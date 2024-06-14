@@ -2463,9 +2463,30 @@ static const uint16 hoyle4PatchEuchreHandsOff[] = {
 	PATCH_END
 };
 
+// In Hearts, a utility function returns the hand of a given player, but
+//  the function uses an uninitialized temp instead of the parameter.
+//
+// We fix this by using the parameter. This bug also appears in Hoyle5.
+//
+// Applies to: All versions
+// Responsible method: The first (and only) local proc in script 300
+static const uint16 hoyle4SignatureHeartsStrategy[] = {
+	0x8d, 0x00,                        // lst 00  [ temp0, uninitialized ]
+	0x81, SIG_MAGICDWORD, 0x75,        // lag 75  [ theHands ]
+	0x4a, 0x06,                        // send 06 [ theHands at: temp0 ] 
+	0x48,                              // ret
+	SIG_END
+};
+
+static const uint16 hoyle4PatchHeartsStrategy[] = {
+	0x8f, 0x01,                        // lsp 01 [ param1, the player (0-3) ] 
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry hoyle4Signatures[] = {
 	{  true,   100, "crazy eights sound",                          1, hoyle4SignatureCrazyEightsSound,  hoyle4PatchCrazyEightsSound },
+	{  true,   300, "hearts strategy",                             1, hoyle4SignatureHeartsStrategy,    hoyle4PatchHeartsStrategy },
 	{  true,   400, "gin undercut sound",                          1, hoyle4SignatureGinUndercutSound,  hoyle4PatchGinUndercutSound },
 	{  true,   733, "bridge arithmetic against object",            1, hoyle4SignatureBridgeArithmetic,  hoyle4PatchBridgeArithmetic },
 	{  true,   800, "euchre handsoff",                             1, hoyle4SignatureEuchreHandsOff,    hoyle4PatchEuchreHandsOff },
@@ -2690,11 +2711,32 @@ static const uint16 hoyle5PatchSolitaireInit[] = {
 	PATCH_END
 };
 
+// In Hearts, a utility function returns the hand of a given player, but
+//  the function uses an uninitialized temp instead of the parameter.
+//
+// We fix this by using the parameter. This bug also appears in Hoyle4.
+//
+// Applies to: All versions
+// Responsible method: The first (and only) local proc in script 300
+static const uint16 hoyle5SignatureHeartsStrategy[] = {
+	0x8d, 0x00,                        // lst 00  [ temp0, uninitialized ]
+	0x81, SIG_MAGICDWORD, 0x75,        // lag 75  [ theHands ]
+	0x4a, SIG_UINT16(0x0006),          // send 06 [ theHands at: temp0 ] 
+	0x48,                              // ret
+	SIG_END
+};
+
+static const uint16 hoyle5PatchHeartsStrategy[] = {
+	0x8f, 0x01,                        // lsp 01 [ param1, the player (0-3) ] 
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry hoyle5Signatures[] = {
 	{  true,     3, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true,    23, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true,   200, "fix setScale calls",                         11, hoyle5SetScaleSignature,          hoyle5PatchSetScale },
+	{  true,   300, "hearts strategy",                             1, hoyle5SignatureHeartsStrategy,    hoyle5PatchHeartsStrategy },
 	{  true,   500, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true,  6001, "fix solitaire init",                          1, hoyle5SignatureSolitaireInit,     hoyle5PatchSolitaireInit },
 	{  true,  6002, "fix solitaire init",                          1, hoyle5SignatureSolitaireInit,     hoyle5PatchSolitaireInit },

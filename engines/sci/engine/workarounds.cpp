@@ -116,38 +116,11 @@ static const uint16 sig_uninitread_hoyle1_1[] = {
 	SIG_END
 };
 
-//                Game: Hoyle 4
-//      Calling method: export 2
-//   Subroutine offset: 0x1d4d (script 300)
-// Applies to at least: English PC floppy
-static const uint16 sig_uninitread_hoyle4_1[] = {
-	0x3f, 0x01,                      // link 01
-	0x39, 0x40,                      // pushi 40h
-	0x78,                            // push1
-	SIG_END
-};
-
-//                Game: Hoyle 5
-//      Calling method: export 2
-//   Subroutine offset: 0x2fb2 (script 300)
-// Applies to at least: English PC demo
-static const uint16 sig_uninitread_hoyle5_1[] = {
-	0x7e, SIG_ADDTOOFFSET(2),        // line N
-	0x7d, 0x68, 0x65, 0x61, 0x72,
-	      0x74, 0x73, 0x2e, 0x73,
-		  0x63, 0x00,                // file "hearts.sc"
-	0x3f, 0x01,                      // link 01
-	0x7e, SIG_ADDTOOFFSET(2),        // line N
-	0x39, 0x4b,                      // pushi 4bh
-	0x78,                            // push1
-	SIG_END
-};
-
 //                Game: Hoyle 5
 //      Calling method: LeadSeat_NoTrump::think
 //   Subroutine offset: 0x22e (script 753)
 // Applies to at least: English PC
-static const uint16 sig_uninitread_hoyle5_2[] = {
+static const uint16 sig_uninitread_hoyle5_1[] = {
 	0x7e, SIG_ADDTOOFFSET(2),        // line N
 	0x7d, 0x73, 0x74, 0x67, 0x62, 0x64, 0x6c, 0x6e, 0x74,
 		  0x2e, 0x73, 0x63, 0x00,               // file "stgbdlnt.sc"
@@ -368,7 +341,6 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE4,        700,    -1,  1,      "BridgeDefense", "think",                        nullptr,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // sometimes while playing bridge, temp var 3, 17 and others, objects LeadReturn_Trump, ThirdSeat_Trump and others
 	{ GID_HOYLE4,        700,    -1,  1,               "Code", "doit",                         nullptr,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // when placing a bid in bridge (always), temp var 11, 24, 27, 46, 75, objects compete_tree, compwe_tree, other1_tree, b1 - bugs #5663 and #5794
 	{ GID_HOYLE4,        700,   921,  0,              "Print", "addEdit",                      nullptr,    -1,    -1, { WORKAROUND_FAKE, 118 } }, // when saving the game (may also occur in other situations) - bug #6601, bug #6614
-	{ GID_HOYLE4,        300,   300,  0,                   "", "export 2",     sig_uninitread_hoyle4_1,     0,     0, { WORKAROUND_FAKE,   0 } }, // after passing around cards in hearts
 	{ GID_HOYLE4,        400,   400,  1,            "GinHand", "calcRuns",                     nullptr,     4,     4, { WORKAROUND_FAKE,   0 } }, // sometimes while playing Gin Rummy (e.g. when knocking and placing a card) - bug #5665
 	{ GID_HOYLE4,        500,    17,  1,          "Character", "say",                          nullptr,   504,   504, { WORKAROUND_FAKE,   0 } }, // sometimes while playing Cribbage (e.g. when the opponent says "Last Card") - bug #5662
 	{ GID_HOYLE4,        800,   870,  0,     "EuchreStrategy", "thinkLead",                    nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // while playing Euchre, happens at least on 2nd or 3rd turn - bug #6602
@@ -376,7 +348,6 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE5,         -1,    14, -1,              nullptr, "select",                       nullptr,     1,     1, { WORKAROUND_FAKE,   0 } }, // dragging the sliders in game settings
 	{ GID_HOYLE5,         -1, 64937, -1,              nullptr, "select",                       nullptr,     7,     7, { WORKAROUND_FAKE,   0 } }, // clicking the "control" and "options" buttons in the icon bar
 	{ GID_HOYLE5,         -1, 64937, -1,            "IconBar", "handleEvent",                  nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // clicking on any button in the icon bar
-	{ GID_HOYLE5,        300,   300,  0,                   "", "export 2",     sig_uninitread_hoyle5_1,     0,     0, { WORKAROUND_FAKE,   0 } }, // after passing around cards in hearts
 	{ GID_HOYLE5,        400,   400,  1,            "GinHand", "calcRuns",                     nullptr,     4,     4, { WORKAROUND_FAKE,   0 } }, // when starting Gin
 	{ GID_HOYLE5,        700,   700,  1,         "BridgeHand", "calcQTS",                      nullptr,     3,     3, { WORKAROUND_FAKE,   0 } }, // when an opponent is playing in Bridge
 	{ GID_HOYLE5,        700,   710,  1, "BridgeStrategyPlay", "checkSplitTops",               nullptr,    10,    10, { WORKAROUND_FAKE,   0 } }, // when playing Bridge - bug #11167
@@ -384,7 +355,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE5,        700,    -1,  1,      "BridgeDefense", "makeContractMinusAce",         nullptr,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // when playing Bridge
 	{ GID_HOYLE5,        700,    -1,  1,      "BridgeDefense", "think",                        nullptr,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // when an opponent is playing in Bridge, objects LeadSeat_NoTrump and others
 	{ GID_HOYLE5,        700,    -1,  1,               "Code", "doit",                         nullptr,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // when placing a bid in Bridge, objects c2_tree, other1_tree, compwe_tree - bugs #11168, #11169, #11170, #11183
-	{ GID_HOYLE5,        700,   753,  0,   "LeadSeat_NoTrump", "think",        sig_uninitread_hoyle5_2,     4,     6, { WORKAROUND_FAKE,   0 } }, // when playing Bridge
+	{ GID_HOYLE5,        700,   753,  0,   "LeadSeat_NoTrump", "think",        sig_uninitread_hoyle5_1,     4,     6, { WORKAROUND_FAKE,   0 } }, // when playing Bridge
 	{ GID_HOYLE5,        700,  1115,  0,              nullptr, "select",                       nullptr,     1,     1, { WORKAROUND_FAKE,   0 } }, // when adjusting the attitude slider in Bridge - bug #11166
 	{ GID_HOYLE5,       1100,    18,  0,               "Tray", "init",                         nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // when playing Poker
 	{ GID_HOYLE5,       1100,  1100,  0,         "anteButton", "handleEvent",                  nullptr,     1,     1, { WORKAROUND_FAKE,   0 } }, // when exiting Poker
