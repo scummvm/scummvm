@@ -284,9 +284,11 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	// These buttons have to be extra wide, or the text will be truncated
 	// in the small version of the GUI.
 
+#ifdef USE_LIBCURL
 	// GUI: Check integrity button
 	if (ConfMan.hasKey("enable_integrity_checking", Common::ConfigManager::kApplicationDomain))
 		new ButtonWidget(tab, "GameOptions_Paths.Checkintegrity", _("Check Integrity"), _("Perform integrity check for all game files"), kCmdCheckIntegrity);
+#endif
 
 	// GUI:  Button + Label for the game path
 	if (!g_gui.useLowResGUI())

@@ -9,7 +9,6 @@ MODULE_OBJS := \
 	dialog.o \
 	dump-all-dialogs.o \
 	editgamedialog.o \
-	integrity-dialog.o \
 	error.o \
 	EventRecorder.o \
 	filebrowser-dialog.o \
@@ -49,14 +48,17 @@ MODULE_OBJS := \
 	widgets/scrollcontainer.o \
 	widgets/tab.o
 
-ifdef USE_CLOUD
 ifdef USE_LIBCURL
+ifdef USE_CLOUD
 MODULE_OBJS += \
 	cloudconnectionwizard.o \
 	downloaddialog.o \
 	downloadpacksdialog.o \
 	remotebrowser.o
 endif
+
+MODULE_OBJS += \
+	integrity-dialog.o
 endif
 
 ifdef USE_DLC
