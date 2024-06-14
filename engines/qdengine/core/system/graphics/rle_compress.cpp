@@ -21,6 +21,8 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define _NO_ZIP_
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/file.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/rle_compress.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
@@ -304,24 +306,39 @@ bool rleBuffer::save(class XStream &fh) {
 }
 
 bool rleBuffer::load(XStream &fh) {
-	int sz;
-	fh > sz;
+	warning("STUB: rleBuffer::load(XStream &fh)");
+	return true;
+}
+
+bool rleBuffer::load(Common::SeekableReadStream *fh) {
+	int32 sz = fh->readUint32LE();
 	header_offset_.resize(sz);
 
-	fh > sz;
+	sz = fh->readSint32LE();
 	data_offset_.resize(sz);
 
-	fh > sz;
+	sz = fh->readSint32LE();
 	header_.resize(sz + 1);
 	header_[sz] = 0;
 
-	fh > sz;
+	sz = fh->readSint32LE();
 	data_.resize(sz);
 
-	fh.read(&*header_offset_.begin(), header_offset_.size() * sizeof(unsigned));
-	fh.read(&*data_offset_.begin(), data_offset_.size() * sizeof(unsigned));
-	fh.read(&*header_.begin(), header_.size() - 1);
-	fh.read(&*data_.begin(), data_.size() * sizeof(unsigned));
+	for (int i = 0; i < header_offset_.size(); i++) {
+		header_offset_[i] = fh->readUint32LE();
+	}
+
+	for (int i = 0; i < data_offset_.size(); i++) {
+		data_offset_[i] = fh->readUint32LE();
+	}
+
+	for (int i = 0; i < header_.size() - 1; i++) {
+		header_[i] = fh->readByte();
+	}
+
+	for (int i = 0; i < data_.size(); i++) {
+		data_[i] = fh->readUint32LE();
+	}
 
 	resize_buffers();
 
@@ -329,27 +346,7 @@ bool rleBuffer::load(XStream &fh) {
 }
 
 bool rleBuffer::load(XZipStream &fh) {
-	int sz;
-	fh > sz;
-	header_offset_.resize(sz);
-
-	fh > sz;
-	data_offset_.resize(sz);
-
-	fh > sz;
-	header_.resize(sz + 1);
-	header_[sz] = 0;
-
-	fh > sz;
-	data_.resize(sz);
-
-	fh.read(&*header_offset_.begin(), header_offset_.size() * sizeof(unsigned));
-	fh.read(&*data_offset_.begin(), data_offset_.size() * sizeof(unsigned));
-	fh.read(&*header_.begin(), header_.size() - 1);
-	fh.read(&*data_.begin(), data_.size() * sizeof(unsigned));
-
-	resize_buffers();
-
+	warning("STUB: rleBuffer::load(XZipStream fh)");
 	return true;
 }
 

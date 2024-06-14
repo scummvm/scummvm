@@ -76,6 +76,7 @@ public:
 	bool save(class XStream &fh);
 	bool load(class XStream &fh);
 	bool load(class XZipStream &fh);
+	bool load(Common::SeekableReadStream *fh);
 
 	bool convert_data(int bits_per_pixel = 16);
 

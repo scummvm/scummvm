@@ -20,7 +20,8 @@
  */
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-#define MAX_PATH 100
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/file.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/app_error_handler.h"
@@ -201,17 +202,19 @@ bool qdSprite::load(const char *fname) {
 	int sx, sy, flags, ssx, colors;
 	unsigned char header[18];
 
-	XZipStream fh;
+	Common::SeekableReadStream *fh;
+	Common::Path fpath(file_.c_str(), '\\');
 
-	if (!qdFileManager::instance().open_file(fh, file_.c_str()))
+	if (!qdFileManager::instance().open_file(&fh, fpath.toString().c_str())) {
 		return false;
+	}
 
-	int size = fh.size();
+	int32 size = fh->size();
 
-	fh.read(header, 18);
+	fh->read(header, 18);
 
 	if (header[0]) { // Length of Image ID field
-		fh.seek(header[0], XS_CUR);
+		fh->seek(header[0], SEEK_CUR);
 	}
 
 	// ColorMapType. 0 - цветовой таблицы нет. 1 - есть. Остальное не соотв. стандарту.
@@ -265,12 +268,12 @@ bool qdSprite::load(const char *fname) {
 		unsigned char pixel[4];
 		unsigned char col_bytes = colors / 8;
 		while (cur < ssx * sy) {
-			fh.read(&info, 1);
+			info = fh->readByte();
 			fl = (info >> 7) & 0x01;
 			len = (info & 0x7F) + 1;
 			// Пакет со сжатием
 			if (1 == fl) {
-				fh.read(&pixel, col_bytes);
+				fh->read(&pixel, col_bytes);
 				for (i = 0; i < len; i++)
 					for (j = 0; j < col_bytes; j++) {
 						data_[cur] = pixel[j];
@@ -280,7 +283,7 @@ bool qdSprite::load(const char *fname) {
 			// Пакет без сжатия
 			else
 				for (i = 0; i < len; i++) {
-					fh.read(&pixel, col_bytes);
+					fh->read(&pixel, col_bytes);
 					for (j = 0; j < col_bytes; j++) {
 						data_[cur] = pixel[j];
 						cur++;
@@ -291,7 +294,7 @@ bool qdSprite::load(const char *fname) {
 	}
 	// Загрузка изображения без сжатия
 	else
-		fh.read(data_, ssx * sy);
+		fh->read(data_, ssx * sy);
 
 	// Если 3 и 4 биты ImageDescriptor (fl) нули, то начало изображения - левый нижний угол
 	// экрана и изображение нужно инвертировать. Иначе предполагаем, что изображение корректно.
@@ -317,7 +320,7 @@ bool qdSprite::load(const char *fname) {
 		delete [] str_buf;
 	}
 
-	fh.close();
+	delete fh;
 
 	if (format_ == GR_ARGB8888) {
 		set_flag(ALPHA_FLAG);
@@ -1069,24 +1072,35 @@ void qdSprite::qda_load(XStream &fh, int version) {
 	}
 }
 
-void qdSprite::qda_load(XZipStream &fh, int version) {
+void qdSprite::qda_load(Common::SeekableReadStream *fh, int version) {
 	free();
 
 	static char str[MAX_PATH];
 
-	int al_flag, compress_flag, len;
-	fh > size_.x > size_.y > picture_size_.x > picture_size_.y > picture_offset_.x > picture_offset_.y > format_ > len;
+	size_.x = fh->readSint32LE();
+	size_.y = fh->readSint32LE();
+	picture_size_.x = fh->readSint32LE();
+	picture_size_.y = fh->readSint32LE();
+	picture_offset_.x = fh->readSint32LE();
+	picture_offset_.y = fh->readSint32LE();
+	format_ = fh->readSint32LE();
+	int32 len = fh->readSint32LE();
+
+	int32 al_flag, compress_flag;
 
 	str[len] = 0;
-	fh.read(str, len);
+	fh->read(str, len);
+	warning(str);
 	set_file(str);
 
 	if (version >= 101) {
-		fh > flags_ > al_flag > compress_flag;
+		flags_ = fh->readSint32LE();
+		al_flag = fh->readSint32LE();
+		compress_flag = fh->readSint32LE();
 	} else {
 		flags_ = 0;
 		compress_flag = 0;
-		fh > al_flag;
+		al_flag = fh->readSint32LE();
 	}
 
 	if (!compress_flag) {
@@ -1097,26 +1111,28 @@ void qdSprite::qda_load(XZipStream &fh, int version) {
 				if (!al_flag)
 					data_ = new unsigned char[picture_size_.x * picture_size_.y * 2];
 				else
+					warning("qdSprite::qda_load(): al_flag is set, check the sprite picture"); // TODO)
 					data_ = new unsigned char[picture_size_.x * picture_size_.y * 4];
 
-				fh.read(data_, picture_size_.x * picture_size_.y * 2);
+				fh->read(data_, picture_size_.x * picture_size_.y * 2);
 				break;
 			case GR_RGB888:
 				if (!al_flag)
 					data_ = new unsigned char[picture_size_.x * picture_size_.y * 3];
 				else
+					warning("qdSprite::qda_load(): al_flag is set, check the sprite picture"); // TODO
 					data_ = new unsigned char[picture_size_.x * picture_size_.y * 4];
 
-				fh.read(data_, picture_size_.x * picture_size_.y * 3);
+				fh->read(data_, picture_size_.x * picture_size_.y * 3);
 				break;
 			case GR_ARGB8888:
 				data_ = new unsigned char[picture_size_.x * picture_size_.y * 4];
-				fh.read(data_, picture_size_.x * picture_size_.y * 4);
+				fh->read(data_, picture_size_.x * picture_size_.y * 4);
 				break;
 			}
 			if (al_flag) {
 				unsigned char *alpha_data = new unsigned char[picture_size_.x * picture_size_.y];
-				fh.read(alpha_data, picture_size_.x * picture_size_.y);
+				fh->read(alpha_data, picture_size_.x * picture_size_.y);
 
 				switch (format_) {
 				case GR_RGB565:
@@ -1165,26 +1181,31 @@ void qdSprite::qda_load(XZipStream &fh, int version) {
 			case GR_ARGB1555:
 				if (check_flag(ALPHA_FLAG)) {
 					data_ = new unsigned char[picture_size_.x * picture_size_.y * 4];
-					fh.read(data_, picture_size_.x * picture_size_.y * 4);
+					fh->read(data_, picture_size_.x * picture_size_.y * 4);
 				} else {
 					data_ = new unsigned char[picture_size_.x * picture_size_.y * 2];
-					fh.read(data_, picture_size_.x * picture_size_.y * 2);
+					fh->read(data_, picture_size_.x * picture_size_.y * 2);
 				}
 				break;
 			case GR_RGB888:
 				data_ = new unsigned char[picture_size_.x * picture_size_.y * 3];
-				fh.read(data_, picture_size_.x * picture_size_.y * 3);
+				fh->read(data_, picture_size_.x * picture_size_.y * 3);
 				break;
 			case GR_ARGB8888:
 				data_ = new unsigned char[picture_size_.x * picture_size_.y * 4];
-				fh.read(data_, picture_size_.x * picture_size_.y * 4);
+				fh->read(data_, picture_size_.x * picture_size_.y * 4);
 				break;
 			}
 		}
 	} else {
 		rle_data_ = new rleBuffer;
-		rle_data_ -> load(fh);
+		rle_data_->load(fh);
 	}
+}
+
+void qdSprite::qda_load(XZipStream &fh, int version) {
+	warning("qdSprite::qda_load(XZipStream &fh, int version)");
+	return;
 }
 
 void qdSprite::qda_save(XStream &fh) {
