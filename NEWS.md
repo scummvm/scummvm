@@ -6,7 +6,8 @@ For a more comprehensive changelog of the latest experimental code, see:
  New games:
   - Added support for Orion Burger.
   - Added support for Total Eclipse and Total Eclipse 2.
-  - Added support for Thimbleweed Park
+  - Added support for Thimbleweed Park.
+  - Added support for The Space Bar.
 
  General:
   - Fixed GLSL version parsing on some OpenGL ES2 platforms.
@@ -19,7 +20,7 @@ For a more comprehensive changelog of the latest experimental code, see:
     they should be, making e.g. the King's Quest III intro hard to read.
 
  AGS:
-  - Syncronized with upstream AGS 3.6.0.58
+  - Syncronized with upstream AGS 3.6.0.58.
   - Fixed glitchy staircase in old Maniac Mansion Mania episodes, caused by
     imperfect pathfinding.
 
@@ -31,11 +32,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added map generator from Moonbase Console for Moonbase Commander.
 
  Sword1:
-   - Added a "Windows audio engine" mode available within the ScummVM game 
-     options, in which we simulate the DirectSound audio drivers powering the 
+   - Added a "Windows audio engine" mode available within the ScummVM game
+     options, in which we simulate the DirectSound audio drivers powering the
      Windows 95 executable.
-     This makes the game use softer (logarithmic) audio curves, but removes 
-     fade-in and fade-out for sound effects, fade-in for music, and automatic 
+     This makes the game use softer (logarithmic) audio curves, but removes
+     fade-in and fade-out for sound effects, fade-in for music, and automatic
      music volume attenuation for when speech is playing. By default the setting
      is off, since the game was developed with DOS and AIL sound drivers in mind,
      and it is also not available for Macintosh and PSX versions.
@@ -53,6 +54,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Alter Ultima VIII minimap to use game palette.
    - Fixed Ultima VIII item splitting & merging on game map.
    - Fixed Ultima VIII animation, audio, and scene transition issues.
+
 
 #### 2.8.1 (2024-03-31)
 
