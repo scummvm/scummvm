@@ -372,9 +372,8 @@ bool parser::read_binary_script(const char *fname) {
 	Common::File ff;
 	ff.open(fname);
 
-	int v = ff.readUint32LE();
-
-	int size = ff.readUint32LE();
+	uint32 v = ff.readUint32LE();
+	uint32 size = ff.readUint32LE();
 
 	if (data_pool_.size() < size)
 		data_pool_.resize(size);
