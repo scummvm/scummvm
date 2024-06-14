@@ -6007,9 +6007,16 @@ EOF
 		SONIVOX_LIBS="`$_pkgconfig --static --libs sonivox`"
 		cc_check_no_clean $SONIVOX_CFLAGS $SONIVOX_LIBS && _sonivox=yes
 	fi
-	if test "$_sonivox" != yes && test "$_pkg_config" = "yes" && $_pkgconfig --exists sonivox-static; then
-		SONIVOX_LIBS="`$_pkgconfig --static --libs sonivox-static`"
-		cc_check_no_clean $SONIVOX_CFLAGS $SONIVOX_LIBS && _sonivox=yes
+	if test "$_sonivox" != yes ; then
+		if test "$_pkg_config" = "yes" && $_pkgconfig --exists sonivox-static; then
+			SONIVOX_LIBS="`$_pkgconfig --static --libs sonivox-static`"
+			cc_check_no_clean $SONIVOX_CFLAGS $SONIVOX_LIBS && _sonivox=yes
+		fi
+
+		if test "$_sonivox" != yes ; then
+			SONIVOX_LIBS="-lsonivox-static"
+			cc_check_no_clean $SONIVOX_CFLAGS $SONIVOX_LIBS && _sonivox=yes
+		fi
 	fi
 	cc_check_clean
 fi
