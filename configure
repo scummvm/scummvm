@@ -6003,8 +6003,15 @@ append_var SONIVOX_LIBS "-lsonivox"
 if test "$_sonivox" = auto; then
 	_sonivox=no
 	cat > $TMPC << EOF
+#include <stddef.h>
 #include <sonivox/eas.h>
-int main(void) { /* delete_fluid_settings(new_fluid_settings()); */ return 0; }
+
+EAS_DATA_HANDLE mEASDataHandle = NULL;
+
+int main(void) {
+	EAS_Init(&mEASDataHandle);
+	return 0;
+}
 EOF
 	cc_check_no_clean $SONIVOX_CFLAGS $SONIVOX_LIBS && _sonivox=yes
 	if test "$_sonivox" != yes && test "$_pkg_config" = "yes" && $_pkgconfig --exists sonivox; then
