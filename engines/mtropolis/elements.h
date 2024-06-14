@@ -177,7 +177,7 @@ private:
 
 	Common::Array<int> _damagedFrames;
 
-	Graphics::Palette _fallbackPalette;
+	Common::ScopedPtr<Graphics::Palette> _fallbackPalette;
 };
 
 class ImageElement : public VisualElement {
