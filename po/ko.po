@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-14 12:37+0000\n"
+"POT-Creation-Date: 2024-06-14 13:24+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -89,7 +89,7 @@ msgstr "위로"
 #: gui/downloadpacksdialog.cpp:464 gui/editgamedialog.cpp:339
 #: gui/editrecorddialog.cpp:66 gui/integrity-dialog.cpp:114
 #: gui/integrity-dialog.cpp:167 gui/filebrowser-dialog.cpp:68
-#: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2360
+#: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2361
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
 #: gui/recorderdialog.cpp:212 gui/remotebrowser.cpp:59
 #: gui/saveload-dialog.cpp:64 gui/saveload-dialog.cpp:456
@@ -162,23 +162,23 @@ msgid ""
 "so your browser can forward data to ScummVM"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3743
+#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3740
 msgid "Stop server"
 msgstr "서버 정지"
 
-#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:2787
+#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:2785
 msgid "Run server"
 msgstr "서버 실행"
 
-#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:3744
+#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:3741
 msgid "Stop local webserver"
 msgstr "내부 웹서버를 정지합니다"
 
-#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:2787
+#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:2785
 msgid "Run local webserver"
 msgstr "로컬 웹 서버를 실행"
 
-#: gui/cloudconnectionwizard.cpp:248 gui/options.cpp:2788 gui/options.cpp:3751
+#: gui/cloudconnectionwizard.cpp:248 gui/options.cpp:2786 gui/options.cpp:3748
 msgid "Not running"
 msgstr "실행되지 않음"
 
@@ -315,7 +315,7 @@ msgstr "다른 스토리지가 현재 동작 중입니다. 중단할까요?"
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
-#: gui/launcher.cpp:502 gui/options.cpp:3448 gui/options.cpp:3827
+#: gui/launcher.cpp:502 gui/options.cpp:3442 gui/options.cpp:3825
 #: base/main.cpp:604 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
@@ -329,7 +329,7 @@ msgstr "예"
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
-#: gui/launcher.cpp:502 gui/options.cpp:3448 gui/options.cpp:3827
+#: gui/launcher.cpp:502 gui/options.cpp:3442 gui/options.cpp:3825
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
@@ -354,7 +354,7 @@ msgstr ""
 #: gui/editgamedialog.cpp:340 gui/editrecorddialog.cpp:67
 #: gui/integrity-dialog.cpp:174 gui/fluidsynth-dialog.cpp:153
 #: gui/launcher.cpp:558 gui/launcher.cpp:562 gui/massadd.cpp:90
-#: gui/options.cpp:2362 gui/predictivedialog.cpp:69
+#: gui/options.cpp:2363 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:33
 #: engines/engine.cpp:567 engines/engine.cpp:590
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
@@ -390,7 +390,7 @@ msgstr "잘못된 rs 파일."
 msgid "Interrupted."
 msgstr "상호작용"
 
-#: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3439
+#: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3433
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -576,11 +576,11 @@ msgstr ""
 msgid "Proceed"
 msgstr "진행"
 
-#: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3283
+#: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3277
 msgid "icon packs"
 msgstr ""
 
-#: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3294
+#: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3288
 msgid "shader packs"
 msgstr ""
 
@@ -592,11 +592,11 @@ msgstr "게임을 선택하세요:"
 msgid "Game"
 msgstr "게임"
 
-#: gui/editgamedialog.cpp:163 gui/options.cpp:2023 gui/options.cpp:2197
+#: gui/editgamedialog.cpp:163 gui/options.cpp:2022 gui/options.cpp:2197
 msgid "GFX"
 msgstr "GFX"
 
-#: gui/editgamedialog.cpp:163 gui/options.cpp:2023 gui/options.cpp:2197
+#: gui/editgamedialog.cpp:163 gui/options.cpp:2022 gui/options.cpp:2197
 #: backends/graphics/atari/atari-graphics.cpp:955
 #: backends/graphics/sdl/sdl-graphics.cpp:436
 msgid "Graphics"
@@ -711,7 +711,7 @@ msgctxt "lowres"
 msgid "Game Path:"
 msgstr "게임 경로:"
 
-#: gui/editgamedialog.cpp:302 gui/options.cpp:2499
+#: gui/editgamedialog.cpp:302 gui/options.cpp:2498
 msgid "Extra Path:"
 msgstr "추가 경로:"
 
@@ -720,33 +720,33 @@ msgstr "추가 경로:"
 msgid "Specifies path to additional data used by the game"
 msgstr "게임에서 사용하는 추가 데이터 경로를 지정"
 
-#: gui/editgamedialog.cpp:304 gui/options.cpp:2501
+#: gui/editgamedialog.cpp:304 gui/options.cpp:2500
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "추가 경로:"
 
-#: gui/editgamedialog.cpp:305 gui/options.cpp:2474 gui/options.cpp:2502
-#: gui/options.cpp:2511 gui/options.cpp:2795
+#: gui/editgamedialog.cpp:305 gui/options.cpp:2473 gui/options.cpp:2501
+#: gui/options.cpp:2510 gui/options.cpp:2793
 #: backends/platform/libretro/src/libretro-options-widget.cpp:244
 msgctxt "path"
 msgid "None"
 msgstr "없음"
 
-#: gui/editgamedialog.cpp:311 gui/options.cpp:2463
+#: gui/editgamedialog.cpp:311 gui/options.cpp:2462
 msgid "Save Path:"
 msgstr "저장 경로:"
 
 #: gui/editgamedialog.cpp:311 gui/editgamedialog.cpp:313
-#: gui/editgamedialog.cpp:314 gui/options.cpp:2463 gui/options.cpp:2465
+#: gui/editgamedialog.cpp:314 gui/options.cpp:2462 gui/options.cpp:2464
 msgid "Specifies where your saved games are put"
 msgstr "게임 저장 파일이 있을 경로를 지정"
 
-#: gui/editgamedialog.cpp:313 gui/options.cpp:2465
+#: gui/editgamedialog.cpp:313 gui/options.cpp:2464
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "저장 경로:"
 
-#: gui/editgamedialog.cpp:314 gui/options.cpp:1792 gui/options.cpp:2466
+#: gui/editgamedialog.cpp:314 gui/options.cpp:1791 gui/options.cpp:2465
 #: backends/platform/wii/options.cpp:55
 msgid "Default"
 msgstr "기본값"
@@ -800,11 +800,11 @@ msgid ""
 "English"
 msgstr "게임의 언어. 선택한 언어로 게임이 번역되지는 않음"
 
-#: gui/editgamedialog.cpp:364 gui/editgamedialog.cpp:379 gui/options.cpp:1574
-#: gui/options.cpp:1589 gui/options.cpp:1606 gui/options.cpp:1620
-#: gui/options.cpp:1660 gui/options.cpp:1676 gui/options.cpp:2086
-#: gui/options.cpp:2544 gui/options.cpp:2618 gui/options.cpp:2836
-#: gui/options.cpp:3326 audio/null.cpp:45
+#: gui/editgamedialog.cpp:364 gui/editgamedialog.cpp:379 gui/options.cpp:1575
+#: gui/options.cpp:1590 gui/options.cpp:1607 gui/options.cpp:1621
+#: gui/options.cpp:1659 gui/options.cpp:1675 gui/options.cpp:2085
+#: gui/options.cpp:2543 gui/options.cpp:2617 gui/options.cpp:2833
+#: gui/options.cpp:3320 audio/null.cpp:45
 #: backends/platform/android/options.cpp:150
 #: backends/platform/android/options.cpp:151
 #: backends/platform/android/options.cpp:179
@@ -828,7 +828,7 @@ msgctxt "lowres"
 msgid "Platform:"
 msgstr "플랫폼:"
 
-#: gui/editgamedialog.cpp:544 gui/options.cpp:3350
+#: gui/editgamedialog.cpp:544 gui/options.cpp:3344
 msgid "Select SoundFont"
 msgstr "SoundFont 선택"
 
@@ -836,11 +836,11 @@ msgstr "SoundFont 선택"
 msgid "Select additional game directory"
 msgstr "추가 게임 디렉토리를 선택"
 
-#: gui/editgamedialog.cpp:596 gui/options.cpp:3197
+#: gui/editgamedialog.cpp:596 gui/options.cpp:3191
 msgid "Select directory for saved games"
 msgstr "세이브 파일 저장 경로를 선택"
 
-#: gui/editgamedialog.cpp:603 gui/options.cpp:3204
+#: gui/editgamedialog.cpp:603 gui/options.cpp:3198
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "선택한 디렉토리에는 기록할 수 없습니다. 다른 디렉토리를 선택해 주세요."
 
@@ -1619,191 +1619,191 @@ msgstr "게임으로 전환"
 msgid "Fast replay"
 msgstr "빠른 리플레이"
 
-#: gui/options.cpp:149 common/updates.cpp:55
+#: gui/options.cpp:150 common/updates.cpp:55
 msgid "Never"
 msgstr "사용하지 않음"
 
-#: gui/options.cpp:149
+#: gui/options.cpp:150
 msgid "Every 5 mins"
 msgstr "5분마다"
 
-#: gui/options.cpp:149
+#: gui/options.cpp:150
 msgid "Every 10 mins"
 msgstr "10분마다"
 
-#: gui/options.cpp:149
+#: gui/options.cpp:150
 msgid "Every 15 mins"
 msgstr "15분마다"
 
-#: gui/options.cpp:149
+#: gui/options.cpp:150
 msgid "Every 30 mins"
 msgstr "30분마다"
 
 #. I18N: Extremely large GUI scale
-#: gui/options.cpp:154
+#: gui/options.cpp:155
 #, fuzzy, c-format
 #| msgid "Very large"
 msgid "200% - Extremely large"
 msgstr "아주 크게"
 
 #. I18N: Very very large GUI scale
-#: gui/options.cpp:156
+#: gui/options.cpp:157
 #, fuzzy
 #| msgid "Very large"
 msgid "175% - Very large"
 msgstr "아주 크게"
 
 #. I18N: Very large GUI scale
-#: gui/options.cpp:158
+#: gui/options.cpp:159
 #, c-format
 msgid "150% - Larger"
 msgstr ""
 
 #. I18N: Large GUI scale
-#: gui/options.cpp:160
+#: gui/options.cpp:161
 #, c-format
 msgid "125% - Large"
 msgstr ""
 
 #. I18N: Medium GUI scale
-#: gui/options.cpp:162
+#: gui/options.cpp:163
 #, fuzzy
 #| msgid "Medium"
 msgid "100% - Medium"
 msgstr "중간"
 
 #. I18N: Small GUI scale
-#: gui/options.cpp:164
+#: gui/options.cpp:165
 #, fuzzy, c-format
 #| msgid "Small"
 msgid "75% - Small"
 msgstr "작게"
 
 #. I18N: Smaller GUI scale
-#: gui/options.cpp:166
+#: gui/options.cpp:167
 #, fuzzy, c-format
 #| msgid "Small"
 msgid "50% - Smaller"
 msgstr "작게"
 
 #. I18N: Smallest GUI scale
-#: gui/options.cpp:168
+#: gui/options.cpp:169
 #, fuzzy, c-format
 #| msgid "Small"
 msgid "25% - Smallest"
 msgstr "작게"
 
-#: gui/options.cpp:815
+#: gui/options.cpp:816
 msgid "Failed to apply some of the graphic options changes:"
 msgstr "일부 그래픽 옵션 변경사항을 적용하지 못했습니다:"
 
-#: gui/options.cpp:827
+#: gui/options.cpp:828
 msgid "the video mode could not be changed"
 msgstr "비디오 모드를 변경할 수 없음"
 
-#: gui/options.cpp:840
+#: gui/options.cpp:841
 msgid "the stretch mode could not be changed"
 msgstr "확대 모드를 변경할 수 없음"
 
-#: gui/options.cpp:846
+#: gui/options.cpp:847
 msgid "the aspect ratio setting could not be changed"
 msgstr "화면 종횡비 설정을 변경할 수 없음"
 
-#: gui/options.cpp:852
+#: gui/options.cpp:853
 msgid "the fullscreen setting could not be changed"
 msgstr "전체 화면 설정을 변경할 수 없음"
 
-#: gui/options.cpp:858
+#: gui/options.cpp:859
 msgid "the filtering setting could not be changed"
 msgstr "필터링 설정을 변경할 수 없음"
 
-#: gui/options.cpp:864
+#: gui/options.cpp:865
 #, fuzzy
 msgid "the vsync setting could not be changed"
 msgstr "전체 화면 설정을 변경할 수 없음"
 
-#: gui/options.cpp:878
+#: gui/options.cpp:879
 #, fuzzy
 msgid "the shader could not be changed"
 msgstr "확대 모드를 변경할 수 없음"
 
-#: gui/options.cpp:1402
+#: gui/options.cpp:1403
 msgid "Touchpad mouse mode"
 msgstr "터치패드 마우스 모드"
 
-#: gui/options.cpp:1407
+#: gui/options.cpp:1408
 msgid "Pointer Speed:"
 msgstr "포인터 속도:"
 
-#: gui/options.cpp:1407 gui/options.cpp:1409 gui/options.cpp:1410
+#: gui/options.cpp:1408 gui/options.cpp:1410 gui/options.cpp:1411
 msgid "Speed for keyboard/joystick mouse pointer control"
 msgstr "키보드/조이스틱 마우스 포인터 컨트롤 속도"
 
-#: gui/options.cpp:1409
+#: gui/options.cpp:1410
 msgctxt "lowres"
 msgid "Pointer Speed:"
 msgstr "포인터 속도:"
 
-#: gui/options.cpp:1420
+#: gui/options.cpp:1421
 msgid "Joy Deadzone:"
 msgstr "조이스틱 데드존:"
 
-#: gui/options.cpp:1420 gui/options.cpp:1422 gui/options.cpp:1423
+#: gui/options.cpp:1421 gui/options.cpp:1423 gui/options.cpp:1424
 msgid "Analog joystick Deadzone"
 msgstr "아날로그 조이스틱 데드존"
 
-#: gui/options.cpp:1422
+#: gui/options.cpp:1423
 msgctxt "lowres"
 msgid "Joy Deadzone:"
 msgstr "조이스틱 데드존:"
 
-#: gui/options.cpp:1518
+#: gui/options.cpp:1519
 #, c-format
 msgid "%d hidden achievements remaining"
 msgstr "%d 개의 숨겨진 업적이 남음"
 
-#: gui/options.cpp:1523
+#: gui/options.cpp:1524
 #, c-format
 msgid "Achievements unlocked: %d/%d"
 msgstr "업적 언락: %d/%d"
 
-#: gui/options.cpp:1569
+#: gui/options.cpp:1570
 msgid "Graphics mode:"
 msgstr "그래픽 모드:"
 
-#: gui/options.cpp:1585
+#: gui/options.cpp:1586
 msgid "Render mode:"
 msgstr "렌더 모드:"
 
-#: gui/options.cpp:1585 gui/options.cpp:1588
+#: gui/options.cpp:1586 gui/options.cpp:1589
 msgid "Special dithering modes supported by some games"
 msgstr "일부 게임에서 지원하는 특수 디더링 모드"
 
-#: gui/options.cpp:1601
+#: gui/options.cpp:1602
 msgid "Stretch mode:"
 msgstr "확대 모드:"
 
-#: gui/options.cpp:1617
+#: gui/options.cpp:1618
 msgid "Scaler:"
 msgstr "크기조절:"
 
-#: gui/options.cpp:1631
+#: gui/options.cpp:1632
 #, fuzzy
 msgid "Shader:"
 msgstr "셰이더"
 
-#: gui/options.cpp:1631 gui/options.cpp:1633 gui/options.cpp:1634
+#: gui/options.cpp:1632 gui/options.cpp:1634 gui/options.cpp:1635
 #, fuzzy
 msgid "Specifies path to the shader used for scaling the game screen"
 msgstr "게임에서 사용하는 추가 데이터 경로를 지정"
 
-#: gui/options.cpp:1633
+#: gui/options.cpp:1634
 #, fuzzy
 msgctxt "lowres"
 msgid "Shader Path:"
 msgstr "저장 경로:"
 
-#: gui/options.cpp:1634
+#: gui/options.cpp:1635
 #, fuzzy
 msgctxt "shader"
 msgid "None"
@@ -1820,251 +1820,251 @@ msgstr "게임 파일 다운로드"
 msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr "업데이트 확인 중..."
 
-#: gui/options.cpp:1647 backends/graphics/sdl/sdl-graphics.cpp:427
+#: gui/options.cpp:1646 backends/graphics/sdl/sdl-graphics.cpp:427
 msgid "Fullscreen mode"
 msgstr "전체 화면 모드"
 
-#: gui/options.cpp:1650
+#: gui/options.cpp:1649
 msgid "V-Sync"
 msgstr "Vsync"
 
-#: gui/options.cpp:1650
+#: gui/options.cpp:1649
 msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
 msgstr ""
 "수직 동기화가 화면을 새로 고칠 때까지 기다리면 아티팩트가 찢어지지 않습니다"
 
-#: gui/options.cpp:1655
+#: gui/options.cpp:1654
 msgid "Game 3D Renderer:"
 msgstr "게임 3D 렌더러:"
 
-#: gui/options.cpp:1657
+#: gui/options.cpp:1656
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
 msgstr "게임 3D 렌더러:"
 
-#: gui/options.cpp:1674
+#: gui/options.cpp:1673
 msgid "3D Anti-aliasing:"
 msgstr "3D 안티 앨리어싱:"
 
-#: gui/options.cpp:1678 engines/mohawk/dialogs.cpp:364
+#: gui/options.cpp:1677 engines/mohawk/dialogs.cpp:364
 msgid "Disabled"
 msgstr "비활성화"
 
-#: gui/options.cpp:1686
+#: gui/options.cpp:1685
 msgid "Filter graphics"
 msgstr "그래픽 필터"
 
-#: gui/options.cpp:1686
+#: gui/options.cpp:1685
 msgid "Use linear filtering when scaling graphics"
 msgstr "화면 크기를 조절할 때 선형 필터링을 사용"
 
-#: gui/options.cpp:1690
+#: gui/options.cpp:1689
 msgid "Aspect ratio correction"
 msgstr "화면 종횡비 보정"
 
-#: gui/options.cpp:1690
+#: gui/options.cpp:1689
 msgid "Correct aspect ratio for games"
 msgstr "게임의 화면 종횡비 보정"
 
-#: gui/options.cpp:1707
+#: gui/options.cpp:1706
 msgid "Preferred device:"
 msgstr "선호하는 장치:"
 
-#: gui/options.cpp:1707
+#: gui/options.cpp:1706
 msgid "Music device:"
 msgstr "음악 장치:"
 
-#: gui/options.cpp:1707 gui/options.cpp:1709
+#: gui/options.cpp:1706 gui/options.cpp:1708
 msgid "Specifies preferred sound device or sound card emulator"
 msgstr "선호하는 사운드 장치나 사운드 카드 에뮬레이터를 지정합니다"
 
-#: gui/options.cpp:1707 gui/options.cpp:1709 gui/options.cpp:1710
+#: gui/options.cpp:1706 gui/options.cpp:1708 gui/options.cpp:1709
 msgid "Specifies output sound device or sound card emulator"
 msgstr "소리를 출력할 사운드 장치나 사운드 카드 에뮬레이터를 지정합니다"
 
-#: gui/options.cpp:1709
+#: gui/options.cpp:1708
 msgctxt "lowres"
 msgid "Preferred dev.:"
 msgstr "선호 장치:"
 
-#: gui/options.cpp:1709
+#: gui/options.cpp:1708
 msgctxt "lowres"
 msgid "Music device:"
 msgstr "음악 장치:"
 
-#: gui/options.cpp:1736
+#: gui/options.cpp:1735
 msgid "AdLib emulator:"
 msgstr "AdLib 에뮬레이터:"
 
-#: gui/options.cpp:1736 gui/options.cpp:1739
+#: gui/options.cpp:1735 gui/options.cpp:1738
 msgid "AdLib is used for music in many games"
 msgstr "AdLib은 많은 게임에서 음악 재생에 사용됩니다"
 
-#: gui/options.cpp:1752
+#: gui/options.cpp:1751
 msgid "GM device:"
 msgstr "GM 장치:"
 
-#: gui/options.cpp:1752
+#: gui/options.cpp:1751
 msgid "Specifies default sound device for General MIDI output"
 msgstr "General MIDI 출력에 사용할 기본 사운드 장치를 지정합니다"
 
-#: gui/options.cpp:1763
+#: gui/options.cpp:1762
 msgid "Don't use General MIDI music"
 msgstr "General MIDI 음악을 사용하지 않음"
 
-#: gui/options.cpp:1774 gui/options.cpp:1843
+#: gui/options.cpp:1773 gui/options.cpp:1842
 msgid "Use first available device"
 msgstr "사용 가능한 첫 번째 장치 사용"
 
-#: gui/options.cpp:1786
+#: gui/options.cpp:1785
 msgid "SoundFont:"
 msgstr "SoundFont:"
 
-#: gui/options.cpp:1786 gui/options.cpp:1788 gui/options.cpp:1796
+#: gui/options.cpp:1785 gui/options.cpp:1787 gui/options.cpp:1795
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
 msgstr "SoundFont는 일부 사운드 카드, FluidSynth, Timidity에서 지원됩니다"
 
-#: gui/options.cpp:1788
+#: gui/options.cpp:1787
 msgctxt "lowres"
 msgid "SoundFont:"
 msgstr "SoundFont:"
 
-#: gui/options.cpp:1794
+#: gui/options.cpp:1793
 msgctxt "soundfont"
 msgid "None"
 msgstr "없음"
 
-#: gui/options.cpp:1801
+#: gui/options.cpp:1800
 msgid "Mixed AdLib/MIDI mode"
 msgstr "AdLib/MIDI 혼합 모드"
 
-#: gui/options.cpp:1801
+#: gui/options.cpp:1800
 msgid "Use both MIDI and AdLib sound generation"
 msgstr "사운드 생성에 MIDI와 AdLib을 동시에 사용"
 
-#: gui/options.cpp:1804
+#: gui/options.cpp:1803
 msgid "MIDI gain:"
 msgstr "MIDI 게인:"
 
-#: gui/options.cpp:1814
+#: gui/options.cpp:1813
 msgid "MT-32 Device:"
 msgstr "MT-32 장치:"
 
-#: gui/options.cpp:1814
+#: gui/options.cpp:1813
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr "Roland MT-32/LAPC1/CM32l/CM64 출력에 사용할 기본 장치를 선택"
 
-#: gui/options.cpp:1819
+#: gui/options.cpp:1818
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "실제 Roland MT-32 사용 (GM 에뮬레이션을 비활성화)"
 
-#: gui/options.cpp:1819 gui/options.cpp:1821
+#: gui/options.cpp:1818 gui/options.cpp:1820
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
 msgstr ""
 "컴퓨터에 Roland MT-32와 호환되는 사운드 장치가 연결되어 있다면 선택하세요"
 
-#: gui/options.cpp:1821
+#: gui/options.cpp:1820
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
 msgstr "실제 Roland MT-32 사용 (GM 에뮬레이션을 비활성화)"
 
-#: gui/options.cpp:1824
+#: gui/options.cpp:1823
 msgid "Roland GS device (enable MT-32 mappings)"
 msgstr "Roland GS 장치 (MT-32 맵핑을 활성화)"
 
-#: gui/options.cpp:1824
+#: gui/options.cpp:1823
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
 "Roland GS 장치에서 MT-32를 에뮬레이트하는 패치 맵핑을 활성화하려면 선택하세요"
 
-#: gui/options.cpp:1833
+#: gui/options.cpp:1832
 msgid "Don't use Roland MT-32 music"
 msgstr "Roland MT-32 음악을 사용하지 않음"
 
-#: gui/options.cpp:1860
+#: gui/options.cpp:1859
 msgid "Text and speech:"
 msgstr "자막과 음성:"
 
-#: gui/options.cpp:1864 gui/options.cpp:1874
+#: gui/options.cpp:1863 gui/options.cpp:1873
 msgid "Speech"
 msgstr "음성"
 
-#: gui/options.cpp:1865 gui/options.cpp:1875
+#: gui/options.cpp:1864 gui/options.cpp:1874
 msgid "Subtitles"
 msgstr "자막"
 
-#: gui/options.cpp:1866
+#: gui/options.cpp:1865
 msgid "Both"
 msgstr "둘 다"
 
-#: gui/options.cpp:1868
+#: gui/options.cpp:1867
 msgid "Subtitle speed:"
 msgstr "자막 속도:"
 
-#: gui/options.cpp:1870
+#: gui/options.cpp:1869
 msgctxt "lowres"
 msgid "Text and speech:"
 msgstr "자막과 음성:"
 
-#: gui/options.cpp:1874
+#: gui/options.cpp:1873
 msgid "Spch"
 msgstr "음성"
 
-#: gui/options.cpp:1875
+#: gui/options.cpp:1874
 msgid "Subs"
 msgstr "자막"
 
-#: gui/options.cpp:1876
+#: gui/options.cpp:1875
 msgctxt "lowres"
 msgid "Both"
 msgstr "둘 다"
 
-#: gui/options.cpp:1876
+#: gui/options.cpp:1875
 msgid "Show subtitles and play speech"
 msgstr "자막을 표시하고 음성을 재생"
 
-#: gui/options.cpp:1878
+#: gui/options.cpp:1877
 msgctxt "lowres"
 msgid "Subtitle speed:"
 msgstr "자막 속도:"
 
-#: gui/options.cpp:1900
+#: gui/options.cpp:1899
 msgid "Music volume:"
 msgstr "음악 볼륨:"
 
-#: gui/options.cpp:1902
+#: gui/options.cpp:1901
 msgctxt "lowres"
 msgid "Music volume:"
 msgstr "음악 볼륨:"
 
-#: gui/options.cpp:1911
+#: gui/options.cpp:1910
 msgid "Mute all"
 msgstr "모두 음소거"
 
-#: gui/options.cpp:1914
+#: gui/options.cpp:1913
 msgid "SFX volume:"
 msgstr "효과음 볼륨:"
 
-#: gui/options.cpp:1914 gui/options.cpp:1916 gui/options.cpp:1919
+#: gui/options.cpp:1913 gui/options.cpp:1915 gui/options.cpp:1918
 msgid "Special sound effects volume"
 msgstr "효과음 볼륨"
 
-#: gui/options.cpp:1916
+#: gui/options.cpp:1915
 msgctxt "lowres"
 msgid "SFX volume:"
 msgstr "효과음 볼륨:"
 
-#: gui/options.cpp:1926
+#: gui/options.cpp:1925
 msgid "Speech volume:"
 msgstr "음성 볼륨:"
 
-#: gui/options.cpp:1928
+#: gui/options.cpp:1927
 msgctxt "lowres"
 msgid "Speech volume:"
 msgstr "음성 볼륨:"
@@ -2078,180 +2078,180 @@ msgctxt "lowres"
 msgid "Cloud"
 msgstr "클라우드"
 
-#: gui/options.cpp:2337
-msgid "LAN"
-msgstr "LAN"
-
 #: gui/options.cpp:2339
+msgid "LAN"
+msgstr "LAN"
+
+#: gui/options.cpp:2341
 msgctxt "lowres"
 msgid "LAN"
 msgstr "LAN"
 
-#: gui/options.cpp:2349
+#: gui/options.cpp:2350
 msgid "Accessibility"
 msgstr "접근성"
 
-#: gui/options.cpp:2351
+#: gui/options.cpp:2352
 msgctxt "lowres"
 msgid "Accessibility"
 msgstr "접근성"
 
-#: gui/options.cpp:2360
+#: gui/options.cpp:2361
 msgid "Discard changes and close the dialog"
 msgstr "변경 사항을 버리고 창을 닫음"
 
-#: gui/options.cpp:2361
+#: gui/options.cpp:2362
 msgid "Apply"
 msgstr "적용"
 
-#: gui/options.cpp:2361
+#: gui/options.cpp:2362
 msgid "Apply changes without closing the dialog"
 msgstr "창을 닫지 않고 변경 사항을 적용"
 
-#: gui/options.cpp:2362
+#: gui/options.cpp:2363
 msgid "Apply changes and close the dialog"
 msgstr "변경 사항을 적용하고 창을 닫음"
 
-#: gui/options.cpp:2452
+#: gui/options.cpp:2451
 msgid "FluidSynth Settings"
 msgstr "FluidSynth 설정"
 
-#: gui/options.cpp:2466
+#: gui/options.cpp:2465
 msgid ""
 "Specifies where your saved games are put. A red coloring indicates the value "
 "is temporary and will not get saved"
 msgstr ""
 
-#: gui/options.cpp:2471
+#: gui/options.cpp:2470
 msgid "Theme Path:"
 msgstr "테마 경로:"
 
-#: gui/options.cpp:2473
+#: gui/options.cpp:2472
 msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "테마 경로:"
 
-#: gui/options.cpp:2479
+#: gui/options.cpp:2478
 msgid "Icon Path:"
 msgstr "/icon/ 경로:"
 
-#: gui/options.cpp:2481
+#: gui/options.cpp:2480
 msgctxt "lowres"
 msgid "Icon Path:"
 msgstr "/icon/ 경로:"
 
-#: gui/options.cpp:2482 gui/options.cpp:2492
+#: gui/options.cpp:2481 gui/options.cpp:2491
 #, fuzzy
 msgctxt "path"
 msgid "Default"
 msgstr "기본값"
 
-#: gui/options.cpp:2489
+#: gui/options.cpp:2488
 #, fuzzy
 #| msgid "Game Path:"
 msgid "DLC Path:"
 msgstr "게임 경로:"
 
-#: gui/options.cpp:2491
+#: gui/options.cpp:2490
 #, fuzzy
 #| msgid "Game Path:"
 msgctxt "lowres"
 msgid "DLC Path:"
 msgstr "게임 경로:"
 
-#: gui/options.cpp:2499 gui/options.cpp:2501 gui/options.cpp:2502
+#: gui/options.cpp:2498 gui/options.cpp:2500 gui/options.cpp:2501
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr "ScummVM과 게임에서 사용하는 추가 데이터 경로"
 
-#: gui/options.cpp:2508
+#: gui/options.cpp:2507
 msgid "Plugins Path:"
 msgstr "플러그인 경로:"
 
-#: gui/options.cpp:2510
+#: gui/options.cpp:2509
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "플러그인 경로:"
 
-#: gui/options.cpp:2520
+#: gui/options.cpp:2519
 msgid "ScummVM config path: "
 msgstr "ScummVM 설정 경로: "
 
-#: gui/options.cpp:2534
+#: gui/options.cpp:2533
 #, fuzzy
 #| msgid "ScummVM config path: "
 msgid "ScummVM log path: "
 msgstr "ScummVM 설정 경로: "
 
-#: gui/options.cpp:2539
+#: gui/options.cpp:2538
 msgid "View"
 msgstr ""
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2549 gui/options.cpp:3326
+#: gui/options.cpp:2548 gui/options.cpp:3320
 msgid "Last browser path: "
 msgstr "마지막 접근 경로: "
 
-#: gui/options.cpp:2554
+#: gui/options.cpp:2553
 msgid "Theme:"
 msgstr "테마:"
 
-#: gui/options.cpp:2559
+#: gui/options.cpp:2558
 msgid "GUI scale:"
 msgstr "GUI 크기:"
 
-#: gui/options.cpp:2576
+#: gui/options.cpp:2575
 #, c-format
 msgid "%d%% - Custom"
 msgstr ""
 
-#: gui/options.cpp:2580
+#: gui/options.cpp:2579
 msgid "GUI renderer:"
 msgstr "GUI 렌더러:"
 
-#: gui/options.cpp:2593
+#: gui/options.cpp:2592
 #, fuzzy
 msgid "Return to the launcher when leaving a game"
 msgstr "게임 종료 시 항상 런처로 복귀"
 
-#: gui/options.cpp:2594
+#: gui/options.cpp:2593
 #, fuzzy
 msgid ""
 "Return to the launcher when leaving a game instead of closing ScummVM\n"
 "(this feature is not supported by all games)."
 msgstr "게임 종료 시 ScummVM을 종료하지 않고 항상 런처로 돌아옵니다."
 
-#: gui/options.cpp:2601
+#: gui/options.cpp:2600
 msgid "Ask for confirmation on exit"
 msgstr "종료 시 확인"
 
-#: gui/options.cpp:2602
+#: gui/options.cpp:2601
 msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr "ScummVM 또는 게임 종료 시 다시 확인합니다."
 
-#: gui/options.cpp:2608
+#: gui/options.cpp:2607
 #, fuzzy
 msgid "Disable fixed font scaling"
 msgstr "저장 메뉴 비활성화"
 
-#: gui/options.cpp:2609
+#: gui/options.cpp:2608
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
 msgstr ""
 
-#: gui/options.cpp:2615
+#: gui/options.cpp:2614
 msgid "GUI language:"
 msgstr "GUI 언어:"
 
-#: gui/options.cpp:2615
+#: gui/options.cpp:2614
 msgid "Language of ScummVM GUI"
 msgstr "ScummVM GUI의 언어"
 
-#: gui/options.cpp:2641
+#: gui/options.cpp:2640
 msgid "Switch the ScummVM GUI language to the game language"
 msgstr "ScummVM GUI 언어를 게임 언어로 전환"
 
-#: gui/options.cpp:2642
+#: gui/options.cpp:2641
 msgid ""
 "When starting a game, change the ScummVM GUI language to the game language. "
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
@@ -2260,11 +2260,11 @@ msgstr ""
 "게임을 시작할 때 ScummVM GUI 언어를 게임 언어로 전환합니다. 이렇게 하면 "
 "ScummVM 저장/불러오기 창이 게임과 동일한 언어로 표시됩니다."
 
-#: gui/options.cpp:2654
+#: gui/options.cpp:2653
 msgid "Use native system file browser"
 msgstr "시스템 파일 브라우저 사용"
 
-#: gui/options.cpp:2655
+#: gui/options.cpp:2654
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
@@ -2272,55 +2272,55 @@ msgstr ""
 "파일과 디렉토리를 선택할 때 ScummVM에 내장된 브라우저 대신 시스템 파일 브라우"
 "저를 사용합니다."
 
-#: gui/options.cpp:2663
+#: gui/options.cpp:2661
 #, fuzzy
 #| msgid "Download"
 msgid "Download Icons"
 msgstr "다운로드"
 
-#: gui/options.cpp:2663
+#: gui/options.cpp:2661
 #, fuzzy
 msgid "Check on the scummvm.org website for updates of icon packs"
 msgstr "업데이트 확인 중..."
 
-#: gui/options.cpp:2670
+#: gui/options.cpp:2667
 msgid "Autosave:"
 msgstr "자동 저장:"
 
-#: gui/options.cpp:2672
+#: gui/options.cpp:2669
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "자동 저장:"
 
-#: gui/options.cpp:2683
+#: gui/options.cpp:2680
 msgid "Random seed:"
 msgstr ""
 
-#: gui/options.cpp:2683
+#: gui/options.cpp:2680
 msgid "Seed for initializing all random number generators"
 msgstr ""
 
-#: gui/options.cpp:2691
+#: gui/options.cpp:2688
 #, fuzzy
 #| msgid "Debug Menu"
 msgid "Debug level:"
 msgstr "디버그 메뉴"
 
 #. I18N: Debug level -1, no messages
-#: gui/options.cpp:2695 gui/options.cpp:2834
+#: gui/options.cpp:2692 gui/options.cpp:2831
 msgid "None"
 msgstr "없음"
 
 #. I18N: Debug level 11, all messages
-#: gui/options.cpp:2701
+#: gui/options.cpp:2698
 msgid "11 (all)"
 msgstr ""
 
-#: gui/options.cpp:2705
+#: gui/options.cpp:2702
 msgid "Enable Discord integration"
 msgstr "Discord 통합 사용"
 
-#: gui/options.cpp:2706
+#: gui/options.cpp:2703
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
@@ -2328,27 +2328,27 @@ msgstr ""
 "Discord 클라이언트가 실행 중인 경우 Discord에서 실행 중인 게임에 대한 정보 표"
 "시."
 
-#: gui/options.cpp:2716 gui/updates-dialog.cpp:85
+#: gui/options.cpp:2713 gui/updates-dialog.cpp:85
 msgid "Update check:"
 msgstr "업데이트 확인:"
 
-#: gui/options.cpp:2716
+#: gui/options.cpp:2713
 msgid "How often to check ScummVM updates"
 msgstr "ScummVM 업데이트를 확인하는 빈도"
 
-#: gui/options.cpp:2727
+#: gui/options.cpp:2724
 msgid "Check now"
 msgstr "지금 확인"
 
-#: gui/options.cpp:2735
+#: gui/options.cpp:2732
 msgid "Active storage:"
 msgstr "사용할 스토리지:"
 
-#: gui/options.cpp:2735
+#: gui/options.cpp:2732
 msgid "Active cloud storage"
 msgstr "사용할 클라우드 스토리지"
 
-#: gui/options.cpp:2744
+#: gui/options.cpp:2741
 #, fuzzy
 #| msgctxt "lowres"
 #| msgid ""
@@ -2361,7 +2361,7 @@ msgstr ""
 "4. 스토리지가 활성화되지 않았습니다. 유저 이름이 정확한지 확인한 뒤 활성화해 "
 "주세요:"
 
-#: gui/options.cpp:2746
+#: gui/options.cpp:2743
 #, fuzzy
 #| msgid ""
 #| "4. Storage is not yet enabled. Verify that username is correct and enable "
@@ -2372,98 +2372,98 @@ msgstr ""
 "4. 스토리지가 아직 활성화되지 않았습니다. 유저 이름이 정확한지 확인한 뒤 활성"
 "화해 주세요:"
 
-#: gui/options.cpp:2747
+#: gui/options.cpp:2744
 msgid "Enable storage"
 msgstr "스토리지 활성화"
 
-#: gui/options.cpp:2747
+#: gui/options.cpp:2744
 msgid "Confirm you want to use this account for this storage"
 msgstr "스토리지에 이 계정을 사용할 것인지 확인"
 
-#: gui/options.cpp:2749 backends/platform/wii/options.cpp:113
+#: gui/options.cpp:2746 backends/platform/wii/options.cpp:113
 msgid "Username:"
 msgstr "유저명:"
 
-#: gui/options.cpp:2749
+#: gui/options.cpp:2746
 msgid "Username used by this storage"
 msgstr "이 스토리지에서 사용할 유저명"
 
-#: gui/options.cpp:2750
+#: gui/options.cpp:2747
 msgid "<none>"
 msgstr "<없음>"
 
-#: gui/options.cpp:2752
+#: gui/options.cpp:2749
 msgid "Used space:"
 msgstr "사용된 용량:"
 
-#: gui/options.cpp:2752
+#: gui/options.cpp:2749
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr "ScummVM의 세이브 파일이 스토리지에서 차지하는 용량"
 
-#: gui/options.cpp:2755
+#: gui/options.cpp:2752
 msgid "Last sync:"
 msgstr "최근 동기화:"
 
-#: gui/options.cpp:2755
+#: gui/options.cpp:2752
 msgid "When was the last time saved games were synced with this storage"
 msgstr "세이브 파일이 이 스토리지와 마지막으로 동기화된 시점"
 
-#: gui/options.cpp:2756 gui/options.cpp:3660
+#: gui/options.cpp:2753 gui/options.cpp:3656
 msgid "<never>"
 msgstr "<없음>"
 
-#: gui/options.cpp:2758
+#: gui/options.cpp:2755
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr "세이브 파일은 실행시와 저장/불러오기시 자동으로 동기화됩니다."
 
-#: gui/options.cpp:2760
+#: gui/options.cpp:2757
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr "세이브 파일은 실행시와 저장/불러오기시 자동으로 동기화됩니다."
 
-#: gui/options.cpp:2761
+#: gui/options.cpp:2758
 msgid "Sync now"
 msgstr "지금 동기화"
 
-#: gui/options.cpp:2761
+#: gui/options.cpp:2758
 msgid "Start saved games sync"
 msgstr "세이브 파일 동기화를 시작"
 
-#: gui/options.cpp:2764
+#: gui/options.cpp:2761
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "클라우드상의 ScummVM 폴더에서 게임 파일을 다운로드할 수 있습니다:"
 
-#: gui/options.cpp:2766
+#: gui/options.cpp:2763
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "클라우드상의 ScummVM 폴더에서 게임 파일을 다운로드할 수 있습니다:"
 
-#: gui/options.cpp:2767
+#: gui/options.cpp:2764
 msgid "Download game files"
 msgstr "게임 파일 다운로드"
 
-#: gui/options.cpp:2767
+#: gui/options.cpp:2764
 msgid "Open downloads manager dialog"
 msgstr "다운로드 매니저 창을 열기"
 
-#: gui/options.cpp:2770
+#: gui/options.cpp:2767
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "이 스토리지의 계정을 변경하려면 연결을 끊고 다시 연결하세요:"
 
-#: gui/options.cpp:2772
+#: gui/options.cpp:2769
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "이 스토리지의 계정을 변경하려면 연결을 끊고 다시 연결하세요:"
 
-#: gui/options.cpp:2773
+#: gui/options.cpp:2770
 msgid "Disconnect"
 msgstr "연결 해제"
 
-#: gui/options.cpp:2773
+#: gui/options.cpp:2770
 msgid "Stop using this storage on this device"
 msgstr "이 장치에서 스토리지 사용을 중단"
 
-#: gui/options.cpp:2776
+#: gui/options.cpp:2773
 #, fuzzy
 #| msgctxt "lowres"
 #| msgid "This storage is not connected yet! To connect,"
@@ -2471,80 +2471,80 @@ msgctxt "lowres"
 msgid "This storage is not connected yet!"
 msgstr "이 스토리지에 아직 연결되지 않았습니다! 연결하려면,"
 
-#: gui/options.cpp:2778
+#: gui/options.cpp:2775
 #, fuzzy
 #| msgid "This storage is not connected yet! To connect,"
 msgid "This storage is not connected yet!"
 msgstr "이 스토리지에 아직 연결되지 않았습니다! 연결하려면,"
 
-#: gui/options.cpp:2779
+#: gui/options.cpp:2776
 #, fuzzy
 #| msgid "3. Connect"
 msgid "Connect"
 msgstr "3. 연결"
 
-#: gui/options.cpp:2779
+#: gui/options.cpp:2776
 msgid "Connect your cloud storage account"
 msgstr "클라우드 스토리지 계정을 연결"
 
-#: gui/options.cpp:2792
+#: gui/options.cpp:2790
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr "/root/ 경로:"
 
-#: gui/options.cpp:2792 gui/options.cpp:2794 gui/options.cpp:2795
+#: gui/options.cpp:2790 gui/options.cpp:2792 gui/options.cpp:2793
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr "파일 매니저에서 어떤 디렉토리를 /root/ 으로 표시할지 선택합니다"
 
-#: gui/options.cpp:2794
+#: gui/options.cpp:2792
 msgid "/root/ Path:"
 msgstr "/root/ 경로:"
 
-#: gui/options.cpp:2800
+#: gui/options.cpp:2798
 msgid "Server's port:"
 msgstr "서버 포트:"
 
-#: gui/options.cpp:2800
+#: gui/options.cpp:2798
 msgid "Port for server to use"
 msgstr "서버가 사용할 포트"
 
-#: gui/options.cpp:2805
+#: gui/options.cpp:2803
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 "동일 네트워크상에서 브라우저를 사용해 파일을 관리하려면 서버를 실행하세요."
+
+#: gui/options.cpp:2804
+msgctxt "lowres"
+msgid "Closing options dialog will stop the server."
+msgstr "옵션 창을 닫으면 서버도 중지됩니다."
 
 #: gui/options.cpp:2806
-msgctxt "lowres"
-msgid "Closing options dialog will stop the server."
-msgstr "옵션 창을 닫으면 서버도 중지됩니다."
-
-#: gui/options.cpp:2808
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 "동일 네트워크상에서 브라우저를 사용해 파일을 관리하려면 서버를 실행하세요."
 
-#: gui/options.cpp:2809
+#: gui/options.cpp:2807
 msgid "Closing options dialog will stop the server."
 msgstr "옵션 창을 닫으면 서버도 중지됩니다."
 
-#: gui/options.cpp:2821
+#: gui/options.cpp:2818
 msgid "Use Text to speech"
 msgstr "TTS 사용"
 
-#: gui/options.cpp:2821
+#: gui/options.cpp:2818
 msgid "Will read text in gui on mouse over."
 msgstr "마우스 커서로 가리킨 GUI의 문장을 읽습니다."
 
-#: gui/options.cpp:2895
+#: gui/options.cpp:2892
 msgid "Ignore"
 msgstr "무시"
 
-#: gui/options.cpp:2896
+#: gui/options.cpp:2893
 msgid "Disable autosave"
 msgstr "자동 저장 비활성화"
 
-#: gui/options.cpp:2897
+#: gui/options.cpp:2894
 msgid ""
 "WARNING: Autosave was enabled. Some of your games have existing saved games "
 "on the autosave slot. You can either move the existing saves to new slots, "
@@ -2558,7 +2558,7 @@ msgstr ""
 "다).\n"
 "대상 게임:\n"
 
-#: gui/options.cpp:2906
+#: gui/options.cpp:2903
 msgid ""
 "\n"
 "And more..."
@@ -2566,31 +2566,31 @@ msgstr ""
 "\n"
 "등등..."
 
-#: gui/options.cpp:2907 engines/engine.cpp:619
+#: gui/options.cpp:2904 engines/engine.cpp:619
 msgid "Move"
 msgstr "이동"
 
-#: gui/options.cpp:2920
+#: gui/options.cpp:2917
 msgid "ERROR: Failed to move the following saved games:\n"
 msgstr "오류: 다음 저장 데이터를 옮기는데 실패했습니다:\n"
 
-#: gui/options.cpp:3015
+#: gui/options.cpp:3010
 msgid "Failed to change cloud storage!"
 msgstr "클라우드 스토리지 변경에 실패했습니다!"
 
-#: gui/options.cpp:3018
+#: gui/options.cpp:3013
 msgid "Another cloud storage is already active."
 msgstr "다른 클라우드 스토리지가 이미 활성화되어 있습니다."
 
-#: gui/options.cpp:3135
+#: gui/options.cpp:3129
 msgid "Theme does not support selected language!"
 msgstr "이 테마는 선택한 언어를 지원하지 않습니다!"
 
-#: gui/options.cpp:3138
+#: gui/options.cpp:3132
 msgid "Theme cannot be loaded!"
 msgstr "테마를 로드할 수 없습니다!"
 
-#: gui/options.cpp:3141
+#: gui/options.cpp:3135
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -2598,45 +2598,45 @@ msgstr ""
 "\n"
 "기타 설정을 복원합니다."
 
-#: gui/options.cpp:3213
+#: gui/options.cpp:3207
 msgid "Select directory for GUI themes"
 msgstr "GUI 테마 디렉토리를 선택"
 
-#: gui/options.cpp:3223
+#: gui/options.cpp:3217
 msgid "Select directory for GUI launcher thumbnails"
 msgstr "GUI 런처 썸네일을 위한 디렉토리 선택"
 
-#: gui/options.cpp:3234
+#: gui/options.cpp:3228
 #, fuzzy
 #| msgid "Select directory for plugins"
 msgid "Select directory for DLC downloads"
 msgstr "플러그인 디렉토리를 선택"
 
-#: gui/options.cpp:3245
+#: gui/options.cpp:3239
 msgid "Select directory for extra files"
 msgstr "추가 파일 디렉토리를 선택"
 
-#: gui/options.cpp:3256
+#: gui/options.cpp:3250
 msgid "Select directory for plugins"
 msgstr "플러그인 디렉토리를 선택"
 
-#: gui/options.cpp:3269
+#: gui/options.cpp:3263
 msgid "Select directory for Files Manager /root/"
 msgstr "파일 매니저 /root/ 디렉토리를 선택"
 
-#: gui/options.cpp:3448
+#: gui/options.cpp:3442
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "이 스토리지가 현재 동작 중입니다. 중단할까요?"
 
-#: gui/options.cpp:3457
+#: gui/options.cpp:3451
 msgid "Wait until current Storage finishes up and try again."
 msgstr "현재 스토리지 작업이 완료될 때까지 기다린 후 다시 시도해 주세요."
 
-#: gui/options.cpp:3658 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:3654 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<지금>"
 
-#: gui/options.cpp:3801
+#: gui/options.cpp:3799
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -2644,13 +2644,13 @@ msgstr ""
 "요청이 실패했습니다.\n"
 "인터넷 연결을 확인해 주세요."
 
-#: gui/options.cpp:3825
+#: gui/options.cpp:3823
 msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
 msgstr ""
 
-#: gui/options.cpp:3828
+#: gui/options.cpp:3826
 #, c-format
 msgid "Reverting automatically in %d seconds"
 msgstr ""
