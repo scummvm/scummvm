@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-14 12:31+0000\n"
+"POT-Creation-Date: 2024-06-14 12:37+0000\n"
 "PO-Revision-Date: 2023-12-14 14:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -854,7 +854,7 @@ msgstr ""
 "Funkce synchronizace uložených her nefunguje s nestandardními adresáři. "
 "Pokud chcete vaše hry synchronizovat, je nutné použít výchozí adresář."
 
-#: gui/editgamedialog.cpp:640
+#: gui/editgamedialog.cpp:642
 msgid "This game ID is already taken. Please choose another one."
 msgstr "Toto ID hry je už zabrané. Vyberte si, prosím, jiné."
 

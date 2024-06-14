@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-14 12:31+0000\n"
+"POT-Creation-Date: 2024-06-14 12:37+0000\n"
 "PO-Revision-Date: 2024-06-10 10:43+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
@@ -814,7 +814,7 @@ msgid ""
 msgstr ""
 "游戏存档同步功能无法同步非默认的目录。如果你想同步存档，请使用默认目录。"
 
-#: gui/editgamedialog.cpp:640
+#: gui/editgamedialog.cpp:642
 msgid "This game ID is already taken. Please choose another one."
 msgstr "这个游戏 ID 已被使用，请换一个。"
 

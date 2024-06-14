@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-14 12:31+0000\n"
+"POT-Creation-Date: 2024-06-14 12:37+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -849,7 +849,7 @@ msgstr ""
 "directorios non predeterminados. Para sincronizar as partidas gardadas, "
 "emprega o directorio predeterminado."
 
-#: gui/editgamedialog.cpp:640
+#: gui/editgamedialog.cpp:642
 msgid "This game ID is already taken. Please choose another one."
 msgstr "Este ID de xogo xa está en uso. Selecciona outro."
 

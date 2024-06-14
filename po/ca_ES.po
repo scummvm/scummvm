@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-14 12:31+0000\n"
+"POT-Creation-Date: 2024-06-14 12:37+0000\n"
 "PO-Revision-Date: 2024-06-12 02:43+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -827,7 +827,7 @@ msgstr ""
 "directoris que no siguin per defecte. Si voleu sincronitzar les vostres "
 "partides desades, utilitzeu un directori per defecte."
 
-#: gui/editgamedialog.cpp:640
+#: gui/editgamedialog.cpp:642
 msgid "This game ID is already taken. Please choose another one."
 msgstr ""
 "Aquest identificador de joc ja està en ús. Si us plau, trieu-ne un altre."

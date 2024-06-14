@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-14 12:31+0000\n"
+"POT-Creation-Date: 2024-06-14 12:37+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -851,7 +851,7 @@ msgstr ""
 "لا تعمل ميزة مزامنة الألعاب المحفوظة مع المجلد غير الافتراضية. إذا كنت تريد "
 "مزامنة ألعابك المحفوظة ، فاستخدم المجلد الافتراضي."
 
-#: gui/editgamedialog.cpp:640
+#: gui/editgamedialog.cpp:642
 msgid "This game ID is already taken. Please choose another one."
 msgstr "تم استخدام معرف هذه اللعبة بالفعل. الرجاء اختيار واحد آخر."
 

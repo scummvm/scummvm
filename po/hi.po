@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-14 12:31+0000\n"
+"POT-Creation-Date: 2024-06-14 12:37+0000\n"
 "PO-Revision-Date: 2023-12-06 11:16+0000\n"
 "Last-Translator: Aditya Mohan <adityamurali003@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -819,7 +819,7 @@ msgstr ""
 "सेव गेम sync फीचर नॉन डीफॉल्ट डायरेक्ट्रीज के लिए काम नहीं करत। अगर आप सेव गेम्स को "
 "sync करना चाहते है तोह डिफ़ॉल्ट डायरेक्टरी इस्तेमाल करे।"
 
-#: gui/editgamedialog.cpp:640
+#: gui/editgamedialog.cpp:642
 msgid "This game ID is already taken. Please choose another one."
 msgstr "यह गेम ID पहले से चुनी जा चुकी है, कृपया कोई और ID चुने।"
 
