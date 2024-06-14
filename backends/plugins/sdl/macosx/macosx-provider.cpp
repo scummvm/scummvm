@@ -29,7 +29,7 @@
 #include "common/fs.h"
 
 void MacOSXPluginProvider::addCustomDirectories(Common::FSList &dirs) const {
-	Common::String bundlePath = getResourceAppBundlePathMacOSX();
+	Common::Path bundlePath(getResourceAppBundlePathMacOSX(), Common::Path::kNativeSeparator);
 	if (!bundlePath.empty())
 		dirs.push_back(Common::FSNode(bundlePath));
 }
