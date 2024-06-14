@@ -53,11 +53,11 @@ ifdef USE_CLOUD
 MODULE_OBJS += \
 	cloudconnectionwizard.o \
 	downloaddialog.o \
-	downloadpacksdialog.o \
 	remotebrowser.o
 endif
 
 MODULE_OBJS += \
+	downloadpacksdialog.o \
 	integrity-dialog.o
 endif
 
