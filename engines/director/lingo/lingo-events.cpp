@@ -520,7 +520,9 @@ void Lingo::processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent) {
 		if (isInputEvent && !completed) {
 			debugC(5, kDebugEvents, "Lingo::processEvents: context frozen on an input event, stopping");
 			LingoState *state = g_director->getCurrentWindow()->getLastFrozenLingoState();
-			_currentInputEvent = state->callstack.front()->sp;
+			if (state) {
+				_currentInputEvent = state->callstack.front()->sp;
+			}
 			break;
 		}
 		lastEventId = el.eventId;
