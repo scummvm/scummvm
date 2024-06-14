@@ -27,6 +27,7 @@
 #include "common/file.h"
 #include "common/macresman.h"
 #include "common/md5.h"
+#include "common/tokenizer.h"
 #include "common/translation.h"
 
 #include "gui/gui-manager.h"
@@ -114,7 +115,7 @@ IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String domain)
 	_cancelButton = new ButtonWidget(this, "GameOptions_IntegrityDialog.MainButton", _("Cancel"), Common::U32String(), kCleanupCmd);
 
 	_copyEmailButton = new ButtonWidget(this, "GameOptions_IntegrityDialog.CopyButton", _("Launch Email Client"), Common::U32String(), kCopyEmailCmd);
-	_copyEmailButton->setVisible(false);
+	_copyEmailButton->setEnabled(false);
 
 	if (!g_checksum_state) {
 		g_checksum_state = new ChecksumDialogState();
@@ -191,7 +192,7 @@ void IntegrityDialog::setState(ProcessState state) {
 			_resultsText->setList(Common::U32StringArray({g_result->errorText}));
 
 		if (g_result->error != 0) {
-			_copyEmailButton->setVisible(true);
+			_copyEmailButton->setEnabled(true);
 			_copyEmailButton->setCmd(kCopyEmailCmd);
 		}
 
@@ -471,29 +472,48 @@ void IntegrityDialog::parseJSON(const Common::JSONValue *response) {
 	Common::JSONObject responseObject = response->asObject();
 	int responseError = responseObject.getVal("error")->asIntegerNumber();
 
-	Common::U32StringArray messageText = {Common::U32String("Results")};
+	Common::U32StringArray messageText;
 	if (responseError == -1) { // Unknown variant
 		g_result->error = true;
 
 		Common::String fileset = responseObject.getVal("fileset")->asString();
 
+		Common::String emailSubj = "Unknown game variant fileset ";
+		Common::String emailBody = "Fileset %s is a new or unknown fileset, the game details are:\n"
+				"    gameid: %s\n"
+				"    platform: %s\n"
+				"    language: %s\n"
+				" \n"
+				"Below please describe the details of your release:\n";
+
 		Common::String emailText =
-			Common::String::format("Fileset %s is a new or unknown fileset, the game details are:\n%s %s %s\n\nHere describe the details of your release:\n",
-								   fileset.c_str(), g_checksum_state->gameid.c_str(), g_checksum_state->platform.c_str(), g_checksum_state->language.c_str());
+			Common::String::format(emailBody.c_str(),
+					   fileset.c_str(), g_checksum_state->gameid.c_str(), g_checksum_state->platform.c_str(),
+					   g_checksum_state->language.c_str());
 
-		Common::String emailLink = Common::percentEncodeString(Common::String::format("mailto:integrity@scummvm.org?subject=Subject: Unknown game variant fileset %s&body=%s!", fileset.c_str(), emailText.c_str()));
+		Common::String emailLink = Common::String::format("mailto:integrity@scummvm.org?subject=%s&body=%s",
+				Common::percentEncodeString(Common::String("Subject: ") + emailSubj + fileset).c_str(),
+				Common::percentEncodeString(emailText).c_str());
 
-		messageText.push_back(_("Your set of game files seems to be unknown to us."));
-		messageText.push_back(_("If you are sure that this is a valid unknown variant, please send the following e-mail to integrity@scummvm.org"));
-		messageText.push_back(_(""));
+		Common::U32String message = _(
+				"### Results\n"
+				"Your set of game files seems to be unknown to us.\n"
+				"\n"
+				"If you are sure that this is a valid unknown variant, "
+				"please send the following e-mail to integrity@scummvm.org");
+
+		Common::U32StringTokenizer mtok(message, "\n");
+		for (auto &line : mtok.split())
+			messageText.push_back(line);
+
+		messageText.push_back(Common::U32String(""));
 		messageText.push_back(Common::U32String("To: integrity@scummvm.org"));
-		messageText.push_back(_(""));
-		messageText.push_back(Common::U32String::format("Subject: Unknown game variant fileset %s", fileset.c_str()));
-		messageText.push_back(_(""));
-		messageText.push_back(Common::U32String::format("Fileset %s is a new or unknown fileset, the game details are:", fileset.c_str()));
-		messageText.push_back(Common::U32String::format("%s %s %s", g_checksum_state->gameid.c_str(), g_checksum_state->platform.c_str(), g_checksum_state->language.c_str()));
-		messageText.push_back(_(""));
-		messageText.push_back(Common::U32String("Here describe the details of your release:"));
+		messageText.push_back(Common::U32String::format("Subject: %s%s", emailSubj.c_str(), fileset.c_str()));
+		messageText.push_back(Common::U32String(""));
+
+		Common::StringTokenizer tok(emailText, "\n");
+		for (auto &line : tok.split())
+			messageText.push_back(line);
 
 		g_result->messageText = messageText;
 		g_result->emailLink = emailLink;
