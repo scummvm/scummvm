@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-13 23:22+0000\n"
+"POT-Creation-Date: 2024-06-14 12:31+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -86,7 +86,7 @@ msgstr "위로"
 
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:64
 #: gui/downloaddlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:271
-#: gui/downloadpacksdialog.cpp:464 gui/editgamedialog.cpp:337
+#: gui/downloadpacksdialog.cpp:464 gui/editgamedialog.cpp:339
 #: gui/editrecorddialog.cpp:66 gui/integrity-dialog.cpp:114
 #: gui/integrity-dialog.cpp:167 gui/filebrowser-dialog.cpp:68
 #: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2360
@@ -351,7 +351,7 @@ msgid "JSON code contents are malformed."
 msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
-#: gui/editgamedialog.cpp:338 gui/editrecorddialog.cpp:67
+#: gui/editgamedialog.cpp:340 gui/editrecorddialog.cpp:67
 #: gui/integrity-dialog.cpp:174 gui/fluidsynth-dialog.cpp:153
 #: gui/launcher.cpp:558 gui/launcher.cpp:562 gui/massadd.cpp:90
 #: gui/options.cpp:2362 gui/predictivedialog.cpp:69
@@ -433,7 +433,7 @@ msgid "Select directory where to download game data"
 msgstr "게임 데이터를 다운로드할 디렉토리를 선택"
 
 #: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:99
-#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:562 gui/launcher.cpp:314
+#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:564 gui/launcher.cpp:314
 msgid "Select directory with game data"
 msgstr "게임 데이터가 있는 디렉토리를 선택"
 
@@ -694,113 +694,113 @@ msgctxt "lowres"
 msgid "Paths"
 msgstr "경로"
 
-#: gui/editgamedialog.cpp:289
+#: gui/editgamedialog.cpp:290
 msgid "Check Integrity"
 msgstr ""
 
-#: gui/editgamedialog.cpp:289
+#: gui/editgamedialog.cpp:290
 msgid "Perform integrity check for all game files"
 msgstr ""
 
-#: gui/editgamedialog.cpp:293
+#: gui/editgamedialog.cpp:295
 msgid "Game Path:"
 msgstr "게임 경로:"
 
-#: gui/editgamedialog.cpp:295
+#: gui/editgamedialog.cpp:297
 msgctxt "lowres"
 msgid "Game Path:"
 msgstr "게임 경로:"
 
-#: gui/editgamedialog.cpp:300 gui/options.cpp:2499
+#: gui/editgamedialog.cpp:302 gui/options.cpp:2499
 msgid "Extra Path:"
 msgstr "추가 경로:"
 
-#: gui/editgamedialog.cpp:300 gui/editgamedialog.cpp:302
-#: gui/editgamedialog.cpp:303
+#: gui/editgamedialog.cpp:302 gui/editgamedialog.cpp:304
+#: gui/editgamedialog.cpp:305
 msgid "Specifies path to additional data used by the game"
 msgstr "게임에서 사용하는 추가 데이터 경로를 지정"
 
-#: gui/editgamedialog.cpp:302 gui/options.cpp:2501
+#: gui/editgamedialog.cpp:304 gui/options.cpp:2501
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "추가 경로:"
 
-#: gui/editgamedialog.cpp:303 gui/options.cpp:2474 gui/options.cpp:2502
+#: gui/editgamedialog.cpp:305 gui/options.cpp:2474 gui/options.cpp:2502
 #: gui/options.cpp:2511 gui/options.cpp:2795
 #: backends/platform/libretro/src/libretro-options-widget.cpp:244
 msgctxt "path"
 msgid "None"
 msgstr "없음"
 
-#: gui/editgamedialog.cpp:309 gui/options.cpp:2463
+#: gui/editgamedialog.cpp:311 gui/options.cpp:2463
 msgid "Save Path:"
 msgstr "저장 경로:"
 
-#: gui/editgamedialog.cpp:309 gui/editgamedialog.cpp:311
-#: gui/editgamedialog.cpp:312 gui/options.cpp:2463 gui/options.cpp:2465
+#: gui/editgamedialog.cpp:311 gui/editgamedialog.cpp:313
+#: gui/editgamedialog.cpp:314 gui/options.cpp:2463 gui/options.cpp:2465
 msgid "Specifies where your saved games are put"
 msgstr "게임 저장 파일이 있을 경로를 지정"
 
-#: gui/editgamedialog.cpp:311 gui/options.cpp:2465
+#: gui/editgamedialog.cpp:313 gui/options.cpp:2465
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "저장 경로:"
 
-#: gui/editgamedialog.cpp:312 gui/options.cpp:1792 gui/options.cpp:2466
+#: gui/editgamedialog.cpp:314 gui/options.cpp:1792 gui/options.cpp:2466
 #: backends/platform/wii/options.cpp:55
 msgid "Default"
 msgstr "기본값"
 
-#: gui/editgamedialog.cpp:323 engines/dialogs.cpp:377
+#: gui/editgamedialog.cpp:325 engines/dialogs.cpp:377
 msgid "Achievements"
 msgstr "업적"
 
-#: gui/editgamedialog.cpp:327 engines/dialogs.cpp:381
+#: gui/editgamedialog.cpp:329 engines/dialogs.cpp:381
 msgid "Statistics"
 msgstr "통계"
 
-#: gui/editgamedialog.cpp:344
+#: gui/editgamedialog.cpp:346
 msgid "ID:"
 msgstr "ID:"
 
-#: gui/editgamedialog.cpp:344 gui/editgamedialog.cpp:346
-#: gui/editgamedialog.cpp:347
+#: gui/editgamedialog.cpp:346 gui/editgamedialog.cpp:348
+#: gui/editgamedialog.cpp:349
 msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
 msgstr "게임 저장에 참조하거나 명령줄에서 실행하는데 사용하는 짧은 게임 식별자"
 
-#: gui/editgamedialog.cpp:346
+#: gui/editgamedialog.cpp:348
 msgctxt "lowres"
 msgid "ID:"
 msgstr "ID:"
 
-#: gui/editgamedialog.cpp:351 gui/editrecorddialog.cpp:58
+#: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:58
 msgid "Name:"
 msgstr "제목:"
 
-#: gui/editgamedialog.cpp:351 gui/editgamedialog.cpp:353
-#: gui/editgamedialog.cpp:354
+#: gui/editgamedialog.cpp:353 gui/editgamedialog.cpp:355
+#: gui/editgamedialog.cpp:356
 msgid "Full title of the game"
 msgstr "게임의 전체 제목"
 
-#: gui/editgamedialog.cpp:353
+#: gui/editgamedialog.cpp:355
 msgctxt "lowres"
 msgid "Name:"
 msgstr "제목:"
 
-#: gui/editgamedialog.cpp:360 engines/mohawk/dialogs.cpp:158
+#: gui/editgamedialog.cpp:362 engines/mohawk/dialogs.cpp:158
 #: engines/mohawk/dialogs.cpp:377
 msgid "Language:"
 msgstr "언어:"
 
-#: gui/editgamedialog.cpp:360 gui/editgamedialog.cpp:361
+#: gui/editgamedialog.cpp:362 gui/editgamedialog.cpp:363
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
 msgstr "게임의 언어. 선택한 언어로 게임이 번역되지는 않음"
 
-#: gui/editgamedialog.cpp:362 gui/editgamedialog.cpp:377 gui/options.cpp:1574
+#: gui/editgamedialog.cpp:364 gui/editgamedialog.cpp:379 gui/options.cpp:1574
 #: gui/options.cpp:1589 gui/options.cpp:1606 gui/options.cpp:1620
 #: gui/options.cpp:1660 gui/options.cpp:1676 gui/options.cpp:2086
 #: gui/options.cpp:2544 gui/options.cpp:2618 gui/options.cpp:2836
@@ -814,37 +814,37 @@ msgstr "게임의 언어. 선택한 언어로 게임이 번역되지는 않음"
 msgid "<default>"
 msgstr "<기본값>"
 
-#: gui/editgamedialog.cpp:373
+#: gui/editgamedialog.cpp:375
 msgid "Platform:"
 msgstr "플랫폼:"
 
-#: gui/editgamedialog.cpp:373 gui/editgamedialog.cpp:375
-#: gui/editgamedialog.cpp:376
+#: gui/editgamedialog.cpp:375 gui/editgamedialog.cpp:377
+#: gui/editgamedialog.cpp:378
 msgid "Platform the game was originally designed for"
 msgstr "게임이 원래 동작하도록 디자인된 플랫폼"
 
-#: gui/editgamedialog.cpp:375
+#: gui/editgamedialog.cpp:377
 msgctxt "lowres"
 msgid "Platform:"
 msgstr "플랫폼:"
 
-#: gui/editgamedialog.cpp:542 gui/options.cpp:3350
+#: gui/editgamedialog.cpp:544 gui/options.cpp:3350
 msgid "Select SoundFont"
 msgstr "SoundFont 선택"
 
-#: gui/editgamedialog.cpp:581
+#: gui/editgamedialog.cpp:583
 msgid "Select additional game directory"
 msgstr "추가 게임 디렉토리를 선택"
 
-#: gui/editgamedialog.cpp:594 gui/options.cpp:3197
+#: gui/editgamedialog.cpp:596 gui/options.cpp:3197
 msgid "Select directory for saved games"
 msgstr "세이브 파일 저장 경로를 선택"
 
-#: gui/editgamedialog.cpp:601 gui/options.cpp:3204
+#: gui/editgamedialog.cpp:603 gui/options.cpp:3204
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "선택한 디렉토리에는 기록할 수 없습니다. 다른 디렉토리를 선택해 주세요."
 
-#: gui/editgamedialog.cpp:606
+#: gui/editgamedialog.cpp:608
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
@@ -852,7 +852,7 @@ msgstr ""
 "세이브 파일 동기화 기능은 기본값 이외의 디렉토리에서는 동작하지 않습니다. 게"
 "임 세이브 파일이 동기화되기를 원하면 기본 디렉토리를 사용하세요."
 
-#: gui/editgamedialog.cpp:638
+#: gui/editgamedialog.cpp:640
 msgid "This game ID is already taken. Please choose another one."
 msgstr "이 게임 ID는 이미 사용 중입니다. 다른 ID를 선택해 주세요."
 

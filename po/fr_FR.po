@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-13 23:22+0000\n"
+"POT-Creation-Date: 2024-06-14 12:31+0000\n"
 "PO-Revision-Date: 2024-06-12 07:49+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -80,7 +80,7 @@ msgstr "Remonter"
 
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:64
 #: gui/downloaddlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:271
-#: gui/downloadpacksdialog.cpp:464 gui/editgamedialog.cpp:337
+#: gui/downloadpacksdialog.cpp:464 gui/editgamedialog.cpp:339
 #: gui/editrecorddialog.cpp:66 gui/integrity-dialog.cpp:114
 #: gui/integrity-dialog.cpp:167 gui/filebrowser-dialog.cpp:68
 #: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2360
@@ -334,7 +334,7 @@ msgid "JSON code contents are malformed."
 msgstr "Les contenus du code JSON sont malformés."
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
-#: gui/editgamedialog.cpp:338 gui/editrecorddialog.cpp:67
+#: gui/editgamedialog.cpp:340 gui/editrecorddialog.cpp:67
 #: gui/integrity-dialog.cpp:174 gui/fluidsynth-dialog.cpp:153
 #: gui/launcher.cpp:558 gui/launcher.cpp:562 gui/massadd.cpp:90
 #: gui/options.cpp:2362 gui/predictivedialog.cpp:69
@@ -408,7 +408,7 @@ msgid "Select directory where to download game data"
 msgstr "Sélectionner le répertoire de téléchargement des données du jeu"
 
 #: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:99
-#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:562 gui/launcher.cpp:314
+#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:564 gui/launcher.cpp:314
 msgid "Select directory with game data"
 msgstr "Sélectionner le répertoire contenant les données du jeu"
 
@@ -666,78 +666,78 @@ msgctxt "lowres"
 msgid "Paths"
 msgstr "Chemins"
 
-#: gui/editgamedialog.cpp:289
+#: gui/editgamedialog.cpp:290
 msgid "Check Integrity"
 msgstr ""
 
-#: gui/editgamedialog.cpp:289
+#: gui/editgamedialog.cpp:290
 msgid "Perform integrity check for all game files"
 msgstr ""
 
-#: gui/editgamedialog.cpp:293
+#: gui/editgamedialog.cpp:295
 msgid "Game Path:"
 msgstr "Chemin du jeu :"
 
-#: gui/editgamedialog.cpp:295
+#: gui/editgamedialog.cpp:297
 msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Chemin du jeu :"
 
-#: gui/editgamedialog.cpp:300 gui/options.cpp:2499
+#: gui/editgamedialog.cpp:302 gui/options.cpp:2499
 msgid "Extra Path:"
 msgstr "Chemin suppl. :"
 
-#: gui/editgamedialog.cpp:300 gui/editgamedialog.cpp:302
-#: gui/editgamedialog.cpp:303
+#: gui/editgamedialog.cpp:302 gui/editgamedialog.cpp:304
+#: gui/editgamedialog.cpp:305
 msgid "Specifies path to additional data used by the game"
 msgstr ""
 "Définit un chemin vers des données supplémentaires utilisées par le jeu"
 
-#: gui/editgamedialog.cpp:302 gui/options.cpp:2501
+#: gui/editgamedialog.cpp:304 gui/options.cpp:2501
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Chemin suppl. :"
 
-#: gui/editgamedialog.cpp:303 gui/options.cpp:2474 gui/options.cpp:2502
+#: gui/editgamedialog.cpp:305 gui/options.cpp:2474 gui/options.cpp:2502
 #: gui/options.cpp:2511 gui/options.cpp:2795
 #: backends/platform/libretro/src/libretro-options-widget.cpp:244
 msgctxt "path"
 msgid "None"
 msgstr "Aucun"
 
-#: gui/editgamedialog.cpp:309 gui/options.cpp:2463
+#: gui/editgamedialog.cpp:311 gui/options.cpp:2463
 msgid "Save Path:"
 msgstr "Sauvegardes :"
 
-#: gui/editgamedialog.cpp:309 gui/editgamedialog.cpp:311
-#: gui/editgamedialog.cpp:312 gui/options.cpp:2463 gui/options.cpp:2465
+#: gui/editgamedialog.cpp:311 gui/editgamedialog.cpp:313
+#: gui/editgamedialog.cpp:314 gui/options.cpp:2463 gui/options.cpp:2465
 msgid "Specifies where your saved games are put"
 msgstr "Définit l'emplacement où les fichiers de sauvegarde sont créés"
 
-#: gui/editgamedialog.cpp:311 gui/options.cpp:2465
+#: gui/editgamedialog.cpp:313 gui/options.cpp:2465
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Sauvegardes :"
 
-#: gui/editgamedialog.cpp:312 gui/options.cpp:1792 gui/options.cpp:2466
+#: gui/editgamedialog.cpp:314 gui/options.cpp:1792 gui/options.cpp:2466
 #: backends/platform/wii/options.cpp:55
 msgid "Default"
 msgstr "Défaut"
 
-#: gui/editgamedialog.cpp:323 engines/dialogs.cpp:377
+#: gui/editgamedialog.cpp:325 engines/dialogs.cpp:377
 msgid "Achievements"
 msgstr "Trophées"
 
-#: gui/editgamedialog.cpp:327 engines/dialogs.cpp:381
+#: gui/editgamedialog.cpp:329 engines/dialogs.cpp:381
 msgid "Statistics"
 msgstr "Statistiques"
 
-#: gui/editgamedialog.cpp:344
+#: gui/editgamedialog.cpp:346
 msgid "ID:"
 msgstr "ID :"
 
-#: gui/editgamedialog.cpp:344 gui/editgamedialog.cpp:346
-#: gui/editgamedialog.cpp:347
+#: gui/editgamedialog.cpp:346 gui/editgamedialog.cpp:348
+#: gui/editgamedialog.cpp:349
 msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
@@ -745,31 +745,31 @@ msgstr ""
 "ID compact du jeu utilisée pour identifier les sauvegardes et démarrer le "
 "jeu depuis la ligne de commande"
 
-#: gui/editgamedialog.cpp:346
+#: gui/editgamedialog.cpp:348
 msgctxt "lowres"
 msgid "ID:"
 msgstr "ID :"
 
-#: gui/editgamedialog.cpp:351 gui/editrecorddialog.cpp:58
+#: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:58
 msgid "Name:"
 msgstr "Nom :"
 
-#: gui/editgamedialog.cpp:351 gui/editgamedialog.cpp:353
-#: gui/editgamedialog.cpp:354
+#: gui/editgamedialog.cpp:353 gui/editgamedialog.cpp:355
+#: gui/editgamedialog.cpp:356
 msgid "Full title of the game"
 msgstr "Nom complet du jeu"
 
-#: gui/editgamedialog.cpp:353
+#: gui/editgamedialog.cpp:355
 msgctxt "lowres"
 msgid "Name:"
 msgstr "Nom :"
 
-#: gui/editgamedialog.cpp:360 engines/mohawk/dialogs.cpp:158
+#: gui/editgamedialog.cpp:362 engines/mohawk/dialogs.cpp:158
 #: engines/mohawk/dialogs.cpp:377
 msgid "Language:"
 msgstr "Langue :"
 
-#: gui/editgamedialog.cpp:360 gui/editgamedialog.cpp:361
+#: gui/editgamedialog.cpp:362 gui/editgamedialog.cpp:363
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
@@ -777,7 +777,7 @@ msgstr ""
 "Langue du jeu. Ceci ne traduira pas automatiquement une version étrangère du "
 "jeu"
 
-#: gui/editgamedialog.cpp:362 gui/editgamedialog.cpp:377 gui/options.cpp:1574
+#: gui/editgamedialog.cpp:364 gui/editgamedialog.cpp:379 gui/options.cpp:1574
 #: gui/options.cpp:1589 gui/options.cpp:1606 gui/options.cpp:1620
 #: gui/options.cpp:1660 gui/options.cpp:1676 gui/options.cpp:2086
 #: gui/options.cpp:2544 gui/options.cpp:2618 gui/options.cpp:2836
@@ -791,39 +791,39 @@ msgstr ""
 msgid "<default>"
 msgstr "<défaut>"
 
-#: gui/editgamedialog.cpp:373
+#: gui/editgamedialog.cpp:375
 msgid "Platform:"
 msgstr "Système :"
 
-#: gui/editgamedialog.cpp:373 gui/editgamedialog.cpp:375
-#: gui/editgamedialog.cpp:376
+#: gui/editgamedialog.cpp:375 gui/editgamedialog.cpp:377
+#: gui/editgamedialog.cpp:378
 msgid "Platform the game was originally designed for"
 msgstr "Plateforme pour laquelle votre jeu a été conçu"
 
-#: gui/editgamedialog.cpp:375
+#: gui/editgamedialog.cpp:377
 msgctxt "lowres"
 msgid "Platform:"
 msgstr "Système :"
 
-#: gui/editgamedialog.cpp:542 gui/options.cpp:3350
+#: gui/editgamedialog.cpp:544 gui/options.cpp:3350
 msgid "Select SoundFont"
 msgstr "Choisir une banque de sons"
 
-#: gui/editgamedialog.cpp:581
+#: gui/editgamedialog.cpp:583
 msgid "Select additional game directory"
 msgstr "Sélectionner un répertoire supplémentaire"
 
-#: gui/editgamedialog.cpp:594 gui/options.cpp:3197
+#: gui/editgamedialog.cpp:596 gui/options.cpp:3197
 msgid "Select directory for saved games"
 msgstr "Sélectionner le répertoire pour les sauvegardes"
 
-#: gui/editgamedialog.cpp:601 gui/options.cpp:3204
+#: gui/editgamedialog.cpp:603 gui/options.cpp:3204
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr ""
 "Le répertoire sélectionné est verrouillé en écriture. Sélectionnez un autre "
 "répertoire."
 
-#: gui/editgamedialog.cpp:606
+#: gui/editgamedialog.cpp:608
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
@@ -832,7 +832,7 @@ msgstr ""
 "les répertoires par défaut. Si vous souhaitez synchroniser vos sauvegardes, "
 "utilisez le répertoire par défaut."
 
-#: gui/editgamedialog.cpp:638
+#: gui/editgamedialog.cpp:640
 msgid "This game ID is already taken. Please choose another one."
 msgstr ""
 "Cet ID est déjà utilisé par un autre jeu. Veuillez en choisir un autre."
