@@ -923,6 +923,15 @@ void VideoDecoder::setEndFrame(uint frame) {
 	setEndTime(time);
 }
 
+void VideoDecoder::resetStartTime() {
+	if (_nextVideoTrack) {
+		Audio::Timestamp curTime = _nextVideoTrack->getFrameTime(_nextVideoTrack->getCurFrame());
+		if (isPlaying()) {
+			_startTime = g_system->getMillis() - (curTime.msecs() / _playbackRate).toInt();
+		}
+	}
+}
+
 VideoDecoder::Track *VideoDecoder::getTrack(uint track) {
 	if (track >= _internalTracks.size())
 		return 0;

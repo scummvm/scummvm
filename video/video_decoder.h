@@ -227,6 +227,11 @@ public:
 	 */
 	Audio::Timestamp getEndTime() const { return _endTime; }
 
+	/**
+	 * Reset the playback start time to the current frame.
+	 */
+	void resetStartTime();
+
 
 	/////////////////////////////////////////
 	// Playback Status
