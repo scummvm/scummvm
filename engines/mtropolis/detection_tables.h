@@ -651,6 +651,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		GID_ALBERT1,
 		0,
 		MTBOOT_ALBERT1_WIN_EN,
+		MT_DEFAULT_MAINFILE
 	},
 
 	{ // Uncle Albert's Magical Album (French, Windows)
@@ -678,6 +679,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		GID_ALBERT1,
 		0,
 		MTBOOT_ALBERT1_WIN_FR,
+		MT_DEFAULT_MAINFILE
 	},
 
 	{ // Uncle Albert's Magical Album (Dutch, Windows)
@@ -705,6 +707,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		GID_ALBERT1,
 		0,
 		MTBOOT_ALBERT1_WIN_NL,
+		MT_DEFAULT_MAINFILE
 	},
 
 	{ // Uncle Albert's Fabulous Voyage (German, Windows)
@@ -759,6 +762,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		GID_ALBERT2,
 		0,
 		MTBOOT_ALBERT2_WIN_EN,
+		MT_DEFAULT_MAINFILE
 	},
 
 	{ // Uncle Albert's Fabulous Voyage (French, Windows)
@@ -786,6 +790,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		GID_ALBERT2,
 		0,
 		MTBOOT_ALBERT2_WIN_FR,
+		MT_DEFAULT_MAINFILE
 	},
 
 	{ // Uncle Albert's Fabulous Voyage (Dutch, Windows)
@@ -813,6 +818,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		GID_ALBERT2,
 		0,
 		MTBOOT_ALBERT2_WIN_NL,
+		MT_DEFAULT_MAINFILE
 	},
 
 	{ // Uncle Albert's Mysterious Island (German, Windows)
@@ -867,6 +873,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		GID_ALBERT3,
 		0,
 		MTBOOT_ALBERT3_WIN_EN,
+		MT_DEFAULT_MAINFILE
 	},
 
 	{ // Uncle Albert's Mysterious Island (French, Windows)
@@ -894,6 +901,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		GID_ALBERT3,
 		0,
 		MTBOOT_ALBERT3_WIN_FR,
+		MT_DEFAULT_MAINFILE
 	},
 
 	{ // Uncle Albert's Mysterious Island (Dutch, Windows)
@@ -921,6 +929,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		GID_ALBERT3,
 		0,
 		MTBOOT_ALBERT3_WIN_NL,
+		MT_DEFAULT_MAINFILE
 	},
 
 	{ // Uncle Albert's Mysterious Island (Catalan, Windows)
@@ -948,6 +957,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		GID_ALBERT3,
 		0,
 		MTBOOT_ALBERT3_WIN_CA,
+		MT_DEFAULT_MAINFILE
 	},
 
 	{ // SPQR: The Empire's Darkest Hour Windows CD-ROM
