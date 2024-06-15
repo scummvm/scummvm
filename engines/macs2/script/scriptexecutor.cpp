@@ -1239,7 +1239,12 @@ void Script::ScriptExecutor::ExecuteScript() {
 			jmp	0E3BAh*/
 		} // l0037_DC21:
 		else if (opcode1 == 0x03) {
-			ScriptUnimplementedOpcode(0x03)
+			uint16 res1;
+			uint16 res2;
+			Func9F4D(res1, res2);
+			if (res1 | res2) {
+				FuncA3D2();
+			}
 			/*
 			l0037_DC25:
 		call	far 0037h:9F4Dh
@@ -1662,6 +1667,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// Note: This is issued right after the fumbling animation starts playing
 			// and it seems to write the same data just to a different address relative
 			// to the object
+			// Note: This seems to adjust the direction the character is facing
 			uint16 throwaway1;
 			uint16 throwaway2;
 			Func9F4D(throwaway1, throwaway2);
