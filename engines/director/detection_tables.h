@@ -4801,7 +4801,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2t("martian", "", "MC.EXE",			 "55e0837d623be4218b317370abc5fc3b", 1764151,
 							 "BUTTONS/MAIN.QTW", "06a9aab09811715e8ec2cc553c4bdcb4", 1391726, 404),
 
-	MACDEMO1("mathblasterjr", "Preview v1.0c", "Math Blaster Jr. Power MAC", "602e61f10c158183218405dd30a09b3f", 60068, 404),
+	MACDEMO1("mathblasterjr", "Preview v1.0c", "Math Blaster Jr. Power MAC", "r:602e61f10c158183218405dd30a09b3f", 60068, 404),
+	WINDEMO1("mathblasterjr", "Preview v1.0c", "MBSTART.EXE",				 "t:ac78baf4e736b3363dae2a7136d07049", 690041, 404),
 	// from Great Adventures by Fisher-Price: Castle (1995)
 	MACDEMO1("mathblasterjr", "Preview v1.0c", "Math Blst Jr. Pwr Mac", "602e61f10c158183218405dd30a09b3f", 60068, 404),
 
@@ -5369,7 +5370,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("racingdays", "Demo", "Racing Days World", "0d5f13d9321d36c23b63f229460928b4", 481803, Common::JA_JPN, 404),
 	MACDEMO1_l("racingdays", "Demo v1.01", "Racing Days World 1.01", "fbe75e9140b23cf5bb2f5fd6f7ce8e88", 481803, Common::JA_JPN, 404),
 
-	MACDEMO1("readblasterjr", "Preview v1.0c", "Reading Blaster Jr. Power Mac", "49aa41e6b624e64e8e48850faa882cc8", 63276, 404),
+	MACDEMO1("readblasterjr", "Preview v1.0c", "Reading Blaster Jr. Power Mac", "r:49aa41e6b624e64e8e48850faa882cc8", 63276, 404),
+	WINDEMO1("readblasterjr", "Preview v1.0c", "RBJUNIOR.EXE",					"t:d146b5084aef8f4edac617c9e0fa79a9", 705457, 404),
 	// from Great Adventures by Fisher-Price: Castle (1995)
 	MACDEMO1("readblasterjr", "Preview v1.0c", "Reading Blaster Power Mac", "49aa41e6b624e64e8e48850faa882cc8", 61732, 404),
 
@@ -6346,6 +6348,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("flipper", "", "Flipper!",	  "6e7e31d05709e1d38d63f4df6a59eec0", 718381, 501),
 	WINGAME1("flipper", "", "FLIP32.EXE", "3460ad87d2ba57104e2810a77b53c220", 1398201, 500),
 
+	MACGAME1("fplit", "", "Toyland",			  "r:7fc35c7129cb027987528b027c6cc27c", 705445, 500),
+	WINGAME2("fplit", "", "PIR32BIT/START32.EXE", "t:564db7e9ffacb6c0fecbf83c1f988069", 1394437,
+						  "FILES/BLOCKS.DIR",	  "d:74388b29ce10d83bbad48c664d87eab3", 7363670, 500),
 	MACDEMO1("fplit", "Demo", "Toyland Preview", "9fbd2e99a6a23933083ba0934e4a7d01", 705417, 500),
 
 	WINDEMO1t("fpready", "Demo", "FPRFS32.EXE", "b976d39fa7f7cf18a05149b5593f43e0", 2901579, 501),
@@ -6555,7 +6560,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("kidsbiblejlife", "", "Startup.exe",			 "t:db89c88c444f41b95cf5a36599dc9c5c", 1410395,
 								   "JESUDISC/DISCJESU.DXR",  "d:b12ed844b5ebe78d70f4be265651b631", 5887462, 501),
 
-	WINGAME2("kidsbiblemoses", "Demo", "KIB31.EXE",				"t:d72d71e434372368968670a51212cba1", 933051,
+	WINDEMO2("kidsbiblemoses", "Demo", "KIB31.EXE",				"t:d72d71e434372368968670a51212cba1", 933051,
 									   "MOSEDISC/DISCMOSE.DXR", "d:7e54012fdb5d6d1f85087ea1de64aae0", 3017034, 501),
 
 	WINGAME2("kidsbiblepaul", "", "Startup.exe",		   "t:db89c88c444f41b95cf5a36599dc9c5c", 1410395,
