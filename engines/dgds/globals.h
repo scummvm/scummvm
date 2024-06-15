@@ -79,16 +79,38 @@ private:
 
 class Globals {
 public:
-	Globals();
+	Globals(Clock &clock);
 	virtual ~Globals();
 
 	int16 getGlobal(uint16 num);
 	int16 setGlobal(uint16 num, int16 val);
 
-	virtual Common::Error syncState(Common::Serializer &s) { return Common::kNoError; }
+	virtual Common::Error syncState(Common::Serializer &s); // note: children should call parent first
 	Common::Array<Global *> &getAllGlobals() { return _globals; }
 
+	int16 getGameMinsToAddOnLClick() const { return _gameMinsToAddOnLClick; }
+	int16 getGameMinsToAddOnStartDrag() const { return _gameMinsToAddOnStartDrag; }
+	int16 getGameMinsToAddOnRClick() const { return _gameMinsToAddOnRClick; }
+	int16 getGameMinsToAddOnDragFinished() const { return _gameMinsToAddOnDragFinished; }
+	int16 getGameMinsToAddOnObjInteraction() const { return _gameMinsToAddOnObjInteraction; }
+
+	void setLastSceneNum(int16 num) { _lastOpcode1SceneChageNum = num; }
+
 protected:
+
+	// these ones seem to be common between games
+	int16 _lastOpcode1SceneChageNum;
+	int16 _sceneOp12SceneNum;
+	int16 _currentSelectedItem;
+	int16 _gameMinsToAddOnLClick;
+	int16 _gameMinsToAddOnStartDrag;
+	int16 _gameMinsToAddOnRClick;
+	int16 _gameMinsToAddOnDragFinished;
+	int16 _gameMinsToAddOnObjInteraction;
+	int16 _gameIsInteractiveGlobal; // used to decide if the game can start a "meanwhile" sequence
+	int16 _sceneOpcode15FromScene;
+	int16 _sceneOpcode15ToScene;
+
 	Common::Array<Global *> _globals;
 };
 
@@ -112,32 +134,12 @@ class DragonGlobals : public Globals {
 public:
 	DragonGlobals(Clock &clock);
 
-	int16 getGameMinsToAddOnLClick() const { return _gameMinsToAddOnLClick; }
-	int16 getGameMinsToAddOnStartDrag() const { return _gameMinsToAddOnStartDrag; }
-	int16 getGameMinsToAddOnRClick() const { return _gameMinsToAddOnRClick; }
-	int16 getGameMinsToAddOnDragFinished() const { return _gameMinsToAddOnDragFinished; }
-	int16 getGameMinsToAddOnObjInteraction() const { return _gameMinsToAddOnObjInteraction; }
-
-	void setLastSceneNum(int16 num) { _lastOpcode1SceneChageNum = num; }
-
 private:
-	int16 _lastOpcode1SceneChageNum;
-	int16 _sceneOp12SceneNum;
-	int16 _currentSelectedItem;
-	int16 _gameMinsToAddOnLClick;
-	int16 _gameMinsToAddOnStartDrag;
-	int16 _gameMinsToAddOnRClick;
-	int16 _gameMinsToAddOnDragFinished;
-	int16 _gameMinsToAddOnObjInteraction;
-	int16 _gameIsInteractiveGlobal;
-	int16 _sceneOpcode15FromScene;
-	int16 _sceneOpcode15ToScene;
+	// Dragon-specific globals
 	int16 _sceneOpcode100Var;
 	int16 _arcadeModeFlag_3cdc;
 	int16 _opcode106EndMinutes;
 	DragonDataTable _table;
-	// Clock _clock; // kept in the engine
-	// uint16 _detailSliderSetting; // kept in the engine
 
 	Common::Error syncState(Common::Serializer &s) override;
 };

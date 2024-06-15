@@ -31,7 +31,54 @@ typedef ReadWriteGlobal<int16> RWI16Global;
 
 ////////////////////////////////
 
-Globals::Globals() {
+// TODO: Move this to Scene??
+class GameIsInteractiveGlobal : public Global {
+public:
+	GameIsInteractiveGlobal(uint16 num, int16 *ptr) : Global(num), _ptr(ptr), _isSetOff(false) {}
+
+	int16 get() override {
+		SDSScene *scene = static_cast<DgdsEngine *>(g_engine)->getScene();
+		bool nonInteractive = _isSetOff || scene->getDragItem() || scene->hasVisibleOrOpeningDialog();
+		*_ptr = !nonInteractive;
+		return *_ptr;
+	}
+
+	int16 set(int16 val) override {
+		_isSetOff = (val == 0);
+		return get();
+	}
+
+	void setRaw(int16 val) override { }
+
+private:
+	int16 *_ptr;
+	bool _isSetOff;
+};
+
+
+Globals::Globals(Clock &clock) :
+_lastOpcode1SceneChageNum(0), _sceneOp12SceneNum(0), _currentSelectedItem(0),
+_gameMinsToAddOnLClick(0), _gameMinsToAddOnStartDrag(0), _gameMinsToAddOnRClick(0), _gameMinsToAddOnDragFinished(0),
+_gameMinsToAddOnObjInteraction(0), _gameIsInteractiveGlobal(0), _sceneOpcode15FromScene(0),
+_sceneOpcode15ToScene(0) {
+	_globals.push_back(clock.getGameMinsAddedGlobal(1));
+	_globals.push_back(clock.getGameTicksUpGlobal(0x64));
+	_globals.push_back(clock.getGameTicksDownGlobal(0x63));
+	_globals.push_back(new ROI16Global(0x62, &_lastOpcode1SceneChageNum));
+	_globals.push_back(new RWI16Global(0x61, &_sceneOp12SceneNum));
+	_globals.push_back(new RWI16Global(0x60, &_currentSelectedItem));
+	_globals.push_back(clock.getDaysGlobal(0x5F));
+	_globals.push_back(clock.getHoursGlobal(0x5E));
+	_globals.push_back(clock.getMinsGlobal(0x5D));
+	_globals.push_back(new RWI16Global(0x5C, &_gameMinsToAddOnLClick));
+	_globals.push_back(new RWI16Global(0x5B, &_gameMinsToAddOnStartDrag));
+	_globals.push_back(new RWI16Global(0x5A, &_gameMinsToAddOnRClick));
+	_globals.push_back(new RWI16Global(0x59, &_gameMinsToAddOnDragFinished));
+	_globals.push_back(new RWI16Global(0x58, &_gameMinsToAddOnObjInteraction));
+	_globals.push_back(new GameIsInteractiveGlobal(0x57, &_gameIsInteractiveGlobal));
+	_globals.push_back(clock.getDays2Global(0x56));
+	_globals.push_back(new RWI16Global(0x55, &_sceneOpcode15FromScene));
+	_globals.push_back(new RWI16Global(0x54, &_sceneOpcode15ToScene));
 }
 
 Globals::~Globals() {
@@ -56,6 +103,21 @@ int16 Globals::setGlobal(uint16 num, int16 val) {
 		}
 	}
 	return 0;
+}
+
+Common::Error Globals::syncState(Common::Serializer &s) {
+	s.syncAsSint16LE(_lastOpcode1SceneChageNum);
+	s.syncAsSint16LE(_sceneOp12SceneNum);
+	s.syncAsSint16LE(_currentSelectedItem);
+	s.syncAsSint16LE(_gameMinsToAddOnLClick);
+	s.syncAsSint16LE(_gameMinsToAddOnStartDrag);
+	s.syncAsSint16LE(_gameMinsToAddOnRClick);
+	s.syncAsSint16LE(_gameMinsToAddOnDragFinished);
+	s.syncAsSint16LE(_gameMinsToAddOnObjInteraction);
+	s.syncAsSint16LE(_gameIsInteractiveGlobal);
+	s.syncAsSint16LE(_sceneOpcode15FromScene);
+	s.syncAsSint16LE(_sceneOpcode15ToScene);
+	return Common::kNoError;
 }
 
 ////////////////////////////////
@@ -114,56 +176,11 @@ private:
 	DragonDataTable &_table;
 };
 
-// TODO: Move this to Scene??
-class GameIsInteractiveGlobal : public Global {
-public:
-	GameIsInteractiveGlobal(uint16 num, int16 *ptr) : Global(num), _ptr(ptr), _isSetOff(false) {}
-
-	int16 get() override {
-		SDSScene *scene = static_cast<DgdsEngine *>(g_engine)->getScene();
-		bool nonInteractive = _isSetOff || scene->getDragItem() || scene->hasVisibleOrOpeningDialog();
-		*_ptr = !nonInteractive;
-		return *_ptr;
-	}
-
-	int16 set(int16 val) override {
-		_isSetOff = (val == 0);
-		return get();
-	}
-
-	void setRaw(int16 val) override { }
-
-private:
-	int16 *_ptr;
-	bool _isSetOff;
-};
 
 ////////////////////////////////
 
-DragonGlobals::DragonGlobals(Clock &_clock) : Globals(),
-_lastOpcode1SceneChageNum(0), _sceneOp12SceneNum(0), _currentSelectedItem(0),
-_gameMinsToAddOnLClick(0), _gameMinsToAddOnStartDrag(0), _gameMinsToAddOnRClick(0), _gameMinsToAddOnDragFinished(0),
-_gameMinsToAddOnObjInteraction(0), _gameIsInteractiveGlobal(0), _sceneOpcode15FromScene(0),
-_sceneOpcode15ToScene(0), _sceneOpcode100Var(0), _arcadeModeFlag_3cdc(0),
-_opcode106EndMinutes(0) {
-	_globals.push_back(_clock.getGameMinsAddedGlobal(1));
-	_globals.push_back(_clock.getGameTicksUpGlobal(0x64));
-	_globals.push_back(_clock.getGameTicksDownGlobal(0x63));
-	_globals.push_back(new ROI16Global(0x62, &_lastOpcode1SceneChageNum));
-	_globals.push_back(new RWI16Global(0x61, &_sceneOp12SceneNum));
-	_globals.push_back(new RWI16Global(0x60, &_currentSelectedItem));
-	_globals.push_back(_clock.getDaysGlobal(0x5F));
-	_globals.push_back(_clock.getHoursGlobal(0x5E));
-	_globals.push_back(_clock.getMinsGlobal(0x5D));
-	_globals.push_back(new RWI16Global(0x5C, &_gameMinsToAddOnLClick));
-	_globals.push_back(new RWI16Global(0x5B, &_gameMinsToAddOnStartDrag));
-	_globals.push_back(new RWI16Global(0x5A, &_gameMinsToAddOnRClick));
-	_globals.push_back(new RWI16Global(0x59, &_gameMinsToAddOnDragFinished));
-	_globals.push_back(new RWI16Global(0x58, &_gameMinsToAddOnObjInteraction));
-	_globals.push_back(new GameIsInteractiveGlobal(0x57, &_gameIsInteractiveGlobal));
-	_globals.push_back(_clock.getDays2Global(0x56));
-	_globals.push_back(new RWI16Global(0x55, &_sceneOpcode15FromScene));
-	_globals.push_back(new RWI16Global(0x54, &_sceneOpcode15ToScene));
+DragonGlobals::DragonGlobals(Clock &clock) : Globals(clock),
+ _sceneOpcode100Var(0), _arcadeModeFlag_3cdc(0), _opcode106EndMinutes(0) {
 	_globals.push_back(new RWI16Global(0x20, &_sceneOpcode100Var));
 	_globals.push_back(new RWI16Global(0x21, &_arcadeModeFlag_3cdc));
 	_globals.push_back(new RWI16Global(0x22, &_opcode106EndMinutes));
@@ -175,17 +192,7 @@ _opcode106EndMinutes(0) {
 }
 
 Common::Error DragonGlobals::syncState(Common::Serializer &s) {
-	s.syncAsSint16LE(_lastOpcode1SceneChageNum);
-	s.syncAsSint16LE(_sceneOp12SceneNum);
-	s.syncAsSint16LE(_currentSelectedItem);
-	s.syncAsSint16LE(_gameMinsToAddOnLClick);
-	s.syncAsSint16LE(_gameMinsToAddOnStartDrag);
-	s.syncAsSint16LE(_gameMinsToAddOnRClick);
-	s.syncAsSint16LE(_gameMinsToAddOnDragFinished);
-	s.syncAsSint16LE(_gameMinsToAddOnObjInteraction);
-	s.syncAsSint16LE(_gameIsInteractiveGlobal);
-	s.syncAsSint16LE(_sceneOpcode15FromScene);
-	s.syncAsSint16LE(_sceneOpcode15ToScene);
+	Globals::syncState(s);
 	s.syncAsSint16LE(_sceneOpcode100Var);
 	s.syncAsSint16LE(_arcadeModeFlag_3cdc);
 	s.syncAsSint16LE(_opcode106EndMinutes);
