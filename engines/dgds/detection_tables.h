@@ -23,7 +23,7 @@
 namespace Dgds {
 
 static const ADGameDescription gameDescriptions[] = {
-	// Rise of the Dragon (PC) : GOG
+	// Rise of the Dragon (PC) GOG
 	{
 		"rise",
 		0,
@@ -143,7 +143,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
-	// Heart of China (PC) : GOG
+	// Heart of China (PC) GOG
 	{
 		"china",
 		0,

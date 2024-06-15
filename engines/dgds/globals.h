@@ -126,7 +126,7 @@ public:
 	int16 _output;
 
 private:
-	int getOffsetForVal(uint16 val);
+	int getOffsetForVal(uint16 val) const;
 };
 
 
