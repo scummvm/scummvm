@@ -271,6 +271,7 @@ bool CBagCharacterObject::doAdvance() {
 
 				// Paint the current frame to the BMP
 				if (refreshCurrentFrame()) {
+					_smacker->resetStartTime();
 					// Get the current frame in the correct place
 					updatePosition();
 				}

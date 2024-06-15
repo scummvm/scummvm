@@ -173,7 +173,6 @@ void  CBofMovie::onMainLoop() {
 				onMovieDone();
 			} else {
 				seekToEnd();
-				//_pSmk->start();
 			}
 		} else {
 			setFrame(_pSmk->getCurFrame() - 2); // HACK: Reverse playback
