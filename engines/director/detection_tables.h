@@ -267,6 +267,10 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "kellyparade",		"Kelly Club Pet Parade" },
 	{ "keroppi",			"Keroppi Day Hopper" },
 	{ "kidsmathsquest",		"Kid's Maths Quest" },
+	{ "kidsbiblejbirth",	"Interactive Bible for Kids: The Birth and Boyhood of Jesus" },
+	{ "kidsbiblejlife",		"Interactive Bible for Kids: The Life and Ministry of Jesus" },
+	{ "kidsbiblemoses",		"Interactive Bible for Kids: The Life of Moses" },
+	{ "kidsbiblepaul",		"Interactive Bible for Kids: The Life of Paul" },
 	{ "kingandi",			"The King and I: Animated Thinking Adventure" },
 	{ "korkydragons",		"Dragons!" },
 	{ "kothhoot",			"King of the Hill: Hootenany" },
@@ -6544,6 +6548,18 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("kidsbox", "", "KIDS BOX(PPC)", "e7ee6c4e4cf63575db94bf3fc433053d", 107863, 500),
 	WINGAME1t("kidsbox", "Normal", "KIDS_N.EXE", "7abed0fbe806404b5e4045927b293950", 1443095, 500),
 	WINGAME1t("kidsbox", "Slow", "KIDS_O.EXE", "7abed0fbe806404b5e4045927b293950", 1443093, 500),
+
+	WINGAME2("kidsbiblejbirth", "", "Startup.exe",			 "t:db89c88c444f41b95cf5a36599dc9c5c", 1410395,
+									"BIRTDISC/BIRTDISC.Dxr", "d:18846fcf36f09aeac49ab3f1b1b496e4", 6246526, 501),
+
+	WINGAME2("kidsbiblejlife", "", "Startup.exe",			 "t:db89c88c444f41b95cf5a36599dc9c5c", 1410395,
+								   "JESUDISC/DISCJESU.DXR",  "d:b12ed844b5ebe78d70f4be265651b631", 5887462, 501),
+
+	WINGAME2("kidsbiblemoses", "Demo", "KIB31.EXE",				"t:d72d71e434372368968670a51212cba1", 933051,
+									   "MOSEDISC/DISCMOSE.DXR", "d:7e54012fdb5d6d1f85087ea1de64aae0", 3017034, 501),
+
+	WINGAME2("kidsbiblepaul", "", "Startup.exe",		   "t:db89c88c444f41b95cf5a36599dc9c5c", 1410395,
+								  "PAULDISC/DISCPAUL.DXR", "d:33e2ce00c9ff1dbcc7a7fd05809571ed", 6766086, 501),
 
 	MACGAME1("maccubed", "Disc 1", "Let's Go! Arcade", "5b3a7fa45ec7655c5f9b7fe39ae37a11", 705357, 500),
 	MACGAME1("maccubed", "Disc 2", "Let's Go! Games", "5b3a7fa45ec7655c5f9b7fe39ae37a11", 705357, 500),
