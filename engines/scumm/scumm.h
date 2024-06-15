@@ -1340,7 +1340,7 @@ protected:
 
 	void decodeNESBaseTiles();
 
-	void drawObject(int obj, int arg);
+	void drawObject(int obj, int scrollType);
 	void drawRoomObjects(int arg);
 	void drawRoomObject(int i, int arg);
 	void drawBox(int x, int y, int x2, int y2, int color);

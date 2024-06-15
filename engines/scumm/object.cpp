@@ -637,7 +637,7 @@ void ScummEngine::drawRoomObjects(int arg) {
 	}
 }
 
-void ScummEngine::drawObject(int obj, int arg) {
+void ScummEngine::drawObject(int obj, int scrollType) {
 	if (_skipDrawObject)
 		return;
 
@@ -648,7 +648,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 	int tmp;
 
 	if (_bgNeedsRedraw)
-		arg = 0;
+		scrollType = 0;
 
 	if (od.obj_nr == 0)
 		return;
@@ -687,9 +687,9 @@ void ScummEngine::drawObject(int obj, int arg) {
 		tmp = xpos + a;
 		if (tmp < _screenStartStrip || _screenEndStrip < tmp)
 			continue;
-		if (arg > 0 && _screenStartStrip + arg <= tmp)
+		if (scrollType > 0 && _screenStartStrip + scrollType <= tmp)
 			continue;
-		if (arg < 0 && tmp <= _screenEndStrip + arg)
+		if (scrollType < 0 && tmp <= _screenEndStrip + scrollType)
 			continue;
 		setGfxUsageBit(tmp, USAGE_BIT_DIRTY); // FIXME: HE70 onwards seems to use USAGE_BIT_RESTORED instead?
 		if (tmp < x)
