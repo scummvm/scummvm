@@ -23,6 +23,7 @@
  *
  * USED IN:
  * Standard Director Xtra
+ * Karma: Curse of the 12 Caves
  *
  *************************************/
 
@@ -137,6 +138,7 @@ const char *FileIO::xlibName = "FileIO";
 const char *FileIO::fileNames[] = {
 	"FileIO",
 	"shFILEIO", // TD loads this up using openXLib("@:shFILEIO.DLL")
+	"FILE",
 	nullptr
 };
 
