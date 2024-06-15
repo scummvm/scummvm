@@ -20,7 +20,8 @@
  */
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/file.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/graphics/gr_tile_animation.h"
@@ -559,30 +560,36 @@ void qdAnimation::qda_save(const char *fname) {
 bool qdAnimation::qda_load(const char *fname) {
 	clear_frames();
 
-#ifndef __QD_SYSLIB__
-	XZipStream fh;
-	if (!qdFileManager::instance().open_file(fh, fname)) return false;
-#else
-	XStream fh;
-	fh.open(fname, XS_IN);
-#endif
+	Common::Path fpath(fname, '\\');
+	Common::SeekableReadStream *fh;
+	if (!qdFileManager::instance().open_file(&fh, fpath.toString().c_str())) {
+		return false;
+	}
 
-	int i, version, fl, num_fr;
-	fh > version > sx_ > sy_ > length_ > fl > num_fr;
+	int i;
+	int32 version = fh->readSint32LE();
+	sx_ = fh->readSint32LE();
+	sy_ = fh->readSint32LE();
+	length_ = fh->readFloatLE();
+	int32 fl = fh->readSint32LE();
+	int32 num_fr = fh->readSint32LE();
 
 	int num_scales = 0;
-	if (version >= 103)
-		fh > num_scales;
+	if (version >= 103) {
+		num_scales = fh->readSint32LE();
+
+	}
 
 	char tile_flag = 0;
-	if (version >= 104)
-		fh > tile_flag;
+	if (version >= 104) {
+		tile_flag = fh->readByte();
+	}
 
 	if (!tile_flag) {
 		if (num_scales) {
 			scales_.resize(num_scales);
 			for (int i = 0; i < num_scales; i++)
-				fh > scales_[i];
+				scales_[i] = fh->readFloatLE();
 		} else
 			scales_.clear();
 
@@ -590,23 +597,25 @@ bool qdAnimation::qda_load(const char *fname) {
 
 		for (i = 0; i < num_fr; i ++) {
 			qdAnimationFrame *p = new qdAnimationFrame;
-			p -> qda_load(fh, version);
+			p->qda_load(fh, version);
 			add_frame(p);
 		}
 
 		for (i = 0; i < num_fr * num_scales; i ++) {
 			qdAnimationFrame *p = new qdAnimationFrame;
-			p -> qda_load(fh, version);
+			p->qda_load(fh, version);
 			scaled_frames_.push_back(p);
 		}
 	} else {
 		set_flag(fl);
 
-		fh > sx_ > sy_;
+		sx_ = fh->readSint32LE();
+		sy_ = fh->readSint32LE();
 
 		for (i = 0; i < num_fr; i ++) {
 			float start_time, length;
-			fh > start_time > length;
+			start_time = fh->readFloatLE();
+			length = fh->readFloatLE();
 
 			qdAnimationFrame *p = new qdAnimationFrame;
 			p->set_start_time(start_time);

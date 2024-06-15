@@ -20,6 +20,8 @@
  */
 
 #define _NO_ZIP_
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/file.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/graphics/gr_tile_animation.h"
@@ -199,43 +201,44 @@ bool grTileAnimation::save(XStream &fh) const {
 }
 
 bool grTileAnimation::load(XStream &fh) {
-	int size;
-	fh > frameCount_ > frameSize_.x > frameSize_.y > frameTileSize_.x > frameTileSize_.y > size;
+	warning("STUB: grTileAnimation::load(XStream &fh)");
+	return true;
+}
+
+bool grTileAnimation::load(Common::SeekableReadStream *fh) {
+
+	frameCount_ = fh->readSint32LE();
+	frameSize_.x = fh->readSint32LE();
+	frameSize_.y = fh->readSint32LE();
+	frameTileSize_.x = fh->readSint32LE();
+	frameTileSize_.y = fh->readSint32LE();
+	uint32 size = fh->readUint32LE();
 
 	compression_ = grTileCompressionMethod(size);
 
-	fh > size;
+	size = fh->readUint32LE();
 	frameIndex_.resize(size);
-	fh.read(&frameIndex_[0], size * sizeof(unsigned));
+	for (int i = 0; i < size; i++) {
+		frameIndex_[i] = fh->readUint32LE();
+	}
 
-	fh > size;
+	size = fh->readUint32LE();
 	tileOffsets_.resize(size);
-	fh.read(&tileOffsets_[0], size * sizeof(unsigned));
+	for (int i = 0; i < size; i++) {
+		tileOffsets_[i] = fh->readUint32LE();
+	}
 
-	fh > size;
+	size = fh->readUint32LE();
 	tileData_.resize(size);
-	fh.read(&tileData_[0], size * sizeof(unsigned));
+	for (int i = 0; i < size; i++) {
+		tileData_[i] = fh->readUint32LE();
+	}
 
 	return true;
 }
 
 bool grTileAnimation::load(XZipStream &fh) {
-	int size;
-	fh > frameCount_ > frameSize_.x > frameSize_.y > frameTileSize_.x > frameTileSize_.y > size;
-
-	compression_ = grTileCompressionMethod(size);
-
-	fh > size;
-	frameIndex_.resize(size);
-	fh.read(&frameIndex_[0], size * sizeof(unsigned));
-
-	fh > size;
-	tileOffsets_.resize(size);
-	fh.read(&tileOffsets_[0], size * sizeof(unsigned));
-
-	fh > size;
-	tileData_.resize(size);
-	fh.read(&tileData_[0], size * sizeof(unsigned));
+	warning("STUB: grTileAnimation::load(XZipStream fh)");
 
 	return true;
 }

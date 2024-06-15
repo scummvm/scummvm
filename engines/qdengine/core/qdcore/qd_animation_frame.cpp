@@ -20,7 +20,8 @@
  */
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/file.h"
 #include "qdengine/core/qd_precomp.h"
 #ifndef __QD_SYSLIB__
 //#include "qdengine/core/parser/qdscr_parser.h"
@@ -78,6 +79,13 @@ void qdAnimationFrame::qda_load(class XStream &fh, int version) {
 	qdSprite::qda_load(fh, version);
 }
 
+void qdAnimationFrame::qda_load(Common::SeekableReadStream *fh, int version) {
+	int32 fl = fh->readSint32LE();
+	start_time_ = fh->readFloatLE();
+	length_ = fh->readFloatLE();
+
+	qdSprite::qda_load(fh, version);
+}
 void qdAnimationFrame::qda_load(XZipStream &fh, int version) {
 	int fl;
 	fh > fl > start_time_ > length_;
