@@ -189,56 +189,55 @@ void MadeEngine::handleEvents() {
 		case Common::EVENT_RBUTTONUP:
 			_eventNum = 3;
 			break;
-
 		case Common::EVENT_KEYDOWN:
 			// Handle any special keys here
 			// Supported keys taken from https://web.archive.org/web/20141114142447/http://www.allgame.com/game.php?id=13542&tab=controls
-
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_KP_PLUS:	// action (same as left mouse click)
-				_eventNum = 1;		// left mouse button up
-				break;
-			case Common::KEYCODE_KP_MINUS:	// inventory (same as right mouse click)
-				_eventNum = 3;		// right mouse button up
-				break;
-			case Common::KEYCODE_UP:
-			case Common::KEYCODE_KP8:
+			if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
+				_eventNum = 5;
+				_eventKey = 9;
+			} else {
+				_eventNum = 5;
+				_eventKey = event.kbd.ascii;
+			}
+			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			switch (event.customType) {
+			case kActionCursorUp:
 				_eventMouseY = MAX<int16>(0, _eventMouseY - 1);
 				g_system->warpMouse(_eventMouseX, _eventMouseY);
 				break;
-			case Common::KEYCODE_DOWN:
-			case Common::KEYCODE_KP2:
+			case kActionCursorDown:
 				_eventMouseY = MIN<int16>(199, _eventMouseY + 1);
 				g_system->warpMouse(_eventMouseX, _eventMouseY);
 				break;
-			case Common::KEYCODE_LEFT:
-			case Common::KEYCODE_KP4:
+			case kActionCursorLeft:
 				_eventMouseX = MAX<int16>(0, _eventMouseX - 1);
 				g_system->warpMouse(_eventMouseX, _eventMouseY);
 				break;
-			case Common::KEYCODE_RIGHT:
-			case Common::KEYCODE_KP6:
+			case kActionCursorRight:
 				_eventMouseX = MIN<int16>(319, _eventMouseX + 1);
 				g_system->warpMouse(_eventMouseX, _eventMouseY);
 				break;
-			case Common::KEYCODE_F1:		// menu
-			case Common::KEYCODE_F2:		// save game
-			case Common::KEYCODE_F3:		// load game
-			case Common::KEYCODE_F4:		// repeat last message
+			case kActionMenu:
 				_eventNum = 5;
-				_eventKey = (event.kbd.keycode - Common::KEYCODE_F1) + 21;
+				_eventKey = 21; //KEYCODE F1
 				break;
-			case Common::KEYCODE_BACKSPACE:
+			case kActionSaveGame:
 				_eventNum = 5;
-				_eventKey = 9;
+				_eventKey = 22; //KEYCODE F2
+				break;
+			case kActionLoadGame:
+				_eventNum = 5;
+				_eventKey = 23; //KEYCODE F3
+				break;
+			case kActionRepeatMessage:
+				_eventNum = 5;
+				_eventKey = 24; //KEYCODE F4
 				break;
 			default:
-				_eventNum = 5;
-				_eventKey = event.kbd.ascii;
 				break;
 			}
 			break;
-
 		default:
 			break;
 

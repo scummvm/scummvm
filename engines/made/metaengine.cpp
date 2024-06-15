@@ -24,6 +24,10 @@
 #include "made/made.h"
 #include "made/detection.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 
 namespace Made {
 
@@ -72,6 +76,8 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool MadeMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -87,6 +93,95 @@ bool Made::MadeEngine::hasFeature(EngineFeature f) const {
 Common::Error MadeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new Made::MadeEngine(syst, (const Made::MadeGameDescription *)desc);
 	return Common::kNoError;
+}
+
+Common::KeymapArray MadeMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Made;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "made-main", "MADE main");
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game Keymappings"));
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	act->addDefaultInputMapping("KP_PLUS");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	act->addDefaultInputMapping("KP_MINUS");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionSkip, _("Skip"));
+	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_Y");
+	act->allowKbdRepeats();
+	engineKeyMap->addAction(act);
+
+	act = new Action("CRSORUP", _("Cursor Up"));
+	act->setCustomEngineActionEvent(kActionCursorUp);
+	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("KP8");
+	act->allowKbdRepeats();
+	gameKeyMap->addAction(act);
+
+	act = new Action("CRSORDOWN", _("Cursor Down"));
+	act->setCustomEngineActionEvent(kActionCursorDown);
+	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("KP2");
+	act->allowKbdRepeats();
+	gameKeyMap->addAction(act);
+
+	act = new Action("CRSORLEFT", _("Cursor Left"));
+	act->setCustomEngineActionEvent(kActionCursorLeft);
+	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("KP4");
+	act->allowKbdRepeats();
+	gameKeyMap->addAction(act);
+
+	act = new Action("CRSORRIGHT", _("Cursor Right"));
+	act->setCustomEngineActionEvent(kActionCursorRight);
+	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("KP6");
+	act->allowKbdRepeats();
+	gameKeyMap->addAction(act);
+
+	act = new Action("MENU", _("Menu"));
+	act->setCustomEngineActionEvent(kActionMenu);
+	act->addDefaultInputMapping("F1");
+	act->addDefaultInputMapping("JOY_GUIDE"); 
+	gameKeyMap->addAction(act);
+
+	act = new Action("SAVEGAME", _("Save Game"));
+	act->setCustomEngineActionEvent(kActionSaveGame);
+	act->addDefaultInputMapping("F2");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER"); 
+	gameKeyMap->addAction(act);
+
+	act = new Action("LOADGAME", _("Load Game"));
+	act->setCustomEngineActionEvent(kActionLoadGame);
+	act->addDefaultInputMapping("F3");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER"); 
+	gameKeyMap->addAction(act);
+
+	act = new Action("RPTMSG", _("Repeat Last Message"));
+	act->setCustomEngineActionEvent(kActionRepeatMessage);
+	act->addDefaultInputMapping("F4");
+	act->addDefaultInputMapping("JOY_X");
+	gameKeyMap->addAction(act);
+
+	KeymapArray keymaps(2);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeyMap;
+
+	return keymaps;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MADE)
