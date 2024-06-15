@@ -43,10 +43,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"driller",
 		"",
-		{
-			{"DRILLER.ZX.DATA", 0, "396c1789a7da3db5058d18eb8d2d35a3", 37590},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("DRILLER.ZX.DATA", "396c1789a7da3db5058d18eb8d2d35a3", 37590),
 		Common::EN_ANY,
 		Common::kPlatformZX,
 		GF_ZX_RETAIL,
@@ -55,10 +52,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"driller",
 		"",
-		{
-			{"DRILLER.ZX.DATA", 0, "6876fc03e754137f428bd4d5f16452b5", 37888},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("DRILLER.ZX.DATA", "6876fc03e754137f428bd4d5f16452b5", 37888),
 		Common::EN_ANY,
 		Common::kPlatformZX,
 		GF_ZX_DISC,
@@ -67,10 +61,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"driller",
 		"",
-		{
-			{"DRILLER.ZX.DATA", 0, "2b996ab877f45414f8e2ae4c862746f3", 35214},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("DRILLER.ZX.DATA", "2b996ab877f45414f8e2ae4c862746f3", 35214),
 		Common::EN_ANY,
 		Common::kPlatformZX,
 		GF_ZX_BUDGET,
@@ -79,10 +70,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"driller",
 		"Not implemented yet",
-		{
-			{"DRILLER.ZX.DATA", 0, "e571795806ed8a30df0fa3109eaa8ffb", 36000},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("DRILLER.ZX.DATA", "e571795806ed8a30df0fa3109eaa8ffb", 36000),
 		Common::EN_ANY,
 		Common::kPlatformZX,
 		ADGF_UNSUPPORTED | ADGF_DEMO,
@@ -91,47 +79,16 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"driller",
 		"",
-		{
-			{"DRILL.BIN", 0, "719f5157391e88b2c391c30576340637", 35320},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("DRILL.BIN", "719f5157391e88b2c391c30576340637", 35320),
 		Common::EN_ANY,
 		Common::kPlatformAmstradCPC,
 		GF_CPC_RETAIL,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDERCPC, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
 	{
-		"spacestationoblivion",
-		"",
-		{
-			{"SPACESTATIONOBLIVION.C64.DATA", 0, "85680576865e211f868885e9997a08b8", 22782},
-			AD_LISTEND
-		},
-		Common::EN_ANY,
-		Common::kPlatformC64,
-		ADGF_UNSUPPORTED,
-		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
-	},
-
-	{
-		"spacestationoblivion",
-		"",
-		{
-			{"SPACESTATIONOBLIVION.C64.DATA", 0, "2b3537e21b8b871ec074df2962999781", 64514},
-			AD_LISTEND
-		},
-		Common::EN_ANY,
-		Common::kPlatformC64,
-		ADGF_UNSUPPORTED,
-		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
-	},
-	{
 		"driller", // Commodore Force - Jan 94
 		"",
-		{
-			{"DRILLER.C64.DATA", 0, "511778d3167ff7504d905df507a03ac5", 63490},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("DRILLER.C64.DATA", "511778d3167ff7504d905df507a03ac5", 63490),
 		Common::EN_ANY,
 		Common::kPlatformC64,
 		ADGF_UNSUPPORTED,
@@ -140,10 +97,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"driller",
 		"",
-		{
-			{"DRILLER.C64.DATA", 0, "73a6f206e54fb13245fe6d92f60fbb34", 41071},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("DRILLER.C64.DATA", "73a6f206e54fb13245fe6d92f60fbb34", 41071),
 		Common::EN_ANY,
 		Common::kPlatformC64,
 		ADGF_UNSTABLE,
@@ -168,10 +122,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{ // Retail release
 		"driller",
 		"",
-		{
-			{"x.prg", 0, "d002983a8b652f25b18a09425db78c4c", 293159},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("x.prg", "d002983a8b652f25b18a09425db78c4c", 293159),
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
 		GF_ATARI_RETAIL,
@@ -180,10 +131,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{ // Budget release
 		"driller",
 		"",
-		{
-			{"x.prg", 0, "1a79e68e6c2c223c96de0ca2d65149ae", 293062},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("x.prg", "1a79e68e6c2c223c96de0ca2d65149ae", 293062),
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
 		GF_ATARI_BUDGET,
@@ -312,6 +260,56 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSUPPORTED | ADGF_DEMO,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDERATARIST, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
+	// Space station oblivion
+	{
+		"spacestationoblivion",
+		"",
+		{
+			{"OBLIVION.EXE", 0, "80783622013750d7c88fd1d35dde919a", 6765},
+			{"DRILLE.EXE", 0, "30edf6be0037b2b0e8c6957df62c2a02", 51944},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO4(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
+		"spacestationoblivion",
+		"",
+		AD_ENTRY1s("x.prg", "bf546ee243c38f51d9beb25c203ccb93", 292624),
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_UNSUPPORTED,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
+		"spacestationoblivion",
+		"",
+		AD_ENTRY1s("x.prg", "7fc6ef316be4819d88d8031738571a50", 293264),
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		GF_ATARI_BUDGET,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
+		"spacestationoblivion",
+		"",
+		AD_ENTRY1s("SPACESTATIONOBLIVION.C64.DATA", "85680576865e211f868885e9997a08b8", 22782),
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		ADGF_UNSUPPORTED,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
+		"spacestationoblivion",
+		"",
+		AD_ENTRY1s("SPACESTATIONOBLIVION.C64.DATA", "2b3537e21b8b871ec074df2962999781", 64514),
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		ADGF_UNSUPPORTED,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
 
 	// Dark Side
 	{
@@ -432,10 +430,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"darkside",
 		"Demo",
-		{
-			{"DARKSIDE.ZX.DATA", 0, "0e4d9b6e64ff24801272ff0b18a3caab", 29182},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("DARKSIDE.ZX.DATA", "0e4d9b6e64ff24801272ff0b18a3caab", 29182),
 		Common::EN_ANY,
 		Common::kPlatformZX,
 		ADGF_DEMO,
@@ -444,10 +439,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"darkside",
 		"",
-		{
-			{"DARKSIDE.ZX.DATA", 0, "e840db278f1256d1d3a1a34d49644aee", 34460},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("DARKSIDE.ZX.DATA", "e840db278f1256d1d3a1a34d49644aee", 34460),
 		Common::EN_ANY,
 		Common::kPlatformZX,
 		ADGF_NO_FLAGS,
@@ -456,10 +448,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"darkside",
 		"",
-		{
-			{"DARKCODE.BIN", 0, "203ce55b7582c556c811acd6a1cf4ab6", 35385},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("DARKCODE.BIN", "203ce55b7582c556c811acd6a1cf4ab6", 35385),
 		Common::EN_ANY,
 		Common::kPlatformAmstradCPC,
 		ADGF_NO_FLAGS,
@@ -510,10 +499,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"totaleclipse",
 		"",
-		{
-			{"totaleclipse.zx.data", 0, "5bc0c4ff50407d16bb409776eda7f4a8", 36055},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("totaleclipse.zx.data", "5bc0c4ff50407d16bb409776eda7f4a8", 36055),
 		Common::EN_ANY,
 		Common::kPlatformZX,
 		ADGF_NO_FLAGS,
@@ -522,10 +508,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"totaleclipse2",
 		"",
-		{
-			{"totaleclipse.zx.data", 0, "5e80cb6a518d5ab2192b845801b1a32e", 35661},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("totaleclipse.zx.data", "5e80cb6a518d5ab2192b845801b1a32e", 35661),
 		Common::EN_ANY,
 		Common::kPlatformZX,
 		ADGF_TESTING,
@@ -631,53 +614,11 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERATARIST)
 	},
 
-	// Space station oblivion
-	{
-		"spacestationoblivion",
-		"",
-		{
-			{"OBLIVION.EXE", 0, "80783622013750d7c88fd1d35dde919a", 6765},
-			{"DRILLE.EXE", 0, "30edf6be0037b2b0e8c6957df62c2a02", 51944},
-			AD_LISTEND
-		},
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO4(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_AUTOMATIC_DRILLING)
-	},
-	{
-		"spacestationoblivion",
-		"",
-		{
-			{"x.prg", 0, "bf546ee243c38f51d9beb25c203ccb93", 292624},
-			AD_LISTEND
-		},
-		Common::EN_ANY,
-		Common::kPlatformAtariST,
-		ADGF_UNSUPPORTED,
-		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
-	},
-	{
-		"spacestationoblivion",
-		"",
-		{
-			{"x.prg", 0, "7fc6ef316be4819d88d8031738571a50", 293264},
-			AD_LISTEND
-		},
-		Common::EN_ANY,
-		Common::kPlatformAtariST,
-		GF_ATARI_BUDGET,
-		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
-	},
-
 	// Castle Master
 	{
 		"castlemaster",
 		"",
-		{
-			{"castlemaster.zx.data", 0, "e2ed83c30cd0ed7119e349d0f677ae91", 36096},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("castlemaster.zx.data", "e2ed83c30cd0ed7119e349d0f677ae91", 36096),
 		Common::EN_ANY,
 		Common::kPlatformZX,
 		ADGF_UNSTABLE,
