@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-14 23:50+0000\n"
+"POT-Creation-Date: 2024-06-15 06:15+0000\n"
 "PO-Revision-Date: 2023-12-29 23:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -6575,8 +6575,8 @@ msgstr ""
 #: engines/mohawk/detection_tables.h:2677
 #: engines/mohawk/detection_tables.h:3797
 #: engines/mohawk/detection_tables.h:3812 engines/myst3/detection.cpp:142
-#: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5337
-#: engines/sci/detection_tables.h:5345 engines/stark/detection.cpp:319
+#: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5345
+#: engines/sci/detection_tables.h:5353 engines/stark/detection.cpp:319
 #: engines/teenagent/detection.cpp:117 engines/toltecs/detection.cpp:210
 #: engines/trecision/detection.cpp:201 engines/zvision/detection_tables.h:129
 msgid "Missing game code"
@@ -9296,17 +9296,17 @@ msgstr "Casio MT-540"
 msgid "Casio CT-460 / CSM-1"
 msgstr "Casio CT-460 / CSM-1"
 
-#: engines/sci/detection_tables.h:4573
+#: engines/sci/detection_tables.h:4581
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr "Denne demoen bruker en uimplementert versjon av Robot-videoer."
 
-#: engines/sci/detection_tables.h:4628
+#: engines/sci/detection_tables.h:4636
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 "Ufullstendig spill oppdaget. Du må kopiere spilldata fra alle CD-ene til "
 "spillet."
 
-#: engines/sci/engine/kfile.cpp:491 engines/sci/metaengine.cpp:370
+#: engines/sci/engine/kfile.cpp:491 engines/sci/metaengine.cpp:371
 msgid "(Autosave)"
 msgstr "(Automatisk lagring)"
 
@@ -9352,7 +9352,7 @@ msgstr ""
 "Kan ikke avspille video i %dbpp på et system med en maksimal fargedybde på "
 "8bpp"
 
-#: engines/sci/metaengine.cpp:302
+#: engines/sci/metaengine.cpp:303
 msgid "SCI32 support not compiled in"
 msgstr "SCI32-støtte er ikke innkompilert"
 
