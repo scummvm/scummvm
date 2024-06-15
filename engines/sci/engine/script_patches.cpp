@@ -7870,7 +7870,7 @@ static const SciScriptPatcherEntry lighthouseSignatures[] = {
 #endif
 
 // ===========================================================================
-// When Robin hands out the scroll to Marion and then types his name using the
+// When Robin hands out the scroll to Marian and then types his name using the
 // hand code, the German version's script contains a typo (likely a copy/paste
 // error), and the local procedure that shows each letter is called twice. The
 // The procedure expects a letter arg and returns no value, so the first call
