@@ -2196,7 +2196,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 		for (int i = 0; i < numzbuf; i++) {
 			byte *dst1, *dst2;
 
-			dst1 = dst2 = (byte *)vs->pixels + y * vs->pitch + x * 8;
+			dst1 = dst2 = (byte *)vs->getPixels(0,0) + y * vs->pitch + x * 8;
 			if (vs->hasTwoBuffers)
 				dst2 = vs->backBuf + y * vs->pitch + x * 8;
 			byte *mask_ptr = getMaskBuffer(x, y, i);
@@ -2960,8 +2960,7 @@ void GdiHE::decompressTMSK(byte *dst, const byte *tmsk, const byte *src, int hei
 
 		maskCount--;
 
-		*dst |= srcbits;
-		*dst &= ~maskbits;
+		*dst = (*dst & (~maskbits)) | (srcbits & maskbits);
 
 		dst += _numStrips;
 		height--;
