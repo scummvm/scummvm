@@ -577,7 +577,6 @@ bool qdAnimation::qda_load(const char *fname) {
 	int num_scales = 0;
 	if (version >= 103) {
 		num_scales = fh->readSint32LE();
-
 	}
 
 	char tile_flag = 0;

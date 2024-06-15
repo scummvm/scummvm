@@ -239,7 +239,6 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh) {
 
 bool grTileAnimation::load(XZipStream &fh) {
 	warning("STUB: grTileAnimation::load(XZipStream fh)");
-
 	return true;
 }
 
