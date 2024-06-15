@@ -147,8 +147,8 @@ ErrorCode CBagRestoreDialog::attach() {
 	}
 
 	// The list box must not be currently allocated
-	if (_pListBox == nullptr)
-		fatalError(ERR_UNKNOWN, "Unexpected null value found in _pListBox");
+	if (_pListBox != nullptr)
+		fatalError(ERR_UNKNOWN, "Unexpected value found in _pListBox");
 
 	// Create a list box for the user to choose the slot to save into
 	CBofRect cRect(LIST_X, LIST_Y, LIST_X + LIST_DX - 1, LIST_Y + LIST_DY - 1);
