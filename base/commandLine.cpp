@@ -566,12 +566,12 @@ bool ensureAccessibleDirectoryForPathOption(Common::FSNode &node,
 		usage("Non-existent path '%s' for option %s%c%s", option, \
 				isLongCmd ? "--" : "-", \
 				isLongCmd ? longCmd[0] : shortCmd, \
-				isLongCmd ? longCmd + 1 : ""); \
+				isLongCmd ? (longCmd) + 1 : ""); \
 	} else if (!ensureAccessibleDirectoryForPathOption(node, false, true, true)) { \
 		usage("Non-readable path '%s' for option %s%c%s", option, \
 				isLongCmd ? "--" : "-", \
 				isLongCmd ? longCmd[0] : shortCmd, \
-				isLongCmd ? longCmd + 1 : ""); \
+				isLongCmd ? (longCmd) + 1 : ""); \
 	} \
 	settings[longCmd] = node.getPath().toConfig();
 
