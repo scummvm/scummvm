@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-15 06:15+0000\n"
-"PO-Revision-Date: 2024-06-11 17:42+0000\n"
+"PO-Revision-Date: 2024-06-15 18:43+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -670,11 +670,11 @@ msgstr "Pfade"
 
 #: gui/editgamedialog.cpp:290
 msgid "Check Integrity"
-msgstr ""
+msgstr "Integrität überprüfen"
 
 #: gui/editgamedialog.cpp:290
 msgid "Perform integrity check for all game files"
-msgstr ""
+msgstr "Führt eine Integritätsprüfung für alle Spiel-Dateien durch"
 
 #: gui/editgamedialog.cpp:295
 msgid "Game Path:"
@@ -849,26 +849,25 @@ msgstr "Notizen:"
 msgid ""
 "Verifying file integrity may take a long time to complete. Please wait...\n"
 msgstr ""
+"Die Prüfung der Datei-Integrität kann einige Zeit in Anspruch nehmen. Bitte "
+"warten...\n"
 
 #: gui/integrity-dialog.cpp:104 gui/integrity-dialog.cpp:167
 msgid "Calculating file checksums..."
-msgstr ""
+msgstr "Berechne Datei-Prüfsummen..."
 
 #: gui/integrity-dialog.cpp:117
 msgid "Launch Email Client"
-msgstr ""
+msgstr "E-Mail-Client starten"
 
 #: gui/integrity-dialog.cpp:173
-#, fuzzy
-#| msgid "Scan complete!"
 msgid "Calculation complete"
-msgstr "Suchlauf abgeschlossen!"
+msgstr "Berechnung abgeschlossen"
 
 #: gui/integrity-dialog.cpp:254
-#, fuzzy, c-format
-#| msgid "Downloaded %s %S / %s %S"
+#, c-format
 msgid "Calculated %s %S / %s %S"
-msgstr "%s %S / %s %S heruntergeladen"
+msgstr "%s %S / %s %S berechnet"
 
 #: gui/integrity-dialog.cpp:499
 msgid ""
