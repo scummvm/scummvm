@@ -78,6 +78,7 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "hoyle5",          "hoyle4",          GID_HOYLE5,           true,  SCI_VERSION_2_1_MIDDLE },
 	{ "hoyle5bridge",    "",                GID_HOYLE5,           true,  SCI_VERSION_2_1_MIDDLE },
 	{ "hoyle5children",  "",                GID_HOYLE5,           true,  SCI_VERSION_2_1_MIDDLE },
+	{ "hoyle5school",    "",                GID_HOYLE5,           true,  SCI_VERSION_2_1_MIDDLE },
 	{ "hoyle5solitaire", "",                GID_HOYLE5,           true,  SCI_VERSION_2_1_MIDDLE },
 	{ "iceman",          "iceman",          GID_ICEMAN,           false, SCI_VERSION_NONE },
 	{ "inndemo",         "",                GID_INNDEMO,          false, SCI_VERSION_NONE },

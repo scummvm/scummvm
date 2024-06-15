@@ -83,6 +83,13 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 
 	switch (g_sci->getGameId()) {
 	case GID_HOYLE5:
+		if (g_sci->getResMan()->testResource(ResourceId(kResourceTypeView, 21))) {
+			// Hoyle school house math
+			_scriptWidth = 320;
+			_scriptHeight = 200;
+			break;
+		}
+		// fall-through
 	case GID_LIGHTHOUSE:
 	case GID_LSL7:
 	case GID_PHANTASMAGORIA2:

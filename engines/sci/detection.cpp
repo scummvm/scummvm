@@ -137,6 +137,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"hoyle5",          "Hoyle Classic Games"},
 	{"hoyle5bridge",    "Hoyle Bridge"},
 	{"hoyle5children",  "Hoyle Children's Collection"},
+	{"hoyle5school",    "Hoyle School House Math"},
 	{"hoyle5solitaire", "Hoyle Solitaire"},
 	{"chest",           "Inside the Chest"},	// aka Behind the Developer's Shield
 	{"gk2",             "The Beast Within: A Gabriel Knight Mystery"},
