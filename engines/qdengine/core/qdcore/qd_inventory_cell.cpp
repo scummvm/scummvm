@@ -59,7 +59,7 @@ bool qdInventoryCellType::load_script(const xml::tag *p) {
 			set_type(xml::tag_buffer(*it).get_int());
 			break;
 		case QDSCR_FILE:
-			sprite_.set_file(it -> data());
+			sprite_.set_file(Common::Path(it->data(), '\\').toString().c_str());
 			break;
 		}
 	}

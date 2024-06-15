@@ -70,7 +70,7 @@ bool qdGameObjectStatic::load_script_body(const xml::tag *p) {
 	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
 		switch (it -> ID()) {
 		case QDSCR_FILE:
-			sprite_.set_file(it -> data());
+			sprite_.set_file(Common::Path(it->data(), '\\').toString().c_str());
 			break;
 		}
 	}

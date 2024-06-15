@@ -67,7 +67,7 @@ bool qdFontInfo::load_script(const xml::tag *p) {
 			set_type(xml::tag_buffer(*it).get_int());
 			break;
 		case QDSCR_FILE:
-			set_font_file_name(it -> data());
+			set_font_file_name(Common::Path(it->data(), '\\').toString().c_str());
 			break;
 		case QDSCR_NAME:
 			set_name(it -> data());
