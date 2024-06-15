@@ -160,7 +160,8 @@ void QuickTimeParser::initParseTable() {
 		{ &QuickTimeParser::readSTTS,    MKTAG('s', 't', 't', 's') },
 		{ &QuickTimeParser::readTKHD,    MKTAG('t', 'k', 'h', 'd') },
 		{ &QuickTimeParser::readTRAK,    MKTAG('t', 'r', 'a', 'k') },
-		{ &QuickTimeParser::readLeaf,    MKTAG('u', 'd', 't', 'a') },
+		{ &QuickTimeParser::readDefault, MKTAG('u', 'd', 't', 'a') },
+		{ &QuickTimeParser::readNAVG,    MKTAG('N', 'A', 'V', 'G') },
 		{ &QuickTimeParser::readLeaf,    MKTAG('v', 'm', 'h', 'd') },
 		{ &QuickTimeParser::readCMOV,    MKTAG('c', 'm', 'o', 'v') },
 		{ &QuickTimeParser::readWAVE,    MKTAG('w', 'a', 'v', 'e') },
@@ -794,6 +795,36 @@ int QuickTimeParser::readSMI(Atom atom) {
 
 	// This atom just contains SVQ3 extra data
 	sampleDesc->_extraData = _fd->readStream(atom.size);
+
+	return 0;
+}
+
+static float readAppleFloatField(SeekableReadStream *stream) {
+	int16 a = stream->readSint16BE();
+	uint16 b = stream->readUint16BE();
+
+	float value = (float)a + (float)b / 65536.0f;
+
+	return value;
+}
+
+int QuickTimeParser::readNAVG(Atom atom) {
+	_fd->readUint16BE(); // version
+	_nav.columns = _fd->readUint16BE();
+	_nav.rows = _fd->readUint16BE();
+	_fd->readUint16BE(); // reserved
+	_nav.loop_size = _fd->readUint16BE();
+	_nav.frame_duration = _fd->readUint16BE();
+	_nav.movie_type = (MovieType)_fd->readUint16BE();
+	_nav.loop_ticks = _fd->readUint16BE();
+	_nav.field_of_view = readAppleFloatField(_fd);
+	_nav.startHPan = readAppleFloatField(_fd);
+	_nav.endHPan = readAppleFloatField(_fd);
+	_nav.endVPan = readAppleFloatField(_fd);
+	_nav.startVPan = readAppleFloatField(_fd);
+	_nav.initialHPan = readAppleFloatField(_fd);
+	_nav.initialVPan = readAppleFloatField(_fd);
+	_fd->readUint32BE(); // reserved2
 
 	return 0;
 }

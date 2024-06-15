@@ -183,6 +183,32 @@ protected:
 		int16 nlvlTo;
 	};
 
+	enum class MovieType {
+		kStandardObject = 1,
+		kOldNavigableMovieScene,
+		kObjectInScene
+	};
+
+	struct Navigation {
+		uint16 columns;
+		uint16 rows;
+		uint16 loop_size;      // Number of frames shot at each position
+		uint16 frame_duration;
+
+		MovieType movie_type;
+
+		uint16 loop_ticks;	 // Number of ticks before next frame of loop is displayed
+
+		float field_of_view;
+
+		float startHPan;
+		float startVPan;
+		float endHPan;
+		float endVPan;
+		float initialHPan;
+		float initialVPan;
+	};
+
 	virtual SampleDesc *readSampleDesc(Track *track, uint32 format, uint32 descSize) = 0;
 
 	uint32 _timeScale;      // movie time
@@ -190,6 +216,7 @@ protected:
 	Rational _scaleFactorX;
 	Rational _scaleFactorY;
 	Array<Track *> _tracks;
+	Navigation _nav;
 
 	void init();
 
@@ -233,6 +260,7 @@ private:
 	int readWAVE(Atom atom);
 	int readESDS(Atom atom);
 	int readSMI(Atom atom);
+	int readNAVG(Atom atom);
 };
 
 /** @} */
