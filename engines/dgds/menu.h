@@ -78,7 +78,9 @@ public:
 
 	void setScreenBuffer();
 	void drawMenu(MenuId menu = kMenuMain);
-	void handleMenu(Common::Point &mouse);
+	void onMouseLUp(const Common::Point &mouse);
+	void onMouseLDown(const Common::Point &mouse);
+	void onMouseMove(const Common::Point &mouse);
 	bool menuShown() const { return _curMenu != kMenuNone; }
 	void hideMenu() { _curMenu = kMenuNone; }
 
@@ -87,10 +89,14 @@ public:
 	}
 
 private:
-	int16 getClickedMenuItem(Common::Point mouseClick);
+	Gadget *getClickedMenuItem(const Common::Point &mouseClick);
 	void drawMenuText(Graphics::ManagedSurface &dst);
 	void toggleGadget(int16 gadgetId, bool enable);
+	void configureGadget(MenuId menu, Gadget *gadget);
 	REQFileData _reqData;
+
+	SliderGadget *_dragGadget;
+	Common::Point _dragStartPt;
 };
 
 } // End of namespace Dgds

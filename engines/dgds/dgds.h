@@ -107,6 +107,7 @@ private:
 	// Settings which we should integrate with ScummVM settings UI
 	DgdsDetailLevel _detailLevel;
 	int _textSpeed;
+	int _difficulty;
 
 	bool _justChangedScene1;
 	bool _justChangedScene2;
@@ -151,8 +152,13 @@ public:
 	Inventory *getInventory() { return _inventory; }
 	void setMouseCursor(uint num);
 
-	DgdsDetailLevel getDetailLevel() const { return _detailLevel; }
 	int getTextSpeed() const { return _textSpeed; }
+	void setTextSpeed(int16 speed) { _textSpeed = speed; }
+	int16 getDifficulty() const { return _difficulty; }
+	void setDetailLevel(DgdsDetailLevel level) { _detailLevel = level; }
+	DgdsDetailLevel getDetailLevel() const { return _detailLevel; }
+	void setDifficulty(int16 difficulty) { _difficulty = difficulty; }
+
 	void setShowClock(bool val);
 	ADSInterpreter *adsInterpreter() { return _adsInterp; }
 	bool justChangedScene1() const { return _justChangedScene1; }

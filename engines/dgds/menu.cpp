@@ -36,7 +36,7 @@
 
 namespace Dgds {
 
-
+// TODO: These are the IDs for Dragon, this code needs updates for China/Beamish/etc
 enum MenuButtonIds {
 	kMenuMainPlay = 120,
 	kMenuMainControls = 20,
@@ -47,6 +47,10 @@ enum MenuButtonIds {
 
 	kMenuControlsVCR = 127,
 	kMenuControlsPlay = 128,
+
+	kMenuSliderControlsDifficulty = 123,
+	kMenuSliderControlsTextSpeed = 125,
+	kMenuSliderControlsDetailLevel = 131,
 
 	kMenuOptionsJoystickOnOff = 139,
 	kMenuOptionsMouseOnOff = 138,
@@ -99,7 +103,7 @@ enum MenuButtonIds {
 	kMenuGameOverRestore = 170,
 };
 
-Menu::Menu() : _curMenu(kMenuNone) {
+Menu::Menu() : _curMenu(kMenuNone), _dragGadget(nullptr) {
 	_screenBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 }
 
@@ -113,7 +117,33 @@ void Menu::setScreenBuffer() {
 	g_system->unlockScreen();
 }
 
+void Menu::configureGadget(MenuId menu, Gadget* gadget) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	// a bit of a hack - set up the gadget with the correct value before we draw it.
+	if (menu == kMenuControls) {
+		SliderGadget *slider = dynamic_cast<SliderGadget *>(gadget);
+		switch (gadget->_gadgetNo) {
+		case kMenuSliderControlsDifficulty:
+			slider->setSteps(3, false);
+			slider->setValue(engine->getDifficulty()); // TODO: set a difficulty value
+			break;
+		case kMenuSliderControlsTextSpeed:
+			slider->setSteps(10, false);
+			slider->setValue(9 - engine->getTextSpeed());
+			break;
+		case kMenuSliderControlsDetailLevel:
+			slider->setSteps(2, true);
+			slider->setValue(engine->getDetailLevel());
+			break;
+		default:
+			break;
+			// do nothing.
+		}
+	}
+}
+
 void Menu::drawMenu(MenuId menu) {
+	bool firstDraw = (_curMenu != menu);
 	_curMenu = menu;
 
 	Common::Array<Common::SharedPtr<Gadget> > gadgets = _reqData._requests[_curMenu]._gadgets;
@@ -129,8 +159,11 @@ void Menu::drawMenu(MenuId menu) {
 
 	for (Common::SharedPtr<Gadget> &gptr : gadgets) {
 		Gadget *gadget = gptr.get();
-		if (gadget->_gadgetType == kGadgetButton || gadget->_gadgetType == kGadgetSlider)
+		if (gadget->_gadgetType == kGadgetButton || gadget->_gadgetType == kGadgetSlider) {
+			if (firstDraw)
+				configureGadget(menu, gadget);
 			gadget->draw(&managed);
+		}
 	}
 
 	drawMenuText(managed);
@@ -165,34 +198,74 @@ void Menu::drawMenuText(Graphics::ManagedSurface &dst) {
 	}
 }
 
-int16 Menu::getClickedMenuItem(Common::Point mouseClick) {
+Gadget *Menu::getClickedMenuItem(const Common::Point &mouseClick) {
 	if (_curMenu == kMenuNone)
-		return -1;
+		return nullptr;
 
 	Common::Array<Common::SharedPtr<Gadget> > gadgets = _reqData._requests[_curMenu]._gadgets;
 
 	for (Common::SharedPtr<Gadget> &gptr : gadgets) {
 		Gadget *gadget = gptr.get();
 		if (gadget->_gadgetType == kGadgetButton || gadget->_gadgetType == kGadgetSlider) {
-			if (gadget->containsPoint(mouseClick))
-				return (int16)gadget->_gadgetNo;
+			if (gadget->containsPoint(mouseClick)) {
+				return gadget;
+			}
 		}
 	}
 
-	return -1;
+	return nullptr;
 }
 
-void Menu::handleMenu(Common::Point &mouse) {
-	const int16 clickedMenuItem = getClickedMenuItem(mouse);
+void Menu::onMouseLDown(const Common::Point &mouse) {
+	SliderGadget *slider = dynamic_cast<SliderGadget *>(getClickedMenuItem(mouse));
+	if (slider) {
+		_dragGadget = slider;
+		_dragStartPt = mouse;
+	}
+}
+
+void Menu::onMouseMove(const Common::Point &mouse) {
+	if (!_dragGadget)
+		return;
+	_dragGadget->onDrag(mouse);
+	drawMenu(_curMenu);
+}
+
+void Menu::onMouseLUp(const Common::Point &mouse) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	if (_dragGadget && mouse != _dragStartPt) {
+		int16 setting = _dragGadget->onDragFinish(mouse);
+		switch (_dragGadget->_gadgetNo) {
+		case kMenuSliderControlsDifficulty:
+			engine->setDifficulty(setting);
+			break;
+		case kMenuSliderControlsTextSpeed:
+			engine->setTextSpeed(9 - setting);
+			break;
+		case kMenuSliderControlsDetailLevel:
+			engine->setDetailLevel(static_cast<DgdsDetailLevel>(setting));
+			break;
+		}
+		drawMenu(_curMenu);
+		_dragGadget = nullptr;
+		_dragStartPt = Common::Point();
+		return;
+	}
+	_dragGadget = nullptr;
+
+	Gadget *gadget = getClickedMenuItem(mouse);
+	if (!gadget)
+		return;
+
+	int16 clickedMenuItem = gadget->_gadgetNo;
 
 	// Click animation
 	// TODO: Handle on/off buttons
-	if (clickedMenuItem >= 0) {
-		toggleGadget(clickedMenuItem, false);
+	if (dynamic_cast<ButtonGadget *>(gadget)) {
+		gadget->toggle(false);
 		drawMenu(_curMenu);
 		g_system->delayMillis(500);
-		toggleGadget(clickedMenuItem, true);
+		gadget->toggle(true);
 	}
 
 	switch (clickedMenuItem) {
@@ -300,6 +373,25 @@ void Menu::handleMenu(Common::Point &mouse) {
 	case kMenuGameOverRestart:
 		drawMenu(kMenuRestart);
 		break;
+	case kMenuSliderControlsDifficulty: {
+		int16 setting = dynamic_cast<SliderGadget *>(gadget)->onClick(mouse);
+		engine->setDifficulty(setting);
+		// redraw for update.
+		drawMenu(_curMenu);
+		break;
+	}
+	case kMenuSliderControlsTextSpeed: {
+		int16 setting = dynamic_cast<SliderGadget *>(gadget)->onClick(mouse);
+		engine->setTextSpeed(9 - setting);
+		drawMenu(_curMenu);
+		break;
+	}
+	case kMenuSliderControlsDetailLevel:  {
+		int16 setting = dynamic_cast<SliderGadget *>(gadget)->onClick(mouse);
+		engine->setDetailLevel(static_cast<DgdsDetailLevel>(setting));
+		drawMenu(_curMenu);
+		break;
+	}
 	default:
 		debug("Clicked ID %d", clickedMenuItem);
 		break;
