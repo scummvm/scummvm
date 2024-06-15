@@ -89,7 +89,6 @@ bool qdTextDB::load(const char *file_name, const char *comments_file_name, bool 
 
 bool qdTextDB::load(XStream &fh, const char *comments_file_name, bool clear_old_texts) {
 	warning("STUB: qdTextDB::load(XStream fh: %s)", comments_file_name);
-
 	return true;
 }
 
@@ -99,26 +98,20 @@ bool qdTextDB::load(Common::SeekableReadStream *fh, const char *commentsFileName
 	}
 
 	int32  textCount = fh->readUint32LE();
-	Common::String idStr("", 1024);
-	Common::String txtStr("", 1024);
-	Common::String sndStr("", 1024);
 
 	for (int i = 0; i < textCount; i++) {
-		int32 idLength = fh->readUint32LE();
-		int txtlength = fh->readUint32LE();
-		int sndLength = fh->readUint32LE();
+		int32 idLength = fh->readSint32LE();
+		Common::String idStr = fh->readString(0, idLength);
 
-		fh->read(&idStr, idLength);
-		fh->read(&txtStr, txtlength);
-		fh->read(&sndStr, sndLength);
+		int32 txtlength = fh->readSint32LE();
+		Common::String txtStr = fh->readString(0, txtlength);
 
-		warning("idStr: %s, txtStr: %s, sndStr: %s", idStr.c_str(), txtStr.c_str(), sndStr.c_str());
+		int32 sndLength = fh->readSint32LE();
+		Common::String sndStr = fh->readString(0, sndLength);
 
 		texts_.insert(qdTextMap::value_type(idStr.c_str(), qdText(txtStr.c_str(), sndStr.c_str())));
 
 	}
-
-	delete fh;
 
 	if (commentsFileName) {
 		Common::File fh1;
@@ -129,13 +122,14 @@ bool qdTextDB::load(Common::SeekableReadStream *fh, const char *commentsFileName
 		textCount = fh1.readUint32LE();
 		for (int i = 0; i < textCount; i++) {
 
-			int32 idLength = fh1.readUint32LE();
-			int txtLength = fh1.readUint32LE();
-			int sndLength = fh1.readUint32LE();
+			int32 idLength = fh->readSint32LE();
+			Common::String idStr = fh->readString(0, idLength);
 
-			fh1.read(&idStr, idLength);
-			fh1.read(&txtStr, txtLength);
-			fh1.read(&sndStr, sndLength);
+			int32 txtlength = fh->readSint32LE();
+			Common::String txtStr = fh->readString(0, txtlength);
+
+			int32 sndLength = fh->readSint32LE();
+			Common::String sndStr = fh->readString(0, sndLength);
 
 			qdTextMap::iterator it = texts_.find(idStr.c_str());
 			if (it != texts_.end())
@@ -146,71 +140,6 @@ bool qdTextDB::load(Common::SeekableReadStream *fh, const char *commentsFileName
 
 bool qdTextDB::load(XZipStream &fh, const char *comments_file_name, bool clear_old_texts) {
 	warning("STUB: qdTextDB::load(XZipStream fh: %s)", comments_file_name);
-	if (clear_old_texts) clear();
-
-	int text_cnt;
-	fh > text_cnt;
-
-	std::string id_str(1024, 0);
-	std::string txt_str(1024, 0);
-	std::string snd_str(1024, 0);
-	for (int i = 0; i < text_cnt; i++) {
-		int id_length;
-		fh > id_length;
-
-		id_str.resize(id_length);
-		fh.read(&*id_str.begin(), id_length);
-
-		int txt_length;
-		fh > txt_length;
-
-		txt_str.resize(txt_length);
-		fh.read(&*txt_str.begin(), txt_length);
-
-		int snd_length;
-		fh > snd_length;
-
-		snd_str.resize(snd_length);
-		fh.read(&*snd_str.begin(), snd_length);
-
-		texts_.insert(qdTextMap::value_type(id_str.c_str(), qdText(txt_str.c_str(), snd_str.c_str())));
-	}
-
-	fh.close();
-
-#ifndef _FINAL_VERSION_
-	if (comments_file_name) {
-		XStream fh1;
-		if (!fh1.open(comments_file_name, XS_IN))
-			return true;
-
-		fh1 > text_cnt;
-		for (int i = 0; i < text_cnt; i++) {
-			int id_length;
-			fh1 > id_length;
-
-			id_str.resize(id_length);
-			fh1.read(&*id_str.begin(), id_length);
-
-			int txt_length;
-			fh1 > txt_length;
-
-			txt_str.resize(txt_length);
-			fh1.read(&*txt_str.begin(), txt_length);
-
-			int snd_length;
-			fh1 > snd_length;
-
-			snd_str.resize(snd_length);
-			fh1.read(&*snd_str.begin(), snd_length);
-
-			qdTextMap::iterator it = texts_.find(id_str.c_str());
-			if (it != texts_.end())
-				it->second.comment_ = txt_str.c_str();
-		}
-	}
-#endif
-
 	return true;
 }
 

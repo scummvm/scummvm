@@ -475,8 +475,13 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 
 	if (!texts_database_.empty()) {
 		Common::SeekableReadStream *fh;
-		if (qdFileManager::instance().open_file(&fh, texts_database_.c_str(), false))
+		Common::Path textsdbPath(texts_database_.c_str(), '\\');
+
+		if (qdFileManager::instance().open_file(&fh, textsdbPath.toString().c_str(), false)) {
 			qdTextDB::instance().load(fh);
+		}
+
+		delete fh;
 	} else
 		qdTextDB::instance().clear();
 
