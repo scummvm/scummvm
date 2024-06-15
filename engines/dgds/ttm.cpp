@@ -318,8 +318,8 @@ void TTMInterpreter::doWipeOp(uint16 code, TTMEnviro &env, struct TTMSeq &seq, c
 	case 0xa030:	// Copy from outside to middle
 	case 0xa090:	// Copy from middle to outside
 	{
-		uint halfwidth = r.width() / 2;
-		uint halfheight = r.height() / 2;
+		int halfwidth = r.width() / 2;
+		int halfheight = r.height() / 2;
 		uint maxside = MAX(halfheight, halfwidth);
 
 		long widthScale = 1000 * halfwidth / maxside;
@@ -336,10 +336,10 @@ void TTMInterpreter::doWipeOp(uint16 code, TTMEnviro &env, struct TTMSeq &seq, c
 					return;
 				i++;
 			}
-			uint xoff = widthScale * i / 1000;
-			uint yoff = heightScale * i / 1000;
-			uint16 xinside = (r.left + halfwidth) - xoff;
-			uint16 yinside = (r.top + halfheight) - yoff;
+			int xoff = widthScale * i / 1000;
+			int yoff = heightScale * i / 1000;
+			int16 xinside = MAX((r.left + halfwidth) - xoff, 0);
+			int16 yinside = MAX((r.top + halfheight) - yoff, 0);
 			uint16 width = xoff * 2;
 			uint16 height = yoff * 2;
 			if (code == 0xa030) {
@@ -371,7 +371,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 			break;
 		//
 		// This appears in the credits, intro sequence, and the
-		// "meanwhile" event with the factory in DRAGON.  Seems it
+		// "meanwhile" event with the factory in DRAGON.  It
 		// should reload the background image to clear any previous 0020
 		// event, and then save the current FG over it.
 		// Credits   - (no scr loaded) Store large image on black bg after loading and before txt scroll
@@ -475,7 +475,6 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		if (seq._executed) // this is a one-shot op.
 			break;
 		uint sleep = _vm->getRandom().getRandomNumberRng(ivals[0], ivals[1]);
-		// TODO: do same time fix as for 0x1020
 		_vm->adsInterpreter()->setScriptDelay((int)(sleep * MS_PER_FRAME));
 		break;
 	}
@@ -642,7 +641,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 			warning("Trying to draw image %d in env %d which is not loaded", seq._currentBmpId, env._enviro);
 		break;
 	}
-	case 0xa600: { // DRAW GETPUT
+	case 0xa600: { // DRAW GETPUT: i:int
 		if (seq._executed) // this is a one-shot op.
 			break;
 		int16 i = ivals[0];
@@ -749,9 +748,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 
 bool TTMInterpreter::run(TTMEnviro &env, struct TTMSeq &seq) {
 	Common::SeekableReadStream *scr = env.scr;
-	if (!scr)
-		return false;
-	if (scr->pos() >= scr->size())
+	if (!scr || scr->pos() >= scr->size())
 		return false;
 
 	debug(10, "TTM: Run env %d seq %d (%s) frame %d (scr offset %d, %s)", seq._enviro, seq._seqNum,

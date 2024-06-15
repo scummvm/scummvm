@@ -1613,7 +1613,7 @@ void GDSScene::drawItems(Graphics::ManagedSurface &surf) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	const Common::SharedPtr<Image> &icons = engine->getIcons();
 	int currentScene = engine->getScene()->getNum();
-	if (icons->loadedFrameCount() < 3)
+	if (!icons || icons->loadedFrameCount() < 3)
 		return;
 
 	int xoff = 20;

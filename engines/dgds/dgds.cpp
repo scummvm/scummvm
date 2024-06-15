@@ -352,12 +352,14 @@ void DgdsEngine::loadGameFiles() {
 		_gameGlobals = new DragonGlobals(_clock);
 		_gamePals->loadPalette("NORMAL.PAL");
 		_adsInterp->load("CESDEMO.ADS");
+		_adsInterp->segmentOrState(1, 3);
 		break;
 	case GID_COMINGSOON:
 		// TODO: Create a better type for this..
 		_gameGlobals = new DragonGlobals(_clock);
 		_gamePals->loadPalette("DYNAMIX.PAL");
 		_adsInterp->load("DEMO.ADS");
+		_adsInterp->segmentOrState(1, 3);
 		break;
 	default:
 		error("Unsupported game type in loadGameFiles");
@@ -469,111 +471,105 @@ Common::Error DgdsEngine::run() {
 			continue;
 		}
 
-		if (getGameId() == GID_DRAGON || getGameId() == GID_CHINA) {
-			_scene->checkForClearedDialogs();
+		_scene->checkForClearedDialogs();
 
-			_gdsScene->runPreTickOps();
-			_scene->runPreTickOps();
+		_gdsScene->runPreTickOps();
+		_scene->runPreTickOps();
 
-			_compositionBuffer.blitFrom(_backgroundBuffer);
+		_compositionBuffer.blitFrom(_backgroundBuffer);
 
-			if (_inventory->isOpen() && _scene->getNum() == 2) {
-				int invCount = _gdsScene->countItemsInScene2();
-				_inventory->draw(_compositionBuffer, invCount);
-			}
+		if (_inventory->isOpen() && _scene->getNum() == 2) {
+			int invCount = _gdsScene->countItemsInScene2();
+			_inventory->draw(_compositionBuffer, invCount);
+		}
 
-			_compositionBuffer.transBlitFrom(_storedAreaBuffer);
+		_compositionBuffer.transBlitFrom(_storedAreaBuffer);
 
-			_scene->drawActiveDialogBgs(&_compositionBuffer);
+		_scene->drawActiveDialogBgs(&_compositionBuffer);
 
-			if (_scene->getNum() != 2 || _inventory->isZoomVisible())
-				_adsInterp->run();
+		if (_scene->getNum() != 2 || _inventory->isZoomVisible())
+			_adsInterp->run();
 
-			if (mouseEvent != Common::EVENT_INVALID) {
-				if (_inventory->isOpen()) {
-					switch (mouseEvent) {
-					case Common::EVENT_MOUSEMOVE:
-						_inventory->mouseMoved(_lastMouse);
-						break;
-					case Common::EVENT_LBUTTONDOWN:
-						_inventory->mouseLDown(_lastMouse);
-						break;
-					case Common::EVENT_LBUTTONUP:
-						_inventory->mouseLUp(_lastMouse);
-						break;
-					case Common::EVENT_RBUTTONUP:
-						_inventory->mouseRUp(_lastMouse);
-						break;
-					default:
-						break;
-					}
-				} else {
-					switch (mouseEvent) {
-					case Common::EVENT_MOUSEMOVE:
-						_scene->mouseMoved(_lastMouse);
-						break;
-					case Common::EVENT_LBUTTONDOWN:
-						_scene->mouseLDown(_lastMouse);
-						break;
-					case Common::EVENT_LBUTTONUP:
-						_scene->mouseLUp(_lastMouse);
-						break;
-					case Common::EVENT_RBUTTONUP:
-						_scene->mouseRUp(_lastMouse);
-						break;
-					default:
-						break;
-					}
+		if (mouseEvent != Common::EVENT_INVALID) {
+			if (_inventory->isOpen()) {
+				switch (mouseEvent) {
+				case Common::EVENT_MOUSEMOVE:
+					_inventory->mouseMoved(_lastMouse);
+					break;
+				case Common::EVENT_LBUTTONDOWN:
+					_inventory->mouseLDown(_lastMouse);
+					break;
+				case Common::EVENT_LBUTTONUP:
+					_inventory->mouseLUp(_lastMouse);
+					break;
+				case Common::EVENT_RBUTTONUP:
+					_inventory->mouseRUp(_lastMouse);
+					break;
+				default:
+					break;
+				}
+			} else {
+				switch (mouseEvent) {
+				case Common::EVENT_MOUSEMOVE:
+					_scene->mouseMoved(_lastMouse);
+					break;
+				case Common::EVENT_LBUTTONDOWN:
+					_scene->mouseLDown(_lastMouse);
+					break;
+				case Common::EVENT_LBUTTONUP:
+					_scene->mouseLUp(_lastMouse);
+					break;
+				case Common::EVENT_RBUTTONUP:
+					_scene->mouseRUp(_lastMouse);
+					break;
+				default:
+					break;
 				}
 			}
+		}
 
-			// TODO: Hard-coded logic to match Rise of the Dragon, check others
-			if (getGameId() != GID_DRAGON || _scene->getNum() != 55)
-				_gdsScene->runPostTickOps();
+		// TODO: Hard-coded logic to match Rise of the Dragon, check others
+		if (getGameId() != GID_DRAGON || _scene->getNum() != 55)
+			_gdsScene->runPostTickOps();
 
-			_scene->runPostTickOps();
-			_scene->checkTriggers();
+		_scene->runPostTickOps();
+		_scene->checkTriggers();
 
 #ifdef DUMP_FRAME_DATA
-			/* For debugging, dump the frame contents.. */
-			{
-				Common::DumpFile outf;
-				uint32 now = g_engine->getTotalPlayTime();
+		/* For debugging, dump the frame contents.. */
+		{
+			Common::DumpFile outf;
+			uint32 now = g_engine->getTotalPlayTime();
 
-				byte palbuf[768];
-				g_system->getPaletteManager()->grabPalette(palbuf, 0, 256);
+			byte palbuf[768];
+			g_system->getPaletteManager()->grabPalette(palbuf, 0, 256);
 
-				outf.open(Common::Path(Common::String::format("/tmp/%07d-back.png", now)));
-				::Image::writePNG(outf, *_backgroundBuffer.surfacePtr(), palbuf);
-				outf.close();
+			outf.open(Common::Path(Common::String::format("/tmp/%07d-back.png", now)));
+			::Image::writePNG(outf, *_backgroundBuffer.surfacePtr(), palbuf);
+			outf.close();
 
-				outf.open(Common::Path(Common::String::format("/tmp/%07d-stor.png", now)));
-				::Image::writePNG(outf, *_storedAreaBuffer.surfacePtr(), palbuf);
-				outf.close();
+			outf.open(Common::Path(Common::String::format("/tmp/%07d-stor.png", now)));
+			::Image::writePNG(outf, *_storedAreaBuffer.surfacePtr(), palbuf);
+			outf.close();
 
-				outf.open(Common::Path(Common::String::format("/tmp/%07d-comp.png", now)));
-				::Image::writePNG(outf, *_compositionBuffer.surfacePtr(), palbuf);
-				outf.close();
-			}
+			outf.open(Common::Path(Common::String::format("/tmp/%07d-comp.png", now)));
+			::Image::writePNG(outf, *_compositionBuffer.surfacePtr(), palbuf);
+			outf.close();
+		}
 #endif
 
-			if (!_inventory->isOpen()) {
-				_gdsScene->drawItems(_compositionBuffer);
-				checkDrawInventoryButton();
-			}
-
-			_clock.draw(_compositionBuffer);
-			bool haveActiveDialog = _scene->checkDialogActive();
-
-			_scene->drawAndUpdateDialogs(&_compositionBuffer);
-
-			bool gameRunning = (!haveActiveDialog && _gameGlobals->getGlobal(0x57) /* TODO: && _dragItem == nullptr*/);
-			_clock.update(gameRunning);
-
-		} else if (getGameId() == GID_BEAMISH) {
-			if (!_adsInterp->run())
-				return Common::kNoError;
+		if (!_inventory->isOpen()) {
+			_gdsScene->drawItems(_compositionBuffer);
+			checkDrawInventoryButton();
 		}
+
+		_clock.draw(_compositionBuffer);
+		bool haveActiveDialog = _scene->checkDialogActive();
+
+		_scene->drawAndUpdateDialogs(&_compositionBuffer);
+
+		bool gameRunning = (!haveActiveDialog && _gameGlobals->getGlobal(0x57) /* TODO: && _dragItem == nullptr*/);
+		_clock.update(gameRunning);
 
 		g_system->copyRectToScreen(_compositionBuffer.getPixels(), SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 		g_system->updateScreen();

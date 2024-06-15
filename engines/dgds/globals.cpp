@@ -147,7 +147,7 @@ static byte dragonDataTable[] = {
 
 DragonDataTable::DragonDataTable() : _row(0), _col(0), _divBy4(0), _output(0) {}
 
-int DragonDataTable::getOffsetForVal(uint16 val) {
+int DragonDataTable::getOffsetForVal(uint16 val) const {
 	for (int i = 0; i < ARRAYSIZE(dragonDataTableOffsets); i++) {
 		if (dragonDataTableOffsets[i] == val)
 			return i;

@@ -79,12 +79,8 @@ bool ADSInterpreter::load(const Common::String &filename) {
 		detailfile = filename;
 
 	debug("ADSInterpreter: load %s", detailfile.c_str());
-	/* FIXME: quick hack - never reuse data.
-	if (_adsTexts.contains(detailfile)) {
-		_adsData = &(_adsTexts.getVal(detailfile));
-		return true;
-	}*/
 
+	// Reset the state
 	_adsTexts.setVal(detailfile, ADSData());
 	_adsData = &(_adsTexts.getVal(detailfile));
 
@@ -384,7 +380,7 @@ bool ADSInterpreter::handleLogicOp(uint16 code, Common::SeekableReadStream *scr)
 				return false;
 			}
 		} else {
-			// TODO: not actually enviro I think? for now just read it.
+			// TODO: this value is not actually enviro? for now just read it.
 			enviro = scr->readUint16LE();
 		}
 
@@ -446,6 +442,7 @@ int16 ADSInterpreter::randomOpGetProportion(uint16 code, Common::SeekableReadStr
 void ADSInterpreter::handleRandomOp(uint16 code, Common::SeekableReadStream *scr) {
 	int16 max = 0;
 	int64 startpos = scr->pos();
+
 	// Collect the random proportions
 	code = scr->readUint16LE();
 	while (code != 0 && code != 0x30ff && scr->pos() < scr->size()) {
@@ -494,36 +491,35 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		debug(10, "ADS 0x%04x: init", code);
 		// "init".  0x0005 can be used for searching for next thing.
 		break;
-	case 0x1010: // if unknown, 2 params
-	case 0x1020: // if unknown, 2 params
-	case 0x1030: // if unknown, 2 params
-	case 0x1040: // if unknown, 2 params
-	case 0x1050: // if unknown, 2 params
-	case 0x1060: // if unknown, 2 params
-	case 0x1070: // if unknown, 2 params
-	case 0x1080: // if current seq countdown??, 1 param
-	case 0x1090: // if ??? ???
+	case 0x1010: // WHILE runtype, 2 params
+	case 0x1020: // WHILE not runtype, 2 params
+	case 0x1030: // WHILE not played, 2 params
+	case 0x1040: // WHILE played, 2 params
+	case 0x1050: // WHILE finished, 2 params
+	case 0x1060: // WHILE not running, 2 params
+	case 0x1070: // WHILE running, 2 params
+	case 0x1080: // WHILE ??, 1 param (HOC+ only)
+	case 0x1090: // WHILE ??, 1 param (HOC+ only)
 	case 0x1310: // IF runtype 5, 2 params
 	case 0x1320: // IF not runtype 5, 2 params
-	case 0x1330: // IF_NOT_PLAYED, 2 params
-	case 0x1340: // IF_PLAYED, 2 params
-	case 0x1350: // IF_FINISHED, 2 params
-	case 0x1360: // IF_NOT_RUNNING, 2 params
-	case 0x1370: // IF_RUNNING, 2 params
-	case 0x1380: // IF_??????, 1 param (HOC+ only)
-	case 0x1390: // IF_??????, 1 param (HOC+ only)
+	case 0x1330: // IF NOT_PLAYED, 2 params
+	case 0x1340: // IF PLAYED, 2 params
+	case 0x1350: // IF FINISHED, 2 params
+	case 0x1360: // IF NOT_RUNNING, 2 params
+	case 0x1370: // IF RUNNING, 2 params
+	case 0x1380: // IF ??????, 1 param (HOC+ only)
+	case 0x1390: // IF ??????, 1 param (HOC+ only)
 		return handleLogicOp(code, scr);
-	case 0x1500: // ? IF ?, 0 params
-		//debug("ADS: Unimplemented ADS branch logic opcode 0x1500");
+	case 0x1500: // Skip to end-if, 0 params
 		debug(10, "ADS 0x%04x: skip to end if", code);
 		skipToEndIf();
 		_adsData->_hitBranchOp = true;
 		return true;
-	case 0x1510: // PLAY_SCENEENDIF? 0 params
+	case 0x1510: // END IF 0 params
 		debug(10, "ADS 0x%04x: hit branch op endif", code);
 		_adsData->_hitBranchOp = true;
 		return true;
-	case 0x1520: // PLAY_SCENE_ENDWHILE?, 0 params
+	case 0x1520: // END WHILE 0 params
 		debug(10, "ADS 0x%04x: hit branch op endwhile", code);
 		_adsData->_hitBranchOp = true;
 		return false;
@@ -560,7 +556,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		seq->_runPlayed++;
 		break;
 	}
-	case 0x2010: { // STOP_SCENE, 3 params (ttmenv, ttmseq, proportion)
+	case 0x2010: { // STOP SCENE, 3 params (ttmenv, ttmseq, proportion)
 		enviro = scr->readUint16LE();
 		seqnum = scr->readUint16LE();
 		uint16 unk = scr->readUint16LE();
@@ -900,6 +896,7 @@ int ADSInterpreter::numArgs(uint16 opcode) const {
 	// TODO: This list is from DRAGON, there may be more entries in newer games.
 	switch (opcode) {
 	case 0x1080:
+	case 0x1090:
 	case 0x1380:
 	case 0x1390:
 	case 0x3020:
