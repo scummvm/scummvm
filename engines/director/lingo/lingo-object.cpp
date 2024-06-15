@@ -204,7 +204,7 @@ static struct XLibProto {
 	{ BackdropXObj::fileNames,			BackdropXObj::open,			BackdropXObj::close,		kXObj,					400 },	// D4
 	{ BarakeObj::fileNames,				BarakeObj::open,			BarakeObj::close,			kXObj,					400 },	// D4
 	{ BatQT::fileNames,					BatQT::open,				BatQT::close,				kXObj,					400 },	// D4
-	{ BIMXObj::fileNames,					BIMXObj::open,			BIMXObj::close,			kXObj,					400 },	// D4
+	{ BIMXObj::fileNames,				BIMXObj::open,				BIMXObj::close,				kXObj,					400 },	// D4
 	{ BlitPictXObj::fileNames,			BlitPictXObj::open,			BlitPictXObj::close,		kXObj,					400 },	// D4
 	{ CDROMXObj::fileNames,				CDROMXObj::open,			CDROMXObj::close,			kXObj,					200 },	// D2
 	{ CloseBleedWindowXCMD::fileNames,	CloseBleedWindowXCMD::open,	CloseBleedWindowXCMD::close,kXObj,					300 },	// D3
@@ -212,7 +212,7 @@ static struct XLibProto {
 	{ ColorCursorXObj::fileNames,		ColorCursorXObj::open,		ColorCursorXObj::close,		kXObj,					400 },	// D4
 	{ ConsumerXObj::fileNames,			ConsumerXObj::open,			ConsumerXObj::close,		kXObj,					400 },	// D4
 	{ CursorXObj::fileNames,			CursorXObj::open,			CursorXObj::close,			kXObj,					400 },	// D4
-	{ DLLGlueXObj::fileNames,			DLLGlueXObj::open,			DLLGlueXObj::close,		kXObj,					400 },	// D4
+	{ DLLGlueXObj::fileNames,			DLLGlueXObj::open,			DLLGlueXObj::close,			kXObj,					400 },	// D4
 	{ DPWAVIXObj::fileNames,			DPWAVIXObj::open,			DPWAVIXObj::close,			kXObj,					300 },	// D3
 	{ DPWQTWXObj::fileNames,			DPWQTWXObj::open,			DPWQTWXObj::close,			kXObj,					300 },	// D3
 	{ DarkenScreen::fileNames,			DarkenScreen::open,			DarkenScreen::close,		kXObj,					300 },	// D3
@@ -241,13 +241,13 @@ static struct XLibProto {
 	{ GetScreenSizeXFCN::fileNames,		GetScreenSizeXFCN::open,	GetScreenSizeXFCN::close,	kXObj,					300 },	// D3
 	{ GpidXObj::fileNames,				GpidXObj::open,				GpidXObj::close,			kXObj,					400 },	// D4
 	{ HitMap::fileNames,				HitMap::open,				HitMap::close,				kXObj,					400 },	// D4
-	{ InstObjXObj::fileNames,			InstObjXObj::open,			InstObjXObj::close,		kXObj,					400 },	// D4
+	{ InstObjXObj::fileNames,			InstObjXObj::open,			InstObjXObj::close,			kXObj,					400 },	// D4
 	{ IsCD::fileNames,					IsCD::open,					IsCD::close,				kXObj,					300 },	// D3
 	{ IsPippin::fileNames,				IsPippin::open,				IsPippin::close,			kXObj,					400 },	// D4
 	{ JITDraw3XObj::fileNames,			JITDraw3XObj::open,			JITDraw3XObj::close,		kXObj,					400 },	// D4
 	{ JourneyWareXINIXObj::fileNames,	JourneyWareXINIXObj::open,	JourneyWareXINIXObj::close,	kXObj,					400 },	// D4
 	{ LabelDrvXObj::fileNames,			LabelDrvXObj::open,			LabelDrvXObj::close,		kXObj,					400 },	// D4
-	{ MMovieXObj::fileNames,			MMovieXObj::open,			MMovieXObj::close,		kXObj,					400 },	// D4
+	{ MMovieXObj::fileNames,			MMovieXObj::open,			MMovieXObj::close,			kXObj,					400 },	// D4
 	{ ManiacBgXObj::fileNames,			ManiacBgXObj::open,			ManiacBgXObj::close,		kXObj,					300 },	// D3
 	{ MapNavigatorXObj::fileNames,		MapNavigatorXObj::open,		MapNavigatorXObj::close,	kXObj,					400 },	// D4
 	{ MemCheckXObj::fileNames,			MemCheckXObj::open,			MemCheckXObj::close,		kXObj,					400 },	// D4
