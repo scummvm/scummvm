@@ -52,6 +52,19 @@ class GameDatabase;
 class MusicPlayer;
 class MadeConsole;
 
+enum MADEAction {
+	kActionNone,
+	kActionCursorUp,
+	kActionCursorDown,
+	kActionCursorLeft,
+	kActionCursorRight,
+	kActionMenu,
+	kActionSaveGame,
+	kActionLoadGame,
+	kActionRepeatMessage
+};
+
+
 class MadeEngine : public ::Engine {
 protected:
 
