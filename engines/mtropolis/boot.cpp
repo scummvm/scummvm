@@ -2082,7 +2082,7 @@ void findWindowsMainSegment(Common::Archive &fs, Common::Path &resolvedPath, con
 	}
 
 	resolvedPath = fileToUse->getPathInArchive();
-	resolvedIsV2 = !fileToUse->getFileName().hasSuffixIgnoreCase(".mpl") && !filteredFiles.front()->getFileName().hasSuffixIgnoreCase(".c9a");
+	resolvedIsV2 = !fileToUse->getFileName().hasSuffixIgnoreCase(".mpl") && !fileToUse->getFileName().hasSuffixIgnoreCase(".c9a");
 }
 
 bool getMacFileType(Common::Archive &fs, const Common::Path &path, uint32 &outTag) {
