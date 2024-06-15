@@ -137,7 +137,7 @@ public:
 private:
 	// Dragon-specific globals
 	int16 _sceneOpcode100Var;
-	int16 _arcadeModeFlag_3cdc;
+	int16 _arcadeModeState;
 	int16 _opcode106EndMinutes;
 	DragonDataTable _table;
 

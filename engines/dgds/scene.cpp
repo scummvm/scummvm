@@ -26,8 +26,9 @@
 #include "common/rect.h"
 #include "common/system.h"
 #include "common/util.h"
-#include "graphics/cursorman.h"
+#include "common/translation.h"
 
+#include "graphics/cursorman.h"
 #include "graphics/surface.h"
 #include "graphics/primitives.h"
 
@@ -112,7 +113,7 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpChangeScene: 	return "changeScene";
 	case kSceneOpNoop:		  	return "noop";
 	case kSceneOpGlobal:		return "global";
-	case kSceneOpSegmentStateOps:   return "sceneOpSegmentStateOps";
+	case kSceneOpSegmentStateOps: return "sceneOpSegmentStateOps";
 	case kSceneOpSetItemAttr:   return "setItemAttr";
 	case kSceneOpSetDragItem:   return "setDragItem";
 	case kSceneOpOpenInventory: return "openInventory";
@@ -120,10 +121,10 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpShowInvButton:	return "showInvButton";
 	case kSceneOpHideInvButton:	return "hideInvButton";
 	case kSceneOpEnableTrigger: return "enabletrigger";
-	case kSceneOpChangeSceneToStored: return "changeSceneToStored";
-	case kSceneOpAddFlagToDragItem:	return "addFlagToDragItem";
+	case kSceneOpChangeSceneToStored: 	return "changeSceneToStored";
+	case kSceneOpAddFlagToDragItem:		return "addFlagToDragItem";
 	case kSceneOpMoveItemsBetweenScenes: return "moveItemsBetweenScenes";
-	case kSceneOpOpenInventoryZoom:   return "openInventoryZoom";
+	case kSceneOpOpenInventoryZoom:   	return "openInventoryZoom";
 	case kSceneOpShowClock:		return "sceneOpShowClock";
 	case kSceneOpHideClock:		return "sceneOpHideClock";
 	case kSceneOpShowMouse:		return "sceneOpShowMouse";
@@ -604,7 +605,12 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 *
 			engine->getScene()->addAndShowTiredDialog();
 			break;
 		case kSceneOpArcadeTick:
-			error("TODO: Implement sceneOpArcadeTick");
+			// TODO: Implement this properly! for now jsut
+			// set the global arcade state variable to the "skip" value.
+			warning("Setting arcade global to 8 (skip)");
+			g_system->displayMessageOnOSD(_("Skipping DGDS arcade sequence"));
+			engine->getGameGlobals()->setGlobal(0x21, 6);
+			break;
 		case kSceneOp105:
 			error("TODO: Implement sceneOp105");
 		case kSceneOp106:
@@ -1657,8 +1663,8 @@ Common::Error GDSScene::syncState(Common::Serializer &s) {
 	assert(!_perSceneGlobals.empty());
 
 	// TODO: Maybe it would be nicer to save the item/global numbers
-	// with the values in case the order changed in some other version of the game data?  This assumes they will be
-	// the same order.
+	// with the values in case the order changed in some other version of
+	// the game data?  This assumes they will be the same order.
 
 	uint16 nitems = _gameItems.size();
 	s.syncAsUint16LE(nitems);

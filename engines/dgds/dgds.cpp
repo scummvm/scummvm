@@ -605,10 +605,12 @@ bool DgdsEngine::canLoadGameStateCurrently(Common::U32String *msg /*= nullptr*/)
 
 bool DgdsEngine::canSaveGameStateCurrently(Common::U32String *msg /*= nullptr*/) {
 	return _gdsScene && _scene && _scene->getNum() != 2
-			&& !_scene->hasVisibleDialog() && !_menu->menuShown()
 			&& _scene->getDragItem() == nullptr && !_isLoading;
 }
 
+bool DgdsEngine::canSaveAutosaveCurrently() {
+	return canSaveGameStateCurrently() && !_scene->hasVisibleDialog() && !_menu->menuShown();
+}
 
 Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 	//
