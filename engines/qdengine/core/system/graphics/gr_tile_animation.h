@@ -19,11 +19,15 @@
  *
  */
 
+
 #ifndef __GR_TILE_ANIMATION_H__
 #define __GR_TILE_ANIMATION_H__
 
 #include "qdengine/core/system/graphics/gr_tile_sprite.h"
 
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace QDEngine {
 
@@ -65,6 +69,7 @@ public:
 	bool save(XStream &fh) const;
 	bool load(XStream &fh);
 	bool load(XZipStream &fh);
+	bool load(Common::SeekableReadStream *fh);
 
 	void drawFrame(const Vect2i &position, int frame_index, int mode = 0) const;
 	void drawFrame(const Vect2i &position, int frame_index, float angle, int mode = 0) const;

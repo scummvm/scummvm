@@ -88,7 +88,7 @@ bool qdTextDB::load(const char *file_name, const char *comments_file_name, bool 
 }
 
 bool qdTextDB::load(XStream &fh, const char *comments_file_name, bool clear_old_texts) {
-	warning("STUB: qdTextDB::load(%s)", comments_file_name);
+	warning("STUB: qdTextDB::load(XStream fh: %s)", comments_file_name);
 
 	return true;
 }
@@ -111,6 +111,8 @@ bool qdTextDB::load(Common::SeekableReadStream *fh, const char *commentsFileName
 		fh->read(&idStr, idLength);
 		fh->read(&txtStr, txtlength);
 		fh->read(&sndStr, sndLength);
+
+		warning("idStr: %s, txtStr: %s, sndStr: %s", idStr.c_str(), txtStr.c_str(), sndStr.c_str());
 
 		texts_.insert(qdTextMap::value_type(idStr.c_str(), qdText(txtStr.c_str(), sndStr.c_str())));
 
@@ -143,7 +145,7 @@ bool qdTextDB::load(Common::SeekableReadStream *fh, const char *commentsFileName
 }
 
 bool qdTextDB::load(XZipStream &fh, const char *comments_file_name, bool clear_old_texts) {
-	warning("STUB: qdTextDB::load(%s)", comments_file_name);
+	warning("STUB: qdTextDB::load(XZipStream fh: %s)", comments_file_name);
 	if (clear_old_texts) clear();
 
 	int text_cnt;

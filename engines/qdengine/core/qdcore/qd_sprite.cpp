@@ -1068,7 +1068,7 @@ void qdSprite::qda_load(XStream &fh, int version) {
 		}
 	} else {
 		rle_data_ = new rleBuffer;
-		rle_data_ -> load(fh);
+		rle_data_->load(fh);
 	}
 }
 
@@ -1090,7 +1090,6 @@ void qdSprite::qda_load(Common::SeekableReadStream *fh, int version) {
 
 	str[len] = 0;
 	fh->read(str, len);
-	warning(str);
 	set_file(str);
 
 	if (version >= 101) {
