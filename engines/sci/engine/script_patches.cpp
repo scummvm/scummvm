@@ -2561,90 +2561,77 @@ static const uint16 hoyle5PatchSetScale[] = {
 // - Poker (script 1100)
 // - Backgammon (script 1300)
 static const uint16 hoyle5SignatureHearts[] = {
+	0x38, SIG_SELECTOR16(init), // pushi init
+	0x76,                       // push0
+	SIG_ADDTOOFFSET(+4),
 	SIG_MAGICDWORD,
-	0x38, 0x8e, 0x00,      // pushi 008e
-	0x76,                  // push0
-	0x38, 0xf0, 0x02,      // pushi 02f0
-	0x76,                  // push0
-	0x72, 0xdc, 0x03,      // lofsa chooseHearts
-	0x4a, 0x08, 0x00,      // send  0008
+	0x72, SIG_UINT16(0x03dc),   // lofsa chooseHearts
+	0x4a, SIG_UINT16(0x0008),   // send 08
 	SIG_END
 };
 
 static const uint16 hoyle5SignatureGinRummy[] = {
+	0x38, SIG_SELECTOR16(init), // pushi init
+	0x76,                       // push0
+	SIG_ADDTOOFFSET(+4),
 	SIG_MAGICDWORD,
-	0x38, 0x8e, 0x00,      // pushi 008e
-	0x76,                  // push0
-	0x38, 0xf0, 0x02,      // pushi 02f0
-	0x76,                  // push0
-	0x72, 0xbc, 0x02,      // lofsa chooseGinRummy
-	0x4a, 0x08, 0x00,      // send  0008
+	0x72, SIG_UINT16(0x02bc),   // lofsa chooseGinRummy
+	0x4a, SIG_UINT16(0x0008),   // send 08
 	SIG_END
 };
 
 static const uint16 hoyle5SignatureCribbage[] = {
+	0x38, SIG_SELECTOR16(init), // pushi init
+	0x76,                       // push0
+	SIG_ADDTOOFFSET(+4),
 	SIG_MAGICDWORD,
-	0x38, 0x8e, 0x00,      // pushi 008e
-	0x76,                  // push0
-	0x38, 0xf0, 0x02,      // pushi 02f0
-	0x76,                  // push0
-	0x72, 0x4c, 0x03,      // lofsa chooseCribbage
-	0x4a, 0x08, 0x00,      // send  0008
+	0x72, SIG_UINT16(0x034c),   // lofsa chooseCribbage
+	0x4a, SIG_UINT16(0x0008),   // send 08
 	SIG_END
 };
 
 static const uint16 hoyle5SignatureKlondike[] = {
+	0x38, SIG_SELECTOR16(init), // pushi init
+	0x76,                       // push0
+	SIG_ADDTOOFFSET(+4),
 	SIG_MAGICDWORD,
-	0x38, 0x8e, 0x00,      // pushi 008e
-	0x76,                  // push0
-	0x38, 0xf0, 0x02,      // pushi 02f0
-	0x76,                  // push0
-	0x72, 0xfc, 0x04,      // lofsa chooseKlondike
-	0x4a, 0x08, 0x00,      // send  0008
+	0x72, SIG_UINT16(0x04fc),   // lofsa chooseKlondike
+	0x4a, SIG_UINT16(0x0008),   // send 08
 	SIG_END
 };
 
 static const uint16 hoyle5SignatureBridge[] = {
+	0x38, SIG_SELECTOR16(init), // pushi init
+	0x76,                       // push0
+	SIG_ADDTOOFFSET(+4),
 	SIG_MAGICDWORD,
-	0x38, 0x8e, 0x00,      // pushi 008e
-	0x76,                  // push0
-	0x38, 0xf0, 0x02,      // pushi 02f0
-	0x76,                  // push0
-	0x72, 0x6c, 0x04,      // lofsa chooseBridge
-	0x4a, 0x08, 0x00,      // send  0008
+	0x72, SIG_UINT16(0x046c),   // lofsa chooseBridge
+	0x4a, SIG_UINT16(0x0008),   // send 08
 	SIG_END
 };
 
 static const uint16 hoyle5SignaturePoker[] = {
+	0x38, SIG_SELECTOR16(init), // pushi init
+	0x76,                       // push0
+	SIG_ADDTOOFFSET(+4),
 	SIG_MAGICDWORD,
-	0x38, 0x8e, 0x00,      // pushi 008e
-	0x76,                  // push0
-	0x38, 0xf0, 0x02,      // pushi 02f0
-	0x76,                  // push0
-	0x72, 0x8c, 0x05,      // lofsa choosePoker
-	0x4a, 0x08, 0x00,      // send  0008
+	0x72, SIG_UINT16(0x058c),   // lofsa choosePoker
+	0x4a, SIG_UINT16(0x0008),   // send 08
 	SIG_END
 };
 
 static const uint16 hoyle5SignatureBackgammon[] = {
+	0x38, SIG_SELECTOR16(init), // pushi init
+	0x76,                       // push0
+	SIG_ADDTOOFFSET(+4),
 	SIG_MAGICDWORD,
-	0x38, 0x8e, 0x00,      // pushi 008e
-	0x76,                  // push0
-	0x38, 0xf0, 0x02,      // pushi 02f0
-	0x76,                  // push0
-	0x72, 0xac, 0x06,      // lofsa chooseBackgammon
-	0x4a, 0x08, 0x00,      // send  0008
+	0x72, SIG_UINT16(0x06ac),   // lofsa chooseBackgammon
+	0x4a, SIG_UINT16(0x0008),   // send 08
 	SIG_END
 };
 
 static const uint16 hoyle5PatchDisableGame[] = {
-	0x35, 0x00,                      // ldi 00
-	0x35, 0x00,                      // ldi 00
-	0x35, 0x00,                      // ldi 00
-	0x35, 0x00,                      // ldi 00
-	0x35, 0x00,                      // ldi 00
-	0x35, 0x00,                      // ldi 00
-	0x35, 0x00,                      // ldi 00
+	0x33, 0x0c,                 // jmp 0c
 	PATCH_END
 };
 
