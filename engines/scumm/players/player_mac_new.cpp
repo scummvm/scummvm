@@ -735,6 +735,7 @@ void MacSndChannel::setupSound(const MacLowLevelPCMDriver::PCMSound *snd) {
 	_res = Common::SharedPtr<const int8>(buff, Common::ArrayDeleter<const int8>());
 	_frameSize = snd->stereo ? 2 : 1;
 	_loopSt = 0;
+	_data = nullptr;
 
 	if (snd->loopend - snd->loopst < 2 || snd->loopend < snd->loopst) {
 		_loopSt2 = 0;
