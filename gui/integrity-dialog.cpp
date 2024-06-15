@@ -40,7 +40,8 @@ namespace GUI {
 enum {
 	kResponseCmd = 'IDRC',
 	kCopyEmailCmd = 'IDCE',
-	kCleanupCmd = 'IDCl'
+	kCleanupCmd = 'IDCl',
+	kDownloadProgressCmd = 'DLPg',
 };
 
 struct ResultFormat {
@@ -64,6 +65,7 @@ struct ChecksumDialogState {
 
 	int totalSize;
 	int calculatedSize;
+	uint32 lastUpdate;
 
 	Common::String endpoint;
 	Common::Path gamePath;
@@ -76,6 +78,7 @@ struct ChecksumDialogState {
 	ChecksumDialogState() {
 		state = kChecksumStateNone;
 		totalSize = calculatedSize = 0;
+		lastUpdate = 0;
 		dialog = nullptr;
 	}
 } static *g_checksum_state;
@@ -132,8 +135,6 @@ IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String domain)
 		g_checksum_state->platform = ConfMan.get("platform", domain);
 		g_checksum_state->language = ConfMan.get("language", domain);
 		calculateTotalSize(g_checksum_state->gamePath);
-
-		sendJSON();
 	} else {
 		g_checksum_state->dialog = this;
 
@@ -182,7 +183,6 @@ void IntegrityDialog::setState(ProcessState state) {
 		_percentLabel->setVisible(false);
 		_calcSizeLabel->setVisible(false);
 		_progressBar->setVisible(false);
-
 		break;
 
 	case kResponseReceived:
@@ -217,6 +217,12 @@ void IntegrityDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		close();
 		break;
 	}
+	case kDownloadProgressCmd:
+		if (!_close) {
+			refreshWidgets();
+			g_gui.redrawFull();
+		}
+		break;
 	case kCopyEmailCmd: {
 		g_system->openUrl(g_result->emailLink);
 		break;
@@ -232,6 +238,9 @@ void IntegrityDialog::handleTickle() {
 		_close = false;
 		return;
 	}
+
+	if (g_checksum_state->state == kChecksumStateCalculating)
+		sendJSON();
 
 	int32 progress = getCalculationProgress();
 	if (_progressBar->getValue() != progress) {
@@ -368,6 +377,11 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::Pa
 			fileChecksum.push_back(Common::computeStreamMD5AsString(file).c_str());
 
 			g_checksum_state->calculatedSize += file.size();
+
+			if (g_system->getMillis() > g_checksum_state->lastUpdate + 500) {
+				g_checksum_state->lastUpdate = g_system->getMillis();
+				sendCommand(kDownloadProgressCmd, 0);
+			}
 
 			file.close();
 			fileChecksums.push_back(fileChecksum);
