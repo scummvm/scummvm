@@ -25,7 +25,6 @@
  * Gahan Wilson's Ultimate Haunted House
  * Wellen, Wracks und Wassermaenner
  *
- * Karma: Curse of the 12 Caves
  *************************************/
 
 /*
