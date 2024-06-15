@@ -79,7 +79,8 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr),
 	_gdsScene(nullptr), _resource(nullptr), _gamePals(nullptr), _gameGlobals(nullptr),
 	_detailLevel(kDgdsDetailHigh), _textSpeed(1), _justChangedScene1(false), _justChangedScene2(false),
-	_random("dgds"), _currentCursor(-1), _menuToTrigger(kMenuNone), _isLoading(true), _rstFileName(nullptr) {
+	_random("dgds"), _currentCursor(-1), _menuToTrigger(kMenuNone), _isLoading(true),
+	_rstFileName(nullptr), _difficulty(1) {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
@@ -449,12 +450,22 @@ Common::Error DgdsEngine::run() {
 		}
 
 		if (_menu->menuShown()) {
-			if (mouseEvent == Common::EVENT_LBUTTONUP) {
-				_menu->handleMenu(_lastMouse);
-				mouseEvent = Common::EVENT_INVALID;
+			switch (mouseEvent) {
+				case Common::EVENT_LBUTTONUP:
+					_menu->onMouseLUp(_lastMouse);
+					break;
+				case Common::EVENT_LBUTTONDOWN:
+					_menu->onMouseLDown(_lastMouse);
+					break;
+				case Common::EVENT_MOUSEMOVE:
+					_menu->onMouseMove(_lastMouse);
+					break;
+				default:
+					break;
 			}
 			g_system->updateScreen();
 			g_system->delayMillis(10);
+			_clock.update(false);
 			continue;
 		}
 

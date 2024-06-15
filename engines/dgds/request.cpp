@@ -155,8 +155,6 @@ bool RequestParser::parseGADChunk(RequestData &data, DgdsChunkReader &chunk, int
 			gptr->_field21_0x2a = val >> 0xf;
 		}
 
-		// TODO: In each of these cases, work out the true offsets to these fields.
-		// and if they are shared between gadget types.
 		switch (gadgetType) {
 		case kGadgetText: {
 			uint16 i1 = str->readUint16LE();
@@ -303,12 +301,13 @@ Common::String Gadget::dump() const {
 
 void Gadget::draw(Graphics::ManagedSurface *dst) const {}
 
+Common::Point Gadget::topLeft() const {
+	return Common::Point(_x + _parentX, _y + _parentY);
+}
+
 bool Gadget::containsPoint(const Common::Point &pt) {
-	int16 x = _x + _parentX;
-	int16 y = _y + _parentY;
-	int16 right = x + _width;
-	int16 bottom = (y + _height) - 1;
-	Common::Rect gadgetRect(x, y, right, bottom);
+	Common::Point tl = topLeft();
+	Common::Rect gadgetRect(tl, _width, _height - 1);
 	return gadgetRect.contains(pt);
 }
 
@@ -440,14 +439,16 @@ static const char *_sliderLabelsForGadget(uint16 num) {
 	}
 }
 
+static const int SLIDER_HANDLE_FRAME = 28;
+
 void SliderGadget::draw(Graphics::ManagedSurface *dst) const {
 	const Font *font = RequestData::getMenuFont();
 
 	int16 x = _x + _parentX;
 	int16 y = _y + _parentY;
+
 	int16 x2 = x + _width;
 	int16 y2 = (y + _height) - 1;
-
 	int16 titley = (y - font->getFontHeight()) + 1;
 	const char *title = _sliderTitleForGadget(_gadgetNo);
 	const char *labels = _sliderLabelsForGadget(_gadgetNo);
@@ -470,6 +471,79 @@ void SliderGadget::draw(Graphics::ManagedSurface *dst) const {
 	dst->fillRect(fillrect, SliderColors[5]);
 	fillrect.grow(-1);
 	dst->fillRect(fillrect, SliderColors[6]);
+
+	// Draw the slider control in the right spot
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	const Common::SharedPtr<Image> uiCorners = engine->getUICorners();
+	uiCorners->drawBitmap(SLIDER_HANDLE_FRAME, x + _handleX, y, Common::Rect(0, 0, 320, 200), *dst);
+}
+
+SliderGadget::SliderGadget() : _lock(false), _steps(0), _gadget2_i1(0),
+	_gadget2_i2(0), _gadget2_i3(0), _gadget2_i4(0) {
+}
+
+int16 SliderGadget::getHandleWidth() const {
+	const Common::SharedPtr<Image> uiCorners = static_cast<DgdsEngine *>(g_engine)->getUICorners();
+	int16 handleWidth = uiCorners->width(SLIDER_HANDLE_FRAME);
+	return handleWidth - 2;
+}
+
+int16 SliderGadget::getUsableWidth() const {
+	return _width + 4 - getHandleWidth();
+}
+
+void SliderGadget::onDrag(const Common::Point &mousePt) {
+	const Common::Point topLeftPt = topLeft();
+	const Common::Point relMouse = mousePt - topLeftPt;
+	// match middle of handle to mouse point
+	int16 handleWidth = getHandleWidth();
+	_handleX = CLIP(relMouse.x - handleWidth / 2, 0, (int)getUsableWidth());
+}
+
+int16 SliderGadget::onDragFinish(const Common::Point &mousePt) {
+	onDrag(mousePt);
+	int16 newVal = getValue();
+	if (_lock)
+		setValue(newVal);
+	return newVal;
+}
+
+int16 SliderGadget::getValue() {
+	int16 stepSize = getUsableWidth() / (_steps - 1);
+	// Find the closest step point to the left end of the handle
+	int16 closestStep = (_handleX + stepSize / 2) / stepSize;
+	return CLIP(closestStep, (int16)0, _steps);
+}
+
+void SliderGadget::setValue(int16 val) {
+	// if val is steps-1, slider x should be at..
+	int16 usableWidth = getUsableWidth();
+	if (val == _steps - 1)
+		_handleX = usableWidth;
+	else
+		_handleX = (usableWidth * val) / (_steps - 1);
+}
+
+int16 SliderGadget::onClick(const Common::Point &mousePt) {
+	const Common::Point topLeftPt = topLeft();
+	const Common::Point relMouse = mousePt - topLeftPt;
+
+	// A click should move the slider to the next step in the direction of the click.
+	int16 handleMiddle = _handleX + getHandleWidth() / 2;
+	// round up step size to ensure we move far enough..
+
+	int16 val = getValue();
+	int16 newVal = val;
+	if (relMouse.x > handleMiddle)
+		newVal++;
+	else
+		newVal--;
+
+	debug("clicked on slider %d, move val from %d -> %d", _gadgetNo, val, newVal);
+
+	newVal = CLIP((int)newVal, 0, _steps - 1);
+	setValue(newVal);
+	return newVal;
 }
 
 Common::String ImageGadget::dump() const {

@@ -102,6 +102,8 @@ public:
 	virtual void toggle(bool enable) {}
 
 	bool containsPoint(const Common::Point &pt);
+
+	Common::Point topLeft() const;
 };
 
 // Button gadget has no additional fields, but some behavior differences.
@@ -124,6 +126,8 @@ public:
 // extended gadget type 2 is 74 (0x4a) bytes
 class SliderGadget : public Gadget {
 public:
+	SliderGadget();
+
 	uint16 _gadget2_i1;
 	uint16 _gadget2_i2;
 	uint16 _gadget2_i3;
@@ -131,6 +135,37 @@ public:
 
 	Common::String dump() const override;
 	void draw(Graphics::ManagedSurface *dst) const override;
+
+	/// Set number of steps the slider has
+	/// If lock is true, jumps the final position to match the step.
+	void setSteps(int16 steps, bool lock) {
+		_steps = steps;
+		_lock = lock;
+	}
+
+	void setValue(int16 val);
+	// Return the closest step value to the current handle position.
+	int16 getValue();
+
+	///
+	/// Work out where the mouse click was and what the new setting should be
+	/// from 0 to steps-1.
+	///
+	int16 onClick(const Common::Point &mousePt);
+
+	// Returns true if the mouse is over the handle and a drag operation should start
+	bool onMouseDown(const Common::Point &mousePt);
+	void onDrag(const Common::Point &mousePt);
+	// returns the new value
+	int16 onDragFinish(const Common::Point &mousePt);
+
+private:
+	bool _lock;
+	int16 _steps;
+	int16 _handleX;
+
+	int16 getHandleWidth() const;
+	int16 getUsableWidth() const;
 };
 
 // extended gadget type 8 is 68 (0x44) bytes
