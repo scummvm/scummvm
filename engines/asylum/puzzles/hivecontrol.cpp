@@ -274,7 +274,7 @@ bool PuzzleHiveControl::mouseLeftDown(const AsylumEvent &) {
 	return true;
 }
 
-bool PuzzleHiveControl::mouseRightDown(const AsylumEvent &) {
+bool PuzzleHiveControl::exitPuzzle() {
 	if (_leverDelta) {
 		_leverDelta = 0;
 		_prevLeverPosition = _leverPosition;
@@ -451,8 +451,7 @@ void PuzzleHiveControl::updateScreen() {
 		if (_counter < 30 || getSound()->isPlaying(getWorld()->graphicResourceIds[83])) {
 			++_counter;
 		} else {
-			AsylumEvent evt;
-			mouseRightDown(evt);
+			exitPuzzle();
 			getCursor()->show();
 		}
 	}

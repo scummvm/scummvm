@@ -49,9 +49,8 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	bool init(const AsylumEvent &evt);
 	void updateScreen();
-	bool key(const AsylumEvent &evt) { return keyExit(evt); }
 	bool mouseLeftDown(const AsylumEvent &evt);
-	bool mouseRightDown(const AsylumEvent &evt);
+	bool exitPuzzle();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers

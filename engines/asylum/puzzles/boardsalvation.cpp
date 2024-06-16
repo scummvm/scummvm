@@ -203,11 +203,10 @@ bool PuzzleBoardSalvation::mouseLeftDown(const AsylumEvent &) {
 	return true;
 }
 
-bool PuzzleBoardSalvation::mouseRightDown(const AsylumEvent &) {
+bool PuzzleBoardSalvation::exitPuzzle() {
 	if (!stopSound()) {
 		checkANALText();
-		getScreen()->clear();
-		_vm->switchEventHandler(getScene());
+		return PuzzleBoard::exitPuzzle();
 	}
 
 	return true;

@@ -85,16 +85,6 @@ bool PuzzleVCR::init(const AsylumEvent &)  {
 	return true;
 }
 
-bool PuzzleVCR::key(const AsylumEvent &evt) {
-	getSound()->stop(getWorld()->graphicResourceIds[47]);
-	getScreen()->clearGraphicsInQueue();
-	getScreen()->clear();
-
-	_vm->switchEventHandler(getScene());
-
-	return true;
-}
-
 bool PuzzleVCR::mouseLeftDown(const AsylumEvent &evt) {
 	if (_isAccomplished)
 		return true;
@@ -259,11 +249,10 @@ bool PuzzleVCR::mouseLeftUp(const AsylumEvent &) {
 	return true;
 }
 
-bool PuzzleVCR::mouseRightDown(const AsylumEvent &) {
+bool PuzzleVCR::exitPuzzle() {
+	getSound()->stop(getWorld()->graphicResourceIds[47]);
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->clear();
-
-	getSound()->stop(getWorld()->graphicResourceIds[47]);
 
 	_vm->switchEventHandler(getScene());
 

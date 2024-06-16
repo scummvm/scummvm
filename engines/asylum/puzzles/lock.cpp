@@ -220,8 +220,10 @@ bool PuzzleLock::mouseLeftDown(const AsylumEvent &evt) {
 	return true;
 }
 
-bool PuzzleLock::mouseRightDown(const AsylumEvent &) {
-	exitPuzzle();
+bool PuzzleLock::exitPuzzle() {
+	getScreen()->clear();
+
+	_vm->switchEventHandler(getScene());
 
 	return true;
 }

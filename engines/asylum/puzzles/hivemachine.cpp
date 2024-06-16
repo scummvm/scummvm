@@ -94,7 +94,7 @@ bool PuzzleHiveMachine::mouseLeftDown(const AsylumEvent &) {
 	return true;
 }
 
-bool PuzzleHiveMachine::mouseRightDown(const AsylumEvent &) {
+bool PuzzleHiveMachine::exitPuzzle() {
 	_notesNumber = 0;
 	_melody.clear();
 

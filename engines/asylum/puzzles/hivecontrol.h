@@ -104,7 +104,7 @@ private:
 	bool init(const AsylumEvent &evt);
 	void updateScreen();
 	bool mouseLeftDown(const AsylumEvent &evt);
-	bool mouseRightDown(const AsylumEvent &evt);
+	bool exitPuzzle();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers

@@ -366,22 +366,16 @@ bool Encounter::handleEvent(const AsylumEvent &evt) {
 	case EVENT_ASYLUM_UPDATE:
 		return update();
 
-	case Common::EVENT_KEYDOWN:
-		return key(evt);
-
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_LBUTTONUP:
-	case Common::EVENT_RBUTTONDOWN:
-	case Common::EVENT_RBUTTONUP:
 		return mouse(evt);
+
+	case Common::EVENT_RBUTTONDOWN:
+		return cancel(evt);
 
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		if ((AsylumAction)evt.customType == kAsylumActionShowMenu) {
-			if (!isSpeaking()
-			 && _isDialogOpen
-			 && !getSpeech()->getTextData()
-			 && !getSpeech()->getTextDataPos())
-				_shouldCloseDialog = true;
+			return cancel(evt);
 		}
 		return true;
 	}
@@ -553,20 +547,20 @@ bool Encounter::mouse(const AsylumEvent &evt) {
 			_data_455BD8 = false;
 		}
 		break;
-
-
-	case Common::EVENT_RBUTTONDOWN:
-		if (!isSpeaking()
-		 && _isDialogOpen
-		 && !getSpeech()->getTextData()
-		 && !getSpeech()->getTextDataPos())
-			_shouldCloseDialog = true;
-		break;
 	}
 
 	return true;
 }
 
+bool Encounter::cancel(const AsylumEvent &evt) {
+	if (!isSpeaking()
+	 && _isDialogOpen
+	 && !getSpeech()->getTextData()
+	 && !getSpeech()->getTextDataPos())
+		_shouldCloseDialog = true;
+
+	return true;
+}
 //////////////////////////////////////////////////////////////////////////
 // Variables
 //////////////////////////////////////////////////////////////////////////

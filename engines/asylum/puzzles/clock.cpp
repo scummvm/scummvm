@@ -112,8 +112,7 @@ void PuzzleClock::updateScreen() {
 		_vm->switchEventHandler(getScene());
 	} else {
 		if (_vm->isGameFlagSet(kGameFlag511)) {
-			AsylumEvent evt;
-			mouseRightDown(evt);
+			exitPuzzle();
 		}
 	}
 }
@@ -134,7 +133,7 @@ bool PuzzleClock::mouseLeftDown(const AsylumEvent &) {
 	return true;
 }
 
-bool PuzzleClock::mouseRightDown(const AsylumEvent &) {
+bool PuzzleClock::exitPuzzle() {
 	setFlag();
 	_rightButtonClicked = true;
 
