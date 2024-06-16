@@ -366,6 +366,8 @@ void AsylumEngine::playIntro() {
 					switch (ev.type) {
 					case Common::EVENT_LBUTTONDOWN:
 					case Common::EVENT_KEYDOWN:
+					case Common::EVENT_JOYBUTTON_DOWN:
+					case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 						skip = true;
 						break;
 					default:
@@ -409,29 +411,16 @@ void AsylumEngine::handleEvents() {
 
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
-			// Handle custom actions
-			if (_handler)
-				_handler->handleEvent(ev);
-			break;
-
+		case Common::EVENT_JOYBUTTON_DOWN:
+		case Common::EVENT_JOYBUTTON_UP:
 		case Common::EVENT_KEYDOWN:
-			// Handle key events
-			if (_handler)
-				_handler->handleEvent(ev);
-			break;
-
 		case Common::EVENT_KEYUP:
-			// Handle key events
-			if (_handler)
-				_handler->handleEvent(ev);
-			break;
-
 		case Common::EVENT_MOUSEMOVE:
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONDOWN:
 		case Common::EVENT_RBUTTONUP:
-			// Handle mouse events
+			// Handle events
 			if (_handler)
 				_handler->handleEvent(ev);
 			break;

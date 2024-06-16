@@ -68,7 +68,10 @@ bool InsertDisc::handleEvent(const AsylumEvent &evt) {
 		update();
 		return true;
 
+	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_KEYDOWN:
+	case Common::EVENT_JOYBUTTON_DOWN:
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		_vm->switchEventHandler(_handler);
 		return true;
 	}
