@@ -226,7 +226,7 @@ public:
 	void drawStatusBar();
 	void setVerbState(int verb, int state);
 
-	bool processAscii(Common::KeyState keystate);
+	bool processAscii(Common::KeyState keystate, Common::CustomEventType customType);
 
 	void keyBoss();
 	void keyBossExit();
