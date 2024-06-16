@@ -768,6 +768,15 @@ bool Character::HandleWalkability(Character *c) {
 	// every time it adjusts by one pixel
 	// TODO: To check if the game actually moves by one pixel each frame only or
 	// íf it has a loop to do more than one per frame
+	if (c->GameObject->Index != 1) {
+		// Other characters will always be able to walk normally
+		return false;
+	}
+	if (g_engine->_scriptExecutor->IsExecuting()) {
+		// We don't care for walkability
+		// TODO: Probably set by some opcode in the game actually
+		return false;
+	}
 
 
 	// TODO: For now, only handle walking into the left
