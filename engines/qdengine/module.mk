@@ -23,7 +23,6 @@ MODULE_OBJS = \
 	core/system/sound/snd_dispatcher.o \
 	core/system/sound/wav_file.o \
 	core/system/sound/wav_sound.o \
-	core/system/graphics/gdi_gr_dispatcher.o \
 	core/system/graphics/gr_core.o \
 	core/system/graphics/gr_dispatcher.o \
 	core/system/graphics/gr_draw_sprite_rle_z.o \
@@ -143,7 +142,6 @@ MODULE_OBJS = \
 	xlibs/xutil/xutil/cpuid.o \
 	xlibs/xutil/xconsole/xcoutput.o \
 	xlibs/xutil/xconsole/xccore.o \
-	core/system/graphics/ddraw_gr_dispatcher.o \
 	xlibs/util/xmath/XMath.o \
 
 # This module can be built as a plugin

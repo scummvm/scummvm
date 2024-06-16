@@ -36,11 +36,9 @@
 #include "qdengine/core/qdcore/util/splash_screen.h"
 #include "qdengine/core/qdcore/util/ResourceDispatcher.h"
 #include "qdengine/core/qdcore/util/WinVideo.h"
-
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/app_core.h"
 #include "qdengine/core/system/app_error_handler.h"
-#include "qdengine/core/system/graphics/gdi_gr_dispatcher.h"
-#include "qdengine/core/system/graphics/ddraw_gr_dispatcher.h"
 #include "qdengine/core/system/input/input_wndproc.h"
 #include "qdengine/core/system/input/input_recorder.h"
 #include "qdengine/core/system/input/mouse_input.h"
@@ -88,8 +86,7 @@ enum {
 	COMLINE_TRIGGERS_PROFILER
 };
 
-GDI_grDispatcher *gdi_grD = NULL;
-DDraw_grDispatcher *dd_grD = NULL;
+grDispatcher *grD = NULL;
 
 HWND hmainWnd;
 
@@ -155,14 +152,12 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 		}
 	}
 
-	gdi_grD = new GDI_grDispatcher;
-	dd_grD = new DDraw_grDispatcher;
+	grD = new grDispatcher();
 
 	if (comline_parser.has_argument(COMLINE_SETTINGS)) {
 		qdlg::settings_dialog();
 
-		delete gdi_grD;
-		delete dd_grD;
+		delete grD;
 
 		grDispatcher::sys_finit();
 		return 0;
@@ -183,11 +178,9 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 	else if (rec_name = comline_parser.argument_string(COMLINE_RECORDER_PLAY))
 		inputRecorder::instance().open(rec_name, inputRecorder::RECORDER_PLAY);
 
-	gdi_grD->set_maximize_handler(maximize_window);
-	dd_grD->set_maximize_handler(maximize_window);
+	grD->set_maximize_handler(maximize_window);
 
-	gdi_grD->HideMouse();
-	dd_grD->HideMouse();
+	grD->HideMouse();
 
 	qdGameConfig::get_config().load();
 	setlocale(LC_CTYPE, qdGameConfig::get_config().locale());
@@ -203,11 +196,11 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 		if (!qdGameConfig::get_config().fullscreen()) {
 			int sx, sy;
 			grPixelFormat pixel_format;
-			dd_grD->get_current_mode(sx, sy, pixel_format);
+			grD->get_current_mode(sx, sy, pixel_format);
 
 			qdGameConfig::get_config().set_pixel_format(pixel_format);
 		} else
-			qdGameConfig::get_config().set_pixel_format(dd_grD->adjust_mode((grPixelFormat)qdGameConfig::get_config().pixel_format()));
+			qdGameConfig::get_config().set_pixel_format(grD->adjust_mode((grPixelFormat)qdGameConfig::get_config().pixel_format()));
 	}
 
 	SplashScreen sp;
@@ -357,8 +350,7 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 	DestroyWindow(hmainWnd);
 
 	delete sndD;
-	delete gdi_grD;
-	delete dd_grD;
+	delete grD;
 
 	winVideo::done();
 
@@ -373,11 +365,7 @@ void init_graphics() {
 	grDispatcher::set_restore_handler(restore_graphics);
 	grDispatcher::instance()->Finit();
 
-	if (!qdGameConfig::get_config().driver_ID())
-		grDispatcher::set_instance(gdi_grD);
-	else
-		grDispatcher::set_instance(dd_grD);
-
+	grDispatcher::set_instance(grD);
 
 	if (!init_graphics_dispatcher())
 		app_errH.show_error("Ошибка инициализации графики", appErrorHandler::ERR_OTHER);
@@ -424,7 +412,7 @@ bool init_graphics_dispatcher() {
 			return true;
 	}
 
-	grDispatcher::set_instance(dd_grD);
+	grDispatcher::set_instance(grD);
 	if (grDispatcher::instance()->init(qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy(), (grPixelFormat)qdGameConfig::get_config().pixel_format(), hmainWnd, qdGameConfig::get_config().fullscreen()))
 		return true;
 
@@ -449,12 +437,6 @@ void qd_show_load_progress(int percents_loaded, void *p) {
 
 bool is_graphics_reinit_needed() {
 	if (qdGameConfig::get_config().pixel_format() != (int)grDispatcher::instance()->pixel_format() || qdGameConfig::get_config().fullscreen() != grDispatcher::instance()->is_in_fullscreen_mode())
-		return true;
-
-	if (qdGameConfig::get_config().driver_ID() && grDispatcher::instance() == gdi_grD)
-		return true;
-
-	if (!qdGameConfig::get_config().driver_ID() && grDispatcher::instance() == dd_grD)
 		return true;
 
 	return false;
