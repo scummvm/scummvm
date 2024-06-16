@@ -203,13 +203,12 @@ qdMiniGame &qdMiniGame::operator = (const qdMiniGame &mg) {
 }
 
 bool qdMiniGame::init() {
-#ifndef _QUEST_EDITOR
 	if (load_interface()) {
-		interface_->new_game(&qdmg::qdEngineInterfaceImpl::instance());
+		// make a call to interface_->new_game(&qdmg::qdEngineInterfaceImpl::instance());
+		warning("STUB: qdMiniGame::init(). Trying to start a new mini game");
 		release_interface();
 		return true;
 	}
-#endif
 	return false;
 }
 
@@ -281,36 +280,10 @@ const char *qdMiniGame::config_parameter_value(const char *cfg_param_name) const
 
 bool qdMiniGame::load_interface() {
 	if (!dll_name_.empty()) {
-		dll_handle_ = LoadLibrary(dll_name_.c_str());
-		if (!dll_handle_) {
-			app_errH.message_box(dll_name_.c_str(), appErrorHandler::ERR_FILE_NOT_FOUND);
-			return false;
-		}
-
-		qdMiniGameInterface::interface_open_proc ip = (qdMiniGameInterface::interface_open_proc)(GetProcAddress(dll_handle_, "open_game_interface"));
-		if (!ip) {
-			app_errH.message_box(dll_name_.c_str(), appErrorHandler::ERR_BAD_FILE_FORMAT);
-			FreeLibrary(static_cast<HMODULE>(dll_handle_));
-			return false;
-		}
-
-		interface_ = (*ip)(game_name());
-
-		if (!interface_) {
-			app_errH.message_box(dll_name_.c_str(), appErrorHandler::ERR_BAD_FILE_FORMAT);
-			FreeLibrary(static_cast<HMODULE>(dll_handle_));
-			return false;
-		}
-
-		if (interface_->version() != qdMiniGameInterface::INTERFACE_VERSION) {
-			XBuffer text;
-			text <= qdMiniGameInterface::INTERFACE_VERSION < " <> " < dll_name_.c_str() < ":" <= interface_->version();
-			app_errH.show_error(text, appErrorHandler::ERR_MINIGAME_VERSION);
-		}
-
+		warning("STUB: Trying to load dll: %s", dll_name_.c_str());
+		// call here dll->open_game_interface(game_name())
 		return true;
 	}
-
 	return false;
 }
 
