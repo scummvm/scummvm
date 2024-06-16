@@ -486,7 +486,7 @@ void Interface::setMode(int mode) {
 	_vm->_render->setFullRefresh(true);
 }
 
-bool Interface::processAscii(Common::KeyState keystate) {
+bool Interface::processAscii(Common::KeyState keystate, Common::CustomEventType customType) {
 	// TODO: Checking for Esc and Enter below is a bit hackish, and
 	// probably only works with the English version. Maybe we should
 	// add a flag to the button so it can indicate if it's the default
@@ -501,7 +501,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 
 	switch (_panelMode) {
 	case kPanelNull:
-		if (keystate.keycode == Common::KEYCODE_ESCAPE) {
+		if (customType == kActionEscape) {
 			if (_vm->_scene->isInIntro()) {
 				_vm->_scene->skipScene();
 			} else {
@@ -517,7 +517,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 #endif
 		break;
 	case kPanelCutaway:
-		if (keystate.keycode == Common::KEYCODE_ESCAPE) {
+		if (customType == kActionEscape) {
 			if (!_disableAbortSpeeches)
 				_vm->_actor->abortAllSpeeches();
 			_vm->_scene->cutawaySkip();
@@ -530,7 +530,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 #endif
 		break;
 	case kPanelVideo:
-		if (keystate.keycode == Common::KEYCODE_ESCAPE) {
+		if (customType == kActionEscape) {
 			if (_vm->_scene->isInIntro()) {
 				_vm->_scene->skipScene();
 			} else {
@@ -548,14 +548,14 @@ bool Interface::processAscii(Common::KeyState keystate) {
 		break;
 	case kPanelOption:
 		// TODO: check input dialog keys
-		if (keystate.keycode == Common::KEYCODE_ESCAPE || keystate.keycode == Common::KEYCODE_RETURN) { // Esc or Enter
+		if (customType == kActionEscape || keystate.keycode == Common::KEYCODE_RETURN) { // Esc or Enter
 			ascii = 'c'; //continue
 		}
 
 		for (i = 0; i < _optionPanel.buttonsCount; i++) {
 			panelButton = &_optionPanel.buttons[i];
 			if (panelButton->type == kPanelButtonOption) {
-				if (panelButton->ascii == ascii) {
+				if (panelButton->customType == customType) {
 					setOption(panelButton);
 					return true;
 				}
@@ -567,7 +567,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 			return true;
 		}
 
-		if (keystate.keycode == Common::KEYCODE_ESCAPE) {
+		if (customType == kActionEscape) {
 			ascii = 'c'; // cancel
 		} else if (keystate.keycode == Common::KEYCODE_RETURN) { // Enter
 			ascii = 's'; // save
@@ -576,7 +576,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 		for (i = 0; i < _savePanel.buttonsCount; i++) {
 			panelButton = &_savePanel.buttons[i];
 			if (panelButton->type == kPanelButtonSave) {
-				if (panelButton->ascii == ascii) {
+				if (panelButton->customType == customType) {
 					setSave(panelButton);
 					return true;
 				}
@@ -584,7 +584,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 		}
 		break;
 	case kPanelQuit:
-		if (keystate.keycode == Common::KEYCODE_ESCAPE) {
+		if (customType == kActionEscape) {
 			ascii = 'c'; // cancel
 		} else if (keystate.keycode == Common::KEYCODE_RETURN) { // Enter
 			ascii = 'q'; // quit
@@ -593,7 +593,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 		for (i = 0; i < _quitPanel.buttonsCount; i++) {
 			panelButton = &_quitPanel.buttons[i];
 			if (panelButton->type == kPanelButtonQuit) {
-				if (panelButton->ascii == ascii) {
+				if (panelButton->customType == customType) {
 					setQuit(panelButton);
 					return true;
 				}
@@ -604,7 +604,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 		for (i = 0; i < _loadPanel.buttonsCount; i++) {
 			panelButton = &_loadPanel.buttons[i];
 			if (panelButton->type == kPanelButtonLoad) {
-				if (panelButton->ascii == ascii) {
+				if (panelButton->customType == customType) {
 					setLoad(panelButton);
 					return true;
 				}
@@ -614,7 +614,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 	case kPanelMain:
 		for (i = 0; i < _mainPanel.buttonsCount; i++) {
 			panelButton = &_mainPanel.buttons[i];
-			if (panelButton->ascii == ascii) {
+			if (panelButton->customType == customType) {
 				if (panelButton->type == kPanelButtonVerb) {
 					_vm->_script->setVerb(panelButton->id);
 				}
@@ -624,29 +624,24 @@ bool Interface::processAscii(Common::KeyState keystate) {
 				return true;
 			}
 		}
-		if (keystate.keycode == Common::KEYCODE_o && keystate.hasFlags(Common::KBD_CTRL)) { // ctrl-o
-			if (_saveReminderState > 0) {
-				setMode(kPanelOption);
-				return true;
-			}
-		}
 		break;
 	case kPanelConverse:
-		switch (ascii) {
-		case 'x':
+		switch (customType) {
+		case kActionConverseExit:
 			setMode(kPanelMain);
 			if (_vm->_scene->isITEPuzzleScene())
 				_vm->_puzzle->exitPuzzle();
 			break;
-
-		case 'u':
-			converseChangePos(-1);
-			break;
-
-		case 'd':
+		case kActionConversePosDown:
 			converseChangePos(1);
 			break;
-
+		case kActionConversePosUp:
+			converseChangePos(-1);
+			break;
+		default:
+			break;
+		}
+		switch (ascii) {
 		case '1':
 		case '2':
 		case '3':
@@ -686,7 +681,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 				return true;
 			}
 
-			if (keystate.keycode == Common::KEYCODE_ESCAPE || keystate.keycode == Common::KEYCODE_RETURN) {
+			if (customType == kActionEscape || keystate.keycode == Common::KEYCODE_RETURN) {
 				_vm->_script->wakeUpThreads(kWaitTypeRequest);
 				_vm->_interface->setMode(kPanelMain);
 
@@ -2749,7 +2744,7 @@ void Interface::handleConverseClick(const Point& mousePoint) {
 	}
 
 	if (_conversePanel.currentButton->type == kPanelButtonConverseText) {
-		converseSetPos(_conversePanel.currentButton->ascii);
+		converseSetPos(_conversePanel.currentButton->customType);
 	}
 
 	if (_conversePanel.currentButton->type == kPanelButtonArrow) {
