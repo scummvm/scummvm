@@ -271,7 +271,7 @@ ErrorCode CBagStorageDev::deactivateLocalObject(const CBofString &sName) {
 }
 
 
-CBofPoint CBagStorageDev::arrangeFloater(CBofPoint nPos, CBagObject *pObj) {
+CBofPoint CBagStorageDev::arrangeFloater(CBofPoint &nPos, CBagObject *pObj) {
 	CBofPoint NextPos = nPos;
 
 	if (getBackground() != nullptr) {

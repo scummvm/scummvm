@@ -19,6 +19,8 @@
  *
  */
 
+#include "graphics/cursorman.h"
+
 #include "bagel/spacebar/nav_window.h"
 #include "bagel/spacebar/master_win.h"
 #include "bagel/boflib/event_loop.h"

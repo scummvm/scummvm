@@ -23,7 +23,6 @@
 #ifndef BAGEL_BAGLIB_CURSOR_H
 #define BAGEL_BAGLIB_CURSOR_H
 
-#include "graphics/cursorman.h"
 #include "bagel/boflib/gfx/bitmap.h"
 #include "bagel/boflib/error.h"
 

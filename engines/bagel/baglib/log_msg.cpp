@@ -52,7 +52,7 @@ CBagLog::~CBagLog() {
 	}
 }
 
-CBofPoint CBagLog::arrangeFloater(CBofPoint pos, CBagObject *bagObj) {
+CBofPoint CBagLog::arrangeFloater(CBofPoint &pos, CBagObject *bagObj) {
 	CBofPoint   nextPos = pos;
 
 	// Things are so convoluted now, it is entirely  possible that this method

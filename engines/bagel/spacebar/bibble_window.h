@@ -25,7 +25,6 @@
 
 #include "bagel/baglib/storage_dev_win.h"
 #include "bagel/boflib/gui/text_box.h"
-#include "bagel/boflib/app.h"
 #include "bagel/boflib/gui/button.h"
 #include "bagel/boflib/gfx/sprite.h"
 #include "bagel/boflib/sound.h"

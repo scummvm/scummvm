@@ -249,11 +249,7 @@ bool CBagSpriteObject::isInside(const CBofPoint &xPoint) {
 }
 
 void CBagSpriteObject::setProperty(const CBofString &sProp, int nVal) {
-	if (!sProp.find("STATE")) {
-		setState(nVal);
-		if (_xSprite)
-			_xSprite->setCel(nVal);
-	} else if (!sProp.find("CURR_CEL")) {
+	if (!sProp.find("STATE") || !sProp.find("CURR_CEL")) {
 		setState(nVal);
 		if (_xSprite)
 			_xSprite->setCel(nVal);

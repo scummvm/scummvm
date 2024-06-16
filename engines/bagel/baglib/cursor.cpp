@@ -19,6 +19,7 @@
  *
  */
 
+#include "graphics/cursorman.h"
 #include "bagel/baglib/cursor.h"
 
 namespace Bagel {

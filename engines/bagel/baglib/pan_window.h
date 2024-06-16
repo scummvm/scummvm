@@ -104,7 +104,7 @@ public:
 	 */
 	CBofRect unSetSlideBitmap();
 
-	uint32 rotateTo(CPoint xPoint, int nRate = 8);
+	uint32 rotateTo(CPoint &xPoint, int nRate = 8);
 
 	void activateView();
 	void deActivateView();

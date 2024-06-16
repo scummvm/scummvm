@@ -346,7 +346,7 @@ public:
 	virtual CBagObject *onNewThingObject(const CBofString &sInit);
 
 	// Call to arrange floating object, override to customize layout
-	virtual CBofPoint arrangeFloater(CBofPoint nPos, CBagObject *pObj);
+	virtual CBofPoint arrangeFloater(CBofPoint &nPos, CBagObject *pObj);
 
 	// Set and Get the number of pages required to display all floating objects
 	int getNumFloatPages() const {

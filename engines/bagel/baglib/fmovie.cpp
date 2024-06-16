@@ -19,6 +19,8 @@
  *
  */
 
+#include "graphics/cursorman.h"
+
 #include "bagel/baglib/fmovie.h"
 #include "bagel/boflib/string.h"
 #include "bagel/boflib/gfx/palette.h"

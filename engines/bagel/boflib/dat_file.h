@@ -24,7 +24,6 @@
 #define BAGEL_BOFLIB_DAT_FILE_H
 
 #include "common/serializer.h"
-#include "bagel/boflib/stdinc.h"
 #include "bagel/boflib/file.h"
 
 namespace Bagel {

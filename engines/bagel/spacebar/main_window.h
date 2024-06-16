@@ -26,7 +26,6 @@
 #include "bagel/boflib/gfx/palette.h"
 #include "bagel/baglib/pan_window.h"
 #include "bagel/baglib/menu_dlg.h"
-#include "bagel/baglib/pda.h"
 #include "bagel/spacebar/thud.h"
 
 namespace Bagel {

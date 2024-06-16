@@ -192,7 +192,7 @@ public:
 	 * @return Returns the next available location in the sdev,
 	 * at this level the objects will go out of range of the sdev.
 	 */
-	CBofPoint arrangeFloater(CBofPoint pos, CBagObject *bagObj) override;
+	CBofPoint arrangeFloater(CBofPoint &pos, CBagObject *bagObj) override;
 
 	int getCurFltPage();
 	void setCurFltPage(int fltPage);

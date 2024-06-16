@@ -23,7 +23,6 @@
 #ifndef BAGEL_BAGLIB_VARIABLE_OBJECT_H
 #define BAGEL_BAGLIB_VARIABLE_OBJECT_H
 
-#include "bagel/baglib/text_object.h"
 #include "bagel/baglib/object.h"
 
 namespace Bagel {

@@ -722,7 +722,7 @@ void CBagPanWindow::flushInputEvents() {
 
 #define HALF_PAN_WIDTH   (PAN_WIDTH/2)
 
-uint32 CBagPanWindow::rotateTo(CBofPoint xPoint, int nRate) {
+uint32 CBagPanWindow::rotateTo(CBofPoint &xPoint, int nRate) {
 	assert(nRate > 0);
 
 	if (_pSlideBitmap && (xPoint.x != -1) && (xPoint.y != -1)) {

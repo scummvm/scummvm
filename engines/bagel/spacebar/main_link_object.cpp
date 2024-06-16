@@ -38,7 +38,8 @@ void CMainLinkObject::onLButtonUp(uint32 nFlags, CBofPoint *xPoint, void *info) 
 
 	if (pWnd && pWnd->gameMode() == CMainWindow::VRPLAYMODE) {
 		if (CBagMasterWin::getFlyThru()) {
-			pWnd->rotateTo(getSrcLoc(), 12);
+			CBofPoint loc = getSrcLoc();
+			pWnd->rotateTo(loc, 12);
 		}
 
 		// Set the link position for the storage device we are about to jump to

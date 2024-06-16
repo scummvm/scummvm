@@ -23,8 +23,6 @@
 #ifndef BAGEL_BOFLIB_FILE_FUNCTIONS_H
 #define BAGEL_BOFLIB_FILE_FUNCTIONS_H
 
-#include "bagel/boflib/stdinc.h"
-
 namespace Bagel {
 
 /**

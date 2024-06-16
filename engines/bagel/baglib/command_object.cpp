@@ -203,7 +203,8 @@ bool CBagCommandObject::runObject() {
 				CBagStorageDev *currSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();
 				if ((currSDev != nullptr) && (currSDev->getDeviceType() == SDEV_GAMEWIN)) {
 					CBagPanWindow *currWin = (CBagPanWindow *)currSDev;
-					currWin->rotateTo(getPosition());
+					CBofPoint loc = getPosition();
+					currWin->rotateTo(loc);
 				}
 			}
 
@@ -212,7 +213,8 @@ bool CBagCommandObject::runObject() {
 			CBagStorageDev *currSDev = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();
 			if ((currSDev != nullptr) && (currSDev->getDeviceType() == SDEV_GAMEWIN)) {
 				CBagPanWindow *currWin = (CBagPanWindow *)currSDev;
-				currWin->rotateTo(getPosition());
+				CBofPoint loc = getPosition();
+				currWin->rotateTo(loc);
 			}
 
 		} else if (getFileName() == "SETQVOL") {
