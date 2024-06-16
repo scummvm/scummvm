@@ -375,8 +375,6 @@ void init_graphics() {
 	hmainWnd = (HWND)grDispatcher::instance()->Get_hWnd();
 	qdGameConfig::get_config().set_pixel_format(grDispatcher::instance()->pixel_format());
 
-	qdGameConfig::get_config().save();
-
 	qdlg::set_icon(hmainWnd);
 	appSetHandle(hmainWnd);
 
