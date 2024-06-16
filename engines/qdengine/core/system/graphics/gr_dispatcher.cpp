@@ -21,7 +21,8 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#include "engines/util.h"
+#include "qdengine/qdengine.h"
 #include "common/textconsole.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
@@ -97,6 +98,8 @@ bool grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, 
 	Finit();
 
 	pixel_format_ = pixel_format;
+
+	initGraphics(sx, sy, &g_engine->_pixelformat);
 
 	if (!is_mode_supported(sx, sy, pixel_format_))
 		pixel_format_ = adjust_mode(pixel_format);
