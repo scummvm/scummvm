@@ -476,10 +476,10 @@ void SBBasePda::getPdaState() {
 #define HAND_CURSOR 1
 
 int SBBasePda::getProperCursor(const CBofPoint &pos, CBofRect &pdaRect) const {
-	int wieldCursor = CBagWield::getWieldCursor();
+	const int wieldCursor = CBagWield::getWieldCursor();
 
 	// Assume can't click
-	int cursorID = NULL_CURSOR;
+	const int cursorID = NULL_CURSOR;
 
 	// If we're in the map, return the nullptr cursor, if on the pda but not in the
 	// map window, return the hand.  Same rules for nomode.
@@ -488,7 +488,7 @@ int SBBasePda::getProperCursor(const CBofPoint &pos, CBofRect &pdaRect) const {
 	case PDA_NO_MODE:
 	case PDA_MOO_MODE:
 		if (_mapWnd) {
-			CBofRect pdaViewRect = _mapWnd->getRect() + pdaRect.topLeft();
+			const CBofRect pdaViewRect = _mapWnd->getRect() + pdaRect.topLeft();
 			if (pdaViewRect.ptInRect(pos)) {
 				if (wieldCursor >= 0) {
 					return wieldCursor;
@@ -517,7 +517,7 @@ int SBBasePda::getProperCursor(const CBofPoint &pos, CBofRect &pdaRect) const {
 					// Localize pda view rect
 					pdaViewRect = _curDisplay->getRect() + pdaRect.topLeft();
 
-					int count = objList->getCount();
+					const int count = objList->getCount();
 					for (int i = 0; i < count; ++i) {
 						CBagObject *curObj = objList->getNodeItem(i);
 						if (curObj->isActive()) {

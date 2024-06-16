@@ -50,7 +50,7 @@ CBagButtonObject::~CBagButtonObject() {
 }
 
 ErrorCode CBagButtonObject::attach() {
-	ErrorCode errorCode = CBagSpriteObject::attach();
+	const ErrorCode errorCode = CBagSpriteObject::attach();
 
 	CBofSprite *curSprite = getSprite();
 	if (curSprite) {
@@ -70,7 +70,7 @@ ErrorCode CBagButtonObject::attach() {
 	// If this is a slider button make sure it is in the correct position
 	if (_buttonType == BTN_SLIDER) {
 		CBofPoint NewPoint = getPosition();
-		int xIncrement = _slideRect.width() / (_numPos - 1);
+		const int xIncrement = _slideRect.width() / (_numPos - 1);
 		NewPoint.x = _slideRect.left + (getState() * xIncrement);
 		setPosition(NewPoint);
 	}
@@ -151,10 +151,10 @@ void CBagButtonObject::onLButtonUp(uint32 flags, CBofPoint *point, void *extraIn
 
 		// Get the mouse point relative to the pan window
 		CBagPanWindow *pWnd = (CBagPanWindow *)extraInfo;
-		CBofRect r = pWnd->getSlideBitmap()->getCurrView();
+		const CBofRect r = pWnd->getSlideBitmap()->getCurrView();
 
-		int mLocX = point->x + r.left - pWnd->getViewPortPos().x;
-		int xIncrement = _slideRect.width() / (_numPos - 1);
+		const int mLocX = point->x + r.left - pWnd->getViewPortPos().x;
+		const int xIncrement = _slideRect.width() / (_numPos - 1);
 
 		int slidePos = _slideRect.left;
 		int i;
@@ -221,9 +221,9 @@ bool CBagButtonObject::onMouseMove(uint32 /*nFlags*/, CBofPoint point, void *ext
 
 			CBofPoint NewPoint = getPosition();
 			CBagPanWindow *pWnd = (CBagPanWindow *)extraInfo;
-			CBofRect r = pWnd->getSlideBitmap()->getCurrView();
+			const CBofRect r = pWnd->getSlideBitmap()->getCurrView();
 
-			int mLocX = point.x + r.left - pWnd->getViewPortPos().x;
+			const int mLocX = point.x + r.left - pWnd->getViewPortPos().x;
 
 			int NewXPos = mLocX;
 
@@ -238,16 +238,15 @@ bool CBagButtonObject::onMouseMove(uint32 /*nFlags*/, CBofPoint point, void *ext
 
 			// We need to set the state here as well as LButtonUP
 			// because there is a chance we won't get it
-			int xIncrement = _slideRect.width() / (_numPos - 1);
-			int i = (NewPoint.x - _slideRect.left) / xIncrement;
+			const int xIncrement = _slideRect.width() / (_numPos - 1);
+			const int i = (NewPoint.x - _slideRect.left) / xIncrement;
 			setState(i);
 		}
 	}
 
 	if (_buttonType == BTN_PUSH) {
 		if (getSprite() && (getSprite()->getCelCount() > 1)) {
-			if (!this->getRect().ptInRect(point) &&
-			        _active && !_activeUp) {
+			if (!this->getRect().ptInRect(point) && _active && !_activeUp) {
 				_activeUp = true;
 			}
 		}
@@ -324,7 +323,7 @@ ErrorCode CBagButtonObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcR
 	}
 
 	if (getSprite() && ((getSprite()->getCelCount() > 1) || isVisible())) {
-		ErrorCode errorCode = CBagSpriteObject::update(bmp, pt, srcRect, maskColor);
+		const ErrorCode errorCode = CBagSpriteObject::update(bmp, pt, srcRect, maskColor);
 		setDirty(bDirty);
 		return errorCode;
 	}
@@ -343,7 +342,7 @@ ParseCodes CBagButtonObject::setInfo(CBagIfstream &istr) {
 	bool nObjectUpdated = false;
 
 	while (!istr.eof()) {
-		char ch = (char)istr.peek();
+		const char ch = (char)istr.peek();
 		switch (ch) {
 		//
 		//  +n  - n number of slides in sprite
@@ -429,7 +428,7 @@ ParseCodes CBagButtonObject::setInfo(CBagIfstream &istr) {
 		// No match return from function
 		//
 		default: {
-			ParseCodes parseCode = CBagObject::setInfo(istr);
+			const ParseCodes parseCode = CBagObject::setInfo(istr);
 			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}

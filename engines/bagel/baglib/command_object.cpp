@@ -406,7 +406,7 @@ ParseCodes CBagCommandObject::setInfo(CBagIfstream &istr) {
 	while (!istr.eof()) {
 		istr.eatWhite();
 
-		char ch = (char)istr.peek();
+		const char ch = (char)istr.peek();
 		switch (ch) {
 		//
 		//  OBJECT
@@ -467,7 +467,7 @@ ParseCodes CBagCommandObject::setInfo(CBagIfstream &istr) {
 		//  No match return from function
 		//
 		default: {
-			ParseCodes parseCode = CBagObject::setInfo(istr);
+			const ParseCodes parseCode = CBagObject::setInfo(istr);
 			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}

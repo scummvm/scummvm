@@ -76,7 +76,7 @@ ErrorCode CDevDlg::createWindow(const char *bmp, CBofWindow *wnd, CBofPalette *p
 	}
 
 	CBofRect bmpRect(bitmap->getRect());
-	CBofString className = "CDevDlg";
+	const CBofString className = "CDevDlg";
 	CBagStorageDevDlg::create(className, &bmpRect, wnd, 0);
 	center();
 	setBackdrop(bitmap);
@@ -182,7 +182,7 @@ void CDevDlg::setText(CBofString &text, CBofRect *textRect) {
 ErrorCode CDevDlg::onRender(CBofBitmap *bmp, CBofRect *rect) {
 	assert(isValidObject(this));
 
-	ErrorCode errorCode = CBagStorageDevDlg::onRender(bmp, rect);
+	const ErrorCode errorCode = CBagStorageDevDlg::onRender(bmp, rect);
 
 	if (_titleText != nullptr) {
 		_titleText->display(getBackdrop());

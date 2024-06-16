@@ -128,7 +128,7 @@ ErrorCode CBagCharacterObject::attach() {
 
 	if (_saveState) {
 		// Get the current state for this object
-		int nState = getState();
+		const int nState = getState();
 
 		// If the state is not the default(0) then move to the correct frame
 		if (nState != 0)
@@ -212,7 +212,7 @@ bool CBagCharacterObject::refreshCurrentFrame() {
 }
 
 CBofRect CBagCharacterObject::getRect() {
-	CBofPoint pos = getPosition();
+	const CBofPoint pos = getPosition();
 	CBofSize size;
 
 	if (_bmpBuf)
@@ -236,13 +236,13 @@ void CBagCharacterObject::updatePosition() {
 		// disk for the position of the smack dudes.
 		// Check that we are going to fit
 		if (lSeekPos + (int32)(2 * sizeof(int32)) <= _binBufLen) {
-			int xPos = READ_LE_INT32(&_binBuf[lSeekPos]);
+			const int xPos = READ_LE_INT32(&_binBuf[lSeekPos]);
 			lSeekPos += sizeof(int32);
-			int yPos = READ_LE_INT32(&_binBuf[lSeekPos]);
+			const int yPos = READ_LE_INT32(&_binBuf[lSeekPos]);
 
 			// A valid number was read
 			if ((xPos > -1) && (yPos > -1)) {
-				CBofPoint newPos(xPos, yPos);
+				const CBofPoint newPos(xPos, yPos);
 				setPosition(newPos);
 			}
 		}
@@ -252,7 +252,7 @@ void CBagCharacterObject::updatePosition() {
 bool CBagCharacterObject::doAdvance() {
 	// Assume we're not advancing
 	bool doAdvanceFl = false;
-	bool pdaWandFl = (this == _pdaWand);
+	const bool pdaWandFl = (this == _pdaWand);
 
 	if (pdaWandFl) {
 		_pdaAnimating = false;
@@ -322,9 +322,9 @@ bool CBagCharacterObject::doAdvance() {
 bool CBagCharacterObject::isInside(const CBofPoint &point) {
 	if (getRect().ptInRect(point) && _charTransColor >= 0) {
 		if (_bmpBuf) {
-			int x = point.x - getRect().left;
-			int y = point.y - getRect().top;
-			int color = _bmpBuf->readPixel(x, y);
+			const int x = point.x - getRect().left;
+			const int y = point.y - getRect().top;
+			const int color = _bmpBuf->readPixel(x, y);
 			return (color != _charTransColor);
 		}
 
@@ -341,9 +341,9 @@ bool CBagCharacterObject::runObject() {
 
 ErrorCode CBagCharacterObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect * /*srcRect, unused*/, int /*maskColor, unused*/) {
 	// Get the original position for character
-	CBofPoint originalPos = getPosition();
+	const CBofPoint originalPos = getPosition();
 
-	bool doAdvanceFl = doAdvance();
+	const bool doAdvanceFl = doAdvance();
 
 	// If we have more frames advance this, else exit and detach if needed
 	if (!doAdvanceFl && _exitAtEnd) {
@@ -353,7 +353,7 @@ ErrorCode CBagCharacterObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect * 
 
 	if (_bmpBuf) {
 		// Get the new position for the character
-		CBofPoint newPos = getPosition();
+		const CBofPoint newPos = getPosition();
 		// Get access to the current sDev
 
 		// Paint in the new pos
@@ -367,7 +367,7 @@ ParseCodes CBagCharacterObject::setInfo(CBagIfstream &istr) {
 	bool objectUpdatedFl = false;
 
 	while (!istr.eof()) {
-		char ch = (char)istr.peek();
+		const char ch = (char)istr.peek();
 		switch (ch) {
 		//  SAVESTATE - Maintain the state of the character
 		case 'K': {
@@ -494,7 +494,7 @@ ParseCodes CBagCharacterObject::setInfo(CBagIfstream &istr) {
 
 		// No match return from function
 		default: {
-			ParseCodes parseCode = CBagObject::setInfo(istr);
+			const ParseCodes parseCode = CBagObject::setInfo(istr);
 			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
@@ -516,8 +516,8 @@ ParseCodes CBagCharacterObject::setInfo(CBagIfstream &istr) {
 }
 
 void CBagCharacterObject::arrangeFrames() {
-	int start = getStartFrame();
-	int end = getEndFrame();
+	const int start = getStartFrame();
+	const int end = getEndFrame();
 
 	if (_playbackSpeed < 0) {
 		_startFrame = MAX(start, end);

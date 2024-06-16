@@ -111,7 +111,7 @@ ErrorCode CBagel::initialize() {
 	Common::U32String errMsg;
 	if (!Common::load_engine_data("bagel.dat", "", 1, 0, errMsg)) {
 		GUIErrorMessage("Could not find bagel.dat data file");
-		Common::String msg(errMsg);
+		const Common::String msg(errMsg);
 		bofMessageBox("Engine Data", msg.c_str());
 		_errCode = ERR_FREAD;
 		return _errCode;
@@ -257,7 +257,7 @@ void CBagel::showNextCDDialog(CBofWindow *parentWin, int diskId) {
 
 	cNextCDDialog.setBackdrop(pBmp);
 
-	CBofRect cRect = cNextCDDialog.getBackdrop()->getRect();
+	const CBofRect cRect = cNextCDDialog.getBackdrop()->getRect();
 
 	// Create the dialog box
 	cNextCDDialog.create("NextCD", cRect.left, cRect.top, cRect.width(), cRect.height(), parentWin);

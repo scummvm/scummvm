@@ -186,7 +186,7 @@ Common::Error BagelEngine::saveGameStream(Common::WriteStream *stream, bool isAu
 }
 
 Common::Error BagelEngine::loadGameStream(Common::SeekableReadStream *stream) {
-	byte version = stream->readByte();
+	const byte version = stream->readByte();
 	if (version > SAVEGAME_VERSION)
 		error("Tried to load unsupported savegame version");
 

@@ -50,8 +50,8 @@ ErrorCode CBagAreaObject::detach() {
 }
 
 CBofRect CBagAreaObject::getRect() {
-	CBofPoint p = getPosition();
-	CBofSize s = getSize();
+	const CBofPoint p = getPosition();
+	const CBofSize s = getSize();
 	CBofRect r = CBofRect(p, s);
 	return r;
 }

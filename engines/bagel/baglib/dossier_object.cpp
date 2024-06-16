@@ -60,7 +60,7 @@ ParseCodes CBagDossierObject::setInfo(CBagIfstream &istr) {
 
 	while (!istr.eof()) {
 		istr.eatWhite();
-		char ch = (char)istr.peek();
+		const char ch = (char)istr.peek();
 		switch (ch) {
 
 		//  SIZE n - n point size of the txt
@@ -199,7 +199,7 @@ ParseCodes CBagDossierObject::setInfo(CBagIfstream &istr) {
 		//  no match return from function
 		//
 		default:
-			ParseCodes parseCode = CBagObject::setInfo(istr);
+			const ParseCodes parseCode = CBagObject::setInfo(istr);
 			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
@@ -222,7 +222,7 @@ ParseCodes CBagDossierObject::setInfo(CBagIfstream &istr) {
 // Implement attach and detach just so we can set our own attributes
 
 ErrorCode CBagDossierObject::attach() {
-	ErrorCode errorCode = CBagTextObject::attach();
+	const ErrorCode errorCode = CBagTextObject::attach();
 
 	// Keep track of the original text rectangle (for the dossier).
 	if (_dosRectInitFl == false) {
@@ -236,7 +236,7 @@ ErrorCode CBagDossierObject::attach() {
 }
 
 ErrorCode CBagDossierObject::detach() {
-	ErrorCode errorCode = CBagTextObject::detach();
+	const ErrorCode errorCode = CBagTextObject::detach();
 
 	setVisible(false); // Make this invisible, don't want it redrawn.
 	return errorCode;
@@ -265,7 +265,7 @@ ErrorCode CBagDossierObject::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *src
 
 CBofRect CBagDossierObject::getRect() {
 	CBofRect rect;
-	CBofPoint pos = getPosition();
+	const CBofPoint pos = getPosition();
 
 	if (_showIndexFl) {
 		rect = _indexRect;
