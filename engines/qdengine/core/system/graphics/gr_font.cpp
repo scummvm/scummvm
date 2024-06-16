@@ -65,133 +65,22 @@ bool grFont::load(const char *fname) {
 }
 
 bool grFont::load_index(XStream &fh) {
-	int buf_sz = fh.size();
-	char *buf = new char[buf_sz];
-
-	fh.read(buf, buf_sz);
-	fh.close();
-
-	XBuffer XBuf(buf, buf_sz);
-
-	int num_ch, sx, sy;
-	XBuf >= sx >= sy >= num_ch;
-
-	grFontChar chr;
-	for (int i = 0; i < num_ch; i ++) {
-		int x, y, sx, sy;
-		XBuf >= chr.code_ >= x >= y >= sx >= sy;
-		chr.region_ = grScreenRegion(x, y, sx, sy);
-		chars_.push_back(chr);
-
-		if (sx > size_x_) size_x_ = sx;
-		if (sy > size_y_) size_y_ = sy;
-	}
-
-	delete buf;
-
+	warning("STUB: grFont::load_index(XStream &fh)");
 	return true;
 }
 
 bool grFont::load_index(XZipStream &fh) {
-	int buf_sz = fh.size();
-	char *buf = new char[buf_sz];
-
-	fh.read(buf, buf_sz);
-	fh.close();
-
-	XBuffer XBuf(buf, buf_sz);
-
-	int num_ch, sx, sy;
-	XBuf >= sx >= sy >= num_ch;
-
-	grFontChar chr;
-	for (int i = 0; i < num_ch; i ++) {
-		int x, y, sx, sy;
-		XBuf >= chr.code_ >= x >= y >= sx >= sy;
-		chr.region_ = grScreenRegion(x, y, sx, sy);
-		chars_.push_back(chr);
-
-		if (sx > size_x_) size_x_ = sx;
-		if (sy > size_y_) size_y_ = sy;
-	}
-
-	delete[] buf;
-
+	warning("STUB: grFont::load_index(XZipStream &fh)");
 	return true;
 }
 
 bool grFont::load_alpha(XStream &fh) {
-	unsigned char header[18];
-	fh.read(header, 18);
-
-	if (header[0]) // Length of Image ID field
-		fh.seek(header[0], XS_CUR);
-
-	if (header[1]) // Color map type (0 is no color map)
-		return false;
-
-	if (header[2] != 2 && header[2] != 3) // TGA file type
-		return false;
-
-	int sx = alpha_buffer_sx_ = header[12] + (header[13] << 8);
-	int sy = alpha_buffer_sy_ = header[14] + (header[15] << 8);
-
-	int colors = header[16];
-	int flags = header[17];
-
-	int ssx = sx * colors / 8;
-
-	alpha_buffer_ = new unsigned char[ssx * sy];
-
-	if (!(flags & 0x20)) {
-		int idx = (sy - 1) * ssx;
-		for (int i = 0; i < sy; i ++) {
-			fh.read(alpha_buffer_ + idx, ssx);
-			idx -= ssx;
-		}
-	} else
-		fh.read(alpha_buffer_, ssx * sy);
-
-	fh.close();
-
+	warning("STUB: grFont::load_alpha(XStream &fh)");
 	return true;
 }
 
 bool grFont::load_alpha(XZipStream &fh) {
-	unsigned char header[18];
-	fh.read(header, 18);
-
-	if (header[0]) // Length of Image ID field
-		return false;
-//		fh.seek(header[0],XS_CUR);
-
-	if (header[1]) // Color map type (0 is no color map)
-		return false;
-
-	if (header[2] != 2 && header[2] != 3) // TGA file type
-		return false;
-
-	int sx = alpha_buffer_sx_ = header[12] + (header[13] << 8);
-	int sy = alpha_buffer_sy_ = header[14] + (header[15] << 8);
-
-	int colors = header[16];
-	int flags = header[17];
-
-	int ssx = sx * colors / 8;
-
-	alpha_buffer_ = new unsigned char[ssx * sy];
-
-	if (!(flags & 0x20)) {
-		int idx = (sy - 1) * ssx;
-		for (int i = 0; i < sy; i ++) {
-			fh.read(alpha_buffer_ + idx, ssx);
-			idx -= ssx;
-		}
-	} else
-		fh.read(alpha_buffer_, ssx * sy);
-
-	fh.close();
-
+	warning("STUB: grFont::load_alpha(XZipStream &fh");
 	return true;
 }
 
