@@ -762,6 +762,32 @@ uint16 View1::GetHitObjectID(const Common::Point& pos) const {
 	return 0x0000;
 }
 
+bool Character::HandleWalkability(Character *c) {
+	// Read the map to find out if we moved into a non-walkable area
+	// TODO: This is where the lerping will be off, since the game does this
+	// every time it adjusts by one pixel
+	// TODO: To check if the game actually moves by one pixel each frame only or
+	// íf it has a loop to do more than one per frame
+
+
+	// TODO: For now, only handle walking into the left
+	if (!IsWalkable(c->GetPosition())) {
+		for (int deltaX = 0; deltaX != 20; deltaX++) {
+			if (IsWalkable(Common::Point(c->GetPosition().x + deltaX, c->GetPosition().y))) {
+				c->SetPosition(Common::Point(c->GetPosition().x + deltaX, c->GetPosition().y));
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+bool Character::IsWalkable(const Common::Point &p) const {
+	uint32 value = g_engine->_pathfindingMap.getPixel(p.x, p.y);
+	return value < 0xC8;
+}
+
 Common::Point Character::GetPosition() const {
 	return GameObject->Position;
 }
@@ -901,6 +927,16 @@ void Character::Update() {
 
 	float progress = (float) (g_events->currentMillis - StartTime) / (float) Duration;
 	SetPosition(StartPosition + (EndPosition - StartPosition) * progress);
+	if (!HandleWalkability(this)) {
+		IsLerping = false;
+		// TODO: Copy & paste code
+		if (!g_engine->_scriptExecutor->IsExecuting()) {
+			g_engine->_scriptExecutor->Rewind();
+			// TODO: Get rid of the different copies of the position
+			View1 *currentView = (View1 *)g_engine->findView("View1");
+			g_engine->ScheduleRun();
+		}
+	}
 }
 
 bool Button::IsPointInside(const Common::Point &p) const {
