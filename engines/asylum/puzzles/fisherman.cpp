@@ -165,7 +165,7 @@ bool PuzzleFisherman::mouseLeftDown(const AsylumEvent &evt) {
 	return true;
 }
 
-bool PuzzleFisherman::mouseRightDown(const AsylumEvent &) {
+bool PuzzleFisherman::exitPuzzle() {
 	getCursor()->hide();
 	getSharedData()->setFlag(kFlag1, true);
 	getScreen()->stopPaletteFade(0, 0, 0);

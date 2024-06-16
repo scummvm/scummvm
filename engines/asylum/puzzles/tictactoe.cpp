@@ -171,8 +171,10 @@ bool PuzzleTicTacToe::mouseLeftDown(const AsylumEvent &evt) {
 	return true;
 }
 
-bool PuzzleTicTacToe::mouseRightDown(const AsylumEvent &) {
-	exitPuzzle();
+bool PuzzleTicTacToe::exitPuzzle() {
+	getScreen()->clear();
+
+	_vm->switchEventHandler(getScene());
 
 	return true;
 }

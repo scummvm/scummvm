@@ -47,9 +47,8 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	bool init(const AsylumEvent &evt);
 	bool update(const AsylumEvent &evt);
-	bool key(const AsylumEvent &evt) { return keyExit(evt); }
 	bool mouseLeftDown(const AsylumEvent &evt);
-	bool mouseRightDown(const AsylumEvent &evt);
+	bool exitPuzzle();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers

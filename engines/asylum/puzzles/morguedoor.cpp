@@ -205,7 +205,7 @@ bool PuzzleMorgueDoor::mouseLeftDown(const AsylumEvent &evt) {
 	return true;
 }
 
-bool PuzzleMorgueDoor::mouseRightUp(const AsylumEvent &) {
+bool PuzzleMorgueDoor::exitPuzzle() {
 	getCursor()->hide();
 	getSharedData()->setFlag(kFlag1, true);
 	getScreen()->stopPaletteFade(0, 0, 0);

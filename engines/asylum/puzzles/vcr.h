@@ -105,10 +105,9 @@ private:
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
 	bool init(const AsylumEvent &evt);
-	bool key(const AsylumEvent &evt);
 	bool mouseLeftDown(const AsylumEvent &evt);
 	bool mouseLeftUp(const AsylumEvent &evt);
-	bool mouseRightDown(const AsylumEvent &evt);
+	bool exitPuzzle();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Drawing

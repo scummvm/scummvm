@@ -59,14 +59,10 @@ protected:
 	virtual void updateScreen() {};
 	virtual void updateCursor() {};
 	virtual bool activate(const AsylumEvent &evt) { return true; }
-	virtual bool key(const AsylumEvent &evt) { return true; }
 	virtual bool mouseLeftUp(const AsylumEvent &evt) { return true; }
 	virtual bool mouseLeftDown(const AsylumEvent &evt) { return true; }
-	virtual bool mouseRightUp(const AsylumEvent &evt) { return true; }
-	virtual bool mouseRightDown(const AsylumEvent &evt) { return true; }
 
-	bool keyExit(const AsylumEvent &evt);
-	void exitPuzzle();
+	virtual bool exitPuzzle() = 0;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Hit test functions

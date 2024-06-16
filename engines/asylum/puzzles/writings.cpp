@@ -154,7 +154,7 @@ bool PuzzleWritings::update(const AsylumEvent &)  {
 	return true;
 }
 
-bool PuzzleWritings::mouseRightUp(const AsylumEvent &) {
+bool PuzzleWritings::exitPuzzle() {
 	getCursor()->hide();
 	getSharedData()->setFlag(kFlag1, true);
 	getScreen()->stopPaletteFade(0, 0, 0);

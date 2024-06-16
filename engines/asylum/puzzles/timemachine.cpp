@@ -231,7 +231,7 @@ bool PuzzleTimeMachine::mouseLeftDown(const AsylumEvent &evt) {
 	return true;
 }
 
-bool PuzzleTimeMachine::mouseRightDown(const AsylumEvent &) {
+bool PuzzleTimeMachine::exitPuzzle() {
 	getCursor()->hide();
 	getSharedData()->setFlag(kFlag1, true);
 	getScreen()->stopPaletteFade(0, 0, 0);

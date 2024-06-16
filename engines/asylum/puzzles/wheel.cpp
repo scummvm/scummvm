@@ -286,7 +286,7 @@ bool PuzzleWheel::mouseLeftDown(const AsylumEvent &) {
 	return true;
 }
 
-bool PuzzleWheel::mouseRightDown(const AsylumEvent &) {
+bool PuzzleWheel::exitPuzzle() {
 	getScreen()->clear();
 	_vm->switchEventHandler(getScene());
 
