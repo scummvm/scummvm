@@ -63,6 +63,12 @@ private:
 	// TODO: Replace by more proper task implementation later
 	Character *objectToPickUp = nullptr;
 
+	// Handle when the character has moved into a non-walkable area, push them out if
+	// they did and return true, return false otherwise
+	bool HandleWalkability(Character *c);
+
+	bool IsWalkable(const Common::Point &p) const;
+
 
 	public:
 	Common::Point GetPosition() const;
