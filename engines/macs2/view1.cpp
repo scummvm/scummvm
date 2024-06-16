@@ -936,7 +936,7 @@ void Character::Update() {
 
 	float progress = (float) (g_events->currentMillis - StartTime) / (float) Duration;
 	SetPosition(StartPosition + (EndPosition - StartPosition) * progress);
-	if (!HandleWalkability(this)) {
+	if (HandleWalkability(this)) {
 		IsLerping = false;
 		// TODO: Copy & paste code
 		if (!g_engine->_scriptExecutor->IsExecuting()) {
