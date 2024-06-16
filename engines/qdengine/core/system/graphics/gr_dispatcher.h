@@ -80,14 +80,29 @@ class UI_TextParser;
 class grDispatcher {
 public:
 	grDispatcher();
-	virtual ~grDispatcher();
+	~grDispatcher();
 
 	static bool sys_init();
 	static bool sys_finit();
 
-	virtual bool is_in_fullscreen_mode() const = 0;
-	virtual bool is_mode_supported(int sx, int sy, grPixelFormat pixel_format) const = 0;
-	virtual bool is_mode_supported(grPixelFormat pixel_format) const = 0;
+	bool is_in_fullscreen_mode() const {
+		warning("STUB: grDispatcher::is_in_fullscreen_mode()");
+		return true;
+	};
+	bool is_mode_supported(int sx, int sy, grPixelFormat pixel_format) const {
+		warning("STUB: grDispatcher::is_mode_supported");
+		return true;
+	};
+	bool is_mode_supported(grPixelFormat pixel_format) const {
+		warning("STUB: grDispatcher::is_mode_supported");
+		return true;
+	};
+
+	bool get_current_mode(int sx, int sy, grPixelFormat grPixelformat) {
+		warning("STUB: grDispatcher::get_current_mode");
+		return true;
+	}
+
 	grPixelFormat adjust_mode(grPixelFormat pixel_format) const {
 		if (!is_mode_supported(pixel_format)) {
 			switch (pixel_format) {
@@ -105,7 +120,7 @@ public:
 		return pixel_format;
 	}
 
-	virtual bool init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, bool fullscreen = false);
+	bool init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, bool fullscreen = false);
 
 	void toggle_reinit() {
 		flags |= GR_REINIT;
@@ -199,8 +214,10 @@ public:
 		return 0;
 	}
 
-	virtual bool Flush(int x, int y, int sx, int sy) = 0;
-	virtual bool StretchFlush(int x_dest, int y_dest, int sx_dest, int sy_dest, int x_src, int y_src, int sx_src, int sy_src) = 0;
+	virtual bool Flush(int x, int y, int sx, int sy) {
+		warning("STUB: grDispatcher::Flush");
+		return true;
+	};
 
 	bool Flush() {
 		return Flush(0, 0, SizeX, SizeY);

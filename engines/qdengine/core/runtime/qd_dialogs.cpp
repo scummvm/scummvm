@@ -27,16 +27,16 @@
 #include "qdengine/core/resource.h"
 #include "qdengine/core/runtime/qd_dialogs.h"
 #include "qdengine/core/runtime/qd_dialog_control.h"
-#include "qdengine/core/system/graphics/ddraw_gr_dispatcher.h"
-
+#include "qdengine/core/system/graphics/gr_dispatcher.h"
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 namespace QDEngine {
 
 namespace qdrt {
-extern DDraw_grDispatcher *dd_grD;
-};
+extern grDispatcher *grD;
+}
+
 
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
 
@@ -178,7 +178,7 @@ void update_color_option() {
 	if (!dp) return;
 
 	for (int i = 0; i < 4; i++) {
-		if (qdrt::dd_grD -> is_mode_supported(grPixelFormat(i)))
+		if (qdrt::grD -> is_mode_supported(grPixelFormat(i)))
 			dp -> enable_item(i);
 		else
 			dp -> disable_item(i);
@@ -190,7 +190,7 @@ void update_color_option() {
 
 		int sx, sy;
 		grPixelFormat pixel_format;
-		if (qdrt::dd_grD->get_current_mode(sx, sy, pixel_format))
+		if (qdrt::grD->get_current_mode(sx, sy, pixel_format))
 			dp -> set_value(pixel_format);
 	} else
 		dp -> enable_control(true);
