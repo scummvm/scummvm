@@ -73,10 +73,8 @@ void qdAnimationFrame::qda_save(class XStream &fh) {
 }
 
 void qdAnimationFrame::qda_load(class XStream &fh, int version) {
-	int fl;
-	fh > fl > start_time_ > length_;
-
-	qdSprite::qda_load(fh, version);
+	warning("STUB: qdAnimationFrame::qda_load(XStream &fh, int version)");
+	return;
 }
 
 void qdAnimationFrame::qda_load(Common::SeekableReadStream *fh, int version) {
@@ -87,10 +85,8 @@ void qdAnimationFrame::qda_load(Common::SeekableReadStream *fh, int version) {
 	qdSprite::qda_load(fh, version);
 }
 void qdAnimationFrame::qda_load(XZipStream &fh, int version) {
-	int fl;
-	fh > fl > start_time_ > length_;
-
-	qdSprite::qda_load(fh, version);
+	warning("STUB: qdAnimationFrame::qda_load(XZipStream &fh, int verion)");
+	return;
 }
 
 bool qdAnimationFrame::load_resources() {
