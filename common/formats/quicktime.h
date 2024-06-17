@@ -209,6 +209,12 @@ protected:
 		float initialVPan;
 	};
 
+	enum class QTVRType {
+		OTHER,
+		OBJECT,
+		PANORAMA
+	};
+
 	virtual SampleDesc *readSampleDesc(Track *track, uint32 format, uint32 descSize) = 0;
 
 	uint32 _timeScale;      // movie time
@@ -217,6 +223,7 @@ protected:
 	Rational _scaleFactorY;
 	Array<Track *> _tracks;
 	Navigation _nav;
+	QTVRType _qtvrType;
 
 	void init();
 
@@ -260,6 +267,7 @@ private:
 	int readWAVE(Atom atom);
 	int readESDS(Atom atom);
 	int readSMI(Atom atom);
+	int readCTYP(Atom atom);
 	int readNAVG(Atom atom);
 };
 
