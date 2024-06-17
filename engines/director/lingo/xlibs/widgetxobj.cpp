@@ -46,9 +46,9 @@ namespace Director {
 
 
 const char *WidgetXObj::xlibName = "Widget";
-const char *WidgetXObj::fileNames[] = {
-	"widget",
-	nullptr
+const XlibFileDesc WidgetXObj::fileNames[] = {
+	{ "widget",	nullptr },
+	{ nullptr,	nullptr },
 };
 
 static MethodProto xlibMethods[] = {

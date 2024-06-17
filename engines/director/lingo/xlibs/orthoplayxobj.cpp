@@ -48,9 +48,9 @@
 namespace Director {
 
 const char *OrthoPlayXObj::xlibName = "OrthoPlayXObj";
-const char *OrthoPlayXObj::fileNames[] = {
-	"OrthoPlay XObj",
-	nullptr
+const XlibFileDesc OrthoPlayXObj::fileNames[] = {
+	{ "OrthoPlay XObj",	nullptr },
+	{ nullptr,			nullptr },
 };
 
 static MethodProto xlibMethods[] = {

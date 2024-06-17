@@ -46,9 +46,9 @@ namespace Director {
 
 // The name is different from the obj filename.
 const char *FindWin::xlibName = "FindWin";
-const char *FindWin::fileNames[] = {
-	"FindWin",
-	nullptr
+const XlibFileDesc FindWin::fileNames[] = {
+	{ "FindWin",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 static MethodProto xlibMethods[] = {

@@ -38,9 +38,9 @@
 namespace Director {
 
 const char *Misc::xlibName = "misc";
-const char *Misc::fileNames[] = {
-    "misc",
-    nullptr
+const XlibFileDesc Misc::fileNames[] = {
+    { "misc",   nullptr },
+    { nullptr,  nullptr },
 };
 
 static MethodProto xlibMethods[] = {

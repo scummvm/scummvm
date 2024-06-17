@@ -49,10 +49,10 @@ X		mDispose												--Dispose of memory allocation
 namespace Director {
 
 const char *HitMap::xlibName = "HitMap";
-const char *HitMap::fileNames[] = {
-	"HitMap",
-	"maskXobj",
-	0
+const XlibFileDesc HitMap::fileNames[] = {
+	{ "HitMap",		nullptr },
+	{ "maskXobj",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 static MethodProto xlibMethods[] = {

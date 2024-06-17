@@ -63,9 +63,9 @@ I          mhwnd  --window handle
 namespace Director {
 
 const char *XWINXObj::xlibName = "XWIN";
-const char *XWINXObj::fileNames[] = {
-	"XWIN",
-	nullptr
+const XlibFileDesc XWINXObj::fileNames[] = {
+	{ "XWIN",	nullptr },
+	{ nullptr,	nullptr },
 };
 
 static MethodProto xlibMethods[] = {

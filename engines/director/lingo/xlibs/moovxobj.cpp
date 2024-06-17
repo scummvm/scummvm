@@ -58,9 +58,9 @@
 namespace Director {
 
 const char *MoovXObj::xlibName = "moovxobj";
-const char *MoovXObj::fileNames[] = {
-	"moovxobj",
-	nullptr
+const XlibFileDesc MoovXObj::fileNames[] = {
+	{ "moovxobj",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 static MethodProto xlibMethods[] = {

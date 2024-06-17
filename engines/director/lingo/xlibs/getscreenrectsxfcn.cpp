@@ -37,9 +37,9 @@
 namespace Director {
 
 const char *GetScreenRectsXFCN::xlibName = "GetScreenRects";
-const char *GetScreenRectsXFCN::fileNames[] = {
-	"GetScreenRects",
-	nullptr
+const XlibFileDesc GetScreenRectsXFCN::fileNames[] = {
+	{ "GetScreenRects",	nullptr },
+	{ nullptr,			nullptr },
 };
 
 static BuiltinProto builtins[] = {

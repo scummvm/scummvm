@@ -37,9 +37,9 @@
 namespace Director {
 
 const char *FadeGammaUpXCMD::xlibName = "FadeGammaUp";
-const char *FadeGammaUpXCMD::fileNames[] = {
-	"FadeGammaUp",
-	nullptr
+const XlibFileDesc FadeGammaUpXCMD::fileNames[] = {
+	{ "FadeGammaUp",	nullptr },
+	{ nullptr,			nullptr },
 };
 
 static BuiltinProto builtins[] = {

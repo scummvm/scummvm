@@ -48,9 +48,9 @@ XII    mVerb msg, qtPacker -- do something
 namespace Director {
 
 const char *DPWQTWXObj::xlibName = "DPWQTW";
-const char *DPWQTWXObj::fileNames[] = {
-	"DPWQTW",
-	nullptr
+const XlibFileDesc DPWQTWXObj::fileNames[] = {
+	{ "DPWQTW",	nullptr },
+	{ nullptr,	nullptr },
 };
 
 static MethodProto xlibMethods[] = {

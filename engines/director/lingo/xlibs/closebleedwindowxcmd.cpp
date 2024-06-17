@@ -37,9 +37,9 @@
 namespace Director {
 
 const char *CloseBleedWindowXCMD::xlibName = "CloseBleedWindow";
-const char *CloseBleedWindowXCMD::fileNames[] = {
-	"CloseBleedWindow",
-	nullptr
+const XlibFileDesc CloseBleedWindowXCMD::fileNames[] = {
+	{ "CloseBleedWindow",	nullptr },
+	{ nullptr,				nullptr },
 };
 
 static BuiltinProto builtins[] = {

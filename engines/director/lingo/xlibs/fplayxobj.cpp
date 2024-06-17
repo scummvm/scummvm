@@ -42,10 +42,10 @@
 namespace Director {
 
 const char *FPlayXObj::xlibName = "FPlay";
-const char *FPlayXObj::fileNames[] = {
-	"FPlayXObj",
-	"FPlay",
-	nullptr
+const XlibFileDesc FPlayXObj::fileNames[] = {
+	{ "FPlayXObj",	nullptr },
+	{ "FPlay",		nullptr },
+	{ nullptr,		nullptr },
 };
 
 static BuiltinProto builtins[] = {

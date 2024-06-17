@@ -47,9 +47,9 @@ X	 mKillProcess	-- kills this process
 namespace Director {
 
 const char *ProcessXObj::xlibName = "ProcessXObj";
-const char *ProcessXObj::fileNames[] = {
-	"ProcessXObj",
-	nullptr
+const XlibFileDesc ProcessXObj::fileNames[] = {
+	{ "ProcessXObj",	nullptr },
+	{ nullptr,			nullptr },
 };
 
 static MethodProto xlibMethods[] = {

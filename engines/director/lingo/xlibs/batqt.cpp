@@ -67,9 +67,9 @@ namespace Director {
 
 // The name is different from the obj filename.
 const char *BatQT::xlibName = "batQT";
-const char *BatQT::fileNames[] = {
-	"batQT",
-	nullptr
+const XlibFileDesc BatQT::fileNames[] = {
+	{ "batQT",	nullptr },
+	{ nullptr,	nullptr },
 };
 
 static MethodProto xlibMethods[] = {

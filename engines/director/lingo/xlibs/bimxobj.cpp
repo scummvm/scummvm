@@ -48,10 +48,10 @@
 namespace Director {
 
 const char *BIMXObj::xlibName = "BIM";
-const char *BIMXObj::fileNames[] = {
-	"FLC",
-	"BIM",
-	nullptr
+const XlibFileDesc BIMXObj::fileNames[] = {
+	{ "FLC",	nullptr },
+	{ "BIM",	nullptr },
+	{ nullptr,	nullptr },
 };
 
 static MethodProto xlibMethods[] = {

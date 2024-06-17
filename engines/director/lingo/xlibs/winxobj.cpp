@@ -45,13 +45,13 @@
 namespace Director {
 
 const char *RearWindowXObj::xlibName = "RearWindow";
-const char *RearWindowXObj::fileNames[] = {
-	"RearWindow",
-	"RearWindow.Xobj",
-	"RearWindow XObj",
-	"RW.XOB",
-	"winXObj",
-	nullptr
+const XlibFileDesc RearWindowXObj::fileNames[] = {
+	{ "RearWindow",			nullptr },
+	{ "RearWindow.Xobj",	nullptr },
+	{ "RearWindow XObj",	nullptr },
+	{ "RW.XOB",				nullptr },
+	{ "winXObj",			nullptr },
+	{ nullptr,				nullptr },
 };
 
 /*

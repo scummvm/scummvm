@@ -46,9 +46,9 @@
 namespace Director {
 
 const char *XioXObj::xlibName = "Xio";
-const char *XioXObj::fileNames[] = {
-	"XIO",
-	0
+const XlibFileDesc XioXObj::fileNames[] = {
+	{ "XIO",	nullptr },
+	{ nullptr,	nullptr },
 };
 
 static MethodProto xlibMethods[] = {

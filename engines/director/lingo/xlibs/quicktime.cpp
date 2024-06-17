@@ -37,10 +37,10 @@
 namespace Director {
 
 const char *Quicktime::xlibName = "quicktime";
-const char *Quicktime::fileNames[] = {
-    "quicktime",
-    "QuickTime",
-    nullptr
+const XlibFileDesc Quicktime::fileNames[] = {
+    { "quicktime",  nullptr },
+    { "QuickTime",  nullptr },
+    { nullptr,      nullptr },
 };
 
 static MethodProto xlibMethods[] = {

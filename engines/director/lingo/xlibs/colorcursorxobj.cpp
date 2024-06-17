@@ -45,9 +45,9 @@ X	mReleaseCursor -- CALL THIS BEFORE DISPOSING OBJECT or using the lingo <cursor
 namespace Director {
 
 const char *ColorCursorXObj::xlibName = "colorcursorxobj";
-const char *ColorCursorXObj::fileNames[] = {
-	"CCURSOR.XOB",
-	nullptr
+const XlibFileDesc ColorCursorXObj::fileNames[] = {
+	{ "CCURSOR.XOB",	nullptr },
+	{ nullptr,			nullptr },
 };
 
 static MethodProto xlibMethods[] = {

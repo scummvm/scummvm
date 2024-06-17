@@ -116,10 +116,10 @@
 namespace Director {
 
 const char *VideodiscXObj::xlibName = "LaserDisc";
-const char *VideodiscXObj::fileNames[] = {
-	"Videodisc XObj",
-	"LaserDisc",
-	nullptr
+const XlibFileDesc VideodiscXObj::fileNames[] = {
+	{ "Videodisc XObj",	nullptr },
+	{ "LaserDisc",		nullptr },
+	{ nullptr,			nullptr },
 };
 
 static MethodProto xlibMethods[] = {

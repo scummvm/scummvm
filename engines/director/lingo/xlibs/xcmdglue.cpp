@@ -51,9 +51,9 @@ O	mGetHandler
 namespace Director {
 
 const char *XCMDGlueXObj::xlibName = "XCMDGlue";
-const char *XCMDGlueXObj::fileNames[] = {
-	"XCMDGlue",
-	nullptr
+const XlibFileDesc XCMDGlueXObj::fileNames[] = {
+	{ "XCMDGlue",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 static MethodProto xlibMethods[] = {

@@ -56,12 +56,12 @@ namespace Director {
 
 // The name is different from the obj filename.
 const char *PalXObj::xlibName = "FixPalette";
-const char *PalXObj::fileNames[] = {
-	"PalXObj",
-	"FixPalette",
-	"FixPaletteXObj",
-	"PALETTE.XOB",    //  Jewels of the Oracle - Mac
-	nullptr
+const XlibFileDesc PalXObj::fileNames[] = {
+	{ "PalXObj",		nullptr },
+	{ "FixPalette",		nullptr },
+	{ "FixPaletteXObj",	nullptr },
+	{ "PALETTE.XOB",    nullptr }, //  Jewels of the Oracle - Mac
+	{ nullptr,			nullptr },
 };
 
 static MethodProto xlibMethods[] = {

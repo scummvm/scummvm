@@ -44,9 +44,9 @@
 namespace Director {
 
 const char *FEIMasksXObj::xlibName = "FEIMasks";
-const char *FEIMasksXObj::fileNames[] = {
-	"FEIMasks",
-	nullptr
+const XlibFileDesc FEIMasksXObj::fileNames[] = {
+	{ "FEIMasks",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 static MethodProto xlibMethods[] = {

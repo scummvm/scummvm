@@ -37,9 +37,9 @@
 namespace Director {
 
 const char *PortaXCMD::xlibName = "Porta";
-const char *PortaXCMD::fileNames[] = {
-	"Porta",
-	nullptr
+const XlibFileDesc PortaXCMD::fileNames[] = {
+	{ "Porta",	nullptr },
+	{ nullptr,	nullptr },
 };
 
 static BuiltinProto builtins[] = {

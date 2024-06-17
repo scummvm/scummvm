@@ -60,10 +60,10 @@
 namespace Director {
 
 const char *JourneyWareXINIXObj::xlibName = "INI";
-const char *JourneyWareXINIXObj::fileNames[] = {
-	"JWXINI",
-	"INI",
-	nullptr
+const XlibFileDesc JourneyWareXINIXObj::fileNames[] = {
+	{ "JWXINI",	nullptr },
+	{ "INI",	"www" },	// "Wellen, Wracks und Wassermaenner" names it INI.DLL
+	{ nullptr,	nullptr },
 };
 
 static MethodProto xlibMethods[] = {

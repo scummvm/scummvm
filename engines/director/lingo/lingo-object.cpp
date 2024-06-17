@@ -195,7 +195,7 @@ void Lingo::cleanupMethods() {
 	{ class::fileNames, class::open, class::close, flags, version }
 
 static struct XLibProto {
-	const char **names;
+	const XlibFileDesc *names;
 	XLibOpenerFunc opener;
 	XLibCloserFunc closer;
 	int type;
@@ -308,9 +308,16 @@ void Lingo::initXLibs() {
 		if (lib->version > _vm->getVersion())
 			continue;
 
-		for (uint i = 0; lib->names[i]; i++) {
-			_xlibOpeners[lib->names[i]] = lib->opener;
-			_xlibClosers[lib->names[i]] = lib->closer;
+		for (uint i = 0; lib->names[i].name; i++) {
+			// If this entry belongs to a specific game, skip it unless matched
+			if (lib->names[i].gameId && strcmp(lib->names[i].gameId, g_director->getGameId()))
+				continue;
+
+			if (_xlibOpeners.contains(lib->names[i].name))
+				warning("Lingo::initXLibs(): Duplicate enttry for %s", lib->names[i].name);
+
+			_xlibOpeners[lib->names[i].name] = lib->opener;
+			_xlibClosers[lib->names[i].name] = lib->closer;
 		}
 	}
 }

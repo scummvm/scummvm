@@ -65,9 +65,9 @@
 namespace Director {
 
 const char *Ednox::xlibName = "Ednox";
-const char *Ednox::fileNames[] = {
-	"Ednox",
-	0
+const XlibFileDesc Ednox::fileNames[] = {
+	{ "Ednox",	nullptr },
+	{ nullptr,	nullptr },
 };
 
 static MethodProto xlibMethods[] = {

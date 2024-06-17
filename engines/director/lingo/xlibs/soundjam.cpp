@@ -54,9 +54,9 @@
 namespace Director {
 
 const char *SoundJam::xlibName = "SoundJam";
-const char *SoundJam::fileNames[] = {
-	"SoundJam",
-	nullptr
+const XlibFileDesc SoundJam::fileNames[] = {
+	{ "SoundJam",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 const int kJamChannel = 3;

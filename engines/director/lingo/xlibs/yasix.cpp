@@ -35,13 +35,12 @@
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/xlibs/yasix.h"
 
-
 namespace Director {
 
 const char *Yasix::xlibName = "YASIX";
-const char *Yasix::fileNames[] = {
-	"YASIX",
-	0
+const XlibFileDesc Yasix::fileNames[] = {
+	{ "YASIX", nullptr },
+	{ nullptr, nullptr },
 };
 
 static BuiltinProto builtins[] = {

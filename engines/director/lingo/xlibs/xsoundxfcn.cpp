@@ -37,9 +37,9 @@
 namespace Director {
 
 const char *XSoundXFCN::xlibName = "XSound";
-const char *XSoundXFCN::fileNames[] = {
-	"XSound",
-	nullptr
+const XlibFileDesc XSoundXFCN::fileNames[] = {
+	{ "XSound",	nullptr },
+	{ nullptr,	nullptr },
 };
 
 static BuiltinProto builtins[] = {

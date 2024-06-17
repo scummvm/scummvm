@@ -49,9 +49,9 @@ XI     mSetErrorMode,mode      --sets windoze error mode
 namespace Director {
 
 const char *DirUtilXObj::xlibName = "DirUtil";
-const char *DirUtilXObj::fileNames[] = {
-	"dirutil",
-	nullptr
+const XlibFileDesc DirUtilXObj::fileNames[] = {
+	{ "dirutil",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 static MethodProto xlibMethods[] = {

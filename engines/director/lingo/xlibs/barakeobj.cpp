@@ -44,9 +44,9 @@
 namespace Director {
 
 const char *BarakeObj::xlibName = "BarakeObj";
-const char *BarakeObj::fileNames[] = {
-	"BarakeObj",
-	0
+const XlibFileDesc BarakeObj::fileNames[] = {
+	{ "BarakeObj",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 static MethodProto xlibMethods[] = {

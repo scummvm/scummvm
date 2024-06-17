@@ -105,9 +105,9 @@ III    mGetMessage           --Get mouse/key messages from the application messa
 namespace Director {
 
 const char *MovUtilsXObj::xlibName = "MovUtils";
-const char *MovUtilsXObj::fileNames[] = {
-	"MOVUTILS",
-	nullptr
+const XlibFileDesc MovUtilsXObj::fileNames[] = {
+	{ "MOVUTILS",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 static MethodProto xlibMethods[] = {

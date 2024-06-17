@@ -62,10 +62,10 @@
 namespace Director {
 
 const char *QTVR::xlibName = "QTVRW";
-const char *QTVR::fileNames[] = {
-	"QTVR",
-	"QTVR.QTC",
-	nullptr
+const XlibFileDesc QTVR::fileNames[] = {
+	{ "QTVR",		nullptr },
+	{ "QTVR.QTC",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 static MethodProto xlibMethods[] = {

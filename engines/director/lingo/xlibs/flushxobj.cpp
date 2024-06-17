@@ -66,13 +66,13 @@ const char *FlushXObj::xlibNames[] = {
 	"Johnny",
 	nullptr,
 };
-const char *FlushXObj::fileNames[] = {
-	"FlushEvents",
-	"FlushXObj",
-	"Johnny",
-	"Johnny.XObj",
-	"Toilet",
-	nullptr
+const XlibFileDesc FlushXObj::fileNames[] = {
+	{ "FlushEvents",	nullptr },
+	{ "FlushXObj",		nullptr },
+	{ "Johnny",			nullptr },
+	{ "Johnny.XObj",	nullptr },
+	{ "Toilet",			nullptr },
+	{ nullptr,			nullptr },
 };
 
 static MethodProto xlibMethods[] = {

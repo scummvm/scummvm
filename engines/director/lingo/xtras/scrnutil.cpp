@@ -49,9 +49,9 @@
 namespace Director {
 
 const char *ScrnUtilXtra::xlibName = "ScrnUtil";
-const char *ScrnUtilXtra::fileNames[] = {
-	"scrnutil",
-	nullptr
+const XlibFileDesc ScrnUtilXtra::fileNames[] = {
+	{ "scrnutil",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 static MethodProto xlibMethods[] = {

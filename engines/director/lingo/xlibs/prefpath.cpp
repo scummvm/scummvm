@@ -41,9 +41,9 @@ SS			mPrefPath
 namespace Director {
 
 const char *PrefPath::xlibName = "PrefPath";
-const char *PrefPath::fileNames[] = {
-	"PrefPath",
-	0
+const XlibFileDesc PrefPath::fileNames[] = {
+	{ "PrefPath",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 static MethodProto xlibMethods[] = {

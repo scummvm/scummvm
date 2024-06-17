@@ -35,9 +35,9 @@
 namespace Director {
 
 const char *IsCD::xlibName = "isCD";
-const char *IsCD::fileNames[] = {
-	"isCD",
-	0
+const XlibFileDesc IsCD::fileNames[] = {
+	{ "isCD",	nullptr },
+	{ nullptr,	nullptr },
 };
 
 static BuiltinProto builtins[] = {

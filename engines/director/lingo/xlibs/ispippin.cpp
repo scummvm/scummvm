@@ -35,9 +35,9 @@
 namespace Director {
 
 const char *IsPippin::xlibName = "IsPippin";
-const char *IsPippin::fileNames[] = {
-	"IsPippin",
-	0
+const XlibFileDesc IsPippin::fileNames[] = {
+	{ "IsPippin",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 static BuiltinProto builtins[] = {

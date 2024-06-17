@@ -51,9 +51,9 @@ X      mDebug              --write debugging info to message window
 namespace Director {
 
 const char *DLLGlueXObj::xlibName = "DLLGlue";
-const char *DLLGlueXObj::fileNames[] = {
-	"DLLGLUE",
-	nullptr
+const XlibFileDesc DLLGlueXObj::fileNames[] = {
+	{ "DLLGLUE",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 static MethodProto xlibMethods[] = {

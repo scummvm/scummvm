@@ -40,9 +40,9 @@
 namespace Director {
 
 const char *QTMovie::xlibName = "QTMovie";
-const char *QTMovie::fileNames[] = {
-	"QTMovie",
-	nullptr
+const XlibFileDesc QTMovie::fileNames[] = {
+	{ "QTMovie",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 static BuiltinProto builtins[] = {

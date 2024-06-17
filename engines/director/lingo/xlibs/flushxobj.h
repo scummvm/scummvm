@@ -32,7 +32,7 @@ public:
 namespace FlushXObj {
 
 extern const char *xlibNames[];
-extern const char *fileNames[];
+extern const XlibFileDesc fileNames[];
 
 void open(ObjectType type, const Common::Path &path);
 void close(ObjectType type);

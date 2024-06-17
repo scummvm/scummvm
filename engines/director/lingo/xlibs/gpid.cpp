@@ -53,9 +53,9 @@
 namespace Director {
 
 const char *GpidXObj::xlibName = "gpid";
-const char *GpidXObj::fileNames[] = {
-	"GPID",
-	nullptr
+const XlibFileDesc GpidXObj::fileNames[] = {
+	{ "GPID",	nullptr },
+	{ nullptr,	nullptr },
 };
 
 static MethodProto xlibMethods[] = {

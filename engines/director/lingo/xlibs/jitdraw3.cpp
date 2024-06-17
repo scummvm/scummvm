@@ -72,9 +72,9 @@
 namespace Director {
 
 const char *JITDraw3XObj::xlibName = "JITDraw3";
-const char *JITDraw3XObj::fileNames[] = {
-	"JITDraw3",
-	nullptr
+const XlibFileDesc JITDraw3XObj::fileNames[] = {
+	{ "JITDraw3",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 static MethodProto xlibMethods[] = {

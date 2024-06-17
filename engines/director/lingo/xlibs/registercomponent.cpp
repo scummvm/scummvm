@@ -21,6 +21,7 @@
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-object.h"
 #include "director/lingo/xlibs/registercomponent.h"
 
 /*************************************
@@ -33,9 +34,9 @@
 namespace Director {
 
 const char *RegisterComponent::xlibName = "RegisterComponent";
-const char *RegisterComponent::fileNames[] = {
-	"RegisterComponent",
-	nullptr
+const XlibFileDesc RegisterComponent::fileNames[] = {
+	{ "RegisterComponent",	nullptr },
+	{ nullptr,				nullptr },
 };
 
 static BuiltinProto builtins[] = {

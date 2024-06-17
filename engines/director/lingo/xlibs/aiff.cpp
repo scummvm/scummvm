@@ -56,9 +56,9 @@
 namespace Director {
 
 const char *AiffXObj::xlibName = "aiff";
-const char *AiffXObj::fileNames[] = {
-	"AIFF",
-	nullptr
+const XlibFileDesc AiffXObj::fileNames[] = {
+	{ "AIFF",	nullptr },
+	{ nullptr,	nullptr },
 };
 
 static MethodProto xlibMethods[] = {

@@ -74,9 +74,9 @@ S       mVolList
 namespace Director {
 
 const char *MMovieXObj::xlibName = "MMovie";
-const char *MMovieXObj::fileNames[] = {
-	"MMovie",
-	nullptr
+const XlibFileDesc MMovieXObj::fileNames[] = {
+	{ "MMovie",	nullptr },
+	{ nullptr,	nullptr },
 };
 
 static MethodProto xlibMethods[] = {

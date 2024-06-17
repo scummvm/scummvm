@@ -44,9 +44,9 @@
 namespace Director {
 
 const char *SerialPortXObj::xlibName = "SerialPort";
-const char *SerialPortXObj::fileNames[] = {
-	"SerialPort",
-	nullptr
+const XlibFileDesc SerialPortXObj::fileNames[] = {
+	{ "SerialPort",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 static MethodProto xlibMethods[] = {

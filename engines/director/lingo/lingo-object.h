@@ -34,6 +34,11 @@ struct MethodProto {
 	int version;
 };
 
+struct XlibFileDesc {
+	const char *name;		// Base file name for the Xlib file in the original
+	const char *gameId;		// GameId or nullptr if applicable to all
+};
+
 class AbstractObject {
 public:
 	virtual ~AbstractObject() {};

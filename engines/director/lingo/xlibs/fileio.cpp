@@ -135,11 +135,11 @@ delete object me -- deletes the open file
 namespace Director {
 
 const char *FileIO::xlibName = "FileIO";
-const char *FileIO::fileNames[] = {
-	"FileIO",
-	"shFILEIO", // TD loads this up using openXLib("@:shFILEIO.DLL")
-	"FILE",
-	nullptr
+const XlibFileDesc FileIO::fileNames[] = {
+	{ "FileIO",		nullptr },
+	{ "shFILEIO",	nullptr }, // TD loads this up using openXLib("@:shFILEIO.DLL")
+	{ "FILE",		nullptr },
+	{ nullptr,		nullptr },
 };
 
 static MethodProto xlibMethods[] = {

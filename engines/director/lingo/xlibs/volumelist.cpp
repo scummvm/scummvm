@@ -40,9 +40,9 @@
 namespace Director {
 
 const char *VolumeList::xlibName = "VolumeList";
-const char *VolumeList::fileNames[] = {
-	"VolumeList",
-	0
+const XlibFileDesc VolumeList::fileNames[] = {
+	{ "VolumeList",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 static BuiltinProto builtins[] = {

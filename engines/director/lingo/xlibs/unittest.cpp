@@ -44,9 +44,9 @@
 namespace Director {
 
 const char *UnitTestXObj::xlibName = "UnitTest";
-const char *UnitTestXObj::fileNames[] = {
-	"UnitTest",
-	0
+const XlibFileDesc UnitTestXObj::fileNames[] = {
+	{ "UnitTest",	nullptr },
+	{ nullptr,		nullptr },
 };
 /*
 -- ScummVM UnitTest XObject.

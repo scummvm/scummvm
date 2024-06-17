@@ -72,34 +72,34 @@ OI	+mNthWindow, n	--Returns the n'th window.
 namespace Director {
 
 const char *WindowXObj::xlibName = "Window";
-const char *WindowXObj::fileNames[] = {
-	"Window",
-	nullptr
+const XlibFileDesc WindowXObj::fileNames[] = {
+	{ "Window",	nullptr },
+	{ nullptr,	nullptr },
 };
 
 static MethodProto xlibMethods[] = {
 	{ "new",				WindowXObj::m_new,		 2, 2,	200 },
-	{ "dispose",				WindowXObj::m_dispose,		 0, 0,	200 },
+	{ "dispose",			WindowXObj::m_dispose,	 0, 0,	200 },
 	{ "name",				WindowXObj::m_name,		 0, 0,	200 },
-	{ "select",				WindowXObj::m_select,		 0, 0,	200 },
+	{ "select",				WindowXObj::m_select,	 0, 0,	200 },
 	{ "show",				WindowXObj::m_show,		 0, 0,	200 },
 	{ "hide",				WindowXObj::m_hide,		 0, 0,	200 },
 	{ "move",				WindowXObj::m_move,		 2, 2,	200 },
 	{ "size",				WindowXObj::m_size,		 2, 2,	200 },
-	{ "addPanel",				WindowXObj::m_addPanel,		 2, 2,	200 },
-	{ "getPanel",				WindowXObj::m_getPanel,		 1, 1,	200 },
-	{ "setHandler",				WindowXObj::m_setHandler,		 1, 1,	200 },
-	{ "getHandler",				WindowXObj::m_getHandler,		 0, 0,	200 },
+	{ "addPanel",			WindowXObj::m_addPanel,	 2, 2,	200 },
+	{ "getPanel",			WindowXObj::m_getPanel,	 1, 1,	200 },
+	{ "setHandler",			WindowXObj::m_setHandler, 1, 1,	200 },
+	{ "getHandler",			WindowXObj::m_getHandler, 0, 0,	200 },
 	{ "idle",				WindowXObj::m_idle,		 0, 0,	200 },
-	{ "activate",				WindowXObj::m_activate,		 1, 1,	200 },
-	{ "update",				WindowXObj::m_update,		 0, 0,	200 },
-	{ "mouseUp",				WindowXObj::m_mouseUp,		 2, 2,	200 },
-	{ "mouseDown",				WindowXObj::m_mouseDown,		 2, 2,	200 },
-	{ "keyDown",				WindowXObj::m_keyDown,		 1, 1,	200 },
-	{ "windowPtr",				WindowXObj::m_windowPtr,		 0, 0,	200 },
-	{ "setTitle",				WindowXObj::m_setTitle,		 1, 1,	200 },
-	{ "disposeAll",				WindowXObj::m_disposeAll,		 0, 0,	200 },
-	{ "nthWindow",				WindowXObj::m_nthWindow,		 1, 1,	200 },
+	{ "activate",			WindowXObj::m_activate,	 1, 1,	200 },
+	{ "update",				WindowXObj::m_update,	 0, 0,	200 },
+	{ "mouseUp",			WindowXObj::m_mouseUp,	 2, 2,	200 },
+	{ "mouseDown",			WindowXObj::m_mouseDown, 2, 2,	200 },
+	{ "keyDown",			WindowXObj::m_keyDown,	 1, 1,	200 },
+	{ "windowPtr",			WindowXObj::m_windowPtr, 0, 0,	200 },
+	{ "setTitle",			WindowXObj::m_setTitle,	 1, 1,	200 },
+	{ "disposeAll",			WindowXObj::m_disposeAll, 0, 0,	200 },
+	{ "nthWindow",			WindowXObj::m_nthWindow, 1, 1,	200 },
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 

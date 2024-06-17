@@ -54,9 +54,9 @@ const char *EventQXObj::xlibNames[] = {
 	nullptr
 };
 
-const char *EventQXObj::fileNames[] = {
-	"EventQ",
-	nullptr
+const XlibFileDesc EventQXObj::fileNames[] = {
+	{ "EventQ",	nullptr },
+	{ nullptr,	nullptr },
 };
 
 static MethodProto xlibMethods[] = {

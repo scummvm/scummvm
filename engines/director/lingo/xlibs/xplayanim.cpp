@@ -37,9 +37,9 @@
 namespace Director {
 
 const char *XPlayAnim::xlibName = "XPlayAnim";
-const char *XPlayAnim::fileNames[] = {
-	"XPlayAnim",
-	nullptr
+const XlibFileDesc XPlayAnim::fileNames[] = {
+	{ "XPlayAnim",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 static BuiltinProto builtins[] = {

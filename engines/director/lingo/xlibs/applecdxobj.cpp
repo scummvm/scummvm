@@ -98,10 +98,10 @@
 namespace Director {
 
 const char *AppleCDXObj::xlibName = "AppleCD";
-const char *AppleCDXObj::fileNames[] = {
-	"AppleCD",
-	"AppleCD XObj",
-	0
+const XlibFileDesc AppleCDXObj::fileNames[] = {
+	{ "AppleCD",		nullptr },
+	{ "AppleCD XObj",	nullptr },
+	{ nullptr,			nullptr },
 };
 
 static MethodProto xlibMethods[] = {

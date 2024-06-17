@@ -37,9 +37,9 @@
 namespace Director {
 
 const char *VMisOnXFCN::xlibName = "VMisOn";
-const char *VMisOnXFCN::fileNames[] = {
-	"VMisOn",
-	nullptr
+const XlibFileDesc VMisOnXFCN::fileNames[] = {
+	{ "VMisOn",	nullptr },
+	{ nullptr,	nullptr },
 };
 
 static BuiltinProto builtins[] = {

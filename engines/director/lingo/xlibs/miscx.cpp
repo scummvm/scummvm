@@ -73,11 +73,11 @@
 namespace Director {
 
 const char *MiscX::xlibName = "Misc_X";
-const char *MiscX::fileNames[] = {
-	"MISC_X",
-	"sharCOPY", // TD loads this up using openXLib("@:sharCOPY.DLL")
-	"BPXLIB",   // Backpacker
-	0
+const XlibFileDesc MiscX::fileNames[] = {
+	{ "MISC_X",		nullptr },
+	{ "sharCOPY",	nullptr }, // TD loads this up using openXLib("@:sharCOPY.DLL")
+	{ "BPXLIB",		nullptr }, // Backpacker
+	{ nullptr, 		nullptr },
 };
 
 static MethodProto xlibMethods[] = {

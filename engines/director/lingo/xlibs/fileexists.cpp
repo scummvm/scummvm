@@ -43,9 +43,9 @@
 namespace Director {
 
 const char *FileExists::xlibName = "FileExists";
-const char *FileExists::fileNames[] = {
-	"FileExists",
-	0
+const XlibFileDesc FileExists::fileNames[] = {
+	{ "FileExists",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 static BuiltinProto builtins[] = {

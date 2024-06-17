@@ -57,10 +57,10 @@ const char *DialogsXObj::xlibNames[] = {
 	nullptr
 };
 
-const char *DialogsXObj::fileNames[] = {
-	"DialogS",
-	"shaREQUE", // TD loads this up using openXLib("@:shaREQUE.DLL")
-	nullptr
+const XlibFileDesc DialogsXObj::fileNames[] = {
+	{ "DialogS",	nullptr },
+	{ "shaREQUE",	nullptr }, // TD loads this up using openXLib("@:shaREQUE.DLL")
+	{ nullptr,		nullptr },
 };
 
 static MethodProto xlibMethods[] = {

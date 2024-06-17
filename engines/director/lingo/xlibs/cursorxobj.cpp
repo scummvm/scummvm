@@ -45,9 +45,9 @@ XSS mSetCursor, cursorName, windowName --Sets the window cursor
 namespace Director {
 
 const char *CursorXObj::xlibName = "Cursor";
-const char *CursorXObj::fileNames[] = {
-	"CURSOR",
-	nullptr
+const XlibFileDesc CursorXObj::fileNames[] = {
+	{ "CURSOR",	nullptr },
+	{ nullptr,	nullptr },
 };
 
 static MethodProto xlibMethods[] = {
