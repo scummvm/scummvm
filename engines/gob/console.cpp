@@ -90,8 +90,8 @@ bool GobConsole::cmd_dumpVars(int argc, const char **argv) {
 	Common::DumpFile file;
 
 	const char *outFile = "variables.dmp";
-    if (!file.open(outFile))
-        return true;
+	if (!file.open(outFile))
+		return true;
 
 	file.write(_vm->_inter->_variables->getAddressOff8(0), _vm->_inter->_variables->getSize());
 
