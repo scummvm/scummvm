@@ -136,7 +136,7 @@ bool CBagFMovie::openMovie(const char *sFilename) {
 			_bmpBuf->getSurface().blitFrom(*frame);
 		}
 	}
-	bool repaintFl = true;
+	const bool repaintFl = true;
 
 	_bounds = CBofRect(0, 0, (uint16)_bmpBuf->width() - 1, (uint16)_bmpBuf->height() - 1);
 	reSize(&_bounds, repaintFl);
@@ -145,8 +145,8 @@ bool CBagFMovie::openMovie(const char *sFilename) {
 	if (curWin != nullptr) {
 		CBagStorageDevWnd *curSDev = curWin->getCurrentStorageDev();
 		if ((curSDev != nullptr) && curSDev->isFiltered()) {
-			uint16 filterId = curSDev->getFilterId();
-			FilterFunction filterFunction = curSDev->getFilter();
+			const uint16 filterId = curSDev->getFilterId();
+			const FilterFunction filterFunction = curSDev->getFilter();
 			_bmpBuf->paint(_filterBmp);
 			(*filterFunction)(filterId, _filterBmp, &_bounds);
 		}
@@ -185,8 +185,8 @@ void CBagFMovie::onMainLoop() {
 	if (curWin != nullptr) {
 		CBagStorageDevWnd *curSDev = curWin->getCurrentStorageDev();
 		if ((curSDev != nullptr) && curSDev->isFiltered()) {
-			uint16 filterId = curSDev->getFilterId();
-			FilterFunction filterFunction = curSDev->getFilter();
+			const uint16 filterId = curSDev->getFilterId();
+			const FilterFunction filterFunction = curSDev->getFilter();
 			(*filterFunction)(filterId, _filterBmp, &_bounds);
 		}
 	}
@@ -264,7 +264,7 @@ bool CBagFMovie::play(bool loop, bool escCanStop) {
 	_escCanStopFl = escCanStop;
 	_loopFl = loop;
 
-	bool retVal = play();
+	const bool retVal = play();
 
 	getParent()->disable();
 	getParent()->flushAllMessages();
@@ -280,22 +280,21 @@ bool CBagFMovie::play(bool loop, bool escCanStop) {
 
 
 bool CBagFMovie::play() {
-	if (_smk) {
-		_smk->pauseVideo(false);
-		// _smk->setReverse(false); // TODO: Not supported by SMK
-		_smk->start();
-		_movieStatus = MOVIE_FOREWARD;
-		return true;
-	}
+	if (!_smk)
+		return false;
 
-	return false;
+	_smk->pauseVideo(false);
+	// _smk->setReverse(false); // TODO: Not supported by SMK
+	_smk->start();
+	_movieStatus = MOVIE_FOREWARD;
+	return true;
 }
 
 bool CBagFMovie::reverse(bool loop, bool escCanStop) {
 	_escCanStopFl = escCanStop;
 	_loopFl = loop;
 
-	bool retVal = reverse();
+	const bool retVal = reverse();
 
 	getParent()->disable();
 	getParent()->flushAllMessages();
@@ -305,57 +304,49 @@ bool CBagFMovie::reverse(bool loop, bool escCanStop) {
 }
 
 bool CBagFMovie::reverse() {
-	if (_smk) {
-		_smk->pauseVideo(false);
-		// _smk->setReverse(true); // TODO: Not supported by SMK
-		_smk->start();
-		_movieStatus = MOVIE_REVERSE;
-		return true;
-	}
+	if (!_smk)
+		return false;
 
-	return false;
-
+	_smk->pauseVideo(false);
+	// _smk->setReverse(true); // TODO: Not supported by SMK
+	_smk->start();
+	_movieStatus = MOVIE_REVERSE;
+	return true;
 }
 
 bool CBagFMovie::stop() {
-	if (_smk) {
-		_smk->stop();
-		_movieStatus = MOVIE_STOPPED;
-		return true;
-	}
-	return false;
+	if (!_smk)
+		return false;
 
+	_smk->stop();
+	_movieStatus = MOVIE_STOPPED;
+	return true;
 }
 
 bool CBagFMovie::pause() {
-	if (_smk) {
-		_smk->pauseVideo(true);
-		_movieStatus = MOVIE_PAUSED;
-		return true;
-	}
+	if (!_smk)
+		return false;
 
-	return false;
+	_smk->pauseVideo(true);
+	_movieStatus = MOVIE_PAUSED;
+	return true;
 
 }
 
 bool CBagFMovie::seekToStart() {
-	if (_smk) {
-		_smk->rewind();
-		return true;
-	}
+	if (!_smk)
+		return false;
 
-	return false;
-
+	_smk->rewind();
+	return true;
 }
 
 bool CBagFMovie::seekToEnd() {
-	if (_smk) {
-		setFrame(_smk->getFrameCount() - 2); // HACK: Reverse rewind
-		return true;
-	}
+	if (!_smk)
+		return false;
 
-	return false;
-
+	setFrame(_smk->getFrameCount() - 2); // HACK: Reverse rewind
+	return true;
 }
 
 uint32 CBagFMovie::getFrame() {
@@ -367,24 +358,23 @@ uint32 CBagFMovie::getFrame() {
 }
 
 bool CBagFMovie::setFrame(uint32 frameNum) {
-	if (_smk) {
-		frameNum = CLIP<uint32>(frameNum, 0, _smk->getFrameCount() - 1);
-		_smk->forceSeekToFrame(frameNum);
-		return true;
-	}
+	if (!_smk)
+		return false;
 
-	return false;
+	frameNum = CLIP<uint32>(frameNum, 0, _smk->getFrameCount() - 1);
+	_smk->forceSeekToFrame(frameNum);
+	return true;
 }
 
 bool CBagFMovie::centerRect() {
 	CBofRect clientRect = getParent()->getClientRect();
-	RECT parentRect = clientRect.getWinRect();
-	int clientWidth = parentRect.right - parentRect.left;
-	int clientHeight = parentRect.bottom - parentRect.top;
+	const RECT parentRect = clientRect.getWinRect();
+	const int clientWidth = parentRect.right - parentRect.left;
+	const int clientHeight = parentRect.bottom - parentRect.top;
 
 	// Get Movies width and height
-	int movieWidth = _smk->getWidth();
-	int movieHeight = _smk->getHeight();
+	const int movieWidth = _smk->getWidth();
+	const int movieHeight = _smk->getHeight();
 
 	RECT movieBounds;
 	movieBounds.left = (clientWidth - movieWidth) / 2;
