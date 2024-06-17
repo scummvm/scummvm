@@ -38,7 +38,6 @@ namespace Director {
 
 const char *Quicktime::xlibName = "quicktime";
 const XlibFileDesc Quicktime::fileNames[] = {
-    { "quicktime",  nullptr },
     { "QuickTime",  nullptr },
     { nullptr,      nullptr },
 };

@@ -86,7 +86,6 @@ namespace Director {
 const char *SpaceMgr::xlibName = "SpaceMgr";
 const XlibFileDesc SpaceMgr::fileNames[] = {
 	{ "SpaceMgr",	nullptr },
-	{ "SPACEMGR",	nullptr },
 	{ nullptr,		nullptr },
 };
 

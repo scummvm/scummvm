@@ -48,7 +48,6 @@ namespace Director {
 const char *AskUser::xlibName = "AskUser";
 const XlibFileDesc AskUser::fileNames[] = {
 	{ "AskUser",	nullptr },
-	{ "ASKUSER",	nullptr },
 	{ nullptr,		nullptr },
 };
 
