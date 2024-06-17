@@ -41,16 +41,6 @@
  * ISSS   mWriteProfileString, App, Key, String                     --WriteProfileString
  */
 
-/*
- * Duplicated from inixobj
- * TODO: remove when inixobj is properly connected and used
- *
- * -- Ini File External Factory. 9feb93 JT
- * --Ini
- * SSSSS mReadString  fileName, SecName, EntryName, DefaultStr -- Read .INI
- * ISSSS mWriteString fileName, SecName, EntryName, String     -- Write .INI
- */
-
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
@@ -74,12 +64,6 @@ static MethodProto xlibMethods[] = {
 	{"GetProfileString", 			JourneyWareXINIXObj::m_GetProfileString, 4, 4, 400}, // D4
 	{"WritePrivateProfileString", 	JourneyWareXINIXObj::m_WritePrivateProfileString, 4, 4, 400}, // D4
 	{"WriteProfileString", 			JourneyWareXINIXObj::m_WriteProfileString, 3, 3, 400}, // D4
-
-	// Duplicated from inixobj
-	// TODO: remove when inixobj is properly connected and used
-	{"readString",	JourneyWareXINIXObj::m_readString, 4, 4, 400},
-	{"writeString",	JourneyWareXINIXObj::m_writeString, 4, 4, 400},
-	// End
 	{nullptr, nullptr, 0, 0, 0}
 };
 
@@ -145,10 +129,5 @@ void JourneyWareXINIXObj::m_GetProfileString(int nargs) {
 
 XOBJSTUB(JourneyWareXINIXObj::m_WritePrivateProfileString, 0)
 XOBJSTUB(JourneyWareXINIXObj::m_WriteProfileString, 0)
-
-// TODO: remove when inixobj is properly connected and used
-XOBJSTUB(JourneyWareXINIXObj::m_readString, "")
-XOBJSTUB(JourneyWareXINIXObj::m_writeString, 0)
-// End
 
 } // End of namespace Director

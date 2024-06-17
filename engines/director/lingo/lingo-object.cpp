@@ -73,6 +73,7 @@
 #include "director/lingo/xlibs/getscreensizexfcn.h"
 #include "director/lingo/xlibs/gpid.h"
 #include "director/lingo/xlibs/hitmap.h"
+#include "director/lingo/xlibs/inixobj.h"
 #include "director/lingo/xlibs/instobj.h"
 #include "director/lingo/xlibs/jwxini.h"
 #include "director/lingo/xlibs/iscd.h"
@@ -244,6 +245,7 @@ static struct XLibProto {
 	XLIBDEF(GetScreenSizeXFCN,	kXObj,			300),	// D3
 	XLIBDEF(GpidXObj,			kXObj,			400),	// D4
 	XLIBDEF(HitMap,				kXObj,			400),	// D4
+	XLIBDEF(IniXObj,			kXObj,			400),	// D4
 	XLIBDEF(InstObjXObj,		kXObj,			400),	// D4
 	XLIBDEF(IsCD,				kXObj,			300),	// D3
 	XLIBDEF(IsPippin,			kXObj,			400),	// D4

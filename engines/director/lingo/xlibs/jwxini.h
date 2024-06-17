@@ -48,11 +48,6 @@ void m_GetProfileString(int nargs);
 void m_WritePrivateProfileString(int nargs);
 void m_WriteProfileString(int nargs);
 
-// TODO: remove when inixobj is properly connected and used
-void m_readString(int nargs);
-void m_writeString(int nargs);
-// End
-
 } // End of namespace JourneyWareXINIXObj
 
 } // End of namespace Director

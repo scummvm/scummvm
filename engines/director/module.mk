@@ -102,6 +102,7 @@ MODULE_OBJS = \
 	lingo/xlibs/getscreensizexfcn.o \
 	lingo/xlibs/gpid.o \
 	lingo/xlibs/hitmap.o \
+	lingo/xlibs/inixobj.o \
 	lingo/xlibs/instobj.o \
 	lingo/xlibs/iscd.o \
 	lingo/xlibs/ispippin.o \
