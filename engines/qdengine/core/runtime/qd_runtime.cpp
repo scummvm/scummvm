@@ -378,8 +378,6 @@ void init_graphics() {
 	qdlg::set_icon(hmainWnd);
 	appSetHandle(hmainWnd);
 
-	SendMessage(hmainWnd, WM_SETTEXT, (WPARAM)0, (LPARAM)qd_gameD->game_title());
-
 	grDispatcher::instance()->SetClip();
 	grDispatcher::instance()->SetClipMode(1);
 	grDispatcher::instance()->Fill(0);
