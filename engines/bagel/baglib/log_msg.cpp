@@ -60,7 +60,7 @@ CBofPoint CBagLog::arrangeFloater(CBofPoint &pos, CBagObject *bagObj) {
 	// so we will not require a backdrop.
 
 	if (getBackground() != nullptr) {
-		CBofString sdevName = getName();
+		const CBofString sdevName = getName();
 		int borderSize = 0;
 
 		// Get this from script, allows individual log states to set border.
@@ -89,7 +89,7 @@ CBofPoint CBagLog::arrangeFloater(CBofPoint &pos, CBagObject *bagObj) {
 		pageNum++;
 		setNumFloatPages(pageNum);
 
-		int totalPages = getCurFltPage();
+		const int totalPages = getCurFltPage();
 		// Now position this object int the sdev
 		// if it fell on this page, show it
 		if (pageNum == totalPages) {
@@ -136,9 +136,9 @@ void CBagLog::arrangePages() {
 	}
 
 	// Get current page number and last page number
-	int lastPage = lastFloat->getNumFloatPages();
-	int curPage = lastFloat->getCurFltPage();
-	int firstPage = 1;
+	const int lastPage = lastFloat->getNumFloatPages();
+	const int curPage = lastFloat->getCurFltPage();
+	const int firstPage = 1;
 
 	if (curPage > firstPage && curPage < lastPage) {
 		if (upObj->isAttached() == false) {
@@ -205,8 +205,8 @@ void CBagLog::setCurFltPage(int fltPage) {
 }
 
 ErrorCode CBagLog::releaseMsg() {
-	ErrorCode errorCode = ERR_NONE;
-	int count = _queuedMsgList->getCount();
+	const ErrorCode errorCode = ERR_NONE;
+	const int count = _queuedMsgList->getCount();
 
 	for (int i = 0; i < count; ++i) {
 		CBagObject *curObj = _queuedMsgList->removeHead();
@@ -227,8 +227,8 @@ ErrorCode CBagLog::releaseMsg() {
 
 CBagObject *CBagLog::onNewUserObject(const CBofString &initStr) {
 	CBagTextObject *retLogObj = nullptr;
-	CBofRect sdevRect = getRect();
-	CBofString  sdevName = getName();
+	const CBofRect sdevRect = getRect();
+	const CBofString  sdevName = getName();
 	int     pointSize = 10;
 
 	if (sdevName == "LOG_WLD")
@@ -269,7 +269,7 @@ CBagObject *CBagLog::onNewUserObject(const CBofString &initStr) {
 
 bool CBagLog::removeFromMsgQueue(CBagObject *deletedObj) {
 	bool removedFl = false;
-	int count = _queuedMsgList->getCount();
+	const int count = _queuedMsgList->getCount();
 
 	for (int i = 0; i < count; i++) {
 		CBagObject *curObj = _queuedMsgList->getNodeItem(i);
@@ -297,7 +297,7 @@ ErrorCode CBagLog::activateLocalObject(CBagObject *bagObj) {
 		// Since zoomed pda doesn't  have a message light, only set this thing
 		// as waiting if we are in the  regular PDA, otherwise, we get superfluous
 		// blinking of the PDA light.
-		CBofString  sdevName = getName();
+		const CBofString  sdevName = getName();
 		if (sdevName == "LOG_WLD") {
 			bagObj->setMsgWaiting(true);
 		}
@@ -437,7 +437,7 @@ ParseCodes CBagLogMsg::setInfo(CBagIfstream &istr) {
 	while (!istr.eof()) {
 		istr.eatWhite();
 
-		char ch = (char)istr.peek();
+		const char ch = (char)istr.peek();
 		switch (ch) {
 		//
 		//  SENDEE FRANK - Sets the sendee name of the message to FRANK
@@ -469,7 +469,7 @@ ParseCodes CBagLogMsg::setInfo(CBagIfstream &istr) {
 
 			if (!string1.find("TIME")) {
 				istr.eatWhite();
-				char nextCh = (char)istr.peek();
+				const char nextCh = (char)istr.peek();
 				int msgTime = 0;
 				if (Common::isDigit(nextCh)) {
 					getIntFromStream(istr, msgTime);
@@ -486,7 +486,7 @@ ParseCodes CBagLogMsg::setInfo(CBagIfstream &istr) {
 		}
 
 		default: {
-			ParseCodes parseCode = CBagObject::setInfo(istr);
+			const ParseCodes parseCode = CBagObject::setInfo(istr);
 			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
@@ -523,7 +523,7 @@ int CBagLogMsg::getProperty(const CBofString &prop) {
 
 	// Played requires a 1 or a 0 (don't use true or false).
 	if (!prop.find("PLAYED")) {
-		bool playedFl = getMsgPlayed();
+		const bool playedFl = getMsgPlayed();
 		return (playedFl ? 1 : 0);
 	}
 
@@ -538,9 +538,9 @@ ErrorCode CBagLogMsg::update(CBofBitmap *bmp, CBofPoint pt, CBofRect *srcRect, i
 		setMsgTime(nMsgTime);
 	}
 
-	int msgTime = getMsgTime();
-	int hour = msgTime / 100;
-	int minutes = msgTime - (hour * 100);
+	const int msgTime = getMsgTime();
+	const int hour = msgTime / 100;
+	const int minutes = msgTime - (hour * 100);
 
 	setFont(FONT_MONO);
 	setText(buildString("%-30s%02d:%02d", _msgSendee.getBuffer(), hour, minutes));
@@ -573,7 +573,7 @@ ParseCodes CBagLogSuspect::setInfo(CBagIfstream &istr) {
 	while (!istr.eof()) {
 		istr.eatWhite();
 
-		char ch = (char)istr.peek();
+		const char ch = (char)istr.peek();
 		switch (ch) {
 		//
 		//  NAME FRANK - Sets the sendee name of the message to FRANK
@@ -634,7 +634,7 @@ ParseCodes CBagLogSuspect::setInfo(CBagIfstream &istr) {
 		}
 
 		default: {
-			ParseCodes parseCode = CBagObject::setInfo(istr);
+			const ParseCodes parseCode = CBagObject::setInfo(istr);
 			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
@@ -790,7 +790,7 @@ ParseCodes CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 	while (!istr.eof()) {
 		istr.eatWhite();
 
-		char ch = (char)istr.peek();
+		const char ch = (char)istr.peek();
 		switch (ch) {
 		//
 		//  ZHAPS - NUMBER OF ZHAPS (ENERGY UNITS)
@@ -871,7 +871,7 @@ ParseCodes CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 		}
 
 		default: {
-			ParseCodes parseCode = CBagObject::setInfo(istr);
+			const ParseCodes parseCode = CBagObject::setInfo(istr);
 			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
@@ -919,8 +919,8 @@ ErrorCode CBagEnergyDetectorObject::attach() {
 		nMsgTime = atoi(_energyTimeStr.getBuffer());
 	}
 
-	int hour = nMsgTime / 100;
-	int minute = nMsgTime - (hour * 100);
+	const int hour = nMsgTime / 100;
+	const int minute = nMsgTime - (hour * 100);
 
 	// Get the number of zhaps.
 	curVar = g_VarManager->getVariable(_zhapsStr);
@@ -975,7 +975,7 @@ ErrorCode CBagLogClue::attach() {
 
 	assert(isValidObject(this));
 
-	ErrorCode errorCode = CBagTextObject::attach();
+	const ErrorCode errorCode = CBagTextObject::attach();
 
 	// Get what is defined in the script.
 	cFormat = getFileName();
@@ -1005,13 +1005,12 @@ ParseCodes CBagLogClue::setInfo(CBagIfstream &istr) {
 
 	while (!istr.eof()) {
 		istr.eatWhite();
-		char ch = (char)istr.peek();
-		switch (ch) {
-		//
-		//  STRINGVAR - This will be a variable used to display some information that
-		//  is contained in script in a clue statement.
-		//
-		case 'S': {
+		const char ch = (char)istr.peek();
+		if (ch == 'S') {
+			//
+			//  STRINGVAR - This will be a variable used to display some information that
+			//  is contained in script in a clue statement.
+			//
 			getAlphaNumFromStream(istr, sStr);
 
 			if (!sStr.find("STRINGVAR")) {
@@ -1039,11 +1038,8 @@ ParseCodes CBagLogClue::setInfo(CBagIfstream &istr) {
 			} else {
 				putbackStringOnStream(istr, sStr);
 			}
-			break;
-		}
-
-		default: {
-			ParseCodes parseCode = CBagObject::setInfo(istr);
+		} else {
+			const ParseCodes parseCode = CBagObject::setInfo(istr);
 			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
@@ -1056,8 +1052,6 @@ ParseCodes CBagLogClue::setInfo(CBagIfstream &istr) {
 
 				return UNKNOWN_TOKEN;
 			}
-			break;
-		}
 		}
 
 	}

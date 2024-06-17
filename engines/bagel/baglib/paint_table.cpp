@@ -40,7 +40,7 @@ void PaintTable::initialize(Common::SeekableReadStream &src) {
 			for (int pointNum = 0; pointNum < 10; ++pointNum, ++pointIndex) {
 				// Get the point
 				int y1 = 0, y2 = 0;
-				int result = sscanf(line.c_str(), "{ %d,%d}", &y1, &y2);
+				const int result = sscanf(line.c_str(), "{ %d,%d}", &y1, &y2);
 				assert(result == 2);
 
 				STRIP_POINTS[stripNum][pointIndex]._top = y1;

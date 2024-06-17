@@ -82,7 +82,7 @@ CBagMenu::CBagMenu() {
 CBagObject *CBagMenu::onNewSpriteObject(const CBofString &) {
 	CBagSpriteObject *pObj = new CBagSpriteObject();
 
-	CBofPoint pt(0, _nY);
+	const CBofPoint pt(0, _nY);
 	pObj->setPosition(pt);
 	pObj->setTransparent(false);
 
@@ -506,8 +506,8 @@ bool CBagMenu::deleteItem(const CBofString & /*sLabel*/) {
 }
 
 bool CBagMenu::isChecked(const CBofString & /*sLabel*/, const CBofString & /*sSubLabel*/) {
-	int nRow = 0;
-	int nCol = 0;
+	const int nRow = 0;
+	const int nCol = 0;
 
 	return isCheckedPos(nRow, nCol);
 }
@@ -618,7 +618,7 @@ void CBagMenuDlg::onLButtonUp(uint32 nFlags, CBofPoint *pPoint, void *) {
 			}
 
 		} else {
-			CBofPoint pt = devPtToViewPort(*pPoint);
+			const CBofPoint pt = devPtToViewPort(*pPoint);
 			_pSelectedObject = getObject(pt);
 			if (_pSelectedObject != nullptr) {
 				_pSelectedObject->onLButtonUp(nFlags, pPoint);

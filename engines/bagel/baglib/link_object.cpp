@@ -43,8 +43,8 @@ CBagLinkObject::~CBagLinkObject() {
 }
 
 CBofRect CBagLinkObject::getRect() {
-	CBofPoint p = getPosition();
-	CBofSize  s = getSize();
+	const CBofPoint p = getPosition();
+	const CBofSize  s = getSize();
 	CBofRect r = CBofRect(p, s);
 	return r;
 }
@@ -56,7 +56,7 @@ ParseCodes CBagLinkObject::setInfo(CBagIfstream &istr) {
 	bool doneFl = false;
 
 	while (!doneFl && !istr.eof()) {
-		char ch = (char)istr.peek();
+		const char ch = (char)istr.peek();
 		switch (ch) {
 		//
 		//  @[x,y]  - destination of a flythru.  start point in next world
@@ -134,7 +134,7 @@ ParseCodes CBagLinkObject::setInfo(CBagIfstream &istr) {
 		//  No match return from function
 		//
 		default: {
-			ParseCodes parseCode = CBagObject::setInfo(istr);
+			const ParseCodes parseCode = CBagObject::setInfo(istr);
 
 			if (parseCode == PARSING_DONE) {
 				returnCode = PARSING_DONE;

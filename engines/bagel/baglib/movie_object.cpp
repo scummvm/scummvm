@@ -74,7 +74,7 @@ CBagMovieObject::~CBagMovieObject() {
 bool CBagMovieObject::runObject() {
 	CBofWindow *pNewWin = nullptr;
 	SBZoomPda *pPDAz = (SBZoomPda *)g_SDevManager->getStorageDevice("BPDAZ_WLD");
-	bool bZoomed = (pPDAz == nullptr ? false : pPDAz->getZoomed());
+	const bool bZoomed = (pPDAz == nullptr ? false : pPDAz->getZoomed());
 	
 	// Get a pointer to the current game window
 	CBagStorageDevWnd *pMainWin = CBagel::getBagApp()->getMasterWnd()->getCurrentStorageDev();
@@ -84,7 +84,7 @@ bool CBagMovieObject::runObject() {
 		rc = false;
 
 		CBofString sFileName = getFileName();
-		int nExt = sFileName.getLength() - 4; // ".EXT"
+		const int nExt = sFileName.getLength() - 4; // ".EXT"
 
 		if (nExt <= 0) {
 			logError("Movie does not have a file name or proper extension.  Please write better scripts.");
@@ -100,7 +100,7 @@ bool CBagMovieObject::runObject() {
 		                   SOUND = 2,
 		                   MOVIE = 3
 		                 } nMovFileType;
-		CBofString sBaseStr = sFileName.left(nExt);
+		const CBofString sBaseStr = sFileName.left(nExt);
 
 		if (sFileName.find(".smk") > 0 || sFileName.find(".SMK") > 0) {
 			nMovFileType = MovieFileType::MOVIE;
@@ -369,7 +369,7 @@ ParseCodes CBagMovieObject::setInfo(CBagIfstream &istr) {
 	while (!istr.eof()) {
 		istr.eatWhite(); // Eat any white space between script elements
 
-		char ch = (char)istr.peek();
+		const char ch = (char)istr.peek();
 		switch (ch) {
 		//
 		//  AS  - n number of slides in sprite
@@ -474,7 +474,7 @@ ParseCodes CBagMovieObject::setInfo(CBagIfstream &istr) {
 		//  No match return from funtion
 		//
 		default: {
-			ParseCodes parseCode = CBagObject::setInfo(istr);
+			const ParseCodes parseCode = CBagObject::setInfo(istr);
 			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}

@@ -120,7 +120,7 @@ ErrorCode CBagHelp::attach() {
 
 	CBofFile file(_textFile, CBF_BINARY | CBF_READONLY);
 
-	uint32 size = file.getLength();
+	const uint32 size = file.getLength();
 	char *buffer = (char *)bofCleanAlloc(size + 1);
 
 	file.read(buffer, size);

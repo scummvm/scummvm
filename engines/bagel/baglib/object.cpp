@@ -212,7 +212,7 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 
 	while (!istr.eof()) {
 		istr.eatWhite();
-		char ch = (char)istr.getCh();
+		const char ch = (char)istr.getCh();
 		switch (ch) {
 		//
 		//  =filename.ext
@@ -255,7 +255,7 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 		//
 		case '^': {
 			parseCode = UPDATED_OBJECT;
-			char c = (char)istr.peek();
+			const char c = (char)istr.peek();
 			if (Common::isDigit(c)) {
 				int nId;
 				getIntFromStream(istr, nId);
@@ -280,7 +280,7 @@ ParseCodes CBagObject::setInfo(CBagIfstream &istr) {
 			break;
 		}
 		//
-		//  %cusror;  - Set cursor
+		//  %cursor;  - Set cursor
 		//
 		case '%': {
 			parseCode = UPDATED_OBJECT;

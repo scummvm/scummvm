@@ -36,7 +36,7 @@ CBagIfstream::CBagIfstream(char *buffer, int length) {
 }
 
 int CBagIfstream::getCh() {
-	int ch = get();
+	const int ch = get();
 	return ch;
 }
 

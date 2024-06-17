@@ -75,7 +75,7 @@ public:
 	}
 
 	void setMsgTime(int &msgTime) {
-		int state = getState();
+		const int state = getState();
 		setState((state & MSG_PLAYED_MASK) | (msgTime & MSG_TIME_MASK));
 	}
 
@@ -84,7 +84,7 @@ public:
 	}
 
 	void setMsgPlayed(bool playedFl) {
-		int state = getState();
+		const int state = getState();
 		setState((state & MSG_TIME_MASK) | (playedFl == true ? MSG_PLAYED_MASK : 0));
 	}
 	bool getMsgPlayed() {

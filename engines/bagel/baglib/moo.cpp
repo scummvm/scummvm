@@ -40,7 +40,7 @@ ErrorCode CBagMoo::update(CBofBitmap *pBmp, CBofPoint /*pt*/, CBofRect *pSrcRect
 
 	if (_pMovie) {
 		// Update the movie, assume only unzoomed pda right now
-		CBofPoint cPos(116, 61);
+		const CBofPoint cPos(116, 61);
 		errorCode = _pMovie->update(pBmp, cPos, pSrcRect, nMaskColor);
 
 		// If we're done or we encountered an error, then roll over and die.
@@ -69,7 +69,7 @@ ErrorCode CBagMoo::setPDAMovie(CBofString &s) {
 	_pMovie->setFileName(s);
 
 	// Attach this bad baby...
-	ErrorCode errorCode = _pMovie->attach();
+	const ErrorCode errorCode = _pMovie->attach();
 	if (errorCode == ERR_NONE) {
 		_pMovie->setModal(false);
 		_pMovie->setNumOfLoops(1);

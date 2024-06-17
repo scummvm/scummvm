@@ -161,7 +161,7 @@ ErrorCode CBagMasterWin::showSystemDialog(bool bSaveBackground) {
 		CBagOptWindow optionDialog;
 		optionDialog.setBackdrop(dialogBmp);
 
-		CBofRect dialogRect = optionDialog.getBackdrop()->getRect();
+		const CBofRect dialogRect = optionDialog.getBackdrop()->getRect();
 
 		if (!bSaveBackground) {
 			optionDialog.setFlags(optionDialog.getFlags() & ~BOFDLG_SAVEBACKGND);
@@ -174,7 +174,7 @@ ErrorCode CBagMasterWin::showSystemDialog(bool bSaveBackground) {
 		g_hackWindow = &optionDialog;
 
 		g_pauseTimerFl = true;
-		int dialogReturnValue = optionDialog.doModal();
+		const int dialogReturnValue = optionDialog.doModal();
 		g_pauseTimerFl = false;
 		optionDialog.detach();
 
@@ -202,11 +202,11 @@ ErrorCode CBagMasterWin::showCreditsDialog(CBofWindow *win, bool bSaveBkg) {
 	CBagCreditsDialog creditsDialog;
 	creditsDialog.setBackdrop(barBmp);
 
-	CBofRect dialogRect = creditsDialog.getBackdrop()->getRect();
+	const CBofRect dialogRect = creditsDialog.getBackdrop()->getRect();
 
 	// Don't allow save of background?
 	if (!bSaveBkg) {
-		int flags = creditsDialog.getFlags();
+		const int flags = creditsDialog.getFlags();
 
 		creditsDialog.setFlags(flags & ~BOFDLG_SAVEBACKGND);
 	}
@@ -219,7 +219,7 @@ ErrorCode CBagMasterWin::showCreditsDialog(CBofWindow *win, bool bSaveBkg) {
 	// Create the dialog box
 	creditsDialog.create("Save Dialog", dialogRect.left, dialogRect.top, dialogRect.width(), dialogRect.height(), win);
 
-	bool saveTimerFl = g_pauseTimerFl;
+	const bool saveTimerFl = g_pauseTimerFl;
 	g_pauseTimerFl = true;
 	creditsDialog.doModal();
 	g_pauseTimerFl = saveTimerFl;
@@ -250,7 +250,7 @@ bool CBagMasterWin::showQuitDialog(CBofWindow *win, bool bSaveBackground) {
 		CBagQuitDialog quitDialog;
 		quitDialog.setBackdrop(dialogBmp);
 
-		CBofRect dialogRect = quitDialog.getBackdrop()->getRect();
+		const CBofRect dialogRect = quitDialog.getBackdrop()->getRect();
 
 		if (!bSaveBackground) {
 			quitDialog.setFlags(quitDialog.getFlags() & ~BOFDLG_SAVEBACKGND);
@@ -259,9 +259,9 @@ bool CBagMasterWin::showQuitDialog(CBofWindow *win, bool bSaveBackground) {
 		// Create the dialog box
 		quitDialog.create("Quit Dialog", dialogRect.left, dialogRect.top, dialogRect.width(), dialogRect.height(), win);
 
-		bool saveTimerFl = g_pauseTimerFl;
+		const bool saveTimerFl = g_pauseTimerFl;
 		g_pauseTimerFl = true;
-		int dialogReturnValue = quitDialog.doModal();
+		const int dialogReturnValue = quitDialog.doModal();
 		g_pauseTimerFl = saveTimerFl;
 
 		switch (dialogReturnValue) {
@@ -276,6 +276,9 @@ bool CBagMasterWin::showQuitDialog(CBofWindow *win, bool bSaveBackground) {
 
 		case CANCEL_BTN:
 			quitFl = false;
+			break;
+
+		default:
 			break;
 		}
 
@@ -420,7 +423,7 @@ ErrorCode CBagMasterWin::loadFile(const CBofString &wldName, const CBofString &s
 	if (fileExists(wldFileName) && (fileLength(wldFileName) > 0)) {
 		// Force buffer to be big enough so that the entire script
 		// is pre-loaded
-		int length = fileLength(wldFileName);
+		const int length = fileLength(wldFileName);
 		char *fileBuf = (char *)bofAlloc(length);
 		CBagIfstream fpInput(fileBuf, length);
 
@@ -562,7 +565,7 @@ ErrorCode CBagMasterWin::loadGlobalVars(const CBofString &wldName) {
 	if (fileExists(wldFileName) && (fileLength(wldFileName) > 0)) {
 		// Force buffer to be big enough so that the entire script
 		// is pre-loaded
-		int length = fileLength(wldFileName);
+		const int length = fileLength(wldFileName);
 		char *buffer = (char *)bofAlloc(length);
 		CBagIfstream fpInput(buffer, length);
 
@@ -992,7 +995,7 @@ ErrorCode CBagMasterWin::onHelp(const CBofString &helpFile, bool /*bSaveBkg*/, C
 		CBagHelp help;
 		help.setBackdrop(bmp);
 
-		CBofRect backRect = help.getBackdrop()->getRect();
+		const CBofRect backRect = help.getBackdrop()->getRect();
 
 		if (parent == nullptr)
 			parent = this;
@@ -1186,7 +1189,7 @@ ErrorCode CBagMasterWin::gotoNewWindow(const CBofString *str) {
 		_gameWindow = (CBagStorageDevWnd *)sdev;
 		setCICStatus(sdev);
 
-		uint16 oldFadeId = sdev->getFadeId();
+		const uint16 oldFadeId = sdev->getFadeId();
 
 		if (_fadeIn != 0)
 			sdev->setFadeId((uint16)_fadeIn);
@@ -1225,13 +1228,13 @@ bool CBagMasterWin::showRestartDialog(CBofWindow *win, bool saveBkgFl) {
 
 		// Don't allow save of background
 		if (!saveBkgFl) {
-			int lFlags = restartDialog.getFlags();
+			const int lFlags = restartDialog.getFlags();
 			restartDialog.setFlags(lFlags & ~BOFDLG_SAVEBACKGND);
 		}
 
-		bool saveTimerFl = g_pauseTimerFl;
+		const bool saveTimerFl = g_pauseTimerFl;
 		g_pauseTimerFl = true;
-		int dialogReturn = restartDialog.doModal();
+		const int dialogReturn = restartDialog.doModal();
 		g_pauseTimerFl = saveTimerFl;
 
 		g_hackWindow = pLastWin;
@@ -1456,7 +1459,7 @@ void CBagMasterWin::fillSaveBuffer(StBagelSave *saveBuf) {
 				// Remember the pan's position
 				if (saveBuf->_nLocType == SDEV_GAMEWIN) {
 					CBagPanWindow *panWin = (CBagPanWindow *)sdevWin;
-					CBofRect cPos = panWin->getViewPort();
+					const CBofRect cPos = panWin->getViewPort();
 
 					saveBuf->_nLocX = (uint16)cPos.left;
 					saveBuf->_nLocY = (uint16)cPos.top;
@@ -1518,20 +1521,20 @@ bool CBagMasterWin::showSaveDialog(CBofWindow *win, bool bSaveBkg) {
 
 		saveDialog.setBackdrop(bmp);
 
-		CBofRect backRect = saveDialog.getBackdrop()->getRect();
+		const CBofRect backRect = saveDialog.getBackdrop()->getRect();
 
 		// Don't allow save of background
 		if (!bSaveBkg) {
-			int fllags = saveDialog.getFlags();
-			saveDialog.setFlags(fllags & ~BOFDLG_SAVEBACKGND);
+			const int dlgFlags = saveDialog.getFlags();
+			saveDialog.setFlags(dlgFlags & ~BOFDLG_SAVEBACKGND);
 		}
 
 		// Create the dialog box
 		saveDialog.create("Save Dialog", backRect.left, backRect.top, backRect.width(), backRect.height(), win);
 
-		bool saveTimerFl = g_pauseTimerFl;
+		const bool saveTimerFl = g_pauseTimerFl;
 		g_pauseTimerFl = true;
-		int btnId = saveDialog.doModal();
+		const int btnId = saveDialog.doModal();
 		g_pauseTimerFl = saveTimerFl;
 
 		savedFl = (btnId == SAVE_BTN);
@@ -1564,7 +1567,7 @@ void CBagMasterWin::doRestore(StBagelSave *saveBuf) {
 	CBofString closeUpString(stringBuf, 256);
 	int i;
 
-	// Rebuild the stack of locations (Could be 3 closups deep)
+	// Rebuild the stack of locations (Could be 3 closeups deep)
 	closeUpBuf[0] = '\0';
 	for (i = MAX_CLOSEUP_DEPTH - 1; i >= 0; i--) {
 		if (saveBuf->_szLocStack[i][0] != '\0') {
@@ -1678,11 +1681,11 @@ bool CBagMasterWin::showRestoreDialog(CBofWindow *win, bool bSaveBkg) {
 
 		restoreDialog.setBackdrop(pBmp);
 
-		CBofRect backRect = restoreDialog.getBackdrop()->getRect();
+		const CBofRect backRect = restoreDialog.getBackdrop()->getRect();
 
 		// Don't allow save of background
 		if (!bSaveBkg) {
-			int flags = restoreDialog.getFlags();
+			const int flags = restoreDialog.getFlags();
 			restoreDialog.setFlags(flags & ~BOFDLG_SAVEBACKGND);
 		}
 
@@ -1692,7 +1695,7 @@ bool CBagMasterWin::showRestoreDialog(CBofWindow *win, bool bSaveBkg) {
 		CBofWindow *lastWin = g_hackWindow;
 		g_hackWindow = &restoreDialog;
 
-		bool saveTimerFl = g_pauseTimerFl;
+		const bool saveTimerFl = g_pauseTimerFl;
 		g_pauseTimerFl = true;
 		restoreDialog.doModal();
 		g_pauseTimerFl = saveTimerFl;

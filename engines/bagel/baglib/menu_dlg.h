@@ -60,7 +60,7 @@ public:
 	bool unCheck(const CBofString &sLabel, const CBofString &sSubLabel = CBofString());
 	bool unCheck(int nRefId);
 
-	bool trackPopupMenu(uint32 nFlags, int x, int y, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *lpRect = 0);
+	bool trackPopupMenu(uint32 nFlags, int x, int y, CBofWindow *pWnd, CBofPalette *pPal, CBofRect *lpRect = nullptr);
 
 	static bool removeUniversalObjectList();
 	static bool setUniversalObjectList(CBofList<CBagObject *> *pObjList);
