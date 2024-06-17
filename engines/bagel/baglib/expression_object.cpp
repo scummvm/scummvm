@@ -50,11 +50,11 @@ bool CBagExpressionObject::runObject() {
 			if (getFileName().isEmpty())
 				return false;
 
-			int nIndex = getFileName().find("~~");
+			const int nIndex = getFileName().find("~~");
 			if (nIndex > 0) {
 				// This is a reference
-				CBofString objectStr = getFileName().left(nIndex);
-				CBofString propertyStr = getFileName().mid(nIndex + 2);
+				const CBofString objectStr = getFileName().left(nIndex);
+				const CBofString propertyStr = getFileName().mid(nIndex + 2);
 
 				g_SDevManager->setObjectValue(objectStr, propertyStr, localVar.getNumValue());
 
@@ -73,21 +73,16 @@ ParseCodes CBagExpressionObject::setInfo(CBagIfstream &istr) {
 	bool objectUpdatedFl = false;
 
 	while (!istr.eof()) {
-		char ch = (char)istr.peek();
-		switch (ch) {
-		//
-		//  AS  - n number of slides in sprite
-		//
-		case '(':
+		const char ch = (char)istr.peek();
+		if (ch == '(') {
+			//
+			//  AS  - n number of slides in sprite
+			//
 			_expression = new CBagExpression();
 			_expression->setInfo(istr);
 			objectUpdatedFl = true;
-			break;
-		//
-		//  No match return from function
-		//
-		default: {
-			ParseCodes parseCode = CBagObject::setInfo(istr);
+		} else {
+			const ParseCodes parseCode = CBagObject::setInfo(istr);
 			if (parseCode == PARSING_DONE) {
 				return PARSING_DONE;
 			}
@@ -100,8 +95,6 @@ ParseCodes CBagExpressionObject::setInfo(CBagIfstream &istr) {
 
 				return UNKNOWN_TOKEN;
 			}
-		}
-		break;
 		}
 	}
 	return PARSING_DONE;

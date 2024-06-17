@@ -151,10 +151,10 @@ CBagVar *CBagExpression::getVariable(int itemPos) {
 			Common::strcpy_s(backStr, p + 2);
 			*p = '\0';
 
-			CBofString stringObject(frontStr, 256);
-			CBofString stringProperty(backStr, 256);
+			const CBofString stringObject(frontStr, 256);
+			const CBofString stringProperty(backStr, 256);
 
-			int newVal = g_SDevManager->getObjectValue(stringObject, stringProperty);
+			const int newVal = g_SDevManager->getObjectValue(stringObject, stringProperty);
 			curVar->setValue(newVal);
 		}
 	}
@@ -250,7 +250,7 @@ bool CBagExpression::evalLeftToRight(bool negFl, CBagVar &result) {
 		while (varCount < _varList.getCount()) {
 			CBagVar compLeftHandOper;
 			CBagVar *rightHandOper = getVariable(varCount++);
-			OPERATION prevOper = oper;      // save previous operator
+			const OPERATION prevOper = oper;      // save previous operator
 			oper = _operList.getNodeItem(nodeCount++);
 
 			if (bFirstTime) {
@@ -335,7 +335,7 @@ bool CBagExpression::onAssign(CBagVar *leftHandOper, CBagVar *rightHandOper, CBa
 	char buffer[256];
 	Common::strcpy_s(buffer, rightHandOper->getValue());
 	assert(strlen(buffer) < 256);
-	CBofString newLeftHandValue(buffer, 256);
+	const CBofString newLeftHandValue(buffer, 256);
 
 	leftHandOper->setValue(newLeftHandValue);
 
@@ -346,7 +346,7 @@ bool CBagExpression::onAssign(CBagVar *leftHandOper, CBagVar *rightHandOper, CBa
 bool CBagExpression::onEqual(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
 	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
-	bool retVal = leftHandOper->getValue() == rightHandOper->getValue();
+	const bool retVal = leftHandOper->getValue() == rightHandOper->getValue();
 	resultOper.setBoolValue(retVal);
 
 	return retVal;
@@ -355,7 +355,7 @@ bool CBagExpression::onEqual(CBagVar *leftHandOper, CBagVar *rightHandOper, CBag
 
 bool CBagExpression::onNotEqual(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
 	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
-	bool retVal = leftHandOper->getValue() != rightHandOper->getValue();
+	const bool retVal = leftHandOper->getValue() != rightHandOper->getValue();
 	resultOper.setBoolValue(retVal);
 
 	return retVal;
@@ -364,7 +364,7 @@ bool CBagExpression::onNotEqual(CBagVar *leftHandOper, CBagVar *rightHandOper, C
 
 bool CBagExpression::onLessThan(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
 	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
-	bool retVal = leftHandOper->getNumValue() < rightHandOper->getNumValue();
+	const bool retVal = leftHandOper->getNumValue() < rightHandOper->getNumValue();
 	resultOper.setBoolValue(retVal);
 	return retVal;
 }
@@ -372,7 +372,7 @@ bool CBagExpression::onLessThan(CBagVar *leftHandOper, CBagVar *rightHandOper, C
 
 bool CBagExpression::onGreaterThan(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
 	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
-	bool retVal = leftHandOper->getNumValue() > rightHandOper->getNumValue();
+	const bool retVal = leftHandOper->getNumValue() > rightHandOper->getNumValue();
 	resultOper.setBoolValue(retVal);
 	return retVal;
 }
@@ -380,7 +380,7 @@ bool CBagExpression::onGreaterThan(CBagVar *leftHandOper, CBagVar *rightHandOper
 
 bool CBagExpression::onLessThanEqual(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
 	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
-	bool retVal = leftHandOper->getNumValue() <= rightHandOper->getNumValue();
+	const bool retVal = leftHandOper->getNumValue() <= rightHandOper->getNumValue();
 	resultOper.setBoolValue(retVal);
 	return retVal;
 }
@@ -389,7 +389,7 @@ bool CBagExpression::onLessThanEqual(CBagVar *leftHandOper, CBagVar *rightHandOp
 bool CBagExpression::onGreaterThanEqual(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVar &resultOper) {
 	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
-	bool retVal = leftHandOper->getNumValue() >= rightHandOper->getNumValue();
+	const bool retVal = leftHandOper->getNumValue() >= rightHandOper->getNumValue();
 	resultOper.setBoolValue(retVal);
 	return retVal;
 }
@@ -399,8 +399,8 @@ bool CBagExpression::onPlusAssign(CBagVar *leftHandOper, CBagVar *rightHandOper,
 	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
 	if (leftHandOper->isNumeric() && rightHandOper->isNumeric()) {
-		int leftHandNum = leftHandOper->getNumValue();
-		int rightHandNum = rightHandOper->getNumValue();
+		const int leftHandNum = leftHandOper->getNumValue();
+		const int rightHandNum = rightHandOper->getNumValue();
 		leftHandOper->setValue(leftHandNum + rightHandNum);
 		resultOper.setValue(leftHandOper->getNumValue());
 	}
@@ -413,8 +413,8 @@ bool CBagExpression::onMinusAssign(CBagVar *leftHandOper, CBagVar *rightHandOper
 	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
 	if (leftHandOper->isNumeric() && rightHandOper->isNumeric()) {
-		int leftHandNum = leftHandOper->getNumValue();
-		int rightHandNum = rightHandOper->getNumValue();
+		const int leftHandNum = leftHandOper->getNumValue();
+		const int rightHandNum = rightHandOper->getNumValue();
 		leftHandOper->setValue(leftHandNum - rightHandNum);
 		resultOper.setValue(leftHandOper->getNumValue());
 	}
@@ -474,8 +474,8 @@ bool CBagExpression::onPlus(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagV
 	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
 	if (leftHandOper->isNumeric() && rightHandOper->isNumeric()) {
-		int leftHandNum = leftHandOper->getNumValue();
-		int rightHandNum = rightHandOper->getNumValue();
+		const int leftHandNum = leftHandOper->getNumValue();
+		const int rightHandNum = rightHandOper->getNumValue();
 		resultOper.setValue(leftHandNum + rightHandNum);
 	}
 
@@ -487,8 +487,8 @@ bool CBagExpression::onMinus(CBagVar *leftHandOper, CBagVar *rightHandOper, CBag
 	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
 	if (leftHandOper->isNumeric() && rightHandOper->isNumeric()) {
-		int leftHandNum = leftHandOper->getNumValue();
-		int rightHandNum = rightHandOper->getNumValue();
+		const int leftHandNum = leftHandOper->getNumValue();
+		const int rightHandNum = rightHandOper->getNumValue();
 		resultOper.setValue(leftHandNum - rightHandNum);
 	}
 
@@ -500,8 +500,8 @@ bool CBagExpression::onMultiply(CBagVar *leftHandOper, CBagVar *rightHandOper, C
 	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
 	if (leftHandOper->isNumeric() && rightHandOper->isNumeric()) {
-		int leftHandNum = leftHandOper->getNumValue();
-		int rightHandNum = rightHandOper->getNumValue();
+		const int leftHandNum = leftHandOper->getNumValue();
+		const int rightHandNum = rightHandOper->getNumValue();
 
 		resultOper.setValue(leftHandNum * rightHandNum);
 	}
@@ -514,8 +514,8 @@ bool CBagExpression::onDivide(CBagVar *leftHandOper, CBagVar *rightHandOper, CBa
 	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
 	if (leftHandOper->isNumeric() && rightHandOper->isNumeric()) {
-		int leftHandNum = leftHandOper->getNumValue();
-		int rightHandNum = rightHandOper->getNumValue();
+		const int leftHandNum = leftHandOper->getNumValue();
+		const int rightHandNum = rightHandOper->getNumValue();
 
 		// Divide by Zero error?
 		assert(rightHandNum != 0);
@@ -531,8 +531,8 @@ bool CBagExpression::onMod(CBagVar *leftHandOper, CBagVar *rightHandOper, CBagVa
 	assert((leftHandOper != nullptr) && (rightHandOper != nullptr));
 
 	if (leftHandOper->isNumeric() && rightHandOper->isNumeric()) {
-		int leftHandNum = leftHandOper->getNumValue();
-		int rightHandNum = rightHandOper->getNumValue();
+		const int leftHandNum = leftHandOper->getNumValue();
+		const int rightHandNum = rightHandOper->getNumValue();
 
 		// Divide by Zero error?
 		assert(rightHandNum != 0);

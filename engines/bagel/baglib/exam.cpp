@@ -61,7 +61,7 @@ void CBagExam::onReSize(CBofSize *size) {
 
 bool CBagExam::setRotationRects() {
 	// Get the  windows rect
-	CBofRect clientRect = getClientRect();
+	const CBofRect clientRect = getClientRect();
 
 	// Left quarter of the video window
 	_leftRect.left = clientRect.left;

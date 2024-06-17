@@ -28,7 +28,7 @@ namespace Bagel {
 bool CBagEventSDev::_evalTurnEventsFl;
 
 ErrorCode CBagEventSDev::attach() {
-	ErrorCode errorCode = CBagStorageDev::attach();
+	const ErrorCode errorCode = CBagStorageDev::attach();
 
 	// Set the firstpaint flag and attach objects to allow
 	// for immediate run objects to run
@@ -47,7 +47,7 @@ ErrorCode CBagEventSDev::evaluateExpressions() {
 		return ERR_NONE;
 
 	ErrorCode errorCode = ERR_NONE;
-	int count = getObjectCount();
+	const int count = getObjectCount();
 	for (int i = 0; i < count; ++i) {
 
 		CBagObject *posObj = getObjectByPos(i);
@@ -80,7 +80,7 @@ ErrorCode CBagTurnEventSDev::evaluateExpressions() {
 	}
 
 	ErrorCode errorCode = ERR_NONE;
-	int count = getObjectCount();
+	const int count = getObjectCount();
 	for (int i = 0; i < count; ++i) {
 		CBagObject *posObj = getObjectByPos(i);
 		if (posObj != nullptr) {
