@@ -162,9 +162,8 @@ bool SoundDesc::loadWAV(byte *data, uint32 dSize) {
 	int wavSize, wavRate;
 	byte wavFlags;
 	uint16 wavType;
-	int numChannels; 
-
-	if (!Audio::loadWAVFromStream(stream, wavSize, wavRate, wavFlags, &wavType, &numChannels))
+	
+	if (!Audio::loadWAVFromStream(stream, wavSize, wavRate, wavFlags, &wavType))
 		return false;
 
 	if (wavFlags & Audio::FLAG_16BITS) {
