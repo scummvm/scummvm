@@ -376,18 +376,12 @@ void init_graphics() {
 	qdGameConfig::get_config().set_pixel_format(grDispatcher::instance()->pixel_format());
 
 	qdlg::set_icon(hmainWnd);
-	appSetHandle(hmainWnd);
 
 	grDispatcher::instance()->SetClip();
 	grDispatcher::instance()->SetClipMode(1);
 	grDispatcher::instance()->Fill(0);
 
-	if (grDispatcher::instance()->is_in_fullscreen_mode())
-		ShowWindow(hmainWnd, SW_SHOWMAXIMIZED);
-	else
-		ShowWindow(hmainWnd, SW_SHOWNORMAL);
-
-	UpdateWindow(hmainWnd);
+	g_system->updateScreen();
 
 	grDispatcher::instance()->Flush();
 }
