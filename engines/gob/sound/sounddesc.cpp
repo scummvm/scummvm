@@ -174,8 +174,6 @@ bool SoundDesc::loadWAV(byte *data, uint32 dSize) {
 
 	if (wavFlags & Audio::FLAG_STEREO)
 		_mixerFlags |= Audio::FLAG_STEREO;
-		return false;
-	}
 
 	_data = data;
 	_dataPtr = data + stream.pos();
