@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-15 22:46+0000\n"
-"PO-Revision-Date: 2024-06-12 07:49+0000\n"
+"PO-Revision-Date: 2024-06-17 11:45+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -666,11 +666,11 @@ msgstr "Chemins"
 
 #: gui/editgamedialog.cpp:290
 msgid "Check Integrity"
-msgstr ""
+msgstr "Vérifier l'intégrité"
 
 #: gui/editgamedialog.cpp:290
 msgid "Perform integrity check for all game files"
-msgstr ""
+msgstr "Vérifie l'intégrité de tous les fichiers de jeu"
 
 #: gui/editgamedialog.cpp:295
 msgid "Game Path:"
@@ -847,26 +847,25 @@ msgstr "Notes :"
 msgid ""
 "Verifying file integrity may take a long time to complete. Please wait...\n"
 msgstr ""
+"La vérification de l'intégrité des fichiers peut prendre un certain temps. "
+"Veuillez patienter...\n"
 
 #: gui/integrity-dialog.cpp:107 gui/integrity-dialog.cpp:168
 msgid "Calculating file checksums..."
-msgstr ""
+msgstr "Calcul des sommes de contrôle des fichiers..."
 
 #: gui/integrity-dialog.cpp:120
 msgid "Launch Email Client"
-msgstr ""
+msgstr "Démarrage du client mail"
 
 #: gui/integrity-dialog.cpp:174
-#, fuzzy
-#| msgid "Scan complete!"
 msgid "Calculation complete"
-msgstr "Examen terminé !"
+msgstr "Calcul terminé"
 
 #: gui/integrity-dialog.cpp:263
-#, fuzzy, c-format
-#| msgid "Downloaded %s %S / %s %S"
+#, c-format
 msgid "Calculated %s %S / %s %S"
-msgstr "Téléchargé %s %S / %s %S"
+msgstr "Calculé %s %S / %s %S"
 
 #: gui/integrity-dialog.cpp:513
 msgid ""
@@ -876,21 +875,31 @@ msgid ""
 "If you are sure that this is a valid unknown variant, please send the "
 "following e-mail to integrity@scummvm.org"
 msgstr ""
+"### Résultats\n"
+"Votre lot de fichiers de jeu semble nous être inconnu.\n"
+"\n"
+"Si vous êtes sûr qu'il s'agit d'une variante inconnue valide, merci "
+"d'envoyer l'e-mail suivant à integrity@scummvm.org"
 
 #: gui/integrity-dialog.cpp:537
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr ""
+"Le jeu ne semble pas contenir de fichiers. Êtes-vous sûr que le chemin "
+"d'accès est correct ?"
 
 #: gui/integrity-dialog.cpp:542
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
 msgstr ""
+"Le jeu ne semble pas avoir de métadonnées associées, il n'est donc pas "
+"possible d'établir une correspondance. Merci de saisir les métadonnées "
+"correctes pour le jeu."
 
 #: gui/integrity-dialog.cpp:569
 msgid "Files all OK"
-msgstr ""
+msgstr "Tous les fichiers sont OK"
 
 #: gui/filebrowser-dialog.cpp:53
 msgid "Choose file for loading"
