@@ -91,7 +91,7 @@ MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 
 	_type = MacWindowConstants::kWindowMenu;
 
-	_screen.create(bounds.width(), bounds.height(), PixelFormat::createFormatCLUT8());
+	_screen.create(bounds.width(), bounds.height(), _wm->_pixelformat);
 
 	_bbox.left = 0;
 	_bbox.top = 0;
@@ -129,7 +129,7 @@ MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 
 	_isModal = false;
 
-	_tempSurface.create(_screen.w, _font->getFontHeight(), PixelFormat::createFormatCLUT8());
+	_tempSurface.create(_screen.w, _font->getFontHeight(), _wm->_pixelformat);
 }
 
 MacMenu::~MacMenu() {
@@ -966,15 +966,45 @@ void MacMenu::calcSubMenuBounds(MacMenuSubMenu *submenu, int x, int y) {
 	}
 }
 
+template <typename T>
 static void drawPixelPlain(int x, int y, int color, void *data) {
 	ManagedSurface *surface = (ManagedSurface *)data;
 
 	if (x >= 0 && x < surface->w && y >= 0 && y < surface->h)
-		*((byte *)surface->getBasePtr(x, y)) = (byte)color;
+		*((T *)surface->getBasePtr(x, y)) = (T)color;
 }
 
+template <typename T>
 static void drawFilledRoundRect(ManagedSurface *surface, Common::Rect &rect, int arc, int color) {
-	drawRoundRect(rect, arc, color, true, drawPixelPlain, surface);
+	drawRoundRect(rect, arc, color, true, drawPixelPlain<T>, surface);
+}
+
+template <typename T>
+static void drawMenuPattern(ManagedSurface &srcSurf, ManagedSurface &destSurf, const byte *pattern, int x, int y, int width, uint32 colorKey) {
+	// I am lazy to extend drawString() with plotProc as a parameter, so
+	// fake it here
+
+	for (int ii = 0; ii < srcSurf.h; ii++) {
+		const T *src = (const T *)srcSurf.getBasePtr(0, ii);
+		T *dst = (T *)destSurf.getBasePtr(x, y + ii);
+		byte pat = pattern[ii % 8];
+		for (int j = 0; j < width; j++) {
+			if (*src != colorKey && (pat & (1 << (7 - (x + j) % 8))))
+				*dst = *src;
+			src++;
+			dst++;
+		}
+	}
+}
+
+template <typename T>
+static void drawMenuDelimiter(ManagedSurface &srcSurf, Common::Rect *r, int y, uint32 black, uint32 white) {
+	bool flip = r->left & 2;
+	T *ptr = (T *)srcSurf.getBasePtr(r->left + 1, y);
+	for (int xx = r->left + 1; xx <= r->right - 1; xx++, ptr++) {
+		*ptr = flip ? black : white;
+		flip = !flip;
+	}
 }
 
 static void underlineAccelerator(ManagedSurface *dst, const Font *font, const Common::UnicodeBiDiText &txt, int x, int y, int shortcutPos, uint32 color) {
@@ -1016,7 +1046,11 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 	// Fill in the corners with black
 	_screen.fillRect(r, _wm->_colorBlack);
 
-	drawFilledRoundRect(&_screen, r, shouldUseDesktopArc ? kDesktopArc : 0, _wm->_colorWhite);
+	if (_wm->_pixelformat.bytesPerPixel == 1) {
+		drawFilledRoundRect<byte>(&_screen, r, shouldUseDesktopArc ? kDesktopArc : 0, _wm->_colorWhite);
+	} else {
+		drawFilledRoundRect<uint32>(&_screen, r, shouldUseDesktopArc ? kDesktopArc : 0, _wm->_colorWhite);
+	}
 
 	r.top = 7;
 	_screen.fillRect(r, _wm->_colorWhite);
@@ -1184,27 +1218,18 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 				drawSubMenuArrow(s, arrowX, ty, color);
 
 			if (!menu->items[i]->enabled) {
-				// I am lazy to extend drawString() with plotProc as a parameter, so
-				// fake it here
-				for (int ii = 0; ii < _tempSurface.h; ii++) {
-					const byte *src = (const byte *)_tempSurface.getBasePtr(0, ii);
-					byte *dst = (byte *)_screen.getBasePtr(x, y + ii);
-					byte pat = _wm->getBuiltinPatterns()[kPatternCheckers2 - 1][ii % 8];
-					for (int j = 0; j < r->width(); j++) {
-						if (*src != _wm->_colorGreen && (pat & (1 << (7 - (x + j) % 8))))
-							*dst = *src;
-						src++;
-						dst++;
-					}
+				if (_wm->_pixelformat.bytesPerPixel == 1) {
+					drawMenuPattern<byte>(_tempSurface, _screen, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, r->width(), _wm->_colorGreen);
+				} else {
+					drawMenuPattern<uint32>(_tempSurface, _screen, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, r->width(), _wm->_colorGreen);
 				}
 			}
 
 		} else { // Delimiter
-			bool flip = r->left & 2;
-			byte *ptr = (byte *)_screen.getBasePtr(r->left + 1, y + _menuDropdownItemHeight / 2);
-			for (int xx = r->left + 1; xx <= r->right - 1; xx++, ptr++) {
-				*ptr = flip ? _wm->_colorBlack : _wm->_colorWhite;
-				flip = !flip;
+			if (_wm->_pixelformat.bytesPerPixel == 1) {
+				drawMenuDelimiter<byte>(_screen, r, y + _menuDropdownItemHeight / 2, _wm->_colorBlack, _wm->_colorWhite);
+			} else {
+				drawMenuDelimiter<uint32>(_screen, r, y + _menuDropdownItemHeight / 2, _wm->_colorBlack, _wm->_colorWhite);
 			}
 		}
 
