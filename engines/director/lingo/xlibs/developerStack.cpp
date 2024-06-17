@@ -133,12 +133,12 @@ namespace Director {
 
 const char *DeveloperStack::xlibName = "SetVolume";
 const XlibFileDesc DeveloperStack::fileNames[] = {
-  {"SetVolume", nullptr },
-  { nullptr,  nullptr },
+	{ "SetVolume",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 static BuiltinProto builtins[] = {
-	{ "SetVolume",	DeveloperStack::b_setvolume, 2, 2, 300, HBLTIN },
+	{ "SetVolume", DeveloperStack::b_setvolume, 2, 2, 300, HBLTIN },
 	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
 };
 

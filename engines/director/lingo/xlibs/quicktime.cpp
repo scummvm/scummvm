@@ -38,94 +38,94 @@ namespace Director {
 
 const char *Quicktime::xlibName = "quicktime";
 const XlibFileDesc Quicktime::fileNames[] = {
-    { "QuickTime",  nullptr },
-    { nullptr,      nullptr },
+	{ "QuickTime",  nullptr },
+	{ nullptr,	  nullptr },
 };
 
 static MethodProto xlibMethods[] = {
-    { "playStage",       Quicktime::m_playStage,      3, 3,  300 },
-    // Defined in the xobj itself but never used
-    // { "mPlaySmall",      Quicktime::m_playSmall,      3, 3,  300 },
-    { nullptr, nullptr, 0, 0, 0 }
+	{ "playStage",	   Quicktime::m_playStage,	  3, 3,  300 },
+	// Defined in the xobj itself but never used
+	// { "mPlaySmall",	  Quicktime::m_playSmall,	  3, 3,  300 },
+	{ nullptr, nullptr, 0, 0, 0 }
 };
 
 void Quicktime::open(ObjectType type, const Common::Path &path) {
-    if (type == kXObj) {
-        QuicktimeObject::initMethods(xlibMethods);
-        QuicktimeObject *xobj = new QuicktimeObject(kXObj);
-        g_lingo->exposeXObject(xlibName, xobj);
-    }
+	if (type == kXObj) {
+		QuicktimeObject::initMethods(xlibMethods);
+		QuicktimeObject *xobj = new QuicktimeObject(kXObj);
+		g_lingo->exposeXObject(xlibName, xobj);
+	}
 }
 
 void Quicktime::close(ObjectType type) {
-    if (type == kXObj) {
-        QuicktimeObject::cleanupMethods();
-        g_lingo->_globalvars[xlibName] = Datum();
-    }
+	if (type == kXObj) {
+		QuicktimeObject::cleanupMethods();
+		g_lingo->_globalvars[xlibName] = Datum();
+	}
 }
 
 QuicktimeObject::QuicktimeObject(ObjectType ObjectType) :Object<QuicktimeObject>("QuickTime") {
-    _objType = ObjectType;
+	_objType = ObjectType;
 }
 
 void Quicktime::m_playStage(int nargs) {
-    int top = g_lingo->pop().asInt();
-    int left = g_lingo->pop().asInt();
-    Common::String movieTitle = g_lingo->pop().asString();
+	int top = g_lingo->pop().asInt();
+	int left = g_lingo->pop().asInt();
+	Common::String movieTitle = g_lingo->pop().asString();
 
-    // Provided file path begins with the volume
-    Common::Path filePath = findPath(movieTitle);
+	// Provided file path begins with the volume
+	Common::Path filePath = findPath(movieTitle);
 
-    Video::QuickTimeDecoder *video = new Video::QuickTimeDecoder();
-    if (!video->loadFile(filePath)) {
-        delete video;
-        g_lingo->push(Datum());
-        return;
-    }
+	Video::QuickTimeDecoder *video = new Video::QuickTimeDecoder();
+	if (!video->loadFile(filePath)) {
+		delete video;
+		g_lingo->push(Datum());
+		return;
+	}
 
-    if (!video->isPlaying()) {
-        video->setRate(1);
-        video->start();
-    }
+	if (!video->isPlaying()) {
+		video->setRate(1);
+		video->start();
+	}
 
-    Graphics::Surface const *frame = nullptr;
-    bool keepPlaying = true;
-    Common::Event event;
-    while (!video->endOfVideo()) {
-        if (g_director->pollEvent(event)) {
-            switch(event.type) {
-                case Common::EVENT_QUIT:
-                    g_director->processEventQUIT();
-                    // fallthrough
-                case Common::EVENT_RBUTTONDOWN:
-                case Common::EVENT_LBUTTONDOWN:
-                    keepPlaying = false;
-                    break;
-                default:
-                    break;
-            }
-        }
-        if (!keepPlaying)
-            break;
-        if (video->needsUpdate()) {
-            frame = video->decodeNextFrame();
-            if (frame != nullptr)
-                g_system->copyRectToScreen(frame->getPixels(), frame->pitch, left, top, frame->w, frame->h);
-        }
-        g_system->updateScreen();
-        g_director->delayMillis(10);
-    }
+	Graphics::Surface const *frame = nullptr;
+	bool keepPlaying = true;
+	Common::Event event;
+	while (!video->endOfVideo()) {
+		if (g_director->pollEvent(event)) {
+			switch(event.type) {
+			case Common::EVENT_QUIT:
+				g_director->processEventQUIT();
+				// fallthrough
+			case Common::EVENT_RBUTTONDOWN:
+			case Common::EVENT_LBUTTONDOWN:
+				keepPlaying = false;
+				break;
+			default:
+				break;
+			}
+		}
+		if (!keepPlaying)
+			break;
+		if (video->needsUpdate()) {
+			frame = video->decodeNextFrame();
+			if (frame != nullptr)
+				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, left, top, frame->w, frame->h);
+		}
+		g_system->updateScreen();
+		g_director->delayMillis(10);
+	}
 
-    if (frame != nullptr)
-        // Display the last frame after the video is done
-        g_director->getCurrentWindow()->getSurface()->copyRectToSurface(
-            frame->getPixels(), frame->pitch, left, top, frame->w, frame->h
-        );
+	if (frame != nullptr)
+		// Display the last frame after the video is done
+		g_director->getCurrentWindow()->getSurface()->copyRectToSurface(
+			frame->getPixels(), frame->pitch, left, top, frame->w, frame->h
+		);
 
-    video->close();
-    delete video;
+	video->close();
+	delete video;
 
-    g_lingo->push(Datum());
+	g_lingo->push(Datum());
 }
 
 } // End of namespace Director
