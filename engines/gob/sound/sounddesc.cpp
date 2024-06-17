@@ -172,10 +172,8 @@ bool SoundDesc::loadWAV(byte *data, uint32 dSize) {
 		wavSize >>= 1;
 	}
 
-	if (numChannels == 2) {
+	if (wavFlags & Audio::FLAG_STEREO)
 		_mixerFlags |= Audio::FLAG_STEREO;
-	} else if (numChannels != 1) {
-		warning("SoundDesc::loadWAV unsupported number of channels %d", numChannels);
 		return false;
 	}
 
