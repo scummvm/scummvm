@@ -25,6 +25,9 @@
 #include "qdengine/core/system/graphics/gr_screen_region.h"
 #include "qdengine/xlibs/util/xmath/xmath.h"
 
+namespace Graphics {
+class ManagedSurface;
+}
 
 namespace QDEngine {
 
@@ -569,6 +572,8 @@ protected:
 	int temp_buffer_size_;
 
 private:
+
+	Graphics::ManagedSurface *_surface;
 
 	int clipMode;
 	int clipCoords[4];
