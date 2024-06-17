@@ -101,6 +101,7 @@ bool grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, 
 
 	initGraphics(sx, sy, &g_engine->_pixelformat);
 	_surface = new Graphics::ManagedSurface(sx, sy, g_engine->_pixelformat);
+	_isFullScreen = fullscreen;
 
 	if (!is_mode_supported(sx, sy, pixel_format_))
 		pixel_format_ = adjust_mode(pixel_format);

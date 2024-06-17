@@ -89,17 +89,17 @@ public:
 	static bool sys_finit();
 
 	bool is_in_fullscreen_mode() const {
-		warning("STUB: grDispatcher::is_in_fullscreen_mode()");
-		return true;
-	};
+		return _isFullScreen;
+	}
+
 	bool is_mode_supported(int sx, int sy, grPixelFormat pixel_format) const {
 		warning("STUB: grDispatcher::is_mode_supported");
 		return true;
-	};
+	}
 	bool is_mode_supported(grPixelFormat pixel_format) const {
 		warning("STUB: grDispatcher::is_mode_supported");
 		return true;
-	};
+	}
 
 	bool get_current_mode(int sx, int sy, grPixelFormat grPixelformat) {
 		warning("STUB: grDispatcher::get_current_mode");
@@ -574,6 +574,8 @@ protected:
 private:
 
 	Graphics::ManagedSurface *_surface;
+
+	bool _isFullScreen;
 
 	int clipMode;
 	int clipCoords[4];
