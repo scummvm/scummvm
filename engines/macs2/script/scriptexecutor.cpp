@@ -1480,9 +1480,13 @@ void Script::ScriptExecutor::ExecuteScript() {
 
 			Func9F4D_Placeholder();
 			Func9F4D_Placeholder();
-			g_engine->changeScene(newSceneID);
+			g_engine->changeScene(newSceneID, false);
 			// TODO: Confirm that script execution is also stopped always afer this command
 			// in the game code
+			// TODO: Confirm that these variables are also reset by the game when changing a scene
+			// or if there is another mechanism for this
+			_interactedObjectID = 0;
+			_interactedOtherObjectID = 0;
 			requestCallback = false;
 			g_engine->ScheduleRun();
 			isAwaitingCallback = true;
