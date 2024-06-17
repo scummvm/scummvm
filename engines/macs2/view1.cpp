@@ -709,6 +709,10 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		
 		// AnimFrame *frame = current->GetCurrentPortrait();
 		DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s);
+		Common::Rect screenRect(0, 0, 320, 200);
+		if (screenRect.contains(current->GetPosition())) {
+			s.setPixel(current->GetPosition().x, current->GetPosition().y, 0xFF);
+		}
 		// DrawSprite(Common::Point(50, 50), frame->Width, frame->Height, frame->Data, s);
 	}
 }
@@ -793,6 +797,7 @@ bool Character::HandleWalkability(Character *c) {
 }
 
 bool Character::IsWalkable(const Common::Point &p) const {
+
 	uint32 value = g_engine->_pathfindingMap.getPixel(p.x, p.y);
 	return value < 0xC8;
 }
