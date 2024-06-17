@@ -22,8 +22,8 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 #include "engines/util.h"
-#include "qdengine/qdengine.h"
 #include "common/textconsole.h"
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/graphics/gr_font.h"
@@ -100,16 +100,13 @@ bool grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, 
 	pixel_format_ = pixel_format;
 
 	initGraphics(sx, sy, &g_engine->_pixelformat);
+	_surface = new Graphics::ManagedSurface(sx, sy, g_engine->_pixelformat);
 
 	if (!is_mode_supported(sx, sy, pixel_format_))
 		pixel_format_ = adjust_mode(pixel_format);
 
 	if (!hwnd) {
-		if (!Get_hWnd()) {
-			if (!create_window(sx, sy)) return false;
-		} else
-			resize_window(sx, sy);
-
+		resize_window(sx, sy);
 		SizeX = sx;
 		SizeY = sy;
 	} else {
@@ -128,8 +125,6 @@ bool grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, 
 
 	changes_mask_.resize(changes_mask_size_x_ * changes_mask_size_y_);
 
-	SetWindowLong((HWND)Get_hWnd(), GWL_USERDATA, (long)(this));
-
 	flags &= ~GR_REINIT;
 
 #ifdef _GR_ENABLE_ZBUFFER
@@ -140,45 +135,7 @@ bool grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, 
 }
 
 void grDispatcher::Fill(int val) {
-	if (val) {
-		if (bytes_per_pixel() == 2) {
-			for (int y = 0; y < SizeY; y ++) {
-				unsigned short *p = (unsigned short *)(screenBuf + yTable[y]);
-				for (int x = 0; x < SizeX; x ++)
-					*p++ = val;
-			}
-			return;
-		}
-		if (bytes_per_pixel() == 3) {
-			unsigned char *vp = (unsigned char *)(&val);
-
-			for (int y = 0; y < SizeY; y ++) {
-				unsigned char *p = (unsigned char *)(screenBuf + yTable[y]);
-				for (int x = 0; x < SizeX; x ++) {
-					p[0] = vp[2];
-					p[1] = vp[1];
-					p[2] = vp[0];
-					p += 3;
-				}
-			}
-			return;
-		}
-		if (bytes_per_pixel() == 4) {
-			for (int y = 0; y < SizeY; y ++) {
-				unsigned *p = (unsigned *)(screenBuf + yTable[y]);
-				for (int x = 0; x < SizeX; x ++)
-					*p++ = val;
-			}
-			return;
-		}
-	} else {
-		for (int y = 0; y < SizeY; y ++)
-			memset(screenBuf + yTable[y], 0, SizeX * bytes_per_pixel());
-
-#ifdef _GR_ENABLE_ZBUFFER
-		clear_zbuffer();
-#endif
-	}
+	_surface->clear(val);
 }
 
 void grDispatcher::Line(int x1, int y1, int x2, int y2, int col, int line_style, bool inverse_col) {
