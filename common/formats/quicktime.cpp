@@ -50,6 +50,7 @@ QuickTimeParser::QuickTimeParser() {
 	_resFork = new MacResManager();
 	_disposeFileHandle = DisposeAfterUse::YES;
 	_timeScale = 1;
+	_qtvrType = QTVRType::OTHER;
 
 	initParseTable();
 }
@@ -161,6 +162,7 @@ void QuickTimeParser::initParseTable() {
 		{ &QuickTimeParser::readTKHD,    MKTAG('t', 'k', 'h', 'd') },
 		{ &QuickTimeParser::readTRAK,    MKTAG('t', 'r', 'a', 'k') },
 		{ &QuickTimeParser::readDefault, MKTAG('u', 'd', 't', 'a') },
+		{ &QuickTimeParser::readCTYP,    MKTAG('c', 't', 'y', 'p') },
 		{ &QuickTimeParser::readNAVG,    MKTAG('N', 'A', 'V', 'G') },
 		{ &QuickTimeParser::readLeaf,    MKTAG('v', 'm', 'h', 'd') },
 		{ &QuickTimeParser::readCMOV,    MKTAG('c', 'm', 'o', 'v') },
@@ -795,6 +797,28 @@ int QuickTimeParser::readSMI(Atom atom) {
 
 	// This atom just contains SVQ3 extra data
 	sampleDesc->_extraData = _fd->readStream(atom.size);
+
+	return 0;
+}
+
+int QuickTimeParser::readCTYP(Atom atom) {
+	uint32 ctype = _fd->readUint32BE();
+
+	switch (ctype) {
+	case MKTAG('s', 't', 'n', 'a'):
+		_qtvrType = QTVRType::OBJECT;
+		break;
+
+	case MKTAG('S', 'T', 'p', 'n'):
+	case MKTAG('s', 't', 'p', 'n'):
+		_qtvrType = QTVRType::PANORAMA;
+		break;
+
+	default:
+		_qtvrType = QTVRType::OTHER;
+		warning("QuickTimeParser::readCTYP(): Unknown QTVR Type ('%s')", tag2str(ctype));
+		break;
+	}
 
 	return 0;
 }
