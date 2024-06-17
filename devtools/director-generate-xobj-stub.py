@@ -73,7 +73,7 @@ public:
 namespace {xobj_class} {{
 
 extern const char *xlibName;
-extern const char *fileNames[];
+extern const XlibFileDesc fileNames[];
 
 void open(ObjectType type, const Common::Path &path);
 void close(ObjectType type);
@@ -115,9 +115,9 @@ TEMPLATE = (
 namespace Director {{
 
 const char *{xobj_class}::xlibName = "{name}";
-const char *{xobj_class}::fileNames[] = {{
-	"{filename}",
-	nullptr
+const XlibFileDesc {xobj_class}::fileNames[] = {{
+	{ "{filename}",   nullptr },
+	{ nullptr,        nullptr },
 }};
 
 static MethodProto xlibMethods[] = {{
