@@ -164,7 +164,7 @@ void QuickTimeParser::initParseTable() {
 		{ &QuickTimeParser::readDefault, MKTAG('u', 'd', 't', 'a') },
 		{ &QuickTimeParser::readCTYP,    MKTAG('c', 't', 'y', 'p') },
 		{ &QuickTimeParser::readNAVG,    MKTAG('N', 'A', 'V', 'G') },
-		{ &QuickTimeParser::readLeaf,    MKTAG('v', 'm', 'h', 'd') },
+		{ &QuickTimeParser::readVMHD,    MKTAG('v', 'm', 'h', 'd') },
 		{ &QuickTimeParser::readCMOV,    MKTAG('c', 'm', 'o', 'v') },
 		{ &QuickTimeParser::readWAVE,    MKTAG('w', 'a', 'v', 'e') },
 		{ &QuickTimeParser::readESDS,    MKTAG('e', 's', 'd', 's') },
@@ -667,6 +667,16 @@ int QuickTimeParser::readSTTS(Atom atom) {
 	return 0;
 }
 
+int QuickTimeParser::readVMHD(Atom atom) {
+	Track *track = _tracks.back();
+
+	_fd->readUint32BE(); // version + flags
+	track->graphicsMode = (GraphicsMode)_fd->readUint16BE();
+	_fd->readMultipleBE(track->opcolor);
+
+	return 0;
+}
+
 int QuickTimeParser::readSTCO(Atom atom) {
 	Track *track = _tracks.back();
 
@@ -1037,6 +1047,8 @@ QuickTimeParser::Track::Track() {
 	mediaDuration = 0;
 	nlvlFrom = -1;
 	nlvlTo = -1;
+	graphicsMode = GraphicsMode::COPY;
+	opcolor[0] = opcolor[1] = opcolor[2] = 0;
 }
 
 QuickTimeParser::Track::~Track() {

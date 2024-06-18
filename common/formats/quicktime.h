@@ -144,6 +144,18 @@ protected:
 		CODEC_TYPE_MIDI
 	};
 
+	enum class GraphicsMode {
+		COPY				 = 0x0,   // Directly copy the source image over the destination.
+		DITHER_COPY			 = 0x40,  // Dither the image (if needed), otherwise copy.
+		BLEND				 = 0x20,  // Blend source and destination pixel colors using opcolor values.
+		TRANSPARENT			 = 0x24,  // Replace destination with source if not equal to opcolor.
+		STRAIGHT_ALPHA  	 = 0x100, // Blend source and destination pixels, with the proportion controlled by the alpha channel.
+		PREMUL_WHITE_ALPHA   = 0x101, // Blend after removing pre-multiplied white from the source.
+		PREMUL_BLACK_ALPHA	 = 0x102, // Blend after removing pre-multiplied black from the source.
+		STRAIGHT_ALPHA_BLEND = 0x104, // Similar to straight alpha, but the alpha for each channel is combined with the corresponding opcolor channel.
+		COMPOSITION			 = 0x103  // Render offscreen and then dither-copy to the main screen (tracks only).
+	};
+
 	struct PanoramaNode {
 		uint32 nodeID;
 		uint32 timestamp;
@@ -195,6 +207,9 @@ protected:
 		int16 nlvlTo;
 
 		PanoramaInformation panoInfo;
+
+		GraphicsMode graphicsMode; // Transfer mode
+		uint16 opcolor[3];         // RGB values used in the transfer mode specified by graphicsMode.
 	};
 
 	enum class MovieType {
@@ -277,6 +292,7 @@ private:
 	int readSTSS(Atom atom);
 	int readSTSZ(Atom atom);
 	int readSTTS(Atom atom);
+	int readVMHD(Atom atom);
 	int readCMOV(Atom atom);
 	int readWAVE(Atom atom);
 	int readESDS(Atom atom);
