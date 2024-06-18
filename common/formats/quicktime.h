@@ -144,6 +144,18 @@ protected:
 		CODEC_TYPE_MIDI
 	};
 
+	struct PanoramaNode {
+		uint32 nodeID;
+		uint32 timestamp;
+	};
+
+	struct PanoramaInformation {
+		String name;
+		uint32 defNodeID;
+		float defZoom;
+		Array<PanoramaNode> nodes;
+	};
+
 	struct Track {
 		Track();
 		~Track();
@@ -181,6 +193,8 @@ protected:
 		Common::String directory;
 		int16 nlvlFrom;
 		int16 nlvlTo;
+
+		PanoramaInformation panoInfo;
 	};
 
 	enum class MovieType {
@@ -269,6 +283,7 @@ private:
 	int readSMI(Atom atom);
 	int readCTYP(Atom atom);
 	int readNAVG(Atom atom);
+	int readPINF(Atom atom);
 };
 
 /** @} */
