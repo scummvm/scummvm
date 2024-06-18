@@ -135,17 +135,18 @@ bool Score::processFrozenScripts(bool recursion, int count) {
 	// Unfreeze the play script if the special flag is set
 	if (g_lingo->_playDone) {
 		g_lingo->_playDone = false;
-		_window->thawLingoPlayState();
-		Symbol currentScript = _window->getLingoState()->callstack.front()->sp;
-		g_lingo->switchStateFromWindow();
-		bool completed = g_lingo->execute();
-		if (!completed) {
-			debugC(3, kDebugLingoExec, "Score::processFrozenScripts(): State froze again mid-thaw, interrupting");
-			return false;
-		} else if (currentScript == g_lingo->_currentInputEvent) {
-			// script that just completed was the current input event, clear the flag
-			debugC(3, kDebugEvents, "Score::processFrozenScripts(): Input event completed");
-			g_lingo->_currentInputEvent = Symbol();
+		if (_window->thawLingoPlayState()) {
+			Symbol currentScript = _window->getLingoState()->callstack.front()->sp;
+			g_lingo->switchStateFromWindow();
+			bool completed = g_lingo->execute();
+			if (!completed) {
+				debugC(3, kDebugLingoExec, "Score::processFrozenScripts(): State froze again mid-thaw, interrupting");
+				return false;
+			} else if (currentScript == g_lingo->_currentInputEvent) {
+				// script that just completed was the current input event, clear the flag
+				debugC(3, kDebugEvents, "Score::processFrozenScripts(): Input event completed");
+				g_lingo->_currentInputEvent = Symbol();
+			}
 		}
 	}
 

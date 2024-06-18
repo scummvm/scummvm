@@ -164,7 +164,7 @@ public:
 	void freezeLingoState();
 	void thawLingoState();
 	void freezeLingoPlayState();
-	void thawLingoPlayState();
+	bool thawLingoPlayState();
 	LingoState *getLastFrozenLingoState() { return _frozenLingoStates.empty() ? nullptr : _frozenLingoStates[_frozenLingoStates.size() - 1]; }
 
 	// events.cpp

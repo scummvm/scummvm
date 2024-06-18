@@ -649,19 +649,20 @@ void Window::freezeLingoPlayState() {
 	debugC(kDebugLingoExec, 3, "Freezing Lingo play state");
 }
 
-void Window::thawLingoPlayState() {
+bool Window::thawLingoPlayState() {
 	if (!_lingoPlayState) {
 		warning("Tried to thaw when there's no frozen play state, ignoring");
-		return;
+		return false;
 	}
 	if (!_lingoState->callstack.empty()) {
 		warning("Can't thaw a Lingo state in mid-execution, ignoring");
-		return;
+		return false;
 	}
 	delete _lingoState;
 	debugC(kDebugLingoExec, 3, "Thawing Lingo play state");
 	_lingoState = _lingoPlayState;
 	_lingoPlayState = nullptr;
+	return true;
 }
 
 
