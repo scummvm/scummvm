@@ -171,6 +171,8 @@ void QuickTimeParser::initParseTable() {
 		{ &QuickTimeParser::readSMI,     MKTAG('S', 'M', 'I', ' ') },
 		{ &QuickTimeParser::readDefault, MKTAG('g', 'm', 'h', 'd') },
 		{ &QuickTimeParser::readLeaf,    MKTAG('g', 'm', 'i', 'n') },
+		{ &QuickTimeParser::readDefault, MKTAG('S', 'T', 'p', 'n') },
+		{ &QuickTimeParser::readPINF,    MKTAG('p', 'I', 'n', 'f') },
 		{ nullptr, 0 }
 	};
 
@@ -849,6 +851,25 @@ int QuickTimeParser::readNAVG(Atom atom) {
 	_nav.initialHPan = readAppleFloatField(_fd);
 	_nav.initialVPan = readAppleFloatField(_fd);
 	_fd->readUint32BE(); // reserved2
+
+	return 0;
+}
+
+int QuickTimeParser::readPINF(Atom atom) {
+	Track *track = _tracks.back();
+
+	track->panoInfo.name = _fd->readPascalString();
+	_fd->seek((int64)atom.offset + 32);
+	track->panoInfo.defNodeID = _fd->readUint32BE();
+	track->panoInfo.defZoom = readAppleFloatField(_fd);
+	_fd->readUint32BE(); // reserved
+	_fd->readSint16BE(); // padding
+	int16 numEntries = _fd->readSint16BE();
+	track->panoInfo.nodes.resize(numEntries);
+	for (int16 i = 0; i < numEntries; i++) {
+		track->panoInfo.nodes[i].nodeID = _fd->readUint32BE();
+		track->panoInfo.nodes[i].timestamp = _fd->readUint32BE();
+	}
 
 	return 0;
 }
