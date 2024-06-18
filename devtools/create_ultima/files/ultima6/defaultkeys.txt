@@ -163,3 +163,7 @@ joy8	game_menu_dialog
 joy9	new_command_bar
 joy10	move
 joy11	look
+joy12	walk_north
+joy13	walk_south
+joy14	walk_west
+joy15	walk_east
