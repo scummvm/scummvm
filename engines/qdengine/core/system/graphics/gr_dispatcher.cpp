@@ -139,6 +139,30 @@ void grDispatcher::Fill(int val) {
 	_surface->clear(val);
 }
 
+bool grDispatcher::Flush(int x, int y, int sx, int sy) {
+	int x1 = x + sx;
+	int y1 = y + sy;
+
+	if (x < 0)
+		x = 0;
+	if (y < 0)
+		y = 0;
+
+	if (x1 > SizeX)
+		x1 = SizeX;
+
+	if (y1 > SizeY)
+		y1 = SizeY;
+
+	g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, x, y, x1, y1);
+	g_system->updateScreen();
+	return true;
+}
+
+bool grDispatcher::Flush() {
+	return Flush(0, 0, SizeX, SizeY);
+}
+
 void grDispatcher::Line(int x1, int y1, int x2, int y2, int col, int line_style, bool inverse_col) {
 	const int F_PREC = 16;
 

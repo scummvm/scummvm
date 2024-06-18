@@ -217,14 +217,9 @@ public:
 		return 0;
 	}
 
-	virtual bool Flush(int x, int y, int sx, int sy) {
-		warning("STUB: grDispatcher::Flush");
-		return true;
-	};
 
-	bool Flush() {
-		return Flush(0, 0, SizeX, SizeY);
-	}
+	bool Flush(int x, int y, int sx, int sy);
+	bool Flush();
 	bool FlushChanges();
 
 	void Fill(int val);
