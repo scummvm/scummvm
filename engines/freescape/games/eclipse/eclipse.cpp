@@ -94,7 +94,8 @@ void EclipseEngine::loadAssets() {
 	_fallenMessage = _messagesList[3];
 	_crushedMessage = _messagesList[2];
 	_areaMap[1]->addFloor();
-	_areaMap[51]->addFloor();
+	if (!isDemo())
+		_areaMap[51]->addFloor();
 }
 
 bool EclipseEngine::checkIfGameEnded() {
