@@ -130,8 +130,12 @@ bool XMLTree::checkRoot(const Common::String &key) const {
 void XMLTree::value(const Common::String &key, Common::String &ret,
 					const char *defaultvalue) const {
 	const XMLNode *sub = _tree->subtree(key);
-	if (sub)
+	if (sub) { 
 		ret = sub->text();
+		if (ret.empty())
+			if (sub->firstChild())
+				ret = sub->firstChild()->text();
+	}	
 	else
 		ret = defaultvalue;
 }
