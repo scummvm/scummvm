@@ -497,7 +497,7 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 		}
 	}
 
-	addDirtyRect(Common::Rect(0, 0, this->w, this->h));
+	addDirtyRect(destRect);
 }
 
 void ManagedSurface::transBlitFrom(const Surface &src, uint32 transColor, bool flipped,
