@@ -134,8 +134,8 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpOpenGameOverMenu: return "openGameOverMenu";
 	case kSceneOpTiredDialog:	return "openTiredDialog";
 	case kSceneOpArcadeTick: 	return "sceneOpArcadeTick";
-	case kSceneOp105: 			return "sceneOp105";
-	case kSceneOp106: 			return "sceneOp106";
+	case kSceneOpDrawDragonCountdown1: 	return "drawDragonCountdown1";
+	case kSceneOpDrawDragonCountdown2:	return "drawDragonCountdown2";
 	case kSceneOpOpenPlaySkipIntroMenu: return "openPlaySkipIntroMovie";
 	case kSceneOpOpenBetterSaveGameMenu: return "openBetterSaveGameMenu";
 	default:
@@ -500,6 +500,16 @@ void Scene::segmentStateOps(const Common::Array<uint16> &args) {
 	}
 }
 
+static void _drawDragonCountdown(FontManager::FontType fontType, int16 x, int16 y) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	int16 countdownEnd = engine->getGameGlobals()->getGlobal(0x22);
+	int16 currentMins = engine->getClock().getMins();
+	const Font *fnt = engine->getFontMan()->getFont(fontType);
+	Common::String str = Common::String::format("%d", countdownEnd - currentMins);
+	fnt->drawString(&engine->_compositionBuffer, str, x, y, 320 - x, 10);
+
+}
+
 bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 */) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	for (const SceneOp &op : ops) {
@@ -605,16 +615,18 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 *
 			engine->getScene()->addAndShowTiredDialog();
 			break;
 		case kSceneOpArcadeTick:
-			// TODO: Implement this properly! for now jsut
+			// TODO: Implement this properly! for now just
 			// set the global arcade state variable to the "skip" value.
 			warning("Setting arcade global to 8 (skip)");
 			g_system->displayMessageOnOSD(_("Skipping DGDS arcade sequence"));
 			engine->getGameGlobals()->setGlobal(0x21, 6);
 			break;
-		case kSceneOp105:
-			error("TODO: Implement sceneOp105");
-		case kSceneOp106:
-			error("TODO: Implement sceneOp106");
+		case kSceneOpDrawDragonCountdown1:
+			_drawDragonCountdown(FontManager::k4x5Font, 141, 56);
+			break;
+		case kSceneOpDrawDragonCountdown2:
+			_drawDragonCountdown(FontManager::k8x8Font, 250, 42);
+			break;
 		case kSceneOpOpenPlaySkipIntroMenu:
 			static_cast<DgdsEngine *>(g_engine)->setMenuToTrigger(kMenuSkipPlayIntro);
 			break;
@@ -850,6 +862,9 @@ void SDSScene::addAndShowTiredDialog() {
 }
 
 
+// The first row of this array corresponds to the
+// positions of buttons in game passcode
+// RYP YWP YRPWRY PBW
 static const uint16 DRAGON_PASSCODE[] = {
 	1, 4, 3, 4, 0, 3, 4, 1, 3, 0, 1, 4, 3, 2, 0,
 	4, 4, 2, 3, 4, 0, 0, 4, 3, 2, 1, 1, 2, 4, 0,
@@ -866,45 +881,58 @@ void SDSScene::sceneOpUpdatePasscodeGlobal() {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	int16 globalval = engine->getGDSScene()->getGlobal(0x20);
 
-	if (globalval > 33)
+	if (globalval > 34)
 		return;
 
 	if (globalval >= 30) {
+		// One of the keypad buttons
 		if (DRAGON_PASSCODE[passcodeVal4 + passcodeBlockNum * 15] == globalval - 30) {
+			debug("sceneOpUpdatePasscodeGlobal CORRECT: variables %d %d %d %d block %d, curval %d",
+				passcodeVal1, passcodeVal2, passcodeVal3, passcodeVal4, passcodeBlockNum, globalval);
+
+			// Correct entry! Increment the expected button
 			passcodeVal4++;
 			if (passcodeVal4 < passcodeVal3) {
 				globalval = 0;
 			} else if (passcodeVal3 < 15) {
 				globalval = 5;
 			} else {
+				// Finished!
 				globalval = 6;
 			}
 		} else {
-			passcodeVal1 = 5;
-			passcodeVal2 = 0;
+			// Mistake
+			debug("sceneOpUpdatePasscodeGlobal WRONG: variables %d %d %d %d block %d, curval %d",
+				passcodeVal1, passcodeVal2, passcodeVal3, passcodeVal4, passcodeBlockNum, globalval);
+			passcodeVal1 = 0;
+			passcodeVal2 = 5;
 			globalval = 7;
 		}
 	} else {
-		if (globalval > 4)
+		if (globalval > 4 || globalval == 0)
 			return;
 
+		debug("sceneOpUpdatePasscodeGlobal OTHER: variables %d %d %d %d block %d, curval %d",
+				passcodeVal1, passcodeVal2, passcodeVal3, passcodeVal4, passcodeBlockNum, globalval);
+
 		if (globalval < 4) {
-			passcodeBlockNum = globalval - 1;
+			passcodeBlockNum = globalval - 1; // expect block globalval-1
 			passcodeVal1 = 5;
 			passcodeVal2 = 0;
-			passcodeVal3 = 15;
+			passcodeVal3 = 15;	// 15 buttons expected
 			passcodeVal4 = 0;
-		} else if (passcodeVal1 > passcodeVal2) {
-			passcodeVal2++;
-			globalval = DRAGON_PASSCODE[passcodeVal2 + passcodeBlockNum * 15] + 20;
-        } else if (passcodeVal1 > 14) {
-			passcodeVal2 = 0;
-			passcodeVal3 = passcodeVal1;
+			return;
+		} else if (passcodeVal2 > passcodeVal1) {
+			passcodeVal1++;
+			globalval = DRAGON_PASSCODE[passcodeVal1 + passcodeBlockNum * 15] + 20;
+        } else if (passcodeVal2 > 14) {
+			passcodeVal1 = 0;
+			passcodeVal3 = passcodeVal2;
 			passcodeVal4 = 0;
 			globalval = 8;
         } else {
-			passcodeVal1 += 5;
-			passcodeVal2 = 0;
+			passcodeVal1 = 0;
+			passcodeVal2 += 5;
 			passcodeVal3 = passcodeVal1;
 			passcodeVal4 = 0;
 			globalval = 8;
