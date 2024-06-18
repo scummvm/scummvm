@@ -22,6 +22,7 @@
 #include "graphics/managed_surface.h"
 #include "graphics/blit.h"
 #include "graphics/palette.h"
+#include "graphics/transform_tools.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
 #include "common/endian.h"
@@ -231,6 +232,75 @@ void ManagedSurface::copyFrom(const Surface &surf) {
 		delete _palette;
 		_palette = nullptr;
 	}
+}
+
+void ManagedSurface::convertFrom(const ManagedSurface &surf, const PixelFormat &fmt) {
+	// Surface::copyFrom frees pixel pointer so let's free up ManagedSurface to be coherent
+	free();
+
+	// Copy the surface
+	_innerSurface.convertFrom(surf._innerSurface, fmt);
+	markAllDirty();
+
+	// Pixels data is now owned by us
+	_disposeAfterUse = DisposeAfterUse::YES;
+
+	// Copy miscellaneous properties
+	_transparentColorSet = surf._transparentColorSet;
+	_transparentColor = surf._transparentColor;
+	_palette = (fmt.isCLUT8() && surf._palette) ? new Palette(*surf._palette) : nullptr;
+}
+
+void ManagedSurface::convertFrom(const Surface &surf, const PixelFormat &fmt) {
+	// Surface::copyFrom frees pixel pointer so let's free up ManagedSurface to be coherent
+	free();
+
+	// Copy the surface
+	_innerSurface.convertFrom(surf, fmt);
+	markAllDirty();
+
+	// Pixels data is now owned by us
+	_disposeAfterUse = DisposeAfterUse::YES;
+
+	// Set miscellaneous properties to sane values
+	_transparentColorSet = false;
+	_transparentColor = 0;
+	if (_palette) {
+		delete _palette;
+		_palette = nullptr;
+	}
+}
+
+Graphics::ManagedSurface *ManagedSurface::scale(int16 newWidth, int16 newHeight, bool filtering) const {
+	Graphics::ManagedSurface *target = new Graphics::ManagedSurface();
+
+	target->create(newWidth, newHeight, format);
+
+	if (filtering) {
+		scaleBlitBilinear((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format);
+	} else {
+		scaleBlit((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format);
+	}
+
+	return target;
+}
+
+Graphics::ManagedSurface *ManagedSurface::rotoscale(const TransformStruct &transform, bool filtering) const {
+
+	Common::Point newHotspot;
+	Common::Rect rect = TransformTools::newRect(Common::Rect((int16)w, (int16)h), transform, &newHotspot);
+
+	Graphics::ManagedSurface *target = new Graphics::ManagedSurface();
+
+	target->create((uint16)rect.right - rect.left, (uint16)rect.bottom - rect.top, this->format);
+
+	if (filtering) {
+		rotoscaleBlitBilinear((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format, transform, newHotspot);
+	} else {
+		rotoscaleBlit((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format, transform, newHotspot);
+	}
+
+	return target;
 }
 
 void ManagedSurface::simpleBlitFrom(const Surface &src, const Palette *srcPalette) {

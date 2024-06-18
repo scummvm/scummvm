@@ -666,6 +666,39 @@ public:
 	void copyFrom(const Surface &surf);
 
 	/**
+	 * Convert the data from another surface to a given pixel
+	 * format, reinitializing the surface to match the dimensions
+	 * of the passed surface.
+	 */
+	void convertFrom(const ManagedSurface &surf, const PixelFormat &fmt);
+
+	/**
+	 * Convert the data from another surface to a given pixel
+	 * format, reinitializing the surface to match the dimensions
+	 * of the passed surface.
+	 */
+	void convertFrom(const Surface &surf, const PixelFormat &fmt);
+
+	/**
+	 * Scale the data to the given size.
+	 *
+	 * @param newWidth   The resulting width.
+	 * @param newHeight  The resulting height.
+	 * @param filtering  Whether or not to use bilinear filtering.
+	 */
+	ManagedSurface *scale(int16 newWidth, int16 newHeight, bool filtering = false) const;
+
+	/**
+	 * @brief Rotoscale function; this returns a transformed version of this surface after rotation and
+	 * scaling. Please do not use this if angle == 0, use plain old scaling function.
+	 *
+	 * @param transform a TransformStruct wrapping the required info. @see TransformStruct
+	 * @param filtering Whether or not to use bilinear filtering.
+	 *
+	 */
+	ManagedSurface *rotoscale(const TransformStruct &transform, bool filtering = false) const;
+
+	/**
 	 * Draw a line.
 	 */
 	void drawLine(int x0, int y0, int x1, int y1, uint32 color) {
