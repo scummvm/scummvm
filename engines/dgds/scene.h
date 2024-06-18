@@ -106,8 +106,8 @@ enum SceneOpCode {
 	kSceneOpOpenGameOverMenu = 102,	// args: none.
 	kSceneOpTiredDialog = 103,			// args: none. Something about "boy am I tired"?
 	kSceneOpArcadeTick = 104,			// args: none. Called in arcade post-tick.
-	kSceneOp105 = 105,			// args: none. Draw some number at 141, 56
-	kSceneOp106 = 106,			// args: none. Draw some number at 250, 42
+	kSceneOpDrawDragonCountdown1 = 105,			// args: none. Draw special countdown number at 141, 56
+	kSceneOpDrawDragonCountdown2 = 106,			// args: none. Draw some number at 250, 42
 	kSceneOpOpenPlaySkipIntroMenu = 107, // args: none.  DRAGON: Show menu 50, the "Play Introduction" / "Skip Introduction" menu.
 	kSceneOpOpenBetterSaveGameMenu = 108,			// args: none. DRAGON: Show menu 46, the "Before arcade maybe you better save your game" menu.
 };
@@ -127,7 +127,7 @@ public:
 	Common::Array<SceneOp> opList5;
 	uint16 _altCursor;
 	uint16 _iconNum;
-	
+
 	// mutable values
 	uint16 _inSceneNum;
 	uint16 _flags;
@@ -154,13 +154,13 @@ public:
 	ObjectInteraction(uint16 dropped, uint16 target) : _droppedItemNum(dropped), _targetItemNum(target) {}
 
 	Common::Array<SceneOp> opList;
-	
+
 	bool matches(uint16 droppedItemNum, uint16 targetItemNum) const {
 		return _droppedItemNum == droppedItemNum && _targetItemNum == targetItemNum;
 	}
 
 	Common::String dump(const Common::String &indent) const;
-	
+
 private:
 	uint16 _droppedItemNum;
 	uint16 _targetItemNum;
@@ -246,6 +246,9 @@ protected:
 
 	void setItemAttrOp(const Common::Array<uint16> &args);
 	void setDragItemOp(const Common::Array<uint16> &args);
+
+	void drawDragonCountdown1();
+	void drawDragonCountdown2();
 
 	uint32 _magic;
 	Common::String _version;

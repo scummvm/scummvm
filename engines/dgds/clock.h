@@ -49,6 +49,8 @@ public:
 
 	void update(bool gameRunning);
 
+	int16 getMins() const { return _mins; }
+
 	Global *getMinsGlobal(uint16 num);
 	Global *getHoursGlobal(uint16 num);
 	Global *getDaysGlobal(uint16 num);
