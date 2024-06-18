@@ -172,8 +172,7 @@ bool SoundDesc::loadWAV(byte *data, uint32 dSize) {
 	}
 
 	if (wavFlags & Audio::FLAG_STEREO) {
-		warning("TODO: SoundDesc::loadWAV() - stereo");
-		return false;
+		_mixerFlags |= Audio::FLAG_STEREO;
 	}
 
 	_data = data;
