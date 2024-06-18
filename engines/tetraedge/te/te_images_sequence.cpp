@@ -101,7 +101,7 @@ bool TeImagesSequence::load(const Common::FSNode &directory) {
 			_height = pngsurf->h;
 			if (_width < 100 && _height < 100) {
 				Graphics::ManagedSurface *surf = new Graphics::ManagedSurface();
-				surf->copyFrom(pngsurf);
+				surf->copyFrom(*pngsurf);
 				_cachedSurfaces.push_back(surf);
 			} else {
 				_cachedSurfaces.push_back(nullptr);

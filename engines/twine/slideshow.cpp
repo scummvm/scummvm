@@ -68,7 +68,7 @@ private:
 		}
 
 		Graphics::ManagedSurface &target = _engine->_frontVideoBuffer;
-		target.blitFrom(src);
+		target.blitFrom(*src);
 
 		if (decoder.hasPalette()) {
 			setPalette(decoder.getPalette(), decoder.getPaletteColorCount());

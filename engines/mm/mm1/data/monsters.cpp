@@ -97,7 +97,7 @@ Graphics::ManagedSurface Monsters::getMonsterImage(int imgNum) {
 	if (!decoder.loadStream(*entry, 104, 96))
 		error("Failed decoding monster image");
 
-	img.copyFrom(decoder.getSurface());
+	img.copyFrom(*decoder.getSurface());
 
 	return img;
 }

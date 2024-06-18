@@ -154,11 +154,13 @@ public:
 	 * If disposeAfterUse flag is set (default), the surface will reuse all structures
 	 * from the surface and destroy it, otherwise it will make a copy.
 	 */
+	WARN_DEPRECATED("Use copyFrom() instead")
 	ManagedSurface(Surface *surf, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 	/**
 	 * Create a managed surface from plain Surface.
 	 */
+	WARN_DEPRECATED("Use copyFrom() instead")
 	ManagedSurface(const Surface *surf);
 
 	/**
@@ -190,6 +192,7 @@ public:
 	 *
 	 * @note If the source has a managed surface, it will be duplicated.
 	 */
+	WARN_DEPRECATED("Use copyFrom() instead")
 	ManagedSurface &operator=(const ManagedSurface &surf);
 
 	/**

@@ -51,7 +51,7 @@ bool Title::msgFocus(const FocusMessage &msg) {
 		if (decoder.loadFile(Common::Path(
 			Common::String::format(g_engine->isEnhanced() ?
 				"gfx/screen%d" : "screen%d", i)))) {
-			_screens[i].copyFrom(decoder.getSurface());
+			_screens[i].copyFrom(*decoder.getSurface());
 		} else {
 			error("Could not load title screen");
 		}

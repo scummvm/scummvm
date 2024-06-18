@@ -605,7 +605,7 @@ const Graphics::ManagedSurface *scaleGfx(const Graphics::ManagedSurface *gfx, in
 	w = nw;
 	h = nh;
 
-	return new Graphics::ManagedSurface(gfx->rawSurface().scale(w, h, filtering));
+	return gfx->scale(w, h, filtering);
 }
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey)
@@ -660,7 +660,8 @@ void PicButtonWidget::setGfx(const Graphics::ManagedSurface *gfx, int statenum, 
 }
 
 void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum, bool scale) {
-	const Graphics::ManagedSurface *tmpGfx = new Graphics::ManagedSurface(gfx);
+	Graphics::ManagedSurface *tmpGfx = new Graphics::ManagedSurface();
+	tmpGfx->copyFrom(*gfx);
 	setGfx(tmpGfx, statenum, scale);
 	delete tmpGfx;
 }
@@ -993,7 +994,8 @@ void GraphicsWidget::setGfx(const Graphics::ManagedSurface *gfx, bool scale) {
 }
 
 void GraphicsWidget::setGfx(const Graphics::Surface *gfx, bool scale) {
-	const Graphics::ManagedSurface *tmpGfx = new Graphics::ManagedSurface(gfx);
+	Graphics::ManagedSurface *tmpGfx = new Graphics::ManagedSurface();
+	tmpGfx->copyFrom(*gfx);
 	setGfx(tmpGfx, scale);
 	delete tmpGfx;
 }

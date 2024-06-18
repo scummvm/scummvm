@@ -362,7 +362,7 @@ void Maps::loadTile() {
 			TILE_WIDTHS[i], TILE_HEIGHTS[i]))
 			error("Failed decoding tile");
 
-		tiles[i].copyFrom(decoder.getSurface());
+		tiles[i].copyFrom(*decoder.getSurface());
 	}
 }
 

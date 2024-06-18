@@ -454,9 +454,8 @@ void MacWindowManager::activateScreenCopy() {
 
 	if (_screen) {
 		if (!_screenCopy)
-			_screenCopy = new ManagedSurface(*_screen);	// Create a copy
-		else
-			*_screenCopy = *_screen;
+			_screenCopy = new ManagedSurface();
+		_screenCopy->copyFrom(*_screen); // Create a copy
 	} else {
 		Surface *surface = g_system->lockScreen();
 
@@ -485,7 +484,7 @@ void MacWindowManager::disableScreenCopy() {
 		return;
 
 	if (_screen)
-		*_screen = *_screenCopy; // restore screen
+		_screen->copyFrom(*_screenCopy); // restore screen
 
 	g_system->copyRectToScreen(_screenCopy->getBasePtr(0, 0), _screenCopy->pitch, 0, 0, _screenCopy->w, _screenCopy->h);
 }

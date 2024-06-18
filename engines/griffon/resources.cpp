@@ -144,7 +144,8 @@ Graphics::ManagedSurface *GriffonEngine::loadImage(const char *name, bool colork
 	bitmapDecoder.loadStream(file);
 	file.close();
 
-	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface(bitmapDecoder.getSurface()->convertTo(g_system->getScreenFormat()));
+	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
+	surface->convertFrom(*bitmapDecoder.getSurface(), g_system->getScreenFormat());
 
 	if (colorkey)
 		surface->surfacePtr()->applyColorKey(255, 0, 255);

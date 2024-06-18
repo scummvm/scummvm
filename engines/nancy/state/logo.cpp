@@ -114,7 +114,7 @@ void Logo::init() {
 // play the video before the game logo
 void Logo::playIntroVideo() {
 	if (_tvdVideoDecoder.needsUpdate()) {
-		_videoObj._drawSurface.blitFrom(_tvdVideoDecoder.decodeNextFrame());
+		_videoObj._drawSurface.blitFrom(*_tvdVideoDecoder.decodeNextFrame());
 		_videoObj.setVisible(true);
 	}
 	if (_tvdVideoDecoder.endOfVideo() || (g_nancy->_input->getInput().input & NancyInput::kLeftMouseButtonDown)) {
