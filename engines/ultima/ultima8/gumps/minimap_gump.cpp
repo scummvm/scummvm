@@ -143,27 +143,27 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		_minimaps[mapNum] = minimap;
 	}
 
-	Graphics::ManagedSurface ms(minimap->getSurface(), DisposeAfterUse::NO);
+	const Graphics::Surface *ms = minimap->getSurface();
 	Common::Rect r(sx, sy, sx + dims.width(), sy + dims.height());
 
 	if (r.left < 0) {
 		dx -= r.left;
 		r.left = 0;
 	}
-	if (r.right > ms.w) {
-		r.right = ms.w;
+	if (r.right > ms->w) {
+		r.right = ms->w;
 	}
 
 	if (r.top < 0) {
 		dy -= r.top;
 		r.top = 0;
 	}
-	if (r.bottom > ms.h) {
-		r.bottom = ms.h;
+	if (r.bottom > ms->h) {
+		r.bottom = ms->h;
 	}
 
 	if (!r.isEmpty()) {
-		surf->CrossKeyBlitMap(ms, r, dx, dy, map, KEY_COLOR);
+		surf->CrossKeyBlitMap(*ms, r, dx, dy, map, KEY_COLOR);
 	}
 
 	int32 ax = _ax - sx;

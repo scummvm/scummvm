@@ -562,7 +562,9 @@ void CachedMToon::decompressQuickTimeFrame(const Common::Array<uint8> &data, siz
 	}
 
 	// Clone the decompressed frame
-	_decompressedFrames[frameIndex].reset(new Graphics::ManagedSurface(surface));
+	Graphics::ManagedSurface *surfaceCopy = new Graphics::ManagedSurface();
+	surfaceCopy->copyFrom(*surface);
+	_decompressedFrames[frameIndex].reset(surfaceCopy);
 }
 
 template<class TSrcNumber, uint32 TSrcLiteralMask, uint32 TSrcTransparentSkipMask, class TDestNumber, uint32 TDestLiteralMask, uint32 TDestTransparentSkipMask>
@@ -636,7 +638,10 @@ void CachedMToon::optimizeNonTemporal(const Graphics::PixelFormat &targetFormatR
 					optimizedSurfRef = srcSurface;
 				} else {
 					optimizedSurfRef.reset();
-					optimizedSurfRef.reset(new Graphics::ManagedSurface(srcSurface->surfacePtr()->convertTo(targetFormat)));
+
+					Graphics::ManagedSurface *newSurface = new Graphics::ManagedSurface();
+					newSurface->convertFrom(*srcSurface, targetFormat);
+					optimizedSurfRef.reset(newSurface);
 				}
 			} else {
 				optimizedSurfRef = srcSurface;

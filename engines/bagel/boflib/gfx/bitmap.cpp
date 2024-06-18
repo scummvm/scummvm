@@ -599,13 +599,10 @@ ErrorCode CBofBitmap::captureScreen(CBofWindow *pWnd, CBofRect *pSrcRect, CBofRe
 
 		// If we're capturing the screen, we have to convert the format first.
 		if (!_bUseBackdrop || pBackdrop == nullptr) {
-			Graphics::Surface tmp;
-			tmp.copyFrom(*pWnd->getSurface());
-			_bitmap.blitFrom(tmp.convertTo(_bitmap.format, nullptr, 0, _pPalette->getData(), PALETTE_COUNT),
-				cSrcRect,
-				cDestRect);
-			tmp.free();
-
+			Graphics::Surface *tmp = pWnd->getSurface()->rawSurface().convertTo(_bitmap.format, nullptr, 0, _pPalette->getData(), PALETTE_COUNT);
+			_bitmap.blitFrom(*tmp, cSrcRect, cDestRect);
+			tmp->free();
+			delete tmp;
 		} else {
 			// Optimization to use the window's backdrop bitmap instead of doing
 			// an actual screen capture.

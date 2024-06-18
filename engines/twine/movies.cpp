@@ -301,7 +301,7 @@ void Movies::prepareGIF(int index) {
 	_engine->setPalette(0, decoder.getPaletteColorCount(), decoder.getPalette());
 	Graphics::ManagedSurface& target = _engine->_frontVideoBuffer;
 	const Common::Rect surfaceBounds(0, 0, surface->w, surface->h);
-	target.transBlitFrom(surface, surfaceBounds, target.getBounds(), 0, false, 0, 0xff, nullptr, true);
+	target.transBlitFrom(*surface, surfaceBounds, target.getBounds(), 0, false, 0, 0xff, nullptr, true);
 	debug(2, "Show gif with id %i from %s", index, Resources::HQR_FLAGIF_FILE);
 	delete stream;
 	_engine->delaySkip(5000);

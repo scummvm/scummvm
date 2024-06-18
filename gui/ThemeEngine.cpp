@@ -688,8 +688,10 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 			}
 		}
 
-		if (srcSurface && srcSurface->format.bytesPerPixel != 1)
-			surf = new Graphics::ManagedSurface(srcSurface->convertTo(_overlayFormat));
+		if (srcSurface && srcSurface->format.bytesPerPixel != 1) {
+			surf = new Graphics::ManagedSurface();
+			surf->convertFrom(*srcSurface, _overlayFormat);
+		}
 #else
 		error("No PNG support compiled in");
 #endif
@@ -709,17 +711,17 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 			}
 		}
 
-		if (srcSurface && srcSurface->format.bytesPerPixel != 1)
-			surf = new Graphics::ManagedSurface(srcSurface->convertTo(_overlayFormat));
+		if (srcSurface && srcSurface->format.bytesPerPixel != 1) {
+			surf = new Graphics::ManagedSurface();
+			surf->convertFrom(*srcSurface, _overlayFormat);
+		}
 
 		if (surf)
 			surf->setTransparentColor(surf->format.RGBToColor(0xFF, 0x00, 0xFF));
 	}
 
 	if (_scaleFactor != 1.0 && surf) {
-		Graphics::Surface *tmp2 = surf->rawSurface().scale(surf->w * _scaleFactor, surf->h * _scaleFactor, false);
-
-		Graphics::ManagedSurface *surf2 = new Graphics::ManagedSurface(tmp2);
+		Graphics::ManagedSurface *surf2 = surf->scale(surf->w * _scaleFactor, surf->h * _scaleFactor, false);
 
 		if (surf->hasTransparentColor())
 			surf2->setTransparentColor(surf->getTransparentColor());
