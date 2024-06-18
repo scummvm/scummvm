@@ -974,14 +974,14 @@ Common::Path findAudioPath(const Common::String &path, bool currentFolder, bool 
 	return result;
 }
 
-Common::String getFileNameFromModal(bool save, const Common::String &suggested, const char *ext) {
+Common::String getFileNameFromModal(bool save, const Common::String &suggested, const Common::String &title, const char *ext) {
 	Common::String prefix = savePrefix();
 	Common::String mask = prefix + "*";
 	if (ext) {
 		mask += ".";
 		mask += ext;
 	}
-	GUI::FileBrowserDialog browser(nullptr, "txt", save ? GUI::kFBModeSave : GUI::kFBModeLoad, mask.c_str(), suggested.c_str());
+	GUI::FileBrowserDialog browser(title.c_str(), "txt", save ? GUI::kFBModeSave : GUI::kFBModeLoad, mask.c_str(), suggested.c_str());
 	if (browser.runModal() <= 0) {
 		return Common::String();
 	}

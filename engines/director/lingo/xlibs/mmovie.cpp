@@ -585,7 +585,7 @@ void MMovieXObj::m_readFile(int nargs) {
 	Common::String prefix = savePrefix();
 	Common::String result;
 	if (origPath.empty()) {
-		path = getFileNameFromModal(false, Common::String(), "txt");
+		path = getFileNameFromModal(false, Common::String(), Common::String(), "txt");
 		if (path.empty()) {
 			debugC(5, kDebugXObj, "MMovieXObj::m_readFile(): read cancelled by modal");
 			g_lingo->push(result);
@@ -646,7 +646,7 @@ void MMovieXObj::m_writeFile(int nargs) {
 
 	Common::String prefix = savePrefix();
 	if (origPath.empty()) {
-		path = getFileNameFromModal(true, Common::String(), "txt");
+		path = getFileNameFromModal(true, Common::String(), Common::String(), "txt");
 		if (path.empty()) {
 			debugC(5, kDebugXObj, "MMovieXObj::m_writeFile(): read cancelled by modal");
 			g_lingo->push(result);

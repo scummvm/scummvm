@@ -54,7 +54,7 @@ Common::Path findMoviePath(const Common::String &path, bool currentFolder = true
 Common::Path findXLibPath(const Common::String &path, bool currentFolder = true, bool searchPaths = true);
 Common::Path findAudioPath(const Common::String &path, bool currentFolder = true, bool searchPaths = true);
 
-Common::String getFileNameFromModal(bool save, const Common::String &suggested, const char *ext = "txt");
+Common::String getFileNameFromModal(bool save, const Common::String &suggested, const Common::String &title, const char *ext = "txt");
 Common::String savePrefix();
 
 bool hasExtension(Common::String filename);
