@@ -255,6 +255,8 @@ protected:
 	Array<Track *> _tracks;
 	Navigation _nav;
 	QTVRType _qtvrType;
+	uint16 _winX;
+	uint16 _winY;
 
 	void init();
 
@@ -300,6 +302,7 @@ private:
 	int readESDS(Atom atom);
 	int readSMI(Atom atom);
 	int readCTYP(Atom atom);
+	int readWLOC(Atom atom);
 	int readNAVG(Atom atom);
 	int readGMIN(Atom atom);
 	int readPINF(Atom atom);
