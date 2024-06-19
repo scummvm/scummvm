@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-15 22:46+0000\n"
-"PO-Revision-Date: 2024-06-12 02:43+0000\n"
+"PO-Revision-Date: 2024-06-19 21:43+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -830,16 +830,13 @@ msgid "Launch Email Client"
 msgstr ""
 
 #: gui/integrity-dialog.cpp:174
-#, fuzzy
-#| msgid "Scan complete!"
 msgid "Calculation complete"
-msgstr "სკანირება დასრულდა!"
+msgstr "გამოთვლა დასრულდა"
 
 #: gui/integrity-dialog.cpp:263
-#, fuzzy, c-format
-#| msgid "Downloaded %s %S / %s %S"
+#, c-format
 msgid "Calculated %s %S / %s %S"
-msgstr "გადმოწერილია %s %S / %s %S"
+msgstr "გამოთვლილია %s %S / %s %S"
 
 #: gui/integrity-dialog.cpp:513
 msgid ""
