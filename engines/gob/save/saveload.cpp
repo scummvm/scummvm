@@ -59,7 +59,7 @@ Common::String SaveLoad::replacePathSeparators(const char *path, char newSeparat
 }
 
 Common::List<Common::String> SaveLoad::getFilesMatchingPattern(const char *pattern) const {
-	warning("SaveLoad::getFilesMatchingPattern not implemented");
+	warning("TODO: SaveLoad::getFilesMatchingPattern not implemented"); // unimplemented Saveload function
 	return Common::List<Common::String>();
 }
 
