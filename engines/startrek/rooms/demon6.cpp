@@ -257,7 +257,7 @@ void Room::demon6TouchedDoorOpenTrigger() {
 	if (!_roomVar.demon.movingToDoor)
 		return;
 	loadActorAnim(10, "s0r6d1", 0xa0, 0x92, 2);
-	playSoundEffectIndex(5);
+	playSoundEffectIndex(kSfxDoor);
 }
 
 void Room::demon6DoorOpenedOrReachedDoor() {
@@ -555,61 +555,61 @@ void Room::demon6UseHandOnStephen() {
 
 void Room::demon6UseMTricoderOnStephen() {
 	loadActorAnim2(OBJECT_MCCOY, "mscans", -1, -1, 0);
-	playSoundEffectIndex(4);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, TX_DEM6_016);
 }
 
 void Room::demon6UseSTricoderOnTable() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
-	playSoundEffectIndex(4);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM6_009);
 }
 
 void Room::demon6UseSTricoderOnComputer() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
-	playSoundEffectIndex(4);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM6_007);
 }
 
 void Room::demon6UseSTricoderOnMineral() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
-	playSoundEffectIndex(4);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM6_013);
 }
 
 void Room::demon6UseSTricoderOnShells() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
-	playSoundEffectIndex(4);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM6_021);
 }
 
 void Room::demon6UseSTricoderOnSkull() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
-	playSoundEffectIndex(4);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM6_012);
 }
 
 void Room::demon6UseSTricoderOnMetal() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
-	playSoundEffectIndex(4);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM6_011);
 }
 
 void Room::demon6UseSTricoderOnMeteor() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
-	playSoundEffectIndex(4);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM6_010);
 }
 
 void Room::demon6UseSTricoderOnCase() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
-	playSoundEffectIndex(4);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM6_023);
 }
 
 void Room::demon6UseSTricoderOnSynthesizer() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
-	playSoundEffectIndex(4);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM6_008);
 }
 

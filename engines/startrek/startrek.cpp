@@ -323,12 +323,12 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 	_gfx->drawAllSprites();
 	_gfx->fadeinScreen();
 
-	_sound->playSoundEffectIndex(0x0a);
+	_sound->playSoundEffectIndex(kSfxTransporterEnergize);
 
 	if (name.equalsIgnoreCase("teled"))
-		_sound->playSoundEffectIndex(0x08);
+		_sound->playSoundEffectIndex(kSfxTransporterDematerialize);
 	else
-		_sound->playSoundEffectIndex(0x09);
+		_sound->playSoundEffectIndex(kSfxTransporterMaterialize);
 
 	while (_actorList[0].field62 == 0) {
 		TrekEvent event;

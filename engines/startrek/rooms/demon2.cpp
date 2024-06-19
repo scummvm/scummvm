@@ -212,25 +212,25 @@ void Room::demon2UsePhaserOnBerries() {
 
 void Room::demon2UseSTricorderOnBerries() {
 	loadActorAnim2(OBJECT_SPOCK, "sscane", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM2_008);
 }
 
 void Room::demon2UseSTricorderOnMoss() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM2_007);
 }
 
 void Room::demon2UseSTricorderOnFern() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM2_006);
 }
 
 void Room::demon2UseSTricorderOnCave() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 
 	// NOTE: audio file for this is empty.
 	showText(TX_SPEAKER_SPOCK, TX_DEM2_005);
@@ -238,7 +238,7 @@ void Room::demon2UseSTricorderOnCave() {
 
 void Room::demon2UseMTricorderOnBerries() {
 	loadActorAnim2(OBJECT_MCCOY, "mscane", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 
 	if (_awayMission->demon.curedChub)
 		showText(TX_SPEAKER_MCCOY, TX_DEM2_013);
