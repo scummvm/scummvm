@@ -622,7 +622,7 @@
 		"gob1",
 		"Interactive Demo",
 		AD_ENTRY1s("intro.stk", "e72bd1e3828c7dec4c8a3e58c48bdfdb", 280044),
-		UNK_LANG,
+		EN_ANY,
 		kPlatformDOS,
 		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
