@@ -166,7 +166,7 @@ void Image::loadBitmap(const Common::String &filename) {
 			mh = stream->readUint16LE();
 			uint32 mcount = uint32(mw) * mh;
 			mtxVals.resize(mcount);
-			debug("        %ux%u: mtx vals", mw, mh);
+			debug("		%ux%u: mtx vals", mw, mh);
 
 			for (uint32 k = 0; k < mcount; k++) {
 				uint16 tile;
@@ -322,108 +322,108 @@ struct VQTDecodeState {
 };
 
 static inline uint16 _getVqtBits(struct VQTDecodeState *state, int nbits) {
-    const uint32 offset = state->offset;
-   const uint32 index = offset >> 3;
-   const uint32 shift = offset & 7;
-   state->offset += nbits;
-   return (*(const uint16 *)(state->srcPtr + index) >> (shift)) & (byte)(0xff00 >> (16 - nbits));
+	const uint32 offset = state->offset;
+	const uint32 index = offset >> 3;
+	const uint32 shift = offset & 7;
+	state->offset += nbits;
+	return (*(const uint16 *)(state->srcPtr + index) >> (shift)) & (byte)(0xff00 >> (16 - nbits));
 }
 
 static void _doVqtDecode2(struct VQTDecodeState *state, const uint16 x, const uint16 y, const uint16 w, const uint16 h) {
-    // Empty region -> nothing to do
-    if (h == 0 || w == 0)
-        return;
+	// Empty region -> nothing to do
+	if (h == 0 || w == 0)
+		return;
 
-    // 1x1 region -> put the byte directly
-    if (w == 1 && h == 1) {
-        state->dstPtr[state->rowStarts[y] + x] = _getVqtBits(state, 8);
-        return;
-    }
+	// 1x1 region -> put the byte directly
+	if (w == 1 && h == 1) {
+		state->dstPtr[state->rowStarts[y] + x] = _getVqtBits(state, 8);
+		return;
+	}
 
-    const uint losize = (w & 0xff) * (h & 0xff);
-    uint bitcount1 = 8;
-    if (losize < 256) {
-        bitcount1 = 0;
-        byte b = (byte)(losize - 1);
-        do {
-            bitcount1++;
-            b >>= 1;
-        } while (b != 0);
-    }
+	const uint losize = (w & 0xff) * (h & 0xff);
+	uint bitcount1 = 8;
+	if (losize < 256) {
+		bitcount1 = 0;
+		byte b = (byte)(losize - 1);
+		do {
+			bitcount1++;
+			b >>= 1;
+		} while (b != 0);
+	}
 
-    uint16 firstval = _getVqtBits(state, bitcount1);
+	uint16 firstval = _getVqtBits(state, bitcount1);
 
-    uint16 bitcount2 = 0;
-    byte bval = (byte)firstval;
-    while (firstval != 0) {
-        bitcount2++;
-        firstval >>= 1;
-    }
+	uint16 bitcount2 = 0;
+	byte bval = (byte)firstval;
+	while (firstval != 0) {
+		bitcount2++;
+		firstval >>= 1;
+	}
 
-    bval++;
+	bval++;
 
-    if (losize * 8 <= losize * bitcount2 + bval * 8) {
-        for (int xx = x; xx < x + w; xx++) {
-            for (int yy = y; yy < y + h; yy++) {
-                state->dstPtr[state->rowStarts[yy] + xx] = _getVqtBits(state, 8);
-            }
-        }
-        return;
-    }
+	if (losize * 8 <= losize * bitcount2 + bval * 8) {
+		for (int xx = x; xx < x + w; xx++) {
+			for (int yy = y; yy < y + h; yy++) {
+				state->dstPtr[state->rowStarts[yy] + xx] = _getVqtBits(state, 8);
+			}
+		}
+		return;
+	}
 
-    if (bval == 1) {
-        const uint16 val = _getVqtBits(state, 8);
-        for (int yy = y; yy < y + h; yy++) {
-            for (int xx = x; xx < x + w; xx++) {
-                state->dstPtr[state->rowStarts[yy] + xx] = val;
-            }
-        }
-        return;
-    }
+	if (bval == 1) {
+		const uint16 val = _getVqtBits(state, 8);
+		for (int yy = y; yy < y + h; yy++) {
+			for (int xx = x; xx < x + w; xx++) {
+				state->dstPtr[state->rowStarts[yy] + xx] = val;
+			}
+		}
+		return;
+	}
 
-    byte tmpbuf[262];
-    byte *ptmpbuf = tmpbuf;
-    for (; bval != 0; bval--) {
-        *ptmpbuf = _getVqtBits(state, 8);
-        ptmpbuf++;
-    }
+	byte tmpbuf[262];
+	byte *ptmpbuf = tmpbuf;
+	for (; bval != 0; bval--) {
+		*ptmpbuf = _getVqtBits(state, 8);
+		ptmpbuf++;
+	}
 
-    for (int xx = x; xx < x + w; xx++) {
-        for (int yy = y; yy < y + h; yy++) {
-            state->dstPtr[state->rowStarts[yy] + xx] = tmpbuf[_getVqtBits(state, bitcount2)];
-        }
-    }
+	for (int xx = x; xx < x + w; xx++) {
+		for (int yy = y; yy < y + h; yy++) {
+			state->dstPtr[state->rowStarts[yy] + xx] = tmpbuf[_getVqtBits(state, bitcount2)];
+		}
+	}
 }
 
 static void _doVqtDecode(struct VQTDecodeState *state, uint16 x, uint16 y, uint16 w, uint16 h) {
-    if (!w && !h)
-        return;
+	if (!w && !h)
+		return;
 
-    const uint16 mask = _getVqtBits(state, 4);
+	const uint16 mask = _getVqtBits(state, 4);
 
-    // Top left quadrant
-    if (mask & 8)
-        _doVqtDecode(state, x, y, w / 2, h / 2);
-    else
-        _doVqtDecode2(state, x, y, w / 2, h / 2);
+	// Top left quadrant
+	if (mask & 8)
+		_doVqtDecode(state, x, y, w / 2, h / 2);
+	else
+		_doVqtDecode2(state, x, y, w / 2, h / 2);
 
-    // Top right quadrant
-    if (mask & 4)
-        _doVqtDecode(state, x + (w / 2), y, (w + 1) >> 1, h >> 1);
-    else
-        _doVqtDecode2(state, x + (w / 2), y, (w + 1) >> 1, h >> 1);
+	// Top right quadrant
+	if (mask & 4)
+		_doVqtDecode(state, x + (w / 2), y, (w + 1) >> 1, h >> 1);
+	else
+		_doVqtDecode2(state, x + (w / 2), y, (w + 1) >> 1, h >> 1);
 
-    // Bottom left quadrant
-    if (mask & 2)
-        _doVqtDecode(state, x, y + (h / 2), w / 2, (h + 1) / 2);
-    else
-        _doVqtDecode2(state, x, y + (h / 2), w / 2, (h + 1) / 2);
+	// Bottom left quadrant
+	if (mask & 2)
+		_doVqtDecode(state, x, y + (h / 2), w / 2, (h + 1) / 2);
+	else
+		_doVqtDecode2(state, x, y + (h / 2), w / 2, (h + 1) / 2);
 
-    // Bottom right quadrant
-    if (mask & 1)
-        _doVqtDecode(state, x + (w / 2), y + (h / 2), (w + 1) / 2, (h + 1) / 2);
-    else
-        _doVqtDecode2(state, x + (w / 2), y + (h / 2), (w + 1) / 2, (h + 1) / 2);
+	// Bottom right quadrant
+	if (mask & 1)
+		_doVqtDecode(state, x + (w / 2), y + (h / 2), (w + 1) / 2, (h + 1) / 2);
+	else
+		_doVqtDecode2(state, x + (w / 2), y + (h / 2), (w + 1) / 2, (h + 1) / 2);
 }
 
 

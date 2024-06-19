@@ -51,7 +51,7 @@ public:
 	int getFontHeight() const { return _h; }
 	int getMaxCharWidth() const { return _w; }
 	virtual int getCharWidth(uint32 chr) const = 0;
-    void drawChar(Graphics::Surface* dst, int pos, int bit, int x, int y, uint32 color) const;
+	void drawChar(Graphics::Surface* dst, int pos, int bit, int x, int y, uint32 color) const;
 	static Font *load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor);
 
 protected:

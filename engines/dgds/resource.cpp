@@ -37,10 +37,10 @@ static const int FILENAME_LENGTH = 12;
 
 ResourceManager::ResourceManager() {
 	const char *indexFiles[] = {
-	    "volume.vga", // Dragon VGA versions
-	    "volume.ega", // Dragon EGA versions
-	    "volume.rmf", // Beamish / HoC
-	    "volume.map"  // Beamish CD
+		"volume.vga", // Dragon VGA versions
+		"volume.ega", // Dragon EGA versions
+		"volume.rmf", // Beamish / HoC
+		"volume.map"  // Beamish CD
 	};
 
 	Common::File indexFile;

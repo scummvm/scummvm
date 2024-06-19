@@ -507,7 +507,6 @@ static void _drawDragonCountdown(FontManager::FontType fontType, int16 x, int16 
 	const Font *fnt = engine->getFontMan()->getFont(fontType);
 	Common::String str = Common::String::format("%d", countdownEnd - currentMins);
 	fnt->drawString(&engine->_compositionBuffer, str, x, y, 320 - x, 10);
-
 }
 
 bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 */) {
@@ -925,12 +924,12 @@ void SDSScene::sceneOpUpdatePasscodeGlobal() {
 		} else if (passcodeVal2 > passcodeVal1) {
 			passcodeVal1++;
 			globalval = DRAGON_PASSCODE[passcodeVal1 + passcodeBlockNum * 15] + 20;
-        } else if (passcodeVal2 > 14) {
+		} else if (passcodeVal2 > 14) {
 			passcodeVal1 = 0;
 			passcodeVal3 = passcodeVal2;
 			passcodeVal4 = 0;
 			globalval = 8;
-        } else {
+		} else {
 			passcodeVal1 = 0;
 			passcodeVal2 += 5;
 			passcodeVal3 = passcodeVal1;
@@ -1599,10 +1598,10 @@ void GDSScene::globalOps(const Common::Array<uint16> &args) {
 		// Off means val is another global to lookup
 		if (op & 8)
 			op = op & 0xfff7;
-        else
+		else
 			val = getGlobal((uint16)val);
 
-        if (op == 1)
+		if (op == 1)
 			val = num2 + val;
 		else if (op == 6)
 			val = (val == 0);

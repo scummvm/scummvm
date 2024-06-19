@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
- 
+
 #include "common/rect.h"
 #include "common/serializer.h"
 
@@ -868,20 +868,20 @@ void TTMSeq::reset() {
 	_currentPalId = 0;
 	_currentBmpId = 0;
 	_currentGetPutId = 0;
-    _currentFrame = _startFrame;
-    _gotoFrame = -1;
-    _drawColBG = 0xf;
-    _drawColFG = 0xf;
-    _brushNum = 0;
-    _timeInterval = 0;
-    _timeNext = 0;
-    _runCount = 0;
-    _runPlayed = 0;
-    _executed = false;
-    _runFlag = kRunTypeStopped;
-    _scriptFlag = 0;
-    _selfLoop = false;
-    _drawWin = Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT);
+	_currentFrame = _startFrame;
+	_gotoFrame = -1;
+	_drawColBG = 0xf;
+	_drawColFG = 0xf;
+	_brushNum = 0;
+	_timeInterval = 0;
+	_timeNext = 0;
+	_runCount = 0;
+	_runPlayed = 0;
+	_executed = false;
+	_runFlag = kRunTypeStopped;
+	_scriptFlag = 0;
+	_selfLoop = false;
+	_drawWin = Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 
