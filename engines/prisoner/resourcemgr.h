@@ -61,7 +61,7 @@ public:
 
 class PrisonerResourceLoader : public ResourceLoader {
 public:
-	PrisonerResourceLoader();
+	PrisonerResourceLoader(char languageChar);
 	~PrisonerResourceLoader();
 	byte *load(Common::String &pakName, int16 pakSlot, int16 type, uint32 &dataSize);
 	KroArchive *getArchiveForType(int16 type);

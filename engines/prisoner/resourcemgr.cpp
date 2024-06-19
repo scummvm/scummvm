@@ -36,7 +36,7 @@ namespace Prisoner {
 
 /* PrisonerResourceLoader */
 
-PrisonerResourceLoader::PrisonerResourceLoader() {
+PrisonerResourceLoader::PrisonerResourceLoader(char languageChar) {
 
 	// NOTE: An alternative to hardcoding the data would be to load it from the game Exe
 	// (The file-based loadDirectory supports this already.)
@@ -132,7 +132,11 @@ PrisonerResourceLoader::PrisonerResourceLoader() {
 
 	addArchive("KSVGA.KRO", kPrisonerKSVGADirectory, kPrisonerKSVGAResourceTypes);
 	addArchive("KSOUND.KRO", kPrisonerDOSKSOUNDDirectory, kPrisonerKSOUNDResourceTypes);
-	addArchive("E_KLANG.KRO", "E_KLANG.BIN", 0, true, kPrisonerKLANGResourceTypes);
+
+	Common::String kroName = Common::String::format("%c_KLANG.KRO", languageChar);
+	Common::String binName = Common::String::format("%c_KLANG.BIN", languageChar);
+
+	addArchive(kroName.c_str(), binName.c_str(), 0, true, kPrisonerKLANGResourceTypes);
 
 }
 

@@ -27,6 +27,16 @@ const PlainGameDescriptor prisonerGames[] = {
 };
 
 const ADGameDescription gameDescriptions[] = {
+	// Prisoner GOG version
+	{
+		"prisoner",
+		0,
+		AD_ENTRY1s("a_klang.bin", "f20001d885aee4e6320052a4368bf8cf", 561),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NONE)},
+
 	// Prisoner English version
 	{
 		"prisoner",

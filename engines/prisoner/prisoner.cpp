@@ -59,6 +59,7 @@ namespace Prisoner {
 PrisonerEngine::PrisonerEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "e_video");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "video");
 
 	// Setup mixer
 	if (!_mixer->isReady()) {
@@ -79,7 +80,13 @@ PrisonerEngine::~PrisonerEngine() {
 Common::Error PrisonerEngine::run() {
 	initGraphics(640, 480);
 
-	_languageChar = 'E';
+	// TODO: try to find a better way of doing this maybe after implementing loading of other
+	// languages (which I currently don't have access to)
+	_languageChar = 'A';
+	if (Common::File::exists("e_klang.bin")) {
+		_languageChar = 'E';
+	}
+
 	_currModuleIndex = 2;
 
 	_isSaveAllowed = true;
@@ -88,7 +95,7 @@ Common::Error PrisonerEngine::run() {
 	_cameraY = 0;
 
 	_screen = new Screen(this);
-	_resLoader = new PrisonerResourceLoader();
+	_resLoader = new PrisonerResourceLoader(_languageChar);
 	_res = new ResourceManager(_resLoader);
 	_scriptOpcodes = new ScriptOpcodes(this);
 	_scriptOpcodes->setupOpcodes();
