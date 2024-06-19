@@ -337,7 +337,7 @@ MpegSound::~MpegSound() {
 	if (prev)prev->next = next;
 	else    pFirstSound = next;
 	if (next)next->prev = prev;
-	warning("STUB: MpegSound::~MpegSound");
+	printf("STUB: MpegSound::~MpegSound\n");
 #if 0
 	if (pDSBuffer)
 		pDSBuffer->Release();

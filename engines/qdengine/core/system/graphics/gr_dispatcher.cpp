@@ -84,6 +84,7 @@ bool grDispatcher::Finit() {
 	wndPosX = wndPosY = 0;
 	screenBuf = NULL;
 	delete _screenBuf;
+	_screenBuf = nullptr;
 	delete  yTable;
 	yTable = NULL;
 

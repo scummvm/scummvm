@@ -67,7 +67,9 @@ bool SplashScreen::set_mask(const char *mask_file) {
 
 bool SplashScreen::destroy() {
 	delete _splash;
+	_splash = nullptr;
 	delete[] _palette;
+	_palette = nullptr;
 	return true;
 }
 
