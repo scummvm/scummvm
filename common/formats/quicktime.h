@@ -210,6 +210,8 @@ protected:
 
 		GraphicsMode graphicsMode; // Transfer mode
 		uint16 opcolor[3];         // RGB values used in the transfer mode specified by graphicsMode.
+
+		uint16 soundBalance; // Controls the sound mix between the computer's two speakers, usually set to 0.
 	};
 
 	enum class MovieType {
@@ -299,6 +301,7 @@ private:
 	int readSMI(Atom atom);
 	int readCTYP(Atom atom);
 	int readNAVG(Atom atom);
+	int readGMIN(Atom atom);
 	int readPINF(Atom atom);
 };
 

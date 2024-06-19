@@ -170,7 +170,7 @@ void QuickTimeParser::initParseTable() {
 		{ &QuickTimeParser::readESDS,    MKTAG('e', 's', 'd', 's') },
 		{ &QuickTimeParser::readSMI,     MKTAG('S', 'M', 'I', ' ') },
 		{ &QuickTimeParser::readDefault, MKTAG('g', 'm', 'h', 'd') },
-		{ &QuickTimeParser::readLeaf,    MKTAG('g', 'm', 'i', 'n') },
+		{ &QuickTimeParser::readGMIN,    MKTAG('g', 'm', 'i', 'n') },
 		{ &QuickTimeParser::readDefault, MKTAG('S', 'T', 'p', 'n') },
 		{ &QuickTimeParser::readPINF,    MKTAG('p', 'I', 'n', 'f') },
 		{ nullptr, 0 }
@@ -865,6 +865,18 @@ int QuickTimeParser::readNAVG(Atom atom) {
 	return 0;
 }
 
+int QuickTimeParser::readGMIN(Atom atom) {
+	Track *track = _tracks.back();
+
+	_fd->readUint32BE(); // version + flags
+	track->graphicsMode = (GraphicsMode)_fd->readUint16BE();
+	_fd->readMultipleBE(track->opcolor);
+	track->soundBalance = _fd->readUint16BE();
+	_fd->readUint16BE(); // reserved
+
+	return 0;
+}
+
 int QuickTimeParser::readPINF(Atom atom) {
 	Track *track = _tracks.back();
 
@@ -1049,6 +1061,7 @@ QuickTimeParser::Track::Track() {
 	nlvlTo = -1;
 	graphicsMode = GraphicsMode::COPY;
 	opcolor[0] = opcolor[1] = opcolor[2] = 0;
+	soundBalance = 0;
 }
 
 QuickTimeParser::Track::~Track() {
