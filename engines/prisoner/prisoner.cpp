@@ -52,6 +52,8 @@
 #include "prisoner/screen.h"
 #include "prisoner/scriptops.h"
 
+#include "prisoner/menumgr.h"
+
 namespace Prisoner {
 
 PrisonerEngine::PrisonerEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
@@ -97,6 +99,12 @@ Common::Error PrisonerEngine::run() {
 	_screenBackedup = false;
 
 	_screen->initPaletteTransTable(65);
+	memcpy(_effectPalette, constPalette1, 768);
+	memcpy(_scenePalette, constPalette1, 768);
+	_effectPaletteOk = true;
+	_scenePaletteOk = true;
+	_screen->buildPaletteTransTable(constPalette1, 0);
+	_needToUpdatePalette = true;
 
 //	initializeMidi();
 
@@ -147,6 +155,7 @@ Common::Error PrisonerEngine::run() {
 	_updateDirtyRectsFlag = true;
 	_autoSaveRequested = false;
 	_mainMenuRequested = false;
+	_mainLoopDone = false;
 	_dialogRunning = false;
 	_screenTextShowing = false;
 	_lockUserInputRefCounter = 0;
@@ -227,8 +236,10 @@ Common::Error PrisonerEngine::run() {
 	_currModuleIndex = -1;
 	_currSceneIndex = -1;
 
-	_newModuleIndex = 2;
-	_newSceneIndex = 39;
+	// Note: These are now set via the main menu
+	// TODO: Remove after debugging
+	//_newModuleIndex = 2;
+	//_newSceneIndex = 39;
 
 #if 0
 	_newModuleIndex = 3;
@@ -280,6 +291,9 @@ Common::Error PrisonerEngine::run() {
 		_inventoryBoxResourceCacheSlot = _res->load<AnimationResource>(pakName, 12, 11);
 	}
 
+	loadMenuPanels();
+
+
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");
 		if (saveSlot >= 0 && saveSlot <= 99) {
@@ -321,15 +335,30 @@ const Common::String PrisonerEngine::getGlobalText(Common::String &identifier) {
 
 void PrisonerEngine::mainLoop() {
 
-	// TODO: Finish main loop code
-	bool done = false;
-	while (!done) {
+	while (!_mainLoopDone) {
 
 		updateEvents();
 
 		if (_mainMenuRequested) {
-			warning("Player died");
-			break;
+			updateFrameTime();
+			updateAnimationFrameTicks();
+
+			updateMenu(67, 77);
+			handleInput(_cameraX + _mouseX, _cameraY + _mouseY);
+
+			updateMouseCursor();
+			updateMouseCursorAnimation();
+
+			if (_needToUpdatePalette) {
+				_screen->setFullPalette(_effectPalette);
+				_needToUpdatePalette = false;
+			}
+
+
+			_screen->update();
+			_system->delayMillis(10);
+
+			continue;
 		}
 
 		updateFrameTime();
@@ -643,6 +672,11 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 			return 0;
 		} else if (y - _cameraY >= 82)
 			_inventoryBarFlag = true;
+	}
+
+	if (_mainMenuRequested) {
+		handleMainMenuInput();
+		return 0;
 	}
 
 	//debug("_currMouseCursor = %d", _currMouseCursor);

@@ -244,9 +244,9 @@ void Screen::initPaletteTransTable(byte colorIncr) {
 	}
 }
 
-void Screen::buildPaletteTransTable(byte *sourcePalette, byte color) {
+void Screen::buildPaletteTransTable(const byte *sourcePalette, byte color) {
 	uint32 pttTable3[256], pttTable4[256], pttTable5[256];
-	byte *src = sourcePalette;
+	const byte *src = sourcePalette;
 
 	for (uint i = 0; i < 256; i++) {
 		byte r = *src++;

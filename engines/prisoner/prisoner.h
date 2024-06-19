@@ -41,6 +41,7 @@
 
 #include "prisoner/detection.h"
 #include "prisoner/objectstorage.h"
+#include "prisoner/menumgr.h"
 
 namespace Prisoner {
 
@@ -488,6 +489,9 @@ struct PaletteTask {
 
 const int16 kMaxPaletteTasks = 5;
 
+/* Globals */
+extern const byte constPalette1[768];
+
 /* Sounds */
 
 struct SoundSlot {
@@ -548,6 +552,8 @@ public:
 	bool _clearBackgroundFlag;
 	bool _sceneFlag;
 	bool _mainMenuRequested;
+	bool _mainLoopDone;
+	int8 _selectedMenuIndex;
 
 	Common::String _muxFilename;
 	bool _muxClearScreenAfter, _muxClearScreenBefore;
@@ -775,6 +781,11 @@ public:
 	/* Font colors */
 	FontColorDef _dialogFontColor, _dialogHoverFontColor, _inventoryFontColor,
 		_zoneFontColor, _screenTextFontColor, _inventoryScreenTextFontColor;
+
+	/* Menu */
+	int16 _menuPanelResourceCacheSlots[MENU_PANELS::PANEL_SIZE_END];
+	Common::StringArray _menuItems;
+
 
 public:
 	int16 loadTextResource(Common::String &pakName, int16 pakSlot);
@@ -1088,6 +1099,17 @@ public:
 	/* Font colors */
 	void setDefaultTextDisplayColors();
 	void setTextDisplayColor(int16 textDisplayNum, int16 outlineColor, int16 inkColor);
+
+	/* Menu */
+	void loadMenuPanels();
+	void loadOnscreenMenuText();
+	void runMainMenu_initMessages();
+	void runMainMenu_addClickBoxes(int16 x, int16 y);
+	void handleMainMenuInput();
+	void drawClickBoxLabels();
+	void updateMenu(int16 x, int16 y);
+	void doMenuAction(uint8 clickBoxIndex);
+
 
 	/* Save/load */
 

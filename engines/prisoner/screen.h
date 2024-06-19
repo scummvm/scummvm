@@ -271,7 +271,7 @@ public:
 
 	void setFontColorTable(byte index, byte color);
 	void initPaletteTransTable(byte colorIncr);
-	void buildPaletteTransTable(byte *sourcePalette, byte color);
+	void buildPaletteTransTable(const byte *sourcePalette, byte color);
 	void drawTransparentRect(int16 x1, int16 y1, int16 x2, int16 y2);
 
 //protected:
