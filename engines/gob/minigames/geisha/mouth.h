@@ -34,28 +34,28 @@ namespace Gob {
 
 namespace Geisha {
 
-/** A kissing/biting mouth in Geisha's "Penetration" minigame. */
+// A kissing/biting mouth in Geisha's "Penetration" minigame.
 class Mouth : public ANIObject {
 public:
 	Mouth(const ANIFile &ani, const CMPFile &cmp,
 	      uint16 mouthAnim, uint16 mouthSprite, uint16 floorSprite);
 	~Mouth() override;
 
-	/** Advance the animation to the next frame. */
+	// Advance the animation to the next frame.
 	void advance() override;
 
-	/** Active the mouth's animation. */
+	// Active the mouth's animation.
 	void activate();
 
-	/** Is the mouth deactivated? */
+	// Is the mouth deactivated?
 	bool isDeactivated() const;
 
-	/** Set the current position. */
+	// Set the current position.
 	void setPosition(int16 x, int16 y) override;
 
-	/** Draw the current frame onto the surface and return the affected rectangle. */
+	// Draw the current frame onto the surface and return the affected rectangle.
 	bool draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom) override;
-	/** Draw the current frame from the surface and return the affected rectangle. */
+	// Draw the current frame from the surface and return the affected rectangle.
 	bool clear(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom) override;
 
 private:

@@ -47,7 +47,7 @@ class DECFile;
 class ANIFile;
 class ANIObject;
 
-/** A SEQ file, describing a complex animation sequence.
+ /*/ A SEQ file, describing a complex animation sequence.
  *
  *  Used in early hardcoded gob games.
  *  The principle is similar to the Mult class (see mult.h), but instead
@@ -60,7 +60,7 @@ public:
 	SEQFile(GobEngine *vm, const Common::String &fileName);
 	virtual ~SEQFile();
 
-	/** Play the SEQ.
+	/* Play the SEQ.
 	 *
 	 *  @param abortable If true, end playback on any user input.
 	 *  @param endFrame  The frame on where to end, or 0xFFFF for infinite playback.
@@ -74,42 +74,42 @@ protected:
 	GobEngine *_vm;
 
 
-	/** Returns the current frame number. */
+	// Returns the current frame number.
 	uint16 getFrame() const;
 
-	/** Seek to a specific frame. */
+	// Seek to a specific frame.
 	void seekFrame(uint16 frame);
 
-	/** Add a frame loop. */
+	// Add a frame loop.
 	uint addLoop(uint16 startFrame, uint16 endFrame, uint16 loopCount);
 
-	/** Skip a frame loop. */
+	// Skip a frame loop.
 	void skipLoop(uint loopID);
 
-	/** Delete a frame loop. */
+	// Delete a frame loop.
 	void delLoop(uint loopID);
 
-	/** Ends SEQ playback. */
+	// Ends SEQ playback.
 	void abortPlay();
 
-	/** Callback for special frame events. */
+	// Callback for special frame events.
 	virtual void handleFrameEvent();
-	/** Callback for special user input handling. */
+	// Callback for special user input handling.
 	virtual void handleInput(int16 key, int16 mouseX, int16 mouseY, MouseButtons mouseButtons);
 
 
 private:
-	/** Number of animation objects that are visible at the same time. */
+	// Number of animation objects that are visible at the same time.
 	static const uint kObjectCount = 4;
 
-	/** A key for changing the background. */
+	// A key for changing the background.
 	struct BackgroundKey {
 		uint16 frame; ///< Frame the change is to happen.
 
 		const DECFile *background; ///< The background to use.
 	};
 
-	/** A key for playing an object animation. */
+	// A key for playing an object animation.
 	struct AnimationKey {
 		uint object; ///< The object this key belongs to.
 
@@ -125,14 +125,14 @@ private:
 		int16 order; ///< Used to determine in which order to draw the objects.
 	};
 
-	/** A managed animation object. */
+	// A managed animation object.
 	struct Object {
 		ANIObject *object; ///< The actual animation object.
 
 		int16 order; ///< The current drawing order.
 	};
 
-	/** A frame loop. */
+	// A frame loop. */
 	struct Loop {
 		uint16 startFrame;
 		uint16 endFrame;
@@ -169,7 +169,7 @@ private:
 
 	Loops _loops;
 
-	/** Whether the playback should be abortable by user input. */
+	// Whether the playback should be abortable by user input.
 	bool _abortable;
 
 
@@ -183,13 +183,13 @@ private:
 
 	void playFrame();
 
-	/** Get a list of objects ordered by drawing order. */
+	// Get a list of objects ordered by drawing order.
 	Objects getOrderedObjects();
 
 	void clearAnims(); ///< Remove all animation frames.
 	void drawAnims();  ///< Draw the animation frames.
 
-	/** Look if we can compact the loop array. */
+	// Look if we can compact the loop array. */
 	void cleanLoops();
 };
 

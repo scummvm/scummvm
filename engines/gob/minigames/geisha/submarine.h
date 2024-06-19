@@ -34,7 +34,7 @@ namespace Gob {
 
 namespace Geisha {
 
-/** The submarine Geisha's "Penetration" minigame. */
+// The submarine Geisha's "Penetration" minigame.
 class Submarine : public ANIObject {
 public:
 	enum Direction {
@@ -54,31 +54,31 @@ public:
 
 	Direction getDirection() const;
 
-	/** Turn to the specified direction. */
+	// Turn to the specified direction.
 	void turn(Direction to);
 
-	/** Play the shoot animation. */
+	// Play the shoot animation.
 	void shoot();
 
-	/** Play the exploding animation. */
+	// Play the exploding animation.
 	void die();
 
-	/** Play the exiting animation. */
+	// Play the exiting animation.
 	void leave();
 
-	/** Advance the animation to the next frame. */
+	// Advance the animation to the next frame.
 	void advance() override;
 
-	/** Can the submarine move at the moment? */
+	// Can the submarine move at the moment?
 	bool canMove() const;
 
-	/** Is the submarine dead? */
+	// Is the submarine dead?
 	bool isDead() const;
 
-	/** Is the submarine shooting? */
+	// Is the submarine shooting?
 	bool isShooting() const;
 
-	/** Has the submarine finished exiting the level? */
+	// Has the submarine finished exiting the level?
 	bool hasExited() const;
 
 private:
@@ -95,11 +95,11 @@ private:
 	State _state;
 	Direction _direction;
 
-	/** Map the directions to move animation indices. */
+	// Map the directions to move animation indices.
 	uint16 directionToMove(Direction direction) const;
-	/** Map the directions to shoot animation indices. */
+	// Map the directions to shoot animation indices.
 	uint16 directionToShoot(Direction direction) const;
-	/** Map the directions to explode animation indices. */
+	// Map the directions to explode animation indices.
 	uint16 directionToExplode(Direction direction) const;
 
 	void move();

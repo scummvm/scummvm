@@ -35,10 +35,10 @@ namespace Gob {
 
 class GobEngine;
 
-/** A system for saving and loading. */
+// A system for saving and loading.
 class SaveLoad {
 public:
-	/** How to handle the specific save. */
+	// How to handle the specific save.
 	enum SaveMode {
 		kSaveModeNone,   ///< Don't handle it
 		kSaveModeIgnore, ///< Ignore it
@@ -46,36 +46,36 @@ public:
 		kSaveModeSave    ///< A normal save
 	};
 
-	/** The constructor.
+	/* The constructor.
 	 *
 	 *  @param targetName The game's target name. Used as a base for the save names.
 	 */
 	SaveLoad(GobEngine *vm);
 	virtual ~SaveLoad();
 
-	/** "foo\bar\quux.bla" => "quux.bla". */
+	// "foo\bar\quux.bla" => "quux.bla".
 	static const char *stripPath(const char *fileName, char separator = '\\');
 
-	/** Changes all file separator characters (/,:,\) in path to newSeparator */
+	// Changes all file separator characters (/,:,\) in path to newSeparator
 	static Common::String replacePathSeparators(const char *path, char newSeparator);
 
-	/** Returns how to handle that file. */
+	// Returns how to handle that file. */
 	virtual SaveMode getSaveMode(const char *fileName) const;
 
-	/** Returns all files known by the saving system matching a pattern. */
+	// Returns all files known by the saving system matching a pattern.
 	virtual Common::List<Common::String> getFilesMatchingPattern(const char *pattern) const;
 
-	/** Returns the file's (virtual) size. */
+	// Returns the file's (virtual) size. */
 	int32 getSize(const char *fileName);
-	/** Loads size bytes from offset into the variables starting with dataVar. */
+	// Loads size bytes from offset into the variables starting with dataVar.
 	bool load(const char *fileName, int16 dataVar, int32 size, int32 offset);
 	bool loadToRaw(const char *fileName, byte *ptr, int32 size, int32 offset);
-	/** Saves size bytes from the variables starting with data dataVar at offset. */
+	// Saves size bytes from the variables starting with data dataVar at offset.
 	bool save(const char *fileName, int16 dataVar, int32 size, int32 offset);
 	bool saveFromRaw(const char *fileName, byte *ptr, int32 size, int32 offset);
 	bool copySaveGame(const char *fileNameSrc, const char *fileNameDest);
 
-	/** Deletes the file. */
+	// Deletes the file.
 	bool deleteFile(const char *fileName);
 
 protected:
@@ -85,7 +85,7 @@ protected:
 	virtual const char *getDescription(const char *fileName) const;
 };
 
-/** Save/Load class for Geisha. */
+// Save/Load class for Geisha.
 class SaveLoad_Geisha : public SaveLoad {
 public:
 	SaveLoad_Geisha(GobEngine *vm, const char *targetName);
@@ -106,7 +106,7 @@ protected:
 		const char *description;
 	};
 
-	/** Handles the save slots. */
+	// Handles the save slots.
 	class GameHandler : public SaveHandler {
 	public:
 		GameHandler(GobEngine *vm, const Common::String &target);
@@ -117,7 +117,7 @@ protected:
 		bool save(int16 dataVar, int32 size, int32 offset) override;
 
 	private:
-		/** Slot file construction. */
+		// Slot file construction.
 		class File : public SlotFileIndexed {
 		public:
 			File(GobEngine *vm, const Common::String &base);
@@ -139,13 +139,13 @@ protected:
 	SaveFile *getSaveFile(const char *fileName);
 };
 
-/** Save/Load class for Gobliins 2, Ween: The Prophecy and Bargon Attack. */
+// Save/Load class for Gobliins 2, Ween: The Prophecy and Bargon Attack.
 class SaveLoad_v2 : public SaveLoad {
 public:
 	static const uint32 kSlotCount = 15;
 	static const uint32 kSlotNameLength = 40;
 
-	/** The index. kSlotCount * kSlotNameLength bytes. */
+	// The index. kSlotCount * kSlotNameLength bytes.
 	static const uint32 kIndexSize = kSlotCount * kSlotNameLength;
 
 	SaveLoad_v2(GobEngine *vm, const char *targetName);
@@ -161,7 +161,7 @@ protected:
 		const char *description;
 	};
 
-	/** Handles the save slots. */
+	// Handles the save slots.
 	class GameHandler : public SaveHandler {
 	public:
 		GameHandler(GobEngine *vm, const char *target);
@@ -172,7 +172,7 @@ protected:
 		bool save(int16 dataVar, int32 size, int32 offset) override;
 
 	private:
-		/** Slot file construction. */
+		// Slot file construction.
 		class File : public SlotFileIndexed {
 		public:
 			File(GobEngine *vm, const char *base);
@@ -203,13 +203,13 @@ protected:
 	SaveFile *getSaveFile(const char *fileName);
 };
 
-/** Save/Load class for Fascination. */
+// Save/Load class for Fascination.
 class SaveLoad_Fascination : public SaveLoad {
 public:
 	static const uint32 kSlotCount = 15;
 	static const uint32 kSlotNameLength = 40;
 
-	/** The index. kSlotCount * kSlotNameLength bytes. */
+	// The index. kSlotCount * kSlotNameLength bytes.
 	static const uint32 kIndexSize = kSlotCount * kSlotNameLength;
 
 	SaveLoad_Fascination(GobEngine *vm, const char *targetName);
@@ -226,7 +226,7 @@ protected:
 		const char *description;
 	};
 
-	/** Handles the save slots. */
+	// Handles the save slots.
 	class GameHandler : public SaveHandler {
 	public:
 		GameHandler(GobEngine *vm, const char *target, int slot, byte *index, bool *hasIndex);
@@ -237,7 +237,7 @@ protected:
 		bool save(int16 dataVar, int32 size, int32 offset) override;
 
 	private:
-		/** Slot file construction. */
+		// Slot file construction.
 		class File : public SlotFileIndexed {
 		public:
 			File(GobEngine *vm, const char *base);
@@ -268,7 +268,7 @@ protected:
 	SaveFile *getSaveFile(const char *fileName);
 };
 
-/** Save/Load class for Adibou 1 */
+// Save/Load class for Adibou 1
 class SaveLoad_Adibou1 : public SaveLoad {
 public:
 	static const int32 kAdibou1NbrOfDrawings = 8;
@@ -339,7 +339,7 @@ protected:
 		bool deleteFile() override;
 
 	private:
-		// Save from raw pointer if ptrRaw != nullptr, else save from game variables
+		// Save from raw pointer if ptrRaw != nullptr, else save from game variables.
 		bool save(const byte *ptrRaw, int16 dataVar, int32 size, int32 offset);
 
 		class File : public SlotFileStatic {
@@ -366,14 +366,14 @@ protected:
 	SaveFile *getSaveFile(const char *fileName);
 };
 
-/** Save/Load class for Goblins 3 and Lost in Time. */
+// Save/Load class for Goblins 3 and Lost in Time.
 class SaveLoad_v3 : public SaveLoad {
 public:
 	static const uint32 kSlotCount = 30;
 	static const uint32 kSlotNameLength = 40;
 
 	static const uint32 kPropsSize = 500;
-	/** Index. kSlotCount * kSlotNameLength bytes. */
+	// Index. kSlotCount * kSlotNameLength bytes.
 	static const uint32 kIndexSize = kSlotCount * kSlotNameLength;
 
 	enum ScreenshotType {
@@ -396,7 +396,7 @@ protected:
 
 	class ScreenshotHandler;
 
-	/** Handles the save slots. */
+	// Handles the save slots.
 	class GameHandler : public SaveHandler {
 	friend class SaveLoad_v3::ScreenshotHandler;
 	public:
@@ -411,7 +411,7 @@ protected:
 		bool saveScreenshot(int slot, const SavePartSprite *screenshot);
 		bool loadScreenshot(int slot, SavePartSprite *screenshot);
 
-		/** Slot file construction. */
+		// Slot file construction.
 		class File : public SlotFileIndexed {
 		public:
 			File(GobEngine *vm, const char *base);
@@ -429,7 +429,7 @@ protected:
 
 		bool _firstSize;
 
-		/** Global properties. */
+		// Global properties.
 		byte _props[kPropsSize];
 		byte _index[kIndexSize];
 		bool _hasIndex;
@@ -444,7 +444,7 @@ protected:
 
 	};
 
-	/** Handles the screenshots. */
+	// Handles the screenshots.
 	class ScreenshotHandler : public TempSpriteHandler {
 	public:
 		ScreenshotHandler(GobEngine *vm, GameHandler *gameHandler, ScreenshotType sShotType);
@@ -455,7 +455,7 @@ protected:
 		bool save(int16 dataVar, int32 size, int32 offset) override;
 
 	private:
-		/** Slot file construction. */
+		// Slot file construction.
 		class File : public SaveLoad_v3::GameHandler::File {
 		public:
 			File(const SaveLoad_v3::GameHandler::File &file,
@@ -497,7 +497,7 @@ protected:
 	SaveFile *getSaveFile(const char *fileName);
 };
 
-/** Save/Load class for Inca 2. */
+// Save/Load class for Inca 2.
 class SaveLoad_Inca2 : public SaveLoad {
 public:
 	static const uint32 kSlotCount =  40;
@@ -516,7 +516,7 @@ protected:
 		const char *description;
 	};
 
-	/** Handles the voice language info file. */
+	// Handles the voice language info file.
 	class VoiceHandler : public SaveHandler {
 	public:
 		VoiceHandler(GobEngine *vm);
@@ -529,7 +529,7 @@ protected:
 
 	class ScreenshotHandler;
 
-	/** Handles the save slots. */
+	// Handles the save slots.
 	class GameHandler : public SaveHandler {
 	friend class SaveLoad_Inca2::ScreenshotHandler;
 	public:
@@ -544,7 +544,7 @@ protected:
 		bool saveScreenshot(int slot, const SavePartSprite *screenshot);
 		bool loadScreenshot(int slot, SavePartSprite *screenshot);
 
-		/** Slot file construction. */
+		// Slot file construction.
 		class File : public SlotFileIndexed {
 		public:
 			File(GobEngine *vm, const char *base);
@@ -570,7 +570,7 @@ protected:
 		bool createWriter(int slot);
 	};
 
-	/** Handles the screenshots. */
+	// Handles the screenshots.
 	class ScreenshotHandler : public TempSpriteHandler {
 	public:
 		ScreenshotHandler(GobEngine *vm, GameHandler *gameHandler);
@@ -581,7 +581,7 @@ protected:
 		bool save(int16 dataVar, int32 size, int32 offset) override;
 
 	private:
-		/** Slot file construction. */
+		// Slot file construction.
 		class File : public SaveLoad_Inca2::GameHandler::File {
 		public:
 			File(const SaveLoad_Inca2::GameHandler::File &file);
@@ -613,14 +613,14 @@ protected:
 	SaveFile *getSaveFile(const char *fileName);
 };
 
-/** Save/Load class for Woodruff. */
+// Save/Load class for Woodruff.
 class SaveLoad_v4 : public SaveLoad {
 public:
 	static const uint32 kSlotCount = 10;
 	static const uint32 kSlotNameLength = 40;
 
 	static const uint32 kPropsSize = 500;
-	/** Index. kSlotCount * kSlotNameLength bytes + 800 bytes 0. */
+	// Index. kSlotCount * kSlotNameLength bytes + 800 bytes 0. 
 	static const uint32 kIndexSize = (kSlotCount * kSlotNameLength) + 800;
 
 	SaveLoad_v4(GobEngine *vm, const char *targetName);
@@ -638,7 +638,7 @@ protected:
 
 	class ScreenPropsHandler;
 
-	/** Handles the save slots. */
+	// Handles the save slots.
 	class GameHandler : public SaveHandler {
 	friend class SaveLoad_v4::ScreenPropsHandler;
 	public:
@@ -654,7 +654,7 @@ protected:
 		bool saveScreenProps(int slot, const byte *props);
 		bool loadScreenProps(int slot, byte *props);
 
-		/** Slot file construction. */
+		// Slot file construction. */
 		class File : public SlotFileIndexed {
 		public:
 			File(GobEngine *vm, const char *base);
@@ -742,14 +742,14 @@ protected:
 	SaveFile *getSaveFile(const char *fileName);
 };
 
-/** Save/Load class for Urban Runner. */
+// Save/Load class for Urban Runner.
 class SaveLoad_v6 : public SaveLoad {
 public:
 	static const uint32 kSlotCount = 60;
 	static const uint32 kSlotNameLength = 40;
 
 	static const uint32 kPropsSize = 500;
-	/** Index. kSlotCount * kSlotNameLength bytes. */
+	// Index. kSlotCount * kSlotNameLength bytes.
 	static const uint32 kIndexSize = kSlotCount * kSlotNameLength;
 
 	SaveLoad_v6(GobEngine *vm, const char *targetName);
@@ -765,7 +765,7 @@ protected:
 		const char *description;
 	};
 
-	/** Handles the temp sprites. */
+	// Handles the temp sprites.
 	class SpriteHandler : public TempSpriteHandler {
 	public:
 		SpriteHandler(GobEngine *vm);
@@ -775,7 +775,7 @@ protected:
 		bool get(SaveWriter *writer, uint32 part);
 	};
 
-	/** Handles the save slots. */
+	// Handles the save slots.
 	class GameHandler : public SaveHandler {
 	public:
 		GameHandler(GobEngine *vm, const char *target, SpriteHandler &spriteHandler);
@@ -790,7 +790,7 @@ protected:
 		bool saveExtra(int slot, uint8 id, int16 dataVar, int32 size, int32 offset);
 
 	private:
-		/** Slot file construction. */
+		// Slot file construction.
 		class File : public SlotFileIndexed {
 		public:
 			File(GobEngine *vm, const char *base);
@@ -820,7 +820,7 @@ protected:
 		bool createWriter(int slot);
 	};
 
-	/** Handles the autosave. */
+	// Handles the autosave.
 	class AutoHandler : public SaveHandler {
 	public:
 		AutoHandler(GobEngine *vm, const Common::String &target);
@@ -840,7 +840,7 @@ protected:
 		File _file;
 	};
 
-	/** Handles the autosave temp sprite. */
+	// Handles the autosave temp sprite.
 	class AutoSpriteHandler : public TempSpriteHandler {
 	public:
 		AutoSpriteHandler(GobEngine *vm, const Common::String &target);
@@ -860,7 +860,7 @@ protected:
 		File _file;
 	};
 
-	/** Handles the temporary saves. */
+	// Handles the temporary saves.
 	class TempHandler : public SaveHandler {
 	public:
 		TempHandler(GobEngine *vm);
@@ -910,14 +910,14 @@ protected:
 	SaveFile *getSaveFile(const char *fileName);
 };
 
-/** Save/Load class for Playtoons. */
+// Save/Load class for Playtoons.
 class SaveLoad_Playtoons : public SaveLoad {
 public:
 	static const uint32 kSlotCount = 60;
 	static const uint32 kSlotNameLength = 40;
 
 	static const uint32 kPropsSize = 3921;
-	/** Index. kSlotCount * kSlotNameLength bytes. */
+	// Index. kSlotCount * kSlotNameLength bytes.
 	static const uint32 kIndexSize = kSlotCount * kSlotNameLength;
 
 	SaveLoad_Playtoons(GobEngine *vm, const char *targetName);
@@ -933,7 +933,7 @@ protected:
 		const char *description;
 	};
 
-	/** Handles the save slots. */
+	// Handles the save slots.
 	class GameHandler : public SaveHandler {
 	public:
 		GameHandler(GobEngine *vm, const char *target);
@@ -944,7 +944,7 @@ protected:
 		bool save(int16 dataVar, int32 size, int32 offset) override;
 
 	private:
-		/** Slot file construction. */
+		// Slot file construction.
 		class File : public SlotFileIndexed {
 		public:
 			File(GobEngine *vm, const char *base);
@@ -974,7 +974,7 @@ protected:
 	SaveFile *getSaveFile(const char *fileName);
 };
 
-/** Save/Load class for Adibou 2/Adi. */
+// Save/Load class for Adibou 2/Adi 4.
 class SaveLoad_v7: public SaveLoad {
 public:
 	static const uint32 kChildrenCount = 16;

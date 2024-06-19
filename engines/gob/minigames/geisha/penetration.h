@@ -47,7 +47,7 @@ namespace Geisha {
 class Meter;
 class Mouth;
 
-/** Geisha's "Penetration" minigame. */
+// Geisha's "Penetration" minigame.
 class Penetration {
 public:
 	Penetration(GobEngine *vm);

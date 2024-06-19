@@ -37,7 +37,7 @@ class SoundDesc;
 
 namespace Geisha {
 
-/** Oko, the person you control, in Geisha's "Diving" minigame. */
+// Oko, the person you control, in Geisha's "Diving" minigame.
 class Oko : public ANIObject {
 public:
 	enum State {
@@ -54,18 +54,18 @@ public:
 	Oko(const ANIFile &ani, Sound &sound, SoundDesc &breathe);
 	~Oko() override;
 
-	/** Advance the animation to the next frame. */
+	// Advance the animation to the next frame.
 	void advance() override;
 
-	/** Oko should sink a level. */
+	// Oko should sink a level.
 	void sink();
-	/** Oko should raise a level. */
+	// Oko should raise a level.
 	void raise();
 
-	/** Oko should get hurt. */
+	// Oko should get hurt.
 	void hurt();
 
-	/** Oko should die. */
+	// Oko should die.
 	void die();
 
 	State getState() const;

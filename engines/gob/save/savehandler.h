@@ -41,7 +41,7 @@ class SavePartVars;
 class SavePartSprite;
 class SaveConverter;
 
-/** Slot file related class. */
+// Slot file related class.
 class SlotFile {
 public:
 	/** The constructor.
@@ -52,9 +52,9 @@ public:
 	SlotFile(GobEngine *vm, uint32 slotCount, const Common::String &base);
 	virtual ~SlotFile();
 
-	/** Calculates which slot to use. */
+	// Calculates which slot to use.
 	virtual int getSlot(int32 offset) const = 0;
-	/** Calculates the slot remainder, for error checking. */
+	// Calculates the slot remainder, for error checking.
 	virtual int getSlotRemainder(int32 offset) const = 0;
 
 protected:
@@ -64,23 +64,23 @@ protected:
 	uint32 _slotCount;
 };
 
-/** An indexed slot file ("foobar.s00", "foobar.s01", ...). */
+// An indexed slot file ("foobar.s00", "foobar.s01", ...).
 class SlotFileIndexed : public SlotFile {
 public:
 	SlotFileIndexed(GobEngine *vm, uint32 slotCount, const Common::String &base,
 			const Common::String &extStub);
 	~SlotFileIndexed() override;
 
-	/** Build the save file name. */
+	// Build the save file name.
 	Common::String build(int slot) const;
 
-	/** Returns the highest filled slot number. */
+	// Returns the highest filled slot number.
 	virtual uint32 getSlotMax() const;
 
-	/** Returns the size of all existing slots + the index. */
+	// Returns the size of all existing slots + the index.
 	virtual int32 tallyUpFiles(uint32 slotSize, uint32 indexSize) const;
 
-	/** Creates an index in buffer. */
+	// Creates an index in buffer.
 	virtual void buildIndex(byte *buffer, SavePartInfo &info,
 			SaveConverter *converter = 0, bool setLongest = false) const;
 
@@ -92,7 +92,7 @@ protected:
 	Common::String _ext;
 };
 
-/** A static slot file ("foo.bar"). */
+// A static slot file ("foo.bar").
 class SlotFileStatic : public SlotFile {
 public:
 	SlotFileStatic(GobEngine *vm, const Common::String &base, const Common::String &ext);
@@ -101,7 +101,7 @@ public:
 	int getSlot(int32 offset) const override;
 	int getSlotRemainder(int32 offset) const override;
 
-	/** Build the save file name. */
+	// Build the save file name.
 	Common::String build() const;
 
 	virtual bool exists() const;
@@ -112,23 +112,23 @@ protected:
 	Common::String _ext;
 };
 
-/** A handler for a specific save file. */
+// A handler for a specific save file.
 class SaveHandler {
 public:
 	SaveHandler(GobEngine *vm);
 	virtual ~SaveHandler();
 
-	/** Returns the file's (virtual) size. */
+	// Returns the file's (virtual) size.
 	virtual int32 getSize() = 0;
-	/** Loads (parts of) the file. */
+	// Loads (parts of) the file.
 	virtual bool load(int16 dataVar, int32 size, int32 offset) = 0;
-	/** Saves (parts of) the file. */
+	// Saves (parts of) the file.
 	virtual bool save(int16 dataVar, int32 size, int32 offset) = 0;
 
 	virtual bool loadToRaw(byte *ptr, int32 size, int32 offset);
 	virtual bool saveFromRaw(const byte *ptr, int32 size, int32 offset);
 
-	/** Deletes the file. */
+	// Deletes the file.
 	virtual bool deleteFile();
 
 	static uint32 getVarSize(GobEngine *vm);
@@ -137,7 +137,7 @@ protected:
 	GobEngine *_vm;
 };
 
-/** A handler for temporary sprites. */
+// A handler for temporary sprites.
 class TempSpriteHandler : public SaveHandler {
 public:
 	TempSpriteHandler(GobEngine *vm);
@@ -156,19 +156,19 @@ public:
 protected:
 	SavePartSprite *_sprite;
 
-	/** Determine whether it's a dummy sprite save/load. */
+	// Determine whether it's a dummy sprite save/load.
 	static bool isDummy(int32 size);
-	/** Determine whether using a sprite was requested. */
+	// Determine whether using a sprite was requested.
 	static bool isSprite(int32 size);
-	/** Determine which sprite is meant. */
+	// Determine which sprite is meant.
 	static int getIndex(int32 size);
-	/** Determine whether the palette should be used too. */
+	// Determine whether the palette should be used too.
 	static bool usesPalette(int32 size);
 
 	SurfacePtr createSprite(int16 dataVar, int32 size, int32 offset);
 };
 
-/** A handler for notes. */
+// A handler for notes.
 class NotesHandler : public SaveHandler {
 public:
 	NotesHandler(uint32 notesSize, GobEngine *vm, const Common::String &target);
@@ -190,7 +190,7 @@ private:
 	SavePartVars *_notes;
 };
 
-/** A handler that behaves like a file but keeps the contents in memory. */
+// A handler that behaves like a file but keeps the contents in memory.
 class FakeFileHandler : public SaveHandler {
 public:
 	FakeFileHandler(GobEngine *vm);

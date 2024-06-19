@@ -53,45 +53,45 @@ public:
 	GCTFile(Common::SeekableReadStream &gct, Common::RandomSource &rnd);
 	~GCTFile();
 
-	/** Return the number of lines in an item. */
+	// Return the number of lines in an item.
 	uint16 getLineCount(uint item) const;
 
-	/** Set the area the text will be printed in. */
+	// Set the area the text will be printed in.
 	void setArea(int16 left, int16 top, int16 right, int16 bottom);
 
-	/** Set which line of this item should be printed. */
+	// Set which line of this item should be printed.
 	void selectLine(uint item, uint16 line);
 
-	/** Change the text of an items' line. */
+	// Change the text of an items' line.
 	void setText(uint item, uint16 line, const Common::String &text);
-	/** Change the item into one one line and set that line's text. */
+	// Change the item into one one line and set that line's text.
 	void setText(uint item, const Common::String &text);
 
-	/** Reset the item drawing state. */
+	// Reset the item drawing state.
 	void reset();
 
-	/** Clear the drawn text, restoring the original content. */
+	// Clear the drawn text, restoring the original content.
 	bool clear(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
 
-	/** Fill the text area with a color. */
+	// Fill the text area with a color. */
 	bool fill(Surface &dest, uint8 color, int16 &left, int16 &top, int16 &right, int16 &bottom);
 
-	/** Draw an item onto the surface, until all text has been drawn or the area is filled. */
+	// Draw an item onto the surface, until all text has been drawn or the area is filled.
 	bool draw(Surface &dest, uint16 item, const Font &font, uint8 color,
 	          int16 &left, int16 &top, int16 &right, int16 &bottom);
 
-	/** Did we draw all text? */
+	// Did we draw all text?
 	bool finished() const;
 
 private:
-	/** The type of a chunk. */
+	// The type of a chunk.
 	enum ChunkType {
 		kChunkTypeNone   = 0, ///< Do nothing.
 		kChunkTypeString    , ///< A direct string.
 		kChunkTypeItem        ///< A reference to an item to print instead.
 	};
 
-	/** A chunk in an item text line. */
+	// A chunk in an item text line.
 	struct Chunk {
 		ChunkType type; ///< The type of the chunk.
 
@@ -104,14 +104,14 @@ private:
 
 	typedef Common::List<Chunk> Chunks;
 
-	/** A line in an item. */
+	// A line in an item.
 	struct Line {
 		Chunks chunks; ///< The chunks that make up the line.
 	};
 
 	typedef Common::Array<Line> Lines;
 
-	/** A GCT item. */
+	// A GCT item.
 	struct Item {
 		Lines  lines;    ///< The text lines in the item
 		uint16 selector; ///< Which line to print.
@@ -131,9 +131,9 @@ private:
 	int16 _areaRight;
 	int16 _areaBottom;
 
-	/** Index of the current item we're drawing. */
+	// Index of the current item we're drawing.
 	uint16 _currentItem;
-	/** Text left to draw. */
+	// Text left to draw. */
 	Common::List<Common::String> _currentText;
 
 

@@ -48,7 +48,7 @@ class EvilFish;
 class Oko;
 class Meter;
 
-/** Geisha's "Diving" minigame. */
+// Geisha's "Diving" minigame.
 class Diving {
 public:
 	Diving(GobEngine *vm);

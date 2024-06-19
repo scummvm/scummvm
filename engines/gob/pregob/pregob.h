@@ -78,7 +78,7 @@ protected:
 
 	// -- Graphics --
 
-	/** Initialize the game screen. */
+	// Initialize the game screen.
 	void initScreen();
 
 	void fadeOut(); ///< Fade to black.
@@ -86,44 +86,44 @@ protected:
 
 	void clearScreen();
 
-	/** Change the palette.
+	/* 	Change the palette.
 	 *
 	 *  @param palette The palette to change to.
 	 *  @param size Size of the palette in colors.
 	 */
 	void setPalette(const byte *palette, uint16 size); ///< Change the palette
 
-	/** Add a new cursor that can be manipulated to the stack. */
+	// Add a new cursor that can be manipulated to the stack.
 	void addCursor();
-	/** Remove the top-most cursor from the stack. */
+	// Remove the top-most cursor from the stack.
 	void removeCursor();
 
-	/** Set the current cursor. */
+	// Set the current cursor.
 	void setCursor(Surface &sprite, int16 hotspotX, int16 hotspotY);
-	/** Set the current cursor. */
+	// Set the current cursor.
 	void setCursor(Surface &sprite, int16 left, int16 top, int16 right, int16 bottom,
 	               int16 hotspotX, int16 hotspotY);
 
-	/** Show the cursor. */
+	// Show the cursor.
 	void showCursor();
-	/** Hide the cursor. */
+	// Hide the cursor.
 	void hideCursor();
 
-	/** Is the cursor currently visible? */
+	// Is the cursor currently visible?
 	bool isCursorVisible() const;
 
-	/** Remove an animation from the screen. */
+	// Remove an animation from the screen.
 	void clearAnim(ANIObject &anim);
-	/** Draw an animation to the screen, advancing it. */
+	// Draw an animation to the screen, advancing it.
 	void drawAnim(ANIObject &anim);
-	/** Clear and draw an animation to the screen, advancing it. */
+	// Clear and draw an animation to the screen, advancing it.
 	void redrawAnim(ANIObject &anim);
 
-	/** Remove animations from the screen. */
+	// Remove animations from the screen.
 	void clearAnim(const ANIList &anims);
-	/** Draw animations to the screen, advancing them. */
+	// Draw animations to the screen, advancing them.
 	void drawAnim(const ANIList &anims);
-	/** Clear and draw animations to the screen, advancing them. */
+	// Clear and draw animations to the screen, advancing them.
 	void redrawAnim(const ANIList &anims);
 
 	void loadAnims(ANIList &anims, ANIFile &ani, uint count, const AnimProperties *props) const;
@@ -131,49 +131,49 @@ protected:
 
 	void setAnim(ANIObject &anim, const AnimProperties &props) const;
 
-	/** Wait for the frame to end, handling screen updates and optionally update input. */
+	// Wait for the frame to end, handling screen updates and optionally update input.
 	void endFrame(bool doInput);
 
 
 	// -- Sound --
 
-	/** Load all sounds that can be played interactively in the game. */
+	// Load all sounds that can be played interactively in the game.
 	void loadSounds(const char * const *sounds, uint soundCount);
-	/** Free all loaded sound. */
+	// Free all loaded sound.
 	void freeSounds();
 
-	/** Play a loaded sound. */
+	// Play a loaded sound.
 	void playSound(uint sound, int16 frequency = 0, int16 repCount = 0);
-	/** Stop all sound playback. */
+	// Stop all sound playback.
 	void stopSound();
 
-	/** Play a sound until it ends or is interrupted by a keypress. */
+	// Play a sound until it ends or is interrupted by a keypress.
 	void playSoundFile(const Common::String &file, int16 frequency = 0, int16 repCount = 0, bool interruptible = true);
 
-	/** Beep the PC speaker. */
+	// Beep the PC speaker.
 	void beep(int16 frequency, int32 length);
 
 
 	// -- Input --
 
-	/** Check mouse and keyboard input. */
+	// Check mouse and keyboard input.
 	int16 checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
-	/** Wait for mouse or keyboard input. */
+	// Wait for mouse or keyboard input.
 	int16 waitInput (int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
-	/** Wait for mouse or keyboard input, but don't care about what was done with the mouse. */
+	// Wait for mouse or keyboard input, but don't care about what was done with the mouse.
 	int16 waitInput();
-	/** Did we have mouse or keyboard input? */
+	// Did we have mouse or keyboard input?
 	bool  hasInput();
 
 
 	// -- TXT helpers --
 
-	/** Get the name of a localized file. */
+	// Get the name of a localized file.
 	Common::String getLocFile(const Common::String &file) const;
-	/** Open a TXT file. */
+	// Open a TXT file. */
 	TXTFile *loadTXT(const Common::String &txtFile, TXTFile::Format format) const;
 
-	/** Called by loadTXT() to fix strings within the TXT file. */
+	// Called by loadTXT() to fix strings within the TXT file.
 	virtual void fixTXTStrings(TXTFile &txt) const;
 
 
@@ -183,14 +183,14 @@ protected:
 
 
 private:
-	/** Did we fade out? */
+	// Did we fade out?
 	bool _fadedOut;
 
-	/** All loaded sounds. */
+	// All loaded sounds.
 	Common::Array<SoundDesc> _sounds;
 
 
-	/** Load a sound file. */
+	// Load a sound file.
 	bool loadSound(SoundDesc &sound, const Common::String &file) const;
 };
 

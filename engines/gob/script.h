@@ -43,9 +43,9 @@ public:
 	Script(GobEngine *vm);
 	~Script();
 
-	/** Read data and move the pointer accordingly. */
+	// Read data and move the pointer accordingly.
 	uint32 read(byte *data, int32 size);
-	/** Read data (from an optional offset) without moving the pointer. */
+	// Read data (from an optional offset) without moving the pointer.
 	uint32 peek(byte *data, int32 size, int32 offset = 0) const;
 
 	// Stream properties
@@ -96,35 +96,35 @@ public:
 	int32 getResultInt() const;
 	char *getResultStr() const;
 
-	/** Returns the offset the specified pointer is within the script data. */
+	// Returns the offset the specified pointer is within the script data.
 	int32 getOffset(byte *ptr) const;
-	/** Returns the data pointer to the offset. */
+	// Returns the data pointer to the offset.
 	byte *getData(int32 offset) const;
 
-	/** Returns the raw data pointer. */
+	// Returns the raw data pointer. */
 	byte *getData();
 
-	/** Load a script file. */
+	// Load a script file.
 	bool load(const Common::String &fileName);
-	/** Unload the script. */
+	// Unload the script.
 	void unload();
-	/** Was a script loaded? */
+	// Was a script loaded?
 	bool isLoaded() const;
 
-	/** Setting the 'finished' property. */
+	// Setting the 'finished' property.
 	void setFinished(bool finished);
-	/** Querying the 'finished' property. */
+	// Querying the 'finished' property.
 	bool isFinished() const;
 
 	// Call stack operations
-	/** Push the current script position onto the call stack. */
+	// Push the current script position onto the call stack.
 	void push();
-	/** Pop a script position from the call stack (and return there). */
+	// Pop a script position from the call stack (and return there).
 	void pop(bool ret = true);
-	/** Push the current script position and branch to the specified offset. */
+	// Push the current script position and branch to the specified offset.
 	void call(uint32 offset);
 
-	/** Override a byte into the loaded script data (used for some script bugs workarounds) */
+	// Override a byte into the loaded script data (used for some script bugs workarounds)
 	void writeByte(int32 offset, byte v);
 
 	// Fixed properties
@@ -164,12 +164,12 @@ private:
 
 	Common::Stack<CallEntry> _callStack;
 
-	/** Loading a TOT file. */
+	// Loading a TOT file.
 	bool loadTOT(const Common::String &fileName);
-	/** Loading a LOM file. */
+	// Loading a LOM file.
 	bool loadLOM(const Common::String &fileName);
 
-	/** Unloading a TOT file. */
+	// Unloading a TOT file.
 	void unloadTOT();
 };
 

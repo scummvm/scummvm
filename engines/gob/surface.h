@@ -48,7 +48,7 @@ enum ImageType {
 	kImageTypeJPEG
 };
 
-/** An iterator over a surface's image data, automatically handles different color depths. */
+// An iterator over a surface's image data, automatically handles different color depths.
 class Pixel {
 public:
 	Pixel(byte *vidMem, uint8 bpp, byte *min, byte *max);
@@ -73,7 +73,7 @@ private:
 	uint8 _bpp;
 };
 
-/** A const iterator over a surface's image data, automatically handles different color depths. */
+// A const iterator over a surface's image data, automatically handles different color depths.
 class ConstPixel {
 public:
 	ConstPixel(const byte *vidMem, uint8 bpp, const byte *min, const byte *max);

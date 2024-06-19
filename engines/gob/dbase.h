@@ -36,8 +36,7 @@
 
 namespace Gob {
 
-/**
- * A class for reading dBase files.
+ /* A class for reading dBase files.
  *
  * Only dBase III files supported for now, and only field type
  * string is actually useful. Further missing is reading of MDX
@@ -53,7 +52,7 @@ public:
 		kTypeNumber = 0x4E  // 'N'
 	};
 
-	/** A field description. */
+	// A field description.
 	struct Field {
 		Common::String name; ///< Name of the field.
 
@@ -62,7 +61,7 @@ public:
 		uint8 decimals; ///< Number of decimals the field holds.
 	};
 
-	/** A record. */
+	// A record.
 	struct Record {
 		bool deleted; ///< Has this record been deleted?
 		Common::Array<const byte *> fields; ///< Raw field data.
@@ -76,13 +75,13 @@ public:
 
 	byte getVersion() const;
 
-	/** Return the date the database was last updated. */
+	// Return the date the database was last updated.
 	TimeDate getLastUpdate() const;
 
 	const Common::Array<Field>  &getFields()  const;
 	const Common::Array<Record> &getRecords() const;
 
-	/** Extract a string out of raw field data. */
+	// Extract a string out of raw field data.
 	Common::String getString(const Record &record, int field) const;
 
 private:

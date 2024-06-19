@@ -34,7 +34,7 @@ namespace Gob {
 
 namespace Geisha {
 
-/** An "evil" fish in Geisha's "Diving" minigame. */
+// An "evil" fish in Geisha's "Diving" minigame.
 class EvilFish : public ANIObject {
 public:
 	enum Direction {
@@ -47,22 +47,22 @@ public:
 	         uint16 animTurnLeft, uint16 animTurnRight, uint16 animDie);
 	~EvilFish() override;
 
-	/** Enter from this direction / screen edge. */
+	// Enter from this direction / screen edge.
 	void enter(Direction from, int16 y);
-	/** Leave the screen in the current direction. */
+	// Leave the screen in the current direction.
 	void leave();
 
-	/** Kill the fish. */
+	// Kill the fish. */
 	void die();
 
-	/** Advance the animation to the next frame. */
+	// Advance the animation to the next frame.
 	void advance() override;
 
-	/** Change the fish's animations, effectively making it a different fish type. */
+	// Change the fish's animations, effectively making it a different fish type.
 	void mutate(uint16 animSwimLeft, uint16 animSwimRight,
 	            uint16 animTurnLeft, uint16 animTurnRight, uint16 animDie);
 
-	/** Is the fish dead? */
+	// Is the fish dead?
 	bool isDead() const;
 
 private:

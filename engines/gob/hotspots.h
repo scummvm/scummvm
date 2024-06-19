@@ -69,41 +69,41 @@ public:
 	Hotspots(GobEngine *vm);
 	~Hotspots();
 
-	/** Remove all hotspots. */
+	// Remove all hotspots.
 	void clear();
 
-	/** Add a hotspot, returning the new index. */
+	// Add a hotspot, returning the new index.
 	uint16 add(uint16 id,
 			uint16 left,  uint16 top, uint16 right, uint16 bottom,
 			uint16 flags, uint16 key,
 			uint16 funcEnter, uint16 funcLeave, uint16 funcPos);
 
-	/** Remove a specific hotspot. */
+	// Remove a specific hotspot.
 	void remove(uint16 id);
-	/** Remove all hotspots in this state. */
+	// Remove all hotspots in this state.
 	void removeState(uint8 state);
 
-	/** Push the current hotspots onto the stack.
-	 *
+	// Push the current hotspots onto the stack.
+	 /*
 	 *  @param all   0: Don't push global ones; 1: Push all; 2: Push only the disabled ones
 	 *  @param force Force a push although _shouldPush is false
 	 */
 	void push(uint8 all, bool force = false);
-	/** Pop hotspots from the stack. */
+	// Pop hotspots from the stack.
 	void pop();
 
-	/** Check the current hotspot. */
+	// Check the current hotspot.
 	uint16 check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index);
-	/** Check the current hotspot. */
+	// Check the current hotspot.
 	uint16 check(uint8 handleMouse, int16 delay);
 
-	/** Evaluate hotspot changes. */
+	// Evaluate hotspot changes.
 	void evaluate();
 
-	/** Return the cursor found in the hotspot to the coordinates. */
+	// Return the cursor found in the hotspot to the coordinates.
 	int16 findCursor(uint16 x, uint16 y) const;
 
-	/** implementation of oPlaytoons_F_1B code*/
+	// implementation of oPlaytoons_F_1B code
 	void oPlaytoons_F_1B();
 
 private:
@@ -133,7 +133,7 @@ private:
 		uint8        getCursor() const;
 		uint8        getState () const;
 
-		/** Is this hotspot the block end marker? */
+		// Is this hotspot the block end marker?
 		bool isEnd() const;
 
 		bool isInput      () const;
@@ -145,9 +145,9 @@ private:
 		bool isFilledNew    () const;
 		bool isDisabled     () const;
 
-		/** Are the specified coordinates in the hotspot? */
+		// Are the specified coordinates in the hotspot?
 		bool isIn(uint16 x, uint16 y) const;
-		/** Does the specified button trigger the hotspot? */
+		// Does the specified button trigger the hotspot?
 		bool buttonMatch(MouseButtons button) const;
 
 		static uint8 getState(uint16 id);
@@ -188,68 +188,68 @@ private:
 	uint16 _currentX;
 	uint16 _currentY;
 
-	/** Add a hotspot, returning the new index. */
+	// Add a hotspot, returning the new index.
 	uint16 add(const Hotspot &hotspot);
 
-	/** Recalculate all hotspot parameters
-	 *
+	// Recalculate all hotspot parameters
+	 /*
 	 *  @param force Force recalculation of all hotspots, including global ones.
 	 */
 	void recalculate(bool force);
 
-	/** Is this a valid hotspot? */
+	// Is this a valid hotspot?
 	bool isValid(uint16 key, uint16 id, uint16 index) const;
 
-	/** Call a hotspot subroutine. */
+	// Call a hotspot subroutine.
 	void call(uint16 offset);
-	/** Handling hotspot enter events. */
+	// Handling hotspot enter events.
 	void enter(uint16 index);
-	/** Handling hotspot leave events. */
+	// Handling hotspot leave events.
 	void leave(uint16 index);
 
-	/** Check whether a specific part of the window forces a certain cursor. */
+	// Check whether a specific part of the window forces a certain cursor.
 	int16 windowCursor(int16 &dx, int16 &dy) const;
 
-	/** Which hotspot is the mouse cursor currently at? */
+	// Which hotspot is the mouse cursor currently at?
 	uint16 checkMouse(Type type, uint16 &id, uint16 &index) const;
 
-	/** Did the current hotspot change in the meantime? */
+	// Did the current hotspot change in the meantime?
 	bool checkHotspotChanged();
 
-	/** Update events from a specific input. */
+	// Update events from a specific input.
 	uint16 updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 height,
 			uint16 backColor, uint16 frontColor, char *str, uint16 fontIndex,
 			Type type, int16 &duration, uint16 &id, uint16 &index);
 
-	/** Handle all inputs we currently manage. */
+	// Handle all inputs we currently manage.
 	uint16 handleInputs(int16 time, uint16 inputCount, uint16 &curInput,
 			InputDesc *inputs, uint16 &id, uint16 &index);
 
-	/** Evaluate adding new hotspots script commands. */
+	// Evaluate adding new hotspots script commands.
 	void evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 			uint16 &inputId, bool &hasInput, uint16 &inputCount);
-	/** Find the hotspot requested by script commands. */
+	// Find the hotspot requested by script commands.
 	bool evaluateFind(uint16 key, int16 timeVal, const uint16 *ids,
 			uint16 leaveWindowIndex, uint16 hotspotIndex1, uint16 hotspotIndex2,
 			uint16 endIndex, int16 &duration, uint16 &id, uint16 &index, bool &finished);
 
 	// Finding specific hotspots
-	/** Find the hotspot index that corresponds to the input index. */
+	// Find the hotspot index that corresponds to the input index.
 	uint16 inputToHotspot(uint16 input) const;
-	/** Find the input index that corresponds to the hotspot index. */
+	// Find the input index that corresponds to the hotspot index.
 	uint16 hotspotToInput(uint16 hotspot) const;
-	/** Find the input that was clicked on. */
+	// Find the input that was clicked on.
 	uint16 findClickedInput(uint16 index) const;
-	/** Find the first input hotspot with a leave function. */
+	// Find the first input hotspot with a leave function.
 	bool findFirstInputLeave(uint16 &id, uint16 &inputId, uint16 &index) const;
-	/** Find the hotspot with the matching key, case sensitively. */
+	// Find the hotspot with the matching key, case sensitively.
 	bool findKey(uint16 key, uint16 &id, uint16 &index) const;
-	/** Find the hotspot with the matching key, case insensitively. */
+	// Find the hotspot with the matching key, case insensitively.
 	bool findKeyCaseInsensitive(uint16 key, uint16 &id, uint16 &index) const;
-	/** Find the nth plain (without Type1 or Type2 state) hotspot. */
+	// Find the nth plain (without Type1 or Type2 state) hotspot.
 	bool findNthPlain(uint16 n, uint16 startIndex, uint16 &id, uint16 &index) const;
 
-	/** Leave the nth plain (without Type1 or Type2 state) hotspot. */
+	// Leave the nth plain (without Type1 or Type2 state) hotspot.
 	bool leaveNthPlain(uint16 n, uint16 startIndex, int16 timeVal, const uint16 *ids,
 			uint16 &id, uint16 &index, int16 &duration);
 
@@ -265,17 +265,17 @@ private:
 
 	uint16 convertSpecialKey(uint16 key) const;
 
-	/** Calculate the graphical cursor position. */
+	// Calculate the graphical cursor position.
 	void getTextCursorPos(const Font &font, const char *str,
 			uint32 pos, uint16 x, uint16 y, uint16 width, uint16 height,
 			uint16 &cursorX, uint16 &cursorY, uint16 &cursorWidth, uint16 &cursorHeight) const;
 
-	/** Fill that rectangle with the color. */
+	// Fill that rectangle with the color.
 	void fillRect(uint16 x, uint16 y, uint16 width, uint16 height, uint16 color) const;
-	/** Print the given text. */
+	// Print the given text.
 	void printText(uint16 x, uint16 y, const char *str, uint16 fontIndex, uint16 color) const;
 
-	/** Go through all inputs we manage and redraw their texts. */
+	// Go through all inputs we manage and redraw their texts.
 	void updateAllTexts(const InputDesc *inputs) const;
 };
 

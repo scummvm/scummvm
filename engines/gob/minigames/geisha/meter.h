@@ -36,7 +36,7 @@ class Surface;
 
 namespace Geisha {
 
-/** A meter measuring a value. */
+// A meter measuring a value.
 class Meter {
 public:
 	enum Direction {
@@ -49,23 +49,23 @@ public:
 	      Direction direction);
 	~Meter();
 
-	/** Return the max value the meter is measuring. */
+	// Return the max value the meter is measuring.
 	int32 getMaxValue() const;
-	/** Return the current value the meter is measuring. */
+	// Return the current value the meter is measuring.
 	int32 getValue() const;
 
-	/** Set the current value the meter is measuring. */
+	// Set the current value the meter is measuring.
 	void setValue(int32 value);
 
-	/** Set the current value the meter is measuring to the max value. */
+	// Set the current value the meter is measuring to the max value.
 	void setMaxValue();
 
-	/** Increase the current value the meter is measuring, returning the overflow. */
+	// Increase the current value the meter is measuring, returning the overflow.
 	int32 increase(int32 n = 1);
-	/** Decrease the current value the meter is measuring, returning the underflow. */
+	// Decrease the current value the meter is measuring, returning the underflow.
 	int32 decrease(int32 n = 1);
 
-	/** Draw the meter onto the surface and return the affected rectangle. */
+	// Draw the meter onto the surface and return the affected rectangle.
 	void draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
 
 private:

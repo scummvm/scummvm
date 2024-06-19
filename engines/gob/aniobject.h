@@ -38,7 +38,7 @@ class ANIFile;
 class CMPFile;
 class Surface;
 
-/** An ANI object, controlling an animation within an ANI file. */
+// An ANI object, controlling an animation within an ANI file.
 class ANIObject : public BackBuffer {
 public:
 	enum Mode {
@@ -46,68 +46,68 @@ public:
 		kModeOnce        ///< Play the animation only once.
 	};
 
-	/** Create an animation object from an ANI file. */
+	// Create an animation object from an ANI file.
 	ANIObject(const ANIFile &ani);
-	/** Create an animation object from a CMP sprite. */
+	// Create an animation object from a CMP sprite.
 	ANIObject(const CMPFile &cmp);
 	virtual ~ANIObject();
 
-	/** Make the object visible/invisible. */
+	// Make the object visible/invisible.
 	void setVisible(bool visible);
 
-	/** Is the object currently visible? */
+	// Is the object currently visible?
 	bool isVisible() const;
 
-	/** Pause/Unpause the animation. */
+	// Pause/Unpause the animation.
 	void setPause(bool pause);
 
-	/** Is the animation currently paused? */
+	// Is the animation currently paused?
 	bool isPaused() const;
 
-	/** Set the animation mode. */
+	// Set the animation mode.
 	void setMode(Mode mode);
 
-	/** Set the current position to the animation's default. */
+	// Set the current position to the animation's default.
 	virtual void setPosition();
-	/** Set the current position. */
+	// Set the current position.
 	virtual void setPosition(int16 x, int16 y);
 
-	/** Return the current position. */
+	// Return the current position.
 	void getPosition(int16 &x, int16 &y) const;
 
-	/** Return the frame position after another n frames. */
+	// Return the frame position after another n frames.
 	void getFramePosition(int16 &x, int16 &y, uint16 n = 0) const;
-	/** Return the current frame size after another n frames. */
+	// Return the current frame size after another n frames.
 	void getFrameSize(int16 &width, int16 &height, uint16 n = 0) const;
 
-	/** Are there coordinates within the animation sprite? */
+	// Are there coordinates within the animation sprite?
 	bool isIn(int16 x, int16 y) const;
-	/** Is this object within the animation sprite? */
+	// Is this object within the animation sprite?
 	bool isIn(const ANIObject &obj) const;
 
-	/** Set the animation number. */
+	// Set the animation number.
 	void setAnimation(uint16 animation);
 
-	/** Rewind the current animation to the first frame. */
+	// Rewind the current animation to the first frame.
 	void rewind();
 
-	/** Set the animation to a specific frame. */
+	// Set the animation to a specific frame.
 	void setFrame(uint16 frame);
 
-	/** Return the current animation number. */
+	// Return the current animation number.
 	uint16 getAnimation() const;
-	/** Return the current frame number. */
+	// Return the current frame number.
 	uint16 getFrame() const;
 
-	/** Is this the last frame within this animation cycle? */
+	// Is this the last frame within this animation cycle?
 	bool lastFrame() const;
 
-	/** Draw the current frame onto the surface and return the affected rectangle. */
+	// Draw the current frame onto the surface and return the affected rectangle.
 	virtual bool draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
-	/** Draw the current frame from the surface and return the affected rectangle. */
+	// Draw the current frame from the surface and return the affected rectangle.
 	virtual bool clear(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
 
-	/** Advance the animation to the next frame. */
+	// Advance the animation to the next frame.
 	virtual void advance();
 
 private:

@@ -37,8 +37,8 @@ namespace Gob {
 class GobEngine;
 class Surface;
 
-/**
- * A class wrapping a save part header.
+
+ /* A class wrapping a save part header.
  *
  * A save part header consists of 4 fields:
  * ID      : The 8 character ID \0SCVMGOB
@@ -48,7 +48,7 @@ class Surface;
 */
 class SaveHeader {
 public:
-	/** The size of the header. */
+	// The size of the header.
 	static const int kSize = 20;
 	static const uint32 kID1 = MKTAG(0,'S','C','V');
 	static const uint32 kID2 = MKTAG('M','G','O','B');
@@ -58,15 +58,15 @@ public:
 	bool operator==(const SaveHeader &header) const;
 	bool operator!=(const SaveHeader &header) const;
 
-	/** Read the header out of a stream into this class. */
+	// Read the header out of a stream into this class.
 	bool read(Common::ReadStream &stream);
-	/** Read the header out of a stream and checks it against this class's contents. */
+	// Read the header out of a stream and checks it against this class's contents.
 	bool verify(Common::ReadStream &stream) const;
 	/** Read the header out of a stream and checks it against this class's contents,
 	 *  but read the size field instead.
 	 */
 	bool verifyReadSize(Common::ReadStream &stream);
-	/** Write this class's contents into a stream. */
+	// Write this class's contents into a stream.
 	bool write(Common::WriteStream &stream) const;
 
 	uint32 getType() const;
@@ -78,33 +78,33 @@ public:
 	void setSize(uint32 size);
 
 private:
-	/** An ID specifying the part's type. */
+	// An ID specifying the part's type.
 	uint32 _type;
-	/** The part's version. */
+	// The part's version.
 	uint32 _version;
-	/** The size of the contents. */
+	// The size of the contents.
 	uint32 _size;
 };
 
-/** An abstract class for a part in a save file. */
+// An abstract class for a part in a save file.
 class SavePart {
 public:
 	SavePart();
 	virtual ~SavePart();
 
-	/** Return the total size of the part. */
+	// Return the total size of the part.
 	virtual uint32 getSize() const;
 
-	/** Read the part (with header) out of the stream. */
+	// Read the part (with header) out of the stream.
 	virtual bool read(Common::ReadStream &stream) = 0;
-	/** Write the part (with header) into the stream. */
+	// Write the part (with header) into the stream.
 	virtual bool write(Common::WriteStream &stream) const = 0;
 
 protected:
 	SaveHeader _header;
 };
 
-/** A save part consisting of plain memory. */
+// A save part consisting of plain memory.
 class SavePartMem : public SavePart {
 public:
 	static const uint32 kVersion = 1;
@@ -116,9 +116,9 @@ public:
 	bool read(Common::ReadStream &stream) override;
 	bool write(Common::WriteStream &stream) const override;
 
-	/** Read size bytes of data into the part at the specified offset. */
+	// Read size bytes of data into the part at the specified offset.
 	bool readFrom(const byte *data, uint32 offset, uint32 size);
-	/** Write size bytes of the part at the specified offset int data. */
+	// Write size bytes of the part at the specified offset int data.
 	bool writeInto(byte *data, uint32 offset, uint32 size) const;
 
 private:
@@ -126,7 +126,7 @@ private:
 	byte *_data;
 };
 
-/** A save part holding script variables. */
+// A save part holding script variables.
 class SavePartVars : public SavePart {
 public:
 	static const uint32 kVersion = 1;
@@ -138,15 +138,15 @@ public:
 	bool read(Common::ReadStream &stream) override;
 	bool write(Common::WriteStream &stream) const override;
 
-	/** Read size bytes of variables starting at var into the part at the specified offset. */
+	// Read size bytes of variables starting at var into the part at the specified offset.
 	bool readFrom(uint32 var, uint32 offset, uint32 size);
-	/** Write size bytes of the part at the specified offset into the variable starting at var. */
+	// Write size bytes of the part at the specified offset into the variable starting at var.
 	bool writeInto(uint32 var, uint32 offset, uint32 size) const;
 
-	/** Read size bytes of raw data into the part. */
+	// Read size bytes of raw data into the part.
 	bool readFromRaw(const byte *data, uint32 offset, uint32 size);
 
-	/** Write size bytes of the part at the specified offset into a raw buffer. */
+	// Write size bytes of the part at the specified offset into a raw buffer.
 	bool writeIntoRaw(byte *data, uint32 offset, uint32 size) const;
 
 	const byte* data() const { return _data; }
@@ -158,7 +158,7 @@ private:
 	byte *_data;
 };
 
-/** A save part holding a sprite. */
+// A save part holding a sprite.
 class SavePartSprite : public SavePart {
 public:
 	static const uint32 kVersion = 2;
@@ -170,17 +170,17 @@ public:
 	bool read(Common::ReadStream &stream) override;
 	bool write(Common::WriteStream &stream) const override;
 
-	/** Read a palette into the part. */
+	// Read a palette into the part.
 	bool readPalette(const byte *palette);
-	/** Read a sprite into the part. */
+	// Read a sprite into the part.
 	bool readSprite(const Surface &sprite);
 
-	/** Read size bytes of raw data into the sprite. */
+	// Read size bytes of raw data into the sprite.
 	bool readSpriteRaw(const byte *data, uint32 size);
 
-	/** Write a palette out of the part. */
+	// Write a palette out of the part.
 	bool writePalette(byte *palette) const;
-	/** Write a sprite out of the part. */
+	// Write a sprite out of the part.
 	bool writeSprite(Surface &sprite) const;
 
 private:
@@ -196,14 +196,13 @@ private:
 	byte *_dataPalette;
 };
 
-/** A save part containing informations about the save's game. */
+// A save part containing informations about the save's game.
 class SavePartInfo : public SavePart {
 public:
 	static const uint32 kVersion = 1;
 	static const uint32 kID = MKTAG('I','N','F','O');
 
-	/**
-	 * The constructor.
+	 /* The constructor.
 	 * @param descMaxLength The maximal number of bytes that fit into the description.
 	 * @param gameID An ID for the game (Gob1, Gob2, Gob3, ...).
 	 * @param gameVersion An ID for game specific versioning
@@ -214,16 +213,16 @@ public:
 			uint32 gameVersion, byte endian, uint32 varCount);
 	~SavePartInfo() override;
 
-	/** Return the save's description. */
+	// Return the save's description.
 	const char *getDesc() const;
-	/** Return the description's maximal length. */
+	// Return the description's maximal length.
 	uint32 getDescMaxLength() const;
 
-	/** Set the variable count. */
+	// Set the variable count.
 	void setVarCount(uint32 varCount);
-	/** Set the save's description. */
+	// Set the save's description.
 	void setDesc(const char *desc = 0);
-	/** Set the save's description. */
+	// Set the save's description.
 	void setDesc(const byte *desc, uint32 size);
 
 	bool read(Common::ReadStream &stream) override;
@@ -238,7 +237,7 @@ private:
 	byte _endian;
 };
 
-/** A container for several save parts. */
+// A container for several save parts. 
 class SaveContainer {
 public:
 	static const uint32 kVersion = 1;
@@ -255,24 +254,24 @@ public:
 	uint32 getSlot() const;
 	uint32 getSize() const;
 
-	/** All parts filled? */
+	// All parts filled?
 	bool hasAllParts() const;
 
-	/** Empty all parts. */
+	// Empty all parts.
 	void clear();
 
-	/** Write a SavePart into the container's part. */
+	// Write a SavePart into the container's part.
 	bool writePart(uint32 partN, const SavePart *part);
-	/** Read the container's part's content into a SavePart. */
+	// Read the container's part's content into a SavePart.
 	bool readPart(uint32 partN, SavePart *part) const;
-	/** Read only the container's part's header. */
+	// Read only the container's part's header.
 	bool readPartHeader(uint32 partN, SaveHeader *header) const;
 
-	/** Checks if the stream is a valid save container. */
+	// Checks if the stream is a valid save container.
 	static bool isSave(Common::SeekableReadStream &stream);
 
 protected:
-	/** A part. */
+	// A part. */
 	struct Part {
 		uint32 size;
 		byte *data;
@@ -284,7 +283,7 @@ protected:
 		Common::ReadStream *createReadStream() const;
 	};
 
-	/** Basic information about a part. */
+	// Basic information about a part.
 	struct PartInfo {
 		uint32 id;
 		uint32 offset;
@@ -305,11 +304,11 @@ protected:
 	bool read(Common::ReadStream &stream);
 	bool write(Common::WriteStream &stream) const;
 
-	/** Get an array containing basic information about all parts in the container in the stream. */
+	// Get an array containing basic information about all parts in the container in the stream.
 	static Common::Array<PartInfo> *getPartsInfo(Common::SeekableReadStream &stream);
 };
 
-/** Reads a save. */
+// Reads a save.
 class SaveReader : public SaveContainer {
 public:
 	SaveReader(uint32 partCount, uint32 slot, const Common::String &fileName);
@@ -321,9 +320,9 @@ public:
 	bool readPart(uint32 partN, SavePart *part) const;
 	bool readPartHeader(uint32 partN, SaveHeader *header) const;
 
-	/** Find and read the save's info part. */
+	// Find and read the save's info part.
 	static bool getInfo(Common::SeekableReadStream &stream, SavePartInfo &info);
-	/** Find and read the save's info part. */
+	// Find and read the save's info part.
 	static bool getInfo(const Common::String &fileName, SavePartInfo &info);
 
 protected:
@@ -336,7 +335,7 @@ protected:
 	Common::InSaveFile *openSave();
 };
 
-/** Writes a save. */
+// Writes a save.
 class SaveWriter: public SaveContainer {
 public:
 	SaveWriter(uint32 partCount, uint32 slot);
@@ -353,7 +352,7 @@ protected:
 
 	Common::String _fileName;
 
-	/** Is everything ready for saving? */
+	// Is everything ready for saving?
 	bool canSave() const;
 
 	static Common::OutSaveFile *openSave(const Common::String &fileName);

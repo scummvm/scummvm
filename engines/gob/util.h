@@ -145,12 +145,12 @@ public:
 	//static char *setExtension(char *str, const char *ext);
 	static Common::String setExtension(const Common::String &str, const Common::String &ext);
 
-	/** Read a constant-length string out of a stream. */
+	// Read a constant-length string out of a stream.
 	static Common::String readString(Common::SeekableReadStream &stream, int n);
 
-	/** Convert a character in CP850 encoding to the equivalent lower case character. */
+	// Convert a character in CP850 encoding to the equivalent lower case character.
 	static char toCP850Lower(char cp850);
-	/** Convert a character in CP850 encoding to the equivalent upper case character. */
+	// Convert a character in CP850 encoding to the equivalent upper case character.
 	static char toCP850Upper(char cp850);
 
 	Util(GobEngine *vm);

@@ -41,8 +41,7 @@ class GobEngine;
 class Surface;
 class CMPFile;
 
-/** A DEC file, describing a "decal" (background).
- *
+/* 	A DEC file, describing a "decal" (background).
  *  Used in hardcoded "actiony" parts of gob games.
  *  The principle is similar to a Static in Scenery (see scenery.cpp), but
  *  instead of referencing indices in the sprites array, DECs reference sprites
@@ -54,13 +53,13 @@ public:
 	        uint16 width, uint16 height, uint8 bpp = 1);
 	~DECFile();
 
-	/** Draw the background, including all default layer parts. */
+	// Draw the background, including all default layer parts.
 	void draw(Surface &dest) const;
 
-	/** Explicitly draw the backdrop. */
+	// Explicitly draw the backdrop.
 	void drawBackdrop(Surface &dest) const;
 
-	/** Explicitly draw a layer part. */
+	// Explicitly draw a layer part. 
 	void drawLayer(Surface &dest, uint16 layer, uint16 part,
 	               uint16 x, uint16 y, int32 transp = -1) const;
 

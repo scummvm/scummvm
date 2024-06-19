@@ -43,8 +43,8 @@ class GobEngine;
 class Surface;
 class CMPFile;
 
-/** An ANI file, describing an animation.
- *
+// An ANI file, describing an animation.
+ /*
  *  Used in hardcoded "actiony" parts of gob games.
  *  The principle is similar to an Anim in Scenery (see scenery.cpp), but
  *  instead of referencing indices in the sprites array, ANIs reference sprites
@@ -52,7 +52,7 @@ class CMPFile;
  */
 class ANIFile {
 public:
-	/** The relative area a frame sprite occupies. */
+	// The relative area a frame sprite occupies. 
 	struct FrameArea {
 		int16 left;
 		int16 top;
@@ -60,7 +60,7 @@ public:
 		int16 bottom;
 	};
 
-	/** An animation within an ANI file. */
+	// An animation within an ANI file.
 	struct Animation {
 		Common::String name; ///< The name of the animation.
 
@@ -73,7 +73,7 @@ public:
 		int16 deltaX; ///< # of pixels to advance in X direction after each cycle.
 		int16 deltaY; ///< # of pixels to advance in Y direction after each cycle.
 
-		/** The relative area each frame sprite occupies. */
+		// The relative area each frame sprite occupies.
 		Common::Array<FrameArea> frameAreas;
 
 		uint16 width;  ///< The maximum width of this animation's frames.
@@ -85,26 +85,26 @@ public:
 	        uint16 width = 320, uint8 bpp = 1);
 	~ANIFile();
 
-	/** Return the number of animations in this ANI file. */
+	// Return the number of animations in this ANI file.
 	uint16 getAnimationCount() const;
 
-	/** Return the maximum size of all animation frames. */
+	// Return the maximum size of all animation frames.
 	void getMaxSize(uint16 &width, uint16 &height) const;
 
-	/** Get this animation's properties. */
+	// Get this animation's properties.
 	const Animation &getAnimationInfo(uint16 animation) const;
 
-	/** Draw an animation frame. */
+	// Draw an animation frame.
 	void draw(Surface &dest, uint16 animation, uint16 frame, int16 x, int16 y) const;
 
-	/** Recolor the animation sprites. */
+	// Recolor the animation sprites.
 	void recolor(uint8 from, uint8 to);
 
 private:
 	typedef Common::Array<CMPFile *> LayerArray;
 	typedef Common::Array<Animation> AnimationArray;
 
-	/** A "chunk" of an animation frame. */
+	// A "chunk" of an animation frame.
 	struct AnimationChunk {
 		int16 x; ///< The relative x offset of this chunk.
 		int16 y; ///< The relative y offset of this chunk.
