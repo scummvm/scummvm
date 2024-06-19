@@ -21,6 +21,10 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 #include <math.h>
+
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include "graphics/managed_surface.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 
@@ -367,7 +371,7 @@ void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const unsigned char *p
 
 		if (pixel_format_ == GR_RGB565) {
 			for (int i = 0; i < psy; i ++) {
-				unsigned short *scr_buf = reinterpret_cast<unsigned short *>(screenBuf + yTable[y] + x);
+				unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
 				const unsigned char *data_line = data_ptr + px;
 
 				for (int j = 0; j < psx; j ++) {

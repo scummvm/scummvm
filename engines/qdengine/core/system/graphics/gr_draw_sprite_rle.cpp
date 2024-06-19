@@ -21,6 +21,10 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include "graphics/managed_surface.h"
+
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/graphics/rle_compress.h"
@@ -301,7 +305,7 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 			dy = 1;
 
 		for (int i = 0; i < psy; i ++) {
-			unsigned short *scr_buf = reinterpret_cast<unsigned short *>(screenBuf + yTable[y] + x);
+			unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
 
 			const char *rle_header = p -> header_ptr(py + i);
 			const unsigned *rle_data = p -> data_ptr(py + i);
