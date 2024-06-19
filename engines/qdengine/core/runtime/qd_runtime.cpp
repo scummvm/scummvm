@@ -378,6 +378,10 @@ void init_graphics() {
 	qdGameConfig::get_config().set_pixel_format(grDispatcher::instance()->pixel_format());
 
 	qdlg::set_icon(hmainWnd);
+
+	grDispatcher::instance()->SetClip();
+	grDispatcher::instance()->SetClipMode(1);
+
 	grDispatcher::instance()->Fill(0);
 
 	g_system->updateScreen();
