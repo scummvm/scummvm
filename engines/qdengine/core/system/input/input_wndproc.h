@@ -22,6 +22,9 @@
 #ifndef __INPUT_WNDPROC_H__
 #define __INPUT_WNDPROC_H__
 
+namespace Common {
+struct Event;
+}
 
 namespace QDEngine {
 
@@ -39,7 +42,7 @@ WM_KEYUP
 WM_SYSKEYDOWN
 WM_SYSKEYUP
 */
-bool keyboard_wndproc(const MSG &msg, keyboardDispatcher *dsp);
+bool keyboard_wndproc(const Common::Event &event, keyboardDispatcher *dsp);
 //! Обработка сообщений мыши.
 /**
 Возвращает true, если сообщение обработано.
@@ -51,7 +54,7 @@ WM_RBUTTONDOWN
 WM_LBUTTONUP
 WM_RBUTTONUP
 */
-bool mouse_wndproc(const MSG &msg, mouseDispatcher *dsp);
+bool mouse_wndproc(const Common::Event &event, mouseDispatcher *dsp);
 };
 
 } // namespace QDEngine
