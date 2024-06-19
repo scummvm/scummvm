@@ -998,8 +998,30 @@ uint16 Macs2Engine::GetInteractedBackgroundHotspot(const Common::Point &p) {
 	return 0;
 }
 
-void Macs2Engine::ScheduleRun() {
+void Macs2Engine::ScheduleRun(bool initScene) {
 	runScheduled = true;
+	scheduledRunIsInitScene = initScene;
+}
+
+uint16 Macs2Engine::Func0E8C(const Common::Point &p) {
+	// TODO: Check against screen extent
+	uint8 value = _pathfindingMap.getPixel(p.x, p.y);
+	if (value < 0xC8 || value > 0xEF) {
+		return value;
+	}
+
+	uint16 lookupIndex = value;
+	lookupIndex << 1;
+	lookupIndex << 1;
+	lookupIndex += value;
+	// TODO: We should look up based on byte ptr es:[di+4EA5h] here
+	bool lookedUpValue = false;
+	if (!lookedUpValue) {
+		return 0xFF;
+	} else {
+		// TODO: We need to look up based on es:[di+4EA6h]
+		return 0xAB;
+	}
 }
 
 int Macs2Engine::MeasureString(Common::String &s) {
@@ -1170,7 +1192,9 @@ bool Macs2Engine::tick() {
 	_scriptExecutor->tick();
 	if (runScheduled) {
 		runScheduled = false;
-		_scriptExecutor->Run();
+		bool shouldRunInit = scheduledRunIsInitScene;
+		scheduledRunIsInitScene = false;
+		_scriptExecutor->Run(shouldRunInit);
 	}
 	return Events::tick();
 }
