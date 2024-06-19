@@ -39,11 +39,11 @@ public:
 bool DgdsMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return checkExtendedSaves(f) ||
 		   (f == kSupportsListSaves) ||
-	       (f == kSupportsLoadingDuringStartup) ||
-	       (f == kSupportsDeleteSave) ||
-	       (f == kSavesSupportMetaInfo) ||
-	       (f == kSavesSupportThumbnail) ||
-	       (f == kSimpleSavesNames);
+		   (f == kSupportsLoadingDuringStartup) ||
+		   (f == kSupportsDeleteSave) ||
+		   (f == kSavesSupportMetaInfo) ||
+		   (f == kSavesSupportThumbnail) ||
+		   (f == kSimpleSavesNames);
 }
 
 Common::Error DgdsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

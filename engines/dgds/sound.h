@@ -81,10 +81,10 @@ private:
 };
 
 enum {
-  DIGITAL_PCM   = 1 << 0,
-  TRACK_ADLIB   = 1 << 1,
-  TRACK_GM      = 1 << 2,
-  TRACK_MT32    = 1 << 3
+	DIGITAL_PCM   = 1 << 0,
+	TRACK_ADLIB   = 1 << 1,
+	TRACK_GM      = 1 << 2,
+	TRACK_MT32    = 1 << 3
 };
 
 byte loadSndTrack(uint32 track, const byte** trackPtr, uint16* trackSiz, const byte *data, uint32 size);

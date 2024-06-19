@@ -145,7 +145,7 @@ bool Console::cmdFileDump(int argc, const char **argv) {
 	}
 	delete[] data;
 
-    return true;
+	return true;
 }
 
 bool Console::dumpImageFrame(const char *fname, int frameno, const char *outpath) {

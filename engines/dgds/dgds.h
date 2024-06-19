@@ -183,15 +183,15 @@ public:
 		return syncGame(s);
 	}
 
-    bool hasFeature(EngineFeature f) const override {
-        return
-            (f == kSupportsLoadingDuringRuntime) ||
-            (f == kSupportsSavingDuringRuntime);
-    };
+	bool hasFeature(EngineFeature f) const override {
+		return
+			(f == kSupportsLoadingDuringRuntime) ||
+			(f == kSupportsSavingDuringRuntime);
+	};
 
-    void setBackgroundFile(const Common::String &name) { _backgroundFile = name; }
-    const Common::String &getBackgroundFile() const { return _backgroundFile; }
-    void setMenuToTrigger(MenuId menu) { _menuToTrigger = menu; }
+	void setBackgroundFile(const Common::String &name) { _backgroundFile = name; }
+	const Common::String &getBackgroundFile() const { return _backgroundFile; }
+	void setMenuToTrigger(MenuId menu) { _menuToTrigger = menu; }
 
 private:
 	Common::Error syncGame(Common::Serializer &s);

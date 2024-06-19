@@ -93,7 +93,7 @@ void MidiParser_DGDS::parseNextEvent(EventInfo &info) {
 
 	_position._runningStatus = info.event;
 	switch (info.command()) {
-	case 0x9: 
+	case 0x9:
 		info.basic.param1 = *_position._playPos++;
 		info.basic.param2 = *_position._playPos++;
 		if (info.basic.param2 == 0) {
