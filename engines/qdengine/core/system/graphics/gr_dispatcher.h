@@ -561,6 +561,8 @@ protected:
 	void *hWnd;
 
 	char *screenBuf;
+	Graphics::ManagedSurface *_screenBuf = nullptr;
+
 	int *yTable;
 
 	char *temp_buffer_;

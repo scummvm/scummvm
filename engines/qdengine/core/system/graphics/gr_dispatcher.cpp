@@ -83,6 +83,7 @@ bool grDispatcher::Finit() {
 	SizeX = SizeY = 0;
 	wndPosX = wndPosY = 0;
 	screenBuf = NULL;
+	delete _screenBuf;
 	delete  yTable;
 	yTable = NULL;
 
@@ -96,6 +97,8 @@ bool grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, 
 
 	initGraphics(sx, sy, &g_engine->_pixelformat);
 	_surface = new Graphics::ManagedSurface(sx, sy, g_engine->_pixelformat);
+	_screenBuf = new Graphics::ManagedSurface(sx, sy, g_engine->_pixelformat);
+
 	_isFullScreen = fullscreen;
 
 	if (!is_mode_supported(sx, sy, pixel_format_))
@@ -454,49 +457,8 @@ void grDispatcher::Erase(int x, int y, int sx, int sy, int col) {
 		if (!clip_rectangle(x, y, sx, sy))
 			return;
 
-	switch (bytes_per_pixel()) {
-	case 2: {
-		unsigned short *ptr;
-		for (int i = y; i <= y + sy; i ++) {
-			ptr = (unsigned short *)(screenBuf + yTable[i] + (x << 1));
-			for (int j = 0; j <= sx; j ++) {
-				ptr[j] = col;
-			}
-		}
-	}
-	break;
-	case 3: {
-		x *= 3;
-		unsigned char *ptr;
-		unsigned char *cptr = (unsigned char *)(&col);
-		for (int i = y; i <= y + sy; i ++) {
-			ptr = (unsigned char *)(screenBuf + yTable[i] + x);
-			for (int j = 0; j <= sx; j ++) {
-				ptr[0] = cptr[2];
-				ptr[1] = cptr[1];
-				ptr[2] = cptr[0];
-				ptr += 3;
-			}
-		}
-	}
-	break;
-	case 4: {
-		unsigned col1 = col;
-
-		unsigned char *cptr = (unsigned char *)(&col);
-		unsigned char *cptr1 = (unsigned char *)(&col1);
-		cptr1[0] = cptr[2];
-		cptr1[2] = cptr[0];
-
-		for (int i = y; i <= y + sy; i ++) {
-			unsigned *ptr = (unsigned *)(screenBuf + yTable[i] + (x << 2));
-			for (int j = 0; j <= sx; j ++) {
-				*ptr++ = col1;
-			}
-		}
-	}
-	break;
-	}
+	_screenBuf->fillRect(Common::Rect(x, y, x + sx, y + sy), col);
+	return;
 }
 
 void grDispatcher::SetPixel(int x, int y, int col) {
