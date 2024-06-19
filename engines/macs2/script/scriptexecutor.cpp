@@ -1488,7 +1488,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 			_interactedObjectID = 0;
 			_interactedOtherObjectID = 0;
 			requestCallback = false;
-			g_engine->ScheduleRun();
+			g_engine->ScheduleRun(true);
 			isAwaitingCallback = true;
 			return;
 		} else if (opcode1 == 0x0d) {

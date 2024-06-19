@@ -211,9 +211,14 @@ public:
 	}
 
 	bool runScheduled = false;
+	// TODO: Feels like this should be more elegantly solved, also check how the game does this
+	// Is required for example after a scene change
+	bool scheduledRunIsInitScene = false;
 
 	// Schedules a run of the script the next time the executor is ticked
-	void ScheduleRun();
+	void ScheduleRun(bool initScene = false);
+
+	uint16 Func0E8C(const Common::Point &p);
 
 	int MeasureString(Common::String &s);
 
