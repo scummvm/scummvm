@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-15 22:46+0000\n"
+"POT-Creation-Date: 2024-06-19 00:36+0000\n"
 "PO-Revision-Date: 2024-06-10 10:43+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
@@ -2654,7 +2654,7 @@ msgstr "录制"
 msgid "Playback"
 msgstr "回放"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:286
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:290
 msgid "Edit"
 msgstr "编辑"
 
@@ -2840,11 +2840,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "清除数值"
 
-#: gui/widgets/grid.cpp:280
+#: gui/widgets/grid.cpp:284
 msgid "Play"
 msgstr "游玩"
 
-#: gui/widgets/grid.cpp:283
+#: gui/widgets/grid.cpp:287
 msgid "Saves"
 msgstr "存档"
 

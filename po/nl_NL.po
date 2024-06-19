@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-15 22:46+0000\n"
+"POT-Creation-Date: 2024-06-19 00:36+0000\n"
 "PO-Revision-Date: 2024-03-24 18:22+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -2682,7 +2682,7 @@ msgstr "Opnemen"
 msgid "Playback"
 msgstr "Opnieuw afspelen"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:286
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:290
 msgid "Edit"
 msgstr "Bewerken"
 
@@ -2873,11 +2873,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "Veld leegmaken"
 
-#: gui/widgets/grid.cpp:280
+#: gui/widgets/grid.cpp:284
 msgid "Play"
 msgstr "Spelen"
 
-#: gui/widgets/grid.cpp:283
+#: gui/widgets/grid.cpp:287
 msgid "Saves"
 msgstr "Opgeslagen spellen"
 

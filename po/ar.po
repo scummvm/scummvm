@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-15 22:46+0000\n"
+"POT-Creation-Date: 2024-06-19 00:36+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -2688,7 +2688,7 @@ msgstr "سِجِلّ"
 msgid "Playback"
 msgstr "تشغيل"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:286
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:290
 msgid "Edit"
 msgstr "يحرر"
 
@@ -2874,11 +2874,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "قيمة واضحة"
 
-#: gui/widgets/grid.cpp:280
+#: gui/widgets/grid.cpp:284
 msgid "Play"
 msgstr "العب"
 
-#: gui/widgets/grid.cpp:283
+#: gui/widgets/grid.cpp:287
 msgid "Saves"
 msgstr "احفظ"
 
