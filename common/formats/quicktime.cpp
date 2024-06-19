@@ -153,7 +153,7 @@ void QuickTimeParser::initParseTable() {
 		{ &QuickTimeParser::readDefault, MKTAG('m', 'i', 'n', 'f') },
 		{ &QuickTimeParser::readMOOV,    MKTAG('m', 'o', 'o', 'v') },
 		{ &QuickTimeParser::readMVHD,    MKTAG('m', 'v', 'h', 'd') },
-		{ &QuickTimeParser::readLeaf,    MKTAG('s', 'm', 'h', 'd') },
+		{ &QuickTimeParser::readSMHD,    MKTAG('s', 'm', 'h', 'd') },
 		{ &QuickTimeParser::readDefault, MKTAG('s', 't', 'b', 'l') },
 		{ &QuickTimeParser::readSTCO,    MKTAG('s', 't', 'c', 'o') },
 		{ &QuickTimeParser::readSTSC,    MKTAG('s', 't', 's', 'c') },
@@ -382,6 +382,16 @@ int QuickTimeParser::readTRAK(Atom atom) {
 	_tracks.push_back(track);
 
 	return readDefault(atom);
+}
+
+int QuickTimeParser::readSMHD(Atom atom) {
+	Track *track = _tracks.back();
+
+	_fd->readUint32BE(); // version + flags
+	track->soundBalance = _fd->readUint16BE();
+	_fd->readUint16BE(); // reserved
+
+	return 0;
 }
 
 int QuickTimeParser::readTKHD(Atom atom) {

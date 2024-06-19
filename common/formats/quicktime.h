@@ -290,6 +290,7 @@ private:
 	int readMVHD(Atom atom);
 	int readTKHD(Atom atom);
 	int readTRAK(Atom atom);
+	int readSMHD(Atom atom);
 	int readSTCO(Atom atom);
 	int readSTSC(Atom atom);
 	int readSTSD(Atom atom);
