@@ -53,7 +53,7 @@ bool SCNPlayer::playStream(Common::SeekableReadStream &scn) {
 	while (!scn.err() && !scn.eos()) {
 		Common::String line = scn.readLine();
 
-		// Interpret
+		// Interpreter
 		if (line == "CLEAR") {
 			clearScreen();
 		} else if (lineStartsWith(line, "VIDEO:")) {
