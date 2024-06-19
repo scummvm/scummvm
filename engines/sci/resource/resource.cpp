@@ -630,7 +630,7 @@ Resource *ResourceManager::testResource(const ResourceId &id) const {
 	return _resMap.getValOrDefault(id, NULL);
 }
 
-int ResourceManager::addAppropriateSources() {
+void ResourceManager::addAppropriateSources() {
 #ifdef ENABLE_SCI32
 	_multiDiscAudio = false;
 #endif
@@ -676,7 +676,7 @@ int ResourceManager::addAppropriateSources() {
 		SearchMan.listMatchingMembers(files, "ressci.0##");
 
 		if (mapFiles.empty() || files.empty())
-			return 0;
+			return;
 
 		if (Common::File::exists("ressci.001") && !Common::File::exists("resource.aud")) {
 			_multiDiscAudio = true;
@@ -718,7 +718,7 @@ int ResourceManager::addAppropriateSources() {
 	}
 #else
 	} else
-		return 0;
+		return;
 #endif
 
 	addPatchDir(".");
@@ -740,17 +740,15 @@ int ResourceManager::addAppropriateSources() {
 		}
 	}
 #endif
-
-	return 1;
 }
 
-int ResourceManager::addAppropriateSourcesForDetection(const Common::FSList &fslist) {
+void ResourceManager::addAppropriateSourcesForDetection(const Common::FSList &fslist) {
 	ResourceSource *map = nullptr;
 	Common::Array<ResourceSource *> sci21Maps;
 
 #ifdef ENABLE_SCI32
-	ResourceSource *sci21PatchMap = 0;
-	const Common::FSNode *sci21PatchRes = 0;
+	ResourceSource *sci21PatchMap = nullptr;
+	const Common::FSNode *sci21PatchRes = nullptr;
 	_multiDiscAudio = false;
 #endif
 
@@ -787,7 +785,7 @@ int ResourceManager::addAppropriateSourcesForDetection(const Common::FSList &fsl
 	}
 
 	if (!map && sci21Maps.empty())
-		return 0;
+		return;
 
 #ifdef ENABLE_SCI32
 	if (sci21PatchMap && sci21PatchRes)
@@ -818,8 +816,6 @@ int ResourceManager::addAppropriateSourcesForDetection(const Common::FSList &fsl
 
 	// This function is only called by the advanced detector, and we don't really need
 	// to add a patch directory or message.map here
-
-	return 1;
 }
 
 void ResourceManager::addScriptChunkSources() {

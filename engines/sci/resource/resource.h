@@ -218,7 +218,7 @@ public:
 		output += intToBase36(getNumber(), 3);                     // Map
 		output += intToBase36(getTuple() >> 24, 2);                // Noun
 		output += intToBase36((getTuple() >> 16) & 0xff, 2);       // Verb
-		output += '.';                                                   // Separator
+		output += '.';                                             // Separator
 		output += intToBase36((getTuple() >> 8) & 0xff, 2);        // Cond
 		output += intToBase36(getTuple() & 0xff, 1);               // Seq
 
@@ -357,12 +357,12 @@ public:
 	/**
 	 * Adds all of the resource files for a game
 	 */
-	int addAppropriateSources();
+	void addAppropriateSources();
 
 	/**
 	 * Similar to the function above, only called from the fallback detector
 	 */
-	int addAppropriateSourcesForDetection(const Common::FSList &fslist);	// TODO: Switch from FSList to Common::Archive?
+	void addAppropriateSourcesForDetection(const Common::FSList &fslist);	// TODO: Switch from FSList to Common::Archive?
 
 	/**
 	 * Looks up a resource's data.
