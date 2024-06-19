@@ -303,7 +303,7 @@ void Sound::playSoundEffectIndex(SoundEffects index) {
 			playVoc("PHASSHOT");
 			break;
 		case kSfxButton:
-			playMidiTrack(MIDITRACK_7);
+			playMidiTrack(MIDITRACK_SFX_BUTTON);
 			break;
 		case kSfxTransporterDematerialize:
 			playVoc("TRANSDEM");
@@ -315,7 +315,7 @@ void Sound::playSoundEffectIndex(SoundEffects index) {
 			playVoc("TRANSENE");
 			break;
 		case kSfxSelection:
-			playMidiTrack(MIDITRACK_16);
+			playMidiTrack(MIDITRACK_SFX_BUTTON);
 			break;
 		case kSfxHailing:
 			playVoc("HAILING");
@@ -330,7 +330,7 @@ void Sound::playSoundEffectIndex(SoundEffects index) {
 			playVoc("HITSHIEL");
 			break;
 		case kSfxUnk:
-			playMidiTrack(MIDITRACK_39);
+			playMidiTrack(MIDITRACK_SFX_UNK);
 			break;
 		case kSfxRedAlert:
 			playVoc("REDALERT");
