@@ -63,7 +63,7 @@ grDispatcher::grDispatcher() : screenBuf(NULL),
 	hide_mouse_ = false;
 	mouse_cursor_ = NULL;
 
-	pixel_format_ = GR_RGB888;
+	pixel_format_ = GR_RGB565;
 
 	if (!dispatcher_ptr_) dispatcher_ptr_ = this;
 }
@@ -96,7 +96,6 @@ bool grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, 
 	pixel_format_ = pixel_format;
 
 	initGraphics(sx, sy, &g_engine->_pixelformat);
-	_surface = new Graphics::ManagedSurface(sx, sy, g_engine->_pixelformat);
 	_screenBuf = new Graphics::ManagedSurface(sx, sy, g_engine->_pixelformat);
 
 	_isFullScreen = fullscreen;
@@ -134,7 +133,7 @@ bool grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, 
 }
 
 void grDispatcher::Fill(int val) {
-	_surface->clear(val);
+	_screenBuf->clear(val);
 }
 
 bool grDispatcher::Flush(int x, int y, int sx, int sy) {
@@ -152,7 +151,7 @@ bool grDispatcher::Flush(int x, int y, int sx, int sy) {
 	if (y1 > SizeY)
 		y1 = SizeY;
 
-	g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, x, y, x1 - x, y1 - y);
+	g_system->copyRectToScreen(_screenBuf->getPixels(), _screenBuf->pitch, x, y, x1 - x, y1 - y);
 	g_system->updateScreen();
 	return true;
 }
@@ -303,7 +302,6 @@ void grDispatcher::LineTo(int x, int y, int len, int dir, int col, int line_styl
 }
 
 void grDispatcher::Rectangle(int x, int y, int sx, int sy, int outcol, int incol, int mode, int line_style) {
-	warning("STUB: grDispatcher::Rectangle");
 	if (!sx || !sy) return;
 
 	LineTo(x, y, sx, GR_RIGHT, outcol, line_style);

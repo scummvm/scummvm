@@ -107,20 +107,7 @@ public:
 	}
 
 	grPixelFormat adjust_mode(grPixelFormat pixel_format) const {
-		if (!is_mode_supported(pixel_format)) {
-			switch (pixel_format) {
-			case GR_RGB565:
-				return GR_ARGB1555;
-			case GR_ARGB1555:
-				return GR_RGB565;
-			case GR_RGB888:
-				return GR_ARGB8888;
-			case GR_ARGB8888:
-				return GR_RGB888;
-			}
-		}
-
-		return pixel_format;
+		return GR_RGB565;
 	}
 
 	bool init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, bool fullscreen = false);
@@ -304,21 +291,11 @@ public:
 		return pixel_format_;
 	}
 	void set_pixel_format(grPixelFormat mode) {
-		pixel_format_ = mode;
+		pixel_format_ = GR_RGB565;
 	}
 
 	inline int bytes_per_pixel() const {
-		switch (pixel_format_) {
-		case GR_RGB565:
-		case GR_ARGB1555:
-			return 2;
-		case GR_RGB888:
-			return 3;
-		case GR_ARGB8888:
-			return 4;
-		}
-
-		return 0;
+		return 2;
 	}
 
 	enum { // маски для high color режимов
@@ -569,8 +546,6 @@ protected:
 	int temp_buffer_size_;
 
 private:
-
-	Graphics::ManagedSurface *_surface;
 
 	bool _isFullScreen;
 
