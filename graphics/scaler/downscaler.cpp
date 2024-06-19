@@ -19,6 +19,7 @@
  *
  */
 #include "common/debug.h"
+#include "common/textconsole.h"
 #include "graphics/scaler/downscaler.h"
 #include "graphics/scaler/intern.h"
 

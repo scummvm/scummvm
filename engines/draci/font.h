@@ -23,6 +23,7 @@
 #define DRACI_FONT_H
 
 #include "graphics/font.h"
+#include "common/path.h"
 
 namespace Draci {
 

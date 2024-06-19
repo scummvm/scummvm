@@ -22,6 +22,7 @@
 #ifndef ZVISION_ACTIONS_H
 #define ZVISION_ACTIONS_H
 
+#include "common/path.h"
 #include "common/str.h"
 #include "common/rect.h"
 

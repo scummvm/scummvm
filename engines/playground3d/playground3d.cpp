@@ -21,6 +21,7 @@
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
+#include "common/error.h"
 #include "common/events.h"
 
 #include "graphics/renderer.h"

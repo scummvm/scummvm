@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "common/hash-str.h"
 #include "common/hashmap.h"
+#include "common/path.h"
 #include "common/rect.h"
 #include "common/str.h"
 #include "common/str-array.h"

@@ -22,6 +22,8 @@
 #include "common/config-manager.h"
 #include "common/translation.h"
 
+#include "engines/metaengine.h"
+
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macmenu.h"
 

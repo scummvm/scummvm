@@ -22,6 +22,7 @@
 #include "common/config-manager.h"
 #include "common/fs.h"
 #include "common/system.h"
+#include "engines/metaengine.h"
 #include "engines/util.h"
 #include "chewy/chewy.h"
 #include "chewy/cursor.h"

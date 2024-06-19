@@ -23,6 +23,7 @@
 #define MM_UTILS_STRINGS_DATA_H
 
 #include "common/hash-str.h"
+#include "common/path.h"
 
 namespace MM {
 

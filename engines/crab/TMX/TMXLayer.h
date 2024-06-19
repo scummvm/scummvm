@@ -35,6 +35,8 @@
 #include "crab/image/Image.h"
 #include "crab/TMX/TileInfo.h"
 
+#include "common/list.h"
+
 namespace Crab {
 
 namespace TMX {

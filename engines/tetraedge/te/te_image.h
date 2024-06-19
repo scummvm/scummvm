@@ -22,6 +22,7 @@
 #ifndef TETRAEDGE_TE_TE_IMAGE_H
 #define TETRAEDGE_TE_TE_IMAGE_H
 
+#include "common/fs.h"
 #include "common/ptr.h"
 #include "common/stream.h"
 #include "common/types.h"

@@ -22,6 +22,7 @@
 #ifndef ASYLUM_SYSTEM_TEXT_H
 #define ASYLUM_SYSTEM_TEXT_H
 
+#include "common/ptr.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
 #include "graphics/font.h"

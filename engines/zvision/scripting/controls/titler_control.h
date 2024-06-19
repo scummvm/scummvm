@@ -26,6 +26,7 @@
 
 #include "graphics/surface.h"
 
+#include "common/path.h"
 #include "common/rect.h"
 #include "common/array.h"
 

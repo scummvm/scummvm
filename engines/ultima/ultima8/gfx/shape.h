@@ -24,6 +24,8 @@
 
 #include "ultima/shared/std/containers.h"
 
+#include "common/stream.h"
+
 namespace Ultima {
 namespace Ultima8 {
 

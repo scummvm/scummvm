@@ -22,6 +22,7 @@
 #ifndef FREESCAPE_GFX_H
 #define FREESCAPE_GFX_H
 
+#include "common/hashmap.h"
 #include "common/rendermode.h"
 #include "common/rect.h"
 

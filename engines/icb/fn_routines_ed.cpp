@@ -26,6 +26,7 @@
 
 #include "engines/icb/fn_routines.h"
 #include "common/debug.h"
+#include "common/textconsole.h"
 
 namespace ICB {
 

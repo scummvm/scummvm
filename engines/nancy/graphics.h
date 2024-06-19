@@ -22,6 +22,8 @@
 #ifndef NANCY_GRAPHICS_H
 #define NANCY_GRAPHICS_H
 
+#include "common/path.h"
+
 #include "graphics/screen.h"
 
 #include "engines/nancy/font.h"

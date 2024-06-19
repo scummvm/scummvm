@@ -22,6 +22,7 @@
 #ifndef STARK_RESOURCES_ANIM_H
 #define STARK_RESOURCES_ANIM_H
 
+#include "common/path.h"
 #include "common/rect.h"
 #include "common/str.h"
 

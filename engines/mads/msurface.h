@@ -23,6 +23,7 @@
 #define MADS_MSURFACE_H
 
 #include "common/scummsys.h"
+#include "common/path.h"
 #include "common/rect.h"
 #include "graphics/screen.h"
 #include "mads/palette.h"

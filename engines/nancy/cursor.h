@@ -23,6 +23,7 @@
 #define NANCY_CURSOR_H
 
 #include "common/array.h"
+#include "common/stream.h"
 
 #include "graphics/managed_surface.h"
 

@@ -22,6 +22,7 @@
 #ifndef STARK_RESOURCES_IMAGE_H
 #define STARK_RESOURCES_IMAGE_H
 
+#include "common/path.h"
 #include "common/rect.h"
 #include "common/str.h"
 

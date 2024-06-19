@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/str.h"
 #include "twine/shared.h"
 
 namespace TwinE {

@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/str.h"
 
 namespace Sherlock {
 

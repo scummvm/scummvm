@@ -25,6 +25,8 @@
 #include "backends/graphics/opengl/framebuffer.h"
 #include "backends/graphics/windowed.h"
 
+#include "base/plugins.h"
+
 #include "common/frac.h"
 #include "common/mutex.h"
 #include "common/ustr.h"

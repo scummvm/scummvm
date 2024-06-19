@@ -23,6 +23,7 @@
 #define MADS_ASSETS_H
 
 #include "common/array.h"
+#include "common/path.h"
 #include "mads/palette.h"
 
 namespace MADS {

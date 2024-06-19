@@ -24,6 +24,7 @@
 
 #include "common/rect.h"
 #include "common/array.h"
+#include "common/language.h"
 #include "common/str.h"
 #include "math/vector3d.h"
 

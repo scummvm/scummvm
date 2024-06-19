@@ -22,6 +22,7 @@
 #ifndef NANCY_RENDEROBJECT_H
 #define NANCY_RENDEROBJECT_H
 
+#include "common/path.h"
 #include "graphics/managed_surface.h"
 
 namespace Nancy {

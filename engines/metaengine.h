@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/error.h"
 #include "common/array.h"
+#include "common/debug-channels.h"
 
 #include "engines/achievements.h"
 #include "engines/game.h"
@@ -74,20 +75,6 @@ struct ExtraGuiOption {
 	byte groupId;        /*!< Id for the checkbox's group, or 0 for no group. */
 	byte groupLeaderId;  /*!< When this checkbox is unchecked, disable all checkboxes in this group. One leader per group. */
 };
-
-/**
- * debug channels structure
- */
-struct DebugChannelDef {
-	uint32 channel;				/*!< enum value, channel id, e.g. kDebugGlobalDetection */
-	const char *name;			/*!< name of debug channel, e.g. "detection" */
-	const char *description;	/*!< description of debug channel, e.g. "track scripts" */
-};
-
-/**
- * delimiter of the array of DebugChannelDef
- */
-#define DEBUG_CHANNEL_END {0, NULL, NULL}
 
 /**
  * Array of ExtraGuiOption structures.

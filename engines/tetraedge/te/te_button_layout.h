@@ -27,6 +27,8 @@
 #include "tetraedge/te/te_signal.h"
 #include "tetraedge/te/te_timer.h"
 
+#include "common/path.h"
+
 namespace Common {
 struct Point;
 }

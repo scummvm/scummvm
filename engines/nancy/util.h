@@ -21,6 +21,8 @@
 #ifndef NANCY_UTIL_H
 #define NANCY_UTIL_H
 
+#include "common/array.h"
+#include "common/path.h"
 #include "common/rect.h"
 #include "common/serializer.h"
 

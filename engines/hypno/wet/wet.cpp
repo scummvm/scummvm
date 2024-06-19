@@ -25,6 +25,9 @@
 
 #include "hypno/hypno.h"
 
+#include "engines/metaengine.h"
+#include "engines/savestate.h"
+
 namespace Hypno {
 
 static const char *failedDetectionError = \

@@ -33,6 +33,7 @@
 #include "graphics/tinygl/gl.h"
 
 #include "common/rect.h"
+#include "common/textconsole.h"
 
 namespace TinyGL {
 

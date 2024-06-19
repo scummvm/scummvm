@@ -24,6 +24,7 @@
 
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
+#include "common/path.h"
 #include "graphics/font.h"
 
 namespace Ultima {

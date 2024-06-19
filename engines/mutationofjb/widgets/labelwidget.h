@@ -24,6 +24,8 @@
 
 #include "mutationofjb/widgets/widget.h"
 
+#include "common/str.h"
+
 namespace MutationOfJB {
 
 class LabelWidget : public Widget {

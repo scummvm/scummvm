@@ -22,6 +22,7 @@
 #include "common/compression/powerpacker.h"
 #include "common/memstream.h"
 #include "common/debug.h"
+#include "common/textconsole.h"
 
 namespace Common {
 

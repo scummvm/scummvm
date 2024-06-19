@@ -25,6 +25,7 @@
 #include "gui/debugger.h"
 
 #include "common/hashmap.h"
+#include "common/path.h"
 
 namespace Common {
 class String;

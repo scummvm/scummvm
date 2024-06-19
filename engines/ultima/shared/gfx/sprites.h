@@ -23,6 +23,7 @@
 #define ULTIMA_SPRITES_H
 
 #include "common/array.h"
+#include "common/path.h"
 #include "graphics/managed_surface.h"
 #include "ultima/shared/core/rect.h"
 

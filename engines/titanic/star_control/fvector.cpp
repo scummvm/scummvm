@@ -22,6 +22,7 @@
 #include "titanic/star_control/fvector.h"
 #include "titanic/star_control/fpose.h"
 
+#include "common/str.h"
 #include "common/math.h"
 
 namespace Titanic {
