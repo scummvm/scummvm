@@ -161,6 +161,7 @@ bool inputRecorder::dispatch_message(const MSG &msg) {
 }
 
 bool inputRecorder::dispatch_message(const inputRecorderMessage &imsg) {
+#if 0
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
 
@@ -199,6 +200,7 @@ bool inputRecorder::dispatch_message(const inputRecorderMessage &imsg) {
 		msg.lParam = (LPARAM)imsg.flags();
 		return input::keyboard_wndproc(msg, keyboardDispatcher::instance());
 	}
+#endif
 	return false;
 }
 
