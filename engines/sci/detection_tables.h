@@ -1410,15 +1410,28 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "daf64a91344a7934fe4374765267c2af", 5767},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_HOYLE5_SAVELOAD },
+		
+	// Hoyle 5 (Hoyle Classic Games for Laptops) - Windows
+	// File date: 1995.11.04
+	// This version is unsupported because it is missing the main menu resources and will crash.
+	// Each card game was launched by a Windows shortcut that passed a config file to the interpreter
+	// via the command line. Each config file provided a card game room and skipped the main menu.
+	{"hoyle5", _s("Game does not contain menu resources"), {
+		{"resmap.000", 0, "000fd106aa6c5eb1d15a76fd2416677a", 4213},
+		{"ressci.000", 0, "ca50cf09f80a5f982a965afea852cc42", 3279020},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSUPPORTED | ADGF_DROPPLATFORM, GUIO_HOYLE5_SAVELOAD },
 
 	// Hoyle 5 (Hoyle Classic Games for Laptops) - Windows
-	// SCI 2.100.002
-	// Reported by misterhands in bug Trac #10676
-	{"hoyle5", "", {
-		{"ressci.000", 0, "ca50cf09f80a5f982a965afea852cc42", 3278849},
+	// File date: 1995.11.21
+	// This versi on is unsupported because it is missing the main menu resources and will crash.
+	// Each card game was launched by a Windows shortcut that passed a config file to the interpreter
+	// via the command line. Each config file provided a card game room and skipped the main menu.
+	{"hoyle5", _s("Game does not contain menu resources"), {
 		{"resmap.000", 0, "d5eef6f2529313e950c4d78251a95b1e", 4213},
+		{"ressci.000", 0, "ca50cf09f80a5f982a965afea852cc42", 3278849},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_HOYLE5_SAVELOAD },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSUPPORTED | ADGF_DROPPLATFORM, GUIO_HOYLE5_SAVELOAD },
 
 	// Hoyle Bridge - Windows
 	{"hoyle5bridge", "", {
