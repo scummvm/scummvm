@@ -282,47 +282,28 @@ void grDispatcher::LineTo(int x, int y, int len, int dir, int col, int line_styl
 	case GR_LEFT:
 		v = x - len;
 		if (!clip_line(x, y, v, y)) return;
-		for (i = x; i > v; i --) {
-			if (++stv > line_style) {
-				SetPixelFast(i, y, col);
-				stv = 0;
-			}
-		}
+		_screenBuf->vLine(x, y, y + len, col);
 		break;
 	case GR_TOP:
 		v = y - len;
 		if (!clip_line(x, y, x, v)) return;
-		for (i = y; i > v; i --) {
-			if (++stv > line_style) {
-				SetPixelFast(x, i, col);
-				stv = 0;
-			}
-		}
+		_screenBuf->hLine(x, y, x + len, col);
 		break;
 	case GR_RIGHT:
 		v = x + len;
 		if (!clip_line(x, y, v, y)) return;
-		for (i = x; i < v; i ++) {
-			if (++stv > line_style) {
-				SetPixelFast(i, y, col);
-				stv = 0;
-			}
-		}
+		_screenBuf->vLine(x, y, y + len, col);
 		break;
 	case GR_BOTTOM:
 		v = y + len;
 		if (!clip_line(x, y, x, v)) return;
-		for (i = y; i < v; i ++) {
-			if (++stv > line_style) {
-				SetPixelFast(x, i, col);
-				stv = 0;
-			}
-		}
+		_screenBuf->hLine(x, y, x + len, col);
 		break;
 	}
 }
 
 void grDispatcher::Rectangle(int x, int y, int sx, int sy, int outcol, int incol, int mode, int line_style) {
+	warning("STUB: grDispatcher::Rectangle");
 	if (!sx || !sy) return;
 
 	LineTo(x, y, sx, GR_RIGHT, outcol, line_style);
