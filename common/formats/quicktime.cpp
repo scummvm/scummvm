@@ -51,6 +51,8 @@ QuickTimeParser::QuickTimeParser() {
 	_disposeFileHandle = DisposeAfterUse::YES;
 	_timeScale = 1;
 	_qtvrType = QTVRType::OTHER;
+	_winX = 0;
+	_winY = 0;
 
 	initParseTable();
 }
@@ -163,6 +165,7 @@ void QuickTimeParser::initParseTable() {
 		{ &QuickTimeParser::readTRAK,    MKTAG('t', 'r', 'a', 'k') },
 		{ &QuickTimeParser::readDefault, MKTAG('u', 'd', 't', 'a') },
 		{ &QuickTimeParser::readCTYP,    MKTAG('c', 't', 'y', 'p') },
+		{ &QuickTimeParser::readWLOC,    MKTAG('W', 'L', 'O', 'C') },
 		{ &QuickTimeParser::readNAVG,    MKTAG('N', 'A', 'V', 'G') },
 		{ &QuickTimeParser::readVMHD,    MKTAG('v', 'm', 'h', 'd') },
 		{ &QuickTimeParser::readCMOV,    MKTAG('c', 'm', 'o', 'v') },
@@ -831,6 +834,13 @@ int QuickTimeParser::readCTYP(Atom atom) {
 		warning("QuickTimeParser::readCTYP(): Unknown QTVR Type ('%s')", tag2str(ctype));
 		break;
 	}
+
+	return 0;
+}
+
+int QuickTimeParser::readWLOC(Atom atom) {
+	_winX = _fd->readUint16BE();
+	_winY = _fd->readUint16BE();
 
 	return 0;
 }
