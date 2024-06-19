@@ -199,7 +199,7 @@ void Room::demon5TouchedDoorOpenTrigger() {
 	if (!_roomVar.demon.movingToDoor)
 		return;
 	loadActorAnim(12, "s0r6d1", 0xa0, 0x92, 1);
-	playSoundEffectIndex(0x05);
+	playSoundEffectIndex(kSfxDoor);
 }
 
 void Room::demon5DoorOpenedOrReachedDoor() {
@@ -212,7 +212,7 @@ void Room::demon5DoorOpenedOrReachedDoor() {
 
 void Room::demon5UseSTricorderOnCrate() {
 	loadActorAnim(OBJECT_SPOCK, "sscans", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM5_006);
 }
 
@@ -413,7 +413,7 @@ void Room::demon5UseMTricorderOnRoberts() {
 	if (_roomVar.demon.scannedRoberts)
 		return;
 	loadActorAnim2(OBJECT_MCCOY, "mscane", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, TX_DEM5_015);
 
 	_roomVar.demon.scannedRoberts = true;
@@ -423,7 +423,7 @@ void Room::demon5UseMTricorderOnRoberts() {
 
 void Room::demon5UseMTricorderOnChub() {
 	loadActorAnim2(OBJECT_MCCOY, "mscane", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 
 	if (_awayMission->demon.curedChub) {
 		if (_roomVar.demon.scannedChub)
@@ -449,7 +449,7 @@ void Room::demon5UseMTricorderOnGrisnash() {
 	if (_roomVar.demon.scannedGrisnash)
 		return;
 	loadActorAnim2(OBJECT_MCCOY, "mscane", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, TX_DEM5_013);
 
 	_roomVar.demon.scannedGrisnash = true;
@@ -461,7 +461,7 @@ void Room::demon5UseMTricorderOnStephen() {
 	if (_roomVar.demon.scannedStephen)
 		return;
 	loadActorAnim2(OBJECT_MCCOY, "mscanw", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, TX_DEM5_014);
 
 	_roomVar.demon.scannedStephen = true;

@@ -1295,7 +1295,7 @@ int StarTrekEngine::showInventoryMenu(int x, int y, bool restoreMouse) {
 		removeNextEvent();
 	}
 
-	_sound->playSoundEffectIndex(0x10);
+	_sound->playSoundEffectIndex(kSfxSelection);
 	if (lastItemIndex >= 0)
 		drawMenuButtonOutline(itemSprites[lastItemIndex].bitmap, 0);
 

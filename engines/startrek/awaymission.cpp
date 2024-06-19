@@ -156,7 +156,7 @@ void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {
 		_kirkActor->triggerActionWhenAnimFinished = true;
 		_kirkActor->finishedAnimActionParam = 0xff;
 		_awayMission.disableInput = true;
-		_sound->playSoundEffectIndex(0x09);
+		_sound->playSoundEffectIndex(kSfxTransporterMaterialize);
 		_warpHotspotsActive = false;
 		break;
 	case 5: // Crew spawns in directly at a position.

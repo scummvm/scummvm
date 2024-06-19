@@ -334,7 +334,7 @@ void Room::demon1Timer1Expired() {
 
 void Room::demon1KlingonFinishedAimingWeapon() {
 	loadActorAnim(11, _roomVar.demon.d6, 0, 0, 0);
-	playSoundEffectIndex(0x06);
+	playSoundEffectIndex(kSfxPhaser);
 
 	_roomVar.demon.attackIndex++;
 	int crewman = OBJECT_REDSHIRT;
@@ -393,7 +393,7 @@ void Room::demon1ShootKlingon1() {
 		_awayMission->disableWalking = false;
 	}
 	loadActorAnim(12, "s0ks1", 0, 0, 0);
-	playSoundEffectIndex(0x06);
+	playSoundEffectIndex(kSfxPhaser);
 	playVoc("EFX19");
 	loadActorAnim2(8, "klg1d", 0x120, 0x84, 7);
 }
@@ -441,7 +441,7 @@ void Room::demon1ShootKlingon2() {
 		_awayMission->disableWalking = false;
 	}
 	loadActorAnim(12, "s0ks2", 0, 0, 0);
-	playSoundEffectIndex(0x06);
+	playSoundEffectIndex(kSfxPhaser);
 	loadActorAnim2(9, "klg2d", 0xaa, 0x7c, 0);
 	_awayMission->disableInput = 0;
 }
@@ -470,7 +470,7 @@ void Room::demon1ShootKlingon3() {
 		_awayMission->disableWalking = false;
 	}
 	loadActorAnim(12, "s0ks3", 0, 0, 0);
-	playSoundEffectIndex(0x06);
+	playSoundEffectIndex(kSfxPhaser);
 	loadActorAnim2(10, "klg3d", 0, 0, 0);
 	_awayMission->disableInput = 0;
 }
@@ -498,37 +498,37 @@ void Room::demon1Timer5Expired() {
 
 void Room::demon1UseMTricorderOnKlingon() {
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, TX_DEM1_012);
 }
 
 void Room::demon1UseSTricorderOnTulips() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM1_007);
 }
 
 void Room::demon1UseSTricorderOnPods() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM1_008);
 }
 
 void Room::demon1UseSTricorderOnCattails() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM1_005);
 }
 
 void Room::demon1UseSTricorderOnFerns() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM1_006);
 }
 
 void Room::demon1UseSTricorderOnHand() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM1_017);
 }
 
@@ -537,7 +537,7 @@ void Room::demon1UseSTricorderOnKlingon1() {
 	// actually call the function...
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 
 	if (_roomVar.demon.numKlingonsKilled == 3 && !_awayMission->demon.tookKlingonHand && _rdfData[0xcf] != 1) {
 		showText(TX_SPEAKER_SPOCK, TX_DEM1_018);
@@ -549,7 +549,7 @@ void Room::demon1UseSTricorderOnKlingon1() {
 
 void Room::demon1UseSTricorderOnKlingon2Or3() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM1_019);
 }
 
@@ -570,7 +570,7 @@ void Room::demon1UseMTricorderOnRedshirt() {
 
 void Room::demon1UseMTricorderOnCrewman() {
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, TX_DEM1_009);
 }
 

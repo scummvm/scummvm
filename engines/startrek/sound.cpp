@@ -288,54 +288,54 @@ void Sound::stopPlayingSpeech() {
 	}
 }
 
-void Sound::playSoundEffectIndex(int index) {
+void Sound::playSoundEffectIndex(SoundEffects index) {
 	if (!(_vm->getFeatures() & GF_CDROM))
 		playMidiTrack(index);
 	else {
 		switch (index) {
-		case 0x04:
+		case kSfxTricorder:
 			playVoc("tricorde");
 			break;
-		case 0x05:
+		case kSfxDoor:
 			playVoc("STDOOR1");
 			break;
-		case 0x06:
+		case kSfxPhaser:
 			playVoc("PHASSHOT");
 			break;
-		case 0x07:
+		case kSfxButton:
 			playMidiTrack(index);
 			break;
-		case 0x08:
+		case kSfxTransporterDematerialize:
 			playVoc("TRANSDEM");
 			break;
-		case 0x09: // Beaming in?
+		case kSfxTransporterMaterialize:
 			playVoc("TRANSMAT");
 			break;
-		case 0x0a: // Beaming out?
+		case kSfxTransporterEnergize:
 			playVoc("TRANSENE");
 			break;
-		case 0x10: // Menu selection sound
+		case kSfxSelection:
 			playMidiTrack(index);
 			break;
-		case 0x22:
+		case kSfxHailing:
 			playVoc("HAILING");
 			break;
-		case 0x24:
+		case kSfxPhaser2:
 			playVoc("PHASSHOT");
 			break;
-		case 0x25:
+		case kSfxPhotonTorpedoes:
 			playVoc("PHOTSHOT");
 			break;
-		case 0x26:
+		case kSfxShieldHit:
 			playVoc("HITSHIEL");
 			break;
-		case 0x27:
+		case kSfxUnk:
 			playMidiTrack(index);
 			break;
-		case 0x28:
+		case kSfxRedAlert:
 			playVoc("REDALERT");
 			break;
-		case 0x29:
+		case kSfxWarp:
 			playVoc("WARP");
 			break;
 		default:

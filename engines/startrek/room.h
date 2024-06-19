@@ -262,7 +262,7 @@ private:
 	/**
 	 * Cmd 0x0f
 	 */
-	void playSoundEffectIndex(int soundEffect);
+	void playSoundEffectIndex(SoundEffects soundEffect);
 	/**
 	 * Cmd 0x10
 	 */

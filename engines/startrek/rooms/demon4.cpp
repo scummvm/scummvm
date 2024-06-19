@@ -745,13 +745,13 @@ void Room::demon4TalkToRedshirt() {
 
 void Room::demon4UseSTricorderOnChamber() {
 	loadActorAnim2(OBJECT_SPOCK, "sscane", -1, -1, 0);
-	playSoundEffectIndex(4);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM4_012);
 }
 
 void Room::demon4UseSTricorderOnPattern() {
 	loadActorAnim2(OBJECT_SPOCK, "sscane", -1, -1, 0);
-	playSoundEffectIndex(4);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM4_014);
 	showText(TX_SPEAKER_SPOCK, TX_DEM4_025);
 }
@@ -762,49 +762,49 @@ void Room::demon4UseMTricorderOnPattern() {
 
 void Room::demon4UseSTricorderOnPanel() {
 	loadActorAnim2(OBJECT_SPOCK, "sscane", -1, -1, 0);
-	playSoundEffectIndex(4);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM4_027);
 }
 
 void Room::demon4UseMTricorderOnPanel() {
 	loadActorAnim2(OBJECT_MCCOY, "mscane", -1, -1, 0);
-	playSoundEffectIndex(4);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, TX_DEM4_027); // BUG: Uses spock's voice (though speaker says "Mccoy")
 }
 
 void Room::demon4UseSTricorderOnAnything() {
 	loadActorAnim2(OBJECT_SPOCK, "sscane", -1, -1, 0);
-	playSoundEffectIndex(4);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM4_023);
 }
 
 void Room::demon4UseMTricorderOnAnything() {
 	loadActorAnim2(OBJECT_MCCOY, "mscane", -1, -1, 0);
-	playSoundEffectIndex(4);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, TX_DEM4_020);
 }
 
 void Room::demon4UseSTricorderOnNauian() {
 	loadActorAnim2(OBJECT_SPOCK, "sscane", -1, -1, 0);
-	playSoundEffectIndex(4);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM4_029);
 }
 
 void Room::demon4UseMTricorderOnNauian() {
 	loadActorAnim2(OBJECT_MCCOY, "mscane", -1, -1, 0);
-	playSoundEffectIndex(4);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM4_029); // BUG: Uses spock's voice (speaker says "Spock" too)
 }
 
 void Room::demon4UseSTricorderOnSecurityEquipment() {
 	loadActorAnim2(OBJECT_SPOCK, "sscane", -1, -1, 0);
-	playSoundEffectIndex(4);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM4_026);
 }
 
 void Room::demon4UseMTricorderOnSecurityEquipment() {
 	loadActorAnim2(OBJECT_MCCOY, "mscane", -1, -1, 0);
-	playSoundEffectIndex(4);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM4_026); // BUG: Uses spock's voice (speaker says "Spock" too)
 }
 

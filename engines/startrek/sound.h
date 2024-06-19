@@ -68,7 +68,7 @@ public:
 	void playSpeech(const Common::String &basename);
 	void stopAllVocSounds();
 	void stopPlayingSpeech();
-	void playSoundEffectIndex(int index);
+	void playSoundEffectIndex(SoundEffects index);
 	void setMusicEnabled(bool enable);
 	void setSfxEnabled(bool enable);
 	void toggleMusic();

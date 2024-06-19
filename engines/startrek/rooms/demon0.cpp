@@ -219,7 +219,7 @@ void Room::demon0TouchedHotspot1() {
 	if (!_roomVar.demon.movingToBottomDoor)
 		return;
 	loadActorAnim2(9, "s0r0d1", 254, 153, 1);
-	playSoundEffectIndex(0x05);
+	playSoundEffectIndex(kSfxDoor);
 }
 
 void Room::demon0ReachedBottomDoor() {
@@ -239,7 +239,7 @@ void Room::demon0TouchedHotspot0() {
 	if (!_roomVar.demon.movingToTopDoor)
 		return;
 	loadActorAnim2(10, "s0r0d2", 158, 130, 2);
-	playSoundEffectIndex(0x05);
+	playSoundEffectIndex(kSfxDoor);
 }
 
 void Room::demon0ReachedTopDoor() {
@@ -451,19 +451,19 @@ void Room::demon0AskPrelateAboutSightings() {
 
 void Room::demon0UseSTricorderAnywhere() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_SPOCK, TX_DEM0_028);
 }
 
 void Room::demon0UseMTricorderAnywhere() {
 	loadActorAnim2(OBJECT_MCCOY, "mscans", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 	showText(TX_SPEAKER_MCCOY, TX_DEM0_021);
 }
 
 void Room::demon0UseMTricorderOnPrelate() {
 	loadActorAnim2(OBJECT_MCCOY, "mscans", -1, -1, 0);
-	playSoundEffectIndex(0x04);
+	playSoundEffectIndex(kSfxTricorder);
 
 	if (_awayMission->demon.talkedToPrelate)
 		showText(TX_SPEAKER_MCCOY, TX_DEM0_018);

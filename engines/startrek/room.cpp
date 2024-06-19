@@ -510,7 +510,7 @@ int16 Room::getRandomWordInRange(int start, int end) {
 	return _vm->getRandomWord() % (end - start + 1) + start;
 }
 
-void Room::playSoundEffectIndex(int soundEffect) {
+void Room::playSoundEffectIndex(SoundEffects soundEffect) {
 	_vm->_sound->playSoundEffectIndex(soundEffect);
 }
 
@@ -532,7 +532,7 @@ void Room::endMission(int16 score, int16 arg1, int16 arg2) {
 	_vm->_mccoyActor->animationString.clear();
 	_vm->_redshirtActor->animationString.clear();
 
-	playSoundEffectIndex(8);
+	playSoundEffectIndex(kSfxTransporterDematerialize);
 
 	while (_vm->_kirkActor->spriteDrawn)
 		_vm->handleAwayMissionEvents();
