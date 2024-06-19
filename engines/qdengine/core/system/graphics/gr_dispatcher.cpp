@@ -152,7 +152,7 @@ bool grDispatcher::Flush(int x, int y, int sx, int sy) {
 	if (y1 > SizeY)
 		y1 = SizeY;
 
-	g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, x, y, x1, y1);
+	g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, x, y, x1 - x, y1 - y);
 	g_system->updateScreen();
 	return true;
 }
