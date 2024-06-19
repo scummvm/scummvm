@@ -20,6 +20,7 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/events.h"
 #include "common/textconsole.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/input/input_recorder.h"
@@ -32,54 +33,45 @@ namespace QDEngine {
 
 namespace input {
 
-bool keyboard_wndproc(const MSG &msg, keyboardDispatcher *dsp) {
-	switch (msg.message) {
-	case WM_KEYDOWN:
-	case WM_SYSKEYDOWN:
-		dsp->handle_event((int)msg.wParam, true);
-		inputRecorder::instance().dispatch_message(msg);
+bool keyboard_wndproc(const Common::Event &event, keyboardDispatcher *dsp) {
+	switch (event.type) {
+	case Common::EVENT_KEYDOWN:
+		dsp->handle_event((int)event.kbd.ascii, true);
 		return true;
-	case WM_KEYUP:
-	case WM_SYSKEYUP:
-		dsp->handle_event((int)msg.wParam, false);
-		inputRecorder::instance().dispatch_message(msg);
+	case Common::EVENT_KEYUP:
+		dsp->handle_event((int)event.kbd.ascii, false);
 		return true;
 	}
 	return false;
 }
 
-bool mouse_wndproc(const MSG &msg, mouseDispatcher *dsp) {
+bool mouse_wndproc(const Common::Event &event, mouseDispatcher *dsp) {
 	int x, y;
-	switch (msg.message) {
-	case WM_MOUSEMOVE:
-		x = LOWORD(msg.lParam);
-		y = HIWORD(msg.lParam);
-		dsp->handle_event(mouseDispatcher::EV_MOUSE_MOVE, x, y, msg.wParam);
-		inputRecorder::instance().dispatch_message(msg);
+	switch (event.type) {
+	case Common::EVENT_MOUSEMOVE:
+		x = event.mouse.x;
+		y = event.mouse.y;
+		dsp->handle_event(mouseDispatcher::EV_MOUSE_MOVE, x, y, 0);
 		return true;
-	case WM_LBUTTONDOWN:
-		x = LOWORD(msg.lParam);
-		y = HIWORD(msg.lParam);
-		dsp->handle_event(mouseDispatcher::EV_LEFT_DOWN, x, y, msg.wParam);
-		inputRecorder::instance().dispatch_message(msg);
+	case Common::EVENT_LBUTTONDOWN:
+		x = event.mouse.x;
+		y = event.mouse.y;
+		dsp->handle_event(mouseDispatcher::EV_LEFT_DOWN, x, y, 0);
 		return true;
-	case WM_RBUTTONDOWN:
-		x = LOWORD(msg.lParam);
-		y = HIWORD(msg.lParam);
-		dsp->handle_event(mouseDispatcher::EV_RIGHT_DOWN, x, y, msg.wParam);
-		inputRecorder::instance().dispatch_message(msg);
+	case Common::EVENT_RBUTTONDOWN:
+		x = event.mouse.x;
+		y = event.mouse.y;
+		dsp->handle_event(mouseDispatcher::EV_RIGHT_DOWN, x, y, 0);
 		return true;
-	case WM_LBUTTONUP:
-		x = LOWORD(msg.lParam);
-		y = HIWORD(msg.lParam);
-		dsp->handle_event(mouseDispatcher::EV_LEFT_UP, x, y, msg.wParam);
-		inputRecorder::instance().dispatch_message(msg);
+	case Common::EVENT_LBUTTONUP:
+		x = event.mouse.x;
+		y = event.mouse.y;
+		dsp->handle_event(mouseDispatcher::EV_LEFT_UP, x, y, 0);
 		return true;
-	case WM_RBUTTONUP:
-		x = LOWORD(msg.lParam);
-		y = HIWORD(msg.lParam);
-		dsp->handle_event(mouseDispatcher::EV_RIGHT_UP, x, y, msg.wParam);
-		inputRecorder::instance().dispatch_message(msg);
+	case Common::EVENT_RBUTTONUP:
+		x = event.mouse.x;
+		y = event.mouse.y;
+		dsp->handle_event(mouseDispatcher::EV_RIGHT_UP, x, y, 0);
 		return true;
 	}
 

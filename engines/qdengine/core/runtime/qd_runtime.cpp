@@ -23,6 +23,8 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/archive.h"
+#include "common/events.h"
+
 #include <locale.h>
 #include "qdengine/core/resource.h"
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
@@ -275,23 +277,17 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 
 	qd_gameD->resume(); // FIXME. HACK. We need to find where it is actually called
 
+	Common::Event event;
+
 	while (!exit_flag && !qd_gameD->need_exit()) {
-		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
-			switch (msg.message) {
-			case WM_QUIT:
+		while (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_QUIT:
 				if (!grDispatcher::instance()->is_in_reinit_mode())
 					exit_flag = true;
 				break;
-			case WM_SYSCOMMAND:
-				if (msg.wParam == SC_MAXIMIZE)
-					toggle_fullscreen(true);
-				break;
-			case WM_SYSKEYDOWN:
-				if (msg.wParam == VK_RETURN && msg.lParam & (1 << 29))
-					toggle_fullscreen();
-				break;
-			case WM_KEYDOWN:
-				if (msg.wParam == 'F')
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.ascii == 'f')
 					qdGameConfig::get_config().toggle_fps();
 #ifdef __QD_DEBUG_ENABLE__
 				else if (msg.wParam == VK_NEXT) {
@@ -317,13 +313,8 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 				break;
 			}
 
-			input::keyboard_wndproc(msg, keyboardDispatcher::instance());
-			input::mouse_wndproc(msg, mouseDispatcher::instance());
-
-#if 0
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-#endif
+			input::keyboard_wndproc(event, keyboardDispatcher::instance());
+			input::mouse_wndproc(event, mouseDispatcher::instance());
 		}
 
 		if (grDispatcher::is_active()) {

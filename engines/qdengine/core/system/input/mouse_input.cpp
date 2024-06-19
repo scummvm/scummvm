@@ -55,14 +55,20 @@ bool mouseDispatcher::handle_event(mouseEvent ev, int x, int y, int flags) {
 	if (event_handlers_[ev])
 		(*event_handlers_[ev])(x, y, flags);
 
-	if (flags & MK_LBUTTON) button_status_ |= 1 << (ID_BUTTON_LEFT);
-	else button_status_ &= ~(1 << ID_BUTTON_LEFT);
-
-	if (flags & MK_MBUTTON) button_status_ |= 1 << (ID_BUTTON_MIDDLE);
-	else button_status_ &= ~(1 << ID_BUTTON_MIDDLE);
-
-	if (flags & MK_RBUTTON) button_status_ |= 1 << (ID_BUTTON_RIGHT);
-	else button_status_ &= ~(1 << ID_BUTTON_RIGHT);
+	switch (ev) {
+	case EV_LEFT_DOWN:
+		button_status_ |= 1 << (ID_BUTTON_LEFT);
+		break;
+	case EV_LEFT_UP:
+		button_status_  &= ~(1 << ID_BUTTON_LEFT);
+		break;
+	case EV_RIGHT_DOWN:
+		button_status_ |= 1 << (ID_BUTTON_RIGHT);
+		break;
+	case EV_RIGHT_UP:
+		button_status_  &= ~(1 << ID_BUTTON_RIGHT);
+		break;
+	}
 
 	toggle_event(ev);
 	mouse_x_ = x;
