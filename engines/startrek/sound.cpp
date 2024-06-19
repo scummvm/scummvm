@@ -37,7 +37,7 @@ namespace StarTrek {
 Sound::Sound(StarTrekEngine *vm) : _vm(vm) {
 	_midiDevice = MT_AUTO;
 	_midiDriver = nullptr;
-	_loopingMidiTrack = false;
+	_loopingMidiTrack = MIDITRACK_0;
 
 	if (_vm->getPlatform() == Common::kPlatformDOS || _vm->getPlatform() == Common::kPlatformMacintosh) {
 		_midiDevice = MidiDriver::detectDevice(MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32);
@@ -94,7 +94,7 @@ void Sound::clearAllMidiSlots() {
 	}
 }
 
-void Sound::playMidiTrack(int track) {
+void Sound::playMidiTrack(MidiTracks track) {
 	if (!_vm->_musicEnabled || !_vm->_musicWorking)
 		return;
 
@@ -125,7 +125,7 @@ void Sound::playMidiTrack(int track) {
 	playMidiTrackInSlot(slot->slot, track);
 }
 
-void Sound::playMidiTrackInSlot(int slot, int track) {
+void Sound::playMidiTrackInSlot(int slot, MidiTracks track) {
 	assert(_loadedSoundData != nullptr);
 	debugC(6, kDebugSound, "Playing MIDI track %d (slot %d)", track, slot);
 
@@ -171,16 +171,16 @@ void Sound::loadMusicFile(const Common::String &baseSoundName) {
 	}
 }
 
-void Sound::playMidiMusicTracks(int startTrack, int loopTrack) {
+void Sound::playMidiMusicTracks(MidiTracks startTrack, MidiLoopType loopType) {
 	if (!_vm->_musicWorking || !_vm->_musicEnabled)
 		return;
 
-	if (loopTrack == -3)
+	if (loopType == kLoopTypeRepeat)
 		_loopingMidiTrack = startTrack;
-	else if (loopTrack != -2)
-		_loopingMidiTrack = loopTrack;
+	else if (loopType == kLoopTypeNone)
+		_loopingMidiTrack = MIDITRACK_NONE;
 
-	if (startTrack != -2 && _vm->_musicEnabled)
+	if (_vm->_musicEnabled)
 		playMidiTrackInSlot(0, startTrack);
 }
 
@@ -290,7 +290,7 @@ void Sound::stopPlayingSpeech() {
 
 void Sound::playSoundEffectIndex(SoundEffects index) {
 	if (!(_vm->getFeatures() & GF_CDROM))
-		playMidiTrack(index);
+		playMidiTrack((MidiTracks)index);
 	else {
 		switch (index) {
 		case kSfxTricorder:
@@ -303,7 +303,7 @@ void Sound::playSoundEffectIndex(SoundEffects index) {
 			playVoc("PHASSHOT");
 			break;
 		case kSfxButton:
-			playMidiTrack(index);
+			playMidiTrack(MIDITRACK_7);
 			break;
 		case kSfxTransporterDematerialize:
 			playVoc("TRANSDEM");
@@ -315,7 +315,7 @@ void Sound::playSoundEffectIndex(SoundEffects index) {
 			playVoc("TRANSENE");
 			break;
 		case kSfxSelection:
-			playMidiTrack(index);
+			playMidiTrack(MIDITRACK_16);
 			break;
 		case kSfxHailing:
 			playVoc("HAILING");
@@ -330,7 +330,7 @@ void Sound::playSoundEffectIndex(SoundEffects index) {
 			playVoc("HITSHIEL");
 			break;
 		case kSfxUnk:
-			playMidiTrack(index);
+			playMidiTrack(MIDITRACK_39);
 			break;
 		case kSfxRedAlert:
 			playVoc("REDALERT");
@@ -356,7 +356,7 @@ void Sound::setMusicEnabled(bool enable) {
 	_vm->_musicEnabled = enable;
 
 	if (enable)
-		playMidiMusicTracks(_loopingMidiTrack, _loopingMidiTrack);
+		playMidiTrackInSlot(0, _loopingMidiTrack);
 	else
 		clearMidiSlot(0);
 }

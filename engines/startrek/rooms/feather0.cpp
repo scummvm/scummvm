@@ -155,7 +155,7 @@ void Room::feather0Tick1() {
 }
 
 void Room::feather0Tick60() {
-	playMidiMusicTracks(33);
+	playMidiMusicTracks(MIDITRACK_33);
 }
 
 void Room::feather0TalkToQuetzecoatl() {
@@ -233,7 +233,7 @@ void Room::feather0TalkToQuetzecoatl() {
 	// Quetzecoatl ultimately warps the crew away no matter what
 	_awayMission->disableInput = true;
 	loadActorAnim(OBJECT_QUETZECOATL, "s5r0qt");
-	playMidiMusicTracks(1);
+	playMidiMusicTracks(MIDITRACK_1);
 	_awayMission->timers[0] = 50;
 	_awayMission->timers[1] = 64;
 }

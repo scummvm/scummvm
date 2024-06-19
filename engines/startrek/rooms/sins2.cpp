@@ -184,7 +184,7 @@ extern const RoomText sins2Texts[] = {
 
 void Room::sins2Tick1() {
 	playVoc("SIN2LOOP");
-	playMidiMusicTracks(MIDITRACK_27, -3);
+	playMidiMusicTracks(MIDITRACK_27, kLoopTypeRepeat);
 
 	if (!_awayMission->sins.enteredRoom2FirstTime)
 		_awayMission->disableInput = 2;

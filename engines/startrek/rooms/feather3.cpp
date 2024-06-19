@@ -179,7 +179,7 @@ extern const RoomText feather3Texts[] = {
 
 void Room::feather3Tick1() {
 	playVoc("FEA3LOOP");
-	playMidiMusicTracks(27);
+	playMidiMusicTracks(MIDITRACK_27);
 
 	if (!_awayMission->feather.tlaoxacTestPassed) {
 		loadActorAnim(OBJECT_TLAOXAC, "s5r3as", 0x2e, 0xab);
@@ -391,7 +391,7 @@ void Room::feather3TalkToTlaoxac() {
 				showText(TX_SPEAKER_TLAOXAC, TX_FEA3_040);
 				_awayMission->disableInput = true;
 				loadActorAnimC(OBJECT_TLAOXAC, "s5r3aj", -1, -1, &Room::feather3TlaoxacKilledRedshirt);
-				playMidiMusicTracks(2);
+				playMidiMusicTracks(MIDITRACK_2);
 				loadActorAnim(OBJECT_REDSHIRT, "s5r3rd");
 				_awayMission->redshirtDead = true;
 			} else

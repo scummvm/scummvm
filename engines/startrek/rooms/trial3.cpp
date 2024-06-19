@@ -172,7 +172,7 @@ void Room::trial3Tick1() {
 		_awayMission->disableWalking = true;
 		_awayMission->disableInput = 2;
 	}
-	playMidiMusicTracks(MIDITRACK_33, -1);
+	playMidiMusicTracks(MIDITRACK_33);
 }
 
 void Room::trial3Tick30() {
@@ -214,7 +214,7 @@ void Room::trial3KlingonShootsSomeone1() {
 	} else if (_awayMission->trial.klingonShootIndex == 2) {
 		playSoundEffectIndex(kSfxPhaser);
 		showBitmapFor5Ticks("t3phas05", 5);
-		playMidiMusicTracks(MIDITRACK_2, -1);
+		playMidiMusicTracks(MIDITRACK_2);
 		loadActorAnimC(OBJECT_KIRK, "kkillw", -1, -1, &Room::trial3KirkDoneDying);
 	}
 }
@@ -313,14 +313,14 @@ void Room::trial3CrewmanBeamedOut() {
 void Room::trial3Tick90() {
 	if ((!(_awayMission->trial.shotKlingons & 8) && _awayMission->trial.shotKlingonState != 20)) {
 		playSoundEffectIndex(kSfxTransporterMaterialize);
-		playMidiMusicTracks(MIDITRACK_32, -1);
+		playMidiMusicTracks(MIDITRACK_32);
 		loadActorAnimC(OBJECT_KLINGON_1, "t3ktel", 0x57, 0xb1, &Room::trial3Klingon1BeamedIn);
 		_awayMission->trial.shotKlingonState = 21;
 	}
 }
 
 void Room::trial3TouchedHotspot3() { // Activated the explosive
-	playMidiMusicTracks(MIDITRACK_2, -1);
+	playMidiMusicTracks(MIDITRACK_2);
 	playVoc("BITOKIRK");
 	loadActorAnimC(OBJECT_EXPLOSION, "t3expl", 0, 0xc7, &Room::trial3KirkExploded);
 }

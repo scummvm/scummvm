@@ -193,7 +193,7 @@ extern const RoomText feather6Texts[] = {
 
 void Room::feather6Tick1() {
 	playVoc("FEA6LOOP");
-	playMidiMusicTracks(27);
+	playMidiMusicTracks(MIDITRACK_27);
 	loadActorAnim(OBJECT_CRYSTALS, "s5r6cx", 0x8a, 0x91);
 	loadActorAnim(OBJECT_STALACTITES, "s5r6ts", 0x90, 0x25);
 }
@@ -227,7 +227,7 @@ void Room::feather6ReachedPositionToThrowRock() {
 void Room::feather6DoneThrowingRock() {
 	loadActorAnim2(OBJECT_STALACTITES, "s5r6tf");
 	loadActorAnimC(OBJECT_KIRK, "s5r6kd", -1, -1, &Room::feather6KirkDiedFromStalactites);
-	playMidiMusicTracks(1);
+	playMidiMusicTracks(MIDITRACK_1);
 }
 
 void Room::feather6KirkDiedFromStalactites() {
@@ -266,7 +266,7 @@ void Room::feather6HitCrystalsWithRockFirstTime() {
 void Room::feather6HitCrystalsWithRockSecondTime() {
 	loadActorAnimC(OBJECT_KIRK, "s5r6kd", -1, -1, &Room::feather6KirkDiedFromStalactites);
 	loadActorAnim2(OBJECT_STALACTITES, "s5r6tf");
-	playMidiMusicTracks(0);
+	playMidiMusicTracks(MIDITRACK_0);
 }
 
 void Room::feather6UseRockOnStalagmites() {

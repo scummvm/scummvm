@@ -217,7 +217,7 @@ void Room::sins3Tick1() {
 		loadActorAnim2(OBJECT_ITEM, "s3card", 0, 0);
 
 	_awayMission->sins.gatheredClues |= 2;
-	playMidiMusicTracks(MIDITRACK_27, -3);
+	playMidiMusicTracks(MIDITRACK_27, kLoopTypeRepeat);
 }
 
 void Room::sins3UseSTricorderOnBox() {

@@ -305,7 +305,7 @@ void Room::tug2Tick1() {
 
 	if (_awayMission->tug.field5b == 0) {
 		_awayMission->disableWalking = true;
-		playMidiMusicTracks(32, -1);
+		playMidiMusicTracks(MIDITRACK_32);
 	}
 
 	_awayMission->tug.field5b = 1;
@@ -486,7 +486,7 @@ void Room::tug2KirkReachedWiresToGet() {
 
 void Room::tug2KirkGotWires() {
 	if (_awayMission->tug.field35 == 0) {
-		playMidiMusicTracks(2, -1);
+		playMidiMusicTracks(MIDITRACK_2);
 		loadActorAnim2(OBJECT_BRIG, "zap", 0, 0, 1);
 		playVoc("NM8EXPLO");
 		loadActorAnim2(OBJECT_BOMB, "t2bbo", -3, 1, 0);
@@ -561,7 +561,7 @@ void Room::tug2RedshirtReachedButton() {
 void Room::tug2TurnedOffForceField() {
 	_awayMission->disableInput = false;
 	if (_awayMission->tug.field35 == 0) {
-		playMidiMusicTracks(2, -1);
+		playMidiMusicTracks(MIDITRACK_2);
 		loadActorAnim2(OBJECT_BRIG, "zap", 0, 0, 1);
 		playVoc("NM8EXPLO");
 		loadActorAnim2(OBJECT_BOMB, "t2bbo", -3, 1, 0);

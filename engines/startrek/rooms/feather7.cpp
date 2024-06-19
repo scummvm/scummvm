@@ -93,7 +93,7 @@ extern const RoomText feather7Texts[] = {
 
 void Room::feather7Tick1() {
 	playVoc("FEA7LOOP");
-	playMidiMusicTracks(33);
+	playMidiMusicTracks(MIDITRACK_33);
 	_awayMission->disableInput = 2;
 	loadActorAnim(OBJECT_QUETZECOATL, "s5r7qn", 0x106, 0x98);
 }

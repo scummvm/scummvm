@@ -302,7 +302,7 @@ void Room::love4Tick1() {
 
 void Room::love4Tick10() {
 	if (!_awayMission->love.visitedRoomWithRomulans) {
-		playMidiMusicTracks(1, -1);
+		playMidiMusicTracks(MIDITRACK_1);
 		_awayMission->love.visitedRoomWithRomulans = true;
 	}
 }

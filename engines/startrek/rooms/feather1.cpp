@@ -259,7 +259,7 @@ extern const RoomText feather1Texts[] = {
 
 void Room::feather1Tick1() {
 	playVoc("FEA1LOOP");
-	playMidiMusicTracks(27);
+	playMidiMusicTracks(MIDITRACK_27);
 
 	if (_awayMission->feather.vineState == 0)
 		_awayMission->disableInput = true;

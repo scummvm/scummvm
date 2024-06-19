@@ -514,8 +514,8 @@ void Room::playSoundEffectIndex(SoundEffects soundEffect) {
 	_vm->_sound->playSoundEffectIndex(soundEffect);
 }
 
-void Room::playMidiMusicTracks(int startTrack, int loopTrack) {
-	_vm->_sound->playMidiMusicTracks(startTrack, loopTrack);
+void Room::playMidiMusicTracks(MidiTracks startTrack, MidiLoopType loopType) {
+	_vm->_sound->playMidiMusicTracks(startTrack, loopType);
 }
 
 void Room::endMission(int16 score, int16 arg1, int16 arg2) {

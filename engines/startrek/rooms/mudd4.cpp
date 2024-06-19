@@ -552,7 +552,7 @@ void Room::mudd4TalkWithMuddAtMissionEnd() {
 		_awayMission->crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_E;
 		loadActorStandAnim(OBJECT_REDSHIRT);
 
-		playMidiMusicTracks(3);
+		playMidiMusicTracks(MIDITRACK_3);
 		loadActorAnim(OBJECT_11, "s4crhw", 0x13f, 0xc7);
 	}
 }
@@ -614,7 +614,7 @@ void Room::mudd4KirkReachedPositionToTalkToMudd() {
 				showText(TX_SPEAKER_KIRK, TX_MUD4_011);
 
 				_awayMission->mudd.missionScore += 4;
-				playMidiMusicTracks(30);
+				playMidiMusicTracks(MIDITRACK_30);
 
 				showText(TX_SPEAKER_MUDD, TX_MUD4_073);
 				showText(TX_SPEAKER_KIRK, TX_MUD4_035);

@@ -151,7 +151,7 @@ void Room::trial4Tick1() {
 	loadActorAnim2(OBJECT_GUARD, "kgstnd", 0xdc, 0x6a);
 	loadActorAnim2(OBJECT_QUETZECOATL, "qstand", 0x10e, 0xaa);
 
-	playMidiMusicTracks(MIDITRACK_32, -1);
+	playMidiMusicTracks(MIDITRACK_32);
 }
 
 void Room::trial4Tick60() {

@@ -206,7 +206,7 @@ void Room::demon4Tick1() {
 
 	if (!_awayMission->demon.foundAlienRoom) {
 		_awayMission->demon.foundAlienRoom = true;
-		playMidiMusicTracks(1, -1);
+		playMidiMusicTracks(MIDITRACK_1);
 	}
 }
 

@@ -304,7 +304,7 @@ void Room::trial0ReachedRoomCenter() {
 		gaveUp = true;
 
 	if (gaveUp) {
-		playMidiMusicTracks(2, -1);
+		playMidiMusicTracks(MIDITRACK_2);
 		showText(TX_SPEAKER_VLICT, TX_TRI0_049);
 		showText(TX_SPEAKER_VLICT, TX_TRI0_044);
 		_awayMission->trial.missionEndMethod = 0;
