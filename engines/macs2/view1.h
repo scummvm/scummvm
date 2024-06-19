@@ -67,7 +67,11 @@ private:
 	// they did and return true, return false otherwise
 	bool HandleWalkability(Character *c);
 
+	// fn0037_0E8C proc
+	uint8 LookupWalkability(const Common::Point &p) const;
 	bool IsWalkable(const Common::Point &p) const;
+
+	
 
 
 	public:
