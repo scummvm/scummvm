@@ -799,6 +799,7 @@ bool Character::HandleWalkability(Character *c) {
 bool Character::IsWalkable(const Common::Point &p) const {
 
 	uint32 value = g_engine->_pathfindingMap.getPixel(p.x, p.y);
+
 	return value < 0xC8;
 }
 
