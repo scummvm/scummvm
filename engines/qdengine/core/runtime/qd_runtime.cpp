@@ -273,6 +273,8 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 	bool exit_flag = false;
 	bool was_inactive = false;
 
+	qd_gameD->resume(); // FIXME. HACK. We need to find where it is actually called
+
 	while (!exit_flag && !qd_gameD->need_exit()) {
 		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
 			switch (msg.message) {
