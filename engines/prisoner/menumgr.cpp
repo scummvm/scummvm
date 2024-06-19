@@ -131,6 +131,9 @@ void PrisonerEngine::handleMainMenuInput() {
 		inpKeybSetWaitRelease(true);
 	} else if (keyState == Common::KEYCODE_UP) {
 		_selectedMenuIndex = (_selectedMenuIndex - 1) % MAIN_MENU_SIZE;
+		if (_selectedMenuIndex < 0) {
+			_selectedMenuIndex += MAIN_MENU_SIZE;
+		}
 		inpKeybSetWaitRelease(true);
 	} else if (keyState == Common::KEYCODE_RETURN) {
 		doMenuAction(_selectedMenuIndex);
