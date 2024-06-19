@@ -631,8 +631,11 @@ l0037_A1B9:
 		// TODO: Expose the position of the character sprite (or his feet)
 		const Common::Point &charPos = GetCharPosition();
 		out1 = Func101D(charPos.x, charPos.y);
+		
 		// TODO: In the logs there is also a value out2 (DX) returned - where
 		// does that come from?
+		// TODO: Fixing to 0 for now
+		out2 = 0;
 		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
@@ -2980,6 +2983,9 @@ void Script::ScriptExecutor::ExecuteScript() {
 		uint16 executingObjectIndex = 1;
 		GameObject *obj = GameObjects::instance().Objects[executingObjectIndex-1];
 		if (obj->Script.size() != 0) {
+			debug(
+					"----- TODO Not looped yet! - Switching execution to script for object: %.4x\n",
+					executingObjectIndex);
 			// TODO: Memory leak
 			SetScript(new Common::MemoryReadStream(obj->Script.data(), obj->Script.size()));
 			// TODO: Check if this process needs to go on (probably does)
