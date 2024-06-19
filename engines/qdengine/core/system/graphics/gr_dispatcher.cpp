@@ -32,14 +32,9 @@
 
 namespace QDEngine {
 
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
-
 grDispatcher::char_input_hanler_t grDispatcher::input_handler_ = 0;
 
-bool grDispatcher::is_active_ = false;
+bool grDispatcher::is_active_ = true; // We have system always active
 grDispatcher::restore_handler_t grDispatcher::restore_handler_ = 0;
 
 grDispatcher *grDispatcher::dispatcher_ptr_;
