@@ -1619,6 +1619,45 @@ static const uint16 ecoquest2PatchIconBarTutorial[] = {
 	PATCH_END
 };
 
+// When awarding points, the game often corrupts a random global variable.
+//  Rain:points takes an optional second parameter as the points flag to test.
+//  Instead of testing the parameter count before setting the flag, the script
+//  tests the parameter even if it doesn't exist. If the undefined value on the
+//  stack happens to be non-zero then the game treats it as a flag and attempts
+//  to set it. If the value is an object then this causes an arithmetic error,
+//  such as when clicking the passport on the customs officer, otherwise the
+//  "flag" is set and a global is altered.
+//
+// We fix this by testing the parameter count as the other points methods do.
+//
+// Applies to: All versions
+// Responsible method: Rain:points
+// Fixes bugs: #4939, #5750
+static const uint16 ecoquest2SignaturePointsFlag[] = {
+	SIG_MAGICDWORD,
+	0x87, 0x02,                         // lap 02 [ flag ]
+	0x31, 0x06,                         // bnt 06
+	0x78,                               // push1
+	0x36,                               // push
+	0x40, SIG_ADDTOOFFSET(+2), 0x02,    // call set-flag 02
+	0x8f, 0x01,                         // lsp 01 [ points (never negative) ]
+	0x35, 0x00,                         // ldi 00
+	0x1e,                               // gt?    [ points > 0 ]
+	SIG_END
+};
+
+static const uint16 ecoquest2PatchPointsFlag[] = {
+	0x78,                               // push1
+	0x87, 0x00,                         // lap 00 [ argc ]
+	0x22,                               // lt?    [ 1 < argc ]
+	0x31, 0x07,                         // bnt 07
+	0x78,                               // push1
+	0x8f, 0x02,                         // lsp 02 [ flag ]
+	0x40, PATCH_GETORIGINALUINT16ADJUST(7, -3), 0x02, // call set-flag 02
+	0x87, 0x01,                         // lap 01 [ points (never negative) ]
+	PATCH_END
+};
+
 // The electronic organizer and password paper reappear in room 500 after they
 //  fall into the water when entering the canoe. rm500:init only tests if these
 //  items are in inventory. It should have also tested the canoe flag like room
@@ -1786,6 +1825,7 @@ static const uint16 ecoquest2PatchCampMessages2[] = {
 //          script, description,                                        signature                          patch
 static const SciScriptPatcherEntry ecoquest2Signatures[] = {
 	{  true,     0, "icon bar tutorial",                            10, ecoquest2SignatureIconBarTutorial, ecoquest2PatchIconBarTutorial },
+	{  true,     0, "points flag",                                   1, ecoquest2SignaturePointsFlag,      ecoquest2PatchPointsFlag },
 	{  true,    10, "disable speed test",                            1, sci11SpeedTestSignature,           sci11SpeedTestPatch},
 	{  true,    50, "initial text not removed on ecorder",           3, ecoquest2SignatureEcorder,         ecoquest2PatchEcorder },
 	{  true,   333, "initial text not removed on ecorder tutorial",  3, ecoquest2SignatureEcorderTutorial, ecoquest2PatchEcorderTutorial },

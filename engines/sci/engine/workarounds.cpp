@@ -54,29 +54,9 @@ static const uint16 sig_arithmetic_camelot_1[] = {
 	SIG_END
 };
 
-//                Game: Eco Quest 2
-//      Calling method: Rain::points
-//   Subroutine offset: English 0x0cc6, French/Spanish 0x0ce0 (script 0)
-// Applies to at least: English/French/Spanish PC floppy
-static const uint16 sig_arithmetic_ecoq2_1[] = {
-	0x8f, 0x01,                      // lsp param[1]
-	0x35, 0x10,                      // ldi 10h
-	0x08,                            // div
-	0x99, 0x6e,                      // lsgi global[6Eh]
-	0x38, SIG_UINT16(0x8000),        // pushi 8000h
-	0x8f, 0x01,                      // lsp param[1]
-	0x35, 0x10,                      // ldi 10h
-	0x0a,                            // mod
-	0x0c,                            // shr
-	0x14,                            // or
-	0x36,                            // push
-	SIG_END
-};
-
 //    gameID,           room,script,lvl,          object-name, method-name,       local-call-signature, index-range,   workaround
 const SciWorkaroundEntry arithmeticWorkarounds[] = {
 	{ GID_CAMELOT,         92,   92,  0,     "endingCartoon2", "changeState", sig_arithmetic_camelot_1,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_lai: during the ending, sub gets called with no parameters, uses parameter 1 which is theGrail in this case - bug #5237
-	{ GID_ECOQUEST2,      100,    0,  0,               "Rain", "points",        sig_arithmetic_ecoq2_1,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_or: when giving the papers to the customs officer, gets called against a pointer instead of a number - bug #4939, Spanish version - bug #5750
 	{ GID_FANMADE,        516,  983,  0,             "Wander", "setTarget",                    nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_mul: The Legend of the Lost Jewel Demo (fan made): called with object as second parameter when attacked by insects - bug #5124
 	{ GID_FANMADE,         -1,  935,  0,             "Scaler", "init",                         nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_mul: Zork: The Great Underground Empire (fan made): called with object as second parameter when changing rooms
 	{ GID_GK1,            800,64992,  0,                "Fwd", "doit",                         nullptr,     0,     0, { WORKAROUND_FAKE,   1 } }, // op_gt: when Mosely finds Gabriel and Grace near the end of the game, compares the Grooper object with 7
