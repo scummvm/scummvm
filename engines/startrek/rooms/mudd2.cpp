@@ -245,7 +245,7 @@ void Room::mudd2Tick1() {
 	} else if (_awayMission->mudd.muddUnavailable) {
 		_awayMission->mudd.muddInsanityState = 1;
 	} else if (_awayMission->mudd.muddInsanityState == 1) { // Second time entering room, start cutscene
-		playMidiMusicTracks(3);
+		playMidiMusicTracks(MIDITRACK_3);
 		loadActorAnim2(OBJECT_MUDD, "s4sbhw", 0x99, 0xbf);
 		_awayMission->disableInput = 2;
 		_awayMission->mudd.muddInhaledGas = true;
@@ -351,7 +351,7 @@ void Room::mudd2MuddNoticedKirk() {
 	showText(TX_SPEAKER_MUDD, TX_MUD2_044);
 	playVoc("BATTYGAS");
 	loadActorAnimC(OBJECT_MUDD, "s4sbhb", 0x9f, 0xbf, &Room::mudd2MuddDroppedCapsule); // Drops the capsule
-	playMidiMusicTracks(0);
+	playMidiMusicTracks(MIDITRACK_0);
 }
 
 void Room::mudd2MuddDroppedCapsule() {

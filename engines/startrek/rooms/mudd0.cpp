@@ -199,7 +199,7 @@ void Room::mudd0Tick1() {
 
 void Room::mudd0Tick50() {
 	if (!_awayMission->mudd.enteredRoom0ForFirstTime) {
-		playMidiMusicTracks(3);
+		playMidiMusicTracks(MIDITRACK_3);
 		_awayMission->mudd.enteredRoom0ForFirstTime = true;
 	}
 }

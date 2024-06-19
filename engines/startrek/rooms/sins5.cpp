@@ -235,11 +235,11 @@ void Room::sins5Tick1() {
 	if (!_awayMission->sins.playedMusicUponEnteringRoom5FirstTime) {
 		// NOTE: The music gets drowned out due to a different track being played
 		// immediately after.
-		playMidiMusicTracks(MIDITRACK_0, -1);
+		playMidiMusicTracks(MIDITRACK_0);
 		_awayMission->sins.playedMusicUponEnteringRoom5FirstTime = true;
 	}
 
-	playMidiMusicTracks(MIDITRACK_27, -3);
+	playMidiMusicTracks(MIDITRACK_27, kLoopTypeRepeat);
 }
 
 void Room::sins5UseSTricorderAnywhere() {
@@ -404,7 +404,7 @@ void Room::sins5WireConnected() {
 		loadActorAnim2(OBJECT_CABLE, "s5cabl", 0, 0);
 		showDescription(TX_SIN5N004);
 		loseItem(OBJECT_ICONECT);
-		playMidiMusicTracks(MIDITRACK_30, -1);
+		playMidiMusicTracks(MIDITRACK_30);
 	}
 	_awayMission->disableInput = false;
 }
@@ -483,7 +483,7 @@ void Room::sins5Timer2Expired() {
 }
 
 void Room::sins5ComputerLaunchesMissiles() {
-	playMidiMusicTracks(MIDITRACK_2, -1);
+	playMidiMusicTracks(MIDITRACK_2);
 	showDescription(TX_SIN5N012);
 	showDescription(TX_SIN5N013);
 	showGameOverMenu();

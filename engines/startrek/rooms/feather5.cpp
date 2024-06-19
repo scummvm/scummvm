@@ -143,7 +143,7 @@ extern const RoomText feather5Texts[] = {
 
 void Room::feather5Tick1() {
 	playVoc("FEA5LOOP");
-	playMidiMusicTracks(29);
+	playMidiMusicTracks(MIDITRACK_29);
 
 	if (!_awayMission->feather.waterMonsterRetreated)
 		loadActorAnim(OBJECT_MONSTER, "s5r5os", 0x4e, 0xa4);
@@ -181,7 +181,7 @@ void Room::feather5UseRedshirtOnLeftExit() {
 }
 
 void Room::feather5RedshirtReachedLog() {
-	playMidiMusicTracks(2);
+	playMidiMusicTracks(MIDITRACK_2);
 	playVoc("TENTICL2");
 	loadActorAnim(OBJECT_MONSTER, "s5r5oh", 0x4e, 0xa4);
 	loadActorAnimC(OBJECT_REDSHIRT, "s5r5ol", 0x8f, 0x64, &Room::feather5RedshirtDeathFinished);

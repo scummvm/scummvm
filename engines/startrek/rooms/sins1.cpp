@@ -184,10 +184,10 @@ void Room::sins1Tick1() {
 	_awayMission->sins.field32 = 1;
 	_awayMission->sins.field31 = 1;
 
-	playMidiMusicTracks(MIDITRACK_27, -3);
+	playMidiMusicTracks(MIDITRACK_27, kLoopTypeRepeat);
 
 	if (!_awayMission->sins.enteredRoom1FirstTime) {
-		playMidiMusicTracks(MIDITRACK_1, -2);
+		playMidiMusicTracks(MIDITRACK_1, kLoopTypeLast);
 		_awayMission->sins.enteredRoom1FirstTime = true;
 	}
 }

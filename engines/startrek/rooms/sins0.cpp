@@ -161,7 +161,7 @@ void Room::sins0Tick1() {
 	else if (_awayMission->sins.openedOuterDoor)
 		loadActorAnim2(OBJECT_DOOR, "s0dr1", 0, 0);
 
-	playMidiMusicTracks(MIDITRACK_27, -3);
+	playMidiMusicTracks(MIDITRACK_27, kLoopTypeRepeat);
 }
 
 void Room::sins0LookAnywhere() {

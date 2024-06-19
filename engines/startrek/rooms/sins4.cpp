@@ -184,7 +184,7 @@ void Room::sins4Tick1() {
 	if (_awayMission->sins.unlockedIDCardDoor)
 		loadActorAnim2(OBJECT_NORTH_DOOR, "s4dro", 0, 0);
 
-	playMidiMusicTracks(MIDITRACK_27, -3);
+	playMidiMusicTracks(MIDITRACK_27, kLoopTypeRepeat);
 }
 
 void Room::sins4UseSTricorderOnPanel() {

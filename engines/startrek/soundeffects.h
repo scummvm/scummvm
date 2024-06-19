@@ -48,7 +48,9 @@ enum SoundEffects {
 
 
 enum MidiTracks {
-	MIDITRACK_0,
+	MIDITRACK_NONE = -1,
+
+	MIDITRACK_0 = 0,
 	MIDITRACK_1,
 	MIDITRACK_2,
 	MIDITRACK_3,
@@ -81,7 +83,22 @@ enum MidiTracks {
 	MIDITRACK_30,
 	MIDITRACK_31,
 	MIDITRACK_32,
-	MIDITRACK_33
+	MIDITRACK_33,
+	MIDITRACK_34,
+	MIDITRACK_35,
+	MIDITRACK_36,
+	MIDITRACK_37,
+	MIDITRACK_38,
+	MIDITRACK_39,
+	MIDITRACK_40,
+	MIDITRACK_41
+};
+
+
+enum MidiLoopType {
+	kLoopTypeRepeat = -3,
+	kLoopTypeLast = -2,
+	kLoopTypeNone = -1
 };
 
 #endif

@@ -212,7 +212,7 @@ void Room::trial2Tick1() {
 		_awayMission->disableInput = 2;
 
 	if (!_awayMission->trial.globDefeated) {
-		playMidiMusicTracks(MIDITRACK_24, -1);
+		playMidiMusicTracks(MIDITRACK_24);
 		loadMapFile("trial22");
 
 		if (!_awayMission->trial.globSplitInTwo) {
@@ -371,7 +371,7 @@ void Room::trial2GlobDoneExploding() {
 	playVoc("Noooloop");
 	showText(TX_SPEAKER_SPOCK, TX_TRI2_020);
 	_awayMission->trial.globDefeated = true;
-	playMidiMusicTracks(MIDITRACK_28, -1);
+	playMidiMusicTracks(MIDITRACK_28);
 	_awayMission->trial.missionScore += 1;
 	loadMapFile("trial2");
 }
@@ -390,7 +390,7 @@ void Room::trial2GlobDoneSplitting() {
 	// Everyone gets vaporized
 	playVoc("V7ALLGET");
 	_awayMission->disableInput = true;
-	playMidiMusicTracks(MIDITRACK_26, -1);
+	playMidiMusicTracks(MIDITRACK_26);
 	loadActorAnimC(OBJECT_KIRK, "kkills", -1, -1, &Room::trial2KirkDied);
 	loadActorAnim2(OBJECT_SPOCK, "skills");
 	loadActorAnim2(OBJECT_MCCOY, "mkills");

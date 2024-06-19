@@ -188,7 +188,7 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 			_sound->clearAllMidiSlots();
 		else {
 			_sound->loadMusicFile(midiFilename);
-			_sound->playMidiMusicTracks(_sound->_loopingMidiTrack, _sound->_loopingMidiTrack);
+			_sound->playMidiTrackInSlot(0, _sound->_loopingMidiTrack);
 		}
 	}
 

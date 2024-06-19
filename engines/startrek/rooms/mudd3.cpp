@@ -231,7 +231,7 @@ void Room::mudd3Tick1() {
 	if (!_awayMission->mudd.muddVisitedDatabaseRoom && _awayMission->mudd.translatedAlienLanguage && !_awayMission->mudd.muddUnavailable) {
 		_awayMission->mudd.muddVisitedDatabaseRoom = true;
 		loadActorAnim(OBJECT_MUDD, "s4lbhs", 0xa2, 0x9f);
-		playMidiMusicTracks(3);
+		playMidiMusicTracks(MIDITRACK_3);
 		_awayMission->mudd.muddInDatabaseRoom = true;
 		_awayMission->timers[2] = 10;
 	}
@@ -450,7 +450,7 @@ void Room::mudd3Timer2Expired() {
 		showText(TX_SPEAKER_MUDD, TX_MUD3_064);
 		_awayMission->timers[4] = 98;
 		_awayMission->disableInput = 2;
-		playMidiMusicTracks(26);
+		playMidiMusicTracks(MIDITRACK_26);
 		loadActorAnim(OBJECT_MUDD, "s4lbhb", 0xa2, 0x9f);
 	}
 }

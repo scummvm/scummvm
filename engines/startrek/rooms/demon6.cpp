@@ -386,7 +386,7 @@ void Room::demon6MccoyReachedSynthesizer() {
 }
 
 void Room::demon6FinishedMakingHypoDytoxin() {
-	playMidiMusicTracks(-1, -1);
+	playMidiMusicTracks(MIDITRACK_NONE);
 	showDescription(TX_DEM6N023);
 	showText(TX_SPEAKER_MCCOY, TX_DEM6_018);
 

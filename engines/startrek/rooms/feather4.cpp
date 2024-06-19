@@ -110,7 +110,7 @@ extern const RoomText feather4Texts[] = {
 
 void Room::feather4Tick1() {
 	playVoc("FEA4LOOP");
-	playMidiMusicTracks(27);
+	playMidiMusicTracks(MIDITRACK_27);
 }
 
 void Room::feather4UseCommunicator() {

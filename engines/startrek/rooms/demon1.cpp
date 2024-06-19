@@ -196,7 +196,7 @@ void Room::demon1Tick1() {
 	playVoc("DEM1LOOP");
 
 	if (!_awayMission->demon.beatKlingons)
-		playMidiMusicTracks(1, -1);
+		playMidiMusicTracks(MIDITRACK_1);
 
 	if (_awayMission->demon.enteredFrom == 1) { // Entered from south
 		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;

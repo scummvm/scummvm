@@ -123,7 +123,7 @@ void StarTrekEngine::playIntro() {
 		switch (frame) {
 		case 0: // Starfield is shown
 			starfieldZoomSpeed = 10;
-			_sound->playMidiMusicTracks(MIDITRACK_0, -1);
+			_sound->playMidiMusicTracks(MIDITRACK_0);
 			_byte_45b3c = 0;
 			break;
 

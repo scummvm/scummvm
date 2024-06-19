@@ -246,7 +246,7 @@ void Room::demon3Tick1() {
 
 	if (!_awayMission->demon.field56) {
 		_awayMission->demon.field56 = true;
-		playMidiMusicTracks(0, -1);
+		playMidiMusicTracks(MIDITRACK_0);
 	}
 }
 
@@ -258,7 +258,7 @@ void Room::demon3Timer0Expired() {
 	_awayMission->demon.boulder1Gone = true;
 	_awayMission->demon.numBouldersGone++;
 	_awayMission->disableInput = true;
-	playMidiMusicTracks(2, -1);
+	playMidiMusicTracks(MIDITRACK_2);
 	playVoc("BOULDERK");
 }
 

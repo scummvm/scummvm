@@ -491,7 +491,7 @@ void Room::tug3UseCommunicator() {
 			showText(TX_SPEAKER_KIRK, TX_TUG3_006);
 			showText(TX_SPEAKER_SCOTT, TX_TUG3_S07);
 
-			playMidiMusicTracks(-1, -1);
+			playMidiMusicTracks(MIDITRACK_NONE);
 
 			_awayMission->disableInput = true;
 			if (_awayMission->tug.missionScore < 0)
@@ -547,7 +547,7 @@ void Room::tug3Timer0Expired() {
 }
 
 void Room::tug3AllCrewmenDead() {
-	playMidiMusicTracks(2, -1);
+	playMidiMusicTracks(MIDITRACK_2);
 	showGameOverMenu();
 }
 
@@ -568,7 +568,7 @@ void Room::tug3Timer1Expired() {
 }
 
 void Room::tug3EndMission() {
-	playMidiMusicTracks(28, -1);
+	playMidiMusicTracks(MIDITRACK_28);
 	showText(TX_SPEAKER_KIRK, TX_TUG3_001);
 	playSoundEffectIndex(kSfxTransporterMaterialize);
 	loadActorAnim2(OBJECT_13, "rteleb", 0x14, 0xa0, 7);
@@ -584,7 +584,7 @@ void Room::tug3SecurityTeamBeamedIn() {
 	showText(TX_SPEAKER_KIRK, TX_TUG3_005);
 	showText(TX_SPEAKER_SCOTT, TX_TUG3_S08);
 
-	playMidiMusicTracks(-1, -1);
+	playMidiMusicTracks(MIDITRACK_NONE);
 	_awayMission->disableInput = true;
 	if (_awayMission->tug.missionScore < 0)
 		_awayMission->tug.missionScore = 0;

@@ -181,7 +181,7 @@ void Room::mudd1Tick1() {
 	playVoc("MUD1LOOP"); // BUGFIX: moved this out of below if statement
 
 	if (!_awayMission->mudd.enteredRoom1ForFirstTime) {
-		playMidiMusicTracks(0);
+		playMidiMusicTracks(MIDITRACK_0);
 		_awayMission->mudd.enteredRoom1ForFirstTime = true;
 	}
 

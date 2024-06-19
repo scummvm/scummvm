@@ -202,7 +202,7 @@ extern const RoomText tug0Texts[] = {
 
 void Room::tug0Tick1() {
 	playVoc("TUG0LOOP");
-	playMidiMusicTracks(0, -1);
+	playMidiMusicTracks(MIDITRACK_0);
 
 	_awayMission->tug.field2b = 0x23;
 	if (_awayMission->tug.transporterRepaired)
@@ -498,7 +498,7 @@ void Room::tug0SpockFinishesBeamingBomb() {
 }
 
 void Room::tug0BombExploded() {
-	playMidiMusicTracks(2, -1);
+	playMidiMusicTracks(MIDITRACK_2);
 	showText(TX_SPEAKER_MCCOY, TX_TUG0_023);
 	showText(TX_SPEAKER_SPOCK, TX_TUG0_037);
 	showText(TX_SPEAKER_MCCOY, TX_TUG0_027);
