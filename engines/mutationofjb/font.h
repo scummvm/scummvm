@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "common/hashmap.h"
+#include "common/path.h"
 #include "graphics/font.h"
 #include "graphics/managed_surface.h"
 #include "graphics/surface.h"

@@ -24,6 +24,7 @@
 #include "backends/networking/enet/source/enet.h"
 #include "backends/networking/enet/socket.h"
 #include "common/debug.h"
+#include "common/textconsole.h"
 
 namespace Networking {
 

@@ -41,6 +41,7 @@
 #include "ags/lib/freetype-2.1.3/ftmemory.h"
 
 #include "common/debug.h"
+#include "common/textconsole.h"
 
 
 namespace AGS3 {

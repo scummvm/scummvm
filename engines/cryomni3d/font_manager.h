@@ -23,6 +23,7 @@
 #define CRYOMNI3D_FONT_MANAGER_H
 
 #include "common/array.h"
+#include "common/path.h"
 #include "common/str.h"
 #include "common/str-enc.h"
 #include "common/ustr.h"

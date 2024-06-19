@@ -23,6 +23,7 @@
 #define PETKA_OBJECT_H
 
 #include "common/rect.h"
+#include "common/str.h"
 
 #include "petka/base.h"
 

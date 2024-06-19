@@ -24,6 +24,10 @@
 
 #include "graphics/font.h"
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace Graphics {
 
 class AmigaFont : public Font {

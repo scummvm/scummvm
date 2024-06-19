@@ -24,6 +24,8 @@
 
 #include "tetraedge/te/te_vector3f32.h"
 
+#include "common/array.h"
+
 namespace Tetraedge {
 
 class TePickMesh {

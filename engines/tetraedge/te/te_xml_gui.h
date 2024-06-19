@@ -22,6 +22,7 @@
 #ifndef TETRAEDGE_TE_TE_XML_GUI_H
 #define TETRAEDGE_TE_TE_XML_GUI_H
 
+#include "common/hash-str.h"
 #include "common/str.h"
 #include "common/path.h"
 

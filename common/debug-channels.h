@@ -30,7 +30,21 @@
 #include "common/singleton.h"
 #include "common/str.h"
 
-#include "engines/metaengine.h"
+/**
+ * debug channels structure
+ */
+struct DebugChannelDef {
+	uint32 channel;				/*!< enum value, channel id, e.g. kDebugGlobalDetection */
+	const char *name;			/*!< name of debug channel, e.g. "detection" */
+	const char *description;	/*!< description of debug channel, e.g. "track scripts" */
+};
+
+/**
+ * delimiter of the array of DebugChannelDef
+ */
+#define DEBUG_CHANNEL_END {0, NULL, NULL}
+
+extern const DebugChannelDef gDebugChannels[];
 
 namespace Common {
 

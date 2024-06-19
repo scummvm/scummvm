@@ -35,6 +35,7 @@
 #include "common/types.h"
 
 namespace Common {
+	class Path;
 	class SeekableReadStream;
 	class String;
 }

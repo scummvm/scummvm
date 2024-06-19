@@ -22,6 +22,7 @@
 #ifndef CHEWY_DETAIL_H
 #define CHEWY_DETAIL_H
 
+#include "common/path.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
 #include "chewy/ngstypes.h"

@@ -31,6 +31,7 @@
 #define MACVENTURE_WINDOWS_H
 
 #include "common/rect.h"
+#include "common/str.h"
 #include "common/array.h"
 
 namespace MacVenture {

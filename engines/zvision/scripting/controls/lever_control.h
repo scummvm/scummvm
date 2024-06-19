@@ -25,6 +25,7 @@
 #include "zvision/scripting/control.h"
 
 #include "common/list.h"
+#include "common/path.h"
 #include "common/rect.h"
 
 namespace Video {

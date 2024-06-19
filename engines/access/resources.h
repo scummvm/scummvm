@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/language.h"
+#include "common/path.h"
 #include "common/rect.h"
 #include "common/str-array.h"
 #include "common/stream.h"

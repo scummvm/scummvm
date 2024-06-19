@@ -24,6 +24,9 @@
 
 #include "common/events.h"
 
+#include "engines/metaengine.h"
+#include "engines/savestate.h"
+
 namespace Hypno {
 
 static const chapterEntry rawChapterTable[] = {

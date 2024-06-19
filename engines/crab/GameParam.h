@@ -32,6 +32,8 @@
 #define CRAB_GAMEPARAM_H
 
 #include "common/hashmap.h"
+#include "common/hash-str.h"
+#include "common/list.h"
 #include "common/rect.h"
 #include "common/str.h"
 #include "crab/loaders.h"

@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/endian.h"
+#include "common/path.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
 

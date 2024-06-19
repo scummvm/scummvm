@@ -23,6 +23,7 @@
 #define ULTIMA_BITMAP_H
 
 #include "ultima/shared/core/lzw.h"
+#include "common/path.h"
 #include "common/stream.h"
 #include "graphics/managed_surface.h"
 

@@ -25,6 +25,8 @@
 #include "engines/stark/ui/menu/locationscreen.h"
 #include "engines/stark/visual/text.h"
 
+#include "common/path.h"
+
 namespace Stark {
 
 class FMVWidget;

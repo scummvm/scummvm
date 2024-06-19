@@ -54,6 +54,7 @@
 #include "common/array.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
+#include "common/fs.h"
 #include "common/mutex.h"
 #include "common/queue.h"
 #include "common/str.h"

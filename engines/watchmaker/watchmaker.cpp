@@ -21,6 +21,7 @@
 
 #include "watchmaker/watchmaker.h"
 #include "watchmaker/console.h"
+#include "common/error.h"
 #include "engines/util.h"
 
 namespace Watchmaker {

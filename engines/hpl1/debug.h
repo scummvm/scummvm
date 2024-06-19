@@ -23,6 +23,7 @@
 #define HPL1_DEBUG_H
 
 #include "common/debug.h"
+#include "common/textconsole.h"
 
 #define HPL1_UNIMPLEMENTED(fnName) error("call to unimplemented function " #fnName)
 

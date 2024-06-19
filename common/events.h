@@ -23,6 +23,7 @@
 #define COMMON_EVENTS_H
 
 #include "common/keyboard.h"
+#include "common/path.h"
 #include "common/queue.h"
 #include "common/rect.h"
 #include "common/noncopyable.h"

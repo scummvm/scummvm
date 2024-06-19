@@ -31,6 +31,7 @@
 #include "common/memstream.h"
 #include "common/random.h"
 #include "engines/engine.h"
+#include "engines/savestate.h"
 #include "graphics/screen.h"
 
 namespace Chewy {

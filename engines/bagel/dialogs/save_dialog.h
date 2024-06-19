@@ -29,6 +29,8 @@
 #include "bagel/boflib/gui/button.h"
 #include "bagel/boflib/gui/edit_text.h"
 
+#include "engines/savestate.h"
+
 namespace Bagel {
 
 #define NUM_BUTTONS 6

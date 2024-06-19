@@ -24,6 +24,9 @@
 
 #include "engines/nancy/commontypes.h"
 
+#include "common/hash-str.h"
+#include "common/path.h"
+
 namespace Nancy {
 
 // Data types corresponding to chunks found inside BOOT

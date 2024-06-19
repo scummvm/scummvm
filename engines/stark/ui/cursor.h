@@ -23,6 +23,7 @@
 #define STARK_UI_CURSOR_H
 
 #include "common/rect.h"
+#include "common/str.h"
 #include "common/scummsys.h"
 
 namespace Stark {

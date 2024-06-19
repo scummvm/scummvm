@@ -22,6 +22,7 @@
 #ifndef TETRAEDGE_TE_TE_CAMERA_H
 #define TETRAEDGE_TE_TE_CAMERA_H
 
+#include "common/path.h"
 #include "common/str.h"
 #include "math/ray.h"
 

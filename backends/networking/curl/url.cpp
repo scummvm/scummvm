@@ -23,6 +23,7 @@
 #include <curl/curl.h>
 #include "backends/networking/curl/url.h"
 #include "common/debug.h"
+#include "common/textconsole.h"
 
 namespace Networking {
 

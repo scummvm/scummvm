@@ -39,6 +39,7 @@
 #include "common/stream.h"
 #include "common/ptr.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 #include "common/compression/deflate.h"
 
 

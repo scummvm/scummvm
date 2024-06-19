@@ -32,6 +32,7 @@
 #define CRAB_LOADERS_H
 
 #include "common/debug.h"
+#include "common/path.h"
 #include "common/str.h"
 #include "crab/color.h"
 #include "crab/gametype.h"

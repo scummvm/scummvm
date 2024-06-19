@@ -38,6 +38,8 @@
 #include "crab/image/Image.h"
 #include "crab/TMX/TMXTileSet.h"
 
+#include "common/hashmap.h"
+
 namespace Crab {
 
 // We use this object as the key for all image assets

@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/hashmap.h"
+#include "common/path.h"
 #include "common/ptr.h"
 #include "common/types.h"
 

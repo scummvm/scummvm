@@ -22,6 +22,7 @@
 #ifndef MTROPOLIS_RUNTIME_H
 #define MTROPOLIS_RUNTIME_H
 
+#include "common/archive.h"
 #include "common/array.h"
 #include "common/events.h"
 #include "common/language.h"
