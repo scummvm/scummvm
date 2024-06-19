@@ -60,7 +60,7 @@ namespace Gob {
 #define ESCAPE 0x001B
 #define ENTER  0x000D
 
-/* Video drivers */
+// Video drivers
 #define UNK_DRIVER 0
 #define VGA_DRIVER 1
 #define EGA_DRIVER 2
