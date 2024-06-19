@@ -507,6 +507,21 @@ struct SoundSlot {
 
 const int16 kMaxSounds = 25;
 
+/* Musics */
+
+struct MusicSlot {
+	int16 resourceCacheSlot;
+	bool volumeFlag;
+	uint volume;
+	bool isPlaying;
+	bool shouldResume;
+	bool moduleWide;
+	bool isEmpty() const { return resourceCacheSlot == -1; }
+	void clear() { resourceCacheSlot = -1; }
+};
+
+const int16 kMaxMusics = 3;
+
 /* Input low-level */
 
 enum {
@@ -1095,6 +1110,16 @@ public:
 	/* Music */
 	void initializeMidi();
 	void shutdownMidi();
+
+	ObjectStorage<MusicSlot, kMaxMusics> _musics;
+	void playMusic(int16 musicIndex);
+	void stopMusic(int16 musicIndex);
+	bool isMusicPlaying(int16 musicIndex);
+	void setMusicVolume(int16 musicIndex, uint volume);
+	int16 loadMusic(Common::String &pakName, int16 pakSlot, bool moduleWide);
+	void unloadMusic(int16 musicIndex);
+	void unloadMusics(bool all);
+
 
 	/* Font colors */
 	void setDefaultTextDisplayColors();

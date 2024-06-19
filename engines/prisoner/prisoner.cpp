@@ -106,7 +106,7 @@ Common::Error PrisonerEngine::run() {
 	_screen->buildPaletteTransTable(constPalette1, 0);
 	_needToUpdatePalette = true;
 
-//	initializeMidi();
+	initializeMidi();
 
 #if 0
 	initInput();
@@ -317,7 +317,7 @@ Common::Error PrisonerEngine::run() {
 
 #endif
 
-//	shutdownMidi();
+	shutdownMidi();
 	delete _screenBackupSurface;
 	delete _pathSystem;
 	delete _scriptOpcodes;
@@ -950,22 +950,20 @@ void PrisonerEngine::getInteractMessage(Common::String &pakName, int16 pakSlot, 
 // TODO: Move MIDI code to own class
 
 void PrisonerEngine::initializeMidi() {
-/*
-	MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
+
+	MidiDriver::DeviceHandle midiDriver = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
+	bool native_mt32 = ((midiDriver & MDT_PREFER_MT32) || ConfMan.getBool("native_mt32"));
 	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
 	if (native_mt32)
 		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 	_midi = new MidiPlayer(this, driver);
 	_midi->setGM(true);
 	_midi->setNativeMT32(native_mt32);
-*/
+
 }
 
 void PrisonerEngine::shutdownMidi() {
-/*
 	delete _midi;
-*/
 }
 
 void PrisonerEngine::setBackgroundObjects(Common::String &pakName, int16 pakSlot) {

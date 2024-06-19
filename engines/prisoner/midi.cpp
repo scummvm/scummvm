@@ -70,6 +70,10 @@ void MidiPlayer::setVolume(int volume) {
 	}
 }
 
+bool MidiPlayer::isOpen() const {
+	return _driver != 0;
+}
+
 int MidiPlayer::open() {
 	// Don't ever call open without first setting the output driver!
 	if (!_driver)
