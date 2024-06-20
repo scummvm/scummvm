@@ -30,16 +30,37 @@
 #include "qdengine/detection.h"
 #include "qdengine/detection_tables.h"
 
-const DebugChannelDef QDEngineMetaEngineDetection::debugFlagList[] = {
-	{ QDEngine::kDebugGraphics, "Graphics", "Graphics debug level" },
-	{ QDEngine::kDebugPath, "Path", "Pathfinding debug level" },
-	{ QDEngine::kDebugFilePath, "FilePath", "File path debug level" },
-	{ QDEngine::kDebugScan, "Scan", "Scan for unrecognised games" },
-	{ QDEngine::kDebugScript, "Script", "Enable debug script dump" },
+static const DebugChannelDef debugFlagList[] = {
+	{ QDEngine::kDebugGraphics, "graphics", "Graphics debug level" },
+	{ QDEngine::kDebugLoad, "load", "Enable load tracing" },
 	DEBUG_CHANNEL_END
 };
 
-QDEngineMetaEngineDetection::QDEngineMetaEngineDetection() : AdvancedMetaEngineDetection(QDEngine::GAME_DESCRIPTIONS, QDEngine::GAME_NAMES) {
-}
+class QDEngineMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
+
+public:
+	QDEngineMetaEngineDetection() : AdvancedMetaEngineDetection(QDEngine::GAME_DESCRIPTIONS, QDEngine::GAME_NAMES) {
+	}
+
+	~QDEngineMetaEngineDetection() override {}
+
+	const char *getName() const override {
+		return "qdengine";
+	}
+
+	const char *getEngineName() const override {
+		return "QD Engine";
+	}
+
+	const char *getOriginalCopyright() const override {
+		return "QD Engine (C) 2003-7 K-D LAB";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
+	}
+};
+
+
 
 REGISTER_PLUGIN_STATIC(QDENGINE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, QDEngineMetaEngineDetection);
