@@ -67,6 +67,7 @@ public:
 	~qdFileManager();
 
 	bool init(int cd_count);
+	void Finit();
 
 	void enable_packages() {}
 

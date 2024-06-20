@@ -86,9 +86,17 @@ bool qdFileManager::init(int cd_count) {
 	return true;
 }
 
+qdFileManager *mgr = nullptr;
+
 qdFileManager &qdFileManager::instance() {
-	static qdFileManager mgr;
-	return mgr;
+	if (!mgr)
+		mgr = new qdFileManager();
+
+	return *mgr;
+}
+
+void qdFileManager::Finit() {
+	delete mgr;
 }
 
 bool qdFileManager::open_file(XZipStream &fh, const char *file_name, bool err_message) {
