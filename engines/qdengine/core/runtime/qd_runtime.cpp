@@ -310,7 +310,8 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 				} else if (msg.wParam == 'G')
 					qdGameConfig::get_config().toggle_show_grid();
 #endif
-
+				break;
+			default:
 				break;
 			}
 
