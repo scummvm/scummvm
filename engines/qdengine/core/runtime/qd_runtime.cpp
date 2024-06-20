@@ -339,6 +339,8 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 
 	grDispatcher::instance()->Finit();
 
+	qdFileManager::instance().Finit();
+
 	ShowWindow(hmainWnd, SW_HIDE);
 	CloseWindow(hmainWnd);
 	DestroyWindow(hmainWnd);
