@@ -29,7 +29,6 @@
 //
 //
 ////////////////////////////////////////////////////////////////////////////////
-#include "qdengine/xlibs/util/serialization/Serialization.h"
 #include "qdengine/xlibs/util/xmath/xmath.h"
 #include "qdengine/xlibs/xutil/xutil.h"
 
@@ -1604,101 +1603,6 @@ QuatD Slerp(const QuatD &A, const QuatD &B, double t) {
 		return A;
 	sin_theta = 1 / sin_theta;
 	return A * (sin(theta * (1 - t)) * sin_theta) + B * (sin(theta * t) * sin_theta);
-}
-
-//////////////////////////////////////////
-void Vect2f::serialize(Archive &ar) {
-	MergeBlocksAuto mergeBlocks(ar);
-	ar.serialize(x, "x", "&x");
-	ar.serialize(y, "y", "&y");
-}
-
-void Vect2i::serialize(Archive &ar) {
-	MergeBlocksAuto mergeBlocks(ar);
-	ar.serialize(x, "x", "&x");
-	ar.serialize(y, "y", "&y");
-}
-
-void Vect2s::serialize(Archive &ar) {
-	MergeBlocksAuto mergeBlocks(ar);
-	ar.serialize(x, "x", "&x");
-	ar.serialize(y, "y", "&y");
-}
-
-void Vect3f::serialize(Archive &ar) {
-	MergeBlocksAuto mergeBlocks(ar);
-	ar.serialize(x, "x", "&x");
-	ar.serialize(y, "y", "&y");
-	ar.serialize(z, "z", "&z");
-}
-
-void Vect3d::serialize(Archive &ar) {
-	MergeBlocksAuto mergeBlocks(ar);
-	ar.serialize(x, "x", "&x");
-	ar.serialize(y, "y", "&y");
-	ar.serialize(z, "z", "&z");
-}
-
-void Mat3f::serialize(Archive &ar) {
-	MergeBlocksAuto mergeBlocks(ar);
-	ar.serialize(xrow(), "xrow", "xrow");
-	ar.serialize(yrow(), "yrow", "yrow");
-	ar.serialize(zrow(), "zrow", "zrow");
-}
-
-void Mat3d::serialize(Archive &ar) {
-	MergeBlocksAuto mergeBlocks(ar);
-	ar.serialize(xrow(), "xrow", "xrow");
-	ar.serialize(yrow(), "yrow", "yrow");
-	ar.serialize(zrow(), "zrow", "zrow");
-}
-
-void MatXf::serialize(Archive &ar) {
-	MergeBlocksAuto mergeBlocks(ar);
-	ar.serialize(rot(), "rotation", "����������");
-	ar.serialize(trans(), "position", "�������");
-}
-
-void MatXd::serialize(Archive &ar) {
-	MergeBlocksAuto mergeBlocks(ar);
-	ar.serialize(rot(), "rotation", "����������");
-	ar.serialize(trans(), "position", "�������");
-}
-
-void QuatF::serialize(Archive &ar) {
-	MergeBlocksAuto mergeBlocks(ar);
-	ar.serialize(s_, "s", "&s");
-	ar.serialize(x_, "x", "&x");
-	ar.serialize(y_, "y", "&y");
-	ar.serialize(z_, "z", "&z");
-}
-
-void QuatD::serialize(Archive &ar) {
-	MergeBlocksAuto mergeBlocks(ar);
-	ar.serialize(s_, "s", "&s");
-	ar.serialize(x_, "x", "&x");
-	ar.serialize(y_, "y", "&y");
-	ar.serialize(z_, "z", "&z");
-}
-
-void Se3f::serialize(Archive &ar) {
-	MergeBlocksAuto mergeBlocks(ar);
-	ar.serialize(rot(), "rotation", "����������");
-	ar.serialize(trans(), "position", "�������");
-}
-
-void Se3d::serialize(Archive &ar) {
-	MergeBlocksAuto mergeBlocks(ar);
-	ar.serialize(rot(), "rotation", "����������");
-	ar.serialize(trans(), "position", "�������");
-}
-
-void Vect4f::serialize(Archive &ar) {
-	MergeBlocksAuto mergeBlocks(ar);
-	ar.serialize(x, "x", "&x");
-	ar.serialize(y, "y", "&y");
-	ar.serialize(z, "z", "&z");
-	ar.serialize(z, "w", "&w");
 }
 
 void Mat3f::makeRotationZ() {

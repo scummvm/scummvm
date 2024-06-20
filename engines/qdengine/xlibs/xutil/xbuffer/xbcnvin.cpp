@@ -19,7 +19,7 @@
  *
  */
 
-#include "qdengine/xlibs/xutil/xglobal.h"
+#include "qdengine/core/qd_precomp.h"
 
 namespace QDEngine {
 
