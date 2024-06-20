@@ -162,9 +162,14 @@ bool DebugManager::isDebugChannelEnabled(uint32 channel, bool enforce) {
 }
 
 void DebugManager::addDebugChannels(const DebugChannelDef *channels) {
+	int added = 0;
 	for (uint i = 0; channels[i].channel != 0; ++i) {
 		addDebugChannel(channels[i].channel, channels[i].name, channels[i].description);
+		added++;
 	}
+
+	if (!added)
+		warning("DebugManager::addDebugChannels(): No debug channels were added, list is empty");
 }
 
 } // End of namespace Common
