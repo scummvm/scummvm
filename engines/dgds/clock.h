@@ -24,6 +24,7 @@
 
 #include "common/types.h"
 #include "common/rect.h"
+#include "common/error.h"
 #include "common/serializer.h"
 
 namespace Graphics {
