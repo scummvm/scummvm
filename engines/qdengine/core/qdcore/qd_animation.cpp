@@ -21,7 +21,11 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/debug.h"
 #include "common/file.h"
+
+#include "qdengine/detection.h"
+
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/graphics/gr_tile_animation.h"
@@ -559,6 +563,8 @@ void qdAnimation::qda_save(const char *fname) {
 
 bool qdAnimation::qda_load(const char *fname) {
 	clear_frames();
+
+	debugC(3, kDebugLoad, "qdAnimation::qda_load(%s)", fname);
 
 	Common::Path fpath(fname, '\\');
 	Common::SeekableReadStream *fh;

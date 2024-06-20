@@ -21,7 +21,11 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/debug.h"
 #include "common/file.h"
+
+#include "qdengine/detection.h"
+
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/app_error_handler.h"
@@ -195,6 +199,8 @@ void qdSprite::free() {
 
 bool qdSprite::load(const char *fname) {
 	free();
+
+	debugC(3, kDebugLoad, "qdSprite::load(%s, %s)", fname, file_.c_str());
 
 	if (fname)
 		set_file(fname);
