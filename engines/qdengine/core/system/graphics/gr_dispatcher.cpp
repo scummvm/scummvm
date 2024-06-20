@@ -469,7 +469,7 @@ bool grDispatcher::clip_line(int &x0, int &y0, int &x1, int &y1) const {
 					x = clipCoords[0];
 				}
 
-				if (outcodeOut = outcode0) {
+				if (outcodeOut == outcode0) {
 					x0 = x;
 					y0 = y;
 
@@ -611,7 +611,7 @@ bool grDispatcher::clip_line(int &x0, int &y0, int &z0, int &x1, int &y1, int &z
 					x = clipCoords[0];
 				}
 
-				if (outcodeOut = outcode0) {
+				if (outcodeOut == outcode0) {
 					x0 = x;
 					y0 = y;
 					z0 = z;
@@ -1040,6 +1040,8 @@ bool grDispatcher::DrawAlignedText(int x, int y, int sx, int sy, unsigned color,
 		break;
 	case GR_ALIGN_RIGHT:
 		delta_x = sx - TextWidth(str, hspace, font, true);
+		break;
+	default:
 		break;
 	}
 

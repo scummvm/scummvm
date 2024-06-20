@@ -118,7 +118,7 @@ public:
 	void quant(float dt);
 
 	//! Возвращает имя параметра командной строки для отладки тиггеров.
-	static const char *const debug_comline();
+	static const char *debug_comline();
 
 	void reset();
 
@@ -155,4 +155,4 @@ private:
 
 } // namespace QDEngine
 
-#endif __QD_TRIGGER_CHAIN_H__
+#endif // __QD_TRIGGER_CHAIN_H__

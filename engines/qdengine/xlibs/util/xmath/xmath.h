@@ -837,7 +837,7 @@ public:
 
 	// Rows
 	xm_inline const Vect2f &operator[](int i) const {
-		return ((Vect2f *)&xx)[i];
+		return ((const Vect2f *)&xx)[i];
 	}
 	xm_inline Vect2f &operator[](int i)     {
 		return ((Vect2f *)&xx)[i];
@@ -868,13 +868,6 @@ public:
 		return Mat2f(*this) *= m;
 	}
 
-	// forward transform
-	xm_inline friend Vect2f &operator*= (Vect2f v, const Mat2f &m) {
-		float x = v.x * m.xx + v.y * m.xy;
-		v.y = v.x * m.yx + v.y * m.yy;
-		v.x = x;
-		return v;
-	}
 	// backward transform
 	xm_inline Vect2f invXform(const Vect2f &v) const {
 		return Vect2f(v.x * xx + v.y * yx, v.x * xy + v.y * yy);
@@ -882,10 +875,6 @@ public:
 
 	static const Mat2f ID;
 };
-// forward transform
-xm_inline Vect2f operator* (const Mat2f &m, const Vect2f &v) {
-	return Vect2f(v) *= m;
-}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -911,12 +900,6 @@ public:
 		trans = -rot.invXform(trans);
 	}
 
-	// forward transform
-	friend Vect2f &operator *=(Vect2f v, const MatX2f &m) {
-		v *= m.rot;
-		v += m.trans;
-		return v;
-	}
 	// backward transform
 	Vect2f invXform(const Vect2f &v) const {
 		return rot.invXform(v - trans);
@@ -924,11 +907,6 @@ public:
 
 	static const MatX2f ID;
 };
-
-xm_inline const Vect2f operator* (const MatX2f &m, const Vect2f &v) {
-	return Vect2f(v) *= m;
-}
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1475,7 +1453,7 @@ public:
 
 	// index-based access:  0=xrow, 1=yrow, 2=zrow.
 	xm_inline const Vect3f &operator[](int i) const {
-		return *(((Vect3f *) &xx) + i);
+		return *(((const Vect3f *) &xx) + i);
 	}
 	xm_inline Vect3f &operator[](int i)       {
 		return *(((Vect3f *) &xx) + i);
@@ -1486,13 +1464,13 @@ public:
 
 	// for reading rows
 	xm_inline const Vect3f &xrow() const {
-		return *((Vect3f *) &xx);
+		return *((const Vect3f *) &xx);
 	}
 	xm_inline const Vect3f &yrow() const {
-		return *((Vect3f *) &yx);
+		return *((const Vect3f *) &yx);
 	}
 	xm_inline const Vect3f &zrow() const {
-		return *((Vect3f *) &zx);
+		return *((const Vect3f *) &zx);
 	}
 	// for writing to rows
 	xm_inline Vect3f &xrow()  {
@@ -1790,7 +1768,7 @@ public:
 
 	// index-based access:  0=xrow, 1=yrow, 2=zrow.
 	const Vect3d &operator[](int i) const {
-		return *(((Vect3d *) &xx) + i);
+		return *(((const Vect3d *) &xx) + i);
 	}
 	Vect3d &operator[](int i)       {
 		return *(((Vect3d *) &xx) + i);
@@ -1801,13 +1779,13 @@ public:
 
 	// for reading rows
 	const Vect3d &xrow() const {
-		return *((Vect3d *) &xx);
+		return *((const Vect3d *) &xx);
 	}
 	const Vect3d &yrow() const {
-		return *((Vect3d *) &yx);
+		return *((const Vect3d *) &yx);
 	}
 	const Vect3d &zrow() const {
-		return *((Vect3d *) &zx);
+		return *((const Vect3d *) &zx);
 	}
 	// for writing to rows
 	Vect3d &xrow()  {
@@ -4283,6 +4261,8 @@ Mat3d &Mat3d::set(double angle, eAxis axis) {
 		zx   = -salpha;
 		zy   =  0;
 		zz   = calpha;
+		break;
+	case W_AXIS:
 		break;
 	}
 	return *this;
