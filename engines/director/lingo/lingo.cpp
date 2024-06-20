@@ -1120,8 +1120,6 @@ Common::String Datum::asString(bool printonly) const {
 		break;
 	case FLOAT:
 		s = Common::String::format(g_lingo->_floatPrecisionFormat.c_str(), u.f);
-		if (printonly)
-			s += "f";		// 0.0f
 		break;
 	case STRING:
 		if (!printonly) {
