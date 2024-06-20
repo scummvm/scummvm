@@ -288,8 +288,6 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 		int dx = -1;
 		int dy = -1;
 
-		x *= 2;
-
 		if (mode & GR_FLIP_HORIZONTAL) {
 			x += (psx - 1) * 2;
 			px = sx - px - psx;
