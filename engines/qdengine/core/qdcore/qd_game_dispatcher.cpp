@@ -134,7 +134,8 @@ qdGameDispatcher::qdGameDispatcher() : is_paused_(false),
 	mouse_cursor_pos_ = Vect2f(0, 0);
 
 	qdAnimationFrame *p = new qdAnimationFrame;
-	p->set_file("Resource\\Cursors\\default.tga");
+	p->set_file("Resource/Cursors/default.tga");
+
 	mouse_animation_->add_frame(p);
 
 	mouse_obj_->set_animation(mouse_animation_);
@@ -3111,9 +3112,9 @@ bool qdGameDispatcher::collect_all_external_files(const char *collector_dir) {
 }
 
 bool qdGameDispatcher::get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const {
-	files_to_pack.push_back("Resource\\Cursors\\default.tga");
-	files_to_pack.push_back("Resource\\Fonts\\font00.idx");
-	files_to_pack.push_back("Resource\\Fonts\\font00.tga");
+	files_to_pack.push_back("Resource/Cursors/default.tga");
+	files_to_pack.push_back("Resource/Fonts/font00.idx");
+	files_to_pack.push_back("Resource/Fonts/font00.tga");
 
 	if (!texts_database_.empty())
 		files_to_pack.push_back(texts_database());
