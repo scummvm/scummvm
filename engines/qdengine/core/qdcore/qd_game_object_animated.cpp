@@ -172,8 +172,9 @@ void qdGameObjectAnimated::clear_states() {
 
 void qdGameObjectAnimated::set_animation(qdAnimation *p, const qdAnimationInfo *inf) {
 	if (p) {
-//		if(!p -> is_resource_loaded())
-//			p -> load_resources();
+		// FIXME: HACK: The original has these lines commented
+		if (!p->is_resource_loaded())
+			p->load_resources();
 
 		p -> create_reference(&animation_, inf);
 		animation_.start();
