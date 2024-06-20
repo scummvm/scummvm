@@ -105,158 +105,43 @@ void grDispatcher::PutTileSpr(int x, int y, const grTileSprite &sprite, bool has
 	int psy = GR_TILE_SPRITE_SIZE_Y;
 
 	if (!clip_rectangle(x, y, px, py, psx, psy)) return;
+	int dx = -1;
+	int dy = -1;
 
-	if (bytes_per_pixel() == 4) {
-		int dx = -4;
-		int dy = -1;
+	if (mode & GR_FLIP_HORIZONTAL) {
+		x += psx - 1;
+		px = GR_TILE_SPRITE_SIZE_X - px - psx;
+	} else
+		dx = 1;
 
-		x *= 4;
+	if (mode & GR_FLIP_VERTICAL) {
+		y += psy - 1;
+		py = GR_TILE_SPRITE_SIZE_Y - py - psy;
+	} else
+		dy = 1;
 
-		if (mode & GR_FLIP_HORIZONTAL) {
-			x += (psx - 1) * 4;
-			px = GR_TILE_SPRITE_SIZE_X - px - psx;
-		} else
-			dx = 4;
+	x *= 2;
 
-		if (mode & GR_FLIP_VERTICAL) {
-			y += psy - 1;
-			py = GR_TILE_SPRITE_SIZE_Y - py - psy;
-		} else
-			dy = 1;
+	const unsigned char *data_ptr = (unsigned char *)(sprite.data() + px + py * GR_TILE_SPRITE_SIZE_X);
 
-		const unsigned char *data_ptr = (const unsigned char *)sprite.data() + px * 4 + py * GR_TILE_SPRITE_SIZE_X * 4;
+	warning("STUB: grDispatcher::PutTileSpr");
+	for (int i = 0; i < psy; i ++) {
+		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
+		const unsigned char *data_line = data_ptr;
 
-		warning("STUB: grDispatcher::PutTileSpr");
-		for (int i = 0; i < psy; i ++) {
-			unsigned char *scr_buf = (unsigned char *)(_screenBuf->getBasePtr(x, y));
-			const unsigned char *data_line = data_ptr;
-
-			for (int j = 0; j < psx; j ++) {
-				unsigned a = data_line[3];
-				if (a != 255) {
-					if (a) {
-						scr_buf[0] = data_line[0] + ((a * scr_buf[0]) >> 8);
-						scr_buf[1] = data_line[1] + ((a * scr_buf[1]) >> 8);
-						scr_buf[2] = data_line[2] + ((a * scr_buf[2]) >> 8);
-					} else {
-						scr_buf[0] = data_line[0];
-						scr_buf[1] = data_line[1];
-						scr_buf[2] = data_line[2];
-					}
-				}
-				scr_buf += dx;
-				data_line += 4;
+		for (int j = 0; j < psx; j ++) {
+			unsigned a = data_line[3];
+			if (a != 255) {
+				if (a)
+					*scr_buf = alpha_blend_565(make_rgb565u(data_line[2], data_line[1], data_line[0]), *scr_buf, a);
+				else
+					*scr_buf = make_rgb565u(data_line[2], data_line[1], data_line[0]);
 			}
-			data_ptr += GR_TILE_SPRITE_SIZE_X * 4;
-			y += dy;
+			scr_buf += dx;
+			data_line += 4;
 		}
-		return;
-	} else if (bytes_per_pixel() == 3) {
-		int dx = -3;
-		int dy = -1;
-
-		x *= 3;
-
-		if (mode & GR_FLIP_HORIZONTAL) {
-			x += (psx - 1) * 3;
-			px = GR_TILE_SPRITE_SIZE_X - px - psx;
-		} else
-			dx = 3;
-
-		if (mode & GR_FLIP_VERTICAL) {
-			y += psy - 1;
-			py = GR_TILE_SPRITE_SIZE_Y - py - psy;
-		} else
-			dy = 1;
-
-		const unsigned char *data_ptr = (const unsigned char *)sprite.data() + px * 4 + py * GR_TILE_SPRITE_SIZE_X * 4;
-
-		warning("STUB: grDispatcher::PutTileSpr");
-		for (int i = 0; i < psy; i ++) {
-			unsigned char *scr_buf = (unsigned char *)(_screenBuf->getBasePtr(x, y));
-			const unsigned char *data_line = data_ptr;
-
-			for (int j = 0; j < psx; j ++) {
-				unsigned a = data_line[3];
-				if (a != 255) {
-					if (a) {
-						scr_buf[0] = data_line[0] + ((a * scr_buf[0]) >> 8);
-						scr_buf[1] = data_line[1] + ((a * scr_buf[1]) >> 8);
-						scr_buf[2] = data_line[2] + ((a * scr_buf[2]) >> 8);
-					} else {
-						scr_buf[0] = data_line[0];
-						scr_buf[1] = data_line[1];
-						scr_buf[2] = data_line[2];
-					}
-				}
-				scr_buf += dx;
-				data_line += 4;
-			}
-			data_ptr += GR_TILE_SPRITE_SIZE_X * 4;
-			y += dy;
-		}
-		return;
-	} else if (bytes_per_pixel() == 2) {
-		int dx = -1;
-		int dy = -1;
-
-		if (mode & GR_FLIP_HORIZONTAL) {
-			x += psx - 1;
-			px = GR_TILE_SPRITE_SIZE_X - px - psx;
-		} else
-			dx = 1;
-
-		if (mode & GR_FLIP_VERTICAL) {
-			y += psy - 1;
-			py = GR_TILE_SPRITE_SIZE_Y - py - psy;
-		} else
-			dy = 1;
-
-		x *= 2;
-
-		const unsigned char *data_ptr = (unsigned char *)(sprite.data() + px + py * GR_TILE_SPRITE_SIZE_X);
-
-		if (pixel_format_ == GR_RGB565) {
-			warning("STUB: grDispatcher::PutTileSpr");
-			for (int i = 0; i < psy; i ++) {
-				uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
-				const unsigned char *data_line = data_ptr;
-
-				for (int j = 0; j < psx; j ++) {
-					unsigned a = data_line[3];
-					if (a != 255) {
-						if (a)
-							*scr_buf = alpha_blend_565(make_rgb565u(data_line[2], data_line[1], data_line[0]), *scr_buf, a);
-						else
-							*scr_buf = make_rgb565u(data_line[2], data_line[1], data_line[0]);
-					}
-					scr_buf += dx;
-					data_line += 4;
-				}
-				data_ptr += GR_TILE_SPRITE_SIZE_X * 4;
-				y += dy;
-			}
-		} else {
-			warning("STUB: grDispatcher::PutTileSpr");
-			for (int i = 0; i < psy; i ++) {
-				uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
-				const unsigned char *data_line = data_ptr;
-
-				for (int j = 0; j < psx; j ++) {
-					unsigned a = data_line[3];
-					if (a != 255) {
-						if (a)
-							*scr_buf = alpha_blend_555(make_rgb555u(data_line[2], data_line[1], data_line[0]), *scr_buf, a);
-						else
-							*scr_buf = make_rgb555u(data_line[2], data_line[1], data_line[0]);
-					}
-					scr_buf += dx;
-					data_line += 4;
-				}
-				data_ptr += GR_TILE_SPRITE_SIZE_X * 4;
-				y += dy;
-			}
-		}
+		data_ptr += GR_TILE_SPRITE_SIZE_X * 4;
+		y += dy;
 	}
 }
 

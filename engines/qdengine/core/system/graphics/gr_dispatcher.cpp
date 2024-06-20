@@ -404,6 +404,7 @@ void grDispatcher::SetPixel(int x, int y, int col) {
 }
 
 void grDispatcher::SetPixelFast(int x, int y, int col) {
+	warning("STUB: grDispatcher::SetPixelFast");
 	uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x, y));
 	*p = col;
 }
