@@ -881,4 +881,18 @@ int DarkseedEngine::getObjectUnderCursor() {
 	return -1;
 }
 
+Common::String DarkseedEngine::getRoomFilePath(const Common::String &filename) {
+	if (isCdVersion()) {
+		return "room/" + filename;
+	}
+	return filename;
+}
+
+Common::String DarkseedEngine::getPictureFilePath(const Common::String &filename) {
+	if (isCdVersion()) {
+		return "picture/" + filename;
+	}
+	return filename;
+}
+
 } // End of namespace Darkseed
