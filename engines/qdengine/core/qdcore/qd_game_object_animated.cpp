@@ -22,7 +22,10 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
-#include "common/str.h"
+#include "common/debug.h"
+
+#include "qdengine/detection.h"
+
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/parser/qdscr_parser.h"
@@ -211,7 +214,9 @@ const Vect2f &qdGameObjectAnimated::screen_scale() const {
 }
 
 void qdGameObjectAnimated::redraw(int offs_x, int offs_y) const {
+	debugC(1, kDebugTemp, "qdGameObjectAnimated::redraw(), empty?: %d", animation_.is_empty());
 	if (!animation_.is_empty()) {
+		debugC(1, kDebugTemp, "anim is not empty");
 		Vect2i r = screen_pos() + Vect2i(offs_x, offs_y);
 
 		if (current_transform_()) {
@@ -542,6 +547,7 @@ void qdGameObjectAnimated::free_resources() {
 }
 
 void qdGameObjectAnimated::set_state(int st) {
+	debugC(1, kDebugTemp, "qdGameObjectAnimated::set_state(%d)", st);
 	// Указание на смену состояния => объект меняется (устанавливаем время изм.)
 	last_chg_time_ = qdGameDispatcher::get_dispatcher()->time();
 
