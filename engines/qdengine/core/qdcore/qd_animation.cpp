@@ -435,6 +435,7 @@ bool qdAnimation::save_script(XStream &fh, int indent) const {
 }
 
 bool qdAnimation::load_resources() {
+	debugC(1, kDebugTemp, "qdAnimation::load_resources(): %s", qda_file());
 	if (check_flag(QD_ANIMATION_FLAG_REFERENCE)) return false;
 
 	if (!qda_file()) {
@@ -476,6 +477,8 @@ void qdAnimation::create_reference(qdAnimation *p, const qdAnimationInfo *inf) c
 	p -> sy_ = sy_;
 
 	p -> num_frames_ = num_frames_;
+
+	debugC(1, kDebugTemp, "num_frames_: %d empty?: %d, is_empty()?: %d", num_frames_, frames.empty(), is_empty());
 
 #ifndef __QD_SYSLIB__
 	if (inf) {

@@ -21,7 +21,9 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
-#include "common/file.h"
+#include "common/debug.h"
+
+#include "qdengine/detection.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_parser.h"
 
@@ -138,7 +140,9 @@ qdGameDispatcher::qdGameDispatcher() : is_paused_(false),
 
 	mouse_animation_->add_frame(p);
 
+	debugC(1, kDebugTemp, "Mouse_set_animation");
 	mouse_obj_->set_animation(mouse_animation_);
+	debugC(1, kDebugTemp, "Mouse_set_animation_over");
 
 	if (!dispatcher_) {
 		keyboardDispatcher::instance()->set_handler(qd_keyboard_handler);
@@ -756,6 +760,7 @@ void qdGameDispatcher::redraw(const grScreenRegion &reg) {
 		interface_dispatcher_.redraw();
 	}
 
+	debugC(1, kDebugTemp, "mouse_obj_ -> redraw()");
 	mouse_obj_ -> redraw();
 
 	grDispatcher::instance() -> SetClip();

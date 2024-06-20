@@ -33,6 +33,7 @@
 static const DebugChannelDef debugFlagList[] = {
 	{ QDEngine::kDebugGraphics, "graphics", "Graphics debug level" },
 	{ QDEngine::kDebugLoad, "load", "Enable load tracing" },
+	{ QDEngine::kDebugTemp, "temp", "Enable temporary tracing" },
 	DEBUG_CHANNEL_END
 };
 

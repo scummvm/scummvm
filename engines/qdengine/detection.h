@@ -30,6 +30,7 @@ namespace QDEngine {
 enum QDEngineDebugChannels {
 	kDebugGraphics = 1,
 	kDebugLoad,
+	kDebugTemp,
 };
 
 extern const PlainGameDescriptor GAME_NAMES[];

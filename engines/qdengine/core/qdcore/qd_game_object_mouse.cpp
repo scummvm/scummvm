@@ -21,6 +21,11 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include "common/debug.h"
+
+#include "qdengine/detection.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/qd_rnd.h"
 #include "qdengine/core/parser/qdscr_parser.h"
@@ -161,6 +166,7 @@ bool qdGameObjectMouse::save_data(qdSaveStream &fh) const {
 }
 
 void qdGameObjectMouse::redraw(int offs_x, int offs_y) const {
+	debugC(1, kDebugTemp, "mouse redraw %p %d", object_, !qdInterfaceDispatcher::get_dispatcher()->is_active());
 	if (object_ && !qdInterfaceDispatcher::get_dispatcher()->is_active()) {
 		update_object_position();
 		const qdGameObjectState *p = object_-> get_cur_state();
@@ -170,8 +176,11 @@ void qdGameObjectMouse::redraw(int offs_x, int offs_y) const {
 
 		if (p -> check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_STAY_IN_INVENTORY) || p -> has_mouse_cursor_ID())
 			qdGameObjectAnimated::redraw(offs_x, offs_y);
-	} else
+	} else {
+		debugC(1, kDebugTemp, "mouse redraw 2");
 		qdGameObjectAnimated::redraw(offs_x, offs_y);
+		debugC(1, kDebugTemp, "mouse redraw 2 over");
+	}
 }
 
 void qdGameObjectMouse::set_cursor(cursor_ID_t id) {
