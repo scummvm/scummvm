@@ -443,8 +443,8 @@ bool qdTriggerChain::init_debug_check() {
 	return true;
 }
 
-const char *const qdTriggerChain::debug_comline() {
-	static const char *const arg = "triggers_debug";
+const char *qdTriggerChain::debug_comline() {
+	static const char  *arg = "triggers_debug";
 	return arg;
 }
 

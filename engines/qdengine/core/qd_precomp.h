@@ -53,14 +53,6 @@
 #endif
 
 //#define _GR_ENABLE_ZBUFFER
-#if 0
-#include "qdengine/xlibs/Heap/Additional/addition.h"
-#endif
-
-
-#if _MSC_VER < 1300
-#define for if(false); else for
-#endif
 
 #pragma warning(disable : 4786)
 #pragma warning(disable : 4018)
@@ -68,14 +60,6 @@
 
 #include "qdengine/xlibs/xutil/xutil.h"
 #include "qdengine/xlibs/util/xmath/xmath.h"
-
-#ifndef _NO_ZIP_
-#if 0
-#include "qdengine/xlibs/XZip/XZip.h"
-#endif
-#else
-
-#endif
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include <algorithm>

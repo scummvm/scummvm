@@ -471,30 +471,6 @@ char *XFindFirst(char *mask);
 #ifndef __ROUND__
 #define __ROUND__
 
-#if 0
-inline int round(double x) {
-	int a;
-#if 0
-	_asm {
-		fld x
-		fistp dword ptr a
-	}
-#endif
-	return a;
-}
-
-inline int round(float x) {
-	int a;
-#if 0
-	_asm {
-		fld x
-		fistp dword ptr a
-	}
-#endif
-	return a;
-}
-#endif
-
 template <class T>
 inline T sqr(const T &x) {
 	return x*x;
@@ -505,7 +481,7 @@ inline int SIGN(const T &x) {
 	return x ? (x > 0 ? 1 : -1) : 0;
 }
 
-#endif __ROUND__
+#endif // __ROUND__
 
 inline int BitSR(int x) {
 	int return_var = 0;

@@ -685,7 +685,7 @@ void grDispatcher::DrawSprContour_a(int x, int y, int sx, int sy, const unsigned
 	int jj = px;
 	for (int j = 0; j < psx; j ++) {
 		int empty_pixel = 1;
-		const unsigned short *pic_buf = reinterpret_cast<const unsigned short *>(p) + py * sx;
+		pic_buf = reinterpret_cast<const unsigned short *>(p) + py * sx;
 		for (int i = 0; i < psy; i ++) {
 			if (pic_buf[jj * 2 + 1] < 200) {
 				if (empty_pixel)
