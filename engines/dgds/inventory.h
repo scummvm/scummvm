@@ -23,6 +23,7 @@
 #define DGDS_INVENTORY_H
 
 #include "common/serializer.h"
+#include "common/error.h"
 #include "dgds/request.h"
 
 namespace Graphics {
