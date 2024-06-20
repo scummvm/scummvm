@@ -184,6 +184,8 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 
 	grD->HideMouse();
 
+	grD->ShowMouse(); // FIXME HACK
+
 	qdGameConfig::get_config().load();
 	setlocale(LC_CTYPE, qdGameConfig::get_config().locale());
 
