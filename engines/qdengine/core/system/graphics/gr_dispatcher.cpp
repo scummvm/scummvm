@@ -23,6 +23,9 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 #include "engines/util.h"
 #include "common/textconsole.h"
+
+#include "graphics/cursorman.h"
+
 #include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
@@ -39,6 +42,33 @@ grDispatcher::restore_handler_t grDispatcher::restore_handler_ = 0;
 
 grDispatcher *grDispatcher::dispatcher_ptr_;
 grFont *grDispatcher::default_font_;
+
+static const int CURSOR_W = 12;
+static const int CURSOR_H = 20;
+static const byte ARROW_CURSOR[CURSOR_W * CURSOR_H] = {
+	1,1,0,0,0,0,0,0,0,0,0,0,
+	1,2,1,0,0,0,0,0,0,0,0,0,
+	1,2,2,1,0,0,0,0,0,0,0,0,
+	1,2,2,2,1,0,0,0,0,0,0,0,
+	1,2,2,2,2,1,0,0,0,0,0,0,
+	1,2,2,2,2,2,1,0,0,0,0,0,
+	1,2,2,2,2,2,2,1,0,0,0,0,
+	1,2,2,2,2,2,2,2,1,0,0,0,
+	1,2,2,2,2,2,2,2,2,1,0,0,
+	1,2,2,2,2,2,2,2,2,2,1,0,
+	1,2,2,2,2,2,2,1,1,1,1,1,
+	1,2,2,2,1,2,2,1,0,0,0,0,
+	1,2,2,1,1,2,2,1,0,0,0,0,
+	1,2,1,0,0,1,2,2,1,0,0,0,
+	1,1,0,0,0,1,2,2,1,0,0,0,
+	1,0,0,0,0,0,1,2,2,1,0,0,
+	0,0,0,0,0,0,1,2,2,1,0,0,
+	0,0,0,0,0,0,0,1,2,2,1,0,
+	0,0,0,0,0,0,0,1,2,2,1,0,
+	0,0,0,0,0,0,0,0,1,1,0,0,
+};
+static const byte CURSOR_PALETTE[] = { 0x80, 0x80, 0x80, 0, 0, 0, 0xff, 0xff, 0xff };
+
 
 grDispatcher::grDispatcher() : screenBuf(NULL),
 #ifdef _GR_ENABLE_ZBUFFER
@@ -64,6 +94,11 @@ grDispatcher::grDispatcher() : screenBuf(NULL),
 	mouse_cursor_ = NULL;
 
 	pixel_format_ = GR_RGB565;
+
+	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+	CursorMan.replaceCursorPalette(CURSOR_PALETTE, 0, ARRAYSIZE(CURSOR_PALETTE) / 3);
+	CursorMan.replaceCursor(ARROW_CURSOR, CURSOR_W, CURSOR_H, 0, 0, 0, true, &format);
+	CursorMan.showMouse(true);
 
 	if (!dispatcher_ptr_) dispatcher_ptr_ = this;
 }
