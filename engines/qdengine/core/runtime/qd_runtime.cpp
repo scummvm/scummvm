@@ -319,6 +319,11 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 			input::mouse_wndproc(event, mouseDispatcher::instance());
 		}
 
+		if (grDispatcher::instance()->is_mouse_hidden())
+			grDispatcher::instance()->set_null_mouse_cursor();
+		else
+			grDispatcher::instance()->set_default_mouse_cursor();
+
 		if (grDispatcher::is_active()) {
 			if (was_inactive) {
 				was_inactive = false;
@@ -334,6 +339,8 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 			g_system->delayMillis(100);
 			resD.skip_time();
 		}
+
+		g_system->updateScreen();
 	}
 
 	delete qd_gameD;
