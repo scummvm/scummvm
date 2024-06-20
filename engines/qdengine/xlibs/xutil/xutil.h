@@ -442,47 +442,6 @@ private:
 #define XERR_DEBUG      0x0100
 #define XERR_UNKNOWN        0x0200
 
-class XErrorHandler {
-public:
-	XErrorHandler();
-	~XErrorHandler();
-
-	void     SetFlags(unsigned f);
-	void     ClearFlags(unsigned f);
-	unsigned InfoFlags(unsigned f);
-
-	void     SetPrefix(const char *s);
-	void     SetPostfix(const char *s);
-	void     SetRestore(void (*rf)());
-	void     SetState(int s) {
-		state = s;
-	}
-	void     Abort(const char *message, int code = XERR_USER, int addval = -1, const char *subj = NULL);
-	void     Exit();
-	void     RTC(const char *file, unsigned int line, const char *expr);
-	void     WriteLog(char *error, char *msg);
-	bool     IsErrorOrAssertHandling() {
-		return flag_errorOrAssertHandling;
-	}
-
-	unsigned flags;
-	bool flag_errorOrAssertHandling;
-
-private:
-	unsigned state;
-
-	const char *prefix;
-	const char *postfix;
-
-	void (*restore_func)();
-};
-
-extern XErrorHandler ErrH;
-
-// Use this macro for after any operation for errors diagnostic
-#define XAssert(expr) ErrH.RTC(__FILE__,__LINE__,expr)
-
-
 #define xassert(exp) assert(exp)
 #define xassertStr(exp, str)
 
@@ -650,7 +609,6 @@ void ZIP_expand(char *trg, ulong trgsize, char *src, ulong srcsize);
 #ifndef _XUTIL_NO_AUTOMATIC_LIB
 
 #define _LIB_NAME "XUtil"
-#include "AutomaticLink.h"
 
 #endif // _XUTIL_NO_AUTOMATIC_LIB
 

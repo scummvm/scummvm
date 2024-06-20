@@ -104,12 +104,10 @@ void XBuffer::handleOutOfSize() {
 	if (automaticRealloc_) {
 		buffer_ = (char*)realloc(buffer_, size_ *= 2);
 		if (!buffer_) {
-			xassert(0 && "Out of XBuffer (low of system memory)");
-			ErrH.Abort("Out of XBuffer (low of system memory)");
+			error("Out of XBuffer (low of system memory)");
 		}
 	} else {
-		xassert(0 && "Out of XBuffer");
-		ErrH.Abort("Out of XBuffer");
+		error("Out of XBuffer");
 	}
 }
 

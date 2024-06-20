@@ -132,16 +132,6 @@ MODULE_OBJS = \
 	xlibs/xutil/xstream/xsenlv.o \
 	xlibs/xutil/xstream/xsrdwr.o \
 	xlibs/xutil/xstream/xsserv.o \
-	xlibs/xutil/xutil/xutil.o \
-	xlibs/xutil/xutil/XClock.o \
-	xlibs/xutil/xerrhand/xerrhand.o \
-	xlibs/xutil/xtcore.o \
-	xlibs/xutil/xkey/xkey.o \
-	xlibs/xutil/xrecorder/xrec.o \
-	xlibs/xutil/xmsgbuffer/xmsgbuf.o \
-	xlibs/xutil/xutil/cpuid.o \
-	xlibs/xutil/xconsole/xcoutput.o \
-	xlibs/xutil/xconsole/xccore.o \
 	xlibs/util/xmath/XMath.o \
 
 # This module can be built as a plugin

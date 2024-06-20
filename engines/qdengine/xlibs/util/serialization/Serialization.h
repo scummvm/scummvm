@@ -650,7 +650,7 @@ private:
 				if (ar.processEnum((int &)value, descriptor, name, nameAlt))
 					return true;
 				else {
-					ErrH.Abort("Unable to write bad/unregistered enum value!");
+					error("Unable to write bad/unregistered enum value");
 					return false;
 				}
 			}

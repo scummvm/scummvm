@@ -113,7 +113,6 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 		event = CreateEvent(0, TRUE, TRUE, event_name);
 	}
 #endif
-	ErrH.SetRestore(restore);
 
 	comlineParser comline_parser;
 	comline_parser.register_option("s", COMLINE_SCENE_NAME);
@@ -248,7 +247,8 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 	qd_gameD->load_resources();
 
 	if (const char * scene_name = comline_parser.argument_string(COMLINE_SCENE_NAME)) {
-		if (!qd_gameD->select_scene(scene_name)) app_errH.show_error("Стартовая сцена не найдена", appErrorHandler::ERR_OTHER);
+		if (!qd_gameD->select_scene(scene_name))
+			error("Cannot find the startup scene");
 	} else {
 		bool music_enabled = mpegPlayer::instance().is_enabled();
 		mpegPlayer::instance().disable();
@@ -374,7 +374,7 @@ void init_graphics() {
 	grDispatcher::set_instance(grD);
 
 	if (!init_graphics_dispatcher())
-		app_errH.show_error("Ошибка инициализации графики", appErrorHandler::ERR_OTHER);
+		return;
 
 	grDispatcher::instance()->resize_window();
 
