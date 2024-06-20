@@ -497,8 +497,6 @@ public:
 	friend XBuffer &operator< (XBuffer &b, const Vect2f &v);
 	friend XBuffer &operator> (XBuffer &b, Vect2f &v);
 
-	void serialize(Archive &ar);
-
 	static const Vect2f ZERO;
 	static const Vect2f ID;
 };
@@ -669,8 +667,6 @@ public:
 	friend XBuffer &operator< (XBuffer &b, const Vect2i &v);
 	friend XBuffer &operator> (XBuffer &b, Vect2i &v);
 
-	void serialize(Archive &ar);
-
 	static const Vect2i ZERO;
 	static const Vect2i ID;
 };
@@ -804,8 +800,6 @@ public:
 	friend XBuffer &operator>= (XBuffer &b, Vect2s &v);
 	friend XBuffer &operator< (XBuffer &b, const Vect2s &v);
 	friend XBuffer &operator> (XBuffer &b, Vect2s &v);
-
-	void serialize(Archive &ar);
 };
 
 
@@ -1163,8 +1157,6 @@ public:
 	friend XBuffer &operator< (XBuffer &b, const Vect3f &v);
 	friend XBuffer &operator> (XBuffer &b, Vect3f &v);
 
-	void serialize(Archive &ar);
-
 	//  Swap  /////////////////////////
 	xm_inline void swap(Vect3f &other);
 	xm_inline friend void swap(Vect3f &u, Vect3f &v) {
@@ -1388,8 +1380,6 @@ public:
 	friend XBuffer &operator>= (XBuffer &b, Vect3d &v);
 	friend XBuffer &operator< (XBuffer &b, const Vect3d &v);
 	friend XBuffer &operator> (XBuffer &b, Vect3d &v);
-
-	void serialize(Archive &ar);
 
 	//  Swap  /////////////////////////
 	xm_inline void swap(Vect3d &other);
@@ -1720,8 +1710,6 @@ public:
 	friend XBuffer &operator< (XBuffer &b, const Mat3f &M);
 	friend XBuffer &operator> (XBuffer &b, Mat3f &M);
 
-	void serialize(Archive &ar);
-
 	// Mat3f constants ////////////////////////////////////////////////////////////
 
 	static const Mat3f ZERO;    // zero matrix
@@ -2035,8 +2023,6 @@ public:
 	friend XBuffer &operator< (XBuffer &b, const Mat3d &M);
 	friend XBuffer &operator> (XBuffer &b, Mat3d &M);
 
-	void serialize(Archive &ar);
-
 	// Mat3d constants ////////////////////////////////////////////////////////////
 
 	static const Mat3d ZERO;    // zero matrix
@@ -2167,8 +2153,6 @@ public:
 	friend istream &operator>>(istream &is, MatXf &M);
 #endif
 
-	void serialize(Archive &ar);
-
 	// MatXf constants ////////////////////////////////////////////////////////////
 
 	static const MatXf ID;      // identity matrix
@@ -2292,8 +2276,6 @@ public:
 	friend ostream &operator<<(ostream &os, const MatXd &M);
 	friend istream &operator>>(istream &is, MatXd &M);
 #endif
-
-	void serialize(Archive &ar);
 
 	// MatXd constants ////////////////////////////////////////////////////////////
 
@@ -2492,8 +2474,6 @@ public:
 	friend XBuffer &operator>= (XBuffer &b, QuatF &q);
 	friend XBuffer &operator< (XBuffer &b, const QuatF &q);
 	friend XBuffer &operator> (XBuffer &b, QuatF &q);
-
-	void serialize(Archive &ar);
 
 	// miscellaneous /////////////////////////////////////////////////////////////
 	xm_inline void slerp(const QuatF &a, const QuatF &b, float t);
@@ -2696,8 +2676,6 @@ public:
 	friend XBuffer &operator< (XBuffer &b, const QuatD &q);
 	friend XBuffer &operator> (XBuffer &b, QuatD &q);
 
-	void serialize(Archive &ar);
-
 	// miscellaneous /////////////////////////////////////////////////////////////
 	xm_inline void slerp(const QuatD &a, const QuatD &b, double t);
 
@@ -2825,8 +2803,6 @@ public:
 	friend XBuffer &operator< (XBuffer &b, const Se3f &v);
 	friend XBuffer &operator> (XBuffer &b, Se3f &v);
 
-	void serialize(Archive &ar);
-
 	// Se3f constants /////////////////////////////////////////////////////////////
 
 	static const Se3f ID;     // identity Se3f
@@ -2939,8 +2915,6 @@ public:
 	friend XBuffer &operator>= (XBuffer &b, Se3d &v);
 	friend XBuffer &operator< (XBuffer &b, const Se3d &v);
 	friend XBuffer &operator> (XBuffer &b, Se3d &v);
-
-	void serialize(Archive &ar);
 
 	// Se3d constants /////////////////////////////////////////////////////////////
 
@@ -3093,8 +3067,6 @@ public:
 	friend XBuffer &operator>= (XBuffer &b, Vect4f &v);
 	friend XBuffer &operator< (XBuffer &b, const Vect4f &v);
 	friend XBuffer &operator> (XBuffer &b, Vect4f &v);
-
-	void serialize(Archive &ar);
 
 	//  Swap  /////////////////////////
 	xm_inline void swap(Vect4f &other);
