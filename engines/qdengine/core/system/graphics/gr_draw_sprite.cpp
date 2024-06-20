@@ -169,48 +169,24 @@ void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const unsigned char *p
 	px <<= 2;
 
 	const unsigned char *data_ptr = p + py * sx;
+	for (int i = 0; i < psy; i ++) {
+		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
+		const unsigned char *data_line = data_ptr + px;
 
-	if (pixel_format_ == GR_RGB565) {
-		warning("STUB: grDispatcher::PutSpr_a()");
-		for (int i = 0; i < psy; i ++) {
-			unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
-			const unsigned char *data_line = data_ptr + px;
-
-			for (int j = 0; j < psx; j ++) {
-				unsigned a = data_line[3];
-				if (a != 255) {
-					if (a)
-						*scr_buf = alpha_blend_565(make_rgb565u(data_line[2], data_line[1], data_line[0]), *scr_buf, a);
-					else
-						*scr_buf = make_rgb565u(data_line[2], data_line[1], data_line[0]);
-				}
-
-				scr_buf += dx;
-				data_line += 4;
+		for (int j = 0; j < psx; j ++) {
+			unsigned a = data_line[3];
+			if (a != 255) {
+				if (a)
+					*scr_buf = alpha_blend_565(make_rgb565u(data_line[2], data_line[1], data_line[0]), *scr_buf, a);
+				else
+					*scr_buf = make_rgb565u(data_line[2], data_line[1], data_line[0]);
 			}
-			data_ptr += sx;
-			y += dy;
-		}
-	} else {
-		for (int i = 0; i < psy; i ++) {
-			unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
-			const unsigned char *data_line = data_ptr + px;
 
-			for (int j = 0; j < psx; j ++) {
-				unsigned a = data_line[3];
-				if (a != 255) {
-					if (a)
-						*scr_buf = alpha_blend_555(make_rgb555u(data_line[2], data_line[1], data_line[0]), *scr_buf, a);
-					else
-						*scr_buf = make_rgb555u(data_line[2], data_line[1], data_line[0]);
-				}
-
-				scr_buf += dx;
-				data_line += 4;
-			}
-			data_ptr += sx;
-			y += dy;
+			scr_buf += dx;
+			data_line += 4;
 		}
+		data_ptr += sx;
+		y += dy;
 	}
 	return;
 }
@@ -256,48 +232,7 @@ void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const unsig
 	int cos_a = round(cs * float(1 << F_PREC));
 
 	if (has_alpha) {
-		if (bytes_per_pixel() == 4 || bytes_per_pixel() == 3) {
-			for (int y = 0; y <= sy; y++) {
-				unsigned char *screen_ptr = (unsigned char *)(screenBuf + yTable[y + y0] + x0 * bytes_per_pixel());
-
-				int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + ((size.x + 1 + dx) << (F_PREC - 1));
-				int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + ((size.y + 1 + dy) << (F_PREC - 1));
-
-				for (int x = 0; x <= sx; x++) {
-					int xb = (xx >> F_PREC);
-					int yb = (yy >> F_PREC);
-
-					if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-						if (mode & GR_FLIP_HORIZONTAL)
-							xb = size.x - xb - 1;
-						if (mode & GR_FLIP_VERTICAL)
-							yb = size.y - yb - 1;
-
-						const unsigned char *data_ptr = data + size.x * 4 * yb + xb * 4;
-
-						unsigned a = data_ptr[3];
-						if (a != 255) {
-							if (a) {
-								screen_ptr[0] = data_ptr[0] + ((a * screen_ptr[0]) >> 8);
-								screen_ptr[1] = data_ptr[1] + ((a * screen_ptr[1]) >> 8);
-								screen_ptr[2] = data_ptr[2] + ((a * screen_ptr[2]) >> 8);
-							} else {
-								screen_ptr[0] = data_ptr[0];
-								screen_ptr[1] = data_ptr[1];
-								screen_ptr[2] = data_ptr[2];
-							}
-						}
-					}
-
-					xx += cos_a;
-					yy -= sin_a;
-
-					screen_ptr += bytes_per_pixel();
-				}
-			}
-		} else if (bytes_per_pixel() == 2) {
-			if (pixel_format_ == GR_RGB565) {
-				for (int y = 0; y <= sy; y++) {
+		for (int y = 0; y <= sy; y++) {
 					unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
 
 					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + ((size.x + 1 + dx) << (F_PREC - 1));
@@ -330,131 +265,32 @@ void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const unsig
 						screen_ptr++;
 					}
 				}
-			} else if (pixel_format_ == GR_ARGB1555) {
-				for (int y = 0; y <= sy; y++) {
-					unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
-
-					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + ((size.x + 1 + dx) << (F_PREC - 1));
-					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + ((size.y + 1 + dy) << (F_PREC - 1));
-
-					for (int x = 0; x <= sx; x++) {
-						int xb = (xx >> F_PREC);
-						int yb = (yy >> F_PREC);
-
-						if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-							if (mode & GR_FLIP_HORIZONTAL)
-								xb = size.x - xb - 1;
-							if (mode & GR_FLIP_VERTICAL)
-								yb = size.y - yb - 1;
-
-							const unsigned char *data_ptr = data + size.x * 4 * yb + xb * 4;
-
-							unsigned a = data_ptr[3];
-							if (a != 255) {
-								if (a)
-									*screen_ptr = alpha_blend_555(make_rgb555u(data_ptr[2], data_ptr[1], data_ptr[0]), *screen_ptr, a);
-								else
-									*screen_ptr = make_rgb555u(data_ptr[2], data_ptr[1], data_ptr[0]);
-							}
-						}
-
-						xx += cos_a;
-						yy -= sin_a;
-
-						screen_ptr++;
-					}
-				}
-			}
-		}
 	} else {
-		if (bytes_per_pixel() == 4 || bytes_per_pixel() == 3) {
-			for (int y = 0; y <= sy; y++) {
-				unsigned char *screen_ptr = (unsigned char *)(screenBuf + yTable[y + y0] + x0 * bytes_per_pixel());
+		for (int y = 0; y <= sy; y++) {
+			unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
 
-				int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + ((size.x + 1 + dx) << (F_PREC - 1));
-				int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + ((size.y + 1 + dy) << (F_PREC - 1));
+			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + ((size.x + 1 + dx) << (F_PREC - 1));
+			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + ((size.y + 1 + dy) << (F_PREC - 1));
 
-				for (int x = 0; x <= sx; x++) {
-					int xb = (xx >> F_PREC);
-					int yb = (yy >> F_PREC);
+			for (int x = 0; x <= sx; x++) {
+				int xb = (xx >> F_PREC);
+				int yb = (yy >> F_PREC);
 
-					if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-						if (mode & GR_FLIP_HORIZONTAL)
-							xb = size.x - xb - 1;
-						if (mode & GR_FLIP_VERTICAL)
-							yb = size.y - yb - 1;
+				if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
+					if (mode & GR_FLIP_HORIZONTAL)
+						xb = size.x - xb - 1;
+					if (mode & GR_FLIP_VERTICAL)
+						yb = size.y - yb - 1;
 
-						const unsigned char *data_ptr = data + size.x * 3 * yb + xb * 3;
-						if (data_ptr[0] || data_ptr[1] || data_ptr[2]) {
-							screen_ptr[0] = data_ptr[0];
-							screen_ptr[1] = data_ptr[1];
-							screen_ptr[2] = data_ptr[2];
-						}
-					}
-
-					xx += cos_a;
-					yy -= sin_a;
-
-					screen_ptr += bytes_per_pixel();
+					const unsigned char *data_ptr = data + size.x * 3 * yb + xb * 3;
+					if (data_ptr[0] || data_ptr[1] || data_ptr[2])
+						*screen_ptr = make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]);
 				}
-			}
-		} else if (bytes_per_pixel() == 2) {
-			if (pixel_format_ == GR_RGB565) {
-				for (int y = 0; y <= sy; y++) {
-					unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
 
-					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + ((size.x + 1 + dx) << (F_PREC - 1));
-					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + ((size.y + 1 + dy) << (F_PREC - 1));
+				xx += cos_a;
+				yy -= sin_a;
 
-					for (int x = 0; x <= sx; x++) {
-						int xb = (xx >> F_PREC);
-						int yb = (yy >> F_PREC);
-
-						if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-							if (mode & GR_FLIP_HORIZONTAL)
-								xb = size.x - xb - 1;
-							if (mode & GR_FLIP_VERTICAL)
-								yb = size.y - yb - 1;
-
-							const unsigned char *data_ptr = data + size.x * 3 * yb + xb * 3;
-							if (data_ptr[0] || data_ptr[1] || data_ptr[2])
-								*screen_ptr = make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]);
-						}
-
-						xx += cos_a;
-						yy -= sin_a;
-
-						screen_ptr++;
-					}
-				}
-			} else if (pixel_format_ == GR_ARGB1555) {
-				for (int y = 0; y <= sy; y++) {
-					unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
-
-					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + ((size.x + 1 + dx) << (F_PREC - 1));
-					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + ((size.y + 1 + dy) << (F_PREC - 1));
-
-					for (int x = 0; x <= sx; x++) {
-						int xb = (xx >> F_PREC);
-						int yb = (yy >> F_PREC);
-
-						if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-							if (mode & GR_FLIP_HORIZONTAL)
-								xb = size.x - xb - 1;
-							if (mode & GR_FLIP_VERTICAL)
-								yb = size.y - yb - 1;
-
-							const unsigned char *data_ptr = data + size.x * 3 * yb + xb * 3;
-							if (data_ptr[0] || data_ptr[1] || data_ptr[2])
-								*screen_ptr = make_rgb555u(data_ptr[2], data_ptr[1], data_ptr[0]);
-						}
-
-						xx += cos_a;
-						yy -= sin_a;
-
-						screen_ptr++;
-					}
-				}
+				screen_ptr++;
 			}
 		}
 	}
@@ -485,48 +321,7 @@ void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const unsig
 	Vect2i scaled_size = Vect2i(iscale.x * size.x, iscale.y * size.y);
 
 	if (has_alpha) {
-		if (bytes_per_pixel() == 4 || bytes_per_pixel() == 3) {
-			for (int y = 0; y <= sy; y++) {
-				unsigned char *screen_ptr = (unsigned char *)(screenBuf + yTable[y + y0] + x0 * bytes_per_pixel());
-
-				int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
-				int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
-
-				for (int x = 0; x <= sx; x++) {
-					int xb = xx / iscale.x;
-					int yb = yy / iscale.y;
-
-					if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-						if (mode & GR_FLIP_HORIZONTAL)
-							xb = size.x - xb - 1;
-						if (mode & GR_FLIP_VERTICAL)
-							yb = size.y - yb - 1;
-
-						const unsigned char *data_ptr = data + size.x * 4 * yb + xb * 4;
-
-						unsigned a = data_ptr[3];
-						if (a != 255) {
-							if (a) {
-								screen_ptr[0] = data_ptr[0] + ((a * screen_ptr[0]) >> 8);
-								screen_ptr[1] = data_ptr[1] + ((a * screen_ptr[1]) >> 8);
-								screen_ptr[2] = data_ptr[2] + ((a * screen_ptr[2]) >> 8);
-							} else {
-								screen_ptr[0] = data_ptr[0];
-								screen_ptr[1] = data_ptr[1];
-								screen_ptr[2] = data_ptr[2];
-							}
-						}
-					}
-
-					xx += cos_a;
-					yy -= sin_a;
-
-					screen_ptr += bytes_per_pixel();
-				}
-			}
-		} else if (bytes_per_pixel() == 2) {
-			if (pixel_format_ == GR_RGB565) {
-				for (int y = 0; y <= sy; y++) {
+		for (int y = 0; y <= sy; y++) {
 					unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
 
 					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
@@ -559,127 +354,31 @@ void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const unsig
 						screen_ptr++;
 					}
 				}
-			} else if (pixel_format_ == GR_ARGB1555) {
-				for (int y = 0; y <= sy; y++) {
-					unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
-
-					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
-					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
-
-					for (int x = 0; x <= sx; x++) {
-						int xb = xx / iscale.x;
-						int yb = yy / iscale.y;
-
-						if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-							if (mode & GR_FLIP_HORIZONTAL)
-								xb = size.x - xb - 1;
-							if (mode & GR_FLIP_VERTICAL)
-								yb = size.y - yb - 1;
-
-							const unsigned char *data_ptr = data + size.x * 4 * yb + xb * 4;
-
-							unsigned a = data_ptr[3];
-							if (a != 255) {
-								if (a)
-									*screen_ptr = alpha_blend_555(make_rgb555u(data_ptr[2], data_ptr[1], data_ptr[0]), *screen_ptr, a);
-								else
-									*screen_ptr = make_rgb555u(data_ptr[2], data_ptr[1], data_ptr[0]);
-							}
-						}
-
-						xx += cos_a;
-						yy -= sin_a;
-
-						screen_ptr++;
-					}
-				}
-			}
-		}
 	} else {
-		if (bytes_per_pixel() == 4 || bytes_per_pixel() == 3) {
-			for (int y = 0; y <= sy; y++) {
-				unsigned char *screen_ptr = (unsigned char *)(screenBuf + yTable[y + y0] + x0 * bytes_per_pixel());
+		for (int y = 0; y <= sy; y++) {
+			unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
 
-				int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
-				int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
+			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
+			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
 
-				for (int x = 0; x <= sx; x++) {
-					int xb = xx / iscale.x;
-					int yb = yy / iscale.y;
+			for (int x = 0; x <= sx; x++) {
+				int xb = xx / iscale.x;
+				int yb = yy / iscale.y;
 
-					if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-						if (mode & GR_FLIP_HORIZONTAL)
-							xb = size.x - xb - 1;
-						if (mode & GR_FLIP_VERTICAL)
-							yb = size.y - yb - 1;
+				if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
+					if (mode & GR_FLIP_HORIZONTAL)
+						xb = size.x - xb - 1;
+					if (mode & GR_FLIP_VERTICAL)
+						yb = size.y - yb - 1;
 
-						const unsigned char *data_ptr = data + size.x * 3 * yb + xb * 3;
-						screen_ptr[0] = data_ptr[0];
-						screen_ptr[1] = data_ptr[1];
-						screen_ptr[2] = data_ptr[2];
-					}
-
-					xx += cos_a;
-					yy -= sin_a;
-
-					screen_ptr += bytes_per_pixel();
+					const unsigned char *data_ptr = data + size.x * 3 * yb + xb * 3;
+					*screen_ptr = make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]);
 				}
-			}
-		} else if (bytes_per_pixel() == 2) {
-			if (pixel_format_ == GR_RGB565) {
-				for (int y = 0; y <= sy; y++) {
-					unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
 
-					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
-					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
+				xx += cos_a;
+				yy -= sin_a;
 
-					for (int x = 0; x <= sx; x++) {
-						int xb = xx / iscale.x;
-						int yb = yy / iscale.y;
-
-						if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-							if (mode & GR_FLIP_HORIZONTAL)
-								xb = size.x - xb - 1;
-							if (mode & GR_FLIP_VERTICAL)
-								yb = size.y - yb - 1;
-
-							const unsigned char *data_ptr = data + size.x * 3 * yb + xb * 3;
-							*screen_ptr = make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]);
-						}
-
-						xx += cos_a;
-						yy -= sin_a;
-
-						screen_ptr++;
-					}
-				}
-			} else if (pixel_format_ == GR_ARGB1555) {
-				for (int y = 0; y <= sy; y++) {
-					unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
-
-					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
-					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
-
-					for (int x = 0; x <= sx; x++) {
-						int xb = xx / iscale.x;
-						int yb = yy / iscale.y;
-
-						if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-							if (mode & GR_FLIP_HORIZONTAL)
-								xb = size.x - xb - 1;
-							if (mode & GR_FLIP_VERTICAL)
-								yb = size.y - yb - 1;
-
-							const unsigned char *data_ptr = data + size.x * 3 * yb + xb * 3;
-							*screen_ptr = make_rgb555u(data_ptr[2], data_ptr[1], data_ptr[0]);
-						}
-
-						xx += cos_a;
-						yy -= sin_a;
-
-						screen_ptr++;
-					}
-				}
+				screen_ptr++;
 			}
 		}
 	}
@@ -707,247 +406,84 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const u
 	int cos_a = round(cs * float(1 << F_PREC));
 
 	if (has_alpha) {
-		if (bytes_per_pixel() == 4 || bytes_per_pixel() == 3) {
-			unsigned mr, mg, mb;
-			split_rgb888(mask_color, mr, mg, mb);
+		unsigned mr, mg, mb;
+		split_rgb565u(mask_color, mr, mg, mb);
 
-			for (int y = 0; y <= sy; y++) {
-				unsigned char *screen_ptr = (unsigned char *)(screenBuf + yTable[y + y0] + x0 * bytes_per_pixel());
+		for (int y = 0; y <= sy; y++) {
+			unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
 
-				int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + (size.x + 1) * (1 << (F_PREC - 1));
-				int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + (size.y + 1) * (1 << (F_PREC - 1));
+			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + (size.x + 1) * (1 << (F_PREC - 1));
+			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + (size.y + 1) * (1 << (F_PREC - 1));
 
-				for (int x = 0; x <= sx; x++) {
-					int xb = (xx >> F_PREC);
-					int yb = (yy >> F_PREC);
+			for (int x = 0; x <= sx; x++) {
+				int xb = (xx >> F_PREC);
+				int yb = (yy >> F_PREC);
 
-					if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-						if (mode & GR_FLIP_HORIZONTAL)
-							xb = size.x - xb - 1;
-						if (mode & GR_FLIP_VERTICAL)
-							yb = size.y - yb - 1;
+				if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
+					if (mode & GR_FLIP_HORIZONTAL)
+						xb = size.x - xb - 1;
+					if (mode & GR_FLIP_VERTICAL)
+						yb = size.y - yb - 1;
 
-						const unsigned char *data_ptr = data + size.x * 4 * yb + xb * 4;
+					const unsigned char *data_ptr = data + size.x * 4 * yb + xb * 4;
 
-						unsigned a = data_ptr[3];
-						if (a != 255) {
-							a = mask_alpha + ((a * (255 - mask_alpha)) >> 8);
+					unsigned a = data_ptr[3];
+					if (a != 255) {
+						a = mask_alpha + ((a * (255 - mask_alpha)) >> 8);
 
-							screen_ptr[0] = ((mb * (255 - a)) >> 8) + ((a * screen_ptr[0]) >> 8);
-							screen_ptr[1] = ((mg * (255 - a)) >> 8) + ((a * screen_ptr[1]) >> 8);
-							screen_ptr[2] = ((mr * (255 - a)) >> 8) + ((a * screen_ptr[2]) >> 8);
-						}
-					}
+						unsigned r = (mr * (255 - a)) >> 8;
+						unsigned g = (mg * (255 - a)) >> 8;
+						unsigned b = (mb * (255 - a)) >> 8;
 
-					xx += cos_a;
-					yy -= sin_a;
+						unsigned cl = make_rgb565u(r, g, b);
 
-					screen_ptr += bytes_per_pixel();
-				}
-			}
-		} else if (bytes_per_pixel() == 2) {
-			if (pixel_format_ == GR_RGB565) {
-				unsigned mr, mg, mb;
-				split_rgb565u(mask_color, mr, mg, mb);
-
-				for (int y = 0; y <= sy; y++) {
-					unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
-
-					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + (size.x + 1) * (1 << (F_PREC - 1));
-					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + (size.y + 1) * (1 << (F_PREC - 1));
-
-					for (int x = 0; x <= sx; x++) {
-						int xb = (xx >> F_PREC);
-						int yb = (yy >> F_PREC);
-
-						if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-							if (mode & GR_FLIP_HORIZONTAL)
-								xb = size.x - xb - 1;
-							if (mode & GR_FLIP_VERTICAL)
-								yb = size.y - yb - 1;
-
-							const unsigned char *data_ptr = data + size.x * 4 * yb + xb * 4;
-
-							unsigned a = data_ptr[3];
-							if (a != 255) {
-								a = mask_alpha + ((a * (255 - mask_alpha)) >> 8);
-
-								unsigned r = (mr * (255 - a)) >> 8;
-								unsigned g = (mg * (255 - a)) >> 8;
-								unsigned b = (mb * (255 - a)) >> 8;
-
-								unsigned cl = make_rgb565u(r, g, b);
-
-								*screen_ptr = alpha_blend_565(cl, *screen_ptr, a);
-							}
-						}
-
-						xx += cos_a;
-						yy -= sin_a;
-
-						screen_ptr++;
+						*screen_ptr = alpha_blend_565(cl, *screen_ptr, a);
 					}
 				}
-			} else if (pixel_format_ == GR_ARGB1555) {
-				unsigned mr, mg, mb;
-				split_rgb555u(mask_color, mr, mg, mb);
 
-				for (int y = 0; y <= sy; y++) {
-					unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
+				xx += cos_a;
+				yy -= sin_a;
 
-					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + (size.x + 1) * (1 << (F_PREC - 1));
-					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + (size.y + 1) * (1 << (F_PREC - 1));
-
-					for (int x = 0; x <= sx; x++) {
-						int xb = (xx >> F_PREC);
-						int yb = (yy >> F_PREC);
-
-						if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-							if (mode & GR_FLIP_HORIZONTAL)
-								xb = size.x - xb - 1;
-							if (mode & GR_FLIP_VERTICAL)
-								yb = size.y - yb - 1;
-
-							const unsigned char *data_ptr = data + size.x * 4 * yb + xb * 4;
-
-							unsigned a = data_ptr[3];
-							if (a != 255) {
-								a = mask_alpha + ((a * (255 - mask_alpha)) >> 8);
-
-								unsigned r = (mr * (255 - a)) >> 8;
-								unsigned g = (mg * (255 - a)) >> 8;
-								unsigned b = (mb * (255 - a)) >> 8;
-
-								unsigned cl = make_rgb555u(r, g, b);
-
-								*screen_ptr = alpha_blend_555(cl, *screen_ptr, a);
-							}
-						}
-
-						xx += cos_a;
-						yy -= sin_a;
-
-						screen_ptr++;
-					}
-				}
+				screen_ptr++;
 			}
 		}
+
 	} else {
-		if (bytes_per_pixel() == 4 || bytes_per_pixel() == 3) {
-			unsigned mr, mg, mb;
-			split_rgb888(mask_color, mr, mg, mb);
+		unsigned mr, mg, mb;
+		split_rgb565u(mask_color, mr, mg, mb);
 
-			mr = (mr * (255 - mask_alpha)) >> 8;
-			mg = (mg * (255 - mask_alpha)) >> 8;
-			mb = (mb * (255 - mask_alpha)) >> 8;
+		mr = (mr * (255 - mask_alpha)) >> 8;
+		mg = (mg * (255 - mask_alpha)) >> 8;
+		mb = (mb * (255 - mask_alpha)) >> 8;
 
-			for (int y = 0; y <= sy; y++) {
-				unsigned char *screen_ptr = (unsigned char *)(screenBuf + yTable[y + y0] + x0 * bytes_per_pixel());
+		unsigned mcl = make_rgb565u(mr, mg, mb);
 
-				int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + (size.x + 1) * (1 << (F_PREC - 1));
-				int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + (size.y + 1) * (1 << (F_PREC - 1));
+		for (int y = 0; y <= sy; y++) {
+			unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
 
-				for (int x = 0; x <= sx; x++) {
-					int xb = (xx >> F_PREC);
-					int yb = (yy >> F_PREC);
+			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + (size.x + 1) * (1 << (F_PREC - 1));
+			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + (size.y + 1) * (1 << (F_PREC - 1));
 
-					if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-						if (mode & GR_FLIP_HORIZONTAL)
-							xb = size.x - xb - 1;
-						if (mode & GR_FLIP_VERTICAL)
-							yb = size.y - yb - 1;
+			for (int x = 0; x <= sx; x++) {
+				int xb = (xx >> F_PREC);
+				int yb = (yy >> F_PREC);
 
-						const unsigned char *data_ptr = data + size.x * 3 * yb + xb * 3;
-						if (data_ptr[0] || data_ptr[1] || data_ptr[2]) {
-							screen_ptr[2] = mr + ((mask_alpha * screen_ptr[2]) >> 8);
-							screen_ptr[1] = mg + ((mask_alpha * screen_ptr[1]) >> 8);
-							screen_ptr[0] = mb + ((mask_alpha * screen_ptr[0]) >> 8);
-						}
-					}
+				if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
+					if (mode & GR_FLIP_HORIZONTAL)
+						xb = size.x - xb - 1;
+					if (mode & GR_FLIP_VERTICAL)
+						yb = size.y - yb - 1;
 
-					xx += cos_a;
-					yy -= sin_a;
-
-					screen_ptr += bytes_per_pixel();
-				}
-			}
-		} else if (bytes_per_pixel() == 2) {
-			if (pixel_format_ == GR_RGB565) {
-				unsigned mr, mg, mb;
-				split_rgb565u(mask_color, mr, mg, mb);
-
-				mr = (mr * (255 - mask_alpha)) >> 8;
-				mg = (mg * (255 - mask_alpha)) >> 8;
-				mb = (mb * (255 - mask_alpha)) >> 8;
-
-				unsigned mcl = make_rgb565u(mr, mg, mb);
-
-				for (int y = 0; y <= sy; y++) {
-					unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
-
-					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + (size.x + 1) * (1 << (F_PREC - 1));
-					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + (size.y + 1) * (1 << (F_PREC - 1));
-
-					for (int x = 0; x <= sx; x++) {
-						int xb = (xx >> F_PREC);
-						int yb = (yy >> F_PREC);
-
-						if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-							if (mode & GR_FLIP_HORIZONTAL)
-								xb = size.x - xb - 1;
-							if (mode & GR_FLIP_VERTICAL)
-								yb = size.y - yb - 1;
-
-							const unsigned char *data_ptr = data + size.x * 3 * yb + xb * 3;
-							if (data_ptr[0] || data_ptr[1] || data_ptr[2]) {
-								*screen_ptr = alpha_blend_565(mcl, *screen_ptr, mask_alpha);
-							}
-						}
-
-						xx += cos_a;
-						yy -= sin_a;
-
-						screen_ptr++;
+					const unsigned char *data_ptr = data + size.x * 3 * yb + xb * 3;
+					if (data_ptr[0] || data_ptr[1] || data_ptr[2]) {
+						*screen_ptr = alpha_blend_565(mcl, *screen_ptr, mask_alpha);
 					}
 				}
-			} else if (pixel_format_ == GR_ARGB1555) {
-				unsigned mr, mg, mb;
-				split_rgb555u(mask_color, mr, mg, mb);
 
-				mr = (mr * (255 - mask_alpha)) >> 8;
-				mg = (mg * (255 - mask_alpha)) >> 8;
-				mb = (mb * (255 - mask_alpha)) >> 8;
+				xx += cos_a;
+				yy -= sin_a;
 
-				unsigned mcl = make_rgb555u(mr, mg, mb);
-
-				for (int y = 0; y <= sy; y++) {
-					unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
-
-					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + (size.x + 1) * (1 << (F_PREC - 1));
-					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + (size.y + 1) * (1 << (F_PREC - 1));
-
-					for (int x = 0; x <= sx; x++) {
-						int xb = (xx >> F_PREC);
-						int yb = (yy >> F_PREC);
-
-						if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-							if (mode & GR_FLIP_HORIZONTAL)
-								xb = size.x - xb - 1;
-							if (mode & GR_FLIP_VERTICAL)
-								yb = size.y - yb - 1;
-
-							const unsigned char *data_ptr = data + size.x * 3 * yb + xb * 3;
-							if (data_ptr[0] || data_ptr[1] || data_ptr[2]) {
-								*screen_ptr = alpha_blend_565(mcl, *screen_ptr, mask_alpha);
-							}
-						}
-
-						xx += cos_a;
-						yy -= sin_a;
-
-						screen_ptr++;
-					}
-				}
+				screen_ptr++;
 			}
 		}
 	}
@@ -978,237 +514,79 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const u
 	Vect2i scaled_size = Vect2i(iscale.x * size.x, iscale.y * size.y);
 
 	if (has_alpha) {
-		if (bytes_per_pixel() == 4 || bytes_per_pixel() == 3) {
-			unsigned mr, mg, mb;
-			split_rgb888(mask_color, mr, mg, mb);
+		unsigned mr, mg, mb;
+		split_rgb565u(mask_color, mr, mg, mb);
 
-			for (int y = 0; y <= sy; y++) {
-				unsigned char *screen_ptr = (unsigned char *)(screenBuf + yTable[y + y0] + x0 * bytes_per_pixel());
+		for (int y = 0; y <= sy; y++) {
+			unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
 
-				int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
-				int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
+			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
+			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
 
-				for (int x = 0; x <= sx; x++) {
-					int xb = xx / iscale.x;
-					int yb = yy / iscale.y;
+			for (int x = 0; x <= sx; x++) {
+				int xb = xx / iscale.x;
+				int yb = yy / iscale.y;
 
-					if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-						if (mode & GR_FLIP_HORIZONTAL)
-							xb = size.x - xb - 1;
-						if (mode & GR_FLIP_VERTICAL)
-							yb = size.y - yb - 1;
+				if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
+					if (mode & GR_FLIP_HORIZONTAL)
+						xb = size.x - xb - 1;
+					if (mode & GR_FLIP_VERTICAL)
+						yb = size.y - yb - 1;
 
-						const unsigned char *data_ptr = data + size.x * 4 * yb + xb * 4;
+					const unsigned char *data_ptr = data + size.x * 4 * yb + xb * 4;
 
-						unsigned a = data_ptr[3];
-						if (a != 255) {
-							a = mask_alpha + ((a * (255 - mask_alpha)) >> 8);
+					unsigned a = data_ptr[3];
+					if (a != 255) {
+						a = mask_alpha + ((a * (255 - mask_alpha)) >> 8);
 
-							screen_ptr[0] = ((mb * (255 - a)) >> 8) + ((a * screen_ptr[0]) >> 8);
-							screen_ptr[1] = ((mg * (255 - a)) >> 8) + ((a * screen_ptr[1]) >> 8);
-							screen_ptr[2] = ((mr * (255 - a)) >> 8) + ((a * screen_ptr[2]) >> 8);
-						}
-					}
+						unsigned r = (mr * (255 - a)) >> 8;
+						unsigned g = (mg * (255 - a)) >> 8;
+						unsigned b = (mb * (255 - a)) >> 8;
 
-					xx += cos_a;
-					yy -= sin_a;
+						unsigned cl = make_rgb565u(r, g, b);
 
-					screen_ptr += bytes_per_pixel();
-				}
-			}
-		} else if (bytes_per_pixel() == 2) {
-			if (pixel_format_ == GR_RGB565) {
-				unsigned mr, mg, mb;
-				split_rgb565u(mask_color, mr, mg, mb);
-
-				for (int y = 0; y <= sy; y++) {
-					unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
-
-					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
-					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
-
-					for (int x = 0; x <= sx; x++) {
-						int xb = xx / iscale.x;
-						int yb = yy / iscale.y;
-
-						if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-							if (mode & GR_FLIP_HORIZONTAL)
-								xb = size.x - xb - 1;
-							if (mode & GR_FLIP_VERTICAL)
-								yb = size.y - yb - 1;
-
-							const unsigned char *data_ptr = data + size.x * 4 * yb + xb * 4;
-
-							unsigned a = data_ptr[3];
-							if (a != 255) {
-								a = mask_alpha + ((a * (255 - mask_alpha)) >> 8);
-
-								unsigned r = (mr * (255 - a)) >> 8;
-								unsigned g = (mg * (255 - a)) >> 8;
-								unsigned b = (mb * (255 - a)) >> 8;
-
-								unsigned cl = make_rgb565u(r, g, b);
-
-								*screen_ptr = alpha_blend_565(cl, *screen_ptr, a);
-							}
-						}
-
-						xx += cos_a;
-						yy -= sin_a;
-
-						screen_ptr++;
+						*screen_ptr = alpha_blend_565(cl, *screen_ptr, a);
 					}
 				}
-			} else if (pixel_format_ == GR_ARGB1555) {
-				unsigned mr, mg, mb;
-				split_rgb555u(mask_color, mr, mg, mb);
 
-				for (int y = 0; y <= sy; y++) {
-					unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
+				xx += cos_a;
+				yy -= sin_a;
 
-					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
-					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
-
-					for (int x = 0; x <= sx; x++) {
-						int xb = xx / iscale.x;
-						int yb = yy / iscale.y;
-
-						if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-							if (mode & GR_FLIP_HORIZONTAL)
-								xb = size.x - xb - 1;
-							if (mode & GR_FLIP_VERTICAL)
-								yb = size.y - yb - 1;
-
-							const unsigned char *data_ptr = data + size.x * 4 * yb + xb * 4;
-
-							unsigned a = data_ptr[3];
-							if (a != 255) {
-								a = mask_alpha + ((a * (255 - mask_alpha)) >> 8);
-
-								unsigned r = (mr * (255 - a)) >> 8;
-								unsigned g = (mg * (255 - a)) >> 8;
-								unsigned b = (mb * (255 - a)) >> 8;
-
-								unsigned cl = make_rgb555u(r, g, b);
-
-								*screen_ptr = alpha_blend_555(cl, *screen_ptr, a);
-							}
-						}
-
-						xx += cos_a;
-						yy -= sin_a;
-
-						screen_ptr++;
-					}
-				}
+				screen_ptr++;
 			}
 		}
 	} else {
-		if (bytes_per_pixel() == 4 || bytes_per_pixel() == 3) {
-			unsigned mr, mg, mb;
-			split_rgb888(mask_color, mr, mg, mb);
+		unsigned mr, mg, mb;
+		split_rgb565u(mask_color, mr, mg, mb);
 
-			mr = (mr * (255 - mask_alpha)) >> 8;
-			mg = (mg * (255 - mask_alpha)) >> 8;
-			mb = (mb * (255 - mask_alpha)) >> 8;
+		mr = (mr * (255 - mask_alpha)) >> 8;
+		mg = (mg * (255 - mask_alpha)) >> 8;
+		mb = (mb * (255 - mask_alpha)) >> 8;
 
-			for (int y = 0; y <= sy; y++) {
-				unsigned char *screen_ptr = (unsigned char *)(screenBuf + yTable[y + y0] + x0 * bytes_per_pixel());
+		for (int y = 0; y <= sy; y++) {
+			unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
 
-				int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
-				int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
+			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
+			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
 
-				for (int x = 0; x <= sx; x++) {
-					int xb = xx / iscale.x;
-					int yb = yy / iscale.y;
+			for (int x = 0; x <= sx; x++) {
+				int xb = xx / iscale.x;
+				int yb = yy / iscale.y;
 
-					if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-						if (mode & GR_FLIP_HORIZONTAL)
-							xb = size.x - xb - 1;
-						if (mode & GR_FLIP_VERTICAL)
-							yb = size.y - yb - 1;
+				if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
+					if (mode & GR_FLIP_HORIZONTAL)
+						xb = size.x - xb - 1;
+					if (mode & GR_FLIP_VERTICAL)
+						yb = size.y - yb - 1;
 
-						const unsigned char *data_ptr = data + size.x * 3 * yb + xb * 3;
-						screen_ptr[0] = data_ptr[0];
-						screen_ptr[1] = data_ptr[1];
-						screen_ptr[2] = data_ptr[2];
-					}
-
-					xx += cos_a;
-					yy -= sin_a;
-
-					screen_ptr += bytes_per_pixel();
+					const unsigned char *data_ptr = data + size.x * 3 * yb + xb * 3;
+					*screen_ptr = make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]);
 				}
-			}
-		} else if (bytes_per_pixel() == 2) {
-			if (pixel_format_ == GR_RGB565) {
-				unsigned mr, mg, mb;
-				split_rgb565u(mask_color, mr, mg, mb);
 
-				mr = (mr * (255 - mask_alpha)) >> 8;
-				mg = (mg * (255 - mask_alpha)) >> 8;
-				mb = (mb * (255 - mask_alpha)) >> 8;
+				xx += cos_a;
+				yy -= sin_a;
 
-				for (int y = 0; y <= sy; y++) {
-					unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
-
-					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
-					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
-
-					for (int x = 0; x <= sx; x++) {
-						int xb = xx / iscale.x;
-						int yb = yy / iscale.y;
-
-						if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-							if (mode & GR_FLIP_HORIZONTAL)
-								xb = size.x - xb - 1;
-							if (mode & GR_FLIP_VERTICAL)
-								yb = size.y - yb - 1;
-
-							const unsigned char *data_ptr = data + size.x * 3 * yb + xb * 3;
-							*screen_ptr = make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]);
-						}
-
-						xx += cos_a;
-						yy -= sin_a;
-
-						screen_ptr++;
-					}
-				}
-			} else if (pixel_format_ == GR_ARGB1555) {
-				unsigned mr, mg, mb;
-				split_rgb555u(mask_color, mr, mg, mb);
-
-				mr = (mr * (255 - mask_alpha)) >> 8;
-				mg = (mg * (255 - mask_alpha)) >> 8;
-				mb = (mb * (255 - mask_alpha)) >> 8;
-
-				for (int y = 0; y <= sy; y++) {
-					unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
-
-					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
-					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
-
-					for (int x = 0; x <= sx; x++) {
-						int xb = xx / iscale.x;
-						int yb = yy / iscale.y;
-
-						if (xb >= 0 && xb < size.x && yb >= 0 && yb < size.y) {
-							if (mode & GR_FLIP_HORIZONTAL)
-								xb = size.x - xb - 1;
-							if (mode & GR_FLIP_VERTICAL)
-								yb = size.y - yb - 1;
-
-							const unsigned char *data_ptr = data + size.x * 3 * yb + xb * 3;
-							*screen_ptr = make_rgb555u(data_ptr[2], data_ptr[1], data_ptr[0]);
-						}
-
-						xx += cos_a;
-						yy -= sin_a;
-
-						screen_ptr++;
-					}
-				}
+				screen_ptr++;
 			}
 		}
 	}
@@ -1222,142 +600,41 @@ void grDispatcher::PutSpr(int x, int y, int sx, int sy, const unsigned char *p, 
 	int psy = sy;
 
 	if (!clip_rectangle(x, y, px, py, psx, psy)) return;
+	int dx = -1;
+	int dy = -1;
 
-	if (bytes_per_pixel() == 4) {
-		int dx = -4;
-		int dy = -1;
+	if (mode & GR_FLIP_HORIZONTAL) {
+		x += psx - 1;
+		px = sx - px - psx;
+	} else
+		dx = 1;
 
-		x *= 4;
+	if (mode & GR_FLIP_VERTICAL) {
+		y += psy - 1;
+		py = sy - py - psy;
+	} else
+		dy = 1;
 
-		if (mode & GR_FLIP_HORIZONTAL) {
-			x += psx * 4 - 4;
-			px = sx - px - psx;
-		} else
-			dx = 4;
+	x <<= 1;
 
-		if (mode & GR_FLIP_VERTICAL) {
-			y += psy - 1;
-			py = sy - py - psy;
-		} else
-			dy = 1;
+	sx *= 3;
+	px *= 3;
 
-		int px3 = px * 3;
-		int sx3 = sx * 3;
+	const unsigned char *data_ptr = p + py * sx;
 
-		const unsigned char *data_ptr = p + py * sx3;
+	for (int i = 0; i < psy; i ++) {
+		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
+		const unsigned char *data_line = data_ptr + px;
 
-		warning("STUB: grDispatcher::PutSpr");
-		for (int i = 0; i < psy; i ++) {
-			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(_screenBuf->getBasePtr(x, y));
-			const unsigned char *data_line = data_ptr + px3;
-
-			for (int j = 0; j < psx; j ++) {
-				if (data_line[0] || data_line[1] || data_line[2]) {
-					scr_buf[0] = data_line[0];
-					scr_buf[1] = data_line[1];
-					scr_buf[2] = data_line[2];
-				}
-				scr_buf += dx;
-				data_line += 3;
-			}
-
-			data_ptr += sx3;
-			y += dy;
+		for (int j = 0; j < psx; j ++) {
+			if (*data_line)
+				*scr_buf = make_rgb565u(data_line[2], data_line[1], data_line[0]);
+			scr_buf += dx;
+			data_line += 3;
 		}
-	} else if (bytes_per_pixel() == 3) {
-		int dx = -3;
-		int dy = -1;
 
-		x *= 3;
-
-		if (mode & GR_FLIP_HORIZONTAL) {
-			x += psx * 3 - 3;
-			px = sx - px - psx;
-		} else
-			dx = 3;
-
-		if (mode & GR_FLIP_VERTICAL) {
-			y += psy - 1;
-			py = sy - py - psy;
-		} else
-			dy = 1;
-
-		int px3 = px * 3;
-		int sx3 = sx * 3;
-
-		const unsigned char *data_ptr = p + py * sx3;
-
-		for (int i = 0; i < psy; i ++) {
-			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(_screenBuf->getBasePtr(x, y));
-			const unsigned char *data_line = data_ptr + px3;
-
-			for (int j = 0; j < psx; j ++) {
-				if (data_line[0] || data_line[1] || data_line[2]) {
-					scr_buf[0] = data_line[0];
-					scr_buf[1] = data_line[1];
-					scr_buf[2] = data_line[2];
-				}
-				scr_buf += dx;
-				data_line += 3;
-			}
-
-			data_ptr += sx3;
-			y += dy;
-		}
-	} else if (bytes_per_pixel() == 2) {
-		int dx = -1;
-		int dy = -1;
-
-		if (mode & GR_FLIP_HORIZONTAL) {
-			x += psx - 1;
-			px = sx - px - psx;
-		} else
-			dx = 1;
-
-		if (mode & GR_FLIP_VERTICAL) {
-			y += psy - 1;
-			py = sy - py - psy;
-		} else
-			dy = 1;
-
-		x <<= 1;
-
-		sx *= 3;
-		px *= 3;
-
-		const unsigned char *data_ptr = p + py * sx;
-
-		if (pixel_format_ == GR_RGB565) {
-			for (int i = 0; i < psy; i ++) {
-				unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
-				const unsigned char *data_line = data_ptr + px;
-
-				for (int j = 0; j < psx; j ++) {
-					if (*data_line)
-						*scr_buf = make_rgb565u(data_line[2], data_line[1], data_line[0]);
-					scr_buf += dx;
-					data_line += 3;
-				}
-
-				data_ptr += sx;
-				y += dy;
-			}
-		} else {
-			for (int i = 0; i < psy; i ++) {
-				unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
-				const unsigned char *data_line = data_ptr + px;
-
-				for (int j = 0; j < psx; j ++) {
-					if (*data_line)
-						*scr_buf = make_rgb555u(data_line[2], data_line[1], data_line[0]);
-					scr_buf += dx;
-					data_line += 3;
-				}
-
-				data_ptr += sx;
-				y += dy;
-			}
-		}
+		data_ptr += sx;
+		y += dy;
 	}
 }
 
@@ -1674,49 +951,26 @@ void grDispatcher::PutChar(int x, int y, unsigned color, int font_sx, int font_s
 	x *= 2;
 	color = make_rgb(color);
 
-	if (pixel_format_ == GR_RGB565) {
-		warning("STUB: grDispatcher::PutChar");
-		for (int i = 0; i < psy; i++, y++) {
-			unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
-			for (int j = 0; j < psx; j++) {
-				unsigned a = alpha_buf[j];
-				unsigned a1 = 255 - a;
-				if (a) {
-					if (a != 255) {
-						unsigned scr_col = *scr_buf;
-						*scr_buf++ = (((((color & mask_565_r) * a) >> 8) & mask_565_r) |
-										((((color & mask_565_g) * a) >> 8) & mask_565_g) |
-										((((color & mask_565_b) * a) >> 8) & mask_565_b)) +
-										(((((scr_col & mask_565_r) * a1) >> 8) & mask_565_r) |
-										((((scr_col & mask_565_g) * a1) >> 8) & mask_565_g) |
-										((((scr_col & mask_565_b) * a1) >> 8) & mask_565_b));
-					} else
-						*scr_buf++ = color;
-				} else scr_buf++;
-			}
-			alpha_buf += font_sx;
+	warning("STUB: grDispatcher::PutChar");
+	for (int i = 0; i < psy; i++, y++) {
+		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
+		for (int j = 0; j < psx; j++) {
+			unsigned a = alpha_buf[j];
+			unsigned a1 = 255 - a;
+			if (a) {
+				if (a != 255) {
+					unsigned scr_col = *scr_buf;
+					*scr_buf++ = (((((color & mask_565_r) * a) >> 8) & mask_565_r) |
+									((((color & mask_565_g) * a) >> 8) & mask_565_g) |
+									((((color & mask_565_b) * a) >> 8) & mask_565_b)) +
+									(((((scr_col & mask_565_r) * a1) >> 8) & mask_565_r) |
+									((((scr_col & mask_565_g) * a1) >> 8) & mask_565_g) |
+									((((scr_col & mask_565_b) * a1) >> 8) & mask_565_b));
+				} else
+					*scr_buf++ = color;
+			} else scr_buf++;
 		}
-	} else {
-		for (int i = 0; i < psy; i++, y++) {
-			unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
-			for (int j = 0; j < psx; j++) {
-				unsigned a = alpha_buf[j];
-				unsigned a1 = 255 - a;
-				if (a) {
-					if (a != 255) {
-						unsigned scr_col = *scr_buf;
-						*scr_buf++ = (((((color & mask_555_r) * a) >> 8) & mask_555_r) |
-										((((color & mask_555_g) * a) >> 8) & mask_555_g) |
-										((((color & mask_555_b) * a) >> 8) & mask_555_b)) +
-										(((((scr_col & mask_555_r) * a1) >> 8) & mask_555_r) |
-										((((scr_col & mask_555_g) * a1) >> 8) & mask_555_g) |
-										((((scr_col & mask_555_b) * a1) >> 8) & mask_555_b));
-					} else
-						*scr_buf++ = color;
-				} else scr_buf++;
-			}
-			alpha_buf += font_sx;
-		}
+		alpha_buf += font_sx;
 	}
 	return;
 }
@@ -1729,174 +983,51 @@ void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const unsigned char 
 	int psy = sy;
 
 	if (!clip_rectangle(x, y, px, py, psx, psy)) return;
+	int dx = -1;
+	int dy = -1;
 
-	if (bytes_per_pixel() == 4) {
-		int dx = -4;
-		int dy = -1;
+	if (mode & GR_FLIP_HORIZONTAL) {
+		x += psx - 1;
+		px = sx - px - psx;
+	} else
+		dx = 1;
 
-		x *= 4;
+	if (mode & GR_FLIP_VERTICAL) {
+		y += psy - 1;
+		py = sy - py - psy;
+	} else
+		dy = 1;
 
-		if (mode & GR_FLIP_HORIZONTAL) {
-			x += psx * 4 - 4;
-			px = sx - px - psx;
-		} else
-			dx = 4;
+	x <<= 1;
 
-		if (mode & GR_FLIP_VERTICAL) {
-			y += psy - 1;
-			py = sy - py - psy;
-		} else
-			dy = 1;
+	px *= 3;
+	sx *= 3;
 
-		int px3 = px * 3;
-		int sx3 = sx * 3;
+	const unsigned char *data_ptr = p + py * sx + px;
 
-		const unsigned char *data_ptr = p + py * sx3;
+	unsigned mr, mg, mb;
+	split_rgb565u(mask_color, mr, mg, mb);
 
-		unsigned mr, mg, mb;
-		split_rgb888(mask_color, mr, mg, mb);
+	mr = (mr * (255 - mask_alpha)) >> 8;
+	mg = (mg * (255 - mask_alpha)) >> 8;
+	mb = (mb * (255 - mask_alpha)) >> 8;
 
-		mr = (mr * (255 - mask_alpha)) >> 8;
-		mg = (mg * (255 - mask_alpha)) >> 8;
-		mb = (mb * (255 - mask_alpha)) >> 8;
+	unsigned mcl = make_rgb565u(mr, mg, mb);
 
-		warning("STUB: grDispatcher::PutSprMask");
-		for (int i = 0; i < psy; i ++) {
-			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(_screenBuf->getBasePtr(x, y));
-			const unsigned char *data_line = data_ptr + px3;
+	warning("STUB: grDispatcher::PutSprMask");
+	for (int i = 0; i < psy; i ++) {
+		unsigned short *scr_buf = (unsigned short *)(_screenBuf->getBasePtr(x, y));
+		const unsigned char *data_line = data_ptr;
 
-			for (int j = 0; j < psx; j ++) {
-				if (data_line[0] || data_line[1] || data_line[2]) {
-					scr_buf[2] = mr + ((mask_alpha * scr_buf[2]) >> 8);
-					scr_buf[1] = mg + ((mask_alpha * scr_buf[1]) >> 8);
-					scr_buf[0] = mb + ((mask_alpha * scr_buf[0]) >> 8);
-				}
-				scr_buf += dx;
-				data_line += 3;
-			}
-
-			data_ptr += sx3;
-			y += dy;
+		for (int j = 0; j < psx; j ++) {
+			if (data_line[0] || data_line[1] || data_line[2])
+				*scr_buf = alpha_blend_565(mcl, *scr_buf, mask_alpha);
+			scr_buf += dx;
+			data_line += 3;
 		}
-	} else if (bytes_per_pixel() == 3) {
-		int dx = -3;
-		int dy = -1;
 
-		x *= 3;
-
-		if (mode & GR_FLIP_HORIZONTAL) {
-			x += psx * 3 - 3;
-			px = sx - px - psx;
-		} else
-			dx = 3;
-
-		if (mode & GR_FLIP_VERTICAL) {
-			y += psy - 1;
-			py = sy - py - psy;
-		} else
-			dy = 1;
-
-		int px3 = px * 3;
-		int sx3 = sx * 3;
-
-		const unsigned char *data_ptr = p + py * sx3;
-
-		unsigned mr, mg, mb;
-		split_rgb888(mask_color, mr, mg, mb);
-
-		mr = (mr * (255 - mask_alpha)) >> 8;
-		mg = (mg * (255 - mask_alpha)) >> 8;
-		mb = (mb * (255 - mask_alpha)) >> 8;
-
-		for (int i = 0; i < psy; i ++) {
-			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(_screenBuf->getBasePtr(x, y));
-			const unsigned char *data_line = data_ptr + px3;
-
-			for (int j = 0; j < psx; j ++) {
-				if (data_line[0] || data_line[1] || data_line[2]) {
-					scr_buf[2] = mr + ((mask_alpha * scr_buf[2]) >> 8);
-					scr_buf[1] = mg + ((mask_alpha * scr_buf[1]) >> 8);
-					scr_buf[0] = mb + ((mask_alpha * scr_buf[0]) >> 8);
-				}
-				scr_buf += dx;
-				data_line += 3;
-			}
-
-			data_ptr += sx3;
-			y += dy;
-		}
-	} else if (bytes_per_pixel() == 2) {
-		int dx = -1;
-		int dy = -1;
-
-		if (mode & GR_FLIP_HORIZONTAL) {
-			x += psx - 1;
-			px = sx - px - psx;
-		} else
-			dx = 1;
-
-		if (mode & GR_FLIP_VERTICAL) {
-			y += psy - 1;
-			py = sy - py - psy;
-		} else
-			dy = 1;
-
-		x <<= 1;
-
-		px *= 3;
-		sx *= 3;
-
-		const unsigned char *data_ptr = p + py * sx + px;
-
-		if (pixel_format_ == GR_RGB565) {
-			unsigned mr, mg, mb;
-			split_rgb565u(mask_color, mr, mg, mb);
-
-			mr = (mr * (255 - mask_alpha)) >> 8;
-			mg = (mg * (255 - mask_alpha)) >> 8;
-			mb = (mb * (255 - mask_alpha)) >> 8;
-
-			unsigned mcl = make_rgb565u(mr, mg, mb);
-
-			for (int i = 0; i < psy; i ++) {
-				unsigned short *scr_buf = (unsigned short *)(_screenBuf->getBasePtr(x, y));
-				const unsigned char *data_line = data_ptr;
-
-				for (int j = 0; j < psx; j ++) {
-					if (data_line[0] || data_line[1] || data_line[2])
-						*scr_buf = alpha_blend_565(mcl, *scr_buf, mask_alpha);
-					scr_buf += dx;
-					data_line += 3;
-				}
-
-				data_ptr += sx;
-				y += dy;
-			}
-		} else {
-			unsigned mr, mg, mb;
-			split_rgb555u(mask_color, mr, mg, mb);
-
-			mr = (mr * (255 - mask_alpha)) >> 8;
-			mg = (mg * (255 - mask_alpha)) >> 8;
-			mb = (mb * (255 - mask_alpha)) >> 8;
-
-			unsigned mcl = make_rgb555u(mr, mg, mb);
-
-			for (int i = 0; i < psy; i ++) {
-				unsigned short *scr_buf = (unsigned short *)(_screenBuf->getBasePtr(x, y));
-				const unsigned char *data_line = data_ptr;
-
-				for (int j = 0; j < psx; j ++) {
-					if (data_line[0] || data_line[1] || data_line[2])
-						*scr_buf = alpha_blend_555(mcl, *scr_buf, mask_alpha);
-					scr_buf += dx;
-					data_line += 3;
-				}
-
-				data_ptr += sx;
-				y += dy;
-			}
-		}
+		data_ptr += sx;
+		y += dy;
 	}
 }
 
@@ -1931,59 +1062,31 @@ void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const unsigned char 
 		ix = -1;
 	}
 
-	if (pixel_format_ == GR_RGB565) {
-		unsigned mr, mg, mb;
-		split_rgb565u(mask_color, mr, mg, mb);
+	unsigned mr, mg, mb;
+	split_rgb565u(mask_color, mr, mg, mb);
 
-		mr = (mr * (255 - mask_alpha)) >> 8;
-		mg = (mg * (255 - mask_alpha)) >> 8;
-		mb = (mb * (255 - mask_alpha)) >> 8;
+	mr = (mr * (255 - mask_alpha)) >> 8;
+	mg = (mg * (255 - mask_alpha)) >> 8;
+	mb = (mb * (255 - mask_alpha)) >> 8;
 
-		unsigned mcl = make_rgb565u(mr, mg, mb);
+	unsigned mcl = make_rgb565u(mr, mg, mb);
 
-		sx *= 3;
+	sx *= 3;
 
-		for (int i = y0; i != y1; i += iy) {
-			const unsigned char *line_src = p + ((fy >> 16) * sx);
+	for (int i = y0; i != y1; i += iy) {
+		const unsigned char *line_src = p + ((fy >> 16) * sx);
 
-			fy += dy;
-			fx = (1 << 15);
+		fy += dy;
+		fx = (1 << 15);
 
-			for (int j = x0; j != x1; j += ix) {
-				const unsigned char *src_data = line_src + (fx >> 16) * 3;
-				if (src_data[0] || src_data[1] || src_data[2]) {
-					unsigned scl;
-					GetPixel(x + j, y + i, scl);
-					SetPixel(x + j, y + i, alpha_blend_565(mcl, scl, mask_alpha));
-				}
-				fx += dx;
+		for (int j = x0; j != x1; j += ix) {
+			const unsigned char *src_data = line_src + (fx >> 16) * 3;
+			if (src_data[0] || src_data[1] || src_data[2]) {
+				unsigned scl;
+				GetPixel(x + j, y + i, scl);
+				SetPixel(x + j, y + i, alpha_blend_565(mcl, scl, mask_alpha));
 			}
-		}
-	} else {
-		unsigned mr, mg, mb;
-		split_rgb555u(mask_color, mr, mg, mb);
-
-		mr = (mr * (255 - mask_alpha)) >> 8;
-		mg = (mg * (255 - mask_alpha)) >> 8;
-		mb = (mb * (255 - mask_alpha)) >> 8;
-
-		unsigned mcl = make_rgb555u(mr, mg, mb);
-
-		for (int i = y0; i != y1; i += iy) {
-			const unsigned char *line_src = p + ((fy >> 16) * sx);
-
-			fy += dy;
-			fx = (1 << 15);
-
-			for (int j = x0; j != x1; j += ix) {
-				const unsigned char *src_data = line_src + (fx >> 16) * 3;
-				if (src_data[0] || src_data[1] || src_data[2]) {
-					unsigned scl;
-					GetPixel(x + j, y + i, scl);
-					SetPixel(x + j, y + i, alpha_blend_555(mcl, scl, mask_alpha));
-				}
-				fx += dx;
-			}
+			fx += dx;
 		}
 	}
 }
@@ -2017,64 +1120,33 @@ void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const unsigned cha
 
 	const unsigned char *data_ptr = p + py * sx + px;
 
-	if (pixel_format_ == GR_RGB565) {
-		unsigned mr, mg, mb;
-		split_rgb565u(mask_color, mr, mg, mb);
+	unsigned mr, mg, mb;
+	split_rgb565u(mask_color, mr, mg, mb);
 
-		warning("STUB: grDispatcher::PutSprMask_a");
-		for (int i = 0; i < psy; i ++) {
-			uint16 *scr_buf = (uint16 *)(_screenBuf->getBasePtr(x, y));
-			const unsigned char *data_line = data_ptr;
+	warning("STUB: grDispatcher::PutSprMask_a");
+	for (int i = 0; i < psy; i ++) {
+		unsigned short *scr_buf = (unsigned short *)(_screenBuf->getBasePtr(x, y));
+		const unsigned char *data_line = data_ptr;
 
-			for (int j = 0; j < psx; j ++) {
-				unsigned a = data_line[3];
+		for (int j = 0; j < psx; j ++) {
+			unsigned a = data_line[3];
 
-				if (a != 255) {
-					a = mask_alpha + ((a * (255 - mask_alpha)) >> 8);
+			if (a != 255) {
+				a = mask_alpha + ((a * (255 - mask_alpha)) >> 8);
 
-					unsigned r = (mr * (255 - a)) >> 8;
-					unsigned g = (mg * (255 - a)) >> 8;
-					unsigned b = (mb * (255 - a)) >> 8;
+				unsigned r = (mr * (255 - a)) >> 8;
+				unsigned g = (mg * (255 - a)) >> 8;
+				unsigned b = (mb * (255 - a)) >> 8;
 
-					unsigned cl = make_rgb565u(r, g, b);
+				unsigned cl = make_rgb565u(r, g, b);
 
-					*scr_buf = alpha_blend_565(cl, *scr_buf, a);
-				}
-				scr_buf += dx;
-				data_line += 4;
+				*scr_buf = alpha_blend_565(cl, *scr_buf, a);
 			}
-			data_ptr += sx;
-			y += dy;
+			scr_buf += dx;
+			data_line += 4;
 		}
-	} else {
-		unsigned mr, mg, mb;
-		split_rgb555u(mask_color, mr, mg, mb);
-
-		warning("STUB: grDispatcher::PutSprMask_a");
-		for (int i = 0; i < psy; i ++) {
-			uint16 *scr_buf = (uint16 *)(_screenBuf->getBasePtr(x, y));
-			const unsigned char *data_line = data_ptr;
-
-			for (int j = 0; j < psx; j ++) {
-				unsigned a = data_line[3];
-
-				if (a != 255) {
-					a = mask_alpha + ((a * (255 - mask_alpha)) >> 8);
-
-					unsigned r = (mr * (255 - a)) >> 8;
-					unsigned g = (mg * (255 - a)) >> 8;
-					unsigned b = (mb * (255 - a)) >> 8;
-
-					unsigned cl = make_rgb555u(r, g, b);
-
-					*scr_buf = alpha_blend_555(cl, *scr_buf, a);
-				}
-				scr_buf += dx;
-				data_line += 4;
-			}
-			data_ptr += sx;
-			y += dy;
-		}
+		data_ptr += sx;
+		y += dy;
 	}
 }
 
