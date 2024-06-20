@@ -1586,7 +1586,7 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 	if (g_lingo->_state->me.type == OBJECT) {
 		AbstractObject *target = g_lingo->_state->me.u.obj;
 		funcSym = target->getMethod(name);
-		if (name.hasPrefixIgnoreCase("m") && funcSym.type != VOIDSYM) {
+		if (funcSym.type != VOIDSYM) {
 			if (nargs == 0) {
 				debugC(3, kDebugLingoExec, "Factory method call detected with missing first arg");
 				g_lingo->_stack.push_back(Datum());
