@@ -45,7 +45,7 @@ long XStream::seek(long offset, int dir) {
 	} else
 		ret = SetFilePointer(handler, offset, 0, dir);
 	if (ret == -1L)
-		if (handleErrors_) ErrH.Abort(seekMSG, XERR_USER, GetLastError(), fname);
+		if (handleErrors_) error(seekMSG);
 		else return -1L;
 	if (ret >= size() - 1) eofFlag = 1;
 	else eofFlag = 0;
@@ -54,7 +54,7 @@ long XStream::seek(long offset, int dir) {
 
 void XStream::flush() {
 	if (!FlushFileBuffers(handler) && handleErrors_)
-		ErrH.Abort(flushMSG, XERR_USER, GetLastError(), fname);
+		error(flushMSG);
 }
 
 long XStream::size() const {
@@ -62,7 +62,7 @@ long XStream::size() const {
 	if (tmp == -1) {
 		tmp = GetFileSize(handler, 0);
 		if (tmp == -1L)
-			if (handleErrors_) ErrH.Abort(sizeMSG, XERR_USER, GetLastError(), fname);
+			if (handleErrors_) error(sizeMSG);
 			else return -1;
 	}
 	return tmp;

@@ -59,7 +59,7 @@ bool XStream::open(const char* name, unsigned f) {
 	handler = CreateFile(name, fa, fs, 0, fc, ff, 0);
 	if (handler == INVALID_HANDLE_VALUE)
 		if (handleErrors_)
-			ErrH.Abort(openMSG, XERR_USER, GetLastError(), name);
+			error(openMSG);
 		else {
 			ioError_ = true;
 			return false;
@@ -88,7 +88,7 @@ void XStream::close() {
 		return;
 
 	if (extSize == -1 && !CloseHandle(handler) && handleErrors_)
-		ErrH.Abort(closeMSG, XERR_USER, GetLastError(), fname);
+		error(closeMSG);
 	handler = INVALID_HANDLE_VALUE;
 	fname = NULL;
 	pos = 0L;

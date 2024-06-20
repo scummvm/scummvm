@@ -53,7 +53,7 @@ unsigned long XStream::read(void* buf, unsigned long len) {
 	unsigned long ret;
 	if (!ReadFile(handler, buf, len, &ret, 0))
 		if (handleErrors_)
-			ErrH.Abort(readMSG, XERR_USER, GetLastError(), fname);
+			error(readMSG);
 		else {
 			ioError_ = true;
 			return 0U;
@@ -79,7 +79,7 @@ unsigned long XStream::write(const void* buf, unsigned long len) {
 	unsigned long ret;
 	if (!WriteFile(handler, buf, len, &ret, 0))
 		if (handleErrors_)
-			ErrH.Abort(writeMSG, XERR_USER, GetLastError(), fname);
+			error(writeMSG);
 		else {
 			ioError_ = true;
 			return 0U;

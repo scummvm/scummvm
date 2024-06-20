@@ -68,7 +68,6 @@
 
 #include "qdengine/xlibs/xutil/xutil.h"
 #include "qdengine/xlibs/util/xmath/xmath.h"
-#include "qdengine/xlibs/util/xmath/XMathLib.h"
 
 #ifndef _NO_ZIP_
 #if 0
