@@ -171,6 +171,7 @@ void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const unsigned char *p
 	const unsigned char *data_ptr = p + py * sx;
 
 	if (pixel_format_ == GR_RGB565) {
+		warning("STUB: grDispatcher::PutSpr_a()");
 		for (int i = 0; i < psy; i ++) {
 			unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
 			const unsigned char *data_line = data_ptr + px;
@@ -192,7 +193,7 @@ void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const unsigned char *p
 		}
 	} else {
 		for (int i = 0; i < psy; i ++) {
-			unsigned short *scr_buf = reinterpret_cast<unsigned short *>(screenBuf + yTable[y] + x);
+			unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
 			const unsigned char *data_line = data_ptr + px;
 
 			for (int j = 0; j < psx; j ++) {
@@ -1245,8 +1246,9 @@ void grDispatcher::PutSpr(int x, int y, int sx, int sy, const unsigned char *p, 
 
 		const unsigned char *data_ptr = p + py * sx3;
 
+		warning("STUB: grDispatcher::PutSpr");
 		for (int i = 0; i < psy; i ++) {
-			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x);
+			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(_screenBuf->getBasePtr(x, y));
 			const unsigned char *data_line = data_ptr + px3;
 
 			for (int j = 0; j < psx; j ++) {
@@ -1286,7 +1288,7 @@ void grDispatcher::PutSpr(int x, int y, int sx, int sy, const unsigned char *p, 
 		const unsigned char *data_ptr = p + py * sx3;
 
 		for (int i = 0; i < psy; i ++) {
-			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x);
+			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(_screenBuf->getBasePtr(x, y));
 			const unsigned char *data_line = data_ptr + px3;
 
 			for (int j = 0; j < psx; j ++) {
@@ -1342,7 +1344,7 @@ void grDispatcher::PutSpr(int x, int y, int sx, int sy, const unsigned char *p, 
 			}
 		} else {
 			for (int i = 0; i < psy; i ++) {
-				unsigned short *scr_buf = reinterpret_cast<unsigned short *>(screenBuf + yTable[y] + x);
+				unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
 				const unsigned char *data_line = data_ptr + px;
 
 				for (int j = 0; j < psx; j ++) {
@@ -1673,8 +1675,9 @@ void grDispatcher::PutChar(int x, int y, unsigned color, int font_sx, int font_s
 	color = make_rgb(color);
 
 	if (pixel_format_ == GR_RGB565) {
+		warning("STUB: grDispatcher::PutChar");
 		for (int i = 0; i < psy; i++, y++) {
-			unsigned short *scr_buf = reinterpret_cast<unsigned short *>(screenBuf + yTable[y] + x);
+			unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
 			for (int j = 0; j < psx; j++) {
 				unsigned a = alpha_buf[j];
 				unsigned a1 = 255 - a;
@@ -1695,7 +1698,7 @@ void grDispatcher::PutChar(int x, int y, unsigned color, int font_sx, int font_s
 		}
 	} else {
 		for (int i = 0; i < psy; i++, y++) {
-			unsigned short *scr_buf = reinterpret_cast<unsigned short *>(screenBuf + yTable[y] + x);
+			unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
 			for (int j = 0; j < psx; j++) {
 				unsigned a = alpha_buf[j];
 				unsigned a1 = 255 - a;
@@ -1757,8 +1760,9 @@ void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const unsigned char 
 		mg = (mg * (255 - mask_alpha)) >> 8;
 		mb = (mb * (255 - mask_alpha)) >> 8;
 
+		warning("STUB: grDispatcher::PutSprMask");
 		for (int i = 0; i < psy; i ++) {
-			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x);
+			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(_screenBuf->getBasePtr(x, y));
 			const unsigned char *data_line = data_ptr + px3;
 
 			for (int j = 0; j < psx; j ++) {
@@ -1805,7 +1809,7 @@ void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const unsigned char 
 		mb = (mb * (255 - mask_alpha)) >> 8;
 
 		for (int i = 0; i < psy; i ++) {
-			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x);
+			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(_screenBuf->getBasePtr(x, y));
 			const unsigned char *data_line = data_ptr + px3;
 
 			for (int j = 0; j < psx; j ++) {
@@ -1855,7 +1859,7 @@ void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const unsigned char 
 			unsigned mcl = make_rgb565u(mr, mg, mb);
 
 			for (int i = 0; i < psy; i ++) {
-				unsigned short *scr_buf = (unsigned short *)(screenBuf + yTable[y] + x);
+				unsigned short *scr_buf = (unsigned short *)(_screenBuf->getBasePtr(x, y));
 				const unsigned char *data_line = data_ptr;
 
 				for (int j = 0; j < psx; j ++) {
@@ -1879,7 +1883,7 @@ void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const unsigned char 
 			unsigned mcl = make_rgb555u(mr, mg, mb);
 
 			for (int i = 0; i < psy; i ++) {
-				unsigned short *scr_buf = (unsigned short *)(screenBuf + yTable[y] + x);
+				unsigned short *scr_buf = (unsigned short *)(_screenBuf->getBasePtr(x, y));
 				const unsigned char *data_line = data_ptr;
 
 				for (int j = 0; j < psx; j ++) {
@@ -2017,8 +2021,9 @@ void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const unsigned cha
 		unsigned mr, mg, mb;
 		split_rgb565u(mask_color, mr, mg, mb);
 
+		warning("STUB: grDispatcher::PutSprMask_a");
 		for (int i = 0; i < psy; i ++) {
-			unsigned short *scr_buf = (unsigned short *)(screenBuf + yTable[y] + x);
+			uint16 *scr_buf = (uint16 *)(_screenBuf->getBasePtr(x, y));
 			const unsigned char *data_line = data_ptr;
 
 			for (int j = 0; j < psx; j ++) {
@@ -2045,8 +2050,9 @@ void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const unsigned cha
 		unsigned mr, mg, mb;
 		split_rgb555u(mask_color, mr, mg, mb);
 
+		warning("STUB: grDispatcher::PutSprMask_a");
 		for (int i = 0; i < psy; i ++) {
-			unsigned short *scr_buf = (unsigned short *)(screenBuf + yTable[y] + x);
+			uint16 *scr_buf = (uint16 *)(_screenBuf->getBasePtr(x, y));
 			const unsigned char *data_line = data_ptr;
 
 			for (int j = 0; j < psx; j ++) {
