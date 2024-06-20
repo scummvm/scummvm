@@ -120,14 +120,15 @@ void Darkseed::Sprite::drawScaled(int destX, int destY, int destWidth, int destH
 
 bool Darkseed::Nsp::load(const Common::String &filename) {
 	Common::File file;
-	if(!file.open(filename)) {
+	Common::String filePath = g_engine->getRoomFilePath(filename);
+	if(!file.open(filePath)) {
 		return false;
 	}
 	bool ret = load(file);
 	file.close();
 	if (ret) {
-		debug("Loaded %s", filename.c_str());
-		Common::String obtFilename = filename.substr(0, filename.size() - 4) + ".obt";
+		debug("Loaded %s", filePath.c_str());
+		Common::String obtFilename = filePath.substr(0, filePath.size() - 4) + ".obt";
 		ret = loadObt(obtFilename);
 	}
 	return ret;

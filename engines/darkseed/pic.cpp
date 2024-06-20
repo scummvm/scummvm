@@ -25,14 +25,15 @@
 
 bool Darkseed::Pic::load(const Common::String &filename) {
 	Common::File file;
-	if(!file.open(filename)) {
-		debug("Failed to load %s", filename.c_str());
+	Common::String fullPath = g_engine->getPictureFilePath(filename);
+	if(!file.open(fullPath)) {
+		debug("Failed to load %s", fullPath.c_str());
 		return false;
 	}
 	bool ret = load(file);
 	file.close();
 	if (ret) {
-		debug("Loaded %s (%d,%d)", filename.c_str(), width, height);
+		debug("Loaded %s (%d,%d)", fullPath.c_str(), width, height);
 	}
 	return ret;
 }

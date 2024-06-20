@@ -134,6 +134,10 @@ public:
 		return _randomSource.getRandomNumber(maxNum);
 	}
 
+	bool isCdVersion() {
+		return getFeatures() & ADGF_CD;
+	}
+
 	bool hasFeature(EngineFeature f) const override {
 		return
 		    (f == kSupportsLoadingDuringRuntime) ||
@@ -162,6 +166,9 @@ public:
 		Common::Serializer s(stream, nullptr);
 		return syncGame(s);
 	}
+
+	Common::String getRoomFilePath(const Common::String &filename);
+	Common::String getPictureFilePath(const Common::String &filename);
 
 	void fadeIn();
 	void fadeOut();

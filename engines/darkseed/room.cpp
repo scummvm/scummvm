@@ -56,7 +56,7 @@ bool Darkseed::Room::load() {
 	Common::String filenameBase = getRoomFilenameBase(_roomNumber);
 	Common::String romFilename;
 	Common::File file;
-	romFilename = Common::String::format("%s.rom", filenameBase.c_str(), _roomNumber);
+	romFilename = g_engine->getRoomFilePath(Common::String::format("%s.rom", filenameBase.c_str(), _roomNumber));
 	if(!file.open(romFilename)) {
 		return false;
 	}
@@ -133,7 +133,7 @@ bool Darkseed::Room::load() {
 		return false;
 	}
 
-	_pal.load(Common::String::format("%s.pal", filenameBase.c_str()));
+	_pal.load(g_engine->getPictureFilePath(Common::String::format("%s.pal", filenameBase.c_str())));
 
 	return true;
 }
