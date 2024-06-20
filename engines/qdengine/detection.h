@@ -28,11 +28,8 @@
 namespace QDEngine {
 
 enum QDEngineDebugChannels {
-	kDebugGraphics = 1 << 0,
-	kDebugPath     = 1 << 1,
-	kDebugScan     = 1 << 2,
-	kDebugFilePath = 1 << 3,
-	kDebugScript   = 1 << 4
+	kDebugGraphics = 1,
+	kDebugLoad,
 };
 
 extern const PlainGameDescriptor GAME_NAMES[];
@@ -40,29 +37,5 @@ extern const PlainGameDescriptor GAME_NAMES[];
 extern const ADGameDescription GAME_DESCRIPTIONS[];
 
 } // namespace QDEngine
-
-class QDEngineMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
-	static const DebugChannelDef debugFlagList[];
-
-public:
-	QDEngineMetaEngineDetection();
-	~QDEngineMetaEngineDetection() override {}
-
-	const char *getName() const override {
-		return "qdengine";
-	}
-
-	const char *getEngineName() const override {
-		return "QD Engine";
-	}
-
-	const char *getOriginalCopyright() const override {
-		return "QD Engine (C) 2003-7 K-D LAB";
-	}
-
-	const DebugChannelDef *getDebugChannels() const override {
-		return debugFlagList;
-	}
-};
 
 #endif
