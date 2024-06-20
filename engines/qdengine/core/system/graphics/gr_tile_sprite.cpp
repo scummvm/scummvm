@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "graphics/managed_surface.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/graphics/gr_tile_sprite.h"
@@ -124,8 +126,9 @@ void grDispatcher::PutTileSpr(int x, int y, const grTileSprite &sprite, bool has
 
 		const unsigned char *data_ptr = (const unsigned char *)sprite.data() + px * 4 + py * GR_TILE_SPRITE_SIZE_X * 4;
 
+		warning("STUB: grDispatcher::PutTileSpr");
 		for (int i = 0; i < psy; i ++) {
-			unsigned char *scr_buf = (unsigned char *)(screenBuf + yTable[y] + x);
+			unsigned char *scr_buf = (unsigned char *)(_screenBuf->getBasePtr(x, y));
 			const unsigned char *data_line = data_ptr;
 
 			for (int j = 0; j < psx; j ++) {
@@ -168,8 +171,9 @@ void grDispatcher::PutTileSpr(int x, int y, const grTileSprite &sprite, bool has
 
 		const unsigned char *data_ptr = (const unsigned char *)sprite.data() + px * 4 + py * GR_TILE_SPRITE_SIZE_X * 4;
 
+		warning("STUB: grDispatcher::PutTileSpr");
 		for (int i = 0; i < psy; i ++) {
-			unsigned char *scr_buf = (unsigned char *)(screenBuf + yTable[y] + x);
+			unsigned char *scr_buf = (unsigned char *)(_screenBuf->getBasePtr(x, y));
 			const unsigned char *data_line = data_ptr;
 
 			for (int j = 0; j < psx; j ++) {
@@ -213,8 +217,9 @@ void grDispatcher::PutTileSpr(int x, int y, const grTileSprite &sprite, bool has
 		const unsigned char *data_ptr = (unsigned char *)(sprite.data() + px + py * GR_TILE_SPRITE_SIZE_X);
 
 		if (pixel_format_ == GR_RGB565) {
+			warning("STUB: grDispatcher::PutTileSpr");
 			for (int i = 0; i < psy; i ++) {
-				unsigned short *scr_buf = reinterpret_cast<unsigned short *>(screenBuf + yTable[y] + x);
+				uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
 				const unsigned char *data_line = data_ptr;
 
 				for (int j = 0; j < psx; j ++) {
@@ -232,8 +237,9 @@ void grDispatcher::PutTileSpr(int x, int y, const grTileSprite &sprite, bool has
 				y += dy;
 			}
 		} else {
+			warning("STUB: grDispatcher::PutTileSpr");
 			for (int i = 0; i < psy; i ++) {
-				unsigned short *scr_buf = reinterpret_cast<unsigned short *>(screenBuf + yTable[y] + x);
+				uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
 				const unsigned char *data_line = data_ptr;
 
 				for (int j = 0; j < psx; j ++) {

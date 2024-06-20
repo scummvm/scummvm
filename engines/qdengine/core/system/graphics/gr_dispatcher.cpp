@@ -337,8 +337,9 @@ void grDispatcher::RectangleAlpha(int x, int y, int sx, int sy, unsigned color, 
 
 	unsigned mcl = make_rgb565u(mr, mg, mb);
 
+	warning("STUB: grDispatcher::RectangleAlpha");
 	for (int i = 0; i < psy; i ++) {
-		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(screenBuf + yTable[y] + x);
+		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
 
 		for (int j = 0; j < psx; j ++) {
 			*scr_buf = alpha_blend_565(mcl, *scr_buf, alpha);
@@ -361,33 +362,38 @@ void grDispatcher::Erase(int x, int y, int sx, int sy, int col) {
 void grDispatcher::SetPixel(int x, int y, int col) {
 	if (clipMode && !ClipCheck(x, y)) return;
 
-	unsigned short *p = (unsigned short *)(screenBuf + yTable[y]);
-	p[x] = col;
+	warning("STUB: grDispatcher::SetPixel");
+	uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x, y));
+	*p = col;
 	return;
 }
 
 void grDispatcher::SetPixelFast(int x, int y, int col) {
-	unsigned short *p = (unsigned short *)(screenBuf + yTable[y]);
-	p[x] = col;
-	return;
+	uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x, y));
+	*p = col;
 }
 
 void grDispatcher::SetPixelFast(int x, int y, int r, int g, int b) {
-	warning("STUB: grDispatcher::SetPixelFast()");
+	warning("STUB: grDispatcher::SetPixelFast");
 }
 
 void grDispatcher::SetPixel(int x, int y, int r, int g, int b) {
 	if (clipMode && !ClipCheck(x, y)) return;
-	unsigned short *p = (unsigned short *)(screenBuf + yTable[y] + x * 2);
+
+	warning("STUB: grDispatcher::SetPixel");
+	uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x * 2, y));
 	*p = (((r >> 3) << 11) + ((g >> 2) << 5) + ((b >> 3) << 0));
 }
 
 void grDispatcher::GetPixel(int x, int y, unsigned &col) {
-	col = *(unsigned short *)(screenBuf + yTable[y] + x * 2);
+
+	warning("STUB: grDispatcher::GetPixel");
+	col = *(uint16 *)(_screenBuf->getBasePtr(x * 2, y));
 }
 
 void grDispatcher::GetPixel(int x, int y, unsigned &r, unsigned &g, unsigned &b) {
-	unsigned col = *(unsigned short *)(screenBuf + yTable[y] + x * 2);
+	warning("STUB: grDispatcher::GetPixel");
+	uint16 col = *(uint16 *)(_screenBuf->getBasePtr(x * 2, y));
 	split_rgb565u(col, r, g, b);
 }
 
