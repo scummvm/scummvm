@@ -275,7 +275,8 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 	bool exit_flag = false;
 	bool was_inactive = false;
 
-	qd_gameD->resume(); // FIXME. HACK. We need to find where it is actually called
+	// Activate the window
+	grDispatcher::activate(true);
 
 	Common::Event event;
 
