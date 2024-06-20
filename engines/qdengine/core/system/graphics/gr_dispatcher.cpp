@@ -324,111 +324,28 @@ void grDispatcher::RectangleAlpha(int x, int y, int sx, int sy, unsigned color, 
 	int psy = sy;
 
 	if (!clip_rectangle(x, y, px, py, psx, psy)) return;
+	int dx = 1;
+	int dy = 1;
 
-	if (bytes_per_pixel() == 4) {
-		int dx = 4;
-		int dy = 1;
+	x <<= 1;
+	unsigned mr, mg, mb;
+	split_rgb565u(color, mr, mg, mb);
 
-		x *= 4;
+	mr = (mr * (255 - alpha)) >> 8;
+	mg = (mg * (255 - alpha)) >> 8;
+	mb = (mb * (255 - alpha)) >> 8;
 
-		unsigned mr, mg, mb;
-		split_rgb888(color, mr, mg, mb);
+	unsigned mcl = make_rgb565u(mr, mg, mb);
 
-		mr = (mr * (255 - alpha)) >> 8;
-		mg = (mg * (255 - alpha)) >> 8;
-		mb = (mb * (255 - alpha)) >> 8;
+	for (int i = 0; i < psy; i ++) {
+		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(screenBuf + yTable[y] + x);
 
-		for (int i = 0; i < psy; i ++) {
-			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x);
-
-			for (int j = 0; j < psx; j ++) {
-				scr_buf[2] = mr + ((alpha * scr_buf[2]) >> 8);
-				scr_buf[1] = mg + ((alpha * scr_buf[1]) >> 8);
-				scr_buf[0] = mb + ((alpha * scr_buf[0]) >> 8);
-
-				scr_buf += dx;
-			}
-
-			y += dy;
+		for (int j = 0; j < psx; j ++) {
+			*scr_buf = alpha_blend_565(mcl, *scr_buf, alpha);
+			scr_buf += dx;
 		}
-		return;
-	}
-	if (bytes_per_pixel() == 3) {
-		int dx = 3;
-		int dy = 1;
 
-		x *= 3;
-
-		unsigned mr, mg, mb;
-		split_rgb888(color, mr, mg, mb);
-
-		mr = (mr * (255 - alpha)) >> 8;
-		mg = (mg * (255 - alpha)) >> 8;
-		mb = (mb * (255 - alpha)) >> 8;
-
-		for (int i = 0; i < psy; i ++) {
-			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x);
-
-			for (int j = 0; j < psx; j ++) {
-				scr_buf[2] = mr + ((alpha * scr_buf[2]) >> 8);
-				scr_buf[1] = mg + ((alpha * scr_buf[1]) >> 8);
-				scr_buf[0] = mb + ((alpha * scr_buf[0]) >> 8);
-
-				scr_buf += dx;
-			}
-
-			y += dy;
-		}
-		return;
-	}
-	if (bytes_per_pixel() == 2) {
-		int dx = 1;
-		int dy = 1;
-
-		x <<= 1;
-
-		if (pixel_format_ == GR_RGB565) {
-			unsigned mr, mg, mb;
-			split_rgb565u(color, mr, mg, mb);
-
-			mr = (mr * (255 - alpha)) >> 8;
-			mg = (mg * (255 - alpha)) >> 8;
-			mb = (mb * (255 - alpha)) >> 8;
-
-			unsigned mcl = make_rgb565u(mr, mg, mb);
-
-			for (int i = 0; i < psy; i ++) {
-				unsigned short *scr_buf = reinterpret_cast<unsigned short *>(screenBuf + yTable[y] + x);
-
-				for (int j = 0; j < psx; j ++) {
-					*scr_buf = alpha_blend_565(mcl, *scr_buf, alpha);
-					scr_buf += dx;
-				}
-
-				y += dy;
-			}
-		} else {
-			unsigned mr, mg, mb;
-			split_rgb555u(color, mr, mg, mb);
-
-			mr = (mr * (255 - alpha)) >> 8;
-			mg = (mg * (255 - alpha)) >> 8;
-			mb = (mb * (255 - alpha)) >> 8;
-
-			unsigned mcl = make_rgb555u(mr, mg, mb);
-
-			for (int i = 0; i < psy; i ++) {
-				unsigned short *scr_buf = reinterpret_cast<unsigned short *>(screenBuf + yTable[y] + x);
-
-				for (int j = 0; j < psx; j ++) {
-					*scr_buf = alpha_blend_555(mcl, *scr_buf, alpha);
-					scr_buf += dx;
-				}
-
-				y += dy;
-			}
-		}
-		return;
+		y += dy;
 	}
 }
 
@@ -444,148 +361,34 @@ void grDispatcher::Erase(int x, int y, int sx, int sy, int col) {
 void grDispatcher::SetPixel(int x, int y, int col) {
 	if (clipMode && !ClipCheck(x, y)) return;
 
-	if (bytes_per_pixel() == 2) {
-		unsigned short *p = (unsigned short *)(screenBuf + yTable[y]);
-		p[x] = col;
-		return;
-	}
-	if (bytes_per_pixel() == 3) {
-		unsigned char *cp = (unsigned char *)(&col);
-		unsigned char *p = (unsigned char *)(screenBuf + yTable[y] + x * 3);
-
-		p[0] = cp[2];
-		p[1] = cp[1];
-		p[2] = cp[0];
-		return;
-	}
-	if (bytes_per_pixel() == 4) {
-		unsigned char *cp = (unsigned char *)(&col);
-		unsigned char *p = (unsigned char *)(screenBuf + yTable[y] + x * 4);
-
-		p[0] = cp[2];
-		p[1] = cp[1];
-		p[2] = cp[0];
-		return;
-	}
+	unsigned short *p = (unsigned short *)(screenBuf + yTable[y]);
+	p[x] = col;
+	return;
 }
 
 void grDispatcher::SetPixelFast(int x, int y, int col) {
-	if (bytes_per_pixel() == 2) {
-		unsigned short *p = (unsigned short *)(screenBuf + yTable[y]);
-		p[x] = col;
-		return;
-	}
-	if (bytes_per_pixel() == 3) {
-		unsigned char *cp = (unsigned char *)(&col);
-		unsigned char *p = (unsigned char *)(screenBuf + yTable[y] + x * 3);
-
-		p[0] = cp[2];
-		p[1] = cp[1];
-		p[2] = cp[0];
-		return;
-	}
-	if (bytes_per_pixel() == 4) {
-		unsigned char *cp = (unsigned char *)(&col);
-		unsigned char *p = (unsigned char *)(screenBuf + yTable[y] + x * 4);
-
-		p[0] = cp[2];
-		p[1] = cp[1];
-		p[2] = cp[0];
-		return;
-	}
+	unsigned short *p = (unsigned short *)(screenBuf + yTable[y]);
+	p[x] = col;
+	return;
 }
 
 void grDispatcher::SetPixelFast(int x, int y, int r, int g, int b) {
-	if (bytes_per_pixel() == 3) {
-		unsigned char *p = (unsigned char *)(screenBuf + yTable[y] + x * 3);
-
-		p[2] = r;
-		p[1] = g;
-		p[0] = b;
-
-		return;
-	}
-	if (bytes_per_pixel() == 4) {
-		unsigned char *p = (unsigned char *)(screenBuf + yTable[y] + x * 4);
-
-		p[2] = r;
-		p[1] = g;
-		p[0] = b;
-
-		return;
-	}
+	warning("STUB: grDispatcher::SetPixelFast()");
 }
 
 void grDispatcher::SetPixel(int x, int y, int r, int g, int b) {
 	if (clipMode && !ClipCheck(x, y)) return;
-
-	switch (pixel_format_) {
-	case GR_RGB565: {
-		unsigned short *p = (unsigned short *)(screenBuf + yTable[y] + x * 2);
-		*p = (((r >> 3) << 11) + ((g >> 2) << 5) + ((b >> 3) << 0));
-	}
-	return;
-	case GR_ARGB1555: {
-		unsigned short *p = (unsigned short *)(screenBuf + yTable[y] + x * 2);
-		*p = (((r >> 3) << 10) + ((g >> 3) << 5) + ((b >> 3) << 0));
-	}
-	return;
-	case GR_RGB888: {
-		unsigned char *cp = (unsigned char *)(screenBuf + yTable[y] + x * 3);
-
-		cp[2] = r;
-		cp[1] = g;
-		cp[0] = b;
-	}
-	return;
-	case GR_ARGB8888: {
-		unsigned char *cp = (unsigned char *)(screenBuf + yTable[y] + x * 4);
-
-		cp[2] = r;
-		cp[1] = g;
-		cp[0] = b;
-	}
-	return;
-	}
+	unsigned short *p = (unsigned short *)(screenBuf + yTable[y] + x * 2);
+	*p = (((r >> 3) << 11) + ((g >> 2) << 5) + ((b >> 3) << 0));
 }
 
 void grDispatcher::GetPixel(int x, int y, unsigned &col) {
-	if (bytes_per_pixel() == 2) {
-		col = *(unsigned short *)(screenBuf + yTable[y] + x * 2);
-	}
-	if (bytes_per_pixel() == 3) {
-		unsigned char *p = (unsigned char *)(screenBuf + yTable[y] + x * 3);
-		unsigned r = p[2];
-		unsigned g = p[1];
-		unsigned b = p[0];
-
-		col = (r << 16) + (g << 8) + (b << 0);
-	}
-	if (bytes_per_pixel() == 4) {
-		col = *((unsigned *)(screenBuf + yTable[y] + x * 4));
-	}
+	col = *(unsigned short *)(screenBuf + yTable[y] + x * 2);
 }
 
 void grDispatcher::GetPixel(int x, int y, unsigned &r, unsigned &g, unsigned &b) {
-	if (bytes_per_pixel() == 2) {
-		unsigned col = *(unsigned short *)(screenBuf + yTable[y] + x * 2);
-		if (pixel_format() == GR_RGB565)
-			split_rgb565u(col, r, g, b);
-		else
-			split_rgb555u(col, r, g, b);
-	}
-	if (bytes_per_pixel() == 3) {
-		unsigned char *p = (unsigned char *)(screenBuf + yTable[y] + x * 3);
-		r = p[2];
-		g = p[1];
-		b = p[0];
-	}
-	if (bytes_per_pixel() == 4) {
-		unsigned char *p = (unsigned char *)(screenBuf + yTable[y] + x * 4);
-		r = p[2];
-		g = p[1];
-		b = p[0];
-	}
+	unsigned col = *(unsigned short *)(screenBuf + yTable[y] + x * 2);
+	split_rgb565u(col, r, g, b);
 }
 
 bool grDispatcher::clip_line(int &x0, int &y0, int &x1, int &y1) const {
@@ -996,6 +799,7 @@ bool grDispatcher::FlushChanges() {
 	return true;
 }
 
+// TODO
 bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt, int sx, int sy, unsigned char *data, bool &has_alpha) {
 	if (dest_fmt == GR_RGB888 && (src_fmt == GR_ARGB1555 || src_fmt == GR_RGB565)) {
 		if (has_alpha)
