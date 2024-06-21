@@ -926,35 +926,11 @@ bool qdSprite::put_pixel(int x, int y, unsigned char r, unsigned char g, unsigne
 
 	int bytes_per_pix;
 	unsigned short word;
-	switch (format_) {
-	case GR_RGB565:
-		bytes_per_pix = 2;
-		word = grDispatcher::make_rgb565u(r, g, b);
-		data_[bytes_per_pix * (y * size_.x + x) + 0] = static_cast<unsigned char>(word & 0x00FF);
-		data_[bytes_per_pix * (y * size_.x + x) + 1] = static_cast<unsigned char>(word >> 8 & 0x00FF);
-		break;
-	case GR_ARGB1555:
-		bytes_per_pix = 2;
-		word = grDispatcher::make_rgb555u(r, g, b);
-		data_[bytes_per_pix * (y * size_.x + x) + 0] = static_cast<unsigned char>(word & 0x00FF);
-		data_[bytes_per_pix * (y * size_.x + x) + 1] = static_cast<unsigned char>(word >> 8 & 0x00FF);
-		break;
-	case GR_RGB888:
-		bytes_per_pix = 3;
-		data_[bytes_per_pix * (y * size_.x + x) + 0] = b;
-		data_[bytes_per_pix * (y * size_.x + x) + 1] = g;
-		data_[bytes_per_pix * (y * size_.x + x) + 2] = r;
-		break;
-	case GR_ARGB8888:
-		bytes_per_pix = 4;
-		data_[bytes_per_pix * (y * size_.x + x) + 0] = b;
-		data_[bytes_per_pix * (y * size_.x + x) + 1] = g;
-		data_[bytes_per_pix * (y * size_.x + x) + 2] = r;
-		break;
-	default:
-		return false;
-		break;
-	}
+
+	bytes_per_pix = 2;
+	word = grDispatcher::make_rgb565u(r, g, b);
+	data_[bytes_per_pix * (y * size_.x + x) + 0] = static_cast<unsigned char>(word & 0x00FF);
+	data_[bytes_per_pix * (y * size_.x + x) + 1] = static_cast<unsigned char>(word >> 8 & 0x00FF);
 
 	return true;
 }
