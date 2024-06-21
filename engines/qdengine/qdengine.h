@@ -111,4 +111,6 @@ extern QDEngineEngine *g_engine;
 
 } // namespace QDEngine
 
+byte *transCyrillic(const Common::String &str);
+
 #endif

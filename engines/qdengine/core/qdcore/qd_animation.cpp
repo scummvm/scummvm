@@ -435,7 +435,7 @@ bool qdAnimation::save_script(XStream &fh, int indent) const {
 }
 
 bool qdAnimation::load_resources() {
-	debugC(1, kDebugTemp, "qdAnimation::load_resources(): %s", qda_file());
+	debugC(1, kDebugTemp, "qdAnimation::load_resources(): %s", transCyrillic(qda_file()));
 	if (check_flag(QD_ANIMATION_FLAG_REFERENCE)) return false;
 
 	if (!qda_file()) {
@@ -567,7 +567,7 @@ void qdAnimation::qda_save(const char *fname) {
 bool qdAnimation::qda_load(const char *fname) {
 	clear_frames();
 
-	debugC(3, kDebugLoad, "qdAnimation::qda_load(%s)", fname);
+	debugC(3, kDebugLoad, "qdAnimation::qda_load(%s)", transCyrillic(fname));
 
 	Common::Path fpath(fname, '\\');
 	Common::SeekableReadStream *fh;
