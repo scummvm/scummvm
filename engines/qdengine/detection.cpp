@@ -27,7 +27,10 @@
 #include "common/str-array.h"
 #include "common/translation.h"
 #include "common/util.h"
-#include "qdengine/detection.h"
+
+#include "engines/advancedDetector.h"
+
+#include "qdengine/qdengine.h"
 #include "qdengine/detection_tables.h"
 
 static const DebugChannelDef debugFlagList[] = {

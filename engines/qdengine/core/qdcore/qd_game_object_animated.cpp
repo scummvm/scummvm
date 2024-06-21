@@ -24,8 +24,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/debug.h"
 
-#include "qdengine/detection.h"
-
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/parser/qdscr_parser.h"

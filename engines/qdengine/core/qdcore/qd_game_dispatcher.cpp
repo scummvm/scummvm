@@ -23,7 +23,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/debug.h"
 
-#include "qdengine/detection.h"
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_parser.h"
 

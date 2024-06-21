@@ -25,7 +25,7 @@
 
 #include "common/debug.h"
 
-#include "qdengine/detection.h"
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/qd_rnd.h"
 #include "qdengine/core/parser/qdscr_parser.h"

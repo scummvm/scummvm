@@ -24,7 +24,7 @@
 #include "common/debug.h"
 #include "common/file.h"
 
-#include "qdengine/detection.h"
+#include "qdengine/qdengine.h"
 
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
