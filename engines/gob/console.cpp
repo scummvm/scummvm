@@ -69,6 +69,9 @@ bool GobConsole::cmd_Help(int, const char **) {
 	debugPrintf(" continue - returns back to the game\n");
 	debugPrintf(" listArchives - shows which Archives are currently being used\n");
 	debugPrintf(" cheat - enables Cheats for Geisha\n");
+	debugPrintf("\n");
+	debugPrintf("Variables\n");
+	debugPrintf("---------\n");
 	debugPrintf(" varSize - shows the size of a variable in bytes\n");
 	debugPrintf(" dumpVars - dumps the variables to variables.dmp\n");
 	debugPrintf(" var8 - manipulates 8-bit variables; usage: var8 <var offset> (<value>)\n");
