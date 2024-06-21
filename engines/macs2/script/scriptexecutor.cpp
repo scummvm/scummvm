@@ -425,6 +425,7 @@ else if (value == 0x6) {
 	debug("- 9F4D results: %.4x %.4x", out1, out2);
 	return;
 	} else if (value == 0xb) {
+
 		out1 = (uint16)IsRepeatRun;
 		out2 = 0;
 		debug("- 9F4D results: %.4x %.4x", out1, out2);
@@ -1141,7 +1142,7 @@ uint16 Script::ScriptExecutor::ReadWord() {
 
 
 void Script::ScriptExecutor::ExecuteScript() {
-	debug("----- Scripting function entered");
+	debug("----- Scripting function entered - scene: %.2x 1014: %.2x 1012: %.2x", Scenes::instance().CurrentSceneIndex, IsSceneInitRun, IsRepeatRun);
 	isRunningScript = true;
 	// TODO: Check if we can somehow interrupt something that we are waiting on,
 	// thereby ending the scripte early
@@ -2959,6 +2960,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 	void ScriptExecutor::Run(bool firstRun) {
 		// Scene initialization run
 		// TODO: Need to better encapsulate this down the road
+		// TODO: Not sure which order is really right, need to check in SIS logs
 		IsRepeatRun = false;
 		IsSceneInitRun = firstRun;
 		do {
