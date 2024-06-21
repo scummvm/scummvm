@@ -107,7 +107,7 @@ bool qdFileManager::open_file(XZipStream &fh, const char *file_name, bool err_me
 }
 
 bool qdFileManager::open_file(Common::SeekableReadStream **fh, const char *file_name, bool err_message) {
-	debugC(4, kDebugLoad, "qdFileManager::open_file(%s)", file_name);
+	debugC(4, kDebugLoad, "qdFileManager::open_file(%s)", transCyrillic(file_name));
 
 	for (int i = 0; i < _packageCount; i++) {
 		if (!_packages[i].is_open())

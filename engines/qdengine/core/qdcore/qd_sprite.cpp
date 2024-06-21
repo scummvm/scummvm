@@ -199,7 +199,7 @@ void qdSprite::free() {
 bool qdSprite::load(const char *fname) {
 	free();
 
-	debugC(3, kDebugLoad, "qdSprite::load(%s, %s)", fname, file_.c_str());
+	debugC(3, kDebugLoad, "qdSprite::load(%s, %s)", transCyrillic(fname), transCyrillic(file_.c_str()));
 
 	if (fname)
 		set_file(fname);
