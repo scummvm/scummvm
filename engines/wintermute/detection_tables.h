@@ -1752,6 +1752,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("lostbride", "",
 		WME_ENTRY1s("data.dcp", "cb45b579c6d5767341a9b07bc807df5f", 106683613), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
 
+	// Tale of The Lost Bride and A Hidden Treasure (Englist)
+	WME_WINENTRY("lostbride", "",
+		WME_ENTRY1s("data.dcp", "c3c7a646d473914e495c4852f312eb76", 101119036), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+
 	// Machu Mayu (Demo)
 	WME_WINENTRY("machumayu", "Demo",
 		WME_ENTRY1s("data.dcp", "79f17943b93c3ff37b5544a5da0d17d0", 12328601), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
