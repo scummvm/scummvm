@@ -35,11 +35,18 @@
 #include "engines/savestate.h"
 #include "graphics/pixelformat.h"
 #include "graphics/screen.h"
-#include "qdengine/detection.h"
+
+struct ADGameDescription;
 
 namespace QDEngine {
 
 struct QDEngineGameDescription;
+
+enum QDEngineDebugChannels {
+	kDebugGraphics = 1,
+	kDebugLoad,
+	kDebugTemp,
+};
 
 class QDEngineEngine : public Engine {
 private:

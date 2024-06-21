@@ -21,16 +21,18 @@
 
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
-#include "qdengine/qdengine.h"
-#include "qdengine/detection.h"
-#include "qdengine/console.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/system.h"
+
+#include "engines/advancedDetector.h"
 #include "engines/util.h"
 #include "graphics/paletteman.h"
+
+#include "qdengine/qdengine.h"
+#include "qdengine/console.h"
 #include "qdengine/core/qd_precomp.h"
 
 namespace QDEngine {

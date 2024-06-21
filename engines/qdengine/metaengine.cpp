@@ -21,7 +21,6 @@
 
 
 #include "qdengine/metaengine.h"
-#include "qdengine/detection.h"
 #include "qdengine/qdengine.h"
 
 const char *QDEngineMetaEngine::getName() const {
