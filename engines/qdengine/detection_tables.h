@@ -102,7 +102,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	// 2007/03/01. Lazy Games
 	GAME("3mice1", "63e79178e66c520a9094622ccdcaf9c5", 10006622),
 	// Příběhy myší rodinky I
-	//GAMEl("3mice1", "???", 10006622, Common::CZ_CZE),
+	GAMEl("3mice1", "a6060f3d17ea2e50a03216332e517817", 10022470, Common::CS_CZE),
 
 	// Похождения бравого солдата Швейка
 	// 2007/09/07. Lazy Games
