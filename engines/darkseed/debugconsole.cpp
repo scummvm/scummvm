@@ -19,12 +19,14 @@
  *
  */
 
+#include "darkseed.h"
 #include "darkseed/debugconsole.h"
 
 namespace Darkseed {
 
 DebugConsole::DebugConsole(TosText *tosText) : GUI::Debugger(), tosText(tosText) {
 	registerCmd("tostext",   WRAP_METHOD(DebugConsole, Cmd_tostext));
+	registerCmd("dt",   WRAP_METHOD(DebugConsole, Cmd_dt));
 }
 
 DebugConsole::~DebugConsole() {
@@ -42,6 +44,16 @@ bool DebugConsole::Cmd_tostext(int argc, const char **argv) {
 	} else {
 		debugPrintf("index too large!\n");
 	}
+	return true;
+}
+
+bool DebugConsole::Cmd_dt(int argc, const char **argv) {
+	int hour = g_engine->_currentTimeInSeconds / 60 / 60 + 1;
+	debugPrintf("Day %d at %d:%02d%s (%d seconds)\n",
+				g_engine->_currentDay,
+				hour % 12,
+				(g_engine->_currentTimeInSeconds / 60) % 60,
+				hour < 12 ? "AM" : "PM", g_engine->_currentTimeInSeconds);
 	return true;
 }
 

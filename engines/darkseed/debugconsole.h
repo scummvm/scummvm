@@ -33,6 +33,7 @@ private:
 	TosText *tosText;
 private:
 	bool Cmd_tostext(int argc, const char **argv);
+	bool Cmd_dt(int argc, const char **argv);
 public:
 	DebugConsole(TosText *tostext);
 	~DebugConsole() override;
