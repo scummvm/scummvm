@@ -230,10 +230,10 @@ void Inventory::mouseMoved(const Common::Point &pt) {
 }
 
 GameItem *Inventory::itemUnderMouse(const Common::Point &pt) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	if (!_itemArea)
 		return nullptr;
 
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	Common::Array<GameItem> &items = engine->getGDSScene()->getGameItems();
 	if (_itemArea->containsPoint(pt)) {
 		const int imgAreaX = _itemArea->_parentX + _itemArea->_x;
@@ -258,12 +258,13 @@ GameItem *Inventory::itemUnderMouse(const Common::Point &pt) {
 }
 
 void Inventory::mouseLDown(const Common::Point &pt) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	RequestData &boxreq = _reqData._requests[0];
 
 	// Ignore this, and close on mouseup.
 	if (!boxreq._rect.contains(pt))
 		return;
+
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 
 	if (engine->getScene()->hasVisibleDialog() || !_itemBox->containsPoint(pt)) {
 		return engine->getScene()->mouseLDown(pt);
