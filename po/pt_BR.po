@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-20 19:16+0000\n"
-"PO-Revision-Date: 2024-06-17 01:43+0000\n"
+"PO-Revision-Date: 2024-06-21 18:49+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -9324,10 +9324,8 @@ msgid "Casio CT-460 / CSM-1"
 msgstr "Casio CT-460 / CSM-1"
 
 #: engines/sci/detection_tables.h:1419 engines/sci/detection_tables.h:1430
-#, fuzzy
-#| msgid "Failed to initialize resources"
 msgid "Game does not contain menu resources"
-msgstr "Falha ao inicializar recursos"
+msgstr "O jogo não contém recursos de menu"
 
 #: engines/sci/detection_tables.h:4594
 msgid "This demo uses an unimplemented version of Robot videos"
