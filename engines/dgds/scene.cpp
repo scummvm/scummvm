@@ -418,10 +418,10 @@ bool Scene::readDialogActionList(Common::SeekableReadStream *s, Common::Array<Di
 
 
 void Scene::setItemAttrOp(const Common::Array<uint16> &args) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	if (args.size() < 3)
 		error("Expect 3 args for item attr opcode.");
 
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	for (auto &item : engine->getGDSScene()->getGameItems()) {
 		if (item._num != args[0])
 			continue;
@@ -593,21 +593,21 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 *
 			CursorMan.showMouse(false);
 			break;
 		case kSceneOpPasscode:
-			static_cast<DgdsEngine *>(g_engine)->getScene()->sceneOpUpdatePasscodeGlobal();
+			engine->getScene()->sceneOpUpdatePasscodeGlobal();
 			break;
 		case kSceneOpMeanwhile:
 			// TODO: Should we draw "meanwhile" like the original? it just gets overwritten with the image anyway.
 			// Probably need to do something here to avoid flashing..
-			//static_cast<DgdsEngine *>(g_engine)->_compositionBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+			//engine->_compositionBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 			break;
 		case kSceneOpShowInvButton:
-			static_cast<DgdsEngine *>(g_engine)->getScene()->addInvButtonToHotAreaList();
+			engine->getScene()->addInvButtonToHotAreaList();
 			break;
 		case kSceneOpHideInvButton:
-			static_cast<DgdsEngine *>(g_engine)->getScene()->removeInvButtonFromHotAreaList();
+			engine->getScene()->removeInvButtonFromHotAreaList();
 			break;
 		case kSceneOpOpenGameOverMenu:
-			static_cast<DgdsEngine *>(g_engine)->setMenuToTrigger(kMenuGameOver);
+			engine->setMenuToTrigger(kMenuGameOver);
 			break;
 		case kSceneOpTiredDialog:
 			engine->getInventory()->close();
@@ -627,10 +627,10 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 *
 			_drawDragonCountdown(FontManager::k8x8Font, 250, 42);
 			break;
 		case kSceneOpOpenPlaySkipIntroMenu:
-			static_cast<DgdsEngine *>(g_engine)->setMenuToTrigger(kMenuSkipPlayIntro);
+			engine->setMenuToTrigger(kMenuSkipPlayIntro);
 			break;
 		case kSceneOpOpenBetterSaveGameMenu:
-			static_cast<DgdsEngine *>(g_engine)->setMenuToTrigger(kMenuBetterSaveGame);
+			engine->setMenuToTrigger(kMenuBetterSaveGame);
 			break;
 		default:
 			warning("TODO: Implement scene op %d", op._opCode);
@@ -1135,13 +1135,12 @@ void SDSScene::globalOps(const Common::Array<uint16> &args) {
 void SDSScene::mouseMoved(const Common::Point &pt) {
 	Dialog *dlg = getVisibleDialog();
 	const HotArea *area = findAreaUnderMouse(pt);
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 
 	int16 cursorNum = (!dlg && area) ? area->_cursorNum : 0;
 	if (_dragItem)
 		cursorNum = _dragItem->_iconNum;
 
-	engine->setMouseCursor(cursorNum);
+	static_cast<DgdsEngine *>(g_engine)->setMouseCursor(cursorNum);
 }
 
 void SDSScene::mouseLDown(const Common::Point &pt) {

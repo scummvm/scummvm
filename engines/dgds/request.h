@@ -194,7 +194,7 @@ public:
 	void drawInvType(Graphics::ManagedSurface *dst);
 
 	static const Font *getMenuFont();
-	const Image *getCorners();
+	static const Image *getCorners();
 
 	static void fillBackground(Graphics::ManagedSurface *dst, uint16 x, uint16 y, uint16 width, uint16 height, int16 startoffset);
 	static void drawCorners(Graphics::ManagedSurface *dst, uint16 startNum, uint16 x, uint16 y, uint16 width, uint16 height);

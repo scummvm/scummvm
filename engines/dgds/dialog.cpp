@@ -84,8 +84,7 @@ static void _drawPixel(int x, int y, int color, void *data) {
 
 
 const Font *Dialog::getDlgTextFont() const {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	const FontManager *fontman = engine->getFontMan();
+	const FontManager *fontman = static_cast<DgdsEngine *>(g_engine)->getFontMan();
 	FontManager::FontType fontType = FontManager::kGameDlgFont;
 	if (_fontSize == 1)
 		fontType = FontManager::k8x8Font;

@@ -473,8 +473,7 @@ void SliderGadget::draw(Graphics::ManagedSurface *dst) const {
 	dst->fillRect(fillrect, SliderColors[6]);
 
 	// Draw the slider control in the right spot
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	const Common::SharedPtr<Image> uiCorners = engine->getUICorners();
+	const Image *uiCorners = RequestData::getCorners();
 	uiCorners->drawBitmap(SLIDER_HANDLE_FRAME, x + _handleX, y, Common::Rect(0, 0, 320, 200), *dst);
 }
 
@@ -483,7 +482,7 @@ SliderGadget::SliderGadget() : _lock(false), _steps(0), _gadget2_i1(0),
 }
 
 int16 SliderGadget::getHandleWidth() const {
-	const Common::SharedPtr<Image> uiCorners = static_cast<DgdsEngine *>(g_engine)->getUICorners();
+	const Image *uiCorners = RequestData::getCorners();
 	int16 handleWidth = uiCorners->width(SLIDER_HANDLE_FRAME);
 	return handleWidth - 2;
 }
@@ -654,20 +653,17 @@ void RequestData::drawInvType(Graphics::ManagedSurface *dst) {
 
 /*static*/
 const Font *RequestData::getMenuFont() {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	return engine->getFontMan()->getFont(FontManager::kGameFont);
+	return static_cast<DgdsEngine *>(g_engine)->getFontMan()->getFont(FontManager::kGameFont);
 }
 
 /*static*/
 const Image *RequestData::getCorners() {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	return engine->getUICorners().get();
+	return static_cast<DgdsEngine *>(g_engine)->getUICorners().get();
 }
 
 /*static*/
 void RequestData::drawCorners(Graphics::ManagedSurface *dst, uint16 startNum, uint16 x, uint16 y, uint16 width, uint16 height) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	const Common::SharedPtr<Image> uiCorners = engine->getUICorners();
+	const Image *uiCorners = RequestData::getCorners();
 	assert(uiCorners->loadedFrameCount() > startNum + 7);
 	const Common::Array<Common::SharedPtr<Graphics::ManagedSurface>> &cframes = uiCorners->getFrames();
 	const Common::SharedPtr<Graphics::ManagedSurface> *corners = cframes.data() + startNum;
@@ -722,8 +718,7 @@ void RequestData::drawBackgroundWithSliderArea(Graphics::ManagedSurface *dst, in
 	fillBackground(dst, x + 9, y + 8, width - 18, sliderHeight + 2, 8);
 	fillBackground(dst, x + 17, y + 8 + sliderHeight + 2, width - 34, height - sliderBgHeight, 32 - sliderBgHeight);
 
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	const Common::SharedPtr<Image> uiCorners = engine->getUICorners();
+	const Image *uiCorners = RequestData::getCorners();
 	assert(uiCorners->loadedFrameCount() >= 11);
 	const Common::Array<Common::SharedPtr<Graphics::ManagedSurface>> &corners = uiCorners->getFrames();
 

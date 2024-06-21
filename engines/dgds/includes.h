@@ -25,7 +25,6 @@
 
 namespace Dgds {
 
-// TODO: Remove
 #define MKTAG24(a0, a1, a2) ((uint32)((a2) | (a1) << 8 | ((a0) << 16)))
 
 #define ID_BIN MKTAG24('B', 'I', 'N')
