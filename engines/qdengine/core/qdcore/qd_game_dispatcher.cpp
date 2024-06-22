@@ -2722,6 +2722,7 @@ bool qdGameDispatcher::toggle_main_menu(bool state, const char *screen_name) {
 		interface_dispatcher_.update_personage_buttons();
 
 		if (interface_music_mode_) {
+			debugC(3, kDebugQuant, "interface_music_mode_");
 			if (cur_music_track_) {
 				const qdMusicTrack *tp = cur_music_track_;
 				cur_music_track_ = 0;

@@ -341,8 +341,9 @@ bool qdInterfaceElementState::keyboard_handler(int vkey) {
 bool qdInterfaceElementState::handle_events(qdInterfaceEvent::activation_t activation_type, bool before_animation) {
 	if (qdInterfaceDispatcher * dp = qdInterfaceDispatcher::get_dispatcher()) {
 		for (int i = 0; i < events_.size(); i ++) {
-			if (events_[i].activation() == activation_type && events_[i].is_before_animation() == before_animation)
+			if (events_[i].activation() == activation_type && events_[i].is_before_animation() == before_animation) {
 				dp -> handle_event(events_[i].event(), events_[i].event_data(), owner());
+			}
 		}
 
 		return true;
