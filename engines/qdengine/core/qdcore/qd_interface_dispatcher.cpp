@@ -105,6 +105,7 @@ bool qdInterfaceDispatcher::select_screen(const char *screen_name, bool lock_res
 			for (resource_container_t::resource_list_t::const_iterator it = resources_.resource_list().begin(); it != resources_.resource_list().end(); ++it) {
 				if (p -> has_references(*it)) {
 					if (!(*it) -> is_resource_loaded())
+						debugC(3, kDebugQuant, "Resource is used in both screens %s and %s", transCyrillic(cur_screen_ -> name()), transCyrillic(p -> name()));
 						(*it) -> load_resource();
 				} else {
 					if ((*it) -> is_resource_loaded() && !cur_screen_ -> has_references(*it))
@@ -142,6 +143,7 @@ bool qdInterfaceDispatcher::select_screen(const char *screen_name, bool lock_res
 	cur_screen_ = p;
 
 	if (cur_screen_) {
+		debugC(3, kDebugQuant, "InterfaceDispatcher: if(cur_scene_): %s", transCyrillic(screen_name));
 		bool is_game_active = false;
 		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
 			if (dp -> get_active_scene())
