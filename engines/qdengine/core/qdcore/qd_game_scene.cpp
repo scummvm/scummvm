@@ -20,7 +20,8 @@
  */
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/app_log_file.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
@@ -103,31 +104,32 @@ void qdGameScene::init_objects_grid() {
 }
 
 void qdGameScene::quant(float dt) {
-#ifndef _QUEST_EDITOR
-	if (minigame_)
+	debugC(9, kDebugQuant, "qdGameScene::quant(%d)", dt);
+
+	if (minigame_) {
+		debugC(3, kDebugQuant, "qdGameScene::quant(%d) minigame", dt);
 		minigame_ -> quant(dt);
+	}
 
 	for (qdGameObjectList::const_iterator io = object_list().begin(); io != object_list().end(); ++io)
 		(*io) -> update_screen_pos();
 
 	conditions_quant(dt);
-#endif
 
 	personages_quant();
 
-#ifndef _QUEST_EDITOR
 	follow_quant(dt);
 	collision_quant();
-#endif
 
 	if (camera.quant(dt)) {
-		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher())
+		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
+			debugC(3, kDebugQuant, "qdGameScene::quant(%d) camera", dt);
 			dp -> toggle_full_redraw();
+		}
 	}
 
 	qdGameDispatcherBase::quant(dt);
 
-#ifndef _QUEST_EDITOR
 	if (mouseDispatcher::instance() -> check_event(mouseDispatcher::EV_LEFT_DOWN) && selected_object_ && selected_object_ -> has_control_type(qdGameObjectMoving::CONTROL_MOUSE)) {
 		qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher();
 		if (dp && !dp -> check_flag(qdGameDispatcher::OBJECT_CLICK_FLAG | qdGameDispatcher::DIALOG_CLICK_FLAG) && selected_object_ -> can_move()) {
@@ -174,15 +176,6 @@ void qdGameScene::quant(float dt) {
 	}
 
 	if (selected_object_) selected_object_ -> keyboard_move();
-#else
-	for (qdGameObjectList::const_iterator io = object_list().begin(); io != object_list().end(); ++io) {
-		if (*io != active_object_)
-			(*io) -> quant(0.0f);
-	}
-
-	if (active_object_)
-		active_object_ -> quant(dt);
-#endif
 
 	mouse_click_object_ = mouse_right_click_object_ = NULL;
 	mouse_hover_object_ = NULL;

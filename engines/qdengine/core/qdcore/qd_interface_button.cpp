@@ -242,6 +242,7 @@ bool qdInterfaceButton::quant(float dt) {
 
 	if (find_event(qdInterfaceEvent::EVENT_CLEAR_MOUSE)) {
 		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
+			debugC(3, kDebugQuant, "qdInterfaceButton::quant()");
 			if (dp -> is_on_mouse(NULL))
 				activate_state(1);
 			else
@@ -249,8 +250,9 @@ bool qdInterfaceButton::quant(float dt) {
 		}
 	}
 
-	if (cur_state_ != -1)
+	if (cur_state_ != -1) {
 		get_state(cur_state_) -> quant(dt);
+	}
 
 	return true;
 }
