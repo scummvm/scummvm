@@ -181,8 +181,8 @@ class CompatHelpers {
 
 	static class ShortcutCreator {
 		public static Intent createShortcutResultIntent(@NonNull Context context, String id, @NonNull Intent intent, @NonNull String label, @Nullable Drawable icon, @DrawableRes int fallbackIconId) {
-			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-				return ShortcutCreatorO.createShortcutResultIntent(context, id, intent, label, icon, fallbackIconId);
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1) {
+				return ShortcutCreatorN_MR1.createShortcutResultIntent(context, id, intent, label, icon, fallbackIconId);
 			} else {
 				return ShortcutCreatorOld.createShortcutResultIntent(context, id, intent, label, icon, fallbackIconId);
 			}
@@ -210,10 +210,9 @@ class CompatHelpers {
 			}
 		}
 
-		@RequiresApi(android.os.Build.VERSION_CODES.O)
-		private static class ShortcutCreatorO {
+		@RequiresApi(android.os.Build.VERSION_CODES.N_MR1)
+		private static class ShortcutCreatorN_MR1 {
 			public static Intent createShortcutResultIntent(Context context, String id, @NonNull Intent intent, @NonNull String label, @Nullable Drawable icon, @DrawableRes int fallbackIconId) {
-				ShortcutManager shortcutManager = context.getSystemService(ShortcutManager.class);
 				ShortcutInfo.Builder builder = new ShortcutInfo.Builder(context, id);
 				builder.setIntent(intent);
 				builder.setShortLabel(label);
@@ -227,7 +226,14 @@ class CompatHelpers {
 					bm = drawableToBitmap(icon);
 					builder.setIcon(Icon.createWithResource(context, fallbackIconId));
 				}
-				Intent result = shortcutManager.createShortcutResultIntent(builder.build());
+				Intent result = null;
+				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+					final ShortcutManager shortcutManager = context.getSystemService(ShortcutManager.class);
+					result = shortcutManager.createShortcutResultIntent(si);
+				}
+				if (result == null) {
+					result = new Intent();
+				}
 				ShortcutCreatorOld.addToIntent(result, intent, label, bm);
 				return result;
 			}
