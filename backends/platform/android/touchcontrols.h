@@ -24,8 +24,13 @@
 
 #include "common/events.h"
 
+namespace Graphics {
+class ManagedSurface;
+}
+
 class TouchControlsDrawer {
 public:
+	virtual void touchControlInitSurface(const Graphics::ManagedSurface &surf) = 0;
 	virtual void touchControlNotifyChanged() = 0;
 	virtual void touchControlDraw(int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) = 0;
 
@@ -44,24 +49,38 @@ public:
 	};
 
 	TouchControls();
+	~TouchControls();
 
-	void init(TouchControlsDrawer *drawer, int width, int height);
+	void init(float scale);
+	void setDrawer(TouchControlsDrawer *drawer, int width, int height);
 	void draw();
 	void update(Action action, int ptr, int x, int y);
 
 private:
 	TouchControlsDrawer *_drawer;
 
-	int _screen_width, _screen_height;
+	unsigned int _screen_width, _screen_height;
+	unsigned int _scale, _scale2;
+
+	Graphics::ManagedSurface *_svg;
 
 	enum Function {
 		kFunctionNone = -1,
-		kFunctionJoystick = 0,
-		kFunctionCenter = 1,
-		kFunctionRight = 2,
+		kFunctionLeft = 0,
+		kFunctionRight = 1,
+		kFunctionCenter = 2,
 		kFunctionMax = 2
 	};
 	Function getFunction(int x, int y);
+
+	struct FunctionState {
+		FunctionState() : mask(0) {}
+		void reset() {
+			mask = 0;
+		}
+
+		uint32 mask;
+	};
 
 	struct Pointer {
 		Pointer() : id(-1), startX(-1), startY(-1),
@@ -72,6 +91,8 @@ private:
 			startX = startY = currentX = currentY = -1;
 			function = kFunctionNone;
 			active = false;
+
+			state.reset();
 		}
 
 		int id;
@@ -79,6 +100,8 @@ private:
 		uint16 currentX, currentY;
 		Function function;
 		bool active;
+
+		FunctionState state;
 	};
 
 	enum { kNumPointers = 5 };
@@ -87,38 +110,36 @@ private:
 	Pointer *getPointerFromId(int ptr, bool createNotFound);
 	Pointer *findPointerFromFunction(Function function);
 
-	struct FunctionState {
-		FunctionState() : main(Common::JOYSTICK_BUTTON_INVALID),
-			modifier(Common::JOYSTICK_BUTTON_INVALID) {}
-		void reset() {
-			main = Common::JOYSTICK_BUTTON_INVALID;
-			modifier = Common::JOYSTICK_BUTTON_INVALID;
-			clip = Common::Rect();
-		}
-
-		Common::JoystickButton main;
-		Common::JoystickButton modifier;
-		Common::Rect clip;
-	};
-
-	FunctionState _functionStates[kFunctionMax + 1];
-
 	void buttonDown(Common::JoystickButton jb);
 	void buttonUp(Common::JoystickButton jb);
 	void buttonPress(Common::JoystickButton jb);
 
+	/**
+	 * Draws a part of the joystick surface on the screen
+	 *
+	 * @param x     The left coordinate in fixed-point screen pixels
+	 * @param y     The top coordinate in fixed-point screen pixels
+	 * @param offX  The left offset in SVG pixels
+	 * @param offY  The top offset in SVG pixels
+	 * @param clip  The clipping rectangle in source surface in SVG pixels
+	 */
+	void drawSurface(int x, int y, int offX, int offY, const Common::Rect &clip);
+
 	/* Functions implementations */
 	struct FunctionBehavior {
-		void (*touchToState)(int, int, TouchControls::FunctionState &);
-		bool pressOnRelease;
-		float xRatio;
-		float yRatio;
+		void (TouchControls::*touch)(int, int, Action, TouchControls::FunctionState &);
+		void (TouchControls::*draw)(int, int, const TouchControls::FunctionState &);
 	};
-	static FunctionBehavior functionBehaviors[TouchControls::kFunctionMax + 1];
+	static const FunctionBehavior functionBehaviors[TouchControls::kFunctionMax + 1];
 
-	static void touchToJoystickState(int dX, int dY, FunctionState &state);
-	static void touchToCenterState(int dX, int dY, FunctionState &state);
-	static void touchToRightState(int dX, int dY, FunctionState &state);
+	void touchLeft(int dX, int dY, Action action, FunctionState &state);
+	void maskToLeftButtons(uint32 oldMask, uint32 newMask);
+	void drawLeft(int centerX, int centerY, const FunctionState &state);
+	void touchRight(int dX, int dY, Action action, FunctionState &state);
+	void drawRight(int centerX, int centerY, const FunctionState &state);
+	void touchCenter(int dX, int dY, Action action, FunctionState &state);
+	void drawCenter(int centerX, int centerY, const FunctionState &state);
+
 };
 
 #endif
