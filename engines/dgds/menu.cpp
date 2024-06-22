@@ -36,6 +36,7 @@
 
 namespace Dgds {
 
+
 // TODO: These are the IDs for Dragon, this code needs updates for China/Beamish/etc
 enum MenuButtonIds {
 	kMenuMainPlay = 120,
@@ -59,8 +60,8 @@ enum MenuButtonIds {
 	kMenuOptionsVCR = 135,
 	kMenuOptionsPlay = 136,
 
-	kMenuCalibrateJoystick = 145,
-	kMenuCalibrateMouse = 146,
+	kMenuCalibrateJoystickBtn = 145,
+	kMenuCalibrateMouseBtn = 146,
 	kMenuCalibrateVCR = 144,
 	kMenuCalibratePlay = 147,
 	kMenuCalibrateVCRHoC = 159,
@@ -111,6 +112,12 @@ Menu::~Menu() {
 	_screenBuffer.free();
 }
 
+void Menu::setRequestData(const REQFileData &data) {
+	for (auto &req : data._requests) {
+		_menuRequests[req._fileNum] = req;
+	}
+}
+
 void Menu::setScreenBuffer() {
 	Graphics::Surface *dst = g_system->lockScreen();
 	_screenBuffer.copyFrom(*dst);
@@ -146,7 +153,7 @@ void Menu::drawMenu(MenuId menu) {
 	bool firstDraw = (_curMenu != menu);
 	_curMenu = menu;
 
-	Common::Array<Common::SharedPtr<Gadget> > gadgets = _reqData._requests[_curMenu]._gadgets;
+	Common::Array<Common::SharedPtr<Gadget> > gadgets = _menuRequests[_curMenu]._gadgets;
 
 	// Restore background when drawing submenus
 	g_system->copyRectToScreen(_screenBuffer.getPixels(), _screenBuffer.pitch, 0, 0, _screenBuffer.w, _screenBuffer.h);
@@ -155,7 +162,7 @@ void Menu::drawMenu(MenuId menu) {
 	Graphics::Surface *screen = g_system->lockScreen();
 	Graphics::ManagedSurface managed(screen->w, screen->h, screen->format);
 	managed.blitFrom(*screen);
-	_reqData._requests[_curMenu].drawBg(&managed);
+	_menuRequests[_curMenu].drawBg(&managed);
 
 	for (Common::SharedPtr<Gadget> &gptr : gadgets) {
 		Gadget *gadget = gptr.get();
@@ -176,8 +183,8 @@ void Menu::drawMenu(MenuId menu) {
 }
 
 void Menu::drawMenuText(Graphics::ManagedSurface &dst) {
-	Common::Array<Common::SharedPtr<Gadget> > gadgets = _reqData._requests[_curMenu]._gadgets;
-	Common::Array<TextItem> textItems = _reqData._requests[_curMenu]._textItemList;
+	Common::Array<Common::SharedPtr<Gadget> > gadgets = _menuRequests[_curMenu]._gadgets;
+	Common::Array<TextItem> textItems = _menuRequests[_curMenu]._textItemList;
 
 	// TODO: Get the parent coordinates properly
 	uint16 parentX = gadgets[0].get()->_parentX;
@@ -202,7 +209,7 @@ Gadget *Menu::getClickedMenuItem(const Common::Point &mouseClick) {
 	if (_curMenu == kMenuNone)
 		return nullptr;
 
-	Common::Array<Common::SharedPtr<Gadget> > gadgets = _reqData._requests[_curMenu]._gadgets;
+	Common::Array<Common::SharedPtr<Gadget> > gadgets = _menuRequests[_curMenu]._gadgets;
 
 	for (Common::SharedPtr<Gadget> &gptr : gadgets) {
 		Gadget *gadget = gptr.get();
@@ -296,7 +303,7 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 		drawMenu(kMenuFiles);
 		break;
 	case kMenuMainQuit:
-		drawMenu(kMenuQuit);
+		drawMenu(kMenuReallyQuit);
 		break;
 	case kMenuCalibrateVCR:  // NOTE: same ID as kMenuIntroPlay
 		if (_curMenu == kMenuSkipPlayIntro) {
@@ -320,14 +327,14 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 		// TODO
 		debug("Clicked option with ID %d", clickedMenuItem);
 		break;
-	case kMenuCalibrateJoystick:
-		drawMenu(kMenuJoystick);
+	case kMenuCalibrateJoystickBtn:
+		drawMenu(kMenuCalibrateJoystick);
 		break;
-	case kMenuCalibrateMouse:
-		drawMenu(kMenuMouse);
+	case kMenuCalibrateMouseBtn:
+		drawMenu(kMenuCalibrateMouse);
 		break;
 	case kMenuChangeDirectoryCancel:
-		drawMenu(kMenuSave);
+		drawMenu(kMenuSaveDlg);
 		break;
 	case kMenuFilesRestore:
 	case kMenuGameOverRestore:
@@ -350,7 +357,7 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 			drawMenu(_curMenu);
 		break;
 	case kMenuSaveChangeDirectory:
-		drawMenu(kMenuChangeDirectory);
+		drawMenu(kMenuChangeDir);
 		break;
 	case kMenuChangeDirectoryOK:
 		// TODO
@@ -368,7 +375,7 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 		engine->restartGame();
 		break;
 	case kMenuGameOverQuit:
-		drawMenu(kMenuQuit);
+		drawMenu(kMenuReallyQuit);
 		break;
 	case kMenuGameOverRestart:
 		drawMenu(kMenuRestart);
@@ -399,7 +406,7 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 }
 
 void Menu::toggleGadget(int16 gadgetId, bool enable) {
-	Common::Array<Common::SharedPtr<Gadget> > gadgets = _reqData._requests[_curMenu]._gadgets;
+	Common::Array<Common::SharedPtr<Gadget> > gadgets = _menuRequests[_curMenu]._gadgets;
 
 	for (Common::SharedPtr<Gadget> &gptr : gadgets) {
 		Gadget *gadget = gptr.get();
