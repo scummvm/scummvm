@@ -283,32 +283,61 @@ void Parser::keyHandler(Common::Event event) {
 	if (event.kbd.flags & (Common::KBD_ALT | Common::KBD_SCRL))
 		return;
 
-	if (event.kbd.hasFlags(Common::KBD_CTRL)) {
-		switch (nChar) {
-		case Common::KEYCODE_l:
-			_vm->_file->restoreGame(-1);
-			break;
-		case Common::KEYCODE_n:
-			if (Utils::yesNoBox("Are you sure you want to start a new game?"))
-				_vm->_file->restoreGame(99);
-			break;
-		case Common::KEYCODE_s:
-			if (gameStatus._viewState == kViewPlay) {
-				if (gameStatus._gameOverFl)
-					_vm->gameOverMsg();
-				else
-					_vm->_file->saveGame(-1, Common::String());
-			}
-			break;
-		default:
-			break;
+	// Process key down input - called from OnKeyDown()
+	if (!gameStatus._storyModeFl) {              // Keyboard disabled
+		// Add printable keys to ring buffer
+		uint16 bnext = _putIndex + 1;
+		if (bnext >= sizeof(_ringBuffer))
+			bnext = 0;
+		if (bnext != _getIndex) {
+			_ringBuffer[_putIndex] = event.kbd.ascii;
+			_putIndex = bnext;
 		}
-		return;
 	}
+}
 
-	// Process key down event - called from OnKeyDown()
-	switch (nChar) {                                // Set various toggle states
-	case Common::KEYCODE_ESCAPE:                    // Escape key, may want to QUIT
+void Parser::actionHandler(Common::Event event) {
+	debugC(1, kDebugParser, "ActionHandler(%d)", event.customType);
+
+	Status &gameStatus = _vm->getGameStatus();
+
+	switch (event.customType) {
+	case kActionUserHelp:
+		if (_checkDoubleF1Fl)
+			gameStatus._helpFl = true;
+		else
+			_vm->_screen->userHelp();
+		_checkDoubleF1Fl = !_checkDoubleF1Fl;
+		break;
+	case kActionToggleSound:
+		_vm->_sound->toggleSound();
+		_vm->_sound->toggleMusic();
+		break;
+	case kActionRepeatLine:
+		gameStatus._recallFl = true;
+		break;
+	case kActionSaveGame:
+		if (gameStatus._viewState == kViewPlay) {
+			if (gameStatus._gameOverFl)
+				_vm->gameOverMsg();
+			else
+				_vm->_file->saveGame(-1, Common::String());
+		}
+		break;
+	case kActionRestoreGame:
+		_vm->_file->restoreGame(-1);
+		break;
+	case kActionNewGame:
+		if (Utils::yesNoBox("Are you sure you want to start a new game?"))
+			_vm->_file->restoreGame(99);
+		break;
+	case kActionInventory:
+		showInventory();
+		break;
+	case kActionToggleTurbo:
+		switchTurbo();
+		break;
+	case kActionEscape: // Escape key, may want to QUIT
 		if (gameStatus._viewState == kViewIntro)
 			gameStatus._skipIntroFl = true;
 		else {
@@ -317,70 +346,22 @@ void Parser::keyHandler(Common::Event event) {
 			_vm->_screen->resetInventoryObjId();
 		}
 		break;
-	case Common::KEYCODE_END:
-	case Common::KEYCODE_HOME:
-	case Common::KEYCODE_PAGEUP:
-	case Common::KEYCODE_PAGEDOWN:
-	case Common::KEYCODE_KP1:
-	case Common::KEYCODE_KP7:
-	case Common::KEYCODE_KP9:
-	case Common::KEYCODE_KP3:
-	case Common::KEYCODE_LEFT:
-	case Common::KEYCODE_RIGHT:
-	case Common::KEYCODE_UP:
-	case Common::KEYCODE_DOWN:
-	case Common::KEYCODE_KP4:
-	case Common::KEYCODE_KP6:
-	case Common::KEYCODE_KP8:
-	case Common::KEYCODE_KP2:
-		_vm->_route->resetRoute();                  // Stop any automatic route
-		_vm->_route->setWalk(nChar);                // Direction of hero travel
+	case kActionMoveTop:
+	case kActionMoveBottom:
+	case kActionMoveLeft:
+	case kActionMoveRight:
+	case kActionMoveTopLeft:
+	case kActionMoveTopRight:
+	case kActionMoveBottomLeft:
+	case kActionMoveBottomRight:
+		_vm->_route->resetRoute();              // Stop any automatic route
+		_vm->_route->setWalk(event.customType); // Direction of hero travel
 		break;
-	case Common::KEYCODE_F1:                        // User Help (DOS)
-		if (_checkDoubleF1Fl)
-			gameStatus._helpFl = true;
-		else
-			_vm->_screen->userHelp();
-		_checkDoubleF1Fl = !_checkDoubleF1Fl;
-		break;
-	case Common::KEYCODE_F2:                        // Toggle sound
-		_vm->_sound->toggleSound();
-		_vm->_sound->toggleMusic();
-		break;
-	case Common::KEYCODE_F3:                        // Repeat last line
-		gameStatus._recallFl = true;
-		break;
-	case Common::KEYCODE_F4:                        // Save game
-		if (gameStatus._viewState == kViewPlay) {
-			if (gameStatus._gameOverFl)
-				_vm->gameOverMsg();
-			else
-				_vm->_file->saveGame(-1, Common::String());
-		}
-		break;
-	case Common::KEYCODE_F5:                        // Restore game
-		_vm->_file->restoreGame(-1);
-		break;
-	case Common::KEYCODE_F6:                        // Inventory
-		showInventory();
-		break;
-	case Common::KEYCODE_F8:                        // Turbo mode
-		switchTurbo();
-		break;
-	default:                                        // Any other key
-		if (!gameStatus._storyModeFl) {              // Keyboard disabled
-			// Add printable keys to ring buffer
-			uint16 bnext = _putIndex + 1;
-			if (bnext >= sizeof(_ringBuffer))
-				bnext = 0;
-			if (bnext != _getIndex) {
-				_ringBuffer[_putIndex] = event.kbd.ascii;
-				_putIndex = bnext;
-			}
-		}
+	default:
 		break;
 	}
-	if (_checkDoubleF1Fl && (nChar != Common::KEYCODE_F1))
+
+	if (_checkDoubleF1Fl && (event.customType != kActionUserHelp))
 		_checkDoubleF1Fl = false;
 }
 

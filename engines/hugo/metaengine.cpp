@@ -23,8 +23,13 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 
 #include "hugo/hugo.h"
 #include "hugo/detection.h"
@@ -47,6 +52,8 @@ public:
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 
 	int getMaximumSaveSlot() const override;
 	SaveStateList listSaves(const char *target) const override;
@@ -76,6 +83,139 @@ bool HugoMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSavesSupportMetaInfo) ||
 	    (f == kSavesSupportThumbnail) ||
 	    (f == kSavesSupportCreationDate);
+}
+
+Common::KeymapArray HugoMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Hugo;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "hugo-main", "HUGO main");
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game Keymappings"));
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	act->addDefaultInputMapping("KP_PLUS");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	act->addDefaultInputMapping("KP_MINUS");
+	engineKeyMap->addAction(act);
+	
+	act = new Action("USERHELP", _("User Help"));
+	act->setCustomEngineActionEvent(kActionUserHelp);
+	act->addDefaultInputMapping("F1");
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeyMap->addAction(act);
+
+	act = new Action("TOGGLESOUND", _("Toggle Sound"));
+	act->setCustomEngineActionEvent(kActionToggleSound);
+	act->addDefaultInputMapping("F2");
+	engineKeyMap->addAction(act);
+
+	act = new Action("REPEATLINE", _("Repeat Last Line"));
+	act->setCustomEngineActionEvent(kActionRepeatLine);
+	act->addDefaultInputMapping("F3");
+	act->addDefaultInputMapping("JOY_RIGHT_STICK");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SAVEGAME", _("Save Game"));
+	act->setCustomEngineActionEvent(kActionSaveGame);
+	act->addDefaultInputMapping("F4");
+	act->addDefaultInputMapping("C+s");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	act = new Action("RESTOREGAME", _("Restore Game"));
+	act->setCustomEngineActionEvent(kActionRestoreGame);
+	act->addDefaultInputMapping("F5");
+	act->addDefaultInputMapping("C+l");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	act = new Action("NEWGAME", _("New Game"));
+	act->setCustomEngineActionEvent(kActionNewGame);
+	act->addDefaultInputMapping("C+n");
+	act->addDefaultInputMapping("JOY_GUIDE");
+	engineKeyMap->addAction(act);
+
+	act = new Action("INVENTORY", _("Show Inventory"));
+	act->setCustomEngineActionEvent(kActionInventory);
+	act->addDefaultInputMapping("F6");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	act = new Action("TURBOMODE", _("Turbo Mode"));
+	act->setCustomEngineActionEvent(kActionToggleTurbo);
+	act->addDefaultInputMapping("F8");
+	act->addDefaultInputMapping("JOY_LEFT_STICK");
+	engineKeyMap->addAction(act);
+
+	act = new Action("ESC", _("Escape"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	act->addDefaultInputMapping("Escape");
+	act->addDefaultInputMapping("JOY_BACK");
+	engineKeyMap->addAction(act);
+
+	act = new Action("MOVETOP", _("Move Top"));
+	act->setCustomEngineActionEvent(kActionMoveTop);
+	act->addDefaultInputMapping("KP8");
+	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("JOY_UP");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MOVEBOTTOM", _("Move Bottom"));
+	act->setCustomEngineActionEvent(kActionMoveBottom);
+	act->addDefaultInputMapping("KP2");
+	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("JOY_DOWN");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MOVELEFT", _("Move Left"));
+	act->setCustomEngineActionEvent(kActionMoveLeft);
+	act->addDefaultInputMapping("KP4");
+	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("JOY_LEFT");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MOVERIGHT", _("Move Right"));
+	act->setCustomEngineActionEvent(kActionMoveRight);
+	act->addDefaultInputMapping("KP6");
+	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MOVETOPLEFT", _("Move Top Left"));
+	act->setCustomEngineActionEvent(kActionMoveTopLeft);
+	act->addDefaultInputMapping("KP7");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MOVETOPRIGHT", _("Move Top Right"));
+	act->setCustomEngineActionEvent(kActionMoveTopRight);
+	act->addDefaultInputMapping("KP9");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MOVEBTMLEFT", _("Move Bottom Left"));
+	act->setCustomEngineActionEvent(kActionMoveBottomLeft);
+	act->addDefaultInputMapping("KP1");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MOVEBTMRIGHT", _("Move Bottom Right"));
+	act->setCustomEngineActionEvent(kActionMoveBottomRight);
+	act->addDefaultInputMapping("KP3");
+	gameKeyMap->addAction(act);
+	
+	KeymapArray keymaps(2);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeyMap;
+
+	return keymaps;
 }
 
 int HugoMetaEngine::getMaximumSaveSlot() const { return 99; }
