@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-20 19:16+0000\n"
+"POT-Creation-Date: 2024-06-22 18:24+0000\n"
 "PO-Revision-Date: 2024-06-05 08:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -4744,12 +4744,12 @@ msgstr "Режим Увеличения выключен. Переключени
 msgid "Magnify Mode Off"
 msgstr "Режим увеличения выключен"
 
-#: backends/platform/android/android.cpp:1050
+#: backends/platform/android/android.cpp:1052
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 msgid "Getting help"
 msgstr "Помощь"
 
-#: backends/platform/android/android.cpp:1053
+#: backends/platform/android/android.cpp:1055
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -4790,13 +4790,13 @@ msgstr ""
 "себе, а иногда и просто очень трудные. Если вы застряли в игре, подумайте о "
 "том, чтобы просмотреть её прохождение. Удачи!\n"
 
-#: backends/platform/android/android.cpp:1062
+#: backends/platform/android/android.cpp:1064
 #: backends/platform/ios7/ios7_osys_misc.mm:261
 #: backends/platform/ios7/ios7_osys_misc.mm:357
 msgid "Touch Controls"
 msgstr "Управление касанием"
 
-#: backends/platform/android/android.cpp:1065
+#: backends/platform/android/android.cpp:1067
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -4934,13 +4934,13 @@ msgstr ""
 "   ![Значок клавиатуры](keyboard.png \"Значок клавиатуры\"){w=10em}\n"
 "\n"
 
-#: backends/platform/android/android.cpp:1121
+#: backends/platform/android/android.cpp:1123
 #: backends/platform/ios7/ios7_osys_misc.mm:336
 #: backends/platform/ios7/ios7_osys_misc.mm:380
 msgid "Adding Games"
 msgstr "Добавление игр"
 
-#: backends/platform/android/android.cpp:1124
+#: backends/platform/android/android.cpp:1126
 msgid ""
 "## Adding Games \n"
 "\n"
