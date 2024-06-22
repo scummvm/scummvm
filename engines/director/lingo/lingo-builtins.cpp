@@ -2508,10 +2508,9 @@ void LB::b_move(int nargs) {
 	score->renderFrame(frame, kRenderForceUpdate);
 
 	movie->eraseCastMember(dest.asMemberID());
-
 	CastMember *toReplace = new CastMember(toMove->getCast(), src.asMemberID().member);
-	movie->createOrReplaceCastMember(dest.asMemberID(), toMove);
-	movie->createOrReplaceCastMember(src.asMemberID(), toReplace);
+	movie->createOrReplaceCastMember(dest.asMemberID(), toReplace);
+	movie->eraseCastMember(src.asMemberID());
 
 	score->refreshPointersForCastMemberID(dest.asMemberID());
 
