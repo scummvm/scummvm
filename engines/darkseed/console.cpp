@@ -25,13 +25,68 @@
 namespace Darkseed {
 
 Console::Console(TosText *tosText) : _tosText(tosText) {
-	if(!_font.load("tosfont.nsp")) {
+	if(!_font.load()) {
 		error("Error loading tosfont.nsp");
 	}
+	_text.resize(10);
 }
 
 void Console::printTosText(int tosIndex) {
-	debug(_tosText->getText(tosIndex).c_str());
+	const Common::String &text = _tosText->getText(tosIndex);
+	debug(text.c_str());
+	addLine(" ");
+	auto lines = wrapText(text);
+	for (auto &line : lines) {
+		addLine(line);
+	}
+}
+
+void Console::draw() {
+	int curIdx = _startIdx == 0 ? _text.size() - 1 : _startIdx - 1;
+	int y = 0x139;
+	for (int i = 0; i < 4 && curIdx != _startIdx && !_text[curIdx].empty(); i++) {
+		_font.displayString(0x70, y, _text[curIdx]);
+		y -= 11;
+		curIdx = curIdx == 0 ? _text.size() - 1 : curIdx - 1;
+	}
+}
+
+Common::Array<Common::String> Console::wrapText(const Common::String &text) {
+	Common::Array<Common::String> lines;
+	Common::String line;
+	Common::String word;
+	int lineLength = 0;
+
+	for (int i = 0; i < text.size(); i++) {
+		word += text[i];
+		if (text[i] == ' ' || text[i] == '\r') {
+			int wordLength = _font.stringLength(word);
+			if (lineLength + wordLength > 0x1a0) {
+				lines.push_back(line);
+				line = word;
+				lineLength = wordLength;
+			} else {
+				line += word;
+				lineLength += wordLength;
+			}
+			word = "";
+		}
+		if (text[i] == '\r') {
+			break;
+		}
+	}
+
+	if (!line.empty() || !word.empty()) {
+		line += word;
+		lines.push_back(line);
+	}
+
+	return lines;
+}
+
+void Console::addLine(const Common::String &line) {
+	_text[_startIdx] = line;
+	_startIdx = (_startIdx + 1) % _text.size();
 }
 
 } // End of namespace Darkseed
