@@ -101,6 +101,7 @@ bool qdInterfaceDispatcher::select_screen(const char *screen_name, bool lock_res
 
 	if (p) {
 		if (cur_screen_ && cur_screen_ -> is_locked()) {
+			debugC(3, kDebugQuant, "InterfaceDispatcher: Selecting screen: %s", transCyrillic(screen_name));
 			for (resource_container_t::resource_list_t::const_iterator it = resources_.resource_list().begin(); it != resources_.resource_list().end(); ++it) {
 				if (p -> has_references(*it)) {
 					if (!(*it) -> is_resource_loaded())
@@ -141,7 +142,6 @@ bool qdInterfaceDispatcher::select_screen(const char *screen_name, bool lock_res
 	cur_screen_ = p;
 
 	if (cur_screen_) {
-#ifndef _QUEST_EDITOR
 		bool is_game_active = false;
 		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
 			if (dp -> get_active_scene())
@@ -150,9 +150,6 @@ bool qdInterfaceDispatcher::select_screen(const char *screen_name, bool lock_res
 			if (cur_screen_ -> has_music_track())
 				dp -> play_music_track(&cur_screen_ -> music_track(), true);
 		}
-#else
-		bool is_game_active = true;
-#endif
 
 		cur_screen_ -> init(is_game_active);
 		if (lock_resources)
@@ -184,6 +181,7 @@ bool qdInterfaceDispatcher::select_background_screen(qdInterfaceScreen *p) {
 
 bool qdInterfaceDispatcher::select_ingame_screen(bool inventory_state) {
 	if (has_ingame_screen(inventory_state))
+		debugC(3, kDebugQuant, "InterfaceDispatcher: Selecting ingame screen: %s", transCyrillic(ingame_screen_name(inventory_state)));
 		return select_screen(ingame_screen_name(inventory_state), true);
 
 	return select_screen(NULL);

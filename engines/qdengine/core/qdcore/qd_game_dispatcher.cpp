@@ -176,20 +176,24 @@ void qdGameDispatcher::quant() {
 	debugC(9, kDebugQuant, "qdGameDispatcher::quant()");
 	inputRecorder::instance().quant();
 	if (check_flag(SKIP_REDRAW_FLAG)) {
+		debugC(3, kDebugQuant, "Skipping redraw...");
 		drop_flag(SKIP_REDRAW_FLAG);
 		toggle_full_redraw();
 	}
 	int idt = qdGameConfig::get_config().logic_period();
 
 	if (!scene_saved_ && cur_scene_ && cur_scene_ -> autosave_slot() != -1) {
+		debugC(3, kDebugQuant, "Autosaving...");
 		save_game(cur_scene_ -> autosave_slot());
 	}
 
 	if (check_flag(SAVE_GAME_FLAG)) {
+		debugC(3, kDebugQuant, "Saving game...");
 		save_game(autosave_slot_);
 		drop_flag(SAVE_GAME_FLAG);
 	}
 	if (check_flag(LOAD_GAME_FLAG)) {
+		debugC(3, kDebugQuant, "Loading game...");
 		load_game(autosave_slot_);
 		drop_flag(LOAD_GAME_FLAG);
 	}
@@ -203,6 +207,7 @@ void qdGameDispatcher::quant() {
 	appLog::default_log().set_time(timer_);
 
 	if (!is_paused() && next_scene_) {
+		debugC(3, kDebugQuant, "Loading next scene...");
 		select_scene(next_scene_);
 		set_next_scene(NULL);
 		quant(0.0f);
@@ -210,11 +215,13 @@ void qdGameDispatcher::quant() {
 	}
 
 	if (check_flag(MAIN_MENU_FLAG)) {
+		debugC(3, kDebugQuant, "Main menu...");
 		drop_flag(MAIN_MENU_FLAG);
 		toggle_main_menu(true);
 	}
 
 	if (game_end_) {
+		debugC(3, kDebugQuant, "Game end...");
 		end_game(game_end_);
 		game_end_ = NULL;
 	}
@@ -256,6 +263,7 @@ void qdGameDispatcher::quant(float dt) {
 	}
 
 	if (!is_paused() || check_flag(NEXT_FRAME_FLAG)) {
+		debugC(9, kDebugQuant, "Quanting...");
 		qdGameDispatcherBase::quant(dt);
 
 		if (cur_scene_)
@@ -270,8 +278,10 @@ void qdGameDispatcher::quant(float dt) {
 
 		interface_dispatcher_.quant(dt);
 
-		if (cur_scene_)
+		if (cur_scene_) {
+			debugC(9, kDebugQuant, "Checking Cur Scene...");
 			cur_scene_ -> quant(dt);
+		}
 
 		for (qdInventoryList::const_iterator it = inventory_list().begin(); it != inventory_list().end(); ++it)
 			(*it) -> objects_quant(dt);
@@ -2192,14 +2202,15 @@ bool qdGameDispatcher::select_scene(qdGameScene *sp, bool resources_flag) {
 	screen_texts.clear_texts();
 
 	if (!sp || get_active_scene() != sp) {
+			debugC(3, kDebugQuant, "Stop sound?");
 		if (sndDispatcher * p = sndDispatcher::get_dispatcher())
 			p -> stop_sounds();
 	}
 
-#ifndef _QUEST_EDITOR
-	if (sp)
+	if (sp) {
+		debugC(3, kDebugQuant, "request_file_package");
 		request_file_package(*sp);
-#endif
+	}
 
 	drop_mouse_object();
 	toggle_inventory(true);
@@ -2219,6 +2230,7 @@ bool qdGameDispatcher::select_scene(qdGameScene *sp, bool resources_flag) {
 	toggle_inventory(true);
 
 	if (cur_scene_) {
+		debugC(3, kDebugQuant, "set_current_camera");
 		qdCamera::set_current_camera(cur_scene_ -> get_camera());
 		cur_scene_ -> activate();
 
@@ -3651,7 +3663,7 @@ bool qdGameDispatcher::write_resource_stats(const char *file_name) const {
 
 bool qdGameDispatcher::update_ingame_interface() {
 	if (cur_scene_ && cur_scene_->has_interface_screen()) {
-		debugC(9, kDebugQuant, cur_scene_->interface_screen_name());
+		debugC(3, kDebugQuant, "update_ingame_interface");
 		return interface_dispatcher_.select_screen(cur_scene_->interface_screen_name());
 	} else
 		return interface_dispatcher_.select_ingame_screen(cur_inventory_ != 0);

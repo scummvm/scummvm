@@ -177,8 +177,10 @@ bool qdInterfaceElementState::quant(float dt) {
 			ep -> set_state(this);
 			break;
 		case qdInterfaceElement::STATE_DONE:
-			if (state_mode() == EVENT_MODE)
+			if (state_mode() == EVENT_MODE) {
+				debugC(3, kDebugQuant, "qdInterfaceElementState::quant(%d) - EVENT_MODE", dt);
 				handle_events(qdInterfaceEvent::EVENT_ACTIVATION_CLICK, false);
+			}
 
 
 			set_state_mode(DEFAULT_MODE);

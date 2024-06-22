@@ -20,7 +20,8 @@
  */
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/qdscr_parser.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
@@ -380,6 +381,7 @@ bool qdCondition::save_script(XStream &fh, int indent) const {
 }
 
 void qdCondition::quant(float dt) {
+	debugC(9, kDebugQuant, "qdCondition::quant(%d)", dt);
 	if (type_ == CONDITION_TIMER) {
 		float period, timer;
 		if (!get_value(TIMER_PERIOD, period, 0)) return;
@@ -390,6 +392,7 @@ void qdCondition::quant(float dt) {
 		put_value(TIMER_PERIOD, timer, 1);
 
 		if (timer >= period) {
+			debugC(3, kDebugQuant, "qdCondition::quant() timer >= period");
 			timer -= period;
 			put_value(TIMER_PERIOD, timer, 1);
 
