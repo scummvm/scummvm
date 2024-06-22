@@ -176,24 +176,24 @@ void qdGameDispatcher::quant() {
 	debugC(9, kDebugQuant, "qdGameDispatcher::quant()");
 	inputRecorder::instance().quant();
 	if (check_flag(SKIP_REDRAW_FLAG)) {
-		debugC(3, kDebugQuant, "Skipping redraw...");
+		debugC(3, kDebugQuant, "qdGameDispatcher::quant() Skipping redraw...");
 		drop_flag(SKIP_REDRAW_FLAG);
 		toggle_full_redraw();
 	}
 	int idt = qdGameConfig::get_config().logic_period();
 
 	if (!scene_saved_ && cur_scene_ && cur_scene_ -> autosave_slot() != -1) {
-		debugC(3, kDebugQuant, "Autosaving...");
+		debugC(3, kDebugQuant, "qdGameDispatcher::quant() Autosaving...");
 		save_game(cur_scene_ -> autosave_slot());
 	}
 
 	if (check_flag(SAVE_GAME_FLAG)) {
-		debugC(3, kDebugQuant, "Saving game...");
+		debugC(3, kDebugQuant, "qdGameDispatcher::quant() Saving game...");
 		save_game(autosave_slot_);
 		drop_flag(SAVE_GAME_FLAG);
 	}
 	if (check_flag(LOAD_GAME_FLAG)) {
-		debugC(3, kDebugQuant, "Loading game...");
+		debugC(3, kDebugQuant, "qdGameDispatcher::quant() Loading game...");
 		load_game(autosave_slot_);
 		drop_flag(LOAD_GAME_FLAG);
 	}
@@ -207,7 +207,7 @@ void qdGameDispatcher::quant() {
 	appLog::default_log().set_time(timer_);
 
 	if (!is_paused() && next_scene_) {
-		debugC(3, kDebugQuant, "Loading next scene...");
+		debugC(3, kDebugQuant, "qdGameDispatcher::quant() Loading next scene...");
 		select_scene(next_scene_);
 		set_next_scene(NULL);
 		quant(0.0f);
@@ -215,13 +215,13 @@ void qdGameDispatcher::quant() {
 	}
 
 	if (check_flag(MAIN_MENU_FLAG)) {
-		debugC(3, kDebugQuant, "Main menu...");
+		debugC(3, kDebugQuant, "qdGameDispatcher::quant() Main menu...");
 		drop_flag(MAIN_MENU_FLAG);
 		toggle_main_menu(true);
 	}
 
 	if (game_end_) {
-		debugC(3, kDebugQuant, "Game end...");
+		debugC(3, kDebugQuant, "qdGameDispatcher::quant() Game end...");
 		end_game(game_end_);
 		game_end_ = NULL;
 	}
@@ -263,7 +263,7 @@ void qdGameDispatcher::quant(float dt) {
 	}
 
 	if (!is_paused() || check_flag(NEXT_FRAME_FLAG)) {
-		debugC(9, kDebugQuant, "Quanting...");
+		debugC(9, kDebugQuant, "qdGameDispatcher::quant() Quanting...");
 		qdGameDispatcherBase::quant(dt);
 
 		if (cur_scene_)
@@ -279,7 +279,7 @@ void qdGameDispatcher::quant(float dt) {
 		interface_dispatcher_.quant(dt);
 
 		if (cur_scene_) {
-			debugC(9, kDebugQuant, "Checking Cur Scene...");
+			debugC(9, kDebugQuant, "qdGameDispatcher::quant() Checking Cur Scene...");
 			cur_scene_ -> quant(dt);
 		}
 
@@ -2202,13 +2202,13 @@ bool qdGameDispatcher::select_scene(qdGameScene *sp, bool resources_flag) {
 	screen_texts.clear_texts();
 
 	if (!sp || get_active_scene() != sp) {
-			debugC(3, kDebugQuant, "Stop sound?");
+			debugC(3, kDebugQuant, "qdGameDispatcher::select_scene() Stop sound");
 		if (sndDispatcher * p = sndDispatcher::get_dispatcher())
 			p -> stop_sounds();
 	}
 
 	if (sp) {
-		debugC(3, kDebugQuant, "request_file_package");
+		debugC(3, kDebugQuant, "qdGameDispatcher::select_scene() request_file_package");
 		request_file_package(*sp);
 	}
 
@@ -2230,7 +2230,7 @@ bool qdGameDispatcher::select_scene(qdGameScene *sp, bool resources_flag) {
 	toggle_inventory(true);
 
 	if (cur_scene_) {
-		debugC(3, kDebugQuant, "set_current_camera");
+		debugC(3, kDebugQuant, "qdGameDispatcher::select_scene() set_current_camera");
 		qdCamera::set_current_camera(cur_scene_ -> get_camera());
 		cur_scene_ -> activate();
 
@@ -2722,7 +2722,7 @@ bool qdGameDispatcher::toggle_main_menu(bool state, const char *screen_name) {
 		interface_dispatcher_.update_personage_buttons();
 
 		if (interface_music_mode_) {
-			debugC(3, kDebugQuant, "interface_music_mode_");
+			debugC(3, kDebugQuant, "qdGameDispatcher::toggle_main_menu() interface_music_mode_");
 			if (cur_music_track_) {
 				const qdMusicTrack *tp = cur_music_track_;
 				cur_music_track_ = 0;
@@ -3664,7 +3664,7 @@ bool qdGameDispatcher::write_resource_stats(const char *file_name) const {
 
 bool qdGameDispatcher::update_ingame_interface() {
 	if (cur_scene_ && cur_scene_->has_interface_screen()) {
-		debugC(3, kDebugQuant, "update_ingame_interface");
+		debugC(3, kDebugQuant, "qdGameDispatcher::update_ingame_interface() update_ingame_interface");
 		return interface_dispatcher_.select_screen(cur_scene_->interface_screen_name());
 	} else
 		return interface_dispatcher_.select_ingame_screen(cur_inventory_ != 0);
