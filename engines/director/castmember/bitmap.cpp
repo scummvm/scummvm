@@ -313,14 +313,13 @@ Graphics::Surface *BitmapCastMember::getDitherImg() {
 
 	// Convert indexed image to indexed palette
 	Movie *movie = g_director->getCurrentMovie();
-	Cast *cast = movie->getCast();
 	Score *score = movie->getScore();
 	int targetBpp = g_director->_wm->_pixelformat.bytesPerPixel;
 
 	// Get the current score palette. Note that this is the ID of the palette in the list, not the cast member!
 	CastMemberID currentPaletteId = score->getCurrentPalette();
 	if (currentPaletteId.isNull())
-		currentPaletteId = cast->_defaultPalette;
+		currentPaletteId = movie->_defaultPalette;
 	PaletteV4 *currentPalette = g_director->getPalette(currentPaletteId);
 	if (!currentPalette) {
 		currentPaletteId = CastMemberID(kClutSystemMac, -1);
@@ -423,11 +422,10 @@ bool BitmapCastMember::isModified() {
 	// to be recreated.
 	if (!_clut.isNull()) {
 		Movie *movie = g_director->getCurrentMovie();
-		Cast *cast = movie->getCast();
 		Score *score = movie->getScore();
 		CastMemberID currentPaletteId = score->getCurrentPalette();
 		if (currentPaletteId.isNull())
-			currentPaletteId = cast->_defaultPalette;
+			currentPaletteId = movie->_defaultPalette;
 		PaletteV4 *currentPalette = g_director->getPalette(currentPaletteId);
 		if (!currentPalette) {
 			currentPaletteId = CastMemberID(kClutSystemMac, -1);
@@ -435,7 +433,7 @@ bool BitmapCastMember::isModified() {
 		}
 		CastMemberID castPaletteId = _clut;
 		if (castPaletteId.isNull())
-			castPaletteId = cast->_defaultPalette;
+			castPaletteId = movie->_defaultPalette;
 
 		return !_ditheredTargetClut.isNull() && _ditheredTargetClut != currentPaletteId;
 	}

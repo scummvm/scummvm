@@ -118,6 +118,7 @@ public:
 	CastMemberID getCastMemberIDByName(const Common::String &name);
 	CastMemberID getCastMemberIDByNameAndType(const Common::String &name, int castLib, CastType type);
 	CastMemberInfo *getCastMemberInfo(CastMemberID memberID);
+	bool isValidCastMember(CastMemberID memberID, CastType type);
 	const Stxt *getStxt(CastMemberID memberID);
 
 	LingoArchive *getMainLingoArch();
@@ -163,6 +164,7 @@ public:
 	Common::String _createdBy;
 	Common::String _changedBy;
 	Common::String _origDirectory;
+	CastMemberID _defaultPalette;
 
 	bool _videoPlayback;
 

@@ -949,15 +949,22 @@ void Score::setLastPalette() {
 
 	bool isCachedPalette = false;
 	CastMemberID currentPalette = _currentFrame->_mainChannels.palette.paletteId;
+	// Director allows you to use palette IDs for cast members
+	// that have long since been erased. Check all of them.
+	if (!_movie->isValidCastMember(currentPalette, kCastPalette))
+		currentPalette = CastMemberID();
 	// Palette not specified in the frame
 	if (currentPalette.isNull()) {
 		// Use the score cached palette ID
 		isCachedPalette = true;
 		currentPalette = _currentFrame->_mainChannels.scoreCachedPaletteId;
+		if (!_movie->isValidCastMember(currentPalette, kCastPalette))
+			currentPalette = CastMemberID();
 		// The cached ID is created before the cast gets loaded; if it's zero,
 		// this corresponds to the movie default palette.
-		if (currentPalette.isNull())
-			currentPalette = g_director->getCurrentMovie()->getCast()->_defaultPalette;
+		if (currentPalette.isNull()) {
+			currentPalette = g_director->getCurrentMovie()->_defaultPalette;
+		}
 		// If for whatever reason this doesn't resolve, abort.
 		if (currentPalette.isNull())
 			return;
@@ -1883,7 +1890,7 @@ void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 Common::String Score::formatChannelInfo() {
 	Frame &frame = *_currentFrame;
 	Common::String result;
-	CastMemberID defaultPalette = g_director->getCurrentMovie()->getCast()->_defaultPalette;
+	CastMemberID defaultPalette = g_director->getCurrentMovie()->_defaultPalette;
 	result += Common::String::format("TMPO:   tempo: %d, skipFrameFlag: %d, blend: %d, currentFPS: %d\n",
 		frame._mainChannels.tempo, frame._mainChannels.skipFrameFlag, frame._mainChannels.blend, _currentFrameRate);
 	if (!frame._mainChannels.palette.paletteId.isNull()) {

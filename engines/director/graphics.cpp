@@ -133,6 +133,9 @@ void DirectorEngine::loadDefaultPalettes() {
 }
 
 PaletteV4 *DirectorEngine::getPalette(const CastMemberID &id) {
+	if (id.isNull())
+		return nullptr;
+
 	if (!_loadedPalettes.contains(id)) {
 		warning("DirectorEngine::getPalette(): Palette %s not found, hash %x", id.asString().c_str(), id.hash());
 		return nullptr;

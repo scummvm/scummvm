@@ -131,7 +131,6 @@ void Movie::setArchive(Archive *archive) {
 		// D4 or lower, only 1 cast
 		_cast->setArchive(archive);
 	}
-
 	// Frame Labels
 	if ((r = archive->getMovieResourceIfPresent(MKTAG('V', 'W', 'L', 'B')))) {
 		_score->loadLabels(*r);
@@ -216,6 +215,13 @@ bool Movie::loadArchive() {
 		it._value->loadCast();
 	}
 	_stageColor = _vm->transformColor(_cast->_stageColor);
+	// Need to check if the default palette is valid; if not, assume it's the Mac one.
+	if (isValidCastMember(_cast->_defaultPalette, kCastPalette)) {
+		_defaultPalette = _cast->_defaultPalette;
+	} else {
+		_defaultPalette = CastMemberID(kClutSystemMac, -1);
+	}
+	g_director->_lastPalette = CastMemberID();
 
 	bool recenter = false;
 	// If the stage dimensions are different, delete it and start again.
@@ -569,6 +575,11 @@ CastMemberInfo *Movie::getCastMemberInfo(CastMemberID memberID) {
 		warning("Movie::getCastMemberInfo: Unknown castLib %d", memberID.castLib);
 	}
 	return result;
+}
+
+bool Movie::isValidCastMember(CastMemberID memberID, CastType type) {
+	CastMember *test = getCastMember(memberID);
+	return test && ((test->_type == type) || (type == kCastTypeAny));
 }
 
 const Stxt *Movie::getStxt(CastMemberID memberID) {

@@ -274,7 +274,7 @@ bool Debugger::cmdInfo(int argc, const char **argv) {
 	debugPrintf("Modified by: %s\n", movie->_changedBy.c_str());
 	debugPrintf("Original directory: %s\n", movie->_origDirectory.c_str());
 	debugPrintf("Stage size: %dx%d\n", movie->_movieRect.width(), movie->_movieRect.height());
-	debugPrintf("Default palette ID: %s\n", cast->_defaultPalette.asString().c_str());
+	debugPrintf("Default palette ID: %s\n", movie->_defaultPalette.asString().c_str());
 	debugPrintf("Default stage color: %d\n", cast->_stageColor);
 	debugPrintf("Copy protected: %d\n", cast->_isProtected);
 	debugPrintf("Remap palettes when needed flag: %d\n", movie->_remapPalettesWhenNeeded);
