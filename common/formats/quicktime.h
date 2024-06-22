@@ -36,6 +36,7 @@
 #include "common/stream.h"
 #include "common/rational.h"
 #include "common/types.h"
+#include "common/rect.h"
 
 namespace Common {
 	class MacResManager;
@@ -141,7 +142,8 @@ protected:
 		CODEC_TYPE_MOV_OTHER,
 		CODEC_TYPE_VIDEO,
 		CODEC_TYPE_AUDIO,
-		CODEC_TYPE_MIDI
+		CODEC_TYPE_MIDI,
+		CODEC_TYPE_PANO
 	};
 
 	enum class GraphicsMode {
@@ -166,6 +168,103 @@ protected:
 		uint32 defNodeID;
 		float defZoom;
 		Array<PanoramaNode> nodes;
+	};
+
+	struct PanoSampleHeader {
+		uint32 nodeID;
+
+		float defHPan;
+		float defVPan;
+		float defZoom;
+
+		// Constraints for this node; zero for default
+		float minHPan;
+		float minVPan;
+		float maxHPan;
+		float maxVPan;
+		float minZoom;
+
+		int32 nameStrOffset;
+		int32 commentStrOffset;
+	};
+
+	enum class HotSpotType {
+		undefined,
+		link,
+		navg
+	};
+
+	struct PanoHotSpot {
+		uint16 id;
+		HotSpotType type;
+		uint32 typeData; // for link and navg, the ID in the link and navg table
+
+		// Canonical view for this hotspot
+		float viewHPan;
+		float viewVPan;
+		float viewZoom;
+
+		Rect rect;
+
+		int32 mouseOverCursorID;
+		int32 mouseDownCursorID;
+		int32 mouseUpCursorID;
+
+		int32 nameStrOffset;
+		int32 commentStrOffset;
+	};
+
+	struct PanoHotSpotTable {
+		Array<PanoHotSpot> hotSpots;
+	};
+
+	struct PanoStringTable {
+		String strings;
+
+		String getString(int32 offset) const;
+	};
+
+	struct PanoLink {
+		uint16 id;
+		uint16 toNodeID;
+
+		// Values to set at the destination node
+		float toHPan;
+		float toVPan;
+		float toZoom;
+
+		int32 nameStrOffset;
+		int32 commentStrOffset;
+	};
+
+	struct PanoLinkTable {
+		Array<PanoLink> links;
+	};
+
+	struct PanoNavigation {
+		uint16 id;
+
+		uint32 hPan;
+		uint32 vPan;
+		uint32 zoom;
+
+		Rect rect; // Starting rect for zoom out transitions
+
+		// Values to set at the destination node
+		int32 nameStrOffset;
+		int32 commentStrOffset;
+	};
+
+	struct PanoNavigationTable {
+		Array<PanoNavigation> navs;
+	};
+
+	struct PanoTrackSample {
+		PanoSampleHeader hdr;
+		PanoHotSpotTable hotSpotTable;
+		PanoStringTable strTable;
+		PanoLinkTable linkTable;
+		PanoNavigationTable navTable;
 	};
 
 	struct Track {
@@ -207,6 +306,7 @@ protected:
 		int16 nlvlTo;
 
 		PanoramaInformation panoInfo;
+		Array<PanoTrackSample> panoSamples;
 
 		GraphicsMode graphicsMode; // Transfer mode
 		uint16 opcolor[3];         // RGB values used in the transfer mode specified by graphicsMode.
@@ -278,7 +378,11 @@ private:
 	MacResManager *_resFork;
 	bool _foundMOOV;
 
+	Track *_panoTrack;
+
 	void initParseTable();
+
+	bool parsePanoramaAtoms();
 
 	int readDefault(Atom atom);
 	int readLeaf(Atom atom);
@@ -307,6 +411,12 @@ private:
 	int readNAVG(Atom atom);
 	int readGMIN(Atom atom);
 	int readPINF(Atom atom);
+
+	int readPHDR(Atom atom);
+	int readPHOT(Atom atom);
+	int readSTRT(Atom atom);
+	int readPLNK(Atom atom);
+	int readPNAV(Atom atom);
 };
 
 /** @} */
