@@ -512,7 +512,7 @@ bool qdGameObjectAnimated::save_script(XStream &fh, int indent) const {
 }
 
 bool qdGameObjectAnimated::load_resources() {
-	debugC(1, kDebugTemp, "qdGameObjectAnimated::load_resources(): name: %s cur_state_: %d max_state: %d", transCyrillic(name()), cur_state_, max_state());
+	debugC(4, kDebugLoad, "qdGameObjectAnimated::load_resources(): name: %s cur_state_: %d max_state: %d", transCyrillic(name()), cur_state_, max_state());
 	if (cur_state_ != -1) {
 		states[cur_state_] -> register_resources();
 		states[cur_state_] -> load_resources();

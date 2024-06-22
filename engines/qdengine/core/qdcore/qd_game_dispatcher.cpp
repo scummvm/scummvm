@@ -596,8 +596,7 @@ void qdGameDispatcher::load_script(const char *fname) {
 	unsigned int start_clock = g_system->getMillis();
 	pr.parse_file(fname);
 	unsigned int end_clock =  g_system->getMillis();
-	warning("Парсинг скрипта: %d мс", end_clock - start_clock);
-	appLog::default_log() << "Парсинг скрипта: " << end_clock - start_clock << " мс\r\n";
+	warning("Script parsing: %d ms", end_clock - start_clock);
 
 	if (pr.is_script_binary()) {
 		enable_file_packages_ = true;
@@ -611,7 +610,7 @@ void qdGameDispatcher::load_script(const char *fname) {
 	}
 
 	end_clock = g_system->getMillis();
-	appLog::default_log() << "Обработка скрипта: " << end_clock - start_clock << " мс\r\n";
+	warning("Script processing: %d ms", end_clock - start_clock);
 
 	pr.clear();
 }
@@ -626,7 +625,7 @@ bool qdGameDispatcher::select_scene(const char *s_name) {
 			return false;
 	}
 
-	if (qdGameScene * sp = get_scene(s_name))
+	if (qdGameScene *sp = get_scene(s_name))
 		return select_scene(sp);
 
 	return false;
@@ -2229,6 +2228,8 @@ bool qdGameDispatcher::select_scene(qdGameScene *sp, bool resources_flag) {
 
 	toggle_inventory(true);
 
+	debug("select_scene('%s', %d)", sp ? (const char *)transCyrillic(sp->name()) : "<no name>", resources_flag);
+
 	if (cur_scene_) {
 		debugC(3, kDebugQuant, "qdGameDispatcher::select_scene() set_current_camera");
 		qdCamera::set_current_camera(cur_scene_ -> get_camera());
@@ -2254,7 +2255,8 @@ bool qdGameDispatcher::select_scene(qdGameScene *sp, bool resources_flag) {
 	}
 
 	tm = g_system->getMillis() - tm;
-	__QDBG(if (cur_scene_) appLog::default_log() << "Загрузка сцены \"" << cur_scene_->name() << "\" " << tm << " мс\r\n");
+	if (cur_scene_)
+		debugC(1, kDebugLoad, "Scene loading \"%s\" %d ms", transCyrillic(cur_scene_->name()), tm);
 
 	return true;
 }
@@ -3297,6 +3299,8 @@ void qdGameDispatcher::startup_check() const {
 }
 
 const char *qdGameDispatcher::find_file(const char *file_name, const qdFileOwner &file_owner) const {
+	debugC(4, kDebugLoad, "qdGameDispatcher::find_file(%s)", file_name);
+
 	if (enable_file_packages_ && !app_io::is_file_exist(file_name)) {
 		request_CD(file_owner);
 
