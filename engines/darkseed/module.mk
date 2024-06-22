@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	pic.o \
 	pal.o \
 	titlefont.o \
+	gamefont.o \
 	tostext.o \
 	metaengine.o \
 	room.o \
