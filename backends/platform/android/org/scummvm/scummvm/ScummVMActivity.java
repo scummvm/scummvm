@@ -848,6 +848,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				ScummVMActivity.this, ScummVMActivity.class);
 			setIntent(intent);
 			Log.d(ScummVM.LOG_TAG, "Current activity Intent is: " + data);
+			if (target != null) {
+				ShortcutCreatorActivity.pushShortcut(ScummVMActivity.this, target, intent);
+			}
 		}
 
 		@Override
