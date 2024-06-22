@@ -1541,7 +1541,12 @@ void OSystem_Android::setupTouchMode(int oldValue, int newValue) {
 
 	if (newValue == TOUCH_MODE_TOUCHPAD) {
 		// Make sure we have a proper touch point if we switch to touchpad mode with finger down
-		_touch_pt_down = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->getMousePosition();
+		if (_graphicsManager) {
+			_touch_pt_down = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->getMousePosition();
+		} else {
+			_touch_pt_down.x = 0;
+			_touch_pt_down.y = 0;
+		}
 		_touch_pt_scroll.x = -1;
 		_touch_pt_scroll.y = -1;
 	}

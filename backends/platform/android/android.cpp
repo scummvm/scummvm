@@ -970,6 +970,7 @@ bool OSystem_Android::setGraphicsMode(int mode, uint flags) {
 	if (render3d && !supports3D) {
 		debug(5, "switching to 3D graphics");
 		delete _graphicsManager;
+		_graphicsManager = nullptr;
 		AndroidGraphics3dManager *manager = new AndroidGraphics3dManager();
 		_graphicsManager = manager;
 		androidGraphicsManager = manager;
@@ -977,6 +978,7 @@ bool OSystem_Android::setGraphicsMode(int mode, uint flags) {
 	} else if (!render3d && supports3D) {
 		debug(5, "switching to 2D graphics");
 		delete _graphicsManager;
+		_graphicsManager = nullptr;
 		AndroidGraphicsManager *manager = new AndroidGraphicsManager();
 		_graphicsManager = manager;
 		androidGraphicsManager = manager;
