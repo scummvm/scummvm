@@ -512,6 +512,7 @@ bool qdGameObjectAnimated::save_script(XStream &fh, int indent) const {
 }
 
 bool qdGameObjectAnimated::load_resources() {
+	debugC(1, kDebugTemp, "qdGameObjectAnimated::load_resources(): name: %s cur_state_: %d max_state: %d", transCyrillic(name()), cur_state_, max_state());
 	if (cur_state_ != -1) {
 		states[cur_state_] -> register_resources();
 		states[cur_state_] -> load_resources();
@@ -528,6 +529,7 @@ bool qdGameObjectAnimated::load_resources() {
 		set_default_state();
 
 	for (int i = 0; i < max_state(); i++) {
+		debugC(1, kDebugTemp, "i: %d forced_load: %d", i, states[i] -> forced_load());
 		if (i != cur_state_ && states[i] -> forced_load()) {
 			states[i] -> register_resources();
 			states[i] -> load_resources();
@@ -546,7 +548,7 @@ void qdGameObjectAnimated::free_resources() {
 }
 
 void qdGameObjectAnimated::set_state(int st) {
-	debugC(1, kDebugTemp, "qdGameObjectAnimated::set_state(%d)", st);
+	debugC(3, kDebugGraphics, "qdGameObjectAnimated::set_state(%d)", st);
 	// Указание на смену состояния => объект меняется (устанавливаем время изм.)
 	last_chg_time_ = qdGameDispatcher::get_dispatcher()->time();
 

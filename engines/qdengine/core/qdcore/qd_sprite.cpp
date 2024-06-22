@@ -580,6 +580,8 @@ bool qdSprite::uncompress() {
 }
 
 void qdSprite::redraw(int x, int y, int z, int mode) const {
+	debugC(2, kDebugGraphics, "qdSprite::redraw(%d, %d, z=%d, mode=%d)", x, y, z, mode);
+
 	int xx = x - size_x() / 2;
 	int yy = y - size_y() / 2;
 
@@ -612,6 +614,9 @@ void qdSprite::redraw(int x, int y, int z, int mode) const {
 	} else
 		grDispatcher::instance() -> PutSpr_rle(xx, yy, picture_size_.x, picture_size_.y, rle_data_, mode, check_flag(ALPHA_FLAG));
 #endif
+
+	if (debugChannelSet(1, kDebugGraphics))
+		grDispatcher::instance()->Rectangle(xx, yy, picture_size_.x, picture_size_.y, 0, 0, GR_OUTLINED);
 }
 
 void qdSprite::redraw_rot(int x, int y, int z, float angle, int mode) const {

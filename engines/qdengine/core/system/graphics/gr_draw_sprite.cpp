@@ -25,6 +25,8 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "graphics/managed_surface.h"
+
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 
@@ -38,6 +40,8 @@ namespace QDEngine {
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
 void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const unsigned char *p, int mode, float scale) {
+	debugC(2, kDebugGraphics, "grDispatcher::PutSpr_a(%d, %d, %d, %d, scale=%f)", x, y, sx, sy, scale);
+
 	int i, j, sx_dest, sy_dest;
 
 	sx_dest = round(float(sx) * scale);
@@ -95,6 +99,8 @@ void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const unsigned char *p
 }
 
 void grDispatcher::PutSpr(int x, int y, int sx, int sy, const unsigned char *p, int mode, float scale) {
+	debugC(2, kDebugGraphics, "grDispatcher::PutSpr(%d, %d, %d, %d, scale=%f)", x, y, sx, sy, scale);
+
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
 
@@ -143,6 +149,8 @@ void grDispatcher::PutSpr(int x, int y, int sx, int sy, const unsigned char *p, 
 }
 
 void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const unsigned char *p, int mode) {
+	debugC(2, kDebugGraphics, "grDispatcher::PutSpr_a(%d, %d, %d, %d, scale=%f)", x, y, sx, sy);
+
 	int px = 0;
 	int py = 0;
 
@@ -593,6 +601,8 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const u
 }
 
 void grDispatcher::PutSpr(int x, int y, int sx, int sy, const unsigned char *p, int mode) {
+	debugC(2, kDebugGraphics, "grDispatcher::PutSpr(%d, %d, %d, %d)", x, y, sx, sy);
+
 	int px = 0;
 	int py = 0;
 

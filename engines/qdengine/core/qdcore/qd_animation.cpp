@@ -332,6 +332,7 @@ const qdAnimationFrame *qdAnimation::get_cur_frame(float &scale) const {
 }
 
 bool qdAnimation::add_frame(qdAnimationFrame *p, qdAnimationFrame *insert_pos, bool insert_after) {
+	debugC(1, kDebugTemp, "qdAnimation::add_frame()");
 	if (check_flag(QD_ANIMATION_FLAG_REFERENCE)) return false;
 
 	if (insert_pos) {
@@ -350,6 +351,8 @@ bool qdAnimation::add_frame(qdAnimationFrame *p, qdAnimationFrame *insert_pos, b
 			frames.push_back(p);
 		else
 			frames.insert(frames.end(), p);
+
+		debugC(1, kDebugTemp, "qdAnimation::add_frame(): inserted, is_empty: %d", is_empty());
 
 		return true;
 	}
@@ -435,7 +438,7 @@ bool qdAnimation::save_script(XStream &fh, int indent) const {
 }
 
 bool qdAnimation::load_resources() {
-	debugC(1, kDebugTemp, "qdAnimation::load_resources(): %s", transCyrillic(qda_file()));
+	debugC(3, kDebugLoad, "qdAnimation::load_resources(): '%s' name: %s", transCyrillic(qda_file()), transCyrillic(name()));
 	if (check_flag(QD_ANIMATION_FLAG_REFERENCE)) return false;
 
 	if (!qda_file()) {

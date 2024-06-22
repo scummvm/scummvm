@@ -730,6 +730,7 @@ void qdGameObjectState::set_cursor_name(std::string const &cursor_name) {
 }
 //! По имени курсора определяет его номер
 void qdGameObjectState::update_cursor_id(qdGameDispatcher const &gameDispatcher) {
+	debugC(5, kDebugGraphics, "qdGameObjectState::update_cursor_id()");
 	if (cursor_name_.empty()
 	        || mouse_cursor_ID() == CURSOR_UNASSIGNED)
 		return;

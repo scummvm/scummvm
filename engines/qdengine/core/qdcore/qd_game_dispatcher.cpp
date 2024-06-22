@@ -128,6 +128,7 @@ qdGameDispatcher::qdGameDispatcher() : is_paused_(false),
 
 	enable_file_packages_ = false;
 
+	debugC(1, kDebugTemp, "Setting up mouse...");
 	mouse_obj_ = new qdGameObjectMouse;
 	mouse_obj_ -> set_owner(this);
 

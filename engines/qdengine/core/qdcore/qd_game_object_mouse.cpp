@@ -184,6 +184,7 @@ void qdGameObjectMouse::redraw(int offs_x, int offs_y) const {
 }
 
 void qdGameObjectMouse::set_cursor(cursor_ID_t id) {
+	debugC(2, kDebugGraphics, "qdGameObjectMouse::set_cursor(%d)", id);
 	if (cur_state() != default_cursors_[id])
 		set_state(default_cursors_[id]);
 }

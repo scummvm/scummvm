@@ -25,6 +25,7 @@
 
 #include "graphics/managed_surface.h"
 
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/graphics/rle_compress.h"
@@ -38,6 +39,8 @@ namespace QDEngine {
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
 void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffer *p, int mode, bool alpha_flag) {
+	debugC(2, kDebugGraphics, "grDispatcher::PutSpr_rle(%d, %d, %d, %d)", x, y, sx, sy);
+
 	int px = 0;
 	int py = 0;
 
@@ -160,6 +163,8 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 }
 
 void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffer *p, int mode, float scale, bool alpha_flag) {
+	debugC(2, kDebugGraphics, "grDispatcher::PutSpr_rle(%d, %d, %d, %d, scale=%f)", x, y, sx, sy, scale);
+
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
 
@@ -238,6 +243,8 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 }
 
 void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer *p, unsigned mask_color, int mask_alpha, int mode, bool alpha_flag) {
+	debugC(2, kDebugGraphics, "grDispatcher::PutSprMask_rle(%d, %d, %d, %d)", x, y, sx, sy);
+
 	int px = 0;
 	int py = 0;
 
@@ -390,6 +397,8 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 }
 
 void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer *p, unsigned mask_color, int mask_alpha, int mode, float scale, bool alpha_flag) {
+	debugC(2, kDebugGraphics, "grDispatcher::PutSprMask_rle(%d, %d, %d, %d, scale=%f)", x, y, sx, sy, scale);
+
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
 
