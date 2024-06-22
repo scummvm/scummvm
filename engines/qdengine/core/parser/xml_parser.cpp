@@ -372,6 +372,8 @@ bool parser::read_binary_script(const char *fname) {
 	Common::File ff;
 	ff.open(fname);
 
+	binary_script_ = true;
+
 	uint32 v = ff.readUint32LE();
 	uint32 size = ff.readUint32LE();
 
