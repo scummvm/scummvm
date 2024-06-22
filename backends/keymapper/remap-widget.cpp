@@ -101,7 +101,7 @@ void RemapWidget::handleInputChanged() {
 void RemapWidget::reflowLayout() {
 	OptionsContainerWidget::reflowLayout();
 	reflowActionWidgets();
-};
+}
 
 void RemapWidget::reflowActionWidgets() {
 	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
