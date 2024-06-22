@@ -509,6 +509,158 @@ static void _drawDragonCountdown(FontManager::FontType fontType, int16 x, int16 
 	fnt->drawString(&engine->_compositionBuffer, str, x, y, 320 - x, 10);
 }
 
+
+bool Scene::runSceneOp(const SceneOp &op) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	switch (op._opCode) {
+	case kSceneOpChangeScene:
+		if (engine->changeScene(op._args[0]))
+			// This probably reset the list - stop now.
+			return false;
+		break;
+	case kSceneOpNoop:
+		break;
+	case kSceneOpGlobal:
+		globalOps(op._args);
+		break;
+	case kSceneOpSegmentStateOps:
+		segmentStateOps(op._args);
+		break;
+	case kSceneOpSetItemAttr:
+		setItemAttrOp(op._args);
+		break;
+	case kSceneOpSetDragItem:
+		setDragItemOp(op._args);
+		break;
+	case kSceneOpOpenInventory:
+		engine->getInventory()->open();
+		// This implicitly changes scene num
+		return false;
+	case kSceneOpShowDlg:
+		showDialog(op._args[0]);
+		break;
+	case kSceneOpShowInvButton:
+		engine->getScene()->addInvButtonToHotAreaList();
+		break;
+	case kSceneOpHideInvButton:
+		engine->getScene()->removeInvButtonFromHotAreaList();
+		break;
+	case kSceneOpEnableTrigger:
+		enableTrigger(op._args[0]);
+		break;
+	case kSceneOpChangeSceneToStored: {
+		uint16 sceneNo = engine->getGameGlobals()->getGlobal(0x61);
+		if (engine->changeScene(sceneNo))
+			// This probably reset the list - stop now.
+			return false;
+		break;
+	}
+	case kSceneOpAddFlagToDragItem: {
+		GameItem *item = engine->getScene()->getDragItem();
+		if (item) {
+			item->_flags |= 1;
+			// TODO: Use hot x/y or just position?
+			Common::Point lastMouse = engine->getLastMouseMinusHot();
+			item->_rect.x = lastMouse.x;
+			item->_rect.y = lastMouse.y;
+		}
+		break;
+	}
+	case kSceneOpOpenInventoryZoom:
+		engine->getInventory()->setShowZoomBox(true);
+		engine->getInventory()->open();
+		return false;
+	case kSceneOpMoveItemsBetweenScenes: {
+		int16 fromScene = engine->getGameGlobals()->getGlobal(0x55);
+		int16 toScene = engine->getGameGlobals()->getGlobal(0x54);
+		for (auto &item : engine->getGDSScene()->getGameItems()) {
+			if (item._inSceneNum == fromScene)
+				item._inSceneNum = toScene;
+		}
+		break;
+	}
+	case kSceneOpShowClock:
+		engine->setShowClock(true);
+		break;
+	case kSceneOpHideClock:
+		engine->setShowClock(false);
+		break;
+	case kSceneOpShowMouse:
+		CursorMan.showMouse(true);
+		break;
+	case kSceneOpHideMouse:
+		CursorMan.showMouse(false);
+		break;
+	default:
+		warning("TODO: Implement generic scene op %d", op._opCode);
+		break;
+	}
+	return true;
+}
+
+bool Scene::runDragonOp(const SceneOp &op) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	switch (op._opCode) {
+	case kSceneOpPasscode:
+		engine->getScene()->sceneOpUpdatePasscodeGlobal();
+		break;
+	case kSceneOpMeanwhile:
+		// TODO: Should we draw "meanwhile" like the original? it just gets overwritten with the image anyway.
+		// Probably need to do something here to avoid flashing..
+		//engine->_compositionBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		break;
+	case kSceneOpOpenGameOverMenu:
+		engine->setMenuToTrigger(kMenuGameOver);
+		break;
+	case kSceneOpTiredDialog:
+		engine->getInventory()->close();
+		engine->getScene()->addAndShowTiredDialog();
+		break;
+	case kSceneOpArcadeTick:
+		// TODO: Implement this properly! for now just
+		// set the global arcade state variable to the "skip" value.
+		warning("Setting arcade global to 8 (skip)");
+		g_system->displayMessageOnOSD(_("Skipping DGDS arcade sequence"));
+		engine->getGameGlobals()->setGlobal(0x21, 6);
+		break;
+	case kSceneOpDrawDragonCountdown1:
+		_drawDragonCountdown(FontManager::k4x5Font, 141, 56);
+		break;
+	case kSceneOpDrawDragonCountdown2:
+		_drawDragonCountdown(FontManager::k8x8Font, 250, 42);
+		break;
+	case kSceneOpOpenPlaySkipIntroMenu:
+		engine->setMenuToTrigger(kMenuSkipPlayIntro);
+		break;
+	case kSceneOpOpenBetterSaveGameMenu:
+		engine->setMenuToTrigger(kMenuBetterSaveGame);
+		break;
+	default:
+		error("Unexpected Dragon scene opcode %d", op._opCode);
+		break;
+	}
+	return true;
+}
+
+bool Scene::runChinaOp(const SceneOp &op) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	switch (op._opCode) {
+	case kSceneOpOpenChinaOpenSomeMenu:
+		engine->setMenuToTrigger(kMenuChina1);
+		break;
+	case kSceneOpOpenChinaOpenSkipCreditsMenu:
+		engine->setMenuToTrigger(kMenuChinaSkipCredits);
+		break;
+	case kSceneOpOpenChinaStartIntro:
+		warning("TODO: Implement start intro opcode");
+		break;
+	default:
+		warning("TODO: Implement china-specific scene opcode %d", op._opCode);
+		break;
+	}
+	return true;
+}
+
 bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 */) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	for (const SceneOp &op : ops) {
@@ -519,123 +671,25 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 *
 			engine->getClock().addGameTime(addMinuites);
 			addMinuites = 0;
 		}
-		switch(op._opCode) {
-		case kSceneOpChangeScene:
-			if (engine->changeScene(op._args[0]))
-				// This probably reset the list - stop now.
-				return false;
-			break;
-		case kSceneOpNoop:
-			break;
-		case kSceneOpGlobal:
-			globalOps(op._args);
-			break;
-		case kSceneOpSegmentStateOps:
-			segmentStateOps(op._args);
-			break;
-		case kSceneOpSetItemAttr:
-			setItemAttrOp(op._args);
-			break;
-		case kSceneOpSetDragItem:
-			setDragItemOp(op._args);
-			break;
-		case kSceneOpOpenInventory:
-			engine->getInventory()->open();
-			// This implicitly changes scene num
-			return false;
-		case kSceneOpShowDlg:
-			showDialog(op._args[0]);
-			break;
-		case kSceneOpEnableTrigger:
-			enableTrigger(op._args[0]);
-			break;
-		case kSceneOpChangeSceneToStored: {
-			uint16 sceneNo = engine->getGameGlobals()->getGlobal(0x61);
-			if (engine->changeScene(sceneNo))
-				// This probably reset the list - stop now.
-				return false;
-			break;
-		}
-		case kSceneOpAddFlagToDragItem: {
-			GameItem *item = engine->getScene()->getDragItem();
-			if (item) {
-				item->_flags |= 1;
-				// TODO: Use hot x/y or just position?
-				Common::Point lastMouse = engine->getLastMouseMinusHot();
-				item->_rect.x = lastMouse.x;
-				item->_rect.y = lastMouse.y;
+		bool keepGoing = true;
+		if (op._opCode < 100) {
+			keepGoing = runSceneOp(op);
+		} else {
+			// Game-specific opcode
+			switch (engine->getGameId()) {
+			case GID_DRAGON:
+				keepGoing = runDragonOp(op);
+				break;
+			case GID_CHINA:
+				keepGoing = runChinaOp(op);
+				break;
+			default:
+				error("TODO: Implement game-specific scene op for this game");
 			}
-			break;
+			continue;
 		}
-		case kSceneOpOpenInventoryZoom:
-			engine->getInventory()->setShowZoomBox(true);
-			engine->getInventory()->open();
+		if (!keepGoing)
 			return false;
-		case kSceneOpMoveItemsBetweenScenes: {
-			int16 fromScene = engine->getGameGlobals()->getGlobal(0x55);
-			int16 toScene = engine->getGameGlobals()->getGlobal(0x54);
-			for (auto &item : engine->getGDSScene()->getGameItems()) {
-				if (item._inSceneNum == fromScene)
-					item._inSceneNum = toScene;
-			}
-			break;
-		}
-		case kSceneOpShowClock:
-			engine->setShowClock(true);
-			break;
-		case kSceneOpHideClock:
-			engine->setShowClock(false);
-			break;
-		case kSceneOpShowMouse:
-			CursorMan.showMouse(true);
-			break;
-		case kSceneOpHideMouse:
-			CursorMan.showMouse(false);
-			break;
-		case kSceneOpPasscode:
-			engine->getScene()->sceneOpUpdatePasscodeGlobal();
-			break;
-		case kSceneOpMeanwhile:
-			// TODO: Should we draw "meanwhile" like the original? it just gets overwritten with the image anyway.
-			// Probably need to do something here to avoid flashing..
-			//engine->_compositionBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
-			break;
-		case kSceneOpShowInvButton:
-			engine->getScene()->addInvButtonToHotAreaList();
-			break;
-		case kSceneOpHideInvButton:
-			engine->getScene()->removeInvButtonFromHotAreaList();
-			break;
-		case kSceneOpOpenGameOverMenu:
-			engine->setMenuToTrigger(kMenuGameOver);
-			break;
-		case kSceneOpTiredDialog:
-			engine->getInventory()->close();
-			engine->getScene()->addAndShowTiredDialog();
-			break;
-		case kSceneOpArcadeTick:
-			// TODO: Implement this properly! for now just
-			// set the global arcade state variable to the "skip" value.
-			warning("Setting arcade global to 8 (skip)");
-			g_system->displayMessageOnOSD(_("Skipping DGDS arcade sequence"));
-			engine->getGameGlobals()->setGlobal(0x21, 6);
-			break;
-		case kSceneOpDrawDragonCountdown1:
-			_drawDragonCountdown(FontManager::k4x5Font, 141, 56);
-			break;
-		case kSceneOpDrawDragonCountdown2:
-			_drawDragonCountdown(FontManager::k8x8Font, 250, 42);
-			break;
-		case kSceneOpOpenPlaySkipIntroMenu:
-			engine->setMenuToTrigger(kMenuSkipPlayIntro);
-			break;
-		case kSceneOpOpenBetterSaveGameMenu:
-			engine->setMenuToTrigger(kMenuBetterSaveGame);
-			break;
-		default:
-			warning("TODO: Implement scene op %d", op._opCode);
-			break;
-		}
 	}
 	return true;
 }

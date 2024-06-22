@@ -137,6 +137,7 @@ public:
 	Graphics::ManagedSurface &getBackgroundBuffer() { return _backgroundBuffer; }
 	Graphics::ManagedSurface &getStoredAreaBuffer() { return _storedAreaBuffer; }
 
+	// Various game engine singletons
 	Common::SeekableReadStream *getResource(const Common::String &name, bool ignorePatches);
 	ResourceManager *getResourceManager() { return _resource; }
 	Decompressor *getDecompressor() { return _decompressor; }
@@ -146,28 +147,28 @@ public:
 	const FontManager *getFontMan() const { return _fontManager; }
 	const Common::SharedPtr<Image> &getUICorners() { return _corners; }
 	const Common::SharedPtr<Image> &getIcons() { return _icons; }
-	bool changeScene(int sceneNum);
 	GamePalettes *getGamePals() { return _gamePals; }
 	Globals *getGameGlobals() { return _gameGlobals; }
 	Inventory *getInventory() { return _inventory; }
+	Clock &getClock() { return _clock; }
+	ADSInterpreter *adsInterpreter() { return _adsInterp; }
+	Common::RandomSource &getRandom() { return _random; }
+
+	bool changeScene(int sceneNum);
 	void setMouseCursor(uint num);
 
 	int getTextSpeed() const { return _textSpeed; }
 	void setTextSpeed(int16 speed) { _textSpeed = speed; }
 	int16 getDifficulty() const { return _difficulty; }
-	void setDetailLevel(DgdsDetailLevel level) { _detailLevel = level; }
-	DgdsDetailLevel getDetailLevel() const { return _detailLevel; }
 	void setDifficulty(int16 difficulty) { _difficulty = difficulty; }
+	DgdsDetailLevel getDetailLevel() const { return _detailLevel; }
+	void setDetailLevel(DgdsDetailLevel level) { _detailLevel = level; }
 
 	void setShowClock(bool val);
-	ADSInterpreter *adsInterpreter() { return _adsInterp; }
 	bool justChangedScene1() const { return _justChangedScene1; }
 	bool justChangedScene2() const { return _justChangedScene2; }
-	Common::RandomSource &getRandom() { return _random; }
 	Common::Point getLastMouse() const { return _lastMouse; }
 	Common::Point getLastMouseMinusHot() const;
-
-	Clock &getClock() { return _clock; }
 
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;

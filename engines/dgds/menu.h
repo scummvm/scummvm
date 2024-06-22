@@ -65,6 +65,8 @@ enum MenuId {
 	kMenuSkipPlayIntro = 18,
 	kMenuBetterSaveGame = 19, // save game before arcade
 	// 20: replay arcade
+	kMenuChina1 = 41,
+	kMenuChinaSkipCredits = 50,
 };
 
 class Menu {

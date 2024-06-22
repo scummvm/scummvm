@@ -226,6 +226,10 @@ FontManager::FontType FontManager::fontTypeByName(const Common::String &filename
 	if (filename == "WILLY.FNT") return kGameFont;
 	if (filename == "WVCR.FNT") return kWVCRFont;
 	if (filename == "COMIX_16.FNT") return kGameDlgFont;
+	if (filename == "EXIT.FNT") return kDefaultFont;
+	if (filename == "SSM1_12.FNT") return kGameFont;
+	if (filename == "SSM1_15.FNT") return kGameDlgFont;
+	if (filename == "SSM1_30.FNT") return kWVCRFont;
 	return FontManager::kDefaultFont;
 }
 
@@ -233,9 +237,11 @@ FontManager::FontType FontManager::fontTypeByName(const Common::String &filename
 void FontManager::loadFonts(DgdsGameId gameId, ResourceManager *resMgr, Decompressor *decomp) {
 	if (gameId == GID_SQ5DEMO || gameId == GID_COMINGSOON) {
 		tryLoadFont("EXIT.FNT", resMgr, decomp);
-		//tryLoadFont("SSM1_12.FNT", resMgr, decomp);
-		//tryLoadFont("SSM1_15.FNT", resMgr, decomp);
-		//tryLoadFont("SSM1_30.FNT", resMgr, decomp);
+		if (gameId == GID_SQ5DEMO) {
+			tryLoadFont("SSM1_12.FNT", resMgr, decomp);
+			tryLoadFont("SSM1_15.FNT", resMgr, decomp);
+			tryLoadFont("SSM1_30.FNT", resMgr, decomp);
+		}
 		return;
 	}
 
