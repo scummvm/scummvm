@@ -167,6 +167,8 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 	t.chunkSize = MAX<uint>(1, transChunkSize);
 	t.area = MAX<uint>(0, transArea);
 
+	debugC(2, kDebugImages, "Window::playTransition(): Playing transition %d", t.type);
+
 	// If we requested fast transitions, speed everything up
 	if (debugChannelSet(-1, kDebugFast))
 		t.duration = 250;
@@ -231,13 +233,12 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 
 	Common::Rect rfrom, rto;
 
-	uint32 transStartTime = g_system->getMillis();
-	debugC(2, kDebugImages, "Window::playTransition(): Playing transition %d", t.type);
-
 	initTransParams(t, clipRect);
 
 	Graphics::ManagedSurface *blitFrom;
 	bool fullredraw = false;
+
+	uint32 transStartTime = g_system->getMillis();
 
 	debugC(2, kDebugImages, "Window::playTransition(): type: %d, duration: %d, area: %d, chunkSize: %d, steps: %d, stepDuration: %d, xpos: %d, ypos: %d, xStepSize: %d, yStepSize: %d, stripSize: %d, clipRect: %d %d %d %d", t.type, t.duration, t.area, t.chunkSize, t.steps, t.stepDuration, t.xpos, t.ypos, t.xStepSize, t.yStepSize, t.stripSize, clipRect.left, clipRect.top, clipRect.right, clipRect.bottom);
 
@@ -574,8 +575,9 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 		}
 
 		uint32 endTime = g_system->getMillis();
-		int diff = (int)t.stepDuration - (int)(endTime - startTime);
-		g_director->delayMillis(MAX(0, diff));
+		int diff = MAX(0, (int)t.stepDuration - (int)(endTime - startTime));
+		debugC(6, kDebugImages, "Window::playTransition(): delaying for %d", diff);
+		g_director->delayMillis(diff);
 
 		g_lingo->executePerFrameHook(t.frame, i);
 	}
@@ -778,8 +780,9 @@ void Window::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::Man
 		}
 
 		uint32 endTime = g_system->getMillis();
-		int diff = (int)t.stepDuration - (int)(endTime - startTime);
-		g_director->delayMillis(MAX(0, diff));
+		int diff = MAX(0, (int)t.stepDuration - (int)(endTime - startTime));
+		debugC(6, kDebugImages, "Window::dissolveTrans(): delaying for %d", diff);
+		g_director->delayMillis(diff);
 	}
 }
 
@@ -902,8 +905,9 @@ void Window::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graph
 		}
 
 		uint32 endTime = g_system->getMillis();
-		int diff = (int)t.stepDuration - (int)(endTime - startTime);
-		g_director->delayMillis(MAX(0, diff));
+		int diff = MAX(0, (int)t.stepDuration - (int)(endTime - startTime));
+		debugC(6, kDebugImages, "Window::dissolvePatternsTrans(): delaying for %d", diff);
+		g_director->delayMillis(diff);
 	}
 }
 
@@ -1075,8 +1079,9 @@ void Window::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::Ma
 		g_lingo->executePerFrameHook(t.frame, i);
 
 		uint32 endTime = g_system->getMillis();
-		int diff = (int)t.stepDuration - (int)(endTime - startTime);
-		g_director->delayMillis(MAX(0, diff));
+		int diff = MAX(0, (int)t.stepDuration - (int)(endTime - startTime));
+		debugC(6, kDebugImages, "Window::transMultiPass(): delaying for %d", diff);
+		g_director->delayMillis(diff);
 
 		if (_vm->processEvents(true)) {
 			exitTransition(t, nextFrame, clipRect);
@@ -1137,8 +1142,9 @@ void Window::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::Managed
 		stepTransition(t, i);
 
 		uint32 endTime = g_system->getMillis();
-		int diff = (int)t.stepDuration - (int)(endTime - startTime);
-		g_director->delayMillis(MAX(0, diff));
+		int diff = MAX(0, (int)t.stepDuration - (int)(endTime - startTime));
+		debugC(6, kDebugImages, "Window::transZoom(): delaying for %d", diff);
+		g_director->delayMillis(diff);
 
 		g_lingo->executePerFrameHook(t.frame, i);
 	}
