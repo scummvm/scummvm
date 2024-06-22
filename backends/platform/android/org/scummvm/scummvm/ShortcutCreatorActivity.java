@@ -55,6 +55,37 @@ public class ShortcutCreatorActivity extends Activity {
 
 	private IconsCache _cache;
 
+	static void pushShortcut(Context context, String gameId, Intent intent) {
+		Map<String, Map<String, String>> parsedIniMap;
+		try (FileReader reader = new FileReader(new File(context.getFilesDir(), "scummvm.ini"))) {
+			parsedIniMap = INIParser.parse(reader);
+		} catch(FileNotFoundException ignored) {
+			parsedIniMap = null;
+		} catch(IOException ignored) {
+			parsedIniMap = null;
+		}
+
+		if (parsedIniMap == null) {
+			return;
+		}
+
+		Game game = Game.loadGame(parsedIniMap, gameId);
+		if (game == null) {
+			return;
+		}
+
+		FileInputStream defaultStream = openFile(new File(context.getFilesDir(), "gui-icons.dat"));
+
+		File iconsPath = INIParser.getPath(parsedIniMap, "scummvm", "iconspath",
+			new File(context.getFilesDir(), "icons"));
+		FileInputStream[] packsStream = openFiles(context, iconsPath, "gui-icons.*\\.dat");
+
+		IconsCache cache = new IconsCache(context, defaultStream, packsStream);
+		final Drawable icon = cache.getGameIcon(game);
+
+		CompatHelpers.ShortcutCreator.pushDynamicShortcut(context, game.getTarget(), intent, game.getDescription(), icon, R.drawable.ic_no_game_icon);
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
