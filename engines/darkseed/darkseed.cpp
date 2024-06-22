@@ -182,6 +182,7 @@ void DarkseedEngine::gameloop() {
 		_frame.draw();
 		_room->draw();
 		_sprites.drawSprites();
+		_console->draw();
 		_cursor.draw();
 		_screen->makeAllDirty();
 		_screen->update();

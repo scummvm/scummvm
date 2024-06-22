@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -20,35 +19,25 @@
  *
  */
 
-#ifndef DARKSEED_CONSOLE_H
-#define DARKSEED_CONSOLE_H
+#ifndef DARKSEED_GAMEFONT_H
+#define DARKSEED_GAMEFONT_H
 
-#include "gamefont.h"
 #include "nsp.h"
-#include "tostext.h"
-
 namespace Darkseed {
 
-class Console  {
+class GameFont {
 private:
-	TosText *_tosText;
-	GameFont _font;
-
-	Common::Array<Common::String> _text;
-	int _startIdx = 0;
+	Nsp letters;
 
 public:
-	Console(TosText *tostext);
-
-	void printTosText(int tosIndex);
-
-	void draw();
-
+	GameFont();
+	bool load();
+	void displayString(uint16 x, uint16 y, const Common::String &text);
+	int stringLength(const Common::String &text);
 private:
-	Common::Array<Common::String> wrapText(const Common::String &text);
-	void addLine(const Common::String &line);
+	const Sprite *getCharacterSprite(char c);
 };
 
-} // End of namespace Darkseed
+} // namespace Darkseed
 
-#endif // DARKSEED_CONSOLE_H
+#endif // DARKSEED_GAMEFONT_H
