@@ -186,6 +186,8 @@ static const char *ttmOpName(uint16 op) {
 	case 0xa520: return "DRAW SPRITE FLIP";
 	case 0xa530: return "DRAW BMP4";
 	case 0xa600: return "DRAW GETPUT";
+	case 0xb000: return "INIT CREDITS SCROLL";
+	case 0xb010: return "DRAW CREDITS SCROLL";
 	case 0xf010: return "LOAD SCR";
 	case 0xf020: return "LOAD BMP";
 	case 0xf040: return "LOAD FONT";
@@ -210,8 +212,6 @@ static const char *ttmOpName(uint16 op) {
 	case 0xa400: return "DRAW FILLED CIRCLE";
 	case 0xa420: return "DRAW EMPTY CIRCLE";
 	case 0xa510: return "DRAW SPRITE1";
-	case 0xb000: return "? (0 args)";
-	case 0xb010: return "? (3 args: 30, 2, 19)";
 	case 0xb600: return "DRAW SCREEN";
 	case 0xc020: return "LOAD_SAMPLE";
 	case 0xc030: return "SELECT_SAMPLE";
@@ -361,6 +361,36 @@ void TTMInterpreter::doWipeOp(uint16 code, TTMEnviro &env, struct TTMSeq &seq, c
 	}
 }
 
+
+int16 TTMInterpreter::doOpInitCreditScroll(const Image *img) {
+	assert(img);
+	int16 maxWidth = 0;
+	for (int i = 0; i < img->loadedFrameCount(); i++)
+		maxWidth = MAX(maxWidth, img->width(i));
+	return maxWidth;
+}
+
+ bool TTMInterpreter::doOpCreditsScroll(const Image *img, int16 ygap, int16 ymax, int16 xoff, int16 measuredWidth, const Common::Rect &clipRect) {
+	int nframes = img->loadedFrameCount();
+	bool scrollFinished = true;
+	int y = 200 - ymax;
+	for (int i = 0; i < nframes; i++) {
+		int width = img->width(i);
+		int height = img->height(i);
+		if (y > -measuredWidth) {
+			Common::Rect drawWin(Common::Point(xoff, y), width, height);
+			drawWin.clip(clipRect);
+			if (!drawWin.isEmpty()) {
+				img->drawBitmap(i, xoff, y, drawWin, _vm->_compositionBuffer);
+			}
+			scrollFinished = false;
+		}
+		y += ygap + height;
+		if (y > 200)
+			break;
+    }
+    return scrollFinished;
+}
 
 void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval) {
 	switch (op) {
@@ -655,6 +685,23 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 						Common::Point(r.left, r.top));
 		break;
 	}
+	case 0xb000:
+		if (seq._executed) // this is a one-shot op
+			break;
+		env._creditScrollMeasure = doOpInitCreditScroll(env._scriptShapes[seq._currentBmpId].get());
+		env._creditScrollYOffset = 0;
+		break;
+	case 0xb010: {
+		const Image *img = env._scriptShapes[seq._currentBmpId].get();
+		if (img && img->loadedFrameCount()) {
+			bool finished = doOpCreditsScroll(env._scriptShapes[seq._currentBmpId].get(), ivals[0], env._creditScrollYOffset,
+							ivals[2], env._creditScrollMeasure, seq._drawWin);
+			env._creditScrollYOffset += ivals[1];
+			if (finished)
+				_vm->adsInterpreter()->setHitTTMOp0110();
+		}
+		break;
+	}
 	case 0xf010: { // LOAD SCR:	filename:str
 		if (seq._executed) // this is a one-shot op
 			break;
@@ -727,9 +774,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	case 0xa420: // DRAW EMPTY CIRCLE
 
 	// From here on are not implemented in DRAGON
-	case 0xb000: // ? (0 args) - found in HoC intro
-	case 0xb010: // ? (3 args: 30, 2, 19) - found in HoC intro
-	case 0xb600: // DRAW SCREEN
+	case 0xb600: // DRAW SCREEN??
 	case 0xc020: // LOAD_SAMPLE
 	case 0xc030: // SELECT_SAMPLE
 	case 0xc040: // DESELECT_SAMPLE
@@ -738,10 +783,11 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 
 	default:
 		if (count < 15)
-			warning("Unimplemented TTM opcode: 0x%04X (%d args) (ivals: %d %d %d %d)",
-					op, count, ivals[0], ivals[1], ivals[2], ivals[3]);
+			warning("Unimplemented TTM opcode: 0x%04X (%s, %d args) (ivals: %d %d %d %d)",
+					op, ttmOpName(op), count, ivals[0], ivals[1], ivals[2], ivals[3]);
 		else
-			warning("Unimplemented TTM opcode: 0x%04X (sval: %s)", op, sval.c_str());
+			warning("Unimplemented TTM opcode: 0x%04X (%s, sval: %s)", op,
+					ttmOpName(op), sval.c_str());
 		break;
 	}
 }

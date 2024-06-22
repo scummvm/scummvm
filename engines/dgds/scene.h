@@ -100,7 +100,7 @@ enum SceneOpCode {
 	kSceneOpShowMouse = 18,		// args: none.
 	kSceneOpHideMouse = 19,		// args: none.
 
-	// From here on might be game-specific?
+	// Dragon-specific opcodes
 	kSceneOpPasscode = 100,			// args: none.
 	kSceneOpMeanwhile = 101,	// args: none. Clears screen and displays "meanwhile".
 	kSceneOpOpenGameOverMenu = 102,	// args: none.
@@ -110,6 +110,11 @@ enum SceneOpCode {
 	kSceneOpDrawDragonCountdown2 = 106,			// args: none. Draw some number at 250, 42
 	kSceneOpOpenPlaySkipIntroMenu = 107, // args: none.  DRAGON: Show menu 50, the "Play Introduction" / "Skip Introduction" menu.
 	kSceneOpOpenBetterSaveGameMenu = 108,			// args: none. DRAGON: Show menu 46, the "Before arcade maybe you better save your game" menu.
+
+	// China-specific opcodes
+	kSceneOpOpenChinaOpenSomeMenu = 114,	// args: none.
+	kSceneOpOpenChinaOpenSkipCreditsMenu = 115,	// args: none.
+	kSceneOpOpenChinaStartIntro = 116,	// args: none.
 };
 
 class SceneOp {
@@ -249,6 +254,10 @@ protected:
 
 	void drawDragonCountdown1();
 	void drawDragonCountdown2();
+
+	bool runSceneOp(const SceneOp &op);
+	bool runDragonOp(const SceneOp &op);
+	bool runChinaOp(const SceneOp &op);
 
 	uint32 _magic;
 	Common::String _version;

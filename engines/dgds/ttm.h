@@ -37,7 +37,8 @@ public:
 
 class TTMEnviro : public ScriptParserData {
 public:
-	TTMEnviro() : _totalFrames(330), _enviro(0), ScriptParserData() {
+	TTMEnviro() : _totalFrames(330), _enviro(0), _creditScrollMeasure(0),
+			_creditScrollYOffset(0), ScriptParserData() {
 		ARRAYCLEAR(_scriptPals);
 		_fonts.push_back(FontManager::kDefaultFont); // is this right?
 	}
@@ -52,6 +53,8 @@ public:
 	int _scriptPals[6];
 	Common::String _strings[10];
 	Common::Array<FontManager::FontType> _fonts;
+	int16 _creditScrollMeasure;
+	int16 _creditScrollYOffset;
 };
 
 enum TTMRunType {
@@ -114,6 +117,8 @@ protected:
 	void handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval);
 	int32 findGOTOTarget(TTMEnviro &env, TTMSeq &seq, int16 frame);
 	void doWipeOp(uint16 code, TTMEnviro &env, struct TTMSeq &seq, const Common::Rect &r);
+	int16 doOpInitCreditScroll(const Image *img);
+	bool doOpCreditsScroll(const Image *img, int16 ygap, int16 ymax, int16 xoff, int16 measuredWidth, const Common::Rect &clipRect);
 
 	DgdsEngine *_vm;
 };
