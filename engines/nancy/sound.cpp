@@ -214,7 +214,10 @@ Audio::SeekableAudioStream *SoundManager::makeHISStream(Common::SeekableReadStre
 		}
 	}
 
-	Common::SeekableSubReadStream *subStream = new Common::SeekableSubReadStream(stream, stream->pos(), stream->pos() + size, disposeAfterUse);
+	Common::SeekableSubReadStream *subStream = new Common::SeekableSubReadStream(
+		stream, stream->pos(),
+		type == kSoundTypeOgg ? stream->size() : stream->pos() + size,
+		disposeAfterUse);
 
 	if (type == kSoundTypeRaw || type == kSoundTypeDiamondware)
 		return Audio::makeRawStream(subStream, overrideSamplesPerSec == 0 ? samplesPerSec : overrideSamplesPerSec, flags, DisposeAfterUse::YES);
