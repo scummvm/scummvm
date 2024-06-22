@@ -2781,7 +2781,8 @@ void LB::b_puppetTransition(int nargs) {
 		chunkSize = g_lingo->pop().asInt();
 		// fall through
 	case 2:
-		duration = g_lingo->pop().asInt();
+		// units are quarter-seconds
+		duration = g_lingo->pop().asInt() * 250;
 		// fall through
 	case 1:
 		type = ((TransitionType)(g_lingo->pop().asInt()));
@@ -2796,6 +2797,7 @@ void LB::b_puppetTransition(int nargs) {
 		warning("b_puppetTransition: Transition already queued");
 		return;
 	}
+	debugC(3, kDebugImages, "b_puppetTransition(): type: %d, duration: %d, chunkSize: %d, area: %d", type, duration, chunkSize, area);
 
 	stage->_puppetTransition = new TransParams(duration, area, chunkSize, ((TransitionType)type));
 }
@@ -2960,9 +2962,16 @@ void LB::b_updateStage(int nargs) {
 	}
 
 	Score *score = movie->getScore();
+	Window *window = movie->getWindow();
 
 	score->updateWidgets(movie->_videoPlayback);
-	movie->getWindow()->render();
+	if (window->_puppetTransition) {
+		window->playTransition(score->getCurrentFrameNum(), kRenderModeNormal, window->_puppetTransition->duration, window->_puppetTransition->area, window->_puppetTransition->chunkSize, window->_puppetTransition->type, score->_currentFrame->_mainChannels.scoreCachedPaletteId);
+		delete window->_puppetTransition;
+		window->_puppetTransition = nullptr;
+	} else {
+		movie->getWindow()->render();
+	}
 
 	// play any puppet sounds that have been queued
 	score->playSoundChannel(true);
