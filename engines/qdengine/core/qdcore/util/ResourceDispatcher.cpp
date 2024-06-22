@@ -19,7 +19,8 @@
  *
  */
 
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/util/ResourceDispatcher.h"
 
@@ -43,6 +44,7 @@ void ResourceDispatcher::reset() {
 }
 
 void ResourceDispatcher::quant() {
+	debugC(9, kDebugQuant, "ResourceDispatcher::quant()");
 	if (users.empty())
 		return;
 

@@ -46,6 +46,7 @@ enum QDEngineDebugChannels {
 	kDebugGraphics = 1,
 	kDebugLoad,
 	kDebugTemp,
+	kDebugQuant
 };
 
 class QDEngineEngine : public Engine {

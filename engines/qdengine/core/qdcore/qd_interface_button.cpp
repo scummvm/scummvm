@@ -20,7 +20,8 @@
  */
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/qdscr_parser.h"
 #include "qdengine/core/parser/xml_tag.h"
@@ -236,6 +237,7 @@ bool qdInterfaceButton::load_script_body(const xml::tag *p) {
 }
 
 bool qdInterfaceButton::quant(float dt) {
+	debugC(9, kDebugQuant, "qdInterfaceButton::quant()");
 	qdInterfaceElement::quant(dt);
 
 	if (find_event(qdInterfaceEvent::EVENT_CLEAR_MOUSE)) {

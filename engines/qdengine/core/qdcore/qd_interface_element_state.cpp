@@ -20,7 +20,8 @@
  */
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/parser/qdscr_parser.h"
@@ -164,6 +165,7 @@ bool qdInterfaceElementState::load_script(const xml::tag *p) {
 }
 
 bool qdInterfaceElementState::quant(float dt) {
+	debugC(9, kDebugQuant, "qdInterfaceElementState::quant(%d)", dt);
 	if (qdInterfaceElement * ep = dynamic_cast<qdInterfaceElement * >(owner())) {
 		if (prev_state_mode_ == MOUSE_HOVER_MODE && state_mode() == DEFAULT_MODE)
 			handle_events(qdInterfaceEvent::EVENT_ACTIVATION_HOVER, false);

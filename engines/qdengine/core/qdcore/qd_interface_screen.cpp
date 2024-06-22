@@ -21,6 +21,8 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include <algorithm>
 
@@ -136,6 +138,7 @@ bool qdInterfaceScreen::post_redraw() {
 }
 
 bool qdInterfaceScreen::quant(float dt) {
+	debugC(9, "qdInterfaceScreen::quant(%f)", dt);
 	if (autohide_time_ > FLT_EPS) {
 		float delta = dt / autohide_time_;
 

@@ -20,7 +20,8 @@
  */
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/parser/qdscr_parser.h"
@@ -229,12 +230,10 @@ bool qdInterfaceDispatcher::post_redraw() {
 }
 
 bool qdInterfaceDispatcher::quant(float dt) {
-#ifndef _QUEST_EDITOR
 	if (next_screen_) {
 		select_screen(next_screen_);
 		set_next_screen(NULL);
 	}
-#endif
 
 	if (cur_screen_)
 		return cur_screen_ -> quant(dt);
