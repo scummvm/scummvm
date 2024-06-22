@@ -156,12 +156,20 @@ AboutDialog::AboutDialog(bool inGame)
 	addLine(engines);
 
 	Common::StringArray enginesDetected;
+
+	uint32 beginTime = g_system->getMillis(true);
 #if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES) && !defined(DETECTION_STATIC)
 	// Unload all MetaEnginesDetection if we're using uncached plugins to save extra memory.
 	if (!inGame) PluginMan.unloadDetectionPlugin();
 #endif
 	if (!inGame) PluginMan.loadFirstPlugin();
 	do {
+		uint32 currentTime = g_system->getMillis(true);
+		if (currentTime - beginTime > 1500) {
+			// Too slow
+			enginesDetected.clear();
+			break;
+		}
 		const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
 		for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 			enginesDetected.push_back((*iter)->getName());
