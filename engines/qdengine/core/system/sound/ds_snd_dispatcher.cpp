@@ -25,14 +25,6 @@
 #include "qdengine/core/system/sound/ds_snd_dispatcher.h"
 #include "qdengine/core/qdcore/util/plaympp_api.h"
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
-
 namespace QDEngine {
 
 static bool operator == (const dsSound &snd0, const sndSound &snd1) {
@@ -62,14 +54,12 @@ ds_sndDispatcher::ds_sndDispatcher() : sound_device_(NULL) {
 	} else {
 		sound_device_ -> SetCooperativeLevel(hWnd, DSSCL_PRIORITY);
 	}
-	mpegPlayer::init_library(sound_device_);
 #endif
 }
 
 ds_sndDispatcher::~ds_sndDispatcher() {
 	sounds_.clear();
 
-	mpegPlayer::deinit_library();
 	warning("STUB: ds_sndDispatcher::~ds_sndDispatcher()");
 #if 0
 	if (sound_device_)

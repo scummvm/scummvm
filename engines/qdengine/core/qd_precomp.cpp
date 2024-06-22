@@ -378,35 +378,6 @@ DWORD timeGetTime() {
 	return 0;
 }
 
-namespace mpp {
-void MpegInitLibrary(void *dsound_device) {
-	warning("STUB: MpegInitLibrary()");
-}
-void MpegDeinitLibrary() {
-	warning("STUB: MpegDeinitLibrary()");
-};
-void MpegOpenToPlay(const char *fname, bool cycled) {
-	warning("STUB: MpegOpenToPlay(%s, %d)", fname, cycled);
-
-}
-void MpegStop() {
-	warning("STUB: MpegStop()");
-}
-void MpegPause() {
-	warning("STUB: MpegPause()");
-}
-void MpegResume() {
-	warning("STUB: MpegResume()");
-}
-void MpegSetVolume(int volume) {
-	warning("STUB: MpegSetVolume(%d)", volume);
-}
-int MpegIsPlay() {
-	warning("STUB: MpegIsPlay()");
-	return 0;
-}
-}
-
 int xtInitApplication() {
 	warning("STUB: xtInitApplication()");
 	return 0;
