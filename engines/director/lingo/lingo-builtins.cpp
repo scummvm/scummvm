@@ -2461,34 +2461,29 @@ void LB::b_move(int nargs) {
 
 	if (nargs == 1) {
 		int id = (int) g_director->getCurrentMovie()->getCast()->_castArrayStart;
-		CastMemberID *castId = new CastMemberID(id, DEFAULT_CAST_LIB);
-		Datum d = Datum(*castId);
-		delete castId;
+		CastMemberID castId(id, DEFAULT_CAST_LIB);
+		Datum d = Datum(castId);
 		g_lingo->push(d);
 		b_findEmpty(1);
-		dest = g_lingo->pop();
-		src = g_lingo->pop();
 	} else if (nargs == 2) {
-		dest = g_lingo->pop();
-		src = g_lingo->pop();
-	}
-
-	//Convert dest datum to type CASTREF if it is INT
-	//As CastMemberID constructor changes all the values, datum_int is used to preserve int
-	if (dest.type == INT) {
-		dest.type = CASTREF;
-		int datum_int = dest.u.i;
-		dest.u.cast = new CastMemberID();
-		dest.u.cast->member = datum_int;
-	}
-
-	//No need to move if src and dest are same
-	if (src.u.cast->member == dest.u.cast->member) {
+		// pass
+	} else {
+		ARGNUMCHECK(2);
+		g_lingo->dropStack(nargs);
 		return;
 	}
+	dest = g_lingo->pop();
+	src = g_lingo->pop();
 
-	if (src.u.cast->castLib != DEFAULT_CAST_LIB) {
-		warning("b_move: wrong castLib '%d' in src CastMemberID", src.u.cast->castLib);
+	// Convert dest datum to type CASTREF if it is INT.
+	// Confirmed to always move to DEFAULT_CAST_LIB in D5
+	if (dest.type == INT) {
+		dest = Datum(CastMemberID(dest.asInt(), DEFAULT_CAST_LIB));
+	}
+
+	// No need to move if src and dest are same
+	if (src == dest) {
+		return;
 	}
 
 	Movie *movie = g_director->getCurrentMovie();
@@ -2500,19 +2495,16 @@ void LB::b_move(int nargs) {
 	}
 
 	g_lingo->push(dest);
-	// Room for improvement, b_erase already marks the sprites as dirty
-	b_erase(1);
 	Score *score = movie->getScore();
 	uint16 frame = score->getCurrentFrameNum();
 
 	score->renderFrame(frame, kRenderForceUpdate);
 
-	movie->eraseCastMember(dest.asMemberID());
-	CastMember *toReplace = new CastMember(toMove->getCast(), src.asMemberID().member);
-	movie->createOrReplaceCastMember(dest.asMemberID(), toReplace);
+	movie->duplicateCastMember(src.asMemberID(), dest.asMemberID());
 	movie->eraseCastMember(src.asMemberID());
 
 	score->refreshPointersForCastMemberID(dest.asMemberID());
+	score->refreshPointersForCastMemberID(src.asMemberID());
 
 	score->renderFrame(frame, kRenderForceUpdate);
 }
