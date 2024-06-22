@@ -187,8 +187,10 @@ bool grDispatcher::Flush(int x, int y, int sx, int sy) {
 	if (y1 > SizeY)
 		y1 = SizeY;
 
-	g_system->copyRectToScreen(_screenBuf->getPixels(), _screenBuf->pitch, x, y, x1 - x, y1 - y);
-	g_system->updateScreen();
+	debugC(8, kDebugGraphics, "grDispatcher::Flush(%d, %d, %d, %d)", x, y, x1 - x, y1 - y);
+
+	g_system->copyRectToScreen(_screenBuf->getBasePtr(x, y), _screenBuf->pitch, x, y, x1 - x, y1 - y);
+
 	return true;
 }
 
