@@ -178,11 +178,7 @@ void qdGameDispatcher::quant() {
 		drop_flag(SKIP_REDRAW_FLAG);
 		toggle_full_redraw();
 	}
-
-#ifdef _QUEST_EDITOR
-	int tm = xclock();
-	int idt = tm - timer_;
-#else
+	
 	int idt = qdGameConfig::get_config().logic_period();
 
 	if (!scene_saved_ && cur_scene_ && cur_scene_ -> autosave_slot() != -1) {
@@ -199,7 +195,6 @@ void qdGameDispatcher::quant() {
 	}
 
 	scene_saved_ = true;
-#endif
 
 	quant(float(idt) / 1000.0f);
 
@@ -593,6 +588,7 @@ void qdGameDispatcher::load_script(const char *fname) {
 	unsigned int start_clock = g_system->getMillis();
 	pr.parse_file(fname);
 	unsigned int end_clock =  g_system->getMillis();
+	warning("Парсинг скрипта: %d мс", end_clock - start_clock);
 	appLog::default_log() << "Парсинг скрипта: " << end_clock - start_clock << " мс\r\n";
 
 	if (pr.is_script_binary()) {
