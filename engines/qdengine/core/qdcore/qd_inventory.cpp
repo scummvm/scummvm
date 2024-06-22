@@ -24,6 +24,7 @@
 
 #include <algorithm>
 #include "qdengine/core/qd_precomp.h"
+#include "qdengine/qdengine.h"
 
 #ifdef _QUEST_EDITOR
 #include <functional>
@@ -327,9 +328,10 @@ void qdInventory::remove_cell_set(int idx) {
 }
 
 bool qdInventory::load_resources() {
-	qdInventoryCellSetVector::iterator it;
-	FOR_EACH(cell_sets_, it)
-	it -> load_resources();
+	debugC(4, kDebugLoad, "qdInventory::load_resources(), %d cells", cell_sets_.size());
+
+	for (auto &it : cell_sets_)
+		it.load_resources();
 
 	return true;
 }

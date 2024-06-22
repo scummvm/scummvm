@@ -152,7 +152,7 @@ void qdInventoryCell::set_object(qdGameObjectAnimated *obj) {
 
 bool qdInventoryCell::load_resources() {
 	if (object_)
-		return object_ -> load_resources();
+		return object_->load_resources();
 	return true;
 }
 
@@ -410,9 +410,8 @@ const Vect2i qdInventoryCellSet::cell_size() const {
 #endif // _QUEST_EDITOR
 
 bool qdInventoryCellSet::load_resources() {
-	qdInventoryCellVector::iterator it;
-	FOR_EACH(cells_, it)
-	it -> load_resources();
+	for (auto &it : cells_)
+		it.load_resources();
 
 	return true;
 }

@@ -453,7 +453,7 @@ bool qdGameScene::save_script(XStream &fh, int indent) const {
 }
 
 int qdGameScene::load_resources() {
-	appLog::default_log() << appLog::default_log().time_string() << " Загрузка сцены \"" << name() << "\"\r\n";
+	debug("[%d] Loading scene \"%s\"", g_system->getMillis(), transCyrillic(name()));
 
 	int total_size = get_resources_size();
 	set_resources_size(total_size);
@@ -473,6 +473,8 @@ int qdGameScene::load_resources() {
 
 	set_resources_size(0);
 	fps_counter_.reset();
+
+	debugC(3, kDebugLoad, "qdGameScene::load_resources(): Loaded %d resources", size);
 
 	return size;
 }
@@ -1069,7 +1071,7 @@ qdConditionalObject::trigger_start_mode qdGameScene::trigger_start() {
 		if (check_flag(RESET_TRIGGERS_ON_LOAD))
 			dp -> deactivate_scene_triggers(this);
 
-		appLog::default_log() << appLog::default_log().time_string() << " Scene queued -> " << name() << "\r\n";
+		debug("[%d] Scene queued -> %s", g_system->getMillis(), transCyrillic(name()));
 
 		return qdConditionalObject::TRIGGER_START_ACTIVATE;
 	}
