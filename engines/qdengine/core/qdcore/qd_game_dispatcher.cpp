@@ -173,12 +173,12 @@ void qdGameDispatcher::update_time() {
 }
 
 void qdGameDispatcher::quant() {
+	debugC(9, kDebugQuant, "qdGameDispatcher::quant()");
 	inputRecorder::instance().quant();
 	if (check_flag(SKIP_REDRAW_FLAG)) {
 		drop_flag(SKIP_REDRAW_FLAG);
 		toggle_full_redraw();
 	}
-	
 	int idt = qdGameConfig::get_config().logic_period();
 
 	if (!scene_saved_ && cur_scene_ && cur_scene_ -> autosave_slot() != -1) {
@@ -198,11 +198,7 @@ void qdGameDispatcher::quant() {
 
 	quant(float(idt) / 1000.0f);
 
-#ifdef _QUEST_EDITOR
-	timer_ = xclock();
-#else
 	timer_ += idt;
-#endif
 
 	appLog::default_log().set_time(timer_);
 
@@ -225,8 +221,10 @@ void qdGameDispatcher::quant() {
 }
 
 void qdGameDispatcher::quant(float dt) {
-	if (sndDispatcher * snd = sndDispatcher::get_dispatcher())
+	debugC(9, kDebugQuant, "qdGameDispatcher::quant(%f)", dt);
+	if (sndDispatcher * snd = sndDispatcher::get_dispatcher()) {
 		snd -> quant();
+	}
 
 #ifndef _QUEST_EDITOR
 	mouse_obj_ -> set_pos(Vect3f(mouseDispatcher::instance() -> mouse_x(), mouseDispatcher::instance() -> mouse_y(), 0));
@@ -2227,11 +2225,9 @@ bool qdGameDispatcher::select_scene(qdGameScene *sp, bool resources_flag) {
 		if (resources_flag)
 			cur_scene_ -> load_resources();
 
-#ifndef _QUEST_EDITOR
 		update_ingame_interface();
 		cur_scene_ -> start_minigame();
 		interface_dispatcher_.update_personage_buttons();
-#endif
 	}
 
 	if (resources_flag) {
@@ -3654,9 +3650,10 @@ bool qdGameDispatcher::write_resource_stats(const char *file_name) const {
 }
 
 bool qdGameDispatcher::update_ingame_interface() {
-	if (cur_scene_ && cur_scene_->has_interface_screen())
+	if (cur_scene_ && cur_scene_->has_interface_screen()) {
+		debugC(9, kDebugQuant, cur_scene_->interface_screen_name());
 		return interface_dispatcher_.select_screen(cur_scene_->interface_screen_name());
-	else
+	} else
 		return interface_dispatcher_.select_ingame_screen(cur_inventory_ != 0);
 }
 
@@ -3795,4 +3792,5 @@ bool qdGameDispatcher::update_hall_of_fame_names() {
 
 	return true;
 }
+
 } // namespace QDEngine
