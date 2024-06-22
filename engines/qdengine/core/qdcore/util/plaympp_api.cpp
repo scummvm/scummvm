@@ -30,9 +30,9 @@
 
 namespace QDEngine {
 
-mpegPlayer::mpegPlayer() : is_enabled_(true),
-	volume_(255),
-	cur_track_volume_(255),
+mpegPlayer::mpegPlayer() : _is_enabled(true),
+	_volume(255),
+	_cur_track_volume(255),
 	_paused(false) {
 }
 
@@ -82,7 +82,7 @@ bool mpegPlayer::resume() {
 	g_system->getMixer()->pauseHandle(_soundHandle, false);
 	_paused = false;
 
-	g_system->getMixer()->setChannelVolume(_soundHandle, volume_ * cur_track_volume_ / 256);
+	g_system->getMixer()->setChannelVolume(_soundHandle, _volume * _cur_track_volume / 256);
 
 	return true;
 }
@@ -101,9 +101,9 @@ mpegPlayer::mpeg_status_t mpegPlayer::status() const {
 }
 
 void mpegPlayer::set_volume(unsigned int vol) {
-	volume_ = vol;
+	_volume = vol;
 
-	g_system->getMixer()->setChannelVolume(_soundHandle, volume_ * cur_track_volume_ / 256);
+	g_system->getMixer()->setChannelVolume(_soundHandle, _volume * _cur_track_volume / 256);
 }
 
 bool mpegPlayer::init_library(void *dsound_device) {

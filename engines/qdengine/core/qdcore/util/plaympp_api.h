@@ -20,8 +20,8 @@
  */
 
 
-#ifndef __PLAYMPP_API_H__
-#define __PLAYMPP_API_H__
+#ifndef QDENGINE_QDCORE_UTIL_PLAYMPP_API_H
+#define QDENGINE_QDCORE_UTIL_PLAYMPP_API_H
 
 #include "audio/mixer.h"
 
@@ -45,25 +45,21 @@ public:
 	~mpegPlayer();
 
 	bool play(const char *file, bool loop = false, int vol = 256);
-	//! Останавливает проигрывание mp+ файла.
 	bool stop();
-	//! Приостанавливает проигрывание mp+ файла.
 	bool pause();
-	//! Продолжает проигрывание mp+ файла.
 	bool resume();
 
-	//! Возвращает true, если проигрывание музыки разрешено.
 	bool is_enabled() const {
-		return is_enabled_;
+		return _is_enabled;
 	}
 	//! Разрешает проигрывание музыки.
 	void enable(bool need_resume = true) {
-		is_enabled_ = true;
+		_is_enabled = true;
 		if (need_resume) resume();
 	}
 	//! Запрещает проигрывание музыки.
 	void disable() {
-		is_enabled_ = false;
+		_is_enabled = false;
 		pause();
 	}
 
@@ -73,7 +69,7 @@ public:
 	}
 
 	unsigned int volume() const {
-		return volume_;
+		return _volume;
 	}
 	void set_volume(unsigned int vol);
 
@@ -87,12 +83,12 @@ private:
 	mpegPlayer();
 
 	//! Music is off when false
-	bool is_enabled_;
+	bool _is_enabled;
 	bool _paused;
 
 	//! Music volume, [0, 255].
-	unsigned int volume_;
-	unsigned int cur_track_volume_;
+	unsigned int _volume;
+	unsigned int _cur_track_volume;
 
 	Audio::SoundHandle _soundHandle;
 
@@ -101,4 +97,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __PLAYMPP_API_H__ */
+#endif /* QDENGINE_QDCORE_UTIL_PLAYMPP_API_H */
