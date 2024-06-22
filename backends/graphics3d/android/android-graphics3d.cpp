@@ -1073,7 +1073,7 @@ float AndroidGraphics3dManager::getHiDPIScreenFactor() const {
 	JNI::getDPI(dpi);
 	// Scale down the Android factor else the GUI is too big and
 	// there is not much options to go smaller
-	return dpi[2] / 1.2;
+	return dpi[2] / 1.2f;
 }
 
 AndroidCommonGraphics::State AndroidGraphics3dManager::getState() const {

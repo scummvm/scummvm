@@ -215,7 +215,7 @@ float AndroidGraphicsManager::getHiDPIScreenFactor() const {
 	JNI::getDPI(dpi);
 	// Scale down the Android factor else the GUI is too big and
 	// there is not much options to go smaller
-	return dpi[2] / 1.2;
+	return dpi[2] / 1.2f;
 }
 
 bool AndroidGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) {
