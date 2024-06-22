@@ -43,30 +43,31 @@ namespace Dgds {
 class REQFileData;
 
 enum MenuId {
-	kMenuNone = -1,
-	kMenuMain = 0,
-	kMenuControls = 1,
-	kMenuOptions = 2,
-	kMenuCalibrate = 3,
-	kMenuRestart = 4,
-	// 5: you cannot save your game right now
-	kMenuGameOver = 6,	// num 41
-	kMenuFiles = 7,  	// num 21
-	// 8: save game not saved because disk is full
-	// 9: all game entries are full
-	kMenuSave = 10,
-	// 11: change directory - create directory
-	// 12: change directory - invalid directory specified
-	kMenuChangeDirectory = 13,
-	kMenuJoystick = 14,
-	kMenuMouse = 15,
-	kMenuQuit = 16,
-	// 17: I'm frustrated - keep trying / win arcade
-	kMenuSkipPlayIntro = 18,
-	kMenuBetterSaveGame = 19, // save game before arcade
-	// 20: replay arcade
-	kMenuChina1 = 41,
-	kMenuChinaSkipCredits = 50,
+	// Request data numbers, same in both RoTD and China VCRs
+	kMenuNone = 0,
+	kMenuMain = 5,
+	kMenuControls = 7,
+	kMenuOptions = 29,
+	kMenuCalibrate = 30,
+	kMenuFiles = 21,
+	kMenuGameOver = 41,
+	kMenuRestart = 39,
+	kMenuCantSave = 36,
+	kMenuSaveNeedName = 43,
+	kMenuNotSavedDiskFull = 42,
+	kMenuReplaceSave = 38,
+	kMenuSaveDlg = 23,
+	kMenuChangeDir = 25,
+	kMenuAskCreateDir = 26,
+	kMenuInvalidDir = 37,
+	kMenuCalibrateJoystick = 28,
+	kMenuCalibrateMouse = 32,
+	kMenuReallyQuit = 35,
+	kMenuSkipPlayIntro = 50,
+	kMenuSkipArcade = 52,
+	kMenuSaveBeforeArcade = 46,
+	kMenuReplayArcade = 45,
+	kMenuArcadeFrustrated = 47,
 };
 
 class Menu {
@@ -86,16 +87,15 @@ public:
 	bool menuShown() const { return _curMenu != kMenuNone; }
 	void hideMenu() { _curMenu = kMenuNone; }
 
-	void setRequestData(const REQFileData &data) {
-		_reqData = data;
-	}
+	void setRequestData(const REQFileData &data);
 
 private:
 	Gadget *getClickedMenuItem(const Common::Point &mouseClick);
 	void drawMenuText(Graphics::ManagedSurface &dst);
 	void toggleGadget(int16 gadgetId, bool enable);
 	void configureGadget(MenuId menu, Gadget *gadget);
-	REQFileData _reqData;
+
+	Common::HashMap<int, RequestData> _menuRequests;
 
 	SliderGadget *_dragGadget;
 	Common::Point _dragStartPt;

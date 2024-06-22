@@ -633,7 +633,7 @@ bool Scene::runDragonOp(const SceneOp &op) {
 		engine->setMenuToTrigger(kMenuSkipPlayIntro);
 		break;
 	case kSceneOpOpenBetterSaveGameMenu:
-		engine->setMenuToTrigger(kMenuBetterSaveGame);
+		engine->setMenuToTrigger(kMenuSaveBeforeArcade);
 		break;
 	default:
 		error("Unexpected Dragon scene opcode %d", op._opCode);
@@ -645,11 +645,11 @@ bool Scene::runDragonOp(const SceneOp &op) {
 bool Scene::runChinaOp(const SceneOp &op) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	switch (op._opCode) {
-	case kSceneOpOpenChinaOpenSomeMenu:
-		engine->setMenuToTrigger(kMenuChina1);
+	case kSceneOpOpenChinaOpenGameOverMenu:
+		engine->setMenuToTrigger(kMenuGameOver);
 		break;
 	case kSceneOpOpenChinaOpenSkipCreditsMenu:
-		engine->setMenuToTrigger(kMenuChinaSkipCredits);
+		engine->setMenuToTrigger(kMenuSkipPlayIntro);
 		break;
 	case kSceneOpOpenChinaStartIntro:
 		warning("TODO: Implement start intro opcode");
