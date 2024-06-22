@@ -90,6 +90,27 @@ typedef byte Icondib[kXPix * kInvDy];               // Icon bar dib
 typedef byte Viewdib[(long)kXPix * kYPix];          // Viewport dib
 typedef byte Overlay[kOvlSize];                     // Overlay file
 
+enum HUGOAction {
+	kActionNone,
+	kActionEscape,
+	kActionMoveTop,
+	kActionMoveBottom,
+	kActionMoveLeft,
+	kActionMoveRight,
+	kActionMoveTopRight,
+	kActionMoveTopLeft,
+	kActionMoveBottomRight,
+	kActionMoveBottomLeft,
+	kActionUserHelp,
+	kActionToggleSound,
+	kActionRepeatLine,
+	kActionSaveGame,
+	kActionRestoreGame,
+	kActionNewGame,
+	kActionInventory,
+	kActionToggleTurbo
+};
+
 enum HugoDebugChannels {
 	kDebugSchedule  = 1 <<  0,
 	kDebugEngine    = 1 <<  1,

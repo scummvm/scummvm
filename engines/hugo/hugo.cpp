@@ -311,6 +311,9 @@ Common::Error HugoEngine::run() {
 		Common::Event event;
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				_parser->actionHandler(event);
+				break;
 			case Common::EVENT_KEYDOWN:
 				_parser->keyHandler(event);
 				break;

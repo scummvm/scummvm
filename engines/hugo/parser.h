@@ -88,6 +88,7 @@ public:
 	void command(const char *format, ...);
 	void freeParser();
 	void keyHandler(Common::Event event);
+	void actionHandler(Common::Event event);
 	void loadArrayReqs(Common::SeekableReadStream &in);
 	void loadBackgroundObjects(Common::ReadStream &in);
 	void loadCatchallList(Common::ReadStream &in);
