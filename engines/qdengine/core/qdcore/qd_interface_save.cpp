@@ -20,7 +20,9 @@
  */
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/stream.h"
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/qdscr_parser.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
@@ -143,7 +145,6 @@ bool qdInterfaceSave::keyboard_handler(int vkey) {
 }
 
 bool qdInterfaceSave::init(bool is_game_active) {
-#ifndef _QUEST_EDITOR
 	if (!is_game_active && frame_.need_active_game())
 		set_lock(true);
 	else
@@ -180,9 +181,6 @@ bool qdInterfaceSave::init(bool is_game_active) {
 				sp -> build_visible_elements_list();
 		}
 	}
-#else
-	set_state(&frame_);
-#endif // _QUEST_EDITOR
 
 	return true;
 }
@@ -325,7 +323,10 @@ bool qdInterfaceSave::hit_test(int x, int y) const {
 bool qdInterfaceSave::perform_save() {
 	bool is_ok = true;
 	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
+		debugC(3, kDebugSave, "qdInterfaceSave::perform_save(): save_ID_ = %d", save_ID_);
 		is_ok &= dp -> save_game(save_ID_);
+
+		debugC(3, kDebugSave, "qdInterfaceSave::perform_save(): is_ok = %d", is_ok);
 
 		if (!save_title_.empty()) {
 			XStream fh(description_file(), XS_OUT);

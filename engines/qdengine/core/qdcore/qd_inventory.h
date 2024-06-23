@@ -26,6 +26,9 @@
 #include "qdengine/core/qdcore/qd_named_object.h"
 #include "qdengine/core/qdcore/qd_inventory_cell.h"
 
+namespace  Common {
+class SeekableWriteStream;
+}
 
 namespace QDEngine {
 
@@ -154,6 +157,7 @@ public:
 	bool load_data(qdSaveStream &fh, int save_version);
 	//! Запись данных в сэйв.
 	bool save_data(qdSaveStream &fh) const;
+	bool save_data(Common::SeekableWriteStream &fh) const;
 
 	bool init(const qdInventoryCellTypeVector &tp);
 

@@ -21,7 +21,8 @@
 
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/stream.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/parser/qdscr_parser.h"
@@ -255,6 +256,17 @@ bool qdConditionalObject::load_data(qdSaveStream &fh, int save_version) {
 
 	for (conditions_container_t::iterator it = conditions_.begin(); it != conditions_.end(); ++it)
 		it -> load_data(fh, save_version);
+
+	return true;
+}
+
+bool qdConditionalObject::save_data(Common::SeekableWriteStream &fh) const {
+	if (!qdNamedObject::save_data(fh)) {
+		return false;
+	}
+
+	for (conditions_container_t::const_iterator it = conditions_.begin(); it != conditions_.end(); ++it)
+		it -> save_data(fh);
 
 	return true;
 }

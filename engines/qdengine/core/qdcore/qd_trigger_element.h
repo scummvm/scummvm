@@ -27,20 +27,9 @@
 #include "qdengine/core/qdcore/qd_named_object_reference.h"
 #include "qdengine/core/qdcore/qd_trigger_profiler.h"
 
-
-#ifdef _QUEST_EDITOR
-#include "SharedCounter.hpp"
-#include <string>
-#include <map>
-#endif // _QUEST_EDITOR
-
-#ifdef _QUEST_EDITOR
-#include <boost/intrusive_ptr.hpp>
-typedef boost::intrusive_ptr<qdTriggerElement> qdTriggerElementPtr;
-typedef boost::intrusive_ptr<qdTriggerElement const> qdTriggerElementConstPtr;
-#else
-
-#endif // _QUEST_EDITOR
+namespace Common {
+class SeekableWriteStream;
+}
 
 namespace QDEngine {
 
@@ -358,6 +347,7 @@ public:
 	bool load_data(qdSaveStream &fh, int save_version);
 	//! Запись данных в сэйв.
 	bool save_data(qdSaveStream &fh) const;
+	bool save_data(Common::SeekableWriteStream &fh) const;
 
 	bool quant(float dt);
 

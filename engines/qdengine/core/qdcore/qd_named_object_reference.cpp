@@ -21,6 +21,8 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/stream.h"
 #include <string>
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
@@ -179,6 +181,17 @@ bool qdNamedObjectReference::load_data(qdSaveStream &fh, int version) {
 
 		object_types_[i] = type;
 		object_names_[i] = str.c_str();
+	}
+
+	return true;
+}
+
+bool qdNamedObjectReference::save_data(Common::SeekableWriteStream &fh) const {
+	fh.writeSint32LE(num_levels());
+
+	for (int i = 0; i < num_levels(); i ++) {
+		fh.writeSint32LE(object_types_[i]);
+		fh.writeUint32LE(strlen(object_names_[i].c_str()) + 1);
 	}
 
 	return true;

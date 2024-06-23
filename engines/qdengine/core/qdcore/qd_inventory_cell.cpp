@@ -21,13 +21,12 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/stream.h"
 #include "qdengine/core/qd_precomp.h"
-
 #include <stdlib.h>
-
 #include "qdengine/core/parser/qdscr_parser.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
-
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
 #include "qdengine/core/qdcore/qd_inventory_cell.h"
 #include "qdengine/core/qdcore/qd_interface_element.h"
@@ -173,6 +172,20 @@ bool qdInventoryCell::load_data(qdSaveStream &fh, int save_version) {
 			object_ = static_cast<qdGameObjectAnimated * >(p -> get_named_object(&ref));
 	} else
 		object_ = NULL;
+
+	return true;
+}
+
+bool qdInventoryCell::save_data(Common::SeekableWriteStream &fh) const {
+	if (object_) {
+		fh.writeByte(1);
+
+		qdNamedObjectReference ref(object_);
+		if (!ref.save_data(fh)) {
+			return false;
+		}
+	} else
+		fh.writeByte(0);
 
 	return true;
 }
@@ -430,6 +443,19 @@ bool qdInventoryCellSet::load_data(qdSaveStream &fh, int save_version) {
 	qdInventoryCellVector::iterator it;
 	FOR_EACH(cells_, it) {
 		if (!it -> load_data(fh, save_version))
+			return false;
+	}
+
+	return true;
+}
+
+bool qdInventoryCellSet::save_data(Common::SeekableWriteStream &fh) const {
+	fh.writeSint32LE(additional_cells_.x);
+	fh.writeSint32LE(additional_cells_.y);
+
+	qdInventoryCellVector::const_iterator it;
+	FOR_EACH(cells_, it) {
+		if (!it -> save_data(fh))
 			return false;
 	}
 

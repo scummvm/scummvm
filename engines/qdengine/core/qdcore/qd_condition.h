@@ -27,6 +27,9 @@
 #include "qdengine/core/qdcore/qd_condition_data.h"
 #include "qdengine/core/qdcore/qd_condition_object_reference.h"
 
+namespace Common {
+class SeekableWriteStream;
+}
 
 namespace QDEngine {
 
@@ -526,6 +529,7 @@ public:
 	bool load_data(qdSaveStream &fh, int save_version);
 	//! Запись данных в сэйв.
 	bool save_data(qdSaveStream &fh) const;
+	bool save_data(Common::SeekableWriteStream &fh) const;
 
 	//! Инициализация условия, вызывается при старте и перезапуске игры.
 	bool init();

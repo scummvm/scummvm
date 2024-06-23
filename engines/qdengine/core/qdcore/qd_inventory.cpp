@@ -21,8 +21,9 @@
 
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include <algorithm>
+#include "common/stream.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/qdengine.h"
 
@@ -352,6 +353,17 @@ bool qdInventory::load_data(qdSaveStream &fh, int save_version) {
 	}
 
 	debug_log();
+
+	return true;
+}
+
+bool qdInventory::save_data(Common::SeekableWriteStream &fh) const {
+	qdInventoryCellSetVector::const_iterator it;
+	FOR_EACH(cell_sets_, it) {
+		if (!it -> save_data(fh)) {
+			return false;
+		}
+	}
 
 	return true;
 }

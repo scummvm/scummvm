@@ -46,7 +46,8 @@ enum QDEngineDebugChannels {
 	kDebugGraphics = 1,
 	kDebugLoad,
 	kDebugTemp,
-	kDebugQuant
+	kDebugQuant,
+	kDebugSave
 };
 
 class QDEngineEngine : public Engine {
@@ -59,6 +60,7 @@ protected:
 public:
 	Graphics::Screen *_screen = nullptr;
 	Graphics::PixelFormat _pixelformat;
+	Common::SaveFileManager *_savefileMan;
 public:
 	QDEngineEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~QDEngineEngine() override;

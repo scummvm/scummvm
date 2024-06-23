@@ -21,6 +21,7 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/stream.h"
 #include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/app_log_file.h"
@@ -864,6 +865,50 @@ bool qdGameScene::load_data(qdSaveStream &fh, int save_version) {
 	return true;
 }
 
+bool qdGameScene::save_data(Common::SeekableWriteStream &fh) const {
+	if (!qdConditionalObject::save_data(fh)) {
+		return false;
+	};
+
+	if (!camera.save_data(fh)) {
+		return false;
+	};
+
+	for (qdGameObjectList::const_iterator it = object_list().begin(); it != object_list().end(); ++it) {
+		if (!(*it) -> save_data(fh))
+			return false;
+	}
+
+	for (qdGridZoneList::const_iterator it = grid_zone_list().begin(); it != grid_zone_list().end(); ++it) {
+		if (!(*it) -> save_data(fh))
+			return false;
+	}
+
+	if (selected_object_) {
+		fh.writeUint32LE(1);
+		qdNamedObjectReference ref(selected_object_);
+		if (!ref.save_data(fh)) {
+			return false;
+		}
+	} else {
+		fh.writeUint32LE(0);
+	}
+
+	if (minigame_) {
+		const int save_buf_sz = 64 * 1024;
+		char save_buf[save_buf_sz];
+		int size = minigame_->save_game(save_buf, save_buf_sz, const_cast<qdGameScene *>(this));
+		fh.writeSint32LE(size);
+		if (size) {
+			fh.write(save_buf, size);
+		}
+	} else {
+		fh.writeUint32LE(0);
+	}
+
+	return true;
+}
+
 bool qdGameScene::save_data(qdSaveStream &fh) const {
 	if (!qdConditionalObject::save_data(fh)) return false;
 
@@ -887,7 +932,6 @@ bool qdGameScene::save_data(qdSaveStream &fh) const {
 	} else
 		fh < (int)0;
 
-#ifndef _QUEST_EDITOR
 	if (minigame_) {
 		const int save_buf_sz = 64 * 1024;
 		char save_buf[save_buf_sz];
@@ -897,7 +941,6 @@ bool qdGameScene::save_data(qdSaveStream &fh) const {
 			fh.write(save_buf, size);
 	} else
 		fh < (int)0;
-#endif
 
 	return true;
 }

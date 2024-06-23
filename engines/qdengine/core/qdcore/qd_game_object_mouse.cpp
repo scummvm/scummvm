@@ -22,9 +22,8 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "common/debug.h"
-
+#include "common/stream.h"
 #include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/qd_rnd.h"
@@ -148,6 +147,22 @@ bool qdGameObjectMouse::load_data(qdSaveStream &fh, int save_version) {
 	}
 
 	return true;
+}
+
+bool qdGameObjectMouse::save_data(Common::SeekableWriteStream &fh) {
+
+	if (object_) {
+		fh.writeUint32LE(1);
+		qdNamedObjectReference ref(object_);
+		if (!ref.save_data(fh)) {
+			return false;
+		}
+	} else {
+		fh.writeUint32LE(0);
+	}
+
+	return true;
+
 }
 
 bool qdGameObjectMouse::save_data(qdSaveStream &fh) const {

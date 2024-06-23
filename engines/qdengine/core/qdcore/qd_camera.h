@@ -25,6 +25,9 @@
 #include "qdengine/core/qdcore/qd_d3dutils.h"
 #include "qdengine/core/qdcore/qd_camera_mode.h"
 
+namespace Common {
+class SeekableWriteStream;
+}
 
 namespace QDEngine {
 
@@ -339,6 +342,7 @@ public:
 	bool load_data(qdSaveStream &fh, int save_version);
 	//! Запись данных в сэйв.
 	bool save_data(qdSaveStream &fh) const;
+	bool save_data(Common::SeekableWriteStream &fh) const;
 
 	//! Инициализация данных, вызывается при старте и перезапуске игры.
 	bool init();

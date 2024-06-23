@@ -21,7 +21,8 @@
 
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/stream.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/qd_named_object.h"
 
@@ -81,6 +82,11 @@ qdNamedObject *qdNamedObject::owner(qdNamedObjectType tp) const {
 bool qdNamedObject::load_data(qdSaveStream &fh, int save_version) {
 	fh > flags_;
 
+	return true;
+}
+
+bool qdNamedObject::save_data(Common::SeekableWriteStream &fh) const {
+	fh.writeSint32BE(flags_);
 	return true;
 }
 
