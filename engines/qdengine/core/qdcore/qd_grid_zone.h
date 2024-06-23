@@ -26,6 +26,9 @@
 #include "qdengine/core/qdcore/qd_contour.h"
 #include "qdengine/core/qdcore/qd_grid_zone_state.h"
 
+namespace Common {
+class SeekableWriteStream;
+}
 
 namespace QDEngine {
 
@@ -74,6 +77,7 @@ public:
 	bool load_data(qdSaveStream &fh, int save_version);
 	//! Запись данных в сэйв.
 	bool save_data(qdSaveStream &fh) const;
+	bool save_data(Common::SeekableWriteStream &fh);
 
 	bool state() const {
 		return state_;

@@ -20,7 +20,8 @@
  */
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/stream.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/parser/qdscr_parser.h"
@@ -101,6 +102,24 @@ bool qdCameraMode::load_data(qdSaveStream &fh, int save_version) {
 	char switch_flag;
 	fh > switch_flag;
 	smooth_switch_ = (switch_flag) ? true : false;
+
+	return true;
+}
+
+bool qdCameraMode::save_data(Common::SeekableWriteStream &fh) const {
+	fh.writeSint32LE((int)camera_mode_);
+	fh.writeFloatLE(work_time_);
+	fh.writeFloatLE(scrolling_speed_);
+	fh.writeSint32LE(scrolling_distance_);
+	fh.writeSint32LE(center_offset_.x);
+	fh.writeSint32LE(center_offset_.y);
+
+
+	if (smooth_switch_) {
+		fh.writeByte(1);
+	} else {
+		fh.writeByte(0);
+	}
 
 	return true;
 }

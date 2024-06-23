@@ -22,8 +22,9 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/stream.h"
 #include "qdengine/core/qd_precomp.h"
-
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/parser/qdscr_parser.h"
 #include "qdengine/core/qdcore/qd_trigger_chain.h"
@@ -458,6 +459,20 @@ bool qdTriggerChain::load_data(qdSaveStream &fh, int save_version) {
 
 	for (qdTriggerElementList::iterator it = elements_.begin(); it != elements_.end(); ++it) {
 		if (!(*it) -> load_data(fh, save_version))
+			return false;
+	}
+
+	return true;
+}
+bool qdTriggerChain::save_data(Common::SeekableWriteStream &fh) const {
+	fh.writeUint32LE(elements_.size());
+
+	if (!root_element() -> save_data(fh)) {
+		return false;
+	}
+
+	for (qdTriggerElementList::const_iterator it = elements_.begin(); it != elements_.end(); ++it) {
+		if (!(*it) -> save_data(fh))
 			return false;
 	}
 

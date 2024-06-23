@@ -22,7 +22,9 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/debug.h"
-
+#include "common/savefile.h"
+#include "common/stream.h"
+#include "engine.h"
 #include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_parser.h"
@@ -2562,71 +2564,81 @@ bool qdGameDispatcher::load_data(const char *fname) {
 }
 
 bool qdGameDispatcher::save_data(const char *fname) const {
-	qdSaveStream fh(fname, XS_OUT);
+	Common::OutSaveFile *fh;
+	Common::Path fpath(fname, '\\');
+	fh = g_engine->_savefileMan->openForSaving(fpath.toString());
 
 	const int save_version = 107;
-	fh < save_version;
+	fh->writeUint32LE(save_version);
 
 	if (get_active_scene()) {
 		qdNamedObjectReference ref(get_active_scene());
-		if (!ref.save_data(fh)) return false;
+		if (!ref.save_data(*fh)) {
+			return false;
+		}
 	} else {
 		qdNamedObjectReference ref;
-		if (!ref.save_data(fh)) return false;
+		if (!ref.save_data(*fh)) {
+			return false;
+		}
 	}
 
 	if (cur_music_track_) {
 		qdNamedObjectReference ref(cur_music_track_);
-		if (!ref.save_data(fh)) return false;
+		if (!ref.save_data(*fh)) {
+			return false;
+		}
 	} else {
 		qdNamedObjectReference ref;
-		if (!ref.save_data(fh)) return false;
+		if (!ref.save_data(*fh)) {
+			return false;
+		}
 	}
 
 	if (cur_inventory_)
-		fh < (int)1;
+		fh->writeSint32LE(1);
 	else
-		fh < (int)0;
+		fh->writeSint32LE(0);
 
-	fh < global_object_list().size();
+	fh->writeUint32LE(global_object_list().size());
 	for (qdGameObjectList::const_iterator it = global_object_list().begin(); it != global_object_list().end(); ++it) {
-		if (!(*it) -> save_data(fh))
+		if (!(*it) -> save_data(*fh))
 			return false;
 	}
 
-	fh < counter_list().size();
+	fh->writeUint32LE(counter_list().size());
 	for (qdCounterList::const_iterator it = counter_list().begin(); it != counter_list().end(); ++it) {
-		if (!(*it) -> save_data(fh))
+		if (!(*it) -> save_data(*fh))
 			return false;
 	}
 
-	fh < scene_list().size();
+	fh->writeUint32LE(scene_list().size());
 	for (qdGameSceneList::const_iterator it = scene_list().begin(); it != scene_list().end(); ++it) {
-		if (!(*it) -> save_data(fh))
+		if (!(*it) -> save_data(*fh))
 			return false;
 	}
 
-	fh < global_object_list().size();
+	fh->writeUint32LE(global_object_list().size());
 	for (qdGameObjectList::const_iterator it = global_object_list().begin(); it != global_object_list().end(); ++it) {
-		if (!(*it) -> save_data(fh))
+		if (!(*it) -> save_data(*fh))
 			return false;
 	}
 
-	fh < trigger_chain_list().size();
+	fh->writeUint32LE(trigger_chain_list().size());
 	for (qdTriggerChainList::const_iterator it = trigger_chain_list().begin(); it != trigger_chain_list().end(); ++it) {
-		if (!(*it) -> save_data(fh))
+		if (!(*it) -> save_data(*fh))
 			return false;
 	}
 
-	fh < inventory_list().size();
+	fh->writeUint32LE(inventory_list().size());
 	for (qdInventoryList::const_iterator it = inventory_list().begin(); it != inventory_list().end(); ++it) {
-		if (!(*it) -> save_data(fh))
+		if (!(*it) -> save_data(*fh))
 			return false;
 	}
 
-	mouse_obj_->save_data(fh);
+	mouse_obj_->save_data(*fh);
 
-	fh.close();
+	delete fh;
 
 	return true;
 }
@@ -2827,6 +2839,7 @@ bool qdGameDispatcher::save_game(int slot_id) const {
 	if (!app_io::is_directory_exist("Saves"))
 		app_io::create_directory("Saves");
 
+	debugC(3, kDebugSave, "qdGameDispatcher::save_game(%d): filename: %s", slot_id, get_save_name(slot_id));
 	return save_data(get_save_name(slot_id));
 }
 

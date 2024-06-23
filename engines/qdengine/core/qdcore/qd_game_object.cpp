@@ -20,7 +20,8 @@
  */
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/stream.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/parser/qdscr_parser.h"
@@ -166,6 +167,16 @@ bool qdGameObject::load_data(qdSaveStream &fh, int save_version) {
 	fh > r_.x > r_.y > r_.z;
 
 	return true;
+}
+
+bool qdGameObject::save_data(Common::SeekableWriteStream &fh) {
+	if (!qdNamedObject::save_data(fh)) {
+		return false;
+	}
+
+	fh.writeFloatLE(r_.x);
+	fh.writeFloatLE(r_.y);
+	fh.writeFloatLE(r_.z);
 }
 
 bool qdGameObject::save_data(qdSaveStream &fh) const {

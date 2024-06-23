@@ -21,10 +21,11 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/stream.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/parser/qdscr_parser.h"
-
 #include "qdengine/core/qdcore/qd_game_scene.h"
 #include "qdengine/core/qdcore/qd_game_object.h"
 #include "qdengine/core/qdcore/qd_grid_zone.h"
@@ -306,6 +307,17 @@ bool qdGridZone::load_data(qdSaveStream &fh, int save_version) {
 	fh > st > update_timer_;
 
 	state_ = (st) ? true : false;
+
+	return true;
+}
+
+bool qdGridZone::save_data(Common::SeekableWriteStream &fh) {
+	if (!qdNamedObject::save_data(fh)) {
+		return false;
+	}
+
+	fh.writeByte(state_);
+	fh.writeSint32LE(update_timer_);
 
 	return true;
 }

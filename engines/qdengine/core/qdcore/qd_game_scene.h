@@ -33,6 +33,9 @@
 #include "qdengine/core/system/input/mouse_input.h"
 #include "qdengine/core/system/graphics/gr_screen_region.h"
 
+namespace Common {
+class SeekableWriteStream;
+}
 
 namespace QDEngine {
 
@@ -193,6 +196,7 @@ public:
 	bool load_data(qdSaveStream &fh, int save_version);
 	//! Запись данных в сэйв.
 	bool save_data(qdSaveStream &fh) const;
+	bool save_data(Common::SeekableWriteStream &fh) const;
 
 	int load_resources();
 	void free_resources();

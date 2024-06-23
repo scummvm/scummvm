@@ -966,6 +966,36 @@ bool qdCamera::load_data(qdSaveStream &fh, int save_version) {
 	return true;
 }
 
+bool qdCamera::save_data(Common::SeekableWriteStream &fh) const {
+	fh.writeSint32LE(scrCenter.x);
+	fh.writeSint32LE(scrCenter.y);
+	fh.writeSint32LE(GSX);
+	fh.writeSint32LE(GSY);
+	fh.writeFloatLE(current_mode_work_time_);
+	fh.writeByte(char(current_mode_switch_));
+
+	current_mode_.save_data(fh);
+	default_mode_.save_data(fh);
+
+	if (current_object_) {
+		fh.writeByte(char(1));
+		qdNamedObjectReference ref(current_object_);
+		ref.save_data(fh);
+	} else {
+		fh.writeByte(char(0));
+	}
+
+	if (default_object_) {
+		fh.writeByte(char(1));
+		qdNamedObjectReference ref(default_object_);
+		ref.save_data(fh);
+	} else {
+		fh.writeByte(char(0));
+	}
+
+	return true;
+}
+
 bool qdCamera::save_data(qdSaveStream &fh) const {
 	fh < scrCenter.x < scrCenter.y < GSX < GSY < current_mode_work_time_ < char(current_mode_switch_);
 

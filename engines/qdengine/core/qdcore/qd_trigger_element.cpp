@@ -21,6 +21,8 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/stream.h"
 #include "qdengine/core/qd_precomp.h"
 
 #include "qdengine/core/parser/xml_tag_buffer.h"
@@ -908,6 +910,45 @@ bool qdTriggerElement::load_data(qdSaveStream &fh, int save_version) {
 		fh > st;
 
 		it -> set_status(qdTriggerLink::LinkStatus(st));
+	}
+
+	return true;
+}
+
+bool qdTriggerElement::save_data(Common::SeekableWriteStream &fh) const {
+	/*  switch(status_){
+	    case TRIGGER_EL_INACTIVE:
+	        for(qdTriggerLinkList::const_iterator it = parents_.begin(); it != parents_.end(); ++it){
+	            if(it -> status() != qdTriggerLink::LINK_INACTIVE)
+	                break;
+	        }
+	        for(qdTriggerLinkList::const_iterator it = children_.begin(); it != children_.end(); ++it){
+	            if(it -> status() != qdTriggerLink::LINK_INACTIVE)
+	                break;
+	        }
+	        fh < char(TRIGGER_EL_INACTIVE_ALL);
+	        return true;
+	    case TRIGGER_EL_DONE:
+	        for(qdTriggerLinkList::const_iterator it = parents_.begin(); it != parents_.end(); ++it){
+	            if(it -> status() != qdTriggerLink::LINK_DONE)
+	                break;
+	        }
+	        for(qdTriggerLinkList::const_iterator it = children_.begin(); it != children_.end(); ++it){
+	            if(it -> status() != qdTriggerLink::LINK_DONE)
+	                break;
+	        }
+	        fh < char(TRIGGER_EL_DONE_ALL);
+	        return true;
+	    }*/
+
+	fh.writeByte(status_);
+
+	for (qdTriggerLinkList::const_iterator it = parents_.begin(); it != parents_.end(); ++it) {
+		fh.writeByte(char(it -> status()));
+	}
+
+	for (qdTriggerLinkList::const_iterator it = children_.begin(); it != children_.end(); ++it) {
+		fh.writeByte(char(it -> status()));
 	}
 
 	return true;

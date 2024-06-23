@@ -24,6 +24,9 @@
 
 #include "qdengine/core/qdcore/qd_game_object_animated.h"
 
+namespace Common {
+class SeekableWriteStream;
+}
 
 namespace QDEngine {
 
@@ -45,6 +48,7 @@ public:
 
 	bool load_data(qdSaveStream &fh, int save_version);
 	bool save_data(qdSaveStream &fh) const;
+	bool save_data(Common::SeekableWriteStream &fh);
 
 	void take_object(qdGameObjectAnimated *p);
 	qdGameObjectAnimated *object() {

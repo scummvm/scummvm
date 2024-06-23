@@ -21,7 +21,7 @@
 
 #ifndef __QD_NAMED_OBJECT_H__
 #define __QD_NAMED_OBJECT_H__
-
+#include "common/stream.h"
 #include "qdengine/core/qdcore/qd_named_object_base.h"
 
 namespace QDEngine {
@@ -126,6 +126,8 @@ public:
 	virtual bool load_data(qdSaveStream &fh, int save_version);
 	//! Запись данных в сэйв.
 	virtual bool save_data(qdSaveStream &fh) const;
+	virtual bool save_data(Common::SeekableWriteStream &fh) const;
+
 
 	//! Добавляет ссылку из триггеров на объект.
 	void add_trigger_reference() {

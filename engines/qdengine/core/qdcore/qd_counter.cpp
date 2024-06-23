@@ -21,6 +21,8 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/stream.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/parser/qdscr_parser.h"
@@ -125,6 +127,11 @@ bool qdCounterElement::load_data(qdSaveStream &fh, int save_version) {
 bool qdCounterElement::save_data(qdSaveStream &fh) const {
 	char v = last_state_status_;
 	fh < v;
+	return true;
+}
+
+bool qdCounterElement::save_data(Common::SeekableWriteStream &fh) const {
+	fh.writeByte(last_state_status_);
 	return true;
 }
 
@@ -274,6 +281,17 @@ bool qdCounter::load_data(qdSaveStream &fh, int save_version) {
 
 	for (element_container_t::iterator it = elements_.begin(); it != elements_.end(); ++it)
 		it -> load_data(fh, save_version);
+
+	return true;
+}
+
+bool qdCounter::save_data(Common::SeekableWriteStream &fh) {
+	fh.writeSint32LE(value_);
+	fh.writeSint32LE(elements_.size());
+
+	for (element_container_t::const_iterator it = elements_.begin(); it != elements_.end(); ++it) {
+		it->save_data(fh);
+	}
 
 	return true;
 }

@@ -29,9 +29,11 @@
 #include "qdengine/core/qdcore/qd_condition.h"
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
 
+namespace Common {
+class SeekableWriteStream;
+}
 
 namespace QDEngine {
-
 
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
@@ -418,6 +420,25 @@ bool qdCondition::load_data(qdSaveStream &fh, int save_version) {
 
 		if (!put_value(TIMER_PERIOD, timer, 1)) return false;
 		if (!put_value(TIMER_RND, state, 1)) return false;
+	}
+
+	return true;
+}
+
+bool qdCondition::save_data(Common::SeekableWriteStream &fh) const {
+	if (type_ == CONDITION_TIMER) {
+		float timer;
+		if (!get_value(TIMER_PERIOD, timer, 1)) {
+			return false;
+		}
+
+		int state;
+		if (!get_value(TIMER_RND, state, 1)) {
+			return false;
+		}
+
+		fh.writeSint32LE(timer);
+		fh.writeSint32LE(state);
 	}
 
 	return true;

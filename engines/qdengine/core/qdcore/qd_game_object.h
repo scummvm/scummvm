@@ -27,6 +27,9 @@
 #include "qdengine/core/system/graphics/gr_screen_region.h"
 #include "qdengine/core/qdcore/qd_named_object.h"
 
+namespace Common {
+class SeekableWriteStream;
+}
 
 namespace QDEngine {
 
@@ -148,6 +151,7 @@ public:
 	bool load_data(qdSaveStream &fh, int save_version);
 	//! Запись данных в сэйв.
 	bool save_data(qdSaveStream &fh) const;
+	bool save_data(Common::SeekableWriteStream &fh);
 
 	const Vect2i &get_screen_R() const {
 		return screen_r_;
