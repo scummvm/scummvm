@@ -126,6 +126,19 @@
 	kFeaturesNone,
 	0, 0, 0
 },
+{ // Supplied by gabberhead in bugreport #15178
+	{
+		"bargon",
+		"",
+		AD_ENTRY1s("intro.stk", "e9ec1eebdec327794681b2b66a30f159", 270055),
+		DE_DEU,
+		kPlatformAmiga,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kFeaturesNone,
+	0, 0, 0
+},
 
 // -- Atari ST --
 
