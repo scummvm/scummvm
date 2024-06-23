@@ -1554,6 +1554,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "hesgonehistorical", "He's Gone Historical" },
 	{ "hewatches", "He Watches" },
 	{ "hhgtgtowelday", "H2G2: Towel Day" },
+	{ "hiddenmessages", "Hidden Messages" },
 	{ "hiddenplains", "Hidden Plains" },
 	{ "hiddentreasureryansfortune", "Hidden Treasure: Ryan's Fortune" },
 	{ "hide", "Hide" },
@@ -3061,6 +3062,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "taoch1ep3", "Tao - Chapter 1: Le Grand Tournoi (Ep. 3)" },
 	{ "taoch1ep4", "Tao - Chapter 1: Le Grand Tournoi (Ep. 4)" },
 	{ "taoch2ep1", "Tao - Chapter 2: L'Université Faërique (Ep. 1)" },
+	{ "taoch2ep2", "Tao - Chapter 2: L'Université Faërique (Ep. 2)" },
 	{ "taospacetime", "Tao Through Space and Time" },
 	{ "tarthenia", "Tarthenia" },
 	{ "tasteblood", "Taste the blood of darkness" },
@@ -5053,6 +5055,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("hellsatans", "Hell's Satans.exe", "0710e2ec71042617f565c01824f0cf3c", 2622899),
 	DEMO_ENTRY_EN("herdiscoming", "herd.exe", "78dd4ca028ee0156b6a093d6d780aa65", 5664594), // Steam
 	DEMO_ENTRY_EN("hewatches", "MansionAGS.exe", "74dc062c5f68f3d70da911f2db5737b6", 10728553),
+	DEMO_ENTRY_EN("hiddenmessages", "RotNHM.ags", "86fda37a195616bc14eca3b9ac1a4116", 34402785),
 	DEMO_ENTRY_EN("hood", "hood.exe", "97d700529f5cc826f230c27acf81adfd", 1575198),
 	DEMO_ENTRY_EN("hopelessness", "TBAD.exe", "0564de07d3fd5c16e6947a647061913c", 13433436),
 	DEMO_ENTRY_EN("horrorhospital", "HHH.exe", "3aba76b46b4493c5541a2a17e67fdd93", 48089904),
@@ -5217,6 +5220,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY("nightmareframes", "Nightmare Frames Prologue.exe", "1965ea84b883d67c781a7e9dc3427e6a", 894702132),  // Steam/itch.io Eng-Esp
 	DEMO_ENTRY_EN("nightoftheravingfeminist", "Prueba1.exe", "b25674056fe8cc0b7bf0a4409c5c5bfc", 7015243),
 	DEMO_ENTRY_EN("nocturnedream", "Nocturne SHAREWARE EMULATOR.exe", "48f8924122df461dffa8232af153f9cd", 294829702),
+	DEMO_ENTRY_EN("nocturnedream", "Nocturne SHAREWARE EMULATOR.exe", "48f8924122df461dffa8232af153f9cd", 294832172),
 	DEMO_ENTRY_EN("noirbois", "Noir Bois Prelude Episode 1.exe", "4d5d25446373d4df71c6bda77a15230a", 5167731),
 	DEMO_ENTRY_EN("notravellerreturns", "Test.exe", "f120690b506dd63cd7d1112ea6af2f77", 19656975),
 	DEMO_ENTRY_EN("nostalgik", "NOLGASTIK.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 143891265),
@@ -7909,8 +7913,10 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("paulainwonderland", "PaulaWunderland.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 2249299),  // Eng-Deu
 	GAME_ENTRY_EN("paulmooseinspaceworld", "Paul Moose In Space World.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 15971406),
 	GAME_ENTRY("paulquest", "calle.exe", "06a03fe35791b0578068ab1873455463", 3055837),  //Eng-Esp
-	GAME_ENTRY("paulromano", "Paul Romano.exe", "ee9deee0da02406cf9b7ca076321a106", 844755077),  // Windows Eng-Ita
-	GAME_ENTRY("paulromano", "Paul Romano.ags", "8af5fa84179b24bc84d78363eb5b0d25", 842261109),  // Linux Eng-Ita
+	GAME_ENTRY("paulromano", "Paul Romano.exe", "ee9deee0da02406cf9b7ca076321a106", 844755077),  // v1.0 Windows Eng-Ita
+	GAME_ENTRY("paulromano", "Paul Romano.ags", "8af5fa84179b24bc84d78363eb5b0d25", 842261109),  // v1.0 Linux Eng-Ita
+	GAME_ENTRY("paulromano", "Paul Romano.exe", "165d69d396898d165a95b29f6e9770db", 845276527),  // v1.1 Android Eng-Ita
+	GAME_ENTRY("paulromano", "Paul Romano.ags", "baef5e71ad847c8f728f2f20c15208f0", 840055169),  // v1.2 Win/Linux Eng-Ita
 	GAME_ENTRY_EN("peakvalley1", "MOPV 1 The Lost Sonata.exe", "7c3c3d4b607946867e979a484d910ca0", 12249206),
 	GAME_ENTRY_EN("peakvalley2", "MOPV 2 The White Lady.exe", "55c5470f14317d5e806cd4f4271a2118", 44869592),
 	GAME_ENTRY_EN("peakvalley2", "MOPV 2 The White Lady.exe", "55c5470f14317d5e806cd4f4271a2118", 45221210),  // v1.0.3
@@ -7922,6 +7928,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("perceptions", "Perceptions.exe", "5cca0f8af961d2bc1c6e475437d3b23b", 9831096),
 	GAME_ENTRY_EN("perceptions", "Perceptions.ags", "a486ab3f60b44c765c6e43acda8786ee", 6797476),
 	GAME_ENTRY_EN("perelman", "Perelman.exe", "615e73fc1874e92d60a1996c2330ea36", 29477673),
+	GAME_ENTRY_EN("perelman", "Perelman.exe", "615e73fc1874e92d60a1996c2330ea36", 29554382),
 	GAME_ENTRY_EN("perilsofpoom", "Poom.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 10455126),
 	GAME_ENTRY_EN("perilsofpoom", "Poom.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 10455152),
 	GAME_ENTRY_EN("pesterquest", "PQ.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 2381566),
@@ -8620,6 +8627,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("taoch1ep3", "Tao - Episode 3.ags", "61f3b6c41cef1e86bee361601f9da997", 338845965),  // En-Fr
 	GAME_ENTRY("taoch1ep4", "Tao - Episode 4.ags", "efbe9dba9052dfa45980a4a8f8bb1173", 260655181),  // En-Fr
 	GAME_ENTRY("taoch2ep1", "Tao - Chapitre 2.ags", "8cd48b6e4f4c9e8582445877afbc9603", 222076248),  // En-Fr
+	GAME_ENTRY("taoch2ep2", "Tao - Chapitre 2,  Episode 2.ags", "f2e667c31a4cd7a77ea84e2f459a8498", 226549126),  // En-Fr
 	GAME_ENTRY_LANG("taospacetime", "Tao through space and time AGS.exe", "7a3096ac0237cb6aa8e1718e28caf039", 35930047, Common::FR_FRA),  // Win French
 	GAME_ENTRY_LANG("taospacetime", "Tao through space and time AGS.ags", "50e4bd3554f1b1d5bf9b7b7c83920c8b", 33452975, Common::FR_FRA),  // Linux French
 	GAME_ENTRY("taospacetime", "Tao through space and time AGS.exe", "7a3096ac0237cb6aa8e1718e28caf039", 35931108),  // Win   En-Fr
