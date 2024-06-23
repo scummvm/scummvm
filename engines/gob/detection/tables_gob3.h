@@ -88,7 +88,7 @@
 	{
 		"gob3",
 		"",
-		AD_ENTRY1("intro.stk", "f6d225b25a180606fa5dbe6405c97380"),
+		AD_ENTRY1s("intro.stk", "f6d225b25a180606fa5dbe6405c97380", 161516),
 		DE_DEU,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -341,7 +341,7 @@
 	{
 		"gob3",
 		"CD v1.02",
-		AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
+		AD_ENTRY1s("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261", 612482),
 		EN_ANY,
 		kPlatformDOS,
 		ADGF_CD,
@@ -354,7 +354,7 @@
 	{
 		"gob3",
 		"CD v1.02",
-		AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
+		AD_ENTRY1s("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261", 612482),
 		DE_DEU,
 		kPlatformDOS,
 		ADGF_CD,
@@ -367,7 +367,7 @@
 	{
 		"gob3",
 		"CD v1.02",
-		AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
+		AD_ENTRY1s("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261", 612482),
 		FR_FRA,
 		kPlatformDOS,
 		ADGF_CD,
@@ -380,7 +380,7 @@
 	{
 		"gob3",
 		"CD v1.02",
-		AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
+		AD_ENTRY1s("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261", 612482),
 		IT_ITA,
 		kPlatformDOS,
 		ADGF_CD,
@@ -393,7 +393,7 @@
 	{
 		"gob3",
 		"CD v1.02",
-		AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
+		AD_ENTRY1s("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261", 612482),
 		ES_ESP,
 		kPlatformDOS,
 		ADGF_CD,
