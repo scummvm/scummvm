@@ -236,7 +236,7 @@ bool AchievementsManager::setAchievement(const String &id) {
 	_iniFile->setKey(id, "achievements", "true");
 	_iniFile->saveToSaveFile(_iniFileName);
 
-	if (!displayedMessage.empty() && g_system) {
+	if (!ConfMan.getBool("disable_achievement_unlocked_osd") && !displayedMessage.empty() && g_system) {
 		U32String msg;
 		msg = Common::U32String::format("%S\n%S",
 			_("Achievement unlocked!").c_str(),
