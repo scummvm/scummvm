@@ -141,6 +141,13 @@ Common::Error DarkseedEngine::run() {
 		_player->_direction = 1;
 		setupOtherNspAnimation(0, 1);
 //		bVar1 = true;
+		if (_currentDay == 1) {
+			_console->printTosText(8);
+		} else if (_currentDay == 2) {
+			_console->printTosText(0xc);
+		} else if (_currentDay == 3) {
+			_console->printTosText(0xe);
+		}
 	}
 
 	gameloop();
@@ -207,10 +214,11 @@ void DarkseedEngine::updateEvents() {
 }
 
 void DarkseedEngine::wait() {
-	g_system->delayMillis(15);
+	g_system->delayMillis(100);
 }
 
 void DarkseedEngine::handleInput() {
+	// FUN_2022_762b_handles_mouse_click_action
 	int currentRoomNumber = _room->_roomNumber;
 	if (_player->_isAutoWalkingToBed && currentRoomNumber == 0 && _player->isAtPosition(0xdf, 0xbe)) {
 		_player->_isAutoWalkingToBed = false;

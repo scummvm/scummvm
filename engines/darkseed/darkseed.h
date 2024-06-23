@@ -37,7 +37,9 @@
 #include "console.h"
 #include "cursor.h"
 #include "darkseed/detection.h"
+#include "inventory.h"
 #include "nsp.h"
+#include "objects.h"
 #include "player.h"
 #include "room.h"
 #include "sprites.h"
@@ -75,6 +77,8 @@ public:
 	ActionMode _actionMode = PointerAction;
 	Player *_player = nullptr;
 	Sprites _sprites;
+	Objects _objects;
+	Inventory _inventory;
 
 	int _currentDay = 1;
 	int _currentTimeInSeconds = 0x7e8e;

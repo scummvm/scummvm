@@ -1,0 +1,61 @@
+/* ScummVM - Graphic Adventure Engine
+*
+* ScummVM is the legal property of its developers, whose names
+* are too numerous to list here. Please refer to the COPYRIGHT
+* file distributed with this source distribution.
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*/
+
+#include "objects.h"
+
+constexpr int MAX_OBJECTS = 199;
+
+Darkseed::Objects::Objects() {
+	_objectVar.resize(MAX_OBJECTS);
+	_objectRunningCode.resize(MAX_OBJECTS);
+	_moveObjectX.resize(MAX_OBJECTS);
+	_moveObjectY.resize(MAX_OBJECTS);
+	_moveObjectRoom.resize(MAX_OBJECTS); // The original only allocates 42 entries here but writes 199 in the save file!
+	reset();
+}
+
+void Darkseed::Objects::reset() {
+	for (int i = 0; i < MAX_OBJECTS; i++) {
+		_objectVar[i] = 0;
+		_objectRunningCode[i] = 0;
+		_moveObjectX[i] = 0; // TODO verify this is the correct reset state for these XY vars.
+		_moveObjectY[i] = 0;
+		_moveObjectRoom[i] = i < 42 ? 0xff : 0; // Hack for weird behaviour in original engine.
+	}
+	// Initial object state.
+	setVar(52, 1);
+	setVar(112, 0);
+	setVar(62, 0);
+}
+
+void Darkseed::Objects::setVar(uint16 varIdx, int16 newValue) {
+	if (varIdx >= MAX_OBJECTS) {
+		error("setVar: Object Index out of range! %d", varIdx);
+	}
+	_objectVar[varIdx] = newValue;
+}
+
+int16 Darkseed::Objects::getVar(uint16 varIdx) {
+	if (varIdx >= MAX_OBJECTS) {
+		error("getVar: Object Index out of range! %d", varIdx);
+	}
+	return _objectVar[varIdx];
+}
