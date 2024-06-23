@@ -82,13 +82,14 @@ namespace _priv {
 
 static MenuSettings createMainMenu(bool lba1) {
 	MenuSettings settings;
-	settings.setButtonsBoxHeight(200);
 	if (lba1) {
+		settings.setButtonsBoxHeight(200);
 		settings.addButton(TextId::kNewGame);
 		settings.addButton(TextId::kContinueGame);
 		settings.addButton(TextId::kOptions);
 		settings.addButton(TextId::kQuit);
 	} else {
+		settings.setButtonsBoxHeight(335);
 		settings.addButton(TextId::toContinueGame);
 		settings.addButton(TextId::toNewGame);
 		settings.addButton(TextId::toLoadGame);
