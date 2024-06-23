@@ -23,6 +23,12 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
+#include "common/system.h"
+#include "common/translation.h"
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 
 #include "dgds/dgds.h"
 
@@ -34,6 +40,8 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool DgdsMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -51,6 +59,43 @@ Common::Error DgdsMetaEngine::createInstance(OSystem *syst, Engine **engine, con
 		*engine = new Dgds::DgdsEngine(syst, desc);
 
 	return (desc != nullptr) ? Common::kNoError : Common::kUnknownError;
+}
+
+struct KeybindingRecord {
+    Dgds::DgdsKeyEvent _action;
+    const char *_id;
+    const Common::U32String _desc;
+    const char *_key;
+    const char *_altKey;
+};
+
+Common::KeymapArray DgdsMetaEngine::initKeymaps(const char *target) const {
+	const KeybindingRecord DGDS_KEYS[] = {
+		{ Dgds::kDgdsKeyLoad, "LOAD", _("Load Game"), "F7", "C+l" },
+		{ Dgds::kDgdsKeySave, "SAVE", _("Save Game"), "F5", "C+s" },
+		{ Dgds::kDgdsKeyToggleMenu, "TOGGLE_MENU", _("Toggle Menu"), "ESCAPE", nullptr },
+		{ Dgds::kDgdsKeyToggleClock, "TOGGLE_CLOCK", _("Toggle Clock"), "c", nullptr },
+		{ Dgds::kDgdsKeyNextChoice, "NEXT_CHOICE", _("Next dialog / menu item"), "DOWN", "s" },
+		{ Dgds::kDgdsKeyPrevChoice, "PREV_CHOICE", _("Previous dialog / menu item"), "UP", "a" },
+		{ Dgds::kDgdsKeyNextItem, "NEXT_ITEM", _("Next object"), "TAB", "w" },
+		{ Dgds::kDgdsKeyPrevItem, "PREV_ITEM", _("Previous object"), "S+TAB", "q" },
+		{ Dgds::kDgdsKeyPickUp, "PICK_UP", _("Pick up / Operate"), "SPACE", "KP5" },
+		{ Dgds::kDgdsKeyLook, "LOOK", _("Look"), "ENTER", "," },
+		{ Dgds::kDgdsKeyActivate, "ACTIVATE", _("Activate Inventory Object"), "BACKSPACE", nullptr },
+	};
+
+	Common::Keymap *map = new Common::Keymap(Common::Keymap::kKeymapTypeGame, target, _("Game Keys"));
+
+	for (const auto &k : DGDS_KEYS) {
+		Common::Action *act = new Common::Action(k._id, k._desc);
+		act->setCustomEngineActionEvent(k._action);
+		act->addDefaultInputMapping(k._key);
+		if (k._altKey)
+			act->addDefaultInputMapping(k._altKey);
+		map->addAction(act);
+	}
+
+	return Common::Keymap::arrayOf(map);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(DGDS)
