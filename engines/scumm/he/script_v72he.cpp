@@ -956,6 +956,14 @@ void ScummEngine_v72he::o72_actorOps() {
 		break;
 	case SO_SHADOW:
 		a->_heShadow = pop();
+
+		if (_game.heversion >= 80 && a->_heShadow) {
+			if (!_wiz->getColorMixBlockPtrForWiz(a->_heShadow)) {
+				debug(4, "o72_actorOps(): SO_SHADOW: Image %d missing shadow table", a->_heShadow);
+				a->_heShadow = 0;
+			}
+		}
+
 		a->_needRedraw = true;
 		a->_needBgReset = true;
 

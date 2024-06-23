@@ -2923,10 +2923,12 @@ void ScummEngine_v70he::setActorRedrawFlags() {
 		return;
 	}
 
-	if (_game.heversion >= 95) {
+	if (_game.heversion >= 90) {
 		for (int j = 1; j < _numActors; j++) {
-			if (_actors[j]->_costume && _actors[j]->_heShadow)
+			if (_actors[j]->_costume && _actors[j]->_heShadow) {
 				_actors[j]->_needRedraw = true;
+				_actors[j]->_needBgReset = true;
+			}
 		}
 	}
 
@@ -3099,8 +3101,8 @@ void ScummEngine_v95he::resetActorBgs() {
 			// apparently breaks a bunch of other stuff though,
 			// and doesn't help us in any way...
 			//
-			//if (!(testGfxOtherUsageBits(strip, act))
-			//	continue;
+			// if (!(testGfxOtherUsageBits(strip, act)))
+			// 	continue;
 
 			if (!(_actors[act]->_needBgReset))
 				continue;
