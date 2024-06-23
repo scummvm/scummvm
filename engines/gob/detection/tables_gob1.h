@@ -602,6 +602,38 @@
 	0, 0, 0
 },
 
+// -- Amiga --
+
+{
+	{
+		"gob1",
+		"",
+		AD_ENTRY2s("intro.stk", "c65e9cc8ba23a38456242e1f2b1caad4", 135561,
+		           "disk1.stk", "6797b5dbdace1518ecf93dc0414970d8", 367110),
+		UNK_LANG,
+		kPlatformAmiga,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kFeaturesNone,
+	0, 0, 0
+},
+{
+	{
+		"gob1",
+		"",
+		AD_ENTRY2s("intro.stk", "c65e9cc8ba23a38456242e1f2b1caad4", 135561,
+		           "disk1.stk", "a6ed3c1c9a46c511952bac0c11c691f5", 367048),
+		DE_DEU,
+		kPlatformAmiga,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kFeaturesNone,
+	0, 0, 0
+},
+
+
 // -- Demos --
 
 {
