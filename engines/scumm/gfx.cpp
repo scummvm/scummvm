@@ -2533,12 +2533,11 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 	case BMCOMP_SOLID_COLOR_FILL:
 	{
 		WizRawPixel color = (WizRawPixel)(*bmapPtr);
+		if (_vm->_game.heversion > 99 && _vm->VAR_COLOR_BLACK != 0xFF && _vm->VAR(_vm->VAR_COLOR_BLACK) == color)
+			break;
 
 		if (_vm->_game.heversion > 90)
 			color = ((ScummEngine_v71he *)_vm)->_wiz->convert8BppToRawPixel(*bmapPtr, (WizRawPixel *)_vm->getHEPaletteSlot(1));
-
-		if (_vm->_game.heversion > 99 && _vm->VAR_COLOR_BLACK != 0xFF && _vm->VAR(_vm->VAR_COLOR_BLACK) == color)
-			break;
 
 		WizSimpleBitmap dstBitmap;
 		dstBitmap.bufferPtr = WizPxShrdBuffer(dst, false);
