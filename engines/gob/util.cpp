@@ -522,7 +522,7 @@ void Util::cutFromStr(char *str, int16 from, int16 cutlen) {
 	} while (str[i] != 0);
 }
 
-// A copy of this utility function is used by fileio.cpp.
+// A copy of this utility function is used by dataio.cpp.
 void Util::replaceChar(char *str, char c1, char c2) {
 	while ((str = strchr(str, c1)))
 		*str = c2;
