@@ -107,7 +107,7 @@ class Base64TestSuite : public CxxTest::TestSuite {
 
 			Common::String string(data, strlen(base64_test_string[i]));
 			TS_ASSERT_EQUALS(string, base64_test_string[i]);
-			delete data;
+			free(data);
 		}
 	}
 
