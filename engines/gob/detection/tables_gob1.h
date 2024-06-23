@@ -36,7 +36,7 @@
 	{
 		"gob1",
 		"EGA",
-		AD_ENTRY1("intro.stk", "c65e9cc8ba23a38456242e1f2b1caad4"),
+		AD_ENTRY1s("intro.stk", "c65e9cc8ba23a38456242e1f2b1caad4", 135561),
 		UNK_LANG,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
