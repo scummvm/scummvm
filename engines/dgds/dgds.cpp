@@ -406,24 +406,40 @@ Common::Error DgdsEngine::run() {
 	while (!shouldQuit()) {
 		Common::EventType mouseEvent = Common::EVENT_INVALID;
 		while (eventMan->pollEvent(ev)) {
-			if (ev.type == Common::EVENT_KEYDOWN) {
-				switch (ev.kbd.keycode) {
-				case Common::KEYCODE_ESCAPE:
+			if (ev.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+				switch ((DgdsKeyEvent)ev.customType) {
+				case kDgdsKeyToggleMenu:
 					_menuToTrigger = kMenuMain;
 					break;
-				case Common::KEYCODE_F5:
-					_menuToTrigger = kMenuMain;
+				case kDgdsKeySave:
+					saveGameDialog();
 					break;
-				case Common::KEYCODE_s:
-					if (ev.kbd.hasFlags(Common::KBD_CTRL))
-						saveGameDialog();
+				case kDgdsKeyLoad:
+					loadGameDialog();
 					break;
-				case Common::KEYCODE_l:
-					if (ev.kbd.hasFlags(Common::KBD_CTRL))
-						loadGameDialog();
-					break;
-				case Common::KEYCODE_c:
+				case kDgdsKeyToggleClock:
 					_clock.toggleVisibleUser();
+					break;
+				case kDgdsKeyNextChoice:
+					warning("TODO: Implement kDgdsKeyNextChoice");
+					break;
+				case kDgdsKeyPrevChoice:
+					warning("TODO: Implement kDgdsKeyPrevChoice");
+					break;
+				case kDgdsKeyNextItem:
+					warning("TODO: Implement kDgdsKeyNextItem");
+					break;
+				case kDgdsKeyPrevItem:
+					warning("TODO: Implement kDgdsKeyPrevItem");
+					break;
+				case kDgdsKeyPickUp:
+					warning("TODO: Implement kDgdsKeyPickUp");
+					break;
+				case kDgdsKeyLook:
+					warning("TODO: Implement kDgdsKeyLook");
+					break;
+				case kDgdsKeyActivate:
+					warning("TODO: Implement kDgdsKeyActivate");
 					break;
 				default:
 					break;

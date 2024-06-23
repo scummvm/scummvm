@@ -75,6 +75,20 @@ enum DgdsDetailLevel {
 	kDgdsDetailHigh = 1
 };
 
+enum DgdsKeyEvent {
+	kDgdsKeyLoad,
+	kDgdsKeySave,
+	kDgdsKeyToggleMenu,
+	kDgdsKeyToggleClock,
+	kDgdsKeyNextChoice,
+	kDgdsKeyPrevChoice,
+	kDgdsKeyNextItem,
+	kDgdsKeyPrevItem,
+	kDgdsKeyPickUp,
+	kDgdsKeyLook,
+	kDgdsKeyActivate,
+};
+
 class DgdsEngine : public Engine {
 public:
 	Common::Platform _platform;
