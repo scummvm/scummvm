@@ -76,14 +76,14 @@ bool DgdsFont::hasChar(byte chr) const {
 	return (chr >= _start && chr <= (_start + _count));
 }
 
-static inline uint isSet(const byte *set, uint bit) {
+static inline bool isSet(const byte *data, uint bit) {
 	assert(bit >= 0);
-	return (set[bit / 8] & (1 << (bit & 7)));
+	return data[bit / 8] & (1 << (7 - (bit % 8)));
 }
 
 void DgdsFont::drawChar(Graphics::Surface* dst, int pos, int bit, int x, int y, int w, uint32 color) const {
-	const Common::Rect destRect(x, y, x + w, y + _h);
-	Common::Rect clippedDestRect(0, 0, dst->w, dst->h);
+	const Common::Rect destRect(Common::Point(x, y), w, _h);
+	Common::Rect clippedDestRect(dst->w, dst->h);
 	clippedDestRect.clip(destRect);
 
 	const Common::Point croppedBy(clippedDestRect.left - destRect.left, clippedDestRect.top - destRect.top);
@@ -91,14 +91,14 @@ void DgdsFont::drawChar(Graphics::Surface* dst, int pos, int bit, int x, int y, 
 	const int rows = clippedDestRect.height();
 	const int columns = clippedDestRect.width();
 
-	int idx = bit + croppedBy.x;
+	int bitOffset = bit + croppedBy.x;
 	int bytesPerRow = (w + 7) / 8;
 	const byte *src = _glyphs + pos + (croppedBy.y * bytesPerRow);
 	byte *ptr = (byte *)dst->getBasePtr(clippedDestRect.left, clippedDestRect.top);
 
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < columns; ++j) {
-			if (isSet(src, idx + _w - 1 - j))
+			if (isSet(src, bitOffset + j))
 				ptr[j] = color;
 		}
 		ptr += dst->pitch;
@@ -146,12 +146,6 @@ FFont *FFont::load(Common::SeekableReadStream &input) {
 PFont::PFont(byte w, byte h, byte start, byte count, byte *data)
 : DgdsFont(w, h, start, count, data + 3 * count), _offsets(reinterpret_cast<const uint16 *>(data)), _widths(data + 2 * count), _rawData(data)
 {
-	debug("-- PFont dump:");
-	debug("char\tw\th\toffset");
-	for (uint c = start; c < start + count; c++) {
-		debug("'%c'\t%d\t%d\t%d", (char)c, _widths[c - start], h, _offsets[c - start]);
-	}
-	debug("-- end dump");
 }
 
 PFont::~PFont() {
@@ -169,7 +163,9 @@ void PFont::drawChar(Graphics::Surface* dst, uint32 chr, int x, int y, uint32 co
 
 	int pos, bit;
 	mapChar(chr, pos, bit);
-	DgdsFont::drawChar(dst, pos, bit, x, y, getCharWidth(chr), color);
+
+	int w = getCharWidth(chr);
+	DgdsFont::drawChar(dst, pos, bit, x, y, w, color);
 }
 
 int PFont::getCharWidth(uint32 chr) const {
