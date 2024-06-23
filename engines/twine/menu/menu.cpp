@@ -56,6 +56,9 @@ namespace TwinE {
 
 static const uint32 kPlasmaEffectFilesize = 262176;
 
+#define HEIGHT_STANDARD 50
+#define MENU_SPACE 6
+
 namespace MenuButtonTypes {
 enum MenuButtonTypesEnum {
 	kMusicVolume = 1,
@@ -313,9 +316,9 @@ void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &r
 
 			processPlasmaEffect(rect, COLOR_80);
 			if (!(_engine->getRandomNumber() % 5)) {
-				_plasmaEffectPtr[_engine->getRandomNumber() % 140 * 10 + 1900] = 255;
+				_plasmaEffectPtr[(_engine->getRandomNumber() % PLASMA_WIDTH * 10) + 20 * PLASMA_WIDTH] = 255;
 			}
-			_engine->_interface->drawFilledRect(Common::Rect(newWidth, rect.top, rect.right, rect.bottom), COLOR_68);
+			_engine->_interface->drawFilledRect(Common::Rect(newWidth, rect.top, rect.right, rect.bottom), COLOR_SELECT_MENU);
 		} else {
 			processPlasmaEffect(rect, COLOR_64);
 			if (!(_engine->getRandomNumber() % 5)) {
@@ -343,7 +346,7 @@ int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 	if (topHeight == 0) {
 		topHeight = 35;
 	} else {
-		topHeight = topHeight - (((maxButton - 1) * 6) + (maxButton * 50)) / 2;
+		topHeight = topHeight - (((maxButton - 1) * 6) + (maxButton * HEIGHT_STANDARD)) / 2;
 	}
 
 	if (maxButton <= 0) {
@@ -422,7 +425,7 @@ int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 		const int32 menuItemId = menuSettings->getButtonState(i);
 		const char *text = menuSettings->getButtonText(_engine->_text, i);
 		const int32 border = 45;
-		const int32 mainMenuButtonHeightHalf = 25;
+		const int32 mainMenuButtonHeightHalf = HEIGHT_STANDARD / 2;
 		const Common::Rect rect(border, topHeight - mainMenuButtonHeightHalf, _engine->width() - border, topHeight + mainMenuButtonHeightHalf);
 		if (hover) {
 			if (i == buttonNumber) {
@@ -439,7 +442,7 @@ int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 			mouseActiveButton = i;
 		}
 
-		topHeight += 56; // increase button top height
+		topHeight += HEIGHT_STANDARD + MENU_SPACE; // increase button top height
 	}
 	return mouseActiveButton;
 }
@@ -1316,7 +1319,7 @@ void Menu::processInventoryMenu() {
 
 	_engine->_renderer->setLightVector(LBAAngles::ANGLE_315, LBAAngles::ANGLE_334, LBAAngles::ANGLE_0);
 
-	_inventorySelectedColor = COLOR_68;
+	_inventorySelectedColor = COLOR_SELECT_MENU;
 
 	if (_engine->_gameState->_inventoryNumLeafs > 0) {
 		_engine->_gameState->giveItem(InventoryItems::kiCloverLeaf);

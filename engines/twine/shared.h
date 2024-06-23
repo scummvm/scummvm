@@ -770,7 +770,8 @@ inline constexpr T bits(T value, uint8 offset, uint8 bits) {
 #define COLOR_48 48 // brown dark
 #define COLOR_63 63 // brown bright
 #define COLOR_64 64 // blue dark
-#define COLOR_68 68 // blue
+#define COLOR_SELECT_MENU 68 // blue
+// TODO #define COLOR_SELECT_MENU 166 // blue lba2
 #define COLOR_73 73 // blue
 #define COLOR_75 75
 #define COLOR_79 79 // blue bright
