@@ -70,12 +70,14 @@ CBagVar::~CBagVar() {
 void CBagVar::setValue(const CBofString &s) {
 	assert(isValidObject(this));
 
-	if (!s.isEmpty()) {
-		char c = s[0];
-		if (Common::isDigit(c) || c == '-')
-			setNumeric();
+	if (!_freeze) {
+		if (!s.isEmpty()) {
+			char c = s[0];
+			if (Common::isDigit(c) || c == '-')
+				setNumeric();
+		}
+		_sVarValue = s;
 	}
-	_sVarValue = s;
 }
 
 const CBofString &CBagVar::getValue() {
@@ -117,10 +119,12 @@ void CBagVar::setBoolValue(bool bVal) {
 void CBagVar::setValue(int nVal) {
 	assert(isValidObject(this));
 
-	setNumeric();
+	if (!_freeze) {
+		setNumeric();
 
-	Common::String tmp = Common::String::format("%d", nVal);
-	_sVarValue = tmp.c_str();
+		Common::String tmp = Common::String::format("%d", nVal);
+		_sVarValue = tmp.c_str();
+	}
 }
 
 int CBagVar::getNumValue() {

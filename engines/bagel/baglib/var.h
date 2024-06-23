@@ -42,6 +42,7 @@ private:
 	bool _bReference : 1;  // Is the variable a reference to an objects state date
 	bool _bTimer : 1;      // Is the variable updated on object timer events
 	bool _bRandom : 1;     // Is the variable updated as a random number
+	bool _freeze = false;
 
 public:
 	CBagVar();
@@ -80,6 +81,9 @@ public:
 	bool isRandom() {
 		return _bRandom;
 	}
+	bool isFrozen() const {
+		return _freeze;
+	}
 	VARTYPE getType() {
 		return _xVarType;
 	}
@@ -103,6 +107,9 @@ public:
 	}
 	void setRandom(bool bVal = true) {
 		_bRandom = bVal;
+	}
+	void setFreeze(bool bVal = true) {
+		_freeze = bVal;
 	}
 	void setString() {
 		_xVarType = STRING;

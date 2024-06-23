@@ -37,6 +37,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("save",      WRAP_METHOD(Console, cmdSave));
 	registerCmd("load",      WRAP_METHOD(Console, cmdLoad));
 	registerCmd("video",     WRAP_METHOD(Console, cmdVideo));
+	registerCmd("timefreeze", WRAP_METHOD(Console, cmdTimefreeze));
 }
 
 Console::~Console() {
@@ -155,6 +156,14 @@ bool Console::cmdVideo(int argc, const char **argv) {
 	} else {
 		return false;
 	}
+}
+
+bool Console::cmdTimefreeze(int argc, const char **argv) {
+	CBagVar *var = g_VarManager->getVariable("TURNCOUNT");
+	var->setFreeze(!var->isFrozen());
+
+	debugPrintf("Time freeze is %s\n", var->isFrozen() ? "on" : "off");
+	return true;
 }
 
 } // End of namespace Bagel
