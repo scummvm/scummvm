@@ -124,7 +124,7 @@ void Clock::draw(Graphics::ManagedSurface &surf) {
 	const Common::String clockStr = getTimeStr();
 
 	const FontManager *fontman = static_cast<DgdsEngine *>(g_engine)->getFontMan();
-	const Font *font = fontman->getFont(FontManager::k4x5Font);
+	const DgdsFont *font = fontman->getFont(FontManager::k4x5Font);
 	int width = font->getMaxCharWidth() * 12 + 3;
 	_drawPos.top = 0;
 	_drawPos.bottom = font->getFontHeight() + 6;

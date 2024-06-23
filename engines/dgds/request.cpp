@@ -357,7 +357,7 @@ void ButtonGadget::draw(Graphics::ManagedSurface *dst) const {
 	dst->drawLine(x + 3, bottom - 3, right - 4, bottom - 3, ButtonColors[colOffset + 3]);
 
 	if (!_buttonName.empty()) {
-		const Font *font = RequestData::getMenuFont();
+		const DgdsFont *font = RequestData::getMenuFont();
 
 		// TODO: Depending on some flags, the game toggles " ON " to " OFF" at the
 		// end of the string.
@@ -407,7 +407,7 @@ Common::String TextAreaGadget::dump() const {
 }
 
 void TextAreaGadget::draw(Graphics::ManagedSurface *dst) const {
-	const Font *font = RequestData::getMenuFont();
+	const DgdsFont *font = RequestData::getMenuFont();
 	font->drawString(dst, _buttonName, _x + _parentX, _y + _parentY, 0, 0);
 }
 
@@ -442,7 +442,7 @@ static const char *_sliderLabelsForGadget(uint16 num) {
 static const int SLIDER_HANDLE_FRAME = 28;
 
 void SliderGadget::draw(Graphics::ManagedSurface *dst) const {
-	const Font *font = RequestData::getMenuFont();
+	const DgdsFont *font = RequestData::getMenuFont();
 
 	int16 x = _x + _parentX;
 	int16 y = _y + _parentY;
@@ -652,7 +652,7 @@ void RequestData::drawInvType(Graphics::ManagedSurface *dst) {
 }
 
 /*static*/
-const Font *RequestData::getMenuFont() {
+const DgdsFont *RequestData::getMenuFont() {
 	return static_cast<DgdsEngine *>(g_engine)->getFontMan()->getFont(FontManager::kGameFont);
 }
 
@@ -691,7 +691,7 @@ void RequestData::drawCorners(Graphics::ManagedSurface *dst, uint16 startNum, ui
 /*static*/
 void RequestData::drawHeader(Graphics::ManagedSurface *dst, int16 x, int16 y, int16 width, int16 yoffset, const Common::String &header) {
 	if (!header.empty()) {
-		const Font *font = getMenuFont();
+		const DgdsFont *font = getMenuFont();
 		int hwidth = font->getStringWidth(header);
 		int hheight = font->getFontHeight();
 		int hleft = x + (width - hwidth) / 2;

@@ -198,7 +198,7 @@ void Menu::drawMenuText(Graphics::ManagedSurface &dst) {
 			continue;
 		}
 
-		const Font *font = RequestData::getMenuFont();
+		const DgdsFont *font = RequestData::getMenuFont();
 		int w = font->getStringWidth(textItem._txt);
 		font->drawString(dst.surfacePtr(), textItem._txt, parentX + textItem._x, parentY + textItem._y, w, 0);
 		pos++;

@@ -83,7 +83,7 @@ static void _drawPixel(int x, int y, int color, void *data) {
 }
 
 
-const Font *Dialog::getDlgTextFont() const {
+const DgdsFont *Dialog::getDlgTextFont() const {
 	const FontManager *fontman = static_cast<DgdsEngine *>(g_engine)->getFontMan();
 	FontManager::FontType fontType = FontManager::kGameDlgFont;
 	if (_fontSize == 1)
@@ -307,7 +307,7 @@ void Dialog::drawFindSelectionXY() {
 	if (!_state)
 		return;
 
-	const Font *font = getDlgTextFont();
+	const DgdsFont *font = getDlgTextFont();
 
 	// Find the appropriate _lastMouseX/lastMouseY value given the last _strMouseLoc.
 
@@ -392,7 +392,7 @@ void Dialog::drawFindSelectionTxtOffset() {
 
 	// Find the appropriate _strMouseLoc value given the last x/y position.
 
-	const Font *font = getDlgTextFont();
+	const DgdsFont *font = getDlgTextFont();
 	int lastMouseX = _state->_lastMouseX;
 	int lastMouseY = _state->_lastMouseY;
 	int lineHeight = font->getFontHeight();
@@ -443,7 +443,7 @@ void Dialog::drawForeground(Graphics::ManagedSurface *dst, uint16 fontcol, const
 	assert(_state);
 
 	Common::StringArray lines;
-	const Font *font = getDlgTextFont();
+	const DgdsFont *font = getDlgTextFont();
 	const int h = font->getFontHeight();
 	font->wordWrapText(txt, _state->_loc.width, lines);
 

@@ -31,7 +31,7 @@
 
 namespace Dgds {
 
-class Font;
+class DgdsFont;
 class Image;
 
 struct TextItem {
@@ -193,7 +193,7 @@ public:
 	void drawBg(Graphics::ManagedSurface *dst) const;
 	void drawInvType(Graphics::ManagedSurface *dst);
 
-	static const Font *getMenuFont();
+	static const DgdsFont *getMenuFont();
 	static const Image *getCorners();
 
 	static void fillBackground(Graphics::ManagedSurface *dst, uint16 x, uint16 y, uint16 width, uint16 height, int16 startoffset);

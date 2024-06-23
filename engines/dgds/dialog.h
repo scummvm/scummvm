@@ -36,7 +36,7 @@ class ManagedSurface;
 
 namespace Dgds {
 
-class Font;
+class DgdsFont;
 class SceneOp;
 
 enum DialogFlags {
@@ -141,7 +141,7 @@ private:
 	void drawFindSelectionTxtOffset();
 	void drawForeground(Graphics::ManagedSurface *dst, uint16 fontcol, const Common::String &txt);
 
-	const Font *getDlgTextFont() const;
+	const DgdsFont *getDlgTextFont() const;
 
 	static int _lastSelectedDialogItemNum;
 	static Dialog *_lastDialogSelectionChangedFor;

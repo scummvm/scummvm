@@ -504,7 +504,7 @@ static void _drawDragonCountdown(FontManager::FontType fontType, int16 x, int16 
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	int16 countdownEnd = engine->getGameGlobals()->getGlobal(0x22);
 	int16 currentMins = engine->getClock().getMins();
-	const Font *fnt = engine->getFontMan()->getFont(fontType);
+	const DgdsFont *fnt = engine->getFontMan()->getFont(fontType);
 	Common::String str = Common::String::format("%d", countdownEnd - currentMins);
 	fnt->drawString(&engine->_compositionBuffer, str, x, y, 320 - x, 10);
 }
