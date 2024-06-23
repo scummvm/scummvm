@@ -62,9 +62,8 @@ void Darkseed::Sprites::clearSpriteDrawList() {
 }
 
 void Darkseed::Sprites::drawSprites() {
-	while (!spriteDrawList.empty()) {
-		SpriteDrawInstruction &drawInstruction = spriteDrawList.back();
+	for (int i = spriteDrawList.size() - 1; i >= 0; i--) {
+		SpriteDrawInstruction &drawInstruction = spriteDrawList[i];
 		drawInstruction.sprite->drawScaled(drawInstruction.destX, drawInstruction.destY, drawInstruction.destW, drawInstruction.destH, drawInstruction.flip);
-		spriteDrawList.pop_back();
 	}
 }

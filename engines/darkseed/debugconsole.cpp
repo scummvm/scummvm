@@ -27,6 +27,8 @@ namespace Darkseed {
 DebugConsole::DebugConsole(TosText *tosText) : GUI::Debugger(), tosText(tosText) {
 	registerCmd("tostext",   WRAP_METHOD(DebugConsole, Cmd_tostext));
 	registerCmd("dt",   WRAP_METHOD(DebugConsole, Cmd_dt));
+	registerCmd("getvar",   WRAP_METHOD(DebugConsole, Cmd_getvar));
+	registerCmd("setvar",   WRAP_METHOD(DebugConsole, Cmd_setvar));
 }
 
 DebugConsole::~DebugConsole() {
@@ -54,6 +56,30 @@ bool DebugConsole::Cmd_dt(int argc, const char **argv) {
 				hour % 12,
 				(g_engine->_currentTimeInSeconds / 60) % 60,
 				hour < 12 ? "AM" : "PM", g_engine->_currentTimeInSeconds);
+	return true;
+}
+
+bool DebugConsole::Cmd_getvar(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: getvar <index>\n");
+		return true;
+	}
+
+	uint16 varIdx = atoi(argv[1]);
+	debugPrintf("Object Var: %d\n", g_engine->_objects.getVar(varIdx));
+	return true;
+}
+
+bool DebugConsole::Cmd_setvar(int argc, const char **argv) {
+	if (argc != 3) {
+		debugPrintf("Usage: setvar <index> <newValue>\n");
+		return true;
+	}
+
+	uint16 varIdx = atoi(argv[1]);
+	int16 newValue = atoi(argv[2]);
+
+	g_engine->_objects.setVar(varIdx, newValue);
 	return true;
 }
 

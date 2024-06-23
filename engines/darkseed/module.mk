@@ -16,7 +16,9 @@ MODULE_OBJS = \
 	room.o \
 	cursor.o \
 	player.o \
-	sprites.o
+	sprites.o \
+	objects.o \
+	inventory.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_DARKSEED), DYNAMIC_PLUGIN)
