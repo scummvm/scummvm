@@ -138,6 +138,8 @@ static const char *ttmOpName(uint16 op) {
 	case 0x0090: return "FREE FONT";
 	case 0x00B0: return "NULLOP";
 	case 0x0110: return "PURGE";
+	case 0x0400: return "PALETTE SOMETHING ?";
+	case 0x0510: return "UNKNOWN 0x0510";
 	case 0x0ff0: return "FINISH FRAME / DRAW";
 	case 0x1020: return "SET DELAY";
 	case 0x1030: return "SET BRUSH";
@@ -154,6 +156,10 @@ static const char *ttmOpName(uint16 op) {
 	case 0x2000: return "SET DRAW COLORS";
 	case 0x2010: return "SET FRAME";
 	case 0x2020: return "SET RANDOM DELAY";
+	case 0x2300: return "UNKNOWN 0x23x2 series";
+	case 0x2310: return "UNKNOWN 0x23x2 series";
+	case 0x2320: return "UNKNOWN 0x23x2 series";
+	case 0x2400: return "UNKNOWN 0x2402, palette related";
 	case 0x4000: return "SET CLIP WINDOW";
 	case 0x4110: return "FADE OUT";
 	case 0x4120: return "FADE IN";
@@ -240,6 +246,8 @@ static void _copyRectToScreen(const Graphics::ManagedSurface &src, const Common:
 	if (r.isEmpty())
 		return;
 	Graphics::Surface *surf = g_system->lockScreen();
+	Common::Rect copyRect = r;
+	copyRect.clip(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT));
 	surf->copyRectToSurface(src.rawSurface(), r.left, r.top, r);
 	g_system->unlockScreen();
 }
@@ -631,7 +639,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		uint strnum = (op & 0x70) >> 4;
 		const Common::String &str = env._strings[strnum];
 		const FontManager *mgr = _vm->getFontMan();
-		const Font *font = mgr->getFont(env._fonts[fontno]);
+		const DgdsFont *font = mgr->getFont(env._fonts[fontno]);
 		// Note: ignore the y-height argument (ivals[3]) for now. If width is 0, draw as much as we can.
 		int width = ivals[2];
 		if (width == 0)
@@ -643,32 +651,36 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		// DRAW SPRITE x,y:int  .. how different from 0xa500??
 		// FALL THROUGH
 	case 0xa520:
-		// DRAW SPRITE FLIP: x,y:int ; happens once in INTRO.TTM
+		// DRAW SPRITE FLIP: x,y:int
 		// FALL THROUGH
 	case 0xa530:
 		// CHINA
 		// DRAW BMP4:	x,y,tile-id,bmp-id:int	[-n,+n] (CHINA)
 		// arguments similar to DRAW BMP but it draws the same BMP multiple times with radial symmetry?
 		// you can see this in the Dynamix logo star.
-		// FALL THROUGH
+		// FALL THROUGH FOR NOW
 	case 0xa500: {
 		// DRAW BMP: x,y,tile-id,bmp-id:int [-n,+n] (CHINA)
-		// This is kind of file system intensive, will likely have to change to store all the BMPs.
 		int frameno;
-		if (count == 4) {
+		int bmpNo;
+		if (count == 6) {
 			frameno = ivals[2];
-			// TODO: Check if the bmp id is changed here in CHINA or if a temp val is used.
-			seq._currentBmpId = ivals[3];
+			bmpNo = ivals[3];
+			warning("TODO: Implement other args %d %d of 6-arg draw function 0x%4x", ivals[4], ivals[5], op);
+		} else if (count == 4) {
+			frameno = ivals[2];
+			bmpNo = ivals[3];
 		} else {
 			frameno = seq._brushNum;
+			bmpNo = seq._currentBmpId;
 		}
 
 		// DRAW BMP: x,y:int [-n,+n] (RISE)
-		Common::SharedPtr<Image> img = env._scriptShapes[seq._currentBmpId];
+		Common::SharedPtr<Image> img = env._scriptShapes[bmpNo];
 		if (img)
 			img->drawBitmap(frameno, ivals[0], ivals[1], seq._drawWin, _vm->_compositionBuffer, op == 0xa520);
 		else
-			warning("Trying to draw image %d in env %d which is not loaded", seq._currentBmpId, env._enviro);
+			warning("Trying to draw image %d in env %d which is not loaded", bmpNo, env._enviro);
 		break;
 	}
 	case 0xa600: { // DRAW GETPUT: i:int
@@ -700,6 +712,18 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 			if (finished)
 				_vm->adsInterpreter()->setHitTTMOp0110();
 		}
+		break;
+	}
+	case 0xc020: {	// LOAD SAMPLE: filename:str
+		_vm->_soundPlayer->loadMacMusic(sval.c_str());
+		break;
+	}
+	case 0xc030: {	// SELECT SAMPLE: int: i
+		// Do nothing for now?
+		break;
+	}
+	case 0xc050: {	// PLAY SAMPLE: int: i
+		_vm->_soundPlayer->playMusic(ivals[0]);
 		break;
 	}
 	case 0xf010: { // LOAD SCR:	filename:str
@@ -772,14 +796,9 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	case 0xa300: // DRAW some string? x,y,?,?:int
 	case 0xa400: // DRAW FILLED CIRCLE
 	case 0xa420: // DRAW EMPTY CIRCLE
-
-	// From here on are not implemented in DRAGON
-	case 0xb600: // DRAW SCREEN??
-	case 0xc020: // LOAD_SAMPLE
-	case 0xc030: // SELECT_SAMPLE
-	case 0xc040: // DESELECT_SAMPLE
-	case 0xc050: // PLAY_SAMPLE
-	case 0xc060: // STOP_SAMPLE
+	case 0xb600: // DRAW SCREEN?? 6 args		// HoC onward
+	case 0xc040: // DESELECT_SAMPLE				// SQ5 demo onward
+	case 0xc060: // STOP_SAMPLE					// SQ5 demo onward
 
 	default:
 		if (count < 15)

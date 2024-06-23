@@ -31,7 +31,7 @@
 
 namespace Dgds {
 
-Font *Font::load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor) {
+DgdsFont *DgdsFont::load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor) {
 	Common::SeekableReadStream *fontFile = resourceManager->getResource(filename);
 	if (!fontFile) {
 		warning("Font file %s not found", filename.c_str());
@@ -40,7 +40,7 @@ Font *Font::load(const Common::String &filename, ResourceManager *resourceManage
 
 	DgdsChunkReader chunk(fontFile);
 
-	Font *font = nullptr;
+	DgdsFont *font = nullptr;
 
 	while (chunk.readNextHeader(EX_FNT, filename)) {
 		if (chunk.isContainer()) {
@@ -67,31 +67,33 @@ Font *Font::load(const Common::String &filename, ResourceManager *resourceManage
 	return font;
 }
 
-Font::Font(byte w, byte h, byte start, byte count, const byte *glyphs) : _w(w), _h(h), _start(start), _count(count), _glyphs(glyphs) { }
+DgdsFont::DgdsFont(byte w, byte h, byte start, byte count, const byte *glyphs) : _w(w), _h(h), _start(start), _count(count), _glyphs(glyphs) { }
 
-Font::~Font() {
+DgdsFont::~DgdsFont() {
 }
 
-bool Font::hasChar(byte chr) const {
+bool DgdsFont::hasChar(byte chr) const {
 	return (chr >= _start && chr <= (_start + _count));
 }
 
 static inline uint isSet(const byte *set, uint bit) {
-	return (set[bit >> 3] & (1 << (bit & 7)));
+	assert(bit >= 0);
+	return (set[bit / 8] & (1 << (bit & 7)));
 }
 
-void Font::drawChar(Graphics::Surface* dst, int pos, int bit, int x, int y, uint32 color) const {
-	const Common::Rect destRect(x, y, x + _w, y + _h);
+void DgdsFont::drawChar(Graphics::Surface* dst, int pos, int bit, int x, int y, int w, uint32 color) const {
+	const Common::Rect destRect(x, y, x + w, y + _h);
 	Common::Rect clippedDestRect(0, 0, dst->w, dst->h);
 	clippedDestRect.clip(destRect);
 
-	const Common::Point croppedBy(clippedDestRect.left-destRect.left, clippedDestRect.top-destRect.top);
+	const Common::Point croppedBy(clippedDestRect.left - destRect.left, clippedDestRect.top - destRect.top);
 
 	const int rows = clippedDestRect.height();
 	const int columns = clippedDestRect.width();
 
 	int idx = bit + croppedBy.x;
-	const byte *src = _glyphs + pos + croppedBy.y;
+	int bytesPerRow = (w + 7) / 8;
+	const byte *src = _glyphs + pos + (croppedBy.y * bytesPerRow);
 	byte *ptr = (byte *)dst->getBasePtr(clippedDestRect.left, clippedDestRect.top);
 
 	for (int i = 0; i < rows; ++i) {
@@ -100,11 +102,11 @@ void Font::drawChar(Graphics::Surface* dst, int pos, int bit, int x, int y, uint
 				ptr[j] = color;
 		}
 		ptr += dst->pitch;
-		src++;
+		src += bytesPerRow;
 	}
 }
 
-FFont::FFont(byte w, byte h, byte start, byte count, byte *data) : Font(w, h, start, count, data), _rawData(data) {
+FFont::FFont(byte w, byte h, byte start, byte count, byte *data) : DgdsFont(w, h, start, count, data), _rawData(data) {
 }
 
 FFont::~FFont() {
@@ -121,7 +123,7 @@ void FFont::drawChar(Graphics::Surface* dst, uint32 chr, int x, int y, uint32 co
 
 	int pos, bit;
 	mapChar(chr, pos, bit);
-	Font::drawChar(dst, pos, bit, x, y, color);
+	DgdsFont::drawChar(dst, pos, bit, x, y, _w, color);
 }
 
 FFont *FFont::load(Common::SeekableReadStream &input) {
@@ -133,7 +135,7 @@ FFont *FFont::load(Common::SeekableReadStream &input) {
 
 	assert((4 + size) == input.size());
 
-	debug("    w: %u, h: %u, start: 0x%x, count: %u", w, h, start, count);
+	debug("FFont w: %u, h: %u, start: 0x%x, count: %u", w, h, start, count);
 
 	byte *data = new byte[size];
 	input.read(data, size);
@@ -142,8 +144,14 @@ FFont *FFont::load(Common::SeekableReadStream &input) {
 }
 
 PFont::PFont(byte w, byte h, byte start, byte count, byte *data)
-: Font(w, h, start, count, data + 3 * count), _offsets(reinterpret_cast<const uint16 *>(data)), _widths(data + 2 * count), _rawData(data)
+: DgdsFont(w, h, start, count, data + 3 * count), _offsets(reinterpret_cast<const uint16 *>(data)), _widths(data + 2 * count), _rawData(data)
 {
+	debug("-- PFont dump:");
+	debug("char\tw\th\toffset");
+	for (uint c = start; c < start + count; c++) {
+		debug("'%c'\t%d\t%d\t%d", (char)c, _widths[c - start], h, _offsets[c - start]);
+	}
+	debug("-- end dump");
 }
 
 PFont::~PFont() {
@@ -161,7 +169,7 @@ void PFont::drawChar(Graphics::Surface* dst, uint32 chr, int x, int y, uint32 co
 
 	int pos, bit;
 	mapChar(chr, pos, bit);
-	Font::drawChar(dst, pos, bit, x, y, color);
+	DgdsFont::drawChar(dst, pos, bit, x, y, getCharWidth(chr), color);
 }
 
 int PFont::getCharWidth(uint32 chr) const {
@@ -179,10 +187,8 @@ PFont *PFont::load(Common::SeekableReadStream &input, Decompressor *decompressor
 	byte count = input.readByte();
 	int size = input.readUint16LE();
 
-	debug("    magic: 0x%x, w: %u, h: %u, unknown: %u, start: 0x%x, count: %u\n"
-	      "    size: %u",
-			magic, w, h, unknown, start, count,
-			size);
+	debug("PFont magic: 0x%x, w: %u, h: %u, unk: %u, start: 0x%x, count: %u, size: %u",
+			magic, w, h, unknown, start, count, size);
 
 	assert(magic == 0xFF);
 
@@ -200,13 +206,13 @@ FontManager::~FontManager() {
 			delete entry._value;
 }
 
-const Font *FontManager::getFont(FontType type) const {
+const DgdsFont *FontManager::getFont(FontType type) const {
 	return _fonts.getVal(type);
 }
 
 void FontManager::tryLoadFont(const char *fname, ResourceManager *resMgr, Decompressor *decomp) {
 	FontType ftype = fontTypeByName(fname);
-	Font *font = Font::load(fname, resMgr, decomp);
+	DgdsFont *font = DgdsFont::load(fname, resMgr, decomp);
 	if (font)
 		_fonts.setVal(ftype, font);
 	else
@@ -226,22 +232,27 @@ FontManager::FontType FontManager::fontTypeByName(const Common::String &filename
 	if (filename == "WILLY.FNT") return kGameFont;
 	if (filename == "WVCR.FNT") return kWVCRFont;
 	if (filename == "COMIX_16.FNT") return kGameDlgFont;
-	if (filename == "EXIT.FNT") return kDefaultFont;
-	if (filename == "SSM1_12.FNT") return kGameFont;
-	if (filename == "SSM1_15.FNT") return kGameDlgFont;
+	if (filename == "EXIT.FNT") return kGameDlgFont;
+	if (filename == "SSM1_12.FNT") return kDefaultFont;
+	if (filename == "SSM1_15.FNT") return kGameFont;
 	if (filename == "SSM1_30.FNT") return kWVCRFont;
+	if (filename == "RMN7_19.FNT") return kGameFont;
+	if (filename == "RMN8_11.FNT") return kDefaultFont;
 	return FontManager::kDefaultFont;
 }
 
 
 void FontManager::loadFonts(DgdsGameId gameId, ResourceManager *resMgr, Decompressor *decomp) {
-	if (gameId == GID_SQ5DEMO || gameId == GID_COMINGSOON) {
+	if (gameId == GID_SQ5DEMO) {
+		tryLoadFont("SSM1_12.FNT", resMgr, decomp);
+		tryLoadFont("SSM1_15.FNT", resMgr, decomp);
+		tryLoadFont("SSM1_30.FNT", resMgr, decomp);
 		tryLoadFont("EXIT.FNT", resMgr, decomp);
-		if (gameId == GID_SQ5DEMO) {
-			tryLoadFont("SSM1_12.FNT", resMgr, decomp);
-			tryLoadFont("SSM1_15.FNT", resMgr, decomp);
-			tryLoadFont("SSM1_30.FNT", resMgr, decomp);
-		}
+		return;
+	} else if (gameId == GID_COMINGSOON) {
+		tryLoadFont("RMN7_19.FNT", resMgr, decomp);
+		tryLoadFont("RMN8_11.FNT", resMgr, decomp);
+		tryLoadFont("EXIT.FNT", resMgr, decomp);
 		return;
 	}
 

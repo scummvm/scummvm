@@ -34,7 +34,7 @@ namespace Dgds {
 
 class ResourceManager;
 class Decompressor;
-class Font;
+class DgdsFont;
 
 enum SceneCondition {
 	kSceneCondNone = 0,

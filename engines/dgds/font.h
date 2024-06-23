@@ -44,15 +44,14 @@ namespace Dgds {
 class ResourceManager;
 class Decompressor;
 
-class Font : public Graphics::Font {
+class DgdsFont : public Graphics::Font {
 public:
-	Font(byte w, byte h, byte start, byte count, const byte *glyphs);
-	virtual ~Font();
-	int getFontHeight() const { return _h; }
-	int getMaxCharWidth() const { return _w; }
-	virtual int getCharWidth(uint32 chr) const = 0;
-	void drawChar(Graphics::Surface* dst, int pos, int bit, int x, int y, uint32 color) const;
-	static Font *load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor);
+	DgdsFont(byte w, byte h, byte start, byte count, const byte *glyphs);
+	virtual ~DgdsFont();
+	virtual int getFontHeight() const override { return _h; }
+	virtual int getMaxCharWidth() const override { return _w; }
+	virtual int getCharWidth(uint32 chr) const override = 0;
+	static DgdsFont *load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor);
 
 protected:
 	byte _w;
@@ -61,16 +60,17 @@ protected:
 	byte _count;
 	const byte *_glyphs;
 
+	void drawChar(Graphics::Surface* dst, int pos, int bit, int x, int y, int w, uint32 color) const;
 	bool hasChar(byte chr) const;
 };
 
 /* Proportional font (each char has its own width and so data is a different size) */
-class PFont : public Font {
+class PFont : public DgdsFont {
 public:
 	PFont(byte w, byte h, byte start, byte count, byte *data);
 	~PFont();
-	int getCharWidth(uint32 chr) const;
-	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const;
+	int getCharWidth(uint32 chr) const override;
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 	static PFont *load(Common::SeekableReadStream &input, Decompressor *decompressor);
 
 protected:
@@ -82,12 +82,12 @@ protected:
 };
 
 /* Fixed-width font */
-class FFont : public Font {
+class FFont : public DgdsFont {
 public:
 	FFont(byte w, byte h, byte start, byte count, byte *data);
 	~FFont();
-	int getCharWidth(uint32 chr) const { return _w; }
-	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const;
+	int getCharWidth(uint32 chr) const  override { return _w; }
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const  override;
 	static FFont *load(Common::SeekableReadStream &input);
 
 protected:
@@ -113,7 +113,7 @@ public:
 	FontManager() {}
 	~FontManager();
 
-	const Font *getFont(FontType) const;
+	const DgdsFont *getFont(FontType) const;
 	FontType fontTypeByName(const Common::String &filename) const;
 	void loadFonts(DgdsGameId gameId, ResourceManager *resourceManager, Decompressor *decompressor);
 
@@ -128,7 +128,7 @@ private:
 		}
 	};
 
-	Common::HashMap<FontType, Font*, FontTypeHash> _fonts;
+	Common::HashMap<FontType, DgdsFont*, FontTypeHash> _fonts;
 };
 
 } // End of namespace Dgds

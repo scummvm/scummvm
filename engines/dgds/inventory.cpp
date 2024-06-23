@@ -90,7 +90,7 @@ void Inventory::setRequestData(const REQFileData &data) {
 
 void Inventory::drawHeader(Graphics::ManagedSurface &surf) {
 	// This really should be a text area, but it's hard-coded in the game.
-	const Font *font = RequestData::getMenuFont();
+	const DgdsFont *font = RequestData::getMenuFont();
 	const RequestData &r = _reqData._requests[0];
 
 	static const char *title = "INVENTORY";
@@ -141,7 +141,7 @@ void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount) {
 
 void Inventory::drawTime(Graphics::ManagedSurface &surf) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	const Font *font = RequestData::getMenuFont();
+	const DgdsFont *font = RequestData::getMenuFont();
 	const Common::String timeStr = engine->getClock().getTimeStr();
 	Common::Point clockpos = Common::Point(_invClock->_x + _invClock->_parentX, _invClock->_y + _invClock->_parentY);
 	surf.fillRect(Common::Rect(clockpos, _invClock->_width, _invClock->_height), 0);
