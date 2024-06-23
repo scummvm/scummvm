@@ -616,7 +616,9 @@ bool DgdsEngine::canLoadGameStateCurrently(Common::U32String *msg /*= nullptr*/)
 
 
 bool DgdsEngine::canSaveGameStateCurrently(Common::U32String *msg /*= nullptr*/) {
-	return _gdsScene && _scene && _scene->getNum() != 2
+	// Doesn't make sense to save non-interactive demos..
+	bool isSavableGame = getGameId() != GID_SQ5DEMO && getGameId() != GID_COMINGSOON;
+	return isSavableGame && _gdsScene && _scene && _scene->getNum() != 2
 			&& _scene->getDragItem() == nullptr && !_isLoading;
 }
 

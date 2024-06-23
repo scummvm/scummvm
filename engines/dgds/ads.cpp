@@ -899,6 +899,12 @@ int ADSInterpreter::numArgs(uint16 opcode) const {
 	case 0x1090:
 	case 0x1380:
 	case 0x1390:
+	case 0x13A0:
+	case 0x13A1:
+	case 0x13B0:
+	case 0x13B1:
+	case 0x13C0:
+	case 0x13C1:
 	case 0x3020:
 	case 0xF010:
 	case 0xF200:
