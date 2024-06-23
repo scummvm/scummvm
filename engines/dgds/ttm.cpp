@@ -248,7 +248,7 @@ static void _copyRectToScreen(const Graphics::ManagedSurface &src, const Common:
 	Graphics::Surface *surf = g_system->lockScreen();
 	Common::Rect copyRect = r;
 	copyRect.clip(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT));
-	surf->copyRectToSurface(src.rawSurface(), r.left, r.top, r);
+	surf->copyRectToSurface(src.rawSurface(), copyRect.left, copyRect.top, copyRect);
 	g_system->unlockScreen();
 }
 
