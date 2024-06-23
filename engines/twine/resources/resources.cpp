@@ -124,6 +124,10 @@ void Resources::preloadSamples() {
 }
 
 void Resources::preloadInventoryItems() {
+	if (!_engine->isLBA1()) {
+		// lba2 has this data in code
+		return;
+	}
 	const int32 numEntries = HQR::numEntries(Resources::HQR_INVOBJ_FILE);
 	if (numEntries > NUM_INVENTORY_ITEMS) {
 		error("Max allowed inventory items exceeded: %i/%i", numEntries, NUM_INVENTORY_ITEMS);
