@@ -24,7 +24,6 @@
 #include "common/debug.h"
 #include "common/savefile.h"
 #include "common/stream.h"
-#include "engine.h"
 #include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_parser.h"
