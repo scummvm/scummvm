@@ -468,11 +468,11 @@ bool qdGameObjectAnimated::save_script_body(XStream &fh, int indent) const {
 		if (!(*is) -> check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_GLOBAL_OWNER) || owner() -> named_object_type() == QD_NAMED_OBJECT_DISPATCHER)
 			(*is) -> save_script(fh, indent + 1);
 		else {
-			appLog::default_log() << "state not saved: ";
+			debugC(3, kDebugLog, "state not saved: ");
 			if (owner() && owner() -> name())
-				appLog::default_log() << owner() -> name() << "::";
+				debugC(3, kDebugLog, "%s::", transCyrillic(owner()->name()));
 
-			appLog::default_log() << name() << "::" << (*is) -> name() << "\r\n";
+			debugC(3, kDebugLog, "%s::%s", transCyrillic(name()), (*is) -> name());
 		}
 	}
 
@@ -557,7 +557,7 @@ void qdGameObjectAnimated::set_state(int st) {
 
 #ifndef _QUEST_EDITOR
 		if (p -> activation_delay() > 0.001f) {
-			appLog::default_log() << appLog::default_log().time_string() << " состояние ждет: " << name() << "/" << get_state(st) -> name() << "\r\n";
+			debugC(3, kDebugGraphics, "state waits %s %s", p->name(), get_state(st)->name());
 
 			if (!p -> check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_ACTIVATION_TIMER)) {
 				p -> set_activation_timer();

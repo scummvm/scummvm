@@ -20,8 +20,9 @@
  */
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "qdengine/core/qd_precomp.h"
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qdcore/qd_rnd.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
@@ -359,15 +360,14 @@ bool qdGameObjectMoving::enough_far_target(const Vect3f &dest) const {
 
 template<class V>
 void dump_vect(const V &vect) {
-	appLog::default_log() << " -------------------- \r\n";
-
-	appLog::default_log() << vect.size() << "\r\n";
+	debugC(3, kDebugLog, "------------");
+	debugC(3, kDebugLog, "%d", vect.size());
 
 	for (int i = 0; i < vect.size(); i++) {
-		appLog::default_log() << vect[i].x << " " << vect[i].y << "\r\n";
+		debugC(3, kDebugLog, "%d %d", vect[i].x, vect[i].y);
 	}
 
-	appLog::default_log() << " -------------------- \r\n";
+	debugC(3, kDebugLog, "------------");
 }
 
 bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
@@ -477,12 +477,12 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 		return false;
 	}
 
-	__QDBG(appLog::default_log() << "найденный путь" << "\r\n");
+	debugC(3, kDebugLog, "The path is found");
 	__QDBG(dump_vect(path_vect));
 
 	optimize_path(path_vect);
 
-	__QDBG(appLog::default_log() << "оптимизированный путь" << "\r\n");
+	debugC(3, kDebugLog, "Optimised Path");
 	__QDBG(dump_vect(path_vect));
 
 	if (path_vect.size() >= 2 && movement_type() == qdGameObjectStateWalk::MOVEMENT_FOUR_DIRS || movement_type() == qdGameObjectStateWalk::MOVEMENT_EIGHT_DIRS) {
@@ -494,7 +494,7 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 
 		idx = final_path.size();
 
-		__QDBG(appLog::default_log() << "финальный путь" << "\r\n");
+		debugC(3, kDebugLog, "Final Path");
 		__QDBG(dump_vect(final_path));
 	} else {
 		idx = 0;
@@ -1342,7 +1342,7 @@ void qdGameObjectMoving::set_state(int st) {
 
 #ifndef _QUEST_EDITOR
 		if (p -> activation_delay() > 0.01f) {
-			__QDBG(appLog::default_log() << appLog::default_log().time_string() << " состояние ждет: " << name() << "/" << get_state(st) -> name() << "\r\n");
+			debugC(3, kDebugLog, "[%d] The condition is waiting: %s/%s", g_system->getMillis(), transCyrillic(name()), transCyrillic(get_state(st)->name()));
 
 			if (!p -> check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_ACTIVATION_TIMER)) {
 				p -> set_activation_timer();
@@ -1359,14 +1359,14 @@ void qdGameObjectMoving::set_state(int st) {
 			if (!can_change_state(p)) return;
 
 			if (is_moving2position(p -> start_pos())) {
-				__QDBG(appLog::default_log() << appLog::default_log().time_string() << " состояние ждет: " << name() << "/" << get_state(st) -> name() << "\r\n");
-				__QDBG(appLog::default_log() << appLog::default_log().time_string() << " pos " << R().x << " " << R().y << "/" << p -> start_pos().x << " " << p -> start_pos().y << "\r\n");
+				debugC(3, kDebugLog, "[%d] The condition is waiting: %s/%s",g_system->getMillis(), transCyrillic(name()), transCyrillic(get_state(st)->name()));
+				debugC(3, kDebugLog, "pos %f %f/%f %f", R().x, R().y, p->start_pos().x, p->start_pos().y);
 				return;
 			}
 
 			if (!is_in_position(p -> start_pos())) {
 				if (move(p -> start_pos(), p -> start_direction_angle(), true)) {
-					__QDBG(appLog::default_log() << appLog::default_log().time_string() << " состояние поставлено в очередь: " << name() << "/" << get_state(st) -> name() << "\r\n");
+					debugC(3, kDebugLog, "[%d] The condition is put in the queue: %s/%s",g_system->getMillis(), transCyrillic(name()), transCyrillic(get_state(st)->name()));
 					set_queued_state(p);
 				}
 
@@ -1384,7 +1384,7 @@ void qdGameObjectMoving::set_state(int st) {
 		if (p -> has_camera_mode() && owner())
 			static_cast<qdGameScene * >(owner()) -> set_camera_mode(p -> camera_mode(), this);
 #endif
-		appLog::default_log() << appLog::default_log().time_string() << " старт состояния: " << name() << "/" << p -> name() << "\r\n";
+		debugC(3, kDebugLog, "%d Starting: %s / %s", transCyrillic(name()), transCyrillic(p -> name()));
 
 		p -> drop_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_ACTIVATION_TIMER);
 		p -> drop_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_ACTIVATION_TIMER_END);

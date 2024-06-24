@@ -23,6 +23,7 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/stream.h"
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/parser/qdscr_parser.h"
@@ -55,7 +56,7 @@ bool qdCounterElement::init() {
 //	if(!state_){
 	state_ = dynamic_cast<const qdGameObjectState *>(state_reference_.object());
 	if (!state_) {
-		appLog::default_log() << "qdCounterElement::init() failed\r\n";
+		debugC(3, kDebugLog, "qdCounterElement::init() failed");
 		return false;
 	}
 //	}

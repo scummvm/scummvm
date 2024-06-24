@@ -441,17 +441,17 @@ void qdInventory::scroll_down() {
 
 void qdInventory::debug_log() const {
 #ifdef _DEBUG
-	appLog::default_log() << "Inventory ";
+	debugC(3, kDebugLog, "Inventory");
 	if (name())
-		appLog::default_log() << name() << " ";
+		debugC(3, kDebugLog, "%s", transCyrillic(name()));
 
-	appLog::default_log() << "--------------\r\n";
+	debugC(3, kDebugLog, "--------------");
 
 	qdInventoryCellSetVector::const_iterator it;
 	FOR_EACH(cell_sets_, it)
 	it->debug_log();
 
-	appLog::default_log() << "--------------\r\n";
+	debugC(3, kDebugLog, "--------------");
 #endif
 }
 } // namespace QDEngine

@@ -23,6 +23,7 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/stream.h"
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 
 #include "qdengine/core/parser/xml_tag_buffer.h"
@@ -548,8 +549,8 @@ bool qdTriggerElement::retrieve_object(const qdNamedObjectReference &ref) {
 			r = ref;
 #endif
 #ifdef __QD_DEBUG_ENABLE__
-			appLog::default_log() << "qdTriggerElement::retrieve_object() failed:\r\n";
-			appLog::default_log() << ref << "\r\n";
+			debugC(3, kDebugLog, "qdTriggerElement::retrieve_object() failed");
+			debugC(3, kDebugLog, "%p", &ref);
 #endif
 			return false;
 		}
@@ -568,7 +569,7 @@ bool qdTriggerElement::retrieve_link_elements(qdTriggerChain *p) {
 			if (qdTriggerElementPtr el = p -> search_element(it -> element_ID())) {
 				it -> set_element(el);
 			} else {
-				appLog::default_log() << "parent link element not found: " << ID() << " -> " << it -> element_ID() << "\r\n";
+				debugC(3, kDebugLog, "parent link element not found: %d -> %d", ID(), it -> element_ID());
 				result = false;
 			}
 		}
@@ -579,7 +580,7 @@ bool qdTriggerElement::retrieve_link_elements(qdTriggerChain *p) {
 			if (qdTriggerElementPtr el = p -> search_element(it -> element_ID())) {
 				it -> set_element(el);
 			} else {
-				appLog::default_log() << "child link element not found: " << ID() << " -> " << it -> element_ID() << "\r\n";
+				debugC(3, kDebugLog, "child link element not found: %d -> %d", ID(), it -> element_ID());
 				result = false;
 			}
 		}
@@ -1025,7 +1026,7 @@ void qdTriggerLink::deactivate() {
 			set_status(LINK_INACTIVE);
 #ifdef __QD_DEBUG_ENABLE__
 		else
-			appLog::default_log() << this;
+			debugC(3, kDebugLog, "%p", this);
 #endif
 	}
 }

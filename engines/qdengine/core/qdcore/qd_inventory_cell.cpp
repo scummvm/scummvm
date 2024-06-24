@@ -628,7 +628,7 @@ void qdInventoryCellSet::debug_log() const {
 		int idx = i * (size_.x + additional_cells_.x) + cells_shift_.x;
 		for (int j = cells_shift_.x; j < size().x + cells_shift_.x; j++) {
 			if (!cells_[idx].is_empty()) {
-				appLog::default_log() << i << " " << j << " " << cells_[idx].object()->name() << "\r\n";
+				debugC(3, kDebugLog, "Inventory cell: %d %d %s", i, j, transCrylic(cells_[idx].object()->name()));
 			}
 		}
 	}

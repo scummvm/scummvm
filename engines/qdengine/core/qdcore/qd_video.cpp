@@ -23,6 +23,7 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/textconsole.h"
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/parser/qdscr_parser.h"
@@ -153,7 +154,7 @@ bool qdVideo::draw_background() {
 }
 
 qdConditionalObject::trigger_start_mode qdVideo::trigger_start() {
-	appLog::default_log() << appLog::default_log().time_string() << " Video start -> " << name() << "\r\n";
+	debugC(3, kDebugLog, "[%d] Video start -> %s", g_system->getMillis(), transCyrillic(name()));
 
 	if (qdGameDispatcher * dp = qd_get_game_dispatcher()) {
 		if (dp -> play_video(this))

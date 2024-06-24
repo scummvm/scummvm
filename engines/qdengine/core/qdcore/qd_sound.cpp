@@ -20,7 +20,8 @@
  */
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/app_error_handler.h"
 
@@ -117,12 +118,11 @@ bool qdSound::save_script(XStream &fh, int indent) const {
 bool qdSound::play(const qdSoundHandle *handle, bool loop, float start_position) const {
 #ifdef __QD_SOUND_LOG__
 	if (handle && handle -> owner()) {
-		appLog::default_log() << appLog::default_log().time_string() << " sound start " << this << " owner: " << handle -> owner();
+		debugC(3, kDebugLog, "[%d] sound start %p owner: %p", g_system->getMillis(), this, transCyrillic(handle->owner()));
 
 		if (loop)
-			appLog::default_log() << " cycled";
-
-		appLog::default_log() << "\r\n";
+			debugCN(3, kDebugLog, " cycled");
+		debugC(3, kDebugLog, "")
 	}
 #endif
 
@@ -139,7 +139,7 @@ bool qdSound::play(const qdSoundHandle *handle, bool loop, float start_position)
 bool qdSound::stop(const qdSoundHandle *handle) const {
 #ifdef __QD_SOUND_LOG__
 	if (handle && handle -> owner())
-		appLog::default_log() << appLog::default_log().time_string() << " sound stop " << this << " owner: " << handle -> owner() << "\r\n";
+		debugC(3, kDebugLog, "[%d] sound stop %p owner: %p", g_system->getMillis(), this, handle -> owner());
 #endif
 
 #ifndef __QD_SYSLIB__

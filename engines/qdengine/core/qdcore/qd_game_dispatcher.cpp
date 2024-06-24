@@ -2461,7 +2461,7 @@ bool qdGameDispatcher::keyboard_handler(int vkey, bool event) {
 }
 
 bool qdGameDispatcher::load_data(const char *fname) {
-	__QDBG(appLog::default_log() << appLog::default_log().time_string() << " загрузка сэйва " << fname << "\r\n");
+	debugC(3, kDebugLog, "[%d] Save loading %s", g_system->getMillis(), transCyrillic(fname));
 
 	if (sndDispatcher * p = sndDispatcher::get_dispatcher()) {
 		p -> stop_sounds();
@@ -2648,7 +2648,7 @@ bool qdGameDispatcher::save_data(const char *fname) const {
 }
 
 bool qdGameDispatcher::play_music_track(const qdMusicTrack *p, bool interface_mode) {
-	appLog::default_log() << appLog::default_log().time_string() <<  "music start -> " << (p -> file_name() ? p -> file_name() : "") << "\r\n";
+	debugC(3, kDebugLog, "[%d] music start -> %s", g_system->getMillis(), transCyrillic(p->file_name()));
 
 	if (!interface_mode) {
 		if (p->check_flag(QD_MUSIC_TRACK_DISABLE_RESTART) && cur_music_track_ == p)
@@ -2676,7 +2676,7 @@ bool qdGameDispatcher::play_music_track(const qdMusicTrack *p, bool interface_mo
 }
 
 bool qdGameDispatcher::stop_music() {
-	appLog::default_log() << appLog::default_log().time_string() <<  "music stop\r\n";
+	debugC(3, kDebugLog, "[%d] music stop", g_system->getMillis());
 
 	if (interface_music_mode_)
 		cur_interface_music_track_ = NULL;
@@ -3470,8 +3470,7 @@ bool qdGameDispatcher::copy_resources_to_folder(const char *dest_dir, const char
 		save_str = dest_dir + save_str;
 		// Копируем и сообщаем об ошибке, если произошла
 		if (!app_io::copy_file(save_str.c_str(), it->c_str())) {
-			appLog::default_log() << "Error: could not copy " << it->c_str()
-			                      << " to directory " << dest_dir << "\r\n";
+			debugC(3, kDebugLog, "Error: could not copy %s to directory %s", it->c_str(), transCyrillic(dest_dir));
 			copy_ok = false;
 		}
 
@@ -3545,9 +3544,9 @@ bool qdGameDispatcher::copy_resources_from_folder(const char *src_dir, const cha
 			(*callback)(files_processed * 100 / file_count, callback_context);
 
 		// Если для некоторых файлов соотв. файлы обнаружить не удалось - warning
-		if (false == fnd_flag)
-			appLog::default_log() << "Warning: appropriate file for "
-			                      << it -> c_str() << " not found.\r\n";
+		if (false == fnd_flag) {
+			debugC(3, kDebugLog, "Warning: appropriate file for %s not found.", transCyrillic(it->c_str()));
+		}
 	}
 
 	return all_copy_ok;
