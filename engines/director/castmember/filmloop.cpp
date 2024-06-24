@@ -84,7 +84,7 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, C
 
 	_subchannels.clear();
 
-	if (channel->_filmLoopFrame >= _frames.size()) {
+	if (channel->_filmLoopFrame < 0 || channel->_filmLoopFrame >= _frames.size()) {
 		warning("FilmLoopCastMember::getSubChannels(): Film loop frame %d requested, only %d available", channel->_filmLoopFrame, _frames.size());
 		return &_subchannels;
 	}

@@ -214,8 +214,8 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 				Common::Rect bbox = channel->getBbox();
 				blitTo->frameRect(bbox, g_director->_wm->_colorWhite);
 
-				font->drawString(blitTo, Common::String::format("m: %d, ch: %d", channel->_sprite->_castId.member, i), bbox.left + 3, bbox.top + 3, 128, g_director->_wm->_colorBlack);
-				font->drawString(blitTo, Common::String::format("m: %d, ch: %d", channel->_sprite->_castId.member, i), bbox.left + 2, bbox.top + 2, 128, g_director->_wm->_colorWhite);
+				font->drawString(blitTo, Common::String::format("m: %d, ch: %d, fr: %d", channel->_sprite->_castId.member, i, channel->_filmLoopFrame ? channel->_filmLoopFrame : channel->_movieTime), bbox.left + 3, bbox.top + 3, 128, g_director->_wm->_colorBlack);
+				font->drawString(blitTo, Common::String::format("m: %d, ch: %d, fr: %d", channel->_sprite->_castId.member, i, channel->_filmLoopFrame ? channel->_filmLoopFrame : channel->_movieTime), bbox.left + 2, bbox.top + 2, 128, g_director->_wm->_colorWhite);
 			}
 		}
 	}
