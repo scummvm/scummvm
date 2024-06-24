@@ -176,6 +176,10 @@ public:
 	// If this is another object, it is the inventory of a storage container
 	GameObject *inventorySource;
 
+	void TransferInventoryItem(GameObject *item, GameObject *targetContainer);
+
+	int FindInventoryItem(GameObject *item);
+
 	// TODO: Find a better place for those
 	// The inventory items for the currently opened inventory
 	Common::Array<GameObject *> inventoryItems;
