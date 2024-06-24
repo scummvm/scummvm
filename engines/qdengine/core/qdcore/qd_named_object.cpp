@@ -23,6 +23,7 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/stream.h"
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/qd_named_object.h"
 
@@ -101,27 +102,31 @@ bool qdNamedObject::save_data(qdSaveStream &fh) const {
 	return true;
 }
 
-appLog &operator << (appLog &log, const qdNamedObject *obj) {
+Common::String qdNamedObject::toString() {
+	Common::String res;
+
 	int owners_count = 0;
 
-	const qdNamedObject *p = obj -> owner();
+	const qdNamedObject *p = owner();
 	while (p) {
 		p = p -> owner();
 		owners_count++;
 	}
 
 	for (int i = owners_count; i > 0; i--) {
-		const qdNamedObject *p = obj;
+		const qdNamedObject *p = this;
 		for (int j = 0; j < i; j++)
-			p = p -> owner();
+			p = p->owner();
 
-		if (p -> name())
-			log << p -> name() << "::";
+		if (p->name()) {
+			res += Common::String((char *)transCyrillic(p->name()));
+			res += "::";
+		}
 	}
 
-	if (obj -> name())
-		log << obj -> name();
+	if (name())
+		res += Common::String((char *)transCyrillic(name()));
 
-	return log;
+	return res;
 }
 } // namespace QDEngine

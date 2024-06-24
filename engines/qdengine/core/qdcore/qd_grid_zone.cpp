@@ -221,7 +221,7 @@ bool qdGridZone::set_state(bool st) {
 	state_ = st;
 
 	if (apply_zone()) {
-		debugC(3, kDebugLog, "[%d] zone condition %s %s", g_system->getMillis(), transCyrillic(name()), (st) ? "on" : "off");
+		debugC(3, kDebugLog, "[%d] zone condition: %s %s", g_system->getMillis(), transCyrillic(name()), (st) ? "on" : "off");
 
 		qdGameScene *sp = static_cast<qdGameScene *>(owner());
 

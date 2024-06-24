@@ -550,7 +550,7 @@ bool qdTriggerElement::retrieve_object(const qdNamedObjectReference &ref) {
 #endif
 #ifdef __QD_DEBUG_ENABLE__
 			debugC(3, kDebugLog, "qdTriggerElement::retrieve_object() failed");
-			debugC(3, kDebugLog, "%p", &ref);
+			debugC(3, kDebugLog, "%s", ref.toString().c_str());
 #endif
 			return false;
 		}
@@ -1026,49 +1026,53 @@ void qdTriggerLink::deactivate() {
 			set_status(LINK_INACTIVE);
 #ifdef __QD_DEBUG_ENABLE__
 		else
-			debugC(3, kDebugLog, "%p", this);
+			debugC(3, kDebugLog, "%s", toString().c_str());
 #endif
 	}
 }
 
-#ifdef __QD_DEBUG_ENABLE__
-static appLog &operator << (appLog &log, const qdTriggerLink *link) {
-	if (link -> element()) {
-		if (qdNamedObject * p = link -> element() -> object()) {
-			log << " -> тип " << link -> type();
 
-			switch (link -> status()) {
+Common::String qdTriggerLink::toString() {
+	Common::String res;
+
+	if (element()) {
+		if (qdNamedObject *p = element()->object()) {
+			res = Common::String::format(" -> type %d ", type());
+
+			switch (status()) {
 			case qdTriggerLink::LINK_ACTIVE:
-				log << " вкл. ";
+				res += " on ";
 				break;
 			case qdTriggerLink::LINK_INACTIVE:
-				log << " выкл. ";
+				res += " off ";
 				break;
 			case qdTriggerLink::LINK_DONE:
-				log << " отр. ";
+				res += " cut ";
 				break;
 			}
 
 			if (p -> named_object_type() == QD_NAMED_OBJECT_OBJ_STATE) {
 				if (p -> owner() && p -> owner() -> name())
-					log << p -> owner() -> name() << "/";
+					res += Common::String((char *)transCyrillic(p->owner()->name()));
 			}
-			log << p -> name() << "\r\n";
+			res += Common::String((char *)transCyrillic(p->name()));
 		}
 	}
 
-	return log;
+	return res;
 }
 
-appLog &operator << (appLog &log, const qdNamedObjectReference &obj) {
-	for (int i = 0; i < obj.num_levels(); i++) {
-		if (i) log << "::";
-		log << obj.object_name(obj.num_levels() - i - 1);
+Common::String qdNamedObjectReference::toString() const {
+	Common::String res;
+
+	for (int i = 0; i < num_levels(); i++) {
+		if (i)
+			res += Common::String("::");
+		res += Common::String((char *)transCyrillic(object_name(num_levels() - i - 1)));
 	}
 
-	return log;
+	return res;
 }
-#endif
 
 void qdTriggerElement::set_status(ElementStatus st) {
 	status_ = st;

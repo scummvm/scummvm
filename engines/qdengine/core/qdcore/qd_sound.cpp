@@ -118,7 +118,7 @@ bool qdSound::save_script(XStream &fh, int indent) const {
 bool qdSound::play(const qdSoundHandle *handle, bool loop, float start_position) const {
 #ifdef __QD_SOUND_LOG__
 	if (handle && handle -> owner()) {
-		debugC(3, kDebugLog, "[%d] sound start %p owner: %p", g_system->getMillis(), this, transCyrillic(handle->owner()));
+		debugCN(3, kDebugLog, "[%d] sound start %p owner: %s", g_system->getMillis(), this, handle->owner().toString());
 
 		if (loop)
 			debugCN(3, kDebugLog, " cycled");
@@ -139,7 +139,7 @@ bool qdSound::play(const qdSoundHandle *handle, bool loop, float start_position)
 bool qdSound::stop(const qdSoundHandle *handle) const {
 #ifdef __QD_SOUND_LOG__
 	if (handle && handle -> owner())
-		debugC(3, kDebugLog, "[%d] sound stop %p owner: %p", g_system->getMillis(), this, handle -> owner());
+		debugC(3, kDebugLog, "[%d] sound stop %p owner: %p", g_system->getMillis(), this, handle->owner().toString();
 #endif
 
 #ifndef __QD_SYSLIB__
