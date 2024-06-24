@@ -160,6 +160,24 @@ bool qdInventoryCell::free_resources() {
 	return true;
 }
 
+bool qdInventoryCell::load_data(Common::SeekableReadStream &fh, int saveVersion) {
+	char flag = fh.readByte();
+
+	if (flag) {
+		qdNamedObjectReference ref;
+		if (!ref.load_data(fh, saveVersion)) {
+			return false;
+		}
+
+		if (qdGameDispatcher * p = qdGameDispatcher::get_dispatcher()) {
+			object_ = static_cast<qdGameObjectAnimated *>(p->get_named_object(&ref));
+		}
+	} else
+		object_ = NULL;
+
+	return true;
+}
+
 bool qdInventoryCell::load_data(qdSaveStream &fh, int save_version) {
 	char flag;
 	fh > flag;

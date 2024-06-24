@@ -161,6 +161,15 @@ bool qdGameObject::update_screen_pos() {
 	return true;
 }
 
+bool qdGameObject::load_data(Common::SeekableReadStream &fh, int saveVersion) {
+	if (!qdNamedObject::load_data(fh, saveVersion)) return false;
+
+	r_.x = fh.readSint32LE();
+	r_.y = fh.readSint32LE();
+	r_.z = fh.readSint32LE();
+	return true;
+}
+
 bool qdGameObject::load_data(qdSaveStream &fh, int save_version) {
 	if (!qdNamedObject::load_data(fh, save_version)) return false;
 

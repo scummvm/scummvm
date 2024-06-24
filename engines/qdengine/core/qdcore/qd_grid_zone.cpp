@@ -300,6 +300,18 @@ qdGridZoneState *qdGridZone::get_state(const char *state_name) {
 	return &state_off_;
 }
 
+bool qdGridZone::load_data(Common::SeekableReadStream &fh, int saveVersion) {
+	if (!qdNamedObject::load_data(fh, saveVersion)) {
+		return false;
+	}
+
+	char st = fh.readByte();
+	update_timer_ = fh.readSint32LE();
+
+	state_ = (st) ? true : false;
+	return true;
+}
+
 bool qdGridZone::load_data(qdSaveStream &fh, int save_version) {
 	if (!qdNamedObject::load_data(fh, save_version)) return false;
 
