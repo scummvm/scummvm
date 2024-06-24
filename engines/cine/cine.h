@@ -30,6 +30,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/random.h"
+#include "common/events.h"
 
 #include "engines/engine.h"
 
@@ -91,6 +92,35 @@ struct VolumeResource {
 };
 
 typedef Common::HashMap<Common::String, Common::Array<VolumeResource> > StringToVolumeResourceArrayHashMap;
+
+enum CINEAction {
+	kActionNone,
+	kActionMoveUp,
+	kActionMoveDown,
+	kActionMoveLeft,
+	kActionMoveRight,
+	kActionMoveUpLeft,
+	kActionMoveUpRight,
+	kActionMoveDownLeft,
+	kActionMoveDownRight,
+	kActionGameSpeedDefault,
+	kActionGameSpeedSlower,
+	kActionGameSpeedFaster,
+	kActionExamine,
+	kActionTake,
+	kActionInventory,
+	kActionUse,
+	kActionActivate,
+	kActionSpeak,
+	kActionActionMenu,
+	kActionSystemMenu,
+	kActionCollisionPage,
+	kActionMouseLeft,
+	kActionMouseRight,
+	kActionExitSonyScreen,
+	kActionMenuOptionUp,
+	kActionMenuOptionDown
+};
 
 class CineConsole;
 
@@ -192,6 +222,7 @@ public:
 
 	Common::String _commandBuffer;
 	Common::Array<Common::KeyState> _keyInputList;
+	Common::Array<Common::CustomEventType> _actionList;
 };
 
 extern CineEngine *g_cine;
