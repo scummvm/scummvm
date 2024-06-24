@@ -27,6 +27,11 @@
 #include <graphics/cursorman.h>
 
 namespace Macs2 {
+void View1::SetInventorySource(GameObject *newInventorySource) {
+	inventorySource = newInventorySource;
+	// TODO: Make sure the assignment per object is saved correctly
+	inventoryItems.clear();
+}
 Character *View1::GetCharacterByIndex(uint16 index) {
 	// TODO: Consider a map
 	for (Character *c : characters) {

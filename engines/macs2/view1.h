@@ -169,7 +169,15 @@ public:
 
 	Common::Array<Character *> characters;
 
+	// Sets the source for the to-be-opened inventory and updats the array of inventory objects
+	void SetInventorySource(GameObject *newInventorySource);
+
+	// If this is the protagonist, we have our normal inventory
+	// If this is another object, it is the inventory of a storage container
+	GameObject *inventorySource;
+
 	// TODO: Find a better place for those
+	// The inventory items for the currently opened inventory
 	Common::Array<GameObject *> inventoryItems;
 
 	// If this is not null, we are using this object
