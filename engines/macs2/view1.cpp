@@ -31,7 +31,29 @@ void View1::SetInventorySource(GameObject *newInventorySource) {
 	inventorySource = newInventorySource;
 	// TODO: Make sure the assignment per object is saved correctly
 	inventoryItems.clear();
+
+	for (GameObject *currentObject : GameObjects::instance().Objects) {
+		if (currentObject->SceneIndex == inventorySource->Index) {
+			inventoryItems.push_back(currentObject);
+		}
+	}
 }
+void View1::TransferInventoryItem(GameObject *item, GameObject *targetContainer) {
+	int index = FindInventoryItem(item);
+	inventoryItems.remove_at(index);
+	item->SceneIndex = targetContainer->Index;
+	
+}
+
+int View1::FindInventoryItem(GameObject *item) {
+	for (int i = 0; i != inventoryItems.size(); i++) {
+		if (inventoryItems[i] == item) {
+			return i;
+		}
+	}
+	return -1;
+}
+
 Character *View1::GetCharacterByIndex(uint16 index) {
 	// TODO: Consider a map
 	for (Character *c : characters) {
@@ -398,6 +420,17 @@ View1::View1() : UIElement("View1") {
 bool View1::msgKeypress(const KeypressMessage &msg) {
 	// Any keypress to close the view
 	// close();
+	if (msg.ascii == (uint16)'t') {
+		if (_isShowingInventory && activeInventoryItem != nullptr) {
+			if (inventorySource->Index == 1) {
+				// TODO: Need to handle this case, the game can figure out that there is a container
+				// in the current room as seen in room 3 of the boat
+			} else {
+				TransferInventoryItem(activeInventoryItem, GameObjects::instance().GetProtagonistObject());
+				activeInventoryItem = nullptr;
+			}
+		}
+	}
 	if (msg.ascii == (uint16)'c') {
 		g_engine->changeScene(0x6);
 	}
