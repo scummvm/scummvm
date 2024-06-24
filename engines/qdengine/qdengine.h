@@ -47,7 +47,8 @@ enum QDEngineDebugChannels {
 	kDebugLoad,
 	kDebugTemp,
 	kDebugQuant,
-	kDebugSave
+	kDebugSave,
+	kDebugLog
 };
 
 class QDEngineEngine : public Engine {

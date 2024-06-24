@@ -549,8 +549,7 @@ int qdGameScene::get_resources_size() {
 }
 
 bool qdGameScene::activate() {
-	appLog::default_log() << "активация сцены " << name() << "\r\n";
-
+	debugC(3, kDebugLog, "Activation of the scene, %s", transCyrillic(name()));
 	camera.quant(0.0f);
 
 	// При активации сцены все объекты следования переводим в нормальное состояние

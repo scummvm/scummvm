@@ -20,7 +20,8 @@
  */
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/qd_named_object_indexer.h"
 #include "qdengine/core/qdcore/qd_game_dispatcher.h"
@@ -56,7 +57,15 @@ bool qdNamedObjectIndexer::qdNamedObjectReferenceLink::resolve() {
 		if (!object_) {
 #ifdef __QD_DEBUG_ENABLE__
 			object_ = dp -> get_named_object(&reference_);
-			appLog::default_log() << "qdNamedObjectReferenceLink::resolve() failed\r\n" << reference_ << "\r\n";
+
+			debugC(3, kDebugLog, "qdNamedObjectReferenceLink::resolve() failed");
+			for (int i = 0; i < reference_.num_levels(); i++) {
+				if (i) {
+					debugCN(3, kDebugLog, "::");
+				}
+				debugCN(3, kDebugLog, "%s", transCyrillic(reference_.object_name(reference_.num_levels() - i - 1)));
+			}
+			debugC(3, kDebugLog, "");
 #endif
 		} else
 			return true;
@@ -77,7 +86,7 @@ void qdNamedObjectIndexer::resolve_references() {
 
 void qdNamedObjectIndexer::clear() {
 #ifdef _QD_DEBUG_ENABLE_
-	appLog::default_log() << "qdNamedObjectIndexer::links count - " << links_.size() << "\r\n";
+	debugC(3, kDebugLog, "qdNamedObjectIndexer::links count - %d", links_.size());
 #endif
 
 	links_.clear();

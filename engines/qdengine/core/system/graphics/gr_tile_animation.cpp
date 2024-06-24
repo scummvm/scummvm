@@ -22,6 +22,7 @@
 #define _NO_ZIP_
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/file.h"
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/graphics/gr_tile_animation.h"
@@ -78,8 +79,7 @@ void grTileAnimation::init(int frame_count, const Vect2i &frame_size, bool alpha
 void grTileAnimation::compact() {
 	TileOffsets(tileOffsets_).swap(tileOffsets_);
 	TileData(tileData_).swap(tileData_);
-
-	__QDBG(appLog::default_log() << "тайловая анимация: " << (frameIndex_.size() + tileData_.size() + tileOffsets_.size()) * 4 / 1024 << " кбайт\r\n");
+	debugC(3, kDebugLog, "Tile animation: %d Kbytes", (frameIndex_.size() + tileData_.size() + tileOffsets_.size()) * 4 / 1024);
 }
 
 bool grTileAnimation::compress(grTileCompressionMethod method) {

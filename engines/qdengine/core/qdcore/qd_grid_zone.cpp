@@ -23,6 +23,7 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/stream.h"
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/parser/qdscr_parser.h"
@@ -220,7 +221,7 @@ bool qdGridZone::set_state(bool st) {
 	state_ = st;
 
 	if (apply_zone()) {
-		__QDBG(appLog::default_log() << appLog::default_log().time_string() << " состояние зоны: " << name() << ((st) ? " вкл." : " выкл.") << "\r\n");
+		debugC(3, kDebugLog, "[%d] zone condition %s %s", g_system->getMillis(), transCyrillic(name()), (st) ? "on" : "off");
 
 		qdGameScene *sp = static_cast<qdGameScene *>(owner());
 
