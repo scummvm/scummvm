@@ -449,6 +449,26 @@ const char *qdTriggerChain::debug_comline() {
 	return arg;
 }
 
+bool qdTriggerChain::load_data(Common::SeekableReadStream &fh, int save_version) {
+	int32 size = fh.readSint32LE();
+
+	if (size != elements_.size()) {
+		return false;
+	}
+
+	if (!root_element()->load_data(fh, save_version)) {
+		return false;
+	}
+
+	for (auto &it : elements_) {
+		if (!it->load_data(fh, save_version)) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 bool qdTriggerChain::load_data(qdSaveStream &fh, int save_version) {
 	int size;
 	fh > size;
@@ -464,6 +484,7 @@ bool qdTriggerChain::load_data(qdSaveStream &fh, int save_version) {
 
 	return true;
 }
+
 bool qdTriggerChain::save_data(Common::SeekableWriteStream &fh) const {
 	fh.writeUint32LE(elements_.size());
 

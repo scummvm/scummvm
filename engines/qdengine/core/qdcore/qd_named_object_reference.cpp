@@ -163,6 +163,25 @@ bool qdNamedObjectReference::save_script(XStream &fh, int indent) const {
 	return true;
 }
 
+bool qdNamedObjectReference::load_data(Common::SeekableReadStream &fh, int version) {
+	int nlevels = fh.readSint32LE();
+
+	object_types_.resize(nlevels);
+	object_names_.resize(nlevels);
+
+	Common::String str;
+
+	for (int i = 0; i < nlevels; i ++) {
+		int32 type = fh.readSint32LE();
+		int32 nameLen = fh.readUint32LE();
+		str = fh.readString('\0', nameLen);
+		object_types_[i] = type;
+		object_names_[i] = str.c_str();
+	}
+
+	return true;
+}
+
 bool qdNamedObjectReference::load_data(qdSaveStream &fh, int version) {
 	int num_levels = 0;
 

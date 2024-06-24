@@ -79,6 +79,11 @@ qdNamedObject *qdNamedObject::owner(qdNamedObjectType tp) const {
 	return NULL;
 }
 
+bool qdNamedObject::load_data(Common::SeekableReadStream &fh, int saveVersion) {
+	flags_ = fh.readSint32LE();
+	return true;
+}
+
 bool qdNamedObject::load_data(qdSaveStream &fh, int save_version) {
 	fh > flags_;
 

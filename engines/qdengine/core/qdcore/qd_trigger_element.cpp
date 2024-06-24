@@ -875,6 +875,23 @@ bool qdTriggerElement::set_parent_link_status(qdTriggerElementConstPtr parent, q
 	return false;
 }
 
+bool qdTriggerElement::load_data(Common::SeekableReadStream &fh, int saveVersion) {
+	char st = fh.readByte();
+	set_status(ElementStatus(st));
+
+	for (auto &it : parents_) {
+		char st = fh.readByte();
+		it.set_status(qdTriggerLink::LinkStatus(st));
+	}
+
+	for (auto &it : children_) {
+		char st = fh.readByte();
+		it.set_status(qdTriggerLink::LinkStatus(st));
+	}
+
+	return true;
+}
+
 bool qdTriggerElement::load_data(qdSaveStream &fh, int save_version) {
 	char st;
 	fh > st;

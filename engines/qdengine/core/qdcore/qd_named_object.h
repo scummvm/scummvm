@@ -124,6 +124,7 @@ public:
 
 	//! Загрузка данных из сэйва.
 	virtual bool load_data(qdSaveStream &fh, int save_version);
+	virtual bool load_data(Common::SeekableReadStream &fh, int save_version);
 	//! Запись данных в сэйв.
 	virtual bool save_data(qdSaveStream &fh) const;
 	virtual bool save_data(Common::SeekableWriteStream &fh) const;
