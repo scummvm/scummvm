@@ -1722,6 +1722,11 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// Skip to the end of the script
 			_stream->seek(0, SEEK_END);
 			expectedEndLocation = _stream->pos();
+			// Need to open a secondary inventory
+			// TODO: Encapsulate this code
+			View1 *currentView = (View1 *)_engine->findView("View1");
+			currentView->SetInventorySource(GameObjects::instance().Objects[objectID - 1]);
+			currentView->_isShowingInventory = true;
 		} else if (opcode1 == 0x2A) {
 			// TODO: Not sure what this is about, current hypothesis is that this is loading object
 			// data for an object not yet added to the scene
