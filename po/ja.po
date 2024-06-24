@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-22 18:24+0000\n"
-"PO-Revision-Date: 2024-06-13 12:35+0000\n"
+"PO-Revision-Date: 2024-06-24 08:43+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -662,11 +662,11 @@ msgstr "フォルダー"
 
 #: gui/editgamedialog.cpp:290
 msgid "Check Integrity"
-msgstr ""
+msgstr "整合性を確認"
 
 #: gui/editgamedialog.cpp:290
 msgid "Perform integrity check for all game files"
-msgstr ""
+msgstr "全ファイルの整合性を確認"
 
 #: gui/editgamedialog.cpp:295
 msgid "Game Path:"
@@ -835,27 +835,24 @@ msgstr "メモ："
 #: gui/integrity-dialog.cpp:100
 msgid ""
 "Verifying file integrity may take a long time to complete. Please wait...\n"
-msgstr ""
+msgstr "整合性の確認には時間がかかる場合があります。お待ち下さい...\n"
 
 #: gui/integrity-dialog.cpp:107 gui/integrity-dialog.cpp:168
 msgid "Calculating file checksums..."
-msgstr ""
+msgstr "チェックサム計算中..."
 
 #: gui/integrity-dialog.cpp:120
 msgid "Launch Email Client"
-msgstr ""
+msgstr "メールを起動"
 
 #: gui/integrity-dialog.cpp:174
-#, fuzzy
-#| msgid "Scan complete!"
 msgid "Calculation complete"
-msgstr "スキャン完了！"
+msgstr "計算完了"
 
 #: gui/integrity-dialog.cpp:263
-#, fuzzy, c-format
-#| msgid "Downloaded %s %S / %s %S"
+#, c-format
 msgid "Calculated %s %S / %s %S"
-msgstr "ダウンロード済 %s %S / %s %S"
+msgstr "計算済 %s %S / %s %S"
 
 #: gui/integrity-dialog.cpp:513
 msgid ""
@@ -865,11 +862,15 @@ msgid ""
 "If you are sure that this is a valid unknown variant, please send the "
 "following e-mail to integrity@scummvm.org"
 msgstr ""
+"### 結果\n"
+"このゲームセットは未知の形式のようです。\n"
+"\n"
+"これが有効なバリアントである場合は、integrity@scummvm.orgまでお知らせください"
 
 #: gui/integrity-dialog.cpp:537
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
-msgstr ""
+msgstr "ゲームのファイルが見つかりません。正しいパスですか?"
 
 #: gui/integrity-dialog.cpp:542
 msgid ""
@@ -879,7 +880,7 @@ msgstr ""
 
 #: gui/integrity-dialog.cpp:569
 msgid "Files all OK"
-msgstr ""
+msgstr "全て正常"
 
 #: gui/filebrowser-dialog.cpp:53
 msgid "Choose file for loading"
@@ -3242,10 +3243,8 @@ msgid "Storage Access Framework Permissions for ScummVM were revoked!"
 msgstr "ScummVMのStorage Access Frameworkの権限が取り消されました!"
 
 #: dists/android.strings.xml.cpp:55
-#, fuzzy
-#| msgid "the video mode could not be changed"
 msgid "Configuration file could not be parsed"
-msgstr "画像モードを変更できませんでした"
+msgstr "設定ファイルを解析できません"
 
 #: dists/android.strings.xml.cpp:56
 msgid "Run a game"
@@ -3260,6 +3259,8 @@ msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
 msgstr ""
+"ゲームがありません\n"
+"ScummVMを開いて追加してください。"
 
 #: dists/android.strings.xml.cpp:59
 msgid "Game icon"
@@ -6210,6 +6211,9 @@ msgid ""
 "or\n"
 "2. Any .sav file inside the QfG2 Remake game directory"
 msgstr ""
+"インポート可能なSierra製ゲームから出力したキャラクターを表示できます:\n"
+"1. ScummVMのセーブフォルダーにあるqfg1*.sav, qfg1vga*.sav\n"
+"2. QfG2 Remakeのゲームフォルダーにある.savファイル"
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
@@ -6997,14 +7001,12 @@ msgid "Use alternative camera controls"
 msgstr "異なるカメラ操作を使用"
 
 #: engines/freescape/metaengine.cpp:117
-#, fuzzy
-#| msgid "Filter graphics"
 msgid "Authentic graphics"
-msgstr "画像フィルター"
+msgstr "真正のグラフィック"
 
 #: engines/freescape/metaengine.cpp:118
 msgid "Keep graphics as close as possible to the original"
-msgstr ""
+msgstr "できる限りオリジナルに近付けた表示にします"
 
 #: engines/freescape/movement.cpp:47 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
@@ -7047,7 +7049,7 @@ msgstr "インフォ"
 
 #: engines/freescape/games/dark/dark.cpp:166
 msgid "Enable/Disable Jetpack"
-msgstr ""
+msgstr "Jetpackの有効/無効"
 
 #: engines/freescape/games/driller/driller.cpp:109
 #, fuzzy
