@@ -120,6 +120,7 @@ public:
 
 	uint8 targetPlayerDirection = 0; // related to changing rooms.
 
+	uint8 systemTimerCounter = 0;
 public:
 	DarkseedEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~DarkseedEngine() override;

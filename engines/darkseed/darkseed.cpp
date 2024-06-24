@@ -183,8 +183,12 @@ void DarkseedEngine::gameloop() {
 	while (!shouldQuit()) {
 		updateEvents();
 		counter_2c85_888b = (counter_2c85_888b + 1) & 0xff;
-		handleInput();
-		updateDisplay();
+		if (systemTimerCounter == 5) {
+			handleInput();
+			updateDisplay();
+			_isRightMouseClicked = false;
+			_isLeftMouseClicked = false;
+		}
 		_room->update();
 		_frame.draw();
 		_room->draw();
@@ -199,22 +203,26 @@ void DarkseedEngine::gameloop() {
 
 void DarkseedEngine::updateEvents() {
 	Common::Event event;
-	_isRightMouseClicked = false;
-	_isLeftMouseClicked = false;
+//	_isRightMouseClicked = false;
+//	_isLeftMouseClicked = false;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_MOUSEMOVE: _cursor.updatePosition(event.mouse.x, event.mouse.y); break;
 		case Common::EVENT_RBUTTONDOWN: _isRightMouseClicked = true; break;
-		case Common::EVENT_RBUTTONUP: _isRightMouseClicked = false; break;
+//		case Common::EVENT_RBUTTONUP: _isRightMouseClicked = false; break;
 		case Common::EVENT_LBUTTONDOWN: _isLeftMouseClicked = true; break;
-		case Common::EVENT_LBUTTONUP: _isLeftMouseClicked = false; break;
+//		case Common::EVENT_LBUTTONUP: _isLeftMouseClicked = false; break;
 		default: break;
 		}
 	}
 }
 
 void DarkseedEngine::wait() {
-	g_system->delayMillis(100);
+	g_system->delayMillis(16);
+	systemTimerCounter++;
+	if (systemTimerCounter == 6) {
+		systemTimerCounter = 0;
+	}
 }
 
 void DarkseedEngine::handleInput() {
