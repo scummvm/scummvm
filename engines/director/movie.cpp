@@ -216,7 +216,7 @@ bool Movie::loadArchive() {
 	}
 	_stageColor = _vm->transformColor(_cast->_stageColor);
 	// Need to check if the default palette is valid; if not, assume it's the Mac one.
-	if (isValidCastMember(_cast->_defaultPalette, kCastPalette)) {
+	if (g_director->hasPalette(_cast->_defaultPalette)) {
 		_defaultPalette = _cast->_defaultPalette;
 	} else {
 		_defaultPalette = CastMemberID(kClutSystemMac, -1);

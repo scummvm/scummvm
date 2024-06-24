@@ -970,14 +970,14 @@ void Score::setLastPalette() {
 	CastMemberID currentPalette = _currentFrame->_mainChannels.palette.paletteId;
 	// Director allows you to use palette IDs for cast members
 	// that have long since been erased. Check all of them.
-	if (!_movie->isValidCastMember(currentPalette, kCastPalette))
+	if (!g_director->hasPalette(currentPalette))
 		currentPalette = CastMemberID();
 	// Palette not specified in the frame
 	if (currentPalette.isNull()) {
 		// Use the score cached palette ID
 		isCachedPalette = true;
 		currentPalette = _currentFrame->_mainChannels.scoreCachedPaletteId;
-		if (!_movie->isValidCastMember(currentPalette, kCastPalette))
+		if (!g_director->hasPalette(currentPalette))
 			currentPalette = CastMemberID();
 		// The cached ID is created before the cast gets loaded; if it's zero,
 		// this corresponds to the movie default palette.

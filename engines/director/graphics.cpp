@@ -144,6 +144,10 @@ PaletteV4 *DirectorEngine::getPalette(const CastMemberID &id) {
 	return &_loadedPalettes[id];
 }
 
+bool DirectorEngine::hasPalette(const CastMemberID &id) {
+	return _loadedPalettes.contains(id);
+}
+
 void DirectorEngine::addPalette(CastMemberID &id, byte *palette, int length) {
 	if (id.castLib < 0) {
 		warning("DirectorEngine::addPalette(): Negative cast library ids reserved for default palettes");
