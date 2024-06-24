@@ -225,6 +225,7 @@ void SetupMenu::run() {
 		auto *tog = _toggles[i];
 		tog->handleInput(input);
 		if (tog->_stateChanged) {
+			g_nancy->_sound->playSound("BUOK");
 			Common::String key = getToggleConfManKey(i);
 			if (key.size()) {
 				// Make sure we don't write an empty string as a key in ConfMan
