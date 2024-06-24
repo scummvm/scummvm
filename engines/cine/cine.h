@@ -92,6 +92,32 @@ struct VolumeResource {
 
 typedef Common::HashMap<Common::String, Common::Array<VolumeResource> > StringToVolumeResourceArrayHashMap;
 
+enum CINEAction {
+	kActionNone,
+	kActionMoveUp,
+	kActionMoveDown,
+	kActionMoveLeft,
+	kActionMoveRight,
+	kActionMoveUpLeft,
+	kActionMoveUpRight,
+	kActionMoveDownLeft,
+	kActionMoveDownRight,
+	kActionGameSpeedDefault,
+	kActionGameSpeedSlower,
+	kActionGameSpeedFaster,
+	kActionExamine,
+	kActionTake,
+	kActionInventory,
+	kActionUse,
+	kActionActivate,
+	kActionSpeak,
+	kActionActionMenu,
+	kActionSystemMenu,
+	kActionCollisionPage,
+	kActionMouseLeft,
+	kActionMouseRight
+};
+
 class CineConsole;
 
 class CineEngine : public Engine {
