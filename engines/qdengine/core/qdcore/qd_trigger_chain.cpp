@@ -471,9 +471,10 @@ bool qdTriggerChain::save_data(Common::SeekableWriteStream &fh) const {
 		return false;
 	}
 
-	for (qdTriggerElementList::const_iterator it = elements_.begin(); it != elements_.end(); ++it) {
-		if (!(*it) -> save_data(fh))
+	for (auto &it : elements_) {
+		if (!it->save_data(fh)) {
 			return false;
+		}
 	}
 
 	return true;
