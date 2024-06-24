@@ -2600,39 +2600,44 @@ bool qdGameDispatcher::save_data(const char *fname) const {
 		fh->writeSint32LE(0);
 
 	fh->writeUint32LE(global_object_list().size());
-	for (qdGameObjectList::const_iterator it = global_object_list().begin(); it != global_object_list().end(); ++it) {
-		if (!(*it) -> save_data(*fh))
+	for (auto &it : global_object_list()) {
+		if (!it->save_data(*fh)) {
 			return false;
+		}
 	}
 
 	fh->writeUint32LE(counter_list().size());
-	for (qdCounterList::const_iterator it = counter_list().begin(); it != counter_list().end(); ++it) {
-		if (!(*it) -> save_data(*fh))
+	for (auto &it : counter_list()) {
+		if (!it->save_data(*fh)) {
 			return false;
+		}
 	}
 
 	fh->writeUint32LE(scene_list().size());
-	for (qdGameSceneList::const_iterator it = scene_list().begin(); it != scene_list().end(); ++it) {
-		if (!(*it) -> save_data(*fh))
+	for (auto &it : scene_list()) {
+		if (!it->save_data(*fh))
 			return false;
 	}
 
 	fh->writeUint32LE(global_object_list().size());
-	for (qdGameObjectList::const_iterator it = global_object_list().begin(); it != global_object_list().end(); ++it) {
-		if (!(*it) -> save_data(*fh))
+	for (auto &it : global_object_list()) {
+		if (!it->save_data(*fh)) {
 			return false;
+		}
 	}
 
 	fh->writeUint32LE(trigger_chain_list().size());
-	for (qdTriggerChainList::const_iterator it = trigger_chain_list().begin(); it != trigger_chain_list().end(); ++it) {
-		if (!(*it) -> save_data(*fh))
+	for (auto &it : trigger_chain_list()) {
+		if (!it->save_data(*fh)) {
 			return false;
+		}
 	}
 
 	fh->writeUint32LE(inventory_list().size());
-	for (qdInventoryList::const_iterator it = inventory_list().begin(); it != inventory_list().end(); ++it) {
-		if (!(*it) -> save_data(*fh))
+	for (auto &it : inventory_list()) {
+		if (!it->save_data(*fh)) {
 			return false;
+		}
 	}
 
 	mouse_obj_->save_data(*fh);

@@ -289,8 +289,8 @@ bool qdCounter::save_data(Common::SeekableWriteStream &fh) {
 	fh.writeSint32LE(value_);
 	fh.writeSint32LE(elements_.size());
 
-	for (element_container_t::const_iterator it = elements_.begin(); it != elements_.end(); ++it) {
-		it->save_data(fh);
+	for (auto &it : elements_) {
+		it.save_data(fh);
 	}
 
 	return true;

@@ -943,12 +943,12 @@ bool qdTriggerElement::save_data(Common::SeekableWriteStream &fh) const {
 
 	fh.writeByte(status_);
 
-	for (qdTriggerLinkList::const_iterator it = parents_.begin(); it != parents_.end(); ++it) {
-		fh.writeByte(char(it -> status()));
+	for (auto &it : parents_) {
+		fh.writeByte(it.status());
 	}
 
-	for (qdTriggerLinkList::const_iterator it = children_.begin(); it != children_.end(); ++it) {
-		fh.writeByte(char(it -> status()));
+	for (auto &it : children_) {
+		fh.writeByte(it.status());
 	}
 
 	return true;

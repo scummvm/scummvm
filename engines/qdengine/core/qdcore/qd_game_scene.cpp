@@ -874,14 +874,16 @@ bool qdGameScene::save_data(Common::SeekableWriteStream &fh) const {
 		return false;
 	};
 
-	for (qdGameObjectList::const_iterator it = object_list().begin(); it != object_list().end(); ++it) {
-		if (!(*it) -> save_data(fh))
+	for (auto &it : objects.get_list()) {
+		if (!it->save_data(fh)) {
 			return false;
+		}
 	}
 
-	for (qdGridZoneList::const_iterator it = grid_zone_list().begin(); it != grid_zone_list().end(); ++it) {
-		if (!(*it) -> save_data(fh))
+	for (auto &it : grid_zones.get_list()) {
+		if (!it->save_data(fh)) {
 			return false;
+		}
 	}
 
 	if (selected_object_) {
