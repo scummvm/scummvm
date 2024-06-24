@@ -147,6 +147,8 @@ public:
 		return (trigger_reference_count_ > 0);
 	}
 
+	Common::String toString();
+
 private:
 
 	//! Некие свойства объекта.

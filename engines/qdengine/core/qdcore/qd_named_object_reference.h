@@ -73,6 +73,8 @@ public:
 
 	qdNamedObject *object() const;
 
+	Common::String toString() const;
+
 private:
 
 	std::vector<int> object_types_;

@@ -441,9 +441,9 @@ void qdInventory::scroll_down() {
 
 void qdInventory::debug_log() const {
 #ifdef _DEBUG
-	debugC(3, kDebugLog, "Inventory");
+	debugCN(3, kDebugLog, "Inventory ");
 	if (name())
-		debugC(3, kDebugLog, "%s", transCyrillic(name()));
+		debugCN(3, kDebugLog, "%s", transCyrillic(name()));
 
 	debugC(3, kDebugLog, "--------------");
 

@@ -1359,14 +1359,14 @@ void qdGameObjectMoving::set_state(int st) {
 			if (!can_change_state(p)) return;
 
 			if (is_moving2position(p -> start_pos())) {
-				debugC(3, kDebugLog, "[%d] The condition is waiting: %s/%s",g_system->getMillis(), transCyrillic(name()), transCyrillic(get_state(st)->name()));
+				debugC(3, kDebugLog, "[%d] The condition is waiting: %s/%s", g_system->getMillis(), transCyrillic(name()), transCyrillic(get_state(st)->name()));
 				debugC(3, kDebugLog, "pos %f %f/%f %f", R().x, R().y, p->start_pos().x, p->start_pos().y);
 				return;
 			}
 
 			if (!is_in_position(p -> start_pos())) {
 				if (move(p -> start_pos(), p -> start_direction_angle(), true)) {
-					debugC(3, kDebugLog, "[%d] The condition is put in the queue: %s/%s",g_system->getMillis(), transCyrillic(name()), transCyrillic(get_state(st)->name()));
+					debugC(3, kDebugLog, "[%d] The condition is put in the queue: %s/%s", g_system->getMillis(), transCyrillic(name()), transCyrillic(get_state(st)->name()));
 					set_queued_state(p);
 				}
 
@@ -1384,7 +1384,7 @@ void qdGameObjectMoving::set_state(int st) {
 		if (p -> has_camera_mode() && owner())
 			static_cast<qdGameScene * >(owner()) -> set_camera_mode(p -> camera_mode(), this);
 #endif
-		debugC(3, kDebugLog, "%d Starting: %s / %s", transCyrillic(name()), transCyrillic(p -> name()));
+		debugC(3, kDebugLog, "%d Starting: %s/%s", g_system->getMillis(), transCyrillic(name()), transCyrillic(p->name()));
 
 		p -> drop_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_ACTIVATION_TIMER);
 		p -> drop_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_ACTIVATION_TIMER_END);
