@@ -4172,6 +4172,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("rhiannon", "",
 		WME_ENTRY1s("data.dcp", "870f348900b735f1cc79c0608ce32b0e", 1046169851), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_6),
 
+	// Rhiannon: Curse of the four Branches
+	WME_WINENTRY("rhiannon", "",
+		WME_ENTRY1s("data.dcp", "38e104ce1ebaf73e81446ab4344e1ad7", 1025512723), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_10),
+
 	// Rhiannon: Curse of the four Branches (English PC DVD)
 	WME_WINENTRY("rhiannon", "DVD",
 		WME_ENTRY1s("data.dcp", "6736bbc921bb6ce5161b3ad095a97bd4", 1053441028), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_6),
