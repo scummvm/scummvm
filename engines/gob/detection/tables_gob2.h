@@ -178,6 +178,19 @@
 	kFeaturesCD,
 	0, 0, 0
 },
+{ // Supplied by pykman in bug report #5365
+	{
+		"gob2",
+		"CD v1.02",
+		AD_ENTRY1s("intro.stk", "978afddcac81bb95a04757b61f78471c", 619825),
+		PL_POL,
+		kPlatformDOS,
+		ADGF_CD,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kFeaturesCD,
+	0, 0, 0
+},
 {
 	{
 		"gob2",
