@@ -270,6 +270,7 @@ View1::View1() : UIElement("View1") {
 	void View1::setStringBox(const Common::StringArray& sa) {
 		_drawnStringBox = sa;
 		_isShowingStringBox = true;
+		_continueScriptAfterUI = true;
 
 		// TODO: Change cursor, stop animations, hide again
 		redraw();

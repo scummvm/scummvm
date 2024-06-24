@@ -723,6 +723,20 @@ l0037_A242:
 	mov	word ptr [bp-4h],1h
 	mov	word ptr [bp-2h],0h
 	jmp	0A256h
+	*/
+	else if (value == 0x2A) {
+		// We return 1 if [1042] is 1 and [0FD2] is 0.
+		// [1042] is set to true if we move an item onto the stack thingy in the inventory
+		// [0FD2] is the UI screen ID, and is 0 if no UI is open
+		// TODO: Just hardcoded for now to be able to progress
+		out1 = 0x0;
+		out2 = 0;
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		return;
+	}
+
+/*
+
 
 l0037_A24E:
 	xor	ax,ax
@@ -1321,6 +1335,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 			Func9F4D(v3, v4);
 
 			shouldSkip = false;
+			// TODO: I think I have shouldSkip backwards, we check it the other way around in SIS code
 			// TODO: Figure out if we handle opcodes differently here
 			if (opcode2 == 0x1) {
 				// l0037_DC8F:
@@ -1329,7 +1344,13 @@ void Script::ScriptExecutor::ExecuteScript() {
 				ScriptUnimplementedOpcode(opcode2);
 				break;
 			} else if (opcode2 == 0x3) {
-				shouldSkip = v1 | v2;
+				// I had this wrong, this is a two-byte comparison
+				if (v2 < v4) {
+					shouldSkip = true;
+				} else if (v2 == v4) {
+					shouldSkip = v1 < v3;
+				}
+				shouldSkip = !shouldSkip;
 			} else if (opcode2 <= 0x5) {
 				ScriptUnimplementedOpcode(opcode2);
 				break;
@@ -1422,6 +1443,17 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Now actually place the object
 			// TODO: Need to handle 0 scene and moving to non-active scenes
 			// TODO: Need to handle negative numbers here
+
+			if (sceneID > 0x400) {
+				// This is the special case of adding a child to an object
+				// TODO: This is hardcoded to fit to the special case of the hat,
+				// with this addition, the function needs to be refactored to still
+				// remain readable
+				GameObject* parentObject = GameObjects::instance().Objects[sceneID - 0x400 - 1];
+				GameObject *childObject = GameObjects::instance().Objects[objectID - 1];
+				childObject->SceneIndex = parentObject->Index;
+				return;
+			}
 
 			View1 *currentView = (View1 *)_engine->findView("View1");
 			Character *c = currentView->GetCharacterByIndex(objectID);
@@ -1684,6 +1716,12 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Figure out what this does - it seems to again write data to a
 			// hotspot's data
 			FuncC8E4();
+		} else if (opcode1 == 0x29) {
+			uint32 objectID = Func9F4D_32();
+			objectID -= 0x400;
+			// Skip to the end of the script
+			_stream->seek(0, SEEK_END);
+			expectedEndLocation = _stream->pos();
 		} else if (opcode1 == 0x2A) {
 			// TODO: Not sure what this is about, current hypothesis is that this is loading object
 			// data for an object not yet added to the scene
