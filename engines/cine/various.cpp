@@ -905,18 +905,18 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 			}
 		} else {
 			int selectionValueDiff = 0;
-			while (!g_cine->_keyInputList.empty()) {
-				switch (g_cine->_keyInputList.back().keycode) {
-				case Common::KEYCODE_UP:
+			while (!g_cine->_actionList.empty()) {
+				switch (g_cine->_actionList.back()) {
+				case kActionMenuOptionUp:
 					selectionValueDiff--;
 					break;
-				case Common::KEYCODE_DOWN:
+				case kActionMenuOptionDown:
 					selectionValueDiff++;
 					break;
 				default:
 					break;
 				}
-				g_cine->_keyInputList.pop_back();
+				g_cine->_actionList.pop_back();
 			}
 
 			if (selectionValueDiff != 0) {

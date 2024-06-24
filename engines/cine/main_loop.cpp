@@ -70,154 +70,142 @@ static void processEvent(Common::Event &event) {
 	case Common::EVENT_MOUSEMOVE:
 		break;
 	case Common::EVENT_WHEELUP:
-		g_cine->_keyInputList.push_back(Common::KeyState(Common::KEYCODE_UP));
+		g_cine->_actionList.push_back(Common::CustomEventType(kActionMenuOptionUp));
 		break;
 	case Common::EVENT_WHEELDOWN:
-		g_cine->_keyInputList.push_back(Common::KeyState(Common::KEYCODE_DOWN));
+		g_cine->_actionList.push_back(Common::CustomEventType(kActionMenuOptionDown));
 		break;
-	case Common::EVENT_KEYDOWN:
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_RETURN:
-		case Common::KEYCODE_KP_ENTER:
-		case Common::KEYCODE_KP5:
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		g_cine->_actionList.push_back(event.customType);
+		switch (event.customType) {
+		case kActionMouseLeft:
 			if (allowPlayerInput) {
 				mouseLeft = 1;
 			}
 			break;
-		case Common::KEYCODE_ESCAPE:
+		case kActionMouseRight:
 			if (allowPlayerInput) {
 				mouseRight = 1;
 			}
 			break;
-		case Common::KEYCODE_F1:
+		case kActionExamine:
 			if (allowPlayerInput) {
 				playerCommand = 0; // EXAMINE
 				makeCommandLine();
 			}
 			break;
-		case Common::KEYCODE_F2:
+		case kActionTake:
 			if (allowPlayerInput) {
 				playerCommand = 1; // TAKE
 				makeCommandLine();
 			}
 			break;
-		case Common::KEYCODE_F3:
+		case kActionInventory:
 			if (allowPlayerInput && !inMenu) {
 				playerCommand = 2; // INVENTORY
 				makeCommandLine();
 			}
 			break;
-		case Common::KEYCODE_F4:
+		case kActionUse:
 			if (allowPlayerInput && !inMenu) {
 				playerCommand = 3; // USE
 				makeCommandLine();
 			}
 			break;
-		case Common::KEYCODE_F5:
+		case kActionActivate:
 			if (allowPlayerInput) {
 				playerCommand = 4; // ACTIVATE
 				makeCommandLine();
 			}
 			break;
-		case Common::KEYCODE_F6:
+		case kActionSpeak:
 			if (allowPlayerInput) {
 				playerCommand = 5; // SPEAK
 				makeCommandLine();
 			}
 			break;
-		case Common::KEYCODE_F9:
+		case kActionActionMenu:
 			if (allowPlayerInput && !inMenu) {
 				makeActionMenu();
 				makeCommandLine();
 			}
 			break;
-		case Common::KEYCODE_F10:
+		case kActionSystemMenu:
 			if (!inMenu) {
 				g_cine->makeSystemMenu();
 			}
 			break;
-		case Common::KEYCODE_F11:
+		case kActionCollisionPage:
 			renderer->showCollisionPage(true);
 			break;
-		case Common::KEYCODE_KP0:
+		case kActionGameSpeedDefault:
 			g_cine->setDefaultGameSpeed();
 			break;
-		case Common::KEYCODE_MINUS:
-		case Common::KEYCODE_KP_MINUS:
+		case kActionGameSpeedSlower:
 			g_cine->modifyGameSpeed(-1); // Slower
 			break;
-		case Common::KEYCODE_PLUS:
-		case Common::KEYCODE_KP_PLUS:
+		case kActionGameSpeedFaster:
 			g_cine->modifyGameSpeed(+1); // Faster
 			break;
-		case Common::KEYCODE_KP4:
+		case kActionMoveLeft:
 			moveUsingKeyboard(-1, 0); // Left
 			break;
-		case Common::KEYCODE_KP6:
+		case kActionMoveRight:
 			moveUsingKeyboard(+1, 0); // Right
 			break;
-		case Common::KEYCODE_KP8:
+		case kActionMoveUp:
 			moveUsingKeyboard(0, +1); // Up
 			break;
-		case Common::KEYCODE_KP2:
+		case kActionMoveDown:
 			moveUsingKeyboard(0, -1); // Down
 			break;
-		case Common::KEYCODE_KP9:
+		case kActionMoveUpRight:
 			moveUsingKeyboard(+1, +1); // Up & Right
 			break;
-		case Common::KEYCODE_KP7:
+		case kActionMoveUpLeft:
 			moveUsingKeyboard(-1, +1); // Up & Left
 			break;
-		case Common::KEYCODE_KP1:
+		case kActionMoveDownLeft:
 			moveUsingKeyboard(-1, -1); // Down & Left
 			break;
-		case Common::KEYCODE_KP3:
+		case kActionMoveDownRight:
 			moveUsingKeyboard(+1, -1); // Down & Right
 			break;
-		case Common::KEYCODE_LEFT:
-			// fall through
-		case Common::KEYCODE_RIGHT:
-			// fall through
-		case Common::KEYCODE_UP:
-			// fall through
-		case Common::KEYCODE_DOWN:
-			// fall through
 		default:
-			g_cine->_keyInputList.push_back(event.kbd);
 			break;
-		}
+		};
 		break;
-	case Common::EVENT_KEYUP:
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_RETURN:
-		case Common::KEYCODE_KP_ENTER:
-		case Common::KEYCODE_KP5:
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+		switch (event.customType) {
+		case kActionMouseLeft:
 			if (allowPlayerInput) {
 				mouseLeft = 0;
-			}
-			break;
-		case Common::KEYCODE_ESCAPE:
+			} break;
+		case kActionMouseRight:
 			if (allowPlayerInput) {
 				mouseRight = 0;
 			}
-			break;
-		case Common::KEYCODE_F11:
-			renderer->showCollisionPage(false);
-			break;
-		case Common::KEYCODE_KP4:   // Left
-		case Common::KEYCODE_KP6:   // Right
-		case Common::KEYCODE_KP8:   // Up
-		case Common::KEYCODE_KP2:   // Down
-		case Common::KEYCODE_KP9:   // Up & Right
-		case Common::KEYCODE_KP7:   // Up & Left
-		case Common::KEYCODE_KP1:   // Down & Left
-		case Common::KEYCODE_KP3:   // Down & Right
+		case kActionMoveUp:
+		case kActionMoveDown:
+		case kActionMoveLeft:
+		case kActionMoveRight:
+		case kActionMoveUpLeft:
+		case kActionMoveUpRight:
+		case kActionMoveDownLeft:
+		case kActionMoveDownRight:
 			// Stop ego movement made with keyboard when releasing a known key
 			moveUsingKeyboard(0, 0);
+			break;
+		case kActionCollisionPage:
+			renderer->showCollisionPage(false);
 			break;
 		default:
 			break;
 		}
+		break;
+	case Common::EVENT_KEYDOWN:
+		g_cine->_keyInputList.push_back(event.kbd);
+		break;
 	default:
 		break;
 	}
@@ -269,9 +257,9 @@ void manageEvents(CallSource callSource, EventTarget eventTarget, bool useMaxMou
 				break;
 			case UNTIL_MOUSE_BUTTON_DOWN_OR_KEY_UP_OR_DOWN_OR_IN_RECTS:
 				foundTarget = mouseButtonDown;
-				if (!g_cine->_keyInputList.empty()) {
-					Common::KeyState key = g_cine->_keyInputList.back();
-					if (key.keycode == Common::KEYCODE_UP || key.keycode == Common::KEYCODE_DOWN) {
+				if (!g_cine->_actionList.empty()) {
+					Common::CustomEventType customType = g_cine->_actionList.back();
+					if (customType == kActionMenuOptionUp || customType == kActionMenuOptionDown) {
 						foundTarget = true;
 					}
 				}
