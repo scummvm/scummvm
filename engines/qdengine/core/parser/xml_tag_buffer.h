@@ -80,7 +80,7 @@ public:
 	tag_buffer &operator > (float &var) {
 		XML_ASSERT(data_format_ == tag::TAG_DATA_VOID || data_format_ == tag::TAG_DATA_FLOAT);
 		var = READ_LE_FLOAT32(data_ + data_offset_);
-		data_offset_ += sizeof(float);
+		data_offset_ += 4;
 
 		return *this;
 	}
