@@ -44,6 +44,7 @@ namespace QDEngine {
 
 qdMiniGame::qdMiniGame() : dll_handle_(NULL),
 	interface_(NULL) {
+		_emptyInterface = new qdEmptyMiniGameInterface;
 }
 
 qdMiniGame::qdMiniGame(const qdMiniGame &mg) : qdNamedObject(mg),
@@ -51,14 +52,16 @@ qdMiniGame::qdMiniGame(const qdMiniGame &mg) : qdNamedObject(mg),
 	dll_handle_(mg.dll_handle_),
 	interface_(mg.interface_),
 	config_(mg.config_) {
+		_emptyInterface = new qdEmptyMiniGameInterface;
 }
 
 qdMiniGame::~qdMiniGame() {
 }
 
 bool qdMiniGame::start() {
-	if (load_interface())
-		return interface_ -> init(&qdmg::qdEngineInterfaceImpl::instance());
+	if (load_interface()) {
+		return _emptyInterface->init(&qdmg::qdEngineInterfaceImpl::instance());
+	}
 
 	return false;
 }
