@@ -425,10 +425,12 @@ void ScummEngine_v100he::o100_actorOps() {
 		break;
 	case SO_PRIORITY:
 		a->_layer = pop();
+		a->_needBgReset = true;
 		a->_needRedraw = true;
 		break;
 	case SO_ROOM_PALETTE:
 		a->_hePaletteNum = pop();
+		a->_needBgReset = true;
 		a->_needRedraw = true;
 		break;
 	case SO_SCALE:
@@ -437,6 +439,7 @@ void ScummEngine_v100he::o100_actorOps() {
 		break;
 	case SO_SHADOW:
 		a->_heShadow = pop();
+		a->_needBgReset = true;
 		a->_needRedraw = true;
 		break;
 	case SO_STEP_DIST:
