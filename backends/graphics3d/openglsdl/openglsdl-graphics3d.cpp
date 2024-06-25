@@ -545,7 +545,7 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 				_window->createOrUpdateWindow(gameWidth, gameHeight, sdlflags);
 			}
 
-			sdlflags |= SDL_WINDOW_FULLSCREEN;
+			sdlflags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 		}
 
 		if (_window->createOrUpdateWindow(effectiveWidth, effectiveHeight, sdlflags)) {
