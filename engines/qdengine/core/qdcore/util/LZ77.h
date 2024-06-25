@@ -27,8 +27,8 @@ namespace QDEngine {
 
 class CLZ77 {
 private:
-	long LZComp(unsigned char *s1, unsigned char *s2, long maxlen);
-	unsigned char *FindLZ(unsigned char *source, unsigned char *s, long slen, long border, long mlen, long &len);
+	long LZComp(const byte *s1, const byte *s2, long maxlen);
+	const byte *FindLZ(const byte *source, const byte *s, long slen, long border, long mlen, int32 &len);
 public:
 	CLZ77();
 	virtual ~CLZ77();
