@@ -29,9 +29,7 @@ namespace QDEngine {
 
 namespace xml {
 
-#ifdef _FINAL_VERSION_
 #define _XML_ONLY_BINARY_SCRIPT_
-#endif
 
 class parser {
 public:
