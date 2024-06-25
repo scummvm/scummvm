@@ -129,4 +129,46 @@ Common::String qdNamedObject::toString() {
 
 	return res;
 }
+
+const char *objectType2str(int id) {
+	const char *names[] = {
+		"GENERIC",
+		"SCALE_INFO",
+		"TRIGGER_CHAIN",
+		"SOUND",
+		"ANIMATION",
+		"ANIMATION_INFO",
+		"COORDS_ANIMATION",
+		"OBJ_STATE",
+		"STATIC_OBJ",
+		"ANIMATED_OBJ",
+		"MOVING_OBJ",
+		"MOUSE_OBJ",
+		"SCENE",
+		"LOCATION",
+		"DISPATCHER",
+
+		"ANIMATION_SET",
+		"GRID_ZONE",
+		"VIDEO",
+		"INVENTORY",
+		"MINIGAME",
+		"MUSIC_TRACK",
+		"GRID_ZONE_STATE",
+
+		"SOUND_INFO",
+		"ANIMATION_SET_INFO",
+
+		"GAME_END",
+		"COUNTER",
+
+		"FONT_INFO",
+	};
+
+	if (id >= QD_NAMED_OBJECT_MAX_TYPE || id < 0)
+		return "???";
+
+	return names[id];
+}
+
 } // namespace QDEngine

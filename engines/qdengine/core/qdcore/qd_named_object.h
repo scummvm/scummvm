@@ -63,6 +63,7 @@ enum qdNamedObjectType {
 	QD_NAMED_OBJECT_MAX_TYPE
 };
 
+const char *objectType2str(int id);
 
 //! Поименованный объект.
 class qdNamedObject : public qdNamedObjectBase {
