@@ -21,6 +21,7 @@
 
 #ifndef __XML_TAG_BUFFER_H__
 #define __XML_TAG_BUFFER_H__
+#include "common/endian.h"
 #include "qdengine/core/parser/xml_tag.h"
 
 #ifdef _DEBUG
@@ -50,35 +51,35 @@ public:
 
 	tag_buffer &operator > (short &var) {
 		XML_ASSERT(data_format_ == tag::TAG_DATA_VOID || data_format_ == tag::TAG_DATA_SHORT);
-		var = *reinterpret_cast<const short *>(data_ + data_offset_);
-		data_offset_ += sizeof(short);
+		var = (int16)READ_LE_UINT16(data_ + data_offset_);
+		data_offset_ += sizeof(int16);
 
 		return *this;
 	}
 	tag_buffer &operator > (unsigned short &var) {
 		XML_ASSERT(data_format_ == tag::TAG_DATA_VOID || data_format_ == tag::TAG_DATA_UNSIGNED_SHORT);
-		var = *reinterpret_cast<const unsigned short *>(data_ + data_offset_);
-		data_offset_ += sizeof(unsigned short);
+		var = READ_LE_UINT16(data_ + data_offset_);
+		data_offset_ += sizeof(uint16);
 
 		return *this;
 	}
 	tag_buffer &operator > (int &var) {
 		XML_ASSERT(data_format_ == tag::TAG_DATA_VOID || data_format_ == tag::TAG_DATA_INT);
-		var = *reinterpret_cast<const int *>(data_ + data_offset_);
-		data_offset_ += sizeof(int);
+		var = (int32)READ_LE_UINT32(data_ + data_offset_);
+		data_offset_ += sizeof(int32);
 
 		return *this;
 	}
 	tag_buffer &operator > (unsigned int &var) {
 		XML_ASSERT(data_format_ == tag::TAG_DATA_VOID || data_format_ == tag::TAG_DATA_UNSIGNED_INT);
-		var = *reinterpret_cast<const unsigned int *>(data_ + data_offset_);
-		data_offset_ += sizeof(unsigned int);
+		var = READ_LE_UINT32(data_ + data_offset_);
+		data_offset_ += sizeof(uint32);
 
 		return *this;
 	}
 	tag_buffer &operator > (float &var) {
 		XML_ASSERT(data_format_ == tag::TAG_DATA_VOID || data_format_ == tag::TAG_DATA_FLOAT);
-		var = *reinterpret_cast<const float *>(data_ + data_offset_);
+		var = READ_LE_FLOAT32(data_ + data_offset_);
 		data_offset_ += sizeof(float);
 
 		return *this;
