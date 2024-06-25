@@ -126,20 +126,20 @@ long CLZ77::Decode(unsigned char *target, long &tlen, const unsigned char *sourc
 	long i;
 	long block, len;
 	long shift, border;
-	unsigned char *s, *t, *p;
-	unsigned char *flag;
-	unsigned short *ptmp;
+	byte *s, *t, *p;
+	byte *flag;
+	uint16 *ptmp;
 
-	tlen = ((unsigned long *)source)[0];
-	source += sizeof(unsigned long);            // read/remove target size
-	slen -= sizeof(unsigned long);
+	tlen = ((uint32 *)source)[0];
+	source += sizeof(uint32);            // read/remove target size
+	slen -= sizeof(uint32);
 
 	t = target;
-	flag = (unsigned char *)source;
+	flag = (byte *)source;
 	block = 0;              // block - bit in single flag byte
 	shift = 16;             // shift offset to most significant bits
 	border = 1;             // offset can`t be more then border
-	for (s = (unsigned char *)source + 1; (s < source + slen) && (t - target < tlen);) {
+	for (s = (byte *)source + 1; (s < source + slen) && (t - target < tlen);) {
 		if (shift > BITS_LEN)
 			while (t - target >= border) {
 				if (shift <= BITS_LEN) break;
@@ -147,7 +147,7 @@ long CLZ77::Decode(unsigned char *target, long &tlen, const unsigned char *sourc
 				shift--;
 			}
 		if (flag[0] & (1 << block)) {
-			ptmp = (unsigned short *)s;
+			ptmp = (uint16 *)s;
 			len = ((1 << shift) - 1)&ptmp[0];
 			p = t - (ptmp[0] >> shift) - 1;
 			for (i = 0; i < len; i++)
@@ -164,7 +164,7 @@ long CLZ77::Decode(unsigned char *target, long &tlen, const unsigned char *sourc
 		}
 //		OnStep();
 	}
-	return (s - source) + sizeof(unsigned long);
+	return (s - source) + sizeof(uint32);
 }
 
 } // namespace QDEngine
