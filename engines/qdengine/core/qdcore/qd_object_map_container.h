@@ -22,7 +22,7 @@
 #ifndef __QD_OBJECT_MAP_CONTAINER_H__
 #define __QD_OBJECT_MAP_CONTAINER_H__
 
-#include <unordered_map>
+#include "qdengine/qdengine.h"
 
 
 namespace QDEngine {
@@ -56,14 +56,7 @@ public:
 
 private:
 
-	struct eqstr {
-		bool operator()(const char *s1, const char *s2) const {
-			if (!s1 || !s2) return false;
-			return strcmp(s1, s2) == 0;
-		}
-	};
-
-	typedef std::unordered_map<const char *, T *, std::hash<const char *>, eqstr> object_map_t;
+	typedef Common::HashMap<Common::String, T *> object_map_t;
 
 	object_list_t object_list_;
 	object_map_t object_map_;
@@ -75,7 +68,7 @@ bool qdObjectMapContainer<T>::add_object(T *p) {
 	if (it != object_map_.end())
 		return false;
 
-	object_map_.insert(typename object_map_t::value_type(p -> name(), p));
+	object_map_[p->name()] = p;
 	object_list_.push_back(p);
 
 	return true;
@@ -86,7 +79,7 @@ const T *qdObjectMapContainer<T>::get_object(const char *name) const {
 
 	typename object_map_t::const_iterator it = object_map_.find(name);
 	if (it != object_map_.end())
-		return it -> second;
+		return it->_value;
 
 	return NULL;
 }
@@ -95,7 +88,7 @@ template <class T>
 T *qdObjectMapContainer<T>::get_object(const char *name) {
 	typename object_map_t::iterator it = object_map_.find(name);
 	if (it != object_map_.end())
-		return it -> second;
+		return it->_value;
 
 	return NULL;
 }
@@ -131,7 +124,7 @@ bool qdObjectMapContainer<T>::rename_object(T *p, const char *name) {
 	if (im != object_map_.end()) {
 		object_map_.erase(im);
 		p -> set_name(name);
-		object_map_.insert(typename object_map_t::value_type(p -> name(), p));
+		object_map_[p->name()] = p;
 
 		return true;
 	}
