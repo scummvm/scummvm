@@ -33,6 +33,7 @@
 #include "qdengine/core/qdcore/qd_setup.h"
 #include "qdengine/core/qdcore/qd_minigame_interface.h"
 #include "qdengine/core/qdcore/qd_engine_interface.h"
+#include "qdengine/minigames/qd_empty_minigame_interface.h"
 
 
 namespace QDEngine {
@@ -44,7 +45,6 @@ namespace QDEngine {
 
 qdMiniGame::qdMiniGame() : dll_handle_(NULL),
 	interface_(NULL) {
-		_emptyInterface = new qdEmptyMiniGameInterface;
 }
 
 qdMiniGame::qdMiniGame(const qdMiniGame &mg) : qdNamedObject(mg),
@@ -52,7 +52,6 @@ qdMiniGame::qdMiniGame(const qdMiniGame &mg) : qdNamedObject(mg),
 	dll_handle_(mg.dll_handle_),
 	interface_(mg.interface_),
 	config_(mg.config_) {
-		_emptyInterface = new qdEmptyMiniGameInterface;
 }
 
 qdMiniGame::~qdMiniGame() {
@@ -60,7 +59,7 @@ qdMiniGame::~qdMiniGame() {
 
 bool qdMiniGame::start() {
 	if (load_interface()) {
-		return _emptyInterface->init(&qdmg::qdEngineInterfaceImpl::instance());
+		return interface_->init(&qdmg::qdEngineInterfaceImpl::instance());
 	}
 
 	return false;
@@ -285,6 +284,7 @@ bool qdMiniGame::load_interface() {
 	if (!dll_name_.empty()) {
 		warning("STUB: Trying to load dll: %s", dll_name_.c_str());
 		// call here dll->open_game_interface(game_name())
+		interface_ = new qdEmptyMiniGameInterface;
 		return true;
 	}
 	return false;
