@@ -94,15 +94,15 @@ public:
 			return 0;
 		case TAG_DATA_SHORT:
 		case TAG_DATA_UNSIGNED_SHORT:
-			return sizeof(short);
+			return sizeof(uint16);
 		case TAG_DATA_INT:
-			return sizeof(int);
+			return sizeof(int32);
 		case TAG_DATA_UNSIGNED_INT:
-			return sizeof(unsigned int);
+			return sizeof(uint32);
 		case TAG_DATA_FLOAT:
 			return sizeof(float);
 		case TAG_DATA_STRING:
-			return sizeof(char);
+			return sizeof(byte);
 		}
 		return 0;
 	}
