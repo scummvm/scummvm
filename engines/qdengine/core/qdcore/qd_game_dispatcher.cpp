@@ -889,12 +889,14 @@ int qdGameDispatcher::get_resources_size() {
 }
 
 qdNamedObject *qdGameDispatcher::get_named_object(const qdNamedObjectReference *ref) {
-	qdNamedObject *p = 0;
+	qdNamedObject *p = nullptr;
 
 	for (int i = 0; i < ref -> num_levels(); i ++) {
+		debugC(9, kDebugLoad, "%i of %d: type: %s (%d)  p so far: %p", i, ref->num_levels() - 1, objectType2str(ref->object_type(i)), ref->object_type(i), (void *)p);
+
 		switch (ref -> object_type(i)) {
 		case QD_NAMED_OBJECT_GENERIC:
-			return 0;
+			return nullptr;
 		case QD_NAMED_OBJECT_TRIGGER_CHAIN:
 			p = get_trigger_chain(ref -> object_name(i));
 			break;
@@ -927,20 +929,20 @@ qdNamedObject *qdGameDispatcher::get_named_object(const qdNamedObjectReference *
 				p = get_animation_set(ref -> object_name(i));
 			break;
 		case QD_NAMED_OBJECT_ANIMATION_INFO:
-			return 0;
+			return nullptr;
 		case QD_NAMED_OBJECT_OBJ_STATE:
-			if (p && (p -> named_object_type() == QD_NAMED_OBJECT_ANIMATED_OBJ || p -> named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ || p -> named_object_type() == QD_NAMED_OBJECT_MOUSE_OBJ)) {
+			if (p && (p->named_object_type() == QD_NAMED_OBJECT_ANIMATED_OBJ || p->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ || p->named_object_type() == QD_NAMED_OBJECT_MOUSE_OBJ)) {
 				qdGameObjectAnimated *ap = static_cast<qdGameObjectAnimated *>(p);
 				p = ap -> get_state(ref -> object_name(i));
 			} else
-				return 0;
+				return nullptr;
 			break;
 		case QD_NAMED_OBJECT_STATIC_OBJ:
 		case QD_NAMED_OBJECT_ANIMATED_OBJ:
 		case QD_NAMED_OBJECT_MOVING_OBJ:
 			if (p && p -> named_object_type() == QD_NAMED_OBJECT_SCENE) {
 				qdGameScene *sp = static_cast<qdGameScene *>(p);
-				p = sp -> get_object(ref -> object_name(i));
+				p = sp->get_object(ref->object_name(i));
 			} else
 				p = get_global_object(ref -> object_name(i));
 			break;
@@ -949,14 +951,14 @@ qdNamedObject *qdGameDispatcher::get_named_object(const qdNamedObjectReference *
 				qdGameScene *sp = static_cast<qdGameScene *>(p);
 				p = sp -> get_grid_zone(ref -> object_name(i));
 			} else
-				return 0;
+				return nullptr;
 			break;
 		case QD_NAMED_OBJECT_GRID_ZONE_STATE:
 			if (p && p -> named_object_type() == QD_NAMED_OBJECT_GRID_ZONE) {
 				qdGridZone *zp = static_cast<qdGridZone *>(p);
 				p = zp -> get_state(ref -> object_name(i));
 			} else
-				return 0;
+				return nullptr;
 			break;
 		case QD_NAMED_OBJECT_MOUSE_OBJ:
 			p = mouse_obj_;
@@ -977,7 +979,7 @@ qdNamedObject *qdGameDispatcher::get_named_object(const qdNamedObjectReference *
 				qdGameScene *sp = static_cast<qdGameScene *>(p);
 				p = sp -> get_music_track(ref -> object_name(i));
 			} else
-				return 0;
+				return nullptr;
 			break;
 		case QD_NAMED_OBJECT_INVENTORY:
 			p = get_inventory(ref -> object_name(i));
