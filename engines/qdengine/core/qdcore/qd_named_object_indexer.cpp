@@ -55,18 +55,7 @@ bool qdNamedObjectIndexer::qdNamedObjectReferenceLink::resolve() {
 	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
 		object_ = dp -> get_named_object(&reference_);
 		if (!object_) {
-#ifdef __QD_DEBUG_ENABLE__
-			object_ = dp -> get_named_object(&reference_);
-
-			debugC(3, kDebugLog, "qdNamedObjectReferenceLink::resolve() failed");
-			for (int i = 0; i < reference_.num_levels(); i++) {
-				if (i) {
-					debugCN(3, kDebugLog, "::");
-				}
-				debugCN(3, kDebugLog, "%s", transCyrillic(reference_.object_name(reference_.num_levels() - i - 1)));
-			}
-			debugC(3, kDebugLog, "");
-#endif
+			debugC(3, kDebugLog, "qdNamedObjectReferenceLink::resolve() failed\n%s", reference_.toString().c_str());
 		} else
 			return true;
 	}
