@@ -24,6 +24,9 @@
 //
 // Implemented by Arkadi Kagan.
 //
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/endian.h"
+
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/util/LZ77.h"
 
@@ -36,18 +39,18 @@ CLZ77::CLZ77() {
 CLZ77::~CLZ77() {
 }
 
-long CLZ77::LZComp(unsigned char *s1, unsigned char *s2, long maxlen) {
+long CLZ77::LZComp(const byte *s1, const byte *s2, long maxlen) {
 	long i;
 	for (i = 0; i < maxlen; i++)
 		if (s1[i] != s2[i])
 			return i;
 	return maxlen;
 }
-unsigned char *CLZ77::FindLZ(unsigned char *source, unsigned char *s, long slen, long border, long mlen, long &len) {
+const byte *CLZ77::FindLZ(const byte *source, const byte *s, long slen, long border, long mlen, int32 &len) {
 	long maxlen = 0;
 	long limit = slen - (s - source);
-	unsigned char *maxp = s - 1;
-	unsigned char *p;
+	const byte *maxp = s - 1;
+	const byte *p;
 	len = 0;
 	for (p = s - 1; p >= source; p--) {
 		len = LZComp(p, s, limit);
@@ -69,15 +72,16 @@ long CLZ77::GetMaxDecoded(unsigned char *source) {
 	return ((unsigned long *)source)[0];
 }
 void CLZ77::Encode(unsigned char *target, long &tlen, const unsigned char *source, long slen) {
-	long len, block;
-	long shift, border;
-	unsigned char *s, *t, *p;
-	unsigned char *flag;
-	unsigned short *ptmp;
+	int32 len, block;
+	int32 shift, border;
+	const byte *s, *p;
+	byte *t;
+	byte *flag;
+	uint16 *ptmp;
 
-	((unsigned long *)target)[0] = slen;    // save source size
-	target += sizeof(unsigned long);
-	tlen = sizeof(unsigned long);
+	((uint32 *)target)[0] = slen;    // save source size
+	target += sizeof(uint32);
+	tlen = sizeof(uint32);
 
 	block = 0;              // block - bit in single flag byte
 	shift = 16;             // shift offset to most significant bits
@@ -85,23 +89,23 @@ void CLZ77::Encode(unsigned char *target, long &tlen, const unsigned char *sourc
 	flag = target;          // flag for every 8 entities
 	tlen++;                 // byte for first flag
 	*flag = 0;
-	s = (unsigned char *)source;
+	s = (const byte *)source;
 	t = target + 1;
-	for (s = (unsigned char *)source; s - source < slen;) {
+	for (s = (const byte *)source; s - source < slen;) {
 		if (shift > BITS_LEN)
 			while (s - source >= border) {
 				if (shift <= BITS_LEN) break;
 				border = border << 1;
 				shift--;
 			}
-		p = FindLZ((unsigned char *)source, s, slen, border, (1 << shift), len);
+		p = FindLZ((const byte *)source, s, slen, border, (1 << shift), len);
 		if (len <= 2) len = 1;
 		if (len <= 1) {
 			*t++ = *s++;
 			tlen++;
 		} else {
-			ptmp = (unsigned short *)t;
-			*ptmp = (unsigned short)(((s - p - 1) << shift) + len);
+			ptmp = (uint16 *)t;
+			*ptmp = (uint16)(((s - p - 1) << shift) + len);
 
 			*flag |= 1 << block;
 			t += 2;
@@ -123,23 +127,24 @@ void CLZ77::Encode(unsigned char *target, long &tlen, const unsigned char *sourc
 	}
 }
 long CLZ77::Decode(unsigned char *target, long &tlen, const unsigned char *source, long slen) {
-	long i;
-	long block, len;
-	long shift, border;
-	byte *s, *t, *p;
-	byte *flag;
-	uint16 *ptmp;
+	uint32 i;
+	uint32 block, len;
+	uint32 shift, border;
+	const byte *s;
+	byte *t, *p;
+	const byte *flag;
+	uint16 tmp;
 
-	tlen = ((uint32 *)source)[0];
+	tlen = READ_LE_UINT32(source);
 	source += sizeof(uint32);            // read/remove target size
 	slen -= sizeof(uint32);
 
 	t = target;
-	flag = (byte *)source;
+	flag = (const byte *)source;
 	block = 0;              // block - bit in single flag byte
 	shift = 16;             // shift offset to most significant bits
 	border = 1;             // offset can`t be more then border
-	for (s = (byte *)source + 1; (s < source + slen) && (t - target < tlen);) {
+	for (s = (const byte *)source + 1; (s < source + slen) && (t - target < tlen);) {
 		if (shift > BITS_LEN)
 			while (t - target >= border) {
 				if (shift <= BITS_LEN) break;
@@ -147,9 +152,9 @@ long CLZ77::Decode(unsigned char *target, long &tlen, const unsigned char *sourc
 				shift--;
 			}
 		if (flag[0] & (1 << block)) {
-			ptmp = (uint16 *)s;
-			len = ((1 << shift) - 1)&ptmp[0];
-			p = t - (ptmp[0] >> shift) - 1;
+			tmp = READ_LE_UINT16(s);
+			len = ((1 << shift) - 1) & tmp;
+			p = t - (tmp >> shift) - 1;
 			for (i = 0; i < len; i++)
 				t[i] = p[i];
 			t += len;
