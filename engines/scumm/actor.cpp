@@ -3018,12 +3018,8 @@ void ScummEngine_v70he::resetActorBgs() {
 			if (!testGfxAnyUsageBits(strip))
 				break;
 
-			// The original also does this test, which
-			// apparently breaks a bunch of other stuff though,
-			// and doesn't help us in any way...
-			//
-			// if (!testGfxOtherUsageBits(strip, j))
-			//	continue;
+			if (!testGfxUsageBit(strip, j))
+				continue;
 
 			int actorMin, actorMax;
 
@@ -3097,14 +3093,10 @@ void ScummEngine_v95he::resetActorBgs() {
 			if (!testGfxAnyUsageBits(strip))
 				break;
 
-			// The original also does this test, which
-			// apparently breaks a bunch of other stuff though,
-			// and doesn't help us in any way...
-			//
-			// if (!(testGfxOtherUsageBits(strip, act)))
-			// 	continue;
+			if (!testGfxUsageBit(strip, act))
+				continue;
 
-			if (!(_actors[act]->_needBgReset))
+			if (!_actors[act]->_needBgReset)
 				continue;
 
 			lastStrip = i;
