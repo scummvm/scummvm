@@ -126,7 +126,7 @@ static inline HError MakeScriptLoadError(const char *name) {
 // For those that do exist, reads them and replaces any scripts of same kind
 // in the already loaded game data.
 HError LoadGameScripts(LoadedGameEntities &ents) {
-	// Global script 
+	// Global script
 	std::unique_ptr<Stream> in(_GP(AssetMgr)->OpenAsset("GlobalScript.o"));
 	if (in) {
 		PScript script(ccScript::CreateFromStream(in.get()));
@@ -192,7 +192,7 @@ HError load_game_file() {
 	}
 	// Upscale mode -- for old games that supported it.
 	if ((_G(loaded_game_file_version) < kGameVersion_310) && _GP(usetup).override_upscale) {
-		if (_GP(game).GetResolutionType() == kGameResolution_320x200)
+		if (_GP(game).GetResolutionType() == kGameResolution_320x200 || _GP(game).GetResolutionType() == kGameResolution_Default)
 			_GP(game).SetGameResolution(kGameResolution_640x400);
 		else if (_GP(game).GetResolutionType() == kGameResolution_320x240)
 			_GP(game).SetGameResolution(kGameResolution_640x480);
