@@ -881,12 +881,12 @@ bool qdTriggerElement::load_data(Common::SeekableReadStream &fh, int saveVersion
 	set_status(ElementStatus(st));
 
 	for (auto &it : parents_) {
-		char st = fh.readByte();
+		st = fh.readByte();
 		it.set_status(qdTriggerLink::LinkStatus(st));
 	}
 
 	for (auto &it : children_) {
-		char st = fh.readByte();
+		st = fh.readByte();
 		it.set_status(qdTriggerLink::LinkStatus(st));
 	}
 
