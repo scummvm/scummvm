@@ -892,6 +892,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "captaindownes", "Captain Downes and the Pirate Princess" },
 	{ "captainhook", "Captain Hook and the Lost Girl" },
 	{ "captainskull", "The Astonishing Captain Skull" },
+	{ "carnivalshadows", "Carnival of Shadows" },
 	{ "carrotbobinzxspeccyworld", "Carrot Bob in ZX Spectrum world" },
 	{ "cartenstein", "Cartenstein" },
 	{ "cartlife", "Cart Life" },
@@ -2694,6 +2695,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "robertredford1", "Robert Redford Saves The Day Ep. 1: Getting There" },
 	{ "robertredford2", "Robert Redford Saves The Day Ep. 2: The Pit and the Pendulum" },
 	{ "robertredford3", "Robert Redford Saves The Day Ep. 3: Who Framed Roger Redford" },
+	{ "robertredford3ds", "Robert Redford Saves The Day Ep. 3: Who Framed Roger Redford (Dream Sequence)" },
 	{ "robmassacreofchainsawness", "Rob: The Massacre of Chainsawness" },
 	{ "robolution", "Robolution" },
 	{ "roboquest", "Robo Quest" },
@@ -2720,6 +2722,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "romanian", "Romanian Beginner" },
 	{ "ron5thanniversary", "Reality-on-the-Norm 5th Anniversary Trailer" },
 	{ "ronbeforethelegacy", "Reality-on-the-Norm: Before the Legacy" },
+	{ "ronendgame", "End Game" },
 	{ "rongyptian", "RoNgyptian" },
 	{ "ronoutbreak", "The Outbreak (Day of Comet)" },
 	{ "ronsixteen", "Sixteen" },
@@ -3596,6 +3599,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "metrocityresistance", "METRO CITY: Resistance" },
 	{ "paintedhills", "Painted Hills" },
 	{ "strangerutopia", "Stranger in Utopia" },
+	{ "thezooags", "The Zoo" },
 	{ "useitall", "Use It All (Or Forget Your Ball)" },
 
 	{ 0, 0 }
@@ -4095,6 +4099,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY("strangerutopia", "StrangerInUtopia.exe", "5c3a31d27beb519dfe291ea27ead1371", 62289972), // Win Fr
 	UNSUPPORTED_GAME_ENTRY("strangerutopia", "StrangerInUtopia.ags", "ca1710839f34ef715bc61d883f4df47c", 58034416), // Linux
 	UNSUPPORTED_GAME_ENTRY("strangerutopia", "StrangerInUtopia.ags", "7343e94d0afe0d24d49f0451cf6c56dd", 58653045),
+	UNSUPPORTED_GAME_ENTRY("thezooags", "The Zoo.exe", "031470656455b56887aa57a3cff9e016", 5221113),
+	UNSUPPORTED_GAME_ENTRY("thezooags", "The Zoo.ags", "f2693962a476d108249433b555e87e7a", 2085605),
 
 	// AGS 4 games
 	UNSUPPORTED_GAME_ENTRY("achristmasnightmare", "xmasnightmare.exe", "53db6ba4864b17a28b8176d92459c7bc", 49689828),  // v1.3 Windows En-Es-It
@@ -5982,6 +5988,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("captainhook", "CaptainHookAndTheLostGirl.ags", "f057e9513fd792aa6b60c6e0555b3577", 5625615),  // Linux En-Fr
 	GAME_ENTRY_EN("captainskull", "The Astonishing Captain Skull.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 21319808),
 	GAME_ENTRY_EN("carrotbobinzxspeccyworld", "carrotbob.exe", "949f7440e3692b7366c2029979dee9a0", 914509),
+	GAME_ENTRY_EN("carnivalshadows", "CarnivalOfShadows.ags", "b88ce232cf50d0e3fe7d58947ff908fb", 27140624),
 	GAME_ENTRY_EN("cartenstein", "Ludum Dare 41.ags", "8c15c837060a65decd61d3a99c78a15c", 1655510),  // Linux
 	GAME_ENTRY_EN("cartenstein", "Ludum Dare 41.exe", "78dd4ca028ee0156b6a093d6d780aa65", 4140262),  // Windows
 	GAME_ENTRY_EN("cartlife", "cartlife.exe", "7c8d67dd922fa543a1b1b76f9e1cc7c2", 21045074),
@@ -8082,6 +8089,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("quiteannoying", "Super Annoying League.exe", "615e73fc1874e92d60a1996c2330ea36", 22513046),  // Windows
 	GAME_ENTRY_EN("quiteannoying", "Super Annoying League.ags", "72d55dd28b18091ebc793b653e94f9c2", 20722806),  // Linux
 	GAME_ENTRY("raastaja", "Raastaja.ags", "16b19709b5ef271146f9bf7b5963b7d2", 2169987209),  // Eng-Fin
+	GAME_ENTRY("raastaja", "Raastaja.ags", "7532f39cd52fbc68c2e6537f8b10197c", 2169987303),  // Eng-Fin
 	GAME_ENTRY_LANG("raataja", "Raataja.exe", "f1095aa63e8a3d00d8018d32dbdea918", 494788763, Common::FI_FIN),
 	GAME_ENTRY_EN_PLATFORM("rabbiteyemotel", "asylumjam2015.exe", "2ca80bd50763378b72cd1e1cf25afac3", 38579543, "GameJam Build"),
 	GAME_ENTRY_EN("rabbiteyemotel", "asylumjam2015.exe", "2ca80bd50763378b72cd1e1cf25afac3", 40528966),  // v0.4.2
@@ -8167,7 +8175,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("robertredford1", "GAME.exe", "02635a77ab660023f59519c91329f7f5", 6537985),
 	GAME_ENTRY_EN("robertredford2", "ROBERT2.exe", "02635a77ab660023f59519c91329f7f5", 13075066),
 	GAME_ENTRY_EN("robertredford3", "game.exe", "71ca0d6c1c699595f28a2125948d4a84", 10846423),
-	GAME_ENTRY_EN_PLATFORM("robertredford3", "dreamseq.ags", "97d700529f5cc826f230c27acf81adfd", 4724470,"Dream Sequence"),
+	GAME_ENTRY_EN("robertredford3ds", "dreamseq.ags", "97d700529f5cc826f230c27acf81adfd", 4724470),
 	GAME_ENTRY_EN("robmassacreofchainsawness", "Chainsaw.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 1153384),
 	GAME_ENTRY_EN("robolution", "Robolution.exe", "e299aa402e6d0f16a4e2dbb8c395b52e", 130836838),
 	GAME_ENTRY("roboquest", "RoboQuest 1.2.exe", "338fa79960d40689063af31c671b8729", 22776964),  // En-De-Es-Ru
@@ -8201,6 +8209,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("rogue", "ac2game.dat", "0813cb3228cc108239c4583e66ca9137", 28647676),  // Mac
 	GAME_ENTRY_EN("romanian", "Beginner.ags", "cff2e109cc5f5363db4ba43b2868a628", 296534681),
 	GAME_ENTRY_EN("ronbeforethelegacy", "RONlegacy.exe", "0b7529a76f38283d6e850b8d56526fc1", 4792872),
+	GAME_ENTRY_EN("ronendgame", "ron-5.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 2444579),
 	GAME_ENTRY_EN("ronoutbreak", "RoN-DayOfComet.exe", "465f972675db2da6040518221af5b0ba", 10497989),
 	GAME_ENTRY_EN("ronsixteen", "16c.exe", "06a03fe35791b0578068ab1873455463", 2467851),
 	GAME_ENTRY_EN("rootofallevil", "RootOfAllEvil.exe", "c4f5b7b29be90ba0f8128298afb917de", 3698912),
