@@ -62,7 +62,7 @@ public:
 	void onScreenChanged();
 
 	/** Called when a keyboard key is pressed and the dialog is active */
-	void onKeyPress(const Common::KeyState &keyState);
+	void onKeyPress(const Common::CustomEventType customType);
 
 protected:
 	void onRender() override;

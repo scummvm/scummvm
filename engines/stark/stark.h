@@ -59,6 +59,33 @@ class Settings;
 class GameChapter;
 class GameMessage;
 
+enum STARKAction {
+	kActionNone,
+	kActionDiaryMenu,
+	kActionSaveGame,
+	kActionLoadGame,
+	kActionConversationLog,
+	kActionAprilsDiary,
+	kActionVideoReplay,
+	kActionGameSettings,
+	kActionSaveScreenshot,
+	kActionToggleSubtitles,
+	kActionQuitToMenu,
+	kActionCycleBackInventory,
+	kActionCycleForwardInventory,
+	kActionInventory,
+	kActionDisplayExits,
+	kActionExitGame,
+	kActionPause,
+	kActionInventoryDialogueScrollUp,
+	kActionInventoryDialogueScrollDown,
+	kActionInventoryScrollUpDialoguePrev,
+	kActionInventoryScrollDownDialogueNext,
+	kActionSelectDialogue,
+	kActionSkip
+};
+
+
 class StarkEngine : public Engine {
 public:
 	StarkEngine(OSystem *syst, const ADGameDescription *gameDesc);

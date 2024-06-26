@@ -24,6 +24,10 @@
 #include "engines/stark/stark.h"
 #include "engines/stark/services/stateprovider.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
@@ -73,6 +77,8 @@ public:
 	const char *getName() const override {
 		return "stark";
 	}
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
 		return optionsList;
@@ -170,6 +176,159 @@ public:
 			return StarkEngine::formatSaveName(target, saveGameIdx);
 	}
 };
+
+Common::KeymapArray StarkMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Stark;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "stark-main", "STARK main");
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game Keymappings"));
+
+	Action *act;
+	
+	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+	
+	act = new Action("DIARYMENU", _("Diary Menu"));
+	act->setCustomEngineActionEvent(kActionDiaryMenu);
+	act->addDefaultInputMapping("F1");
+	gameKeyMap->addAction(act);
+	
+	act = new Action("SAVEGAME", _("Save Game"));
+	act->setCustomEngineActionEvent(kActionSaveGame);
+	act->addDefaultInputMapping("F2");
+	gameKeyMap->addAction(act);
+	
+	act = new Action("LOADGAME", _("Load Game"));
+	act->setCustomEngineActionEvent(kActionLoadGame);
+	act->addDefaultInputMapping("F3");
+	gameKeyMap->addAction(act);
+	
+	act = new Action("CONVOLOG", _("Conversation log"));
+	act->setCustomEngineActionEvent(kActionConversationLog);
+	act->addDefaultInputMapping("F4");
+	gameKeyMap->addAction(act);
+	
+	act = new Action("APRILSDIARY", _("April's Diary (initially disabled)"));
+	act->setCustomEngineActionEvent(kActionAprilsDiary);
+	act->addDefaultInputMapping("F5");
+	gameKeyMap->addAction(act);
+	
+	act = new Action("VIDREPLAY", _("Video Replay"));
+	act->setCustomEngineActionEvent(kActionVideoReplay);
+	act->addDefaultInputMapping("F6");
+	gameKeyMap->addAction(act);
+	
+	act = new Action("GAMESETTINGS", _("Game Settings"));
+	act->setCustomEngineActionEvent(kActionGameSettings);
+	act->addDefaultInputMapping("F7");
+	act->addDefaultInputMapping("JOY_Y");
+	gameKeyMap->addAction(act);
+	
+	act = new Action("SAVESCRNSHOT", _("Save Screenshot"));
+	act->setCustomEngineActionEvent(kActionSaveScreenshot);
+	act->addDefaultInputMapping("F8");
+	gameKeyMap->addAction(act);
+	
+	act = new Action("TOGGLESUBS", _("Toggle Subtitles"));
+	act->setCustomEngineActionEvent(kActionToggleSubtitles);
+	act->addDefaultInputMapping("F9");
+	gameKeyMap->addAction(act);
+	
+	act = new Action("QUITTOMENU", _("Quit to Menu"));
+	act->setCustomEngineActionEvent(kActionQuitToMenu);
+	act->addDefaultInputMapping("F10");
+	gameKeyMap->addAction(act);
+	
+	act = new Action("CYCLEBACK", _("Cycle back through inventory cursor items"));
+	act->setCustomEngineActionEvent(kActionCycleForwardInventory);
+	act->addDefaultInputMapping("a");
+	act->addDefaultInputMapping("JOY_LEFT");
+	gameKeyMap->addAction(act);
+	
+	act = new Action("CYCLEFORWARD", _("Cycle forward through inventory cursor items"));
+	act->setCustomEngineActionEvent(kActionCycleBackInventory);
+	act->addDefaultInputMapping("s");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	gameKeyMap->addAction(act);
+	
+	act = new Action("INVENTORY", _("Inventory"));
+	act->setCustomEngineActionEvent(kActionInventory);
+	act->addDefaultInputMapping("i");
+	act->addDefaultInputMapping("JOY_X");
+	gameKeyMap->addAction(act);
+	
+	act = new Action("DISPLAYEXITS", _("Display all exits on current location"));
+	act->setCustomEngineActionEvent(kActionDisplayExits);
+	act->addDefaultInputMapping("x");
+	act->addDefaultInputMapping("JOY_RIGHT_STICK");
+	gameKeyMap->addAction(act);
+
+	act = new Action("EXITGAME", _("Exit Game"));
+	act->setCustomEngineActionEvent(kActionExitGame);
+	act->addDefaultInputMapping("A+x");
+	act->addDefaultInputMapping("A+q");
+	gameKeyMap->addAction(act);
+
+	act = new Action("PAUSE", _("Pause Game"));
+	act->setCustomEngineActionEvent(kActionPause);
+	act->addDefaultInputMapping("p");
+	act->addDefaultInputMapping("JOY_GUIDE");
+	gameKeyMap->addAction(act);
+
+	act = new Action("SCROLLUP", _("Scroll up in inventory or in your dialogues"));
+	act->setCustomEngineActionEvent(kActionInventoryDialogueScrollUp);
+	act->addDefaultInputMapping("PAGEUP");
+	act->addDefaultInputMapping("JOY_UP");
+	gameKeyMap->addAction(act);
+
+	act = new Action("SCROLLDOWN", _("Scroll down in inventory or in your dialogues"));
+	act->setCustomEngineActionEvent(kActionInventoryDialogueScrollDown);
+	act->addDefaultInputMapping("PAGEDOWN");
+	act->addDefaultInputMapping("JOY_DOWN");
+	gameKeyMap->addAction(act);
+
+	act = new Action("SCROLLUPINVPREVDILOG", _("Scroll up in inventory or go to next dialogue"));
+	act->setCustomEngineActionEvent(kActionInventoryScrollUpDialoguePrev);
+	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	gameKeyMap->addAction(act);
+
+	act = new Action("SCROLLDOWNINVNEXTDILOG", _("Scroll down in inventory or go to previous dialogues"));
+	act->setCustomEngineActionEvent(kActionInventoryScrollDownDialogueNext);
+	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	gameKeyMap->addAction(act);
+
+	act = new Action("SELECTDILOG", _("Select Dialogue"));
+	act->setCustomEngineActionEvent(kActionSelectDialogue);
+	act->addDefaultInputMapping("RETURN");
+	act->addDefaultInputMapping("KP_ENTER");
+	act->addDefaultInputMapping("JOY_LEFT_STICK");
+	gameKeyMap->addAction(act);
+	
+	act = new Action("SKIP", _("Skip video sequence or dialogue"));
+	act->setCustomEngineActionEvent(kActionSkip);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_BACK");
+	gameKeyMap->addAction(act);
+
+	
+	KeymapArray keymaps(2);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeyMap;
+
+	return keymaps;
+}
 
 } // End of namespace Stark
 
