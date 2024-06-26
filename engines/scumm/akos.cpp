@@ -849,6 +849,8 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 	if (_vm->_game.heversion >= 71 && !actorIsScaled) {
 		if (_clipOverride.right > _clipOverride.left && _clipOverride.bottom > _clipOverride.top) {
 			compData.boundsRect = _clipOverride;
+			compData.boundsRect.right += 1;
+			compData.boundsRect.bottom += 1;
 		}
 	}
 
