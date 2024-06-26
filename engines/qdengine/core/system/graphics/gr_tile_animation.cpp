@@ -272,7 +272,7 @@ void grTileAnimation::drawFrame(const Vect2i &position, int32 frame_index, int32
 		pos.x = pos0.x;
 
 		for (int32 j = 0; j < frameTileSize_.x; j++) {
-			grDispatcher::instance()->PutTileSpr(pos.x, pos.y, getTile(*index_ptr), hasAlpha_, mode);
+			grDispatcher::instance()->PutTileSpr(pos.x, pos.y, getTile(*index_ptr++), hasAlpha_, mode);
 			pos.x += dx;
 		}
 
