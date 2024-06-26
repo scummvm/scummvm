@@ -219,9 +219,12 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh) {
 
 	size = fh->readUint32LE();
 	frameIndex_.resize(size);
+	debugC(1, kDebugLoad, "frameIndex_ size: %d", size);
 	for (int i = 0; i < size; i++) {
 		frameIndex_[i] = fh->readUint32LE();
+		debugCN(1, kDebugLoad, " %d ", frameIndex_[i]);
 	}
+	debugCN(1, kDebugLoad, "\n");
 
 	size = fh->readUint32LE();
 	tileOffsets_.resize(size);
