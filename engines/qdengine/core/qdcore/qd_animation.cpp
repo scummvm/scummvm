@@ -586,6 +586,8 @@ bool qdAnimation::qda_load(const char *fname) {
 	int32 fl = fh->readSint32LE();
 	int32 num_fr = fh->readSint32LE();
 
+	debugC(3, kDebugLoad, "qdAnimation::qda_load(): vers: %d sx: %d x %d len: %d fl: %d num_fr: %d", version, sx_, sy_, length_, fl, num_fr);
+
 	int num_scales = 0;
 	if (version >= 103) {
 		num_scales = fh->readSint32LE();
