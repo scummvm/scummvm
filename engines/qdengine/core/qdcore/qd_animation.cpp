@@ -634,6 +634,7 @@ bool qdAnimation::qda_load(const char *fname) {
 			add_frame(p);
 		}
 
+		debugC(1, kDebugLoad, "qdAnimation::qda_load() tileAnimation %s", transCyrillic(fname));
 		tileAnimation_ = new grTileAnimation;
 		tileAnimation_->load(fh);
 	}
