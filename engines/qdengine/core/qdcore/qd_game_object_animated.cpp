@@ -557,7 +557,7 @@ void qdGameObjectAnimated::set_state(int st) {
 
 #ifndef _QUEST_EDITOR
 		if (p -> activation_delay() > 0.001f) {
-			debugC(3, kDebugGraphics, "state waits %s %s", transCyrillic(p->name()), transCyrillic(get_state(st)->name()));
+			debugC(3, kDebugGraphics, "[%d] state waits %s %s", g_system->getMillis(), transCyrillic(p->name()), transCyrillic(get_state(st)->name()));
 
 			if (!p -> check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_ACTIVATION_TIMER)) {
 				p -> set_activation_timer();
