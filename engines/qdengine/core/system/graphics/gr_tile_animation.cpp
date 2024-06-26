@@ -208,6 +208,8 @@ bool grTileAnimation::load(XStream &fh) {
 
 bool grTileAnimation::load(Common::SeekableReadStream *fh) {
 
+	debugC(7, kDebugLoad, "grTileAnimation::load(): pos start: %d", fh->pos());
+
 	frameCount_ = fh->readSint32LE();
 	frameSize_.x = fh->readSint32LE();
 	frameSize_.y = fh->readSint32LE();
@@ -215,16 +217,19 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh) {
 	frameTileSize_.y = fh->readSint32LE();
 	uint32 size = fh->readUint32LE();
 
+	debugC(7, kDebugLoad, "grTileAnimation::load(): frameCount: %d  frame: %d x %d tile: %d x %d compsize: %d", frameCount_, frameSize_.x, frameSize_.y,
+		frameTileSize_.x, frameTileSize_.y, size);
+
 	compression_ = grTileCompressionMethod(size);
 
 	size = fh->readUint32LE();
 	frameIndex_.resize(size);
-	debugC(1, kDebugLoad, "frameIndex_ size: %d", size);
+	debugC(7, kDebugLoad, "grTileAnimation::load(): pos: %d frameIndex_ size: %d", fh->pos() - 4, size);
 	for (int i = 0; i < size; i++) {
 		frameIndex_[i] = fh->readUint32LE();
-		debugCN(1, kDebugLoad, " %d ", frameIndex_[i]);
+		debugCN(8, kDebugLoad, " %d ", frameIndex_[i]);
 	}
-	debugCN(1, kDebugLoad, "\n");
+	debugCN(8, kDebugLoad, "\n");
 
 	size = fh->readUint32LE();
 	tileOffsets_.resize(size);
