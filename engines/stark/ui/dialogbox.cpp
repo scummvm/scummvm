@@ -199,8 +199,8 @@ void DialogBox::onClick(const Common::Point &pos) {
 	}
 }
 
-void DialogBox::onKeyPress(const Common::KeyState &keyState) {
-	if (keyState.keycode == Common::KEYCODE_ESCAPE) {
+void DialogBox::onKeyPress(const Common::CustomEventType customType) {
+	if (customType == kActionSkip) {
 		close();
 	}
 }
