@@ -364,7 +364,6 @@ void grDispatcher::RectangleAlpha(int x, int y, int sx, int sy, unsigned color, 
 	int dx = 1;
 	int dy = 1;
 
-	x <<= 1;
 	unsigned mr, mg, mb;
 	split_rgb565u(color, mr, mg, mb);
 
