@@ -120,7 +120,6 @@ void grDispatcher::PutTileSpr(int x, int y, const grTileSprite &sprite, bool has
 	} else
 		dy = 1;
 
-	x *= 2;
 
 	const unsigned char *data_ptr = (unsigned char *)(sprite.data() + px + py * GR_TILE_SPRITE_SIZE_X);
 
