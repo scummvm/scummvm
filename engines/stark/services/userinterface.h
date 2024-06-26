@@ -193,6 +193,7 @@ public:
 	void performToggleSubtitle();
 
 	/** Perform an action after a keypress */
+	void handleActions(Common::CustomEventType customType);
 	void handleKeyPress(const Common::KeyState &keyState);
 
 private:
