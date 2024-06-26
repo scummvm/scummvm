@@ -373,7 +373,7 @@ void grDispatcher::RectangleAlpha(int x, int y, int sx, int sy, unsigned color, 
 
 	unsigned mcl = make_rgb565u(mr, mg, mb);
 
-	warning("STUB: grDispatcher::RectangleAlpha");
+	// warning("STUB: grDispatcher::RectangleAlpha"); FIXME HACK
 	for (int i = 0; i < psy; i ++) {
 		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
 

@@ -21,7 +21,7 @@ class qdEmptyMiniGameInterface : public qdMiniGameInterface {
 
  	//! Обсчёт логики игры, параметр - время, которое должно пройти в игре (в секундах).
  	bool quant(float dt) {
- 		warning("STUB: qdEmptyMiniGameInterface::quant()");
+ 		// warning("STUB: qdEmptyMiniGameInterface::quant()"); FIXME HACK
  		return true;
  	}
 
