@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-22 18:24+0000\n"
+"POT-Creation-Date: 2024-06-26 07:28+0000\n"
 "PO-Revision-Date: 2024-05-14 12:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -92,7 +92,7 @@ msgstr "向上"
 #: backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
 #: backends/events/default/default-events.cpp:217
-#: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:201
+#: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:204
 #: engines/buried/saveload.cpp:83 engines/cine/saveload.cpp:863
 #: engines/director/lingo/xlibs/jitdraw3.cpp:123
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:84
@@ -3459,7 +3459,7 @@ msgid "Default game keymap"
 msgstr ""
 
 #: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:161
-#: engines/asylum/metaengine.cpp:158 engines/hdb/metaengine.cpp:207
+#: engines/asylum/metaengine.cpp:159 engines/hdb/metaengine.cpp:207
 #: engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
@@ -3473,7 +3473,7 @@ msgid "Middle Click"
 msgstr ""
 
 #: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:169
-#: engines/asylum/metaengine.cpp:164 engines/parallaction/metaengine.cpp:120
+#: engines/asylum/metaengine.cpp:165 engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr ""
@@ -5538,7 +5538,7 @@ msgstr ""
 msgid "Add game speed menu (similar to PC version)"
 msgstr ""
 
-#: engines/agi/metaengine.cpp:411 engines/asylum/asylum.cpp:674
+#: engines/agi/metaengine.cpp:411 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
 #, fuzzy
@@ -5546,7 +5546,7 @@ msgstr ""
 msgid "This game does not support loading"
 msgstr "这个游戏不支持直接从启动器载入存档。"
 
-#: engines/agi/metaengine.cpp:433 engines/asylum/asylum.cpp:685
+#: engines/agi/metaengine.cpp:433 engines/asylum/asylum.cpp:666
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
 msgid "This game does not support saving"
@@ -5801,15 +5801,63 @@ msgstr ""
 msgid "Open character inventory"
 msgstr ""
 
+#: engines/asylum/metaengine.cpp:171 engines/asylum/metaengine.cpp:198
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:195
+msgid "Move up"
+msgstr ""
+
+#: engines/asylum/metaengine.cpp:177 engines/asylum/metaengine.cpp:205
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:201
+msgid "Move down"
+msgstr ""
+
+#: engines/asylum/metaengine.cpp:183 engines/asylum/metaengine.cpp:212
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:207
+msgid "Move left"
+msgstr ""
+
+#: engines/asylum/metaengine.cpp:189 engines/asylum/metaengine.cpp:219
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:213
+msgid "Move right"
+msgstr ""
+
+#: engines/asylum/metaengine.cpp:226
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Toggle animation on/off"
+msgstr "特殊音效音量"
+
+#: engines/asylum/metaengine.cpp:232
+#, fuzzy
+#| msgid "In 2D games"
+msgid "Return to gameplay"
+msgstr "2D遊戲中"
+
+#: engines/asylum/metaengine.cpp:238
+msgid "Previous resource"
+msgstr ""
+
+#: engines/asylum/metaengine.cpp:245
+msgid "Next resource"
+msgstr ""
+
+#: engines/asylum/metaengine.cpp:252
+msgid "Previous palette"
+msgstr ""
+
+#: engines/asylum/metaengine.cpp:259
+msgid "Next palette"
+msgstr ""
+
 #. I18N: Warn user about loading potentially incompatible saved game
-#: engines/asylum/asylum.cpp:200
+#: engines/asylum/asylum.cpp:203
 #, c-format
 msgid ""
 "WARNING: Attempt to load saved game from a previous version: Version %s / "
 "Build %d"
 msgstr ""
 
-#: engines/asylum/asylum.cpp:201 engines/cine/saveload.cpp:863
+#: engines/asylum/asylum.cpp:204 engines/cine/saveload.cpp:863
 msgid "Load anyway"
 msgstr ""
 
@@ -6923,22 +6971,6 @@ msgstr ""
 
 #: engines/hdb/metaengine.cpp:45
 msgid "Debug info and level selection becomes available"
-msgstr ""
-
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:195
-msgid "Move up"
-msgstr ""
-
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:201
-msgid "Move down"
-msgstr ""
-
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:207
-msgid "Move left"
-msgstr ""
-
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:213
-msgid "Move right"
 msgstr ""
 
 #. I18N: Combat command in Might & Magic 1

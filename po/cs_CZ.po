@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-22 18:24+0000\n"
+"POT-Creation-Date: 2024-06-26 07:28+0000\n"
 "PO-Revision-Date: 2023-12-14 14:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -100,7 +100,7 @@ msgstr "Jít nahoru"
 #: backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
 #: backends/events/default/default-events.cpp:217
-#: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:201
+#: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:204
 #: engines/buried/saveload.cpp:83 engines/cine/saveload.cpp:863
 #: engines/director/lingo/xlibs/jitdraw3.cpp:123
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:84
@@ -3654,7 +3654,7 @@ msgid "Default game keymap"
 msgstr "Výchozí rozložení kláves"
 
 #: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:161
-#: engines/asylum/metaengine.cpp:158 engines/hdb/metaengine.cpp:207
+#: engines/asylum/metaengine.cpp:159 engines/hdb/metaengine.cpp:207
 #: engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
@@ -3668,7 +3668,7 @@ msgid "Middle Click"
 msgstr "Kliknutí prostředním tlačítkem"
 
 #: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:169
-#: engines/asylum/metaengine.cpp:164 engines/parallaction/metaengine.cpp:120
+#: engines/asylum/metaengine.cpp:165 engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr "Pravé kliknutí"
@@ -5852,7 +5852,7 @@ msgstr ""
 msgid "Add game speed menu (similar to PC version)"
 msgstr ""
 
-#: engines/agi/metaengine.cpp:411 engines/asylum/asylum.cpp:674
+#: engines/agi/metaengine.cpp:411 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
 #, fuzzy
@@ -5860,7 +5860,7 @@ msgstr ""
 msgid "This game does not support loading"
 msgstr "Tato hra není podporována"
 
-#: engines/agi/metaengine.cpp:433 engines/asylum/asylum.cpp:685
+#: engines/agi/metaengine.cpp:433 engines/asylum/asylum.cpp:666
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
 #, fuzzy
@@ -6144,15 +6144,71 @@ msgstr ""
 msgid "Open character inventory"
 msgstr "Otevřít/Zavřít Inventář"
 
+#: engines/asylum/metaengine.cpp:171 engines/asylum/metaengine.cpp:198
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:195
+#, fuzzy
+msgid "Move up"
+msgstr "Vzad"
+
+#: engines/asylum/metaengine.cpp:177 engines/asylum/metaengine.cpp:205
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:201
+#, fuzzy
+msgid "Move down"
+msgstr "Zrušit stahování"
+
+#: engines/asylum/metaengine.cpp:183 engines/asylum/metaengine.cpp:212
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:207
+#, fuzzy
+msgid "Move left"
+msgstr "Přesunout se doleva"
+
+#: engines/asylum/metaengine.cpp:189 engines/asylum/metaengine.cpp:219
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:213
+#, fuzzy
+msgid "Move right"
+msgstr "Přesunout se doprava"
+
+#: engines/asylum/metaengine.cpp:226
+#, fuzzy
+#| msgid "Toggle fullscreen"
+msgid "Toggle animation on/off"
+msgstr "Přepnout celou obrazovku"
+
+#: engines/asylum/metaengine.cpp:232
+#, fuzzy
+msgid "Return to gameplay"
+msgstr "V-Sync ve 3D hrách"
+
+#: engines/asylum/metaengine.cpp:238
+#, fuzzy
+msgid "Previous resource"
+msgstr "~P~ředchozí"
+
+#: engines/asylum/metaengine.cpp:245
+#, fuzzy
+#| msgid "[ Resources ]"
+msgid "Next resource"
+msgstr "[ Zdroje ]"
+
+#: engines/asylum/metaengine.cpp:252
+#, fuzzy
+msgid "Previous palette"
+msgstr "~P~ředchozí"
+
+#: engines/asylum/metaengine.cpp:259
+#, fuzzy
+msgid "Next palette"
+msgstr "Další"
+
 #. I18N: Warn user about loading potentially incompatible saved game
-#: engines/asylum/asylum.cpp:200
+#: engines/asylum/asylum.cpp:203
 #, c-format
 msgid ""
 "WARNING: Attempt to load saved game from a previous version: Version %s / "
 "Build %d"
 msgstr ""
 
-#: engines/asylum/asylum.cpp:201 engines/cine/saveload.cpp:863
+#: engines/asylum/asylum.cpp:204 engines/cine/saveload.cpp:863
 #, fuzzy
 msgid "Load anyway"
 msgstr "Přesto přidat"
@@ -7359,26 +7415,6 @@ msgstr "Zapnout héliový režim"
 #: engines/hdb/metaengine.cpp:45
 msgid "Debug info and level selection becomes available"
 msgstr ""
-
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:195
-#, fuzzy
-msgid "Move up"
-msgstr "Vzad"
-
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:201
-#, fuzzy
-msgid "Move down"
-msgstr "Zrušit stahování"
-
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:207
-#, fuzzy
-msgid "Move left"
-msgstr "Přesunout se doleva"
-
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:213
-#, fuzzy
-msgid "Move right"
-msgstr "Přesunout se doprava"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/hdb/metaengine.cpp:237 engines/mm/mm1/metaengine.cpp:81
@@ -12833,9 +12869,6 @@ msgstr ""
 
 #~ msgid "[ Data ]"
 #~ msgstr "[ Data ]"
-
-#~ msgid "[ Resources ]"
-#~ msgstr "[ Zdroje ]"
 
 #~ msgid "[ SDCard ]"
 #~ msgstr "[ SD Karta ]"
