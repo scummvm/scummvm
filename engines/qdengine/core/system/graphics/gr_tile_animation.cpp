@@ -120,6 +120,7 @@ bool grTileAnimation::compress(grTileCompressionMethod method) {
 
 
 grTileSprite grTileAnimation::getTile(int tile_index) const {
+	debugC(3, kDebugTemp, "The tile index is given by %d", tile_index);
 	static unsigned tile_buf[GR_TILE_SPRITE_SIZE];
 
 	switch (compression_) {
@@ -242,11 +243,11 @@ bool grTileAnimation::load(XZipStream &fh) {
 	return true;
 }
 
-void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, int mode) const {
+void grTileAnimation::drawFrame(const Vect2i &position, int32 frame_index, int32 mode) const {
 	Vect2i pos0 = position - frameSize_ / 2;
 
-	int dx = GR_TILE_SPRITE_SIZE_X;
-	int dy = GR_TILE_SPRITE_SIZE_Y;
+	int32 dx = GR_TILE_SPRITE_SIZE_X;
+	int32 dy = GR_TILE_SPRITE_SIZE_Y;
 
 	if (mode & GR_FLIP_HORIZONTAL) {
 		pos0.x += frameSize_.x - GR_TILE_SPRITE_SIZE_X;
@@ -259,14 +260,19 @@ void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, int mod
 
 //	grDispatcher::instance()->Rectangle(position.x - frameSize_.x/2, position.y - frameSize_.y/2, frameSize_.x, frameSize_.y, 0xFFFFF, 0, GR_OUTLINED);
 
-	const unsigned *index_ptr = &frameIndex_[0] + frameTileSize_.x * frameTileSize_.y * frame_index;
+	const uint32 *index_ptr = &frameIndex_[0] + frameTileSize_.x * frameTileSize_.y * frame_index;
+
+	debugC(3, kDebugTemp, "The length of frameIndex is given by %d", frameIndex_.size());
+	debugC(3, kDebugTemp, "The value of increment is given by %d", frameTileSize_.x * frameTileSize_.y * frame_index);
+	debugC(3, kDebugTemp, "grTileAnimation::drawFrame %p", index_ptr);
+	debugC(3, kDebugTemp, "grTileAnimation::drawFrame *index_ptr: %d", *index_ptr);
 
 	Vect2i pos = pos0;
-	for (int i = 0; i < frameTileSize_.y; i++) {
+	for (int32 i = 0; i < frameTileSize_.y; i++) {
 		pos.x = pos0.x;
 
-		for (int j = 0; j < frameTileSize_.x; j++) {
-			grDispatcher::instance()->PutTileSpr(pos.x, pos.y, getTile(*index_ptr++), hasAlpha_, mode);
+		for (int32 j = 0; j < frameTileSize_.x; j++) {
+			grDispatcher::instance()->PutTileSpr(pos.x, pos.y, getTile(*index_ptr), hasAlpha_, mode);
 			pos.x += dx;
 		}
 
