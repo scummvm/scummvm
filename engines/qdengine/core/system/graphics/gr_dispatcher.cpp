@@ -399,39 +399,33 @@ void grDispatcher::Erase(int x, int y, int sx, int sy, int col) {
 void grDispatcher::SetPixel(int x, int y, int col) {
 	if (clipMode && !ClipCheck(x, y)) return;
 
-	warning("STUB: grDispatcher::SetPixel");
 	uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x, y));
 	*p = col;
-	return;
 }
 
 void grDispatcher::SetPixelFast(int x, int y, int col) {
-	warning("STUB: grDispatcher::SetPixelFast");
 	uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x, y));
 	*p = col;
 }
 
 void grDispatcher::SetPixelFast(int x, int y, int r, int g, int b) {
-	warning("STUB: grDispatcher::SetPixelFast");
+	uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x, y));
+	*p = (((r >> 3) << 11) + ((g >> 2) << 5) + ((b >> 3) << 0));
 }
 
 void grDispatcher::SetPixel(int x, int y, int r, int g, int b) {
 	if (clipMode && !ClipCheck(x, y)) return;
 
-	warning("STUB: grDispatcher::SetPixel");
 	uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x * 2, y));
 	*p = (((r >> 3) << 11) + ((g >> 2) << 5) + ((b >> 3) << 0));
 }
 
 void grDispatcher::GetPixel(int x, int y, unsigned &col) {
-
-	warning("STUB: grDispatcher::GetPixel");
-	col = *(uint16 *)(_screenBuf->getBasePtr(x * 2, y));
+	col = *(uint16 *)(_screenBuf->getBasePtr(x, y));
 }
 
 void grDispatcher::GetPixel(int x, int y, unsigned &r, unsigned &g, unsigned &b) {
-	warning("STUB: grDispatcher::GetPixel");
-	uint16 col = *(uint16 *)(_screenBuf->getBasePtr(x * 2, y));
+	uint16 col = *(uint16 *)(_screenBuf->getBasePtr(x, y));
 	split_rgb565u(col, r, g, b);
 }
 
