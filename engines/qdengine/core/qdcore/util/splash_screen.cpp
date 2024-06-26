@@ -38,7 +38,11 @@ bool SplashScreen::create(int bitmapResID) {
 	Common::WinResourceID resid(bitmapResID);
 	Image::BitmapDecoder decoder;
 
-	if (r.loadFromEXE("shveik.exe")) {
+	Common::ArchiveMemberList files;
+	SearchMan.listMatchingMembers(files, "*.exe");
+	Common::ArchiveMemberPtr p = files.front(); // FIXME HACK
+
+	if (r.loadFromEXE(p->getFileName().c_str())) {
 		Common::SeekableReadStream *stream = r.getResource(Common::kWinBitmap, resid);
 		if (decoder.loadStream(*stream)) {
 			_splash = new Graphics::Surface();
