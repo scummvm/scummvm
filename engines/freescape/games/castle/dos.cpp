@@ -88,20 +88,22 @@ void CastleEngine::loadAssetsDOSFullGame() {
 				break;
 			case Common::FR_FRA:
 				stream = decryptFile("CMLF");
+				loadMessagesVariableSize(stream, 0x11, 164);
 				break;
 			case Common::DE_DEU:
 				stream = decryptFile("CMLG");
+				loadMessagesVariableSize(stream, 0x11, 164);
 				break;
 			case Common::EN_ANY:
 				stream = decryptFile("CMLE");
+				loadRiddles(stream, 0xaae, 11);
+				loadMessagesVariableSize(stream, 0x11, 164);
 				break;
 			default:
 				error("Invalid or unsupported language: %x", _language);
 		}
 
 		loadFonts(kFreescapeCastleFont, 59);
-		loadMessagesVariableSize(stream, 0x11, 164);
-		loadRiddles(stream, 0xaae, 11);
 		delete stream;
 
 		stream = decryptFile("CMEDF");
