@@ -73,7 +73,7 @@ public:
 
 	//! Возвращает идентификатор тега.
 	int ID() const {
-		return g_engine->_versionPtr[ID_ - 1];
+		return g_engine->_tagMap[ID_ - 1];
 	}
 
 	//! Возвращает формат данных тега.

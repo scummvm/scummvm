@@ -34,6 +34,7 @@
 #include "qdengine/qdengine.h"
 #include "qdengine/console.h"
 #include "qdengine/core/qd_precomp.h"
+#include "qdengine/core/parser/qdscr_parser.h"
 
 namespace QDEngine {
 
@@ -44,7 +45,7 @@ QDEngineEngine::QDEngineEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	g_engine = this;
 	_pixelformat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	_savefileMan = _saveFileMan;
-	_versionPtr = nullptr;
+	_tagMap = version125;
 }
 
 QDEngineEngine::~QDEngineEngine() {
