@@ -130,11 +130,6 @@ static BuiltinProto xlibBuiltins[] = {{
 	{{ nullptr, nullptr, 0, 0, 0, VOIDSYM }}
 }};
 
-static BuiltinProto xlibTopLevel[] = {{
-{xlib_toplevels}
-	{{ nullptr, nullptr, 0, 0, 0, VOIDSYM }}
-}};
-
 {xobject_class}::{xobject_class}(ObjectType ObjectType) :Object<{xobject_class}>("{name}") {{
 	_objType = ObjectType;
 }}
