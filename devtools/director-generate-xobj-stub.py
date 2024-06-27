@@ -330,7 +330,7 @@ def inject_lingo_object(slug: str, xobj_class: str, director_version: int, xcode
             elif xobj_class < m.group(1):
                 lo_contents.insert(
                     i,
-                    f"	XLIBDEF({xobj_class},		    {obj_type},					{director_version}),	// D{director_version // 100}\n",
+                    f"	XLIBDEF({xobj_class},			{obj_type},					{director_version}),	// D{director_version // 100}\n",
                 )
                 with open(LINGO_OBJECT_PATH, "w") as f:
                     f.writelines(lo_contents)
