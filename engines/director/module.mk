@@ -157,7 +157,12 @@ MODULE_OBJS = \
 	lingo/xlibs/xsoundxfcn.o \
 	lingo/xlibs/xwin.o \
 	lingo/xlibs/yasix.o \
-	lingo/xtras/scrnutil.o
+	lingo/xtras/directsound.o \
+	lingo/xtras/keypoll.o \
+	lingo/xtras/qtvrxtra.o \
+	lingo/xtras/scrnutil.o \
+	lingo/xtras/timextra.o
+
 
 ifdef USE_IMGUI
 MODULE_OBJS += \

@@ -128,7 +128,11 @@
 #include "director/lingo/xlibs/xsoundxfcn.h"
 #include "director/lingo/xlibs/xwin.h"
 #include "director/lingo/xlibs/yasix.h"
+#include "director/lingo/xtras/directsound.h"
+#include "director/lingo/xtras/keypoll.h"
+#include "director/lingo/xtras/qtvrxtra.h"
 #include "director/lingo/xtras/scrnutil.h"
+#include "director/lingo/xtras/timextra.h"
 
 namespace Director {
 
@@ -223,6 +227,7 @@ static struct XLibProto {
 	XLIBDEF(DeveloperStack,		kXObj,			300),	// D3
 	XLIBDEF(DialogsXObj,		kXObj,			400),	// D4
 	XLIBDEF(DirUtilXObj,		kXObj,			400),	// D4
+	XLIBDEF(DirectsoundXtra,	kXtraObj,		500),	// D5
 	XLIBDEF(DrawXObj,			kXObj,			400),	// D4
 	XLIBDEF(Ednox,				kXObj,			300),	// D3
 	XLIBDEF(EventQXObj,			kXObj,			400),	// D4
@@ -251,6 +256,7 @@ static struct XLibProto {
 	XLIBDEF(IsPippin,			kXObj,			400),	// D4
 	XLIBDEF(JITDraw3XObj,		kXObj,			400),	// D4
 	XLIBDEF(JourneyWareXINIXObj,kXObj,			400),	// D4
+	XLIBDEF(KeypollXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(LabelDrvXObj,		kXObj,			400),	// D4
 	XLIBDEF(MMovieXObj,			kXObj,			400),	// D4
 	XLIBDEF(ManiacBgXObj,		kXObj,			300),	// D3
@@ -279,6 +285,7 @@ static struct XLibProto {
 	XLIBDEF(QTCatMoviePlayerXObj,kXObj,			400),	// D4
 	XLIBDEF(QTMovie,			kXObj,			400),	// D4
 	XLIBDEF(QTVR,				kXObj,			400),	// D4
+	XLIBDEF(QtvrxtraXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(Quicktime,			kXObj,			300),	// D3
 	XLIBDEF(RearWindowXObj,		kXObj,			400),	// D4
 	XLIBDEF(RegisterComponent,	kXObj,			400),	// D4
@@ -288,6 +295,7 @@ static struct XLibProto {
 	XLIBDEF(SoundJam,			kXObj,			400),	// D4
 	XLIBDEF(SpaceMgr,			kXObj,			400),	// D4
 	XLIBDEF(StageTCXObj,		kXObj,			400),	// D4
+	XLIBDEF(TimextraXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(UnitTestXObj,		kXObj,			400),	// D4
 	XLIBDEF(VMisOnXFCN,			kXObj,			400),	// D4
 	XLIBDEF(ValkyrieXObj,		kXObj,			400),	// D4
