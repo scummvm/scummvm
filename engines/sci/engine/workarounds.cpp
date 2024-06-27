@@ -630,8 +630,7 @@ const SciWorkaroundEntry kDisplay_workarounds[] = {
 	{ GID_LONGBOW,       220,   220,  0,             "moveOn", "changeState",             nullptr,     0,     0, { WORKAROUND_IGNORE,    0 } }, // DEMO: during second room "Outwit and outfight..."
 	{ GID_LONGBOW,       210,   210,  0,               "mama", "changeState",             nullptr,     0,     0, { WORKAROUND_IGNORE,    0 } }, // DEMO: during third room "Fall under the spell..."
 	{ GID_LONGBOW,       320,   320,  0,              "flyin", "changeState",             nullptr,     0,     0, { WORKAROUND_IGNORE,    0 } }, // DEMO: during fourth room "Conspiracies, love..."
-	{ GID_PQ2,            23,    23,  0,         "rm23Script", "elements",     sig_kDisplay_pq2_1,     0,     0, { WORKAROUND_IGNORE,    0 } }, // when looking at the 2nd page of files in jail - 0x75 as id - bug #5223
-	{ GID_PQ2,            23,    23,  0,         "rm23Script", "handleEvent",  sig_kDisplay_pq2_1,     0,     0, { WORKAROUND_IGNORE,    0 } }, // when looking at the 2nd page of file in jail - 0x75 as id - bug #9670
+	{ GID_PQ2,            23,    23,  0,         "rm23Script", "handleEvent",  sig_kDisplay_pq2_1,     0,     0, { WORKAROUND_IGNORE,    0 } }, // when looking at the 2nd page of files in jail - 0x75 as id - bugs #5223, #9670
 	{ GID_QFG1,           11,    11,  0,             "battle", "init",                    nullptr,     0,     0, { WORKAROUND_IGNORE,    0 } }, // DEMO: When entering battle, 0x75 as id
 	{ GID_SQ3,             1,     1,  0,              "rm001", "handleEvent",             nullptr,     0,     0, { WORKAROUND_IGNORE,    0 } }, // MAC: during intro when pressing enter - a parameter is an object
 	{ GID_SQ4,           397,     0,  0,                   "", "export 12",               nullptr,     0,     0, { WORKAROUND_IGNORE,    0 } }, // FLOPPY: when going into the computer store - bug #5227
