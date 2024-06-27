@@ -13279,8 +13279,42 @@ static const uint16 pepperPatchGlassJar[] = {
 	PATCH_END
 };
 
+// Ben Franklin's puzzle box cannot be solved. It is a sliding tile puzzle that
+//  is always initialized to the same state, but that state cannot reach the
+//  goal state. The puzzle can only be completed by pressing the Help button,
+//  because it "solves" the puzzle one tile at a time by swapping them instead
+//  of sliding. Swapping tiles can place the puzzle in a solvable state.
+//  
+// We have verified this with sliding tile puzzle solver programs. They reject
+//  the initial state as unsolvable. There is no indication that this was the
+//  the intention for the puzzle box.
+//
+// We fix this by swapping the initial positions of the last two tiles. This is
+//  all it takes for the initial state to be solvable.
+//
+// Applies to: All versions
+// Responsible method: rm116:init
+// Fixes bug: #15225
+static const uint16 pepperSignaturePuzzleBox[] = {
+	SIG_MAGICDWORD,
+	0x36,                            // push
+	0x72, SIG_UINT16(0x0284),        // lofsa t3
+	SIG_ADDTOOFFSET(+9),
+	0x72, SIG_UINT16(0x0594),        // lofsa t11
+	SIG_END
+};
+
+static const uint16 pepperPatchPuzzleBox[] = {
+	PATCH_ADDTOOFFSET(+1),
+	0x72, PATCH_GETORIGINALUINT16(+14),  // lofsa t11
+	PATCH_ADDTOOFFSET(+9),
+	0x72, PATCH_GETORIGINALUINT16(+2),   // lofsa t3
+	PATCH_END
+};
+
 //          script, description,                                         signature                            patch
 static const SciScriptPatcherEntry pepperSignatures[] = {
+	{  true,   116, "puzzle box fix",                                 1, pepperSignaturePuzzleBox,            pepperPatchPuzzleBox },
 	{  true,   894, "glass jar fix",                                  1, pepperSignatureGlassJar,             pepperPatchGlassJar },
 	{  true,   928, "Narrator lockup fix",                            1, sciNarratorLockupSignature,          sciNarratorLockupPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
