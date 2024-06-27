@@ -68,3 +68,7 @@ int Darkseed::Cursor::getHeight() {
 const Darkseed::Sprite &Darkseed::Cursor::getSprite() {
 	return g_engine->_baseSprites.getSpriteAt(_currentCursorType);
 }
+
+const Darkseed::Sprite &Darkseed::Cursor::getSpriteForType(Darkseed::CursorType cursorType) {
+	return g_engine->_baseSprites.getSpriteAt(cursorType);
+}

@@ -54,7 +54,7 @@ public:
 	int getWidth();
 	int getHeight();
 	const Sprite &getSprite();
-
+	const Sprite &getSpriteForType(CursorType cursorType);
 	void updatePosition(int16 x, int16 y);
 	void draw();
 };

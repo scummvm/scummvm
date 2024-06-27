@@ -41,15 +41,15 @@ struct RoomStruct2 {
 	uint8 strip[40];
 };
 
-struct RoomStruct3 {
-	uint16 unk0 = 0;
-	uint16 unk2 = 0;
+struct RoomObjElement {
+	uint16 type = 0;
+	uint16 objNum = 0;
 	uint16 xOffset = 0;
 	uint16 yOffset = 0;
 	uint16 width = 0;
 	uint16 height = 0;
-	uint8 unkc = 0;
-	uint8 unkd = 0;
+	uint8 depth = 0;
+	uint8 spriteNum = 0;
 };
 
 struct RoomConnector {
@@ -65,7 +65,7 @@ public:
 
 	Common::Array<RoomExit> room1;
 	Common::Array<RoomStruct2> walkableLocationsMap;
-	Common::Array<RoomStruct3> room3;
+	Common::Array<RoomObjElement> room3;
 	Common::Array<RoomConnector> connectors;
 
 	uint16 selectedObjIndex = 0;
@@ -76,7 +76,8 @@ public:
 
 	void update();
 
-	int getObjectAtPoint(int x, int y);
+	int checkCursorAndMoveableObjects();
+	int checkCursorAndStaticObjects(int x, int y);
 	int getObjectNumUnder6AtCursor();
 	void getWalkTargetForObjectType_maybe(int objId);
 	int getExitRoomNumberAtPoint(int x, int y);
