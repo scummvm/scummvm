@@ -22,7 +22,7 @@
 #ifndef __XML_TAG_H__
 #define __XML_TAG_H__
 
-#include "qdengine/core/parser/qdscr_parser.h"
+#include "qdengine/qdengine.h"
 
 namespace QDEngine {
 
@@ -73,7 +73,7 @@ public:
 
 	//! Возвращает идентификатор тега.
 	int ID() const {
-		return version110[ID_ - 1];
+		return g_engine->_versionPtr[ID_ - 1];
 	}
 
 	//! Возвращает формат данных тега.
