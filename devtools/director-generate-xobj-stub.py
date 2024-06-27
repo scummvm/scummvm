@@ -116,8 +116,8 @@ namespace Director {{
 
 const char *{xobj_class}::xlibName = "{name}";
 const XlibFileDesc {xobj_class}::fileNames[] = {{
-	{ "{filename}",   nullptr },
-	{ nullptr,        nullptr },
+	{{ "{filename}",   nullptr }},
+	{{ nullptr,        nullptr }},
 }};
 
 static MethodProto xlibMethods[] = {{
