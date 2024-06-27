@@ -321,7 +321,7 @@ def inject_lingo_object(slug: str, xobj_class: str, director_version: int, xcode
 
     # write entry in the XLibProto table
     lo_contents = open(LINGO_OBJECT_PATH, "r").readlines()
-    expr = re.compile("^\t\\{ ([a-zA-Z0-9_]+)::fileNames")
+    expr = re.compile("^\tXLIBDEF\\(([a-zA-Z0-9_]+),")
     in_xlibs = False
     for i in range(len(lo_contents)):
         m = expr.match(lo_contents[i])
@@ -335,7 +335,7 @@ def inject_lingo_object(slug: str, xobj_class: str, director_version: int, xcode
             elif xobj_class < m.group(1):
                 lo_contents.insert(
                     i,
-                    f"	{{ {xobj_class}::fileNames,			{xobj_class}::open,			{xobj_class}::close,		{obj_type},					{director_version} }},	// D{director_version // 100}\n",
+                    f"	XLIBDEF({xobj_class},		    {obj_type},					{director_version}),	// D{director_version // 100}\n",
                 )
                 with open(LINGO_OBJECT_PATH, "w") as f:
                     f.writelines(lo_contents)
@@ -344,7 +344,7 @@ def inject_lingo_object(slug: str, xobj_class: str, director_version: int, xcode
             # final entry in the list
             lo_contents.insert(
                 i,
-                f"	{{ {xobj_class}::fileNames,			{xobj_class}::open,			{xobj_class}::close,		{obj_type},					{director_version} }},	// D{director_version // 100}\n",
+                f"	XLIBDEF({xobj_class},			{obj_type},					{director_version}),	// D{director_version // 100}\n",
             )
             with open(LINGO_OBJECT_PATH, "w") as f:
                 f.writelines(lo_contents)
