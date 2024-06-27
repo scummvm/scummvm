@@ -13287,7 +13287,7 @@ static const uint16 pepperPatchGlassJar[] = {
 //  
 // We have verified this with sliding tile puzzle solver programs. They reject
 //  the initial state as unsolvable. There is no indication that this was the
-//  the intention for the puzzle box.
+//  intention for the puzzle box.
 //
 // We fix this by swapping the initial positions of the last two tiles. This is
 //  all it takes for the initial state to be solvable.
