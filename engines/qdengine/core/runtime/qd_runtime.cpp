@@ -215,7 +215,9 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 
 	Common::String gameID = g_engine->getGameId();
 	if (gameID == "3mice1") {
-		g_engine->_versionPtr = version120;
+		g_engine->_tagMap = version120;
+	} else if (gameID == "shveik") {
+		g_engine->_tagMap = version125;
 	}
 
 	SetErrorMode(SEM_FAILCRITICALERRORS);
