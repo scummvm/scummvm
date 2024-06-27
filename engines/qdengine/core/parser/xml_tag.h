@@ -22,6 +22,8 @@
 #ifndef __XML_TAG_H__
 #define __XML_TAG_H__
 
+#include "qdengine/core/parser/qdscr_parser.h"
+
 namespace QDEngine {
 
 //! Парсер XML на базе expat.
@@ -71,7 +73,7 @@ public:
 
 	//! Возвращает идентификатор тега.
 	int ID() const {
-		return ID_;
+		return version110[ID_ - 1];
 	}
 
 	//! Возвращает формат данных тега.
