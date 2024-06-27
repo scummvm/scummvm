@@ -176,6 +176,14 @@ private:
 		mutable bool _dirtyPalette;
 		bool _reversed;
 
+		void constructPanorama();
+		void projectPanorama();
+
+		Graphics::Surface *_constructedPano;
+		Graphics::Surface *_projectedPano;
+
+		bool _isPanoConstructed;
+
 		// Forced dithering of frames
 		byte *_forcedDitherPalette;
 		byte *_ditherTable;
