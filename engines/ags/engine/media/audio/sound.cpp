@@ -122,7 +122,7 @@ SOUNDCLIP *my_load_mod(const AssetPath &asset_name, bool loop) {
 		} else if (charAfterDot == 'S') {
 			audioStream = Audio::makeModXmS3mStream(data, DisposeAfterUse::YES);
 		} else if (charAfterDot == 'M') {
-			audioStream = Audio::makeProtrackerStream(data);
+			audioStream = Audio::makeModXmS3mStream(data, DisposeAfterUse::YES);
 		} else {
 			warning("MOD file format not recognized");
 			delete data;

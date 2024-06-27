@@ -125,7 +125,7 @@ SoundClipWaveBase::SoundClipWaveBase(Audio::AudioStream *stream, bool repeat) :
 	_vol255 = 255;
 
 	if (repeat) {
-		Audio::SeekableAudioStream *str = dynamic_cast<Audio::SeekableAudioStream *>(stream);
+		Audio::RewindableAudioStream *str = dynamic_cast<Audio::RewindableAudioStream *>(stream);
 		if (str)
 			_stream = new Audio::LoopingAudioStream(str, 0);
 	}
