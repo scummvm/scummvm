@@ -974,7 +974,6 @@ private:
 	Audio::Timestamp _endTime;
 	bool _endTimeSet;
 	Common::Rational _playbackRate;
-	VideoTrack *_nextVideoTrack;
 
 	// Palette settings from individual tracks
 	mutable bool _dirtyPalette;
@@ -995,6 +994,8 @@ protected:
 
 	Audio::Timestamp _lastTimeChange;
 	int32 _startTime;
+
+	VideoTrack *_nextVideoTrack;
 
 private:
 	uint32 _pauseLevel;

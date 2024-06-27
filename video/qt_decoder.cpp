@@ -51,6 +51,9 @@ QuickTimeDecoder::QuickTimeDecoder() {
 	_scaledSurface = 0;
 	_width = _height = 0;
 	_enableEditListBoundsCheckQuirk = false;
+	_prevMouseX = _prevMouseY = 0;
+	_isMouseButtonDown = false;
+	_isVR = false;
 }
 
 QuickTimeDecoder::~QuickTimeDecoder() {
@@ -211,6 +214,9 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::Qu
 }
 
 void QuickTimeDecoder::init() {
+	if (_qtvrType == QTVRType::OBJECT || _qtvrType == QTVRType::PANORAMA)
+		_isVR = true;
+
 	Audio::QuickTimeAudioDecoder::init();
 
 	// Initialize all the audio tracks
@@ -301,6 +307,8 @@ QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder
 	_curFrame = -1;
 	_delayedFrameToBufferTo = -1;
 	enterNewEditListEntry(true, true); // might set _curFrame
+	if (decoder->_qtvrType == QTVRType::OBJECT)
+		_curFrame = getFrameCount() / 2;
 
 	_durationOverride = -1;
 	_scaledSurface = 0;
@@ -366,7 +374,10 @@ QuickTimeDecoder::VideoTrackHandler::~VideoTrackHandler() {
 
 bool QuickTimeDecoder::VideoTrackHandler::endOfTrack() const {
 	// A track is over when we've finished going through all edits
-	return _reversed ? (_curEdit == 0 && _curFrame < 0) : atLastEdit();
+	if (!_decoder->_isVR)
+		return _reversed ? (_curEdit == 0 && _curFrame < 0) : atLastEdit();
+	else
+		return false;
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::seek(const Audio::Timestamp &requestedTime) {
@@ -473,7 +484,7 @@ int QuickTimeDecoder::VideoTrackHandler::getFrameCount() const {
 }
 
 uint32 QuickTimeDecoder::VideoTrackHandler::getNextFrameStartTime() const {
-	if (endOfTrack())
+	if (endOfTrack() || _decoder->_isVR)
 		return 0;
 
 	Audio::Timestamp frameTime(0, getRateAdjustedFrameTime(), _parent->timeScale);
@@ -575,6 +586,59 @@ Common::String QuickTimeDecoder::getAliasPath() {
 			return tracks[i]->path;
 	}
 	return Common::String();
+}
+
+void QuickTimeDecoder::handleMouseMove(int16 x, int16 y) {
+	if (_qtvrType != QTVRType::OBJECT || !_isMouseButtonDown )
+		return;
+
+	VideoTrackHandler *track = (VideoTrackHandler *)_nextVideoTrack;
+
+	// HACK: FIXME: Hard coded for now
+	const int sensitivity = 10;
+	const float speedFactor = 0.1f; 
+
+	int16 mouseDeltaX = x - _prevMouseX;
+	int16 mouseDeltaY = y - _prevMouseY;
+
+	float speedX = (float)mouseDeltaX * speedFactor;
+	float speedY = (float)mouseDeltaY * speedFactor;
+
+	bool changed = false;
+
+	if (ABS(mouseDeltaY) >= sensitivity) {
+		int newFrame = track->getCurFrame() - round(speedY) * _nav.columns;
+
+		if (newFrame >= 0 && newFrame < track->getFrameCount())
+			track->setCurFrame(newFrame);
+
+		changed = true;
+	}
+
+	if (ABS(mouseDeltaX) >= sensitivity) {
+		int currentRow = track->getCurFrame() / _nav.columns;
+		int currentRowStart = currentRow * _nav.columns;
+
+		int newFrame = (track->getCurFrame() - (int)roundf(speedX) - currentRowStart) % _nav.columns + currentRowStart;
+
+		track->setCurFrame(newFrame);
+
+		changed = true;
+	}
+
+	if (changed) {
+		_prevMouseX = x;
+		_prevMouseY = y;
+	}
+}
+
+void QuickTimeDecoder::handleMouseButton(bool isDown, int16 x, int16 y) {
+	_isMouseButtonDown = isDown;
+
+	if (isDown) {
+		_prevMouseX = x;
+		_prevMouseY = y;
+	}
 }
 
 Audio::Timestamp QuickTimeDecoder::VideoTrackHandler::getFrameTime(uint frame) const {
@@ -815,7 +879,8 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::bufferNextFrame() 
 		}
 	}
 
-	_curFrame++;
+	if (!_decoder->_isVR)
+		_curFrame++;
 
 	// Get the next packet
 	uint32 descId;
@@ -901,7 +966,10 @@ bool QuickTimeDecoder::VideoTrackHandler::atLastEdit() const {
 bool QuickTimeDecoder::VideoTrackHandler::endOfCurEdit() const {
 	// We're at the end of the edit once the next frame's time would
 	// bring us past the end of the edit.
-	return getRateAdjustedFrameTime() >= getCurEditTimeOffset() + getCurEditTrackDuration();
+	if (!_decoder->_isVR)
+		return getRateAdjustedFrameTime() >= getCurEditTimeOffset() + getCurEditTrackDuration();
+	else
+		return false;
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::canDither() const {

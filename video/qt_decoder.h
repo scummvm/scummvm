@@ -73,6 +73,11 @@ public:
 	void enableEditListBoundsCheckQuirk(bool enable) { _enableEditListBoundsCheckQuirk = enable; }
 	Common::String getAliasPath();
 
+	void handleMouseMove(int16 x, int16 y);
+	void handleMouseButton(bool isDown, int16 x = -1, int16 y = -1);
+
+	bool isVR() const { return _isVR; }
+
 protected:
 	Common::QuickTimeParser::SampleDesc *readSampleDesc(Common::QuickTimeParser::Track *track, uint32 format, uint32 descSize);
 
@@ -82,6 +87,11 @@ private:
 	void updateAudioBuffer();
 
 	uint16 _width, _height;
+
+	uint16 _prevMouseX, _prevMouseY;
+	bool _isMouseButtonDown;
+
+	bool _isVR;
 
 	Graphics::Surface *_scaledSurface;
 	void scaleSurface(const Graphics::Surface *src, Graphics::Surface *dst,
@@ -138,6 +148,7 @@ private:
 		Graphics::PixelFormat getPixelFormat() const;
 		bool setOutputPixelFormat(const Graphics::PixelFormat &format);
 		int getCurFrame() const { return _curFrame; }
+		void setCurFrame(int32 curFrame) { _curFrame = curFrame; }
 		int getFrameCount() const;
 		uint32 getNextFrameStartTime() const; // milliseconds
 		const Graphics::Surface *decodeNextFrame();
