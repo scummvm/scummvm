@@ -134,6 +134,20 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 			Common::Event event;
 
 			while (g_system->getEventManager()->pollEvent(event)) {
+				switch (event.type) {
+				case Common::EVENT_LBUTTONDOWN:
+					((Video::QuickTimeDecoder *)video)->handleMouseButton(true, event.mouse.x, event.mouse.y);
+					break;
+				case Common::EVENT_LBUTTONUP:
+					((Video::QuickTimeDecoder *)video)->handleMouseButton(false);
+					break;
+				case Common::EVENT_MOUSEMOVE:
+					((Video::QuickTimeDecoder *)video)->handleMouseMove(event.mouse.x, event.mouse.y);
+					break;
+				default:
+					break;
+				}
+
 				if (Engine::shouldQuit()) {
 					video->close();
 					delete video;
