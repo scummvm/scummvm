@@ -127,6 +127,7 @@ void call(const Symbol &targetSym, int nargs, bool allowRetVal);
 void call(const Common::String &name, int nargs, bool allowRetVal);
 
 void c_procret();
+void procret();
 
 void c_mci();
 void c_mciwait();

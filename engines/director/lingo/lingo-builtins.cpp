@@ -1870,7 +1870,7 @@ void LB::b_return(int nargs) {
 		g_lingo->push(retVal);
 	}
 
-	LC::c_procret();
+	LC::procret();
 }
 
 void LB::b_restart(int nargs) {
