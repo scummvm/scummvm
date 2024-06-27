@@ -1490,15 +1490,25 @@ void LB::b_xFactoryList(int nargs) {
 }
 
 void LB::b_xtra(int nargs) {
-	Common::String name = g_lingo->pop().asString();
-	if (g_lingo->_globalvars.contains(name)) {
-		Datum var = g_lingo->_globalvars[name];
-		if (var.type == OBJECT && var.u.obj->getObjType() == kXtraObj) {
+	Datum d = g_lingo->pop();
+	if (d.type == INT) {
+		int i = d.asInt() -1; // Lingo index for XTRAs start at 1
+		if (i >=0 && i < g_lingo->_openXtras.size()) {
+			Datum var = g_lingo->_globalvars[g_lingo->_openXtras[i]];
 			g_lingo->push(var);
 			return;
 		}
+	} else {
+		Common::String name = d.asString();
+		if (g_lingo->_globalvars.contains(name)) {
+			Datum var = g_lingo->_globalvars[name];
+			if (var.type == OBJECT && var.u.obj->getObjType() == kXtraObj) {
+				g_lingo->push(var);
+				return;
+			}
+		}
 	}
-	g_lingo->lingoError("Xtra not found: %s", name.c_str());
+	g_lingo->lingoError("Xtra not found: %s", d.asString().c_str());
 }
 
 ///////////////////

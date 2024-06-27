@@ -522,6 +522,7 @@ public:
 
 	OpenXLibsHash _openXLibs;
 	OpenXLibsStateHash _openXLibsState;
+	Common::StringArray _openXtras;
 
 	Common::String _floatPrecisionFormat;
 

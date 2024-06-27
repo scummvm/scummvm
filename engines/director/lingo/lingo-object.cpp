@@ -373,6 +373,8 @@ void Lingo::openXLib(Common::String name, ObjectType type, const Common::Path &p
 
 	if (_xlibOpeners.contains(name)) {
 		(*_xlibOpeners[name])(type, path);
+		if (type == kXtraObj)
+			_openXtras.push_back(name);
 	} else {
 		warning("Lingo::openXLib: Unimplemented xlib: '%s'", name.c_str());
 	}
