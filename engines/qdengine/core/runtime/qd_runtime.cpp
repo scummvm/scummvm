@@ -213,6 +213,11 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 		sp.show();
 	}
 
+	Common::String gameID = g_engine->getGameId();
+	if (gameID == "3mice1") {
+		g_engine->_versionPtr = version120;
+	}
+
 	SetErrorMode(SEM_FAILCRITICALERRORS);
 
 //	qdFileManager::instance().check_drive('E');
