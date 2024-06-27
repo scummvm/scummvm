@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-26 07:28+0000\n"
+"POT-Creation-Date: 2024-06-27 22:33+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -3706,8 +3706,8 @@ msgid "Default game keymap"
 msgstr "خريطة مفاتيح اللعبة الافتراضية"
 
 #: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:161
-#: engines/asylum/metaengine.cpp:159 engines/hdb/metaengine.cpp:207
-#: engines/parallaction/metaengine.cpp:114
+#: engines/agos/metaengine.cpp:227 engines/asylum/metaengine.cpp:159
+#: engines/hdb/metaengine.cpp:207 engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
 msgstr "الزر الأيسر"
@@ -3720,15 +3720,17 @@ msgid "Middle Click"
 msgstr "النقر الأوسط"
 
 #: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:169
-#: engines/asylum/metaengine.cpp:165 engines/parallaction/metaengine.cpp:120
+#: engines/agos/metaengine.cpp:233 engines/asylum/metaengine.cpp:165
+#: engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr "انقر على اليمين"
 
 #. I18N: Action in In Cold Blood
-#: engines/metaengine.cpp:76 engines/crab/input/input.cpp:261
-#: engines/grim/grim.cpp:541 engines/hdb/metaengine.cpp:258
-#: engines/icb/icb.cpp:137 engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
+#: engines/metaengine.cpp:76 engines/agos/metaengine.cpp:247
+#: engines/crab/input/input.cpp:261 engines/grim/grim.cpp:541
+#: engines/hdb/metaengine.cpp:258 engines/icb/icb.cpp:137
+#: engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
 #: engines/mohawk/riven.cpp:876 engines/sky/metaengine.cpp:125
 #: engines/twine/metaengine.cpp:231 engines/wintermute/keymapper_tables.h:1608
 msgid "Pause"
@@ -5984,11 +5986,11 @@ msgstr ""
 msgid "Cutscene file '%s' not found!"
 msgstr "ملف Cutscene '%s' غير موجود!"
 
-#: engines/agos/metaengine.cpp:42
+#: engines/agos/metaengine.cpp:46
 msgid "AdLib OPL3 mode"
 msgstr "وضع AdLib OPL3"
 
-#: engines/agos/metaengine.cpp:43
+#: engines/agos/metaengine.cpp:47
 msgid ""
 "When AdLib is selected, OPL3 features will be used. Depending on the game, "
 "this will prevent cut-off notes, add extra notes or instruments and/or add "
@@ -5997,11 +5999,11 @@ msgstr ""
 "عند تحديد AdLib ، سيتم استخدام ميزات OPL3. اعتمادًا على اللعبة ، سيمنع هذا "
 "قطع الملاحظات وإضافة ملاحظات أو أدوات إضافية و / أو إضافة استريو."
 
-#: engines/agos/metaengine.cpp:53 engines/agos/metaengine.cpp:64
+#: engines/agos/metaengine.cpp:57 engines/agos/metaengine.cpp:68
 msgid "Use DOS version music tempos"
 msgstr "استخدام الموسيقى الإصدار DOS"
 
-#: engines/agos/metaengine.cpp:54 engines/agos/metaengine.cpp:65
+#: engines/agos/metaengine.cpp:58 engines/agos/metaengine.cpp:69
 msgid ""
 "Selecting this option will play the music using the tempos used by the DOS "
 "version of the game. Otherwise, the faster tempos of the Windows version "
@@ -6010,25 +6012,170 @@ msgstr ""
 "سيؤدي تحديد هذا الخيار إلى تشغيل الموسيقى باستخدام الإيقاع المستخدم في إصدار "
 "DOS من اللعبة. خلاف ذلك ، سيتم استخدام سرعة إصدار Windows بشكل أسرع."
 
-#: engines/agos/metaengine.cpp:75 engines/sci/detection_options.h:95
+#: engines/agos/metaengine.cpp:79 engines/sci/detection_options.h:95
 msgid "Prefer digital sound effects"
 msgstr "تفضل المؤثرات الصوتية الرقمية"
 
-#: engines/agos/metaengine.cpp:76 engines/sci/detection_options.h:96
+#: engines/agos/metaengine.cpp:80 engines/sci/detection_options.h:96
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "تفضل المؤثرات الصوتية الرقمية بدلاً من المؤثرات المركبة"
 
-#: engines/agos/metaengine.cpp:86
+#: engines/agos/metaengine.cpp:90
 msgid "Disable fade-out effects"
 msgstr "تعطيل تأثيرات التلاشي"
 
-#: engines/agos/metaengine.cpp:87
+#: engines/agos/metaengine.cpp:91
 msgid "Don't fade every screen to black when leaving a room."
 msgstr "لا تتلاشى كل شاشة إلى اللون الأسود عند مغادرة الغرفة."
 
-#: engines/agos/metaengine.cpp:170
+#: engines/agos/metaengine.cpp:176
 msgid "AGOS 2 support is not compiled in"
 msgstr "لا يتم تجميع دعم AGOS 2 بتنسيق"
+
+#: engines/agos/metaengine.cpp:222
+msgid "AGOS main"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:223 engines/cge/metaengine.cpp:199
+#: engines/cge2/metaengine.cpp:212
+#, fuzzy
+#| msgid "Game Options"
+msgid "Game Keymappings"
+msgstr "خيارات اللعبة"
+
+#: engines/agos/metaengine.cpp:224
+#, fuzzy
+#| msgid "Game Options"
+msgid "Yes/No Keymapping"
+msgstr "خيارات اللعبة"
+
+#: engines/agos/metaengine.cpp:239
+#, fuzzy
+#| msgid "Skip cutscene"
+msgid "Exit cutscene"
+msgstr "تخطي المشهد"
+
+#: engines/agos/metaengine.cpp:252 engines/vcruise/metaengine.cpp:176
+#, fuzzy
+#| msgid "Music volume up / down"
+msgid "Music volume down"
+msgstr "رفع / خفض مستوى صوت الموسيقى"
+
+#: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:181
+#, fuzzy
+#| msgid "Music volume: "
+msgid "Music volume up"
+msgstr "طبقة صوت الموسيقا: "
+
+#: engines/agos/metaengine.cpp:263
+#, fuzzy
+#| msgid "Toggle fullscreen"
+msgid "Toggle Music on/off"
+msgstr "تبديل ملء الشاشة"
+
+#: engines/agos/metaengine.cpp:268
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Toggle Sound effect on/off"
+msgstr "حجم المؤثرات الصوتية الخاصة"
+
+#: engines/agos/metaengine.cpp:273
+#, fuzzy
+#| msgid "Toggle fast mode"
+msgid "Toggle Fast mode on/off"
+msgstr "تبديل الوضع السريع"
+
+#: engines/agos/metaengine.cpp:285 engines/wintermute/keymapper_tables.h:149
+#: engines/wintermute/keymapper_tables.h:731
+#: engines/wintermute/keymapper_tables.h:2116
+#: engines/wintermute/keymapper_tables.h:2216
+msgid "Walk forward"
+msgstr "السير إلى الأمام"
+
+#: engines/agos/metaengine.cpp:291
+#, fuzzy
+#| msgid "Run backward"
+msgid "Turn backward"
+msgstr "اركض للخلف"
+
+#: engines/agos/metaengine.cpp:297 engines/mohawk/riven.cpp:901
+#: engines/wintermute/keymapper_tables.h:161
+#: engines/wintermute/keymapper_tables.h:741
+#: engines/wintermute/keymapper_tables.h:2122
+#: engines/wintermute/keymapper_tables.h:2223
+msgid "Turn left"
+msgstr "انعطف لليسار"
+
+#: engines/agos/metaengine.cpp:303 engines/mohawk/riven.cpp:907
+#: engines/wintermute/keymapper_tables.h:167
+#: engines/wintermute/keymapper_tables.h:746
+#: engines/wintermute/keymapper_tables.h:2128
+#: engines/wintermute/keymapper_tables.h:2230
+msgid "Turn right"
+msgstr "انعطف يمينا"
+
+#: engines/agos/metaengine.cpp:311
+#, fuzzy
+#| msgid "Text speed slower / faster"
+msgid "Text speed - Fast"
+msgstr "سرعة النص أبطأ / أسرع"
+
+#: engines/agos/metaengine.cpp:316
+#, fuzzy
+#| msgid "Walking speed: Medium"
+msgid "Text speed - Medium"
+msgstr "سرعة المشي: متوسطة"
+
+#: engines/agos/metaengine.cpp:321
+#, fuzzy
+#| msgid "Text speed slower / faster"
+msgid "Text speed - Slow"
+msgstr "سرعة النص أبطأ / أسرع"
+
+#: engines/agos/metaengine.cpp:326
+#, fuzzy
+#| msgid "Show Object Line"
+msgid "Show objects to interact"
+msgstr "إظهار خط الكائن"
+
+#: engines/agos/metaengine.cpp:333
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Toggle background sounds On/Off"
+msgstr "حجم المؤثرات الصوتية الخاصة"
+
+#. I18N: Characters are game actors
+#: engines/agos/metaengine.cpp:342
+#, fuzzy
+#| msgid "Switching characters:"
+msgid "Switch characters"
+msgstr "تبديل الشخصيات:"
+
+#: engines/agos/metaengine.cpp:348
+#, fuzzy
+#| msgid "Toggle fullscreen"
+msgid "Toggle hitbox names on/off"
+msgstr "تبديل ملء الشاشة"
+
+#: engines/agos/metaengine.cpp:355
+msgid "Switches between speech only and combined speech and subtitles"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:361
+msgid "Switches between subtitles only and combined speech and subtitles"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:371
+msgid "High speed mode on/off in Swampy Adventures"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:377
+msgid "Press Yes Key"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:382
+msgid "Press No Key"
+msgstr ""
 
 #: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -6643,12 +6790,6 @@ msgstr "تمكين تحويل النص إلى كلام"
 #: engines/cge/metaengine.cpp:57
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "استخدم TTS لقراءة النص في اللعبة (إذا كان TTS متاحًا)"
-
-#: engines/cge/metaengine.cpp:199 engines/cge2/metaengine.cpp:212
-#, fuzzy
-#| msgid "Game Options"
-msgid "Game Keymappings"
-msgstr "خيارات اللعبة"
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:204 engines/cge2/metaengine.cpp:216
@@ -8431,20 +8572,6 @@ msgstr "تقدم يمينًا"
 #: engines/mohawk/riven.cpp:895
 msgid "Move backwards"
 msgstr "ارجع للخلف"
-
-#: engines/mohawk/riven.cpp:901 engines/wintermute/keymapper_tables.h:161
-#: engines/wintermute/keymapper_tables.h:741
-#: engines/wintermute/keymapper_tables.h:2122
-#: engines/wintermute/keymapper_tables.h:2223
-msgid "Turn left"
-msgstr "انعطف لليسار"
-
-#: engines/mohawk/riven.cpp:907 engines/wintermute/keymapper_tables.h:167
-#: engines/wintermute/keymapper_tables.h:746
-#: engines/wintermute/keymapper_tables.h:2128
-#: engines/wintermute/keymapper_tables.h:2230
-msgid "Turn right"
-msgstr "انعطف يمينا"
 
 #: engines/mohawk/riven.cpp:913
 msgid "Look up"
@@ -11479,18 +11606,6 @@ msgstr "تبديل ملء الشاشة"
 msgid "Toggle sound effects on/off"
 msgstr "حجم المؤثرات الصوتية الخاصة"
 
-#: engines/vcruise/metaengine.cpp:176
-#, fuzzy
-#| msgid "Music volume up / down"
-msgid "Music volume down"
-msgstr "رفع / خفض مستوى صوت الموسيقى"
-
-#: engines/vcruise/metaengine.cpp:181
-#, fuzzy
-#| msgid "Music volume: "
-msgid "Music volume up"
-msgstr "طبقة صوت الموسيقا: "
-
 #: engines/vcruise/metaengine.cpp:186
 #, fuzzy
 #| msgid "Special sound effects volume"
@@ -11603,13 +11718,6 @@ msgid ""
 msgstr ""
 "تتطلب هذه اللعبة قدرات ثلاثية الأبعاد ، والتي لم يتم تجميعها فيها. على هذا "
 "النحو ، فمن المحتمل أن تكون غير قابلة للتشغيل كليًا أو جزئيًا."
-
-#: engines/wintermute/keymapper_tables.h:149
-#: engines/wintermute/keymapper_tables.h:731
-#: engines/wintermute/keymapper_tables.h:2116
-#: engines/wintermute/keymapper_tables.h:2216
-msgid "Walk forward"
-msgstr "السير إلى الأمام"
 
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736

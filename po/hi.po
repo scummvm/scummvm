@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-26 07:28+0000\n"
+"POT-Creation-Date: 2024-06-27 22:33+0000\n"
 "PO-Revision-Date: 2023-12-06 11:16+0000\n"
 "Last-Translator: Aditya Mohan <adityamurali003@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -3501,8 +3501,8 @@ msgid "Default game keymap"
 msgstr ""
 
 #: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:161
-#: engines/asylum/metaengine.cpp:159 engines/hdb/metaengine.cpp:207
-#: engines/parallaction/metaengine.cpp:114
+#: engines/agos/metaengine.cpp:227 engines/asylum/metaengine.cpp:159
+#: engines/hdb/metaengine.cpp:207 engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
 msgstr ""
@@ -3515,15 +3515,17 @@ msgid "Middle Click"
 msgstr ""
 
 #: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:169
-#: engines/asylum/metaengine.cpp:165 engines/parallaction/metaengine.cpp:120
+#: engines/agos/metaengine.cpp:233 engines/asylum/metaengine.cpp:165
+#: engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr "दाहिना क्लिक"
 
 #. I18N: Action in In Cold Blood
-#: engines/metaengine.cpp:76 engines/crab/input/input.cpp:261
-#: engines/grim/grim.cpp:541 engines/hdb/metaengine.cpp:258
-#: engines/icb/icb.cpp:137 engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
+#: engines/metaengine.cpp:76 engines/agos/metaengine.cpp:247
+#: engines/crab/input/input.cpp:261 engines/grim/grim.cpp:541
+#: engines/hdb/metaengine.cpp:258 engines/icb/icb.cpp:137
+#: engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
 #: engines/mohawk/riven.cpp:876 engines/sky/metaengine.cpp:125
 #: engines/twine/metaengine.cpp:231 engines/wintermute/keymapper_tables.h:1608
 msgid "Pause"
@@ -5667,47 +5669,168 @@ msgstr ""
 msgid "Cutscene file '%s' not found!"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:42
+#: engines/agos/metaengine.cpp:46
 msgid "AdLib OPL3 mode"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:43
+#: engines/agos/metaengine.cpp:47
 msgid ""
 "When AdLib is selected, OPL3 features will be used. Depending on the game, "
 "this will prevent cut-off notes, add extra notes or instruments and/or add "
 "stereo."
 msgstr ""
 
-#: engines/agos/metaengine.cpp:53 engines/agos/metaengine.cpp:64
+#: engines/agos/metaengine.cpp:57 engines/agos/metaengine.cpp:68
 msgid "Use DOS version music tempos"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:54 engines/agos/metaengine.cpp:65
+#: engines/agos/metaengine.cpp:58 engines/agos/metaengine.cpp:69
 msgid ""
 "Selecting this option will play the music using the tempos used by the DOS "
 "version of the game. Otherwise, the faster tempos of the Windows version "
 "will be used."
 msgstr ""
 
-#: engines/agos/metaengine.cpp:75 engines/sci/detection_options.h:95
+#: engines/agos/metaengine.cpp:79 engines/sci/detection_options.h:95
 msgid "Prefer digital sound effects"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:76 engines/sci/detection_options.h:96
+#: engines/agos/metaengine.cpp:80 engines/sci/detection_options.h:96
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:86
+#: engines/agos/metaengine.cpp:90
 msgid "Disable fade-out effects"
 msgstr "फेड आउट इफेक्ट्स डिसएबल किये जाए"
 
-#: engines/agos/metaengine.cpp:87
+#: engines/agos/metaengine.cpp:91
 msgid "Don't fade every screen to black when leaving a room."
 msgstr ""
 
-#: engines/agos/metaengine.cpp:170
+#: engines/agos/metaengine.cpp:176
 msgid "AGOS 2 support is not compiled in"
 msgstr "AGOS 2 सपोर्ट कम्पाइल नहीं है"
+
+#: engines/agos/metaengine.cpp:222
+msgid "AGOS main"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:223 engines/cge/metaengine.cpp:199
+#: engines/cge2/metaengine.cpp:212
+#, fuzzy
+#| msgid "Game Options"
+msgid "Game Keymappings"
+msgstr "गेम विकल्प(O)..."
+
+#: engines/agos/metaengine.cpp:224
+#, fuzzy
+#| msgid "Game Options"
+msgid "Yes/No Keymapping"
+msgstr "गेम विकल्प(O)..."
+
+#: engines/agos/metaengine.cpp:239
+msgid "Exit cutscene"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:252 engines/vcruise/metaengine.cpp:176
+#, fuzzy
+#| msgid "Move down"
+msgid "Music volume down"
+msgstr "नीचे को चलें"
+
+#: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:181
+msgid "Music volume up"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:263
+msgid "Toggle Music on/off"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:268
+msgid "Toggle Sound effect on/off"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:273
+msgid "Toggle Fast mode on/off"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:285 engines/wintermute/keymapper_tables.h:149
+#: engines/wintermute/keymapper_tables.h:731
+#: engines/wintermute/keymapper_tables.h:2116
+#: engines/wintermute/keymapper_tables.h:2216
+msgid "Walk forward"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:291
+msgid "Turn backward"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:297 engines/mohawk/riven.cpp:901
+#: engines/wintermute/keymapper_tables.h:161
+#: engines/wintermute/keymapper_tables.h:741
+#: engines/wintermute/keymapper_tables.h:2122
+#: engines/wintermute/keymapper_tables.h:2223
+msgid "Turn left"
+msgstr "बांए मुड़िए"
+
+#: engines/agos/metaengine.cpp:303 engines/mohawk/riven.cpp:907
+#: engines/wintermute/keymapper_tables.h:167
+#: engines/wintermute/keymapper_tables.h:746
+#: engines/wintermute/keymapper_tables.h:2128
+#: engines/wintermute/keymapper_tables.h:2230
+msgid "Turn right"
+msgstr "दायें मुड़िए"
+
+#: engines/agos/metaengine.cpp:311
+msgid "Text speed - Fast"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:316
+msgid "Text speed - Medium"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:321
+msgid "Text speed - Slow"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:326
+msgid "Show objects to interact"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:333
+msgid "Toggle background sounds On/Off"
+msgstr ""
+
+#. I18N: Characters are game actors
+#: engines/agos/metaengine.cpp:342
+#, fuzzy
+#| msgid "Switch to Sarah"
+msgid "Switch characters"
+msgstr "सारा पे स्विच करें"
+
+#: engines/agos/metaengine.cpp:348
+msgid "Toggle hitbox names on/off"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:355
+msgid "Switches between speech only and combined speech and subtitles"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:361
+msgid "Switches between subtitles only and combined speech and subtitles"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:371
+msgid "High speed mode on/off in Swampy Adventures"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:377
+msgid "Press Yes Key"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:382
+msgid "Press No Key"
+msgstr ""
 
 #: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -6268,12 +6391,6 @@ msgstr "Text से Speech इनेबल करें"
 #: engines/cge/metaengine.cpp:57
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr ""
-
-#: engines/cge/metaengine.cpp:199 engines/cge2/metaengine.cpp:212
-#, fuzzy
-#| msgid "Game Options"
-msgid "Game Keymappings"
-msgstr "गेम विकल्प(O)..."
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:204 engines/cge2/metaengine.cpp:216
@@ -7916,20 +8033,6 @@ msgstr ""
 #: engines/mohawk/riven.cpp:895
 msgid "Move backwards"
 msgstr ""
-
-#: engines/mohawk/riven.cpp:901 engines/wintermute/keymapper_tables.h:161
-#: engines/wintermute/keymapper_tables.h:741
-#: engines/wintermute/keymapper_tables.h:2122
-#: engines/wintermute/keymapper_tables.h:2223
-msgid "Turn left"
-msgstr "बांए मुड़िए"
-
-#: engines/mohawk/riven.cpp:907 engines/wintermute/keymapper_tables.h:167
-#: engines/wintermute/keymapper_tables.h:746
-#: engines/wintermute/keymapper_tables.h:2128
-#: engines/wintermute/keymapper_tables.h:2230
-msgid "Turn right"
-msgstr "दायें मुड़िए"
 
 #: engines/mohawk/riven.cpp:913
 msgid "Look up"
@@ -10745,16 +10848,6 @@ msgstr ""
 msgid "Toggle sound effects on/off"
 msgstr ""
 
-#: engines/vcruise/metaengine.cpp:176
-#, fuzzy
-#| msgid "Move down"
-msgid "Music volume down"
-msgstr "नीचे को चलें"
-
-#: engines/vcruise/metaengine.cpp:181
-msgid "Music volume up"
-msgstr ""
-
 #: engines/vcruise/metaengine.cpp:186
 msgid "Sound effect volume down"
 msgstr ""
@@ -10853,13 +10946,6 @@ msgstr ""
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
-msgstr ""
-
-#: engines/wintermute/keymapper_tables.h:149
-#: engines/wintermute/keymapper_tables.h:731
-#: engines/wintermute/keymapper_tables.h:2116
-#: engines/wintermute/keymapper_tables.h:2216
-msgid "Walk forward"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:155

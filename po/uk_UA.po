@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-26 07:28+0000\n"
+"POT-Creation-Date: 2024-06-27 22:33+0000\n"
 "PO-Revision-Date: 2024-06-05 08:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -3704,8 +3704,8 @@ msgid "Default game keymap"
 msgstr "Мапа клавіш за замовчунням"
 
 #: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:161
-#: engines/asylum/metaengine.cpp:159 engines/hdb/metaengine.cpp:207
-#: engines/parallaction/metaengine.cpp:114
+#: engines/agos/metaengine.cpp:227 engines/asylum/metaengine.cpp:159
+#: engines/hdb/metaengine.cpp:207 engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
 msgstr "Лівий клік"
@@ -3718,15 +3718,17 @@ msgid "Middle Click"
 msgstr "Середній клік"
 
 #: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:169
-#: engines/asylum/metaengine.cpp:165 engines/parallaction/metaengine.cpp:120
+#: engines/agos/metaengine.cpp:233 engines/asylum/metaengine.cpp:165
+#: engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr "Правий клік"
 
 #. I18N: Action in In Cold Blood
-#: engines/metaengine.cpp:76 engines/crab/input/input.cpp:261
-#: engines/grim/grim.cpp:541 engines/hdb/metaengine.cpp:258
-#: engines/icb/icb.cpp:137 engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
+#: engines/metaengine.cpp:76 engines/agos/metaengine.cpp:247
+#: engines/crab/input/input.cpp:261 engines/grim/grim.cpp:541
+#: engines/hdb/metaengine.cpp:258 engines/icb/icb.cpp:137
+#: engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
 #: engines/mohawk/riven.cpp:876 engines/sky/metaengine.cpp:125
 #: engines/twine/metaengine.cpp:231 engines/wintermute/keymapper_tables.h:1608
 msgid "Pause"
@@ -6217,11 +6219,11 @@ msgstr ""
 msgid "Cutscene file '%s' not found!"
 msgstr "Файл ролику '%s' не знайдено!"
 
-#: engines/agos/metaengine.cpp:42
+#: engines/agos/metaengine.cpp:46
 msgid "AdLib OPL3 mode"
 msgstr "Режим AdLib OPL3"
 
-#: engines/agos/metaengine.cpp:43
+#: engines/agos/metaengine.cpp:47
 msgid ""
 "When AdLib is selected, OPL3 features will be used. Depending on the game, "
 "this will prevent cut-off notes, add extra notes or instruments and/or add "
@@ -6231,11 +6233,11 @@ msgstr ""
 "гри, це буде запобігати скороченню нот, додасть ноти чи інструменти та/або "
 "додасть стерео."
 
-#: engines/agos/metaengine.cpp:53 engines/agos/metaengine.cpp:64
+#: engines/agos/metaengine.cpp:57 engines/agos/metaengine.cpp:68
 msgid "Use DOS version music tempos"
 msgstr "Використовувати темп музики для DOS-версії"
 
-#: engines/agos/metaengine.cpp:54 engines/agos/metaengine.cpp:65
+#: engines/agos/metaengine.cpp:58 engines/agos/metaengine.cpp:69
 msgid ""
 "Selecting this option will play the music using the tempos used by the DOS "
 "version of the game. Otherwise, the faster tempos of the Windows version "
@@ -6244,25 +6246,164 @@ msgstr ""
 "Обрання цієї опції буде програвати музику с темпом від DOS-версії гри. "
 "Інакше буде використовуватися швидший темп Windows-версії."
 
-#: engines/agos/metaengine.cpp:75 engines/sci/detection_options.h:95
+#: engines/agos/metaengine.cpp:79 engines/sci/detection_options.h:95
 msgid "Prefer digital sound effects"
 msgstr "Надавати перевагу цифровим звуковим ефектам"
 
-#: engines/agos/metaengine.cpp:76 engines/sci/detection_options.h:96
+#: engines/agos/metaengine.cpp:80 engines/sci/detection_options.h:96
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Віддавати перевагу цифровим звуковим ефектам, а не синтезованим"
 
-#: engines/agos/metaengine.cpp:86
+#: engines/agos/metaengine.cpp:90
 msgid "Disable fade-out effects"
 msgstr "Заборонити ефекти затемнення"
 
-#: engines/agos/metaengine.cpp:87
+#: engines/agos/metaengine.cpp:91
 msgid "Don't fade every screen to black when leaving a room."
 msgstr "Не затемнювати екран під час кожного переходу між кімнатами."
 
-#: engines/agos/metaengine.cpp:170
+#: engines/agos/metaengine.cpp:176
 msgid "AGOS 2 support is not compiled in"
 msgstr "Підтримку для AGOS 2 не скомпільовано"
+
+#: engines/agos/metaengine.cpp:222
+msgid "AGOS main"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:223 engines/cge/metaengine.cpp:199
+#: engines/cge2/metaengine.cpp:212
+msgid "Game Keymappings"
+msgstr "Мапа клавіш гри"
+
+#: engines/agos/metaengine.cpp:224
+#, fuzzy
+#| msgid "Game Keymappings"
+msgid "Yes/No Keymapping"
+msgstr "Мапа клавіш гри"
+
+#: engines/agos/metaengine.cpp:239
+#, fuzzy
+#| msgid "Skip cutscene"
+msgid "Exit cutscene"
+msgstr "Пропустити ролік"
+
+#: engines/agos/metaengine.cpp:252 engines/vcruise/metaengine.cpp:176
+msgid "Music volume down"
+msgstr "Гучність музики нижче"
+
+#: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:181
+msgid "Music volume up"
+msgstr "Гучність музики вище"
+
+#: engines/agos/metaengine.cpp:263
+#, fuzzy
+#| msgid "Toggle music on/off"
+msgid "Toggle Music on/off"
+msgstr "Перемикання музики"
+
+#: engines/agos/metaengine.cpp:268
+#, fuzzy
+#| msgid "Toggle sound effects on/off"
+msgid "Toggle Sound effect on/off"
+msgstr "Перемикання звукових ефектів"
+
+#: engines/agos/metaengine.cpp:273
+#, fuzzy
+#| msgid "Toggle fast mode"
+msgid "Toggle Fast mode on/off"
+msgstr "Перемикання швидкого режиму"
+
+#: engines/agos/metaengine.cpp:285 engines/wintermute/keymapper_tables.h:149
+#: engines/wintermute/keymapper_tables.h:731
+#: engines/wintermute/keymapper_tables.h:2116
+#: engines/wintermute/keymapper_tables.h:2216
+msgid "Walk forward"
+msgstr "Іти вперед"
+
+#: engines/agos/metaengine.cpp:291
+#, fuzzy
+#| msgid "Run backward"
+msgid "Turn backward"
+msgstr "Бігти назад"
+
+#: engines/agos/metaengine.cpp:297 engines/mohawk/riven.cpp:901
+#: engines/wintermute/keymapper_tables.h:161
+#: engines/wintermute/keymapper_tables.h:741
+#: engines/wintermute/keymapper_tables.h:2122
+#: engines/wintermute/keymapper_tables.h:2223
+msgid "Turn left"
+msgstr "Повернутися вліво"
+
+#: engines/agos/metaengine.cpp:303 engines/mohawk/riven.cpp:907
+#: engines/wintermute/keymapper_tables.h:167
+#: engines/wintermute/keymapper_tables.h:746
+#: engines/wintermute/keymapper_tables.h:2128
+#: engines/wintermute/keymapper_tables.h:2230
+msgid "Turn right"
+msgstr "Повернутися вправо"
+
+#: engines/agos/metaengine.cpp:311
+#, fuzzy
+#| msgid "Text speed slower / faster"
+msgid "Text speed - Fast"
+msgstr "Швидкість тексту повільніше / швидше"
+
+#: engines/agos/metaengine.cpp:316
+#, fuzzy
+#| msgid "Walking speed: Medium"
+msgid "Text speed - Medium"
+msgstr "Швидкість ходи: Середня"
+
+#: engines/agos/metaengine.cpp:321
+#, fuzzy
+#| msgid "Text speed slower / faster"
+msgid "Text speed - Slow"
+msgstr "Швидкість тексту повільніше / швидше"
+
+#: engines/agos/metaengine.cpp:326
+#, fuzzy
+#| msgid "Show Object Line"
+msgid "Show objects to interact"
+msgstr "Показувати лінії об'єктів"
+
+#: engines/agos/metaengine.cpp:333
+#, fuzzy
+#| msgid "Toggle sound effects on/off"
+msgid "Toggle background sounds On/Off"
+msgstr "Перемикання звукових ефектів"
+
+#. I18N: Characters are game actors
+#: engines/agos/metaengine.cpp:342
+#, fuzzy
+#| msgid "Switching characters:"
+msgid "Switch characters"
+msgstr "Переключення героїв:"
+
+#: engines/agos/metaengine.cpp:348
+#, fuzzy
+#| msgid "Toggle music on/off"
+msgid "Toggle hitbox names on/off"
+msgstr "Перемикання музики"
+
+#: engines/agos/metaengine.cpp:355
+msgid "Switches between speech only and combined speech and subtitles"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:361
+msgid "Switches between subtitles only and combined speech and subtitles"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:371
+msgid "High speed mode on/off in Swampy Adventures"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:377
+msgid "Press Yes Key"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:382
+msgid "Press No Key"
+msgstr ""
 
 #: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -6881,10 +7022,6 @@ msgstr "Ввімкнути генератор мови"
 #: engines/cge/metaengine.cpp:57
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Використовувати автоматичний читач текста (якщо TTS доступне)"
-
-#: engines/cge/metaengine.cpp:199 engines/cge2/metaengine.cpp:212
-msgid "Game Keymappings"
-msgstr "Мапа клавіш гри"
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:204 engines/cge2/metaengine.cpp:216
@@ -8642,20 +8779,6 @@ msgstr "Рухатись уперед-вправо"
 #: engines/mohawk/riven.cpp:895
 msgid "Move backwards"
 msgstr "Рухатись назад"
-
-#: engines/mohawk/riven.cpp:901 engines/wintermute/keymapper_tables.h:161
-#: engines/wintermute/keymapper_tables.h:741
-#: engines/wintermute/keymapper_tables.h:2122
-#: engines/wintermute/keymapper_tables.h:2223
-msgid "Turn left"
-msgstr "Повернутися вліво"
-
-#: engines/mohawk/riven.cpp:907 engines/wintermute/keymapper_tables.h:167
-#: engines/wintermute/keymapper_tables.h:746
-#: engines/wintermute/keymapper_tables.h:2128
-#: engines/wintermute/keymapper_tables.h:2230
-msgid "Turn right"
-msgstr "Повернутися вправо"
 
 #: engines/mohawk/riven.cpp:913
 msgid "Look up"
@@ -11643,14 +11766,6 @@ msgstr "Перемикання музики"
 msgid "Toggle sound effects on/off"
 msgstr "Перемикання звукових ефектів"
 
-#: engines/vcruise/metaengine.cpp:176
-msgid "Music volume down"
-msgstr "Гучність музики нижче"
-
-#: engines/vcruise/metaengine.cpp:181
-msgid "Music volume up"
-msgstr "Гучність музики вище"
-
 #: engines/vcruise/metaengine.cpp:186
 msgid "Sound effect volume down"
 msgstr "Гучність звукових ефектів нижче"
@@ -11756,13 +11871,6 @@ msgid ""
 msgstr ""
 "Ця гра потребує підтримки 3D, яку не було скомпільовано. Тому ця гра скорше "
 "за все не працює частково або повністю."
-
-#: engines/wintermute/keymapper_tables.h:149
-#: engines/wintermute/keymapper_tables.h:731
-#: engines/wintermute/keymapper_tables.h:2116
-#: engines/wintermute/keymapper_tables.h:2216
-msgid "Walk forward"
-msgstr "Іти вперед"
 
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736

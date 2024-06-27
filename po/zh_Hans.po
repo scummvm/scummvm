@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-26 07:28+0000\n"
+"POT-Creation-Date: 2024-06-27 22:33+0000\n"
 "PO-Revision-Date: 2024-06-23 14:50+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
@@ -3592,8 +3592,8 @@ msgid "Default game keymap"
 msgstr "默认游戏按键绑定"
 
 #: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:161
-#: engines/asylum/metaengine.cpp:159 engines/hdb/metaengine.cpp:207
-#: engines/parallaction/metaengine.cpp:114
+#: engines/agos/metaengine.cpp:227 engines/asylum/metaengine.cpp:159
+#: engines/hdb/metaengine.cpp:207 engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
 msgstr "左键点击"
@@ -3606,15 +3606,17 @@ msgid "Middle Click"
 msgstr "中键点击"
 
 #: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:169
-#: engines/asylum/metaengine.cpp:165 engines/parallaction/metaengine.cpp:120
+#: engines/agos/metaengine.cpp:233 engines/asylum/metaengine.cpp:165
+#: engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr "右键点击"
 
 #. I18N: Action in In Cold Blood
-#: engines/metaengine.cpp:76 engines/crab/input/input.cpp:261
-#: engines/grim/grim.cpp:541 engines/hdb/metaengine.cpp:258
-#: engines/icb/icb.cpp:137 engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
+#: engines/metaengine.cpp:76 engines/agos/metaengine.cpp:247
+#: engines/crab/input/input.cpp:261 engines/grim/grim.cpp:541
+#: engines/hdb/metaengine.cpp:258 engines/icb/icb.cpp:137
+#: engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
 #: engines/mohawk/riven.cpp:876 engines/sky/metaengine.cpp:125
 #: engines/twine/metaengine.cpp:231 engines/wintermute/keymapper_tables.h:1608
 msgid "Pause"
@@ -6006,11 +6008,11 @@ msgstr ""
 msgid "Cutscene file '%s' not found!"
 msgstr "找不到转场文件“%s”！"
 
-#: engines/agos/metaengine.cpp:42
+#: engines/agos/metaengine.cpp:46
 msgid "AdLib OPL3 mode"
 msgstr "AdLib OPL3 模式"
 
-#: engines/agos/metaengine.cpp:43
+#: engines/agos/metaengine.cpp:47
 msgid ""
 "When AdLib is selected, OPL3 features will be used. Depending on the game, "
 "this will prevent cut-off notes, add extra notes or instruments and/or add "
@@ -6019,11 +6021,11 @@ msgstr ""
 "当选择 AdLib 时，将会使用 OPL3 特性。取决于游戏，这将避免截断音符、添加附加音"
 "符或乐器，和/或添加立体声。"
 
-#: engines/agos/metaengine.cpp:53 engines/agos/metaengine.cpp:64
+#: engines/agos/metaengine.cpp:57 engines/agos/metaengine.cpp:68
 msgid "Use DOS version music tempos"
 msgstr "使用 DOS 版本音乐音调"
 
-#: engines/agos/metaengine.cpp:54 engines/agos/metaengine.cpp:65
+#: engines/agos/metaengine.cpp:58 engines/agos/metaengine.cpp:69
 msgid ""
 "Selecting this option will play the music using the tempos used by the DOS "
 "version of the game. Otherwise, the faster tempos of the Windows version "
@@ -6032,25 +6034,160 @@ msgstr ""
 "启用此设置后，将会用 DOS 版本的速度播放游戏音乐。否则将使用 Windows 版本更快"
 "的速度。"
 
-#: engines/agos/metaengine.cpp:75 engines/sci/detection_options.h:95
+#: engines/agos/metaengine.cpp:79 engines/sci/detection_options.h:95
 msgid "Prefer digital sound effects"
 msgstr "优先使用电子音效"
 
-#: engines/agos/metaengine.cpp:76 engines/sci/detection_options.h:96
+#: engines/agos/metaengine.cpp:80 engines/sci/detection_options.h:96
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "优先使用数字音效而非合成音效"
 
-#: engines/agos/metaengine.cpp:86
+#: engines/agos/metaengine.cpp:90
 msgid "Disable fade-out effects"
 msgstr "禁用淡出效果"
 
-#: engines/agos/metaengine.cpp:87
+#: engines/agos/metaengine.cpp:91
 msgid "Don't fade every screen to black when leaving a room."
 msgstr "离开房间时不要将屏幕渐变为黑色。"
 
-#: engines/agos/metaengine.cpp:170
+#: engines/agos/metaengine.cpp:176
 msgid "AGOS 2 support is not compiled in"
 msgstr "未编译入 AGOS 2 支持"
+
+#: engines/agos/metaengine.cpp:222
+msgid "AGOS main"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:223 engines/cge/metaengine.cpp:199
+#: engines/cge2/metaengine.cpp:212
+msgid "Game Keymappings"
+msgstr "游戏按键绑定"
+
+#: engines/agos/metaengine.cpp:224
+#, fuzzy
+#| msgid "Game Keymappings"
+msgid "Yes/No Keymapping"
+msgstr "游戏按键绑定"
+
+#: engines/agos/metaengine.cpp:239
+#, fuzzy
+#| msgid "Skip cutscene"
+msgid "Exit cutscene"
+msgstr "跳过过场动画"
+
+#: engines/agos/metaengine.cpp:252 engines/vcruise/metaengine.cpp:176
+msgid "Music volume down"
+msgstr "减小音乐音量"
+
+#: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:181
+msgid "Music volume up"
+msgstr "增大音乐音量"
+
+#: engines/agos/metaengine.cpp:263
+#, fuzzy
+#| msgid "Toggle music on/off"
+msgid "Toggle Music on/off"
+msgstr "打开/关闭音乐"
+
+#: engines/agos/metaengine.cpp:268
+#, fuzzy
+#| msgid "Toggle sound effects on/off"
+msgid "Toggle Sound effect on/off"
+msgstr "开关音效"
+
+#: engines/agos/metaengine.cpp:273
+#, fuzzy
+#| msgid "Toggle fast mode"
+msgid "Toggle Fast mode on/off"
+msgstr "开关快速模式"
+
+#: engines/agos/metaengine.cpp:285 engines/wintermute/keymapper_tables.h:149
+#: engines/wintermute/keymapper_tables.h:731
+#: engines/wintermute/keymapper_tables.h:2116
+#: engines/wintermute/keymapper_tables.h:2216
+msgid "Walk forward"
+msgstr "向前走"
+
+#: engines/agos/metaengine.cpp:291
+#, fuzzy
+#| msgid "Run backward"
+msgid "Turn backward"
+msgstr "向后跑"
+
+#: engines/agos/metaengine.cpp:297 engines/mohawk/riven.cpp:901
+#: engines/wintermute/keymapper_tables.h:161
+#: engines/wintermute/keymapper_tables.h:741
+#: engines/wintermute/keymapper_tables.h:2122
+#: engines/wintermute/keymapper_tables.h:2223
+msgid "Turn left"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:303 engines/mohawk/riven.cpp:907
+#: engines/wintermute/keymapper_tables.h:167
+#: engines/wintermute/keymapper_tables.h:746
+#: engines/wintermute/keymapper_tables.h:2128
+#: engines/wintermute/keymapper_tables.h:2230
+msgid "Turn right"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:311
+msgid "Text speed - Fast"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:316
+#, fuzzy
+#| msgid "Walking speed: Medium"
+msgid "Text speed - Medium"
+msgstr "行走速度：中"
+
+#: engines/agos/metaengine.cpp:321
+msgid "Text speed - Slow"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:326
+#, fuzzy
+#| msgid "Show object labels"
+msgid "Show objects to interact"
+msgstr "显示物品标签"
+
+#: engines/agos/metaengine.cpp:333
+#, fuzzy
+#| msgid "Toggle sound effects on/off"
+msgid "Toggle background sounds On/Off"
+msgstr "开关音效"
+
+#. I18N: Characters are game actors
+#: engines/agos/metaengine.cpp:342
+#, fuzzy
+#| msgid "Switching characters:"
+msgid "Switch characters"
+msgstr "切换人物："
+
+#: engines/agos/metaengine.cpp:348
+#, fuzzy
+#| msgid "Toggle music on/off"
+msgid "Toggle hitbox names on/off"
+msgstr "打开/关闭音乐"
+
+#: engines/agos/metaengine.cpp:355
+msgid "Switches between speech only and combined speech and subtitles"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:361
+msgid "Switches between subtitles only and combined speech and subtitles"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:371
+msgid "High speed mode on/off in Swampy Adventures"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:377
+msgid "Press Yes Key"
+msgstr ""
+
+#: engines/agos/metaengine.cpp:382
+msgid "Press No Key"
+msgstr ""
 
 #: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -6647,10 +6784,6 @@ msgstr "启用文本转语音"
 #: engines/cge/metaengine.cpp:57
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "在游戏内使用 TTS 读出文本（如果可用）"
-
-#: engines/cge/metaengine.cpp:199 engines/cge2/metaengine.cpp:212
-msgid "Game Keymappings"
-msgstr "游戏按键绑定"
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:204 engines/cge2/metaengine.cpp:216
@@ -8278,20 +8411,6 @@ msgstr ""
 
 #: engines/mohawk/riven.cpp:895
 msgid "Move backwards"
-msgstr ""
-
-#: engines/mohawk/riven.cpp:901 engines/wintermute/keymapper_tables.h:161
-#: engines/wintermute/keymapper_tables.h:741
-#: engines/wintermute/keymapper_tables.h:2122
-#: engines/wintermute/keymapper_tables.h:2223
-msgid "Turn left"
-msgstr ""
-
-#: engines/mohawk/riven.cpp:907 engines/wintermute/keymapper_tables.h:167
-#: engines/wintermute/keymapper_tables.h:746
-#: engines/wintermute/keymapper_tables.h:2128
-#: engines/wintermute/keymapper_tables.h:2230
-msgid "Turn right"
 msgstr ""
 
 #: engines/mohawk/riven.cpp:913
@@ -11058,14 +11177,6 @@ msgstr "打开/关闭音乐"
 msgid "Toggle sound effects on/off"
 msgstr "开关音效"
 
-#: engines/vcruise/metaengine.cpp:176
-msgid "Music volume down"
-msgstr "减小音乐音量"
-
-#: engines/vcruise/metaengine.cpp:181
-msgid "Music volume up"
-msgstr "增大音乐音量"
-
 #: engines/vcruise/metaengine.cpp:186
 msgid "Sound effect volume down"
 msgstr "降低音效音量"
@@ -11167,13 +11278,6 @@ msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
 msgstr "此游戏需要 3D 功能，但未被编译入游戏。因此游戏可能部分或完全不可玩。"
-
-#: engines/wintermute/keymapper_tables.h:149
-#: engines/wintermute/keymapper_tables.h:731
-#: engines/wintermute/keymapper_tables.h:2116
-#: engines/wintermute/keymapper_tables.h:2216
-msgid "Walk forward"
-msgstr "向前走"
 
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
