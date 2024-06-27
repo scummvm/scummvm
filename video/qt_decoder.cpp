@@ -318,6 +318,13 @@ QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder
 	_forcedDitherPalette = 0;
 	_ditherTable = 0;
 	_ditherFrame = 0;
+	_isPanoConstructed = false;
+
+	_constructedPano = nullptr;
+	_projectedPano = nullptr;
+
+	if (decoder->_qtvrType == QTVRType::PANORAMA)
+		constructPanorama();
 }
 
 // FIXME: This check breaks valid QuickTime movies, such as the KQ6 Mac opening.
@@ -369,6 +376,16 @@ QuickTimeDecoder::VideoTrackHandler::~VideoTrackHandler() {
 	if (_ditherFrame) {
 		_ditherFrame->free();
 		delete _ditherFrame;
+	}
+
+	if (_isPanoConstructed) {
+		_constructedPano->free();
+		delete _constructedPano;
+	}
+
+	if (_projectedPano) {
+		_projectedPano->free();
+		delete _projectedPano;
 	}
 }
 
@@ -506,6 +523,19 @@ uint32 QuickTimeDecoder::VideoTrackHandler::getNextFrameStartTime() const {
 }
 
 const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() {
+	if (_decoder->_qtvrType == QTVRType::PANORAMA) {
+		if (!_isPanoConstructed)
+			return nullptr;
+
+		if (_projectedPano) {
+			_projectedPano->free();
+			delete _projectedPano;
+		}
+
+		projectPanorama();
+		return _projectedPano;
+	}
+
 	if (endOfTrack())
 		return 0;
 
@@ -879,7 +909,7 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::bufferNextFrame() 
 		}
 	}
 
-	if (!_decoder->_isVR)
+	if (_decoder->_qtvrType != QTVRType::OBJECT)
 		_curFrame++;
 
 	// Get the next packet
@@ -1041,6 +1071,65 @@ void ditherFrame(const Graphics::Surface &src, Graphics::Surface &dst, const byt
 }
 
 } // End of anonymous namespace
+
+void QuickTimeDecoder::VideoTrackHandler::constructPanorama() {
+	int16 totalWidth = getHeight() * _parent->frameCount;
+	int16 totalHeight = getWidth();
+
+	if (totalWidth <= 0 || totalHeight <= 0)
+		return;
+
+	_constructedPano = new Graphics::Surface();
+	_constructedPano->create(totalWidth, totalHeight, getPixelFormat());
+
+	for (uint32 frameIndex = 0; frameIndex < _parent->frameCount; frameIndex++) {
+		const Graphics::Surface *frame = bufferNextFrame();
+
+		for (int16 y = 0; y < frame->h; y++) {
+			for (int16 x = 0; x < frame->w; x++) {
+
+				int setX = (totalWidth - 1) - (frameIndex * _parent->height + y);
+				int setY = x;
+
+				if (setX >= 0 && setX < _constructedPano->w && setY >= 0 && setY < _constructedPano->h) {
+					uint32 pixel = frame->getPixel(x, y);
+					_constructedPano->setPixel(setX, setY, pixel);
+				}
+			}
+		}
+	}
+
+	_isPanoConstructed = true;
+}
+
+void QuickTimeDecoder::VideoTrackHandler::projectPanorama() {
+	if (!_isPanoConstructed)
+		return;
+
+	_projectedPano = new Graphics::Surface();
+	_projectedPano->create(_constructedPano->w, _constructedPano->h, _constructedPano->format);
+
+	const float c = _projectedPano->w;
+	const float r = c / (2 * M_PI);
+
+	// HACK: FIXME: Hard coded for now
+	const float d = 500.0f;
+
+	for (int16 y = 0; y < _projectedPano->h; y++) {
+		for (int16 x = 0; x < _projectedPano->w; x++) {
+			double u = atan(x / d) / (2.0 * M_PI);
+			double v = y * r * cos(u) / d;
+
+			int setX = round(u * _constructedPano->w);
+			int setY = round(v);
+
+			if (setX >= 0 && setX < _constructedPano->w && setY >= 0 && setY < _constructedPano->h) {
+				uint32 pixel = _constructedPano->getPixel(setX, setY);
+				_projectedPano->setPixel(x, y, pixel);
+			}
+		}
+	}
+}
 
 const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::forceDither(const Graphics::Surface &frame) {
 	if (frame.format.bytesPerPixel == 1) {
