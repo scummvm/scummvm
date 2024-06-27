@@ -62,7 +62,7 @@ public:
 	Graphics::Screen *_screen = nullptr;
 	Graphics::PixelFormat _pixelformat;
 	Common::SaveFileManager *_savefileMan;
-	const int * _versionPtr;
+	const int *_versionPtr;
 public:
 	QDEngineEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~QDEngineEngine() override;
