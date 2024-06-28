@@ -96,37 +96,34 @@ bool qdFontInfo::save_script(class XStream &fh, int indent) const {
 bool qdFontInfo::load_font() {
 	grFont *buf_font = new grFont;
 
-	bool load_fl = true; // По умолчанию загрузка прошла успешно
-	XZipStream fh;
-	if (qdFileManager::instance().open_file(fh, font_file_name(), false)) {
+	bool load_fl = false; // По умолчанию загрузка прошла успешно
+
+	Common::SeekableReadStream *fh;
+	if (qdFileManager::instance().open_file(&fh, font_file_name(), false)) {
 		// Грузим альфу шрифта из .tga
 		if (buf_font -> load_alpha(fh)) {
 			// Меняем расширение с .tga на .idx
-			char drive[_MAX_DRIVE];
-			char dir[_MAX_DIR];
-			char fname[_MAX_FNAME];
+			Common::String fpath(font_file_name());
+			Common::String tgaExt = ".tga";
+			Common::String idxExt = ".idx";
 
-			_splitpath(font_file_name(), drive, dir, fname, NULL);
-
-			std::string idx_fname = "";
-			idx_fname += drive;
-			idx_fname += dir;
-			idx_fname += fname;
-			idx_fname = idx_fname + ".idx";
+			Common::replace(fpath, tgaExt, idxExt);
 
 			// Открываем .idx и грузим индекс
-			XZipStream fh;
-			if (qdFileManager::instance().open_file(fh, idx_fname.c_str(), false)) {
-				if (!buf_font -> load_index(fh))
-					load_fl = false;
-			} else load_fl = false;
-		} else load_fl = false;
-	} else load_fl = false;
+			if (qdFileManager::instance().open_file(&fh, fpath.c_str(), false)) {
+				if (buf_font -> load_index(fh))
+					load_fl = true;
+			}
+		}
+	}
+
+	delete fh;
 
 	if (!load_fl) {
 		delete buf_font;
 		return false;
 	}
+
 	font_ = buf_font;
 	return true;
 }
