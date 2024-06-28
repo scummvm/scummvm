@@ -101,7 +101,7 @@ void qdFileManager::Finit() {
 }
 
 bool qdFileManager::open_file(XZipStream &fh, const char *file_name, bool err_message) {
-	warning("STUB: qdFileManager::open_file(%s)", file_name);
+	warning("STUB: qdFileManager::open_file(%s)", transCyrillic(file_name));
 
 	return false;
 }
