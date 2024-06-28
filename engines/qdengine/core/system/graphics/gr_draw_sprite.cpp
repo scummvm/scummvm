@@ -961,7 +961,7 @@ void grDispatcher::PutChar(int x, int y, unsigned color, int font_sx, int font_s
 
 	color = make_rgb(color);
 
-	// warning("STUB: grDispatcher::PutChar"); FIXME HACK
+	warning("STUB: grDispatcher::PutChar");
 	for (int i = 0; i < psy; i++, y++) {
 		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
 		for (int j = 0; j < psx; j++) {
