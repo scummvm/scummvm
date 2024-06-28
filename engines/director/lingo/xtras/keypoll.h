@@ -27,6 +27,9 @@ namespace Director {
 class KeypollXtraObject : public Object<KeypollXtraObject> {
 public:
 	KeypollXtraObject(ObjectType objType);
+
+	bool hasProp(const Common::String &propName) override;
+	Datum getProp(const Common::String &propName) override;
 };
 
 namespace KeypollXtra {

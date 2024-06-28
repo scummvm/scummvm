@@ -27,6 +27,9 @@ namespace Director {
 class DirectsoundXtraObject : public Object<DirectsoundXtraObject> {
 public:
 	DirectsoundXtraObject(ObjectType objType);
+
+	bool hasProp(const Common::String &propName) override;
+	Datum getProp(const Common::String &propName) override;
 };
 
 namespace DirectsoundXtra {

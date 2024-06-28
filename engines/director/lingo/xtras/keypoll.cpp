@@ -72,9 +72,22 @@ KeypollXtraObject::KeypollXtraObject(ObjectType ObjectType) :Object<KeypollXtraO
 	_objType = ObjectType;
 }
 
+bool KeypollXtraObject::hasProp(const Common::String &propName) {
+	return (propName == "name");
+}
+
+Datum KeypollXtraObject::getProp(const Common::String &propName) {
+	if (propName == "name")
+		return Datum(KeypollXtra::xlibName);
+	warning("KeypollXtra::getProp: unknown property '%s'", propName.c_str());
+	return Datum();
+}
+
 void KeypollXtra::open(ObjectType type, const Common::Path &path) {
     KeypollXtraObject::initMethods(xlibMethods);
     KeypollXtraObject *xobj = new KeypollXtraObject(type);
+    if (type == kXtraObj)
+        g_lingo->_openXtras.push_back(xlibName);
     g_lingo->exposeXObject(xlibName, xobj);
     g_lingo->initBuiltIns(xlibBuiltins);
 }

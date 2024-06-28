@@ -63,9 +63,22 @@ TimextraXtraObject::TimextraXtraObject(ObjectType ObjectType) :Object<TimextraXt
 	_objType = ObjectType;
 }
 
+bool TimextraXtraObject::hasProp(const Common::String &propName) {
+	return (propName == "name");
+}
+
+Datum TimextraXtraObject::getProp(const Common::String &propName) {
+	if (propName == "name")
+		return Datum(TimextraXtra::xlibName);
+	warning("TimextraXtra::getProp: unknown property '%s'", propName.c_str());
+	return Datum();
+}
+
 void TimextraXtra::open(ObjectType type, const Common::Path &path) {
     TimextraXtraObject::initMethods(xlibMethods);
     TimextraXtraObject *xobj = new TimextraXtraObject(type);
+    if (type == kXtraObj)
+        g_lingo->_openXtras.push_back(xlibName);
     g_lingo->exposeXObject(xlibName, xobj);
     g_lingo->initBuiltIns(xlibBuiltins);
 }

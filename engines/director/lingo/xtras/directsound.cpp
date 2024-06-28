@@ -159,9 +159,22 @@ DirectsoundXtraObject::DirectsoundXtraObject(ObjectType ObjectType) :Object<Dire
 	_objType = ObjectType;
 }
 
+bool DirectsoundXtraObject::hasProp(const Common::String &propName) {
+	return (propName == "name");
+}
+
+Datum DirectsoundXtraObject::getProp(const Common::String &propName) {
+	if (propName == "name")
+		return Datum(DirectsoundXtra::xlibName);
+	warning("DirectsoundXtra::getProp: unknown property '%s'", propName.c_str());
+	return Datum();
+}
+
 void DirectsoundXtra::open(ObjectType type, const Common::Path &path) {
     DirectsoundXtraObject::initMethods(xlibMethods);
     DirectsoundXtraObject *xobj = new DirectsoundXtraObject(type);
+    if (type == kXtraObj)
+        g_lingo->_openXtras.push_back(xlibName);
     g_lingo->exposeXObject(xlibName, xobj);
     g_lingo->initBuiltIns(xlibBuiltins);
 }

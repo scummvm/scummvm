@@ -183,6 +183,8 @@ static BuiltinProto xlibBuiltins[] = {
 void FileIO::open(ObjectType type, const Common::Path &path) {
 	FileObject::initMethods(xlibMethods);
 	FileObject *xobj = new FileObject(type);
+	if (g_director->getVersion() >= 500)
+		g_lingo->_openXtras.push_back(xlibName);
 	g_lingo->exposeXObject(xlibName, xobj);
 	g_lingo->initBuiltIns(xlibBuiltins);
 }
@@ -214,6 +216,17 @@ FileObject::FileObject(const FileObject &obj) : Object<FileObject>(obj) {
 
 FileObject::~FileObject() {
 	clear();
+}
+
+bool FileObject::hasProp(const Common::String &propName) {
+	return (propName == "name");
+}
+
+Datum FileObject::getProp(const Common::String &propName) {
+	if (propName == "name")
+		return Datum(FileIO::xlibName);
+	warning("FileIO::getProp: unknown property '%s'", propName.c_str());
+	return Datum();
 }
 
 FileIOError FileObject::open(const Common::String &origpath, const Common::String &mode) {

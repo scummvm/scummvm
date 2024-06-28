@@ -27,6 +27,9 @@ namespace Director {
 class QtvrxtraXtraObject : public Object<QtvrxtraXtraObject> {
 public:
 	QtvrxtraXtraObject(ObjectType objType);
+
+	bool hasProp(const Common::String &propName) override;
+	Datum getProp(const Common::String &propName) override;
 };
 
 namespace QtvrxtraXtra {

@@ -235,9 +235,22 @@ QtvrxtraXtraObject::QtvrxtraXtraObject(ObjectType ObjectType) :Object<QtvrxtraXt
 	_objType = ObjectType;
 }
 
+bool QtvrxtraXtraObject::hasProp(const Common::String &propName) {
+	return (propName == "name");
+}
+
+Datum QtvrxtraXtraObject::getProp(const Common::String &propName) {
+	if (propName == "name")
+		return Datum(QtvrxtraXtra::xlibName);
+	warning("QtvrxtraXtra::getProp: unknown property '%s'", propName.c_str());
+	return Datum();
+}
+
 void QtvrxtraXtra::open(ObjectType type, const Common::Path &path) {
     QtvrxtraXtraObject::initMethods(xlibMethods);
     QtvrxtraXtraObject *xobj = new QtvrxtraXtraObject(type);
+    if (type == kXtraObj)
+        g_lingo->_openXtras.push_back(xlibName);
     g_lingo->exposeXObject(xlibName, xobj);
     g_lingo->initBuiltIns(xlibBuiltins);
 }

@@ -64,6 +64,9 @@ public:
 	FileObject(const FileObject &obj);
 	~FileObject() override;
 
+	bool hasProp(const Common::String &propName) override;
+	Datum getProp(const Common::String &propName) override;
+
 	FileIOError open(const Common::String &origpath, const Common::String &mode);
 	void clear();
 	FileIOError saveFileError();

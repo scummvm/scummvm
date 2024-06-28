@@ -27,6 +27,9 @@ namespace Director {
 class TimextraXtraObject : public Object<TimextraXtraObject> {
 public:
 	TimextraXtraObject(ObjectType objType);
+
+	bool hasProp(const Common::String &propName) override;
+	Datum getProp(const Common::String &propName) override;
 };
 
 namespace TimextraXtra {
