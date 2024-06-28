@@ -138,7 +138,7 @@ static const char *ttmOpName(uint16 op) {
 	case 0x0090: return "FREE FONT";
 	case 0x00B0: return "NULLOP";
 	case 0x0110: return "PURGE";
-	case 0x0400: return "PALETTE SOMETHING ?";
+	case 0x0400: return "PALETTE RESET ?";
 	case 0x0510: return "UNKNOWN 0x0510";
 	case 0x0ff0: return "FINISH FRAME / DRAW";
 	case 0x1020: return "SET DELAY";
@@ -156,10 +156,10 @@ static const char *ttmOpName(uint16 op) {
 	case 0x2000: return "SET DRAW COLORS";
 	case 0x2010: return "SET FRAME";
 	case 0x2020: return "SET RANDOM DELAY";
-	case 0x2300: return "UNKNOWN 0x23x2 series";
-	case 0x2310: return "UNKNOWN 0x23x2 series";
-	case 0x2320: return "UNKNOWN 0x23x2 series";
-	case 0x2400: return "UNKNOWN 0x2402, palette related";
+	case 0x2300: return "PAL SET BLOCK SWAP 0";
+	case 0x2310: return "PAL SET BLOCK SWAP 1";
+	case 0x2320: return "PAL SET BLOCK SWAP 2";
+	case 0x2400: return "PAL DO BLOCK SWAP";
 	case 0x4000: return "SET CLIP WINDOW";
 	case 0x4110: return "FADE OUT";
 	case 0x4120: return "FADE IN";
@@ -455,6 +455,11 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 			break;
 		_vm->_soundPlayer->stopMusic();
 		break;
+	case 0x0400: // RESET PALETTE?
+		if (seq._executed) // this is a one-shot op
+			break;
+		warning("TODO: 0x0400 Reset palette");
+		break;
 	case 0x0ff0: // REFRESH:	void
 		break;
 	case 0x1020: // SET DELAY:	    i:int   [0..n]
@@ -516,6 +521,20 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		_vm->adsInterpreter()->setScriptDelay((int)(sleep * MS_PER_FRAME));
 		break;
 	}
+	case 0x2300:
+	case 0x2310:
+	case 0x2320: {
+		uint num = (op & 0xf) > 4;
+		uint start = ivals[0];
+		uint end = ivals[1];
+		warning("TODO: 0x%04x Palette configure block swap %d (%d - %d)", op, num, start, end);
+		break;
+	}
+	case 0x2400:
+		if (seq._executed) // this is a one-shot op.
+			break;
+		warning("TODO: 0x%04x Palette do block swaps 0x%x, 0x%x", op, ivals[0], ivals[1]);
+		break;
 	case 0x4000: // SET CLIP WINDOW x,y,x2,y2:int	[0..320,0..200]
 		// NOTE: params are xmax/ymax, NOT w/h
 		seq._drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
@@ -789,7 +808,6 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	// Unimplemented / unknown
 	case 0x0010: // (one-shot) ??
 	case 0x0230: // (one-shot) reset current music? (0 args) - found in HoC intro.  Sets params about current music.
-	case 0x0400: // (one-shot) set palette??
 	case 0x1040: // Sets some global? i:int
 	case 0x10B0: // null op?
 	case 0x2010: // SET FRAME?? x,y

@@ -316,7 +316,7 @@ void ADSInterpreter::findEndOrInitOp() {
 }
 
 bool ADSInterpreter::logicOpResult(uint16 code, const TTMEnviro *env, const TTMSeq *seq) {
-	const char *tag = seq ? env->_tags[seq->_seqNum].c_str() : "";
+	const char *tag = seq ? env->_tags.getValOrDefault(seq->_seqNum).c_str() : "";
 	int16 envNum = env ? env->_enviro : 0;
 	int16 seqNum = seq ? seq->_seqNum : 0;
 	const char *optype = (code < 0x1300 ? "while" : "if");

@@ -86,11 +86,12 @@ ResourceManager::ResourceManager() {
 
 			_volumes[i].skip(1); // unknown
 			res.size = _volumes[i].readUint32LE();
-			_resources[fileName] = res;
 
-			if (fileName == "" || res.size == 0)
+			// Some sounds in Beamish FDD have size -1, which I think just means they don't exist.
+			if (res.size > (uint32)1 << 31 || fileName == "" || res.size == 0)
 				continue;
 
+			_resources[fileName] = res;
 		}
 	}
 
@@ -116,6 +117,7 @@ Common::SeekableReadStream *ResourceManager::getResource(Common::String name, bo
 		return nullptr;
 
 	Resource res = _resources[name];
+
 	return new Common::SeekableSubReadStream(&_volumes[res.volume], res.pos, res.pos + res.size);
 }
 

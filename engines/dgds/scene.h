@@ -68,6 +68,11 @@ public:
 	DgdsRect _rect;
 	uint16 _num; //
 	uint16 _cursorNum;
+
+	// Used in Willy Beamish
+	uint16 _unk1;
+	uint16 _unk2;
+
 	Common::Array<SceneConditions> enableConditions;
 	Common::Array<SceneOp> onRClickOps;
 	Common::Array<SceneOp> onLDownOps;
@@ -115,6 +120,8 @@ enum SceneOpCode {
 	kSceneOpOpenChinaOpenGameOverMenu = 114,	// args: none.
 	kSceneOpOpenChinaOpenSkipCreditsMenu = 115,	// args: none.
 	kSceneOpOpenChinaStartIntro = 116,	// args: none.
+
+	kSceneOpMaxCode = 255, // for checking file load
 };
 
 class SceneOp {
@@ -179,6 +186,8 @@ public:
 
 	Common::Array<SceneConditions> conditionList;
 	Common::Array<SceneOp> sceneOpList;
+
+	uint16 _unk; // Only used in Beamish.
 	bool _enabled;
 	uint16 getNum() const { return _num; }
 
@@ -308,6 +317,13 @@ private:
 	Common::Array<PerSceneGlobal> _perSceneGlobals;
 	Common::Array<ObjectInteraction> _objInteractions1;
 	Common::Array<ObjectInteraction> _objInteractions2;
+
+	// Additional fields that appear in Willy Beamish (unused in others)
+	uint16 _field38;
+	uint16 _field3a;
+	uint16 _field3c;
+	uint16 _field3e;
+	uint16 _field40;
 };
 
 class SDSScene : public Scene {

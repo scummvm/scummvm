@@ -336,15 +336,13 @@ void DgdsEngine::loadGameFiles() {
 		// TODO: Create a better type for this..
 		_gameGlobals = new DragonGlobals(_clock);
 		_gamePals->loadPalette("WILLY.PAL");
-		// TODO: This doesn't parse correctly yet.
-		//_gdsScene->load("WILLY.GDS", _resource, _decompressor);
+		_gdsScene->load("WILLY.GDS", _resource, _decompressor);
 		_rstFileName = "WILLY.RST";
 
 		loadCorners("WCORNERS.BMP");
 		reqParser.parse(&invRequestData, "WINV.REQ");
 		reqParser.parse(&vcrRequestData, "WVCR.REQ");
 
-		//_scene->load("S34.SDS", _resource, _decompressor);
 		_adsInterp->load("TITLE.ADS");
 		break;
 	case GID_SQ5DEMO:
