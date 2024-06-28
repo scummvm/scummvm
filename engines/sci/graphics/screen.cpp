@@ -162,13 +162,15 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 			_gfxDrv = new SCI0_HerculesDriver(renderMode == Common::kRenderHercG ? 1 : 0);
 			break;
 		case Common::kRenderEGA:
-		default:
 			_gfxDrv = new SCI0_EGADriver();
 			break;
+		default:
+			break;
 		}
-	} else {
-		_gfxDrv = new GfxDefaultDriver(_displayWidth, _displayHeight);
 	}
+
+	if (_gfxDrv == nullptr)
+		_gfxDrv = new GfxDefaultDriver(_displayWidth, _displayHeight);
 	assert(_gfxDrv);
 
 	_displayPixels = _displayWidth * _displayHeight;
