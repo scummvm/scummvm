@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-27 22:33+0000\n"
-"PO-Revision-Date: 2024-06-26 20:40+0000\n"
+"PO-Revision-Date: 2024-06-28 08:08+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -6357,7 +6357,7 @@ msgstr "No se ha incluido el soporte para AGOS 2."
 
 #: engines/agos/metaengine.cpp:222
 msgid "AGOS main"
-msgstr ""
+msgstr "AGOS - Principal"
 
 #: engines/agos/metaengine.cpp:223 engines/cge/metaengine.cpp:199
 #: engines/cge2/metaengine.cpp:212
@@ -6365,16 +6365,12 @@ msgid "Game Keymappings"
 msgstr "Asignaciones del juego"
 
 #: engines/agos/metaengine.cpp:224
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Yes/No Keymapping"
-msgstr "Asignaciones del juego"
+msgstr "Asignación a Sí/No"
 
 #: engines/agos/metaengine.cpp:239
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Exit cutscene"
-msgstr "Omitir escena"
+msgstr "Salir de escena"
 
 #: engines/agos/metaengine.cpp:252 engines/vcruise/metaengine.cpp:176
 msgid "Music volume down"
@@ -6385,22 +6381,16 @@ msgid "Music volume up"
 msgstr "Subir volumen de música"
 
 #: engines/agos/metaengine.cpp:263
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle Music on/off"
 msgstr "Activar/Desactivar música"
 
 #: engines/agos/metaengine.cpp:268
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Toggle Sound effect on/off"
 msgstr "Activar/Desactivar efectos de sonido"
 
 #: engines/agos/metaengine.cpp:273
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle Fast mode on/off"
-msgstr "Modo rápido"
+msgstr "Activar/Desactivar modo rápido"
 
 #: engines/agos/metaengine.cpp:285 engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
@@ -6410,10 +6400,8 @@ msgid "Walk forward"
 msgstr "Caminar hacia delante"
 
 #: engines/agos/metaengine.cpp:291
-#, fuzzy
-#| msgid "Run backward"
 msgid "Turn backward"
-msgstr "Correr hacia atrás"
+msgstr "Dar media vuelta"
 
 #: engines/agos/metaengine.cpp:297 engines/mohawk/riven.cpp:901
 #: engines/wintermute/keymapper_tables.h:161
@@ -6432,67 +6420,53 @@ msgid "Turn right"
 msgstr "Girar a la derecha"
 
 #: engines/agos/metaengine.cpp:311
-#, fuzzy
-#| msgid "Text speed slower / faster"
 msgid "Text speed - Fast"
-msgstr "Aumentar/Disminuir veloc. de texto"
+msgstr "Velocidad de texto rápida"
 
 #: engines/agos/metaengine.cpp:316
-#, fuzzy
-#| msgid "Walking speed: Medium"
 msgid "Text speed - Medium"
-msgstr "Andar a velocidad media"
+msgstr "Velocidad de texto media"
 
 #: engines/agos/metaengine.cpp:321
-#, fuzzy
-#| msgid "Text speed slower / faster"
 msgid "Text speed - Slow"
-msgstr "Aumentar/Disminuir veloc. de texto"
+msgstr "Velocidad de texto lenta"
 
 #: engines/agos/metaengine.cpp:326
-#, fuzzy
-#| msgid "Show Object Line"
 msgid "Show objects to interact"
-msgstr "Mostrar etiquetas de objetos"
+msgstr "Mostrar objetos interactuables"
 
 #: engines/agos/metaengine.cpp:333
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Toggle background sounds On/Off"
-msgstr "Activar/Desactivar efectos de sonido"
+msgstr "Activar/Desactivar sonidos de fondo"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:342
-#, fuzzy
-#| msgid "Switching characters:"
 msgid "Switch characters"
-msgstr "Cambiar personaje:"
+msgstr "Cambiar de personaje"
 
 #: engines/agos/metaengine.cpp:348
-#, fuzzy
-#| msgid "Toggle animation on/off"
 msgid "Toggle hitbox names on/off"
-msgstr "Activar/Desactivar animación"
+msgstr "Activar/Desactivar nombres de puntos de interés"
 
 #: engines/agos/metaengine.cpp:355
 msgid "Switches between speech only and combined speech and subtitles"
-msgstr ""
+msgstr "Alterna entre los modos de Solo voces y Voces y subtítulos"
 
 #: engines/agos/metaengine.cpp:361
 msgid "Switches between subtitles only and combined speech and subtitles"
-msgstr ""
+msgstr "Alterna entre los modos de Solo subtítulos y Voces y subtítulos"
 
 #: engines/agos/metaengine.cpp:371
 msgid "High speed mode on/off in Swampy Adventures"
-msgstr ""
+msgstr "Activa o desactiva el modo de alta velocidad en Swampy Adventures"
 
 #: engines/agos/metaengine.cpp:377
 msgid "Press Yes Key"
-msgstr ""
+msgstr "Pulsar tecla «Sí»"
 
 #: engines/agos/metaengine.cpp:382
 msgid "Press No Key"
-msgstr ""
+msgstr "Pulsar tecla «No»"
 
 #: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
