@@ -43,6 +43,7 @@ public:
 	int16 getVar(uint16 varIdx);
 
 	Common::Point getMoveObjectPosition(uint8 objIdx);
+	int getEyeDescriptionTosIdx(uint16 objNum);
 
 	int16 &operator[](uint16 varIdx);
 	const int16 &operator[](uint16 varIdx) const;

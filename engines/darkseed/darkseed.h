@@ -193,6 +193,9 @@ private:
 	void wait();
 	void handlePointerAction();
 	void changeToRoom(int newRoomNumber);
+	void handleObjCollision(int objNum);
+
+	void eyeCode(int objNum);
 };
 
 extern DarkseedEngine *g_engine;

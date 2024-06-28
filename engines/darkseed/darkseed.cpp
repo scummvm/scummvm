@@ -349,7 +349,7 @@ void DarkseedEngine::handleInput() {
 							// 2022:77ce
 							// TODO walk player to object.
 //							walkToSequence = 1;
-//							newPlayerFacingDirection = 255;
+							_player->playerNewFacingDirection_maybe = -1;
 //							cursorSequenceXPosition = curXPosition;
 //							cursorSequenceYPosition = curYPosition;
 							Common::Point currentCursorPos = _cursor.getPosition();
@@ -549,6 +549,21 @@ void DarkseedEngine::handleInput() {
 					_player->BoolEnum_2c85_811c = false;
 					_player->isPlayerWalking_maybe = false;
 					// TODO complete at final destination logic. 2022:879d
+//					if (walkToSequence != 0) {
+//						walkToSequence = 0;
+//						curXPosition = cursorSequenceXPosition;
+//						curYPosition = cursorSequenceYPosition;
+//					}
+					int objIdx = _room->getObjectUnderCursor();
+					int objType = _room->_roomObj[objIdx].type;
+					int objNum = _room->_roomObj[objIdx].objNum;
+					if (objIdx != -1 && ((objType != 4 && objType != 0 && objType < 10) || objNum > 5 || _room->_collisionType != 0)) {
+						if (_room->_collisionType == 0) {
+							handleObjCollision(objNum);
+						} else {
+							handleObjCollision(objIdx); // TODO is this correct?
+						}
+					}
 				}
 				if (!isPlayingAnimation_maybe) {
 					// walk to destination point
@@ -1086,6 +1101,46 @@ Common::String DarkseedEngine::getPictureFilePath(const Common::String &filename
 		return "picture/" + filename;
 	}
 	return filename;
+}
+
+void DarkseedEngine::handleObjCollision(int objNum) {
+	if (objNum == 35 && _objectVar[22] < 2 && _cursor.getY() > 40) {
+		objNum = 22;
+	}
+	if (_actionMode == LookAction || _actionMode == HandAction || objNum != 115) {
+		if (_cursor.getY() < 10 && _actionMode > LookAction) {
+			// TODO handle inventory
+			// 171d:53c3
+		} else {
+			switch (_actionMode) {
+			case HandAction:
+				break;
+			case LookAction:
+				eyeCode(objNum);
+				break;
+			// TODO lots of extra switch cases here for inventory usages.
+			default:
+				break;
+			}
+		}
+	} else {
+		// TODO
+		// 171d:51dc
+	}
+}
+
+void DarkseedEngine::eyeCode(int objNum) {
+	// TODO lots of custom eye code here.
+	if (_cursor.getY() > 39 && objNum != 77) {
+		int eyeTosIdx = _objectVar.getEyeDescriptionTosIdx(objNum);
+		if (eyeTosIdx < 979 && eyeTosIdx != 0)  {
+			_console->printTosText(eyeTosIdx);
+		}
+//		else if (978 < *(int *)((int)_eyedescriptions + objNum * 2)) {
+//			genericresponse(3,objNum,*(undefined2 *)((int)_eyedescriptions + objNum * 2));
+//		}
+		return;
+	}
 }
 
 } // End of namespace Darkseed
