@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-27 22:33+0000\n"
-"PO-Revision-Date: 2024-06-26 11:43+0000\n"
+"PO-Revision-Date: 2024-06-28 08:08+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -5656,16 +5656,12 @@ msgid "Game Keymappings"
 msgstr "თამაშის კლავიატურის მალსახმობები"
 
 #: engines/agos/metaengine.cpp:224
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Yes/No Keymapping"
-msgstr "თამაშის კლავიატურის მალსახმობები"
+msgstr "დიახ/არა კლავიატურის მალსახმობები"
 
 #: engines/agos/metaengine.cpp:239
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Exit cutscene"
-msgstr "საწყისი ეკრანის გამოტოვება"
+msgstr "საწყისი ეკრანიდან გასვლა"
 
 #: engines/agos/metaengine.cpp:252 engines/vcruise/metaengine.cpp:176
 msgid "Music volume down"
@@ -5676,33 +5672,27 @@ msgid "Music volume up"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:263
-#, fuzzy
-#| msgid "Toggle fullscreen"
 msgid "Toggle Music on/off"
-msgstr "მთელ ეკრანზე გატანის ჩართ/გამორთ"
+msgstr "მუსიკის ჩართვა/გამორთვა"
 
 #: engines/agos/metaengine.cpp:268
 msgid "Toggle Sound effect on/off"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:273
-#, fuzzy
-#| msgid "Toggle Drag Mode"
 msgid "Toggle Fast mode on/off"
-msgstr "გადათრევის რეჟიმის გადართვა"
+msgstr "სწრაფი რეჟიმის ჩართვა/გამორთვა"
 
 #: engines/agos/metaengine.cpp:285 engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
 #: engines/wintermute/keymapper_tables.h:2116
 #: engines/wintermute/keymapper_tables.h:2216
 msgid "Walk forward"
-msgstr ""
+msgstr "წინ სიარული"
 
 #: engines/agos/metaengine.cpp:291
-#, fuzzy
-#| msgid "Run backward"
 msgid "Turn backward"
-msgstr "უკან გაშვება"
+msgstr "უკან მიბრუნება"
 
 #: engines/agos/metaengine.cpp:297 engines/mohawk/riven.cpp:901
 #: engines/wintermute/keymapper_tables.h:161
@@ -5742,10 +5732,8 @@ msgstr ""
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:342
-#, fuzzy
-#| msgid "Switching characters:"
 msgid "Switch characters"
-msgstr "ჩარის გადართვა:"
+msgstr "გმირების შეცვლა"
 
 #: engines/agos/metaengine.cpp:348
 msgid "Toggle hitbox names on/off"
@@ -5931,32 +5919,24 @@ msgid "Toggle animation on/off"
 msgstr ""
 
 #: engines/asylum/metaengine.cpp:232
-#, fuzzy
-#| msgid "Run a game"
 msgid "Return to gameplay"
-msgstr "თამაშის გაშვება"
+msgstr "თამაშზე დაბრუნება"
 
 #: engines/asylum/metaengine.cpp:238
-#, fuzzy
-#| msgid "Previous Page"
 msgid "Previous resource"
-msgstr "წინა გვერდი"
+msgstr "წინა რესურსი"
 
 #: engines/asylum/metaengine.cpp:245
 msgid "Next resource"
 msgstr ""
 
 #: engines/asylum/metaengine.cpp:252
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous palette"
-msgstr "წინა გვერდი"
+msgstr "წინა პალიტრა"
 
 #: engines/asylum/metaengine.cpp:259
-#, fuzzy
-#| msgid "Next page"
 msgid "Next palette"
-msgstr "შემდეგი გვერდი"
+msgstr "შემდეგი პალიტრა"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:203
@@ -5972,7 +5952,7 @@ msgstr "მაინც ჩატვირთვა"
 
 #: engines/bagel/metaengine.cpp:41
 msgid "Wait"
-msgstr ""
+msgstr "მოითმინეთ"
 
 #: engines/bagel/metaengine.cpp:42
 msgid "Soldier 714 Eye Cheat"
@@ -8807,11 +8787,11 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1458 engines/scumm/dialogs.cpp:1459
 msgid "auto"
-msgstr ""
+msgstr "ავტო"
 
 #: engines/scumm/dialogs.cpp:1458
 msgid "Low"
-msgstr ""
+msgstr "დაბალი"
 
 #: engines/scumm/dialogs.cpp:1458
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:75
@@ -8820,15 +8800,15 @@ msgstr "საშუალო"
 
 #: engines/scumm/dialogs.cpp:1458
 msgid "High"
-msgstr ""
+msgstr "მაღალი"
 
 #: engines/scumm/dialogs.cpp:1459
 msgid "Good"
-msgstr ""
+msgstr "კარგი"
 
 #: engines/scumm/dialogs.cpp:1459
 msgid "Better"
-msgstr ""
+msgstr "უკეთესი"
 
 #: engines/scumm/dialogs.cpp:1460
 #, c-format
@@ -9666,17 +9646,17 @@ msgstr "შემთხვევითი რუკის პარამეტ�
 #. I18N: Map generator algorthims
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:59
 msgid "Algorithm"
-msgstr ""
+msgstr "ალგორითმი"
 
 #. I18N: Spiff algorthim
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:63
 msgid "Spiff"
-msgstr ""
+msgstr "Spiff"
 
 #. I18N: Katton algorthim
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:65
 msgid "Katton"
-msgstr ""
+msgstr "Katton"
 
 #. I18N: Random algorthim
 #. I18N: Random map size
@@ -9700,7 +9680,7 @@ msgstr ""
 #. I18N: Map sizes
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:70
 msgid "Size"
-msgstr ""
+msgstr "ზომა"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:74
 msgid "Small"
@@ -9712,15 +9692,15 @@ msgstr "დიდი"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:77
 msgid "Huge"
-msgstr ""
+msgstr "უზარმაზარი"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:78
 msgid "SAI"
-msgstr ""
+msgstr "SAI"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:79
 msgid "Ridiculous"
-msgstr ""
+msgstr "სასაცილო"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:80
 msgid "Max"
@@ -9742,7 +9722,7 @@ msgstr ""
 #. I18N: Percentage of energy pools
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:102
 msgid "Energy"
-msgstr ""
+msgstr "ენერგია"
 
 #. I18N: Energy slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:107
@@ -9756,7 +9736,7 @@ msgstr ""
 #. I18N: Percentage of terrain
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:115
 msgid "Terrain"
-msgstr ""
+msgstr "რელიეფი"
 
 #. I18N: Terrain slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:120
@@ -9770,7 +9750,7 @@ msgstr ""
 #. I18N: Percentage of water
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:127
 msgid "Water"
-msgstr ""
+msgstr "წყალი"
 
 #. I18N: Water slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:132
@@ -10293,7 +10273,7 @@ msgstr ""
 
 #: engines/twine/metaengine.cpp:426
 msgid "Special Action"
-msgstr ""
+msgstr "სპეციალური ქმედება"
 
 #: engines/twine/metaengine.cpp:432
 msgid "Scenery Zoom"
@@ -10306,11 +10286,11 @@ msgstr "შეწყვეტა"
 
 #: engines/twine/metaengine.cpp:562
 msgid "Previous location"
-msgstr ""
+msgstr "წინა მდებარეობა"
 
 #: engines/twine/metaengine.cpp:567
 msgid "Next location"
-msgstr ""
+msgstr "შემდეგი მდებარეობა"
 
 #: engines/twine/parser/text.cpp:34
 msgctxt "Options menu"
@@ -10340,22 +10320,22 @@ msgstr "ენების ამორჩევა"
 #: engines/twine/parser/text.cpp:39
 msgctxt "Options menu"
 msgid "Voices: None"
-msgstr ""
+msgstr "ხმები: არცერთი"
 
 #: engines/twine/parser/text.cpp:40
 msgctxt "Options menu"
 msgid "Voices: English"
-msgstr ""
+msgstr "ხმები: ინგლისური"
 
 #: engines/twine/parser/text.cpp:41
 msgctxt "Options menu"
 msgid "Voices: French"
-msgstr ""
+msgstr "ხმები: ფრანგული"
 
 #: engines/twine/parser/text.cpp:42
 msgctxt "Options menu"
 msgid "Voices: German"
-msgstr ""
+msgstr "ხმები: გერმანული"
 
 #: engines/twp/dialogs.cpp:32
 msgid "Video:"
@@ -10610,7 +10590,7 @@ msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:138
 msgid "Ultima VIII"
-msgstr ""
+msgstr "Ultima VIII"
 
 #: engines/ultima/ultima8/metaengine.cpp:138
 msgid "Crusader"
@@ -10644,7 +10624,7 @@ msgstr ""
 
 #: engines/vcruise/metaengine.cpp:53
 msgid "Faster animations"
-msgstr ""
+msgstr "უფრო სწრაფი ანიმაციები"
 
 #: engines/vcruise/metaengine.cpp:54
 msgid "Speeds up animations."
@@ -10680,7 +10660,7 @@ msgstr ""
 
 #: engines/vcruise/metaengine.cpp:155
 msgid "Quit game"
-msgstr ""
+msgstr "თამაშიდან გასვლა"
 
 #: engines/vcruise/metaengine.cpp:166
 msgid "Toggle music on/off"
@@ -10736,7 +10716,7 @@ msgstr ""
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
-msgstr ""
+msgstr "FPS-ის მთვლელის ჩვენება"
 
 #: engines/wintermute/metaengine.cpp:43
 msgid "Show the current number of frames per second in the upper left corner"
@@ -10792,7 +10772,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:736
 #: engines/wintermute/keymapper_tables.h:2238
 msgid "Walk backward"
-msgstr ""
+msgstr "უკან სიარული"
 
 #. I18N: Debug feature to draw lines of scene geometry: walls, walking areas, etc
 #: engines/wintermute/keymapper_tables.h:174
