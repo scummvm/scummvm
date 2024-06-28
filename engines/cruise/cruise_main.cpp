@@ -762,7 +762,8 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 	return -1;
 }
 
-Common::KeyCode keyboardCode = Common::KEYCODE_INVALID;
+Common::CustomEventType action = kActionNone;
+bool endpause = false;
 
 void freeStuff2() {
 	warning("implement freeStuff2");
@@ -1413,65 +1414,61 @@ int CruiseEngine::processInput() {
 	}
 
 	// Check for Exit 'X' key
-	if (keyboardCode == Common::KEYCODE_x)
+	if (action == kActionExit)
 		return 1;
 
 	// Check for Pause 'P' key
-	if (keyboardCode == Common::KEYCODE_p) {
-		keyboardCode = Common::KEYCODE_INVALID;
+	if (action == kActionPause) {
+		action = kActionNone;
+		endpause = false;
 		_vm->pauseEngine(true);
 		mouseOff();
 
-		bool pausedButtonDown = false;
 		while (!_vm->shouldQuit()) {
 			manageEvents();
 			getMouseStatus(&main10, &mouseX, &button, &mouseY);
 
-			if (button) pausedButtonDown = true;
-			else if (pausedButtonDown)
-				// Button released, so exit pause
-				break;
-			else if (keyboardCode != Common::KEYCODE_INVALID)
+			if (endpause)
 				break;
 
 			g_system->delayMillis(10);
 		}
 
-		if (keyboardCode == Common::KEYCODE_x)
+		if (action == kActionExit)
 			// Exit the game
 			return 1;
 
-		keyboardCode = Common::KEYCODE_INVALID;
+		action = kActionNone;
 		_vm->pauseEngine(false);
 		mouseOn();
 		return 0;
 	}
 
 	// Player Menu - test for both buttons or the F10 key
-	if (((button & CRS_MB_BOTH) == CRS_MB_BOTH) || (keyboardCode == Common::KEYCODE_F10)) {
+	if (((button & CRS_MB_BOTH) == CRS_MB_BOTH) || (action == kActionPlayerMenu)) {
 		changeCursor(CURSOR_NORMAL);
-		keyboardCode = Common::KEYCODE_INVALID;
+		action = kActionNone;
 		return (playerMenu(mouseX, mouseY));
 	}
 
 	if (userWait) {
 		// Check for left mouse button click or Space to end user waiting
-		if ((keyboardCode == Common::KEYCODE_SPACE) || (button == CRS_MB_LEFT))
+		if ((action == kActionEndUserWaiting) || (button == CRS_MB_LEFT))
 			userWait = false;
 
-		keyboardCode = Common::KEYCODE_INVALID;
+		action = kActionNone;
 		return 0;
 	}
 
 	// Handle any changes in game speed
 	if (_speedFlag) {
-		if ((keyboardCode == Common::KEYCODE_KP_PLUS) && (_gameSpeed >= 30)) {
+		if ((action == kActionIncreaseGameSpeed) && (_gameSpeed >= 30)) {
 			_gameSpeed -= 10;
-			keyboardCode = Common::KEYCODE_INVALID;
+			action = kActionNone;
 		}
-		if ((keyboardCode == Common::KEYCODE_KP_MINUS) && (_gameSpeed <= 200)) {
+		if ((action == kActionDecreaseGameSpeed) && (_gameSpeed <= 200)) {
 			_gameSpeed += 10;
-			keyboardCode = Common::KEYCODE_INVALID;
+			action = kActionNone;
 		}
 	}
 
@@ -1645,9 +1642,9 @@ int CruiseEngine::processInput() {
 				}
 			}
 		}
-	} else if ((button & CRS_MB_RIGHT) || (keyboardCode == Common::KEYCODE_F9)) {
+	} else if ((button & CRS_MB_RIGHT) || (action == kActionInventory)) {
 		if (buttonDown == 0) {
-			keyboardCode = Common::KEYCODE_INVALID;
+			action = kActionNone;
 
 			// close object menu if there is no linked relation
 			if ((linkedRelation == nullptr) && (menuTable[0])) {
@@ -1694,12 +1691,17 @@ bool manageEvents() {
 			break;
 		case Common::EVENT_LBUTTONUP:
 			currentMouseButton &= ~CRS_MB_LEFT;
+			endpause = true;
 			break;
 		case Common::EVENT_RBUTTONDOWN:
 			currentMouseButton |= CRS_MB_RIGHT;
 			break;
 		case Common::EVENT_RBUTTONUP:
 			currentMouseButton &= ~CRS_MB_RIGHT;
+			endpause = true;
+			break;
+		case Common::EVENT_JOYBUTTON_DOWN:
+			endpause = true;
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			currentMouseX = event.mouse.x;
@@ -1710,30 +1712,30 @@ bool manageEvents() {
 		case Common::EVENT_RETURN_TO_LAUNCHER:
 			_playerDontAskQuit = true;
 			break;
-		case Common::EVENT_KEYUP:
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_ESCAPE:
+		case Common::EVENT_KEYDOWN:
+			endpause = true;
+			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			if (event.customType == kActionEscape) {
 				currentMouseButton &= ~CRS_MB_MIDDLE;
-				break;
-			default:
-				break;
 			}
 			break;
-		case Common::EVENT_KEYDOWN:
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_ESCAPE:
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			action = event.customType;
+
+			switch (action) {
+			case kActionFastMode:
+				bFastMode = !bFastMode;
+				break;
+			case kActionEscape:
 				currentMouseButton |= CRS_MB_MIDDLE;
 				break;
 			default:
-				keyboardCode = event.kbd.keycode;
 				break;
 			}
 
-			if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_f) {
-				bFastMode = !bFastMode;
-				keyboardCode = Common::KEYCODE_INVALID;
-			}
-
+			endpause = true;
+			break;
 		default:
 			break;
 		}

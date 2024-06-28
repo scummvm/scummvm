@@ -24,6 +24,12 @@
 #include "common/system.h"
 #include "engines/advancedDetector.h"
 
+#include "common/translation.h"
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
+
 #include "cruise/cruise.h"
 #include "cruise/saveload.h"
 #include "cruise/detection.h"
@@ -56,6 +62,8 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const Cruise::CRUISEGameDescription *desc) const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool CruiseMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -125,6 +133,84 @@ SaveStateDescriptor CruiseMetaEngine::querySaveMetaInfos(const char *target, int
 Common::Error CruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, const Cruise::CRUISEGameDescription *desc) const {
 	*engine = new Cruise::CruiseEngine(syst,desc);
 	return Common::kNoError;
+}
+
+Common::KeymapArray CruiseMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Cruise;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "cruise-default", _("Default keymappings"));
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
+
+	Action *act;
+	
+	act = new Action(kStandardActionLeftClick, _("Left click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Right click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	// I18N: Game runs at faster speed
+	act = new Action("FASTMODE", _("Fast mode"));
+	act->setCustomEngineActionEvent(kActionFastMode);
+	act->addDefaultInputMapping("C+f");
+	act->addDefaultInputMapping("JOY_CENTER");
+	gameKeyMap->addAction(act);
+
+	act = new Action("INVENTORY", _("Inventory"));
+	act->setCustomEngineActionEvent(kActionInventory);
+	act->addDefaultInputMapping("F9");
+	act->addDefaultInputMapping("JOY_X");
+	gameKeyMap->addAction(act);
+
+	// I18N: Opens menu with player commands
+	act = new Action("PLAYERMENU", _("Player menu"));
+	act->setCustomEngineActionEvent(kActionPlayerMenu);
+	act->addDefaultInputMapping("F10");
+	act->addDefaultInputMapping("JOY_Y");
+	gameKeyMap->addAction(act);
+
+	act = new Action("INCGAMESPEED", _("Increase game speed"));
+	act->setCustomEngineActionEvent(kActionIncreaseGameSpeed);
+	act->addDefaultInputMapping("KP_PLUS");
+	act->addDefaultInputMapping("JOY_UP");
+	gameKeyMap->addAction(act);
+
+	act = new Action("DECGAMESPEED", _("Decrease game speed"));
+	act->setCustomEngineActionEvent(kActionDecreaseGameSpeed);
+	act->addDefaultInputMapping("KP_MINUS");
+	act->addDefaultInputMapping("JOY_DOWN");
+	gameKeyMap->addAction(act);
+
+	act = new Action("PAUSE", _("Pause"));
+	act->setCustomEngineActionEvent(kActionPause);
+	act->addDefaultInputMapping("p");
+	act->addDefaultInputMapping("JOY_RIGHT_STICK");
+	gameKeyMap->addAction(act);
+
+	act = new Action("ESC", _("Escape"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	gameKeyMap->addAction(act);
+
+	act = new Action("EXITGAME", _("Exit game"));
+	act->setCustomEngineActionEvent(kActionExit);
+	act->addDefaultInputMapping("x");
+	act->addDefaultInputMapping("JOY_LEFT_STICK");
+	gameKeyMap->addAction(act);
+
+	KeymapArray keymaps(2);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeyMap;
+
+	return keymaps;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(CRUISE)
