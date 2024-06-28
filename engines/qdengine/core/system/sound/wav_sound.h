@@ -22,6 +22,7 @@
 #ifndef __WAV_SOUND_H__
 #define __WAV_SOUND_H__
 
+#include "audio/decoders/wave.h"
 
 namespace QDEngine {
 
@@ -80,6 +81,8 @@ private:
 	Значения: 8.0, 11.025, 22.05, 44.1 x1000 Hz.
 	 */
 	int samples_per_sec_;
+
+	Audio::SeekableAudioStream *_audiostream;
 
 	friend bool wav_file_load(const char *fname, class wavSound *snd);
 
