@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-27 22:33+0000\n"
+"POT-Creation-Date: 2024-06-27 22:34+0000\n"
 "PO-Revision-Date: 2024-06-22 01:43+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -3698,7 +3698,8 @@ msgstr "Oletusnäppäinasetukset"
 
 #: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:161
 #: engines/agos/metaengine.cpp:227 engines/asylum/metaengine.cpp:159
-#: engines/hdb/metaengine.cpp:207 engines/parallaction/metaengine.cpp:114
+#: engines/hdb/metaengine.cpp:207 engines/made/metaengine.cpp:107
+#: engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
 msgstr "Vasen klikkaus"
@@ -3712,7 +3713,7 @@ msgstr "Keskiklikkaus"
 
 #: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:169
 #: engines/agos/metaengine.cpp:233 engines/asylum/metaengine.cpp:165
-#: engines/parallaction/metaengine.cpp:120
+#: engines/made/metaengine.cpp:114 engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr "Oikea klikkaus"
@@ -3732,8 +3733,9 @@ msgid "Game menu"
 msgstr "Pelivalikko"
 
 #: engines/metaengine.cpp:89 engines/grim/grim.cpp:524
-#: engines/grim/grim.cpp:620 engines/mohawk/myst.cpp:566
-#: engines/mohawk/riven.cpp:847 engines/wintermute/keymapper_tables.h:220
+#: engines/grim/grim.cpp:620 engines/made/metaengine.cpp:121
+#: engines/mohawk/myst.cpp:566 engines/mohawk/riven.cpp:847
+#: engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
 #: engines/wintermute/keymapper_tables.h:1276
 #: engines/wintermute/keymapper_tables.h:1601
@@ -5790,6 +5792,7 @@ msgstr "R2"
 #: backends/platform/sdl/miyoo/miyoo.cpp:83
 #: backends/platform/sdl/miyoo/miyoo.cpp:114 engines/grim/grim.cpp:536
 #: engines/grim/grim.cpp:632 engines/hdb/metaengine.cpp:264
+#: engines/made/metaengine.cpp:156
 msgid "Menu"
 msgstr "Valikko"
 
@@ -6273,7 +6276,7 @@ msgid "AGOS main"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:223 engines/cge/metaengine.cpp:199
-#: engines/cge2/metaengine.cpp:212
+#: engines/cge2/metaengine.cpp:212 engines/made/metaengine.cpp:103
 msgid "Game Keymappings"
 msgstr "Pelin näppäinkartta"
 
@@ -6925,7 +6928,7 @@ msgstr "Vihjeen julkisuus päälle / pois"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330 engines/cge2/metaengine.cpp:221
-#: engines/pegasus/pegasus.cpp:2825
+#: engines/made/metaengine.cpp:162 engines/pegasus/pegasus.cpp:2825
 msgid "Save Game"
 msgstr "Tallenna peli"
 
@@ -6934,7 +6937,7 @@ msgstr "Tallenna peli"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339 engines/cge2/metaengine.cpp:226
-#: engines/pegasus/pegasus.cpp:2831
+#: engines/made/metaengine.cpp:168 engines/pegasus/pegasus.cpp:2831
 msgid "Load Game"
 msgstr "Lataa pelitallennus"
 
@@ -8326,17 +8329,39 @@ msgstr "TTS-kertoja"
 msgid "The game is using unsupported engine"
 msgstr "Tämä peli käyttää moottoria joka ei ole tuettu"
 
-#: engines/made/metaengine.cpp:34
+#: engines/made/metaengine.cpp:38
 msgid "Play a digital soundtrack during the opening movie"
 msgstr "Käytä digitaalista musiikkia avausvideossa"
 
-#: engines/made/metaengine.cpp:35
+#: engines/made/metaengine.cpp:39
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
 msgstr ""
 "Jos valittu, peli käyttää digitaalista musiikkia intron aikana. Muutoin se "
 "käyttää MIDI-musiikkia."
+
+#: engines/made/metaengine.cpp:128
+msgid "Cursor Up"
+msgstr "Kursori ylös"
+
+#: engines/made/metaengine.cpp:135
+msgid "Cursor Down"
+msgstr "Kursori alas"
+
+#: engines/made/metaengine.cpp:142
+msgid "Cursor Left"
+msgstr "Kursori vasemmalle"
+
+#: engines/made/metaengine.cpp:149
+msgid "Cursor Right"
+msgstr "Kursori oikealle"
+
+#: engines/made/metaengine.cpp:174
+#, fuzzy
+#| msgid "Reload last save"
+msgid "Repeat Last Message"
+msgstr "Lataa viimeisin tallennus"
 
 #: engines/mads/metaengine.cpp:47
 msgid "Easy mouse interface"
@@ -13051,9 +13076,6 @@ msgstr ""
 #~ msgid "Go to save/load menu"
 #~ msgstr "Mene tallennus/lataus valikkoon"
 
-#~ msgid "Reload last save"
-#~ msgstr "Lataa viimeisin tallennus"
-
 #~ msgid "Show credits"
 #~ msgstr "Näytä lopputekstit"
 
@@ -13826,18 +13848,6 @@ msgstr ""
 
 #~ msgid "Bind Keys"
 #~ msgstr "Määritä näppäimet"
-
-#~ msgid "Cursor Up"
-#~ msgstr "Kursori ylös"
-
-#~ msgid "Cursor Down"
-#~ msgstr "Kursori alas"
-
-#~ msgid "Cursor Left"
-#~ msgstr "Kursori vasemmalle"
-
-#~ msgid "Cursor Right"
-#~ msgstr "Kursori oikealle"
 
 #~ msgid "Using SDL driver "
 #~ msgstr "Käytetään SDL:n ajuria "

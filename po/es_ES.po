@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-27 22:33+0000\n"
+"POT-Creation-Date: 2024-06-27 22:34+0000\n"
 "PO-Revision-Date: 2024-06-28 08:08+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -3750,7 +3750,8 @@ msgstr "Asignación predet. del juego"
 
 #: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:161
 #: engines/agos/metaengine.cpp:227 engines/asylum/metaengine.cpp:159
-#: engines/hdb/metaengine.cpp:207 engines/parallaction/metaengine.cpp:114
+#: engines/hdb/metaengine.cpp:207 engines/made/metaengine.cpp:107
+#: engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
 msgstr "Clic izquierdo"
@@ -3764,7 +3765,7 @@ msgstr "Clic central"
 
 #: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:169
 #: engines/agos/metaengine.cpp:233 engines/asylum/metaengine.cpp:165
-#: engines/parallaction/metaengine.cpp:120
+#: engines/made/metaengine.cpp:114 engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr "Clic derecho"
@@ -3784,8 +3785,9 @@ msgid "Game menu"
 msgstr "Menú del juego"
 
 #: engines/metaengine.cpp:89 engines/grim/grim.cpp:524
-#: engines/grim/grim.cpp:620 engines/mohawk/myst.cpp:566
-#: engines/mohawk/riven.cpp:847 engines/wintermute/keymapper_tables.h:220
+#: engines/grim/grim.cpp:620 engines/made/metaengine.cpp:121
+#: engines/mohawk/myst.cpp:566 engines/mohawk/riven.cpp:847
+#: engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
 #: engines/wintermute/keymapper_tables.h:1276
 #: engines/wintermute/keymapper_tables.h:1601
@@ -5874,6 +5876,7 @@ msgstr "R2"
 #: backends/platform/sdl/miyoo/miyoo.cpp:83
 #: backends/platform/sdl/miyoo/miyoo.cpp:114 engines/grim/grim.cpp:536
 #: engines/grim/grim.cpp:632 engines/hdb/metaengine.cpp:264
+#: engines/made/metaengine.cpp:156
 msgid "Menu"
 msgstr "Menú"
 
@@ -6360,7 +6363,7 @@ msgid "AGOS main"
 msgstr "AGOS - Principal"
 
 #: engines/agos/metaengine.cpp:223 engines/cge/metaengine.cpp:199
-#: engines/cge2/metaengine.cpp:212
+#: engines/cge2/metaengine.cpp:212 engines/made/metaengine.cpp:103
 msgid "Game Keymappings"
 msgstr "Asignaciones del juego"
 
@@ -6986,7 +6989,7 @@ msgstr "Ocultar pista"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330 engines/cge2/metaengine.cpp:221
-#: engines/pegasus/pegasus.cpp:2825
+#: engines/made/metaengine.cpp:162 engines/pegasus/pegasus.cpp:2825
 msgid "Save Game"
 msgstr "Guardar partida"
 
@@ -6995,7 +6998,7 @@ msgstr "Guardar partida"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339 engines/cge2/metaengine.cpp:226
-#: engines/pegasus/pegasus.cpp:2831
+#: engines/made/metaengine.cpp:168 engines/pegasus/pegasus.cpp:2831
 msgid "Load Game"
 msgstr "Cargar partida"
 
@@ -8422,11 +8425,11 @@ msgstr "Narración TTS"
 msgid "The game is using unsupported engine"
 msgstr "El juego utiliza un motor no compatible."
 
-#: engines/made/metaengine.cpp:34
+#: engines/made/metaengine.cpp:38
 msgid "Play a digital soundtrack during the opening movie"
 msgstr "Reproducir música digital durante la introducción"
 
-#: engines/made/metaengine.cpp:35
+#: engines/made/metaengine.cpp:39
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
@@ -8434,6 +8437,28 @@ msgstr ""
 "Al activar esta opción el juego utilizará una música digital durante la "
 "secuencia de introducción. En caso contrario, reproducirá una pista de "
 "música en formato MIDI."
+
+#: engines/made/metaengine.cpp:128
+msgid "Cursor Up"
+msgstr "Arriba"
+
+#: engines/made/metaengine.cpp:135
+msgid "Cursor Down"
+msgstr "Abajo"
+
+#: engines/made/metaengine.cpp:142
+msgid "Cursor Left"
+msgstr "Izquierda"
+
+#: engines/made/metaengine.cpp:149
+msgid "Cursor Right"
+msgstr "Derecha"
+
+#: engines/made/metaengine.cpp:174
+#, fuzzy
+#| msgid "Reload last save"
+msgid "Repeat Last Message"
+msgstr "Cargar la última partida guardada"
 
 #: engines/mads/metaengine.cpp:47
 msgid "Easy mouse interface"
@@ -13190,9 +13215,6 @@ msgstr ""
 #~ msgid "Go to save/load menu"
 #~ msgstr "Ir al menú de guardado/carga"
 
-#~ msgid "Reload last save"
-#~ msgstr "Cargar la última partida guardada"
-
 #~ msgid "Show credits"
 #~ msgstr "Mostrar créditos"
 
@@ -13989,18 +14011,6 @@ msgstr ""
 
 #~ msgid "Bind Keys"
 #~ msgstr "Asignar teclas"
-
-#~ msgid "Cursor Up"
-#~ msgstr "Arriba"
-
-#~ msgid "Cursor Down"
-#~ msgstr "Abajo"
-
-#~ msgid "Cursor Left"
-#~ msgstr "Izquierda"
-
-#~ msgid "Cursor Right"
-#~ msgstr "Derecha"
 
 #~ msgid "Using SDL driver "
 #~ msgstr "Usando el controlador SDL "

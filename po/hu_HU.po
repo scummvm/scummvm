@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-27 22:33+0000\n"
+"POT-Creation-Date: 2024-06-27 22:34+0000\n"
 "PO-Revision-Date: 2023-12-08 17:19+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -3673,7 +3673,8 @@ msgstr "Alapértelmezett játék billentyûzet kiosztás"
 
 #: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:161
 #: engines/agos/metaengine.cpp:227 engines/asylum/metaengine.cpp:159
-#: engines/hdb/metaengine.cpp:207 engines/parallaction/metaengine.cpp:114
+#: engines/hdb/metaengine.cpp:207 engines/made/metaengine.cpp:107
+#: engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
 msgstr "Bal katt"
@@ -3687,7 +3688,7 @@ msgstr "Középsõ katt"
 
 #: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:169
 #: engines/agos/metaengine.cpp:233 engines/asylum/metaengine.cpp:165
-#: engines/parallaction/metaengine.cpp:120
+#: engines/made/metaengine.cpp:114 engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr "Jobb katt"
@@ -3707,8 +3708,9 @@ msgid "Game menu"
 msgstr "Játék menü"
 
 #: engines/metaengine.cpp:89 engines/grim/grim.cpp:524
-#: engines/grim/grim.cpp:620 engines/mohawk/myst.cpp:566
-#: engines/mohawk/riven.cpp:847 engines/wintermute/keymapper_tables.h:220
+#: engines/grim/grim.cpp:620 engines/made/metaengine.cpp:121
+#: engines/mohawk/myst.cpp:566 engines/mohawk/riven.cpp:847
+#: engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
 #: engines/wintermute/keymapper_tables.h:1276
 #: engines/wintermute/keymapper_tables.h:1601
@@ -5528,6 +5530,7 @@ msgstr "R2"
 #: backends/platform/sdl/miyoo/miyoo.cpp:83
 #: backends/platform/sdl/miyoo/miyoo.cpp:114 engines/grim/grim.cpp:536
 #: engines/grim/grim.cpp:632 engines/hdb/metaengine.cpp:264
+#: engines/made/metaengine.cpp:156
 msgid "Menu"
 msgstr "Menü"
 
@@ -6016,7 +6019,7 @@ msgid "AGOS main"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:223 engines/cge/metaengine.cpp:199
-#: engines/cge2/metaengine.cpp:212
+#: engines/cge2/metaengine.cpp:212 engines/made/metaengine.cpp:103
 #, fuzzy
 #| msgid "Game Options"
 msgid "Game Keymappings"
@@ -6677,7 +6680,7 @@ msgstr "Clue Adatvédelem Váltás"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330 engines/cge2/metaengine.cpp:221
-#: engines/pegasus/pegasus.cpp:2825
+#: engines/made/metaengine.cpp:162 engines/pegasus/pegasus.cpp:2825
 msgid "Save Game"
 msgstr "Játék mentés"
 
@@ -6686,7 +6689,7 @@ msgstr "Játék mentés"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339 engines/cge2/metaengine.cpp:226
-#: engines/pegasus/pegasus.cpp:2831
+#: engines/made/metaengine.cpp:168 engines/pegasus/pegasus.cpp:2831
 msgid "Load Game"
 msgstr "Játék betöltés"
 
@@ -8120,17 +8123,39 @@ msgstr "TTS Narrátor"
 msgid "The game is using unsupported engine"
 msgstr "A játék nem támogatott motort használ"
 
-#: engines/made/metaengine.cpp:34
+#: engines/made/metaengine.cpp:38
 msgid "Play a digital soundtrack during the opening movie"
 msgstr "Játsszon digitális hangsávot a nyitófilm alatt"
 
-#: engines/made/metaengine.cpp:35
+#: engines/made/metaengine.cpp:39
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
 msgstr ""
 "Ha ez a lehetőség van kiválasztva, a játék digitális filmzenét használ a "
 "bevezetésnél. Ellenkező esetben MIDI zenét játszik le."
+
+#: engines/made/metaengine.cpp:128
+msgid "Cursor Up"
+msgstr "Kurzor Fel"
+
+#: engines/made/metaengine.cpp:135
+msgid "Cursor Down"
+msgstr "Kurzor Le"
+
+#: engines/made/metaengine.cpp:142
+msgid "Cursor Left"
+msgstr "Kurzor Bal"
+
+#: engines/made/metaengine.cpp:149
+msgid "Cursor Right"
+msgstr "Kurzor Jobb"
+
+#: engines/made/metaengine.cpp:174
+#, fuzzy
+#| msgid "Reload last save"
+msgid "Repeat Last Message"
+msgstr "Utolsó mentés újratöltése"
 
 #: engines/mads/metaengine.cpp:47
 msgid "Easy mouse interface"
@@ -12700,9 +12725,6 @@ msgstr ""
 #~ msgid "Go to save/load menu"
 #~ msgstr "Menj a ment/betölt menübe"
 
-#~ msgid "Reload last save"
-#~ msgstr "Utolsó mentés újratöltése"
-
 #~ msgid "Show credits"
 #~ msgstr "Kreditek megjelenítése"
 
@@ -13487,18 +13509,6 @@ msgstr ""
 
 #~ msgid "Bind Keys"
 #~ msgstr "Kapcsolódás kulcsok"
-
-#~ msgid "Cursor Up"
-#~ msgstr "Kurzor Fel"
-
-#~ msgid "Cursor Down"
-#~ msgstr "Kurzor Le"
-
-#~ msgid "Cursor Left"
-#~ msgstr "Kurzor Bal"
-
-#~ msgid "Cursor Right"
-#~ msgstr "Kurzor Jobb"
 
 #~ msgid "Using SDL driver "
 #~ msgstr "SDL meghajtó használata "

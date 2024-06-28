@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-27 22:33+0000\n"
+"POT-Creation-Date: 2024-06-27 22:34+0000\n"
 "PO-Revision-Date: 2024-05-16 08:20+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -3822,7 +3822,8 @@ msgstr "Προκαθορισμένες αντιστοιχίες"
 
 #: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:161
 #: engines/agos/metaengine.cpp:227 engines/asylum/metaengine.cpp:159
-#: engines/hdb/metaengine.cpp:207 engines/parallaction/metaengine.cpp:114
+#: engines/hdb/metaengine.cpp:207 engines/made/metaengine.cpp:107
+#: engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
 msgstr "Αριστερό Click"
@@ -3836,7 +3837,7 @@ msgstr "Μεσαίο Click"
 
 #: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:169
 #: engines/agos/metaengine.cpp:233 engines/asylum/metaengine.cpp:165
-#: engines/parallaction/metaengine.cpp:120
+#: engines/made/metaengine.cpp:114 engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr "Δεξί Click"
@@ -3856,8 +3857,9 @@ msgid "Game menu"
 msgstr "Μενού παιχνιδιού"
 
 #: engines/metaengine.cpp:89 engines/grim/grim.cpp:524
-#: engines/grim/grim.cpp:620 engines/mohawk/myst.cpp:566
-#: engines/mohawk/riven.cpp:847 engines/wintermute/keymapper_tables.h:220
+#: engines/grim/grim.cpp:620 engines/made/metaengine.cpp:121
+#: engines/mohawk/myst.cpp:566 engines/mohawk/riven.cpp:847
+#: engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
 #: engines/wintermute/keymapper_tables.h:1276
 #: engines/wintermute/keymapper_tables.h:1601
@@ -5998,6 +6000,7 @@ msgstr "R2"
 #: backends/platform/sdl/miyoo/miyoo.cpp:83
 #: backends/platform/sdl/miyoo/miyoo.cpp:114 engines/grim/grim.cpp:536
 #: engines/grim/grim.cpp:632 engines/hdb/metaengine.cpp:264
+#: engines/made/metaengine.cpp:156
 msgid "Menu"
 msgstr "Μενού"
 
@@ -6491,7 +6494,7 @@ msgid "AGOS main"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:223 engines/cge/metaengine.cpp:199
-#: engines/cge2/metaengine.cpp:212
+#: engines/cge2/metaengine.cpp:212 engines/made/metaengine.cpp:103
 msgid "Game Keymappings"
 msgstr "Αντιστοίχιση Πλήκτρων"
 
@@ -7158,7 +7161,7 @@ msgstr "Εναλλαγή Ιδιωτικότητας Ευρημάτων"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330 engines/cge2/metaengine.cpp:221
-#: engines/pegasus/pegasus.cpp:2825
+#: engines/made/metaengine.cpp:162 engines/pegasus/pegasus.cpp:2825
 msgid "Save Game"
 msgstr "Αποθήκευση παιχνιδιού"
 
@@ -7167,7 +7170,7 @@ msgstr "Αποθήκευση παιχνιδιού"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339 engines/cge2/metaengine.cpp:226
-#: engines/pegasus/pegasus.cpp:2831
+#: engines/made/metaengine.cpp:168 engines/pegasus/pegasus.cpp:2831
 msgid "Load Game"
 msgstr "Φόρτωση Παιχνιδιού"
 
@@ -8601,17 +8604,39 @@ msgstr "Αφηγητής Κειμένου"
 msgid "The game is using unsupported engine"
 msgstr "Αυτό το παιχνίδι χρησιμοποιεί μηχανή που δεν υποστηρίζεται"
 
-#: engines/made/metaengine.cpp:34
+#: engines/made/metaengine.cpp:38
 msgid "Play a digital soundtrack during the opening movie"
 msgstr "Αναπαραγωγή ψηφιακής μουσικής κατά την εναρκτήρια ταινία"
 
-#: engines/made/metaengine.cpp:35
+#: engines/made/metaengine.cpp:39
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
 msgstr ""
 "Με την επιλογή αυτή, το παιχνίδι θα χρησιμοποιήσει ψηφιακή μουσική (digital "
 "soundtrack) κατά την εισαγωγή. Αλλιώς, θα παίξει μουσική MIDI."
+
+#: engines/made/metaengine.cpp:128
+msgid "Cursor Up"
+msgstr "Δρομέας Πάνω"
+
+#: engines/made/metaengine.cpp:135
+msgid "Cursor Down"
+msgstr "Δρομέας Κάτω"
+
+#: engines/made/metaengine.cpp:142
+msgid "Cursor Left"
+msgstr "Δρομέας Αριστερά"
+
+#: engines/made/metaengine.cpp:149
+msgid "Cursor Right"
+msgstr "Δρομέας Δεξιά"
+
+#: engines/made/metaengine.cpp:174
+#, fuzzy
+#| msgid "Reload last save"
+msgid "Repeat Last Message"
+msgstr "Φόρτωση τελευταίου αποθηκευμένου παιχνιδιού"
 
 #: engines/mads/metaengine.cpp:47
 msgid "Easy mouse interface"
@@ -13503,9 +13528,6 @@ msgstr ""
 #~ msgid "Go to save/load menu"
 #~ msgstr "Άνοιγμα μενού απόθήκευσης/φόρτωσης"
 
-#~ msgid "Reload last save"
-#~ msgstr "Φόρτωση τελευταίου αποθηκευμένου παιχνιδιού"
-
 #~ msgid "Show credits"
 #~ msgstr "Προβολή συντελεστών"
 
@@ -14290,18 +14312,6 @@ msgstr ""
 
 #~ msgid "Bind Keys"
 #~ msgstr "Δέσμευση Πλήκτρων"
-
-#~ msgid "Cursor Up"
-#~ msgstr "Δρομέας Πάνω"
-
-#~ msgid "Cursor Down"
-#~ msgstr "Δρομέας Κάτω"
-
-#~ msgid "Cursor Left"
-#~ msgstr "Δρομέας Αριστερά"
-
-#~ msgid "Cursor Right"
-#~ msgstr "Δρομέας Δεξιά"
 
 #~ msgid "Using SDL driver "
 #~ msgstr "Χρήση οδηγού SDL "
