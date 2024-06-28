@@ -21,13 +21,10 @@
 
 #include "objects.h"
 
-constexpr int MAX_OBJECTS = 199;
-
 Darkseed::Objects::Objects() {
 	_objectVar.resize(MAX_OBJECTS);
 	_objectRunningCode.resize(MAX_OBJECTS);
-	_moveObjectX.resize(MAX_OBJECTS);
-	_moveObjectY.resize(MAX_OBJECTS);
+	_moveObjectXY.resize(MAX_OBJECTS);
 	_moveObjectRoom.resize(MAX_OBJECTS); // The original only allocates 42 entries here but writes 199 in the save file!
 	reset();
 }
@@ -36,8 +33,8 @@ void Darkseed::Objects::reset() {
 	for (int i = 0; i < MAX_OBJECTS; i++) {
 		_objectVar[i] = 0;
 		_objectRunningCode[i] = 0;
-		_moveObjectX[i] = 0; // TODO verify this is the correct reset state for these XY vars.
-		_moveObjectY[i] = 0;
+		_moveObjectXY[i].x = 0; // TODO verify this is the correct reset state for these XY vars.
+		_moveObjectXY[i].y = 0;
 		_moveObjectRoom[i] = i < 42 ? 0xff : 0; // Hack for weird behaviour in original engine.
 	}
 	// Initial object state.
@@ -54,6 +51,26 @@ void Darkseed::Objects::setVar(uint16 varIdx, int16 newValue) {
 }
 
 int16 Darkseed::Objects::getVar(uint16 varIdx) {
+	if (varIdx >= MAX_OBJECTS) {
+		error("getVar: Object Index out of range! %d", varIdx);
+	}
+	return _objectVar[varIdx];
+}
+
+Common::Point Darkseed::Objects::getMoveObjectPosition(uint8 objIdx) {
+	if (objIdx >= MAX_OBJECTS) {
+		error("getMoveObjectPosition: Object Index out of range! %d", objIdx);
+	}
+	return _moveObjectXY[objIdx];
+}
+
+int16 &Darkseed::Objects::operator[](uint16 varIdx) {
+	if (varIdx >= MAX_OBJECTS) {
+		error("getVar: Object Index out of range! %d", varIdx);
+	}
+	return _objectVar[varIdx];
+}
+const int16 &Darkseed::Objects::operator[](uint16 varIdx) const {
 	if (varIdx >= MAX_OBJECTS) {
 		error("getVar: Object Index out of range! %d", varIdx);
 	}

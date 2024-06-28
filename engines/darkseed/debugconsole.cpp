@@ -65,8 +65,11 @@ bool DebugConsole::Cmd_getvar(int argc, const char **argv) {
 		return true;
 	}
 
-	uint16 varIdx = atoi(argv[1]);
-	debugPrintf("Object Var: %d\n", g_engine->_objects.getVar(varIdx));
+	int16 varIdx = (int16)atoi(argv[1]);
+
+	if (validateObjVarIndex(varIdx)) {
+		debugPrintf("Object Var: %d\n", g_engine->_objectVar.getVar(varIdx));
+	}
 	return true;
 }
 
@@ -76,10 +79,24 @@ bool DebugConsole::Cmd_setvar(int argc, const char **argv) {
 		return true;
 	}
 
-	uint16 varIdx = atoi(argv[1]);
-	int16 newValue = atoi(argv[2]);
+	int16 varIdx = (int16)atoi(argv[1]);
+	int16 newValue = (int16)atoi(argv[2]);
 
-	g_engine->_objects.setVar(varIdx, newValue);
+	if (validateObjVarIndex(varIdx)) {
+		g_engine->_objectVar[varIdx] = newValue;
+	}
+	return true;
+}
+
+bool DebugConsole::validateObjVarIndex(int16 varIdx) {
+	if (varIdx >= Objects::MAX_OBJECTS) {
+		debugPrintf("Index must be less than %d\n", Objects::MAX_OBJECTS);
+		return false;
+	}
+	if (varIdx < 0) {
+		debugPrintf("Index cannot be negative\n");
+		return false;
+	}
 	return true;
 }
 

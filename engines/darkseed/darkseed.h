@@ -52,7 +52,9 @@ struct DarkseedGameDescription;
 enum ActionMode {
 	PointerAction = 0,
 	HandAction = 2,
-	LookAction = 3
+	LookAction = 3,
+	Unk19Action = 19,
+	Unk27Action = 27,
 };
 
 class DarkseedEngine : public Engine {
@@ -77,7 +79,7 @@ public:
 	ActionMode _actionMode = PointerAction;
 	Player *_player = nullptr;
 	Sprites _sprites;
-	Objects _objects;
+	Objects _objectVar;
 	Inventory _inventory;
 
 	int _currentDay = 1;
@@ -112,7 +114,7 @@ public:
 	uint16 DAT_2c85_825c = 0;
 	uint16 DAT_2c85_819c = 0;
 	bool BoolEnum_2c85_985a = false;
-	bool BoolByteEnum_2c85_9e67 = false;
+	bool useDoorTarget = false;
 
 	uint16 DAT_2c85_81e0 = 0;
 
@@ -180,8 +182,6 @@ public:
 
 	void updateDisplay();
 	void setupOtherNspAnimation(int nspAnimIdx, int animId);
-
-	int getObjectUnderCursor();
 
 private:
 	void updateAnimation();
