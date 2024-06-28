@@ -84,6 +84,10 @@ void Inventory::setRequestData(const REQFileData &data) {
 
 	_fullWidth = req._rect.width;
 
+	// TODO! Beamish doesn't have a zoom box, or it's a different ID?
+	if (static_cast<DgdsEngine *>(g_engine)->getGameId() == GID_BEAMISH)
+		_itemZoomBox = _itemBox;
+
 	if (!_prevPageBtn || !_nextPageBtn || !_invClock || !_itemZoomBox || !_exitButton || !_itemArea)
 		error("Didn't get all expected inventory gadgets");
 }

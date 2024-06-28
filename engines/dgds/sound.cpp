@@ -257,8 +257,10 @@ void Sound::loadMacMusic(const Common::String &filename) {
 		error("Unhandled music file type: %s", filename.c_str());
 
 	Common::SeekableReadStream *musicStream = _resource->getResource(filename);
-	if (!musicStream)
-		error("Music file %s not found", filename.c_str());
+	if (!musicStream) {
+		warning("Music file %s not found", filename.c_str());
+		return;
+	}
 
 	DgdsChunkReader chunk(musicStream);
 

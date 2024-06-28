@@ -210,20 +210,33 @@ Common::String PerSceneGlobal::dump(const Common::String &indent) const {
 
 // //////////////////////////////////// //
 
+//
+// Check that a list length seems "sensible" so we can crash with
+// a nice error message instead of crash trying to allocate a
+// massive list.
+//
+static void _checkListNotTooLong(uint16 len, const char *list_type) {
+	if (len > 1000)
+		error("Too many %s in list (%d), scene data is likely corrupt.", list_type, len);
+}
+
 Scene::Scene() : _magic(0) {
 }
 
 bool Scene::isVersionOver(const char *version) const {
+	assert(!_version.empty());
 	return strncmp(_version.c_str(), version, _version.size()) > 0;
 }
 
 bool Scene::isVersionUnder(const char *version) const {
+	assert(!_version.empty());
 	return strncmp(_version.c_str(), version, _version.size()) < 0;
 }
 
 
 bool Scene::readConditionList(Common::SeekableReadStream *s, Common::Array<SceneConditions> &list) const {
 	uint16 num = s->readUint16LE();
+	_checkListNotTooLong(num, "scene conditions");
 	for (uint16 i = 0; i < num; i++) {
 		uint16 cnum = s->readUint16LE();
 		SceneCondition cond = static_cast<SceneCondition>(s->readUint16LE());
@@ -241,6 +254,19 @@ bool Scene::readHotArea(Common::SeekableReadStream *s, HotArea &dst) const {
 	dst._rect.height = s->readUint16LE();
 	dst._num = s->readUint16LE();
 	dst._cursorNum = s->readUint16LE();
+	if (isVersionOver(" 1.217"))
+		dst._unk1 = s->readUint16LE();
+	else
+		dst._unk1 = 0;
+
+	if (isVersionOver(" 1.218")) {
+		dst._unk2 = s->readUint16LE();
+		if (dst._unk2) {
+			dst._rect = DgdsRect();
+		}
+	} else {
+		dst._unk2 = 0;
+	}
 	readConditionList(s, dst.enableConditions);
 	readOpList(s, dst.onRClickOps);
 	readOpList(s, dst.onLDownOps);
@@ -251,6 +277,7 @@ bool Scene::readHotArea(Common::SeekableReadStream *s, HotArea &dst) const {
 
 bool Scene::readHotAreaList(Common::SeekableReadStream *s, Common::List<HotArea> &list) const {
 	uint16 num = s->readUint16LE();
+	_checkListNotTooLong(num, "hot areas");
 	for (uint16 i = 0; i < num; i++) {
 		HotArea dst;
 		readHotArea(s, dst);
@@ -261,7 +288,10 @@ bool Scene::readHotAreaList(Common::SeekableReadStream *s, Common::List<HotArea>
 
 
 bool Scene::readGameItemList(Common::SeekableReadStream *s, Common::Array<GameItem> &list) const {
-	list.resize(s->readUint16LE());
+	uint16 num = s->readUint16LE();
+	_checkListNotTooLong(num, "game items");
+	list.resize(num);
+
 	for (GameItem &dst : list) {
 		readHotArea(s, dst);
 	}
@@ -283,6 +313,8 @@ bool Scene::readGameItemList(Common::SeekableReadStream *s, Common::Array<GameIt
 
 bool Scene::readMouseHotspotList(Common::SeekableReadStream *s, Common::Array<MouseCursor> &list) const {
 	uint16 num = s->readUint16LE();
+	_checkListNotTooLong(num, "mouse hotspots");
+
 	for (uint16 i = 0; i < num; i++) {
 		list.push_back(MouseCursor(s->readUint16LE(), s->readUint16LE()));
 	}
@@ -292,6 +324,8 @@ bool Scene::readMouseHotspotList(Common::SeekableReadStream *s, Common::Array<Mo
 
 bool Scene::readObjInteractionList(Common::SeekableReadStream *s, Common::Array<ObjectInteraction> &list) const {
 	uint16 num = s->readUint16LE();
+	_checkListNotTooLong(num, "interactions");
+
 	for (uint16 i = 0; i < num; i++) {
 		uint16 dropped, target;
 		if (!isVersionOver(" 1.205")) {
@@ -310,12 +344,17 @@ bool Scene::readObjInteractionList(Common::SeekableReadStream *s, Common::Array<
 
 
 bool Scene::readOpList(Common::SeekableReadStream *s, Common::Array<SceneOp> &list) const {
-	list.resize(s->readUint16LE());
+	uint16 nitems = s->readUint16LE();
+	_checkListNotTooLong(nitems, "scene ops");
+	list.resize(nitems);
 	for (SceneOp &dst : list) {
 		readConditionList(s, dst._conditionList);
 		dst._opCode = static_cast<SceneOpCode>(s->readUint16LE());
-		int nvals = s->readUint16LE();
-		for (int i = 0; i < nvals / 2; i++) {
+		if (dst._opCode > kSceneOpMaxCode || dst._opCode == kSceneOpNone)
+			error("Unexpected scene opcode %d", (int)dst._opCode);
+		uint16 nvals = s->readUint16LE();
+		_checkListNotTooLong(nvals, "scene op args");
+		for (uint16 i = 0; i < nvals / 2; i++) {
 			dst._args.push_back(s->readUint16LE());
 		}
 	}
@@ -327,7 +366,10 @@ bool Scene::readOpList(Common::SeekableReadStream *s, Common::Array<SceneOp> &li
 bool Scene::readDialogList(Common::SeekableReadStream *s, Common::Array<Dialog> &list) const {
 	// Some data on this format here https://www.oldgamesitalia.net/forum/index.php?showtopic=24055&st=25&p=359214&#entry359214
 
-	list.resize(s->readUint16LE());
+	uint16 nitems = s->readUint16LE();
+	_checkListNotTooLong(nitems, "dialogs");
+	list.resize(nitems);
+
 	for (Dialog &dst : list) {
 		dst._num = s->readUint16LE();
 		dst._rect.x = s->readUint16LE();
@@ -389,8 +431,11 @@ bool Scene::readDialogList(Common::SeekableReadStream *s, Common::Array<Dialog> 
 
 bool Scene::readTriggerList(Common::SeekableReadStream *s, Common::Array<SceneTrigger> &list) const {
 	uint16 num = s->readUint16LE();
+	_checkListNotTooLong(num, "triggers");
 	for (uint16 i = 0; i < num; i++) {
 		list.push_back(SceneTrigger(s->readUint16LE()));
+		if (isVersionOver(" 1.219"))
+			list.back()._unk = s->readUint16LE();
 		readConditionList(s, list.back().conditionList);
 		readOpList(s, list.back().sceneOpList);
 	}
@@ -400,7 +445,9 @@ bool Scene::readTriggerList(Common::SeekableReadStream *s, Common::Array<SceneTr
 
 
 bool Scene::readDialogActionList(Common::SeekableReadStream *s, Common::Array<DialogAction> &list) const {
-	list.resize(s->readUint16LE());
+	uint16 num = s->readUint16LE();
+	_checkListNotTooLong(num, "dialog actions");
+	list.resize(num);
 
 	// The original initializes a field in the first entry to 1 here, but it seems
 	// only used for memory management so we don't need it?
@@ -795,8 +842,8 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 	_magic = stream->readUint32LE();
 	_version = stream->readString();
 	//if (isVersionOver(" 1.211")) { // Dragon
-	if (isVersionOver(" 1.216")) { // HoC
-	//if (isVersionOver(" 1.224")) { // Beamish
+	//if (isVersionOver(" 1.216")) { // HoC
+	if (isVersionOver(" 1.224")) { // Beamish
 		error("Unsupported scene version '%s'", _version.c_str());
 	}
 	_num = stream->readUint16LE();
@@ -818,6 +865,9 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 	}
 	if (isVersionOver(" 1.203")) {
 		readTriggerList(stream, _triggers);
+	}
+	if (isVersionOver(" 1.223")) {
+		warning("TODO: Read another list here.");
 	}
 
 	return !stream->err();
@@ -1436,7 +1486,7 @@ Common::Error SDSScene::syncState(Common::Serializer &s) {
 	return Common::kNoError;
 }
 
-GDSScene::GDSScene() {
+GDSScene::GDSScene() : _field38(0), _field3a(0), _field3c(0), _field3e(0), _field40(0) {
 }
 
 bool GDSScene::load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor) {
@@ -1606,6 +1656,20 @@ bool GDSScene::parse(Common::SeekableReadStream *stream) {
 	readObjInteractionList(stream, _objInteractions2);
 	if (isVersionOver(" 1.205"))
 		readObjInteractionList(stream, _objInteractions1);
+
+	if (isVersionOver(" 1.218")) {
+		_field38 = stream->readUint16LE();
+		_field3a = stream->readUint16LE();
+		_field3c = stream->readUint16LE();
+		_field3e = stream->readUint16LE();
+		_field40 = stream->readUint16LE();
+	} else {
+		_field38 = 0;
+		_field3a = 1;
+		_field3c = 2;
+		_field3e = 0;
+		_field40 = 6;
+	}
 
 	return !stream->err();
 }
