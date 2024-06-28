@@ -34,10 +34,11 @@
 #include "sci/graphics/view.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/scifx.h"
+#include "sci/graphics/gfxdrivers.h"
 
 namespace Sci {
 
-GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
+GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _resMan(resMan) {
 
 	// Scale the screen, if needed
 	_upscaledHires = GFX_SCREEN_UPSCALED_DISABLED;
@@ -147,6 +148,29 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 		break;
 	}
 
+	_gfxDrv = nullptr;
+	if (getSciVersion() <= SCI_VERSION_0_LATE || getSciVersion() == SCI_VERSION_1_EGA_ONLY) {
+		switch (renderMode) {
+		case Common::kRenderCGA:
+			_gfxDrv = new SCI0_CGADriver(false);
+			break;
+		case Common::kRenderCGA_BW:
+			_gfxDrv = new SCI0_CGABWDriver();
+			break;
+		case Common::kRenderHercA:
+		case Common::kRenderHercG:
+			_gfxDrv = new SCI0_HerculesDriver(renderMode == Common::kRenderHercG ? 1 : 0);
+			break;
+		case Common::kRenderEGA:
+		default:
+			_gfxDrv = new SCI0_EGADriver();
+			break;
+		}
+	} else {
+		_gfxDrv = new GfxDefaultDriver(_displayWidth, _displayHeight);
+	}
+	assert(_gfxDrv);
+
 	_displayPixels = _displayWidth * _displayHeight;
 
 	// Allocate visual, priority, control and display screen
@@ -218,7 +242,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 
 		initGraphics(_displayWidth, _displayHeight + macIconBarBuffer, format);
 	} else
-		initGraphics(_displayWidth, _displayHeight, format);
+		initGraphics(_gfxDrv->screenWidth(), _gfxDrv->screenHeight(), format);
 
 
 	_format = g_system->getScreenFormat();
@@ -253,6 +277,7 @@ GfxScreen::~GfxScreen() {
 	free(_rgbScreen);
 	delete[] _palette;
 	delete[] _backupScreen;
+	delete _gfxDrv;
 }
 
 void GfxScreen::convertToRGB(const Common::Rect &rect) {
@@ -368,7 +393,7 @@ void GfxScreen::displayRect(const Common::Rect &rect, int x, int y) {
 	// Clipping is assumed to be done already.
 
 	if (_format.bytesPerPixel == 1) {
-		g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, x, y, rect.width(), rect.height());
+		_gfxDrv->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, x, y, rect.width(), rect.height());
 	} else {
 		displayRectRGB(rect, x, y);
 	}
@@ -426,7 +451,9 @@ void GfxScreen::kernelSyncWithFramebuffer() {
 
 void GfxScreen::copyRectToScreen(const Common::Rect &rect) {
 	if (!_upscaledHires)  {
-		displayRect(rect, rect.left, rect.top);
+		uint8 align = _gfxDrv->hAlignment();
+		Common::Rect r(rect.left & ~align, rect.top, (rect.right + align) & ~align, rect.bottom);
+		displayRect(r, r.left, r.top);
 	} else {
 		int rectHeight = _upscaledHeightMapping[rect.bottom] - _upscaledHeightMapping[rect.top];
 		int rectWidth  = _upscaledWidthMapping[rect.right] - _upscaledWidthMapping[rect.left];
@@ -1047,7 +1074,6 @@ int16 GfxScreen::kernelPicNotValid(int16 newPicNotValid) {
 	return oldPicNotValid;
 }
 
-
 void GfxScreen::grabPalette(byte *buffer, uint start, uint num) const {
 	assert(start + num <= 256);
 	if (_format.bytesPerPixel == 1) {
@@ -1060,7 +1086,7 @@ void GfxScreen::grabPalette(byte *buffer, uint start, uint num) const {
 void GfxScreen::setPalette(const byte *buffer, uint start, uint num, bool update) {
 	assert(start + num <= 256);
 	if (_format.bytesPerPixel == 1) {
-		g_system->getPaletteManager()->setPalette(buffer, start, num);
+		_gfxDrv->setPalette(buffer, start, num);
 	} else {
 		memcpy(_palette + 3*start, buffer, 3*num);
 		if (update) {
@@ -1108,7 +1134,5 @@ void GfxScreen::setPaletteMods(const PaletteMod *mods, unsigned int count) {
 
 	_paletteModsEnabled = true;
 }
-
-
 
 } // End of namespace Sci

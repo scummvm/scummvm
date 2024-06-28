@@ -43,6 +43,7 @@
 #include "sci/graphics/compare.h"
 #include "sci/graphics/controls16.h"
 #include "sci/graphics/cursor.h"
+#include "sci/graphics/gfxdrivers.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/picture.h"
@@ -257,7 +258,7 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kGraphGetColorCount(EngineState *s, int argc, reg_t *argv) {
-	return make_reg(0, g_sci->_gfxPalette16->getTotalColorCount());
+	return make_reg(0, g_sci->_gfxScreen->gfxDriver()->numColors());
 }
 
 reg_t kGraphDrawLine(EngineState *s, int argc, reg_t *argv) {
@@ -614,7 +615,7 @@ reg_t kPaletteSetFromResource(EngineState *s, int argc, reg_t *argv) {
 	// Non-VGA games don't use palette resources.
 	// This has been changed to 64 colors because Longbow Amiga does have
 	// one palette (palette 999).
-	if (g_sci->_gfxPalette16->getTotalColorCount() < 64)
+	if (g_sci->_gfxScreen->gfxDriver()->numColors() < 64)
 		return s->r_acc;
 
 	g_sci->_gfxPalette16->kernelSetFromResource(resourceId, force);
@@ -644,7 +645,7 @@ reg_t kPaletteSetIntensity(EngineState *s, int argc, reg_t *argv) {
 	bool setPalette = (argc < 4) ? true : (argv[3].isNull()) ? true : false;
 
 	// Palette intensity in non-VGA SCI1 games has been removed
-	if (g_sci->_gfxPalette16->getTotalColorCount() < 256)
+	if (g_sci->_gfxScreen->gfxDriver()->numColors() < 256)
 		return s->r_acc;
 
 	if (setPalette) {
@@ -678,7 +679,7 @@ reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv) {
 	bool paletteChanged = false;
 
 	// Palette animation in non-VGA SCI1 games has been removed
-	if (g_sci->_gfxPalette16->getTotalColorCount() == 256) {
+	if (g_sci->_gfxScreen->gfxDriver()->numColors() == 256) {
 		for (int argNr = 0; argNr < argc; argNr += 3) {
 			uint16 fromColor = argv[argNr].toUint16();
 			uint16 toColor = argv[argNr + 1].toUint16();

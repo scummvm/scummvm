@@ -31,6 +31,8 @@
 #include "graphics/korfont.h"
 #include "graphics/pixelformat.h"
 
+#include "common/rendermode.h"
+
 namespace Sci {
 
 enum {
@@ -57,6 +59,8 @@ enum {
 	DITHERED_BG_COLORS_SIZE = 256
 };
 
+class GfxDriver;
+
 /**
  * Screen class, actually creates 3 (4) screens internally:
  * - visual/display (for the user),
@@ -67,7 +71,7 @@ enum {
  */
 class GfxScreen {
 public:
-	GfxScreen(ResourceManager *resMan);
+	GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode);
 	~GfxScreen();
 
 	uint16 getWidth() { return _width; }
@@ -157,6 +161,8 @@ public:
 	void setPaletteMods(const PaletteMod *mods, unsigned int count);
 	bool paletteModsEnabled() const { return _paletteModsEnabled; }
 
+	GfxDriver *gfxDriver() const { return _gfxDrv; }
+
 private:
 	uint16 _width;
 	uint16 _height;
@@ -199,6 +205,11 @@ private:
 	 */
 	byte *_displayScreen;
 	Graphics::Surface _displayScreenSurface;
+
+	/**
+	 * CGA and Hercules support
+	 */
+	GfxDriver *_gfxDrv;
 
 	// Screens for RGB mode support
 	byte *_displayedScreen;

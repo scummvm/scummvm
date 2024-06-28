@@ -30,6 +30,7 @@
 #include "gui/widgets/popup.h"
 
 #include "sci/detection.h"
+#include "sci/detection_internal.h"
 #include "sci/dialogs.h"
 #include "sci/graphics/helpers_detection_enums.h"
 #include "sci/sci.h"
@@ -213,11 +214,29 @@ public:
 		return "Sierra's Creative Interpreter (C) Sierra Online";
 	}
 
+	DetectedGames detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) override;
+
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override;
 
 private:
 	void addFileToDetectedGame(const Common::Path &name, const FileMap &allFiles, MD5Properties md5Prop, ADDetectedGame &game) const;
 };
+
+DetectedGames SciMetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) {
+	DetectedGames games = AdvancedMetaEngineDetection::detectGames(fslist, skipADFlags, skipIncomplete);
+
+	for (DetectedGame &game : games) {
+		const GameIdStrToEnum *g = s_gameIdStrToEnum;
+		for (; g->gameidStr; ++g) {
+			if (game.gameId.equals(g->gameidStr))
+				break;
+		}
+		game.setGUIOptions(customizeGuiOptions(fslist.begin()->getParent().getPath(), parseGameGUIOptions(game.getGUIOptions()), g->version));
+		game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(game.language));
+	}
+
+	return games;
+}
 
 ADDetectedGame SciMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
 	/**
