@@ -98,6 +98,7 @@ namespace Director {
 const char *DirectsoundXtra::xlibName = "Directsound";
 const XlibFileDesc DirectsoundXtra::fileNames[] = {
 	{ "directsound",	nullptr },
+	{ "Dsound_r", 		nullptr },
 	{ nullptr,			nullptr },
 };
 
@@ -191,7 +192,7 @@ void DirectsoundXtra::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
 }
 
-XOBJSTUB(DirectsoundXtra::m_dsOpen, 0)
+XOBJSTUB(DirectsoundXtra::m_dsOpen, 1)
 XOBJSTUB(DirectsoundXtra::m_dsNewSound, 0)
 XOBJSTUB(DirectsoundXtra::m_dsDelSound, 0)
 XOBJSTUB(DirectsoundXtra::m_dsDupSound, 0)
