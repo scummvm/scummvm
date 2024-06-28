@@ -84,7 +84,7 @@ View1::View1() : UIElement("View1") {
 	AnimFrame *View1::GetInventoryIcon(GameObject *gameObject) {
 		AnimFrame *result = new AnimFrame();
 		int index = 5 - 1;
-		if (is_in_list<uint16, 0x11, 0x22, 0x23>(gameObject->Index)) {
+		if (is_in_list<uint16, 0x11, 0x22, 0x23, 0x19>(gameObject->Index)) {
 			// gameObject->Index == 0x23 || gameObject->Index == 0x22) {
 			// TODO Figure out these - the mug has a different blob
 			index = 0x13;
