@@ -97,8 +97,8 @@ namespace Director {
 
 const char *DirectsoundXtra::xlibName = "Directsound";
 const XlibFileDesc DirectsoundXtra::fileNames[] = {
-	{ "directsound",   nullptr },
-	{ nullptr,        nullptr },
+	{ "directsound",	nullptr },
+	{ nullptr,			nullptr },
 };
 
 static MethodProto xlibMethods[] = {

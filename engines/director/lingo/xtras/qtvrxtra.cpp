@@ -155,8 +155,8 @@ namespace Director {
 
 const char *QtvrxtraXtra::xlibName = "Qtvrxtra";
 const XlibFileDesc QtvrxtraXtra::fileNames[] = {
-	{ "qtvrxtra",   nullptr },
-	{ nullptr,        nullptr },
+	{ "qtvrxtra",	nullptr },
+	{ nullptr,		nullptr },
 };
 
 static MethodProto xlibMethods[] = {
@@ -256,9 +256,8 @@ void QtvrxtraXtra::open(ObjectType type, const Common::Path &path) {
 }
 
 void QtvrxtraXtra::close(ObjectType type) {
-    QtvrxtraXtraObject::cleanupMethods();
-    g_lingo->_globalvars[xlibName] = Datum();
-
+	QtvrxtraXtraObject::cleanupMethods();
+	g_lingo->_globalvars[xlibName] = Datum();
 }
 
 void QtvrxtraXtra::m_new(int nargs) {
