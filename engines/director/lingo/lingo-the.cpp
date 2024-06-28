@@ -1266,7 +1266,7 @@ int Lingo::getMembersNum() {
 }
 
 int Lingo::getXtrasNum() {
-	return _openXLibs.size();
+	return _openXtras.size();
 }
 
 int Lingo::getMenuItemsNum(Datum &d) {
