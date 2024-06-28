@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-27 22:34+0000\n"
-"PO-Revision-Date: 2024-06-12 02:43+0000\n"
+"PO-Revision-Date: 2024-06-28 23:43+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -221,6 +221,9 @@ msgid ""
 "find it on the Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
+"Quan falla i no passa el codi JSON a ScummVM,\n"
+"cerca a la secció Resolució de problemes de la pàgina,\n"
+"i ves al següent pas aquí."
 
 #: gui/cloudconnectionwizard.cpp:354
 msgid "Manual Mode: Step 2"
@@ -663,7 +666,7 @@ msgstr "Camins"
 
 #: gui/editgamedialog.cpp:290
 msgid "Check Integrity"
-msgstr ""
+msgstr "Comprova la integritat"
 
 #: gui/editgamedialog.cpp:290
 msgid "Perform integrity check for all game files"
@@ -852,16 +855,13 @@ msgid "Launch Email Client"
 msgstr ""
 
 #: gui/integrity-dialog.cpp:174
-#, fuzzy
-#| msgid "Scan complete!"
 msgid "Calculation complete"
-msgstr "S'ha acabat la cerca!"
+msgstr "S'ha completat el càlcul"
 
 #: gui/integrity-dialog.cpp:263
-#, fuzzy, c-format
-#| msgid "Downloaded %s %S / %s %S"
+#, c-format
 msgid "Calculated %s %S / %s %S"
-msgstr "Descarregat: %s %S / %s %S"
+msgstr "Calculat %s %S / %s %S"
 
 #: gui/integrity-dialog.cpp:513
 msgid ""
@@ -5871,16 +5871,12 @@ msgid "Game Keymappings"
 msgstr "Assignacions de tecles del joc"
 
 #: engines/agos/metaengine.cpp:224
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Yes/No Keymapping"
-msgstr "Assignacions de tecles del joc"
+msgstr "Assignació de tecles Sí/No"
 
 #: engines/agos/metaengine.cpp:239
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Exit cutscene"
-msgstr "Salta la seqüència de video"
+msgstr "Surt de l'escena"
 
 #: engines/agos/metaengine.cpp:252 engines/vcruise/metaengine.cpp:176
 msgid "Music volume down"
@@ -5891,22 +5887,16 @@ msgid "Music volume up"
 msgstr "Apuja el volum de música"
 
 #: engines/agos/metaengine.cpp:263
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle Music on/off"
 msgstr "Activa/desactiva la música"
 
 #: engines/agos/metaengine.cpp:268
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Toggle Sound effect on/off"
 msgstr "Activa/desactiva els efectes de so"
 
 #: engines/agos/metaengine.cpp:273
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle Fast mode on/off"
-msgstr "Commuta el mode ràpid"
+msgstr "Activa/desactiva el mode ràpid"
 
 #: engines/agos/metaengine.cpp:285 engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
@@ -5916,10 +5906,8 @@ msgid "Walk forward"
 msgstr "Camina cap endavant"
 
 #: engines/agos/metaengine.cpp:291
-#, fuzzy
-#| msgid "Run backward"
 msgid "Turn backward"
-msgstr "Corre cap enrere"
+msgstr "Gira cap enrere"
 
 #: engines/agos/metaengine.cpp:297 engines/mohawk/riven.cpp:901
 #: engines/wintermute/keymapper_tables.h:161
@@ -5938,47 +5926,33 @@ msgid "Turn right"
 msgstr "Gira a la dreta"
 
 #: engines/agos/metaengine.cpp:311
-#, fuzzy
-#| msgid "Text speed slower / faster"
 msgid "Text speed - Fast"
-msgstr "Velocitat de text més lenta / més ràpida"
+msgstr "Velocitat del text - Ràpida"
 
 #: engines/agos/metaengine.cpp:316
-#, fuzzy
-#| msgid "Walking speed: Medium"
 msgid "Text speed - Medium"
-msgstr "Velocitat caminant: Mitjana"
+msgstr "Velocitat del text - Mitjana"
 
 #: engines/agos/metaengine.cpp:321
-#, fuzzy
-#| msgid "Text speed slower / faster"
 msgid "Text speed - Slow"
-msgstr "Velocitat de text més lenta / més ràpida"
+msgstr "Velocitat del text - Lenta"
 
 #: engines/agos/metaengine.cpp:326
-#, fuzzy
-#| msgid "Show Object Line"
 msgid "Show objects to interact"
-msgstr "Mostra l'etiqueta de l'objecte"
+msgstr "Mostra els objectes a interactuar"
 
 #: engines/agos/metaengine.cpp:333
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Toggle background sounds On/Off"
-msgstr "Activa/desactiva els efectes de so"
+msgstr "Activa/desactiva els sons de fons"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:342
-#, fuzzy
-#| msgid "Switching characters:"
 msgid "Switch characters"
-msgstr "Canvia els personatges:"
+msgstr "Canvia els personatges"
 
 #: engines/agos/metaengine.cpp:348
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle hitbox names on/off"
-msgstr "Activa/desactiva la música"
+msgstr "Activa/desactiva els noms dels punts d'interès"
 
 #: engines/agos/metaengine.cpp:355
 msgid "Switches between speech only and combined speech and subtitles"
@@ -6166,38 +6140,28 @@ msgid "Move right"
 msgstr "Mou a la dreta"
 
 #: engines/asylum/metaengine.cpp:226
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle animation on/off"
-msgstr "Activa/desactiva la música"
+msgstr "Activa/desactiva l'animació"
 
 #: engines/asylum/metaengine.cpp:232
-#, fuzzy
-#| msgid "Run a game"
 msgid "Return to gameplay"
-msgstr "Executa una partida"
+msgstr "Torna al joc"
 
 #: engines/asylum/metaengine.cpp:238
-#, fuzzy
-#| msgid "Previous Page"
 msgid "Previous resource"
-msgstr "Pàgina anterior"
+msgstr "Recurs anterior"
 
 #: engines/asylum/metaengine.cpp:245
 msgid "Next resource"
 msgstr ""
 
 #: engines/asylum/metaengine.cpp:252
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous palette"
-msgstr "Pàgina anterior"
+msgstr "Paleta anterior"
 
 #: engines/asylum/metaengine.cpp:259
-#, fuzzy
-#| msgid "Next page"
 msgid "Next palette"
-msgstr "Pàgina següent"
+msgstr "Paleta següent"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:203
@@ -7845,10 +7809,8 @@ msgid "Cursor Right"
 msgstr "Cursor Dreta"
 
 #: engines/made/metaengine.cpp:174
-#, fuzzy
-#| msgid "Reload last save"
 msgid "Repeat Last Message"
-msgstr "Torna a carregar l'última partida desada"
+msgstr "Repeteix l'últim missatge"
 
 #: engines/mads/metaengine.cpp:47
 msgid "Easy mouse interface"
@@ -8847,10 +8809,8 @@ msgid "Casio CT-460 / CSM-1"
 msgstr ""
 
 #: engines/sci/detection_tables.h:1419 engines/sci/detection_tables.h:1430
-#, fuzzy
-#| msgid "Failed to initialize resources"
 msgid "Game does not contain menu resources"
-msgstr "No s'han pogut inicialitzar els recursos"
+msgstr "El joc no conté recursos de menú"
 
 #: engines/sci/detection_tables.h:4594
 msgid "This demo uses an unimplemented version of Robot videos"
