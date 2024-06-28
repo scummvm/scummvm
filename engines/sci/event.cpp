@@ -28,6 +28,7 @@
 #include "sci/console.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
+#include "sci/graphics/gfxdrivers.h"
 #ifdef ENABLE_SCI32
 #include "sci/graphics/cursor32.h"
 #include "sci/graphics/frameout.h"
@@ -205,7 +206,7 @@ SciEvent EventManager::getScummVMEvent() {
 		found = em->pollEvent(ev);
 	} while (found && ev.type == Common::EVENT_MOUSEMOVE);
 
-	Common::Point mousePos = em->getMousePos();
+	Common::Point mousePos = g_sci->_gfxScreen->gfxDriver()->getMousePos();
 
 #if ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {

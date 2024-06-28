@@ -30,6 +30,7 @@
 #include "sci/sci.h"
 #include "sci/event.h"
 #include "sci/engine/state.h"
+#include "sci/graphics/gfxdrivers.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/coordadjuster.h"
@@ -175,7 +176,8 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 				resourceId, hotspot.x, hotspot.y, heightWidth, heightWidth);
 	}
 
-	CursorMan.replaceCursor(rawBitmap->getUnsafeDataAt(0, heightWidth * heightWidth), heightWidth, heightWidth, hotspot.x, hotspot.y, SCI_CURSOR_SCI0_TRANSPARENCYCOLOR);
+	_screen->gfxDriver()->replaceCursor(rawBitmap->getUnsafeDataAt(0, heightWidth * heightWidth), heightWidth, heightWidth, hotspot.x, hotspot.y, SCI_CURSOR_SCI0_TRANSPARENCYCOLOR);
+
 	if (g_system->getScreenFormat().bytesPerPixel != 1) {
 		byte buf[3*256];
 		_screen->grabPalette(buf, 0, 256);
@@ -251,7 +253,7 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 		_screen->scale2x(rawBitmap, *cursorBitmap, celInfo->width, celInfo->height);
 		CursorMan.replaceCursor(cursorBitmap->getUnsafeDataAt(0, width * height), width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
 	} else {
-		CursorMan.replaceCursor(rawBitmap.getUnsafeDataAt(0, width * height), width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
+		_screen->gfxDriver()->replaceCursor(rawBitmap.getUnsafeDataAt(0, width * height), width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
 	}
 	if (g_system->getScreenFormat().bytesPerPixel != 1) {
 		byte buf[3*256];
@@ -331,7 +333,7 @@ void GfxCursor::setPosition(Common::Point pos) {
 }
 
 Common::Point GfxCursor::getPosition() {
-	Common::Point mousePos = g_system->getEventManager()->getMousePos();
+	Common::Point mousePos = g_sci->_gfxScreen->gfxDriver()->getMousePos();
 
 	if (_upscaledHires)
 		_screen->adjustBackUpscaledCoordinates(mousePos.y, mousePos.x);
@@ -409,7 +411,7 @@ void GfxCursor::refreshPosition() {
 			}
 		}
 
-		CursorMan.replaceCursor(_cursorSurface->getUnsafeDataAt(0, cursorCelInfo->width * cursorCelInfo->height), cursorCelInfo->width, cursorCelInfo->height, cursorHotspot.x, cursorHotspot.y, cursorCelInfo->clearKey);
+		_screen->gfxDriver()->replaceCursor(_cursorSurface->getUnsafeDataAt(0, cursorCelInfo->width * cursorCelInfo->height), cursorCelInfo->width, cursorCelInfo->height, cursorHotspot.x, cursorHotspot.y, cursorCelInfo->clearKey);
 		if (g_system->getScreenFormat().bytesPerPixel != 1) {
 			byte buf[3*256];
 			_screen->grabPalette(buf, 0, 256);

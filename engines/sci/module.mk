@@ -49,6 +49,7 @@ MODULE_OBJS := \
 	graphics/cursor.o \
 	graphics/fontkorean.o \
 	graphics/fontsjis.o \
+	graphics/gfxdrivers.o \
 	graphics/macfont.o \
 	graphics/maciconbar.o \
 	graphics/menu.o \
