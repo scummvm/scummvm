@@ -20,6 +20,10 @@
  */
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "audio/decoders/wave.h"
+
+#include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/runtime/qd_dialogs.h"
 #include "qdengine/core/system/sound/wav_file.h"
@@ -163,7 +167,8 @@ bool wav_file_load(const char *fname, class wavSound *snd) {
 	if (!fname)
 		return false;
 
-	warning("STUB: wav_file_load()");
+
+	warning("STUB: wav_file_load() %s", transCyrillic(fname));
 #if 0
 	MMIOINFO inf;
 	memset(&inf, 0, sizeof(MMIOINFO));
