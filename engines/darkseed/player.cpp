@@ -162,7 +162,7 @@ void Darkseed::Player::calculateWalkTarget() {
 	numConnectorsInWalkPath = 0;
 	int selectedObjNum = 0;
 	if(g_engine->_actionMode == PointerAction) {
-		selectedObjNum = g_engine->_room->getObjectNumUnder6AtCursor();
+		selectedObjNum = g_engine->_room->getRoomExitAtCursor();
 	}
 
 	if (selectedObjNum == 0) {

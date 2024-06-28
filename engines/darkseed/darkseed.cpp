@@ -225,6 +225,89 @@ void DarkseedEngine::wait() {
 	}
 }
 
+static constexpr uint8 walkToDirTbl[] =
+	{0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
+	 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
+	 0x04, 0x04, 0x04, 0x01, 0x04, 0x04, 0x04, 0x00,
+	 0x04, 0x04, 0x04, 0x04, 0x01, 0x04, 0x01, 0x00,
+	 0x00, 0x00, 0x04, 0x01, 0x04, 0x04, 0x04, 0x04,
+	 0x04, 0x04, 0x04, 0x04, 0x00, 0x04, 0x00, 0x03,
+	 0x01, 0x04, 0x04, 0x04, 0x00, 0x04, 0x04, 0x00,
+	 0x04, 0x01, 0x04, 0x04, 0x04, 0x00, 0x04, 0x04,
+	 0x04, 0x04, 0x00, 0x00, 0x00, 0x04, 0x04, 0x04,
+	 0x04, 0x04, 0x04, 0x04, 0x04, 0x01, 0x04, 0x04,
+	 0x03, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x03,
+	 0x03, 0x03, 0x03, 0x03, 0x01, 0x01, 0x03, 0x03,
+	 0x03, 0x03, 0x01, 0x04, 0x03, 0x00, 0x04, 0x00,
+	 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x00, 0x04,
+	 0x04, 0x04, 0x03, 0x04, 0x04, 0x01, 0x00, 0x04,
+	 0x04, 0x04, 0x04, 0x03, 0x04, 0x04, 0x04, 0x01,
+	 0x04, 0x04, 0x03, 0x04, 0x04, 0x00, 0x01, 0x00,
+	 0x04, 0x04, 0x04, 0x03, 0x04, 0x01, 0x04, 0x00,
+	 0x00, 0x00, 0x04, 0x00, 0x01, 0x00, 0x00, 0x00,
+	 0x04, 0x04, 0x04, 0x04, 0x00, 0x04, 0x00, 0x04,
+	 0x00, 0x04, 0x00, 0x04, 0x04, 0x04, 0x04, 0x04,
+	 0x04, 0x04, 0x03, 0x03, 0x03, 0x03, 0x03, 0x00,
+	 0x04, 0x04, 0x04, 0x04, 0x00, 0x04, 0x04, 0x04,
+	 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x01, 0x04,
+	 0x04, 0x04, 0x01, 0x04, 0x03, 0x00, 0x04};
+
+static constexpr int16 walkToXTbl[] = {
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 212, 0, 0, 0, 253,
+	0, 0, 0, 0, 464, 0, 405, 325,
+	325, 325, 0, 505, 0, 0, 0, 0,
+	0, 0, 0, 0, 489, 0, 340, 300,
+	340, 0, 0, 0, 218, 0, 0, 391,
+	0, 308, 0, 0, 0, 484, 0, 0,
+	0, 0, 288, 288, 288, 0, 0, 0,
+	0, 0, 0, 0, 0, 437, 0, 0,
+	437, 0, 0, 0, 0, 0, 0, 338,
+	480, 159, 316, 387, 390, 466, 218, 331,
+	316, 230, 346, 0, 153, 534, 0, 156,
+	0, 0, 0, 0, 0, 0, 297, 0,
+	0, 0, 0, 201, 0, 457, 327, 0,
+	0, 0, 0, 223, 0, 0, 0, 477,
+	0, 0, 202, 0, 0, 221, 464, 369,
+	0, 0, 0, 179, 0, 142, 0, 156,
+	293, 359, 0, 260, 463, 269, 208, 156,
+	0, 0, 0, 0, 251, 0, 357, 0,
+	428, 0, 357, 0, 0, 0, 0, 0,
+	0, 0, 210, 244, 212, 202, 348, 0,
+	0, 0, 0, 0, 389, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 465, 0,
+	0, 0, 458, 0, 210, 260, 0
+};
+
+static constexpr uint8 walkToYTbl[] = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	 0x00, 0x00, 0x00, 0xd7, 0x00, 0x00, 0x00, 0xcf,
+	 0x00, 0x00, 0x00, 0x00, 0xd8, 0x00, 0xaa, 0xe1,
+	 0xe1, 0xe1, 0x00, 0xc8, 0x00, 0x00, 0x00, 0x00,
+	 0x00, 0x00, 0x00, 0x00, 0xd5, 0x00, 0xd4, 0xb7,
+	 0xd9, 0x00, 0x00, 0x00, 0xc6, 0x00, 0x00, 0xd3,
+	 0x00, 0xb8, 0x00, 0x00, 0x00, 0xaa, 0x00, 0x00,
+	 0x00, 0x00, 0xcd, 0xcd, 0xcd, 0x00, 0x00, 0x00,
+	 0x00, 0x00, 0x00, 0x00, 0x00, 0xdf, 0x00, 0x00,
+	 0xd2, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xb6,
+	 0xdf, 0xbc, 0xa2, 0xa0, 0xa1, 0xaa, 0xdd, 0xcd,
+	 0xd1, 0xd8, 0xe2, 0x00, 0xd7, 0xd5, 0x00, 0xaa,
+	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc5, 0x00,
+	 0x00, 0x00, 0x00, 0xb8, 0x00, 0xbd, 0xb4, 0x00,
+	 0x00, 0x00, 0x00, 0xbe, 0x00, 0x00, 0x00, 0xdb,
+	 0x00, 0x00, 0xee, 0x00, 0x00, 0xc5, 0xd9, 0xd8,
+	 0x00, 0x00, 0x00, 0xcc, 0x00, 0xd8, 0x00, 0xb6,
+	 0xc6, 0xc8, 0x00, 0xd3, 0xba, 0xd2, 0xd2, 0xaa,
+	 0x00, 0x00, 0x00, 0x00, 0xe1, 0x00, 0xd6, 0x00,
+	 0xe0, 0x00, 0xab, 0x00, 0x00, 0x00, 0x00, 0x00,
+	 0x00, 0x00, 0xe8, 0xb9, 0xd7, 0xcf, 0xb2, 0x00,
+	 0x00, 0x00, 0x00, 0x00, 0xbf, 0x00, 0x00, 0x00,
+	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xbc, 0x00,
+	 0x00, 0x00, 0xec, 0x00, 0xe8, 0xd3, 0x00
+};
+
 void DarkseedEngine::handleInput() {
 	// FUN_2022_762b_handles_mouse_click_action
 	int currentRoomNumber = _room->_roomNumber;
@@ -261,9 +344,107 @@ void DarkseedEngine::handleInput() {
 						_player->calculateWalkTarget();
 						_player->playerFaceWalkTarget();
 					} else {
-						int objNum = getObjectUnderCursor();
-						if (objNum != -1) {
+						int roomObjIdx = _room->getObjectUnderCursor();
+						if (roomObjIdx != -1) {
+							// 2022:77ce
+							// TODO walk player to object.
+//							walkToSequence = 1;
+//							newPlayerFacingDirection = 255;
+//							cursorSequenceXPosition = curXPosition;
+//							cursorSequenceYPosition = curYPosition;
+							Common::Point currentCursorPos = _cursor.getPosition();
+							int objNum = _room->_roomObj[roomObjIdx].objNum;
+							if (walkToDirTbl[objNum] != 4) {
+								_player->playerNewFacingDirection_maybe = walkToDirTbl[objNum];
+								_cursor.updatePosition(walkToXTbl[objNum], walkToYTbl[objNum]);
+							}
+							if (objNum == 142 && _room->_roomNumber == 2) {
+								_player->playerNewFacingDirection_maybe = 0;
+								_cursor.updatePosition(347, 189);
+							} else if (objNum == 53 && _room->_roomNumber == 15) {
+								_player->playerNewFacingDirection_maybe = 0;
+								_cursor.updatePosition(369, 216);
+							} else if (objNum == 114) {
+								if (_cursor.getX() < 321) {
+									_player->playerNewFacingDirection_maybe = 3;
+									_cursor.updatePosition(169, 178);
+								} else {
+									_player->playerNewFacingDirection_maybe = 1;
+									_cursor.updatePosition(362, 198);
+								}
+							} else if (objNum == 189 || (objNum == 64 && _room->_roomNumber == 30)) {
+								_player->playerNewFacingDirection_maybe = 1;
+								_cursor.updatePosition(405, 208);
+							} else if (objNum == 50 || objNum == 85 || (objNum >= 163 && objNum <= 168)) {
+								_player->playerNewFacingDirection_maybe = 3;
+								_cursor.updatePosition(228, 211);
+							} else if (objNum == 51 || objNum == 187) {
+								_player->playerNewFacingDirection_maybe = 1;
+								_cursor.updatePosition(380, 211);
+							} else if (objNum == 116 && _actionMode == Unk19Action) {
+								_player->playerNewFacingDirection_maybe = 1;
+								_cursor.updatePosition(285, 233);
+							} else if (objNum == 137) {
+								_player->playerNewFacingDirection_maybe = 1;
+								if (_actionMode == Unk27Action) {
+									_cursor.updatePosition(354, 175);
+								} else {
+									_cursor.updatePosition(409, 173);
+								}
+							} else if (objNum == 112 || objNum == 111) {
+							_player->playerNewFacingDirection_maybe = 1;
+							_cursor.updatePosition(464, 191);
+							} else if (objNum == 138 || objNum == 7 || objNum == 152) {
+								_player->playerNewFacingDirection_maybe = 1;
+								_cursor.updatePosition(292, 208);
+							} else if (objNum == 22 || objNum == 42 ||
+									   (objNum == 35 && _objectVar[22] < 2 && _cursor.getY() > 40)) {
+								_player->playerNewFacingDirection_maybe = 1;
+								if (_objectVar[22] == 0 || _objectVar[22] == 1) {
+									_cursor.updatePosition(437, 203);
+								}
+								if (_objectVar[22] == 2) {
+									_cursor.updatePosition(427, 196);
+								}
+								if (_objectVar[22] > 2) {
+									_cursor.updatePosition(394, 175);
+								}
+							}
 
+							if (objNum == 102 && _objectVar[23] != 0 && _actionMode == HandAction) {
+								_player->playerNewFacingDirection_maybe = 0;
+								_cursor.updatePosition(331, 195);
+							} else if (objNum < 104 || objNum > 108) {
+								if (objNum == 78) {
+									if (_room->_roomNumber == 2) {
+										_player->playerNewFacingDirection_maybe = 3;
+										_cursor.updatePosition(152, 239);
+									} else {
+										_player->playerNewFacingDirection_maybe = 1;
+										_cursor.updatePosition(497, 220);
+									}
+								} else if (objNum == 59) {
+									if (_room->_roomNumber == 3) {
+										_player->playerNewFacingDirection_maybe = 3;
+										_cursor.updatePosition(145, 239);
+									} else {
+										_player->playerNewFacingDirection_maybe = 1;
+										_cursor.updatePosition(520, 229);
+									}
+								}
+							} else {
+								_player->playerNewFacingDirection_maybe = 3;
+								_cursor.updatePosition(_room->_roomObj[roomObjIdx].xOffset + 30, 206);
+							}
+							if (_room->_roomNumber == 34 || (_room->_roomNumber > 18 && _room->_roomNumber < 24)) {
+								_player->_walkTarget = _player->_position;
+							} else if (_cursor.getPosition() != _player->_position) {
+								_player->calculateWalkTarget();
+							}
+
+							_cursor.updatePosition(currentCursorPos.x, currentCursorPos.y);
+							_player->playerFaceWalkTarget();
+							_player->isPlayerWalking_maybe = true;
 						}
 					}
 				}
@@ -301,14 +482,14 @@ void DarkseedEngine::handleInput() {
 				_room->calculateScaledSpriteDimensions(_player->getWidth(), _player->getHeight(), _player->_position.y);
 
 				if (_player->isAtWalkTarget() && _player->BoolEnum_2c85_811c && !_player->isPlayerWalking_maybe) {
-					if (BoolByteEnum_2c85_9e67) {
+					if (useDoorTarget) {
 						_player->changeDirection(_player->_direction, targetPlayerDirection);
-						BoolByteEnum_2c85_9e67 = false;
+						useDoorTarget = false;
 						BoolByteEnum_2c85_8324 = true;
 						return;
 					}
 					_player->BoolEnum_2c85_811c = false;
-					if (BoolByteEnum_2c85_9e67 || BoolByteEnum_2c85_8324) {
+					if (useDoorTarget || BoolByteEnum_2c85_8324) {
 						for (int i = 0; i < _room->room1.size(); i++) {
 							RoomExit &roomExit = _room->room1[i];
 							if (roomExit.roomNumber != 0xff
@@ -318,13 +499,13 @@ void DarkseedEngine::handleInput() {
 								&& _player->_position.y - scaledSpriteHeight < roomExit.y + roomExit.height
 								&& roomExit.direction == _player->_direction) {
 								bool bVar = true;
-								if (currentRoomNumber == 0x40 && roomExit.roomNumber == 0x40) {
+								if (currentRoomNumber == 64 && roomExit.roomNumber == 64) {
 									bVar = false;
-									_console->printTosText(0x2bf);
+									_console->printTosText(703);
 								}
-								if (currentRoomNumber == 0x43 && roomExit.roomNumber == 0) {
+								if (currentRoomNumber == 67 && roomExit.roomNumber == 0) {
 									bVar = false;
-									_console->printTosText(0x386);
+									_console->printTosText(902);
 								}
 								// 2022:808a TODO
 //								if (currentRoomNumber == 0x3b)
@@ -891,11 +1072,6 @@ void DarkseedEngine::advanceAnimationFrame(int nspAminIdx) {
 		}
 		spriteAnimCountdownTimer[nspAminIdx] = anim.frameDuration[animIndexTbl[nspAminIdx]];
 	}
-}
-
-int DarkseedEngine::getObjectUnderCursor() {
-	// TODO
-	return -1;
 }
 
 Common::String DarkseedEngine::getRoomFilePath(const Common::String &filename) {

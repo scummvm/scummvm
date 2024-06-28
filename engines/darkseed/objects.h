@@ -23,22 +23,29 @@
 #define DARKSEED_OBJECTS_H
 
 #include "common/array.h"
+#include "common/rect.h"
 namespace Darkseed {
 
 class Objects {
 private:
 	Common::Array<int16> _objectVar;
 	Common::Array<int16> _objectRunningCode;
-	Common::Array<uint16> _moveObjectX;
-	Common::Array<uint16> _moveObjectY;
+	Common::Array<Common::Point> _moveObjectXY;
 	Common::Array<uint8> _moveObjectRoom;
 
 public:
+	static constexpr int MAX_MOVED_OBJECTS = 42;
+	static constexpr int MAX_OBJECTS = 199;
 	Objects();
 	void reset();
 
 	void setVar(uint16 varIdx, int16 newValue);
 	int16 getVar(uint16 varIdx);
+
+	Common::Point getMoveObjectPosition(uint8 objIdx);
+
+	int16 &operator[](uint16 varIdx);
+	const int16 &operator[](uint16 varIdx) const;
 };
 
 } // namespace Darkseed

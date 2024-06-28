@@ -24,6 +24,7 @@
 
 #include "pal.h"
 #include "pic.h"
+#include "nsp.h"
 #include "common/rect.h"
 
 namespace Darkseed {
@@ -62,13 +63,16 @@ public:
 	int _roomNumber;
 	Pic pic;
 	Pal _pal;
+	Nsp _locationSprites;
 
 	Common::Array<RoomExit> room1;
 	Common::Array<RoomStruct2> walkableLocationsMap;
-	Common::Array<RoomObjElement> room3;
+	Common::Array<RoomObjElement> _roomObj;
 	Common::Array<RoomConnector> connectors;
 
 	uint16 selectedObjIndex = 0;
+	int16 _collisionType = 0;
+
 public:
 	explicit Room(int roomNumber);
 
@@ -78,8 +82,11 @@ public:
 
 	int checkCursorAndMoveableObjects();
 	int checkCursorAndStaticObjects(int x, int y);
-	int getObjectNumUnder6AtCursor();
+	int CheckCursorAndMovedObjects();
+	int getRoomExitAtCursor();
 	void getWalkTargetForObjectType_maybe(int objId);
+	int getObjectUnderCursor();
+	uint16 getDoorTargetRoom(int objId);
 	int getExitRoomNumberAtPoint(int x, int y);
 	bool exitRoom();
 	Common::String getRoomFilenameBase(int roomNumber);

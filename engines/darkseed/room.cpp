@@ -45,7 +45,7 @@ const static int roomDescriptionTextTbl[] = {
 Darkseed::Room::Room(int roomNumber) : _roomNumber(roomNumber) {
 	room1.resize(8);
 	walkableLocationsMap.resize(16);
-	room3.resize(30);
+	_roomObj.resize(30);
 
 	if(!load()) {
 		error("Failed to load room %d", roomNumber);
@@ -85,28 +85,28 @@ bool Darkseed::Room::load() {
 	}
 
 	for (int i = 0; i < 30; i++) {
-		room3[i].type = file.readUint16BE();
-		room3[i].objNum = file.readUint16BE();
-		room3[i].xOffset = file.readUint16BE();
-		room3[i].yOffset = file.readUint16BE();
-		room3[i].width = file.readUint16BE();
-		room3[i].height = file.readUint16BE();
-		room3[i].depth = file.readByte();
-		room3[i].spriteNum = file.readByte();
+		_roomObj[i].type = file.readUint16BE();
+		_roomObj[i].objNum = file.readUint16BE();
+		_roomObj[i].xOffset = file.readUint16BE();
+		_roomObj[i].yOffset = file.readUint16BE();
+		_roomObj[i].width = file.readUint16BE();
+		_roomObj[i].height = file.readUint16BE();
+		_roomObj[i].depth = file.readByte();
+		_roomObj[i].spriteNum = file.readByte();
 
-		if (room3[i].spriteNum >= 0x29 && room3[i].type != 0 && room3[i].type != 1000) {
-			room3[i].height = 0x14;
-			room3[i].width = 0x14;
-			room3[i].type = 0;
+		if (_roomObj[i].spriteNum >= 0x29 && _roomObj[i].type != 0 && _roomObj[i].type != 1000) {
+			_roomObj[i].height = 0x14;
+			_roomObj[i].width = 0x14;
+			_roomObj[i].type = 0;
 		}
 
-		if (room3[i].objNum == 0 && room3[i].type == 1) {
+		if (_roomObj[i].objNum == 0 && _roomObj[i].type == 1) {
 			if (connectors.size() == 0xc) {
 				error("Too many connectors in this room, max of %d", 0xc);
 			}
 			RoomConnector connector;
-			connector.x = room3[i].xOffset;
-			connector.y = room3[i].yOffset;
+			connector.x = _roomObj[i].xOffset;
+			connector.y = _roomObj[i].yOffset;
 
 			if (connector.x > 565) {
 				connector.x = 565;
@@ -123,17 +123,20 @@ bool Darkseed::Room::load() {
 
 			debug("Room Connector: %d %d", connector.x, connector.y);
 			connectors.push_back(connector);
-			room3[i].type = 0xff;
+			_roomObj[i].type = 0xff;
 		}
 	}
 
 	file.close();
 
+	_collisionType = 0;
 	if(!pic.load(picFilename)) {
 		return false;
 	}
 
 	_pal.load(g_engine->getPictureFilePath(Common::String::format("%s.pal", filenameBase.c_str())));
+
+	_locationSprites.load(Common::String::format("%s.nsp", filenameBase.c_str()));
 
 	return true;
 }
@@ -173,22 +176,23 @@ int Darkseed::Room::checkCursorAndMoveableObjects() {
 									 : g_engine->_cursor.getSprite();
 	bool hasObject = false;
 	int objNum = -1;
-	for (int i = 0; i < room3.size(); i++) {
-		if ((room3[i].type == 1 || room3[i].type == 3)
-			&& room3[i].xOffset <= cursorSprite.width + g_engine->_cursor.getX()
-			&& g_engine->_cursor.getX() <= room3[i].width + room3[i].xOffset
-			&& room3[i].yOffset <= cursorSprite.height + g_engine->_cursor.getY()
-			&& g_engine->_cursor.getY() <= room3[i].height + room3[i].yOffset
+	_collisionType = 0;
+	for (int i = 0; i < _roomObj.size(); i++) {
+		if ((_roomObj[i].type == 1 || _roomObj[i].type == 3)
+			&& _roomObj[i].xOffset <= cursorSprite.width + g_engine->_cursor.getX()
+			&& g_engine->_cursor.getX() <= _roomObj[i].width + _roomObj[i].xOffset
+			&& _roomObj[i].yOffset <= cursorSprite.height + g_engine->_cursor.getY()
+			&& g_engine->_cursor.getY() <= _roomObj[i].height + _roomObj[i].yOffset
 		) {
-			if (room3[i].objNum == 25) {
-				if (g_engine->_objects.getVar(80) < 3) {
+			if (_roomObj[i].objNum == 25) {
+				if (g_engine->_objectVar.getVar(80) < 3) {
 					hasObject = false;
 				} else {
 					hasObject = true;
 				}
 			}
 
-			if (room3[i].objNum == 14 && g_engine->_cursor.getY() > 40 && g_engine->_objects.getVar(86) == 0) {
+			if (_roomObj[i].objNum == 14 && g_engine->_cursor.getY() > 40 && g_engine->_objectVar.getVar(86) == 0) {
 				hasObject = false;
 			}
 
@@ -206,38 +210,39 @@ int Darkseed::Room::checkCursorAndStaticObjects(int x, int y) {
 									 ? g_engine->_cursor.getSpriteForType(ExclamationMark)
 									 : g_engine->_cursor.getSprite();
 	bool hasObject = false;
-	for (int i = 0; i < room3.size(); i++) {
-		if (room3[i].type == 0
-			&& room3[i].xOffset <= cursorSprite.width + g_engine->_cursor.getX()
-			&& g_engine->_cursor.getX() <= room3[i].width + room3[i].xOffset
-			&& room3[i].yOffset <= cursorSprite.height + g_engine->_cursor.getY()
-			&& g_engine->_cursor.getY() <= room3[i].height + room3[i].yOffset
+	_collisionType = 0;
+	for (int i = 0; i < _roomObj.size(); i++) {
+		if (_roomObj[i].type == 0
+			&& _roomObj[i].xOffset <= cursorSprite.width + g_engine->_cursor.getX()
+			&& g_engine->_cursor.getX() <= _roomObj[i].width + _roomObj[i].xOffset
+			&& _roomObj[i].yOffset <= cursorSprite.height + g_engine->_cursor.getY()
+			&& g_engine->_cursor.getY() <= _roomObj[i].height + _roomObj[i].yOffset
 		) {
-			if (actionMode != PointerAction && room3[i].objNum >= 5) {
+			if (actionMode != PointerAction && _roomObj[i].objNum >= 5) {
 				hasObject = true;
 			}
 
-			if (actionMode == PointerAction && room3[i].objNum < 6) {
+			if (actionMode == PointerAction && _roomObj[i].objNum < 6) {
 				hasObject = true;
 			}
 
-			if (room3[i].objNum == 59 || room3[i].objNum == 78) {
-				if (g_engine->_objects.getVar(34) == 1) {
+			if (_roomObj[i].objNum == 59 || _roomObj[i].objNum == 78) {
+				if (g_engine->_objectVar.getVar(34) == 1) {
 					hasObject = true;
 				} else {
 					hasObject = false;
 				}
 			}
 
-			if (room3[i].objNum == 0x19 && hasObject) {
-				if (g_engine->_objects.getVar(80) < 2) {
+			if (_roomObj[i].objNum == 0x19 && hasObject) {
+				if (g_engine->_objectVar.getVar(80) < 2) {
 					hasObject = false;
 				} else {
 					hasObject = true;
 				}
 			}
 
-			if (room3[i].objNum == 0x74 && hasObject && (int)actionMode != 0x13) {
+			if (_roomObj[i].objNum == 0x74 && hasObject && (int)actionMode != 0x13) {
 				hasObject = false;
 			}
 
@@ -249,14 +254,52 @@ int Darkseed::Room::checkCursorAndStaticObjects(int x, int y) {
 	return -1;
 }
 
+int Darkseed::Room::CheckCursorAndMovedObjects() {
+	ActionMode actionMode = g_engine->_actionMode;
+	const Sprite &cursorSprite = (actionMode == LookAction)
+									 ? g_engine->_cursor.getSpriteForType(ExclamationMark)
+									 : g_engine->_cursor.getSprite();
+	_collisionType = 1;
+	for (int i = 0; i < Objects::MAX_MOVED_OBJECTS; i++) {
+		Common::Point movedObjPos = g_engine->_objectVar.getMoveObjectPosition(i);
+		int16 spriteWidth = 0;
+		int16 spriteHeight = 0;
+		if (i == 22) {
+			uint8 spriteIdx = g_engine->_objectVar.getVar(5) != 0 ? 1 : 0;
+			const Sprite &sprite = _locationSprites.getSpriteAt(spriteIdx);
+			spriteWidth = sprite.width;
+			spriteHeight = sprite.height;
+		} else {
+			const Sprite &sprite = g_engine->_baseSprites.getSpriteAt(i);
+			spriteWidth = sprite.width;
+			spriteHeight = sprite.height;
+		}
+		calculateScaledSpriteDimensions(spriteWidth, spriteHeight, movedObjPos.y);
+
+		if (
+			((spriteWidth / 2 + movedObjPos.x) - g_engine->scaledSpriteWidth / 2 <= cursorSprite.width + g_engine->_cursor.getX()) &&
+			(g_engine->_cursor.getX() <= ((spriteWidth / 2 + movedObjPos.x) - g_engine->scaledSpriteWidth / 2) + g_engine->scaledSpriteWidth) &&
+			((movedObjPos.y + spriteHeight) - g_engine->scaledSpriteHeight <= cursorSprite.height + g_engine->_cursor.getY()) &&
+			g_engine->_cursor.getY() <= movedObjPos.y + spriteHeight
+		) {
+			return i;
+		}
+	}
+	return -1;
+}
+
 void Darkseed::Room::update() {
 	if (g_engine->_actionMode == HandAction) {
 		int moveableObj = checkCursorAndMoveableObjects();
 		if (moveableObj == -1) {
 			int objectUnderCursor = checkCursorAndStaticObjects(g_engine->_cursor.getX(), g_engine->_cursor.getY());
 			if (objectUnderCursor == -1) {
-				// TODO CheckCursorAndMovedObjects();
-				g_engine->_cursor.setCursorType(Hand);
+				int movedObject = CheckCursorAndMovedObjects();
+				if (movedObject == -1) {
+					g_engine->_cursor.setCursorType(Hand);
+				} else {
+					g_engine->_cursor.setCursorType(HandPointing);
+				}
 			} else {
 				g_engine->_cursor.setCursorType(HandPointing);
 			}
@@ -264,10 +307,48 @@ void Darkseed::Room::update() {
 			g_engine->_cursor.setCursorType(HandPointing);
 		}
 	} else if (g_engine->_actionMode == LookAction) {
+		if (checkCursorAndMoveableObjects() != -1 || CheckCursorAndMovedObjects() != -1) {
+			g_engine->_cursor.setCursorType(ExclamationMark);
+		} else {
+			int objIdx = checkCursorAndStaticObjects(0,0);
+			if (objIdx != -1 && _roomObj[objIdx].objNum > 7) {
+				g_engine->_cursor.setCursorType(ExclamationMark);
+			} else {
+				g_engine->_cursor.setCursorType(Look);
+			}
+		}
+	} else {
+		if (g_engine->_actionMode != PointerAction) {
+			g_engine->_cursor.setCursorType(Pointer);
+		}
 
-	} else if (g_engine->_actionMode == PointerAction) {
 		int objectUnderCursor = checkCursorAndStaticObjects(g_engine->_cursor.getX(), g_engine->_cursor.getY());
-		g_engine->_cursor.setCursorType(objectUnderCursor != -1 ? ConnectorEntrance : Pointer);
+		if ((objectUnderCursor == -1 || _roomObj[objectUnderCursor].objNum > 5 || _roomObj[objectUnderCursor].type != 0) &&
+			(g_engine->_objectVar[59] != 2 || _roomObj[objectUnderCursor].objNum != 59) &&
+			(g_engine->_objectVar[78] != 2 || _roomObj[objectUnderCursor].objNum != 78)
+			) {
+			g_engine->_cursor.setCursorType(Pointer);
+		} else {
+			int roomExitObjNum = getRoomExitAtCursor();
+			uint16 targetRoomNumber = getDoorTargetRoom(roomExitObjNum);
+			if ((((((_roomNumber == 59) && (g_engine->_objectVar[190] < 2)) ||
+				   ((_roomNumber == 61 && ((g_engine->_objectVar[22] < 3 && (targetRoomNumber == 13)))))) ||
+				  ((_roomNumber == 7 && ((targetRoomNumber == 38 && (g_engine->_objectVar[137] == 0)))))) ||
+				 ((((_roomNumber == 7 && ((targetRoomNumber == 38 && (g_engine->_objectVar[57] == 1)))) ||
+					((_roomNumber == 46 && ((targetRoomNumber == 60 && (g_engine->_objectVar[57] == 1)))))) ||
+				   ((((_roomNumber == 13 && ((targetRoomNumber == 31 && (g_engine->_objectVar[23] != 1)))) ||
+					  ((_roomNumber == 2 && ((targetRoomNumber == 0 && (g_engine->_objectVar[78] != 2)))))) ||
+					 ((_roomNumber == 0 && ((targetRoomNumber == 2 && (g_engine->_objectVar[78] != 2)))))))))) ||
+				(((_roomNumber == 32 && ((targetRoomNumber == 13 && (g_engine->_objectVar[23] != 1)))) ||
+				  (((((_roomNumber == 13 && ((targetRoomNumber == 32 && (g_engine->_objectVar[23] != 1)))) ||
+					  ((_roomNumber == 39 && ((targetRoomNumber == 46 && (g_engine->_objectVar[117] == 0)))))) ||
+					 ((_roomNumber == 3 && ((targetRoomNumber == 9 && (g_engine->_objectVar[59] != 2)))))) ||
+					((_roomNumber == 9 && ((targetRoomNumber == 3 && (g_engine->_objectVar[59] != 2)))))))))) {
+				g_engine->_cursor.setCursorType(Pointer);
+			} else {
+				g_engine->_cursor.setCursorType(ConnectorEntrance);
+			}
+		}
 	}
 }
 
@@ -279,10 +360,10 @@ int Darkseed::Room::getExitRoomNumberAtPoint(int x, int y) {
 	for (int i = 0; i < room1.size(); i++) {
 		if (
 			room1[i].roomNumber != 0xff
-			&& room3[obj].xOffset <= room1[i].x
-			&& room1[i].x <= room3[obj].width + room3[obj].xOffset
-			&& room3[obj].yOffset <= room1[i].y
-			&& room1[i].y <= room3[obj].yOffset + room3[obj].height
+			&& _roomObj[obj].xOffset <= room1[i].x
+			&& room1[i].x <= _roomObj[obj].width + _roomObj[obj].xOffset
+			&& _roomObj[obj].yOffset <= room1[i].y
+			&& room1[i].y <= _roomObj[obj].yOffset + _roomObj[obj].height
 			) {
 			return room1[i].roomNumber;
 		}
@@ -355,31 +436,31 @@ void Darkseed::Room::printRoomDescriptionText() const {
 	}
 }
 
-int Darkseed::Room::getObjectNumUnder6AtCursor() {
-	for (int i = 0; i < room3.size(); i++) {
-		Common::Rect roomRect(room3[i].xOffset, room3[i].yOffset, room3[i].xOffset + room3[i].width, room3[i].yOffset + room3[i].height);
-		if (room3[i].type == 0 && room3[i].objNum < 6 && roomRect.contains(g_engine->_cursor.getPosition())) {
+int Darkseed::Room::getRoomExitAtCursor() {
+	for (int i = 0; i < _roomObj.size(); i++) {
+		Common::Rect roomRect(_roomObj[i].xOffset, _roomObj[i].yOffset, _roomObj[i].xOffset + _roomObj[i].width, _roomObj[i].yOffset + _roomObj[i].height);
+		if (_roomObj[i].type == 0 && _roomObj[i].objNum < 6 && roomRect.contains(g_engine->_cursor.getPosition())) {
 			selectedObjIndex = i;
-			return room3[i].objNum;
+			return _roomObj[i].objNum;
 		}
 	}
 	return 0;
 }
 
 void Darkseed::Room::getWalkTargetForObjectType_maybe(int objId) {
-	for (int i = 0; i < room3.size(); i++) {
-		if (room3[i].objNum == objId && room3[i].type == 4) {
-			g_engine->_player->_walkTarget.x = room3[i].xOffset;
-			g_engine->_player->_walkTarget.y = room3[i].yOffset;
+	for (int i = 0; i < _roomObj.size(); i++) {
+		if (_roomObj[i].objNum == objId && _roomObj[i].type == 4) {
+			g_engine->_player->_walkTarget.x = _roomObj[i].xOffset;
+			g_engine->_player->_walkTarget.y = _roomObj[i].yOffset;
 			for (int j = 0; j < room1.size(); j++) {
 				if (room1[j].roomNumber != 0xff
-					&& room3[selectedObjIndex].xOffset < room1[j].x
-					&& room1[j].x < room3[selectedObjIndex].xOffset + room3[selectedObjIndex].width
-					&& room3[selectedObjIndex].yOffset < room1[j].y
-					&& room1[j].y < room3[selectedObjIndex].yOffset + room3[selectedObjIndex].height
+					&& _roomObj[selectedObjIndex].xOffset < room1[j].x
+					&& room1[j].x < _roomObj[selectedObjIndex].xOffset + _roomObj[selectedObjIndex].width
+					&& _roomObj[selectedObjIndex].yOffset < room1[j].y
+					&& room1[j].y < _roomObj[selectedObjIndex].yOffset + _roomObj[selectedObjIndex].height
 					) {
 					if (_roomNumber != 0x3d || room1[j].roomNumber == 5 || g_engine->trunkPushCounter > 2) {
-						g_engine->BoolByteEnum_2c85_9e67 = true;
+						g_engine->useDoorTarget = true;
 					}
 					g_engine->targetRoomNumber = room1[j].roomNumber;
 					g_engine->targetPlayerDirection = room1[j].direction;
@@ -443,4 +524,34 @@ void Darkseed::Room::calculateScaledSpriteDimensions(int width, int height, int 
 	g_engine->scaledWalkSpeed_maybe = room_sprite_related_2c85_41e[_roomNumber] - ((room_sprite_related_2c85_4303[_roomNumber] * local_6) / 5);
 	g_engine->scaledSpriteWidth = (width * g_engine->scaledWalkSpeed_maybe) / 1000;
 	g_engine->scaledSpriteHeight = (height * g_engine->scaledWalkSpeed_maybe) / 1000;
+}
+
+uint16 Darkseed::Room::getDoorTargetRoom(int objId) {
+	for (int i = 0; i < _roomObj.size(); i++) {
+		if (_roomObj[i].objNum == objId && _roomObj[i].type == 4) {
+			for (int j = 0; j < room1.size(); j++) {
+				if (room1[j].roomNumber != 0xff
+					&& _roomObj[selectedObjIndex].xOffset < room1[j].x
+					&& room1[j].x < _roomObj[selectedObjIndex].xOffset + _roomObj[selectedObjIndex].width
+					&& _roomObj[selectedObjIndex].yOffset < room1[j].y
+					&& room1[j].y < _roomObj[selectedObjIndex].yOffset + _roomObj[selectedObjIndex].height
+				) {
+					return room1[j].roomNumber;
+				}
+			}
+		}
+	}
+	return g_engine->targetRoomNumber; //TODO is this a safe fallback if no door exists?
+}
+
+int Darkseed::Room::getObjectUnderCursor() {
+	_collisionType = 0;
+	int objIdx = checkCursorAndMoveableObjects();
+	if (objIdx == -1) {
+		objIdx = CheckCursorAndMovedObjects();
+		if (objIdx == -1) {
+			objIdx = checkCursorAndStaticObjects(0,0);
+		}
+	}
+	return objIdx;
 }
