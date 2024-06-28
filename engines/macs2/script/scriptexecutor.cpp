@@ -1452,7 +1452,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 				GameObject* parentObject = GameObjects::instance().Objects[sceneID - 0x400 - 1];
 				GameObject *childObject = GameObjects::instance().Objects[objectID - 1];
 				childObject->SceneIndex = parentObject->Index;
-				return;
+				continue;
 			}
 
 			View1 *currentView = (View1 *)_engine->findView("View1");

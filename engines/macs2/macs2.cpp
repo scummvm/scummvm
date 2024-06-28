@@ -994,7 +994,7 @@ uint16 Macs2Engine::GetInteractedBackgroundHotspot(const Common::Point &p) {
 		}
 		i++;
 		// TODO: Should it be <= ?
-	} while (i < numHotspots);
+	} while (i <= numHotspots);
 	return 0;
 }
 
