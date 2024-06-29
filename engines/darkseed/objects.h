@@ -45,6 +45,8 @@ public:
 	Common::Point getMoveObjectPosition(uint8 objIdx);
 	int getEyeDescriptionTosIdx(uint16 objNum);
 
+	int getMoveObjectRoom(uint16 idx);
+
 	int16 &operator[](uint16 varIdx);
 	const int16 &operator[](uint16 varIdx) const;
 };

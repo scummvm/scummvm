@@ -110,7 +110,7 @@ public:
 	int spriteAnimCountdownTimer[20];
 
 	// Unknown variables
-	bool BoolByteEnum_2c85_8324 = false;
+	bool _doorEnabled = false;
 	uint16 DAT_2c85_825c = 0;
 	uint16 DAT_2c85_819c = 0;
 	bool BoolEnum_2c85_985a = false;

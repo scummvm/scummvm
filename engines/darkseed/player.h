@@ -39,6 +39,8 @@ public:
 	Common::Point _position;
 	Common::Point _positionLong; // the original sometimes seems to use a long (4 byte) version of the location
 	Common::Point _walkTarget;
+	Common::Point _finalTarget;
+
 	int16 playerSpriteWalkIndex_maybe = 0;
 	int16 playerWalkFrameDeltaOffset = 0;
 	int16 playerNewFacingDirection_maybe = 0;
@@ -46,9 +48,12 @@ public:
 	bool isPlayerWalking_maybe = false; // player is pathfinding to some destination?
 	bool _playerIsChangingDirection = false;
 	bool _isAutoWalkingToBed = false;
-	bool BoolEnum_2c85_811c = false; // maybe set to true while player is walking around the room.
+	bool _heroMoving = false; // maybe set to true while player is walking around the room.
 	int walkPathIndex = -1;
 	uint16 numConnectorsInWalkPath = 0;
+	Common::Array<Common::Point> _connectorList;
+	bool _walkToSequence = false;
+	Common::Point _walkToSequencePoint;
 
 public:
 	Player();
@@ -67,6 +72,11 @@ public:
 	int getHeight();
 	void updatePlayerPositionAfterRoomChange();
 	void updateBedAutoWalkSequence();
+	void walkToNextConnector();
+
+private:
+	void createConnectorPathToDest();
+	Common::Point getClosestUnusedConnector(int16 x, int16 y, bool mustHaveCleanLine = false);
 };
 
 } // namespace Darkseed

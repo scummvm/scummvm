@@ -136,3 +136,10 @@ int Darkseed::Objects::getEyeDescriptionTosIdx(uint16 objNum) {
 	}
 	return eyeDescriptionsTbl[objNum];
 }
+
+int Darkseed::Objects::getMoveObjectRoom(uint16 idx) {
+	if (idx >= MAX_OBJECTS) {
+		error("getMoveObjectRoom: index out of range.");
+	}
+	return _moveObjectRoom[idx];
+}
