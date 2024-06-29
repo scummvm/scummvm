@@ -40,6 +40,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{ QDEngine::kDebugQuant, "quant", "Enable quant tracing"},
 	{ QDEngine::kDebugSave, "save", "Enable save tracing"},
 	{ QDEngine::kDebugLog, "log", "See log messages"},
+	{ QDEngine::kDebugSound, "sound", "Sound debug level"},
 	DEBUG_CHANNEL_END
 };
 

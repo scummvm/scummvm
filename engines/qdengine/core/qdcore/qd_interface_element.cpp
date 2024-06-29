@@ -106,10 +106,10 @@ bool qdInterfaceElement::set_state(const qdInterfaceElementState *p) {
 	qdInterfaceElementState::state_mode_t mode = p -> state_mode();
 
 	set_animation(p -> animation(mode), p -> animation_flags(mode));
-
 	if (p -> sound(mode)) {
-		if (sndDispatcher * dp = sndDispatcher::get_dispatcher())
+		if (sndDispatcher * dp = sndDispatcher::get_dispatcher()) {
 			dp -> stop_sound(&sound_handle_);
+		}
 
 		p -> sound(mode) -> play(&sound_handle_);
 	}

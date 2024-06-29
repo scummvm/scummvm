@@ -19,6 +19,9 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/sound/ds_sound.h"
 #include "qdengine/core/system/sound/wav_sound.h"
@@ -48,9 +51,12 @@ dsSound::~dsSound() {
 	release_sound_buffer();
 }
 
-bool dsSound::create_sound_buffer() {
+bool dsSound::create_sound_buffer(Audio::SeekableAudioStream *stream) {
 	if (!sound())
 		return false;
+
+	delete _stream;
+	_stream = stream;
 
 	warning("STUB: dsSound::create_sound_buffer()");
 #if 0
@@ -112,29 +118,28 @@ bool dsSound::release_sound_buffer() {
 }
 
 bool dsSound::play() {
+	if (!_stream) {
+		return false;
+	}
 	flags_ &= ~SOUND_FLAG_PAUSED;
-
-	if (!sound_buffer_) return false;
+	g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, _soundHandle, _stream);
 	warning("STUB: dsSound::play()");
-#if 0
-	DWORD flags = (flags_ & SOUND_FLAG_LOOPING) ? DSBPLAY_LOOPING : 0;
-	sound_buffer_ -> Play(0, 0, flags);
-#endif
 	return true;
 }
 
 bool dsSound::stop() {
-	if (!sound_buffer_) return false;
+	if (!_stream) {
+		return false;
+	}
+	
 	warning("STUB: dsSound::stop()");
-#if 0
-	sound_buffer_ -> Stop();
-#endif
+	g_system->getMixer()->stopHandle(*_soundHandle);
 	return true;
 }
 
 void dsSound::pause() {
 	flags_ |= SOUND_FLAG_PAUSED;
-	stop();
+	g_system->getMixer()->pauseHandle(*_soundHandle, true);
 }
 
 void dsSound::resume() {
