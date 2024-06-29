@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-28 12:40+0000\n"
-"PO-Revision-Date: 2024-06-28 23:43+0000\n"
+"PO-Revision-Date: 2024-06-30 06:43+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -670,7 +670,7 @@ msgstr "Comprova la integritat"
 
 #: gui/editgamedialog.cpp:290
 msgid "Perform integrity check for all game files"
-msgstr ""
+msgstr "Realitza la comprovació d'integritat per a tots els fitxers de joc"
 
 #: gui/editgamedialog.cpp:295
 msgid "Game Path:"
@@ -845,14 +845,16 @@ msgstr "Notes:"
 msgid ""
 "Verifying file integrity may take a long time to complete. Please wait...\n"
 msgstr ""
+"La verificació de la integritat del fitxer pot trigar molt a completar-se. "
+"Espereu...\n"
 
 #: gui/integrity-dialog.cpp:107 gui/integrity-dialog.cpp:168
 msgid "Calculating file checksums..."
-msgstr ""
+msgstr "S'estan calculant les sumes de verificació dels fitxers..."
 
 #: gui/integrity-dialog.cpp:120
 msgid "Launch Email Client"
-msgstr ""
+msgstr "Inicia el client de correu electrònic"
 
 #: gui/integrity-dialog.cpp:174
 msgid "Calculation complete"
@@ -871,21 +873,29 @@ msgid ""
 "If you are sure that this is a valid unknown variant, please send the "
 "following e-mail to integrity@scummvm.org"
 msgstr ""
+"###Resultats\n"
+"El vostre conjunt de fitxers del joc sembla ser desconegut per a nosaltres.\n"
+"\n"
+"Si esteu segur que aquesta és una variant vàlida desconeguda, envieu el "
+"següent correu electrònic a integrity@scummvm.org"
 
 #: gui/integrity-dialog.cpp:537
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr ""
+"Sembla que el joc no té cap fitxer. Esteu segur que el camí és correcte?"
 
 #: gui/integrity-dialog.cpp:542
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
 msgstr ""
+"Sembla que el joc no té cap metadada associada amb ell, per la qual cosa no "
+"es pot comparar. Si us plau, ompliu les metadades correctes per al joc."
 
 #: gui/integrity-dialog.cpp:569
 msgid "Files all OK"
-msgstr ""
+msgstr "Tots els fitxers són correctes"
 
 #: gui/filebrowser-dialog.cpp:53
 msgid "Choose file for loading"
