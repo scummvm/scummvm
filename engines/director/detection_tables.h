@@ -345,6 +345,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "nightlight",			"Night Light" },
 	{ "nikolaiknights",		"Nikolai in Time: In the Time of the Knights" },
 	{ "nikolaimystery",		"Nikolai's Mysteries: The Mystery of the Black Windows" },
+	{ "nikolaipharaohs",	"Nikolai's Pharaohs" },
 	{ "nikolaipirates",		"Nikolai's Pirates" },
 	{ "nikolaispace",		"Nikolai in Outer Space" },
 	{ "nikolaispaceedu",	"Nikolai Space Education" },
@@ -4260,9 +4261,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("gusolis", "Demo", "Cyberopolis DEMO", "r:77f4098988d5386794d1530065f514cd", 303961, 404),
 
 	MACGAME1("guspark", "",		"Gus goes to CyberStone Park", "r:ccfbfc1a0ac231db40a250babaa6ad7c", 285282, 404),
-	MACGAME1("guspark", "",		"Gus goes to CyberStone Park", "r:ccfbfc1a0ac231db40a250babaa6ad7c", 288490, 404),
+	MACGAME1("guspark", "",		"Gus goes to CyberStone Park", "tr:6cb8084d74e94d6f04f619ee9b423a06", 288490, 404),
 	WINGAME1("guspark", "",		"PCINST/CYBSTONE.EXE", "d:ac22c7568c90ab4af7396148521f446e", 707439, 404),
-	WINGAME2("guspark", "",		"CYBSTONE.EXE",		   "d:dc0be57ab8e9f9b54de24ac41b1b4854", 703913,
+	WINGAME2("guspark", "",		"PCINST/CYBSTONE.EXE", "t:296e7735cc8fbf8d2fb6046cef88ee4c", 703913,
 								"CONTENT/INTRO.DIR",   "d:05fbf807ea9b766a12c2c08483cc6fa7", 1082406, 404),
 	WINGAME2_l("guspark", "",	"CYBSTONE.EXE",		   "d:dc0be57ab8e9f9b54de24ac41b1b4854", 703913,
 								"CONTENT/INTRO.DIR",   "d:fb97a887ac99dcb5a1a78520cc00c7d9", 1092858, Common::PT_BRA, 404),
@@ -6758,10 +6759,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// All original Mac filenames end with ™
 	// Nikolai in Outer Space did not get a Mac release
 	MACGAME1("nikolaiknights", "v2.0", "Nikolai's Knights",   "c43bfadda9be111e461dc0b735430ad3", 720690, 501),
-	MACGAME1("nikolaimystery", "",     "Nikolai's Mysteries", "c43bfadda9be111e461dc0b735430ad3", 719241, 501),
-	MACGAME1("nikolaipirates", "",     "Nikolai's Pirates",   "c43bfadda9be111e461dc0b735430ad3", 719289, 501),
 	WINGAME1("nikolaiknights", "v2.0", "KNIGHT95.EXE",         "1a7acbba10a7246ba58c1d53fc7203f5", 1410541, 501),
+
+	MACGAME1("nikolaimystery", "",     "Nikolai's Mysteries", "c43bfadda9be111e461dc0b735430ad3", 719241, 501),
+
+	WINGAME1("nikolaipharaohs", "",    "PHAR95.EXE",           "t:97e3ec47de3b06d8349d34c2016cc528", 1407221, 501),
+
+	MACGAME1("nikolaipirates", "",     "Nikolai's Pirates",   "c43bfadda9be111e461dc0b735430ad3", 719289, 501),
 	WINGAME1("nikolaipirates", "",     "PIRATE95.EXE",         "3460ad87d2ba57104e2810a77b53c220", 1394017, 500),
+
 	WINGAME1("nikolaispace", "",       "0_LAUNCH.EXE",         "3460ad87d2ba57104e2810a77b53c220", 1394291, 501),
 
 	// spaceedu module can also be launched externally
