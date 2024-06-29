@@ -48,6 +48,8 @@ public:
 	CursorType getCursorType() { return _currentCursorType; }
 
 	Common::Point &getPosition() { return _position; }
+	void setPosition(Common::Point &position) { _position = position; }
+
 	int16 getX() const { return _position.x; }
 	int16 getY() const { return _position.y; }
 

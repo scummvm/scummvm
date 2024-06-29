@@ -101,10 +101,10 @@ bool Darkseed::Room::load() {
 		}
 
 		if (_roomObj[i].objNum == 0 && _roomObj[i].type == 1) {
-			if (connectors.size() == 0xc) {
-				error("Too many connectors in this room, max of %d", 0xc);
+			if (_connectors.size() == MAX_CONNECTORS) {
+				error("Too many connectors in this room, max of %d", MAX_CONNECTORS);
 			}
-			RoomConnector connector;
+			Common::Point connector;
 			connector.x = _roomObj[i].xOffset;
 			connector.y = _roomObj[i].yOffset;
 
@@ -122,7 +122,7 @@ bool Darkseed::Room::load() {
 			}
 
 			debug("Room Connector: %d %d", connector.x, connector.y);
-			connectors.push_back(connector);
+			_connectors.push_back(connector);
 			_roomObj[i].type = 0xff;
 		}
 	}
@@ -261,28 +261,29 @@ int Darkseed::Room::CheckCursorAndMovedObjects() {
 									 : g_engine->_cursor.getSprite();
 	_collisionType = 1;
 	for (int i = 0; i < Objects::MAX_MOVED_OBJECTS; i++) {
-		Common::Point movedObjPos = g_engine->_objectVar.getMoveObjectPosition(i);
-		int16 spriteWidth = 0;
-		int16 spriteHeight = 0;
-		if (i == 22) {
-			uint8 spriteIdx = g_engine->_objectVar.getVar(5) != 0 ? 1 : 0;
-			const Sprite &sprite = _locationSprites.getSpriteAt(spriteIdx);
-			spriteWidth = sprite.width;
-			spriteHeight = sprite.height;
-		} else {
-			const Sprite &sprite = g_engine->_baseSprites.getSpriteAt(i);
-			spriteWidth = sprite.width;
-			spriteHeight = sprite.height;
-		}
-		calculateScaledSpriteDimensions(spriteWidth, spriteHeight, movedObjPos.y);
+		if (g_engine->_objectVar.getMoveObjectRoom(i) == _roomNumber) {
+			Common::Point movedObjPos = g_engine->_objectVar.getMoveObjectPosition(i);
+			int16 spriteWidth = 0;
+			int16 spriteHeight = 0;
+			if (i == 22) {
+				uint8 spriteIdx = g_engine->_objectVar.getVar(5) != 0 ? 1 : 0;
+				const Sprite &sprite = _locationSprites.getSpriteAt(spriteIdx);
+				spriteWidth = sprite.width;
+				spriteHeight = sprite.height;
+			} else {
+				const Sprite &sprite = g_engine->_baseSprites.getSpriteAt(i);
+				spriteWidth = sprite.width;
+				spriteHeight = sprite.height;
+			}
+			calculateScaledSpriteDimensions(spriteWidth, spriteHeight, movedObjPos.y);
 
-		if (
-			((spriteWidth / 2 + movedObjPos.x) - g_engine->scaledSpriteWidth / 2 <= cursorSprite.width + g_engine->_cursor.getX()) &&
-			(g_engine->_cursor.getX() <= ((spriteWidth / 2 + movedObjPos.x) - g_engine->scaledSpriteWidth / 2) + g_engine->scaledSpriteWidth) &&
-			((movedObjPos.y + spriteHeight) - g_engine->scaledSpriteHeight <= cursorSprite.height + g_engine->_cursor.getY()) &&
-			g_engine->_cursor.getY() <= movedObjPos.y + spriteHeight
-		) {
-			return i;
+			if (
+				((spriteWidth / 2 + movedObjPos.x) - g_engine->scaledSpriteWidth / 2 <= cursorSprite.width + g_engine->_cursor.getX()) &&
+				(g_engine->_cursor.getX() <= ((spriteWidth / 2 + movedObjPos.x) - g_engine->scaledSpriteWidth / 2) + g_engine->scaledSpriteWidth) &&
+				((movedObjPos.y + spriteHeight) - g_engine->scaledSpriteHeight <= cursorSprite.height + g_engine->_cursor.getY()) &&
+				g_engine->_cursor.getY() <= movedObjPos.y + spriteHeight) {
+				return i;
+			}
 		}
 	}
 	return -1;
@@ -387,46 +388,180 @@ bool Darkseed::Room::canWalkAtLocation(int x, int y) {
 	return (walkableLocationsMap[t / 8].strip[(y - 40) / 5] >> (7 - (t % 8) & 0x1f) & 1);
 }
 
-bool Darkseed::Room::canWalkInLineToTarget(int x, int y, int targetX, int targetY) {
-	int iVar2 = targetX - x;
-	int iVar3 = targetY - y;
+bool Darkseed::Room::canWalkInLineToTarget(int srcX, int srcY, int destX, int destY) {
+	int iVar1;
+	int iVar2;
+	int iVar4;
 
-	if (iVar2 < 0 || iVar3 > 0) {
-		if (iVar2 < 1 && iVar3 < 1) {
-			if (-iVar2 <= -iVar3) {
-				int iVar4 = 0;
-				do {
-					if (x == targetX) {
-						return true;
+	iVar1 = destX - srcX;
+	destY = destY - srcY;
+	iVar4 = 0;
+	if ((iVar1 < 0) || (0 < destY)) {
+		if ((iVar1 < 1) && (destY < 1)) {
+			iVar2 = -iVar1;
+			if (-iVar1 <= -destY) { //destY == iVar1 || SBORROW2(iVar2,-destY) != iVar2 + destY < 0) { //-iVar1 <= -destY
+				while (srcX != destX) {
+					iVar4 = iVar4 - iVar1;
+					if (-iVar4 == destY || -destY < iVar4) {
+						iVar4 = iVar4 + destY;
+						srcX = srcX + -1;
 					}
-					iVar4 -= iVar2;
-					if (-iVar4 == iVar3 || -iVar3 < iVar4) {
-						iVar4 += iVar3;
-						x--;
+					srcY = srcY + -1;
+					iVar2 = canWalkAtLocation(srcX,srcY);
+					if (iVar2 == 0) {
+						return 0;
 					}
-					y--;
-				} while (canWalkAtLocation(x, y));
+				}
 			}
-		} else {
-			int iVar4 = 0;
-			do {
-				if (x == targetX) {
-					return true;
+			else {
+				while (srcX != destX) {
+					iVar4 = iVar4 - destY;
+					if (-iVar4 == iVar1 || -iVar1 < iVar4) {
+						iVar4 = iVar4 + iVar1;
+						srcY = srcY + -1;
+					}
+					srcX = srcX + -1;
+					iVar2 = canWalkAtLocation(srcX,srcY);
+					if (iVar2 == 0) {
+						return 0;
+					}
 				}
-				iVar4 -= iVar3;
-				if (-iVar4 == iVar2 || -iVar2 < iVar4) {
-					iVar4 += iVar2;
-					y--;
-				}
-				x--;
-			} while (canWalkAtLocation(x, y));
+			}
 		}
-	} else if (-iVar3 < iVar2) {
-
-	} else {
-
+		else if ((iVar1 < 1) && (0 < destY)) {
+			iVar2 = -iVar1;
+			if (-destY == iVar1 || iVar2 < destY) {
+				while (srcX != destX) {
+					iVar4 = iVar4 - iVar1;
+					if (destY <= iVar4) {
+						iVar4 = iVar4 - destY;
+						srcX = srcX + -1;
+					}
+					srcY = srcY + 1;
+					iVar2 = canWalkAtLocation(srcX,srcY);
+					if (iVar2 == 0) {
+						return 0;
+					}
+				}
+			}
+			else {
+				while (srcX != destX) {
+					iVar4 = iVar4 + destY;
+					if (-iVar4 == iVar1 || -iVar1 < iVar4) {
+						iVar4 = iVar4 + iVar1;
+						srcY = srcY + 1;
+					}
+					srcX = srcX + -1;
+					iVar2 = canWalkAtLocation(srcX,srcY);
+					if (iVar2 == 0) {
+						return 0;
+					}
+				}
+			}
+		}
+		else {
+			iVar2 = iVar1;
+			if (destY < iVar1) {
+				while (srcX != destX) {
+					iVar4 = iVar4 + destY;
+					if (iVar1 <= iVar4) {
+						iVar4 = iVar4 - iVar1;
+						srcY = srcY + 1;
+					}
+					srcX = srcX + 1;
+					iVar2 = canWalkAtLocation(srcX,srcY);
+					if (iVar2 == 0) {
+						return 0;
+					}
+				}
+			}
+			else {
+				while (srcX != destX) {
+					iVar4 = iVar4 + iVar1;
+					if (destY <= iVar4) {
+						iVar4 = iVar4 - destY;
+						srcX = srcX + 1;
+					}
+					srcY = srcY + 1;
+					iVar2 = canWalkAtLocation(srcX,srcY);
+					if (iVar2 == 0) {
+						return 0;
+					}
+				}
+			}
+		}
 	}
-	return false;
+	else {
+		iVar2 = -destY;
+		if (iVar2 < iVar1) {
+			while (srcX != destX) {
+				iVar4 = iVar4 - destY;
+				if (iVar1 <= iVar4) {
+					iVar4 = iVar4 - iVar1;
+					srcY = srcY + -1;
+				}
+				srcX = srcX + 1;
+				iVar2 = canWalkAtLocation(srcX,srcY);
+				if (iVar2 == 0) {
+					return 0;
+				}
+			}
+		}
+		else {
+			while (srcX != destX) {
+				iVar4 = iVar4 + iVar1;
+				if (-iVar4 == destY || -destY < iVar4) {
+					iVar4 = iVar4 + destY;
+					srcX = srcX + 1;
+				}
+				srcY = srcY + -1;
+				iVar2 = canWalkAtLocation(srcX,srcY);
+				if (iVar2 == 0) {
+					return 0;
+				}
+			}
+		}
+	}
+	return true;
+//	int iVar2 = targetX - x;
+//	int iVar3 = targetY - y;
+//
+//	if (iVar2 < 0 || iVar3 > 0) {
+//		if (iVar2 < 1 && iVar3 < 1) {
+//			if (-iVar2 <= -iVar3) {
+//				int iVar4 = 0;
+//				do {
+//					if (x == targetX) {
+//						return true;
+//					}
+//					iVar4 -= iVar2;
+//					if (-iVar4 == iVar3 || -iVar3 < iVar4) {
+//						iVar4 += iVar3;
+//						x--;
+//					}
+//					y--;
+//				} while (canWalkAtLocation(x, y));
+//			}
+//		} else {
+//			int iVar4 = 0;
+//			do {
+//				if (x == targetX) {
+//					return true;
+//				}
+//				iVar4 -= iVar3;
+//				if (-iVar4 == iVar2 || -iVar2 < iVar4) {
+//					iVar4 += iVar2;
+//					y--;
+//				}
+//				x--;
+//			} while (canWalkAtLocation(x, y));
+//		}
+//	} else if (-iVar3 < iVar2) {
+//
+//	} else {
+//
+//	}
+//	return false;
 }
 
 void Darkseed::Room::printRoomDescriptionText() const {

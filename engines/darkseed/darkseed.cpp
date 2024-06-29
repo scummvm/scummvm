@@ -323,7 +323,7 @@ void DarkseedEngine::handleInput() {
 			if (currentRoomNumber == 0x39 &&_previousRoomNumber == 0x36) {
 				_player->updateSprite();
 			} else {
-				if (_player->isAtWalkTarget() && !_player->BoolEnum_2c85_811c) {
+				if (_player->isAtWalkTarget() && !_player->_heroMoving) {
 					_player->updateSprite();
 				} else {
 					if (counter_2c85_888b >= 0 && !_player->isAtWalkTarget()) {
@@ -348,10 +348,9 @@ void DarkseedEngine::handleInput() {
 						if (roomObjIdx != -1) {
 							// 2022:77ce
 							// TODO walk player to object.
-//							walkToSequence = 1;
+							_player->_walkToSequence = true;
+							_player->_walkToSequencePoint = _cursor.getPosition();
 							_player->playerNewFacingDirection_maybe = -1;
-//							cursorSequenceXPosition = curXPosition;
-//							cursorSequenceYPosition = curYPosition;
 							Common::Point currentCursorPos = _cursor.getPosition();
 							int objNum = _room->_roomObj[roomObjIdx].objNum;
 							if (walkToDirTbl[objNum] != 4) {
@@ -461,7 +460,8 @@ void DarkseedEngine::handleInput() {
 					}
 					_cursor.setCursorType((CursorType)_actionMode);
 				}
-				if (_player->isAtWalkTarget() && _player->BoolEnum_2c85_811c && _player->walkPathIndex != 0xff) {
+				if (_player->isAtWalkTarget() && _player->_heroMoving && _player->walkPathIndex != -1) {
+					_player->walkToNextConnector();
 //					if (walkPathIndex + 1 < numConnectorsInWalkPath) {
 //						walkPathIndex = walkPathIndex + 1;
 //						walkTargetX = *(uint *)((int)roomConnectorXPositionTbl +
@@ -481,15 +481,15 @@ void DarkseedEngine::handleInput() {
 				}
 				_room->calculateScaledSpriteDimensions(_player->getWidth(), _player->getHeight(), _player->_position.y);
 
-				if (_player->isAtWalkTarget() && _player->BoolEnum_2c85_811c && !_player->isPlayerWalking_maybe) {
+				if (_player->isAtWalkTarget() && _player->_heroMoving && !_player->isPlayerWalking_maybe) {
 					if (useDoorTarget) {
 						_player->changeDirection(_player->_direction, targetPlayerDirection);
 						useDoorTarget = false;
-						BoolByteEnum_2c85_8324 = true;
+						_doorEnabled = true;
 						return;
 					}
-					_player->BoolEnum_2c85_811c = false;
-					if (useDoorTarget || BoolByteEnum_2c85_8324) {
+					_player->_heroMoving = false;
+					if (useDoorTarget || _doorEnabled) {
 						for (int i = 0; i < _room->room1.size(); i++) {
 							RoomExit &roomExit = _room->room1[i];
 							if (roomExit.roomNumber != 0xff
@@ -512,7 +512,7 @@ void DarkseedEngine::handleInput() {
 								if (bVar) {
 									if (currentRoomNumber != 0x22 && (currentRoomNumber < 0x13 || currentRoomNumber > 0x17)) {
 										_player->_playerIsChangingDirection = false;
-										_player->BoolEnum_2c85_811c = false;
+										_player->_heroMoving = false;
 										_player->updateSprite();
 										updateDisplay();
 										_previousRoomNumber = currentRoomNumber;
@@ -546,22 +546,25 @@ void DarkseedEngine::handleInput() {
 						_player->playerNewFacingDirection_maybe = -1;
 						return;
 					}
-					_player->BoolEnum_2c85_811c = false;
+					_player->_heroMoving = false;
 					_player->isPlayerWalking_maybe = false;
 					// TODO complete at final destination logic. 2022:879d
-//					if (walkToSequence != 0) {
-//						walkToSequence = 0;
-//						curXPosition = cursorSequenceXPosition;
-//						curYPosition = cursorSequenceYPosition;
-//					}
+					Common::Point currentCursorPos = _cursor.getPosition();
+					if (_player->_walkToSequence) {
+						_cursor.setPosition(_player->_walkToSequencePoint);
+						_player->_walkToSequence = false;
+					}
 					int objIdx = _room->getObjectUnderCursor();
+					_cursor.setPosition(currentCursorPos);
+					if (objIdx != -1) {
 					int objType = _room->_roomObj[objIdx].type;
 					int objNum = _room->_roomObj[objIdx].objNum;
-					if (objIdx != -1 && ((objType != 4 && objType != 0 && objType < 10) || objNum > 5 || _room->_collisionType != 0)) {
-						if (_room->_collisionType == 0) {
-							handleObjCollision(objNum);
-						} else {
-							handleObjCollision(objIdx); // TODO is this correct?
+						if (((objType != 4 && objType != 0 && objType < 10) || objNum > 5 || _room->_collisionType != 0)) {
+							if (_room->_collisionType == 0) {
+								handleObjCollision(objNum);
+							} else {
+								handleObjCollision(objIdx); // TODO is this correct?
+							}
 						}
 					}
 				}
@@ -622,7 +625,7 @@ void DarkseedEngine::handleInput() {
 									local_6--;
 								} else {
 									_player->_position.x -= local_6;
-									_player->BoolEnum_2c85_811c = true;
+									_player->_heroMoving = true;
 									bVar1 = true;
 								}
 							}
@@ -637,7 +640,7 @@ void DarkseedEngine::handleInput() {
 									local_6--;
 								} else {
 									_player->_position.x += local_6;
-									_player->BoolEnum_2c85_811c = true;
+									_player->_heroMoving = true;
 									bVar1 = true;
 								}
 							}
@@ -657,7 +660,7 @@ void DarkseedEngine::handleInput() {
 									local_4--;
 								} else {
 									_player->_position.y -= local_4;
-									_player->BoolEnum_2c85_811c = true;
+									_player->_heroMoving = true;
 									bVar2 = true;
 								}
 							}
@@ -672,7 +675,7 @@ void DarkseedEngine::handleInput() {
 									local_4--;
 								} else {
 									_player->_position.y += local_4;
-									_player->BoolEnum_2c85_811c = true;
+									_player->_heroMoving = true;
 									bVar2 = true;
 								}
 							}
@@ -681,7 +684,7 @@ void DarkseedEngine::handleInput() {
 						if (!bVar1 || !bVar2) {
 							_player->_walkTarget = _player->_position;
 						}
-						BoolByteEnum_2c85_8324 = false;
+						_doorEnabled = false;
 						if (_player->_isAutoWalkingToBed && _player->isAtWalkTarget()) {
 							_player->updateBedAutoWalkSequence();
 						}

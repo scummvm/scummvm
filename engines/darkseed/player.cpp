@@ -20,11 +20,13 @@
 */
 
 #include "player.h"
+#include "common/math.h"
 #include "darkseed.h"
 
 Darkseed::Player::Player() {
 	_cPlayerSprites.load("cplayer.nsp");
 	_gPlayerSprites.load("gplayer.nsp");
+	_connectorList.resize(Room::MAX_CONNECTORS);
 }
 
 const Darkseed::Sprite &Darkseed::Player::getSprite(int frameNo) {
@@ -45,7 +47,7 @@ void Darkseed::Player::updateSprite() {
 		if ((_direction == 3) || (_direction == 1)) {
 			g_engine->player_sprite_related_2c85_82f3 = BYTE_ARRAY_2c85_41eb[_direction];
 		}
-		if (_position.x == _walkTarget.x && _position.y == _walkTarget.y && !BoolEnum_2c85_811c) {
+		if (_position.x == _walkTarget.x && _position.y == _walkTarget.y && !_heroMoving) {
 			_frameIdx = playerSpriteIndexDirectionTbl[_direction];
 		} else {
 			_frameIdx = playerWalkFrameIdx + walkFrameOffsetTbl[_direction];
@@ -156,7 +158,7 @@ void Darkseed::Player::playerFaceWalkTarget() {
 }
 
 void Darkseed::Player::calculateWalkTarget() {
-	BoolEnum_2c85_811c = true;
+	_heroMoving = true;
 	playerWalkFrameIdx = 0;
 	walkPathIndex = -1;
 	numConnectorsInWalkPath = 0;
@@ -191,11 +193,20 @@ void Darkseed::Player::calculateWalkTarget() {
 		for (; !g_engine->_room->canWalkAtLocation(_walkTarget.x, ty) && ty <= 0xe9;) {
 			ty += 4;
 		}
-		if (ty < 0xeb) {
+		if (ty < 235) {
 			_walkTarget.y = ty;
 		}
 	}
 
+	if (g_engine->_room->canWalkInLineToTarget(_position.x, _position.y, _walkTarget.x, _walkTarget.y)) {
+		return;
+	}
+
+	if (!g_engine->_room->canWalkAtLocation(_walkTarget.x, _walkTarget.y)) {
+		// TODO find closest connector
+	} else {
+		createConnectorPathToDest();
+	}
 	// TODO more logic here.
 }
 
@@ -276,4 +287,91 @@ void Darkseed::Player::updatePlayerPositionAfterRoomChange() {
 
 void Darkseed::Player::updateBedAutoWalkSequence() {
 	// TODO updateBedAutoWalkSequence.
+}
+
+void Darkseed::Player::createConnectorPathToDest() {
+	constexpr Common::Point noConnectorFound(-1,-1);
+	Common::Point origWalkTarget = _walkTarget;
+	if (g_engine->_room->_roomNumber != 5 || _position.x > 320) {
+		_walkTarget = _position;
+	}
+	numConnectorsInWalkPath = 0;
+	Common::Point connector;
+	if (!g_engine->_room->canWalkAtLocation(_position.x, _position.y)) {
+		connector = getClosestUnusedConnector(_position.x, _position.y);
+	} else {
+		connector = getClosestUnusedConnector(_position.x, _position.y, true);
+	}
+	if (connector == noConnectorFound) {
+		if (g_engine->_room->_roomNumber != 5 || _position.x > 320) {
+			_walkTarget = origWalkTarget;
+		}
+		return;
+	}
+
+	walkPathIndex = 0;
+	_connectorList[numConnectorsInWalkPath] = connector;
+	numConnectorsInWalkPath++;
+
+	while (numConnectorsInWalkPath < Room::MAX_CONNECTORS && connector != noConnectorFound) {
+		if (g_engine->_room->canWalkInLineToTarget(connector.x, connector.y, _walkTarget.x, _walkTarget.y)) {
+			break;
+		}
+		connector = getClosestUnusedConnector(connector.x, connector.y, true);
+		if (connector == _walkTarget) {
+			break;
+		}
+		if (connector != noConnectorFound) {
+			_connectorList[numConnectorsInWalkPath] = connector;
+			numConnectorsInWalkPath++;
+		}
+	}
+
+	if (g_engine->_room->_roomNumber != 5 || _position.x > 320) {
+//		FlipConnectorList();
+		_walkTarget = origWalkTarget;
+	}
+	// Optimize();
+	if (g_engine->_room->_roomNumber == 5 && _position.x < 321) {
+		_finalTarget = _walkTarget;
+	} else {
+		_finalTarget = origWalkTarget;
+	}
+	_walkTarget = _connectorList[0];
+}
+
+Common::Point Darkseed::Player::getClosestUnusedConnector(int16 x, int16 y, bool mustHaveCleanLine) {
+	Common::Point closestPoint = {-1, -1};
+	int closestDist = 5000;
+	for (auto &roomConnector : g_engine->_room->_connectors) {
+		bool containsPoint = false;
+		for (int i = 0; i < numConnectorsInWalkPath; i++) {
+			if (_connectorList[i] == roomConnector) {
+				containsPoint = true;
+			}
+		}
+		if (!containsPoint) {
+			int dist = Common::hypotenuse(ABS(roomConnector.x - x), ABS(roomConnector.y - y));
+			if (dist < closestDist) {
+				if (!mustHaveCleanLine || g_engine->_room->canWalkInLineToTarget(x, y, roomConnector.x, roomConnector.y)) {
+					closestPoint = roomConnector;
+				}
+			}
+		}
+	}
+	return closestPoint;
+}
+
+void Darkseed::Player::walkToNextConnector() {
+	if (walkPathIndex == -1) {
+		return;
+	}
+	if (walkPathIndex + 1 < numConnectorsInWalkPath) {
+		walkPathIndex++;
+		_walkTarget = _connectorList[walkPathIndex];
+	} else {
+		_walkTarget = _finalTarget;
+		walkPathIndex = -1;
+	}
+	playerFaceWalkTarget();
 }

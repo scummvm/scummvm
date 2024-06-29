@@ -53,13 +53,9 @@ struct RoomObjElement {
 	uint8 spriteNum = 0;
 };
 
-struct RoomConnector {
-	uint16 x = 0;
-	uint16 y = 0;
-};
-
 class Room {
 public:
+	static constexpr int MAX_CONNECTORS = 12;
 	int _roomNumber;
 	Pic pic;
 	Pal _pal;
@@ -68,7 +64,7 @@ public:
 	Common::Array<RoomExit> room1;
 	Common::Array<RoomStruct2> walkableLocationsMap;
 	Common::Array<RoomObjElement> _roomObj;
-	Common::Array<RoomConnector> connectors;
+	Common::Array<Common::Point> _connectors;
 
 	uint16 selectedObjIndex = 0;
 	int16 _collisionType = 0;
