@@ -45,7 +45,7 @@ QDEngineEngine::QDEngineEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	g_engine = this;
 	_pixelformat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	_savefileMan = _saveFileMan;
-	_tagMap = version125;
+	_tagMap = nullptr;
 }
 
 QDEngineEngine::~QDEngineEngine() {

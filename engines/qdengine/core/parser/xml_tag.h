@@ -73,6 +73,9 @@ public:
 
 	//! Возвращает идентификатор тега.
 	int ID() const {
+		if (!g_engine->_tagMap)
+			return ID_;
+
 		return g_engine->_tagMap[ID_ - 1];
 	}
 
