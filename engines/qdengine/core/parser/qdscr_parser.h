@@ -367,7 +367,7 @@ const int version100[300] = {
 	QDSCR_ID,
 	QDSCR_X,
 	QDSCR_Y,
-	QDSCR_SX,
+	QDSCR_SX,	// 5th Element
 	QDSCR_SY,
 	QDSCR_POS2D,
 	QDSCR_POS3D,
@@ -626,7 +626,7 @@ const int version105[300] = {
 	QDSCR_ID,
 	QDSCR_X,
 	QDSCR_Y,
-	QDSCR_SX,
+	QDSCR_SX,	// 5th Element
 	QDSCR_SY,
 	QDSCR_POS2D,
 	QDSCR_POS3D,
@@ -898,7 +898,7 @@ const int version110[302] = {
 	QDSCR_ID,
 	QDSCR_X,
 	QDSCR_Y,
-	QDSCR_SX,
+	QDSCR_SX,	// 5th Element
 	QDSCR_SY,
 	QDSCR_POS2D,
 	QDSCR_POS3D,
@@ -1193,7 +1193,7 @@ const int version115[323] = {
 	QDSCR_ID,
 	QDSCR_X,
 	QDSCR_Y,
-	QDSCR_SX,
+	QDSCR_SX,	// 5th Element
 	QDSCR_SY,
 	QDSCR_POS2D,
 	QDSCR_POS3D,
@@ -1509,7 +1509,7 @@ const int version120[324] = {
 	QDSCR_ID,
 	QDSCR_X,
 	QDSCR_Y,
-	QDSCR_SX,
+	QDSCR_SX,	// 5th Element
 	QDSCR_SY,
 	QDSCR_POS2D,
 	QDSCR_POS3D,
@@ -1826,7 +1826,7 @@ const int version125[339] = {
 	QDSCR_ID,
 	QDSCR_X,
 	QDSCR_Y,
-	QDSCR_SX,
+	QDSCR_SX,	// 5th Element
 	QDSCR_SY,
 	QDSCR_POS2D,
 	QDSCR_POS3D,
