@@ -29,6 +29,12 @@ namespace Scumm {
 
 #define ACTOR_GENERAL_FLAG_IGNORE_ERASE 0x00000001
 
+#define HE100_CHORE_REDIRECT_INIT        1024
+#define HE100_CHORE_REDIRECT_WALK        1025
+#define HE100_CHORE_REDIRECT_STAND       1026
+#define HE100_CHORE_REDIRECT_START_TALK  1027
+#define HE100_CHORE_REDIRECT_STOP_TALK   1028
+
  struct HEEraseAuxEntry {
 	int actor;
 	int32 x1, y1, x2, y2;

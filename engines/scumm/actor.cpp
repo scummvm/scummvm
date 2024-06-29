@@ -2620,24 +2620,46 @@ bool Actor::actorHitTest(int x, int y) {
 #endif
 
 void Actor::startAnimActor(int f) {
-	switch (f) {
-	case 0x38:
-		f = _initFrame;
-		break;
-	case 0x39:
-		f = _walkFrame;
-		break;
-	case 0x3A:
-		f = _standFrame;
-		break;
-	case 0x3B:
-		f = _talkStartFrame;
-		break;
-	case 0x3C:
-		f = _talkStopFrame;
-		break;
-	default:
-		break;
+	if (_vm->_game.heversion > 99) {
+		switch (f) {
+		case HE100_CHORE_REDIRECT_INIT:
+			f = _initFrame;
+			break;
+		case HE100_CHORE_REDIRECT_WALK:
+			f = _walkFrame;
+			break;
+		case HE100_CHORE_REDIRECT_STAND:
+			f = _standFrame;
+			break;
+		case HE100_CHORE_REDIRECT_START_TALK:
+			f = _talkStartFrame;
+			break;
+		case HE100_CHORE_REDIRECT_STOP_TALK:
+			f = _talkStopFrame;
+			break;
+		default:
+			break;
+		}
+	} else {
+		switch (f) {
+		case CHORE_REDIRECT_INIT:
+			f = _initFrame;
+			break;
+		case CHORE_REDIRECT_WALK:
+			f = _walkFrame;
+			break;
+		case CHORE_REDIRECT_STAND:
+			f = _standFrame;
+			break;
+		case CHORE_REDIRECT_START_TALK:
+			f = _talkStartFrame;
+			break;
+		case CHORE_REDIRECT_STOP_TALK:
+			f = _talkStopFrame;
+			break;
+		default:
+			break;
+		}
 	}
 
 	assert(f != 0x3E);

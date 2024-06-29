@@ -29,6 +29,12 @@
 
 namespace Scumm {
 
+#define CHORE_REDIRECT_INIT        56
+#define CHORE_REDIRECT_WALK        57
+#define CHORE_REDIRECT_STAND       58
+#define CHORE_REDIRECT_START_TALK  59
+#define CHORE_REDIRECT_STOP_TALK   60
+
 enum {
 	V12_X_MULTIPLIER = 8,
 	V12_Y_MULTIPLIER = 2,
