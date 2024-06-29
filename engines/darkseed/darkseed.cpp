@@ -350,55 +350,55 @@ void DarkseedEngine::handleInput() {
 							// TODO walk player to object.
 							_player->_walkToSequence = true;
 							_player->_walkToSequencePoint = _cursor.getPosition();
-							_player->playerNewFacingDirection_maybe = -1;
+							_player->_sequenceRotation = -1;
 							Common::Point currentCursorPos = _cursor.getPosition();
 							int objNum = _room->_roomObj[roomObjIdx].objNum;
 							if (walkToDirTbl[objNum] != 4) {
-								_player->playerNewFacingDirection_maybe = walkToDirTbl[objNum];
+								_player->_sequenceRotation = walkToDirTbl[objNum];
 								_cursor.updatePosition(walkToXTbl[objNum], walkToYTbl[objNum]);
 							}
 							if (objNum == 142 && _room->_roomNumber == 2) {
-								_player->playerNewFacingDirection_maybe = 0;
+								_player->_sequenceRotation = 0;
 								_cursor.updatePosition(347, 189);
 							} else if (objNum == 53 && _room->_roomNumber == 15) {
-								_player->playerNewFacingDirection_maybe = 0;
+								_player->_sequenceRotation = 0;
 								_cursor.updatePosition(369, 216);
 							} else if (objNum == 114) {
 								if (_cursor.getX() < 321) {
-									_player->playerNewFacingDirection_maybe = 3;
+									_player->_sequenceRotation = 3;
 									_cursor.updatePosition(169, 178);
 								} else {
-									_player->playerNewFacingDirection_maybe = 1;
+									_player->_sequenceRotation = 1;
 									_cursor.updatePosition(362, 198);
 								}
 							} else if (objNum == 189 || (objNum == 64 && _room->_roomNumber == 30)) {
-								_player->playerNewFacingDirection_maybe = 1;
+								_player->_sequenceRotation = 1;
 								_cursor.updatePosition(405, 208);
 							} else if (objNum == 50 || objNum == 85 || (objNum >= 163 && objNum <= 168)) {
-								_player->playerNewFacingDirection_maybe = 3;
+								_player->_sequenceRotation = 3;
 								_cursor.updatePosition(228, 211);
 							} else if (objNum == 51 || objNum == 187) {
-								_player->playerNewFacingDirection_maybe = 1;
+								_player->_sequenceRotation = 1;
 								_cursor.updatePosition(380, 211);
 							} else if (objNum == 116 && _actionMode == Unk19Action) {
-								_player->playerNewFacingDirection_maybe = 1;
+								_player->_sequenceRotation = 1;
 								_cursor.updatePosition(285, 233);
 							} else if (objNum == 137) {
-								_player->playerNewFacingDirection_maybe = 1;
+								_player->_sequenceRotation = 1;
 								if (_actionMode == Unk27Action) {
 									_cursor.updatePosition(354, 175);
 								} else {
 									_cursor.updatePosition(409, 173);
 								}
 							} else if (objNum == 112 || objNum == 111) {
-							_player->playerNewFacingDirection_maybe = 1;
+							_player->_sequenceRotation = 1;
 							_cursor.updatePosition(464, 191);
 							} else if (objNum == 138 || objNum == 7 || objNum == 152) {
-								_player->playerNewFacingDirection_maybe = 1;
+								_player->_sequenceRotation = 1;
 								_cursor.updatePosition(292, 208);
 							} else if (objNum == 22 || objNum == 42 ||
 									   (objNum == 35 && _objectVar[22] < 2 && _cursor.getY() > 40)) {
-								_player->playerNewFacingDirection_maybe = 1;
+								_player->_sequenceRotation = 1;
 								if (_objectVar[22] == 0 || _objectVar[22] == 1) {
 									_cursor.updatePosition(437, 203);
 								}
@@ -411,28 +411,28 @@ void DarkseedEngine::handleInput() {
 							}
 
 							if (objNum == 102 && _objectVar[23] != 0 && _actionMode == HandAction) {
-								_player->playerNewFacingDirection_maybe = 0;
+								_player->_sequenceRotation = 0;
 								_cursor.updatePosition(331, 195);
 							} else if (objNum < 104 || objNum > 108) {
 								if (objNum == 78) {
 									if (_room->_roomNumber == 2) {
-										_player->playerNewFacingDirection_maybe = 3;
+										_player->_sequenceRotation = 3;
 										_cursor.updatePosition(152, 239);
 									} else {
-										_player->playerNewFacingDirection_maybe = 1;
+										_player->_sequenceRotation = 1;
 										_cursor.updatePosition(497, 220);
 									}
 								} else if (objNum == 59) {
 									if (_room->_roomNumber == 3) {
-										_player->playerNewFacingDirection_maybe = 3;
+										_player->_sequenceRotation = 3;
 										_cursor.updatePosition(145, 239);
 									} else {
-										_player->playerNewFacingDirection_maybe = 1;
+										_player->_sequenceRotation = 1;
 										_cursor.updatePosition(520, 229);
 									}
 								}
 							} else {
-								_player->playerNewFacingDirection_maybe = 3;
+								_player->_sequenceRotation = 3;
 								_cursor.updatePosition(_room->_roomObj[roomObjIdx].xOffset + 30, 206);
 							}
 							if (_room->_roomNumber == 34 || (_room->_roomNumber > 18 && _room->_roomNumber < 24)) {
@@ -462,19 +462,6 @@ void DarkseedEngine::handleInput() {
 				}
 				if (_player->isAtWalkTarget() && _player->_heroMoving && _player->walkPathIndex != -1) {
 					_player->walkToNextConnector();
-//					if (walkPathIndex + 1 < numConnectorsInWalkPath) {
-//						walkPathIndex = walkPathIndex + 1;
-//						walkTargetX = *(uint *)((int)roomConnectorXPositionTbl +
-//												*(int *)((int)walkPathConnectorList + walkPathIndex * 2) * 2);
-//						walkTargetY = *(uint *)((int)roomConnectorYPositionTbl +
-//												*(int *)((int)walkPathConnectorList + walkPathIndex * 2) * 2);
-//					}
-//					else {
-//						walkTargetX = DAT_2c85_6dd7;
-//						walkTargetY = DAT_2c85_6df1;
-//						walkPathIndex = 0xff;
-//					}
-//					playerFaceWalkTarget();
 				}
 				if (_isLeftMouseClicked && _cursor.getY() < 0x29) {
 					// TODO handle inventory click.
@@ -540,10 +527,10 @@ void DarkseedEngine::handleInput() {
 					}
 				}
 				if (_player->isAtWalkTarget() && _player->isPlayerWalking_maybe) {
-					if (_player->playerNewFacingDirection_maybe != -1) {
-						_player->changeDirection(_player->_direction, _player->playerNewFacingDirection_maybe);
+					if (_player->_sequenceRotation != -1) {
+						_player->changeDirection(_player->_direction, _player->_sequenceRotation);
 						_player->updateSprite();
-						_player->playerNewFacingDirection_maybe = -1;
+						_player->_sequenceRotation = -1;
 						return;
 					}
 					_player->_heroMoving = false;

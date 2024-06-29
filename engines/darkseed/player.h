@@ -52,6 +52,7 @@ public:
 	int walkPathIndex = -1;
 	uint16 numConnectorsInWalkPath = 0;
 	Common::Array<Common::Point> _connectorList;
+	int16 _sequenceRotation = -1;
 	bool _walkToSequence = false;
 	Common::Point _walkToSequencePoint;
 
