@@ -214,10 +214,14 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 	}
 
 	Common::String gameID = g_engine->getGameId();
-	if (gameID == "3mice1") {
+	if (gameID == "pilots3d") {
+		g_engine->_tagMap = version110;
+	} else if (gameID == "3mice1") {
 		g_engine->_tagMap = version120;
 	} else if (gameID == "shveik") {
 		g_engine->_tagMap = nullptr;
+	} else {
+		warning("Unprocessed tagMap, switching to shveik");
 	}
 
 	SetErrorMode(SEM_FAILCRITICALERRORS);
