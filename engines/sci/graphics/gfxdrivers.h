@@ -34,7 +34,7 @@ public:
 	uint16 screenWidth() const { return _screenW; }
 	uint16 screenHeight() const { return _screenH; }
 	uint16 numColors() const { return _numColors; }
-	uint8 hAlignment() const { return _hAlign; }
+	byte hAlignment() const { return _hAlign; }
 
 	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
 	virtual void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) = 0;
@@ -45,7 +45,7 @@ protected:
 	const uint16 _screenW;
 	const uint16 _screenH;
 	uint16 _numColors;
-	const uint8 _hAlign;
+	const byte _hAlign;
 };
 
 class GfxDefaultDriver final : public GfxDriver {
