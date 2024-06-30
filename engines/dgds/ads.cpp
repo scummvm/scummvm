@@ -88,6 +88,8 @@ bool ADSInterpreter::load(const Common::String &filename) {
 	dgds.parse(_adsData, detailfile);
 
 	for (const auto &file : _adsData->_scriptNames) {
+		if (file.empty())
+			continue;
 		_adsData->_scriptEnvs.resize(_adsData->_scriptEnvs.size() + 1);
 		debug("   load TTM %s to env %d", file.c_str(), _adsData->_scriptEnvs.size());
 		TTMEnviro &data = _adsData->_scriptEnvs.back();
@@ -884,8 +886,8 @@ bool ADSInterpreter::runUntilBranchOpOrEnd() {
 	return more;
 }
 
-void ADSInterpreter::setHitTTMOp0110() {
-	_adsData->_hitTTMOp0110 = true;
+void ADSInterpreter::setHitTTMOp0110(bool val /* = true */) {
+	_adsData->_hitTTMOp0110 = val;
 }
 
 void ADSInterpreter::setGotoTarget(int32 target) {

@@ -709,16 +709,16 @@ bool Scene::runChinaOp(const SceneOp &op) {
 }
 
 bool Scene::runBeamishOp(const SceneOp &op) {
-	error("TODO: Implement beamish-specific scene op %d", op._opCode);
-	/*
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	switch (op._opCode) {
+	case kSceneOpOpenBeamishOpenSkipCreditsMenu:
+		engine->setMenuToTrigger(kMenuBeamishSkipCredits);
+		break;
 	default:
 		warning("TODO: Implement beamish-specific scene opcode %d", op._opCode);
 		break;
 	}
 	return true;
-	*/
 }
 
 bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 */) {
@@ -883,7 +883,7 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 		readTriggerList(stream, _triggers);
 	}
 	if (isVersionOver(" 1.223")) {
-		warning("TODO: Read another list here.");
+		warning("TODO: SDSScene::parse read another list here for version %s", _version.c_str());
 	}
 
 	return !stream->err();

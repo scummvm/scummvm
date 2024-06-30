@@ -68,6 +68,7 @@ enum MenuId {
 	kMenuSaveBeforeArcade = 46,
 	kMenuReplayArcade = 45,
 	kMenuArcadeFrustrated = 47,
+	kMenuBeamishSkipCredits = 50,
 };
 
 class Menu {
