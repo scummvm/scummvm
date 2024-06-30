@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __DS_SND_DISPATCHER_H__
-#define __DS_SND_DISPATCHER_H__
+#ifndef QDENGINE_CORE_SYSTEM_SOUND_DS_SND_DISPATCHER_H
+#define QDENGINE_CORE_SYSTEM_SOUND_DS_SND_DISPATCHER_H
 
 #include "common/textconsole.h"
 #include "qdengine/core/system/sound/snd_dispatcher.h"
@@ -78,4 +78,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __DS_SND_DISPATCHER_H__ */
+#endif /* QDENGINE_CORE_SYSTEM_SOUND_DS_SND_DISPATCHER_H */
