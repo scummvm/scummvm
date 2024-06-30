@@ -161,9 +161,6 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 		case Common::kRenderHercG:
 			_gfxDrv = new SCI0_HerculesDriver(renderMode == Common::kRenderHercG ? 1 : 0);
 			break;
-		case Common::kRenderEGA:
-			_gfxDrv = new SCI0_EGADriver();
-			break;
 		default:
 			break;
 		}

@@ -104,37 +104,8 @@ void SCI0_DOSPreVGADriver::assignPalette(const byte *colors) {
 void SCI0_DOSPreVGADriver::setPalette(const byte*, uint, uint) {
 	if (!_palNeedUpdate || !_colors)
 		return;
-	_palNeedUpdate = false;
-	byte *tmp = new byte[768]();
-	memcpy(tmp, _colors, _numColors * 3);
-	g_system->getPaletteManager()->setPalette(tmp, 0, 256);
-	delete[]tmp;
-}
-
-SCI0_EGADriver::SCI0_EGADriver() : SCI0_DOSPreVGADriver(16, 320, 200, 1) {
-	static const byte egaColors[] = {
-		0x00, 0x00, 0x00, 0x00, 0x00, 0xAA, 0x00, 0xAA, 0x00, 0x00, 0xAA, 0xAA,
-		0xAA, 0x00, 0x00, 0xAA, 0x00, 0xAA, 0xAA, 0x55, 0x00, 0xAA, 0xAA, 0xAA,
-		0x55, 0x55, 0x55, 0x55, 0x55, 0xFF, 0x55, 0xFF, 0x55, 0x55, 0xFF, 0xFF,
-		0xFF, 0x55, 0x55, 0xFF, 0x55, 0xFF, 0xFF, 0xFF, 0x55, 0xFF, 0xFF, 0xFF
-	};
-	assignPalette(egaColors);
-}
-
-void SCI0_EGADriver::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) {
-	byte *dst = _compositeBuffer;
-	pitch -= w;
-	for (int i = 0; i < h; ++i) {
-		for (int ii = 0; ii < w; ++ii)
-			*dst++ = *src++;
-		src += pitch;
-	}
-
-	g_system->copyRectToScreen(_compositeBuffer, w, x, y, w, h);
-}
-
-void SCI0_EGADriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
-	CursorMan.replaceCursor(cursor, w, h, hotspotX, hotspotY, keycolor);
+	_palNeedUpdate = false;;
+	g_system->getPaletteManager()->setPalette(_colors, 0, _numColors);
 }
 
 SCI0_CGADriver::SCI0_CGADriver(bool emulateCGAModeOnEGACard) : SCI0_DOSPreVGADriver(4, 320, 200, 1), _cgaPatterns(nullptr), _disableMode5(emulateCGAModeOnEGACard) {

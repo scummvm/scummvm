@@ -72,14 +72,6 @@ private:
 	const byte *_colors;
 };
 
-class SCI0_EGADriver final : public SCI0_DOSPreVGADriver {
-public:
-	SCI0_EGADriver();
-	~SCI0_EGADriver() override {}
-	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) override;
-	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
-};
-
 class SCI0_CGADriver final : public SCI0_DOSPreVGADriver {
 public:
 	SCI0_CGADriver(bool emulateCGAModeOnEGACard);
