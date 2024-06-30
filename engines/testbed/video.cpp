@@ -141,7 +141,7 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 				}
 			}
 			g_system->updateScreen();
-			g_system->delayMillis(10);
+			video->delayMillis(10);
 		}
 	}
 	video->close();
