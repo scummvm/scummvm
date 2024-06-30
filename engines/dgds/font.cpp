@@ -81,7 +81,7 @@ static inline bool isSet(const byte *data, uint bit) {
 	return data[bit / 8] & (1 << (7 - (bit % 8)));
 }
 
-void DgdsFont::drawChar(Graphics::Surface* dst, int pos, int x, int y, int w, uint32 color) const {
+void DgdsFont::drawDgdsChar(Graphics::Surface* dst, int pos, int x, int y, int w, uint32 color) const {
 	const Common::Rect destRect(Common::Point(x, y), w, _h);
 	Common::Rect clippedDestRect(dst->w, dst->h);
 	clippedDestRect.clip(destRect);
@@ -123,7 +123,7 @@ void FFont::drawChar(Graphics::Surface* dst, uint32 chr, int x, int y, uint32 co
 		return;
 
 	int pos = charOffset(chr);
-	DgdsFont::drawChar(dst, pos, x, y, _w, color);
+	drawDgdsChar(dst, pos, x, y, _w, color);
 }
 
 FFont *FFont::load(Common::SeekableReadStream &input) {
@@ -162,7 +162,7 @@ void PFont::drawChar(Graphics::Surface* dst, uint32 chr, int x, int y, uint32 co
 
 	int pos = charOffset(chr);
 	int w = getCharWidth(chr);
-	DgdsFont::drawChar(dst, pos, x, y, w, color);
+	drawDgdsChar(dst, pos, x, y, w, color);
 }
 
 int PFont::getCharWidth(uint32 chr) const {

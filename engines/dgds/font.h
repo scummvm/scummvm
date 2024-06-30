@@ -60,7 +60,7 @@ protected:
 	byte _count;
 	const byte *_glyphs;
 
-	void drawChar(Graphics::Surface* dst, int pos, int x, int y, int w, uint32 color) const;
+	void drawDgdsChar(Graphics::Surface* dst, int pos, int x, int y, int w, uint32 color) const;
 	bool hasChar(byte chr) const;
 	virtual int charOffset(byte chr) const = 0;
 };
