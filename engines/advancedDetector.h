@@ -65,7 +65,7 @@ static inline uint32 alignSizeBuffer() {
 static inline void *alignToBuffer(void *buffer) {
 	// Round up
 	uintptr tmp = (uintptr)buffer + sizeof(void *) - 1;
-	return (void *)(tmp & -sizeof(void *));
+	return (void *)(tmp & -(int)sizeof(void *));
 }
 
 } // End of namespace ADDynamicDescription
