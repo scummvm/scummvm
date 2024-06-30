@@ -99,14 +99,24 @@ enum MTGameFlag {
 };
 
 struct MTropolisGameDescription {
-	AD_GAME_DESCRIPTION_HELPERS(desc);
-
 	ADGameDescription desc;
 
 	int gameID;
 	int gameType;
 	MTropolisGameBootID bootID;
 	const char *mainFileWindows;
+
+	uint32 sizeBuffer() const {
+		uint32 ret = desc.sizeBuffer();
+		ret += ADDynamicDescription::strSizeBuffer(mainFileWindows);
+		return ret;
+	}
+
+	void *toBuffer(void* buffer) {
+		buffer = desc.toBuffer(buffer);
+		buffer = ADDynamicDescription::strToBuffer(buffer, mainFileWindows);
+		return buffer;
+	}
 };
 
 #define GAMEOPTION_WIDESCREEN_MOD				GUIO_GAMEOPTIONS1
