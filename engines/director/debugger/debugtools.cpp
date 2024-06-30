@@ -441,7 +441,6 @@ void onImGuiRender() {
 void onImGuiCleanup() {
 	Common::setLogWatcher(nullptr);
 	if (_state) {
-		delete _state->_tinyFont;
 		free(_state->_archive.data);
 
 		delete _state->_logger;
