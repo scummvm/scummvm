@@ -215,7 +215,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 
 	// Initialize the actual screen
 	const Graphics::PixelFormat *format = &format8;
-	if (ConfMan.getBool("rgb_rendering"))
+	if (_gfxDrv->allowRGBRendering() && ConfMan.getBool("rgb_rendering"))
 		format = nullptr; // Backend's preferred mode; RGB if available
 
 	if (g_sci->hasMacIconBar()) {

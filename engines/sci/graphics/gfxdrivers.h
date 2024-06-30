@@ -35,7 +35,8 @@ public:
 	uint16 screenHeight() const { return _screenH; }
 	uint16 numColors() const { return _numColors; }
 	byte hAlignment() const { return _hAlign; }
-
+	
+	virtual bool allowRGBRendering() const = 0;
 	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
 	virtual void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) = 0;
 	virtual void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) = 0;
@@ -53,6 +54,7 @@ class GfxDefaultDriver final : public GfxDriver {
 public:
 	GfxDefaultDriver(uint16 screenWidth, uint16 screenHeight);
 	~GfxDefaultDriver() override {}
+	bool allowRGBRendering() const override { return true; }
 	void setPalette(const byte *colors, uint start, uint num) override;
 	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
@@ -62,6 +64,7 @@ class SCI0_DOSPreVGADriver : public GfxDriver {
 public:
 	SCI0_DOSPreVGADriver(int numColors, int screenW, int screenH, int horizontalAlignment);
 	~SCI0_DOSPreVGADriver() override;
+	bool allowRGBRendering() const override { return false; }
 	void setPalette(const byte*, uint, uint) override;
 protected:
 	static bool checkDriver(const char *const *driverNames, int listSize);
