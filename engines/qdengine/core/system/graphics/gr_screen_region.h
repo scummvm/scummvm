@@ -20,8 +20,8 @@
  */
 
 
-#ifndef __GR_SCREEN_REGION_H__
-#define __GR_SCREEN_REGION_H__
+#ifndef QDENGINE_CORE_SYSTEM_GRAPHICS_GR_SCREEN_REGION_H
+#define QDENGINE_CORE_SYSTEM_GRAPHICS_GR_SCREEN_REGION_H
 
 namespace QDEngine {
 
@@ -134,4 +134,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __GR_SCREEN_REGION_H__ */
+#endif /* QDENGINE_CORE_SYSTEM_GRAPHICS_GR_SCREEN_REGION_H */

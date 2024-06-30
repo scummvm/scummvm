@@ -19,9 +19,8 @@
  *
  */
 
-#ifndef __QD_PRECOMP_H__
-#define __QD_PRECOMP_H__
-
+#ifndef QDENGINE_CORE_QD_PRECOMP_H
+#define QDENGINE_CORE_QD_PRECOMP_H
 #ifndef _QUEST_EDITOR
 #else
 /*  #define   _STLP_NO_NEW_IOSTREAMS 1
@@ -556,4 +555,4 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 
 } // namespace QDEngine
 
-#endif /* __QD_PRECOMP_H__ */
+#endif /* QDENGINE_CORE_QD_PRECOMP_H */

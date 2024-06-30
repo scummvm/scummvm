@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __DS_SOUND_H__
-#define __DS_SOUND_H__
+#ifndef QDENGINE_CORE_SYSTEM_DS_SOUND_H
+#define QDENGINE_CORE_SYSTEM_DS_SOUND_H
 
 #include "qdengine/core/system/sound/snd_sound.h"
 #include "qdengine/core/qd_precomp.h"
@@ -107,4 +107,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __DS_SOUND_H__ */
+#endif /* QDENGINE_CORE_SYSTEM_DS_SOUND_H */

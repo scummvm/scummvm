@@ -20,8 +20,8 @@
  */
 
 
-#ifndef __QD_INTERFACE_ELEMENT_STATE_MODE_H__
-#define __QD_INTERFACE_ELEMENT_STATE_MODE_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_INTERFACE_ELEMENT_STATE_MODE_H
+#define QDENGINE_CORE_QDCORE_QD_INTERFACE_ELEMENT_STATE_MODE_H
 
 #include "qdengine/core/qdcore/qd_contour.h"
 
@@ -153,4 +153,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __QD_INTERFACE_ELEMENT_STATE_MODE_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_INTERFACE_ELEMENT_STATE_MODE_H */

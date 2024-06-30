@@ -1,3 +1,6 @@
+#ifndef QDENGINE_MINIGAMES_QD_EMPTY_INTERFACE_H
+#define QDENGINE_MINIGAMES_QD_EMPTY_INTERFACE_H
+
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/qd_minigame_interface.h"
 
@@ -54,3 +57,5 @@ class qdEmptyMiniGameInterface : public qdMiniGameInterface {
 };
 
 } // namespace QDEngine
+
+#endif /* QDENGINE_MINIGAMES_QD_EMPTY_INTERFACE_H */

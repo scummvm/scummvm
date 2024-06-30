@@ -19,8 +19,9 @@
  *
  */
 
-#ifndef __QD_NAMED_OBJECT_H__
-#define __QD_NAMED_OBJECT_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_NAMED_OBJECT_H
+#define QDENGINE_CORE_QDCORE_QD_NAMED_OBJECT_H
+
 #include "common/stream.h"
 #include "qdengine/core/qdcore/qd_named_object_base.h"
 
@@ -167,4 +168,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __QD_NAMED_OBJECT_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_NAMED_OBJECT_H */

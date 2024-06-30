@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_INTERFACE_COUNTER__
-#define __QD_INTERFACE_COUNTER__
+#ifndef QDENGINE_CORE_QDCORE_QD_INTERFACE_COUNTER_H
+#define QDENGINE_CORE_QDCORE_QD_INTERFACE_COUNTER_H
 
 #include "qdengine/core/qdcore/qd_named_object_reference.h"
 #include "qdengine/core/qdcore/qd_screen_text.h"
@@ -112,4 +112,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __QD_INTERFACE_COUNTER__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_INTERFACE_COUNTER_H */

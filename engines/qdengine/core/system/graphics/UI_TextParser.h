@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __UI_TEXT_PARSER_H__
-#define __UI_TEXT_PARSER_H__
+#ifndef QDENGINE_CORE_SYSTEM_GRAPHICS_UI_TEXT_PARSER_H
+#define QDENGINE_CORE_SYSTEM_GRAPHICS_UI_TEXT_PARSER_H
 
 
 #include "qdengine/core/system/graphics/gr_font.h"
@@ -158,4 +158,4 @@ private:
 
 } // namespace QDEngine
 
-#endif //__UI_TEXT_PARSER_H__
+#endif //QDENGINE_CORE_SYSTEM_GRAPHICS_UI_TEXT_PARSER_H

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_SOUND_H__
-#define __QD_SOUND_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_SOUND_H
+#define QDENGINE_CORE_QDCORE_QD_SOUND_H
 
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/qdcore/qd_named_object.h"
@@ -130,4 +130,4 @@ typedef std::list<qdSound *> qdSoundList;
 
 } // namespace QDEngine
 
-#endif /* __QD_SOUND_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_SOUND_H */

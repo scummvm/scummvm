@@ -20,8 +20,8 @@
  */
 
 
-#ifndef __QD_GAME_DISPATCHER_H__
-#define __QD_GAME_DISPATCHER_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_GAME_DISPATCHER_H
+#define QDENGINE_CORE_QDCORE_QD_GAME_DISPATCHER_H
 
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/system/input/mouse_input.h"
@@ -707,4 +707,4 @@ qdGameDispatcher *qd_get_game_dispatcher();
 
 } // namespace QDEngine
 
-#endif /* __QD_GAME_DISPATCHER_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_GAME_DISPATCHER_H */

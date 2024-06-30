@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_SCREEN_TEXT_SET_H__
-#define __QD_SCREEN_TEXT_SET_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_SCREEN_TEXT_SET_H
+#define QDENGINE_CORE_QDCORE_QD_SCREEN_TEXT_SET_H
 
 #include "qdengine/core/qdcore/qd_screen_text.h"
 #include "qdengine/core/parser/xml_fwd.h"
@@ -154,4 +154,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __QD_SCREEN_TEXT_SET_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_SCREEN_TEXT_SET_H */

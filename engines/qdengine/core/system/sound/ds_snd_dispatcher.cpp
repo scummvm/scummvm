@@ -72,7 +72,7 @@ ds_sndDispatcher::~ds_sndDispatcher() {
 }
 
 void ds_sndDispatcher::quant() {
-	sounds_.remove_if(std::mem_fun_ref(&dsSound::is_stopped));
+	sounds_.remove_if(std::mem_fn(&dsSound::is_stopped));
 }
 
 bool ds_sndDispatcher::play_sound(const sndSound *snd, bool loop, float start_position, int vol) {
@@ -116,7 +116,7 @@ bool ds_sndDispatcher::stop_sound(const sndSound *snd) {
 }
 
 bool ds_sndDispatcher::stop_sound(const sndHandle *handle) {
-	debugC(3, kDebugSound, "Stop Sound: sndHandle %d", sounds_.size());
+	debugC(3, kDebugSound, "Stop Sound: sndHandle %p", handle);
 	sound_list_t::iterator it = std::find(sounds_.begin(), sounds_.end(), *handle);
 
 	if (it != sounds_.end()) {

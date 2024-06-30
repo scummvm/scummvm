@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __ANIMATION_SET_PREVIEW_H__
-#define __ANIMATION_SET_PREVIEW_H__
+#ifndef QDENGINE_CORE_QDCORE_ANIMATION_SET_PREVIEW_H
+#define QDENGINE_CORE_QDCORE_ANIMATION_SET_PREVIEW_H
 
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 
@@ -147,4 +147,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __ANIMATION_SET_PREVIEW_H__ */
+#endif /* QDENGINE_CORE_QDCORE_ANIMATION_SET_PREVIEW_H */

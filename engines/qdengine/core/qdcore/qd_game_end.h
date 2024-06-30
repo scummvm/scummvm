@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_GAME_END_H__
-#define __QD_GAME_END_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_GAME_END_H
+#define QDENGINE_CORE_QDCORE_QD_GAME_END_H
 
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/qdcore/qd_conditional_object.h"
@@ -69,4 +69,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // __QD_GAME_END_H__
+#endif // QDENGINE_CORE_QDCORE_QD_GAME_END_H

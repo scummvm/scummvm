@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_VIDEO_H__
-#define __QD_VIDEO_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_VIDEO_H
+#define QDENGINE_CORE_QDCORE_QD_VIDEO_H
 
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/qdcore/qd_sprite.h"
@@ -101,4 +101,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __QD_VIDEO_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_VIDEO_H */

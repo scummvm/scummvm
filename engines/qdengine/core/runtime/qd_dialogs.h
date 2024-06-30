@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_DIALOGS_H__
-#define __QD_DIALOGS_H__
+#ifndef QDENGINE_CORE_RUNTIME_QD_DIALOGS_H__
+#define QDENGINE_CORE_RUNTIME_QD_DIALOGS_H__
 
 
 namespace QDEngine {
@@ -34,4 +34,4 @@ void settings_dialog();
 
 } // namespace QDEngine
 
-#endif /* __QD_DIALOGS_H__ */
+#endif /* QDENGINE_CORE_RUNTIME_QD_DIALOGS_H__ */

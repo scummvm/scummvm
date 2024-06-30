@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __INPUT_RECORDER_H__
-#define __INPUT_RECORDER_H__
+#ifndef QDENGINE_CORE_SYSTEM_INPUT_INPUT_RECORDER_H
+#define QDENGINE_CORE_SYSTEM_INPUT_INPUT_RECORDER_H
 
 
 namespace QDEngine {
@@ -182,4 +182,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __INPUT_RECORDER_H__ */
+#endif /* QDENGINE_CORE_SYSTEM_INPUT_INPUT_RECORDER_H */

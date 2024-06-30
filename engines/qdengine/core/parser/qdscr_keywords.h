@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QDSCR_KEYWORDS_H__
-#define __QDSCR_KEYWORDS_H__
+#ifndef QDENGINE_CORE_PARSER_QDSCR_KEYWORDS_H
+#define QDENGINE_CORE_PARSER_QDSCR_KEYWORDS_H
 
 namespace QDEngine {
 
@@ -191,4 +191,4 @@ enum qdscrKeywordID {
 
 } // namespace QDEngine
 
-#endif /* __QDSCR_KEYWORDS_H__ */
+#endif /* QDENGINE_CORE_PARSER_QDSCR_KEYWORDS_H */

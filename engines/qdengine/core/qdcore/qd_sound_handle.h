@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_SOUND_HANDLE_H__
-#define __QD_SOUND_HANDLE_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_SOUND_HANDLE_H
+#define QDENGINE_CORE_QDCORE_QD_SOUND_HANDLE_H
 
 #include "qdengine/core/system/sound/snd_sound.h"
 
@@ -46,4 +46,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __QD_SOUND_HANDLE_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_SOUND_HANDLE_H */

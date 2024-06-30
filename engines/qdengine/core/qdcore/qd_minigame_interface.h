@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_MINIGAME_INTERFACE_H__
-#define __QD_MINIGAME_INTERFACE_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_MINIGAME_INTERFACE_H__
+#define QDENGINE_CORE_QDCORE_QD_MINIGAME_INTERFACE_H__
 
 
 namespace QDEngine {
@@ -402,4 +402,4 @@ public:
 
 } // namespace QDEngine
 
-#endif /* __QD_MINIGAME_INTERFACE_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_MINIGAME_INTERFACE_H__ */

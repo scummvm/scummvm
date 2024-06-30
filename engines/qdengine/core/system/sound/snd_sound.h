@@ -20,8 +20,8 @@
  */
 
 
-#ifndef __SND_SOUND_H__
-#define __SND_SOUND_H__
+#ifndef QDENGINE_CORE_SYSTEM_SND_SOUND_H
+#define QDENGINE_CORE_SYSTEM_SND_SOUND_H
 
 
 namespace QDEngine {
@@ -85,4 +85,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __SND_SOUND_H__ */
+#endif /* QDENGINE_CORE_SYSTEM_SND_SOUND_H */

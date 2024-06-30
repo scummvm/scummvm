@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __MOUSE_INPUT_H__
-#define __MOUSE_INPUT_H__
+#ifndef QDENGINE_CORE_SYSTEM_INPUT_MOUSE_INPUT_H
+#define QDENGINE_CORE_SYSTEM_INPUT_MOUSE_INPUT_H
 
 
 namespace QDEngine {
@@ -149,4 +149,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __MOUSE_INPUT_H__ */
+#endif /* QDENGINE_CORE_SYSTEM_INPUT_MOUSE_INPUT_H */

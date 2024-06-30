@@ -20,8 +20,8 @@
  */
 
 
-#ifndef __QD_ANIMATION_SET_INFO_H__
-#define __QD_ANIMATION_SET_INFO_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_ANIMATION_SET_INFO_H
+#define QDENGINE_CORE_QDCORE_QD_ANIMATION_SET_INFO_H
 
 #include "qdengine/core/qdcore/qd_named_object.h"
 
@@ -45,4 +45,4 @@ public:
 
 } // namespace QDEngine
 
-#endif /* __QD_ANIMATION_SET_INFO_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_ANIMATION_SET_INFO_H */

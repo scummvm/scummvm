@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_COORDS_ANIMATION_H__
-#define __QD_COORDS_ANIMATION_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_COORDS_ANIMATION_H
+#define QDENGINE_CORE_QDCORE_QD_COORDS_ANIMATION_H
 
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/qdcore/qd_named_object.h"
@@ -176,4 +176,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __QD_COORDS_ANIMATION_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_COORDS_ANIMATION_H */

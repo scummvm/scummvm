@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_RESOURCE_DISPATCHER_H__
-#define __QD_RESOURCE_DISPATCHER_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_RESOURCE_DISPATCHER_H
+#define QDENGINE_CORE_QDCORE_QD_RESOURCE_DISPATCHER_H
 
 #include "qdengine/core/qdcore/qd_resource.h"
 
@@ -189,4 +189,4 @@ protected:
 
 } // namespace QDEngine
 
-#endif /* __QD_RESOURCE_DISPATCHER_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_RESOURCE_DISPATCHER_H */

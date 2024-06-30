@@ -20,8 +20,8 @@
  */
 
 
-#ifndef __QD_INTERFACE_SLIDER_H__
-#define __QD_INTERFACE_SLIDER_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_INTERFACE_SLIDER_H
+#define QDENGINE_CORE_QDCORE_QD_INTERFACE_SLIDER_H
 
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/qdcore/qd_interface_element.h"
@@ -178,4 +178,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __QD_INTERFACE_SLIDER_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_INTERFACE_SLIDER_H */

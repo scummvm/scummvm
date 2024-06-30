@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_NAMED_OBJECT_BASE_H__
-#define __QD_NAMED_OBJECT_BASE_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_NAMED_OBJECT_BASE_H
+#define QDENGINE_CORE_QDCORE_QD_NAMED_OBJECT_BASE_H
 
 #include <string>
 
@@ -55,4 +55,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __QD_NAMED_OBJECT_BASE_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_NAMED_OBJECT_BASE_H */

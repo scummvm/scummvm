@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __XML_FWD_H__
-#define __XML_FWD_H__
+#ifndef QDENGINE_CORE_PARSER_XML_FWD_H
+#define QDENGINE_CORE_PARSER_XML_FWD_H
 
 namespace QDEngine {
 
@@ -33,4 +33,4 @@ class parser;
 
 } // namespace QDEngine
 
-#endif /* __XML_FWD_H__ */
+#endif /* QDENGINE_CORE_PARSER_XML_FWD_H */

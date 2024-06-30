@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_GRID_ZONE_H__
-#define __QD_GRID_ZONE_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_GRID_ZONE_H
+#define QDENGINE_CORE_QDCORE_QD_GRID_ZONE_H
 
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/qdcore/qd_contour.h"
@@ -159,4 +159,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __QD_GRID_ZONE_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_GRID_ZONE_H */

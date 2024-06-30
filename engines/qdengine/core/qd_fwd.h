@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_FWD_H__
-#define __QD_FWD_H__
+#ifndef QDENGINE_CORE_QD_FWD_H
+#define QDENGINE_CORE_QD_FWD_H
 
 #include <list>
 #include <string>
@@ -97,4 +97,4 @@ typedef std::list<qdFontInfo *> qdFontInfoList;
 
 } // namespace QDEngine
 
-#endif // __QD_FWD_H__
+#endif // QDENGINE_CORE_QD_FWD_H

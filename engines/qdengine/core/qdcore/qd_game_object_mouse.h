@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_GAME_OBJECT_MOUSE_H__
-#define __QD_GAME_OBJECT_MOUSE_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_MOUSE_H
+#define QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_MOUSE_H
 
 #include "qdengine/core/qdcore/qd_game_object_animated.h"
 
@@ -125,4 +125,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __QD_GAME_OBJECT_MOUSE_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_MOUSE_H */
