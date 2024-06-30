@@ -41,6 +41,13 @@ class Decompressor;
 class DgdsChunkReader;
 class ResourceManager;
 
+enum ImageFlipMode {
+	kImageFlipNone = 0,
+	kImageFlipH = 1,
+	kImageFlipV = 2,
+	kImageFlipHV = 3,
+};
+
 class Image {
 public:
 	Image(ResourceManager *resourceMan, Decompressor *decompressor);
@@ -50,7 +57,7 @@ public:
 
 	void loadBitmap(const Common::String &filename);
 	int frameCount(const Common::String &filename);
-	void drawBitmap(uint frameno, int x, int y, const Common::Rect &drawWin, Graphics::ManagedSurface &dst, bool flip = false, int dstWidth = 0, int dstHeight = 0) const;
+	void drawBitmap(uint frameno, int x, int y, const Common::Rect &drawWin, Graphics::ManagedSurface &dst, ImageFlipMode flip = kImageFlipNone, int dstWidth = 0, int dstHeight = 0) const;
 
 	Common::SharedPtr<Graphics::ManagedSurface> getSurface(uint frameno) const;
 

@@ -194,8 +194,9 @@ static const char *ttmOpName(uint16 op) {
 	case 0xa400: return "DRAW FILLED CIRCLE";
 	case 0xa420: return "DRAW EMPTY CIRCLE";
 	case 0xa500: return "DRAW BMP";
-	case 0xa520: return "DRAW SPRITE FLIP";
-	case 0xa530: return "DRAW BMP4";
+	case 0xa510: return "DRAW SPRITE FLIPV";
+	case 0xa520: return "DRAW SPRITE FLIPH";
+	case 0xa530: return "DRAW SPRITE FLIPHV";
 	case 0xa600: return "DRAW GETPUT";
 	case 0xb000: return "INIT CREDITS SCROLL";
 	case 0xb010: return "DRAW CREDITS SCROLL";
@@ -219,7 +220,6 @@ static const char *ttmOpName(uint16 op) {
 	case 0x00C0: return "FREE BACKGROUND";
 	case 0x0230: return "reset current music?";
 	case 0x1310: return "STOP SFX";
-	case 0xa510: return "DRAW SPRITE1";
 	case 0xb600: return "DRAW SCREEN";
 	case 0xc020: return "LOAD_SAMPLE";
 	case 0xc030: return "SELECT_SAMPLE";
@@ -744,20 +744,10 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	case 0xa300:
 		doDrawDialogForStrings(env, seq, ivals[0], ivals[1], ivals[2], ivals[3]);
 		break;
-	case 0xa510:
-		// DRAW SPRITE x,y:int  .. how different from 0xa500??
-		// FALL THROUGH
-	case 0xa520:
-		// DRAW SPRITE FLIP: x,y:int
-		// FALL THROUGH
-	case 0xa530:
-		// CHINA
-		// DRAW BMP4:	x,y,tile-id,bmp-id:int	[-n,+n] (CHINA)
-		// arguments similar to DRAW BMP but it draws the same BMP multiple times with radial symmetry?
-		// you can see this in the Dynamix logo star.
-		// FALL THROUGH FOR NOW
-	case 0xa500: {
-		// DRAW BMP: x,y,tile-id,bmp-id:int [-n,+n] (CHINA)
+	case 0xa500: // DRAW SPRITE: x,y,tile-id,bmp-id:int [-n,+n]
+	case 0xa510: // DRAW SPRITE FLIP V x,y:int
+	case 0xa520: // DRAW SPRITE FLIP H: x,y:int
+	case 0xa530: { // DRAW SPRITE FLIP HV: x,y,tile-id,bmp-id:int	[-n,+n] (CHINA)
 		int frameno;
 		int bmpNo;
 		int dstWidth = 0;
@@ -775,10 +765,17 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 			bmpNo = seq._currentBmpId;
 		}
 
-		// DRAW BMP: x,y:int [-n,+n] (RISE)
+		ImageFlipMode flipMode = kImageFlipNone;
+		if (op == 0xa510)
+			flipMode = kImageFlipV;
+		else if (op == 0xa520)
+			flipMode = kImageFlipH;
+		else if (op == 0xa530)
+			flipMode = kImageFlipHV;
+
 		Common::SharedPtr<Image> img = env._scriptShapes[bmpNo];
 		if (img)
-			img->drawBitmap(frameno, ivals[0], ivals[1], seq._drawWin, _vm->_compositionBuffer, op == 0xa520, dstWidth, dstHeight);
+			img->drawBitmap(frameno, ivals[0], ivals[1], seq._drawWin, _vm->_compositionBuffer, flipMode, dstWidth, dstHeight);
 		else
 			warning("Trying to draw image %d in env %d which is not loaded", bmpNo, env._enviro);
 		break;

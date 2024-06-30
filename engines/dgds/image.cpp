@@ -235,7 +235,7 @@ void Image::loadBitmap(const Common::String &filename) {
 	delete fileStream;
 }
 
-void Image::drawBitmap(uint frameno, int x, int y, const Common::Rect &drawWin, Graphics::ManagedSurface &destSurf, bool flip, int dstWidth, int dstHeight) const {
+void Image::drawBitmap(uint frameno, int x, int y, const Common::Rect &drawWin, Graphics::ManagedSurface &destSurf, ImageFlipMode flipMode, int dstWidth, int dstHeight) const {
 	if (frameno >= _frames.size()) {
 		warning("drawBitmap: Trying to draw frame %d from a %d frame image %s!", frameno, _frames.size(), _filename.c_str());
 		return;
@@ -258,31 +258,27 @@ void Image::drawBitmap(uint frameno, int x, int y, const Common::Rect &drawWin, 
 		return;
 
 	const byte *src = (const byte *)srcFrame->getBasePtr(0, 0);
-	// Note: this is not super optimized, but it's easy to understand at least..
+
+	// Note: this is not particularly optimized, written to be easier to understand
+
 	byte *dst = (byte *)destSurf.getBasePtr(x, y);
 
 	for (int i = 0; i < dstHeight; ++i) {
-		if (y + i < drawWin.top || y + i >= drawWin.bottom) {
-			dst += destSurf.pitch;
-			continue;
-		}
-
-		const byte *srcRow = src + srcFrame->pitch * (i * srcHeight / dstHeight);
+		const byte *srcRow = src;
+		if (flipMode & kImageFlipV)
+			srcRow += srcFrame->pitch * ((dstHeight - i - 1) * srcHeight / dstHeight);
+		else
+			srcRow += srcFrame->pitch * (i * srcHeight / dstHeight);
 
 		for (int j = 0; j < dstWidth; ++j) {
-			if (flip) {
-				if (x + j < drawWin.left || x + j >= drawWin.right)
-					continue;
-				int srcX = (dstWidth - j - 1) * srcWidth / dstWidth;
-				if (srcRow[srcX])
-					dst[j] = srcRow[srcX];
-			} else {
-				if (x + j < drawWin.left || x + j >= drawWin.right)
-					continue;
-				int srcX = j * srcWidth / dstWidth;
-				if (srcRow[srcX])
-					dst[j] = srcRow[srcX];
-			}
+			int srcX;
+			if (flipMode & kImageFlipH)
+				srcX = (dstWidth - j - 1) * srcWidth / dstWidth;
+			else
+				srcX = j * srcWidth / dstWidth;
+
+			if (srcRow[srcX] && clippedDestRect.contains(j + x, i + y))
+				dst[j] = srcRow[srcX];
 		}
 		dst += destSurf.pitch;
 	}
