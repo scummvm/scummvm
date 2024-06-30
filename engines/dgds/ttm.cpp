@@ -115,11 +115,12 @@ Common::Error TTMSeq::syncState(Common::Serializer &s) {
 	return Common::kNoError;
 }
 
-TTMInterpreter::TTMInterpreter(DgdsEngine *vm) : _vm(vm) {}
+TTMInterpreter::TTMInterpreter(DgdsEngine *vm) : _vm(vm), _stackDepth(0) {}
 
 bool TTMInterpreter::load(const Common::String &filename, TTMEnviro &scriptData) {
 	TTMParser dgds(_vm->getResourceManager(), _vm->getDecompressor());
 	bool parseResult = dgds.parse(&scriptData, filename);
+	_stackDepth = 0;
 
 	scriptData.scr->seek(0);
 
@@ -160,6 +161,7 @@ static const char *ttmOpName(uint16 op) {
 	case 0x2310: return "PAL SET BLOCK SWAP 1";
 	case 0x2320: return "PAL SET BLOCK SWAP 2";
 	case 0x2400: return "PAL DO BLOCK SWAP";
+	case 0x3000: return "GOSUB";
 	case 0x4000: return "SET CLIP WINDOW";
 	case 0x4110: return "FADE OUT";
 	case 0x4120: return "FADE IN";
@@ -269,7 +271,7 @@ void TTMInterpreter::doWipeOp(uint16 code, TTMEnviro &env, TTMSeq &seq, const Co
 	//
 	switch(code) {
 	case 0xa010:
-		// TODO: How is this different to a020?
+		warning("TODO: Implement TTM 0xa010 wipe (dissolve) op");
 		_copyRectToScreen(_vm->_compositionBuffer, r);
 		g_system->updateScreen();
 		break;
@@ -586,6 +588,27 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 			break;
 		warning("TODO: 0x%04x Palette do block swaps 0x%x, 0x%x", op, ivals[0], ivals[1]);
 		break;
+	case 0x3000: {
+		_stackDepth++;
+		bool prevHitOp0110Val = _vm->adsInterpreter()->getHitTTMOp0110();
+		int32 target = findGOTOTarget(env, seq, ivals[2]);
+		if (target == -1)
+			error("TTM gosub to frame %d which doesn't exist", target);
+		int64 prevPos = env.scr->pos();
+		env.scr->seek(env._frameOffsets[target]);
+
+		// TODO: Set some other render-related globals here
+		warning("TODO: TTM 0x3000 GOSUB %d %d, use other args", ivals[0], ivals[1]);
+
+		run(env, seq);
+		env.scr->seek(prevPos);
+
+		if (_vm->adsInterpreter()->getHitTTMOp0110() && !prevHitOp0110Val)
+			_vm->adsInterpreter()->setHitTTMOp0110(false);
+
+		_stackDepth--;
+		break;
+	}
 	case 0x4000: // SET CLIP WINDOW x,y,x2,y2:int	[0..320,0..200]
 		// NOTE: params are xmax/ymax, NOT w/h
 		seq._drawWin = Common::Rect(ivals[0], ivals[1], ivals[2], ivals[3]);
@@ -679,7 +702,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		break;
 	}
 	case 0xa100: { // DRAW FILLED RECT x,y,w,h:int	[0..320,0..200]
-		const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
+		Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
+		r.clip(seq._drawWin);
 		_vm->_compositionBuffer.fillRect(r, seq._drawColFG);
 		break;
 	}
@@ -736,10 +760,13 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		// DRAW BMP: x,y,tile-id,bmp-id:int [-n,+n] (CHINA)
 		int frameno;
 		int bmpNo;
+		int dstWidth = 0;
+		int dstHeight = 0;
 		if (count == 6) {
 			frameno = ivals[2];
 			bmpNo = ivals[3];
-			warning("TODO: Implement other args %d %d of 6-arg draw function 0x%4x", ivals[4], ivals[5], op);
+			dstWidth = ivals[4];
+			dstHeight = ivals[5];
 		} else if (count == 4) {
 			frameno = ivals[2];
 			bmpNo = ivals[3];
@@ -751,7 +778,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		// DRAW BMP: x,y:int [-n,+n] (RISE)
 		Common::SharedPtr<Image> img = env._scriptShapes[bmpNo];
 		if (img)
-			img->drawBitmap(frameno, ivals[0], ivals[1], seq._drawWin, _vm->_compositionBuffer, op == 0xa520);
+			img->drawBitmap(frameno, ivals[0], ivals[1], seq._drawWin, _vm->_compositionBuffer, op == 0xa520, dstWidth, dstHeight);
 		else
 			warning("Trying to draw image %d in env %d which is not loaded", bmpNo, env._enviro);
 		break;

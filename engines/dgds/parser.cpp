@@ -136,10 +136,13 @@ bool ADSParser::handleChunk(DgdsChunkReader &chunk, ParserData *data) {
 
 		for (uint16 i = 0; i < count; i++) {
 			uint16 idx = chunkStream->readUint16LE();
-			assert(idx == (i + 1));
+			//assert(idx == (i + 1)); // not true in Willy Beamish.
+			if (idx > scriptData->_scriptNames.size())
+				scriptData->_scriptNames.resize(idx);
+
 
 			Common::String string = chunkStream->readString();
-			scriptData->_scriptNames.push_back(string);
+			scriptData->_scriptNames[idx - 1] = string;
 		}
 	} break;
 	case ID_SCR:

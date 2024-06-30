@@ -121,6 +121,7 @@ protected:
 	void doDrawDialogForStrings(TTMEnviro &env, TTMSeq &seq, int16 x, int16 y, int16 width, int16 height);
 
 	DgdsEngine *_vm;
+	int _stackDepth;
 };
 
 } // end namespace Dgds

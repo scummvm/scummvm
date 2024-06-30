@@ -186,6 +186,9 @@ void Menu::drawMenuText(Graphics::ManagedSurface &dst) {
 	Common::Array<Common::SharedPtr<Gadget> > gadgets = _menuRequests[_curMenu]._gadgets;
 	Common::Array<TextItem> textItems = _menuRequests[_curMenu]._textItemList;
 
+	if (gadgets.empty())
+		return;
+
 	// TODO: Get the parent coordinates properly
 	uint16 parentX = gadgets[0].get()->_parentX;
 	uint16 parentY = gadgets[0].get()->_parentY;

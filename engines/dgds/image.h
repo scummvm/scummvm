@@ -50,7 +50,7 @@ public:
 
 	void loadBitmap(const Common::String &filename);
 	int frameCount(const Common::String &filename);
-	void drawBitmap(uint frameno, int x, int y, const Common::Rect &drawWin, Graphics::ManagedSurface &dst, bool flip = false) const;
+	void drawBitmap(uint frameno, int x, int y, const Common::Rect &drawWin, Graphics::ManagedSurface &dst, bool flip = false, int dstWidth = 0, int dstHeight = 0) const;
 
 	Common::SharedPtr<Graphics::ManagedSurface> getSurface(uint frameno) const;
 

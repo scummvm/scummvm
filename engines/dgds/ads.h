@@ -72,7 +72,8 @@ public:
 	void segmentOrState(int16 seg, uint16 val);
 	void segmentSetState(int16 seg, uint16 val);
 
-	void setHitTTMOp0110(); // TODO: better name for this global?
+	void setHitTTMOp0110(bool val = true); // TODO: better name for this global?
+	bool getHitTTMOp0110() const { return _adsData->_hitTTMOp0110; }
 	void setGotoTarget(int32 target);
 	int16 getStateForSceneOp(uint16 segnum);
 	void setScriptDelay(int16 delay) { _adsData->_scriptDelay = delay; }

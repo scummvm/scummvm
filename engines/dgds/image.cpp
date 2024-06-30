@@ -235,48 +235,56 @@ void Image::loadBitmap(const Common::String &filename) {
 	delete fileStream;
 }
 
-void Image::drawBitmap(uint frameno, int x, int y, const Common::Rect &drawWin, Graphics::ManagedSurface &destSurf, bool flip) const {
+void Image::drawBitmap(uint frameno, int x, int y, const Common::Rect &drawWin, Graphics::ManagedSurface &destSurf, bool flip, int dstWidth, int dstHeight) const {
 	if (frameno >= _frames.size()) {
 		warning("drawBitmap: Trying to draw frame %d from a %d frame image %s!", frameno, _frames.size(), _filename.c_str());
 		return;
 	}
 
 	const Common::SharedPtr<Graphics::ManagedSurface> srcFrame = _frames[frameno];
-	const Common::Rect destRect(x, y, x + srcFrame->w, y + srcFrame->h);
+
+	int srcWidth = srcFrame->w;
+	int srcHeight = srcFrame->h;
+	if (dstWidth == 0)
+		dstWidth = srcWidth;
+	if (dstHeight == 0)
+		dstHeight = srcHeight;
+
+	const Common::Rect destRect(Common::Point(x, y), dstWidth, dstHeight);
 	Common::Rect clippedDestRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	clippedDestRect.clip(destRect);
 	clippedDestRect.clip(drawWin);
-
-	Common::Point srcTopLeft(clippedDestRect.left - destRect.left, clippedDestRect.top - destRect.top);
-	const int rows = clippedDestRect.height();
-	const int columns = clippedDestRect.width();
-
-	if (!rows || !columns) {
-		//debug("Draw at %d,%d frame %dx%d clipwin %d,%d-%d,%d gives null image area", x, y,
-		//	srcFrame->w, srcFrame->h, drawWin.left, drawWin.top, drawWin.right, drawWin.bottom);
+	if (clippedDestRect.isEmpty())
 		return;
-	}
 
-	// Flip should be applied before clip window
-	if (flip)
-		srcTopLeft.x = (srcFrame->w - srcTopLeft.x) - columns;
+	const byte *src = (const byte *)srcFrame->getBasePtr(0, 0);
+	// Note: this is not super optimized, but it's easy to understand at least..
+	byte *dst = (byte *)destSurf.getBasePtr(x, y);
 
-	const byte *src = (const byte *)srcFrame->getBasePtr(srcTopLeft.x, srcTopLeft.y);
-	byte *dst = (byte *)destSurf.getBasePtr(clippedDestRect.left, clippedDestRect.top);
-	for (int i = 0; i < rows; ++i) {
-		if (flip) {
-			for (int j = 0; j < columns; ++j) {
-				if (src[columns - j - 1])
-					dst[j] = src[columns - j - 1];
-			}
-		} else {
-			for (int j = 0; j < columns; ++j) {
-				if (src[j])
-					dst[j] = src[j];
+	for (int i = 0; i < dstHeight; ++i) {
+		if (y + i < drawWin.top || y + i >= drawWin.bottom) {
+			dst += destSurf.pitch;
+			continue;
+		}
+
+		const byte *srcRow = src + srcFrame->pitch * (i * srcHeight / dstHeight);
+
+		for (int j = 0; j < dstWidth; ++j) {
+			if (flip) {
+				if (x + j < drawWin.left || x + j >= drawWin.right)
+					continue;
+				int srcX = (dstWidth - j - 1) * srcWidth / dstWidth;
+				if (srcRow[srcX])
+					dst[j] = srcRow[srcX];
+			} else {
+				if (x + j < drawWin.left || x + j >= drawWin.right)
+					continue;
+				int srcX = j * srcWidth / dstWidth;
+				if (srcRow[srcX])
+					dst[j] = srcRow[srcX];
 			}
 		}
 		dst += destSurf.pitch;
-		src += srcFrame->pitch;
 	}
 }
 

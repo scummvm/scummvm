@@ -121,6 +121,9 @@ enum SceneOpCode {
 	kSceneOpOpenChinaOpenSkipCreditsMenu = 115,	// args: none.
 	kSceneOpOpenChinaStartIntro = 116,	// args: none.
 
+	// Beamish-specific opcodes
+	kSceneOpOpenBeamishOpenSkipCreditsMenu = 101,
+
 	kSceneOpMaxCode = 255, // for checking file load
 };
 
