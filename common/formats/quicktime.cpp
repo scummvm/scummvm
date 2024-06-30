@@ -1288,8 +1288,8 @@ String QuickTimeParser::PanoStringTable::getString(int32 offset) const {
 	if (offset < 0)
 		return String();
 
-	int32_t str_start = offset + 1;
-	int32_t str_length = strings[offset];
+	int32 str_start = offset + 1;
+	int32 str_length = strings[offset];
 
 	return strings.substr(str_start, str_length);
 }
