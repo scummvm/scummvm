@@ -476,9 +476,8 @@ void EditGameDialog::close() {
 
 	// Cleanup engine widgets before unloading its plugin
 	if (_engineOptions) {
-		// Switch back to Game tab before deleting the widget
-		_tabWidget->setActiveTab(0);
-		_tabWidget->removeWidget(_engineOptions);
+		// Remove the widget from the container before deleting the widget
+		_gameContainer->removeWidget(_engineOptions);
 		delete _engineOptions;
 	}
 
