@@ -36,6 +36,10 @@ Common::Point GfxDriver::getMousePos() const {
 	return g_system->getEventManager()->getMousePos();
 }
 
+void GfxDriver::clearRect(const Common::Rect &r) const {
+	g_system->fillScreen(r, 0);
+}
+
 GfxDefaultDriver::GfxDefaultDriver(uint16 screenWidth, uint16 screenHeight) : GfxDriver(screenWidth, screenHeight, 0, 1) {
 	switch (g_sci->getResMan()->getViewType()) {
 	case kViewEga:
@@ -409,6 +413,11 @@ Common::Point SCI0_CGABWDriver::getMousePos() const {
 	return res;
 }
 
+void SCI0_CGABWDriver::clearRect(const Common::Rect &r) const {
+	Common::Rect r2(r.left << 1, r.top << 1, r.right << 1, r.bottom << 1);
+	GfxDriver::clearRect(r2);
+}
+
 const char *SCI0_CGABWDriver::_driverFiles[2] = { "CGA320BW.DRV", "CGA320M.DRV" };
 
 SCI0_HerculesDriver::SCI0_HerculesDriver(int palIndex) : SCI0_DOSPreVGADriver(2, 720, 350, 0), _monochromePatterns(nullptr) {
@@ -501,6 +510,11 @@ Common::Point SCI0_HerculesDriver::getMousePos() const {
 	res.x = CLIP<int>(res.x - 40, 0, 639) >> 1;
 	res.y = CLIP<int>(res.y - 25, 0, 299) * 2 / 3;
 	return res;
+}
+
+void SCI0_HerculesDriver::clearRect(const Common::Rect &r) const {
+	Common::Rect r2((r.left << 1) + 40, (r.top & ~1) * 3 / 2 + (r.top & 1) + 25, (r.right << 1) + 40, (r.bottom & ~1) * 3 / 2 + (r.bottom & 1) + 25);
+	GfxDriver::clearRect(r2);
 }
 
 const char *SCI0_HerculesDriver::_driverFile = "HERCMONO.DRV";
