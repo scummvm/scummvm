@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_INTERFACE_ELEMENT_H__
-#define __QD_INTERFACE_ELEMENT_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_INTERFACE_ELEMENT_H
+#define QDENGINE_CORE_QDCORE_QD_INTERFACE_ELEMENT_H
 
 #include "qdengine/core/system/sound/snd_sound.h"
 #include "qdengine/core/system/input/mouse_input.h"
@@ -268,4 +268,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __QD_INTERFACE_ELEMENT_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_INTERFACE_ELEMENT_H */

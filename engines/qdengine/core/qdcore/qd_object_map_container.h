@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_OBJECT_MAP_CONTAINER_H__
-#define __QD_OBJECT_MAP_CONTAINER_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_OBJECT_MAP_CONTAINER_H
+#define QDENGINE_CORE_QDCORE_QD_OBJECT_MAP_CONTAINER_H
 
 #include "qdengine/qdengine.h"
 
@@ -154,4 +154,4 @@ bool qdObjectMapContainer<T>::clear() {
 
 } // namespace QDEngine
 
-#endif /* __QD_OBJECT_MAP_CONTAINER_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_OBJECT_MAP_CONTAINER_H */

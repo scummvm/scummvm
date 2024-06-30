@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __WAV_SOUND_H__
-#define __WAV_SOUND_H__
+#ifndef QDENGINE_CORE_SYSTEM_WAV_SOUND_H
+#define QDENGINE_CORE_SYSTEM_WAV_SOUND_H
 
 #include "audio/decoders/wave.h"
 
@@ -94,4 +94,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __WAV_SOUND_H__ */
+#endif /* QDENGINE_CORE_SYSTEM_WAV_SOUND_H */

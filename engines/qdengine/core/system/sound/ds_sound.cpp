@@ -131,7 +131,7 @@ bool dsSound::stop() {
 	if (!_stream) {
 		return false;
 	}
-	
+
 	warning("STUB: dsSound::stop()");
 	g_system->getMixer()->stopHandle(*_soundHandle);
 	return true;

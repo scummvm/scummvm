@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_FILE_OWNER__
-#define __QD_FILE_OWNER__
+#ifndef QDENGINE_CORE_QDCORE_QD_FILE_OWNER
+#define QDENGINE_CORE_QDCORE_QD_FILE_OWNER
 
 
 
@@ -65,4 +65,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // __QD_FILE_OWNER__
+#endif // QDENGINE_CORE_QDCORE_QD_FILE_OWNER

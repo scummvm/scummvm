@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_TRIGGER_ELEMENT_H__
-#define __QD_TRIGGER_ELEMENT_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_TRIGGER_ELEMENT_H
+#define QDENGINE_CORE_QDCORE_QD_TRIGGER_ELEMENT_H
 
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/qdcore/qd_named_object.h"
@@ -421,4 +421,4 @@ typedef std::vector<qdTriggerElementPtr> qdTriggerElementList;
 
 } // namespace QDEngine
 
-#endif /* __QD_TRIGGER_ELEMENT_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_TRIGGER_ELEMENT_H */

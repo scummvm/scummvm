@@ -20,8 +20,8 @@
  */
 
 
-#ifndef QD_FILE_MANAGER_H
-#define QD_FILE_MANAGER_H
+#ifndef QDENGINE_CORE_QDCORE_QD_FILE_MANAGER_H
+#define QDENGINE_CORE_QDCORE_QD_FILE_MANAGER_H
 
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/qd_file_owner.h"
@@ -120,4 +120,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // QD_FILE_MANAGER_H
+#endif // QDENGINE_CORE_QDCORE_QD_FILE_MANAGER_H

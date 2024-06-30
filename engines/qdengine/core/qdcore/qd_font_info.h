@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_FONT_INFO_H__
-#define __QD_FONT_INFO_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_FONT_INFO_H
+#define QDENGINE_CORE_QDCORE_QD_FONT_INFO_H
 
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/parser/xml_tag.h"
@@ -95,4 +95,4 @@ typedef std::list<qdFontInfo *> qdFontInfoList;
 
 } // namespace QDEngine
 
-#endif // __QD_FONT_INFO_H__
+#endif // QDENGINE_CORE_QDCORE_QD_FONT_INFO_H

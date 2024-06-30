@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_RND_H__
-#define __QD_RND_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_RND_H
+#define QDENGINE_CORE_QDCORE_QD_RND_H
 
 
 namespace QDEngine {
@@ -45,4 +45,4 @@ bool qd_rnd_init(int seed = 83);
 
 } // namespace QDEngine
 
-#endif /* __QD_RND_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_RND_H */

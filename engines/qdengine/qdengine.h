@@ -20,8 +20,8 @@
  */
 
 
-#ifndef QDENGINE_QDENGINE_H
-#define QDENGINE_QDENGINE_H
+#ifndef QDENGINE_H
+#define QDENGINE_H
 
 #include "common/scummsys.h"
 #include "common/system.h"

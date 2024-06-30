@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_INVENTORY_CELL_H__
-#define __QD_INVENTORY_CELL_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_INVENTORY_CELL_H
+#define QDENGINE_CORE_QDCORE_QD_INVENTORY_CELL_H
 
 #include <vector>
 #include <algorithm>
@@ -312,4 +312,4 @@ typedef std::vector<qdInventoryCellSet> qdInventoryCellSetVector;
 
 } // namespace QDEngine
 
-#endif /* __QD_INVENTORY_CELL_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_INVENTORY_CELL_H */

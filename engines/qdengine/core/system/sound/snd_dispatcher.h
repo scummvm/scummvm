@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __SND_DISPATCHER_H__
-#define __SND_DISPATCHER_H__
+#ifndef QDENGINE_CORE_SYSTEM_SND_DISPATCHER_H
+#define QDENGINE_CORE_SYSTEM_SND_DISPATCHER_H
 
 #include "audio/mixer.h"
 #include "qdengine/core/system/sound/snd_sound.h"
@@ -169,4 +169,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __SND_DISPATCHER_H__ */
+#endif /* QDENGINE_CORE_SYSTEM_SND_DISPATCHER_H */

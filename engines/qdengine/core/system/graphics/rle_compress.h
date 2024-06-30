@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __RLE_COMPRESS_H__
-#define __RLE_COMPRESS_H__
+#ifndef QDENGINE_CORE_SYSTEM_GRAPHICS_RLE_COMPRESS_H
+#define QDENGINE_CORE_SYSTEM_GRAPHICS_RLE_COMPRESS_H
 
 
 namespace QDEngine {
@@ -97,4 +97,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __RLE_COMPRESS_H__ */
+#endif /* QDENGINE_CORE_SYSTEM_GRAPHICS_RLE_COMPRESS_H */

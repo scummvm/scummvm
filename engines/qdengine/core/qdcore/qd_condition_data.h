@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_CONDITION_DATA_H__
-#define __QD_CONDITION_DATA_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_CONDITION_DATA_H
+#define QDENGINE_CORE_QDCORE_QD_CONDITION_DATA_H
 
 #include <vector>
 #include "qdengine/core/parser/xml_fwd.h"
@@ -107,4 +107,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __QD_CONDITION_DATA_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_CONDITION_DATA_H */

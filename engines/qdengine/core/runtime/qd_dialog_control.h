@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_DIALOG_CONTROL_H__
-#define __QD_DIALOG_CONTROL_H__
+#ifndef QDENGINE_CORE_RUNTIME_QD_DIALOG_CONTROL_H
+#define QDENGINE_CORE_RUNTIME_QD_DIALOG_CONTROL_H
 
 
 
@@ -143,4 +143,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __QD_DIALOG_CONTROL_H__ */
+#endif /* QDENGINE_CORE_RUNTIME_QD_DIALOG_CONTROL_H */

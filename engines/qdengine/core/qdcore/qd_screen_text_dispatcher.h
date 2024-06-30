@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_SCREEN_TEXT_DISPATCHER__
-#define __QD_SCREEN_TEXT_DISPATCHER__
+#ifndef QDENGINE_CORE_QDCORE_QD_SCREEN_TEXT_DISPATCHER
+#define QDENGINE_CORE_QDCORE_QD_SCREEN_TEXT_DISPATCHER
 
 #include "qdengine/core/qdcore/qd_screen_text_set.h"
 #include "qdengine/core/system/input/mouse_input.h"
@@ -67,4 +67,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __QD_SCREEN_TEXT_DISPATCHER__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_SCREEN_TEXT_DISPATCHER */

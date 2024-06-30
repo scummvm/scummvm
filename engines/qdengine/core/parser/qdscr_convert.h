@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QDSCR_CONVERT_H__
-#define __QDSCR_CONVERT_H__
+#ifndef QDENGINE_CORE_PARSER_QDSCR_CONVERT_H
+#define QDENGINE_CORE_PARSER_QDSCR_CONVERT_H
 
 namespace QDEngine {
 
@@ -33,4 +33,4 @@ const char *qdscr_get_XML_file_name(const char *file_name);
 
 } // namespace QDEngine
 
-#endif /* __QDSCR_CONVERT_H__ */
+#endif /* QDENGINE_CORE_PARSER_QDSCR_CONVERT_H */

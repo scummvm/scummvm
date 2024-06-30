@@ -20,8 +20,8 @@
  */
 
 
-#ifndef __QD_CONDITION_OBJECT_REFERENCE_H__
-#define __QD_CONDITION_OBJECT_REFERENCE_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_CONDITION_OBJECT_REFERENCE_H
+#define QDENGINE_CORE_QDCORE_QD_CONDITION_OBJECT_REFERENCE_H
 
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/qdcore/qd_named_object_reference.h"
@@ -66,4 +66,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __QD_CONDITION_OBJECT_REFERENCE_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_CONDITION_OBJECT_REFERENCE_H */

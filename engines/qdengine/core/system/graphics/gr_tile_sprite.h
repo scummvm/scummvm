@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __GR_TILE_SPRITE_H__
-#define __GR_TILE_SPRITE_H__
+#ifndef QDENGINE_CORE_SYSTEM_GRAPHICS_GR_TILE_SPRITE_H
+#define QDENGINE_CORE_SYSTEM_GRAPHICS_GR_TILE_SPRITE_H
 
 
 namespace QDEngine {
@@ -76,4 +76,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /*__GR_TILE_SPRITE_H__ */
+#endif /*QDENGINE_CORE_SYSTEM_GRAPHICS_GR_TILE_SPRITE_H */

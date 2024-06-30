@@ -19,9 +19,8 @@
  *
  */
 
-#ifndef __QD_MINIGAME_CONFIG_H__
-#define __QD_MINIGAME_CONFIG_H__
-
+#ifndef QDENGINE_CORE_QDCORE_QD_MINIGAME_CONFIG_H
+#define QDENGINE_CORE_QDCORE_QD_MINIGAME_CONFIG_H
 
 namespace QDEngine {
 /// Конфигурационные данные для миниигры.
@@ -153,8 +152,6 @@ private:
 	bool is_data_valid_;
 };
 
-#endif /* __QD_MINIGAME_CONFIG_H__ */
-
-
-
 } // namespace QDEngine
+
+#endif /* QDENGINE_CORE_QDCORE_QD_MINIGAME_CONFIG_H */

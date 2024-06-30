@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __INPUT_WNDPROC_H__
-#define __INPUT_WNDPROC_H__
+#ifndef QDENGINE_CORE_SYSTEM_INPUT_INPUT_WNDPROC_H
+#define QDENGINE_CORE_SYSTEM_INPUT_INPUT_WNDPROC_H
 
 namespace Common {
 struct Event;
@@ -59,4 +59,4 @@ bool mouse_wndproc(const Common::Event &event, mouseDispatcher *dsp);
 
 } // namespace QDEngine
 
-#endif /* __INPUT_WNDPROC_H__ */
+#endif /* QDENGINE_CORE_SYSTEM_INPUT_INPUT_WNDPROC_H */

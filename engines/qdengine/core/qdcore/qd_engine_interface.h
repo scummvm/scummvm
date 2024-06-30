@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_ENGINE_INTERFACE_H__
-#define __QD_ENGINE_INTERFACE_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_ENGINE_INTERFACE_H
+#define QDENGINE_CORE_QDCORE_QD_ENGINE_INTERFACE_H
 
 #include "qdengine/core/qdcore/qd_rnd.h"
 
@@ -83,4 +83,4 @@ public:
 
 } // namespace QDEngine
 
-#endif /* __QD_ENGINE_INTERFACE_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_ENGINE_INTERFACE_H */

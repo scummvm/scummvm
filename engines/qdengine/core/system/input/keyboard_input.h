@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __KEYBOARD_INPUT_H__
-#define __KEYBOARD_INPUT_H__
+#ifndef QDENGINE_CORE_SYSTEM_INPUT_KEYBOARD_INPUT_H
+#define QDENGINE_CORE_SYSTEM_INPUT_KEYBOARD_INPUT_H
 
 
 namespace QDEngine {
@@ -71,4 +71,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __KEYBOARD_INPUT_H__ */
+#endif /* QDENGINE_CORE_SYSTEM_INPUT_KEYBOARD_INPUT_H */

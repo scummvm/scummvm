@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __GR_FONT_H__
-#define __GR_FONT_H__
+#ifndef QDENGINE_CORE_SYSTEM_GRAPHICS_GR_FONT_H
+#define QDENGINE_CORE_SYSTEM_GRAPHICS_GR_FONT_H
 
 #include "qdengine/core/system/graphics/gr_screen_region.h"
 
@@ -99,4 +99,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // __GR_FONT_H__
+#endif // QDENGINE_CORE_SYSTEM_GRAPHICS_GR_FONT_H

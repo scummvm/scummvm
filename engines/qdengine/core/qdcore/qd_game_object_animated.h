@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_GAME_OBJECT_ANIMATED__
-#define __QD_GAME_OBJECT_ANIMATED__
+#ifndef QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_ANIMATED_H
+#define QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_ANIMATED_H
 
 #include <vector>
 #include "qdengine/core/parser/xml_fwd.h"
@@ -411,4 +411,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __QD_GAME_OBJECT_ANIMATED__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_ANIMATED_H */

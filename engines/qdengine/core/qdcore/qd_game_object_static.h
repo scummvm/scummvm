@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_GAME_OBJECT_STATIC_H__
-#define __QD_GAME_OBJECT_STATIC_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_STATIC_H
+#define QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_STATIC_H
 
 #include "qdengine/core/qdcore/qd_sprite.h"
 #include "qdengine/core/qdcore/qd_game_object.h"
@@ -81,4 +81,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __QD_GAME_OBJECT_STATIC_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_STATIC_H */

@@ -20,8 +20,8 @@
  */
 
 
-#ifndef __QD_INTERFACE_BACKGROUND_H__
-#define __QD_INTERFACE_BACKGROUND_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_INTERFACE_BACKGROUND_H
+#define QDENGINE_CORE_QDCORE_QD_INTERFACE_BACKGROUND_H
 
 #include "qdengine/core/qdcore/qd_interface_element.h"
 #include "qdengine/core/qdcore/qd_interface_element_state.h"
@@ -103,4 +103,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __QD_INTERFACE_BACKGROUND_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_INTERFACE_BACKGROUND_H */

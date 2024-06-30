@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_SCALE_INFO_H__
-#define __QD_SCALE_INFO_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_SCALE_INFO_H
+#define QDENGINE_CORE_QDCORE_QD_SCALE_INFO_H
 
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/qdcore/qd_named_object.h"
@@ -57,4 +57,4 @@ typedef std::list<qdScaleInfo *> qdScaleInfoList;
 
 } // namespace QDEngine
 
-#endif /* __QD_SCALE_INFO_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_SCALE_INFO_H */

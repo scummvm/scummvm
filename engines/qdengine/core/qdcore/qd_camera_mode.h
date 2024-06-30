@@ -20,8 +20,8 @@
  */
 
 
-#ifndef __QD_CAMERA_MODE_H__
-#define __QD_CAMERA_MODE_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_CAMERA_MODE_H
+#define QDENGINE_CORE_QDCORE_QD_CAMERA_MODE_H
 
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/qd_precomp.h"
@@ -151,4 +151,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __QD_CAMERA_MODE_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_CAMERA_MODE_H */

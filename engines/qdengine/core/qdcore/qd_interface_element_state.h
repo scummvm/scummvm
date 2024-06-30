@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_INTERFACE_ELEMENT_STATE_H__
-#define __QD_INTERFACE_ELEMENT_STATE_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_INTERFACE_ELEMENT_STATE_H
+#define QDENGINE_CORE_QDCORE_QD_INTERFACE_ELEMENT_STATE_H
 
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/qdcore/qd_animation_info.h"
@@ -345,4 +345,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __QD_INTERFACE_ELEMENT_STATE_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_INTERFACE_ELEMENT_STATE_H */

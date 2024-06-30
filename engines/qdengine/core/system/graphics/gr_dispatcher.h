@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __GR_DISPATCHER_H__
-#define __GR_DISPATCHER_H__
+#ifndef QDENGINE_CORE_SYSTEM_GRAPHICS_GR_DISPATCHER_H
+#define QDENGINE_CORE_SYSTEM_GRAPHICS_GR_DISPATCHER_H
 
 #include "qdengine/core/system/graphics/gr_screen_region.h"
 #include "qdengine/xlibs/util/xmath/xmath.h"
@@ -623,4 +623,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __GR_DISPATCHER_H__ */
+#endif /* QDENGINE_CORE_SYSTEM_GRAPHICS_GR_DISPATCHER_H */

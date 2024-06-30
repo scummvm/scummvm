@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __APP_ERROR_HANDLER_H__
-#define __APP_ERROR_HANDLER_H__
+#ifndef QDENGINE_CORE_SYSTEM_APP_ERROR_HANDLER_H
+#define QDENGINE_CORE_SYSTEM_APP_ERROR_HANDLER_H
 
 
 
@@ -76,4 +76,4 @@ extern appErrorHandler app_errH;
 
 } // namespace QDEngine
 
-#endif /* __APP_ERROR_HANDLER_H__ */
+#endif /* QDENGINE_CORE_SYSTEM_APP_ERROR_HANDLER_H */

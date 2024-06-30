@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_RESOURCE_FILE_H__
-#define __QD_RESOURCE_FILE_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_RESOURCE_FILE_H
+#define QDENGINE_CORE_QDCORE_QD_RESOURCE_FILE_H
 
 
 namespace QDEngine {
@@ -29,4 +29,4 @@ bool qd_open_resource(const char *file_name, class XStream &fh, bool readonly = 
 
 } // namespace QDEngine
 
-#endif /* __QD_RESOURCE_FILE_H__ */
+#endif /* QDENGINE_CORE_QDCORE_QD_RESOURCE_FILE_H */

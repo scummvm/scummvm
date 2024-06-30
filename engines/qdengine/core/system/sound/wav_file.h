@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __WAV_FILE_H__
-#define __WAV_FILE_H__
+#ifndef QDENGINE_CORE_SYSTEM_WAV_FILE_H
+#define QDENGINE_CORE_SYSTEM_WAV_FILE_H
 
 namespace QDEngine {
 
@@ -28,4 +28,4 @@ bool wav_file_load(const char *fname, class wavSound *snd);
 
 } // namespace QDEngine
 
-#endif /* __WAV_FILE_H__ */
+#endif /* QDENGINE_CORE_SYSTEM_WAV_FILE_H */

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __COMLINE_PARSER_H__
-#define __COMLINE_PARSER_H__
+#ifndef QDENGINE_CORE_RUNTIME_COMLINE_PARSER_H
+#define QDENGINE_CORE_RUNTIME_COMLINE_PARSER_H
 
 
 namespace QDEngine {
@@ -77,4 +77,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __COMLINE_PARSER_H__ */
+#endif /* QDENGINE_CORE_RUNTIME_COMLINE_PARSER_H */

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_LIST_H__
-#define __QD_LIST_H__
+#ifndef QDENGINE_CORE_QDCORE_QD_LIST_H
+#define QDENGINE_CORE_QDCORE_QD_LIST_H
 
 namespace QDEngine {
 
@@ -197,6 +197,6 @@ inline Type *qdList<Type>::search(int ID) {
 	return 0;
 }
 
-#endif  // __QD_LIST_H__
-
 } // namespace QDEngine
+
+#endif  // QDENGINE_CORE_QDCORE_QD_LIST_H
