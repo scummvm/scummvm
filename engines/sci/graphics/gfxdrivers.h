@@ -40,6 +40,7 @@ public:
 	virtual void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) = 0;
 	virtual void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) = 0;
 	virtual Common::Point getMousePos() const;
+	virtual void clearRect(const Common::Rect &r) const;
 
 protected:
 	const uint16 _screenW;
@@ -100,6 +101,7 @@ public:
 	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	Common::Point getMousePos() const override;
+	void clearRect(const Common::Rect &r) const override;
 	static bool validateMode() { return checkDriver(_driverFiles, 2); }
 private:
 	const byte *_monochromePatterns;
@@ -114,6 +116,7 @@ public:
 	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	Common::Point getMousePos() const override;
+	void clearRect(const Common::Rect &r) const override;
 	static bool validateMode() { return checkDriver(&_driverFile, 1); }
 private:
 	const byte *_monochromePatterns;

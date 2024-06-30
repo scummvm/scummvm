@@ -25,6 +25,7 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
+#include "sci/graphics/gfxdrivers.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/transitions.h"
@@ -283,12 +284,12 @@ void GfxTransitions::copyRectToScreen(const Common::Rect rect, bool blackoutFlag
 		_screen->copyRectToScreen(rect);
 	} else {
 		if (!_screen->getUpscaledHires()) {
-			g_system->fillScreen(rect, 0);
+			_screen->gfxDriver()->clearRect(rect);
 		} else {
 			Common::Rect upscaledRect = rect;
 			_screen->adjustToUpscaledCoordinates(upscaledRect.top, upscaledRect.left);
 			_screen->adjustToUpscaledCoordinates(upscaledRect.bottom, upscaledRect.right);
-			g_system->fillScreen(upscaledRect, 0);
+			_screen->gfxDriver()->clearRect(rect);
 		}
 	}
 }
