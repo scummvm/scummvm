@@ -36,16 +36,16 @@ namespace Trecision {
 #define AD_NL_ENTRY(md5, size) \
 	{ \
 		{"data.nl", 0, md5, size}, \
-		{"nlanim.cd1", 0, nullptr, -1}, \
-		{"nlanim.cd2", 0, nullptr, -1}, \
-		{"nlanim.cd3", 0, nullptr, -1}, \
+		{"nlanim.cd1", 0, nullptr, AD_NO_SIZE}, \
+		{"nlanim.cd2", 0, nullptr, AD_NO_SIZE}, \
+		{"nlanim.cd3", 0, nullptr, AD_NO_SIZE}, \
 		AD_LISTEND \
 	}
 
 #define AD_NL_DEMO_ENTRY(md5, size) \
 	{ \
 		{"data.nl", 0, md5, size}, \
-		{"nlanim.cd1", 0, nullptr, -1}, \
+		{"nlanim.cd1", 0, nullptr, AD_NO_SIZE}, \
 		AD_LISTEND \
 	}
 

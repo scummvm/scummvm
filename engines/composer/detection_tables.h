@@ -372,7 +372,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"magictales",
 			"Magic Tales Demo: Baba Yaga, Samurai, Imo",
 			{
-				{"book.ini", GAME_CONFIGFILE, "dbc98c566f4ac61b544443524585dccb", -1},
+				{"book.ini", GAME_CONFIGFILE, "dbc98c566f4ac61b544443524585dccb", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -458,7 +458,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"magictales",
 			"Magic Tales Demo: Sleeping Cub, Princess & Crab",
 			{
-				{"book.ini", GAME_CONFIGFILE, "3dede2522bb0886c95667b082987a87f", -1},
+				{"book.ini", GAME_CONFIGFILE, "3dede2522bb0886c95667b082987a87f", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -524,7 +524,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"darby",
 			0,
 			{
-				{"book.ini", GAME_CONFIGFILE, "285308372f7dddff2ca5a25c9192cf5c", -1},
+				{"book.ini", GAME_CONFIGFILE, "285308372f7dddff2ca5a25c9192cf5c", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::FR_FRA,
@@ -557,7 +557,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"darby",
 			0,
 			{
-				{"page99.rsc", GAME_SCRIPTFILE, "183463d18c050563dcdec2d9f9670515", -1},
+				{"page99.rsc", GAME_SCRIPTFILE, "183463d18c050563dcdec2d9f9670515", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::HE_ISR,
@@ -606,7 +606,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"gregory",
 			0,
 			{
-				{"book.ini", GAME_CONFIGFILE, "e54fc5c00de5f94e908a969e445af5d0", -1},
+				{"book.ini", GAME_CONFIGFILE, "e54fc5c00de5f94e908a969e445af5d0", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::FR_FRA,

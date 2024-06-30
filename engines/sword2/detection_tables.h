@@ -89,7 +89,7 @@ static const ADGameDescription gameDescriptions[] = {
 				   "speech1.clu", "a403904a0e825356107d228f8f74092e", 176260048,
 				   "docks.clu",   "b39246fbb5b955a29f9a207c69bfc318", 20262263,
 				   "bs2k.fnt",    nullptr,                            1222000,
-				   "korean.clu",  nullptr,                            -1),
+				   "korean.clu",  nullptr,                            AD_NO_SIZE),
 		Common::KO_KOR,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,

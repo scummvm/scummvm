@@ -699,7 +699,7 @@ void AdvancedMetaEngineDetectionBase::dumpDetectionEntries() const {
 
 		for (auto fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			const char *fname = fileDesc->fileName;
-			int64 fsize = fileDesc->fileSize;
+			int64 fsize = fileDesc->fileSize == AD_NO_SIZE ? -1 : fileDesc->fileSize;
 			Common::String md5 = fileDesc->md5;
 			MD5Properties md5prop = gameFileToMD5Props(fileDesc, g->flags);
 			Common::String md5Prefix = md5PropToGameFile(md5prop);
@@ -807,8 +807,8 @@ ADDetectedGames AdvancedMetaEngineDetectionBase::detectGame(const Common::FSNode
 				continue;
 			}
 
-			if (fileDesc->fileSize != -1 && fileDesc->fileSize != filesProps[key].size) {
-				debugC(3, kDebugGlobalDetection, "Size Mismatch. Skipping (%ld) (%ld)", long(fileDesc->fileSize), long(filesProps[key].size));
+			if (fileDesc->fileSize != AD_NO_SIZE && fileDesc->fileSize != filesProps[key].size) {
+				debugC(3, kDebugGlobalDetection, "Size Mismatch. Skipping (%u) (%ld)", fileDesc->fileSize, long(filesProps[key].size));
 				game.hasUnknownFiles = true;
 				continue;
 			}

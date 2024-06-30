@@ -71,7 +71,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
 			{"RES.000",   0, "f58f8dc3e63663f174977d359e11132c", 272057},
 			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
-			{"MOV000.SMK", 0, NULL, -1},
+			{"MOV000.SMK", 0, NULL, AD_NO_SIZE},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
@@ -120,7 +120,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"SNTRM.DAT", 0, "e09a12543c6ede1727c8ecffb74e7fd2", 8930},
 			{"RES.000",   0, "2a4677ee3fd7bfa3161e16cd59371238", 277931},
 			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
-			{"MOV000.SMK", 0, NULL, -1},
+			{"MOV000.SMK", 0, NULL, AD_NO_SIZE},
 			AD_LISTEND
 		},
 		Common::FR_FRA,
@@ -136,7 +136,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
 			{"RES.000",   0, "f58f8dc3e63663f174977d359e11132c", 272057},
 			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
-			{"MOV000_2_SMK.ogv", 0, NULL, -1},
+			{"MOV000_2_SMK.ogv", 0, NULL, AD_NO_SIZE},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
@@ -152,7 +152,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"SNTRM.DAT", 0, "f427fda37a0e29afd4acf982c4cb9fb0", 8930},
 			{"RES.000",   0, "0578f326b40d22f661ac93cf49dc2c19", 285658},
 			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
-			{"MOV000_2_SMK.ogv", 0, NULL, -1},
+			{"MOV000_2_SMK.ogv", 0, NULL, AD_NO_SIZE},
 			AD_LISTEND
 		},
 		Common::DE_DEU,
@@ -168,7 +168,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"SNTRM.DAT", 0, "e09a12543c6ede1727c8ecffb74e7fd2", 8930},
 			{"RES.000",   0, "94f3c795599ea79492cbf81127944f37", 277935},
 			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
-			{"MOV000_2_SMK.ogv", 0, NULL, -1},
+			{"MOV000_2_SMK.ogv", 0, NULL, AD_NO_SIZE},
 			AD_LISTEND
 		},
 		Common::FR_FRA,
@@ -229,7 +229,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
 			{"RES.000",   0, "1f7b3734a8da87464ce3765bd79be208", 247149},
 			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
-			{"MOV000.SMK", 0, NULL, -1},
+			{"MOV000.SMK", 0, NULL, AD_NO_SIZE},
 			AD_LISTEND
 		},
 		Common::RU_RUS,
@@ -245,7 +245,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
 			{"RES.000",   0, "1f7b3734a8da87464ce3765bd79be208", 247149},
 			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
-			{"MOV000_2_SMK.ogv", 0, NULL, -1},
+			{"MOV000_2_SMK.ogv", 0, NULL, AD_NO_SIZE},
 			AD_LISTEND
 		},
 		Common::RU_RUS,

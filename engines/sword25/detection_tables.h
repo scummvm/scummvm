@@ -128,9 +128,9 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"sword25",
 		"Extracted",
-		{{"_includes.lua", 0, 0, -1},
-		 {"boot.lua", 0, 0, -1},
-		 {"kernel.lua", 0, 0, -1},
+		{{"_includes.lua", 0, 0, AD_NO_SIZE},
+		 {"boot.lua", 0, 0, AD_NO_SIZE},
+		 {"kernel.lua", 0, 0, AD_NO_SIZE},
 		 AD_LISTEND},
 		Common::UNK_LANG,
 		Common::kPlatformUnknown,
