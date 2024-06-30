@@ -190,7 +190,7 @@ static const ADGameDescription gameDescriptions[] = {
 
 	// SQ5 demo
 	{
-		"sq5",
+		"sq5demo",
 		0,
 		{
 			{"cesdemo.ads", 0, "8b5d56353aae62c69fe81a3ef80c3789", 2394},
@@ -202,9 +202,9 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
-	// "Coming Soon" non-interactive demo
+	// "Coming Attractions" non-interactive demo
 	{
-		"comingsoon",
+		"comingattractions",
 		0,
 		{
 			{"demo.ads", 0, "bc709c5defe472f1ddc03db8cf6c83df", 94},

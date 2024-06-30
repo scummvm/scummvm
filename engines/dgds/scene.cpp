@@ -95,8 +95,8 @@ Common::String SceneConditions::dump(const Common::String &indent) const {
 
 
 Common::String HotArea::dump(const Common::String &indent) const {
-	Common::String str = Common::String::format("%sHotArea<%s num %d cursor %d",
-			indent.c_str(), _rect.dump("").c_str(), _num, _cursorNum);
+	Common::String str = Common::String::format("%sHotArea<%s num %d cursor %d unk1 %d unk2 %d",
+			indent.c_str(), _rect.dump("").c_str(), _num, _cursorNum, _unk1, _unk2);
 	str += _dumpStructList(indent, "enableConditions", enableConditions);
 	str += _dumpStructList(indent, "onRClickOps", onRClickOps);
 	str += _dumpStructList(indent, "onLDownOps", onLDownOps);
@@ -195,7 +195,7 @@ Common::String ObjectInteraction::dump(const Common::String &indent) const {
 
 
 Common::String SceneTrigger::dump(const Common::String &indent) const {
-	Common::String str = Common::String::format("%sSceneTrigger<num %d %s", indent.c_str(), _num, _enabled ? "enabled" : "disabled");
+	Common::String str = Common::String::format("%sSceneTrigger<num %d %s %d", indent.c_str(), _num, _enabled ? "enabled" : "disabled", _unk);
 	str += _dumpStructList(indent, "conditionList", conditionList);
 	str += _dumpStructList(indent, "opList", sceneOpList);
 	str += "\n";
@@ -708,6 +708,19 @@ bool Scene::runChinaOp(const SceneOp &op) {
 	return true;
 }
 
+bool Scene::runBeamishOp(const SceneOp &op) {
+	error("TODO: Implement beamish-specific scene op %d", op._opCode);
+	/*
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	switch (op._opCode) {
+	default:
+		warning("TODO: Implement beamish-specific scene opcode %d", op._opCode);
+		break;
+	}
+	return true;
+	*/
+}
+
 bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 */) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	for (const SceneOp &op : ops) {
@@ -729,6 +742,9 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 *
 				break;
 			case GID_CHINA:
 				keepGoing = runChinaOp(op);
+				break;
+			case GID_BEAMISH:
+				keepGoing = runBeamishOp(op);
 				break;
 			default:
 				error("TODO: Implement game-specific scene op for this game");

@@ -91,10 +91,10 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 		_gameId = GID_CHINA;
 	else if (!strcmp(gameDesc->gameId, "beamish"))
 		_gameId = GID_BEAMISH;
-	else if (!strcmp(gameDesc->gameId, "sq5"))
+	else if (!strcmp(gameDesc->gameId, "sq5demo"))
 		_gameId = GID_SQ5DEMO;
-	else if (!strcmp(gameDesc->gameId, "comingsoon"))
-		_gameId = GID_COMINGSOON;
+	else if (!strcmp(gameDesc->gameId, "comingattractions"))
+		_gameId = GID_COMINGATTRACTIONS;
 	else
 		error("Unknown game ID");
 
@@ -321,7 +321,7 @@ void DgdsEngine::loadGameFiles() {
 		break;
 	case GID_CHINA:
 		// TODO: Create a better type for this..
-		_gameGlobals = new DragonGlobals(_clock);
+		_gameGlobals = new Globals(_clock);
 		_gamePals->loadPalette("HOC.PAL");
 		_gdsScene->load("HOC.GDS", _resource, _decompressor);
 		_rstFileName = "HOC.RST";
@@ -334,10 +334,12 @@ void DgdsEngine::loadGameFiles() {
 		break;
 	case GID_BEAMISH:
 		// TODO: Create a better type for this..
-		_gameGlobals = new DragonGlobals(_clock);
+		_gameGlobals = new Globals(_clock);
 		_gamePals->loadPalette("WILLY.PAL");
 		_gdsScene->load("WILLY.GDS", _resource, _decompressor);
 		_rstFileName = "WILLY.RST";
+
+		debug("%s", _gdsScene->dump("").c_str());
 
 		loadCorners("WCORNERS.BMP");
 		reqParser.parse(&invRequestData, "WINV.REQ");
@@ -346,15 +348,13 @@ void DgdsEngine::loadGameFiles() {
 		_adsInterp->load("TITLE.ADS");
 		break;
 	case GID_SQ5DEMO:
-		// TODO: Create a better type for this..
-		_gameGlobals = new DragonGlobals(_clock);
+		_gameGlobals = new Globals(_clock);
 		_gamePals->loadPalette("NORMAL.PAL");
 		_adsInterp->load("CESDEMO.ADS");
 		_adsInterp->segmentOrState(1, 3);
 		break;
-	case GID_COMINGSOON:
-		// TODO: Create a better type for this..
-		_gameGlobals = new DragonGlobals(_clock);
+	case GID_COMINGATTRACTIONS:
+		_gameGlobals = new Globals(_clock);
 		_gamePals->loadPalette("DYNAMIX.PAL");
 		_adsInterp->load("DEMO.ADS");
 		_adsInterp->segmentOrState(1, 3);
@@ -370,8 +370,6 @@ void DgdsEngine::loadGameFiles() {
 
 	_inventory->setRequestData(invRequestData);
 	_menu->setRequestData(vcrRequestData);
-
-	//getDebugger()->attach();
 
 	debug("Parsed Inv Request:\n%s", invRequestData.dump().c_str());
 	debug("Parsed VCR Request:\n%s", vcrRequestData.dump().c_str());
@@ -615,7 +613,7 @@ bool DgdsEngine::canLoadGameStateCurrently(Common::U32String *msg /*= nullptr*/)
 
 bool DgdsEngine::canSaveGameStateCurrently(Common::U32String *msg /*= nullptr*/) {
 	// Doesn't make sense to save non-interactive demos..
-	bool isSavableGame = getGameId() != GID_SQ5DEMO && getGameId() != GID_COMINGSOON;
+	bool isSavableGame = getGameId() != GID_SQ5DEMO && getGameId() != GID_COMINGATTRACTIONS;
 	return isSavableGame && _gdsScene && _scene && _scene->getNum() != 2
 			&& _scene->getDragItem() == nullptr && !_isLoading;
 }

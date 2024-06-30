@@ -67,7 +67,7 @@ enum DgdsGameId {
 	GID_CHINA,
 	GID_BEAMISH,
 	GID_SQ5DEMO,
-	GID_COMINGSOON,
+	GID_COMINGATTRACTIONS,
 };
 
 enum DgdsDetailLevel {

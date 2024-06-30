@@ -60,8 +60,9 @@ protected:
 	byte _count;
 	const byte *_glyphs;
 
-	void drawChar(Graphics::Surface* dst, int pos, int bit, int x, int y, int w, uint32 color) const;
+	void drawChar(Graphics::Surface* dst, int pos, int x, int y, int w, uint32 color) const;
 	bool hasChar(byte chr) const;
+	virtual int charOffset(byte chr) const = 0;
 };
 
 /* Proportional font (each char has its own width and so data is a different size) */
@@ -78,7 +79,7 @@ protected:
 	const byte *_widths;
 	byte *_rawData;
 
-	void mapChar(byte chr, int &pos, int &bit) const;
+	int charOffset(byte chr) const override;
 };
 
 /* Fixed-width font */
@@ -93,7 +94,7 @@ public:
 protected:
 	byte *_rawData;
 
-	void mapChar(byte chr, int &pos, int &bit) const;
+	int charOffset(byte chr) const override;
 };
 
 class FontManager {
@@ -106,7 +107,7 @@ public:
 		kGameFont, 		// DRAGON for Rise of the Dragon, WILLY for Willy Beamish, HOC for Heart of China.
 		kGameDlgFont,	// P6x6 for Rise of the Dragon, COMIX_16 for Willy Beamish, CHINESE for Heart of China
 		k7x8Font,	  	// Rise of the Dragon only
-		kWVCRFont,    	// Willy Beamish only
+		kVCRFont,    	// Willy Beamish only
 		kChinaFont,   	// Heart of China only
 	};
 
