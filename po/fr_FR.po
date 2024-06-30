@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-30 13:57+0000\n"
+"POT-Creation-Date: 2024-06-30 16:01+0000\n"
 "PO-Revision-Date: 2024-06-28 16:15+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -1022,7 +1022,7 @@ msgstr "Interagir"
 #: engines/dragons/metaengine.cpp:160 engines/freescape/movement.cpp:35
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:473
 #: engines/grim/grim.cpp:554 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
-#: engines/scumm/metaengine.cpp:862 engines/twine/metaengine.cpp:465
+#: engines/scumm/metaengine.cpp:874 engines/twine/metaengine.cpp:465
 #: engines/twine/metaengine.cpp:532 engines/twp/metaengine.cpp:154
 #: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
@@ -1037,7 +1037,7 @@ msgstr "Haut"
 #: engines/dragons/metaengine.cpp:166 engines/freescape/movement.cpp:41
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:478
 #: engines/grim/grim.cpp:559 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
-#: engines/scumm/metaengine.cpp:829 engines/twine/metaengine.cpp:472
+#: engines/scumm/metaengine.cpp:841 engines/twine/metaengine.cpp:472
 #: engines/twine/metaengine.cpp:540 engines/twp/metaengine.cpp:155
 #: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
@@ -1051,7 +1051,7 @@ msgstr "Bas"
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:483 engines/grim/grim.cpp:564 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:842
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:854
 #: engines/twine/metaengine.cpp:487 engines/twine/metaengine.cpp:555
 #: engines/twp/metaengine.cpp:152 engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
@@ -1066,7 +1066,7 @@ msgstr "Gauche"
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:488 engines/grim/grim.cpp:569 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:849
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:861
 #: engines/twine/metaengine.cpp:479 engines/twine/metaengine.cpp:548
 #: engines/twp/metaengine.cpp:153 engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
@@ -3770,7 +3770,7 @@ msgid "Default game keymap"
 msgstr "Contrôles par défaut du jeu"
 
 #: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:161
-#: engines/agos/metaengine.cpp:227 engines/asylum/metaengine.cpp:159
+#: engines/agos/metaengine.cpp:238 engines/asylum/metaengine.cpp:159
 #: engines/hdb/metaengine.cpp:207 engines/made/metaengine.cpp:107
 #: engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
@@ -3785,14 +3785,14 @@ msgid "Middle Click"
 msgstr "Clic Milieu"
 
 #: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:169
-#: engines/agos/metaengine.cpp:233 engines/asylum/metaengine.cpp:165
+#: engines/agos/metaengine.cpp:244 engines/asylum/metaengine.cpp:165
 #: engines/made/metaengine.cpp:114 engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr "Clic Droit"
 
 #. I18N: Action in In Cold Blood
-#: engines/metaengine.cpp:76 engines/agos/metaengine.cpp:247
+#: engines/metaengine.cpp:76 engines/agos/metaengine.cpp:258
 #: engines/crab/input/input.cpp:261 engines/grim/grim.cpp:541
 #: engines/hdb/metaengine.cpp:258 engines/icb/icb.cpp:137
 #: engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
@@ -6159,7 +6159,7 @@ msgstr ""
 #: engines/agi/metaengine.cpp:111 engines/bagel/metaengine.cpp:50
 #: engines/chewy/metaengine.cpp:36 engines/cine/metaengine.cpp:42
 #: engines/crab/metaengine.cpp:34 engines/drascula/metaengine.cpp:38
-#: engines/dreamweb/metaengine.cpp:36 engines/groovie/metaengine.cpp:49
+#: engines/dreamweb/metaengine.cpp:48 engines/groovie/metaengine.cpp:49
 #: engines/m4/metaengine.cpp:37 engines/neverhood/dialogs.cpp:47
 #: engines/sci/detection_options.h:107 engines/sherlock/metaengine.cpp:39
 #: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:37
@@ -6170,7 +6170,7 @@ msgstr "Écrans sauvegarde/chargement d'origine"
 #: engines/agi/metaengine.cpp:112 engines/bagel/metaengine.cpp:51
 #: engines/chewy/metaengine.cpp:37 engines/cine/metaengine.cpp:43
 #: engines/crab/metaengine.cpp:35 engines/drascula/metaengine.cpp:39
-#: engines/dreamweb/metaengine.cpp:37 engines/groovie/metaengine.cpp:50
+#: engines/dreamweb/metaengine.cpp:49 engines/groovie/metaengine.cpp:50
 #: engines/m4/metaengine.cpp:38 engines/neverhood/dialogs.cpp:48
 #: engines/sci/detection_options.h:108 engines/sherlock/metaengine.cpp:40
 #: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:38
@@ -6326,11 +6326,27 @@ msgstr ""
 msgid "Cutscene file '%s' not found!"
 msgstr "Fichier de séquence '%s' non trouvé !"
 
-#: engines/agos/metaengine.cpp:46
+#: engines/agos/metaengine.cpp:46 engines/dreamweb/metaengine.cpp:36
+#: engines/lure/metaengine.cpp:37 engines/mads/metaengine.cpp:47
+#: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:48
+#: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:745
+#, fuzzy
+#| msgid "Enable Discord integration"
+msgid "Enable copy protection"
+msgstr "Activer l'intégration de Discord"
+
+#: engines/agos/metaengine.cpp:47 engines/dreamweb/metaengine.cpp:37
+#: engines/lure/metaengine.cpp:38 engines/mads/metaengine.cpp:48
+#: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:49
+#: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:746
+msgid "Enable any copy protection that would otherwise be bypassed by default."
+msgstr ""
+
+#: engines/agos/metaengine.cpp:57
 msgid "AdLib OPL3 mode"
 msgstr "AdLib mode OPL3"
 
-#: engines/agos/metaengine.cpp:47
+#: engines/agos/metaengine.cpp:58
 msgid ""
 "When AdLib is selected, OPL3 features will be used. Depending on the game, "
 "this will prevent cut-off notes, add extra notes or instruments and/or add "
@@ -6340,11 +6356,11 @@ msgstr ""
 "fonction du jeu, cela empêchera les notes coupées, ajoutera des notes ou des "
 "instruments supplémentaires et/ou ajoutera la stéréo."
 
-#: engines/agos/metaengine.cpp:57 engines/agos/metaengine.cpp:68
+#: engines/agos/metaengine.cpp:68 engines/agos/metaengine.cpp:79
 msgid "Use DOS version music tempos"
 msgstr "Utiliser le tempo des musiques de la version DOS"
 
-#: engines/agos/metaengine.cpp:58 engines/agos/metaengine.cpp:69
+#: engines/agos/metaengine.cpp:69 engines/agos/metaengine.cpp:80
 msgid ""
 "Selecting this option will play the music using the tempos used by the DOS "
 "version of the game. Otherwise, the faster tempos of the Windows version "
@@ -6354,75 +6370,75 @@ msgstr ""
 "tempo utilisé par la version DOS du jeu. Sinon, le tempo plus rapide de la "
 "version Windows sera utilisé."
 
-#: engines/agos/metaengine.cpp:79 engines/sci/detection_options.h:95
+#: engines/agos/metaengine.cpp:90 engines/sci/detection_options.h:95
 msgid "Prefer digital sound effects"
 msgstr "Préférer les effets sonores digitaux"
 
-#: engines/agos/metaengine.cpp:80 engines/sci/detection_options.h:96
+#: engines/agos/metaengine.cpp:91 engines/sci/detection_options.h:96
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Préférer les effets sonores digitaux plutôt que ceux synthétisés"
 
-#: engines/agos/metaengine.cpp:90
+#: engines/agos/metaengine.cpp:101
 msgid "Disable fade-out effects"
 msgstr "Désactiver les fondus au noir"
 
-#: engines/agos/metaengine.cpp:91
+#: engines/agos/metaengine.cpp:102
 msgid "Don't fade every screen to black when leaving a room."
 msgstr "Les fondus au noir sont désactivés en quittant une pièce."
 
-#: engines/agos/metaengine.cpp:176
+#: engines/agos/metaengine.cpp:187
 msgid "AGOS 2 support is not compiled in"
 msgstr "La prise en charge de AGOS 2 n'a pas été activée dans cette version"
 
-#: engines/agos/metaengine.cpp:222
+#: engines/agos/metaengine.cpp:233
 msgid "AGOS main"
 msgstr "AGOS principal"
 
-#: engines/agos/metaengine.cpp:223 engines/cge/metaengine.cpp:199
+#: engines/agos/metaengine.cpp:234 engines/cge/metaengine.cpp:199
 #: engines/cge2/metaengine.cpp:212 engines/made/metaengine.cpp:103
 msgid "Game Keymappings"
 msgstr "Conf. des touches du jeu"
 
-#: engines/agos/metaengine.cpp:224
+#: engines/agos/metaengine.cpp:235
 msgid "Yes/No Keymapping"
 msgstr "Conf. des touches Oui/Non"
 
-#: engines/agos/metaengine.cpp:239
+#: engines/agos/metaengine.cpp:250
 msgid "Exit cutscene"
 msgstr "Quitter la séquence"
 
-#: engines/agos/metaengine.cpp:252 engines/vcruise/metaengine.cpp:176
+#: engines/agos/metaengine.cpp:263 engines/vcruise/metaengine.cpp:176
 msgid "Music volume down"
 msgstr "Baisse du volume de la musique"
 
-#: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:181
+#: engines/agos/metaengine.cpp:268 engines/vcruise/metaengine.cpp:181
 msgid "Music volume up"
 msgstr "Hausse du volume de la musique"
 
-#: engines/agos/metaengine.cpp:263
+#: engines/agos/metaengine.cpp:274
 msgid "Toggle Music on/off"
 msgstr "Act./Désact. la musique"
 
-#: engines/agos/metaengine.cpp:268
+#: engines/agos/metaengine.cpp:279
 msgid "Toggle Sound effect on/off"
 msgstr "Act./Désact. les effets sonores"
 
-#: engines/agos/metaengine.cpp:273
+#: engines/agos/metaengine.cpp:284
 msgid "Toggle Fast mode on/off"
 msgstr "Act./Désact. le mode rapide"
 
-#: engines/agos/metaengine.cpp:285 engines/wintermute/keymapper_tables.h:149
+#: engines/agos/metaengine.cpp:296 engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
 #: engines/wintermute/keymapper_tables.h:2116
 #: engines/wintermute/keymapper_tables.h:2216
 msgid "Walk forward"
 msgstr "Marcher en avant"
 
-#: engines/agos/metaengine.cpp:291
+#: engines/agos/metaengine.cpp:302
 msgid "Turn backward"
 msgstr "Se retourner"
 
-#: engines/agos/metaengine.cpp:297 engines/mohawk/riven.cpp:901
+#: engines/agos/metaengine.cpp:308 engines/mohawk/riven.cpp:901
 #: engines/wintermute/keymapper_tables.h:161
 #: engines/wintermute/keymapper_tables.h:741
 #: engines/wintermute/keymapper_tables.h:2122
@@ -6430,7 +6446,7 @@ msgstr "Se retourner"
 msgid "Turn left"
 msgstr "Tourner vers la Gauche"
 
-#: engines/agos/metaengine.cpp:303 engines/mohawk/riven.cpp:907
+#: engines/agos/metaengine.cpp:314 engines/mohawk/riven.cpp:907
 #: engines/wintermute/keymapper_tables.h:167
 #: engines/wintermute/keymapper_tables.h:746
 #: engines/wintermute/keymapper_tables.h:2128
@@ -6438,52 +6454,52 @@ msgstr "Tourner vers la Gauche"
 msgid "Turn right"
 msgstr "Tourner vers la Droite"
 
-#: engines/agos/metaengine.cpp:311
+#: engines/agos/metaengine.cpp:322
 msgid "Text speed - Fast"
 msgstr "Vitesse du texte - Rapide"
 
-#: engines/agos/metaengine.cpp:316
+#: engines/agos/metaengine.cpp:327
 msgid "Text speed - Medium"
 msgstr "Vitesse du texte - Moyenne"
 
-#: engines/agos/metaengine.cpp:321
+#: engines/agos/metaengine.cpp:332
 msgid "Text speed - Slow"
 msgstr "Vitesse du texte - Lente"
 
-#: engines/agos/metaengine.cpp:326
+#: engines/agos/metaengine.cpp:337
 msgid "Show objects to interact"
 msgstr "Afficher les objets en interaction"
 
-#: engines/agos/metaengine.cpp:333
+#: engines/agos/metaengine.cpp:344
 msgid "Toggle background sounds On/Off"
 msgstr "Act./Désact. les effets sonores d'ambiance"
 
 #. I18N: Characters are game actors
-#: engines/agos/metaengine.cpp:342
+#: engines/agos/metaengine.cpp:353
 msgid "Switch characters"
 msgstr "Changer de personnage"
 
-#: engines/agos/metaengine.cpp:348
+#: engines/agos/metaengine.cpp:359
 msgid "Toggle hitbox names on/off"
 msgstr "Act./Désact. les noms des hitbox"
 
-#: engines/agos/metaengine.cpp:355
+#: engines/agos/metaengine.cpp:366
 msgid "Switches between speech only and combined speech and subtitles"
 msgstr "Bascule entre voix seule et voix + sous-titres combinés"
 
-#: engines/agos/metaengine.cpp:361
+#: engines/agos/metaengine.cpp:372
 msgid "Switches between subtitles only and combined speech and subtitles"
 msgstr "Bascule entre sous-titres seuls et voix + sous-titres combinés"
 
-#: engines/agos/metaengine.cpp:371
+#: engines/agos/metaengine.cpp:382
 msgid "High speed mode on/off in Swampy Adventures"
 msgstr "Mode Haute vitesse act./désact. dans Swampy Adventures"
 
-#: engines/agos/metaengine.cpp:377
+#: engines/agos/metaengine.cpp:388
 msgid "Press Yes Key"
 msgstr "Appuyez sur la touche Oui"
 
-#: engines/agos/metaengine.cpp:382
+#: engines/agos/metaengine.cpp:393
 msgid "Press No Key"
 msgstr "Appuyez sur la touche Non"
 
@@ -6944,7 +6960,7 @@ msgstr "Act./Désact. Combat"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:888 engines/twp/metaengine.cpp:162
+#: engines/scumm/metaengine.cpp:900 engines/twp/metaengine.cpp:162
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "Passer la séquence"
@@ -7187,19 +7203,19 @@ msgstr "DEBUG : Accès aux lieux 1-24"
 msgid "Enable Text to Speech for Objects and Options"
 msgstr "Activer la synthèse vocale pour les objets et les options"
 
-#: engines/cge2/metaengine.cpp:60 engines/dreamweb/metaengine.cpp:62
-#: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:40
-#: engines/mads/metaengine.cpp:109 engines/sci/detection_options.h:224
+#: engines/cge2/metaengine.cpp:60 engines/dreamweb/metaengine.cpp:74
+#: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:50
+#: engines/mads/metaengine.cpp:121 engines/sci/detection_options.h:224
 #: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:50
 #: engines/twine/metaengine.cpp:157
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Utilise la synthèse vocale pour lire les descriptions (si disponible)"
 
-#: engines/cge2/metaengine.cpp:71 engines/dreamweb/metaengine.cpp:73
+#: engines/cge2/metaengine.cpp:71 engines/dreamweb/metaengine.cpp:85
 msgid "Enable Text to Speech for Subtitles"
 msgstr "Activer la synthèse vocale pour les sous-titres"
 
-#: engines/cge2/metaengine.cpp:72 engines/dreamweb/metaengine.cpp:74
+#: engines/cge2/metaengine.cpp:72 engines/dreamweb/metaengine.cpp:86
 msgid "Use TTS to read the subtitles (if TTS is available)"
 msgstr "Utilise la synthèse vocale pour lire les sous-titres (si disponible)"
 
@@ -7249,7 +7265,7 @@ msgstr "Parler/Interagir"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:875
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:887
 msgid "Attack"
 msgstr "Attaque"
 
@@ -7405,15 +7421,15 @@ msgstr ""
 "Appuyer sur OK pour les convertir maintenant, sinon le même message "
 "s'affichera la prochaine fois que vous démarrerez le jeu.\n"
 
-#: engines/dreamweb/metaengine.cpp:48
+#: engines/dreamweb/metaengine.cpp:60
 msgid "Use bright palette mode"
 msgstr "Utiliser le mode palette lumineuse"
 
-#: engines/dreamweb/metaengine.cpp:49
+#: engines/dreamweb/metaengine.cpp:61
 msgid "Display graphics using the game's bright palette"
 msgstr "Utilise la palette lumineuse du jeu pour les graphismes"
 
-#: engines/dreamweb/metaengine.cpp:61
+#: engines/dreamweb/metaengine.cpp:73
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr ""
 "Activer la synthèse vocale pour les objets, les options et la citation de la "
@@ -8433,7 +8449,7 @@ msgstr ""
 msgid "This puzzle is not available in the trial version of the game"
 msgstr "Cette énigme n'est pas disponible dans la version d'essai"
 
-#: engines/lure/metaengine.cpp:39 engines/mads/metaengine.cpp:108
+#: engines/lure/metaengine.cpp:49 engines/mads/metaengine.cpp:120
 #: engines/sherlock/metaengine.cpp:112 engines/twine/metaengine.cpp:156
 msgid "TTS Narrator"
 msgstr "Synthèse vocale"
@@ -8474,31 +8490,31 @@ msgstr "Droit"
 msgid "Repeat Last Message"
 msgstr "Répéter le dernier message"
 
-#: engines/mads/metaengine.cpp:47
+#: engines/mads/metaengine.cpp:59
 msgid "Easy mouse interface"
 msgstr "Interface souris simple"
 
-#: engines/mads/metaengine.cpp:48
+#: engines/mads/metaengine.cpp:60
 msgid "Shows object names when hovering the mouse over them"
 msgstr "Affiche le nom des objets lors de passage du pointeur"
 
-#: engines/mads/metaengine.cpp:59 engines/mads/metaengine.cpp:60
+#: engines/mads/metaengine.cpp:71 engines/mads/metaengine.cpp:72
 msgid "Animated inventory items"
 msgstr "Éléments d'inventaire animés"
 
-#: engines/mads/metaengine.cpp:71 engines/mads/metaengine.cpp:72
+#: engines/mads/metaengine.cpp:83 engines/mads/metaengine.cpp:84
 msgid "Animated game interface"
 msgstr "Interface du jeu animée"
 
-#: engines/mads/metaengine.cpp:83 engines/mads/metaengine.cpp:84
+#: engines/mads/metaengine.cpp:95 engines/mads/metaengine.cpp:96
 msgid "Naughty game mode"
 msgstr "Mode coquin"
 
-#: engines/mm/metaengine.cpp:46
+#: engines/mm/metaengine.cpp:57
 msgid "Show item costs in standard inventory mode"
 msgstr "Afficher le prix des objets dans l'inventaire en mode standard"
 
-#: engines/mm/metaengine.cpp:47
+#: engines/mm/metaengine.cpp:58
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
@@ -8506,21 +8522,21 @@ msgstr ""
 "Affiche le prix des objets dans l'inventaire en mode standard, ce qui permet "
 "de comparer la valeur des objets"
 
-#: engines/mm/metaengine.cpp:57
+#: engines/mm/metaengine.cpp:68
 msgid "More durable armor"
 msgstr "Armure plus durable"
 
-#: engines/mm/metaengine.cpp:58
+#: engines/mm/metaengine.cpp:69
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr ""
 "L'armure ne se brisera pas avant que le personnage ne soit à -80 HP, au lieu "
 "de seulement -10 HP"
 
-#: engines/mm/metaengine.cpp:68
+#: engines/mm/metaengine.cpp:79
 msgid "Hitpoint bars"
 msgstr "Barres de points de vie (Hit Point)"
 
-#: engines/mm/metaengine.cpp:69
+#: engines/mm/metaengine.cpp:80
 msgid "Replace a colored gem with bars for hit points and spell points."
 msgstr ""
 "Remplace une gemme de couleur par des barres de points de vie et de points "
@@ -8792,7 +8808,7 @@ msgstr "Rapide"
 msgid "Normal"
 msgstr "Normal"
 
-#: engines/mohawk/dialogs.cpp:367 engines/scumm/dialogs.cpp:1459
+#: engines/mohawk/dialogs.cpp:367 engines/scumm/dialogs.cpp:1484
 msgid "Best"
 msgstr "Meilleur"
 
@@ -9392,7 +9408,7 @@ msgstr "La version d'essai macOS n'est pas prise en charge"
 msgid "Pocket PC Trial version is not supported"
 msgstr "La version d'essai Pocket PC n'est pas prise en charge"
 
-#: engines/saga/metaengine.cpp:114
+#: engines/saga/metaengine.cpp:132
 msgid "I Have No Mouth support not compiled in"
 msgstr ""
 "La prise en charge de I Have No Mouth n'a pas été activée dans cette version"
@@ -9923,11 +9939,11 @@ msgstr ""
 "sauvegarder/charger d'origine. Utilisez-le avec le \"Demander la "
 "confirmation en quittant\" pour une expérience plus complète."
 
-#: engines/scumm/dialogs.cpp:1293
+#: engines/scumm/dialogs.cpp:1300
 msgid "Overture Timing:"
 msgstr "Timing de l'ouverture :"
 
-#: engines/scumm/dialogs.cpp:1297
+#: engines/scumm/dialogs.cpp:1304
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
@@ -9935,18 +9951,18 @@ msgstr ""
 "Lorsque des musiques de remplacement sont utilisées, ajuste le moment où "
 "l'ouverture passe à la scène avec les logos Lucasfilm et Loom."
 
-#: engines/scumm/dialogs.cpp:1380
+#: engines/scumm/dialogs.cpp:1391
 msgid "Music Quality:"
 msgstr "Qualité des musiques :"
 
-#: engines/scumm/dialogs.cpp:1384
+#: engines/scumm/dialogs.cpp:1395
 msgid ""
 "Select music quality. The original lets you choose this from the Game menu."
 msgstr ""
 "Sélectionne la qualité des musiques. L'original vous permet de choisir cette "
 "qualité dans le menu du jeu."
 
-#: engines/scumm/dialogs.cpp:1385
+#: engines/scumm/dialogs.cpp:1396
 msgid ""
 "Select music quality. The original determines the basic setup by hardware "
 "detection and speed tests, but also allows changes through the Game menu to "
@@ -9956,46 +9972,46 @@ msgstr ""
 "base par détection du matériel et des tests de vitesse, mais permet aussi "
 "certains changements via le menu du jeu."
 
-#: engines/scumm/dialogs.cpp:1458 engines/scumm/dialogs.cpp:1459
+#: engines/scumm/dialogs.cpp:1483 engines/scumm/dialogs.cpp:1484
 msgid "auto"
 msgstr "auto"
 
-#: engines/scumm/dialogs.cpp:1458
+#: engines/scumm/dialogs.cpp:1483
 msgid "Low"
 msgstr "Basse"
 
-#: engines/scumm/dialogs.cpp:1458
+#: engines/scumm/dialogs.cpp:1483
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:75
 msgid "Medium"
 msgstr "Moyenne"
 
-#: engines/scumm/dialogs.cpp:1458
+#: engines/scumm/dialogs.cpp:1483
 msgid "High"
 msgstr "Elevée"
 
-#: engines/scumm/dialogs.cpp:1459
+#: engines/scumm/dialogs.cpp:1484
 msgid "Good"
 msgstr "Bonne"
 
-#: engines/scumm/dialogs.cpp:1459
+#: engines/scumm/dialogs.cpp:1484
 msgid "Better"
 msgstr "Meilleure"
 
-#: engines/scumm/dialogs.cpp:1460
+#: engines/scumm/dialogs.cpp:1485
 #, c-format
 msgid "Hardware Rating: %s   -   "
 msgstr "Note Matériel : %s   -   "
 
-#: engines/scumm/dialogs.cpp:1460
+#: engines/scumm/dialogs.cpp:1485
 #, c-format
 msgid "Quality Selection: %s"
 msgstr "Sélection de la qualité : %s"
 
-#: engines/scumm/dialogs.cpp:1474
+#: engines/scumm/dialogs.cpp:1499
 msgid "Playback Adjust:"
 msgstr "Ajustement du son :"
 
-#: engines/scumm/dialogs.cpp:1478
+#: engines/scumm/dialogs.cpp:1503
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
@@ -10004,11 +10020,11 @@ msgstr ""
 "départ du son de cette valeur. Utilisez cette option si vous entendez "
 "souvent des parties de sons incorrects."
 
-#: engines/scumm/dialogs.cpp:1558
+#: engines/scumm/dialogs.cpp:1583
 msgid "Intro Adjust:"
 msgstr "Ajustement de l'Intro :"
 
-#: engines/scumm/dialogs.cpp:1562
+#: engines/scumm/dialogs.cpp:1587
 msgid ""
 "When playing the intro track, play from this point in it. Use this if the "
 "music gets cut off prematurely, or if you are unhappy with the way the music "
@@ -10019,11 +10035,11 @@ msgstr ""
 "vous n'êtes pas satisfait de la façon dont la musique se synchronise avec "
 "l'intro."
 
-#: engines/scumm/dialogs.cpp:1571
+#: engines/scumm/dialogs.cpp:1596
 msgid "Outlook Adjust:"
 msgstr "Ajustement de l'accompagnement :"
 
-#: engines/scumm/dialogs.cpp:1575
+#: engines/scumm/dialogs.cpp:1600
 msgid ""
 "The outlook music is part of the intro track. Adjust the position in the "
 "track at which it starts playing. Use this if the music is cut off, or if "
@@ -10034,11 +10050,11 @@ msgstr ""
 "fonction si la musique est coupée, ou si vous entendez une partie de la "
 "musique précédente."
 
-#: engines/scumm/dialogs.cpp:1677 engines/scumm/metaengine.cpp:706
+#: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:706
 msgid "Load modded audio"
 msgstr "Charger de l'audio modifié"
 
-#: engines/scumm/dialogs.cpp:1677 engines/scumm/metaengine.cpp:707
+#: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:707
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
@@ -10046,15 +10062,15 @@ msgstr ""
 "Remplace la musique, les effets sonores et les clips vocaux par des fichiers "
 "audio modifiés, s'ils sont disponibles."
 
-#: engines/scumm/dialogs.cpp:1679
+#: engines/scumm/dialogs.cpp:1704
 msgid "Multiplayer Server:"
 msgstr "Serveur Multijoueur :"
 
-#: engines/scumm/dialogs.cpp:1685
+#: engines/scumm/dialogs.cpp:1710
 msgid "Online Server:"
 msgstr "Serveur en ligne :"
 
-#: engines/scumm/dialogs.cpp:1686
+#: engines/scumm/dialogs.cpp:1711
 msgid ""
 "Address of the server to connect to for online play.  It must start with "
 "either \"https://\" or \"http://\" schemas."
@@ -10062,20 +10078,20 @@ msgstr ""
 "Adresse du serveur auquel se connecter pour jouer en ligne.  Celle-ci doit "
 "commencer par les termes \"https://\" ou \"http://\"."
 
-#: engines/scumm/dialogs.cpp:1688
+#: engines/scumm/dialogs.cpp:1713
 msgid "Enable online competitive mods"
 msgstr "Activer les mods en ligne compétitifs"
 
-#: engines/scumm/dialogs.cpp:1688
+#: engines/scumm/dialogs.cpp:1713
 msgid "Enables custom-made modifications intented for online competitive play."
 msgstr ""
 "Active les modifications personnalisées destinées au jeu en ligne compétitif."
 
-#: engines/scumm/dialogs.cpp:1692
+#: engines/scumm/dialogs.cpp:1717
 msgid "Enable connection to Multiplayer Server"
 msgstr "Activer la connexion au Serveur Multijoueur"
 
-#: engines/scumm/dialogs.cpp:1692
+#: engines/scumm/dialogs.cpp:1717
 msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
@@ -10083,25 +10099,25 @@ msgstr ""
 "Active la connexion au serveur qui permet d'héberger et de rejoindre des "
 "parties multijoueurs en ligne sur Internet."
 
-#: engines/scumm/dialogs.cpp:1693
+#: engines/scumm/dialogs.cpp:1718
 msgid "Host games over LAN"
 msgstr "Héberger des jeux en LAN"
 
-#: engines/scumm/dialogs.cpp:1693
+#: engines/scumm/dialogs.cpp:1718
 msgid "Allows the game sessions to be discovered over your local area network."
 msgstr "Permet de trouver les parties sur votre réseau local."
 
-#: engines/scumm/dialogs.cpp:1696
+#: engines/scumm/dialogs.cpp:1721
 msgid "Generate random maps"
 msgstr "Générer des cartes aléatoires"
 
-#: engines/scumm/dialogs.cpp:1696
+#: engines/scumm/dialogs.cpp:1721
 msgid "Allow random map generation (Based from Moonbase Console)."
 msgstr ""
 "Permet la génération de cartes aléatoires (basée depuis la console de la "
 "base lunaire)."
 
-#: engines/scumm/dialogs.cpp:1698
+#: engines/scumm/dialogs.cpp:1723
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."
@@ -10767,28 +10783,28 @@ msgstr ""
 "Be\", \t\tqui a été coupée dans les versions internationales. Attention "
 "cependant : les sous-titres peuvent ne pas avoir été entièrement traduits."
 
-#: engines/scumm/metaengine.cpp:823
+#: engines/scumm/metaengine.cpp:835
 msgid "Down Left"
 msgstr "Bas Gauche"
 
-#: engines/scumm/metaengine.cpp:836
+#: engines/scumm/metaengine.cpp:848
 msgid "Down Right"
 msgstr "Bas Droite"
 
-#: engines/scumm/metaengine.cpp:856
+#: engines/scumm/metaengine.cpp:868
 msgid "Up Left"
 msgstr "Haut Gauche"
 
-#: engines/scumm/metaengine.cpp:869
+#: engines/scumm/metaengine.cpp:881
 msgid "Up Right"
 msgstr "Haut Droite"
 
-#: engines/scumm/metaengine.cpp:881
+#: engines/scumm/metaengine.cpp:893
 msgid "Switch weapon"
 msgstr "Changer d'arme"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:895
+#: engines/scumm/metaengine.cpp:907
 msgid "Win the bike fight cheat"
 msgstr "Gagner les bagarres en bécane (cheat)"
 
