@@ -5217,6 +5217,8 @@ echocheck "FLAC >= 1.0.1"
 if test "$_flac" = auto ; then
 	_flac=no
 	cat > $TMPC << EOF
+#define FLAC__NO_DLL // Like in audio/decoders/flac.cpp
+
 #include <FLAC/stream_decoder.h>
 #include <FLAC/format.h>
 int main(void) {
