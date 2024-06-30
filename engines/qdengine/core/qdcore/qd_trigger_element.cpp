@@ -1013,7 +1013,7 @@ void qdTriggerLink::activate() {
 //		element_ -> set_status(qdTriggerElement::TRIGGER_EL_INACTIVE);
 #endif
 
-// debugC(3, kDebugLog, "%s", this);
+// debugC(3, kDebugLog, "%p", this);
 }
 
 void qdTriggerLink::deactivate() {

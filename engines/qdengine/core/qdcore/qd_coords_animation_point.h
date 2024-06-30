@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QDENGINE_CORE_QDCORE_QD_COORDS_ANIMATION_FRAME_H
-#define QDENGINE_CORE_QDCORE_QD_COORDS_ANIMATION_FRAME_H
+#ifndef QDENGINE_CORE_QDCORE_QD_COORDS_ANIMATION_POINT_H
+#define QDENGINE_CORE_QDCORE_QD_COORDS_ANIMATION_POINT_H
 
 #include <vector>
 #include "qdengine/core/parser/xml_fwd.h"
@@ -91,4 +91,4 @@ typedef std::vector<qdCoordsAnimationPoint> qdCoordsAnimationPointVector;
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_COORDS_ANIMATION_FRAME_H */
+#endif /* QDENGINE_CORE_QDCORE_QD_COORDS_ANIMATION_POINT_H */

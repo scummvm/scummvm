@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QDENGINE_CORE_SYSTEM_APP_CORE_H__
-#define QDENGINE_CORE_SYSTEM_APP_CORE_H__
+#ifndef QDENGINE_CORE_SYSTEM_APP_CORE_H
+#define QDENGINE_CORE_SYSTEM_APP_CORE_H
 
 
 
@@ -92,4 +92,4 @@ void adjust_dir_end_slash(std::string &str);
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_SYSTEM_APP_CORE_H__ */
+#endif /* QDENGINE_CORE_SYSTEM_APP_CORE_H */
