@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-30 18:44+0000\n"
-"PO-Revision-Date: 2024-06-30 09:03+0000\n"
+"PO-Revision-Date: 2024-06-30 22:12+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -6313,10 +6313,8 @@ msgstr "¡No se ha encontrado el vídeo %s!"
 #: engines/lure/metaengine.cpp:37 engines/mads/metaengine.cpp:47
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:48
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:746
-#, fuzzy
-#| msgid "Enable Discord integration"
 msgid "Enable copy protection"
-msgstr "Activar integración con Discord"
+msgstr "Activar protección anticopia"
 
 #: engines/agos/metaengine.cpp:45 engines/dreamweb/metaengine.cpp:37
 #: engines/lure/metaengine.cpp:38 engines/mads/metaengine.cpp:48
@@ -6324,6 +6322,8 @@ msgstr "Activar integración con Discord"
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:747
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
+"Activa cualquier sistema de protección anticopia que, de lo contrario, sería "
+"anulada por defecto."
 
 #: engines/agos/metaengine.cpp:55
 msgid "AdLib OPL3 mode"
