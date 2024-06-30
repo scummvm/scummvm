@@ -553,7 +553,7 @@ ADDetectedGames AdlMetaEngineDetection::detectGame(const Common::FSNode &parent,
 				continue;
 			}
 
-			if (fDesc.fileSize != -1 && fDesc.fileSize != filesProps[fileName].size) {
+			if (fDesc.fileSize != AD_NO_SIZE && fDesc.fileSize != filesProps[fileName].size) {
 				debugC(3, kDebugGlobalDetection, "Size Mismatch. Skipping");
 				game.hasUnknownFiles = true;
 				continue;

@@ -79,7 +79,7 @@ struct ADGameFileDescription {
 	const char *fileName; ///< Name of the described file.
 	uint16 fileType;      ///< Optional. Not used during detection, only by engines.
 	const char *md5;      ///< MD5 of (the beginning of) the described file. Optional. Set to NULL to ignore.
-	int64 fileSize;       ///< Size of the described file. Set to -1 to ignore.
+	uint32 fileSize;      ///< Size of the described file. Set to AD_NO_SIZE to ignore.
 
 	uint32 sizeBuffer() const {
 		uint32 ret = 0;
@@ -95,6 +95,8 @@ struct ADGameFileDescription {
 	}
 };
 
+#define AD_NO_SIZE ((uint32)-1)
+
 /**
  * A shortcut to produce an empty ADGameFileDescription record. Used to mark
  * the end of a list of these.
@@ -105,7 +107,7 @@ struct ADGameFileDescription {
  * A shortcut to produce a list of ADGameFileDescription records with only one
  * record that contains just a filename with an MD5, and no file size.
  */
-#define AD_ENTRY1(f, x) {{ f, 0, x, -1}, AD_LISTEND}
+#define AD_ENTRY1(f, x) {{ f, 0, x, AD_NO_SIZE}, AD_LISTEND}
 
 /**
  * A shortcut to produce a list of ADGameFileDescription records with only one

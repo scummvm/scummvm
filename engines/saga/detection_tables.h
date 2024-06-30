@@ -45,10 +45,10 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ite",
 			_s("Missing game code"), // Reason for being unsupported
 			{
-				{"ite.rsc",		GAME_RESOURCEFILE,					"986c79c4d2939dbe555576529fd37932", -1},
-				//{"ite.dmo",	GAME_DEMOFILE,						"0b9a70eb4e120b6f00579b46c8cae29e", -1},
-				{"scripts.rsc", GAME_SCRIPTFILE,					"d5697dd3240a3ceaddaa986c47e1a2d7", -1},
-				//{"voices.rsc",	GAME_SOUNDFILE | GAME_VOICEFILE,	"c58e67c506af4ffa03fd0aac2079deb0", -1},
+				{"ite.rsc",		GAME_RESOURCEFILE,					"986c79c4d2939dbe555576529fd37932", AD_NO_SIZE},
+				//{"ite.dmo",	GAME_DEMOFILE,						"0b9a70eb4e120b6f00579b46c8cae29e", AD_NO_SIZE},
+				{"scripts.rsc", GAME_SCRIPTFILE,					"d5697dd3240a3ceaddaa986c47e1a2d7", AD_NO_SIZE},
+				//{"voices.rsc",	GAME_SOUNDFILE | GAME_VOICEFILE,	"c58e67c506af4ffa03fd0aac2079deb0", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -390,11 +390,11 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ite",
 			"CD",
 			{
-				{"ite resources.bin",	GAME_RESOURCEFILE | GAME_MACBINARY,	"473768a17d843de5126d608b26ed7250", -1},
-				{"ite scripts.bin",		GAME_SCRIPTFILE | GAME_MACBINARY,	"294cad2d7bb6cd7dd602c9a5867873d7", -1},
-				{"ite sounds.bin",		GAME_SOUNDFILE | GAME_MACBINARY,	"178fa322aeb8eb51bba821eb128e037b", -1},
-				{"ite music.bin",		GAME_MUSICFILE_GM | GAME_MACBINARY,	"023fddf96a39edeaed647f16947de9c1", -1},
-				//{"ite voices.bin",		GAME_VOICEFILE | GAME_MACBINARY,	"dba92ae7d57e942250fe135609708369", -1},
+				{"ite resources.bin",	GAME_RESOURCEFILE | GAME_MACBINARY,	"473768a17d843de5126d608b26ed7250", AD_NO_SIZE},
+				{"ite scripts.bin",		GAME_SCRIPTFILE | GAME_MACBINARY,	"294cad2d7bb6cd7dd602c9a5867873d7", AD_NO_SIZE},
+				{"ite sounds.bin",		GAME_SOUNDFILE | GAME_MACBINARY,	"178fa322aeb8eb51bba821eb128e037b", AD_NO_SIZE},
+				{"ite music.bin",		GAME_MUSICFILE_GM | GAME_MACBINARY,	"023fddf96a39edeaed647f16947de9c1", AD_NO_SIZE},
+				//{"ite voices.bin",		GAME_VOICEFILE | GAME_MACBINARY,	"dba92ae7d57e942250fe135609708369", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -418,8 +418,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ite",
 			"Wyrmkeep CD",
 			{
-				{"ite.rsc",						GAME_RESOURCEFILE,	"4f7fa11c5175980ed593392838523060", -1},
-				{"scripts.rsc",					GAME_SCRIPTFILE,	"adf1f46c1d0589083996a7060c798ad0", -1},
+				{"ite.rsc",						GAME_RESOURCEFILE,	"4f7fa11c5175980ed593392838523060", AD_NO_SIZE},
+				{"scripts.rsc",					GAME_SCRIPTFILE,	"adf1f46c1d0589083996a7060c798ad0", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -477,7 +477,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"Multi-OS CD Version",
 			{
 				{"ite.rsc",						GAME_RESOURCEFILE,					"a6433e34b97b15e64fe8214651012db9", 8927165},
-				{"scripts.rsc",					GAME_SCRIPTFILE,					"a891405405edefc69c9d6c420c868b84", -1},
+				{"scripts.rsc",					GAME_SCRIPTFILE,					"a891405405edefc69c9d6c420c868b84", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -505,7 +505,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"Multi-OS CD Version",
 			{
 				{"ite.rsc",						GAME_RESOURCEFILE,					"420e09cfdbb4db12baefd4bc81d8e154", 8925349},
-				{"scripts.rsc",					GAME_SCRIPTFILE,					"a891405405edefc69c9d6c420c868b84", -1},
+				{"scripts.rsc",					GAME_SCRIPTFILE,					"a891405405edefc69c9d6c420c868b84", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::DE_DEU,
@@ -535,9 +535,9 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"Multi-OS CD Version",
 			{
 				// TODO: add size for ite.rsc
-				{"ite.rsc",						GAME_RESOURCEFILE,					"a6433e34b97b15e64fe8214651012db9", -1},
-				{"scripts.rsc",					GAME_SCRIPTFILE,					"a891405405edefc69c9d6c420c868b84", -1},
-				{"voices.rsc",					GAME_VOICEFILE,						"41bb6b95d792dde5196bdb78740895a6", -1},
+				{"ite.rsc",						GAME_RESOURCEFILE,					"a6433e34b97b15e64fe8214651012db9", AD_NO_SIZE},
+				{"scripts.rsc",					GAME_SCRIPTFILE,					"a891405405edefc69c9d6c420c868b84", AD_NO_SIZE},
+				{"voices.rsc",					GAME_VOICEFILE,						"41bb6b95d792dde5196bdb78740895a6", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::IT_ITA,
@@ -563,7 +563,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"Windows CD Version",
 			{
 				{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", 8928678},
-				{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", -1},
+				{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", AD_NO_SIZE},
 				{"cave.mid",	0,					"f7619359323058b61ec44fa8ce7888e5", 4441},
 				AD_LISTEND
 			},
@@ -590,7 +590,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"Linux CD Version",
 			{
 				{"ite.rsc",		GAME_RESOURCEFILE,		"8f4315a9bb10ec839253108a032c8b54", 8928678},
-				{"scripts.rsc",	GAME_SCRIPTFILE,		"a891405405edefc69c9d6c420c868b84", -1},
+				{"scripts.rsc",	GAME_SCRIPTFILE,		"a891405405edefc69c9d6c420c868b84", AD_NO_SIZE},
 				{"music.rsc",	GAME_DIGITALMUSICFILE,	"d6454756517f042f01210458abe8edd4", 52894196},
 				AD_LISTEND
 			},
@@ -617,7 +617,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"DOS CD Version 1",
 			{
 				{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", 8928678},
-				{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", -1},
+				{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -795,8 +795,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ite",
 			"DOS CD Version 2",
 			{
-				{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", -1},
-				{"scripts.rsc",	GAME_SCRIPTFILE,	"50a0d2d7003c926a3832d503c8534e90", -1},
+				{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", AD_NO_SIZE},
+				{"scripts.rsc",	GAME_SCRIPTFILE,	"50a0d2d7003c926a3832d503c8534e90", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -820,8 +820,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ite",
 			"CD Version",
 			{
-				{"ite.rsc",		GAME_RESOURCEFILE,	"b9354a4c2d138f680306e4baf8585e9d", -1},
-				{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", -1},
+				{"ite.rsc",		GAME_RESOURCEFILE,	"b9354a4c2d138f680306e4baf8585e9d", AD_NO_SIZE},
+				{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::HE_ISR,
@@ -846,8 +846,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ite",
 			"CD Version",
 			{
-				{"ite.rsc",		GAME_RESOURCEFILE,	"869fc23c8f38f575979ec67152914fee", -1},
-				{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", -1},
+				{"ite.rsc",		GAME_RESOURCEFILE,	"869fc23c8f38f575979ec67152914fee", AD_NO_SIZE},
+				{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::DE_DEU,
@@ -1005,8 +1005,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ite",
 			"Floppy",
 			{
-				{"ite.rsc",		GAME_RESOURCEFILE,					"869fc23c8f38f575979ec67152914fee", -1},
-				{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", -1},
+				{"ite.rsc",		GAME_RESOURCEFILE,					"869fc23c8f38f575979ec67152914fee", AD_NO_SIZE},
+				{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::DE_DEU,
@@ -1031,7 +1031,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"Floppy",
 			{
 				{"ite.rsc",		GAME_RESOURCEFILE,					"8f4315a9bb10ec839253108a032c8b54", 8903828},
-				{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", -1},
+				{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -1077,7 +1077,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		INTROLIST_ITE_DEFAULT,
 		{
 			{"ite.rsc",		GAME_RESOURCEFILE,					"8f4315a9bb10ec839253108a032c8b54", 8903828},
-			{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", -1},
+			{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", AD_NO_SIZE},
 			AD_LISTEND
 		},
 	},
@@ -1348,10 +1348,10 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ihnm",
 			"Demo",
 			{
-				{"music.res",		GAME_MUSICFILE_FM,	"0439083e3dfdc51b486071d45872ae52", -1},
+				{"music.res",		GAME_MUSICFILE_FM,	"0439083e3dfdc51b486071d45872ae52", AD_NO_SIZE},
 				{"scream.res",		GAME_RESOURCEFILE,	"46bbdc65d164ba7e89836a0935eec8e6", 16687179},
-				{"scripts.res",		GAME_SCRIPTFILE,	"9626bda8978094ff9b29198bc1ed5f9a", -1},
-				{"sfx.res",			GAME_SOUNDFILE,		"1c610d543f32ec8b525e3f652536f269", -1},
+				{"scripts.res",		GAME_SCRIPTFILE,	"9626bda8978094ff9b29198bc1ed5f9a", AD_NO_SIZE},
+				{"sfx.res",			GAME_SOUNDFILE,		"1c610d543f32ec8b525e3f652536f269", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -1375,16 +1375,16 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ihnm",
 			"",
 			{
-				{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", -1},
-				{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", -1},
+				{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", AD_NO_SIZE},
+				{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", AD_NO_SIZE},
 				{"scream.res",	GAME_RESOURCEFILE,					"46bbdc65d164ba7e89836a0935eec8e6", 79211140},
-				{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
-				{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", -1},
-				//{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
+				{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", AD_NO_SIZE},
+				{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", AD_NO_SIZE},
+				//{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", AD_NO_SIZE},
 				// There are two English versions of the game, each one with a different sfx.res file
 				// Known MD5 checksums for sfx.res in the English version of the game are
 				// 1c610d543f32ec8b525e3f652536f269 and 45a9a9f5d37740be24fd2ae2edf36573
-				{"sfx.res",		GAME_SOUNDFILE,						NULL, -1},
+				{"sfx.res",		GAME_SOUNDFILE,						NULL, AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -1410,12 +1410,12 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ihnm",
 			"",
 			{
-				{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", -1},
-				{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", -1},
+				{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", AD_NO_SIZE},
+				{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", AD_NO_SIZE},
 				{"scream.res",	GAME_RESOURCEFILE,					"c92370d400e6f2a3fc411c3729d09224", 78517884},
-				{"scripts.res",	GAME_SCRIPTFILE,					"32aa01a89937520fe0ea513950117292", -1},
-				{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
-				{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
+				{"scripts.res",	GAME_SCRIPTFILE,					"32aa01a89937520fe0ea513950117292", AD_NO_SIZE},
+				{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", AD_NO_SIZE},
+				{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::DE_DEU,
@@ -1501,12 +1501,12 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ihnm",
 			"",
 			{
-				{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", -1},
-				{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", -1},
+				{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", AD_NO_SIZE},
+				{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", AD_NO_SIZE},
 				{"scream.res",	GAME_RESOURCEFILE,					"c92370d400e6f2a3fc411c3729d09224", 78560025},
-				{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
-				{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", -1},
-				{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
+				{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", AD_NO_SIZE},
+				{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", AD_NO_SIZE},
+				{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::ES_ESP,
@@ -1530,13 +1530,13 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ihnm",
 			"",
 			{
-				{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", -1},
-				{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", -1},
+				{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", AD_NO_SIZE},
+				{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", AD_NO_SIZE},
 				{"scream.res",	GAME_RESOURCEFILE,					"46bbdc65d164ba7e89836a0935eec8e6", 79211140},
-				{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
-				{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", -1},
-				{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
-				{"sbh1616.fnt",	0,									"ec047bbe048ed9465def705b5bd74d99", -1},
+				{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", AD_NO_SIZE},
+				{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", AD_NO_SIZE},
+				{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", AD_NO_SIZE},
+				{"sbh1616.fnt",	0,									"ec047bbe048ed9465def705b5bd74d99", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::KO_KOR,
@@ -1561,12 +1561,12 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ihnm",
 			"",
 			{
-				{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", -1},
-				{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", -1},
+				{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", AD_NO_SIZE},
+				{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", AD_NO_SIZE},
 				{"scream.res",	GAME_RESOURCEFILE,					"c92370d400e6f2a3fc411c3729d09224", 78519324},
-				{"scripts.res",	GAME_SCRIPTFILE,					"32aa01a89937520fe0ea513950117292", -1},
-				{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
-				{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
+				{"scripts.res",	GAME_SCRIPTFILE,					"32aa01a89937520fe0ea513950117292", AD_NO_SIZE},
+				{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", AD_NO_SIZE},
+				{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::FR_FRA,
@@ -1620,12 +1620,12 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ihnm",
 			"",
 			{
-				{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", -1},
-				{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", -1},
+				{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", AD_NO_SIZE},
+				{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", AD_NO_SIZE},
 				{"scream.res",	GAME_RESOURCEFILE,					"46bbdc65d164ba7e89836a0935eec8e6", 79211498},
-				{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
-				{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", -1},
-				{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
+				{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", AD_NO_SIZE},
+				{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", AD_NO_SIZE},
+				{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::IT_ITA,
@@ -1649,16 +1649,16 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ihnm",
 			"",
 			{
-				{"musicfm.res",	GAME_MUSICFILE_FM,						"0439083e3dfdc51b486071d45872ae52", -1},
-				{"musicgm.res",	GAME_MUSICFILE_GM,						"80f875a1fb384160d1f4b27166eef583", -1},
+				{"musicfm.res",	GAME_MUSICFILE_FM,						"0439083e3dfdc51b486071d45872ae52", AD_NO_SIZE},
+				{"musicgm.res",	GAME_MUSICFILE_GM,						"80f875a1fb384160d1f4b27166eef583", AD_NO_SIZE},
 				{"scream.res",	GAME_RESOURCEFILE,						"ac00dd9e6701e8edbb49429dacbc4731", 79210049},
-				{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,		"58b79e61594779513c7f2d35509fa89e", -1},
-				{"scripts.res",	GAME_SCRIPTFILE,						"be38bbc5a26be809dbf39f13befebd01", -1},
-				//{"sfx.res",	GAME_SOUNDFILE,							"1c610d543f32ec8b525e3f652536f269", -1},
+				{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,		"58b79e61594779513c7f2d35509fa89e", AD_NO_SIZE},
+				{"scripts.res",	GAME_SCRIPTFILE,						"be38bbc5a26be809dbf39f13befebd01", AD_NO_SIZE},
+				//{"sfx.res",	GAME_SOUNDFILE,							"1c610d543f32ec8b525e3f652536f269", AD_NO_SIZE},
 				// There are two English versions of the game, each one with a different sfx.res file
 				// Known MD5 checksums for sfx.res in the English version of the game are
 				// 1c610d543f32ec8b525e3f652536f269 and 45a9a9f5d37740be24fd2ae2edf36573
-				{"sfx.res",		GAME_SOUNDFILE,							NULL, -1},
+				{"sfx.res",		GAME_SOUNDFILE,							NULL, AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::RU_RUS,

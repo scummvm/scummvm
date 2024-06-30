@@ -235,7 +235,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			"grim",
 			"",
 			AD_ENTRY2s("VOX0001.LAB", "444f05f2af689c1bffd179b8b6a632bd", 57993159,
-					   "grim.ko.tab", NULL, -1),
+					   "grim.ko.tab", NULL, AD_NO_SIZE),
 			Common::KO_KOR,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,

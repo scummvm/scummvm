@@ -70,7 +70,7 @@ public:
 };
 
 struct SizeMD5 {
-	int size;
+	unsigned int size;
 	Common::String md5;
 };
 typedef Common::HashMap<Common::Path, SizeMD5, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> SizeMD5Map;
@@ -193,7 +193,7 @@ ADDetectedGame TinselMetaEngineDetection::fallbackDetect(const FileMap &allFiles
 				break;
 			}
 
-			if (fileDesc->fileSize != -1 && fileDesc->fileSize != filesSizeMD5[tstr].size) {
+			if (fileDesc->fileSize != AD_NO_SIZE && fileDesc->fileSize != filesSizeMD5[tstr].size) {
 				fileMissing = true;
 				break;
 			}

@@ -2688,7 +2688,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("jman", "v1.2",  "Journeyman 16MB",  "r:2ce360c9ea2da80a2c6d1040b0ad92dd", 440902, 313),
 	WINGAME1("jman", "",	  "JMAN.EXE",		  "d:7c8230a804abf9353b05627a675b5ffb", 375282, 300),
 	WINGAME1_l("jman", "v1.1", "JMAN.EXE",		  "t:56feca9681406edc2fd78da501694cb2", 370002, Common::DE_DEU, 300),
-//	WINGAME1_l("jman", "", "JOURNEY.EXE",	 "65d06b5fef155a2473434571aff5bc29", -1, Common::JA_JPN, 300), FIXME: Needs additional file
+//	WINGAME1_l("jman", "", "JOURNEY.EXE",	 "65d06b5fef155a2473434571aff5bc29", AD_NO_SIZE, Common::JA_JPN, 300), FIXME: Needs additional file
 	MACDEMO1("jman", "Sneak Preview", "Journeyman Sneak Preview", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 6222633, 300),
 	MACDEMO1("jman", "CD Demo", "Journeyman Demo", "1ae45c23586b41997ba52e2e7c771c4c", 3077381, 311),
 	MACDEMO1("jman", "CD Demo", "Journeyman Demo", "424093b2bc04a1bfa4376c878f67a364", 3083188, 300),
@@ -3113,7 +3113,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Game is HyperCard based. Movies will play with --start-movie from console.
 	MACGAME1("spelunx", "v2.01 Color", "Spelunx", "8c4ac0488e92704a257698ee45affea5", 1208328, 313),
 
-	WINGAME1("spyclub", "", "SPYCLUB.EXE", "65d06b5fef155a2473434571aff5bc29", -1, 300),
+	WINGAME1("spyclub", "", "SPYCLUB.EXE", "65d06b5fef155a2473434571aff5bc29", AD_NO_SIZE, 300),
 
 	WINGAME1("ssbeastie", "", "BEASTIE.exe", "7c8230a804abf9353b05627a675b5ffb", 1739737, 310),
 
@@ -3201,10 +3201,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2t("vvcyber", "Demo", "CYBER.EXE", "f6a00141499568e167ab0ed901fffa05", 639439,
 								 "CYBER.MMM", "eaa81c1e5ee7229bca5f214f86337f3d", 270188, 310),
 
-//	MACGAME1("vvdinosaur", "", "Start Game", "d41d8cd98f00b204e9800998ecf8427e", -1, 300),
+//	MACGAME1("vvdinosaur", "", "Start Game", "d41d8cd98f00b204e9800998ecf8427e", AD_NO_SIZE, 300),
 	MACGAME2("vvdinosaur", "", "Start Adventure (8Mb)", 	  "2ce360c9ea2da80a2c6d1040b0ad92dd", 384984,
 							   "Dinosaur/Chapter1/LDE Intro", "4ae7c14351bc9cfd812c410ba37aecd3", 407023, 310),
-//	WINGAME1("vvdinosaur", "", "DINOSAUR.EXE", "4e6303630f4dd588e730d09241cf7e76", -1, 300),
+//	WINGAME1("vvdinosaur", "", "DINOSAUR.EXE", "4e6303630f4dd588e730d09241cf7e76", AD_NO_SIZE, 300),
 	WINGAME2t("vvdinosaur", "v1.1", "DINOSAUR.EXE", "d9a7b8248c831b9af1a0f3c43269d9d6", 370049,
 								    "STARTLDE.MMM", "87da46f4deaa55032ed54b3d366c272d", 792, 310),
 
@@ -3213,7 +3213,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2t("vvharp", "", "HYPNOTIC.EXE", "0cf51de2c038e003dd4046295e12a5d6", 370272,
 							"START.MMM",	"cab5ffd61f5f547d2b7be44fe6b67c76", 954, 310),
 
-//	MACGAME1("vvvampire", "", "The Vampire's Coffin", "d41d8cd98f00b204e9800998ecf8427e", -1, 300),
+//	MACGAME1("vvvampire", "", "The Vampire's Coffin", "d41d8cd98f00b204e9800998ecf8427e", AD_NO_SIZE, 300),
 	MACGAME1("vvvampire", "", "The Vampire's Coffin", "7f443f2e63fd497a9ad85b10dc880a91", 384070, 313),
 	WINGAME2t("vvvampire", "", "VAMPIRE.EXE", "97019593c1c86ac3be60c3ba468c07b6", 370837,
 							   "START.MMM",	  "425df941db805b5599e37a1e7b1c4d59", 1584, 310),
@@ -4606,8 +4606,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Windows version isn't Director
 	// Original filename is JMP Turbo™
-	MACGAME1("jman", "Turbo!", "JMP Turbo", "cc3321069072b90f091f220bba16e4d4", -1, 400),
-	MACGAME1("jman", "Making Of", "The Journey", "cc3321069072b90f091f220bba16e4d4", -1, 400),
+	MACGAME1("jman", "Turbo!", "JMP Turbo", "cc3321069072b90f091f220bba16e4d4", AD_NO_SIZE, 400),
+	MACGAME1("jman", "Making Of", "The Journey", "cc3321069072b90f091f220bba16e4d4", AD_NO_SIZE, 400),
 	MACDEMO1("jman", "Director's Cut Demo", "Journeyman - Director's Cut", "01be45e7241194dad07938e7059b88e3", 484284, 400),
 
 	// Original filename is Buried in Time™ PowerPC; also contains 68k binary
@@ -8298,8 +8298,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("isscommerce", "", "Mac-Start", "fa52f0136cde568a46249ce74f01a324", 107126, 700),
 	WINGAME1("isscommerce", "", "PC-Start.exe", "c1a2e8b7e41fa204009324a9c7db1030", 6878037, 700),
 
-	MACGAME1("jewels1", "", "Jewels of the Oracle", "fa52f0136cde568a46249ce74f01a324", -1, 700),
-	WINGAME1("jewels1", "", "Jewels.exe", "c1a2e8b7e41fa204009324a9c7db1030", -1, 700),
+	MACGAME1("jewels1", "", "Jewels of the Oracle", "fa52f0136cde568a46249ce74f01a324", AD_NO_SIZE, 700),
+	WINGAME1("jewels1", "", "Jewels.exe", "c1a2e8b7e41fa204009324a9c7db1030", AD_NO_SIZE, 700),
 
 	// All of the installers also use Director
 	// Mac filename is Starta Jönssonligan

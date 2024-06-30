@@ -384,12 +384,12 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"myst",
 			"Masterpiece Edition - 25th Anniversary",
 			{
-				{"myst.dat", 0, "c4cae9f143b5947262e6cb2397e1617e", -1},
-				{"myst_french.dat", 0, "7c8230be50ffcac588e7db8788ad7614", -1},
-				{"myst_german.dat", 0, "3952554439960b22a360e8e006dfed58", -1},
-				{"myst_polish.dat", 0, "9ca82ff26fcbfacf40e4164523a50854", -1},
-				{"myst_spanish.dat", 0, "822ed3c0de912c10b877dcd2cc078493", -1},
-				{"menu.dat", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
+				{"myst.dat", 0, "c4cae9f143b5947262e6cb2397e1617e", AD_NO_SIZE},
+				{"myst_french.dat", 0, "7c8230be50ffcac588e7db8788ad7614", AD_NO_SIZE},
+				{"myst_german.dat", 0, "3952554439960b22a360e8e006dfed58", AD_NO_SIZE},
+				{"myst_polish.dat", 0, "9ca82ff26fcbfacf40e4164523a50854", AD_NO_SIZE},
+				{"myst_spanish.dat", 0, "822ed3c0de912c10b877dcd2cc078493", AD_NO_SIZE},
+				{"menu.dat", 0, "7dc23051084f79b1c2bccc84cdec0503", AD_NO_SIZE},
 				AD_LISTEND
 			},
 			Common::UNK_LANG,

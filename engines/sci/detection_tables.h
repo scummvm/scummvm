@@ -638,7 +638,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "a4b73d5d2b55bdb6e44345e99c8fbdd0", 4804},
 		{"resource.000", 0, "d908dbef56816ac6c60dd145fdeafb2b", 3536046},
 		{"resource.msg", 0, "0c68a203302841adb9faa47ff61edd93", 561801},
-		{"resource.aud", 0, NULL,                               -1},
+		{"resource.aud", 0, NULL,                               AD_NO_SIZE},
 		AD_LISTEND},
 		Common::KO_KOR, Common::kPlatformDOS, ADGF_CD, GUIO_STD16_SPEECH	},
 
@@ -2469,9 +2469,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		// that is detected with additional files, and we might as well check
 		// for the DOS-specific files here too since there are at least some
 		// Windows-only releases of this game too
-		{"avi/91.rbt",   0, NULL,                               -1},
-		{"avi/911.rbt",  0, NULL,                               -1},
-		{"avi/912.rbt",  0, NULL,                               -1},
+		{"avi/91.rbt",   0, NULL,                               AD_NO_SIZE},
+		{"avi/911.rbt",  0, NULL,                               AD_NO_SIZE},
+		{"avi/912.rbt",  0, NULL,                               AD_NO_SIZE},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_KQ7 },
 
@@ -2485,9 +2485,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		// matter (some users replace them with higher quality versions created
 		// from the rare 1.65c release, which should not cause a detection
 		// failure)
-		{"avi/e108x11.avi",  0, NULL,                           -1},
-		{"avi/e208x11.avi",  0, NULL,                           -1},
-		{"avi/int08x11.avi", 0, NULL,                           -1},
+		{"avi/e108x11.avi",  0, NULL,                           AD_NO_SIZE},
+		{"avi/e208x11.avi",  0, NULL,                           AD_NO_SIZE},
+		{"avi/int08x11.avi", 0, NULL,                           AD_NO_SIZE},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO_KQ7 },
 

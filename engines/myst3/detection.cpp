@@ -56,7 +56,7 @@ static const char *const directoryGlobs[] = {
 		extra,                                                                  \
 		{                                                                       \
 			{ "RSRC.m3r", 0, "a2c8ed69800f60bf5667e5c76a88e481", 1223862 },     \
-			{ langFile, 0, md5lang, -1 },                                       \
+			{ langFile, 0, md5lang, AD_NO_SIZE },                                       \
 		},                                                                      \
 		lang,                                                                   \
 		Common::kPlatformWindows,                                               \
@@ -74,7 +74,7 @@ static const char *const directoryGlobs[] = {
 		{                                                                       \
 			{ "RSRC.m3r",    0, "a2c8ed69800f60bf5667e5c76a88e481", 1223862 },  \
 			{ "ENGLISH.m3t", 0, "74726de866c0594d3f2a05ff754c973d", 3407120 },  \
-			{ langFile, 0, md5lang, -1 },                                       \
+			{ langFile, 0, md5lang, AD_NO_SIZE },                                       \
 		},                                                                      \
 		lang,                                                                   \
 		Common::kPlatformWindows,                                               \
@@ -91,7 +91,7 @@ static const char *const directoryGlobs[] = {
 		0,                                                                      \
 		{                                                                       \
 			{ "RSRC.m3r", 0, "3de23eb5a036a62819186105478f9dde", 1226192 },     \
-			{ langFile, 0, md5lang, -1 },                                       \
+			{ langFile, 0, md5lang, AD_NO_SIZE },                                       \
 		},                                                                      \
 		lang,                                                                   \
 		Common::kPlatformXbox,                                                  \
