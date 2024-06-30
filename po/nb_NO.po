@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-30 16:39+0000\n"
+"POT-Creation-Date: 2024-06-30 18:44+0000\n"
 "PO-Revision-Date: 2023-12-29 23:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -405,7 +405,7 @@ msgid "Select directory where to download game data"
 msgstr "Velg mappe for nedlasting av spilldata"
 
 #: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:99
-#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:579 gui/launcher.cpp:314
+#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:578 gui/launcher.cpp:314
 msgid "Select directory with game data"
 msgstr "Velg mappe med spilldata"
 
@@ -801,23 +801,23 @@ msgctxt "lowres"
 msgid "Platform:"
 msgstr "Plattform:"
 
-#: gui/editgamedialog.cpp:559 gui/options.cpp:3359
+#: gui/editgamedialog.cpp:558 gui/options.cpp:3359
 msgid "Select SoundFont"
 msgstr "Velg SoundFont"
 
-#: gui/editgamedialog.cpp:598
+#: gui/editgamedialog.cpp:597
 msgid "Select additional game directory"
 msgstr "Velg mappe med ytterligere data"
 
-#: gui/editgamedialog.cpp:611 gui/options.cpp:3206
+#: gui/editgamedialog.cpp:610 gui/options.cpp:3206
 msgid "Select directory for saved games"
 msgstr "Velg mappe for lagrede spill"
 
-#: gui/editgamedialog.cpp:618 gui/options.cpp:3213
+#: gui/editgamedialog.cpp:617 gui/options.cpp:3213
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Den valgte mappen kan ikke skrives til. Vennligst velg en annen."
 
-#: gui/editgamedialog.cpp:623
+#: gui/editgamedialog.cpp:622
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
@@ -825,7 +825,7 @@ msgstr ""
 "Syncing av lagrede spill fungerer ikke med ikke-standard mapper. Hvis du vil "
 "at de lagrede spillene dine skal synce må du bruke standardmapper."
 
-#: gui/editgamedialog.cpp:657
+#: gui/editgamedialog.cpp:656
 msgid "This game ID is already taken. Please choose another one."
 msgstr "Denne spill-IDen er allerede i bruk. Vennligst velg en annen."
 

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-30 16:39+0000\n"
+"POT-Creation-Date: 2024-06-30 18:44+0000\n"
 "PO-Revision-Date: 2023-12-14 14:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -430,7 +430,7 @@ msgid "Select directory where to download game data"
 msgstr "Vyberte adresář kam data her stáhnout"
 
 #: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:99
-#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:579 gui/launcher.cpp:314
+#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:578 gui/launcher.cpp:314
 msgid "Select directory with game data"
 msgstr "Vyberte adresář s daty hry"
 
@@ -828,23 +828,23 @@ msgctxt "lowres"
 msgid "Platform:"
 msgstr "Platforma:"
 
-#: gui/editgamedialog.cpp:559 gui/options.cpp:3359
+#: gui/editgamedialog.cpp:558 gui/options.cpp:3359
 msgid "Select SoundFont"
 msgstr "Vybrat SoundFont"
 
-#: gui/editgamedialog.cpp:598
+#: gui/editgamedialog.cpp:597
 msgid "Select additional game directory"
 msgstr "Vyberte dodatečný adresář hry"
 
-#: gui/editgamedialog.cpp:611 gui/options.cpp:3206
+#: gui/editgamedialog.cpp:610 gui/options.cpp:3206
 msgid "Select directory for saved games"
 msgstr "Vyberte adresář pro uložené hry"
 
-#: gui/editgamedialog.cpp:618 gui/options.cpp:3213
+#: gui/editgamedialog.cpp:617 gui/options.cpp:3213
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Do zvoleného adresáře nelze zapisovat. Vyberte, prosím, jiný."
 
-#: gui/editgamedialog.cpp:623
+#: gui/editgamedialog.cpp:622
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
@@ -852,7 +852,7 @@ msgstr ""
 "Funkce synchronizace uložených her nefunguje s nestandardními adresáři. "
 "Pokud chcete vaše hry synchronizovat, je nutné použít výchozí adresář."
 
-#: gui/editgamedialog.cpp:657
+#: gui/editgamedialog.cpp:656
 msgid "This game ID is already taken. Please choose another one."
 msgstr "Toto ID hry je už zabrané. Vyberte si, prosím, jiné."
 

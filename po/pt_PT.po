@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-30 16:39+0000\n"
+"POT-Creation-Date: 2024-06-30 18:44+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -429,7 +429,7 @@ msgid "Select directory where to download game data"
 msgstr "Selecione a pasta de transferências de ficheiros do jogo"
 
 #: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:99
-#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:579 gui/launcher.cpp:314
+#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:578 gui/launcher.cpp:314
 msgid "Select directory with game data"
 msgstr "Selecione a pasta com os ficheiros do jogo"
 
@@ -828,29 +828,29 @@ msgctxt "lowres"
 msgid "Platform:"
 msgstr "Plataforma:"
 
-#: gui/editgamedialog.cpp:559 gui/options.cpp:3359
+#: gui/editgamedialog.cpp:558 gui/options.cpp:3359
 msgid "Select SoundFont"
 msgstr "Selecione o SoundFont"
 
-#: gui/editgamedialog.cpp:598
+#: gui/editgamedialog.cpp:597
 msgid "Select additional game directory"
 msgstr "Selecione a pasta adicional para o jogo"
 
-#: gui/editgamedialog.cpp:611 gui/options.cpp:3206
+#: gui/editgamedialog.cpp:610 gui/options.cpp:3206
 msgid "Select directory for saved games"
 msgstr "Selecione a pasta para jogos guardados"
 
-#: gui/editgamedialog.cpp:618 gui/options.cpp:3213
+#: gui/editgamedialog.cpp:617 gui/options.cpp:3213
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Não é possível escrever na pasta selecionada. Por favor escolha outra."
 
-#: gui/editgamedialog.cpp:623
+#: gui/editgamedialog.cpp:622
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr "Só é possível sincronizar os jogos guardados com as pastas padrão."
 
-#: gui/editgamedialog.cpp:657
+#: gui/editgamedialog.cpp:656
 msgid "This game ID is already taken. Please choose another one."
 msgstr "Este ID já se encontra em utilização. Por favor escolha outro."
 
