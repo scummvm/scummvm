@@ -24,7 +24,7 @@
 #include "common/textconsole.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/app_core.h"
-
+#include "qdengine/qdengine.h"
 #include "qdengine/xlibs/xutil/xutil.h"
 
 namespace QDEngine {
@@ -324,8 +324,7 @@ bool copy_file_list(const std::list<std::string> &file_list, const char *target_
 			save_str = target_dir + save_str;
 			// Копируем и сообщаем об ошибке, если произошла
 			if (!app_io::copy_file(save_str.c_str(), it->c_str())) {
-				appLog::default_log() << "Error: could not copy " << it->c_str()
-				                      << " to directory " << target_dir << "\r\n";
+				debugC(3, kDebugLog, "Error: could not copy %s to directory %s", transCyrillic(it->c_str()), transCyrillic(target_dir));
 				copy_ok = false;
 			}
 		}

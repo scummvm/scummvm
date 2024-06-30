@@ -24,7 +24,6 @@
 #include "common/stream.h"
 #include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
-#include "qdengine/core/system/app_log_file.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
 #include "qdengine/core/system/input/mouse_input.h"

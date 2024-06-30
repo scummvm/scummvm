@@ -33,11 +33,6 @@ namespace QDEngine {
 /* ----------------------------- STRUCT SECTION ----------------------------- */
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
-
-#ifdef __QD_DEBUG_ENABLE__
-appLog &operator << (appLog &log, const qdNamedObjectReference &obj);
-#endif
-
 /* --------------------------- DEFINITION SECTION --------------------------- */
 
 qdNamedObjectIndexer::qdNamedObjectIndexer() {

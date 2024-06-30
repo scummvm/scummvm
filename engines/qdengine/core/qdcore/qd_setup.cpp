@@ -220,7 +220,6 @@ void qdGameConfig::load() {
 #endif
 
 	if (atoi(getIniKey(ini_name_, "debug", "enable_log")))
-		appLog::default_log().enable();
 
 	if (atoi(getIniKey(ini_name_, "debug", "full_redraw")))
 		force_full_redraw_ = true;
