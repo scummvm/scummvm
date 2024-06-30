@@ -1426,8 +1426,8 @@ void Wiz::dwCreateRawWiz(int imageNum, int w, int h, int flags, int bitsPerPixel
 	if (flags & kCWFSpot) {
 		WRITE_BE_UINT32(writePtr, MKTAG('S', 'P', 'O', 'T')); writePtr += 4;
 		WRITE_BE_UINT32(writePtr, WIZBLOCK_SPOT_SIZE); writePtr += 4;
-		WRITE_BE_UINT32(writePtr + 0, optionalSpotX);
-		WRITE_BE_UINT32(writePtr + 4, optionalSpotY);
+		WRITE_LE_UINT32(writePtr + 0, optionalSpotX);
+		WRITE_LE_UINT32(writePtr + 4, optionalSpotY);
 
 		writePtr += WIZBLOCK_SPOT_DATA_SIZE;
 	}
@@ -1435,7 +1435,7 @@ void Wiz::dwCreateRawWiz(int imageNum, int w, int h, int flags, int bitsPerPixel
 	if (flags & kCWFRemapTable) {
 		WRITE_BE_UINT32(writePtr, MKTAG('R', 'M', 'A', 'P')); writePtr += 4;
 		WRITE_BE_UINT32(writePtr, WIZBLOCK_RMAP_SIZE); writePtr += 4;
-		WRITE_BE_UINT32(writePtr, 0); writePtr += 4;
+		WRITE_LE_UINT32(writePtr, 0); writePtr += 4;
 
 		for (int i = 0; i < 256; ++i) {
 			*writePtr++ = i;
