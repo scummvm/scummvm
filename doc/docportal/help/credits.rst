@@ -235,6 +235,21 @@ Avalanche
    * - Arnaud Boutonné
      -
 
+Bagel
+^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Arnaud Boutonné
+     -
+   * - Daniel Albano
+     -
+   * - Eugene Sandulenko
+     -
+   * - Paul Gilbert
+     -
+
 BBVS
 ^^^^
 
@@ -1097,7 +1112,7 @@ SCUMM HE
    :widths: 35 65
 
    * - Andrea Boscarino
-     - Digital audio
+     - Digital audio, WIZ graphics system
    * - Jonathan Gray
      - (retired)
    * - Travis Howell
