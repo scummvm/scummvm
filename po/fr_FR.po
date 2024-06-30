@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-28 12:40+0000\n"
+"POT-Creation-Date: 2024-06-30 10:05+0000\n"
 "PO-Revision-Date: 2024-06-28 16:15+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -345,7 +345,7 @@ msgstr "Les contenus du code JSON sont malformés."
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
 #: engines/groovie/script.cpp:660 engines/mtropolis/mtropolis.cpp:114
 #: engines/mtropolis/mtropolis.cpp:124 engines/parallaction/saveload.cpp:270
-#: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:75
+#: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:76
 #: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1243
 #: engines/scumm/scumm.cpp:1616 engines/scumm/scumm.cpp:2093
 #: engines/scumm/scumm.cpp:2109 engines/sky/compact.cpp:140
@@ -9573,7 +9573,7 @@ msgstr "Cette démo utilise une version non-implémentée des vidéos de Robot"
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr "Jeu incomplet détecté. Vous devez copier les données de tous les CD."
 
-#: engines/sci/engine/kfile.cpp:491 engines/sci/metaengine.cpp:371
+#: engines/sci/engine/kfile.cpp:491 engines/sci/metaengine.cpp:283
 msgid "(Autosave)"
 msgstr "(Sauvegarde automatique)"
 
@@ -9623,7 +9623,7 @@ msgstr ""
 "Impossible de lire une vidéo %d bpp sur un système avec une profondeur de "
 "couleur maximale de 8 bpp"
 
-#: engines/sci/metaengine.cpp:303
+#: engines/sci/metaengine.cpp:212
 msgid "SCI32 support not compiled in"
 msgstr ""
 "La prise en charge des jeux SCI32 n'a pas été activée dans cette version"
@@ -9638,7 +9638,7 @@ msgstr ""
 "fonctionnalités peuvent ne pas marcher correctement. Consultez la console "
 "pour plus d'information et assurez-vous que vos fichiers de jeu sont valides."
 
-#: engines/sci/sci.cpp:399
+#: engines/sci/sci.cpp:422
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -9652,7 +9652,7 @@ msgstr ""
 "correctement ou ne correspondent pas toujours à ce qui est dit. Ce n'est pas "
 "un bogue dans ScummVM, mais un problème avec les données du jeu."
 
-#: engines/sci/sci.cpp:423
+#: engines/sci/sci.cpp:446
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI Utility"
@@ -9675,11 +9675,11 @@ msgstr ""
 "l'absence de ce patch, la musique General MIDI pour ce jeu est fortement "
 "déformée."
 
-#: engines/sci/sci.cpp:515
+#: engines/sci/sci.cpp:538
 msgid "Download patch"
 msgstr "Télécharger le patch"
 
-#: engines/sci/sci.cpp:516
+#: engines/sci/sci.cpp:539
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
@@ -9687,7 +9687,7 @@ msgstr ""
 "(ou cliquer sur le bouton 'Télécharger le patch'. Nota : Il ne sera que "
 "téléchargé, vous devrez continuer depuis ici)\n"
 
-#: engines/sci/sci.cpp:523
+#: engines/sci/sci.cpp:546
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -9703,7 +9703,7 @@ msgstr ""
 "- télécharger http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 
-#: engines/sci/sci.cpp:956
+#: engines/sci/sci.cpp:979
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
