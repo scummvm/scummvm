@@ -280,7 +280,10 @@ void MidiParser_SCI::midiFilterChannels(int channelMask) {
 		if (!validateNextRead(channelData))
 			goto end;
 		curDelta = *channelData++;
-		if (curDelta == 0xF8) {
+		if (curDelta == kEndOfTrack) {
+			// kEndOfTrack status byte can potentially appear without delta.
+			goto end;
+		} else if (curDelta == 0xF8) {
 			delta += 240;
 			continue;
 		}
@@ -306,6 +309,13 @@ void MidiParser_SCI::midiFilterChannels(int channelMask) {
 			if (curChannel != 0xF)
 				containsMidiData = true;
 
+			// Stop at first kEndOfTrack.
+			// There can be duplicate end of track events afterwards,
+			// or junk bytes, or other leftover events.
+			if (command == kEndOfTrack) {
+				goto end;
+			}
+
 			// Write delta
 			while (delta > 240) {
 				*outData++ = 0xF8;
@@ -325,13 +335,6 @@ void MidiParser_SCI::midiFilterChannels(int channelMask) {
 					*outData++ = curByte; // out
 				} while (curByte != 0xF7);
 				lastCommand = command;
-				break;
-
-			case kEndOfTrack: // end of channel
-				// At least KQ4 sound 104 has a doubled kEndOfTrack marker at
-				// the end of the file, which breaks filtering
-				if (channelData.size() < 2)
-					goto end;
 				break;
 
 			default: // MIDI command
@@ -369,7 +372,14 @@ void MidiParser_SCI::midiFilterChannels(int channelMask) {
 
 end:
 	// Insert stop event
-	// (Delta is already output above)
+
+	// Write final delta
+	while (delta > 240) {
+		*outData++ = 0xF8;
+		delta -= 240;
+	}
+	*outData++ = (byte)delta;
+
 	*outData++ = 0xFF; // Meta event
 	*outData++ = 0x2F; // End of track (EOT)
 	*outData++ = 0x00;
