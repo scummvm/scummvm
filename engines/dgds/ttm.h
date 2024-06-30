@@ -40,7 +40,6 @@ public:
 	TTMEnviro() : _totalFrames(330), _enviro(0), _creditScrollMeasure(0),
 			_creditScrollYOffset(0), ScriptParserData() {
 		ARRAYCLEAR(_scriptPals);
-		_fonts.push_back(FontManager::kDefaultFont); // is this right?
 	}
 
 	Common::Error syncState(Common::Serializer &s);
@@ -110,15 +109,16 @@ public:
 
 	bool load(const Common::String &filename, TTMEnviro &env);
 	void unload();
-	bool run(TTMEnviro &env, struct TTMSeq &seq);
+	bool run(TTMEnviro &env, TTMSeq &seq);
 	void findAndAddSequences(TTMEnviro &scriptData, Common::Array<TTMSeq> &seqArray);
 
 protected:
-	void handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval);
+	void handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval);
 	int32 findGOTOTarget(TTMEnviro &env, TTMSeq &seq, int16 frame);
-	void doWipeOp(uint16 code, TTMEnviro &env, struct TTMSeq &seq, const Common::Rect &r);
+	void doWipeOp(uint16 code, TTMEnviro &env, TTMSeq &seq, const Common::Rect &r);
 	int16 doOpInitCreditScroll(const Image *img);
 	bool doOpCreditsScroll(const Image *img, int16 ygap, int16 ymax, int16 xoff, int16 measuredWidth, const Common::Rect &clipRect);
+	void doDrawDialogForStrings(TTMEnviro &env, TTMSeq &seq, int16 x, int16 y, int16 width, int16 height);
 
 	DgdsEngine *_vm;
 };

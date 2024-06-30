@@ -188,6 +188,9 @@ static const char *ttmOpName(uint16 op) {
 	case 0xa270: return "DRAW STRING 7";
 	case 0xa280: return "DRAW STRING 8";
 	case 0xa290: return "DRAW STRING 9";
+	case 0xa300: return "DRAW STRINGS AS DLG";
+	case 0xa400: return "DRAW FILLED CIRCLE";
+	case 0xa420: return "DRAW EMPTY CIRCLE";
 	case 0xa500: return "DRAW BMP";
 	case 0xa520: return "DRAW SPRITE FLIP";
 	case 0xa530: return "DRAW BMP4";
@@ -214,9 +217,6 @@ static const char *ttmOpName(uint16 op) {
 	case 0x00C0: return "FREE BACKGROUND";
 	case 0x0230: return "reset current music?";
 	case 0x1310: return "STOP SFX";
-	case 0xa300: return "DRAW some string";
-	case 0xa400: return "DRAW FILLED CIRCLE";
-	case 0xa420: return "DRAW EMPTY CIRCLE";
 	case 0xa510: return "DRAW SPRITE1";
 	case 0xb600: return "DRAW SCREEN";
 	case 0xc020: return "LOAD_SAMPLE";
@@ -253,7 +253,7 @@ static void _copyRectToScreen(const Graphics::ManagedSurface &src, const Common:
 }
 
 
-void TTMInterpreter::doWipeOp(uint16 code, TTMEnviro &env, struct TTMSeq &seq, const Common::Rect &r) {
+void TTMInterpreter::doWipeOp(uint16 code, TTMEnviro &env, TTMSeq &seq, const Common::Rect &r) {
 	//
 	// In the original games, these operations copy certain parts of the buffer on to
 	// the screen, and rely on the system's speed to make it happen faster than a regular
@@ -400,7 +400,58 @@ int16 TTMInterpreter::doOpInitCreditScroll(const Image *img) {
     return scrollFinished;
 }
 
-void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval) {
+void TTMInterpreter::doDrawDialogForStrings(TTMEnviro &env, TTMSeq &seq, int16 x, int16 y, int16 width, int16 height) {
+	int16 fontno = seq._currentFontId;
+	if (fontno >= (int16)env._fonts.size()) {
+		warning("Trying to draw font no %d but only loaded %d", fontno, env._fonts.size());
+		fontno = 0;
+	}
+	const FontManager *mgr = _vm->getFontMan();
+	const DgdsFont *font = mgr->getFont(env._fonts[fontno]);
+	int16 lineHeight = font->getFontHeight();
+
+	// FIXME: this doesn't match original code but seems to be needed to make it right??
+	int16 charWidth = font->getMaxCharWidth() / 2;
+	if (lineHeight == 0 || charWidth == 0)
+		return;
+	// Black background
+	Common::Rect drawRect = Common::Rect(Common::Point(x, y), width - 3, height - 3);
+	_vm->_compositionBuffer.fillRect(drawRect, 0);
+	drawRect.grow(-1);
+	// Header area color
+	_vm->_compositionBuffer.fillRect(drawRect, seq._drawColBG);
+
+	// Main text bg
+	_vm->_compositionBuffer.fillRect(Common::Rect(Common::Point(x, y + lineHeight + 2), width - 3, height - lineHeight - 5), 0);
+	_vm->_compositionBuffer.fillRect(Common::Rect(Common::Point(x + 1, y + lineHeight + 4), width - 5, height - lineHeight - 8), seq._drawColFG);
+
+	// Drop shadow.
+	_vm->_compositionBuffer.fillRect(Common::Rect(Common::Point(x + width - 3, y + 3), 3, height - 3), 0);
+	_vm->_compositionBuffer.fillRect(Common::Rect(Common::Point(x + 3, y + height - 3), width - 3, 3), 0);
+
+	for (int i = 0; i < ARRAYSIZE(env._strings); i++) {
+		const Common::String &str = env._strings[i];
+		int16 lineX;
+		int16 lineY;
+		if ((int)str.size() * charWidth < width) {
+			if (i == 0) {
+				int16 lineWidth = font->getStringWidth(str);
+				// Heading is centered
+				lineX = x + (width - lineWidth) / 2;
+				lineY = y + 2;
+			} else {
+				if (height <= (i + 2) * lineHeight)
+					continue;
+				lineX = x + charWidth;
+				lineY = y + i * lineHeight + 5;
+			}
+			font->drawString(_vm->_compositionBuffer.surfacePtr(), str, lineX, lineY, width, 0);
+		}
+	}
+}
+
+
+void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval) {
 	switch (op) {
 	case 0x0000: // FINISH:	void
 		break;
@@ -652,7 +703,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	case 0xa290: {
 		int16 fontno = seq._currentFontId;
 		if (fontno >= (int16)env._fonts.size()) {
-			warning("Trying to draw font no %d but only loaded %d", seq._currentFontId, env._fonts.size());
+			warning("Trying to draw font no %d but only loaded %d", fontno, env._fonts.size());
 			fontno = 0;
 		}
 		uint strnum = (op & 0x70) >> 4;
@@ -666,6 +717,9 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 		font->drawString(&(_vm->_compositionBuffer), str, ivals[0], ivals[1], width, seq._drawColFG);
 		break;
 	}
+	case 0xa300:
+		doDrawDialogForStrings(env, seq, ivals[0], ivals[1], ivals[2], ivals[3]);
+		break;
 	case 0xa510:
 		// DRAW SPRITE x,y:int  .. how different from 0xa500??
 		// FALL THROUGH
@@ -766,7 +820,6 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 			break;
 		const FontManager *mgr = _vm->getFontMan();
 		env._fonts.push_back(mgr->fontTypeByName(sval));
-		seq._currentFontId = env._fonts.size() - 1;
 		break;
 	}
 	case 0xf050: { // LOAD PAL:	filename:str
@@ -811,7 +864,6 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	case 0x1040: // Sets some global? i:int
 	case 0x10B0: // null op?
 	case 0x2010: // SET FRAME?? x,y
-	case 0xa300: // DRAW some string? x,y,?,?:int
 	case 0xa400: // DRAW FILLED CIRCLE
 	case 0xa420: // DRAW EMPTY CIRCLE
 	case 0xb600: // DRAW SCREEN?? 6 args		// HoC onward
@@ -829,7 +881,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, struct TTMSeq &seq, uint16 
 	}
 }
 
-bool TTMInterpreter::run(TTMEnviro &env, struct TTMSeq &seq) {
+bool TTMInterpreter::run(TTMEnviro &env, TTMSeq &seq) {
 	Common::SeekableReadStream *scr = env.scr;
 	if (!scr || scr->pos() >= scr->size())
 		return false;

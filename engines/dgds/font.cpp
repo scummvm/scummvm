@@ -81,7 +81,7 @@ static inline bool isSet(const byte *data, uint bit) {
 	return data[bit / 8] & (1 << (7 - (bit % 8)));
 }
 
-void DgdsFont::drawChar(Graphics::Surface* dst, int pos, int bit, int x, int y, int w, uint32 color) const {
+void DgdsFont::drawChar(Graphics::Surface* dst, int pos, int x, int y, int w, uint32 color) const {
 	const Common::Rect destRect(Common::Point(x, y), w, _h);
 	Common::Rect clippedDestRect(dst->w, dst->h);
 	clippedDestRect.clip(destRect);
@@ -91,7 +91,7 @@ void DgdsFont::drawChar(Graphics::Surface* dst, int pos, int bit, int x, int y, 
 	const int rows = clippedDestRect.height();
 	const int columns = clippedDestRect.width();
 
-	int bitOffset = bit + croppedBy.x;
+	int bitOffset = croppedBy.x;
 	int bytesPerRow = (w + 7) / 8;
 	const byte *src = _glyphs + pos + (croppedBy.y * bytesPerRow);
 	byte *ptr = (byte *)dst->getBasePtr(clippedDestRect.left, clippedDestRect.top);
@@ -112,18 +112,18 @@ FFont::FFont(byte w, byte h, byte start, byte count, byte *data) : DgdsFont(w, h
 FFont::~FFont() {
 	delete [] _rawData;
 }
-void FFont::mapChar(byte chr, int &pos, int &bit) const {
-	pos = (chr - _start) * _h;
-	bit = 8 - _w;
+
+
+int FFont::charOffset(byte chr) const {
+	return (chr - _start) * _h;
 }
 
 void FFont::drawChar(Graphics::Surface* dst, uint32 chr, int x, int y, uint32 color) const {
 	if (!hasChar(chr))
 		return;
 
-	int pos, bit;
-	mapChar(chr, pos, bit);
-	DgdsFont::drawChar(dst, pos, bit, x, y, _w, color);
+	int pos = charOffset(chr);
+	DgdsFont::drawChar(dst, pos, x, y, _w, color);
 }
 
 FFont *FFont::load(Common::SeekableReadStream &input) {
@@ -152,20 +152,17 @@ PFont::~PFont() {
 	delete [] _rawData;
 }
 
-void PFont::mapChar(byte chr, int& pos, int& bit) const {
-	pos = READ_LE_UINT16(&_offsets[chr - _start]);
-	bit = 0;
+int PFont::charOffset(byte chr) const {
+	return READ_LE_UINT16(&_offsets[chr - _start]);
 }
 
 void PFont::drawChar(Graphics::Surface* dst, uint32 chr, int x, int y, uint32 color) const {
 	if (!hasChar(chr))
 		return;
 
-	int pos, bit;
-	mapChar(chr, pos, bit);
-
+	int pos = charOffset(chr);
 	int w = getCharWidth(chr);
-	DgdsFont::drawChar(dst, pos, bit, x, y, w, color);
+	DgdsFont::drawChar(dst, pos, x, y, w, color);
 }
 
 int PFont::getCharWidth(uint32 chr) const {
@@ -226,14 +223,14 @@ FontManager::FontType FontManager::fontTypeByName(const Common::String &filename
 	if (filename == "CHINA.FNT") return kChinaFont;
 	if (filename == "CHINESE.FNT") return kGameDlgFont;
 	if (filename == "WILLY.FNT") return kGameFont;
-	if (filename == "WVCR.FNT") return kWVCRFont;
+	if (filename == "WVCR.FNT") return kVCRFont;
 	if (filename == "COMIX_16.FNT") return kGameDlgFont;
-	if (filename == "EXIT.FNT") return kGameDlgFont;
-	if (filename == "SSM1_12.FNT") return kDefaultFont;
-	if (filename == "SSM1_15.FNT") return kGameFont;
-	if (filename == "SSM1_30.FNT") return kWVCRFont;
-	if (filename == "RMN7_19.FNT") return kGameFont;
-	if (filename == "RMN8_11.FNT") return kDefaultFont;
+	if (filename == "EXIT.FNT") return kVCRFont;
+	if (filename == "SSM1_12.FNT") return kGameFont;
+	if (filename == "SSM1_15.FNT") return kGameDlgFont;
+	if (filename == "SSM1_30.FNT") return k8x8Font;
+	if (filename == "RMN7_19.FNT") return kGameDlgFont;
+	if (filename == "RMN8_11.FNT") return kGameFont;
 	return FontManager::kDefaultFont;
 }
 
@@ -244,29 +241,29 @@ void FontManager::loadFonts(DgdsGameId gameId, ResourceManager *resMgr, Decompre
 		tryLoadFont("SSM1_15.FNT", resMgr, decomp);
 		tryLoadFont("SSM1_30.FNT", resMgr, decomp);
 		tryLoadFont("EXIT.FNT", resMgr, decomp);
-		return;
-	} else if (gameId == GID_COMINGSOON) {
-		tryLoadFont("RMN7_19.FNT", resMgr, decomp);
+	} else if (gameId == GID_COMINGATTRACTIONS) {
 		tryLoadFont("RMN8_11.FNT", resMgr, decomp);
+		tryLoadFont("RMN7_19.FNT", resMgr, decomp);
 		tryLoadFont("EXIT.FNT", resMgr, decomp);
+		_fonts.setVal(kDefaultFont, _fonts.getVal(kGameDlgFont));
 		return;
-	}
-
-	tryLoadFont("8X8.FNT", resMgr, decomp);
-	tryLoadFont("6X6.FNT", resMgr, decomp);
-	tryLoadFont("4x5.FNT", resMgr, decomp);
-	if (gameId == GID_DRAGON) {
-		tryLoadFont("DRAGON.FNT", resMgr, decomp);
-		tryLoadFont("7X8.FNT", resMgr, decomp);
-		tryLoadFont("P6X6.FNT", resMgr, decomp);
-	} else if (gameId == GID_CHINA) {
-		tryLoadFont("HOC.FNT", resMgr, decomp);
-		tryLoadFont("CHINA.FNT", resMgr, decomp);
-		tryLoadFont("CHINESE.FNT", resMgr, decomp);
-	} else if (gameId == GID_BEAMISH) {
-		tryLoadFont("WILLY.FNT", resMgr, decomp);
-		tryLoadFont("WVCR.FNT", resMgr, decomp);
-		tryLoadFont("COMIX_16.FNT", resMgr, decomp);
+	} else {
+		tryLoadFont("8X8.FNT", resMgr, decomp);
+		tryLoadFont("6X6.FNT", resMgr, decomp);
+		tryLoadFont("4x5.FNT", resMgr, decomp);
+		if (gameId == GID_DRAGON) {
+			tryLoadFont("DRAGON.FNT", resMgr, decomp);
+			tryLoadFont("7X8.FNT", resMgr, decomp);
+			tryLoadFont("P6X6.FNT", resMgr, decomp);
+		} else if (gameId == GID_CHINA) {
+			tryLoadFont("HOC.FNT", resMgr, decomp);
+			tryLoadFont("CHINA.FNT", resMgr, decomp);
+			tryLoadFont("CHINESE.FNT", resMgr, decomp);
+		} else if (gameId == GID_BEAMISH) {
+			tryLoadFont("WILLY.FNT", resMgr, decomp);
+			tryLoadFont("WVCR.FNT", resMgr, decomp);
+			tryLoadFont("COMIX_16.FNT", resMgr, decomp);
+		}
 	}
 
 	_fonts.setVal(kDefaultFont, _fonts.getVal(kGameFont));

@@ -267,6 +267,7 @@ protected:
 	bool runSceneOp(const SceneOp &op);
 	bool runDragonOp(const SceneOp &op);
 	bool runChinaOp(const SceneOp &op);
+	bool runBeamishOp(const SceneOp &op);
 
 	uint32 _magic;
 	Common::String _version;
