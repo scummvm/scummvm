@@ -55,6 +55,34 @@ public class ShortcutCreatorActivity extends Activity {
 
 	private IconsCache _cache;
 
+	static void pushShortcut(Context context, String gameId, Intent intent) {
+		Map<String, Map<String, String>> parsedIniMap;
+		try (FileReader reader = new FileReader(new File(context.getFilesDir(), "scummvm.ini"))) {
+			parsedIniMap = INIParser.parse(reader);
+		} catch(FileNotFoundException ignored) {
+			parsedIniMap = null;
+		} catch(IOException ignored) {
+			parsedIniMap = null;
+		}
+
+		if (parsedIniMap == null) {
+			return;
+		}
+
+		Game game = Game.loadGame(parsedIniMap, gameId);
+
+		FileInputStream defaultStream = openFile(new File(context.getFilesDir(), "gui-icons.dat"));
+
+		File iconsPath = INIParser.getPath(parsedIniMap, "scummvm", "iconspath",
+			new File(context.getFilesDir(), "icons"));
+		FileInputStream[] packsStream = openFiles(context, iconsPath, "gui-icons.*\\.dat");
+
+		IconsCache cache = new IconsCache(context, defaultStream, packsStream);
+		final Drawable icon = cache.getGameIcon(game);
+
+		CompatHelpers.ShortcutCreator.pushDynamicShortcut(context, game.getTarget(), intent, game.getDescription(), icon, R.drawable.ic_no_game_icon);
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -88,7 +116,7 @@ public class ShortcutCreatorActivity extends Activity {
 
 		File iconsPath = INIParser.getPath(parsedIniMap, "scummvm", "iconspath",
 			new File(getFilesDir(), "icons"));
-		FileInputStream[] packsStream = openFiles(iconsPath, "gui-icons.*\\.dat");
+		FileInputStream[] packsStream = openFiles(this, iconsPath, "gui-icons.*\\.dat");
 
 		_cache = new IconsCache(this, defaultStream, packsStream);
 
@@ -123,7 +151,7 @@ public class ShortcutCreatorActivity extends Activity {
 		setResult(RESULT_CANCELED);
 	}
 
-	private FileInputStream openFile(File path) {
+	static private FileInputStream openFile(File path) {
 		 try {
 			return new FileInputStream(path);
 		} catch (FileNotFoundException e) {
@@ -131,7 +159,7 @@ public class ShortcutCreatorActivity extends Activity {
 		}
 	}
 
-	private FileInputStream[] openFiles(File basePath, String regex) {
+	static private FileInputStream[] openFiles(Context context, File basePath, String regex) {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N ||
 			!basePath.getPath().startsWith("/saf/")) {
 			// This is a standard filesystem path
@@ -157,7 +185,7 @@ public class ShortcutCreatorActivity extends Activity {
 		String treeName = baseName.substring(5, slash);
 		String path = baseName.substring(slash);
 
-		SAFFSTree tree = SAFFSTree.findTree(this, treeName);
+		SAFFSTree tree = SAFFSTree.findTree(context, treeName);
 		if (tree == null) {
 			return new FileInputStream[0];
 		}
@@ -273,6 +301,20 @@ public class ShortcutCreatorActivity extends Activity {
 			ret.add(String.format("icons/%s.png", _engineid).toLowerCase());
 
 			return ret;
+		}
+
+		public static Game loadGame(@NonNull Map<String, Map<String, String>> parsedIniMap, String target) {
+			Map<String, String> domain = parsedIniMap.get(target);
+			if (domain == null) {
+				return null;
+			}
+			String engineid = domain.get("engineid");
+			String gameid = domain.get("gameid");
+			String description = domain.get("description");
+			if (description == null) {
+				return null;
+			}
+			return new Game(target, engineid, gameid, description);
 		}
 
 		public static List<Game> loadGames(@NonNull Map<String, Map<String, String>> parsedIniMap) {

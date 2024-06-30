@@ -26,6 +26,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 
 class CompatHelpers {
@@ -181,11 +186,20 @@ class CompatHelpers {
 
 	static class ShortcutCreator {
 		public static Intent createShortcutResultIntent(@NonNull Context context, String id, @NonNull Intent intent, @NonNull String label, @Nullable Drawable icon, @DrawableRes int fallbackIconId) {
-			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-				return ShortcutCreatorO.createShortcutResultIntent(context, id, intent, label, icon, fallbackIconId);
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1) {
+				return ShortcutCreatorN_MR1.createShortcutResultIntent(context, id, intent, label, icon, fallbackIconId);
 			} else {
 				return ShortcutCreatorOld.createShortcutResultIntent(context, id, intent, label, icon, fallbackIconId);
 			}
+		}
+
+		public static void pushDynamicShortcut(@NonNull Context context, String id, @NonNull Intent intent, @NonNull String label, @Nullable Drawable icon, @DrawableRes int fallbackIconId) {
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+				ShortcutCreatorR.pushDynamicShortcut(context, id, intent, label, icon, fallbackIconId);
+			} else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1) {
+				ShortcutCreatorN_MR1.pushDynamicShortcut(context, id, intent, label, icon, fallbackIconId);
+			}
+			// No support for older versions
 		}
 
 		@SuppressWarnings("deprecation")
@@ -210,26 +224,118 @@ class CompatHelpers {
 			}
 		}
 
-		@RequiresApi(android.os.Build.VERSION_CODES.O)
-		private static class ShortcutCreatorO {
-			public static Intent createShortcutResultIntent(Context context, String id, @NonNull Intent intent, @NonNull String label, @Nullable Drawable icon, @DrawableRes int fallbackIconId) {
-				ShortcutManager shortcutManager = context.getSystemService(ShortcutManager.class);
+		@RequiresApi(android.os.Build.VERSION_CODES.N_MR1)
+		private static class ShortcutCreatorN_MR1 {
+			public static ShortcutInfo createShortcutInfo(Context context, String id, @NonNull Intent intent, @NonNull String label, @Nullable Icon icon) {
 				ShortcutInfo.Builder builder = new ShortcutInfo.Builder(context, id);
 				builder.setIntent(intent);
 				builder.setShortLabel(label);
+				builder.setIcon(icon);
+				HashSet<String> categories = new HashSet<>(1);
+				categories.add("actions.intent.START_GAME_EVENT");
+				builder.setCategories(categories);
+				return builder.build();
+			}
+
+			public static Intent createShortcutResultIntent(Context context, String id, @NonNull Intent intent, @NonNull String label, @Nullable Drawable icon, @DrawableRes int fallbackIconId) {
 				Bitmap bm;
+				Icon ic;
 				if (icon != null) {
 					bm = drawableToBitmap(icon);
-					builder.setIcon(Icon.createWithBitmap(bm));
+					ic = Icon.createWithBitmap(bm);
 				} else {
 					icon = DrawableCompat.getDrawable(context, fallbackIconId);
 					Objects.requireNonNull(icon);
 					bm = drawableToBitmap(icon);
-					builder.setIcon(Icon.createWithResource(context, fallbackIconId));
+					ic = Icon.createWithResource(context, fallbackIconId);
 				}
-				Intent result = shortcutManager.createShortcutResultIntent(builder.build());
+				ShortcutInfo si = createShortcutInfo(context, id, intent, label, ic);
+
+				Intent result = null;
+				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+					final ShortcutManager shortcutManager = context.getSystemService(ShortcutManager.class);
+					result = shortcutManager.createShortcutResultIntent(si);
+				}
+				if (result == null) {
+					result = new Intent();
+				}
 				ShortcutCreatorOld.addToIntent(result, intent, label, bm);
 				return result;
+			}
+
+			public static void pushDynamicShortcut(@NonNull Context context, String id, @NonNull Intent intent, @NonNull String label, @Nullable Drawable icon, @DrawableRes int fallbackIconId) {
+				Icon ic;
+				if (icon != null) {
+					ic = Icon.createWithBitmap(drawableToBitmap(icon));
+				} else {
+					ic = Icon.createWithResource(context, fallbackIconId);
+				}
+				ShortcutInfo si = createShortcutInfo(context, id, intent, label, ic);
+
+				final ShortcutManager shortcutManager = context.getSystemService(ShortcutManager.class);
+				if (shortcutManager.isRateLimitingActive()) {
+					return;
+				}
+				List<ShortcutInfo> shortcuts = shortcutManager.getDynamicShortcuts();
+				// Sort shortcuts by rank, timestamp and id
+				Collections.sort(shortcuts, new Comparator<ShortcutInfo>() {
+					@Override
+					public int compare(ShortcutInfo a, ShortcutInfo b) {
+						int ret = Integer.compare(a.getRank(), b.getRank());
+						if (ret != 0) {
+							return ret;
+						}
+
+						ret = Long.compare(a.getLastChangedTimestamp(), b.getLastChangedTimestamp());
+						if (ret != 0) {
+							return ret;
+						}
+
+						return a.getId().compareTo(b.getId());
+					}
+				});
+
+				// In old Android versions, only 4 shortcuts are displayed but 5 maximum are supported
+				// Problem: the last one added is not displayed... so stick to 4
+				int maxSize = Math.min(shortcutManager.getMaxShortcutCountPerActivity(), 4);
+				if (shortcuts.size() >= maxSize) {
+					int toRemove = shortcuts.size() - maxSize + 1;
+					ArrayList<String> toRemoveList = new ArrayList<>(toRemove);
+					// Remove the lowest rank, oldest shortcut if we need it
+					for(ShortcutInfo oldSi : shortcuts) {
+						if (oldSi.getId().equals(id)) {
+							// We will update it: no need to make space
+							toRemoveList.clear();
+							break;
+						}
+						if (toRemove > 0) {
+							toRemoveList.add(oldSi.getId());
+							toRemove -= 1;
+						}
+					}
+					shortcutManager.removeDynamicShortcuts(toRemoveList);
+				}
+				shortcuts = new ArrayList<>(1);
+				shortcuts.add(si);
+				shortcutManager.addDynamicShortcuts(shortcuts);
+				shortcutManager.reportShortcutUsed(id);
+			}
+		}
+
+		@RequiresApi(android.os.Build.VERSION_CODES.R)
+		private static class ShortcutCreatorR {
+			public static void pushDynamicShortcut(@NonNull Context context, String id, @NonNull Intent intent, @NonNull String label, @Nullable Drawable icon, @DrawableRes int fallbackIconId) {
+				Icon ic;
+				if (icon != null) {
+					ic = Icon.createWithBitmap(drawableToBitmap(icon));
+				} else {
+					ic = Icon.createWithResource(context, fallbackIconId);
+				}
+				ShortcutInfo si = ShortcutCreatorN_MR1.createShortcutInfo(context, id, intent, label, ic);
+
+				final ShortcutManager shortcutManager = context.getSystemService(ShortcutManager.class);
+				shortcutManager.pushDynamicShortcut(si);
+				// pushDynamicShortcut already reports usage
 			}
 		}
 
