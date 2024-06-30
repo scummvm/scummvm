@@ -37,6 +37,12 @@
 #ifdef EMSCRIPTEN
 #include "backends/platform/sdl/emscripten/emscripten.h"
 #endif
+
+#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+#include "backends/imgui/backends/imgui_impl_sdl2.h"
+#include "backends/imgui/backends/imgui_impl_opengl3.h"
+#endif
+
 SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source, SdlWindow *window)
 	: _eventSource(source), _window(window), _hwScreen(nullptr)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -501,3 +507,89 @@ Common::Keymap *SdlGraphicsManager::getKeymap() {
 
 	return keymap;
 }
+
+#if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
+void SdlGraphicsManager::initImGui(void *glContext) {
+	assert(!_imGuiReady);
+	_imGuiInited = false;
+
+	if (!glContext) {
+		return;
+	}
+
+	IMGUI_CHECKVERSION();
+	if (!ImGui::CreateContext()) {
+		return;
+	}
+	ImGuiIO &io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+	ImGui::StyleColorsDark();
+	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+	ImGuiStyle& style = ImGui::GetStyle();
+	style.WindowRounding = 0.0f;
+	style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+	io.IniFilename = nullptr;
+	if (!ImGui_ImplSDL2_InitForOpenGL(_window->getSDLWindow(), glContext)) {
+		ImGui::DestroyContext();
+		return;
+	}
+
+	if (!ImGui_ImplOpenGL3_Init("#version 110")) {
+		ImGui_ImplSDL2_Shutdown();
+		ImGui::DestroyContext();
+		return;
+	}
+
+	_imGuiReady = true;
+
+	if (_imGuiCallbacks.init) {
+		_imGuiCallbacks.init();
+		_imGuiInited = true;
+	}
+}
+
+void SdlGraphicsManager::renderImGui() {
+	if (!_imGuiReady || !_imGuiCallbacks.render) {
+		return;
+	}
+
+	if (!_imGuiInited) {
+		if (_imGuiCallbacks.init) {
+			_imGuiCallbacks.init();
+		}
+		_imGuiInited = true;
+	}
+
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplSDL2_NewFrame();
+
+	ImGui::NewFrame();
+	_imGuiCallbacks.render();
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+	SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+	ImGui::UpdatePlatformWindows();
+	ImGui::RenderPlatformWindowsDefault();
+	SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+}
+
+void SdlGraphicsManager::destroyImGui() {
+	if (!_imGuiReady) {
+		return;
+	}
+
+	if (_imGuiCallbacks.cleanup) {
+		_imGuiCallbacks.cleanup();
+	}
+
+	_imGuiInited = false;
+	_imGuiReady = false;
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
+}
+#endif

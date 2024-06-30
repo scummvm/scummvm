@@ -34,11 +34,6 @@
 #include "common/translation.h"
 #endif
 
-#ifdef USE_IMGUI
-#include "backends/imgui/backends/imgui_impl_sdl2.h"
-#include "backends/imgui/backends/imgui_impl_opengl3.h"
-#endif
-
 OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, SdlWindow *window)
 	: SdlGraphicsManager(eventSource, window), _lastRequestedHeight(0),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -198,11 +193,7 @@ OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 
 #ifdef USE_IMGUI
-	if (_glContext) {
-		ImGui_ImplOpenGL3_Shutdown();
-		ImGui_ImplSDL2_Shutdown();
-		ImGui::DestroyContext();
-	}
+	destroyImGui();
 #endif
 
 	notifyContextDestroy();
@@ -306,7 +297,7 @@ void OpenGLSdlGraphicsManager::updateScreen() {
 	}
 
 #if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
-	if (_callbacks.render) {
+	if (_imGuiCallbacks.render) {
 		_forceRedraw = true;
 	}
 #endif
@@ -465,21 +456,7 @@ void OpenGLSdlGraphicsManager::refreshScreen() {
 #endif
 
 #if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
-	if (_callbacks.render) {
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplSDL2_NewFrame();
-
-		ImGui::NewFrame();
-		_callbacks.render();
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-		SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
-		SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault();
-		SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
-	}
+	renderImGui();
 #endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -561,12 +538,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		notifyContextDestroy();
 
 #ifdef USE_IMGUI
-		if (_callbacks.cleanup) {
-			_callbacks.cleanup();
-		}
-		ImGui_ImplOpenGL3_Shutdown();
-		ImGui_ImplSDL2_Shutdown();
-		ImGui::DestroyContext();
+		destroyImGui();
 #endif
 
 		SDL_GL_DeleteContext(_glContext);
@@ -619,23 +591,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 
 #ifdef USE_IMGUI
 	// Setup Dear ImGui
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO &io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
-	ImGui::StyleColorsDark();
-	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
-    ImGuiStyle& style = ImGui::GetStyle();
-	style.WindowRounding = 0.0f;
-	style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-	io.IniFilename = nullptr;
-	ImGui_ImplSDL2_InitForOpenGL(_window->getSDLWindow(), _glContext);
-	ImGui_ImplOpenGL3_Init("#version 110");
-
-	if (_callbacks.init) {
-		_callbacks.init();
-	}
+	initImGui(_glContext);
 #endif
 
 	if (SDL_GL_SetSwapInterval(_vsync ? 1 : 0)) {

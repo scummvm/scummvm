@@ -46,11 +46,6 @@
 #include "image/bmp.h"
 #endif
 
-#ifdef USE_IMGUI
-#include "backends/imgui/backends/imgui_impl_sdl2.h"
-#include "backends/imgui/backends/imgui_impl_opengl3.h"
-#endif
-
 OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSource, SdlWindow *window, bool supportsFrameBuffer)
 	: SdlGraphicsManager(eventSource, window),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -559,17 +554,7 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 
 #ifdef USE_IMGUI
 					// Setup Dear ImGui
-					IMGUI_CHECKVERSION();
-					ImGui::CreateContext();
-					ImGui_ImplSDL2_InitForOpenGL(_window->getSDLWindow(), _glContext);
-					ImGui_ImplOpenGL3_Init("#version 110");
-					ImGui::StyleColorsDark();
-					ImGuiIO &io = ImGui::GetIO();
-					io.IniFilename = nullptr;
-					if (_callbacks.init) {
-						_imguiInitCalled = true;
-						_callbacks.init();
-					}
+					initImGui(_glContext);
 #endif
 				}
 			}
@@ -681,23 +666,7 @@ void OpenGLSdlGraphics3dManager::updateScreen() {
 #endif
 
 #if defined(USE_IMGUI) && SDL_VERSION_ATLEAST(2, 0, 0)
-	if (_callbacks.render) {
-		if (!_imguiRenderCalled && _callbacks.init) {
-			_imguiRenderCalled = true;
-			if (!_imguiInitCalled) {
-				_imguiInitCalled = true;
-				_callbacks.init();
-			}
-		}
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplSDL2_NewFrame();
-
-		ImGui::NewFrame();
-		_callbacks.render();
-		ImGui::Render();
-
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	}
+	renderImGui();
 #endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -831,14 +800,7 @@ void OpenGLSdlGraphics3dManager::showSystemMouseCursor(bool visible) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 void OpenGLSdlGraphics3dManager::deinitializeRenderer() {
 #ifdef USE_IMGUI
-	if (_glContext) {
-		if (_callbacks.cleanup) {
-			_callbacks.cleanup();
-		}
-		ImGui_ImplOpenGL3_Shutdown();
-		ImGui_ImplSDL2_Shutdown();
-		ImGui::DestroyContext();
-	}
+	destroyImGui();
 #endif
 
 	SDL_GL_DeleteContext(_glContext);
