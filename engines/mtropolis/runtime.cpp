@@ -2287,7 +2287,7 @@ void MessengerSendSpec::resolveDestination(Runtime *runtime, Modifier *sender, R
 
 void MessengerSendSpec::resolveVariableObjectType(RuntimeObject *obj, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest) {
 	if (!obj) {
-		warning("Couldn't resolve mesenger destination");
+		warning("Couldn't resolve messenger destination");
 		return;
 	}
 
@@ -2428,10 +2428,15 @@ void VarReference::linkInternalReferences(ObjectLinkingScope *scope) {
 			warning("VarReference to '%s' failed to resolve a valid object", source.c_str());
 		} else {
 			Common::SharedPtr<RuntimeObject> objShr = obj.lock();
-			if (objShr->isModifier() && static_cast<Modifier *>(objShr.get())->isVariable()) {
-				this->resolution = obj.staticCast<Modifier>();
+			if (objShr->isModifier()) {
+				Modifier *modifier = static_cast<Modifier *>(objShr.get());
+				if (modifier->isVariable() || modifier->isAlias() || modifier->isCompoundVariable()) {
+					this->resolution = obj.staticCast<Modifier>();
+				} else {
+					error("VarReference referenced a non-variable");
+				}
 			} else {
-				error("VarReference referenced a non-variable");
+				error("VarReference referenced a non-modifier");
 			}
 		}
 	}
