@@ -839,7 +839,7 @@ void GrimEngine::updateDisplayScene() {
 		if (g_movie->isPlaying()) {
 			_movieTime = g_movie->getMovieTime();
 			if (g_movie->isUpdateNeeded()) {
-				g_driver->prepareMovieFrame(g_movie->getDstSurface());
+				g_driver->prepareMovieFrame(g_movie->getDstSurface(), g_movie->getDstPalette());
 				g_movie->clearUpdateNeeded();
 			}
 			int frame = g_movie->getFrame();
@@ -908,7 +908,7 @@ void GrimEngine::drawNormalMode() {
 	if (g_movie->isPlaying() && _movieSetup == _currSet->getCurrSetup()->_name) {
 		_movieTime = g_movie->getMovieTime();
 		if (g_movie->isUpdateNeeded()) {
-			g_driver->prepareMovieFrame(g_movie->getDstSurface());
+			g_driver->prepareMovieFrame(g_movie->getDstSurface(), g_movie->getDstPalette());
 			g_movie->clearUpdateNeeded();
 		}
 		if (g_movie->getFrame() >= 0)
@@ -1664,19 +1664,6 @@ void GrimEngine::pauseEngineIntern(bool pause) {
 	} else {
 		_frameStart += _system->getMillis() - _pauseStartTime;
 	}
-}
-
-
-Graphics::Surface *loadPNG(const Common::Path &filename) {
-	Image::PNGDecoder d;
-	Common::SeekableReadStream *s = SearchMan.createReadStreamForMember(filename);
-	if (!s)
-		return nullptr;
-	d.loadStream(*s);
-	delete s;
-
-	Graphics::Surface *srf = d.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-	return srf;
 }
 
 void GrimEngine::debugLua(const Common::String &str) {
