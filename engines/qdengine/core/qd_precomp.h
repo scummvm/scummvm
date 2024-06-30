@@ -73,7 +73,6 @@
 
 #include "engines/qdengine/core/qd_fwd.h"
 #include "qdengine/core/system/app_core.h"
-#include "qdengine/core/system/app_log.h"
 #include "qdengine/core/system/app_error_handler.h"
 #include "qdengine/core/system/input/mouse_input.h"
 #include "qdengine/core/system/input/keyboard_input.h"

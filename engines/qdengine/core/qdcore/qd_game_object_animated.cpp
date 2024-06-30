@@ -320,7 +320,7 @@ void qdGameObjectAnimated::quant(float dt) {
 	if (R() != beg_r)
 		last_chg_time_ = qdGameDispatcher::get_dispatcher() -> time();
 
-//	appLog::default_log() << name() << " " << animation_.cur_time() << " " << R().x << " " << R().y << " " << R().z << "\r\n";
+// debugC(3, kDebugLog, "%s %d %d %d %d", name(), animation_.cur_time(), R().x, R().y, R().z);
 }
 
 bool qdGameObjectAnimated::load_script_body(const xml::tag *p) {
@@ -866,7 +866,7 @@ void qdGameObjectAnimated::debug_redraw() const {
 	        }
 	    }
 	*/
-//	appLog::default_log() << name() << " screen_pos:"  << screen_pos().x << " " << screen_pos().y << "\r\n";
+// debugC(3, kDebugLog, "%s screen_pos: %d %d", transCyrillic(name()), screen_pos().x, screen_pos().y);
 
 //	if(const qdGameObjectStateMask* st = dynamic_cast<const qdGameObjectStateMask*>(get_cur_state()))
 //		st->draw_mask(grDispatcher::instance()->make_rgb(255,255,255));

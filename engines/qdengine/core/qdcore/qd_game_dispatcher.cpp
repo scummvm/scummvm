@@ -205,8 +205,6 @@ void qdGameDispatcher::quant() {
 
 	timer_ += idt;
 
-	appLog::default_log().set_time(timer_);
-
 	if (!is_paused() && next_scene_) {
 		debugC(3, kDebugQuant, "qdGameDispatcher::quant() Loading next scene...");
 		select_scene(next_scene_);
@@ -3532,8 +3530,7 @@ bool qdGameDispatcher::copy_resources_from_folder(const char *src_dir, const cha
 				path += it -> c_str();
 				if (!app_io::copy_file((*c_it).c_str(), path.c_str())) {
 #if 0
-					appLog::default_log() << "Error: could not copy " << find_data.cFileName
-					                      << " to " << (*c_it).c_str() << "\r\n";
+					debugC(3, kDebugLog, "Error: could not copy %s to %s", transCyrillic(find_data.cFileName), transCyrillic((*c_it).c_str()));
 #endif
 					all_copy_ok = false;
 				}

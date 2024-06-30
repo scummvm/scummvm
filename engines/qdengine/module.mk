@@ -13,8 +13,6 @@ MODULE_OBJS = \
 	core/runtime/qd_dialog_control.o \
 	core/runtime/comline_parser.o \
 	core/runtime/qd_runtime.o \
-	core/system/app_log.o \
-	core/system/app_log_file.o \
 	core/system/app_error_handler.o \
 	core/system/app_core.o \
 	core/system/sound/ds_snd_dispatcher.o \

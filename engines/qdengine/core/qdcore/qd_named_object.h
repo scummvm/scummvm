@@ -165,8 +165,6 @@ private:
 #endif
 };
 
-appLog &operator << (appLog &log, const qdNamedObject *obj);
-
 } // namespace QDEngine
 
 #endif /* __QD_NAMED_OBJECT_H__ */

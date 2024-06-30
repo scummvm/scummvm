@@ -230,9 +230,9 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 	qdFileManager::instance().set_request_CD_handler(request_CD_handler);
 #if 0
 	for (int i = 1; i < __argc; i ++) {
-		appLog::default_log() << " \"" << __argv[i] << "\"";
+		debugCN(3, kDebugLog, "'\' %s '\'", __argv[i]);
 	}
-	appLog::default_log() << "\r\n";
+	debugC(3, kDebugLog, "");
 #endif
 	grDispatcher::set_default_font(qdGameDispatcher::create_font(0));
 

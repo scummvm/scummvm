@@ -53,10 +53,6 @@
 /* --------------------------- DEFINITION SECTION --------------------------- */
 namespace QDEngine {
 
-#ifdef __QD_DEBUG_ENABLE__
-static appLog &operator << (appLog &log, const qdTriggerLink *link);
-appLog &operator << (appLog &log, const qdNamedObjectReference &obj);
-#endif
 qdTriggerLink::qdTriggerLink(qdTriggerElementPtr p, int tp)
 	: element_(p),
 	  element_ID_(qdTriggerElement::INVALID_ID),
@@ -1017,7 +1013,7 @@ void qdTriggerLink::activate() {
 //		element_ -> set_status(qdTriggerElement::TRIGGER_EL_INACTIVE);
 #endif
 
-//	appLog::default_log() << this;
+// debugC(3, kDebugLog, "%s", this);
 }
 
 void qdTriggerLink::deactivate() {
