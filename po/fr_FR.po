@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-30 18:44+0000\n"
-"PO-Revision-Date: 2024-06-28 16:15+0000\n"
+"PO-Revision-Date: 2024-07-01 05:11+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -6330,10 +6330,8 @@ msgstr "Fichier de séquence '%s' non trouvé !"
 #: engines/lure/metaengine.cpp:37 engines/mads/metaengine.cpp:47
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:48
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:746
-#, fuzzy
-#| msgid "Enable Discord integration"
 msgid "Enable copy protection"
-msgstr "Activer l'intégration de Discord"
+msgstr "Activer la protection anti-copie"
 
 #: engines/agos/metaengine.cpp:45 engines/dreamweb/metaengine.cpp:37
 #: engines/lure/metaengine.cpp:38 engines/mads/metaengine.cpp:48
@@ -6341,6 +6339,8 @@ msgstr "Activer l'intégration de Discord"
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:747
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
+"Active toute protection contre la copie qui serait autrement neutralisée par "
+"défaut."
 
 #: engines/agos/metaengine.cpp:55
 msgid "AdLib OPL3 mode"
