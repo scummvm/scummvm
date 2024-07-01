@@ -479,9 +479,11 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	DEF_SYSFRAMEWORK("CoreMIDI");
 	DEF_SYSFRAMEWORK("CoreGraphics");
 	DEF_SYSFRAMEWORK("CoreFoundation");
+	DEF_SYSFRAMEWORK("CoreVideo");
 	DEF_SYSFRAMEWORK("Foundation");
 	DEF_SYSFRAMEWORK("GameController");
 	DEF_SYSFRAMEWORK("IOKit");
+	DEF_SYSFRAMEWORK("Metal");
 	DEF_SYSFRAMEWORK("OpenGL");
 	DEF_SYSFRAMEWORK("OpenGLES");
 	DEF_SYSFRAMEWORK("QuartzCore");
@@ -623,6 +625,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_iOS.push_back("CoreAudio.framework");
 	frameworks_iOS.push_back("CoreGraphics.framework");
 	frameworks_iOS.push_back("CoreFoundation.framework");
+	frameworks_iOS.push_back("CoreVideo.framework");
 	frameworks_iOS.push_back("Foundation.framework");
 	frameworks_iOS.push_back("GameController.framework");
 	frameworks_iOS.push_back("UIKit.framework");
@@ -630,6 +633,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_iOS.push_back("AudioToolbox.framework");
 	frameworks_iOS.push_back("QuartzCore.framework");
 	frameworks_iOS.push_back("OpenGLES.framework");
+	frameworks_iOS.push_back("Metal.framework");
 
 	if (CONTAINS_DEFINE(setup.defines, "USE_FAAD")) {
 		frameworks_iOS.push_back(getLibString("faad", setup.useXCFramework));
@@ -857,6 +861,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_tvOS.push_back("CoreAudio.framework");
 	frameworks_tvOS.push_back("CoreGraphics.framework");
 	frameworks_tvOS.push_back("CoreFoundation.framework");
+	frameworks_tvOS.push_back("CoreVideo.framework");
 	frameworks_tvOS.push_back("Foundation.framework");
 	frameworks_tvOS.push_back("GameController.framework");
 	frameworks_tvOS.push_back("UIKit.framework");
@@ -864,6 +869,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_tvOS.push_back("AudioToolbox.framework");
 	frameworks_tvOS.push_back("QuartzCore.framework");
 	frameworks_tvOS.push_back("OpenGLES.framework");
+	frameworks_tvOS.push_back("Metal.framework");
 
 	if (CONTAINS_DEFINE(setup.defines, "USE_FAAD")) {
 		frameworks_tvOS.push_back(getLibString("faad", setup.useXCFramework));

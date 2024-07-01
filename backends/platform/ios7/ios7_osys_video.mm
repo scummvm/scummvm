@@ -294,3 +294,10 @@ float OSystem_iOS7::getSystemHiDPIScreenFactor() const {
 	return [[UIScreen mainScreen] scale];
 }
 
+bool OSystem_iOS7::doOffScreenRendering() const {
+	return [[iOS7AppDelegate iPhoneView] doOffScreenRendering];
+}
+
+uint OSystem_iOS7::getOpenGLRenderBufferID() const {
+	return [[iOS7AppDelegate iPhoneView] getOpenGLRenderBufferID];
+}

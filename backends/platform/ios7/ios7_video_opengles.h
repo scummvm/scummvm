@@ -19,43 +19,30 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_IOS_RENDERBUFFER_H
-#define BACKENDS_GRAPHICS_IOS_RENDERBUFFER_H
+#ifndef BACKENDS_PLATFORM_IOS7_IOS7_VIDEO_OPENGLES_H
+#define BACKENDS_PLATFORM_IOS7_IOS7_VIDEO_OPENGLES_H
 
-#include "backends/graphics/opengl/framebuffer.h"
+#include "backends/platform/ios7/ios7_video.h"
 
-namespace OpenGL {
+@interface iPhoneViewOpenGLES : iPhoneView {
+	EAGLContext *_mainContext;
+	EAGLContext *_openGLContext;
+	GLuint _viewRenderbuffer;
 
-/**
- * Render to renderbuffer framebuffer implementation.
- *
- * This target allows to render to a renderbuffer, which can then be used as
- * a rendering source like expected on iOS.
- */
-class RenderbufferTarget : public Framebuffer {
-public:
-	RenderbufferTarget(GLuint renderbufferID, bool offScreenRendering);
-	~RenderbufferTarget() override;
+	GLint _renderBufferWidth;
+	GLint _renderBufferHeight;
+}
 
-	/**
-	 * Set size of the render target.
-	 */
-	bool setSize(uint width, uint height) override;
+- (id)initWithFrame:(struct CGRect)frame;
 
-	/**
-	 * Updates the render target.
-	 */
-	void updateRenderBuffer(GLuint newRenderbufferID);
+- (uint)createOpenGLContext;
+- (void)destroyOpenGLContext;
+- (void)refreshScreen;
+- (int)getScreenWidth;
+- (int)getScreenHeight;
 
-protected:
-	void activateInternal() override;
-
-private:
-	GLuint _glRBO;
-	GLuint _glFBO;
-	bool _offScreenRendering;
-};
-
-} // End of namespace OpenGL
+- (void)initSurface;
+- (bool)doOffScreenRendering;
+@end
 
 #endif

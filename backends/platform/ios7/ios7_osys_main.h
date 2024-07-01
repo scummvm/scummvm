@@ -113,6 +113,8 @@ public:
 	int getScreenWidth() const;
 	int getScreenHeight() const;
 	float getSystemHiDPIScreenFactor() const;
+	bool doOffScreenRendering() const;
+	uint getOpenGLRenderBufferID() const;
 
 #if defined(USE_OPENGL) && defined(USE_GLAD)
 	void *getOpenGLProcAddress(const char *name) const override;

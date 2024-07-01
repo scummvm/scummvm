@@ -26,6 +26,7 @@
 #include <OpenGLES/ES2/gl.h>
 
 #include "backends/graphics/opengl/opengl-graphics.h"
+#include "backends/graphics/ios/renderbuffer.h"
 
 class iOSCommonGraphics {
 public:
@@ -98,6 +99,9 @@ protected:
 	void hideOverlay() override;
 
 	void refreshScreen() override;
+
+private:
+	OpenGL::RenderbufferTarget *_targetBuffer;
 };
 
 #endif
