@@ -665,6 +665,7 @@ l0037_A1C8:
 l0037_A1E6:
 	jmp	0A32Ch
 
+
 l0037_A1E9:
 	cmp	ax,28h
 	jnz	0A20Ch
@@ -685,6 +686,19 @@ l0037_A201:
 
 l0037_A209:
 	jmp	0A32Ch
+
+*/
+	else if (value == 0x28) {
+		// TODO: Get actual value of the global
+		static int count = 0;
+		count++;
+		out1 = count == 1 ? 0x1 : 0x0;
+		out2 = 0x0;
+		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		return;
+	}
+
+/*
 
 l0037_A20C:
 	cmp	ax,29h
@@ -1341,8 +1355,10 @@ void Script::ScriptExecutor::ExecuteScript() {
 				// l0037_DC8F:
 				shouldSkip = !((v1 == v3) && (v2 == v4));
 			} else if (opcode2 == 0x2) {
-				ScriptUnimplementedOpcode(opcode2);
-				break;
+				// l0037_DCA6:
+				if (v1 != v3 || v2 != v4) {
+					shouldSkip = true;
+				}
 			} else if (opcode2 == 0x3) {
 				// I had this wrong, this is a two-byte comparison
 				if (v2 < v4) {
@@ -1444,7 +1460,9 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Need to handle 0 scene and moving to non-active scenes
 			// TODO: Need to handle negative numbers here
 
-			if (sceneID > 0x400) {
+			// TODO: Exception for 0x401 since we assume the protagonist is always in the scene
+			// TODO: Even more evidence that we need a refactor!
+			if (sceneID > 0x401) {
 				// This is the special case of adding a child to an object
 				// TODO: This is hardcoded to fit to the special case of the hat,
 				// with this addition, the function needs to be refactored to still
@@ -1454,6 +1472,13 @@ void Script::ScriptExecutor::ExecuteScript() {
 				childObject->SceneIndex = parentObject->Index;
 				continue;
 			}
+
+			// TODO: This function really needs refactoring now.
+			// Handling the general case of overwriting scene index and position in all cases
+			GameObject *childObject = GameObjects::instance().Objects[objectID - 1];
+			childObject->SceneIndex = sceneID;
+			childObject->Position = Common::Point(x, y);
+
 
 			View1 *currentView = (View1 *)_engine->findView("View1");
 			Character *c = currentView->GetCharacterByIndex(objectID);
@@ -1745,6 +1770,12 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// c->GameObject->SceneIndex = sceneID;
 			currentView->characters.push_back(c);
 			continue;
+		} else if (opcode1 == 0x2C) {
+			// TODO: Guess is that we check if we have an inventory item
+			// This gets saved into [103Ch]
+			// TODO: This is handled as an object ID
+			Func9F4D_Placeholder();
+			Func9F4D_Placeholder();
 		} else if (opcode1 == 0x2D) {
 			// TODO: This one seems to adjust something about pathfinding, but not sure what exactly
 			// It impacts the field di+22Fh of the object data, which is a bool
