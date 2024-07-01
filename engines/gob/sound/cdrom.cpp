@@ -118,7 +118,6 @@ void CDROM::startTrack(const char *trackName) {
 
 void CDROM::play(uint32 from, uint32 to) {
 	// play from sector [from] to sector [to]
-	//
 	// format is HSG:
 	// HSG encodes frame information into a double word:
 	// minute multiplied by 4500, plus second multiplied by 75,
