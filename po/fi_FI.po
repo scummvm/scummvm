@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-30 18:44+0000\n"
-"PO-Revision-Date: 2024-06-22 01:43+0000\n"
+"PO-Revision-Date: 2024-07-01 22:43+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -6227,10 +6227,8 @@ msgstr "Videotiedostoa '%s' ei löytynyt!"
 #: engines/lure/metaengine.cpp:37 engines/mads/metaengine.cpp:47
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:48
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:746
-#, fuzzy
-#| msgid "Enable Discord integration"
 msgid "Enable copy protection"
-msgstr "Discord-integraatio"
+msgstr "Kopiosuojaus päälle"
 
 #: engines/agos/metaengine.cpp:45 engines/dreamweb/metaengine.cpp:37
 #: engines/lure/metaengine.cpp:38 engines/mads/metaengine.cpp:48
@@ -6238,6 +6236,7 @@ msgstr "Discord-integraatio"
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:747
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
+"Laita päälle kopiosuojaukset jotka muuten oletusarvoisesti ohitettaisiin."
 
 #: engines/agos/metaengine.cpp:55
 msgid "AdLib OPL3 mode"
@@ -6289,7 +6288,7 @@ msgstr "AGOS 2-tukea ei ole käännetty mukaan"
 
 #: engines/agos/metaengine.cpp:225
 msgid "AGOS main"
-msgstr ""
+msgstr "AGOS päätaso"
 
 #: engines/agos/metaengine.cpp:226 engines/cge/metaengine.cpp:199
 #: engines/cge2/metaengine.cpp:212 engines/made/metaengine.cpp:103
@@ -6297,14 +6296,10 @@ msgid "Game Keymappings"
 msgstr "Pelin näppäinkartta"
 
 #: engines/agos/metaengine.cpp:227
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Yes/No Keymapping"
-msgstr "Pelin näppäinkartta"
+msgstr "Kyllä/Ei näppäinkomennot"
 
 #: engines/agos/metaengine.cpp:242
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Exit cutscene"
 msgstr "Ohita video"
 
@@ -6317,20 +6312,14 @@ msgid "Music volume up"
 msgstr "Musiikin äänenvoimakkuus ylös"
 
 #: engines/agos/metaengine.cpp:266
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle Music on/off"
 msgstr "Musiikki päälle/pois"
 
 #: engines/agos/metaengine.cpp:271
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Toggle Sound effect on/off"
 msgstr "Ääniefektit päälle/pois"
 
 #: engines/agos/metaengine.cpp:276
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle Fast mode on/off"
 msgstr "Nopea tila päälle / pois"
 
@@ -6342,8 +6331,6 @@ msgid "Walk forward"
 msgstr "Kävele eteenpäin"
 
 #: engines/agos/metaengine.cpp:294
-#, fuzzy
-#| msgid "Run backward"
 msgid "Turn backward"
 msgstr "Juokse taaksepäin"
 
@@ -6364,67 +6351,53 @@ msgid "Turn right"
 msgstr "Käänny oikealle"
 
 #: engines/agos/metaengine.cpp:314
-#, fuzzy
-#| msgid "Text speed slower / faster"
 msgid "Text speed - Fast"
-msgstr "Hidasta/nopeuta tekstiä"
+msgstr "Tekstin nopeus - nopea"
 
 #: engines/agos/metaengine.cpp:319
-#, fuzzy
-#| msgid "Walking speed: Medium"
 msgid "Text speed - Medium"
-msgstr "Kävelynopeus: normaali"
+msgstr "Tekstin nopeus - normaali"
 
 #: engines/agos/metaengine.cpp:324
-#, fuzzy
-#| msgid "Text speed slower / faster"
 msgid "Text speed - Slow"
-msgstr "Hidasta/nopeuta tekstiä"
+msgstr "Tekstin nopeus - hidas"
 
 #: engines/agos/metaengine.cpp:329
-#, fuzzy
-#| msgid "Show Object Line"
 msgid "Show objects to interact"
-msgstr "Näytä esineiden tiedot"
+msgstr "Näytä käytettävät esineet"
 
 #: engines/agos/metaengine.cpp:336
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Toggle background sounds On/Off"
-msgstr "Ääniefektit päälle/pois"
+msgstr "Taustaäänet päälle/pois"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:345
-#, fuzzy
-#| msgid "Switching characters:"
 msgid "Switch characters"
-msgstr "Vaihda hahmoa:"
+msgstr "Vaihda hahmoa"
 
 #: engines/agos/metaengine.cpp:351
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle hitbox names on/off"
-msgstr "Musiikki päälle/pois"
+msgstr "Osumalaatikoiden nimet päälle/pois"
 
 #: engines/agos/metaengine.cpp:358
 msgid "Switches between speech only and combined speech and subtitles"
-msgstr ""
+msgstr "Pelkät äänet tai äänet sekä tekstit"
 
 #: engines/agos/metaengine.cpp:364
 msgid "Switches between subtitles only and combined speech and subtitles"
-msgstr ""
+msgstr "Pelkät tekstit tai äänet sekä tekstit"
 
 #: engines/agos/metaengine.cpp:374
 msgid "High speed mode on/off in Swampy Adventures"
-msgstr ""
+msgstr "Nopea tila päälle/pois Swampy Adventures:issa"
 
 #: engines/agos/metaengine.cpp:380
 msgid "Press Yes Key"
-msgstr ""
+msgstr "Paina Kyllä-näppäintä"
 
 #: engines/agos/metaengine.cpp:385
 msgid "Press No Key"
-msgstr ""
+msgstr "Paina Ei-näppäintä"
 
 #: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -6614,40 +6587,28 @@ msgid "Move right"
 msgstr "Liiku oikealle"
 
 #: engines/asylum/metaengine.cpp:226
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle animation on/off"
-msgstr "Musiikki päälle/pois"
+msgstr "Animaatio päälle/pois"
 
 #: engines/asylum/metaengine.cpp:232
-#, fuzzy
-#| msgid "Run a game"
 msgid "Return to gameplay"
-msgstr "Käynnistä peli"
+msgstr "Palaa peliin"
 
 #: engines/asylum/metaengine.cpp:238
-#, fuzzy
-#| msgid "Previous Page"
 msgid "Previous resource"
-msgstr "Edellinen sivu"
+msgstr "Edellinen resurssi"
 
 #: engines/asylum/metaengine.cpp:245
-#, fuzzy
-#| msgid "[ Resources ]"
 msgid "Next resource"
-msgstr "[ Resurssit ]"
+msgstr "Seuraava resurssi"
 
 #: engines/asylum/metaengine.cpp:252
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous palette"
-msgstr "Edellinen sivu"
+msgstr "Edellinen paletti"
 
 #: engines/asylum/metaengine.cpp:259
-#, fuzzy
-#| msgid "Next page"
 msgid "Next palette"
-msgstr "Seuraava sivu"
+msgstr "Seuraava paletti"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:203
@@ -8374,10 +8335,8 @@ msgid "Cursor Right"
 msgstr "Kursori oikealle"
 
 #: engines/made/metaengine.cpp:174
-#, fuzzy
-#| msgid "Reload last save"
 msgid "Repeat Last Message"
-msgstr "Lataa viimeisin tallennus"
+msgstr "Toista viimeisin viesti"
 
 #: engines/mads/metaengine.cpp:59
 msgid "Easy mouse interface"
