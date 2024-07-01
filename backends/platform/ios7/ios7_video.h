@@ -25,6 +25,7 @@
 #include <UIKit/UIKit.h>
 #include <Foundation/Foundation.h>
 #include <QuartzCore/QuartzCore.h>
+#include <Metal/Metal.hpp>
 
 #include <OpenGLES/EAGL.h>
 #include <OpenGLES/ES2/gl.h>
@@ -52,13 +53,6 @@ uint getSizeNextPOT(uint size);
 	UIInterfaceOrientation _currentOrientation;
 #endif
 	UIBackgroundTaskIdentifier _backgroundSaveStateTask;
-
-	EAGLContext *_mainContext;
-	EAGLContext *_openGLContext;
-	GLuint _viewRenderbuffer;
-
-	GLint _renderBufferWidth;
-	GLint _renderBufferHeight;
 }
 
 @property (nonatomic, assign) BOOL isInGame;
@@ -66,13 +60,20 @@ uint getSizeNextPOT(uint size);
 
 - (id)initWithFrame:(struct CGRect)frame;
 
+// OpenGL ES functions to be overrided
 - (uint)createOpenGLContext;
 - (void)destroyOpenGLContext;
-- (void)refreshScreen;
+- (void)refreshScreen:(bool)isOpenGLES;
 - (int)getScreenWidth;
 - (int)getScreenHeight;
 
+- (void)adjustViewFrameForSafeArea;
+
 - (void)initSurface;
+- (bool)doOffScreenRendering;
+- (uint)getOpenGLRenderBufferID;
+- (MTL::CommandQueue *)getMetalCommandQueue;
+- (MTL::Texture *)getMetalTargetTexture;
 
 #if TARGET_OS_IOS
 - (void)interfaceOrientationChanged:(UIInterfaceOrientation)orientation;

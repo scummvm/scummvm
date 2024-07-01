@@ -1,0 +1,779 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include "graphics/blit.h"
+#include "backends/graphics/metal/framebuffer.h"
+#include "backends/graphics/metal/texture.h"
+#include "backends/graphics/metal/pipelines/clut8.h"
+#include "backends/graphics/metal/pipelines/pipeline.h"
+
+#ifdef USE_SCALERS
+#include "graphics/scalerplugin.h"
+#endif
+
+namespace Metal {
+
+MetalTexture::MetalTexture(MTL::Device *device, MTL::PixelFormat pixelFormat, MTL::TextureUsage usage)
+	: _device(device), _pixelFormat(pixelFormat),
+	  _width(0), _height(0), _logicalWidth(0), _logicalHeight(0),
+	  _texCoords(), _usage(usage), _filter(MTL::SamplerMinMagFilterNearest),
+	  _texture(nullptr) {
+	create();
+}
+
+MetalTexture::~MetalTexture() {
+	if (_texture)
+		_texture->release();
+}
+
+void MetalTexture::enableLinearFiltering(bool enable) {
+	if (enable) {
+		_filter = MTL::SamplerMinMagFilterLinear;
+	} else {
+		_filter = MTL::SamplerMinMagFilterNearest;
+	}
+}
+
+void MetalTexture::setWrapMode(WrapMode wrapMode) {
+	switch(wrapMode) {
+	case kWrapModeBorder:
+		_wrapMode = MTL::SamplerAddressModeClampToBorderColor;
+		break;
+	case kWrapModeEdge:
+		_wrapMode = MTL::SamplerAddressModeClampToEdge;
+		break;
+	case kWrapModeRepeat:
+	default:
+		_wrapMode = MTL::SamplerAddressModeRepeat;
+		break;
+	}
+}
+
+void MetalTexture::destroy() {
+	_texture->release();
+	_texture = nullptr;
+}
+
+void MetalTexture::create() {
+	// Release old texture name in case it exists.
+	destroy();
+
+	// If a size is specified, allocate memory for it.
+	if (_width != 0 && _height != 0) {
+		// Allocate storage for Metal texture.
+		MTL::TextureDescriptor *d = MTL::TextureDescriptor::alloc()->init();
+		d->setWidth(_width);
+		d->setHeight(_height);
+		d->setPixelFormat(_pixelFormat);
+		d->setUsage(_usage);
+		_texture = _device->newTexture(d);
+		d->release();
+	}
+}
+
+bool MetalTexture::setSize(uint width, uint height) {
+	const uint oldWidth  = _width;
+	const uint oldHeight = _height;
+
+	_logicalWidth  = width;
+	_logicalHeight = height;
+
+	_width = width;
+	_height = height;
+
+	// If a size is specified, allocate memory for it.
+	if (width != 0 && height != 0) {
+		const float texWidth = (float)width / _width;
+		const float texHeight = (float)height / _height;
+
+		_texCoords[0] = 0.0f;
+		_texCoords[1] = texHeight;
+
+		_texCoords[2] = texWidth;
+		_texCoords[3] = texHeight;
+
+		_texCoords[4] = texWidth;
+		_texCoords[5] = 0.0f;
+
+		_texCoords[6] = 0.0f;
+		_texCoords[7] = 0.0f;
+
+		// Allocate storage for OpenGL texture if necessary.
+		if (oldWidth != _width || oldHeight != _height) {
+			// Allocate storage for Metal texture.
+			MTL::TextureDescriptor *d = MTL::TextureDescriptor::alloc()->init();
+			d->setWidth(_width);
+			d->setHeight(_height);
+			d->setPixelFormat(_pixelFormat);
+			d->setUsage(_usage);
+			_texture = _device->newTexture(d);
+			d->release();
+		}
+	}
+	return true;
+}
+
+void MetalTexture::updateArea(const Common::Rect &area, const Graphics::Surface &src) {
+	// Update the actual texture.
+	_texture->replaceRegion(MTL::Region(area.left, area.top, 0, src.w - area.left, area.height(), 1), 0, src.getBasePtr(area.left, area.top), src.pitch);
+}
+
+
+Surface::Surface()
+	: _allDirty(false), _dirtyArea() {
+}
+
+void Surface::copyRectToTexture(uint x, uint y, uint w, uint h, const void *srcPtr, uint srcPitch) {
+	Graphics::Surface *dstSurf = getSurface();
+	assert(x + w <= (uint)dstSurf->w);
+	assert(y + h <= (uint)dstSurf->h);
+
+	addDirtyArea(Common::Rect(x, y, x + w, y + h));
+
+	const byte *src = (const byte *)srcPtr;
+	byte *dst = (byte *)dstSurf->getBasePtr(x, y);
+	const uint pitch = dstSurf->pitch;
+	const uint bytesPerPixel = dstSurf->format.bytesPerPixel;
+
+	if (srcPitch == pitch && x == 0 && w == (uint)dstSurf->w) {
+		memcpy(dst, src, h * pitch);
+	} else {
+		while (h-- > 0) {
+			memcpy(dst, src, w * bytesPerPixel);
+			dst += pitch;
+			src += srcPitch;
+		}
+	}
+}
+
+void Surface::fill(uint32 color) {
+	Graphics::Surface *dst = getSurface();
+	dst->fillRect(Common::Rect(dst->w, dst->h), color);
+
+	flagDirty();
+}
+
+void Surface::fill(const Common::Rect &r, uint32 color) {
+	Graphics::Surface *dst = getSurface();
+	dst->fillRect(r, color);
+
+	addDirtyArea(r);
+}
+
+void Surface::addDirtyArea(const Common::Rect &r) {
+	// *sigh* Common::Rect::extend behaves unexpected whenever one of the two
+	// parameters is an empty rect. Thus, we check whether the current dirty
+	// area is valid. In case it is not we simply use the parameters as new
+	// dirty area. Otherwise, we simply call extend.
+	if (_dirtyArea.isEmpty()) {
+		_dirtyArea = r;
+	} else {
+		_dirtyArea.extend(r);
+	}
+}
+
+Common::Rect Surface::getDirtyArea() const {
+	if (_allDirty) {
+		return Common::Rect(getWidth(), getHeight());
+	} else {
+		return _dirtyArea;
+	}
+}
+
+//
+// Surface implementations
+//
+
+Texture::Texture(MTL::Device *device, const MTL::PixelFormat metalPixelFormat, const Graphics::PixelFormat &format)
+	: Surface(), _format(format), _device(device), _metalTexture(MetalTexture(device, metalPixelFormat)),
+	  _textureData(), _userPixelData() {
+}
+
+Texture::~Texture() {
+	_textureData.free();
+}
+
+void Texture::destroy() {
+	_metalTexture.destroy();
+}
+
+void Texture::recreate() {
+	// Need to release metal textures
+	destroy();
+	_metalTexture.create();
+
+	// In case image date exists assure it will be completely refreshed next
+	// time.
+	if (_textureData.getPixels()) {
+		flagDirty();
+	}
+}
+
+void Texture::enableLinearFiltering(bool enable) {
+	_metalTexture.enableLinearFiltering(enable);
+}
+
+void Texture::allocate(uint width, uint height) {
+	// Assure the texture can contain our user data.
+	_metalTexture.setSize(width, height);
+
+	// In case the needed texture dimension changed we will reinitialize the
+	// texture data buffer.
+	if (_metalTexture.getWidth() != (uint)_textureData.w || _metalTexture.getHeight() != (uint)_textureData.h) {
+		// Create a buffer for the texture data.
+		_textureData.create(_metalTexture.getWidth(), _metalTexture.getHeight(), _format);
+	}
+
+	// Create a sub-buffer for raw access.
+	_userPixelData = _textureData.getSubArea(Common::Rect(width, height));
+
+	// The whole texture is dirty after we changed the size. This fixes
+	// multiple texture size changes without any actual update in between.
+	// Without this we might try to write a too big texture into the GL
+	// texture.
+	flagDirty();
+}
+
+void Texture::updateMetalTexture() {
+	if (!isDirty()) {
+		return;
+	}
+
+	Common::Rect dirtyArea = getDirtyArea();
+
+	updateMetalTexture(dirtyArea);
+}
+
+void Texture::updateMetalTexture(Common::Rect &dirtyArea) {
+	// In case we use linear filtering we might need to duplicate the last
+	// pixel row/column to avoid glitches with filtering.
+	if (_metalTexture.isLinearFilteringEnabled()) {
+		if (dirtyArea.right == _userPixelData.w && _userPixelData.w != _textureData.w) {
+			uint height = dirtyArea.height();
+
+			const byte *src = (const byte *)_textureData.getBasePtr(_userPixelData.w - 1, dirtyArea.top);
+			byte *dst = (byte *)_textureData.getBasePtr(_userPixelData.w, dirtyArea.top);
+
+			while (height-- > 0) {
+				memcpy(dst, src, _textureData.format.bytesPerPixel);
+				dst += _textureData.pitch;
+				src += _textureData.pitch;
+			}
+
+			// Extend the dirty area.
+			++dirtyArea.right;
+		}
+
+		if (dirtyArea.bottom == _userPixelData.h && _userPixelData.h != _textureData.h) {
+			const byte *src = (const byte *)_textureData.getBasePtr(dirtyArea.left, _userPixelData.h - 1);
+			byte *dst = (byte *)_textureData.getBasePtr(dirtyArea.left, _userPixelData.h);
+			memcpy(dst, src, dirtyArea.width() * _textureData.format.bytesPerPixel);
+
+			// Extend the dirty area.
+			++dirtyArea.bottom;
+		}
+	}
+	_metalTexture.updateArea(dirtyArea, _textureData);
+	// We should have handled everything, thus not dirty anymore.
+	clearDirty();
+}
+
+FakeTexture::FakeTexture(MTL::Device *device, const MTL::PixelFormat metalPixelFormat, const Graphics::PixelFormat &format, const Graphics::PixelFormat &fakeFormat)
+	: Texture(device, metalPixelFormat, format),
+	  _fakeFormat(fakeFormat),
+	  _rgbData(),
+	  _palette(nullptr),
+	  _mask(nullptr) {
+	if (_fakeFormat.isCLUT8()) {
+		_palette = new uint32[256]();
+	}
+}
+
+FakeTexture::~FakeTexture() {
+	delete[] _palette;
+	delete[] _mask;
+	_palette = nullptr;
+	_rgbData.free();
+}
+
+void FakeTexture::allocate(uint width, uint height) {
+	Texture::allocate(width, height);
+
+	// We only need to reinitialize our surface when the output size
+	// changed.
+	if (width == (uint)_rgbData.w && height == (uint)_rgbData.h) {
+		return;
+	}
+
+	_rgbData.create(width, height, getFormat());
+}
+
+void FakeTexture::setMask(const byte *mask) {
+	if (mask) {
+		const uint numPixels = _rgbData.w * _rgbData.h;
+
+		if (!_mask)
+			_mask = new byte[numPixels];
+
+		memcpy(_mask, mask, numPixels);
+	} else {
+		delete[] _mask;
+		_mask = nullptr;
+	}
+
+	flagDirty();
+}
+
+void FakeTexture::setColorKey(uint colorKey) {
+	if (!_palette)
+		return;
+
+	// The key color is set to black so the color value is pre-multiplied with the alpha value
+	// to avoid color fringes due to filtering.
+	// Erasing the color data is not a problem as the palette is always fully re-initialized
+	// before setting the key color.
+	uint32 *palette = _palette + colorKey;
+	*palette = 0;
+
+	// A palette changes means we need to refresh the whole surface.
+	flagDirty();
+}
+
+void FakeTexture::setPalette(uint start, uint colors, const byte *palData) {
+	if (!_palette)
+		return;
+
+	Graphics::convertPaletteToMap(_palette + start, palData, colors, _format);
+
+	// A palette changes means we need to refresh the whole surface.
+	flagDirty();
+}
+
+void FakeTexture::updateMetalTexture() {
+	if (!isDirty()) {
+		return;
+	}
+
+	// Convert color space.
+	Graphics::Surface *outSurf = Texture::getSurface();
+
+	const Common::Rect dirtyArea = getDirtyArea();
+
+	byte *dst = (byte *)outSurf->getBasePtr(dirtyArea.left, dirtyArea.top);
+	const byte *src = (const byte *)_rgbData.getBasePtr(dirtyArea.left, dirtyArea.top);
+
+	applyPaletteAndMask(dst, src, outSurf->pitch, _rgbData.pitch, _rgbData.w, dirtyArea, outSurf->format, _rgbData.format);
+
+	// Do generic handling of updating the texture.
+	Texture::updateMetalTexture();
+}
+
+void FakeTexture::applyPaletteAndMask(byte *dst, const byte *src, uint dstPitch, uint srcPitch, uint srcWidth, const Common::Rect &dirtyArea, const Graphics::PixelFormat &dstFormat, const Graphics::PixelFormat &srcFormat) const {
+	if (_palette) {
+		Graphics::crossBlitMap(dst, src, dstPitch, srcPitch, dirtyArea.width(), dirtyArea.height(), dstFormat.bytesPerPixel, _palette);
+	} else {
+		Graphics::crossBlit(dst, src, dstPitch, srcPitch, dirtyArea.width(), dirtyArea.height(), dstFormat, srcFormat);
+	}
+
+	if (_mask) {
+		uint maskPitch = srcWidth;
+		uint dirtyWidth = dirtyArea.width();
+		byte destBPP = dstFormat.bytesPerPixel;
+
+		const byte *maskRowStart = (_mask + dirtyArea.top * maskPitch + dirtyArea.left);
+		byte *dstRowStart = dst;
+
+		for (uint y = dirtyArea.top; y < static_cast<uint>(dirtyArea.bottom); y++) {
+			if (destBPP == 2) {
+				for (uint x = 0; x < dirtyWidth; x++) {
+					if (!maskRowStart[x])
+						reinterpret_cast<uint16 *>(dstRowStart)[x] = 0;
+				}
+			} else if (destBPP == 4) {
+				for (uint x = 0; x < dirtyWidth; x++) {
+					if (!maskRowStart[x])
+						reinterpret_cast<uint32 *>(dstRowStart)[x] = 0;
+				}
+			}
+
+			dstRowStart += dstPitch;
+			maskRowStart += maskPitch;
+		}
+	}
+}
+
+TextureRGB555::TextureRGB555(MTL::Device *device)
+	: FakeTexture(device, MTL::PixelFormatB5G6R5Unorm, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) {
+}
+
+void TextureRGB555::updateMetalTexture() {
+	if (!isDirty()) {
+		return;
+	}
+
+	// Convert color space.
+	Graphics::Surface *outSurf = Texture::getSurface();
+
+	const Common::Rect dirtyArea = getDirtyArea();
+
+	uint16 *dst = (uint16 *)outSurf->getBasePtr(dirtyArea.left, dirtyArea.top);
+	const uint dstAdd = outSurf->pitch - 2 * dirtyArea.width();
+
+	const uint16 *src = (const uint16 *)_rgbData.getBasePtr(dirtyArea.left, dirtyArea.top);
+	const uint srcAdd = _rgbData.pitch - 2 * dirtyArea.width();
+
+	for (int height = dirtyArea.height(); height > 0; --height) {
+		for (int width = dirtyArea.width(); width > 0; --width) {
+			const uint16 color = *src++;
+
+			*dst++ =   ((color & 0x7C00) << 1)                             // R
+					 | (((color & 0x03E0) << 1) | ((color & 0x0200) >> 4)) // G
+					 | (color & 0x001F);                                   // B
+		}
+
+		src = (const uint16 *)((const byte *)src + srcAdd);
+		dst = (uint16 *)((byte *)dst + dstAdd);
+	}
+
+	// Do generic handling of updating the texture.
+	Texture::updateMetalTexture();
+}
+
+
+TextureRGBA8888Swap::TextureRGBA8888Swap(MTL::Device *device)
+#ifdef SCUMM_LITTLE_ENDIAN
+	: FakeTexture(device, MTL::PixelFormatRGBA8Unorm, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) // RGBA8888 -> ABGR8888
+#else
+	: FakeTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) // ABGR8888 -> RGBA8888
+#endif
+	  {
+}
+
+void TextureRGBA8888Swap::updateMetalTexture() {
+	if (!isDirty()) {
+		return;
+	}
+
+	// Convert color space.
+	Graphics::Surface *outSurf = Texture::getSurface();
+
+	const Common::Rect dirtyArea = getDirtyArea();
+
+	uint32 *dst = (uint32 *)outSurf->getBasePtr(dirtyArea.left, dirtyArea.top);
+	const uint dstAdd = outSurf->pitch - 4 * dirtyArea.width();
+
+	const uint32 *src = (const uint32 *)_rgbData.getBasePtr(dirtyArea.left, dirtyArea.top);
+	const uint srcAdd = _rgbData.pitch - 4 * dirtyArea.width();
+
+	for (int height = dirtyArea.height(); height > 0; --height) {
+		for (int width = dirtyArea.width(); width > 0; --width) {
+			const uint32 color = *src++;
+
+			*dst++ = SWAP_BYTES_32(color);
+		}
+
+		src = (const uint32 *)((const byte *)src + srcAdd);
+		dst = (uint32 *)((byte *)dst + dstAdd);
+	}
+
+	// Do generic handling of updating the texture.
+	Texture::updateMetalTexture();
+}
+
+#ifdef USE_SCALERS
+ScaledTexture::ScaledTexture(MTL::Device *device, const MTL::PixelFormat metalPixelFormat, const Graphics::PixelFormat &format, const Graphics::PixelFormat &fakeFormat)
+	: FakeTexture(device, metalPixelFormat, format, fakeFormat), _convData(nullptr), _scaler(nullptr), _scalerIndex(0), _scaleFactor(1), _extraPixels(0) {
+}
+
+ScaledTexture::~ScaledTexture() {
+	delete _scaler;
+
+	if (_convData) {
+		_convData->free();
+		delete _convData;
+	}
+}
+
+void ScaledTexture::allocate(uint width, uint height) {
+	Texture::allocate(width * _scaleFactor, height * _scaleFactor);
+
+	// We only need to reinitialize our surface when the output size
+	// changed.
+	if (width != (uint)_rgbData.w || height != (uint)_rgbData.h) {
+		_rgbData.create(width, height, _fakeFormat);
+	}
+
+	if (_format != _fakeFormat || _extraPixels != 0) {
+		if (!_convData)
+			_convData = new Graphics::Surface();
+
+		_convData->create(width + (_extraPixels * 2), height + (_extraPixels * 2), _format);
+	} else if (_convData) {
+		_convData->free();
+		delete _convData;
+		_convData = nullptr;
+	}
+}
+
+void ScaledTexture::updateMetalTexture() {
+	if (!isDirty()) {
+		return;
+	}
+
+	// Convert color space.
+	Graphics::Surface *outSurf = Texture::getSurface();
+
+	Common::Rect dirtyArea = getDirtyArea();
+
+	// Extend the dirty region for scalers
+	// that "smear" the screen, e.g. 2xSAI
+	dirtyArea.grow(_extraPixels);
+	dirtyArea.clip(Common::Rect(0, 0, _rgbData.w, _rgbData.h));
+
+	const byte *src = (const byte *)_rgbData.getBasePtr(dirtyArea.left, dirtyArea.top);
+	uint srcPitch = _rgbData.pitch;
+	byte *dst;
+	uint dstPitch;
+
+	if (_convData) {
+		dst = (byte *)_convData->getBasePtr(dirtyArea.left + _extraPixels, dirtyArea.top + _extraPixels);
+		dstPitch = _convData->pitch;
+
+		applyPaletteAndMask(dst, src, dstPitch, srcPitch, _rgbData.w, dirtyArea, _convData->format, _rgbData.format);
+
+		src = dst;
+		srcPitch = dstPitch;
+	}
+
+	dst = (byte *)outSurf->getBasePtr(dirtyArea.left * _scaleFactor, dirtyArea.top * _scaleFactor);
+	dstPitch = outSurf->pitch;
+
+	if (_scaler && (uint)dirtyArea.height() >= _extraPixels) {
+		_scaler->scale(src, srcPitch, dst, dstPitch, dirtyArea.width(), dirtyArea.height(), dirtyArea.left, dirtyArea.top);
+	} else {
+		Graphics::scaleBlit(dst, src, dstPitch, srcPitch,
+							dirtyArea.width() * _scaleFactor, dirtyArea.height() * _scaleFactor,
+							dirtyArea.width(), dirtyArea.height(), outSurf->format);
+	}
+
+	dirtyArea.left   *= _scaleFactor;
+	dirtyArea.right  *= _scaleFactor;
+	dirtyArea.top    *= _scaleFactor;
+	dirtyArea.bottom *= _scaleFactor;
+
+	// Do generic handling of updating the texture.
+	Texture::updateMetalTexture(dirtyArea);
+}
+
+void ScaledTexture::setScaler(uint scalerIndex, int scaleFactor) {
+	const PluginList &scalerPlugins = ScalerMan.getPlugins();
+	const ScalerPluginObject &scalerPlugin = scalerPlugins[scalerIndex]->get<ScalerPluginObject>();
+
+	// If the scalerIndex has changed, change scaler plugins
+	if (_scaler && scalerIndex != _scalerIndex) {
+		delete _scaler;
+		_scaler = nullptr;
+	}
+
+	if (!_scaler) {
+		_scaler = scalerPlugin.createInstance(_format);
+	}
+	_scaler->setFactor(scaleFactor);
+
+	_scalerIndex = scalerIndex;
+	_scaleFactor = _scaler->getFactor();
+	_extraPixels = scalerPlugin.extraPixels();
+}
+#endif
+
+TextureCLUT8GPU::TextureCLUT8GPU(MTL::Device *device, Renderer *renderer)
+	: _device(device), _clut8Texture(MetalTexture(device, MTL::PixelFormatA8Unorm)), _paletteTexture(MetalTexture(device, MTL::PixelFormatRGBA8Unorm)), _renderer(renderer),
+	  _target(new TextureTarget(device)), _clut8Pipeline(new CLUT8LookUpPipeline(renderer)),
+	  _clut8Data(), _userPixelData(), _palette(),
+	  _paletteDirty(false) {
+	// Allocate space for 256 colors.
+	_paletteTexture.setSize(256, 1);
+
+	// Setup pipeline
+	_clut8Pipeline->setFramebuffer(_target);
+	_clut8Pipeline->setPaletteTexture(&_paletteTexture);
+	_clut8Pipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
+}
+
+TextureCLUT8GPU::~TextureCLUT8GPU() {
+	delete _clut8Pipeline;
+	delete _target;
+	_clut8Data.free();
+	_clut8Texture.destroy();
+}
+
+void TextureCLUT8GPU::destroy() {
+	_clut8Texture.destroy();
+	_paletteTexture.destroy();
+	_target->destroy();
+	delete _clut8Pipeline;
+	_clut8Pipeline = nullptr;
+}
+
+void TextureCLUT8GPU::recreate() {
+	// Release old data
+	destroy();
+
+	_clut8Texture.create();
+	_paletteTexture.create();
+	_target->create();
+
+	// In case image date exists assure it will be completely refreshed next
+	// time.
+	if (_clut8Data.getPixels()) {
+		flagDirty();
+		_paletteDirty = true;
+	}
+
+	if (_clut8Pipeline == nullptr) {
+		_clut8Pipeline = new CLUT8LookUpPipeline(_renderer);
+		// Setup pipeline.
+		_clut8Pipeline->setFramebuffer(_target);
+		_clut8Pipeline->setPaletteTexture(&_paletteTexture);
+		_clut8Pipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+}
+
+void TextureCLUT8GPU::enableLinearFiltering(bool enable) {
+	_target->getTexture()->enableLinearFiltering(enable);
+}
+
+void TextureCLUT8GPU::allocate(uint width, uint height) {
+	// Assure the texture can contain our user data.
+	_clut8Texture.setSize(width, height);
+	_target->setSize(width, height);
+
+	// In case the needed texture dimension changed we will reinitialize the
+	// texture data buffer.
+	if (_clut8Texture.getWidth() != (uint)_clut8Data.w || _clut8Texture.getHeight() != (uint)_clut8Data.h) {
+		// Create a buffer for the texture data.
+		_clut8Data.create(_clut8Texture.getWidth(), _clut8Texture.getHeight(), Graphics::PixelFormat::createFormatCLUT8());
+	}
+
+	// Create a sub-buffer for raw access.
+	_userPixelData = _clut8Data.getSubArea(Common::Rect(width, height));
+
+	// Setup structures for internal rendering to _metalTexture.
+	_clut8Vertices[0] = 0;//-1.0f;
+	_clut8Vertices[1] = height;//-1.0f;
+
+	_clut8Vertices[2] = width; //1.0f;
+	_clut8Vertices[3] = height;
+
+	_clut8Vertices[4] = width;
+	_clut8Vertices[5] = 0;
+
+	_clut8Vertices[6] = 0;
+	_clut8Vertices[7] = 0;
+
+	// The whole texture is dirty after we changed the size. This fixes
+	// multiple texture size changes without any actual update in between.
+	// Without this we might try to write a too big texture into the GL
+	// texture.
+	flagDirty();
+}
+
+Graphics::PixelFormat TextureCLUT8GPU::getFormat() const {
+	return Graphics::PixelFormat::createFormatCLUT8();
+}
+
+void TextureCLUT8GPU::setColorKey(uint colorKey) {
+	// The key color is set to black so the color value is pre-multiplied with the alpha value
+	// to avoid color fringes due to filtering.
+	// Erasing the color data is not a problem as the palette is always fully re-initialized
+	// before setting the key color.
+	_palette[colorKey * 4    ] = 0x00;
+	_palette[colorKey * 4 + 1] = 0x00;
+	_palette[colorKey * 4 + 2] = 0x00;
+	_palette[colorKey * 4 + 3] = 0x00;
+
+	_paletteDirty = true;
+}
+
+void TextureCLUT8GPU::setPalette(uint start, uint colors, const byte *palData) {
+	byte *dst = _palette + start * 4;
+
+	while (colors-- > 0) {
+		memcpy(dst, palData, 3);
+		dst[3] = 0xFF;
+
+		dst += 4;
+		palData += 3;
+	}
+
+	_paletteDirty = true;
+}
+
+const MetalTexture &TextureCLUT8GPU::getMetalTexture() const {
+	return *_target->getTexture();
+}
+
+void TextureCLUT8GPU::updateMetalTexture() {
+	const bool needLookUp = Surface::isDirty() || _paletteDirty;
+
+	// Update CLUT8 texture if necessary.
+	// The CLUT8 texture has 8 bit color representation while we create the texture with 32 bit color
+	// representation, hence *4.
+	if (Surface::isDirty()) {
+		Common::Rect dirtyArea = getDirtyArea();
+		_clut8Texture.updateArea(dirtyArea, _clut8Data);
+		clearDirty();
+	}
+
+	// Update palette if necessary.
+	if (_paletteDirty) {
+		Graphics::Surface palSurface;
+		palSurface.init(256, 1, 256*4, _palette,
+#ifdef SCUMM_LITTLE_ENDIAN
+						Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24) // ABGR8888
+#else
+						Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0) // RGBA8888
+#endif
+					   );
+
+		_paletteTexture.updateArea(Common::Rect(256, 1), palSurface);
+		_paletteDirty = false;
+	}
+
+	// In case any data changed, do color look up and store result in _target.
+	if (needLookUp) {
+		lookUpColors();
+	}
+}
+
+void TextureCLUT8GPU::lookUpColors() {
+	// Setup pipeline to do color look up.
+	_clut8Pipeline->activate();
+
+	// Do color look up.
+	_clut8Pipeline->drawTexture(_clut8Texture, _clut8Vertices);
+
+	_clut8Pipeline->deactivate();
+}
+
+} // end namespace Metal

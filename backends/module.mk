@@ -180,6 +180,18 @@ MODULE_OBJS += \
 	graphics/opengl/pipelines/shader.o
 endif
 
+ifdef USE_METAL_CPP
+MODULE_OBJS += \
+	graphics/metal/framebuffer.o \
+	graphics/metal/metal-graphics.o \
+	graphics/metal/renderer.o \
+	graphics/metal/shader.o \
+	graphics/metal/texture.o \
+	graphics/metal/pipelines/clut8.o \
+	graphics/metal/pipelines/pipeline.o \
+	graphics/metal/pipelines/shader.o
+endif
+
 # SDL specific source files.
 # We cannot just check $BACKEND = sdl, as various other backends
 # derive from the SDL backend, and they all need the following files.
@@ -407,6 +419,12 @@ MODULE_OBJS += \
 	graphics3d/opengl/surfacerenderer.o \
 	graphics3d/opengl/texture.o \
 	graphics3d/opengl/tiledsurface.o
+
+ifdef USE_METAL_CPP
+MODULE_OBJS += \
+	graphics/ios/ios-metal-graphics.o \
+	graphics/ios/metal-renderbuffer.o
+endif
 endif
 
 ifeq ($(BACKEND),maemo)

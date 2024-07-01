@@ -34,7 +34,7 @@ namespace OpenGL {
  */
 class RenderbufferTarget : public Framebuffer {
 public:
-	RenderbufferTarget(GLuint renderbufferID);
+	RenderbufferTarget(GLuint renderbufferID, bool offScreenRendering);
 	~RenderbufferTarget() override;
 
 	/**
@@ -42,12 +42,18 @@ public:
 	 */
 	bool setSize(uint width, uint height) override;
 
+	/**
+	 * Updates the render target.
+	 */
+	void updateRenderBuffer(GLuint newRenderbufferID);
+
 protected:
 	void activateInternal() override;
 
 private:
 	GLuint _glRBO;
 	GLuint _glFBO;
+	bool _offScreenRendering;
 };
 
 } // End of namespace OpenGL

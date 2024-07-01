@@ -39,8 +39,10 @@ void iOSGraphicsManager::initSurface() {
 	// Create OpenGL context
 	GLuint rbo = sys->createOpenGLContext();
 
+	_targetBuffer = new OpenGL::RenderbufferTarget(rbo, sys->doOffScreenRendering());
+
 	notifyContextCreate(OpenGL::kContextGLES2,
-	new OpenGL::RenderbufferTarget(rbo),
+	_targetBuffer,
 	// Currently iOS runs the ARMs in little-endian mode but prepare if
 	// that is changed in the future.
 #ifdef SCUMM_LITTLE_ENDIAN
@@ -61,9 +63,13 @@ void iOSGraphicsManager::initSurface() {
 void iOSGraphicsManager::deinitSurface() {
 	notifyContextDestroy();
 	dynamic_cast<OSystem_iOS7 *>(g_system)->destroyOpenGLContext();
+	// _targetBuffer deleted by OpenGL manager
 }
 
 void iOSGraphicsManager::notifyResize(const int width, const int height) {
+	GLuint newRenderBufferId =
+		dynamic_cast<OSystem_iOS7 *>(g_system)->getOpenGLRenderBufferID();
+	_targetBuffer->updateRenderBuffer(newRenderBufferId);
 	handleResize(width, height);
 }
 
@@ -74,6 +80,7 @@ iOSCommonGraphics::State iOSGraphicsManager::getState() const {
 	state.screenHeight  = getHeight();
 	state.aspectRatio   = getFeatureState(OSystem::kFeatureAspectRatioCorrection);
 	state.cursorPalette = getFeatureState(OSystem::kFeatureCursorPalette);
+	state.filteringMode = getFeatureState(OSystem::kFeatureFilteringMode);
 #ifdef USE_RGB_COLOR
 	state.pixelFormat   = getScreenFormat();
 #endif
@@ -90,6 +97,7 @@ bool iOSGraphicsManager::setState(const iOSCommonGraphics::State &state) {
 #endif
 	setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
 	setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
+	setFeatureState(OSystem::kFeatureFilteringMode, state.filteringMode);
 
 	return endGFXTransaction() == OSystem::kTransactionSuccess;
 }
@@ -131,7 +139,7 @@ float iOSGraphicsManager::getHiDPIScreenFactor() const {
 }
 
 void iOSGraphicsManager::refreshScreen() {
-	dynamic_cast<OSystem_iOS7 *>(g_system)->refreshScreen();
+	dynamic_cast<OSystem_iOS7 *>(g_system)->refreshScreen(true);
 }
 
 bool iOSGraphicsManager::notifyMousePosition(Common::Point &mouse) {

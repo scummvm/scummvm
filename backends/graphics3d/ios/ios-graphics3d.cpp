@@ -44,7 +44,8 @@ iOSGraphics3dManager::iOSGraphics3dManager() :
 	_mouseSurface(nullptr),
 	_surfaceRenderer(nullptr),
 	_frameBuffer(nullptr),
-	_glFBO(0) {
+	_glFBO(0),
+	_offScreenRendering(false) {
 
 	ConfMan.registerDefault("aspect_ratio", true);
 
@@ -65,14 +66,19 @@ void iOSGraphics3dManager::initSurface() {
 	OSystem_iOS7 *sys = dynamic_cast<OSystem_iOS7 *>(g_system);
 
 	// Create OpenGL context if not existing
-	GLuint glRBO = sys->createOpenGLContext();
+	_glRBO = sys->createOpenGLContext();
 
 	OpenGLContext.initialize(OpenGL::kContextGLES2);
 
 	// Create the framebuffer attached to ObjC provided RBO
 	glGenFramebuffers(1, &_glFBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, _glFBO);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, glRBO);
+	_offScreenRendering = sys->doOffScreenRendering();
+	if (_offScreenRendering) {
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _glRBO, 0);
+	} else {
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _glRBO);
+	}
 
 	// Attach a depth and stencil buffer
 	createDepthAndStencilBuffer(sys->getScreenWidth(), sys->getScreenHeight());
@@ -90,6 +96,11 @@ void iOSGraphics3dManager::initSurface() {
 void iOSGraphics3dManager::deinitSurface() {
 	glDeleteFramebuffers(1, &_glFBO);
 	glDeleteRenderbuffers(2, _glRBOs);
+	if (_offScreenRendering) {
+		glDeleteTextures(1, &_glRBO);
+	} else {
+		glDeleteRenderbuffers(1, &_glRBO);
+	}
 
 	OpenGLContext.destroy();
 	dynamic_cast<OSystem_iOS7 *>(g_system)->destroyOpenGLContext();
@@ -131,6 +142,12 @@ void iOSGraphics3dManager::updateDepthAndStencilBuffer(int width, int height) {
 }
 
 void iOSGraphics3dManager::notifyResize(const int width, const int height) {
+	if (_offScreenRendering) {
+		glBindFramebuffer(GL_FRAMEBUFFER, _glFBO);
+		_glRBO = dynamic_cast<OSystem_iOS7 *>(g_system)->getOpenGLRenderBufferID();
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _glRBO, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
 	updateDepthAndStencilBuffer(width, height);
 	handleResize(width, height);
 }
@@ -142,6 +159,8 @@ iOSCommonGraphics::State iOSGraphics3dManager::getState() const {
 	state.screenHeight  = getHeight();
 	state.aspectRatio   = getFeatureState(OSystem::kFeatureAspectRatioCorrection);
 	state.cursorPalette = getFeatureState(OSystem::kFeatureCursorPalette);
+	state.filteringMode = getFeatureState(OSystem::kFeatureFilteringMode);
+	
 #ifdef USE_RGB_COLOR
 	state.pixelFormat   = getScreenFormat();
 #endif
@@ -152,6 +171,7 @@ bool iOSGraphics3dManager::setState(const iOSCommonGraphics::State &state) {
 	initSize(state.screenWidth, state.screenHeight, nullptr);
 	setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
 	setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
+	setFeatureState(OSystem::kFeatureFilteringMode, state.filteringMode);
 
 	return true;
 }
@@ -348,7 +368,7 @@ void iOSGraphics3dManager::updateScreen() {
 		_frameBuffer->attach();
 	}
 
-	dynamic_cast<OSystem_iOS7 *>(g_system)->refreshScreen();
+	dynamic_cast<OSystem_iOS7 *>(g_system)->refreshScreen(true);
 	glViewport(prevStateViewport[0], prevStateViewport[1], prevStateViewport[2], prevStateViewport[3]);
 }
 

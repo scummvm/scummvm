@@ -27,8 +27,8 @@ namespace OpenGL {
 //
 // Render to backbuffer target implementation
 //
-RenderbufferTarget::RenderbufferTarget(GLuint renderbufferID)
-	: _glRBO(renderbufferID), _glFBO(0) {
+RenderbufferTarget::RenderbufferTarget(GLuint renderbufferID, bool offScreenRendering)
+	: _glRBO(renderbufferID), _glFBO(0), _offScreenRendering(offScreenRendering) {
 }
 
 RenderbufferTarget::~RenderbufferTarget() {
@@ -49,7 +49,18 @@ void RenderbufferTarget::activateInternal() {
 
 	// Attach render buffer to newly created FBO.
 	if (needUpdate) {
-		GL_CALL(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _glRBO));
+		if (_offScreenRendering) {
+			GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _glRBO, 0));
+		} else {
+			GL_CALL(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _glRBO));
+		}
+	}
+}
+
+void RenderbufferTarget::updateRenderBuffer(GLuint newRenderbufferID) {
+	if (_offScreenRendering) {
+		_glRBO = newRenderbufferID;
+		GL_CALL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _glRBO, 0));
 	}
 }
 

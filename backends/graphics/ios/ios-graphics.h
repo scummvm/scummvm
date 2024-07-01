@@ -26,6 +26,7 @@
 #include <OpenGLES/ES2/gl.h>
 
 #include "backends/graphics/opengl/opengl-graphics.h"
+#include "backends/graphics/ios/renderbuffer.h"
 
 class iOSCommonGraphics {
 public:
@@ -51,6 +52,7 @@ public:
 		int screenWidth, screenHeight;
 		bool aspectRatio;
 		bool cursorPalette;
+		bool filteringMode;
 
 #ifdef USE_RGB_COLOR
 		Graphics::PixelFormat pixelFormat;
@@ -98,6 +100,9 @@ protected:
 	void hideOverlay() override;
 
 	void refreshScreen() override;
+
+private:
+	OpenGL::RenderbufferTarget *_targetBuffer;
 };
 
 #endif

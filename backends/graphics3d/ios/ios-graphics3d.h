@@ -142,6 +142,10 @@ protected:
 	GLuint _glFBO;
 	// RBOs used for depth and stencil buffer only
 	GLuint _glRBOs[2];
+	// RBO for render buffer
+	GLuint _glRBO;
+
+	bool _offScreenRendering;
 };
 
 #endif

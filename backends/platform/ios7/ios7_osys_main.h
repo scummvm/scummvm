@@ -34,11 +34,17 @@
 #include "graphics/palette.h"
 
 #include <AudioToolbox/AudioQueue.h>
+#include <Metal/Metal.hpp>
 
 #define AUDIO_BUFFERS 3
 #define WAVE_BUFFER_SIZE 2048
 #define AUDIO_SAMPLE_RATE 44100
 #define MAX_IOS7_SCUMMVM_LOG_FILESIZE_IN_BYTES (100*1024)
+
+enum {
+	IOS7_GFX_OPENGLES = 0,
+	IOS7_GFX_METAL
+};
 
 typedef void (*SoundProc)(void *param, byte *buf, int len);
 typedef int (*TimerProc)(int interval);
@@ -75,6 +81,8 @@ protected:
 
 	Common::String _chrootBasePath;
 
+	int _currentGraphicMode;
+
 public:
 
 	OSystem_iOS7();
@@ -109,10 +117,14 @@ public:
 
 	uint createOpenGLContext();
 	void destroyOpenGLContext();
-	void refreshScreen() const;
+	void refreshScreen(bool isOpenGLES) const;
 	int getScreenWidth() const;
 	int getScreenHeight() const;
 	float getSystemHiDPIScreenFactor() const;
+	bool doOffScreenRendering() const;
+	uint getOpenGLRenderBufferID() const;
+	MTL::CommandQueue* getMetalCommandQueue() const;
+	MTL::Texture *getMetalTargetTexture() const;
 
 #if defined(USE_OPENGL) && defined(USE_GLAD)
 	void *getOpenGLProcAddress(const char *name) const override;
@@ -120,6 +132,7 @@ public:
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	OpenGL::ContextType getOpenGLType() const override { return OpenGL::kContextGLES2; }
 #endif
+	const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
 
 public:
 	bool pollEvent(Common::Event &event) override;
