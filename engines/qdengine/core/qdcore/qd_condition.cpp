@@ -359,6 +359,11 @@ bool qdCondition::load_script(const xml::tag *p) {
 	return true;
 }
 
+bool qdCondition::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	warning("STUB: qdCondition::save_script(Common::SeekableWriteStream)");
+	return true;
+}
+
 bool qdCondition::save_script(XStream &fh, int indent) const {
 	for (int i = 0; i < indent; i ++) fh < "\t";
 	fh < "<condition type=\"" <= type_ < "\"";

@@ -106,6 +106,13 @@ void qdScreenTextDispatcher::post_redraw() {
 #endif
 }
 
+bool qdScreenTextDispatcher::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (auto &it : text_sets_) {
+		it.save_script(fh, indent);
+	}
+	return true;
+}
+
 bool qdScreenTextDispatcher::save_script(XStream &fh, int indent) const {
 	std::vector<qdScreenTextSet>::const_iterator it;
 	FOR_EACH(text_sets_, it)
@@ -113,4 +120,5 @@ bool qdScreenTextDispatcher::save_script(XStream &fh, int indent) const {
 
 	return true;
 }
+
 } // namespace QDEngine

@@ -84,28 +84,39 @@ bool qdGameEnd::load_script(const xml::tag *p) {
 	return true;
 }
 
-bool qdGameEnd::save_script(class XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i++) fh < "\t";
-	fh < "<game_end";
+bool qdGameEnd::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+	}
 
-	if (name())
-		fh < " name=\"" < qdscr_XML_string(name()) < "\"";
+	fh.writeString("<game_end");
 
-	if (flags())
-		fh < " flags=\"" <= flags() < "\"";
+	if (name()) {
+		fh.writeString(Common::String::format(" name=\"%s\"", qdscr_XML_string(name())));
+	}
 
-	if (!interface_screen_.empty())
-		fh < " end_screen=\"" < qdscr_XML_string(interface_screen_.c_str()) < "\"";
+	if (flags()) {
+		fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
+	}
+
+	if (!interface_screen_.empty()) {
+		fh.writeString(Common::String::format(" end_screen=\"%s\"", qdscr_XML_string(interface_screen_.c_str())));
+	}
 
 	if (has_conditions()) {
-		fh < ">\r\n";
-
+		fh.writeString(">\r\n");
 		save_conditions_script(fh, indent);
-		for (int i = 0; i < indent; i++) fh < "\t";
-		fh < "</game_end>\r\n";
-	} else
-		fh < "/>\r\n";
-
+		for (int i = 0; i < indent; i++) {
+			fh.writeString("\t");
+		}
+		fh.writeString("</game_end>\r\n");
+	}
 	return true;
 }
+
+bool qdGameEnd::save_script(class XStream &fh, int indent) const {
+	warning("STUB: qdGameEnd::save_script(XStream)");
+	return true;
+}
+
 } // namespace QDEngine

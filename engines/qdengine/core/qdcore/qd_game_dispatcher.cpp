@@ -22,6 +22,7 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/debug.h"
+#include "common/file.h"
 #include "common/savefile.h"
 #include "common/stream.h"
 #include "qdengine/qdengine.h"
@@ -496,20 +497,21 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 	init();
 }
 
-bool qdGameDispatcher::save_script(XStream &fh) const {
-#ifndef _FINAL_VERSION
-	fh < "<?xml version=\"1.0\" encoding=\"WINDOWS-1251\"?>\r\n";
-	fh < "<qd_script>\r\n";
+bool qdGameDispatcher::save_script(Common::SeekableWriteStream &fh) const {
+	fh.writeString("<?xml version=\"1.0\" encoding=\"WINDOWS-1251\"?> \r\n");
+	fh.writeString("<qd_script>\r\n");
 
-	if (!game_title_.empty())
-		fh < "\t<game_title>" < qdscr_XML_string(game_title_.c_str()) < "</game_title>\r\n";
+	if (!game_title_.empty()) {
+		fh.writeString(Common::String::format("\t<game_title>%s</game_title>\r\n", qdscr_XML_string(game_title_.c_str())));
+	}
 
-	if (default_font_)
-		fh < "\t<default_font>" <= default_font_ < "</default_font>\r\n";
+	if (default_font_) {
+		fh.writeString(Common::String::format("\t<default_font>%d</default_font>\r\n", default_font_));
+	}
 
-	// Сохраняем глобальный формат до сохранения прочих объектов с форматом
-	// текста чтобы он загрузился раньше прочих объектов с форматом текста
-	// и все нормально проинициализировалось
+	// // Сохраняем глобальный формат до сохранения прочих объектов с форматом
+	// // текста чтобы он загрузился раньше прочих объектов с форматом текста
+	// // и все нормально проинициализировалось
 	qdScreenTextFormat frmt = qdScreenTextFormat::global_text_format();
 	frmt.toggle_global_depend(false); // Чтобы нормально сохранилось
 	frmt.save_script(fh, 1);
@@ -520,71 +522,90 @@ bool qdGameDispatcher::save_script(XStream &fh) const {
 
 	qdGameDispatcherBase::save_script_body(fh);
 
-	if (hall_of_fame_size_)
-		fh < "\t<hof_size>" <= hall_of_fame_size_ < "</hof_size>\r\n";
+	if (hall_of_fame_size_) {
+		fh.writeString(Common::String::format("\t<hof_size>%d</hof_size>\r\n", hall_of_fame_size_));
+	}
 
-	if (has_startup_scene())
-		fh < "\t<startup_scene>" < qdscr_XML_string(startup_scene()) < "</startup_scene>\r\n";
+	if (has_startup_scene()) {
+		fh.writeString(Common::String::format("\t<startup_scene>%s</startup_scene>\r\n", qdscr_XML_string(startup_scene())));
+	}
 
-	if (resource_compression_)
-		fh < "\t<compression>" <= resource_compression_ < "</compression>\r\n";
+	if (resource_compression_) {
+		fh.writeString(Common::String::format("\t<compression>%d</compression>\r\n", resource_compression_));
+	}
 
-	if (CD_info())
-		fh < "\t<cd>" <= CD_info() < "</cd>\r\n";
+	if (CD_info()) {
+		fh.writeString(Common::String::format("\t<cd>%d</cd>\r\n", CD_info()));
+	}
 
-	if (!texts_database_.empty())
-		fh < "\t<text_db>" < qdscr_XML_string(texts_database_.c_str()) < "</text_db>\r\n";
+	if (!texts_database_.empty()) {
+		fh.writeString(Common::String::format("\t<text_db>%s</text_db>\r\n", qdscr_XML_string(texts_database_.c_str())));
+	}
 
-	if (!cd_key_.empty())
-		fh < "\t<cd_key>" < qdscr_XML_string(cd_key_.c_str()) < "</cd_key>\r\n";
+	if (!cd_key_.empty()) {
+		fh.writeString(Common::String::format("\t<cd_key>%s</cd_key>\r\n", qdscr_XML_string(cd_key_.c_str())));
+	}
 
-	fh < "\t<screen_size>" <= qdGameConfig::get_config().screen_sx() < " " <= qdGameConfig::get_config().screen_sy() < "</screen_size>\r\n";
+	fh.writeString(Common::String::format("\t<screen_size>%d %d</screen_size>\r\n", qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy()));
 
 	screen_texts.save_script(fh, 1);
 
-	mouse_obj_ -> save_script(fh, 1);
+	mouse_obj_->save_script(fh, 1);
 
-	for (qdGameEndList::const_iterator it = game_end_list().begin(); it != game_end_list().end(); ++it)
-		(*it) -> save_script(fh, 1);
+	for (auto &it : game_end_list()) {
+		it->save_script(fh, 1);
+	}
 
-	for (qdCounterList::const_iterator it = counter_list().begin(); it != counter_list().end(); ++it)
-		(*it) -> save_script(fh, 1);
+	for (auto &it : counter_list()) {
+		it->save_script(fh, 1);
+	}
 
-	for (qdGameSceneList::const_iterator it = scene_list().begin(); it != scene_list().end(); ++it)
-		(*it) -> save_script(fh, 1);
+	for (auto &it : scene_list()) {
+	it->save_script(fh, 1);
+	}
 
-	for (qdVideoList::const_iterator it = video_list().begin(); it != video_list().end(); ++it)
-		(*it) -> save_script(fh, 1);
+	for (auto &it : video_list()) {
+		it->save_script(fh, 1);
+	}
 
-	for (qdGameObjectList::const_iterator it = global_object_list().begin(); it != global_object_list().end(); ++it)
-		(*it) -> save_script(fh, 1);
+	for (auto &it : global_object_list()) {
+		// it->save_script(fh, 1); FIXME
+	}
 
-	for (qdTriggerChainList::const_iterator it = trigger_chain_list().begin(); it != trigger_chain_list().end(); ++it)
-		(*it) -> save_script(fh, 1);
+	for (auto &it : trigger_chain_list()) {
+		it->save_script(fh, 1);
+	}
 
-	for (qdInventoryCellTypeVector::const_iterator it = inventory_cell_types_.begin(); it != inventory_cell_types_.end(); ++it)
-		it -> save_script(fh, 1);
+	for (auto &it : inventory_cell_types_) {
+		it.save_script(fh, 1);
+	}
 
-	for (qdFontInfoList::const_iterator it = fonts_list().begin(); it != fonts_list().end(); ++it)
-		(*it) -> save_script(fh, 1);
+	for (auto &it : fonts_list()) {
+		it->save_script(fh, 1);
+	}
 
-	for (qdInventoryList::const_iterator it = inventory_list().begin(); it != inventory_list().end(); ++it)
-		(*it) -> save_script(fh, 1);
+	for (auto &it : inventory_list()) {
+		it->save_script(fh, 1);
+	}
 
-	for (qdMiniGameList::const_iterator it = minigame_list().begin(); it != minigame_list().end(); ++it)
-		(*it) -> save_script(fh, 1);
+	for (auto &it : minigame_list()) {
+		it->save_script(fh, 1);
+	}
 
 	interface_dispatcher_.save_script(fh, 1);
 
-	fh < "</qd_script>\r\n";
-#endif
+	fh.writeString("</qd_script>\r\n");
 	return true;
 }
 
 bool qdGameDispatcher::save_script(const char *fname) const {
-	XStream fh(fname, XS_OUT);
-	save_script(fh);
-	fh.close();
+	Common::DumpFile df;
+	df.open(Common::Path(fname));
+	if (!df.isOpen()) {
+		warning("Not able to open xml file");
+	}
+	save_script(df);
+	df.close();
 
 	return true;
 }

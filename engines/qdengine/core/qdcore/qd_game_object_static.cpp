@@ -52,6 +52,10 @@ bool qdGameObjectStatic::load_script(const xml::tag *p) {
 	return load_script_body(p);
 }
 
+bool qdGameObjectStatic::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	return true;
+}
+
 bool qdGameObjectStatic::save_script(XStream &fh, int indent) const {
 	for (int i = 0; i < indent; i ++) fh < "\t";
 	fh < "<static_object name=\"" < qdscr_XML_string(name()) < "\">\r\n";
@@ -73,6 +77,20 @@ bool qdGameObjectStatic::load_script_body(const xml::tag *p) {
 			sprite_.set_file(Common::Path(it->data(), '\\').toString().c_str());
 			break;
 		}
+	}
+
+	return true;
+}
+
+bool qdGameObjectStatic::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
+	qdGameObject::save_script_body(fh, indent);
+
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+
+	if (sprite_.file()) {
+		fh.writeString(Common::String::format("<file>%s</file>\r\n", qdscr_XML_string(sprite_.file())));
 	}
 
 	return true;

@@ -23,6 +23,7 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/archive.h"
+#include "common/config-manager.h"
 #include "common/events.h"
 
 #include <locale.h>
@@ -113,6 +114,10 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 		event = CreateEvent(0, TRUE, TRUE, event_name);
 	}
 #endif
+
+	if (ConfMan.getBool("dump_scripts")) {
+
+	}
 
 	comlineParser comline_parser;
 	comline_parser.register_option("s", COMLINE_SCENE_NAME);
@@ -238,6 +243,10 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 
 	qd_gameD = new qdGameDispatcher;
 	qd_gameD->load_script(script_name.c_str());
+
+	if (ConfMan.getBool("dump_scripts")) {
+		qd_gameD->save_script("qd_game.xml");
+	}
 
 	qd_gameD->set_scene_loading_progress_callback(qd_show_load_progress);
 

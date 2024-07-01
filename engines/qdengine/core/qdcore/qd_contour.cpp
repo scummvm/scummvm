@@ -87,8 +87,9 @@ void qdContour::insert_contour_point(const Vect2s &pt, int insert_pos) {
 	if (insert_pos < contour_.size()) {
 		if (insert_pos < 0) insert_pos = 0;
 		contour_.insert(contour_.begin() + insert_pos, pt);
-	} else
+	} else {
 		contour_.push_back(pt);
+	}
 }
 
 bool qdContour::remove_contour_point(int pos) {
@@ -204,30 +205,40 @@ bool qdContour::is_inside(const Vect2s &pos) const {
 return false;
 }
 
-bool qdContour::save_script(XStream &fh, int indent) const {
+bool qdContour::save_script(Common::SeekableWriteStream &fh, int indent) const {
 	if (contour_type_ == CONTOUR_POLYGON) {
-		for (int i = 0; i < indent; i ++) fh < "\t";
-		fh < "<contour_polygon>" <= contour_size() * 2;
-
-		for (int j = 0; j < contour_size(); j ++) {
-			fh < " " <= contour_[j].x < " " <= contour_[j].y;
+		for (int i = 0; i < indent; i++) {
+			fh.writeString("\t");
 		}
-		fh < "</contour_polygon>\r\n";
+		fh.writeString(Common::String::format("<contour_polygon>%d", contour_size() * 2));
+		for (int j = 0; j < contour_size(); j ++) {
+			fh.writeString(Common::String::format(" %d %d", contour_[j].x, contour_[j].y));
+		}
+		fh.writeString("</contour_polygon>\r\n");
 		return true;
 	}
 
 	if (contour_type_ == CONTOUR_RECTANGLE) {
-		for (int i = 0; i < indent; i ++) fh < "\t";
-		fh < "<contour_rect>" <= size_.x < " " <= size_.y < "</contour_rect>\r\n";
+		for (int i = 0; i < indent; i++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<contour_rect>%d %d</contour_rect>\r\n", size_.x, size_.y));
 		return true;
 	}
 
 	if (contour_type_ == CONTOUR_CIRCLE) {
-		for (int i = 0; i < indent; i ++) fh < "\t";
-		fh < "<contour_circle>" <= size_.x < "</contour_circle>\r\n";
+		for (int i = 0; i < indent; i++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<contour_circle>%d</contour_circle>\r\n", size_.x));
 		return true;
 	}
 
+	return false;
+}
+
+bool qdContour::save_script(XStream &fh, int indent) const {
+	warning("STUB: qdCounter::save_script(XStream)");
 	return false;
 }
 
@@ -298,4 +309,5 @@ bool qdContour::is_contour_empty() const {
 
 	return false;
 }
-}
+
+} // namespace QDEngine

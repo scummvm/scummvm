@@ -72,11 +72,6 @@ Common::Error QDEngineEngine::run() {
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	// Draw a series of boxes on screen as a sample
-	for (int i = 0; i < 100; ++i)
-		_screen->frameRect(Common::Rect(i, i, 320 - i, 200 - i), i);
-	_screen->update();
-
 	// Simple event handling loop
 	byte pal[256 * 3] = { 0 };
 	Common::Event e;

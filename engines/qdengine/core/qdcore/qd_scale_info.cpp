@@ -52,15 +52,25 @@ void qdScaleInfo::load_script(const xml::tag *p) {
 	}
 }
 
-bool qdScaleInfo::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
+bool qdScaleInfo::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+	}
 
-	fh < "<object_scale name=";
-	if (name()) fh < "\"" < qdscr_XML_string(name()) < "\"";
-	else fh < "\" \"";
+	fh.writeString("<object_scale name=");
+	if (name()) {
+		fh.writeString(Common::String::format("\"%s\"", qdscr_XML_string(name())));
+	} else {
+		fh.writeString("\" \"");
+	}
 
-	fh < " scale=\"" <= scale() < "\"/>\r\n";
+	fh.writeString(Common::String::format(" scale=\"%f\"", scale()));
 
 	return true;
 }
+
+bool qdScaleInfo::save_script(XStream &fh, int indent) const {
+	warning("STUB: qdScaleInfo::save_script(XStream)");
+}
+
 } // namespace QDEngine

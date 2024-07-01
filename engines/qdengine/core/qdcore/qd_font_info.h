@@ -75,6 +75,7 @@ public:
 
 	bool load_script(const xml::tag *p);
 	bool save_script(class XStream &fh, int indent = 0) const;
+	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 	//! Грузит шрифт из файлов: font_file_name_ (хранит путь к *.tga части)
 	//! и файла аналогичного font_file_name_, но с расш-ем. *.idx (индексная часть)

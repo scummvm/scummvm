@@ -155,6 +155,37 @@ grScreenRegion qdInterfaceElement::screen_region() const {
 		return grScreenRegion::EMPTY;
 }
 
+bool qdInterfaceElement::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+	}
+
+	fh.writeString("<interface_element");
+	fh.writeString(Common::String::format(" type=\"%d\"", get_element_type()));
+
+	if (name()) {
+		fh.writeString(Common::String::format(" name=\"%s\"", qdscr_XML_string(name())));
+	}
+
+	if (option_ID_ != OPTION_NONE) {
+		fh.writeString(Common::String::format(" option_id=\"%s\"", (int)option_ID_));
+	}
+
+	fh.writeString(">\r\n");
+
+	// if (!save_script_body(fh, indent)) {
+	// 	return false;
+	// } FIXME
+
+	for (int i = 0; i < indent; i ++) {
+		fh.writeString("\t");
+	}
+
+	fh.writeString("</interface_element>\r\n");
+	return true;
+
+}
+
 bool qdInterfaceElement::save_script(XStream &fh, int indent) const {
 	for (int i = 0; i < indent; i ++) fh < '\t';
 	fh < "<interface_element ";

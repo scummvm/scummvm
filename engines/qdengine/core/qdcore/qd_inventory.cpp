@@ -186,6 +186,10 @@ bool qdInventory::load_script(const xml::tag *p) {
 
 	return true;
 }
+bool qdInventory::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	warning("qdInventory::save_script(Common::SeekableStream &fh)");
+	return true;
+}
 
 bool qdInventory::save_script(class XStream &fh, int indent) const {
 	for (int i = 0; i < indent; i ++) fh < "\t";

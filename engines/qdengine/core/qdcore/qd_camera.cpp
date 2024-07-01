@@ -492,47 +492,75 @@ void qdCamera::load_script(const xml::tag *p) {
 	rotate_and_scale(xAngle, yAngle, zAngle, 1, 1, 1);
 }
 
+bool qdCamera::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+	}
+
+	fh.writeString("<camera");
+
+	fh.writeString(Common::String::format(" camera_grid_size=\"%d %d\"", GSX, GSY));
+
+	fh.writeString(">\r\n");
+
+	for (int i = 0; i <= indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<camera_cell_size>%d %d</camera_cell_size>\r\n", cellSX, cellSY));
+
+	for (int i = 0; i <= indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<pos_3d>%ld %ld %d</pos_3d>\r\n", 0L, 0L, get_R()));
+
+	for (int i = 0; i <= indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<camera_focus>%d</camera_focus>\r\n", focus));
+
+	for (int i = 0; i <= indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<camera_angles>%f %f %f</camera_angles>\r\n", xAngle, yAngle, zAngle));
+
+	for (int i = 0; i <= indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<camera_screen_size>%f %f</camera_screen_size>\r\n", scrSize.x, scrSize.y));
+
+	for (int i = 0; i <= indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<camera_screen_offset>%f %f</camera_screen_offset>\r\n", scrOffset.x, scrOffset.y));
+
+	for (int i = 0; i <= indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<camera_screen_center>%f %f</camera_screen_center>\r\n", scrCenterInitial.x, scrCenterInitial.y));
+
+	for (int i = 0; i <= indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<camera_grid_center>%f %f %f</camera_grid_center>\r\n", gridCenter.x, gridCenter.y, gridCenter.z));
+
+	for (int i = 0; i <= indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<camera_scale_pow>%f</camera_scale_pow>\r\n", scale_pow()));
+
+	for (int i = 0; i <= indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<camera_scale_z_offset>%f</camera_scale_z_offset>\r\n", scale_z_offset()));
+
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("</camera>\r\n");
+
+}
 bool qdCamera::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "<camera";
-
-	fh < " camera_grid_size=\"" <= GSX < " " <= GSY < "\"";
-
-	fh < ">\r\n";
-
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<camera_cell_size>" <= cellSX < " " <= cellSY < "</camera_cell_size>\r\n";
-
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<pos_3d>" <= 0L < " " <= 0L < " " <= get_R() < "</pos_3d>\r\n";
-
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<camera_focus>" <= focus < "</camera_focus>\r\n";
-
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<camera_angles>" <= xAngle < " " <= yAngle < " " <= zAngle < "</camera_angles>\r\n";
-
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<camera_screen_size>" <= scrSize.x < " " <= scrSize.y < "</camera_screen_size>\r\n";
-
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<camera_screen_offset>" <= scrOffset.x < " " <= scrOffset.y < "</camera_screen_offset>\r\n";
-
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<camera_screen_center>" <= scrCenterInitial.x < " " <= scrCenterInitial.y < "</camera_screen_center>\r\n";
-
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<camera_grid_center>" <= gridCenter.x < " " <= gridCenter.y < " " <= gridCenter.z < "</camera_grid_center>\r\n";
-
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<camera_scale_pow>" <= scale_pow() < "</camera_scale_pow>\r\n";
-
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<camera_scale_z_offset>" <= scale_z_offset() < "</camera_scale_z_offset>\r\n";
-
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "</camera>\r\n";
-
+	warning("STUB: qdCamera::save_script");
 	return true;
 }
 

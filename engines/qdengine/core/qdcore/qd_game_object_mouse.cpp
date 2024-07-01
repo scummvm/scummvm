@@ -99,6 +99,10 @@ bool qdGameObjectMouse::load_script_body(const xml::tag *p) {
 	return true;
 }
 
+bool qdGameObjectMouse::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
+	return qdGameObjectAnimated::save_script_body(fh, indent);
+}
+
 bool qdGameObjectMouse::save_script_body(XStream &fh, int indent) const {
 	return qdGameObjectAnimated::save_script_body(fh, indent);
 }
@@ -107,24 +111,33 @@ bool qdGameObjectMouse::load_script(const xml::tag *p) {
 	return load_script_body(p);
 }
 
-bool qdGameObjectMouse::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "<mouse_object name=\"" < qdscr_XML_string(name()) < "\"";
-
-	fh < " default_cursors=\"";
-	for (int i = 0; i < MAX_CURSOR_ID; i ++) {
-		if (i) fh < " ";
-		fh <= default_cursors_[i];
+bool qdGameObjectMouse::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
 	}
-	fh < "\"";
 
-	fh < ">\r\n";
+	fh.writeString(" default_cursors=\"");
+	for (int i = 0; i < MAX_CURSOR_ID; i ++) {
+		if (i) fh.writeString(" ");
+		fh.writeString(Common::String::format("%d", default_cursors_[i]));
+	}
+
+	fh.writeString("\"");
+	fh.writeString(">\r\n");
 
 	save_script_body(fh, indent);
 
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "</mouse_object>\r\n";
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("</mouse_object>\r\n");
 
+	return true;
+
+}
+
+bool qdGameObjectMouse::save_script(XStream &fh, int indent) const {
+	warning("STUB: qdGameObjectMouse::save_script(XStream)");
 	return true;
 }
 

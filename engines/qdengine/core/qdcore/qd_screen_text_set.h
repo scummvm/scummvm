@@ -83,6 +83,7 @@ public:
 
 	void load_script(const xml::tag *p);
 	bool save_script(XStream &fh, int indent = 0) const;
+	bool save_script(Common::SeekableWriteStream &fh, int indent) const;
 
 	bool need_redraw() const {
 		return need_redraw_;

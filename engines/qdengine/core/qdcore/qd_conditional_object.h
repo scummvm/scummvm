@@ -166,6 +166,7 @@ protected:
 	bool load_conditions_script(const xml::tag *p);
 	//! Запись данных в скрипт.
 	bool save_conditions_script(XStream &fh, int indent = 0) const;
+	bool save_conditions_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 private:
 

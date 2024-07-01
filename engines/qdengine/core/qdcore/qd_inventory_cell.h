@@ -27,9 +27,11 @@
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/qdcore/qd_sprite.h"
 
+namespace Common {
+class SeekableWriteStream;
+}
 
 namespace QDEngine {
-
 
 class qdGameObjectAnimated;
 
@@ -65,6 +67,7 @@ public:
 
 	bool load_script(const xml::tag *p);
 	bool save_script(class XStream &fh, int indent = 0) const;
+	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 	const Vect2i &size() const {
 		return sprite_.size();
@@ -249,6 +252,7 @@ public:
 
 	bool load_script(const xml::tag *p);
 	bool save_script(class XStream &fh, int indent = 0) const;
+	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 	//! Загрузка данных из сэйва.
 	bool load_data(qdSaveStream &fh, int save_version);

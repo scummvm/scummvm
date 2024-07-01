@@ -404,6 +404,65 @@ void qdGameScene::load_script(const xml::tag *p) {
 	camera.set_cycle(check_flag(CYCLE_X), check_flag(CYCLE_Y));
 }
 
+bool qdGameScene::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<scene name=\"%s\"", qdscr_XML_string(name())));
+
+	if (CD_info()) {
+		fh.writeString(Common::String::format(" cd=\"%d\"", CD_info()));
+	}
+
+	if (flags()) {
+		fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
+	}
+
+	if (autosave_slot_ != -1) {
+		fh.writeString(Common::String::format(" save_slot=\"%d\"", autosave_slot_));
+	}
+
+	if (restart_minigame_on_load_) {
+		fh.writeString(" restart_minigame=\"1\"");
+	}
+
+	if (has_minigame()) {
+		fh.writeString(Common::String::format(" game_name=\"%d\"", qdscr_XML_string(minigame_name())));
+	}
+
+	fh.writeString(">\r\n");
+
+	if (has_interface_screen()) {
+		for (int i = 0; i < indent; i++) {
+			fh.writeString("\t");
+		}
+
+		fh.writeString(Common::String::format("<interface_screen_name=\"%s\"/>\r\n", qdscr_XML_string(interface_screen_name())));
+	}
+
+	qdGameDispatcherBase::save_script_body(fh, indent);
+
+	camera.save_script(fh, indent + 1);
+
+	for (qdGameObjectList::const_iterator it = object_list().begin(); it != object_list().end(); ++it)
+		(*it) -> save_script(fh, indent + 1);
+
+	for (qdGridZoneList::const_iterator it = grid_zone_list().begin(); it != grid_zone_list().end(); ++it)
+		(*it) -> save_script(fh, indent + 1);
+
+	for (qdMusicTrackList::const_iterator it = music_track_list().begin(); it != music_track_list().end(); ++it)
+		(*it) -> save_script(fh, indent + 1);
+
+	save_conditions_script(fh, indent);
+
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("</scene>");
+
+	return true;
+
+}
 
 bool qdGameScene::save_script(XStream &fh, int indent) const {
 	for (int i = 0; i < indent; i ++) fh < "\t";

@@ -285,43 +285,74 @@ bool qdInterfaceDispatcher::char_input_handler(int vkey) {
 	return false;
 }
 
-bool qdInterfaceDispatcher::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < '\t';
-	fh < "<interface";
+bool qdInterfaceDispatcher::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
 
-	if (has_main_menu())
-		fh < " main_menu=\"" < qdscr_XML_string(main_menu_screen_name()) < "\"";
+	fh.writeString("<interface");
 
-	if (need_scene_redraw())
-		fh < " draw_scene=\"1\"";
+	if (has_main_menu()) {
+		fh.writeString(Common::String::format(" main_menu=\"%s\"", qdscr_XML_string(main_menu_screen_name())));
+	}
 
-	if (has_ingame_screen(false))
-		fh < " ingame_screen0=\"" < qdscr_XML_string(ingame_screen_name(false)) < "\"";
-	if (has_ingame_screen(true))
-		fh < " ingame_screen1=\"" < qdscr_XML_string(ingame_screen_name(true)) < "\"";
-	if (!save_prompt_screen_name_.empty())
-		fh < " save_prompt_screen=\"" < qdscr_XML_string(save_prompt_screen_name_.c_str()) < "\"";
-	if (!save_title_screen_name_.empty())
-		fh < " save_title_screen=\"" < qdscr_XML_string(save_title_screen_name_.c_str()) < "\"";
+	if (need_scene_redraw()) {
+		fh.writeString(" draw_scene=\"1\"");
+	}
+
+	if (has_ingame_screen(false)) {
+		fh.writeString(Common::String::format(" ingame_screen0=\"%s\"", qdscr_XML_string(ingame_screen_name(false))));
+	}
+
+	if (has_ingame_screen(true)) {
+		fh.writeString(Common::String::format(" ingame_screen1=\"%s\"", qdscr_XML_string(ingame_screen_name(true))));
+	}
+
+	if (!save_prompt_screen_name_.empty()) {
+		fh.writeString(Common::String::format(" save_prompt_screen=\"%s\"", qdscr_XML_string(save_prompt_screen_name_.c_str())));
+	}
+
+	if (!save_title_screen_name_.empty()) {
+		fh.writeString(Common::String::format(" save_title_screen=\"%s\"", qdscr_XML_string(save_title_screen_name_.c_str())));
+	}
+
 	// Значение по умолчанию - true, значит сохраняем только false
-	if (!need_save_screenshot_)
-		fh < " need_save_screenshot=\"0\"";
-	if (need_show_save_time_)
-		fh < " need_show_save_time=\"1\"";
-	if (need_show_save_title_)
-		fh < " need_show_save_name=\"1\"";
-	if (QD_FONT_TYPE_NONE != save_font_type_)
-		fh < " save_font_type=\"" <= save_font_type_ < "\"";
-	if (0x00FFFFFF != save_font_color_)
-		fh < " save_font_color=\"" <= save_font_color_ < "\"";
-	fh < ">\r\n";
+	if (!need_save_screenshot_) {
+		fh.writeString(" need_save_screenshot=\"0\"");
+	}
 
-	for (screen_list_t::const_iterator it = screen_list().begin(); it != screen_list().end(); ++it)
-		(*it) -> save_script(fh, indent + 1);
+	if (need_show_save_time_) {
+		fh.writeString(" need_show_save_time=\"1\"");
+	}
 
-	for (int i = 0; i < indent; i ++) fh < '\t';
-	fh < "</interface>\r\n";
+	if (need_show_save_title_) {
+		fh.writeString(" need_show_save_name=\"1\"");
+	}
 
+	if (QD_FONT_TYPE_NONE != save_font_type_) {
+		fh.writeString(Common::String::format(" save_font_type=\"%d\"", save_font_type_));
+	}
+
+	if (0x00FFFFFF != save_font_color_) {
+		fh.writeString(Common::String::format(" save_font_color=\"%d\"", save_font_color_));
+	}
+
+	fh.writeString(">\r\n");
+
+
+	for (auto &it : screen_list()) {
+		it->save_script(fh, indent + 1);
+	}
+
+	for (int i = 0; i < indent; i ++) {
+		fh.writeString("\t");
+	}
+
+	fh.writeString("</interface>\r\n");
+}
+
+bool qdInterfaceDispatcher::save_script(XStream &fh, int indent) const {
+	warning("qdInterfaceDispatcher::save_script(XStream)");
 	return true;
 }
 

@@ -53,6 +53,7 @@ public:
 
 	bool load_script(const xml::tag *p);
 	bool save_script(XStream &fh, int indent = 0) const;
+	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 	bool mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
 		return false;
@@ -74,6 +75,7 @@ protected:
 
 	bool load_script_body(const xml::tag *p);
 	bool save_script_body(XStream &fh, int indent = 0) const;
+	bool save_script_body(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 private:
 	qdSprite sprite_;

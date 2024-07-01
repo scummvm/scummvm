@@ -224,43 +224,64 @@ void qdAnimationSet::load_script(const xml::tag *p) {
 	}
 }
 
-bool qdAnimationSet::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i++) fh < "\t";
-	fh < "<animation_set name=\"" < qdscr_XML_string(name()) < "\"";
-
-	if (turn_animation_.animation_name())
-		fh < " animation_turn=\"" < qdscr_XML_string(turn_animation_.animation_name()) < "\"";
-
-	fh < " size=\"" <= size() < "\"";
-
-	if (fabs(start_angle_) > FLT_EPS)
-		fh < " start_angle=\"" <= start_angle_ < "\"";
-
-	fh < ">\r\n";
-
-	for (qdAnimationInfoVector::const_iterator it = animations_.begin(); it != animations_.end(); ++it)
-		it -> save_script(fh, indent + 1);
-
-	for (qdAnimationInfoVector::const_iterator it = static_animations_.begin(); it != static_animations_.end(); ++it)
-		it -> save_script(fh, indent + 1);
-
-	for (qdAnimationInfoVector::const_iterator it = start_animations_.begin(); it != start_animations_.end(); ++it)
-		it -> save_script(fh, indent + 1);
-
-	for (qdAnimationInfoVector::const_iterator it = stop_animations_.begin(); it != stop_animations_.end(); ++it)
-		it -> save_script(fh, indent + 1);
-
-	if (walk_sound_frequency_.size()) {
-		for (int i = 0; i <= indent; i++) fh < "\t";
-		fh < "<walk_sound_frequency>" <= walk_sound_frequency_.size();
-		for (int i = 0; i < walk_sound_frequency_.size(); i++)
-			fh < " " <= walk_sound_frequency_[i];
-		fh < "</walk_sound_frequency>\r\n";
+bool qdAnimationSet::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
 	}
 
-	for (int i = 0; i < indent; i++) fh < "\t";
-	fh < "</animation_set>\r\n";
+	fh.writeString(Common::String::format("<animation_set name=\"%s\"", qdscr_XML_string(name())));
 
+	if (turn_animation_.animation_name()) {
+		fh.writeString(Common::String::format(" animation_turn=\"%s\"", qdscr_XML_string(turn_animation_.animation_name())));
+	}
+
+	fh.writeString(Common::String::format(" size=\"%d\"", size()));
+
+	if (fabs(start_angle_) > FLT_EPS) {
+		fh.writeString(Common::String::format(" start_angle=\"%d\"", start_angle_));
+	}
+
+	fh.writeString(">\r\n");
+
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+	}
+
+	for (auto &it : animations_) {
+		it.save_script(fh, indent + 1);
+	}
+
+	for (auto &it : static_animations_) {
+		it.save_script(fh, indent + 1);
+	}
+
+	for (auto &it : start_animations_) {
+		it.save_script(fh, indent + 1);
+	}
+
+	for (auto &it : stop_animations_) {
+		it.save_script(fh, indent + 1);
+	}
+
+	if (walk_sound_frequency_.size()) {
+		for (int i = 0; i < indent; i++) {
+			fh.writeString("\t");
+		}
+
+		for (int i = 0; i < walk_sound_frequency_.size(); i++) {
+			fh.writeString(Common::String::format(" %d", walk_sound_frequency_[i]));
+		}
+
+		fh.writeString("</walk_sound_frequency>\r\n");
+	}
+
+	fh.writeString("</animation_set>\r\n");
+
+	return true;
+}
+
+bool qdAnimationSet::save_script(XStream &fh, int indent) const {
+	warning("STUB: qdAnimationSet::save_script(XStream)");
 	return true;
 }
 

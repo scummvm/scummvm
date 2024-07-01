@@ -48,6 +48,7 @@ public:
 	void load_script(const xml::tag *p);
 	//! Запись данных в скрипт.
 	bool save_script(XStream &fh, int indent = 0) const;
+	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 	bool load_resource();
 	bool free_resource();

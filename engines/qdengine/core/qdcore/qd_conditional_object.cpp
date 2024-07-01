@@ -213,19 +213,28 @@ bool qdConditionalObject::load_conditions_script(const xml::tag *p) {
 	return true;
 }
 
-bool qdConditionalObject::save_conditions_script(XStream &fh, int indent) const {
+bool qdConditionalObject::save_conditions_script(Common::SeekableWriteStream &fh, int indent) const {
 	if (conditions_.size()) {
-		conditions_container_t::const_iterator it;
-		FOR_EACH(conditions_, it)
-		it -> save_script(fh, indent + 1);
+		for (auto &it : conditions_) {
+			it.save_script(fh, indent + 1);
+		}
 
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<conditions_mode>" <= conditions_mode_ < "</conditions_mode>\r\n";
+		for (int i = 0; i <= indent; i ++) {
+			fh.writeString("\t");
+		}
+
+		fh.writeString(Common::String::format("<conditions_mode>%d</conditions_mode>\r\n", conditions_mode_));
 	}
 
-	for (condition_groups_container_t::const_iterator it = condition_groups_.begin(); it != condition_groups_.end(); ++it)
-		it -> save_script(fh, indent);
+	for (auto  &it : condition_groups_) {
+		it.save_script(fh, indent);
+	}
 
+	return true;
+}
+
+bool qdConditionalObject::save_conditions_script(XStream &fh, int indent) const {
+	warning("STUB: qdConditionalObject::save_conditions_script(XStream)");
 	return true;
 }
 

@@ -127,34 +127,50 @@ bool qdGridZone::load_script(const xml::tag *p) {
 	return true;
 }
 
-bool qdGridZone::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "<grid_zone name=\"" < qdscr_XML_string(name()) < "\"" < " grid_zone_height=\"" <= height_ < "\"";
+bool qdGridZone::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+	}
 
-	if (flags())
-		fh < " flags=\"" <= flags() < "\"";
+	fh.writeString(Common::String::format("<grid_zone name=\"%s\" grid_zone_height=\"%d\"", qdscr_XML_string(name()), height_));
 
-	if (state_)
-		fh < " state=\"1\"";
-	else
-		fh < " state=\"0\"";
+	if (flags()) {
+		fh.writeString(Common::String::format(" flags=\"%s\"", flags()));
+	}
 
-	if (shadow_color_)
-		fh < " shadow_color=\"" <= shadow_color_ < "\"";
+	if (state_) {
+		fh.writeString(" state=\"1\"");
+	} else {
+		fh.writeString(" state=\"0\"");
+	}
 
-	if (shadow_alpha_ != QD_NO_SHADOW_ALPHA)
-		fh < " shadow_alpha=\"" <= shadow_alpha_ < "\"";
+	if (shadow_color_) {
+		fh.writeString(Common::String::format(" shadow_color=\"%d\"", shadow_color_));
+	}
 
-	fh < ">\r\n";
+	if (shadow_alpha_ != QD_NO_SHADOW_ALPHA) {
+		fh.writeString(Common::String::format(" shadow_alpha=\"%d\"", shadow_alpha_));
+	}
+
+	fh.writeString(">\r\n");
 
 	state_on_.save_script(fh, indent + 1);
 	state_off_.save_script(fh, indent + 1);
 
-	if (contour_size())
+	if (contour_size()) {
 		qdContour::save_script(fh, indent + 1);
+	}
 
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "</grid_zone>\r\n";
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("</grid_zone>\r\n");
+
+	return true;
+}
+
+bool qdGridZone::save_script(XStream &fh, int indent) const {
+	warning("STUB: qdGridZone::save_script(XStream)");
 	return true;
 }
 

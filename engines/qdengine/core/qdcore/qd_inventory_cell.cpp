@@ -66,15 +66,22 @@ bool qdInventoryCellType::load_script(const xml::tag *p) {
 	return true;
 }
 
+bool qdInventoryCellType::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i < indent; i ++) {
+		fh.writeString("\t");
+	}
+
+	fh.writeString(Common::String::format("<inventory_cell_type type=\"%d\"", type_));
+	if (strlen(sprite_.file())) {
+		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(sprite_.file())));
+	}
+	fh.writeString("/>\r\n");
+
+	return true;
+}
+
 bool qdInventoryCellType::save_script(class XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "<inventory_cell_type type=\"" <= type_ < "\"";
-
-	if (strlen(sprite_.file()))
-		fh < " file=\"" < qdscr_XML_string(sprite_.file()) < "\"";
-
-	fh < "/>\r\n";
-
+	warning("STUB: qdInventoryCellType::save_script");
 	return true;
 }
 
@@ -390,26 +397,42 @@ bool qdInventoryCellSet::load_script(const xml::tag *p) {
 	return true;
 }
 
-bool qdInventoryCellSet::save_script(class XStream &fh, int indent) const {
+bool qdInventoryCellSet::save_script(Common::SeekableWriteStream &fh, int indent) const {
 	int tp = 0;
-	if (!cells_.empty())
+	if (!cells_.empty()) {
 		tp = cells_.front().type();
+	}
 
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "<inventory_cell_set type=\"" <= tp < "\">\r\n";
+	for (int i = 0; i < indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<inventory_cell_set type=\"%d\">\r\n", tp));
 
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<inventory_cell_set_size>" <= size_.x < " " <= size_.y < "</inventory_cell_set_size>\r\n";
+	for (int i = 0; i < indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<inventory_cell_set_size>%d %d</inventory_cell_set_size>\r\n", size_.x, size_.y));
 
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<inventory_cell_set_pos>" <= screen_pos_.x < " " <= screen_pos_.y < "</inventory_cell_set_pos>\r\n";
+	for (int i = 0; i < indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<inventory_cell_set_pos>%d %d</inventory_cell_set_pos>\r\n", screen_pos_.x, screen_pos_.y));
 
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<inventory_cell_set_additional_cells>" <= additional_cells_.x < " " <= additional_cells_.y < "</inventory_cell_set_additional_cells>\r\n";
+	for (int i = 0; i < indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<inventory_cell_set_additional_cells>%d %d</inventory_cell_set_additional_cells>\r\n", additional_cells_.x, additional_cells_.y));
 
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "</inventory_cell_set>\r\n";
+	for (int i = 0; i < indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("</inventory_cell_set>\r\n");
 
+	return true;
+}
+
+bool qdInventoryCellSet::save_script(class XStream &fh, int indent) const {
+	warning("STUB: qdInventoryCellSet::save_script(XStream)");
 	return true;
 }
 

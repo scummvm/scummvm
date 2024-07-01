@@ -88,6 +88,43 @@ bool qdMusicTrack::load_script(const xml::tag *p) {
 	return true;
 }
 
+bool qdMusicTrack::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+	}
+	
+	if (name()) {
+		fh.writeString(Common::String::format(" name=\"%s\"", qdscr_XML_string(name())));
+	}
+
+	fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
+
+	if (!file_name_.empty()) {
+		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(file_name_.c_str())));
+	}
+
+	if (is_cycled()) {
+		fh.writeString(" cycled=\"1\"");
+	}
+
+	if (volume_ != 256) {
+		fh.writeString(Common::String::format(" volume=\"%d\"", volume_));
+	}
+
+	if (has_conditions()) {
+		fh.writeString(">\r\n");
+		save_conditions_script(fh, indent);
+		for (int i = 0; i < indent; i++) {
+			fh.writeString("\t");
+		}
+		fh.writeString("</music_track>\r\n");
+	} else {
+		fh.writeString("/>\r\n");
+	}
+
+	return true;
+}
+
 bool qdMusicTrack::save_script(class XStream &fh, int indent) const {
 	for (int i = 0; i < indent; i ++) fh < "\t";
 	fh < "<music_track";

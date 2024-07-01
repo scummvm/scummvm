@@ -25,6 +25,9 @@
 #include <vector>
 #include "qdengine/core/parser/xml_fwd.h"
 
+namespace Common {
+class SeekableWriteStream;
+}
 
 namespace QDEngine {
 
@@ -76,6 +79,7 @@ public:
 
 	//! Запись данных в скрипт.
 	virtual bool save_script(XStream &fh, int indent = 0) const;
+	virtual bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 	//! Чтение данных из скрипта.
 	virtual bool load_script(const xml::tag *p);
 

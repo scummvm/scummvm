@@ -207,19 +207,28 @@ void qdScreenTextSet::load_script(const xml::tag *p) {
 	}
 }
 
-bool qdScreenTextSet::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "<text_set ID=\"" <= ID_ < "\"";
+bool qdScreenTextSet::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+	}
 
-	if (pos_.x || pos_.y)
-		fh < " pos_2d=\"" <= pos_.x < " " <= pos_.y < "\"";
+	fh.writeString(Common::String::format("<text_set ID=\"%d\"", ID_));
 
-	if (size_.x || size_.y)
-		fh < " screen_size=\"" <= size_.x < " " <= size_.y < "\"";
+	if (pos_.x || pos_.y) {
+		fh.writeString(Common::String::format(" pos_2d=\"%d %d\"", pos_.x, pos_.y));
+	}
 
-	fh < "/>\r\n";
+	if (size_.x || size_.y) {
+		fh.writeString(Common::String::format(" screen_size=\"%d %d\"", pos_.x, pos_.y));
+	}
+
+	fh.writeString("/>\r\n");
 
 	return true;
+}
+
+bool qdScreenTextSet::save_script(XStream &fh, int indent) const {
+	warning("STUB: qdScreenTextSet(XStream)");
 }
 
 qdScreenText *qdScreenTextSet::add_text(const qdScreenText &txt) {

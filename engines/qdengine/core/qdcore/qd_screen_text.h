@@ -22,6 +22,7 @@
 #ifndef QDENGINE_CORE_QDCORE_QD_SCREEN_TEXT_H
 #define QDENGINE_CORE_QDCORE_QD_SCREEN_TEXT_H
 
+#include "common/stream.h"
 #include "qdengine/core/parser/xml_fwd.h"
 #include "qdengine/core/system/graphics/gr_screen_region.h"
 #include "qdengine/core/system/graphics/gr_font.h"
@@ -134,6 +135,7 @@ public:
 	}
 
 	bool load_script(const xml::tag *p);
+	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 	bool save_script(class XStream &fh, int indent = 0) const;
 
 private:
