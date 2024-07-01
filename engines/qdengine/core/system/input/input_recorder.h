@@ -182,4 +182,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_SYSTEM_INPUT_INPUT_RECORDER_H */
+#endif // QDENGINE_CORE_SYSTEM_INPUT_INPUT_RECORDER_H

@@ -72,4 +72,4 @@ typedef std::list<qdAnimationFrame *> qdAnimationFrameList;
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_ANIMATION_FRAME_H */
+#endif // QDENGINE_CORE_QDCORE_QD_ANIMATION_FRAME_H

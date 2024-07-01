@@ -555,4 +555,4 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QD_PRECOMP_H */
+#endif // QDENGINE_CORE_QD_PRECOMP_H

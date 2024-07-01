@@ -967,4 +967,4 @@ inline bool qdbg_is_object_state(const qdNamedObject *obj, const char *scene_nam
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_STATE_H */
+#endif // QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_STATE_H

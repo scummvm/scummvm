@@ -39,4 +39,4 @@ public:
 	bool hasFeature(MetaEngineFeature f) const override;
 };
 
-#endif
+#endif // QDENGINE_METAENGINE_H

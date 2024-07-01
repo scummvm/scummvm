@@ -83,4 +83,4 @@ typedef std::vector<qdAnimationInfo> qdAnimationInfoVector;
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_ANIMATION_INFO_H */
+#endif // QDENGINE_CORE_QDCORE_QD_ANIMATION_INFO_H

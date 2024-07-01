@@ -312,4 +312,4 @@ typedef std::vector<qdInventoryCellSet> qdInventoryCellSetVector;
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_INVENTORY_CELL_H */
+#endif // QDENGINE_CORE_QDCORE_QD_INVENTORY_CELL_H

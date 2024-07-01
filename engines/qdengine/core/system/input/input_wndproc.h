@@ -59,4 +59,4 @@ bool mouse_wndproc(const Common::Event &event, mouseDispatcher *dsp);
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_SYSTEM_INPUT_INPUT_WNDPROC_H */
+#endif // QDENGINE_CORE_SYSTEM_INPUT_INPUT_WNDPROC_H

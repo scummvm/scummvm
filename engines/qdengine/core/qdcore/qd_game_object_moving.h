@@ -504,4 +504,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_MOVING_H */
+#endif // QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_MOVING_H

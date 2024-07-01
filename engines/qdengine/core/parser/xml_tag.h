@@ -196,4 +196,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_PARSER_XML_TAG_H__ */
+#endif // QDENGINE_CORE_PARSER_XML_TAG_H

@@ -273,4 +273,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_SCREEN_TEXT_H */
+#endif // QDENGINE_CORE_QDCORE_QD_SCREEN_TEXT_H

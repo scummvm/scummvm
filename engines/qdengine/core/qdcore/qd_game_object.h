@@ -195,4 +195,4 @@ inline bool qdbg_is_object(const qdNamedObject *, const char *, const char *) {
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_H */
+#endif // QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_H

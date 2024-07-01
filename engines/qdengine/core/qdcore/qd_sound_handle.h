@@ -46,4 +46,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_SOUND_HANDLE_H */
+#endif // QDENGINE_CORE_QDCORE_QD_SOUND_HANDLE_H

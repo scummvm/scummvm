@@ -71,4 +71,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_SYSTEM_INPUT_KEYBOARD_INPUT_H */
+#endif // QDENGINE_CORE_SYSTEM_INPUT_KEYBOARD_INPUT_H

@@ -37,4 +37,4 @@ public:
 
 } // End of namespace QDEngine
 
-#endif
+#endif // QDENGINE_CONSOLE_H

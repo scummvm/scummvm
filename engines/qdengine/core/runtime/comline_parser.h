@@ -77,4 +77,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_RUNTIME_COMLINE_PARSER_H */
+#endif // QDENGINE_CORE_RUNTIME_COMLINE_PARSER_H

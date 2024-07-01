@@ -91,4 +91,4 @@ typedef std::vector<qdCoordsAnimationPoint> qdCoordsAnimationPointVector;
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_COORDS_ANIMATION_POINT_H */
+#endif // QDENGINE_CORE_QDCORE_QD_COORDS_ANIMATION_POINT_H

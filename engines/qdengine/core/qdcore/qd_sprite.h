@@ -220,4 +220,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_SPRITE_H */
+#endif // QDENGINE_CORE_QDCORE_QD_SPRITE_H
