@@ -317,4 +317,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_ANIMATION_H */
+#endif // QDENGINE_CORE_QDCORE_QD_ANIMATION_H

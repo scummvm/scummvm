@@ -90,4 +90,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_CONDITION_GROUP_H */
+#endif // QDENGINE_CORE_QDCORE_QD_CONDITION_GROUP_H

@@ -97,4 +97,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_SYSTEM_GRAPHICS_RLE_COMPRESS_H */
+#endif // QDENGINE_CORE_SYSTEM_GRAPHICS_RLE_COMPRESS_H

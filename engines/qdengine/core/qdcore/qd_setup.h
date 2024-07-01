@@ -230,4 +230,4 @@ bool enumerateIniSections(const char *fname, Common::INIFile::SectionList &secti
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_SETUP_H */
+#endif // QDENGINE_CORE_QDCORE_QD_SETUP_H

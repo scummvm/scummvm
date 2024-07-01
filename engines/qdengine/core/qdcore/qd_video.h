@@ -101,4 +101,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_VIDEO_H */
+#endif // QDENGINE_CORE_QDCORE_QD_VIDEO_H

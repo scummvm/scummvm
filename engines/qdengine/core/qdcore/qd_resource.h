@@ -128,4 +128,4 @@ typedef std::vector<qdResourceInfo> qdResourceInfoContainer;
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_RESOURCE_H */
+#endif // QDENGINE_CORE_QDCORE_QD_RESOURCE_H

@@ -92,4 +92,4 @@ void adjust_dir_end_slash(std::string &str);
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_SYSTEM_APP_CORE_H */
+#endif // QDENGINE_CORE_SYSTEM_APP_CORE_H

@@ -149,4 +149,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_SYSTEM_INPUT_MOUSE_INPUT_H */
+#endif // QDENGINE_CORE_SYSTEM_INPUT_MOUSE_INPUT_H

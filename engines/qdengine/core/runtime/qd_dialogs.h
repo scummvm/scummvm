@@ -34,4 +34,4 @@ void settings_dialog();
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_RUNTIME_QD_DIALOGS_H__ */
+#endif // QDENGINE_CORE_RUNTIME_QD_DIALOGS_H

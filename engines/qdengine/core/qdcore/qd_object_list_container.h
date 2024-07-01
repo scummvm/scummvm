@@ -152,4 +152,4 @@ bool qdObjectListContainer<T>::clear() {
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_OBJECT_LIST_CONTAINER_H */
+#endif // QDENGINE_CORE_QDCORE_QD_OBJECT_LIST_CONTAINER_H

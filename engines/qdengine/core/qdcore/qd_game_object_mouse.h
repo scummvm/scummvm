@@ -125,4 +125,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_MOUSE_H */
+#endif // QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_MOUSE_H

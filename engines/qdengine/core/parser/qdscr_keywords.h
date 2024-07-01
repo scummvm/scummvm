@@ -191,4 +191,4 @@ enum qdscrKeywordID {
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_PARSER_QDSCR_KEYWORDS_H */
+#endif // QDENGINE_CORE_PARSER_QDSCR_KEYWORDS_H

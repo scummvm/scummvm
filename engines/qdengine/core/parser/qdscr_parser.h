@@ -1507,4 +1507,4 @@ const char *qdscr_XML_string(const char *p);
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_PARSER_QDSCR_PARSER_H */
+#endif // QDENGINE_CORE_PARSER_QDSCR_PARSER_H

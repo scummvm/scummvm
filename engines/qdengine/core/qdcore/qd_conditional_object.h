@@ -193,4 +193,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_CONDITIONAL_OBJECT_H */
+#endif // QDENGINE_CORE_QDCORE_CONDITIONAL_OBJECT_H

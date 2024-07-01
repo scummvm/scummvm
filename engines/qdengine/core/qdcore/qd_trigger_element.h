@@ -421,4 +421,4 @@ typedef std::vector<qdTriggerElementPtr> qdTriggerElementList;
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_TRIGGER_ELEMENT_H */
+#endif // QDENGINE_CORE_QDCORE_QD_TRIGGER_ELEMENT_H

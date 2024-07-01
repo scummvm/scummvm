@@ -45,4 +45,4 @@ bool qd_rnd_init(int seed = 83);
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_RND_H */
+#endif // QDENGINE_CORE_QDCORE_QD_RND_H

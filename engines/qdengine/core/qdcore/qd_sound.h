@@ -130,4 +130,4 @@ typedef std::list<qdSound *> qdSoundList;
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_SOUND_H */
+#endif // QDENGINE_CORE_QDCORE_QD_SOUND_H

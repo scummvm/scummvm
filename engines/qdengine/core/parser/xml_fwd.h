@@ -33,4 +33,4 @@ class parser;
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_PARSER_XML_FWD_H */
+#endif // QDENGINE_CORE_PARSER_XML_FWD_H

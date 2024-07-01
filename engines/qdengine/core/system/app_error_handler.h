@@ -76,4 +76,4 @@ extern appErrorHandler app_errH;
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_SYSTEM_APP_ERROR_HANDLER_H */
+#endif // QDENGINE_CORE_SYSTEM_APP_ERROR_HANDLER_H

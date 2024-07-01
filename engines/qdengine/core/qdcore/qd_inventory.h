@@ -199,4 +199,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_INVENTORY_H */
+#endif // QDENGINE_CORE_QDCORE_QD_INVENTORY_H

@@ -58,4 +58,4 @@ class qdEmptyMiniGameInterface : public qdMiniGameInterface {
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_MINIGAMES_QD_EMPTY_INTERFACE_H */
+#endif // QDENGINE_MINIGAMES_QD_EMPTY_INTERFACE_H

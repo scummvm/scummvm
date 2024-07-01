@@ -76,4 +76,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /*QDENGINE_CORE_SYSTEM_GRAPHICS_GR_TILE_SPRITE_H */
+#endif // QDENGINE_CORE_SYSTEM_GRAPHICS_GR_TILE_SPRITE_H

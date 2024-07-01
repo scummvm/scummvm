@@ -119,4 +119,4 @@ extern QDEngineEngine *g_engine;
 
 byte *transCyrillic(const Common::String &str);
 
-#endif
+#endif // QDENGINE_H

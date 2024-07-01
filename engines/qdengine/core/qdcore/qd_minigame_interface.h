@@ -402,4 +402,4 @@ public:
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_MINIGAME_INTERFACE_H__ */
+#endif // QDENGINE_CORE_QDCORE_QD_MINIGAME_INTERFACE_H

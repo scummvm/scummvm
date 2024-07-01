@@ -143,4 +143,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_RUNTIME_QD_DIALOG_CONTROL_H */
+#endif // QDENGINE_CORE_RUNTIME_QD_DIALOG_CONTROL_H

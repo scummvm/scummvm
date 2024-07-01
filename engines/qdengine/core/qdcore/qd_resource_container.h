@@ -190,4 +190,4 @@ bool qdResourceContainer<T>::get_file_list(qdFileNameList &list) const {
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_RESOURCE_CONTAINER_H */
+#endif // QDENGINE_CORE_QDCORE_QD_RESOURCE_CONTAINER_H

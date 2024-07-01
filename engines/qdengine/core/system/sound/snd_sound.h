@@ -85,4 +85,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_SYSTEM_SOUND_SND_SOUND_H */
+#endif // QDENGINE_CORE_SYSTEM_SOUND_SND_SOUND_H

@@ -350,4 +350,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_CORE_QDCORE_QD_GAME_SCENE_H */
+#endif // QDENGINE_CORE_QDCORE_QD_GAME_SCENE_H
