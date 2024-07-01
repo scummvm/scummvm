@@ -36,6 +36,9 @@
 #include "graphics/pixelformat.h"
 #include "graphics/screen.h"
 
+#include "qdengine/core/parser/qdscr_parser.h"
+
+
 struct ADGameDescription;
 
 namespace QDEngine {
@@ -63,7 +66,7 @@ public:
 	Graphics::Screen *_screen = nullptr;
 	Graphics::PixelFormat _pixelformat;
 	Common::SaveFileManager *_savefileMan;
-	const int *_tagMap;
+	int _tagMap[QDSCR_MAX_KEYWORD_ID];
 public:
 	QDEngineEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~QDEngineEngine() override;
