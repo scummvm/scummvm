@@ -99,14 +99,45 @@ qdGameDispatcher *qd_gameD = NULL;
 
 using namespace qdrt;
 
-static void generateTagMap(int date) {
+static void generateTagMap(int date, bool verbose = true) {
 	int n = 0;
+
+	memset(g_engine->_tagMap, 0, QDSCR_MAX_KEYWORD_ID);
 
 	for (int i = 0; i < QDSCR_MAX_KEYWORD_ID; i++)
 		if (idTagVersionAll[i * 2] <= date)
 			g_engine->_tagMap[n++] = idTagVersionAll[i * 2 + 1];
 
-	warning("Generated %d ids for version %d", n, date);
+	if (verbose)
+		warning("Generated %d ids for version %d", n, date);
+}
+
+void searchTagMap(int id, int targetVal) {
+	Common::HashMap<int, bool> dates;
+
+	for (int i = 0; i < QDSCR_MAX_KEYWORD_ID; i++)
+		dates[idTagVersionAll[i * 2]] = true;
+
+	Common::Array<int> sdates;
+	for (auto it : dates)
+		sdates.push_back(it._key);
+
+	Common::sort(sdates.begin(), sdates.end());
+
+	for (auto d : sdates) {
+		generateTagMap(d, false);
+
+		for (int i = 0; i < QDSCR_MAX_KEYWORD_ID; i++)
+			if (g_engine->_tagMap[i] == id)
+				warning("ver: %d  val: %d", d, i + 1);
+
+		if (g_engine->_tagMap[targetVal - 1] == id) {
+			warning("searchTagMap(): Matched version %d", d);
+			return;
+		}
+	}
+
+	warning("searchTagMap(): No match");
 }
 
 int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow) {
@@ -227,6 +258,8 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 		sp.set_mask(IDB_SPLASH_MASK);
 		sp.show();
 	}
+
+	// searchTagMap(QDSCR_GAME_TITLE, 203);
 
 	Common::String gameID = g_engine->getGameId();
 	if (gameID == "pilots3d") {
