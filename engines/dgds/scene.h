@@ -184,7 +184,7 @@ private:
 
 class SceneTrigger {
 public:
-	SceneTrigger(uint16 num) : _num(num), _enabled(false) {}
+	SceneTrigger(uint16 num) : _num(num), _enabled(false), _unk(0) {}
 	Common::String dump(const Common::String &indent) const;
 
 	Common::Array<SceneConditions> conditionList;
@@ -203,7 +203,7 @@ private:
    the game */
 class PerSceneGlobal {
 public:
-	PerSceneGlobal(uint16 num, uint16 scene) : _num(num), _sceneNo(scene) {}
+	PerSceneGlobal(uint16 num, uint16 scene) : _num(num), _sceneNo(scene), _val(0) {}
 
 	Common::String dump(const Common::String &indent) const;
 	bool matches(uint16 num, uint16 scene) const { return num == _num && (_sceneNo == 0 || _sceneNo == scene); }

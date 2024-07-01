@@ -38,6 +38,7 @@ public:
 
 class LzwDecompressor {
 public:
+	LzwDecompressor();
 	uint32 decompress(byte *dest, uint32 sz, Common::SeekableReadStream &input);
 
 protected:

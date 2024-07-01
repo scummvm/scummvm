@@ -77,7 +77,6 @@ bool DgdsFont::hasChar(byte chr) const {
 }
 
 static inline bool isSet(const byte *data, uint bit) {
-	assert(bit >= 0);
 	return data[bit / 8] & (1 << (7 - (bit % 8)));
 }
 

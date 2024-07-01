@@ -59,6 +59,7 @@ public:
 
 MidiParser_DGDS::MidiParser_DGDS() : _init(nullptr), _last(nullptr), _numParts(0) {
 	memset(_trackSz, 0, sizeof(_trackSz));
+	memset(_trackPtr, 0, sizeof(_trackPtr));
 }
 
 MidiParser_DGDS::~MidiParser_DGDS() {

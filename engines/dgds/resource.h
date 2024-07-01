@@ -65,7 +65,7 @@ private:
 
 class DgdsChunkReader {
 public:
-	DgdsChunkReader(Common::SeekableReadStream *stream) : _sourceStream(stream), _contentStream(nullptr), _size(0), _container(false), _startPos(0) {}
+	DgdsChunkReader(Common::SeekableReadStream *stream) : _sourceStream(stream), _contentStream(nullptr), _size(0), _container(false), _startPos(0), _id(0) {}
 	~DgdsChunkReader();
 
 	bool isSection(const Common::String &section) const;

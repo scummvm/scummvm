@@ -43,7 +43,7 @@ void GetPutRegion::reset() {
 }
 
 Common::Error TTMEnviro::syncState(Common::Serializer &s) {
-	DgdsEngine *engine = dynamic_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	for (auto &shape : _scriptShapes) {
 		bool hasShape = shape.get() != nullptr;
 		s.syncAsByte(hasShape);
@@ -918,7 +918,7 @@ bool TTMInterpreter::run(TTMEnviro &env, TTMSeq &seq) {
 		code = scr->readUint16LE();
 		uint16 op = code & 0xFFF0;
 		byte count = code & 0x000F;
-		int16 ivals[8];
+		int16 ivals[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 		Common::String sval;
 
 		if (count > 8 && count != 0x0f)
@@ -1024,7 +1024,7 @@ void TTMInterpreter::findAndAddSequences(TTMEnviro &env, Common::Array<TTMSeq> &
 void TTMSeq::reset() {
 	_currentFontId = 0;
 	_currentPalId = 0;
-	_currentPalId = 0;
+	_currentSongId = 0;
 	_currentBmpId = 0;
 	_currentGetPutId = 0;
 	_currentFrame = _startFrame;

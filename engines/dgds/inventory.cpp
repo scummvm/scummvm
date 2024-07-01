@@ -32,8 +32,9 @@ namespace Dgds {
 
 Inventory::Inventory() : _isOpen(false), _prevPageBtn(nullptr), _nextPageBtn(nullptr),
 	_invClock(nullptr), _itemZoomBox(nullptr), _exitButton(nullptr), _clockSkipMinBtn(nullptr),
-	_itemArea(nullptr), _clockSkipHrBtn(nullptr), _dropBtn(nullptr), _highlightItemNo(-1),
-	_itemOffset(0), _openedFromSceneNum(0), _showZoomBox(false), _fullWidth(-1)
+	_itemArea(nullptr), _clockSkipHrBtn(nullptr), _dropBtn(nullptr), _itemBox(nullptr),
+	_highlightItemNo(-1), _itemOffset(0), _openedFromSceneNum(0), _showZoomBox(false),
+	_fullWidth(-1)
 {
 }
 

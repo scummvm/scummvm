@@ -58,6 +58,10 @@ uint32 RleDecompressor::decompress(byte *dest, uint32 sz, Common::SeekableReadSt
 	return sz - left;
 }
 
+LzwDecompressor::LzwDecompressor() {
+	reset();
+}
+
 void LzwDecompressor::reset() {
 	memset(&_codeTable, 0, sizeof(_codeTable));
 

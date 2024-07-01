@@ -478,7 +478,7 @@ void SliderGadget::draw(Graphics::ManagedSurface *dst) const {
 }
 
 SliderGadget::SliderGadget() : _lock(false), _steps(0), _gadget2_i1(0),
-	_gadget2_i2(0), _gadget2_i3(0), _gadget2_i4(0) {
+	_gadget2_i2(0), _gadget2_i3(0), _gadget2_i4(0), _handleX(0) {
 }
 
 int16 SliderGadget::getHandleWidth() const {
@@ -759,8 +759,7 @@ void RequestData::drawBackgroundNoSliders(Graphics::ManagedSurface *dst, const C
 
 /*static*/
 void RequestData::fillBackground(Graphics::ManagedSurface *dst, uint16 x, uint16 y, uint16 width, uint16 height, int16 startoffset) {
-	bool detailHigh = true;
-	if (detailHigh) {
+	if (static_cast<DgdsEngine *>(g_engine)->getDetailLevel() == kDgdsDetailHigh) {
 		Graphics::Surface area = dst->getSubArea(Common::Rect(x, y, x + width, y + height));
 		while (startoffset < 0)
 			startoffset += ARRAYSIZE(MenuBackgroundColors);

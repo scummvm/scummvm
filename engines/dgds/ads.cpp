@@ -322,6 +322,9 @@ bool ADSInterpreter::logicOpResult(uint16 code, const TTMEnviro *env, const TTMS
 	int16 envNum = env ? env->_enviro : 0;
 	int16 seqNum = seq ? seq->_seqNum : 0;
 	const char *optype = (code < 0x1300 ? "while" : "if");
+
+	assert (seq || code == 0x1380 || code == 0x1390);
+
 	switch (code) {
 	case 0x1010: // WHILE runtype 5
 	case 0x1310: // IF runtype 5, 2 params
@@ -680,7 +683,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		int16 segment = scr->readSint16LE();
 		int16 idx = getArrIndexOfSegNum(segment);
 		debug(10, "ADS 0x%04x: add 4 remove 8 to state seg %d idx %d", code, segment, idx);
-		if (segment >= 0) {
+		if (segment >= 0 && idx >= 0) {
 			int state = (_adsData->_state[idx] & 8) | 4;
 			_adsData->_state[idx] = state;
 		}
@@ -691,7 +694,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		int16 segment = scr->readSint16LE();
 		int16 idx = getArrIndexOfSegNum(segment);
 		debug(10, "ADS 0x%04x: add 3 remove 8 to state seg %d idx %d", code, segment, idx);
-		if (segment >= 0) {
+		if (segment >= 0 && idx >= 0) {
 			int state = (_adsData->_state[idx] & 8) | 3;
 			_adsData->_state[idx] = state;
 		}

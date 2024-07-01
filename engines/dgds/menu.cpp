@@ -131,14 +131,17 @@ void Menu::configureGadget(MenuId menu, Gadget* gadget) {
 		SliderGadget *slider = dynamic_cast<SliderGadget *>(gadget);
 		switch (gadget->_gadgetNo) {
 		case kMenuSliderControlsDifficulty:
+			assert(slider);
 			slider->setSteps(3, false);
 			slider->setValue(engine->getDifficulty()); // TODO: set a difficulty value
 			break;
 		case kMenuSliderControlsTextSpeed:
+			assert(slider);
 			slider->setSteps(10, false);
 			slider->setValue(9 - engine->getTextSpeed());
 			break;
 		case kMenuSliderControlsDetailLevel:
+			assert(slider);
 			slider->setSteps(2, true);
 			slider->setValue(engine->getDetailLevel());
 			break;

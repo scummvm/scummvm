@@ -823,7 +823,7 @@ bool Scene::checkConditions(const Common::Array<SceneConditions> &conds) const {
 bool SDSScene::_dlgWithFlagLo8IsClosing = false;;
 DialogFlags SDSScene::_sceneDialogFlags = kDlgFlagNone;
 
-SDSScene::SDSScene() : _num(-1), _dragItem(nullptr), _shouldClearDlg(false), _ignoreMouseUp(false) {
+SDSScene::SDSScene() : _num(-1), _dragItem(nullptr), _shouldClearDlg(false), _ignoreMouseUp(false), _field6_0x14(0) {
 }
 
 bool SDSScene::load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor) {
@@ -1465,6 +1465,8 @@ void SDSScene::addInvButtonToHotAreaList() {
 	area._rect.height = icons->height(2);
 	area._rect.x = SCREEN_WIDTH - area._rect.width;
 	area._rect.y = SCREEN_HEIGHT - area._rect.height;
+	area._unk1 = 0;
+	area._unk2 = 0;
 
 	_hotAreaList.push_front(area);
 }
