@@ -344,11 +344,13 @@ bool qdInterfaceDispatcher::save_script(Common::SeekableWriteStream &fh, int ind
 		it->save_script(fh, indent + 1);
 	}
 
-	for (int i = 0; i < indent; i ++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 
 	fh.writeString("</interface>\r\n");
+
+	return true;
 }
 
 bool qdInterfaceDispatcher::save_script(XStream &fh, int indent) const {

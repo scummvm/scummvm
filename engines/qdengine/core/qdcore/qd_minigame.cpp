@@ -165,7 +165,7 @@ bool qdMiniGame::load_script(const xml::tag *p) {
 }
 
 bool qdMiniGame::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 
@@ -198,7 +198,7 @@ bool qdMiniGame::save_script(Common::SeekableWriteStream &fh, int indent) const 
 			it.save_script(fh, indent + 1);
 		}
 
-		for (int i = 0; i < indent; i ++) {
+		for (int i = 0; i < indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString("</minigame>\r\n");
