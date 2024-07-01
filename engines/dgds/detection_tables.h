@@ -217,6 +217,36 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Heart of China (PC) 720kb Floppy version
+	{
+		"china",
+		0,
+		{
+			{"volume.rmf", 0, "4e61bfb1d323bf07ae9de7c37fcda0d0", 8208},
+			{"volume.001", 0, "9de863e3cb1467fde7d91c02942432de", 342873},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Heart of China (PC) 1.2MB Floppy version
+	{
+		"china",
+		0,
+		{
+			{"volume.rmf", 0, "a1ffe0a1ba0efbb487f4b258ff860623", 8106},
+			{"volume.001", 0, "cd535e57d3ece406a054c254a479906e", 867861},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Heart of China (PC)
 	{
 		"china",
