@@ -44,7 +44,7 @@ bool SplashScreen::create(int bitmapResID) {
 
 	if (r.loadFromEXE(p->getFileName().c_str())) {
 		Common::SeekableReadStream *stream = r.getResource(Common::kWinBitmap, resid);
-		if (decoder.loadStream(*stream)) {
+		if (stream && decoder.loadStream(*stream)) {
 			_splash = new Graphics::Surface();
 			_splash->copyFrom(*decoder.getSurface());
 			_paletteCount = decoder.getPaletteColorCount();
@@ -81,12 +81,16 @@ void SplashScreen::show() {
 	g_system->fillScreen(0);
 	g_system->getPaletteManager()->setPalette(_palette, 0, _paletteCount);
 
+	start_time_ = g_system->getMillis();
+
+	if (!_splash)
+		return;
+
 	int x = (640 - _splash->w) / 2;
 	int y = (480 - _splash->h) / 2;
 	g_system->copyRectToScreen(_splash->getPixels(), _splash->pitch, x, y, _splash->w, _splash->h);
 	g_system->updateScreen();
 
-	start_time_ = g_system->getMillis();
 }
 
 void SplashScreen::wait(int time) {
