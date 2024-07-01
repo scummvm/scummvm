@@ -417,23 +417,33 @@ void qdAnimation::load_script(const xml::tag *p) {
 #endif
 }
 
+bool qdAnimation::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+	}
+
+	fh.writeString("<animation name=");
+
+	if (name()) {
+		fh.writeString(Common::String::format("\"%s\"", qdscr_XML_string(name())));
+	} else {
+		fh.writeString("\" \"");
+	}
+
+	if (flags()) {
+		fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
+	}
+
+	if (qda_file()) {
+		fh.writeString(Common::String::format(" animation_file=\"%s\"", qdscr_XML_string(qda_file())));
+	}
+
+	fh.writeString("/>\r\n");
+	return true;
+}
+
 bool qdAnimation::save_script(XStream &fh, int indent) const {
-#ifndef __QD_SYSLIB__
-	for (int i = 0; i < indent; i ++) fh < "\t";
-
-	fh < "<animation name=";
-
-	if (name()) fh < "\"" < qdscr_XML_string(name()) < "\"";
-	else fh < "\" \"";
-
-	if (flags())
-		fh < " flags=\"" <= flags() < "\"";
-
-	if (qda_file())
-		fh < " animation_file=\"" < qdscr_XML_string(qda_file()) < "\"";
-
-	fh < "/>\r\n";
-#endif
+	warning("STUB: qdAnimation::save_script(XStream)");
 	return true;
 }
 

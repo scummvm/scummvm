@@ -351,7 +351,7 @@ public:
 
 	void load_script(const char *fname);
 	void load_script(const xml::tag *p);
-	bool save_script(XStream &fh) const;
+	bool save_script(Common::SeekableWriteStream &fh) const;
 	bool save_script(const char *fname) const;
 
 	//! Загрузка данных из сэйва.

@@ -68,6 +68,32 @@ bool qdMinigameConfigParameter::load_script(const xml::tag *p) {
 	return true;
 }
 
+bool qdMinigameConfigParameter::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i < indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("<minigame_config_prm");
+
+	fh.writeString(Common::String::format(" name=\"%s\"", qdscr_XML_string(name())));
+//	fh < " type=\"" <= int(data_type_) < "\"";
+
+//	if(!comment_.empty())
+//		fh < " comment=\"" < qdscr_XML_string(comment()) < "\"";
+
+	if (data_count_ > 1) {
+		fh.writeString(Common::String::format(" size=\"%d\"", data_count_));
+	}
+
+	fh.writeString(">");
+
+	fh.writeString(qdscr_XML_string(data_string()));
+
+	fh.writeString("</minigame_config_prm>\r\n");
+
+	return true;
+
+}
+
 bool qdMinigameConfigParameter::save_script(XStream &fh, int indent) const {
 	for (int i = 0; i < indent; i ++) fh < "\t";
 	fh < "<minigame_config_prm";

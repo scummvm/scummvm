@@ -149,6 +149,7 @@ public:
 
 	bool load_script(const xml::tag *p);
 	bool save_script(class XStream &fh, int indent = 0) const;
+	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 	bool load_resources();
 	bool free_resources();

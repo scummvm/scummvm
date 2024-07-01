@@ -78,20 +78,27 @@ void qdGameDispatcherBase::load_script_body(const xml::tag *p) {
 	}
 }
 
-bool qdGameDispatcherBase::save_script_body(XStream &fh, int indent) const {
-	for (scale_info_container_t::const_iterator it = scale_infos.begin(); it != scale_infos.end(); ++it)
-		it -> save_script(fh, indent + 1);
+bool qdGameDispatcherBase::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
+	for (auto &it : scale_infos)
+		it.save_script(fh, indent + 1);
 
-	for (qdSoundList::const_iterator it = sound_list().begin(); it != sound_list().end(); ++it)
-		(*it) -> save_script(fh, indent + 1);
+	for (auto &it : sound_list()) {
+		it->save_script(fh, indent + 1);
+	}
 
-	for (qdAnimationList::const_iterator it = animation_list().begin(); it != animation_list().end(); ++it)
-		(*it) -> save_script(fh, indent + 1);
+	for (auto &it : animation_list()) {
+		it->save_script(fh, indent + 1);
+	}
 
-	for (qdAnimationSetList::const_iterator it = animation_set_list().begin(); it != animation_set_list().end(); ++it)
-		(*it) -> save_script(fh, indent + 1);
+	for (auto &it : animation_set_list()) {
+		it->save_script(fh, indent + 1);
+	}
 
 	return true;
+}
+
+bool qdGameDispatcherBase::save_script_body(XStream &fh, int indent) const {
+	warning("STUB: qdGameDispatcherBase::save_script_body(XStream)");
 }
 
 bool qdGameDispatcherBase::get_object_scale(const char *p, float &sc) {

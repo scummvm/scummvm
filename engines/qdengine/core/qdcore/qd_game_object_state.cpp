@@ -405,6 +405,10 @@ bool qdGameObjectState::load_script_body(const xml::tag *p) {
 	drop_flag(QD_OBJ_STATE_FLAG_GLOBAL_OWNER);
 	return true;
 }
+bool qdGameObjectState::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
+	warning("qdGameObjectState::save_script_body(Common::SeekableWriteStream)");
+	return true;
+}
 
 bool qdGameObjectState::save_script_body(XStream &fh, int indent) const {
 	if (name())
@@ -808,6 +812,11 @@ bool qdGameObjectStateStatic::load_script(const xml::tag *p) {
 		}
 	}
 
+	return true;
+}
+
+bool qdGameObjectStateStatic::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	warning("qdGameObjectStateStatic::save_script(Common::SeekableWriteStream)");
 	return true;
 }
 
@@ -1233,6 +1242,10 @@ bool qdGameObjectStateWalk::load_script(const xml::tag *p) {
 
 	return true;
 }
+bool qdGameObjectStateWalk::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	warning("STUB: qdGameObjectStateWalk");
+	return true;
+}
 
 bool qdGameObjectStateWalk::save_script(XStream &fh, int indent) const {
 	for (int i = 0; i < indent; i ++) fh < "\t";
@@ -1444,6 +1457,10 @@ bool qdGameObjectStateMask::load_script(const xml::tag *p) {
 	return true;
 }
 
+bool qdGameObjectStateMask::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	warning("qdGameObjectStateMask::save_script(Common::SeekableWriteStream)");
+	return true;
+}
 bool qdGameObjectStateMask::save_script(XStream &fh, int indent) const {
 	for (int i = 0; i < indent; i ++) fh < "\t";
 	fh < "<object_state_mask";

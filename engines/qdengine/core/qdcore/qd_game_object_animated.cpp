@@ -460,43 +460,70 @@ bool qdGameObjectAnimated::remove_state(qdGameObjectState *p) {
 	return false;
 }
 
-bool qdGameObjectAnimated::save_script_body(XStream &fh, int indent) const {
+bool qdGameObjectAnimated::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
 	qdGameObject::save_script_body(fh, indent);
 
-	qdGameObjectStateVector::const_iterator is = states.begin();
-	FOR_EACH(states, is) {
-		if (!(*is) -> check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_GLOBAL_OWNER) || owner() -> named_object_type() == QD_NAMED_OBJECT_DISPATCHER)
-			(*is) -> save_script(fh, indent + 1);
-		else {
-			debugC(3, kDebugLog, "state not saved: ");
-			if (owner() && owner() -> name())
+	for (auto &is : states) {
+		if (!is->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_GLOBAL_OWNER) || owner()->named_object_type() == QD_NAMED_OBJECT_DISPATCHER) {
+			is->save_script(fh, indent + 1);
+		} else {
+			debugC(3, kDebugLog, "State not saved: ");
+			if (owner() && owner()->name()) {
 				debugC(3, kDebugLog, "%s::", transCyrillic(owner()->name()));
+			}
 
-			debugC(3, kDebugLog, "%s::%s", transCyrillic(name()), transCyrillic((*is)->name()));
+			debugC(3, kDebugLog, "%s::%s", transCyrillic(name()), transCyrillic(is->name()));
 		}
 	}
 
 	if (inventory_type_) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<inventory_cell_type>" <= inventory_type_ < "</inventory_cell_type>\r\n";
+		for (int i = 0; i <= indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<inventory_cell_type>%d</inventory_cell_type>\r\n", inventory_type_));
 	}
 
 	if (!inventory_name_.empty()) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<inventory>" < inventory_name_.c_str() < "</inventory>\r\n";
+		for (int i = 0; i <= indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<inventory>%s</inventory>\r\n", inventory_name_.c_str()));
 	}
 
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<bound>" <= bound_.x < " " <= bound_.y < " " <= bound_.z < "</bound>\r\n";
 
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<default_pos>" <= default_r_.x < " " <= default_r_.y < " " <= default_r_.z < "</default_pos>\r\n";
+	fh.writeString(Common::String::format("<bound>%d %d %d</bound>\r\n", bound_.x, bound_.y, bound_.z));
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
 
+	fh.writeString(Common::String::format("<default_pos>%d %d %d</default_pos>\r\n", default_r_.x, default_r_.y, default_r_.z));
+
+	return true;
+}
+
+bool qdGameObjectAnimated::save_script_body(XStream &fh, int indent) const {
+	warning("STUB: qdGameObjectAnimated::save_script_body(XStream)");
 	return true;
 }
 
 bool qdGameObjectAnimated::load_script(const xml::tag *p) {
 	return load_script_body(p);
+}
+
+bool qdGameObjectAnimated::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i < indent; i ++) {
+		fh.writeString("\t");
+	}
+
+	fh.writeString(Common::String::format("<animated_object name=\"%s\"", qdscr_XML_string(name())));
+	save_script_body(fh, indent);
+
+	for (int i = 0; i < indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("</animated_object>\r\n");
+
+	return true;
 }
 
 bool qdGameObjectAnimated::save_script(XStream &fh, int indent) const {

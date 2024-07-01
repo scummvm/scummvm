@@ -93,22 +93,34 @@ bool qdGameObject::load_script_body(const xml::tag *p) {
 	return true;
 }
 
-bool qdGameObject::save_script_body(XStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<pos_3d>" <= r_.x < " " <= r_.y < " " <= r_.z < "</pos_3d>\r\n";
+bool qdGameObject::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+
+	fh.writeString(Common::String::format("<pos_3d>%d %d %d</pos_3d>", r_.x, r_.y, r_.z));
 
 	if (parallax_offset_.x || parallax_offset_.y) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<parallax_offset>" <= parallax_offset_.x < " " <= parallax_offset_.y < "</parallax_offset>\r\n";
+		for (int i = 0; i <= indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<parallax_offset>%d %d</parallax_offset>", parallax_offset_.x, parallax_offset_.y));
 	}
 
 	if (flags()) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<flag>" <= flags() < "</flag>\r\n";
+		for (int i = 0; i <= indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<flag>%d</flag>", flags()));
 	}
-
 	return true;
 }
+
+bool qdGameObject::save_script_body(XStream &fh, int indent) const {
+	warning("STUB: qdGameObject::save_script_body");
+	return true;
+}
+
 #ifdef _QUEST_EDITOR
 const Vect2i &qdGameObject::screen_pos() {
 	update_screen_pos();

@@ -125,6 +125,7 @@ public:
 
 	virtual void load_script_body(const xml::tag *p);
 	virtual bool save_script_body(XStream &fh, int indent = 0) const;
+	virtual bool save_script_body(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 	virtual int load_resources();
 	virtual void free_resources();

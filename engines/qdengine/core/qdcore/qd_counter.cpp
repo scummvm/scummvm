@@ -98,6 +98,11 @@ bool qdCounterElement::load_script(const xml::tag *p) {
 	return true;
 }
 
+bool qdCounterElement::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	warning("qdCounterElement::save_script(Common::SeekableWriteStream)");
+	return true;
+}
+
 bool qdCounterElement::save_script(XStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) fh < "\t";
 	fh < "<counter_element";
@@ -252,25 +257,27 @@ bool qdCounter::load_script(const xml::tag *p) {
 	return true;
 }
 
+bool qdCounter::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+
+	fh.writeString("<counter");
+
+	fh.writeString(Common::String::format(" name=\"%s\"", qdscr_XML_string(name())));
+
+	if (value_limit_) {
+		fh.writeString(Common::String::format(" limit=\"%d\"", value_limit_));
+	}
+
+	if (flags()) {
+		fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
+	}
+	fh.writeString(">\r\n");
+	}
+}
+
 bool qdCounter::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i++) fh < "\t";
-	fh < "<counter";
-
-	fh < " name=\"" < qdscr_XML_string(name()) < "\"";
-
-	if (value_limit_)
-		fh < " limit=\"" <= value_limit_ < "\"";
-
-	if (flags())
-		fh < " flags=\"" <= flags() < "\"";
-
-	fh < ">\r\n";
-
-	for (element_container_t::const_iterator it = elements_.begin(); it != elements_.end(); ++it)
-		it -> save_script(fh, indent + 1);
-
-	for (int i = 0; i < indent; i++) fh < "\t";
-	fh < "</counter>\r\n";
+	warning("STUB: qdCounter::save_script(XStream)");
 	return true;
 }
 

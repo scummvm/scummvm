@@ -172,6 +172,45 @@ bool qdInterfaceScreen::quant(float dt) {
 	return true;
 }
 
+bool qdInterfaceScreen::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+
+	fh.writeString("<interface_screen");
+
+	if (name()) {
+		fh.writeString(Common::String::format(" name=\"%s\"", qdscr_XML_string(name())));
+	}
+
+	if (autohide_time_ > FLT_EPS) {
+		fh.writeString(Common::String::format(" hide_time=\"%f\"", autohide_time_));
+	}
+
+	if (autohide_offset_.x || autohide_offset_.y) {
+		fh.writeString(Common::String::format(" hide_offset=\"%f %f\"", autohide_offset_.x, autohide_offset_.y));
+	}
+
+	fh.writeString(">\r\n");
+
+	if (has_music_track()) {
+		music_track_.save_script(fh, indent + 1);
+	}
+
+	for (auto &it : element_list()) {
+		it->save_script(fh, indent + 1);
+	}
+
+
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+
+	fh.writeString("</interface_screen>\r\n");
+
+	return true;
+}
+
 bool qdInterfaceScreen::save_script(XStream &fh, int indent) const {
 	for (int i = 0; i < indent; i ++) fh < "\t";
 	fh < "<interface_screen";

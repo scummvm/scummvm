@@ -93,25 +93,33 @@ void qdSound::load_script(const xml::tag *p) {
 #endif
 }
 
+bool qdSound::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i < indent; i ++) {
+		fh.writeString("\t");
+	}
+
+	fh.writeString("<sound name=");
+
+	if (name()) {
+		fh.writeString(Common::String::format("\"%s\"", qdscr_XML_string(name())));
+	} else {
+		fh.writeString("\"\"");
+	}
+
+	if (volume_ != 255) {
+		fh.writeString(Common::String::format(" volume=\"%d\"", volume_));
+	}
+
+	if (!file_name_.empty()) {
+		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(file_name_.c_str())));
+	}
+
+	fh.writeString("/>\r\n");
+	return true;
+}
+
 bool qdSound::save_script(XStream &fh, int indent) const {
-#ifndef __QD_SYSLIB__
-	for (int i = 0; i < indent; i ++) fh < "\t";
-
-	fh < "<sound name=";
-
-	if (name())
-		fh < "\"" < qdscr_XML_string(name()) < "\"";
-	else
-		fh < "\" \"";
-
-	if (volume_ != 255)
-		fh < " volume=\"" <= volume_ < "\"";
-
-	if (!file_name_.empty())
-		fh < " file=\"" < qdscr_XML_string(file_name_.c_str()) < "\"";
-
-	fh < "/>\r\n";
-#endif
+	warning("STUB: qdSound::save_script");
 	return true;
 }
 

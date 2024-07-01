@@ -97,6 +97,55 @@ bool qdVideo::load_script(const xml::tag *p) {
 	return true;
 }
 
+bool qdVideo::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	 for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+	}
+
+	fh.writeString("<video name=");
+
+	if (name()) {
+		fh.writeString(Common::String::format("\"%s\"", qdscr_XML_string(name())));
+	} else {
+		fh.writeString("\" \"");
+	}
+
+	if (CD_info()) {
+		fh.writeString(Common::String::format(" cd=\"%s\"", CD_info())) ;
+	}
+
+	if (flags()) {
+		fh.writeString(Common::String::format(" flags=\"%s\"", flags())) ;
+	}
+
+	if (!check_flag(VID_CENTER_FLAG | VID_FULLSCREEN_FLAG) && (position_.x || position_.y)) {
+		fh.writeString(Common::String::format(" video_position=\"%d %d\"", position_.x, position_.y)) ;
+	}
+
+	fh.writeString(">\r\n");
+
+	if (background_.has_file()) {
+		for (int i = 0; i < indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<video_background>%s</video_background>", qdscr_XML_string(background_file_name())));
+	}
+
+	for (int i = 0; i < indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<file>%s</file>", qdscr_XML_string(file_name_.c_str())));
+
+	save_conditions_script(fh, indent);
+
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("</video>\r\n");
+	return true;
+
+}
+
 bool qdVideo::save_script(XStream &fh, int indent) const {
 	for (int i = 0; i < indent; i ++) fh < "\t";
 

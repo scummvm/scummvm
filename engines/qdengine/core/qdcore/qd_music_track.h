@@ -83,6 +83,7 @@ public:
 	bool load_script(const xml::tag *p);
 	//! Запись данных в скрипт.
 	bool save_script(class XStream &fh, int indent = 0) const;
+	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 	qdConditionalObject::trigger_start_mode trigger_start();
 

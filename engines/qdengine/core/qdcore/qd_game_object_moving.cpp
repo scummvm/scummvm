@@ -304,6 +304,11 @@ bool qdGameObjectMoving::load_script(const xml::tag *p) {
 	return load_script_body(p);
 }
 
+bool qdGameObjectMoving::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	warning("STUB: qdGameObjectMoving::save_script(Common::SeekableWriteStream)");
+	return true;
+}
+
 bool qdGameObjectMoving::save_script(XStream &fh, int indent) const {
 	for (int i = 0; i < indent; i ++) fh < "\t";
 	fh < "<moving_object name=\"" < qdscr_XML_string(name()) < "\">\r\n";

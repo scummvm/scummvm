@@ -63,6 +63,33 @@ bool qdGridZoneState::load_script(const xml::tag *p) {
 	return load_conditions_script(p);
 }
 
+bool qdGridZoneState::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+
+	fh.writeString("<grid_zone_state");
+
+	if (state_) {
+		fh.writeString(" state=\"1\"");
+	} else {
+		fh.writeString(" state=\"0\"");
+	};
+
+	if (has_conditions()) {
+		fh.writeString("/>\r\n");
+		save_conditions_script(fh, indent);
+		for (int i = 0; i <= indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString("</grid_zone_state>\r\n");
+	} else {
+		fh.writeString("/>\r\n");
+	}
+
+	return true;
+}
+
 bool qdGridZoneState::save_script(class XStream &fh, int indent) const {
 	for (int i = 0; i < indent; i ++) fh < "\t";
 	fh < "<grid_zone_state";

@@ -91,6 +91,11 @@ bool qdConditionGroup::load_script(const xml::tag *p) {
 	return true;
 }
 
+bool qdConditionGroup::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	warning("qdConditionGroup::save_script");
+	return true;
+}
+
 bool qdConditionGroup::save_script(XStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) fh < "\t";
 

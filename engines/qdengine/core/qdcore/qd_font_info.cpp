@@ -78,6 +78,23 @@ bool qdFontInfo::load_script(const xml::tag *p) {
 	return true;
 }
 
+bool qdFontInfo::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+	}
+
+	if (!font_file_name_.empty()) {
+		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(font_file_name_.c_str())));
+	}
+
+	if (name()) {
+		fh.writeString(Common::String::format(" name=\"%s\"", qdscr_XML_string(name())));
+	}
+
+	fh.writeString("/>\r\n");
+	return true;
+}
+
 bool qdFontInfo::save_script(class XStream &fh, int indent) const {
 	for (int i = 0; i < indent; i ++) fh < "\t";
 	fh < "<font_info type=\"" <= type_ < "\"";

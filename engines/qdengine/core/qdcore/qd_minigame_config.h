@@ -115,6 +115,7 @@ public:
 	bool load_script(const xml::tag *p);
 	//! Запись данных в скрипт.
 	bool save_script(XStream &fh, int indent = 0) const;
+	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 	//! Загрузка данных из .ini файла.
 	bool load_ini(const char *ini_file, const char *ini_section);

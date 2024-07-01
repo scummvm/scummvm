@@ -20,7 +20,8 @@
  */
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/stream.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/qdcore/qd_setup.h"
 #include "qdengine/core/qdcore/qd_screen_text.h"
@@ -85,38 +86,41 @@ bool qdScreenTextFormat::load_script(const xml::tag *p) {
 	return true;
 }
 
-bool qdScreenTextFormat::save_script(class XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
+bool qdScreenTextFormat::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i < indent; i ++) fh.writeString("\t");
 
-	fh < "<screen_text_format";
-
-	// Если зависим от глобального формата текста, то пишем только сам факт зависимости
-	// (пишем факт или отсутствие зависимости в любом случае)
+	fh.writeString("<screen_text_format");
+// if we depend on the global format of the text, then we write only the fact of dependence
+ // (write a fact or absence of dependence in any case)
 	if (is_global_depend())
-		fh < " global_depend=\"1\"";
+		fh.writeString(" global_depend=\"1\"");
 	else {
 		// Не зависит от глобальных параметров - значит пишем данные о формате
-		fh < " global_depend=\"0\"";
+		fh.writeString("global_depend=\"0\"");
 
 		if (arrangement() != qdScreenTextFormat::default_format().arrangement())
-			fh < " text_align=\"" <= (int)arrangement() < "\"";
+			fh.writeString(Common::String::format(" text_align=\"%d\"", (int)arrangement()));
 
 		if (alignment() != qdScreenTextFormat::default_format().alignment())
-			fh < " align=\"" <= (int)alignment() < "\"";
+			fh.writeString(Common::String::format(" align=\"%d\"", (int)alignment()));
 
 		if (color() != qdScreenTextFormat::default_format().color())
-			fh < " text_color=\"" <= color() < "\"";
+			fh.writeString(Common::String::format(" text_color=\"%d\"", color()));
 
 		if (hover_color() != qdScreenTextFormat::default_format().hover_color())
-			fh < " text_hover_color=\"" <= hover_color() < "\"";
+			fh.writeString(Common::String::format(" text_hover_color=\"%d\"", hover_color()));
 
 		if (font_type() != qdScreenTextFormat::default_format().font_type())
-			fh < " font_type=\"" <= font_type() < "\"";
+			fh.writeString(Common::String::format(" font_type=\"%d\"", font_type()));
 	}
 
-	fh < "/>\r\n";
+	fh.writeString("/>\r\n");
 
 	return true;
+}
+
+bool qdScreenTextFormat::save_script(class XStream &fh, int indent) const {
+	warning("qdScreenTextFormat::save_script(XStream)");
 }
 
 qdScreenText::qdScreenText(const char *p, const Vect2i &pos, qdGameObjectState *owner) : pos_(pos),

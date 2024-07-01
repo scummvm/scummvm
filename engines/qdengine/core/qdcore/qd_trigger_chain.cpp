@@ -366,6 +366,11 @@ bool qdTriggerChain::load_script(const xml::tag *p) {
 	return true;
 }
 
+bool qdTriggerChain::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	warning("STUB: qdTriggerChain::save_script(Common::SeekableWriteStream)");
+	return true;
+}
+
 bool qdTriggerChain::save_script(XStream &fh, int indent) const {
 	for (int i = 0; i < indent; i ++) fh < "\t";
 
