@@ -53,6 +53,21 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Rise of the Dragon (PC)
+	{
+		"rise",
+		0,
+		{
+			{"volume.vga", 0, "59265803753cda6939901f41e324d004", 7823},
+			{"volume.001", 0, "3483f61b9bf0023c00a7fc1b568a54fa", 776190},
+			AD_LISTEND
+		},
+		Common::DE_DEU,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Rise of the Dragon (PC) 16 Color, 1.2MB disks
 	{
 		"rise",
@@ -113,6 +128,21 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Adventures of Willy Beamish (PC)
+	{
+		"beamish",
+		0,
+		{
+			{"volume.rmf", 0, "e5c3ddb2700fe4b1a33363ef6393e635", 9896},
+			{"volume.001", 0, "48752f0f7798e81bc7f343c32325eaaa", 1317322},
+			AD_LISTEND
+		},
+		Common::DE_DEU,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Adventures of Willy Beamish (Macintosh)
 	{
 		"beamish",
@@ -168,6 +198,21 @@ static const ADGameDescription gameDescriptions[] = {
 			AD_LISTEND
 		},
 		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Heart of China (PC)
+	{
+		"china",
+		0,
+		{
+			{"volume.rmf", 0, "203de252953ef96c0a6b83ccd137bc4a", 10032},
+			{"volume.001", 0, "f3b05430e2fd64598fe9e7b422ae63e3", 1122957},
+			AD_LISTEND
+		},
+		Common::DE_DEU,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
