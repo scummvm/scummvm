@@ -934,7 +934,7 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 	while (1) {
 		// If we the edit field has enough space, add a space for the new character
 		Common::strlcpy(tempStr, str, 255);
-		Common::strcat_s(tempStr, " ");
+    	Common::strcat_s(tempStr, sizeof(tempStr), " ");
 		if ((editSize != 0) && strlen(tempStr) > editSize)
 			Common::strlcpy(tempStr, str, 256);
 
