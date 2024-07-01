@@ -219,10 +219,6 @@ void qdGameConfig::load() {
 	if (strlen(p)) qdGameScene::fps_counter().set_period(atoi(p));
 #endif
 
-	if (atoi(getIniKey(ini_name_, "debug", "enable_log"))){
-		
-	}
-
 	if (atoi(getIniKey(ini_name_, "debug", "full_redraw")))
 		force_full_redraw_ = true;
 
