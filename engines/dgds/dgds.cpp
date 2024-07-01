@@ -335,17 +335,23 @@ void DgdsEngine::loadGameFiles() {
 	case GID_BEAMISH:
 		// TODO: Create a better type for this..
 		_gameGlobals = new Globals(_clock);
-		_gamePals->loadPalette("WILLY.PAL");
-		_gdsScene->load("WILLY.GDS", _resource, _decompressor);
-		_rstFileName = "WILLY.RST";
+		if (_resource->hasResource("WILLY.GDS")) {
+			_gdsScene->load("WILLY.GDS", _resource, _decompressor);
+			_rstFileName = "WILLY.RST";
+			_gamePals->loadPalette("WILLY.PAL");
+			loadCorners("WCORNERS.BMP");
+		} else {
+			_gdsScene->load("SOWILLY.GDS", _resource, _decompressor);
+			_rstFileName = "SOWILLY.RST";
+			_gamePals->loadPalette("SOWILLY.PAL");
+			loadCorners("SOWCORNERS.BMP");
+		}
 
 		debug("%s", _gdsScene->dump("").c_str());
 
-		loadCorners("WCORNERS.BMP");
 		reqParser.parse(&invRequestData, "WINV.REQ");
 		reqParser.parse(&vcrRequestData, "WVCR.REQ");
 
-		_adsInterp->load("TITLE.ADS");
 		break;
 	case GID_SQ5DEMO:
 		_gameGlobals = new Globals(_clock);

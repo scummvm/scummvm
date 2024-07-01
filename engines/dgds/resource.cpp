@@ -40,7 +40,7 @@ ResourceManager::ResourceManager() {
 		"volume.vga", // Dragon VGA versions
 		"volume.ega", // Dragon EGA versions
 		"volume.rmf", // Beamish / HoC
-		"volume.map"  // Beamish CD
+		"resource.map"  // Beamish CD
 	};
 
 	Common::File indexFile;
@@ -57,16 +57,19 @@ ResourceManager::ResourceManager() {
 	}
 
 	indexFile.skip(4); // salt for file hash, TODO
-	int volumes = indexFile.readUint16LE();
+	int nvolumes = indexFile.readUint16LE();
 
 	char fnbuf[FILENAME_LENGTH + 1];
 	fnbuf[FILENAME_LENGTH] = '\0';
 
-	for (int i = 0; i < volumes; i++) {
+	for (int i = 0; i < nvolumes; i++) {
 		indexFile.read(fnbuf, FILENAME_LENGTH);
-		Common::String volumeName(fnbuf);
+		Common::Path volumeName(fnbuf);
+		assert(!volumeName.empty());
 
-		_volumes[i].open(Common::Path(volumeName));
+		_volumes[i].open(volumeName);
+		if (!_volumes[i].isOpen())
+			error("Couldn't open volume data %s", volumeName.toString().c_str());
 
 		indexFile.skip(1); // unknown
 		int entries = indexFile.readUint16LE();
@@ -88,7 +91,7 @@ ResourceManager::ResourceManager() {
 			res.size = _volumes[i].readUint32LE();
 
 			// Some sounds in Beamish FDD have size -1, which I think just means they don't exist.
-			if (res.size > (uint32)1 << 31 || fileName == "" || res.size == 0)
+			if (res.size > (uint32)1 << 31 || fileName.empty() || res.size == 0)
 				continue;
 
 			_resources[fileName] = res;

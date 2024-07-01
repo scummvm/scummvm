@@ -247,9 +247,11 @@ static void plotClippedPoint(int x, int y, int color, void *data) {
 static void _copyRectToScreen(const Graphics::ManagedSurface &src, const Common::Rect &r) {
 	if (r.isEmpty())
 		return;
-	Graphics::Surface *surf = g_system->lockScreen();
 	Common::Rect copyRect = r;
 	copyRect.clip(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT));
+	if (copyRect.isEmpty())
+		return;
+	Graphics::Surface *surf = g_system->lockScreen();
 	surf->copyRectToSurface(src.rawSurface(), copyRect.left, copyRect.top, copyRect);
 	g_system->unlockScreen();
 }
