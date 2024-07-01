@@ -99,6 +99,16 @@ qdGameDispatcher *qd_gameD = NULL;
 
 using namespace qdrt;
 
+static void generateTagMap(int date) {
+	int n = 0;
+
+	for (int i = 0; i < QDSCR_MAX_KEYWORD_ID; i++)
+		if (idTagVersionAll[i * 2] <= date)
+			g_engine->_tagMap[n++] = idTagVersionAll[i * 2 + 1];
+
+	warning("Generated %d ids for version %d", n, date);
+}
+
 int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow) {
 	const char *const event_name = "QD Engine Game";
 	warning("STUB: qdrt::WinMain");
@@ -220,13 +230,15 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 
 	Common::String gameID = g_engine->getGameId();
 	if (gameID == "pilots3d") {
-		g_engine->_tagMap = version110;
+		generateTagMap(20040706);
 	} else if (gameID == "3mice1") {
-		g_engine->_tagMap = version120;
+		generateTagMap(20060630);
 	} else if (gameID == "shveik") {
-		g_engine->_tagMap = nullptr;
+		generateTagMap(20070503);
 	} else {
 		warning("Unprocessed tagMap, switching to shveik");
+
+		generateTagMap(20070503);
 	}
 
 	SetErrorMode(SEM_FAILCRITICALERRORS);
