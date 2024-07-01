@@ -35,7 +35,7 @@
 {
 	{
 		"inca2",
-		"",
+		"v1.000",
 		AD_ENTRY1s("intro.stk", "1fa92b00fe80a20f34ec34a8e2fa869e", 923072),
 		EN_USA,
 		kPlatformDOS,
@@ -48,7 +48,7 @@
 {
 	{
 		"inca2",
-		"",
+		"v1.000",
 		AD_ENTRY1s("intro.stk", "1fa92b00fe80a20f34ec34a8e2fa869e", 923072),
 		FR_FRA,
 		kPlatformDOS,
@@ -61,7 +61,7 @@
 {
 	{
 		"inca2",
-		"",
+		"v1.000",
 		AD_ENTRY1s("intro.stk", "1fa92b00fe80a20f34ec34a8e2fa869e", 923072),
 		DE_DEU,
 		kPlatformDOS,
