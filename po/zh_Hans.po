@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-06-30 18:44+0000\n"
-"PO-Revision-Date: 2024-06-23 14:50+0000\n"
+"PO-Revision-Date: 2024-07-01 22:43+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/zh_Hans/>\n"
@@ -657,11 +657,11 @@ msgstr "路径"
 
 #: gui/editgamedialog.cpp:291
 msgid "Check Integrity"
-msgstr ""
+msgstr "检查完整性"
 
 #: gui/editgamedialog.cpp:291
 msgid "Perform integrity check for all game files"
-msgstr ""
+msgstr "检查所有游戏文件的完整性"
 
 #: gui/editgamedialog.cpp:296
 msgid "Game Path:"
@@ -827,15 +827,15 @@ msgstr "说明："
 #: gui/integrity-dialog.cpp:100
 msgid ""
 "Verifying file integrity may take a long time to complete. Please wait...\n"
-msgstr ""
+msgstr "完整性检查可能需要很长时间完成。请稍候...\n"
 
 #: gui/integrity-dialog.cpp:107 gui/integrity-dialog.cpp:168
 msgid "Calculating file checksums..."
-msgstr ""
+msgstr "正在计算文件校验和..."
 
 #: gui/integrity-dialog.cpp:120
 msgid "Launch Email Client"
-msgstr ""
+msgstr "启动电子邮件客户端"
 
 #: gui/integrity-dialog.cpp:174
 msgid "Calculation complete"
@@ -854,21 +854,25 @@ msgid ""
 "If you are sure that this is a valid unknown variant, please send the "
 "following e-mail to integrity@scummvm.org"
 msgstr ""
+"### 结果\n"
+"你的游戏文件对我们来说似乎是未知的。\n"
+"\n"
+"如果你确定这是有效变体，请将以下电子邮件发送到 integrity@scummvm.org"
 
 #: gui/integrity-dialog.cpp:537
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
-msgstr ""
+msgstr "此游戏似乎没有文件。确定路径正确吗？"
 
 #: gui/integrity-dialog.cpp:542
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
-msgstr ""
+msgstr "此游戏似乎没有关联的元数据，因此无法进行匹配。请填入正确的元数据。"
 
 #: gui/integrity-dialog.cpp:569
 msgid "Files all OK"
-msgstr ""
+msgstr "所有文件无误"
 
 #: gui/filebrowser-dialog.cpp:53
 msgid "Choose file for loading"
@@ -1889,7 +1893,7 @@ msgstr "AdLib 在很多游戏中用于音乐"
 
 #: gui/options.cpp:1751
 msgid "GM device:"
-msgstr "GM 设备："
+msgstr "常规 MIDI 设备："
 
 #: gui/options.cpp:1751
 msgid "Specifies default sound device for General MIDI output"
@@ -5241,6 +5245,19 @@ msgid ""
 "See our [iOS documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/ios.html) for more information.\n"
 msgstr ""
+"## 添加游戏 \n"
+"\n"
+"1. 将所需游戏文件复制到 ScummVM 应用中。有多种方式可以做到，详见[转移游戏文件文档](https://docs.scummvm.org/en/"
+"latest/other_platforms/ios.html#transferring-game-files)。\n"
+"\n"
+"3. 点击启动器中的**添加游戏...**。\n"
+"\n"
+"3. 在 ScummVM 文件浏览器中，双击转到添加的文件夹，选择含有游戏文件的子文件夹，然后点击**选择**。 \n"
+"\n"
+"重复上述步骤以添加更多游戏。\n"
+"\n"
+"浏览我们的 [iOS 文档](https://docs.scummvm.org/en/latest/other_platforms/ios."
+"html)获取更多信息。\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:360
 msgid ""
@@ -5301,6 +5318,19 @@ msgid ""
 "See our [tvOS documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/tvos.html) for more information.\n"
 msgstr ""
+"## 添加游戏 \n"
+"\n"
+"1. 将所需游戏文件复制到 ScummVM 应用中。有多种方式可以做到，详见[转移游戏文件文档](https://docs.scummvm.org/en/"
+"latest/other_platforms/tvos.html#transferring-game-files)。\n"
+"\n"
+"3. 点击启动器中的**添加游戏...**。\n"
+"\n"
+"3. 在 ScummVM 文件浏览器中，双击转到添加的文件夹，选择含有游戏文件的子文件夹，然后点击**选择**。 \n"
+"\n"
+"重复上述步骤以添加更多游戏。\n"
+"\n"
+"浏览我们的 [tvOS 文档](https://docs.scummvm.org/en/latest/other_platforms/tvos."
+"html)获取更多信息。\n"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:46
 msgid "LIBRETRO PLAYLIST GENERATOR"
@@ -5381,6 +5411,15 @@ msgid ""
 "\n"
 "The core also supports dedicated per game **hook** plain text files with **."
 msgstr ""
+"## 用于 ScummVM 内核的 Libretro 游戏列表\n"
+"Libretro 前端（如 "
+"Retroarch）用到的游戏列表是纯文本列表，可用于调用用户界面指定的内核来直接启动游戏。那些列表会向内核传递待加载的指定内容文件（如 ROM）的路径。"
+"\n"
+"\n"
+"ScummVM 内核可接受有效游戏文件夹内任何文件的路径作为内容，检测系统将尝试从内容文件父文件夹自动检测游戏，并使用默认 ScummVM 选项运行游戏。"
+"\n"
+"\n"
+"内核还支持使用“**”调用每个游戏专用的**钩子**纯文本文件。"
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
@@ -6015,17 +6054,15 @@ msgstr "找不到转场文件“%s”！"
 #: engines/lure/metaengine.cpp:37 engines/mads/metaengine.cpp:47
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:48
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:746
-#, fuzzy
-#| msgid "Enable Discord integration"
 msgid "Enable copy protection"
-msgstr "启用 Discord 集成"
+msgstr "启用复制保护"
 
 #: engines/agos/metaengine.cpp:45 engines/dreamweb/metaengine.cpp:37
 #: engines/lure/metaengine.cpp:38 engines/mads/metaengine.cpp:48
 #: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:49
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:747
 msgid "Enable any copy protection that would otherwise be bypassed by default."
-msgstr ""
+msgstr "启用默认跳过的所有复制保护。"
 
 #: engines/agos/metaengine.cpp:55
 msgid "AdLib OPL3 mode"
@@ -6075,7 +6112,7 @@ msgstr "未编译入 AGOS 2 支持"
 
 #: engines/agos/metaengine.cpp:225
 msgid "AGOS main"
-msgstr ""
+msgstr "AGOS 主页面"
 
 #: engines/agos/metaengine.cpp:226 engines/cge/metaengine.cpp:199
 #: engines/cge2/metaengine.cpp:212 engines/made/metaengine.cpp:103
@@ -6083,16 +6120,12 @@ msgid "Game Keymappings"
 msgstr "游戏按键绑定"
 
 #: engines/agos/metaengine.cpp:227
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Yes/No Keymapping"
-msgstr "游戏按键绑定"
+msgstr "是/否绑定"
 
 #: engines/agos/metaengine.cpp:242
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Exit cutscene"
-msgstr "跳过过场动画"
+msgstr "退出过场动画"
 
 #: engines/agos/metaengine.cpp:255 engines/vcruise/metaengine.cpp:176
 msgid "Music volume down"
@@ -6103,20 +6136,14 @@ msgid "Music volume up"
 msgstr "增大音乐音量"
 
 #: engines/agos/metaengine.cpp:266
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle Music on/off"
 msgstr "打开/关闭音乐"
 
 #: engines/agos/metaengine.cpp:271
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Toggle Sound effect on/off"
 msgstr "开关音效"
 
 #: engines/agos/metaengine.cpp:276
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle Fast mode on/off"
 msgstr "开关快速模式"
 
@@ -6128,10 +6155,8 @@ msgid "Walk forward"
 msgstr "向前走"
 
 #: engines/agos/metaengine.cpp:294
-#, fuzzy
-#| msgid "Run backward"
 msgid "Turn backward"
-msgstr "向后跑"
+msgstr "向后转"
 
 #: engines/agos/metaengine.cpp:300 engines/mohawk/riven.cpp:901
 #: engines/wintermute/keymapper_tables.h:161
@@ -6139,7 +6164,7 @@ msgstr "向后跑"
 #: engines/wintermute/keymapper_tables.h:2122
 #: engines/wintermute/keymapper_tables.h:2223
 msgid "Turn left"
-msgstr ""
+msgstr "左转"
 
 #: engines/agos/metaengine.cpp:306 engines/mohawk/riven.cpp:907
 #: engines/wintermute/keymapper_tables.h:167
@@ -6147,66 +6172,56 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:2128
 #: engines/wintermute/keymapper_tables.h:2230
 msgid "Turn right"
-msgstr ""
+msgstr "右转"
 
 #: engines/agos/metaengine.cpp:314
 msgid "Text speed - Fast"
-msgstr ""
+msgstr "文本速度 - 快"
 
 #: engines/agos/metaengine.cpp:319
-#, fuzzy
-#| msgid "Walking speed: Medium"
 msgid "Text speed - Medium"
-msgstr "行走速度：中"
+msgstr "文本速度：中"
 
 #: engines/agos/metaengine.cpp:324
 msgid "Text speed - Slow"
-msgstr ""
+msgstr "文本速度 - 慢"
 
 #: engines/agos/metaengine.cpp:329
-#, fuzzy
-#| msgid "Show object labels"
 msgid "Show objects to interact"
-msgstr "显示物品标签"
+msgstr "显示可交互物品"
 
 #: engines/agos/metaengine.cpp:336
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Toggle background sounds On/Off"
-msgstr "开关音效"
+msgstr "开关背景音效"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:345
-#, fuzzy
-#| msgid "Switching characters:"
 msgid "Switch characters"
-msgstr "切换人物："
+msgstr "切换人物"
 
 #: engines/agos/metaengine.cpp:351
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle hitbox names on/off"
-msgstr "打开/关闭音乐"
+msgstr "打开/关闭 Hitbox 名称"
 
 #: engines/agos/metaengine.cpp:358
 msgid "Switches between speech only and combined speech and subtitles"
-msgstr ""
+msgstr "切换仅语音与语音+字幕模式"
 
 #: engines/agos/metaengine.cpp:364
 msgid "Switches between subtitles only and combined speech and subtitles"
-msgstr ""
+msgstr "切换仅字幕与语音+字幕模式"
 
 #: engines/agos/metaengine.cpp:374
 msgid "High speed mode on/off in Swampy Adventures"
-msgstr ""
+msgstr "Swampy Adventures 中开关高速模式"
 
 #: engines/agos/metaengine.cpp:380
 msgid "Press Yes Key"
-msgstr ""
+msgstr "按下“是”按键"
 
 #: engines/agos/metaengine.cpp:385
 msgid "Press No Key"
-msgstr ""
+msgstr "按下“否”按键"
 
 #: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -6387,38 +6402,28 @@ msgid "Move right"
 msgstr "向右移动"
 
 #: engines/asylum/metaengine.cpp:226
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle animation on/off"
-msgstr "打开/关闭音乐"
+msgstr "打开/关闭动画"
 
 #: engines/asylum/metaengine.cpp:232
-#, fuzzy
-#| msgid "Run a game"
 msgid "Return to gameplay"
-msgstr "运行游戏"
+msgstr "返回游戏"
 
 #: engines/asylum/metaengine.cpp:238
-#, fuzzy
-#| msgid "Previous Page"
 msgid "Previous resource"
-msgstr "上一页"
+msgstr "上一个资源"
 
 #: engines/asylum/metaengine.cpp:245
 msgid "Next resource"
-msgstr ""
+msgstr "下一个资源"
 
 #: engines/asylum/metaengine.cpp:252
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous palette"
-msgstr "上一页"
+msgstr "上一个调色板"
 
 #: engines/asylum/metaengine.cpp:259
-#, fuzzy
-#| msgid "Next page"
 msgid "Next palette"
-msgstr "下一页"
+msgstr "下一个调色板"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:203
@@ -7041,6 +7046,9 @@ msgid ""
 "%s for details on how to properly extract the DTSPEECH.XA and *.STR files "
 "from your game disc."
 msgstr ""
+"错误：文件“%s”未被恰当提取。\n"
+"请阅读 wiki 页面 %s\n"
+"获取关于从游戏光盘恰当提取 DTSPEECH.XA 与 *.STR 文件的细节。"
 
 #: engines/dragons/metaengine.cpp:121
 #, c-format
@@ -7052,6 +7060,11 @@ msgid ""
 "\n"
 " See %s"
 msgstr ""
+"错误：游戏数据文件似乎被不当提取了。\n"
+"\n"
+"你应该只使用特殊方法提取 STR 与 XA 文件。剩余文件应使用正常方式从游戏 CD 中复制。\n"
+"\n"
+" 参见 %s"
 
 #: engines/dragons/metaengine.cpp:136 engines/twp/metaengine.cpp:150
 msgid "Action"
@@ -7075,6 +7088,10 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
+"ScummVM 发现你有 Drascula 的旧版存档，应将其转换。\n"
+"旧版存档格式不再受支持，因此如果不转换，将无法加载游戏。\n"
+"\n"
+"点击 OK 现在转换，否则下次启动游戏时将再次询问你。\n"
 
 #: engines/dreamweb/metaengine.cpp:60
 msgid "Use bright palette mode"
@@ -7150,7 +7167,7 @@ msgstr "仿真图形"
 
 #: engines/freescape/metaengine.cpp:118
 msgid "Keep graphics as close as possible to the original"
-msgstr ""
+msgstr "使图形尽可能与原游戏相近"
 
 #: engines/freescape/movement.cpp:47 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
@@ -7443,6 +7460,10 @@ msgid ""
 "%s\n"
 "and put it in the game data files directory"
 msgstr ""
+"缺失 Grim Fandango\n"
+"的原有补丁。从\n"
+"%s 下载后，\n"
+"请将其置于游戏数据文件目录"
 
 #: engines/grim/resource.cpp:107
 #, c-format
@@ -7453,6 +7474,10 @@ msgid ""
 "Pay attention to download the correct version according to the game's "
 "language!"
 msgstr ""
+"缺失 Escape from Monkey Island的原有补丁。\n"
+"从 %s 下载后，\n"
+"请将其置于游戏数据文件目录。\n"
+"请注意根据游戏语言，下载正确的版本！"
 
 #: engines/grim/emi/sound/emisound.cpp:655
 msgid ""
@@ -7465,6 +7490,14 @@ msgid ""
 "\n"
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt"
 msgstr ""
+"错误：找到的音轨不足！\n"
+"《逃离猴岛》有两个版本的 FullMonkeyMap.imt，\n"
+"你需要从两个 CD 拷贝这两个文件到 Textures/ 文件夹，\n"
+"并按如下方式重命名，以获取游戏内音乐支持： \n"
+"CD 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
+"CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
+"\n"
+"除此之外，Steam 或 GOG 副本有合并版的 FullMonkeyMap.imt"
 
 #: engines/groovie/metaengine.cpp:37
 msgid "Fast movie speed"
@@ -7696,18 +7729,18 @@ msgstr "缺失此粉丝翻译的特定语言游戏代码和/或资源。"
 
 #: engines/kyra/detection_tables.h:78
 msgid "Demo plays simple animations without using Westwood's Engine."
-msgstr ""
+msgstr "演示版不使用 Westwood 的引擎即可播放简单动画。"
 
 #: engines/kyra/detection_tables.h:1369
 msgid "You added the game incorrectly. Please add the root folder of the game."
-msgstr ""
+msgstr "你错误地添加了游戏。请添加游戏的根目录。"
 
 #. I18N: The file in the game directory needs to be extracted
 #: engines/kyra/detection_tables.h:1385
 msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
-msgstr ""
+msgstr "你错误地添加了游戏。GAME.DAT 文件是 ISO 映像，你需要从中提取游戏数据文件。"
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
@@ -7726,11 +7759,11 @@ msgstr "允许跳过文本与转场动画"
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/metaengine.cpp:74
 msgid "Helium mode"
-msgstr ""
+msgstr "氦气模式"
 
 #: engines/kyra/metaengine.cpp:75
 msgid "Enable helium mode"
-msgstr ""
+msgstr "启用氦气模式"
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
@@ -7783,17 +7816,17 @@ msgstr "使用左按钮攻击，右按钮捡起物品"
 
 #: engines/kyra/metaengine.cpp:239
 msgid "Lands of Lore support is not compiled in"
-msgstr ""
+msgstr "未编入 Lands of Lore 支持"
 
 #: engines/kyra/metaengine.cpp:249
 msgid ""
 "EOB II FM-TOWNS requires support of 16bit color modes which has not been "
 "activated in your ScummVM build"
-msgstr ""
+msgstr "EOB II FM-TOWNS 需要 16bit 颜色模式支持，但在你的 ScummVM 版本未被激活"
 
 #: engines/kyra/metaengine.cpp:255
 msgid "Eye of Beholder support is not compiled in"
-msgstr ""
+msgstr "未编入 Eye of Beholder 支持"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:502
 #: engines/ultima/ultima4/metaengine.cpp:224
@@ -7925,6 +7958,12 @@ msgid ""
 "Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
+"在你的游戏目录找到了以下原游戏存档文件：\n"
+"\n"
+"%s %S\n"
+"\n"
+"你想要 ScummVM 使用存档文件吗？\n"
+"\n"
 
 #: engines/kyra/gui/saveload_eob.cpp:631
 #, c-format
@@ -7932,6 +7971,8 @@ msgid ""
 "A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
+"在指定槽位 %d 找到了存档。要覆盖吗？\n"
+"\n"
 
 #: engines/kyra/gui/saveload_eob.cpp:664
 #, c-format
@@ -7942,6 +7983,10 @@ msgid ""
 "'import_savefile'.\n"
 "\n"
 msgstr ""
+"%d 个原游戏存档已被成功导入\n"
+"ScummVM。如果你想稍后手动导入存档，你需要\n"
+"打开 ScummVM 调试控制台并使用命令“import_savefile”。\n"
+"\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:279
 msgid ""
@@ -7956,6 +8001,16 @@ msgid ""
 "should be located in the AmigaDOS system 'Fonts/' folder.\n"
 "Please copy them into the EOB game data directory.\n"
 msgstr ""
+"此 AMIGA 版本需要以下字体文件：\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6/6\n"
+"EOBF8.FONT\n"
+"EOBF8/8\n"
+"\n"
+"如果你使用原有安装器安装，\n"
+"这些文件应该位于 AmigaDOS 系统的“Fonts/”文件夹下。\n"
+"请将它们复制到 EOB 游戏数据文件夹。\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:287
 msgid ""
@@ -7978,18 +8033,32 @@ msgid ""
 "Please copy the correct font files into your EOB II game data directory.\n"
 "\n"
 msgstr ""
+"此 AMIGA 版本需要以下字体文件：\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6/6\n"
+"EOBF8.FONT\n"
+"EOBF8/8\n"
+"\n"
+"这是 EOB II 的本地化（非英语）版本，使用了特定语言的字符，\n"
+"这些字符尽在你的游戏的特定字体文件中。\n"
+"你不能使用英语版或 EOB I 游戏的字体文件，而你似乎正在这么饿做。\n"
+"\n"
+"游戏会继续运行，但不会显示特定语言的字符。\n"
+"请将正确的字体文件复制到 EOB II 游戏数据文件夹。\n"
+"\n"
 
 #: engines/lab/engine.cpp:124
 msgid ""
 "This is a trial Windows version of the game. To play the full version, you "
 "will need to use the original interpreter and purchase a key from Wyrmkeep"
-msgstr ""
+msgstr "这是游戏的 Windows 试玩版。要游玩完整版，你需要使用原有解释器，从 Wyhmkeep 购买密钥"
 
 #: engines/lab/processroom.cpp:329
 msgid ""
 "This is the end of the trial version. You can play the full game using the "
 "original interpreter from Wyrmkeep"
-msgstr ""
+msgstr "已到达试玩版末尾。你可以使用来自 Wyrmkeep 的原有解释器游玩完整游戏"
 
 #: engines/lab/speciallocks.cpp:148
 msgid "This puzzle is not available in the trial version of the game"
@@ -8006,39 +8075,33 @@ msgstr "游戏使用不支持的引擎"
 
 #: engines/made/metaengine.cpp:38
 msgid "Play a digital soundtrack during the opening movie"
-msgstr ""
+msgstr "开场影片期间播放数字音乐"
 
 #: engines/made/metaengine.cpp:39
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
-msgstr ""
+msgstr "选中后，游戏入场期间会使用数字音乐。否则会播放 MIDI 音乐。"
 
 #: engines/made/metaengine.cpp:128
 msgid "Cursor Up"
-msgstr ""
+msgstr "光标上移"
 
 #: engines/made/metaengine.cpp:135
-#, fuzzy
-#| msgid "Scroll Down"
 msgid "Cursor Down"
-msgstr "向下滚动"
+msgstr "光标下移"
 
 #: engines/made/metaengine.cpp:142
-#, fuzzy
-#| msgid "Turn Left"
 msgid "Cursor Left"
-msgstr "向左转"
+msgstr "光标左移"
 
 #: engines/made/metaengine.cpp:149
-#, fuzzy
-#| msgid "Turn Right"
 msgid "Cursor Right"
-msgstr "向右转"
+msgstr "光标右移"
 
 #: engines/made/metaengine.cpp:174
 msgid "Repeat Last Message"
-msgstr ""
+msgstr "重复上一消息"
 
 #: engines/mads/metaengine.cpp:59
 msgid "Easy mouse interface"
@@ -8050,41 +8113,41 @@ msgstr "鼠标悬停在物品上时显示名称"
 
 #: engines/mads/metaengine.cpp:71 engines/mads/metaengine.cpp:72
 msgid "Animated inventory items"
-msgstr ""
+msgstr "物品栏物品动画"
 
 #: engines/mads/metaengine.cpp:83 engines/mads/metaengine.cpp:84
 msgid "Animated game interface"
-msgstr ""
+msgstr "游戏界面动画"
 
 #: engines/mads/metaengine.cpp:95 engines/mads/metaengine.cpp:96
 msgid "Naughty game mode"
-msgstr ""
+msgstr "调皮游戏模式"
 
 #: engines/mm/metaengine.cpp:57
 msgid "Show item costs in standard inventory mode"
-msgstr ""
+msgstr "在标准物品栏模式中显示物品花销"
 
 #: engines/mm/metaengine.cpp:58
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
-msgstr ""
+msgstr "在标准物品栏模式中显示物品花销，以便比较物品价值"
 
 #: engines/mm/metaengine.cpp:68
 msgid "More durable armor"
-msgstr ""
+msgstr "持久武器"
 
 #: engines/mm/metaengine.cpp:69
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
-msgstr ""
+msgstr "武器仅会在人物 -80HP 时损坏，而不是 -10HP"
 
 #: engines/mm/metaengine.cpp:79
 msgid "Hitpoint bars"
-msgstr ""
+msgstr "血条"
 
 #: engines/mm/metaengine.cpp:80
 msgid "Replace a colored gem with bars for hit points and spell points."
-msgstr ""
+msgstr "将有色宝石替换成长条，用于显示血量与拼写点数。"
 
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
@@ -8094,32 +8157,32 @@ msgstr "退出"
 
 #: engines/mm/mm1/metaengine.cpp:54
 msgid "View Party Member 1"
-msgstr ""
+msgstr "查看派对成员 1"
 
 #: engines/mm/mm1/metaengine.cpp:55
 msgid "View Party Member 2"
-msgstr ""
+msgstr "查看派对成员 2"
 
 #: engines/mm/mm1/metaengine.cpp:56
 msgid "View Party Member 3"
-msgstr ""
+msgstr "查看派对成员 3"
 
 #: engines/mm/mm1/metaengine.cpp:57
 msgid "View Party Member 4"
-msgstr ""
+msgstr "查看派对成员 4"
 
 #: engines/mm/mm1/metaengine.cpp:58
 msgid "View Party Member 5"
-msgstr ""
+msgstr "查看派对成员 5"
 
 #: engines/mm/mm1/metaengine.cpp:59
 msgid "View Party Member 6"
-msgstr ""
+msgstr "查看派对成员 6"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:69
 msgid "Cast"
-msgstr ""
+msgstr "投放"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:71
@@ -8139,7 +8202,7 @@ msgstr "快速参考"
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:77
 msgid "Retreat"
-msgstr ""
+msgstr "撤退"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:84
@@ -8178,7 +8241,7 @@ msgstr "搜索"
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:113
 msgid "Bash"
-msgstr ""
+msgstr "重击"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:115 engines/scumm/help.cpp:148
@@ -8191,35 +8254,35 @@ msgstr "前往位置"
 
 #: engines/mm/mm1/metaengine.cpp:133 engines/mm/mm1/metaengine.cpp:143
 msgid "Might and Magic 1 - Menus"
-msgstr ""
+msgstr "Might and Magic 1 - 菜单"
 
 #: engines/mm/mm1/metaengine.cpp:138
 msgid "Might and Magic 1 - Minimal Keys"
-msgstr ""
+msgstr "Might and Magic 1 - 最小按键"
 
 #: engines/mm/mm1/metaengine.cpp:144 engines/mm/mm1/metaengine.cpp:150
 #: engines/mm/mm1/metaengine.cpp:156
 msgid "Might and Magic 1 - Party"
-msgstr ""
+msgstr "Might and Magic 1 - 派对"
 
 #: engines/mm/mm1/metaengine.cpp:149
 msgid "Might and Magic 1 - Combat"
-msgstr ""
+msgstr "Might and Magic 1 - 征服"
 
 #: engines/mm/mm1/metaengine.cpp:155
 msgid "Might and Magic 1"
-msgstr ""
+msgstr "Might and Magic 1"
 
 #: engines/mm/mm1/metaengine.cpp:157
 msgid "Might and Magic 1 - Cheats"
-msgstr ""
+msgstr "Might and Magic 1 - 作弊"
 
 #: engines/mm/mm1/mm1.cpp:56
 msgid ""
 "You cannot run the game directly from the Graphics Overhaul Mod. Instead, it "
 "will automatically be available if you detect the original game and select "
 "Enhanced mode."
-msgstr ""
+msgstr "你无法直接从 Graphics Overhaul 模组运行游戏。如果你检测原游戏并选择增强模式，此模组将自动可用。"
 
 #: engines/mm/mm1/mm1.cpp:108
 msgid ""
@@ -8227,6 +8290,8 @@ msgid ""
 "of Xeen\n"
 "or Clouds of Xeen to your Might and Magic 1 game folder"
 msgstr ""
+"要在增强模式运行，请将 World of Xeen 或 Clouds of Xeen 中的 xeen.cc\n"
+"文件复制到你的 Might and Magic 1 游戏文件夹"
 
 #: engines/mm/xeen/saves.cpp:294
 msgid "Failed to autosave"
@@ -8235,14 +8300,14 @@ msgstr "自动保存失败"
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:112 engines/mohawk/dialogs.cpp:357
 msgid "~Z~ip Mode Activated"
-msgstr ""
+msgstr "激活传送模式 (~Z~)"
 
 #: engines/mohawk/dialogs.cpp:113 engines/mohawk/dialogs.cpp:357
 msgid ""
 "When activated, clicking on an item or area with the lightning bolt cursor "
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
-msgstr ""
+msgstr "激活后，使用闪电光标点击物品或区域会跳过中间屏幕，直接将你带到那里。你只能“传送”到曾经来过的精准区域。"
 
 #: engines/mohawk/dialogs.cpp:116
 msgid "~T~ransitions Enabled"
@@ -8252,15 +8317,15 @@ msgstr "启用转场 (~T~)"
 msgid ""
 "Toggle screen transitions on or off. Turning off screen transitions will "
 "enable you to navigate more quickly through the game."
-msgstr ""
+msgstr "开启或关闭屏幕转场。关闭屏幕转场后，你可以在游戏中更快导航。"
 
 #: engines/mohawk/dialogs.cpp:120
 msgid "Play the Myst fly by movie"
-msgstr ""
+msgstr "播放 Myst fly by 影片"
 
 #: engines/mohawk/dialogs.cpp:121
 msgid "The Myst fly by movie was not played by the original engine."
-msgstr ""
+msgstr "原游戏引擎不会播放此影片。"
 
 #. I18N:
 #. This Option is for hard-of-hearing.
@@ -8271,21 +8336,21 @@ msgstr ""
 #.
 #: engines/mohawk/dialogs.cpp:133
 msgid "Improve Selenitic Age puzzle ~a~ccessibility"
-msgstr ""
+msgstr "改善 Selenitic Age 谜题可访问性 (~A~)"
 
 #: engines/mohawk/dialogs.cpp:134
 msgid "Allow solving Selenitic Age audio puzzles with more error margin."
-msgstr ""
+msgstr "提高解决 Selenitic Age 音频谜题的容许偏差。"
 
 #: engines/mohawk/dialogs.cpp:137
 msgid "Simulate loading times of old CD drives"
-msgstr ""
+msgstr "模拟老式 CD 驱动器加载时间"
 
 #: engines/mohawk/dialogs.cpp:138
 msgid ""
 "Simulate loading times of old CD-ROM drives by adding a random delay during "
 "scene transitions."
-msgstr ""
+msgstr "在转场期间随机添加延时，以模拟旧 CD-ROM 驱动器的加载时间。"
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:145
@@ -8302,17 +8367,17 @@ msgstr "主菜单 ("
 
 #: engines/mohawk/dialogs.cpp:286
 msgid "The new language will be applied after restarting the game."
-msgstr ""
+msgstr "新语言将于游戏重启后生效。"
 
 #: engines/mohawk/dialogs.cpp:358
 msgid "~W~ater Effect Enabled"
-msgstr ""
+msgstr "启用水效果 (~W~)"
 
 #: engines/mohawk/dialogs.cpp:358
 msgid ""
 "Toggles the use of QuickTime videos for visual effects related to water "
 "surfaces (ripples, waves, etc.)."
-msgstr ""
+msgstr "开关水面相关视觉效果（水波、波浪等）使用的 QuickTime 视频。"
 
 #: engines/mohawk/dialogs.cpp:360
 msgid "Transitions:"
@@ -8322,7 +8387,7 @@ msgstr "转场："
 msgid ""
 "Adjusts the speed of screen transitions. Disabling screen transitions will "
 "enable you to navigate more quickly through the game."
-msgstr ""
+msgstr "调整屏幕转场速度。禁用转场能够使你在游戏中导航更快。"
 
 #: engines/mohawk/dialogs.cpp:365
 msgid "Fastest"
@@ -8338,19 +8403,19 @@ msgstr "最佳"
 
 #: engines/mohawk/metaengine.cpp:290
 msgid "Myst ME support not compiled in"
-msgstr ""
+msgstr "未编入 Myst ME 支持"
 
 #: engines/mohawk/metaengine.cpp:295
 msgid "Myst support not compiled in"
-msgstr ""
+msgstr "未编入 Myst 支持"
 
 #: engines/mohawk/metaengine.cpp:302
 msgid "Riven support not compiled in"
-msgstr ""
+msgstr "未编入 Riven 支持"
 
 #: engines/mohawk/metaengine.cpp:316
 msgid "CSTime support not compiled in"
-msgstr ""
+msgstr "未编入 CSTime 支持"
 
 #: engines/mohawk/mohawk.cpp:51
 msgid "The game is paused. Press any key to continue."
@@ -8391,7 +8456,7 @@ msgstr "显示地图"
 msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
-msgstr ""
+msgstr "你确定载入存档吗？所有未保存进度都将丢失。"
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:145
@@ -8404,17 +8469,17 @@ msgstr "载入游戏"
 #: engines/mohawk/riven_stacks/aspit.cpp:370
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
-msgstr ""
+msgstr "你确定要开始新游戏吗？所有未保存进度都将丢失。"
 
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 msgid "New game"
-msgstr ""
+msgstr "新游戏"
 
 #: engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
-msgstr ""
+msgstr "你确定要退出吗？所有未保存进度都将丢失。"
 
 #: engines/mohawk/myst_stacks/preview.cpp:89
 msgid "You can't leave the library in the demo."
@@ -8424,57 +8489,59 @@ msgstr "在演示版中，你无法离开图书馆。"
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
-msgstr ""
+msgstr "缺失 Riven 可执行文件。Windows 版文件名是“riven.exe”或“rivendemo.exe”。 "
 
 #: engines/mohawk/riven.cpp:156
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
-msgstr ""
+msgstr "也可以使用“arcriven.z”安装程序。除此之外，你还可以使用 Mac 版“Riven”可执行文件。"
 
 #: engines/mohawk/riven.cpp:168
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
-msgstr ""
+msgstr "确实“extras.mhk”。使用“arcriven.z”安装器文件也有用。"
 
 #: engines/mohawk/riven.cpp:509
 msgid "You are missing the following required Riven data files:\n"
-msgstr ""
+msgstr "缺失如下必需的 Riven 数据文件：\n"
 
 #: engines/mohawk/riven.cpp:881
 msgid "Move forward"
-msgstr ""
+msgstr "向前移动"
 
 #: engines/mohawk/riven.cpp:887
 msgid "Move forward left"
-msgstr ""
+msgstr "向左前方移动"
 
 #: engines/mohawk/riven.cpp:891
 msgid "Move forward right"
-msgstr ""
+msgstr "向右前方移动"
 
 #: engines/mohawk/riven.cpp:895
 msgid "Move backwards"
-msgstr ""
+msgstr "向后移动"
 
 #: engines/mohawk/riven.cpp:913
 msgid "Look up"
-msgstr ""
+msgstr "向上看"
 
 #: engines/mohawk/riven.cpp:918
 msgid "Look down"
-msgstr ""
+msgstr "向下看"
 
 #: engines/mohawk/riven.cpp:924
 msgid "Play intro videos"
-msgstr ""
+msgstr "播放开场视频"
 
 #: engines/mohawk/riven_stack.cpp:203
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
 msgstr ""
+"探索此点后区域仅限\n"
+"完整版游戏可用。"
 
 #: engines/mohawk/riven_stacks/aspit.cpp:428
 msgid ""
@@ -8484,96 +8551,101 @@ msgid ""
 "the game. ScummVM cannot do that and\n"
 "the site no longer exists."
 msgstr ""
+"此时 Riven 演示版会询问你\n"
+"是否要打开网页浏览器访问\n"
+"Red Orb 商店购买游戏。\n"
+"ScummVM 无法实现此功能，\n"
+"且此网站不再存在。"
 
 #: engines/mtropolis/metaengine.cpp:52
 msgid "16:9 widescreen mod"
-msgstr ""
+msgstr "16:9 宽屏模组"
 
 #: engines/mtropolis/metaengine.cpp:53
 msgid ""
 "Removes letterboxing and moves some display elements, improving coverage on "
 "widescreen displays"
-msgstr ""
+msgstr "移除黑边并移动一些显示元素，以改善宽屏显示覆盖效果"
 
 #: engines/mtropolis/metaengine.cpp:63
 msgid "Improved music mixing"
-msgstr ""
+msgstr "优化音乐混合"
 
 #: engines/mtropolis/metaengine.cpp:64
 msgid ""
 "Enables dynamic MIDI mixer, improving quality, but behaving less like "
 "mTropolis Player."
-msgstr ""
+msgstr "启用动态 MIDI 混音器，会改善音频质量，但行为与 mTropolis Player 不相似。"
 
 #: engines/mtropolis/metaengine.cpp:74
 msgid "Autosave at progress points"
-msgstr ""
+msgstr "在进展点自动存档"
 
 #: engines/mtropolis/metaengine.cpp:75
 msgid "Automatically saves the game after completing puzzles and chapters."
-msgstr ""
+msgstr "在完成谜题与章节后自动保存游戏。"
 
 #: engines/mtropolis/metaengine.cpp:85
 msgid "Enable short transitions"
-msgstr ""
+msgstr "启用短转场"
 
 #: engines/mtropolis/metaengine.cpp:86
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
-msgstr ""
+msgstr "启用最高速度转场而非跳过。"
 
 #: engines/mtropolis/metaengine.cpp:96
 msgid "Enable subtitles for important sound effects"
-msgstr ""
+msgstr "为重要的音效启用字幕"
 
 #: engines/mtropolis/metaengine.cpp:97
 msgid ""
 "Enables subtitles for important sound effects.  This may reduce the "
 "difficulty of sound recognition puzzles and minigames."
-msgstr ""
+msgstr "为重要音效启用字幕。  这可能会降低声音辨别谜题与小游戏的难度。"
 
 #: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:64
 msgid "Start with debugger"
-msgstr ""
+msgstr "带调试器启动"
 
 #: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:65
 msgid "Starts with the debugger dashboard active."
-msgstr ""
+msgstr "启动同时激活调试器面板。"
 
 #: engines/mtropolis/metaengine.cpp:160
 msgid "Toggle debug overlay"
-msgstr ""
+msgstr "开关调试叠加层"
 
 #: engines/mtropolis/metaengine.cpp:165
 msgid "Force any playing movies to end"
-msgstr ""
+msgstr "强制完整播放所有影片"
 
 #: engines/mtropolis/saveload.cpp:142
 msgid "Failed to read version information from save file"
-msgstr ""
+msgstr "无法从存档文件读取版本信息"
 
 #: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:358
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
-msgstr ""
+msgstr "存档读取失败，存档文件不含有效版本信息。"
 
 #: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:368
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
-msgstr ""
+msgstr "存档文件由不兼容的早期版本 ScummVM 创建。无法加载。"
 
 #: engines/mtropolis/saveload.cpp:174
 msgid "Failed to load save, an error occurred when reading the save game data."
-msgstr ""
+msgstr "无法加载存档，读取存档数据时出错。"
 
 #: engines/mtropolis/saveload.cpp:234
 msgid "An internal error occurred while attempting to write save game data"
-msgstr ""
+msgstr "试图写入存档数据时发生内部错误"
 
 #: engines/mtropolis/saveload.cpp:242
 msgid "An error occurred while writing the save game"
-msgstr ""
+msgstr "写存档时出错"
 
 #: engines/mtropolis/mtropolis.cpp:111
 msgid ""
@@ -8581,6 +8653,9 @@ msgid ""
 "content but MPEG video support was not compiled in.\n"
 "The game will still play, but MPEG videos will not work."
 msgstr ""
+"此游戏的某些内容需要 MPEG 视频\n"
+"支持，但未编入此支持。\n"
+"游戏仍会运行，但不会播放 MPEG 视频。"
 
 #: engines/mtropolis/mtropolis.cpp:121
 msgid ""
@@ -8588,27 +8663,30 @@ msgid ""
 "content but MPEG audio support was not compiled in.\n"
 "The game will still play, but some audio will not work."
 msgstr ""
+"此游戏的某些内容需要 MPEG 音频\n"
+"支持，但未编入此支持。\n"
+"游戏仍会运行，但不会播放某些音频。"
 
 #: engines/mtropolis/plugin/mti.cpp:550
 msgid "Image Viewer"
-msgstr ""
+msgstr "图像查看器"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
 msgid "Unable to locate the '%s' engine data file"
-msgstr ""
+msgstr "无法定位“%s”引擎数据文件"
 
 #: engines/myst3/detection.cpp:181 engines/myst3/detection.cpp:195
 msgid "PS2 version is not yet supported"
-msgstr ""
+msgstr "尚未支持 PS2 版本"
 
 #: engines/myst3/metaengine.cpp:40
 msgid "Widescreen mod"
-msgstr ""
+msgstr "宽屏模组"
 
 #: engines/myst3/metaengine.cpp:41
 msgid "Enable widescreen rendering in fullscreen mode."
-msgstr ""
+msgstr "启用全屏模式的宽屏渲染。"
 
 #: engines/myst3/myst3.cpp:363
 #, c-format
@@ -8619,52 +8697,56 @@ msgid ""
 "The updates can be downloaded from:\n"
 "%s"
 msgstr ""
+"此版本的 Myst III 还未接收最新官方补丁更新。\n"
+"请安装与游戏语言对应的官方更新。\n"
+"可从以下地址下载更新：\n"
+"%s"
 
 #: engines/myst3/myst3.cpp:1577 engines/pegasus/pegasus.cpp:749
 msgid "Invalid file name for saving"
-msgstr ""
+msgstr "存档文件名无效"
 
 #: engines/nancy/input.cpp:178
 msgid "Nancy Drew"
-msgstr ""
+msgstr "Nancy Drew"
 
 #: engines/nancy/input.cpp:181
 msgid "Left Click Interact"
-msgstr ""
+msgstr "左键点击互动"
 
 #: engines/nancy/input.cpp:188
 msgid "Right Click Interact"
-msgstr ""
+msgstr "右键点击互动"
 
 #: engines/nancy/input.cpp:219
 msgid "Fast move modifier"
-msgstr ""
+msgstr "快速移动修饰"
 
 #: engines/nancy/input.cpp:234
 msgid "Nancy Drew - Maze"
-msgstr ""
+msgstr "Nancy Drew - 迷宫"
 
 #: engines/nancy/input.cpp:236
 msgid "Show/hide maze map"
-msgstr ""
+msgstr "显示/隐藏迷宫地图"
 
 #: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
-msgstr ""
+msgstr "玩家语音"
 
 #: engines/nancy/metaengine.cpp:39
 msgid ""
 "Enable player speech. Only works if speech is enabled in the Audio settings."
-msgstr ""
+msgstr "启用玩家语音。仅在“音频”设置中启用语音时有效。"
 
 #: engines/nancy/metaengine.cpp:49
 msgid "Character Speech"
-msgstr ""
+msgstr "人物语音"
 
 #: engines/nancy/metaengine.cpp:50
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
-msgstr ""
+msgstr "启用 NPC 语音。仅在“音频”设置中启用语音时有效。"
 
 #: engines/nancy/metaengine.cpp:60
 msgid "Auto Move"
@@ -8672,64 +8754,64 @@ msgstr "自动移动"
 
 #: engines/nancy/metaengine.cpp:61
 msgid "Automatically rotate the viewport when the mouse reaches an edge."
-msgstr ""
+msgstr "光标到达边界时自动旋转视口。"
 
 #: engines/nancy/metaengine.cpp:71
 msgid "Fix softlocks"
-msgstr ""
+msgstr "修复软锁定"
 
 #: engines/nancy/metaengine.cpp:72
 msgid ""
 "Fix instances where missing something earlier in the game blocks you from "
 "progressing any further."
-msgstr ""
+msgstr "修复因在游戏早期缺失物品，而你无法继续游玩的情况。"
 
 #: engines/nancy/metaengine.cpp:82
 msgid "Fix annoyances"
-msgstr ""
+msgstr "修复恼人元素"
 
 #: engines/nancy/metaengine.cpp:83
 msgid "Fix various minor annoyances."
-msgstr ""
+msgstr "修复多个恼人元素。"
 
 #: engines/nancy/metaengine.cpp:93
 msgid "Extend endgame timer"
-msgstr ""
+msgstr "延长游戏结束计时器"
 
 #: engines/nancy/metaengine.cpp:94
 msgid ""
 "Get a little more time before failing the final puzzle. This is an official "
 "patch by HeR Interactive."
-msgstr ""
+msgstr "在最终谜题结束前多给点时间。这是 HeR Interactive 的官方补丁。"
 
 #: engines/neverhood/dialogs.cpp:52
 msgid "Skip the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "跳过 Hall of Records 故事板场景"
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "允许玩家跳过 Hall of Records 故事板场景"
 
 #: engines/neverhood/dialogs.cpp:57
 msgid "Scale the making of videos to full screen"
-msgstr ""
+msgstr "将视频制作放大至全屏"
 
 #: engines/neverhood/dialogs.cpp:58
 msgid "Scale the making of videos, so that they use the whole screen"
-msgstr ""
+msgstr "放大视频制作，使其占满整个屏幕"
 
 #: engines/neverhood/dialogs.cpp:62
 msgid "Repeat useful Willie's hint"
-msgstr ""
+msgstr "重复 Willie 有用的提示"
 
 #: engines/neverhood/dialogs.cpp:63
 msgid "Repeat actual useful hint by Willie"
-msgstr ""
+msgstr "重复 Willie 给出的真正有用的提示"
 
 #. I18N: NHC is a file extension
 #: engines/neverhood/dialogs.cpp:89
 msgid "NHC replacement:"
-msgstr ""
+msgstr "NHC 替换："
 
 #: engines/neverhood/dialogs.cpp:95
 msgid "<original>"
@@ -8741,10 +8823,12 @@ msgid ""
 "Can't save game in slot %i\n"
 "\n"
 msgstr ""
+"无法在槽位 %i 存档\n"
+"\n"
 
 #: engines/parallaction/saveload.cpp:193
 msgid "Load file"
-msgstr ""
+msgstr "载入文件"
 
 #: engines/parallaction/saveload.cpp:200
 msgid "Loading game..."
@@ -8752,11 +8836,11 @@ msgstr "游戏加载中..."
 
 #: engines/parallaction/saveload.cpp:208
 msgid "Save file"
-msgstr ""
+msgstr "保存文件"
 
 #: engines/parallaction/saveload.cpp:215
 msgid "Saving game..."
-msgstr ""
+msgstr "保存游戏中..."
 
 #: engines/parallaction/saveload.cpp:268
 msgid ""
@@ -8767,10 +8851,14 @@ msgid ""
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
+"ScummVM 发现你有 Nippon Safes 的旧版存档，应将其转换。\n"
+"旧版存档格式不再受支持，因此如果不转换，将无法加载游戏。\n"
+"\n"
+"点击 OK 现在转换，否则下次启动游戏时将再次询问你。\n"
 
 #: engines/parallaction/saveload.cpp:315
 msgid "ScummVM successfully converted all your saved games."
-msgstr ""
+msgstr "ScummVM 已成功转换所有存档。"
 
 #: engines/parallaction/saveload.cpp:317
 msgid ""
@@ -8779,14 +8867,17 @@ msgid ""
 "\n"
 "Please report to the team."
 msgstr ""
+"ScummVM 在控制台窗口中输出了警告，无法保证所有文件均被转换。\n"
+"\n"
+"请将此报告给团队。"
 
 #: engines/pegasus/pegasus.cpp:2724
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr ""
+msgstr "上/放大/向前移动/开门"
 
 #: engines/pegasus/pegasus.cpp:2732
 msgid "Down/Zoom Out"
-msgstr ""
+msgstr "下/缩小"
 
 #: engines/pegasus/pegasus.cpp:2754
 msgid "Action/Select"
@@ -8794,71 +8885,71 @@ msgstr "行动/选择"
 
 #: engines/pegasus/pegasus.cpp:2774
 msgid "Display/Hide Inventory Tray"
-msgstr ""
+msgstr "显示/隐藏物品栏托盘"
 
 #: engines/pegasus/pegasus.cpp:2781
 msgid "Display/Hide Biochip Tray"
-msgstr ""
+msgstr "显示/隐藏生物芯片托盘"
 
 #: engines/pegasus/pegasus.cpp:2789
 msgid "Toggle Center Data Display"
-msgstr ""
+msgstr "开关中心数据显示"
 
 #: engines/pegasus/pegasus.cpp:2796
 msgid "Display/Hide Info Screen"
-msgstr ""
+msgstr "显示/隐藏信息屏幕"
 
 #: engines/pegasus/pegasus.cpp:2803
 msgid "Display/Hide Pause Menu"
-msgstr ""
+msgstr "显示/隐藏暂停菜单"
 
 #: engines/pegasus/pegasus.cpp:2810
 msgid "Toggle Chatty AI"
-msgstr ""
+msgstr "开关唠叨 AI"
 
 #: engines/pink/gui.cpp:291
 msgid "This menu item is not yet implemented"
-msgstr ""
+msgstr "此菜单项尚未实现"
 
 #. I18N: Plumbers is the title of the game. 3DO is the name of platform
 #: engines/plumbers/metaengine.cpp:51
 msgid "3DO Plumbers requires RGB support."
-msgstr ""
+msgstr "3DO Plumbers 需要 RGB 支持。"
 
 #: engines/queen/metaengine.cpp:36
 msgid "Alternative intro"
-msgstr ""
+msgstr "备用入场"
 
 #: engines/queen/metaengine.cpp:37
 msgid "Use an alternative game intro (CD version only)"
-msgstr ""
+msgstr "使用备用游戏入场（仅 CD 版本）"
 
 #: engines/queen/metaengine.cpp:47
 msgid "Improved font"
-msgstr ""
+msgstr "优化字体"
 
 #: engines/queen/metaengine.cpp:48
 msgid "Use an easier to read custom font"
-msgstr ""
+msgstr "使用更易阅读的自定义字体"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:875
 msgid "Windows Trial version is not supported"
-msgstr ""
+msgstr "不支持 Windows 试玩版"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:902
 msgid "macOS Trial version is not supported"
-msgstr ""
+msgstr "不支持 macOS 试玩版"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:928
 msgid "Pocket PC Trial version is not supported"
-msgstr ""
+msgstr "不支持 Pocket PC 试玩版"
 
 #: engines/saga/metaengine.cpp:130
 msgid "I Have No Mouth support not compiled in"
-msgstr ""
+msgstr "未编入 I Have No Mouth 支持"
 
 #: engines/saga/music.cpp:98
 #, c-format
@@ -8867,38 +8958,41 @@ msgid ""
 "%s and %s. Without these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
+"找不到 AdLib 乐器定义文件\n"
+"%s 与 %s。若没有这些文件，\n"
+"音乐则不会与原游戏相同。"
 
 #: engines/saga/saga.cpp:395
 msgid "Error loading game resources."
-msgstr ""
+msgstr "加载游戏资源时出错。"
 
 #: engines/sci/detection_options.h:33
 msgid "Skip EGA dithering pass (full color backgrounds)"
-msgstr ""
+msgstr "跳过 EGA 抖动传递（全彩背景）"
 
 #: engines/sci/detection_options.h:34
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
-msgstr ""
+msgstr "跳过 EGA 游戏中的抖动传递，使图形以全彩显示"
 
 #: engines/sci/detection_options.h:45
 msgid "Enable high resolution graphics"
-msgstr ""
+msgstr "启用高分辨率图形"
 
 #: engines/sci/detection_options.h:46
 msgid "Enable high resolution graphics/content"
-msgstr ""
+msgstr "启用高分辨率的图形/内容"
 
 #: engines/sci/detection_options.h:57
 msgid "Enable black-lined video"
-msgstr ""
+msgstr "启用黑线视频"
 
 #: engines/sci/detection_options.h:58
 msgid "Draw black lines over videos to increase their apparent sharpness"
-msgstr ""
+msgstr "在视频上层绘制黑线，以增加其清晰度"
 
 #: engines/sci/detection_options.h:70
 msgid "Use high-quality video scaling"
-msgstr ""
+msgstr "使用高质量视频缩放"
 
 #: engines/sci/detection_options.h:71
 msgid "Use linear interpolation when upscaling videos, where possible"
@@ -8906,37 +9000,37 @@ msgstr "若可能，则在放大视频时使用线性插值"
 
 #: engines/sci/detection_options.h:83
 msgid "Use high-quality \"LarryScale\" cel scaling"
-msgstr ""
+msgstr "使用高质量“LarryScale”缩放方式"
 
 #: engines/sci/detection_options.h:84
 msgid "Use special cartoon scaler for drawing character sprites"
-msgstr ""
+msgstr "绘制人物精灵图时，使用特殊的卡通缩放器"
 
 #: engines/sci/detection_options.h:119
 msgid "Use CD audio"
-msgstr ""
+msgstr "使用 CD 音频"
 
 #: engines/sci/detection_options.h:120
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr ""
+msgstr "可用时使用 CD 音频替换游戏内音频"
 
 #: engines/sci/detection_options.h:132
 msgid "Use Windows cursors"
-msgstr ""
+msgstr "使用 Windows 光标"
 
 #: engines/sci/detection_options.h:133
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
-msgstr ""
+msgstr "使用 Windows 光标（较小的黑白光标）替代 DOS 光标"
 
 #: engines/sci/detection_options.h:145
 msgid "Use silver cursors"
-msgstr ""
+msgstr "使用银色光标"
 
 #: engines/sci/detection_options.h:146
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
-msgstr ""
+msgstr "使用备用银色光标替代常规的金色光标"
 
 #: engines/sci/detection_options.h:158
 msgid "Enable content censoring"
@@ -8964,19 +9058,19 @@ msgstr "使用 RGB 渲染以改善转场"
 
 #: engines/sci/detection_options.h:197
 msgid "Use per-resource modified palettes"
-msgstr ""
+msgstr "使用按资源修改的调色板"
 
 #: engines/sci/detection_options.h:198
 msgid "Use custom per-resource palettes to improve visuals"
-msgstr ""
+msgstr "使用自定义的按资源调色板，以优化观感"
 
 #: engines/sci/detection_options.h:210
 msgid "Enable bearded musicians"
-msgstr ""
+msgstr "启用大胡子音乐家"
 
 #: engines/sci/detection_options.h:211
 msgid "Enable graphics that were disabled for legal reasons"
-msgstr ""
+msgstr "启用因法律原因禁用的图像"
 
 #: engines/sci/detection_options.h:239
 msgid "MIDI mode:"
@@ -8986,7 +9080,7 @@ msgstr "MIDI 模式："
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
-msgstr ""
+msgstr "当使用外部 MIDI 设备时（例如通过 USB-MIDI），请在这里选择设备"
 
 #: engines/sci/detection_options.h:245
 msgid "Standard (GM / MT-32)"
@@ -9014,11 +9108,11 @@ msgstr "游戏不含菜单资源"
 
 #: engines/sci/detection_tables.h:4594
 msgid "This demo uses an unimplemented version of Robot videos"
-msgstr ""
+msgstr "此演示游戏使用了 Robot 视频的未实现版本"
 
 #: engines/sci/detection_tables.h:4649
 msgid "Incomplete game detected. You have to copy data from all the CDs."
-msgstr ""
+msgstr "检测到不完整游戏。你需要从所有 CD 中复制数据。"
 
 #: engines/sci/engine/kfile.cpp:491 engines/sci/metaengine.cpp:283
 msgid "(Autosave)"
@@ -9027,46 +9121,46 @@ msgstr "（自动保存）"
 #: engines/sci/engine/kgraphics32.cpp:361
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
-msgstr ""
+msgstr "请使用外部查看器打开游戏的帮助文件：%s"
 
 #: engines/sci/engine/kmisc.cpp:894
 msgid ""
 "The Poker logic is hardcoded in an external DLL, and is not implemented yet. "
 "There exists some dummy logic for now, where opponent actions are chosen "
 "randomly"
-msgstr ""
+msgstr "The Poker 逻辑是硬编码在外部 DLL 文件中的，且尚未实现。目前仍存在一些占位逻辑，其中对手操作完全随机"
 
 #: engines/sci/engine/savegame.cpp:1455
 msgid "The format of this saved game is obsolete, unable to load it"
-msgstr ""
+msgstr "此存档格式已被启用，无法加载"
 
 #: engines/sci/engine/savegame.cpp:1457
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
-msgstr ""
+msgstr "存档版本为 %d，支持最高版本为 %0d"
 
 #: engines/sci/engine/savegame.cpp:1469
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
-msgstr ""
+msgstr "此存档是使用不同版本的游戏创建的，无法加载"
 
 #: engines/sci/graphics/video32.cpp:68
 #, c-format
 msgid ""
 "Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
-msgstr ""
+msgstr "无法在最大颜色深度 8bpp 的系统播放 %dbpp 视频"
 
 #: engines/sci/metaengine.cpp:212
 msgid "SCI32 support not compiled in"
-msgstr ""
+msgstr "未编入 SCI32 支持"
 
 #: engines/sci/resource/resource.cpp:856
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "
 "that your game files are valid."
-msgstr ""
+msgstr "检测到缺失或损坏的游戏资源。部分游戏功能可能无法正常进行。请检查控制台获取更多信息，并检查游戏文件有效。"
 
 #: engines/sci/sci.cpp:422
 msgid ""
@@ -9076,6 +9170,8 @@ msgid ""
 "not always render properly or reflect the actual game speech. This is not a "
 "ScummVM bug -- it is a problem with the game's assets."
 msgstr ""
+"字幕已启用，但 King's Quest 7 中的字幕未完成，在游戏发布版本中被禁用。ScummVM "
+"允许重新启用字幕，但因为其在原游戏中被移除，字幕不总是渲染正确或反映游戏实际语音。这不是 ScummVM 的问题 -- 是游戏资源的问题。"
 
 #: engines/sci/sci.cpp:446
 msgid ""
@@ -9089,16 +9185,20 @@ msgid ""
 "place it in the game folder. Without this patch, General MIDI music for this "
 "game will sound badly distorted."
 msgstr ""
+"你选择了通用 MIDI 作为声音设备。Sierra 在其“通用 MIDI 实用程序”中为本游戏提供了通用 MIDI 后市场支持。请使用此补丁，"
+"以便在游戏中享受 MIDI 音乐。获得该补丁后，你可以解压缩 ScummVM 附加内容文件夹中的所有 *.PAT 文件，ScummVM "
+"会自动添加相应补丁。你也可以按照补丁中包含的 READ.ME 文件中的说明，将相关 *.PAT 文件重命名为 4.PAT "
+"并将其放入游戏文件夹中。如果没有这个补丁，这款游戏的通用 MIDI 音乐听起来会严重失真。"
 
 #: engines/sci/sci.cpp:538
 msgid "Download patch"
-msgstr ""
+msgstr "下载补丁"
 
 #: engines/sci/sci.cpp:539
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
-msgstr ""
+msgstr "（或点击“下载补丁”按钮。但注意 - 它只负责下载，你需要继续操作）\n"
 
 #: engines/sci/sci.cpp:546
 msgid ""
@@ -9109,6 +9209,10 @@ msgid ""
 "- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 msgstr ""
+"GK2 有粉丝制作的字幕，感谢 SierraHelp 的好心人使其可用。\n"
+"\n"
+"安装方式：\n"
+"- 下载 http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip\n"
 
 #: engines/sci/sci.cpp:979
 msgid ""
@@ -9118,12 +9222,17 @@ msgid ""
 "was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
 "Example: 'qfg2-thief.sav'."
 msgstr ""
+"保存在 ScummVM 中的角色会自动显示。在原始解释器中保存的角色文件需要放到 ScummVM "
+"的保存游戏目录中，并根据保存的游戏添加前缀：“qfg1-”表示《光荣使命 1》，“qfg2-”表示《光荣使命 2》。例如：“qfg2-thief."
+"sav”。"
 
 #: engines/sci/sound/music.cpp:173
 msgid ""
 "The selected audio driver requires the following file(s):\n"
 "\n"
 msgstr ""
+"选中的音频驱动需要以下文件：\n"
+"\n"
 
 #: engines/sci/sound/music.cpp:176
 msgid ""
@@ -9140,6 +9249,18 @@ msgid ""
 "In that case you may need to apply the original Sierra patch.\n"
 "\n"
 msgstr ""
+"\n"
+"\n"
+"一些音频驱动（至少对某些游戏）\n"
+"由 Sierra 作为市场后补丁发布，\n"
+"因此可能不会作为原游戏的一部分安装。\n"
+"\n"
+"请将这些文件复制到你的游戏数据文件夹。\n"
+"\n"
+"但请注意，单独这些文件可能不可用，\n"
+"而是作为（补丁）资源包的内容出现。\n"
+"在这种情况下，你可能需要应用原有的 Sierra 补丁。\n"
+"\n"
 
 #: engines/scumm/detection_internal.h:384
 msgid ""
@@ -9150,11 +9271,15 @@ msgid ""
 "for some guides which can help you recover valid files from the KryoFlux "
 "dumps that Limited Run Games also provided."
 msgstr ""
+"无法游玩此版本的 Monkey Island，因为 Limited Run Games 提供了损坏的 DISK03.LEC、DISK04.LEC 与 "
+"903.LFL 文件。\n"
+"\n"
+"请联系他们的技术支持替换文件，或者在网上搜索从他们提供的 KryoFlux 转储文件中恢复有效文件的方法。"
 
 #. I18N: Creates new online session for multiplayer
 #: engines/scumm/dialog-createsession.cpp:37
 msgid "Create a new game session"
-msgstr ""
+msgstr "新建游戏会话"
 
 #. I18N: Name of the online game session
 #: engines/scumm/dialog-createsession.cpp:40
@@ -9170,7 +9295,7 @@ msgstr "你的名字："
 #. I18N: Button, start hosting online multiplayer game
 #: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3913
 msgid "Host"
-msgstr ""
+msgstr "主机"
 
 #. I18N: Retrieving list of online multiplayer games
 #: engines/scumm/dialog-sessionselector.cpp:51
@@ -9180,7 +9305,7 @@ msgstr "读取游戏中..."
 #. I18N: Join online multiplayer game
 #: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3913
 msgid "Join"
-msgstr ""
+msgstr "加入"
 
 #. I18N: Online multiplayer games were found
 #: engines/scumm/dialog-sessionselector.cpp:118
@@ -9191,130 +9316,130 @@ msgstr "找到 %d 个可用游戏。"
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:285
 msgid "~P~revious"
-msgstr ""
+msgstr "上一个 (~P~)"
 
 #. I18N: Next page button
 #: engines/scumm/dialogs.cpp:287
 msgid "~N~ext"
-msgstr ""
+msgstr "下一个 (~N~)"
 
 #: engines/scumm/dialogs.cpp:288
 msgid "~C~lose"
-msgstr ""
+msgstr "关闭 (~C~)"
 
 #: engines/scumm/dialogs.cpp:969
 msgid "Speech Only"
-msgstr ""
+msgstr "仅语音"
 
 #: engines/scumm/dialogs.cpp:970
 msgid "Speech and Subtitles"
-msgstr ""
+msgstr "语音与字幕"
 
 #: engines/scumm/dialogs.cpp:971
 msgid "Subtitles Only"
-msgstr ""
+msgstr "仅字幕"
 
 #: engines/scumm/dialogs.cpp:979
 msgctxt "lowres"
 msgid "Speech & Subs"
-msgstr ""
+msgstr "语音与字幕"
 
 #: engines/scumm/dialogs.cpp:1025
 msgid "Select a Proficiency Level."
-msgstr ""
+msgstr "选择熟练水平。"
 
 #: engines/scumm/dialogs.cpp:1027
 msgid "Refer to your Loom(TM) manual for help."
-msgstr ""
+msgstr "参考你的 Loom(TM) 手册获取帮助。"
 
 #: engines/scumm/dialogs.cpp:1031
 msgid "Practice"
-msgstr ""
+msgstr "实际"
 
 #: engines/scumm/dialogs.cpp:1032
 msgid "Expert"
-msgstr ""
+msgstr "专家"
 
 #: engines/scumm/dialogs.cpp:1139
 msgid "Enhancements:"
-msgstr ""
+msgstr "增强："
 
 #: engines/scumm/dialogs.cpp:1144
 msgid "Fix original bugs"
-msgstr ""
+msgstr "修复原作问题"
 
 #: engines/scumm/dialogs.cpp:1145
 msgid ""
 "Fixes bugs which were present in the original release, and noticeable "
 "graphical/audio glitches."
-msgstr ""
+msgstr "修复原版本中存在的问题与明显的图形/音频错误。"
 
 #: engines/scumm/dialogs.cpp:1148
 msgid "Audio-visual improvements"
-msgstr ""
+msgstr "视听优化"
 
 #: engines/scumm/dialogs.cpp:1149
 msgid ""
 "Makes adjustments not related to bugs for certain audio and graphics "
 "elements (e.g. version consistency changes)."
-msgstr ""
+msgstr "调整特定音频与图形元素，与问题无关（如版本一致性更改）。"
 
 #: engines/scumm/dialogs.cpp:1152
 msgid "Restored content"
-msgstr ""
+msgstr "恢复内容"
 
 #: engines/scumm/dialogs.cpp:1153
 msgid ""
 "Restores dialogs, graphics, and audio elements which were originally cut in "
 "the original release."
-msgstr ""
+msgstr "恢复原版本中删除的对话框、图形与音频元素。"
 
 #: engines/scumm/dialogs.cpp:1156
 msgid "Modern UI/UX adjustments"
-msgstr ""
+msgstr "现代 UI/UX 调整"
 
 #: engines/scumm/dialogs.cpp:1157
 msgid ""
 "Activates some modern comforts; e.g it removes the fake sound loading screen "
 "in Sam&Max, and makes early save menus snappier."
-msgstr ""
+msgstr "增强现代特性；例如移除 Sam&Max 虚假的音效加载屏幕，并且让早期存档菜单更轻巧。"
 
 #: engines/scumm/dialogs.cpp:1181 engines/scumm/metaengine.cpp:716
 msgid "Enable the original GUI and Menu"
-msgstr ""
+msgstr "启用原版 GUI 与菜单"
 
 #: engines/scumm/dialogs.cpp:1182
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
 "for a more complete experience."
-msgstr ""
+msgstr "允许游戏使用引擎内置的界面与原有保存/载入菜单。将其与“退出时确认”一起使用，以获得更完全的体验。"
 
 #: engines/scumm/dialogs.cpp:1300
 msgid "Overture Timing:"
-msgstr ""
+msgstr "Overture 时间点："
 
 #: engines/scumm/dialogs.cpp:1304
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
-msgstr ""
+msgstr "使用替换音乐时，此选项会调整 Overture 改变到带 Lucasfilm 与 Loom 标识场景的时间。"
 
 #: engines/scumm/dialogs.cpp:1391
 msgid "Music Quality:"
-msgstr ""
+msgstr "音乐质量："
 
 #: engines/scumm/dialogs.cpp:1395
 msgid ""
 "Select music quality. The original lets you choose this from the Game menu."
-msgstr ""
+msgstr "选择音乐质量。可在原版本的游戏菜单中选择。"
 
 #: engines/scumm/dialogs.cpp:1396
 msgid ""
 "Select music quality. The original determines the basic setup by hardware "
 "detection and speed tests, but also allows changes through the Game menu to "
 "some degree."
-msgstr ""
+msgstr "选择音乐质量。原游戏通过硬件检测与速度测试决定基本配置，但也允许使用游戏菜单做出一定程度的更改。"
 
 #: engines/scumm/dialogs.cpp:1483 engines/scumm/dialogs.cpp:1484
 msgid "auto"
@@ -9365,25 +9490,25 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1583
 msgid "Intro Adjust:"
-msgstr ""
+msgstr "开场调节："
 
 #: engines/scumm/dialogs.cpp:1587
 msgid ""
 "When playing the intro track, play from this point in it. Use this if the "
 "music gets cut off prematurely, or if you are unhappy with the way the music "
 "syncs up with the intro."
-msgstr ""
+msgstr "从指定点开始播放开场音乐。如果音乐提前结束，或者你觉得音乐跟不上画面，可以使用此选项。"
 
 #: engines/scumm/dialogs.cpp:1596
 msgid "Outlook Adjust:"
-msgstr ""
+msgstr "前景调节："
 
 #: engines/scumm/dialogs.cpp:1600
 msgid ""
 "The outlook music is part of the intro track. Adjust the position in the "
 "track at which it starts playing. Use this if the music is cut off, or if "
 "you hear part of the previous music."
-msgstr ""
+msgstr "前景音乐时开场音轨的一部分。此选项会调节播放起点位置。如果音乐被截断，或者你听到了前一音乐的一部分，可以使用此选项。"
 
 #: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:707
 msgid "Load modded audio"
@@ -9407,33 +9532,33 @@ msgstr "在线服务器："
 msgid ""
 "Address of the server to connect to for online play.  It must start with "
 "either \"https://\" or \"http://\" schemas."
-msgstr ""
+msgstr "用于在线游玩连接的服务器地址。必须以“https://”或“http://”协议开头。"
 
 #: engines/scumm/dialogs.cpp:1713
 msgid "Enable online competitive mods"
-msgstr ""
+msgstr "启用在线竞争模组"
 
 #: engines/scumm/dialogs.cpp:1713
 msgid "Enables custom-made modifications intented for online competitive play."
-msgstr ""
+msgstr "允许为在线经济设计的自定义更改。"
 
 #: engines/scumm/dialogs.cpp:1717
 msgid "Enable connection to Multiplayer Server"
-msgstr ""
+msgstr "允许连接到多人游戏服务器"
 
 #: engines/scumm/dialogs.cpp:1717
 msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
-msgstr ""
+msgstr "开关服务器连接，用于在互联网上主持与加入在线多人游戏。"
 
 #: engines/scumm/dialogs.cpp:1718
 msgid "Host games over LAN"
-msgstr ""
+msgstr "在局域网主持游戏"
 
 #: engines/scumm/dialogs.cpp:1718
 msgid "Allows the game sessions to be discovered over your local area network."
-msgstr ""
+msgstr "允许游戏会话在局域网范围被发现。"
 
 #: engines/scumm/dialogs.cpp:1721
 msgid "Generate random maps"
@@ -9447,15 +9572,15 @@ msgstr "允许随机生成地图（基于 Moonbase 主机）。"
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."
-msgstr ""
+msgstr "用于连接到主持与加入在线游戏会话的服务器地址。"
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
-msgstr ""
+msgstr "常见键盘指令："
 
 #: engines/scumm/help.cpp:73
 msgid "Save / Load dialog"
-msgstr ""
+msgstr "保存/加载对话框"
 
 #: engines/scumm/help.cpp:77
 msgid "Selection screen"
@@ -9463,15 +9588,15 @@ msgstr "选择屏幕"
 
 #: engines/scumm/help.cpp:78
 msgid "Skip line of text"
-msgstr ""
+msgstr "跳过文本行"
 
 #: engines/scumm/help.cpp:79
 msgid "Esc"
-msgstr ""
+msgstr "Esc 键"
 
 #: engines/scumm/help.cpp:80 engines/wintermute/keymapper_tables.h:2136
 msgid "Space"
-msgstr ""
+msgstr "空格"
 
 #: engines/scumm/help.cpp:80 engines/vcruise/metaengine.cpp:160
 msgid "Pause game"
@@ -9489,19 +9614,19 @@ msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:81
 msgid "Load saved game 1-10"
-msgstr ""
+msgstr "加载存档 1-10"
 
 #: engines/scumm/help.cpp:82
 msgid "Save game 1-10"
-msgstr ""
+msgstr "保存游戏 1-10"
 
 #: engines/scumm/help.cpp:89
 msgid "Music volume up / down"
-msgstr ""
+msgstr "增加/减少音乐音量"
 
 #: engines/scumm/help.cpp:90
 msgid "Text speed slower / faster"
-msgstr ""
+msgstr "减少/增加文本速度"
 
 #: engines/scumm/help.cpp:91
 msgid "Simulate left mouse button"
@@ -9549,27 +9674,27 @@ msgstr "增加/减小缩放因数"
 
 #: engines/scumm/help.cpp:104
 msgid "Toggle aspect-ratio correction"
-msgstr ""
+msgstr "开关宽高比矫正"
 
 #: engines/scumm/help.cpp:109
 msgid "* Note that using ctrl-f and"
-msgstr ""
+msgstr "* 注意，不推荐使用"
 
 #: engines/scumm/help.cpp:110
 msgid "  ctrl-g are not recommended"
-msgstr ""
+msgstr "  Ctrl-F 与 Ctrl-G"
 
 #: engines/scumm/help.cpp:111
 msgid "  since they may cause crashes"
-msgstr ""
+msgstr "  由于它们可能导致崩溃"
 
 #: engines/scumm/help.cpp:112
 msgid "  or incorrect game behavior."
-msgstr ""
+msgstr "  或不正常的游戏行为。"
 
 #: engines/scumm/help.cpp:116
 msgid "Spinning drafts on the keyboard:"
-msgstr ""
+msgstr "在键盘上旋转草稿："
 
 #: engines/scumm/help.cpp:118
 msgid "Main game controls:"
@@ -9675,35 +9800,35 @@ msgstr "向 Henry /"
 #. I18N: These are different musical notes
 #: engines/scumm/help.cpp:181
 msgid "play C minor on distaff"
-msgstr ""
+msgstr "在纺纱杆上弹 C 小调"
 
 #: engines/scumm/help.cpp:182
 msgid "play D on distaff"
-msgstr ""
+msgstr "在纺纱杆上弹 D"
 
 #: engines/scumm/help.cpp:183
 msgid "play E on distaff"
-msgstr ""
+msgstr "在纺纱杆上弹 E"
 
 #: engines/scumm/help.cpp:184
 msgid "play F on distaff"
-msgstr ""
+msgstr "在纺纱杆上弹 F"
 
 #: engines/scumm/help.cpp:185
 msgid "play G on distaff"
-msgstr ""
+msgstr "在纺纱杆上弹 G"
 
 #: engines/scumm/help.cpp:186
 msgid "play A on distaff"
-msgstr ""
+msgstr "在纺纱杆上弹 A"
 
 #: engines/scumm/help.cpp:187
 msgid "play B on distaff"
-msgstr ""
+msgstr "在纺纱杆上弹 B"
 
 #: engines/scumm/help.cpp:188
 msgid "play C major on distaff"
-msgstr ""
+msgstr "在纺纱杆上弹 C大调"
 
 #: engines/scumm/help.cpp:190
 msgid "Shows the drafts inventory"
@@ -9740,7 +9865,7 @@ msgstr "关闭"
 
 #: engines/scumm/help.cpp:221
 msgid "KeyUp"
-msgstr ""
+msgstr "KeyUp"
 
 #: engines/scumm/help.cpp:221
 msgid "Highlight prev dialogue"
@@ -9748,7 +9873,7 @@ msgstr "高亮显示上一对话"
 
 #: engines/scumm/help.cpp:222
 msgid "KeyDown"
-msgstr ""
+msgstr "KeyDown"
 
 #: engines/scumm/help.cpp:222
 msgid "Highlight next dialogue"
@@ -9902,19 +10027,19 @@ msgstr "低处拳击"
 
 #: engines/scumm/help.cpp:320
 msgid "Sucker punch"
-msgstr ""
+msgstr "吸盘拳"
 
 #: engines/scumm/help.cpp:323
 msgid "These are for Indy on left."
-msgstr ""
+msgstr "这是 Indy 位于左侧的键位。"
 
 #: engines/scumm/help.cpp:324
 msgid "When Indy is on the right,"
-msgstr ""
+msgstr "当 Indy 位于右侧时，"
 
 #: engines/scumm/help.cpp:325
 msgid "7, 4, and 1 are switched with"
-msgstr ""
+msgstr "7、4、1 会与如下交换"
 
 #: engines/scumm/help.cpp:326
 msgid "9, 6, and 3, respectively."
@@ -9922,7 +10047,7 @@ msgstr "分别使用 9、6、3。"
 
 #: engines/scumm/help.cpp:335
 msgid "Biplane controls (numpad):"
-msgstr ""
+msgstr "双翼飞机控制（数字键盘）："
 
 #: engines/scumm/help.cpp:336
 msgid "Fly to upper left"
@@ -9962,11 +10087,11 @@ msgstr "飞向右下角"
 
 #: engines/scumm/input.cpp:1366
 msgid "Snap scroll on"
-msgstr ""
+msgstr "快速滚动开启"
 
 #: engines/scumm/input.cpp:1368
 msgid "Snap scroll off"
-msgstr ""
+msgstr "快速滚动关闭"
 
 #: engines/scumm/input.cpp:1381
 msgid "Music volume: "
@@ -9982,22 +10107,24 @@ msgid ""
 "piracy.\n"
 "The full version is available for purchase from the iTunes Store."
 msgstr ""
+"为避免盗版，Putt-Putt Saves the Zoo 的 iOS Lite 版本未受支持。\n"
+"可在 iTunes Store 购买完整版。"
 
 #: engines/scumm/metaengine.cpp:466
 msgid "HE v71+ support is not compiled in"
-msgstr ""
+msgstr "未编入 HE v71+ 支持"
 
 #: engines/scumm/metaengine.cpp:490
 msgid "SCUMM v7-8 support is not compiled in"
-msgstr ""
+msgstr "未编入 SCUMM v7-8 支持"
 
 #: engines/scumm/metaengine.cpp:636
 msgid "Show Object Line"
-msgstr ""
+msgstr "显示物品行"
 
 #: engines/scumm/metaengine.cpp:637
 msgid "Show the names of objects at the bottom of the screen"
-msgstr ""
+msgstr "在屏幕底部显示物品名称"
 
 #: engines/scumm/metaengine.cpp:645
 msgid "Use NES Classic Palette"
@@ -10009,13 +10136,13 @@ msgstr "使用更能模拟 NES Classic 的自然调色板"
 
 #: engines/scumm/metaengine.cpp:654
 msgid "Trim FM-TOWNS games to 200 pixels height"
-msgstr ""
+msgstr "将 FM-TOWNS 游戏高度缩减到 200 像素"
 
 #: engines/scumm/metaengine.cpp:655
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
-msgstr ""
+msgstr "削除屏幕底部多出的 40 像素，将其变为标准 200 像素高度，以便使用“宽高比矫正”"
 
 #: engines/scumm/metaengine.cpp:663
 msgid "Run in original 640 x 480 resolution"
@@ -10058,7 +10185,7 @@ msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
 "\" for a more complete experience."
-msgstr ""
+msgstr "允许游戏使用引擎内置的图形界面与原版保存/载入菜单。\t\t将其与“退出时确认”一起使用，以获取更完整的体验。"
 
 #: engines/scumm/metaengine.cpp:726
 msgid "Enable low latency audio mode"
@@ -10069,7 +10196,7 @@ msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. \t"
 "\tIt is recommended to enable this feature only if you incur in audio "
 "latency issues during normal gameplay."
-msgstr ""
+msgstr "允许游戏以降低声音精确度为代价，使用低延迟音频。\t\t建议仅在你正常游玩遇到音频延迟问题时启用此功能。"
 
 #: engines/scumm/metaengine.cpp:736
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
@@ -10080,7 +10207,7 @@ msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", \t\twhich was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
-msgstr ""
+msgstr "启用游戏第三部分的歌曲“A Pirate I Was Meant To Be”，\t\t此歌曲在国际版中被删除。但请注意：字幕翻译可能不完整。"
 
 #: engines/scumm/metaengine.cpp:836
 msgid "Down Left"
@@ -10114,21 +10241,25 @@ msgid ""
 "Aspect ratio correction can be achieved by trimming the resolution to "
 "320x200, under 'engine' tab."
 msgstr ""
+"你启用了“宽高比矫正”。但 FM-TOWNS 的原有分辨率是 320x240，不允许宽高比矫正。\n"
+"可以通过在“引擎”标签页下将分辨率缩减为 320x200 实现宽高比矫正。"
 
 #: engines/scumm/scumm.cpp:1197
 msgid "This game requires the 'Indy' Macintosh executable for its fonts."
-msgstr ""
+msgstr "此游戏需要“Indy”Macintosh 可执行文件提供字体。"
 
 #: engines/scumm/scumm.cpp:1222
 msgid ""
 "This game requires the 'Loom' Macintosh executable for its music and fonts."
-msgstr ""
+msgstr "此游戏需要“Loom”Macintosh 可执行文件提供音乐与字体。"
 
 #: engines/scumm/scumm.cpp:1242
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"找不到用于读取乐器的“Monkey Island”\n"
+"Macintosh 可执行文件。音乐将被禁用。"
 
 #: engines/scumm/scumm.cpp:1250
 #, c-format
@@ -10146,6 +10277,9 @@ msgid ""
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please copy the game from the original media without compression."
 msgstr ""
+"检测到使用 ScummVM Tools 压缩的音频文件。\n"
+"此游戏不再支持 *.BUN/*.SOU 压缩，将会禁用音频。\n"
+"请从原始媒介复制未经压缩的游戏。"
 
 #: engines/scumm/scumm.cpp:2091
 #, c-format
@@ -10153,12 +10287,16 @@ msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
 msgstr ""
+"原生 MIDI 支持需要 LucasArts 提供的 Roland Upgrade，\n"
+"但缺失 %s。将转而使用 AdLib。"
 
 #: engines/scumm/scumm.cpp:2107
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
 msgstr ""
+"已知此版本的 Monkey Island 1 缺失\n"
+"MT-32 所需的一些资源。将转而使用 AdLib。"
 
 #: engines/scumm/scumm.cpp:3802
 msgid ""
@@ -10166,6 +10304,8 @@ msgid ""
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
+"Maniac Mansion 此时通常会启动。但要启动，Maniac Mansion 的游戏文件必须放在 Tentacle "
+"游戏目录下的“Maniac”目录中，同时游戏必须添加到 ScummVM 中。"
 
 #: engines/scumm/scumm.cpp:3913
 msgid "Would you like to host or join a network play session?"
@@ -10304,6 +10444,8 @@ msgid ""
 "Unimplemented development codepath encountered within the sound engine,\n"
 "please file a ticket at https://bugs.scummvm.org."
 msgstr ""
+"在声音引擎中遇到未实现的开发代码路径，\n"
+"请在 https://bugs.scummvm.org 上提交报告。"
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
@@ -10367,7 +10509,7 @@ msgstr "使窗口部分背景透明"
 
 #: engines/sky/compact.cpp:140
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
-msgstr ""
+msgstr "“sky.cpt”引擎数据文件大小不正确。"
 
 #: engines/sky/metaengine.cpp:89
 msgid "Walk / Look / Talk"
@@ -10448,15 +10590,15 @@ msgstr ""
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
-msgstr ""
+msgstr "推荐使用“gui.ini”获取用于游戏本地化的正确字体设置。"
 
 #: engines/stark/stark.cpp:318
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
-msgstr ""
+msgstr "建议使用“language.ini”获取本地化确认对话框。"
 
 #: engines/stark/stark.cpp:324
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
-msgstr ""
+msgstr "建议使用“game.exe”获取定制的确认对话框。"
 
 #: engines/supernova/supernova.cpp:191
 #, c-format
@@ -10524,6 +10666,10 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
+"ScummVM 发现你有 Broken Sword 1 的旧版存档，应将其转换。\n"
+"旧版存档格式不再受支持，因此如果不转换，将无法加载游戏。\n"
+"\n"
+"点击 OK 现在转换，否则下次启动游戏时将再次询问你。\n"
 
 #: engines/sword1/control.cpp:2982
 #, c-format
@@ -10549,7 +10695,7 @@ msgstr "《断剑 1》演示到此结束"
 #: engines/sword2/animation.cpp:426
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
-msgstr ""
+msgstr "找到 PSX 转场动画，但 ScummVM 未编入 RGB 颜色支持"
 
 #: engines/sword2/metaengine.cpp:43
 msgid "Show object labels"
@@ -10597,7 +10743,7 @@ msgid ""
 "The game originally renders at 640x432 which is then presented letterboxed "
 "at 640x480. Enabling this option removes the forced letterbox effect, so "
 "that the game fits better on screens with an aspect ratio wider than 4:3."
-msgstr ""
+msgstr "游戏最初以 640x432 渲染，以 640x480 的宽高比呈现。启用此选项可消除强制的黑边效果，使游戏更适合宽高比大于 4:3 的屏幕。"
 
 #: engines/tony/tony.cpp:248
 #, c-format
