@@ -177,7 +177,7 @@ bool qdInterfaceElement::save_script(Common::SeekableWriteStream &fh, int indent
 	// 	return false;
 	// } FIXME
 
-	for (int i = 0; i < indent; i ++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 

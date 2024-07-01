@@ -125,13 +125,13 @@ bool qdVideo::save_script(Common::SeekableWriteStream &fh, int indent) const {
 	fh.writeString(">\r\n");
 
 	if (background_.has_file()) {
-		for (int i = 0; i < indent; i ++) {
+		for (int i = 0; i < indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<video_background>%s</video_background>", qdscr_XML_string(background_file_name())));
 	}
 
-	for (int i = 0; i < indent; i ++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString(Common::String::format("<file>%s</file>", qdscr_XML_string(file_name_.c_str())));
