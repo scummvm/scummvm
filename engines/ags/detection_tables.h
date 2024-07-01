@@ -4679,9 +4679,11 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("shivahkosher", "ac2game.dat", "ec0019b528dd1e9bcb4264967c4a3a31", 30446404), // Linux Humble Bundle
 	GAME_ENTRY_EN("shivahkosher", "ac2game.dat", "bdc618b23fc279938f05f8ac058a938b", 32723739), // MacOS
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("shivahkosher", "shivah.exe", "0aaf5445a3544a631d6e7dd4561fc7ae", 32319665, nullptr), // Windows GOG, Humble Bundle
-	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("shivahkosher", "shivah.exe", "adf5d1e8de8b1292e98ef59ce89ab42c", 33845596, nullptr), // GOG, v2.1
+	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("shivahkosher", "shivah.exe", "adf5d1e8de8b1292e98ef59ce89ab42c", 33845596, nullptr), // Windows v2.1
+	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("shivahkosher", "shivah.exe", "b4b91ed6682c0aa7f1c78dbb6373f7eb", 21136003, nullptr), // Windows v3.0
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("shivahkosher", "ac2game.dat", "021b85e94ba52ed77b6b4841ffb50c43", 30658376, nullptr), // macOS v2.1a
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("shivahkosher", "ac2game.dat", "75d706c07c1e8beb688a4968d1b8e6a4", 17889391, nullptr), // macOS v3.0
+	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("shivahkosher", "Shivah.ags", "75d706c07c1e8beb688a4968d1b8e6a4", 17889391, nullptr), // Linux v3.0
 	GAME_ENTRY_EN_PLATFORM("shoaly", "SYCBS.exe", "fae163b58c16e194688727d0903684be", 4302275, "Deluxe"),  // Windows
 	GAME_ENTRY_EN_PLATFORM("shoaly", "SYCBS.ags", "9ad5572708bd5b2077bf227494fd2679", 1198511, "Deluxe"),  // Linux
 	GAME_ENTRY_EN("sisterssecret", "SistersSecret.exe", "f8d06c339ca2af5160b662c7a19572d6", 18659398),  // v1.0.0a
@@ -7094,6 +7096,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("kq4retold", "KQ4Retold.ags", "f472e13626996771d94066ab5661924d", 163943178), // v1.0.4 Linux
 	GAME_ENTRY_EN("kq4retold", "ac2game.dat", "da6140c1e246d5f7641464bda80c45d5", 312046797), // v1.0.4 Mac
 	GAME_ENTRY_EN("kq4retold", "KQ4Retold.exe", "da6140c1e246d5f7641464bda80c45d5", 312165417), // v1.0.5 Win
+	GAME_ENTRY_EN("kq4retold", "KQ4Retold.exe", "da6140c1e246d5f7641464bda80c45d5", 166602358), // v1.0.5 Win (fixed)
+	GAME_ENTRY_EN("kq4retold", "KQ4Retold.ags", "fdf0ce483760fca13a4279f161b965da", 164061798), // v1.0.5 Linux
+	GAME_ENTRY_EN("kq4retold", "game.ags", "da6140c1e246d5f7641464bda80c45d5", 166602358), // v1.0.5 Mac
 	GAME_ENTRY("kristmaskrisis", "Kristmas Krisis.exe", "90413e9ae57e222f8913b09d2bc847bc", 2067681),  // En-De
 	GAME_ENTRY_LANG("ksauna", "Karjalan Sauna.exe", "663bbdd33432ee73be23f3c97d10053e", 14485962, Common::FI_FIN),
 	GAME_ENTRY_EN("ktx1", "KTX-1.exe", "615e73fc1874e92d60a1996c2330ea36", 13806290),
