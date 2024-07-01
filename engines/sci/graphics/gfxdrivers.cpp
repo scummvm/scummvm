@@ -295,11 +295,12 @@ const byte *monochrInit(const char *drvFile, bool &earlyVersion) {
 	return result;
 }
 
-SCI0_CGABWDriver::SCI0_CGABWDriver() : SCI0_DOSPreVGADriver(2, 640, 400, 1), _monochromePatterns(nullptr), _earlyVersion(false) {
-	static const byte monochromePalette[6] = {
-		0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF
-	};
-	assignPalette(monochromePalette);
+SCI0_CGABWDriver::SCI0_CGABWDriver(uint32 monochromeColor) : SCI0_DOSPreVGADriver(2, 640, 400, 1), _monochromePatterns(nullptr), _earlyVersion(false) {
+	_monochromePalette[0] = _monochromePalette[1] = _monochromePalette[2] = 0;
+	_monochromePalette[3] = (monochromeColor >> 16) & 0xff;
+	_monochromePalette[4] = (monochromeColor >> 8) & 0xff;
+	_monochromePalette[5] = monochromeColor & 0xff;
+	assignPalette(_monochromePalette);
 
 	if (!(_monochromePatterns = monochrInit(_driverFiles[0], _earlyVersion)) && !(_monochromePatterns = monochrInit(_driverFiles[1], _earlyVersion)))
 		error("Failed to open '%s' or '%s'", _driverFiles[0], _driverFiles[1]);
@@ -391,14 +392,13 @@ void SCI0_CGABWDriver::clearRect(const Common::Rect &r) const {
 
 const char *SCI0_CGABWDriver::_driverFiles[2] = { "CGA320BW.DRV", "CGA320M.DRV" };
 
-SCI0_HerculesDriver::SCI0_HerculesDriver(int palIndex) : SCI0_DOSPreVGADriver(2, 720, 350, 0), _monochromePatterns(nullptr) {
-	static const byte monochromePalettes[3][6] = {
-		{ 0x00, 0x00, 0x00, 0xFF, 0xBF, 0x66 }, // Amber
-		{ 0x00, 0x00, 0x00, 0x66, 0xFF, 0x66 }, // Green
-		{ 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF }  // B/W
-	};
-	assert(palIndex >= 0 && palIndex <= 2);
-	assignPalette(monochromePalettes[palIndex]);
+SCI0_HerculesDriver::SCI0_HerculesDriver(uint32 monochromeColor, bool cropImage) : SCI0_DOSPreVGADriver(2, cropImage ? 640 : 720, cropImage ? 300 : 350, 0),
+	_centerX(cropImage ? 0 : 40), _centerY(cropImage ? 0 : 25), _monochromePatterns(nullptr) {
+	_monochromePalette[0] = _monochromePalette[1] = _monochromePalette[2] = 0;
+	_monochromePalette[3] = (monochromeColor >> 16) & 0xff;
+	_monochromePalette[4] = (monochromeColor >> 8) & 0xff;
+	_monochromePalette[5] = monochromeColor & 0xff;
+	assignPalette(_monochromePalette);
 	bool unused = false;
 
 	if (!(_monochromePatterns = monochrInit(_driverFile, unused)))
@@ -444,7 +444,7 @@ void SCI0_HerculesDriver::copyRectToScreen(const byte *src, int pitch, int x, in
 		}
 	}
 
-	g_system->copyRectToScreen(_compositeBuffer, w << 1, (x << 1) + 40, y + 25, w << 1, rh);
+	g_system->copyRectToScreen(_compositeBuffer, w << 1, (x << 1) + _centerX, y + _centerY, w << 1, rh);
 }
 
 void SCI0_HerculesDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
@@ -478,13 +478,13 @@ void SCI0_HerculesDriver::replaceCursor(const void *cursor, uint w, uint h, int 
 
 Common::Point SCI0_HerculesDriver::getMousePos() const {
 	Common::Point res = GfxDriver::getMousePos();
-	res.x = CLIP<int>(res.x - 40, 0, 639) >> 1;
-	res.y = CLIP<int>(res.y - 25, 0, 299) * 2 / 3;
+	res.x = CLIP<int>(res.x - _centerX, 0, 639) >> 1;
+	res.y = CLIP<int>(res.y - _centerY, 0, 299) * 2 / 3;
 	return res;
 }
 
 void SCI0_HerculesDriver::clearRect(const Common::Rect &r) const {
-	Common::Rect r2((r.left << 1) + 40, (r.top & ~1) * 3 / 2 + (r.top & 1) + 25, (r.right << 1) + 40, (r.bottom & ~1) * 3 / 2 + (r.bottom & 1) + 25);
+	Common::Rect r2((r.left << 1) + _centerX, (r.top & ~1) * 3 / 2 + (r.top & 1) + _centerY, (r.right << 1) + 40, (r.bottom & ~1) * 3 / 2 + (r.bottom & 1) + 25);
 	GfxDriver::clearRect(r2);
 }
 

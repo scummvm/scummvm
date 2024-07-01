@@ -91,7 +91,7 @@ private:
 
 class SCI0_CGABWDriver final : public SCI0_DOSPreVGADriver {
 public:
-	SCI0_CGABWDriver();
+	SCI0_CGABWDriver(uint32 monochromeColor);
 	~SCI0_CGABWDriver() override;
 	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
@@ -99,6 +99,7 @@ public:
 	void clearRect(const Common::Rect &r) const override;
 	static bool validateMode() { return checkDriver(_driverFiles, 2); }
 private:
+	byte _monochromePalette[6];
 	const byte *_monochromePatterns;
 	bool _earlyVersion;
 	static const char *_driverFiles[2];
@@ -106,7 +107,7 @@ private:
 
 class SCI0_HerculesDriver final : public SCI0_DOSPreVGADriver {
 public:
-	SCI0_HerculesDriver(int palIndex);
+	SCI0_HerculesDriver(uint32 monochromeColor, bool cropImage);
 	~SCI0_HerculesDriver() override;
 	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
@@ -114,6 +115,9 @@ public:
 	void clearRect(const Common::Rect &r) const override;
 	static bool validateMode() { return checkDriver(&_driverFile, 1); }
 private:
+	const uint16 _centerX;
+	const uint16 _centerY;
+	byte _monochromePalette[6];
 	const byte *_monochromePatterns;
 	static const char *_driverFile;
 };

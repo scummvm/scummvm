@@ -155,11 +155,11 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 			_gfxDrv = new SCI0_CGADriver(false);
 			break;
 		case Common::kRenderCGA_BW:
-			_gfxDrv = new SCI0_CGABWDriver();
+			_gfxDrv = new SCI0_CGABWDriver(0xffffff);
 			break;
 		case Common::kRenderHercA:
 		case Common::kRenderHercG:
-			_gfxDrv = new SCI0_HerculesDriver(renderMode == Common::kRenderHercG ? 1 : 0);
+			_gfxDrv = new SCI0_HerculesDriver(renderMode == Common::kRenderHercG ? 0x66ff66 : 0xffbf66, false);
 			break;
 		default:
 			break;
