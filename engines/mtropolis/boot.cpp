@@ -2046,7 +2046,7 @@ void findMacPlayer(Common::Archive &fs, Common::Path &resolvedPath, PlayerType &
 	resolvedPlayerType = bestPlayerType;
 }
 
-void findWindowsMainSegment(Common::Archive &fs, Common::Path &resolvedPath, bool &resolvedIsV2) {
+void findWindowsMainSegment(Common::Archive &fs, Common::Path &resolvedPath, const MTropolisGameDescription &gamedesc, bool &resolvedIsV2) {
 	Common::ArchiveMemberList allFiles;
 	Common::ArchiveMemberList filteredFiles;
 
@@ -2054,7 +2054,7 @@ void findWindowsMainSegment(Common::Archive &fs, Common::Path &resolvedPath, boo
 
 	for (const Common::ArchiveMemberPtr &archiveMember : allFiles) {
 		Common::String fileName = archiveMember->getFileName();
-		if (fileName.hasSuffixIgnoreCase(".mpl") || fileName.hasSuffixIgnoreCase(".mfw") || fileName.hasSuffixIgnoreCase(".mfx")) {
+		if (fileName.hasSuffixIgnoreCase(".mpl") || fileName.hasSuffixIgnoreCase(".mfw") || fileName.hasSuffixIgnoreCase(".mfx") || fileName.hasSuffixIgnoreCase(".c9a")) {
 			filteredFiles.push_back(archiveMember);
 			debug(4, "Identified possible main segment file %s", fileName.c_str());
 		}
@@ -2065,11 +2065,24 @@ void findWindowsMainSegment(Common::Archive &fs, Common::Path &resolvedPath, boo
 	if (filteredFiles.size() == 0)
 		error("Couldn't find any main segment files");
 
-	if (filteredFiles.size() != 1)
-		error("Found multiple main segment files");
+	auto &fileToUse = filteredFiles.front();
 
-	resolvedPath = filteredFiles.front()->getPathInArchive();
-	resolvedIsV2 = !filteredFiles.front()->getFileName().hasSuffixIgnoreCase(".mpl");
+	if (filteredFiles.size() != 1) {
+		if (gamedesc.mainFileWindows && *gamedesc.mainFileWindows) {
+			const auto predicate = [&gamedesc](const Common::ArchiveMemberPtr &x) { return x->getFileName().hasPrefixIgnoreCase(gamedesc.mainFileWindows); };
+			const auto match = Common::find_if(filteredFiles.begin(), filteredFiles.end(), predicate);
+			if (match == filteredFiles.end()) {
+				error("Designated main segment file not found. Expected file %s", gamedesc.mainFileWindows);
+			} else {
+				fileToUse = *match;
+			}
+		} else {
+			error("Found multiple main segment files");
+		}
+	}
+
+	resolvedPath = fileToUse->getPathInArchive();
+	resolvedIsV2 = !fileToUse->getFileName().hasSuffixIgnoreCase(".mpl") && !fileToUse->getFileName().hasSuffixIgnoreCase(".c9a");
 }
 
 bool getMacFileType(Common::Archive &fs, const Common::Path &path, uint32 &outTag) {
@@ -2087,6 +2100,7 @@ enum SegmentSignatureType {
 
 	kSegmentSignatureMacV1,
 	kSegmentSignatureWinV1,
+	kSegmentSignatureCloud9V1,
 	kSegmentSignatureMacV2,
 	kSegmentSignatureWinV2,
 	kSegmentSignatureCrossV2,
@@ -2097,13 +2111,14 @@ const uint kSignatureHeaderSize = 10;
 SegmentSignatureType identifyStreamBySignature(byte (&header)[kSignatureHeaderSize]) {
 	const byte macV1Signature[kSignatureHeaderSize] = {0, 0, 0xaa, 0x55, 0xa5, 0xa5, 0, 0, 0, 0};
 	const byte winV1Signature[kSignatureHeaderSize] = {1, 0, 0xa5, 0xa5, 0x55, 0xaa, 0, 0, 0, 0};
+	const byte cloud9V1Signature[kSignatureHeaderSize] = {8, 0, 0xa5, 0xa5, 0x55, 0xaa, 0, 0, 0, 0};
 	const byte macV2Signature[kSignatureHeaderSize] = {0, 0, 0xaa, 0x55, 0xa5, 0xa5, 2, 0, 0, 0};
 	const byte winV2Signature[kSignatureHeaderSize] = {1, 0, 0xa5, 0xa5, 0x55, 0xaa, 0, 0, 0, 2};
 	const byte crossV2Signature[kSignatureHeaderSize] = {8, 0, 0xa5, 0xa5, 0x55, 0xaa, 0, 0, 0, 2};
 
-	const byte *signatures[5] = {macV1Signature, winV1Signature, macV2Signature, winV2Signature, crossV2Signature};
+	const byte *signatures[6] = {macV1Signature, winV1Signature, cloud9V1Signature, macV2Signature, winV2Signature, crossV2Signature};
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < ARRAYSIZE(signatures); i++) {
 		const byte *signature = signatures[i];
 
 		if (!memcmp(signature, header, kSignatureHeaderSize))
@@ -2463,7 +2478,7 @@ BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 		Boot::findMacMainSegment(*vfs, mainSegmentLocation, isV2Project);
 	} else if (gameDesc.desc.platform == Common::kPlatformWindows) {
 		Boot::findWindowsPlayer(*vfs, playerLocation, playerType);
-		Boot::findWindowsMainSegment(*vfs, mainSegmentLocation, isV2Project);
+		Boot::findWindowsMainSegment(*vfs, mainSegmentLocation, gameDesc, isV2Project);
 	}
 
 	{
