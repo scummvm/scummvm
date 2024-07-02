@@ -90,6 +90,14 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 
 	_messageBannerActive = true;
 
+	int oldScreenTop = _screenTop;
+
+	// There are a few instances in a non-zero _screenTop is not being reset
+	// before starting a SMUSH movie (e.g. the very last video in The Dig);
+	// let's set it to zero now and restore it at the very end...
+	if (isSmushActive())
+		_screenTop = 0;
+
 	// Fetch the translated string for the message...
 	convertMessageToString((const byte *)msg, (byte *)localizedMsg, sizeof(localizedMsg));
 	ptrToBreak = strstr(localizedMsg, "\\n");
@@ -311,6 +319,9 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	_internalGUIControls[0].relativeCenterX = -1;
 
 	_messageBannerActive = false;
+
+	if (isSmushActive())
+		_screenTop = oldScreenTop;
 
 	return ks;
 }
@@ -851,6 +862,10 @@ void ScummEngine_v7::queryQuit(bool returnToLauncher) {
 			_messageBannerActive = true;
 			_comiQuitMenuIsOpen = true;
 
+			int oldScreenTop = _screenTop;
+			if (isSmushActive())
+				_screenTop = 0;
+
 			// Force the cursor to be ON...
 			int8 oldCursorState = _cursor.state;
 			_cursor.state = 1;
@@ -1037,6 +1052,9 @@ void ScummEngine_v7::queryQuit(bool returnToLauncher) {
 
 			_comiQuitMenuIsOpen = false;
 			_messageBannerActive = false;
+
+			if (isSmushActive())
+				_screenTop = oldScreenTop;
 		} else {
 			ScummEngine::queryQuit(returnToLauncher);
 		}
@@ -2375,8 +2393,13 @@ void ScummEngine::showMainMenu() {
 		runScript(VAR(VAR_PRE_SAVELOAD_SCRIPT), 0, 0, nullptr);
 
 	int oldSaveSound = _saveSound;
+	int oldScreenTop = _screenTop;
 
 	_saveSound = 1;
+
+	if (isSmushActive())
+		_screenTop = 0;
+
 	_shakeTempSavedState = _shakeEnabled;
 	setShake(0);
 
@@ -2551,6 +2574,9 @@ void ScummEngine::showMainMenu() {
 	}
 
 	_saveSound = oldSaveSound;
+
+	if (isSmushActive())
+		_screenTop = oldScreenTop;
 
 	_mainMenuIsActive = false;
 
