@@ -98,7 +98,7 @@ bool qdGameObject::save_script_body(Common::SeekableWriteStream &fh, int indent)
 		fh.writeString("\t");
 	}
 
-	fh.writeString(Common::String::format("<pos_3d>%f %f %f</pos_3d>", r_.x, r_.y, r_.z));
+	fh.writeString(Common::String::format("<pos_3d>%f %f %f</pos_3d>\r\n", r_.x, r_.y, r_.z));
 
 	if (parallax_offset_.x || parallax_offset_.y) {
 		for (int i = 0; i <= indent; i ++) {
