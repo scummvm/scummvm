@@ -222,15 +222,15 @@ bool ADSInterpreter::skipSceneLogicBranch() {
 	bool result = true;
 	while (scr->pos() < scr->size()) {
 		uint16 op = scr->readUint16LE();
-		if (op == 0x1510 || op == 0x1500) {
+		if (op == 0x1510 || op == 0x1500) { // else or endif
 			scr->seek(-2, SEEK_CUR);
 			return true;
 		} else if (op == 0 || op == 0xffff) {
 			// end of segment
 			return false;
 		} else if ((op & 0xff0f) == 0x1300) {
-			// a 0x13x0 logic op
-			result = handleOperation(op, scr);
+			// A nested IF (0x13x0) block. Skip to endif ignoring else.
+			result = skipToEndIf();
 		} else {
 			scr->skip(numArgs(op) * 2);
 		}
@@ -238,16 +238,32 @@ bool ADSInterpreter::skipSceneLogicBranch() {
 	return result && scr->pos() < scr->size();
 }
 
-bool ADSInterpreter::skipToEndIf() {
+bool ADSInterpreter::skipToElseOrEndif() {
 	Common::SeekableReadStream *scr = _adsData->scr;
 	bool result = skipSceneLogicBranch();
 	if (result) {
 		uint16 op = scr->readUint16LE();
 		if (op == 0x1500)
+			// Hit else block - we want to run that
 			result = runUntilBranchOpOrEnd();
 		// don't rewind - the calls to this should always return ptr+2
 	}
 	return result;
+}
+
+bool ADSInterpreter::skipToEndIf() {
+	Common::SeekableReadStream *scr = _adsData->scr;
+	while (scr->pos() < scr->size()) {
+		uint16 op = scr->readUint16LE();
+		// don't rewind - the calls to this should always return after the last op.
+		if (op == 0x1510) // ENDIF
+			return true;
+		else if (op == 0 || op == 0xffff)
+			return false;
+
+		scr->skip(numArgs(op) * 2);
+	}
+	return false;
 }
 
 bool ADSInterpreter::skipToEndWhile() {
@@ -317,13 +333,13 @@ void ADSInterpreter::findEndOrInitOp() {
 	}
 }
 
-bool ADSInterpreter::logicOpResult(uint16 code, const TTMEnviro *env, const TTMSeq *seq) {
+bool ADSInterpreter::logicOpResult(uint16 code, const TTMEnviro *env, const TTMSeq *seq, uint16 arg) {
 	const char *tag = seq ? env->_tags.getValOrDefault(seq->_seqNum).c_str() : "";
 	int16 envNum = env ? env->_enviro : 0;
 	int16 seqNum = seq ? seq->_seqNum : 0;
 	const char *optype = (code < 0x1300 ? "while" : "if");
 
-	assert (seq || code == 0x1380 || code == 0x1390);
+	assert(seq || code == 0x1380 || code == 0x1390);
 
 	switch (code) {
 	case 0x1010: // WHILE runtype 5
@@ -356,10 +372,18 @@ bool ADSInterpreter::logicOpResult(uint16 code, const TTMEnviro *env, const TTMS
 		return seq->_runFlag == kRunType1 || seq->_runFlag == kRunTypeMulti || seq->_runFlag == kRunTypeTimeLimited;
 	case 0x1080:
 	case 0x1090:
-	case 0x1380: // IF_???????, 0 params
-	case 0x1390: // IF_???????, 0 params
 		warning("Unimplemented IF/WHILE operation 0x%x", code);
 		return true;
+	case 0x1380: // IF_DETAIL_LTE, 1 param
+		debugN(10, "ADS 0x%04x: if detail <= %d", code, arg);
+		// FIXME: This should be right but we only have detail 0/1 and maybe HOC onward use
+		// different numbers?  HOC intro checks for >= 4.
+		return false;
+		//return ((int)static_cast<DgdsEngine *>(g_engine)->getDetailLevel() <= arg);
+	case 0x1390: // IF_DETAIL_GTE, 1 param
+		debugN(10, "ADS 0x%04x: if detail >= %d", code, arg);
+		return true;
+		//return ((int)static_cast<DgdsEngine *>(g_engine)->getDetailLevel() >= arg);
 	default:
 		error("Not an ADS logic op: %04x, how did we get here?", code);
 	}
@@ -389,7 +413,7 @@ bool ADSInterpreter::handleLogicOp(uint16 code, Common::SeekableReadStream *scr)
 			enviro = scr->readUint16LE();
 		}
 
-		bool logicResult = logicOpResult(code, env, seq);
+		bool logicResult = logicOpResult(code, env, seq, enviro);
 
 		if (andor == 0x1420) // AND
 			testval &= logicResult;
@@ -423,7 +447,7 @@ bool ADSInterpreter::handleLogicOp(uint16 code, Common::SeekableReadStream *scr)
 					_adsData->_charWhile[_adsData->_runningSegmentIdx] = 0;
 					return skipToEndWhile();
 				} else {
-					return skipToEndIf();
+					return skipToElseOrEndif();
 				}
 			}
 		}
@@ -503,7 +527,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0x1050: // WHILE finished, 2 params
 	case 0x1060: // WHILE not running, 2 params
 	case 0x1070: // WHILE running, 2 params
-	case 0x1080: // WHILE ??, 1 param (HOC+ only)
+	case 0x1080: // WHILE count?, 1 param (HOC+ only)
 	case 0x1090: // WHILE ??, 1 param (HOC+ only)
 	case 0x1310: // IF runtype 5, 2 params
 	case 0x1320: // IF not runtype 5, 2 params
@@ -512,12 +536,12 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 	case 0x1350: // IF FINISHED, 2 params
 	case 0x1360: // IF NOT_RUNNING, 2 params
 	case 0x1370: // IF RUNNING, 2 params
-	case 0x1380: // IF ??????, 1 param (HOC+ only)
-	case 0x1390: // IF ??????, 1 param (HOC+ only)
+	case 0x1380: // IF DETAIL LEVEL <= x, 1 param (HOC+ only)
+	case 0x1390: // IF DETAIL LEVEL >= x, 1 param (HOC+ only)
 		return handleLogicOp(code, scr);
-	case 0x1500: // Skip to end-if, 0 params
-		debug(10, "ADS 0x%04x: skip to end if", code);
-		skipToEndIf();
+	case 0x1500: // ELSE / Skip to end-if, 0 params
+		debug(10, "ADS 0x%04x: else (skip to end if)", code);
+		skipToElseOrEndif();
 		_adsData->_hitBranchOp = true;
 		return true;
 	case 0x1510: // END IF 0 params
