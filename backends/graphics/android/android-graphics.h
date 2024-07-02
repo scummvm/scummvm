@@ -88,6 +88,7 @@ public:
 
 	float getHiDPIScreenFactor() const override;
 
+	void touchControlInitSurface(const Graphics::ManagedSurface &surf) override;
 	void touchControlNotifyChanged() override;
 	void touchControlDraw(int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) override;
 
