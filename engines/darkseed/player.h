@@ -78,6 +78,8 @@ public:
 private:
 	void createConnectorPathToDest();
 	Common::Point getClosestUnusedConnector(int16 x, int16 y, bool mustHaveCleanLine = false);
+	void reverseConnectorList();
+	void OptimisePath();
 };
 
 } // namespace Darkseed

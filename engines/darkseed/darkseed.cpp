@@ -193,6 +193,7 @@ void DarkseedEngine::gameloop() {
 		_frame.draw();
 		_room->draw();
 		_sprites.drawSprites();
+		_player->draw();
 		_console->draw();
 		_cursor.draw();
 		_screen->makeAllDirty();
@@ -557,7 +558,6 @@ void DarkseedEngine::handleInput() {
 				}
 				if (!isPlayingAnimation_maybe) {
 					// walk to destination point
-					Common::Point origPlayerPosition = _player->_position;
 					int walkXDelta = 0;
 					int walkYDelta = 0;
 					int local_a = scaledWalkSpeed_maybe * 16;
@@ -633,10 +633,10 @@ void DarkseedEngine::handleInput() {
 							}
 						}
 						if (_player->_walkTarget.y < _player->_position.y) {
-							if (_player->_position.y - _player->_walkTarget.y <= walkYDelta) {
-								local_4 = _player->_position.y - _player->_walkTarget.y;
-							} else {
+							if (walkYDelta < _player->_position.y - _player->_walkTarget.y) {
 								local_4 = walkYDelta;
+							} else {
+								local_4 = _player->_position.y - _player->_walkTarget.y;
 							}
 							while (!bVar2 && local_4 > 0) {
 								int local_34 = (_player->_position.y - local_4) - 1;
@@ -652,10 +652,10 @@ void DarkseedEngine::handleInput() {
 								}
 							}
 						} else if (_player->_position.y < _player->_walkTarget.y) {
-							if (_player->_walkTarget.y - _player->_position.y <= walkYDelta) {
-								local_4 = _player->_walkTarget.y - _player->_position.y;
-							} else {
+							if (walkYDelta < _player->_walkTarget.y - _player->_position.y) {
 								local_4 = walkYDelta;
+							} else {
+								local_4 = _player->_walkTarget.y - _player->_position.y;
 							}
 							while (!bVar2 && local_4 > 0) {
 								if (!_room->canWalkAtLocation(_player->_position.x, _player->_position.y + local_4 + 2)) {
@@ -680,27 +680,29 @@ void DarkseedEngine::handleInput() {
 							if (_player->_position.x - _player->_walkTarget.x < walkXDelta) {
 								walkXDelta = _player->_position.x - _player->_walkTarget.x;
 							}
-							_player->_position.x -= walkXDelta;
+							_player->_positionLong.x -= walkXDelta;
 						} else if (_player->_position.x < _player->_walkTarget.x) {
 							if (_player->_walkTarget.x - _player->_position.x < walkXDelta) {
 								walkXDelta = _player->_walkTarget.x - _player->_position.x;
 							}
-							_player->_position.x += walkXDelta;
+							_player->_positionLong.x += walkXDelta;
 						}
 						if (_player->_walkTarget.y < _player->_position.y) {
 							if (_player->_position.y - _player->_walkTarget.y < walkYDelta) {
 								walkYDelta = _player->_position.y - _player->_walkTarget.y;
 							}
-							_player->_position.y -= walkYDelta;
+							_player->_positionLong.y -= walkYDelta;
 						} else if (_player->_position.y < _player->_walkTarget.y) {
 							if (_player->_walkTarget.y - _player->_position.y < walkYDelta) {
 								walkYDelta = _player->_walkTarget.y - _player->_position.y;
 							}
-							_player->_position.y += walkYDelta;
+							_player->_positionLong.y += walkYDelta;
 						}
-						if (!_room->canWalkAtLocation(_player->_position.x, _player->_position.y)) {
-							_player->_position = origPlayerPosition;
-							_player->_walkTarget = origPlayerPosition;
+						if (!_room->canWalkAtLocation(_player->_positionLong.x, _player->_positionLong.y)) {
+							_player->_walkTarget = _player->_position;
+							_player->_positionLong = _player->_position;
+						} else {
+							_player->_position = _player->_positionLong;
 						}
 					}
 				}
