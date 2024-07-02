@@ -194,6 +194,7 @@ static const ADGameDescription gameDescriptions[] = {
 		{
 			{"volume.001", 0, "8ef6966691086a5557b7c874db5b7ff4", 881872},
 			{"volume.rmf", 0, "560ec4fc04184a5113c08eeb721ca2ce", 741},
+			AD_LISTEND
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
