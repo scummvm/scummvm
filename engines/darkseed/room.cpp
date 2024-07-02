@@ -156,17 +156,19 @@ void Darkseed::Room::draw() {
 	pic.draw(0x45, 0x28);
 
 	// print walkable area map.
-//	for (int y = 0x28; y < pic.getHeight() + 0x28; y++) {
-//		for (int x = 0x45; x < pic.getWidth() + 0x45; x++) {
-//			if (canWalkAtLocation(x, y)) {
-//				g_engine->_screen->drawLine(x, y, x, y, 14);
-//			}
-//		}
-//	}
-//
-//	for (int i = 0; i < connectors.size(); i++) {
-//		g_engine->_baseSprites.getSpriteAt(0).draw(connectors[i].x, connectors[i].y);
-//	}
+	if (g_engine->_debugShowWalkPath) {
+		for (int y = 0x28; y < pic.getHeight() + 0x28; y++) {
+			for (int x = 0x45; x < pic.getWidth() + 0x45; x++) {
+				if (canWalkAtLocation(x, y)) {
+					g_engine->_screen->drawLine(x, y, x, y, 14);
+				}
+			}
+		}
+
+		for (int i = 0; i < _connectors.size(); i++) {
+			g_engine->_baseSprites.getSpriteAt(0).draw(_connectors[i].x, _connectors[i].y);
+		}
+	}
 }
 
 int Darkseed::Room::checkCursorAndMoveableObjects() {
@@ -609,7 +611,7 @@ void Darkseed::Room::getWalkTargetForObjectType_maybe(int objId) {
 	g_engine->_player->_walkTarget.y = g_engine->_cursor.getY();
 }
 
-static const int room_sprite_related_2c85_41e[] = {
+static const int scaleTbl[] = {
 	 1000,          1000,          1000,          1000,
 	 1000,          1000,          1000,          1000,
 	 1000,          1000,           400,           750,
@@ -656,7 +658,7 @@ void Darkseed::Room::calculateScaledSpriteDimensions(int width, int height, int 
 	if (local_6 <= 0) {
 		local_6 = 0;
 	}
-	g_engine->scaledWalkSpeed_maybe = room_sprite_related_2c85_41e[_roomNumber] - ((room_sprite_related_2c85_4303[_roomNumber] * local_6) / 5);
+	g_engine->scaledWalkSpeed_maybe = scaleTbl[_roomNumber] - ((room_sprite_related_2c85_4303[_roomNumber] * local_6) / 5);
 	g_engine->scaledSpriteWidth = (width * g_engine->scaledWalkSpeed_maybe) / 1000;
 	g_engine->scaledSpriteHeight = (height * g_engine->scaledWalkSpeed_maybe) / 1000;
 }
