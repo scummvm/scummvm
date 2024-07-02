@@ -131,10 +131,8 @@ void searchTagMap(int id, int targetVal) {
 			if (g_engine->_tagMap[i] == id)
 				warning("ver: %d  val: %d", d, i + 1);
 
-		if (g_engine->_tagMap[targetVal - 1] == id) {
+		if (g_engine->_tagMap[targetVal - 1] == id)
 			warning("searchTagMap(): Matched version %d", d);
-			return;
-		}
 	}
 
 	warning("searchTagMap(): No match");
@@ -262,7 +260,9 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 	// searchTagMap(QDSCR_GAME_TITLE, 203);
 
 	Common::String gameID = g_engine->getGameId();
-	if (gameID == "pilots3d") {
+	if (gameID == "pilots3") {
+		generateTagMap(20040519);
+	} else if (gameID == "pilots3d") {
 		generateTagMap(20040706);
 	} else if (gameID == "3mice1") {
 		generateTagMap(20060630);
