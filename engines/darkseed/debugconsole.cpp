@@ -29,6 +29,7 @@ DebugConsole::DebugConsole(TosText *tosText) : GUI::Debugger(), tosText(tosText)
 	registerCmd("dt",   WRAP_METHOD(DebugConsole, Cmd_dt));
 	registerCmd("getvar",   WRAP_METHOD(DebugConsole, Cmd_getvar));
 	registerCmd("setvar",   WRAP_METHOD(DebugConsole, Cmd_setvar));
+	registerCmd("enablePathfinderOverlay",   WRAP_METHOD(DebugConsole, Cmd_enablePathfinderOverlay));
 }
 
 DebugConsole::~DebugConsole() {
@@ -86,6 +87,20 @@ bool DebugConsole::Cmd_setvar(int argc, const char **argv) {
 		g_engine->_objectVar[varIdx] = newValue;
 	}
 	return true;
+}
+
+bool DebugConsole::Cmd_enablePathfinderOverlay(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: enablePathfinderOverlay <true | t | false | f>\n");
+		return true;
+	}
+
+	if (!strcmp(argv[1], "true") || !strcmp(argv[1], "t")) {
+		g_engine->_debugShowWalkPath = true;
+	} else if (!strcmp(argv[1], "false") || !strcmp(argv[1], "f")) {
+		g_engine->_debugShowWalkPath = false;
+	}
+		return true;
 }
 
 bool DebugConsole::validateObjVarIndex(int16 varIdx) {
