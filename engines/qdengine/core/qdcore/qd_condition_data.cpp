@@ -108,16 +108,16 @@ bool qdConditionData::save_script(Common::SeekableWriteStream &fh, int indent) c
 
 	switch(type_) {
 	case DATA_INT:
-		fh.writeString(Common::String::format("<condition_data_int>%d", data_.size() / sizeof(int32)));
+		fh.writeString(Common::String::format("<condition_data_int>%lu", data_.size() / sizeof(int32)));
 		for (int i = 0; i < data_.size() / sizeof(int32); i++) {
 			fh.writeString(Common::String::format(" %d", get_int(i)));
 		}
 		fh.writeString("</condition_data_int>\r\n");
 		break;
 	case DATA_FLOAT:
-		fh.writeString(Common::String::format("<condition_data_float>%d", data_.size() / sizeof(float)));
+		fh.writeString(Common::String::format("<condition_data_float>%lu", data_.size() / sizeof(float)));
 		for (int i = 0; i < data_.size() / sizeof(float); i++) {
-			fh.writeString(Common::String::format(" ", get_float(i)));
+			fh.writeString(Common::String::format(" %f", get_float(i)));
 		}
 		fh.writeString("</condition_data_float>\r\n");
 		break;

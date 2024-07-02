@@ -238,7 +238,7 @@ bool qdAnimationSet::save_script(Common::SeekableWriteStream &fh, int indent) co
 	fh.writeString(Common::String::format(" size=\"%d\"", size()));
 
 	if (fabs(start_angle_) > FLT_EPS) {
-		fh.writeString(Common::String::format(" start_angle=\"%d\"", start_angle_));
+		fh.writeString(Common::String::format(" start_angle=\"%f\"", start_angle_));
 	}
 
 	fh.writeString(">\r\n");
@@ -269,7 +269,7 @@ bool qdAnimationSet::save_script(Common::SeekableWriteStream &fh, int indent) co
 		}
 
 		for (int i = 0; i < walk_sound_frequency_.size(); i++) {
-			fh.writeString(Common::String::format(" %d", walk_sound_frequency_[i]));
+			fh.writeString(Common::String::format(" %f", walk_sound_frequency_[i]));
 		}
 
 		fh.writeString("</walk_sound_frequency>\r\n");

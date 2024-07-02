@@ -79,7 +79,7 @@ bool qdCameraMode::save_script(Common::SeekableWriteStream &fh, int indent) cons
 	}
 
 	fh.writeString(Common::String::format("<camera_mode type=\"%d\"", (int)camera_mode()));
-	fh.writeString(Common::String::format(" scrolling_speed=\"%d\"", scrolling_speed_));
+	fh.writeString(Common::String::format(" scrolling_speed=\"%f\"", scrolling_speed_));
 	fh.writeString(Common::String::format(" scrolling_dist=\"%d\"", scrolling_distance_));
 
 	if (center_offset_.x || center_offset_.y) {

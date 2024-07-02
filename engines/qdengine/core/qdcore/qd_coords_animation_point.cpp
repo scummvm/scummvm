@@ -62,7 +62,7 @@ bool qdCoordsAnimationPoint::save_script(Common::SeekableWriteStream &fh, int in
 	}
 
 	fh.writeString("<coords_animation_point");
-	fh.writeString(Common::String::format(" dest_pos=\"%d %d %d\"", pos_.x, pos_.y, pos_.z));
+	fh.writeString(Common::String::format(" dest_pos=\"%f %f %f\"", pos_.x, pos_.y, pos_.z));
 
 	if (direction_angle_ >= 0.0f) {
 		fh.writeString(Common::String::format(" object_direction=\"%f\"", direction_angle_));

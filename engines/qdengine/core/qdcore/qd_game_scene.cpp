@@ -104,10 +104,10 @@ void qdGameScene::init_objects_grid() {
 }
 
 void qdGameScene::quant(float dt) {
-	debugC(9, kDebugQuant, "qdGameScene::quant(%d)", dt);
+	debugC(9, kDebugQuant, "qdGameScene::quant(%f)", dt);
 
 	if (minigame_) {
-		debugC(3, kDebugQuant, "qdGameScene::quant(%d) minigame", dt);
+		debugC(3, kDebugQuant, "qdGameScene::quant(%f) minigame", dt);
 		minigame_ -> quant(dt);
 	}
 
@@ -123,7 +123,7 @@ void qdGameScene::quant(float dt) {
 
 	if (camera.quant(dt)) {
 		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-			debugC(3, kDebugQuant, "qdGameScene::quant(%d) camera", dt);
+			debugC(3, kDebugQuant, "qdGameScene::quant(%f) camera", dt);
 			dp -> toggle_full_redraw();
 		}
 	}
@@ -427,7 +427,7 @@ bool qdGameScene::save_script(Common::SeekableWriteStream &fh, int indent) const
 	}
 
 	if (has_minigame()) {
-		fh.writeString(Common::String::format(" game_name=\"%d\"", qdscr_XML_string(minigame_name())));
+		fh.writeString(Common::String::format(" game_name=\"%s\"", qdscr_XML_string(minigame_name())));
 	}
 
 	fh.writeString(">\r\n");

@@ -511,12 +511,12 @@ bool qdCamera::save_script(Common::SeekableWriteStream &fh, int indent) const {
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<pos_3d>%ld %ld %d</pos_3d>\r\n", 0L, 0L, get_R()));
+	fh.writeString(Common::String::format("<pos_3d>%ld %ld %f</pos_3d>\r\n", 0L, 0L, get_R()));
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<camera_focus>%d</camera_focus>\r\n", focus));
+	fh.writeString(Common::String::format("<camera_focus>%f</camera_focus>\r\n", focus));
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
@@ -526,17 +526,17 @@ bool qdCamera::save_script(Common::SeekableWriteStream &fh, int indent) const {
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<camera_screen_size>%f %f</camera_screen_size>\r\n", scrSize.x, scrSize.y));
+	fh.writeString(Common::String::format("<camera_screen_size>%d %d</camera_screen_size>\r\n", scrSize.x, scrSize.y));
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<camera_screen_offset>%f %f</camera_screen_offset>\r\n", scrOffset.x, scrOffset.y));
+	fh.writeString(Common::String::format("<camera_screen_offset>%d %d</camera_screen_offset>\r\n", scrOffset.x, scrOffset.y));
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<camera_screen_center>%f %f</camera_screen_center>\r\n", scrCenterInitial.x, scrCenterInitial.y));
+	fh.writeString(Common::String::format("<camera_screen_center>%d %d</camera_screen_center>\r\n", scrCenterInitial.x, scrCenterInitial.y));
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");

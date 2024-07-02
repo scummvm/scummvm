@@ -395,7 +395,7 @@ bool qdCondition::save_script(XStream &fh, int indent) const {
 }
 
 void qdCondition::quant(float dt) {
-	debugC(9, kDebugQuant, "qdCondition::quant(%d)", dt);
+	debugC(9, kDebugQuant, "qdCondition::quant(%f)", dt);
 	if (type_ == CONDITION_TIMER) {
 		float period, timer;
 		if (!get_value(TIMER_PERIOD, period, 0)) return;

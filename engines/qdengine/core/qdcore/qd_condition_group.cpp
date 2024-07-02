@@ -92,24 +92,24 @@ bool qdConditionGroup::load_script(const xml::tag *p) {
 }
 
 bool qdConditionGroup::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	warning("qdConditionGroup::save_script");
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+	}
+
+	fh.writeString("<condition_group");
+	fh.writeString(Common::String::format(" type=\"%d\"", (int)conditions_mode_));
+	fh.writeString(">");
+
+	fh.writeString(Common::String::format("%lu", conditions_.size()));
+	for (auto &it : conditions_) {
+		fh.writeString(Common::String::format(" %d", it));
+	}
+	fh.writeString("</condition_group>\r\n");
 	return true;
 }
 
 bool qdConditionGroup::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i++) fh < "\t";
-
-	fh < "<condition_group";
-	fh < " type=\"" <= (int)conditions_mode_ < "\"";
-	fh < ">";
-
-	fh <= conditions_.size();
-
-	for (conditions_container_t::const_iterator it = conditions_.begin(); it != conditions_.end(); ++it)
-		fh < " " <= *it;
-
-	fh < "</condition_group>\r\n";
-
+	warning("STUB: qdConditionGroup::save_script(XStream)");
 	return true;
 }
 } // namespace QDEngine
