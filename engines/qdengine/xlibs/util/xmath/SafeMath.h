@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef _PERIMETER_SAFE_MATH_
-#define _PERIMETER_SAFE_MATH_
+#ifndef QDENGINE_XLIBS_UTIL_XMATH_SAFEMATH_H
+#define QDENGINE_XLIBS_UTIL_XMATH_SAFEMATH_H
 
 #include "qdengine/xlibs/util/xmath/fastMath.h"
 
@@ -66,4 +66,4 @@ inline bool isGreater(float x, float y, float eps = FLT_EPS) {
 
 } // namespace QDEngine
 
-#endif // _PERIMETER_SAFE_MATH_
+#endif // QDENGINE_XLIBS_UTIL_XMATH_SAFEMATH_H

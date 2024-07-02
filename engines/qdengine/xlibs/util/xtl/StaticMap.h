@@ -52,8 +52,8 @@
         не померяв впоследствии их реальных характеристик.
 ***************************************************************************************************************************/
 
-#ifndef __STATIC_MAP_H_INCLUDED__
-#define __STATIC_MAP_H_INCLUDED__
+#ifndef QDENGINE_XLIBS_UTIL_XTL_STATIC_MAP_H
+#define QDENGINE_XLIBS_UTIL_XTL_STATIC_MAP_H
 
 #include <vector>
 #include <algorithm>
