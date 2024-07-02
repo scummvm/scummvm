@@ -22,6 +22,16 @@
 #include "common/random.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/macresman.h"
+#include "common/formats/formatinfo.h"
+#include "common/translation.h"
+
+#include "graphics/palette.h"
+
+#include "gui/dialog.h"
+#include "gui/imagealbum-dialog.h"
+
+#include "image/pict.h"
 
 #include "mtropolis/miniscript.h"
 #include "mtropolis/plugin/standard.h"
@@ -1416,6 +1426,192 @@ const char *SysInfoModifier::getDefaultName() const {
 	return "SysInfo Modifier";
 }
 
+class PrintModifierImageSupplier : public GUI::ImageAlbumImageSupplier {
+public:
+	PrintModifierImageSupplier(const Common::String &inputPath, bool isMacVersion);
+
+	bool loadImageSlot(uint slot, const Graphics::Surface *&outSurface, bool &outHasPalette, Graphics::Palette &outPalette, GUI::ImageAlbumImageMetadata &outMetadata) override;
+	void releaseImageSlot(uint slot) override;
+	uint getNumSlots() const override;
+	Common::U32String getDefaultFileNameForSlot(uint slot) const override;
+	bool getFileFormatForImageSlot(uint slot, Common::FormatInfo::FormatID &outFormat) const override;
+	Common::SeekableReadStream *createReadStreamForSlot(uint slot) override;
+
+private:
+	Common::String _path;
+
+	Common::SharedPtr<Image::ImageDecoder> _decoder;
+	bool _isMacVersion;
+};
+
+PrintModifierImageSupplier::PrintModifierImageSupplier(const Common::String &inputPath, bool isMacVersion) : _path(inputPath), _isMacVersion(isMacVersion) {
+	if (isMacVersion)
+		_decoder.reset(new Image::PICTDecoder());
+	else
+		_decoder.reset(new Image::BitmapDecoder());
+}
+
+bool PrintModifierImageSupplier::loadImageSlot(uint slot, const Graphics::Surface *&outSurface, bool &outHasPalette, Graphics::Palette &outPalette, GUI::ImageAlbumImageMetadata &outMetadata) {
+	Common::ScopedPtr<Common::SeekableReadStream> dataStream(createReadStreamForSlot(slot));
+
+	if (!dataStream)
+		return false;
+
+	if (!_decoder->loadStream(*dataStream)) {
+		warning("Failed to decode print file");
+		return false;
+	}
+
+	dataStream.reset();
+
+	outSurface = _decoder->getSurface();
+	outHasPalette = _decoder->hasPalette();
+
+	if (_decoder->hasPalette())
+		outPalette.set(_decoder->getPalette(), 0, _decoder->getPaletteColorCount());
+
+	outMetadata = GUI::ImageAlbumImageMetadata();
+	outMetadata._orientation = GUI::kImageAlbumImageOrientationLandscape;
+	outMetadata._viewTransformation = GUI::kImageAlbumViewTransformationRotate90CW;
+
+	return true;
+}
+
+void PrintModifierImageSupplier::releaseImageSlot(uint slot) {
+	_decoder->destroy();
+}
+
+uint PrintModifierImageSupplier::getNumSlots() const {
+	return 1;
+}
+
+Common::U32String PrintModifierImageSupplier::getDefaultFileNameForSlot(uint slot) const {
+	Common::String filename = _path;
+
+	size_t lastColonPos = filename.findLastOf(':');
+
+	if (lastColonPos != Common::String::npos)
+		filename = filename.substr(lastColonPos + 1);
+
+	size_t lastDotPos = filename.findLastOf('.');
+	if (lastDotPos != Common::String::npos)
+		filename = filename.substr(0, lastDotPos);
+
+	if (_isMacVersion)
+		filename += Common::U32String(".pict");
+	else
+		filename += Common::U32String(".bmp");
+
+	return filename.decode(Common::kASCII);
+}
+
+bool PrintModifierImageSupplier::getFileFormatForImageSlot(uint slot, Common::FormatInfo::FormatID &outFormat) const {
+	if (slot != 0)
+		return false;
+
+	if (_isMacVersion)
+		outFormat = Common::FormatInfo::kPICT;
+	else
+		outFormat = Common::FormatInfo::kBMP;
+
+	return true;
+}
+
+Common::SeekableReadStream *PrintModifierImageSupplier::createReadStreamForSlot(uint slot) {
+	if (slot != 0)
+		return nullptr;
+
+	size_t lastColonPos = _path.findLastOf(':');
+	Common::String filename;
+
+	if (lastColonPos == Common::String::npos)
+		filename = _path;
+	else
+		filename = _path.substr(lastColonPos + 1);
+
+	Common::Path path(Common::String("MPZ_MTI/") + filename);
+
+	if (_isMacVersion) {
+		// Color images have res fork data so we must load from the data fork
+		return Common::MacResManager::openFileOrDataFork(path);
+	} else {
+		// Win versions are just files
+		Common::File *f = new Common::File();
+
+		if (!f->open(path)) {
+			delete f;
+			return nullptr;
+		}
+		return f;
+	}
+}
+
+
+PrintModifier::PrintModifier() {
+}
+
+PrintModifier::~PrintModifier() {
+}
+
+bool PrintModifier::respondsToEvent(const Event &evt) const {
+	return _executeWhen.respondsTo(evt);
+}
+
+VThreadState PrintModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_executeWhen.respondsTo(msg->getEvent())) {
+		PrintModifierImageSupplier imageSupplier(_filePath, runtime->getProject()->getPlatform() == kProjectPlatformMacintosh);
+
+		Common::ScopedPtr<GUI::Dialog> dialog(GUI::createImageAlbumDialog(_("Image Viewer"), &imageSupplier, 0));
+		dialog->runModal();
+	}
+
+	return kVThreadReturn;
+}
+
+void PrintModifier::disable(Runtime *runtime) {
+}
+
+MiniscriptInstructionOutcome PrintModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+	if (attrib == "showdialog") {
+		// This is only ever set to "false"
+		DynamicValueWriteDiscardHelper::create(writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "filepath") {
+		DynamicValueWriteStringHelper::create(&_filePath, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return Modifier::writeRefAttribute(thread, writeProxy, attrib);
+}
+
+bool PrintModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::PrintModifier &data) {
+	if (data.executeWhen.type != Data::PlugInTypeTaggedValue::kEvent)
+		return false;
+
+	if (data.filePath.type != Data::PlugInTypeTaggedValue::kString)
+		return false;
+
+	_filePath = data.filePath.value.asString;
+
+	if (!_executeWhen.load(data.executeWhen.value.asEvent))
+		return false;
+
+	return true;
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void PrintModifier::debugInspect(IDebugInspectionReport *report) const {
+}
+#endif
+
+Common::SharedPtr<Modifier> PrintModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new PrintModifier(*this));
+}
+
+const char *PrintModifier::getDefaultName() const {
+	return "Print Modifier";
+}
+
 PanningModifier::PanningModifier() {
 }
 
@@ -1451,6 +1647,111 @@ const char *PanningModifier::getDefaultName() const {
 	return "Panning Modifier"; // ???
 }
 
+FadeModifier::FadeModifier() {
+}
+
+FadeModifier::~FadeModifier() {
+}
+
+bool FadeModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::FadeModifier &data) {
+	return true;
+}
+
+bool FadeModifier::respondsToEvent(const Event &evt) const {
+	return false;
+}
+
+VThreadState FadeModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	return kVThreadReturn;
+}
+
+void FadeModifier::disable(Runtime *runtime) {
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void FadeModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+}
+#endif
+
+Common::SharedPtr<Modifier> FadeModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new FadeModifier(*this));
+}
+
+const char *FadeModifier::getDefaultName() const {
+	return "Fade Modifier";
+}
+
+OpenTitleModifier::OpenTitleModifier() {
+}
+
+OpenTitleModifier::~OpenTitleModifier() {
+}
+
+bool OpenTitleModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::OpenTitleModifier &data) {
+	return true;
+}
+
+bool OpenTitleModifier::respondsToEvent(const Event &evt) const {
+	return false;
+}
+
+VThreadState OpenTitleModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	return kVThreadReturn;
+}
+
+void OpenTitleModifier::disable(Runtime *runtime) {
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void OpenTitleModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+}
+#endif
+
+Common::SharedPtr<Modifier> OpenTitleModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new OpenTitleModifier(*this));
+}
+
+const char *OpenTitleModifier::getDefaultName() const {
+	return "Open Title Modifier";
+}
+
+NavigateModifier::NavigateModifier() {
+}
+
+NavigateModifier::~NavigateModifier() {
+}
+
+bool NavigateModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::NavigateModifier &data) {
+	return true;
+}
+
+bool NavigateModifier::respondsToEvent(const Event &evt) const {
+	return false;
+}
+
+VThreadState NavigateModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	return kVThreadReturn;
+}
+
+void NavigateModifier::disable(Runtime *runtime) {
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void NavigateModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+}
+#endif
+
+Common::SharedPtr<Modifier> NavigateModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new NavigateModifier(*this));
+}
+
+const char *NavigateModifier::getDefaultName() const {
+	return "Navigate Modifier";
+}
+
 StandardPlugInHacks::StandardPlugInHacks() : allowGarbledListModData(false) {
 }
 
@@ -1461,7 +1762,11 @@ StandardPlugIn::StandardPlugIn()
 	, _objRefVarModifierFactory(this)
 	, _listVarModifierFactory(this)
 	, _sysInfoModifierFactory(this)
-	, _panningModifierFactory(this) {
+	, _printModifierFactory(this)
+	, _fadeModifierFactory(this)
+	, _panningModifierFactory(this)
+	, _openTitleModifierFactory(this)
+	, _navigateModifierFactory(this) {
 }
 
 StandardPlugIn::~StandardPlugIn() {
@@ -1474,8 +1779,11 @@ void StandardPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) cons
 	registrar->registerPlugInModifier("ObjRefP", &_objRefVarModifierFactory);
 	registrar->registerPlugInModifier("ListMod", &_listVarModifierFactory);
 	registrar->registerPlugInModifier("SysInfo", &_sysInfoModifierFactory);
-
+	registrar->registerPlugInModifier("Print", &_printModifierFactory);
+	registrar->registerPlugInModifier("fade", &_fadeModifierFactory);
 	registrar->registerPlugInModifier("panning", &_panningModifierFactory);
+	registrar->registerPlugInModifier("OpenTitle", &_openTitleModifierFactory);
+	registrar->registerPlugInModifier("Navigate", &_navigateModifierFactory);
 }
 
 const StandardPlugInHacks &StandardPlugIn::getHacks() const {
