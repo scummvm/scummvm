@@ -27,6 +27,15 @@
 
 namespace QDEngine {
 
+/*
+   qda_version = 100: 20020404
+   qda_version = 101: 20020730
+   qda_version = 102: 20020822
+   qda_version = 103: 20030829
+   qda_version = 104: < 20060129
+*/
+
+
 //! Идентификаторы тэгов скрипта.
 enum qdscrTagID {
 	QDSCR_ROOT = 1,
