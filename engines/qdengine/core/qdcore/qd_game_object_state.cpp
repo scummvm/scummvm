@@ -406,91 +406,111 @@ bool qdGameObjectState::load_script_body(const xml::tag *p) {
 	return true;
 }
 bool qdGameObjectState::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
-	warning("qdGameObjectState::save_script_body(Common::SeekableWriteStream)");
-	return true;
-}
+	if (name()) {
+		fh.writeString(Common::String::format(" name=\"%s\"", qdscr_XML_string(name())));
+	}
 
-bool qdGameObjectState::save_script_body(XStream &fh, int indent) const {
-	if (name())
-		fh < " name=\"" < qdscr_XML_string(name()) < "\"";
+	if (mouse_cursor_id_ != CURSOR_UNASSIGNED) {
+		fh.writeString(Common::String::format(" cursor_id=\"%d\"", mouse_cursor_id_));
+	}
 
-	if (mouse_cursor_id_ != CURSOR_UNASSIGNED)
-		fh < " cursor_id=\"" <= mouse_cursor_id_ < "\"";
+	fh.writeString(Common::String::format(" save_slot=\"%d\"", autosave_slot_));
 
-	fh < " save_slot=\"" <= autosave_slot_ < "\"";
+	if (flags()) {
+		fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
+	}
 
-	if (flags())
-		fh < " flags=\"" <= flags() < "\"";
+	if (work_time_ > 0.001f) {
+		fh.writeString(Common::String::format(" length=\"%d\"", work_time_));
+	}
 
-	if (work_time_ > 0.001f)
-		fh < " length=\"" <= work_time_ < "\"";
+	if (activation_delay_ > 0.001f) {
+		fh.writeString(Common::String::format(" state_activation_delay=\"%f\"", activation_delay_));
+	}
 
-	if (activation_delay_ > 0.001f)
-		fh < " state_activation_delay=\"" <= activation_delay_ < "\"";
+	if (!short_text_ID_.empty()) {
+		fh.writeString(Common::String::format(" short_text=\"%s\"", qdscr_XML_string(short_text_ID_.c_str())));
+	}
 
-	if (!short_text_ID_.empty())
-		fh < " short_text=\"" < qdscr_XML_string(short_text_ID_.c_str()) < "\"";
+	if (!text_ID_.empty()) {
+		fh.writeString(Common::String::format(" text=\"%s\"", qdscr_XML_string(text_ID_.c_str())));
+	}
 
-	if (!text_ID_.empty())
-		fh < " text=\"" < qdscr_XML_string(text_ID_.c_str()) < "\"";
+	if (center_offset_.x || center_offset_.y) {
+		fh.writeString(Common::String::format(" center_offset=\"%d %d\"", center_offset_.x, center_offset_.y));
+	}
 
-	if (center_offset_.x || center_offset_.y)
-		fh < " center_offset=\"" <= center_offset_.x < " " <= center_offset_.y < "\"";
+	if (has_bound()) {
+		fh.writeString(Common::String::format(" bound=\"%f %f %f\"", bound_.x, bound_.y, bound_.z));
+	}
 
-	if (has_bound())
-		fh < " bound=\"" <= bound_.x < " " <= bound_.y < " " <= bound_.z < "\"";
+	if (has_sound_delay()) {
+		fh.writeString(Common::String::format(" sound_delay=\"%f\"", sound_delay_));
+	}
 
-	if (has_sound_delay())
-		fh < " sound_delay=\"" <= sound_delay_ < "\"";
+	if (has_text_delay()) {
+		fh.writeString(Common::String::format(" text_delay=\"%f\"", text_delay_));
+	}
 
-	if (has_text_delay())
-		fh < " text_delay=\"" <= text_delay_ < "\"";
+	if (rnd_move_radius_ > FLT_EPS && rnd_move_speed_ > FLT_EPS) {
+		fh.writeString(Common::String::format(" rnd_move=\"%d %d\"", rnd_move_radius_, rnd_move_speed_));
+	}
 
-	if (rnd_move_radius_ > FLT_EPS && rnd_move_speed_ > FLT_EPS)
-		fh < " rnd_move=\"" <= rnd_move_radius_ < " " <= rnd_move_speed_ < "\"";
+	if (fabs(fade_time_ - 0.1f) > FLT_EPS) {
+		fh.writeString(Common::String::format(" fade_time=\"%f\"", fade_time_));
+	}
 
-	if (fabs(fade_time_ - 0.1f) > FLT_EPS)
-		fh < " fade_time=\"" <= fade_time_ < "\"";
+	if (shadow_color_) {
+		fh.writeString(Common::String::format(" shadow_color=\"%u\"", shadow_color_));
+	}
 
-	if (shadow_color_)
-		fh < " shadow_color=\"" <= shadow_color_ < "\"";
+	if (shadow_alpha_ != QD_NO_SHADOW_ALPHA) {
+		fh.writeString(Common::String::format(" shadow_alpha=\"%d %d\"", rnd_move_radius_, rnd_move_speed_));
+	}
 
-	if (shadow_alpha_ != QD_NO_SHADOW_ALPHA)
-		fh < " shadow_alpha=\"" <= shadow_alpha_ < "\"";
+	fh.writeString(">\r\n");
 
-	fh < ">\r\n";
-
-	if (!coords_animation_.is_empty())
+	if (!coords_animation_.is_empty()) {
 		coords_animation_.save_script(fh, indent + 1);
+	}
 
-	if (has_camera_mode())
+	if (has_camera_mode()) {
 		camera_mode_.save_script(fh, indent + 1);
+	}
 
 	if (has_sound()) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<sound";
+		for (int i = 0; i <= indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString("<sound");
 
-		if (sound_info_.flags())
-			fh < " flags=\"" <= sound_info_.flags() < "\"";
+		if (sound_info_.flags()) {
+			fh.writeString(Common::String::format(" flags=\"%d\"", sound_info_.flags()));
+		}
 
-		fh < ">" < qdscr_XML_string(sound_info_.name()) < "</sound>\r\n";
+		fh.writeString(Common::String::format(">%s</sound>\r\n", qdscr_XML_string(sound_info_.name())));
 	}
 
 	if (has_transform()) {
-		for (int i = 0; i < indent; i ++) fh < "\t";
-		fh < "<screen_transform>";
-
-		fh < " " <= R2G(transform_.angle()) < " " <= R2G(transform_speed_.angle());
-		fh < " " <= transform_.scale().x < " " <= transform_.scale().y;
-		fh < " " <= transform_speed_.scale().x < " " <= transform_speed_.scale().y;
-
-		fh < "</screen_transform>\r\n";
+		for (int i = 0; i < indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString("<screen_transform>");
+		fh.writeString(Common::String::format(" %d %d", R2G(transform_.angle()), R2G(transform_speed_.angle())));
+		fh.writeString(Common::String::format(" %d %d", transform_.scale().x, transform_.scale().y));
+		fh.writeString(Common::String::format(" %d %d", transform_speed_.scale().x, transform_speed_.scale().y));
+		fh.writeString("</screen_transform>\r\n");
 	}
 
 	text_format_.save_script(fh, indent + 1);
 
 	save_conditions_script(fh, indent);
 
+	return true;
+}
+
+bool qdGameObjectState::save_script_body(XStream &fh, int indent) const {
+	warning("STUB: qdGameObjectState::save_script(XStream)");
 	return true;
 }
 
@@ -816,22 +836,27 @@ bool qdGameObjectStateStatic::load_script(const xml::tag *p) {
 }
 
 bool qdGameObjectStateStatic::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	warning("qdGameObjectStateStatic::save_script(Common::SeekableWriteStream)");
+	for (int i = 0; i < indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("<object_state_static");
+
+	save_script_body(fh, indent);
+
+	if (animation_info_.animation_name()) {
+		animation_info_.save_script(fh, indent + 1);
+	}
+
+	for (int i = 0; i < indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("</object_state_static>\r\n");
+
 	return true;
 }
 
 bool qdGameObjectStateStatic::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "<object_state_static";
-
-	save_script_body(fh, indent);
-
-	if (animation_info_.animation_name())
-		animation_info_.save_script(fh, indent + 1);
-
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "</object_state_static>\r\n";
-
+	warning("qdGameObjectStateStatic::save_script(XStream)");
 	return true;
 }
 
@@ -1243,77 +1268,100 @@ bool qdGameObjectStateWalk::load_script(const xml::tag *p) {
 	return true;
 }
 bool qdGameObjectStateWalk::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	warning("STUB: qdGameObjectStateWalk");
-	return true;
-}
-
-bool qdGameObjectStateWalk::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "<object_state_walk";
-
-	fh < " movement=\"" <= movement_type_ < "\"";
+	for (int i = 0; i < indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("<object_state_walk");
+	fh.writeString(Common::String::format(" movement=\"%d\"", movement_type_));
 
 	save_script_body(fh, indent);
 
 	if (animation_set_info_.name()) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<animation_set>" < qdscr_XML_string(animation_set_info_.name()) < "</animation_set>\r\n";
+		for (int i = 0; i < indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<animation_set>%s</animation_set>\r\n", qdscr_XML_string(animation_set_info_.name())));
 	}
 
 	if (direction_angle_ > 0.0f) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<object_direction>" <= direction_angle_ < "</object_direction>\r\n";
+		for (int i = 0; i < indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<object_direction>%f</object_direction>\r\n"));
 	}
 
 	if (acceleration_ > FLT_EPS || max_speed_ > FLT_EPS) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<acceleration>" <= acceleration_ < " " <= max_speed_ < "</acceleration>\r\n";
+		for (int i = 0; i < indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<acceleration>%f %f</acceleration>\r\n", acceleration_, max_speed_));
 	}
 
 	if (center_offsets_.size()) {
-		for (int i = 0; i <= indent; i++) fh < "\t";
-		fh < "<center_offsets>" <= center_offsets_.size() * 2;
-		for (int i = 0; i < center_offsets_.size(); i++)
-			fh < " " <= center_offsets_[i].x < " " <= center_offsets_[i].y;
-		fh < "</center_offsets>\r\n";
+		for (int i = 0; i < indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<center_offsets>%d", center_offsets_.size() * 2));
+		for (int i = 0; i < center_offsets_.size(); i++) {
+			fh.writeString(Common::String::format(" %d %d", center_offsets_[i].x, center_offsets_[i].y));
+		}
+		fh.writeString("</center_offsets>\r\n");
 	}
 
 	if (static_center_offsets_.size()) {
-		for (int i = 0; i <= indent; i++) fh < "\t";
-		fh < "<static_center_offsets>" <= static_center_offsets_.size() * 2;
-		for (int i = 0; i < static_center_offsets_.size(); i++)
-			fh < " " <= static_center_offsets_[i].x < " " <= static_center_offsets_[i].y;
-		fh < "</static_center_offsets>\r\n";
+		for (int i = 0; i < indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<center_offsets>%d", static_center_offsets_.size() * 2));
+		for (int i = 0; i < static_center_offsets_.size(); i++) {
+			fh.writeString(Common::String::format(" %d %d", static_center_offsets_[i].x, static_center_offsets_[i].y));
+		}
+		fh.writeString("</static_center_offsets>\r\n");
 	}
 
 	if (start_center_offsets_.size()) {
-		for (int i = 0; i <= indent; i++) fh < "\t";
-		fh < "<start_center_offsets>" <= start_center_offsets_.size() * 2;
-		for (int i = 0; i < start_center_offsets_.size(); i++)
-			fh < " " <= start_center_offsets_[i].x < " " <= start_center_offsets_[i].y;
-		fh < "</start_center_offsets>\r\n";
+		for (int i = 0; i < indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<start_center_offsets>%d", start_center_offsets_.size() * 2));
+		for (int i = 0; i < start_center_offsets_.size(); i++){
+			fh.writeString(Common::String::format(" %d %d", start_center_offsets_[i].x, start_center_offsets_[i].y));
+		}
+		fh.writeString("</start_center_offsets>\r\n");
 	}
 
 	if (stop_center_offsets_.size()) {
-		for (int i = 0; i <= indent; i++) fh < "\t";
-		fh < "<stop_center_offsets>" <= stop_center_offsets_.size() * 2;
-		for (int i = 0; i < stop_center_offsets_.size(); i++)
-			fh < " " <= stop_center_offsets_[i].x < " " <= stop_center_offsets_[i].y;
-		fh < "</stop_center_offsets>\r\n";
+		for (int i = 0; i < indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<stop_center_offsets>%d", stop_center_offsets_.size() * 2));
+		for (int i = 0; i < stop_center_offsets_.size(); i++) {
+			fh.writeString(Common::String::format(" %d %d", stop_center_offsets_[i].x, stop_center_offsets_[i].y));
+		}
+		fh.writeString("</stop_center_offsets>\r\n");
 	}
 
 	if (walk_sound_frequency_.size()) {
-		for (int i = 0; i <= indent; i++) fh < "\t";
-		fh < "<walk_sound_frequency>" <= walk_sound_frequency_.size();
-		for (int i = 0; i < walk_sound_frequency_.size(); i++)
-			fh < " " <= walk_sound_frequency_[i];
-		fh < "</walk_sound_frequency>\r\n";
+		for (int i = 0; i < indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<walk_sound_frequency>%d", walk_sound_frequency_.size()));
+		for (int i = 0; i < walk_sound_frequency_.size(); i++) {
+			fh.writeString(Common::String::format(" %d", walk_sound_frequency_[i]));
+		}
+		fh.writeString("</walk_sound_frequency>\r\n");
 	}
 
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "</object_state_walk>\r\n";
+	for (int i = 0; i < indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("</object_state_walk>\r\n");
 
 	return true;
+}
+
+bool qdGameObjectStateWalk::save_script(XStream &fh, int indent) const {
+
 }
 
 bool qdGameObjectStateWalk::register_resources() {
@@ -1458,26 +1506,34 @@ bool qdGameObjectStateMask::load_script(const xml::tag *p) {
 }
 
 bool qdGameObjectStateMask::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	warning("qdGameObjectStateMask::save_script(Common::SeekableWriteStream)");
-	return true;
-}
-bool qdGameObjectStateMask::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "<object_state_mask";
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+
+	fh.writeString("<object_state_mask");
 
 	save_script_body(fh, indent);
 
 	if (!parent_name_.empty()) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<state_mask_parent>" < qdscr_XML_string(parent_name_.c_str()) < "</state_mask_parent>\r\n";
+		for (int i = 0; i <= indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<state_mask_parent>%s</state_mask_parent>\r\n", qdscr_XML_string(parent_name_.c_str())));
 	}
 
-	if (contour_size())
+	if (contour_size()) {
 		qdContour::save_script(fh, indent + 1);
+	}
 
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "</object_state_mask>\r\n";
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("</object_state_mask>\r\n");
 
+	return true;
+}
+bool qdGameObjectStateMask::save_script(XStream &fh, int indent) const {
+	warning("qdGameObjectStateMask::save_script(Common::XStream)");
 	return true;
 }
 

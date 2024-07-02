@@ -108,26 +108,30 @@ bool qdTriggerLink::load_script(const xml::tag *p) {
 	return true;
 }
 
-bool qdTriggerLink::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i++)  fh < "\t";
-	fh < "<link";
-
-	if (element_) fh < " ID=\"" <= element_ -> ID() < "\"";
-
-	if (type_) fh < " type=\"" <= type_ < "\"";
-
-	if (auto_restart_)
-		fh < " auto_restart=\"1\"";
-
-#ifdef _QUEST_EDITOR
-	if (m_owner_offset.cx || m_owner_offset.cy || m_child_offset.cx || m_child_offset.cy) {
-		fh < " offsets=\"" <= m_owner_offset.cx < " " <= m_owner_offset.cy < " ";
-		fh <= m_child_offset.cx < " " <= m_child_offset.cy < "\"";
+bool qdTriggerLink::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i <= indent; i++) {
+		fh.writeString("\t");
 	}
-#endif // _QUEST_EDITOR
+	fh.writeString("<link");
 
-	fh < "/>\r\n";
+	if (element_) {
+		fh.writeString(Common::String::format(" ID=\"%d\"", element_->ID()));
+	}
 
+	if (type_) {
+		fh.writeString(Common::String::format(" type=\"%d\"", type_));
+	}
+
+	if (auto_restart_) {
+		fh.writeString("  auto_restart=\"1\"");
+	}
+
+	fh.writeString("/>\r\n");
+	return true;
+}
+
+bool qdTriggerLink::save_script(XStream &fh, int indent) const {
+	warning("STUB: qdTriggerLink::save_script(XStream)");
 	return true;
 }
 
@@ -473,64 +477,69 @@ bool qdTriggerElement::load_links_script(const xml::tag *p, bool load_parents) {
 	return true;
 }
 
-bool qdTriggerElement::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
-
-	if (ID_ == ROOT_ID)
-		fh < "<trigger_chain_root";
-	else
-		fh < "<trigger_element ID=\"" <= ID_ < "\"";
-
-	if (is_active_) fh < " start_element=\"1\"";
-
-#ifdef _QUEST_EDITOR
-	fh < " trigger_bound=\"" <= m_rcBound.left < " " <= m_rcBound.top < " " <= m_rcBound.right < " " <= m_rcBound.bottom < "\"";
-
-	fh < " trigger_element_title=\"" < qdscr_XML_string(m_strTitle.c_str()) < "\"";
-
-	fh < " trigger_element_cell_number=\"" <= m_vCellNumber.x < " " <= m_vCellNumber.y < "\"";
-#endif
-
-	fh < ">\r\n";
-
-	if (object_) {
-		qdNamedObjectReference ref(object_);
-		ref.save_script(fh, indent + 1);
-	} else {
-#ifdef _QUEST_EDITOR
-		if (!object_reference_.is_empty())
-			object_reference_.save_script(fh, indent + 1);
-#endif
+bool qdTriggerElement::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
 	}
 
+	if (ID_ == ROOT_ID) {
+		fh.writeString("<trigger_chain_root");
+	} else {
+		fh.writeString(Common::String::format("<trigger_element ID=\"%d\"", ID_));
+	}
+
+	if (is_active_) {
+		fh.writeString(" start_element=\"1\"");
+	}
+
+	fh.writeString(">\r\n");
+
 	if (parents_.size()) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<parent_links>\r\n";
+		for (int i = 0; i <= indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString("<parent_links>\r\n");
 
-		for (qdTriggerLinkList::const_iterator it = parents_.begin(); it != parents_.end(); ++it)
-			it -> save_script(fh, indent + 2);
+		for (auto &it: parents_) {
+			it.save_script(fh, indent + 2);
+		}
 
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "</parent_links>\r\n";
+		for (int i = 0; i <= indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString("<parent_links>\r\n");
 	}
 
 	if (children_.size()) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<child_links>\r\n";
+		for (int i = 0; i <= indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString("<child_links>\r\n");
 
-		for (qdTriggerLinkList::const_iterator it = children_.begin(); it != children_.end(); ++it)
-			it -> save_script(fh, indent + 2);
+		for (auto &it : children_) {
+			it.save_script(fh, indent + 2);
+		}
 
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "</child_links>\r\n";
+		for (int i = 0; i <= indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString("</child_links>\r\n");
 	}
 
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	if (ID_ == ROOT_ID)
-		fh < "</trigger_chain_root>\r\n";
-	else
-		fh < "</trigger_element>\r\n";
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+	if (ID_ == ROOT_ID) {
+		fh.writeString("</trigger_chain_root>\r\n");
+	} else {
+		fh.writeString("</trigger_element>\r\n");
+	}
 
+	return true;
+}
+
+bool qdTriggerElement::save_script(XStream &fh, int indent) const {
+	warning("STUB: qdTriggerElement::save_script(XStream)");
 	return true;
 }
 

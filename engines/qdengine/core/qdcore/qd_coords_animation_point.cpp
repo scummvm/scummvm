@@ -56,18 +56,25 @@ void qdCoordsAnimationPoint::load_script(const xml::tag *p) {
 	}
 }
 
-bool qdCoordsAnimationPoint::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "<coords_animation_point";
-
-	fh < " dest_pos=\"" <= pos_.x < " " <= pos_.y < " " <= pos_.z < "\"";
-
-	if (direction_angle_ >= 0.0f) {
-		fh < " object_direction=\"" <= direction_angle_ < "\"";
+bool qdCoordsAnimationPoint::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
 	}
 
-	fh < "/>\r\n";
+	fh.writeString("<coords_animation_point");
+	fh.writeString(Common::String::format(" dest_pos=\"%d %d %d\"", pos_.x, pos_.y, pos_.z));
 
+	if (direction_angle_ >= 0.0f) {
+		fh.writeString(Common::String::format(" object_direction=\"%f\"", direction_angle_));
+	}
+
+	fh.writeString("/>\r\n");
+
+	return true;
+}
+
+bool qdCoordsAnimationPoint::save_script(XStream &fh, int indent) const {
+	warning("STUB: qdCoordsAnimationPoint::save_script(XStream)");
 	return true;
 }
 

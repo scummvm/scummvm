@@ -192,7 +192,7 @@ bool qdInventory::save_script(Common::SeekableWriteStream &fh, int indent) const
 }
 
 bool qdInventory::save_script(class XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
+	for (int i = 0; i <= indent; i ++) fh < "\t";
 
 	fh < "<inventory name=";
 
@@ -216,7 +216,7 @@ bool qdInventory::save_script(class XStream &fh, int indent) const {
 	FOR_EACH(cell_sets_, it)
 	it -> save_script(fh, indent + 1);
 
-	for (int i = 0; i < indent; i ++) fh < "\t";
+	for (int i = 0; i <= indent; i ++) fh < "\t";
 	fh < "</inventory>\r\n";
 
 	return true;

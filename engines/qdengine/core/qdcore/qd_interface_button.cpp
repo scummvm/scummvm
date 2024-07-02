@@ -200,10 +200,16 @@ bool qdInterfaceButton::init(bool is_game_active) {
 	return true;
 }
 
-bool qdInterfaceButton::save_script_body(XStream &fh, int indent) const {
-	for (int i = 0; i < num_states(); i++)
-		get_state(i) -> save_script(fh, indent + 1);
+bool qdInterfaceButton::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i < num_states(); i++) {
+		get_state(i)->save_script(fh, indent + 1);
+	}
 
+	return true;
+}
+
+bool qdInterfaceButton::save_script_body(XStream &fh, int indent) const {
+	warning("STUB: qdInterfaceButton::save_script(XStream)");
 	return true;
 }
 

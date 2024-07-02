@@ -58,9 +58,16 @@ qdInterfaceBackground &qdInterfaceBackground::operator = (const qdInterfaceBackg
 	return *this;
 }
 
-bool qdInterfaceBackground::save_script_body(XStream &fh, int indent) const {
-	if (!state_.save_script(fh, indent)) return false;
+bool qdInterfaceBackground::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
+	if (!state_.save_script(fh, indent)) {
+		return false;
+	}
 
+	return true;
+}
+
+bool qdInterfaceBackground::save_script_body(XStream &fh, int indent) const {
+	warning("STUB: qdInterfaceBackground::save_script_body");
 	return true;
 }
 

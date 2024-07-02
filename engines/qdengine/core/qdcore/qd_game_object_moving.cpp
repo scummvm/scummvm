@@ -251,52 +251,78 @@ bool qdGameObjectMoving::load_script_body(const xml::tag *p) {
 	return true;
 }
 
-bool qdGameObjectMoving::save_script_body(XStream &fh, int indent) const {
+bool qdGameObjectMoving::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
 	qdGameObjectAnimated::save_script_body(fh, indent);
 
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<object_direction>" <= direction_angle_ < "</object_direction>\r\n";
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<object_direction>%d</object_direction>\r\n", direction_angle_));
 
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<default_direction>" <= default_direction_angle_ < "</default_direction>\r\n";
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<default_direction>%d</default_direction>", default_direction_angle_));
 
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<rotation_angle_per_quant>" <= rotation_angle_per_quant_ < "</rotation_angle_per_quant>\r\n";
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<rotation_angle_per_quant>%d</rotation_angle_per_quant>", rotation_angle_per_quant_));
 
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<collision_path>" <= collision_path_ < "</collision_path>\r\n";
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<collision_path>%d</collision_path>", collision_path_));
 
 	if (collision_radius_ > FLT_EPS) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<collision_radius>" <= collision_radius_ < "</collision_radius>\r\n";
+		for (int i = 0; i <= indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<collision_radius>%d</collision_radius>", collision_radius_));
 	}
 
 	if (collision_delay_ > FLT_EPS) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<collision_delay>" <= collision_delay_ < "</collision_delay>\r\n";
+		for (int i = 0; i <= indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<collision_delay>%d</collision_delay>", collision_delay_));
 	}
 
 	if (follow_min_radius_ > FLT_EPS) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<follow_min_radius>" <= follow_min_radius_ < "</follow_min_radius>\r\n";
+		for (int i = 0; i <= indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<follow_min_radius>%d</follow_min_radius>", follow_min_radius_));
 	}
 
 	if (follow_max_radius_ > FLT_EPS) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<follow_max_radius>" <= follow_max_radius_ < "</follow_max_radius>\r\n";
+		for (int i = 0; i <= indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<follow_max_radius>%d</follow_max_radius>", follow_max_radius_));
 	}
 
-	if (NULL != attacher_)
+	if (NULL != attacher_) {
 		attacher_ref_.save_script(fh, indent + 1);
+	}
 
 	if ((0 != attach_shift_.x) || (0 != attach_shift_.y)) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<attach_shift>" <= attach_shift_.x < " " <= attach_shift_.y < "</attach_shift>\r\n";
+		for (int i = 0; i <= indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<attach_shift>%d</attach_shift>", attach_shift_));
 	}
 
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<control>" <= control_types_ < "</control>\r\n";
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<control>%d</control>\r\n", control_types_));
 
+	return true;
+}
+
+bool qdGameObjectMoving::save_script_body(XStream &fh, int indent) const {
+	warning("STUB: qdGameObjectMoving::save_script(XStream)");
 	return true;
 }
 
@@ -305,19 +331,24 @@ bool qdGameObjectMoving::load_script(const xml::tag *p) {
 }
 
 bool qdGameObjectMoving::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	warning("STUB: qdGameObjectMoving::save_script(Common::SeekableWriteStream)");
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+
+	fh.writeString(Common::String::format("<moving_object name=\"%s\">\r\n", qdscr_XML_string(name())));
+
+	save_script_body(fh, indent);
+
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("</moving_object>\r\n");
+
 	return true;
 }
 
 bool qdGameObjectMoving::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "<moving_object name=\"" < qdscr_XML_string(name()) < "\">\r\n";
-
-	save_script_body(fh, indent);
-
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "</moving_object>\r\n";
-
+	warning("STUB: qdGameObjectMoving::save_script(XStream)");
 	return true;
 }
 

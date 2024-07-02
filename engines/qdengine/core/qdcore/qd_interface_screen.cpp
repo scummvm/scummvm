@@ -212,7 +212,7 @@ bool qdInterfaceScreen::save_script(Common::SeekableWriteStream &fh, int indent)
 }
 
 bool qdInterfaceScreen::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
+	for (int i = 0; i <= indent; i ++) fh < "\t";
 	fh < "<interface_screen";
 
 	if (name())
@@ -232,7 +232,7 @@ bool qdInterfaceScreen::save_script(XStream &fh, int indent) const {
 	for (element_list_t::const_iterator it = element_list().begin(); it != element_list().end(); ++it)
 		(*it) -> save_script(fh, indent + 1);
 
-	for (int i = 0; i < indent; i ++) fh < "\t";
+	for (int i = 0; i <= indent; i ++) fh < "\t";
 	fh < "</interface_screen>\r\n";
 
 	return true;

@@ -101,28 +101,40 @@ bool qdConditionData::load_script(const xml::tag *p) {
 	return true;
 }
 
-bool qdConditionData::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
+bool qdConditionData::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i <= indent; i++) {
+		fh.writeString("\t");
+	}
 
-	switch (type_) {
+	switch(type_) {
 	case DATA_INT:
-		fh < "<condition_data_int>" <= data_.size() / sizeof(int);
-		for (int i = 0; i < data_.size() / sizeof(int); i ++) fh < " " <= get_int(i);
-		fh < "</condition_data_int>\r\n";
+		fh.writeString(Common::String::format("<condition_data_int>%d", data_.size() / sizeof(int32)));
+		for (int i = 0; i < data_.size() / sizeof(int32); i++) {
+			fh.writeString(Common::String::format(" %d", get_int(i)));
+		}
+		fh.writeString("</condition_data_int>\r\n");
 		break;
 	case DATA_FLOAT:
-		fh < "<condition_data_float>" <= data_.size() / sizeof(float);
-		for (int i = 0; i < data_.size() / sizeof(float); i ++) fh < " " <= get_float(i);
-		fh < "</condition_data_float>\r\n";
+		fh.writeString(Common::String::format("<condition_data_float>%d", data_.size() / sizeof(float)));
+		for (int i = 0; i < data_.size() / sizeof(float); i++) {
+			fh.writeString(Common::String::format(" ", get_float(i)));
+		}
+		fh.writeString("</condition_data_float>\r\n");
 		break;
 	case DATA_STRING:
-		fh < "<condition_data_string>";
-		if (!data_.empty())
-			fh < qdscr_XML_string(&*data_.begin());
-		fh < "</condition_data_string>\r\n";
+		fh.writeString("<condition_dat_string>");
+		if (!data_.empty()) {
+			fh.writeString(Common::String::format("%s", qdscr_XML_string(&*data_.begin())));
+		}
+		fh.writeString("</condition_data_string>\r\n");
 		break;
 	}
 
+	return true;
+}
+
+bool qdConditionData::save_script(XStream &fh, int indent) const {
+	warning("STUB: qdConditionData::save_script(XStream");
 	return true;
 }
 

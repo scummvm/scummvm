@@ -97,7 +97,7 @@ bool qdConditionGroup::save_script(Common::SeekableWriteStream &fh, int indent) 
 }
 
 bool qdConditionGroup::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i++) fh < "\t";
+	for (int i = 0; i <= indent; i++) fh < "\t";
 
 	fh < "<condition_group";
 	fh < " type=\"" <= (int)conditions_mode_ < "\"";

@@ -99,27 +99,32 @@ bool qdCounterElement::load_script(const xml::tag *p) {
 }
 
 bool qdCounterElement::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	warning("qdCounterElement::save_script(Common::SeekableWriteStream)");
-	return true;
-}
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
 
-bool qdCounterElement::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i++) fh < "\t";
-	fh < "<counter_element";
+	fh.writeString("<counter_element");
 
-	if (!increment_value_)
-		fh < " inc_value=\"0\"";
-
-	fh < ">\r\n";
+	if (!increment_value_) {
+		fh.writeString(" inc_value=\"0\"");
+	}
+	fh.writeString(">\r\n");
 
 	if (state_) {
 		qdNamedObjectReference ref(state_);
 		ref.save_script(fh, indent + 1);
 	}
 
-	for (int i = 0; i < indent; i++) fh < "\t";
-	fh < "</counter_element>\r\n";
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("</counter_element>\r\n");
 
+	return true;
+}
+
+bool qdCounterElement::save_script(XStream &fh, int indent) const {
+	warning("STUB: qdCounterElement::save_script(XStream)");
 	return true;
 }
 
@@ -258,7 +263,7 @@ bool qdCounter::load_script(const xml::tag *p) {
 }
 
 bool qdCounter::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i < indent; i++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 
 	fh.writeString("<counter");

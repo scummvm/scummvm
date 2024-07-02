@@ -367,37 +367,37 @@ bool qdTriggerChain::load_script(const xml::tag *p) {
 }
 
 bool qdTriggerChain::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	warning("STUB: qdTriggerChain::save_script(Common::SeekableWriteStream)");
-	return true;
-}
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
 
-bool qdTriggerChain::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
+	fh.writeString("<trigger_chain name=");
 
-	fh < "<trigger_chain name=";
+	if (name()) {
+		fh.writeString(Common::String::format("\"%s\"", qdscr_XML_string(name())));
+	} else {
+		fh.writeString("\" \"");
+	}
 
-	if (name())
-		fh < "\"" < qdscr_XML_string(name()) < "\"";
-	else
-		fh < "\" \"";
-
-#ifdef _QUEST_EDITOR
-	fh < " trigger_bound=\"" <= m_rcBound.left < " " <= m_rcBound.top < " " <= m_rcBound.right < " " <= m_rcBound.bottom < "\"";
-	fh < " work_area=\"" <= m_rcWorkArea.left < " " <= m_rcWorkArea.top < " " <= m_rcWorkArea.right < " " <= m_rcWorkArea.bottom < "\"";
-	fh < " layout=\"" <= m_szGenLayout.cx < " " <= m_szGenLayout.cy < "\"";
-#endif
-
-	fh < ">\r\n";
+	fh.writeString(">\r\n");
 
 	root_element()->save_script(fh, indent + 1);
 
 	qdTriggerElementList::const_iterator it;
-	FOR_EACH(elements_, it)
-	(*it) -> save_script(fh, indent + 1);
+	for (auto &it : elements_) {
+		it->save_script(fh, indent + 1);
+	};
 
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "</trigger_chain>\r\n";
+	for (int i = 0; i <= indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("</trigger_chain>\r\n");
 
+	return true;
+}
+
+bool qdTriggerChain::save_script(XStream &fh, int indent) const {
+	warning("STUB: qdTriggerChain::save_script(XStream)");
 	return true;
 }
 

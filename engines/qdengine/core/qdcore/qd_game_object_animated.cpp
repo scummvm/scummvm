@@ -511,14 +511,14 @@ bool qdGameObjectAnimated::load_script(const xml::tag *p) {
 }
 
 bool qdGameObjectAnimated::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i < indent; i++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 
-	fh.writeString(Common::String::format("<animated_object name=\"%s\"", qdscr_XML_string(name())));
+	fh.writeString(Common::String::format("<animated_object name=\"%s\">\r\n", qdscr_XML_string(name())));
 	save_script_body(fh, indent);
 
-	for (int i = 0; i < indent; i++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString("</animated_object>\r\n");

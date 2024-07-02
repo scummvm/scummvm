@@ -79,7 +79,7 @@ bool qdFontInfo::load_script(const xml::tag *p) {
 }
 
 bool qdFontInfo::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i < indent; i++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 
@@ -96,7 +96,7 @@ bool qdFontInfo::save_script(Common::SeekableWriteStream &fh, int indent) const 
 }
 
 bool qdFontInfo::save_script(class XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
+	for (int i = 0; i <= indent; i ++) fh < "\t";
 	fh < "<font_info type=\"" <= type_ < "\"";
 
 	if (!font_file_name_.empty())

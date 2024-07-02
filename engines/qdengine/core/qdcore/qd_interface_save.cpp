@@ -341,25 +341,42 @@ bool qdInterfaceSave::perform_save() {
 	return false;
 }
 
-bool qdInterfaceSave::save_script_body(XStream &fh, int indent) const {
-	if (!frame_.save_script(fh, indent)) return false;
+bool qdInterfaceSave::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
+	if (!frame_.save_script(fh, indent)) {
+		return false;
+	}
 
-	for (int i = 0; i <= indent; i++) fh < "\t";
-	fh < "<ID>" <= save_ID_ < "</ID>\r\n";
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<ID>%d</ID>", save_ID_));
 
 	if (thumbnail_size_x_ || thumbnail_size_y_) {
-		for (int i = 0; i <= indent; i++) fh < "\t";
-		fh < "<thumbnail_size>" <= thumbnail_size_x_ < " " <= thumbnail_size_y_ < "</thumbnail_size>\r\n";
-	}
-	if (text_dx_ || text_dy_) {
-		for (int i = 0; i <= indent; i++) fh < "\t";
-		fh < "<text_shift>" <= text_dx_ < " " <= text_dy_ < "</text_shift>\r\n";
-	}
-	if (isAutosaveSlot()) {
-		for (int i = 0; i <= indent; i++) fh < "\t";
-		fh < "<is_autosave>1</is_autosave>\r\n";
+		for (int i = 0; i <= indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<thumbnail_size>%d %d</thumbnail_size>\r\n", thumbnail_size_x_, thumbnail_size_y_));
 	}
 
+	if (text_dx_ || text_dy_) {
+		for (int i = 0; i <= indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<text_shift>%d %d</text_shift>\r\n", text_dx_, text_dy_));
+	}
+
+	if (isAutosaveSlot()) {
+		for (int i = 0; i <= indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString("<is_autosave>1</is_autosave>\r\n");
+	}
+
+	return true;
+}
+
+bool qdInterfaceSave::save_script_body(XStream &fh, int indent) const {
+	warning("STUB: qdInterfaceSave::save_script(XStream)");
 	return true;
 }
 

@@ -360,30 +360,37 @@ bool qdCondition::load_script(const xml::tag *p) {
 }
 
 bool qdCondition::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	warning("STUB: qdCondition::save_script(Common::SeekableWriteStream)");
-	return true;
-}
+	for (int i = 0; i <= indent; i++) {
+		fh.writeString("\t");
+	}
 
-bool qdCondition::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "<condition type=\"" <= type_ < "\"";
+	fh.writeString(Common::String::format("<condition type=\"%d\""));
 
-	if (is_inversed())
-		fh < " condition_inverse=\"1\"";
+	if (is_inversed()) {
+		fh.writeString("condition_inverse=\"1\"");
+	}
 
-	fh < ">\r\n";
+	fh.writeString(">\r\n");
 
-	for (data_container_t::const_iterator it = data_.begin(); it != data_.end(); ++it)
-		it -> save_script(fh, indent + 1);
+	for (auto &it : data_) {
+		it.save_script(fh, indent + 1);
+	}
 
 	for (int i = 0; i < objects_.size(); i++) {
 		if (objects_[i].object())
 			objects_[i].save_script(fh, indent + 1, i);
 	}
 
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "</condition>\r\n";
+	for (int i = 0; i <= indent; i++) {
+		fh.writeString("\t");
+	}
 
+	fh.writeString("</condition>\r\n");
+	return true;
+}
+
+bool qdCondition::save_script(XStream &fh, int indent) const {
+	warning("STUB: qdCondition::save_script(XStream)");
 	return true;
 }
 
