@@ -157,7 +157,7 @@ bool qdNamedObjectReference::save_script(Common::SeekableWriteStream &fh, int in
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<name>%s</name>", qdscr_XML_string(object_names_[j].c_str())));
+		fh.writeString(Common::String::format("<name>%s</name>\r\n", qdscr_XML_string(object_names_[j].c_str())));
 	}
 
 	for (int i = 0; i <= indent; i++) {

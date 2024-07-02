@@ -104,7 +104,7 @@ bool qdConditionObjectReference::save_script(Common::SeekableWriteStream &fh, in
 		fh.writeString("\t");
 	}
 
-	fh.writeString(Common::String::format("<condition_object ID=\"%d\""));
+	fh.writeString(Common::String::format("<condition_object ID=\"%d\">\r\n", id));
 	if (object_) {
 		qdNamedObjectReference ref(object_);
 		ref.save_script(fh, indent + 1);
