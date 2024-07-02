@@ -85,6 +85,11 @@ enum GameSpeed {
 	kGroovieSpeedFast
 };
 
+enum GROOVIEAction {
+	kActionNone,
+	kActionSkip
+};
+
 #define MAX_SAVES 25
 
 struct GroovieGameDescription;
