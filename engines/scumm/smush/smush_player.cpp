@@ -248,6 +248,10 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 	_pauseStartTime = 0;
 	_pauseTime = 0;
 
+	memset(_pal, 0, sizeof(byte));
+	memset(_deltaPal, 0, sizeof(int16));
+	memset(_shiftedDeltaPal, 0, sizeof(int32));
+
 	for (int i = 0; i < 4; i++)
 		_iactTable[i] = 0;
 
@@ -699,36 +703,31 @@ void SmushPlayer::readPalette(byte *out, Common::SeekableReadStream &in) {
 	in.read(out, 0x300);
 }
 
-static byte delta_color(byte org_color, int16 delta_color) {
-	int t = (org_color * 129 + delta_color) / 128;
-	return CLIP(t, 0, 255);
-}
-
 void SmushPlayer::handleDeltaPalette(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleDeltaPalette()");
 
-	if (subSize == 0x300 * 3 + 4) {
+	b.readUint16LE();
+	uint16 xpalCommand = b.readUint16LE();
 
+	if (xpalCommand == 256) {
 		b.readUint16LE();
-		b.readUint16LE();
-
-		for (int i = 0; i < 0x300; i++) {
-			_deltaPal[i] = b.readUint16LE();
+		for (int i = 0; i < 768; ++i) {
+			_shiftedDeltaPal[i] += _deltaPal[i];
+			
+			_pal[i] = CLIP(_shiftedDeltaPal[i] >> 7, 0, 255);
 		}
-		readPalette(_pal, b);
-		setDirtyColors(0, 255);
-	} else if (subSize == 6) {
 
-		b.readUint16LE();
-		b.readUint16LE();
-		b.readUint16LE();
-
-		for (int i = 0; i < 0x300; i++) {
-			_pal[i] = delta_color(_pal[i], _deltaPal[i]);
-		}
 		setDirtyColors(0, 255);
 	} else {
-		error("SmushPlayer::handleDeltaPalette() Wrong size for DeltaPalette");
+		for (int j = 0; j < 768; ++j) {
+			_shiftedDeltaPal[j] = _pal[j] << 7;
+			_deltaPal[j] = b.readUint16LE();
+		}
+
+		if (xpalCommand == 512)
+			readPalette(_pal, b);
+
+		setDirtyColors(0, 255);
 	}
 }
 

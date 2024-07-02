@@ -130,6 +130,7 @@ private:
 	Insane *_insane;
 	int32 _nbframes;
 	int16 _deltaPal[0x300];
+	int32 _shiftedDeltaPal[0x300];
 	byte _pal[0x300];
 	SmushFont *_sf[5];
 	StringResource *_strings;
