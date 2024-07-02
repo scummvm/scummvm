@@ -206,10 +206,11 @@ SciEvent EventManager::getScummVMEvent() {
 		found = em->pollEvent(ev);
 	} while (found && ev.type == Common::EVENT_MOUSEMOVE);
 
-	Common::Point mousePos = g_sci->_gfxScreen->gfxDriver()->getMousePos();
+	Common::Point mousePos;
 
 #if ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
+		mousePos = em->getMousePos();
 		const GfxFrameout *gfxFrameout = g_sci->_gfxFrameout;
 
 		// This will clamp `mousePos` according to the restricted zone,
@@ -226,6 +227,7 @@ SciEvent EventManager::getScummVMEvent() {
 		}
 	} else {
 #endif
+		mousePos = g_sci->_gfxScreen->gfxDriver()->getMousePos();
 		g_sci->_gfxScreen->adjustBackUpscaledCoordinates(mousePos.y, mousePos.x);
 #if ENABLE_SCI32
 	}
