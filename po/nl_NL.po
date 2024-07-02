@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-06-30 18:44+0000\n"
+"POT-Creation-Date: 2024-07-01 19:00+0000\n"
 "PO-Revision-Date: 2024-03-24 18:22+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -5710,7 +5710,7 @@ msgid "Check for Updates..."
 msgstr "Controleren op updates..."
 
 #: engines/access/resources.cpp:43 engines/drascula/drascula.cpp:940
-#: engines/hugo/hugo.cpp:424 engines/lure/lure.cpp:57
+#: engines/hugo/hugo.cpp:427 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:300 engines/sky/compact.cpp:129
 #: engines/supernova/supernova.cpp:463 engines/teenagent/resources.cpp:97
 #: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5416
@@ -5720,7 +5720,7 @@ msgid "Unable to locate the '%s' engine data file."
 msgstr "Kon de '%s' engine data file niet vinden."
 
 #: engines/access/resources.cpp:51 engines/drascula/drascula.cpp:956
-#: engines/hugo/hugo.cpp:436 engines/lure/lure.cpp:66
+#: engines/hugo/hugo.cpp:439 engines/lure/lure.cpp:66
 #: engines/mortevielle/mortevielle.cpp:308 engines/supernova/supernova.cpp:468
 #: engines/tony/tony.cpp:200 engines/toon/toon.cpp:5429
 #, c-format
@@ -5728,7 +5728,7 @@ msgid "The '%s' engine data file is corrupt."
 msgstr "De '%s' engine data file is corrupt."
 
 #: engines/access/resources.cpp:60 engines/drascula/drascula.cpp:967
-#: engines/hugo/hugo.cpp:446 engines/lure/lure.cpp:69
+#: engines/hugo/hugo.cpp:449 engines/lure/lure.cpp:69
 #: engines/mortevielle/mortevielle.cpp:318 engines/tony/tony.cpp:211
 #: engines/toon/toon.cpp:5440
 #, c-format
