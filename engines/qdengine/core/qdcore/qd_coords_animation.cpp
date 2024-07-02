@@ -287,7 +287,7 @@ bool qdCoordsAnimation::save_script(Common::SeekableWriteStream &fh, int indent)
 
 	fh.writeString(Common::String::format(" type=\"%d\"", (int)type_));
 	fh.writeString(Common::String::format(" speed=\"%f\"", speed_));
-	fh.writeString(Common::String::format(" animation_phase=\"%d\"", animation_phase_));
+	fh.writeString(Common::String::format(" animation_phase=\"%f\"", animation_phase_));
 
 	fh.writeString(">\r\n");
 

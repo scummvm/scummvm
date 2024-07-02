@@ -183,7 +183,7 @@ bool qdInterfaceElementState::load_script(const xml::tag *p) {
 }
 
 bool qdInterfaceElementState::quant(float dt) {
-	debugC(9, kDebugQuant, "qdInterfaceElementState::quant(%d)", dt);
+	debugC(9, kDebugQuant, "qdInterfaceElementState::quant(%f)", dt);
 	if (qdInterfaceElement * ep = dynamic_cast<qdInterfaceElement * >(owner())) {
 		if (prev_state_mode_ == MOUSE_HOVER_MODE && state_mode() == DEFAULT_MODE)
 			handle_events(qdInterfaceEvent::EVENT_ACTIVATION_HOVER, false);
@@ -196,7 +196,7 @@ bool qdInterfaceElementState::quant(float dt) {
 			break;
 		case qdInterfaceElement::STATE_DONE:
 			if (state_mode() == EVENT_MODE) {
-				debugC(3, kDebugQuant, "qdInterfaceElementState::quant(%d) - EVENT_MODE", dt);
+				debugC(3, kDebugQuant, "qdInterfaceElementState::quant(%f) - EVENT_MODE", dt);
 				handle_events(qdInterfaceEvent::EVENT_ACTIVATION_CLICK, false);
 			}
 

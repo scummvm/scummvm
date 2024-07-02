@@ -188,7 +188,7 @@ bool qdInterfaceScreen::save_script(Common::SeekableWriteStream &fh, int indent)
 	}
 
 	if (autohide_offset_.x || autohide_offset_.y) {
-		fh.writeString(Common::String::format(" hide_offset=\"%f %f\"", autohide_offset_.x, autohide_offset_.y));
+		fh.writeString(Common::String::format(" hide_offset=\"%d %d\"", autohide_offset_.x, autohide_offset_.y));
 	}
 
 	fh.writeString(">\r\n");

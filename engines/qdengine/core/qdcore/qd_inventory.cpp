@@ -187,38 +187,50 @@ bool qdInventory::load_script(const xml::tag *p) {
 	return true;
 }
 bool qdInventory::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	warning("qdInventory::save_script(Common::SeekableStream &fh)");
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+
+	fh.writeString("<inventory name=");
+
+	if (name()) {
+		fh.writeString(Common::String::format("\"%s\"", qdscr_XML_string(name())));
+	} else {
+		fh.writeString("\" \"");
+	}
+
+	if (flags()) {
+		fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
+	}
+
+	if (shadow_color_ != INV_DEFAULT_SHADOW_COLOR) {
+		fh.writeString(Common::String::format(" shadow_color=\"%u\"", shadow_color_));
+	}
+
+	if (shadow_alpha_ != INV_DEFAULT_SHADOW_ALPHA) {
+		fh.writeString(Common::String::format(" shadow_alpha=\"%d\"", shadow_alpha_));
+	}
+
+	fh.writeString(">\r\n");
+
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<inventory_cell_set_additional_cells>%hd %hd</inventory_cell_set_additional_cells>\r\n", additional_cells_.x, additional_cells_.y));
+
+	for (auto &it : cell_sets_) {
+		it.save_script(fh, indent + 1);
+	}
+
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("</inventory>\r\n");
 	return true;
 }
 
 bool qdInventory::save_script(class XStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-
-	fh < "<inventory name=";
-
-	if (name()) fh < "\"" < qdscr_XML_string(name()) < "\"";
-	else fh < "\" \"";
-
-	if (flags()) fh < " flags=\"" <= flags() < "\"";
-
-	if (shadow_color_ != INV_DEFAULT_SHADOW_COLOR)
-		fh < " shadow_color=\"" <= shadow_color_ < "\"";
-
-	if (shadow_alpha_ != INV_DEFAULT_SHADOW_ALPHA)
-		fh < " shadow_alpha=\"" <= shadow_alpha_ < "\"";
-
-	fh < ">\r\n";
-
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<inventory_cell_set_additional_cells>" <= additional_cells_.x < " " <= additional_cells_.y < "</inventory_cell_set_additional_cells>\r\n";
-
-	qdInventoryCellSetVector::const_iterator it;
-	FOR_EACH(cell_sets_, it)
-	it -> save_script(fh, indent + 1);
-
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "</inventory>\r\n";
-
+	warning("STUB: qdInventory::save_script(XStream)");
 	return true;
 }
 
