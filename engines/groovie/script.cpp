@@ -118,6 +118,7 @@ Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_videoSkipAddress = 0;
 	resetFastForward();
 	_eventKbdChar = 0;
+	_eventAction = kActionNone;
 	_eventMouseClicked = 0;
 	_wantAutosave = false;
 }
@@ -395,6 +396,10 @@ void Script::setMouseClick(uint8 button) {
 
 void Script::setKbdChar(uint8 c) {
 	_eventKbdChar = c;
+}
+
+void Script::setAction(uint8 a) {
+	_eventAction = a;
 }
 
 Common::String &Script::getContext() {
@@ -983,11 +988,12 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 	}
 
 	// Check if the user wants to skip the video
-	if (_eventMouseClicked == 2 || _eventKbdChar == Common::KEYCODE_ESCAPE || _eventKbdChar == Common::KEYCODE_SPACE) {
+	if (_eventMouseClicked == 2 || _eventAction == kActionSkip) {
 		// we don't want to clear a left click here, that would eat the input
 		if (_eventMouseClicked == 2)
 			_eventMouseClicked = 0;
 		_eventKbdChar = 0;
+		_eventAction = kActionNone;
 		if (_videoSkipAddress != 0) {
 			// Jump to the given address
 			_currentInstruction = _videoSkipAddress;
@@ -1038,6 +1044,7 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 			// Clear the input events while playing the video
 			_eventMouseClicked = 0;
 			_eventKbdChar = 0;
+			_eventAction = kActionNone;
 
 			// Newline
 			debugCN(1, kDebugScript, "\n");
@@ -1103,6 +1110,7 @@ void Script::o_inputloopstart() {	//0x0B
 	// Save the current pressed character for the whole loop
 	_kbdChar = _eventKbdChar;
 	_eventKbdChar = 0;
+	_eventAction = kActionNone;
 }
 
 void Script::o_keyboardaction() {
@@ -1329,7 +1337,7 @@ void Script::o_sleep() {
 	while (_vm->_system->getMillis() < endTime && !_fastForwarding) {
 		_vm->_system->getEventManager()->pollEvent(ev);
 		if (ev.type == Common::EVENT_RBUTTONDOWN
-			|| (ev.type == Common::EVENT_KEYDOWN && (ev.kbd.ascii == Common::KEYCODE_SPACE || ev.kbd.ascii == Common::KEYCODE_ESCAPE))
+			|| (ev.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START && (ev.customType == kActionSkip))
 		) {
 			_fastForwarding = true;
 			break;

@@ -25,6 +25,10 @@
 #include "common/system.h"
 #include "common/translation.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "engines/advancedDetector.h"
 #include "groovie/detection.h"
 
@@ -136,6 +140,8 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	int getAutosaveSlot() const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 Common::Error GroovieMetaEngine::createInstance(OSystem *syst, Engine **engine, const GroovieGameDescription *gd) const {
@@ -186,6 +192,41 @@ SaveStateDescriptor GroovieMetaEngine::querySaveMetaInfos(const char *target, in
 
 int GroovieMetaEngine::getAutosaveSlot() const {
 	return GroovieEngine::AUTOSAVE_SLOT;
+}
+
+Common::KeymapArray GroovieMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Groovie;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "groovie-main", "GROOVIE main");
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game Keymappings"));
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+	
+	act = new Action("SKIPORFAST", _("Skip or Fast Forward Scene"));
+	act->setCustomEngineActionEvent(kActionSkip);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_X");
+	gameKeyMap->addAction(act);
+
+	KeymapArray keymaps(2);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeyMap;
+
+	return keymaps;
 }
 
 } // End of namespace Groovie
