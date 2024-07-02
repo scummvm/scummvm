@@ -224,7 +224,7 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh) {
 
 	size = fh->readUint32LE();
 	frameIndex_.resize(size);
-	debugC(7, kDebugLoad, "grTileAnimation::load(): pos: %d frameIndex_ size: %u", fh->pos() - 4, size);
+	debugC(7, kDebugLoad, "grTileAnimation::load(): pos: %ld frameIndex_ size: %u", fh->pos() - 4, size);
 	for (int i = 0; i < size; i++) {
 		frameIndex_[i] = fh->readUint32LE();
 		debugCN(8, kDebugLoad, " %d ", frameIndex_[i]);
@@ -270,10 +270,10 @@ void grTileAnimation::drawFrame(const Vect2i &position, int32 frame_index, int32
 
 	const uint32 *index_ptr = &frameIndex_[0] + frameTileSize_.x * frameTileSize_.y * frame_index;
 
-	debugC(3, kDebugTemp, "The length of frameIndex is given by %u", frameIndex_.size());
+	debugC(3, kDebugTemp, "The length of frameIndex is given by %lu", frameIndex_.size());
 	debugC(3, kDebugTemp, "The value of increment is given by %d", frameTileSize_.x * frameTileSize_.y * frame_index);
 	debugC(3, kDebugTemp, "grTileAnimation::drawFrame %u", index_ptr);
-	debugC(3, kDebugTemp, "grTileAnimation::drawFrame *index_ptr: %d", *index_ptr);
+	debugC(3, kDebugTemp, "grTileAnimation::drawFrame *index_ptr: %u", *index_ptr);
 
 	Vect2i pos = pos0;
 	for (int32 i = 0; i < frameTileSize_.y; i++) {
