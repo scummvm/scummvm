@@ -187,6 +187,20 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Adventures of Willy Beamish Demo
+	{
+		"beamish",
+		0,
+		{
+			{"volume.001", 0, "8ef6966691086a5557b7c874db5b7ff4", 881872},
+			{"volume.rmf", 0, "560ec4fc04184a5113c08eeb721ca2ce", 741},
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE | ADGF_DEMO,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Heart of China (PC) GOG
 	{
 		"china",

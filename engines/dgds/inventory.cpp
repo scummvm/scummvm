@@ -89,7 +89,7 @@ void Inventory::setRequestData(const REQFileData &data) {
 	if (static_cast<DgdsEngine *>(g_engine)->getGameId() == GID_BEAMISH)
 		_itemZoomBox = _itemBox;
 
-	if (!_prevPageBtn || !_nextPageBtn || !_invClock || !_itemZoomBox || !_exitButton || !_itemArea)
+	if (!_prevPageBtn || !_nextPageBtn || !_itemZoomBox || !_exitButton || !_itemArea)
 		error("Didn't get all expected inventory gadgets");
 }
 
@@ -145,6 +145,9 @@ void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount) {
 }
 
 void Inventory::drawTime(Graphics::ManagedSurface &surf) {
+	if (!_invClock) // no clock in Willy Beamish demo.
+		return;
+
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	const DgdsFont *font = RequestData::getMenuFont();
 	const Common::String timeStr = engine->getClock().getTimeStr();
