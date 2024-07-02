@@ -207,10 +207,25 @@ void Darkseed::Player::calculateWalkTarget() {
 		if (connector.x == -1 && connector.y == -1) {
 			return;
 		}
+		int connectorToTargetDist = Common::hypotenuse(connector.x - _walkTarget.x, connector.y - _walkTarget.y);
+		int playerToTargetDist = Common::hypotenuse(_position.x - _walkTarget.x, _position.y - _walkTarget.y);
+		if (connectorToTargetDist < playerToTargetDist) {
+			if(g_engine->_room->canWalkInLineToTarget(_position.x, _position.y, connector.x, connector.y)) {
+				_finalTarget = _walkTarget;
+				_walkTarget = connector;
+			} else {
+				Common::Point tmpDest = _walkTarget;
+				_walkTarget = connector;
+				if (numConnectorsInWalkPath > 0 && numConnectorsInWalkPath < Room::MAX_CONNECTORS - 1 && _connectorList[numConnectorsInWalkPath - 1] != connector) {
+					_connectorList[numConnectorsInWalkPath] = connector;
+					numConnectorsInWalkPath++;
+				}
+				_finalTarget = tmpDest;
+			}
+		}
 	} else {
 		createConnectorPathToDest();
 	}
-	// TODO more logic here.
 }
 
 int Darkseed::Player::getWidth() {
