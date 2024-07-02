@@ -360,6 +360,7 @@ Common::Point Darkseed::Player::getClosestUnusedConnector(int16 x, int16 y, bool
 			if (dist < closestDist) {
 				if (!mustHaveCleanLine || g_engine->_room->canWalkInLineToTarget(x, y, roomConnector.x, roomConnector.y)) {
 					closestPoint = roomConnector;
+					closestDist = dist;
 				}
 			}
 		}
