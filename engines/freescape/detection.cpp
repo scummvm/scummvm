@@ -163,6 +163,19 @@ static const ADGameDescription gameDescriptions[] = {
 		GF_AMIGA_RETAIL,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDERAMIGA, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
+	{ // Virtual Worlds release
+		"driller",
+		"",
+		{
+			{"driller", 0, "45312c9ccdb567c332f953059e4819a5", 282384},
+			{"text", 0, "bf949a753634cdcb376e0dab9447b08b", 215},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		GF_AMIGA_RETAIL,
+		GUIO3(GUIO_NOMIDI, GUIO_RENDERAMIGA, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
 	{
 		"driller",
 		"",
@@ -289,7 +302,16 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("x.prg", "7fc6ef316be4819d88d8031738571a50", 293264),
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
-		GF_ATARI_BUDGET,
+		ADGF_UNSUPPORTED,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
+		"spacestationoblivion",
+		"",
+		AD_ENTRY1s("oblivion", "7fc6ef316be4819d88d8031738571a50", 293264),
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_UNSUPPORTED,
 		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
 	{
@@ -324,6 +346,20 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformAmiga,
 		ADGF_UNSTABLE,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERAMIGA)
+	},
+	// Microstatus release decrypted
+	{
+		"darkside",
+		"",
+		{
+			{"0.DRK", 0, "5aa6473a75991f1e1217974a7844a042", 77900},
+			{"1.DRK", 0, "49cc73a5ca7adb26065286a7afd4d0a4", 280704},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERATARIST)
 	},
 	// Cinemaware release
 	{
@@ -587,6 +623,19 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSUPPORTED,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERAMIGA)
 	},
+	{ // Virtual Worlds release
+		"totaleclipse",
+		"",
+		{
+			{"0.TEC", 0, "8daa244d6814f06b9a081b7bd0ec542d", 89500},
+			{"1.TEC", 0, "c1b022ad7284578f97aa2ff46ed3db38", 304030},
+  			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_UNSUPPORTED,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERAMIGA)
+	},
 	{
 		"totaleclipse",
 		"",
@@ -683,7 +732,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"castlemaster",
-		"Virtual Words",
+		"Virtual Worlds",
 		{
 			{"CASTLE.EXE", 0, "f1a141df0e47860246716db20d2ba061", 2806},
 			{"CMC.EXE", 0, "7b9275df446f82fdd0c377f6ec2db546", 57168},
