@@ -272,37 +272,50 @@ void qdCoordsAnimation::load_script(const xml::tag *p) {
 	}
 }
 
-bool qdCoordsAnimation::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
-
-	fh < "<coords_animation";
-
-	if (name())
-		fh < " name=\"" < qdscr_XML_string(name()) < "\"";
-	else
-		fh < " name=\" \"";
-
-	fh < " type=\"" <= type_ < "\"";
-	fh < " speed=\"" <= speed_ < "\"";
-	fh < " animation_phase=\"" <= animation_phase_ < "\"";
-
-	fh < ">\r\n";
-
-	qdCoordsAnimationPointVector::const_iterator it;
-	FOR_EACH(points_, it)
-	it -> save_script(fh, indent + 1);
-
-	if (flags()) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<flag>" <= flags() < "</flag>\r\n";
+bool qdCoordsAnimation::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
 	}
 
-	if (NULL != start_object_)
+	fh.writeString("<coords_animation");
+
+	if (name()) {
+		fh.writeString(Common::String::format(" name=\"%s\"", qdscr_XML_string(name())));
+	} else {
+		fh.writeString(" name=\" \"");
+	}
+
+	fh.writeString(Common::String::format(" type=\"%d\"", (int)type_));
+	fh.writeString(Common::String::format(" speed=\"%f\"", speed_));
+	fh.writeString(Common::String::format(" animation_phase=\"%d\"", animation_phase_));
+
+	fh.writeString(">\r\n");
+
+	for (auto &it: points_) {
+		it.save_script(fh, indent + 1);
+	}
+
+	if (flags()) {
+		for (int i = 0; i < indent; i++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<flag>%d</flag>\r\n", flags()));
+	}
+
+	if (NULL != start_object_) {
 		start_object_ref_.save_script(fh, indent + 1);
+	}
 
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "</coords_animation>\r\n";
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("</coords_animation>\r\n");
 
+	return true;
+}
+
+bool qdCoordsAnimation::save_script(XStream &fh, int indent) const {
+	warning("STUB: qdCoordsAnimation::save_script(XStream)");
 	return true;
 }
 

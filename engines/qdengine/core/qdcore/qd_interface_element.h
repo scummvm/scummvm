@@ -148,7 +148,7 @@ public:
 	//! Запись данных в скрипт.
 	bool save_script(XStream &fh, int indent = 0) const;
 	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
-	
+
 	//! Загрузка данных из скрипта.
 	bool load_script(const xml::tag *p);
 
@@ -230,6 +230,8 @@ protected:
 
 	//! Запись данных в скрипт.
 	virtual bool save_script_body(XStream &fh, int indent = 0) const = 0;
+	virtual bool save_script_body(Common::SeekableWriteStream &fh, int indent = 0) const = 0;
+
 	//! Загрузка данных из скрипта.
 	virtual bool load_script_body(const xml::tag *p) = 0;
 

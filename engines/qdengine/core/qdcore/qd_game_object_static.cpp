@@ -57,12 +57,12 @@ bool qdGameObjectStatic::save_script(Common::SeekableWriteStream &fh, int indent
 }
 
 bool qdGameObjectStatic::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
+	for (int i = 0; i <= indent; i ++) fh < "\t";
 	fh < "<static_object name=\"" < qdscr_XML_string(name()) < "\">\r\n";
 
 	save_script_body(fh, indent);
 
-	for (int i = 0; i < indent; i ++) fh < "\t";
+	for (int i = 0; i <= indent; i ++) fh < "\t";
 	fh < "</static_object>\r\n";
 
 	return true;

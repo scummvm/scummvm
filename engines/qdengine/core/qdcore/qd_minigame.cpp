@@ -165,7 +165,7 @@ bool qdMiniGame::load_script(const xml::tag *p) {
 }
 
 bool qdMiniGame::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i < indent; i++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 
@@ -176,7 +176,7 @@ bool qdMiniGame::save_script(Common::SeekableWriteStream &fh, int indent) const 
 	}
 
 	if (flags()) {
-		fh.writeString(Common::String::format(" flags=\"%s\"", flags()));
+		fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
 	}
 
 	if (!config_file_name_.empty()) {
@@ -198,7 +198,7 @@ bool qdMiniGame::save_script(Common::SeekableWriteStream &fh, int indent) const 
 			it.save_script(fh, indent + 1);
 		}
 
-		for (int i = 0; i < indent; i++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString("</minigame>\r\n");
@@ -210,7 +210,7 @@ bool qdMiniGame::save_script(Common::SeekableWriteStream &fh, int indent) const 
 }
 
 bool qdMiniGame::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
+	for (int i = 0; i <= indent; i ++) fh < "\t";
 	fh < "<minigame";
 
 	if (name()) fh < " name=\"" < qdscr_XML_string(name()) < "\"";
@@ -226,7 +226,7 @@ bool qdMiniGame::save_script(XStream &fh, int indent) const {
 		for (config_container_t::const_iterator it = config_.begin(); it != config_.end(); ++it)
 			it -> save_script(fh, indent + 1);
 
-		for (int i = 0; i < indent; i ++) fh < "\t";
+		for (int i = 0; i <= indent; i ++) fh < "\t";
 		fh < "</minigame>\r\n";
 	} else
 		fh < "/>\r\n";

@@ -156,7 +156,7 @@ grScreenRegion qdInterfaceElement::screen_region() const {
 }
 
 bool qdInterfaceElement::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i < indent; i++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 
@@ -168,16 +168,16 @@ bool qdInterfaceElement::save_script(Common::SeekableWriteStream &fh, int indent
 	}
 
 	if (option_ID_ != OPTION_NONE) {
-		fh.writeString(Common::String::format(" option_id=\"%s\"", (int)option_ID_));
+		fh.writeString(Common::String::format(" option_id=\"%d\"", (int)option_ID_));
 	}
 
 	fh.writeString(">\r\n");
 
-	// if (!save_script_body(fh, indent)) {
-	// 	return false;
-	// } FIXME
+	if (!save_script_body(fh, indent)) {
+		return false;
+	}
 
-	for (int i = 0; i < indent; i++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 
@@ -187,7 +187,7 @@ bool qdInterfaceElement::save_script(Common::SeekableWriteStream &fh, int indent
 }
 
 bool qdInterfaceElement::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < '\t';
+	for (int i = 0; i <= indent; i ++) fh < '\t';
 	fh < "<interface_element ";
 	fh < " type=\"" <= static_cast<int>(get_element_type()) < "\"";
 
@@ -201,7 +201,7 @@ bool qdInterfaceElement::save_script(XStream &fh, int indent) const {
 
 	if (!save_script_body(fh, indent)) return false;
 
-	for (int i = 0; i < indent; i ++) fh < '\t';
+	for (int i = 0; i <= indent; i ++) fh < '\t';
 	fh < "</interface_element>\r\n";
 
 	return true;

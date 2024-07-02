@@ -569,7 +569,7 @@ bool qdGameDispatcher::save_script(Common::SeekableWriteStream &fh) const {
 	}
 
 	for (auto &it : global_object_list()) {
-		// it->save_script(fh, 1); FIXME
+		it->save_script(fh, 1);
 	}
 
 	for (auto &it : trigger_chain_list()) {

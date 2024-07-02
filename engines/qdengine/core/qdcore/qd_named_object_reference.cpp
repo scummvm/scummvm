@@ -140,26 +140,36 @@ void qdNamedObjectReference::load_script(const xml::tag *p) {
 	}
 }
 
-bool qdNamedObjectReference::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
+bool qdNamedObjectReference::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i <= indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("<named_object");
 
-	fh < "<named_object";
-
-	fh < " types=\"" <= num_levels();
-	for (int i = 0; i < num_levels(); i ++)
-		fh < " " <= object_types_[i];
-	fh < "\"";
-
-	fh < ">\r\n";
+	fh.writeString(Common::String::format(" types=\"%d", num_levels()));
+	for (int i = 0; i < num_levels(); i++) {
+		fh.writeString(Common::String::format(" %d", object_types_[i]));
+	}
+	fh.writeString("\"");
+	fh.writeString(">\r\n");
 
 	for (int j = 0; j < num_levels(); j ++) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<name>" < qdscr_XML_string(object_names_[j].c_str()) < "</name>\r\n";
+		for (int i = 0; i <= indent; i++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<name>%s</name>", qdscr_XML_string(object_names_[j].c_str())));
 	}
 
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "</named_object>\r\n";
+	for (int i = 0; i <= indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("</named_object>\r\n");
+	return true;
 
+}
+
+bool qdNamedObjectReference::save_script(XStream &fh, int indent) const {
+	warning("STUB: qdNamedObjectReference::save_script(XStream)");
 	return true;
 }
 

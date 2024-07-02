@@ -91,7 +91,7 @@ bool qdGridZoneState::save_script(Common::SeekableWriteStream &fh, int indent) c
 }
 
 bool qdGridZoneState::save_script(class XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
+	for (int i = 0; i <= indent; i ++) fh < "\t";
 	fh < "<grid_zone_state";
 
 	if (state_) fh < " state=\"1\"";
@@ -102,7 +102,7 @@ bool qdGridZoneState::save_script(class XStream &fh, int indent) const {
 
 		save_conditions_script(fh, indent);
 
-		for (int i = 0; i < indent; i ++) fh < "\t";
+		for (int i = 0; i <= indent; i ++) fh < "\t";
 		fh < "</grid_zone_state>\r\n";
 	} else
 		fh < "/>\r\n";

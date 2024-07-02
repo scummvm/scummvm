@@ -67,15 +67,24 @@ qdInterfaceCounter &qdInterfaceCounter::operator = (const qdInterfaceCounter &co
 	return *this;
 }
 
-bool qdInterfaceCounter::save_script_body(XStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<counter_name>" < qdscr_XML_string(counterName()) < "</counter_name>\r\n";
+bool qdInterfaceCounter::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<counter_name>%s</counter_name>\r\n"));
 
 	textFormat_.save_script(fh, indent + 1);
 
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<digits>" <= digits_ < "</digits>\r\n";
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString(Common::String::format("<digits>%d</digits>", digits_));
 
+	return true;
+}
+
+bool qdInterfaceCounter::save_script_body(XStream &fh, int indent) const {
+	warning("STUB: qdInterfaceCounter::save_script(XStream)");
 	return true;
 }
 

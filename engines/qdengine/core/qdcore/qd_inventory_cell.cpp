@@ -67,7 +67,7 @@ bool qdInventoryCellType::load_script(const xml::tag *p) {
 }
 
 bool qdInventoryCellType::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i < indent; i++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 
@@ -403,27 +403,27 @@ bool qdInventoryCellSet::save_script(Common::SeekableWriteStream &fh, int indent
 		tp = cells_.front().type();
 	}
 
-	for (int i = 0; i < indent; i++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString(Common::String::format("<inventory_cell_set type=\"%d\">\r\n", tp));
 
-	for (int i = 0; i < indent; i++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString(Common::String::format("<inventory_cell_set_size>%d %d</inventory_cell_set_size>\r\n", size_.x, size_.y));
 
-	for (int i = 0; i < indent; i++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString(Common::String::format("<inventory_cell_set_pos>%d %d</inventory_cell_set_pos>\r\n", screen_pos_.x, screen_pos_.y));
 
-	for (int i = 0; i < indent; i++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString(Common::String::format("<inventory_cell_set_additional_cells>%d %d</inventory_cell_set_additional_cells>\r\n", additional_cells_.x, additional_cells_.y));
 
-	for (int i = 0; i < indent; i++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString("</inventory_cell_set>\r\n");

@@ -98,7 +98,7 @@ bool qdVideo::load_script(const xml::tag *p) {
 }
 
 bool qdVideo::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	 for (int i = 0; i < indent; i++) {
+	 for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 
@@ -111,11 +111,11 @@ bool qdVideo::save_script(Common::SeekableWriteStream &fh, int indent) const {
 	}
 
 	if (CD_info()) {
-		fh.writeString(Common::String::format(" cd=\"%s\"", CD_info())) ;
+		fh.writeString(Common::String::format(" cd=\"%d\"", CD_info()));
 	}
 
 	if (flags()) {
-		fh.writeString(Common::String::format(" flags=\"%s\"", flags())) ;
+		fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
 	}
 
 	if (!check_flag(VID_CENTER_FLAG | VID_FULLSCREEN_FLAG) && (position_.x || position_.y)) {
@@ -125,20 +125,20 @@ bool qdVideo::save_script(Common::SeekableWriteStream &fh, int indent) const {
 	fh.writeString(">\r\n");
 
 	if (background_.has_file()) {
-		for (int i = 0; i < indent; i++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<video_background>%s</video_background>", qdscr_XML_string(background_file_name())));
 	}
 
-	for (int i = 0; i < indent; i++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString(Common::String::format("<file>%s</file>", qdscr_XML_string(file_name_.c_str())));
 
 	save_conditions_script(fh, indent);
 
-	for (int i = 0; i < indent; i++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString("</video>\r\n");
@@ -147,7 +147,7 @@ bool qdVideo::save_script(Common::SeekableWriteStream &fh, int indent) const {
 }
 
 bool qdVideo::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
+	for (int i = 0; i <= indent; i ++) fh < "\t";
 
 	fh < "<video name=";
 
@@ -175,7 +175,7 @@ bool qdVideo::save_script(XStream &fh, int indent) const {
 
 	save_conditions_script(fh, indent);
 
-	for (int i = 0; i < indent; i ++) fh < "\t";
+	for (int i = 0; i <= indent; i ++) fh < "\t";
 	fh < "</video>\r\n";
 
 	return true;

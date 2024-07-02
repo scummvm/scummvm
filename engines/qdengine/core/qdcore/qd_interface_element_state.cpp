@@ -79,38 +79,56 @@ qdInterfaceElementState &qdInterfaceElementState::operator = (const qdInterfaceE
 	return *this;
 }
 
-bool qdInterfaceElementState::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "<interface_element_state";
+bool qdInterfaceElementState::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
 
-	if (name())
-		fh < " name=\"" < qdscr_XML_string(name()) < "\"";
+	fh.writeString("<interface_element_state");
 
-	fh < ">\r\n";
+	if (name()) {
+		fh.writeString(Common::String::format(" name=\"%s\"", qdscr_XML_string(name())));
+	}
+
+	fh.writeString(">\r\n");
 
 	for (int j = 0; j < events_.size(); j ++) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<event type=\"" <= int(events_[j].event()) < "\"";
+		for (int i = 0; i <= indent; i ++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<event type=\"%d\"", int(events_[j].event())));
 
-		if (events_[j].has_data())
-			fh < " event_data=\"" < qdscr_XML_string(events_[j].event_data()) < "\"";
+		if (events_[j].has_data()) {
+			fh.writeString(Common::String::format(" event_data=\"%s\"", qdscr_XML_string(events_[j].event_data())));
+		}
 
-		if (events_[j].is_before_animation())
-			fh < " before_animation=\"1\"";
+		if (events_[j].is_before_animation()) {
+			fh.writeString(" before_animation=\"1\"");
+		}
 
-		if (events_[j].activation() != qdInterfaceEvent::EVENT_ACTIVATION_CLICK)
-			fh < " activation_type=\"" <= (int)events_[j].activation() < "\"";
+		if (events_[j].activation() != qdInterfaceEvent::EVENT_ACTIVATION_CLICK) {
+			fh.writeString(Common::String::format(" activation_type=\"%d\"", (int)events_[j].activation()));
+		}
 
-		fh < "/>\r\n";
+		fh.writeString("/>\r\n");
 	}
 
 	for (int i = 0; i < NUM_MODES; i ++) {
-		if (has_state_mode(state_mode_t(i)))
+		if (has_state_mode(state_mode_t(i))) {
 			modes_[i].save_script(fh, i, indent + 1);
+		}
 	}
 
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "</interface_element_state>\r\n";
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("</interface_element_state>\r\n");
+
+	return true;
+}
+
+bool qdInterfaceElementState::save_script(XStream &fh, int indent) const {
+	warning("STUB: qdInterfaceElementState::save_script(XStream)");
 	return true;
 }
 

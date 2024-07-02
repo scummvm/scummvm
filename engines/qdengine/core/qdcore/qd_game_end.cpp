@@ -85,7 +85,7 @@ bool qdGameEnd::load_script(const xml::tag *p) {
 }
 
 bool qdGameEnd::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i < indent; i++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 
@@ -105,11 +105,15 @@ bool qdGameEnd::save_script(Common::SeekableWriteStream &fh, int indent) const {
 
 	if (has_conditions()) {
 		fh.writeString(">\r\n");
+
 		save_conditions_script(fh, indent);
-		for (int i = 0; i < indent; i++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
+
 		fh.writeString("</game_end>\r\n");
+	} else {
+		fh.writeString("/>\r\n");
 	}
 	return true;
 }

@@ -79,8 +79,9 @@ void qdGameDispatcherBase::load_script_body(const xml::tag *p) {
 }
 
 bool qdGameDispatcherBase::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
-	for (auto &it : scale_infos)
+	for (auto &it : scale_infos) {
 		it.save_script(fh, indent + 1);
+	}
 
 	for (auto &it : sound_list()) {
 		it->save_script(fh, indent + 1);
@@ -99,6 +100,7 @@ bool qdGameDispatcherBase::save_script_body(Common::SeekableWriteStream &fh, int
 
 bool qdGameDispatcherBase::save_script_body(XStream &fh, int indent) const {
 	warning("STUB: qdGameDispatcherBase::save_script_body(XStream)");
+	return true;
 }
 
 bool qdGameDispatcherBase::get_object_scale(const char *p, float &sc) {

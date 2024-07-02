@@ -55,6 +55,7 @@ public:
 	bool load_script(const xml::tag *p);
 	//! Запись данных в скрипт.
 	bool save_script(XStream &fh, int indent = 0, int id = 0) const;
+	bool save_script(Common::SeekableWriteStream &fh, int indent = 0, int id = 0) const;
 
 private:
 

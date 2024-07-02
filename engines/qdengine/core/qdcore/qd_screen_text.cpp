@@ -87,31 +87,38 @@ bool qdScreenTextFormat::load_script(const xml::tag *p) {
 }
 
 bool qdScreenTextFormat::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh.writeString("\t");
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
 
 	fh.writeString("<screen_text_format");
 // if we depend on the global format of the text, then we write only the fact of dependence
- // (write a fact or absence of dependence in any case)
+// (write a fact or absence of dependence in any case)
 	if (is_global_depend())
 		fh.writeString(" global_depend=\"1\"");
 	else {
 		// Не зависит от глобальных параметров - значит пишем данные о формате
 		fh.writeString("global_depend=\"0\"");
 
-		if (arrangement() != qdScreenTextFormat::default_format().arrangement())
+		if (arrangement() != qdScreenTextFormat::default_format().arrangement()) {
 			fh.writeString(Common::String::format(" text_align=\"%d\"", (int)arrangement()));
+		}
 
-		if (alignment() != qdScreenTextFormat::default_format().alignment())
+		if (alignment() != qdScreenTextFormat::default_format().alignment()) {
 			fh.writeString(Common::String::format(" align=\"%d\"", (int)alignment()));
+		}
 
-		if (color() != qdScreenTextFormat::default_format().color())
+		if (color() != qdScreenTextFormat::default_format().color()) {
 			fh.writeString(Common::String::format(" text_color=\"%d\"", color()));
+		}
 
-		if (hover_color() != qdScreenTextFormat::default_format().hover_color())
+		if (hover_color() != qdScreenTextFormat::default_format().hover_color()) {
 			fh.writeString(Common::String::format(" text_hover_color=\"%d\"", hover_color()));
+		}
 
-		if (font_type() != qdScreenTextFormat::default_format().font_type())
+		if (font_type() != qdScreenTextFormat::default_format().font_type()) {
 			fh.writeString(Common::String::format(" font_type=\"%d\"", font_type()));
+		}
 	}
 
 	fh.writeString("/>\r\n");
@@ -121,6 +128,7 @@ bool qdScreenTextFormat::save_script(Common::SeekableWriteStream &fh, int indent
 
 bool qdScreenTextFormat::save_script(class XStream &fh, int indent) const {
 	warning("qdScreenTextFormat::save_script(XStream)");
+	return true;
 }
 
 qdScreenText::qdScreenText(const char *p, const Vect2i &pos, qdGameObjectState *owner) : pos_(pos),

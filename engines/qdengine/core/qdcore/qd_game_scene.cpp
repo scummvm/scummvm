@@ -465,7 +465,7 @@ bool qdGameScene::save_script(Common::SeekableWriteStream &fh, int indent) const
 }
 
 bool qdGameScene::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
+	for (int i = 0; i <= indent; i ++) fh < "\t";
 	fh < "<scene name=\"" < qdscr_XML_string(name()) < "\"";
 
 	if (CD_info())
@@ -486,7 +486,7 @@ bool qdGameScene::save_script(XStream &fh, int indent) const {
 	fh < ">\r\n";
 
 	if (has_interface_screen()) {
-		for (int i = 0; i < indent; i ++) fh < "\t";
+		for (int i = 0; i <= indent; i ++) fh < "\t";
 		fh < "<interface_screen name=\"" < qdscr_XML_string(interface_screen_name()) < "\"/>\r\n";
 	}
 
@@ -505,7 +505,7 @@ bool qdGameScene::save_script(XStream &fh, int indent) const {
 
 	save_conditions_script(fh, indent);
 
-	for (int i = 0; i < indent; i ++) fh < "\t";
+	for (int i = 0; i <= indent; i ++) fh < "\t";
 	fh < "</scene>\r\n";
 
 	return true;

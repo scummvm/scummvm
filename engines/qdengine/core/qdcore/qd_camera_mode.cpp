@@ -73,25 +73,34 @@ bool qdCameraMode::load_script(const xml::tag *p) {
 	return true;
 }
 
+bool qdCameraMode::save_script(Common::SeekableWriteStream &fh, int indent) const {
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
+
+	fh.writeString(Common::String::format("<camera_mode type=\"%d\"", (int)camera_mode()));
+	fh.writeString(Common::String::format(" scrolling_speed=\"%d\"", scrolling_speed_));
+	fh.writeString(Common::String::format(" scrolling_dist=\"%d\"", scrolling_distance_));
+
+	if (center_offset_.x || center_offset_.y) {
+		fh.writeString(Common::String::format(" camera_screen_center=\"%d %d\"", center_offset_.x, center_offset_.y));
+	}
+
+	if (has_work_time()) {
+		fh.writeString(Common::String::format(" time=\"%f\"", work_time()));
+	}
+
+	if (smooth_switch()) {
+		fh.writeString(" smooth_switch=\"1\"");
+	}
+
+	fh.writeString("/>\r\n");
+
+	return true;
+}
+
 bool qdCameraMode::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i++) fh < "\t";
-
-	fh < "<camera_mode type=\"" <= (int)camera_mode() < "\"";
-
-	fh < " scrolling_speed=\"" <= scrolling_speed_ < "\"";
-	fh < " scrolling_dist=\"" <= scrolling_distance_ < "\"";
-
-	if (center_offset_.x || center_offset_.y)
-		fh < " camera_screen_center=\"" <= center_offset_.x < " " <= center_offset_.y < "\"";
-
-	if (has_work_time())
-		fh < " time=\"" <= work_time() < "\"";
-
-	if (smooth_switch())
-		fh < " smooth_switch=\"1\"";
-
-	fh < "/>\r\n";
-
+	warning("STUB: qdCameraMode::save_script(XStream)");
 	return true;
 }
 

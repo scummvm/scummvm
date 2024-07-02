@@ -139,30 +139,48 @@ bool qdInterfaceSlider::init(bool is_game_active) {
 	return true;
 }
 
-bool qdInterfaceSlider::save_script_body(XStream &fh, int indent) const {
-	if (!background_.save_script(fh, indent)) return false;
-	if (!slider_.save_script(fh, indent)) return false;
+bool qdInterfaceSlider::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
+	if (!background_.save_script(fh, indent)) {
+		return false;
+	}
+
+	if (!slider_.save_script(fh, indent)) {
+		return false;
+	}
 
 	if (active_rectangle_.x || active_rectangle_.y) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<slider_rect>" <= active_rectangle_.x < " " <= active_rectangle_.y < "</slider_rect>\r\n";
+		for (int i = 0; i <= indent; i++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<slider_rect>%d %d</slider_rect>", active_rectangle_.x, active_rectangle_.y));
 	}
 
 	if (background_offset_.x || background_offset_.y) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<background_offset>" <= background_offset_.x < " " <= background_offset_.y < "</background_offset>\r\n";
+		for (int i = 0; i <= indent; i++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<background_offset>%d %d</background_offset>", background_offset_.x, background_offset_.y));
 	}
 
 	if (orientation_ != SL_HORIZONTAL) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<slider_orientation>" <= int(orientation_) < "</slider_orientation>\r\n";
+		for (int i = 0; i <= indent; i++) {
+			fh.writeString("\t");
+		}
+		fh.writeString(Common::String::format("<slider_orientation>%d</slider_orientation>", int(orientation_)));
 	}
 
 	if (inverse_direction_) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<inverse_direction>1</inverse_direction>\r\n";
+		for (int i = 0; i <= indent; i++) {
+			fh.writeString("\t");
+		}
+		fh.writeString("<inverse_direction>1</inverse_direction>\r\n");
 	}
 
+	return true;
+}
+
+bool qdInterfaceSlider::save_script_body(XStream &fh, int indent) const {
+	warning("STUB: qdInterfaceSlider::save_script_body(XStream)");
 	return true;
 }
 
