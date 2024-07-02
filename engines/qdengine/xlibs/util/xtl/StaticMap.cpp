@@ -19,7 +19,6 @@
  *
  */
 
-#include "qdengine/xlibs/util/serialization/Serialization.h"
 #include "qdengine/xlibs/util/xtl/StaticMap.h"
 
 namespace QDEngine {

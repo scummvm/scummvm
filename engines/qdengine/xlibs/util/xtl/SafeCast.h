@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __SAFE_CAST_H__
-#define __SAFE_CAST_H__
+#ifndef QDENGINE_XLIBS_UTIL_XTL_SAFE_CAST_H
+#define QDENGINE_XLIBS_UTIL_XTL_SAFE_CAST_H
 
 namespace QDEngine {
 
@@ -47,4 +47,4 @@ inline DestinationType safe_cast_ref(SourceType &source) {
 
 }
 
-#endif //__SAFE_CAST_H__
+#endif // QDENGINE_XLIBS_UTIL_XTL_SAFE_CAST_H
