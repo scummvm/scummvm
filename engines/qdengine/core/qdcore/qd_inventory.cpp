@@ -345,7 +345,7 @@ void qdInventory::remove_cell_set(int idx) {
 }
 
 bool qdInventory::load_resources() {
-	debugC(4, kDebugLoad, "qdInventory::load_resources(), %d cells", cell_sets_.size());
+	debugC(4, kDebugLoad, "qdInventory::load_resources(), %lu cells", cell_sets_.size());
 
 	for (auto &it : cell_sets_)
 		it.load_resources();
