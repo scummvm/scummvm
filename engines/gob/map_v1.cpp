@@ -72,7 +72,7 @@ void Map_v1::loadMapObjects(const char *avjFile) {
 	uint32 objsPos;
 
 	Common::strcpy_s(avoName, sizeof(avoName) - 4, _sourceFile);
-	Common::strcat_s(avoName, sizeof(avoName), ".avo");
+	Common::strcat_s(avoName, ".avo");
 
 	int32 size;
 	dataBuf = _vm->_dataIO->getFile(avoName, size);
@@ -157,8 +157,8 @@ void Map_v1::loadSounds(Common::SeekableReadStream &data) {
 	for (int i = 0; i < count; i++) {
 		data.read(buf, 14);
 		buf[14] = 0;
-		Common::strcat_s(buf, sizeof(buf), ".SND");
-		Common::strcpy_s(sndNames[i], sizeof(sndNames[i]), buf);
+		Common::strcat_s(buf, ".SND");
+		Common::strcpy_s(sndNames[i], buf);
 	}
 
 	_vm->_sound->sampleLoad(&_vm->_goblin->_soundData[14], SOUND_SND, "diamant1.snd");
