@@ -216,6 +216,13 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		break;
 	}
 
+	int checkFlags = MDCK_NONE;
+
+	if (flags & MDT_SUPPLIED_SOUND_FONT) {
+		checkFlags |= MDCK_SUPPLIED_SOUND_FONT;
+		flags ^= MDT_SUPPLIED_SOUND_FONT;
+	}
+
 	Common::String failedDevStr;
 	if (getMusicType(hdl) == MT_INVALID) {
 		// If the expressly selected driver or device cannot be found (no longer compiled in, turned off, etc.)
@@ -230,7 +237,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 
 	MusicType tp = getMusicType(reslt);
 	if (tp != MT_INVALID && tp != MT_AUTO) {
-		if (checkDevice(reslt)) {
+		if (checkDevice(reslt, checkFlags, false)) {
 			return reslt;
 		} else {
 			// If the expressly selected device cannot be used we display a warning and continue.
@@ -249,6 +256,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	// If only MDT_MIDI but not MDT_PREFER_MT32 or MDT_PREFER_GM is set we prefer the other devices (which will always be
 	// detected since they are hard coded and cannot be disabled).
 	bool skipMidi = !(flags & (MDT_PREFER_GM | MDT_PREFER_MT32));
+
 	while (flags != MDT_NONE) {
 		if ((flags & MDT_MIDI) && !skipMidi) {
 			// If a preferred MT32 or GM device has been selected that device gets returned if available.
@@ -279,7 +287,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 						dialog.runModal();
 					}
 				} else if (type != MT_AUTO) {
-					if (checkDevice(hdl)) {
+					if (checkDevice(hdl, checkFlags, false)) {
 						if (flags & MDT_PREFER_MT32)
 							// If we have a preferred MT32 device we disable the gm/mt32 mapping (more about this in mididrv.h).
 							_forceTypeMT32 = true;
@@ -307,7 +315,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 						for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 							if (d->getMusicType() == MT_MT32) {
 								hdl = d->getHandle();
-								if (checkDevice(hdl))
+								if (checkDevice(hdl, checkFlags | MDCK_AUTO, true))
 									return hdl;
 							}
 						}
@@ -322,7 +330,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 						for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 							if (d->getMusicType() == MT_GM || d->getMusicType() == MT_GS) {
 								hdl = d->getHandle();
-								if (checkDevice(hdl))
+								if (checkDevice(hdl, checkFlags | MDCK_AUTO, true))
 									return hdl;
 							}
 						}
@@ -381,7 +389,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 			for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 				if (d->getMusicType() == tp) {
 					hdl = d->getHandle();
-					if (checkDevice(hdl))
+					if (checkDevice(hdl, checkFlags, true))
 						return hdl;
 				}
 			}
@@ -403,12 +411,12 @@ MidiDriver *MidiDriver::createMidi(MidiDriver::DeviceHandle handle) {
 	return driver;
 }
 
-bool MidiDriver::checkDevice(MidiDriver::DeviceHandle handle) {
+bool MidiDriver::checkDevice(MidiDriver::DeviceHandle handle, int flags, bool quiet) {
 	const PluginList p = MusicMan.getPlugins();
 	for (PluginList::const_iterator m = p.begin(); m != p.end(); m++) {
 		const MusicPluginObject &musicPlugin = (*m)->get<MusicPluginObject>();
 		if (getDeviceString(handle, MidiDriver::kDriverId).equals(musicPlugin.getId()))
-			return musicPlugin.checkDevice(handle);
+			return musicPlugin.checkDevice(handle, flags, quiet);
 	}
 
 	return false;
