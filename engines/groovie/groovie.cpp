@@ -266,6 +266,9 @@ Common::Error GroovieEngine::run() {
 		Common::Event ev;
 		while (_eventMan->pollEvent(ev)) {
 			switch (ev.type) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				_script->setAction(ev.customType);
+				break;
 			case Common::EVENT_KEYDOWN:
 				// Send the event to the scripts
 				_script->setKbdChar(ev.kbd.ascii);
