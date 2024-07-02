@@ -154,10 +154,6 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 	}
 #endif
 
-	if (ConfMan.getBool("dump_scripts")) {
-
-	}
-
 	comlineParser comline_parser;
 	comline_parser.register_option("s", COMLINE_SCENE_NAME);
 	comline_parser.register_option("log", COMLINE_ENABLE_LOG);
