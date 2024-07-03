@@ -398,7 +398,7 @@ int MidiPlayer::open() {
 		_driverMsMusic->setControllerDefault(MidiDriver_Multisource::CONTROLLER_DEFAULT_VOLUME);
 		_driverMsMusic->setControllerDefault(MidiDriver_Multisource::CONTROLLER_DEFAULT_PANNING);
 
-		// The Windows version uses music tempos which are noticably faster
+		// The Windows version uses music tempos which are noticeably faster
 		// than those used by the DOS versions. The MIDI parsers can be
 		// configured to use one of both tempos. The DOS tempos will be used
 		// for the DOS versions or if the user has selected the "Use DOS music
