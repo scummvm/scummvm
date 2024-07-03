@@ -143,7 +143,7 @@ void SoundGenMIDI::play(int resnum) {
 	}
 }
 
-/* channel / intrument setup: */
+/* channel / instrument setup: */
 
 /* most songs are good with this: */
 unsigned char instr[] = {0, 0, 0};
