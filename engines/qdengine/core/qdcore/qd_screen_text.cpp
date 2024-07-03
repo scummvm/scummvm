@@ -98,7 +98,7 @@ bool qdScreenTextFormat::save_script(Common::SeekableWriteStream &fh, int indent
 		fh.writeString(" global_depend=\"1\"");
 	else {
 		// Не зависит от глобальных параметров - значит пишем данные о формате
-		fh.writeString("global_depend=\"0\"");
+		fh.writeString(" global_depend=\"0\"");
 
 		if (arrangement() != qdScreenTextFormat::default_format().arrangement()) {
 			fh.writeString(Common::String::format(" text_align=\"%d\"", (int)arrangement()));
