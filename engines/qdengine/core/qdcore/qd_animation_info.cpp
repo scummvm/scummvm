@@ -79,35 +79,36 @@ void qdAnimationInfo::load_script(const xml::tag *p) {
 }
 
 bool qdAnimationInfo::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i < indent; i++) {
-		fh.writeString("\t");
+	Common::String res;
+
+	if (flags())
+		res += Common::String::format(" flags=\"%d\"", flags());
+
+	if (speed_ > 0.01f)
+		res += Common::String::format(" speed=\"%f\"", speed_);
+
+	if (animation_speed_ != 1.0f)
+		res += Common::String::format(" animation_speed=\"%f\"", animation_speed_);
+
+	if (animation_name())
+		res += Common::String::format(" animation=\"%s\"", qdscr_XML_string(animation_name()));
+
+	if (!res.empty()) {
+		for (int i = 0; i < indent; i++)
+			fh.writeString("\t");
+
+		fh.writeString("<animation_info");
+		fh.writeString(res);
+		fh.writeString("/>\r\n");
 	}
 
-	fh.writeString("<animation_info");
-
-	if (flags()) {
-		fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
-	}
-
-	if (speed_ > 0.01f) {
-		fh.writeString(Common::String::format(" speed=\"%f\"", speed_));
-	}
-
-	if (animation_speed_ != 1.0f) {
-		fh.writeString(Common::String::format(" animation_speed=\"%f\"", animation_speed_));
-	}
-
-	if (animation_name()) {
-		fh.writeString(Common::String::format(" animation=\"%s\"", qdscr_XML_string(animation_name())));
-	}
-
-	fh.writeString("/>\r\n");
 	return true;
-
 }
 
 bool qdAnimationInfo::save_script(XStream &fh, int indent) const {
 	warning("STUB: qdAnimationInfo::save_script(XStream)");
+
+	return true;
 }
 
 qdAnimationInfo &qdAnimationInfo::operator = (const qdAnimationInfo &p) {
