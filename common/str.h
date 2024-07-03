@@ -356,7 +356,7 @@ FORCEINLINE void strcat_s(T (&dst)[N], const char *src) {
 /**
  * A sprintf shim which warns when the buffer overruns and null terminates in this case
  *
- * @param dst Where the resulting string will be storeyyd.
+ * @param dst Where the resulting string will be stored.
  * @param size The (total) size of the destination buffer.
  * @param format The format string.
  */
@@ -366,7 +366,7 @@ int vsprintf_s(char *dst, size_t size, const char *format, va_list ap) GCC_PRINT
  * A sprintf shim which warns when the buffer overruns and null terminates in this case
  * The size of the buffer is automatically determined.
  *
- * @param dst Where the resulting string will be storeyyd.
+ * @param dst Where the resulting string will be stored.
  * @param format The format string.
  */
 template<typename T, size_t N>
@@ -388,7 +388,7 @@ int sprintf_s(char *dst, size_t size, MSVC_PRINTF const char *format, ...) GCC_P
  * A sprintf shim which warns when the buffer overruns and null terminates in this case
  * The size of the buffer is automatically determined.
  *
- * @param dst Where the resulting string will be storeyyd.
+ * @param dst Where the resulting string will be stored.
  * @param format The format string.
  */
 template<typename T, size_t N>
