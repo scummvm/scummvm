@@ -27,7 +27,7 @@
 
 #include "common/str.h"
 
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 #include "gob/game.h"
 #include "gob/script.h"
 #include "gob/save/saveload.h"

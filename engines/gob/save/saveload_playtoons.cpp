@@ -26,7 +26,7 @@
  */
 
 #include "gob/save/saveload.h"
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 #include "gob/variables.h"
 
 namespace Gob {

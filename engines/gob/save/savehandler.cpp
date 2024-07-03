@@ -35,7 +35,7 @@
 #include "gob/video/video.h"
 #include "gob/draw.h"
 #include "gob/variables.h"
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 
 namespace Gob {
 

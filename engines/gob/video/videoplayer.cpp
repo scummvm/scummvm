@@ -34,7 +34,7 @@
 #include "gob/video/video.h"
 #include "gob/game.h"
 #include "gob/palanim.h"
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 #include "gob/map.h"
 #include "gob/sound/sound.h"
 

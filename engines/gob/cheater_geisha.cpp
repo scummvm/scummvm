@@ -29,7 +29,7 @@
 
 #include "gob/gob.h"
 #include "gob/cheater.h"
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 
 #include "gob/minigames/geisha/diving.h"
 #include "gob/minigames/geisha/penetration.h"

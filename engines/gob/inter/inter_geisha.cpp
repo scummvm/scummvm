@@ -32,7 +32,7 @@
 #include "gui/message.h"
 
 #include "gob/gob.h"
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 #include "gob/dataio.h"
 #include "gob/script.h"
 #include "gob/resources.h"

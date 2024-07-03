@@ -31,7 +31,7 @@
 #include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/game.h"
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 
 #include "gob/sound/bgatmosphere.h"
 #include "gob/sound/pcspeaker.h"

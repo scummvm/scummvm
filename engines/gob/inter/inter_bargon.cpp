@@ -28,7 +28,7 @@
 #include "common/endian.h"
 
 #include "gob/gob.h"
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/dataio.h"

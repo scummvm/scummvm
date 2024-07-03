@@ -33,7 +33,7 @@
 #include "gob/global.h"
 #include "gob/game.h"
 #include "gob/script.h"
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 
 namespace Gob {
 

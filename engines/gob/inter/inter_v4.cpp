@@ -28,7 +28,7 @@
 #include "common/str.h"
 
 #include "gob/gob.h"
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 #include "gob/global.h"
 #include "gob/draw.h"
 #include "gob/game.h"

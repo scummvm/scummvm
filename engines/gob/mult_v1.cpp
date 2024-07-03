@@ -36,7 +36,7 @@
 #include "gob/game.h"
 #include "gob/script.h"
 #include "gob/resources.h"
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 #include "gob/scenery.h"
 
 namespace Gob {

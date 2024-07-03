@@ -28,7 +28,7 @@
 #include "gob/global.h"
 #include "gob/gob.h"
 #include "gob/goblin.h"
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 #include "gob/map.h"
 #include "gob/mult.h"
 #include "gob/scenery.h"

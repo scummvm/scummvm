@@ -38,7 +38,7 @@
 #include "gob/resources.h"
 #include "gob/hotspots.h"
 #include "gob/scenery.h"
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 #include "gob/video/video.h"
 
 namespace Gob {

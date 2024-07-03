@@ -34,7 +34,7 @@
 #include "gob/gob.h"
 #include "gob/save/savefile.h"
 #include "gob/video/video.h"
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 #include "gob/variables.h"
 
 namespace Gob {

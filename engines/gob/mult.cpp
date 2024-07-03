@@ -38,7 +38,7 @@
 #include "gob/scenery.h"
 #include "gob/video/video.h"
 #include "gob/video/videoplayer.h"
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 #include "gob/sound/sound.h"
 
 namespace Gob {

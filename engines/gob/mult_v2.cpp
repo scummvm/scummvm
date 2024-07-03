@@ -37,7 +37,7 @@
 #include "gob/script.h"
 #include "gob/resources.h"
 #include "gob/goblin.h"
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 #include "gob/scenery.h"
 #include "gob/map.h"
 #include "gob/video/video.h"

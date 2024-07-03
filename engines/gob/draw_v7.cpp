@@ -35,7 +35,7 @@
 #include "gob/game.h"
 #include "gob/global.h"
 #include "gob/hotspots.h"
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 #include "gob/resources.h"
 #include "gob/scenery.h"
 #include "gob/script.h"

@@ -28,7 +28,7 @@
 #include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/global.h"
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 #include "gob/resources.h"
 
 namespace Gob {

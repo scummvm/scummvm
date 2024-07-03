@@ -36,7 +36,7 @@
 #include "gob/game.h"
 #include "gob/script.h"
 #include "gob/palanim.h"
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 #include "gob/video/video.h"
 #include "gob/video/videoplayer.h"
 

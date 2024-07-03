@@ -42,7 +42,7 @@
 #include "gob/gob.h"
 #include "gob/global.h"
 #include "gob/dataio.h"
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 #include "gob/game.h"
 #include "gob/script.h"
 #include "gob/expression.h"

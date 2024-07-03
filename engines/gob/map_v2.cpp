@@ -31,7 +31,7 @@
 #include "gob/map.h"
 #include "gob/global.h"
 #include "gob/goblin.h"
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 #include "gob/game.h"
 #include "gob/script.h"
 #include "gob/resources.h"

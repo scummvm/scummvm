@@ -40,21 +40,21 @@ MODULE_OBJS := \
 	init_v4.o \
 	init_v6.o \
 	init_v7.o \
-	inter.o \
-	inter_v1.o \
-	inter_geisha.o \
-	inter_v2.o \
-	inter_adibou1.o \
-	inter_bargon.o \
-	inter_fascin.o \
-	inter_littlered.o \
-	inter_inca2.o \
-	inter_playtoons.o \
-	inter_v3.o \
-	inter_v4.o \
-	inter_v5.o \
-	inter_v6.o \
-	inter_v7.o \
+	inter/inter.o \
+	inter/inter_v1.o \
+	inter/inter_geisha.o \
+	inter/inter_v2.o \
+	inter/inter_adibou1.o \
+	inter/inter_bargon.o \
+	inter/inter_fascin.o \
+	inter/inter_littlered.o \
+	inter/inter_inca2.o \
+	inter/inter_playtoons.o \
+	inter/inter_v3.o \
+	inter/inter_v4.o \
+	inter/inter_v5.o \
+	inter/inter_v6.o \
+	inter/inter_v7.o \
 	map.o \
 	map_v1.o \
 	map_v2.o \

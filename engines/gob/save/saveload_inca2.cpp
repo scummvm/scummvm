@@ -28,7 +28,7 @@
 #include "gob/save/saveload.h"
 #include "gob/save/saveconverter.h"
 #include "gob/global.h"
-#include "gob/inter.h"
+#include "gob/inter/inter.h"
 
 namespace Gob {
 
