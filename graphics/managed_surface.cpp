@@ -396,9 +396,17 @@ void ManagedSurface::simpleBlitFromInner(const Surface &src, const Common::Rect 
 	const byte *srcPtr = (const byte *)src.getBasePtr(srcRectC.left, srcRectC.top);
 	byte *dstPtr = (byte *)getBasePtr(dstRectC.left, dstRectC.top);
 
-	if (src.format.isCLUT8()) {
+	if (format == src.format) {
+		if (transparentColorSet) {
+			keyBlit(dstPtr, srcPtr, pitch, src.pitch, srcRectC.width(), srcRectC.height(),
+				format.bytesPerPixel, transparentColor);
+		} else {
+			copyBlit(dstPtr, srcPtr, pitch, src.pitch, srcRectC.width(), srcRectC.height(),
+				format.bytesPerPixel);
+		}
+	} else if (src.format.isCLUT8()) {
 		assert(srcPalette);
-		assert(format.isCLUT8());
+		assert(!format.isCLUT8());
 
 		uint32 map[256];
 		convertPaletteToMap(map, srcPalette->data(), srcPalette->size(), format);
