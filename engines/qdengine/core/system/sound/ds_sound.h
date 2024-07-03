@@ -73,7 +73,7 @@ public:
 	bool set_position(float pos);
 
 	//! Создает DirectSoundBuffer.
-	bool create_sound_buffer(Audio::SeekableAudioStream *stream);
+	bool create_sound_buffer();
 	//! Удаляет DirectSoundBuffer.
 	bool release_sound_buffer();
 
@@ -82,18 +82,11 @@ public:
 		flags_ ^= SOUND_FLAG_LOOPING;
 	}
 
-	void setAudioStream(Audio::SeekableAudioStream *stream) {
-		_stream = stream;
-	}
-
 private:
 	//! Указатель на объект DirectSound.
 	const LPDIRECTSOUND sound_device_;
 	//! Указатель на DirectSoundBuffer.
 	LPDIRECTSOUNDBUFFER  sound_buffer_;
-
-	Audio::SoundHandle *_soundHandle;
-	Audio::SeekableAudioStream *_stream;
 
 	//! флаги
 	enum {

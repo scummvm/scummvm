@@ -66,10 +66,6 @@ public:
 		return float(data_length_ / channels_ / (bits_per_sample_ >> 3)) / float(samples_per_sec_);
 	}
 
-	Audio::SeekableAudioStream *audioStream() const {
-		return _audiostream;
-	}
-
 private:
 
 	//! Данные.

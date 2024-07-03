@@ -22,7 +22,6 @@
 #ifndef QDENGINE_CORE_SYSTEM_SOUND_SND_DISPATCHER_H
 #define QDENGINE_CORE_SYSTEM_SOUND_SND_DISPATCHER_H
 
-#include "audio/mixer.h"
 #include "qdengine/core/system/sound/snd_sound.h"
 
 
@@ -137,7 +136,6 @@ protected:
 	//! Обновление установки громкости.
 	virtual bool update_volume() = 0;
 	virtual bool update_frequency() = 0;
-	Audio::SoundHandle *_soundHandle;
 
 private:
 

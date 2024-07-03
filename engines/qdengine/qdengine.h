@@ -52,7 +52,7 @@ enum QDEngineDebugChannels {
 	kDebugQuant,
 	kDebugSave,
 	kDebugLog,
-	kDebugSound
+	kDebugSound,
 };
 
 class QDEngineEngine : public Engine {

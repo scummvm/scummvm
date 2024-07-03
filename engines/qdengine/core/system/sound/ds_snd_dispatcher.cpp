@@ -19,10 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-#include "audio/audiostream.h"
-#include "qdengine/qdengine.h"
-#include "qdengine/core/system/sound/wav_sound.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/app_core.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
@@ -76,8 +72,9 @@ void ds_sndDispatcher::quant() {
 }
 
 bool ds_sndDispatcher::play_sound(const sndSound *snd, bool loop, float start_position, int vol) {
+	if (!sound_device_) return false;
+
 	if (is_enabled()) {
-		debugC(3, kDebugSound, "Playing Sound ... %d", sounds_.size());
 		sounds_.push_back(dsSound(*snd, sound_device_));
 		dsSound &p = sounds_.back();
 
@@ -85,24 +82,24 @@ bool ds_sndDispatcher::play_sound(const sndSound *snd, bool loop, float start_po
 			p.toggle_looping();
 
 		int snd_volume = (vol == 255) ? volume_dB() : convert_volume_to_dB((volume() * vol) >> 8);
-		const wavSound *wavSnd = snd->sound();
 
-		p.create_sound_buffer(wavSnd->audioStream());
+		p.create_sound_buffer();
 		p.set_volume(snd_volume);
 		p.change_frequency(frequency_coeff());
 		p.set_position(start_position);
 
-		if (is_paused()) {
+		if (!is_paused()) {
+			if (!p.play()) return false;
+		} else
 			p.pause();
-		} else {
-			return p.play();
-		}
 	}
 
 	return true;
 }
 
 bool ds_sndDispatcher::stop_sound(const sndSound *snd) {
+	if (!sound_device_) return false;
+
 	sound_list_t::iterator it = std::find(sounds_.begin(), sounds_.end(), *snd);
 
 	if (it != sounds_.end()) {
@@ -116,7 +113,8 @@ bool ds_sndDispatcher::stop_sound(const sndSound *snd) {
 }
 
 bool ds_sndDispatcher::stop_sound(const sndHandle *handle) {
-	debugC(3, kDebugSound, "Stop Sound: sndHandle %p", handle);
+	if (!sound_device_) return false;
+
 	sound_list_t::iterator it = std::find(sounds_.begin(), sounds_.end(), *handle);
 
 	if (it != sounds_.end()) {
