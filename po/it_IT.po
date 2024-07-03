@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-03 06:58+0000\n"
-"PO-Revision-Date: 2024-07-01 16:10+0000\n"
+"PO-Revision-Date: 2024-07-03 17:25+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -9373,82 +9373,60 @@ msgid "I Have No Mouth support not compiled in"
 msgstr "Il supporto per I Have No Mouth non è stato incluso nella compilazione"
 
 #: engines/saga/metaengine.cpp:267
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game keymapping"
-msgstr "Mappa Tasti"
+msgstr "Mappa tasti gioco"
 
 #: engines/saga/metaengine.cpp:268
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Option panel keymapping"
-msgstr "Mappa Tasti"
+msgstr "Mappa tasti finestra Opzioni"
 
 #: engines/saga/metaengine.cpp:269
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Save panel keymapping"
-msgstr "Mappa Tasti"
+msgstr "Mappa tasti finestra Salva"
 
 #: engines/saga/metaengine.cpp:270
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Load panel keymapping"
-msgstr "Mappa Tasti"
+msgstr "Mappa tasti finestra Carica"
 
 #: engines/saga/metaengine.cpp:271
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Quit panel keymapping"
-msgstr "Mappa Tasti"
+msgstr "Mappa tasti finestra Esci"
 
 #: engines/saga/metaengine.cpp:272
 msgid "Converse panel keymapping"
-msgstr ""
+msgstr "Mappa tasti finestra Dialogo"
 
 #: engines/saga/metaengine.cpp:294
-#, fuzzy
-#| msgid "Press No Key"
 msgid "Boss Key"
-msgstr "Premi tasto No"
+msgstr "Tasto anti-Capo"
 
 #: engines/saga/metaengine.cpp:299
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Show Options"
-msgstr "Opzioni Parlato"
+msgstr "Mostra Opzioni"
 
 #: engines/saga/metaengine.cpp:307
-#, fuzzy
-#| msgid "Next location"
 msgid "Exit Conversation"
-msgstr "Posizione successiva"
+msgstr "Chiudi conversazione"
 
 #: engines/saga/metaengine.cpp:312
 msgid "Conversation position - Up"
-msgstr ""
+msgstr "Posizione conversazione - Su"
 
 #: engines/saga/metaengine.cpp:317
 msgid "Conversation position - Down"
-msgstr ""
+msgstr "Posizione conversazione - Giù"
 
 #: engines/saga/metaengine.cpp:329
-#, fuzzy
-#| msgid "Pause game"
 msgid "Pause Game"
-msgstr "Metti in pausa"
+msgstr "Pausa Gioco"
 
 #: engines/saga/metaengine.cpp:335
-#, fuzzy
-#| msgid "Speech"
 msgid "Abort Speech"
-msgstr "Voci"
+msgstr "Salta battuta dialogo"
 
 #: engines/saga/metaengine.cpp:340
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Show Dialogue"
-msgstr "Salta battuta dialogo"
+msgstr "Mostra dialogo"
 
 #: engines/saga/metaengine.cpp:345 engines/scumm/help.cpp:226
 msgid "Walk"
@@ -9462,8 +9440,6 @@ msgid "Look at"
 msgstr "Esamina"
 
 #: engines/saga/metaengine.cpp:355
-#, fuzzy
-#| msgid "Pick up"
 msgid "Pickup"
 msgstr "Raccogli"
 
@@ -9495,66 +9471,48 @@ msgid "Push"
 msgstr "Premi"
 
 #: engines/saga/metaengine.cpp:390
-#, fuzzy
-#| msgid "Take off"
 msgid "Take"
-msgstr "Togli"
+msgstr "Prendi"
 
 #: engines/saga/metaengine.cpp:395
 msgid "Swallow"
-msgstr ""
+msgstr "Ingerisci"
 
 #: engines/saga/metaengine.cpp:402
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "Reading Speed"
-msgstr "Lettura dei dati fallita"
+msgstr "Velocità di lettura"
 
 #: engines/saga/metaengine.cpp:407
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change Music"
-msgstr "Cambia dimensione testi"
+msgstr "Cambia musica"
 
 #: engines/saga/metaengine.cpp:412
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change Sound"
-msgstr "Cambia modalità"
+msgstr "Modifica Suono"
 
 #: engines/saga/metaengine.cpp:417
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change Voices"
-msgstr "Cambia modalità"
+msgstr "Modifica Voci"
 
 #: engines/saga/metaengine.cpp:422
-#, fuzzy
-#| msgid "Continue"
 msgid "Continue Game"
-msgstr "Continua"
+msgstr "Continua Gioco"
 
 #: engines/saga/metaengine.cpp:449
-#, fuzzy
-#| msgid "Cancel input"
 msgid "Cancel Quit"
-msgstr "Cancella input"
+msgstr "Annulla uscita"
 
 #: engines/saga/metaengine.cpp:454
 msgid "okay"
-msgstr ""
+msgstr "Ok"
 
 #: engines/saga/metaengine.cpp:459
-#, fuzzy
-#| msgid "Cancel download"
 msgid "Cancel Load"
-msgstr "Annulla download"
+msgstr "Annulla caricamento"
 
 #: engines/saga/metaengine.cpp:469
-#, fuzzy
-#| msgid "Cancel autosave"
 msgid "Cancel Save"
-msgstr "Annulla salv. auto"
+msgstr "Annulla salvataggio"
 
 #: engines/saga/music.cpp:98
 #, c-format
