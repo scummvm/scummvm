@@ -27,7 +27,7 @@
 
 #include "common/stream.h"
 
-#include "gob/draw.h"
+#include "gob/draw/draw.h"
 
 #include "gob/pregob/txtfile.h"
 

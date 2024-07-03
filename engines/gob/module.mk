@@ -12,13 +12,13 @@ MODULE_OBJS := \
 	dataio.o \
 	dbase.o \
 	decfile.o \
-	draw.o \
-	draw_v1.o \
-	draw_v2.o \
-	draw_v7.o \
-	draw_bargon.o \
-	draw_fascin.o \
-	draw_playtoons.o \
+	draw/draw.o \
+	draw/draw_v1.o \
+	draw/draw_v2.o \
+	draw/draw_v7.o \
+	draw/draw_bargon.o \
+	draw/draw_fascin.o \
+	draw/draw_playtoons.o \
 	expression.o \
 	game.o \
 	global.o \

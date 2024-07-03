@@ -31,7 +31,7 @@
 #include "gob/demos/scnplayer.h"
 #include "gob/global.h"
 #include "gob/util.h"
-#include "gob/draw.h"
+#include "gob/draw/draw.h"
 #include "gob/inter/inter.h"
 #include "gob/video/videoplayer.h"
 

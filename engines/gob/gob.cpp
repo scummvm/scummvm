@@ -46,7 +46,7 @@
 #include "gob/sound/sound.h"
 #include "gob/init.h"
 #include "gob/inter/inter.h"
-#include "gob/draw.h"
+#include "gob/draw/draw.h"
 #include "gob/goblin/goblin.h"
 #include "gob/map.h"
 #include "gob/mult.h"

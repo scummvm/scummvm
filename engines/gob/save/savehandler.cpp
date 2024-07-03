@@ -33,7 +33,7 @@
 #include "gob/save/saveconverter.h"
 #include "gob/global.h"
 #include "gob/video/video.h"
-#include "gob/draw.h"
+#include "gob/draw/draw.h"
 #include "gob/variables.h"
 #include "gob/inter/inter.h"
 

@@ -32,7 +32,7 @@
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/dataio.h"
-#include "gob/draw.h"
+#include "gob/draw/draw.h"
 #include "gob/game.h"
 #include "gob/expression.h"
 #include "gob/script.h"

@@ -36,7 +36,7 @@
 #include "graphics/surface.h"
 
 #include "gob/util.h"
-#include "gob/draw.h"
+#include "gob/draw/draw.h"
 
 namespace Video {
 class CoktelDecoder;

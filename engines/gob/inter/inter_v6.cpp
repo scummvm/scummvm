@@ -36,7 +36,7 @@
 #include "gob/script.h"
 #include "gob/resources.h"
 #include "gob/hotspots.h"
-#include "gob/draw.h"
+#include "gob/draw/draw.h"
 #include "gob/sound/sound.h"
 #include "gob/video/videoplayer.h"
 

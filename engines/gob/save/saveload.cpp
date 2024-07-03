@@ -29,7 +29,7 @@
 #include "gob/save/saveload.h"
 #include "gob/global.h"
 #include "gob/video/video.h"
-#include "gob/draw.h"
+#include "gob/draw/draw.h"
 
 namespace Gob {
 

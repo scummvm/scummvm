@@ -31,7 +31,7 @@
 #include "gob/gob.h"
 #include "gob/scenery.h"
 #include "gob/global.h"
-#include "gob/draw.h"
+#include "gob/draw/draw.h"
 #include "gob/game.h"
 #include "gob/script.h"
 #include "gob/resources.h"

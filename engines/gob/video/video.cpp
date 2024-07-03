@@ -38,7 +38,7 @@
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/dataio.h"
-#include "gob/draw.h"
+#include "gob/draw/draw.h"
 
 namespace Gob {
 

@@ -27,7 +27,7 @@
 
 #include "common/endian.h"
 
-#include "gob/draw.h"
+#include "gob/draw/draw.h"
 #include "gob/inter/inter.h"
 #include "gob/game.h"
 #include "gob/resources.h"

@@ -37,7 +37,7 @@
 #include "gob/resources.h"
 #include "gob/hotspots.h"
 #include "gob/inter/inter.h"
-#include "gob/draw.h"
+#include "gob/draw/draw.h"
 #include "gob/mult.h"
 #include "gob/scenery.h"
 #include "gob/video/videoplayer.h"

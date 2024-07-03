@@ -34,7 +34,7 @@
 #include "gob/global.h"
 #include "gob/game.h"
 #include "gob/script.h"
-#include "gob/draw.h"
+#include "gob/draw/draw.h"
 #include "gob/save/saveload.h"
 
 namespace Gob {

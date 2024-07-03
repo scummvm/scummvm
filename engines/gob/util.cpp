@@ -33,7 +33,7 @@
 #include "gob/util.h"
 #include "gob/global.h"
 #include "gob/dataio.h"
-#include "gob/draw.h"
+#include "gob/draw/draw.h"
 #include "gob/game.h"
 #include "gob/video/video.h"
 #include "gob/video/videoplayer.h"

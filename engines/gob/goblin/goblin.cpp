@@ -31,7 +31,7 @@
 #include "gob/goblin/goblin.h"
 #include "gob/global.h"
 #include "gob/util.h"
-#include "gob/draw.h"
+#include "gob/draw/draw.h"
 #include "gob/game.h"
 #include "gob/map.h"
 #include "gob/mult.h"

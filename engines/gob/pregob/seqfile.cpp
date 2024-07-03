@@ -30,7 +30,7 @@
 
 #include "gob/gob.h"
 #include "gob/dataio.h"
-#include "gob/draw.h"
+#include "gob/draw/draw.h"
 #include "gob/decfile.h"
 #include "gob/anifile.h"
 #include "gob/aniobject.h"

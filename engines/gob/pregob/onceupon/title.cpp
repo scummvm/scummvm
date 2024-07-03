@@ -28,7 +28,7 @@
 #include "gob/gob.h"
 #include "gob/global.h"
 #include "gob/palanim.h"
-#include "gob/draw.h"
+#include "gob/draw/draw.h"
 
 #include "gob/sound/sound.h"
 

@@ -26,7 +26,7 @@
  */
 
 #include "gob/gob.h"
-#include "gob/draw.h"
+#include "gob/draw/draw.h"
 #include "gob/global.h"
 #include "gob/video/video.h"
 
