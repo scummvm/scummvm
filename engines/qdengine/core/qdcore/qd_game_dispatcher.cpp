@@ -488,9 +488,10 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 
 		if (qdFileManager::instance().open_file(&fh, textsdbPath.toString().c_str(), false)) {
 			qdTextDB::instance().load(fh);
+			delete fh;
+		} else {
+			warning("Cannot open textsdbPath: '%s'", transCyrillic(textsdbPath.toString().c_str()));
 		}
-
-		delete fh;
 	} else
 		qdTextDB::instance().clear();
 
