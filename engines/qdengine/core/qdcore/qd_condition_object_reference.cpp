@@ -100,7 +100,7 @@ bool qdConditionObjectReference::load_script(const xml::tag *p) {
 }
 
 bool qdConditionObjectReference::save_script(Common::SeekableWriteStream &fh, int indent, int id) const {
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 
@@ -110,7 +110,7 @@ bool qdConditionObjectReference::save_script(Common::SeekableWriteStream &fh, in
 		ref.save_script(fh, indent + 1);
 	}
 
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString("</condition_object>\r\n");

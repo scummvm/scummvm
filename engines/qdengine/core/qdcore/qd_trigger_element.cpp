@@ -123,7 +123,7 @@ bool qdTriggerLink::save_script(Common::SeekableWriteStream &fh, int indent) con
 	}
 
 	if (auto_restart_) {
-		fh.writeString("  auto_restart=\"1\"");
+		fh.writeString(" auto_restart=\"1\"");
 	}
 
 	fh.writeString("/>\r\n");
@@ -526,7 +526,7 @@ bool qdTriggerElement::save_script(Common::SeekableWriteStream &fh, int indent) 
 		fh.writeString("</child_links>\r\n");
 	}
 
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 	if (ID_ == ROOT_ID) {

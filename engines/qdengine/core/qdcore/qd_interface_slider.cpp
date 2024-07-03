@@ -152,21 +152,21 @@ bool qdInterfaceSlider::save_script_body(Common::SeekableWriteStream &fh, int in
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<slider_rect>%d %d</slider_rect>", active_rectangle_.x, active_rectangle_.y));
+		fh.writeString(Common::String::format("<slider_rect>%d %d</slider_rect>\r\n", active_rectangle_.x, active_rectangle_.y));
 	}
 
 	if (background_offset_.x || background_offset_.y) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<background_offset>%d %d</background_offset>", background_offset_.x, background_offset_.y));
+		fh.writeString(Common::String::format("<background_offset>%d %d</background_offset>\r\n", background_offset_.x, background_offset_.y));
 	}
 
 	if (orientation_ != SL_HORIZONTAL) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<slider_orientation>%d</slider_orientation>", int(orientation_)));
+		fh.writeString(Common::String::format("<slider_orientation>%d</slider_orientation>\r\n", int(orientation_)));
 	}
 
 	if (inverse_direction_) {
