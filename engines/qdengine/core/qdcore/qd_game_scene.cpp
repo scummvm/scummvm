@@ -461,7 +461,7 @@ bool qdGameScene::save_script(Common::SeekableWriteStream &fh, int indent) const
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString("</scene>");
+	fh.writeString("</scene>\r\n");
 
 	return true;
 }

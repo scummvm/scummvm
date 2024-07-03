@@ -128,7 +128,7 @@ bool qdGridZone::load_script(const xml::tag *p) {
 }
 
 bool qdGridZone::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 
@@ -161,7 +161,7 @@ bool qdGridZone::save_script(Common::SeekableWriteStream &fh, int indent) const 
 		qdContour::save_script(fh, indent + 1);
 	}
 
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString("</grid_zone>\r\n");

@@ -1291,14 +1291,14 @@ bool qdGameObjectStateWalk::save_script(Common::SeekableWriteStream &fh, int ind
 	}
 
 	if (acceleration_ > FLT_EPS || max_speed_ > FLT_EPS) {
-		for (int i = 0; i < indent; i++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<acceleration>%f %f</acceleration>\r\n", acceleration_, max_speed_));
 	}
 
 	if (center_offsets_.size()) {
-		for (int i = 0; i < indent; i++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<center_offsets>%lu", center_offsets_.size() * 2));
@@ -1309,7 +1309,7 @@ bool qdGameObjectStateWalk::save_script(Common::SeekableWriteStream &fh, int ind
 	}
 
 	if (static_center_offsets_.size()) {
-		for (int i = 0; i < indent; i++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<static_center_offsets>%lu", static_center_offsets_.size() * 2));
@@ -1320,7 +1320,7 @@ bool qdGameObjectStateWalk::save_script(Common::SeekableWriteStream &fh, int ind
 	}
 
 	if (start_center_offsets_.size()) {
-		for (int i = 0; i < indent; i++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<start_center_offsets>%lu", start_center_offsets_.size() * 2));
@@ -1331,7 +1331,7 @@ bool qdGameObjectStateWalk::save_script(Common::SeekableWriteStream &fh, int ind
 	}
 
 	if (stop_center_offsets_.size()) {
-		for (int i = 0; i < indent; i++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<stop_center_offsets>%lu", stop_center_offsets_.size() * 2));
@@ -1342,7 +1342,7 @@ bool qdGameObjectStateWalk::save_script(Common::SeekableWriteStream &fh, int ind
 	}
 
 	if (walk_sound_frequency_.size()) {
-		for (int i = 0; i < indent; i++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<walk_sound_frequency>%lu", walk_sound_frequency_.size()));
@@ -1507,7 +1507,7 @@ bool qdGameObjectStateMask::load_script(const xml::tag *p) {
 }
 
 bool qdGameObjectStateMask::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i ++) {
+	for (int i = 0; i < indent; i ++) {
 		fh.writeString("\t");
 	}
 
@@ -1526,7 +1526,7 @@ bool qdGameObjectStateMask::save_script(Common::SeekableWriteStream &fh, int ind
 		qdContour::save_script(fh, indent + 1);
 	}
 
-	for (int i = 0; i <= indent; i ++) {
+	for (int i = 0; i < indent; i ++) {
 		fh.writeString("\t");
 	}
 	fh.writeString("</object_state_mask>\r\n");

@@ -80,7 +80,7 @@ qdInterfaceElementState &qdInterfaceElementState::operator = (const qdInterfaceE
 }
 
 bool qdInterfaceElementState::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i ++) {
+	for (int i = 0; i < indent; i ++) {
 		fh.writeString("\t");
 	}
 
