@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-01 19:00+0000\n"
+"POT-Creation-Date: 2024-07-03 06:58+0000\n"
 "PO-Revision-Date: 2023-12-09 22:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -530,9 +530,10 @@ msgstr "Nedladdning klar, laddade ner %d paket, %s %S"
 #: gui/integrity-dialog.cpp:276 gui/gui-manager.cpp:170
 #: gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
-#: engines/scumm/help.cpp:127 engines/scumm/help.cpp:142
-#: engines/scumm/help.cpp:167 engines/scumm/help.cpp:195
-#: engines/scumm/help.cpp:213 engines/twp/metaengine.cpp:179
+#: engines/saga/metaengine.cpp:370 engines/scumm/help.cpp:127
+#: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
+#: engines/scumm/help.cpp:195 engines/scumm/help.cpp:213
+#: engines/twp/metaengine.cpp:179
 msgid "Close"
 msgstr "Stäng"
 
@@ -3152,9 +3153,9 @@ msgstr ""
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:326 engines/cge2/metaengine.cpp:239
 #: engines/hdb/metaengine.cpp:275 engines/mohawk/myst_stacks/menu.cpp:317
-#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/scumm/help.cpp:84
-#: engines/scumm/help.cpp:86 engines/zvision/metaengine.cpp:272
-#: engines/zvision/metaengine.cpp:290
+#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/saga/metaengine.cpp:444
+#: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
+#: engines/zvision/metaengine.cpp:272 engines/zvision/metaengine.cpp:290
 msgid "Quit"
 msgstr "Avsluta"
 
@@ -3393,8 +3394,9 @@ msgstr "Spara spelet:"
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
 #: engines/neverhood/menumodule.cpp:923 engines/parallaction/metaengine.cpp:131
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:407
-#: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:743
-#: engines/sci/engine/kfile.cpp:1083 engines/sherlock/scalpel/scalpel.cpp:1249
+#: engines/prince/saveload.cpp:54 engines/saga/metaengine.cpp:464
+#: engines/sci/engine/guest_additions.cpp:743 engines/sci/engine/kfile.cpp:1083
+#: engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3811
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
@@ -3616,20 +3618,20 @@ msgstr ""
 msgid "Matched game IDs for the %s engine:"
 msgstr "Matchade spel-ID för motor %s:"
 
-#: engines/metaengine.cpp:56
+#: engines/metaengine.cpp:56 engines/saga/metaengine.cpp:266
 msgid "Default game keymap"
 msgstr "Förvald knappuppsättning"
 
 #: engines/metaengine.cpp:60 backends/platform/maemo/maemo.cpp:161
 #: engines/agos/metaengine.cpp:230 engines/asylum/metaengine.cpp:159
 #: engines/hdb/metaengine.cpp:207 engines/made/metaengine.cpp:107
-#: engines/parallaction/metaengine.cpp:112
+#: engines/parallaction/metaengine.cpp:112 engines/saga/metaengine.cpp:277
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
 msgstr "Vänsterklick"
 
 #: engines/metaengine.cpp:66 backends/platform/maemo/maemo.cpp:165
-#: engines/wintermute/keymapper_tables.h:256
+#: engines/saga/metaengine.cpp:283 engines/wintermute/keymapper_tables.h:256
 #: engines/wintermute/keymapper_tables.h:300
 #: engines/wintermute/keymapper_tables.h:2166
 msgid "Middle Click"
@@ -3638,7 +3640,8 @@ msgstr "Mittenklick"
 #: engines/metaengine.cpp:71 backends/platform/maemo/maemo.cpp:169
 #: engines/agos/metaengine.cpp:236 engines/asylum/metaengine.cpp:165
 #: engines/made/metaengine.cpp:114 engines/parallaction/metaengine.cpp:118
-#: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
+#: engines/saga/metaengine.cpp:288 engines/wintermute/keymapper_tables.h:48
+#: engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr "Högerklick"
 
@@ -5919,7 +5922,7 @@ msgstr "Filmfilen '%s' hittades ej!"
 
 #: engines/agos/metaengine.cpp:44 engines/dreamweb/metaengine.cpp:36
 #: engines/lure/metaengine.cpp:37 engines/mads/metaengine.cpp:47
-#: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:48
+#: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:746
 #, fuzzy
 #| msgid "Enable Discord integration"
@@ -5928,7 +5931,7 @@ msgstr "Aktivera Discord integration"
 
 #: engines/agos/metaengine.cpp:45 engines/dreamweb/metaengine.cpp:37
 #: engines/lure/metaengine.cpp:38 engines/mads/metaengine.cpp:48
-#: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:49
+#: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:747
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
@@ -6621,6 +6624,7 @@ msgstr "Ljud av/på"
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330 engines/cge2/metaengine.cpp:221
 #: engines/made/metaengine.cpp:162 engines/pegasus/pegasus.cpp:2825
+#: engines/saga/metaengine.cpp:437
 #, fuzzy
 msgid "Save Game"
 msgstr "Spara spelet:"
@@ -6631,6 +6635,7 @@ msgstr "Spara spelet:"
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339 engines/cge2/metaengine.cpp:226
 #: engines/made/metaengine.cpp:168 engines/pegasus/pegasus.cpp:2831
+#: engines/saga/metaengine.cpp:427
 #, fuzzy
 msgid "Load Game"
 msgstr "Ladda spel"
@@ -6664,6 +6669,7 @@ msgstr ""
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. QUIT GAME
 #: engines/bladerunner/metaengine.cpp:375 engines/dragons/metaengine.cpp:224
+#: engines/saga/metaengine.cpp:432
 msgid "Quit Game"
 msgstr "Avsluta Spel"
 
@@ -7541,11 +7547,12 @@ msgstr "Felsökningsinformation och nivåval blir tilgängligt"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/hdb/metaengine.cpp:237 engines/mm/mm1/metaengine.cpp:81
-#: engines/scumm/help.cpp:130 engines/scumm/help.cpp:154
-#: engines/scumm/help.cpp:172 engines/scumm/help.cpp:202
-#: engines/scumm/help.cpp:217 engines/scumm/help.cpp:228
-#: engines/scumm/help.cpp:254 engines/sky/metaengine.cpp:95
-#: engines/twp/metaengine.cpp:186 engines/wintermute/keymapper_tables.h:140
+#: engines/saga/metaengine.cpp:375 engines/scumm/help.cpp:130
+#: engines/scumm/help.cpp:154 engines/scumm/help.cpp:172
+#: engines/scumm/help.cpp:202 engines/scumm/help.cpp:217
+#: engines/scumm/help.cpp:228 engines/scumm/help.cpp:254
+#: engines/sky/metaengine.cpp:95 engines/twp/metaengine.cpp:186
+#: engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1552
 msgid "Use"
 msgstr "Använd"
@@ -8131,7 +8138,8 @@ msgstr ""
 
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
-#: engines/twine/metaengine.cpp:436 engines/wintermute/keymapper_tables.h:60
+#: engines/saga/metaengine.cpp:324 engines/twine/metaengine.cpp:436
+#: engines/wintermute/keymapper_tables.h:60
 #, fuzzy
 msgid "Escape"
 msgstr "Escape-tangenten"
@@ -8985,10 +8993,182 @@ msgstr "Spel-ID stöds inte"
 msgid "Pocket PC Trial version is not supported"
 msgstr "Spel-ID stöds inte"
 
-#: engines/saga/metaengine.cpp:130
+#: engines/saga/metaengine.cpp:136
 #, fuzzy
 msgid "I Have No Mouth support not compiled in"
 msgstr "Funktioner kompilerade i:"
+
+#: engines/saga/metaengine.cpp:267
+#, fuzzy
+msgid "Game keymapping"
+msgstr "~I~nställningar..."
+
+#: engines/saga/metaengine.cpp:268
+#, fuzzy
+msgid "Option panel keymapping"
+msgstr "~I~nställningar..."
+
+#: engines/saga/metaengine.cpp:269
+#, fuzzy
+msgid "Save panel keymapping"
+msgstr "~I~nställningar..."
+
+#: engines/saga/metaengine.cpp:270
+#, fuzzy
+msgid "Load panel keymapping"
+msgstr "~I~nställningar..."
+
+#: engines/saga/metaengine.cpp:271
+#, fuzzy
+msgid "Quit panel keymapping"
+msgstr "~I~nställningar..."
+
+#: engines/saga/metaengine.cpp:272
+msgid "Converse panel keymapping"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:294
+msgid "Boss Key"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:299
+#, fuzzy
+msgid "Show Options"
+msgstr "Endast tal"
+
+#: engines/saga/metaengine.cpp:307
+#, fuzzy
+msgid "Exit Conversation"
+msgstr "~F~öregående"
+
+#: engines/saga/metaengine.cpp:312
+msgid "Conversation position - Up"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:317
+msgid "Conversation position - Down"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:329
+#, fuzzy
+#| msgid "Pause game"
+msgid "Pause Game"
+msgstr "Pausa spelet"
+
+#: engines/saga/metaengine.cpp:335
+#, fuzzy
+#| msgid "Speech"
+msgid "Abort Speech"
+msgstr "Tal"
+
+#: engines/saga/metaengine.cpp:340
+#, fuzzy
+msgid "Show Dialogue"
+msgstr "Skippa rad"
+
+#: engines/saga/metaengine.cpp:345 engines/scumm/help.cpp:226
+msgid "Walk"
+msgstr "Gå"
+
+#: engines/saga/metaengine.cpp:350 engines/scumm/help.cpp:203
+#: engines/scumm/help.cpp:215 engines/twp/metaengine.cpp:182
+#: engines/wintermute/keymapper_tables.h:122
+#: engines/wintermute/keymapper_tables.h:1534
+msgid "Look at"
+msgstr "Titta på"
+
+#: engines/saga/metaengine.cpp:355
+#, fuzzy
+#| msgid "Pick up"
+msgid "Pickup"
+msgstr "Ta"
+
+#: engines/saga/metaengine.cpp:360 engines/scumm/help.cpp:200
+#: engines/scumm/help.cpp:216 engines/scumm/help.cpp:252
+#: engines/twp/metaengine.cpp:183 engines/wintermute/keymapper_tables.h:128
+#: engines/wintermute/keymapper_tables.h:1558
+msgid "Talk to"
+msgstr "Tala med"
+
+#: engines/saga/metaengine.cpp:365 engines/scumm/help.cpp:126
+#: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
+#: engines/scumm/help.cpp:194 engines/scumm/help.cpp:212
+#: engines/twp/metaengine.cpp:178
+msgid "Open"
+msgstr "Öppna"
+
+#: engines/saga/metaengine.cpp:380 engines/scumm/help.cpp:125
+#: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
+#: engines/scumm/help.cpp:201 engines/scumm/help.cpp:211
+#: engines/twp/metaengine.cpp:180
+msgid "Give"
+msgstr "Ge"
+
+#: engines/saga/metaengine.cpp:385 engines/scumm/help.cpp:123
+#: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
+#: engines/twp/metaengine.cpp:184
+msgid "Push"
+msgstr "Tryck"
+
+#: engines/saga/metaengine.cpp:390
+#, fuzzy
+#| msgid "Take off"
+msgid "Take"
+msgstr "Ta av"
+
+#: engines/saga/metaengine.cpp:395
+msgid "Swallow"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:402
+#, fuzzy
+#| msgid "Reading data failed"
+msgid "Reading Speed"
+msgstr "Inläsning misslyckades"
+
+#: engines/saga/metaengine.cpp:407
+#, fuzzy
+#| msgid "Fast mode"
+msgid "Change Music"
+msgstr "Snabbläge"
+
+#: engines/saga/metaengine.cpp:412
+#, fuzzy
+#| msgid "Fast mode"
+msgid "Change Sound"
+msgstr "Snabbläge"
+
+#: engines/saga/metaengine.cpp:417
+#, fuzzy
+#| msgid "Fast mode"
+msgid "Change Voices"
+msgstr "Snabbläge"
+
+#: engines/saga/metaengine.cpp:422
+#, fuzzy
+#| msgid "Continue"
+msgid "Continue Game"
+msgstr "Fortsätt"
+
+#: engines/saga/metaengine.cpp:449
+#, fuzzy
+msgid "Cancel Quit"
+msgstr "Avbryt"
+
+#: engines/saga/metaengine.cpp:454
+msgid "okay"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:459
+#, fuzzy
+#| msgid "Cancel download"
+msgid "Cancel Load"
+msgstr "Avbryt nedladdning"
+
+#: engines/saga/metaengine.cpp:469
+#, fuzzy
+msgid "Cancel Save"
+msgstr "Namnlös sparfil"
 
 #: engines/saga/music.cpp:98
 #, c-format
@@ -8998,7 +9178,7 @@ msgid ""
 "the music will not sound the same as the original game."
 msgstr ""
 
-#: engines/saga/saga.cpp:395
+#: engines/saga/saga.cpp:404
 #, fuzzy
 msgid "Error loading game resources."
 msgstr "Fel under körning av spel:"
@@ -9756,27 +9936,10 @@ msgstr "Väva melodier med tangentbordet:"
 msgid "Main game controls:"
 msgstr "Huvudkontroller:"
 
-#: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
-#: engines/scumm/help.cpp:163 engines/twp/metaengine.cpp:184
-msgid "Push"
-msgstr "Tryck"
-
 #: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
 #: engines/scumm/help.cpp:164 engines/twp/metaengine.cpp:185
 msgid "Pull"
 msgstr "Dra"
-
-#: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
-#: engines/scumm/help.cpp:165 engines/scumm/help.cpp:201
-#: engines/scumm/help.cpp:211 engines/twp/metaengine.cpp:180
-msgid "Give"
-msgstr "Ge"
-
-#: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
-#: engines/scumm/help.cpp:166 engines/scumm/help.cpp:194
-#: engines/scumm/help.cpp:212 engines/twp/metaengine.cpp:178
-msgid "Open"
-msgstr "Öppna"
 
 #: engines/scumm/help.cpp:128
 msgid "Go to"
@@ -9899,19 +10062,6 @@ msgstr "Tryck"
 msgid "pull (Yank)"
 msgstr "Dra"
 
-#: engines/scumm/help.cpp:200 engines/scumm/help.cpp:216
-#: engines/scumm/help.cpp:252 engines/twp/metaengine.cpp:183
-#: engines/wintermute/keymapper_tables.h:128
-#: engines/wintermute/keymapper_tables.h:1558
-msgid "Talk to"
-msgstr "Tala med"
-
-#: engines/scumm/help.cpp:203 engines/scumm/help.cpp:215
-#: engines/twp/metaengine.cpp:182 engines/wintermute/keymapper_tables.h:122
-#: engines/wintermute/keymapper_tables.h:1534
-msgid "Look at"
-msgstr "Titta på"
-
 #: engines/scumm/help.cpp:204
 msgid "turn oN"
 msgstr "Sätt på"
@@ -9935,10 +10085,6 @@ msgstr "Piltangent ned"
 #: engines/scumm/help.cpp:222
 msgid "Highlight next dialogue"
 msgstr "Markera nästa dialog"
-
-#: engines/scumm/help.cpp:226
-msgid "Walk"
-msgstr "Gå"
 
 #: engines/scumm/help.cpp:230
 msgid "Object"
@@ -12527,10 +12673,6 @@ msgstr ""
 #~ msgid "You cloud storage has been connected!"
 #~ msgstr "Anslut ditt molnlagerkonto"
 
-#, fuzzy
-#~ msgid "Speech Options"
-#~ msgstr "Endast tal"
-
 #~ msgctxt "lowres"
 #~ msgid "2. Get the code and enter it here:"
 #~ msgstr "2. Skriv in koden du fått:"
@@ -12591,10 +12733,6 @@ msgstr ""
 
 #~ msgid "Overwrite"
 #~ msgstr "Skriv över"
-
-#, fuzzy
-#~ msgid "Cancel autosave"
-#~ msgstr "Namnlös sparfil"
 
 #, fuzzy
 #~ msgid "Open general cheat menu"

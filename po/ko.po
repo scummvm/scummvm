@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-01 19:00+0000\n"
+"POT-Creation-Date: 2024-07-03 06:58+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -547,9 +547,10 @@ msgstr ""
 #: gui/integrity-dialog.cpp:276 gui/gui-manager.cpp:170
 #: gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
-#: engines/scumm/help.cpp:127 engines/scumm/help.cpp:142
-#: engines/scumm/help.cpp:167 engines/scumm/help.cpp:195
-#: engines/scumm/help.cpp:213 engines/twp/metaengine.cpp:179
+#: engines/saga/metaengine.cpp:370 engines/scumm/help.cpp:127
+#: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
+#: engines/scumm/help.cpp:195 engines/scumm/help.cpp:213
+#: engines/twp/metaengine.cpp:179
 msgid "Close"
 msgstr "닫기"
 
@@ -3172,9 +3173,9 @@ msgstr ""
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:326 engines/cge2/metaengine.cpp:239
 #: engines/hdb/metaengine.cpp:275 engines/mohawk/myst_stacks/menu.cpp:317
-#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/scumm/help.cpp:84
-#: engines/scumm/help.cpp:86 engines/zvision/metaengine.cpp:272
-#: engines/zvision/metaengine.cpp:290
+#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/saga/metaengine.cpp:444
+#: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
+#: engines/zvision/metaengine.cpp:272 engines/zvision/metaengine.cpp:290
 msgid "Quit"
 msgstr "종료"
 
@@ -3427,8 +3428,9 @@ msgstr "게임 저장:"
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
 #: engines/neverhood/menumodule.cpp:923 engines/parallaction/metaengine.cpp:131
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:407
-#: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:743
-#: engines/sci/engine/kfile.cpp:1083 engines/sherlock/scalpel/scalpel.cpp:1249
+#: engines/prince/saveload.cpp:54 engines/saga/metaengine.cpp:464
+#: engines/sci/engine/guest_additions.cpp:743 engines/sci/engine/kfile.cpp:1083
+#: engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3811
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
@@ -3649,20 +3651,20 @@ msgstr ""
 msgid "Matched game IDs for the %s engine:"
 msgstr "%s 엔진에서 매칭된 게임 ID:"
 
-#: engines/metaengine.cpp:56
+#: engines/metaengine.cpp:56 engines/saga/metaengine.cpp:266
 msgid "Default game keymap"
 msgstr "기본 게임 키설정"
 
 #: engines/metaengine.cpp:60 backends/platform/maemo/maemo.cpp:161
 #: engines/agos/metaengine.cpp:230 engines/asylum/metaengine.cpp:159
 #: engines/hdb/metaengine.cpp:207 engines/made/metaengine.cpp:107
-#: engines/parallaction/metaengine.cpp:112
+#: engines/parallaction/metaengine.cpp:112 engines/saga/metaengine.cpp:277
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
 msgstr "왼쪽 클릭"
 
 #: engines/metaengine.cpp:66 backends/platform/maemo/maemo.cpp:165
-#: engines/wintermute/keymapper_tables.h:256
+#: engines/saga/metaengine.cpp:283 engines/wintermute/keymapper_tables.h:256
 #: engines/wintermute/keymapper_tables.h:300
 #: engines/wintermute/keymapper_tables.h:2166
 msgid "Middle Click"
@@ -3671,7 +3673,8 @@ msgstr "중간 클릭"
 #: engines/metaengine.cpp:71 backends/platform/maemo/maemo.cpp:169
 #: engines/agos/metaengine.cpp:236 engines/asylum/metaengine.cpp:165
 #: engines/made/metaengine.cpp:114 engines/parallaction/metaengine.cpp:118
-#: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
+#: engines/saga/metaengine.cpp:288 engines/wintermute/keymapper_tables.h:48
+#: engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr "오른쪽 클릭"
 
@@ -5924,7 +5927,7 @@ msgstr "컷씬 파일 '%s' 을 찾을 수 없습니다!"
 
 #: engines/agos/metaengine.cpp:44 engines/dreamweb/metaengine.cpp:36
 #: engines/lure/metaengine.cpp:37 engines/mads/metaengine.cpp:47
-#: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:48
+#: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:746
 #, fuzzy
 #| msgid "Enable Discord integration"
@@ -5933,7 +5936,7 @@ msgstr "Discord 통합 사용"
 
 #: engines/agos/metaengine.cpp:45 engines/dreamweb/metaengine.cpp:37
 #: engines/lure/metaengine.cpp:38 engines/mads/metaengine.cpp:48
-#: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:49
+#: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:747
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
@@ -6639,6 +6642,7 @@ msgstr "음소거 전환"
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330 engines/cge2/metaengine.cpp:221
 #: engines/made/metaengine.cpp:162 engines/pegasus/pegasus.cpp:2825
+#: engines/saga/metaengine.cpp:437
 msgid "Save Game"
 msgstr "게임 저장"
 
@@ -6648,6 +6652,7 @@ msgstr "게임 저장"
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339 engines/cge2/metaengine.cpp:226
 #: engines/made/metaengine.cpp:168 engines/pegasus/pegasus.cpp:2831
+#: engines/saga/metaengine.cpp:427
 msgid "Load Game"
 msgstr "게임 불러오기"
 
@@ -6680,6 +6685,7 @@ msgstr "단서 데이터베이스"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. QUIT GAME
 #: engines/bladerunner/metaengine.cpp:375 engines/dragons/metaengine.cpp:224
+#: engines/saga/metaengine.cpp:432
 msgid "Quit Game"
 msgstr "게임 종료"
 
@@ -7571,11 +7577,12 @@ msgstr "디버그 정보와 레벨 선택이 가능해집니다"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/hdb/metaengine.cpp:237 engines/mm/mm1/metaengine.cpp:81
-#: engines/scumm/help.cpp:130 engines/scumm/help.cpp:154
-#: engines/scumm/help.cpp:172 engines/scumm/help.cpp:202
-#: engines/scumm/help.cpp:217 engines/scumm/help.cpp:228
-#: engines/scumm/help.cpp:254 engines/sky/metaengine.cpp:95
-#: engines/twp/metaengine.cpp:186 engines/wintermute/keymapper_tables.h:140
+#: engines/saga/metaengine.cpp:375 engines/scumm/help.cpp:130
+#: engines/scumm/help.cpp:154 engines/scumm/help.cpp:172
+#: engines/scumm/help.cpp:202 engines/scumm/help.cpp:217
+#: engines/scumm/help.cpp:228 engines/scumm/help.cpp:254
+#: engines/sky/metaengine.cpp:95 engines/twp/metaengine.cpp:186
+#: engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1552
 msgid "Use"
 msgstr "사용하기"
@@ -8192,7 +8199,8 @@ msgstr ""
 
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
-#: engines/twine/metaengine.cpp:436 engines/wintermute/keymapper_tables.h:60
+#: engines/saga/metaengine.cpp:324 engines/twine/metaengine.cpp:436
+#: engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
 msgstr "탈출"
 
@@ -9034,9 +9042,191 @@ msgstr "macOS 평가판 버전은 아직 지원되지 않습니다"
 msgid "Pocket PC Trial version is not supported"
 msgstr "포켓 PC 평가판 버전은 아직 지원되지 않습니다"
 
-#: engines/saga/metaengine.cpp:130
+#: engines/saga/metaengine.cpp:136
 msgid "I Have No Mouth support not compiled in"
 msgstr "I Have No Mouth 지원이 컴파일되지 않음"
+
+#: engines/saga/metaengine.cpp:267
+#, fuzzy
+#| msgid "Game Options"
+msgid "Game keymapping"
+msgstr "게임 옵션"
+
+#: engines/saga/metaengine.cpp:268
+#, fuzzy
+#| msgid "Game Options"
+msgid "Option panel keymapping"
+msgstr "게임 옵션"
+
+#: engines/saga/metaengine.cpp:269
+#, fuzzy
+#| msgid "Game Options"
+msgid "Save panel keymapping"
+msgstr "게임 옵션"
+
+#: engines/saga/metaengine.cpp:270
+#, fuzzy
+#| msgid "Game Options"
+msgid "Load panel keymapping"
+msgstr "게임 옵션"
+
+#: engines/saga/metaengine.cpp:271
+#, fuzzy
+#| msgid "Game Options"
+msgid "Quit panel keymapping"
+msgstr "게임 옵션"
+
+#: engines/saga/metaengine.cpp:272
+msgid "Converse panel keymapping"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:294
+msgid "Boss Key"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:299
+#, fuzzy
+#| msgid "Speech Options"
+msgid "Show Options"
+msgstr "음성 옵션"
+
+#: engines/saga/metaengine.cpp:307
+#, fuzzy
+#| msgid "Next location"
+msgid "Exit Conversation"
+msgstr "다음 위치"
+
+#: engines/saga/metaengine.cpp:312
+msgid "Conversation position - Up"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:317
+msgid "Conversation position - Down"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:329
+#, fuzzy
+#| msgid "Pause game"
+msgid "Pause Game"
+msgstr "게임 일시 정지"
+
+#: engines/saga/metaengine.cpp:335
+#, fuzzy
+#| msgid "Speech"
+msgid "Abort Speech"
+msgstr "음성"
+
+#: engines/saga/metaengine.cpp:340
+#, fuzzy
+#| msgid "Skip dialogue"
+msgid "Show Dialogue"
+msgstr "대사 건너뛰기"
+
+#: engines/saga/metaengine.cpp:345 engines/scumm/help.cpp:226
+msgid "Walk"
+msgstr "걷기"
+
+#: engines/saga/metaengine.cpp:350 engines/scumm/help.cpp:203
+#: engines/scumm/help.cpp:215 engines/twp/metaengine.cpp:182
+#: engines/wintermute/keymapper_tables.h:122
+#: engines/wintermute/keymapper_tables.h:1534
+msgid "Look at"
+msgstr "보기"
+
+#: engines/saga/metaengine.cpp:355
+#, fuzzy
+#| msgid "Pick up"
+msgid "Pickup"
+msgstr "줍기"
+
+#: engines/saga/metaengine.cpp:360 engines/scumm/help.cpp:200
+#: engines/scumm/help.cpp:216 engines/scumm/help.cpp:252
+#: engines/twp/metaengine.cpp:183 engines/wintermute/keymapper_tables.h:128
+#: engines/wintermute/keymapper_tables.h:1558
+msgid "Talk to"
+msgstr "대화하기"
+
+#: engines/saga/metaengine.cpp:365 engines/scumm/help.cpp:126
+#: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
+#: engines/scumm/help.cpp:194 engines/scumm/help.cpp:212
+#: engines/twp/metaengine.cpp:178
+msgid "Open"
+msgstr "열기"
+
+#: engines/saga/metaengine.cpp:380 engines/scumm/help.cpp:125
+#: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
+#: engines/scumm/help.cpp:201 engines/scumm/help.cpp:211
+#: engines/twp/metaengine.cpp:180
+msgid "Give"
+msgstr "주기"
+
+#: engines/saga/metaengine.cpp:385 engines/scumm/help.cpp:123
+#: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
+#: engines/twp/metaengine.cpp:184
+msgid "Push"
+msgstr "밀기"
+
+#: engines/saga/metaengine.cpp:390
+#, fuzzy
+#| msgid "Take off"
+msgid "Take"
+msgstr "벗기"
+
+#: engines/saga/metaengine.cpp:395
+msgid "Swallow"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:402
+#, fuzzy
+#| msgid "Reading data failed"
+msgid "Reading Speed"
+msgstr "데이터 읽기 실패"
+
+#: engines/saga/metaengine.cpp:407
+#, fuzzy
+#| msgid "Change font size"
+msgid "Change Music"
+msgstr "폰트 크기 변경"
+
+#: engines/saga/metaengine.cpp:412
+#, fuzzy
+#| msgid "Change Command"
+msgid "Change Sound"
+msgstr "변경 명령"
+
+#: engines/saga/metaengine.cpp:417
+#, fuzzy
+#| msgid "Change Command"
+msgid "Change Voices"
+msgstr "변경 명령"
+
+#: engines/saga/metaengine.cpp:422
+#, fuzzy
+#| msgid "Continue"
+msgid "Continue Game"
+msgstr "계속"
+
+#: engines/saga/metaengine.cpp:449
+#, fuzzy
+#| msgid "Cancel input"
+msgid "Cancel Quit"
+msgstr "입력 취소"
+
+#: engines/saga/metaengine.cpp:454
+msgid "okay"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:459
+#, fuzzy
+#| msgid "Cancel download"
+msgid "Cancel Load"
+msgstr "다운로드 취소"
+
+#: engines/saga/metaengine.cpp:469
+#, fuzzy
+#| msgid "Cancel autosave"
+msgid "Cancel Save"
+msgstr "자동 저장 취소"
 
 #: engines/saga/music.cpp:98
 #, c-format
@@ -9049,7 +9239,7 @@ msgstr ""
 "이 파일들이 없다면,\n"
 "음악은 원래의 게임과 똑같이 들리지 않을 것이다."
 
-#: engines/saga/saga.cpp:395
+#: engines/saga/saga.cpp:404
 msgid "Error loading game resources."
 msgstr "게임 리소스 불러오기 오류."
 
@@ -9834,27 +10024,10 @@ msgstr "키보드로 드래프트를 짓기:"
 msgid "Main game controls:"
 msgstr "주 게임 조작:"
 
-#: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
-#: engines/scumm/help.cpp:163 engines/twp/metaengine.cpp:184
-msgid "Push"
-msgstr "밀기"
-
 #: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
 #: engines/scumm/help.cpp:164 engines/twp/metaengine.cpp:185
 msgid "Pull"
 msgstr "당기기"
-
-#: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
-#: engines/scumm/help.cpp:165 engines/scumm/help.cpp:201
-#: engines/scumm/help.cpp:211 engines/twp/metaengine.cpp:180
-msgid "Give"
-msgstr "주기"
-
-#: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
-#: engines/scumm/help.cpp:166 engines/scumm/help.cpp:194
-#: engines/scumm/help.cpp:212 engines/twp/metaengine.cpp:178
-msgid "Open"
-msgstr "열기"
 
 #: engines/scumm/help.cpp:128
 msgid "Go to"
@@ -9978,19 +10151,6 @@ msgstr "밀기"
 msgid "pull (Yank)"
 msgstr "당기기"
 
-#: engines/scumm/help.cpp:200 engines/scumm/help.cpp:216
-#: engines/scumm/help.cpp:252 engines/twp/metaengine.cpp:183
-#: engines/wintermute/keymapper_tables.h:128
-#: engines/wintermute/keymapper_tables.h:1558
-msgid "Talk to"
-msgstr "대화하기"
-
-#: engines/scumm/help.cpp:203 engines/scumm/help.cpp:215
-#: engines/twp/metaengine.cpp:182 engines/wintermute/keymapper_tables.h:122
-#: engines/wintermute/keymapper_tables.h:1534
-msgid "Look at"
-msgstr "보기"
-
 #: engines/scumm/help.cpp:204
 msgid "turn oN"
 msgstr "켜기"
@@ -10014,10 +10174,6 @@ msgstr "KeyDown"
 #: engines/scumm/help.cpp:222
 msgid "Highlight next dialogue"
 msgstr "다음 대사를 강조"
-
-#: engines/scumm/help.cpp:226
-msgid "Walk"
-msgstr "걷기"
 
 #: engines/scumm/help.cpp:230
 msgid "Object"
@@ -12534,9 +12690,6 @@ msgstr ""
 #~ msgid "You cloud storage has been connected!"
 #~ msgstr "클라우드 스토리지 계정을 연결"
 
-#~ msgid "Speech Options"
-#~ msgstr "음성 옵션"
-
 #~ msgctxt "lowres"
 #~ msgid "2. Get the code and enter it here:"
 #~ msgstr "2. 코드를 얻은 뒤 이 곳에 입력하세요:"
@@ -12599,9 +12752,6 @@ msgstr ""
 
 #~ msgid "Overwrite"
 #~ msgstr "덮어쓰기"
-
-#~ msgid "Cancel autosave"
-#~ msgstr "자동 저장 취소"
 
 #~ msgid "Open general cheat menu"
 #~ msgstr "일반 치트 메뉴를 열기"

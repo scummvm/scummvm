@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-01 19:00+0000\n"
+"POT-Creation-Date: 2024-07-03 06:58+0000\n"
 "PO-Revision-Date: 2024-06-24 08:43+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -513,9 +513,10 @@ msgstr "DL完了。%dパック検出しました、%s %S"
 #: gui/integrity-dialog.cpp:276 gui/gui-manager.cpp:170
 #: gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
-#: engines/scumm/help.cpp:127 engines/scumm/help.cpp:142
-#: engines/scumm/help.cpp:167 engines/scumm/help.cpp:195
-#: engines/scumm/help.cpp:213 engines/twp/metaengine.cpp:179
+#: engines/saga/metaengine.cpp:370 engines/scumm/help.cpp:127
+#: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
+#: engines/scumm/help.cpp:195 engines/scumm/help.cpp:213
+#: engines/twp/metaengine.cpp:179
 msgid "Close"
 msgstr "閉じる"
 
@@ -3151,9 +3152,9 @@ msgstr "グラフィックアドベンチャーエンジン"
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:326 engines/cge2/metaengine.cpp:239
 #: engines/hdb/metaengine.cpp:275 engines/mohawk/myst_stacks/menu.cpp:317
-#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/scumm/help.cpp:84
-#: engines/scumm/help.cpp:86 engines/zvision/metaengine.cpp:272
-#: engines/zvision/metaengine.cpp:290
+#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/saga/metaengine.cpp:444
+#: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
+#: engines/zvision/metaengine.cpp:272 engines/zvision/metaengine.cpp:290
 msgid "Quit"
 msgstr "終了"
 
@@ -3392,8 +3393,9 @@ msgstr "ゲームをセーブ："
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
 #: engines/neverhood/menumodule.cpp:923 engines/parallaction/metaengine.cpp:131
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:407
-#: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:743
-#: engines/sci/engine/kfile.cpp:1083 engines/sherlock/scalpel/scalpel.cpp:1249
+#: engines/prince/saveload.cpp:54 engines/saga/metaengine.cpp:464
+#: engines/sci/engine/guest_additions.cpp:743 engines/sci/engine/kfile.cpp:1083
+#: engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3811
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
@@ -3603,20 +3605,20 @@ msgstr ""
 msgid "Matched game IDs for the %s engine:"
 msgstr "エンジン%sにマッチしたゲームID："
 
-#: engines/metaengine.cpp:56
+#: engines/metaengine.cpp:56 engines/saga/metaengine.cpp:266
 msgid "Default game keymap"
 msgstr "キーマッピング(デフォルト)"
 
 #: engines/metaengine.cpp:60 backends/platform/maemo/maemo.cpp:161
 #: engines/agos/metaengine.cpp:230 engines/asylum/metaengine.cpp:159
 #: engines/hdb/metaengine.cpp:207 engines/made/metaengine.cpp:107
-#: engines/parallaction/metaengine.cpp:112
+#: engines/parallaction/metaengine.cpp:112 engines/saga/metaengine.cpp:277
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
 msgstr "左クリック"
 
 #: engines/metaengine.cpp:66 backends/platform/maemo/maemo.cpp:165
-#: engines/wintermute/keymapper_tables.h:256
+#: engines/saga/metaengine.cpp:283 engines/wintermute/keymapper_tables.h:256
 #: engines/wintermute/keymapper_tables.h:300
 #: engines/wintermute/keymapper_tables.h:2166
 msgid "Middle Click"
@@ -3625,7 +3627,8 @@ msgstr "中クリック"
 #: engines/metaengine.cpp:71 backends/platform/maemo/maemo.cpp:169
 #: engines/agos/metaengine.cpp:236 engines/asylum/metaengine.cpp:165
 #: engines/made/metaengine.cpp:114 engines/parallaction/metaengine.cpp:118
-#: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
+#: engines/saga/metaengine.cpp:288 engines/wintermute/keymapper_tables.h:48
+#: engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr "右クリック"
 
@@ -6044,7 +6047,7 @@ msgstr "カットシーンファイル'%s'が見つかりません!"
 
 #: engines/agos/metaengine.cpp:44 engines/dreamweb/metaengine.cpp:36
 #: engines/lure/metaengine.cpp:37 engines/mads/metaengine.cpp:47
-#: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:48
+#: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:746
 #, fuzzy
 #| msgid "Enable Discord integration"
@@ -6053,7 +6056,7 @@ msgstr "Discordとの連携を可能にする"
 
 #: engines/agos/metaengine.cpp:45 engines/dreamweb/metaengine.cpp:37
 #: engines/lure/metaengine.cpp:38 engines/mads/metaengine.cpp:48
-#: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:49
+#: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:747
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
@@ -6749,6 +6752,7 @@ msgstr "手がかり表示の切替"
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330 engines/cge2/metaengine.cpp:221
 #: engines/made/metaengine.cpp:162 engines/pegasus/pegasus.cpp:2825
+#: engines/saga/metaengine.cpp:437
 msgid "Save Game"
 msgstr "ゲームをセーブ"
 
@@ -6758,6 +6762,7 @@ msgstr "ゲームをセーブ"
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339 engines/cge2/metaengine.cpp:226
 #: engines/made/metaengine.cpp:168 engines/pegasus/pegasus.cpp:2831
+#: engines/saga/metaengine.cpp:427
 msgid "Load Game"
 msgstr "ゲームをロード"
 
@@ -6790,6 +6795,7 @@ msgstr "手がかりデータベース"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. QUIT GAME
 #: engines/bladerunner/metaengine.cpp:375 engines/dragons/metaengine.cpp:224
+#: engines/saga/metaengine.cpp:432
 msgid "Quit Game"
 msgstr "ゲームを終了する"
 
@@ -7632,11 +7638,12 @@ msgstr "デバッグ情報とレベル選択を利用可能にする"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/hdb/metaengine.cpp:237 engines/mm/mm1/metaengine.cpp:81
-#: engines/scumm/help.cpp:130 engines/scumm/help.cpp:154
-#: engines/scumm/help.cpp:172 engines/scumm/help.cpp:202
-#: engines/scumm/help.cpp:217 engines/scumm/help.cpp:228
-#: engines/scumm/help.cpp:254 engines/sky/metaengine.cpp:95
-#: engines/twp/metaengine.cpp:186 engines/wintermute/keymapper_tables.h:140
+#: engines/saga/metaengine.cpp:375 engines/scumm/help.cpp:130
+#: engines/scumm/help.cpp:154 engines/scumm/help.cpp:172
+#: engines/scumm/help.cpp:202 engines/scumm/help.cpp:217
+#: engines/scumm/help.cpp:228 engines/scumm/help.cpp:254
+#: engines/sky/metaengine.cpp:95 engines/twp/metaengine.cpp:186
+#: engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1552
 msgid "Use"
 msgstr "使用"
@@ -8224,7 +8231,8 @@ msgstr "色付きの宝石を、HPやSPのバーと交換します。"
 
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
-#: engines/twine/metaengine.cpp:436 engines/wintermute/keymapper_tables.h:60
+#: engines/saga/metaengine.cpp:324 engines/twine/metaengine.cpp:436
+#: engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
 msgstr "脱出"
 
@@ -9051,9 +9059,191 @@ msgstr "macOS用の体験版はサポートされていません"
 msgid "Pocket PC Trial version is not supported"
 msgstr "Pocket PC用の体験版はサポートされていません"
 
-#: engines/saga/metaengine.cpp:130
+#: engines/saga/metaengine.cpp:136
 msgid "I Have No Mouth support not compiled in"
 msgstr "I Have No Mouthのサポートはコンパイルされていません"
+
+#: engines/saga/metaengine.cpp:267
+#, fuzzy
+#| msgid "Game Keymappings"
+msgid "Game keymapping"
+msgstr "キーマッピング"
+
+#: engines/saga/metaengine.cpp:268
+#, fuzzy
+#| msgid "Game Keymappings"
+msgid "Option panel keymapping"
+msgstr "キーマッピング"
+
+#: engines/saga/metaengine.cpp:269
+#, fuzzy
+#| msgid "Game Keymappings"
+msgid "Save panel keymapping"
+msgstr "キーマッピング"
+
+#: engines/saga/metaengine.cpp:270
+#, fuzzy
+#| msgid "Game Keymappings"
+msgid "Load panel keymapping"
+msgstr "キーマッピング"
+
+#: engines/saga/metaengine.cpp:271
+#, fuzzy
+#| msgid "Game Keymappings"
+msgid "Quit panel keymapping"
+msgstr "キーマッピング"
+
+#: engines/saga/metaengine.cpp:272
+msgid "Converse panel keymapping"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:294
+msgid "Boss Key"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:299
+#, fuzzy
+#| msgid "Speech Options"
+msgid "Show Options"
+msgstr "スピーチオプション"
+
+#: engines/saga/metaengine.cpp:307
+#, fuzzy
+#| msgid "Next location"
+msgid "Exit Conversation"
+msgstr "次の地点"
+
+#: engines/saga/metaengine.cpp:312
+msgid "Conversation position - Up"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:317
+msgid "Conversation position - Down"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:329
+#, fuzzy
+#| msgid "Pause game"
+msgid "Pause Game"
+msgstr "ポーズ"
+
+#: engines/saga/metaengine.cpp:335
+#, fuzzy
+#| msgid "Speech"
+msgid "Abort Speech"
+msgstr "音声"
+
+#: engines/saga/metaengine.cpp:340
+#, fuzzy
+#| msgid "Skip dialogue"
+msgid "Show Dialogue"
+msgstr "ダイアログをスキップ"
+
+#: engines/saga/metaengine.cpp:345 engines/scumm/help.cpp:226
+msgid "Walk"
+msgstr "歩く"
+
+#: engines/saga/metaengine.cpp:350 engines/scumm/help.cpp:203
+#: engines/scumm/help.cpp:215 engines/twp/metaengine.cpp:182
+#: engines/wintermute/keymapper_tables.h:122
+#: engines/wintermute/keymapper_tables.h:1534
+msgid "Look at"
+msgstr "見る"
+
+#: engines/saga/metaengine.cpp:355
+#, fuzzy
+#| msgid "Pick up"
+msgid "Pickup"
+msgstr "拾う"
+
+#: engines/saga/metaengine.cpp:360 engines/scumm/help.cpp:200
+#: engines/scumm/help.cpp:216 engines/scumm/help.cpp:252
+#: engines/twp/metaengine.cpp:183 engines/wintermute/keymapper_tables.h:128
+#: engines/wintermute/keymapper_tables.h:1558
+msgid "Talk to"
+msgstr "話す"
+
+#: engines/saga/metaengine.cpp:365 engines/scumm/help.cpp:126
+#: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
+#: engines/scumm/help.cpp:194 engines/scumm/help.cpp:212
+#: engines/twp/metaengine.cpp:178
+msgid "Open"
+msgstr "開く"
+
+#: engines/saga/metaengine.cpp:380 engines/scumm/help.cpp:125
+#: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
+#: engines/scumm/help.cpp:201 engines/scumm/help.cpp:211
+#: engines/twp/metaengine.cpp:180
+msgid "Give"
+msgstr "上げる"
+
+#: engines/saga/metaengine.cpp:385 engines/scumm/help.cpp:123
+#: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
+#: engines/twp/metaengine.cpp:184
+msgid "Push"
+msgstr "押す"
+
+#: engines/saga/metaengine.cpp:390
+#, fuzzy
+#| msgid "Take off"
+msgid "Take"
+msgstr "外す"
+
+#: engines/saga/metaengine.cpp:395
+msgid "Swallow"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:402
+#, fuzzy
+#| msgid "Reading data failed"
+msgid "Reading Speed"
+msgstr "データの読み取りを失敗しました"
+
+#: engines/saga/metaengine.cpp:407
+#, fuzzy
+#| msgid "Change font size"
+msgid "Change Music"
+msgstr "フォントサイズの変更"
+
+#: engines/saga/metaengine.cpp:412
+#, fuzzy
+#| msgid "Change mode"
+msgid "Change Sound"
+msgstr "モード変更"
+
+#: engines/saga/metaengine.cpp:417
+#, fuzzy
+#| msgid "Change mode"
+msgid "Change Voices"
+msgstr "モード変更"
+
+#: engines/saga/metaengine.cpp:422
+#, fuzzy
+#| msgid "Continue"
+msgid "Continue Game"
+msgstr "つづく"
+
+#: engines/saga/metaengine.cpp:449
+#, fuzzy
+#| msgid "Cancel input"
+msgid "Cancel Quit"
+msgstr "入力をキャンセル"
+
+#: engines/saga/metaengine.cpp:454
+msgid "okay"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:459
+#, fuzzy
+#| msgid "Cancel download"
+msgid "Cancel Load"
+msgstr "ダウンロードをキャンセル"
+
+#: engines/saga/metaengine.cpp:469
+#, fuzzy
+#| msgid "Cancel autosave"
+msgid "Cancel Save"
+msgstr "オートセーブをキャンセル"
 
 #: engines/saga/music.cpp:98
 #, c-format
@@ -9066,7 +9256,7 @@ msgstr ""
 "見つかりません。これらが存在しない場合\n"
 "オリジナルと同様の音にならないかもしれません。"
 
-#: engines/saga/saga.cpp:395
+#: engines/saga/saga.cpp:404
 msgid "Error loading game resources."
 msgstr "リソースのロード中にエラーが発生しました。"
 
@@ -9841,27 +10031,10 @@ msgstr "紡績をキーボードで行う："
 msgid "Main game controls:"
 msgstr "メインゲームの操作:"
 
-#: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
-#: engines/scumm/help.cpp:163 engines/twp/metaengine.cpp:184
-msgid "Push"
-msgstr "押す"
-
 #: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
 #: engines/scumm/help.cpp:164 engines/twp/metaengine.cpp:185
 msgid "Pull"
 msgstr "引く"
-
-#: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
-#: engines/scumm/help.cpp:165 engines/scumm/help.cpp:201
-#: engines/scumm/help.cpp:211 engines/twp/metaengine.cpp:180
-msgid "Give"
-msgstr "上げる"
-
-#: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
-#: engines/scumm/help.cpp:166 engines/scumm/help.cpp:194
-#: engines/scumm/help.cpp:212 engines/twp/metaengine.cpp:178
-msgid "Open"
-msgstr "開く"
 
 #: engines/scumm/help.cpp:128
 msgid "Go to"
@@ -9983,19 +10156,6 @@ msgstr "押す"
 msgid "pull (Yank)"
 msgstr "引く"
 
-#: engines/scumm/help.cpp:200 engines/scumm/help.cpp:216
-#: engines/scumm/help.cpp:252 engines/twp/metaengine.cpp:183
-#: engines/wintermute/keymapper_tables.h:128
-#: engines/wintermute/keymapper_tables.h:1558
-msgid "Talk to"
-msgstr "話す"
-
-#: engines/scumm/help.cpp:203 engines/scumm/help.cpp:215
-#: engines/twp/metaengine.cpp:182 engines/wintermute/keymapper_tables.h:122
-#: engines/wintermute/keymapper_tables.h:1534
-msgid "Look at"
-msgstr "見る"
-
 #: engines/scumm/help.cpp:204
 msgid "turn oN"
 msgstr "付ける"
@@ -10019,10 +10179,6 @@ msgstr "下キー"
 #: engines/scumm/help.cpp:222
 msgid "Highlight next dialogue"
 msgstr "次のダイアログをハイライト"
-
-#: engines/scumm/help.cpp:226
-msgid "Walk"
-msgstr "歩く"
 
 #: engines/scumm/help.cpp:230
 msgid "Object"
@@ -12660,9 +12816,6 @@ msgstr ""
 #~ msgid "and go to the next step here."
 #~ msgstr "をクリックして次に進みます。"
 
-#~ msgid "Speech Options"
-#~ msgstr "スピーチオプション"
-
 #~ msgctxt "lowres"
 #~ msgid "2. Get the code and enter it here:"
 #~ msgstr "２。コードを取得して、ここに入力して："
@@ -12726,9 +12879,6 @@ msgstr ""
 
 #~ msgid "Overwrite"
 #~ msgstr "上書き"
-
-#~ msgid "Cancel autosave"
-#~ msgstr "オートセーブをキャンセル"
 
 #~ msgid "Open general cheat menu"
 #~ msgstr "総合チートメニューを開く"

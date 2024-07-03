@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-01 19:00+0000\n"
+"POT-Creation-Date: 2024-07-03 06:58+0000\n"
 "PO-Revision-Date: 2024-06-05 08:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -517,9 +517,10 @@ msgstr "Завантаження закінчено, завантажено %d �
 #: gui/integrity-dialog.cpp:276 gui/gui-manager.cpp:170
 #: gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
-#: engines/scumm/help.cpp:127 engines/scumm/help.cpp:142
-#: engines/scumm/help.cpp:167 engines/scumm/help.cpp:195
-#: engines/scumm/help.cpp:213 engines/twp/metaengine.cpp:179
+#: engines/saga/metaengine.cpp:370 engines/scumm/help.cpp:127
+#: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
+#: engines/scumm/help.cpp:195 engines/scumm/help.cpp:213
+#: engines/twp/metaengine.cpp:179
 msgid "Close"
 msgstr "Закрити"
 
@@ -3231,9 +3232,9 @@ msgstr "Движок графічних квестів"
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:326 engines/cge2/metaengine.cpp:239
 #: engines/hdb/metaengine.cpp:275 engines/mohawk/myst_stacks/menu.cpp:317
-#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/scumm/help.cpp:84
-#: engines/scumm/help.cpp:86 engines/zvision/metaengine.cpp:272
-#: engines/zvision/metaengine.cpp:290
+#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/saga/metaengine.cpp:444
+#: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
+#: engines/zvision/metaengine.cpp:272 engines/zvision/metaengine.cpp:290
 msgid "Quit"
 msgstr "Вихід"
 
@@ -3473,8 +3474,9 @@ msgstr "Зберегти гру:"
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
 #: engines/neverhood/menumodule.cpp:923 engines/parallaction/metaengine.cpp:131
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:407
-#: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:743
-#: engines/sci/engine/kfile.cpp:1083 engines/sherlock/scalpel/scalpel.cpp:1249
+#: engines/prince/saveload.cpp:54 engines/saga/metaengine.cpp:464
+#: engines/sci/engine/guest_additions.cpp:743 engines/sci/engine/kfile.cpp:1083
+#: engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3811
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
@@ -3699,20 +3701,20 @@ msgstr ""
 msgid "Matched game IDs for the %s engine:"
 msgstr "Можливі ідентифікатори гри для движка %s:"
 
-#: engines/metaengine.cpp:56
+#: engines/metaengine.cpp:56 engines/saga/metaengine.cpp:266
 msgid "Default game keymap"
 msgstr "Мапа клавіш за замовчунням"
 
 #: engines/metaengine.cpp:60 backends/platform/maemo/maemo.cpp:161
 #: engines/agos/metaengine.cpp:230 engines/asylum/metaengine.cpp:159
 #: engines/hdb/metaengine.cpp:207 engines/made/metaengine.cpp:107
-#: engines/parallaction/metaengine.cpp:112
+#: engines/parallaction/metaengine.cpp:112 engines/saga/metaengine.cpp:277
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
 msgstr "Лівий клік"
 
 #: engines/metaengine.cpp:66 backends/platform/maemo/maemo.cpp:165
-#: engines/wintermute/keymapper_tables.h:256
+#: engines/saga/metaengine.cpp:283 engines/wintermute/keymapper_tables.h:256
 #: engines/wintermute/keymapper_tables.h:300
 #: engines/wintermute/keymapper_tables.h:2166
 msgid "Middle Click"
@@ -3721,7 +3723,8 @@ msgstr "Середній клік"
 #: engines/metaengine.cpp:71 backends/platform/maemo/maemo.cpp:169
 #: engines/agos/metaengine.cpp:236 engines/asylum/metaengine.cpp:165
 #: engines/made/metaengine.cpp:114 engines/parallaction/metaengine.cpp:118
-#: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
+#: engines/saga/metaengine.cpp:288 engines/wintermute/keymapper_tables.h:48
+#: engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr "Правий клік"
 
@@ -6224,7 +6227,7 @@ msgstr "Файл ролику '%s' не знайдено!"
 
 #: engines/agos/metaengine.cpp:44 engines/dreamweb/metaengine.cpp:36
 #: engines/lure/metaengine.cpp:37 engines/mads/metaengine.cpp:47
-#: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:48
+#: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:746
 #, fuzzy
 #| msgid "Enable Discord integration"
@@ -6233,7 +6236,7 @@ msgstr "Ввімкнути інтеграцію з Discord"
 
 #: engines/agos/metaengine.cpp:45 engines/dreamweb/metaengine.cpp:37
 #: engines/lure/metaengine.cpp:38 engines/mads/metaengine.cpp:48
-#: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:49
+#: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:747
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
@@ -6937,6 +6940,7 @@ msgstr "Перемкнути приватність підказок"
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330 engines/cge2/metaengine.cpp:221
 #: engines/made/metaengine.cpp:162 engines/pegasus/pegasus.cpp:2825
+#: engines/saga/metaengine.cpp:437
 msgid "Save Game"
 msgstr "Зберегти гру"
 
@@ -6946,6 +6950,7 @@ msgstr "Зберегти гру"
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339 engines/cge2/metaengine.cpp:226
 #: engines/made/metaengine.cpp:168 engines/pegasus/pegasus.cpp:2831
+#: engines/saga/metaengine.cpp:427
 msgid "Load Game"
 msgstr "Завантажити збережену гру"
 
@@ -6978,6 +6983,7 @@ msgstr "База даних доказів"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. QUIT GAME
 #: engines/bladerunner/metaengine.cpp:375 engines/dragons/metaengine.cpp:224
+#: engines/saga/metaengine.cpp:432
 msgid "Quit Game"
 msgstr "Вийти з ігри"
 
@@ -7830,11 +7836,12 @@ msgstr "Інформація про налагодження та вибір р�
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/hdb/metaengine.cpp:237 engines/mm/mm1/metaengine.cpp:81
-#: engines/scumm/help.cpp:130 engines/scumm/help.cpp:154
-#: engines/scumm/help.cpp:172 engines/scumm/help.cpp:202
-#: engines/scumm/help.cpp:217 engines/scumm/help.cpp:228
-#: engines/scumm/help.cpp:254 engines/sky/metaengine.cpp:95
-#: engines/twp/metaengine.cpp:186 engines/wintermute/keymapper_tables.h:140
+#: engines/saga/metaengine.cpp:375 engines/scumm/help.cpp:130
+#: engines/scumm/help.cpp:154 engines/scumm/help.cpp:172
+#: engines/scumm/help.cpp:202 engines/scumm/help.cpp:217
+#: engines/scumm/help.cpp:228 engines/scumm/help.cpp:254
+#: engines/sky/metaengine.cpp:95 engines/twp/metaengine.cpp:186
+#: engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1552
 msgid "Use"
 msgstr "Використати"
@@ -8424,7 +8431,8 @@ msgstr "Замінити кольоровий камінь на смужки о�
 
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
-#: engines/twine/metaengine.cpp:436 engines/wintermute/keymapper_tables.h:60
+#: engines/saga/metaengine.cpp:324 engines/twine/metaengine.cpp:436
+#: engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
 msgstr "Втікти"
 
@@ -9265,9 +9273,191 @@ msgstr "Пробна версія для macOS не підтримується"
 msgid "Pocket PC Trial version is not supported"
 msgstr "Пробна версія для Pocket PC не підтримується"
 
-#: engines/saga/metaengine.cpp:130
+#: engines/saga/metaengine.cpp:136
 msgid "I Have No Mouth support not compiled in"
 msgstr "Підтримку для I Have no Mouth не скомпільовано"
+
+#: engines/saga/metaengine.cpp:267
+#, fuzzy
+#| msgid "Game Keymappings"
+msgid "Game keymapping"
+msgstr "Мапа клавіш гри"
+
+#: engines/saga/metaengine.cpp:268
+#, fuzzy
+#| msgid "Game Keymappings"
+msgid "Option panel keymapping"
+msgstr "Мапа клавіш гри"
+
+#: engines/saga/metaengine.cpp:269
+#, fuzzy
+#| msgid "Game Keymappings"
+msgid "Save panel keymapping"
+msgstr "Мапа клавіш гри"
+
+#: engines/saga/metaengine.cpp:270
+#, fuzzy
+#| msgid "Game Keymappings"
+msgid "Load panel keymapping"
+msgstr "Мапа клавіш гри"
+
+#: engines/saga/metaengine.cpp:271
+#, fuzzy
+#| msgid "Game Keymappings"
+msgid "Quit panel keymapping"
+msgstr "Мапа клавіш гри"
+
+#: engines/saga/metaengine.cpp:272
+msgid "Converse panel keymapping"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:294
+msgid "Boss Key"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:299
+#, fuzzy
+#| msgid "Speech Options"
+msgid "Show Options"
+msgstr "Налаштування озвучки"
+
+#: engines/saga/metaengine.cpp:307
+#, fuzzy
+#| msgid "Next location"
+msgid "Exit Conversation"
+msgstr "Наступна локація"
+
+#: engines/saga/metaengine.cpp:312
+msgid "Conversation position - Up"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:317
+msgid "Conversation position - Down"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:329
+#, fuzzy
+#| msgid "Pause game"
+msgid "Pause Game"
+msgstr "Пауза гри"
+
+#: engines/saga/metaengine.cpp:335
+#, fuzzy
+#| msgid "Speech"
+msgid "Abort Speech"
+msgstr "Озвучка"
+
+#: engines/saga/metaengine.cpp:340
+#, fuzzy
+#| msgid "Skip dialogue"
+msgid "Show Dialogue"
+msgstr "Пропустити діалог"
+
+#: engines/saga/metaengine.cpp:345 engines/scumm/help.cpp:226
+msgid "Walk"
+msgstr "Іти"
+
+#: engines/saga/metaengine.cpp:350 engines/scumm/help.cpp:203
+#: engines/scumm/help.cpp:215 engines/twp/metaengine.cpp:182
+#: engines/wintermute/keymapper_tables.h:122
+#: engines/wintermute/keymapper_tables.h:1534
+msgid "Look at"
+msgstr "Глянути на"
+
+#: engines/saga/metaengine.cpp:355
+#, fuzzy
+#| msgid "Pick up"
+msgid "Pickup"
+msgstr "Підібрати"
+
+#: engines/saga/metaengine.cpp:360 engines/scumm/help.cpp:200
+#: engines/scumm/help.cpp:216 engines/scumm/help.cpp:252
+#: engines/twp/metaengine.cpp:183 engines/wintermute/keymapper_tables.h:128
+#: engines/wintermute/keymapper_tables.h:1558
+msgid "Talk to"
+msgstr "Говорити до"
+
+#: engines/saga/metaengine.cpp:365 engines/scumm/help.cpp:126
+#: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
+#: engines/scumm/help.cpp:194 engines/scumm/help.cpp:212
+#: engines/twp/metaengine.cpp:178
+msgid "Open"
+msgstr "Відкрити"
+
+#: engines/saga/metaengine.cpp:380 engines/scumm/help.cpp:125
+#: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
+#: engines/scumm/help.cpp:201 engines/scumm/help.cpp:211
+#: engines/twp/metaengine.cpp:180
+msgid "Give"
+msgstr "Дати"
+
+#: engines/saga/metaengine.cpp:385 engines/scumm/help.cpp:123
+#: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
+#: engines/twp/metaengine.cpp:184
+msgid "Push"
+msgstr "Штовхати"
+
+#: engines/saga/metaengine.cpp:390
+#, fuzzy
+#| msgid "Take off"
+msgid "Take"
+msgstr "Зняти"
+
+#: engines/saga/metaengine.cpp:395
+msgid "Swallow"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:402
+#, fuzzy
+#| msgid "Reading data failed"
+msgid "Reading Speed"
+msgstr "Помилка читання"
+
+#: engines/saga/metaengine.cpp:407
+#, fuzzy
+#| msgid "Change font size"
+msgid "Change Music"
+msgstr "Змінити розмір шрифта"
+
+#: engines/saga/metaengine.cpp:412
+#, fuzzy
+#| msgid "Change mode"
+msgid "Change Sound"
+msgstr "Змінити режим"
+
+#: engines/saga/metaengine.cpp:417
+#, fuzzy
+#| msgid "Change mode"
+msgid "Change Voices"
+msgstr "Змінити режим"
+
+#: engines/saga/metaengine.cpp:422
+#, fuzzy
+#| msgid "Continue"
+msgid "Continue Game"
+msgstr "Продовжуйте"
+
+#: engines/saga/metaengine.cpp:449
+#, fuzzy
+#| msgid "Cancel input"
+msgid "Cancel Quit"
+msgstr "Відміна вводу"
+
+#: engines/saga/metaengine.cpp:454
+msgid "okay"
+msgstr ""
+
+#: engines/saga/metaengine.cpp:459
+#, fuzzy
+#| msgid "Cancel download"
+msgid "Cancel Load"
+msgstr "Припинити завантаження"
+
+#: engines/saga/metaengine.cpp:469
+#, fuzzy
+#| msgid "Cancel autosave"
+msgid "Cancel Save"
+msgstr "Відмінити автозбереження"
 
 #: engines/saga/music.cpp:98
 #, c-format
@@ -9280,7 +9470,7 @@ msgstr ""
 "%s та %s. Без цих файлів музика\n"
 "не звучатиме так, як задумано в оригіналі."
 
-#: engines/saga/saga.cpp:395
+#: engines/saga/saga.cpp:404
 msgid "Error loading game resources."
 msgstr "Помилка читання файлу ресурсів гри."
 
@@ -10086,27 +10276,10 @@ msgstr "Змінні чорновики на клавіатурі:"
 msgid "Main game controls:"
 msgstr "Основні опції керування:"
 
-#: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
-#: engines/scumm/help.cpp:163 engines/twp/metaengine.cpp:184
-msgid "Push"
-msgstr "Штовхати"
-
 #: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
 #: engines/scumm/help.cpp:164 engines/twp/metaengine.cpp:185
 msgid "Pull"
 msgstr "Тягнути"
-
-#: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
-#: engines/scumm/help.cpp:165 engines/scumm/help.cpp:201
-#: engines/scumm/help.cpp:211 engines/twp/metaengine.cpp:180
-msgid "Give"
-msgstr "Дати"
-
-#: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
-#: engines/scumm/help.cpp:166 engines/scumm/help.cpp:194
-#: engines/scumm/help.cpp:212 engines/twp/metaengine.cpp:178
-msgid "Open"
-msgstr "Відкрити"
 
 #: engines/scumm/help.cpp:128
 msgid "Go to"
@@ -10228,19 +10401,6 @@ msgstr "Поштовх"
 msgid "pull (Yank)"
 msgstr "тягнути (Смикнути)"
 
-#: engines/scumm/help.cpp:200 engines/scumm/help.cpp:216
-#: engines/scumm/help.cpp:252 engines/twp/metaengine.cpp:183
-#: engines/wintermute/keymapper_tables.h:128
-#: engines/wintermute/keymapper_tables.h:1558
-msgid "Talk to"
-msgstr "Говорити до"
-
-#: engines/scumm/help.cpp:203 engines/scumm/help.cpp:215
-#: engines/twp/metaengine.cpp:182 engines/wintermute/keymapper_tables.h:122
-#: engines/wintermute/keymapper_tables.h:1534
-msgid "Look at"
-msgstr "Глянути на"
-
 #: engines/scumm/help.cpp:204
 msgid "turn oN"
 msgstr "Увімкнути"
@@ -10264,10 +10424,6 @@ msgstr "Донизу"
 #: engines/scumm/help.cpp:222
 msgid "Highlight next dialogue"
 msgstr "Виділити наступний діалог"
-
-#: engines/scumm/help.cpp:226
-msgid "Walk"
-msgstr "Іти"
 
 #: engines/scumm/help.cpp:230
 msgid "Object"
@@ -12747,9 +12903,6 @@ msgstr ""
 #~ msgid "so your browser could forward data to ScummVM"
 #~ msgstr "тож ваш переглядач зможе передати дані до ScummVM"
 
-#~ msgid "Speech Options"
-#~ msgstr "Налаштування озвучки"
-
 #~ msgctxt "lowres"
 #~ msgid "2. Get the code and enter it here:"
 #~ msgstr "2. Отримайте код і введіть його тут:"
@@ -12814,9 +12967,6 @@ msgstr ""
 
 #~ msgid "Overwrite"
 #~ msgstr "Перетерти"
-
-#~ msgid "Cancel autosave"
-#~ msgstr "Відмінити автозбереження"
 
 #~ msgid "Open general cheat menu"
 #~ msgstr "Відкрити загальне чіт-меню"
