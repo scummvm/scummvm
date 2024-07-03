@@ -31,7 +31,7 @@
 #include "common/func.h"
 #include "common/hashmap.h"
 
-#include "gob/goblin.h"
+#include "gob/goblin/goblin.h"
 #include "gob/variables.h"
 #include "gob/iniconfig.h"
 #include "gob/databases.h"

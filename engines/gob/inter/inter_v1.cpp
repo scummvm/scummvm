@@ -38,7 +38,7 @@
 #include "gob/script.h"
 #include "gob/resources.h"
 #include "gob/hotspots.h"
-#include "gob/goblin.h"
+#include "gob/goblin/goblin.h"
 #include "gob/map.h"
 #include "gob/mult.h"
 #include "gob/palanim.h"

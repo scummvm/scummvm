@@ -47,7 +47,7 @@
 #include "gob/init.h"
 #include "gob/inter/inter.h"
 #include "gob/draw.h"
-#include "gob/goblin.h"
+#include "gob/goblin/goblin.h"
 #include "gob/map.h"
 #include "gob/mult.h"
 #include "gob/palanim.h"

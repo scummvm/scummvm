@@ -28,7 +28,7 @@
 #include "common/endian.h"
 
 #include "gob/gob.h"
-#include "gob/goblin.h"
+#include "gob/goblin/goblin.h"
 #include "gob/util.h"
 #include "gob/map.h"
 #include "gob/mult.h"

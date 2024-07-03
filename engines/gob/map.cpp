@@ -27,7 +27,7 @@
 
 #include "gob/gob.h"
 #include "gob/map.h"
-#include "gob/goblin.h"
+#include "gob/goblin/goblin.h"
 #include "gob/scenery.h"
 #include "gob/mult.h"
 

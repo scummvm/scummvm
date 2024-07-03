@@ -28,7 +28,7 @@
 #include "common/str.h"
 
 #include "gob/gob.h"
-#include "gob/goblin.h"
+#include "gob/goblin/goblin.h"
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/draw.h"

@@ -30,7 +30,7 @@
 #include "gob/gob.h"
 #include "gob/map.h"
 #include "gob/global.h"
-#include "gob/goblin.h"
+#include "gob/goblin/goblin.h"
 #include "gob/inter/inter.h"
 #include "gob/game.h"
 #include "gob/script.h"

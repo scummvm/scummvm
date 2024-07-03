@@ -30,7 +30,7 @@
 #include "gob/gob.h"
 #include "gob/map.h"
 #include "gob/dataio.h"
-#include "gob/goblin.h"
+#include "gob/goblin/goblin.h"
 #include "gob/mult.h"
 #include "gob/sound/sound.h"
 

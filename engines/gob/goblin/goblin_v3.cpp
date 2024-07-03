@@ -26,7 +26,7 @@
  */
 
 #include "gob/gob.h"
-#include "gob/goblin.h"
+#include "gob/goblin/goblin.h"
 #include "gob/mult.h"
 
 namespace Gob {

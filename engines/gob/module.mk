@@ -23,12 +23,12 @@ MODULE_OBJS := \
 	game.o \
 	global.o \
 	gob.o \
-	goblin.o \
-	goblin_v1.o \
-	goblin_v2.o \
-	goblin_v3.o \
-	goblin_v4.o \
-	goblin_v7.o \
+	goblin/goblin.o \
+	goblin/goblin_v1.o \
+	goblin/goblin_v2.o \
+	goblin/goblin_v3.o \
+	goblin/goblin_v4.o \
+	goblin/goblin_v7.o \
 	hotspots.o \
 	iniconfig.o \
 	init.o \
