@@ -30,9 +30,9 @@
 
 // Used to transfer the final rendered display to the framebuffer
 #define DISPLAY_TRANSFER_FLAGS                                                    \
-		(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) |                    \
-		 GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) | \
-		 GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) |                           \
+		(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) |                   \
+		 GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGB8) | \
+		 GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) |                          \
 		 GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
 #define TEXTURE_TRANSFER_FLAGS(in, out)                             \
 		(GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) |  \
@@ -72,13 +72,13 @@ void OSystem_3DS::init3DSGraphics() {
 	int topScreenWidth = gfxIsWide() ? 800 : 400;
 
 	_renderTargetTop =
-	    C3D_RenderTargetCreate(240, topScreenWidth, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+	    C3D_RenderTargetCreate(240, topScreenWidth, GPU_RB_RGB8, -1);
 	C3D_RenderTargetClear(_renderTargetTop, C3D_CLEAR_ALL, 0x0000000, 0);
 	C3D_RenderTargetSetOutput(_renderTargetTop, GFX_TOP, GFX_LEFT,
 	                          DISPLAY_TRANSFER_FLAGS);
 
 	_renderTargetBottom =
-	    C3D_RenderTargetCreate(240, 320, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+	    C3D_RenderTargetCreate(240, 320, GPU_RB_RGB8, -1);
 	C3D_RenderTargetClear(_renderTargetBottom, C3D_CLEAR_ALL, 0x00000000, 0);
 	C3D_RenderTargetSetOutput(_renderTargetBottom, GFX_BOTTOM, GFX_LEFT,
 	                          DISPLAY_TRANSFER_FLAGS);
@@ -107,6 +107,8 @@ void OSystem_3DS::init3DSGraphics() {
 
 	C3D_DepthTest(false, GPU_GEQUAL, GPU_WRITE_ALL);
 	C3D_CullFace(GPU_CULL_NONE);
+
+	_overlay.create(320, 240, &DEFAULT_MODE, true);
 }
 
 void OSystem_3DS::destroy3DSGraphics() {
@@ -221,8 +223,7 @@ void OSystem_3DS::initSize(uint width, uint height,
 		_transactionDetails.formatChanged = true;
 	}
 
-	_gameTopTexture.create(width, height, _gfxState.gfxMode);
-	_overlay.create(400, 320, &DEFAULT_MODE);
+	_gameTopTexture.create(width, height, _gfxState.gfxMode, true);
 	_gameScreen.create(width, height, _pfGame);
 
 	_focusDirty = true;
