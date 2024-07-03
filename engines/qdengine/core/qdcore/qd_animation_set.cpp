@@ -228,7 +228,6 @@ bool qdAnimationSet::save_script(Common::SeekableWriteStream &fh, int indent) co
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
-
 	fh.writeString(Common::String::format("<animation_set name=\"%s\"", qdscr_XML_string(name())));
 
 	if (turn_animation_.animation_name()) {
@@ -242,10 +241,6 @@ bool qdAnimationSet::save_script(Common::SeekableWriteStream &fh, int indent) co
 	}
 
 	fh.writeString(">\r\n");
-
-	for (int i = 0; i < indent; i++) {
-		fh.writeString("\t");
-	}
 
 	for (auto &it : animations_) {
 		it.save_script(fh, indent + 1);
@@ -264,10 +259,11 @@ bool qdAnimationSet::save_script(Common::SeekableWriteStream &fh, int indent) co
 	}
 
 	if (walk_sound_frequency_.size()) {
-		for (int i = 0; i < indent; i++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 
+		fh.writeString(Common::String::format("<walk_sound_frequency>%lu", walk_sound_frequency_.size()));
 		for (int i = 0; i < walk_sound_frequency_.size(); i++) {
 			fh.writeString(Common::String::format(" %f", walk_sound_frequency_[i]));
 		}
@@ -275,6 +271,9 @@ bool qdAnimationSet::save_script(Common::SeekableWriteStream &fh, int indent) co
 		fh.writeString("</walk_sound_frequency>\r\n");
 	}
 
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+	}
 	fh.writeString("</animation_set>\r\n");
 
 	return true;
