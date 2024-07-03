@@ -55,6 +55,7 @@ enum GraphicsModeID {
 	RGB565,
 	RGB555,
 	RGB5A1,
+	RGBA4,
 	CLUT8
 };
 
