@@ -346,27 +346,27 @@ bool qdInterfaceSave::save_script_body(Common::SeekableWriteStream &fh, int inde
 		return false;
 	}
 
-	for (int i = 0; i <= indent; i ++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<ID>%d</ID>", save_ID_));
+	fh.writeString(Common::String::format("<ID>%d</ID>\r\n", save_ID_));
 
 	if (thumbnail_size_x_ || thumbnail_size_y_) {
-		for (int i = 0; i <= indent; i ++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<thumbnail_size>%d %d</thumbnail_size>\r\n", thumbnail_size_x_, thumbnail_size_y_));
 	}
 
 	if (text_dx_ || text_dy_) {
-		for (int i = 0; i <= indent; i ++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<text_shift>%d %d</text_shift>\r\n", text_dx_, text_dy_));
 	}
 
 	if (isAutosaveSlot()) {
-		for (int i = 0; i <= indent; i ++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString("<is_autosave>1</is_autosave>\r\n");

@@ -102,11 +102,11 @@ bool qdConditionData::load_script(const xml::tag *p) {
 }
 
 bool qdConditionData::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 
-	switch(type_) {
+	switch (type_) {
 	case DATA_INT:
 		fh.writeString(Common::String::format("<condition_data_int>%lu", data_.size() / sizeof(int32)));
 		for (int i = 0; i < data_.size() / sizeof(int32); i++) {
@@ -122,7 +122,7 @@ bool qdConditionData::save_script(Common::SeekableWriteStream &fh, int indent) c
 		fh.writeString("</condition_data_float>\r\n");
 		break;
 	case DATA_STRING:
-		fh.writeString("<condition_dat_string>");
+		fh.writeString("<condition_data_string>");
 		if (!data_.empty()) {
 			fh.writeString(Common::String::format("%s", qdscr_XML_string(&*data_.begin())));
 		}

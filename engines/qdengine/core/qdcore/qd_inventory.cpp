@@ -187,7 +187,7 @@ bool qdInventory::load_script(const xml::tag *p) {
 	return true;
 }
 bool qdInventory::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i ++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 
@@ -213,7 +213,7 @@ bool qdInventory::save_script(Common::SeekableWriteStream &fh, int indent) const
 
 	fh.writeString(">\r\n");
 
-	for (int i = 0; i <= indent; i ++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString(Common::String::format("<inventory_cell_set_additional_cells>%hd %hd</inventory_cell_set_additional_cells>\r\n", additional_cells_.x, additional_cells_.y));
@@ -222,7 +222,7 @@ bool qdInventory::save_script(Common::SeekableWriteStream &fh, int indent) const
 		it.save_script(fh, indent + 1);
 	}
 
-	for (int i = 0; i <= indent; i ++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString("</inventory>\r\n");

@@ -53,7 +53,7 @@ void qdScaleInfo::load_script(const xml::tag *p) {
 }
 
 bool qdScaleInfo::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 
@@ -64,7 +64,7 @@ bool qdScaleInfo::save_script(Common::SeekableWriteStream &fh, int indent) const
 		fh.writeString("\" \"");
 	}
 
-	fh.writeString(Common::String::format(" scale=\"%f\"", scale()));
+	fh.writeString(Common::String::format(" scale=\"%f\"/>\r\n", scale()));
 
 	return true;
 }

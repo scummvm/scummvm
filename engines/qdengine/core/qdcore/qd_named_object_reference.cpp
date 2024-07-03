@@ -141,7 +141,7 @@ void qdNamedObjectReference::load_script(const xml::tag *p) {
 }
 
 bool qdNamedObjectReference::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString("<named_object");
@@ -160,7 +160,7 @@ bool qdNamedObjectReference::save_script(Common::SeekableWriteStream &fh, int in
 		fh.writeString(Common::String::format("<name>%s</name>\r\n", qdscr_XML_string(object_names_[j].c_str())));
 	}
 
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString("</named_object>\r\n");

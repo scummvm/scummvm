@@ -477,25 +477,27 @@ bool qdGameObjectAnimated::save_script_body(Common::SeekableWriteStream &fh, int
 	}
 
 	if (inventory_type_) {
-		for (int i = 0; i <= indent; i ++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<inventory_cell_type>%d</inventory_cell_type>\r\n", inventory_type_));
 	}
 
 	if (!inventory_name_.empty()) {
-		for (int i = 0; i <= indent; i ++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<inventory>%s</inventory>\r\n", inventory_name_.c_str()));
 	}
 
-
-	fh.writeString(Common::String::format("<bound>%f %f %f</bound>\r\n", bound_.x, bound_.y, bound_.z));
 	for (int i = 0; i <= indent; i ++) {
 		fh.writeString("\t");
 	}
+	fh.writeString(Common::String::format("<bound>%f %f %f</bound>\r\n", bound_.x, bound_.y, bound_.z));
 
+	for (int i = 0; i <= indent; i ++) {
+		fh.writeString("\t");
+	}
 	fh.writeString(Common::String::format("<default_pos>%f %f %f</default_pos>\r\n", default_r_.x, default_r_.y, default_r_.z));
 
 	return true;
@@ -511,11 +513,11 @@ bool qdGameObjectAnimated::load_script(const xml::tag *p) {
 }
 
 bool qdGameObjectAnimated::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
-
 	fh.writeString(Common::String::format("<animated_object name=\"%s\">\r\n", qdscr_XML_string(name())));
+
 	save_script_body(fh, indent);
 
 	for (int i = 0; i <= indent; i++) {
@@ -527,14 +529,7 @@ bool qdGameObjectAnimated::save_script(Common::SeekableWriteStream &fh, int inde
 }
 
 bool qdGameObjectAnimated::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "<animated_object name=\"" < qdscr_XML_string(name()) < "\">\r\n";
-
-	save_script_body(fh, indent);
-
-	for (int i = 0; i < indent; i ++) fh < "\t";
-	fh < "</animated_object>\r\n";
-
+	warning("STUB: qdGameObjectAnimated::save_script(XStream)");
 	return true;
 }
 

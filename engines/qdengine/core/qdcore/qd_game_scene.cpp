@@ -444,14 +444,17 @@ bool qdGameScene::save_script(Common::SeekableWriteStream &fh, int indent) const
 
 	camera.save_script(fh, indent + 1);
 
-	for (qdGameObjectList::const_iterator it = object_list().begin(); it != object_list().end(); ++it)
-		(*it) -> save_script(fh, indent + 1);
+	for (auto &it : object_list()) {
+		it->save_script(fh, indent + 1);
+	}
 
-	for (qdGridZoneList::const_iterator it = grid_zone_list().begin(); it != grid_zone_list().end(); ++it)
-		(*it) -> save_script(fh, indent + 1);
+	for (auto &it : grid_zone_list()) {
+		it->save_script(fh, indent + 1);
+	}
 
-	for (qdMusicTrackList::const_iterator it = music_track_list().begin(); it != music_track_list().end(); ++it)
-		(*it) -> save_script(fh, indent + 1);
+	for (auto &it : music_track_list()) {
+		it->save_script(fh, indent + 1);
+	}
 
 	save_conditions_script(fh, indent);
 
@@ -461,53 +464,10 @@ bool qdGameScene::save_script(Common::SeekableWriteStream &fh, int indent) const
 	fh.writeString("</scene>");
 
 	return true;
-
 }
 
 bool qdGameScene::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<scene name=\"" < qdscr_XML_string(name()) < "\"";
-
-	if (CD_info())
-		fh < " cd=\"" <= CD_info() < "\"";
-
-	if (flags())
-		fh < " flags=\"" <= flags() < "\"";
-
-	if (autosave_slot_ != -1)
-		fh < " save_slot=\"" <= autosave_slot_ < "\"";
-
-	if (restart_minigame_on_load_)
-		fh < " restart_minigame=\"1\"";
-
-	if (has_minigame())
-		fh < " game_name=\"" < qdscr_XML_string(minigame_name()) < "\"";
-
-	fh < ">\r\n";
-
-	if (has_interface_screen()) {
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "<interface_screen name=\"" < qdscr_XML_string(interface_screen_name()) < "\"/>\r\n";
-	}
-
-	qdGameDispatcherBase::save_script_body(fh, indent);
-
-	camera.save_script(fh, indent + 1);
-
-	for (qdGameObjectList::const_iterator it = object_list().begin(); it != object_list().end(); ++it)
-		(*it) -> save_script(fh, indent + 1);
-
-	for (qdGridZoneList::const_iterator it = grid_zone_list().begin(); it != grid_zone_list().end(); ++it)
-		(*it) -> save_script(fh, indent + 1);
-
-	for (qdMusicTrackList::const_iterator it = music_track_list().begin(); it != music_track_list().end(); ++it)
-		(*it) -> save_script(fh, indent + 1);
-
-	save_conditions_script(fh, indent);
-
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "</scene>\r\n";
-
+	warning("STUB: qdGameScene::save_script");
 	return true;
 }
 

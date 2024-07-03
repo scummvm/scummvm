@@ -509,9 +509,9 @@ bool qdGameDispatcher::save_script(Common::SeekableWriteStream &fh) const {
 		fh.writeString(Common::String::format("\t<default_font>%d</default_font>\r\n", default_font_));
 	}
 
-	// // Сохраняем глобальный формат до сохранения прочих объектов с форматом
-	// // текста чтобы он загрузился раньше прочих объектов с форматом текста
-	// // и все нормально проинициализировалось
+	// Сохраняем глобальный формат до сохранения прочих объектов с форматом
+	// текста чтобы он загрузился раньше прочих объектов с форматом текста
+	// и все нормально проинициализировалось
 	qdScreenTextFormat frmt = qdScreenTextFormat::global_text_format();
 	frmt.toggle_global_depend(false); // Чтобы нормально сохранилось
 	frmt.save_script(fh, 1);
@@ -561,7 +561,7 @@ bool qdGameDispatcher::save_script(Common::SeekableWriteStream &fh) const {
 	}
 
 	for (auto &it : scene_list()) {
-	it->save_script(fh, 1);
+		it->save_script(fh, 1);
 	}
 
 	for (auto &it : video_list()) {
@@ -601,10 +601,13 @@ bool qdGameDispatcher::save_script(Common::SeekableWriteStream &fh) const {
 bool qdGameDispatcher::save_script(const char *fname) const {
 	Common::DumpFile df;
 	df.open(Common::Path(fname));
-	if (!df.isOpen()) {
-		warning("Not able to open xml file");
+
+	if (df.isOpen()) {
+		save_script(df);
+	} else {
+		warning("Not able to open %s", fname);
 	}
-	save_script(df);
+
 	df.close();
 
 	return true;

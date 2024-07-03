@@ -207,11 +207,11 @@ return false;
 
 bool qdContour::save_script(Common::SeekableWriteStream &fh, int indent) const {
 	if (contour_type_ == CONTOUR_POLYGON) {
-		for (int i = 0; i <= indent; i++) {
+		for (int i = 0; i < indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<contour_polygon>%d", contour_size() * 2));
-		for (int j = 0; j < contour_size(); j ++) {
+		for (int j = 0; j < contour_size(); j++) {
 			fh.writeString(Common::String::format(" %d %d", contour_[j].x, contour_[j].y));
 		}
 		fh.writeString("</contour_polygon>\r\n");
@@ -219,7 +219,7 @@ bool qdContour::save_script(Common::SeekableWriteStream &fh, int indent) const {
 	}
 
 	if (contour_type_ == CONTOUR_RECTANGLE) {
-		for (int i = 0; i <= indent; i++) {
+		for (int i = 0; i < indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<contour_rect>%d %d</contour_rect>\r\n", size_.x, size_.y));
@@ -227,7 +227,7 @@ bool qdContour::save_script(Common::SeekableWriteStream &fh, int indent) const {
 	}
 
 	if (contour_type_ == CONTOUR_CIRCLE) {
-		for (int i = 0; i <= indent; i++) {
+		for (int i = 0; i < indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<contour_circle>%d</contour_circle>\r\n", size_.x));

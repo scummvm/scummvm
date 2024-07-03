@@ -84,10 +84,9 @@ void qdInterfaceElementStateMode::set_animation_file(const char *name) {
 }
 
 bool qdInterfaceElementStateMode::save_script(Common::SeekableWriteStream &fh, int type_id, int indent) const {
-	for (int i = 0; i <= indent; i ++) {
+	for (int i = 0; i < indent; i ++) {
 		fh.writeString("\t");
 	}
-
 	fh.writeString(Common::String::format("<state_mode type=\"%d\"", type_id));
 
 	if (has_animation()) {
@@ -99,11 +98,12 @@ bool qdInterfaceElementStateMode::save_script(Common::SeekableWriteStream &fh, i
 	}
 
 	if (has_sound()) {
-		fh.writeString(Common::String::format(" sound=\"%d\"", qdscr_XML_string(sound_file())));
+		fh.writeString(Common::String::format(" sound=\"%s\"", qdscr_XML_string(sound_file())));
 	}
 
 	if (has_contour()) {
 		fh.writeString("/>\r\n");
+		contour_.save_script(fh, indent + 1);
 		for (int i = 0; i <= indent; i ++) {
 			fh.writeString("\t");
 		}
@@ -116,26 +116,7 @@ bool qdInterfaceElementStateMode::save_script(Common::SeekableWriteStream &fh, i
 }
 
 bool qdInterfaceElementStateMode::save_script(XStream &fh, int type_id, int indent) const {
-	for (int i = 0; i <= indent; i ++) fh < '\t';
-	fh < "<state_mode type=\"" <= type_id < "\"";
-
-	if (has_animation())
-		fh < " animation=\"" < qdscr_XML_string(animation_file()) < "\"";
-
-	if (animation_flags_)
-		fh < " animation_flags=\"" <= animation_flags_ < "\"";
-
-	if (has_sound())
-		fh < " sound=\"" < qdscr_XML_string(sound_file()) < "\"";
-
-	if (has_contour()) {
-		fh < ">\r\n";
-		contour_.save_script(fh, indent + 1);
-		for (int i = 0; i <= indent; i ++) fh < '\t';
-		fh < "</state_mode>\r\n";
-	} else
-		fh < "/>\r\n";
-
+	warning("STUB: qdInterfaceElementStateMode::save_script(XStream)");
 	return true;
 }
 
