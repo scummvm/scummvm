@@ -173,10 +173,9 @@ bool qdInterfaceScreen::quant(float dt) {
 }
 
 bool qdInterfaceScreen::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i ++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
-
 	fh.writeString("<interface_screen");
 
 	if (name()) {
@@ -190,7 +189,6 @@ bool qdInterfaceScreen::save_script(Common::SeekableWriteStream &fh, int indent)
 	if (autohide_offset_.x || autohide_offset_.y) {
 		fh.writeString(Common::String::format(" hide_offset=\"%d %d\"", autohide_offset_.x, autohide_offset_.y));
 	}
-
 	fh.writeString(">\r\n");
 
 	if (has_music_track()) {
@@ -202,39 +200,16 @@ bool qdInterfaceScreen::save_script(Common::SeekableWriteStream &fh, int indent)
 	}
 
 
-	for (int i = 0; i <= indent; i ++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
-
 	fh.writeString("</interface_screen>\r\n");
 
 	return true;
 }
 
 bool qdInterfaceScreen::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<interface_screen";
-
-	if (name())
-		fh < " name=\"" < qdscr_XML_string(name()) < "\"";
-
-	if (autohide_time_ > FLT_EPS)
-		fh < " hide_time=\"" <= autohide_time_ < "\"";
-
-	if (autohide_offset_.x || autohide_offset_.y)
-		fh < " hide_offset=\"" <= autohide_offset_.x < " " <= autohide_offset_.y < "\"";
-
-	fh < ">\r\n";
-
-	if (has_music_track())
-		music_track_.save_script(fh, indent + 1);
-
-	for (element_list_t::const_iterator it = element_list().begin(); it != element_list().end(); ++it)
-		(*it) -> save_script(fh, indent + 1);
-
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "</interface_screen>\r\n";
-
+	warning("STUB: qdInterfaceSreen::save_script(XStream)");
 	return true;
 }
 

@@ -94,7 +94,7 @@ bool qdGameObject::load_script_body(const xml::tag *p) {
 }
 
 bool qdGameObject::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i ++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 
@@ -111,8 +111,9 @@ bool qdGameObject::save_script_body(Common::SeekableWriteStream &fh, int indent)
 		for (int i = 0; i <= indent; i ++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<flag>%d</flag>", flags()));
+		fh.writeString(Common::String::format("<flag>%d</flag>\r\n", flags()));
 	}
+	
 	return true;
 }
 

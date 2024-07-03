@@ -92,8 +92,8 @@ bool qdInterfaceElementState::save_script(Common::SeekableWriteStream &fh, int i
 
 	fh.writeString(">\r\n");
 
-	for (int j = 0; j < events_.size(); j ++) {
-		for (int i = 0; i <= indent; i ++) {
+	for (int j = 0; j < events_.size(); j++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<event type=\"%d\"", int(events_[j].event())));
@@ -119,7 +119,7 @@ bool qdInterfaceElementState::save_script(Common::SeekableWriteStream &fh, int i
 		}
 	}
 
-	for (int i = 0; i <= indent; i ++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString("</interface_element_state>\r\n");

@@ -87,13 +87,13 @@ bool qdScreenTextFormat::load_script(const xml::tag *p) {
 }
 
 bool qdScreenTextFormat::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i ++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
-
 	fh.writeString("<screen_text_format");
-// if we depend on the global format of the text, then we write only the fact of dependence
-// (write a fact or absence of dependence in any case)
+
+	// Если зависим от глобального формата текста, то пишем только сам факт зависимости
+	// (пишем факт или отсутствие зависимости в любом случае)
 	if (is_global_depend())
 		fh.writeString(" global_depend=\"1\"");
 	else {

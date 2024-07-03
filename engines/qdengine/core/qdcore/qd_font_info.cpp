@@ -79,10 +79,11 @@ bool qdFontInfo::load_script(const xml::tag *p) {
 }
 
 bool qdFontInfo::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
-
+	fh.writeString(Common::String::format("<font_info type=\"%d\"", type_));
+	
 	if (!font_file_name_.empty()) {
 		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(font_file_name_.c_str())));
 	}
@@ -96,17 +97,7 @@ bool qdFontInfo::save_script(Common::SeekableWriteStream &fh, int indent) const 
 }
 
 bool qdFontInfo::save_script(class XStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<font_info type=\"" <= type_ < "\"";
-
-	if (!font_file_name_.empty())
-		fh < " file=\"" < qdscr_XML_string(font_file_name_.c_str()) < "\"";
-
-	if (name())
-		fh < " name=\"" < qdscr_XML_string(name()) < "\"";
-
-	fh < "/>\r\n";
-
+	warning("STUB: qdFontInfo::save_script(XStream)");
 	return true;
 }
 

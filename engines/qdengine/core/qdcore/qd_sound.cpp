@@ -94,7 +94,7 @@ void qdSound::load_script(const xml::tag *p) {
 }
 
 bool qdSound::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 
@@ -103,7 +103,7 @@ bool qdSound::save_script(Common::SeekableWriteStream &fh, int indent) const {
 	if (name()) {
 		fh.writeString(Common::String::format("\"%s\"", qdscr_XML_string(name())));
 	} else {
-		fh.writeString("\"\"");
+		fh.writeString("\" \"");
 	}
 
 	if (volume_ != 255) {

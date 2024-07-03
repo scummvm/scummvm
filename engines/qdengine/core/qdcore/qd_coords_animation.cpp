@@ -296,7 +296,7 @@ bool qdCoordsAnimation::save_script(Common::SeekableWriteStream &fh, int indent)
 	}
 
 	if (flags()) {
-		for (int i = 0; i < indent; i++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<flag>%d</flag>\r\n", flags()));

@@ -89,7 +89,7 @@ bool qdMusicTrack::load_script(const xml::tag *p) {
 }
 
 bool qdMusicTrack::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 
@@ -114,7 +114,7 @@ bool qdMusicTrack::save_script(Common::SeekableWriteStream &fh, int indent) cons
 	if (has_conditions()) {
 		fh.writeString(">\r\n");
 		save_conditions_script(fh, indent);
-		for (int i = 0; i <= indent; i++) {
+		for (int i = 0; i < indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString("</music_track>\r\n");
@@ -126,31 +126,7 @@ bool qdMusicTrack::save_script(Common::SeekableWriteStream &fh, int indent) cons
 }
 
 bool qdMusicTrack::save_script(class XStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<music_track";
-
-	if (name())
-		fh < " name=\"" < qdscr_XML_string(name()) < "\"";
-
-	fh < " flags=\"" <= flags() < "\"";
-
-	if (!file_name_.empty())
-		fh < " file=\"" < qdscr_XML_string(file_name_.c_str()) < "\"";
-
-	if (is_cycled())
-		fh < " cycled=\"1\"";
-
-	if (volume_ != 256)
-		fh < " volume=\"" <= volume_ < "\"";
-
-	if (has_conditions()) {
-		fh < ">\r\n";
-		save_conditions_script(fh, indent);
-		for (int i = 0; i <= indent; i ++) fh < "\t";
-		fh < "</music_track>";
-	} else
-		fh < "/>\r\n";
-
+	warning("STUB: qdMusicTrack::save_script(XStream)");
 	return true;
 }
 

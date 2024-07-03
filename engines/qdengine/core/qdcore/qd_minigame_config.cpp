@@ -95,24 +95,7 @@ bool qdMinigameConfigParameter::save_script(Common::SeekableWriteStream &fh, int
 }
 
 bool qdMinigameConfigParameter::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i ++) fh < "\t";
-	fh < "<minigame_config_prm";
-
-	fh < " name=\"" < qdscr_XML_string(name()) < "\"";
-//	fh < " type=\"" <= int(data_type_) < "\"";
-
-//	if(!comment_.empty())
-//		fh < " comment=\"" < qdscr_XML_string(comment()) < "\"";
-
-	if (data_count_ > 1)
-		fh < " size=\"" <= data_count_ < "\"";
-
-	fh < ">";
-
-	fh < qdscr_XML_string(data_string());
-
-	fh < "</minigame_config_prm>\r\n";
-
+	warning("STUB: qdMinigameConfigParameter::save_script(XStream)");
 	return true;
 }
 

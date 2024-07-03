@@ -156,16 +156,17 @@ grScreenRegion qdInterfaceElement::screen_region() const {
 }
 
 bool qdInterfaceElement::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 
 	fh.writeString("<interface_element");
-	fh.writeString(Common::String::format(" type=\"%d\"", get_element_type()));
+	fh.writeString(Common::String::format(" type=\"%d\"", static_cast<int>(get_element_type())));
 
 	if (name()) {
 		fh.writeString(Common::String::format(" name=\"%s\"", qdscr_XML_string(name())));
 	}
+	fh.writeString(Common::String::format(" pos=\"%d %d %d\"", r_.x, r_.y, screen_depth_));
 
 	if (option_ID_ != OPTION_NONE) {
 		fh.writeString(Common::String::format(" option_id=\"%d\"", (int)option_ID_));
@@ -177,7 +178,7 @@ bool qdInterfaceElement::save_script(Common::SeekableWriteStream &fh, int indent
 		return false;
 	}
 
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 
@@ -187,23 +188,7 @@ bool qdInterfaceElement::save_script(Common::SeekableWriteStream &fh, int indent
 }
 
 bool qdInterfaceElement::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i ++) fh < '\t';
-	fh < "<interface_element ";
-	fh < " type=\"" <= static_cast<int>(get_element_type()) < "\"";
-
-	if (name()) fh < " name=\"" < qdscr_XML_string(name()) < "\"";
-	fh < " pos=\"" <= r_.x < " " <= r_.y < " " <= screen_depth_ < "\"";
-
-	if (option_ID_ != OPTION_NONE)
-		fh < " option_id=\"" <= (int)option_ID_ < "\"";
-
-	fh < ">\r\n";
-
-	if (!save_script_body(fh, indent)) return false;
-
-	for (int i = 0; i <= indent; i ++) fh < '\t';
-	fh < "</interface_element>\r\n";
-
+	warning("STUB: qdInterfaceElement::save_script(XStream)");
 	return true;
 }
 

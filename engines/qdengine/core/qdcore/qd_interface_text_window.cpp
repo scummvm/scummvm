@@ -241,28 +241,28 @@ bool qdInterfaceTextWindow::save_script_body(Common::SeekableWriteStream &fh, in
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<border_back>%s</border_back>", qdscr_XML_string(border_background_.animation_file())));
+		fh.writeString(Common::String::format("<border_back>%s</border_back>\r\n", qdscr_XML_string(border_background_.animation_file())));
 	}
 
 	if (!slider_name_.empty()) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<window_slider>%s</window_slider>", qdscr_XML_string(slider_name_.c_str())));
+		fh.writeString(Common::String::format("<window_slider>%s</window_slider>\r\n", qdscr_XML_string(slider_name_.c_str())));
 	}
 
 	if (text_size_.x || text_size_.y) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<screen_size>%d %d</screen_size>", text_size_.x, text_size_.y));
+		fh.writeString(Common::String::format("<screen_size>%d %d</screen_size>\r\n", text_size_.x, text_size_.y));
 	}
 
 	if (background_color_) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<color>%u</color>", background_color_));
+		fh.writeString(Common::String::format("<color>%u</color>\r\n", background_color_));
 	}
 
 	if (has_background_color_) {
@@ -276,48 +276,48 @@ bool qdInterfaceTextWindow::save_script_body(Common::SeekableWriteStream &fh, in
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<alpha>%d</alpha>", background_alpha_));
+		fh.writeString(Common::String::format("<alpha>%d</alpha>\r\n", background_alpha_));
 	}
 
 	if (windowType_ != WINDOW_DIALOGS) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<window_type>%d</window_type>", (int)windowType_));
+		fh.writeString(Common::String::format("<window_type>%d</window_type>\r\n", (int)windowType_));
 	}
 
 	if (infoType_ != INFO_NONE) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<info_type>%d</info_type>", (int)infoType_));
+		fh.writeString(Common::String::format("<info_type>%d</info_type>\r\n", (int)infoType_));
 	}
 
 	if (playerID_) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<player_id>%d</player_id>", playerID_));
+		fh.writeString(Common::String::format("<player_id>%d</player_id>\r\n", playerID_));
 	}
 
 	if (!inputString_.empty()) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<text>%s</text>", qdscr_XML_string(inputString_.c_str())));
+		fh.writeString(Common::String::format("<text>%s</text>\r\n", qdscr_XML_string(inputString_.c_str())));
 	}
 
 	if (inputStringLimit_) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<string_length>%d</string_length>", inputStringLimit_));
+		fh.writeString(Common::String::format("<string_length>%d</string_length\r\n>", inputStringLimit_));
 	}
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<valign>%d</valign>", textVAlign_));
+	fh.writeString(Common::String::format("<valign>%d</valign>\r\n", textVAlign_));
 
 	if (textFormat_ != qdScreenTextFormat::default_format()) {
 		textFormat_.save_script(fh, indent + 1);

@@ -68,14 +68,14 @@ qdInterfaceCounter &qdInterfaceCounter::operator = (const qdInterfaceCounter &co
 }
 
 bool qdInterfaceCounter::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i ++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString(Common::String::format("<counter_name>%s</counter_name>\r\n"));
 
 	textFormat_.save_script(fh, indent + 1);
 
-	for (int i = 0; i <= indent; i ++) {
+for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString(Common::String::format("<digits>%d</digits>", digits_));

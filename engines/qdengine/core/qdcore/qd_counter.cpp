@@ -99,7 +99,7 @@ bool qdCounterElement::load_script(const xml::tag *p) {
 }
 
 bool qdCounterElement::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i ++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 
@@ -115,7 +115,7 @@ bool qdCounterElement::save_script(Common::SeekableWriteStream &fh, int indent) 
 		ref.save_script(fh, indent + 1);
 	}
 
-	for (int i = 0; i <= indent; i ++) {
+	for (int i = 0; i < indent; i ++) {
 		fh.writeString("\t");
 	}
 	fh.writeString("</counter_element>\r\n");
@@ -263,8 +263,9 @@ bool qdCounter::load_script(const xml::tag *p) {
 }
 
 bool qdCounter::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
+	}
 
 	fh.writeString("<counter");
 
@@ -278,7 +279,17 @@ bool qdCounter::save_script(Common::SeekableWriteStream &fh, int indent) const {
 		fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
 	}
 	fh.writeString(">\r\n");
+
+	for (auto &it : elements_) {
+		it.save_script(fh, indent + 1);
 	}
+
+	for (int i = 0; i < indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("</counter>\r\n");
+
+	return true;
 }
 
 bool qdCounter::save_script(XStream &fh, int indent) const {

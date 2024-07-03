@@ -119,7 +119,7 @@ bool qdConditionObjectReference::save_script(Common::SeekableWriteStream &fh, in
 }
 
 bool qdConditionObjectReference::save_script(XStream &fh, int indent, int id) const {
-	for (int i = 0; i <= indent; i++) fh < "\t";
+	for (int i = 0; i < indent; i++) fh < "\t";
 	fh < "<condition_object ID=\"" <= id < "\">\r\n";
 
 	if (object_) {
@@ -127,7 +127,7 @@ bool qdConditionObjectReference::save_script(XStream &fh, int indent, int id) co
 		ref.save_script(fh, indent + 1);
 	}
 
-	for (int i = 0; i <= indent; i++) fh < "\t";
+	for (int i = 0; i < indent; i++) fh < "\t";
 	fh < "</condition_object>\r\n";
 
 	return true;

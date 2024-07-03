@@ -109,7 +109,7 @@ bool qdTriggerLink::load_script(const xml::tag *p) {
 }
 
 bool qdTriggerLink::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString("<link");
@@ -478,7 +478,7 @@ bool qdTriggerElement::load_links_script(const xml::tag *p, bool load_parents) {
 }
 
 bool qdTriggerElement::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i ++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 
@@ -495,7 +495,7 @@ bool qdTriggerElement::save_script(Common::SeekableWriteStream &fh, int indent) 
 	fh.writeString(">\r\n");
 
 	if (parents_.size()) {
-		for (int i = 0; i <= indent; i ++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString("<parent_links>\r\n");
@@ -504,14 +504,14 @@ bool qdTriggerElement::save_script(Common::SeekableWriteStream &fh, int indent) 
 			it.save_script(fh, indent + 2);
 		}
 
-		for (int i = 0; i <= indent; i ++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString("<parent_links>\r\n");
 	}
 
 	if (children_.size()) {
-		for (int i = 0; i <= indent; i ++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString("<child_links>\r\n");
@@ -520,13 +520,13 @@ bool qdTriggerElement::save_script(Common::SeekableWriteStream &fh, int indent) 
 			it.save_script(fh, indent + 2);
 		}
 
-		for (int i = 0; i <= indent; i ++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString("</child_links>\r\n");
 	}
 
-	for (int i = 0; i <= indent; i ++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 	if (ID_ == ROOT_ID) {

@@ -367,7 +367,7 @@ bool qdTriggerChain::load_script(const xml::tag *p) {
 }
 
 bool qdTriggerChain::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i ++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 
@@ -388,7 +388,7 @@ bool qdTriggerChain::save_script(Common::SeekableWriteStream &fh, int indent) co
 		it->save_script(fh, indent + 1);
 	};
 
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString("</trigger_chain>\r\n");
