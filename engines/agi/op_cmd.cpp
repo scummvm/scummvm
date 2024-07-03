@@ -751,7 +751,7 @@ void cmdSaveGame(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 	if (state->automaticSave) {
 		if (vm->saveGameAutomatic()) {
-			// automatic save succeded
+			// automatic save succeeded
 			return;
 		}
 		// fall back to regular dialog otherwise
@@ -1198,7 +1198,7 @@ void cmdDrawPic(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	// With this workaround, when the player goes back to picture 20 (1 screen
 	// above the ground), flag 103 is reset, thereby fixing this issue. Note
 	// that this is a script bug and occurs in the original interpreter as well.
-	// Fixes bug #3056: AGI: SQ1 (2.2 DOS ENG) bizzare exploding roger
+	// Fixes bug #3056: AGI: SQ1 (2.2 DOS ENG) bizarre exploding roger
 	if (vm->getGameID() == GID_SQ1 && resourceNr == 20)
 		vm->setFlag(103, false);
 
