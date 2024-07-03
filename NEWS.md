@@ -8,6 +8,7 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Added support for Total Eclipse and Total Eclipse 2.
   - Added support for Thimbleweed Park.
   - Added support for The Space Bar.
+  - Added support for Moonbase Commander.
 
  General:
   - Fixed GLSL version parsing on some OpenGL ES2 platforms.
