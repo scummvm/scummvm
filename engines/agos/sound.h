@@ -59,7 +59,7 @@ private:
 	bool _hasVoiceFile;
 	uint16 _ambientPlaying;
 
-	// Personal Nightmare specfic
+	// Personal Nightmare specific
 	byte *_soundQueuePtr;
 	uint16 _soundQueueNum;
 	uint32 _soundQueueSize;
@@ -87,7 +87,7 @@ public:
 	void playEffects(uint sound);
 	void playAmbient(uint sound);
 
-	// Personal Nightmare specfic
+	// Personal Nightmare specific
 	void handleSoundQueue();
 	void queueSound(byte *ptr, uint16 sound, uint32 size, uint16 freq);
 
