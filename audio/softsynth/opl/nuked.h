@@ -45,6 +45,10 @@
 namespace OPL {
 namespace NUKED {
 
+typedef uint64 uint64_t;
+typedef uint32 uint_fast32_t;
+#define UINT64_C(value) value##ui64
+
 typedef struct _opl3_slot opl3_slot;
 typedef struct _opl3_channel opl3_channel;
 typedef struct _opl3_chip opl3_chip;
