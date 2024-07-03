@@ -131,6 +131,7 @@ public:
 	 * this surface will create its own surface of the same size and copy
 	 * the contents from the source surface.
 	 */
+	WARN_DEPRECATED("Use copyFrom(), a move constructor or supply bounds")
 	ManagedSurface(const ManagedSurface &surf);
 
 	/**
@@ -197,7 +198,7 @@ public:
 	 *
 	 * @note If the source has a managed surface, it will be duplicated.
 	 */
-	WARN_DEPRECATED("Use copyFrom() instead")
+	WARN_DEPRECATED("Use copyFrom() or a move constructor instead")
 	ManagedSurface &operator=(const ManagedSurface &surf);
 
 	/**
