@@ -2033,6 +2033,8 @@ void OptionsDialog::setupGraphicsTab() {
 			rebuild();
 		} else if (!_stretchPopUp && g_system->hasFeature(OSystem::kFeatureStretchMode)) {
 			rebuild();
+		} else if (!_aspectCheckbox && g_system->hasFeature(OSystem::kFeatureAspectRatioCorrection)) {
+			rebuild();
 		}
 		setGraphicSettingsState(_enableGraphicSettings);
 	}
