@@ -28,7 +28,7 @@
 #include "common/fs.h"
 #include "common/config-manager.h"
 
-#include "gob/init.h"
+#include "gob/init/init.h"
 
 namespace Gob {
 

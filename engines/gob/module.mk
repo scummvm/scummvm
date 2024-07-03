@@ -31,15 +31,15 @@ MODULE_OBJS := \
 	goblin/goblin_v7.o \
 	hotspots.o \
 	iniconfig.o \
-	init.o \
-	init_v1.o \
-	init_geisha.o \
-	init_v2.o \
-	init_fascin.o \
-	init_v3.o \
-	init_v4.o \
-	init_v6.o \
-	init_v7.o \
+	init/init.o \
+	init/init_v1.o \
+	init/init_geisha.o \
+	init/init_v2.o \
+	init/init_fascin.o \
+	init/init_v3.o \
+	init/init_v4.o \
+	init/init_v6.o \
+	init/init_v7.o \
 	inter/inter.o \
 	inter/inter_v1.o \
 	inter/inter_geisha.o \

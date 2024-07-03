@@ -28,33 +28,25 @@
 #include "common/endian.h"
 
 #include "gob/gob.h"
-#include "gob/init.h"
-#include "gob/game.h"
+#include "gob/init/init.h"
 #include "gob/global.h"
+#include "gob/draw/draw.h"
+#include "gob/video/video.h"
 
 namespace Gob {
 
-Init_Fascination::Init_Fascination(GobEngine *vm) : Init_v2(vm) {
+Init_Geisha::Init_Geisha(GobEngine *vm) : Init_v1(vm) {
 }
 
-Init_Fascination::~Init_Fascination() {
+Init_Geisha::~Init_Geisha() {
 }
 
-void Init_Fascination::updateConfig() {
-// In Fascination, some empty texts are present and used to clean up the text area.
-// Using _doSubtitles does the trick.
-// The first obvious example is in the hotel hall: 'Use ...' is displayed at
-// the same place than the character dialogs.
-	_vm->_global->_doSubtitles = true;
-}
+void Init_Geisha::initVideo() {
+	Init_v1::initVideo();
 
-void Init_Fascination::initGame() {
-// HACK - Suppress
-// the PC Speaker, as the script checks in the intro for it's presence
-// to play or not some noices.
-	_vm->_global->_soundFlags = MIDI_FLAG | BLASTER_FLAG | ADLIB_FLAG;
-
-	Init::initGame();
+	_vm->_draw->_cursorWidth       = 16;
+	_vm->_draw->_cursorHeight      = 23;
+	_vm->_draw->_transparentCursor =  1;
 }
 
 } // End of namespace Gob

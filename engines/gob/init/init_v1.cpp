@@ -28,7 +28,7 @@
 #include "common/endian.h"
 
 #include "gob/gob.h"
-#include "gob/init.h"
+#include "gob/init/init.h"
 #include "gob/global.h"
 #include "gob/draw/draw.h"
 
