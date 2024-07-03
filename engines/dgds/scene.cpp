@@ -698,6 +698,9 @@ bool Scene::runChinaOp(const SceneOp &op) {
 		engine->setMenuToTrigger(kMenuSkipPlayIntro);
 		break;
 	case kSceneOpOpenChinaStartIntro:
+		// TODO: This is the intro scene but it doesn't work directly.. what's different?
+		//engine->changeScene(98);
+		//return false;
 		warning("TODO: Implement start intro opcode");
 		break;
 	default:
@@ -748,7 +751,6 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 *
 			default:
 				error("TODO: Implement game-specific scene op for this game");
 			}
-			continue;
 		}
 		if (!keepGoing)
 			return false;
