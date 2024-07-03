@@ -44,6 +44,28 @@ ManagedSurface::ManagedSurface(const ManagedSurface &surf) :
 	this->copyFrom(surf);
 }
 
+ManagedSurface::ManagedSurface(ManagedSurface &&surf) :
+		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
+		_disposeAfterUse(surf._disposeAfterUse), _owner(surf._owner), _offsetFromOwner(surf._offsetFromOwner),
+		_transparentColor(surf._transparentColor), _transparentColorSet(surf._transparentColorSet),
+		_palette(surf._palette) {
+
+	_innerSurface.setPixels(surf.getPixels());
+	_innerSurface.w = surf.w;
+	_innerSurface.h = surf.h;
+	_innerSurface.pitch = surf.pitch;
+	_innerSurface.format = surf.format;
+
+	// Reset the old surface
+	surf._innerSurface.init(0, 0, 0, NULL, PixelFormat());
+	surf._disposeAfterUse = DisposeAfterUse::NO;
+	surf._owner = nullptr;
+	surf._offsetFromOwner = Common::Point();
+	surf._transparentColor = 0;
+	surf._transparentColorSet = false;
+	surf._palette = nullptr;
+}
+
 ManagedSurface::ManagedSurface(int width, int height) :
 		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
 		_disposeAfterUse(DisposeAfterUse::NO), _owner(nullptr),
@@ -136,6 +158,37 @@ ManagedSurface &ManagedSurface::operator=(const ManagedSurface &surf) {
 		_transparentColor = surf._transparentColor;
 		_palette = surf._palette ? new Palette(*surf._palette) : nullptr;
 	}
+
+	return *this;
+}
+
+ManagedSurface &ManagedSurface::operator=(ManagedSurface &&surf) {
+	// Free any current surface
+	free();
+
+	_disposeAfterUse = surf._disposeAfterUse;
+	_owner = surf._owner;
+	_offsetFromOwner = surf._offsetFromOwner;
+
+	_innerSurface.setPixels(surf.getPixels());
+	_innerSurface.w = surf.w;
+	_innerSurface.h = surf.h;
+	_innerSurface.pitch = surf.pitch;
+	_innerSurface.format = surf.format;
+
+	// Copy miscellaneous properties
+	_transparentColorSet = surf._transparentColorSet;
+	_transparentColor = surf._transparentColor;
+	_palette = surf._palette;
+
+	// Reset the old surface
+	surf._innerSurface.init(0, 0, 0, NULL, PixelFormat());
+	surf._disposeAfterUse = DisposeAfterUse::NO;
+	surf._owner = nullptr;
+	surf._offsetFromOwner = Common::Point();
+	surf._transparentColor = 0;
+	surf._transparentColorSet = false;
+	surf._palette = nullptr;
 
 	return *this;
 }

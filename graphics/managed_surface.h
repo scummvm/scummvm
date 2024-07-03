@@ -134,6 +134,11 @@ public:
 	ManagedSurface(const ManagedSurface &surf);
 
 	/**
+	 * Create a managed surface from another one.
+	 */
+	ManagedSurface(ManagedSurface &&surf);
+
+	/**
 	 * Create the managed surface.
 	 */
 	ManagedSurface(int width, int height);
@@ -194,6 +199,11 @@ public:
 	 */
 	WARN_DEPRECATED("Use copyFrom() instead")
 	ManagedSurface &operator=(const ManagedSurface &surf);
+
+	/**
+	 * Reassign one managed surface to another one.
+	 */
+	ManagedSurface &operator=(ManagedSurface &&surf);
 
 	/**
 	 * Return true if the surface has not yet been allocated.
