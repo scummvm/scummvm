@@ -73,7 +73,7 @@ private:
 
 	//! Указатель на DirectSound интерфейс.
 	LPDIRECTSOUND sound_device_;
-	Audio::SeekableAudioStream *_audioStream;
+//	Audio::SeekableAudioStream *_audioStream;
 };
 
 } // namespace QDEngine
