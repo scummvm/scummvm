@@ -20,6 +20,7 @@
  */
 
 #include "common/debug.h"
+#include "common/scummsys.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
