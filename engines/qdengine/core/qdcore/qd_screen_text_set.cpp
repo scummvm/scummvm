@@ -219,7 +219,7 @@ bool qdScreenTextSet::save_script(Common::SeekableWriteStream &fh, int indent) c
 	}
 
 	if (size_.x || size_.y) {
-		fh.writeString(Common::String::format(" screen_size=\"%d %d\"", pos_.x, pos_.y));
+		fh.writeString(Common::String::format(" screen_size=\"%d %d\"", size_.x, size_.y));
 	}
 
 	fh.writeString("/>\r\n");
