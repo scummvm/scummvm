@@ -28,7 +28,7 @@
 #ifndef GOB_PALANIM_H
 #define GOB_PALANIM_H
 
-#include "gob/video.h"
+#include "gob/video/video.h"
 
 namespace Gob {
 

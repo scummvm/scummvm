@@ -28,8 +28,8 @@
 #ifndef GOB_MULT_H
 #define GOB_MULT_H
 
-#include "gob/videoplayer.h"
-#include "gob/video.h"
+#include "gob/video/videoplayer.h"
+#include "gob/video/video.h"
 #include "gob/variables.h"
 
 namespace Gob {

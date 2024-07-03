@@ -32,7 +32,7 @@
 #include "gob/map.h"
 #include "gob/mult.h"
 #include "gob/scenery.h"
-#include "gob/videoplayer.h"
+#include "gob/video/videoplayer.h"
 
 namespace Gob {
 

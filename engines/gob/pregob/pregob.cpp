@@ -34,7 +34,7 @@
 #include "gob/dataio.h"
 #include "gob/palanim.h"
 #include "gob/draw.h"
-#include "gob/video.h"
+#include "gob/video/video.h"
 #include "gob/aniobject.h"
 
 #include "gob/sound/sound.h"

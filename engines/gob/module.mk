@@ -73,11 +73,11 @@ MODULE_OBJS := \
 	totfile.o \
 	util.o \
 	variables.o \
-	video.o \
-	video_v1.o \
-	video_v2.o \
-	video_v6.o \
-	videoplayer.o \
+	video/video.o \
+	video/video_v1.o \
+	video/video_v2.o \
+	video/video_v6.o \
+	video/videoplayer.o \
 	demos/demoplayer.o \
 	demos/scnplayer.o \
 	demos/batplayer.o \

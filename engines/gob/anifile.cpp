@@ -32,7 +32,7 @@
 #include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/surface.h"
-#include "gob/video.h"
+#include "gob/video/video.h"
 #include "gob/cmpfile.h"
 #include "gob/anifile.h"
 

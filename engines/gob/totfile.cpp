@@ -31,7 +31,7 @@
 #include "gob/gob.h"
 #include "gob/totfile.h"
 #include "gob/dataio.h"
-#include "gob/videoplayer.h"
+#include "gob/video/videoplayer.h"
 
 namespace Gob {
 

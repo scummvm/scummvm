@@ -40,7 +40,7 @@
 #include "gob/draw.h"
 #include "gob/mult.h"
 #include "gob/scenery.h"
-#include "gob/videoplayer.h"
+#include "gob/video/videoplayer.h"
 #include "gob/sound/sound.h"
 
 namespace Gob {

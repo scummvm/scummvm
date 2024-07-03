@@ -52,7 +52,7 @@
 #include "gob/mult.h"
 #include "gob/palanim.h"
 #include "gob/scenery.h"
-#include "gob/videoplayer.h"
+#include "gob/video/videoplayer.h"
 #include "gob/save/saveload.h"
 
 #include "gob/pregob/pregob.h"

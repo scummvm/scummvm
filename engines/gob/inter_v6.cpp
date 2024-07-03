@@ -38,7 +38,7 @@
 #include "gob/hotspots.h"
 #include "gob/draw.h"
 #include "gob/sound/sound.h"
-#include "gob/videoplayer.h"
+#include "gob/video/videoplayer.h"
 
 namespace Gob {
 

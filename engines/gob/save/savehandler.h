@@ -31,7 +31,7 @@
 #include "common/savefile.h"
 #include "common/array.h"
 
-#include "engines/gob/video.h" // for SurfacePtr
+#include "engines/gob/video/video.h" // for SurfacePtr
 
 namespace Gob {
 

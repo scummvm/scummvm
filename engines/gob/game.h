@@ -31,7 +31,7 @@
 #include "common/str.h"
 
 #include "gob/util.h"
-#include "gob/video.h"
+#include "gob/video/video.h"
 #include "gob/sound/sounddesc.h"
 
 namespace Gob {

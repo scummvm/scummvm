@@ -38,7 +38,7 @@
 #include "gob/resources.h"
 #include "gob/game.h"
 #include "gob/draw.h"
-#include "gob/video.h"
+#include "gob/video/video.h"
 #include "gob/cheater.h"
 #include "gob/save/saveload.h"
 #include "gob/sound/sound.h"

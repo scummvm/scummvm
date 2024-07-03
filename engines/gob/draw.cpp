@@ -37,7 +37,7 @@
 #include "gob/resources.h"
 #include "gob/script.h"
 #include "gob/inter.h"
-#include "gob/video.h"
+#include "gob/video/video.h"
 #include "gob/palanim.h"
 
 namespace Gob {

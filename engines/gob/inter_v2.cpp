@@ -46,9 +46,9 @@
 #include "gob/map.h"
 #include "gob/mult.h"
 #include "gob/scenery.h"
-#include "gob/video.h"
+#include "gob/video/video.h"
 #include "gob/save/saveload.h"
-#include "gob/videoplayer.h"
+#include "gob/video/videoplayer.h"
 #include "gob/sound/sound.h"
 
 namespace Gob {

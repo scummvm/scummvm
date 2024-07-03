@@ -43,8 +43,8 @@
 #include "gob/hotspots.h"
 #include "gob/palanim.h"
 #include "gob/scenery.h"
-#include "gob/video.h"
-#include "gob/videoplayer.h"
+#include "gob/video/video.h"
+#include "gob/video/videoplayer.h"
 #include "gob/save/saveload.h"
 
 namespace Gob {

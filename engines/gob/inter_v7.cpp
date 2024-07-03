@@ -46,7 +46,7 @@
 #include "gob/game.h"
 #include "gob/script.h"
 #include "gob/expression.h"
-#include "gob/videoplayer.h"
+#include "gob/video/videoplayer.h"
 #include "gob/resources.h"
 #include "gob/sound/sound.h"
 #include "gob/save/saveload.h"

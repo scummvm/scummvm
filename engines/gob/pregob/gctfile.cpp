@@ -29,7 +29,7 @@
 #include "common/stream.h"
 
 #include "gob/surface.h"
-#include "gob/video.h"
+#include "gob/video/video.h"
 
 #include "gob/pregob/gctfile.h"
 

@@ -33,7 +33,7 @@
 #include "gob/util.h"
 #include "gob/draw.h"
 #include "gob/inter.h"
-#include "gob/videoplayer.h"
+#include "gob/video/videoplayer.h"
 
 namespace Gob {
 

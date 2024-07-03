@@ -31,7 +31,7 @@
 #include "common/file.h"
 #include "common/endian.h"
 
-#include "gob/video.h"
+#include "gob/video/video.h"
 
 namespace Gob {
 

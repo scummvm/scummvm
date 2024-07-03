@@ -28,10 +28,10 @@
 
 #include "video/coktel_decoder.h"
 
-#include "gob/videoplayer.h"
+#include "gob/video/videoplayer.h"
 #include "gob/global.h"
 #include "gob/dataio.h"
-#include "gob/video.h"
+#include "gob/video/video.h"
 #include "gob/game.h"
 #include "gob/palanim.h"
 #include "gob/inter.h"

@@ -32,7 +32,7 @@
 #include "gob/script.h"
 #include "gob/dataio.h"
 #include "gob/expression.h"
-#include "gob/videoplayer.h"
+#include "gob/video/videoplayer.h"
 
 namespace Gob {
 

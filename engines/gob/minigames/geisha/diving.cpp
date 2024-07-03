@@ -30,7 +30,7 @@
 #include "gob/global.h"
 #include "gob/palanim.h"
 #include "gob/draw.h"
-#include "gob/video.h"
+#include "gob/video/video.h"
 #include "gob/decfile.h"
 #include "gob/anifile.h"
 

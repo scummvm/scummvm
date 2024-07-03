@@ -40,8 +40,8 @@
 #include "gob/inter.h"
 #include "gob/scenery.h"
 #include "gob/map.h"
-#include "gob/video.h"
-#include "gob/videoplayer.h"
+#include "gob/video/video.h"
+#include "gob/video/videoplayer.h"
 
 namespace Gob {
 

@@ -28,7 +28,7 @@
 #include "gob/gob.h"
 #include "gob/draw.h"
 #include "gob/global.h"
-#include "gob/video.h"
+#include "gob/video/video.h"
 
 namespace Gob {
 

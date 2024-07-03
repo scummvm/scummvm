@@ -31,7 +31,7 @@
 #include "graphics/conversion.h"
 
 #include "gob/gob.h"
-#include "gob/video.h"
+#include "gob/video/video.h"
 #include "gob/util.h"
 #include "gob/draw.h"
 #include "gob/global.h"
