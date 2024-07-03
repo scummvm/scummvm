@@ -781,7 +781,9 @@ void MovieElement::render(Window *window) {
 		Graphics::ManagedSurface *target = window->getSurface().get();
 		Common::Rect srcRect(0, 0, displaySurface->w, displaySurface->h);
 		Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.width(), _cachedAbsoluteOrigin.y + _rect.height());
-		target->blitFrom(*displaySurface, srcRect, destRect);
+
+		initFallbackPalette();
+		target->blitFrom(*displaySurface, srcRect, destRect, _fallbackPalette.get());
 	}
 }
 
@@ -961,6 +963,13 @@ IntRange MovieElement::computeRealRange() const {
 void MovieElement::stopSubtitles() {
 	if (_subtitles)
 		_subtitles->stop();
+}
+
+void MovieElement::initFallbackPalette() {
+	if (!_fallbackPalette) {
+		const Palette &globalPalette = getRuntime()->getGlobalPalette();
+		_fallbackPalette = Common::ScopedPtr<Graphics::Palette>(new Graphics::Palette(globalPalette.getPalette(), globalPalette.kNumColors));
+	}
 }
 
 void MovieElement::onPauseStateChanged() {
