@@ -553,7 +553,7 @@ bool qdCamera::save_script(Common::SeekableWriteStream &fh, int indent) const {
 	}
 	fh.writeString(Common::String::format("<camera_scale_z_offset>%f</camera_scale_z_offset>\r\n", scale_z_offset()));
 
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString("</camera>\r\n");
