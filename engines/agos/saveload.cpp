@@ -222,7 +222,7 @@ bool AGOSEngine_Waxworks::confirmOverWrite(WindowBlock *window) {
 }
 
 bool AGOSEngine_Elvira2::confirmOverWrite(WindowBlock *window) {
-	// Original verison never confirmed
+	// Original version never confirmed
 	return true;
 }
 
