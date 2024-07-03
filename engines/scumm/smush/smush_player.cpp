@@ -714,7 +714,7 @@ void SmushPlayer::handleDeltaPalette(int32 subSize, Common::SeekableReadStream &
 		for (int i = 0; i < 768; ++i) {
 			_shiftedDeltaPal[i] += _deltaPal[i];
 			
-			_pal[i] = CLIP(_shiftedDeltaPal[i] >> 7, 0, 255);
+			_pal[i] = CLIP<int32>(_shiftedDeltaPal[i] >> 7, 0, 255);
 		}
 
 		setDirtyColors(0, 255);
