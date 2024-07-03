@@ -101,19 +101,19 @@ bool qdGameObject::save_script_body(Common::SeekableWriteStream &fh, int indent)
 	fh.writeString(Common::String::format("<pos_3d>%f %f %f</pos_3d>\r\n", r_.x, r_.y, r_.z));
 
 	if (parallax_offset_.x || parallax_offset_.y) {
-		for (int i = 0; i <= indent; i ++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<parallax_offset>%d %d</parallax_offset>", parallax_offset_.x, parallax_offset_.y));
 	}
 
 	if (flags()) {
-		for (int i = 0; i <= indent; i ++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<flag>%d</flag>\r\n", flags()));
 	}
-	
+
 	return true;
 }
 

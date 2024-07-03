@@ -490,12 +490,12 @@ bool qdGameObjectAnimated::save_script_body(Common::SeekableWriteStream &fh, int
 		fh.writeString(Common::String::format("<inventory>%s</inventory>\r\n", qdscr_XML_string(inventory_name_.c_str())));
 	}
 
-	for (int i = 0; i <= indent; i ++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString(Common::String::format("<bound>%f %f %f</bound>\r\n", bound_.x, bound_.y, bound_.z));
 
-	for (int i = 0; i <= indent; i ++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString(Common::String::format("<default_pos>%f %f %f</default_pos>\r\n", default_r_.x, default_r_.y, default_r_.z));

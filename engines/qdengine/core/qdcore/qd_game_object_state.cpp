@@ -1507,7 +1507,7 @@ bool qdGameObjectStateMask::load_script(const xml::tag *p) {
 }
 
 bool qdGameObjectStateMask::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i < indent; i ++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 
@@ -1516,7 +1516,7 @@ bool qdGameObjectStateMask::save_script(Common::SeekableWriteStream &fh, int ind
 	save_script_body(fh, indent);
 
 	if (!parent_name_.empty()) {
-		for (int i = 0; i <= indent; i ++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<state_mask_parent>%s</state_mask_parent>\r\n", qdscr_XML_string(parent_name_.c_str())));
@@ -1526,7 +1526,7 @@ bool qdGameObjectStateMask::save_script(Common::SeekableWriteStream &fh, int ind
 		qdContour::save_script(fh, indent + 1);
 	}
 
-	for (int i = 0; i < indent; i ++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString("</object_state_mask>\r\n");
