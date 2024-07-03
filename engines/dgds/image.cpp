@@ -324,7 +324,8 @@ struct VQTDecodeState {
 	uint16 rowStarts[200];
 };
 
-static inline uint16 _getVqtBits(struct VQTDecodeState *state, int nbits) {
+static inline byte _getVqtBits(struct VQTDecodeState *state, uint16 nbits) {
+	assert(nbits <= 8);
 	const uint32 offset = state->offset;
 	const uint32 index = offset >> 3;
 	const uint32 shift = offset & 7;
@@ -343,8 +344,9 @@ static void _doVqtDecode2(struct VQTDecodeState *state, const uint16 x, const ui
 		return;
 	}
 
-	const uint losize = (w & 0xff) * (h & 0xff);
-	uint bitcount1 = 8;
+	// this will always fit in uint16 but we multiply it later so need 32 bits.
+	const uint32 losize = (w & 0xff) * (h & 0xff);
+	byte bitcount1 = 8;
 	if (losize < 256) {
 		bitcount1 = 0;
 		byte b = (byte)(losize - 1);
@@ -354,7 +356,7 @@ static void _doVqtDecode2(struct VQTDecodeState *state, const uint16 x, const ui
 		} while (b != 0);
 	}
 
-	uint16 firstval = _getVqtBits(state, bitcount1);
+	byte firstval = _getVqtBits(state, bitcount1);
 
 	uint16 bitcount2 = 0;
 	byte bval = (byte)firstval;
@@ -365,7 +367,7 @@ static void _doVqtDecode2(struct VQTDecodeState *state, const uint16 x, const ui
 
 	bval++;
 
-	if (losize * 8 <= losize * bitcount2 + bval * 8) {
+	if (losize * 8 <= losize * bitcount2 + (uint32)bval * 8) {
 		for (int xx = x; xx < x + w; xx++) {
 			for (int yy = y; yy < y + h; yy++) {
 				state->dstPtr[state->rowStarts[yy] + xx] = _getVqtBits(state, 8);
@@ -384,7 +386,7 @@ static void _doVqtDecode2(struct VQTDecodeState *state, const uint16 x, const ui
 		return;
 	}
 
-	byte tmpbuf[262];
+	byte tmpbuf[255];
 	byte *ptmpbuf = tmpbuf;
 	for (; bval != 0; bval--) {
 		*ptmpbuf = _getVqtBits(state, 8);
@@ -412,9 +414,9 @@ static void _doVqtDecode(struct VQTDecodeState *state, uint16 x, uint16 y, uint1
 
 	// Top right quadrant
 	if (mask & 4)
-		_doVqtDecode(state, x + (w / 2), y, (w + 1) >> 1, h >> 1);
+		_doVqtDecode(state, x + (w / 2), y, (w + 1) / 2, h / 2);
 	else
-		_doVqtDecode2(state, x + (w / 2), y, (w + 1) >> 1, h >> 1);
+		_doVqtDecode2(state, x + (w / 2), y, (w + 1) / 2, h / 2);
 
 	// Bottom left quadrant
 	if (mask & 2)
@@ -497,12 +499,12 @@ bool Image::loadSCN(Graphics::ManagedSurface *surf, Common::SeekableReadStream *
 			x += val;
 			break;
 		}
-		case 0xc0: { // CMD 11 - direct read of 4-bit values
-			for (uint16 i = 0; i < (val + 1) / 2; i++) {
+		case 0xc0: { // CMD 11 - direct read of `val` * 4-bit values
+			for (uint16 i = 0; i < val; i += 2) {
 				byte color = stream->readByte();
-				dst[y * tw + x + i * 2] = (color >> 4) + addVal;
-				if (x + i * 2 + 1 < tw)
-					dst[y * tw + x + i * 2 + 1] = (color & 0xf) + addVal;
+				dst[y * tw + x + i] = (color >> 4) + addVal;
+				if (x + i + 1 < tw && i < val - 1)
+					dst[y * tw + x + i + 1] = (color & 0xf) + addVal;
 			}
 			x += val;
 			break;
