@@ -73,8 +73,8 @@ qdFileManager::qdFileManager() {
 		_packages[i].init();
 		_packages[i].set_container_index(i);
 
-		if (!_packages[i].check_container())
-			_packageCount = i;
+		if (_packages[i].check_container())
+			_packageCount = i + 1;
 	}
 
 	debug(0, "qdFileManager(): Package count: %d", _packageCount);
