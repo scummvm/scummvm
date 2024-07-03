@@ -386,7 +386,7 @@ const char *qdscr_XML_string(const char *p) {
 
 	} while (pos != std::string::npos);
 
-	return conv_str.c_str();
+	return (const char *)transCyrillic(conv_str.c_str());
 }
 
 } // namespace QDEngine
