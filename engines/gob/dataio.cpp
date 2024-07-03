@@ -282,7 +282,7 @@ DataIO::Archive *DataIO::openArchive(const Common::Path &name) {
 
 		file.name = fileName;
 
-		// Geisha use 0ot files, which are compressed TOT files without the packed byte set.
+		// Geisha use 0OT files, which are compressed TOT files without the packed byte set.
 		if (file.name.hasSuffix(".0OT")) {
 			file.name.setChar('T', file.name.size() - 3);
 			file.compression = 2;
