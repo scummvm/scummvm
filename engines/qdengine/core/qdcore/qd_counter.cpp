@@ -115,7 +115,7 @@ bool qdCounterElement::save_script(Common::SeekableWriteStream &fh, int indent) 
 		ref.save_script(fh, indent + 1);
 	}
 
-	for (int i = 0; i < indent; i ++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString("</counter_element>\r\n");
