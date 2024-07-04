@@ -94,7 +94,6 @@ MODULE_OBJS = \
 	core/qdcore/qd_named_object_base.o \
 	core/qdcore/qd_named_object_indexer.o \
 	core/qdcore/qd_named_object.o \
-	core/qdcore/qd_resource_file.o \
 	core/qdcore/qd_resource.o \
 	core/qdcore/qd_rnd.o \
 	core/qdcore/qd_scale_info.o \
