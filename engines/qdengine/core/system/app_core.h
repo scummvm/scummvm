@@ -76,7 +76,6 @@ const char *change_ext(const char *file_name, const char *new_ext);
 
 bool create_directory(const char *path);
 bool remove_directory(const char *path);
-bool full_remove_directory(const char *path);
 
 unsigned file_size(const char *file_name);
 

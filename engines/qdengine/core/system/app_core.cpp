@@ -222,39 +222,6 @@ bool remove_directory(const char *path) {
 	return true;
 }
 
-bool full_remove_directory(const char *path) {
-	char cur_path[MAX_PATH];
-	warning("STUB: full_remove_directory()");
-#if 0
-	GetCurrentDirectory(MAX_PATH, cur_path);
-
-	if (!SetCurrentDirectory(path)) return false;
-
-	WIN32_FIND_DATA fd;
-	HANDLE  fh = FindFirstFile("*.*", &fd);
-
-	if (fh != INVALID_HANDLE_VALUE) {
-		do {
-			if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-				if (fd.cFileName[0] != '.')
-					remove_directory(fd.cFileName);
-			} else {
-				SetFileAttributes(fd.cFileName, FILE_ATTRIBUTE_ARCHIVE);
-				DeleteFile(fd.cFileName);
-			}
-		} while (FindNextFile(fh, &fd));
-		FindClose(fh);
-	}
-
-	SetCurrentDirectory(cur_path);
-	// Удаляем и текущую директорию, в которую залезли
-	SetFileAttributes(path, FILE_ATTRIBUTE_ARCHIVE);
-	RemoveDirectory(path);
-
-	return true;
-#endif
-}
-
 unsigned file_size(const char *file_name) {
 	XStream fh(0);
 	if (fh.open(file_name, XS_IN))
