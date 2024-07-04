@@ -28,7 +28,6 @@
 
 namespace QDEngine {
 
-class XStream;
 class qdAnimation;
 
 //! Информация об анимации.

@@ -27,8 +27,6 @@
 
 namespace QDEngine {
 
-class XStream;
-
 class qdConditionData {
 public:
 	enum data_t {

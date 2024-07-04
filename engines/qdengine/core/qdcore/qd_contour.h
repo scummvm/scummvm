@@ -31,9 +31,6 @@ class SeekableWriteStream;
 
 namespace QDEngine {
 
-
-class XStream;
-
 //! Контур.
 /**
 Используется для задания масок на статических объектах,
