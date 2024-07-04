@@ -1030,6 +1030,27 @@ Common::Point ScriptExecutor::GetCharPosition() {
 	return protagonist->Position;
 }
 
+void ScriptExecutor::Step() {
+	switch (_state) {
+	case ExecutorState::Idle: {
+		// Check if there is a scheduled run
+	};
+		break;
+	case ExecutorState::Executing: {
+		// Continue execution 
+	};
+		break;
+	case ExecutorState::WaitingForCallback: {
+			// TODO: Check if this can even occur i.e. if we even schedule something or if
+			// we always call the execute directly
+
+		};
+	break;
+	}
+
+	};
+}
+
 byte Script::ScriptExecutor::ReadByte() {
 	const int64 pos = _stream->pos();
 	const byte result = _stream->readByte();
