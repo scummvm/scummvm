@@ -386,8 +386,9 @@ template<class Heuristic, class Node, class TypeH>
 void AIAStarGraph<Heuristic, Node, TypeH>::clear() {
 	is_used_num = 0;
 	typename std::vector<OnePoint>::iterator it;
-	FOR_EACH(chart, it)
-	it->used = 0;
+	for (auto &it : chart) {
+		it.used = 0;
+	}
 }
 
 template<class Heuristic, class Node, class TypeH>
@@ -442,7 +443,7 @@ bool AIAStarGraph<Heuristic, Node, TypeH>::FindPath(Node *from, Heuristic *hr, s
 
 		//для каждого наследника child узла parent
 		typename Node::iterator it;
-		FOR_EACH(*node, it) {
+		for (auto &it : *node) {
 			Node *cur_node = *it;
 			OnePoint *p = (OnePoint *)cur_node->AIAStarPointer;
 			num_point_examine++;

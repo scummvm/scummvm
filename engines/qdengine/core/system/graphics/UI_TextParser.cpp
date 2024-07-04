@@ -77,10 +77,11 @@ OutNodes::const_iterator UI_TextParser::getLineBegin(int lineNum) const {
 		return outNodes_.end();
 
 	OutNodes::const_iterator it;
-	FOR_EACH(outNodes_, it)
-	if (it->type == OutNode::NEW_LINE)
-		if (lineNum-- == 0)
-			return it;
+	for (auto it = outNodes_.begin(); it != outNodes_.end(); it++) {
+		if (it->type == OutNode::NEW_LINE)
+			if (lineNum-- == 0)
+				return it;
+	}
 
 	xassert(lineNum == 0);
 	return outNodes_.end();
