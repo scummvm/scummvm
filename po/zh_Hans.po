@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-03 06:58+0000\n"
-"PO-Revision-Date: 2024-07-01 22:43+0000\n"
+"PO-Revision-Date: 2024-07-04 15:43+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/zh_Hans/>\n"
@@ -8976,82 +8976,60 @@ msgid "I Have No Mouth support not compiled in"
 msgstr "未编入 I Have No Mouth 支持"
 
 #: engines/saga/metaengine.cpp:267
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game keymapping"
 msgstr "游戏按键绑定"
 
 #: engines/saga/metaengine.cpp:268
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Option panel keymapping"
-msgstr "游戏按键绑定"
+msgstr "设置面板按键绑定"
 
 #: engines/saga/metaengine.cpp:269
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Save panel keymapping"
-msgstr "游戏按键绑定"
+msgstr "保存面板按键绑定"
 
 #: engines/saga/metaengine.cpp:270
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Load panel keymapping"
-msgstr "游戏按键绑定"
+msgstr "载入面板按键绑定"
 
 #: engines/saga/metaengine.cpp:271
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Quit panel keymapping"
-msgstr "游戏按键绑定"
+msgstr "退出面板按键绑定"
 
 #: engines/saga/metaengine.cpp:272
 msgid "Converse panel keymapping"
-msgstr ""
+msgstr "对话面板按键绑定"
 
 #: engines/saga/metaengine.cpp:294
-#, fuzzy
-#| msgid "Press No Key"
 msgid "Boss Key"
-msgstr "按下“否”按键"
+msgstr "老板键"
 
 #: engines/saga/metaengine.cpp:299
-#, fuzzy
-#| msgid "Show options menu"
 msgid "Show Options"
-msgstr "显示设置菜单"
+msgstr "显示设置"
 
 #: engines/saga/metaengine.cpp:307
-#, fuzzy
-#| msgid "Next location"
 msgid "Exit Conversation"
-msgstr "下一个位置"
+msgstr "退出对话"
 
 #: engines/saga/metaengine.cpp:312
 msgid "Conversation position - Up"
-msgstr ""
+msgstr "对话位置 - 上"
 
 #: engines/saga/metaengine.cpp:317
 msgid "Conversation position - Down"
-msgstr ""
+msgstr "对话位置 - 下"
 
 #: engines/saga/metaengine.cpp:329
-#, fuzzy
-#| msgid "Pause game"
 msgid "Pause Game"
 msgstr "暂停游戏"
 
 #: engines/saga/metaengine.cpp:335
-#, fuzzy
-#| msgid "Speech"
 msgid "Abort Speech"
-msgstr "语音"
+msgstr "取消语音"
 
 #: engines/saga/metaengine.cpp:340
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Show Dialogue"
-msgstr "跳过对话"
+msgstr "显示对话"
 
 #: engines/saga/metaengine.cpp:345 engines/scumm/help.cpp:226
 msgid "Walk"
@@ -9065,8 +9043,6 @@ msgid "Look at"
 msgstr "观察"
 
 #: engines/saga/metaengine.cpp:355
-#, fuzzy
-#| msgid "Pick up"
 msgid "Pickup"
 msgstr "捡起"
 
@@ -9098,66 +9074,48 @@ msgid "Push"
 msgstr "推"
 
 #: engines/saga/metaengine.cpp:390
-#, fuzzy
-#| msgid "Take off"
 msgid "Take"
-msgstr "脱下"
+msgstr "拿取"
 
 #: engines/saga/metaengine.cpp:395
 msgid "Swallow"
-msgstr ""
+msgstr "吞下"
 
 #: engines/saga/metaengine.cpp:402
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "Reading Speed"
-msgstr "数据读取失败"
+msgstr "读取速度"
 
 #: engines/saga/metaengine.cpp:407
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change Music"
-msgstr "更改字体大小"
+msgstr "更改音乐"
 
 #: engines/saga/metaengine.cpp:412
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change Sound"
-msgstr "更改模式"
+msgstr "更改声音"
 
 #: engines/saga/metaengine.cpp:417
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change Voices"
-msgstr "更改模式"
+msgstr "更改语音"
 
 #: engines/saga/metaengine.cpp:422
-#, fuzzy
-#| msgid "Continue"
 msgid "Continue Game"
-msgstr "继续"
+msgstr "继续游戏"
 
 #: engines/saga/metaengine.cpp:449
-#, fuzzy
-#| msgid "Cancel input"
 msgid "Cancel Quit"
-msgstr "取消输入"
+msgstr "取消退出"
 
 #: engines/saga/metaengine.cpp:454
 msgid "okay"
-msgstr ""
+msgstr "好的"
 
 #: engines/saga/metaengine.cpp:459
-#, fuzzy
-#| msgid "Cancel download"
 msgid "Cancel Load"
-msgstr "取消下载"
+msgstr "取消加载"
 
 #: engines/saga/metaengine.cpp:469
-#, fuzzy
-#| msgid "Cancel"
 msgid "Cancel Save"
-msgstr "取消"
+msgstr "取消保存"
 
 #: engines/saga/music.cpp:98
 #, c-format
