@@ -89,18 +89,17 @@ bool winVideo::set_volume(int volume_db) {
 }
 
 void winVideo::set_window(void *hwnd, int x, int y, int xsize, int ysize) {
+	warning("STUB: winVideo::set_window");
+
 	winVideo::hwnd_ = hwnd;
 	if (video_window_ && hwnd) { // Set the video window
-	warning("STUB: winVideo::set_window");
 #if 0
 		video_window_->put_Owner((OAHWND)hwnd);
 		video_window_->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS);
 //		video_window_->put_WindowStyleEx(WS_EX_TOPMOST);
-#endif
 
 		RECT grc = { x, y, xsize, ysize };
 		if (!grc.right || !grc.bottom) GetClientRect((HWND)hwnd, &grc);
-#if 0
 		video_window_->SetWindowPosition(grc.left, grc.top, grc.right, grc.bottom);
 #endif
 		toggle_cursor(false);

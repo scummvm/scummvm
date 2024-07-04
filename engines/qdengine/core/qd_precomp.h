@@ -97,7 +97,6 @@ class XZipStream : public XStream {};
 #define BOOL          bool
 #define HMMIO         void *
 #define HWND          void *
-#define HINSTANCE     void *
 #define HANDLE        void *
 #define HMODULE       void *
 #define HRESULT       int
@@ -496,8 +495,6 @@ DWORD GetCurrentDirectory(DWORD nBufferLength, char *lpBuffer);
 bool CreateDirectory(const char *lpPathName, void *lpSecurityAttributes);
 char *_fullpath(char *absPath, const char *relPath, size_t maxLength);
 long SetWindowLong(HWND hWnd, int nIndex, long dwNewLong);
-HANDLE LoadImage(HINSTANCE hinst, LPCSTR name, UINT type, int cxDesired, int cyDesired, UINT fuLoad);
-HMODULE GetModuleHandle(LPCSTR lpModuleName);
 DWORD SetFilePointer(HANDLE hfile, long lDistanceToMove, long *lpDistanceToMoveHigh, DWORD dwMoveMethod);
 bool CloseHandle(HANDLE hObject);
 HANDLE CreateFile(LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, void *lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile);
@@ -507,19 +504,6 @@ DWORD GetFileSize(HANDLE hFile, void *lpFileSizeHigh);
 bool FlushFileBuffers(HANDLE hFile);
 HRESULT CoInitialize(void *pvReserved);
 void CoUninitialize();
-HANDLE GlobalAlloc(UINT uFlags, size_t dwBytes);
-HANDLE GlobalReAlloc(HANDLE hMem, size_t dwBytes, UINT uFlags);
-void GlobalFree(HANDLE hMem);
-const char *MAKEINTRESOURCE(int i);
-bool DeleteObject(HANDLE hObject);
-HWND CreateWindowEx(DWORD dwExStyle, const char *lpClassName, const char *lpWindowName, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hWndParent, int hMenu, HINSTANCE hInstance, void *lpParam);
-HRGN CreateRectRgn(int x1, int y1, int x2, int y2);
-int CombineRgn(HRGN hrgnDest, HRGN hrgnSrc1, HRGN hrgnSrc2, int iMode);
-int SetWindowRgn(HWND hWnd, HRGN hRgn, bool bRedraw);
-int GetObject(HGDIOBJ hgdiobj, int cbBuffer, void *lpvObject);
-bool GetClientRect(HWND hWnd, RECT *lpRect);
-bool SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, UINT uFlags);
-int GetSystemMetrics(int nIndex);
 HRESULT CoCreateInstance(REFCLSID rclsid, void *pUnkOuter, DWORD dwClsContext, REFIID riid, void **ppv);
 int ov_open(void *datasource, void *vf, const char *initial, long ibytes);
 int ov_read(void *vf, char *buffer, int length, int bigendianp, int word, int sgned, int *bitstream);
@@ -539,7 +523,7 @@ int GetKeyState(int nVirtKey);
 DWORD timeGetTime();
 
 
-int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow);
+int engineMain();
 
 } // namespace QDEngine
 

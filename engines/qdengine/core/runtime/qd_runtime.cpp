@@ -124,7 +124,7 @@ void searchTagMap(int id, int targetVal) {
 	warning("searchTagMap(): No match");
 }
 
-int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow) {
+int engineMain() {
 	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, "*.qml");
 	Common::ArchiveMemberPtr p = files.front();
