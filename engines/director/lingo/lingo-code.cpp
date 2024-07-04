@@ -687,26 +687,47 @@ static DatumType getArrayAlignedType(Datum &d1, Datum &d2) {
 Datum LC::mapBinaryOp(Datum (*mapFunc)(Datum &, Datum &), Datum &d1, Datum &d2) {
 	// At least one of d1 and d2 must be an array
 	uint arraySize;
+
 	if (d1.isArray() && d2.isArray()) {
 		arraySize = MIN(d1.u.farr->arr.size(), d2.u.farr->arr.size());
-	} else if (d1.isArray()) {
+	} else if (d1.type == PARRAY && d2.type == PARRAY) {
+		arraySize = MIN(d1.u.parr->arr.size(), d2.u.parr->arr.size());
+	// if d1 and d2 are different arrays, result is [x+d2 for x in d1], with type of d1
+	} else if (d1.isArray() && d2.type == PARRAY) {
 		arraySize = d1.u.farr->arr.size();
+	} else if (d1.type == PARRAY && d2.isArray()) {
+		arraySize = d1.u.parr->arr.size();
+	} else if (d1.isArray() || d1.type == PARRAY) {
+		arraySize = d1.type == PARRAY ? d1.u.parr->arr.size() : d1.u.farr->arr.size();
 	} else {
-		arraySize = d2.u.farr->arr.size();
+		arraySize = d2.type == PARRAY ? d2.u.parr->arr.size() : d2.u.farr->arr.size();
 	}
 	Datum res;
-	res.type = getArrayAlignedType(d1, d2);
-	res.u.farr = new FArray(arraySize);
+	if (d1.type == PARRAY) {
+		res.type = PARRAY;
+		res.u.parr = new PArray(arraySize);
+	} else {
+		res.type = getArrayAlignedType(d1, d2);
+		res.u.farr = new FArray(arraySize);
+	}
 	Datum a = d1;
 	Datum b = d2;
 	for (uint i = 0; i < arraySize; i++) {
 		if (d1.isArray()) {
 			a = d1.u.farr->arr[i];
+		} else if (d1.type == PARRAY) {
+			a = d1.u.parr->arr[i].v;
 		}
 		if (d2.isArray()) {
 			b = d2.u.farr->arr[i];
+		} else if (d2.type == PARRAY) {
+			a = d2.u.parr->arr[i].v;
 		}
-		res.u.farr->arr[i] = mapFunc(a, b);
+		if (res.type == PARRAY) {
+			res.u.parr->arr[i] = PCell(d1.u.parr->arr[i].p, mapFunc(a, b));
+		} else {
+			res.u.farr->arr[i] = mapFunc(a, b);
+		}
 	}
 	return res;
 }
@@ -717,7 +738,7 @@ Datum LC::addData(Datum &d1, Datum &d2) {
 		return Datum(0);
 	}
 
-	if (d1.isArray() || d2.isArray()) {
+	if (d1.isArray() || d2.isArray() || d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::mapBinaryOp(LC::addData, d1, d2);
 	}
 
@@ -746,7 +767,7 @@ Datum LC::subData(Datum &d1, Datum &d2) {
 		return Datum(0);
 	}
 
-	if (d1.isArray() || d2.isArray()) {
+	if (d1.isArray() || d2.isArray() || d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::mapBinaryOp(LC::subData, d1, d2);
 	}
 
@@ -775,7 +796,7 @@ Datum LC::mulData(Datum &d1, Datum &d2) {
 		return Datum(0);
 	}
 
-	if (d1.isArray() || d2.isArray()) {
+	if (d1.isArray() || d2.isArray() || d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::mapBinaryOp(LC::mulData, d1, d2);
 	}
 
@@ -804,7 +825,7 @@ Datum LC::divData(Datum &d1, Datum &d2) {
 		return Datum(0);
 	}
 
-	if (d1.isArray() || d2.isArray()) {
+	if (d1.isArray() || d2.isArray() || d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::mapBinaryOp(LC::divData, d1, d2);
 	}
 
