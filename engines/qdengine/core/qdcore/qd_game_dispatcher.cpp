@@ -3242,13 +3242,10 @@ void qdGameDispatcher::request_CD(const qdFileOwner &file_owner) const {
 
 	mpegPlayer::instance().stop();
 
-	hide_game_window();
-
 	while (1) {
 		switch (MessageBox(NULL, cd_request_string(cd_id), game_title(), MB_OKCANCEL | MB_ICONEXCLAMATION)) {
 		case IDOK:
 			if (qdFileManager::instance().scan_drives(&file_owner)) {
-				restore_game_window();
 				qdFileManager::instance().set_last_CD_id(cd_id);
 				qdFileManager::instance().update_packages();
 				return;
@@ -3266,13 +3263,10 @@ void qdGameDispatcher::request_CD(int cd_id) const {
 
 	mpegPlayer::instance().stop();
 
-	hide_game_window();
-
 	while (1) {
 		switch (MessageBox(NULL, cd_request_string(cd_id), game_title(), MB_OKCANCEL | MB_ICONEXCLAMATION)) {
 		case IDOK:
 			if (qdFileManager::instance().scan_drives(cd_id)) {
-				restore_game_window();
 				qdFileManager::instance().update_packages();
 				return;
 			}
@@ -3293,33 +3287,6 @@ const char *qdGameDispatcher::cd_request_string(int cd_id) const {
 		str < " " <= cd_id + 1;
 
 	return str.c_str();
-}
-
-void qdGameDispatcher::hide_game_window() const {
-	HWND hwnd = (HWND)appGetHandle();
-	warning("STUB: qdGameDispatcher::hide_game_window()");
-#if 0
-	ShowWindow(hwnd, SW_HIDE);
-	UpdateWindow(hwnd);
-#endif
-}
-
-void qdGameDispatcher::restore_game_window() const {
-	HWND hwnd = (HWND)appGetHandle();
-
-	grDispatcher::instance() -> Fill(0);
-	grDispatcher::instance() -> Flush();
-	warning("STUB: qdGameDispatcher::restore_game_window()");
-#if 0
-	SetCursor(NULL);
-
-	if (grDispatcher::instance() -> is_in_fullscreen_mode())
-		ShowWindow(hwnd, SW_SHOWMAXIMIZED);
-	else
-		ShowWindow(hwnd, SW_SHOWNORMAL);
-
-	UpdateWindow(hwnd);
-#endif
 }
 
 void qdGameDispatcher::request_file_package(const qdFileOwner &file_owner) const {
