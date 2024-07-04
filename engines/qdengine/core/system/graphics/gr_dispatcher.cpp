@@ -1105,7 +1105,7 @@ bool grDispatcher::DrawParsedText(int x, int y, int sx, int sy, unsigned color, 
 				break;
 
 			std::string str;
-			str.assign(it->begin, it->end - it->begin);
+			str.assign(it->nl.begin, it->nl.end - it->nl.begin);
 			DrawText(cur_x, y, color, str.c_str(), 0, 0, font);
 
 			int ssx = TextWidth(str.c_str(), 0, font);

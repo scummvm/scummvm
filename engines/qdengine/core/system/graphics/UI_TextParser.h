@@ -39,14 +39,14 @@ struct OutNode {
 		struct {
 			const char *begin;
 			const char *end;
-		};
+		} nl;
 		struct {
 			int style;
-		};
+		} t;
 		int color;
 	};
-	OutNode() : type(NEW_LINE), width(0), begin(0), end(0) {}
-	OutNode(const char *b, const char *e, int wd) : type(TEXT), width(wd), begin(b), end(e) {}
+	OutNode() : type(NEW_LINE), width(0) { nl.begin = 0; nl.end = 0; }
+	OutNode(const char *b, const char *e, int wd) : type(TEXT), width(wd) { nl.begin = b; nl.end = e; }
 	OutNode(int clr) : type(COLOR), width(0), color(clr) {}
 };
 
