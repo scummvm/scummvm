@@ -163,17 +163,6 @@ int engineMain() {
 		qdTriggerProfiler::instance().set_work_file(qdGameConfig::get_config().profiler_file());
 #endif
 
-	if (qdGameConfig::get_config().driver_ID()) {
-		if (!qdGameConfig::get_config().fullscreen()) {
-			int sx, sy;
-			grPixelFormat pixel_format;
-			grD->get_current_mode(sx, sy, pixel_format);
-
-			qdGameConfig::get_config().set_pixel_format(pixel_format);
-		} else
-			qdGameConfig::get_config().set_pixel_format(grD->adjust_mode((grPixelFormat)qdGameConfig::get_config().pixel_format()));
-	}
-
 	SplashScreen sp;
 	if (qdGameConfig::get_config().is_splash_enabled()) {
 		sp.create(IDB_SPLASH);
@@ -434,7 +423,6 @@ void restore_graphics() {
 }
 
 void restore() {
-	int dummy = 0;
 }
 
 void toggle_fullscreen(bool force_fullscreen) {
