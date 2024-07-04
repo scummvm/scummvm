@@ -202,6 +202,22 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Adventures of Willy Beamish Demo from Joystick Magazine 1995 September disk
+	{
+		"beamish",
+		0,
+		{
+			{"volume.001", 0, "84bb888d47b535512847d49549d7c289", 947579},
+			{"volume.rmf", 0, "924d02d0a767c3a3b91f9d32aa247669", 2492},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE | ADGF_DEMO,
+		GUIO1(GUIO_NONE)
+	},
+
+
 	// Heart of China (PC) GOG
 	{
 		"china",
