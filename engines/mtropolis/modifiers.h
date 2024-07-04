@@ -194,6 +194,10 @@ public:
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 #endif
 
+protected:
+	void linkInternalReferences(ObjectLinkingScope *scope) override;
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 	const char *getDefaultName() const override;

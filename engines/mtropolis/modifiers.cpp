@@ -451,6 +451,18 @@ VThreadState SaveAndRestoreModifier::consumeMessage(Runtime *runtime, const Comm
 	return kVThreadError;
 }
 
+void SaveAndRestoreModifier::linkInternalReferences(ObjectLinkingScope *scope) {
+	Modifier::linkInternalReferences(scope);
+
+	_saveOrRestoreValue.linkInternalReferences(scope);
+}
+
+void SaveAndRestoreModifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	Modifier::visitInternalReferences(visitor);
+
+	_saveOrRestoreValue.visitInternalReferences(visitor);
+}
+
 Common::SharedPtr<Modifier> SaveAndRestoreModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new SaveAndRestoreModifier(*this));
 }
