@@ -377,7 +377,7 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 			break;
 		case QDSCR_LOCATION: {
 			for (xml::tag::subtag_iterator it1 = it -> subtags_begin(); it1 != it -> subtags_end(); ++it1) {
-				int sz = it -> num_subtags();
+				// int sz = it -> num_subtags();
 				if (it1 -> ID() == QDSCR_SCENE) {
 					scn = new qdGameScene;
 					scn -> load_script(&*it1);
@@ -425,24 +425,24 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 		}
 		break;
 		case QDSCR_INVENTORY: {
-			qdInventory *p = new qdInventory;
-			p -> load_script(&*it);
-			add_inventory(p);
+			qdInventory *p1 = new qdInventory;
+			p1 -> load_script(&*it);
+			add_inventory(p1);
 		}
 		break;
 		case QDSCR_MINIGAME: {
-			qdMiniGame *p = new qdMiniGame;
-			p -> load_script(&*it);
-			add_minigame(p);
+			qdMiniGame *p1 = new qdMiniGame;
+			p1 -> load_script(&*it);
+			add_minigame(p1);
 		}
 		break;
 		case QDSCR_INTERFACE:
 			interface_dispatcher_.load_script(&*it);
 			break;
 		case QDSCR_GAME_END: {
-			qdGameEnd *p = new qdGameEnd;
-			p -> load_script(&*it);
-			add_game_end(p);
+			qdGameEnd *p1 = new qdGameEnd;
+			p1 -> load_script(&*it);
+			add_game_end(p1);
 		}
 		break;
 		case QDSCR_TEXT_SET: {
@@ -1047,7 +1047,7 @@ bool qdGameDispatcher::reset_triggers() {
 }
 
 bool qdGameDispatcher::check_condition(qdCondition *cnd) {
-	switch (cnd -> type()) {
+	switch (cnd->type()) {
 	case qdCondition::CONDITION_TRUE:
 		return true;
 	case qdCondition::CONDITION_FALSE:
@@ -1903,6 +1903,8 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 		return anim1->inters_with_bound(anim2->bound(), anim2->R());
 	}
 	return false;
+	default:
+		break;
 	}
 	return false;
 }
