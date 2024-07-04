@@ -47,8 +47,6 @@ void settings_dialog_finit();
 
 qdlgOption *find_option(int ctl_id);
 
-void update_color_option();
-
 }; // namespace qdlg
 
 /* --------------------------- DEFINITION SECTION --------------------------- */
@@ -104,9 +102,6 @@ BOOL APIENTRY settings_dlgproc(HWND hdlg, UINT msg, WPARAM wParam, LPARAM lParam
 		case IDCANCEL:
 			EndDialog(hdlg, 0);
 			return 1;
-		case IDC_FULLSCREEN:
-			update_color_option();
-			return 1;
 		}
 		return 0;
 	}
@@ -161,39 +156,11 @@ void settings_dialog_init(HWND hdlg) {
 
 	for (options_container_t::const_iterator it = options_.begin(); it != options_.end(); ++it)
 		(*it)->load_value();
-
-	update_color_option();
 }
 
 void settings_dialog_finit() {
 	for (options_container_t::const_iterator it = options_.begin(); it != options_.end(); ++it)
 		(*it)->save_value();
-}
-
-void update_color_option() {
-	qdlgOption *sp = find_option(IDC_FULLSCREEN);
-	if (!sp) return;
-
-	qdlgOptionDroplist *dp = dynamic_cast<qdlgOptionDroplist *>(find_option(IDC_COLOR_DEPTH));
-	if (!dp) return;
-
-	for (int i = 0; i < 4; i++) {
-		if (qdrt::grD->is_mode_supported(grPixelFormat(i)))
-			dp->enable_item(i);
-		else
-			dp->disable_item(i);
-	}
-
-	dp->init_control();
-	if (!sp->value()) {
-		dp->enable_control(false);
-
-		int sx, sy;
-		grPixelFormat pixel_format;
-		if (qdrt::grD->get_current_mode(sx, sy, pixel_format))
-			dp->set_value(pixel_format);
-	} else
-		dp->enable_control(true);
 }
 
 qdlgOption *find_option(int ctl_id) {
