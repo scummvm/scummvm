@@ -22,8 +22,6 @@ MODULE_OBJS = \
 	plugin/mti_data.o \
 	plugin/obsidian.o \
 	plugin/obsidian_data.o \
-	plugin/spqr.o \
-	plugin/spqr_data.o \
 	plugin/standard.o \
 	plugin/standard_data.o \
 	render.o \
