@@ -3453,11 +3453,6 @@ void Structural::materializeDescendents(Runtime *runtime, ObjectLinkingScope *ou
 
 	for (Common::Array<Common::SharedPtr<Modifier> >::const_iterator it = _modifiers.begin(), itEnd = _modifiers.end(); it != itEnd; ++it) {
 		Modifier *modifier = it->get();
-
-		if (modifier->getStaticGUID() == 0x00040c8d) {
-			int n = 0;
-		}
-
 		modifier->materialize(runtime, modifierScope);
 	}
 
