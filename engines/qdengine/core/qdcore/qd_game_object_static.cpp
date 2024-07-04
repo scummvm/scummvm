@@ -53,18 +53,18 @@ bool qdGameObjectStatic::load_script(const xml::tag *p) {
 }
 
 bool qdGameObjectStatic::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	return true;
-}
+	for (int i = 0; i <= indent; i++) {
+		fh.writeString("\t");
+	}
 
-bool qdGameObjectStatic::save_script(XStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i++) fh < "\t";
-	fh < "<static_object name=\"" < qdscr_XML_string(name()) < "\">\r\n";
+	fh.writeString(Common::String::format("<static_object name=\"%s\">\r\n", qdscr_XML_string(name())));
 
 	save_script_body(fh, indent);
 
-	for (int i = 0; i <= indent; i++) fh < "\t";
-	fh < "</static_object>\r\n";
-
+	for (int i = 0; i <= indent; i++) {
+		fh.writeString("\t");
+	}
+	fh.writeString("</static_object>\r\n");
 	return true;
 }
 
@@ -92,15 +92,6 @@ bool qdGameObjectStatic::save_script_body(Common::SeekableWriteStream &fh, int i
 	if (sprite_.file()) {
 		fh.writeString(Common::String::format("<file>%s</file>\r\n", qdscr_XML_string(sprite_.file())));
 	}
-
-	return true;
-}
-
-bool qdGameObjectStatic::save_script_body(XStream &fh, int indent) const {
-	qdGameObject::save_script_body(fh, indent);
-
-	for (int i = 0; i <= indent; i++) fh < "\t";
-	if (sprite_.file()) fh < "<file>" < qdscr_XML_string(sprite_.file()) < "</file>\r\n";
 
 	return true;
 }
