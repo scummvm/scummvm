@@ -3197,6 +3197,20 @@ bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, c
 	} else if (attrib == "element") {
 		result.setObject(getSelfReference());
 		return true;
+	} else if (attrib == "elementindex") {
+		int32 elementIndex = 0;
+
+		for (const Common::SharedPtr<Structural> &parentChild : _parent->getChildren()) {
+			if (parentChild.get() == this)
+				break;
+
+			elementIndex++;
+		}
+
+		assert(static_cast<uint>(elementIndex) < _parent->getChildren().size());
+
+		result.setInt(elementIndex + 1);
+		return true;
 	}
 
 	// Traverse children (modifiers must be first)
@@ -3291,6 +3305,29 @@ MiniscriptInstructionOutcome Structural::writeRefAttribute(MiniscriptThread *thr
 
 	return RuntimeObject::writeRefAttribute(thread, result, attrib);
 }
+
+bool Structural::readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index) {
+	if (attrib == "nthelement") {
+		DynamicValue indexConverted;
+		if (!index.convertToType(DynamicValueTypes::kInteger, indexConverted)) {
+			thread->error("Invalid index for 'nthelement'");
+			return false;
+		}
+
+		int32 indexInt = indexConverted.getInt();
+
+		if (indexInt < 1 || static_cast<uint32>(indexInt) > _children.size()) {
+			thread->error("Index out of range for 'nthelement'");
+			return false;
+		}
+
+		result.setObject(_children[indexInt - 1]->getSelfReference());
+		return true;
+	}
+
+	return Structural::readAttributeIndexed(thread, result, attrib, index);
+}
+
 
 const Common::Array<Common::SharedPtr<Structural> > &Structural::getChildren() const {
 	return _children;
