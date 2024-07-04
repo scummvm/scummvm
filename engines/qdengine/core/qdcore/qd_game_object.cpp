@@ -186,7 +186,7 @@ bool qdGameObject::load_data(qdSaveStream &fh, int save_version) {
 	return true;
 }
 
-bool qdGameObject::save_data(Common::SeekableWriteStream &fh) {
+bool qdGameObject::save_data(Common::SeekableWriteStream &fh) const {
 	if (!qdNamedObject::save_data(fh)) {
 		return false;
 	}

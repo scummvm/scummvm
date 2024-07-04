@@ -335,7 +335,7 @@ bool qdGridZone::load_data(qdSaveStream &fh, int save_version) {
 	return true;
 }
 
-bool qdGridZone::save_data(Common::SeekableWriteStream &fh) {
+bool qdGridZone::save_data(Common::SeekableWriteStream &fh) const {
 	if (!qdNamedObject::save_data(fh)) {
 		return false;
 	}

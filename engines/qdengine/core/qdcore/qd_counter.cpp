@@ -299,7 +299,7 @@ bool qdCounter::load_data(qdSaveStream &fh, int save_version) {
 	return true;
 }
 
-bool qdCounter::save_data(Common::SeekableWriteStream &fh) {
+bool qdCounter::save_data(Common::SeekableWriteStream &fh) const {
 	fh.writeSint32LE(value_);
 	fh.writeSint32LE(elements_.size());
 

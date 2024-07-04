@@ -78,7 +78,7 @@ public:
 	bool load_data(Common::SeekableReadStream &fh, int saveVersion);
 	//! Запись данных в сэйв.
 	bool save_data(qdSaveStream &fh) const;
-	bool save_data(Common::SeekableWriteStream &fh);
+	bool save_data(Common::SeekableWriteStream &fh) const;
 
 	bool state() const {
 		return state_;
