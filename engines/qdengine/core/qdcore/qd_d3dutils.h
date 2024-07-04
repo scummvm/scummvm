@@ -37,16 +37,8 @@ namespace QDEngine {
 
 typedef float VALUE3D;
 typedef struct _MATRIX3D {
-	union {
-		struct {
-			VALUE3D        _11, _12, _13, _14;
-			VALUE3D        _21, _22, _23, _24;
-			VALUE3D        _31, _32, _33, _34;
-			VALUE3D        _41, _42, _43, _44;
+	VALUE3D m[4][4];
 
-		};
-		VALUE3D m[4][4];
-	};
 	_MATRIX3D() { }
 	_MATRIX3D(VALUE3D _m00, VALUE3D _m01, VALUE3D _m02, VALUE3D _m03,
 	          VALUE3D _m10, VALUE3D _m11, VALUE3D _m12, VALUE3D _m13,
