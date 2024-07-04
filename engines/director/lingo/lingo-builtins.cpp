@@ -1493,7 +1493,7 @@ void LB::b_xtra(int nargs) {
 	Datum d = g_lingo->pop();
 	if (d.type == INT) {
 		int i = d.asInt() -1; // Lingo index for XTRAs start at 1
-		if (i >=0 && i < g_lingo->_openXtras.size()) {
+		if (i >=0 && (uint)i < g_lingo->_openXtras.size()) {
 			Datum var = g_lingo->_globalvars[g_lingo->_openXtras[i]];
 			g_lingo->push(var);
 			return;
