@@ -1402,6 +1402,45 @@ bool SysInfoModifier::readAttribute(MiniscriptThread *thread, DynamicValue &resu
 	} else if (attrib == "currentram") {
 		result.setInt(256 * 1024 * 1024);
 		return true;
+	} else if (attrib == "architecture") {
+		ProjectPlatform platform = thread->getRuntime()->getProject()->getPlatform();
+
+		if (platform == kProjectPlatformWindows)
+			result.setString("80x86");
+		else if (platform == kProjectPlatformMacintosh)
+			result.setString("PowerPC"); // MC680x0 for 68k
+		else {
+			thread->error("Couldn't resolve architecture");
+			return false;
+		}
+
+		return true;
+	} else if (attrib == "sysversion") {
+		ProjectPlatform platform = thread->getRuntime()->getProject()->getPlatform();
+
+		if (platform == kProjectPlatformMacintosh)
+			result.setString("9.0.4");
+		else if (platform == kProjectPlatformWindows)
+			result.setString("4.0");	// Windows version?  MindGym checks for < 4
+		else {
+			thread->error("Couldn't resolve architecture");
+			return false;
+		}
+
+		return true;
+	} else if (attrib == "processor" || attrib == "nativecpu") {
+		ProjectPlatform platform = thread->getRuntime()->getProject()->getPlatform();
+
+		if (platform == kProjectPlatformMacintosh)
+			result.setString("604");		// PowerPC 604
+		else if (platform == kProjectPlatformWindows)
+			result.setString("Pentium");
+		else {
+			thread->error("Couldn't resolve architecture");
+			return false;
+		}
+
+		return true;
 	}
 
 	return false;
