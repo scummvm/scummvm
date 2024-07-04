@@ -29,6 +29,7 @@ namespace QDEngine {
 class qdFileOwner {
 public:
 	qdFileOwner() : files_size_(0), cd_info_(0) { }
+	virtual ~qdFileOwner() {}
 
 	unsigned files_size() const {
 		return files_size_;

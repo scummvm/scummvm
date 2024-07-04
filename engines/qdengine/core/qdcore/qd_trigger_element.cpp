@@ -628,6 +628,9 @@ void qdTriggerElement::start() {
 			break;
 		case qdConditionalObject::TRIGGER_START_WAIT:
 			set_status(TRIGGER_EL_WAITING);
+			break;
+		default:
+			break;
 		}
 	} else
 		set_status(TRIGGER_EL_WAITING);
@@ -668,6 +671,8 @@ bool qdTriggerElement::conditions_quant(int link_type) {
 			case qdGameObjectAnimated::STATE_DONE:
 				set_status(TRIGGER_EL_WORKING);
 				break;
+			default:
+				break;
 			}
 		} else
 			set_status(TRIGGER_EL_WORKING);
@@ -698,6 +703,8 @@ bool qdTriggerElement::conditions_quant(int link_type) {
 				obj -> handle_state_end();
 				set_status(TRIGGER_EL_DONE);
 				break;
+			default:
+				break;
 			}
 		} else
 			set_status(TRIGGER_EL_DONE);
@@ -721,6 +728,8 @@ bool qdTriggerElement::conditions_quant(int link_type) {
 		break;
 //		case TRIGGER_EL_DONE:
 //			break;
+		default:
+			break;
 	}
 
 	return false;

@@ -1062,6 +1062,8 @@ bool grDispatcher::DrawAlignedText(int x, int y, int sx, int sy, unsigned color,
 			case GR_ALIGN_RIGHT:
 				delta_x = sx - TextWidth(str + i + 1, hspace, font, true);
 				break;
+			default:
+				break;
 			}
 		}
 	}

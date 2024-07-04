@@ -801,8 +801,8 @@ public:
 	const Vect2i &center_offset(float direction_angle, OffsetType offset_type = OFFSET_WALK) const;
 	void set_center_offset(int direction_index, const Vect2i &offs, OffsetType offset_type = OFFSET_WALK);
 
-	const float walk_sound_frequency(int direction_index) const;
-	const float walk_sound_frequency(float direction_angle) const;
+	float walk_sound_frequency(int direction_index) const;
+	float walk_sound_frequency(float direction_angle) const;
 	void set_walk_sound_frequency(int direction_index, float freq);
 
 	//! Установка частоты звука.

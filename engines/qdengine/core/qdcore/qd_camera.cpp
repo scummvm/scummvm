@@ -1193,6 +1193,8 @@ bool qdCamera::quant(float dt) {
 			current_mode_switch_ = false;
 		}
 		break;
+	default:
+		break;
 	}
 
 	if (p)
@@ -1401,7 +1403,7 @@ bool qdCamera::clip_grid_line(Vect2s &v0, Vect2s &v1) const {
 					x = 0;
 				}
 
-				if (outcodeOut = outcode0) {
+				if (outcodeOut == outcode0) {
 					v0.x = x;
 					v0.y = y;
 
