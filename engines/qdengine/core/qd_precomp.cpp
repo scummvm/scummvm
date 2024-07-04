@@ -206,32 +206,6 @@ HRESULT CoCreateInstance(REFCLSID rclsid, void *pUnkOuter, DWORD dwClsContext, R
 	return 0;
 }
 
-int ov_open(void *datasource, void *vf, const char *initial, long ibytes) {
-	warning("STUB: ov_open_callbacks()");
-	return 0;
-}
-
-int ov_read(void *vf, char *buffer, int length, int bigendianp, int word, int sgned, int *bitstream) {
-	warning("STUB: ov_read()");
-	return 0;
-}
-
-int ov_time_total(void *vf, int i) {
-	warning("STUB: ov_time_total()");
-	return 0;
-}
-
-
-int ov_clear(void *vf) {
-	warning("STUB: ov_clear()");
-	return 0;
-}
-
-int ov_time_tell(void *vf) {
-	warning("STUB: ov_time_total()");
-	return 0;
-}
-
 DWORD WaitForSingleObject(HANDLE hHandle, DWORD dwMilliseconds) {
 	warning("STUB: WaitForSingleObject()");
 	return 0;
@@ -246,55 +220,6 @@ bool SetEvent(HANDLE hEvent) {
 bool SetThreadPriority(HANDLE hThread, int nPriority) {
 	warning("STUB: SetThreadPriority()");
 	return false;
-}
-
-HANDLE CreateEvent(void *lpEventAttributes, bool bManualReset, bool bInitialState, const char *lpName) {
-	warning("STUB: CreateEvent()");
-	return 0;
-}
-
-bool ResetEvent(HANDLE hEvent) {
-	warning("STUB: ResetEvent()");
-	return false;
-}
-
-void initclock() {
-	warning("STUB: initClock()");
-	return;
-}
-
-bool WINAPI GetNumberOfConsoleInputEvents(HANDLE hConsoleInput, unsigned long *lpcNumberOfEvents) {
-	warning("STUB: GetNumberOfConsoleInputEvents()");
-	return false;
-}
-
-bool WINAPI ReadConsoleInput(HANDLE hConsoleInput, void *lpBuffer, unsigned long nLength, unsigned long *lpNumberOfEventsRead) {
-	warning("STUB: ReadConsoleInput()");
-	return false;
-}
-
-int GetAsyncKeyState(int vKey) {
-	printf("STUB: GetAsyncKeyState()\n");
-	return 0;
-}
-
-int GetKeyState(int nVirtKey) {
-	warning("STUB: GetKeyState()");
-	return 0;
-}
-DWORD timeGetTime() {
-	warning("STUB: timeGetTime()");
-	return 0;
-}
-
-int xtInitApplication() {
-	warning("STUB: xtInitApplication()");
-	return 0;
-}
-
-void xtDoneApplication() {
-	warning("STUB: xtDoneApplication()");
-	return;
 }
 
 } // namespace QDEngine
