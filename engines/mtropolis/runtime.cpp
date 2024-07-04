@@ -1881,15 +1881,9 @@ DynamicValue DynamicValueSource::produceValue(const DynamicValue &incomingData) 
 	case DynamicValueSourceTypes::kIncomingData:
 		return incomingData;
 	case DynamicValueSourceTypes::kVariableReference: {
-			Common::SharedPtr<Modifier> resolution = _valueUnion._varReference.resolution.lock();
-			if (resolution && resolution->isVariable()) {
-				DynamicValue result;
-				static_cast<VariableModifier *>(resolution.get())->varGetValue(result);
-				return result;
-			} else {
-				warning("Dynamic value source wasn't a variable");
-				return DynamicValue();
-			}
+			DynamicValue result;
+			result.setObject(_valueUnion._varReference.resolution);
+			return result;
 		} break;
 	default:
 		warning("Dynamic value couldn't be resolved");
