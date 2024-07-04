@@ -31,18 +31,6 @@ namespace Data {
 namespace SPQR {
 
 // Known SPQR - The Empire's Darkest Hour custom modifiers:
-// fade - ???
-
-struct FadeModifier : public PlugInModifierData {
-	PlugInTypeTaggedValue unknown1Event; // Probably "Enable When"
-	PlugInTypeTaggedValue unknown2Event; // Probably "Disable When"
-	PlugInTypeTaggedValue unknown3Int;   // Int
-	PlugInTypeTaggedValue unknown4Int;   // Int
-	PlugInTypeTaggedValue unknown5Int;   // Int
-
-protected:
-	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
-};
 
 } // End of namespace SPQR
 

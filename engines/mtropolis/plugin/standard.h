@@ -348,6 +348,25 @@ private:
 	const char *getDefaultName() const override;
 };
 
+class FadeModifier : public Modifier {
+public:
+	FadeModifier();
+	~FadeModifier();
+
+	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::FadeModifier &data);
+
+	void disable(Runtime *runtime) override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Fade Modifier"; }
+#endif
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+};
+
+
 class StandardPlugIn : public MTropolis::PlugIn {
 public:
 	StandardPlugIn();
@@ -366,6 +385,7 @@ private:
 	PlugInModifierFactory<ListVariableModifier, Data::Standard::ListVariableModifier> _listVarModifierFactory;
 	PlugInModifierFactory<SysInfoModifier, Data::Standard::SysInfoModifier> _sysInfoModifierFactory;
 	PlugInModifierFactory<PanningModifier, Data::Standard::PanningModifier> _panningModifierFactory;
+	PlugInModifierFactory<FadeModifier, Data::Standard::FadeModifier> _fadeModifierFactory;
 
 	StandardPlugInHacks _hacks;
 };

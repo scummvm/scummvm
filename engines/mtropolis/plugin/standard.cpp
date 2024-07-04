@@ -1451,6 +1451,27 @@ const char *PanningModifier::getDefaultName() const {
 	return "Panning Modifier"; // ???
 }
 
+FadeModifier::FadeModifier() {
+}
+
+FadeModifier::~FadeModifier() {
+}
+
+bool FadeModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::FadeModifier &data) {
+	return true;
+}
+
+void FadeModifier::disable(Runtime *runtime) {
+}
+
+Common::SharedPtr<Modifier> FadeModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new FadeModifier(*this));
+}
+
+const char *FadeModifier::getDefaultName() const {
+	return "Fade Modifier"; // ???
+}
+
 StandardPlugInHacks::StandardPlugInHacks() : allowGarbledListModData(false) {
 }
 
@@ -1461,7 +1482,8 @@ StandardPlugIn::StandardPlugIn()
 	, _objRefVarModifierFactory(this)
 	, _listVarModifierFactory(this)
 	, _sysInfoModifierFactory(this)
-	, _panningModifierFactory(this) {
+	, _panningModifierFactory(this)
+	, _fadeModifierFactory(this) {
 }
 
 StandardPlugIn::~StandardPlugIn() {
@@ -1476,6 +1498,7 @@ void StandardPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) cons
 	registrar->registerPlugInModifier("SysInfo", &_sysInfoModifierFactory);
 
 	registrar->registerPlugInModifier("panning", &_panningModifierFactory);
+	registrar->registerPlugInModifier("fade", &_fadeModifierFactory);
 }
 
 const StandardPlugInHacks &StandardPlugIn::getHacks() const {

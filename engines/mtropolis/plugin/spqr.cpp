@@ -26,34 +26,10 @@ namespace MTropolis {
 
 namespace SPQR {
 
-FadeModifier::FadeModifier() {
-}
-
-FadeModifier::~FadeModifier() {
-}
-
-bool FadeModifier::load(const PlugInModifierLoaderContext &context, const Data::SPQR::FadeModifier &data) {
-	return true;
-}
-
-
-void FadeModifier::disable(Runtime *runtime) {
-}
-
-Common::SharedPtr<Modifier> FadeModifier::shallowClone() const {
-	return Common::SharedPtr<Modifier>(new FadeModifier(*this));
-}
-
-const char *FadeModifier::getDefaultName() const {
-	return "Fade Modifier"; // ???
-}
-
-SPQRPlugIn::SPQRPlugIn()
-	: _fadeModifierFactory(this) {
+SPQRPlugIn::SPQRPlugIn() {
 }
 
 void SPQRPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) const {
-	registrar->registerPlugInModifier("fade", &_fadeModifierFactory);
 }
 
 } // namespace SPQR

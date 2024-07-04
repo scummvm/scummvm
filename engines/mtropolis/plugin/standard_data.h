@@ -141,6 +141,17 @@ protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
 };
 
+struct FadeModifier : public PlugInModifierData {
+	PlugInTypeTaggedValue unknown1Event; // Probably "Enable When"
+	PlugInTypeTaggedValue unknown2Event; // Probably "Disable When"
+	PlugInTypeTaggedValue unknown3Int;   // Int
+	PlugInTypeTaggedValue unknown4Int;   // Int
+	PlugInTypeTaggedValue unknown5Int;   // Int
+
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
+
 } // End of namespace Standard
 
 } // End of namespace Data

@@ -188,6 +188,16 @@ DataReadErrorCode SysInfoModifier::load(PlugIn &plugIn, const PlugInModifier &pr
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode FadeModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 1)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!unknown1Event.load(reader) || !unknown2Event.load(reader) || !unknown3Int.load(reader) || !unknown4Int.load(reader) || !unknown5Int.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 } // End of namespace Standard
 
 } // End of namespace Data

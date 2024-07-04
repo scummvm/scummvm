@@ -33,24 +33,6 @@ namespace SPQR {
 
 class SPQRPlugIn;
 
-class FadeModifier : public Modifier {
-public:
-	FadeModifier();
-	~FadeModifier();
-
-	bool load(const PlugInModifierLoaderContext &context, const Data::SPQR::FadeModifier &data);
-
-	void disable(Runtime *runtime) override;
-
-#ifdef MTROPOLIS_DEBUG_ENABLE
-	const char *debugGetTypeName() const override { return "Fade Modifier"; }
-#endif
-
-private:
-	Common::SharedPtr<Modifier> shallowClone() const override;
-	const char *getDefaultName() const override;
-};
-
 class SPQRPlugIn : public MTropolis::PlugIn {
 public:
 	SPQRPlugIn();
@@ -58,7 +40,6 @@ public:
 	void registerModifiers(IPlugInModifierRegistrar *registrar) const override;
 
 private:
-	PlugInModifierFactory<FadeModifier, Data::SPQR::FadeModifier> _fadeModifierFactory;
 };
 
 } // End of namespace SPQR
