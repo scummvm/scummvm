@@ -505,23 +505,9 @@ bool FlushFileBuffers(HANDLE hFile);
 HRESULT CoInitialize(void *pvReserved);
 void CoUninitialize();
 HRESULT CoCreateInstance(REFCLSID rclsid, void *pUnkOuter, DWORD dwClsContext, REFIID riid, void **ppv);
-int ov_open(void *datasource, void *vf, const char *initial, long ibytes);
-int ov_read(void *vf, char *buffer, int length, int bigendianp, int word, int sgned, int *bitstream);
-int ov_time_total(void *vf, int i);
-int ov_clear(void *vf);
-int ov_time_tell(void *vf);
 DWORD WaitForSingleObject(HANDLE hHandle, DWORD dwMilliseconds);
 bool SetEvent(HANDLE hEvent);
 bool SetThreadPriority(HANDLE hThread, int nPriority);
-HANDLE CreateEvent(void *lpEventAttributes, bool bManualReset, bool bInitialState, const char *lpName);
-bool ResetEvent(HANDLE hEvent);
-void initclock();
-bool WINAPI GetNumberOfConsoleInputEvents(HANDLE hConsoleInput, unsigned long *lpcNumberOfEvents);
-bool WINAPI ReadConsoleInput(HANDLE hConsoleInput, void *lpBuffer, unsigned long nLength, unsigned long *lpNumberOfEventsRead);
-int GetAsyncKeyState(int vKey);
-int GetKeyState(int nVirtKey);
-DWORD timeGetTime();
-
 
 int engineMain();
 
