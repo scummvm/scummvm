@@ -281,32 +281,32 @@ bool qdAnimationSet::save_script(Common::SeekableWriteStream &fh, int indent) co
 
 bool qdAnimationSet::load_animations(const qdNamedObject *res_owner) {
 	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-		qdAnimationInfoVector::iterator it;
-		FOR_EACH(animations_, it) {
-			if (qdAnimation * p = it->animation()) {
+		for (auto &it : animations_) {
+			if (qdAnimation *p = it.animation()) {
 				dp->load_resource(p, res_owner);
 			}
 		}
 
-		FOR_EACH(static_animations_, it) {
-			if (qdAnimation * p = it->animation()) {
+		for (auto &it : static_animations_) {
+			if (qdAnimation *p = it.animation()) {
 				dp->load_resource(p, res_owner);
 			}
 		}
 
-		FOR_EACH(start_animations_, it) {
-			if (qdAnimation * p = it->animation()) {
+
+		for (auto &it : start_animations_) {
+			if (qdAnimation *p = it.animation()) {
 				dp->load_resource(p, res_owner);
 			}
 		}
 
-		FOR_EACH(stop_animations_, it) {
-			if (qdAnimation * p = it->animation()) {
+		for (auto &it : stop_animations_) {
+			if (qdAnimation *p = it.animation()) {
 				dp->load_resource(p, res_owner);
 			}
 		}
 
-		if (qdAnimation * p = turn_animation_.animation())
+		if (qdAnimation *p = turn_animation_.animation())
 			dp->load_resource(p, res_owner);
 
 		return true;
@@ -317,32 +317,31 @@ bool qdAnimationSet::load_animations(const qdNamedObject *res_owner) {
 
 bool qdAnimationSet::free_animations(const qdNamedObject *res_owner) {
 	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-		qdAnimationInfoVector::iterator it;
-		FOR_EACH(animations_, it) {
-			if (qdAnimation * p = it->animation()) {
+		for (auto &it : animations_) {
+			if (qdAnimation *p = it.animation()) {
 				dp->release_resource(p, res_owner);
 			}
 		}
 
-		FOR_EACH(static_animations_, it) {
-			if (qdAnimation * p = it->animation()) {
+		for (auto &it : static_animations_) {
+			if (qdAnimation *p = it.animation()) {
 				dp->release_resource(p, res_owner);
 			}
 		}
 
-		FOR_EACH(start_animations_, it) {
-			if (qdAnimation * p = it->animation()) {
+		for (auto &it : start_animations_) {
+			if (qdAnimation *p = it.animation()) {
 				dp->release_resource(p, res_owner);
 			}
 		}
 
-		FOR_EACH(stop_animations_, it) {
-			if (qdAnimation * p = it->animation()) {
+		for (auto &it : stop_animations_) {
+			if (qdAnimation *p = it.animation()) {
 				dp->release_resource(p, res_owner);
 			}
 		}
 
-		if (qdAnimation * p = turn_animation_.animation())
+		if (qdAnimation *p = turn_animation_.animation())
 			dp->release_resource(p, res_owner);
 
 		return true;
@@ -354,29 +353,28 @@ bool qdAnimationSet::free_animations(const qdNamedObject *res_owner) {
 bool qdAnimationSet::scale_animations(float coeff_x, float coeff_y) {
 	bool res = true;
 
-	qdAnimationInfoVector::iterator it;
-	FOR_EACH(animations_, it) {
-		qdAnimation *p = it->animation();
+	for (auto &it : animations_) {
+		qdAnimation *p = it.animation();
 		if (p)
 			if (!p->scale(coeff_x, coeff_y)) res = false;
 	}
-	FOR_EACH(static_animations_, it) {
-		qdAnimation *p = it->animation();
+	for (auto &it : static_animations_) {
+		qdAnimation *p = it.animation();
 		if (p)
 			if (!p->scale(coeff_x, coeff_y)) res = false;
 	}
-	FOR_EACH(start_animations_, it) {
-		qdAnimation *p = it->animation();
+	for (auto &it : start_animations_) {
+		qdAnimation *p = it.animation();
 		if (p)
 			if (!p->scale(coeff_x, coeff_y)) res = false;
 	}
-	FOR_EACH(stop_animations_, it) {
-		qdAnimation *p = it->animation();
+	for (auto &it : stop_animations_) {
+		qdAnimation *p = it.animation();
 		if (p)
 			if (!p->scale(coeff_x, coeff_y)) res = false;
 	}
 
-	if (qdAnimation * p = turn_animation_.animation())
+	if (qdAnimation *p = turn_animation_.animation())
 		if (!p->scale(coeff_x, coeff_y)) res = false;
 
 	return res;
@@ -384,24 +382,23 @@ bool qdAnimationSet::scale_animations(float coeff_x, float coeff_y) {
 
 bool qdAnimationSet::register_resources(const qdNamedObject *res_owner) {
 	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-		qdAnimationInfoVector::iterator it;
-		FOR_EACH(animations_, it) {
-			if (qdAnimation * p = it->animation())
+		for (auto &it : animations_) {
+			if (qdAnimation *p = it.animation())
 				dp->register_resource(p, res_owner);
 		}
-		FOR_EACH(static_animations_, it) {
-			if (qdAnimation * p = it->animation())
+		for (auto &it : static_animations_) {
+			if (qdAnimation *p = it.animation())
 				dp->register_resource(p, res_owner);
 		}
-		FOR_EACH(start_animations_, it) {
-			if (qdAnimation * p = it->animation())
+		for (auto &it : start_animations_) {
+			if (qdAnimation *p = it.animation())
 				dp->register_resource(p, res_owner);
 		}
-		FOR_EACH(stop_animations_, it) {
-			if (qdAnimation * p = it->animation())
+		for (auto &it : stop_animations_) {
+			if (qdAnimation *p = it.animation())
 				dp->register_resource(p, res_owner);
 		}
-		if (qdAnimation * p = turn_animation_.animation())
+		if (qdAnimation *p = turn_animation_.animation())
 			dp->register_resource(p, res_owner);
 		return true;
 	}
@@ -411,24 +408,23 @@ bool qdAnimationSet::register_resources(const qdNamedObject *res_owner) {
 
 bool qdAnimationSet::unregister_resources(const qdNamedObject *res_owner) {
 	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-		qdAnimationInfoVector::iterator it;
-		FOR_EACH(animations_, it) {
-			if (qdAnimation * p = it->animation())
+		for (auto &it : animations_) {
+			if (qdAnimation *p = it.animation())
 				dp->unregister_resource(p, res_owner);
 		}
-		FOR_EACH(static_animations_, it) {
-			if (qdAnimation * p = it->animation())
+		for (auto &it : static_animations_) {
+			if (qdAnimation *p = it.animation())
 				dp->unregister_resource(p, res_owner);
 		}
-		FOR_EACH(start_animations_, it) {
-			if (qdAnimation * p = it->animation())
+		for (auto &it : start_animations_) {
+			if (qdAnimation *p = it.animation())
 				dp->unregister_resource(p, res_owner);
 		}
-		FOR_EACH(stop_animations_, it) {
-			if (qdAnimation * p = it->animation())
+		for (auto &it : stop_animations_) {
+			if (qdAnimation *p = it.animation())
 				dp->unregister_resource(p, res_owner);
 		}
-		if (qdAnimation * p = turn_animation_.animation())
+		if (qdAnimation *p = turn_animation_.animation())
 			dp->unregister_resource(p, res_owner);
 		return true;
 	}

@@ -479,8 +479,8 @@ int qdGameScene::load_resources() {
 	int size = qdGameDispatcherBase::load_resources();
 
 	qdGameObjectList::const_iterator io;
-	FOR_EACH(object_list(), io) {
-		(*io)->load_resources();
+	for (auto &io : object_list()) {
+		io->load_resources();
 		show_loading_progress(1);
 		size ++;
 	}
@@ -500,8 +500,9 @@ void qdGameScene::free_resources() {
 	}
 
 	qdGameObjectList::const_iterator io;
-	FOR_EACH(object_list(), io)
-	(*io)->free_resources();
+	for (auto &io : object_list()) {
+		io->free_resources();
+	}
 
 	qdGameDispatcherBase::free_resources();
 }
@@ -617,21 +618,19 @@ bool qdGameScene::merge_global_objects(qdGameObject *obj) {
 	if (!gd) return false;
 
 	if (!obj) {
-		qdGameObjectList::const_iterator it;
-		FOR_EACH(object_list(), it) {
-			if ((*it)->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ) {
-				qdGameObject *p = gd->get_global_object((*it)->name());
+		for (auto &it : object_list()) {
+			if (it->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ) {
+				qdGameObject *p = gd->get_global_object(it->name());
 				if (p && p->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ) {
-					static_cast<qdGameObjectMoving *>(*it)->merge(static_cast<qdGameObjectMoving *>(p));
+					static_cast<qdGameObjectMoving *>(it)->merge(static_cast<qdGameObjectMoving *>(p));
 				}
 			}
 		}
 	} else {
-		qdGameObjectList::const_iterator it;
-		FOR_EACH(object_list(), it) {
-			if ((*it)->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ) {
-				if ((*it)->name() && obj->name() && !strcmp((*it)->name(), obj->name())) {
-					static_cast<qdGameObjectMoving *>(*it)->merge(static_cast<qdGameObjectMoving *>(obj));
+		for (auto &it : object_list()) {
+			if (it->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ) {
+				if (it->name() && obj->name() && !strcmp(it->name(), obj->name())) {
+					static_cast<qdGameObjectMoving *>(it)->merge(static_cast<qdGameObjectMoving *>(obj));
 				}
 			}
 		}
@@ -645,21 +644,19 @@ bool qdGameScene::split_global_objects(qdGameObject *obj) {
 	if (!gd) return false;
 
 	if (!obj) {
-		qdGameObjectList::const_iterator it;
-		FOR_EACH(object_list(), it) {
-			if ((*it)->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ) {
-				qdGameObject *p = gd->get_global_object((*it)->name());
+		for (auto &it : object_list()) {
+			if (it->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ) {
+				qdGameObject *p = gd->get_global_object(it->name());
 				if (p && p->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ) {
-					static_cast<qdGameObjectMoving *>(*it)->split(static_cast<qdGameObjectMoving *>(p));
+					static_cast<qdGameObjectMoving *>(it)->split(static_cast<qdGameObjectMoving *>(p));
 				}
 			}
 		}
 	} else {
-		qdGameObjectList::const_iterator it;
-		FOR_EACH(object_list(), it) {
-			if ((*it)->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ) {
-				if ((*it)->name() && obj->name() && !strcmp((*it)->name(), obj->name())) {
-					static_cast<qdGameObjectMoving *>(*it)->split(static_cast<qdGameObjectMoving *>(obj));
+		for (auto &it : object_list()) {
+			if (it->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ) {
+				if (it->name() && obj->name() && !strcmp(it->name(), obj->name())) {
+					static_cast<qdGameObjectMoving *>(it)->split(static_cast<qdGameObjectMoving *>(obj));
 				}
 			}
 		}
@@ -677,12 +674,12 @@ struct qdObjectOrdering {
 bool qdGameScene::init_visible_objects_list() {
 	visible_objects_.clear();
 
-	qdGameObjectList::const_iterator it;
-	FOR_EACH(object_list(), it) {
-		qdGameObject *p = *it;
-		(*it)->update_screen_pos();
-		if ((*it)->is_visible() && !(*it)->check_flag(QD_OBJ_SCREEN_COORDS_FLAG))
-			visible_objects_.push_back(*it);
+	for (auto &it : object_list()) {
+		qdGameObject *p = it;
+		it->update_screen_pos();
+		if (it->is_visible() && !it->check_flag(QD_OBJ_SCREEN_COORDS_FLAG)) {
+			visible_objects_.push_back(it);
+		}
 	}
 
 	std::sort(visible_objects_.begin(), visible_objects_.end(), qdObjectOrdering());

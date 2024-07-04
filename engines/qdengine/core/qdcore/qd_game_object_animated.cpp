@@ -97,12 +97,11 @@ qdGameObjectAnimated::qdGameObjectAnimated(const qdGameObjectAnimated &obj) : qd
 	lastShadowColor_ = 0;
 	lastShadowAlpha_ = QD_NO_SHADOW_ALPHA;
 
-	qdGameObjectStateVector::const_iterator it;
-	FOR_EACH(obj.states, it) {
-		if (!(*it)->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_GLOBAL_OWNER))
-			add_state((*it)->clone());
+	for (auto &it : obj.states) {
+		if (!it->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_GLOBAL_OWNER))
+			add_state(it->clone());
 		else
-			add_state(*it);
+			add_state(it);
 	}
 }
 
@@ -149,25 +148,24 @@ qdGameObjectAnimated &qdGameObjectAnimated::operator = (const qdGameObjectAnimat
 
 	clear_states();
 
-	qdGameObjectStateVector::const_iterator it;
-	FOR_EACH(obj.states, it) {
-		if (!(*it)->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_GLOBAL_OWNER))
-			add_state((*it)->clone());
-		else
-			add_state(*it);
+	for (auto &it : obj.states) {
+		if (!(it->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_GLOBAL_OWNER))) {
+			add_state(it->clone());
+		} else {
+			add_state(it);
+		}
 	}
 
 	return *this;
 }
 
 void qdGameObjectAnimated::clear_states() {
-	qdGameObjectStateVector::iterator it;
-	FOR_EACH(states, it) {
-		(*it)->dec_reference_count();
+	for (auto &it : states) {
+		it->dec_reference_count();
 
-		if (!(*it)->reference_count()) {
-			delete (*it);
-			*it = NULL;
+		if (!it->reference_count()) {
+			delete it;
+			it = nullptr;
 		}
 	}
 }
@@ -317,7 +315,7 @@ void qdGameObjectAnimated::quant(float dt) {
 
 	// Если текущ. позиция не соответствует той, что была в начале кванта, то
 	// объект изменился
-	if (R().x != beg_r.x || R().y != beg_r.y || R().z != beg_r.z )
+	if (R().x != beg_r.x || R().y != beg_r.y || R().z != beg_r.z)
 		last_chg_time_ = qdGameDispatcher::get_dispatcher()->time();
 
 // debugC(3, kDebugLog, "%s %d %d %d %d", name(), animation_.cur_time(), R().x, R().y, R().z);
@@ -912,21 +910,20 @@ bool qdGameObjectAnimated::hit(int x, int y) const {
 }
 
 qdGameObjectState *qdGameObjectAnimated::get_state(const char *state_name) {
-	qdGameObjectStateVector::iterator it;
-	FOR_EACH(states, it) {
-		qdGameObjectState *p = *it;
-		if ((*it)->name() && !strcmp((*it)->name(), state_name))
-			return *it;
+	for (auto &it : states) {
+		qdGameObjectState *p = it;
+		if (it-> name() && !strcmp(it->name(), state_name)) {
+			return it;
+		}
 	}
 
 	return NULL;
 }
 
 const qdGameObjectState *qdGameObjectAnimated::get_state(const char *state_name) const {
-	qdGameObjectStateVector::const_iterator it;
-	FOR_EACH(states, it) {
-		const qdGameObjectState *p = *it;
-		if ((*it)->name() && !strcmp((*it)->name(), state_name))
+	for (auto &it : states) {
+		const qdGameObjectState *p = it;
+		if (it->name() && !strcmp(it->name(), state_name))
 			return p;
 	}
 
@@ -1098,10 +1095,9 @@ qdGameObjectState *qdGameObjectAnimated::get_inventory_state() {
 	if (last_inventory_state_) return last_inventory_state_;
 
 	if (states.size()) {
-		qdGameObjectStateVector::iterator it;
-		FOR_EACH(states, it) {
-			if ((*it)->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY))
-				return *it;
+		for (auto &it : states) {
+			if (it->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY))
+				return it;
 		}
 	}
 #endif
@@ -1657,10 +1653,9 @@ void qdGameObjectAnimated::set_states_owner() {
 qdGameObjectState *qdGameObjectAnimated::get_mouse_state() {
 #ifndef _QUEST_EDITOR
 	if (states.size()) {
-		qdGameObjectStateVector::iterator it;
-		FOR_EACH(states, it) {
-			if ((*it)->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_STATE))
-				return *it;
+		for (auto &it : states) {
+			if (it->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_STATE))
+				return it;
 		}
 	}
 #endif
@@ -1670,10 +1665,9 @@ qdGameObjectState *qdGameObjectAnimated::get_mouse_state() {
 qdGameObjectState *qdGameObjectAnimated::get_mouse_hover_state() {
 #ifndef _QUEST_EDITOR
 	if (states.size()) {
-		qdGameObjectStateVector::iterator it;
-		FOR_EACH(states, it) {
-			if ((*it)->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_HOVER_STATE))
-				return *it;
+		for (auto &it : states) {
+			if (it->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_HOVER_STATE))
+				return it;
 		}
 	}
 #endif

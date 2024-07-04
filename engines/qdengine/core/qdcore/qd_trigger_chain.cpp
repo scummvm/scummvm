@@ -82,9 +82,9 @@ qdTriggerChain::qdTriggerChain()
 
 qdTriggerChain::~qdTriggerChain() {
 #ifndef _QUEST_EDITOR
-	qdTriggerElementList::iterator it;
-	FOR_EACH(elements_, it)
-	delete *it;
+	for (auto &it : elements_) {
+		delete it;
+	}
 #else
 	qdTriggerElementList::iterator it;
 	FOR_EACH(elements_, it) {
@@ -99,9 +99,9 @@ qdTriggerChain::~qdTriggerChain() {
 
 bool qdTriggerChain::reindex_elements() {
 	int id = 0;
-	qdTriggerElementList::iterator it;
-	FOR_EACH(elements_, it)
-	(*it)->set_id(id++);
+	for (auto &it : elements_) {
+		it->set_id(id++);
+	}
 
 	return true;
 }
@@ -171,22 +171,20 @@ qdTriggerElementPtr qdTriggerChain::add_element(qdNamedObject *p) {
 }
 
 bool qdTriggerChain::remove_element(qdTriggerElementPtr p, bool free_mem, bool relink_elements) {
-	qdTriggerElementList::iterator it;
-	FOR_EACH(elements_, it) {
+	for (auto it = elements_.begin(); it != elements_.end(); it++) {
 		if (*it == p) {
 			if (relink_elements) {
-				qdTriggerLinkList::iterator it_c;
-				FOR_EACH((*it)->children(), it_c)
-				it_c->element()->remove_parent(*it);
+				for (auto &it_c : (*it)->children()) {
+					it_c.element()->remove_parent(*it);
+				}
 
-				qdTriggerLinkList::iterator it_p;
-				FOR_EACH((*it)->parents(), it_p)
-				it_p->element()->remove_child(*it);
-
-				FOR_EACH((*it)->children(), it_c) {
-					FOR_EACH((*it)->parents(), it_p) {
-						it_c->element()->add_parent(it_p->element());
-						it_p->element()->add_child(it_c->element());
+				for (auto &it_p : (*it)->parents()) {
+					it_p.element()->remove_child(*it);
+				}
+				for (auto &it_c : (*it)->children()) {
+					for (auto &it_p : (*it)->parents()) {
+						it_c.element()->add_parent(it_p.element());
+						it_p.element()->add_child(it_c.element());
 					}
 				}
 			}
@@ -217,28 +215,29 @@ bool qdTriggerChain::can_add_element(const qdNamedObject *p) const {
 bool qdTriggerChain::init_elements() {
 	qdTriggerElementList::iterator it;
 
-	FOR_EACH(elements_, it)
-	(*it)->clear_object_trigger_references();
+	for (auto &it : elements_) {
+		it->clear_object_trigger_references();
+	}
 
-	FOR_EACH(elements_, it)
-	(*it)->add_object_trigger_reference();
+	for (auto &it : elements_) {
+		it->add_object_trigger_reference();
+	}
+
 
 	return true;
 }
 
 bool qdTriggerChain::is_element_in_list(qdNamedObject const *p) const {
-	qdTriggerElementList::const_iterator it;
-	FOR_EACH(elements_, it) {
-		if ((*it)->object() == p)
+	for (auto &it : elements_) {
+		if (it->object() == p)
 			return true;
 	}
 	return false;
 }
 
 bool qdTriggerChain::is_element_in_list(qdTriggerElementConstPtr p) const {
-	qdTriggerElementList::const_iterator it;
-	FOR_EACH(elements_, it) {
-		if (*it == p || ((*it)->object() && (*it)->object() == p->object()))
+	for (auto &it : elements_) {
+		if (it == p || (it->object() && it->object() == p->object()))
 			return true;
 	}
 	return false;
@@ -399,9 +398,8 @@ void qdTriggerChain::quant(float dt) {
 #ifndef _QUEST_EDITOR
 	root_element()->quant(dt);
 
-	qdTriggerElementList::iterator it;
-	FOR_EACH(elements_, it)
-	(*it)->quant(dt);
+	for (auto &it : elements_)
+		it->quant(dt);
 #endif
 }
 

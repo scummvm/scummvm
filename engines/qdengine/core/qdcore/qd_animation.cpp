@@ -336,8 +336,7 @@ bool qdAnimation::add_frame(qdAnimationFrame *p, qdAnimationFrame *insert_pos, b
 	if (check_flag(QD_ANIMATION_FLAG_REFERENCE)) return false;
 
 	if (insert_pos) {
-		qdAnimationFrameList::iterator iaf;
-		FOR_EACH(frames, iaf) {
+		for (auto iaf = frames.begin(); iaf != frames.end(); iaf++) {
 			if (*iaf == insert_pos) {
 				if (insert_after)
 					++iaf;
@@ -553,20 +552,21 @@ void qdAnimation::qda_save(const char *fname) {
 		for (int i = 0; i < num_scales; i++)
 			fh < scales_[i];
 
-		qdAnimationFrameList::iterator it;
-		FOR_EACH(frames, it)
-		(*it)->qda_save(fh);
+		for (auto &it : frames) {
+			it->qda_save(fh);
+		}
 
 		assert(scaled_frames_.size() == num_scales * frames.size());
 
-		FOR_EACH(scaled_frames_, it)
-		(*it)->qda_save(fh);
+		for (auto &it : scaled_frames_) {
+			it->qda_save(fh);
+		}
 	} else {
 		fh < char(1) < sx_ < sy_;
 
-		qdAnimationFrameList::iterator it;
-		FOR_EACH(frames, it)
-		fh < (*it)->start_time() < (*it)->length();
+		for (auto &it : frames) {
+			fh < it->start_time() < it->length();
+		}
 
 		tileAnimation_->save(fh);
 	}
@@ -1042,14 +1042,15 @@ bool qdAnimation::copy_frames(const qdAnimation &anm) {
 
 		frames_ptr = &frames;
 
-		qdAnimationFrameList::const_iterator it;
-		FOR_EACH(anm.frames, it)
-		frames.push_back((*it)->clone());
+		for (auto &it : anm.frames) {
+			frames.push_back(it->clone());
+		}
 
 		scaled_frames_ptr_ = &scaled_frames_;
 
-		FOR_EACH(anm.scaled_frames_, it)
-		scaled_frames_.push_back((*it)->clone());
+		for (auto &it : anm.scaled_frames_) {
+			scaled_frames_.push_back(it->clone());
+		}
 	} else {
 		frames_ptr = anm.frames_ptr;
 		scaled_frames_ptr_ = anm.scaled_frames_ptr_;

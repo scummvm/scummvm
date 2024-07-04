@@ -109,8 +109,8 @@ bool qdAnimationMaker::insert_frames(class qdAnimation *p, const char *folder, i
 	if (!flist.empty()) {
 		int i = 0;
 		qdFileNameList::iterator it;
-		FOR_EACH(flist, it) {
-			if (insert_frame(p, it->c_str(), insert_pos, insert_after, true))
+		for (auto &it : flist) {
+			if (insert_frame(p, it.c_str(), insert_pos, insert_after, true))
 				result = true;
 
 			if (progress_callback_) {

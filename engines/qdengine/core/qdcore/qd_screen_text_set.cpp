@@ -52,9 +52,9 @@ qdScreenTextSet::~qdScreenTextSet() {
 }
 
 void qdScreenTextSet::redraw() const {
-	texts_container_t::const_iterator it;
-	FOR_EACH(texts_, it)
-	it->redraw(pos_);
+	for (auto &it : texts_) {
+		it.redraw(pos_);
+	}
 
 //	grDispatcher::instance()->Rectangle(pos_.x - size_.x/2,pos_.y - size_.y/2,size_.x,size_.x,0xFFFFFF,0,GR_OUTLINED);
 }
@@ -143,9 +143,9 @@ bool qdScreenTextSet::arrange_texts() {
 }
 
 qdScreenText *qdScreenTextSet::get_text(int x, int y) {
-	texts_container_t::iterator it;
-	FOR_EACH(texts_, it)
-	if (it->hit(x - pos_.x, y - pos_.y)) return &*it;
+	for (auto &it : texts_) {
+		if (it.hit(x - pos_.x, y - pos_.y)) return &it;
+	}
 
 	return NULL;
 }

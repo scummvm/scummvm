@@ -268,9 +268,9 @@ void qdGameDispatcher::quant(float dt) {
 		if (cur_scene_)
 			cur_scene_->init_objects_grid();
 
-		qdTriggerChainList::const_iterator it;
-		FOR_EACH(trigger_chain_list(), it)
-		(*it)->quant(dt);
+		for (auto &it: trigger_chain_list()) {
+			it->quant(dt);
+		}
 
 		for (qdCounterList::const_iterator it = counter_list().begin(); it != counter_list().end(); ++it)
 			(*it)->quant();
@@ -878,12 +878,14 @@ int qdGameDispatcher::load_resources() {
 	if (cur_scene_) size += cur_scene_->load_resources();
 	size += qdGameDispatcherBase::load_resources();
 
-	for (qdInventoryList::const_iterator it = inventory_list().begin(); it != inventory_list().end(); ++it)
-		(*it)->load_resources();
+	for (auto &it : inventory_list()) {
+		it->load_resources();
+	}
 
-	qdInventoryCellTypeVector::iterator icv;
-	FOR_EACH(inventory_cell_types_, icv)
-	icv->load_resources();
+	for (auto &icv : inventory_cell_types_) {
+		icv.load_resources();
+	}
+
 
 	return size;
 }
@@ -891,9 +893,9 @@ int qdGameDispatcher::load_resources() {
 void qdGameDispatcher::free_resources() {
 	mouse_animation_->free_resources();
 
-	qdInventoryCellTypeVector::iterator icv;
-	FOR_EACH(inventory_cell_types_, icv)
-	icv->free_resources();
+	for (auto &icv : inventory_cell_types_) {
+		icv.free_resources();
+	}
 
 	for (qdInventoryList::const_iterator it = inventory_list().begin(); it != inventory_list().end(); ++it)
 		(*it)->free_resources();
@@ -1022,13 +1024,12 @@ qdNamedObject *qdGameDispatcher::get_named_object(const qdNamedObjectReference *
 bool qdGameDispatcher::init_triggers() {
 	bool result = true;
 
-	qdTriggerChainList::const_iterator it;
-	FOR_EACH(trigger_chain_list(), it) {
-		if (!(*it)->init_elements())
+	for (auto &it : trigger_chain_list()) {
+		if (!it->init_elements())
 			result = false;
 #ifdef __QD_DEBUG_ENABLE__
 		if (qdGameConfig::get_config().triggers_debug())
-			(*it)->init_debug_check();
+			it->init_debug_check();
 #endif
 	}
 
@@ -2015,9 +2016,9 @@ bool qdGameDispatcher::is_video_finished() {
 
 bool qdGameDispatcher::merge_global_objects(qdGameObject *obj) {
 #ifndef _QUEST_EDITOR
-	qdGameSceneList::const_iterator is;
-	FOR_EACH(scene_list(), is)
-	(*is)->merge_global_objects(obj);
+	for (auto &is : scene_list()) {
+		is->merge_global_objects(obj);
+	}
 #else
 	qdGameScene *const activeScene = get_active_scene();
 	qdGameSceneList::const_iterator is = scene_list().begin(),
@@ -2054,19 +2055,19 @@ qdGameObjectState *qdGameDispatcher::get_walk_state(const char *object_name) {
 #endif // _QUEST_EDITOR
 
 bool qdGameDispatcher::split_global_objects(qdGameObject *obj) {
-	qdGameSceneList::const_iterator is;
-	FOR_EACH(scene_list(), is)
-	(*is)->split_global_objects(obj);
+	for (auto &is : scene_list()) {
+		is->split_global_objects(obj);
+	}
 
 	return true;
 }
 
 bool qdGameDispatcher::init_inventories() {
 	bool result = true;
-	qdInventoryList::const_iterator it;
-	FOR_EACH(inventory_list(), it) {
-		if (!(*it)->init(inventory_cell_types_))
+	for (auto &it : inventory_list()) {
+		if (!it->init(inventory_cell_types_)) {
 			result = false;
+		}
 	}
 	return result;
 }
@@ -2151,9 +2152,8 @@ bool qdGameDispatcher::put_to_inventory(qdGameObjectAnimated *p) {
 }
 
 bool qdGameDispatcher::is_in_inventory(const qdGameObjectAnimated *p) const {
-	qdInventoryList::const_iterator it;
-	FOR_EACH(inventory_list(), it) {
-		if ((*it)->is_object_in_list(p)) return true;
+	for (auto &it : inventory_list()) {
+		if (it->is_object_in_list(p)) return true;
 	}
 
 	return false;
