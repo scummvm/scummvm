@@ -138,7 +138,7 @@ public:
 	void close();
 
 	bool add_message(const inputRecorderMessage &msg);
-	bool dispatch_message(const MSG &msg);
+	bool dispatch_message();
 
 	void quant();
 

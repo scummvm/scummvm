@@ -111,7 +111,8 @@ bool inputRecorder::add_message(const inputRecorderMessage &msg) {
 	return false;
 }
 
-bool inputRecorder::dispatch_message(const MSG &msg) {
+bool inputRecorder::dispatch_message() {
+#if 0
 	if (recorder_mode_ != RECORDER_WRITE) return false;
 
 	inputRecorderMessage::message_id_t msg_id = inputRecorderMessage::MSG_MOUSE_MOVE;
@@ -157,6 +158,7 @@ bool inputRecorder::dispatch_message(const MSG &msg) {
 	}
 
 	return add_message(inputRecorderMessage(msg_id, time_, key_id, cursor_x, cursor_y, flags));
+#endif
 	return false;
 }
 
