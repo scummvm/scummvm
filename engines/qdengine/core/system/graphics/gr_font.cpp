@@ -22,8 +22,9 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #define _NO_ZIP_
-#include "common/textconsole.h"
+#include "common/file.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/system/graphics/gr_dispatcher.h"
 #include "qdengine/core/system/graphics/gr_font.h"
@@ -48,17 +49,18 @@ grFont::~grFont() {
 }
 
 bool grFont::load(const char *fname) {
-	XBuffer str(MAX_PATH);
-	str < fname < ".tga";
-	XStream fh;
+	Common::String str(fname);
+	str += ".tga";
 
-	fh.open(str, XS_IN);
-	if (load_alpha(fh)) {
-		str.init();
-		str < fname < ".idx";
+	Common::File file;
+	file.open(Common::Path(str, '\\'));
 
-		fh.open(str, XS_IN);
-		if (load_index(fh))
+	if (load_alpha(&file)) {
+		Common::String str(fname);
+		str += ".idx";
+
+		file.open(Common::Path(str));
+		if (load_index(&file))
 			return true;
 	}
 	return false;
