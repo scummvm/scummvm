@@ -311,7 +311,7 @@ bool qdInterfaceTextWindow::save_script_body(Common::SeekableWriteStream &fh, in
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<string_length>%d</string_length\r\n>", inputStringLimit_));
+		fh.writeString(Common::String::format("<string_length>%d</string_length>\r\n", inputStringLimit_));
 	}
 
 	for (int i = 0; i <= indent; i++) {

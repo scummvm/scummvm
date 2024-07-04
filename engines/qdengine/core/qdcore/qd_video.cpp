@@ -138,7 +138,7 @@ bool qdVideo::save_script(Common::SeekableWriteStream &fh, int indent) const {
 
 	save_conditions_script(fh, indent);
 
-	for (int i = 0; i <indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString("</video>\r\n");

@@ -71,14 +71,14 @@ bool qdInterfaceCounter::save_script_body(Common::SeekableWriteStream &fh, int i
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<counter_name>%s</counter_name>\r\n"));
+	fh.writeString(Common::String::format("<counter_name>%s</counter_name>\r\n", qdscr_XML_string(counterName())));
 
 	textFormat_.save_script(fh, indent + 1);
 
-for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<digits>%d</digits>", digits_));
+	fh.writeString(Common::String::format("<digits>%d</digits>\r\n", digits_));
 
 	return true;
 }
