@@ -228,6 +228,8 @@ bool qdInterfaceTextWindow::init(bool is_game_active) {
 			} else
 				inputString_ = "";
 			break;
+		default:
+			break;
 		}
 #endif
 		if (windowType_ == WINDOW_TEXT)
@@ -528,6 +530,8 @@ void qdInterfaceTextWindow::update_text_position() {
 		case VALIGN_BOTTOM:
 			rr.y += text_size().y - text_set_->screen_size().y;
 			break;
+		default:
+			break;
 		}
 		text_set_->set_screen_pos(rr);
 		text_set_position_ = rr.y;
@@ -699,6 +703,8 @@ bool qdInterfaceTextWindow::edit_done(bool cancel) {
 					dp->save_hall_of_fame();
 				}
 			}
+			break;
+		default:
 			break;
 		}
 

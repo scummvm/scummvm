@@ -1176,14 +1176,14 @@ void qdGameObjectStateWalk::set_center_offset(int direction_index, const Vect2i 
 	(*vect)[direction_index] = offs;
 }
 
-const float qdGameObjectStateWalk::walk_sound_frequency(int direction_index) const {
+float qdGameObjectStateWalk::walk_sound_frequency(int direction_index) const {
 	if (direction_index < 0 || direction_index >= walk_sound_frequency_.size())
 		return 1;
 	else
 		return walk_sound_frequency_[direction_index];
 }
 
-const float qdGameObjectStateWalk::walk_sound_frequency(float direction_angle) const {
+float qdGameObjectStateWalk::walk_sound_frequency(float direction_angle) const {
 	int index = 0;
 	if (qdAnimationSet * p = animation_set())
 		index = p -> get_angle_index(direction_angle);

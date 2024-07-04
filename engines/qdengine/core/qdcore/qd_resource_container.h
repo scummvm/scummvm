@@ -147,10 +147,10 @@ bool qdResourceContainer<T>::remove_resource(const char *file_name, const T *own
 
 	if (!resource_dispatcher_.is_registered(p)) {
 		resource_map_.erase(it);
-		resource_list_t::iterator it = std::find(resource_list_.begin(), resource_list_.end(), p);
-		if (it != resource_list_.end()) {
+		resource_list_t::iterator it2 = std::find(resource_list_.begin(), resource_list_.end(), p);
+		if (it2 != resource_list_.end()) {
 			delete p;
-			resource_list_.erase(it);
+			resource_list_.erase(it2);
 			return true;
 		}
 
