@@ -109,7 +109,6 @@ public:
 	virtual void qda_load(XStream &fh, int version = 100);
 	virtual void qda_load(XZipStream &fh, int version = 100);
 	virtual void qda_load(Common::SeekableReadStream *fh, int version = 100);
-	virtual void qda_save(XStream &fh);
 
 	void redraw(int x, int y, int z, int mode = 0) const;
 	void redraw_rot(int x, int y, int z, float angle, int mode = 0) const;

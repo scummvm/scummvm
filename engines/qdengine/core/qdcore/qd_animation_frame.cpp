@@ -66,12 +66,6 @@ qdAnimationFrame *qdAnimationFrame::clone() const {
 	return new qdAnimationFrame(*this);
 }
 
-void qdAnimationFrame::qda_save(class XStream &fh) {
-	fh < static_cast<int>(0) < start_time_ < length_;
-
-	qdSprite::qda_save(fh);
-}
-
 void qdAnimationFrame::qda_load(class XStream &fh, int version) {
 	warning("STUB: qdAnimationFrame::qda_load(XStream &fh, int version)");
 	return;

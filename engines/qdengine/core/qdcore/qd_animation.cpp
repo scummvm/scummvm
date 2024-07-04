@@ -539,39 +539,6 @@ bool qdAnimation::hit(int x, int y, float scale) const {
 	return false;
 }
 
-void qdAnimation::qda_save(const char *fname) {
-	XStream fh(fname, XS_OUT);
-
-	int num_frames = frames.size();
-	int num_scales = scales_.size();
-	fh < qda_version < sx_ < sy_ < length_ < flags() < num_frames < num_scales;
-
-	if (!tileAnimation_) {
-		fh < char(0);
-
-		for (int i = 0; i < num_scales; i++)
-			fh < scales_[i];
-
-		for (auto &it : frames) {
-			it->qda_save(fh);
-		}
-
-		assert(scaled_frames_.size() == num_scales * frames.size());
-
-		for (auto &it : scaled_frames_) {
-			it->qda_save(fh);
-		}
-	} else {
-		fh < char(1) < sx_ < sy_;
-
-		for (auto &it : frames) {
-			fh < it->start_time() < it->length();
-		}
-
-		tileAnimation_->save(fh);
-	}
-}
-
 bool qdAnimation::qda_load(const char *fname) {
 	clear_frames();
 

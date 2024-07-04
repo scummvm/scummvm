@@ -58,7 +58,6 @@ public:
 	virtual void qda_load(class XStream &fh, int version = 100);
 	virtual void qda_load(class XZipStream &fh, int version = 100);
 	virtual void qda_load(class Common::SeekableReadStream *fh, int version = 100);
-	virtual void qda_save(class XStream &fh);
 
 	bool load_resources();
 	void free_resources();
