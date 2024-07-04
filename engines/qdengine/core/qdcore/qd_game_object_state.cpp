@@ -465,7 +465,7 @@ bool qdGameObjectState::save_script_body(Common::SeekableWriteStream &fh, int in
 	}
 
 	if (shadow_alpha_ != QD_NO_SHADOW_ALPHA) {
-		fh.writeString(Common::String::format(" shadow_alpha=\"%f %f\"", rnd_move_radius_, rnd_move_speed_));
+		fh.writeString(Common::String::format(" shadow_alpha=\"%d\"", shadow_alpha_));
 	}
 
 	fh.writeString(">\r\n");

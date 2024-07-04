@@ -102,9 +102,9 @@ bool qdInterfaceElementStateMode::save_script(Common::SeekableWriteStream &fh, i
 	}
 
 	if (has_contour()) {
-		fh.writeString("/>\r\n");
+		fh.writeString(">\r\n");
 		contour_.save_script(fh, indent + 1);
-		for (int i = 0; i <= indent; i++) {
+		for (int i = 0; i < indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString("</state_mode>\r\n");

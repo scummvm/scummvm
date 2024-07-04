@@ -69,7 +69,7 @@ bool qdMinigameConfigParameter::load_script(const xml::tag *p) {
 }
 
 bool qdMinigameConfigParameter::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString("<minigame_config_prm");

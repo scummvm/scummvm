@@ -76,7 +76,7 @@ bool qdGridZoneState::save_script(Common::SeekableWriteStream &fh, int indent) c
 	};
 
 	if (has_conditions()) {
-		fh.writeString("/>\r\n");
+		fh.writeString(">\r\n");
 
 		save_conditions_script(fh, indent);
 

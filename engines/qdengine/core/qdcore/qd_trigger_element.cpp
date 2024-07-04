@@ -489,6 +489,11 @@ bool qdTriggerElement::save_script(Common::SeekableWriteStream &fh, int indent) 
 
 	fh.writeString(">\r\n");
 
+	if (object_) {
+		qdNamedObjectReference ref(object_);
+		ref.save_script(fh, indent + 1);
+	}
+
 	if (parents_.size()) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
@@ -502,7 +507,7 @@ bool qdTriggerElement::save_script(Common::SeekableWriteStream &fh, int indent) 
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString("<parent_links>\r\n");
+		fh.writeString("</parent_links>\r\n");
 	}
 
 	if (children_.size()) {

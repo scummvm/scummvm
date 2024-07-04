@@ -310,7 +310,7 @@ bool qdGameObjectMoving::save_script_body(Common::SeekableWriteStream &fh, int i
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<attach_shift>%hd %hd</attach_shift>\r\n", attach_shift_.x, attach_shift_.y));
+		fh.writeString(Common::String::format("<attach_shift>%d %d</attach_shift>\r\n", attach_shift_.x, attach_shift_.y));
 	}
 
 	for (int i = 0; i <= indent; i++) {

@@ -53,7 +53,7 @@ bool qdGameObjectStatic::load_script(const xml::tag *p) {
 }
 
 bool qdGameObjectStatic::save_script(Common::SeekableWriteStream &fh, int indent) const {
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 
@@ -61,7 +61,7 @@ bool qdGameObjectStatic::save_script(Common::SeekableWriteStream &fh, int indent
 
 	save_script_body(fh, indent);
 
-	for (int i = 0; i <= indent; i++) {
+	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
 	fh.writeString("</static_object>\r\n");

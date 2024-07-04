@@ -216,7 +216,7 @@ bool qdInventory::save_script(Common::SeekableWriteStream &fh, int indent) const
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<inventory_cell_set_additional_cells>%hd %hd</inventory_cell_set_additional_cells>\r\n", additional_cells_.x, additional_cells_.y));
+	fh.writeString(Common::String::format("<inventory_cell_set_additional_cells>%d %d</inventory_cell_set_additional_cells>\r\n", additional_cells_.x, additional_cells_.y));
 
 	for (auto &it : cell_sets_) {
 		it.save_script(fh, indent + 1);

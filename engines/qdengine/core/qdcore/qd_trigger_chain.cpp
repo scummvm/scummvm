@@ -383,7 +383,6 @@ bool qdTriggerChain::save_script(Common::SeekableWriteStream &fh, int indent) co
 
 	root_element()->save_script(fh, indent + 1);
 
-	qdTriggerElementList::const_iterator it;
 	for (auto &it : elements_) {
 		it->save_script(fh, indent + 1);
 	};
