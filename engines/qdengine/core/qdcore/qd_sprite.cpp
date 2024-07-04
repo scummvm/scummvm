@@ -1080,38 +1080,6 @@ void qdSprite::qda_load(XZipStream &fh, int version) {
 	return;
 }
 
-void qdSprite::qda_save(XStream &fh) {
-	fh < size_.x < size_.y < picture_size_.x < picture_size_.y < picture_offset_.x < picture_offset_.y < format_ < strlen(file_.c_str());
-
-	fh.write(file_.c_str(), strlen(file_.c_str()));
-
-	fh < flags_;
-
-	if (is_compressed()) {
-		fh < 0L < 1L;
-
-		rle_data_->save(fh);
-	} else {
-		fh < 0L < 0L;
-
-		switch (format_) {
-		case GR_RGB565:
-		case GR_ARGB1555:
-			if (check_flag(ALPHA_FLAG))
-				fh.write(data_, picture_size_.x * picture_size_.y * 4);
-			else
-				fh.write(data_, picture_size_.x * picture_size_.y * 2);
-			break;
-		case GR_RGB888:
-			fh.write(data_, picture_size_.x * picture_size_.y * 3);
-			break;
-		case GR_ARGB8888:
-			fh.write(data_, picture_size_.x * picture_size_.y * 4);
-			break;
-		}
-	}
-}
-
 bool qdSprite::crop() {
 	int left, top, right, bottom;
 	if (!get_edges_width(left, top, right, bottom)) return false;

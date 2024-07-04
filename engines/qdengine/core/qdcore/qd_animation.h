@@ -179,7 +179,6 @@ public:
 	}
 	void qda_set_file(const char *fname);
 
-	void qda_save(const char *fname);
 	bool qda_load(const char *fname);
 	bool qda_load_header(const char *fname);
 
