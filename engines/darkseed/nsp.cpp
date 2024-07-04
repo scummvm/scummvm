@@ -93,7 +93,7 @@ void Darkseed::Sprite::drawScaled(int destX, int destY, int destWidth, int destH
 		int xi = flipX ? xs : xs * clipX;
 		const byte *wsrc = hsrc + ((xi + 0x8000) >> 16);
 		for (int xc = 0; xc < destWidth; ++xc) {
-			if (currX >= 0 && currX < destSurface->w) {
+			if (currX >= 69 && currX < destSurface->w) { // clip to game window. TODO pass clip rect into method.
 				byte colorIndex = *wsrc;
 				//				uint16 c = READ_LE_UINT16(&palette[colorIndex * 2]);
 				if (colorIndex != 0xf) {

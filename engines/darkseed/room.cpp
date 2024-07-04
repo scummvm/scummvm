@@ -692,3 +692,31 @@ int Darkseed::Room::getObjectUnderCursor() {
 	}
 	return objIdx;
 }
+
+bool Darkseed::Room::isOutside() {
+	bool isRoomOutside;
+
+	if (_roomNumber == 61) {
+		isRoomOutside = true;
+	}
+	else if (_roomNumber < 10 || _roomNumber > 14) {
+		if (_roomNumber < 24 || _roomNumber > 27) {
+			if (_roomNumber >= 63 && _roomNumber <= 65) {
+				isRoomOutside = true;
+			}
+			else if (_roomNumber == 31 || _roomNumber == 32 || _roomNumber == 36) {
+				isRoomOutside = true;
+			}
+			else {
+				isRoomOutside = false;
+			}
+		}
+		else {
+			isRoomOutside = true;
+		}
+	}
+	else {
+		isRoomOutside = true;
+	}
+	return isRoomOutside;
+}

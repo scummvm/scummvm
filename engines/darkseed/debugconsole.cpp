@@ -30,6 +30,7 @@ DebugConsole::DebugConsole(TosText *tosText) : GUI::Debugger(), tosText(tosText)
 	registerCmd("getvar",   WRAP_METHOD(DebugConsole, Cmd_getvar));
 	registerCmd("setvar",   WRAP_METHOD(DebugConsole, Cmd_setvar));
 	registerCmd("enablePathfinderOverlay",   WRAP_METHOD(DebugConsole, Cmd_enablePathfinderOverlay));
+	registerCmd("info",   WRAP_METHOD(DebugConsole, Cmd_info));
 }
 
 DebugConsole::~DebugConsole() {
@@ -51,12 +52,7 @@ bool DebugConsole::Cmd_tostext(int argc, const char **argv) {
 }
 
 bool DebugConsole::Cmd_dt(int argc, const char **argv) {
-	int hour = g_engine->_currentTimeInSeconds / 60 / 60 + 1;
-	debugPrintf("Day %d at %d:%02d%s (%d seconds)\n",
-				g_engine->_currentDay,
-				hour % 12,
-				(g_engine->_currentTimeInSeconds / 60) % 60,
-				hour < 12 ? "AM" : "PM", g_engine->_currentTimeInSeconds);
+	printDayAndTime();
 	return true;
 }
 
@@ -113,6 +109,23 @@ bool DebugConsole::validateObjVarIndex(int16 varIdx) {
 		return false;
 	}
 	return true;
+}
+
+bool DebugConsole::Cmd_info(int argc, const char **argv) {
+	printDayAndTime();
+	debugPrintf("\nRoom info:\n");
+	debugPrintf("Room number: %d\n", g_engine->_room->_roomNumber);
+
+	return true;
+}
+
+void DebugConsole::printDayAndTime() {
+	int hour = g_engine->_currentTimeInSeconds / 60 / 60 + 1;
+	debugPrintf("Day %d at %d:%02d%s (%d seconds)\n",
+				g_engine->_currentDay,
+				hour % 12,
+				(g_engine->_currentTimeInSeconds / 60) % 60,
+				hour < 12 ? "AM" : "PM", g_engine->_currentTimeInSeconds);
 }
 
 } // End of namespace Darkseed
