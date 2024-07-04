@@ -143,7 +143,7 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 	grD = new grDispatcher();
 
 #ifdef __QD_TRIGGER_PROFILER__
-	if (ConfMan.getBool("tirggers_profiler"))
+	if (ConfMan.getBool("trigger_profiler"))
 		qdTriggerProfiler::instance().enable();
 #endif
 
