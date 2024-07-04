@@ -1952,7 +1952,7 @@ bool qdGameDispatcher::play_video(qdVideo *p) {
 			video_player_.set_window(appGetHandle(), p->position().x, p->position().y, sx, sy);
 	}
 
-	if (sndDispatcher * sp = sndDispatcher::get_dispatcher()) {
+	if ((sp = sndDispatcher::get_dispatcher())) {
 		if (sp->is_enabled())
 			video_player_.set_volume(sp->volume_dB());
 		else
@@ -3096,7 +3096,7 @@ void qdGameDispatcher::scan_files(qdLoadingProgressFnc progress_fnc, void *conte
 		(*it)->calc_files_size();
 
 		progress++;
-		int percents = progress * 100 / size;
+		percents = progress * 100 / size;
 		(*progress_fnc)(percents, context_ptr);
 	}
 
@@ -3104,7 +3104,7 @@ void qdGameDispatcher::scan_files(qdLoadingProgressFnc progress_fnc, void *conte
 		(*it)->calc_files_size();
 
 		progress++;
-		int percents = progress * 100 / size;
+		percents = progress * 100 / size;
 		(*progress_fnc)(percents, context_ptr);
 	}
 }

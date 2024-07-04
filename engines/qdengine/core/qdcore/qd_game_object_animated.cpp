@@ -700,6 +700,8 @@ void qdGameObjectAnimated::set_state(int st) {
 		case qdGameObjectState::STATE_MASK:
 			animation_.clear();
 			break;
+		default:
+			break;
 		}
 
 		if (!p->coords_animation()->is_empty()) {
@@ -911,7 +913,6 @@ bool qdGameObjectAnimated::hit(int x, int y) const {
 
 qdGameObjectState *qdGameObjectAnimated::get_state(const char *state_name) {
 	for (auto &it : states) {
-		qdGameObjectState *p = it;
 		if (it-> name() && !strcmp(it->name(), state_name)) {
 			return it;
 		}

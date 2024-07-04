@@ -77,8 +77,8 @@ public:
 		turn_animation_.set_animation_name(animation_name);
 	}
 
-	const float walk_sound_frequency(int direction_index) const;
-	const float walk_sound_frequency(float direction_angle) const;
+	float walk_sound_frequency(int direction_index) const;
+	float walk_sound_frequency(float direction_angle) const;
 	void set_walk_sound_frequency(int direction_index, float freq);
 
 	bool load_animations(const qdNamedObject *res_owner);

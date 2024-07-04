@@ -118,7 +118,7 @@ private:
 	int start_time_;
 
 	int direction_;
-	float speed_;
+	//float speed_;
 
 	float personage_speed_;
 	float personage_height_;
