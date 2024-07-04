@@ -140,7 +140,7 @@ void MainWindow::onAction(MTropolis::Actions::Action action) {
 
 class ModifierInnerScopeBuilder : public IStructuralReferenceVisitor {
 public:
-	ModifierInnerScopeBuilder(ObjectLinkingScope *scope);
+	ModifierInnerScopeBuilder(Runtime *runtime, Modifier *modifier, ObjectLinkingScope *scope);
 
 	void visitChildStructuralRef(Common::SharedPtr<Structural> &structural) override;
 	void visitChildModifierRef(Common::SharedPtr<Modifier> &modifier) override;
@@ -149,9 +149,12 @@ public:
 
 private:
 	ObjectLinkingScope *_scope;
+	Modifier *_modifier;
+	Runtime *_runtime;
 };
 
-ModifierInnerScopeBuilder::ModifierInnerScopeBuilder(ObjectLinkingScope *scope) : _scope(scope) {
+ModifierInnerScopeBuilder::ModifierInnerScopeBuilder(Runtime *runtime, Modifier *modifier, ObjectLinkingScope *scope)
+	: _scope(scope), _modifier(modifier), _runtime(runtime) {
 }
 
 void ModifierInnerScopeBuilder::visitChildStructuralRef(Common::SharedPtr<Structural> &structural) {
@@ -159,7 +162,10 @@ void ModifierInnerScopeBuilder::visitChildStructuralRef(Common::SharedPtr<Struct
 }
 
 void ModifierInnerScopeBuilder::visitChildModifierRef(Common::SharedPtr<Modifier> &modifier) {
-	_scope->addObject(modifier->getStaticGUID(), modifier->getName(), modifier);
+	uint32 oldStaticGUID = modifier->getStaticGUID();
+
+	_runtime->instantiateIfAlias(modifier, _modifier->getSelfReference());
+	_scope->addObject(oldStaticGUID, modifier->getName(), modifier);
 }
 
 void ModifierInnerScopeBuilder::visitWeakStructuralRef(Common::WeakPtr<Structural> &structural) {
@@ -171,7 +177,7 @@ void ModifierInnerScopeBuilder::visitWeakModifierRef(Common::WeakPtr<Modifier> &
 
 class ModifierChildMaterializer : public IStructuralReferenceVisitor {
 public:
-	ModifierChildMaterializer(Runtime *runtime, Modifier *modifier, ObjectLinkingScope *outerScope);
+	ModifierChildMaterializer(Runtime *runtime, ObjectLinkingScope *outerScope);
 
 	void visitChildStructuralRef(Common::SharedPtr<Structural> &structural) override;
 	void visitChildModifierRef(Common::SharedPtr<Modifier> &modifier) override;
@@ -180,9 +186,28 @@ public:
 
 private:
 	Runtime *_runtime;
-	Modifier *_modifier;
 	ObjectLinkingScope *_outerScope;
 };
+
+ModifierChildMaterializer::ModifierChildMaterializer(Runtime *runtime, ObjectLinkingScope *outerScope)
+	: _runtime(runtime), _outerScope(outerScope) {
+}
+
+void ModifierChildMaterializer::visitChildStructuralRef(Common::SharedPtr<Structural> &structural) {
+	assert(false);
+}
+
+void ModifierChildMaterializer::visitChildModifierRef(Common::SharedPtr<Modifier> &modifier) {
+	modifier->materialize(_runtime, _outerScope);
+}
+
+void ModifierChildMaterializer::visitWeakStructuralRef(Common::WeakPtr<Structural> &structural) {
+	// Do nothing
+}
+
+void ModifierChildMaterializer::visitWeakModifierRef(Common::WeakPtr<Modifier> &modifier) {
+	// Do nothing
+}
 
 class ModifierChildCloner : public IStructuralReferenceVisitor {
 public:
@@ -197,27 +222,6 @@ private:
 	Runtime *_runtime;
 	Common::WeakPtr<RuntimeObject> _relinkParent;
 };
-
-ModifierChildMaterializer::ModifierChildMaterializer(Runtime *runtime, Modifier *modifier, ObjectLinkingScope *outerScope)
-	: _runtime(runtime), _modifier(modifier), _outerScope(outerScope) {
-}
-
-void ModifierChildMaterializer::visitChildStructuralRef(Common::SharedPtr<Structural> &structural) {
-	assert(false);
-}
-
-void ModifierChildMaterializer::visitChildModifierRef(Common::SharedPtr<Modifier> &modifier) {
-	_runtime->instantiateIfAlias(modifier, _modifier->getSelfReference());
-	modifier->materialize(_runtime, _outerScope);
-}
-
-void ModifierChildMaterializer::visitWeakStructuralRef(Common::WeakPtr<Structural> &structural) {
-	// Do nothing
-}
-
-void ModifierChildMaterializer::visitWeakModifierRef(Common::WeakPtr<Modifier> &modifier) {
-	// Do nothing
-}
 
 ModifierChildCloner::ModifierChildCloner(Runtime *runtime, const Common::WeakPtr<RuntimeObject> &relinkParent)
 	: _runtime(runtime), _relinkParent(relinkParent) {
@@ -3449,6 +3453,11 @@ void Structural::materializeDescendents(Runtime *runtime, ObjectLinkingScope *ou
 
 	for (Common::Array<Common::SharedPtr<Modifier> >::const_iterator it = _modifiers.begin(), itEnd = _modifiers.end(); it != itEnd; ++it) {
 		Modifier *modifier = it->get();
+
+		if (modifier->getStaticGUID() == 0x00040c8d) {
+			int n = 0;
+		}
+
 		modifier->materialize(runtime, modifierScope);
 	}
 
@@ -9362,10 +9371,10 @@ void Modifier::materialize(Runtime *runtime, ObjectLinkingScope *outerScope) {
 	ObjectLinkingScope innerScope;
 	innerScope.setParent(outerScope);
 
-	ModifierInnerScopeBuilder innerScopeBuilder(&innerScope);
+	ModifierInnerScopeBuilder innerScopeBuilder(runtime, this, &innerScope);
 	this->visitInternalReferences(&innerScopeBuilder);
 
-	ModifierChildMaterializer childMaterializer(runtime, this, &innerScope);
+	ModifierChildMaterializer childMaterializer(runtime, &innerScope);
 	this->visitInternalReferences(&childMaterializer);
 
 	linkInternalReferences(outerScope);
