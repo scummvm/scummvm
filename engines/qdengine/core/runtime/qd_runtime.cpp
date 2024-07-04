@@ -334,7 +334,6 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 	resD.set_speed(qdGameConfig::get_config().game_speed());
 	resD.start();
 
-	MSG msg;
 	bool exit_flag = false;
 	bool was_inactive = false;
 
@@ -354,23 +353,23 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 				if (event.kbd.ascii == 'f')
 					qdGameConfig::get_config().toggle_fps();
 #ifdef __QD_DEBUG_ENABLE__
-				else if (msg.wParam == VK_NEXT) {
+				else if (event.kbd.keycode == Common::KEYCODE_PAGEDOWN) {
 					float speed = qdGameConfig::get_config().game_speed() * 0.9f;
 					if (speed < 0.1f) speed = 0.1f;
 					qdGameConfig::get_config().set_game_speed(speed);
 					sndD->set_frequency_coeff(speed);
 					resD.set_speed(qdGameConfig::get_config().game_speed());
-				} else if (msg.wParam == VK_PRIOR) {
+				} else if (event.kbd.keycode == Common::KEYCODE_PAGEUP) {
 					float speed = qdGameConfig::get_config().game_speed() * 1.1f;
 					if (speed > 10.0f) speed = 10.0f;
 					qdGameConfig::get_config().set_game_speed(speed);
 					sndD->set_frequency_coeff(speed);
 					resD.set_speed(qdGameConfig::get_config().game_speed());
-				} else if (msg.wParam == VK_HOME) {
+				} else if (event.kbd.keycode == Common::KEYCODE_HOME) {
 					qdGameConfig::get_config().set_game_speed(1.0f);
 					sndD->set_frequency_coeff(1.0f);
 					resD.set_speed(qdGameConfig::get_config().game_speed());
-				} else if (msg.wParam == 'G')
+				} else if (event.kbd.ascii == 'g')
 					qdGameConfig::get_config().toggle_show_grid();
 #endif
 				break;

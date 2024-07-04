@@ -466,15 +466,6 @@ typedef struct _EXCEPTION_POINTERS {
 	PCONTEXT *ContextRecord;
 }EXCEPTION_POINTERS;
 
-typedef struct MSG {
-	HWND   hwnd;
-	UINT   message;
-	int    wParam;
-	LPARAM lParam;
-	DWORD  time;
-	DWORD  lPrivate;
-};
-
 extern void *INVALID_HANDLE_VALUE;
 const int CP_ACP = 0;
 const int CP_UTF8 = 65001;
@@ -491,7 +482,6 @@ bool ShowWindow(HWND hWnd, int nCmdShow);
 bool CloseWindow(HWND hWnd);
 bool DestroyWindow(HWND hWnd);
 bool UpdateWindow(HWND hWnd);
-bool PeekMessage(MSG *msg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilterMax, UINT wRemoveMsg);
 bool SendMessage(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 bool SetErrorMode(UINT uMode);
 DWORD WINAPI GetLastError();
@@ -544,8 +534,6 @@ bool ResetEvent(HANDLE hEvent);
 void initclock();
 bool WINAPI GetNumberOfConsoleInputEvents(HANDLE hConsoleInput, unsigned long *lpcNumberOfEvents);
 bool WINAPI ReadConsoleInput(HANDLE hConsoleInput, void *lpBuffer, unsigned long nLength, unsigned long *lpNumberOfEventsRead);
-bool TranslateMessage(const MSG *lpMsg);
-bool DispatchMessage(const MSG *lpMsg);
 int GetAsyncKeyState(int vKey);
 int GetKeyState(int nVirtKey);
 DWORD timeGetTime();

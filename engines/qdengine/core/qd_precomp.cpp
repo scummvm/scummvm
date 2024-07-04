@@ -87,11 +87,6 @@ bool UpdateWindow(HWND hWnd) {
 	return false;
 }
 
-bool PeekMessage(MSG *msg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilterMax, UINT wRemoveMsg) {
-	warning("STUB: PeakMessage");
-	return false;
-}
-
 bool SendMessage(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) {
 	warning("STUB: SendMessage");
 	return false;
@@ -351,16 +346,6 @@ bool WINAPI GetNumberOfConsoleInputEvents(HANDLE hConsoleInput, unsigned long *l
 
 bool WINAPI ReadConsoleInput(HANDLE hConsoleInput, void *lpBuffer, unsigned long nLength, unsigned long *lpNumberOfEventsRead) {
 	warning("STUB: ReadConsoleInput()");
-	return false;
-}
-
-bool TranslateMessage(const MSG *lpMsg) {
-	warning("STUB: TranslateMessage()");
-	return false;
-}
-
-bool DispatchMessage(const MSG *lpMsg) {
-	warning("STUB: DispatchMessage()");
 	return false;
 }
 
