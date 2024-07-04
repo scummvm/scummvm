@@ -313,7 +313,7 @@ void grDispatcher::Line(int x1, int y1, int x2, int y2, int col, int line_style,
 }
 
 void grDispatcher::LineTo(int x, int y, int len, int dir, int col, int line_style) {
-	int i, v, stv = 0;
+	int v;
 
 	switch (dir) {
 	case GR_LEFT:
@@ -1108,8 +1108,8 @@ bool grDispatcher::DrawParsedText(int x, int y, int sx, int sy, unsigned color, 
 			str.assign(it->nl.begin, it->nl.end - it->nl.begin);
 			DrawText(cur_x, y, color, str.c_str(), 0, 0, font);
 
-			int ssx = TextWidth(str.c_str(), 0, font);
-			int ssx1 = it->width;
+			//int ssx = TextWidth(str.c_str(), 0, font);
+			//int ssx1 = it->width;
 			cur_x += it->width;
 		}
 		break;

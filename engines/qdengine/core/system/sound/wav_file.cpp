@@ -26,7 +26,6 @@
 #include "common/system.h"
 #include "qdengine/qdengine.h"
 #include "qdengine/core/qd_precomp.h"
-#include "qdengine/core/runtime/qd_dialogs.h"
 #include "qdengine/core/system/sound/wav_file.h"
 #include "qdengine/core/system/sound/wav_sound.h"
 #include "qdengine/core/qdcore/qd_file_manager.h"
