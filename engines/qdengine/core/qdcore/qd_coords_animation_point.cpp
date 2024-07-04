@@ -73,11 +73,6 @@ bool qdCoordsAnimationPoint::save_script(Common::SeekableWriteStream &fh, int in
 	return true;
 }
 
-bool qdCoordsAnimationPoint::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdCoordsAnimationPoint::save_script(XStream)");
-	return true;
-}
-
 void qdCoordsAnimationPoint::calc_path(const qdCoordsAnimationPoint &p, const Vect3f &shift) const {
 	Vect3f dr = pos_ - shift - p.dest_pos();
 	path_length_ = dr.norm();

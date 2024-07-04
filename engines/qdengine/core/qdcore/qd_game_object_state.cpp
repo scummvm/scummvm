@@ -509,11 +509,6 @@ bool qdGameObjectState::save_script_body(Common::SeekableWriteStream &fh, int in
 	return true;
 }
 
-bool qdGameObjectState::save_script_body(XStream &fh, int indent) const {
-	warning("STUB: qdGameObjectState::save_script(XStream)");
-	return true;
-}
-
 bool qdGameObjectState::init() {
 	if (!qdConditionalObject::init()) return false;
 	// Ищем по ссылке и инициализируем найденным стартовый объект координатной анимации
@@ -852,11 +847,6 @@ bool qdGameObjectStateStatic::save_script(Common::SeekableWriteStream &fh, int i
 	}
 	fh.writeString("</object_state_static>\r\n");
 
-	return true;
-}
-
-bool qdGameObjectStateStatic::save_script(XStream &fh, int indent) const {
-	warning("qdGameObjectStateStatic::save_script(XStream)");
 	return true;
 }
 
@@ -1360,11 +1350,6 @@ bool qdGameObjectStateWalk::save_script(Common::SeekableWriteStream &fh, int ind
 	return true;
 }
 
-bool qdGameObjectStateWalk::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdGameObjectStateWalk::save_script(XStream)");
-	return true;
-}
-
 bool qdGameObjectStateWalk::register_resources() {
 	qdGameObjectState::register_resources();
 
@@ -1531,10 +1516,6 @@ bool qdGameObjectStateMask::save_script(Common::SeekableWriteStream &fh, int ind
 	}
 	fh.writeString("</object_state_mask>\r\n");
 
-	return true;
-}
-bool qdGameObjectStateMask::save_script(XStream &fh, int indent) const {
-	warning("qdGameObjectStateMask::save_script(Common::XStream)");
 	return true;
 }
 

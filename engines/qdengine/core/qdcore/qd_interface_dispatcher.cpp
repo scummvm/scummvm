@@ -353,11 +353,6 @@ bool qdInterfaceDispatcher::save_script(Common::SeekableWriteStream &fh, int ind
 	return true;
 }
 
-bool qdInterfaceDispatcher::save_script(XStream &fh, int indent) const {
-	warning("qdInterfaceDispatcher::save_script(XStream)");
-	return true;
-}
-
 bool qdInterfaceDispatcher::load_script(const xml::tag *p) {
 	bool screen_idx = false;
 	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {

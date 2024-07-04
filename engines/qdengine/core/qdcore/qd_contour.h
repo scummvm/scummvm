@@ -78,7 +78,6 @@ public:
 	bool is_inside(const Vect2s &pos) const;
 
 	//! Запись данных в скрипт.
-	virtual bool save_script(XStream &fh, int indent = 0) const;
 	virtual bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 	//! Чтение данных из скрипта.
 	virtual bool load_script(const xml::tag *p);

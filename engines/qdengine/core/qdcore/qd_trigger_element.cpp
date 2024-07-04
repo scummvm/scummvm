@@ -130,11 +130,6 @@ bool qdTriggerLink::save_script(Common::SeekableWriteStream &fh, int indent) con
 	return true;
 }
 
-bool qdTriggerLink::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdTriggerLink::save_script(XStream)");
-	return true;
-}
-
 qdTriggerElement::qdTriggerElement() : object_(NULL),
 	ID_(0),
 	is_active_(false),
@@ -535,11 +530,6 @@ bool qdTriggerElement::save_script(Common::SeekableWriteStream &fh, int indent) 
 		fh.writeString("</trigger_element>\r\n");
 	}
 
-	return true;
-}
-
-bool qdTriggerElement::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdTriggerElement::save_script(XStream)");
 	return true;
 }
 

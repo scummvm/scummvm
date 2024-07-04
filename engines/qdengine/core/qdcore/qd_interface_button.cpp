@@ -208,11 +208,6 @@ bool qdInterfaceButton::save_script_body(Common::SeekableWriteStream &fh, int in
 	return true;
 }
 
-bool qdInterfaceButton::save_script_body(XStream &fh, int indent) const {
-	warning("STUB: qdInterfaceButton::save_script(XStream)");
-	return true;
-}
-
 bool qdInterfaceButton::load_script_body(const xml::tag *p) {
 	int num_states = 0;
 	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {

@@ -118,11 +118,6 @@ bool qdSound::save_script(Common::SeekableWriteStream &fh, int indent) const {
 	return true;
 }
 
-bool qdSound::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdSound::save_script");
-	return true;
-}
-
 bool qdSound::play(const qdSoundHandle *handle, bool loop, float start_position) const {
 #ifdef __QD_SOUND_LOG__
 	if (handle && handle -> owner()) {

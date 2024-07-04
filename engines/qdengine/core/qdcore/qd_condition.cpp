@@ -389,11 +389,6 @@ bool qdCondition::save_script(Common::SeekableWriteStream &fh, int indent) const
 	return true;
 }
 
-bool qdCondition::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdCondition::save_script(XStream)");
-	return true;
-}
-
 void qdCondition::quant(float dt) {
 	debugC(9, kDebugQuant, "qdCondition::quant(%f)", dt);
 	if (type_ == CONDITION_TIMER) {

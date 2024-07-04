@@ -66,11 +66,6 @@ bool qdInterfaceBackground::save_script_body(Common::SeekableWriteStream &fh, in
 	return true;
 }
 
-bool qdInterfaceBackground::save_script_body(XStream &fh, int indent) const {
-	warning("STUB: qdInterfaceBackground::save_script_body");
-	return true;
-}
-
 bool qdInterfaceBackground::load_script_body(const xml::tag *p) {
 	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
 		switch (it -> ID()) {

@@ -229,11 +229,6 @@ bool qdInventory::save_script(Common::SeekableWriteStream &fh, int indent) const
 	return true;
 }
 
-bool qdInventory::save_script(class XStream &fh, int indent) const {
-	warning("STUB: qdInventory::save_script(XStream)");
-	return true;
-}
-
 bool qdInventory::init(const qdInventoryCellTypeVector &tp) {
 	bool result = true;
 	qdInventoryCellSetVector::iterator it;

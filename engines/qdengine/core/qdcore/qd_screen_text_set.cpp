@@ -227,10 +227,6 @@ bool qdScreenTextSet::save_script(Common::SeekableWriteStream &fh, int indent) c
 	return true;
 }
 
-bool qdScreenTextSet::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdScreenTextSet(XStream)");
-}
-
 qdScreenText *qdScreenTextSet::add_text(const qdScreenText &txt) {
 	int sy = size_.y;
 

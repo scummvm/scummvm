@@ -375,11 +375,6 @@ bool qdInterfaceSave::save_script_body(Common::SeekableWriteStream &fh, int inde
 	return true;
 }
 
-bool qdInterfaceSave::save_script_body(XStream &fh, int indent) const {
-	warning("STUB: qdInterfaceSave::save_script(XStream)");
-	return true;
-}
-
 bool qdInterfaceSave::load_script_body(const xml::tag *p) {
 	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
 		switch (it -> ID()) {

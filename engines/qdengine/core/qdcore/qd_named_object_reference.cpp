@@ -168,11 +168,6 @@ bool qdNamedObjectReference::save_script(Common::SeekableWriteStream &fh, int in
 
 }
 
-bool qdNamedObjectReference::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdNamedObjectReference::save_script(XStream)");
-	return true;
-}
-
 bool qdNamedObjectReference::load_data(Common::SeekableReadStream &fh, int version) {
 	int nlevels = fh.readSint32LE();
 

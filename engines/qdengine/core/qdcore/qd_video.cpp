@@ -146,11 +146,6 @@ bool qdVideo::save_script(Common::SeekableWriteStream &fh, int indent) const {
 	return true;
 }
 
-bool qdVideo::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdVideo::save_script(XStream)");
-	return true;
-}
-
 bool qdVideo::draw_background() {
 	if (background_.has_file()) {
 		background_.load();

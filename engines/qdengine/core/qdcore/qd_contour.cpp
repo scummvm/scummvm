@@ -237,11 +237,6 @@ bool qdContour::save_script(Common::SeekableWriteStream &fh, int indent) const {
 	return false;
 }
 
-bool qdContour::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdCounter::save_script(XStream)");
-	return false;
-}
-
 bool qdContour::load_script(const xml::tag *p) {
 	int i;
 

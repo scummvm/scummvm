@@ -217,7 +217,6 @@ public:
 	//! Загрузка данных из скрипта.
 	virtual bool load_script(const xml::tag *p) = 0;
 	//! Запись данных в скрипт.
-	virtual bool save_script(XStream &fh, int indent = 0) const = 0;
 	virtual bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const = 0;
 
 	//! Инициализация состояния, вызывается при старте и перезапуске игры.
@@ -597,7 +596,6 @@ protected:
 	//! Загрузка данных из скрипта.
 	bool load_script_body(const xml::tag *p);
 	//! Запись данных в скрипт.
-	bool save_script_body(XStream &fh, int indent = 0) const;
 	bool save_script_body(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 	//! Возвращает true, если надо перезапустить звук.
@@ -721,7 +719,6 @@ public:
 #endif // _QUEST_EDITOR
 
 	bool load_script(const xml::tag *p);
-	bool save_script(XStream &fh, int indent = 0) const;
 	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 	//! Регистрация ресурсов состояния в диспетчере ресурсов.
@@ -825,7 +822,6 @@ public:
 	}
 
 	bool load_script(const xml::tag *p);
-	bool save_script(XStream &fh, int indent = 0) const;
 	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 	//! Регистрация ресурсов состояния в диспетчере ресурсов.
@@ -928,7 +924,6 @@ public:
 	}
 
 	bool load_script(const xml::tag *p);
-	bool save_script(XStream &fh, int indent = 0) const;
 	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 	bool is_state_empty() const;

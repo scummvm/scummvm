@@ -560,10 +560,6 @@ bool qdCamera::save_script(Common::SeekableWriteStream &fh, int indent) const {
 
 	return true;
 }
-bool qdCamera::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdCamera::save_script");
-	return true;
-}
 
 const Vect2i qdCamera::screen_center_limit_x() const {
 	int x0, x1;

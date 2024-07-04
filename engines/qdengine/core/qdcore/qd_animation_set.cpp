@@ -279,11 +279,6 @@ bool qdAnimationSet::save_script(Common::SeekableWriteStream &fh, int indent) co
 	return true;
 }
 
-bool qdAnimationSet::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdAnimationSet::save_script(XStream)");
-	return true;
-}
-
 bool qdAnimationSet::load_animations(const qdNamedObject *res_owner) {
 	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
 		qdAnimationInfoVector::iterator it;

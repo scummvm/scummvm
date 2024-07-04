@@ -83,7 +83,7 @@ bool qdFontInfo::save_script(Common::SeekableWriteStream &fh, int indent) const 
 		fh.writeString("\t");
 	}
 	fh.writeString(Common::String::format("<font_info type=\"%d\"", type_));
-	
+
 	if (!font_file_name_.empty()) {
 		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(font_file_name_.c_str())));
 	}
@@ -93,11 +93,6 @@ bool qdFontInfo::save_script(Common::SeekableWriteStream &fh, int indent) const 
 	}
 
 	fh.writeString("/>\r\n");
-	return true;
-}
-
-bool qdFontInfo::save_script(class XStream &fh, int indent) const {
-	warning("STUB: qdFontInfo::save_script(XStream)");
 	return true;
 }
 

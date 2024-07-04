@@ -92,7 +92,6 @@ public:
 	//! Загрузка данных из скрипта.
 	bool load_script(const xml::tag *p);
 	//! Запись данных в скрипт.
-	bool save_script(XStream &fh, int indent = 0) const;
 	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 	bool adjust_files_paths(const char *copy_dir, const char *pack_dir, bool can_overwrite = false);

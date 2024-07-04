@@ -69,9 +69,4 @@ bool qdScaleInfo::save_script(Common::SeekableWriteStream &fh, int indent) const
 	return true;
 }
 
-bool qdScaleInfo::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdScaleInfo::save_script(XStream)");
-	return true;
-}
-
 } // namespace QDEngine

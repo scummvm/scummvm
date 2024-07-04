@@ -209,11 +209,6 @@ bool qdMiniGame::save_script(Common::SeekableWriteStream &fh, int indent) const 
 	return true;
 }
 
-bool qdMiniGame::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdMiniGame::save_script(XStream)");
-	return true;
-}
-
 qdMiniGame &qdMiniGame::operator = (const qdMiniGame &mg) {
 	if (this == &mg) return *this;
 

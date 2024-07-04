@@ -224,7 +224,6 @@ public:
 	}
 
 	bool load_script(const xml::tag *p);
-	bool save_script(XStream &fh, int indent = 0) const;
 	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 	//! Загрузка данных из сэйва.
@@ -368,7 +367,6 @@ public:
 protected:
 
 	bool load_script_body(const xml::tag *p);
-	bool save_script_body(XStream &fh, int indent = 0) const;
 	bool save_script_body(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 private:

@@ -108,8 +108,4 @@ bool qdConditionGroup::save_script(Common::SeekableWriteStream &fh, int indent) 
 	return true;
 }
 
-bool qdConditionGroup::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdConditionGroup::save_script(XStream)");
-	return true;
-}
 } // namespace QDEngine

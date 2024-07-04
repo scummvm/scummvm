@@ -127,11 +127,6 @@ bool qdInterfaceElementState::save_script(Common::SeekableWriteStream &fh, int i
 	return true;
 }
 
-bool qdInterfaceElementState::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdInterfaceElementState::save_script(XStream)");
-	return true;
-}
-
 bool qdInterfaceElementState::load_script(const xml::tag *p) {
 	int num_events = 0;
 	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {

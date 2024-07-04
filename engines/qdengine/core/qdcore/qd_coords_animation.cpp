@@ -314,11 +314,6 @@ bool qdCoordsAnimation::save_script(Common::SeekableWriteStream &fh, int indent)
 	return true;
 }
 
-bool qdCoordsAnimation::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdCoordsAnimation::save_script(XStream)");
-	return true;
-}
-
 Vect3f qdCoordsAnimation::cur_pos() const {
 	// В cur_pos() учитываем дельту относительных координат
 	qdCoordsAnimationPoint p0;

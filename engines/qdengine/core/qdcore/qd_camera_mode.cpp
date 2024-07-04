@@ -99,11 +99,6 @@ bool qdCameraMode::save_script(Common::SeekableWriteStream &fh, int indent) cons
 	return true;
 }
 
-bool qdCameraMode::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdCameraMode::save_script(XStream)");
-	return true;
-}
-
 bool qdCameraMode::load_data(qdSaveStream &fh, int save_version) {
 	int mode;
 	fh > mode > work_time_ > scrolling_speed_ > scrolling_distance_ > center_offset_.x > center_offset_.y;

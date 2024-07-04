@@ -91,11 +91,6 @@ bool qdGridZoneState::save_script(Common::SeekableWriteStream &fh, int indent) c
 	return true;
 }
 
-bool qdGridZoneState::save_script(class XStream &fh, int indent) const {
-	warning("STUB: qdGridZoneState:save_script(XStream)");
-	return true;
-}
-
 qdConditionalObject::trigger_start_mode qdGridZoneState::trigger_start() {
 	if (!owner()) return qdConditionalObject::TRIGGER_START_FAILED;
 

@@ -125,11 +125,6 @@ bool qdMusicTrack::save_script(Common::SeekableWriteStream &fh, int indent) cons
 	return true;
 }
 
-bool qdMusicTrack::save_script(class XStream &fh, int indent) const {
-	warning("STUB: qdMusicTrack::save_script(XStream)");
-	return true;
-}
-
 qdConditionalObject::trigger_start_mode qdMusicTrack::trigger_start() {
 	if (qdGameDispatcher * dp = qd_get_game_dispatcher()) {
 		dp -> play_music_track(this);

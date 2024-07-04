@@ -94,11 +94,6 @@ bool qdMinigameConfigParameter::save_script(Common::SeekableWriteStream &fh, int
 
 }
 
-bool qdMinigameConfigParameter::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdMinigameConfigParameter::save_script(XStream)");
-	return true;
-}
-
 bool qdMinigameConfigParameter::validate_data() {
 	is_data_valid_ = true;
 	return true;

@@ -105,12 +105,6 @@ bool qdAnimationInfo::save_script(Common::SeekableWriteStream &fh, int indent) c
 	return true;
 }
 
-bool qdAnimationInfo::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdAnimationInfo::save_script(XStream)");
-
-	return true;
-}
-
 qdAnimationInfo &qdAnimationInfo::operator = (const qdAnimationInfo &p) {
 	if (this == &p) return *this;
 
