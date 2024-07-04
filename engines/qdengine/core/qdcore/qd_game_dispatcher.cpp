@@ -2487,7 +2487,7 @@ bool qdGameDispatcher::keyboard_handler(int vkey, bool event) {
 	return false;
 }
 
-bool qdGameDispatcher::load_data(const char *fname) {
+bool qdGameDispatcher::load_save(const char *fname) {
 	debugC(3, kDebugLog, "[%d] Save loading %s", g_system->getMillis(), transCyrillic(fname));
 
 	if (sndDispatcher * p = sndDispatcher::get_dispatcher()) {
@@ -2589,7 +2589,7 @@ bool qdGameDispatcher::load_data(const char *fname) {
 	return true;
 }
 
-bool qdGameDispatcher::save_data(const char *fname) const {
+bool qdGameDispatcher::save_save(const char *fname) const {
 	Common::OutSaveFile *fh;
 	Common::Path fpath(fname, '\\');
 	fh = g_engine->_savefileMan->openForSaving(fpath.toString());
@@ -2855,7 +2855,7 @@ bool qdGameDispatcher::load_game(int slot_id) {
 	const char *save_name = get_save_name(slot_id);
 
 	if (app_io::is_file_exist(save_name)) {
-		if (!load_data(save_name))
+		if (!load_save(save_name))
 			app_errH.show_error("Сохраненная игра не может быть загружена");
 	}
 
@@ -2871,7 +2871,7 @@ bool qdGameDispatcher::save_game(int slot_id) const {
 		app_io::create_directory("Saves");
 
 	debugC(3, kDebugSave, "qdGameDispatcher::save_game(%d): filename: %s", slot_id, get_save_name(slot_id));
-	return save_data(get_save_name(slot_id));
+	return save_save(get_save_name(slot_id));
 }
 
 const char *qdGameDispatcher::get_save_name(int slot_id, SaveFileType file_type) {

@@ -355,9 +355,9 @@ public:
 	bool save_script(const char *fname) const;
 
 	//! Загрузка данных из сэйва.
-	bool load_data(const char *fname);
+	bool load_save(const char *fname);
 	//! Запись данных в сэйв.
-	bool save_data(const char *fname) const;
+	bool save_save(const char *fname) const;
 
 	bool load_game(int slot_id);
 	bool save_game(int slot_id) const;
