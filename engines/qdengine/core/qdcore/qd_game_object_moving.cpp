@@ -940,7 +940,7 @@ void qdGameObjectMoving::quant(float dt) {
 
 	// Если текущ. позиция не соответствует той, что была в начале кванта, то
 	// объект изменился
-	if (R() != beg_r)
+	if (R().x != beg_r.x || R().y != beg_r.y || R().z != beg_r.z )
 		set_last_chg_time(qdGameDispatcher::get_dispatcher()->time());
 }
 
