@@ -1172,11 +1172,6 @@ MiniscriptInstructionOutcome ListVariableModifier::scriptSetCount(MiniscriptThre
 
 	size_t newSize = asInteger;
 	if (newSize > storage->_list->getSize()) {
-		if (storage->_list->getSize() == 0) {
-			thread->error("Restoring an empty list by setting its count isn't implemented");
-			return kMiniscriptInstructionOutcomeFailed;
-		}
-
 		storage->_list->expandToMinimumSize(newSize);
 	} else if (newSize < storage->_list->getSize()) {
 		storage->_list->truncateToSize(newSize);
