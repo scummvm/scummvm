@@ -920,14 +920,7 @@ class Vect3f {
 public:
 	typedef float float3[3];
 
-	union {
-		struct {
-			float x, y, z;
-		};
-		struct {
-			float3 array;
-		};
-	};
+	float x, y, z;
 
 	// constructors //////////////////////////////////////////////////////////////
 
@@ -947,13 +940,6 @@ public:
 		x = v[0];
 		y = v[1];
 		z = v[2];
-	}
-
-	xm_inline operator const float3 &() const {
-		return array;
-	}
-	xm_inline operator float3 &() {
-		return array;
 	}
 
 	xm_inline operator Vect3d() const;
