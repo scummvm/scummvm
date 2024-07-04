@@ -90,6 +90,7 @@ public:
 	bool canWalkInLineToTarget(int x,int y,int targetX,int targetY);
 	void printRoomDescriptionText() const;
 	void calculateScaledSpriteDimensions(int width, int height, int curYPosition);
+	bool isOutside();
 private:
 	bool load();
 	static Common::String stripSpaces(Common::String source);

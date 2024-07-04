@@ -64,6 +64,10 @@ void Darkseed::Sprites::clearSpriteDrawList() {
 void Darkseed::Sprites::drawSprites() {
 	for (int i = spriteDrawList.size() - 1; i >= 0; i--) {
 		SpriteDrawInstruction &drawInstruction = spriteDrawList[i];
-		drawInstruction.sprite->drawScaled(drawInstruction.destX, drawInstruction.destY, drawInstruction.destW, drawInstruction.destH, drawInstruction.flip);
+		if (drawInstruction.sprite->width == drawInstruction.destW && drawInstruction.sprite->height == drawInstruction.destH) {
+			drawInstruction.sprite->draw(drawInstruction.destX, drawInstruction.destY); // TODO add support for flipping sprite.
+		} else {
+			drawInstruction.sprite->drawScaled(drawInstruction.destX, drawInstruction.destY, drawInstruction.destW, drawInstruction.destH, drawInstruction.flip);
+		}
 	}
 }
