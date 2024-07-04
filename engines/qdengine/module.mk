@@ -35,7 +35,6 @@ MODULE_OBJS = \
 	core/system/input/mouse_input.o \
 	core/system/input/keyboard_input.o \
 	core/system/input/input_wndproc.o \
-	core/system/input/input_recorder.o \
 	core/qdcore/util/AIAStar_API.o \
 	core/qdcore/util/fps_counter.o \
 	core/qdcore/util/LZ77.o \

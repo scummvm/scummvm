@@ -43,7 +43,6 @@
 #include "qdengine/core/system/app_core.h"
 #include "qdengine/core/system/app_error_handler.h"
 #include "qdengine/core/system/input/input_wndproc.h"
-#include "qdengine/core/system/input/input_recorder.h"
 #include "qdengine/core/system/input/mouse_input.h"
 #include "qdengine/core/system/input/keyboard_input.h"
 
@@ -159,9 +158,6 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 	comline_parser.register_option("log", COMLINE_ENABLE_LOG);
 	comline_parser.register_option("settings", COMLINE_SETTINGS);
 
-	comline_parser.register_option(inputRecorder::write_comline(), COMLINE_RECORDER_WRITE);
-	comline_parser.register_option(inputRecorder::play_comline(), COMLINE_RECORDER_PLAY);
-
 #ifdef __QD_DEBUG_ENABLE__
 	comline_parser.register_option(qdTriggerChain::debug_comline(), COMLINE_TRIGGERS_DEBUG);
 #endif
@@ -213,11 +209,6 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 	if (comline_parser.has_argument(COMLINE_TRIGGERS_PROFILER))
 		qdTriggerProfiler::instance().enable();
 #endif
-
-	if (const char * rec_name = comline_parser.argument_string(COMLINE_RECORDER_WRITE))
-		inputRecorder::instance().open(rec_name, inputRecorder::RECORDER_WRITE);
-	else if (rec_name = comline_parser.argument_string(COMLINE_RECORDER_PLAY))
-		inputRecorder::instance().open(rec_name, inputRecorder::RECORDER_PLAY);
 
 	grD->set_maximize_handler(maximize_window);
 
