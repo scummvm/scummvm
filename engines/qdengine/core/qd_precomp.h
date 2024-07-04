@@ -259,28 +259,8 @@ class XZipStream : public XStream {};
 #define CLSCTX_INPROC     0
 #define IMAGE_BITMAP      0
 
-#define EXCEPTION_CONTINUE_EXECUTION        -1
-#define EXCEPTION_CONTINUE_SEARCH            0
-#define EXCEPTION_EXECUTE_HANDLER            1
-
 #define CONTEXT_INTEGER                     0x00000002
 #define CONTEXT_CONTROL                     0x00000001
-
-#define EXCEPTION_INT_DIVIDE_BY_ZERO        0xC0000094
-#define EXCEPTION_INT_OVERFLOW              0xC0000095
-#define EXCEPTION_ACCESS_VIOLATION          0xC0000005
-#define EXCEPTION_BREAKPOINT                0x80000003
-#define EXCEPTION_DATATYPE_MISALIGNMENT     0x80000002
-#define EXCEPTION_SINGLE_STEP               0x80000004
-#define EXCEPTION_ARRAY_BOUNDS_EXCEEDED     0xC000008C
-#define EXCEPTION_FLT_DENORMAL_OPERAND      0xC000008D
-#define EXCEPTION_FLT_DIVIDE_BY_ZERO        0xC000008E
-#define EXCEPTION_FLT_INEXACT_RESULT        0xC000008F
-#define EXCEPTION_FLT_INVALID_OPERATION     0xC0000090
-#define EXCEPTION_FLT_OVERFLOW              0xC0000091
-#define EXCEPTION_FLT_STACK_CHECK           0xC0000092
-#define EXCEPTION_FLT_UNDERFLOW             0xC0000093
-#define EXCEPTION_PRIV_INSTRUCTION          0xC0000096
 
 #define GSTSO_PARAMS    0x01
 #define GSTSO_MODULE    0x02
@@ -292,19 +272,6 @@ class XZipStream : public XStream {};
 #define WM_CHAR         0x0102
 #define WM_SYSCHAR      0x0106
 #define WAIT_OBJECT_0   0
-
-#define DDSD_PIXELFORMAT          0x00001000
-#define DDSD_WIDTH                0x00000004
-#define DDSD_PITCH                0x00000008
-#define DDSCAPS_BACKBUFFER        0x00000002
-#define DDSCAPS_SYSTEMMEMORY      0x00000008
-#define DDLOCK_SURFACEMEMORYPTR   0x00000040
-#define DDSD_CAPS                 0x00000001
-#define DDSD_HEIGHT               0x00000002
-#define DDSCAPS_PRIMARYSURFACE    0x00000001
-#define DD_OK                     0
-#define DDENUMRET_OK              0
-#define LPDDSURFACEDESC           DDSURFACEDESC*
 
 #define THREAD_PRIORITY_TIME_CRITICAL 0
 #define INFINITE                      0xFFFFFFFF
@@ -375,52 +342,6 @@ typedef struct {
     WORD  cbSize;             // Size of extra format information
 } WAVEFORMATEX;
 
-typedef struct _DDSCAPS {
-    DWORD dwCaps;         // capabilities of surface wanted
-} DDSCAPS;
-
-typedef struct _DDPIXELFORMAT {
-    DWORD dwSize;
-    DWORD dwFlags;
-    DWORD dwFourCC;
-    union {
-        DWORD dwRGBBitCount;
-        DWORD dwYUVBitCount;
-        DWORD dwZBufferBitDepth;
-        DWORD dwAlphaBitDepth;
-        DWORD dwLuminanceBitCount;
-        DWORD dwBumpBitCount;
-        DWORD dwPrivateFormatBitCount;
-    };
-    union {
-        DWORD dwRBitMask;
-        DWORD dwYBitMask;
-        DWORD dwStencilBitDepth;
-        DWORD dwLuminanceBitMask;
-        DWORD dwBumpDuBitMask;
-        DWORD dwOperations;
-    };
-    union {
-        DWORD dwGBitMask;
-        DWORD dwUBitMask;
-        DWORD dwZBitMask;
-        DWORD dwBumpDvBitMask;
-        DWORD dwBumpLuminanceBitMask;
-        DWORD dwRGBAlphaBitMask;
-    };
-    DWORD dwBBitMask;
-    DWORD dwRGBZBitMask;
-} DDPIXELFORMAT;
-
-typedef struct _DDSURFACEDESC {
-    DWORD dwSize;
-    DWORD dwFlags;
-    DWORD dwHeight;
-    DWORD dwWidth;
-    DDPIXELFORMAT ddpfPixelFormat;
-	DDSCAPS ddsCaps;
-} DDSURFACEDESC;
-
 typedef struct {
   int map[256];
   void *data;
@@ -428,52 +349,12 @@ typedef struct {
   void (*release)(void *data);
 } XML_Encoding;
 
-typedef struct PCONTEXT {
-	unsigned int ContextFlags;
-	unsigned int Dr0;
-	unsigned int Dr1;
-	unsigned int Dr2;
-	unsigned int Dr3;
-	unsigned int Dr6;
-	unsigned int Dr7;
-	unsigned int FloatSave;
-	unsigned int SegGs;
-	unsigned int SegFs;
-	unsigned int SegEs;
-	unsigned int SegDs;
-	unsigned int Edi;
-	unsigned int Esi;
-	unsigned int Ebx;
-	unsigned int Edx;
-	unsigned int Ecx;
-	unsigned int Eax;
-	unsigned int Ebp;
-	unsigned int Eip;
-	unsigned int SegCs;
-	unsigned int EFlags;
-	unsigned int Esp;
-	unsigned int SegSs;
-}PCONTEXT;
-
-typedef struct PEXCEPTION_RECORD {
-	unsigned int ExceptionCode;
-	void *ExceptionAddress;
-}PEXCEPTION_RECORD;
-
-typedef struct _EXCEPTION_POINTERS {
-	PEXCEPTION_RECORD *ExceptionRecord;
-	PCONTEXT *ContextRecord;
-}EXCEPTION_POINTERS;
-
 extern void *INVALID_HANDLE_VALUE;
 const int CP_ACP = 0;
 const int CP_UTF8 = 65001;
 
 void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext);
 int MessageBox(HWND hWnd, const char *lpText, const char *lpCaption, UINT uType);
-void ShellExecute(HWND hwnd, const char *lpOperation, const char *lpFile, const char *lpParameters, const char *lpDirectory, int nShowCmd);
-int GetLogicalDrives();
-uint GetDriveType(LPCSTR lpRootPathName);
 FARPROC GetProcAddress(HMODULE hModule, LPCSTR lpProcName);
 bool FreeLibrary(void *hModule);
 HMODULE LoadLibrary(const char *lpLibFileName);
@@ -481,15 +362,9 @@ bool ShowWindow(HWND hWnd, int nCmdShow);
 bool CloseWindow(HWND hWnd);
 bool DestroyWindow(HWND hWnd);
 bool UpdateWindow(HWND hWnd);
-bool SendMessage(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 bool SetErrorMode(UINT uMode);
-DWORD WINAPI GetLastError();
 int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr, int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar);
 int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr, int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCSTR lpDefaultChar, LPBOOL lpUsedDefaultChar);
-LRESULT SendDlgItemMessage(HWND hDlg, int nIDDlgItem, UINT Msg, WPARAM wParam, LPARAM lParam);
-bool EndDialog(HWND hDlg, int nResult);
-LPARAM MAKELPARAM(short a, short b);
-void ZeroMemory(void *dest, size_t size);
 bool SetCurrentDirectory(const char *lpPathName);
 DWORD GetCurrentDirectory(DWORD nBufferLength, char *lpBuffer);
 bool CreateDirectory(const char *lpPathName, void *lpSecurityAttributes);

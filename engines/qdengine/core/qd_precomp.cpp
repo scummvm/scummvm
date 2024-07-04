@@ -37,21 +37,6 @@ int MessageBox(HWND hWnd, const char *lpText, const char *lpCaption, UINT uType)
 	return 0;
 }
 
-void ShellExecute(HWND hwnd, const char *lpOperation, const char *lpFile, const char *lpParameters, const char *lpDirectory, int nShowCmd) {
-	warning("STUB: ShellExecute");
-	return;
-}
-
-int GetLogicalDrives() {
-	warning("STUB: GetLogicalDrives");
-	return 0;
-}
-
-uint GetDriveType(LPCSTR lpRootPathName) {
-	warning("STUB: GetDriveTypeA");
-	return 0;
-}
-
 FARPROC GetProcAddress(HMODULE hModule, LPCSTR lpProcName) {
 	warning("STUB: GetProcAddress");
 	return 0;
@@ -87,19 +72,9 @@ bool UpdateWindow(HWND hWnd) {
 	return false;
 }
 
-bool SendMessage(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) {
-	warning("STUB: SendMessage");
-	return false;
-}
-
 bool SetErrorMode(UINT uMode) {
 	warning("STUB: SetErrorMode");
 	return false;
-}
-
-DWORD WINAPI GetLastError() {
-	warning("STUB: GetLastError");
-	return 0;
 }
 
 int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr, int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar) {
@@ -110,25 +85,6 @@ int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr, int
 int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr, int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCSTR lpDefaultChar, LPBOOL lpUsedDefaultChar) {
 	warning("STUB: WideCharToMultiByte");
 	return 0;
-}
-
-LRESULT SendDlgItemMessage(HWND hDlg, int nIDDlgItem, UINT Msg, WPARAM wParam, LPARAM lParam) {
-	warning("STUB: SendDlgItemMessage");
-	return 0;
-}
-
-bool EndDialog(HWND hDlg, int nResult) {
-	warning("STUB: EndDialog");
-	return false;
-}
-
-LPARAM MAKELPARAM(short a, short b) {
-	warning("STUB: MAKELPARAM");
-	return 0;
-}
-
-void ZeroMemory(void *dest, size_t size) {
-	warning("STUB: ZeroMemory");
 }
 
 bool SetCurrentDirectory(const char *lpPathName) {
