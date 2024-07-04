@@ -115,13 +115,15 @@ qdResource *qdResourceContainer<T>::add_resource(const char *file_name, const T 
 		p -> set_resource_file(file_name);
 		break;
 	case qdResource::RES_SPRITE: {
-		qdAnimation *anm = new qdAnimation;
-		qdAnimationFrame *fr = new qdAnimationFrame;
-		fr -> set_file(file_name);
-		anm -> add_frame(fr);
-		p = anm;
-	}
-	break;
+			qdAnimation *anm = new qdAnimation;
+			qdAnimationFrame *fr = new qdAnimationFrame;
+			fr -> set_file(file_name);
+			anm -> add_frame(fr);
+			p = anm;
+		}
+		break;
+	default:
+		break;
 	}
 
 	if (!p) return NULL;
