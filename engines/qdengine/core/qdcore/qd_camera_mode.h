@@ -35,8 +35,6 @@ namespace QDEngine {
 class qdGameObjectState;
 class qdGameObjectAnimated;
 
-class XStream;
-
 //! Режим работы камеры.
 class qdCameraMode {
 public:
