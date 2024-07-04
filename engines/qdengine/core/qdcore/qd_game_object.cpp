@@ -117,11 +117,6 @@ bool qdGameObject::save_script_body(Common::SeekableWriteStream &fh, int indent)
 	return true;
 }
 
-bool qdGameObject::save_script_body(XStream &fh, int indent) const {
-	warning("STUB: qdGameObject::save_script_body");
-	return true;
-}
-
 #ifdef _QUEST_EDITOR
 const Vect2i &qdGameObject::screen_pos() {
 	update_screen_pos();

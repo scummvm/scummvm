@@ -103,10 +103,6 @@ bool qdGameObjectMouse::save_script_body(Common::SeekableWriteStream &fh, int in
 	return qdGameObjectAnimated::save_script_body(fh, indent);
 }
 
-bool qdGameObjectMouse::save_script_body(XStream &fh, int indent) const {
-	return qdGameObjectAnimated::save_script_body(fh, indent);
-}
-
 bool qdGameObjectMouse::load_script(const xml::tag *p) {
 	return load_script_body(p);
 }
@@ -134,11 +130,6 @@ bool qdGameObjectMouse::save_script(Common::SeekableWriteStream &fh, int indent)
 
 	return true;
 
-}
-
-bool qdGameObjectMouse::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdGameObjectMouse::save_script(XStream)");
-	return true;
 }
 
 bool qdGameObjectMouse::load_data(qdSaveStream &fh, int save_version) {

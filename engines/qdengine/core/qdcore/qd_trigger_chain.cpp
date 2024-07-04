@@ -396,11 +396,6 @@ bool qdTriggerChain::save_script(Common::SeekableWriteStream &fh, int indent) co
 	return true;
 }
 
-bool qdTriggerChain::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdTriggerChain::save_script(XStream)");
-	return true;
-}
-
 void qdTriggerChain::quant(float dt) {
 #ifndef _QUEST_EDITOR
 	root_element()->quant(dt);

@@ -442,11 +442,6 @@ bool qdAnimation::save_script(Common::SeekableWriteStream &fh, int indent) const
 	return true;
 }
 
-bool qdAnimation::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdAnimation::save_script(XStream)");
-	return true;
-}
-
 bool qdAnimation::load_resources() {
 	debugC(3, kDebugLoad, "qdAnimation::load_resources(): '%s' name: %s", transCyrillic(qda_file()), transCyrillic(name()));
 	if (check_flag(QD_ANIMATION_FLAG_REFERENCE)) return false;

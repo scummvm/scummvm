@@ -71,7 +71,6 @@ public:
 	}
 
 	void load_script(const xml::tag *p);
-	bool save_script(XStream &fh, int indent = 0) const;
 	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 	//! Загрузка данных из сэйва.

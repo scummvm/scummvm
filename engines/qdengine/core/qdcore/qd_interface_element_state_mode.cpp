@@ -115,11 +115,6 @@ bool qdInterfaceElementStateMode::save_script(Common::SeekableWriteStream &fh, i
 	return true;
 }
 
-bool qdInterfaceElementStateMode::save_script(XStream &fh, int type_id, int indent) const {
-	warning("STUB: qdInterfaceElementStateMode::save_script(XStream)");
-	return true;
-}
-
 bool qdInterfaceElementStateMode::load_script(const xml::tag *p) {
 	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
 		switch (it -> ID()) {

@@ -466,11 +466,6 @@ bool qdGameScene::save_script(Common::SeekableWriteStream &fh, int indent) const
 	return true;
 }
 
-bool qdGameScene::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdGameScene::save_script");
-	return true;
-}
-
 int qdGameScene::load_resources() {
 	debug("[%d] Loading scene \"%s\"", g_system->getMillis(), transCyrillic(name()));
 

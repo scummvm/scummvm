@@ -80,11 +80,6 @@ bool qdInventoryCellType::save_script(Common::SeekableWriteStream &fh, int inden
 	return true;
 }
 
-bool qdInventoryCellType::save_script(class XStream &fh, int indent) const {
-	warning("STUB: qdInventoryCellType::save_script");
-	return true;
-}
-
 // class qdInventoryCell
 
 Vect2i qdInventoryCell::screen_offset_ = Vect2i(0, 0);
@@ -428,11 +423,6 @@ bool qdInventoryCellSet::save_script(Common::SeekableWriteStream &fh, int indent
 	}
 	fh.writeString("</inventory_cell_set>\r\n");
 
-	return true;
-}
-
-bool qdInventoryCellSet::save_script(class XStream &fh, int indent) const {
-	warning("STUB: qdInventoryCellSet::save_script(XStream)");
 	return true;
 }
 

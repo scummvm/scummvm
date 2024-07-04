@@ -169,11 +169,6 @@ bool qdGridZone::save_script(Common::SeekableWriteStream &fh, int indent) const 
 	return true;
 }
 
-bool qdGridZone::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdGridZone::save_script(XStream)");
-	return true;
-}
-
 bool qdGridZone::set_height(int _h) {
 	height_ = _h;
 	if (state_) {

@@ -66,7 +66,6 @@ public:
 	void free_resources() const;
 
 	bool load_script(const xml::tag *p);
-	bool save_script(class XStream &fh, int indent = 0) const;
 	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 	const Vect2i &size() const {
@@ -251,7 +250,6 @@ public:
 	bool is_object_in_list(const qdGameObjectAnimated *p) const;
 
 	bool load_script(const xml::tag *p);
-	bool save_script(class XStream &fh, int indent = 0) const;
 	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 	//! Загрузка данных из сэйва.

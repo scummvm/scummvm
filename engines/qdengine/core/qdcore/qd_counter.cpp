@@ -123,11 +123,6 @@ bool qdCounterElement::save_script(Common::SeekableWriteStream &fh, int indent) 
 	return true;
 }
 
-bool qdCounterElement::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdCounterElement::save_script(XStream)");
-	return true;
-}
-
 bool qdCounterElement::load_data(qdSaveStream &fh, int save_version) {
 	char v;
 	fh > v;
@@ -289,11 +284,6 @@ bool qdCounter::save_script(Common::SeekableWriteStream &fh, int indent) const {
 	}
 	fh.writeString("</counter>\r\n");
 
-	return true;
-}
-
-bool qdCounter::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdCounter::save_script(XStream)");
 	return true;
 }
 

@@ -208,11 +208,6 @@ bool qdInterfaceScreen::save_script(Common::SeekableWriteStream &fh, int indent)
 	return true;
 }
 
-bool qdInterfaceScreen::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdInterfaceSreen::save_script(XStream)");
-	return true;
-}
-
 bool qdInterfaceScreen::load_script(const xml::tag *p) {
 	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
 		switch (it -> ID()) {

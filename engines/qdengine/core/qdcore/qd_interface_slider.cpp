@@ -179,11 +179,6 @@ bool qdInterfaceSlider::save_script_body(Common::SeekableWriteStream &fh, int in
 	return true;
 }
 
-bool qdInterfaceSlider::save_script_body(XStream &fh, int indent) const {
-	warning("STUB: qdInterfaceSlider::save_script_body(XStream)");
-	return true;
-}
-
 bool qdInterfaceSlider::load_script_body(const xml::tag *p) {
 	bool background_flag = false;
 	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {

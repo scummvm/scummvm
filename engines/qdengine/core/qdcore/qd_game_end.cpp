@@ -115,12 +115,7 @@ bool qdGameEnd::save_script(Common::SeekableWriteStream &fh, int indent) const {
 	} else {
 		fh.writeString("/>\r\n");
 	}
-	
-	return true;
-}
 
-bool qdGameEnd::save_script(class XStream &fh, int indent) const {
-	warning("STUB: qdGameEnd::save_script(XStream)");
 	return true;
 }
 

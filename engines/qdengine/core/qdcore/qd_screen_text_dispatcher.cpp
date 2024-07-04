@@ -113,12 +113,4 @@ bool qdScreenTextDispatcher::save_script(Common::SeekableWriteStream &fh, int in
 	return true;
 }
 
-bool qdScreenTextDispatcher::save_script(XStream &fh, int indent) const {
-	std::vector<qdScreenTextSet>::const_iterator it;
-	FOR_EACH(text_sets_, it)
-	it -> save_script(fh, indent);
-
-	return true;
-}
-
 } // namespace QDEngine

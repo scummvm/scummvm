@@ -126,11 +126,6 @@ bool qdScreenTextFormat::save_script(Common::SeekableWriteStream &fh, int indent
 	return true;
 }
 
-bool qdScreenTextFormat::save_script(class XStream &fh, int indent) const {
-	warning("qdScreenTextFormat::save_script(XStream)");
-	return true;
-}
-
 qdScreenText::qdScreenText(const char *p, const Vect2i &pos, qdGameObjectState *owner) : pos_(pos),
 	size_(0, 0),
 	owner_(owner) {

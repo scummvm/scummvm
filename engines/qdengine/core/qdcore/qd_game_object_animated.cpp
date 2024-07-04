@@ -503,11 +503,6 @@ bool qdGameObjectAnimated::save_script_body(Common::SeekableWriteStream &fh, int
 	return true;
 }
 
-bool qdGameObjectAnimated::save_script_body(XStream &fh, int indent) const {
-	warning("STUB: qdGameObjectAnimated::save_script_body(XStream)");
-	return true;
-}
-
 bool qdGameObjectAnimated::load_script(const xml::tag *p) {
 	return load_script_body(p);
 }
@@ -525,11 +520,6 @@ bool qdGameObjectAnimated::save_script(Common::SeekableWriteStream &fh, int inde
 	}
 	fh.writeString("</animated_object>\r\n");
 
-	return true;
-}
-
-bool qdGameObjectAnimated::save_script(XStream &fh, int indent) const {
-	warning("STUB: qdGameObjectAnimated::save_script(XStream)");
 	return true;
 }
 
