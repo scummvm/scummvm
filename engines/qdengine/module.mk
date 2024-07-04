@@ -5,7 +5,6 @@ MODULE_OBJS = \
 	console.o \
 	metaengine.o \
 	core/qd_precomp.o \
-	core/parser/qdscr_convert.o \
 	core/parser/qdscr_parser.o \
 	core/parser/xml_parser.o \
 	core/parser/xml_tag_buffer.o \
