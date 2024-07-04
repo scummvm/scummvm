@@ -58,7 +58,8 @@ Dialog *Dialog::_lastDialogSelectionChangedFor = nullptr;
 
 
 Dialog::Dialog() : _num(0), _bgColor(0), _fontColor(0), _selectionBgCol(0), _selectonFontCol(0),
-	_fontSize(0), _flags(kDlgFlagNone), _frameType(kDlgFramePlain), _time(0), _nextDialogNum(0)
+	_fontSize(0), _flags(kDlgFlagNone), _frameType(kDlgFramePlain), _time(0), _nextDialogDlgNum(0),
+	_nextDialogFileNum(0)
 {}
 
 
@@ -115,6 +116,45 @@ void Dialog::drawType1(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 	}
 }
 
+void Dialog::drawType2BackgroundDragon(Graphics::ManagedSurface *dst, const Common::String &title) {
+	_state->_loc = DgdsRect(_rect.x + 6, _rect.y + 6, _rect.width - 12, _rect.height - 12);
+	RequestData::fillBackground(dst, _rect.x, _rect.y, _rect.width, _rect.height, 0);
+	RequestData::drawCorners(dst, 11, _rect.x, _rect.y, _rect.width, _rect.height);
+	if (!title.empty()) {
+		// TODO: Maybe should measure the font?
+		_state->_loc.y += 10;
+		_state->_loc.height -= 10;
+		RequestData::drawHeader(dst, _rect.x, _rect.y, _rect.width, 4, title, 0, true);
+	}
+
+	if (hasFlag(kDlgFlagFlatBg)) {
+		dst->fillRect(_state->_loc.toCommonRect(), 0);
+	} else {
+		RequestData::fillBackground(dst, _state->_loc.x, _state->_loc.y, _state->_loc.width, _state->_loc.height, 6);
+	}
+
+	RequestData::drawCorners(dst, 19, _state->_loc.x - 2, _state->_loc.y - 2,
+							_state->_loc.width + 4, _state->_loc.height + 4);
+
+	_state->_loc.x += 8;
+	_state->_loc.width -= 16;
+}
+
+void Dialog::drawType2BackgroundChina(Graphics::ManagedSurface *dst, const Common::String &title) {
+	_state->_loc = DgdsRect(_rect.x + 12, _rect.y + 10, _rect.width - 24, _rect.height - 20);
+	if (title.empty()) {
+		RequestData::fillBackground(dst, _rect.x, _rect.y, _rect.width, _rect.height, 0);
+		RequestData::drawCorners(dst, 1, _rect.x, _rect.y, _rect.width, _rect.height);
+	} else {
+		dst->fillRect(Common::Rect(Common::Point(_rect.x, _rect.y), _rect.width, _rect.height), 0);
+		RequestData::drawCorners(dst, 11, _rect.x, _rect.y, _rect.width, _rect.height);
+		// TODO: Maybe should measure the font?
+		_state->_loc.y += 11;
+		_state->_loc.height -= 11;
+		RequestData::drawHeader(dst, _rect.x, _rect.y, _rect.width, 2, title, _fontColor, false);
+	}
+}
+
 // box with fancy frame and optional title (everything before ":")
 void Dialog::drawType2(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 	if (!_state)
@@ -134,29 +174,11 @@ void Dialog::drawType2(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 	}
 
 	if (stage == kDlgDrawStageBackground) {
-		_state->_loc = DgdsRect(_rect.x + 6, _rect.y + 6, _rect.width - 12, _rect.height - 12);
-		Common::Rect drawRect(_rect.x, _rect.y, _rect.x + _rect.width, _rect.y + _rect.height);
-		RequestData::fillBackground(dst, _rect.x, _rect.y, _rect.width, _rect.height, 0);
-		RequestData::drawCorners(dst, 11, _rect.x, _rect.y, _rect.width, _rect.height);
-		if (!title.empty()) {
-			// TODO: Maybe should measure the font?
-			_state->_loc.y += 10;
-			_state->_loc.height -= 10;
-			RequestData::drawHeader(dst, _rect.x, _rect.y, _rect.width, 4, title);
-		}
-
-		if (hasFlag(kDlgFlagFlatBg)) {
-			Common::Rect fr = _state->_loc.toCommonRect();
-			dst->fillRect(fr, 0);
-		} else {
-			RequestData::fillBackground(dst, _state->_loc.x, _state->_loc.y, _state->_loc.width, _state->_loc.height, 6);
-		}
-
-		RequestData::drawCorners(dst, 19, _state->_loc.x - 2, _state->_loc.y - 2,
-								_state->_loc.width + 4, _state->_loc.height + 4);
-
-		_state->_loc.x += 8;
-		_state->_loc.width -= 16;
+		DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+		if (engine->getGameId() == GID_DRAGON)
+			drawType2BackgroundDragon(dst, title);
+		else
+			drawType2BackgroundChina(dst, title);
 
 	} else if (stage == kDlgDrawFindSelectionPointXY) {
 		drawFindSelectionXY();
@@ -624,9 +646,9 @@ void Dialog::fixupStringAndActions() {
 
 Common::String Dialog::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format(
-			"%sDialog<num %d %s bgcol %d fcol %d selbgcol %d selfontcol %d fntsz %d flags 0x%02x frame %d delay %d next %d",
+			"%sDialog<num %d %s bgcol %d fcol %d selbgcol %d selfontcol %d fntsz %d flags 0x%02x frame %d delay %d next %d:%d",
 			indent.c_str(), _num, _rect.dump("").c_str(), _bgColor, _fontColor, _selectionBgCol, _selectonFontCol, _fontSize,
-			_flags, _frameType, _time, _nextDialogNum);
+			_flags, _frameType, _time, _nextDialogFileNum, _nextDialogDlgNum);
 	str += indent + "state=" + (_state ? _state->dump("") : "null");
 	str += "\n";
 	str += _dumpStructList(indent, "actions", _action);

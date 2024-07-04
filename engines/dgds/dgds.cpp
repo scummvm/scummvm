@@ -576,7 +576,9 @@ Common::Error DgdsEngine::run() {
 			checkDrawInventoryButton();
 		}
 
-		_clock.draw(_compositionBuffer);
+		if (getGameId() == GID_DRAGON)
+			_clock.draw(_compositionBuffer);
+
 		bool haveActiveDialog = _scene->checkDialogActive();
 
 		_scene->drawAndUpdateDialogs(&_compositionBuffer);

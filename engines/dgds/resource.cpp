@@ -178,6 +178,9 @@ bool DgdsChunkReader::isPacked() const {
 	case EX_TDS:
 		packed = (_id == ID_THD);
 		break;
+	case EX_DDS:
+		packed = (_id == ID_DDS);
+		break;
 	default:
 		break;
 	}

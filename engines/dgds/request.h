@@ -197,7 +197,7 @@ public:
 
 	static void fillBackground(Graphics::ManagedSurface *dst, uint16 x, uint16 y, uint16 width, uint16 height, int16 startoffset);
 	static void drawCorners(Graphics::ManagedSurface *dst, uint16 startNum, uint16 x, uint16 y, uint16 width, uint16 height);
-	static void drawHeader(Graphics::ManagedSurface *dst, int16 x, int16 y, int16 width, int16 yoffset, const Common::String &header);
+	static void drawHeader(Graphics::ManagedSurface *dst, int16 x, int16 y, int16 width, int16 yoffset, const Common::String &header, byte fontCol, bool addBox);
 	Gadget *findGadgetByNumWithFlags3Not0x40(int16 num);
 
 private:

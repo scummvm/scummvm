@@ -45,11 +45,13 @@ static const byte SliderColors[] = {
 	0x7B, 0x4D, 0xF4, 0x54, 0xDF, 0x74, 0x58
 };
 
-static const byte FallbackColors[] = {
+static const byte DragonFallbackColors[] = {
 	0x7, 0x7, 0x8, 0x7, 0x0, 0xF, 0x7, 0xC,
 	0x4, 0x0, 0xF, 0xF, 0xC, 0x4, 0x7, 0xF,
 	0x8, 0x7, 0x0, 0x7, 0x7
 };
+
+static const byte ChinaBakgroundColor = 23;
 
 static const byte MenuBackgroundColors[] {
 	0x71, 0x71, 0x71, 0x71, 0x71, 0x7B, 0x71, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B,
@@ -688,7 +690,7 @@ void RequestData::drawCorners(Graphics::ManagedSurface *dst, uint16 startNum, ui
 }
 
 /*static*/
-void RequestData::drawHeader(Graphics::ManagedSurface *dst, int16 x, int16 y, int16 width, int16 yoffset, const Common::String &header) {
+void RequestData::drawHeader(Graphics::ManagedSurface *dst, int16 x, int16 y, int16 width, int16 yoffset, const Common::String &header, byte fontCol, bool addBox) {
 	if (!header.empty()) {
 		const DgdsFont *font = getMenuFont();
 		int hwidth = font->getStringWidth(header);
@@ -698,11 +700,13 @@ void RequestData::drawHeader(Graphics::ManagedSurface *dst, int16 x, int16 y, in
 		int htop = y + yoffset;
 		int hbottom = htop + hheight;
 
-		font->drawString(dst, header, hleft + 1, htop + 2, hwidth, 0);
-		dst->drawLine(hleft - 3, htop, hright, htop, 0);
-		dst->drawLine(hright, htop + 1, hright, hbottom, 0);
-		dst->drawLine(hleft - 3, htop + 1, hleft - 3, hbottom, 15);
-		dst->drawLine(hleft - 2, hbottom, hleft + hwidth, hbottom, 15);
+		font->drawString(dst, header, hleft + 1, htop + 2, hwidth, fontCol);
+		if (addBox) {
+			dst->drawLine(hleft - 3, htop, hright, htop, 0);
+			dst->drawLine(hright, htop + 1, hright, hbottom, 0);
+			dst->drawLine(hleft - 3, htop + 1, hleft - 3, hbottom, 15);
+			dst->drawLine(hleft - 2, hbottom, hleft + hwidth, hbottom, 15);
+		}
 	}
 }
 
@@ -746,20 +750,25 @@ void RequestData::drawBackgroundWithSliderArea(Graphics::ManagedSurface *dst, in
 	dst->transBlitFrom(*corners[9], Common::Point(x, (y + sliderBgHeight) - corners[9]->h));
 	dst->transBlitFrom(*corners[10], Common::Point((x + width) - corners[10]->w, (y + sliderBgHeight) - corners[10]->h));
 
-	drawHeader(dst, x, y, width, 9, header);
+	drawHeader(dst, x, y, width, 9, header, 0,
+		static_cast<DgdsEngine *>(g_engine)->getGameId() == GID_DRAGON);
 }
 
 
 void RequestData::drawBackgroundNoSliders(Graphics::ManagedSurface *dst, const Common::String &header) const {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	fillBackground(dst, _rect.x, _rect.y, _rect.width, _rect.height, 0);
-	drawCorners(dst, 11, _rect.x, _rect.y, _rect.width, _rect.height);
-	drawHeader(dst, _rect.x, _rect.y, _rect.width, 4, header);
+	drawCorners(dst, engine->getGameId() == GID_DRAGON ? 11 : 1, _rect.x, _rect.y, _rect.width, _rect.height);
+	drawHeader(dst, _rect.x, _rect.y, _rect.width, 4, header, 0,
+		engine->getGameId() == GID_DRAGON);
 }
 
 /*static*/
 void RequestData::fillBackground(Graphics::ManagedSurface *dst, uint16 x, uint16 y, uint16 width, uint16 height, int16 startoffset) {
-	if (static_cast<DgdsEngine *>(g_engine)->getDetailLevel() == kDgdsDetailHigh) {
-		Graphics::Surface area = dst->getSubArea(Common::Rect(x, y, x + width, y + height));
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+
+	if (engine->getGameId() == GID_DRAGON && engine->getDetailLevel() == kDgdsDetailHigh) {
+		Graphics::Surface area = dst->getSubArea(Common::Rect(Common::Point(x, y), width, height));
 		while (startoffset < 0)
 			startoffset += ARRAYSIZE(MenuBackgroundColors);
 		startoffset = startoffset % ARRAYSIZE(MenuBackgroundColors);
@@ -780,7 +789,10 @@ void RequestData::fillBackground(Graphics::ManagedSurface *dst, uint16 x, uint16
 				coloffset = ARRAYSIZE(MenuBackgroundColors) - 1;
 		}
 	} else {
-		dst->fillRect(Common::Rect(x, y, width, height), FallbackColors[0]);
+		byte bgCol = DragonFallbackColors[0];
+		if (engine->getGameId() == GID_CHINA)
+			bgCol = ChinaBakgroundColor;
+		dst->fillRect(Common::Rect(Common::Point(x, y), width, height), bgCol);
 	}
 }
 

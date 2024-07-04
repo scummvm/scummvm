@@ -218,8 +218,8 @@ FontManager::FontType FontManager::fontTypeByName(const Common::String &filename
 	if (filename == "7X8.FNT") return k7x8Font;
 	if (filename == "P6X6.FNT") return kGameDlgFont;
 	if (filename == "HOC.FNT") return kGameFont;
-	if (filename == "CHINA.FNT") return kChinaFont;
-	if (filename == "CHINESE.FNT") return kGameDlgFont;
+	if (filename == "CHINA.FNT") return kGameDlgFont;
+	if (filename == "CHINESE.FNT") return kChinaFont;
 	if (filename == "WILLY.FNT") return kGameFont;
 	if (filename == "WVCR.FNT") return kVCRFont;
 	if (filename == "COMIX_16.FNT") return kGameDlgFont;

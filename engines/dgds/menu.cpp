@@ -317,8 +317,14 @@ void Menu::handleClick(const Common::Point &mouse) {
 		break;
 	case kMenuMainCalibrate:
 	case kMenuJoystickCalibrationOK:
-	case kMenuMouseCalibrationCalibrate:
-		drawMenu(kMenuCalibrate);
+	case kMenuMouseCalibrationCalibrate: // NOTE: same ID as kMenuJumpToGame (for HOC)
+		if (_curMenu == kMenuSkipPlayIntro) {
+			hideMenu();
+			engine->setShowClock(true);
+			engine->changeScene(24);
+		} else {
+			drawMenu(kMenuCalibrate);
+		}
 		break;
 	case kMenuMainFiles:
 	case kMenuSaveCancel:

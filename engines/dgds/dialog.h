@@ -102,6 +102,7 @@ class Dialog {
 public:
 	Dialog();
 	uint16 _num;
+	uint16 _fileNum; // HOC onward
 	DgdsRect _rect;
 	uint16 _bgColor;
 	uint16 _fontColor;
@@ -111,7 +112,8 @@ public:
 	DialogFlags _flags;
 	DialogFrameType _frameType;
 	uint16 _time;
-	uint16 _nextDialogNum;
+	uint16 _nextDialogFileNum; // HOC onward, always set 0 in dragon.
+	uint16 _nextDialogDlgNum;
 	Common::Array<DialogAction> _action;
 	Common::String _str;
 
@@ -136,6 +138,9 @@ private:
 	void drawType2(Graphics::ManagedSurface *dst, DialogDrawStage stage);
 	void drawType3(Graphics::ManagedSurface *dst, DialogDrawStage stage);
 	void drawType4(Graphics::ManagedSurface *dst, DialogDrawStage stage);
+
+	void drawType2BackgroundDragon(Graphics::ManagedSurface *dst, const Common::String &title);
+	void drawType2BackgroundChina(Graphics::ManagedSurface *dst, const Common::String &title);
 
 	void drawFindSelectionXY();
 	void drawFindSelectionTxtOffset();

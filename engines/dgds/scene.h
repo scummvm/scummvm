@@ -103,6 +103,14 @@ enum SceneOpCode {
 	kSceneOpHideClock = 17,		// args: none.  set clock script-hidden.
 	kSceneOpShowMouse = 18,		// args: none.
 	kSceneOpHideMouse = 19,		// args: none.
+	// Op 20 onward are common, but not in dragon
+
+	kSceneOpLoadTalkDataAndSetFlags = 20, // args: tdsnum to load, headnum
+	kSceneOpDrawVisibleTalkHeads = 21, // args: none
+	kSceneOpLoadTalkData = 22, 	// args: tds num to load
+	kSceneOpLoadDDSData = 24, 	// args: dds num to load
+	kSceneOpFreeDDSData = 25,	// args: dds num to free
+	kSceneOpFreeTalkData = 26, 	// args: tds num to free
 
 	// Dragon-specific opcodes
 	kSceneOpPasscode = 100,			// args: none.
@@ -119,6 +127,8 @@ enum SceneOpCode {
 	kSceneOpOpenChinaOpenGameOverMenu = 114,	// args: none.
 	kSceneOpOpenChinaOpenSkipCreditsMenu = 115,	// args: none.
 	kSceneOpOpenChinaStartIntro = 116,	// args: none.
+	kSceneOpChina117 = 117,	// args: none. ??
+	kSceneOpChina118 = 118,	// args: none. ??
 
 	// Beamish-specific opcodes
 	kSceneOpOpenBeamishOpenSkipCreditsMenu = 101,
@@ -217,6 +227,53 @@ private:
 };
 
 
+class TalkDataHeadFrame {
+public:
+	TalkDataHeadFrame() : _xoff(0), _yoff(0), _frameNo(0) {}
+	Common::String dump(const Common::String &indent) const;
+
+	uint16 _frameNo;
+	uint16 _xoff;
+	uint16 _yoff;
+};
+
+enum HeadFlags {
+	kHeadFlagNone = 0,
+	kHeadFlag1 = 1,
+	kHeadFlag2 = 2,
+	kHeadFlag4 = 4,
+	kHeadFlag8 = 8,
+	kHeadFlag10 = 0x10,
+	kHeadFlagVisible = 0x20,
+};
+
+class TalkDataHead {
+public:
+	TalkDataHead() : _num(0), _drawType(0), _drawCol(0), _val3(0), _flags(kHeadFlagNone) {}
+	Common::String dump(const Common::String &indent) const;
+
+	uint16 _num;
+	uint16 _drawType;
+	uint16 _drawCol;
+	DgdsRect _rect;
+	Common::Array<TalkDataHeadFrame> _headFrames;
+	uint16 _val3;
+	HeadFlags _flags;
+};
+
+class TalkData {
+public:
+	TalkData() : _num(0) {}
+	Common::String dump(const Common::String &indent) const;
+
+	uint16 _num;
+	Common::SharedPtr<Image> _shape;
+	Common::Array<TalkDataHead> _heads;
+	uint16 _val;
+	Common::String _bmpFile;
+};
+
+
 /**
  * A scene is described by an SDS file, which points to the ADS script to load
  * and holds the dialog info.
@@ -233,8 +290,8 @@ public:
 
 	uint32 getMagic() const { return _magic; }
 	const Common::String &getVersion() const { return _version; }
-	void runPreTickOps() { runOps(_preTickOps); }
-	void runPostTickOps() { runOps(_postTickOps); }
+	bool runPreTickOps() { return runOps(_preTickOps); }
+	bool runPostTickOps() { return runOps(_postTickOps); }
 
 	void mouseMoved(const Common::Point pt);
 	void mouseClicked(const Common::Point pt);
@@ -251,13 +308,13 @@ protected:
 	bool readMouseHotspotList(Common::SeekableReadStream *s, Common::Array<MouseCursor> &list) const;
 	bool readObjInteractionList(Common::SeekableReadStream *s, Common::Array<ObjectInteraction> &list) const;
 	bool readOpList(Common::SeekableReadStream *s, Common::Array<SceneOp> &list) const;
-	bool readDialogList(Common::SeekableReadStream *s, Common::Array<Dialog> &list) const;
+	bool readDialogList(Common::SeekableReadStream *s, Common::Array<Dialog> &list, int16 filenum = 0) const;
 	bool readTriggerList(Common::SeekableReadStream *s, Common::Array<SceneTrigger> &list) const;
 	bool readDialogActionList(Common::SeekableReadStream *s, Common::Array<DialogAction> &list) const;
 
 	bool checkConditions(const Common::Array<SceneConditions> &cond) const;
 
-	virtual void showDialog(uint16 num) {}
+	virtual void showDialog(uint16 fileNum, uint16 dlgNum) {}
 	virtual void globalOps(const Common::Array<uint16> &args) {}
 	virtual void segmentStateOps(const Common::Array<uint16> &args);
 
@@ -378,16 +435,30 @@ public:
 	void onDragFinish(const Common::Point &pt);
 	void enableTrigger(uint16 num, bool enable = true) override;
 
+	Dialog *loadDialogData(uint16 num);
+	void freeDialogData(uint16 num);
+	bool loadTalkData(uint16 num);
+	void freeTalkData(uint16 num);
+	void drawVisibleTalkers();
+	void loadTalkDataAndSomething(uint16 talknum, uint16 headnum);
+
 	// dragon-specific scene ops
 	void addAndShowTiredDialog();
 	void sceneOpUpdatePasscodeGlobal();
+
 
 protected:
 	HotArea *findAreaUnderMouse(const Common::Point &pt);
 
 private:
-	void showDialog(uint16 num) override;
+	void showDialog(uint16 fileNum, uint16 dlgNum) override;
 	Dialog *getVisibleDialog();
+	bool readTalkData(Common::SeekableReadStream *s, TalkData &dst);
+	void updateHead(TalkDataHead &head);
+	void drawHead(Graphics::ManagedSurface *dst, const TalkData &data, const TalkDataHead &head);
+	void drawHeadType1(Graphics::ManagedSurface *dst, const TalkDataHead &head, const Image &img);
+	void drawHeadType2(Graphics::ManagedSurface *dst, const TalkDataHead &head, const Image &img);
+	void drawHeadType3(Graphics::ManagedSurface *dst, const TalkDataHead &head, const Image &img);
 
 	int _num;
 	Common::Array<SceneOp> _enterSceneOps;
@@ -401,6 +472,8 @@ private:
 	Common::Array<ObjectInteraction> _objInteractions2;
 	//uint _field12_0x2b;
 	//uint _field15_0x33;
+
+	Common::Array<TalkData> _talkData;
 
 	// From here on is mutable stuff that might need saving
 	Common::Array<Dialog> _dialogs;

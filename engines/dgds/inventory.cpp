@@ -70,6 +70,7 @@ void Inventory::setRequestData(const REQFileData &data) {
 		warning("No inventory request data to load");
 		return;
 	}
+
 	RequestData &req = _reqData._requests[0];
 	_prevPageBtn = dynamic_cast<ButtonGadget *>(req.findGadgetByNumWithFlags3Not0x40(14));
 	_nextPageBtn = dynamic_cast<ButtonGadget *>(req.findGadgetByNumWithFlags3Not0x40(15));
@@ -104,12 +105,16 @@ void Inventory::drawHeader(Graphics::ManagedSurface &surf) {
 	int x1 = r._rect.x + 112;
 	font->drawString(&surf, title, x1 + 4, y1 + 2, titleWidth, 0);
 
-	int x2 = x1 + titleWidth + 6;
-	int y2 = y1 + font->getFontHeight();
-	surf.drawLine(x1, y1, x2, y1, 0xdf);
-	surf.drawLine(x2, y1 + 1, x2, y2, 0xdf);
-	surf.drawLine(x1, y1 + 1, x1, y2, 0xff);
-	surf.drawLine(x1 + 1, y2, x1 + titleWidth + 5, y2, 0xff);
+	// Only draw the box around the title in DRAGON
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	if (engine->getGameId() == GID_DRAGON) {
+		int x2 = x1 + titleWidth + 6;
+		int y2 = y1 + font->getFontHeight();
+		surf.drawLine(x1, y1, x2, y1, 0xdf);
+		surf.drawLine(x2, y1 + 1, x2, y2, 0xdf);
+		surf.drawLine(x1, y1 + 1, x1, y2, 0xff);
+		surf.drawLine(x1 + 1, y2, x1 + titleWidth + 5, y2, 0xff);
+	}
 }
 
 void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount) {
@@ -145,10 +150,10 @@ void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount) {
 }
 
 void Inventory::drawTime(Graphics::ManagedSurface &surf) {
-	if (!_invClock) // no clock in Willy Beamish demo.
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	if (engine->getGameId() != GID_DRAGON)
 		return;
 
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	const DgdsFont *font = RequestData::getMenuFont();
 	const Common::String timeStr = engine->getClock().getTimeStr();
 	Common::Point clockpos = Common::Point(_invClock->_x + _invClock->_parentX, _invClock->_y + _invClock->_parentY);

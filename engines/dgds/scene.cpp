@@ -128,6 +128,14 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpHideClock:		return "sceneOpHideClock";
 	case kSceneOpShowMouse:		return "sceneOpShowMouse";
 	case kSceneOpHideMouse:		return "sceneOpHideMouse";
+	case kSceneOpLoadTalkDataAndSetFlags: return "sceneOpLoadTalkDataAndSetFlags";
+	case kSceneOpDrawVisibleTalkHeads: return "sceneOpDrawVisibleTalksHeads";
+	case kSceneOpLoadTalkData: 	return "sceneOpLoadTalkData";
+	case kSceneOpLoadDDSData: 	return "sceneOpLoadDDSData";
+	case kSceneOpFreeDDSData: 	return "sceneOpFreeDDSData";
+	case kSceneOpFreeTalkData: 	return "sceneOpFreeTalkData";
+
+	// Dragon-specific
 	case kSceneOpPasscode:		return "passcode";
 	case kSceneOpMeanwhile:   	return "meanwhile";
 	case kSceneOpOpenGameOverMenu: return "openGameOverMenu";
@@ -365,15 +373,18 @@ bool Scene::readOpList(Common::SeekableReadStream *s, Common::Array<SceneOp> &li
 }
 
 
-bool Scene::readDialogList(Common::SeekableReadStream *s, Common::Array<Dialog> &list) const {
+bool Scene::readDialogList(Common::SeekableReadStream *s, Common::Array<Dialog> &list, int16 filenum /* = 0 */) const {
 	// Some data on this format here https://www.oldgamesitalia.net/forum/index.php?showtopic=24055&st=25&p=359214&#entry359214
 
 	uint16 nitems = s->readUint16LE();
 	_checkListNotTooLong(nitems, "dialogs");
-	list.resize(nitems);
+	uint startsize = list.size();
+	list.resize(startsize + nitems);
 
-	for (Dialog &dst : list) {
+	for (uint i = startsize; i < list.size(); i++) {
+		Dialog &dst = list[i];
 		dst._num = s->readUint16LE();
+		dst._fileNum = filenum;
 		dst._rect.x = s->readUint16LE();
 		dst._rect.y = s->readUint16LE();
 		dst._rect.width = s->readUint16LE();
@@ -400,11 +411,12 @@ bool Scene::readDialogList(Common::SeekableReadStream *s, Common::Array<Dialog> 
 		dst._frameType = static_cast<DialogFrameType>(s->readUint16LE());
 		dst._time = s->readUint16LE();
 		if (isVersionOver(" 1.215")) {
-			s->readUint16LE();
-			error("TODO: what is this extra int in dialog action list?");
+			dst._nextDialogFileNum = s->readUint16LE();
+		} else {
+			dst._nextDialogFileNum = 0;
 		}
 		if (isVersionOver(" 1.207")) {
-			dst._nextDialogNum = s->readUint16LE();
+			dst._nextDialogDlgNum = s->readUint16LE();
 		}
 
 		uint16 nbytes = s->readUint16LE();
@@ -586,7 +598,10 @@ bool Scene::runSceneOp(const SceneOp &op) {
 		// This implicitly changes scene num
 		return false;
 	case kSceneOpShowDlg:
-		showDialog(op._args[0]);
+		if (op._args.size() == 1)
+			showDialog(0, op._args[0]);
+		else
+			showDialog(op._args[0], op._args[1]);
 		break;
 	case kSceneOpShowInvButton:
 		engine->getScene()->addInvButtonToHotAreaList();
@@ -640,6 +655,26 @@ bool Scene::runSceneOp(const SceneOp &op) {
 	case kSceneOpHideMouse:
 		CursorMan.showMouse(false);
 		break;
+	case kSceneOpLoadTalkDataAndSetFlags: // args: tdsnum to load, headnum
+		engine->getScene()->loadTalkDataAndSomething(op._args[0], op._args[1]);
+		break;
+	case kSceneOpDrawVisibleTalkHeads: // args: none
+		engine->getScene()->drawVisibleTalkers();
+		break;
+	case kSceneOpLoadTalkData: 	// args: tds num to load
+		engine->getScene()->loadTalkData(op._args[0]);
+		break;
+	case kSceneOpLoadDDSData: 	// args: dds num to load
+		if (op._args[0])
+			engine->getScene()->loadDialogData(op._args[0]);
+		break;
+	case kSceneOpFreeDDSData:	// args: dds num to free
+		engine->getScene()->freeDialogData(op._args[0]);
+		break;
+	case kSceneOpFreeTalkData: 	// args: tds num to free
+		engine->getScene()->freeTalkData(op._args[0]);
+		break;
+
 	default:
 		warning("TODO: Implement generic scene op %d", op._opCode);
 		break;
@@ -701,9 +736,7 @@ bool Scene::runChinaOp(const SceneOp &op) {
 		engine->setMenuToTrigger(kMenuSkipPlayIntro);
 		break;
 	case kSceneOpOpenChinaStartIntro:
-		// TODO: This is the intro scene but it doesn't work directly.. what's different?
 		// The game first jumps to scene 100, and then to 98
-		warning("TODO: Implement start intro opcode");
 		engine->changeScene(98);
 		return false;
 	default:
@@ -957,6 +990,225 @@ void SDSScene::checkTriggers() {
 	}
 }
 
+
+Dialog *SDSScene::loadDialogData(uint16 num) {
+	if (num == 0)
+		return &_dialogs.front();
+
+	for (auto &dlg: _dialogs)
+		if (dlg._fileNum == num)
+			return &dlg;
+
+	const Common::String filename = Common::String::format("D%d.DDS", num);
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	ResourceManager *resourceManager = engine->getResourceManager();
+	Common::SeekableReadStream *dlgFile = resourceManager->getResource(filename);
+	if (!dlgFile)
+		error("Dialog file %s not found", filename.c_str());
+
+	DgdsChunkReader chunk(dlgFile);
+	Decompressor *decompressor = engine->getDecompressor();
+
+	bool result = false;
+
+	while (chunk.readNextHeader(EX_DDS, filename)) {
+		if (chunk.isContainer()) {
+			continue;
+		}
+
+		chunk.readContent(decompressor);
+		Common::SeekableReadStream *stream = chunk.getContent();
+
+		if (chunk.isSection(ID_DDS)) {
+			uint32 magic = stream->readUint32LE();
+			if (magic != _magic)
+				error("Dialog file magic mismatch %08x vs scene %08x", magic, _magic);
+			Common::String fileVersion = stream->readString();
+			Common::String fileId = stream->readString();
+			// slight hack, set file version while loading
+			Common::String oldVer = _version;
+			_version = fileVersion;
+			result = readDialogList(stream, _dialogs, num);
+			_version = oldVer;
+		}
+	}
+
+	delete dlgFile;
+
+	if (!result)
+		return nullptr;
+
+	for (auto &dlg : _dialogs) {
+		if (dlg._nextDialogDlgNum && !dlg._nextDialogFileNum) {
+			dlg._nextDialogFileNum = num;
+		}
+	}
+
+	// TODO: Maybe not this?
+	return &_dialogs.front();
+}
+
+void SDSScene::freeDialogData(uint16 num) {
+	if (!num)
+		return;
+
+	for (uint i = 0; i < _dialogs.size(); i++) {
+		if (_dialogs[i]._num == num) {
+			_dialogs.remove_at(i);
+			i--;
+		}
+	}
+}
+
+bool SDSScene::readTalkData(Common::SeekableReadStream *s, TalkData &dst) {
+	dst._bmpFile = s->readString();
+
+	uint16 nvals = s->readUint16LE();
+	_checkListNotTooLong(nvals, "talk data");
+	dst._heads.resize(nvals);
+	for (auto &h : dst._heads) {
+		h._num = s->readUint16LE();
+		h._drawType = s->readUint16LE();
+		h._drawCol = s->readUint16LE();
+		h._rect.x = s->readUint16LE();
+		h._rect.y = s->readUint16LE();
+		h._rect.width = s->readUint16LE();
+		h._rect.height = s->readUint16LE();
+		uint16 nsub = s->readUint16LE();
+		_checkListNotTooLong(nsub, "talk head frames");
+		h._headFrames.resize(nsub);
+		for (auto &sub : h._headFrames) {
+			sub._frameNo = s->readUint16LE();
+			sub._xoff = s->readUint16LE();
+			sub._yoff = s->readUint16LE();
+		}
+	}
+
+	return true;
+}
+
+bool SDSScene::loadTalkData(uint16 num) {
+	if (!num)
+		return false;
+
+	for (auto &talk : _talkData) {
+		if (talk._num == num)
+			return true;
+	}
+
+	const Common::String filename = Common::String::format("T%d.TDS", num);
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	ResourceManager *resourceManager = engine->getResourceManager();
+	Common::SeekableReadStream *dlgFile = resourceManager->getResource(filename);
+	if (!dlgFile)
+		error("Talk file %s not found", filename.c_str());
+
+	DgdsChunkReader chunk(dlgFile);
+	Decompressor *decompressor = engine->getDecompressor();
+
+	bool result = false;
+
+	while (chunk.readNextHeader(EX_TDS, filename)) {
+		if (chunk.isContainer()) {
+			continue;
+		}
+
+		chunk.readContent(decompressor);
+		Common::SeekableReadStream *stream = chunk.getContent();
+
+		if (chunk.isSection(ID_THD)) {
+			uint32 magic = stream->readUint32LE();
+			if (magic != _magic)
+				error("Talk file magic mismatch %08x vs scene %08x", magic, _magic);
+			Common::String fileVersion = stream->readString();
+			Common::String fileId = stream->readString();
+			// slight hack, set file version while loading
+			Common::String oldVer = _version;
+			_version = fileVersion;
+			_talkData.insert_at(0, TalkData());
+			result = readTalkData(stream, _talkData.front());
+			_talkData.front()._num = num;
+			_version = oldVer;
+		}
+	}
+
+	delete dlgFile;
+
+	return result;
+}
+
+void SDSScene::freeTalkData(uint16 num) {
+	for (uint i = 0; i < _talkData.size(); i++) {
+		if (_talkData[i]._num == num) {
+			_talkData.remove_at(i);
+			i--;
+		}
+	}
+}
+
+void SDSScene::drawVisibleTalkers() {
+	for (auto &data : _talkData) {
+		for (auto &head : data._heads) {
+			if (head._flags & kHeadFlagVisible)
+				updateHead(head);
+		}
+	}
+}
+
+void SDSScene::drawHead(Graphics::ManagedSurface *dst, const TalkData &data, const TalkDataHead &head) {
+	uint drawtype = head._drawType ? head._drawType : 1;
+	switch (drawtype) {
+	case 1:
+		drawHeadType1(dst, head, *data._shape);
+		break;
+	case 2:
+		drawHeadType2(dst, head, *data._shape);
+		break;
+	case 3:
+		drawHeadType3(dst, head, *data._shape);
+		break;
+	default:
+		error("Unsupported head draw type %d", drawtype);
+	}
+}
+
+void SDSScene::drawHeadType1(Graphics::ManagedSurface *dst, const TalkDataHead &head, const Image &img) {
+
+}
+
+void SDSScene::drawHeadType2(Graphics::ManagedSurface *dst, const TalkDataHead &head, const Image &img) {
+
+}
+
+void SDSScene::drawHeadType3(Graphics::ManagedSurface *dst, const TalkDataHead &head, const Image &img) {
+
+}
+
+void SDSScene::updateHead(TalkDataHead &head) {
+	warning("TODO: Update head");
+	head._flags = static_cast<HeadFlags>(head._flags & ~(kHeadFlag1 | kHeadFlag8 | kHeadFlag10 | kHeadFlagVisible));
+}
+
+void SDSScene::loadTalkDataAndSomething(uint16 talknum, uint16 headnum) {
+	drawVisibleTalkers();
+	if (loadTalkData(talknum)) {
+		for (auto &data : _talkData) {
+			if (data._num != talknum)
+				continue;
+
+			for (auto &head : data._heads) {
+				if (head._num != headnum)
+					continue;
+				head._flags = static_cast<HeadFlags>(head._flags & ~(kHeadFlag1 | kHeadFlag10));
+				head._flags = static_cast<HeadFlags>(head._flags | (kHeadFlag8 | kHeadFlagVisible));
+				break;
+			}
+			break;
+		}
+	}
+}
+
+
 static const uint16 TIRED_DLG_ID = 7777;
 
 void SDSScene::addAndShowTiredDialog() {
@@ -981,7 +1233,7 @@ void SDSScene::addAndShowTiredDialog() {
 		dlg._str = "Boy, am I tired.  Better get some sleep in about an hour.";
 		_dialogs.push_back(dlg);
 	}
-	showDialog(TIRED_DLG_ID);
+	showDialog(0, TIRED_DLG_ID);
 }
 
 
@@ -1065,9 +1317,12 @@ void SDSScene::sceneOpUpdatePasscodeGlobal() {
 	engine->getGDSScene()->setGlobal(0x20, globalval);
 }
 
-void SDSScene::showDialog(uint16 num) {
+void SDSScene::showDialog(uint16 fileNum, uint16 dlgNum) {
+	if (fileNum)
+		loadDialogData(fileNum);
+
 	for (auto &dialog : _dialogs) {
-		if (dialog._num == num) {
+		if (dialog._num == dlgNum) {
 			dialog.clearFlag(kDlgFlagHiFinished);
 			dialog.clearFlag(kDlgFlagRedrawSelectedActionChanged);
 			dialog.clearFlag(kDlgFlagHi10);
@@ -1137,9 +1392,9 @@ bool SDSScene::checkDialogActive() {
 					}
 				}
 			}
-			if (dlg._nextDialogNum) {
+			if (dlg._nextDialogDlgNum) {
 				dlg.setFlag(kDlgFlagHiFinished);
-				showDialog(dlg._nextDialogNum);
+				showDialog(dlg._nextDialogFileNum, dlg._nextDialogDlgNum);
 			}
 		}
 		if (dlg.hasFlag(kDlgFlagVisible)) {
