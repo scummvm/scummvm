@@ -172,7 +172,6 @@ qdResource *qdResourceContainer<T>::get_resource(const char *file_name) const {
 
 template<class T>
 void qdResourceContainer<T>::get_owners(std::list<T *> &owners) {
-	bool all_ok = true;
 	for (resource_list_t::iterator it = resource_list_.begin(); it != resource_list_.end(); ++it) {
 		if ((*it)->resource_file()) {
 			T *ptr = const_cast<T *>(resource_dispatcher_.find_owner(*it));
