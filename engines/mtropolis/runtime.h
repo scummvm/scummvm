@@ -408,7 +408,7 @@ struct VarReference {
 
 	uint32 guid;
 	Common::String source;
-	Common::WeakPtr<Modifier> resolution;
+	Common::WeakPtr<Modifier> resolution;	// NOTE: This may not be a variable
 
 	inline bool operator==(const VarReference &other) const {
 		return guid == other.guid && source == other.source;

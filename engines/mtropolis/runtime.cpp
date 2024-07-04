@@ -2428,11 +2428,10 @@ void VarReference::linkInternalReferences(ObjectLinkingScope *scope) {
 			warning("VarReference to '%s' failed to resolve a valid object", source.c_str());
 		} else {
 			Common::SharedPtr<RuntimeObject> objShr = obj.lock();
-			if (objShr->isModifier() && static_cast<Modifier *>(objShr.get())->isVariable()) {
+			if (objShr->isModifier())
 				this->resolution = obj.staticCast<Modifier>();
-			} else {
-				error("VarReference referenced a non-variable");
-			}
+			else
+				warning("VarReference to '%s' wasn't a modifier", source.c_str());
 		}
 	}
 }
