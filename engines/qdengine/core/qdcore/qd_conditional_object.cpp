@@ -233,11 +233,6 @@ bool qdConditionalObject::save_conditions_script(Common::SeekableWriteStream &fh
 	return true;
 }
 
-bool qdConditionalObject::save_conditions_script(XStream &fh, int indent) const {
-	warning("STUB: qdConditionalObject::save_conditions_script(XStream)");
-	return true;
-}
-
 void qdConditionalObject::conditions_quant(float dt) {
 	conditions_container_t::iterator it;
 	for (auto &it : conditions_) {
