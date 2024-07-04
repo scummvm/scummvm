@@ -18,7 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/file.h"
 #include "qdengine/core/qd_precomp.h"
 #include "qdengine/core/parser/qdscr_parser.h"
 #include "qdengine/core/parser/xml_tag_buffer.h"
@@ -1586,15 +1587,18 @@ bool qdCamera::check_grid_line_attributes(const Vect2s &start_pos, const Vect2s 
 
 void qdCamera::dump_grid(const char *file_name) const {
 #ifdef __QD_DEBUG_ENABLE__
-	XStream fh(file_name, XS_OUT);
+	Common::DumpFile fh;
+	fh.open(Common::Path(file_name));
+
 	for (int i = 0; i < GSY; i++) {
 		for (int j = 0; j < GSX; j++) {
 			if (Grid[j + i * GSX].attributes() < 10)
-				fh < " ";
-			fh <= Grid[j + i * GSX].attributes() < " ";
+				fh.writeString(" ");
+			fh.writeString(Common::String::format("%u ", Grid[j + i * GSX].attributes()));
 		}
-		fh < "\r\n";
+		fh.writeString("\r\n");
 	}
+
 	fh.close();
 #endif
 }
