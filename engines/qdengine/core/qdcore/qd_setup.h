@@ -98,7 +98,7 @@ public:
 		config_ = s;
 	}
 
-	static const char *const ini_name() {
+	static const char *ini_name() {
 		return ini_name_;
 	}
 
