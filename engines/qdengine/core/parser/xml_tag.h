@@ -125,7 +125,7 @@ public:
 
 	//! Возвращает указатель на данные тега.
 	const char *data() const {
-		return &*(data_ -> begin() + data_offset_);
+		return &*(data_->begin() + data_offset_);
 	}
 
 	//! Устанавливает указатель на общие данные.
@@ -133,7 +133,7 @@ public:
 		data_ = p;
 
 		for (subtags_t::iterator it = subtags_.begin(); it != subtags_.end(); ++it)
-			it -> set_data(p);
+			it->set_data(p);
 	}
 
 	//! Очистка вложенных тегов.
@@ -167,7 +167,7 @@ public:
 	//! Поиск вложенного тега по его идентификатору.
 	const tag *search_subtag(int subtag_id) const {
 		for (subtag_iterator it = subtags_begin(); it != subtags_end(); ++it)
-			if (it -> ID() == subtag_id) return &*it;
+			if (it->ID() == subtag_id) return &*it;
 
 		return NULL;
 	}

@@ -145,17 +145,17 @@ bool qdInterfaceTextWindow::mouse_handler(int x, int y, mouseDispatcher::mouseEv
 
 	if (windowType_ == WINDOW_DIALOGS) {
 		if (ev == mouseDispatcher::EV_LEFT_DOWN) {
-			if (qdScreenText * p = text_set_ -> get_text(x, y)) {
+			if (qdScreenText * p = text_set_->get_text(x, y)) {
 				if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-					dp -> set_flag(qdGameDispatcher::DIALOG_CLICK_FLAG);
-					dp -> set_mouse_click_state(p -> owner());
+					dp->set_flag(qdGameDispatcher::DIALOG_CLICK_FLAG);
+					dp->set_mouse_click_state(p->owner());
 				}
 				return true;
 			}
 		} else if (ev == mouseDispatcher::EV_MOUSE_MOVE) {
-			text_set_ -> clear_hover_mode();
-			if (qdScreenText * p = text_set_ -> get_text(x, y))
-				p -> set_hover_mode(true);
+			text_set_->clear_hover_mode();
+			if (qdScreenText * p = text_set_->get_text(x, y))
+				p->set_hover_mode(true);
 		}
 	}
 
@@ -190,7 +190,7 @@ bool qdInterfaceTextWindow::char_input_handler(int input) {
 void qdInterfaceTextWindow::hover_clear() {
 	if (windowType_ == WINDOW_DIALOGS) {
 		if (text_set_)
-			text_set_ -> clear_hover_mode();
+			text_set_->clear_hover_mode();
 	}
 }
 
@@ -199,15 +199,15 @@ bool qdInterfaceTextWindow::init(bool is_game_active) {
 
 	if (windowType_ == WINDOW_DIALOGS) {
 		if (!text_set_)
-			text_set_ = qdGameDispatcher::get_dispatcher() -> screen_texts_dispatcher().get_text_set(text_set_id_);
+			text_set_ = qdGameDispatcher::get_dispatcher()->screen_texts_dispatcher().get_text_set(text_set_id_);
 
 		if (!slider_) {
 			if (qdInterfaceScreen * p = static_cast<qdInterfaceScreen * >(owner()))
-				slider_ = dynamic_cast<qdInterfaceSlider * >(p -> get_element(slider_name()));
+				slider_ = dynamic_cast<qdInterfaceSlider * >(p->get_element(slider_name()));
 		}
 
 		if (text_set_) {
-			text_set_ -> set_max_text_width(text_size_.x);
+			text_set_->set_max_text_width(text_size_.x);
 			update_text_position();
 		}
 	} else {
@@ -329,13 +329,13 @@ bool qdInterfaceTextWindow::save_script_body(Common::SeekableWriteStream &fh, in
 }
 
 bool qdInterfaceTextWindow::load_script_body(const xml::tag *p) {
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_TEXT_WINDOW_BORDER_BACK:
-			set_border_background_file(it -> data());
+			set_border_background_file(it->data());
 			break;
 		case QDSCR_TEXT_WINDOW_SLIDER:
-			set_slider_name(it -> data());
+			set_slider_name(it->data());
 			break;
 		case QDSCR_SCREEN_SIZE:
 			xml::tag_buffer(*it) > text_size_.x > text_size_.y;
@@ -366,7 +366,7 @@ bool qdInterfaceTextWindow::load_script_body(const xml::tag *p) {
 			xml::tag_buffer(*it) > inputStringLimit_;
 			break;
 		case QDSCR_TEXT:
-			inputString_ = it -> data();
+			inputString_ = it->data();
 			break;
 		case QDSCR_VALIGN:
 			textVAlign_ = TextVAlign(xml::tag_buffer(*it).get_int());
@@ -383,10 +383,10 @@ bool qdInterfaceTextWindow::redraw() const {
 	if (windowType_ == WINDOW_DIALOGS) {
 		if (text_set_) {
 			int l_clip, t_clip, r_clip, b_clip;
-			grDispatcher::instance() -> GetClip(l_clip, t_clip, r_clip, b_clip);
+			grDispatcher::instance()->GetClip(l_clip, t_clip, r_clip, b_clip);
 
 			Vect2i ar = r();
-			grDispatcher::instance() -> LimitClip(ar.x - text_size_.x / 2, ar.y - text_size_.y / 2, ar.x + text_size_.x / 2, ar.y + text_size_.y / 2);
+			grDispatcher::instance()->LimitClip(ar.x - text_size_.x / 2, ar.y - text_size_.y / 2, ar.x + text_size_.x / 2, ar.y + text_size_.y / 2);
 
 			if (has_background_color_) {
 				Vect2i text_r = text_set_->screen_pos();
@@ -398,12 +398,12 @@ bool qdInterfaceTextWindow::redraw() const {
 					grDispatcher::instance()->RectangleAlpha(ar.x - text_size_.x / 2, text_r.y - text_sz.y / 2, text_size_.x, text_sz.y, background_color_, background_alpha_);
 			}
 
-			text_set_ -> redraw();
+			text_set_->redraw();
 
-			grDispatcher::instance() -> SetClip(l_clip, t_clip, r_clip, b_clip);
+			grDispatcher::instance()->SetClip(l_clip, t_clip, r_clip, b_clip);
 
 			if (qdGameConfig::get_config().debug_draw())
-				grDispatcher::instance() -> Rectangle(ar.x - text_size_.x / 2, ar.y - text_size_.y / 2, text_size_.x, text_size_.y, 0xFFFFFF, 0, GR_OUTLINED, 3);
+				grDispatcher::instance()->Rectangle(ar.x - text_size_.x / 2, ar.y - text_size_.y / 2, text_size_.x, text_size_.y, 0xFFFFFF, 0, GR_OUTLINED, 3);
 		}
 	} else if (windowType_ == WINDOW_EDIT || windowType_ == WINDOW_TEXT) {
 		if (has_background_color_) {
@@ -438,10 +438,10 @@ bool qdInterfaceTextWindow::need_redraw() const {
 		return true;
 
 	if (windowType_ == WINDOW_DIALOGS) {
-		if (text_set_ && text_set_ -> need_redraw())
+		if (text_set_ && text_set_->need_redraw())
 			return true;
 
-		if (slider_ && slider_ -> need_redraw())
+		if (slider_ && slider_->need_redraw())
 			return true;
 	} else if (windowType_ == WINDOW_EDIT || windowType_ == WINDOW_TEXT)
 		return true;
@@ -461,7 +461,7 @@ bool qdInterfaceTextWindow::quant(float dt) {
 	}
 
 	if (windowType_ == WINDOW_DIALOGS) {
-		if (is_visible() && text_set_ && text_set_ -> was_changed())
+		if (is_visible() && text_set_ && text_set_->was_changed())
 			update_text_position();
 
 #ifndef _QUEST_EDITOR
@@ -473,43 +473,43 @@ bool qdInterfaceTextWindow::quant(float dt) {
 				else
 					scrolling_position_ = 0;
 
-				Vect2i pos = text_set_ -> screen_pos();
+				Vect2i pos = text_set_->screen_pos();
 				pos.y = text_set_position_ + round(scrolling_position_);
-				text_set_ -> set_screen_pos(pos);
+				text_set_->set_screen_pos(pos);
 			}
 
-			if (text_set_ -> is_empty()) {
+			if (text_set_->is_empty()) {
 				if (is_visible()) {
 					hide();
 					if (qdInterfaceScreen * sp = dynamic_cast<qdInterfaceScreen * >(owner()))
-						sp -> build_visible_elements_list();
+						sp->build_visible_elements_list();
 
-					qdGameDispatcher::get_dispatcher() -> toggle_full_redraw();
+					qdGameDispatcher::get_dispatcher()->toggle_full_redraw();
 				}
 			} else {
 				if (!is_visible()) {
 					show();
 					if (qdInterfaceScreen * sp = dynamic_cast<qdInterfaceScreen * >(owner()))
-						sp -> build_visible_elements_list();
+						sp->build_visible_elements_list();
 				}
 			}
 
 			if (slider_) {
-				if (!is_visible() || text_size_.y > text_set_ -> screen_size().y) {
-					if (slider_ -> is_visible()) {
-						slider_ -> hide();
+				if (!is_visible() || text_size_.y > text_set_->screen_size().y) {
+					if (slider_->is_visible()) {
+						slider_->hide();
 
 						if (qdInterfaceScreen * sp = dynamic_cast<qdInterfaceScreen * >(owner()))
-							sp -> build_visible_elements_list();
+							sp->build_visible_elements_list();
 
-						qdGameDispatcher::get_dispatcher() -> toggle_full_redraw();
+						qdGameDispatcher::get_dispatcher()->toggle_full_redraw();
 					}
 				} else {
-					if (!slider_ -> is_visible()) {
-						slider_ -> show();
+					if (!slider_->is_visible()) {
+						slider_->show();
 
 						if (qdInterfaceScreen * sp = dynamic_cast<qdInterfaceScreen * >(owner()))
-							sp -> build_visible_elements_list();
+							sp->build_visible_elements_list();
 					}
 				}
 			}
@@ -597,21 +597,21 @@ void qdInterfaceTextWindow::text_redraw() const {
 
 		std::string str = inputString_.substr(0, caretPose_);
 		if (!str.empty()) {
-			grDispatcher::instance() -> DrawAlignedText(x0, ar.y, text_size_.x, text_size_.y, col, str.c_str(), GR_ALIGN_LEFT, 0, 0, font);
+			grDispatcher::instance()->DrawAlignedText(x0, ar.y, text_size_.x, text_size_.y, col, str.c_str(), GR_ALIGN_LEFT, 0, 0, font);
 			x0 += grDispatcher::instance()->TextWidth(str.c_str(), 0, font);
 		}
 		if (caretVisible_)
-			grDispatcher::instance() -> DrawAlignedText(x0, ar.y, text_size_.x, text_size_.y, col, "|", GR_ALIGN_LEFT, 0, 0, font);
+			grDispatcher::instance()->DrawAlignedText(x0, ar.y, text_size_.x, text_size_.y, col, "|", GR_ALIGN_LEFT, 0, 0, font);
 		x0 += grDispatcher::instance()->TextWidth("|", 0, font);
 
 		str = inputString_.substr(caretPose_, std::string::npos);
 		if (!str.empty())
-			grDispatcher::instance() -> DrawAlignedText(x0, ar.y, text_size_.x, text_size_.y, col, str.c_str(), GR_ALIGN_LEFT, 0, 0, font);
+			grDispatcher::instance()->DrawAlignedText(x0, ar.y, text_size_.x, text_size_.y, col, str.c_str(), GR_ALIGN_LEFT, 0, 0, font);
 	} else {
 		if (windowType_ == WINDOW_TEXT)
-			grDispatcher::instance() -> DrawParsedText(ar.x, ar.y, text_size_.x, text_size_.y, col, &parser_, grTextAlign(textFormat_.alignment()), font);
+			grDispatcher::instance()->DrawParsedText(ar.x, ar.y, text_size_.x, text_size_.y, col, &parser_, grTextAlign(textFormat_.alignment()), font);
 		else
-			grDispatcher::instance() -> DrawAlignedText(ar.x, ar.y, text_size_.x, text_size_.y, col, inputString_.c_str(), grTextAlign(textFormat_.alignment()), 0, 0, font);
+			grDispatcher::instance()->DrawAlignedText(ar.x, ar.y, text_size_.x, text_size_.y, col, inputString_.c_str(), grTextAlign(textFormat_.alignment()), 0, 0, font);
 	}
 }
 

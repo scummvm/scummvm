@@ -105,7 +105,7 @@ bool qdInterfaceSlider::mouse_handler(int x, int y, mouseDispatcher::mouseEvent 
 		break;
 	case mouseDispatcher::EV_MOUSE_MOVE:
 		if (track_mouse_) {
-			if (mouseDispatcher::instance() -> is_pressed(mouseDispatcher::ID_BUTTON_LEFT)) {
+			if (mouseDispatcher::instance()->is_pressed(mouseDispatcher::ID_BUTTON_LEFT)) {
 				set_phase(offset2phase(Vect2i(x, y)));
 				return true;
 			} else
@@ -181,8 +181,8 @@ bool qdInterfaceSlider::save_script_body(Common::SeekableWriteStream &fh, int in
 
 bool qdInterfaceSlider::load_script_body(const xml::tag *p) {
 	bool background_flag = false;
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_INTERFACE_ELEMENT_STATE:
 			if (!background_flag) {
 				if (!background_.load_script(&*it)) return false;
@@ -264,7 +264,7 @@ grScreenRegion qdInterfaceSlider::screen_region() const {
 
 bool qdInterfaceSlider::set_slider_animation(const qdAnimation *anm, int anm_flags) {
 	if (anm) {
-		anm -> create_reference(&slider_animation_);
+		anm->create_reference(&slider_animation_);
 
 		if (anm_flags & QD_ANIMATION_FLAG_LOOP)
 			slider_animation_.set_flag(QD_ANIMATION_FLAG_LOOP);

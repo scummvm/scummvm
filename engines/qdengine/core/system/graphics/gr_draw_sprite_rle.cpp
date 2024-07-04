@@ -68,8 +68,8 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 	for (int i = 0; i < psy; i ++) {
 		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
 
-		const char *rle_header = p -> header_ptr(py + i);
-		const unsigned *rle_data = p -> data_ptr(py + i);
+		const char *rle_header = p->header_ptr(py + i);
+		const unsigned *rle_data = p->data_ptr(py + i);
 
 		int j = 0;
 		char count = 0;
@@ -197,7 +197,7 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 	if (!alpha_flag) {
 		const unsigned char *line_src = rleBuffer::get_buffer(0);
 		for (int i = y0; i != y1; i += iy) {
-			p -> decode_line(fy >> 16);
+			p->decode_line(fy >> 16);
 
 			fy += dy;
 			fx = (1 << 15);
@@ -214,7 +214,7 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 	} else {
 		const unsigned char *line_src = rleBuffer::get_buffer(0);
 		for (int i = y0; i != y1; i += iy) {
-			p -> decode_line(fy >> 16);
+			p->decode_line(fy >> 16);
 
 			fy += dy;
 			fx = (1 << 15);
@@ -276,8 +276,8 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 	for (int i = 0; i < psy; i ++) {
 		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
 
-		const char *rle_header = p -> header_ptr(py + i);
-		const unsigned *rle_data = p -> data_ptr(py + i);
+		const char *rle_header = p->header_ptr(py + i);
+		const unsigned *rle_data = p->data_ptr(py + i);
 
 		int j = 0;
 		char count = 0;
@@ -441,7 +441,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 		const unsigned char *line_src = rleBuffer::get_buffer(0);
 
 		for (int i = y0; i != y1; i += iy) {
-			p -> decode_line(fy >> 16);
+			p->decode_line(fy >> 16);
 
 			fy += dy;
 			fx = (1 << 15);
@@ -464,7 +464,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 		split_rgb565u(mask_color, mr, mg, mb);
 
 		for (int i = y0; i != y1; i += iy) {
-			p -> decode_line(fy >> 16);
+			p->decode_line(fy >> 16);
 
 			fy += dy;
 			fx = (1 << 15);
@@ -636,7 +636,7 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const class rleB
 	for (int i = 0; i < psy; i ++) {
 		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
 		unsigned short *scr_buf_prev = (i) ? reinterpret_cast<unsigned short *>(screenBuf + yTable[y - dy] + x) : scr_buf;
-		p -> decode_line(py + i, i & 1);
+		p->decode_line(py + i, i & 1);
 
 		const unsigned short *data_ptr = (i & 1) ? data1 + px : data0 + px;
 		const unsigned short *data_ptr_prev = (i & 1) ? data0 + px : data1 + px;
@@ -745,7 +745,7 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const class rleB
 		const unsigned short *line1 = reinterpret_cast<const unsigned short *>(rleBuffer::get_buffer(1));
 
 		for (int i = y0; i != y1; i += iy) {
-			p -> decode_line(fy >> 16, i & 1);
+			p->decode_line(fy >> 16, i & 1);
 			const unsigned short *line_src = (i & 1) ? line1 : line0;
 			const unsigned short *line_src_prev = (i & 1) ? line0 : line1;
 
@@ -785,7 +785,7 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const class rleB
 		const unsigned short *line1 = reinterpret_cast<const unsigned short *>(rleBuffer::get_buffer(1));
 
 		for (int i = y0; i != y1; i += iy) {
-			p -> decode_line(fy >> 16, i & 1);
+			p->decode_line(fy >> 16, i & 1);
 			const unsigned short *line_src = (i & 1) ? line1 : line0;
 			const unsigned short *line_src_prev = (i & 1) ? line0 : line1;
 

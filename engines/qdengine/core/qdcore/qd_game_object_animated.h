@@ -72,7 +72,7 @@ public:
 	//! Возвращает true, если у объекта выставлен баунд.
 	bool has_bound() const {
 		if (check_flag(QD_OBJ_HAS_BOUND_FLAG)) return true;
-		if (cur_state_ != -1 && states[cur_state_] -> has_bound()) return true;
+		if (cur_state_ != -1 && states[cur_state_]->has_bound()) return true;
 		return false;
 	}
 	//! Отрисовка баунда (для отладки).
@@ -121,7 +121,7 @@ public:
 
 	//! Возвращает true, если состояние state было активировано.
 	bool was_state_active(const qdGameObjectState *p) const {
-		return p -> check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_WAS_ACTIVATED);
+		return p->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_WAS_ACTIVATED);
 	}
 
 	bool is_state_waiting(const qdGameObjectState *p) const {
@@ -344,12 +344,12 @@ protected:
 	bool save_script_body(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 	void set_last_state(qdGameObjectState *p) {
-		if (!p || !p -> check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_STATE | qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_HOVER_STATE))
+		if (!p || !p->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_STATE | qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_HOVER_STATE))
 			last_state_ = p;
 	}
 
 	void set_last_inventory_state(qdGameObjectState *p) {
-		if (!p || (p -> check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY) && !p -> check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_STATE | qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_HOVER_STATE)))
+		if (!p || (p->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY) && !p->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_STATE | qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_HOVER_STATE)))
 			last_inventory_state_ = p;
 	}
 

@@ -436,10 +436,10 @@ bool qdCamera::deselect_cell(int x, int y) {
 
 void qdCamera::load_script(const xml::tag *p) {
 	int x, y;
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		xml::tag_buffer buf(*it);
 
-		switch (it -> ID()) {
+		switch (it->ID()) {
 		case QDSCR_CAMERA_GRID_SIZE:
 			buf > x > y;
 			set_grid_size(x, y);
@@ -652,9 +652,9 @@ bool qdCamera::draw_grid() const {
 					Vect2s e = camera_coord2scr(endPoint);
 
 #ifdef _GR_ENABLE_ZBUFFER
-					grDispatcher::instance() -> Line_z(b.x, b.y, begPoint.z, e.x, e.y, endPoint.z, NORMAL_CELL_CLR, DASH_LEN);
+					grDispatcher::instance()->Line_z(b.x, b.y, begPoint.z, e.x, e.y, endPoint.z, NORMAL_CELL_CLR, DASH_LEN);
 #else
-					grDispatcher::instance() -> Line(b.x, b.y, e.x, e.y, NORMAL_CELL_CLR, DASH_LEN);
+					grDispatcher::instance()->Line(b.x, b.y, e.x, e.y, NORMAL_CELL_CLR, DASH_LEN);
 #endif
 				}
 			}
@@ -670,9 +670,9 @@ bool qdCamera::draw_grid() const {
 					Vect2s e = camera_coord2scr(endPoint);
 
 #ifdef _GR_ENABLE_ZBUFFER
-					grDispatcher::instance() -> Line_z(b.x, b.y, begPoint.z, e.x, e.y, endPoint.z, NORMAL_CELL_CLR, DASH_LEN);
+					grDispatcher::instance()->Line_z(b.x, b.y, begPoint.z, e.x, e.y, endPoint.z, NORMAL_CELL_CLR, DASH_LEN);
 #else
-					grDispatcher::instance() -> Line(b.x, b.y, e.x, e.y, NORMAL_CELL_CLR, DASH_LEN);
+					grDispatcher::instance()->Line(b.x, b.y, e.x, e.y, NORMAL_CELL_CLR, DASH_LEN);
 #endif
 				}
 			}
@@ -687,7 +687,7 @@ bool qdCamera::draw_grid() const {
 				Vect2s b = camera_coord2scr(begPoint);
 				Vect2s e = camera_coord2scr(endPoint);
 
-				grDispatcher::instance() -> Line(b.x, b.y, e.x, e.y, NORMAL_CELL_CLR, DASH_LEN);
+				grDispatcher::instance()->Line(b.x, b.y, e.x, e.y, NORMAL_CELL_CLR, DASH_LEN);
 			}
 		}
 
@@ -834,9 +834,9 @@ void qdCamera::scale_grid(int sx, int sy, int csx, int csy) {
 						}
 					}
 					if (attr_count >= dx * dy / 2)
-						new_p -> make_impassable();
+						new_p->make_impassable();
 
-					new_p -> set_height(height_sum / (dx * dy));
+					new_p->set_height(height_sum / (dx * dy));
 
 					new_p ++;
 				}
@@ -978,14 +978,14 @@ bool qdCamera::load_data(qdSaveStream &fh, int save_version) {
 	if (flag) {
 		qdNamedObjectReference ref;
 		if (!ref.load_data(fh, save_version)) return false;
-		current_object_ = dynamic_cast<qdGameObjectAnimated *>(qdGameDispatcher::get_dispatcher() -> get_named_object(&ref));
+		current_object_ = dynamic_cast<qdGameObjectAnimated *>(qdGameDispatcher::get_dispatcher()->get_named_object(&ref));
 	}
 
 	fh > flag;
 	if (flag) {
 		qdNamedObjectReference ref;
 		if (!ref.load_data(fh, save_version)) return false;
-		default_object_ = dynamic_cast<qdGameObjectAnimated *>(qdGameDispatcher::get_dispatcher() -> get_named_object(&ref));
+		default_object_ = dynamic_cast<qdGameObjectAnimated *>(qdGameDispatcher::get_dispatcher()->get_named_object(&ref));
 	}
 
 	return true;
@@ -1062,12 +1062,12 @@ bool qdCamera::quant(float dt) {
 	if (!p) p = default_object_;
 
 	if (p)
-		p -> qdGameObject::update_screen_pos();
+		p->qdGameObject::update_screen_pos();
 
 	switch (current_mode_.camera_mode()) {
 	case qdCameraMode::MODE_CENTER_OBJECT:
 		if (p) {
-			Vect2i r = p -> screen_pos() + current_mode_.center_offset();
+			Vect2i r = p->screen_pos() + current_mode_.center_offset();
 
 			int cx = scrCenter.x + qdGameConfig::get_config().screen_sx() / 2 - r.x;
 			int cy = scrCenter.y + qdGameConfig::get_config().screen_sy() / 2 - r.y;
@@ -1094,8 +1094,8 @@ bool qdCamera::quant(float dt) {
 		break;
 	case qdCameraMode::MODE_OBJECT_ON_SCREEN:
 		if (p) {
-			Vect2s r = p -> screen_pos();
-			float sz = p -> radius();
+			Vect2s r = p->screen_pos();
+			float sz = p->radius();
 
 			int dx = 0;
 			int dy = 0;
@@ -1138,7 +1138,7 @@ bool qdCamera::quant(float dt) {
 		break;
 	case qdCameraMode::MODE_FOLLOW_OBJECT:
 		if (p) {
-			Vect2s r = p -> screen_pos() + current_mode_.center_offset();
+			Vect2s r = p->screen_pos() + current_mode_.center_offset();
 			int dx = -r.x + qdGameConfig::get_config().screen_sx() / 2;
 			int dy = -r.y + qdGameConfig::get_config().screen_sy() / 2;
 
@@ -1157,8 +1157,8 @@ bool qdCamera::quant(float dt) {
 		break;
 	case qdCameraMode::MODE_CENTER_OBJECT_WHEN_LEAVING:
 		if (p) {
-			Vect2s r = p -> screen_pos() + current_mode_.center_offset();
-			float sz = p -> radius();
+			Vect2s r = p->screen_pos() + current_mode_.center_offset();
+			float sz = p->radius();
 
 			int dx = 0;
 			int dy = 0;
@@ -1198,7 +1198,7 @@ bool qdCamera::quant(float dt) {
 	}
 
 	if (p)
-		p -> update_screen_pos();
+		p->update_screen_pos();
 
 	clip_center_coords(scrCenter.x, scrCenter.y);
 
@@ -1233,7 +1233,7 @@ bool qdCamera::set_grid_attributes(const Vect2s &center_pos, const Vect2s &size,
 	for (int y = y0; y < y1; y ++) {
 		sGridCell *p = cells;
 		for (int x = x0; x < x1; x++, p++)
-			p -> set_attribute(attr);
+			p->set_attribute(attr);
 
 		cells += GSX;
 	}
@@ -1258,7 +1258,7 @@ bool qdCamera::drop_grid_attributes(const Vect2s &center_pos, const Vect2s &size
 	for (int y = y0; y < y1; y ++) {
 		sGridCell *p = cells;
 		for (int x = x0; x < x1; x++, p++)
-			p -> drop_attribute(attr);
+			p->drop_attribute(attr);
 
 		cells += GSX;
 	}
@@ -1269,7 +1269,7 @@ bool qdCamera::drop_grid_attributes(const Vect2s &center_pos, const Vect2s &size
 bool qdCamera::set_grid_attributes(int attr) {
 	sGridCell *p = Grid;
 	for (int i = 0; i < GSX * GSY; i++, p++)
-		p -> set_attribute(attr);
+		p->set_attribute(attr);
 
 	return true;
 }
@@ -1277,7 +1277,7 @@ bool qdCamera::set_grid_attributes(int attr) {
 bool qdCamera::drop_grid_attributes(int attr) {
 	sGridCell *p = Grid;
 	for (int i = 0; i < GSX * GSY; i++, p++)
-		p -> drop_attribute(attr);
+		p->drop_attribute(attr);
 
 	return true;
 }
@@ -1299,7 +1299,7 @@ bool qdCamera::check_grid_attributes(const Vect2s &center_pos, const Vect2s &siz
 	for (int y = y0; y < y1; y ++) {
 		const sGridCell *p = cells;
 		for (int x = x0; x < x1; x++, p++) {
-			if (p -> check_attribute(attr))
+			if (p->check_attribute(attr))
 				return true;
 		}
 
@@ -1327,7 +1327,7 @@ int qdCamera::cells_num_with_exact_attributes(const Vect2s &center_pos, const Ve
 	for (int y = y0; y < y1; y ++) {
 		const sGridCell *p = cells;
 		for (int x = x0; x < x1; x++, p++) {
-			if (p -> attributes() == attr)
+			if (p->attributes() == attr)
 				ret++;
 		}
 
@@ -1357,7 +1357,7 @@ bool qdCamera::is_walkable(const Vect2s &center_pos, const Vect2s &size, bool ig
 	for (int y = y0; y < y1; y ++) {
 		const sGridCell *p = cells;
 		for (int x = x0; x < x1; x++, p++) {
-			if (p -> check_attribute(attr) && !p -> check_attribute(sGridCell::CELL_SELECTED))
+			if (p->check_attribute(attr) && !p->check_attribute(sGridCell::CELL_SELECTED))
 				return false;
 		}
 

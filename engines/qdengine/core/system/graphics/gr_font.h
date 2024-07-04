@@ -64,7 +64,7 @@ public:
 
 	const grScreenRegion &find_char(int code) const {
 		grFontCharVector::const_iterator it = std::find(chars_.begin(), chars_.end(), code);
-		if (it != chars_.end()) return it -> region_;
+		if (it != chars_.end()) return it->region_;
 
 		return grScreenRegion::EMPTY;
 	}

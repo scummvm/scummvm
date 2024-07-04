@@ -50,7 +50,7 @@ public:
 		return (get_object(name) != 0);
 	}
 	bool is_in_list(const T *p) const {
-		return (get_object(p -> name()) != 0);
+		return (get_object(p->name()) != 0);
 	}
 	bool clear();
 
@@ -64,7 +64,7 @@ private:
 
 template <class T>
 bool qdObjectMapContainer<T>::add_object(T *p) {
-	typename object_map_t::iterator it = object_map_.find(p -> name());
+	typename object_map_t::iterator it = object_map_.find(p->name());
 	if (it != object_map_.end())
 		return false;
 
@@ -99,7 +99,7 @@ bool qdObjectMapContainer<T>::remove_object(T *p) {
 	FOR_EACH(object_list_, it) {
 		if (*it == p) {
 			object_list_.erase(it);
-			typename object_map_t::iterator im = object_map_.find(p -> name());
+			typename object_map_t::iterator im = object_map_.find(p->name());
 			if (im != object_map_.end())
 				object_map_.erase(im);
 
@@ -120,10 +120,10 @@ bool qdObjectMapContainer<T>::remove_object(const char *name) {
 
 template <class T>
 bool qdObjectMapContainer<T>::rename_object(T *p, const char *name) {
-	typename object_map_t::iterator im = object_map_.find(p -> name());
+	typename object_map_t::iterator im = object_map_.find(p->name());
 	if (im != object_map_.end()) {
 		object_map_.erase(im);
-		p -> set_name(name);
+		p->set_name(name);
 		object_map_[p->name()] = p;
 
 		return true;

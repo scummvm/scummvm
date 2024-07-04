@@ -56,7 +56,7 @@ qdTriggerProfilerRecord::qdTriggerProfilerRecord(unsigned int tm, event_t ev, co
 	link_id_(lnk_id),
 	status_(st) {
 	if (qdGameDispatcher * p = qdGameDispatcher::get_dispatcher()) {
-		for (qdTriggerChainList::const_iterator it = p -> trigger_chain_list().begin(); it != p -> trigger_chain_list().end(); ++it) {
+		for (qdTriggerChainList::const_iterator it = p->trigger_chain_list().begin(); it != p->trigger_chain_list().end(); ++it) {
 			if (*it == trigger) break;
 			trigger_id_++;
 		}
@@ -112,7 +112,7 @@ bool qdTriggerProfiler::save_to_work_file() const {
 
 	fh < records_.size();
 	for (record_container_t::const_iterator it = records_.begin(); it != records_.end(); ++it)
-		it -> save(fh);
+		it->save(fh);
 
 	fh.close();
 	return true;
@@ -128,7 +128,7 @@ bool qdTriggerProfiler::load_from_work_file() {
 		fh > size;
 		records_.resize(size);
 		for (record_container_t::iterator it = records_.begin(); it != records_.end(); ++it)
-			it -> load(fh);
+			it->load(fh);
 
 		fh.close();
 		return true;
@@ -162,8 +162,8 @@ const char *qdTriggerProfiler::record_text(const qdTriggerProfilerRecord &rec, c
 
 	if (record_text_format_ & PROFILER_TEXT_TRIGGER_NAME) {
 		if (qdTriggerChain * tp = get_record_trigger(rec)) {
-			if (tp -> name())
-				text < "[" < tp -> name() < "]" < separator;
+			if (tp->name())
+				text < "[" < tp->name() < "]" < separator;
 		}
 	}
 
@@ -209,7 +209,7 @@ const char *qdTriggerProfiler::record_text(const qdTriggerProfilerRecord &rec, c
 			break;
 		case qdTriggerProfilerRecord::PARENT_LINK_STATUS_UPDATE:
 			if (qdTriggerLink * lp = get_record_link(rec))
-				text < element_text(lp -> element());
+				text < element_text(lp->element());
 			else
 				text < "???";
 
@@ -223,7 +223,7 @@ const char *qdTriggerProfiler::record_text(const qdTriggerProfilerRecord &rec, c
 			text < " ->" < separator;
 
 			if (qdTriggerLink * lp = get_record_link(rec))
-				text < element_text(lp -> element());
+				text < element_text(lp->element());
 			else
 				text < "???";
 			break;
@@ -235,7 +235,7 @@ const char *qdTriggerProfiler::record_text(const qdTriggerProfilerRecord &rec, c
 
 qdTriggerElementPtr qdTriggerProfiler::get_record_element(const qdTriggerProfilerRecord &rec) {
 	if (qdTriggerChain * p = get_record_trigger(rec))
-		return p -> search_element(rec.element_id());
+		return p->search_element(rec.element_id());
 
 	return NULL;
 }
@@ -243,9 +243,9 @@ qdTriggerElementPtr qdTriggerProfiler::get_record_element(const qdTriggerProfile
 qdTriggerLink *qdTriggerProfiler::get_record_link(const qdTriggerProfilerRecord &rec) {
 	if (qdTriggerElementPtr p = get_record_element(rec)) {
 		if (rec.event() == qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE)
-			return p -> find_child_link(rec.link_id());
+			return p->find_child_link(rec.link_id());
 		else
-			return p -> find_parent_link(rec.link_id());
+			return p->find_parent_link(rec.link_id());
 	}
 
 	return NULL;
@@ -253,12 +253,12 @@ qdTriggerLink *qdTriggerProfiler::get_record_link(const qdTriggerProfilerRecord 
 
 qdTriggerChain *qdTriggerProfiler::get_record_trigger(const qdTriggerProfilerRecord &rec) {
 	if (qdGameDispatcher * p = qdGameDispatcher::get_dispatcher()) {
-		qdTriggerChainList::const_iterator it = p -> trigger_chain_list().begin();
+		qdTriggerChainList::const_iterator it = p->trigger_chain_list().begin();
 		for (int i = 0; i < rec.trigger_id(); i++) {
-			if (it != p -> trigger_chain_list().end()) ++it;
+			if (it != p->trigger_chain_list().end()) ++it;
 		}
 
-		if (it != p -> trigger_chain_list().end()) return *it;
+		if (it != p->trigger_chain_list().end()) return *it;
 	}
 
 	return NULL;
@@ -268,18 +268,18 @@ bool qdTriggerProfiler::evolve(int record_num) const {
 	assert(record_num >= 0 && record_num < records_.size());
 
 	if (qdGameDispatcher * p = qdGameDispatcher::get_dispatcher())
-		p -> reset_triggers();
+		p->reset_triggers();
 
 	for (int i = 0; i <= record_num; i++) {
 		switch (records_[i].event()) {
 		case qdTriggerProfilerRecord::ELEMENT_STATUS_UPDATE:
 			if (qdTriggerElementPtr p = get_record_element(records_[i]))
-				p -> set_status(qdTriggerElement::ElementStatus(records_[i].status()));
+				p->set_status(qdTriggerElement::ElementStatus(records_[i].status()));
 			break;
 		case qdTriggerProfilerRecord::PARENT_LINK_STATUS_UPDATE:
 		case qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE:
 			if (qdTriggerLink * p = get_record_link(records_[i]))
-				p -> set_status(qdTriggerLink::LinkStatus(records_[i].status()));
+				p->set_status(qdTriggerLink::LinkStatus(records_[i].status()));
 			break;
 		}
 	}
@@ -297,43 +297,43 @@ const char *qdTriggerProfiler::element_text(qdTriggerElementPtr el) {
 	static XBuffer text(1024, 1);
 	text.init();
 
-	if (el -> object()) {
+	if (el->object()) {
 		if (record_text_format_ & PROFILER_TEXT_SCENE_NAME) {
-			if (qdNamedObject * p = el -> object() -> owner(QD_NAMED_OBJECT_SCENE)) {
-				if (p -> name())
-					text < p -> name() < "::";
+			if (qdNamedObject * p = el->object()->owner(QD_NAMED_OBJECT_SCENE)) {
+				if (p->name())
+					text < p->name() < "::";
 				else
 					text < "???::";
 			}
 		}
 
-		if (qdNamedObject * p = el -> object() -> owner(QD_NAMED_OBJECT_ANIMATED_OBJ)) {
-			if (p -> name())
-				text < p -> name() < "::";
+		if (qdNamedObject * p = el->object()->owner(QD_NAMED_OBJECT_ANIMATED_OBJ)) {
+			if (p->name())
+				text < p->name() < "::";
 			else
 				text < "???::";
 		} else {
-			if (qdNamedObject * p = el -> object() -> owner(QD_NAMED_OBJECT_MOVING_OBJ)) {
-				if (p -> name())
-					text < p -> name() < "::";
+			if (qdNamedObject * p = el->object()->owner(QD_NAMED_OBJECT_MOVING_OBJ)) {
+				if (p->name())
+					text < p->name() < "::";
 				else
 					text < "???::";
 			} else {
-				if (qdNamedObject * p = el -> object() -> owner(QD_NAMED_OBJECT_GRID_ZONE)) {
-					if (p -> name())
-						text < p -> name() < "::";
+				if (qdNamedObject * p = el->object()->owner(QD_NAMED_OBJECT_GRID_ZONE)) {
+					if (p->name())
+						text < p->name() < "::";
 					else
 						text < "???::";
 				}
 			}
 		}
 
-		if (el -> object() -> name())
-			text < el -> object() -> name();
+		if (el->object()->name())
+			text < el->object()->name();
 		else
 			text < "???";
 	} else {
-		if (el -> ID() == qdTriggerElement::ROOT_ID)
+		if (el->ID() == qdTriggerElement::ROOT_ID)
 			text < "Старт";
 	}
 

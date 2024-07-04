@@ -34,13 +34,13 @@ void ResourceDispatcher::do_start() {
 		start_log = false;
 		syncro_timer.setTime(1);
 		for (UserList::iterator i = users.begin(); i != users.end(); ++i)
-			(*i) -> time = syncro_timer();
+			(*i)->time = syncro_timer();
 	}
 }
 
 void ResourceDispatcher::reset() {
 	for (UserList::iterator i = users.begin(); i != users.end(); ++i)
-		(*i) -> time = syncro_timer();
+		(*i)->time = syncro_timer();
 }
 
 void ResourceDispatcher::quant() {
@@ -53,7 +53,7 @@ void ResourceDispatcher::quant() {
 	syncro_timer.next_frame();
 
 	for (;;) {
-		time_type t_min = users.front() -> time;
+		time_type t_min = users.front()->time;
 		ResourceUser *user_min = users.front();
 		for (UserList::iterator i = users.begin(); i != users.end(); ++i) {
 			ResourceUser &u = **i;
@@ -63,11 +63,11 @@ void ResourceDispatcher::quant() {
 			}
 		}
 		if (t_min < syncro_timer()) {
-			if (!user_min -> quant()) {
-				debugC(3, kDebugQuant, "ResourceDispatcher::quant() user_min->time = %d", user_min -> time);
+			if (!user_min->quant()) {
+				debugC(3, kDebugQuant, "ResourceDispatcher::quant() user_min->time = %d", user_min->time);
 				detach(user_min);
 			} else
-				user_min -> time += user_min -> time_step();
+				user_min->time += user_min->time_step();
 		} else
 			break;
 	}

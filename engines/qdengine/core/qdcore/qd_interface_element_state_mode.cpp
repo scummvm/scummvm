@@ -116,16 +116,16 @@ bool qdInterfaceElementStateMode::save_script(Common::SeekableWriteStream &fh, i
 }
 
 bool qdInterfaceElementStateMode::load_script(const xml::tag *p) {
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_SOUND:
-			set_sound_file(it -> data());
+			set_sound_file(it->data());
 			break;
 		case QDSCR_INTERFACE_ANIMATION_FLAGS:
 			xml::tag_buffer(*it) > animation_flags_;
 			break;
 		case QDSCR_ANIMATION:
-			set_animation_file(it -> data());
+			set_animation_file(it->data());
 			break;
 		case QDSCR_CONTOUR_CIRCLE:
 			contour_.set_contour_type(qdContour::CONTOUR_CIRCLE);

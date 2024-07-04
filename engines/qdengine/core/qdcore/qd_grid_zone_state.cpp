@@ -94,7 +94,7 @@ bool qdGridZoneState::save_script(Common::SeekableWriteStream &fh, int indent) c
 qdConditionalObject::trigger_start_mode qdGridZoneState::trigger_start() {
 	if (!owner()) return qdConditionalObject::TRIGGER_START_FAILED;
 
-	static_cast<qdGridZone *>(owner()) -> set_state(state());
+	static_cast<qdGridZone *>(owner())->set_state(state());
 
 	return qdConditionalObject::TRIGGER_START_ACTIVATE;
 }

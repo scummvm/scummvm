@@ -84,8 +84,8 @@ bool qdInterfaceCounter::save_script_body(Common::SeekableWriteStream &fh, int i
 }
 
 bool qdInterfaceCounter::load_script_body(const xml::tag *p) {
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_COUNTER_NAME:
 			setCounterName(it->data());
 			break;
@@ -155,7 +155,7 @@ bool qdInterfaceCounter::redraw() const {
 
 		Vect2i sz = Vect2i(size_x(), size_y());
 		Vect2i pos = r() - sz / 2;
-		grDispatcher::instance() -> DrawAlignedText(pos.x, pos.y, sz.x, sz.y,
+		grDispatcher::instance()->DrawAlignedText(pos.x, pos.y, sz.x, sz.y,
 		        textFormat_.color(), data(), GR_ALIGN_LEFT, 0, 0, font);
 	}
 
@@ -184,13 +184,13 @@ bool qdInterfaceCounter::post_redraw() {
 int qdInterfaceCounter::size_x() const {
 	const grFont *font = qdGameDispatcher::get_dispatcher()->
 	                     find_font(textFormat_.font_type());
-	return grDispatcher::instance() -> TextWidth(data(), 0, font);
+	return grDispatcher::instance()->TextWidth(data(), 0, font);
 }
 
 int qdInterfaceCounter::size_y() const {
 	const grFont *font = qdGameDispatcher::get_dispatcher()->
 	                     find_font(textFormat_.font_type());
-	return grDispatcher::instance() -> TextHeight(data(), 0, font);
+	return grDispatcher::instance()->TextHeight(data(), 0, font);
 }
 
 void qdInterfaceCounter::setCounter(const qdCounter *counter) {

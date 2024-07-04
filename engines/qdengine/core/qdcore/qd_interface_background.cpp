@@ -67,8 +67,8 @@ bool qdInterfaceBackground::save_script_body(Common::SeekableWriteStream &fh, in
 }
 
 bool qdInterfaceBackground::load_script_body(const xml::tag *p) {
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_INTERFACE_ELEMENT_STATE:
 			if (!state_.load_script(&*it)) return false;
 			break;

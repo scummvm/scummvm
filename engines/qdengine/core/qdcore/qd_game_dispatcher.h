@@ -168,7 +168,7 @@ public:
 
 	bool add_inventory(qdInventory *p) {
 		if (inventories.add_object(p)) {
-			p -> set_owner(this);
+			p->set_owner(this);
 			return 1;
 		}
 		return 0;

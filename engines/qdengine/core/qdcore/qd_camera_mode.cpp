@@ -45,10 +45,10 @@ qdCameraMode::qdCameraMode() : camera_mode_(MODE_UNASSIGNED),
 }
 
 bool qdCameraMode::load_script(const xml::tag *p) {
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		xml::tag_buffer buf(*it);
 
-		switch (it -> ID()) {
+		switch (it->ID()) {
 		case QDSCR_TYPE:
 			set_camera_mode(camera_mode_t(buf.get_int()));
 			break;

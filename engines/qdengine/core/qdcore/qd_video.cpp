@@ -69,10 +69,10 @@ bool qdVideo::load_script(const xml::tag *p) {
 	load_conditions_script(p);
 
 	Vect2s v;
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_NAME:
-			set_name(it -> data());
+			set_name(it->data());
 			break;
 		case QDSCR_FLAG:
 			set_flag(xml::tag_buffer(*it).get_int());
@@ -88,8 +88,8 @@ bool qdVideo::load_script(const xml::tag *p) {
 			set_position(v);
 			break;
 		case QDSCR_VIDEO_BACKGROUND:
-			if (strlen(it -> data()))
-				set_background_file_name(it -> data());
+			if (strlen(it->data()))
+				set_background_file_name(it->data());
 			break;
 		}
 	}
@@ -150,29 +150,29 @@ bool qdVideo::draw_background() {
 	if (background_.has_file()) {
 		background_.load();
 
-		grDispatcher::instance() -> Fill(0);
+		grDispatcher::instance()->Fill(0);
 		int x = qdGameConfig::get_config().screen_sx() >> 1;
 		int y = qdGameConfig::get_config().screen_sy() >> 1;
 		background_.redraw(x, y, 0);
-		grDispatcher::instance() -> Flush();
+		grDispatcher::instance()->Flush();
 
 		background_.free();
 
 		return true;
 	}
 
-	grDispatcher::instance() -> Fill(0);
-	grDispatcher::instance() -> Flush();
+	grDispatcher::instance()->Fill(0);
+	grDispatcher::instance()->Flush();
 
 	return false;
 }
 
 qdConditionalObject::trigger_start_mode qdVideo::trigger_start() {
-	debugC(3, kDebugLog, "[%d] Video start -> %s", g_system->getMillis(), transCyrillic(name()));
+	debugC(3, kDebugLog, "[%d] Video start->%s", g_system->getMillis(), transCyrillic(name()));
 
 	if (qdGameDispatcher * dp = qd_get_game_dispatcher()) {
-		if (dp -> play_video(this))
-			dp -> pause();
+		if (dp->play_video(this))
+			dp->pause();
 	}
 
 	return qdConditionalObject::TRIGGER_START_ACTIVATE;

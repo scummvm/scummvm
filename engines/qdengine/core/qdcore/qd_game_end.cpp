@@ -57,7 +57,7 @@ qdGameEnd &qdGameEnd::operator = (const qdGameEnd &end) {
 
 qdConditionalObject::trigger_start_mode qdGameEnd::trigger_start() {
 	if (qdGameDispatcher * p = qdGameDispatcher::get_dispatcher()) {
-		p -> set_game_end(this);
+		p->set_game_end(this);
 		return qdConditionalObject::TRIGGER_START_ACTIVATE;
 	}
 
@@ -67,16 +67,16 @@ qdConditionalObject::trigger_start_mode qdGameEnd::trigger_start() {
 bool qdGameEnd::load_script(const xml::tag *p) {
 	load_conditions_script(p);
 
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_NAME:
-			set_name(it -> data());
+			set_name(it->data());
 			break;
 		case QDSCR_FLAG:
 			set_flag(xml::tag_buffer(*it).get_int());
 			break;
 		case QDSCR_GAME_END_SCREEN:
-			set_interface_screen(it -> data());
+			set_interface_screen(it->data());
 			break;
 		}
 	}

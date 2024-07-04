@@ -40,9 +40,9 @@ void qdFileOwner::calc_files_size() {
 
 	if (get_files_list(list0, list1)) {
 		for (qdFileNameList::const_iterator it = list0.begin(); it != list0.end(); ++it)
-			files_size_ += app_io::file_size(it -> c_str());
+			files_size_ += app_io::file_size(it->c_str());
 		for (qdFileNameList::const_iterator it = list1.begin(); it != list1.end(); ++it)
-			files_size_ += app_io::file_size(it -> c_str());
+			files_size_ += app_io::file_size(it->c_str());
 	}
 }
 

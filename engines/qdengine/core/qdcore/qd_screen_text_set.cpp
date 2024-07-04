@@ -54,7 +54,7 @@ qdScreenTextSet::~qdScreenTextSet() {
 void qdScreenTextSet::redraw() const {
 	texts_container_t::const_iterator it;
 	FOR_EACH(texts_, it)
-	it -> redraw(pos_);
+	it->redraw(pos_);
 
 //	grDispatcher::instance()->Rectangle(pos_.x - size_.x/2,pos_.y - size_.y/2,size_.x,size_.x,0xFFFFFF,0,GR_OUTLINED);
 }
@@ -145,7 +145,7 @@ bool qdScreenTextSet::arrange_texts() {
 qdScreenText *qdScreenTextSet::get_text(int x, int y) {
 	texts_container_t::iterator it;
 	FOR_EACH(texts_, it)
-	if (it -> hit(x - pos_.x, y - pos_.y)) return &*it;
+	if (it->hit(x - pos_.x, y - pos_.y)) return &*it;
 
 	return NULL;
 }
@@ -168,8 +168,8 @@ void qdScreenTextSet::clear_texts(qdNamedObject *owner) {
 bool qdScreenTextSet::pre_redraw() const {
 	if (need_redraw_) {
 		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-			dp -> add_redraw_region(screen_region());
-			dp -> add_redraw_region(last_screen_region_);
+			dp->add_redraw_region(screen_region());
+			dp->add_redraw_region(last_screen_region_);
 		}
 	}
 
@@ -185,14 +185,14 @@ bool qdScreenTextSet::post_redraw() {
 grScreenRegion qdScreenTextSet::screen_region() const {
 	grScreenRegion reg;
 	for (texts_container_t::const_iterator it = texts_.begin(); it != texts_.end(); ++it)
-		reg += it -> screen_region();
+		reg += it->screen_region();
 	return reg;
 }
 
 void qdScreenTextSet::load_script(const xml::tag *p) {
 	Vect2f r;
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_ID:
 			xml::tag_buffer(*it) > ID_;
 			break;
@@ -245,7 +245,7 @@ qdScreenText *qdScreenTextSet::add_text(const qdScreenText &txt) {
 
 void qdScreenTextSet::clear_hover_mode() {
 	for (texts_container_t::iterator it = texts_.begin(); it != texts_.end(); ++it)
-		it -> set_hover_mode(false);
+		it->set_hover_mode(false);
 }
 
 
@@ -253,6 +253,6 @@ void qdScreenTextSet::format_texts() {
 	if (!max_text_width_) return;
 
 	for (texts_container_t::iterator it = texts_.begin(); it != texts_.end(); ++it)
-		it -> format_text(max_text_width_);
+		it->format_text(max_text_width_);
 }
 } // namespace QDEngine

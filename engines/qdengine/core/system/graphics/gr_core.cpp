@@ -60,8 +60,8 @@ LRESULT CALLBACK GR_WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		break;
 	case WM_SYSCOMMAND:
 		if (wParam == SC_MAXIMIZE) {
-			if (p && p -> maximize_handler())
-				(*p -> maximize_handler())();
+			if (p && p->maximize_handler())
+				(*p->maximize_handler())();
 			return 0;
 		}
 		break;
@@ -72,7 +72,7 @@ LRESULT CALLBACK GR_WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		return 0;
 #endif
 	case WM_DESTROY:
-		if (!grDispatcher::instance() || !grDispatcher::instance() -> is_in_reinit_mode())
+		if (!grDispatcher::instance() || !grDispatcher::instance()->is_in_reinit_mode())
 			PostQuitMessage(0);
 		break;
 	case WM_ACTIVATEAPP:
@@ -84,7 +84,7 @@ LRESULT CALLBACK GR_WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	case WM_SETCURSOR:
 		if (p) {
 #ifndef _QUEST_EDITOR
-			SetCursor((HCURSOR)p -> mouse_cursor());
+			SetCursor((HCURSOR)p->mouse_cursor());
 			return 1;
 #else
 			return 0;
@@ -95,7 +95,7 @@ LRESULT CALLBACK GR_WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		if (p) {
 			PAINTSTRUCT pc;
 			HDC hdc = BeginPaint(hwnd, &pc);
-			p -> Flush(pc.rcPaint.left, pc.rcPaint.top, pc.rcPaint.right - pc.rcPaint.left, pc.rcPaint.bottom - pc.rcPaint.top);
+			p->Flush(pc.rcPaint.left, pc.rcPaint.top, pc.rcPaint.right - pc.rcPaint.left, pc.rcPaint.bottom - pc.rcPaint.top);
 			EndPaint(hwnd, &pc);
 			return 0;
 		}
@@ -105,10 +105,10 @@ LRESULT CALLBACK GR_WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	LRESULT res = DefWindowProc(hwnd, uMsg, wParam, lParam);
 
 	if (hittest && p) {
-		if (res == HTCLIENT && p -> is_mouse_hidden())
-			p -> set_null_mouse_cursor();
+		if (res == HTCLIENT && p->is_mouse_hidden())
+			p->set_null_mouse_cursor();
 		else
-			p -> set_default_mouse_cursor();
+			p->set_default_mouse_cursor();
 	}
 	return res;
 #endif

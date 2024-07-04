@@ -143,12 +143,12 @@ void qdlgOptionDroplist::set_value(int val) const {
 
 	int idx = 0;
 	for (item_container_t::const_iterator it = items_.begin(); it != items_.end(); ++it) {
-		if (it -> value() == val) {
+		if (it->value() == val) {
 			SendDlgItemMessage(control_parent(), control_ID(), CB_SETCURSEL, (WPARAM)idx, (LPARAM)0);
 			return;
 		}
 
-		if (it -> is_enabled())
+		if (it->is_enabled())
 			idx++;
 	}
 }
@@ -160,7 +160,7 @@ void qdlgOptionDroplist::add_item(const char *title, int value) {
 bool qdlgOptionDroplist::enable_item(int value) {
 	item_container_t::iterator it = std::find(items_.begin(), items_.end(), value);
 	if (it != items_.end()) {
-		it -> enable();
+		it->enable();
 		return true;
 	}
 
@@ -170,7 +170,7 @@ bool qdlgOptionDroplist::enable_item(int value) {
 bool qdlgOptionDroplist::disable_item(int value) {
 	item_container_t::iterator it = std::find(items_.begin(), items_.end(), value);
 	if (it != items_.end()) {
-		it -> disable();
+		it->disable();
 		return true;
 	}
 
@@ -180,7 +180,7 @@ bool qdlgOptionDroplist::disable_item(int value) {
 bool qdlgOptionDroplist::is_value_enabled(int value) const {
 	item_container_t::const_iterator it = std::find(items_.begin(), items_.end(), value);
 	if (it != items_.end())
-		return it -> is_enabled();
+		return it->is_enabled();
 
 	return false;
 }

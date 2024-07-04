@@ -56,7 +56,7 @@ inline void qdList<Type>::test(int code) {
 	int cnt = 0;
 	while (p) {
 		cnt++;
-		p = p -> next;
+		p = p->next;
 	}
 	if (cnt != numElements)
 		ErrH.Abort("List", XERR_USER, code);
@@ -101,24 +101,24 @@ inline Type *qdList<Type>::first() {
 
 template <class Type>
 inline Type *qdList<Type>::last() {
-	return firstElement ? firstElement -> prev : 0;
+	return firstElement ? firstElement->prev : 0;
 }
 
 template <class Type>
 inline void qdList<Type>::insert(Type *p) {
-	if (p -> list)
+	if (p->list)
 		ErrH.Abort("Element is already in list");
 	numElements++;
 	if (firstElement) {
-		p -> next = firstElement;
-		p -> prev = firstElement -> prev;
-		firstElement -> prev = p;
+		p->next = firstElement;
+		p->prev = firstElement->prev;
+		firstElement->prev = p;
 	} else {
-		p -> prev = p;
-		p -> next = 0;
+		p->prev = p;
+		p->next = 0;
 	}
 	firstElement = p;
-	p -> list = this;
+	p->list = this;
 	test(0);
 }
 
@@ -133,56 +133,56 @@ inline void qdList<Type>::insert(Type *pointer, Type *p) {
 		return;
 	}
 
-	if (p -> list)
+	if (p->list)
 		ErrH.Abort("Element is already in list");
 	numElements++;
-	p -> next = pointer;
-	p -> prev = pointer -> prev;
-	pointer -> prev -> next = p;
-	pointer -> prev = p;
-	p -> list = this;
+	p->next = pointer;
+	p->prev = pointer->prev;
+	pointer->prev->next = p;
+	pointer->prev = p;
+	p->list = this;
 	test(5);
 }
 
 
 template <class Type>
 inline void qdList<Type>::append(Type *p) {
-//	if(p -> list)
+//	if(p->list)
 //		ErrH.Abort("Element is already in list");
 	numElements++;
 	if (firstElement) {
-		p -> next = 0;
-		p -> prev = firstElement -> prev;
-		firstElement -> prev -> next = p;
-		firstElement -> prev = p;
+		p->next = 0;
+		p->prev = firstElement->prev;
+		firstElement->prev->next = p;
+		firstElement->prev = p;
 	} else {
-		p -> next = 0;
-		p -> prev = firstElement = p;
+		p->next = 0;
+		p->prev = firstElement = p;
 	}
-	p -> list = this;
+	p->list = this;
 	test(1);
 }
 
 template <class Type>
 inline void qdList<Type>::remove(Type *p) {
-//	if(p -> list != this)
+//	if(p->list != this)
 //		ErrH.Abort("Removed element isn't in list");
 	numElements--;
-	if (p -> next)
-		p -> next -> prev = p -> prev;
+	if (p->next)
+		p->next->prev = p->prev;
 	else
-		firstElement -> prev = p -> prev;
+		firstElement->prev = p->prev;
 
 	if (p != firstElement)
-		p -> prev -> next = p -> next;
+		p->prev->next = p->next;
 	else {
-		firstElement = p -> next;
+		firstElement = p->next;
 		if (firstElement)
-			firstElement -> prev = p -> prev;
+			firstElement->prev = p->prev;
 	}
 
-	p -> next = p -> prev = 0;
-	p -> list = 0;
+	p->next = p->prev = 0;
+	p->list = 0;
 	test(2);
 }
 
@@ -190,9 +190,9 @@ template <class Type>
 inline Type *qdList<Type>::search(int ID) {
 	Type *p = first();
 	while (p) {
-		if (p -> ID == ID)
+		if (p->ID == ID)
 			return p;
-		p = p -> next;
+		p = p->next;
 	}
 	return 0;
 }

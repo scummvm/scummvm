@@ -179,8 +179,8 @@ private:
 #ifdef __QD_DEBUG_ENABLE__
 inline bool qdbg_is_object(const qdNamedObject *obj, const char *scene_name, const char *object_name) {
 	if (dynamic_cast<const qdGameObject * >(obj)) {
-		if (obj -> name() && !strcmp(object_name, obj -> name())) {
-			if (!scene_name || (obj -> owner() && obj -> owner() -> name() && !strcmp(obj -> owner() -> name(), scene_name)))
+		if (obj->name() && !strcmp(object_name, obj->name())) {
+			if (!scene_name || (obj->owner() && obj->owner()->name() && !strcmp(obj->owner()->name(), scene_name)))
 				return true;
 		}
 	}

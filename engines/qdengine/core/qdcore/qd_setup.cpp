@@ -264,9 +264,9 @@ void qdGameConfig::save() {
 bool qdGameConfig::update_sound_settings() const {
 #ifndef __QD_SYSLIB__
 	if (sndDispatcher * dp = sndDispatcher::get_dispatcher()) {
-		dp -> set_volume(sound_volume_);
-		if (enable_sound_) dp -> enable();
-		else dp -> disable();
+		dp->set_volume(sound_volume_);
+		if (enable_sound_) dp->enable();
+		else dp->disable();
 
 		return true;
 	}

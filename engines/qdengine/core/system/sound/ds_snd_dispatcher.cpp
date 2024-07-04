@@ -47,12 +47,12 @@ ds_sndDispatcher::ds_sndDispatcher() : sound_device_(NULL) {
 	grDispatcher *gp = grDispatcher::instance();
 
 #if 0
-	if (gp && gp -> is_in_fullscreen_mode()) {
-		res = sound_device_ -> SetCooperativeLevel(hWnd, DSSCL_EXCLUSIVE);
+	if (gp && gp->is_in_fullscreen_mode()) {
+		res = sound_device_->SetCooperativeLevel(hWnd, DSSCL_EXCLUSIVE);
 		if (FAILED(res))
-			sound_device_ -> SetCooperativeLevel(hWnd, DSSCL_PRIORITY);
+			sound_device_->SetCooperativeLevel(hWnd, DSSCL_PRIORITY);
 	} else {
-		sound_device_ -> SetCooperativeLevel(hWnd, DSSCL_PRIORITY);
+		sound_device_->SetCooperativeLevel(hWnd, DSSCL_PRIORITY);
 	}
 #endif
 }
@@ -103,7 +103,7 @@ bool ds_sndDispatcher::stop_sound(const sndSound *snd) {
 	sound_list_t::iterator it = std::find(sounds_.begin(), sounds_.end(), *snd);
 
 	if (it != sounds_.end()) {
-		it -> stop();
+		it->stop();
 		sounds_.erase(it);
 
 		return true;
@@ -118,7 +118,7 @@ bool ds_sndDispatcher::stop_sound(const sndHandle *handle) {
 	sound_list_t::iterator it = std::find(sounds_.begin(), sounds_.end(), *handle);
 
 	if (it != sounds_.end()) {
-		it -> stop();
+		it->stop();
 		sounds_.erase(it);
 
 		return true;
@@ -144,28 +144,28 @@ sndSound::status_t ds_sndDispatcher::sound_status(const sndSound *snd) const {
 	sound_list_t::const_iterator it = std::find(sounds_.begin(), sounds_.end(), *snd);
 
 	if (it != sounds_.end())
-		return it -> status();
+		return it->status();
 
 	return sndSound::SOUND_STOPPED;
 }
 
 bool ds_sndDispatcher::update_volume() {
 	for (sound_list_t::iterator it = sounds_.begin(); it != sounds_.end(); ++it)
-		it -> set_volume(volume_dB());
+		it->set_volume(volume_dB());
 
 	return true;
 }
 
 bool ds_sndDispatcher::update_frequency() {
 	for (sound_list_t::iterator it = sounds_.begin(); it != sounds_.end(); ++it)
-		it -> change_frequency(frequency_coeff());
+		it->change_frequency(frequency_coeff());
 
 	return true;
 }
 
 void ds_sndDispatcher::stop_sounds() {
 	for (sound_list_t::iterator it = sounds_.begin(); it != sounds_.end(); ++it)
-		it -> stop();
+		it->stop();
 
 	sounds_.clear();
 }
@@ -174,7 +174,7 @@ bool ds_sndDispatcher::set_sound_frequency(const sndHandle *snd, float coeff) {
 	sound_list_t::iterator it = std::find(sounds_.begin(), sounds_.end(), *snd);
 
 	if (it != sounds_.end()) {
-		it -> change_frequency(frequency_coeff() * coeff);
+		it->change_frequency(frequency_coeff() * coeff);
 		return true;
 	}
 
@@ -185,20 +185,20 @@ float ds_sndDispatcher::sound_position(const sndHandle *snd) const {
 	sound_list_t::const_iterator it = std::find(sounds_.begin(), sounds_.end(), *snd);
 
 	if (it != sounds_.end())
-		return it -> position();
+		return it->position();
 
 	return 0.0f;
 }
 
 void ds_sndDispatcher::pause_sounds() {
 	for (sound_list_t::iterator it = sounds_.begin(); it != sounds_.end(); ++it)
-		it -> pause();
+		it->pause();
 }
 
 void ds_sndDispatcher::resume_sounds() {
 	for (sound_list_t::iterator it = sounds_.begin(); it != sounds_.end(); ++it) {
-		if (it -> is_paused())
-			it -> resume();
+		if (it->is_paused())
+			it->resume();
 	}
 }
 } // namespace QDEngine

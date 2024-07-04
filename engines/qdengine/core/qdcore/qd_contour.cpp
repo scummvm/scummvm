@@ -252,8 +252,8 @@ bool qdContour::load_script(const xml::tag *p) {
 		size_.x = size_.y = buf.get_short();
 		return true;
 	case CONTOUR_POLYGON:
-		contour_.reserve(p -> data_size() / 2);
-		for (i = 0; i < p -> data_size(); i += 2) {
+		contour_.reserve(p->data_size() / 2);
+		for (i = 0; i < p->data_size(); i += 2) {
 			buf > v.x > v.y;
 			add_contour_point(v);
 		}

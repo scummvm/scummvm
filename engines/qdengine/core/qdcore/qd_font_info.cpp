@@ -61,8 +61,8 @@ qdFontInfo &qdFontInfo::operator = (const qdFontInfo &fi) {
 
 
 bool qdFontInfo::load_script(const xml::tag *p) {
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_TYPE:
 			set_type(xml::tag_buffer(*it).get_int());
 			break;
@@ -70,7 +70,7 @@ bool qdFontInfo::load_script(const xml::tag *p) {
 			set_font_file_name(Common::Path(it->data(), '\\').toString().c_str());
 			break;
 		case QDSCR_NAME:
-			set_name(it -> data());
+			set_name(it->data());
 			break;
 		}
 	}
@@ -104,7 +104,7 @@ bool qdFontInfo::load_font() {
 	Common::SeekableReadStream *fh;
 	if (qdFileManager::instance().open_file(&fh, font_file_name(), false)) {
 		// Грузим альфу шрифта из .tga
-		if (buf_font -> load_alpha(fh)) {
+		if (buf_font->load_alpha(fh)) {
 			// Меняем расширение с .tga на .idx
 			Common::String fpath(font_file_name());
 			Common::String tgaExt = ".tga";
@@ -114,7 +114,7 @@ bool qdFontInfo::load_font() {
 
 			// Открываем .idx и грузим индекс
 			if (qdFileManager::instance().open_file(&fh, fpath.c_str(), false)) {
-				if (buf_font -> load_index(fh))
+				if (buf_font->load_index(fh))
 					load_fl = true;
 			}
 		}

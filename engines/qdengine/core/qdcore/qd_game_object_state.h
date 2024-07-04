@@ -380,14 +380,14 @@ public:
 	//! Возвращает координаты точки, в которой должно активироваться состояние.
 	const Vect3f &start_pos() const {
 		if (!coords_animation_.is_empty()) {
-			return coords_animation_.get_point(0) -> dest_pos();
+			return coords_animation_.get_point(0)->dest_pos();
 		} else
 			return Vect3f::ZERO;
 	}
 	//! Возвращает направление объекта в точке, в которой должно активироваться состояние.
 	float start_direction_angle() const {
 		if (!coords_animation_.is_empty()) {
-			return coords_animation_.get_point(0) -> direction_angle();
+			return coords_animation_.get_point(0)->direction_angle();
 		} else
 			return -1.0f;
 	}
@@ -950,9 +950,9 @@ private:
 #ifdef __QD_DEBUG_ENABLE__
 inline bool qdbg_is_object_state(const qdNamedObject *obj, const char *scene_name, const char *object_name, const char *state_name) {
 	if (dynamic_cast<const qdGameObjectState * >(obj)) {
-		if (obj -> name() && !strcmp(state_name, obj -> name())) {
-			if (!object_name || (obj -> owner() && obj -> owner() -> name() && !strcmp(object_name, obj -> owner() -> name()))) {
-				if (!scene_name || (obj -> owner() -> owner() && obj -> owner() -> owner() -> name() && !strcmp(obj -> owner() -> owner() -> name(), scene_name)))
+		if (obj->name() && !strcmp(state_name, obj->name())) {
+			if (!object_name || (obj->owner() && obj->owner()->name() && !strcmp(object_name, obj->owner()->name()))) {
+				if (!scene_name || (obj->owner()->owner() && obj->owner()->owner()->name() && !strcmp(obj->owner()->owner()->name(), scene_name)))
 					return true;
 			}
 		}

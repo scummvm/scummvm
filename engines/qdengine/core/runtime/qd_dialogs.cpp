@@ -117,57 +117,57 @@ void settings_dialog_init(HWND hdlg) {
 	set_icon(hdlg);
 
 	qdlgOption *p = new qdlgOptionDroplist;
-	p -> set_control(hdlg, IDC_COLOR_DEPTH);
-	p -> set_ini_key("qd_game.ini", "graphics", "color_depth");
+	p->set_control(hdlg, IDC_COLOR_DEPTH);
+	p->set_ini_key("qd_game.ini", "graphics", "color_depth");
 
 	qdlgOptionDroplist *dp = static_cast<qdlgOptionDroplist *>(p);
-	dp -> add_item("High Color (16bit)", 0);
-	dp -> add_item("High Color (16bit)", 1);
-	dp -> add_item("True Color (24bit)", 2);
-	dp -> add_item("True Color (32bit)", 3);
-	dp -> init_control();
+	dp->add_item("High Color (16bit)", 0);
+	dp->add_item("High Color (16bit)", 1);
+	dp->add_item("True Color (24bit)", 2);
+	dp->add_item("True Color (32bit)", 3);
+	dp->init_control();
 
 	options_.push_back(p);
 
 	p = new qdlgOptionCheckbox;
-	p -> set_control(hdlg, IDC_FULLSCREEN);
-	p -> set_ini_key("qd_game.ini", "graphics", "fullscreen");
+	p->set_control(hdlg, IDC_FULLSCREEN);
+	p->set_ini_key("qd_game.ini", "graphics", "fullscreen");
 	options_.push_back(p);
 
 	p = new qdlgOptionCheckbox;
-	p -> set_control(hdlg, IDC_SOUND);
-	p -> set_ini_key("qd_game.ini", "sound", "enable_sound");
+	p->set_control(hdlg, IDC_SOUND);
+	p->set_ini_key("qd_game.ini", "sound", "enable_sound");
 	options_.push_back(p);
 
 	p = new qdlgOptionCheckbox;
-	p -> set_control(hdlg, IDC_MUSIC);
-	p -> set_ini_key("qd_game.ini", "sound", "enable_music");
+	p->set_control(hdlg, IDC_MUSIC);
+	p->set_ini_key("qd_game.ini", "sound", "enable_music");
 	options_.push_back(p);
 
 	qdlgOptionSlider *sp = new qdlgOptionSlider;
-	sp -> set_control(hdlg, IDC_SOUND_VOLUME);
-	sp -> set_value_range(0, 255, true);
-	sp -> set_ini_key("qd_game.ini", "sound", "sound_volume");
+	sp->set_control(hdlg, IDC_SOUND_VOLUME);
+	sp->set_value_range(0, 255, true);
+	sp->set_ini_key("qd_game.ini", "sound", "sound_volume");
 	options_.push_back(sp);
 
 	sp = new qdlgOptionSlider;
-	sp -> set_control(hdlg, IDC_MUSIC_VOLUME);
-	sp -> set_value_range(0, 255, true);
-	sp -> set_ini_key("qd_game.ini", "sound", "music_volume");
+	sp->set_control(hdlg, IDC_MUSIC_VOLUME);
+	sp->set_value_range(0, 255, true);
+	sp->set_ini_key("qd_game.ini", "sound", "music_volume");
 	options_.push_back(sp);
 
 	SendDlgItemMessage(hdlg, IDC_SOUND_VOLUME, TBM_SETTICFREQ, (WPARAM)32, (LPARAM)0);
 	SendDlgItemMessage(hdlg, IDC_MUSIC_VOLUME, TBM_SETTICFREQ, (WPARAM)32, (LPARAM)0);
 
 	for (options_container_t::const_iterator it = options_.begin(); it != options_.end(); ++it)
-		(*it) -> load_value();
+		(*it)->load_value();
 
 	update_color_option();
 }
 
 void settings_dialog_finit() {
 	for (options_container_t::const_iterator it = options_.begin(); it != options_.end(); ++it)
-		(*it) -> save_value();
+		(*it)->save_value();
 }
 
 void update_color_option() {
@@ -178,27 +178,27 @@ void update_color_option() {
 	if (!dp) return;
 
 	for (int i = 0; i < 4; i++) {
-		if (qdrt::grD -> is_mode_supported(grPixelFormat(i)))
-			dp -> enable_item(i);
+		if (qdrt::grD->is_mode_supported(grPixelFormat(i)))
+			dp->enable_item(i);
 		else
-			dp -> disable_item(i);
+			dp->disable_item(i);
 	}
 
-	dp -> init_control();
-	if (!sp -> value()) {
-		dp -> enable_control(false);
+	dp->init_control();
+	if (!sp->value()) {
+		dp->enable_control(false);
 
 		int sx, sy;
 		grPixelFormat pixel_format;
 		if (qdrt::grD->get_current_mode(sx, sy, pixel_format))
-			dp -> set_value(pixel_format);
+			dp->set_value(pixel_format);
 	} else
-		dp -> enable_control(true);
+		dp->enable_control(true);
 }
 
 qdlgOption *find_option(int ctl_id) {
 	for (options_container_t::iterator it = options_.begin(); it != options_.end(); ++it) {
-		if ((*it) -> control_ID() == ctl_id)
+		if ((*it)->control_ID() == ctl_id)
 			return *it;
 	}
 

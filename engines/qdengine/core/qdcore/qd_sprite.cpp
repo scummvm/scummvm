@@ -438,10 +438,10 @@ bool qdSprite::compress() {
 					*dp++ = *sp++;
 					*dp++ = 0;
 				}
-				rle_data_ -> encode(picture_size_.x, picture_size_.y, p);
+				rle_data_->encode(picture_size_.x, picture_size_.y, p);
 				delete [] p;
 			} else
-				rle_data_ -> encode(picture_size_.x, picture_size_.y, data_);
+				rle_data_->encode(picture_size_.x, picture_size_.y, data_);
 
 			delete [] data_;
 			data_ = 0;
@@ -465,7 +465,7 @@ bool qdSprite::compress() {
 			}
 
 			rle_data_ = new rleBuffer;
-			rle_data_ -> encode(picture_size_.x, picture_size_.y, p);
+			rle_data_->encode(picture_size_.x, picture_size_.y, p);
 
 			delete [] p;
 			delete [] data_;
@@ -477,7 +477,7 @@ bool qdSprite::compress() {
 	case GR_ARGB8888:
 		if (data_) {
 			rle_data_ = new rleBuffer;
-			rle_data_ -> encode(picture_size_.x, picture_size_.y, data_);
+			rle_data_->encode(picture_size_.x, picture_size_.y, data_);
 			set_flag(ALPHA_FLAG);
 
 			delete [] data_;
@@ -499,7 +499,7 @@ bool qdSprite::uncompress() {
 			data_ = new unsigned char[picture_size_.x * picture_size_.y * 4];
 			unsigned char *p = data_;
 			for (int i = 0; i < picture_size_.y; i ++) {
-				rle_data_ -> decode_line(i, p);
+				rle_data_->decode_line(i, p);
 				p += picture_size_.x * sizeof(unsigned);
 			}
 		} else {
@@ -507,7 +507,7 @@ bool qdSprite::uncompress() {
 			unsigned short *p = reinterpret_cast<unsigned short *>(data_);
 			for (int i = 0; i < picture_size_.y; i ++) {
 				const unsigned short *rle_p = reinterpret_cast<const unsigned short *>(rleBuffer::get_buffer(0));
-				rle_data_ -> decode_line(i);
+				rle_data_->decode_line(i);
 
 				for (int j = 0; j < picture_size_.x; j ++) {
 					*p++ = *rle_p++;
@@ -522,7 +522,7 @@ bool qdSprite::uncompress() {
 			unsigned char *p = data_;
 			for (int i = 0; i < picture_size_.y; i ++) {
 				const unsigned char *rle_p = reinterpret_cast<const unsigned char *>(rleBuffer::get_buffer(0));
-				rle_data_ -> decode_line(i);
+				rle_data_->decode_line(i);
 
 				for (int j = 0; j < picture_size_.x; j ++) {
 					p[0] = rle_p[0];
@@ -537,7 +537,7 @@ bool qdSprite::uncompress() {
 			unsigned char *p = data_;
 
 			for (int i = 0; i < picture_size_.y; i ++) {
-				rle_data_ -> decode_line(i, p);
+				rle_data_->decode_line(i, p);
 				p += picture_size_.x * 4;
 			}
 
@@ -550,7 +550,7 @@ bool qdSprite::uncompress() {
 			unsigned char *p = data_;
 			for (int i = 0; i < picture_size_.y; i ++) {
 				const unsigned char *rle_p = reinterpret_cast<const unsigned char *>(rleBuffer::get_buffer(0));
-				rle_data_ -> decode_line(i);
+				rle_data_->decode_line(i);
 
 				for (int j = 0; j < picture_size_.x; j ++) {
 					p[0] = rle_p[0];
@@ -566,7 +566,7 @@ bool qdSprite::uncompress() {
 			unsigned char *p = data_;
 
 			for (int i = 0; i < picture_size_.y; i ++) {
-				rle_data_ -> decode_line(i, p);
+				rle_data_->decode_line(i, p);
 				p += picture_size_.x * 4;
 			}
 		}
@@ -599,20 +599,20 @@ void qdSprite::redraw(int x, int y, int z, int mode) const {
 	if (!is_compressed()) {
 		if (!data_) return;
 		if (check_flag(ALPHA_FLAG))
-			grDispatcher::instance() -> PutSpr_a_z(xx, yy, z, picture_size_.x, picture_size_.y, data_, mode);
+			grDispatcher::instance()->PutSpr_a_z(xx, yy, z, picture_size_.x, picture_size_.y, data_, mode);
 		else
-			grDispatcher::instance() -> PutSpr_z(xx, yy, z, picture_size_.x, picture_size_.y, data_, mode);
+			grDispatcher::instance()->PutSpr_z(xx, yy, z, picture_size_.x, picture_size_.y, data_, mode);
 	} else
-		grDispatcher::instance() -> PutSpr_rle_z(xx, yy, z, picture_size_.x, picture_size_.y, rle_data_, mode, check_flag(ALPHA_FLAG));
+		grDispatcher::instance()->PutSpr_rle_z(xx, yy, z, picture_size_.x, picture_size_.y, rle_data_, mode, check_flag(ALPHA_FLAG));
 #else
 	if (!is_compressed()) {
 		if (!data_) return;
 		if (check_flag(ALPHA_FLAG))
-			grDispatcher::instance() -> PutSpr_a(xx, yy, picture_size_.x, picture_size_.y, data_, mode);
+			grDispatcher::instance()->PutSpr_a(xx, yy, picture_size_.x, picture_size_.y, data_, mode);
 		else
-			grDispatcher::instance() -> PutSpr(xx, yy, picture_size_.x, picture_size_.y, data_, mode);
+			grDispatcher::instance()->PutSpr(xx, yy, picture_size_.x, picture_size_.y, data_, mode);
 	} else
-		grDispatcher::instance() -> PutSpr_rle(xx, yy, picture_size_.x, picture_size_.y, rle_data_, mode, check_flag(ALPHA_FLAG));
+		grDispatcher::instance()->PutSpr_rle(xx, yy, picture_size_.x, picture_size_.y, rle_data_, mode, check_flag(ALPHA_FLAG));
 #endif
 
 	if (debugChannelSet(1, kDebugGraphics))
@@ -640,9 +640,9 @@ void qdSprite::redraw_rot(int x, int y, int z, float angle, int mode) const {
 
 	if (!is_compressed()) {
 		if (!data_) return;
-		grDispatcher::instance() -> PutSpr_rot(Vect2i(xx, yy), picture_size_, data_, check_flag(ALPHA_FLAG), mode, angle);
+		grDispatcher::instance()->PutSpr_rot(Vect2i(xx, yy), picture_size_, data_, check_flag(ALPHA_FLAG), mode, angle);
 	} else
-		grDispatcher::instance() -> PutSpr_rle_rot(Vect2i(xx, yy), picture_size_, rle_data_, check_flag(ALPHA_FLAG), mode, angle);
+		grDispatcher::instance()->PutSpr_rle_rot(Vect2i(xx, yy), picture_size_, rle_data_, check_flag(ALPHA_FLAG), mode, angle);
 }
 
 void qdSprite::redraw_rot(int x, int y, int z, float angle, const Vect2f &scale, int mode) const {
@@ -669,9 +669,9 @@ void qdSprite::redraw_rot(int x, int y, int z, float angle, const Vect2f &scale,
 
 	if (!is_compressed()) {
 		if (!data_) return;
-		grDispatcher::instance() -> PutSpr_rot(Vect2i(xx, yy), picture_size_, data_, check_flag(ALPHA_FLAG), mode, angle, scale);
+		grDispatcher::instance()->PutSpr_rot(Vect2i(xx, yy), picture_size_, data_, check_flag(ALPHA_FLAG), mode, angle, scale);
 	} else
-		grDispatcher::instance() -> PutSpr_rle_rot(Vect2i(xx, yy), picture_size_, rle_data_, check_flag(ALPHA_FLAG), mode, angle, scale);
+		grDispatcher::instance()->PutSpr_rle_rot(Vect2i(xx, yy), picture_size_, rle_data_, check_flag(ALPHA_FLAG), mode, angle, scale);
 }
 
 void qdSprite::redraw(int x, int y, int z, float scale, int mode) const {
@@ -692,20 +692,20 @@ void qdSprite::redraw(int x, int y, int z, float scale, int mode) const {
 	if (!is_compressed()) {
 		if (!data_) return;
 		if (check_flag(ALPHA_FLAG))
-			grDispatcher::instance() -> PutSpr_a_z(xx, yy, z, picture_size_.x, picture_size_.y, data_, mode, scale);
+			grDispatcher::instance()->PutSpr_a_z(xx, yy, z, picture_size_.x, picture_size_.y, data_, mode, scale);
 		else
-			grDispatcher::instance() -> PutSpr_z(xx, yy, z, picture_size_.x, picture_size_.y, data_, mode, scale);
+			grDispatcher::instance()->PutSpr_z(xx, yy, z, picture_size_.x, picture_size_.y, data_, mode, scale);
 	} else
-		grDispatcher::instance() -> PutSpr_rle_z(xx, yy, z, picture_size_.x, picture_size_.y, rle_data_, mode, scale, check_flag(ALPHA_FLAG));
+		grDispatcher::instance()->PutSpr_rle_z(xx, yy, z, picture_size_.x, picture_size_.y, rle_data_, mode, scale, check_flag(ALPHA_FLAG));
 #else
 	if (!is_compressed()) {
 		if (!data_) return;
 		if (check_flag(ALPHA_FLAG))
-			grDispatcher::instance() -> PutSpr_a(xx, yy, picture_size_.x, picture_size_.y, data_, mode, scale);
+			grDispatcher::instance()->PutSpr_a(xx, yy, picture_size_.x, picture_size_.y, data_, mode, scale);
 		else
-			grDispatcher::instance() -> PutSpr(xx, yy, picture_size_.x, picture_size_.y, data_, mode, scale);
+			grDispatcher::instance()->PutSpr(xx, yy, picture_size_.x, picture_size_.y, data_, mode, scale);
 	} else
-		grDispatcher::instance() -> PutSpr_rle(xx, yy, picture_size_.x, picture_size_.y, rle_data_, mode, scale, check_flag(ALPHA_FLAG));
+		grDispatcher::instance()->PutSpr_rle(xx, yy, picture_size_.x, picture_size_.y, rle_data_, mode, scale, check_flag(ALPHA_FLAG));
 #endif
 }
 
@@ -726,11 +726,11 @@ void qdSprite::draw_mask(int x, int y, int z, unsigned mask_color, int mask_alph
 	if (!is_compressed()) {
 		if (!data_) return;
 		if (check_flag(ALPHA_FLAG))
-			grDispatcher::instance() -> PutSprMask_a(xx, yy, picture_size_.x, picture_size_.y, data_, mask_color, mask_alpha, mode);
+			grDispatcher::instance()->PutSprMask_a(xx, yy, picture_size_.x, picture_size_.y, data_, mask_color, mask_alpha, mode);
 		else
-			grDispatcher::instance() -> PutSprMask(xx, yy, picture_size_.x, picture_size_.y, data_, mask_color, mask_alpha, mode);
+			grDispatcher::instance()->PutSprMask(xx, yy, picture_size_.x, picture_size_.y, data_, mask_color, mask_alpha, mode);
 	} else
-		grDispatcher::instance() -> PutSprMask_rle(xx, yy, picture_size_.x, picture_size_.y, rle_data_, mask_color, mask_alpha, mode, check_flag(ALPHA_FLAG));
+		grDispatcher::instance()->PutSprMask_rle(xx, yy, picture_size_.x, picture_size_.y, rle_data_, mask_color, mask_alpha, mode, check_flag(ALPHA_FLAG));
 }
 
 void qdSprite::draw_mask(int x, int y, int z, unsigned mask_color, int mask_alpha, float scale, int mode) const {
@@ -750,11 +750,11 @@ void qdSprite::draw_mask(int x, int y, int z, unsigned mask_color, int mask_alph
 	if (!is_compressed()) {
 		if (!data_) return;
 		if (check_flag(ALPHA_FLAG))
-			grDispatcher::instance() -> PutSprMask_a(xx, yy, picture_size_.x, picture_size_.y, data_, mask_color, mask_alpha, mode, scale);
+			grDispatcher::instance()->PutSprMask_a(xx, yy, picture_size_.x, picture_size_.y, data_, mask_color, mask_alpha, mode, scale);
 		else
-			grDispatcher::instance() -> PutSprMask(xx, yy, picture_size_.x, picture_size_.y, data_, mask_color, mask_alpha, mode, scale);
+			grDispatcher::instance()->PutSprMask(xx, yy, picture_size_.x, picture_size_.y, data_, mask_color, mask_alpha, mode, scale);
 	} else
-		grDispatcher::instance() -> PutSprMask_rle(xx, yy, picture_size_.x, picture_size_.y, rle_data_, mask_color, mask_alpha, mode, scale, check_flag(ALPHA_FLAG));
+		grDispatcher::instance()->PutSprMask_rle(xx, yy, picture_size_.x, picture_size_.y, rle_data_, mask_color, mask_alpha, mode, scale, check_flag(ALPHA_FLAG));
 }
 
 void qdSprite::draw_mask_rot(int x, int y, int z, float angle, unsigned mask_color, int mask_alpha, int mode) const {
@@ -778,9 +778,9 @@ void qdSprite::draw_mask_rot(int x, int y, int z, float angle, unsigned mask_col
 
 	if (!is_compressed()) {
 		if (!data_) return;
-		grDispatcher::instance() -> PutSprMask_rot(Vect2i(xx, yy), picture_size_, data_, check_flag(ALPHA_FLAG), mask_color, mask_alpha, mode, angle);
+		grDispatcher::instance()->PutSprMask_rot(Vect2i(xx, yy), picture_size_, data_, check_flag(ALPHA_FLAG), mask_color, mask_alpha, mode, angle);
 	} else
-		grDispatcher::instance() -> PutSprMask_rle_rot(Vect2i(xx, yy), picture_size_, rle_data_, check_flag(ALPHA_FLAG), mask_color, mask_alpha, mode, angle);
+		grDispatcher::instance()->PutSprMask_rle_rot(Vect2i(xx, yy), picture_size_, rle_data_, check_flag(ALPHA_FLAG), mask_color, mask_alpha, mode, angle);
 }
 
 void qdSprite::draw_mask_rot(int x, int y, int z, float angle, unsigned mask_color, int mask_alpha, const Vect2f &scale, int mode) const {
@@ -807,9 +807,9 @@ void qdSprite::draw_mask_rot(int x, int y, int z, float angle, unsigned mask_col
 
 	if (!is_compressed()) {
 		if (!data_) return;
-		grDispatcher::instance() -> PutSprMask_rot(Vect2i(xx, yy), picture_size_, data_, check_flag(ALPHA_FLAG), mask_color, mask_alpha, mode, angle, scale);
+		grDispatcher::instance()->PutSprMask_rot(Vect2i(xx, yy), picture_size_, data_, check_flag(ALPHA_FLAG), mask_color, mask_alpha, mode, angle, scale);
 	} else
-		grDispatcher::instance() -> PutSprMask_rle_rot(Vect2i(xx, yy), picture_size_, rle_data_, check_flag(ALPHA_FLAG), mask_color, mask_alpha, mode, angle, scale);
+		grDispatcher::instance()->PutSprMask_rle_rot(Vect2i(xx, yy), picture_size_, rle_data_, check_flag(ALPHA_FLAG), mask_color, mask_alpha, mode, angle, scale);
 }
 
 void qdSprite::draw_contour(int x, int y, unsigned color, int mode) const {
@@ -827,13 +827,13 @@ void qdSprite::draw_contour(int x, int y, unsigned color, int mode) const {
 		yy += picture_offset_.y;
 
 	if (is_compressed()) {
-		grDispatcher::instance() -> DrawSprContour(xx, yy, picture_size_.x, picture_size_.y, rle_data_, color, mode, check_flag(ALPHA_FLAG));
+		grDispatcher::instance()->DrawSprContour(xx, yy, picture_size_.x, picture_size_.y, rle_data_, color, mode, check_flag(ALPHA_FLAG));
 	} else {
 		if (!data_) return;
 		if (check_flag(ALPHA_FLAG))
-			grDispatcher::instance() -> DrawSprContour_a(xx, yy, picture_size_.x, picture_size_.y, data_, color, mode);
+			grDispatcher::instance()->DrawSprContour_a(xx, yy, picture_size_.x, picture_size_.y, data_, color, mode);
 		else
-			grDispatcher::instance() -> DrawSprContour(xx, yy, picture_size_.x, picture_size_.y, data_, color, mode);
+			grDispatcher::instance()->DrawSprContour(xx, yy, picture_size_.x, picture_size_.y, data_, color, mode);
 	}
 }
 
@@ -853,11 +853,11 @@ void qdSprite::draw_contour(int x, int y, unsigned color, float scale, int mode)
 
 	if (!is_compressed()) {
 		if (check_flag(ALPHA_FLAG))
-			grDispatcher::instance() -> DrawSprContour_a(xx, yy, picture_size_.x, picture_size_.y, data_, color, mode, scale);
+			grDispatcher::instance()->DrawSprContour_a(xx, yy, picture_size_.x, picture_size_.y, data_, color, mode, scale);
 		else
-			grDispatcher::instance() -> DrawSprContour(xx, yy, picture_size_.x, picture_size_.y, data_, color, mode, scale);
+			grDispatcher::instance()->DrawSprContour(xx, yy, picture_size_.x, picture_size_.y, data_, color, mode, scale);
 	} else
-		grDispatcher::instance() -> DrawSprContour(xx, yy, picture_size_.x, picture_size_.y, rle_data_, color, mode, scale, check_flag(ALPHA_FLAG));
+		grDispatcher::instance()->DrawSprContour(xx, yy, picture_size_.x, picture_size_.y, rle_data_, color, mode, scale, check_flag(ALPHA_FLAG));
 }
 
 bool qdSprite::hit(int x, int y) const {
@@ -891,7 +891,7 @@ bool qdSprite::hit(int x, int y) const {
 			}
 		} else {
 			unsigned pixel;
-			rle_data_ -> decode_pixel(x, y, pixel);
+			rle_data_->decode_pixel(x, y, pixel);
 			if (check_flag(ALPHA_FLAG)) {
 				switch (format_) {
 				case GR_RGB565:
@@ -1090,7 +1090,7 @@ void qdSprite::qda_save(XStream &fh) {
 	if (is_compressed()) {
 		fh < 0L < 1L;
 
-		rle_data_ -> save(fh);
+		rle_data_->save(fh);
 	} else {
 		fh < 0L < 0L;
 
@@ -1358,7 +1358,7 @@ unsigned qdSprite::data_size() const {
 		}
 		return sz;
 	} else
-		return rle_data_ -> size();
+		return rle_data_->size();
 }
 
 bool qdSprite::scale(float coeff_x, float coeff_y) {

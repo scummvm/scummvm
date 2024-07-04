@@ -57,9 +57,9 @@ bool dsSound::create_sound_buffer() {
 	WAVEFORMATEX wfx;
 
 	wfx.wFormatTag = WAVE_FORMAT_PCM;
-	wfx.nChannels = WORD(sound() -> channels());
-	wfx.nSamplesPerSec = sound() -> samples_per_sec();
-	wfx.wBitsPerSample = WORD(sound() -> bits_per_sample());
+	wfx.nChannels = WORD(sound()->channels());
+	wfx.nSamplesPerSec = sound()->samples_per_sec();
+	wfx.wBitsPerSample = WORD(sound()->bits_per_sample());
 	wfx.nBlockAlign = (wfx.nChannels * wfx.wBitsPerSample) / 8;
 	wfx.nAvgBytesPerSec = wfx.nSamplesPerSec * wfx.nBlockAlign;
 	wfx.cbSize = 0;
@@ -69,28 +69,28 @@ bool dsSound::create_sound_buffer() {
 
 	desc.dwSize = sizeof(DSBUFFERDESC);
 	desc.dwFlags = DSBCAPS_STATIC | DSBCAPS_CTRLFREQUENCY | DSBCAPS_CTRLPAN | DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_CTRLVOLUME | DSBCAPS_GETCURRENTPOSITION2;
-	desc.dwBufferBytes = sound() -> data_length();
+	desc.dwBufferBytes = sound()->data_length();
 	desc.lpwfxFormat = &wfx;
 
 	release_sound_buffer();
 
-	HRESULT res = sound_device_ -> CreateSoundBuffer(&desc, &sound_buffer_, NULL);
+	HRESULT res = sound_device_->CreateSoundBuffer(&desc, &sound_buffer_, NULL);
 	if (FAILED(res))
 		return false;
 
 	LPVOID ptr_1 = NULL, ptr_2 = NULL;
 	DWORD size_1, size_2;
-	res = sound_buffer_ -> Lock(0, sound() -> data_length(), &ptr_1, &size_1, &ptr_2, &size_2, 0L);
+	res = sound_buffer_->Lock(0, sound()->data_length(), &ptr_1, &size_1, &ptr_2, &size_2, 0L);
 	if (FAILED(res) || ptr_1 == NULL)
 		return false;
 
-	memcpy(ptr_1, sound() -> data(), sound() -> data_length());
+	memcpy(ptr_1, sound()->data(), sound()->data_length());
 
-	res = sound_buffer_ -> Unlock(ptr_1, sound() -> data_length(), NULL, 0L);
+	res = sound_buffer_->Unlock(ptr_1, sound()->data_length(), NULL, 0L);
 	if (FAILED(res))
 		return false;
 
-	sound_buffer_ -> SetCurrentPosition(0);
+	sound_buffer_->SetCurrentPosition(0);
 #endif
 
 	return true;
@@ -103,7 +103,7 @@ bool dsSound::release_sound_buffer() {
 
 		warning("STUB: dsSound::release_sound_buffer()");
 #if 0
-		sound_buffer_ -> Release();
+		sound_buffer_->Release();
 		sound_buffer_ = NULL;
 #endif
 	}
@@ -118,7 +118,7 @@ bool dsSound::play() {
 	warning("STUB: dsSound::play()");
 #if 0
 	DWORD flags = (flags_ & SOUND_FLAG_LOOPING) ? DSBPLAY_LOOPING : 0;
-	sound_buffer_ -> Play(0, 0, flags);
+	sound_buffer_->Play(0, 0, flags);
 #endif
 	return true;
 }
@@ -127,7 +127,7 @@ bool dsSound::stop() {
 	if (!sound_buffer_) return false;
 	warning("STUB: dsSound::stop()");
 #if 0
-	sound_buffer_ -> Stop();
+	sound_buffer_->Stop();
 #endif
 	return true;
 }
@@ -148,7 +148,7 @@ sndSound::status_t dsSound::status() const {
 	warning("STUB: dsSound::status()");
 #if 0
 	DWORD st;
-	sound_buffer_ -> GetStatus(&st);
+	sound_buffer_->GetStatus(&st);
 
 	if (st & (DSBSTATUS_PLAYING | DSBSTATUS_LOOPING)) return SOUND_PLAYING;
 #endif
@@ -169,7 +169,7 @@ bool dsSound::set_volume(int vol) {
 	if (!sound_buffer_) return false;
 	warning("STUB: dsSound::set_volume()");
 #if 0
-	sound_buffer_ -> SetVolume(vol);
+	sound_buffer_->SetVolume(vol);
 #endif
 	return true;
 }
@@ -179,7 +179,7 @@ bool dsSound::change_frequency(float coeff) {
 	warning("STUB: dsSound::change_frequency()");
 #if 0
 	DWORD freq;
-	if (sound_buffer_ -> GetFrequency(&freq) != DS_OK)
+	if (sound_buffer_->GetFrequency(&freq) != DS_OK)
 		return false;
 
 	freq = round(float(freq) * coeff);
@@ -188,7 +188,7 @@ bool dsSound::change_frequency(float coeff) {
 	else if (freq < DSBFREQUENCY_MIN)
 		freq = DSBFREQUENCY_MIN;
 
-	if (sound_buffer_ -> SetFrequency(freq) != DS_OK)
+	if (sound_buffer_->SetFrequency(freq) != DS_OK)
 		return false;
 #endif
 	return true;
@@ -199,8 +199,8 @@ float dsSound::position() const {
 	warning("STUB: dsSound::position()");
 #if 0
 	DWORD pos = 0;
-	if (sound_buffer_ -> GetCurrentPosition(&pos, NULL) == DS_OK) {
-		float norm_pos = float(pos) / float(sound() -> data_length());
+	if (sound_buffer_->GetCurrentPosition(&pos, NULL) == DS_OK) {
+		float norm_pos = float(pos) / float(sound()->data_length());
 
 		if (norm_pos < 0.0f) norm_pos = 0.0f;
 		if (norm_pos > 1.0f) norm_pos = 1.0f;
@@ -215,9 +215,9 @@ bool dsSound::set_position(float pos) {
 	if (sound_buffer_) {
 		warning("STUB: dsSound::set_position()");
 #if 0
-		DWORD npos = DWORD(float(sound() -> data_length() * pos));
+		DWORD npos = DWORD(float(sound()->data_length() * pos));
 
-		if (sound_buffer_ -> SetCurrentPosition(npos) == DS_OK)
+		if (sound_buffer_->SetCurrentPosition(npos) == DS_OK)
 			return true;
 #endif
 	}

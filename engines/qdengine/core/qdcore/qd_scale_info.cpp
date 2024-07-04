@@ -40,10 +40,10 @@ qdScaleInfo::qdScaleInfo(const qdScaleInfo &sc) : qdNamedObject(sc),
 }
 
 void qdScaleInfo::load_script(const xml::tag *p) {
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_NAME:
-			set_name(it -> data());
+			set_name(it->data());
 			break;
 		case QDSCR_SCALE:
 			xml::tag_buffer(*it) > scale_;

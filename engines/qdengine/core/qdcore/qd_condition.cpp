@@ -332,8 +332,8 @@ bool qdCondition::get_value(int idx, float &val, int val_index) const {
 
 bool qdCondition::load_script(const xml::tag *p) {
 	int data_idx = 0;
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_CONDITION_DATA_INT:
 		case QDSCR_CONDITION_DATA_FLOAT:
 		case QDSCR_CONDITION_DATA_STRING:
@@ -347,7 +347,7 @@ bool qdCondition::load_script(const xml::tag *p) {
 				inverse(false);
 			break;
 		case QDSCR_CONDITION_OBJECT:
-			if (const xml::tag * tp = it -> search_subtag(QDSCR_ID)) {
+			if (const xml::tag * tp = it->search_subtag(QDSCR_ID)) {
 				int object_idx = xml::tag_buffer(*tp).get_int();
 
 				if (object_idx >= 0 && object_idx < objects_.size())
@@ -468,7 +468,7 @@ bool qdCondition::save_data(qdSaveStream &fh) const {
 bool qdCondition::check() {
 	bool result = false;
 	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-		if (dp -> check_condition(this))
+		if (dp->check_condition(this))
 			result = !is_inversed_;
 		else
 			result = is_inversed_;
@@ -508,7 +508,7 @@ bool qdCondition::init_objects() {
 	bool result = true;
 
 	for (objects_container_t::iterator it = objects_.begin(); it != objects_.end(); ++it) {
-		if (!it -> find_object())
+		if (!it->find_object())
 			result = false;
 	}
 

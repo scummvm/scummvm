@@ -104,57 +104,57 @@ const char *qdscr_XML_string(const char *p);
 static void qdscr_write_tag(qdscrDataBlock *p, XStream &ff, int depth) {
 	for (int i = 0; i < depth; i ++) ff < "\t";
 
-	if (p -> name)
-		ff < "<" < p -> name;
+	if (p->name)
+		ff < "<" < p->name;
 
-	if (!p -> nextLevel.empty()) {
-		if (p -> name) {
-			switch (p -> dataType) {
+	if (!p->nextLevel.empty()) {
+		if (p->name) {
+			switch (p->dataType) {
 			case QDSCR_DATA_INT:
-				ff < " type=\"" <= *p -> i_dataPtr < "\"";
+				ff < " type=\"" <= *p->i_dataPtr < "\"";
 				break;
 			case QDSCR_DATA_CHAR:
-				if (p -> dataSize0 == -1)
-					ff < " name=\"" < qdscr_XML_string(p -> c_dataPtr) < "\"";
+				if (p->dataSize0 == -1)
+					ff < " name=\"" < qdscr_XML_string(p->c_dataPtr) < "\"";
 				break;
 			}
 			ff < ">\r\n";
 		}
 
-		qdscrDataBlockList::iterator it = p -> nextLevel.begin();
-		FOR_EACH(p -> nextLevel, it)
+		qdscrDataBlockList::iterator it = p->nextLevel.begin();
+		FOR_EACH(p->nextLevel, it)
 		qdscr_write_tag(*it, ff, depth + 1);
-		if (p -> name) {
+		if (p->name) {
 			for (int i = 0; i < depth; i ++) ff < "\t";
-			ff < "</" < p -> name < ">\r\n";
+			ff < "</" < p->name < ">\r\n";
 		}
 	} else {
-		if (p -> name) {
+		if (p->name) {
 			ff < ">";
 			int j;
-			switch (p -> dataType) {
+			switch (p->dataType) {
 			case QDSCR_DATA_INT:
-				if (p -> dataSize0 == -1)
-					ff <= p -> dataSize < " ";
-				for (j = 0; j < p -> dataSize; j ++) {
-					ff <= p -> i_dataPtr[j];
-					if (j < p -> dataSize - 1) ff < " ";
+				if (p->dataSize0 == -1)
+					ff <= p->dataSize < " ";
+				for (j = 0; j < p->dataSize; j ++) {
+					ff <= p->i_dataPtr[j];
+					if (j < p->dataSize - 1) ff < " ";
 				}
 				break;
 			case QDSCR_DATA_DOUBLE:
-				if (p -> dataSize0 == -1)
-					ff <= p -> dataSize < " ";
-				for (j = 0; j < p -> dataSize; j ++) {
-					ff <= p -> d_dataPtr[j];
-					if (j < p -> dataSize - 1) ff < " ";
+				if (p->dataSize0 == -1)
+					ff <= p->dataSize < " ";
+				for (j = 0; j < p->dataSize; j ++) {
+					ff <= p->d_dataPtr[j];
+					if (j < p->dataSize - 1) ff < " ";
 				}
 				break;
 			case QDSCR_DATA_CHAR:
-				if (p -> dataSize0 == -1)
-					ff < qdscr_XML_string(p -> c_dataPtr);
+				if (p->dataSize0 == -1)
+					ff < qdscr_XML_string(p->c_dataPtr);
 				break;
 			}
-			ff < "</" < p -> name < ">\r\n";
+			ff < "</" < p->name < ">\r\n";
 		}
 	}
 }
