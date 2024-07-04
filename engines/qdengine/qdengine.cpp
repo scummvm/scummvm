@@ -87,7 +87,7 @@ Common::Error QDEngineEngine::run() {
 		g_system->getPaletteManager()->setPalette(pal, 0, 256);
 		_screen->update();
 
-		engineMain(NULL, NULL, "", SW_SHOWNORMAL);
+		engineMain();
 
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded

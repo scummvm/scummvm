@@ -156,16 +156,6 @@ long SetWindowLong(HWND hWnd, int nIndex, long dwNewLong) {
 	return 0;
 }
 
-HANDLE LoadImage(HINSTANCE hinst, LPCSTR name, UINT type, int cxDesired, int cyDesired, UINT fuLoad) {
-	warning("STUB: LoadImage");
-	return 0;
-}
-
-HMODULE GetModuleHandle(LPCSTR lpModuleName) {
-	warning("STUB: GetModuleHandle");
-	return 0;
-}
-
 DWORD SetFilePointer(HANDLE hfile, long lDistanceToMove, long * lpDistanceToMoveHigh, DWORD  dwMoveMethod) {
 	warning("STUB: SetFilePointer");
 	return 0;
@@ -209,72 +199,6 @@ HRESULT CoInitialize(void *pvReserved) {
 
 void CoUninitialize() {
 	warning("STUB: CoUninitialize()");
-}
-
-HANDLE GlobalAlloc(UINT uFlags, size_t dwBytes) {
-	warning("STUB: GlobalAlloc()");
-	return 0;
-}
-
-HANDLE GlobalReAlloc(HANDLE hMem, size_t dwBytes, UINT uFlags) {
-	warning("STUB: GlobalReAlloc()");
-	return 0;
-}
-
-void GlobalFree(HANDLE hMem) {
-	warning("STUB: GlobalFree()");
-}
-
-const char *MAKEINTRESOURCE(int i) {
-	warning("STUB: MAKEINTRESOURCE()");
-	return 0;
-}
-
-bool DeleteObject(HANDLE hObject) {
-	warning("STUB: DeleteObject()");
-	return false;
-}
-
-HWND CreateWindowEx(DWORD dwExStyle, const char *lpClassName, const char *lpWindowName, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hWndParent, int hMenu, HINSTANCE hInstance, void *lpParam) {
-	warning("STUB: CreteWindowEx()");
-	return 0;
-}
-
-
-HRGN CreateRectRgn(int x1, int y1, int x2, int y2) {
-	warning("STUB: CreateRectRgn()");
-	return HRGN{0};
-}
-
-int CombineRgn(HRGN hrgnDest, HRGN hrgnSrc1, HRGN hrgnSrc2, int iMode) {
-	warning("STUB: CombineRgn()");
-	return 0;
-}
-
-int SetWindowRgn(HWND hWnd, HRGN hRgn, bool bRedraw) {
-	warning("STUB: SetWindowRgn()");
-	return 0;
-}
-
-
-int GetObject(HGDIOBJ hgdiobj, int cbBuffer, void *lpvObject) {
-	warning("STUB: GetObject()");
-	return 0;
-}
-
-bool GetClientRect(HWND hWnd, RECT *lpRect) {
-	warning("STUB: GetClientRect()");
-	return false;
-}
-
-bool SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, UINT uFlags) {
-	warning("STUB: SetWindowPos()");
-	return false;
-}
-
-int GetSystemMetrics(int nIndex) {
-	warning("STUB: GetSystemMetrics()");
-	return 0;
 }
 
 HRESULT CoCreateInstance(REFCLSID rclsid, void *pUnkOuter, DWORD dwClsContext, REFIID riid, void **ppv) {
