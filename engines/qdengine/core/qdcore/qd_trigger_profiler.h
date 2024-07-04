@@ -172,7 +172,7 @@ public:
 
 	static qdTriggerProfiler &instance();
 
-	static const char *const activation_comline() {
+	static const char *activation_comline() {
 		return activation_comline_;
 	}
 

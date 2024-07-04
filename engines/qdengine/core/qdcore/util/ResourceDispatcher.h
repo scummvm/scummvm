@@ -40,6 +40,7 @@ public:
 		time = 0;
 		ID = ++IDs;
 	}
+	virtual ~ResourceUser() {}
 	virtual int quant() {
 		return 1;
 	}
@@ -64,6 +65,7 @@ public:
 
 	VoidFunctionCallResourceUser(type func_, time_type dtime) :
 		ResourceUser(dtime), func(func_) {}
+	virtual ~VoidFunctionCallResourceUser() {}
 	int quant() {
 		func();
 		return 1;
@@ -80,6 +82,7 @@ public:
 
 	MemberFunctionCallResourceUser(T &object_, type func_, time_type dtime) :
 		ResourceUser(dtime), object(object_), func(func_) {}
+	virtual ~MemberFunctionCallResourceUser() {}
 	int quant() {
 		(object.*func)();
 		return 1;

@@ -207,7 +207,6 @@ qdTriggerElement::~qdTriggerElement() {
 bool qdTriggerElement::check_external_conditions(int link_type) {
 	if (parents_.empty()) return true;
 
-	qdTriggerLinkList::iterator it;
 	for (auto &it : parents_) {
 		if (it.type() == link_type && it.element()->status() != TRIGGER_EL_DONE) {
 			return false;
@@ -322,7 +321,6 @@ bool qdTriggerElement::is_parent(qdTriggerElementConstPtr p) {
 #ifdef _QUEST_EDITOR
 	return (find_parent_link(p) != NULL);
 #else
-	qdTriggerLinkList::iterator it;
 	for (auto &it : parents_) {
 		if (it.element() == p) return true;
 	}
@@ -335,7 +333,6 @@ bool qdTriggerElement::is_child(qdTriggerElementConstPtr p) {
 #ifdef _QUEST_EDITOR
 	return (find_child_link(p) != NULL);
 #else
-	qdTriggerLinkList::iterator it;
 	for (auto &it : children_) {
 		if (it.element() == p) return true;
 	}
@@ -592,7 +589,7 @@ bool qdTriggerElement::retrieve_link_elements(qdTriggerChain *p) {
 
 bool qdTriggerElement::quant(float dt) {
 	bool ret = false;
-	qdTriggerLinkList::iterator it;
+
 	for (auto &it : children_) {
 		if (it.status() == qdTriggerLink::LINK_ACTIVE) {
 			if (it.element()->conditions_quant(it.type())) {
@@ -924,14 +921,12 @@ bool qdTriggerElement::load_data(qdSaveStream &fh, int save_version) {
 	set_status(ElementStatus(st));
 
 	for (qdTriggerLinkList::iterator it = parents_.begin(); it != parents_.end(); ++it) {
-		char st;
 		fh > st;
 
 		it->set_status(qdTriggerLink::LinkStatus(st));
 	}
 
 	for (qdTriggerLinkList::iterator it = children_.begin(); it != children_.end(); ++it) {
-		char st;
 		fh > st;
 
 		it->set_status(qdTriggerLink::LinkStatus(st));
