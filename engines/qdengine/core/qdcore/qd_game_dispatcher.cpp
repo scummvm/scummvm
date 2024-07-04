@@ -62,7 +62,6 @@
 #include "qdengine/core/parser/qdscr_parser.h"
 #include "qdengine/core/system/sound/snd_dispatcher.h"
 #include "qdengine/core/system/input/keyboard_input.h"
-#include "qdengine/core/system/input/input_recorder.h"
 
 #include <stdio.h>
 
@@ -176,7 +175,7 @@ void qdGameDispatcher::update_time() {
 
 void qdGameDispatcher::quant() {
 	debugC(9, kDebugQuant, "qdGameDispatcher::quant()");
-	inputRecorder::instance().quant();
+
 	if (check_flag(SKIP_REDRAW_FLAG)) {
 		debugC(3, kDebugQuant, "qdGameDispatcher::quant() Skipping redraw...");
 		drop_flag(SKIP_REDRAW_FLAG);

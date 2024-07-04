@@ -23,7 +23,6 @@
 #include "common/events.h"
 #include "common/textconsole.h"
 #include "qdengine/core/qd_precomp.h"
-#include "qdengine/core/system/input/input_recorder.h"
 #include "qdengine/core/system/input/input_wndproc.h"
 #include "qdengine/core/system/input/keyboard_input.h"
 #include "qdengine/core/system/input/mouse_input.h"
