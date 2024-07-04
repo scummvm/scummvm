@@ -213,8 +213,6 @@ bool qdTriggerChain::can_add_element(const qdNamedObject *p) const {
 }
 
 bool qdTriggerChain::init_elements() {
-	qdTriggerElementList::iterator it;
-
 	for (auto &it : elements_) {
 		it->clear_object_trigger_references();
 	}
@@ -258,7 +256,7 @@ bool qdTriggerChain::remove_link(qdTriggerElementPtr from, qdTriggerElementPtr t
 }
 
 bool qdTriggerChain::load_script(const xml::tag *p) {
-	int id0, id1, tp0, tp1 = 0;
+	int id0, id1, tp0;
 	qdTriggerElementPtr el, el1;
 	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		switch (it->ID()) {
