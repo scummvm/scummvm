@@ -80,10 +80,6 @@
 
 namespace QDEngine {
 
-
-#define FOR_EACH(list, iterator) \
-	for(iterator = (list).begin(); iterator != (list).end(); ++iterator)
-
 // STUB: XZipStream
 #define _NO_ZIP_
 class XZipStream : public XStream {};
