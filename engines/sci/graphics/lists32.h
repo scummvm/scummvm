@@ -60,6 +60,13 @@ public:
 			}
 		}
 	}
+	StablePointerArray(StablePointerArray &&other) : _size(other._size) {
+		other._size = 0;
+		for (size_type i = 0; i < _size; ++i) {
+			_items[i] = other._items[i];
+			other._items[i] = nullptr;
+		}
+	}
 	~StablePointerArray() {
 		for (size_type i = 0; i < _size; ++i) {
 			delete _items[i];
@@ -75,6 +82,16 @@ public:
 			} else {
 				_items[i] = new T(*other._items[i]);
 			}
+		}
+	}
+
+	void operator=(StablePointerArray &&other) {
+		clear();
+		_size = other._size;
+		other._size = 0;
+		for (size_type i = 0; i < _size; ++i) {
+			_items[i] = other._items[i];
+			other._items[i] = nullptr;
 		}
 	}
 
@@ -217,6 +234,9 @@ public:
 			}
 		}
 	}
+	StablePointerDynamicArray(StablePointerDynamicArray &&other) {
+		_items = Common::move(other._items);
+	}
 	~StablePointerDynamicArray() {
 		for (size_type i = 0; i < _items.size(); ++i) {
 			delete _items[i];
@@ -232,6 +252,10 @@ public:
 				_items.push_back(new T(*other._items[i]));
 			}
 		}
+	}
+	void operator=(StablePointerDynamicArray &&other) {
+		clear();
+		_items = Common::move(other._items);
 	}
 
 	T *const &operator[](size_type index) const {
