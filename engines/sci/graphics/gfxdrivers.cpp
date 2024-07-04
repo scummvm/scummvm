@@ -473,13 +473,13 @@ void SCI0_HerculesDriver::replaceCursor(const void *cursor, uint w, uint h, int 
 		}
 	}
 
-	CursorMan.replaceCursor(_compositeBuffer, w << 1, h * 3 / 2, hotspotX << 1, hotspotY * 3 / 2, keycolor);
+	CursorMan.replaceCursor(_compositeBuffer, w << 1, (h & ~1) * 3 / 2 + (h & 1), hotspotX << 1, (hotspotY & ~1) * 3 / 2 + (hotspotY & 1), keycolor);
 }
 
 Common::Point SCI0_HerculesDriver::getMousePos() const {
 	Common::Point res = GfxDriver::getMousePos();
 	res.x = CLIP<int>(res.x - _centerX, 0, 639) >> 1;
-	res.y = CLIP<int>(res.y - _centerY, 0, 299) * 2 / 3;
+	res.y = (CLIP<int>(res.y - _centerY, 0, 299) * 2 + 1) / 3;
 	return res;
 }
 
