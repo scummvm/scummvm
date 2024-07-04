@@ -28,8 +28,6 @@
 
 namespace QDEngine {
 
-class XStream;
-
 class qdCoordsAnimationPoint {
 public:
 	qdCoordsAnimationPoint();
