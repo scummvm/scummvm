@@ -46,8 +46,6 @@
 #include "qdengine/core/system/input/mouse_input.h"
 #include "qdengine/core/system/input/keyboard_input.h"
 
-#include "qdengine/core/runtime/comline_parser.h"
-#include "qdengine/core/runtime/qd_dialogs.h"
 #include "qdengine/core/qd_precomp.h"
 
 
@@ -76,17 +74,6 @@ void restore();
 bool request_CD_handler(int cd_id);
 
 /* --------------------------- DEFINITION SECTION --------------------------- */
-
-//! Командная строка
-enum {
-	COMLINE_SCENE_NAME,
-	COMLINE_ENABLE_LOG,
-	COMLINE_SETTINGS,
-	COMLINE_RECORDER_WRITE,
-	COMLINE_RECORDER_PLAY,
-	COMLINE_TRIGGERS_DEBUG,
-	COMLINE_TRIGGERS_PROFILER
-};
 
 grDispatcher *grD = NULL;
 
@@ -138,75 +125,25 @@ void searchTagMap(int id, int targetVal) {
 }
 
 int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow) {
-	const char *const event_name = "QD Engine Game";
-	warning("STUB: qdrt::WinMain");
-#if 0
-	if (HANDLE event = OpenEvent(EVENT_ALL_ACCESS, FALSE, event_name)) {
-		if (HWND hwnd = FindWindow(grDispatcher::wnd_class_name(), NULL)) {
-			ShowWindow(hwnd, SW_RESTORE);
-			BringWindowToTop(hwnd);
-			SetForegroundWindow(hwnd);
-		}
-		return 0;
-	} else {
-		event = CreateEvent(0, TRUE, TRUE, event_name);
-	}
-#endif
-
-	comlineParser comline_parser;
-	comline_parser.register_option("s", COMLINE_SCENE_NAME);
-	comline_parser.register_option("log", COMLINE_ENABLE_LOG);
-	comline_parser.register_option("settings", COMLINE_SETTINGS);
-
-#ifdef __QD_DEBUG_ENABLE__
-	comline_parser.register_option(qdTriggerChain::debug_comline(), COMLINE_TRIGGERS_DEBUG);
-#endif
-
-#ifdef __QD_TRIGGER_PROFILER__
-	comline_parser.register_option(qdTriggerProfiler::activation_comline(), COMLINE_TRIGGERS_PROFILER);
-#endif
-
-#if 0
-	comline_parser.parse_comline(__argc, __argv);
-#endif
+	Common::ArchiveMemberList files;
+	SearchMan.listMatchingMembers(files, "*.qml");
+	Common::ArchiveMemberPtr p = files.front();
+	Common::String firstFileName;
 	std::string script_name;
-	if (comline_parser.has_argument(-1))
-		script_name = comline_parser.argument_string(-1);
+
+	if (p) {
+		firstFileName = p->getFileName();
+		script_name = firstFileName.c_str();
+	}
 
 	if (script_name.empty()) {
-		Common::ArchiveMemberList files;
-		SearchMan.listMatchingMembers(files, "*.qml");
-		Common::ArchiveMemberPtr p = files.front();
-		Common::String firstFileName;
-
-		if (p) {
-			firstFileName = p->getFileName();
-			script_name = firstFileName.c_str();
-		}
-
-		if (script_name.empty()) {
-			return 0;
-		}
+		return 0;
 	}
 
 	grD = new grDispatcher();
 
-	if (comline_parser.has_argument(COMLINE_SETTINGS)) {
-		qdlg::settings_dialog();
-
-		delete grD;
-
-		grDispatcher::sys_finit();
-		return 0;
-	}
-
-#ifdef __QD_DEBUG_ENABLE__
-	if (comline_parser.has_argument(COMLINE_TRIGGERS_DEBUG))
-		qdGameConfig::get_config().toggle_triggers_debug(true);
-#endif
-
 #ifdef __QD_TRIGGER_PROFILER__
-	if (comline_parser.has_argument(COMLINE_TRIGGERS_PROFILER))
+	if (ConfMan.getBool("tirggers_profiler"))
 		qdTriggerProfiler::instance().enable();
 #endif
 
@@ -298,7 +235,8 @@ int WINAPI engineMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCm
 
 	qd_gameD->load_resources();
 
-	if (const char * scene_name = comline_parser.argument_string(COMLINE_SCENE_NAME)) {
+	if (ConfMan.hasKey("boot_param")) {
+		const char *scene_name = ""; // FIXME. Implement actual scene selection
 		if (!qd_gameD->select_scene(scene_name))
 			error("Cannot find the startup scene");
 	} else {
@@ -429,10 +367,7 @@ void init_graphics() {
 
 	grDispatcher::instance()->resize_window();
 
-	hmainWnd = (HWND)grDispatcher::instance()->Get_hWnd();
 	qdGameConfig::get_config().set_pixel_format(grDispatcher::instance()->pixel_format());
-
-	qdlg::set_icon(hmainWnd);
 
 	grDispatcher::instance()->SetClip();
 	grDispatcher::instance()->SetClipMode(1);

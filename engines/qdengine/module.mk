@@ -8,9 +8,6 @@ MODULE_OBJS = \
 	core/parser/qdscr_parser.o \
 	core/parser/xml_parser.o \
 	core/parser/xml_tag_buffer.o \
-	core/runtime/qd_dialogs.o \
-	core/runtime/qd_dialog_control.o \
-	core/runtime/comline_parser.o \
 	core/runtime/qd_runtime.o \
 	core/system/app_error_handler.o \
 	core/system/app_core.o \
