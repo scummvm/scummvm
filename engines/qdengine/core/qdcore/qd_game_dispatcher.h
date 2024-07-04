@@ -688,8 +688,6 @@ private:
 	void redraw(const grScreenRegion &reg);
 	void redraw_scene(bool draw_interface = true);
 
-	void hide_game_window() const;
-	void restore_game_window() const;
 	const char *cd_request_string(int cd_id) const;
 
 	/// включает нужный экран внутриигрового интерфейса
