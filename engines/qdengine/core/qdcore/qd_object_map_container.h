@@ -96,7 +96,7 @@ T *qdObjectMapContainer<T>::get_object(const char *name) {
 template <class T>
 bool qdObjectMapContainer<T>::remove_object(T *p) {
 	typename object_list_t::iterator it;
-	FOR_EACH(object_list_, it) {
+	for (it = object_list_.begin(); it != object_list_.end(); it++) {
 		if (*it == p) {
 			object_list_.erase(it);
 			typename object_map_t::iterator im = object_map_.find(p->name());
