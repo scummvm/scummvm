@@ -206,9 +206,9 @@ bool qdGameObjectMoving::load_script_body(const xml::tag *p) {
 		switch (it->ID()) {
 		case QDSCR_OBJECT_MOVEMENT_STATES:
 			for (is = it->subtags_begin(); is != it->subtags_end(); ++is) {
-				qdGameObjectStateWalk *p = new qdGameObjectStateWalk;
-				p->load_script(&*is);
-				add_state(p);
+				qdGameObjectStateWalk *w = new qdGameObjectStateWalk;
+				w->load_script(&*is);
+				add_state(w);
 			}
 			break;
 		case QDSCR_OBJECT_DIRECTION:
@@ -365,6 +365,8 @@ bool qdGameObjectMoving::move(const Vect3f &target, bool lock_target) {
 	case MOVEMENT_MODE_END:
 		movement_mode_ = MOVEMENT_MODE_TURN;
 		break;
+	default:
+		break;
 	}
 	return find_path(target, lock_target);
 }
@@ -511,7 +513,7 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 	debugC(3, kDebugLog, "Optimised Path");
 	__QDBG(dump_vect(path_vect));
 
-	if (path_vect.size() >= 2 && movement_type() == qdGameObjectStateWalk::MOVEMENT_FOUR_DIRS || movement_type() == qdGameObjectStateWalk::MOVEMENT_EIGHT_DIRS) {
+	if (path_vect.size() >= 2 && (movement_type() == qdGameObjectStateWalk::MOVEMENT_FOUR_DIRS || movement_type() == qdGameObjectStateWalk::MOVEMENT_EIGHT_DIRS)) {
 		std::vector<Vect3f> final_path;
 		finalize_path(R(), trg, path_vect, final_path);
 
@@ -578,8 +580,6 @@ bool qdGameObjectMoving::stop_movement() {
 }
 
 bool qdGameObjectMoving::move2position(const Vect3f target) {
-	float tm = 0.0f;
-
 	change_direction_angle(calc_direction_angle(target));
 	target_r_ = target;
 
@@ -745,6 +745,8 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool &end_movement, bool real_
 			}
 		}
 		return R();
+	default:
+		break;
 	}
 
 	movement_mode_ = MOVEMENT_MODE_MOVE;
@@ -1552,6 +1554,8 @@ void qdGameObjectMoving::set_state(int st) {
 				start_auto_move();
 #endif
 			break;
+		default:
+			break;
 		}
 #ifdef _QUEST_EDITOR
 		adjust_z();
@@ -1603,7 +1607,7 @@ Vect2s qdGameObjectMoving::get_pre_last_walkable_point(const Vect2s &target) con
 	if (delta < 1) delta = 1;
 	dr.normalize(float(delta));
 	// Идем с конца. Если натыкаемся на проходимую точку, отличную от начальной
-	bool fir_step = true;
+	//bool fir_step = true;
 	if (abs(x2 - x1) > abs(y2 - y1)) {
 		int dx = int(float(x2 - x1) / dr.x);
 		// Пропускаем все проходимые и доходим до непроходимой
@@ -2060,6 +2064,8 @@ bool qdGameObjectMoving::set_walk_animation() {
 				}
 			}
 			break;
+		default:
+			break;
 		}
 
 		set_animation_info(wst->animation_info(direction_angle_));
@@ -2216,6 +2222,8 @@ void qdGameObjectMoving::optimize_path(std::vector<Vect2i> &path) const {
 	case qdGameObjectStateWalk::MOVEMENT_SMOOTH:
 		optimize_path_smooth(opt_path);
 		break;
+	default:
+		break;
 	}
 
 	path.clear();
@@ -2281,8 +2289,6 @@ bool coll(const Vect2i v1, const Vect2i v2) {
 		return true;
 	else return false;
 }
-
-const double SQRT_2_DIV_2 = 0.7071067811865475244;
 
 bool qdGameObjectMoving::del_coll_pts(std::list<Vect2i> &path) const {
 	bool is_del = false;

@@ -439,14 +439,14 @@ float qdAnimationSet::adjust_angle(float angle) const {
 	return get_index_angle(dir);
 }
 
-const float qdAnimationSet::walk_sound_frequency(int direction_index) const {
+float qdAnimationSet::walk_sound_frequency(int direction_index) const {
 	if (direction_index < 0 || direction_index >= walk_sound_frequency_.size())
 		return 1;
 	else
 		return walk_sound_frequency_[direction_index];
 }
 
-const float qdAnimationSet::walk_sound_frequency(float direction_angle) const {
+float qdAnimationSet::walk_sound_frequency(float direction_angle) const {
 	int index = get_angle_index(direction_angle);
 	return walk_sound_frequency(index);
 }
