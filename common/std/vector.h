@@ -39,16 +39,6 @@
 
 namespace Std {
 
-template<class In, class Type>
-Type *uninitialized_move(In first, In last, Type *dst) {
-	while (first != last) {
-		Type &t = *new ((void *)dst++) Type();
-		t = Std::move(*first++);
-	}
-
-	return dst;
-}
-
 template<class T>
 class vector {
 public:
@@ -501,8 +491,8 @@ public:
 		allocCapacity(newCapacity);
 
 		if (oldStorage) {
-			// Copy old data
-			uninitialized_move(oldStorage, oldStorage + _size, _storage);
+			// Move old data
+			Common::uninitialized_move(oldStorage, oldStorage + _size, _storage);
 			freeStorage(oldStorage, _size);
 		}
 	}
