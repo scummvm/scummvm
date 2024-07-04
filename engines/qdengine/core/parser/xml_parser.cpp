@@ -46,8 +46,6 @@ static int unknown_encoding_handler(void *encodingHandlerData, const XML_Char *n
 static const char *UTF8_convert(const char *input_string, int input_string_length = -1);
 #endif
 
-static bool write_tag(XStream &ff, const tag &tg, int depth = 0);
-
 }; /* namespace xml */
 
 /* --------------------------- DEFINITION SECTION --------------------------- */
@@ -374,7 +372,7 @@ bool parser::read_binary_script(const char *fname) {
 
 	binary_script_ = true;
 
-	uint32 v = ff.readUint32LE();
+	/* uint32 v = */ff.readUint32LE();
 	uint32 size = ff.readUint32LE();
 
 	if (data_pool_.size() < size)
