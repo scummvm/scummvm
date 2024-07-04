@@ -29,6 +29,7 @@ namespace QDEngine {
 class qdlgOption {
 public:
 	qdlgOption() : control_ID_(-1), control_parent_(NULL) { }
+	virtual ~qdlgOption() {}
 
 	void set_control(HWND ctl_parent, int ctl_id) {
 		control_parent_ = ctl_parent;
@@ -71,6 +72,7 @@ private:
 
 class qdlgOptionSlider : public qdlgOption {
 public:
+	virtual ~qdlgOptionSlider() {}
 	int value() const;
 	void set_value(int val) const;
 
@@ -83,6 +85,7 @@ private:
 
 class qdlgOptionCheckbox : public qdlgOption {
 public:
+	virtual ~qdlgOptionCheckbox() {}
 	int value() const;
 	void set_value(int val) const;
 };
@@ -90,6 +93,7 @@ public:
 class qdlgOptionDroplist : public qdlgOption {
 public:
 	qdlgOptionDroplist() { }
+	virtual ~qdlgOptionDroplist() {}
 
 	void init_control() const;
 

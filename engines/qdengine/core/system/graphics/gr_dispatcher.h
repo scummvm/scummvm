@@ -83,7 +83,7 @@ class UI_TextParser;
 class grDispatcher {
 public:
 	grDispatcher();
-	~grDispatcher();
+	virtual ~grDispatcher();
 
 	static bool sys_init();
 	static bool sys_finit();
