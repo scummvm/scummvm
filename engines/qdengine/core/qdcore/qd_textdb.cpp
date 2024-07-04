@@ -148,9 +148,9 @@ void qdTextDB::getIdList(const char *mask, IdList &idList) const {
 //	int const maskLen = _tcslen(mask);
 	int const maskLen = strlen(mask);
 	qdTextMap::const_iterator i;
-	FOR_EACH(texts_, i) {
-		if (!i->first.find(mask)) {
-			std::string str = i->first;
+	for (auto &i : texts_) {
+		if (!i.first.find(mask)) {
+			std::string str = i.first;
 			str.erase(0, maskLen + 1);
 			if (!str.empty()) {
 				int pos = str.find(DELIMETER);

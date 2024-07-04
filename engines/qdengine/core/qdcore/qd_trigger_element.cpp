@@ -208,9 +208,10 @@ bool qdTriggerElement::check_external_conditions(int link_type) {
 	if (parents_.empty()) return true;
 
 	qdTriggerLinkList::iterator it;
-	FOR_EACH(parents_, it) {
-		if (it->type() == link_type && it->element()->status() != TRIGGER_EL_DONE)
+	for (auto &it : parents_) {
+		if (it.type() == link_type && it.element()->status() != TRIGGER_EL_DONE) {
 			return false;
+		}
 	}
 
 	return true;
@@ -322,8 +323,9 @@ bool qdTriggerElement::is_parent(qdTriggerElementConstPtr p) {
 	return (find_parent_link(p) != NULL);
 #else
 	qdTriggerLinkList::iterator it;
-	FOR_EACH(parents_, it)
-	if (it->element() == p) return true;
+	for (auto &it : parents_) {
+		if (it.element() == p) return true;
+	}
 
 	return false;
 #endif
@@ -334,8 +336,9 @@ bool qdTriggerElement::is_child(qdTriggerElementConstPtr p) {
 	return (find_child_link(p) != NULL);
 #else
 	qdTriggerLinkList::iterator it;
-	FOR_EACH(children_, it)
-	if (it->element() == p) return true;
+	for (auto &it : children_) {
+		if (it.element() == p) return true;
+	}
 
 	return false;
 #endif
@@ -365,9 +368,8 @@ bool qdTriggerElement::remove_parent(qdTriggerElementPtr p) {
 		return true;
 	}
 #else
-	qdTriggerLinkList::iterator it;
-	FOR_EACH(parents_, it) {
-		if (it->element() == p) {
+	for (auto it = parents_.begin(); it != parents_.end(); it++) {
+		if ((*it).element() == p) {
 			parents_.erase(it);
 			return true;
 		}
@@ -385,9 +387,8 @@ bool qdTriggerElement::remove_child(qdTriggerElementPtr p) {
 		return true;
 	}
 #else
-	qdTriggerLinkList::iterator it;
-	FOR_EACH(children_, it) {
-		if (it->element() == p) {
+	for (auto it = children_.begin(); it != children_.end(); it++) {
+		if ((*it).element() == p) {
 			children_.erase(it);
 			return true;
 		}
@@ -592,14 +593,14 @@ bool qdTriggerElement::retrieve_link_elements(qdTriggerChain *p) {
 bool qdTriggerElement::quant(float dt) {
 	bool ret = false;
 	qdTriggerLinkList::iterator it;
-	FOR_EACH(children_, it) {
-		if (it->status() == qdTriggerLink::LINK_ACTIVE) {
-			if (it->element()->conditions_quant(it->type())) {
-				if (!it->auto_restart())
-					it->set_status(qdTriggerLink::LINK_DONE);
+	for (auto &it : children_) {
+		if (it.status() == qdTriggerLink::LINK_ACTIVE) {
+			if (it.element()->conditions_quant(it.type())) {
+				if (!it.auto_restart())
+					it.set_status(qdTriggerLink::LINK_DONE);
 #ifdef __QD_TRIGGER_PROFILER__
 				if (!qdTriggerProfiler::instance().is_read_only()) {
-					qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, owner_, ID_, it->element()->ID(), it->status());
+					qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, owner_, ID_, it.element()->ID(), it.status());
 					qdTriggerProfiler::instance().add_record(rec);
 				}
 #endif
@@ -710,14 +711,14 @@ bool qdTriggerElement::conditions_quant(int link_type) {
 			set_status(TRIGGER_EL_DONE);
 
 		if (status_ == TRIGGER_EL_DONE) {
-			qdTriggerLinkList::iterator it;
-			FOR_EACH(parents_, it)
-			it->element()->deactivate_link(this);
-			FOR_EACH(children_, it) {
-				it->activate();
+			for (auto &it : parents_)
+				it.element()->deactivate_link(this);
+
+			for (auto &it : children_) {
+				it.activate();
 #ifdef __QD_TRIGGER_PROFILER__
 				if (!qdTriggerProfiler::instance().is_read_only()) {
-					qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, owner_, ID_, it->element()->ID(), it->status());
+					qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, owner_, ID_, it.element()->ID(), it.status());
 					qdTriggerProfiler::instance().add_record(rec);
 				}
 #endif
@@ -737,23 +738,22 @@ bool qdTriggerElement::conditions_quant(int link_type) {
 
 bool qdTriggerElement::activate_links(qdTriggerElementPtr child) {
 	int link_type = -1;
-	qdTriggerLinkList::iterator it;
-	FOR_EACH(children_, it) {
-		if (it->element() == child) {
-			link_type = it->type();
+	for (auto &it : children_) {
+		if (it.element() == child) {
+			link_type = it.type();
 			break;
 		}
 	}
 
 	if (link_type == -1) return false;
 
-	FOR_EACH(children_, it) {
-		if (it->type() == link_type) {
-			if (it->element() != child && it->status() == qdTriggerLink::LINK_INACTIVE) {
-				it->activate();
+	for (auto &it : children_) {
+		if (it.type() == link_type) {
+			if (it.element() != child && it.status() == qdTriggerLink::LINK_INACTIVE) {
+				it.activate();
 #ifdef __QD_TRIGGER_PROFILER__
 				if (!qdTriggerProfiler::instance().is_read_only()) {
-					qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, owner_, ID_, it->element()->ID(), it->status());
+					qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, owner_, ID_, it.element()->ID(), it.status());
 					qdTriggerProfiler::instance().add_record(rec);
 				}
 #endif
@@ -766,23 +766,22 @@ bool qdTriggerElement::activate_links(qdTriggerElementPtr child) {
 
 bool qdTriggerElement::deactivate_links(qdTriggerElementPtr child) {
 	int link_type = -1;
-	qdTriggerLinkList::iterator it;
-	FOR_EACH(children_, it) {
-		if (it->element() == child) {
-			link_type = it->type();
+	for (auto &it : children_) {
+		if (it.element() == child) {
+			link_type = it.type();
 			break;
 		}
 	}
 
 	if (link_type == -1) return false;
 
-	FOR_EACH(children_, it) {
-		if (it->type() != link_type) {
-			it->deactivate();
+	for (auto &it : children_) {
+		if (it.type() != link_type) {
+			it.deactivate();
 //			it->element()->set_status(qdTriggerElement::TRIGGER_EL_INACTIVE);
 #ifdef __QD_TRIGGER_PROFILER__
 			if (!qdTriggerProfiler::instance().is_read_only()) {
-				qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, owner_, ID_, it->element()->ID(), it->status());
+				qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, owner_, ID_, it.element()->ID(), it.status());
 				qdTriggerProfiler::instance().add_record(rec);
 			}
 #endif
@@ -793,13 +792,12 @@ bool qdTriggerElement::deactivate_links(qdTriggerElementPtr child) {
 }
 
 bool qdTriggerElement::deactivate_link(qdTriggerElementPtr child) {
-	qdTriggerLinkList::iterator it;
-	FOR_EACH(children_, it) {
-		if (it->element() == child) {
-			it->deactivate();
+	for (auto &it : children_) {
+		if (it.element() == child) {
+			it.deactivate();
 #ifdef __QD_TRIGGER_PROFILER__
 			if (!qdTriggerProfiler::instance().is_read_only()) {
-				qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, owner_, ID_, it->element()->ID(), it->status());
+				qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, owner_, ID_, it.element()->ID(), it.status());
 				qdTriggerProfiler::instance().add_record(rec);
 			}
 #endif

@@ -279,10 +279,9 @@ void qdInventoryCellSet::redraw(int offs_x, int offs_y, bool inactive_mode) cons
 }
 
 bool qdInventoryCellSet::put_object(qdGameObjectAnimated *p) {
-	qdInventoryCellVector::iterator it;
-	FOR_EACH(cells_, it) {
-		if (it->is_empty() && it->type() == p->inventory_type()) {
-			it->set_object(p);
+	for (auto &it : cells_) {
+		if (it.is_empty() && it.type() == p->inventory_type()) {
+			it.set_object(p);
 			return true;
 		}
 	}
@@ -347,10 +346,9 @@ qdGameObjectAnimated *qdInventoryCellSet::get_object(const Vect2s &pos) const {
 }
 
 bool qdInventoryCellSet::remove_object(qdGameObjectAnimated *p) {
-	qdInventoryCellVector::iterator it;
-	FOR_EACH(cells_, it) {
-		if (it->object() == p) {
-			it->set_object(NULL);
+	for (auto &it : cells_) {
+		if (it.object() == p) {
+			it.set_object(NULL);
 			return true;
 		}
 	}
@@ -359,9 +357,8 @@ bool qdInventoryCellSet::remove_object(qdGameObjectAnimated *p) {
 }
 
 bool qdInventoryCellSet::is_object_in_list(const qdGameObjectAnimated *p) const {
-	qdInventoryCellVector::const_iterator it;
-	FOR_EACH(cells_, it) {
-		if (it->object() == p)
+	for (auto &it : cells_) {
+		if (it.object() == p)
 			return true;
 	}
 
@@ -429,10 +426,9 @@ bool qdInventoryCellSet::save_script(Common::SeekableWriteStream &fh, int indent
 bool qdInventoryCellSet::init(const qdInventoryCellTypeVector &tp) {
 	if (cells_.empty()) return false;
 
-	qdInventoryCellTypeVector::const_iterator it;
-	FOR_EACH(tp, it) {
-		if (it->type() == cells_.front().type()) {
-			set_cell_type(*it);
+	for (auto &it : tp) {
+		if (it.type() == cells_.front().type()) {
+			set_cell_type(it);
 			return true;
 		}
 	}
@@ -461,9 +457,9 @@ bool qdInventoryCellSet::load_resources() {
 }
 
 bool qdInventoryCellSet::free_resources() {
-	qdInventoryCellVector::iterator it;
-	FOR_EACH(cells_, it)
-	it->free_resources();
+	for (auto &it : cells_) {
+		it.free_resources();
+	}
 
 	return true;
 }
@@ -471,9 +467,8 @@ bool qdInventoryCellSet::free_resources() {
 bool qdInventoryCellSet::load_data(qdSaveStream &fh, int save_version) {
 	if (save_version >= 102)
 		fh > additional_cells_.x > additional_cells_.y;
-	qdInventoryCellVector::iterator it;
-	FOR_EACH(cells_, it) {
-		if (!it->load_data(fh, save_version))
+	for (auto &it : cells_) {
+		if (!it.load_data(fh, save_version))
 			return false;
 	}
 
@@ -484,9 +479,8 @@ bool qdInventoryCellSet::save_data(Common::SeekableWriteStream &fh) const {
 	fh.writeSint32LE(additional_cells_.x);
 	fh.writeSint32LE(additional_cells_.y);
 
-	qdInventoryCellVector::const_iterator it;
-	FOR_EACH(cells_, it) {
-		if (!it->save_data(fh))
+	for (auto &it : cells_) {
+		if (!it.save_data(fh))
 			return false;
 	}
 
@@ -495,9 +489,8 @@ bool qdInventoryCellSet::save_data(Common::SeekableWriteStream &fh) const {
 
 bool qdInventoryCellSet::save_data(qdSaveStream &fh) const {
 	fh < additional_cells_.x < additional_cells_.y;
-	qdInventoryCellVector::const_iterator it;
-	FOR_EACH(cells_, it) {
-		if (!it->save_data(fh))
+	for (auto &it : cells_) {
+		if (!it.save_data(fh))
 			return false;
 	}
 
@@ -505,10 +498,10 @@ bool qdInventoryCellSet::save_data(qdSaveStream &fh) const {
 }
 
 int qdInventoryCellSet::cell_index(const qdGameObjectAnimated *obj) const {
-	qdInventoryCellVector::const_iterator it;
-	FOR_EACH(cells_, it) {
-		if (it->object() == obj)
+	for (auto it = cells_.begin(); it != cells_.end(); it++) {
+		if (it->object() == obj) {
 			return (it - cells_.begin());
+		}
 	}
 
 	return -1;
@@ -528,12 +521,11 @@ Vect2s qdInventoryCellSet::cell_position(int cell_idx) const {
 }
 
 void qdInventoryCellSet::set_mouse_hover_object(qdGameObjectAnimated *obj) {
-	qdInventoryCellVector::const_iterator it;
-	FOR_EACH(cells_, it) {
-		if (it->object() && it->object() != obj && it->object()->get_cur_state()) {
-			if (it->object()->get_cur_state()->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_HOVER_STATE)) {
-				if (qdGameObjectState * sp = it->object()->get_inventory_state())
-					it->object()->set_state(sp);
+	for (auto &it : cells_) {
+		if (it.object() && it.object() != obj && it.object()->get_cur_state()) {
+			if (it.object()->get_cur_state()->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_HOVER_STATE)) {
+				if (qdGameObjectState *sp = it.object()->get_inventory_state())
+					it.object()->set_state(sp);
 			}
 		}
 	}
@@ -548,10 +540,10 @@ void qdInventoryCellSet::set_mouse_hover_object(qdGameObjectAnimated *obj) {
 }
 
 void qdInventoryCellSet::objects_quant(float dt) {
-	qdInventoryCellVector::iterator it;
-	FOR_EACH(cells_, it) {
-		if (!it->is_empty())
-			it->object()->quant(dt);
+	for (auto &it : cells_) {
+		if (!it.is_empty()) {
+			it.object()->quant(dt);
+		}
 	}
 }
 

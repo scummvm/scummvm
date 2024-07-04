@@ -64,15 +64,15 @@ qdScreenText *qdScreenTextDispatcher::add_text(int set_ID, const qdScreenText &t
 }
 
 void qdScreenTextDispatcher::clear_texts() {
-	std::vector<qdScreenTextSet>::iterator it;
-	FOR_EACH(text_sets_, it)
-	it->clear_texts();
+	for (auto &it : text_sets_) {
+		it.clear_texts();
+	}
 }
 
 void qdScreenTextDispatcher::clear_texts(qdNamedObject *p) {
-	std::vector<qdScreenTextSet>::iterator it;
-	FOR_EACH(text_sets_, it)
-	it->clear_texts(p);
+	for (auto &it : text_sets_) {
+		it.clear_texts(p);
+	}
 }
 
 const qdScreenTextSet *qdScreenTextDispatcher::get_text_set(int id) const {

@@ -152,13 +152,13 @@ int qdGameDispatcherBase::load_resources() {
 
 void qdGameDispatcherBase::free_resources() {
 	qdAnimationList::const_iterator ia;
-	FOR_EACH(animation_list(), ia) {
-		(*ia)->free_resources();
+	for (auto &ia : animation_list()) {
+		ia->free_resources();
 	}
 
 	qdSoundList::const_iterator is;
-	FOR_EACH(sound_list(), is) {
-		(*is)->free_resource();
+	for (auto &is : sound_list()) {
+		is->free_resource();
 	}
 }
 

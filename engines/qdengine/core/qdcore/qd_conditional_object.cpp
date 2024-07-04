@@ -240,8 +240,9 @@ bool qdConditionalObject::save_conditions_script(XStream &fh, int indent) const 
 
 void qdConditionalObject::conditions_quant(float dt) {
 	conditions_container_t::iterator it;
-	FOR_EACH(conditions_, it)
-	it->quant(dt);
+	for (auto &it : conditions_) {
+		it.quant(dt);
+	}
 }
 
 #ifdef _QUEST_EDITOR
