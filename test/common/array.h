@@ -65,6 +65,31 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(array[1], -11);
 	}
 
+	void test_erase_iterator_range() {
+		Common::Array<int> array;
+		Common::Array<int>::iterator first, last;
+
+		// Fill the array with some random data
+		array.push_back(17);
+		array.push_back(33);
+		array.push_back(66);
+		array.push_back(99);
+		array.push_back(-11);
+
+		first = array.begin();
+		++first;
+
+		last = array.end();
+		--last;
+
+		first = array.erase(first, last);
+		TS_ASSERT_DIFFERS(first, array.end());
+		TS_ASSERT_EQUALS(*first, -11);
+		TS_ASSERT_EQUALS(array.size(), (unsigned int)2);
+		TS_ASSERT_EQUALS(array[0], 17);
+		TS_ASSERT_EQUALS(array[1], -11);
+	}
+
 	void test_insert_iterator() {
 		Common::Array<int> array;
 		Common::Array<int>::iterator iter;
