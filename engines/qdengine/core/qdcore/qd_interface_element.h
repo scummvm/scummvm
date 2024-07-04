@@ -228,7 +228,6 @@ public:
 protected:
 
 	//! Запись данных в скрипт.
-	virtual bool save_script_body(XStream &fh, int indent = 0) const = 0;
 	virtual bool save_script_body(Common::SeekableWriteStream &fh, int indent = 0) const = 0;
 
 	//! Загрузка данных из скрипта.
