@@ -64,3 +64,10 @@ Common::MemoryReadStream *Macs2::Scenes::ReadSceneStrings(uint16 sceneIndex, Com
 Macs2::GameObject *Macs2::GameObjects::GetProtagonistObject() {
 	return instance().Objects[0];
 }
+
+Macs2::GameObject *Macs2::GameObjects::GetObjectByIndex(uint16 index) {
+	if (index - 1 >= instance().Objects.size()) {
+		return nullptr;
+	}
+	return instance().Objects[index - 1];
+}

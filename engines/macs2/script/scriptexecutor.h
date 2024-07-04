@@ -63,7 +63,15 @@ class Macs2Engine;
 			Executing,
 			// Executing but paused until a callback happens
 			WaitingForCallback
-		}
+		};
+
+		enum class ExecutionResult {
+			// We have finished executing the script
+			ScriptFinished,
+
+			// We are now waiting for a callback
+			WaitingForCallback
+		};
 
 
 
@@ -107,10 +115,17 @@ class Macs2Engine;
 
 			uint16 executingObjectIndex;
 
+			// Returns true iff the object is relevant to be executing in the current scene
+			bool IsRelevantObject(const GameObject *obj);
+
 			// Handles the next step of execution based on the current state.
 			// Can be run right after a previous step or be called after execution was paused
 			// Needs to update the state to be valid again
 			void Step();
+
+			// Depending on the current state, chooses the next script to run
+			// and adjusts the state
+			void LoadNextScript();
 			
 
 			bool isTimerActive = false;
@@ -195,13 +210,15 @@ class Macs2Engine;
 
 			// TODO: Mockup variable to simulate conditions where the scripting
 			// function would be called again, like after a walk to event
+			// TODO: Rename to reflect this
+			// TODO: Check if used like this consistently - not really, let's get rid of it
 			bool requestCallback = false;
 
 			Macs2::Macs2Engine* _engine;
 
 			ScriptExecutor();
 		
-			void ExecuteScript();
+			ExecutionResult ExecuteScript();
 
 			// Will execute the script and any object scripts until execution should be stopped
 			// TODO: Consider if we should let the executor also figure out where to get the
