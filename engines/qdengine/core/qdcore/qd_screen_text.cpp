@@ -54,8 +54,8 @@ qdScreenTextFormat::qdScreenTextFormat() : arrangement_(ARRANGE_VERTICAL),
 
 bool qdScreenTextFormat::load_script(const xml::tag *p) {
 	bool load_global_depend = false;
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_TEXT_ALIGN:
 			set_arrangement((qdScreenTextFormat::arrangement_t)xml::tag_buffer(*it).get_int());
 			break;
@@ -153,9 +153,9 @@ void qdScreenText::redraw(const Vect2i &owner_pos) const {
 	const grFont *font = qdGameDispatcher::get_dispatcher()->
 	                     find_font(text_format_.font_type());
 
-	grDispatcher::instance() -> DrawAlignedText(x, y, size_.x, size_.y, col, data(), grTextAlign(text_format_.alignment()), 0, 0, font);
+	grDispatcher::instance()->DrawAlignedText(x, y, size_.x, size_.y, col, data(), grTextAlign(text_format_.alignment()), 0, 0, font);
 	if (qdGameConfig::get_config().debug_draw())
-		grDispatcher::instance() -> Rectangle(x, y, size_.x, size_.y, col, 0, GR_OUTLINED);
+		grDispatcher::instance()->Rectangle(x, y, size_.x, size_.y, col, 0, GR_OUTLINED);
 }
 
 void qdScreenText::set_data(const char *p) {
@@ -163,12 +163,12 @@ void qdScreenText::set_data(const char *p) {
 
 	const grFont *font = qdGameDispatcher::get_dispatcher()->
 	                     find_font(text_format_.font_type());
-	size_.x = grDispatcher::instance() -> TextWidth(data(), 0, font);
-	size_.y = grDispatcher::instance() -> TextHeight(data(), 0, font);
+	size_.x = grDispatcher::instance()->TextWidth(data(), 0, font);
+	size_.y = grDispatcher::instance()->TextHeight(data(), 0, font);
 }
 
 bool qdScreenText::is_owned_by(const qdNamedObject *p) const {
-	return (owner_ && p == owner_ -> owner());
+	return (owner_ && p == owner_->owner());
 }
 
 bool qdScreenText::format_text(int max_width) {

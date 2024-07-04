@@ -100,45 +100,45 @@ bool qdInterfaceDispatcher::select_screen(const char *screen_name, bool lock_res
 	qdInterfaceScreen *p = get_screen(screen_name);
 
 	if (p) {
-		if (cur_screen_ && cur_screen_ -> is_locked()) {
+		if (cur_screen_ && cur_screen_->is_locked()) {
 			debugC(3, kDebugQuant, "qdInterfaceDispatcher::select_screen() Selecting screen: %s", transCyrillic(screen_name));
 			for (resource_container_t::resource_list_t::const_iterator it = resources_.resource_list().begin(); it != resources_.resource_list().end(); ++it) {
-				if (p -> has_references(*it)) {
-					if (!(*it) -> is_resource_loaded())
-						debugC(3, kDebugQuant, "qdInterfaceDispatcher::select_screen() Resource is used in both screens %s and %s", transCyrillic(cur_screen_ -> name()), transCyrillic(p -> name()));
-						(*it) -> load_resource();
+				if (p->has_references(*it)) {
+					if (!(*it)->is_resource_loaded())
+						debugC(3, kDebugQuant, "qdInterfaceDispatcher::select_screen() Resource is used in both screens %s and %s", transCyrillic(cur_screen_->name()), transCyrillic(p->name()));
+						(*it)->load_resource();
 				} else {
-					if ((*it) -> is_resource_loaded() && !cur_screen_ -> has_references(*it))
-						(*it) -> free_resource();
+					if ((*it)->is_resource_loaded() && !cur_screen_->has_references(*it))
+						(*it)->free_resource();
 				}
 			}
 		} else {
 			for (resource_container_t::resource_list_t::const_iterator it = resources_.resource_list().begin(); it != resources_.resource_list().end(); ++it) {
-				if (p -> has_references(*it)) {
-					if (!(*it) -> is_resource_loaded())
-						(*it) -> load_resource();
+				if (p->has_references(*it)) {
+					if (!(*it)->is_resource_loaded())
+						(*it)->load_resource();
 				} else {
-					if ((*it) -> is_resource_loaded())
-						(*it) -> free_resource();
+					if ((*it)->is_resource_loaded())
+						(*it)->free_resource();
 				}
 			}
 		}
 	} else {
-		if (cur_screen_ && cur_screen_ -> is_locked()) {
+		if (cur_screen_ && cur_screen_->is_locked()) {
 			for (resource_container_t::resource_list_t::const_iterator it = resources_.resource_list().begin(); it != resources_.resource_list().end(); ++it) {
-				if ((*it) -> is_resource_loaded() && !cur_screen_ -> has_references(*it))
-					(*it) -> free_resource();
+				if ((*it)->is_resource_loaded() && !cur_screen_->has_references(*it))
+					(*it)->free_resource();
 			}
 		} else {
 			for (resource_container_t::resource_list_t::const_iterator it = resources_.resource_list().begin(); it != resources_.resource_list().end(); ++it) {
-				if ((*it) -> is_resource_loaded())
-					(*it) -> free_resource();
+				if ((*it)->is_resource_loaded())
+					(*it)->free_resource();
 			}
 		}
 	}
 
 	if (p && cur_screen_ != p)
-		p -> set_autohide_phase(1.0f);
+		p->set_autohide_phase(1.0f);
 
 	cur_screen_ = p;
 
@@ -146,16 +146,16 @@ bool qdInterfaceDispatcher::select_screen(const char *screen_name, bool lock_res
 		debugC(3, kDebugQuant, "qdInterfaceDispatcher::select_screen() if(cur_scene_): %s", transCyrillic(screen_name));
 		bool is_game_active = false;
 		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-			if (dp -> get_active_scene())
+			if (dp->get_active_scene())
 				is_game_active = true;
 
-			if (cur_screen_ -> has_music_track())
-				dp -> play_music_track(&cur_screen_ -> music_track(), true);
+			if (cur_screen_->has_music_track())
+				dp->play_music_track(&cur_screen_->music_track(), true);
 		}
 
-		cur_screen_ -> init(is_game_active);
+		cur_screen_->init(is_game_active);
 		if (lock_resources)
-			cur_screen_ -> lock_resources();
+			cur_screen_->lock_resources();
 	}
 
 	need_full_redraw_ = true;
@@ -199,20 +199,20 @@ bool qdInterfaceDispatcher::remove_resource(const char *file_name, const qdInter
 
 bool qdInterfaceDispatcher::redraw(int dx, int dy) const {
 	if (background_screen_)
-		background_screen_ -> redraw(dx, dy);
+		background_screen_->redraw(dx, dy);
 
 	if (cur_screen_)
-		return cur_screen_ -> redraw(dx, dy);
+		return cur_screen_->redraw(dx, dy);
 
 	return false;
 }
 
 bool qdInterfaceDispatcher::pre_redraw() {
 	if (cur_screen_)
-		cur_screen_ -> pre_redraw(need_full_redraw_);
+		cur_screen_->pre_redraw(need_full_redraw_);
 
 	if (background_screen_)
-		background_screen_ -> pre_redraw(need_full_redraw_);
+		background_screen_->pre_redraw(need_full_redraw_);
 
 	return false;
 }
@@ -221,10 +221,10 @@ bool qdInterfaceDispatcher::post_redraw() {
 	need_full_redraw_ = false;
 
 	if (cur_screen_)
-		return cur_screen_ -> post_redraw();
+		return cur_screen_->post_redraw();
 
 	if (background_screen_)
-		background_screen_ -> post_redraw();
+		background_screen_->post_redraw();
 
 	return false;
 }
@@ -236,7 +236,7 @@ bool qdInterfaceDispatcher::quant(float dt) {
 	}
 
 	if (cur_screen_)
-		return cur_screen_ -> quant(dt);
+		return cur_screen_->quant(dt);
 
 	return false;
 }
@@ -254,7 +254,7 @@ bool qdInterfaceDispatcher::mouse_handler(int x, int y, mouseDispatcher::mouseEv
 	}
 
 	if (cur_screen_)
-		return cur_screen_ -> mouse_handler(x, y, ev);
+		return cur_screen_->mouse_handler(x, y, ev);
 
 	return false;
 }
@@ -262,7 +262,7 @@ bool qdInterfaceDispatcher::mouse_handler(int x, int y, mouseDispatcher::mouseEv
 bool qdInterfaceDispatcher::keyboard_handler(int vkey) {
 	if (cur_screen_) {
 		if (vkey == VK_ESCAPE && has_main_menu()) {
-			if (cur_screen_ -> name() && !strcmp(cur_screen_ -> name(), main_menu_screen_name()))
+			if (cur_screen_->name() && !strcmp(cur_screen_->name(), main_menu_screen_name()))
 				handle_event(qdInterfaceEvent::EVENT_RESUME_GAME, NULL);
 			else {
 				if (qdGameDispatcher::get_dispatcher()->is_main_menu_exit_enabled())
@@ -272,7 +272,7 @@ bool qdInterfaceDispatcher::keyboard_handler(int vkey) {
 			return true;
 		}
 
-		return cur_screen_ -> keyboard_handler(vkey);
+		return cur_screen_->keyboard_handler(vkey);
 	}
 
 	return false;
@@ -355,32 +355,32 @@ bool qdInterfaceDispatcher::save_script(Common::SeekableWriteStream &fh, int ind
 
 bool qdInterfaceDispatcher::load_script(const xml::tag *p) {
 	bool screen_idx = false;
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_INTERFACE_SCENE_REDRAW:
 			set_scene_redraw(xml::tag_buffer(*it).get_int());
 			break;
 		case QDSCR_INTERFACE_SCREEN: {
 			qdInterfaceScreen *scr = new qdInterfaceScreen;
-			scr -> set_owner(this);
-			scr -> load_script(&*it);
+			scr->set_owner(this);
+			scr->load_script(&*it);
 			add_screen(scr);
 		}
 		break;
 		case QDSCR_INTERFACE_MAIN_MENU:
-			set_main_menu_screen(it -> data());
+			set_main_menu_screen(it->data());
 			break;
 		case QDSCR_INTERFACE_INGAME_SCREEN0:
-			ingame_screen_names_[0] = it -> data();
+			ingame_screen_names_[0] = it->data();
 			break;
 		case QDSCR_INTERFACE_INGAME_SCREEN1:
-			ingame_screen_names_[1] = it -> data();
+			ingame_screen_names_[1] = it->data();
 			break;
 		case QDSCR_INTERFACE_SAVE_PROMPT_SCREEN:
-			save_prompt_screen_name_ = it -> data();
+			save_prompt_screen_name_ = it->data();
 			break;
 		case QDSCR_INTERFACE_SAVE_NAME_SCREEN:
-			save_title_screen_name_ = it -> data();
+			save_title_screen_name_ = it->data();
 			break;
 		case QDSCR_INTERFACE_NEED_SAVE_SCREENSHOT:
 			need_save_screenshot_ = (0 != xml::tag_buffer(*it).get_int());
@@ -422,7 +422,7 @@ bool qdInterfaceDispatcher::handle_event(int event_code, const char *event_data,
 	switch (event_code) {
 	case qdInterfaceEvent::EVENT_EXIT:
 		if (qdGameDispatcher * p = qd_get_game_dispatcher()) {
-			p -> toggle_exit();
+			p->toggle_exit();
 			return true;
 		}
 		break;
@@ -430,7 +430,7 @@ bool qdInterfaceDispatcher::handle_event(int event_code, const char *event_data,
 		if (event_data) {
 			if (has_main_menu() && !strcmp(main_menu_screen_name(), event_data)) {
 				if (qdGameDispatcher * p = qdGameDispatcher::get_dispatcher()) {
-					p -> set_flag(qdGameDispatcher::MAIN_MENU_FLAG);
+					p->set_flag(qdGameDispatcher::MAIN_MENU_FLAG);
 					return true;
 				}
 			} else {
@@ -441,20 +441,20 @@ bool qdInterfaceDispatcher::handle_event(int event_code, const char *event_data,
 		return false;
 	case qdInterfaceEvent::EVENT_TMP_HIDE_ELEMENT:
 		if (cur_screen_)
-			return cur_screen_ -> hide_element(event_data, true);
+			return cur_screen_->hide_element(event_data, true);
 		break;
 	case qdInterfaceEvent::EVENT_HIDE_ELEMENT:
 		if (cur_screen_)
-			return cur_screen_ -> hide_element(event_data);
+			return cur_screen_->hide_element(event_data);
 		break;
 	case qdInterfaceEvent::EVENT_SHOW_ELEMENT:
 		if (cur_screen_)
-			return cur_screen_ -> show_element(event_data);
+			return cur_screen_->show_element(event_data);
 		break;
 	case qdInterfaceEvent::EVENT_RESUME_GAME:
 		if (qdGameDispatcher * p = qd_get_game_dispatcher()) {
-			if (p -> get_active_scene())
-				return p -> toggle_main_menu(false);
+			if (p->get_active_scene())
+				return p->toggle_main_menu(false);
 		}
 		break;
 	case qdInterfaceEvent::EVENT_SET_SAVE_MODE:
@@ -465,52 +465,52 @@ bool qdInterfaceDispatcher::handle_event(int event_code, const char *event_data,
 		return true;
 	case qdInterfaceEvent::EVENT_NEW_GAME:
 		if (qdGameDispatcher * p = qd_get_game_dispatcher()) {
-			p -> toggle_main_menu(false);
-			return p -> restart();
+			p->toggle_main_menu(false);
+			return p->restart();
 		}
 		break;
 	case qdInterfaceEvent::EVENT_ACTIVATE_PERSONAGE:
 		if (!event_data) return false;
 		if (qdGameDispatcher * p = qd_get_game_dispatcher()) {
-			if (qdGameScene * sp = p -> get_active_scene()) {
-				qdGameObjectMoving *obj = dynamic_cast<qdGameObjectMoving *>(sp -> get_object(event_data));
-				if (!obj || obj == sp -> get_active_personage()) return false;
-				sp -> set_active_personage(obj);
+			if (qdGameScene * sp = p->get_active_scene()) {
+				qdGameObjectMoving *obj = dynamic_cast<qdGameObjectMoving *>(sp->get_object(event_data));
+				if (!obj || obj == sp->get_active_personage()) return false;
+				sp->set_active_personage(obj);
 				return true;
 			}
 		}
 		break;
 	case qdInterfaceEvent::EVENT_CHANGE_PERSONAGE:
 		if (qdGameDispatcher * p = qd_get_game_dispatcher()) {
-			if (qdGameScene * sp = p -> get_active_scene()) {
-				sp -> change_active_personage();
+			if (qdGameScene * sp = p->get_active_scene()) {
+				sp->change_active_personage();
 				return true;
 			}
 		}
 		break;
 	case qdInterfaceEvent::EVENT_PREV_ELEMENT_STATE:
 		if (cur_screen_ && event_data) {
-			if (qdInterfaceButton * p = dynamic_cast<qdInterfaceButton * >(cur_screen_ -> get_element(event_data)))
-				return p -> change_state(false);
+			if (qdInterfaceButton * p = dynamic_cast<qdInterfaceButton * >(cur_screen_->get_element(event_data)))
+				return p->change_state(false);
 		}
 		break;
 	case qdInterfaceEvent::EVENT_NEXT_ELEMENT_STATE:
 		if (cur_screen_ && event_data) {
-			if (qdInterfaceButton * p = dynamic_cast<qdInterfaceButton * >(cur_screen_ -> get_element(event_data)))
-				return p -> change_state(true);
+			if (qdInterfaceButton * p = dynamic_cast<qdInterfaceButton * >(cur_screen_->get_element(event_data)))
+				return p->change_state(true);
 		}
 		break;
 	case qdInterfaceEvent::EVENT_MAIN_MENU:
 		if (qdGameDispatcher * p = qdGameDispatcher::get_dispatcher()) {
-			p -> set_flag(qdGameDispatcher::MAIN_MENU_FLAG);
+			p->set_flag(qdGameDispatcher::MAIN_MENU_FLAG);
 			return true;
 		}
 		break;
 	case qdInterfaceEvent::EVENT_PLAY_VIDEO:
 		if (event_data) {
 			if (qdGameDispatcher * p = qdGameDispatcher::get_dispatcher()) {
-				if (p -> play_video(event_data)) {
-					p -> pause();
+				if (p->play_video(event_data)) {
+					p->pause();
 					return true;
 				}
 			}
@@ -521,7 +521,7 @@ bool qdInterfaceDispatcher::handle_event(int event_code, const char *event_data,
 			std::string str = event_data;
 			int pos = str.find("::");
 			if (pos != std::string::npos) {
-				if (qdInterfaceButton * p = dynamic_cast<qdInterfaceButton * >(cur_screen_ -> get_element(str.substr(0, pos).c_str()))) {
+				if (qdInterfaceButton * p = dynamic_cast<qdInterfaceButton * >(cur_screen_->get_element(str.substr(0, pos).c_str()))) {
 					return p->activate_state(str.substr(pos + 2).c_str());
 				}
 			}
@@ -529,15 +529,15 @@ bool qdInterfaceDispatcher::handle_event(int event_code, const char *event_data,
 		break;
 	case qdInterfaceEvent::EVENT_CLEAR_MOUSE:
 		if (qdGameDispatcher * p = qdGameDispatcher::get_dispatcher()) {
-			return p -> drop_mouse_object();
+			return p->drop_mouse_object();
 		}
 		break;
 	case qdInterfaceEvent::EVENT_LOAD_SCENE:
 		if (event_data) {
 			if (qdGameDispatcher * p = qdGameDispatcher::get_dispatcher()) {
-				if (qdGameScene * sp = p -> get_scene(event_data)) {
-					p -> set_next_scene(sp);
-					p -> activate_trigger_links(sp);
+				if (qdGameScene * sp = p->get_scene(event_data)) {
+					p->set_next_scene(sp);
+					p->activate_trigger_links(sp);
 					return true;
 				}
 			}
@@ -550,7 +550,7 @@ bool qdInterfaceDispatcher::handle_event(int event_code, const char *event_data,
 		if (qdGameDispatcher * p = qdGameDispatcher::get_dispatcher()) {
 			if (!p->get_active_personage())
 				break;
-			if (qdInventory * sp = p -> get_inventory(p->get_active_personage()->inventory_name())) {
+			if (qdInventory * sp = p->get_inventory(p->get_active_personage()->inventory_name())) {
 				if (qdInterfaceEvent::EVENT_SCROLL_LEFT == event_code)
 					sp->scroll_left();
 				else if (qdInterfaceEvent::EVENT_SCROLL_RIGHT == event_code)
@@ -689,8 +689,8 @@ int qdInterfaceDispatcher::option_value(int option_id, const char *option_data) 
 		return qdGameConfig::get_config().music_volume();
 	case qdInterfaceElement::OPTION_ACTIVE_PERSONAGE:
 		if (option_data) {
-			if (qdGameObjectMoving * p = qdGameDispatcher::get_dispatcher() -> get_active_personage()) {
-				if (!strcmp(p -> name(), option_data)) return 1;
+			if (qdGameObjectMoving * p = qdGameDispatcher::get_dispatcher()->get_active_personage()) {
+				if (!strcmp(p->name(), option_data)) return 1;
 			}
 		}
 		return 0;
@@ -724,10 +724,10 @@ bool qdInterfaceDispatcher::set_option_value(int option_id, int value, const cha
 		return true;
 	case qdInterfaceElement::OPTION_ACTIVE_PERSONAGE:
 		if (option_data) {
-			if (qdGameScene * sp = qdGameDispatcher::get_dispatcher() -> get_active_scene()) {
-				qdGameObjectMoving *obj = dynamic_cast<qdGameObjectMoving *>(sp -> get_object(option_data));
-				if (!obj || obj == sp -> get_active_personage()) return false;
-				sp -> set_active_personage(obj);
+			if (qdGameScene * sp = qdGameDispatcher::get_dispatcher()->get_active_scene()) {
+				qdGameObjectMoving *obj = dynamic_cast<qdGameObjectMoving *>(sp->get_object(option_data));
+				if (!obj || obj == sp->get_active_personage()) return false;
+				sp->set_active_personage(obj);
 				return true;
 			}
 		}
@@ -739,13 +739,13 @@ bool qdInterfaceDispatcher::set_option_value(int option_id, int value, const cha
 
 void qdInterfaceDispatcher::update_personage_buttons() {
 	if (cur_screen_)
-		cur_screen_ -> update_personage_buttons();
+		cur_screen_->update_personage_buttons();
 }
 
 #ifdef __QD_DEBUG_ENABLE__
 bool qdInterfaceDispatcher::get_resources_info(qdResourceInfoContainer &infos) const {
 	for (resource_container_t::resource_list_t::const_iterator it = resources_.resource_list().begin(); it != resources_.resource_list().end(); ++it) {
-		if ((*it) -> is_resource_loaded())
+		if ((*it)->is_resource_loaded())
 			infos.push_back(qdResourceInfo(*it));
 	}
 

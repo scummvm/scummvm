@@ -70,7 +70,7 @@ bool qdCounterElement::quant() {
 	if (state_) {
 		bool result = false;
 
-		bool status = state_ -> is_active();
+		bool status = state_->is_active();
 		if (status && !last_state_status_)
 			result = true;
 
@@ -83,9 +83,9 @@ bool qdCounterElement::quant() {
 }
 
 bool qdCounterElement::load_script(const xml::tag *p) {
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		xml::tag_buffer buf(*it);
-		switch (it -> ID()) {
+		switch (it->ID()) {
 		case QDSCR_NAMED_OBJECT:
 			state_reference_.load_script(&*it);
 			break;
@@ -203,8 +203,8 @@ void qdCounter::remove_all_elements() {
 void qdCounter::quant() {
 	int value_change = 0;
 	for (element_container_t::iterator it = elements_.begin(); it != elements_.end(); ++it) {
-		if (it -> quant()) {
-			if (it -> increment_value())
+		if (it->quant()) {
+			if (it->increment_value())
 				value_change++;
 			else
 				value_change--;
@@ -222,9 +222,9 @@ void qdCounter::quant() {
 
 bool qdCounter::load_script(const xml::tag *p) {
 	int num_elements = 0;
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		xml::tag_buffer buf(*it);
-		switch (it -> ID()) {
+		switch (it->ID()) {
 		case QDSCR_COUNTER_ELEMENT:
 			num_elements++;
 			break;
@@ -233,11 +233,11 @@ bool qdCounter::load_script(const xml::tag *p) {
 
 	elements_.reserve(num_elements);
 
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		xml::tag_buffer buf(*it);
-		switch (it -> ID()) {
+		switch (it->ID()) {
 		case QDSCR_NAME:
-			set_name(it -> data());
+			set_name(it->data());
 			break;
 		case QDSCR_FLAG:
 			set_flag(xml::tag_buffer(*it).get_int());
@@ -294,7 +294,7 @@ bool qdCounter::load_data(qdSaveStream &fh, int save_version) {
 	if (sz != elements_.size()) return false;
 
 	for (element_container_t::iterator it = elements_.begin(); it != elements_.end(); ++it)
-		it -> load_data(fh, save_version);
+		it->load_data(fh, save_version);
 
 	return true;
 }
@@ -314,14 +314,14 @@ bool qdCounter::save_data(qdSaveStream &fh) const {
 	fh < value_ < elements_.size();
 
 	for (element_container_t::const_iterator it = elements_.begin(); it != elements_.end(); ++it)
-		it -> save_data(fh);
+		it->save_data(fh);
 
 	return true;
 }
 
 void qdCounter::init() {
 	for (element_container_t::iterator it = elements_.begin(); it != elements_.end(); ++it)
-		it -> init();
+		it->init();
 
 	value_ = 0;
 }

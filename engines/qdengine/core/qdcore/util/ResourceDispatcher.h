@@ -104,7 +104,7 @@ public:
 	void attach(ResourceUser *user) {
 		users.push_back(0);
 		users.back() = user;
-		user -> init_time(syncro_timer());
+		user->init_time(syncro_timer());
 	}
 	void attach(void (*func)(), time_type dtime) {
 		attach(new VoidFunctionCallResourceUser(func, dtime));

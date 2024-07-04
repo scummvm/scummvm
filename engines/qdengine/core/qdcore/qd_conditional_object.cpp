@@ -110,8 +110,8 @@ bool qdConditionalObject::check_conditions() {
 		switch (conditions_mode()) {
 		case CONDITIONS_AND:
 			for (conditions_container_t::iterator it = conditions_.begin(); it != conditions_.end(); ++it) {
-				if (!it -> is_in_group()) {
-					if (!it -> check())
+				if (!it->is_in_group()) {
+					if (!it->check())
 						return false;
 				}
 			}
@@ -122,8 +122,8 @@ bool qdConditionalObject::check_conditions() {
 			return true;
 		case CONDITIONS_OR:
 			for (conditions_container_t::iterator it = conditions_.begin(); it != conditions_.end(); ++it) {
-				if (!it -> is_in_group()) {
-					if (it -> check())
+				if (!it->is_in_group()) {
+					if (it->check())
 						return true;
 				}
 			}
@@ -145,7 +145,7 @@ bool qdConditionalObject::remove_conditon(int idx) {
 	conditions_.erase(conditions_.begin() + idx);
 
 	for (condition_groups_container_t::iterator it = condition_groups_.begin(); it != condition_groups_.end(); ++it)
-		it -> remove_condition(idx);
+		it->remove_condition(idx);
 
 	return true;
 }
@@ -163,8 +163,8 @@ bool qdConditionalObject::load_conditions_script(const xml::tag *p) {
 	int count = 0;
 	int gr_count = 0;
 
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_CONDITION:
 			count++;
 			break;
@@ -180,21 +180,21 @@ bool qdConditionalObject::load_conditions_script(const xml::tag *p) {
 	if (gr_count) condition_groups_.resize(gr_count);
 	condition_groups_container_t::iterator igt = condition_groups_.begin();
 
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_CONDITION:
-			if (const xml::tag * tp = it -> search_subtag(QDSCR_TYPE)) {
+			if (const xml::tag * tp = it->search_subtag(QDSCR_TYPE)) {
 				qdCondition *p = &*ict;
-				p -> set_type(qdCondition::ConditionType(xml::tag_buffer(*tp).get_int()));
-				p -> load_script(&*it);
-				p -> set_owner(this);
+				p->set_type(qdCondition::ConditionType(xml::tag_buffer(*tp).get_int()));
+				p->load_script(&*it);
+				p->set_owner(this);
 			}
 			++ict;
 			break;
 		case QDSCR_CONDITION_GROUP:
-			if (const xml::tag * tp = it -> search_subtag(QDSCR_TYPE))
-				igt -> set_conditions_mode(qdConditionGroup::conditions_mode_t(xml::tag_buffer(*tp).get_int()));
-			igt -> load_script(&*it);
+			if (const xml::tag * tp = it->search_subtag(QDSCR_TYPE))
+				igt->set_conditions_mode(qdConditionGroup::conditions_mode_t(xml::tag_buffer(*tp).get_int()));
+			igt->load_script(&*it);
 			++igt;
 			break;
 		case QDSCR_CONDITIONS_MODE:
@@ -241,7 +241,7 @@ bool qdConditionalObject::save_conditions_script(XStream &fh, int indent) const 
 void qdConditionalObject::conditions_quant(float dt) {
 	conditions_container_t::iterator it;
 	FOR_EACH(conditions_, it)
-	it -> quant(dt);
+	it->quant(dt);
 }
 
 #ifdef _QUEST_EDITOR
@@ -264,7 +264,7 @@ bool qdConditionalObject::load_data(qdSaveStream &fh, int save_version) {
 	if (!qdNamedObject::load_data(fh, save_version)) return false;
 
 	for (conditions_container_t::iterator it = conditions_.begin(); it != conditions_.end(); ++it)
-		it -> load_data(fh, save_version);
+		it->load_data(fh, save_version);
 
 	return true;
 }
@@ -275,7 +275,7 @@ bool qdConditionalObject::save_data(Common::SeekableWriteStream &fh) const {
 	}
 
 	for (conditions_container_t::const_iterator it = conditions_.begin(); it != conditions_.end(); ++it)
-		it -> save_data(fh);
+		it->save_data(fh);
 
 	return true;
 }
@@ -311,7 +311,7 @@ bool qdConditionalObject::check_group_conditions(const qdConditionGroup &gr) {
 
 bool qdConditionalObject::is_condition_in_group(int condition_idx) const {
 	for (condition_groups_container_t::const_iterator it = condition_groups_.begin(); it != condition_groups_.end(); ++it) {
-		if (std::find(it -> conditions_begin(), it -> conditions_end(), condition_idx) != it -> conditions_end())
+		if (std::find(it->conditions_begin(), it->conditions_end(), condition_idx) != it->conditions_end())
 			return true;
 	}
 
@@ -372,7 +372,7 @@ bool qdConditionalObject::init_objects() {
 
 void qdConditionalObject::global_init() {
 	for (std::list<qdConditionalObject * >::const_iterator it = objects_list_.begin(); it != objects_list_.end(); ++it)
-		(*it) -> init_objects();
+		(*it)->init_objects();
 }
 #endif /* _QUEST_EDITOR */
 
@@ -389,7 +389,7 @@ bool qdConditionalObject::init() {
 
 bool qdConditionalObject::trigger_can_start() const {
 	if (const qdGameScene * p = static_cast<const qdGameScene * >(owner(QD_NAMED_OBJECT_SCENE)))
-		return p -> is_active();
+		return p->is_active();
 
 	return true;
 }

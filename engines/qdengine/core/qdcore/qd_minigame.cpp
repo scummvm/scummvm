@@ -71,7 +71,7 @@ bool qdMiniGame::is_started() const {
 
 bool qdMiniGame::quant(float dt) {
 	if (interface_)
-		interface_ -> quant(dt);
+		interface_->quant(dt);
 	return true;
 }
 
@@ -119,28 +119,28 @@ int qdMiniGame::load_game(const char *buffer, int buffer_size, qdGameScene *scen
 bool qdMiniGame::load_script(const xml::tag *p) {
 #ifndef _QUEST_EDITOR
 	int config_size = 0;
-	for (xml::tag::subtag_iterator it1 = p -> subtags_begin(); it1 != p -> subtags_end(); ++it1) {
-		if (it1 -> ID() == QDSCR_MINIGAME_CONFIG_PARAMETER)
+	for (xml::tag::subtag_iterator it1 = p->subtags_begin(); it1 != p->subtags_end(); ++it1) {
+		if (it1->ID() == QDSCR_MINIGAME_CONFIG_PARAMETER)
 			config_size++;
 	}
 #endif
 
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_FLAG:
 			set_flag(xml::tag_buffer(*it).get_int());
 			break;
 		case QDSCR_NAME:
-			set_name(it -> data());
+			set_name(it->data());
 			break;
 		case QDSCR_MINIGAME_DLL_NAME:
-			set_dll_name(it -> data());
+			set_dll_name(it->data());
 			break;
 		case QDSCR_MINIGAME_GAME_NAME:
-			set_game_name(it -> data());
+			set_game_name(it->data());
 			break;
 		case QDSCR_MINIGAME_CONFIG_FILE:
-			set_config_file_name(it -> data());
+			set_config_file_name(it->data());
 			load_config();
 #ifndef _QUEST_EDITOR
 			config_.reserve(config_.size() + config_size);
@@ -152,8 +152,8 @@ bool qdMiniGame::load_script(const xml::tag *p) {
 				prm.load_script(&*it);
 				config_container_t::iterator cfg_it = std::find(config_.begin(), config_.end(), prm);
 				if (cfg_it != config_.end()) {
-					cfg_it -> set_data_string(prm.data_string());
-					cfg_it -> set_data_count(prm.data_count());
+					cfg_it->set_data_string(prm.data_string());
+					cfg_it->set_data_count(prm.data_count());
 				}
 			}
 		}
@@ -268,7 +268,7 @@ bool qdMiniGame::adjust_files_paths(const char *copy_dir, const char *pack_dir, 
 		                             set_config_file_name, can_overwrite, all_ok);
 
 	for (config_container_t::iterator it = config_.begin(); it != config_.end(); ++it) {
-		if (it -> data_type() == qdMinigameConfigParameter::PRM_DATA_FILE)
+		if (it->data_type() == qdMinigameConfigParameter::PRM_DATA_FILE)
 			QD_ADJUST_TO_REL_FILE_MEMBER(copy_corr_dir, it->data_string,
 			                             it->set_data_string, can_overwrite, all_ok);
 	}
@@ -284,8 +284,8 @@ bool qdMiniGame::get_files_list(qdFileNameList &files_to_copy, qdFileNameList &f
 		files_to_copy.push_back(config_file_name());
 
 	for (config_container_t::const_iterator it = config_.begin(); it != config_.end(); ++it) {
-		if (it -> data_type() == qdMinigameConfigParameter::PRM_DATA_FILE)
-			files_to_copy.push_back(it -> data_string());
+		if (it->data_type() == qdMinigameConfigParameter::PRM_DATA_FILE)
+			files_to_copy.push_back(it->data_string());
 	}
 
 	return true;
@@ -295,7 +295,7 @@ const char *qdMiniGame::config_parameter_value(const char *cfg_param_name) const
 #ifndef _QUEST_EDITOR
 	config_container_t::const_iterator it = std::find(config_.begin(), config_.end(), cfg_param_name);
 	if (it != config_.end())
-		return it -> data_string();
+		return it->data_string();
 #endif
 	return NULL;
 }

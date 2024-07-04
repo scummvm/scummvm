@@ -71,7 +71,7 @@ qdInterfaceElement::~qdInterfaceElement() {
 qdInterfaceElement &qdInterfaceElement::operator = (const qdInterfaceElement &el) {
 	if (this == &el) return *this;
 
-	this -> qdInterfaceObjectBase::operator = (el);
+	this->qdInterfaceObjectBase::operator = (el);
 
 	r_ = el.r_;
 	option_ID_ = el.option_ID_;
@@ -84,7 +84,7 @@ qdInterfaceElement &qdInterfaceElement::operator = (const qdInterfaceElement &el
 
 bool qdInterfaceElement::set_animation(const qdAnimation *anm, int anm_flags) {
 	if (anm) {
-		anm -> create_reference(&animation_);
+		anm->create_reference(&animation_);
 
 		if (anm_flags & QD_ANIMATION_FLAG_LOOP)
 			animation_.set_flag(QD_ANIMATION_FLAG_LOOP);
@@ -103,15 +103,15 @@ bool qdInterfaceElement::set_animation(const qdAnimation *anm, int anm_flags) {
 }
 
 bool qdInterfaceElement::set_state(const qdInterfaceElementState *p) {
-	qdInterfaceElementState::state_mode_t mode = p -> state_mode();
+	qdInterfaceElementState::state_mode_t mode = p->state_mode();
 
-	set_animation(p -> animation(mode), p -> animation_flags(mode));
+	set_animation(p->animation(mode), p->animation_flags(mode));
 
-	if (p -> sound(mode)) {
+	if (p->sound(mode)) {
 		if (sndDispatcher * dp = sndDispatcher::get_dispatcher())
-			dp -> stop_sound(&sound_handle_);
+			dp->stop_sound(&sound_handle_);
 
-		p -> sound(mode) -> play(&sound_handle_);
+		p->sound(mode)->play(&sound_handle_);
 	}
 
 	return true;
@@ -187,10 +187,10 @@ bool qdInterfaceElement::save_script(Common::SeekableWriteStream &fh, int indent
 }
 
 bool qdInterfaceElement::load_script(const xml::tag *p) {
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_NAME:
-			set_name(it -> data());
+			set_name(it->data());
 			break;
 		case QDSCR_INTERFACE_ELEMENT_POS:
 			xml::tag_buffer(*it) > r_.x > r_.y > screen_depth_;
@@ -206,14 +206,14 @@ bool qdInterfaceElement::load_script(const xml::tag *p) {
 
 qdResource *qdInterfaceElement::add_resource(const char *file_name, const qdInterfaceElementState *res_owner) {
 	if (qdInterfaceScreen * p = dynamic_cast<qdInterfaceScreen * >(owner()))
-		return p -> add_resource(file_name, res_owner);
+		return p->add_resource(file_name, res_owner);
 
 	return NULL;
 }
 
 bool qdInterfaceElement::remove_resource(const char *file_name, const qdInterfaceElementState *res_owner) {
 	if (qdInterfaceScreen * p = dynamic_cast<qdInterfaceScreen * >(owner()))
-		return p -> remove_resource(file_name, res_owner);
+		return p->remove_resource(file_name, res_owner);
 
 	return false;
 }
@@ -254,10 +254,10 @@ bool qdInterfaceElement::hit_test(int x, int y) const {
 }
 
 qdInterfaceElement::state_status_t qdInterfaceElement::state_status(const qdInterfaceElementState *p) const {
-	qdInterfaceElementState::state_mode_t mode = p -> state_mode();
+	qdInterfaceElementState::state_mode_t mode = p->state_mode();
 
-	if (p -> animation(mode)) {
-		if (p -> animation(mode) -> is_reference(&animation_)) {
+	if (p->animation(mode)) {
+		if (p->animation(mode)->is_reference(&animation_)) {
 			if (!animation_.is_finished())
 				return STATE_ACTIVE;
 		} else
@@ -267,8 +267,8 @@ qdInterfaceElement::state_status_t qdInterfaceElement::state_status(const qdInte
 			return STATE_INACTIVE;
 	}
 
-	if (p -> sound(mode)) {
-		if (!p -> sound(mode) -> is_stopped(&sound_handle_))
+	if (p->sound(mode)) {
+		if (!p->sound(mode)->is_stopped(&sound_handle_))
 			return STATE_ACTIVE;
 	}
 

@@ -48,7 +48,7 @@ qdNamedObjectIndexer &qdNamedObjectIndexer::instance() {
 
 bool qdNamedObjectIndexer::qdNamedObjectReferenceLink::resolve() {
 	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-		object_ = dp -> get_named_object(&reference_);
+		object_ = dp->get_named_object(&reference_);
 		if (!object_) {
 			debugC(3, kDebugLog, "qdNamedObjectReferenceLink::resolve() failed\n%s", reference_.toString().c_str());
 		} else
@@ -65,7 +65,7 @@ qdNamedObjectReference &qdNamedObjectIndexer::add_reference(qdNamedObject *&p) {
 
 void qdNamedObjectIndexer::resolve_references() {
 	for (link_container_t::iterator it = links_.begin(); it != links_.end(); ++it)
-		it -> resolve();
+		it->resolve();
 }
 
 void qdNamedObjectIndexer::clear() {

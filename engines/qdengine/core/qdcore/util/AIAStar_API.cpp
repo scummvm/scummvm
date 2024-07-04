@@ -46,14 +46,14 @@ int qdHeuristic::GetH(int x, int y) {
 }
 
 int qdHeuristic::GetG(int x1, int y1, int x2, int y2) {
-	if (!object_ptr_ -> is_walkable(Vect2s(x2, y2)))
+	if (!object_ptr_->is_walkable(Vect2s(x2, y2)))
 		return 10000;
 	// Для диагональных перемещений смотрим еще и перемещения по катетам,
 	// потому как туда может попасть персонаж из-за погрешностей интерполирования позиции
 	if ((x1 != x2) && (y1 != y2) &&
 	        (
-	            !object_ptr_ -> is_walkable(Vect2s(x1, y2)) ||
-	            !object_ptr_ -> is_walkable(Vect2s(x2, y1))
+	            !object_ptr_->is_walkable(Vect2s(x1, y2)) ||
+	            !object_ptr_->is_walkable(Vect2s(x2, y1))
 	        ))
 		return 10000;
 
@@ -66,7 +66,7 @@ int qdHeuristic::GetG(int x1, int y1, int x2, int y2) {
 
 void qdHeuristic::init(const Vect3f trg) {
 	target_f_ = trg;
-	target_ = camera_ptr_ -> get_cell_index(trg.x, trg.y);
+	target_ = camera_ptr_->get_cell_index(trg.x, trg.y);
 }
 
 } // namespace QDEngine

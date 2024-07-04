@@ -58,8 +58,8 @@ qdAnimationInfo::~qdAnimationInfo() {
 void qdAnimationInfo::load_script(const xml::tag *p) {
 #ifndef __QD_SYSLIB__
 	int fl;
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_SPEED:
 			xml::tag_buffer(*it) > speed_;
 			break;
@@ -67,7 +67,7 @@ void qdAnimationInfo::load_script(const xml::tag *p) {
 			xml::tag_buffer(*it) > animation_speed_;
 			break;
 		case QDSCR_ANIMATION:
-			set_animation_name(it -> data());
+			set_animation_name(it->data());
 			break;
 		case QDSCR_FLAG:
 			xml::tag_buffer(*it) > fl;
@@ -120,12 +120,12 @@ qdAnimation *qdAnimationInfo::animation() const {
 #ifndef __QD_SYSLIB__
 	if (animation_name()) {
 		if (qdGameScene * p = static_cast<qdGameScene * >(owner(QD_NAMED_OBJECT_SCENE))) {
-			if (qdAnimation * anm = p -> get_animation(animation_name()))
+			if (qdAnimation * anm = p->get_animation(animation_name()))
 				return anm;
 		}
 
 		if (qdGameDispatcher * p = qd_get_game_dispatcher())
-			return p -> get_animation(animation_name());
+			return p->get_animation(animation_name());
 	}
 #endif
 	return NULL;

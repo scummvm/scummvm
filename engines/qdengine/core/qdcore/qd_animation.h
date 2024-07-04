@@ -203,7 +203,7 @@ public:
 
 	void create_reference(qdAnimation *p, const qdAnimationInfo *inf = NULL) const;
 	bool is_reference(const qdAnimation *p) const {
-		if (p -> check_flag(QD_ANIMATION_FLAG_REFERENCE) && p -> parent_ == this) return true;
+		if (p->check_flag(QD_ANIMATION_FLAG_REFERENCE) && p->parent_ == this) return true;
 		return false;
 	}
 
@@ -214,7 +214,7 @@ public:
 	}
 
 	bool is_empty() const {
-		return (frames_ptr -> empty());
+		return (frames_ptr->empty());
 	}
 
 	//! Возвращает область экрана, занимаемую анимацией.
@@ -240,8 +240,8 @@ public:
 	const char *resource_file() const {
 		if (!qda_file()) {
 			if (!check_flag(QD_ANIMATION_FLAG_REFERENCE) && !frames.empty()) {
-				if (frames.front() -> has_file())
-					return frames.front() -> file();
+				if (frames.front()->has_file())
+					return frames.front()->file();
 				else
 					return NULL;
 			} else
@@ -264,7 +264,7 @@ public:
 	bool create_scaled_frames();
 
 	const std::vector<float> &scales() const {
-		if (check_flag(QD_ANIMATION_FLAG_REFERENCE) && parent_) return parent_ -> scales_;
+		if (check_flag(QD_ANIMATION_FLAG_REFERENCE) && parent_) return parent_->scales_;
 		else return scales_;
 	}
 	void clear_scales() {

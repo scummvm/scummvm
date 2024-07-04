@@ -73,8 +73,8 @@ qdNamedObject *qdNamedObject::owner(qdNamedObjectType tp) const {
 	qdNamedObject *p = owner();
 
 	while (p) {
-		if (p -> named_object_type() == tp) return p;
-		p = p -> owner();
+		if (p->named_object_type() == tp) return p;
+		p = p->owner();
 	}
 
 	return NULL;
@@ -109,7 +109,7 @@ Common::String qdNamedObject::toString() {
 
 	const qdNamedObject *p = owner();
 	while (p) {
-		p = p -> owner();
+		p = p->owner();
 		owners_count++;
 	}
 

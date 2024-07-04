@@ -77,10 +77,10 @@ bool qdSound::load_resource() {
 
 void qdSound::load_script(const xml::tag *p) {
 #ifndef __QD_SYSLIB__
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_NAME:
-			set_name(it -> data());
+			set_name(it->data());
 			break;
 		case QDSCR_FILE:
 			set_file_name(Common::Path(it->data(), '\\').toString().c_str());
@@ -120,7 +120,7 @@ bool qdSound::save_script(Common::SeekableWriteStream &fh, int indent) const {
 
 bool qdSound::play(const qdSoundHandle *handle, bool loop, float start_position) const {
 #ifdef __QD_SOUND_LOG__
-	if (handle && handle -> owner()) {
+	if (handle && handle->owner()) {
 		debugCN(3, kDebugLog, "[%d] sound start %p owner: %s", g_system->getMillis(), this, handle->owner().toString());
 
 		if (loop)
@@ -132,7 +132,7 @@ bool qdSound::play(const qdSoundHandle *handle, bool loop, float start_position)
 #ifndef __QD_SYSLIB__
 	if (sndDispatcher * p = sndDispatcher::get_dispatcher()) {
 		sndSound sound(&sound_, handle);
-		return p -> play_sound(&sound, loop, start_position, volume_);
+		return p->play_sound(&sound, loop, start_position, volume_);
 	}
 #endif
 
@@ -144,9 +144,9 @@ bool qdSound::stop(const qdSoundHandle *handle) const {
 	if (sndDispatcher * p = sndDispatcher::get_dispatcher()) {
 		if (!handle) {
 			sndSound sound(&sound_);
-			return p -> stop_sound(&sound);
+			return p->stop_sound(&sound);
 		} else {
-			return p -> stop_sound(handle);
+			return p->stop_sound(handle);
 		}
 	}
 
@@ -158,7 +158,7 @@ float qdSound::position(const qdSoundHandle *handle) const {
 
 #ifndef __QD_SYSLIB__
 	if (sndDispatcher * p = sndDispatcher::get_dispatcher())
-		return p -> sound_position(handle);
+		return p->sound_position(handle);
 #endif
 
 	return 0.0f;
@@ -168,10 +168,10 @@ bool qdSound::is_stopped(const qdSoundHandle *handle) const {
 #ifndef __QD_SYSLIB__
 	if (sndDispatcher * p = sndDispatcher::get_dispatcher()) {
 		if (handle) {
-			return (p -> sound_status(handle) == sndSound::SOUND_STOPPED);
+			return (p->sound_status(handle) == sndSound::SOUND_STOPPED);
 		} else {
 			sndSound sound(&sound_);
-			return (p -> sound_status(&sound) == sndSound::SOUND_STOPPED);
+			return (p->sound_status(&sound) == sndSound::SOUND_STOPPED);
 		}
 	}
 #endif
@@ -182,7 +182,7 @@ bool qdSound::is_stopped(const qdSoundHandle *handle) const {
 bool qdSound::set_frequency(const qdSoundHandle *handle, float frequency_coeff) const {
 #ifndef __QD_SYSLIB__
 	if (sndDispatcher * p = sndDispatcher::get_dispatcher())
-		return p -> set_sound_frequency(handle, frequency_coeff);
+		return p->set_sound_frequency(handle, frequency_coeff);
 #endif
 	return false;
 }

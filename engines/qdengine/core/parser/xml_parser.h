@@ -75,7 +75,7 @@ public:
 	const tag *get_tag_format(const char *tag_name) const {
 		tag_format_t::const_iterator it = tag_format_.find(tag_name);
 		if (it != tag_format_.end())
-			return &it -> second;
+			return &it->second;
 
 		return NULL;
 	}

@@ -61,10 +61,10 @@ qdMusicTrack &qdMusicTrack::operator = (const qdMusicTrack &trk) {
 bool qdMusicTrack::load_script(const xml::tag *p) {
 	load_conditions_script(p);
 
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_NAME:
-			set_name(it -> data());
+			set_name(it->data());
 			break;
 		case QDSCR_FLAG:
 			clear_flags();
@@ -127,7 +127,7 @@ bool qdMusicTrack::save_script(Common::SeekableWriteStream &fh, int indent) cons
 
 qdConditionalObject::trigger_start_mode qdMusicTrack::trigger_start() {
 	if (qdGameDispatcher * dp = qd_get_game_dispatcher()) {
-		dp -> play_music_track(this);
+		dp->play_music_track(this);
 		return qdConditionalObject::TRIGGER_START_ACTIVATE;
 	}
 

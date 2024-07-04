@@ -52,8 +52,8 @@ qdInterfaceButton::qdInterfaceButton(const qdInterfaceButton &bt) : qdInterfaceE
 #endif
 
 	for (int i = 0; i < num_states(); i++) {
-		get_state(i) -> set_owner(this);
-		get_state(i) -> register_resources();
+		get_state(i)->set_owner(this);
+		get_state(i)->register_resources();
 	}
 }
 
@@ -80,8 +80,8 @@ qdInterfaceButton &qdInterfaceButton::operator = (const qdInterfaceButton &bt) {
 #endif
 
 	for (int i = 0; i < num_states(); i++) {
-		get_state(i) -> set_owner(this);
-		get_state(i) -> register_resources();
+		get_state(i)->set_owner(this);
+		get_state(i)->register_resources();
 	}
 
 	cur_state_ = -1;
@@ -109,7 +109,7 @@ bool qdInterfaceButton::activate_state(int state_num) {
 bool qdInterfaceButton::activate_state(const char *state_name) {
 	for (int i = 0; i < num_states(); i++) {
 		qdInterfaceElementState *p = get_state(i);
-		if (!strcmp(p -> name(), state_name))
+		if (!strcmp(p->name(), state_name))
 			return activate_state(i);
 	}
 
@@ -131,8 +131,8 @@ bool qdInterfaceButton::add_state(const qdInterfaceElementState &st) {
 	states_.push_back(st);
 #endif
 
-	get_state(states_.size() - 1) -> set_owner(this);
-	get_state(states_.size() - 1) -> register_resources();
+	get_state(states_.size() - 1)->set_owner(this);
+	get_state(states_.size() - 1)->register_resources();
 
 	return true;
 }
@@ -146,8 +146,8 @@ bool qdInterfaceButton::insert_state(int insert_before, const qdInterfaceElement
 	states_.insert(states_.begin() + insert_before, st);
 #endif
 
-	get_state(insert_before) -> set_owner(this);
-	get_state(insert_before) -> register_resources();
+	get_state(insert_before)->set_owner(this);
+	get_state(insert_before)->register_resources();
 
 	return true;
 }
@@ -170,7 +170,7 @@ bool qdInterfaceButton::erase_state(int state_num) {
 bool qdInterfaceButton::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
 	if (cur_state_ == -1) return false;
 
-	return get_state(cur_state_) -> mouse_handler(x, y, ev);
+	return get_state(cur_state_)->mouse_handler(x, y, ev);
 }
 
 bool qdInterfaceButton::keyboard_handler(int vkey) {
@@ -182,7 +182,7 @@ bool qdInterfaceButton::init(bool is_game_active) {
 
 	if (!is_game_active) {
 		for (int i = 0; i < num_states(); i++) {
-			if (get_state(i) -> need_active_game()) {
+			if (get_state(i)->need_active_game()) {
 				set_lock(true);
 				break;
 			}
@@ -191,7 +191,7 @@ bool qdInterfaceButton::init(bool is_game_active) {
 
 	for (int i = 0; i < num_states(); i++) {
 		qdInterfaceElementState *p = get_state(i);
-		p -> set_state_mode(qdInterfaceElementState::DEFAULT_MODE);
+		p->set_state_mode(qdInterfaceElementState::DEFAULT_MODE);
 	}
 
 	if (cur_state_ != -1)
@@ -210,8 +210,8 @@ bool qdInterfaceButton::save_script_body(Common::SeekableWriteStream &fh, int in
 
 bool qdInterfaceButton::load_script_body(const xml::tag *p) {
 	int num_states = 0;
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_INTERFACE_ELEMENT_STATE:
 			num_states++;
 			break;
@@ -223,8 +223,8 @@ bool qdInterfaceButton::load_script_body(const xml::tag *p) {
 		cur_state_ = 0;
 	}
 
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_INTERFACE_ELEMENT_STATE: {
 			qdInterfaceElementState st;
 			st.load_script(&*it);
@@ -244,7 +244,7 @@ bool qdInterfaceButton::quant(float dt) {
 	if (find_event(qdInterfaceEvent::EVENT_CLEAR_MOUSE)) {
 		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
 			debugC(3, kDebugQuant, "qdInterfaceButton::quant()");
-			if (dp -> is_on_mouse(NULL))
+			if (dp->is_on_mouse(NULL))
 				activate_state(1);
 			else
 				activate_state(0);
@@ -252,7 +252,7 @@ bool qdInterfaceButton::quant(float dt) {
 	}
 
 	if (cur_state_ != -1) {
-		get_state(cur_state_) -> quant(dt);
+		get_state(cur_state_)->quant(dt);
 	}
 
 	return true;
@@ -260,8 +260,8 @@ bool qdInterfaceButton::quant(float dt) {
 
 bool qdInterfaceButton::hit_test(int x, int y) const {
 	if (cur_state_ != -1) {
-		if (get_state(cur_state_) -> has_contour(get_state(cur_state_) -> state_mode()))
-			return get_state(cur_state_) -> hit_test(x - r().x, y - r().y, get_state(cur_state_) -> state_mode());
+		if (get_state(cur_state_)->has_contour(get_state(cur_state_)->state_mode()))
+			return get_state(cur_state_)->hit_test(x - r().x, y - r().y, get_state(cur_state_)->state_mode());
 	}
 
 	return qdInterfaceElement::hit_test(x, y);
@@ -285,7 +285,7 @@ bool qdInterfaceButton::change_state(bool direction) {
 const qdInterfaceEvent *qdInterfaceButton::find_event(qdInterfaceEvent::event_t type) const {
 	for (int i = 0; i < num_states(); i++) {
 		const qdInterfaceElementState *p = get_state(i);
-		if (const qdInterfaceEvent * ev = p -> find_event(type))
+		if (const qdInterfaceEvent * ev = p->find_event(type))
 			return ev;
 	}
 
@@ -295,7 +295,7 @@ const qdInterfaceEvent *qdInterfaceButton::find_event(qdInterfaceEvent::event_t 
 bool qdInterfaceButton::has_event(qdInterfaceEvent::event_t type, const char *ev_data) const {
 	for (int i = 0; i < num_states(); i++) {
 		const qdInterfaceElementState *p = get_state(i);
-		if (p -> has_event(type, ev_data))
+		if (p->has_event(type, ev_data))
 			return true;
 	}
 

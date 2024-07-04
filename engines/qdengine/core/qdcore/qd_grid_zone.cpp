@@ -89,10 +89,10 @@ qdGridZone &qdGridZone::operator = (const qdGridZone &gz) {
 }
 
 bool qdGridZone::load_script(const xml::tag *p) {
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_NAME:
-			set_name(it -> data());
+			set_name(it->data());
 			break;
 		case QDSCR_FLAG:
 			set_flag(xml::tag_buffer(*it).get_int());
@@ -101,7 +101,7 @@ bool qdGridZone::load_script(const xml::tag *p) {
 			initial_state_ = state_ = (xml::tag_buffer(*it).get_int()) ? true : false;
 			break;
 		case QDSCR_GRID_ZONE_STATE:
-			if (const xml::tag * tg = it -> search_subtag(QDSCR_STATE)) {
+			if (const xml::tag * tg = it->search_subtag(QDSCR_STATE)) {
 				if (xml::tag_buffer(*tg).get_int())
 					state_on_.load_script(&*it);
 				else
@@ -175,8 +175,8 @@ bool qdGridZone::set_height(int _h) {
 		if (apply_zone()) {
 			qdGameScene *sp = static_cast<qdGameScene *>(owner());
 
-			update_timer_ = sp -> zone_update_count();
-			sp -> inc_zone_update_count();
+			update_timer_ = sp->zone_update_count();
+			sp->inc_zone_update_count();
 
 			return true;
 		} else
@@ -187,10 +187,10 @@ bool qdGridZone::set_height(int _h) {
 }
 
 bool qdGridZone::apply_zone() const {
-	if (!owner() || owner() -> named_object_type() != QD_NAMED_OBJECT_SCENE) return false;
+	if (!owner() || owner()->named_object_type() != QD_NAMED_OBJECT_SCENE) return false;
 	if (is_mask_empty()) return false;
 
-	qdCamera *camera = static_cast<qdGameScene *>(owner()) -> get_camera();
+	qdCamera *camera = static_cast<qdGameScene *>(owner())->get_camera();
 	if (!camera) return false;
 
 	Vect2s pos = mask_pos();
@@ -204,9 +204,9 @@ bool qdGridZone::apply_zone() const {
 			for (int x = 0; x < mask_size().x; x ++) {
 				if (is_inside(pos + Vect2s(x, y))) {
 //				if(*mask_ptr++){
-					if (sGridCell * p = camera -> get_cell(pos + Vect2s(x, y))) {
-						p -> make_walkable();
-						p -> set_height(height_);
+					if (sGridCell * p = camera->get_cell(pos + Vect2s(x, y))) {
+						p->make_walkable();
+						p->set_height(height_);
 					}
 				}
 			}
@@ -216,9 +216,9 @@ bool qdGridZone::apply_zone() const {
 			for (int x = 0; x < mask_size().x; x ++) {
 				if (is_inside(pos + Vect2s(x, y))) {
 //				if(*mask_ptr++){
-					if (sGridCell * p = camera -> get_cell(pos + Vect2s(x, y))) {
-						p -> make_impassable();
-						p -> set_height(0);
+					if (sGridCell * p = camera->get_cell(pos + Vect2s(x, y))) {
+						p->make_impassable();
+						p->set_height(0);
 					}
 				}
 			}
@@ -236,8 +236,8 @@ bool qdGridZone::set_state(bool st) {
 
 		qdGameScene *sp = static_cast<qdGameScene *>(owner());
 
-		update_timer_ = sp -> zone_update_count();
-		sp -> inc_zone_update_count();
+		update_timer_ = sp->zone_update_count();
+		sp->inc_zone_update_count();
 
 		return true;
 	}
@@ -260,8 +260,8 @@ bool qdGridZone::select(qdCamera *camera, bool bSelect) const {
 			for (int x = 0; x < mask_size().x; x ++) {
 				if (is_inside(pos + Vect2s(x, y))) {
 //				if(*mask_ptr++){
-					if (sGridCell * p = camera -> get_cell(pos + Vect2s(x, y)))
-						p -> select();
+					if (sGridCell * p = camera->get_cell(pos + Vect2s(x, y)))
+						p->select();
 				}
 			}
 		}
@@ -270,8 +270,8 @@ bool qdGridZone::select(qdCamera *camera, bool bSelect) const {
 			for (int x = 0; x < mask_size().x; x ++) {
 				if (is_inside(pos + Vect2s(x, y))) {
 //				if(*mask_ptr++){
-					if (sGridCell * p = camera -> get_cell(pos + Vect2s(x, y)))
-						p -> deselect();
+					if (sGridCell * p = camera->get_cell(pos + Vect2s(x, y)))
+						p->deselect();
 				}
 			}
 		}
@@ -281,26 +281,26 @@ bool qdGridZone::select(qdCamera *camera, bool bSelect) const {
 }
 
 bool qdGridZone::select(bool bSelect) const {
-	assert(owner() || owner() -> named_object_type() == QD_NAMED_OBJECT_SCENE);
+	assert(owner() || owner()->named_object_type() == QD_NAMED_OBJECT_SCENE);
 
 	qdNamedObject *obj = owner();
-	qdCamera *camera = static_cast<qdGameScene *>(obj) -> get_camera();
+	qdCamera *camera = static_cast<qdGameScene *>(obj)->get_camera();
 	if (!camera) return false;
 	return select(camera, bSelect);
 }
 
 bool qdGridZone::is_object_in_zone(const qdGameObject *obj) const {
-	if (!owner() || owner() -> named_object_type() != QD_NAMED_OBJECT_SCENE || owner() != obj -> owner()) return false;
+	if (!owner() || owner()->named_object_type() != QD_NAMED_OBJECT_SCENE || owner() != obj->owner()) return false;
 
-	return is_point_in_zone(Vect2f(obj -> R().x, obj -> R().y));
+	return is_point_in_zone(Vect2f(obj->R().x, obj->R().y));
 }
 
 bool qdGridZone::is_point_in_zone(const Vect2f &r) const {
 	assert(owner());
-	qdCamera *camera = static_cast<qdGameScene *>(owner()) -> get_camera();
+	qdCamera *camera = static_cast<qdGameScene *>(owner())->get_camera();
 	assert(camera);
 
-	Vect2s v = camera -> get_cell_index(r.x, r.y);
+	Vect2s v = camera->get_cell_index(r.x, r.y);
 	if (v.x == -1) return false;
 
 	return is_inside(v);
@@ -363,9 +363,9 @@ bool qdGridZone::init() {
 }
 
 bool qdGridZone::is_any_personage_in_zone() const {
-	if (!owner() || owner() -> named_object_type() != QD_NAMED_OBJECT_SCENE) return false;
+	if (!owner() || owner()->named_object_type() != QD_NAMED_OBJECT_SCENE) return false;
 
 	const qdGameScene *p = static_cast<const qdGameScene *>(owner());
-	return p -> is_any_personage_in_zone(this);
+	return p->is_any_personage_in_zone(this);
 }
 } // namespace QDEngine

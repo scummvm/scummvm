@@ -80,12 +80,12 @@ public:
 	void load_resources(const T *owner = NULL) const {
 		if (owner) {
 			for (typename handle_container_t::const_iterator it = handles_.begin(); it != handles_.end(); ++it) {
-				if (it -> resource_owner() == owner)
-					it -> load_resource();
+				if (it->resource_owner() == owner)
+					it->load_resource();
 			}
 		} else {
 			for (typename handle_container_t::const_iterator it = handles_.begin(); it != handles_.end(); ++it)
-				it -> load_resource();
+				it->load_resource();
 		}
 	}
 
@@ -93,18 +93,18 @@ public:
 	void release_resources(const T *owner = NULL, const T *hold_owner = NULL) const {
 		if (owner) {
 			for (typename handle_container_t::const_iterator it = handles_.begin(); it != handles_.end(); ++it) {
-				if (it -> resource_owner() == owner && (!hold_owner || !is_registered(it -> resource(), hold_owner)))
-					it -> release_resource();
+				if (it->resource_owner() == owner && (!hold_owner || !is_registered(it->resource(), hold_owner)))
+					it->release_resource();
 			}
 		} else {
 			if (hold_owner) {
 				for (typename handle_container_t::const_iterator it = handles_.begin(); it != handles_.end(); ++it) {
-					if (it -> resource_owner() != hold_owner)
-						it -> release_resource();
+					if (it->resource_owner() != hold_owner)
+						it->release_resource();
 				}
 			} else {
 				for (typename handle_container_t::const_iterator it = handles_.begin(); it != handles_.end(); ++it)
-					it -> release_resource();
+					it->release_resource();
 			}
 		}
 	}
@@ -162,14 +162,14 @@ protected:
 
 		//! Загружает ресурс в память.
 		bool load_resource() const {
-			if (!resource_ -> is_resource_loaded())
-				return resource_ -> load_resource();
+			if (!resource_->is_resource_loaded())
+				return resource_->load_resource();
 			return true;
 		}
 		//! Выгружает ресурс из памяти.
 		bool release_resource() const {
-			if (resource_ -> is_resource_loaded())
-				return resource_ -> free_resource();
+			if (resource_->is_resource_loaded())
+				return resource_->free_resource();
 			return true;
 		}
 

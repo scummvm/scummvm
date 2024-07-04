@@ -37,7 +37,7 @@ sndDispatcher *sndDispatcher::dispatcher_ptr_;
 sndDispatcher::SoundDisabler::SoundDisabler() {
 	if (sndDispatcher * p = sndDispatcher::get_dispatcher()) {
 		soundEnabled_ = p->is_enabled();
-		p -> disable();
+		p->disable();
 	}
 }
 sndDispatcher::SoundDisabler::~SoundDisabler() {

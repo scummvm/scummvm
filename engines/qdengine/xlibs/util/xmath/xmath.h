@@ -1433,7 +1433,7 @@ public:
 
 	Mat3f &set(const QuatF &q);
 
-	// Convertion "from"-basis -> "to"-basis
+	// Convertion "from"-basis->"to"-basis
 	Mat3f &set(const Vect3f &x_from, const Vect3f &y_from, const Vect3f &z_from,
 	           const Vect3f &x_to = Vect3f::I, const Vect3f &y_to = Vect3f::J, const Vect3f &z_to = Vect3f::K);
 
@@ -1748,7 +1748,7 @@ public:
 
 	Mat3d &set(const QuatD &q);
 
-	// Convertion "from"-basis -> "to"-basis
+	// Convertion "from"-basis->"to"-basis
 	Mat3d &set(const Vect3d &x_from, const Vect3d &y_from, const Vect3d &z_from,
 	           const Vect3d &x_to = Vect3d::I, const Vect3d &y_to = Vect3d::J, const Vect3d &z_to = Vect3d::K);
 

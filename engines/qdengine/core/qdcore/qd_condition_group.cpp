@@ -78,14 +78,14 @@ bool qdConditionGroup::remove_condition(int condition_id) {
 
 bool qdConditionGroup::load_script(const xml::tag *p) {
 #ifndef _QUEST_EDITOR
-	conditions_.reserve(p -> data_size());
+	conditions_.reserve(p->data_size());
 #endif
 
-	if (const xml::tag * tp = p -> search_subtag(QDSCR_TYPE))
+	if (const xml::tag * tp = p->search_subtag(QDSCR_TYPE))
 		conditions_mode_ = conditions_mode_t(xml::tag_buffer(*tp).get_int());
 
 	xml::tag_buffer buf(*p);
-	for (int i = 0; i < p -> data_size(); i++)
+	for (int i = 0; i < p->data_size(); i++)
 		conditions_.push_back(buf.get_int());
 
 	return true;

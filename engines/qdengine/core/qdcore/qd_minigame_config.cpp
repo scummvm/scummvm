@@ -46,15 +46,15 @@ qdMinigameConfigParameter::~qdMinigameConfigParameter() {
 }
 
 bool qdMinigameConfigParameter::load_script(const xml::tag *p) {
-	set_data_string(p -> data());
+	set_data_string(p->data());
 
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_NAME:
-			set_name(it -> data());
+			set_name(it->data());
 			break;
 //			case QDSCR_COMMENT:
-//				set_comment(it -> data());
+//				set_comment(it->data());
 //				break;
 //			case QDSCR_TYPE:
 //				set_data_type(data_type_t(xml::tag_buffer(*it).get_int()));

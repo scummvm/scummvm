@@ -831,7 +831,7 @@ bool grDispatcher::invalidate_region(const grScreenRegion &reg) {
 
 bool grDispatcher::FlushChanges() {
 	for (regions_container_t::const_iterator it = changed_regions_.begin(); it != changed_regions_.end(); ++it)
-		Flush(it -> min_x() - 1, it -> min_y() - 1, it -> size_x() + 2, it -> size_y() + 2);
+		Flush(it->min_x() - 1, it->min_y() - 1, it->size_x() + 2, it->size_y() + 2);
 
 	return true;
 }
@@ -985,7 +985,7 @@ bool grDispatcher::DrawText(int x, int y, unsigned color, const char *str, int h
 	if (!font)
 		font = default_font_;
 
-	if (!font || !font -> alpha_buffer())
+	if (!font || !font->alpha_buffer())
 		return false;
 
 	const unsigned char *str_buf = reinterpret_cast<const unsigned char *>(str);
@@ -995,18 +995,18 @@ bool grDispatcher::DrawText(int x, int y, unsigned color, const char *str, int h
 
 	for (int i = 0; i < sz; i ++) {
 		if (str_buf[i] != '\n') {
-			const grScreenRegion &rg = font -> find_char(str_buf[i]);
+			const grScreenRegion &rg = font->find_char(str_buf[i]);
 			int dx = rg.size_x();
 
 			if (str_buf[i] == ' ')
-				x += font -> size_x() / 2 + hspace;
+				x += font->size_x() / 2 + hspace;
 			else if (dx) {
-				PutChar(x, y, color, font -> alpha_buffer_size_x(), font -> alpha_buffer_size_y(), font -> alpha_buffer(), rg);
+				PutChar(x, y, color, font->alpha_buffer_size_x(), font->alpha_buffer_size_y(), font->alpha_buffer(), rg);
 				x += dx + hspace;
 			}
 		} else {
 			x = x0;
-			y += font -> size_y() + vspace;
+			y += font->size_y() + vspace;
 		}
 	}
 
@@ -1017,7 +1017,7 @@ bool grDispatcher::DrawAlignedText(int x, int y, int sx, int sy, unsigned color,
 	if (!font)
 		font = default_font_;
 
-	if (!font || !font -> alpha_buffer())
+	if (!font || !font->alpha_buffer())
 		return false;
 
 	const unsigned char *str_buf = reinterpret_cast<const unsigned char *>(str);
@@ -1042,18 +1042,18 @@ bool grDispatcher::DrawAlignedText(int x, int y, int sx, int sy, unsigned color,
 
 	for (int i = 0; i < sz; i ++) {
 		if (str_buf[i] != '\n') {
-			const grScreenRegion &rg = font -> find_char(str_buf[i]);
+			const grScreenRegion &rg = font->find_char(str_buf[i]);
 			int dx = rg.size_x();
 
 			if (str_buf[i] == ' ') {
-				x += font -> size_x() / 2 + hspace;
+				x += font->size_x() / 2 + hspace;
 			} else if (dx) {
-				PutChar(x + delta_x, y, color, font -> alpha_buffer_size_x(), font -> alpha_buffer_size_y(), font -> alpha_buffer(), rg);
+				PutChar(x + delta_x, y, color, font->alpha_buffer_size_x(), font->alpha_buffer_size_y(), font->alpha_buffer(), rg);
 				x += dx + hspace;
 			}
 		} else {
 			x = x0;
-			y += font -> size_y() + vspace;
+			y += font->size_y() + vspace;
 
 			switch (align) {
 			case GR_ALIGN_CENTER:
@@ -1137,11 +1137,11 @@ int grDispatcher::TextWidth(const char *str, int hspace, const grFont *font, boo
 	int sz = strlen(str);
 	for (int i = 0; i < sz; i ++) {
 		if (str_buf[i] != '\n') {
-			const grScreenRegion &rg = font -> find_char(str_buf[i]);
+			const grScreenRegion &rg = font->find_char(str_buf[i]);
 			int dx = rg.size_x();
 
 			if (str_buf[i] == ' ')
-				sx += font -> size_x() / 2;
+				sx += font->size_x() / 2;
 			else
 				sx += dx + hspace;
 		} else {
@@ -1165,11 +1165,11 @@ int grDispatcher::TextHeight(const char *str, int vspace, const grFont *font) co
 	if (!font)
 		return false;
 
-	int sy = font -> size_y() + vspace;
+	int sy = font->size_y() + vspace;
 
 	for (int i = 0; i < strlen(str); i ++) {
 		if (str[i] == '\n')
-			sy += font -> size_y() + vspace;
+			sy += font->size_y() + vspace;
 	}
 
 	return sy;

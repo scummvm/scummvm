@@ -76,15 +76,15 @@ static const char *UTF8_convert(const char *input_string, int input_string_lengt
 
 static int unknown_encoding_handler(void *encodingHandlerData, const XML_Char *name, XML_Encoding *info) {
 	if (!scumm_stricmp(name, "WINDOWS-1251")) {
-		info -> data = NULL;
-		info -> convert = NULL;
-		info -> release = NULL;
+		info->data = NULL;
+		info->convert = NULL;
+		info->release = NULL;
 
 		for (int i = 0; i < 256; i ++) {
 			char c = i;
 			wchar_t cc = 0;
 			MultiByteToWideChar(1251, 0, &c, 1, &cc, 1);
-			info -> map[i] = cc;
+			info->map[i] = cc;
 		}
 
 		return 1;
@@ -95,17 +95,17 @@ static int unknown_encoding_handler(void *encodingHandlerData, const XML_Char *n
 
 static void start_element_handler(void *userData, const XML_Char *name, const XML_Char **atts) {
 	parser *p = static_cast<parser *>(userData);
-	p -> start_element_handler(name, atts);
+	p->start_element_handler(name, atts);
 }
 
 static void end_element_handler(void *userData, const XML_Char *name) {
 	parser *p = static_cast<parser *>(userData);
-	p -> end_element_handler(name);
+	p->end_element_handler(name);
 }
 
 static void character_data_handler(void *userData, const XML_Char *s, int len) {
 	parser *p = static_cast<parser *>(userData);
-	p -> character_data_handler(s, len);
+	p->character_data_handler(s, len);
 }
 #endif
 
@@ -152,7 +152,7 @@ void parser::start_element_handler(const char *tag_name, const char **tag_attrib
 			}
 
 			if (!tag_stack_.empty())
-				tag_stack_.push(&tag_stack_.top() -> add_subtag(tg));
+				tag_stack_.push(&tag_stack_.top()->add_subtag(tg));
 		} else {
 			skip_mode_ = true;
 			cur_level_ = 0;

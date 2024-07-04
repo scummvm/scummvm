@@ -52,7 +52,7 @@ void comlineParser::parse_comline(int argc, char **argv) {
 	for (int i = 1; i < argc; i++) {
 		if (is_option(argv[i])) {
 			options_container_t::const_iterator it = std::find(options_.begin(), options_.end(), argv[i] + 1);
-			int id = (it == options_.end()) ? -1 : it -> ID_;
+			int id = (it == options_.end()) ? -1 : it->ID_;
 
 			if (i < argc - 1 && !is_option(argv[i + 1])) {
 				arguments_.push_back(comlineArgument(argv[i + 1], id));
@@ -72,7 +72,7 @@ bool comlineParser::has_argument(int id) const {
 const char *comlineParser::argument_string(int id) const {
 	arguments_container_t::const_iterator it = std::find(arguments_.begin(), arguments_.end(), id);
 	if (it != arguments_.end())
-		return it -> data_;
+		return it->data_;
 
 	return NULL;
 }

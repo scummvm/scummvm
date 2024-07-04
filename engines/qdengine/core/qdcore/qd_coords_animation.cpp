@@ -153,10 +153,10 @@ void qdCoordsAnimation::start() const {
 
 #ifdef _QUEST_EDITOR
 		start_point_.set_dest_pos(points_[0].dest_pos());
-		p -> set_pos(points_[0].dest_pos());
+		p->set_pos(points_[0].dest_pos());
 #else
 		if (check_flag(QD_COORDS_ANM_OBJECT_START_FLAG))
-			start_point_.set_dest_pos(p -> R());
+			start_point_.set_dest_pos(p->R());
 		else {
 			start_point_.set_dest_pos(points_[0].dest_pos() - del_);
 			// Задана коорд. анимация с перемещением в точку и задан угол =>
@@ -173,7 +173,7 @@ void qdCoordsAnimation::start() const {
 		points_[0].start();
 		status_ = true;
 
-		p -> set_pos(cur_pos());
+		p->set_pos(cur_pos());
 	}
 
 	is_finished_ = false;
@@ -207,14 +207,14 @@ void qdCoordsAnimation::quant(float dt) const {
 		}
 
 		qdGameObjectAnimated *obj = object();
-		if (obj) obj -> set_pos(cur_pos());
+		if (obj) obj->set_pos(cur_pos());
 	} else {
 		if (type_ == CA_WALK) {
 			qdGameObjectAnimated *obj = object();
-			if (obj -> named_object_type() != QD_NAMED_OBJECT_MOVING_OBJ) return;
+			if (obj->named_object_type() != QD_NAMED_OBJECT_MOVING_OBJ) return;
 			qdGameObjectMoving *p = static_cast<qdGameObjectMoving *>(obj);
 
-			if (p -> is_in_position(points_[cur_point_].dest_pos() - del_)) {
+			if (p->is_in_position(points_[cur_point_].dest_pos() - del_)) {
 				if (++cur_point_ >= points_.size()) {
 					is_finished_ = true;
 					if (!check_flag(QD_COORDS_ANM_LOOP_FLAG)) {
@@ -232,18 +232,18 @@ void qdCoordsAnimation::quant(float dt) const {
 				points_[cur_point_].start();
 			}
 
-			if (!p -> is_moving())
-				p -> move(points_[cur_point_].dest_pos() - del_, points_[cur_point_].direction_angle());
+			if (!p->is_moving())
+				p->move(points_[cur_point_].dest_pos() - del_, points_[cur_point_].direction_angle());
 		}
 	}
 }
 
 void qdCoordsAnimation::load_script(const xml::tag *p) {
 	int v;
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_NAME:
-			set_name(it -> data());
+			set_name(it->data());
 			break;
 		case QDSCR_COORDS_ANIMATION_POINT: {
 			qdCoordsAnimationPoint fp;
@@ -329,9 +329,9 @@ Vect3f qdCoordsAnimation::cur_pos() const {
 }
 
 qdGameObjectAnimated *qdCoordsAnimation::object() const {
-	if (owner() && owner() -> named_object_type() == QD_NAMED_OBJECT_OBJ_STATE) {
-		qdNamedObject *p = owner() -> owner();
-		if (p && p -> named_object_type() == QD_NAMED_OBJECT_ANIMATED_OBJ || p -> named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ)
+	if (owner() && owner()->named_object_type() == QD_NAMED_OBJECT_OBJ_STATE) {
+		qdNamedObject *p = owner()->owner();
+		if (p && p->named_object_type() == QD_NAMED_OBJECT_ANIMATED_OBJ || p->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ)
 			return static_cast<qdGameObjectAnimated * >(p);
 	}
 
@@ -344,13 +344,13 @@ bool qdCoordsAnimation::set_cur_point(int point_num) const {
 	start();
 
 	if (type_ == CA_WALK) {
-		if (!object() || object() -> named_object_type() != QD_NAMED_OBJECT_MOVING_OBJ) return false;
+		if (!object() || object()->named_object_type() != QD_NAMED_OBJECT_MOVING_OBJ) return false;
 		qdGameObjectMoving *p = static_cast<qdGameObjectMoving *>(object());
-		p -> set_pos(cur_pos());
-		p -> drop_flag(QD_OBJ_MOVING_FLAG);
+		p->set_pos(cur_pos());
+		p->drop_flag(QD_OBJ_MOVING_FLAG);
 
-		p -> move(points_[cur_point_].dest_pos());
-		p -> skip_movement();
+		p->move(points_[cur_point_].dest_pos());
+		p->skip_movement();
 
 		for (int i = 0; i < point_num; i ++) {
 			if (++cur_point_ >= points_.size()) {
@@ -367,16 +367,16 @@ bool qdCoordsAnimation::set_cur_point(int point_num) const {
 
 			points_[cur_point_].start();
 
-			if (!p -> move(points_[cur_point_].dest_pos())) return false;
-			if (!p -> skip_movement()) return false;
+			if (!p->move(points_[cur_point_].dest_pos())) return false;
+			if (!p->skip_movement()) return false;
 		}
 
 		return true;
 	} else {
 		if (!object() || speed_ < 0.01f) return false;
 		qdGameObjectAnimated *p = object();
-		p -> get_animation() -> set_time_rel(animation_phase());
-		p -> set_pos(cur_pos());
+		p->get_animation()->set_time_rel(animation_phase());
+		p->set_pos(cur_pos());
 
 		for (int i = 0; i < point_num; i ++) {
 			if (++cur_point_ >= points_.size()) {
@@ -385,8 +385,8 @@ bool qdCoordsAnimation::set_cur_point(int point_num) const {
 #ifdef _QUEST_EDITOR
 					cur_point_ = (points_.size()) ? points_.size() - 1 : 0;
 #endif // _QUEST_EDITOR
-					if (p -> named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ)
-						static_cast<qdGameObjectMoving * >(p) -> adjust_z();
+					if (p->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ)
+						static_cast<qdGameObjectMoving * >(p)->adjust_z();
 
 					return false;
 				}
@@ -399,12 +399,12 @@ bool qdCoordsAnimation::set_cur_point(int point_num) const {
 
 			points_[cur_point_].start();
 
-			p -> set_pos(points_[cur_point_].dest_pos());
-			p -> get_animation() -> advance_time(points_[cur_point_].path_length() / speed_);
+			p->set_pos(points_[cur_point_].dest_pos());
+			p->get_animation()->advance_time(points_[cur_point_].path_length() / speed_);
 		}
 
-		if (p -> named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ)
-			static_cast<qdGameObjectMoving * >(p) -> adjust_z();
+		if (p->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ)
+			static_cast<qdGameObjectMoving * >(p)->adjust_z();
 
 		return true;
 	}
@@ -412,7 +412,7 @@ bool qdCoordsAnimation::set_cur_point(int point_num) const {
 	        const float dt = 0.005f;
 	        while(cur_point_ < point_num || points_[cur_point_].passed_path() < 0.99f){
 	            quant(dt);
-	            p -> quant(dt);
+	            p->quant(dt);
 	        }
 
 	        return true;
@@ -428,18 +428,18 @@ bool qdCoordsAnimation::reset_cur_point() const {
 #ifdef _QUEST_EDITOR
 bool qdCoordsAnimation::change_animation_frame(bool direction) const {
 	qdGameObjectAnimated *p = object();
-	if (p && !p -> get_animation() -> is_empty()) {
-		int frame_idx = p -> get_animation() -> get_cur_frame_number();
+	if (p && !p->get_animation()->is_empty()) {
+		int frame_idx = p->get_animation()->get_cur_frame_number();
 		frame_idx += (direction) ? 1 : -1;
 
-		if (frame_idx < 0) frame_idx = p -> get_animation() -> num_frames() - 1;
-		if (frame_idx >= p -> get_animation() -> num_frames()) frame_idx = p -> get_animation() -> num_frames() - 1;
+		if (frame_idx < 0) frame_idx = p->get_animation()->num_frames() - 1;
+		if (frame_idx >= p->get_animation()->num_frames()) frame_idx = p->get_animation()->num_frames() - 1;
 
-		float phase = p -> get_animation() -> cur_time_rel();
-		p -> get_animation() -> set_cur_frame(frame_idx);
+		float phase = p->get_animation()->cur_time_rel();
+		p->get_animation()->set_cur_frame(frame_idx);
 
 
-		animation_scroll_phase_ += p -> get_animation() -> cur_time_rel() - phase;
+		animation_scroll_phase_ += p->get_animation()->cur_time_rel() - phase;
 		if (animation_scroll_phase_ > 1.f)
 			animation_scroll_phase_ = fmodf(animation_scroll_phase_, 1.f);
 		else if (animation_scroll_phase_ < 0.f)
@@ -481,7 +481,7 @@ bool qdCoordsAnimation::load_data(qdSaveStream &fh, int save_version) {
 		del_ = Vect3f::ZERO;
 
 	for (qdCoordsAnimationPointVector::iterator it = points_.begin(); it != points_.end(); ++it)
-		it -> load_data(fh, save_version);
+		it->load_data(fh, save_version);
 
 	start_point_.load_data(fh, save_version);
 
@@ -500,7 +500,7 @@ bool qdCoordsAnimation::save_data(qdSaveStream &fh) const {
 	fh < del_.x < del_.y < del_.z;
 
 	for (qdCoordsAnimationPointVector::const_iterator it = points_.begin(); it != points_.end(); ++it)
-		it -> save_data(fh);
+		it->save_data(fh);
 
 	start_point_.save_data(fh);
 	fh < start_point_.dest_pos().x < start_point_.dest_pos().y < start_point_.dest_pos().z;

@@ -85,7 +85,7 @@ void qd_set_game_dispatcher(qdGameDispatcher *p) {
 
 bool qd_keyboard_handler(int vkey, bool event) {
 	if (qdGameDispatcher * p = qd_get_game_dispatcher())
-		return p -> keyboard_handler(vkey, event);
+		return p->keyboard_handler(vkey, event);
 
 	return false;
 }
@@ -131,7 +131,7 @@ qdGameDispatcher::qdGameDispatcher() : is_paused_(false),
 
 	debugC(1, kDebugTemp, "Setting up mouse...");
 	mouse_obj_ = new qdGameObjectMouse;
-	mouse_obj_ -> set_owner(this);
+	mouse_obj_->set_owner(this);
 
 	mouse_animation_ = new qdAnimation;
 
@@ -183,9 +183,9 @@ void qdGameDispatcher::quant() {
 	}
 	int idt = qdGameConfig::get_config().logic_period();
 
-	if (!scene_saved_ && cur_scene_ && cur_scene_ -> autosave_slot() != -1) {
+	if (!scene_saved_ && cur_scene_ && cur_scene_->autosave_slot() != -1) {
 		debugC(3, kDebugQuant, "qdGameDispatcher::quant() Autosaving...");
-		save_game(cur_scene_ -> autosave_slot());
+		save_game(cur_scene_->autosave_slot());
 	}
 
 	if (check_flag(SAVE_GAME_FLAG)) {
@@ -229,25 +229,25 @@ void qdGameDispatcher::quant() {
 void qdGameDispatcher::quant(float dt) {
 	debugC(9, kDebugQuant, "qdGameDispatcher::quant(%f)", dt);
 	if (sndDispatcher * snd = sndDispatcher::get_dispatcher()) {
-		snd -> quant();
+		snd->quant();
 	}
 
 #ifndef _QUEST_EDITOR
-	mouse_obj_ -> set_pos(Vect3f(mouseDispatcher::instance() -> mouse_x(), mouseDispatcher::instance() -> mouse_y(), 0));
+	mouse_obj_->set_pos(Vect3f(mouseDispatcher::instance()->mouse_x(), mouseDispatcher::instance()->mouse_y(), 0));
 #endif
 
-	mouse_cursor_pos_.x = mouseDispatcher::instance() -> mouse_x() + mouse_obj_ -> screen_pos_offset().x;
-	mouse_cursor_pos_.y = mouseDispatcher::instance() -> mouse_y() + mouse_obj_ -> screen_pos_offset().y;
+	mouse_cursor_pos_.x = mouseDispatcher::instance()->mouse_x() + mouse_obj_->screen_pos_offset().x;
+	mouse_cursor_pos_.y = mouseDispatcher::instance()->mouse_y() + mouse_obj_->screen_pos_offset().y;
 
-	mouse_obj_ -> update_screen_pos();
-	mouse_obj_ -> quant(dt);
+	mouse_obj_->update_screen_pos();
+	mouse_obj_->quant(dt);
 
-	mouseDispatcher::instance() -> toggle_event(mouseDispatcher::EV_MOUSE_MOVE);
+	mouseDispatcher::instance()->toggle_event(mouseDispatcher::EV_MOUSE_MOVE);
 	for (int i = mouseDispatcher::first_event_ID(); i <= mouseDispatcher::last_event_ID(); i ++) {
 		mouseDispatcher::mouseEvent ev = static_cast<mouseDispatcher::mouseEvent>(i);
-		if (mouseDispatcher::instance() -> check_event(ev)) {
+		if (mouseDispatcher::instance()->check_event(ev)) {
 			if (mouse_handler(mouse_cursor_pos_.x, mouse_cursor_pos_.y, ev))
-				mouseDispatcher::instance() -> clear_event(ev);
+				mouseDispatcher::instance()->clear_event(ev);
 		}
 	}
 
@@ -266,31 +266,31 @@ void qdGameDispatcher::quant(float dt) {
 		qdGameDispatcherBase::quant(dt);
 
 		if (cur_scene_)
-			cur_scene_ -> init_objects_grid();
+			cur_scene_->init_objects_grid();
 
 		qdTriggerChainList::const_iterator it;
 		FOR_EACH(trigger_chain_list(), it)
-		(*it) -> quant(dt);
+		(*it)->quant(dt);
 
 		for (qdCounterList::const_iterator it = counter_list().begin(); it != counter_list().end(); ++it)
-			(*it) -> quant();
+			(*it)->quant();
 
 		interface_dispatcher_.quant(dt);
 
 		if (cur_scene_) {
 			debugC(9, kDebugQuant, "qdGameDispatcher::quant() Checking Cur Scene...");
-			cur_scene_ -> quant(dt);
+			cur_scene_->quant(dt);
 		}
 
 		for (qdInventoryList::const_iterator it = inventory_list().begin(); it != inventory_list().end(); ++it)
-			(*it) -> objects_quant(dt);
+			(*it)->objects_quant(dt);
 
 		if (dialog_states_ != dialog_states_last_) {
 			for (dialog_states_container_t::iterator it = dialog_states_last_.begin(); it != dialog_states_last_.end(); ++it)
-				screen_texts.clear_texts((*it) -> owner());
+				screen_texts.clear_texts((*it)->owner());
 
 			for (dialog_states_container_t::iterator it = dialog_states_.begin(); it != dialog_states_.end(); ++it) {
-				screen_texts.add_text(qdGameDispatcher::TEXT_SET_DIALOGS, qdScreenText((*it) -> short_text(), (*it) -> text_format(true), Vect2i(0, 0), (*it)));
+				screen_texts.add_text(qdGameDispatcher::TEXT_SET_DIALOGS, qdScreenText((*it)->short_text(), (*it)->text_format(true), Vect2i(0, 0), (*it)));
 			}
 		}
 
@@ -319,7 +319,7 @@ void qdGameDispatcher::quant(float dt) {
 		}
 	}
 
-	mouseDispatcher::instance() -> clear_events();
+	mouseDispatcher::instance()->clear_events();
 	drop_flag(OBJECT_CLICK_FLAG | DIALOG_CLICK_FLAG);
 	mouse_click_obj_ = NULL;
 	mouse_click_state_ = NULL;
@@ -344,22 +344,22 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 
 	qdGameDispatcherBase::load_script_body(p);
 
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_HALL_OF_FAME_SIZE:
 			xml::tag_buffer(*it) > hall_of_fame_size_;
 			break;
 		case QDSCR_GAME_TITLE:
-			game_title_ = it -> data();
+			game_title_ = it->data();
 			break;
 		case QDSCR_TEXT_DB:
 			texts_database_ = it->data();
 			break;
 		case QDSCR_CD_KEY:
-			cd_key_ = it -> data();
+			cd_key_ = it->data();
 			break;
 		case QDSCR_STARTUP_SCENE:
-			set_startup_scene(it -> data());
+			set_startup_scene(it->data());
 			break;
 		case QDSCR_RESOURCE_COMPRESSION:
 			xml::tag_buffer(*it) > resource_compression_;
@@ -368,19 +368,19 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 			set_CD_info(xml::tag_buffer(*it).get_uint());
 			break;
 		case QDSCR_MOUSE_OBJECT:
-			mouse_obj_ -> load_script(&*it);
+			mouse_obj_->load_script(&*it);
 			break;
 		case QDSCR_COUNTER:
 			cnt = new qdCounter;
-			cnt -> load_script(&*it);
+			cnt->load_script(&*it);
 			add_counter(cnt);
 			break;
 		case QDSCR_LOCATION: {
-			for (xml::tag::subtag_iterator it1 = it -> subtags_begin(); it1 != it -> subtags_end(); ++it1) {
-				// int sz = it -> num_subtags();
-				if (it1 -> ID() == QDSCR_SCENE) {
+			for (xml::tag::subtag_iterator it1 = it->subtags_begin(); it1 != it->subtags_end(); ++it1) {
+				// int sz = it->num_subtags();
+				if (it1->ID() == QDSCR_SCENE) {
 					scn = new qdGameScene;
-					scn -> load_script(&*it1);
+					scn->load_script(&*it1);
 					add_scene(scn);
 				}
 			}
@@ -388,17 +388,17 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 		break;
 		case QDSCR_SCENE:
 			scn = new qdGameScene;
-			scn -> load_script(&*it);
+			scn->load_script(&*it);
 			add_scene(scn);
 			break;
 		case QDSCR_TRIGGER_CHAIN:
 			trc = new qdTriggerChain;
-			trc -> load_script(&*it);
+			trc->load_script(&*it);
 			add_trigger_chain(trc);
 			break;
 		case QDSCR_VIDEO:
 			vid = new qdVideo;
-			vid -> load_script(&*it);
+			vid->load_script(&*it);
 			add_video(vid);
 			break;
 		case QDSCR_SCREEN_SIZE: {
@@ -409,7 +409,7 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 		break;
 		case QDSCR_MOVING_OBJECT:
 			obj = new qdGameObjectMoving;
-			obj -> load_script(&*it);
+			obj->load_script(&*it);
 			add_global_object(obj);
 			break;
 		case QDSCR_INVENTORY_CELL_TYPE: {
@@ -426,13 +426,13 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 		break;
 		case QDSCR_INVENTORY: {
 			qdInventory *p1 = new qdInventory;
-			p1 -> load_script(&*it);
+			p1->load_script(&*it);
 			add_inventory(p1);
 		}
 		break;
 		case QDSCR_MINIGAME: {
 			qdMiniGame *p1 = new qdMiniGame;
-			p1 -> load_script(&*it);
+			p1->load_script(&*it);
 			add_minigame(p1);
 		}
 		break;
@@ -441,7 +441,7 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 			break;
 		case QDSCR_GAME_END: {
 			qdGameEnd *p1 = new qdGameEnd;
-			p1 -> load_script(&*it);
+			p1->load_script(&*it);
 			add_game_end(p1);
 		}
 		break;
@@ -659,7 +659,7 @@ qdSound *qdGameDispatcher::get_sound(const char *name) {
 	qdSound *p = NULL;
 
 	if (cur_scene_)
-		p = cur_scene_ -> get_sound(name);
+		p = cur_scene_->get_sound(name);
 
 	if (p) return p;
 
@@ -670,7 +670,7 @@ qdAnimation *qdGameDispatcher::get_animation(const char *name) {
 	qdAnimation *p = NULL;
 
 	if (cur_scene_)
-		p = cur_scene_ -> get_animation(name);
+		p = cur_scene_->get_animation(name);
 
 	if (p) return p;
 
@@ -681,7 +681,7 @@ qdAnimationSet *qdGameDispatcher::get_animation_set(const char *name) {
 	qdAnimationSet *p = NULL;
 
 	if (cur_scene_)
-		p = cur_scene_ -> get_animation_set(name);
+		p = cur_scene_->get_animation_set(name);
 
 	if (p) return p;
 
@@ -689,50 +689,50 @@ qdAnimationSet *qdGameDispatcher::get_animation_set(const char *name) {
 }
 
 void qdGameDispatcher::pre_redraw() {
-	grDispatcher::instance() -> clear_changes_mask();
+	grDispatcher::instance()->clear_changes_mask();
 
 	if (cur_scene_)
-		cur_scene_ -> pre_redraw();
+		cur_scene_->pre_redraw();
 
 	interface_dispatcher_.pre_redraw();
-	mouse_obj_ -> pre_redraw();
+	mouse_obj_->pre_redraw();
 	screen_texts.pre_redraw();
 
 	if (!need_full_redraw()) {
 		if (cur_inventory_) {
-//			cur_inventory_ -> toggle_redraw(true);
-			cur_inventory_ -> pre_redraw();
+//			cur_inventory_->toggle_redraw(true);
+			cur_inventory_->pre_redraw();
 		}
 
 		if (cur_scene_) {
 			for (qdInventoryList::const_iterator it = inventory_list().begin(); it != inventory_list().end(); ++it) {
-				if (*it != cur_inventory_ && (*it) -> check_flag(qdInventory::INV_VISIBLE_WHEN_INACTIVE) && cur_scene_ -> need_to_redraw_inventory((*it) -> name())) {
-//					(*it) -> toggle_redraw(true);
-					(*it) -> pre_redraw();
+				if (*it != cur_inventory_ && (*it)->check_flag(qdInventory::INV_VISIBLE_WHEN_INACTIVE) && cur_scene_->need_to_redraw_inventory((*it)->name())) {
+//					(*it)->toggle_redraw(true);
+					(*it)->pre_redraw();
 				}
 			}
 		}
 	} else
-		add_redraw_region(grScreenRegion(grDispatcher::instance() -> Get_SizeX() / 2, grDispatcher::instance() -> Get_SizeY() / 2, grDispatcher::instance() -> Get_SizeX(), grDispatcher::instance() -> Get_SizeY()));
+		add_redraw_region(grScreenRegion(grDispatcher::instance()->Get_SizeX() / 2, grDispatcher::instance()->Get_SizeY() / 2, grDispatcher::instance()->Get_SizeX(), grDispatcher::instance()->Get_SizeY()));
 
-	grDispatcher::instance() -> build_changed_regions();
+	grDispatcher::instance()->build_changed_regions();
 }
 
 void qdGameDispatcher::post_redraw() {
 	if (cur_scene_)
-		cur_scene_ -> post_redraw();
+		cur_scene_->post_redraw();
 
 	interface_dispatcher_.post_redraw();
-	mouse_obj_ -> post_redraw();
+	mouse_obj_->post_redraw();
 	screen_texts.post_redraw();
 
 	if (cur_inventory_)
-		cur_inventory_ -> post_redraw();
+		cur_inventory_->post_redraw();
 
 	if (cur_scene_) {
 		for (qdInventoryList::const_iterator it = inventory_list().begin(); it != inventory_list().end(); ++it) {
-			if (*it != cur_inventory_ && (*it) -> check_flag(qdInventory::INV_VISIBLE_WHEN_INACTIVE) && cur_scene_ -> need_to_redraw_inventory((*it) -> name()))
-				(*it) -> post_redraw();
+			if (*it != cur_inventory_ && (*it)->check_flag(qdInventory::INV_VISIBLE_WHEN_INACTIVE) && cur_scene_->need_to_redraw_inventory((*it)->name()))
+				(*it)->post_redraw();
 		}
 	}
 }
@@ -741,27 +741,27 @@ void qdGameDispatcher::post_redraw() {
 
 void qdGameDispatcher::redraw() {
 #ifndef _QUEST_EDITOR
-	mouse_obj_ -> set_pos(Vect3f(mouseDispatcher::instance() -> mouse_x(), mouseDispatcher::instance() -> mouse_y(), 0));
-	mouse_obj_ -> update_screen_pos();
+	mouse_obj_->set_pos(Vect3f(mouseDispatcher::instance()->mouse_x(), mouseDispatcher::instance()->mouse_y(), 0));
+	mouse_obj_->update_screen_pos();
 #endif
 
 	if (!check_flag(SKIP_REDRAW_FLAG)) {
 		if (!is_video_playing()) {
 			pre_redraw();
 #ifndef _GD_REDRAW_REGIONS_CHECK_
-			for (grDispatcher::region_iterator it = grDispatcher::instance() -> changed_regions().begin(); it != grDispatcher::instance() -> changed_regions().end(); ++it) {
-				if (!it -> is_empty())
+			for (grDispatcher::region_iterator it = grDispatcher::instance()->changed_regions().begin(); it != grDispatcher::instance()->changed_regions().end(); ++it) {
+				if (!it->is_empty())
 					redraw(*it);
 			}
 
-			grDispatcher::instance() -> FlushChanges();
+			grDispatcher::instance()->FlushChanges();
 #else
-			redraw(grScreenRegion(grDispatcher::instance() -> Get_SizeX() / 2, grDispatcher::instance() -> Get_SizeY() / 2, grDispatcher::instance() -> Get_SizeX(), grDispatcher::instance() -> Get_SizeY()));
+			redraw(grScreenRegion(grDispatcher::instance()->Get_SizeX() / 2, grDispatcher::instance()->Get_SizeY() / 2, grDispatcher::instance()->Get_SizeX(), grDispatcher::instance()->Get_SizeY()));
 
-			for (grDispatcher::region_iterator it = grDispatcher::instance() -> changed_regions().begin(); it != grDispatcher::instance() -> changed_regions().end(); ++it)
-				grDispatcher::instance() -> Rectangle(it -> min_x(), it -> min_y(), it -> size_x(), it -> size_y(), 0xFFFFFF, 0, GR_OUTLINED);
+			for (grDispatcher::region_iterator it = grDispatcher::instance()->changed_regions().begin(); it != grDispatcher::instance()->changed_regions().end(); ++it)
+				grDispatcher::instance()->Rectangle(it->min_x(), it->min_y(), it->size_x(), it->size_y(), 0xFFFFFF, 0, GR_OUTLINED);
 
-			grDispatcher::instance() -> Flush();
+			grDispatcher::instance()->Flush();
 #endif
 		}
 #ifndef _QUEST_EDITOR
@@ -773,11 +773,11 @@ void qdGameDispatcher::redraw() {
 }
 
 void qdGameDispatcher::redraw(const grScreenRegion &reg) {
-//	grDispatcher::instance() -> SetClip(reg.min_x() - 1,reg.min_y() - 1,reg.max_x() + 1,reg.max_y() + 1);
-//	grDispatcher::instance() -> Erase(reg.min_x() - 1,reg.min_y() - 1,reg.size_x() + 2,reg.size_y() + 2,0);
+//	grDispatcher::instance()->SetClip(reg.min_x() - 1,reg.min_y() - 1,reg.max_x() + 1,reg.max_y() + 1);
+//	grDispatcher::instance()->Erase(reg.min_x() - 1,reg.min_y() - 1,reg.size_x() + 2,reg.size_y() + 2,0);
 
-	grDispatcher::instance() -> SetClip(reg.min_x(), reg.min_y(), reg.max_x(), reg.max_y());
-	grDispatcher::instance() -> Erase(reg.min_x(), reg.min_y(), reg.size_x(), reg.size_y(), 0);
+	grDispatcher::instance()->SetClip(reg.min_x(), reg.min_y(), reg.max_x(), reg.max_y());
+	grDispatcher::instance()->Erase(reg.min_x(), reg.min_y(), reg.size_x(), reg.size_y(), 0);
 
 	if (!interface_dispatcher_.is_active()) {
 		redraw_scene(true);
@@ -788,29 +788,29 @@ void qdGameDispatcher::redraw(const grScreenRegion &reg) {
 		interface_dispatcher_.redraw();
 	}
 
-	debugC(1, kDebugTemp, "mouse_obj_ -> redraw()");
-	mouse_obj_ -> redraw();
+	debugC(1, kDebugTemp, "mouse_obj_->redraw()");
+	mouse_obj_->redraw();
 
-	grDispatcher::instance() -> SetClip();
+	grDispatcher::instance()->SetClip();
 }
 
 void qdGameDispatcher::redraw_scene(bool draw_interface) {
 	if (cur_scene_) {
-		cur_scene_ -> redraw();
+		cur_scene_->redraw();
 
 		if (draw_interface) {
 			interface_dispatcher_.redraw();
-			if (cur_inventory_) cur_inventory_ -> redraw();
+			if (cur_inventory_) cur_inventory_->redraw();
 
 			for (qdInventoryList::const_iterator it = inventory_list().begin(); it != inventory_list().end(); ++it) {
-				if (*it != cur_inventory_ && (*it) -> check_flag(qdInventory::INV_VISIBLE_WHEN_INACTIVE) && cur_scene_ -> need_to_redraw_inventory((*it) -> name()))
-					(*it) -> redraw(0, 0, true);
+				if (*it != cur_inventory_ && (*it)->check_flag(qdInventory::INV_VISIBLE_WHEN_INACTIVE) && cur_scene_->need_to_redraw_inventory((*it)->name()))
+					(*it)->redraw(0, 0, true);
 			}
 		}
 
 		screen_texts.redraw();
 #ifndef _QUEST_EDITOR
-		cur_scene_ -> debug_redraw();
+		cur_scene_->debug_redraw();
 
 		if (check_flag(FADE_IN_FLAG | FADE_OUT_FLAG)) {
 			float phase = fade_timer_ / fade_duration_;
@@ -829,24 +829,24 @@ void qdGameDispatcher::redraw_scene(bool draw_interface) {
 }
 
 bool qdGameDispatcher::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
-	if ((ev == mouseDispatcher::EV_LEFT_DOWN || ev == mouseDispatcher::EV_RIGHT_DOWN) && mouse_obj_ -> object()) {
+	if ((ev == mouseDispatcher::EV_LEFT_DOWN || ev == mouseDispatcher::EV_RIGHT_DOWN) && mouse_obj_->object()) {
 		set_flag(OBJECT_CLICK_FLAG);
-		mouse_click_obj_ = mouse_obj_ -> object();
+		mouse_click_obj_ = mouse_obj_->object();
 	}
 
 	if (!is_paused()) {
-		if (cur_inventory_ && cur_inventory_ -> mouse_handler(x, y, ev))
+		if (cur_inventory_ && cur_inventory_->mouse_handler(x, y, ev))
 			return true;
 	}
 
 	if (interface_dispatcher_.mouse_handler(x, y, ev)) {
-		mouseDispatcher::instance() -> deactivate_event(ev);
+		mouseDispatcher::instance()->deactivate_event(ev);
 		return true;
 	}
 
 	if (is_paused()) {
 		if (is_video_playing() && (ev == mouseDispatcher::EV_LEFT_DOWN || ev == mouseDispatcher::EV_RIGHT_DOWN)) {
-			if (!cur_video_ -> check_flag(qdVideo::VID_DISABLE_INTERRUPT_FLAG)) {
+			if (!cur_video_->check_flag(qdVideo::VID_DISABLE_INTERRUPT_FLAG)) {
 				close_video();
 				resume();
 				return true;
@@ -863,49 +863,49 @@ bool qdGameDispatcher::mouse_handler(int x, int y, mouseDispatcher::mouseEvent e
 	}
 
 	if (cur_scene_)
-		return cur_scene_ -> mouse_handler(x, y, ev);
+		return cur_scene_->mouse_handler(x, y, ev);
 
 	return false;
 }
 
 int qdGameDispatcher::load_resources() {
 	int size = 0;
-	if (mouse_obj_ -> max_state())
-		mouse_obj_ -> load_resources();
+	if (mouse_obj_->max_state())
+		mouse_obj_->load_resources();
 	else
-		mouse_animation_ -> load_resources();
+		mouse_animation_->load_resources();
 
-	if (cur_scene_) size += cur_scene_ -> load_resources();
+	if (cur_scene_) size += cur_scene_->load_resources();
 	size += qdGameDispatcherBase::load_resources();
 
 	for (qdInventoryList::const_iterator it = inventory_list().begin(); it != inventory_list().end(); ++it)
-		(*it) -> load_resources();
+		(*it)->load_resources();
 
 	qdInventoryCellTypeVector::iterator icv;
 	FOR_EACH(inventory_cell_types_, icv)
-	icv -> load_resources();
+	icv->load_resources();
 
 	return size;
 }
 
 void qdGameDispatcher::free_resources() {
-	mouse_animation_ -> free_resources();
+	mouse_animation_->free_resources();
 
 	qdInventoryCellTypeVector::iterator icv;
 	FOR_EACH(inventory_cell_types_, icv)
-	icv -> free_resources();
+	icv->free_resources();
 
 	for (qdInventoryList::const_iterator it = inventory_list().begin(); it != inventory_list().end(); ++it)
-		(*it) -> free_resources();
+		(*it)->free_resources();
 
-	if (cur_scene_) cur_scene_ -> free_resources();
+	if (cur_scene_) cur_scene_->free_resources();
 
 	qdGameDispatcherBase::free_resources();
 }
 
 int qdGameDispatcher::get_resources_size() {
 	int size = 0;
-	if (cur_scene_) size += cur_scene_ -> get_resources_size();
+	if (cur_scene_) size += cur_scene_->get_resources_size();
 	size += qdGameDispatcherBase::get_resources_size();
 
 	return size;
@@ -914,72 +914,72 @@ int qdGameDispatcher::get_resources_size() {
 qdNamedObject *qdGameDispatcher::get_named_object(const qdNamedObjectReference *ref) {
 	qdNamedObject *p = nullptr;
 
-	for (int i = 0; i < ref -> num_levels(); i ++) {
+	for (int i = 0; i < ref->num_levels(); i ++) {
 		debugC(9, kDebugLoad, "%i of %d: type: %s (%d)  p so far: %p", i, ref->num_levels() - 1, objectType2str(ref->object_type(i)), ref->object_type(i), (void *)p);
 
-		switch (ref -> object_type(i)) {
+		switch (ref->object_type(i)) {
 		case QD_NAMED_OBJECT_GENERIC:
 			return nullptr;
 		case QD_NAMED_OBJECT_TRIGGER_CHAIN:
-			p = get_trigger_chain(ref -> object_name(i));
+			p = get_trigger_chain(ref->object_name(i));
 			break;
 		case QD_NAMED_OBJECT_SCALE_INFO:
-			if (p && p -> named_object_type() == QD_NAMED_OBJECT_SCENE) {
+			if (p && p->named_object_type() == QD_NAMED_OBJECT_SCENE) {
 				qdGameDispatcherBase *bp = static_cast<qdGameDispatcherBase *>(p);
-				p = bp -> get_scale_info(ref -> object_name(i));
+				p = bp->get_scale_info(ref->object_name(i));
 			} else
-				p = get_scale_info(ref -> object_name(i));
+				p = get_scale_info(ref->object_name(i));
 			break;
 		case QD_NAMED_OBJECT_SOUND:
-			if (p && p -> named_object_type() == QD_NAMED_OBJECT_SCENE) {
+			if (p && p->named_object_type() == QD_NAMED_OBJECT_SCENE) {
 				qdGameDispatcherBase *bp = static_cast<qdGameDispatcherBase *>(p);
-				p = bp -> get_sound(ref -> object_name(i));
+				p = bp->get_sound(ref->object_name(i));
 			} else
-				p = get_sound(ref -> object_name(i));
+				p = get_sound(ref->object_name(i));
 			break;
 		case QD_NAMED_OBJECT_ANIMATION:
-			if (p && p -> named_object_type() == QD_NAMED_OBJECT_SCENE) {
+			if (p && p->named_object_type() == QD_NAMED_OBJECT_SCENE) {
 				qdGameDispatcherBase *bp = static_cast<qdGameDispatcherBase *>(p);
-				p = bp -> get_animation(ref -> object_name(i));
+				p = bp->get_animation(ref->object_name(i));
 			} else
-				p = get_animation(ref -> object_name(i));
+				p = get_animation(ref->object_name(i));
 			break;
 		case QD_NAMED_OBJECT_ANIMATION_SET:
-			if (p && p -> named_object_type() == QD_NAMED_OBJECT_SCENE) {
+			if (p && p->named_object_type() == QD_NAMED_OBJECT_SCENE) {
 				qdGameDispatcherBase *bp = static_cast<qdGameDispatcherBase *>(p);
-				p = bp -> get_animation_set(ref -> object_name(i));
+				p = bp->get_animation_set(ref->object_name(i));
 			} else
-				p = get_animation_set(ref -> object_name(i));
+				p = get_animation_set(ref->object_name(i));
 			break;
 		case QD_NAMED_OBJECT_ANIMATION_INFO:
 			return nullptr;
 		case QD_NAMED_OBJECT_OBJ_STATE:
 			if (p && (p->named_object_type() == QD_NAMED_OBJECT_ANIMATED_OBJ || p->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ || p->named_object_type() == QD_NAMED_OBJECT_MOUSE_OBJ)) {
 				qdGameObjectAnimated *ap = static_cast<qdGameObjectAnimated *>(p);
-				p = ap -> get_state(ref -> object_name(i));
+				p = ap->get_state(ref->object_name(i));
 			} else
 				return nullptr;
 			break;
 		case QD_NAMED_OBJECT_STATIC_OBJ:
 		case QD_NAMED_OBJECT_ANIMATED_OBJ:
 		case QD_NAMED_OBJECT_MOVING_OBJ:
-			if (p && p -> named_object_type() == QD_NAMED_OBJECT_SCENE) {
+			if (p && p->named_object_type() == QD_NAMED_OBJECT_SCENE) {
 				qdGameScene *sp = static_cast<qdGameScene *>(p);
 				p = sp->get_object(ref->object_name(i));
 			} else
-				p = get_global_object(ref -> object_name(i));
+				p = get_global_object(ref->object_name(i));
 			break;
 		case QD_NAMED_OBJECT_GRID_ZONE:
-			if (p && p -> named_object_type() == QD_NAMED_OBJECT_SCENE) {
+			if (p && p->named_object_type() == QD_NAMED_OBJECT_SCENE) {
 				qdGameScene *sp = static_cast<qdGameScene *>(p);
-				p = sp -> get_grid_zone(ref -> object_name(i));
+				p = sp->get_grid_zone(ref->object_name(i));
 			} else
 				return nullptr;
 			break;
 		case QD_NAMED_OBJECT_GRID_ZONE_STATE:
-			if (p && p -> named_object_type() == QD_NAMED_OBJECT_GRID_ZONE) {
+			if (p && p->named_object_type() == QD_NAMED_OBJECT_GRID_ZONE) {
 				qdGridZone *zp = static_cast<qdGridZone *>(p);
-				p = zp -> get_state(ref -> object_name(i));
+				p = zp->get_state(ref->object_name(i));
 			} else
 				return nullptr;
 			break;
@@ -987,31 +987,31 @@ qdNamedObject *qdGameDispatcher::get_named_object(const qdNamedObjectReference *
 			p = mouse_obj_;
 			break;
 		case QD_NAMED_OBJECT_SCENE:
-			p = get_scene(ref -> object_name(i));
+			p = get_scene(ref->object_name(i));
 			break;
 		case QD_NAMED_OBJECT_VIDEO:
-			p = get_video(ref -> object_name(i));
+			p = get_video(ref->object_name(i));
 			break;
 		case QD_NAMED_OBJECT_LOCATION:
 			break;
 		case QD_NAMED_OBJECT_MINIGAME:
-			p = get_minigame(ref -> object_name(i));
+			p = get_minigame(ref->object_name(i));
 			break;
 		case QD_NAMED_OBJECT_MUSIC_TRACK:
-			if (p && p -> named_object_type() == QD_NAMED_OBJECT_SCENE) {
+			if (p && p->named_object_type() == QD_NAMED_OBJECT_SCENE) {
 				qdGameScene *sp = static_cast<qdGameScene *>(p);
-				p = sp -> get_music_track(ref -> object_name(i));
+				p = sp->get_music_track(ref->object_name(i));
 			} else
 				return nullptr;
 			break;
 		case QD_NAMED_OBJECT_INVENTORY:
-			p = get_inventory(ref -> object_name(i));
+			p = get_inventory(ref->object_name(i));
 			break;
 		case QD_NAMED_OBJECT_GAME_END:
-			p = get_game_end(ref -> object_name(i));
+			p = get_game_end(ref->object_name(i));
 			break;
 		case QD_NAMED_OBJECT_COUNTER:
-			p = get_counter(ref -> object_name(i));
+			p = get_counter(ref->object_name(i));
 			break;
 		}
 	}
@@ -1024,11 +1024,11 @@ bool qdGameDispatcher::init_triggers() {
 
 	qdTriggerChainList::const_iterator it;
 	FOR_EACH(trigger_chain_list(), it) {
-		if (!(*it) -> init_elements())
+		if (!(*it)->init_elements())
 			result = false;
 #ifdef __QD_DEBUG_ENABLE__
 		if (qdGameConfig::get_config().triggers_debug())
-			(*it) -> init_debug_check();
+			(*it)->init_debug_check();
 #endif
 	}
 
@@ -1041,7 +1041,7 @@ bool qdGameDispatcher::init_triggers() {
 
 bool qdGameDispatcher::reset_triggers() {
 	for (qdTriggerChainList::const_iterator it = trigger_chain_list().begin(); it != trigger_chain_list().end(); ++it)
-		(*it) -> reset();
+		(*it)->reset();
 
 	return true;
 }
@@ -1053,22 +1053,22 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 	case qdCondition::CONDITION_FALSE:
 		return false;
 	case qdCondition::CONDITION_MOUSE_CLICK:
-		if (mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_LEFT_DOWN)) {
+		if (mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_LEFT_DOWN)) {
 			if (check_flag(OBJECT_CLICK_FLAG | DIALOG_CLICK_FLAG)) return false;
 
-			if (cnd -> owner()) {
-				qdNamedObject *p = cnd -> owner() -> owner(QD_NAMED_OBJECT_MOVING_OBJ);
+			if (cnd->owner()) {
+				qdNamedObject *p = cnd->owner()->owner(QD_NAMED_OBJECT_MOVING_OBJ);
 				if (p && p != get_active_personage())
 					return false;
 			}
 
-			const qdNamedObject *p = cnd -> get_object(qdCondition::OBJECT_NAME);
+			const qdNamedObject *p = cnd->get_object(qdCondition::OBJECT_NAME);
 
 			if (!p) {
 				const char *object_name;
-				if (!cnd -> get_value(qdCondition::OBJECT_NAME, object_name) || !strlen(object_name)) {
-					if (cnd -> owner())
-						p = cnd -> owner() -> owner();
+				if (!cnd->get_value(qdCondition::OBJECT_NAME, object_name) || !strlen(object_name)) {
+					if (cnd->owner())
+						p = cnd->owner()->owner();
 				} else
 					p = get_object(object_name);
 
@@ -1078,50 +1078,50 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 			qdGameScene *sc = get_active_scene();
 			if (!sc) return false;
 
-			if (sc -> mouse_click_object()) {
-				if (p == sc -> mouse_click_object())
+			if (sc->mouse_click_object()) {
+				if (p == sc->mouse_click_object())
 					return true;
 			}
 		}
 		return false;
 	case qdCondition::CONDITION_MOUSE_RIGHT_CLICK:
-		if (mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_RIGHT_DOWN)) {
+		if (mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_RIGHT_DOWN)) {
 			if (check_flag(OBJECT_CLICK_FLAG | DIALOG_CLICK_FLAG)) return false;
 
-			if (cnd -> owner()) {
-				qdNamedObject *p = cnd -> owner() -> owner(QD_NAMED_OBJECT_MOVING_OBJ);
+			if (cnd->owner()) {
+				qdNamedObject *p = cnd->owner()->owner(QD_NAMED_OBJECT_MOVING_OBJ);
 				if (p && p != get_active_personage())
 					return false;
 			}
 
-			const qdNamedObject *p = cnd -> get_object(qdCondition::OBJECT_NAME);
+			const qdNamedObject *p = cnd->get_object(qdCondition::OBJECT_NAME);
 			if (!p) return false;
 
 			qdGameScene *sc = get_active_scene();
 			if (!sc) return false;
 
-			if (sc -> mouse_right_click_object()) {
-				if (p == sc -> mouse_right_click_object())
+			if (sc->mouse_right_click_object()) {
+				if (p == sc->mouse_right_click_object())
 					return true;
 			}
 		}
 		return false;
 	case qdCondition::CONDITION_MOUSE_OBJECT_CLICK:
-		if (mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_LEFT_DOWN)) {
+		if (mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_LEFT_DOWN)) {
 			if (!check_flag(OBJECT_CLICK_FLAG) || check_flag(DIALOG_CLICK_FLAG) || !mouse_click_obj_) return false;
 
-			if (cnd -> owner()) {
-				qdNamedObject *p = cnd -> owner() -> owner(QD_NAMED_OBJECT_MOVING_OBJ);
+			if (cnd->owner()) {
+				qdNamedObject *p = cnd->owner()->owner(QD_NAMED_OBJECT_MOVING_OBJ);
 				if (p && p != get_active_personage())
 					return false;
 			}
 
-			const qdNamedObject *p = cnd -> get_object(qdCondition::OBJECT_NAME);
+			const qdNamedObject *p = cnd->get_object(qdCondition::OBJECT_NAME);
 			if (!p) {
 				const char *object_name;
-				if (!cnd -> get_value(qdCondition::OBJECT_NAME, object_name) || !strlen(object_name)) {
-					if (cnd -> owner())
-						p = cnd -> owner() -> owner();
+				if (!cnd->get_value(qdCondition::OBJECT_NAME, object_name) || !strlen(object_name)) {
+					if (cnd->owner())
+						p = cnd->owner()->owner();
 				} else
 					p = get_object(object_name);
 
@@ -1131,11 +1131,11 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 			qdGameScene *sc = get_active_scene();
 			if (!sc) return false;
 
-			if (p == sc -> mouse_click_object()) {
-				const qdGameObject *m_obj = dynamic_cast<const qdGameObject *>(cnd -> get_object(qdCondition::MOUSE_OBJECT_NAME));
+			if (p == sc->mouse_click_object()) {
+				const qdGameObject *m_obj = dynamic_cast<const qdGameObject *>(cnd->get_object(qdCondition::MOUSE_OBJECT_NAME));
 				if (!m_obj) {
 					const char *object_name;
-					if (!cnd -> get_value(qdCondition::MOUSE_OBJECT_NAME, object_name) || !strlen(object_name))
+					if (!cnd->get_value(qdCondition::MOUSE_OBJECT_NAME, object_name) || !strlen(object_name))
 						return false;
 
 					m_obj = get_object(object_name);
@@ -1148,47 +1148,47 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 		}
 		return false;
 	case qdCondition::CONDITION_MOUSE_RIGHT_OBJECT_CLICK:
-		if (mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_RIGHT_DOWN)) {
+		if (mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_RIGHT_DOWN)) {
 			if (!check_flag(OBJECT_CLICK_FLAG) || check_flag(DIALOG_CLICK_FLAG) || !mouse_click_obj_) return false;
 
-			if (cnd -> owner()) {
-				qdNamedObject *p = cnd -> owner() -> owner(QD_NAMED_OBJECT_MOVING_OBJ);
+			if (cnd->owner()) {
+				qdNamedObject *p = cnd->owner()->owner(QD_NAMED_OBJECT_MOVING_OBJ);
 				if (p && p != get_active_personage())
 					return false;
 			}
 
-			const qdNamedObject *p = cnd -> get_object(qdCondition::OBJECT_NAME);
+			const qdNamedObject *p = cnd->get_object(qdCondition::OBJECT_NAME);
 			if (!p) return false;
 
 			qdGameScene *sc = get_active_scene();
 			if (!sc) return false;
 
-			if (p == sc -> mouse_right_click_object()) {
-				const qdGameObject *m_obj = dynamic_cast<const qdGameObject *>(cnd -> get_object(qdCondition::MOUSE_OBJECT_NAME));
+			if (p == sc->mouse_right_click_object()) {
+				const qdGameObject *m_obj = dynamic_cast<const qdGameObject *>(cnd->get_object(qdCondition::MOUSE_OBJECT_NAME));
 				if (m_obj == mouse_click_obj_)
 					return true;
 			}
 		}
 		return false;
 	case qdCondition::CONDITION_OBJECT_IN_ZONE: {
-		const qdGameObject *obj = dynamic_cast<const qdGameObject *>(cnd -> get_object(qdCondition::OBJECT_NAME));
+		const qdGameObject *obj = dynamic_cast<const qdGameObject *>(cnd->get_object(qdCondition::OBJECT_NAME));
 		if (!obj) {
 			const char *object_name;
-			if (!cnd -> get_value(qdCondition::OBJECT_NAME, object_name) || !strlen(object_name)) {
-				if (cnd -> owner())
-					obj = dynamic_cast<const qdGameObject * >(cnd -> owner() -> owner());
+			if (!cnd->get_value(qdCondition::OBJECT_NAME, object_name) || !strlen(object_name)) {
+				if (cnd->owner())
+					obj = dynamic_cast<const qdGameObject * >(cnd->owner()->owner());
 			} else
 				obj = get_object(object_name);
 
 			if (!obj) return false;
 		}
 
-		if (!obj -> is_visible())
+		if (!obj->is_visible())
 			return false;
 
 		const qdGridZone *zone = NULL;
-		if (const qdNamedObject * zone_obj = cnd -> get_object(qdCondition::ZONE_NAME)) {
-			if (zone_obj -> named_object_type() != QD_NAMED_OBJECT_GRID_ZONE)
+		if (const qdNamedObject * zone_obj = cnd->get_object(qdCondition::ZONE_NAME)) {
+			if (zone_obj->named_object_type() != QD_NAMED_OBJECT_GRID_ZONE)
 				return false;
 			zone = dynamic_cast<const qdGridZone *>(zone_obj);
 		} else {
@@ -1196,65 +1196,65 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 			if (!sc) return false;
 
 			const char *zone_name;
-			if (!cnd -> get_value(qdCondition::ZONE_NAME, zone_name))
+			if (!cnd->get_value(qdCondition::ZONE_NAME, zone_name))
 				return false;
 
-			zone = sc -> get_grid_zone(zone_name);
+			zone = sc->get_grid_zone(zone_name);
 		}
 
 		if (!zone) return false;
-		return zone -> is_object_in_zone(obj);
+		return zone->is_object_in_zone(obj);
 	}
 	return false;
 	case qdCondition::CONDITION_PERSONAGE_WALK_DIRECTION: {
-		const qdGameObjectMoving *p = dynamic_cast<const qdGameObjectMoving *>(cnd -> get_object(qdCondition::PERSONAGE_NAME));
+		const qdGameObjectMoving *p = dynamic_cast<const qdGameObjectMoving *>(cnd->get_object(qdCondition::PERSONAGE_NAME));
 		if (!p) {
 			const char *object_name;
-			if (!cnd -> get_value(qdCondition::PERSONAGE_NAME, object_name) || !strlen(object_name)) {
-				if (!cnd -> owner() || !cnd -> owner() -> owner()) return false;
-				p = dynamic_cast<const qdGameObjectMoving *>(cnd -> owner() -> owner());
+			if (!cnd->get_value(qdCondition::PERSONAGE_NAME, object_name) || !strlen(object_name)) {
+				if (!cnd->owner() || !cnd->owner()->owner()) return false;
+				p = dynamic_cast<const qdGameObjectMoving *>(cnd->owner()->owner());
 			} else
 				p = dynamic_cast<const qdGameObjectMoving *>(get_object(object_name));
 
 			if (!p) return false;
 		}
 
-		if (!p -> is_visible())
+		if (!p->is_visible())
 			return false;
 
 		float angle = 0.0f;
-		if (!cnd -> get_value(qdCondition::DIRECTION_ANGLE, angle)) return false;
+		if (!cnd->get_value(qdCondition::DIRECTION_ANGLE, angle)) return false;
 
-		int dir = p -> get_direction(p -> direction_angle());
+		int dir = p->get_direction(p->direction_angle());
 
-		if (!p -> check_flag(QD_OBJ_MOVING_FLAG) || dir == -1 || dir != p -> get_direction(angle))
+		if (!p->check_flag(QD_OBJ_MOVING_FLAG) || dir == -1 || dir != p->get_direction(angle))
 			return false;
 
 		return true;
 	}
 	return false;
 	case qdCondition::CONDITION_PERSONAGE_STATIC_DIRECTION: {
-		const qdGameObjectMoving *p = dynamic_cast<const qdGameObjectMoving *>(cnd -> get_object(qdCondition::PERSONAGE_NAME));
+		const qdGameObjectMoving *p = dynamic_cast<const qdGameObjectMoving *>(cnd->get_object(qdCondition::PERSONAGE_NAME));
 		if (!p) {
 			const char *object_name;
-			if (!cnd -> get_value(qdCondition::PERSONAGE_NAME, object_name) || !strlen(object_name)) {
-				if (!cnd -> owner() || !cnd -> owner() -> owner()) return false;
-				p = dynamic_cast<const qdGameObjectMoving *>(cnd -> owner() -> owner());
+			if (!cnd->get_value(qdCondition::PERSONAGE_NAME, object_name) || !strlen(object_name)) {
+				if (!cnd->owner() || !cnd->owner()->owner()) return false;
+				p = dynamic_cast<const qdGameObjectMoving *>(cnd->owner()->owner());
 			} else
 				p = dynamic_cast<const qdGameObjectMoving *>(get_object(object_name));
 
 			if (!p) return false;
 		}
 
-		if (!p -> is_visible())
+		if (!p->is_visible())
 			return false;
 
 		float angle = 0.0f;
-		if (!cnd -> get_value(qdCondition::DIRECTION_ANGLE, angle)) return false;
+		if (!cnd->get_value(qdCondition::DIRECTION_ANGLE, angle)) return false;
 
-		int dir = p -> get_direction(p -> direction_angle());
+		int dir = p->get_direction(p->direction_angle());
 
-		if (p -> check_flag(QD_OBJ_MOVING_FLAG) || dir == -1 || dir != p -> get_direction(angle))
+		if (p->check_flag(QD_OBJ_MOVING_FLAG) || dir == -1 || dir != p->get_direction(angle))
 			return false;
 
 		return true;
@@ -1262,25 +1262,25 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 	return false;
 	case qdCondition::CONDITION_TIMER: {
 		int state;
-		if (!cnd -> get_value(qdCondition::TIMER_RND, state, 1) || !state) return false;
+		if (!cnd->get_value(qdCondition::TIMER_RND, state, 1) || !state) return false;
 		return true;
 	}
 	return false;
 	case qdCondition::CONDITION_MOUSE_DIALOG_CLICK: {
 		if (!check_flag(DIALOG_CLICK_FLAG) || mouse_click_obj_) return false;
-		if (cnd -> owner() && cnd -> owner() == mouse_click_state_)
+		if (cnd->owner() && cnd->owner() == mouse_click_state_)
 			return true;
 	}
 	return false;
 	case qdCondition::CONDITION_MINIGAME_STATE:
 		return false;
 	case qdCondition::CONDITION_OBJECT_STATE: {
-		const qdGameObject *obj = dynamic_cast<const qdGameObject *>(cnd -> get_object(qdCondition::OBJECT_NAME));
+		const qdGameObject *obj = dynamic_cast<const qdGameObject *>(cnd->get_object(qdCondition::OBJECT_NAME));
 		if (!obj) {
 			const char *object_name;
-			if (!cnd -> get_value(qdCondition::OBJECT_NAME, object_name) || !strlen(object_name)) {
-				if (cnd -> owner())
-					obj = dynamic_cast<const qdGameObject * >(cnd -> owner() -> owner());
+			if (!cnd->get_value(qdCondition::OBJECT_NAME, object_name) || !strlen(object_name)) {
+				if (cnd->owner())
+					obj = dynamic_cast<const qdGameObject * >(cnd->owner()->owner());
 			} else
 				obj = get_object(object_name);
 
@@ -1288,77 +1288,77 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 		}
 
 		if (const qdGameObjectAnimated * p = dynamic_cast<const qdGameObjectAnimated * >(obj)) {
-			if (!p -> is_visible())
+			if (!p->is_visible())
 				return false;
 
-			if (const qdGameObjectState * sp = dynamic_cast<const qdGameObjectState * >(cnd -> get_object(qdCondition::OBJECT_STATE_NAME))) {
-				return p -> is_state_active(sp);
+			if (const qdGameObjectState * sp = dynamic_cast<const qdGameObjectState * >(cnd->get_object(qdCondition::OBJECT_STATE_NAME))) {
+				return p->is_state_active(sp);
 			} else {
 				const char *state_name;
-				if (!cnd -> get_value(qdCondition::OBJECT_STATE_NAME, state_name) || !strlen(state_name))
+				if (!cnd->get_value(qdCondition::OBJECT_STATE_NAME, state_name) || !strlen(state_name))
 					return false;
 
-				return p -> is_state_active(state_name);
+				return p->is_state_active(state_name);
 			}
 		}
 	}
 	return false;
 	case qdCondition::CONDITION_MOUSE_ZONE_CLICK:
-		if (mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_LEFT_DOWN)) {
+		if (mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_LEFT_DOWN)) {
 			if (check_flag(OBJECT_CLICK_FLAG | DIALOG_CLICK_FLAG) || mouse_click_obj_) return false;
 
 			qdGameScene *sc = get_active_scene();
-			if (!sc || sc -> mouse_click_object()) return false;
+			if (!sc || sc->mouse_click_object()) return false;
 
-			if (cnd -> owner()) {
-				qdNamedObject *p = cnd -> owner() -> owner(QD_NAMED_OBJECT_MOVING_OBJ);
+			if (cnd->owner()) {
+				qdNamedObject *p = cnd->owner()->owner(QD_NAMED_OBJECT_MOVING_OBJ);
 				if (p && p != get_active_personage())
 					return false;
 			}
 
-			const qdGridZone *zone = dynamic_cast<const qdGridZone *>(cnd -> get_object(qdCondition::CLICK_ZONE_NAME));
+			const qdGridZone *zone = dynamic_cast<const qdGridZone *>(cnd->get_object(qdCondition::CLICK_ZONE_NAME));
 
 			if (!zone) {
 				const char *zone_name;
-				if (!cnd -> get_value(qdCondition::CLICK_ZONE_NAME, zone_name))
+				if (!cnd->get_value(qdCondition::CLICK_ZONE_NAME, zone_name))
 					return false;
 
-				zone = sc -> get_grid_zone(zone_name);
+				zone = sc->get_grid_zone(zone_name);
 				if (!zone) return false;
 			}
 
-			return zone -> is_point_in_zone(sc -> mouse_click_pos());
+			return zone->is_point_in_zone(sc->mouse_click_pos());
 		}
 		return false;
 	case qdCondition::CONDITION_MOUSE_OBJECT_ZONE_CLICK:
-		if (mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_LEFT_DOWN)) {
+		if (mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_LEFT_DOWN)) {
 			if (!check_flag(OBJECT_CLICK_FLAG) || check_flag(DIALOG_CLICK_FLAG) || !mouse_click_obj_) return false;
 
 			qdGameScene *sc = get_active_scene();
-			if (!sc || sc -> mouse_click_object()) return false;
+			if (!sc || sc->mouse_click_object()) return false;
 
-			if (cnd -> owner()) {
-				qdNamedObject *p = cnd -> owner() -> owner(QD_NAMED_OBJECT_MOVING_OBJ);
+			if (cnd->owner()) {
+				qdNamedObject *p = cnd->owner()->owner(QD_NAMED_OBJECT_MOVING_OBJ);
 				if (p && p != get_active_personage())
 					return false;
 			}
 
-			const qdGridZone *zone = dynamic_cast<const qdGridZone *>(cnd -> get_object(qdCondition::CLICK_ZONE_NAME));
+			const qdGridZone *zone = dynamic_cast<const qdGridZone *>(cnd->get_object(qdCondition::CLICK_ZONE_NAME));
 
 			if (!zone) {
 				const char *zone_name;
-				if (!cnd -> get_value(qdCondition::CLICK_ZONE_NAME, zone_name))
+				if (!cnd->get_value(qdCondition::CLICK_ZONE_NAME, zone_name))
 					return false;
 
-				zone = sc -> get_grid_zone(zone_name);
+				zone = sc->get_grid_zone(zone_name);
 				if (!zone) return false;
 			}
 
-			if (zone -> is_point_in_zone(sc -> mouse_click_pos())) {
-				const qdGameObject *m_obj = dynamic_cast<const qdGameObject *>(cnd -> get_object(qdCondition::MOUSE_OBJECT_NAME));
+			if (zone->is_point_in_zone(sc->mouse_click_pos())) {
+				const qdGameObject *m_obj = dynamic_cast<const qdGameObject *>(cnd->get_object(qdCondition::MOUSE_OBJECT_NAME));
 				if (!m_obj) {
 					const char *object_name;
-					if (!cnd -> get_value(qdCondition::MOUSE_OBJECT_NAME, object_name) || !strlen(object_name))
+					if (!cnd->get_value(qdCondition::MOUSE_OBJECT_NAME, object_name) || !strlen(object_name))
 						return false;
 
 					m_obj = get_object(object_name);
@@ -1371,12 +1371,12 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 		}
 		return false;
 	case qdCondition::CONDITION_OBJECT_STATE_WAS_ACTIVATED: {
-		const qdGameObject *obj = static_cast<const qdGameObject *>(cnd -> get_object(qdCondition::OBJECT_NAME));
+		const qdGameObject *obj = static_cast<const qdGameObject *>(cnd->get_object(qdCondition::OBJECT_NAME));
 		if (!obj) {
 			const char *object_name;
-			if (!cnd -> get_value(qdCondition::OBJECT_NAME, object_name) || !strlen(object_name)) {
-				if (cnd -> owner())
-					obj = static_cast<const qdGameObject * >(cnd -> owner() -> owner());
+			if (!cnd->get_value(qdCondition::OBJECT_NAME, object_name) || !strlen(object_name)) {
+				if (cnd->owner())
+					obj = static_cast<const qdGameObject * >(cnd->owner()->owner());
 			} else
 				obj = get_object(object_name);
 
@@ -1384,14 +1384,14 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 		}
 
 		if (const qdGameObjectAnimated * p = dynamic_cast<const qdGameObjectAnimated * >(obj)) {
-			if (const qdGameObjectState * sp = static_cast<const qdGameObjectState * >(cnd -> get_object(qdCondition::OBJECT_STATE_NAME))) {
-				return p -> was_state_active(sp);
+			if (const qdGameObjectState * sp = static_cast<const qdGameObjectState * >(cnd->get_object(qdCondition::OBJECT_STATE_NAME))) {
+				return p->was_state_active(sp);
 			} else {
 				const char *state_name;
-				if (!cnd -> get_value(qdCondition::OBJECT_STATE_NAME, state_name) || !strlen(state_name))
+				if (!cnd->get_value(qdCondition::OBJECT_STATE_NAME, state_name) || !strlen(state_name))
 					return false;
 
-				return p -> was_state_active(state_name);
+				return p->was_state_active(state_name);
 			}
 		}
 	}
@@ -1399,30 +1399,30 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 	case qdCondition::CONDITION_OBJECTS_DISTANCE: {
 		const char *object_name;
 
-		const qdGameObject *obj1 = dynamic_cast<const qdGameObject *>(cnd -> get_object(qdCondition::OBJECT_NAME));
+		const qdGameObject *obj1 = dynamic_cast<const qdGameObject *>(cnd->get_object(qdCondition::OBJECT_NAME));
 		if (!obj1) {
-			if (cnd -> get_value(qdCondition::OBJECT_NAME, object_name) && strlen(object_name))
+			if (cnd->get_value(qdCondition::OBJECT_NAME, object_name) && strlen(object_name))
 				obj1 = get_object(object_name);
 			if (!obj1) return false;
 		}
 
-		if (!obj1 -> is_visible())
+		if (!obj1->is_visible())
 			return false;
 
-		const qdGameObject *obj2 = dynamic_cast<const qdGameObject *>(cnd -> get_object(qdCondition::OBJECT2_NAME));
+		const qdGameObject *obj2 = dynamic_cast<const qdGameObject *>(cnd->get_object(qdCondition::OBJECT2_NAME));
 		if (!obj2) {
-			if (cnd -> get_value(qdCondition::OBJECT2_NAME, object_name) && strlen(object_name))
+			if (cnd->get_value(qdCondition::OBJECT2_NAME, object_name) && strlen(object_name))
 				obj2 = get_object(object_name);
 			if (!obj2) return false;
 		}
 
-		if (!obj2 -> is_visible())
+		if (!obj2->is_visible())
 			return false;
 
 		float dist = 0.0f;
-		if (!cnd -> get_value(qdCondition::OBJECTS_DISTANCE, dist)) return false;
+		if (!cnd->get_value(qdCondition::OBJECTS_DISTANCE, dist)) return false;
 
-		Vect3f dr = obj2 -> R() - obj1 -> R();
+		Vect3f dr = obj2->R() - obj1->R();
 		dr.z = 0.0f;
 
 		if (dr.norm2() < dist * dist) return true;
@@ -1430,12 +1430,12 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 	return false;
 	case qdCondition::CONDITION_PERSONAGE_ACTIVE:
 		if (get_active_personage()) {
-			const qdGameObjectMoving *p = dynamic_cast<const qdGameObjectMoving *>(cnd -> get_object(qdCondition::PERSONAGE_NAME));
+			const qdGameObjectMoving *p = dynamic_cast<const qdGameObjectMoving *>(cnd->get_object(qdCondition::PERSONAGE_NAME));
 			if (!p) {
 				const char *object_name;
-				if (!cnd -> get_value(qdCondition::PERSONAGE_NAME, object_name) || !strlen(object_name)) {
-					if (!cnd -> owner() || !cnd -> owner() -> owner()) return false;
-					p = dynamic_cast<const qdGameObjectMoving *>(cnd -> owner() -> owner());
+				if (!cnd->get_value(qdCondition::PERSONAGE_NAME, object_name) || !strlen(object_name)) {
+					if (!cnd->owner() || !cnd->owner()->owner()) return false;
+					p = dynamic_cast<const qdGameObjectMoving *>(cnd->owner()->owner());
 				} else
 					p = dynamic_cast<const qdGameObjectMoving *>(get_object(object_name));
 
@@ -1446,12 +1446,12 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 		}
 		return false;
 	case qdCondition::CONDITION_OBJECT_STATE_WAITING: {
-		const qdGameObject *obj = dynamic_cast<const qdGameObject *>(cnd -> get_object(qdCondition::OBJECT_NAME));
+		const qdGameObject *obj = dynamic_cast<const qdGameObject *>(cnd->get_object(qdCondition::OBJECT_NAME));
 		if (!obj) {
 			const char *object_name;
-			if (!cnd -> get_value(qdCondition::OBJECT_NAME, object_name) || !strlen(object_name)) {
-				if (cnd -> owner())
-					obj = dynamic_cast<const qdGameObject * >(cnd -> owner() -> owner());
+			if (!cnd->get_value(qdCondition::OBJECT_NAME, object_name) || !strlen(object_name)) {
+				if (cnd->owner())
+					obj = dynamic_cast<const qdGameObject * >(cnd->owner()->owner());
 			} else
 				obj = get_object(object_name);
 
@@ -1459,28 +1459,28 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 		}
 
 		if (const qdGameObjectAnimated * p = dynamic_cast<const qdGameObjectAnimated * >(obj)) {
-			if (!p -> is_visible())
+			if (!p->is_visible())
 				return false;
 
-			if (const qdGameObjectState * sp = dynamic_cast<const qdGameObjectState * >(cnd -> get_object(qdCondition::OBJECT_STATE_NAME))) {
-				return p -> is_state_waiting(sp);
+			if (const qdGameObjectState * sp = dynamic_cast<const qdGameObjectState * >(cnd->get_object(qdCondition::OBJECT_STATE_NAME))) {
+				return p->is_state_waiting(sp);
 			} else {
 				const char *state_name;
-				if (!cnd -> get_value(qdCondition::OBJECT_STATE_NAME, state_name) || !strlen(state_name))
+				if (!cnd->get_value(qdCondition::OBJECT_STATE_NAME, state_name) || !strlen(state_name))
 					return false;
 
-				return p -> is_state_waiting(state_name);
+				return p->is_state_waiting(state_name);
 			}
 		}
 	}
 	return false;
 	case qdCondition::CONDITION_OBJECT_STATE_ANIMATION_PHASE: {
-		const qdGameObject *obj = dynamic_cast<const qdGameObject *>(cnd -> get_object(qdCondition::OBJECT_NAME));
+		const qdGameObject *obj = dynamic_cast<const qdGameObject *>(cnd->get_object(qdCondition::OBJECT_NAME));
 		if (!obj) {
 			const char *object_name;
-			if (!cnd -> get_value(qdCondition::OBJECT_NAME, object_name) || !strlen(object_name)) {
-				if (cnd -> owner())
-					obj = dynamic_cast<const qdGameObject * >(cnd -> owner() -> owner());
+			if (!cnd->get_value(qdCondition::OBJECT_NAME, object_name) || !strlen(object_name)) {
+				if (cnd->owner())
+					obj = dynamic_cast<const qdGameObject * >(cnd->owner()->owner());
 			} else
 				obj = get_object(object_name);
 
@@ -1488,39 +1488,39 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 		}
 
 		if (const qdGameObjectAnimated * p = dynamic_cast<const qdGameObjectAnimated * >(obj)) {
-			if (!p -> is_visible())
+			if (!p->is_visible())
 				return false;
 
-			const qdGameObjectState *sp = dynamic_cast<const qdGameObjectState *>(cnd -> get_object(qdCondition::OBJECT_STATE_NAME));
+			const qdGameObjectState *sp = dynamic_cast<const qdGameObjectState *>(cnd->get_object(qdCondition::OBJECT_STATE_NAME));
 			if (!sp) {
 				const char *state_name;
-				if (!cnd -> get_value(qdCondition::OBJECT_STATE_NAME, state_name) || !strlen(state_name))
+				if (!cnd->get_value(qdCondition::OBJECT_STATE_NAME, state_name) || !strlen(state_name))
 					return false;
 
-				sp = p -> get_state(state_name);
+				sp = p->get_state(state_name);
 			}
 
-			if (!sp || !p -> is_state_active(sp)) return false;
+			if (!sp || !p->is_state_active(sp)) return false;
 
 			float phase0, phase1;
-			if (!cnd -> get_value(qdCondition::ANIMATION_PHASE, phase0, 0))
+			if (!cnd->get_value(qdCondition::ANIMATION_PHASE, phase0, 0))
 				return false;
-			if (!cnd -> get_value(qdCondition::ANIMATION_PHASE, phase1, 1))
+			if (!cnd->get_value(qdCondition::ANIMATION_PHASE, phase1, 1))
 				return false;
 
-			float phase = p -> get_animation() -> cur_time_rel();
+			float phase = p->get_animation()->cur_time_rel();
 			if (phase >= phase0 && phase <= phase1)
 				return true;
 		}
 	}
 	return false;
 	case qdCondition::CONDITION_OBJECT_PREV_STATE: {
-		const qdGameObject *obj = dynamic_cast<const qdGameObject *>(cnd -> get_object(qdCondition::OBJECT_NAME));
+		const qdGameObject *obj = dynamic_cast<const qdGameObject *>(cnd->get_object(qdCondition::OBJECT_NAME));
 		if (!obj) {
 			const char *object_name;
-			if (!cnd -> get_value(qdCondition::OBJECT_NAME, object_name) || !strlen(object_name)) {
-				if (cnd -> owner())
-					obj = dynamic_cast<const qdGameObject * >(cnd -> owner() -> owner());
+			if (!cnd->get_value(qdCondition::OBJECT_NAME, object_name) || !strlen(object_name)) {
+				if (cnd->owner())
+					obj = dynamic_cast<const qdGameObject * >(cnd->owner()->owner());
 			} else
 				obj = get_object(object_name);
 
@@ -1528,209 +1528,209 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 		}
 
 		if (const qdGameObjectAnimated * p = dynamic_cast<const qdGameObjectAnimated * >(obj)) {
-			if (!p -> is_visible())
+			if (!p->is_visible())
 				return false;
 
-			if (const qdGameObjectState * sp = dynamic_cast<const qdGameObjectState * >(cnd -> get_object(qdCondition::OBJECT_STATE_NAME))) {
-				return p -> was_state_previous(sp);
+			if (const qdGameObjectState * sp = dynamic_cast<const qdGameObjectState * >(cnd->get_object(qdCondition::OBJECT_STATE_NAME))) {
+				return p->was_state_previous(sp);
 			} else {
 				const char *state_name;
-				if (!cnd -> get_value(qdCondition::OBJECT_STATE_NAME, state_name) || !strlen(state_name))
+				if (!cnd->get_value(qdCondition::OBJECT_STATE_NAME, state_name) || !strlen(state_name))
 					return false;
 
-				return p -> was_state_previous(state_name);
+				return p->was_state_previous(state_name);
 			}
 		}
 	}
 	return false;
 	case qdCondition::CONDITION_STATE_TIME_GREATER_THAN_VALUE:
-		if (const qdNamedObject * p = cnd -> get_object(0)) {
-			if (p -> named_object_type() != QD_NAMED_OBJECT_OBJ_STATE) return false;
+		if (const qdNamedObject * p = cnd->get_object(0)) {
+			if (p->named_object_type() != QD_NAMED_OBJECT_OBJ_STATE) return false;
 			const qdGameObjectState *sp = static_cast<const qdGameObjectState *>(p);
 
-			if (!sp -> is_active()) return false;
+			if (!sp->is_active()) return false;
 
 			float time;
-			if (!cnd -> get_value(0, time, 0))
+			if (!cnd->get_value(0, time, 0))
 
-				if (sp -> cur_time() > time)
+				if (sp->cur_time() > time)
 					return true;
 		}
 		return false;
 	case qdCondition::CONDITION_STATE_TIME_GREATER_THAN_STATE_TIME:
-		if (const qdNamedObject * p = cnd -> get_object(0)) {
-			if (p -> named_object_type() != QD_NAMED_OBJECT_OBJ_STATE) return false;
+		if (const qdNamedObject * p = cnd->get_object(0)) {
+			if (p->named_object_type() != QD_NAMED_OBJECT_OBJ_STATE) return false;
 			const qdGameObjectState *sp0 = static_cast<const qdGameObjectState *>(p);
 
-			if (!sp0 -> is_active()) return false;
+			if (!sp0->is_active()) return false;
 
-			p = cnd -> get_object(1);
-			if (p -> named_object_type() != QD_NAMED_OBJECT_OBJ_STATE) return false;
+			p = cnd->get_object(1);
+			if (p->named_object_type() != QD_NAMED_OBJECT_OBJ_STATE) return false;
 			const qdGameObjectState *sp1 = static_cast<const qdGameObjectState *>(p);
 
-			if (!sp1 -> is_active()) return false;
+			if (!sp1->is_active()) return false;
 
-			return (sp0 -> cur_time() > sp1 -> cur_time());
+			return (sp0->cur_time() > sp1->cur_time());
 		}
 		return false;
 	case qdCondition::CONDITION_STATE_TIME_IN_INTERVAL:
-		if (const qdNamedObject * p = cnd -> get_object(0)) {
-			if (p -> named_object_type() != QD_NAMED_OBJECT_OBJ_STATE) return false;
+		if (const qdNamedObject * p = cnd->get_object(0)) {
+			if (p->named_object_type() != QD_NAMED_OBJECT_OBJ_STATE) return false;
 			const qdGameObjectState *sp = static_cast<const qdGameObjectState *>(p);
 
-			if (!sp -> is_active()) return false;
+			if (!sp->is_active()) return false;
 
 			float time0, time1;
-			if (!cnd -> get_value(0, time0, 0))
+			if (!cnd->get_value(0, time0, 0))
 				return false;
-			if (!cnd -> get_value(0, time1, 1))
+			if (!cnd->get_value(0, time1, 1))
 				return false;
 
-			if (sp -> cur_time() >= time0 && sp -> cur_time() <= time1)
+			if (sp->cur_time() >= time0 && sp->cur_time() <= time1)
 				return true;
 		}
 		return false;
 	case qdCondition::CONDITION_COUNTER_GREATER_THAN_VALUE:
-		if (const qdNamedObject * p = cnd -> get_object(0)) {
-			if (p -> named_object_type() != QD_NAMED_OBJECT_COUNTER) return false;
+		if (const qdNamedObject * p = cnd->get_object(0)) {
+			if (p->named_object_type() != QD_NAMED_OBJECT_COUNTER) return false;
 			const qdCounter *cp = static_cast<const qdCounter *>(p);
 
 			int value;
-			if (!cnd -> get_value(0, value))
+			if (!cnd->get_value(0, value))
 				return false;
 
-			return (cp -> value() > value);
+			return (cp->value() > value);
 		}
 		return false;
 	case qdCondition::CONDITION_COUNTER_LESS_THAN_VALUE:
-		if (const qdNamedObject * p = cnd -> get_object(0)) {
-			if (p -> named_object_type() != QD_NAMED_OBJECT_COUNTER) return false;
+		if (const qdNamedObject * p = cnd->get_object(0)) {
+			if (p->named_object_type() != QD_NAMED_OBJECT_COUNTER) return false;
 			const qdCounter *cp = static_cast<const qdCounter *>(p);
 
 			int value;
-			if (!cnd -> get_value(0, value))
+			if (!cnd->get_value(0, value))
 				return false;
 
-			return (cp -> value() < value);
+			return (cp->value() < value);
 		}
 		return false;
 	case qdCondition::CONDITION_COUNTER_GREATER_THAN_COUNTER:
-		if (const qdNamedObject * p = cnd -> get_object(0)) {
-			if (p -> named_object_type() != QD_NAMED_OBJECT_COUNTER) return false;
+		if (const qdNamedObject * p = cnd->get_object(0)) {
+			if (p->named_object_type() != QD_NAMED_OBJECT_COUNTER) return false;
 			const qdCounter *cp0 = static_cast<const qdCounter *>(p);
 
-			p = cnd -> get_object(1);
-			if (p -> named_object_type() != QD_NAMED_OBJECT_COUNTER) return false;
+			p = cnd->get_object(1);
+			if (p->named_object_type() != QD_NAMED_OBJECT_COUNTER) return false;
 			const qdCounter *cp1 = static_cast<const qdCounter *>(p);
 
-			return (cp0 -> value() > cp1 -> value());
+			return (cp0->value() > cp1->value());
 		}
 		return false;
 	case qdCondition::CONDITION_COUNTER_IN_INTERVAL:
-		if (const qdNamedObject * p = cnd -> get_object(0)) {
-			if (p -> named_object_type() != QD_NAMED_OBJECT_COUNTER) return false;
+		if (const qdNamedObject * p = cnd->get_object(0)) {
+			if (p->named_object_type() != QD_NAMED_OBJECT_COUNTER) return false;
 			const qdCounter *cp = static_cast<const qdCounter *>(p);
 
 			int value0, value1;
-			if (!cnd -> get_value(0, value0, 0))
+			if (!cnd->get_value(0, value0, 0))
 				return false;
-			if (!cnd -> get_value(0, value1, 1))
+			if (!cnd->get_value(0, value1, 1))
 				return false;
 
-			return (cp -> value() >= value0 && cp -> value() <= value1);
+			return (cp->value() >= value0 && cp->value() <= value1);
 		}
 		return false;
 	case qdCondition::CONDITION_OBJECT_ON_PERSONAGE_WAY:
-		if (const qdNamedObject * p = cnd -> get_object(0)) {
-			if (p -> named_object_type() != QD_NAMED_OBJECT_MOVING_OBJ) return false;
+		if (const qdNamedObject * p = cnd->get_object(0)) {
+			if (p->named_object_type() != QD_NAMED_OBJECT_MOVING_OBJ) return false;
 			const qdGameObjectMoving *obj = static_cast<const qdGameObjectMoving *>(p);
-			if (!obj -> is_visible()) return false;
+			if (!obj->is_visible()) return false;
 
-			p = cnd -> get_object(1);
+			p = cnd->get_object(1);
 			if (!p) return false;
 			const qdGameObject *obj1 = dynamic_cast<const qdGameObject *>(p);
-			if (!obj1 || !obj1 -> is_visible()) return false;
+			if (!obj1 || !obj1->is_visible()) return false;
 
 			float dist = 0.0f;
-			if (!cnd -> get_value(0, dist)) return false;
+			if (!cnd->get_value(0, dist)) return false;
 
-			Vect3f dr = obj -> R() - obj1 -> R();
+			Vect3f dr = obj->R() - obj1->R();
 			dr.z = 0.0f;
 
 			if (dr.norm2() > dist * dist) return false;
 
-			float angle = obj -> calc_direction_angle(obj1 -> R());
+			float angle = obj->calc_direction_angle(obj1->R());
 
-			if (fabs(angle - obj -> direction_angle()) < M_PI / 2.0f) return true;
+			if (fabs(angle - obj->direction_angle()) < M_PI / 2.0f) return true;
 		}
 		return false;
 	case qdCondition::CONDITION_KEYPRESS: {
 		int vkey;
-		if (!cnd -> get_value(0, vkey)) return false;
-		return keyboardDispatcher::instance() -> is_pressed(vkey);
+		if (!cnd->get_value(0, vkey)) return false;
+		return keyboardDispatcher::instance()->is_pressed(vkey);
 	}
 	return false;
 	case qdCondition::CONDITION_ANY_PERSONAGE_IN_ZONE:
-		if (const qdNamedObject * p = cnd -> get_object(0)) {
-			if (p -> named_object_type() != QD_NAMED_OBJECT_GRID_ZONE) return false;
-			return static_cast<const qdGridZone *>(p) -> is_any_personage_in_zone();
+		if (const qdNamedObject * p = cnd->get_object(0)) {
+			if (p->named_object_type() != QD_NAMED_OBJECT_GRID_ZONE) return false;
+			return static_cast<const qdGridZone *>(p)->is_any_personage_in_zone();
 		}
 		return false;
 	case qdCondition::CONDITION_OBJECT_HIDDEN: {
-		const qdGameObject *obj = dynamic_cast<const qdGameObject *>(cnd -> get_object(qdCondition::OBJECT_NAME));
+		const qdGameObject *obj = dynamic_cast<const qdGameObject *>(cnd->get_object(qdCondition::OBJECT_NAME));
 		if (!obj) return false;
 		return !obj->is_visible();
 	}
 	return false;
 	case qdCondition::CONDITION_MOUSE_RIGHT_ZONE_CLICK:
-		if (mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_RIGHT_DOWN)) {
+		if (mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_RIGHT_DOWN)) {
 			if (check_flag(OBJECT_CLICK_FLAG | DIALOG_CLICK_FLAG) || mouse_click_obj_) return false;
 
 			qdGameScene *sc = get_active_scene();
-			if (!sc || sc -> mouse_click_object() || sc -> mouse_right_click_object()) return false;
+			if (!sc || sc->mouse_click_object() || sc->mouse_right_click_object()) return false;
 
-			if (cnd -> owner()) {
-				qdNamedObject *p = cnd -> owner() -> owner(QD_NAMED_OBJECT_MOVING_OBJ);
+			if (cnd->owner()) {
+				qdNamedObject *p = cnd->owner()->owner(QD_NAMED_OBJECT_MOVING_OBJ);
 				if (p && p != get_active_personage())
 					return false;
 			}
 
-			const qdGridZone *zone = dynamic_cast<const qdGridZone *>(cnd -> get_object(qdCondition::CLICK_ZONE_NAME));
+			const qdGridZone *zone = dynamic_cast<const qdGridZone *>(cnd->get_object(qdCondition::CLICK_ZONE_NAME));
 			if (!zone) return false;
 
-			return zone -> is_point_in_zone(sc -> mouse_click_pos());
+			return zone->is_point_in_zone(sc->mouse_click_pos());
 		}
 		return false;
 	case qdCondition::CONDITION_MOUSE_RIGHT_OBJECT_ZONE_CLICK:
-		if (mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_RIGHT_DOWN)) {
+		if (mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_RIGHT_DOWN)) {
 			if (!check_flag(OBJECT_CLICK_FLAG) || check_flag(DIALOG_CLICK_FLAG) || !mouse_click_obj_) return false;
 
 			qdGameScene *sc = get_active_scene();
-			if (!sc || sc -> mouse_click_object() || sc -> mouse_right_click_object()) return false;
+			if (!sc || sc->mouse_click_object() || sc->mouse_right_click_object()) return false;
 
-			if (cnd -> owner()) {
-				qdNamedObject *p = cnd -> owner() -> owner(QD_NAMED_OBJECT_MOVING_OBJ);
+			if (cnd->owner()) {
+				qdNamedObject *p = cnd->owner()->owner(QD_NAMED_OBJECT_MOVING_OBJ);
 				if (p && p != get_active_personage())
 					return false;
 			}
 
-			const qdGridZone *zone = dynamic_cast<const qdGridZone *>(cnd -> get_object(qdCondition::CLICK_ZONE_NAME));
+			const qdGridZone *zone = dynamic_cast<const qdGridZone *>(cnd->get_object(qdCondition::CLICK_ZONE_NAME));
 			if (!zone) return false;
 
-			if (zone -> is_point_in_zone(sc -> mouse_click_pos())) {
-				const qdGameObject *m_obj = dynamic_cast<const qdGameObject *>(cnd -> get_object(qdCondition::MOUSE_OBJECT_NAME));
+			if (zone->is_point_in_zone(sc->mouse_click_pos())) {
+				const qdGameObject *m_obj = dynamic_cast<const qdGameObject *>(cnd->get_object(qdCondition::MOUSE_OBJECT_NAME));
 				if (m_obj && m_obj == mouse_click_obj_)
 					return true;
 			}
 		}
 		return false;
 	case qdCondition::CONDITION_MOUSE_HOVER:
-		if (!mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_LEFT_DOWN) && !mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_RIGHT_DOWN)) {
-			const qdNamedObject *p = cnd -> get_object(qdCondition::OBJECT_NAME);
+		if (!mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_LEFT_DOWN) && !mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_RIGHT_DOWN)) {
+			const qdNamedObject *p = cnd->get_object(qdCondition::OBJECT_NAME);
 
 			if (!p) {
-				if (cnd -> owner())
-					p = cnd -> owner() -> owner();
+				if (cnd->owner())
+					p = cnd->owner()->owner();
 
 				if (!p) return false;
 			}
@@ -1738,19 +1738,19 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 			qdGameScene *sc = get_active_scene();
 			if (!sc) return false;
 
-			if (sc -> mouse_hover_object()) {
-				if (p == sc -> mouse_hover_object())
+			if (sc->mouse_hover_object()) {
+				if (p == sc->mouse_hover_object())
 					return true;
 			}
 		}
 		return false;
 	case qdCondition::CONDITION_MOUSE_OBJECT_HOVER:
-		if (!mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_LEFT_DOWN) && !mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_RIGHT_DOWN)) {
-			const qdNamedObject *p = cnd -> get_object(qdCondition::OBJECT_NAME);
+		if (!mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_LEFT_DOWN) && !mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_RIGHT_DOWN)) {
+			const qdNamedObject *p = cnd->get_object(qdCondition::OBJECT_NAME);
 
 			if (!p) {
-				if (cnd -> owner())
-					p = cnd -> owner() -> owner();
+				if (cnd->owner())
+					p = cnd->owner()->owner();
 
 				if (!p) return false;
 			}
@@ -1758,98 +1758,98 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 			qdGameScene *sc = get_active_scene();
 			if (!sc) return false;
 
-			if (sc -> mouse_hover_object()) {
-				if (p == sc -> mouse_hover_object()) {
-					const qdGameObject *m_obj = dynamic_cast<const qdGameObject *>(cnd -> get_object(qdCondition::MOUSE_OBJECT_NAME));
-					if (m_obj && m_obj == mouse_obj_ -> object())
+			if (sc->mouse_hover_object()) {
+				if (p == sc->mouse_hover_object()) {
+					const qdGameObject *m_obj = dynamic_cast<const qdGameObject *>(cnd->get_object(qdCondition::MOUSE_OBJECT_NAME));
+					if (m_obj && m_obj == mouse_obj_->object())
 						return true;
 				}
 			}
 		}
 		return false;
 	case qdCondition::CONDITION_MOUSE_HOVER_ZONE:
-		if (!mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_LEFT_DOWN) && !mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_RIGHT_DOWN)) {
-			if (mouse_obj_ -> object()) return false;
+		if (!mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_LEFT_DOWN) && !mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_RIGHT_DOWN)) {
+			if (mouse_obj_->object()) return false;
 
 			qdGameScene *sc = get_active_scene();
-			if (!sc || sc -> mouse_click_object()) return false;
+			if (!sc || sc->mouse_click_object()) return false;
 
-			const qdGridZone *zone = dynamic_cast<const qdGridZone *>(cnd -> get_object(qdCondition::CLICK_ZONE_NAME));
+			const qdGridZone *zone = dynamic_cast<const qdGridZone *>(cnd->get_object(qdCondition::CLICK_ZONE_NAME));
 			if (!zone) return false;
 
-			return zone -> is_point_in_zone(sc -> mouse_click_pos());
+			return zone->is_point_in_zone(sc->mouse_click_pos());
 		}
 		return false;
 	case qdCondition::CONDITION_MOUSE_OBJECT_HOVER_ZONE:
-		if (!mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_LEFT_DOWN) && !mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_RIGHT_DOWN)) {
-			if (!mouse_obj_ -> object()) return false;
+		if (!mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_LEFT_DOWN) && !mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_RIGHT_DOWN)) {
+			if (!mouse_obj_->object()) return false;
 
 			qdGameScene *sc = get_active_scene();
-			if (!sc || sc -> mouse_click_object()) return false;
+			if (!sc || sc->mouse_click_object()) return false;
 
-			if (cnd -> owner()) {
-				qdNamedObject *p = cnd -> owner() -> owner(QD_NAMED_OBJECT_MOVING_OBJ);
+			if (cnd->owner()) {
+				qdNamedObject *p = cnd->owner()->owner(QD_NAMED_OBJECT_MOVING_OBJ);
 				if (p && p != get_active_personage())
 					return false;
 			}
 
-			const qdGridZone *zone = dynamic_cast<const qdGridZone *>(cnd -> get_object(qdCondition::CLICK_ZONE_NAME));
+			const qdGridZone *zone = dynamic_cast<const qdGridZone *>(cnd->get_object(qdCondition::CLICK_ZONE_NAME));
 			if (!zone) return false;
 
-			if (zone -> is_point_in_zone(sc -> mouse_click_pos())) {
-				const qdGameObject *m_obj = dynamic_cast<const qdGameObject *>(cnd -> get_object(qdCondition::MOUSE_OBJECT_NAME));
-				if (m_obj && m_obj == mouse_obj_ -> object())
+			if (zone->is_point_in_zone(sc->mouse_click_pos())) {
+				const qdGameObject *m_obj = dynamic_cast<const qdGameObject *>(cnd->get_object(qdCondition::MOUSE_OBJECT_NAME));
+				if (m_obj && m_obj == mouse_obj_->object())
 					return true;
 			}
 		}
 		return false;
 	case qdCondition::CONDITION_MOUSE_CLICK_FAILED:
-		if (!mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_LEFT_DOWN)) {
+		if (!mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_LEFT_DOWN)) {
 			return check_flag(CLICK_WAS_FAILED_FLAG);
 		}
 		return false;
 	case qdCondition::CONDITION_MOUSE_OBJECT_CLICK_FAILED:
-		if (!mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_LEFT_DOWN)) {
+		if (!mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_LEFT_DOWN)) {
 			return check_flag(OBJECT_CLICK_WAS_FAILED_FLAG);
 		}
 		return false;
 	case qdCondition::CONDITION_MOUSE_CLICK_EVENT:
-		if (mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_LEFT_DOWN)) {
+		if (mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_LEFT_DOWN)) {
 			if (check_flag(OBJECT_CLICK_FLAG | DIALOG_CLICK_FLAG)) return false;
 
 			return true;
 		}
 		return false;
 	case qdCondition::CONDITION_MOUSE_OBJECT_CLICK_EVENT:
-		if (mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_LEFT_DOWN)) {
+		if (mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_LEFT_DOWN)) {
 			if (!check_flag(OBJECT_CLICK_FLAG) || check_flag(DIALOG_CLICK_FLAG) || !mouse_click_obj_) return false;
 
-			const qdGameObject *m_obj = dynamic_cast<const qdGameObject *>(cnd -> get_object(0));
+			const qdGameObject *m_obj = dynamic_cast<const qdGameObject *>(cnd->get_object(0));
 			return (!m_obj || m_obj == mouse_click_obj_);
 
 			return true;
 		}
 		return false;
 	case qdCondition::CONDITION_MOUSE_RIGHT_CLICK_EVENT:
-		if (mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_RIGHT_DOWN)) {
+		if (mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_RIGHT_DOWN)) {
 			if (check_flag(OBJECT_CLICK_FLAG | DIALOG_CLICK_FLAG)) return false;
 			return true;
 		}
 		return false;
 	case qdCondition::CONDITION_MOUSE_RIGHT_OBJECT_CLICK_EVENT:
-		if (mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_RIGHT_DOWN)) {
+		if (mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_RIGHT_DOWN)) {
 			if (!check_flag(OBJECT_CLICK_FLAG) || check_flag(DIALOG_CLICK_FLAG) || !mouse_click_obj_) return false;
 
-			const qdGameObject *m_obj = dynamic_cast<const qdGameObject *>(cnd -> get_object(0));
+			const qdGameObject *m_obj = dynamic_cast<const qdGameObject *>(cnd->get_object(0));
 			return (!m_obj || m_obj == mouse_click_obj_);
 
 			return true;
 		}
 		return false;
 	case qdCondition::CONDITION_MOUSE_STATE_PHRASE_CLICK:
-		if (mouseDispatcher::instance() -> is_event_active(mouseDispatcher::EV_LEFT_DOWN)) {
+		if (mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_LEFT_DOWN)) {
 			if (check_flag(DIALOG_CLICK_FLAG) && !mouse_click_obj_) {
-				const qdGameObjectState *p = dynamic_cast<const qdGameObjectState *>(cnd -> get_object(0));
+				const qdGameObjectState *p = dynamic_cast<const qdGameObjectState *>(cnd->get_object(0));
 				if (!p) return false;
 
 				return (p == mouse_click_state_);
@@ -1857,21 +1857,21 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 		}
 		return false;
 	case qdCondition::CONDITION_OBJECT_IS_CLOSER: {
-		const qdGameObject *obj0 = dynamic_cast<const qdGameObject *>(cnd -> get_object(0));
+		const qdGameObject *obj0 = dynamic_cast<const qdGameObject *>(cnd->get_object(0));
 		if (!obj0) {
-			if (cnd -> owner())
-				obj0 = dynamic_cast<const qdGameObject * >(cnd -> owner() -> owner());
+			if (cnd->owner())
+				obj0 = dynamic_cast<const qdGameObject * >(cnd->owner()->owner());
 		}
 		if (!obj0) return false;
 
-		const qdGameObject *obj1 = dynamic_cast<const qdGameObject *>(cnd -> get_object(1));
+		const qdGameObject *obj1 = dynamic_cast<const qdGameObject *>(cnd->get_object(1));
 		if (!obj1) return false;
 
-		const qdGameObject *obj2 = dynamic_cast<const qdGameObject *>(cnd -> get_object(2));
+		const qdGameObject *obj2 = dynamic_cast<const qdGameObject *>(cnd->get_object(2));
 		if (!obj2) return false;
 
-		Vect3f dr1 = obj1 -> R() - obj0 -> R();
-		Vect3f dr2 = obj2 -> R() - obj0 -> R();
+		Vect3f dr1 = obj1->R() - obj0->R();
+		Vect3f dr2 = obj2->R() - obj0->R();
 
 		dr1.z = dr2.z = 0;
 
@@ -1880,22 +1880,22 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 	return false;
 	case qdCondition::CONDITION_ANIMATED_OBJECT_IDLE_GREATER_THAN_VALUE: {
 		const qdGameObjectAnimated *anim_obj =
-		    dynamic_cast<const qdGameObjectAnimated *>(cnd -> get_object(0));
+		    dynamic_cast<const qdGameObjectAnimated *>(cnd->get_object(0));
 
 		if (NULL == anim_obj) return false;
 
 		int value;
-		if (!cnd -> get_value(0, value))
+		if (!cnd->get_value(0, value))
 			return false;
 
-		return (anim_obj -> idle_time() > value);
+		return (anim_obj->idle_time() > value);
 	}
 	return false;
 	case qdCondition::CONDITION_ANIMATED_OBJECTS_INTERSECTIONAL_BOUNDS: {
 		const qdGameObjectAnimated *anim1 =
-		    dynamic_cast<const qdGameObjectAnimated *>(cnd -> get_object(0));
+		    dynamic_cast<const qdGameObjectAnimated *>(cnd->get_object(0));
 		const qdGameObjectAnimated *anim2 =
-		    dynamic_cast<const qdGameObjectAnimated *>(cnd -> get_object(1));
+		    dynamic_cast<const qdGameObjectAnimated *>(cnd->get_object(1));
 
 		if ((NULL == anim1) || (NULL == anim2))
 			return false;
@@ -1922,38 +1922,38 @@ bool qdGameDispatcher::play_video(qdVideo *p) {
 		video_player_.close_file();
 	}
 
-	if (!video_player_.open_file(find_file(p -> file_name(), *p)))
+	if (!video_player_.open_file(find_file(p->file_name(), *p)))
 		return false;
 
 	sndDispatcher *sp = sndDispatcher::get_dispatcher();
-	if (sp) sp -> pause_sounds();
+	if (sp) sp->pause_sounds();
 
-	if (!p -> check_flag(qdVideo::VID_ENABLE_MUSIC))
+	if (!p->check_flag(qdVideo::VID_ENABLE_MUSIC))
 		mpegPlayer::instance().pause();
 
 	cur_video_ = p;
 
-	if (p -> background_file_name())
-		p -> draw_background();
+	if (p->background_file_name())
+		p->draw_background();
 
-	if (p -> check_flag(qdVideo::VID_FULLSCREEN_FLAG)) {
+	if (p->check_flag(qdVideo::VID_FULLSCREEN_FLAG)) {
 		video_player_.set_window(appGetHandle(), 0, 0, qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy());
 	} else {
 		int sx, sy;
 		video_player_.get_movie_size(sx, sy);
 
-		if (p -> check_flag(qdVideo::VID_CENTER_FLAG)) {
+		if (p->check_flag(qdVideo::VID_CENTER_FLAG)) {
 			int x = (qdGameConfig::get_config().screen_sx() - sx) >> 1;
 			int y = (qdGameConfig::get_config().screen_sy() - sy) >> 1;
 
 			video_player_.set_window(appGetHandle(), x, y, sx, sy);
 		} else
-			video_player_.set_window(appGetHandle(), p -> position().x, p -> position().y, sx, sy);
+			video_player_.set_window(appGetHandle(), p->position().x, p->position().y, sx, sy);
 	}
 
 	if (sndDispatcher * sp = sndDispatcher::get_dispatcher()) {
-		if (sp -> is_enabled())
-			video_player_.set_volume(sp -> volume_dB());
+		if (sp->is_enabled())
+			video_player_.set_volume(sp->volume_dB());
 		else
 			video_player_.set_volume(0);
 	}
@@ -1981,7 +1981,7 @@ bool qdGameDispatcher::close_video() {
 		qdVideoList::const_iterator it = std::find(video_list().begin(), video_list().end(), cur_video_);
 		if (it != video_list().end()) ++it;
 		for (; it != video_list().end(); ++it) {
-			if ((*it) -> is_intro_movie()) {
+			if ((*it)->is_intro_movie()) {
 				play_video(*it);
 				return true;
 			}
@@ -1996,7 +1996,7 @@ bool qdGameDispatcher::close_video() {
 	cur_video_ = NULL;
 
 	if (sndDispatcher * sp = sndDispatcher::get_dispatcher())
-		sp -> resume_sounds();
+		sp->resume_sounds();
 
 	if (!interface_dispatcher_.is_active())
 		resume();
@@ -2017,17 +2017,17 @@ bool qdGameDispatcher::merge_global_objects(qdGameObject *obj) {
 #ifndef _QUEST_EDITOR
 	qdGameSceneList::const_iterator is;
 	FOR_EACH(scene_list(), is)
-	(*is) -> merge_global_objects(obj);
+	(*is)->merge_global_objects(obj);
 #else
 	qdGameScene *const activeScene = get_active_scene();
 	qdGameSceneList::const_iterator is = scene_list().begin(),
 	                en = scene_list().end();
 	for (; is != en; ++is) {
 		if (*is != activeScene)
-			(*is) -> merge_global_objects(obj);
+			(*is)->merge_global_objects(obj);
 	}
 	if (activeScene)
-		activeScene -> merge_global_objects(obj);
+		activeScene->merge_global_objects(obj);
 #endif // _QUEST_EDITOR
 
 	return true;
@@ -2036,8 +2036,8 @@ bool qdGameDispatcher::merge_global_objects(qdGameObject *obj) {
 #ifndef _QUEST_EDITOR
 bool qdGameDispatcher::update_walk_state(const char *object_name, qdGameObjectState *p) {
 	if (qdGameObject * obj = get_global_object(object_name)) {
-		if (obj -> named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ)
-			static_cast<qdGameObjectMoving * >(obj) -> set_last_walk_state(p);
+		if (obj->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ)
+			static_cast<qdGameObjectMoving * >(obj)->set_last_walk_state(p);
 	}
 
 	return false;
@@ -2045,8 +2045,8 @@ bool qdGameDispatcher::update_walk_state(const char *object_name, qdGameObjectSt
 
 qdGameObjectState *qdGameDispatcher::get_walk_state(const char *object_name) {
 	if (qdGameObject * obj = get_global_object(object_name)) {
-		if (obj -> named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ)
-			return static_cast<qdGameObjectMoving * >(obj) -> last_walk_state();
+		if (obj->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ)
+			return static_cast<qdGameObjectMoving * >(obj)->last_walk_state();
 	}
 
 	return NULL;
@@ -2056,7 +2056,7 @@ qdGameObjectState *qdGameDispatcher::get_walk_state(const char *object_name) {
 bool qdGameDispatcher::split_global_objects(qdGameObject *obj) {
 	qdGameSceneList::const_iterator is;
 	FOR_EACH(scene_list(), is)
-	(*is) -> split_global_objects(obj);
+	(*is)->split_global_objects(obj);
 
 	return true;
 }
@@ -2065,7 +2065,7 @@ bool qdGameDispatcher::init_inventories() {
 	bool result = true;
 	qdInventoryList::const_iterator it;
 	FOR_EACH(inventory_list(), it) {
-		if (!(*it) -> init(inventory_cell_types_))
+		if (!(*it)->init(inventory_cell_types_))
 			result = false;
 	}
 	return result;
@@ -2079,8 +2079,8 @@ bool qdGameDispatcher::toggle_inventory(bool state) {
 
 	if (state) {
 		qdGameObjectMoving *p = get_active_personage();
-		if (p && strlen(p -> inventory_name())) {
-			cur_inventory_ = get_inventory(p -> inventory_name());
+		if (p && strlen(p->inventory_name())) {
+			cur_inventory_ = get_inventory(p->inventory_name());
 			if (cur_inventory_) {
 				update_ingame_interface();
 				return true;
@@ -2095,7 +2095,7 @@ bool qdGameDispatcher::toggle_inventory(bool state) {
 }
 
 bool qdGameDispatcher::drop_mouse_object() {
-	if (mouse_obj_ -> object()) {
+	if (mouse_obj_->object()) {
 		/*      if(!cur_inventory_){
 		            if(!toggle_inventory(true))
 		                return false;
@@ -2104,9 +2104,9 @@ bool qdGameDispatcher::drop_mouse_object() {
 		if (!cur_inventory_)
 			return false;
 
-		qdGameObjectAnimated *obj = mouse_obj_ -> object();
-		mouse_obj_ -> take_object(NULL);
-		cur_inventory_ -> put_object(obj);
+		qdGameObjectAnimated *obj = mouse_obj_->object();
+		mouse_obj_->take_object(NULL);
+		cur_inventory_->put_object(obj);
 	}
 
 	return true;
@@ -2117,29 +2117,29 @@ bool qdGameDispatcher::put_to_inventory(qdGameObjectAnimated *p) {
 
 	qdInventory *inv = NULL;
 
-	if (!p -> has_inventory_name()) {
+	if (!p->has_inventory_name()) {
 		qdGameObjectMoving *pe = get_active_personage();
-		if (!pe || !pe -> has_inventory_name()) return false;
-		inv = get_inventory(pe -> inventory_name());
+		if (!pe || !pe->has_inventory_name()) return false;
+		inv = get_inventory(pe->inventory_name());
 	} else
-		inv = get_inventory(p -> inventory_name());
+		inv = get_inventory(p->inventory_name());
 
-	if (inv && inv -> put_object(p)) {
-		if (qdGameObjectState * sp = p -> get_inventory_state())
-			p -> set_state(sp);
+	if (inv && inv->put_object(p)) {
+		if (qdGameObjectState * sp = p->get_inventory_state())
+			p->set_state(sp);
 
-		if (!inv -> check_flag(qdInventory::INV_DONT_OPEN_AFTER_TAKE)) {
+		if (!inv->check_flag(qdInventory::INV_DONT_OPEN_AFTER_TAKE)) {
 			if (!cur_inventory_) toggle_inventory(true);
 
-			if (inv -> check_flag(qdInventory::INV_TAKE_TO_MOUSE)) {
+			if (inv->check_flag(qdInventory::INV_TAKE_TO_MOUSE)) {
 				if (cur_inventory_ == inv) {
-					if (mouse_obj_ -> object()) {
-						qdGameObjectAnimated *obj = mouse_obj_ -> object();
-						mouse_obj_ -> take_object(NULL);
-						cur_inventory_ -> put_object(obj);
+					if (mouse_obj_->object()) {
+						qdGameObjectAnimated *obj = mouse_obj_->object();
+						mouse_obj_->take_object(NULL);
+						cur_inventory_->put_object(obj);
 					}
-					cur_inventory_ -> remove_object(p);
-					mouse_obj_ -> take_object(p);
+					cur_inventory_->remove_object(p);
+					mouse_obj_->take_object(p);
 				}
 			}
 		}
@@ -2153,22 +2153,22 @@ bool qdGameDispatcher::put_to_inventory(qdGameObjectAnimated *p) {
 bool qdGameDispatcher::is_in_inventory(const qdGameObjectAnimated *p) const {
 	qdInventoryList::const_iterator it;
 	FOR_EACH(inventory_list(), it) {
-		if ((*it) -> is_object_in_list(p)) return true;
+		if ((*it)->is_object_in_list(p)) return true;
 	}
 
 	return false;
 }
 
 bool qdGameDispatcher::remove_from_inventory(qdGameObjectAnimated *p) {
-	if (mouse_obj_ -> object() == p) {
-		mouse_obj_ -> take_object(NULL);
-		p -> drop_flag(QD_OBJ_IS_IN_INVENTORY_FLAG);
+	if (mouse_obj_->object() == p) {
+		mouse_obj_->take_object(NULL);
+		p->drop_flag(QD_OBJ_IS_IN_INVENTORY_FLAG);
 		return true;
 	}
 
 	for (qdInventoryList::const_iterator it = inventory_list().begin(); it != inventory_list().end(); ++it) {
-		if ((*it) -> is_object_in_list(p)) {
-			(*it) -> remove_object(p);
+		if ((*it)->is_object_in_list(p)) {
+			(*it)->remove_object(p);
 			return true;
 		}
 	}
@@ -2184,13 +2184,13 @@ bool qdGameDispatcher::add_video(qdVideo *p, qdVideo const *before) {
 #ifdef _QUEST_EDITOR
 	if (before) {
 		if (videos.insert_object(p, before)) {
-			p -> set_owner(this);
+			p->set_owner(this);
 			return true;
 		}
 	} else //!!!!!!!!
 #endif // _QUEST_EDITOR
 		if (videos.add_object(p)) {
-			p -> set_owner(this);
+			p->set_owner(this);
 			return true;
 		}
 
@@ -2231,7 +2231,7 @@ bool qdGameDispatcher::select_scene(qdGameScene *sp, bool resources_flag) {
 	if (!sp || get_active_scene() != sp) {
 			debugC(3, kDebugQuant, "qdGameDispatcher::select_scene() Stop sound");
 		if (sndDispatcher * p = sndDispatcher::get_dispatcher())
-			p -> stop_sounds();
+			p->stop_sounds();
 	}
 
 	if (sp) {
@@ -2244,9 +2244,9 @@ bool qdGameDispatcher::select_scene(qdGameScene *sp, bool resources_flag) {
 
 	if (cur_scene_) {
 		if (cur_scene_ != sp)
-			cur_scene_ -> free_resources();
+			cur_scene_->free_resources();
 
-		cur_scene_ -> deactivate();
+		cur_scene_->deactivate();
 	}
 
 	scene_saved_ = false;
@@ -2260,26 +2260,26 @@ bool qdGameDispatcher::select_scene(qdGameScene *sp, bool resources_flag) {
 
 	if (cur_scene_) {
 		debugC(3, kDebugQuant, "qdGameDispatcher::select_scene() set_current_camera");
-		qdCamera::set_current_camera(cur_scene_ -> get_camera());
-		cur_scene_ -> activate();
+		qdCamera::set_current_camera(cur_scene_->get_camera());
+		cur_scene_->activate();
 
 		if (resources_flag)
-			cur_scene_ -> load_resources();
+			cur_scene_->load_resources();
 
 		update_ingame_interface();
-		cur_scene_ -> start_minigame();
+		cur_scene_->start_minigame();
 		interface_dispatcher_.update_personage_buttons();
 	}
 
 	if (resources_flag) {
-		if (mouse_obj_ -> max_state()) {
-			mouse_obj_ -> free_resources();
-			mouse_obj_ -> load_resources();
+		if (mouse_obj_->max_state()) {
+			mouse_obj_->free_resources();
+			mouse_obj_->load_resources();
 		} else
-			mouse_animation_ -> load_resources();
+			mouse_animation_->load_resources();
 
 		for (qdInventoryList::const_iterator it = inventory_list().begin(); it != inventory_list().end(); ++it)
-			(*it) -> load_resources();
+			(*it)->load_resources();
 	}
 
 	tm = g_system->getMillis() - tm;
@@ -2291,20 +2291,20 @@ bool qdGameDispatcher::select_scene(qdGameScene *sp, bool resources_flag) {
 
 qdGameObject *qdGameDispatcher::get_object(const char *name) {
 	if (cur_scene_)
-		return cur_scene_ -> get_object(name);
+		return cur_scene_->get_object(name);
 
 	return NULL;
 }
 
 qdGameObjectMoving *qdGameDispatcher::get_active_personage() {
-	if (cur_scene_) return cur_scene_ -> get_active_personage();
+	if (cur_scene_) return cur_scene_->get_active_personage();
 
 	return NULL;
 }
 
 qdScaleInfo *qdGameDispatcher::get_scale_info(const char *p) {
 	if (cur_scene_) {
-		qdScaleInfo *si = cur_scene_ -> get_scale_info(p);
+		qdScaleInfo *si = cur_scene_->get_scale_info(p);
 		if (si) return si;
 	}
 
@@ -2313,7 +2313,7 @@ qdScaleInfo *qdGameDispatcher::get_scale_info(const char *p) {
 
 bool qdGameDispatcher::add_trigger_chain(qdTriggerChain *p) {
 	if (trigger_chains.add_object(p)) {
-		p -> set_owner(this);
+		p->set_owner(this);
 		return true;
 	}
 
@@ -2346,7 +2346,7 @@ bool qdGameDispatcher::rename_trigger_chain(qdTriggerChain *p, const char *name)
 
 bool qdGameDispatcher::add_global_object(qdGameObject *p) {
 	if (global_objects.add_object(p)) {
-		p -> set_owner(this);
+		p->set_owner(this);
 		return true;
 	}
 
@@ -2379,7 +2379,7 @@ bool qdGameDispatcher::is_global_object_in_list(qdGameObject *p) {
 
 bool qdGameDispatcher::add_minigame(qdMiniGame *p) {
 	if (minigames.add_object(p)) {
-		p -> set_owner(this);
+		p->set_owner(this);
 		return true;
 	}
 
@@ -2426,7 +2426,7 @@ bool qdGameDispatcher::keyboard_handler(int vkey, bool event) {
 #endif
 
 		if (is_video_playing() && event) {
-			if (!cur_video_ -> check_flag(qdVideo::VID_DISABLE_INTERRUPT_FLAG)) {
+			if (!cur_video_->check_flag(qdVideo::VID_DISABLE_INTERRUPT_FLAG)) {
 				close_video();
 				return true;
 			}
@@ -2450,7 +2450,7 @@ bool qdGameDispatcher::keyboard_handler(int vkey, bool event) {
 		case VK_SPACE:
 			if (qdGameScene * sp = get_active_scene()) {
 				if (!sp->check_flag(qdGameScene::DISABLE_KEYBOARD_PERSONAGE_SWITCH))
-					sp -> change_active_personage();
+					sp->change_active_personage();
 				return true;
 			}
 			break;
@@ -2491,8 +2491,8 @@ bool qdGameDispatcher::load_data(const char *fname) {
 	debugC(3, kDebugLog, "[%d] Save loading %s", g_system->getMillis(), transCyrillic(fname));
 
 	if (sndDispatcher * p = sndDispatcher::get_dispatcher()) {
-		p -> stop_sounds();
-		p -> pause();
+		p->stop_sounds();
+		p->pause();
 	}
 
 	pause();
@@ -2528,7 +2528,7 @@ bool qdGameDispatcher::load_data(const char *fname) {
 	if (size != global_object_list().size()) return false;
 
 	for (qdGameObjectList::const_iterator it = global_object_list().begin(); it != global_object_list().end(); ++it) {
-		if (!(*it) -> load_data(fh, save_version))
+		if (!(*it)->load_data(fh, save_version))
 			return false;
 	}
 
@@ -2536,7 +2536,7 @@ bool qdGameDispatcher::load_data(const char *fname) {
 	if (size != counter_list().size()) return false;
 
 	for (qdCounterList::const_iterator it = counter_list().begin(); it != counter_list().end(); ++it) {
-		if (!(*it) -> load_data(fh, save_version))
+		if (!(*it)->load_data(fh, save_version))
 			return false;
 	}
 
@@ -2544,7 +2544,7 @@ bool qdGameDispatcher::load_data(const char *fname) {
 	if (size != scene_list().size()) return false;
 
 	for (qdGameSceneList::const_iterator it = scene_list().begin(); it != scene_list().end(); ++it) {
-		if (!(*it) -> load_data(fh, save_version))
+		if (!(*it)->load_data(fh, save_version))
 			return false;
 	}
 
@@ -2552,7 +2552,7 @@ bool qdGameDispatcher::load_data(const char *fname) {
 	if (size != global_object_list().size()) return false;
 
 	for (qdGameObjectList::const_iterator it = global_object_list().begin(); it != global_object_list().end(); ++it) {
-		if (!(*it) -> load_data(fh, save_version))
+		if (!(*it)->load_data(fh, save_version))
 			return false;
 	}
 
@@ -2560,7 +2560,7 @@ bool qdGameDispatcher::load_data(const char *fname) {
 	if (size != trigger_chain_list().size()) return false;
 
 	for (qdTriggerChainList::const_iterator it = trigger_chain_list().begin(); it != trigger_chain_list().end(); ++it) {
-		if (!(*it) -> load_data(fh, save_version))
+		if (!(*it)->load_data(fh, save_version))
 			return false;
 	}
 
@@ -2568,7 +2568,7 @@ bool qdGameDispatcher::load_data(const char *fname) {
 	if (size != inventory_list().size()) return false;
 
 	for (qdInventoryList::const_iterator it = inventory_list().begin(); it != inventory_list().end(); ++it) {
-		if (!(*it) -> load_data(fh, save_version))
+		if (!(*it)->load_data(fh, save_version))
 			return false;
 	}
 
@@ -2581,7 +2581,7 @@ bool qdGameDispatcher::load_data(const char *fname) {
 	load_resources();
 
 	if (sndDispatcher * p = sndDispatcher::get_dispatcher())
-		p -> resume();
+		p->resume();
 
 	interface_dispatcher_.update_personage_buttons();
 	resume();
@@ -2675,7 +2675,7 @@ bool qdGameDispatcher::save_data(const char *fname) const {
 }
 
 bool qdGameDispatcher::play_music_track(const qdMusicTrack *p, bool interface_mode) {
-	debugC(3, kDebugLog, "[%d] music start -> %s", g_system->getMillis(), transCyrillic(p->file_name()));
+	debugC(3, kDebugLog, "[%d] music start->%s", g_system->getMillis(), transCyrillic(p->file_name()));
 
 	if (!interface_mode) {
 		if (p->check_flag(QD_MUSIC_TRACK_DISABLE_RESTART) && cur_music_track_ == p)
@@ -2693,13 +2693,13 @@ bool qdGameDispatcher::play_music_track(const qdMusicTrack *p, bool interface_mo
 	const char *file_name = NULL;
 
 	if (cur_scene_)
-		file_name = find_file(p -> file_name(), *cur_scene_);
+		file_name = find_file(p->file_name(), *cur_scene_);
 	else
-		file_name = find_file(p -> file_name(), *this);
+		file_name = find_file(p->file_name(), *this);
 
 	interface_music_mode_ = interface_mode;
 
-	return mpegPlayer::instance().play(file_name, p -> is_cycled(), p -> volume());
+	return mpegPlayer::instance().play(file_name, p->is_cycled(), p->volume());
 }
 
 bool qdGameDispatcher::stop_music() {
@@ -2717,7 +2717,7 @@ void qdGameDispatcher::pause() {
 	is_paused_ = true;
 
 	if (sndDispatcher * p = sndDispatcher::get_dispatcher())
-		p -> pause_sounds();
+		p->pause_sounds();
 }
 
 void qdGameDispatcher::resume() {
@@ -2725,14 +2725,14 @@ void qdGameDispatcher::resume() {
 	is_paused_ = false;
 
 	if (sndDispatcher * p = sndDispatcher::get_dispatcher())
-		p -> resume_sounds();
+		p->resume_sounds();
 }
 
 void qdGameDispatcher::set_dispatcher(qdGameDispatcher *p) {
 	dispatcher_ = p;
 
 	if (p)
-		qdInterfaceDispatcher::set_dispatcher(&p -> interface_dispatcher_);
+		qdInterfaceDispatcher::set_dispatcher(&p->interface_dispatcher_);
 	else
 		qdInterfaceDispatcher::set_dispatcher(NULL);
 }
@@ -2743,14 +2743,14 @@ bool qdGameDispatcher::toggle_main_menu(bool state, const char *screen_name) {
 	if (state) {
 		if (interface_dispatcher_.has_main_menu() || screen_name) {
 			/*          if(cur_inventory_){
-			                if(mouse_obj_ -> object()){
-			                    qdGameObjectAnimated* obj = mouse_obj_ -> object();
-			                    mouse_obj_ -> take_object(NULL);
-			                    cur_inventory_ -> put_object(obj);
+			                if(mouse_obj_->object()){
+			                    qdGameObjectAnimated* obj = mouse_obj_->object();
+			                    mouse_obj_->take_object(NULL);
+			                    cur_inventory_->put_object(obj);
 			                }
 			            }*/
 
-			mouse_obj_ -> set_cursor(qdGameObjectMouse::MAIN_MENU_CURSOR);
+			mouse_obj_->set_cursor(qdGameObjectMouse::MAIN_MENU_CURSOR);
 
 			if (!screen_name)
 				screen_name = interface_dispatcher_.main_menu_screen_name();
@@ -2790,7 +2790,7 @@ bool qdGameDispatcher::is_main_menu_exit_enabled() const {
 bool qdGameDispatcher::end_game(const qdGameEnd *p) {
 	restart();
 
-	const char *screen_name = (p -> has_interface_screen()) ? p -> interface_screen() : NULL;
+	const char *screen_name = (p->has_interface_screen()) ? p->interface_screen() : NULL;
 
 	if (screen_name)
 		interface_dispatcher_.toggle_end_game_mode(true);
@@ -2799,7 +2799,7 @@ bool qdGameDispatcher::end_game(const qdGameEnd *p) {
 }
 
 bool qdGameDispatcher::add_redraw_region(const grScreenRegion &reg) {
-	return grDispatcher::instance() -> invalidate_region(reg);
+	return grDispatcher::instance()->invalidate_region(reg);
 }
 
 bool qdGameDispatcher::init() {
@@ -2808,7 +2808,7 @@ bool qdGameDispatcher::init() {
 #endif
 
 	if (sndDispatcher * sdp = sndDispatcher::get_dispatcher())
-		sdp -> stop_sounds();
+		sdp->stop_sounds();
 
 	if (!screen_texts.get_text_set(TEXT_SET_DIALOGS)) {
 		qdScreenTextSet set;
@@ -2824,19 +2824,19 @@ bool qdGameDispatcher::init() {
 
 	select_scene(NULL, false);
 	for (qdGameSceneList::const_iterator it = scene_list().begin(); it != scene_list().end(); ++it)
-		(*it) -> init();
+		(*it)->init();
 
 	for (qdMiniGameList::const_iterator it = minigame_list().begin(); it != minigame_list().end(); ++it)
-		(*it) -> init();
+		(*it)->init();
 
 	for (qdVideoList::const_iterator it = video_list().begin(); it != video_list().end(); ++it)
-		(*it) -> init();
+		(*it)->init();
 
 	for (qdCounterList::const_iterator it = counter_list().begin(); it != counter_list().end(); ++it)
-		(*it) -> init();
+		(*it)->init();
 
 	for (qdGameObjectList::const_iterator it = global_object_list().begin(); it != global_object_list().end(); ++it)
-		(*it) -> init();
+		(*it)->init();
 
 	//! Грузим шрифты, заданные в qdGameDispatcher::qdFontInfoList
 	for (std::list<qdFontInfo * >::const_iterator it = fonts_.get_list().begin();
@@ -2908,7 +2908,7 @@ bool qdGameDispatcher::game_screenshot(const char *file_name, int sx, int sy) co
 		unsigned int r, g, b;
 		for (int i = 0; i < qdGameConfig::get_config().screen_sy(); i++)
 			for (int j = 0; j < qdGameConfig::get_config().screen_sx(); j++) {
-				grDispatcher::instance() -> GetPixel(j, i, r, g, b);
+				grDispatcher::instance()->GetPixel(j, i, r, g, b);
 				sprite.put_pixel(j, i, r, g, b);
 			}
 
@@ -2924,7 +2924,7 @@ bool qdGameDispatcher::game_screenshot(const char *file_name, int sx, int sy) co
 	    if(screen_buf.size() < sx * sy * 3)
 	        screen_buf.resize(sx * sy * 3);
 
-	    sp -> redraw();
+	    sp->redraw();
 
 	    int dx = (qdGameConfig::get_config().screen_sx() << 16) / sx;
 	    int dy = (qdGameConfig::get_config().screen_sy() << 16) / sy;
@@ -2938,7 +2938,7 @@ bool qdGameDispatcher::game_screenshot(const char *file_name, int sx, int sy) co
 	        int fx = (1 << 15);
 	        for(int x = 0; x < sx; x++){
 	            unsigned r,g,b;
-	            grDispatcher::instance() -> GetPixel(fx >> 16,y0,r,g,b);
+	            grDispatcher::instance()->GetPixel(fx >> 16,y0,r,g,b);
 
 	            p[2] = r;
 	            p[1] = g;
@@ -2993,7 +2993,7 @@ bool qdGameDispatcher::restart() {
 
 bool qdGameDispatcher::add_game_end(qdGameEnd *p) {
 	if (game_ends_.add_object(p)) {
-		p -> set_owner(this);
+		p->set_owner(this);
 		return true;
 	}
 
@@ -3021,12 +3021,12 @@ bool qdGameDispatcher::is_game_end_in_list(qdGameEnd *p) {
 }
 
 bool qdGameDispatcher::is_on_mouse(const qdGameObjectAnimated *p) const {
-	return (mouse_obj_ -> object() == p);
+	return (mouse_obj_->object() == p);
 }
 
 bool qdGameDispatcher::add_scene(qdGameScene *p) {
 	if (scenes_.add_object(p)) {
-		p -> set_owner(this);
+		p->set_owner(this);
 		return true;
 	}
 
@@ -3055,7 +3055,7 @@ bool qdGameDispatcher::is_scene_in_list(const qdGameScene *p) {
 
 bool qdGameDispatcher::add_counter(qdCounter *p) {
 	if (counters_.add_object(p)) {
-		p -> set_owner(this);
+		p->set_owner(this);
 		return true;
 	}
 
@@ -3093,7 +3093,7 @@ void qdGameDispatcher::scan_files(qdLoadingProgressFnc progress_fnc, void *conte
 	(*progress_fnc)(percents, context_ptr);
 
 	for (qdVideoList::const_iterator it = video_list().begin(); it != video_list().end(); ++it) {
-		(*it) -> calc_files_size();
+		(*it)->calc_files_size();
 
 		progress++;
 		int percents = progress * 100 / size;
@@ -3101,7 +3101,7 @@ void qdGameDispatcher::scan_files(qdLoadingProgressFnc progress_fnc, void *conte
 	}
 
 	for (qdGameSceneList::const_iterator it = scene_list().begin(); it != scene_list().end(); ++it) {
-		(*it) -> calc_files_size();
+		(*it)->calc_files_size();
 
 		progress++;
 		int percents = progress * 100 / size;
@@ -3158,11 +3158,11 @@ bool qdGameDispatcher::collect_all_external_files(const char *collector_dir) {
 		all_ok = false;
 
 	for (qdVideoList::const_iterator it = video_list().begin(); it != video_list().end(); ++it)
-		if (!(*it) -> adjust_files_paths(collector_dir, collector_dir, true))
+		if (!(*it)->adjust_files_paths(collector_dir, collector_dir, true))
 			all_ok = false;
 
 	for (qdGameSceneList::const_iterator it = scene_list().begin(); it != scene_list().end(); ++it)
-		if (!(*it) -> adjust_files_paths(collector_dir, collector_dir, true))
+		if (!(*it)->adjust_files_paths(collector_dir, collector_dir, true))
 			all_ok = false;
 
 	return all_ok;
@@ -3177,16 +3177,16 @@ bool qdGameDispatcher::get_files_list(qdFileNameList &files_to_copy, qdFileNameL
 		files_to_pack.push_back(texts_database());
 
 	for (qdMiniGameList::const_iterator it = minigame_list().begin(); it != minigame_list().end(); ++it)
-		(*it) -> get_files_list(files_to_copy, files_to_pack);
+		(*it)->get_files_list(files_to_copy, files_to_pack);
 
 	for (qdSoundList::const_iterator it = sound_list().begin(); it != sound_list().end(); ++it)
-		files_to_pack.push_back((*it) -> file_name());
+		files_to_pack.push_back((*it)->file_name());
 
 	for (qdAnimationList::const_iterator it = animation_list().begin(); it != animation_list().end(); ++it)
-		files_to_pack.push_back((*it) -> qda_file());
+		files_to_pack.push_back((*it)->qda_file());
 
 	for (qdInventoryCellTypeVector::const_iterator it = inventory_cell_types().begin(); it != inventory_cell_types().end(); ++it)
-		files_to_pack.push_back(it -> sprite_file());
+		files_to_pack.push_back(it->sprite_file());
 
 	interface_dispatcher_.get_file_list(files_to_copy, files_to_pack);
 
@@ -3204,7 +3204,7 @@ bool qdGameDispatcher::get_files_list(qdFileNameList &files_to_copy, qdFileNameL
 
 bool qdGameDispatcher::start_intro_videos() {
 	for (qdVideoList::const_iterator it = video_list().begin(); it != video_list().end(); ++it) {
-		if ((*it) -> is_intro_movie()) {
+		if ((*it)->is_intro_movie()) {
 			if (play_video(*it)) {
 				set_flag(INTRO_MODE_FLAG);
 				return true;
@@ -3366,7 +3366,7 @@ bool qdGameDispatcher::add_dialog_state(qdGameObjectState *p) {
 
 bool qdGameDispatcher::activate_trigger_links(const qdNamedObject *p) {
 	for (qdTriggerChainList::const_iterator it = trigger_chain_list().begin(); it != trigger_chain_list().end(); ++it)
-		(*it) -> activate_links(p);
+		(*it)->activate_links(p);
 
 	return true;
 }
@@ -3443,7 +3443,7 @@ bool qdGameDispatcher::copy_resources_to_folder(const char *dest_dir, const char
 	get_files_list(files_to_copy, files_to_pack);
 
 	for (qdGameSceneList::const_iterator it = scene_list().begin(); it != scene_list().end(); it++)
-		(*it) -> get_files_list(files_to_copy, files_to_pack);
+		(*it)->get_files_list(files_to_copy, files_to_pack);
 
 	// в files_to_copy - все файлы, которые надо скопировать
 	files_to_copy.clear();
@@ -3516,12 +3516,12 @@ bool qdGameDispatcher::copy_resources_from_folder(const char *src_dir, const cha
 
 		// Ищем место файлу в глобальном списке
 		for (qdFileNameList::const_iterator c_it = files_to_copy.begin(); c_it != files_to_copy.end(); c_it++) {
-			if (0 == scumm_stricmp(it -> c_str(), app_io::path_to_file_name(*c_it).c_str())) {
+			if (0 == scumm_stricmp(it->c_str(), app_io::path_to_file_name(*c_it).c_str())) {
 				// Нашли соотв. файл - копируем
 				fnd_flag = true;
 				path = src_dir;
 				path += '\\';
-				path += it -> c_str();
+				path += it->c_str();
 				if (!app_io::copy_file((*c_it).c_str(), path.c_str())) {
 #if 0
 					debugC(3, kDebugLog, "Error: could not copy %s to %s", transCyrillic(find_data.cFileName), transCyrillic((*c_it).c_str()));
@@ -3547,7 +3547,7 @@ bool qdGameDispatcher::copy_resources_from_folder(const char *src_dir, const cha
 
 bool qdGameDispatcher::deactivate_scene_triggers(const qdGameScene *p) {
 	for (qdTriggerChainList::const_iterator it = trigger_chain_list().begin(); it != trigger_chain_list().end(); ++it)
-		(*it) -> deactivate_object_triggers(p);
+		(*it)->deactivate_object_triggers(p);
 
 	return true;
 }

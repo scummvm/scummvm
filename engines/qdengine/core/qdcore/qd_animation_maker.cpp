@@ -54,31 +54,31 @@ maker_progress_fnc qdAnimationMaker::set_callback(maker_progress_fnc p, void *da
 bool qdAnimationMaker::insert_frame(class qdAnimation *p, const char *fname, int &insert_pos, bool insert_after, bool dupe_check) {
 	// IMPORTANT(pabdulin): auto_ptr usage was removed
 	qdAnimationFrame *fp = new qdAnimationFrame;
-	fp -> set_file(fname);
-	fp -> set_length(default_frame_length_);
+	fp->set_file(fname);
+	fp->set_length(default_frame_length_);
 
-	if (!fp -> load_resources())
+	if (!fp->load_resources())
 		return false;
 
-	if (p -> check_flag(QD_ANIMATION_FLAG_CROP))
-		fp -> crop();
+	if (p->check_flag(QD_ANIMATION_FLAG_CROP))
+		fp->crop();
 
-	if (p -> check_flag(QD_ANIMATION_FLAG_COMPRESS))
-		fp -> compress();
+	if (p->check_flag(QD_ANIMATION_FLAG_COMPRESS))
+		fp->compress();
 
-	qdAnimationFrame *ins_p = p -> get_frame(insert_pos);
+	qdAnimationFrame *ins_p = p->get_frame(insert_pos);
 	if (dupe_check && ins_p && *ins_p == *fp) {
-		ins_p -> set_length(ins_p -> length() + fp -> length());
+		ins_p->set_length(ins_p->length() + fp->length());
 		return true;
 	}
 
-	if (!p -> add_frame(fp, ins_p, insert_after))
+	if (!p->add_frame(fp, ins_p, insert_after))
 		return false;
 
 	if (insert_after)
 		insert_pos++;
 
-	p -> init_size();
+	p->init_size();
 
 	//fp->release();
 	delete fp;
@@ -110,7 +110,7 @@ bool qdAnimationMaker::insert_frames(class qdAnimation *p, const char *folder, i
 		int i = 0;
 		qdFileNameList::iterator it;
 		FOR_EACH(flist, it) {
-			if (insert_frame(p, it -> c_str(), insert_pos, insert_after, true))
+			if (insert_frame(p, it->c_str(), insert_pos, insert_after, true))
 				result = true;
 
 			if (progress_callback_) {

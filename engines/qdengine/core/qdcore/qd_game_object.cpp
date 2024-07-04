@@ -68,10 +68,10 @@ qdGameObject &qdGameObject::operator = (const qdGameObject &obj) {
 
 bool qdGameObject::load_script_body(const xml::tag *p) {
 	int fl;
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_NAME:
-			set_name(it -> data());
+			set_name(it->data());
 			break;
 		case QDSCR_POS2D:
 			xml::tag_buffer(*it) > r_.x > r_.y;
@@ -131,33 +131,33 @@ bool qdGameObject::update_screen_pos() {
 	if (!check_flag(QD_OBJ_SCREEN_COORDS_FLAG)) {
 		if (const qdCamera * cp = qdCamera::current_camera()) {
 #ifndef _QUEST_EDITOR
-			Vect3f v = cp -> global2camera_coord(R());
+			Vect3f v = cp->global2camera_coord(R());
 
 			if (check_flag(QD_OBJ_FIXED_SCREEN_COORDS_FLAG)) {
-				screen_r_ = cp -> camera_coord2rscr(v);
-				screen_r_.x += cp -> get_scr_sx() / 2;
-				screen_r_.y = cp -> get_scr_sy() / 2 - screen_r_.y;
+				screen_r_ = cp->camera_coord2rscr(v);
+				screen_r_.x += cp->get_scr_sx() / 2;
+				screen_r_.y = cp->get_scr_sy() / 2 - screen_r_.y;
 
 				screen_depth_ = 0.0f;
 			} else {
-				screen_r_ = cp -> camera_coord2scr(v);
+				screen_r_ = cp->camera_coord2scr(v);
 
 				Vect3f rr = R();
-				rr.z = cp -> get_grid_center().z;
-				screen_depth_ = cp -> global2camera_coord(rr).z;
+				rr.z = cp->get_grid_center().z;
+				screen_depth_ = cp->global2camera_coord(rr).z;
 			}
 
 			if (parallax_offset_.x || parallax_offset_.y) {
-				screen_r_.x += round(float(parallax_offset_.x) * cp -> scrolling_phase_x());
-				screen_r_.y += round(float(parallax_offset_.y) * cp -> scrolling_phase_y());
+				screen_r_.x += round(float(parallax_offset_.x) * cp->scrolling_phase_x());
+				screen_r_.y += round(float(parallax_offset_.y) * cp->scrolling_phase_y());
 			}
 #else
-			Vect3f v = cp -> global2camera_coord(R());
-			screen_r_ = cp -> camera_coord2scr(v);
+			Vect3f v = cp->global2camera_coord(R());
+			screen_r_ = cp->camera_coord2scr(v);
 
 			v = R();
-			v.z = cp -> get_grid_center().z;
-			screen_depth_ = cp -> global2camera_coord(v).z;
+			v.z = cp->get_grid_center().z;
+			screen_depth_ = cp->global2camera_coord(v).z;
 #endif
 		} else
 			return false;

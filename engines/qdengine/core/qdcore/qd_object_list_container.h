@@ -50,7 +50,7 @@ public:
 		return (get_object(name) != 0);
 	}
 	bool is_in_list(const T *p) const {
-		return (get_object(p -> name()) != 0);
+		return (get_object(p->name()) != 0);
 	}
 	bool clear();
 
@@ -64,7 +64,7 @@ private:
 
 template <class T>
 bool qdObjectListContainer<T>::add_object(T *p) {
-	if (get_object(p -> name())) return false;
+	if (get_object(p->name())) return false;
 	object_list_.push_back(p);
 
 	return true;
@@ -74,7 +74,7 @@ bool qdObjectListContainer<T>::add_object(T *p) {
 #ifdef _QUEST_EDITOR
 template<class T>
 bool qdObjectListContainer<T>::insert_object(T *p, const T *before) {
-	if (get_object(p -> name())) return false;
+	if (get_object(p->name())) return false;
 	object_list_t::iterator i =
 	    std::find(object_list_.begin(), object_list_.end(), before);
 	return (object_list_.insert(i, p) != object_list_.end());
@@ -86,7 +86,7 @@ const T *qdObjectListContainer<T>::get_object(const char *name) const {
 	if (!name) return NULL;
 
 	for (typename object_list_t::const_iterator it = object_list_.begin(); it != object_list_.end(); ++it) {
-		if (!scumm_stricmp(name, (*it) -> name()))
+		if (!scumm_stricmp(name, (*it)->name()))
 			return *it;
 	}
 
@@ -98,7 +98,7 @@ T *qdObjectListContainer<T>::get_object(const char *name) {
 	if (!name) return NULL;
 
 	for (typename object_list_t::const_iterator it = object_list_.begin(); it != object_list_.end(); ++it) {
-		if (!scumm_stricmp(name, (*it) -> name()))
+		if (!scumm_stricmp(name, (*it)->name()))
 			return *it;
 	}
 
@@ -127,7 +127,7 @@ bool qdObjectListContainer<T>::remove_object(const char *name) {
 
 template <class T>
 bool qdObjectListContainer<T>::rename_object(T *p, const char *name) {
-	p -> set_name(name);
+	p->set_name(name);
 	return true;
 }
 

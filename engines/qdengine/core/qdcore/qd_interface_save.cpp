@@ -127,9 +127,9 @@ bool qdInterfaceSave::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev
 
 				return true;
 			} else {
-				dp -> load_game(save_ID_);
+				dp->load_game(save_ID_);
 				if (qdInterfaceDispatcher * ip = qdInterfaceDispatcher::get_dispatcher())
-					ip -> handle_event(qdInterfaceEvent::EVENT_RESUME_GAME, NULL);
+					ip->handle_event(qdInterfaceEvent::EVENT_RESUME_GAME, NULL);
 
 				return true;
 			}
@@ -171,14 +171,14 @@ bool qdInterfaceSave::init(bool is_game_active) {
 			hide();
 
 			if (qdInterfaceScreen * sp = dynamic_cast<qdInterfaceScreen * >(owner()))
-				sp -> build_visible_elements_list();
+				sp->build_visible_elements_list();
 		}
 	} else {
 		if (!is_visible()) {
 			show();
 
 			if (qdInterfaceScreen * sp = dynamic_cast<qdInterfaceScreen * >(owner()))
-				sp -> build_visible_elements_list();
+				sp->build_visible_elements_list();
 		}
 	}
 
@@ -190,7 +190,7 @@ bool qdInterfaceSave::redraw() const {
 	if (qdInterfaceDispatcher * pid = qdInterfaceDispatcher::get_dispatcher()) {
 		if (pid->need_save_screenshot())
 			if (const qdAnimation * p = thumbnail_.animation())
-				p -> redraw(r().x, r().y, 0);
+				p->redraw(r().x, r().y, 0);
 
 		std::string text;
 
@@ -281,8 +281,8 @@ grScreenRegion qdInterfaceSave::screen_region() const {
 int qdInterfaceSave::size_x() const {
 	int x = thumbnail_size_x_;
 	if (const qdAnimation * p = frame_.animation()) {
-		if (x < p -> size_x())
-			x = p -> size_x();
+		if (x < p->size_x())
+			x = p->size_x();
 	}
 
 	return x;
@@ -291,8 +291,8 @@ int qdInterfaceSave::size_x() const {
 int qdInterfaceSave::size_y() const {
 	int y = thumbnail_size_y_;
 	if (const qdAnimation * p = frame_.animation()) {
-		if (y < p -> size_y())
-			y = p -> size_y();
+		if (y < p->size_y())
+			y = p->size_y();
 	}
 
 	return y;
@@ -324,7 +324,7 @@ bool qdInterfaceSave::perform_save() {
 	bool is_ok = true;
 	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
 		debugC(3, kDebugSave, "qdInterfaceSave::perform_save(): save_ID_ = %d", save_ID_);
-		is_ok &= dp -> save_game(save_ID_);
+		is_ok &= dp->save_game(save_ID_);
 
 		debugC(3, kDebugSave, "qdInterfaceSave::perform_save(): is_ok = %d", is_ok);
 
@@ -334,7 +334,7 @@ bool qdInterfaceSave::perform_save() {
 			fh.close();
 		}
 
-		is_ok &= dp -> game_screenshot(qdGameDispatcher::get_save_name(save_ID_, qdGameDispatcher::SAVE_THUMBNAIL), thumbnail_size_x_, thumbnail_size_y_);
+		is_ok &= dp->game_screenshot(qdGameDispatcher::get_save_name(save_ID_, qdGameDispatcher::SAVE_THUMBNAIL), thumbnail_size_x_, thumbnail_size_y_);
 		is_ok &= init(true);
 		return is_ok;
 	}
@@ -376,8 +376,8 @@ bool qdInterfaceSave::save_script_body(Common::SeekableWriteStream &fh, int inde
 }
 
 bool qdInterfaceSave::load_script_body(const xml::tag *p) {
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_INTERFACE_ELEMENT_STATE:
 			if (!frame_.load_script(&*it)) return false;
 			break;

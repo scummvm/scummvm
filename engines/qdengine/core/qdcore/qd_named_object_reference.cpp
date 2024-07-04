@@ -86,11 +86,11 @@ bool qdNamedObjectReference::init(const qdNamedObject *p) {
 	int num_levels = 0;
 
 	const qdNamedObject *obj = p;
-	while (obj && obj -> named_object_type() != QD_NAMED_OBJECT_DISPATCHER) {
+	while (obj && obj->named_object_type() != QD_NAMED_OBJECT_DISPATCHER) {
 #ifdef _QUEST_EDITOR
-		obj = obj -> ref_owner();
+		obj = obj->ref_owner();
 #else
-		obj = obj -> owner();
+		obj = obj->owner();
 #endif
 		num_levels ++;
 	}
@@ -102,14 +102,14 @@ bool qdNamedObjectReference::init(const qdNamedObject *p) {
 		obj = p;
 		for (int j = 0; j < num_levels - i - 1; j ++) {
 #ifdef _QUEST_EDITOR
-			obj = obj -> ref_owner();
+			obj = obj->ref_owner();
 #else
-			obj = obj -> owner();
+			obj = obj->owner();
 #endif
 		}
 		if (obj->name()) {
-			object_names_.push_back(obj -> name());
-			object_types_.push_back(obj -> named_object_type());
+			object_names_.push_back(obj->name());
+			object_types_.push_back(obj->named_object_type());
 		}
 	}
 
@@ -117,23 +117,23 @@ bool qdNamedObjectReference::init(const qdNamedObject *p) {
 }
 
 void qdNamedObjectReference::load_script(const xml::tag *p) {
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		xml::tag_buffer buf(*it);
-		switch (it -> ID()) {
+		switch (it->ID()) {
 		case QDSCR_SIZE:
 			object_types_.reserve(xml::tag_buffer(*it).get_int());
 			object_names_.reserve(xml::tag_buffer(*it).get_int());
 			break;
 		case QDSCR_NAME:
-			object_names_.push_back(it -> data());
+			object_names_.push_back(it->data());
 			break;
 		case QDSCR_TYPE:
 			object_types_.push_back(xml::tag_buffer(*it).get_int());
 			break;
 		case QDSCR_NAMED_OBJECT_TYPES:
-			object_types_.resize(it -> data_size());
-			object_names_.reserve(it -> data_size());
-			for (int i = 0; i < it -> data_size(); i++)
+			object_types_.resize(it->data_size());
+			object_names_.reserve(it->data_size());
+			for (int i = 0; i < it->data_size(); i++)
 				object_types_[i] = buf.get_int();
 			break;
 		}
@@ -235,7 +235,7 @@ bool qdNamedObjectReference::save_data(qdSaveStream &fh) const {
 
 qdNamedObject *qdNamedObjectReference::object() const {
 	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher())
-		return dp -> get_named_object(this);
+		return dp->get_named_object(this);
 
 	return NULL;
 }

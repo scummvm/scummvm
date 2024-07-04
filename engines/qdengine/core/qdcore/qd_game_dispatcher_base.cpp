@@ -51,8 +51,8 @@ void qdGameDispatcherBase::load_script_body(const xml::tag *p) {
 	qdAnimationSet *asp;
 	qdSound *snd;
 
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_OBJ_SCALE_INFO: {
 			qdScaleInfo sp;
 			sp.load_script(&*it);
@@ -61,17 +61,17 @@ void qdGameDispatcherBase::load_script_body(const xml::tag *p) {
 		break;
 		case QDSCR_ANIMATION:
 			ap = new qdAnimation;
-			ap -> load_script(&*it);
+			ap->load_script(&*it);
 			add_animation(ap);
 			break;
 		case QDSCR_ANIMATION_SET:
 			asp = new qdAnimationSet;
-			asp -> load_script(&*it);
+			asp->load_script(&*it);
 			add_animation_set(asp);
 			break;
 		case QDSCR_SOUND:
 			snd = new qdSound;
-			snd -> load_script(&*it);
+			snd->load_script(&*it);
 			add_sound(snd);
 			break;
 		}
@@ -101,7 +101,7 @@ bool qdGameDispatcherBase::save_script_body(Common::SeekableWriteStream &fh, int
 bool qdGameDispatcherBase::get_object_scale(const char *p, float &sc) {
 	qdScaleInfo *si = get_scale_info(p);
 	if (si) {
-		sc = si -> scale();
+		sc = si->scale();
 		return true;
 	}
 
@@ -110,7 +110,7 @@ bool qdGameDispatcherBase::get_object_scale(const char *p, float &sc) {
 
 bool qdGameDispatcherBase::remove_object_scale(const char *p) {
 	for (scale_info_container_t::iterator it = scale_infos.begin(); it != scale_infos.end(); ++it) {
-		if (!strcmp(it -> name(), p)) {
+		if (!strcmp(it->name(), p)) {
 			scale_infos.erase(it);
 			return true;
 		}
@@ -121,7 +121,7 @@ bool qdGameDispatcherBase::remove_object_scale(const char *p) {
 
 qdScaleInfo *qdGameDispatcherBase::get_scale_info(const char *p) {
 	for (scale_info_container_t::iterator it = scale_infos.begin(); it != scale_infos.end(); ++it) {
-		if (!strcmp(it -> name(), p)) {
+		if (!strcmp(it->name(), p)) {
 			return &*it;
 		}
 	}
@@ -131,8 +131,8 @@ qdScaleInfo *qdGameDispatcherBase::get_scale_info(const char *p) {
 
 bool qdGameDispatcherBase::set_object_scale(const char *p, float sc) {
 	for (scale_info_container_t::iterator it = scale_infos.begin(); it != scale_infos.end(); ++it) {
-		if (!strcmp(it -> name(), p)) {
-			it -> set_scale(sc);
+		if (!strcmp(it->name(), p)) {
+			it->set_scale(sc);
 			return true;
 		}
 	}
@@ -153,12 +153,12 @@ int qdGameDispatcherBase::load_resources() {
 void qdGameDispatcherBase::free_resources() {
 	qdAnimationList::const_iterator ia;
 	FOR_EACH(animation_list(), ia) {
-		(*ia) -> free_resources();
+		(*ia)->free_resources();
 	}
 
 	qdSoundList::const_iterator is;
 	FOR_EACH(sound_list(), is) {
-		(*is) -> free_resource();
+		(*is)->free_resource();
 	}
 }
 
@@ -172,7 +172,7 @@ void qdGameDispatcherBase::show_loading_progress(int sz) {
 
 bool qdGameDispatcherBase::add_sound(qdSound *p) {
 	if (sounds.add_object(p)) {
-		p -> set_owner(this);
+		p->set_owner(this);
 		return true;
 	}
 
@@ -201,7 +201,7 @@ bool qdGameDispatcherBase::is_sound_in_list(qdSound *p) {
 
 bool qdGameDispatcherBase::add_animation(qdAnimation *p) {
 	if (animations.add_object(p)) {
-		p -> set_owner(this);
+		p->set_owner(this);
 		return true;
 	}
 	return false;
@@ -229,7 +229,7 @@ bool qdGameDispatcherBase::is_animation_in_list(qdAnimation *p) {
 
 bool qdGameDispatcherBase::add_animation_set(qdAnimationSet *p) {
 	if (animation_sets.add_object(p)) {
-		p -> set_owner(this);
+		p->set_owner(this);
 		return true;
 	}
 	return false;
@@ -258,12 +258,12 @@ bool qdGameDispatcherBase::is_animation_set_in_list(qdAnimationSet *p) {
 #ifdef __QD_DEBUG_ENABLE__
 bool qdGameDispatcherBase::get_resources_info(qdResourceInfoContainer &infos) const {
 	for (qdSoundList::const_iterator it = sound_list().begin(); it != sound_list().end(); ++it) {
-		if ((*it) -> is_resource_loaded())
+		if ((*it)->is_resource_loaded())
 			infos.push_back(qdResourceInfo(*it, *it));
 	}
 
 	for (qdAnimationList::const_iterator it = animation_list().begin(); it != animation_list().end(); ++it) {
-		if ((*it) -> is_resource_loaded())
+		if ((*it)->is_resource_loaded())
 			infos.push_back(qdResourceInfo(*it, *it));
 	}
 

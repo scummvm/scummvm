@@ -129,18 +129,18 @@ public:
 
 	const Vect2i &size() const {
 		if (sprite())
-			return sprite() -> size();
+			return sprite()->size();
 
 		static Vect2i z = Vect2i(0, 0);
 		return z;
 	}
 
 	int size_x() const {
-		if (sprite()) return sprite() -> size_x();
+		if (sprite()) return sprite()->size_x();
 		else return 0;
 	}
 	int size_y() const {
-		if (sprite()) return sprite() -> size_y();
+		if (sprite()) return sprite()->size_y();
 		else return 0;
 	}
 

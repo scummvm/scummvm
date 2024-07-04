@@ -73,8 +73,8 @@ void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x3);
 			zbuf_t *z_buf = zbuffer_ + SizeX * y + x;
 
-			const char *rle_header = p -> header_ptr(py + i);
-			const unsigned *rle_data = p -> data_ptr(py + i);
+			const char *rle_header = p->header_ptr(py + i);
+			const unsigned *rle_data = p->data_ptr(py + i);
 
 			int j = 0;
 			char count = 0;
@@ -204,8 +204,8 @@ void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x3);
 			zbuf_t *z_buf = zbuffer_ + SizeX * y + x;
 
-			const char *rle_header = p -> header_ptr(py + i);
-			const unsigned *rle_data = p -> data_ptr(py + i);
+			const char *rle_header = p->header_ptr(py + i);
+			const unsigned *rle_data = p->data_ptr(py + i);
 
 			int j = 0;
 			char count = 0;
@@ -334,8 +334,8 @@ void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 			unsigned short *scr_buf = reinterpret_cast<unsigned short *>(screenBuf + yTable[y] + x * 2);
 			zbuf_t *z_buf = zbuffer_ + y * SizeX + x;
 
-			const char *rle_header = p -> header_ptr(py + i);
-			const unsigned *rle_data = p -> data_ptr(py + i);
+			const char *rle_header = p->header_ptr(py + i);
+			const unsigned *rle_data = p->data_ptr(py + i);
 
 			int j = 0;
 			char count = 0;
@@ -484,7 +484,7 @@ void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 			const unsigned short *line_src = reinterpret_cast<const unsigned short *>(rleBuffer::get_buffer(0));
 
 			for (int i = y0; i != y1; i += iy) {
-				p -> decode_line(fy >> 16);
+				p->decode_line(fy >> 16);
 
 				fy += dy;
 				fx = (1 << 15);
@@ -508,7 +508,7 @@ void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 			const unsigned mask_b = (pixel_format_ == GR_RGB565) ? mask_565_b : mask_555_b;
 
 			for (int i = y0; i != y1; i += iy) {
-				p -> decode_line(fy >> 16);
+				p->decode_line(fy >> 16);
 
 				fy += dy;
 				fx = (1 << 15);
@@ -544,7 +544,7 @@ void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 
 		if (!alpha_flag) {
 			for (int i = y0; i != y1; i += iy) {
-				p -> decode_line(fy >> 16);
+				p->decode_line(fy >> 16);
 
 				fy += dy;
 				fx = (1 << 15);
@@ -567,7 +567,7 @@ void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 			}
 		} else {
 			for (int i = y0; i != y1; i += iy) {
-				p -> decode_line(fy >> 16);
+				p->decode_line(fy >> 16);
 
 				fy += dy;
 				fx = (1 << 15);

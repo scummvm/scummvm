@@ -71,11 +71,11 @@ bool XStream::open(const char* name, unsigned f) {
 }
 
 bool XStream::open(XStream* owner, long s, long ext_sz) {
-	fname = owner -> fname;
-	handler = owner -> handler;
+	fname = owner->fname;
+	handler = owner->handler;
 	pos = 0;
-	owner -> seek(s, XS_BEG);
-	eofFlag = owner -> eof();
+	owner->seek(s, XS_BEG);
+	eofFlag = owner->eof();
 	extSize = ext_sz;
 	extPos = s;
 	ioError_ = owner->ioError();

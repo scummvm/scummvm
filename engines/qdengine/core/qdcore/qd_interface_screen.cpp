@@ -46,7 +46,7 @@ namespace QDEngine {
 
 struct qdInterfaceElementsOrdering {
 	bool operator()(const qdInterfaceElement *p0, const qdInterfaceElement *p1) {
-		return p0 -> screen_depth() < p1 -> screen_depth();
+		return p0->screen_depth() < p1->screen_depth();
 	}
 };
 
@@ -100,7 +100,7 @@ bool qdInterfaceScreen::redraw(int dx, int dy) const {
 #endif
 
 	for (sorted_element_list_t::const_reverse_iterator it = sorted_elements_.rbegin(); it != sorted_elements_.rend(); ++it)
-		(*it) -> redraw();
+		(*it)->redraw();
 
 	return true;
 }
@@ -111,18 +111,18 @@ bool qdInterfaceScreen::pre_redraw(bool force_full_redraw) {
 
 	if (force_full_redraw) {
 		for (sorted_element_list_t::iterator it = sorted_elements_.begin(); it != sorted_elements_.end(); ++it) {
-			if ((*it) -> last_screen_region() != (*it) -> screen_region())
-				dp -> add_redraw_region((*it) -> last_screen_region());
+			if ((*it)->last_screen_region() != (*it)->screen_region())
+				dp->add_redraw_region((*it)->last_screen_region());
 
-			dp -> add_redraw_region((*it) -> screen_region());
+			dp->add_redraw_region((*it)->screen_region());
 		}
 	} else {
 		for (sorted_element_list_t::iterator it = sorted_elements_.begin(); it != sorted_elements_.end(); ++it) {
-			if ((*it) -> need_redraw()) {
-				if ((*it) -> last_screen_region() != (*it) -> screen_region())
-					dp -> add_redraw_region((*it) -> last_screen_region());
+			if ((*it)->need_redraw()) {
+				if ((*it)->last_screen_region() != (*it)->screen_region())
+					dp->add_redraw_region((*it)->last_screen_region());
 
-				dp -> add_redraw_region((*it) -> screen_region());
+				dp->add_redraw_region((*it)->screen_region());
 			}
 		}
 	}
@@ -132,7 +132,7 @@ bool qdInterfaceScreen::pre_redraw(bool force_full_redraw) {
 
 bool qdInterfaceScreen::post_redraw() {
 	for (sorted_element_list_t::iterator it = sorted_elements_.begin(); it != sorted_elements_.end(); ++it)
-		(*it) -> post_redraw();
+		(*it)->post_redraw();
 
 	return true;
 }
@@ -144,7 +144,7 @@ bool qdInterfaceScreen::quant(float dt) {
 
 		qdInterfaceDispatcher *dp = dynamic_cast<qdInterfaceDispatcher *>(owner());
 
-		if (dp && !dp -> is_autohide_enabled())
+		if (dp && !dp->is_autohide_enabled())
 			autohide_phase_ -= delta;
 		else
 			autohide_phase_ += delta;
@@ -163,10 +163,10 @@ bool qdInterfaceScreen::quant(float dt) {
 	}
 
 	for (element_list_t::const_iterator it = element_list().begin(); it != element_list().end(); ++it) {
-		if ((*it) -> linked_to_option() && qdInterfaceDispatcher::option_value((*it) -> option_ID()) != (*it) -> option_value())
-			qdInterfaceDispatcher::set_option_value((*it) -> option_ID(), (*it) -> option_value());
+		if ((*it)->linked_to_option() && qdInterfaceDispatcher::option_value((*it)->option_ID()) != (*it)->option_value())
+			qdInterfaceDispatcher::set_option_value((*it)->option_ID(), (*it)->option_value());
 
-		(*it) -> quant(dt);
+		(*it)->quant(dt);
 	}
 
 	return true;
@@ -209,16 +209,16 @@ bool qdInterfaceScreen::save_script(Common::SeekableWriteStream &fh, int indent)
 }
 
 bool qdInterfaceScreen::load_script(const xml::tag *p) {
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_NAME:
-			set_name(it -> data());
+			set_name(it->data());
 			break;
 		case QDSCR_INTERFACE_ELEMENT:
-			if (const xml::tag * tg = it -> search_subtag(QDSCR_TYPE)) {
+			if (const xml::tag * tg = it->search_subtag(QDSCR_TYPE)) {
 				if (qdInterfaceElement * el = qdInterfaceElement::create_element(static_cast<qdInterfaceElement::element_type>(xml::tag_buffer(*tg).get_int()))) {
-					el -> set_owner(this);
-					el -> load_script(&*it);
+					el->set_owner(this);
+					el->load_script(&*it);
 					add_element(el);
 				}
 			}
@@ -275,15 +275,15 @@ bool qdInterfaceScreen::is_element_in_list(const qdInterfaceElement *el) const {
 bool qdInterfaceScreen::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
 	if (qdInterfaceDispatcher * dp = dynamic_cast<qdInterfaceDispatcher * >(owner())) {
 		for (sorted_element_list_t::const_iterator it = sorted_elements_.begin(); it != sorted_elements_.end(); ++it) {
-			if ((*it) -> hit_test(x, y)) {
-				dp -> toggle_mouse_hover();
-				if ((*it) -> get_element_type() != qdInterfaceElement::EL_TEXT_WINDOW)
-					dp -> disable_autohide();
+			if ((*it)->hit_test(x, y)) {
+				dp->toggle_mouse_hover();
+				if ((*it)->get_element_type() != qdInterfaceElement::EL_TEXT_WINDOW)
+					dp->disable_autohide();
 
-				if (!(*it) -> is_locked() && (*it) -> mouse_handler(x, y, ev))
+				if (!(*it)->is_locked() && (*it)->mouse_handler(x, y, ev))
 					return true;
 			} else
-				(*it) -> hover_clear();
+				(*it)->hover_clear();
 		}
 	}
 
@@ -292,7 +292,7 @@ bool qdInterfaceScreen::mouse_handler(int x, int y, mouseDispatcher::mouseEvent 
 
 bool qdInterfaceScreen::keyboard_handler(int vkey) {
 	for (element_list_t::const_iterator it = element_list().begin(); it != element_list().end(); ++it) {
-		if (!(*it) -> is_locked() && (*it) -> keyboard_handler(vkey))
+		if (!(*it)->is_locked() && (*it)->keyboard_handler(vkey))
 			return true;
 	}
 
@@ -310,10 +310,10 @@ bool qdInterfaceScreen::char_input_handler(int vkey) {
 
 qdResource *qdInterfaceScreen::add_resource(const char *file_name, const qdInterfaceElementState *res_owner) {
 	if (qdInterfaceDispatcher * dp = dynamic_cast<qdInterfaceDispatcher * >(owner())) {
-		if (qdResource * p = dp -> add_resource(file_name, res_owner)) {
+		if (qdResource * p = dp->add_resource(file_name, res_owner)) {
 			resources_.register_resource(p, res_owner);
-			if (dp -> is_screen_active(this) && !p -> is_resource_loaded())
-				p -> load_resource();
+			if (dp->is_screen_active(this) && !p->is_resource_loaded())
+				p->load_resource();
 
 			return p;
 		}
@@ -324,9 +324,9 @@ qdResource *qdInterfaceScreen::add_resource(const char *file_name, const qdInter
 
 bool qdInterfaceScreen::remove_resource(const char *file_name, const qdInterfaceElementState *res_owner) {
 	if (qdInterfaceDispatcher * dp = dynamic_cast<qdInterfaceDispatcher * >(owner())) {
-		if (qdResource * p = dp -> get_resource(file_name)) {
+		if (qdResource * p = dp->get_resource(file_name)) {
 			resources_.unregister_resource(p, res_owner);
-			return dp -> remove_resource(file_name, res_owner);
+			return dp->remove_resource(file_name, res_owner);
 		}
 	}
 
@@ -335,9 +335,9 @@ bool qdInterfaceScreen::remove_resource(const char *file_name, const qdInterface
 
 bool qdInterfaceScreen::init(bool is_game_active) {
 	for (element_list_t::const_iterator it = element_list().begin(); it != element_list().end(); ++it) {
-		(*it) -> init(is_game_active);
-		if ((*it) -> linked_to_option())
-			(*it) -> set_option_value(qdInterfaceDispatcher::option_value((*it) -> option_ID()));
+		(*it)->init(is_game_active);
+		if ((*it)->linked_to_option())
+			(*it)->set_option_value(qdInterfaceDispatcher::option_value((*it)->option_ID()));
 	}
 
 	build_visible_elements_list();
@@ -354,7 +354,7 @@ bool qdInterfaceScreen::hide_element(const char *element_name, bool temporary_hi
 
 bool qdInterfaceScreen::hide_element(qdInterfaceElement *p, bool temporary_hide) {
 	if (!temporary_hide)
-		p -> hide();
+		p->hide();
 
 	sorted_element_list_t::iterator it = std::find(sorted_elements_.begin(), sorted_elements_.end(), p);
 	if (it != sorted_elements_.end())
@@ -371,7 +371,7 @@ bool qdInterfaceScreen::show_element(const char *element_name) {
 }
 
 bool qdInterfaceScreen::show_element(qdInterfaceElement *p) {
-	p -> show();
+	p->show();
 
 	sorted_element_list_t::iterator it = std::find(sorted_elements_.begin(), sorted_elements_.end(), p);
 	if (it == sorted_elements_.end()) {
@@ -391,7 +391,7 @@ bool qdInterfaceScreen::build_visible_elements_list() {
 	sorted_elements_.clear();
 
 	for (element_list_t::const_iterator it = element_list().begin(); it != element_list().end(); ++it) {
-		if ((*it) -> is_visible())
+		if ((*it)->is_visible())
 			sorted_elements_.push_back(*it);
 	}
 
@@ -403,14 +403,14 @@ bool qdInterfaceScreen::build_visible_elements_list() {
 void qdInterfaceScreen::activate_personage_buttons(const qdNamedObject *p) {
 	for (element_list_t::const_iterator it = element_list().begin(); it != element_list().end(); ++it) {
 		if (qdInterfaceButton * bt = dynamic_cast<qdInterfaceButton * >(*it)) {
-			if (const qdInterfaceEvent * ev = bt -> find_event(qdInterfaceEvent::EVENT_ACTIVATE_PERSONAGE)) {
+			if (const qdInterfaceEvent * ev = bt->find_event(qdInterfaceEvent::EVENT_ACTIVATE_PERSONAGE)) {
 				if (p) {
-					if (ev -> has_data() && !strcmp(p -> name(), ev -> event_data()))
-						bt -> activate_state(1);
+					if (ev->has_data() && !strcmp(p->name(), ev->event_data()))
+						bt->activate_state(1);
 					else
-						bt -> activate_state(0);
+						bt->activate_state(0);
 				} else
-					bt -> activate_state(0);
+					bt->activate_state(0);
 			}
 		}
 	}
@@ -420,13 +420,13 @@ void qdInterfaceScreen::update_personage_buttons() {
 	qdGameDispatcher *p = qdGameDispatcher::get_dispatcher();
 	if (!p) return;
 
-	qdGameScene *sp = p -> get_active_scene();
+	qdGameScene *sp = p->get_active_scene();
 	if (!sp) return;
 
 	for (element_list_t::const_iterator it = element_list().begin(); it != element_list().end(); ++it) {
 		if (qdInterfaceButton * bt = dynamic_cast<qdInterfaceButton * >(*it)) {
-			if (!sp -> set_personage_button(bt)) {
-				if (bt -> find_event(qdInterfaceEvent::EVENT_ACTIVATE_PERSONAGE))
+			if (!sp->set_personage_button(bt)) {
+				if (bt->find_event(qdInterfaceEvent::EVENT_ACTIVATE_PERSONAGE))
 					hide_element(bt);
 			}
 		}

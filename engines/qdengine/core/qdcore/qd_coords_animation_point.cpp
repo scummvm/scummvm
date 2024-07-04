@@ -44,8 +44,8 @@ qdCoordsAnimationPoint::~qdCoordsAnimationPoint() {
 }
 
 void qdCoordsAnimationPoint::load_script(const xml::tag *p) {
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_DEST_POS:
 			xml::tag_buffer(*it) > pos_.x > pos_.y > pos_.z;
 			break;

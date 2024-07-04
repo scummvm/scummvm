@@ -64,7 +64,7 @@ qdInterfaceElementState &qdInterfaceElementState::operator = (const qdInterfaceE
 
 	unregister_resources();
 
-	this -> qdInterfaceObjectBase::operator = (st);
+	this->qdInterfaceObjectBase::operator = (st);
 
 	events_ = st.events_;
 
@@ -129,8 +129,8 @@ bool qdInterfaceElementState::save_script(Common::SeekableWriteStream &fh, int i
 
 bool qdInterfaceElementState::load_script(const xml::tag *p) {
 	int num_events = 0;
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_INTERFACE_EVENT:
 			num_events++;
 			break;
@@ -140,13 +140,13 @@ bool qdInterfaceElementState::load_script(const xml::tag *p) {
 	if (num_events)
 		events_.reserve(num_events);
 
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_NAME:
-			set_name(it -> data());
+			set_name(it->data());
 			break;
 		case QDSCR_INTERFACE_ELEMENT_STATE_MODE:
-			if (const xml::tag * tg = it -> search_subtag(QDSCR_TYPE))
+			if (const xml::tag * tg = it->search_subtag(QDSCR_TYPE))
 				modes_[state_mode_t(xml::tag_buffer(*tg).get_int())].load_script(&*it);
 			break;
 		case QDSCR_INTERFACE_EVENT: {
@@ -155,15 +155,15 @@ bool qdInterfaceElementState::load_script(const xml::tag *p) {
 			const char *ev_data = "";
 			bool anm_flag = false;
 
-			if (const xml::tag * tg = it -> search_subtag(QDSCR_TYPE))
+			if (const xml::tag * tg = it->search_subtag(QDSCR_TYPE))
 				ev = qdInterfaceEvent::event_t(xml::tag_buffer(*tg).get_int());
-			if (const xml::tag * tg = it -> search_subtag(QDSCR_INTERFACE_EVENT_DATA))
-				ev_data = tg -> data();
-			if (const xml::tag * tg = it -> search_subtag(QDSCR_INTERFACE_EVENT_BEFORE_ANIMATION)) {
+			if (const xml::tag * tg = it->search_subtag(QDSCR_INTERFACE_EVENT_DATA))
+				ev_data = tg->data();
+			if (const xml::tag * tg = it->search_subtag(QDSCR_INTERFACE_EVENT_BEFORE_ANIMATION)) {
 				if (xml::tag_buffer(*tg).get_int())
 					anm_flag = true;
 			}
-			if (const xml::tag * tg = it -> search_subtag(QDSCR_INTERFACE_EVENT_ACTIVATION_TYPE))
+			if (const xml::tag * tg = it->search_subtag(QDSCR_INTERFACE_EVENT_ACTIVATION_TYPE))
 				act = qdInterfaceEvent::activation_t(xml::tag_buffer(*tg).get_int());
 
 			events_.push_back(qdInterfaceEvent(ev, ev_data, anm_flag, act));
@@ -185,9 +185,9 @@ bool qdInterfaceElementState::quant(float dt) {
 
 		prev_state_mode_ = state_mode();
 
-		switch (ep -> state_status(this)) {
+		switch (ep->state_status(this)) {
 		case qdInterfaceElement::STATE_INACTIVE:
-			ep -> set_state(this);
+			ep->set_state(this);
 			break;
 		case qdInterfaceElement::STATE_DONE:
 			if (state_mode() == EVENT_MODE) {
@@ -209,7 +209,7 @@ bool qdInterfaceElementState::quant(float dt) {
 void qdInterfaceElementState::set_sound_file(const char *str, state_mode_t snd_id) {
 	if (has_sound(snd_id)) {
 		if (qdInterfaceElement * p = dynamic_cast<qdInterfaceElement * >(owner()))
-			p -> remove_resource(sound_file(snd_id), this);
+			p->remove_resource(sound_file(snd_id), this);
 
 		modes_[snd_id].set_sound(NULL);
 	}
@@ -217,14 +217,14 @@ void qdInterfaceElementState::set_sound_file(const char *str, state_mode_t snd_i
 	modes_[snd_id].set_sound_file(str);
 	if (has_sound(snd_id)) {
 		if (qdInterfaceElement * p = dynamic_cast<qdInterfaceElement * >(owner()))
-			modes_[snd_id].set_sound(dynamic_cast<const qdSound * >(p -> add_resource(sound_file(snd_id), this)));
+			modes_[snd_id].set_sound(dynamic_cast<const qdSound * >(p->add_resource(sound_file(snd_id), this)));
 	}
 }
 
 void qdInterfaceElementState::set_animation_file(const char *name, state_mode_t anm_id) {
 	if (has_animation(anm_id)) {
 		if (qdInterfaceElement * p = dynamic_cast<qdInterfaceElement * >(owner()))
-			p -> remove_resource(animation_file(anm_id), this);
+			p->remove_resource(animation_file(anm_id), this);
 
 		modes_[anm_id].set_animation(NULL);
 	}
@@ -232,7 +232,7 @@ void qdInterfaceElementState::set_animation_file(const char *name, state_mode_t 
 	modes_[anm_id].set_animation_file(name);
 	if (has_animation(anm_id)) {
 		if (qdInterfaceElement * p = dynamic_cast<qdInterfaceElement * >(owner()))
-			modes_[anm_id].set_animation(dynamic_cast<const qdAnimation * >(p -> add_resource(animation_file(anm_id), this)));
+			modes_[anm_id].set_animation(dynamic_cast<const qdAnimation * >(p->add_resource(animation_file(anm_id), this)));
 	}
 }
 
@@ -264,7 +264,7 @@ bool qdInterfaceElementState::unregister_resources() {
 	for (int i = 0; i < NUM_MODES; i ++) {
 		if (has_animation(state_mode_t(i))) {
 			if (qdInterfaceElement * p = dynamic_cast<qdInterfaceElement * >(owner())) {
-				if (!p -> remove_resource(animation_file(state_mode_t(i)), this))
+				if (!p->remove_resource(animation_file(state_mode_t(i)), this))
 					res = false;
 
 				modes_[i].set_animation(NULL);
@@ -273,7 +273,7 @@ bool qdInterfaceElementState::unregister_resources() {
 
 		if (has_sound(state_mode_t(i))) {
 			if (qdInterfaceElement * p = dynamic_cast<qdInterfaceElement * >(owner())) {
-				if (!p -> remove_resource(sound_file(state_mode_t(i)), this))
+				if (!p->remove_resource(sound_file(state_mode_t(i)), this))
 					res = false;
 
 				modes_[i].set_sound(NULL);
@@ -290,14 +290,14 @@ bool qdInterfaceElementState::register_resources() {
 	for (int i = 0; i < NUM_MODES; i ++) {
 		if (has_animation(state_mode_t(i))) {
 			if (qdInterfaceElement * p = dynamic_cast<qdInterfaceElement * >(owner()))
-				modes_[i].set_animation(dynamic_cast<const qdAnimation * >(p -> add_resource(animation_file(state_mode_t(i)), this)));
+				modes_[i].set_animation(dynamic_cast<const qdAnimation * >(p->add_resource(animation_file(state_mode_t(i)), this)));
 
 			if (!modes_[i].animation()) res = false;
 		}
 
 		if (has_sound(state_mode_t(i))) {
 			if (qdInterfaceElement * p = dynamic_cast<qdInterfaceElement * >(owner()))
-				modes_[i].set_sound(dynamic_cast<const qdSound * >(p -> add_resource(sound_file(state_mode_t(i)), this)));
+				modes_[i].set_sound(dynamic_cast<const qdSound * >(p->add_resource(sound_file(state_mode_t(i)), this)));
 
 			if (!modes_[i].sound()) res = false;
 		}
@@ -355,7 +355,7 @@ bool qdInterfaceElementState::handle_events(qdInterfaceEvent::activation_t activ
 	if (qdInterfaceDispatcher * dp = qdInterfaceDispatcher::get_dispatcher()) {
 		for (int i = 0; i < events_.size(); i ++) {
 			if (events_[i].activation() == activation_type && events_[i].is_before_animation() == before_animation) {
-				dp -> handle_event(events_[i].event(), events_[i].event_data(), owner());
+				dp->handle_event(events_[i].event(), events_[i].event_data(), owner());
 			}
 		}
 
@@ -402,8 +402,8 @@ const qdInterfaceEvent *qdInterfaceElementState::find_event(qdInterfaceEvent::ev
 
 bool qdInterfaceElementState::has_event(qdInterfaceEvent::event_t type, const char *ev_data) const {
 	for (events_container_t::const_iterator it = events_.begin(); it != events_.end(); ++it) {
-		if (it -> event() == type) {
-			if ((!ev_data && !it -> event_data()) || (it -> event_data() && !strcmp(ev_data, it -> event_data())))
+		if (it->event() == type) {
+			if ((!ev_data && !it->event_data()) || (it->event_data() && !strcmp(ev_data, it->event_data())))
 				return true;
 		}
 	}

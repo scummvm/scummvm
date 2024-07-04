@@ -72,7 +72,7 @@ bool qdConditionObjectReference::find_object() {
 		return false;
 
 	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-		object_ = dp -> get_named_object(&object_reference_);
+		object_ = dp->get_named_object(&object_reference_);
 
 		if (object_)
 			return true;
@@ -82,8 +82,8 @@ bool qdConditionObjectReference::find_object() {
 }
 
 bool qdConditionObjectReference::load_script(const xml::tag *p) {
-	for (xml::tag::subtag_iterator it = p -> subtags_begin(); it != p -> subtags_end(); ++it) {
-		switch (it -> ID()) {
+	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
+		switch (it->ID()) {
 		case QDSCR_NAMED_OBJECT: {
 #ifndef _QUEST_EDITOR
 			qdNamedObjectReference &ref = qdNamedObjectIndexer::instance().add_reference((qdNamedObject *&)object_);
