@@ -27,8 +27,8 @@
 //	Define _XMATH_NO_IOSTREAM to disable iostream using
 //
 ///////////////////////////////////////////////////////////////////////////////
-#ifndef QDENGINE_XLIBS_UTIL_XMATH_H
-#define QDENGINE_XLIBS_UTIL_XMATH_H
+#ifndef QDENGINE_UTIL_XMATH_H
+#define QDENGINE_UTIL_XMATH_H
 
 #include <math.h>
 #include "qdengine/util/xmath/fastMath.h"
@@ -5749,4 +5749,4 @@ inline istream &operator>>(istream &is, Se3f &se3) {
 
 } // namespace QDEngine
 
-#endif // QDENGINE_XLIBS_UTIL_XMATH_H
+#endif // QDENGINE_UTIL_XMATH_H

@@ -30,8 +30,8 @@
 ******************************************************************************
 */
 
-#ifndef QDENGINE_XLIBS_XUTIL_XUTIL_H
-#define QDENGINE_XLIBS_XUTIL_XUTIL_H
+#ifndef QDENGINE_XUTIL_XUTIL_H
+#define QDENGINE_XUTIL_XUTIL_H
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include <memory.h>
@@ -590,4 +590,4 @@ void ZIP_expand(char *trg, ulong trgsize, char *src, ulong srcsize);
 
 } // namespace QDEngine
 
-#endif // QDENGINE_XLIBS_XUTIL_XUTIL_H
+#endif // QDENGINE_XUTIL_XUTIL_H
