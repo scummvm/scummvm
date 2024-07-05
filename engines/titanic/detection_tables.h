@@ -30,7 +30,7 @@ static const TitanicGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("newgame.st", "c276f2661f0d0a547445a65db78b2292", 87227),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			0,
+			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
@@ -43,7 +43,7 @@ static const TitanicGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("newgame.st", "db22924adfd6730f4b79f4e51b25e779", 87608),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
-			0,
+			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
