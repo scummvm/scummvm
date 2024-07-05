@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __FPS_COUNTER_H__
-#define __FPS_COUNTER_H__
+#ifndef QDENGINE_QDCORE_UTIL_FPS_COUNTER_H
+#define QDENGINE_QDCORE_UTIL_FPS_COUNTER_H
 
 namespace QDEngine {
 
@@ -70,4 +70,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __FPS_COUNTER_H__ */
+#endif // QDENGINE_QDCORE_UTIL_FPS_COUNTER_H

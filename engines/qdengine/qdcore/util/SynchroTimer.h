@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __SYNCRO_TIMER__
-#define __SYNCRO_TIMER__
+#ifndef QDENGINE_QDCORE_UTIL_SYNCRO_TIMER
+#define QDENGINE_QDCORE_UTIL_SYNCRO_TIMER
 
 typedef unsigned int time_type;
 
@@ -100,4 +100,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // __SYNCRO_TIMER__
+#endif // QDENGINE_QDCORE_UTIL_SYNCRO_TIMER

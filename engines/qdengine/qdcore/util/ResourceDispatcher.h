@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __RESOURCE_DISPATCHER_H__
-#define __RESOURCE_DISPATCHER_H__
+#ifndef QDENGINE_QDCORE_UTIL_RESOURCE_DISPATCHER_H
+#define QDENGINE_QDCORE_UTIL_RESOURCE_DISPATCHER_H
 
 #include "qdengine/qdcore/util/Handle.h"
 #include "qdengine/qdcore/util/SynchroTimer.h"
@@ -148,4 +148,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // __RESOURCE_DISPATCHER_H__
+#endif // QDENGINE_QDCORE_UTIL_RESOURCE_DISPATCHER_H

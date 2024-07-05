@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __QD_SAVE_STREAM_H__
-#define __QD_SAVE_STREAM_H__
+#ifndef QDENGINE_QDCORE_UTIL_QD_SAVE_STREAM_H
+#define QDENGINE_QDCORE_UTIL_QD_SAVE_STREAM_H
 
 //#define __QD_SAVE_DEBUG__
 
@@ -69,4 +69,4 @@ typedef XStream qdSaveStream;
 
 } // namespace QDEngine
 
-#endif // __QD_SAVE_STREAM_H__
+#endif // QDENGINE_QDCORE_UTIL_QD_SAVE_STREAM_H

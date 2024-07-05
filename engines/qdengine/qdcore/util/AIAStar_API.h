@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __AIASTAR_API_H__
-#define __AIASTAR_API_H__
+#ifndef QDENGINE_QDCORE_UTIL_AIASTAR_API_H
+#define QDENGINE_QDCORE_UTIL_AIASTAR_API_H
 
 #include "qdengine/qdcore/util/AIAStar.h"
 
@@ -63,4 +63,4 @@ typedef AIAStar<qdHeuristic, int> qdAStar;
 
 } // namespace QDEngine
 
-#endif /* __AIASTAR_API_H__ */
+#endif // _AIASTAR_API_H

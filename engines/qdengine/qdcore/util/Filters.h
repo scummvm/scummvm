@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef _FILTERS_H_
-#define _FILTERS_H_
+#ifndef QDENGINE_QDCORE_UTIL_FILTERS_H
+#define QDENGINE_QDCORE_UTIL_FILTERS_H
 
 
 
@@ -118,4 +118,4 @@ public:
 
 } // namespace QDEngine
 
-#endif  // _FILTERS_H_
+#endif // QDENGINE_QDCORE_UTIL_FILTERS_H

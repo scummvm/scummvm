@@ -97,4 +97,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* QDENGINE_QDCORE_UTIL_PLAYMPP_API_H */
+#endif // QDENGINE_QDCORE_UTIL_PLAYMPP_API_H

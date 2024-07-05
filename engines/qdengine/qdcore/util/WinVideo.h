@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __WINVIDEO_H__
-#define __WINVIDEO_H__
+#ifndef QDENGINE_QDCORE_UTIL_WINVIDEO_H
+#define QDENGINE_QDCORE_UTIL_WINVIDEO_H
 
 //#define __WINVIDEO_LOG__
 
@@ -82,4 +82,4 @@ private:
 
 } // namespace QDEngine
 
-#endif /* __WINVIDEO_H__ */
+#endif // QDENGINE_QDCORE_UTIL_WINVIDEO_H

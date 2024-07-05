@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef _2_PASS_SCALE_H_
-#define _2_PASS_SCALE_H_
+#ifndef QDENGINE_QDCORE_UTIL_2_PASS_SCALE_H
+#define QDENGINE_QDCORE_UTIL_2_PASS_SCALE_H
 
 #include <math.h>
 #include <vector>
@@ -302,4 +302,4 @@ COLORREF *C2PassScale<FilterClass>::Scale(COLORREF *pOrigImage, UINT uOrigWidth,
 
 } // namespace QDEngine
 
-#endif //   _2_PASS_SCALE_H_
+#endif // QDENGINE_QDCORE_UTIL_2_PASS_SCALE_H
