@@ -1359,6 +1359,8 @@ void Script::ScriptExecutor::ExecuteScript() {
 				if (v1 != v3 || v2 != v4) {
 					shouldSkip = true;
 				}
+				// TODO: I think I have this variable backwards from the original!
+				shouldSkip = !shouldSkip;
 			} else if (opcode2 == 0x3) {
 				// I had this wrong, this is a two-byte comparison
 				if (v2 < v4) {
@@ -1770,6 +1772,12 @@ void Script::ScriptExecutor::ExecuteScript() {
 			// c->GameObject->SceneIndex = sceneID;
 			currentView->characters.push_back(c);
 			continue;
+		} else if (opcode1 == 0x2B) {
+			// TODO: Mocking this one for now to see if this unlocks something
+			// It loads an object index, checks if it has a certain pointer in its
+			// data and if so calls two other functions with the object index
+			Func9F4D_Placeholder();
+		
 		} else if (opcode1 == 0x2C) {
 			// TODO: Guess is that we check if we have an inventory item
 			// This gets saved into [103Ch]
@@ -3043,6 +3051,7 @@ void Script::ScriptExecutor::ExecuteScript() {
 				break;
 			}
 		} while (requestCallback);
+
 		// During the first call, we want to try calling again
 		// TODO: Need to see if this is really the right way to go
 		if (!IsSceneInitRun && !requestCallback) {
@@ -3062,6 +3071,18 @@ void Script::ScriptExecutor::ExecuteScript() {
 			debug(
 					"----- TODO Not looped yet! - Switching execution to script for object: %.4x\n",
 					executingObjectIndex);
+			// TODO: Memory leak
+			SetScript(new Common::MemoryReadStream(obj->Script.data(), obj->Script.size()));
+			// TODO: Check if this process needs to go on (probably does)
+			// and what the rules for it would be
+			ExecuteScript();
+		}
+		if (_interactedObjectID != 0 && _interactedOtherObjectID != 0) {
+			// TODO: Hardcoded for this specific case
+			obj = GameObjects::instance().Objects[_interactedObjectID - 1];
+			debug(
+				"----- TODO Not looped yet! - Switching execution to script for object: %.4x\n",
+				executingObjectIndex);
 			// TODO: Memory leak
 			SetScript(new Common::MemoryReadStream(obj->Script.data(), obj->Script.size()));
 			// TODO: Check if this process needs to go on (probably does)
