@@ -104,7 +104,7 @@ bool rleBuffer::encode(int sx, int sy, const unsigned char *buf) {
 				index ++;
 
 			if (index - count == 1) {
-				while (index < sx && index - count < 127 && (buffer[index] != buffer[index - 1] || index > 1 && buffer[index] != buffer[index - 2]))
+				while (index < sx && index - count < 127 && (buffer[index] != buffer[index - 1] || (index > 1 && buffer[index] != buffer[index - 2])))
 					index ++;
 
 				while (index < sx && buffer[index] == buffer[index - 1])
@@ -137,8 +137,6 @@ bool rleBuffer::decode_line(int y, unsigned char *out_buf) const {
 
 	int size = line_header_length(y);
 
-	int line_len = 0;
-
 	for (int i = 0; i < size; i ++) {
 		char count = *header_ptr++;
 		if (count > 0) {
@@ -152,8 +150,6 @@ bool rleBuffer::decode_line(int y, unsigned char *out_buf) const {
 			out_ptr += count;
 			data_ptr += count;
 		}
-
-		line_len += abs(count);
 	}
 
 	return true;
