@@ -156,6 +156,10 @@ private:
 	size_t _alignment;
 	size_t _used;
 	VThreadFaultIdentifier *_faultID;
+
+#ifdef MTROPOLIS_DEBUG_VTHREAD_STACKS
+	const VThreadStackFrame *_topFrame;
+#endif
 };
 
 template<typename TClass, typename TData>
@@ -286,7 +290,11 @@ TData *VThread::pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, 
 	frame->taskDataOffset = reinterpret_cast<char *>(static_cast<VThreadTaskData *>(frameData)) - static_cast<char *>(_stackAlignedBase);
 
 #ifdef MTROPOLIS_DEBUG_VTHREAD_STACKS
-	frame->prevFrame = reinterpret_cast<VThreadStackFrame *>(static_cast<char *>(_stackAlignedBase) + prevFrameOffset);
+	if (frame->prevFrameOffset == 0)
+		frame->prevFrame = nullptr;
+	else
+		frame->prevFrame = reinterpret_cast<VThreadStackFrame *>(static_cast<char *>(_stackAlignedBase) + prevFrameOffset);
+
 	frame->data = frameData;
 #endif
 #ifdef MTROPOLIS_DEBUG_ENABLE
@@ -316,7 +324,11 @@ TData *VThread::pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, 
 	frame->taskDataOffset = reinterpret_cast<char *>(static_cast<VThreadTaskData *>(frameData)) - static_cast<char *>(_stackAlignedBase);
 
 #ifdef MTROPOLIS_DEBUG_VTHREAD_STACKS
-	frame->prevFrame = reinterpret_cast<VThreadStackFrame *>(static_cast<char *>(_stackAlignedBase) + prevFrameOffset);
+	if (frame->prevFrameOffset == 0)
+		frame->prevFrame = nullptr;
+	else
+		frame->prevFrame = reinterpret_cast<VThreadStackFrame *>(static_cast<char *>(_stackAlignedBase) + prevFrameOffset);
+
 	frame->data = frameData;
 #endif
 #ifdef MTROPOLIS_DEBUG_ENABLE

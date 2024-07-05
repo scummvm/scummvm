@@ -38,7 +38,12 @@ void VThreadTaskData::debugInspect(IDebugInspectionReport *report) const {
 }
 #endif
 
-VThread::VThread() : _faultID(nullptr), _stackUnalignedBase(nullptr), _stackAlignedBase(nullptr), /* _size(0), */_alignment(1), _used(0) {
+VThread::VThread()
+	: _faultID(nullptr), _stackUnalignedBase(nullptr), _stackAlignedBase(nullptr), /* _size(0), */_alignment(1), _used(0)
+#ifdef MTROPOLIS_DEBUG_VTHREAD_STACKS
+	, _topFrame(nullptr)
+#endif
+{
 }
 
 VThread::~VThread() {
@@ -59,8 +64,10 @@ VThreadState VThread::step() {
 	while (popFrame(dataPtr, framePtr)) {
 		VThreadTaskData *data = static_cast<VThreadTaskData *>(dataPtr);
 
+		VThreadStackFrame *stackFrame = static_cast<VThreadStackFrame *>(framePtr);
+
 		const bool isHandling = (data->handlesFault(_faultID));
-		static_cast<VThreadStackFrame *>(framePtr)->~VThreadStackFrame();
+		stackFrame->~VThreadStackFrame();
 		if (isHandling) {
 			_faultID = nullptr;
 			VThreadState state = data->destructAndRunTask();
@@ -175,6 +182,10 @@ void VThread::reserveFrame(size_t size, size_t alignment, void *&outFramePtr, vo
 	outFramePtr = newFrame;
 	outUnadjustedDataPtr = newData;
 	outPrevFrameOffset = offsetOfPrevFrame;
+
+#ifdef MTROPOLIS_DEBUG_VTHREAD_STACKS
+	_topFrame = newFrame;
+#endif
 }
 
 bool VThread::popFrame(void *&dataPtr, void *&outFramePtr) {
@@ -191,6 +202,13 @@ bool VThread::popFrame(void *&dataPtr, void *&outFramePtr) {
 		_used = 0;
 	else
 		_used = frame->prevFrameOffset + sizeof(VThreadStackFrame);
+
+#ifdef MTROPOLIS_DEBUG_VTHREAD_STACKS
+	if (_used == 0)
+		_topFrame = nullptr;
+	else
+		_topFrame = reinterpret_cast<VThreadStackFrame *>(static_cast<char *>(_stackAlignedBase) + frame->prevFrameOffset);
+#endif
 
 	return true;
 }
