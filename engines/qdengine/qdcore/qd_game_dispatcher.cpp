@@ -54,7 +54,6 @@
 #include "qdengine/qdcore/qd_interface_element.h"
 #include "qdengine/qdcore/qd_file_manager.h"
 #include "qdengine/system/app_core.h"
-#include "qdengine/system/app_error_handler.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 #include "qdengine/system/graphics/gr_font.h"
 
@@ -2854,7 +2853,7 @@ bool qdGameDispatcher::load_game(int slot_id) {
 
 	if (app_io::is_file_exist(save_name)) {
 		if (!load_save(save_name))
-			app_errH.show_error("Сохраненная игра не может быть загружена");
+			error("Save game format error");
 	}
 
 	scene_saved_ = true;

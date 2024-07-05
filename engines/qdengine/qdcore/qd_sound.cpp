@@ -19,11 +19,9 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
-#include "qdengine/system/app_error_handler.h"
 
 #ifndef __QD_SYSLIB__
 #include "qdengine/parser/xml_tag_buffer.h"
@@ -35,11 +33,6 @@
 
 
 namespace QDEngine {
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 #ifdef __QD_DEBUG_ENABLE__
 //#define __QD_SOUND_LOG__

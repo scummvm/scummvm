@@ -19,13 +19,10 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include "qdengine/qd_precomp.h"
 #include "qdengine/parser/qdscr_parser.h"
 #include "qdengine/parser/xml_tag_buffer.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
-#include "qdengine/system/app_error_handler.h"
 #include "qdengine/system/input/mouse_input.h"
 #include "qdengine/system/input/keyboard_input.h"
 #include "qdengine/qdcore/qd_game_dispatcher.h"
@@ -37,11 +34,6 @@
 
 
 namespace QDEngine {
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 qdMiniGame::qdMiniGame() : dll_handle_(NULL),
 	interface_(NULL) {
