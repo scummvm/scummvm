@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-05 05:37+0000\n"
-"PO-Revision-Date: 2024-07-03 16:36+0000\n"
+"PO-Revision-Date: 2024-07-05 09:19+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -12119,10 +12119,8 @@ msgid "Uses 16-color graphics."
 msgstr "Utilise des graphismes 16 couleurs."
 
 #: engines/vcruise/metaengine.cpp:97
-#, fuzzy
-#| msgid "Prerecorded sounds"
 msgid "Preload sounds"
-msgstr "Sons préenregistrés"
+msgstr "Précharger les sons"
 
 #: engines/vcruise/metaengine.cpp:98
 msgid "Preload sounds. May improve performance on slow hard drives."
