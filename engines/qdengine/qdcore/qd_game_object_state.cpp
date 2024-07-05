@@ -1277,7 +1277,7 @@ bool qdGameObjectStateWalk::save_script(Common::SeekableWriteStream &fh, int ind
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<object_direction>%f</object_direction>\r\n"));
+		fh.writeString(Common::String::format("<object_direction>%f</object_direction>\r\n", direction_angle_));
 	}
 
 	if (acceleration_ > FLT_EPS || max_speed_ > FLT_EPS) {
