@@ -29,8 +29,8 @@
 //
 //
 ////////////////////////////////////////////////////////////////////////////////
-#include "qdengine/xlibs/util/xmath/xmath.h"
-#include "qdengine/xlibs/xutil/xutil.h"
+#include "qdengine/util/xmath/xmath.h"
+#include "qdengine/xutil/xutil.h"
 
 
 namespace QDEngine {

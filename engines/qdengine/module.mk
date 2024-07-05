@@ -108,20 +108,20 @@ MODULE_OBJS = \
 	qdcore/qd_trigger_element.o \
 	qdcore/qd_trigger_profiler.o \
 	qdcore/qd_video.o \
-	xlibs/xutil/xbuffer/xbcnvin.o \
-	xlibs/xutil/xbuffer/xbcnvout.o \
-	xlibs/xutil/xbuffer/xbcore.o \
-	xlibs/xutil/xbuffer/xbsearch.o \
-	xlibs/xutil/xstream/xscnvin.o \
-	xlibs/xutil/xstream/xscore.o \
-	xlibs/xutil/xstream/xscnvout.o \
-	xlibs/xutil/xstream/xsenlv.o \
-	xlibs/xutil/xstream/xsgetlin.o \
-	xlibs/xutil/xstream/xsinput.o \
-	xlibs/xutil/xstream/xsoutput.o \
-	xlibs/xutil/xstream/xsrdwr.o \
-	xlibs/xutil/xstream/xsserv.o \
-	xlibs/util/xmath/XMath.o
+	xutil/xbuffer/xbcnvin.o \
+	xutil/xbuffer/xbcnvout.o \
+	xutil/xbuffer/xbcore.o \
+	xutil/xbuffer/xbsearch.o \
+	xutil/xstream/xscnvin.o \
+	xutil/xstream/xscore.o \
+	xutil/xstream/xscnvout.o \
+	xutil/xstream/xsenlv.o \
+	xutil/xstream/xsgetlin.o \
+	xutil/xstream/xsinput.o \
+	xutil/xstream/xsoutput.o \
+	xutil/xstream/xsrdwr.o \
+	xutil/xstream/xsserv.o \
+	util/xmath/XMath.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_QDENGINE), DYNAMIC_PLUGIN)

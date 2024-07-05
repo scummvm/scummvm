@@ -38,7 +38,7 @@
 #include "qdengine/qdcore/qd_interface_button.h"
 
 #include "qdengine/qdcore/util/AIAStar_API.h"
-#include "qdengine/xlibs/util/xmath/SafeMath.h"
+#include "qdengine/util/xmath/SafeMath.h"
 
 
 namespace QDEngine {

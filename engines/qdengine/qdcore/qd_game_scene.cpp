@@ -28,7 +28,7 @@
 #include "qdengine/parser/xml_tag_buffer.h"
 #include "qdengine/system/input/mouse_input.h"
 #include "qdengine/qdcore/util/plaympp_api.h"
-#include "qdengine/xlibs/util/xmath/SafeMath.h"
+#include "qdengine/util/xmath/SafeMath.h"
 #include "qdengine/parser/qdscr_parser.h"
 #include "qdengine/qdcore/qd_minigame.h"
 #include "qdengine/qdcore/qd_grid_zone.h"

@@ -57,8 +57,8 @@
 #pragma warning(disable : 4018)
 #pragma warning(disable : 4244)
 
-#include "qdengine/xlibs/xutil/xutil.h"
-#include "qdengine/xlibs/util/xmath/xmath.h"
+#include "qdengine/xutil/xutil.h"
+#include "qdengine/util/xmath/xmath.h"
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include <algorithm>
@@ -76,7 +76,7 @@
 #include "qdengine/system/input/mouse_input.h"
 #include "qdengine/system/input/keyboard_input.h"
 #include "qdengine/qdcore/util/qd_save_stream.h"
-#include "qdengine/xlibs/util/xmath/SafeMath.h"
+#include "qdengine/util/xmath/SafeMath.h"
 
 namespace QDEngine {
 
