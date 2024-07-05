@@ -270,11 +270,6 @@ void grTileAnimation::drawFrame(const Vect2i &position, int32 frame_index, int32
 
 	const uint32 *index_ptr = &frameIndex_[0] + frameTileSize_.x * frameTileSize_.y * frame_index;
 
-	debugC(3, kDebugTemp, "The length of frameIndex is given by %lu", frameIndex_.size());
-	debugC(3, kDebugTemp, "The value of increment is given by %d", frameTileSize_.x * frameTileSize_.y * frame_index);
-	debugC(3, kDebugTemp, "grTileAnimation::drawFrame %u", index_ptr);
-	debugC(3, kDebugTemp, "grTileAnimation::drawFrame *index_ptr: %u", *index_ptr);
-
 	Vect2i pos = pos0;
 	for (int32 i = 0; i < frameTileSize_.y; i++) {
 		pos.x = pos0.x;
@@ -298,7 +293,6 @@ void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float a
 			unsigned char *buf_ptr = buf + (i * frameSize_.x + j) * 4;
 			const unsigned char *data_ptr = (const unsigned char *)getTile(*index_ptr++).data();
 			int dx = min(frameSize_.x - j * GR_TILE_SPRITE_SIZE_X, GR_TILE_SPRITE_SIZE_X) * 4;
-			int dy = min(frameSize_.y - i * GR_TILE_SPRITE_SIZE_Y, GR_TILE_SPRITE_SIZE_Y);
 			for (int k = 0; k < GR_TILE_SPRITE_SIZE_Y; k++) {
 				memcpy(buf_ptr, data_ptr, dx);
 				data_ptr += GR_TILE_SPRITE_SIZE_X * 4;

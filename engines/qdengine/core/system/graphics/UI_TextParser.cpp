@@ -76,7 +76,6 @@ OutNodes::const_iterator UI_TextParser::getLineBegin(int lineNum) const {
 	if (lineNum >= lineCount_)
 		return outNodes_.end();
 
-	OutNodes::const_iterator it;
 	for (auto it = outNodes_.begin(); it != outNodes_.end(); it++) {
 		if (it->type == OutNode::NEW_LINE)
 			if (lineNum-- == 0)
@@ -191,20 +190,14 @@ void UI_TextParser::parseString(const char *text, int color, int fitIn) {
 }
 
 int UI_TextParser::getToken() {
-	const char *ptr = pstr_;
-	const char *begin_tag = ptr;
-	const char *begin_style = 0;
-
 	char cc;
 	while ((cc = *pstr_) && cc != '=' && cc != '>')
 		++pstr_;
-	unsigned int tag_len = pstr_ - begin_tag;
 
 	if (cc != '>') {
 		while ((cc = *pstr_) && cc != ';' && cc != '>')
 			++pstr_;
 		if (cc == ';') {
-			begin_style = pstr_;
 			while ((cc = *pstr_) && cc != '>')
 				++pstr_;
 		}

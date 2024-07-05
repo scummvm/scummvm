@@ -149,7 +149,7 @@ void grDispatcher::PutSpr(int x, int y, int sx, int sy, const unsigned char *p, 
 }
 
 void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const unsigned char *p, int mode) {
-	debugC(2, kDebugGraphics, "grDispatcher::PutSpr_a(%d, %d, %d, %d, scale=%f)", x, y, sx, sy);
+	debugC(2, kDebugGraphics, "grDispatcher::PutSpr_a(%d, %d, %d, %d)", x, y, sx, sy);
 
 	int px = 0;
 	int py = 0;
@@ -761,7 +761,7 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const unsigned c
 	int jj = px;
 	for (int j = 0; j < psx; j ++) {
 		int empty_pixel = 1;
-		const unsigned short *pic_buf = reinterpret_cast<const unsigned short *>(p) + py * sx;
+		pic_buf = reinterpret_cast<const unsigned short *>(p) + py * sx;
 		for (int i = 0; i < psy; i ++) {
 			unsigned cl = pic_buf[jj];
 			if (cl) {
@@ -1193,7 +1193,6 @@ void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const unsigned cha
 		ix = -1;
 	}
 
-	const unsigned short *src = reinterpret_cast<const unsigned short *>(p);
 	sx <<= 1;
 	unsigned mr, mg, mb;
 	split_rgb565u(mask_color, mr, mg, mb);

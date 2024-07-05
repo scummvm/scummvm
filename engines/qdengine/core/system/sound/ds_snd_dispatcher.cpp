@@ -41,12 +41,10 @@ ds_sndDispatcher::ds_sndDispatcher() : sound_device_(NULL) {
 	HRESULT res = DirectSoundCreate(NULL, &sound_device_, NULL);
 	if (FAILED(res) || sound_device_ == NULL)
 		return;
-#endif
 
 	HWND hWnd = static_cast<HWND>(appGetHandle());
 	grDispatcher *gp = grDispatcher::instance();
 
-#if 0
 	if (gp && gp->is_in_fullscreen_mode()) {
 		res = sound_device_->SetCooperativeLevel(hWnd, DSSCL_EXCLUSIVE);
 		if (FAILED(res))
