@@ -414,9 +414,6 @@ private:
 	void start();
 };
 
-#include "qd_trigger_element_boost.h"
-
-
 typedef std::vector<qdTriggerElementPtr> qdTriggerElementList;
 
 } // namespace QDEngine
