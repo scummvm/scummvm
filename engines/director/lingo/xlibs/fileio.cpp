@@ -341,18 +341,33 @@ FileIOError FileObject::saveFileError() {
 
 void FileIO::m_new(int nargs) {
 	FileObject *me = static_cast<FileObject *>(g_lingo->_state->me.u.obj);
+	Datum result = g_lingo->_state->me;
 	if (nargs == 2) {
+		if (me->getObjType() != kXObj) {
+			warning("FileIO::m_new: called with XObject API however was expecting object type %d", me->getObjType());
+		}
 		Datum d2 = g_lingo->pop();
 		Datum d1 = g_lingo->pop();
 
 		Common::String option = d1.asString();
 		Common::String path = d2.asString();
-		FileIOError result = me->open(path, option);
-		if (result != kErrorNone) {
-			me->_lastError = result;
+		FileIOError err = me->open(path, option);
+		// if there's an error, return an errorcode int instead of an object
+		if (err != kErrorNone) {
+			me->_lastError = err;
+			warning("FileIO::m_new: couldn't open file at path %s, error %d", path.c_str(), err);
+			g_lingo->push(Datum(err));
+			return;
 		}
+	} else if (nargs == 0) {
+		if (me->getObjType() != kXtraObj) {
+			warning("FileIO::m_new: called with Xtra API however was expecting object type %d", me->getObjType());
+		}
+	} else {
+		warning("FileIO::m_new: expected 0 or 2 args, assuming 0");
+		g_lingo->dropStack(nargs);
 	}
-	g_lingo->push(g_lingo->_state->me);
+	g_lingo->push(result);
 }
 
 void FileIO::m_openFile(int nargs) {
