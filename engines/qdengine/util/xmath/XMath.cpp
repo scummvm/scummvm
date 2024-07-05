@@ -1136,22 +1136,6 @@ Vect3f &QuatF::invXform(Vect3f &v) const {
 //
 //////////////////////////////////////////////////////////////////////////////////
 //  Vect2i I/O operations  //////////////
-XStream &operator<= (XStream &s, const Vect2i &v) {
-	s <= v.x < "  " <= v.y;
-	return s;
-}
-XStream &operator>= (XStream &s, Vect2i &v) {
-	s >= v.x >= v.y;
-	return s;
-}
-XStream &operator< (XStream &s, const Vect2i &v) {
-	s.write(&v, sizeof(Vect2i));
-	return s;
-}
-XStream &operator> (XStream &s, Vect2i &v) {
-	s.read(&v, sizeof(Vect2i));
-	return s;
-}
 
 XBuffer &operator<= (XBuffer &b, const Vect2i &v) {
 	b <= v.x < "  " <= v.y;
@@ -1171,22 +1155,6 @@ XBuffer &operator> (XBuffer &b, Vect2i &v) {
 }
 
 //  Vect2f I/O operations  //////////////
-XStream &operator<= (XStream &s, const Vect2f &v) {
-	s <= v.x < "  " <= v.y;
-	return s;
-}
-XStream &operator>= (XStream &s, Vect2f &v) {
-	s >= v.x >= v.y;
-	return s;
-}
-XStream &operator< (XStream &s, const Vect2f &v) {
-	s.write(&v, sizeof(Vect2f));
-	return s;
-}
-XStream &operator> (XStream &s, Vect2f &v) {
-	s.read(&v, sizeof(Vect2f));
-	return s;
-}
 
 XBuffer &operator<= (XBuffer &b, const Vect2f &v) {
 	b <= v.x < "  " <= v.y;
@@ -1206,22 +1174,6 @@ XBuffer &operator> (XBuffer &b, Vect2f &v) {
 }
 
 //  Vect2s I/O operations  //////////////
-XStream &operator<= (XStream &s, const Vect2s &v) {
-	s <= v.x < "  " <= v.y;
-	return s;
-}
-XStream &operator>= (XStream &s, Vect2s &v) {
-	s >= v.x >= v.y;
-	return s;
-}
-XStream &operator< (XStream &s, const Vect2s &v) {
-	s.write(&v, sizeof(Vect2s));
-	return s;
-}
-XStream &operator> (XStream &s, Vect2s &v) {
-	s.read(&v, sizeof(Vect2s));
-	return s;
-}
 
 XBuffer &operator<= (XBuffer &b, const Vect2s &v) {
 	b <= v.x < "  " <= v.y;
@@ -1241,22 +1193,6 @@ XBuffer &operator> (XBuffer &b, Vect2s &v) {
 }
 
 //  Vect3d I/O operations  //////////////
-XStream &operator<= (XStream &s, const Vect3d &v) {
-	s <= v.x < "  " <= v.y < "  " <= v.z;
-	return s;
-}
-XStream &operator>= (XStream &s, Vect3d &v) {
-	s >= v.x >= v.y >= v.z;
-	return s;
-}
-XStream &operator< (XStream &s, const Vect3d &v) {
-	s.write(&v, sizeof(Vect3d));
-	return s;
-}
-XStream &operator> (XStream &s, Vect3d &v) {
-	s.read(&v, sizeof(Vect3d));
-	return s;
-}
 
 XBuffer &operator<= (XBuffer &b, const Vect3d &v) {
 	b <= v.x < "  " <= v.y < "  " <= v.z;
@@ -1276,22 +1212,6 @@ XBuffer &operator> (XBuffer &b, Vect3d &v) {
 }
 
 //  Vect3f I/O operations  //////////////
-XStream &operator<= (XStream &s, const Vect3f &v) {
-	s <= v.x < "  " <= v.y < "  " <= v.z;
-	return s;
-}
-XStream &operator>= (XStream &s, Vect3f &v) {
-	s >= v.x >= v.y >= v.z;
-	return s;
-}
-XStream &operator< (XStream &s, const Vect3f &v) {
-	s.write(&v, sizeof(Vect3f));
-	return s;
-}
-XStream &operator> (XStream &s, Vect3f &v) {
-	s.read(&v, sizeof(Vect3f));
-	return s;
-}
 
 XBuffer &operator<= (XBuffer &b, const Vect3f &v) {
 	b <= v.x < "  " <= v.y < "  " <= v.z;
@@ -1311,26 +1231,6 @@ XBuffer &operator> (XBuffer &b, Vect3f &v) {
 }
 
 //   Mat3d I/O operations    /////////////
-XStream &operator<= (XStream &s, const Mat3d &m) {
-	s <= m.xx < "  " <= m.xy < "  " <= m.xz < "\n";
-	s <= m.yx < "  " <= m.yy < "  " <= m.yz < "\n";
-	s <= m.zx < "  " <= m.zy < "  " <= m.zz < "\n";
-	return s;
-}
-XStream &operator>= (XStream &s, Mat3d &m) {
-	s >= m.xx >= m.xy >= m.xz;
-	s >= m.yx >= m.yy >= m.yz;
-	s >= m.zx >= m.zy >= m.zz;
-	return s;
-}
-XStream &operator< (XStream &s, const Mat3d &m) {
-	s.write(&m, sizeof(Mat3d));
-	return s;
-}
-XStream &operator> (XStream &s, Mat3d &m) {
-	s.read(&m, sizeof(Mat3d));
-	return s;
-}
 
 XBuffer &operator<= (XBuffer &b, const Mat3d &m) {
 	b <= m.xx < "  " <= m.xy < "  " <= m.xz < "\n";
@@ -1358,26 +1258,6 @@ XBuffer &operator> (XBuffer &b, Mat3d &m) {
 }
 
 //   Mat3f I/O operations    /////////////
-XStream &operator<= (XStream &s, const Mat3f &m) {
-	s <= m.xx < "  " <= m.xy < "  " <= m.xz < "\n";
-	s <= m.yx < "  " <= m.yy < "  " <= m.yz < "\n";
-	s <= m.zx < "  " <= m.zy < "  " <= m.zz < "\n";
-	return s;
-}
-XStream &operator>= (XStream &s, Mat3f &m) {
-	s >= m.xx >= m.xy >= m.xz;
-	s >= m.yx >= m.yy >= m.yz;
-	s >= m.zx >= m.zy >= m.zz;
-	return s;
-}
-XStream &operator< (XStream &s, const Mat3f &m) {
-	s.write(&m, sizeof(Mat3f));
-	return s;
-}
-XStream &operator> (XStream &s, Mat3f &m) {
-	s.read(&m, sizeof(Mat3f));
-	return s;
-}
 
 XBuffer &operator<= (XBuffer &b, const Mat3f &m) {
 	b <= m.xx < "  " <= m.xy < "  " <= m.xz < "\n";
@@ -1406,23 +1286,6 @@ XBuffer &operator> (XBuffer &b, Mat3f &m) {
 
 
 //  QuatD I/O operations  //////////////////
-XStream &operator<= (XStream &s, const QuatD &q) {
-	s <= q.s_ < "   "  <= q.x_ < "  " <= q.y_ < "  " <= q.z_;
-	return s;
-}
-XStream &operator>= (XStream &s, QuatD &q) {
-	s >= q.s_ >= q.x_ >= q.y_ >= q.z_;
-	return s;
-}
-XStream &operator< (XStream &s, const QuatD &q) {
-	s.write(&q, sizeof(QuatD));
-	return s;
-}
-XStream &operator> (XStream &s, QuatD &q) {
-	s.read(&q, sizeof(QuatD));
-	return s;
-}
-
 XBuffer &operator<= (XBuffer &b, const QuatD &q) {
 	b <= q.s_ < "   "  <= q.x_ < "  " <= q.y_ < "  " <= q.z_;
 	return b;
@@ -1441,22 +1304,6 @@ XBuffer &operator> (XBuffer &b, QuatD &q) {
 }
 
 //  QuatF I/O operations  //////////////////
-XStream &operator<= (XStream &s, const QuatF &q) {
-	s <= q.s_ < "   "  <= q.x_ < "  " <= q.y_ < "  " <= q.z_;
-	return s;
-}
-XStream &operator>= (XStream &s, QuatF &q) {
-	s >= q.s_ >= q.x_ >= q.y_ >= q.z_;
-	return s;
-}
-XStream &operator< (XStream &s, const QuatF &q) {
-	s.write(&q, sizeof(QuatF));
-	return s;
-}
-XStream &operator> (XStream &s, QuatF &q) {
-	s.read(&q, sizeof(QuatF));
-	return s;
-}
 
 XBuffer &operator<= (XBuffer &b, const QuatF &q) {
 	b <= q.s_ < "   "  <= q.x_ < "  " <= q.y_ < "  " <= q.z_;
@@ -1477,22 +1324,6 @@ XBuffer &operator> (XBuffer &b, QuatF &q) {
 
 
 //  Se3f I/O operations  //////////////
-XStream &operator<= (XStream &s, const Se3f &se3) {
-	s <= se3.q < "  " <= se3.d;
-	return s;
-}
-XStream &operator>= (XStream &s, Se3f &se3) {
-	s >= se3.q >= se3.d;
-	return s;
-}
-XStream &operator< (XStream &s, const Se3f &se3) {
-	s.write(&se3, sizeof(Vect2f));
-	return s;
-}
-XStream &operator> (XStream &s, Se3f &se3) {
-	s.read(&se3, sizeof(Vect2f));
-	return s;
-}
 
 XBuffer &operator<= (XBuffer &b, const Se3f &se3) {
 	b <= se3.q < "  " <= se3.d;
@@ -1512,22 +1343,6 @@ XBuffer &operator> (XBuffer &b, Se3f &se3) {
 }
 
 //  Se3d I/O operations  //////////////
-XStream &operator<= (XStream &s, const Se3d &se3) {
-	s <= se3.q < "  " <= se3.d;
-	return s;
-}
-XStream &operator>= (XStream &s, Se3d &se3) {
-	s >= se3.q >= se3.d;
-	return s;
-}
-XStream &operator< (XStream &s, const Se3d &se3) {
-	s.write(&se3, sizeof(Vect2f));
-	return s;
-}
-XStream &operator> (XStream &s, Se3d &se3) {
-	s.read(&se3, sizeof(Vect2f));
-	return s;
-}
 
 XBuffer &operator<= (XBuffer &b, const Se3d &se3) {
 	b <= se3.q < "  " <= se3.d;

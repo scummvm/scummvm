@@ -68,7 +68,6 @@ class Se3d;
 
 class Vect4f;
 
-class XStream;
 class XBuffer;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -487,11 +486,6 @@ public:
 	friend istream &operator>> (istream &is, Vect2f &v);
 #endif
 
-	friend XStream &operator<= (XStream &s, const Vect2f &v);
-	friend XStream &operator>= (XStream &s, Vect2f &v);
-	friend XStream &operator< (XStream &s, const Vect2f &v);
-	friend XStream &operator> (XStream &s, Vect2f &v);
-
 	friend XBuffer &operator<= (XBuffer &b, const Vect2f &v);
 	friend XBuffer &operator>= (XBuffer &b, Vect2f &v);
 	friend XBuffer &operator< (XBuffer &b, const Vect2f &v);
@@ -657,11 +651,6 @@ public:
 	friend istream &operator>> (istream &is, Vect2i &v);
 #endif
 
-	friend XStream &operator<= (XStream &s, const Vect2i &v);
-	friend XStream &operator>= (XStream &s, Vect2i &v);
-	friend XStream &operator< (XStream &s, const Vect2i &v);
-	friend XStream &operator> (XStream &s, Vect2i &v);
-
 	friend XBuffer &operator<= (XBuffer &b, const Vect2i &v);
 	friend XBuffer &operator>= (XBuffer &b, Vect2i &v);
 	friend XBuffer &operator< (XBuffer &b, const Vect2i &v);
@@ -790,11 +779,6 @@ public:
 	friend ostream &operator<< (ostream &os, const Vect2s &v);
 	friend istream &operator>> (istream &is, Vect2s &v);
 #endif
-
-	friend XStream &operator<= (XStream &s, const Vect2s &v);
-	friend XStream &operator>= (XStream &s, Vect2s &v);
-	friend XStream &operator< (XStream &s, const Vect2s &v);
-	friend XStream &operator> (XStream &s, Vect2s &v);
 
 	friend XBuffer &operator<= (XBuffer &b, const Vect2s &v);
 	friend XBuffer &operator>= (XBuffer &b, Vect2s &v);
@@ -1111,11 +1095,6 @@ public:
 	friend istream &operator>> (istream &is, Vect3f &v);
 #endif
 
-	friend XStream &operator<= (XStream &s, const Vect3f &v);
-	friend XStream &operator>= (XStream &s, Vect3f &v);
-	friend XStream &operator< (XStream &s, const Vect3f &v);
-	friend XStream &operator> (XStream &s, Vect3f &v);
-
 	friend XBuffer &operator<= (XBuffer &b, const Vect3f &v);
 	friend XBuffer &operator>= (XBuffer &b, Vect3f &v);
 	friend XBuffer &operator< (XBuffer &b, const Vect3f &v);
@@ -1334,11 +1313,6 @@ public:
 	friend ostream &operator<< (ostream &os, const Vect3d &v);
 	friend istream &operator>> (istream &is, Vect3d &v);
 #endif
-
-	friend XStream &operator<= (XStream &s, const Vect3d &v);
-	friend XStream &operator>= (XStream &s, Vect3d &v);
-	friend XStream &operator< (XStream &s, const Vect3d &v);
-	friend XStream &operator> (XStream &s, Vect3d &v);
 
 	friend XBuffer &operator<= (XBuffer &b, const Vect3d &v);
 	friend XBuffer &operator>= (XBuffer &b, Vect3d &v);
@@ -1664,11 +1638,6 @@ public:
 	friend istream &operator>> (istream &is, Mat3f &M);
 #endif
 
-	friend XStream &operator<= (XStream &s, const Mat3f &M);
-	friend XStream &operator>= (XStream &s, Mat3f &M);
-	friend XStream &operator< (XStream &s, const Mat3f &M);
-	friend XStream &operator> (XStream &s, Mat3f &M);
-
 	friend XBuffer &operator<= (XBuffer &b, const Mat3f &M);
 	friend XBuffer &operator>= (XBuffer &b, Mat3f &M);
 	friend XBuffer &operator< (XBuffer &b, const Mat3f &M);
@@ -1976,11 +1945,6 @@ public:
 	friend ostream &operator<< (ostream &os, const Mat3d &M);
 	friend istream &operator>> (istream &is, Mat3d &M);
 #endif
-
-	friend XStream &operator<= (XStream &s, const Mat3d &M);
-	friend XStream &operator>= (XStream &s, Mat3d &M);
-	friend XStream &operator< (XStream &s, const Mat3d &M);
-	friend XStream &operator> (XStream &s, Mat3d &M);
 
 	friend XBuffer &operator<= (XBuffer &b, const Mat3d &M);
 	friend XBuffer &operator>= (XBuffer &b, Mat3d &M);
@@ -2429,11 +2393,6 @@ public:
 	friend istream &operator>> (istream &is, QuatF &q);
 #endif
 
-	friend XStream &operator<= (XStream &s, const QuatF &q);
-	friend XStream &operator>= (XStream &s, QuatF &q);
-	friend XStream &operator< (XStream &s, const QuatF &q);
-	friend XStream &operator> (XStream &s, QuatF &q);
-
 	friend XBuffer &operator<= (XBuffer &b, const QuatF &q);
 	friend XBuffer &operator>= (XBuffer &b, QuatF &q);
 	friend XBuffer &operator< (XBuffer &b, const QuatF &q);
@@ -2630,11 +2589,6 @@ public:
 	friend istream &operator>> (istream &is, QuatD &q);
 #endif
 
-	friend XStream &operator<= (XStream &s, const QuatD &q);
-	friend XStream &operator>= (XStream &s, QuatD &q);
-	friend XStream &operator< (XStream &s, const QuatD &q);
-	friend XStream &operator> (XStream &s, QuatD &q);
-
 	friend XBuffer &operator<= (XBuffer &b, const QuatD &q);
 	friend XBuffer &operator>= (XBuffer &b, QuatD &q);
 	friend XBuffer &operator< (XBuffer &b, const QuatD &q);
@@ -2757,11 +2711,6 @@ public:
 	friend istream &operator>>(istream &is, Se3f &se3);
 #endif
 
-	friend XStream &operator<= (XStream &s, const Se3f &v);
-	friend XStream &operator>= (XStream &s, Se3f &v);
-	friend XStream &operator< (XStream &s, const Se3f &v);
-	friend XStream &operator> (XStream &s, Se3f &v);
-
 	friend XBuffer &operator<= (XBuffer &b, const Se3f &v);
 	friend XBuffer &operator>= (XBuffer &b, Se3f &v);
 	friend XBuffer &operator< (XBuffer &b, const Se3f &v);
@@ -2869,11 +2818,6 @@ public:
 	friend ostream &operator<<(ostream &os, const Se3d &se3);
 	friend istream &operator>>(istream &is, Se3d &se3);
 #endif
-
-	friend XStream &operator<= (XStream &s, const Se3d &v);
-	friend XStream &operator>= (XStream &s, Se3d &v);
-	friend XStream &operator< (XStream &s, const Se3d &v);
-	friend XStream &operator> (XStream &s, Se3d &v);
 
 	friend XBuffer &operator<= (XBuffer &b, const Se3d &v);
 	friend XBuffer &operator>= (XBuffer &b, Se3d &v);
@@ -3021,11 +2965,6 @@ public:
 	friend ostream &operator<< (ostream &os, const Vect4f &v);
 	friend istream &operator>> (istream &is, Vect4f &v);
 #endif
-
-	friend XStream &operator<= (XStream &s, const Vect4f &v);
-	friend XStream &operator>= (XStream &s, Vect4f &v);
-	friend XStream &operator< (XStream &s, const Vect4f &v);
-	friend XStream &operator> (XStream &s, Vect4f &v);
 
 	friend XBuffer &operator<= (XBuffer &b, const Vect4f &v);
 	friend XBuffer &operator>= (XBuffer &b, Vect4f &v);
