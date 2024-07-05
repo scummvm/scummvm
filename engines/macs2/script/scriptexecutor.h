@@ -34,6 +34,7 @@ namespace Common {
 
 namespace Macs2 {
 class Macs2Engine;
+class GameObject;
 
 	namespace Script {
 
@@ -125,7 +126,8 @@ class Macs2Engine;
 
 			// Depending on the current state, chooses the next script to run
 			// and adjusts the state
-			void LoadNextScript();
+			// Should return true iff a new script was loaded
+			bool LoadNextScript();
 			
 
 			bool isTimerActive = false;

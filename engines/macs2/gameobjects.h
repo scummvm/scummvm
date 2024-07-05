@@ -58,6 +58,8 @@ public:
 	// The object-specific script
 	// TODO: Random thought - do objects have their own space for script variables?
 	Common::Array<uint8> Script;
+
+	Common::MemoryReadStream *GetScriptStream(); 
 };
 
 class GameObjects : public Common::Singleton<GameObjects> {
@@ -71,6 +73,8 @@ public:
 	Common::Array<GameObject*> Objects;
 
 	static GameObject *GetProtagonistObject();
+
+	static GameObject *GetObjectByIndex(uint16 index);
 };
 
 } // namespace Macs2

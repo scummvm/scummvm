@@ -1026,13 +1026,13 @@ void ScriptExecutor::SetVariableValue(uint16 index, uint16 a, uint16 b) {
 }
 
 Common::Point ScriptExecutor::GetCharPosition() {
-	const GameObject* protagonist = GameObjects::GetProtagonistObject();
+	const Macs2::GameObject* protagonist = GameObjects::GetProtagonistObject();
 	return protagonist->Position;
 }
 
 bool ScriptExecutor::IsRelevantObject(const GameObject *obj) {
-	// TODO: Implement
-	return false;
+	return obj->Index == 1;
+	// TODO: Implement properly
 }
 
 void ScriptExecutor::Step() {
@@ -1073,9 +1073,14 @@ void ScriptExecutor::Step() {
 }
 	
 	
-void ScriptExecutor::LoadNextSript(){
+bool ScriptExecutor::LoadNextScript() {
 	// TODO: Implement
 	// TODO: Consider what effect this one can have on the state
+	if (executingObjectIndex == Scenes::instance().CurrentSceneIndex) {
+		// If we are finished with executing the scene, we need to go over all relevant objects
+		// The code below will increment to 1 to start at the protagonist
+		executingObjectIndex = 0;
+	}
 
 	// We always try to advance to the next object's script until we reach the end
 	// of the objects list
@@ -1085,69 +1090,32 @@ void ScriptExecutor::LoadNextSript(){
 		candidateObject = GameObjects::GetObjectByIndex(executingObjectIndex);
 
 		// TODO: Check if this is a valid option
-		if ()
-
-	} while (candidateObject != nullptr)
-
-
-
-
-	// Scene initialization run
-	// TODO: Need to better encapsulate this down the road
-	// TODO: Not sure which order is really right, need to check in SIS logs
-	IsRepeatRun = false;
-	IsSceneInitRun = firstRun;
-	do {
-		ExecuteScript();
-		if (_stream->pos() == _stream->size()) {
-			break;
+		if (IsRelevantObject(candidateObject)) {
+			if (candidateObject->Script.size() != 0) {
+				_stream = candidateObject->GetScriptStream();
+				return true;
+			}
 		}
-	} while (requestCallback);
-	// During the first call, we want to try calling again
-	// TODO: Need to see if this is really the right way to go
-	if (!IsSceneInitRun && !requestCallback) {
-		return;
-	}
-	requestCallback = false;
+	} while (candidateObject != nullptr);
 
-	Common::MemoryReadStream *originalStream = _stream;
-
-	// Check if we reached the end of the script
-	// TODO: Need to check if this is the correct way to continue to pick an object script to run
-
-	// TODO: Not looped for now
-	uint16 executingObjectIndex = 1;
-	GameObject *obj = GameObjects::instance().Objects[executingObjectIndex - 1];
-	if (obj->Script.size() != 0) {
-		debug(
-			"----- TODO Not looped yet! - Switching execution to script for object: %.4x\n",
-			executingObjectIndex);
-		// TODO: Memory leak
-		SetScript(new Common::MemoryReadStream(obj->Script.data(), obj->Script.size()));
-		// TODO: Check if this process needs to go on (probably does)
-		// and what the rules for it would be
-		ExecuteScript();
+	// We are done executing all relevant objects
+	if (IsSceneInitRun) {
+		// We need to start again at the scene object
+		IsSceneInitRun = false;
+		IsRepeatRun = true;
+		executingObjectIndex = Scenes::instance().CurrentSceneIndex;
+		_stream = Scenes::instance().CurrentSceneScript;
+		_stream->seek(0, SEEK_SET);
+		return true;
 	}
 
-	IsSceneInitRun = false;
-
-	// TODO: Encapsulate the repeat run
-	// Reset to start
-	_stream = originalStream;
-	_stream->seek(0, SEEK_SET);
-	IsRepeatRun = true;
-	do {
-		ExecuteScript();
-		if (_stream->pos() == _stream->size()) {
-			break;
-		}
-	} while (requestCallback);
-	if (!requestCallback) {
-		return;
+	if (IsRepeatRun) {
+		// We are done
+		IsRepeatRun = false;
+		return false;
 	}
-	requestCallback = false;
-	IsRepeatRun = false;
 
+	return false;
 };
 
 
@@ -3166,70 +3134,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		// TODO: Not sure which order is really right, need to check in SIS logs
 		IsRepeatRun = false;
 		IsSceneInitRun = firstRun;
-		do {
-			ExecuteScript();
-			if (_stream->pos() == _stream->size()) {
-				break;
-			}
-		} while (requestCallback);
-
-		// During the first call, we want to try calling again
-		// TODO: Need to see if this is really the right way to go
-		if (!IsSceneInitRun && !requestCallback) {
-			return;
-		}
-		requestCallback = false;
-
-		Common::MemoryReadStream *originalStream = _stream;
-		
-		// Check if we reached the end of the script
-		// TODO: Need to check if this is the correct way to continue to pick an object script to run
-
-		// TODO: Not looped for now
-		uint16 executingObjectIndex = 1;
-		GameObject *obj = GameObjects::instance().Objects[executingObjectIndex-1];
-		if (obj->Script.size() != 0) {
-			debug(
-					"----- TODO Not looped yet! - Switching execution to script for object: %.4x\n",
-					executingObjectIndex);
-			// TODO: Memory leak
-			SetScript(new Common::MemoryReadStream(obj->Script.data(), obj->Script.size()));
-			// TODO: Check if this process needs to go on (probably does)
-			// and what the rules for it would be
-			ExecuteScript();
-		}
-		if (_interactedObjectID != 0 && _interactedOtherObjectID != 0) {
-			// TODO: Hardcoded for this specific case
-			obj = GameObjects::instance().Objects[_interactedObjectID - 1];
-			debug(
-				"----- TODO Not looped yet! - Switching execution to script for object: %.4x\n",
-				executingObjectIndex);
-			// TODO: Memory leak
-			SetScript(new Common::MemoryReadStream(obj->Script.data(), obj->Script.size()));
-			// TODO: Check if this process needs to go on (probably does)
-			// and what the rules for it would be
-			ExecuteScript();
-		}
-
-		IsSceneInitRun = false;
-		
-
-		// TODO: Encapsulate the repeat run
-		// Reset to start
-		_stream = originalStream;
-		_stream->seek(0, SEEK_SET);
-		IsRepeatRun = true;
-		do {
-			ExecuteScript();
-			if (_stream->pos() == _stream->size()) {
-				break;
-			}
-		} while (requestCallback);
-		if (!requestCallback) {
-			return;
-		}
-		requestCallback = false;
-		IsRepeatRun = false;
+		Step();
 	}
 
 	void ScriptExecutor::SetScript(Common::MemoryReadStream *stream) {
