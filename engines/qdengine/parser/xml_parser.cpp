@@ -190,8 +190,6 @@ bool parser::parse_file(const char *fname) {
 	if (!p) return false;
 #endif
 
-	XStream ff(fname, XS_IN);
-
 	unsigned int fsize = ff.size();
 
 #if 0
@@ -291,55 +289,6 @@ bool parser::read_tag_data(tag &tg, const char *data_ptr, int data_length) {
 }
 #endif
 
-XStream &operator < (XStream &ff, const tag &tg) {
-	int id = tg.ID();
-	ff.write(reinterpret_cast<const char *>(&id), sizeof(int));
-
-	int data_format = tg.data_format();
-	ff.write(reinterpret_cast<const char *>(&data_format), sizeof(int));
-
-	int data_size = tg.data_size();
-	ff.write(reinterpret_cast<const char *>(&data_size), sizeof(int));
-
-	int data_offset = tg.data_offset();
-	ff.write(reinterpret_cast<const char *>(&data_offset), sizeof(int));
-
-	int num_subtags = tg.num_subtags();
-	ff.write(reinterpret_cast<const char *>(&num_subtags), sizeof(int));
-
-	for (tag::subtag_iterator it = tg.subtags_begin(); it != tg.subtags_end(); ++it)
-		ff < *it;
-
-	return ff;
-}
-
-XStream &operator > (XStream &ff, tag &tg) {
-	int id = 0;
-	ff.read(reinterpret_cast<char *>(&id), sizeof(int));
-
-	int data_format = 0;
-	ff.read(reinterpret_cast<char *>(&data_format), sizeof(int));
-
-	int data_size = 0;
-	ff.read(reinterpret_cast<char *>(&data_size), sizeof(int));
-
-	int data_offset = 0;
-	ff.read(reinterpret_cast<char *>(&data_offset), sizeof(int));
-
-	tg = tag(tag(id, tag::tag_data_format(data_format), data_size, data_offset));
-
-	int num_subtags = 0;
-	ff.read(reinterpret_cast<char *>(&num_subtags), sizeof(int));
-
-	for (int i = 0; i < num_subtags; i++) {
-		tag stg;
-		ff > stg;
-
-		tg.add_subtag(stg);
-	}
-
-	return ff;
-}
 
 bool tag::readTag(Common::SeekableReadStream *ff, tag &tg) {
 	uint32 id = ff->readUint32LE();
@@ -379,22 +328,6 @@ bool parser::read_binary_script(const char *fname) {
 	root_tag_.readTag(&ff, root_tag_);
 
 	root_tag_.set_data(&data_pool_);
-
-	ff.close();
-
-	return true;
-}
-
-bool parser::write_binary_script(const char *fname) const {
-	XStream ff(fname, XS_OUT);
-
-	int v = 8383;
-	ff.write(reinterpret_cast<const char *>(&v), sizeof(int));
-
-	ff.write(reinterpret_cast<const char *>(&data_pool_position_), sizeof(int));
-	ff.write(&*data_pool_.begin(), data_pool_position_);
-
-	ff < root_tag_;
 
 	ff.close();
 
