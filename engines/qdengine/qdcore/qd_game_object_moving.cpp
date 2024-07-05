@@ -25,6 +25,7 @@
 #include "qdengine/qdengine.h"
 #include "qdengine/qdcore/qd_rnd.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
+#include "qdengine/system/input/keyboard_input.h"
 #include "qdengine/parser/xml_tag_buffer.h"
 
 #include "qdengine/qdcore/qd_setup.h"

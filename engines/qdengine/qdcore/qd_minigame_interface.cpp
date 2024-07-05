@@ -29,6 +29,7 @@
 #include "qdengine/qdcore/qd_engine_interface.h"
 #include "qdengine/qdcore/qd_rnd.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
+#include "qdengine/system/input/keyboard_input.h"
 
 #include "qdengine/qdcore/qd_game_dispatcher.h"
 #include "qdengine/qdcore/qd_game_scene.h"

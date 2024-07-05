@@ -29,7 +29,7 @@
 #include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
-
+#include "qdengine/util/xmath/SafeMath.h"
 
 namespace QDEngine {
 

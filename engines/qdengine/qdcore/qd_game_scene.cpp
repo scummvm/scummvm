@@ -43,6 +43,8 @@
 #include "qdengine/qdcore/qd_interface_button.h"
 #include "qdengine/qdcore/qd_interface_screen.h"
 #include "qdengine/qdcore/qd_game_dispatcher.h"
+
+#include "qdengine/system/app_core.h"
 #include <stdio.h>
 
 
