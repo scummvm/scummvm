@@ -29,7 +29,7 @@
 
 namespace QDEngine {
 
-//! Интерфейсный элемент для отображения значения счётчика.
+//! Interface widget for displaying a counter
 
 class qdInterfaceCounter : public qdInterfaceElement {
 public:

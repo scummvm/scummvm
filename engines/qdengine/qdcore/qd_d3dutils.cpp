@@ -19,29 +19,11 @@
  *
  */
 
-/*
-**-----------------------------------------------------------------------------
-** Name:    D3DUtils.cpp
-** Purpose: Various D3D utility functions
-** Notes:
-**
-** Copyright (c) 1995 - 1997 by Microsoft, all rights reserved.
-**-----------------------------------------------------------------------------
-*/
-
 // Note:  Must Define D3D_OVERLOADS to get C++ version of MATRIX3D
 #include <cfloat>
 #include <cmath>
 #include "qdengine/qd_precomp.h"
 #include "qdengine/qdcore/qd_d3dutils.h"
-
-
-
-/*
-**-----------------------------------------------------------------------------
-** Functions
-**-----------------------------------------------------------------------------
-*/
 
 //набор своих функций, потому что те, что представлены в xMath.h
 //не удовлетворяют потребностям

@@ -30,9 +30,7 @@
 #include "qdengine/qdcore/qd_named_object.h"
 #include "qdengine/qdcore/qd_object_list_container.h"
 
-
 namespace QDEngine {
-
 
 //! Шрифт
 class qdFontInfo : public qdNamedObject {

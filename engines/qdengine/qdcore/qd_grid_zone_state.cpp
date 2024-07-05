@@ -19,20 +19,11 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include "qdengine/qd_precomp.h"
 #include "qdengine/qdcore/qd_grid_zone.h"
 #include "qdengine/qdcore/qd_grid_zone_state.h"
 
-
 namespace QDEngine {
-
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 const char *const qdGridZoneState::ZONE_STATE_ON_NAME = "Вкл";
 const char *const qdGridZoneState::ZONE_STATE_OFF_NAME = "Выкл";

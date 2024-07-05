@@ -25,7 +25,6 @@
 #include "qdengine/parser/xml_fwd.h"
 #include "qdengine/qdcore/qd_game_object_animated.h"
 
-
 namespace QDEngine {
 
 class qdInterfaceButton;

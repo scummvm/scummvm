@@ -19,8 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
@@ -41,18 +39,11 @@
 
 namespace QDEngine {
 
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-
 struct qdInterfaceElementsOrdering {
 	bool operator()(const qdInterfaceElement *p0, const qdInterfaceElement *p1) {
 		return p0->screen_depth() < p1->screen_depth();
 	}
 };
-
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 qdInterfaceScreen::qdInterfaceScreen() : is_locked_(false),
 	autohide_time_(0.0f),

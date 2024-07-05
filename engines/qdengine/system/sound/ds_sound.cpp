@@ -23,13 +23,7 @@
 #include "qdengine/system/sound/ds_sound.h"
 #include "qdengine/system/sound/wav_sound.h"
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 namespace QDEngine {
 
 dsSound::dsSound(const sndSound &snd, LPDIRECTSOUND sound_device) : sndSound(snd),

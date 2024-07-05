@@ -21,17 +21,6 @@
 
 #ifndef D3DUTILS_H
 #define D3DUTILS_H
-/*
-**-----------------------------------------------------------------------------
-** Name:    D3DUtils.h
-** Purpose: Various D3D utility functions
-** Notes:
-**
-** Copyright (c) 1995 - 1997 by Microsoft, all rights reserved
-**-----------------------------------------------------------------------------
-*/
-
-
 
 namespace QDEngine {
 

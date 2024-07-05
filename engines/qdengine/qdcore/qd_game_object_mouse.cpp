@@ -31,7 +31,6 @@
 #include "qdengine/qdcore/qd_game_object_mouse.h"
 #include "qdengine/qdcore/qd_game_dispatcher.h"
 
-
 namespace QDEngine {
 
 qdGameObjectMouse::qdGameObjectMouse() : object_(NULL),

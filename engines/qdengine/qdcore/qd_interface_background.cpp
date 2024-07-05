@@ -19,8 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include "qdengine/qd_precomp.h"
 
 #include "qdengine/parser/qdscr_parser.h"
@@ -28,12 +26,6 @@
 #include "qdengine/qdcore/qd_interface_background.h"
 
 namespace QDEngine {
-
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 qdInterfaceBackground::qdInterfaceBackground() {
 	state_.set_owner(this);

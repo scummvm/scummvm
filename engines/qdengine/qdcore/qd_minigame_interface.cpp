@@ -19,8 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include "qdengine/qd_precomp.h"
 #include "qdengine/parser/xml_fwd.h"
 #include "qdengine/qdcore/qd_minigame.h"
@@ -43,9 +41,6 @@
 
 
 namespace QDEngine {
-
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
 
 namespace qdmg {
 

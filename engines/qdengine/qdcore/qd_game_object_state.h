@@ -36,7 +36,6 @@
 #include "qdengine/qdcore/qd_grid_zone.h"
 #include "qdengine/system/sound/snd_sound.h"
 
-
 namespace QDEngine {
 
 class XStream;

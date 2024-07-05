@@ -19,8 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include "qdengine/qd_precomp.h"
 #include "qdengine/parser/xml_tag.h"
 #include "qdengine/parser/qdscr_parser.h"
@@ -28,14 +26,7 @@
 #include "qdengine/qdcore/qd_game_object_static.h"
 #include "qdengine/qdcore/qd_game_scene.h"
 
-
 namespace QDEngine {
-
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 qdGameObjectStatic::qdGameObjectStatic() {
 }

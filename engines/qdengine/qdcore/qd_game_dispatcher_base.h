@@ -32,9 +32,7 @@
 #include "qdengine/qdcore/qd_resource.h"
 #endif
 
-
 namespace QDEngine {
-
 
 typedef void (*qdLoadingProgressFnc)(int percents_loaded, void *data);
 
