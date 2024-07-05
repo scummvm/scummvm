@@ -1,4 +1,4 @@
-/* ScummVM - Graphic Adventure Engine
+/* ScummVM - Graphic Adventure Engineapp_core.cpp
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -20,7 +20,7 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
-#include "common/str.h"
+#include "common/file.h"
 #include "common/textconsole.h"
 #include "qdengine/qd_precomp.h"
 #include "qdengine/system/app_core.h"
@@ -151,8 +151,8 @@ const char *change_ext(const char *file_name, const char *new_ext) {
 }
 
 unsigned file_size(const char *file_name) {
-	XStream fh(0);
-	if (fh.open(file_name, XS_IN))
+	Common::File fh;
+	if (fh.open(file_name))
 		return fh.size();
 
 	return 0;
@@ -184,3 +184,4 @@ void adjust_dir_end_slash(std::string &str) {
 }; /* namespace app_io */
 
 } // namespace QDEngine
+
