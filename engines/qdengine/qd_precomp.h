@@ -71,18 +71,14 @@
 
 
 #include "engines/qdengine/qd_fwd.h"
-#include "qdengine/system/app_core.h"
-#include "qdengine/system/app_error_handler.h"
-#include "qdengine/system/input/mouse_input.h"
-#include "qdengine/system/input/keyboard_input.h"
-#include "qdengine/qdcore/util/qd_save_stream.h"
-#include "qdengine/util/xmath/SafeMath.h"
 
 namespace QDEngine {
 
 // STUB: XZipStream
 #define _NO_ZIP_
 class XZipStream : public XStream {};
+
+typedef XStream qdSaveStream;
 
 // STUB FIXME
 #define APIENTRY

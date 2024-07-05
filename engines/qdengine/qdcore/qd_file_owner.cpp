@@ -23,7 +23,7 @@
 
 #include "qdengine/qd_precomp.h"
 #include "qdengine/qdcore/qd_file_owner.h"
-
+#include "qdengine/system/app_core.h"
 
 namespace QDEngine {
 
