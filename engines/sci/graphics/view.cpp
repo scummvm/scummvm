@@ -899,17 +899,39 @@ void GfxView::createScalingTable(Common::Array<uint16> &table, int16 celSize, ui
 	const int16 clippedScaledSize = CLIP<int16>(scaledSize, 0, maxSize);
 	const int16 stepCount = scaledSize - 1;
 
-	if (stepCount <= 0) {
+	if (clippedScaledSize <= 0) {
 		table.clear();
 		return;
 	}
 
-	uint32 acc;
-	uint32 inc = ((celSize - 1) << 16) / stepCount;
-	if ((inc & 0xffff8000) == 0) {
-		acc = 0x8000;
+	// SSCI used the mirror flag when creating the scaling table by swapping start and end.
+	// We don't do this because we reverse the cel's bitmap in memory before drawing.
+	const int16 start = 0;
+	const int16 end = (celSize - 1);
+
+	int32 acc;
+	int32 inc;
+	bool negative = false;
+	if (stepCount == 0) {
+		acc = start << 16;
+		inc = 0;
 	} else {
-		acc = inc & 0xffff;
+		acc = start << 16;
+		inc = end << 16;
+		inc -= acc;
+		inc /= stepCount;
+		if (inc < 0) {
+			inc = -inc;
+			negative = true;
+		}
+		if ((inc & 0xffff8000) == 0) {
+			acc = (acc & 0xffff0000) | 0x8000;
+		} else {
+			acc = (acc & 0xffff0000) | (inc & 0xffff);
+		}
+	}
+	if (negative) {
+		inc = -inc;
 	}
 
 	table.resize(clippedScaledSize);

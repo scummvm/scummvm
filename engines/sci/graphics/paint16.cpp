@@ -110,12 +110,12 @@ void GfxPaint16::drawCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo,
 	}
 }
 
-// This version of drawCel is not supposed to call BitsShow()!
+// This version of drawCel is not supposed to call bitsShow()!
 void GfxPaint16::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, const Common::Rect &celRect, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY, uint16 scaleSignal) {
 	drawCel(_cache->getView(viewId), loopNo, celNo, celRect, priority, paletteNo, scaleX, scaleY, scaleSignal);
 }
 
-// This version of drawCel is not supposed to call BitsShow()!
+// This version of drawCel is not supposed to call bitsShow()!
 void GfxPaint16::drawCel(GfxView *view, int16 loopNo, int16 celNo, const Common::Rect &celRect, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY, uint16 scaleSignal) {
 	Common::Rect clipRect = celRect;
 	clipRect.clip(_ports->_curPort->rect);
