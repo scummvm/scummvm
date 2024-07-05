@@ -19,7 +19,7 @@
  *
  */
 
-#include "qdengine/core/qd_precomp.h"
+#include "qdengine/qd_precomp.h"
 
 namespace QDEngine {
 

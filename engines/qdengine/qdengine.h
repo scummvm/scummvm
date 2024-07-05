@@ -36,7 +36,7 @@
 #include "graphics/pixelformat.h"
 #include "graphics/screen.h"
 
-#include "qdengine/core/parser/qdscr_parser.h"
+#include "qdengine/parser/qdscr_parser.h"
 
 
 struct ADGameDescription;

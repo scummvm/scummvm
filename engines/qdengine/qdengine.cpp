@@ -33,8 +33,8 @@
 
 #include "qdengine/qdengine.h"
 #include "qdengine/console.h"
-#include "qdengine/core/qd_precomp.h"
-#include "qdengine/core/parser/qdscr_parser.h"
+#include "qdengine/qd_precomp.h"
+#include "qdengine/parser/qdscr_parser.h"
 
 namespace QDEngine {
 
