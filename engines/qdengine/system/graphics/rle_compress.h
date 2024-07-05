@@ -24,7 +24,6 @@
 
 
 namespace QDEngine {
-//#include <vector>
 
 //! Массив, сжатый методом RLE.
 class rleBuffer {
