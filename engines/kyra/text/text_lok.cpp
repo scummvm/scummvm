@@ -35,8 +35,9 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int chatDuration, const ch
 	uint8 currPage;
 
 	uint32 timeToEnd = strlen(chatStr) * 8 * _tickLength + _system->getMillis();
+	bool textOnly = textEnabled() && vocFile == - 1;
 
-	if (textEnabled() && !speechEnabled() && chatDuration != -1) {
+	if (textOnly && chatDuration != -1) {
 		switch (_configTextspeed) {
 		case 0:
 			chatDuration *= 2;
@@ -100,7 +101,7 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int chatDuration, const ch
 		_animator->copyChangedObjectsForward(0);
 		updateTextFade();
 
-		if (((chatDuration < (int)(_system->getMillis() - timeAtStart)) && chatDuration != -1 && printText) || (vocFile != -1 && !snd_voiceIsPlaying()))
+		if (((chatDuration < (int)(_system->getMillis() - timeAtStart)) && chatDuration != -1 && printText && textOnly) || (!textOnly && !snd_voiceIsPlaying()))
 			break;
 
 		uint32 nextTime = loopStart + _tickLength;
