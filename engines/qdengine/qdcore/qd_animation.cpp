@@ -610,23 +610,6 @@ bool qdAnimation::qda_load(const char *fname) {
 	return true;
 }
 
-bool qdAnimation::qda_load_header(const char *fname) {
-#ifndef __QD_SYSLIB__
-	XZipStream fh;
-	if (!qdFileManager::instance().open_file(fh, fname)) return false;
-#else
-	XStream fh;
-	fh.open(fname, XS_IN);
-#endif
-
-	int fl, version;
-	fh > version > sx_ > sy_ > length_ > fl > num_frames_;
-	clear_flags();
-	set_flag(fl);
-
-	return true;
-}
-
 void qdAnimation::qda_set_file(const char *fname) {
 	if (fname)
 		qda_file_ = fname;
@@ -814,12 +797,6 @@ bool qdAnimation::load_resource() {
 	return load_resources();
 }
 
-bool qdAnimation::load_resource_header(const char *fname) {
-	if (is_resource_loaded()) return load_resource();
-
-	const char *p = (fname) ? fname : qda_file();
-	return qda_load_header(p);
-}
 
 bool qdAnimation::free_resource() {
 	toggle_resource_status(false);
