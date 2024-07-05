@@ -29,6 +29,7 @@
 #include <mint/ostruct.h>
 #include <unordered_set>
 
+#include "atari-cursor.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
 
@@ -318,64 +319,6 @@ private:
 	bool _overlayVisible = false;
 	Graphics::Surface _overlaySurface;
 
-	struct Cursor {
-		void update(const Graphics::Surface &screen, bool isModified);
-
-		bool visible = false;
-
-		// position
-		Common::Point getPosition() const {
-			return Common::Point(_x, _y);
-		}
-		void setPosition(int x, int y) {
-			_x = x;
-			_y = y;
-		}
-		void updatePosition(int deltaX, int deltaY, const Graphics::Surface &screen);
-		void swap() {
-			const int tmpX = _oldX;
-			const int tmpY = _oldY;
-
-			_oldX = _x;
-			_oldY = _y;
-
-			_x = tmpX;
-			_y = tmpY;
-		}
-
-		// surface
-		void setSurface(const void *buf, int w, int h, int hotspotX, int hotspotY, uint32 keycolor);
-		template <bool isClut8>
-		void convertTo(const Graphics::PixelFormat &format);
-		Graphics::Surface surface;
-		Graphics::Surface surfaceMask;
-
-		// rects (valid only if !outOfScreen)
-		bool isClipped() const {
-			return outOfScreen ? false : _width != srcRect.width();
-		}
-		bool outOfScreen = true;
-		Common::Rect srcRect;
-		Common::Rect dstRect;
-
-		// palette (only used for the overlay)
-		byte palette[256*3] = {};
-
-	private:
-		int _x = -1, _y = -1;
-		int _oldX = -1, _oldY = -1;
-
-		// related to 'surface'
-		const byte *_buf = nullptr;
-		int _width;
-		int _height;
-		int _hotspotX;
-		int _hotspotY;
-		uint32 _keycolor;
-
-		int _rShift, _gShift, _bShift;
-		int _rMask, _gMask, _bMask;
-	};
 	Cursor _cursor;
 
 	Palette _palette;
