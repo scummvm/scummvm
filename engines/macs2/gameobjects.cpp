@@ -71,3 +71,7 @@ Macs2::GameObject *Macs2::GameObjects::GetObjectByIndex(uint16 index) {
 	}
 	return instance().Objects[index - 1];
 }
+
+Common::MemoryReadStream *Macs2::GameObject::GetScriptStream() {
+	return new Common::MemoryReadStream(Script.data(), Script.size());
+}
