@@ -328,16 +328,6 @@ bool isCommand(EventID eventID);
 
 } // End of namespace EventIDs
 
-namespace MTropolisVersions {
-
-enum MTropolisVersion {
-	kMTropolisVersion1_0,
-	kMTropolisVersion1_1,
-	kMTropolisVersion2_0,
-};
-
-} // End of namespace MTropolisVersions
-
 MiniscriptInstructionOutcome pointWriteRefAttrib(Common::Point &point, MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib);
 Common::String pointToString(const Common::Point &point);
 
@@ -2455,7 +2445,7 @@ public:
 
 	const SubtitleTables &getSubtitles() const;
 
-	MTropolisVersions::MTropolisVersion guessVersion() const;
+	RuntimeVersion getRuntimeVersion() const;
 	ProjectPlatform getPlatform() const;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
@@ -2573,7 +2563,6 @@ private:
 
 	SubtitleTables _subtitles;
 
-	MTropolisVersions::MTropolisVersion _guessedVersion;
 	ProjectPlatform _platform;
 
 	Common::Archive *_rootArchive;

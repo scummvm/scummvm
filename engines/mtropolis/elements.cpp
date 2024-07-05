@@ -1382,7 +1382,7 @@ VThreadState MToonElement::consumeCommand(Runtime *runtime, const Common::Shared
 		// mTropolis 1.0 will not fire a Hidden event when an mToon is stopped even though it is hidden in the process.
 		// MTI depends on this, otherwise 2 hints will play at once when clicking a song button on the piano.
 		// This same bug does NOT apply to the "Shown" event firing on Play (as happens above).
-		if (runtime->getProject()->guessVersion() >= MTropolisVersions::kMTropolisVersion1_1) {
+		if (runtime->getProject()->getRuntimeVersion() > kRuntimeVersion100) {
 			ChangeFlagTaskData *hideTaskData = runtime->getVThread().pushTask("MToonElement::changeVisibilityTask", static_cast<VisualElement *>(this), &MToonElement::changeVisibilityTask);
 			hideTaskData->desiredFlag = false;
 			hideTaskData->runtime = runtime;

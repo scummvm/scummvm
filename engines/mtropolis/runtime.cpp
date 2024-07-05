@@ -2708,6 +2708,27 @@ bool RuntimeObject::readAttributeIndexed(MiniscriptThread *thread, DynamicValue 
 }
 
 MiniscriptInstructionOutcome RuntimeObject::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+	if (thread->getRuntime()->getProject()->getRuntimeVersion() < kRuntimeVersion200) {
+		// Per 2.0 release notes, the following attrib writes succeed without error
+		// on all objects
+		const char *sunkAttribs[] = {
+			"position", "width", "height", "rate", "range", "cel", "text", "volume", "timevalue",
+			"mastervolume", "usertimeout", "layer", "paused", "trackenable", "trackdisable",
+			"cache", "direct", "loop", "visible", "loopbackforth", "playeveryframe"
+		};
+
+		for (const char *sunkAttrib : sunkAttribs) {
+			if (attrib == sunkAttrib) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+				if (Debugger *debugger = thread->getRuntime()->debugGetDebugger())
+					debugger->notify(kDebugSeverityWarning, Common::String::format("'%s' attribute write was discarded", sunkAttrib));
+#endif
+				DynamicValueWriteDiscardHelper::create(writeProxy);
+				return kMiniscriptInstructionOutcomeContinue;
+			}
+		}
+	}
+
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
@@ -7049,7 +7070,7 @@ Project::AssetDesc::AssetDesc() : typeCode(0), id(0), streamID(0), filePosition(
 Project::Project(Runtime *runtime)
 	: Structural(runtime), _projectFormat(Data::kProjectFormatUnknown),
 	  _haveGlobalObjectInfo(false), _haveProjectStructuralDef(false), _playMediaSignaller(new PlayMediaSignaller()),
-	  _keyboardEventSignaller(new KeyboardEventSignaller()), _guessedVersion(MTropolisVersions::kMTropolisVersion1_0),
+	  _keyboardEventSignaller(new KeyboardEventSignaller()),
 	  _platform(kProjectPlatformUnknown), _rootArchive(nullptr), _runtimeVersion(kRuntimeVersion100) {
 }
 
@@ -7643,8 +7664,8 @@ const SubtitleTables &Project::getSubtitles() const {
 	return _subtitles;
 }
 
-MTropolisVersions::MTropolisVersion Project::guessVersion() const {
-	return _guessedVersion;
+RuntimeVersion Project::getRuntimeVersion() const {
+	return _runtimeVersion;
 }
 
 ProjectPlatform Project::getPlatform() const {
@@ -7701,14 +7722,6 @@ void Project::loadAssetCatalog(const Data::AssetCatalog &assetCatalog) {
 				_assetNameToID[assetDesc.name] = assetDesc.id;
 		}
 	}
-
-	if (assetCatalog.getRevision() <= 2)
-		_guessedVersion = MTropolisVersions::kMTropolisVersion1_0;
-	else if (assetCatalog.getRevision() <= 4)
-		_guessedVersion = MTropolisVersions::kMTropolisVersion1_1;
-	else
-		_guessedVersion = MTropolisVersions::kMTropolisVersion2_0;
-
 }
 
 void Project::loadGlobalObjectInfo(ChildLoaderStack &loaderStack, const Data::GlobalObjectInfo& globalObjectInfo) {
