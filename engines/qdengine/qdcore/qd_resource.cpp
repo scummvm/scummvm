@@ -25,10 +25,6 @@
 #include "common/str.h"
 #include "qdengine/qd_precomp.h"
 
-#ifdef __QD_DEBUG_ENABLE__
-#include <stdio.h>
-#endif
-
 #include "qdengine/qdcore/qd_resource.h"
 #include "qdengine/qdcore/qd_named_object.h"
 #include "qdengine/parser/qdscr_parser.h"

@@ -19,8 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/debug.h"
 
@@ -40,11 +38,6 @@
 
 namespace QDEngine {
 
-#include <stdio.h>
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 #ifdef _QUEST_EDITOR
 bool qdGameObjectAnimated::fast_state_merge_ = false;
