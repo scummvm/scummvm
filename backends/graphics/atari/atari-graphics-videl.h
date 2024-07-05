@@ -24,8 +24,8 @@
 
 #include "backends/graphics/atari/atari-graphics.h"
 
+#include "backends/graphics/atari/atari-c2p-asm.h"
 #include "backends/graphics/atari/atari-graphics-asm.h"
-#include "backends/graphics/atari/atari_c2p-asm.h"
 #include "common/system.h"
 
 class AtariVidelManager : public AtariGraphicsManager {
