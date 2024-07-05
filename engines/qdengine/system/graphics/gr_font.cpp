@@ -19,7 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #define _NO_ZIP_
 #include "common/file.h"
@@ -32,10 +31,6 @@
 
 
 namespace QDEngine {
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 grFont::grFont() : alpha_buffer_(NULL) {
 	size_x_ = size_y_ = 0;
@@ -56,7 +51,7 @@ bool grFont::load(const char *fname) {
 	file.open(Common::Path(str, '\\'));
 
 	if (load_alpha(&file)) {
-		Common::String str(fname);
+		str = fname;
 		str += ".idx";
 
 		file.open(Common::Path(str));
