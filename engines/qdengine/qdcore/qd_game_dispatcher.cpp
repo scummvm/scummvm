@@ -3125,7 +3125,7 @@ bool qdGameDispatcher::get_files_list(qdFileNameList &files_to_copy, qdFileNameL
 	}
 
 	if (hall_of_fame_size_)
-		files_to_copy.push_back("Resource\\hof.dat");
+		files_to_copy.push_back("Resource/hof.dat");
 
 	return true;
 }
@@ -3438,7 +3438,7 @@ bool qdGameDispatcher::load_hall_of_fame() {
 	hall_of_fame_.resize(hall_of_fame_size_);
 
 	Common::File fh;
-	if (fh.open(Common::Path("Resource\\hof.dat", '\\'))) {
+	if (fh.open(Common::Path("Resource/hof.dat"))) {
 		char buf[1024];
 		for (int i = 0; i < hall_of_fame_size_; i++) {
 			fh.readLine(buf, 1024);
@@ -3458,7 +3458,7 @@ bool qdGameDispatcher::save_hall_of_fame() const {
 		return false;
 
 	Common::DumpFile fh;
-	if (fh.open(Common::Path("Resource\\hof.dat", '\\'))) {
+	if (fh.open(Common::Path("Resource/hof.dat"))) {
 		for (int i = 0; i < hall_of_fame_size_; i++) {
 			fh.writeString(Common::String::format("%s\r\n", hall_of_fame_[i].player_name_.c_str()));
 			fh.writeString(Common::String::format("%d\r\n", hall_of_fame_[i].score_));
