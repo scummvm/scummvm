@@ -58,6 +58,7 @@ struct AGSGameDescription {
 	ADGameDescription desc;
 	const PluginVersion *_plugins;
 	const char *_mainNameInsideInstaller;
+	uint8 features;
 
 	uint32 sizeBuffer() const {
 		uint32 ret = desc.sizeBuffer();

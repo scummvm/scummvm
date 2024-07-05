@@ -88,7 +88,7 @@ AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine
 		Common::parseBool(forceAA, _forceTextAA);
 
 	// WORKAROUND: Certain games need to force AA to render the text correctly
-	if (_gameDescription->desc.flags & GAMEFLAG_FORCE_AA)
+	if (_gameDescription->features & GAMEFLAG_FORCE_AA)
 		_forceTextAA = true;
 }
 
@@ -156,7 +156,7 @@ Common::Error AGSEngine::run() {
 	setDebugger(new AGSConsole(this));
 
 	const char *filename = _gameDescription->desc.filesDescriptions[0].fileName;
-	if (_gameDescription->desc.flags & GAMEFLAG_INSTALLER) {
+	if (_gameDescription->features & GAMEFLAG_INSTALLER) {
 		Common::File *f = new Common::File();
 		f->open(filename);
 		SearchMan.add("installer", Common::ClickteamInstaller::open(f, DisposeAfterUse::YES));
