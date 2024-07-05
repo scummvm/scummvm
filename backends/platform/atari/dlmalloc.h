@@ -31,6 +31,12 @@
 #define MSPACES 1
 #define MALLOC_ALIGNMENT ((size_t)16U) /* 16B cache line */
 
+#pragma GCC diagnostic push
+/* warning: 'mallinfo mallinfo()' hides constructor for 'struct mallinfo' [-Wshadow] */
+#pragma GCC diagnostic ignored "-Wshadow"
+/* warning: this use of "defined" may not be portable [-Wexpansion-to-defined] */
+#pragma GCC diagnostic ignored "-Wexpansion-to-defined"
+
 /*
 Copyright 2023 Doug Lea
 
@@ -1460,5 +1466,7 @@ DLMALLOC_EXPORT int mspace_mallopt(int, int);
 #ifdef __cplusplus
 }  /* end of extern "C" */
 #endif /* __cplusplus */
+
+#pragma GCC diagnostic pop
 
 #endif /* PLATFORM_ATARI_DLMALLOC_H */
