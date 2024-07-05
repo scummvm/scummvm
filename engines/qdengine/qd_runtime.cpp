@@ -19,8 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/archive.h"
 #include "common/config-manager.h"
@@ -40,17 +38,11 @@
 #include "qdengine/qdcore/util/WinVideo.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 #include "qdengine/system/app_core.h"
-#include "qdengine/system/app_error_handler.h"
 #include "qdengine/system/input/input_wndproc.h"
 #include "qdengine/system/input/mouse_input.h"
 #include "qdengine/system/input/keyboard_input.h"
 
 #include "qdengine/qd_precomp.h"
-
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
 
 namespace QDEngine {
 

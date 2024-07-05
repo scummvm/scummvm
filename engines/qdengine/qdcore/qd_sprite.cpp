@@ -27,7 +27,6 @@
 #include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
-#include "qdengine/system/app_error_handler.h"
 #include "qdengine/system/graphics/rle_compress.h"
 #include "qdengine/qdcore/qd_setup.h"
 #include "qdengine/qdcore/qd_sprite.h"
@@ -225,13 +224,13 @@ bool qdSprite::load(const char *fname) {
 	// ColorMapType. 0 - цветовой таблицы нет. 1 - есть. Остальное не соотв. стандарту.
 	// Изображения с цветовой таблицей не обрабатываем.
 	if (header[1]) {
-		app_errH.message_box(file_.c_str(), appErrorHandler::ERR_BAD_FILE_FORMAT);
+		warning("qdSprite::load(): Bad file format: '%s'", transCyrillic(file_.c_str()));
 		return false;
 	}
 
 	// ImageType. 2 - truecolor без сжатия, 10 - truecolor со сжатием (RLE).
 	if ((header[2] != 2) && (header[2] != 10)) {
-		app_errH.message_box(file_.c_str(), appErrorHandler::ERR_BAD_FILE_FORMAT);
+		warning("qdSprite::load(): Bad file format: '%s'", transCyrillic(file_.c_str()));
 		return false;
 	}
 
@@ -258,7 +257,7 @@ bool qdSprite::load(const char *fname) {
 		break;
 	// Иначе неверный формат файла
 	default: {
-		app_errH.message_box(file_.c_str(), appErrorHandler::ERR_BAD_FILE_FORMAT);
+		warning("qdSprite::load(): Bad file format: '%s'", transCyrillic(file_.c_str()));
 		return false;
 	}
 	}
@@ -1440,4 +1439,3 @@ grScreenRegion qdSprite::screen_region(int mode, float scale) const {
 	return grScreenRegion(x, y, sx, sy);
 }
 } // namespace QDEngine
-
