@@ -370,7 +370,7 @@ void qdSprite::save(const char *fname) {
 
 	static unsigned char header[18];
 
-	XStream fh(out_file, XS_OUT);
+	Common::DumpFile fh;
 
 	memset(header, 0, 18);
 	header[2] = 2;
@@ -1440,3 +1440,4 @@ grScreenRegion qdSprite::screen_region(int mode, float scale) const {
 	return grScreenRegion(x, y, sx, sy);
 }
 } // namespace QDEngine
+
