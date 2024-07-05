@@ -180,7 +180,6 @@ public:
 	void qda_set_file(const char *fname);
 
 	bool qda_load(const char *fname);
-	bool qda_load_header(const char *fname);
 
 	bool load_resources();
 	void free_resources();
@@ -252,8 +251,6 @@ public:
 	unsigned resource_data_size() const;
 #endif
 
-	bool load_resource_header(const char *fname = NULL);
-
 	//! Загрузка данных из сэйва.
 	bool load_data(qdSaveStream &fh, int save_version);
 	//! Запись данных в сэйв.
@@ -317,3 +314,4 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_ANIMATION_H
+
