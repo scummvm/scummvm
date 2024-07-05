@@ -67,16 +67,6 @@ bool qdScreenTransform::change(float dt, const qdScreenTransform &target_trans, 
 	return (*this == target_trans);
 }
 
-XStream &operator < (XStream &fh, const qdScreenTransform &trans) {
-	fh < trans.angle_ < trans.scale_;
-	return fh;
-}
-
-XStream &operator > (XStream &fh, qdScreenTransform &trans) {
-	fh > trans.angle_ > trans.scale_;
-	return fh;
-}
-
 qdGameObjectState::qdGameObjectState(qdGameObjectState::StateType tp) : center_offset_(0, 0),
 	state_type_(tp),
 	prev_state_(0),
@@ -1581,3 +1571,4 @@ bool qdGameObjectStateMask::load_resources() {
 	return true;
 }
 } // namespace QDEngine
+
