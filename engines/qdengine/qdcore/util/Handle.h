@@ -20,8 +20,8 @@
  */
 
 
-#ifndef __HANDLE_H__
-#define __HANDLE_H__
+#ifndef QDENGINE_QDCORE_UTIL_HANDLE_H
+#define QDENGINE_QDCORE_UTIL_HANDLE_H
 
 
 namespace QDEngine {
@@ -175,4 +175,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // __HANDLE_H__
+#endif // QDENGINE_QDCORE_UTIL_HANDLE_H

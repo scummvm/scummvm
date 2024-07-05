@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __LZ77_H
-#define __LZ77_H
+#ifndef QDENGINE_QDCORE_UTIL_LZ77_H
+#define QDENGINE_QDCORE_UTIL_LZ77_H
 
 
 namespace QDEngine {
@@ -43,4 +43,4 @@ public:
 
 } // namespace QDEngine
 
-#endif
+#endif // QDENGINE_QDCORE_UTIL_LZ77_H

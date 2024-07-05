@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __SPLASH_SCREEN_H__
-#define __SPLASH_SCREEN_H__
+#ifndef QDENGINE_QDCORE_UTIL_SPLASH_SCREEN_H
+#define QDENGINE_QDCORE_UTIL_SPLASH_SCREEN_H
 
 namespace Graphics {
 struct Surface;
@@ -61,4 +61,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // __SPLASH_SCREEN_H__
+#endif // QDENGINE_QDCORE_UTIL_SPLASH_SCREEN_H
