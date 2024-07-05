@@ -237,7 +237,7 @@ MediaCueMessengerModifier::MediaCueMessengerModifier() : _isActive(false), _cueS
 }
 
 MediaCueMessengerModifier::MediaCueMessengerModifier(const MediaCueMessengerModifier &other)
-	: _cueSourceType(other._cueSourceType), _cueSourceModifier(other._cueSourceModifier), _enableWhen(other._enableWhen), _disableWhen(other._disableWhen), _mediaCue(other._mediaCue), _isActive(other._isActive) {
+	: Modifier(other), _cueSourceType(other._cueSourceType), _cueSourceModifier(other._cueSourceModifier), _enableWhen(other._enableWhen), _disableWhen(other._disableWhen), _mediaCue(other._mediaCue), _isActive(other._isActive) {
 	_cueSource.destruct<uint64, &CueSourceUnion::asUnset>();
 
 	switch (_cueSourceType) {
