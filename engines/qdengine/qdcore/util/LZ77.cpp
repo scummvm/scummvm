@@ -26,6 +26,7 @@
 //
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/endian.h"
+#include "common/util.h"
 
 #include "qdengine/qd_precomp.h"
 #include "qdengine/qdcore/util/LZ77.h"

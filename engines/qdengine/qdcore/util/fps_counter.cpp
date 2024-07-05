@@ -21,6 +21,9 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/system.h"
+
 #include "qdengine/qd_precomp.h"
 #include "qdengine/qdcore/util/fps_counter.h"
 
