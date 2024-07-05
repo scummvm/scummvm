@@ -84,7 +84,7 @@ View1::View1() : UIElement("View1") {
 	AnimFrame *View1::GetInventoryIcon(GameObject *gameObject) {
 		AnimFrame *result = new AnimFrame();
 		int index = 5 - 1;
-		if (is_in_list<uint16, 0x11, 0x22, 0x23, 0x19>(gameObject->Index)) {
+		if (is_in_list<uint16, 0x11, 0x22, 0x23, 0x19, 0x1A, 0x14>(gameObject->Index)) {
 			// gameObject->Index == 0x23 || gameObject->Index == 0x22) {
 			// TODO Figure out these - the mug has a different blob
 			index = 0x13;
@@ -347,6 +347,14 @@ View1::View1() : UIElement("View1") {
 				// Check if we hit an item
 				// TODO: Skipping this for now while we only have one item
 				GameObject *clickedObject = getClickedInventoryItem(msg._pos);
+				if (activeInventoryItem != nullptr && clickedObject != nullptr) {
+					// Trigger a use item on item
+					GameObject *firstObject = activeInventoryItem;
+					activeInventoryItem = nullptr;
+					g_engine->_scriptExecutor->_interactedObjectID = firstObject->Index;
+					g_engine->_scriptExecutor->_interactedOtherObjectID = clickedObject->Index;
+					g_engine->RunScriptExecutor(false);
+				}
 				activeInventoryItem = clickedObject;
 				return true;
 			}
@@ -449,6 +457,9 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 		// Also test the lerping
 		characters[0]->StartLerpTo(Common::Point(200, 100), 5000);
 	} else if (msg.ascii == (uint16)'i') {
+		if (!_isShowingInventory) {
+			SetInventorySource(GameObjects::instance().GetProtagonistObject());
+		}
 		_isShowingInventory = !_isShowingInventory;
 	} else if (msg.ascii >= '1' && msg.ascii <= '9') {
 		// Register a dialogue choice and act upon it
