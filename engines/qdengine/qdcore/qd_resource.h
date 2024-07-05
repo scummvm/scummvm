@@ -114,8 +114,6 @@ public:
 
 	qdResource::file_format_t file_format() const;
 
-	bool write(XStream &fh, int line_class_id = -1) const;
-
 private:
 	unsigned data_size_;
 	const qdResource *resource_;
