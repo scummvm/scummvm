@@ -22,7 +22,6 @@
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
 #include "qdengine/qd_precomp.h"
-#include <stdlib.h>
 #include "qdengine/parser/xml_tag_buffer.h"
 #include "qdengine/parser/qdscr_parser.h"
 #include "qdengine/qdcore/qd_condition_data.h"

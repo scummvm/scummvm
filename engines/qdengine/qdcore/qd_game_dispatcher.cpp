@@ -63,8 +63,6 @@
 #include "qdengine/system/sound/snd_dispatcher.h"
 #include "qdengine/system/input/keyboard_input.h"
 
-#include <stdio.h>
-
 namespace QDEngine {
 
 

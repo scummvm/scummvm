@@ -26,7 +26,6 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 
-#include <locale.h>
 #include "qdengine/resource.h"
 #include "qdengine/qdcore/qd_game_dispatcher.h"
 #include "qdengine/qdcore/qd_game_scene.h"
