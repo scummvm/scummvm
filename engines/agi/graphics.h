@@ -173,7 +173,7 @@ public:
 	byte getCGAMixtureColor(byte color);
 
 	void render_Block(int16 x, int16 y, int16 width, int16 height, bool copyToScreen = true);
-	bool render_Clip(int16 &x, int16 &y, int16 &width, int16 &height, int16 clipAgainstWidth = SCRIPT_WIDTH, int16 clipAgainstHeight = SCRIPT_HEIGHT);
+	bool render_Clip(int16 &x, int16 &y, int16 &width, int16 &height, const int16 minY = 0, const int16 clipAgainstWidth = SCRIPT_WIDTH, const int16 clipAgainstHeight = SCRIPT_HEIGHT);
 
 private:
 	void render_BlockEGA(int16 x, int16 y, int16 width, int16 height);

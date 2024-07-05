@@ -548,7 +548,16 @@ bool TextMgr::isMouseWithinMessageBox() {
 
 void TextMgr::closeWindow() {
 	if (_messageState.window_Active) {
-		_gfx->render_Block(_messageState.backgroundPos_x, _messageState.backgroundPos_y, _messageState.backgroundSize_Width, _messageState.backgroundSize_Height);
+		// Close the window by copying the game screen to the display screen.
+		// Our graphics code was designed with the assumption that the window would
+		// always be contained within the game screen, but MUMG nursery rhymes pass
+		// y=0 to print.at to place the text at the top of the game screen with the
+		// window border over the menu bar. We now support this, but the background
+		// position is in game screen coordinates, so it will have a negative y value
+		// that we must limit to zero before copying. Bugs #13820, #15241
+		const int16 x = _messageState.backgroundPos_x;
+		const int16 y = MAX<int16>(0, _messageState.backgroundPos_y);
+		_gfx->render_Block(x, y, _messageState.backgroundSize_Width, _messageState.backgroundSize_Height);
 	}
 	_messageState.dialogue_Open = false;
 	_messageState.window_Active = false;
