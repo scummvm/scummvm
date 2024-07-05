@@ -19,8 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "graphics/managed_surface.h"
@@ -32,11 +30,6 @@
 
 
 namespace QDEngine {
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffer *p, int mode, bool alpha_flag) {
 	debugC(2, kDebugGraphics, "grDispatcher::PutSpr_rle(%d, %d, %d, %d)", x, y, sx, sy);
@@ -355,7 +348,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 							unsigned g = (mg * (255 - a)) >> 8;
 							unsigned b = (mb * (255 - a)) >> 8;
 
-							unsigned cl = make_rgb565u(r, g, b);
+							cl = make_rgb565u(r, g, b);
 							*scr_buf = alpha_blend_565(cl, *scr_buf, a);
 						}
 
@@ -378,7 +371,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 								unsigned g = (mg * (255 - a)) >> 8;
 								unsigned b = (mb * (255 - a)) >> 8;
 
-								unsigned cl = make_rgb565u(r, g, b);
+								cl = make_rgb565u(r, g, b);
 								*scr_buf = alpha_blend_565(cl, *scr_buf, a);
 							}
 
