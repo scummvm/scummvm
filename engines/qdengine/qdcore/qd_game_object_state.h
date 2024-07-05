@@ -90,12 +90,7 @@ private:
 	float angle_;
 	Vect2f scale_;
 
-	friend XStream &operator < (XStream &fh, const qdScreenTransform &trans);
-	friend XStream &operator > (XStream &fh, qdScreenTransform &trans);
 };
-
-XStream &operator < (XStream &fh, const qdScreenTransform &trans);
-XStream &operator > (XStream &fh, qdScreenTransform &trans);
 
 //! Состояние динамического объекта - базовый класс.
 class qdGameObjectState : public qdConditionalObject {
@@ -967,3 +962,4 @@ inline bool qdbg_is_object_state(const qdNamedObject *obj, const char *scene_nam
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_GAME_OBJECT_STATE_H
+
