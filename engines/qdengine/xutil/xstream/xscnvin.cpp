@@ -55,7 +55,7 @@ XStream& XStream::operator<= (int var) {
 }
 
 XStream& XStream::operator<= (unsigned var) {
-	Common::String s = Common::String::format((const char *)var, ConvertBuffer_, radix);
+	Common::String s = Common::String::format("%u", var);
 	write(s.c_str(), s.size());
 	return *this;
 }

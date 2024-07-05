@@ -24,9 +24,8 @@
 
 namespace QDEngine {
 
-static char* openMSG     = "CREATE/OPEN FAILURE";
-static char* closeMSG    = "CLOSE FAILURE";
-static char* appendMSG   = "APPENDING FAILURE";
+static const char *openMSG     = "CREATE/OPEN FAILURE";
+static const char *closeMSG    = "CLOSE FAILURE";
 
 bool XStream::open(const char* name, unsigned f) {
 	close();
@@ -56,13 +55,14 @@ bool XStream::open(const char* name, unsigned f) {
 		ff |= FILE_FLAG_NO_BUFFERING;
 
 	handler = CreateFile(name, fa, fs, 0, fc, ff, 0);
-	if (handler == INVALID_HANDLE_VALUE)
+	if (handler == INVALID_HANDLE_VALUE) {
 		if (handleErrors_)
-			error(openMSG);
+			error("%s", openMSG);
 		else {
 			ioError_ = true;
 			return false;
 		}
+	}
 	fname = name;
 	pos = SetFilePointer(handler, 0, 0, f & XS_APPEND ? FILE_END : FILE_CURRENT);
 	eofFlag = 0;
@@ -87,7 +87,7 @@ void XStream::close() {
 		return;
 
 	if (extSize == -1 && !CloseHandle(handler) && handleErrors_)
-		error(closeMSG);
+		error("%s", closeMSG);
 	handler = INVALID_HANDLE_VALUE;
 	fname = NULL;
 	pos = 0L;

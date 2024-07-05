@@ -24,9 +24,9 @@
 
 namespace QDEngine {
 
-static char *seekMSG    = "BAD SEEK";
-static char *flushMSG   = "FLUSH FILE BUFFERS ERROR";
-static char *sizeMSG    = "FILE SIZE CALCULATION ERROR";
+static const char *seekMSG    = "BAD SEEK";
+static const char *flushMSG   = "FLUSH FILE BUFFERS ERROR";
+static const char *sizeMSG    = "FILE SIZE CALCULATION ERROR";
 
 long XStream::seek(long offset, int dir) {
 	long ret;
@@ -44,9 +44,10 @@ long XStream::seek(long offset, int dir) {
 		}
 	} else
 		ret = SetFilePointer(handler, offset, 0, dir);
-	if (ret == -1L)
-		if (handleErrors_) error(seekMSG);
+	if (ret == -1L) {
+		if (handleErrors_) error("%s", seekMSG);
 		else return -1L;
+	}
 	if (ret >= size() - 1) eofFlag = 1;
 	else eofFlag = 0;
 	return pos = ret;
@@ -54,16 +55,17 @@ long XStream::seek(long offset, int dir) {
 
 void XStream::flush() {
 	if (!FlushFileBuffers(handler) && handleErrors_)
-		error(flushMSG);
+		error("%s", flushMSG);
 }
 
 long XStream::size() const {
 	long tmp = extSize;
 	if (tmp == -1) {
 		tmp = GetFileSize(handler, 0);
-		if (tmp == -1L)
-			if (handleErrors_) error(sizeMSG);
+		if (tmp == -1L) {
+			if (handleErrors_) error("%s", sizeMSG);
 			else return -1;
+		}
 	}
 	return tmp;
 }

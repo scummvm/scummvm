@@ -24,8 +24,8 @@
 
 namespace QDEngine {
 
-static char* readMSG    = "WRONG READING";
-static char* writeMSG   = "WRONG WRITING";
+static const char *readMSG    = "WRONG READING";
+static const char *writeMSG   = "WRONG WRITING";
 
 unsigned xsReadBytes = 0;
 unsigned xsReadBytesDelta = 0;
@@ -51,13 +51,14 @@ void xsSetWriteHandler(void (*fp)(unsigned), unsigned res) {
 
 unsigned long XStream::read(void* buf, unsigned long len) {
 	unsigned long ret;
-	if (!ReadFile(handler, buf, len, &ret, 0))
+	if (!ReadFile(handler, buf, len, &ret, 0)) {
 		if (handleErrors_)
-			error(readMSG);
+			error("%s", readMSG);
 		else {
 			ioError_ = true;
 			return 0U;
 		}
+	}
 	if (ret < len)
 		eofFlag = 1;
 	pos += ret;
@@ -77,13 +78,14 @@ unsigned long XStream::read(void* buf, unsigned long len) {
 
 unsigned long XStream::write(const void* buf, unsigned long len) {
 	unsigned long ret;
-	if (!WriteFile(handler, buf, len, &ret, 0))
+	if (!WriteFile(handler, buf, len, &ret, 0)) {
 		if (handleErrors_)
-			error(writeMSG);
+			error("%s", writeMSG);
 		else {
 			ioError_ = true;
 			return 0U;
 		}
+	}
 	pos += ret;
 	if (xsWriteHandler) {
 		xsWriteBytesDelta += ret;
