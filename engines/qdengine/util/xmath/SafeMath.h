@@ -22,7 +22,7 @@
 #ifndef QDENGINE_XLIBS_UTIL_XMATH_SAFEMATH_H
 #define QDENGINE_XLIBS_UTIL_XMATH_SAFEMATH_H
 
-#include "qdengine/xlibs/util/xmath/fastMath.h"
+#include "qdengine/util/xmath/fastMath.h"
 
 
 namespace QDEngine {

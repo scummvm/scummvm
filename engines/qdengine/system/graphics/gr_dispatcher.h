@@ -23,7 +23,7 @@
 #define QDENGINE_SYSTEM_GRAPHICS_GR_DISPATCHER_H
 
 #include "qdengine/system/graphics/gr_screen_region.h"
-#include "qdengine/xlibs/util/xmath/xmath.h"
+#include "qdengine/util/xmath/xmath.h"
 
 namespace Graphics {
 class ManagedSurface;
