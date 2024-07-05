@@ -23,8 +23,6 @@
 #define QDENGINE_QD_FWD_H
 
 #include <list>
-#include <string>
-#include <vector>
 
 namespace Common {
 class SeekableReadStream;
