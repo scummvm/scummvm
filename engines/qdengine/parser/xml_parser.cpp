@@ -19,7 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #ifndef _XML_ONLY_BINARY_SCRIPT_
 #endif
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
@@ -30,10 +29,6 @@
 #include "qdengine/xutil/xutil.h"
 
 namespace QDEngine {
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
 
 namespace xml {
 
