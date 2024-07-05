@@ -79,24 +79,12 @@ bool qdNamedObject::load_data(Common::SeekableReadStream &fh, int saveVersion) {
 	return true;
 }
 
-bool qdNamedObject::load_data(qdSaveStream &fh, int save_version) {
-	fh > flags_;
-
-	return true;
-}
-
 bool qdNamedObject::save_data(Common::SeekableWriteStream &fh) const {
 	fh.writeSint32BE(flags_);
 	return true;
 }
 
-bool qdNamedObject::save_data(qdSaveStream &fh) const {
-	fh < flags_;
-
-	return true;
-}
-
-Common::String qdNamedObject::toString() {
+Common::String qdNamedObject::toString() const {
 	Common::String res;
 
 	int owners_count = 0;
@@ -166,3 +154,4 @@ const char *objectType2str(int id) {
 }
 
 } // namespace QDEngine
+

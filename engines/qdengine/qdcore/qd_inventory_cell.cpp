@@ -171,22 +171,6 @@ bool qdInventoryCell::load_data(Common::SeekableReadStream &fh, int saveVersion)
 	return true;
 }
 
-bool qdInventoryCell::load_data(qdSaveStream &fh, int save_version) {
-	char flag;
-	fh > flag;
-
-	if (flag) {
-		qdNamedObjectReference ref;
-		if (!ref.load_data(fh, save_version)) return false;
-
-		if (qdGameDispatcher * p = qdGameDispatcher::get_dispatcher())
-			object_ = static_cast<qdGameObjectAnimated * >(p->get_named_object(&ref));
-	} else
-		object_ = NULL;
-
-	return true;
-}
-
 bool qdInventoryCell::save_data(Common::SeekableWriteStream &fh) const {
 	if (object_) {
 		fh.writeByte(1);
@@ -200,19 +184,6 @@ bool qdInventoryCell::save_data(Common::SeekableWriteStream &fh) const {
 
 	return true;
 }
-
-bool qdInventoryCell::save_data(qdSaveStream &fh) const {
-	if (object_) {
-		fh < char(1);
-
-		qdNamedObjectReference ref(object_);
-		if (!ref.save_data(fh)) return false;
-	} else
-		fh < char(0);
-
-	return true;
-}
-
 
 // class qdInventoryCellSet
 
@@ -455,9 +426,11 @@ bool qdInventoryCellSet::free_resources() {
 	return true;
 }
 
-bool qdInventoryCellSet::load_data(qdSaveStream &fh, int save_version) {
-	if (save_version >= 102)
-		fh > additional_cells_.x > additional_cells_.y;
+bool qdInventoryCellSet::load_data(Common::SeekableReadStream &fh, int save_version) {
+	if (save_version >= 102) {
+		additional_cells_.x = fh.readSint16LE();
+		additional_cells_.y = fh.readSint16LE();
+	}
 	for (auto &it : cells_) {
 		if (!it.load_data(fh, save_version))
 			return false;
@@ -470,16 +443,6 @@ bool qdInventoryCellSet::save_data(Common::SeekableWriteStream &fh) const {
 	fh.writeSint32LE(additional_cells_.x);
 	fh.writeSint32LE(additional_cells_.y);
 
-	for (auto &it : cells_) {
-		if (!it.save_data(fh))
-			return false;
-	}
-
-	return true;
-}
-
-bool qdInventoryCellSet::save_data(qdSaveStream &fh) const {
-	fh < additional_cells_.x < additional_cells_.y;
 	for (auto &it : cells_) {
 		if (!it.save_data(fh))
 			return false;

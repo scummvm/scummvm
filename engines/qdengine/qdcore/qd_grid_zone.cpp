@@ -315,16 +315,6 @@ bool qdGridZone::load_data(Common::SeekableReadStream &fh, int saveVersion) {
 	return true;
 }
 
-bool qdGridZone::load_data(qdSaveStream &fh, int save_version) {
-	if (!qdNamedObject::load_data(fh, save_version)) return false;
-
-	char st;
-	fh > st > update_timer_;
-
-	state_ = (st) ? true : false;
-
-	return true;
-}
 
 bool qdGridZone::save_data(Common::SeekableWriteStream &fh) const {
 	if (!qdNamedObject::save_data(fh)) {
@@ -337,13 +327,6 @@ bool qdGridZone::save_data(Common::SeekableWriteStream &fh) const {
 	return true;
 }
 
-bool qdGridZone::save_data(qdSaveStream &fh) const {
-	if (!qdNamedObject::save_data(fh)) return false;
-
-	fh < char(state_) < update_timer_;
-
-	return true;
-}
 
 bool qdGridZone::init() {
 #ifdef _QUEST_EDITOR

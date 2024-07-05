@@ -76,14 +76,16 @@ float qdCoordsAnimationPoint::passed_path() const {
 	return passed_path_length_ / path_length_;
 }
 
-bool qdCoordsAnimationPoint::load_data(qdSaveStream &fh, int save_version) {
-	fh > path_length_ > passed_path_length_;
+bool qdCoordsAnimationPoint::load_data(Common::SeekableReadStream &fh, int save_version) {
+	path_length_ = fh.readFloatLE();
+	passed_path_length_ = fh.readFloatLE();
 
 	return true;
 }
 
-bool qdCoordsAnimationPoint::save_data(qdSaveStream &fh) const {
-	fh < path_length_ < passed_path_length_;
+bool qdCoordsAnimationPoint::save_data(Common::SeekableWriteStream &fh) const {
+	fh.writeFloatLE(path_length_);
+	fh.writeFloatLE(passed_path_length_);
 
 	return true;
 }

@@ -345,7 +345,7 @@ bool qdInventory::free_resources() {
 	return true;
 }
 
-bool qdInventory::load_data(qdSaveStream &fh, int save_version) {
+bool qdInventory::load_data(Common::SeekableReadStream &fh, int save_version) {
 	for (auto &it : cell_sets_) {
 		if (!it.load_data(fh, save_version))
 			return false;
@@ -361,15 +361,6 @@ bool qdInventory::save_data(Common::SeekableWriteStream &fh) const {
 		if (!it.save_data(fh)) {
 			return false;
 		}
-	}
-
-	return true;
-}
-
-bool qdInventory::save_data(qdSaveStream &fh) const {
-	for (auto &it : cell_sets_) {
-		if (!it.save_data(fh))
-			return false;
 	}
 
 	return true;

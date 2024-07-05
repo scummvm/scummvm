@@ -148,10 +148,8 @@ public:
 	}
 
 	//! Загрузка данных из сэйва.
-	bool load_data(qdSaveStream &fh, int save_version);
 	bool load_data(Common::SeekableReadStream &fh, int saveVersion);
 	//! Запись данных в сэйв.
-	bool save_data(qdSaveStream &fh) const;
 	bool save_data(Common::SeekableWriteStream &fh) const;
 
 	const Vect2i &get_screen_R() const {
@@ -196,3 +194,4 @@ inline bool qdbg_is_object(const qdNamedObject *, const char *, const char *) {
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_GAME_OBJECT_H
+

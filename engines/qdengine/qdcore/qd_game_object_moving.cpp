@@ -1832,29 +1832,40 @@ void qdGameObjectMoving::split(qdGameObjectMoving *p) {
 	split_states(p);
 }
 
-bool qdGameObjectMoving::load_data(qdSaveStream &fh, int save_version) {
+bool qdGameObjectMoving::load_data(Common::SeekableReadStream &fh, int save_version) {
 	if (!qdGameObjectAnimated::load_data(fh, save_version)) return false;
 
-#ifndef _QUEST_EDITOR
-	int idx;
-	fh > idx > walk_grid_size_.x > walk_grid_size_.y;
+	int idx = fh.readSint32LE();
+	walk_grid_size_.x = fh.readSint16LE();
+	walk_grid_size_.y = fh.readSint16LE();
 
 	if (idx != -1)
 		last_walk_state_ = get_state(idx);
 	else
 		last_walk_state_ = NULL;
-#endif
 
 	char mode;
-	fh > scale_ > direction_angle_ > rotation_angle_ > target_r_.x > target_r_.y > target_r_.z > target_angle_;
-	fh > path_length_ > cur_path_index_ > mode > impulse_timer_ > impulse_direction_ > speed_delta_;
+	scale_ = fh.readFloatLE();
+	direction_angle_ = fh.readFloatLE();
+	rotation_angle_ = fh.readFloatLE();
+	target_r_.x = fh.readFloatLE();
+	target_r_.y = fh.readFloatLE();
+	target_r_.z = fh.readFloatLE();
+	target_angle_ = fh.readFloatLE();
+
+	path_length_ = fh.readSint32LE();
+	cur_path_index_ = fh.readSint32LE();
+	mode = fh.readByte();
+	impulse_timer_ = fh.readFloatLE();
+	impulse_direction_ = fh.readFloatLE();
+	speed_delta_ = fh.readFloatLE();
 
 	if (save_version >= 104) {
-		char rot_mode;
-		fh > rot_mode;
+		char rot_mode = fh.readByte();
 		if (save_version >= 105) {
 			movement_mode_ = movement_mode_t(rot_mode);
-			fh > movement_mode_time_ > movement_mode_time_current_;
+			movement_mode_time_ = fh.readFloatLE();
+			movement_mode_time_current_ = fh.readFloatLE();
 		} else {
 			if (rot_mode)
 				movement_mode_ = MOVEMENT_MODE_TURN;
@@ -1866,13 +1877,16 @@ bool qdGameObjectMoving::load_data(qdSaveStream &fh, int save_version) {
 	impulse_movement_mode_ = mode;
 	is_selected_ = false;
 
-	for (int i = 0; i < path_length_; i ++)
-		fh > path_[i].x > path_[i].y > path_[i].z;
+	for (int i = 0; i < path_length_; i ++) {
+		path_[i].x = fh.readFloatLE();
+		path_[i].y = fh.readFloatLE();
+		path_[i].z = fh.readFloatLE();
+	}
 
-	fh > follow_condition_;
 
-	int num;
-	fh > num;
+	follow_condition_ = fh.readSint32LE();
+
+	int num = fh.readSint32LE();
 	circuit_objs_.clear();
 	for (int i = 0; i < num; i++) {
 		qdNamedObjectReference circ_ref;
@@ -1884,25 +1898,44 @@ bool qdGameObjectMoving::load_data(qdSaveStream &fh, int save_version) {
 	return true;
 }
 
-bool qdGameObjectMoving::save_data(qdSaveStream &fh) const {
+bool qdGameObjectMoving::save_data(Common::SeekableWriteStream &fh) const {
 	if (!qdGameObjectAnimated::save_data(fh)) return false;
 
-#ifndef _QUEST_EDITOR
 	int idx = -1;
 	if (last_walk_state_) idx = get_state_index(last_walk_state_);
-	fh < idx < walk_grid_size_.x < walk_grid_size_.y;
-#endif
 
-	fh < scale_ < direction_angle_ < rotation_angle_ < target_r_.x < target_r_.y < target_r_.z < target_angle_;
-	fh < path_length_ < cur_path_index_ < char(impulse_movement_mode_) < impulse_timer_ < impulse_direction_ < speed_delta_ < char(movement_mode_);
-	fh < movement_mode_time_ < movement_mode_time_current_;
+	fh.writeSint32LE(idx);
+	fh.writeSint32LE(walk_grid_size_.x);
+	fh.writeSint32LE(walk_grid_size_.y);
 
-	for (int i = 0; i < path_length_; i ++)
-		fh < path_[i].x < path_[i].y < path_[i].z;
+	fh.writeFloatLE(scale_);
+	fh.writeFloatLE(direction_angle_);
+	fh.writeFloatLE(rotation_angle_);
+	fh.writeFloatLE(target_r_.x);
+	fh.writeFloatLE(target_r_.y);
+	fh.writeFloatLE(target_r_.z);
+	fh.writeFloatLE(target_angle_);
 
-	fh < follow_condition_;
+	fh.writeSint32LE(path_length_);
+	fh.writeSint32LE(cur_path_index_);
+	fh.writeByte(impulse_movement_mode_);
+	fh.writeFloatLE(impulse_timer_);
+	fh.writeFloatLE(impulse_direction_);
+	fh.writeFloatLE(speed_delta_);
+	fh.writeByte(char(movement_mode_));
 
-	fh < circuit_objs_.size();
+	fh.writeFloatLE(movement_mode_time_);
+	fh.writeFloatLE(movement_mode_time_current_);
+
+	for (int i = 0; i < path_length_; i ++) {
+		fh.writeFloatLE(path_[i].x);
+		fh.writeFloatLE(path_[i].y);
+		fh.writeFloatLE(path_[i].z);
+	}
+
+	fh.writeUint32LE(follow_condition_);
+
+	fh.writeUint32LE(circuit_objs_.size());
 	for (int i = 0; i < circuit_objs_.size(); i++) {
 		qdNamedObjectReference circ_ref(circuit_objs_[i]);
 		circ_ref.save_data(fh);

@@ -806,10 +806,11 @@ bool qdGameScene::is_music_track_in_list(qdMusicTrack *p) const {
 	return music_tracks.is_in_list(p);
 }
 
-bool qdGameScene::load_data(qdSaveStream &fh, int save_version) {
+bool qdGameScene::load_data(Common::SeekableReadStream &fh, int save_version) {
 	if (!qdConditionalObject::load_data(fh, save_version)) return false;
 
-	if (!camera.load_data(fh, save_version)) return false;
+	if (!camera.load_data(fh, save_version))
+		return false;
 
 	for (qdGameObjectList::const_iterator it = object_list().begin(); it != object_list().end(); ++it) {
 		if (!(*it)->load_data(fh, save_version))
@@ -833,8 +834,7 @@ bool qdGameScene::load_data(qdSaveStream &fh, int save_version) {
 			(*it)->set_state((*it)->state());
 	}
 
-	int fl;
-	fh > fl;
+	int fl = fh.readUint32LE();
 
 	if (fl) {
 		qdNamedObjectReference ref;
@@ -853,18 +853,16 @@ bool qdGameScene::load_data(qdSaveStream &fh, int save_version) {
 	} else
 		selected_object_ = NULL;
 
-#ifndef _QUEST_EDITOR
 	if (save_version >= 107) {
 		const int save_buf_sz = 64 * 1024;
 		char save_buf[save_buf_sz];
 
-		fh > fl;
+		fl = fh.readSint32LE();
 		if (fl)
 			fh.read(save_buf, fl);
 		if (minigame_)
 			minigame_->load_game(save_buf, fl, this);
 	}
-#endif
 
 	return true;
 }
@@ -911,42 +909,6 @@ bool qdGameScene::save_data(Common::SeekableWriteStream &fh) const {
 	} else {
 		fh.writeUint32LE(0);
 	}
-
-	return true;
-}
-
-bool qdGameScene::save_data(qdSaveStream &fh) const {
-	if (!qdConditionalObject::save_data(fh)) return false;
-
-	if (!camera.save_data(fh)) return false;
-
-	for (qdGameObjectList::const_iterator it = object_list().begin(); it != object_list().end(); ++it) {
-		if (!(*it)->save_data(fh))
-			return false;
-	}
-
-	for (qdGridZoneList::const_iterator it = grid_zone_list().begin(); it != grid_zone_list().end(); ++it) {
-		if (!(*it)->save_data(fh))
-			return false;
-	}
-
-	if (selected_object_) {
-		fh < (int)1;
-		qdNamedObjectReference ref(selected_object_);
-		if (!ref.save_data(fh))
-			return false;
-	} else
-		fh < (int)0;
-
-	if (minigame_) {
-		const int save_buf_sz = 64 * 1024;
-		char save_buf[save_buf_sz];
-		int size = minigame_->save_game(save_buf, save_buf_sz, const_cast<qdGameScene *>(this));
-		fh < size;
-		if (size)
-			fh.write(save_buf, size);
-	} else
-		fh < (int)0;
 
 	return true;
 }

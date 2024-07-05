@@ -116,16 +116,10 @@ bool qdCounterElement::save_script(Common::SeekableWriteStream &fh, int indent) 
 	return true;
 }
 
-bool qdCounterElement::load_data(qdSaveStream &fh, int save_version) {
+bool qdCounterElement::load_data(Common::SeekableReadStream &fh, int save_version) {
 	char v;
-	fh > v;
+	v = fh.readByte();
 	last_state_status_ = v;
-	return true;
-}
-
-bool qdCounterElement::save_data(qdSaveStream &fh) const {
-	char v = last_state_status_;
-	fh < v;
 	return true;
 }
 
@@ -280,14 +274,16 @@ bool qdCounter::save_script(Common::SeekableWriteStream &fh, int indent) const {
 	return true;
 }
 
-bool qdCounter::load_data(qdSaveStream &fh, int save_version) {
+bool qdCounter::load_data(Common::SeekableReadStream &fh, int save_version) {
 	int sz;
-	fh > value_ > sz;
+	value_ = fh.readSint32LE();
+	sz = fh.readSint32LE();
 
-	if (sz != elements_.size()) return false;
+	if (sz != elements_.size())
+		return false;
 
-	for (element_container_t::iterator it = elements_.begin(); it != elements_.end(); ++it)
-		it->load_data(fh, save_version);
+	for (auto it : elements_)
+		it.load_data(fh, save_version);
 
 	return true;
 }
@@ -299,15 +295,6 @@ bool qdCounter::save_data(Common::SeekableWriteStream &fh) const {
 	for (auto &it : elements_) {
 		it.save_data(fh);
 	}
-
-	return true;
-}
-
-bool qdCounter::save_data(qdSaveStream &fh) const {
-	fh < value_ < elements_.size();
-
-	for (element_container_t::const_iterator it = elements_.begin(); it != elements_.end(); ++it)
-		it->save_data(fh);
 
 	return true;
 }

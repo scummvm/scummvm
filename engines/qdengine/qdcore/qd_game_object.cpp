@@ -172,14 +172,6 @@ bool qdGameObject::load_data(Common::SeekableReadStream &fh, int saveVersion) {
 	return true;
 }
 
-bool qdGameObject::load_data(qdSaveStream &fh, int save_version) {
-	if (!qdNamedObject::load_data(fh, save_version)) return false;
-
-	fh > r_.x > r_.y > r_.z;
-
-	return true;
-}
-
 bool qdGameObject::save_data(Common::SeekableWriteStream &fh) const {
 	if (!qdNamedObject::save_data(fh)) {
 		return false;
@@ -188,14 +180,6 @@ bool qdGameObject::save_data(Common::SeekableWriteStream &fh) const {
 	fh.writeFloatLE(r_.x);
 	fh.writeFloatLE(r_.y);
 	fh.writeFloatLE(r_.z);
-
-	return true;
-}
-
-bool qdGameObject::save_data(qdSaveStream &fh) const {
-	if (!qdNamedObject::save_data(fh)) return false;
-
-	fh < r_.x < r_.y < r_.z;
 
 	return true;
 }
@@ -212,3 +196,4 @@ bool qdGameObject::init() {
 	return true;
 }
 } // namespace QDEngine
+
