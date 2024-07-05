@@ -2939,8 +2939,6 @@ bool qdGameDispatcher::game_screenshot(const char *file_name, int sx, int sy) co
 
 	    static unsigned char header[18];
 
-	    XStream fh(file_name,XS_OUT);
-
 	    memset(header,0,18);
 	    header[2] = 2;
 
@@ -3503,4 +3501,3 @@ bool qdGameDispatcher::update_hall_of_fame_names() {
 }
 
 } // namespace QDEngine
-

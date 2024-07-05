@@ -28,8 +28,6 @@
 
 namespace QDEngine {
 
-class XStream;
-
 class qdGameObjectStatic : public qdGameObject {
 public:
 	qdGameObjectStatic();

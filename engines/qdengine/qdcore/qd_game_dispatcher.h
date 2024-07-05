@@ -684,10 +684,6 @@ private:
 	/// включает нужный экран внутриигрового интерфейса
 	bool update_ingame_interface();
 
-#ifdef __QD_DEBUG_ENABLE__
-	unsigned write_resource_stats(XStream &fh, const qdResourceInfoContainer &info, const char *title = NULL, qdResource::file_format_t filter = qdResource::RES_UNKNOWN) const;
-#endif
-
 	/// вытаскивает из интерфейса имена игроков в таблице рекордов
 	bool update_hall_of_fame_names();
 };
