@@ -19,18 +19,11 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include "qdengine/qd_precomp.h"
 #include "qdengine/qdcore/util/WinVideo.h"
 
 
 namespace QDEngine {
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 bool winVideo::is_initialized = false;
 
@@ -210,10 +203,11 @@ winVideo::PlaybackStatus winVideo::playback_status() {
 }
 
 bool winVideo::wait_end() {
+	warning("STUB: winVideo::wait_end()");
+
 	if (media_event_) {
-		long evCode;
-		warning("STUB: winVideo::wait_end()");
 #if 0
+		long evCode;
 		media_event_->WaitForCompletion(INFINITE, &evCode);
 #endif
 		return true;
@@ -222,11 +216,12 @@ bool winVideo::wait_end() {
 }
 
 bool winVideo::is_playback_finished() {
-	if (!media_event_) return true;
-
-	long evCode, param1, param2;
 	warning("STUB: winVideo::is_playback_finished");
+
+	if (!media_event_) return true;
 #if 0
+	long evCode, param1, param2;
+
 	while (media_event_->GetEvent(&evCode, &param1, &param2, 0) == S_OK) {
 		media_event_->FreeEventParams(evCode, param1, param2);
 		if ((EC_COMPLETE == evCode) || (EC_USERABORT == evCode))
@@ -237,8 +232,9 @@ bool winVideo::is_playback_finished() {
 }
 
 bool winVideo::toggle_fullscreen(bool fullscr) {
+	warning("STUB: winVideo::toggle_fullscreen()");
+
 	if (video_window_) {
-		warning("STUB: winVideo::toggle_fullscreen()");
 #if 0
 		video_window_->put_FullScreenMode(fullscr);
 #endif
@@ -249,9 +245,10 @@ bool winVideo::toggle_fullscreen(bool fullscr) {
 }
 
 bool winVideo::toggle_cursor(bool visible) {
+	warning("STUB: winVideo::toggle_cursor()");
+
 	if (!video_window_)
 		return false;
-	warning("STUB: winVideo::toggle_cursor()");
 #if 0
 	video_window_->HideCursor(visible);
 #endif
@@ -268,24 +265,26 @@ bool winVideo::get_movie_size(int &sx, int &sy) {
 	    sx = sx_;
 	    sy = sy_;
 	*/
+	warning("STUB: winVideo::get_movie_size()");
+
 	if (!basic_video_) return false;
 
-	long width, height;
-
-	warning("STUB: winVideo::get_movie_size()");
 #if 0
+	long width, height;
 	if (basic_video_->GetVideoSize(&width, &height) == E_NOINTERFACE)
 		return false;
-#endif
 	sx = width;
 	sy = height;
+
+#endif
 
 	return true;
 }
 
 bool winVideo::set_window_size(int sx, int sy) {
-	if (!video_window_) return false;
 	warning("STUB: winVideo::set_window_size()");
+
+	if (!video_window_) return false;
 #if 0
 	video_window_->put_Width(sx);
 	video_window_->put_Height(sy);
@@ -294,57 +293,45 @@ bool winVideo::set_window_size(int sx, int sy) {
 }
 
 void winVideo::close_file() {
-	if (video_window_) {
-		warning("STUB: winVideo::close_file()");
+	warning("STUB: winVideo::close_file()");
 #if 0
+	if (video_window_) {
 		video_window_->put_Visible(0);
-#endif
 //		video_window_->put_Owner(NULL);
 	}
 
 	if (media_event_) {
-#if 0
 		media_event_->Release();
-#endif
 		media_event_ = NULL;
 	}
 
 	if (media_control_) {
-#if 0
 		media_control_->Release();
-#endif
 		media_control_ = NULL;
 	}
 
 	if (basic_video_) {
-#if 0
 		basic_video_->Release();
-#endif
 		basic_video_ = NULL;
 	}
 
 	if (basic_audio_) {
-#if 0
 		basic_audio_->Release();
-#endif
 		basic_audio_ = NULL;
 	}
 
 	if (video_window_) {
-#if 0
 		video_window_->Release();
-#endif
 		video_window_ = NULL;
 	}
 
 	if (graph_builder_) {
-#if 0
 		graph_builder_->Release();
-#endif
 		graph_builder_ = NULL;
 	}
 
 	hwnd_ = NULL;
+#endif
 }
 
 } // namespace QDEngine

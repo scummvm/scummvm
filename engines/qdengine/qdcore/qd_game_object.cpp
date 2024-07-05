@@ -19,7 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/stream.h"
 #include "qdengine/qd_precomp.h"
@@ -30,11 +29,6 @@
 
 
 namespace QDEngine {
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 qdGameObject::qdGameObject() : r_(0, 0, 0),
 	parallax_offset_(0.0f, 0.0f),
@@ -194,6 +188,8 @@ bool qdGameObject::save_data(Common::SeekableWriteStream &fh) const {
 	fh.writeFloatLE(r_.x);
 	fh.writeFloatLE(r_.y);
 	fh.writeFloatLE(r_.z);
+
+	return true;
 }
 
 bool qdGameObject::save_data(qdSaveStream &fh) const {

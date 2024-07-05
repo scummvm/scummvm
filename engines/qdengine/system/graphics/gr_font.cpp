@@ -83,7 +83,7 @@ bool grFont::load_alpha(XZipStream &fh) {
 
 bool grFont::load_index(Common::SeekableReadStream *fh) {
 	int64 bufSize = fh->size();
-	byte buf[bufSize];
+	byte *buf = new byte[bufSize];
 	fh->read(buf, bufSize);
 
 	XBuffer XBuf(buf, bufSize);
@@ -93,7 +93,7 @@ bool grFont::load_index(Common::SeekableReadStream *fh) {
 
 	grFontChar chr;
 	for (int i = 0; i < num_ch; i ++) {
-		int x, y, sx, sy;
+		int x, y;
 		XBuf >= chr.code_ >= x >= y >= sx >= sy;
 
 		chr.region_ = grScreenRegion(x, y, sx, sy);
@@ -102,6 +102,8 @@ bool grFont::load_index(Common::SeekableReadStream *fh) {
 		if (sx > size_x_) size_x_ = sx;
 		if (sy > size_y_) size_y_ = sy;
 	};
+
+	delete[] buf;
 
 	return true;
 }
