@@ -135,7 +135,8 @@ static uint32 _availableSndTracks(const byte *data, uint32 size) {
 Sound::Sound(Audio::Mixer *mixer, ResourceManager *resource, Decompressor *decompressor) :
 	_mixer(mixer), _resource(resource), _decompressor(decompressor) {
 	_midiMusicPlayer = new DgdsMidiPlayer(false);
-	_midiSoundPlayer = new DgdsMidiPlayer(true);
+	//_midiSoundPlayer = new DgdsMidiPlayer(true);	// FIXME: Can't have multiple instances of OPL players
+	_midiSoundPlayer = nullptr;
 }
 
 Sound::~Sound() {
@@ -176,7 +177,7 @@ void Sound::playAmigaSfx(const Common::String &filename, byte channel, byte volu
 void Sound::stopAllSfx() {
 	for (uint i = 0; i < ARRAYSIZE(_channels); i++)
 		stopSfx(i);
-	_midiSoundPlayer->stop();
+	//_midiSoundPlayer->stop();
 }
 
 void Sound::stopSfx(byte channel) {
@@ -358,7 +359,7 @@ void Sound::playMusic(uint num) {
 void Sound::playPCSound(uint num, const Common::Array<uint32> &sizeArray, const Common::Array<byte *> &dataArray, DgdsMidiPlayer *midiPlayer) {
 	if (num < dataArray.size()) {
 		uint32 tracks = _availableSndTracks(dataArray[num], sizeArray[num]);
-		if (tracks & TRACK_MT32)
+		if (midiPlayer && (tracks & TRACK_MT32))
 			midiPlayer->play(dataArray[num], sizeArray[num]);
 		else if (tracks & DIGITAL_PCM)
 			playPCM(dataArray[num], sizeArray[num]);
