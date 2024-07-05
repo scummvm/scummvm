@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-04 16:12+0000\n"
+"POT-Creation-Date: 2024-07-05 05:37+0000\n"
 "PO-Revision-Date: 2024-07-04 15:43+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
@@ -6134,11 +6134,11 @@ msgstr "是/否绑定"
 msgid "Exit cutscene"
 msgstr "退出过场动画"
 
-#: engines/agos/metaengine.cpp:255 engines/vcruise/metaengine.cpp:176
+#: engines/agos/metaengine.cpp:255 engines/vcruise/metaengine.cpp:187
 msgid "Music volume down"
 msgstr "减小音乐音量"
 
-#: engines/agos/metaengine.cpp:260 engines/vcruise/metaengine.cpp:181
+#: engines/agos/metaengine.cpp:260 engines/vcruise/metaengine.cpp:192
 msgid "Music volume up"
 msgstr "增大音乐音量"
 
@@ -6797,7 +6797,7 @@ msgstr ""
 "按下“OK”现在转换，否则在下次启动游戏时将再次询问你。\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:363
+#: engines/vcruise/vcruise.cpp:367
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr "存档使用较高版本的 ScummVM 创建。无法载入。"
 
@@ -8479,7 +8479,7 @@ msgid ""
 msgstr "你确定载入存档吗？所有未保存进度都将丢失。"
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:145
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:156
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
@@ -8648,12 +8648,12 @@ msgstr "强制完整播放所有影片"
 msgid "Failed to read version information from save file"
 msgstr "无法从存档文件读取版本信息"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:358
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:362
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr "存档读取失败，存档文件不含有效版本信息。"
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:368
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:372
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -9784,7 +9784,7 @@ msgstr "Esc 键"
 msgid "Space"
 msgstr "空格"
 
-#: engines/scumm/help.cpp:80 engines/vcruise/metaengine.cpp:160
+#: engines/scumm/help.cpp:80 engines/vcruise/metaengine.cpp:171
 msgid "Pause game"
 msgstr "暂停游戏"
 
@@ -11506,43 +11506,53 @@ msgstr "使用 16 色图形"
 msgid "Uses 16-color graphics."
 msgstr "使用 16 色图形。"
 
-#: engines/vcruise/metaengine.cpp:135
+#: engines/vcruise/metaengine.cpp:97
+#, fuzzy
+#| msgid "Prerecorded sounds"
+msgid "Preload sounds"
+msgstr "预录制声音"
+
+#: engines/vcruise/metaengine.cpp:98
+msgid "Preload sounds. May improve performance on slow hard drives."
+msgstr ""
+
+#: engines/vcruise/metaengine.cpp:146
 msgid "Display help screen"
 msgstr "显示帮助屏幕"
 
-#: engines/vcruise/metaengine.cpp:140 engines/wintermute/keymapper_tables.h:920
+#: engines/vcruise/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "保存游戏"
 
-#: engines/vcruise/metaengine.cpp:150
+#: engines/vcruise/metaengine.cpp:161
 msgid "Open sound settings"
 msgstr "打开声音设置"
 
-#: engines/vcruise/metaengine.cpp:155
+#: engines/vcruise/metaengine.cpp:166
 msgid "Quit game"
 msgstr "退出游戏"
 
-#: engines/vcruise/metaengine.cpp:166
+#: engines/vcruise/metaengine.cpp:177
 msgid "Toggle music on/off"
 msgstr "打开/关闭音乐"
 
-#: engines/vcruise/metaengine.cpp:171
+#: engines/vcruise/metaengine.cpp:182
 msgid "Toggle sound effects on/off"
 msgstr "开关音效"
 
-#: engines/vcruise/metaengine.cpp:186
+#: engines/vcruise/metaengine.cpp:197
 msgid "Sound effect volume down"
 msgstr "降低音效音量"
 
-#: engines/vcruise/metaengine.cpp:191
+#: engines/vcruise/metaengine.cpp:202
 msgid "Sound effect volume up"
 msgstr "提高音效音量"
 
-#: engines/vcruise/metaengine.cpp:196
+#: engines/vcruise/metaengine.cpp:207
 msgid "Skip current animation"
 msgstr "跳过当前动画"
 
-#: engines/vcruise/metaengine.cpp:200
+#: engines/vcruise/metaengine.cpp:211
 msgid "Cycle item in scene (debug cheat)"
 msgstr "循环切换场景中物品（调试作弊）"
 
@@ -11566,15 +11576,15 @@ msgstr ""
 "此游戏的音乐需要 MP3 支持，但未被编译进去。\n"
 "游戏仍能运行，但不会播放音乐。"
 
-#: engines/vcruise/vcruise.cpp:348
+#: engines/vcruise/vcruise.cpp:352
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr "存档加载失败，存档数据似乎已被破坏。"
 
-#: engines/vcruise/vcruise.cpp:353
+#: engines/vcruise/vcruise.cpp:357
 msgid "Failed to read version information from save file."
 msgstr "无法从存档读取版本信息。"
 
-#: engines/vcruise/vcruise.cpp:373
+#: engines/vcruise/vcruise.cpp:377
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "尝试载入存档时发生未知错误。"
 

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-04 16:12+0000\n"
+"POT-Creation-Date: 2024-07-05 05:37+0000\n"
 "PO-Revision-Date: 2024-06-05 08:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -6309,11 +6309,11 @@ msgstr "Мапа клавіш гри"
 msgid "Exit cutscene"
 msgstr "Пропустити ролік"
 
-#: engines/agos/metaengine.cpp:255 engines/vcruise/metaengine.cpp:176
+#: engines/agos/metaengine.cpp:255 engines/vcruise/metaengine.cpp:187
 msgid "Music volume down"
 msgstr "Гучність музики нижче"
 
-#: engines/agos/metaengine.cpp:260 engines/vcruise/metaengine.cpp:181
+#: engines/agos/metaengine.cpp:260 engines/vcruise/metaengine.cpp:192
 msgid "Music volume up"
 msgstr "Гучність музики вище"
 
@@ -7024,7 +7024,7 @@ msgstr ""
 "наступному запуску гри.\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:363
+#: engines/vcruise/vcruise.cpp:367
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Цей файл зі збереженою грою було створено у новішій версії ScummVM. Не зможу "
@@ -8756,7 +8756,7 @@ msgstr ""
 "буде втрачено."
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:145
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:156
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
@@ -8936,14 +8936,14 @@ msgstr "Примусове програвання роликів до кінця
 msgid "Failed to read version information from save file"
 msgstr "Не вдалося завантажити інформацію про версію зі збереження гри"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:358
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:362
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Не вдалося завантажити гру, у файлі збереження відсутня інформація про "
 "версію."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:368
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:372
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -10174,7 +10174,7 @@ msgstr "Esc"
 msgid "Space"
 msgstr "Space"
 
-#: engines/scumm/help.cpp:80 engines/vcruise/metaengine.cpp:160
+#: engines/scumm/help.cpp:80 engines/vcruise/metaengine.cpp:171
 msgid "Pause game"
 msgstr "Пауза гри"
 
@@ -11939,43 +11939,53 @@ msgstr "Використовувати 16-колірну графіку"
 msgid "Uses 16-color graphics."
 msgstr "Використовує 16-колірну графіку."
 
-#: engines/vcruise/metaengine.cpp:135
+#: engines/vcruise/metaengine.cpp:97
+#, fuzzy
+#| msgid "Prerecorded sounds"
+msgid "Preload sounds"
+msgstr "Заздалегідь записані звуки"
+
+#: engines/vcruise/metaengine.cpp:98
+msgid "Preload sounds. May improve performance on slow hard drives."
+msgstr ""
+
+#: engines/vcruise/metaengine.cpp:146
 msgid "Display help screen"
 msgstr "Показати екран допомоги"
 
-#: engines/vcruise/metaengine.cpp:140 engines/wintermute/keymapper_tables.h:920
+#: engines/vcruise/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Зберегти гру"
 
-#: engines/vcruise/metaengine.cpp:150
+#: engines/vcruise/metaengine.cpp:161
 msgid "Open sound settings"
 msgstr "Відкрити налаштування звуку"
 
-#: engines/vcruise/metaengine.cpp:155
+#: engines/vcruise/metaengine.cpp:166
 msgid "Quit game"
 msgstr "Вийти з гри"
 
-#: engines/vcruise/metaengine.cpp:166
+#: engines/vcruise/metaengine.cpp:177
 msgid "Toggle music on/off"
 msgstr "Перемикання музики"
 
-#: engines/vcruise/metaengine.cpp:171
+#: engines/vcruise/metaengine.cpp:182
 msgid "Toggle sound effects on/off"
 msgstr "Перемикання звукових ефектів"
 
-#: engines/vcruise/metaengine.cpp:186
+#: engines/vcruise/metaengine.cpp:197
 msgid "Sound effect volume down"
 msgstr "Гучність звукових ефектів нижче"
 
-#: engines/vcruise/metaengine.cpp:191
+#: engines/vcruise/metaengine.cpp:202
 msgid "Sound effect volume up"
 msgstr "Гучність звукових ефектів вище"
 
-#: engines/vcruise/metaengine.cpp:196
+#: engines/vcruise/metaengine.cpp:207
 msgid "Skip current animation"
 msgstr "Пропускає поточну анімацію"
 
-#: engines/vcruise/metaengine.cpp:200
+#: engines/vcruise/metaengine.cpp:211
 msgid "Cycle item in scene (debug cheat)"
 msgstr "Міняти по колу елемент у сцені (debug cheat)"
 
@@ -11999,15 +12009,15 @@ msgstr ""
 "Музика у цій грі потребує підтримки MP3, яка відсутня у збірці.\n"
 "Гра запуститься, але музика буде відсутня."
 
-#: engines/vcruise/vcruise.cpp:348
+#: engines/vcruise/vcruise.cpp:352
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr "Не вдалося завантажити гру, файл збереження виглядає пошкодженим."
 
-#: engines/vcruise/vcruise.cpp:353
+#: engines/vcruise/vcruise.cpp:357
 msgid "Failed to read version information from save file."
 msgstr "Не вдалося завантажити інформацію про версію зі збереження гри."
 
-#: engines/vcruise/vcruise.cpp:373
+#: engines/vcruise/vcruise.cpp:377
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "Виникла невідома помилка під час спроби завантаження збереження гри."
 

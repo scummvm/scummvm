@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-04 16:12+0000\n"
+"POT-Creation-Date: 2024-07-05 05:37+0000\n"
 "PO-Revision-Date: 2023-12-08 17:19+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -6056,13 +6056,13 @@ msgstr "Játék Opciók"
 msgid "Exit cutscene"
 msgstr "Bevezetõ átugrása"
 
-#: engines/agos/metaengine.cpp:255 engines/vcruise/metaengine.cpp:176
+#: engines/agos/metaengine.cpp:255 engines/vcruise/metaengine.cpp:187
 #, fuzzy
 #| msgid "Music volume up / down"
 msgid "Music volume down"
 msgstr "Zene hangerõ fel / le"
 
-#: engines/agos/metaengine.cpp:260 engines/vcruise/metaengine.cpp:181
+#: engines/agos/metaengine.cpp:260 engines/vcruise/metaengine.cpp:192
 #, fuzzy
 #| msgid "Music volume: "
 msgid "Music volume up"
@@ -6784,7 +6784,7 @@ msgstr ""
 "indításakor újra megkérdezi.\n"
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:363
+#: engines/vcruise/vcruise.cpp:367
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "A mentett játék a ScummVM újabb verziójával készült. Nem lehet betölteni."
@@ -8555,7 +8555,7 @@ msgstr ""
 "fog veszni."
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:145
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:156
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
@@ -8737,14 +8737,14 @@ msgstr "Kényszerítsd a filmek lejátszását a végére"
 msgid "Failed to read version information from save file"
 msgstr "Nem sikerült a mentett játékállás betöltése fájlból"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:358
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:362
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Nem sikerült betölteni a mentést, a mentési fájl nem tartalmaz érvényes "
 "verzióinformációkat."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:368
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:372
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -9989,7 +9989,7 @@ msgstr "Esc"
 msgid "Space"
 msgstr "Szóköz"
 
-#: engines/scumm/help.cpp:80 engines/vcruise/metaengine.cpp:160
+#: engines/scumm/help.cpp:80 engines/vcruise/metaengine.cpp:171
 msgid "Pause game"
 msgstr "Szünet a játékban"
 
@@ -11811,57 +11811,67 @@ msgstr "Szines grafika"
 msgid "Uses 16-color graphics."
 msgstr "Szines grafika"
 
-#: engines/vcruise/metaengine.cpp:135
+#: engines/vcruise/metaengine.cpp:97
+#, fuzzy
+#| msgid "Prerecorded sounds"
+msgid "Preload sounds"
+msgstr "Előre felvett hangok"
+
+#: engines/vcruise/metaengine.cpp:98
+msgid "Preload sounds. May improve performance on slow hard drives."
+msgstr ""
+
+#: engines/vcruise/metaengine.cpp:146
 #, fuzzy
 #| msgid "Display/Hide Info Screen"
 msgid "Display help screen"
 msgstr "Infóképernyõ Képre/Elrejt"
 
-#: engines/vcruise/metaengine.cpp:140 engines/wintermute/keymapper_tables.h:920
+#: engines/vcruise/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Játék mentés"
 
-#: engines/vcruise/metaengine.cpp:150
+#: engines/vcruise/metaengine.cpp:161
 #, fuzzy
 #| msgid "Open 3DS Settings"
 msgid "Open sound settings"
 msgstr "3DS Beállítások megnyitása"
 
-#: engines/vcruise/metaengine.cpp:155
+#: engines/vcruise/metaengine.cpp:166
 #, fuzzy
 #| msgid "Quit Game"
 msgid "Quit game"
 msgstr "Játék Vége"
 
-#: engines/vcruise/metaengine.cpp:166
+#: engines/vcruise/metaengine.cpp:177
 #, fuzzy
 #| msgid "Toggle fullscreen"
 msgid "Toggle music on/off"
 msgstr "Teljesképernyõ kapcsoló"
 
-#: engines/vcruise/metaengine.cpp:171
+#: engines/vcruise/metaengine.cpp:182
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Toggle sound effects on/off"
 msgstr "Speciális hangeffektusok hangereje"
 
-#: engines/vcruise/metaengine.cpp:186
+#: engines/vcruise/metaengine.cpp:197
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Sound effect volume down"
 msgstr "Speciális hangeffektusok hangereje"
 
-#: engines/vcruise/metaengine.cpp:191
+#: engines/vcruise/metaengine.cpp:202
 #, fuzzy
 #| msgid "Special sound effects volume"
 msgid "Sound effect volume up"
 msgstr "Speciális hangeffektusok hangereje"
 
-#: engines/vcruise/metaengine.cpp:196
+#: engines/vcruise/metaengine.cpp:207
 msgid "Skip current animation"
 msgstr "Az aktuális animáció kihagyása"
 
-#: engines/vcruise/metaengine.cpp:200
+#: engines/vcruise/metaengine.cpp:211
 msgid "Cycle item in scene (debug cheat)"
 msgstr ""
 
@@ -11886,16 +11896,16 @@ msgstr ""
 "A játék zenéjéhez MP3-támogatás szükséges, ami nem lett lefordítva.\n"
 "A játék továbbra is játszható, de nem lesz benne zene."
 
-#: engines/vcruise/vcruise.cpp:348
+#: engines/vcruise/vcruise.cpp:352
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "Nem sikerült betölteni a mentést, úgy tűnik, hogy a mentési adatok sérültek."
 
-#: engines/vcruise/vcruise.cpp:353
+#: engines/vcruise/vcruise.cpp:357
 msgid "Failed to read version information from save file."
 msgstr "Nem sikerült a mentett játékállás betöltése fájlból."
 
-#: engines/vcruise/vcruise.cpp:373
+#: engines/vcruise/vcruise.cpp:377
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "Ismeretlen hiba történt a mentett játék betöltése közben."
 
