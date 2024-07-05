@@ -319,10 +319,6 @@ const Vect2s qdCamera::plane2scr(const Vect3f &plnPoint) const {
 
 const Vect2s qdCamera::plane2rscr(const Vect3f &plnPoint) const {
 	const float SMALL_VALUE = 0.0001f;
-	const int XSP = cellSX * GSX;
-	const int YSP = cellSY * GSY;
-	const float XSP05 = XSP / 2.f;
-	const float YSP05 = YSP / 2.f;
 
 	Vect3f res = global2camera_coord(plnPoint);
 
@@ -622,7 +618,6 @@ float qdCamera::scrolling_phase_y() const {
 bool qdCamera::draw_grid() const {
 	if (redraw_mode == QDCAM_GRID_NONE) return true;
 
-	int i, j;
 	int cnt = 0;
 
 	const int XSP = cellSX * GSX;
@@ -630,7 +625,7 @@ bool qdCamera::draw_grid() const {
 	const float XSP05 = XSP / 2.f;
 	const float YSP05 = YSP / 2.f;
 
-	for (cnt = 0, i = 0; i < GSY; ++i) {
+	for (int i = 0; i < GSY; ++i) {
 		for (int j = 0; j < GSX; ++j) {
 			if (!Grid[cnt].is_walkable())
 				draw_cell(j, i, 0, 1, IMPASSIBLE_CELL_CLR);
@@ -642,8 +637,8 @@ bool qdCamera::draw_grid() const {
 	}
 
 	if (redraw_mode == QDCAM_GRID_ZBUFFER) {
-		for (i = 0; i <= GSX; i++) {
-			for (j = 0; j < GSY; j++) {
+		for (int i = 0; i <= GSX; i++) {
+			for (int j = 0; j < GSY; j++) {
 				Vect3f begPoint(-XSP05 + i * cellSX, -YSP05 + j * cellSY, 0);
 				Vect3f endPoint(-XSP05 + i * cellSX, -YSP05 + (j + 1)*cellSY, 0);
 				begPoint = global2camera_coord(begPoint + gridCenter);
@@ -660,8 +655,8 @@ bool qdCamera::draw_grid() const {
 				}
 			}
 		}
-		for (i = 0; i <= GSY; i++) {
-			for (j = 0; j < GSX; j++) {
+		for (int i = 0; i <= GSY; i++) {
+			for (int j = 0; j < GSX; j++) {
 				Vect3f begPoint(-XSP05 + j * cellSX, -YSP05 + i * cellSY, 0);
 				Vect3f endPoint(-XSP05 + (j + 1)*cellSX, -YSP05 + i * cellSY, 0);
 				begPoint = global2camera_coord(begPoint + gridCenter);
@@ -679,7 +674,7 @@ bool qdCamera::draw_grid() const {
 			}
 		}
 	} else {
-		for (i = 0; i <= GSX; i++) {
+		for (int i = 0; i <= GSX; i++) {
 			Vect3f begPoint(-XSP05 + i * cellSX, -YSP05, 0);
 			Vect3f endPoint(-XSP05 + i * cellSX, +YSP05, 0);
 			begPoint = global2camera_coord(begPoint + gridCenter);
@@ -692,7 +687,7 @@ bool qdCamera::draw_grid() const {
 			}
 		}
 
-		for (i = 0; i <= GSY; i++) {
+		for (int i = 0; i <= GSY; i++) {
 			Vect3f begPoint(-XSP05, -YSP05 + i * cellSY, 0);
 			Vect3f endPoint(+XSP05, -YSP05 + i * cellSY, 0);
 			begPoint = global2camera_coord(begPoint + gridCenter);
@@ -707,7 +702,7 @@ bool qdCamera::draw_grid() const {
 	}
 
 	cnt = 0;
-	for (i = 0; i < GSY; i++) {
+	for (int i = 0; i < GSY; i++) {
 		for (int j = 0; j < GSX; j++, cnt++) {
 			if (Grid[cnt].height()) {
 				draw_cell(j, i, Grid[cnt].height(), 1, 0x00FFFFFF);
@@ -719,7 +714,6 @@ bool qdCamera::draw_grid() const {
 }
 
 bool qdCamera::draw_cell(int x, int y, int z, int penWidth, unsigned color) const {
-	const float SMALL_VALUE = 0.0001f;
 	const int XSP = get_cell_sx() * get_grid_sx();
 	const int YSP = get_cell_sy() * get_grid_sy();
 	const float XSP05 = XSP * 0.5f;

@@ -550,7 +550,6 @@ bool qdAnimation::qda_load(const char *fname) {
 		return false;
 	}
 
-	int i;
 	int32 version = fh->readSint32LE();
 	sx_ = fh->readSint32LE();
 	sy_ = fh->readSint32LE();
@@ -580,13 +579,13 @@ bool qdAnimation::qda_load(const char *fname) {
 
 		set_flag(fl & (QD_ANIMATION_FLAG_CROP | QD_ANIMATION_FLAG_COMPRESS));
 
-		for (i = 0; i < num_fr; i ++) {
+		for (int i = 0; i < num_fr; i ++) {
 			qdAnimationFrame *p = new qdAnimationFrame;
 			p->qda_load(fh, version);
 			add_frame(p);
 		}
 
-		for (i = 0; i < num_fr * num_scales; i ++) {
+		for (int i = 0; i < num_fr * num_scales; i ++) {
 			qdAnimationFrame *p = new qdAnimationFrame;
 			p->qda_load(fh, version);
 			scaled_frames_.push_back(p);
@@ -597,7 +596,7 @@ bool qdAnimation::qda_load(const char *fname) {
 		sx_ = fh->readSint32LE();
 		sy_ = fh->readSint32LE();
 
-		for (i = 0; i < num_fr; i ++) {
+		for (int i = 0; i < num_fr; i ++) {
 			float start_time, length;
 			start_time = fh->readFloatLE();
 			length = fh->readFloatLE();
@@ -952,12 +951,12 @@ bool qdAnimation::load_data(qdSaveStream &fh, int save_version) {
 		if (qdGameDispatcher * p = qd_get_game_dispatcher()) {
 			if (qdNamedObject * obj = p->get_named_object(&ref)) {
 				if (obj->named_object_type() != QD_NAMED_OBJECT_ANIMATION) return false;
-				int fl = flags();
+				int fl1 = flags();
 
 				static_cast<qdAnimation *>(obj)->create_reference(this);
 
 				clear_flags();
-				set_flag(fl);
+				set_flag(fl1);
 			}
 		}
 	} else
