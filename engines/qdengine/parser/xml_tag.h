@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QDENGINE_CORE_PARSER_XML_TAG_H
-#define QDENGINE_CORE_PARSER_XML_TAG_H
+#ifndef QDENGINE_PARSER_XML_TAG_H
+#define QDENGINE_PARSER_XML_TAG_H
 
 #include "qdengine/qdengine.h"
 
@@ -193,4 +193,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // QDENGINE_CORE_PARSER_XML_TAG_H
+#endif // QDENGINE_PARSER_XML_TAG_H

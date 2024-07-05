@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QDENGINE_CORE_QDCORE_QD_INVENTORY_H
-#define QDENGINE_CORE_QDCORE_QD_INVENTORY_H
+#ifndef QDENGINE_QDCORE_QD_INVENTORY_H
+#define QDENGINE_QDCORE_QD_INVENTORY_H
 
 #include "qdengine/system/input/mouse_input.h"
 #include "qdengine/qdcore/qd_named_object.h"
@@ -199,4 +199,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // QDENGINE_CORE_QDCORE_QD_INVENTORY_H
+#endif // QDENGINE_QDCORE_QD_INVENTORY_H

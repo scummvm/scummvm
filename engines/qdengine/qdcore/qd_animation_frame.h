@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QDENGINE_CORE_QDCORE_QD_ANIMATION_FRAME_H
-#define QDENGINE_CORE_QDCORE_QD_ANIMATION_FRAME_H
+#ifndef QDENGINE_QDCORE_QD_ANIMATION_FRAME_H
+#define QDENGINE_QDCORE_QD_ANIMATION_FRAME_H
 
 #include "qdengine/qdcore/qd_sprite.h"
 
@@ -71,4 +71,4 @@ typedef std::list<qdAnimationFrame *> qdAnimationFrameList;
 
 } // namespace QDEngine
 
-#endif // QDENGINE_CORE_QDCORE_QD_ANIMATION_FRAME_H
+#endif // QDENGINE_QDCORE_QD_ANIMATION_FRAME_H

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QDENGINE_CORE_QDCORE_QD_INTERFACE_TEXT_WINDOW_H
-#define QDENGINE_CORE_QDCORE_QD_INTERFACE_TEXT_WINDOW_H
+#ifndef QDENGINE_QDCORE_QD_INTERFACE_TEXT_WINDOW_H
+#define QDENGINE_QDCORE_QD_INTERFACE_TEXT_WINDOW_H
 
 #include "qdengine/qdcore/qd_interface_element.h"
 #include "qdengine/qdcore/qd_interface_element_state.h"
@@ -248,4 +248,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // QDENGINE_CORE_QDCORE_QD_INTERFACE_TEXT_WINDOW_H
+#endif // QDENGINE_QDCORE_QD_INTERFACE_TEXT_WINDOW_H

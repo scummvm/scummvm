@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QDENGINE_CORE_QDCORE_QD_SCREEN_TEXT_H
-#define QDENGINE_CORE_QDCORE_QD_SCREEN_TEXT_H
+#ifndef QDENGINE_QDCORE_QD_SCREEN_TEXT_H
+#define QDENGINE_QDCORE_QD_SCREEN_TEXT_H
 
 #include "common/stream.h"
 #include "qdengine/parser/xml_fwd.h"
@@ -274,4 +274,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // QDENGINE_CORE_QDCORE_QD_SCREEN_TEXT_H
+#endif // QDENGINE_QDCORE_QD_SCREEN_TEXT_H

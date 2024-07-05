@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_H
-#define QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_H
+#ifndef QDENGINE_QDCORE_QD_GAME_OBJECT_H
+#define QDENGINE_QDCORE_QD_GAME_OBJECT_H
 
 #include "qdengine/parser/xml_fwd.h"
 #include "qdengine/system/input/mouse_input.h"
@@ -195,4 +195,4 @@ inline bool qdbg_is_object(const qdNamedObject *, const char *, const char *) {
 
 } // namespace QDEngine
 
-#endif // QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_H
+#endif // QDENGINE_QDCORE_QD_GAME_OBJECT_H

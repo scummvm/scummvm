@@ -20,8 +20,8 @@
  */
 
 
-#ifndef QDENGINE_CORE_PARSER_QDSCR_PARSER_H
-#define QDENGINE_CORE_PARSER_QDSCR_PARSER_H
+#ifndef QDENGINE_PARSER_QDSCR_PARSER_H
+#define QDENGINE_PARSER_QDSCR_PARSER_H
 
 #include "qdengine/parser/xml_fwd.h"
 
@@ -706,4 +706,4 @@ const char *qdscr_XML_string(const char *p);
 
 } // namespace QDEngine
 
-#endif // QDENGINE_CORE_PARSER_QDSCR_PARSER_H
+#endif // QDENGINE_PARSER_QDSCR_PARSER_H

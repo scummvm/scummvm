@@ -20,8 +20,8 @@
  */
 
 
-#ifndef QDENGINE_CORE_QDCORE_QD_INTERFACE_DISPATCHER_H
-#define QDENGINE_CORE_QDCORE_QD_INTERFACE_DISPATCHER_H
+#ifndef QDENGINE_QDCORE_QD_INTERFACE_DISPATCHER_H
+#define QDENGINE_QDCORE_QD_INTERFACE_DISPATCHER_H
 
 #include "qdengine/qdcore/qd_resource_container.h"
 #include "qdengine/qdcore/qd_interface_object_base.h"
@@ -343,4 +343,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // QDENGINE_CORE_QDCORE_QD_INTERFACE_DISPATCHER_H
+#endif // QDENGINE_QDCORE_QD_INTERFACE_DISPATCHER_H

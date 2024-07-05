@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QDENGINE_CORE_QDCORE_QD_SETUP_H
-#define QDENGINE_CORE_QDCORE_QD_SETUP_H
+#ifndef QDENGINE_QDCORE_QD_SETUP_H
+#define QDENGINE_QDCORE_QD_SETUP_H
 
 #include "common/formats/ini-file.h"
 
@@ -230,4 +230,4 @@ bool enumerateIniSections(const char *fname, Common::INIFile::SectionList &secti
 
 } // namespace QDEngine
 
-#endif // QDENGINE_CORE_QDCORE_QD_SETUP_H
+#endif // QDENGINE_QDCORE_QD_SETUP_H

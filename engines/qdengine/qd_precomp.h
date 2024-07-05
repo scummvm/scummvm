@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QDENGINE_CORE_QD_PRECOMP_H
-#define QDENGINE_CORE_QD_PRECOMP_H
+#ifndef QDENGINE_QD_PRECOMP_H
+#define QDENGINE_QD_PRECOMP_H
 #ifndef _QUEST_EDITOR
 #else
 /*  #define   _STLP_NO_NEW_IOSTREAMS 1
@@ -384,4 +384,4 @@ int engineMain();
 
 } // namespace QDEngine
 
-#endif // QDENGINE_CORE_QD_PRECOMP_H
+#endif // QDENGINE_QD_PRECOMP_H

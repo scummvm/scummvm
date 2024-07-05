@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QDENGINE_CORE_QDCORE_CONDITIONAL_OBJECT_H
-#define QDENGINE_CORE_QDCORE_CONDITIONAL_OBJECT_H
+#ifndef QDENGINE_QDCORE_CONDITIONAL_OBJECT_H
+#define QDENGINE_QDCORE_CONDITIONAL_OBJECT_H
 
 #include "qdengine/parser/xml_fwd.h"
 #include "qdengine/qdcore/qd_condition.h"
@@ -193,4 +193,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // QDENGINE_CORE_QDCORE_CONDITIONAL_OBJECT_H
+#endif // QDENGINE_QDCORE_CONDITIONAL_OBJECT_H
