@@ -253,7 +253,6 @@ public:
 		interface_screen_name_ = name;
 	}
 
-	bool adjust_files_paths(const char *copy_dir, const char *pack_dir, bool canoverwrite = false);
 	bool get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const;
 
 	qdGameObject *get_hitted_obj(int x, int y);

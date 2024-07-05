@@ -255,27 +255,6 @@ bool qdMiniGame::load_config() {
 	return true;
 }
 
-bool qdMiniGame::adjust_files_paths(const char *copy_dir, const char *pack_dir, bool can_overwrite) {
-	std::string copy_corr_dir = copy_dir;
-	app_io::adjust_dir_end_slash(copy_corr_dir);
-
-	bool all_ok = true;
-	if (has_dll())
-		QD_ADJUST_TO_REL_FILE_MEMBER(copy_corr_dir, dll_name, set_dll_name, can_overwrite, all_ok);
-
-	if (has_config_file())
-		QD_ADJUST_TO_REL_FILE_MEMBER(copy_corr_dir, config_file_name,
-		                             set_config_file_name, can_overwrite, all_ok);
-
-	for (config_container_t::iterator it = config_.begin(); it != config_.end(); ++it) {
-		if (it->data_type() == qdMinigameConfigParameter::PRM_DATA_FILE)
-			QD_ADJUST_TO_REL_FILE_MEMBER(copy_corr_dir, it->data_string,
-			                             it->set_data_string, can_overwrite, all_ok);
-	}
-
-	return all_ok;
-}
-
 bool qdMiniGame::get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const {
 	if (has_dll())
 		files_to_copy.push_back(dll_name());

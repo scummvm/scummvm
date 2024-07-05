@@ -2867,9 +2867,6 @@ bool qdGameDispatcher::load_game(int slot_id) {
 bool qdGameDispatcher::save_game(int slot_id) const {
 	if (!get_active_scene()) return false;
 
-	if (!app_io::is_directory_exist("Saves"))
-		app_io::create_directory("Saves");
-
 	debugC(3, kDebugSave, "qdGameDispatcher::save_game(%d): filename: %s", slot_id, get_save_name(slot_id));
 	return save_save(get_save_name(slot_id));
 }
@@ -3107,65 +3104,6 @@ void qdGameDispatcher::scan_files(qdLoadingProgressFnc progress_fnc, void *conte
 		percents = progress * 100 / size;
 		(*progress_fnc)(percents, context_ptr);
 	}
-}
-
-bool qdGameDispatcher::adjust_global_object_files_paths(const char *copy_dir, const char *pack_dir, bool can_overwrite) {
-	std::string copy_corr_dir = copy_dir;
-	app_io::adjust_dir_end_slash(copy_corr_dir);
-	std::string pack_corr_dir = pack_dir;
-	app_io::adjust_dir_end_slash(pack_corr_dir);
-
-	bool all_ok = true;
-	if (!texts_database_.empty())
-		QD_ADJUST_TO_REL_FILE_MEMBER(pack_corr_dir, texts_database, set_texts_database, can_overwrite, all_ok);
-
-	for (qdMiniGameList::const_iterator it = minigame_list().begin(); it != minigame_list().end(); ++it)
-		if (false == (*it)->adjust_files_paths(copy_corr_dir.c_str(), pack_corr_dir.c_str(), can_overwrite))
-			all_ok = false;
-
-	for (qdSoundList::const_iterator it = sound_list().begin(); it != sound_list().end(); ++it)
-		QD_ADJUST_TO_REL_FILE_MEMBER(pack_corr_dir, (*it)->file_name, (*it)->set_file_name, can_overwrite, all_ok);
-
-	for (qdAnimationList::const_iterator it = animation_list().begin(); it != animation_list().end(); ++it)
-		QD_ADJUST_TO_REL_FILE_MEMBER(pack_corr_dir, (*it)->qda_file, (*it)->qda_set_file, can_overwrite, all_ok);
-
-	for (qdInventoryCellTypeVector::iterator it = not_const_inventory_cell_types().begin(); it != inventory_cell_types().end(); ++it)
-		QD_ADJUST_TO_REL_FILE_MEMBER(pack_corr_dir, it->sprite_file, it->set_sprite_file, can_overwrite, all_ok);
-
-	if (false == interface_dispatcher_.adjust_pack_files(pack_corr_dir.c_str(), can_overwrite))
-		all_ok = false;
-
-	for (qdFontInfoList::const_iterator it = fonts_list().begin();
-	        it != fonts_list().end(); ++it) {
-		std::string tga_file = (*it)->font_file_name();
-		// Правим положение idx
-		(*it)->set_font_file_name(app_io::change_ext((*it)->font_file_name(), ".idx"));
-		QD_ADJUST_TO_REL_FILE_MEMBER(pack_corr_dir, (*it)->font_file_name,
-		                             (*it)->set_font_file_name, can_overwrite, all_ok);
-		// Правим положение tga
-		(*it)->set_font_file_name(tga_file.c_str()); // Восстанавливаем старый путь
-		(*it)->set_font_file_name(app_io::change_ext((*it)->font_file_name(), ".tga"));
-		QD_ADJUST_TO_REL_FILE_MEMBER(pack_corr_dir, (*it)->font_file_name,
-		                             (*it)->set_font_file_name, can_overwrite, all_ok);
-	}
-
-	return all_ok;
-}
-
-bool qdGameDispatcher::collect_all_external_files(const char *collector_dir) {
-	bool all_ok = true;
-	if (!adjust_global_object_files_paths(collector_dir, collector_dir, true))
-		all_ok = false;
-
-	for (qdVideoList::const_iterator it = video_list().begin(); it != video_list().end(); ++it)
-		if (!(*it)->adjust_files_paths(collector_dir, collector_dir, true))
-			all_ok = false;
-
-	for (qdGameSceneList::const_iterator it = scene_list().begin(); it != scene_list().end(); ++it)
-		if (!(*it)->adjust_files_paths(collector_dir, collector_dir, true))
-			all_ok = false;
-
-	return all_ok;
 }
 
 bool qdGameDispatcher::get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const {
@@ -3434,115 +3372,6 @@ bool qdGameDispatcher::set_font_info(const qdFontInfo &fi) {
 		return true;
 	}
 	return false;
-}
-
-bool qdGameDispatcher::copy_resources_to_folder(const char *dest_dir, const char *file_extension, qdLoadingProgressFnc callback, void *callback_context) {
-	app_io::create_directory(dest_dir);
-
-	qdFileNameList files_to_copy, files_to_pack;
-	get_files_list(files_to_copy, files_to_pack);
-
-	for (qdGameSceneList::const_iterator it = scene_list().begin(); it != scene_list().end(); it++)
-		(*it)->get_files_list(files_to_copy, files_to_pack);
-
-	// в files_to_copy - все файлы, которые надо скопировать
-	files_to_copy.clear();
-	for (qdFileNameList::const_iterator it = files_to_pack.begin(); it != files_to_pack.end(); it++) {
-		if (0 == scumm_stricmp(file_extension, app_io::get_ext(it->c_str())))
-			files_to_copy.push_back(*it);
-	}
-
-	bool copy_ok = true;
-	std::string save_str;
-
-	int file_count = files_to_copy.size();
-	int files_processed = 0;
-	for (qdFileNameList::const_iterator it = files_to_copy.begin(); it != files_to_copy.end(); it++) {
-		// Формируем имя файла и прикрепляем к нему путь папки-хранилища файлов
-		save_str = app_io::path_to_file_name(it->c_str());
-		save_str = '\\' + save_str;
-		save_str = dest_dir + save_str;
-		// Копируем и сообщаем об ошибке, если произошла
-		if (!app_io::copy_file(save_str.c_str(), it->c_str())) {
-			debugC(3, kDebugLog, "Error: could not copy %s to directory %s", it->c_str(), transCyrillic(dest_dir));
-			copy_ok = false;
-		}
-
-		files_processed++;
-		if (callback)
-			(*callback)(files_processed * 100 / file_count, callback_context);
-	}
-
-	return copy_ok;
-}
-
-bool qdGameDispatcher::copy_resources_from_folder(const char *src_dir, const char *file_extension, qdLoadingProgressFnc callback, void *callback_context) {
-	qdFileNameList files_to_copy, resource_files;
-	get_files_list(files_to_copy, resource_files);
-	for (qdGameSceneList::const_iterator c_it = scene_list().begin(); c_it != scene_list().end(); c_it++) {
-		(*c_it)->get_files_list(files_to_copy, resource_files);
-	}
-
-	// в files_to_copy - все файлы, которые надо скопировать
-	files_to_copy.clear();
-	for (qdFileNameList::const_iterator it = resource_files.begin(); it != resource_files.end(); it++) {
-		if (0 == scumm_stricmp(file_extension, app_io::get_ext(it->c_str())))
-			files_to_copy.push_back(*it);
-	}
-
-	std::string path = src_dir;
-	path +=  "\\*";
-	path += file_extension;
-
-	resource_files.clear();
-	warning("STUB: qdGameDispatcher::copy_resources_from_folder");
-#if 0
-	WIN32_FIND_DATA find_data;
-	HANDLE hFile = FindFirstFile(path.c_str(), &find_data);
-	while (INVALID_HANDLE_VALUE != hFile) {
-		resource_files.push_back(find_data.cFileName);
-		if (!FindNextFile(hFile, &find_data))
-			break;
-	}
-
-	FindClose(hFile);
-#endif
-	int file_count = resource_files.size();
-	int files_processed = 0;
-
-	bool all_copy_ok = true;
-	for (qdFileNameList::const_iterator it = resource_files.begin(); it != resource_files.end(); it++) {
-		bool fnd_flag = false; // По умолчанию не нашли файл для текущего файла из папки-источника
-
-		// Ищем место файлу в глобальном списке
-		for (qdFileNameList::const_iterator c_it = files_to_copy.begin(); c_it != files_to_copy.end(); c_it++) {
-			if (0 == scumm_stricmp(it->c_str(), app_io::path_to_file_name(*c_it).c_str())) {
-				// Нашли соотв. файл - копируем
-				fnd_flag = true;
-				path = src_dir;
-				path += '\\';
-				path += it->c_str();
-				if (!app_io::copy_file((*c_it).c_str(), path.c_str())) {
-#if 0
-					debugC(3, kDebugLog, "Error: could not copy %s to %s", transCyrillic(find_data.cFileName), transCyrillic((*c_it).c_str()));
-#endif
-					all_copy_ok = false;
-				}
-				break;
-			}
-		}
-
-		files_processed++;
-		if (callback)
-			(*callback)(files_processed * 100 / file_count, callback_context);
-
-		// Если для некоторых файлов соотв. файлы обнаружить не удалось - warning
-		if (false == fnd_flag) {
-			debugC(3, kDebugLog, "Warning: appropriate file for %s not found.", transCyrillic(it->c_str()));
-		}
-	}
-
-	return all_copy_ok;
 }
 
 bool qdGameDispatcher::deactivate_scene_triggers(const qdGameScene *p) {

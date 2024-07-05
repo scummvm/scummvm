@@ -236,28 +236,6 @@ void qdInterfaceElementState::set_animation_file(const char *name, state_mode_t 
 	}
 }
 
-bool qdInterfaceElementState::adjust_res_file(const char *res_file, const char *dir, const char *&new_path, bool can_overwrite) {
-	std::string corr_dir = dir;
-	app_io::adjust_dir_end_slash(corr_dir);
-
-	bool all_ok = true;
-	new_path = NULL; // По умолчанию изменений с файлами не было
-	// Если файл ресурса - звук, то правим положение звукового файла
-	if (0 == strcmp(res_file, sound_file())) {
-		QD_ADJUST_TO_REL_FILE_MEMBER(corr_dir, sound_file, set_sound_file, can_overwrite, all_ok);
-		if (all_ok) new_path = sound_file();
-		return all_ok;
-	}
-	// Анимация
-	if (0 == strcmp(res_file, animation_file())) {
-		QD_ADJUST_TO_REL_FILE_MEMBER(corr_dir, animation_file, set_animation_file, can_overwrite, all_ok);
-		if (all_ok) new_path = animation_file();
-		return all_ok;
-	}
-
-	return true; // Нет ресурса с таким файлом - все ок.
-}
-
 bool qdInterfaceElementState::unregister_resources() {
 	bool res = true;
 

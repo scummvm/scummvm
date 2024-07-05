@@ -210,9 +210,6 @@ public:
 		return modes_[snd_id].has_sound();
 	}
 
-	//! Правка положения файла ресурса (если есть ресурс с таким файлом)
-	bool adjust_res_file(const char *res_file, const char *dir, const char *&new_path, bool can_overwrite = false);
-
 	//! Устанавливает имя файла для анимации.
 	/**
 	Если надо убрать анимацию - передать NULL в качестве имени файла.
