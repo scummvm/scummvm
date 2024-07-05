@@ -68,6 +68,8 @@ bool mouseDispatcher::handle_event(mouseEvent ev, int x, int y, int flags) {
 	case EV_RIGHT_UP:
 		button_status_  &= ~(1 << ID_BUTTON_RIGHT);
 		break;
+	default:
+		break;
 	}
 
 	toggle_event(ev);

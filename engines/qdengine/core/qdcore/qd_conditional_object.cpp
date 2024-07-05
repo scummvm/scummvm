@@ -184,10 +184,10 @@ bool qdConditionalObject::load_conditions_script(const xml::tag *p) {
 		switch (it->ID()) {
 		case QDSCR_CONDITION:
 			if (const xml::tag * tp = it->search_subtag(QDSCR_TYPE)) {
-				qdCondition *p = &*ict;
-				p->set_type(qdCondition::ConditionType(xml::tag_buffer(*tp).get_int()));
-				p->load_script(&*it);
-				p->set_owner(this);
+				qdCondition *cp = &*ict;
+				cp->set_type(qdCondition::ConditionType(xml::tag_buffer(*tp).get_int()));
+				cp->load_script(&*it);
+				cp->set_owner(this);
 			}
 			++ict;
 			break;
@@ -234,7 +234,6 @@ bool qdConditionalObject::save_conditions_script(Common::SeekableWriteStream &fh
 }
 
 void qdConditionalObject::conditions_quant(float dt) {
-	conditions_container_t::iterator it;
 	for (auto &it : conditions_) {
 		it.quant(dt);
 	}

@@ -48,7 +48,7 @@ unsigned encodeRLE(const unsigned *in_data, unsigned *out_data) {
 			index ++;
 
 		if (index - count == 1) {
-			while (index < GR_TILE_SPRITE_SIZE && (in_data[index] != in_data[index - 1] || index > 1 && in_data[index] != in_data[index - 2]))
+			while (index < GR_TILE_SPRITE_SIZE && (in_data[index] != in_data[index - 1] || (index > 1 && in_data[index] != in_data[index - 2])))
 				index ++;
 
 			while (index < GR_TILE_SPRITE_SIZE && in_data[index] == in_data[index - 1])
@@ -121,7 +121,7 @@ void grDispatcher::PutTileSpr(int x, int y, const grTileSprite &sprite, bool has
 		dy = 1;
 
 
-	const unsigned char *data_ptr = (unsigned char *)(sprite.data() + px + py * GR_TILE_SPRITE_SIZE_X);
+	const unsigned char *data_ptr = (const unsigned char *)(sprite.data() + px + py * GR_TILE_SPRITE_SIZE_X);
 
 	warning("STUB: grDispatcher::PutTileSpr");
 	for (int i = 0; i < psy; i ++) {

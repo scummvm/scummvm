@@ -195,21 +195,21 @@ bool AIAStar<Heuristic, TypeH>::FindPath(Vect2i from, Heuristic *hr, std::vector
 
 		if (heuristic->IsEndPoint(pt.x, pt.y)) {
 			//сконструировать путь
-			Vect2i p;
+			Vect2i vp;
 			while (parent) {
-				p = PosBy(parent);;
-				path.push_back(p);
+				vp = PosBy(parent);;
+				path.push_back(vp);
 
 				if (parent->parent) {
 					Vect2i pp;
 					pp = PosBy(parent->parent);
-					assert(abs(p.x - pp.x) <= 1 &&
-					       abs(p.y - pp.y) <= 1);
+					assert(abs(vp.x - pp.x) <= 1 &&
+					       abs(vp.y - pp.y) <= 1);
 				}
 
 				parent = parent->parent;
 			}
-			assert(p.x == from.x && p.y == from.y);
+			assert(vp.x == from.x && vp.y == from.y);
 			std::reverse(path.begin(), path.end());
 			return true;
 		}
@@ -385,7 +385,6 @@ void AIAStarGraph<Heuristic, Node, TypeH>::Init(std::vector<Node> &all_node) {
 template<class Heuristic, class Node, class TypeH>
 void AIAStarGraph<Heuristic, Node, TypeH>::clear() {
 	is_used_num = 0;
-	typename std::vector<OnePoint>::iterator it;
 	for (auto &it : chart) {
 		it.used = 0;
 	}
@@ -428,45 +427,44 @@ bool AIAStarGraph<Heuristic, Node, TypeH>::FindPath(Node *from, Heuristic *hr, s
 
 		if (heuristic->IsEndPoint(node)) {
 			//сконструировать путь
-			Node *p;
+			Node *np;
 			while (parent) {
-				p = PosBy(parent);
+				np = PosBy(parent);
 				assert(parent->used == is_used_num);
 
-				path.push_back(p);
+				path.push_back(np);
 				parent = parent->parent;
 			}
-			assert(p == from_node);
+			assert(np == from_node);
 			reverse(path.begin(), path.end());
 			return true;
 		}
 
 		//для каждого наследника child узла parent
-		typename Node::iterator it;
 		for (auto &it : *node) {
 			Node *cur_node = *it;
-			OnePoint *p = (OnePoint *)cur_node->AIAStarPointer;
+			OnePoint *op = (OnePoint *)cur_node->AIAStarPointer;
 			num_point_examine++;
 
 			TypeH addg = heuristic->GetG(node, cur_node);
 			TypeH newg = parent->g + addg;
 
-			if (p->used == is_used_num) {
-				if (!p->is_open)continue;
-				if (p->g <= newg)continue;
+			if (op->used == is_used_num) {
+				if (!op->is_open)continue;
+				if (op->g <= newg)continue;
 
-				open_map.erase(p->self_it);
+				open_map.erase(op->self_it);
 				num_find_erase++;
 			}
 
-			p->parent = parent;
-			p->g = newg;
-			p->h = heuristic->GetH(cur_node);
+			op->parent = parent;
+			op->g = newg;
+			op->h = heuristic->GetH(cur_node);
 
-			p->self_it = open_map.insert(type_point_map::value_type(p->f(), p));
+			op->self_it = open_map.insert(type_point_map::value_type(op->f(), op));
 
-			p->is_open = true;
-			p->used = is_used_num;
+			op->is_open = true;
+			op->used = is_used_num;
 		}
 	}
 
