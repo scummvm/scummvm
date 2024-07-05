@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QDENGINE_CORE_QDCORE_QD_CONTOUR_H
-#define QDENGINE_CORE_QDCORE_QD_CONTOUR_H
+#ifndef QDENGINE_QDCORE_QD_CONTOUR_H
+#define QDENGINE_QDCORE_QD_CONTOUR_H
 
 #include <vector>
 #include "qdengine/parser/xml_fwd.h"
@@ -170,4 +170,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // QDENGINE_CORE_QDCORE_QD_CONTOUR_H
+#endif // QDENGINE_QDCORE_QD_CONTOUR_H

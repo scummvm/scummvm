@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QDENGINE_CORE_QDCORE_QD_GAME_DISPATCHER_BASE_H
-#define QDENGINE_CORE_QDCORE_QD_GAME_DISPATCHER_BASE_H
+#ifndef QDENGINE_QDCORE_QD_GAME_DISPATCHER_BASE_H
+#define QDENGINE_QDCORE_QD_GAME_DISPATCHER_BASE_H
 
 #include "qdengine/qdcore/qd_conditional_object.h"
 #include "qdengine/qdcore/qd_object_map_container.h"
@@ -164,4 +164,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // QDENGINE_CORE_QDCORE_QD_GAME_DISPATCHER_BASE_H
+#endif // QDENGINE_QDCORE_QD_GAME_DISPATCHER_BASE_H

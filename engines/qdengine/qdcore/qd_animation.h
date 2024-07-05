@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QDENGINE_CORE_QDCORE_QD_ANIMATION_H
-#define QDENGINE_CORE_QDCORE_QD_ANIMATION_H
+#ifndef QDENGINE_QDCORE_QD_ANIMATION_H
+#define QDENGINE_QDCORE_QD_ANIMATION_H
 
 #include "qdengine/parser/xml_fwd.h"
 #include "qdengine/system/graphics/gr_screen_region.h"
@@ -316,4 +316,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // QDENGINE_CORE_QDCORE_QD_ANIMATION_H
+#endif // QDENGINE_QDCORE_QD_ANIMATION_H

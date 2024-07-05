@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QDENGINE_CORE_QDCORE_QD_CAMERA_H
-#define QDENGINE_CORE_QDCORE_QD_CAMERA_H
+#ifndef QDENGINE_QDCORE_QD_CAMERA_H
+#define QDENGINE_QDCORE_QD_CAMERA_H
 
 #include "qdengine/qdcore/qd_d3dutils.h"
 #include "qdengine/qdcore/qd_camera_mode.h"
@@ -509,4 +509,4 @@ inline Vect3f To3D(const Vect2f &v) {
 
 } // namespace QDEngine
 
-#endif // QDENGINE_CORE_QDCORE_QD_CAMERA_H
+#endif // QDENGINE_QDCORE_QD_CAMERA_H

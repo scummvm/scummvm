@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_STATE_H
-#define QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_STATE_H
+#ifndef QDENGINE_QDCORE_QD_GAME_OBJECT_STATE_H
+#define QDENGINE_QDCORE_QD_GAME_OBJECT_STATE_H
 
 #include "qdengine/parser/xml_fwd.h"
 #include "qdengine/qdcore/qd_contour.h"
@@ -967,4 +967,4 @@ inline bool qdbg_is_object_state(const qdNamedObject *obj, const char *scene_nam
 
 } // namespace QDEngine
 
-#endif // QDENGINE_CORE_QDCORE_QD_GAME_OBJECT_STATE_H
+#endif // QDENGINE_QDCORE_QD_GAME_OBJECT_STATE_H

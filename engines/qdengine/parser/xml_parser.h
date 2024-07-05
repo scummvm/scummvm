@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QDENGINE_CORE_PARSER_XML_PARSER_H
-#define QDENGINE_CORE_PARSER_XML_PARSER_H
+#ifndef QDENGINE_PARSER_XML_PARSER_H
+#define QDENGINE_PARSER_XML_PARSER_H
 
 #include "qdengine/parser/xml_tag_buffer.h"
 #include <unordered_map>
@@ -108,4 +108,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // QDENGINE_CORE_PARSER_XML_PARSER_H
+#endif // QDENGINE_PARSER_XML_PARSER_H

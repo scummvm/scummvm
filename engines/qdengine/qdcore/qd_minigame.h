@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QDENGINE_CORE_QDCORE_QD_MINIGAME_H
-#define QDENGINE_CORE_QDCORE_QD_MINIGAME_H
+#ifndef QDENGINE_QDCORE_QD_MINIGAME_H
+#define QDENGINE_QDCORE_QD_MINIGAME_H
 
 #include "qdengine/qdcore/qd_named_object.h"
 #include "qdengine/qdcore/qd_minigame_config.h"
@@ -140,4 +140,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // QDENGINE_CORE_QDCORE_QD_MINIGAME_H
+#endif // QDENGINE_QDCORE_QD_MINIGAME_H

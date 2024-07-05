@@ -20,8 +20,8 @@
  */
 
 
-#ifndef QDENGINE_CORE_QDCORE_QD_RESOURCE_CONTAINER_H
-#define QDENGINE_CORE_QDCORE_QD_RESOURCE_CONTAINER_H
+#ifndef QDENGINE_QDCORE_QD_RESOURCE_CONTAINER_H
+#define QDENGINE_QDCORE_QD_RESOURCE_CONTAINER_H
 
 #include "qdengine/qdcore/qd_animation.h"
 #include "qdengine/qdcore/qd_resource_dispatcher.h"
@@ -191,4 +191,4 @@ bool qdResourceContainer<T>::get_file_list(qdFileNameList &list) const {
 
 } // namespace QDEngine
 
-#endif // QDENGINE_CORE_QDCORE_QD_RESOURCE_CONTAINER_H
+#endif // QDENGINE_QDCORE_QD_RESOURCE_CONTAINER_H

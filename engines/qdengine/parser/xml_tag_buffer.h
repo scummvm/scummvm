@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef QDENGINE_CORE_PARSER_XML_TAG_BUFFER_H
-#define QDENGINE_CORE_PARSER_XML_TAG_BUFFER_H
+#ifndef QDENGINE_PARSER_XML_TAG_BUFFER_H
+#define QDENGINE_PARSER_XML_TAG_BUFFER_H
 
 #include "common/endian.h"
 #include "qdengine/parser/xml_tag.h"
@@ -139,4 +139,4 @@ private:
 
 } // namespace QDEngine
 
-#endif // QDENGINE_CORE_PARSER_XML_TAG_BUFFER_H
+#endif // QDENGINE_PARSER_XML_TAG_BUFFER_H

@@ -20,8 +20,8 @@
  */
 
 
-#ifndef QDENGINE_CORE_QDCORE_QD_SOUND_INFO_H
-#define QDENGINE_CORE_QDCORE_QD_SOUND_INFO_H
+#ifndef QDENGINE_QDCORE_QD_SOUND_INFO_H
+#define QDENGINE_QDCORE_QD_SOUND_INFO_H
 
 #include "qdengine/qdcore/qd_named_object.h"
 
@@ -51,4 +51,4 @@ public:
 
 } // namespace QDEngine
 
-#endif // QDENGINE_CORE_QDCORE_QD_SOUND_INFO_H
+#endif // QDENGINE_QDCORE_QD_SOUND_INFO_H
