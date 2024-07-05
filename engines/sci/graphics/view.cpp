@@ -433,8 +433,8 @@ void GfxView::getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int1
 	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
 
 	// Scaling displaceX/Y, Width/Height
-	int16 scaledDisplaceX = (celInfo->displaceX * scaleX) >> 7;
-	int16 scaledDisplaceY = (celInfo->displaceY * scaleY) >> 7;
+	int16 scaledDisplaceX = (celInfo->displaceX * scaleX) / 128;
+	int16 scaledDisplaceY = (celInfo->displaceY * scaleY) / 128;
 	int16 scaledWidth = (celInfo->width * scaleX) >> 7;
 	int16 scaledHeight = (celInfo->height * scaleY) >> 7;
 	scaledWidth = CLIP<int16>(scaledWidth, 0, _screen->getWidth());
