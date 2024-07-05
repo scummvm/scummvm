@@ -118,6 +118,7 @@ MODULE_OBJS = \
 	lingo/xlibs/mmaskxobj.o \
 	lingo/xlibs/mmovie.o \
 	lingo/xlibs/moovxobj.o \
+	lingo/xlibs/movemousejp.o \
 	lingo/xlibs/movemousexobj.o \
 	lingo/xlibs/movieidxxobj.o \
 	lingo/xlibs/movutils.o \

@@ -89,6 +89,7 @@
 #include "director/lingo/xlibs/mmaskxobj.h"
 #include "director/lingo/xlibs/mmovie.h"
 #include "director/lingo/xlibs/moovxobj.h"
+#include "director/lingo/xlibs/movemousejp.h"
 #include "director/lingo/xlibs/movemousexobj.h"
 #include "director/lingo/xlibs/movieidxxobj.h"
 #include "director/lingo/xlibs/movutils.h"
@@ -268,6 +269,7 @@ static struct XLibProto {
 	XLIBDEF(MMaskXObj,			kXObj,			400),	// D4
 	XLIBDEF(MoovXObj,			kXObj,			300),	// D3
 	XLIBDEF(MovUtilsXObj,		kXObj,			400),	// D4
+	XLIBDEF(MoveMouseJPXObj,			kXObj,					400),	// D4
 	XLIBDEF(MoveMouseXObj,		kXObj,			400),	// D4
 	XLIBDEF(MovieIdxXObj,		kXObj,			400),	// D4
 	XLIBDEF(MovUtilsXObj,		kXObj,			400),	// D4
