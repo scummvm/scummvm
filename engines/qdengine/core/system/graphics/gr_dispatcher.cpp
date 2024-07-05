@@ -35,6 +35,8 @@
 
 namespace QDEngine {
 
+void *grDispatcher::default_mouse_cursor_ = nullptr;
+
 grDispatcher::char_input_hanler_t grDispatcher::input_handler_ = 0;
 
 bool grDispatcher::is_active_ = true; // We have system always active

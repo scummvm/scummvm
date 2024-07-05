@@ -338,8 +338,6 @@ int engineMain() {
 
 	winVideo::done();
 
-	grDispatcher::sys_finit();
-
 	return 0;
 }
 
