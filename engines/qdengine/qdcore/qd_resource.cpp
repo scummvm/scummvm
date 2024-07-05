@@ -19,8 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/str.h"
 #include "qdengine/qd_precomp.h"
@@ -31,11 +29,6 @@
 
 
 namespace QDEngine {
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 qdResource::qdResource() : is_loaded_(false) {
 }
@@ -109,7 +102,7 @@ bool qdResourceInfo::write(XStream &fh, int line_class_id) const {
 
 	static char buf[1024];
 	float sz = float(data_size_) / (1024.0f * 1024.0f);
-	sprintf(buf, "%.2f", sz);
+	snprintf(buf, 1024, "%.2f", sz);
 	fh < buf;
 
 	fh < "</td></tr>\r\n";

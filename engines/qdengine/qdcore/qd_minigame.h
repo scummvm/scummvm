@@ -129,7 +129,6 @@ private:
 	void *dll_handle_;
 	//! Интерфейс к игре из dll.
 	qdMiniGameInterface *interface_;
-	qdEmptyMiniGameInterface *_emptyInterface;
 
 	//! Настройки игры.
 	config_container_t config_;

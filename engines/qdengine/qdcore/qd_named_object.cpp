@@ -20,7 +20,6 @@
  */
 
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/stream.h"
 #include "qdengine/qdengine.h"
@@ -30,11 +29,6 @@
 
 namespace QDEngine {
 
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 qdNamedObject::qdNamedObject() : owner_(0),
 	trigger_reference_count_(0),
@@ -114,7 +108,7 @@ Common::String qdNamedObject::toString() {
 	}
 
 	for (int i = owners_count; i > 0; i--) {
-		const qdNamedObject *p = this;
+		p = this;
 		for (int j = 0; j < i; j++)
 			p = p->owner();
 

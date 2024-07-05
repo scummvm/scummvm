@@ -19,7 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/file.h"
 #include "qdengine/qd_precomp.h"
@@ -31,12 +30,6 @@
 
 
 namespace QDEngine {
-
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 qdAnimationFrame::qdAnimationFrame() : start_time_(0.0f),
 	length_(0.0f) {
@@ -72,7 +65,7 @@ void qdAnimationFrame::qda_load(class XStream &fh, int version) {
 }
 
 void qdAnimationFrame::qda_load(Common::SeekableReadStream *fh, int version) {
-	int32 fl = fh->readSint32LE();
+	/*int32 fl = */fh->readSint32LE();
 	start_time_ = fh->readFloatLE();
 	length_ = fh->readFloatLE();
 

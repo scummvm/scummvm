@@ -19,7 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
@@ -34,11 +33,6 @@ class SeekableWriteStream;
 }
 
 namespace QDEngine {
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 #ifndef _QUEST_EDITOR
 bool qdCondition::successful_click_ = false;
@@ -306,7 +300,6 @@ bool qdCondition::put_value(int idx, float val, int val_index) {
 
 bool qdCondition::get_value(int idx, const char *&str) const {
 	assert(idx >= 0 && idx < data_.size());
-	const qdConditionData &dt = data_[idx];
 
 	if (data_[idx].get_string()) {
 		str = data_[idx].get_string();

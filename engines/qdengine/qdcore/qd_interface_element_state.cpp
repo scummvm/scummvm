@@ -19,7 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
@@ -35,12 +34,6 @@
 
 
 namespace QDEngine {
-
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 qdInterfaceElementState::qdInterfaceElementState() : state_mode_(DEFAULT_MODE), prev_state_mode_(DEFAULT_MODE) {
 }
@@ -167,8 +160,10 @@ bool qdInterfaceElementState::load_script(const xml::tag *p) {
 				act = qdInterfaceEvent::activation_t(xml::tag_buffer(*tg).get_int());
 
 			events_.push_back(qdInterfaceEvent(ev, ev_data, anm_flag, act));
-		}
-		break;
+			}
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -197,6 +192,8 @@ bool qdInterfaceElementState::quant(float dt) {
 
 
 			set_state_mode(DEFAULT_MODE);
+			break;
+		default:
 			break;
 		}
 
@@ -319,6 +316,8 @@ bool qdInterfaceElementState::mouse_handler(int x, int y, mouseDispatcher::mouse
 			handle_events(qdInterfaceEvent::EVENT_ACTIVATION_CLICK, true);
 			return true;
 		}
+		break;
+	default:
 		break;
 	}
 

@@ -20,7 +20,6 @@
  */
 
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include <algorithm>
 #include "common/stream.h"
@@ -42,11 +41,6 @@
 
 namespace QDEngine {
 
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 qdInventory::qdInventory() : need_redraw_(false),
 	shadow_color_(INV_DEFAULT_SHADOW_COLOR),
@@ -95,7 +89,6 @@ bool qdInventory::put_object(qdGameObjectAnimated *p) {
 			return true;
 	}
 
-	qdInventoryCellSetVector::iterator it;
 	for (auto  &it : cell_sets_) {
 		if (it.put_object(p)) {
 			p->set_inventory_cell_index(cell_index(p));
