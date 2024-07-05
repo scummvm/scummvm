@@ -241,6 +241,9 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 	fp->allowRetVal = allowRetVal;
 	fp->defaultRetVal = defaultRetVal;
 	fp->paramCount = paramCount;
+	for (int i = 0; i < paramCount; i++) {
+		fp->paramList.insert_at(0, pop());
+	}
 
 	_state->script = funcSym.u.defn;
 
@@ -264,25 +267,20 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 	}
 
 	if (funcSym.argNames) {
-		int symNArgs = funcSym.nargs;
-		if ((int)funcSym.argNames->size() < symNArgs) {
-			int dropSize = symNArgs - funcSym.argNames->size();
-			warning("%d arg names defined for %d args! Dropping the last %d values", funcSym.argNames->size(), symNArgs, dropSize);
-			for (int i = 0; i < dropSize; i++) {
-				pop();
-				symNArgs -= 1;
-			}
-		} else if ((int)funcSym.argNames->size() > symNArgs) {
-			warning("%d arg names defined for %d args! Ignoring the last %d names", funcSym.argNames->size(), symNArgs, funcSym.argNames->size() - symNArgs);
+		if ((int)funcSym.argNames->size() > fp->paramCount) {
+			warning("%d arg names defined for %d args! Ignoring the last %d names", funcSym.argNames->size(), fp->paramCount, funcSym.argNames->size() - fp->paramCount);
 		}
-		for (int i = symNArgs - 1; i >= 0; i--) {
+		for (int i = (int)funcSym.argNames->size() - 1; i >= 0; i--) {
 			Common::String name = (*funcSym.argNames)[i];
 			if (!localvars->contains(name)) {
-				Datum value = pop();
-				(*localvars)[name] = value;
+				if (i < fp->paramCount) {
+					Datum value = fp->paramList[i];
+					(*localvars)[name] = value;
+				} else {
+					(*localvars)[name] = Datum();
+				}
 			} else {
 				warning("Argument %s already defined", name.c_str());
-				pop();
 			}
 		}
 	}
@@ -1704,14 +1702,6 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 		if (funcSym.type == HANDLER || funcSym.type == HBLTIN) {
 			// Lingo supports providing a different number of arguments than expected,
 			// and several games rely on this behaviour.
-			if (funcSym.maxArgs < nargs) {
-				debugC(kDebugLingoExec, 1, "Incorrect number of arguments for handler '%s' (%d, expected %d to %d). Dropping extra %d",
-							funcSym.name->c_str(), nargs, funcSym.nargs, funcSym.maxArgs, nargs - funcSym.maxArgs);
-				while (nargs > funcSym.maxArgs) {
-					g_lingo->pop();
-					nargs--;
-				}
-			}
 			if (funcSym.nargs > nargs) {
 				debugC(kDebugLingoExec, 1, "Incorrect number of arguments for handler '%s' (%d, expected %d to %d). Adding extra %d voids",
 							funcSym.name->c_str(), nargs, funcSym.nargs, funcSym.maxArgs, funcSym.nargs - nargs);
@@ -1721,6 +1711,7 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 					d.type = VOID;
 					g_lingo->push(d);
 					nargs++;
+					paramCount++;
 				}
 			}
 		} else if (funcSym.nargs > nargs || funcSym.maxArgs < nargs) {

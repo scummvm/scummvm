@@ -1827,10 +1827,16 @@ void LB::b_param(int nargs) {
 	int pos = g_lingo->pop().asInt();
 	Datum result;
 	CFrame *cf = g_lingo->_state->callstack[g_lingo->_state->callstack.size() - 1];
-	if (pos > 0 && cf->sp.argNames && (int)cf->sp.argNames->size() <= pos) {
+	// for named parameters, b_param must return what the current value is (i.e.
+	// if the handler has changed it, return that)
+	if (pos > 0 && cf->sp.argNames && pos <= (int)cf->sp.argNames->size()) {
 		Datum func((*cf->sp.argNames)[pos - 1]);
 		func.type = LOCALREF;
 		result = g_lingo->varFetch(func);
+	} else if (pos > 0 && pos <= (int)cf->paramList.size()) {
+		// otherwise, if a function was called with extra unnamed arguments,
+		// return that.
+		result = cf->paramList[pos - 1];
 	} else {
 		warning("Invalid argument position %d", pos);
 	}
