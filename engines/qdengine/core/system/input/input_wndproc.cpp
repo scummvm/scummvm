@@ -40,6 +40,8 @@ bool keyboard_wndproc(const Common::Event &event, keyboardDispatcher *dsp) {
 	case Common::EVENT_KEYUP:
 		dsp->handle_event((int)event.kbd.ascii, false);
 		return true;
+	default:
+		break;
 	}
 	return false;
 }
@@ -72,6 +74,8 @@ bool mouse_wndproc(const Common::Event &event, mouseDispatcher *dsp) {
 		y = event.mouse.y;
 		dsp->handle_event(mouseDispatcher::EV_RIGHT_UP, x, y, 0);
 		return true;
+	default:
+		break;
 	}
 
 	return false;

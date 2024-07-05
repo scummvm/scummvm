@@ -331,7 +331,7 @@ Vect3f qdCoordsAnimation::cur_pos() const {
 qdGameObjectAnimated *qdCoordsAnimation::object() const {
 	if (owner() && owner()->named_object_type() == QD_NAMED_OBJECT_OBJ_STATE) {
 		qdNamedObject *p = owner()->owner();
-		if (p && p->named_object_type() == QD_NAMED_OBJECT_ANIMATED_OBJ || p->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ)
+		if (p && (p->named_object_type() == QD_NAMED_OBJECT_ANIMATED_OBJ || p->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ))
 			return static_cast<qdGameObjectAnimated * >(p);
 	}
 
