@@ -43,7 +43,7 @@ bool PegasusEngine::isDemo() const {
 }
 
 bool PegasusEngine::isDVD() const {
-	return (_gameDescription->desc.flags & GF_DVD) != 0;
+	return (_gameDescription->desc.flags & ADGF_DVD) != 0;
 }
 
 bool PegasusEngine::isDVDDemo() const {
