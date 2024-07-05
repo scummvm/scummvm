@@ -19,7 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/debug.h"
 #include "common/file.h"
@@ -36,12 +35,6 @@
 
 
 namespace QDEngine {
-
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 bool operator == (const qdSprite &sp1, const qdSprite &sp2) {
 	if (sp1.size_ == sp2.size_ && sp1.picture_offset_ == sp2.picture_offset_ && sp1.picture_size_ == sp2.picture_size_) {
@@ -213,8 +206,6 @@ bool qdSprite::load(const char *fname) {
 		return false;
 	}
 
-	int32 size = fh->size();
-
 	fh->read(header, 18);
 
 	if (header[0]) { // Length of Image ID field
@@ -371,6 +362,8 @@ void qdSprite::save(const char *fname) {
 
 	Common::DumpFile fh;
 
+	fh.open(out_file);
+
 	memset(header, 0, 18);
 	header[2] = 2;
 
@@ -392,7 +385,6 @@ void qdSprite::save(const char *fname) {
 
 		for (int i = 0; i < picture_size_.x * picture_size_.y; i ++) {
 			unsigned short r, g, b, a;
-			const unsigned min_color = 8;
 
 			r = dp[0];
 			g = dp[1];
@@ -1146,7 +1138,6 @@ bool qdSprite::undo_crop() {
 	if (format_ == GR_ARGB8888)
 		psx = 4;
 
-	int i;
 	unsigned char *new_data = new unsigned char[size_.x * size_.y * psx];
 	memset(new_data, 0, size_.x * size_.y * psx);
 
@@ -1161,7 +1152,7 @@ bool qdSprite::undo_crop() {
 	unsigned char *dp = data_;
 	unsigned char *p = new_data + (picture_offset_.x + picture_offset_.y * size_.x) * psx;
 
-	for (i = 0; i < picture_size_.y; i ++) {
+	for (int i = 0; i < picture_size_.y; i ++) {
 		memcpy(p, dp, picture_size_.x * psx);
 
 		p += size_.x * psx;
@@ -1333,8 +1324,6 @@ bool qdSprite::scale(float coeff_x, float coeff_y) {
 	static std::vector<unsigned char> temp_buffer(300 * 400 * 4, 0);
 
 	bool compress_flag = false;
-
-	int fmt = format_;
 
 	if (is_compressed()) {
 		uncompress();

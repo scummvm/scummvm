@@ -117,8 +117,6 @@ template<class FilterClass>
 LineContribType *C2PassScale<FilterClass>::AllocContributions(UINT uLineLength, UINT uWindowSize) {
 	static LineContribType line_ct;
 
-	LineContribType *res = new LineContribType;
-
 	line_ct.WindowSize = uWindowSize;
 	line_ct.LineLength = uLineLength;
 
