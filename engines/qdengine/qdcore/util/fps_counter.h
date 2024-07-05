@@ -22,8 +22,6 @@
 #ifndef __FPS_COUNTER_H__
 #define __FPS_COUNTER_H__
 
-
-
 namespace QDEngine {
 
 class fpsCounter {

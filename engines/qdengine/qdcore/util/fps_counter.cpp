@@ -19,8 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/system.h"
 
@@ -29,11 +27,6 @@
 
 
 namespace QDEngine {
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 fpsCounter::fpsCounter(int period) : start_time_(0.0f),
 	prev_time_(0.0f),
