@@ -1031,8 +1031,30 @@ Common::Point ScriptExecutor::GetCharPosition() {
 }
 
 bool ScriptExecutor::IsRelevantObject(const GameObject *obj) {
-	return obj->Index == 1;
-	// TODO: Implement properly
+	// It can be the protagonist
+	if (obj->Index == 1) {
+		return true;
+	}
+	// It can be in the scene
+	if (obj->SceneIndex == Scenes::instance().CurrentSceneIndex) {
+		return true;
+	}
+
+	// It can be in the inventory
+	// TODO: Don't hardcode the index of the protagonist
+	if (obj->SceneIndex == 1) {
+		return true;
+	}
+
+	// It can be in the inventory
+	// TODO: To check if this only applies if the inventory is open
+	// TODO: Also keep storage container inventories in mind
+	// TODO: Any others?
+	// TODO: How exactly does the ordering work?
+	// TODO: Where do we decide when to use which scripts and when not?
+
+
+	return false;
 }
 
 void ScriptExecutor::Step() {
@@ -1041,7 +1063,8 @@ void ScriptExecutor::Step() {
 	while (shouldContinue) {
 		switch (_state) {
 		case ExecutorState::Idle: {
-			// Check if there is a scheduled run
+			// TODO: Check if there is a scheduled run
+			return;
 		};
 			break;
 		case ExecutorState::Executing: {
@@ -1050,7 +1073,7 @@ void ScriptExecutor::Step() {
 			// Check if the currently executing script is at the end
 			if (_stream->pos() == _stream->size()) {
 				// Handle the next one potentially
-				LoadNextScript();
+				shouldContinue = LoadNextScript();
 			} else {
 				// Let the current script continue
 				ExecutionResult result = ExecuteScript();
@@ -1074,6 +1097,12 @@ void ScriptExecutor::Step() {
 	
 	
 bool ScriptExecutor::LoadNextScript() {
+	// TODO: Not sure if for example the scripts of the objects are always called, or if
+	// there is code to determine that a script run is finished for good
+	// The script switching etc. really needs work
+
+	// TODO: Need to add a state variable here, since this will always break our execution once we
+	// reach the scene
 	// TODO: Implement
 	// TODO: Consider what effect this one can have on the state
 	if (executingObjectIndex == Scenes::instance().CurrentSceneIndex) {
@@ -1090,9 +1119,10 @@ bool ScriptExecutor::LoadNextScript() {
 		candidateObject = GameObjects::GetObjectByIndex(executingObjectIndex);
 
 		// TODO: Check if this is a valid option
-		if (IsRelevantObject(candidateObject)) {
+		if (candidateObject && IsRelevantObject(candidateObject)) {
 			if (candidateObject->Script.size() != 0) {
 				_stream = candidateObject->GetScriptStream();
+				debug("----- Switching execution to script for object: %.4x", candidateObject->Index);
 				return true;
 			}
 		}
@@ -1106,6 +1136,7 @@ bool ScriptExecutor::LoadNextScript() {
 		executingObjectIndex = Scenes::instance().CurrentSceneIndex;
 		_stream = Scenes::instance().CurrentSceneScript;
 		_stream->seek(0, SEEK_SET);
+		debug("----- Switching execution to script for scene: %.4x", executingObjectIndex);
 		return true;
 	}
 
@@ -1528,7 +1559,10 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			c->RegisterWaitForMovementFinishedEvent();
 			requestCallback = false;
 			isAwaitingCallback = true;
-			return;
+			// TODO: Could be special for me with the short timer times, but it can happen
+			// that things happen out of order if not ending any timers active
+			EndTimer();
+			return ExecutionResult::WaitingForCallback;
 		}
 
 		else if (opcode1 == 0x0a) {
@@ -1642,7 +1676,10 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			requestCallback = false;
 			g_engine->ScheduleRun(true);
 			isAwaitingCallback = true;
-			return;
+			// TODO: Could be special for me with the short timer times, but it can happen
+			// that things happen out of order if not ending any timers active
+			EndTimer();
+			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x0d) {
 			// Show a dialogue option
 			uint32 objectID = Func9F4D_32() - 0x400;
@@ -1657,7 +1694,10 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			Common::Array<Common::String> strings = g_engine->DecodeStrings(Scenes::instance().CurrentSceneStrings, offset, numLines);
 			currentView->ShowSpeechAct(objectID, strings, Common::Point(x, y), side);
 			isAwaitingCallback = true;
-			return;
+			// TODO: Could be special for me with the short timer times, but it can happen
+			// that things happen out of order if not ending any timers active
+			EndTimer();
+			return ExecutionResult::WaitingForCallback;
 		}
 		else
 		if (opcode1 == 0x0E) {
@@ -1709,13 +1749,15 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			uint16 side = Func9F4D_16();
 			currentView->ShowDialogueChoice(DialogueChoices, Common::Point(x, y), side);
 			requestCallback = false;
-			return;
+			// TODO: Could be special for me with the short timer times, but it can happen
+			// that things happen out of order if not ending any timers active
+			EndTimer();
+			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x18) {
 			// Set the stream to the end and let the calling code figure out that we are done
 			// for this run
 			_stream->seek(_stream->size(), SEEK_SET);
-			requestCallback = true;
-			return;
+			return ExecutionResult::ScriptFinished;
 		} else if (opcode1 == 0x19) {
 			// Walk to and pick up an object
 			uint32 actorIndex = Func9F4D_32() - 0x400;
@@ -1728,7 +1770,10 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			actor->StartPickup(object);
 			requestCallback = false;
 			isAwaitingCallback = true;
-			return;
+			// TODO: Could be special for me with the short timer times, but it can happen
+			// that things happen out of order if not ending any timers active
+			EndTimer();
+			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x1b) {
 			// TODO: No idea yet what this does, it seems to be around move commands in some cases,
 			// and seems to go along with 1e
@@ -1927,6 +1972,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			ScriptUnimplementedOpcode(opcode1)
 			break;
 		}
+
+		return ExecutionResult::ScriptFinished;
 
 
 		// 0E3BDh
@@ -3134,6 +3181,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		// TODO: Not sure which order is really right, need to check in SIS logs
 		IsRepeatRun = false;
 		IsSceneInitRun = firstRun;
+		_state = ExecutorState::Executing;
 		Step();
 	}
 
@@ -3155,6 +3203,10 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 	void ScriptExecutor::StartTimer(uint32 duration) {
 		isTimerActive = true;
 		timerEndMillis = g_engine->currentMillis + duration;
+	}
+
+	void ScriptExecutor::EndTimer() {
+		isTimerActive = false;
 	}
 
 	void ScriptExecutor::Rewind() {

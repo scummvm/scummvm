@@ -97,7 +97,7 @@ class GameObject;
 			// State variables from here
 
 			// Overall state
-			ExecutorState _state;
+			ExecutorState _state = ExecutorState::Idle;
 
 			// Currently executed script
 			Common::MemoryReadStream *_stream;
@@ -232,6 +232,7 @@ class GameObject;
 			void tick();
 
 			void StartTimer(uint32 duration);
+			void EndTimer();
 
 			bool isRunningScript = false;
 			bool isAwaitingCallback = false;
