@@ -19,15 +19,8 @@
  *
  */
 
-#include <math.h>
 #include "qdengine/qd_precomp.h"
 #include "qdengine/system/sound/snd_dispatcher.h"
-
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 namespace QDEngine {
 

@@ -19,8 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/stream.h"
 #include "qdengine/qdengine.h"
@@ -41,16 +39,6 @@
 #include "qdengine/qdcore/qd_named_object_indexer.h"
 #include "qdengine/qdcore/qd_game_dispatcher.h"
 
-#ifdef _QUEST_EDITOR
-#include <additional/qls.hpp>
-#endif //#ifdef _QUEST_EDITOR
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-
-
-/* --------------------------- DEFINITION SECTION --------------------------- */
 namespace QDEngine {
 
 qdTriggerLink::qdTriggerLink(qdTriggerElementPtr p, int tp)

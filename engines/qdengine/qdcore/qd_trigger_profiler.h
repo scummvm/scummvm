@@ -38,14 +38,8 @@ class qdTriggerElement;
 class qdTriggerLink;
 class qdTriggerChain;
 
-#ifdef _QUEST_EDITOR
-#include <boost/intrusive_ptr.hpp>
-typedef boost::intrusive_ptr<qdTriggerElement> qdTriggerElementPtr;
-typedef boost::intrusive_ptr<qdTriggerElement const> qdTriggerElementConstPtr;
-#else
 typedef qdTriggerElement *qdTriggerElementPtr;
 typedef qdTriggerElement const *qdTriggerElementConstPtr;
-#endif // _QUEST_EDITOR
 
 //! Запись в базе профайлера триггеров.
 class qdTriggerProfilerRecord {

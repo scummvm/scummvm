@@ -19,9 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-#include <math.h>
-
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "graphics/managed_surface.h"
@@ -32,12 +29,6 @@
 #include "qdengine/util/xmath/SafeMath.h"
 
 namespace QDEngine {
-
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const unsigned char *p, int mode, float scale) {
 	debugC(2, kDebugGraphics, "grDispatcher::PutSpr_a(%d, %d, %d, %d, scale=%f)", x, y, sx, sy, scale);

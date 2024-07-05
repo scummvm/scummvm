@@ -19,8 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/file.h"
 #include "qdengine/qd_precomp.h"
@@ -29,14 +27,7 @@
 
 namespace QDEngine {
 
-//#include <tchar.h>
-
 char const DELIMETER = '.';
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 qdTextDB::qdTextDB() {
 }
