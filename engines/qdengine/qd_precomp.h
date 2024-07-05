@@ -61,14 +61,6 @@
 #include "qdengine/util/xmath/xmath.h"
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
-#include <algorithm>
-#include <functional>
-#include <list>
-#include <stack>
-#include <string>
-#include <vector>
-#include "common/system.h"
-
 
 #include "engines/qdengine/qd_fwd.h"
 

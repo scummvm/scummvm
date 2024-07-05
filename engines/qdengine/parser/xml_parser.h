@@ -24,6 +24,7 @@
 
 #include "qdengine/parser/xml_tag_buffer.h"
 #include <unordered_map>
+#include <stack>
 
 namespace QDEngine {
 

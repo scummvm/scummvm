@@ -21,6 +21,9 @@
 
 /* ---------------------------- INCLUDE SECTION ----------------------------- */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/system.h"
+
 #include "qdengine/qd_precomp.h"
 #include "qdengine/qdcore/qd_animation_set.h"
 #include "qdengine/qdcore/qd_animation_set_preview.h"

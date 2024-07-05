@@ -26,6 +26,9 @@
 #include <string>
 #include <vector>
 
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace QDEngine {
 
