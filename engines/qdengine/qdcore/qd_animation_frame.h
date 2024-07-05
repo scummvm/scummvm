@@ -55,8 +55,6 @@ public:
 		length_ = tm;
 	}
 
-	virtual void qda_load(class XStream &fh, int version = 100);
-	virtual void qda_load(class XZipStream &fh, int version = 100);
 	virtual void qda_load(class Common::SeekableReadStream *fh, int version = 100);
 
 	bool load_resources();
@@ -72,3 +70,4 @@ typedef std::list<qdAnimationFrame *> qdAnimationFrameList;
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_ANIMATION_FRAME_H
+

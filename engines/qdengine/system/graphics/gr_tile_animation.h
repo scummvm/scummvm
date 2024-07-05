@@ -66,8 +66,6 @@ public:
 
 	void addFrame(const unsigned *frame_data);
 
-	bool load(XStream &fh);
-	bool load(XZipStream &fh);
 	bool load(Common::SeekableReadStream *fh);
 
 	void drawFrame(const Vect2i &position, int frame_index, int mode = 0) const;

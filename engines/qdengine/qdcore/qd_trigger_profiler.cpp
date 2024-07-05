@@ -94,11 +94,6 @@ bool qdTriggerProfilerRecord::save(Common::SeekableWriteStream &fh) const {
 	return true;
 }
 
-bool qdTriggerProfilerRecord::save(XStream &fh) const {
-	warning("STUB: qdTriggerProfilerRecord::save(XStream &fh)");
-	return true;
-}
-
 bool qdTriggerProfilerRecord::load(Common::SeekableReadStream &fh) {
 	warning("STUB: Test qdTriggerProfilerRecord::load(Common::SeekableReadStream &fh)");
 	int ev;
@@ -111,11 +106,6 @@ bool qdTriggerProfilerRecord::load(Common::SeekableReadStream &fh) {
 	status_ = fh.readSint32LE();
 
 	event_ = event_t(ev);
-	return true;
-}
-
-bool qdTriggerProfilerRecord::load(XStream &fh) {
-	warning("STUB: qdTriggerProfilerRecord::load(XStream &fh)");
 	return true;
 }
 
@@ -373,3 +363,4 @@ void qdTriggerProfiler::set_work_file(const char *fname) {
 
 #endif /* __QD_TRIGGER_PROFILER__ */
 } // namespace QDEngine
+

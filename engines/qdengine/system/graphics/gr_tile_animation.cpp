@@ -186,12 +186,6 @@ void grTileAnimation::addFrame(const unsigned *frame_data) {
 	}
 }
 
-
-bool grTileAnimation::load(XStream &fh) {
-	warning("STUB: grTileAnimation::load(XStream &fh)");
-	return true;
-}
-
 bool grTileAnimation::load(Common::SeekableReadStream *fh) {
 
 	debugC(7, kDebugLoad, "grTileAnimation::load(): pos start: %lu", fh->pos());
@@ -229,11 +223,6 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh) {
 		tileData_[i] = fh->readUint32LE();
 	}
 
-	return true;
-}
-
-bool grTileAnimation::load(XZipStream &fh) {
-	warning("STUB: grTileAnimation::load(XZipStream fh)");
 	return true;
 }
 

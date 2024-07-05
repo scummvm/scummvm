@@ -61,26 +61,6 @@ bool grFont::load(const char *fname) {
 	return false;
 }
 
-bool grFont::load_index(XStream &fh) {
-	warning("STUB: grFont::load_index(XStream &fh)");
-	return true;
-}
-
-bool grFont::load_index(XZipStream &fh) {
-	warning("STUB: grFont::load_index(XZipStream &fh)");
-	return true;
-}
-
-bool grFont::load_alpha(XStream &fh) {
-	warning("STUB: grFont::load_alpha(XStream &fh)");
-	return true;
-}
-
-bool grFont::load_alpha(XZipStream &fh) {
-	warning("STUB: grFont::load_alpha(XZipStream &fh");
-	return true;
-}
-
 bool grFont::load_index(Common::SeekableReadStream *fh) {
 	int64 bufSize = fh->size();
 	byte *buf = new byte[bufSize];
@@ -145,3 +125,4 @@ bool grFont::load_alpha(Common::SeekableReadStream *fh) {
 
 
 } // namespace QDEngine
+

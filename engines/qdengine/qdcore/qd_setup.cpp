@@ -276,3 +276,4 @@ bool qdGameConfig::update_music_settings() const {
 	return true;
 }
 } // namespace QDEngine
+

@@ -106,8 +106,6 @@ public:
 	void save(const char *fname = 0);
 	void free();
 
-	virtual void qda_load(XStream &fh, int version = 100);
-	virtual void qda_load(XZipStream &fh, int version = 100);
 	virtual void qda_load(Common::SeekableReadStream *fh, int version = 100);
 
 	void redraw(int x, int y, int z, int mode = 0) const;
@@ -220,3 +218,4 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_SPRITE_H
+
