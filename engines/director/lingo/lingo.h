@@ -257,6 +257,7 @@ struct CFrame {	/* proc/func call stack frame */
 	bool			allowRetVal;		/* whether to allow a return value */
 	Datum			defaultRetVal;		/* default return value */
 	int				paramCount;			/* original number of arguments submitted */
+	Common::Array<Datum> paramList;		/* original argument list */
 };
 
 struct LingoEvent {
