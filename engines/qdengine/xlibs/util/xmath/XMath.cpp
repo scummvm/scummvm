@@ -44,51 +44,9 @@ namespace QDEngine {
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-const Vect2f Vect2f::ZERO(0, 0);
-const Vect2f Vect2f::ID(1, 1);
-
-const Vect2i Vect2i::ZERO(0, 0);
-const Vect2i Vect2i::ID(1, 1);
-
-const Vect3d Vect3d::ZERO(0, 0, 0);
-const Vect3d Vect3d::I(1, 0, 0);
-const Vect3d Vect3d::J(0, 1, 0);
-const Vect3d Vect3d::K(0, 0, 1);
-const Vect3d Vect3d::I_(-1,  0,  0);
-const Vect3d Vect3d::J_(0, -1,  0);
-const Vect3d Vect3d::K_(0,  0, -1);
-const Vect3d Vect3d::ID(1,  1, 1);
-
 const Vect3f Vect3f::ZERO(0, 0, 0);
-const Vect3f Vect3f::I(1, 0, 0);
-const Vect3f Vect3f::J(0, 1, 0);
-const Vect3f Vect3f::K(0, 0, 1);
-const Vect3f Vect3f::I_(-1,  0,  0);
-const Vect3f Vect3f::J_(0, -1,  0);
-const Vect3f Vect3f::K_(0,  0, -1);
-const Vect3f Vect3f::ID(1,  1, 1);
-
-const Mat3d Mat3d::ZERO(Vect3d::ZERO, Vect3d::ZERO);
-const Mat3d Mat3d::ID(Vect3d(1, 1, 1), Vect3d::ZERO);
-
-const Mat3f Mat3f::ZERO(Vect3f::ZERO, Vect3f::ZERO);
-const Mat3f Mat3f::ID(Vect3f(1, 1, 1), Vect3f::ZERO);
-
-const MatXd MatXd::ID(Mat3d::ID, Vect3d::ZERO);
-
-const MatXf MatXf::ID(Mat3f::ID, Vect3f::ZERO);
-
 const QuatF QuatF::ID(1, 0, 0, 0);
 const QuatD QuatD::ID(1, 0, 0, 0);
-
-const Se3d  Se3d::ID(QuatD::ID, Vect3d::ZERO);
-const Se3f  Se3f::ID(QuatF::ID, Vect3f::ZERO);
-
-const Mat2f Mat2f::ID(1, 0, 0, 1);
-const MatX2f MatX2f::ID(Mat2f::ID, Vect2f::ZERO);
-
-const Vect4f Vect4f::ZERO(0, 0, 0, 0);
-const Vect4f Vect4f::ID(1, 1, 1, 1);
 
 RandomGenerator xm_random_generator;
 int RandomGenerator::operator()() {
@@ -913,10 +871,11 @@ QuatD &QuatD::postmult(const QuatD &q) {
 // Automation, 1988, p. 886-991.
 
 Vect3d &QuatD::xform(const Vect3d &v, Vect3d &xv) const {
-	Vect3d *u, uv, uuv;
+	const Vect3d *u;
+	Vect3d uv, uuv;
 
 
-	u = (Vect3d *) &x_;
+	u = (const Vect3d *) &x_;
 	uv.cross(*u, v);
 	uuv.cross(*u, uv);
 	uv.scale(2.0 * s_);
@@ -928,9 +887,10 @@ Vect3d &QuatD::xform(const Vect3d &v, Vect3d &xv) const {
 
 
 Vect3d &QuatD::xform(Vect3d &v) const {
-	Vect3d *u, uv, uuv;
+	const Vect3d *u;
+	Vect3d uv, uuv;
 
-	u = (Vect3d *) &x_;
+	u = (const Vect3d *) &x_;
 	uv.cross(*u, v);
 	uuv.cross(*u, uv);
 	uv.scale(2.0 * s_);
@@ -942,9 +902,10 @@ Vect3d &QuatD::xform(Vect3d &v) const {
 
 
 Vect3d &QuatD::invXform(const Vect3d &v, Vect3d &xv) const {
-	Vect3d *u, uv, uuv;
+	const Vect3d *u;
+	Vect3d uv, uuv;
 
-	u = (Vect3d *) &x_;
+	u = (const Vect3d *) &x_;
 	uv.cross(*u, v);
 	uuv.cross(*u, uv);
 	uv.scale(2.0 * -s_);
@@ -956,9 +917,10 @@ Vect3d &QuatD::invXform(const Vect3d &v, Vect3d &xv) const {
 
 
 Vect3d &QuatD::invXform(Vect3d &v) const {
-	Vect3d *u, uv, uuv;
+	const Vect3d *u;
+	Vect3d uv, uuv;
 
-	u = (Vect3d *) &x_;
+	u = (const Vect3d *) &x_;
 	uv.cross(*u, v);
 	uuv.cross(*u, uv);
 	uv.scale(2.0 * -s_);
@@ -1112,9 +1074,10 @@ QuatF &QuatF::postmult(const QuatF &q) {
 // Automation, 1988, p. 886-991.
 
 Vect3f &QuatF::xform(const Vect3f &v, Vect3f &xv) const {
-	Vect3f *u, uv, uuv;
+	const Vect3f *u;
+	Vect3f uv, uuv;
 
-	u = (Vect3f *) &x_;
+	u = (const Vect3f *) &x_;
 	uv.cross(*u, v);
 	uuv.cross(*u, uv);
 	uv.scale(2.f * s_);
@@ -1125,9 +1088,10 @@ Vect3f &QuatF::xform(const Vect3f &v, Vect3f &xv) const {
 }
 
 Vect3f &QuatF::xform(Vect3f &v) const {
-	Vect3f *u, uv, uuv;
+	const Vect3f *u;
+	Vect3f uv, uuv;
 
-	u = (Vect3f *) &x_;
+	u = (const Vect3f *) &x_;
 	uv.cross(*u, v);
 	uuv.cross(*u, uv);
 	uv.scale(2.f * s_);
@@ -1138,9 +1102,10 @@ Vect3f &QuatF::xform(Vect3f &v) const {
 }
 
 Vect3f &QuatF::invXform(const Vect3f &v, Vect3f &xv) const {
-	Vect3f *u, uv, uuv;
+	const Vect3f *u;
+	Vect3f uv, uuv;
 
-	u = (Vect3f *) &x_;
+	u = (const Vect3f *) &x_;
 	uv.cross(*u, v);
 	uuv.cross(*u, uv);
 	uv.scale(2.f * -s_);
@@ -1152,9 +1117,10 @@ Vect3f &QuatF::invXform(const Vect3f &v, Vect3f &xv) const {
 
 
 Vect3f &QuatF::invXform(Vect3f &v) const {
-	Vect3f *u, uv, uuv;
+	const Vect3f *u;
+	Vect3f uv, uuv;
 
-	u = (Vect3f *) &x_;
+	u = (const Vect3f *) &x_;
 	uv.cross(*u, v);
 	uuv.cross(*u, uv);
 	uv.scale(2.f * -s_);
