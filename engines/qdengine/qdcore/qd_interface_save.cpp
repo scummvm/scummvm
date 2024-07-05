@@ -20,6 +20,7 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/file.h"
 #include "common/stream.h"
 #include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
@@ -149,7 +150,8 @@ bool qdInterfaceSave::init(bool is_game_active) {
 		thumbnail_.set_animation_file(thumbnail_file());
 
 	if (app_io::is_file_exist(description_file())) {
-		XStream fh(description_file(), XS_IN);
+		Common::File fh;
+		fh.open(description_file());
 		XBuffer buf(fh.size() + 1);
 		buf.fill(0);
 		fh.read(buf.buffer(), fh.size());
@@ -324,7 +326,9 @@ bool qdInterfaceSave::perform_save() {
 		debugC(3, kDebugSave, "qdInterfaceSave::perform_save(): is_ok = %d", is_ok);
 
 		if (!save_title_.empty()) {
-			XStream fh(description_file(), XS_OUT);
+			warning("STUB: Test qdInterfaceSave::perform_save()");
+			Common::DumpFile fh;
+			fh.open(description_file());
 			fh.write(save_title_.c_str(), strlen(save_title_.c_str()));
 			fh.close();
 		}
@@ -405,4 +409,6 @@ const char *qdInterfaceSave::thumbnail_file() const {
 const char *qdInterfaceSave::description_file() const {
 	return qdGameDispatcher::get_save_name(save_ID_, qdGameDispatcher::SAVE_DESCRIPTION);
 }
+
 } // namespace QDEngine
+

@@ -3437,13 +3437,13 @@ bool qdGameDispatcher::load_hall_of_fame() {
 	hall_of_fame_.clear();
 	hall_of_fame_.resize(hall_of_fame_size_);
 
-	XStream fh(0);
-	if (fh.open("Resource\\hof.dat", XS_IN)) {
+	Common::File fh;
+	if (fh.open(Common::Path("Resource\\hof.dat", '\\'))) {
 		char buf[1024];
 		for (int i = 0; i < hall_of_fame_size_; i++) {
-			fh.getline(buf, 1024);
+			fh.readLine(buf, 1024);
 			hall_of_fame_[i].player_name_ = buf;
-			fh.getline(buf, 1024);
+			fh.readLine(buf, 1024);
 			hall_of_fame_[i].score_ = atoi(buf);
 		}
 
@@ -3457,11 +3457,11 @@ bool qdGameDispatcher::save_hall_of_fame() const {
 	if (!hall_of_fame_size_)
 		return false;
 
-	XStream fh(0);
-	if (fh.open("Resource\\hof.dat", XS_OUT)) {
+	Common::DumpFile fh;
+	if (fh.open(Common::Path("Resource\\hof.dat", '\\'))) {
 		for (int i = 0; i < hall_of_fame_size_; i++) {
-			fh < hall_of_fame_[i].player_name_.c_str() < "\r\n";
-			fh <= hall_of_fame_[i].score_ < "\r\n";
+			fh.writeString(Common::String::format("%s\r\n", hall_of_fame_[i].player_name_.c_str()));
+			fh.writeString(Common::String::format("%d\r\n", hall_of_fame_[i].score_));
 		}
 		return true;
 	}
@@ -3503,3 +3503,4 @@ bool qdGameDispatcher::update_hall_of_fame_names() {
 }
 
 } // namespace QDEngine
+
