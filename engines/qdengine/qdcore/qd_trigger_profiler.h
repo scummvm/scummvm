@@ -33,8 +33,6 @@
 
 namespace QDEngine {
 
-class XStream;
-
 class qdTriggerElement;
 class qdTriggerLink;
 class qdTriggerChain;
@@ -62,9 +60,7 @@ public:
 	qdTriggerProfilerRecord &operator = (const qdTriggerProfilerRecord &rec);
 
 	bool save(Common::SeekableWriteStream &fh) const;
-	bool save(XStream &fh) const;
 	bool load(Common::SeekableReadStream &fh);
-	bool load(XStream &fh);
 
 	//! Время события (в миллисекундах от старта приложения).
 	unsigned int time() const {

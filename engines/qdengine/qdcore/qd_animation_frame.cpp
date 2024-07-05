@@ -59,21 +59,12 @@ qdAnimationFrame *qdAnimationFrame::clone() const {
 	return new qdAnimationFrame(*this);
 }
 
-void qdAnimationFrame::qda_load(class XStream &fh, int version) {
-	warning("STUB: qdAnimationFrame::qda_load(XStream &fh, int version)");
-	return;
-}
-
 void qdAnimationFrame::qda_load(Common::SeekableReadStream *fh, int version) {
 	/*int32 fl = */fh->readSint32LE();
 	start_time_ = fh->readFloatLE();
 	length_ = fh->readFloatLE();
 
 	qdSprite::qda_load(fh, version);
-}
-void qdAnimationFrame::qda_load(XZipStream &fh, int version) {
-	warning("STUB: qdAnimationFrame::qda_load(XZipStream &fh, int verion)");
-	return;
 }
 
 bool qdAnimationFrame::load_resources() {
@@ -86,3 +77,4 @@ void qdAnimationFrame::free_resources() {
 	free();
 }
 } // namespace QDEngine
+

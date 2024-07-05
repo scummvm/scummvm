@@ -38,8 +38,6 @@
 
 namespace QDEngine {
 
-class XStream;
-
 class qdScreenTransform {
 public:
 	qdScreenTransform(float angle = 0.f, const Vect2f &scale = Vect2f(1.f, 1.f)) : angle_(angle), scale_(scale) { }

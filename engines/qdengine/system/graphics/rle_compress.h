@@ -72,7 +72,6 @@ public:
 		return &*(data_.begin() + data_offset_[y]);
 	}
 
-	bool load(class XStream &fh);
 	bool load(class XZipStream &fh);
 	bool load(Common::SeekableReadStream *fh);
 

@@ -70,11 +70,6 @@ const char *qdTextDB::getComment(const char *text_id) const {
 	return str;
 }
 
-bool qdTextDB::load(XStream &fh, const char *comments_file_name, bool clear_old_texts) {
-	warning("STUB: qdTextDB::load(XStream fh: %s)", comments_file_name);
-	return true;
-}
-
 bool qdTextDB::load(Common::SeekableReadStream *fh, const char *commentsFileName, bool clearOldTexts) {
 	if (clearOldTexts) {
 		clear();
@@ -120,11 +115,6 @@ bool qdTextDB::load(Common::SeekableReadStream *fh, const char *commentsFileName
 		}
 	}
 
-	return true;
-}
-
-bool qdTextDB::load(XZipStream &fh, const char *comments_file_name, bool clear_old_texts) {
-	warning("STUB: qdTextDB::load(XZipStream fh: %s)", comments_file_name);
 	return true;
 }
 

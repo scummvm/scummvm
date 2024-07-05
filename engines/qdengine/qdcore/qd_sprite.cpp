@@ -931,11 +931,6 @@ bool qdSprite::put_pixel(int x, int y, unsigned char r, unsigned char g, unsigne
 	return true;
 }
 
-void qdSprite::qda_load(XStream &fh, int version) {
-	warning("STUB: qdSprite::qda_load(XStream &fh, int version)");
-	return;
-}
-
 void qdSprite::qda_load(Common::SeekableReadStream *fh, int version) {
 	free();
 
@@ -1064,11 +1059,6 @@ void qdSprite::qda_load(Common::SeekableReadStream *fh, int version) {
 		rle_data_ = new rleBuffer;
 		rle_data_->load(fh);
 	}
-}
-
-void qdSprite::qda_load(XZipStream &fh, int version) {
-	warning("qdSprite::qda_load(XZipStream &fh, int version)");
-	return;
 }
 
 bool qdSprite::crop() {
@@ -1428,3 +1418,4 @@ grScreenRegion qdSprite::screen_region(int mode, float scale) const {
 	return grScreenRegion(x, y, sx, sy);
 }
 } // namespace QDEngine
+

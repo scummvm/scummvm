@@ -285,11 +285,6 @@ int rleBuffer::line_header_length(int line_num) const {
 }
 
 
-bool rleBuffer::load(XStream &fh) {
-	warning("STUB: rleBuffer::load(XStream &fh)");
-	return true;
-}
-
 bool rleBuffer::load(Common::SeekableReadStream *fh) {
 	int32 sz = fh->readUint32LE();
 	header_offset_.resize(sz);
@@ -322,11 +317,6 @@ bool rleBuffer::load(Common::SeekableReadStream *fh) {
 
 	resize_buffers();
 
-	return true;
-}
-
-bool rleBuffer::load(XZipStream &fh) {
-	warning("STUB: rleBuffer::load(XZipStream fh)");
 	return true;
 }
 

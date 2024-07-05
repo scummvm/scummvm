@@ -27,8 +27,6 @@
 
 namespace QDEngine {
 
-class XStream;
-
 //! Состояние зоны на сетке сцены.
 class qdGridZoneState : public qdConditionalObject {
 public:
@@ -66,3 +64,4 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_GRID_ZONE_STATE_H
+

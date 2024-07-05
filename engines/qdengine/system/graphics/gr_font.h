@@ -35,12 +35,6 @@ public:
 
 	bool load(const char *fname);
 
-	bool load_index(XStream &fh);
-	bool load_alpha(XStream &fh);
-
-	bool load_index(XZipStream &fh);
-	bool load_alpha(XZipStream &fh);
-
 	bool load_index(Common::SeekableReadStream *fh);
 	bool load_alpha(Common::SeekableReadStream *fh);
 
@@ -100,3 +94,4 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_SYSTEM_GRAPHICS_GR_FONT_H
+
