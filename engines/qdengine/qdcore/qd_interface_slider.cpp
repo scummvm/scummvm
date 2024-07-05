@@ -19,8 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include "qdengine/qd_precomp.h"
 #include "qdengine/parser/qdscr_parser.h"
 #include "qdengine/parser/xml_tag_buffer.h"
@@ -28,11 +26,6 @@
 
 
 namespace QDEngine {
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 qdInterfaceSlider::qdInterfaceSlider() : active_rectangle_(0, 0),
 	phase_(0.5f),
@@ -111,6 +104,8 @@ bool qdInterfaceSlider::mouse_handler(int x, int y, mouseDispatcher::mouseEvent 
 			} else
 				track_mouse_ = false;
 		}
+		break;
+	default:
 		break;
 	}
 
@@ -217,7 +212,7 @@ bool qdInterfaceSlider::redraw() const {
 	animation().redraw(rr.x, rr.y, 0);
 
 	if (!slider_animation_.is_empty()) {
-		Vect2i rr = r() + phase2offset(phase_);
+		rr = r() + phase2offset(phase_);
 		slider_animation_.redraw(rr.x, rr.y, 0);
 	}
 

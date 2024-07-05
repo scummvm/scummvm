@@ -31,6 +31,7 @@ public:
 	//! Деинициализация игры.
 	bool finit() {
 		warning("STUB: qdEmptyMiniGameInterface::finit()");
+		return true;
 	}
 
 	/// Инициализация миниигры, вызывается при старте и перезапуске игры.

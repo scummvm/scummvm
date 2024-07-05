@@ -19,8 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include "qdengine/qd_precomp.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 #include "qdengine/parser/qdscr_parser.h"
@@ -30,12 +28,6 @@
 
 
 namespace QDEngine {
-
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 qdScreenTextSet::qdScreenTextSet() : ID_(0),
 	pos_(0, 0),
@@ -62,7 +54,6 @@ void qdScreenTextSet::redraw() const {
 bool qdScreenTextSet::arrange_texts() {
 	if (texts_.empty()) return false;
 
-	int row_sx = texts_[0].size_x() + space_;
 	int row_sy = texts_[0].size_y();
 
 	texts_[0].set_screen_pos(Vect2i(space_, 0));
@@ -75,12 +66,10 @@ bool qdScreenTextSet::arrange_texts() {
 				row_sy = texts_[i].size_y();
 
 			text_pos.x += texts_[i - 1].size_x() + space_;
-			row_sx += texts_[i - 1].size_x() + space_;
 		} else {
 			text_pos.x = 0;
 			text_pos.y += row_sy + space_;
 
-			row_sx = texts_[i].size_x();
 			row_sy = texts_[i].size_y();
 		}
 
@@ -104,6 +93,8 @@ bool qdScreenTextSet::arrange_texts() {
 			case qdScreenTextFormat::ALIGN_RIGHT:
 				dx = max_text_width_ - sx - space_;
 				break;
+			default:
+				break;
 			}
 
 			for (int j = 0; j < row_size; j++) {
@@ -122,9 +113,6 @@ bool qdScreenTextSet::arrange_texts() {
 	int sy = 0;
 
 	for (int i = 0; i < texts_.size(); i ++) {
-		Vect2i sz = Vect2i(texts_[i].size_x(), texts_[i].size_y());
-		Vect2i ps = texts_[i].screen_pos();
-
 		if (texts_[i].screen_pos().x + texts_[i].size_x() > sx)
 			sx = texts_[i].screen_pos().x + texts_[i].size_x();
 		if (texts_[i].screen_pos().y + texts_[i].size_y() > sy)

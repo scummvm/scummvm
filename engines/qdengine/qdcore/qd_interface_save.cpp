@@ -19,7 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/stream.h"
 #include "qdengine/qdengine.h"
@@ -35,12 +34,6 @@
 
 
 namespace QDEngine {
-
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 bool qdInterfaceSave::save_mode_ = false;
 int qdInterfaceSave::current_save_ID_ = 0;
@@ -134,6 +127,8 @@ bool qdInterfaceSave::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev
 				return true;
 			}
 		}
+		break;
+	default:
 		break;
 	}
 

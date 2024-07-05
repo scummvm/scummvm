@@ -19,7 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/stream.h"
 #include "qdengine/qdengine.h"
@@ -45,21 +44,15 @@
 #include "qdengine/qdcore/qd_game_dispatcher.h"
 
 #include "qdengine/system/app_core.h"
-#include <stdio.h>
 
 
 namespace QDEngine {
-/* ----------------------------- STRUCT SECTION ----------------------------- */
 
 struct qdGridZoneOrdering {
 	bool operator()(const qdGridZone *z0, const qdGridZone *z1) {
 		return z0->update_timer() < z1->update_timer();
 	}
 };
-
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 fpsCounter qdGameScene::fps_counter_ = fpsCounter(1000);
 grScreenRegion qdGameScene::fps_region_ = grScreenRegion::EMPTY;
@@ -291,7 +284,7 @@ bool qdGameScene::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
 		}
 		break;
 	case mouseDispatcher::EV_LEFT_DOWN:
-	case mouseDispatcher::EV_RIGHT_DOWN:
+	case mouseDispatcher::EV_RIGHT_DOWN: {
 		if (qdInterfaceDispatcher * dp = qdInterfaceDispatcher::get_dispatcher()) {
 			if (dp->is_mouse_hover()) {
 				result = false;
@@ -306,6 +299,9 @@ bool qdGameScene::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
 			else
 				mouse_right_click_object_ = pObj;
 		}
+		break;
+		}
+	default:
 		break;
 	}
 
@@ -480,7 +476,6 @@ int qdGameScene::load_resources() {
 
 	int size = qdGameDispatcherBase::load_resources();
 
-	qdGameObjectList::const_iterator io;
 	for (auto &io : object_list()) {
 		io->load_resources();
 		show_loading_progress(1);
@@ -501,7 +496,6 @@ void qdGameScene::free_resources() {
 			dp->stop_music();
 	}
 
-	qdGameObjectList::const_iterator io;
 	for (auto &io : object_list()) {
 		io->free_resources();
 	}
@@ -517,16 +511,16 @@ void qdGameScene::debug_redraw() {
 	if (qdGameConfig::get_config().debug_draw()) {
 		if (selected_object_) {
 			static char buffer[256];
-			sprintf(buffer, "%.1f %.1f %.1f, %.1f", selected_object_->R().x, selected_object_->R().y, selected_object_->R().z, R2G(selected_object_->direction_angle()));
+			snprintf(buffer, 256, "%.1f %.1f %.1f, %.1f", selected_object_->R().x, selected_object_->R().y, selected_object_->R().z, R2G(selected_object_->direction_angle()));
 			grDispatcher::instance()->DrawText(10, 30, grDispatcher::instance()->make_rgb888(255, 255, 255), buffer);
 			float z = camera.global2camera_coord(selected_object_->R()).z;
-			sprintf(buffer, "D: %.2f", z);
+			snprintf(buffer, 256, "D: %.2f", z);
 			grDispatcher::instance()->DrawText(10, 50, grDispatcher::instance()->make_rgb888(255, 255, 255), buffer);
 
 			if (selected_object_->get_cur_state() && selected_object_->get_cur_state()->name())
 				grDispatcher::instance()->DrawText(10, 70, grDispatcher::instance()->make_rgb888(255, 255, 255), selected_object_->get_cur_state()->name());
 
-			sprintf(buffer, "%d %d", camera.get_scr_center_x(), camera.get_scr_center_y());
+			snprintf(buffer, 256, "%d %d", camera.get_scr_center_x(), camera.get_scr_center_y());
 			grDispatcher::instance()->DrawText(10, 90, grDispatcher::instance()->make_rgb888(255, 255, 255), buffer);
 			/*
 			            sprintf(buffer,"%d %d",mouseDispatcher::instance()->mouse_x(),mouseDispatcher::instance()->mouse_y());
@@ -1096,12 +1090,12 @@ void qdGameScene::pre_redraw() {
 
 		if (fps_counter_.fps_value() > 0.0f)
 #ifdef __QD_DEBUG_ENABLE__
-			sprintf(fps_string_, "%.1f fps\nmemory: %.2f MB", fps_counter_.fps_value(), float(memory_usage) / 1024.0f / 1024.0f);
+			snprintf(fps_string_, 255, "%.1f fps\nmemory: %.2f MB", fps_counter_.fps_value(), float(memory_usage) / 1024.0f / 1024.0f);
 #else
-			sprintf(fps_string_, "%.1f fps", fps_counter_.fps_value());
+			snprintf(fps_string_, 255, "%.1f fps", fps_counter_.fps_value());
 #endif
 		else
-			sprintf(fps_string_, "--");
+			snprintf(fps_string_, 255, "--");
 
 		int sx = grDispatcher::instance()->TextWidth(fps_string_);
 		int sy = grDispatcher::instance()->TextHeight(fps_string_);
@@ -1588,7 +1582,6 @@ void qdGameScene::follow_quant(float dt) {
 
 void qdGameScene::collision_quant() {
 #ifndef _QUEST_EDITOR
-	Vect3f vec;
 	for (personages_container_t::iterator it = personages_.begin(); it != personages_.end(); ++it) {
 		// Жесткая привязка с учетом направления привязывающего и без
 		if (((*it)->has_control_type(qdGameObjectMoving::CONTROL_ATTACHMENT_WITH_DIR_REL) ||

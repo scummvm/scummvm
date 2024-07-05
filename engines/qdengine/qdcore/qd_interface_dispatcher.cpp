@@ -19,7 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
@@ -43,13 +42,6 @@
 
 
 namespace QDEngine {
-
-
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 qdInterfaceDispatcher *qdInterfaceDispatcher::dispatcher_ = NULL;
 
@@ -357,7 +349,6 @@ bool qdInterfaceDispatcher::save_script(Common::SeekableWriteStream &fh, int ind
 }
 
 bool qdInterfaceDispatcher::load_script(const xml::tag *p) {
-	bool screen_idx = false;
 	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		switch (it->ID()) {
 		case QDSCR_INTERFACE_SCENE_REDRAW:

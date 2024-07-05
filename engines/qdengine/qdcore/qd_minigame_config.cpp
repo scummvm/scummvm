@@ -19,8 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/str.h"
 #include "qdengine/qd_precomp.h"
@@ -31,11 +29,6 @@
 
 
 namespace QDEngine {
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 qdMinigameConfigParameter::qdMinigameConfigParameter() : data_type_(PRM_DATA_STRING) {
 	data_count_ = 1;
@@ -118,8 +111,6 @@ bool qdMinigameConfigParameter::load_ini(const char *ini_file, const char *ini_s
 	str = getIniKey(ini_file, ini_section, "value");
 	if (strlen(str)) {
 		set_data_string(str);
-		int cnt = 0;
-
 	}
 
 	str = getIniKey(ini_file, ini_section, "comment");
