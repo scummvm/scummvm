@@ -91,6 +91,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_PRELOAD_SOUNDS,
+		{
+			_s("Preload sounds"),
+			_s("Preload sounds. May improve performance on slow hard drives."),
+			"vcruise_preload_sounds",
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

@@ -657,6 +657,7 @@ public:
 	void loadCursors(const char *exeName);
 	void setDebugMode(bool debugMode);
 	void setFastAnimationMode(bool fastAnimationMode);
+	void setPreloadSounds(bool preloadSounds);
 	void setLowQualityGraphicsMode(bool lowQualityGraphicsMode);
 
 	bool runFrame();
@@ -1337,6 +1338,7 @@ private:
 	bool _escOn;
 	bool _debugMode;
 	bool _fastAnimationMode;
+	bool _preloadSounds;
 	bool _lowQualityGraphicsMode;
 
 	VCruiseGameID _gameID;

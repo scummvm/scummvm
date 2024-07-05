@@ -234,6 +234,10 @@ Common::Error VCruiseEngine::run() {
 		_runtime->setFastAnimationMode(true);
 	}
 
+	if (ConfMan.getBool("vcruise_preload_sounds")) {
+		_runtime->setPreloadSounds(true);
+	}
+
 	if (ConfMan.getBool("vcruise_use_4bit")) {
 		_runtime->setLowQualityGraphicsMode(true);
 	}

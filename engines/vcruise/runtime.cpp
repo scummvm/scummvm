@@ -1467,8 +1467,8 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, MidiDriver *midiDrv, cons
 	: _system(system), _mixer(mixer), _midiDrv(midiDrv), _roomNumber(1), _screenNumber(0), _direction(0), _hero(0), _disc(0), _swapOutRoom(0), _swapOutScreen(0), _swapOutDirection(0),
 	  _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingPreIdleActions(false), _havePendingReturnToIdleState(false), _havePendingPostSwapScreenReset(false),
-	  _havePendingCompletionCheck(false), _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _escOn(false), _debugMode(false), _fastAnimationMode(false), _lowQualityGraphicsMode(false),
-	  _musicTrack(0), _musicActive(true), _musicMute(false), _musicMuteDisabled(false),
+	  _havePendingCompletionCheck(false), _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _escOn(false), _debugMode(false), _fastAnimationMode(false), _preloadSounds(false),
+	  _lowQualityGraphicsMode(false), _musicTrack(0), _musicActive(true), _musicMute(false), _musicMuteDisabled(false),
 	  _scoreSectionEndTime(0), _musicVolume(getDefaultSoundVolume()), _musicVolumeRampStartTime(0), _musicVolumeRampStartVolume(0), _musicVolumeRampRatePerMSec(0), _musicVolumeRampEnd(0),
 	  _panoramaDirectionFlags(0),
 	  _loadedAnimation(0), _loadedAnimationHasSound(false),
@@ -1666,6 +1666,10 @@ void Runtime::setDebugMode(bool debugMode) {
 
 void Runtime::setFastAnimationMode(bool fastAnimationMode) {
 	_fastAnimationMode = fastAnimationMode;
+}
+
+void Runtime::setPreloadSounds(bool preloadSounds) {
+	_preloadSounds = preloadSounds;
 }
 
 void Runtime::setLowQualityGraphicsMode(bool lowQualityGraphicsMode) {
@@ -3492,12 +3496,37 @@ SoundCache *Runtime::loadCache(SoundInstance &sound) {
 		return nullptr;
 	}
 
+	if (_preloadSounds) {
+		if (stream->size() > static_cast<int64>(0xffffffffu)) {
+			warning("Sound stream is too large");
+			delete stream;
+			return nullptr;
+		}
+
+		uint32 streamSize = static_cast<uint32>(stream->size());
+
+		byte *streamContents = new byte[streamSize];
+
+		if (stream->read(streamContents, streamSize) != streamSize) {
+			warning("Couldn't preload sound contents for sound '%s'", sound.name.c_str());
+			delete[] streamContents;
+			delete stream;
+			return nullptr;
+		}
+
+		Common::MemoryReadStream *memStream = new Common::MemoryReadStream(streamContents, streamSize);
+		delete stream;
+
+		stream = memStream;
+	}
+
 	Common::SharedPtr<SoundLoopInfo> loopInfo;
 
 	if (_gameID == GID_SCHIZM) {
 		loopInfo = SoundLoopInfo::readFromWaveFile(*stream);
 		if (!stream->seek(0)) {
 			warning("Couldn't reset stream to 0 after reading sample table for sound '%s'", sound.name.c_str());
+			delete stream;
 			return nullptr;
 		}
 	}
