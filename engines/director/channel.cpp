@@ -386,7 +386,13 @@ void Channel::setCast(CastMemberID memberID) {
 	if (_sprite->_cast)
 		_sprite->_cast->releaseWidget();
 
-	_sprite->setCast(memberID);
+	// Replace the cast member in the sprite.
+	// Only change the dimensions if the "stretch" flag is set,
+	// indicating that the sprite has already been warped away from cast
+	// dimensions. In puppet mode Lingo can first change the
+	// dimensions of the sprite, -then- change the cast ID, and expect
+	// those custom dimensions to stick around.
+	_sprite->setCast(memberID, !_sprite->_stretch);
 	replaceWidget();
 
 	// Based on Director in a Nutshell, page 15
