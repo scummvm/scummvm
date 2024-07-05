@@ -284,16 +284,6 @@ int rleBuffer::line_header_length(int line_num) const {
 		return header_.size() - header_offset_[line_num];
 }
 
-bool rleBuffer::save(class XStream &fh) {
-	fh < header_offset_.size() < data_offset_.size() < header_.size() < data_.size();
-
-	fh.write(&*header_offset_.begin(), header_offset_.size() * sizeof(unsigned));
-	fh.write(&*data_offset_.begin(), data_offset_.size() * sizeof(unsigned));
-	fh.write(&*header_.begin(), header_.size());
-	fh.write(&*data_.begin(), data_.size() * sizeof(unsigned));
-
-	return true;
-}
 
 bool rleBuffer::load(XStream &fh) {
 	warning("STUB: rleBuffer::load(XStream &fh)");
@@ -341,3 +331,4 @@ bool rleBuffer::load(XZipStream &fh) {
 }
 
 } // namespace QDEngine
+
