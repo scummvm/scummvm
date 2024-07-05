@@ -378,7 +378,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Microstatus release
 	{
 		"darkside",
-		"Encrypted executable with CopyLock",
+		"Encrypted executable with CopyLock, follow the instructions here: https://wiki.scummvm.org/index.php?title=Freescape/DRM",
 		{
 			{"0.DRK", 0, "c19bc332f6550e21e7b8ef79bcf3d99e", 81840},
 			{"1.DRK", 0, "9e700d991054f4393b1ccef706586b5b", 223272},
@@ -387,6 +387,19 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformAtariST,
 		ADGF_UNSUPPORTED,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERATARIST)
+	},
+	{ // Stampede AtariST, Issue 1
+		"darkside",
+		"",
+		{
+			{"0.DRK", 0, "86794a6cb2d371cdf892a2173e3b7568", 47966},
+			{"1.DRK", 0, "9e700d991054f4393b1ccef706586b5b", 223272},
+  			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_UNSTABLE,
 		GUIO2(GUIO_NOMIDI, GUIO_RENDERATARIST)
 	},
 	// Stampede Amiga, Issue 1, July 1990
