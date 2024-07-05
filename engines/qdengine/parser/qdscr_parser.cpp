@@ -389,3 +389,4 @@ const char *qdscr_XML_string(const char *p) {
 }
 
 } // namespace QDEngine
+
