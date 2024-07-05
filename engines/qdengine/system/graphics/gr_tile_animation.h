@@ -66,7 +66,6 @@ public:
 
 	void addFrame(const unsigned *frame_data);
 
-	bool save(XStream &fh) const;
 	bool load(XStream &fh);
 	bool load(XZipStream &fh);
 	bool load(Common::SeekableReadStream *fh);
@@ -115,3 +114,4 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_SYSTEM_GRAPHICS_GR_TILE_ANIMATION_H
+

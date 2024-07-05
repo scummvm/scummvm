@@ -186,20 +186,6 @@ void grTileAnimation::addFrame(const unsigned *frame_data) {
 	}
 }
 
-bool grTileAnimation::save(XStream &fh) const {
-	fh < frameCount_ < frameSize_.x < frameSize_.y < frameTileSize_.x < frameTileSize_.y < (int)compression_;
-
-	fh < (int)frameIndex_.size();
-	fh.write(&frameIndex_[0], frameIndex_.size() * sizeof(unsigned));
-
-	fh < (int)tileOffsets_.size();
-	fh.write(&tileOffsets_[0], tileOffsets_.size() * sizeof(unsigned));
-
-	fh < (int)tileData_.size();
-	fh.write(&tileData_[0], tileData_.size() * sizeof(unsigned));
-
-	return true;
-}
 
 bool grTileAnimation::load(XStream &fh) {
 	warning("STUB: grTileAnimation::load(XStream &fh)");
@@ -305,3 +291,4 @@ void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float a
 }
 
 } // namespace QDEngine
+
