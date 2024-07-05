@@ -1248,9 +1248,21 @@ MiniscriptInstructionOutcome BuiltinFunc::executeStr2Num(MiniscriptThread *threa
 	const Common::String &str = inputDynamicValue.getString();
 	if (str.empty())
 		result = 0.0;
-	else if (str.size() == 0 || !sscanf(str.c_str(), "%lf", &result)) {
-		thread->error("Couldn't parse number");
-		return kMiniscriptInstructionOutcomeFailed;
+	else if (!sscanf(str.c_str(), "%lf", &result)) {
+		// NOTE: sscanf will properly handle cases where a number is followed by a non-numeric value,
+		// which is consistent with mTropolis' behavior.
+		// 
+		// If it fails, the result is 0.0 and no script error.
+		//
+		// This includes a case in Obsidian where it tries to parse in invalid room number "L100"
+		// upon entering the sky face for the first time in Bureau.
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+		if (Debugger *debugger = thread->getRuntime()->debugGetDebugger())
+			debugger->notify(kDebugSeverityError, Common::String::format("Failed to parse '%s' as a number", str.c_str()));
+#endif
+
+		result = 0.0;
 	}
 
 	returnValue->setFloat(result);
