@@ -127,6 +127,8 @@ bool qdTextDB::load(Common::SeekableReadStream *fh, const char *commentsFileName
 				it->second.comment_ = txtStr.c_str();
 		}
 	}
+
+	return true;
 }
 
 bool qdTextDB::load(XZipStream &fh, const char *comments_file_name, bool clear_old_texts) {
@@ -138,7 +140,6 @@ void qdTextDB::getIdList(const char *mask, IdList &idList) const {
 	idList.clear();
 //	int const maskLen = _tcslen(mask);
 	int const maskLen = strlen(mask);
-	qdTextMap::const_iterator i;
 	for (auto &i : texts_) {
 		if (!i.first.find(mask)) {
 			std::string str = i.first;

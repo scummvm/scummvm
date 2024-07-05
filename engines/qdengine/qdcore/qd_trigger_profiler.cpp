@@ -297,9 +297,11 @@ const char *qdTriggerProfiler::element_text(qdTriggerElementPtr el) {
 	static XBuffer text(1024, 1);
 	text.init();
 
+	qdNamedObject *p;
+
 	if (el->object()) {
 		if (record_text_format_ & PROFILER_TEXT_SCENE_NAME) {
-			if (qdNamedObject * p = el->object()->owner(QD_NAMED_OBJECT_SCENE)) {
+			if ((p = el->object()->owner(QD_NAMED_OBJECT_SCENE))) {
 				if (p->name())
 					text < p->name() < "::";
 				else
@@ -307,19 +309,19 @@ const char *qdTriggerProfiler::element_text(qdTriggerElementPtr el) {
 			}
 		}
 
-		if (qdNamedObject * p = el->object()->owner(QD_NAMED_OBJECT_ANIMATED_OBJ)) {
+		if ((p = el->object()->owner(QD_NAMED_OBJECT_ANIMATED_OBJ))) {
 			if (p->name())
 				text < p->name() < "::";
 			else
 				text < "???::";
 		} else {
-			if (qdNamedObject * p = el->object()->owner(QD_NAMED_OBJECT_MOVING_OBJ)) {
+			if ((p = el->object()->owner(QD_NAMED_OBJECT_MOVING_OBJ))) {
 				if (p->name())
 					text < p->name() < "::";
 				else
 					text < "???::";
 			} else {
-				if (qdNamedObject * p = el->object()->owner(QD_NAMED_OBJECT_GRID_ZONE)) {
+				if ((p = el->object()->owner(QD_NAMED_OBJECT_GRID_ZONE))) {
 					if (p->name())
 						text < p->name() < "::";
 					else
