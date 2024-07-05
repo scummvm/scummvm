@@ -197,7 +197,7 @@ void ZVision::initialize() {
 	modes.push_back(Graphics::Mode(WINDOW_WIDTH, WINDOW_HEIGHT));
 #if defined(USE_MPEG2) && defined(USE_A52)
 	// For the DVD version of ZGI we can play high resolution videos
-	if (getGameId() == GID_GRANDINQUISITOR && (getFeatures() & GF_DVD))
+	if (getGameId() == GID_GRANDINQUISITOR && (getFeatures() & ADGF_DVD))
 		modes.push_back(Graphics::Mode(HIRES_WINDOW_WIDTH, HIRES_WINDOW_HEIGHT));
 #endif
 	initGraphicsModes(modes);
