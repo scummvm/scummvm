@@ -72,7 +72,6 @@ public:
 		return &*(data_.begin() + data_offset_[y]);
 	}
 
-	bool load(class XZipStream &fh);
 	bool load(Common::SeekableReadStream *fh);
 
 	bool convert_data(int bits_per_pixel = 16);
@@ -95,4 +94,3 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_SYSTEM_GRAPHICS_RLE_COMPRESS_H
-

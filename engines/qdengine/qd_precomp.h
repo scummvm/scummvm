@@ -68,9 +68,6 @@ namespace QDEngine {
 
 // STUB: XZipStream
 #define _NO_ZIP_
-class XZipStream : public XStream {};
-
-typedef XStream qdSaveStream;
 
 // STUB FIXME
 #define APIENTRY
