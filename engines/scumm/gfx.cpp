@@ -1542,12 +1542,16 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 		}
 	} else if (_game.heversion >= 72) {
 		// Flags are used for different methods in HE games
+		uint32 colorToBack         = (!(_game.heversion > 99 || _isHE995)) ? 0x8000 : 0x1000000;
+		uint32 colorCopyForeToBack = (!(_game.heversion > 99 || _isHE995)) ? 0x4000 : 0x2000000;
+		uint32 colorCopyBackToFore = (!(_game.heversion > 99 || _isHE995)) ? 0x2000 : 0x4000000;
+
 		uint32 flags = color;
-		if ((flags & 0x2000) || (flags & 0x4000000)) {
+		if (flags & colorCopyBackToFore) {
 			blit(backbuff, vs->pitch, bgbuff, vs->pitch, width, height, vs->format.bytesPerPixel);
-		} else if ((flags & 0x4000) || (flags & 0x2000000)) {
+		} else if (flags & colorCopyForeToBack) {
 			blit(bgbuff, vs->pitch, backbuff, vs->pitch, width, height, vs->format.bytesPerPixel);
-		} else if ((flags & 0x8000) || (flags & 0x1000000)) {
+		} else if (flags & colorToBack) {
 			flags &= (flags & 0x1000000) ? 0xFFFFFF : 0x7FFF;
 			fill(backbuff, vs->pitch, flags, width, height, vs->format.bytesPerPixel);
 			fill(bgbuff, vs->pitch, flags, width, height, vs->format.bytesPerPixel);
