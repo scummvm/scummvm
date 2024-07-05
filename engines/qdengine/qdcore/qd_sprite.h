@@ -32,8 +32,6 @@ class SeekableReadStream;
 
 namespace QDEngine {
 
-class XZipStream;
-
 //! Спрайт.
 class qdSprite : public qdResource {
 public:
@@ -218,4 +216,3 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_SPRITE_H
-

@@ -100,12 +100,6 @@ void qdFileManager::Finit() {
 	delete mgr;
 }
 
-bool qdFileManager::open_file(XZipStream &fh, const char *file_name, bool err_message) {
-	warning("STUB: qdFileManager::open_file(%s)", transCyrillic(file_name));
-
-	return false;
-}
-
 bool qdFileManager::open_file(Common::SeekableReadStream **fh, const char *file_name, bool err_message) {
 	debugC(4, kDebugLoad, "qdFileManager::open_file(%s)", transCyrillic(file_name));
 

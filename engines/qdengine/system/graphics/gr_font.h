@@ -26,8 +26,6 @@
 
 namespace QDEngine {
 
-class XZipStream;
-
 class grFont {
 public:
 	grFont();
@@ -94,4 +92,3 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_SYSTEM_GRAPHICS_GR_FONT_H
-

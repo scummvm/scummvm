@@ -71,7 +71,6 @@ public:
 
 	void enable_packages() {}
 
-	bool open_file(XZipStream &fh, const char *file_name, bool err_message = true);
 	bool open_file(Common::SeekableReadStream **fh, const char *file_name, bool err_message = true);
 
 	int last_CD_id() const {
