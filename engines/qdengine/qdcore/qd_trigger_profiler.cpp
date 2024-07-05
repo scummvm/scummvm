@@ -19,6 +19,9 @@
  *
  */
 
+/* ---------------------------- INCLUDE SECTION ----------------------------- */
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/file.h"
 #include "qdengine/qd_precomp.h"
 #include "qdengine/qdcore/qd_trigger_profiler.h"
 
@@ -78,16 +81,41 @@ qdTriggerProfilerRecord &qdTriggerProfilerRecord::operator = (const qdTriggerPro
 	return *this;
 }
 
+bool qdTriggerProfilerRecord::save(Common::SeekableWriteStream &fh) const {
+	warning("STUB: Test qdTriggerProfilerRecord::save(Common::SeekableWriteStream &fh)");
+
+	fh.writeUint32LE(time_);
+	fh.writeSint32LE((int)event_);
+	fh.writeSint32LE(trigger_id_);
+	fh.writeSint32LE(element_id_);
+	fh.writeSint32LE(link_id_);
+	fh.writeSint32LE(status_);
+
+	return true;
+}
+
 bool qdTriggerProfilerRecord::save(XStream &fh) const {
-	fh < time_ < (int)event_ < trigger_id_ < element_id_ < link_id_ < status_;
+	warning("STUB: qdTriggerProfilerRecord::save(XStream &fh)");
+	return true;
+}
+
+bool qdTriggerProfilerRecord::load(Common::SeekableReadStream &fh) {
+	warning("STUB: Test qdTriggerProfilerRecord::load(Common::SeekableReadStream &fh)");
+	int ev;
+
+	time_ = fh.readUint32LE();
+	ev = fh.readSint32LE();
+	trigger_id_ = fh.readSint32LE();
+	element_id_ = fh.readSint32LE();
+	link_id_ = fh.readSint32LE();
+	status_ = fh.readSint32LE();
+
+	event_ = event_t(ev);
 	return true;
 }
 
 bool qdTriggerProfilerRecord::load(XStream &fh) {
-	int ev;
-	fh > time_ > ev > trigger_id_ > element_id_ > link_id_ > status_;
-	event_ = event_t(ev);
-
+	warning("STUB: qdTriggerProfilerRecord::load(XStream &fh)");
 	return true;
 }
 
@@ -101,24 +129,27 @@ qdTriggerProfiler::~qdTriggerProfiler() {
 }
 
 bool qdTriggerProfiler::save_to_work_file() const {
-	XStream fh(work_file_.c_str(), XS_OUT);
+	warning("STUB: qdTriggerProfiler::save_to_work_file()");
+	Common::DumpFile fh;
 
-	fh < records_.size();
-	for (record_container_t::const_iterator it = records_.begin(); it != records_.end(); ++it)
-		it->save(fh);
+	fh.writeUint32LE(records_.size());
+	for (auto &it : records_) {
+		it.save(fh);
+	}
 
 	fh.close();
 	return true;
 }
 
 bool qdTriggerProfiler::load_from_work_file() {
-	XStream fh(0);
+	warning("STUB: qdTriggerProfiler::load_from_work_file()");
+	Common::File fh;
 
 	records_.clear();
 
-	if (fh.open(work_file_.c_str(), XS_IN)) {
+	if (fh.open(work_file_.c_str())) {
 		int size;
-		fh > size;
+		size = fh.readSint32LE();
 		records_.resize(size);
 		for (record_container_t::iterator it = records_.begin(); it != records_.end(); ++it)
 			it->load(fh);

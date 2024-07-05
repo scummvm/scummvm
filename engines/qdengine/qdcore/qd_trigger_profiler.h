@@ -23,6 +23,7 @@
 #ifndef QDENGINE_QDCORE_QD_TRIGGER_PROFILER_H
 #define QDENGINE_QDCORE_QD_TRIGGER_PROFILER_H
 
+#include "common/stream.h"
 #define __QD_TRIGGER_PROFILER__
 
 #ifdef __QD_TRIGGER_PROFILER__
@@ -60,7 +61,9 @@ public:
 
 	qdTriggerProfilerRecord &operator = (const qdTriggerProfilerRecord &rec);
 
+	bool save(Common::SeekableWriteStream &fh) const;
 	bool save(XStream &fh) const;
+	bool load(Common::SeekableReadStream &fh);
 	bool load(XStream &fh);
 
 	//! Время события (в миллисекундах от старта приложения).
@@ -211,3 +214,4 @@ private:
 #endif /* __QD_TRIGGER_PROFILER__ */
 
 #endif // QDENGINE_QDCORE_QD_TRIGGER_PROFILER_H
+
