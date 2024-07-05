@@ -72,7 +72,6 @@ public:
 		return &*(data_.begin() + data_offset_[y]);
 	}
 
-	bool save(class XStream &fh);
 	bool load(class XStream &fh);
 	bool load(class XZipStream &fh);
 	bool load(Common::SeekableReadStream *fh);
@@ -97,3 +96,4 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_SYSTEM_GRAPHICS_RLE_COMPRESS_H
+
