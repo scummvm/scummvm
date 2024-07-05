@@ -19,8 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/stream.h"
 #include <string>
@@ -32,12 +30,6 @@
 
 
 namespace QDEngine {
-
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 int qdNamedObjectReference::objects_counter_ = 0;
 

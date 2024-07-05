@@ -19,8 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include "qdengine/qd_precomp.h"
 #include "qdengine/qdcore/qd_game_scene.h"
 #include "qdengine/qdcore/qd_game_dispatcher.h"
@@ -28,11 +26,6 @@
 
 
 namespace QDEngine {
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 qdScreenTextDispatcher::qdScreenTextDispatcher() {
 	text_sets_.reserve(16);

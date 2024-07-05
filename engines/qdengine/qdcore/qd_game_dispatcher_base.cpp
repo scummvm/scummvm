@@ -19,8 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include "qdengine/qd_precomp.h"
 
 #include "qdengine/parser/xml_tag.h"
@@ -30,14 +28,7 @@
 #include "qdengine/qdcore/qd_animation_set.h"
 #include "qdengine/qdcore/qd_game_dispatcher_base.h"
 
-
 namespace QDEngine {
-
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 qdGameDispatcherBase::qdGameDispatcherBase() {
 }

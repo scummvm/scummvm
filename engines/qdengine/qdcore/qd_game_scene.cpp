@@ -45,7 +45,6 @@
 
 #include "qdengine/system/app_core.h"
 
-
 namespace QDEngine {
 
 struct qdGridZoneOrdering {

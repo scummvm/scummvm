@@ -30,7 +30,7 @@ class SeekableWriteStream;
 
 namespace QDEngine {
 
-//! Мышь.
+//! Mouse
 class qdGameObjectMouse : public qdGameObjectAnimated {
 public:
 	qdGameObjectMouse();

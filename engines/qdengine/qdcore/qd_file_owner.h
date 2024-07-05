@@ -22,8 +22,6 @@
 #ifndef QDENGINE_QDCORE_QD_FILE_OWNER
 #define QDENGINE_QDCORE_QD_FILE_OWNER
 
-
-
 namespace QDEngine {
 
 class qdFileOwner {

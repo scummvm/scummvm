@@ -19,8 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/textconsole.h"
 #include "qdengine/qdengine.h"
@@ -32,11 +30,6 @@
 #include "qdengine/qdcore/qd_setup.h"
 #include "qdengine/qdcore/qd_game_dispatcher.h"
 #include "qdengine/qdcore/qd_file_manager.h"
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 namespace QDEngine {
 

@@ -35,9 +35,7 @@
 #include "qdengine/qdcore/qd_animation_set.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 
-
 namespace QDEngine {
-
 
 #ifdef _QUEST_EDITOR
 bool qdGameObjectAnimated::fast_state_merge_ = false;

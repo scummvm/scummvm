@@ -27,11 +27,6 @@
 
 
 namespace QDEngine {
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 mouseDispatcher::mouseDispatcher() : events_(0), active_events_(0), mouse_x_(0), mouse_y_(0), button_status_(0) {
 	for (int i = 0; i < EV_MOUSE_MOVE + 1; i++)

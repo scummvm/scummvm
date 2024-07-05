@@ -23,7 +23,6 @@
 #include "qdengine/qdcore/qd_font_info.h"
 #include "qdengine/qdcore/qd_file_manager.h"
 
-
 namespace QDEngine {
 
 qdFontInfo::qdFontInfo(const qdFontInfo &fi) : qdNamedObject(fi),

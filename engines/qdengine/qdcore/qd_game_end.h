@@ -25,7 +25,6 @@
 #include "qdengine/parser/xml_fwd.h"
 #include "qdengine/qdcore/qd_conditional_object.h"
 
-
 namespace QDEngine {
 
 //! Концовка игры.

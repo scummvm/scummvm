@@ -19,7 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define _NO_ZIP_
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/file.h"
@@ -29,11 +28,6 @@
 
 
 namespace QDEngine {
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 std::vector<unsigned char> rleBuffer::buffer0_(4096);
 std::vector<unsigned char> rleBuffer::buffer1_(4096);

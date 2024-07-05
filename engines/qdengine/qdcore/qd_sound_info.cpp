@@ -20,8 +20,6 @@
  */
 
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include "qdengine/qd_precomp.h"
 #include "qdengine/qdcore/qd_sound_info.h"
 #include "qdengine/qdcore/qd_game_scene.h"
@@ -29,12 +27,6 @@
 
 
 namespace QDEngine {
-
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 qdSound *qdSoundInfo::sound() const {
 	if (name()) {

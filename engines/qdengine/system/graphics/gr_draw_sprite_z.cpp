@@ -19,19 +19,11 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include "qdengine/qd_precomp.h"
 #include "gr_dispatcher.h"
 
 
 namespace QDEngine {
-
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 #ifdef _GR_ENABLE_ZBUFFER
 void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const unsigned char *p, int mode, float scale) {

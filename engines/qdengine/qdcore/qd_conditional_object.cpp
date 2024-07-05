@@ -20,7 +20,6 @@
  */
 
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/stream.h"
 #include "qdengine/qd_precomp.h"
@@ -31,11 +30,6 @@
 
 
 namespace QDEngine {
-
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 #ifdef _QUEST_EDITOR
 qdConditionalObject::ConditionsMode qdConditionalObject::backup_mode_ = qdConditionalObject::CONDITIONS_OR;

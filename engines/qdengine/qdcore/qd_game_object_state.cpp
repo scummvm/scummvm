@@ -19,8 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-
 #include "qdengine/qd_precomp.h"
 
 #include <algorithm>
@@ -44,12 +42,7 @@
 #include "qd_game_object_mouse.h"
 #endif // _QUEST_EDITOR
 
-
 namespace QDEngine {
-/* ----------------------------- STRUCT SECTION ----------------------------- */
-/* ----------------------------- EXTERN SECTION ----------------------------- */
-/* --------------------------- PROTOTYPE SECTION ---------------------------- */
-/* --------------------------- DEFINITION SECTION --------------------------- */
 
 const Vect3f qdGameObjectState::DEFAULT_BOUND(3.f, 3.f, 3.f);
 

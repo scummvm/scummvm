@@ -20,7 +20,6 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
 #include "engines/util.h"
 #include "common/textconsole.h"
 

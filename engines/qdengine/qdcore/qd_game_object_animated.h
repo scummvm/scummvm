@@ -29,13 +29,11 @@
 #include "qdengine/qdcore/qd_game_object.h"
 #include "qdengine/qdcore/qd_game_object_state.h"
 
-
 namespace QDEngine {
 
-
-//! Динамический объект.
+//! Dynamic object
 /**
-Собственно динамические объекты, персонажи и мышь.
+Paticularly dynamic object, actors and the mouse.
 */
 class qdGameObjectAnimated : public qdGameObject {
 public:
