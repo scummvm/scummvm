@@ -86,7 +86,6 @@ public:
 	virtual ~grDispatcher();
 
 	static bool sys_init();
-	static bool sys_finit();
 
 	bool is_in_fullscreen_mode() const {
 		return _isFullScreen;
