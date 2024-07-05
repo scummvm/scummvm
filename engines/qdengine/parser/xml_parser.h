@@ -43,7 +43,6 @@ public:
 	bool parse_file(const char *fname);
 
 	bool read_binary_script(const char *fname);
-	bool write_binary_script(const char *fname) const;
 	bool is_script_binary(const char *fname) const;
 	bool is_script_binary() const {
 		return binary_script_;
