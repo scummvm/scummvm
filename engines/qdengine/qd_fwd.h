@@ -22,6 +22,7 @@
 #ifndef QDENGINE_QD_FWD_H
 #define QDENGINE_QD_FWD_H
 
+#include <string>
 #include <list>
 
 namespace Common {
@@ -99,3 +100,4 @@ typedef std::list<qdFontInfo *> qdFontInfoList;
 } // namespace QDEngine
 
 #endif // QDENGINE_QD_FWD_H
+

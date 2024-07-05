@@ -145,7 +145,6 @@ int engineMain() {
 	grD->ShowMouse(); // FIXME HACK
 
 	qdGameConfig::get_config().load();
-	setlocale(LC_CTYPE, qdGameConfig::get_config().locale());
 
 #ifdef __QD_TRIGGER_PROFILER__
 	if (qdGameConfig::get_config().is_profiler_enabled())
@@ -441,3 +440,4 @@ bool request_CD_handler(int cd_id) {
 
 }; // namespace main
 } // namespace QDEngine
+
