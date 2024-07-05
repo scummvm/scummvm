@@ -642,29 +642,6 @@ bool qdInterfaceDispatcher::handle_event(int event_code, const char *event_data,
 	return false;
 }
 
-bool qdInterfaceDispatcher::adjust_pack_files(const char *pack_dir, bool can_overwrite) {
-	std::list<qdInterfaceElementState *> interf_list;
-	resources_.get_owners(interf_list);
-	qdFileNameList res_file_list;
-	resources_.get_file_list(res_file_list);
-
-	const char *str;
-	bool all_ok = true;
-	// Правим все найденные файлы ресурсов в qdInterfaceElementState.
-	// Заметим, что пути в resources_ правятся автоматически
-	for (qdFileNameList::const_iterator it1 = res_file_list.begin();
-	        res_file_list.end() != it1;
-	        ++it1) {
-		for (std::list<qdInterfaceElementState * >::const_iterator it2 = interf_list.begin();
-		        interf_list.end() != it2;
-		        ++it2)
-			if (false == (*it2)->adjust_res_file((*it1).c_str(), pack_dir, str, can_overwrite))
-				all_ok = false;
-	}
-
-	return all_ok;
-};
-
 bool qdInterfaceDispatcher::get_file_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const {
 	for (screen_list_t::const_iterator it = screen_list().begin(); it != screen_list().end(); ++it) {
 		if ((*it)->has_music_track())

@@ -488,13 +488,10 @@ public:
 	bool game_screenshot(const char *file_name, int sx, int sy) const;
 
 	void scan_files(qdLoadingProgressFnc progress_fnc, void *context_ptr);
-	//! Правит пути файлов глобальных объектов: файлы без упаковки в copy_dir, пакетные в pack_dir
-	bool adjust_global_object_files_paths(const char *copy_dir, const char *pack_dir, bool can_overwrite = false);
 	/**
 	    Собирает все файлы находящиеся НЕ внутри рабочей дирректории в collect_dir,
 	    исправляя пути файлов в соответствующих им объектах
 	*/
-	bool collect_all_external_files(const char *collector_dir);
 	bool get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const;
 
 	void set_game_title(const char *p) {
@@ -549,10 +546,6 @@ public:
 	qdFontInfo *find_font_info(int type);
 	const qdFontInfo *find_font_info(int type) const;
 	const grFont *find_font(int type) const;
-
-	//! Копирование ресурсов в папку и из папки
-	bool copy_resources_to_folder(const char *dest_dir, const char *file_extension, qdLoadingProgressFnc callback = NULL, void *callback_context = NULL);
-	bool copy_resources_from_folder(const char *src_dir, const char *file_extension, qdLoadingProgressFnc callback = NULL, void *callback_context = NULL);
 
 	bool set_fade(bool fade_in, float duration);
 

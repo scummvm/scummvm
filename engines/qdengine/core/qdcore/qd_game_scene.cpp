@@ -1728,39 +1728,6 @@ bool qdGameScene::set_personage_button(qdInterfaceButton *p) {
 	return ret;
 }
 
-bool qdGameScene::adjust_files_paths(const char *copy_dir, const char *pack_dir, bool can_overwrite) {
-	std::string copy_corr_dir = copy_dir;
-	app_io::adjust_dir_end_slash(copy_corr_dir);
-	std::string pack_corr_dir = pack_dir;
-	app_io::adjust_dir_end_slash(pack_corr_dir);
-
-	bool all_ok = true;
-	for (qdMusicTrackList::const_iterator it = music_track_list().begin(); it != music_track_list().end(); ++it)
-		QD_ADJUST_TO_REL_FILE_MEMBER(copy_corr_dir, (*it)->file_name, (*it)->set_file_name, can_overwrite, all_ok);
-
-	for (qdSoundList::const_iterator it = sound_list().begin(); it != sound_list().end(); ++it)
-		QD_ADJUST_TO_REL_FILE_MEMBER(pack_corr_dir, (*it)->file_name, (*it)->set_file_name, can_overwrite, all_ok);
-
-	for (qdAnimationList::const_iterator it = animation_list().begin(); it != animation_list().end(); ++it)
-		QD_ADJUST_TO_REL_FILE_MEMBER(pack_corr_dir, (*it)->qda_file, (*it)->qda_set_file, can_overwrite, all_ok);
-
-	for (qdGameObjectList::const_iterator it = object_list().begin(); it != object_list().end(); ++it) {
-		if ((*it)->named_object_type() == QD_NAMED_OBJECT_STATIC_OBJ) {
-			qdGameObjectStatic *obj = static_cast<qdGameObjectStatic *>(*it);
-			if (obj->get_sprite()->file())
-				QD_ADJUST_TO_REL_FILE_MEMBER(pack_corr_dir,
-				                             obj->get_sprite()->file,
-				                             obj->get_sprite()->set_file,
-				                             can_overwrite,
-				                             all_ok);
-			std::string str = obj->get_sprite()->file();
-			str = str;
-		}
-	}
-
-	return all_ok;
-}
-
 bool qdGameScene::get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const {
 	for (qdMusicTrackList::const_iterator it = music_track_list().begin(); it != music_track_list().end(); ++it)
 		files_to_copy.push_back((*it)->file_name());

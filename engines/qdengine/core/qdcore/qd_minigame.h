@@ -94,7 +94,6 @@ public:
 	//! Запись данных в скрипт.
 	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 
-	bool adjust_files_paths(const char *copy_dir, const char *pack_dir, bool can_overwrite = false);
 	//! Добавляет в передаваемые списки имена файлов, необходимых для миниигры.
 	bool get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const;
 

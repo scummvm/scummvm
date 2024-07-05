@@ -247,7 +247,6 @@ public:
 	*/
 	bool handle_event(int event_code, const char *event_data, qdInterfaceObjectBase *sender = NULL);
 
-	bool adjust_pack_files(const char *pack_dir, bool can_overwrite = false);
 	//! Пишет список всех файлов ресурсов в list.
 	bool get_file_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const;
 

@@ -84,7 +84,6 @@ public:
 
 	qdConditionalObject::trigger_start_mode trigger_start();
 
-	bool adjust_files_paths(const char *copy_dir, const char *pack_dir, bool can_overwrite = false);
 	bool get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const;
 
 	bool is_intro_movie() const {
