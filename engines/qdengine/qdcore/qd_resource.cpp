@@ -79,35 +79,7 @@ qdResource::file_format_t qdResourceInfo::file_format() const {
 	return qdResource::RES_UNKNOWN;
 }
 
-bool qdResourceInfo::write(XStream &fh, int line_class_id) const {
-	if (!resource_) return false;
-
-	fh < "<tr";
-
-	if (line_class_id != -1) {
-		if (line_class_id) fh < " class=\"line1\"";
-		else fh < " class=\"line0\"";
-	}
-
-	static XBuffer name;
-	name.init();
-
-	if (resource_owner_)
-		name < resource_owner_->name();
-	else
-		name < "???";
-
-	fh < "><td nowrap class=\"name\">" < qdscr_XML_string(name.c_str());
-	fh < "</td><td nowrap>" < qdscr_XML_string(resource_->resource_file()) < "</td><td class=\"to_r\">";
-
-	static char buf[1024];
-	float sz = float(data_size_) / (1024.0f * 1024.0f);
-	snprintf(buf, 1024, "%.2f", sz);
-	fh < buf;
-
-	fh < "</td></tr>\r\n";
-
-	return true;
-}
 #endif
+
 } // namespace QDEngine
+
