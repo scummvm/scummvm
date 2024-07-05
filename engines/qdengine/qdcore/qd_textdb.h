@@ -56,7 +56,6 @@ public:
 	Если clear_old_texts == true, то загруженная в данный момент база очищается.
 	В финальной версии база комментариев игнорируется.
 	*/
-	bool load(const char *file_name, const char *comments_file_name = NULL, bool clear_old_texts = true);
 	bool load(XStream &fh, const char *comments_file_name = NULL, bool clear_old_texts = true);
 	bool load(XZipStream &fh, const char *comments_file_name = NULL, bool clear_old_texts = true);
 	bool load(Common::SeekableReadStream *fh, const char *comments_file_name = NULL, bool clear_old_texts = true);
@@ -87,3 +86,4 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_TEXTDB_H
+

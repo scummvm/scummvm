@@ -70,14 +70,6 @@ const char *qdTextDB::getComment(const char *text_id) const {
 	return str;
 }
 
-bool qdTextDB::load(const char *file_name, const char *comments_file_name, bool clear_old_texts) {
-	XStream fh(0);
-	if (!fh.open(file_name, XS_IN))
-		return false;
-
-	return load(fh, comments_file_name, clear_old_texts);
-}
-
 bool qdTextDB::load(XStream &fh, const char *comments_file_name, bool clear_old_texts) {
 	warning("STUB: qdTextDB::load(XStream fh: %s)", comments_file_name);
 	return true;
@@ -190,3 +182,4 @@ bool qdTextDB::getRootIdList(IdList &idList) const {
 	return true;
 }
 } // namespace QDEngine
+
