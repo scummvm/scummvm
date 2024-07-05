@@ -460,49 +460,62 @@ void qdCoordsAnimation::set_time_rel(float tm) {
 	set_cur_point(pt);
 }
 
-bool qdCoordsAnimation::load_data(qdSaveStream &fh, int save_version) {
+bool qdCoordsAnimation::load_data(Common::SeekableReadStream &fh, int save_version) {
 	if (!qdNamedObject::load_data(fh, save_version)) return false;
 
 	int v;
-	fh > v;
+	v = fh.readSint32LE();
 	status_ = (v) ? true : false;
 
-	fh > v;
+	v = fh.readSint32LE();
 	is_finished_ = (v) ? true : false;
 
-	fh > cur_point_ > v;
+	cur_point_ = fh.readSint32LE();
+	v = fh.readSint32LE();
 	if (points_.size() != v) return false;
 
-	if (save_version >= 101)
-		fh > del_.x > del_.y > del_.z;
-	else
+	if (save_version >= 101) {
+		del_.x = fh.readFloatLE();
+		del_.y = fh.readFloatLE();
+		del_.z = fh.readFloatLE();
+	} else {
 		del_ = Vect3f::ZERO;
+	}
 
-	for (qdCoordsAnimationPointVector::iterator it = points_.begin(); it != points_.end(); ++it)
-		it->load_data(fh, save_version);
+	for (auto &it : points_)
+		it.load_data(fh, save_version);
 
 	start_point_.load_data(fh, save_version);
 
 	Vect3f vec;
-	fh > vec.x > vec.y > vec.z;
+	vec.x = fh.readFloatLE();
+	vec.y = fh.readFloatLE();
+	vec.z = fh.readFloatLE();
 	start_point_.set_dest_pos(vec);
 
 	return true;
 }
 
-bool qdCoordsAnimation::save_data(qdSaveStream &fh) const {
+bool qdCoordsAnimation::save_data(Common::SeekableWriteStream &fh) const {
 	if (!qdNamedObject::save_data(fh)) return false;
 
-	fh < static_cast<int>(status_) < static_cast<int>(is_finished_) < cur_point_ < points_.size();
+	fh.writeSint32LE(static_cast<int>(status_));
+	fh.writeSint32LE(static_cast<int>(is_finished_));
+	fh.writeSint32LE(cur_point_);
+	fh.writeUint32LE(points_.size());
 
-	fh < del_.x < del_.y < del_.z;
+	fh.writeFloatLE(del_.x);
+	fh.writeFloatLE(del_.y);
+	fh.writeFloatLE(del_.z);
 
 	for (qdCoordsAnimationPointVector::const_iterator it = points_.begin(); it != points_.end(); ++it)
 		it->save_data(fh);
 
 	start_point_.save_data(fh);
-	fh < start_point_.dest_pos().x < start_point_.dest_pos().y < start_point_.dest_pos().z;
-
+	
+	fh.writeFloatLE(start_point_.dest_pos().x);
+	fh.writeFloatLE(start_point_.dest_pos().y);
+	fh.writeFloatLE(start_point_.dest_pos().z);
 	return true;
 }
 } // namespace QDEngine

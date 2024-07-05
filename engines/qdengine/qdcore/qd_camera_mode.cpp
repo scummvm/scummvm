@@ -92,12 +92,16 @@ bool qdCameraMode::save_script(Common::SeekableWriteStream &fh, int indent) cons
 	return true;
 }
 
-bool qdCameraMode::load_data(qdSaveStream &fh, int save_version) {
+bool qdCameraMode::load_data(Common::SeekableReadStream &fh, int save_version) {
 	int mode;
-	fh > mode > work_time_ > scrolling_speed_ > scrolling_distance_ > center_offset_.x > center_offset_.y;
+	mode = fh.readSint32LE();
+	work_time_ = fh.readFloatLE();
+	scrolling_speed_ = fh.readFloatLE();
+	scrolling_distance_ = fh.readSint32LE();
+	center_offset_.x = fh.readSint32LE();
+	center_offset_.y = fh.readSint32LE();
 
-	char switch_flag;
-	fh > switch_flag;
+	char switch_flag = fh.readByte();
 	smooth_switch_ = (switch_flag) ? true : false;
 
 	return true;
@@ -121,12 +125,4 @@ bool qdCameraMode::save_data(Common::SeekableWriteStream &fh) const {
 	return true;
 }
 
-bool qdCameraMode::save_data(qdSaveStream &fh) const {
-	fh < int(camera_mode_) < work_time_ < scrolling_speed_ < scrolling_distance_ < center_offset_.x < center_offset_.y;
-
-	if (smooth_switch_) fh < char(1);
-	else fh < char(0);
-
-	return true;
-}
 } // namespace QDEngine

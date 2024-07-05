@@ -46,8 +46,7 @@ public:
 	bool load_script(const xml::tag *p);
 	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 
-	bool load_data(qdSaveStream &fh, int save_version);
-	bool save_data(qdSaveStream &fh) const;
+	bool load_data(Common::SeekableReadStream &fh, int save_version);
 	bool save_data(Common::SeekableWriteStream &fh);
 
 	void take_object(qdGameObjectAnimated *p);

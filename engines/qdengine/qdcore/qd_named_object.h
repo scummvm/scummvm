@@ -125,10 +125,8 @@ public:
 	virtual int named_object_type() const = 0;
 
 	//! Загрузка данных из сэйва.
-	virtual bool load_data(qdSaveStream &fh, int save_version);
 	virtual bool load_data(Common::SeekableReadStream &fh, int save_version);
 	//! Запись данных в сэйв.
-	virtual bool save_data(qdSaveStream &fh) const;
 	virtual bool save_data(Common::SeekableWriteStream &fh) const;
 
 
@@ -149,7 +147,7 @@ public:
 		return (trigger_reference_count_ > 0);
 	}
 
-	Common::String toString();
+	Common::String toString() const;
 
 private:
 

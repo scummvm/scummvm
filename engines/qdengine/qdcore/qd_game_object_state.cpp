@@ -627,26 +627,23 @@ void qdGameObjectState::set_bound(const Vect3f &b) {
 	radius_ = b2.norm();
 }
 
-bool qdGameObjectState::load_data(qdSaveStream &fh, int save_version) {
+bool qdGameObjectState::load_data(Common::SeekableReadStream &fh, int save_version) {
 	if (!qdConditionalObject::load_data(fh, save_version)) return false;
 
-	fh > cur_time_;
+	cur_time_ = fh.readFloatLE();
 
-	int idx;
-	fh > idx;
+	int idx = fh.readSint32LE();
 
 	if (idx != -1)
 		prev_state_ = static_cast<qdGameObjectAnimated * >(owner())->get_state(idx);
 	else
 		prev_state_ = NULL;
 
-	char cidx;
-	fh > cidx;
+	char cidx = fh.readByte();
 	if (cidx) {
-		fh > cidx;
+		cidx = fh.readByte();
 		if (cidx) {
-			float pos;
-			fh > pos;
+			float pos = fh.readFloatLE();
 
 			if (qdSound * snd = sound()) {
 				if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
@@ -658,7 +655,7 @@ bool qdGameObjectState::load_data(qdSaveStream &fh, int save_version) {
 			is_sound_started_ = true;
 		}
 
-		fh > cidx;
+		cidx = fh.readByte();
 		is_sound_started_ = (cidx) ? true : false;
 
 		if (!coords_animation_.is_empty()) {
@@ -670,36 +667,37 @@ bool qdGameObjectState::load_data(qdSaveStream &fh, int save_version) {
 	return true;
 }
 
-bool qdGameObjectState::save_data(qdSaveStream &fh) const {
+bool qdGameObjectState::save_data(Common::SeekableWriteStream &fh) const {
 	if (!qdConditionalObject::save_data(fh)) return false;
 
-	fh < cur_time_;
+	fh.writeFloatLE(cur_time_);
 
 	int idx = -1;
 	if (prev_state_ && owner())
 		idx = static_cast<qdGameObjectAnimated * >(owner())->get_state_index(prev_state_);
-	fh < idx;
+	fh.writeSint32LE(idx);
 
 	if (is_active()) {
-		fh < char(1);
+		fh.writeByte(1);
 
 		if (const qdSound * snd = sound()) {
 			if (!snd->is_stopped(&sound_handle_)) {
 				float pos = snd->position(&sound_handle_);
-				fh < char(1) < pos;
+				fh.writeByte(1);
+				fh.writeFloatLE(pos);
 			} else
-				fh < char(0);
+				fh.writeByte(0);
 		} else
-			fh < char(0);
+			fh.writeByte(0);
 
-		fh < char(is_sound_started_);
+		fh.writeByte(is_sound_started_);
 
 		if (!coords_animation_.is_empty()) {
 			if (!coords_animation_.save_data(fh))
 				return false;
 		}
 	} else
-		fh < char(0);
+		fh.writeByte(0);
 
 	return true;
 }

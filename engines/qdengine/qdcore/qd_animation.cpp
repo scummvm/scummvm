@@ -905,12 +905,12 @@ Vect2i qdAnimation::remove_edges() {
 	return Vect2i(left, top);
 }
 
-bool qdAnimation::load_data(qdSaveStream &fh, int save_version) {
-#ifndef __QD_SYSLIB__
-	if (!qdNamedObject::load_data(fh, save_version)) return false;
+bool qdAnimation::load_data(Common::SeekableReadStream &fh, int save_version) {
+	if (!qdNamedObject::load_data(fh, save_version))
+		return false;
 
 	char fl;
-	fh > fl;
+	fl = fh.readByte();
 
 	if (fl) {
 		qdNamedObjectReference ref;
@@ -933,29 +933,32 @@ bool qdAnimation::load_data(qdSaveStream &fh, int save_version) {
 		clear();
 
 	char st, finished;
-	fh > st > finished > cur_time_ > length_;
+	st = fh.readByte();
+	finished = fh.readByte();
+	cur_time_ = fh.readFloatLE();
+	length_ = fh.readFloatLE();
 
 	status_ = st;
 	is_finished_ = (finished) ? true : false;
-#endif
 	return true;
 }
 
-bool qdAnimation::save_data(qdSaveStream &fh) const {
-#ifndef __QD_SYSLIB__
+bool qdAnimation::save_data(Common::SeekableWriteStream &fh) const {
 	if (!qdNamedObject::save_data(fh)) return false;
 
 	if (check_flag(QD_ANIMATION_FLAG_REFERENCE) && parent_) {
-		fh < (char)1;
+		fh.writeByte(1);
 		qdNamedObjectReference ref(parent_);
 
 		if (!ref.save_data(fh))
 			return false;
 	} else
-		fh < (char)0;
+		fh.writeByte(0);
 
-	fh < char(status_) < char(is_finished_) < cur_time_ < length_;
-#endif
+	fh.writeByte(status_);
+	fh.writeByte(is_finished_);
+	fh.writeFloatLE(cur_time_);
+	fh.writeFloatLE(length_);
 	return true;
 }
 

@@ -179,47 +179,12 @@ bool qdNamedObjectReference::load_data(Common::SeekableReadStream &fh, int versi
 	return true;
 }
 
-bool qdNamedObjectReference::load_data(qdSaveStream &fh, int version) {
-	int num_levels = 0;
-
-	fh > num_levels;
-
-	object_types_.resize(num_levels);
-	object_names_.resize(num_levels);
-
-	std::string str(256, '\0');
-
-	for (int i = 0; i < num_levels; i ++) {
-		int type, name_len;
-		fh > type > name_len;
-		if (str.size() < name_len + 1) str.resize(name_len + 1);
-		fh.read(&*str.begin(), name_len);
-
-		object_types_[i] = type;
-		object_names_[i] = str.c_str();
-	}
-
-	return true;
-}
-
 bool qdNamedObjectReference::save_data(Common::SeekableWriteStream &fh) const {
 	fh.writeSint32LE(num_levels());
 
 	for (int i = 0; i < num_levels(); i ++) {
 		fh.writeSint32LE(object_types_[i]);
 		fh.writeUint32LE(strlen(object_names_[i].c_str()) + 1);
-	}
-
-	return true;
-}
-
-bool qdNamedObjectReference::save_data(qdSaveStream &fh) const {
-	fh < num_levels();
-
-	for (int i = 0; i < num_levels(); i ++) {
-		fh < object_types_[i] < strlen(object_names_[i].c_str()) + 1;
-		fh.write(object_names_[i].c_str(), strlen(object_names_[i].c_str()) + 1);
-//		fh < '\0';
 	}
 
 	return true;

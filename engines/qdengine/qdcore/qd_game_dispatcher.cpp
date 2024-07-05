@@ -24,6 +24,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/stream.h"
+#include "common/system.h"
 #include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
 #include "qdengine/parser/xml_parser.h"
@@ -2489,81 +2490,80 @@ bool qdGameDispatcher::load_save(const char *fname) {
 
 	free_resources();
 
-	qdSaveStream fh(fname, XS_IN);
+	Common::SeekableReadStream *fh;
+	fh = g_engine->_savefileMan->openForLoading(Common::Path(fname, '\\').toString());
 	int save_version;
-	fh > save_version;
+	save_version = fh->readSint32LE();
 
 	qdNamedObjectReference ref;
 
-	if (!ref.load_data(fh, save_version)) return false;
+	if (!ref.load_data(*fh, save_version)) return false;
 
 	qdGameScene *cur_scene_ptr = static_cast<qdGameScene *>(get_named_object(&ref));
 	select_scene(0, false);
 
-	if (!ref.load_data(fh, save_version)) return false;
+	if (!ref.load_data(*fh, save_version)) return false;
 	if (qdMusicTrack * p = static_cast<qdMusicTrack * >(get_named_object(&ref))) {
 		cur_music_track_ = 0;
 		play_music_track(p);
 	}
 
-	int flag;
-	fh > flag;
+	int flag = fh->readSint32LE();
 	if (flag)
 		toggle_inventory(true);
 	else
 		toggle_inventory(false);
 
-	int size;
-	fh > size;
+	int size = fh->readSint32LE();
 	if (size != global_object_list().size()) return false;
 
-	for (qdGameObjectList::const_iterator it = global_object_list().begin(); it != global_object_list().end(); ++it) {
-		if (!(*it)->load_data(fh, save_version))
+	for (auto it : global_object_list()) {
+		if (!it->load_data(*fh, save_version))
 			return false;
 	}
 
-	fh > size;
+	size = fh->readSint32LE();
 	if (size != counter_list().size()) return false;
 
-	for (qdCounterList::const_iterator it = counter_list().begin(); it != counter_list().end(); ++it) {
-		if (!(*it)->load_data(fh, save_version))
+	for (auto it : counter_list()) {
+		if (!it->load_data(*fh, save_version))
 			return false;
 	}
 
-	fh > size;
+	size = fh->readSint32LE();
 	if (size != scene_list().size()) return false;
 
-	for (qdGameSceneList::const_iterator it = scene_list().begin(); it != scene_list().end(); ++it) {
-		if (!(*it)->load_data(fh, save_version))
+	for (auto it : scene_list()) {
+		if (!it->load_data(*fh, save_version))
 			return false;
 	}
 
-	fh > size;
+	size = fh->readSint32LE();
 	if (size != global_object_list().size()) return false;
 
-	for (qdGameObjectList::const_iterator it = global_object_list().begin(); it != global_object_list().end(); ++it) {
-		if (!(*it)->load_data(fh, save_version))
+	for (auto it : global_object_list()) {
+		if (!it->load_data(*fh, save_version))
 			return false;
 	}
 
-	fh > size;
+	size = fh->readSint32LE();
 	if (size != trigger_chain_list().size()) return false;
 
-	for (qdTriggerChainList::const_iterator it = trigger_chain_list().begin(); it != trigger_chain_list().end(); ++it) {
-		if (!(*it)->load_data(fh, save_version))
+	for (auto &it : trigger_chain_list()) {
+		if (!it->load_data(*fh, save_version))
 			return false;
 	}
 
-	fh > size;
+	size = fh->readSint32LE();
 	if (size != inventory_list().size()) return false;
 
-	for (qdInventoryList::const_iterator it = inventory_list().begin(); it != inventory_list().end(); ++it) {
-		if (!(*it)->load_data(fh, save_version))
+	for (auto &it : inventory_list()) {
+		if (!it->load_data(*fh, save_version))
 			return false;
 	}
 
 	if (save_version >= 10)
-		mouse_obj_->load_data(fh, save_version);
+		mouse_obj_->load_data(*fh, save_version);
 
 	if (cur_scene_ptr)
 		select_scene(cur_scene_ptr, false);

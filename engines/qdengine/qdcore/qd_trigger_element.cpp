@@ -885,44 +885,6 @@ bool qdTriggerElement::load_data(Common::SeekableReadStream &fh, int saveVersion
 	return true;
 }
 
-bool qdTriggerElement::load_data(qdSaveStream &fh, int save_version) {
-	char st;
-	fh > st;
-
-	/*  switch(st){
-	    case TRIGGER_EL_INACTIVE_ALL:
-	        set_status(TRIGGER_EL_INACTIVE);
-	        for(qdTriggerLinkList::iterator it = parents_.begin(); it != parents_.end(); ++it)
-	            it->set_status(qdTriggerLink::LINK_INACTIVE);
-	        for(qdTriggerLinkList::iterator it = children_.begin(); it != children_.end(); ++it)
-	            it->set_status(qdTriggerLink::LINK_INACTIVE);
-	        return true;
-	    case TRIGGER_EL_DONE_ALL:
-	        set_status(TRIGGER_EL_DONE);
-	        for(qdTriggerLinkList::iterator it = parents_.begin(); it != parents_.end(); ++it)
-	            it->set_status(qdTriggerLink::LINK_DONE);
-	        for(qdTriggerLinkList::iterator it = children_.begin(); it != children_.end(); ++it)
-	            it->set_status(qdTriggerLink::LINK_DONE);
-	        return true;
-	    }*/
-
-	set_status(ElementStatus(st));
-
-	for (qdTriggerLinkList::iterator it = parents_.begin(); it != parents_.end(); ++it) {
-		fh > st;
-
-		it->set_status(qdTriggerLink::LinkStatus(st));
-	}
-
-	for (qdTriggerLinkList::iterator it = children_.begin(); it != children_.end(); ++it) {
-		fh > st;
-
-		it->set_status(qdTriggerLink::LinkStatus(st));
-	}
-
-	return true;
-}
-
 bool qdTriggerElement::save_data(Common::SeekableWriteStream &fh) const {
 	/*  switch(status_){
 	    case TRIGGER_EL_INACTIVE:
@@ -958,43 +920,6 @@ bool qdTriggerElement::save_data(Common::SeekableWriteStream &fh) const {
 	for (auto &it : children_) {
 		fh.writeByte(it.status());
 	}
-
-	return true;
-}
-
-bool qdTriggerElement::save_data(qdSaveStream &fh) const {
-	/*  switch(status_){
-	    case TRIGGER_EL_INACTIVE:
-	        for(qdTriggerLinkList::const_iterator it = parents_.begin(); it != parents_.end(); ++it){
-	            if(it->status() != qdTriggerLink::LINK_INACTIVE)
-	                break;
-	        }
-	        for(qdTriggerLinkList::const_iterator it = children_.begin(); it != children_.end(); ++it){
-	            if(it->status() != qdTriggerLink::LINK_INACTIVE)
-	                break;
-	        }
-	        fh < char(TRIGGER_EL_INACTIVE_ALL);
-	        return true;
-	    case TRIGGER_EL_DONE:
-	        for(qdTriggerLinkList::const_iterator it = parents_.begin(); it != parents_.end(); ++it){
-	            if(it->status() != qdTriggerLink::LINK_DONE)
-	                break;
-	        }
-	        for(qdTriggerLinkList::const_iterator it = children_.begin(); it != children_.end(); ++it){
-	            if(it->status() != qdTriggerLink::LINK_DONE)
-	                break;
-	        }
-	        fh < char(TRIGGER_EL_DONE_ALL);
-	        return true;
-	    }*/
-
-	fh < char(status_);
-
-	for (qdTriggerLinkList::const_iterator it = parents_.begin(); it != parents_.end(); ++it)
-		fh < char(it->status());
-
-	for (qdTriggerLinkList::const_iterator it = children_.begin(); it != children_.end(); ++it)
-		fh < char(it->status());
 
 	return true;
 }
@@ -1124,3 +1049,4 @@ bool qdTriggerElement::clear_object_trigger_references() {
 	return false;
 }
 } // namespace QDEngine
+

@@ -252,9 +252,9 @@ public:
 #endif
 
 	//! Загрузка данных из сэйва.
-	bool load_data(qdSaveStream &fh, int save_version);
+	bool load_data(Common::SeekableReadStream &fh, int save_version);
 	//! Запись данных в сэйв.
-	bool save_data(qdSaveStream &fh) const;
+	bool save_data(Common::SeekableWriteStream &fh) const;
 
 	bool add_scale(float value);
 	bool create_scaled_frames();

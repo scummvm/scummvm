@@ -455,22 +455,6 @@ bool qdTriggerChain::load_data(Common::SeekableReadStream &fh, int save_version)
 	return true;
 }
 
-bool qdTriggerChain::load_data(qdSaveStream &fh, int save_version) {
-	int size;
-	fh > size;
-
-	if (size != elements_.size()) return false;
-
-	if (!root_element()->load_data(fh, save_version)) return false;
-
-	for (qdTriggerElementList::iterator it = elements_.begin(); it != elements_.end(); ++it) {
-		if (!(*it)->load_data(fh, save_version))
-			return false;
-	}
-
-	return true;
-}
-
 bool qdTriggerChain::save_data(Common::SeekableWriteStream &fh) const {
 	fh.writeUint32LE(elements_.size());
 
@@ -482,19 +466,6 @@ bool qdTriggerChain::save_data(Common::SeekableWriteStream &fh) const {
 		if (!it->save_data(fh)) {
 			return false;
 		}
-	}
-
-	return true;
-}
-
-bool qdTriggerChain::save_data(qdSaveStream &fh) const {
-	fh < elements_.size();
-
-	if (!root_element()->save_data(fh)) return false;
-
-	for (qdTriggerElementList::const_iterator it = elements_.begin(); it != elements_.end(); ++it) {
-		if (!(*it)->save_data(fh))
-			return false;
 	}
 
 	return true;
@@ -551,3 +522,4 @@ bool qdTriggerChain::deactivate_object_triggers(const qdNamedObject *p) {
 	return ret;
 }
 } // namespace QDEngine
+

@@ -249,11 +249,11 @@ bool qdConditionalObject::restore_object() {
 }
 #endif
 
-bool qdConditionalObject::load_data(qdSaveStream &fh, int save_version) {
+bool qdConditionalObject::load_data(Common::SeekableReadStream &fh, int save_version) {
 	if (!qdNamedObject::load_data(fh, save_version)) return false;
 
-	for (conditions_container_t::iterator it = conditions_.begin(); it != conditions_.end(); ++it)
-		it->load_data(fh, save_version);
+	for (auto &it : conditions_)
+		it.load_data(fh, save_version);
 
 	return true;
 }
@@ -265,16 +265,6 @@ bool qdConditionalObject::save_data(Common::SeekableWriteStream &fh) const {
 
 	for (conditions_container_t::const_iterator it = conditions_.begin(); it != conditions_.end(); ++it)
 		it->save_data(fh);
-
-	return true;
-}
-
-bool qdConditionalObject::save_data(qdSaveStream &fh) const {
-	if (!qdNamedObject::save_data(fh)) return false;
-
-	for (auto &it : conditions_) {
-		it.save_data(fh);
-	}
 
 	return true;
 }

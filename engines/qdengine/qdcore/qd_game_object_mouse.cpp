@@ -123,12 +123,11 @@ bool qdGameObjectMouse::save_script(Common::SeekableWriteStream &fh, int indent)
 
 }
 
-bool qdGameObjectMouse::load_data(qdSaveStream &fh, int save_version) {
+bool qdGameObjectMouse::load_data(Common::SeekableReadStream &fh, int save_version) {
 	if (!qdGameObjectAnimated::load_data(fh, save_version))
 		return false;
 
-	int fl;
-	fh > fl;
+	int fl = fh.readSint32LE();
 
 	if (fl) {
 		qdNamedObjectReference ref;
@@ -158,21 +157,6 @@ bool qdGameObjectMouse::save_data(Common::SeekableWriteStream &fh) {
 
 	return true;
 
-}
-
-bool qdGameObjectMouse::save_data(qdSaveStream &fh) const {
-	if (!qdGameObjectAnimated::save_data(fh))
-		return false;
-
-	if (object_) {
-		fh < (int)1;
-		qdNamedObjectReference ref(object_);
-		if (!ref.save_data(fh))
-			return false;
-	} else
-		fh < (int)0;
-
-	return true;
 }
 
 void qdGameObjectMouse::redraw(int offs_x, int offs_y) const {

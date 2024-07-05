@@ -959,28 +959,37 @@ const sGridCell *qdCamera::get_cell(const Vect2s &cell_pos) const {
 	return NULL;
 }
 
-bool qdCamera::load_data(qdSaveStream &fh, int save_version) {
+bool qdCamera::load_data(Common::SeekableReadStream &fh, int save_version) {
 	int x, y;
 	char flag;
-	fh > scrCenter.x > scrCenter.y > x > y > current_mode_work_time_ > flag;
+	scrCenter.x = fh.readSint32LE();
+	scrCenter.y = fh.readSint32LE();
+	x = fh.readSint32LE();
+	y = fh.readSint32LE();
+	current_mode_work_time_ = fh.readFloatLE();
+	flag = fh.readByte();
 	current_mode_switch_ = bool(flag);
 
 	if (x != GSX || y != GSY) return false;
 
-	if (!current_mode_.load_data(fh, save_version)) return false;
-	if (!default_mode_.load_data(fh, save_version)) return false;
+	if (!current_mode_.load_data(fh, save_version))
+		return false;
+	if (!default_mode_.load_data(fh, save_version))
+		return false;
 
-	fh > flag;
+	flag = fh.readByte();
 	if (flag) {
 		qdNamedObjectReference ref;
-		if (!ref.load_data(fh, save_version)) return false;
+		if (!ref.load_data(fh, save_version))
+			return false;
 		current_object_ = dynamic_cast<qdGameObjectAnimated *>(qdGameDispatcher::get_dispatcher()->get_named_object(&ref));
 	}
 
-	fh > flag;
+	flag = fh.readByte();
 	if (flag) {
 		qdNamedObjectReference ref;
-		if (!ref.load_data(fh, save_version)) return false;
+		if (!ref.load_data(fh, save_version))
+			return false;
 		default_object_ = dynamic_cast<qdGameObjectAnimated *>(qdGameDispatcher::get_dispatcher()->get_named_object(&ref));
 	}
 
@@ -1013,29 +1022,6 @@ bool qdCamera::save_data(Common::SeekableWriteStream &fh) const {
 	} else {
 		fh.writeByte(char(0));
 	}
-
-	return true;
-}
-
-bool qdCamera::save_data(qdSaveStream &fh) const {
-	fh < scrCenter.x < scrCenter.y < GSX < GSY < current_mode_work_time_ < char(current_mode_switch_);
-
-	current_mode_.save_data(fh);
-	default_mode_.save_data(fh);
-
-	if (current_object_) {
-		fh < char(1);
-		qdNamedObjectReference ref(current_object_);
-		ref.save_data(fh);
-	} else
-		fh < char(0);
-
-	if (default_object_) {
-		fh < char(1);
-		qdNamedObjectReference ref(default_object_);
-		ref.save_data(fh);
-	} else
-		fh < char(0);
 
 	return true;
 }

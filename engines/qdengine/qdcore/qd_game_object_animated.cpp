@@ -1321,10 +1321,10 @@ int qdGameObjectAnimated::get_state_index(const qdGameObjectState *p) const {
 	return -1;
 }
 
-bool qdGameObjectAnimated::load_data(qdSaveStream &fh, int save_version) {
+bool qdGameObjectAnimated::load_data(Common::SeekableReadStream &fh, int save_version) {
 	if (!qdGameObject::load_data(fh, save_version)) return false;
 
-	fh > cur_state_;
+	cur_state_ = fh.readSint32LE();
 
 	for (int i = 0; i < states.size(); i ++) {
 		if (!states[i]->load_data(fh, save_version))
@@ -1333,38 +1333,36 @@ bool qdGameObjectAnimated::load_data(qdSaveStream &fh, int save_version) {
 
 	if (!animation_.load_data(fh, save_version)) return false;
 
-	int idx;
-	fh > idx;
+	int idx = fh.readSint32LE();
 	if (idx != -1)
 		queued_state_ = get_state(idx);
 	else
 		queued_state_ = NULL;
 
-	fh > idx;
+	idx = fh.readSint32LE();
 	if (idx != -1)
 		last_state_ = get_state(idx);
 	else
 		last_state_ = NULL;
 
 	if (save_version >= 103) {
-		fh > idx;
+		idx = fh.readSint32LE();
 		if (idx != -1)
 			last_inventory_state_ = get_state(idx);
 		else
 			last_inventory_state_ = NULL;
 	}
 
-	fh > inventory_cell_index_;
-
-	fh > last_chg_time_;
+	inventory_cell_index_ = fh.readSint32LE();
+	last_chg_time_ = fh.readUint32LE();
 
 	return true;
 }
 
-bool qdGameObjectAnimated::save_data(qdSaveStream &fh) const {
+bool qdGameObjectAnimated::save_data(Common::SeekableWriteStream &fh) const {
 	if (!qdGameObject::save_data(fh)) return false;
 
-	fh < cur_state_;
+	fh.writeSint32LE(cur_state_);
 
 	for (int i = 0; i < states.size(); i ++) {
 		if (!states[i]->save_data(fh))
@@ -1376,60 +1374,24 @@ bool qdGameObjectAnimated::save_data(qdSaveStream &fh) const {
 	int idx = -1;
 	if (queued_state_)
 		idx = get_state_index(queued_state_);
-	fh < idx;
+	fh.writeSint32LE(idx);
 
 	idx = -1;
 	if (last_state_)
 		idx = get_state_index(last_state_);
-	fh < idx;
+	fh.writeSint32LE(idx);
 
 	idx = -1;
 	if (last_inventory_state_)
 		idx = get_state_index(last_inventory_state_);
-	fh < idx;
+	fh.writeSint32LE(idx);
 
-	fh < inventory_cell_index_;
+	fh.writeSint32LE(inventory_cell_index_);
 
-	fh < last_chg_time_;
+	fh.writeSint32LE(last_chg_time_);
 
 	return true;
 }
-#ifdef _QUEST_EDITOR
-bool qdGameObjectAnimated::remove_animation_edges(Vect2i &full_offset,
-        Vect2i &anim_offset) {
-	if (!qdCamera::current_camera()) return false;
-
-	if (cur_state_ != -1 && states[cur_state_]->state_type() == qdGameObjectState::STATE_STATIC) {
-		if (qdAnimationInfo * inf = static_cast<qdGameObjectStateStatic * >(states[cur_state_])->animation_info()) {
-			if (qdAnimation * p = inf->animation()) {
-				int const sx = p->size_x();
-				int const sy = p->size_y();
-
-				Vect2i offs = p->remove_edges();
-
-				if (p->qda_file())
-					p->qda_save(p->qda_file());
-
-				offs.x = offs.x + p->size_x() / 2 - (sx >> 1);
-				offs.y = offs.y + p->size_y() / 2 - (sy >> 1);
-
-				if (inf->check_flag(QD_ANIMATION_FLAG_FLIP_HORIZONTAL))
-					offs.x = -offs.x;
-				if (inf->check_flag(QD_ANIMATION_FLAG_FLIP_VERTICAL))
-					offs.y = -offs.y;
-
-				Vect2i const &state_offset = states[cur_state_]->center_offset();
-				anim_offset = offs;
-				full_offset = offs + state_offset;
-				states[cur_state_]->set_center_offset(full_offset);
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
-#endif//_QUEST_EDITOR
 
 bool qdGameObjectAnimated::is_state_active(const char *state_name) const {
 	if (cur_state_ != -1 && !strcmp(states[cur_state_]->name(), state_name))
