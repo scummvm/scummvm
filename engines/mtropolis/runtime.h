@@ -1359,6 +1359,7 @@ struct HighLevelSceneTransition {
 		kTypeReturn,
 		kTypeChangeToScene,
 		kTypeChangeSharedScene,
+		kTypeForceLoadScene,
 	};
 
 	HighLevelSceneTransition(const Common::SharedPtr<Structural> &hlst_scene, Type hlst_type, bool hlst_addToDestinationScene, bool hlst_addToReturnList);
@@ -1569,6 +1570,7 @@ public:
 
 	virtual void onSceneTransitionSetup(Runtime *runtime, const Common::WeakPtr<Structural> &oldScene, const Common::WeakPtr<Structural> &newScene);
 	virtual void onSceneTransitionEnded(Runtime *runtime, const Common::WeakPtr<Structural> &newScene);
+	virtual void onProjectStarted(Runtime *runtime);
 };
 
 class Palette {

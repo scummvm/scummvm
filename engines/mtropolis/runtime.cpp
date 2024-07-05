@@ -3151,9 +3151,7 @@ bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, c
 	} else if (attrib == "scene") {
 		result.clear();
 
-		// Scene returns the scene of the Miniscript modifier, even though it's looked up
-		// as if it's an element property, because it's treated like a keyword.
-		RuntimeObject *possibleScene = thread->getModifier();
+		RuntimeObject *possibleScene = this;
 		while (possibleScene) {
 			if (possibleScene->isModifier()) {
 				possibleScene = static_cast<Modifier *>(possibleScene)->getParent().lock().get();
@@ -3173,8 +3171,36 @@ bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, c
 			assert(false);
 			break;
 		}
+
 		if (possibleScene)
 			result.setObject(possibleScene->getSelfReference());
+		else
+			result.clear();
+		return true;
+	} else if (attrib == "section") {
+		result.clear();
+
+		RuntimeObject *possibleSection = this;
+		while (possibleSection) {
+			if (possibleSection->isSection())
+				break;
+
+			if (possibleSection->isModifier()) {
+				possibleSection = static_cast<Modifier *>(possibleSection)->getParent().lock().get();
+				continue;
+			}
+
+			if (possibleSection->isStructural()) {
+				possibleSection = static_cast<Structural *>(possibleSection)->getParent();
+				continue;
+			}
+
+			assert(false);
+			break;
+		}
+
+		if (possibleSection)
+			result.setObject(possibleSection->getSelfReference());
 		else
 			result.clear();
 		return true;
@@ -4320,6 +4346,9 @@ void SceneTransitionHooks::onSceneTransitionSetup(Runtime *runtime, const Common
 void SceneTransitionHooks::onSceneTransitionEnded(Runtime *runtime, const Common::WeakPtr<Structural> &newScene) {
 }
 
+void SceneTransitionHooks::onProjectStarted(Runtime *runtime) {
+}
+
 
 Palette::Palette() {
 	initDefaultPalette(1);
@@ -4598,6 +4627,9 @@ bool Runtime::runFrame() {
 			Common::SharedPtr<MessageProperties> psProps(new MessageProperties(Event(EventIDs::kProjectStarted, 0), DynamicValue(), _project->getSelfReference()));
 			Common::SharedPtr<MessageDispatch> psDispatch(new MessageDispatch(psProps, _project.get(), false, true, false));
 			queueMessage(psDispatch);
+
+			for (const Common::SharedPtr<SceneTransitionHooks> &hook : _hacks.sceneTransitionHooks)
+				hook->onProjectStarted(this);
 
 			_pendingSceneTransitions.push_back(HighLevelSceneTransition(firstSubsection->getChildren()[1], HighLevelSceneTransition::kTypeChangeToScene, false, false));
 			continue;
@@ -5218,6 +5250,11 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 			}
 
 			_sharedSceneWasSetExplicitly = true;
+		} break;
+	case HighLevelSceneTransition::kTypeForceLoadScene: {
+			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(transition.scene, LowLevelSceneStateTransitionAction::kLoad));
+			queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kParentEnabled, 0), transition.scene.get(), true, true);
+			queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneStarted, 0), transition.scene.get(), true, true);
 		} break;
 	default:
 		error("Unknown high-level scene transition type");

@@ -332,6 +332,8 @@ Common::Error MTropolisEngine::run() {
 		Palette pal;
 		pal.initDefaultPalette(2);
 		_runtime->setGlobalPalette(pal);
+	} else if (_gameDescription->gameID == GID_SPQR) {
+		HackSuites::addSPQRQuirks(*_gameDescription, _runtime->getHacks());
 	}
 
 
