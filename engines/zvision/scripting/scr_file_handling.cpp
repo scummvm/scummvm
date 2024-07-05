@@ -109,7 +109,7 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 			//
 			// Note that the bug only affects the DVD version. The CD
 			// version doesn't have a separate room for the cutscene.
-			else if (_engine->getGameId() == GID_GRANDINQUISITOR && (_engine->getFeatures() & GF_DVD) && puzzle->key == 10836)
+			else if (_engine->getGameId() == GID_GRANDINQUISITOR && (_engine->getFeatures() & ADGF_DVD) && puzzle->key == 10836)
 				puzzle->resultActions.push_front(new ActionAssign(_engine, 11, "10803, 0"));
 		} else if (line.matchString("flags {", true)) {
 			setStateFlag(puzzle->key, parseFlags(stream));
