@@ -21,18 +21,15 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE // atari-graphics.h's unordered_set
 
-#include "backends/graphics/atari/atari-graphics.h"
+#include "atari-graphics.h"
 
 #include <mint/cookie.h>
-#include <mint/falcon.h>
 #include <mint/osbind.h>
 #include <mint/sysvars.h>
 
-#include "backends/graphics/atari/atari-graphics-superblitter.h"
+#include "backends/platform/atari/dlmalloc.h"
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
-#include "backends/platform/atari/dlmalloc.h"
-
 #include "common/config-manager.h"
 #include "common/str.h"
 #include "common/textconsole.h"	// for warning() & error()
@@ -41,10 +38,9 @@
 #include "graphics/blit.h"
 #include "gui/ThemeEngine.h"
 
-#define SCREEN_ACTIVE
+#include "atari-graphics-superblitter.h"
 
-#define MAX_HZ_SHAKE 16 // Falcon only
-#define MAX_V_SHAKE  16
+#define SCREEN_ACTIVE
 
 bool g_unalignedPitch = false;
 mspace g_mspace = nullptr;
@@ -991,15 +987,15 @@ template <bool directRendering>	// hopefully compiler optimizes all the branchin
 bool AtariGraphicsManager::updateScreenInternal(const Graphics::Surface &srcSurface) {
 	//debug("updateScreenInternal");
 
-	const DirtyRects &dirtyRects  = _workScreen->dirtyRects;
-	Graphics::Surface *dstSurface = _workScreen->offsettedSurf;
-	bool &cursorPositionChanged   = _workScreen->cursorPositionChanged;
-	bool &cursorSurfaceChanged    = _workScreen->cursorSurfaceChanged;
-	bool &cursorVisibilityChanged = _workScreen->cursorVisibilityChanged;
-	Common::Rect &oldCursorRect   = _workScreen->oldCursorRect;
-	const bool &fullRedraw        = _workScreen->fullRedraw;
+	const Screen::DirtyRects &dirtyRects = _workScreen->dirtyRects;
+	Graphics::Surface *dstSurface        = _workScreen->offsettedSurf;
+	bool &cursorPositionChanged          = _workScreen->cursorPositionChanged;
+	bool &cursorSurfaceChanged           = _workScreen->cursorSurfaceChanged;
+	bool &cursorVisibilityChanged        = _workScreen->cursorVisibilityChanged;
+	Common::Rect &oldCursorRect          = _workScreen->oldCursorRect;
+	const bool &fullRedraw               = _workScreen->fullRedraw;
 
-	const int dstBitsPerPixel     = getBitsPerPixel(dstSurface->format);
+	const int dstBitsPerPixel            = getBitsPerPixel(dstSurface->format);
 
 	bool updated = false;
 
@@ -1128,183 +1124,4 @@ bool AtariGraphicsManager::isOverlayDirectRendering() const {
 		   && (ConfMan.getActiveDomain() == nullptr || _currentState.mode == GraphicsMode::DirectRendering)
 #endif
 		;
-}
-
-AtariGraphicsManager::Screen::Screen(AtariGraphicsManager *manager, int width, int height, const Graphics::PixelFormat &format, const Palette *palette_)
-	: _manager(manager)
-	, palette(palette_) {
-	const AtariMemAlloc &allocFunc = _manager->getStRamAllocFunc();
-
-	surf.init(
-		width + (_manager->_tt ? 0 : 2 * MAX_HZ_SHAKE),
-		height + 2 * MAX_V_SHAKE,
-		(width + (_manager->_tt ? 0 : 2 * MAX_HZ_SHAKE)) * _manager->getBitsPerPixel(format) / 8,
-		nullptr,
-		format);
-
-	void *pixelsUnaligned = allocFunc(sizeof(uintptr) + (surf.h * surf.pitch) + ALIGN - 1);
-	if (!pixelsUnaligned) {
-		error("Failed to allocate memory in ST RAM");
-	}
-
-	surf.setPixels((void *)(((uintptr)pixelsUnaligned + sizeof(uintptr) + ALIGN - 1) & (-ALIGN)));
-
-	// store the unaligned pointer for later release
-	*((uintptr *)surf.getPixels() - 1) = (uintptr)pixelsUnaligned;
-
-	memset(surf.getPixels(), 0, surf.h * surf.pitch);
-
-	_offsettedSurf.init(
-		width, height, surf.pitch,
-		surf.getBasePtr((surf.w - width) / 2, (surf.h - height) / 2),
-		surf.format);
-}
-
-AtariGraphicsManager::Screen::~Screen() {
-	const AtariMemFree &freeFunc = _manager->getStRamFreeFunc();
-
-	freeFunc((void *)*((uintptr *)surf.getPixels() - 1));
-}
-
-void AtariGraphicsManager::Screen::reset(int width, int height, int bitsPerPixel) {
-	cursorPositionChanged = true;
-	cursorSurfaceChanged = true;
-	cursorVisibilityChanged = false;
-	clearDirtyRects();
-	oldCursorRect = Common::Rect();
-	rez = -1;
-	mode = -1;
-
-	// erase old screen
-	_offsettedSurf.fillRect(Common::Rect(_offsettedSurf.w, _offsettedSurf.h), 0);
-
-	if (_manager->_tt) {
-		if (width <= 320 && height <= 240) {
-			surf.w = 320;
-			surf.h = 240 + 2 * MAX_V_SHAKE;
-			surf.pitch = 2 * surf.w * bitsPerPixel / 8;
-			rez = kRezValueTTLow;
-		} else {
-			surf.w = 640;
-			surf.h = 480 + 2 * MAX_V_SHAKE;
-			surf.pitch = surf.w * bitsPerPixel / 8;
-			rez = kRezValueTTMid;
-		}
-	} else {
-		mode = VsetMode(VM_INQUIRE) & PAL;
-
-		if (_manager->_vgaMonitor) {
-			mode |= VGA | (bitsPerPixel == 4 ? BPS4 : (hasSuperVidel() ? BPS8C : BPS8));
-
-			if (width <= 320 && height <= 240) {
-				surf.w = 320;
-				surf.h = 240;
-				mode |= VERTFLAG | COL40;
-			} else {
-				surf.w = 640;
-				surf.h = 480;
-				mode |= COL80;
-			}
-		} else {
-			mode |= TV | (bitsPerPixel == 4 ? BPS4 : BPS8);
-
-			if (width <= 320 && height <= 200) {
-				surf.w = 320;
-				surf.h = 200;
-				mode |= COL40;
-			} else if (width <= 320*1.2 && height <= 200*1.2) {
-				surf.w = 320*1.2;
-				surf.h = 200*1.2;
-				mode |= OVERSCAN | COL40;
-			} else if (width <= 640 && height <= 400) {
-				surf.w = 640;
-				surf.h = 400;
-				mode |= VERTFLAG | COL80;
-			} else {
-				surf.w = 640*1.2;
-				surf.h = 400*1.2;
-				mode |= VERTFLAG | OVERSCAN | COL80;
-			}
-		}
-
-		surf.w += 2 * MAX_HZ_SHAKE;
-		surf.h += 2 * MAX_V_SHAKE;
-		surf.pitch = surf.w * bitsPerPixel / 8;
-	}
-
-	_offsettedSurf.init(
-		width, height, surf.pitch,
-		surf.getBasePtr((surf.w - width) / 2, (surf.h - height) / 2),
-		surf.format);
-}
-
-void AtariGraphicsManager::Screen::addDirtyRect(const Graphics::Surface &srcSurface, const Common::Rect &rect, bool directRendering) {
-	if (fullRedraw)
-		return;
-
-	if ((rect.width() == srcSurface.w && rect.height() == srcSurface.h)
-		|| dirtyRects.size() == 128) {	// 320x200 can hold at most 250 16x16 rectangles
-		//debug("addDirtyRect[%d]: purge %d x %d", (int)dirtyRects.size(), srcSurface.w, srcSurface.h);
-
-		dirtyRects.clear();
-		dirtyRects.emplace(srcSurface.w, srcSurface.h);
-
-		oldCursorRect = Common::Rect();
-
-		fullRedraw = true;
-		return;
-	}
-
-	dirtyRects.insert(rect);
-
-	if (!oldCursorRect.isEmpty()) {
-		const Common::Rect alignedOldCursorRect = _manager->alignRect(oldCursorRect);
-
-		// we have to check *aligned* oldCursorRect because it is background which gets copied,
-		// i.e. it has to be up to date even outside the cursor rectangle.
-		// do it now to avoid complex checking in updateScreenInternal()
-		if (rect.contains(alignedOldCursorRect)) {
-			oldCursorRect = Common::Rect();
-		} else if (rect.intersects(alignedOldCursorRect)) {
-			if (!directRendering) {
-				_manager->copyRectToSurface(
-					*offsettedSurf, _manager->getBitsPerPixel(offsettedSurf->format), srcSurface,
-					alignedOldCursorRect.left, alignedOldCursorRect.top,
-					alignedOldCursorRect);
-			} else {
-				restoreBackground(alignedOldCursorRect);
-			}
-
-			oldCursorRect = Common::Rect();
-		}
-	}
-}
-
-void AtariGraphicsManager::Screen::storeBackground(const Common::Rect &rect) {
-	const int bitsPerPixel = _manager->getBitsPerPixel(offsettedSurf->format);
-
-	if (_cursorBackgroundSurf.w != rect.width()
-		|| _cursorBackgroundSurf.h != rect.height()
-		|| _cursorBackgroundSurf.format != offsettedSurf->format) {
-		_cursorBackgroundSurf.create(rect.width(), rect.height(), offsettedSurf->format);
-		_cursorBackgroundSurf.pitch = _cursorBackgroundSurf.pitch * bitsPerPixel / 8;
-	}
-
-	Graphics::copyBlit(
-		(byte *)_cursorBackgroundSurf.getPixels(),
-		(const byte *)offsettedSurf->getPixels() + rect.top * offsettedSurf->pitch + rect.left * bitsPerPixel / 8,
-		_cursorBackgroundSurf.pitch, offsettedSurf->pitch,
-		rect.width() * bitsPerPixel / 8, rect.height(),	// fake 4bpp by 8bpp's width/2
-		offsettedSurf->format.bytesPerPixel);
-}
-
-void AtariGraphicsManager::Screen::restoreBackground(const Common::Rect &rect) {
-	const int bitsPerPixel = _manager->getBitsPerPixel(offsettedSurf->format);
-
-	Graphics::copyBlit(
-		(byte *)offsettedSurf->getPixels() + rect.top * offsettedSurf->pitch + rect.left * bitsPerPixel / 8,
-		(const byte *)_cursorBackgroundSurf.getPixels(),
-		offsettedSurf->pitch, _cursorBackgroundSurf.pitch,
-		rect.width() * bitsPerPixel / 8, rect.height(),	// fake 4bpp by 8bpp's width/2
-		offsettedSurf->format.bytesPerPixel);
 }

@@ -371,6 +371,7 @@ MODULE_OBJS += \
 	graphics/atari/atari-cursor.o \
 	graphics/atari/atari-graphics.o \
 	graphics/atari/atari-graphics-asm.o \
+	graphics/atari/atari-screen.o \
 	mixer/atari/atari-mixer.o
 endif
 

@@ -26,25 +26,19 @@
 #include "common/events.h"
 
 #include <mint/osbind.h>
-#include <mint/ostruct.h>
-#include <unordered_set>
 
-#include "atari-cursor.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
 
-template<>
-struct std::hash<Common::Rect>
-{
-	std::size_t operator()(Common::Rect const& rect) const noexcept
-	{
-		return 31 * (31 * (31 * rect.left + rect.top) + rect.right) + rect.bottom;
-	}
-};
+#include "atari-cursor.h"
+#include "atari-screen.h"
 
-///////////////////////////////////////////////////////////////////////////////
+#define MAX_HZ_SHAKE 16 // Falcon only
+#define MAX_V_SHAKE  16
 
 class AtariGraphicsManager : public GraphicsManager, Common::EventObserver {
+	friend class Screen;
+
 public:
 	AtariGraphicsManager();
 	virtual ~AtariGraphicsManager();
@@ -116,40 +110,9 @@ protected:
 	void allocateSurfaces();
 	void freeSurfaces();
 
-	enum class GraphicsMode : int {
-		DirectRendering = 0,
-		SingleBuffering = 1,
-		TripleBuffering = 3
-	};
-
-	struct GraphicsState {
-		GraphicsState(GraphicsMode mode_)
-			: mode(mode_)
-			, width(0)
-			, height(0) {
-		}
-
-		GraphicsMode mode;
-		int width;
-		int height;
-		Graphics::PixelFormat format;
-	};
-	GraphicsState _pendingState{ (GraphicsMode)getDefaultGraphicsMode() };
-
 private:
-	using DirtyRects = std::unordered_set<Common::Rect>;
-
 	enum CustomEventAction {
 		kActionToggleAspectRatioCorrection = 100,
-	};
-
-	enum SteTtRezValue {
-		kRezValueSTLow  = 0,	// 320x200@4bpp, ST palette
-		kRezValueSTMid  = 1,	// 640x200@2bpp, ST palette
-		kRezValueSTHigh = 2,	// 640x400@1bpp, ST palette
-		kRezValueTTLow  = 7,	// 320x480@8bpp, TT palette
-		kRezValueTTMid  = 4,	// 640x480@4bpp, TT palette
-		kRezValueTTHigh = 6		// 1280x960@1bpp, TT palette
 	};
 
 	int16 getMaximumScreenHeight() const { return 480; }
@@ -236,6 +199,25 @@ private:
 	bool _oldAspectRatioCorrection = false;
 	bool _checkUnalignedPitch = false;
 
+	enum class GraphicsMode : int {
+		DirectRendering = 0,
+		SingleBuffering = 1,
+		TripleBuffering = 3
+	};
+
+	struct GraphicsState {
+		GraphicsState(GraphicsMode mode_)
+			: mode(mode_)
+			, width(0)
+			, height(0) {
+		}
+
+		GraphicsMode mode;
+		int width;
+		int height;
+		Graphics::PixelFormat format;
+	};
+	GraphicsState _pendingState{ (GraphicsMode)getDefaultGraphicsMode() };
 	GraphicsState _currentState{ (GraphicsMode)getDefaultGraphicsMode() };
 
 	enum PendingScreenChange {
@@ -252,63 +234,6 @@ private:
 		BACK_BUFFER2,
 		OVERLAY_BUFFER,
 		BUFFER_COUNT
-	};
-
-	class Palette {
-	public:
-		void clear() {
-			memset(data, 0, sizeof(data));
-		}
-
-		uint16 *const tt = reinterpret_cast<uint16*>(data);
-		_RGB *const falcon = reinterpret_cast<_RGB*>(data);
-
-	private:
-		byte data[256*4] = {};
-	};
-
-	struct Screen {
-		Screen(AtariGraphicsManager *manager, int width, int height, const Graphics::PixelFormat &format, const Palette *palette);
-		~Screen();
-
-		void reset(int width, int height, int bitsPerPixel);
-		// must be called before any rectangle drawing
-		void addDirtyRect(const Graphics::Surface &srcSurface, const Common::Rect &rect, bool directRendering);
-
-		void clearDirtyRects() {
-			dirtyRects.clear();
-			fullRedraw = false;
-		}
-
-		void storeBackground(const Common::Rect &rect);
-		void restoreBackground(const Common::Rect &rect);
-
-		Graphics::Surface surf;
-		const Palette *palette;
-		bool cursorPositionChanged = true;
-		bool cursorSurfaceChanged = true;
-		bool cursorVisibilityChanged = false;
-		DirtyRects dirtyRects;
-		bool fullRedraw = false;
-		Common::Rect oldCursorRect;
-		int rez = -1;
-		int mode = -1;
-		Graphics::Surface *const offsettedSurf = &_offsettedSurf;
-
-		int oldScreenSurfaceWidth = -1;
-		int oldScreenSurfaceHeight = -1;
-		int oldScreenSurfacePitch = -1;
-		int oldOffsettedSurfaceWidth = -1;
-		int oldOffsettedSurfaceHeight = -1;
-
-	private:
-		static constexpr size_t ALIGN = 16;	// 16 bytes
-
-		const AtariGraphicsManager *_manager;
-
-		Graphics::Surface _offsettedSurf;
-		// used by direct rendering
-		Graphics::Surface _cursorBackgroundSurf;
 	};
 	Screen *_screen[BUFFER_COUNT] = {};
 	Screen *_workScreen = nullptr;
