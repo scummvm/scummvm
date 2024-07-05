@@ -111,15 +111,6 @@ MODULE_OBJS = \
 	xutil/xbuffer/xbcnvout.o \
 	xutil/xbuffer/xbcore.o \
 	xutil/xbuffer/xbsearch.o \
-	xutil/xstream/xscnvin.o \
-	xutil/xstream/xscore.o \
-	xutil/xstream/xscnvout.o \
-	xutil/xstream/xsenlv.o \
-	xutil/xstream/xsgetlin.o \
-	xutil/xstream/xsinput.o \
-	xutil/xstream/xsoutput.o \
-	xutil/xstream/xsrdwr.o \
-	xutil/xstream/xsserv.o \
 	util/xmath/XMath.o
 
 # This module can be built as a plugin
