@@ -47,7 +47,7 @@ public:
 	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
 
 	bool load_data(Common::SeekableReadStream &fh, int save_version);
-	bool save_data(Common::SeekableWriteStream &fh);
+	bool save_data(Common::SeekableWriteStream &fh) const;
 
 	void take_object(qdGameObjectAnimated *p);
 	qdGameObjectAnimated *object() {
@@ -125,3 +125,4 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_GAME_OBJECT_MOUSE_H
+

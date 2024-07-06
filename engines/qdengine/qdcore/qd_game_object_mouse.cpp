@@ -143,7 +143,7 @@ bool qdGameObjectMouse::load_data(Common::SeekableReadStream &fh, int save_versi
 	return true;
 }
 
-bool qdGameObjectMouse::save_data(Common::SeekableWriteStream &fh) {
+bool qdGameObjectMouse::save_data(Common::SeekableWriteStream &fh) const {
 
 	if (object_) {
 		fh.writeUint32LE(1);
@@ -287,3 +287,4 @@ bool qdGameObjectMouse::update_screen_pos() {
 	return false;
 }
 } // namespace QDEngine
+
