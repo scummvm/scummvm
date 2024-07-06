@@ -623,7 +623,7 @@ int LogicHEfootball2002::getPlaybookFiles(int32 *args) {
 	// Get the pattern and then skip over the directory prefix ("*\" or "*:")
 	// Also prepend the target name
 	Common::String targetName = _vm->getTargetName();
-	Common::String basePattern = ((const char *)_vm->getStringAddress(args[0] & ~0x33539000) + 2);
+	Common::String basePattern = ((const char *)_vm->getStringAddress(args[0] & ~MAGIC_ARRAY_NUMBER) + 2);
 	Common::String pattern = targetName + '-' + basePattern;
 
 	// Prepare a buffer to hold the file names

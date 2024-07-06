@@ -500,7 +500,7 @@ void ScummEngine_v80he::o80_drawLine() {
 void ScummEngine_v80he::o80_pickVarRandom() {
 	int num;
 	int args[100];
-	int32 dim1end;
+	int32 acrossMax;
 
 	num = getStackList(args, ARRAYSIZE(args));
 	int value = fetchScriptWord();
@@ -528,13 +528,13 @@ void ScummEngine_v80he::o80_pickVarRandom() {
 	num = readArray(value, 0, 0);
 
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(value));
-	dim1end = FROM_LE_32(ah->dim1end);
+	acrossMax = FROM_LE_32(ah->acrossMax);
 
-	if (dim1end < num) {
+	if (acrossMax < num) {
 		int32 var_2 = readArray(value, 0, num - 1);
-		shuffleArray(value, 1, dim1end);
+		shuffleArray(value, 1, acrossMax);
 		num = 1;
-		if (readArray(value, 0, 1) == var_2 && dim1end >= 3) {
+		if (readArray(value, 0, 1) == var_2 && acrossMax >= 3) {
 			int32 tmp = readArray(value, 0, 2);
 			writeArray(value, 0, num, tmp);
 			writeArray(value, 0, 2, var_2);

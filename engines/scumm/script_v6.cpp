@@ -25,6 +25,7 @@
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/file.h"
+#include "scumm/he/intern_he.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse_engine.h"
 #include "scumm/insane/insane.h"
@@ -345,7 +346,7 @@ void ScummEngine_v6::nukeArray(int a) {
 	data = readVar(a);
 
 	if (_game.heversion >= 80)
-		data &= ~0x33539000;
+		data &= ~MAGIC_ARRAY_NUMBER;
 
 	if (data)
 		_res->nukeResource(rtString, data);
@@ -3505,15 +3506,21 @@ void ScummEngine_v6::o6_findAllObjects() {
 	push(readVar(0));
 }
 
-void ScummEngine_v6::shuffleArray(int num, int minIdx, int maxIdx) {
+void ScummEngine_v6::shuffleArray(int num, int minIdx, int maxIdx) {	
+	int rand1, rand2;
 	int range = maxIdx - minIdx;
 	int count = range * 2;
-
+	
 	// Shuffle the array 'num'
 	while (count--) {
 		// Determine two random elements...
-		int rand1 = _rnd.getRandomNumber(range) + minIdx;
-		int rand2 = _rnd.getRandomNumber(range) + minIdx;
+		if (_game.heversion >= 72) {
+			rand1 = VAR(VAR_RANDOM_NR) = _rnd.getRandomNumberRng(minIdx, maxIdx);
+			rand2 = VAR(VAR_RANDOM_NR) = _rnd.getRandomNumberRng(minIdx, maxIdx);
+		} else {
+			rand1 = _rnd.getRandomNumber(range) + minIdx;
+			rand2 = _rnd.getRandomNumber(range) + minIdx;
+		}
 
 		// ...and swap them
 		int val1 = readArray(num, 0, rand1);

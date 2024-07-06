@@ -763,7 +763,7 @@ byte *ScummEngine::getResourceAddress(ResType type, ResId idx) {
 	byte *ptr;
 
 	if (_game.heversion >= 80 && type == rtString)
-		idx &= ~0x33539000;
+		idx &= ~MAGIC_ARRAY_NUMBER;
 
 	if (!_res->validateResource("getResourceAddress", type, idx))
 		return nullptr;
