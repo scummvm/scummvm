@@ -282,7 +282,7 @@ bool qdCounter::load_data(Common::SeekableReadStream &fh, int save_version) {
 	if (sz != elements_.size())
 		return false;
 
-	for (auto it : elements_)
+	for (auto &it : elements_)
 		it.load_data(fh, save_version);
 
 	return true;
@@ -307,3 +307,4 @@ void qdCounter::init() {
 }
 
 } // namespace QDEngine
+
