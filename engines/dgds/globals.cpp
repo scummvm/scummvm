@@ -60,7 +60,7 @@ Globals::Globals(Clock &clock) :
 _lastOpcode1SceneChageNum(0), _sceneOp12SceneNum(0), _currentSelectedItem(0),
 _gameMinsToAddOnLClick(0), _gameMinsToAddOnStartDrag(0), _gameMinsToAddOnRClick(0), _gameMinsToAddOnDragFinished(0),
 _gameMinsToAddOnObjInteraction(0), _gameIsInteractiveGlobal(0), _sceneOpcode15FromScene(0),
-_sceneOpcode15ToScene(0), _unk2(0), _unk5(0), _unk39(0), _unk40(0), _unk51(0), _unk52(0), _unk54(0), _unk81(0) {
+_sceneOpcode15ToScene(0), _unk2(0), _unk5(0), _unk39(0), _unk40(0), _unk45(0), _unk51(0), _unk52(0), _unk54(0), _unk81(0) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	DgdsGameId gameId = engine->getGameId();
 
@@ -88,6 +88,7 @@ _sceneOpcode15ToScene(0), _unk2(0), _unk5(0), _unk39(0), _unk40(0), _unk51(0), _
 		_globals.push_back(new RWI16Global(0x34, &_unk52));
 		_globals.push_back(new RWI16Global(0x33, &_unk51));
 		_globals.push_back(new RWI16Global(0x28, &_unk40));
+		_globals.push_back(new RWI16Global(0x2D, &_unk45));
 		_globals.push_back(new RWI16Global(0x27, &_unk39));
 	}
 

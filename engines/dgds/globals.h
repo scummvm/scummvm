@@ -113,6 +113,7 @@ protected:
 	// HoC
 	int16 _unk39;
 	int16 _unk40;
+	int16 _unk45;
 	int16 _unk51;
 	int16 _unk52;
 	int16 _unk54;
