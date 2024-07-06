@@ -211,7 +211,8 @@ bool SoundManager::initCustomTimbres(bool canAbort) {
 
 		if (events.interruptableDelay(10)) {
 			if (LureEngine::getReference().shouldQuit() ||
-					(canAbort && events.type() == Common::EVENT_KEYDOWN && events.event().kbd.keycode == 27)) {
+					(canAbort && events.type() == Common::EVENT_CUSTOM_ENGINE_ACTION_START &&
+						events.event().customType == kActionEscape)) {
 				// User has quit the game or pressed Escape.
 				_mt32Driver->clearSysExQueue();
 				result = true;
@@ -439,8 +440,8 @@ bool SoundManager::fadeOut() {
 	_driver->startFade(3000, 0);
 	while (_driver->isFading()) {
 		if (events.interruptableDelay(100)) {
-			result = ((events.type() == Common::EVENT_KEYDOWN && events.event().kbd.keycode == 27) ||
-				LureEngine::getReference().shouldQuit());
+			result = ((events.type() == Common::EVENT_CUSTOM_ENGINE_ACTION_START && events.event().customType == kActionEscape)
+						|| LureEngine::getReference().shouldQuit());
 			_driver->abortFade();
 			break;
 		}

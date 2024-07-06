@@ -29,6 +29,8 @@
 #include "lure/sound.h"
 #include "lure/strings.h"
 
+#include "backends/keymapper/keymapper.h"
+
 #include "common/config-manager.h"
 #include "common/system.h"
 
@@ -50,7 +52,6 @@ Game::Game() {
 	_fastTextFlag = false;
 	_preloadFlag = false;
 	_debugFlag = gDebugLevel >= ERROR_BASIC;
-
 	_soundFlag = true;
 }
 
@@ -185,25 +186,40 @@ void Game::execute() {
 			}
 
 			while (events.pollEvent()) {
+				// Handle special keys
+				if (events.type() == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+					bool handled = true;
+					switch (events.customType()) {
+					case kActionSaveGame:
+						if (isMenuAvailable())
+							SaveRestoreDialog::show(true);
+						break;
+
+					case kActionRestoreGame:
+						SaveRestoreDialog::show(false);
+						break;
+
+					case kActionRestartGame:
+						doRestart();
+						break;
+
+					case kActionEscape:
+						doQuit();
+						break;
+
+					default:
+						handled = false;
+					}
+					if (handled)
+						continue;
+				}
+
 				if (events.type() == Common::EVENT_KEYDOWN) {
 					uint16 roomNum = room.roomNumber();
 
 					// Handle special keys
 					bool handled = true;
 					switch (events.event().kbd.keycode) {
-					case Common::KEYCODE_F5:
-						if (isMenuAvailable())
-							SaveRestoreDialog::show(true);
-						break;
-
-					case Common::KEYCODE_F7:
-						SaveRestoreDialog::show(false);
-						break;
-
-					case Common::KEYCODE_F9:
-						doRestart();
-						break;
-
 					case Common::KEYCODE_KP_PLUS:
 						if (_debugFlag) {
 							while (++roomNum <= 51)
@@ -232,10 +248,6 @@ void Game::execute() {
 					case Common::KEYCODE_SLASH:
 						if (_debugFlag)
 							room.setShowInfo(!room.showInfo());
-						break;
-
-					case Common::KEYCODE_ESCAPE:
-						doQuit();
 						break;
 
 					default:
@@ -1028,13 +1040,6 @@ bool Game::getYN() {
 	Resources &res = Resources::getReference();
 	LureEngine &engine = LureEngine::getReference();
 
-	Common::Language l = LureEngine::getReference().getLanguage();
-	Common::KeyCode y = Common::KEYCODE_y;
-	if (l == Common::FR_FRA) y = Common::KEYCODE_o;
-	else if ((l == Common::DE_DEU) || (l == Common::NL_NLD)) y = Common::KEYCODE_j;
-	else if ((l == Common::ES_ESP) || (l == Common::IT_ITA)) y = Common::KEYCODE_s;
-	else if (l == Common::RU_RUS) y = Common::KEYCODE_l;
-
 	bool vKbdFlag = g_system->hasFeature(OSystem::kFeatureVirtualKeyboard);
 	if (!vKbdFlag)
 		mouse.cursorOff();
@@ -1048,19 +1053,17 @@ bool Game::getYN() {
 	bool breakFlag = false;
 	bool result = false;
 
+	Common::Keymapper *keymapper = LureEngine::getReference().getEventManager()->getKeymapper();
+	keymapper->getKeymap("yesno-shortcut")->setEnabled(true);
+
 	do {
 		while (events.pollEvent()) {
-			if (events.event().type == Common::EVENT_KEYDOWN) {
-				Common::KeyCode key = events.event().kbd.keycode;
-				if (l == Common::RU_RUS) {
-					if ((key == y) || (key == Common::KEYCODE_y) || (key == Common::KEYCODE_ESCAPE)) {
-						breakFlag = true;
-						result = key == y;
-					}
-				} else if ((key == y) || (key == Common::KEYCODE_n) ||
-					(key == Common::KEYCODE_ESCAPE)) {
+			if (events.event().type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+				Common::CustomEventType key = events.event().customType;
+				if ((key == kActionYes) || (key == kActionNo) ||
+					(key == kActionEscape)) {
 					breakFlag = true;
-					result = key == y;
+					result = key == kActionYes;
 				}
 			}
 			if (events.event().type == Common::EVENT_LBUTTONUP) {
@@ -1075,6 +1078,8 @@ bool Game::getYN() {
 
 		g_system->delayMillis(10);
 	} while (!engine.shouldQuit() && !breakFlag);
+
+	keymapper->getKeymap("yesno-shortcut")->setEnabled(false);
 
 	screen.update();
 	if (!vKbdFlag)
