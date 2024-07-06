@@ -202,7 +202,7 @@ static MethodProto xlibMethods[] = {
 	{ "QTVRGetUpdateMode",				QtvrxtraXtra::m_QTVRGetUpdateMode,		 0, 0,	500 },
 	{ "QTVRSetUpdateMode",				QtvrxtraXtra::m_QTVRSetUpdateMode,		 1, 1,	500 },
 	{ "QTVRGetVisible",				QtvrxtraXtra::m_QTVRGetVisible,		 0, 0,	500 },
-	{ "QTVRSetVisible",				QtvrxtraXtra::m_QTVRSetVisible,		 1, 0,	500 },
+	{ "QTVRSetVisible",				QtvrxtraXtra::m_QTVRSetVisible,		 1, 1,	500 },
 	{ "QTVRGetWarpMode",				QtvrxtraXtra::m_QTVRGetWarpMode,		 0, 0,	500 },
 	{ "QTVRSetWarpMode",				QtvrxtraXtra::m_QTVRSetWarpMode,		 1, 0,	500 },
 	{ "QTVRCollapseToHotSpotRgn",				QtvrxtraXtra::m_QTVRCollapseToHotSpotRgn,		 0, 0,	500 },
@@ -562,8 +562,24 @@ void QtvrxtraXtra::m_QTVRSetUpdateMode(int nargs) {
 	me->_updateMode = g_lingo->pop().asString();
 }
 
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetVisible, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetVisible, 0)
+void QtvrxtraXtra::m_QTVRGetVisible(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetVisible", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push((int)me->_visible);
+}
+
+void QtvrxtraXtra::m_QTVRSetVisible(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetVisible", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_visible = (bool)g_lingo->pop().asInt();
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetWarpMode, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetWarpMode, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRCollapseToHotSpotRgn, 0)
