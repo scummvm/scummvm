@@ -1877,7 +1877,7 @@ bool qdGameObjectMoving::load_data(Common::SeekableReadStream &fh, int save_vers
 	impulse_movement_mode_ = mode;
 	is_selected_ = false;
 
-	for (int i = 0; i < path_length_; i ++) {
+	for (int i = 0; i < path_length_; i++) {
 		path_[i].x = fh.readFloatLE();
 		path_[i].y = fh.readFloatLE();
 		path_[i].z = fh.readFloatLE();
@@ -1927,7 +1927,7 @@ bool qdGameObjectMoving::save_data(Common::SeekableWriteStream &fh) const {
 	fh.writeFloatLE(movement_mode_time_);
 	fh.writeFloatLE(movement_mode_time_current_);
 
-	for (int i = 0; i < path_length_; i ++) {
+	for (int i = 0; i < path_length_; i++) {
 		fh.writeFloatLE(path_[i].x);
 		fh.writeFloatLE(path_[i].y);
 		fh.writeFloatLE(path_[i].z);
@@ -2796,3 +2796,4 @@ bool qdGameObjectMoving::get_debug_info(XBuffer &buf) const {
 	return true;
 }
 } // namespace QDEngine
+
