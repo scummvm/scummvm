@@ -196,9 +196,9 @@ static MethodProto xlibMethods[] = {
 	{ "QTVRGetQuality",				QtvrxtraXtra::m_QTVRGetQuality,		 0, 0,	500 },
 	{ "QTVRSetQuality",				QtvrxtraXtra::m_QTVRSetQuality,		 1, 1,	500 },
 	{ "QTVRGetTransitionMode",				QtvrxtraXtra::m_QTVRGetTransitionMode,		 0, 0,	500 },
-	{ "QTVRSetTransitionMode",				QtvrxtraXtra::m_QTVRSetTransitionMode,		 1, 0,	500 },
+	{ "QTVRSetTransitionMode",				QtvrxtraXtra::m_QTVRSetTransitionMode,		 1, 1,	500 },
 	{ "QTVRGetTransitionSpeed",				QtvrxtraXtra::m_QTVRGetTransitionSpeed,		 0, 0,	500 },
-	{ "QTVRSetTransitionSpeed",				QtvrxtraXtra::m_QTVRSetTransitionSpeed,		 1, 0,	500 },
+	{ "QTVRSetTransitionSpeed",				QtvrxtraXtra::m_QTVRSetTransitionSpeed,		 1, 1,	500 },
 	{ "QTVRGetUpdateMode",				QtvrxtraXtra::m_QTVRGetUpdateMode,		 0, 0,	500 },
 	{ "QTVRSetUpdateMode",				QtvrxtraXtra::m_QTVRSetUpdateMode,		 1, 0,	500 },
 	{ "QTVRGetVisible",				QtvrxtraXtra::m_QTVRGetVisible,		 0, 0,	500 },
@@ -242,6 +242,9 @@ QtvrxtraXtraObject::QtvrxtraXtraObject(ObjectType ObjectType) :Object<QtvrxtraXt
 
 	_visible = false;
 	_quality = 0.0f;
+
+	_transitionMode = "normal";
+	_transitionSpeed = 1.0f;
 }
 
 bool QtvrxtraXtraObject::hasProp(const Common::String &propName) {
@@ -503,10 +506,42 @@ void QtvrxtraXtra::m_QTVRSetQuality(int nargs) {
 	me->_quality = atof(g_lingo->pop().asString().c_str());
 }
 
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetTransitionMode, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetTransitionMode, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetTransitionSpeed, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetTransitionSpeed, 0)
+void QtvrxtraXtra::m_QTVRGetTransitionMode(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetTransitionMode", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_transitionMode = g_lingo->pop().asString();
+}
+
+void QtvrxtraXtra::m_QTVRSetTransitionMode(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetTransitionMode", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_transitionMode);
+}
+
+void QtvrxtraXtra::m_QTVRGetTransitionSpeed(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetTransitionSpeed", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(Common::String::format("%f", me->_transitionSpeed));
+}
+
+void QtvrxtraXtra::m_QTVRSetTransitionSpeed(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetTransitionSpeed", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_transitionSpeed = atof(g_lingo->pop().asString().c_str());
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetUpdateMode, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetUpdateMode, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetVisible, 0)
