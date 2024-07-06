@@ -74,6 +74,14 @@ class GameObject;
 			WaitingForCallback
 		};
 
+		enum class ScriptExecutionState {
+			// We are executing the scene script
+			ExecutingSceneScript,
+
+			// We are executing the other scripts
+			ExecutingOtherScripts
+		};
+
 
 
 		class ScriptExecutor {
@@ -115,6 +123,8 @@ class GameObject;
 			bool IsRepeatRun = false;
 
 			uint16 executingObjectIndex;
+
+			ScriptExecutionState scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 
 			// Returns true iff the object is relevant to be executing in the current scene
 			bool IsRelevantObject(const GameObject *obj);
@@ -239,7 +249,8 @@ class GameObject;
 
 			// TODO: Impplement mutexes correctly
 			bool IsExecuting() const {
-				return isRunningScript || isAwaitingCallback;
+				return _state != ExecutorState::Idle;
+				// return isRunningScript || isAwaitingCallback;
 			}
 
 
