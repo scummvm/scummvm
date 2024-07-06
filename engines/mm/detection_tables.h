@@ -196,6 +196,21 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 	},
 
 	{
+		// World of Xeen (DOS non-interactive demo)
+		{
+			"worldofxeen",
+			"Non-Interactive Demo",
+			AD_ENTRY1s("demo.cc", "bcd6775323833dc8dd2d930c3b98da03", 4556916),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE | ADGF_DEMO,
+			GUIO0()
+		},
+		GType_WorldOfXeen,
+		0
+	},
+
+	{
 		// Clouds of Xeen
 		{
 			"cloudsofxeen",
@@ -266,6 +281,21 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO_XEEN
+		},
+		GType_Clouds,
+		0
+	},
+
+	{
+		// Clouds of Xeen (DOS non-interactive demo)
+		{
+			"cloudsofxeen",
+			"Non-Interactive Demo",
+			AD_ENTRY1s("logobak.raw", "68425e43f4b0c74f5ff448d1f3c9855c", 64000),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE | ADGF_DEMO,
+			GUIO0()
 		},
 		GType_Clouds,
 		0
@@ -343,6 +373,21 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO_XEEN
+		},
+		GType_DarkSide,
+		0
+	},
+
+	{
+		// Darkside of Xeen (DOS non-interactive demo)
+		{
+			"darksideofxeen",
+			"Non-Interactive Demo",
+			AD_ENTRY1s("demo.cc", "2c320db380a479652a27a604c7c357b6", 5017135),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE | ADGF_DEMO,
+			GUIO0()
 		},
 		GType_DarkSide,
 		0
