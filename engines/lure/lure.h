@@ -64,6 +64,28 @@ enum LureLanguage {
 	LANG_UNKNOWN = -1
 };
 
+enum LUREActions {
+	kActionNone,
+	kActionSaveGame,
+	kActionRestoreGame,
+	kActionRestartGame,
+	kActionQuitGame,
+	kActionEscape,
+	kActionFightMoveLeft,
+	kActionFightMoveRight,
+	kActionFightCursorLeftTop,
+	kActionFightCursorLeftMiddle,
+	kActionFightCursorLeftBottom,
+	kActionFightCursorRightTop,
+	kActionFightCursorRightMiddle,
+	kActionFightCursorRightBottom,
+	kActionIndexNext,
+	kActionIndexPrevious,
+	kActionIndexSelect,
+	kActionYes,
+	kActionNo
+};
+
 struct LureGameDescription;
 
 class LureEngine : public Engine {

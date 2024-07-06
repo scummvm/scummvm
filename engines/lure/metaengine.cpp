@@ -23,6 +23,10 @@
 #include "common/system.h"
 #include "common/translation.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "engines/advancedDetector.h"
 
 #include "lure/lure.h"
@@ -96,6 +100,8 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool LureMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -153,6 +159,174 @@ void LureMetaEngine::removeSaveState(const char *target, int slot) const {
 	filename += Common::String::format(".%03d", slot);
 
 	g_system->getSavefileManager()->removeSavefile(filename);
+}
+
+Common::KeymapArray LureMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Lure;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "lure-default", _("Default keymappings"));
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
+	Keymap *fightKeyMap = new Keymap(Keymap::kKeymapTypeGame, "fight-shortcut", _("Fight sequence keymappings"));
+	Keymap *indexKeyMap = new Keymap(Keymap::kKeymapTypeGame, "index-shortcut", _("Index keymappings"));
+	Keymap *yesNoKeyMap = new Keymap(Keymap::kKeymapTypeGame, "yesno-shortcut", _("Yes/No keymappings"));
+
+	Common::Action *act;
+
+	{
+		act = new Common::Action(kStandardActionLeftClick, _("Left click"));
+		act->setLeftClickEvent();
+		act->addDefaultInputMapping("MOUSE_LEFT");
+		act->addDefaultInputMapping("JOY_A");
+		engineKeyMap->addAction(act);
+
+		act = new Common::Action(kStandardActionRightClick, _("Right click"));
+		act->setRightClickEvent();
+		act->addDefaultInputMapping("MOUSE_RIGHT");
+		act->addDefaultInputMapping("JOY_B");
+		engineKeyMap->addAction(act);
+	}
+
+	{
+		act = new Common::Action("SAVEGAME", _("Save game"));
+		act->setCustomEngineActionEvent(kActionSaveGame);
+		act->addDefaultInputMapping("F5");
+		act->addDefaultInputMapping("JOY_Y");
+		gameKeyMap->addAction(act);
+
+		act = new Common::Action("RESTOREGAME", _("Restore game"));
+		act->setCustomEngineActionEvent(kActionRestoreGame);
+		act->addDefaultInputMapping("F7");
+		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+		gameKeyMap->addAction(act);
+
+		act = new Common::Action("RESTARTGAME", _("Restart game"));
+		act->setCustomEngineActionEvent(kActionRestartGame);
+		act->addDefaultInputMapping("F9");
+		act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+		gameKeyMap->addAction(act);
+
+		act = new Common::Action("ESC", _("Escape"));
+		act->setCustomEngineActionEvent(kActionEscape);
+		act->addDefaultInputMapping("ESCAPE");
+		act->addDefaultInputMapping("JOY_X");
+		gameKeyMap->addAction(act);
+	}
+
+	{
+		// I18N: Move actor left during fight
+		act = new Common::Action("MOVELEFT", _("Move left"));
+		act->setCustomEngineActionEvent(kActionFightMoveLeft);
+		act->addDefaultInputMapping("LEFT");
+		act->addDefaultInputMapping("JOY_LEFT");
+		fightKeyMap->addAction(act);
+
+		
+		// I18N: Move actor right during fight
+		act = new Common::Action("MOVERIGHT", _("Move right"));
+		act->setCustomEngineActionEvent(kActionFightMoveRight);
+		act->addDefaultInputMapping("RIGHT");
+		act->addDefaultInputMapping("JOY_RIGHT");
+		fightKeyMap->addAction(act);
+
+		// I18N: Shift Cursor during fight to top left
+		act = new Common::Action("CURSORLEFTTOP", _("Shift Cursor - Top left"));
+		act->setCustomEngineActionEvent(kActionFightCursorLeftTop);
+		act->addDefaultInputMapping("KP7");
+		fightKeyMap->addAction(act);
+
+		// I18N: Shift Cursor during fight to middle left
+		act = new Common::Action("CURSORLEFTMIDDLE", _("Shift Cursor -  Middle left"));
+		act->setCustomEngineActionEvent(kActionFightCursorLeftTop);
+		act->addDefaultInputMapping("KP4");
+		fightKeyMap->addAction(act);
+
+		// I18N: Shift Cursor during fight to bottom left
+		act = new Common::Action("CURSORLEFTBOTTOM", _("Shift Cursor - Bottom left"));
+		act->setCustomEngineActionEvent(kActionFightCursorLeftTop);
+		act->addDefaultInputMapping("KP1");
+		fightKeyMap->addAction(act);
+
+		// I18N: Shift Cursor during fight to top right
+		act = new Common::Action("CURSORRIGHTTOP", _("Shift Cursor - Top right"));
+		act->setCustomEngineActionEvent(kActionFightCursorLeftTop);
+		act->addDefaultInputMapping("KP9");
+		fightKeyMap->addAction(act);
+
+		// I18N: Shift Cursor during fight to middle right
+		act = new Common::Action("CURSORRIGHTMIDDLE", _("Shift Cursor - Middle right"));
+		act->setCustomEngineActionEvent(kActionFightCursorLeftTop);
+		act->addDefaultInputMapping("KP6");
+		fightKeyMap->addAction(act);
+
+		// I18N: Shift Cursor during fight to bottom right
+		act = new Common::Action("CURSORRIGHTBOTTOM", _("Shift Cursor - Bottom right"));
+		act->setCustomEngineActionEvent(kActionFightCursorLeftTop);
+		act->addDefaultInputMapping("KP3");
+		fightKeyMap->addAction(act);
+	}
+
+	{
+		act = new Common::Action("INDEXPREVIOUS", _("Go to next index"));
+		act->setCustomEngineActionEvent(kActionIndexNext);
+		act->addDefaultInputMapping("KP2");
+		act->addDefaultInputMapping("DOWN");
+		act->addDefaultInputMapping("JOY_DOWN");
+		indexKeyMap->addAction(act);
+
+		act = new Common::Action("INDEXNEXT", _("Go to previous index"));
+		act->setCustomEngineActionEvent(kActionIndexPrevious);
+		act->addDefaultInputMapping("KP8");
+		act->addDefaultInputMapping("UP");
+		act->addDefaultInputMapping("JOY_UP");
+		indexKeyMap->addAction(act);
+
+		act = new Common::Action("INDEXSELECT", _("Select index"));
+		act->setCustomEngineActionEvent(kActionIndexSelect);
+		act->addDefaultInputMapping("KP3");
+		act->addDefaultInputMapping("JOY_CENTER");
+		indexKeyMap->addAction(act);
+	}
+
+	{
+		String s = ConfMan.get("language", target);
+		Language l = Common::parseLanguage(s);
+
+		act = new Common::Action("YES", _("Press \"Yes\" key"));
+		act->setCustomEngineActionEvent(kActionYes);
+		act->addDefaultInputMapping("JOY_LEFT_STICK");
+		if (l == Common::FR_FRA)
+			act->addDefaultInputMapping("o");
+		else if ((l == Common::DE_DEU) || (l == Common::NL_NLD))
+			act->addDefaultInputMapping("j");
+		else if ((l == Common::ES_ESP) || (l == Common::IT_ITA))
+			act->addDefaultInputMapping("s");
+		else if (l == Common::RU_RUS)
+			act->addDefaultInputMapping("l");
+		else
+			act->addDefaultInputMapping("y");
+		yesNoKeyMap->addAction(act);
+
+		act = new Common::Action("NO", _("Press \"No\" key"));
+		act->setCustomEngineActionEvent(kActionNo);
+		act->addDefaultInputMapping("JOY_RIGHT_STICK");
+		if (l == Common::RU_RUS)
+			act->addDefaultInputMapping("y");
+		else
+			act->addDefaultInputMapping("n");
+		yesNoKeyMap->addAction(act);
+	}
+
+	KeymapArray keymaps(5);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeyMap;
+	keymaps[2] = fightKeyMap;
+	keymaps[3] = indexKeyMap;
+	keymaps[4] = yesNoKeyMap;
+
+	yesNoKeyMap->setEnabled(false);
+
+	return keymaps;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(LURE)
