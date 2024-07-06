@@ -2258,6 +2258,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if23_seasieve", "231010", "2cfded6774246ec58552290eed968f64", 3606616),
 	DT_ENTRY1("if23_citimakane", "23????", "07152db6c2d5b508638e55d95f3cb8a8", 1624512),
 	DT_ENTRY1("if23_eateldritch", "231020", "dc4e9b2eb5da3841022e3d2cd3431042", 4090574),
+	DT_ENTRY1("if23_eateldritch", "240109", "2e5f36ed9fadb2fc73e59d16a00f40a6", 4090574),
 	DT_ENTRY1("if23_oneking", "231027", "7cb26e63f109bbecf353a2bbfd482131", 996352),
 	DT_ENTRY1("if23_gesture", "230930", "ab2b8220c0ce90096c0713b9a573cb1d", 2871814),
 	DT_ENTRY1("if23_ribald", "231002", "8982312266fc875dda47c67128f89d41", 1059740),
@@ -2749,6 +2750,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRYL1("tgp_staub", Common::DE_DEU, "240329", "e2bfc2c311f85396fd76af2a10613fd1", 1506992),
 	DT_ENTRYL1("tgp_staub", Common::DE_DEU, "240415", "d0ca22538b7e06b7d100fdab0693124f", 1551536),
 	DT_ENTRYL1("tgp_staub", Common::DE_DEU, "240511", "0816b685a42260ead843db9933939ed9", 1572784),
+	DT_ENTRYL1("tgp_staub", Common::DE_DEU, "24????", "4f2a48b82d89f23bd467bc7ac018c50d", 1599152),
+	DT_ENTRYL1("tgp_staub", Common::DE_DEU, "240630", "1af2ab312d088b387048d9edd3779e08", 1452042),
 	DT_ENTRYL1("tgp_zuschauer", Common::DE_DEU, "240401", "f16bf2cf4ae27bf035cd221c0b3ec3fc", 1851170),
 
 	// Italian games
