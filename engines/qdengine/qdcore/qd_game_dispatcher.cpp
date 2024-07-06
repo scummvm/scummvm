@@ -342,7 +342,7 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 			break;
 		case QDSCR_GAME_TITLE:
 			game_title_ = it->data();
-			debug("Game title: %s", transCyrillic(game_title_.c_str()));
+			debug("Game title: '%s', id: %d", transCyrillic(game_title_.c_str()), it->origID());
 			break;
 		case QDSCR_TEXT_DB:
 			texts_database_ = it->data();
