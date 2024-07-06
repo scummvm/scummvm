@@ -79,7 +79,7 @@ using namespace qdrt;
 static void generateTagMap(int date, bool verbose = true) {
 	int n = 0;
 
-	memset(g_engine->_tagMap, 0, QDSCR_MAX_KEYWORD_ID);
+	memset(g_engine->_tagMap, 0, QDSCR_MAX_KEYWORD_ID * sizeof(int));
 
 	for (int i = 0; i < QDSCR_MAX_KEYWORD_ID; i++)
 		if (idTagVersionAll[i * 2] <= date)
@@ -104,9 +104,20 @@ void searchTagMap(int id, int targetVal) {
 	for (auto d : sdates) {
 		generateTagMap(d, false);
 
-		for (int i = 0; i < QDSCR_MAX_KEYWORD_ID; i++)
+		int matchedId = -1;
+		int len = QDSCR_MAX_KEYWORD_ID;
+
+		for (int i = 0; i < QDSCR_MAX_KEYWORD_ID; i++) {
+			if (!g_engine->_tagMap[i]) {
+				len = i;
+				break;
+			}
+
 			if (g_engine->_tagMap[i] == id)
-				warning("ver: %d  val: %d", d, i + 1);
+				matchedId = i + 1;
+		}
+
+		warning("ver: %d  val: %d of %d", d, matchedId, len);
 
 		if (g_engine->_tagMap[targetVal - 1] == id)
 			warning("searchTagMap(): Matched version %d", d);
@@ -163,7 +174,9 @@ int engineMain() {
 	// searchTagMap(QDSCR_GAME_TITLE, 203);
 
 	Common::String gameID = g_engine->getGameId();
-	if (gameID == "pilots3") {
+	if (gameID == "karliknos") {
+		generateTagMap(20030919); // QDSCR_GAME_TITLE = 182
+	} else if (gameID == "pilots3") {
 		generateTagMap(20040519);
 	} else if (gameID == "pilots3d") {
 		generateTagMap(20040706);
@@ -440,4 +453,3 @@ bool request_CD_handler(int cd_id) {
 
 }; // namespace main
 } // namespace QDEngine
-
