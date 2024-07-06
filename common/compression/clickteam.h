@@ -23,6 +23,7 @@
 #define COMMON_CLICKTEAM_H
 
 #include "common/archive.h"
+#include "common/fs.h"
 #include "common/ptr.h"
 #include "common/stream.h"
 #include "common/hashmap.h"
@@ -64,6 +65,7 @@ public:
 	static ClickteamInstaller* openPatch(Common::SeekableReadStream *stream, bool verifyOriginal = true, bool verifyAllowSkip = true,
 					     Common::Archive *reference = &SearchMan, DisposeAfterUse::Flag dispose = DisposeAfterUse::NO);
 	static ClickteamInstaller* open(Common::SeekableReadStream *stream, DisposeAfterUse::Flag dispose = DisposeAfterUse::NO);
+	static ClickteamInstaller* open(const Common::FSNode &node);
 
 private:
 	struct ClickteamPatchDescriptor {
