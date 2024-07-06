@@ -538,8 +538,63 @@ void DarkseedEngine::handleInput() {
 									setupOtherNspAnimation(0,41);
 									return;
 								}
-								// 2022:82df TODO
-//
+								if (_objectVar[52] == 1 &&
+									((currentRoomNumber == 12 && roomExit.roomNumber == 17) || (currentRoomNumber == 11 && (roomExit.roomNumber == 15 || roomExit.roomNumber == 16)))
+									) {
+									_console->printTosText(437);
+									bVar = false;
+									// TODO the original sets roomExit to number 8 here.
+								} else if (currentRoomNumber == 11 && roomExit.roomNumber == 15 && bVar) {
+									_player->loadAnimations("rm11strs.nsp");
+									setupOtherNspAnimation(0,55);
+									return;
+								}
+								if (currentRoomNumber == 14 && roomExit.roomNumber == 35 && _objectVar[99] != 1) {
+									bVar = false;
+									_console->printTosText(937);
+								}
+								if (bVar && (
+												(currentRoomNumber == 6 && roomExit.roomNumber == 10) ||
+												(currentRoomNumber == 11 && roomExit.roomNumber == 16) ||
+												(currentRoomNumber == 12 && roomExit.roomNumber == 17)
+												)
+									) {
+									_player->loadAnimations("opendoor.nsp");
+									setupOtherNspAnimation(0,14);
+									// FUN_1208_0dac_sound_related(10,CONCAT11(extraout_AH,5));
+									return;
+								}
+								if (currentRoomNumber == 6 && roomExit.roomNumber == 5 && bVar) {
+									_player->_position.x = 346;
+									_player->_position.y = 176;
+									_player->loadAnimations("stairs.nsp");
+									setupOtherNspAnimation(1,6);
+									return;
+								}
+								if (currentRoomNumber == 33 && roomExit.roomNumber == 34 && bVar) {
+									_player->loadAnimations("opendoor.nsp");
+									setupOtherNspAnimation(0,25);
+									// FUN_1208_0dac_sound_related(24,CONCAT11(extraout_AH,5));
+									return;
+								}
+								if (currentRoomNumber == 5 && roomExit.roomNumber == 6 && bVar) {
+									if (_player->_position.x == 466 && _player->_position.y == 195) {
+										_player->loadAnimations("stairs.nsp");
+										_player->_position.x -= 35;
+										setupOtherNspAnimation(3,7);
+										return;
+									}
+									bVar = false;
+								}
+								if (currentRoomNumber == 40 && roomExit.roomNumber == 41 && _objectVar[59] != 2) {
+									_console->printTosText(775);
+									bVar = false;
+								}
+								if (currentRoomNumber == 44 && roomExit.roomNumber == 43 && _objectVar[78] != 2) {
+									_console->printTosText(775);
+									bVar = false;
+								}
+
 								if (bVar) {
 									if (currentRoomNumber != 0x22 && (currentRoomNumber < 0x13 || currentRoomNumber > 0x17)) {
 										_player->_playerIsChangingDirection = false;
@@ -815,6 +870,20 @@ void DarkseedEngine::changeToRoom(int newRoomNumber) {
 	_room->printRoomDescriptionText();
 }
 
+void DarkseedEngine::debugTeleportToRoom(int newRoomNumber, int entranceNumber) {
+	delete _room;
+	_room = new Room(newRoomNumber);
+
+	if (entranceNumber < _room->room1.size()) {
+		const RoomExit &roomExit = _room->room1[entranceNumber];
+		_player->_position.x = roomExit.x + roomExit.width / 2;
+		_player->_position.y = roomExit.y;
+		_player->_direction = roomExit.direction ^ 2;
+		_player->updatePlayerPositionAfterRoomChange();
+		_player->_walkTarget = _player->_position;
+	}
+}
+
 void DarkseedEngine::updateDisplay() {
 	int currentRoomNumber = _room->_roomNumber;
 	_sprites.clearSpriteDrawList();
@@ -929,7 +998,7 @@ void DarkseedEngine::updateDisplay() {
 //									*(undefined2 *)((int)&otherNspSpritePtr[0].Offset + _player->_frameIdx * 4),
 //									0xf0 - playerSpriteY_maybe,uVar1,uVar2,uVar3 & 0xff00);
 //					bVar6 = extraout_AH_01;
-				} else if (!BoolEnum_2c85_985a) {
+				} else if (!_scaleSequence) {
 					if (otherNspAnimationType_maybe == 0x11) {
 //						addSpriteToDraw(playerSpriteX_maybe - (int)otherNspWidthTbl[0] / 2,playerSpriteY_maybe - iVar8,iVar9,iVa r8,
 //										*(undefined2 *)((int)otherNspSpritePtr + _player->_frameIdx * 4),
@@ -984,7 +1053,8 @@ void DarkseedEngine::updateDisplay() {
 							if (otherNspAnimationType_maybe == 35) {
 
 							} else if (otherNspAnimationType_maybe >= 53 && otherNspAnimationType_maybe <= 56) {
-
+								const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
+								_sprites.addSpriteToDrawList(_player->_position.x, _player->_position.y, &animSprite, 0xf0 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
 							} else if (otherNspAnimationType_maybe == 57 || otherNspAnimationType_maybe == 58) {
 
 							} else {
@@ -1026,6 +1096,26 @@ void DarkseedEngine::updateDisplay() {
 						scaledSpriteHeight,
 						player_sprite_related_2c85_82f3);
 				}
+				if (isPlayingAnimation_maybe && otherNspAnimationType_maybe == 14 && animIndexTbl[0] > 1) {
+					if (_objectVar.getObjectRunningCode(140) == 0 || _room->_roomNumber != 6) {
+						if (_room->_roomNumber == 6 && _player->_isAutoWalkingToBed) {
+							const Sprite &animSprite = _player->_animations.getSpriteAt(8);
+							_sprites.addSpriteToDrawList(132, 70, &animSprite, 255, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
+						} else if (_room->_roomNumber == 6) {
+							const Sprite &animSprite = _player->_animations.getSpriteAt(2);
+							_sprites.addSpriteToDrawList(132, 70, &animSprite, 255, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
+						} else if (_room->_roomNumber == 11) {
+							const Sprite &animSprite = _player->_animations.getSpriteAt(6);
+							_sprites.addSpriteToDrawList(369, 119, &animSprite, 255, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
+						} else if (_room->_roomNumber == 12) {
+							const Sprite &animSprite = _player->_animations.getSpriteAt(6);
+							_sprites.addSpriteToDrawList(252, 121, &animSprite, 255, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
+						}
+					} else {
+						const Sprite &animSprite = _player->_animations.getSpriteAt(3);
+						_sprites.addSpriteToDrawList(132, 70, &animSprite, 255, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
+					}
+				}
 			}
 		}
 	}
@@ -1035,7 +1125,7 @@ void DarkseedEngine::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 	assert(nspAnimIdx < 20);
 	_player->_playerIsChangingDirection = false;
 	nsp_sprite_scaling_y_position = 0;
-	BoolEnum_2c85_985a = false;
+	_scaleSequence = false;
 
 	animIndexTbl[nspAnimIdx] = 0;
 	spriteAnimCountdownTimer[nspAnimIdx] = _player->_animations.getAnimAt(nspAnimIdx).frameDuration[0];
@@ -1052,13 +1142,44 @@ void DarkseedEngine::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 
 	// TODO big switch here to init the different animation types.
 	switch (otherNspAnimationType_maybe) {
+	case 2:
+		_player->_position.x = 188;
+		_player->_position.y = 94;
+		break;
+	case 3:
+		// TODO
+//		if ((_SoundDevice != '\x01') && ((char)_day == '\x03')) {
+//			LoadModeSong(7);
+//			PlaySound(0,6,-1);
+//		}
+		_scaleSequence = 1;
+		break;
+	case 4:
+	case 14:
+	case 15:
+	case 18:
+	case 21:
+	case 22:
+	case 24:
+	case 25:
+	case 65:
+		_scaleSequence = 1;
+		break;
 	case 6 : // stairs
 		nsp_sprite_scaling_y_position = 0xbe;
-		BoolEnum_2c85_985a = true;
+		_scaleSequence = true;
 		break;
 	case 7 : // stairs down
 		nsp_sprite_scaling_y_position = 0xbe;
-		BoolEnum_2c85_985a = true;
+		_scaleSequence = true;
+		break;
+	case 8 :
+		_player->_position.x = 249;
+		_player->_position.y = 92;
+		break;
+	case 16 :
+		_player->_position.x = 324;
+		_player->_position.y = 50;
 		break;
 	case 26 :
 		_player->_position.x = 324;
@@ -1076,6 +1197,19 @@ void DarkseedEngine::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 	case 42 :
 		_player->_position.x = 432;
 		_player->_position.y = 78;
+		break;
+	case 53 :
+	case 54 :
+		_player->_position.x = 308;
+		_player->_position.y = 160;
+		break;
+	case 55 :
+		_player->_position.x = 150;
+		_player->_position.y = 104;
+		break;
+	case 56 :
+		_player->_position.x = 142;
+		_player->_position.y = 104;
 		break;
 	default:
 		break;
@@ -1146,6 +1280,48 @@ void DarkseedEngine::updateAnimation() {
 			}
 		}
 		break;
+	case 14:
+	case 15:
+	case 24:
+	case 25:
+		advanceAnimationFrame(0);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]];
+		} else {
+			_player->updateSprite();
+			if (otherNspAnimationType_maybe == 14) {
+				// TODO
+				if (_objectVar.getObjectRunningCode(140) == 0 || _room->_roomNumber != 6) {
+					_previousRoomNumber = _room->_roomNumber;
+					int newRoomNumber = _previousRoomNumber;
+					if (_room->_roomNumber == 6) {
+						if (_player->_isAutoWalkingToBed && _objectVar[137] == 2) {
+							 wongame();
+						}
+						newRoomNumber = 10;
+					} else if (_room->_roomNumber == 10) {
+						newRoomNumber = 6;
+					} else if (_room->_roomNumber == 11) {
+						if (_player->_position.x < 250) {
+							newRoomNumber = 15;
+						} else {
+							newRoomNumber = 16;
+						}
+					} else {
+						newRoomNumber = 17;
+					}
+					changeToRoom(newRoomNumber);
+				} else {
+					_objectVar.setObjectRunningCode(140, 0);
+					getPackage(_currentDay);
+				}
+			}
+			if (otherNspAnimationType_maybe == 25) {
+				_previousRoomNumber = 33;
+				changeToRoom(34);
+			}
+		}
+		break;
 	case 27:
 		advanceAnimationFrame(0);
 		if (!isAnimFinished_maybe) {
@@ -1164,13 +1340,51 @@ void DarkseedEngine::updateAnimation() {
 			changeToRoom(7);
 		}
 		break;
+	case 53 :
+	case 54 :
+	case 55 :
+	case 56 :
+		advanceAnimationFrame((otherNspAnimationType_maybe - 53) & 1);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]];
+		} else {
+			switch (otherNspAnimationType_maybe) {
+			case 53 :
+				_previousRoomNumber = _room->_roomNumber;
+				changeToRoom(6);
+				break;
+			case 54 :
+				_player->_position.x = 322;
+				_player->_position.y = 220;
+				_player->_walkTarget = _player->_position;
+				_player->_direction = 2;
+				_player->updateSprite();
+				break;
+			case 55 :
+				_previousRoomNumber = _room->_roomNumber;
+				changeToRoom(15);
+				break;
+			case 56 :
+				_player->_position.x = 162;
+				_player->_position.y = 206;
+				_player->_walkTarget = _player->_position;
+				_player->_direction = 2;
+				_player->updateSprite();
+				break;
+			}
+		}
+		if (animFrameChanged && animIndexTbl[0] == 1) {
+			// FUN_1208_0dac_sound_related(0xd,CONCAT11(extraout_AH_05,5));
+			// PlaySound(1,5,-1);
+		}
+		break;
 	default:
 		error("Unhandled animation type! %d", otherNspAnimationType_maybe);
 	}
 }
 
 void DarkseedEngine::advanceAnimationFrame(int nspAminIdx) {
-	if (!BoolEnum_2c85_985a) {
+	if (!_scaleSequence) {
 		scaledWalkSpeed_maybe = 1000;
 	}
 	else {
@@ -1249,6 +1463,15 @@ void DarkseedEngine::eyeCode(int objNum) {
 //		}
 		return;
 	}
+}
+
+void DarkseedEngine::wongame() {
+	// TODO
+}
+
+void DarkseedEngine::getPackage(int state) {
+	_console->printTosText(424);
+	// TODO handle different getPackage states.
 }
 
 } // End of namespace Darkseed

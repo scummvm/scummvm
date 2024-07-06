@@ -143,3 +143,17 @@ int Darkseed::Objects::getMoveObjectRoom(uint16 idx) {
 	}
 	return _moveObjectRoom[idx];
 }
+
+int16 Darkseed::Objects::getObjectRunningCode(int idx) {
+	if (idx >= MAX_OBJECTS) {
+		error("getObjectRunningCode: index out of range.");
+	}
+	return _objectRunningCode[idx];
+}
+
+void Darkseed::Objects::setObjectRunningCode(int idx, int16 value) {
+	if (idx >= MAX_OBJECTS) {
+		error("setObjectRunningCode: index out of range.");
+	}
+	_objectRunningCode[idx] = value;
+}

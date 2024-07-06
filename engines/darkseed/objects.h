@@ -42,6 +42,9 @@ public:
 	void setVar(uint16 varIdx, int16 newValue);
 	int16 getVar(uint16 varIdx);
 
+	int16 getObjectRunningCode(int idx);
+	void setObjectRunningCode(int idx, int16 value);
+
 	Common::Point getMoveObjectPosition(uint8 objIdx);
 	int getEyeDescriptionTosIdx(uint16 objNum);
 
