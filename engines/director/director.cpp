@@ -291,8 +291,9 @@ Common::Error DirectorEngine::run() {
 
 #ifdef USE_IMGUI
 	ImGuiCallbacks callbacks;
+	bool drawImGui = debugChannelSet(-1, kDebugImGui);
 	callbacks.init = DT::onImGuiInit;
-	callbacks.render = DT::onImGuiRender;
+	callbacks.render = drawImGui ? DT::onImGuiRender : nullptr;
 	callbacks.cleanup = DT::onImGuiCleanup;
 	_system->setImGuiCallbacks(callbacks);
 #endif
@@ -321,6 +322,14 @@ Common::Error DirectorEngine::run() {
 
 		draw();
 		g_director->delayMillis(10);
+#ifdef USE_IMGUI
+		// For performance reasons, disable the renderer callback if the ImGui debug flag isn't set
+		if (debugChannelSet(-1, kDebugImGui) != drawImGui) {
+			drawImGui = !drawImGui;
+			callbacks.render = drawImGui ? DT::onImGuiRender : nullptr;
+			_system->setImGuiCallbacks(callbacks);
+		}
+#endif
 	}
 
 	return Common::kNoError;
