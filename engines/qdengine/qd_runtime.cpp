@@ -178,8 +178,8 @@ int engineMain() {
 		generateTagMap(20030919); // QDSCR_GAME_TITLE = 182
 	} else if (gameID == "pilots3") {
 		generateTagMap(20040519);
-	} else if (gameID == "pilots3d") {
-		generateTagMap(20040706);
+	} else if (gameID == "pilots3d") {  // QDSCR_GAME_TITLE = 206
+		generateTagMap(20040601);
 	} else if (gameID == "3mice1") {
 		generateTagMap(20060630);
 	} else if (gameID == "shveik") {

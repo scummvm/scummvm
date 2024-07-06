@@ -76,6 +76,10 @@ public:
 		return g_engine->_tagMap[ID_ - 1];
 	}
 
+	int origID() const {
+		return ID_;
+	}
+
 	//! Возвращает формат данных тега.
 	tag_data_format data_format() const {
 		return data_format_;
