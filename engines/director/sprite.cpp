@@ -536,7 +536,7 @@ void Sprite::setCast(CastMemberID memberID, bool replaceDims) {
 		}
 
 	} else {
-		if (_castId.member != 0 && debugChannelSet(kDebugImages, 4))
+		if (_castId.member != 0 && debugChannelSet(4, kDebugImages))
 			warning("Sprite::setCast(): %s is null", memberID.asString().c_str());
 	}
 }
