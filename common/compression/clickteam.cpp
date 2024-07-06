@@ -342,6 +342,20 @@ int ClickteamInstaller::findPatchIdx(const ClickteamFileDescriptor &desc, Common
 }
 
 
+ClickteamInstaller* ClickteamInstaller::open(const Common::FSNode &node) {
+	Common::SeekableReadStream *stream = node.createReadStream();
+	if (!stream)
+		return nullptr;
+
+	ClickteamInstaller *installer = open(stream, DisposeAfterUse::YES);
+	if (!installer) {
+		delete stream;
+		return nullptr;
+	}
+
+	return installer;
+}
+
 ClickteamInstaller* ClickteamInstaller::open(Common::SeekableReadStream *stream, DisposeAfterUse::Flag dispose) {
 	return openPatch(stream, false, true, nullptr, dispose);
 }

@@ -32,6 +32,7 @@
 #include "common/textconsole.h"
 #include "common/tokenizer.h"
 #include "common/translation.h"
+#include "common/compression/clickteam.h"
 #include "common/compression/installshield_cab.h"
 #include "common/compression/installshieldv3_archive.h"
 #include "gui/EventRecorder.h"
@@ -630,6 +631,12 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngineBase:
 					delete archive;
 					return false;
 				}
+			} else if (archiveType.equals("clk")) {
+				// Clickteam
+				archive = Common::ClickteamInstaller::open(allFiles[archiveName]);
+				ADCacheMan.addArchive(allFiles[archiveName], archive);
+				if (!archive)
+					return false;
 			} else {
 				debugC(3, kDebugGlobalDetection, "WARNING: Archive type string '%s' not recognized", archiveType.c_str());
 				return false;
