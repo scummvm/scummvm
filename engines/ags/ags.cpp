@@ -31,6 +31,7 @@
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/tokenizer.h"
 #include "common/util.h"
 #include "engines/util.h"
 
@@ -155,14 +156,18 @@ Common::Error AGSEngine::run() {
 
 	setDebugger(new AGSConsole(this));
 
-	const char *filename = _gameDescription->desc.filesDescriptions[0].fileName;
-	if (_gameDescription->features & GAMEFLAG_INSTALLER) {
+	Common::String filename(_gameDescription->desc.filesDescriptions[0].fileName);
+	Common::StringTokenizer tok(filename, ":");
+
+	Common::String type = tok.nextToken();
+	if (type.equals("clk")) {
 		Common::File *f = new Common::File();
-		f->open(filename);
+		f->open(tok.nextToken().c_str());
 		SearchMan.add("installer", Common::ClickteamInstaller::open(f, DisposeAfterUse::YES));
-		filename = _gameDescription->_mainNameInsideInstaller;
+		filename = tok.nextToken();
 	}
-	const char *ARGV[] = { "scummvm.exe", filename };
+
+	const char *ARGV[] = { "scummvm.exe", filename.c_str() };
 	const int ARGC = 2;
 	AGS3::main_init(ARGC, ARGV);
 

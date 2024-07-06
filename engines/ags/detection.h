@@ -36,7 +36,6 @@ enum AGSDebugChannels {
 
 enum GameFlag {
 	GAMEFLAG_FORCE_AA = 1,
-	GAMEFLAG_INSTALLER = 2,
 };
 
 struct PluginVersion {
@@ -57,7 +56,6 @@ struct PluginVersion {
 struct AGSGameDescription {
 	ADGameDescription desc;
 	const PluginVersion *_plugins;
-	const char *_mainNameInsideInstaller;
 	uint8 features;
 
 	uint32 sizeBuffer() const {
@@ -72,7 +70,6 @@ struct AGSGameDescription {
 			// Add all plugins plus the final element
 			ret += sizeof(*p) * (p - _plugins + 1);
 		}
-		ret += ADDynamicDescription::strSizeBuffer(_mainNameInsideInstaller);
 		return ret;
 	}
 
@@ -98,7 +95,6 @@ struct AGSGameDescription {
 				buffer = dp->toBuffer(buffer);
 			}
 		}
-		buffer = ADDynamicDescription::strToBuffer(buffer, _mainNameInsideInstaller);
 		return buffer;
 	}
 };

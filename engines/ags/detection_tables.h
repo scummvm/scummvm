@@ -3620,17 +3620,10 @@ const char *const PRE_25 = "Pre 2.5";
 
 #define DETECTION_ENTRY_GUIO(ID, FILENAME, MD5, SIZE, LANG, PLATFORM, GUIO, PLUGIN_ARR, ADGF, FLAGS) \
 	{{ ID, PLATFORM, AD_ENTRY1s(FILENAME, MD5, SIZE), LANG, \
-	Common::kPlatformUnknown, ADGF, GUIO }, PLUGIN_ARR, nullptr, FLAGS }
-
-#define DETECTION_ENTRY_GUIO_INSTALLER(ID, FILENAME, MD5, SIZE, LANG, PLATFORM, GUIO, PLUGIN_ARR, ADGF, FLAGS, MAIN_FILENAME) \
-	{{ ID, PLATFORM, AD_ENTRY1s(FILENAME, MD5, SIZE), LANG, \
-	Common::kPlatformUnknown, ADGF, GUIO }, PLUGIN_ARR, MAIN_FILENAME, FLAGS }
+	Common::kPlatformUnknown, ADGF, GUIO }, PLUGIN_ARR, FLAGS }
 
 #define DETECTION_ENTRY(ID, FILENAME, MD5, SIZE, LANG, PLATFORM, PLUGIN_ARR, ADGF, FLAGS) \
 	DETECTION_ENTRY_GUIO(ID, FILENAME, MD5, SIZE, LANG, PLATFORM, GUIO1(GUIO_NOLANG), PLUGIN_ARR, ADGF, FLAGS)
-
-#define DETECTION_ENTRY_INSTALLER(ID, FILENAME, MD5, SIZE, LANG, PLATFORM, PLUGIN_ARR, ADGF, FLAGS, MAIN_FILENAME) \
-	DETECTION_ENTRY_GUIO_INSTALLER(ID, FILENAME, MD5, SIZE, LANG, PLATFORM, GUIO1(GUIO_NOLANG), PLUGIN_ARR, ADGF, FLAGS, MAIN_FILENAME)
 
 
 #define PRE_25_ENTRY(ID, FILENAME, MD5, SIZE) \
@@ -3660,9 +3653,6 @@ const char *const PRE_25 = "Pre 2.5";
 #define UNSUPPORTED_GAME_ENTRY(ID, FILENAME, MD5, SIZE) \
 	UNSUPPORTED_ENTRY(ID, FILENAME, MD5, SIZE, Common::UNK_LANG, nullptr)
 
-#define UNSUPPORTED_INSTALLER_ENTRY(ID, FILENAME, MAIN_FILENAME, MD5, SIZE)	\
-	DETECTION_ENTRY_INSTALLER(ID, FILENAME, MD5, SIZE, Common::UNK_LANG, nullptr, nullptr, ADGF_UNSTABLE, GAMEFLAG_INSTALLER, MAIN_FILENAME)
-
 
 #define TESTING_ENTRY(ID, FILENAME, MD5, SIZE, LANG, PLATFORM) \
 	DETECTION_ENTRY(ID, FILENAME, MD5, SIZE, LANG, PLATFORM, nullptr, ADGF_TESTING, 0)
@@ -3681,9 +3671,6 @@ const char *const PRE_25 = "Pre 2.5";
 
 #define GAME_ENTRY(ID, FILENAME, MD5, SIZE) \
 	STABLE_ENTRY(ID, FILENAME, MD5, SIZE, Common::UNK_LANG, nullptr)
-
-#define INSTALLER_ENTRY(ID, FILENAME, MAIN_FILENAME, MD5, SIZE)	\
-	DETECTION_ENTRY_INSTALLER(ID, FILENAME, MD5, SIZE, Common::UNK_LANG, nullptr, nullptr, ADGF_NO_FLAGS, GAMEFLAG_INSTALLER, MAIN_FILENAME)
 
 #define GAME_ENTRY_EN(ID, FILENAME, MD5, SIZE) \
 	STABLE_ENTRY(ID, FILENAME, MD5, SIZE, Common::EN_ANY, nullptr)
@@ -4082,7 +4069,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	// hacked to specify plugin, errors on loading room107 saying that
 	// "room animations are no longer supported"
 	UNSUPPORTED_GAME_ENTRY("zak2", "Zak2.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 8686711),
-	UNSUPPORTED_INSTALLER_ENTRY("zak2", "fanadv_zak2.exe", "Zak2.exe", "329ff478ffc1a3bd0dc941d5212aa602", 7165704),
+	UNSUPPORTED_GAME_ENTRY("zak2", "clk:fanadv_zak2.exe:Zak2.exe", "A:e88fd6a23a5e498d7b0d50e3bb914085", 8686711),
 	UNSUPPORTED_GAME_ENTRY("zak2", "Zak2.exe", "0b7529a76f38283d6e850b8d56526fc1", 9205143),
 
 	// AGS 3.6.1 games
@@ -7314,11 +7301,11 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("maniacland", "AliceInManiacland.ags", "00596e8a9f0bd774528fb8c7225bed0d", 4082163),  // Linux
 	GAME_ENTRY("maniacland", "AliceInManiacland.exe", "d37a4f06126fc1f3bb7e5c31bd58a014", 8015351),  // Windows (newer) En-Es-It
 	GAME_ENTRY("maniacmansiondeluxe", "Maniac.exe", "3128b9f90e2f954ba704414ae854d10b", 9395050),  // v1.05 Multi
-	INSTALLER_ENTRY("maniacmansiondeluxe", "mmdsetup.exe", "Maniac.exe", "329ff478ffc1a3bd0dc941d5212aa602", 5826271),  // v1.05 Multi
-	INSTALLER_ENTRY("maniacmansiondeluxe", "manicmdsetup.exe", "Maniac.exe", "329ff478ffc1a3bd0dc941d5212aa602", 5826271),  // v1.05 Multi
+	GAME_ENTRY("maniacmansiondeluxe", "clk:mmdsetup.exe:Maniac.exe", "A:3128b9f90e2f954ba704414ae854d10b", 9395050),  // v1.05 Multi
+	GAME_ENTRY("maniacmansiondeluxe", "clk:manicmdsetup.exe:Maniac.exe", "A:3128b9f90e2f954ba704414ae854d10b", 9395050),  // v1.05 Multi
 	GAME_ENTRY("maniacmansiondeluxe", "Maniac.exe", "465f972675db2da6040518221af5b0ba", 10181366), // v1.3  "
 	GAME_ENTRY("maniacmansiondeluxe", "Maniac.exe", "465f972675db2da6040518221af5b0ba", 10409172), // v1.4  "
-	INSTALLER_ENTRY("maniacmansiondeluxe", "Maniac-Mansion-Deluxe_Win_EN-FR-ES-DE-IT.exe", "Maniac.exe", "329ff478ffc1a3bd0dc941d5212aa602", 6598337),  // v1.4
+	GAME_ENTRY("maniacmansiondeluxe", "clk:Maniac-Mansion-Deluxe_Win_EN-FR-ES-DE-IT.exe:Maniac.exe", "A:465f972675db2da6040518221af5b0ba", 10409172),  // v1.4
 	GAME_ENTRY("maniacmetalheadmania", "Maniac Metalhead Mania.exe", "d4dbb53d3617dcbb56251eb4a332fddd", 11785951),  //En-De
 	GAME_ENTRY("maniacmetalheadmania2", "Maniac Metalhead Mania II.exe", "be3275347f23aadb6d13aa75f70fcb99", 14997025),  //En-De
 	GAME_ENTRY_EN("manvsfish", "ManVsFish.exe", "06a03fe35791b0578068ab1873455463", 1875086),
@@ -9313,7 +9300,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("prisonersofice", "newyearq.exe", "b26aa198e5175000f037b84d8a4038f5", 88100040, Common::RU_RUS),
 
 
-	{ AD_TABLE_END_MARKER, nullptr, nullptr, 0 }
+	{ AD_TABLE_END_MARKER, nullptr, 0 }
 };
 
 /**
@@ -9329,7 +9316,6 @@ static AGSGameDescription g_fallbackDesc = {
 		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOLANG)
 	},
-	nullptr,
 	nullptr,
 	0
 };
