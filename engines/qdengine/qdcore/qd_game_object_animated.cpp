@@ -1326,7 +1326,7 @@ bool qdGameObjectAnimated::load_data(Common::SeekableReadStream &fh, int save_ve
 
 	cur_state_ = fh.readSint32LE();
 
-	for (int i = 0; i < states.size(); i ++) {
+	for (int i = 0; i < states.size(); i++) {
 		if (!states[i]->load_data(fh, save_version))
 			return false;
 	}
@@ -1364,7 +1364,7 @@ bool qdGameObjectAnimated::save_data(Common::SeekableWriteStream &fh) const {
 
 	fh.writeSint32LE(cur_state_);
 
-	for (int i = 0; i < states.size(); i ++) {
+	for (int i = 0; i < states.size(); i++) {
 		if (!states[i]->save_data(fh))
 			return false;
 	}
@@ -1672,3 +1672,4 @@ bool qdGameObjectAnimated::get_debug_info(XBuffer &buf) const {
 	return true;
 }
 } // namespace QDEngine
+
