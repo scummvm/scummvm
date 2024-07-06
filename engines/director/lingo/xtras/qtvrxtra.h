@@ -40,6 +40,9 @@ public:
 	float _quality;
 
 	Video::QuickTimeDecoder::NodeData _currentNode;
+
+	Common::String _transitionMode;
+	float _transitionSpeed;
 };
 
 namespace QtvrxtraXtra {
