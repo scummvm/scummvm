@@ -43,6 +43,10 @@ namespace MTropolis {
 GraphicElement::GraphicElement() : _cacheBitmap(false) {
 }
 
+GraphicElement::GraphicElement(const GraphicElement &other)
+	: VisualElement(other), _cacheBitmap(other._cacheBitmap), _mask(nullptr) {
+}
+
 GraphicElement::~GraphicElement() {
 }
 
@@ -493,6 +497,15 @@ void GraphicElement::render(Window *window) {
 	}
 }
 
+Common::SharedPtr<Structural> GraphicElement::shallowClone() const {
+	return Common::SharedPtr<Structural>(new GraphicElement(*this));
+}
+
+void GraphicElement::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	VisualElement::visitInternalReferences(visitor);
+
+}
+
 MovieResizeFilter::~MovieResizeFilter() {
 }
 
@@ -939,6 +952,17 @@ void MovieElement::setResizeFilter(const Common::SharedPtr<MovieResizeFilter> &f
 	_resizeFilter = filter;
 }
 
+Common::SharedPtr<Structural> MovieElement::shallowClone() const {
+	error("Cloning movie elements is not currently supported");
+	return nullptr;
+}
+
+void MovieElement::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	VisualElement::visitInternalReferences(visitor);
+
+	error("Cloning movie elements is not currently supported");
+}
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 void MovieElement::debugSkipMovies() {
 	if (_videoDecoder && !_videoDecoder->endOfVideo()) {
@@ -1273,6 +1297,14 @@ void ImageElement::render(Window *window) {
 	}
 }
 
+Common::SharedPtr<Structural> ImageElement::shallowClone() const {
+	return Common::SharedPtr<Structural>(new ImageElement(*this));
+}
+
+void ImageElement::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	VisualElement::visitInternalReferences(visitor);
+}
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 void ImageElement::debugInspect(IDebugInspectionReport *report) const {
 	VisualElement::debugInspect(report);
@@ -1290,6 +1322,14 @@ MiniscriptInstructionOutcome ImageElement::scriptSetFlushPriority(MiniscriptThre
 MToonElement::MToonElement()
 	: _cacheBitmap(false), _maintainRate(false), _assetID(0), _rateTimes100000(0), _flushPriority(0), _celStartTimeMSec(0),
 	  _isPlaying(false), _isStopped(false), _renderedFrame(0), _playRange(IntRange(1, 1)), _cel(1), _hasIssuedRenderWarning(false) {
+}
+
+MToonElement::MToonElement(const MToonElement &other)
+	: VisualElement(other), _cacheBitmap(other._cacheBitmap), _maintainRate(other._maintainRate), _assetID(other._assetID)
+	, _rateTimes100000(other._rateTimes100000), _flushPriority(other._flushPriority), _celStartTimeMSec(other._celStartTimeMSec)
+	, _isPlaying(other._isPlaying), _isStopped(other._isStopped), _renderSurface(nullptr), _renderedFrame(0), _metadata(other._metadata)
+	, _cachedMToon(other._cachedMToon), _playMediaSignaller(nullptr), _playRange(other._playRange), _cel(other._cel), _hasIssuedRenderWarning(false) {
+	_playMediaSignaller = other.getRuntime()->getProject()->notifyOnPlayMedia(this);
 }
 
 MToonElement::~MToonElement() {
@@ -1568,6 +1608,15 @@ Common::Rect MToonElement::getRelativeCollisionRect() const {
 	colRect.translate(_rect.left, _rect.top);
 	return colRect;
 }
+
+Common::SharedPtr<Structural> MToonElement::shallowClone() const {
+	return Common::SharedPtr<Structural>(new MToonElement(*this));
+}
+
+void MToonElement::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	VisualElement::visitInternalReferences(visitor);
+}
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 void MToonElement::debugInspect(IDebugInspectionReport *report) const {
 	VisualElement::debugInspect(report);
@@ -1896,8 +1945,18 @@ MiniscriptInstructionOutcome MToonElement::scriptSetRate(MiniscriptThread *threa
 
 
 TextLabelElement::TextLabelElement()
-	: _cacheBitmap(false), _needsRender(false), /*_isBitmap(false), */_assetID(0),
+	: _cacheBitmap(false), _needsRender(false), _isBitmap(true), _assetID(0),
 	  _macFontID(0), _size(12), _alignment(kTextAlignmentLeft) {
+}
+
+TextLabelElement::TextLabelElement(const TextLabelElement &other)
+	: VisualElement(other), _cacheBitmap(other._cacheBitmap), _needsRender(other._needsRender), _isBitmap(other._isBitmap)
+	, _assetID(other._assetID), _text(other._text), _macFontID(other._macFontID), _fontFamilyName(other._fontFamilyName)
+	, _size(other._size), _alignment(other._alignment), _styleFlags(other._styleFlags), _macFormattingSpans(other._macFormattingSpans)
+	, _renderedText(nullptr) {
+
+	if (other._isBitmap)
+		_renderedText = other._renderedText;
 }
 
 TextLabelElement::~TextLabelElement() {
@@ -1993,8 +2052,10 @@ void TextLabelElement::activate() {
 	if (textAsset->isBitmap()) {
 		_renderedText = textAsset->getBitmapSurface();
 		_needsRender = false;
+		_isBitmap = true;
 	} else {
 		_needsRender = true;
+		_isBitmap = false;
 		_text = textAsset->getString();
 		_macFormattingSpans = textAsset->getMacFormattingSpans();
 	}
@@ -2016,6 +2077,7 @@ void TextLabelElement::render(Window *window) {
 
 	if (_needsRender) {
 		_needsRender = false;
+		_isBitmap = false;
 
 		_renderedText.reset();
 		_renderedText.reset(new Graphics::ManagedSurface());
@@ -2165,6 +2227,7 @@ void TextLabelElement::render(Window *window) {
 void TextLabelElement::setTextStyle(uint16 macFontID, const Common::String &fontFamilyName, uint size, TextAlignment alignment, const TextStyleFlags &styleFlags) {
 	if (!_text.empty()) {
 		_needsRender = true;
+		_isBitmap = false;
 		_contentsDirty = true;
 	}
 
@@ -2202,6 +2265,14 @@ Graphics::FontManager::FontUsage TextLabelElement::getDefaultUsageForNamedFont(c
 	return Graphics::FontManager::kGUIFont;
 }
 
+Common::SharedPtr<Structural> TextLabelElement::shallowClone() const {
+	return Common::SharedPtr<Structural>(new TextLabelElement(*this));
+}
+
+void TextLabelElement::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	VisualElement::visitInternalReferences(visitor);
+}
+
 MiniscriptInstructionOutcome TextLabelElement::scriptSetText(MiniscriptThread *thread, const DynamicValue &value) {
 	if (value.getType() != DynamicValueTypes::kString) {
 		thread->error("Tried to set a text label element's text to something that wasn't a string");
@@ -2210,6 +2281,7 @@ MiniscriptInstructionOutcome TextLabelElement::scriptSetText(MiniscriptThread *t
 
 	_text = value.getString();
 	_needsRender = true;
+	_isBitmap = false;
 	_contentsDirty = true;
 	_macFormattingSpans.clear();
 
@@ -2239,6 +2311,7 @@ MiniscriptInstructionOutcome TextLabelElement::scriptSetLine(MiniscriptThread *t
 	}
 
 	_needsRender = true;
+	_isBitmap = false;
 	_contentsDirty = true;
 	_macFormattingSpans.clear();
 
@@ -2293,6 +2366,18 @@ MiniscriptInstructionOutcome TextLabelElement::TextLabelLineWriteInterface::refA
 SoundElement::SoundElement()
 	: _leftVolume(0), _rightVolume(0), _balance(0), _assetID(0), _startTime(0), _finishTime(0), _cueCheckTime(0),
 	  _startTimestamp(0), _shouldPlayIfNotPaused(true), _needsReset(true) {
+}
+
+SoundElement::SoundElement(const SoundElement &other)
+	: NonVisualElement(other), _leftVolume(other._leftVolume), _rightVolume(other._rightVolume), _balance(other._balance)
+	, _assetID(other._assetID), _cachedAudio(other._cachedAudio), _metadata(other._metadata), _player(nullptr)
+	, _startTime(other._startTime), _finishTime(other._finishTime), _startTimestamp(other._startTimestamp)
+	, _cueCheckTime(other._cueCheckTime), _shouldPlayIfNotPaused(other._shouldPlayIfNotPaused), _needsReset(true)
+	, _playMediaSignaller(nullptr), _subtitlePlayer(nullptr) {
+
+	_playMediaSignaller = other.getRuntime()->getProject()->notifyOnPlayMedia(this);
+
+	initSubtitles();
 }
 
 SoundElement::~SoundElement() {
@@ -2361,6 +2446,23 @@ VThreadState SoundElement::consumeCommand(Runtime *runtime, const Common::Shared
 	return NonVisualElement::consumeCommand(runtime, msg);
 }
 
+void SoundElement::initSubtitles() {
+	Project *project = getRuntime()->getProject();
+
+	const SubtitleTables &subTables = project->getSubtitles();
+	if (subTables.assetMapping) {
+		const Common::String *subtitleSetIDPtr = subTables.assetMapping->findSubtitleSetForAssetID(_assetID);
+		if (!subtitleSetIDPtr) {
+			Common::String assetName = project->getAssetNameByID(_assetID);
+			if (assetName.size() > 0)
+				subtitleSetIDPtr = subTables.assetMapping->findSubtitleSetForAssetName(assetName);
+		}
+
+		if (subtitleSetIDPtr)
+			_subtitlePlayer.reset(new SubtitlePlayer(getRuntime(), *subtitleSetIDPtr, subTables));
+	}
+}
+
 void SoundElement::activate() {
 	Project *project = getRuntime()->getProject();
 	Common::SharedPtr<Asset> asset = project->getAssetByID(_assetID).lock();
@@ -2383,18 +2485,7 @@ void SoundElement::activate() {
 	if (_name.empty())
 		_name = project->getAssetNameByID(_assetID);
 
-	const SubtitleTables &subTables = project->getSubtitles();
-	if (subTables.assetMapping) {
-		const Common::String *subtitleSetIDPtr = subTables.assetMapping->findSubtitleSetForAssetID(_assetID);
-		if (!subtitleSetIDPtr) {
-			Common::String assetName = project->getAssetNameByID(_assetID);
-			if (assetName.size() > 0)
-				subtitleSetIDPtr = subTables.assetMapping->findSubtitleSetForAssetName(assetName);
-		}
-
-		if (subtitleSetIDPtr)
-			_subtitlePlayer.reset(new SubtitlePlayer(getRuntime(), *subtitleSetIDPtr, subTables));
-	}
+	initSubtitles();
 }
 
 
@@ -2488,6 +2579,14 @@ bool SoundElement::resolveMediaMarkerLabel(const Label &label, int32 &outResolut
 	}
 
 	return false;
+}
+
+Common::SharedPtr<Structural> SoundElement::shallowClone() const {
+	return Common::SharedPtr<Structural>(new SoundElement(*this));
+}
+
+void SoundElement::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	NonVisualElement::visitInternalReferences(visitor);
 }
 
 void SoundElement::stopPlayer() {

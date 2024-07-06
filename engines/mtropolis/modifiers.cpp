@@ -103,6 +103,15 @@ void BehaviorModifier::appendModifier(const Common::SharedPtr<Modifier> &modifie
 	modifier->setParent(getSelfReference());
 }
 
+void BehaviorModifier::removeModifier(const Modifier *modifier) {
+	for (Common::Array<Common::SharedPtr<Modifier> >::iterator it = _children.begin(), itEnd = _children.end(); it != itEnd; ++it) {
+		if (it->get() == modifier) {
+			_children.erase(it);
+			return;
+		}
+	}
+}
+
 IModifierContainer *BehaviorModifier::getMessagePropagationContainer() {
 	if (_isEnabled)
 		return this;
@@ -2816,6 +2825,15 @@ const Common::Array<Common::SharedPtr<Modifier> > &CompoundVariableModifier::get
 void CompoundVariableModifier::appendModifier(const Common::SharedPtr<Modifier> &modifier) {
 	_children.push_back(modifier);
 	modifier->setParent(getSelfReference());
+}
+
+void CompoundVariableModifier::removeModifier(const Modifier *modifier) {
+	for (Common::Array<Common::SharedPtr<Modifier> >::iterator it = _children.begin(), itEnd = _children.end(); it != itEnd; ++it) {
+		if (it->get() == modifier) {
+			_children.erase(it);
+			return;
+		}
+	}
 }
 
 void CompoundVariableModifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {

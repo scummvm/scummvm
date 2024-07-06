@@ -45,6 +45,7 @@ Hacks::Hacks() {
 	mtiVariableReferencesHack = false;
 	mtiSceneReturnHack = false;
 	mtiHispaniolaDamagedStringHack = false;
+	ignoreSceneUnloads = false;
 }
 
 Hacks::~Hacks() {
@@ -1172,6 +1173,7 @@ void SPQRSoundPreloadHooks::onProjectStarted(Runtime *runtime) {
 
 void addSPQRQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
 	hacks.addSceneTransitionHooks(Common::SharedPtr<SceneTransitionHooks>(new SPQRSoundPreloadHooks()));
+	hacks.ignoreSceneUnloads = true;
 }
 
 } // End of namespace HackSuites

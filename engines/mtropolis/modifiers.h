@@ -48,6 +48,7 @@ public:
 
 	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
+	void removeModifier(const Modifier *modifier) override;
 
 	IModifierContainer *getMessagePropagationContainer() override;
 	IModifierContainer *getChildContainer() override;
@@ -1152,6 +1153,7 @@ private:
 
 	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
+	void removeModifier(const Modifier *modifier) override;
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;

@@ -1354,6 +1354,13 @@ private:
 	Common::SharedPtr<MessageDispatch> _msg;
 };
 
+struct ObjectParentChange {
+	explicit ObjectParentChange(const Common::WeakPtr<RuntimeObject> &object, const Common::WeakPtr<RuntimeObject> &newParent);
+
+	Common::WeakPtr<RuntimeObject> _object;
+	Common::WeakPtr<RuntimeObject> _newParent;
+};
+
 struct HighLevelSceneTransition {
 	enum Type {
 		kTypeReturn,
@@ -1727,6 +1734,10 @@ public:
 
 	const Common::SharedPtr<SubtitleRenderer> &getSubtitleRenderer() const;
 
+	void queueCloneObject(const Common::WeakPtr<RuntimeObject> &obj);
+	void queueKillObject(const Common::WeakPtr<RuntimeObject> &obj);
+	void queueChangeObjectParent(const Common::WeakPtr<RuntimeObject> &obj, const Common::WeakPtr<RuntimeObject> &newParent);
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
 	void debugBreak();
@@ -1752,6 +1763,7 @@ private:
 		Teardown();
 
 		Common::WeakPtr<Structural> structural;
+		Common::WeakPtr<Modifier> modifier;
 		bool onlyRemoveChildren;
 	};
 
@@ -1842,6 +1854,9 @@ private:
 	void executeCompleteTransitionToScene(const Common::SharedPtr<Structural> &scene);
 	void executeSharedScenePostSceneChangeActions();
 	void executeSceneChangeRecursiveVisibilityChange(Structural *structural, bool showing);
+	void executeChangeObjectParent(RuntimeObject *object, RuntimeObject *newParent);
+	void executeCloneObject(RuntimeObject *object);
+	void executeKillObject(RuntimeObject *object);
 
 	void recursiveAutoPlayMedia(Structural *structural);
 	void recursiveDeactivateStructural(Structural *structural);
@@ -1884,6 +1899,11 @@ private:
 
 	Common::Array<Teardown> _pendingTeardowns;
 	Common::Array<LowLevelSceneStateTransitionAction> _pendingLowLevelTransitions;
+	Common::Array<Common::WeakPtr<RuntimeObject> > _pendingKills;
+	Common::Array<Common::WeakPtr<RuntimeObject> > _pendingClones;
+	Common::Array<Common::WeakPtr<Structural> > _pendingPostCloneShowChecks;
+	Common::Array<Common::WeakPtr<Structural> > _pendingShowClonedObject;
+	Common::Array<ObjectParentChange> _pendingParentChanges;
 	Common::Array<HighLevelSceneTransition> _pendingSceneTransitions;
 	Common::Array<SceneStackEntry> _sceneStack;
 	Common::SharedPtr<Structural> _activeMainScene;
@@ -2005,12 +2025,14 @@ private:
 struct IModifierContainer : public IInterfaceBase {
 	virtual const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const = 0;
 	virtual void appendModifier(const Common::SharedPtr<Modifier> &modifier) = 0;
+	virtual void removeModifier(const Modifier *modifier) = 0;
 };
 
 class SimpleModifierContainer : public IModifierContainer {
 public:
 	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
+	void removeModifier(const Modifier *modifier) override;
 
 	void clear();
 
@@ -2047,6 +2069,10 @@ public:
 	virtual MiniscriptInstructionOutcome writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib, const DynamicValue &index);
 
 protected:
+	MiniscriptInstructionOutcome scriptSetClone(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetKill(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetParent(MiniscriptThread *thread, const DynamicValue &value);
+
 	// This is the static GUID stored in the data, it is not guaranteed
 	// to be globally unique at runtime.  In particular, cloning an object
 	// and using aliased modifiers will cause multiple objects with the same
@@ -2054,6 +2080,12 @@ protected:
 	uint32 _guid;
 	uint32 _runtimeGUID;
 	Common::WeakPtr<RuntimeObject> _selfReference;
+
+	struct ParentWriteProxyInterface {
+		static MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr ptrOrOffset);
+		static MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib);
+		static MiniscriptInstructionOutcome refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index);
+	};
 };
 
 struct MessageProperties {
@@ -2181,6 +2213,7 @@ public:
 
 	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
+	void removeModifier(const Modifier *modifier) override;
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
@@ -2198,6 +2231,11 @@ public:
 	void setHooks(const Common::SharedPtr<StructuralHooks> &hooks);
 	const Common::SharedPtr<StructuralHooks> &getHooks() const;
 
+	// Shallow clones only need to copy the object.  Descendent copies are done using visitInternalReferences.
+	virtual Common::SharedPtr<Structural> shallowClone() const = 0;
+
+	virtual void visitInternalReferences(IStructuralReferenceVisitor *visitor);
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	SupportStatus debugGetSupportStatus() const override;
 	const Common::String &debugGetName() const override;
@@ -2207,6 +2245,8 @@ public:
 #endif
 
 protected:
+	explicit Structural(const Structural &other);
+
 	virtual ObjectLinkingScope *getPersistentStructuralScope();
 	virtual ObjectLinkingScope *getPersistentModifierScope();
 
@@ -2450,6 +2490,9 @@ public:
 	RuntimeVersion getRuntimeVersion() const;
 	ProjectPlatform getPlatform() const;
 
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
+	Common::SharedPtr<Structural> shallowClone() const override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Project"; }
 #endif
@@ -2580,6 +2623,9 @@ public:
 
 	bool isSection() const override;
 
+	Common::SharedPtr<Structural> shallowClone() const override;
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Section"; }
 #endif
@@ -2601,6 +2647,9 @@ public:
 	ObjectLinkingScope *getSceneLoadMaterializeScope();
 
 	bool isSubsection() const override;
+
+	Common::SharedPtr<Structural> shallowClone() const override;
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Subsection"; }
@@ -2633,7 +2682,11 @@ public:
 
 	virtual bool resolveMediaMarkerLabel(const Label &label, int32 &outResolution) const;
 
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
+
 protected:
+	Element(const Element &other);
+
 	uint32 _streamLocator;
 	uint16 _sectionID;
 
@@ -2813,11 +2866,17 @@ public:
 	void setPalette(const Common::SharedPtr<Palette> &palette);
 	const Common::SharedPtr<Palette> &getPalette() const;
 
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
+
+	void pushVisibilityChangeTask(Runtime *runtime, bool desiredVisibility);
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugInspect(IDebugInspectionReport *report) const override;
 #endif
 
 protected:
+	VisualElement(const VisualElement &other);
+
 	bool loadCommon(const Common::String &name, uint32 guid, const Data::Rect &rect, uint32 elementFlags, uint16 layer, uint32 streamLocator, uint16 sectionID);
 
 	MiniscriptInstructionOutcome scriptSetDirect(MiniscriptThread *thread, const DynamicValue &dest);
