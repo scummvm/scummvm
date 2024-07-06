@@ -20,12 +20,14 @@
  */
 
 #include "common/system.h"
+#include "common/tokenizer.h"
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
 #include "director/lingo/xtras/qtvrxtra.h"
+#include "video/qt_decoder.h"
 
 /**************************************************
  *
@@ -164,7 +166,7 @@ static MethodProto xlibMethods[] = {
 	{ "forget",				QtvrxtraXtra::m_forget,		 0, 0,	500 },
 	{ "QTVREnter",			QtvrxtraXtra::m_QTVREnter,	 0, 0,	500 },
 	{ "QTVRExit",			QtvrxtraXtra::m_QTVRExit,	 0, 0,	500 },
-	{ "QTVROpen",				QtvrxtraXtra::m_QTVROpen,		 3, 0,	500 },
+	{ "QTVROpen",				QtvrxtraXtra::m_QTVROpen,		 3, 3,	500 },
 	{ "QTVRClose",				QtvrxtraXtra::m_QTVRClose,		 0, 0,	500 },
 	{ "QTVRUpdate",				QtvrxtraXtra::m_QTVRUpdate,		 0, 0,	500 },
 	{ "QTVRGetQTVRType",				QtvrxtraXtra::m_QTVRGetQTVRType,		 0, 0,	500 },
@@ -235,6 +237,10 @@ static BuiltinProto xlibBuiltins[] = {
 
 QtvrxtraXtraObject::QtvrxtraXtraObject(ObjectType ObjectType) :Object<QtvrxtraXtraObject>("Qtvrxtra") {
 	_objType = ObjectType;
+
+	_video = nullptr;
+
+	_visible = false;
 }
 
 bool QtvrxtraXtraObject::hasProp(const Common::String &propName) {
@@ -281,8 +287,77 @@ void QtvrxtraXtra::m_QTVRExit(int nargs) {
 	ARGNUMCHECK(0);
 }
 
-XOBJSTUB(QtvrxtraXtra::m_QTVROpen, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRClose, 0)
+static Common::Rect stringToRect(const Common::String &rectStr) {
+	Common::StringTokenizer tokenizer(rectStr, Common::String(','));
+	Common::StringArray tokens(tokenizer.split());
+
+	if (tokens.size() != 4) {
+		error("stringToRect(): The string should contain exactly 4 numbers separated by commas!");
+		return {};
+	}
+
+	Common::Rect rect;
+	rect.left = atoi(tokens[0].c_str());
+	rect.top = atoi(tokens[1].c_str());
+	rect.right = atoi(tokens[2].c_str());
+	rect.bottom = atoi(tokens[3].c_str());
+
+	return rect;
+}
+
+void QtvrxtraXtra::m_QTVROpen(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVROpen", nargs);
+	ARGNUMCHECK(3);
+
+	Common::String visiblityStr = g_lingo->pop().asString();
+	Common::String rectStr = g_lingo->pop().asString();
+	Common::String pathStr = g_lingo->pop().asString();
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	if (visiblityStr.equalsIgnoreCase("visible")) {
+		me->_visible = true;
+	} else if (visiblityStr.equalsIgnoreCase("invisible")) {
+		me->_visible = false;
+	} else {
+		Common::String error = Common::String::format("Error: Invalid visibility string: ('%s')!", visiblityStr.c_str());
+		g_lingo->push(error);
+		return;
+	}
+
+	me->_rect = stringToRect(rectStr);
+
+	Common::Path path = findMoviePath(pathStr);
+	if (path.empty()) {
+		Common::String error = Common::String::format("Error: Movie file ('%s') not found!", pathStr.c_str());
+		g_lingo->push(error);
+		return;
+	}
+
+	me->_video = new Video::QuickTimeDecoder();
+	debugC(5, kDebugXObj, "QtvrxtraXtra::m_QTVROpen(): Loading QT file ('%s')", path.toString().c_str());
+	if (!me->_video->loadFile(path)) {
+		Common::String error = Common::String::format("Error: Failed to load movie file ('%s')!", path.toString().c_str());
+		g_lingo->push(error);
+		return;
+	}
+
+	g_lingo->push(Common::String());
+}
+
+void QtvrxtraXtra::m_QTVRClose(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRClose", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	if (me->_video) {
+		me->_video->close();
+		delete me->_video;
+		me->_video = nullptr;
+	}
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRUpdate, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetQTVRType, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRIdle, 0)

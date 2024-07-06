@@ -22,6 +22,10 @@
 #ifndef DIRECTOR_LINGO_XTRAS_QTVRXTRA_H
 #define DIRECTOR_LINGO_XTRAS_QTVRXTRA_H
 
+namespace Video {
+class QuickTimeDecoder;
+}
+
 namespace Director {
 
 class QtvrxtraXtraObject : public Object<QtvrxtraXtraObject> {
@@ -30,6 +34,11 @@ public:
 
 	bool hasProp(const Common::String &propName) override;
 	Datum getProp(const Common::String &propName) override;
+
+	Video::QuickTimeDecoder *_video;
+
+	Common::Rect _rect;
+	bool _visible;
 };
 
 namespace QtvrxtraXtra {
