@@ -312,10 +312,13 @@ bool Scene::readGameItemList(Common::SeekableReadStream *s, Common::Array<GameIt
 
 bool Scene::readMouseHotspotList(Common::SeekableReadStream *s, Common::Array<MouseCursor> &list) const {
 	uint16 num = s->readUint16LE();
+	uint16 hotX, hotY;
 	_checkListNotTooLong(num, "mouse hotspots");
 
 	for (uint16 i = 0; i < num; i++) {
-		list.push_back(MouseCursor(s->readUint16LE(), s->readUint16LE()));
+		hotX = s->readUint16LE();
+		hotY = s->readUint16LE();
+		list.push_back(MouseCursor(hotX, hotY));
 	}
 	return !s->err();
 }
