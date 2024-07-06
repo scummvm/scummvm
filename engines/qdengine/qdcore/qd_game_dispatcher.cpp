@@ -2517,7 +2517,7 @@ bool qdGameDispatcher::load_save(const char *fname) {
 	int size = fh->readSint32LE();
 	if (size != global_object_list().size()) return false;
 
-	for (auto it : global_object_list()) {
+	for (auto &it : global_object_list()) {
 		if (!it->load_data(*fh, save_version))
 			return false;
 	}
@@ -2525,7 +2525,7 @@ bool qdGameDispatcher::load_save(const char *fname) {
 	size = fh->readSint32LE();
 	if (size != counter_list().size()) return false;
 
-	for (auto it : counter_list()) {
+	for (auto &it : counter_list()) {
 		if (!it->load_data(*fh, save_version))
 			return false;
 	}
@@ -2533,7 +2533,7 @@ bool qdGameDispatcher::load_save(const char *fname) {
 	size = fh->readSint32LE();
 	if (size != scene_list().size()) return false;
 
-	for (auto it : scene_list()) {
+	for (auto &it : scene_list()) {
 		if (!it->load_data(*fh, save_version))
 			return false;
 	}
@@ -2541,7 +2541,7 @@ bool qdGameDispatcher::load_save(const char *fname) {
 	size = fh->readSint32LE();
 	if (size != global_object_list().size()) return false;
 
-	for (auto it : global_object_list()) {
+	for (auto &it : global_object_list()) {
 		if (!it->load_data(*fh, save_version))
 			return false;
 	}
