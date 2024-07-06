@@ -90,7 +90,7 @@ ImFont *addTTFFontFromArchive(const char *filename, float size_pixels, const ImF
 
 	uint size = f.size();
 
-	uint8 *ttfFile = new uint8[size];
+	uint8 *ttfFile = (uint8 *)ImGui::MemAlloc(size);
 	f.read(ttfFile, size);
 	ImGuiIO &io = ImGui::GetIO();
 	return io.Fonts->AddFontFromMemoryTTF(ttfFile, size, size_pixels, font_cfg_template, glyph_ranges);
