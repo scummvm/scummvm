@@ -60,7 +60,10 @@ Globals::Globals(Clock &clock) :
 _lastOpcode1SceneChageNum(0), _sceneOp12SceneNum(0), _currentSelectedItem(0),
 _gameMinsToAddOnLClick(0), _gameMinsToAddOnStartDrag(0), _gameMinsToAddOnRClick(0), _gameMinsToAddOnDragFinished(0),
 _gameMinsToAddOnObjInteraction(0), _gameIsInteractiveGlobal(0), _sceneOpcode15FromScene(0),
-_sceneOpcode15ToScene(0) {
+_sceneOpcode15ToScene(0), _unk2(0), _unk5(0), _unk39(0), _unk40(0), _unk51(0), _unk52(0), _unk54(0), _unk81(0) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsGameId gameId = engine->getGameId();
+
 	_globals.push_back(clock.getGameMinsAddedGlobal(1));
 	_globals.push_back(clock.getGameTicksUpGlobal(0x64));
 	_globals.push_back(clock.getGameTicksDownGlobal(0x63));
@@ -79,6 +82,20 @@ _sceneOpcode15ToScene(0) {
 	_globals.push_back(clock.getDays2Global(0x56));
 	_globals.push_back(new RWI16Global(0x55, &_sceneOpcode15FromScene));
 	_globals.push_back(new RWI16Global(0x54, &_sceneOpcode15ToScene));
+
+	if (gameId == GID_CHINA) {
+		_globals.push_back(new RWI16Global(0x36, &_unk54));
+		_globals.push_back(new RWI16Global(0x34, &_unk52));
+		_globals.push_back(new RWI16Global(0x33, &_unk51));
+		_globals.push_back(new RWI16Global(0x28, &_unk40));
+		_globals.push_back(new RWI16Global(0x27, &_unk39));
+	}
+
+	if (gameId == GID_BEAMISH) {
+		_globals.push_back(new RWI16Global(0x51, &_unk81));
+		_globals.push_back(new RWI16Global(0x05, &_unk5));
+		_globals.push_back(new RWI16Global(0x02, &_unk2));
+	}
 }
 
 Globals::~Globals() {

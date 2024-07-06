@@ -110,6 +110,16 @@ protected:
 	int16 _gameIsInteractiveGlobal; // used to decide if the game can start a "meanwhile" sequence
 	int16 _sceneOpcode15FromScene;
 	int16 _sceneOpcode15ToScene;
+	// HoC
+	int16 _unk39;
+	int16 _unk40;
+	int16 _unk51;
+	int16 _unk52;
+	int16 _unk54;
+	// Beamish
+	int16 _unk2;
+	int16 _unk5;
+	int16 _unk81;
 
 	Common::Array<Global *> _globals;
 };
