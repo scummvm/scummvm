@@ -992,6 +992,8 @@ void Character::Update() {
 			int index = currentView->GetCharacterArrayIndex(objectToPickUp);
 			currentView->inventoryItems.push_back(objectToPickUp->GameObject);
 			currentView->characters.remove_at(index);
+			// Give it to the protagonist
+			objectToPickUp->GameObject->SceneIndex = 1;
 			objectToPickUp = nullptr;
 		}
 
