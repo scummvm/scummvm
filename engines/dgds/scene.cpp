@@ -702,10 +702,10 @@ bool Scene::runChinaOp(const SceneOp &op) {
 		break;
 	case kSceneOpOpenChinaStartIntro:
 		// TODO: This is the intro scene but it doesn't work directly.. what's different?
-		//engine->changeScene(98);
-		//return false;
+		// The game first jumps to scene 100, and then to 98
 		warning("TODO: Implement start intro opcode");
-		break;
+		engine->changeScene(98);
+		return false;
 	default:
 		warning("TODO: Implement china-specific scene opcode %d", op._opCode);
 		break;
