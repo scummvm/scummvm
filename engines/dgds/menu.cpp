@@ -92,8 +92,14 @@ enum MenuButtonIds {
 	kMenuMaybeBetterSaveYes = 137,
 	kMenuMaybeBetterSaveNo = 138,
 
+	// Intro menu in Rise of the Dragon
 	kMenuIntroSkip = 143,
 	kMenuIntroPlay = 144,
+
+	// Intro menu in Heart of China / Willy Beamish
+	kMenuIntroJumpToIntroduction = 156,
+	kMenuIntroJumpToGame = 157,
+	kMenuIntroRestore = 150,
 
 	kMenuRestartYes = 163,
 	kMenuRestartNo = 164,
@@ -269,8 +275,6 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 	if (!gadget)
 		return;
 
-	int16 clickedMenuItem = gadget->_gadgetNo;
-
 	// Click animation
 	// TODO: Handle on/off buttons
 	if (dynamic_cast<ButtonGadget *>(gadget)) {
@@ -279,6 +283,19 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 		g_system->delayMillis(500);
 		gadget->toggle(true);
 	}
+
+	if (_curMenu == kMenuOptions)
+		handleClickOptionsMenu(mouse);
+	else if (_curMenu == kMenuSkipPlayIntro)
+		handleClickSkipPlayIntroMenu(mouse);
+	else
+		handleClick(mouse);
+}
+
+void Menu::handleClick(const Common::Point &mouse) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	Gadget *gadget = getClickedMenuItem(mouse);
+	int16 clickedMenuItem = gadget->_gadgetNo;
 
 	switch (clickedMenuItem) {
 	case kMenuMainPlay:
@@ -310,12 +327,8 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 	case kMenuMainQuit:
 		drawMenu(kMenuReallyQuit);
 		break;
-	case kMenuCalibrateVCR:  // NOTE: same ID as kMenuIntroPlay
-		if (_curMenu == kMenuSkipPlayIntro) {
-			hideMenu();
-		} else {
-			drawMenu(kMenuMain);
-		}
+	case kMenuCalibrateVCR: // NOTE: same ID as kMenuIntroPlay
+		drawMenu(kMenuMain);
 		break;
 	case kMenuControlsVCR:
 	case kMenuOptionsVCR:
@@ -324,13 +337,6 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 	case kMenuQuitNo:
 	case kMenuRestartNo:
 		drawMenu(kMenuMain);
-		break;
-	case kMenuOptionsJoystickOnOff:
-	//case kMenuOptionsMouseOnOff: // same id as kMenuMaybeBetterSaveNo
-	//case kMenuOptionsSoundsOnOff: // same id as kMenuMaybeBetterSaveYes
-	case kMenuOptionsMusicOnOff:
-		// TODO
-		debug("Clicked option with ID %d", clickedMenuItem);
 		break;
 	case kMenuCalibrateJoystickBtn:
 		drawMenu(kMenuCalibrateJoystick);
@@ -343,6 +349,7 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 		break;
 	case kMenuFilesRestore:
 	case kMenuGameOverRestore:
+	case kMenuIntroRestore:
 		if (g_engine->loadGameDialog())
 			hideMenu();
 		else
@@ -351,7 +358,7 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 	case kMenuFilesRestart:
 		drawMenu(kMenuRestart);
 		break;
-	case kMenuFilesSave:  	// TODO: Add an option to support original save/load dialogs?
+	case kMenuFilesSave: // TODO: Add an option to support original save/load dialogs?
 	case kMenuSavePrevious:
 	case kMenuSaveNext:
 	case kMenuSaveSave:
@@ -367,11 +374,6 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 	case kMenuChangeDirectoryOK:
 		// TODO
 		debug("Clicked change directory - %d", clickedMenuItem);
-		break;
-	case kMenuIntroSkip:
-		hideMenu();
-		engine->setShowClock(true);
-		engine->changeScene(5);
 		break;
 	case kMenuQuitYes:
 		g_engine->quitGame();
@@ -398,7 +400,7 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 		drawMenu(_curMenu);
 		break;
 	}
-	case kMenuSliderControlsDetailLevel:  {
+	case kMenuSliderControlsDetailLevel: {
 		int16 setting = dynamic_cast<SliderGadget *>(gadget)->onClick(mouse);
 		engine->setDetailLevel(static_cast<DgdsDetailLevel>(setting));
 		drawMenu(_curMenu);
@@ -406,6 +408,56 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 	}
 	default:
 		debug("Clicked ID %d", clickedMenuItem);
+		break;
+	}
+}
+
+void Menu::handleClickOptionsMenu(const Common::Point &mouse) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	Gadget *gadget = getClickedMenuItem(mouse);
+	int16 clickedMenuItem = gadget->_gadgetNo;
+
+	switch (clickedMenuItem) {
+	case kMenuOptionsJoystickOnOff:
+	case kMenuOptionsMouseOnOff:  // same id as kMenuMaybeBetterSaveNo
+	case kMenuOptionsSoundsOnOff: // same id as kMenuMaybeBetterSaveYes
+	case kMenuOptionsMusicOnOff:
+		// TODO
+		debug("Clicked option with ID %d", clickedMenuItem);
+		break;
+	default:
+		handleClick(mouse);
+		break;
+	}
+}
+
+void Menu::handleClickSkipPlayIntroMenu(const Common::Point &mouse) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	Gadget *gadget = getClickedMenuItem(mouse);
+	int16 clickedMenuItem = gadget->_gadgetNo;
+
+	switch (clickedMenuItem) {
+	case kMenuIntroPlay:
+		hideMenu();
+		break;
+	case kMenuIntroSkip:
+		hideMenu();
+		engine->setShowClock(true);
+		engine->changeScene(5);
+		break;
+	case kMenuIntroJumpToIntroduction:
+		hideMenu();
+		if (engine->getGameId() == GID_CHINA)
+			engine->changeScene(98);
+		else if (engine->getGameId() == GID_BEAMISH)
+			engine->changeScene(24);
+		break;
+	case kMenuIntroJumpToGame:
+		// TODO
+		debug("Clicked option with ID %d", clickedMenuItem);
+		break;
+	default:
+		handleClick(mouse);
 		break;
 	}
 }
