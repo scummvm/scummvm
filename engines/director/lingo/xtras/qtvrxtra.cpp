@@ -194,7 +194,7 @@ static MethodProto xlibMethods[] = {
 	{ "QTVRSetNodeID",				QtvrxtraXtra::m_QTVRSetNodeID,		 1, 1,	500 },
 	{ "QTVRGetNodeName",				QtvrxtraXtra::m_QTVRGetNodeName,		 0, 0,	500 },
 	{ "QTVRGetQuality",				QtvrxtraXtra::m_QTVRGetQuality,		 0, 0,	500 },
-	{ "QTVRSetQuality",				QtvrxtraXtra::m_QTVRSetQuality,		 1, 0,	500 },
+	{ "QTVRSetQuality",				QtvrxtraXtra::m_QTVRSetQuality,		 1, 1,	500 },
 	{ "QTVRGetTransitionMode",				QtvrxtraXtra::m_QTVRGetTransitionMode,		 0, 0,	500 },
 	{ "QTVRSetTransitionMode",				QtvrxtraXtra::m_QTVRSetTransitionMode,		 1, 0,	500 },
 	{ "QTVRGetTransitionSpeed",				QtvrxtraXtra::m_QTVRGetTransitionSpeed,		 0, 0,	500 },
@@ -241,6 +241,7 @@ QtvrxtraXtraObject::QtvrxtraXtraObject(ObjectType ObjectType) :Object<QtvrxtraXt
 	_video = nullptr;
 
 	_visible = false;
+	_quality = 0.0f;
 }
 
 bool QtvrxtraXtraObject::hasProp(const Common::String &propName) {
@@ -484,8 +485,24 @@ void QtvrxtraXtra::m_QTVRGetNodeName(int nargs) {
 	g_lingo->push(me->_currentNode.name);
 }
 
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetQuality, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetQuality, 0)
+void QtvrxtraXtra::m_QTVRGetQuality(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetQuality", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(Common::String::format("%f", me->_quality));
+}
+
+void QtvrxtraXtra::m_QTVRSetQuality(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetQuality", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_quality = atof(g_lingo->pop().asString().c_str());
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetTransitionMode, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetTransitionMode, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetTransitionSpeed, 0)

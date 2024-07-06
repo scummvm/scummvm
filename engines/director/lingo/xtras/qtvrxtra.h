@@ -37,6 +37,7 @@ public:
 
 	Common::Rect _rect;
 	bool _visible;
+	float _quality;
 
 	Video::QuickTimeDecoder::NodeData _currentNode;
 };
