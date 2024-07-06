@@ -1717,6 +1717,13 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 		image = spritePtr[i]->image;
 		state = spritePtr[i]->state;
 
+		if (image == 495) {
+			if (state == 15) {
+				debug("state %d", state);
+				// return;
+			}
+		}
+
 		int32 spotX = 0, spotY = 0;
 		calcSpriteSpot(spritePtr[i], true, spotX, spotY);
 
@@ -1921,6 +1928,15 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 				imageRenderCmd.actionFlags |= kWAFDestImage;
 				imageRenderCmd.destImageNumber = destImageNumber;
 			}
+
+			if (image == 495) {
+				
+				if (state == 15) {
+					//debug("state %d", state);
+					//return;
+				}
+			}
+
 
 			// Finally actually do something by calling the command parser...
 			if (_vm->_game.heversion > 99 || _vm->_isHE995) {

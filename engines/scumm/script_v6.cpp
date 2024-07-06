@@ -3510,7 +3510,7 @@ void ScummEngine_v6::shuffleArray(int num, int minIdx, int maxIdx) {
 	int rand1, rand2;
 	int range = maxIdx - minIdx;
 	int count = range * 2;
-	
+
 	// Shuffle the array 'num'
 	while (count--) {
 		// Determine two random elements...
