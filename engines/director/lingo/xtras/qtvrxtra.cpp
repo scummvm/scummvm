@@ -200,7 +200,7 @@ static MethodProto xlibMethods[] = {
 	{ "QTVRGetTransitionSpeed",				QtvrxtraXtra::m_QTVRGetTransitionSpeed,		 0, 0,	500 },
 	{ "QTVRSetTransitionSpeed",				QtvrxtraXtra::m_QTVRSetTransitionSpeed,		 1, 1,	500 },
 	{ "QTVRGetUpdateMode",				QtvrxtraXtra::m_QTVRGetUpdateMode,		 0, 0,	500 },
-	{ "QTVRSetUpdateMode",				QtvrxtraXtra::m_QTVRSetUpdateMode,		 1, 0,	500 },
+	{ "QTVRSetUpdateMode",				QtvrxtraXtra::m_QTVRSetUpdateMode,		 1, 1,	500 },
 	{ "QTVRGetVisible",				QtvrxtraXtra::m_QTVRGetVisible,		 0, 0,	500 },
 	{ "QTVRSetVisible",				QtvrxtraXtra::m_QTVRSetVisible,		 1, 0,	500 },
 	{ "QTVRGetWarpMode",				QtvrxtraXtra::m_QTVRGetWarpMode,		 0, 0,	500 },
@@ -245,6 +245,8 @@ QtvrxtraXtraObject::QtvrxtraXtraObject(ObjectType ObjectType) :Object<QtvrxtraXt
 
 	_transitionMode = "normal";
 	_transitionSpeed = 1.0f;
+
+	_updateMode = "normal";
 }
 
 bool QtvrxtraXtraObject::hasProp(const Common::String &propName) {
@@ -542,8 +544,24 @@ void QtvrxtraXtra::m_QTVRSetTransitionSpeed(int nargs) {
 	me->_transitionSpeed = atof(g_lingo->pop().asString().c_str());
 }
 
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetUpdateMode, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetUpdateMode, 0)
+void QtvrxtraXtra::m_QTVRGetUpdateMode(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetUpdateMode", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_updateMode);
+}
+
+void QtvrxtraXtra::m_QTVRSetUpdateMode(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetUpdateMode", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_updateMode = g_lingo->pop().asString();
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetVisible, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetVisible, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetWarpMode, 0)
