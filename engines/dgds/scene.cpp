@@ -1757,6 +1757,11 @@ int16 GDSScene::getGlobal(uint16 num) {
 	for (const auto &global : _perSceneGlobals) {
 		if (global.matches(num, curSceneNum))
 			return global._val;
+		else if (!global.matches(num, curSceneNum) && global.numMatches(num)) {
+			// This looks like a script bug, get it anyway
+			warning("getGlobal: scene global %d is not in scene %d", num, curSceneNum);
+			return global._val;
+		}
 	}
 	Globals *gameGlobals = engine->getGameGlobals();
 	return gameGlobals->getGlobal(num);
@@ -1769,6 +1774,11 @@ int16 GDSScene::setGlobal(uint16 num, int16 val) {
 		if (global.matches(num, curSceneNum)) {
 			global._val = val;
 			return val;
+		} else if (!global.matches(num, curSceneNum) && global.numMatches(num)) {
+			// This looks like a script bug, set it anyway
+			warning("setGlobal: scene global %d is not in scene %d", num, curSceneNum);
+			global._val = val;
+			return val;			
 		}
 	}
 	Globals *gameGlobals = engine->getGameGlobals();

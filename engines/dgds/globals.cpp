@@ -93,7 +93,8 @@ int16 Globals::getGlobal(uint16 num) {
 			return global->get();
 		}
 	}
-	return 0;
+
+	error("getGlobal: requested non-existing global %d", num);
 }
 
 int16 Globals::setGlobal(uint16 num, int16 val) {
@@ -102,7 +103,8 @@ int16 Globals::setGlobal(uint16 num, int16 val) {
 			return global->set(val);
 		}
 	}
-	return 0;
+
+	error("setGlobal: requested non-existing global %d", num);
 }
 
 Common::Error Globals::syncState(Common::Serializer &s) {

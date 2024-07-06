@@ -206,6 +206,7 @@ public:
 
 	Common::String dump(const Common::String &indent) const;
 	bool matches(uint16 num, uint16 scene) const { return num == _num && (_sceneNo == 0 || _sceneNo == scene); }
+	bool numMatches(uint16 num) const { return num == _num; }
 
 	int16 _val;
 
