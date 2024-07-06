@@ -113,8 +113,24 @@ uint32 AGSEngine::getFeatures() const {
 	return _gameDescription->desc.flags;
 }
 
+static const PluginVersion AGSTEAM_WADJETEYE[] = { { "agsteam", kWadjetEye }, { nullptr, 0 } };
+static const PluginVersion AGS_FLASHLIGHT[] = { { "agsflashlight", 0 }, { nullptr, 0 } };
+static const PluginVersion AGSSPRITEFONT_CLIFFTOP[] = { { "agsspritefont", kClifftopGames }, { "agsplugin.spritefont", kClifftopGames }, { nullptr, 0 } };
+
+static const PluginVersion *const PLUGIN_VERSIONS[] = {
+	nullptr,
+	AGSTEAM_WADJETEYE,
+	AGS_FLASHLIGHT,
+	AGSSPRITEFONT_CLIFFTOP
+};
+
 const PluginVersion *AGSEngine::getNeededPlugins() const {
-	return _gameDescription->_plugins;
+	uint index = (_gameDescription->features & GAMEFLAG_PLUGINS_MASK);
+
+	if (index >= ARRAYSIZE(PLUGIN_VERSIONS))
+		return nullptr;
+	else
+		return PLUGIN_VERSIONS[index];
 }
 
 Common::String AGSEngine::getGameId() const {

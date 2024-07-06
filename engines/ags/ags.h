@@ -59,6 +59,14 @@ struct PluginVersion;
 class EventsManager;
 class Music;
 
+struct PluginVersion {
+	const char *_plugin;
+	int _version;
+};
+
+enum AGSSteamVersion { kAGSteam = 0, kWadjetEye = 1 };
+enum AGSSpriteFontVersion { kAGSSpriteFont = 0, kClifftopGames = 1 };
+
 class AGSEngine : public Engine {
 private:
 	const AGSGameDescription *_gameDescription;
