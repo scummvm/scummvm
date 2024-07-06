@@ -1647,8 +1647,11 @@ void GDSScene::initIconSizes() {
 
 bool GDSScene::readPerSceneGlobals(Common::SeekableReadStream *s) {
 	uint16 numGlobals = s->readUint16LE();
+	uint16 num, scene;
 	for (uint16 i = 0; i < numGlobals; i++) {
-		_perSceneGlobals.push_back(PerSceneGlobal(s->readUint16LE(), s->readUint16LE()));
+		num = s->readUint16LE();
+		scene = s->readUint16LE();
+		_perSceneGlobals.push_back(PerSceneGlobal(num, scene));
 		_perSceneGlobals.back()._val = s->readSint16LE();
 	}
 	return !s->err();
