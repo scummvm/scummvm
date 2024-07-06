@@ -35,76 +35,26 @@ enum AGSDebugChannels {
 };
 
 enum GameFlag {
-	GAMEFLAG_FORCE_AA = 1,
-};
+	GAMEFLAG_PLUGINS_MASK = 0xff,
+	GAMEFLAG_PLUGINS_NONE = 0,
+	GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE = 1,
+	GAMEFLAG_PLUGINS_AGS_FLASHLIGHT = 2,
+	GAMEFLAG_PLUGINS_AGSSPRITEFONT_CLIFFTOP = 3,
 
-struct PluginVersion {
-	const char *_plugin;
-	int _version;
-
-	uint32 sizeBuffer() const {
-		uint32 ret = 0;
-		ret += ADDynamicDescription::strSizeBuffer(_plugin);
-		return ret;
-	}
-	void *toBuffer(void *buffer) {
-		buffer = ADDynamicDescription::strToBuffer(buffer, _plugin);
-		return buffer;
-	}
+	GAMEFLAG_FORCE_AA = 1 << 8,
 };
 
 struct AGSGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
 	ADGameDescription desc;
-	const PluginVersion *_plugins;
-	uint8 features;
 
-	uint32 sizeBuffer() const {
-		uint32 ret = desc.sizeBuffer();
-		if (_plugins) {
-			const PluginVersion *p;
-			for (p = _plugins; p->_plugin != nullptr; p++) {
-				ret += p->sizeBuffer();
-			}
-			// Make space for alignment
-			ret += ADDynamicDescription::alignSizeBuffer();
-			// Add all plugins plus the final element
-			ret += sizeof(*p) * (p - _plugins + 1);
-		}
-		return ret;
-	}
-
-	void *toBuffer(void *buffer) {
-		buffer = desc.toBuffer(buffer);
-		if (_plugins) {
-			const PluginVersion *p;
-			for (p = _plugins; p->_plugin != nullptr; p++)
-				;
-			uint count = (p - _plugins + 1);
-
-			// Align for pointers
-			buffer = ADDynamicDescription::alignToBuffer(buffer);
-
-			memcpy(buffer, _plugins, sizeof(*p) * count);
-
-			_plugins = (PluginVersion *)buffer;
-
-			PluginVersion *dp = (PluginVersion *)buffer;
-			buffer = (PluginVersion *)buffer + count;
-
-			for (; dp->_plugin != nullptr; dp++) {
-				buffer = dp->toBuffer(buffer);
-			}
-		}
-		return buffer;
-	}
+	uint32 features;
 };
 
 extern const PlainGameDescriptor GAME_NAMES[];
 
 extern const AGSGameDescription GAME_DESCRIPTIONS[];
-
-enum AGSSteamVersion { kAGSteam = 0, kWadjetEye = 1 };
-enum AGSSpriteFontVersion { kAGSSpriteFont = 0, kClifftopGames = 1 };
 
 #define GAMEOPTION_NO_SAVE_THUMBNAIL GUIO_GAMEOPTIONS1
 #define GAMEOPTION_NO_AUTOSAVE		 GUIO_GAMEOPTIONS2
