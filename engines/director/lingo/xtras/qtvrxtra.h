@@ -43,6 +43,8 @@ public:
 
 	Common::String _transitionMode;
 	float _transitionSpeed;
+
+	Common::String _updateMode;
 };
 
 namespace QtvrxtraXtra {
