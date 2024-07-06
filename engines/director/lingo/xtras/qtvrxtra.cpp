@@ -416,6 +416,14 @@ XOBJSTUB(QtvrxtraXtra::m_QTVRGetRolloverHotSpotHandler, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetRolloverHotSpotHandler, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRExitMouseOver, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRPassMouseDown, 0)
-XOBJSTUB(QtvrxtraXtra::m_IsQTVRMovie, 0)
+
+void QtvrxtraXtra::m_IsQTVRMovie(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_IsQTVRMovie", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push((int)(me->_video && me->_video->isVideoLoaded()));
+}
 
 }
