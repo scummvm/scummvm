@@ -226,7 +226,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 		if (_mouseMode == MouseMode::Use) {
 			// l0037_9FC7:
 			out1 = _interactedObjectID;
-			out2 = 0;
+			out2 = _interactedOtherObjectID;
 			debug("- 9F4D results: %.4x %.4x", out1, out2);
 			return;
 		} else if (_mouseMode == MouseMode::UseInventory) {
@@ -1093,6 +1093,11 @@ void ScriptExecutor::Step() {
 			break;
 		}
 	}
+	// Rewind and reset to the scene script after we are done executing
+	executingObjectIndex == Scenes::instance().CurrentSceneIndex;
+	SetScript(Scenes::instance().CurrentSceneScript);
+	_stream->seek(0, SEEK_SET);
+	scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 }
 	
 	
@@ -1101,15 +1106,14 @@ bool ScriptExecutor::LoadNextScript() {
 	// there is code to determine that a script run is finished for good
 	// The script switching etc. really needs work
 
-	// TODO: Need to add a state variable here, since this will always break our execution once we
-	// reach the scene
 	// TODO: Implement
 	// TODO: Consider what effect this one can have on the state
-	if (executingObjectIndex == Scenes::instance().CurrentSceneIndex) {
+	if (scriptExecutionState == ScriptExecutionState::ExecutingSceneScript) {
 		// If we are finished with executing the scene, we need to go over all relevant objects
 		// The code below will increment to 1 to start at the protagonist
 		executingObjectIndex = 0;
-	}
+		scriptExecutionState = ScriptExecutionState::ExecutingOtherScripts;
+	} 
 
 	// We always try to advance to the next object's script until we reach the end
 	// of the objects list
@@ -1136,6 +1140,7 @@ bool ScriptExecutor::LoadNextScript() {
 		executingObjectIndex = Scenes::instance().CurrentSceneIndex;
 		_stream = Scenes::instance().CurrentSceneScript;
 		_stream->seek(0, SEEK_SET);
+		scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 		debug("----- Switching execution to script for scene: %.4x", executingObjectIndex);
 		return true;
 	}
@@ -1713,7 +1718,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			constexpr uint32 durationMultiplier = 5;
 			StartTimer(duration * durationMultiplier);
 			isAwaitingCallback = true;
-			break;
+			return ExecutionResult::WaitingForCallback;
 		}
 		else if (opcode1 == 0x12) {
 			// TODO: Working assumption is that this adjusts something about pathfinding data

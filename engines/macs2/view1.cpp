@@ -84,7 +84,7 @@ View1::View1() : UIElement("View1") {
 	AnimFrame *View1::GetInventoryIcon(GameObject *gameObject) {
 		AnimFrame *result = new AnimFrame();
 		int index = 5 - 1;
-		if (is_in_list<uint16, 0x11, 0x22, 0x23, 0x19, 0x1A, 0x14>(gameObject->Index)) {
+		if (is_in_list<uint16, 0x11, 0x17, 0x18, 0x22, 0x23, 0x19, 0x1A, 0x14>(gameObject->Index)) {
 			// gameObject->Index == 0x23 || gameObject->Index == 0x22) {
 			// TODO Figure out these - the mug has a different blob
 			index = 0x13;
@@ -351,8 +351,10 @@ View1::View1() : UIElement("View1") {
 					// Trigger a use item on item
 					GameObject *firstObject = activeInventoryItem;
 					activeInventoryItem = nullptr;
-					g_engine->_scriptExecutor->_interactedObjectID = firstObject->Index;
-					g_engine->_scriptExecutor->_interactedOtherObjectID = clickedObject->Index;
+					// TODO: Does the scripting engine expect always the objects with the
+					// right number prefix like here 419 instead of 19?
+					g_engine->_scriptExecutor->_interactedObjectID = 0x400 + firstObject->Index;
+					g_engine->_scriptExecutor->_interactedOtherObjectID = 0x400 + clickedObject->Index;
 					g_engine->RunScriptExecutor(false);
 				}
 				activeInventoryItem = clickedObject;
@@ -964,7 +966,6 @@ void Character::RegisterWaitForMovementFinishedEvent() {
 	// even if we are not lerping, so that we have a delay between action 0x11
 	// and the new execution
 	ExecuteScriptOnFinishLerp = true;
-	
 }
 
 void Character::Update() {
