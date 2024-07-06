@@ -162,7 +162,8 @@ const XlibFileDesc QtvrxtraXtra::fileNames[] = {
 static MethodProto xlibMethods[] = {
 	{ "new",				QtvrxtraXtra::m_new,		 0, 0,	500 },
 	{ "forget",				QtvrxtraXtra::m_forget,		 0, 0,	500 },
-	{ "QTVREnter",			QtvrxtraXtra::m_QTVREnter,	 1, 1,	500 },
+	{ "QTVREnter",			QtvrxtraXtra::m_QTVREnter,	 0, 0,	500 },
+	{ "QTVRExit",			QtvrxtraXtra::m_QTVRExit,	 0, 0,	500 },
 	{ "QTVROpen",				QtvrxtraXtra::m_QTVROpen,		 3, 0,	500 },
 	{ "QTVRClose",				QtvrxtraXtra::m_QTVRClose,		 0, 0,	500 },
 	{ "QTVRUpdate",				QtvrxtraXtra::m_QTVRUpdate,		 0, 0,	500 },
@@ -268,8 +269,18 @@ void QtvrxtraXtra::m_new(int nargs) {
 }
 
 XOBJSTUB(QtvrxtraXtra::m_forget, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVREnter, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRExit, 0)
+
+void QtvrxtraXtra::m_QTVREnter(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVREnter", nargs);
+	ARGNUMCHECK(0);
+	g_lingo->push(0);
+}
+
+void QtvrxtraXtra::m_QTVRExit(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRExit", nargs);
+	ARGNUMCHECK(0);
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVROpen, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRClose, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRUpdate, 0)
