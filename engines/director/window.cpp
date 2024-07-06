@@ -316,7 +316,7 @@ void Window::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Mana
 	} else if (pd.srf) {
 		pd.inkBlitSurface(srcRect, channel->getMask());
 	} else {
-		if (debugChannelSet(kDebugImages, 4)) {
+		if (debugChannelSet(4, kDebugImages)) {
 			CastType castType = channel->_sprite->_cast ? channel->_sprite->_cast->_type : kCastTypeNull;
 			warning("Window::inkBlitFrom(): No source surface: spriteType: %d (%s), castType: %d (%s), castId: %s",
 				channel->_sprite->_spriteType, spriteType2str(channel->_sprite->_spriteType), castType, castType2str(castType),
@@ -621,7 +621,7 @@ Common::Path Window::getSharedCastPath() {
 void Window::freezeLingoState() {
 	_frozenLingoStates.push_back(_lingoState);
 	_lingoState = new LingoState;
-	debugC(kDebugLingoExec, 3, "Freezing Lingo state, depth %d", _frozenLingoStates.size());
+	debugC(3, kDebugLingoExec, "Freezing Lingo state, depth %d", _frozenLingoStates.size());
 }
 
 void Window::thawLingoState() {
@@ -634,7 +634,7 @@ void Window::thawLingoState() {
 		return;
 	}
 	delete _lingoState;
-	debugC(kDebugLingoExec, 3, "Thawing Lingo state, depth %d", _frozenLingoStates.size());
+	debugC(3, kDebugLingoExec, "Thawing Lingo state, depth %d", _frozenLingoStates.size());
 	_lingoState = _frozenLingoStates.back();
 	_frozenLingoStates.pop_back();
 }
@@ -646,7 +646,7 @@ void Window::freezeLingoPlayState() {
 	}
 	_lingoPlayState = _lingoState;
 	_lingoState = new LingoState;
-	debugC(kDebugLingoExec, 3, "Freezing Lingo play state");
+	debugC(3, kDebugLingoExec, "Freezing Lingo play state");
 }
 
 bool Window::thawLingoPlayState() {
@@ -659,7 +659,7 @@ bool Window::thawLingoPlayState() {
 		return false;
 	}
 	delete _lingoState;
-	debugC(kDebugLingoExec, 3, "Thawing Lingo play state");
+	debugC(3, kDebugLingoExec, "Thawing Lingo play state");
 	_lingoState = _lingoPlayState;
 	_lingoPlayState = nullptr;
 	return true;

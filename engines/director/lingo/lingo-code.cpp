@@ -1703,7 +1703,7 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 			// Lingo supports providing a different number of arguments than expected,
 			// and several games rely on this behaviour.
 			if (funcSym.nargs > nargs) {
-				debugC(kDebugLingoExec, 1, "Incorrect number of arguments for handler '%s' (%d, expected %d to %d). Adding extra %d voids",
+				debugC(1, kDebugLingoExec, "Incorrect number of arguments for handler '%s' (%d, expected %d to %d). Adding extra %d voids",
 							funcSym.name->c_str(), nargs, funcSym.nargs, funcSym.maxArgs, funcSym.nargs - nargs);
 				while (nargs < funcSym.nargs) {
 					Datum d;
