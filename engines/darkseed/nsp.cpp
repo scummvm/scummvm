@@ -57,6 +57,7 @@ void Darkseed::Sprite::draw(int x, int y) const {
 }
 
 void Darkseed::Sprite::drawScaled(int destX, int destY, int destWidth, int destHeight, bool flipX) const {
+	//TODO image isn't exactly the same when not scaling. It seems larger by about a pixel.
 	//TODO this logic is pretty messy. It should probably be re-written. It is trying to scale, clip and flip at once.
 	Graphics::ManagedSurface * destSurface = g_engine->_screen;
 	// Based on the GNAP engine scaling code

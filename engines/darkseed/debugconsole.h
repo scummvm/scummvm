@@ -38,6 +38,7 @@ private:
 	bool Cmd_setvar(int argc, const char **argv);
 	bool Cmd_enablePathfinderOverlay(int argc, const char **argv);
 	bool Cmd_info(int argc, const char **argv);
+	bool Cmd_gotoRoom(int argc, const char **argv);
 	bool validateObjVarIndex(int16 varIdx);
 	void printDayAndTime();
 public:

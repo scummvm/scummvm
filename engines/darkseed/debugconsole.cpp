@@ -31,6 +31,7 @@ DebugConsole::DebugConsole(TosText *tosText) : GUI::Debugger(), tosText(tosText)
 	registerCmd("setvar",   WRAP_METHOD(DebugConsole, Cmd_setvar));
 	registerCmd("enablePathfinderOverlay",   WRAP_METHOD(DebugConsole, Cmd_enablePathfinderOverlay));
 	registerCmd("info",   WRAP_METHOD(DebugConsole, Cmd_info));
+	registerCmd("gotoRoom",   WRAP_METHOD(DebugConsole, Cmd_gotoRoom));
 }
 
 DebugConsole::~DebugConsole() {
@@ -116,6 +117,22 @@ bool DebugConsole::Cmd_info(int argc, const char **argv) {
 	debugPrintf("\nRoom info:\n");
 	debugPrintf("Room number: %d\n", g_engine->_room->_roomNumber);
 
+	return true;
+}
+
+bool DebugConsole::Cmd_gotoRoom(int argc, const char **argv) {
+	if (argc < 2 || argc > 3) {
+		debugPrintf("Usage: gotoRoom <roomNumber> <entranceNumber>\n");
+		return true;
+	}
+
+	int16 roomNumber = (int16)atoi(argv[1]);
+	int entranceNumber = 0;
+	if (argc == 3) {
+		entranceNumber = (int16)atoi(argv[2]);
+	}
+
+	g_engine->debugTeleportToRoom(roomNumber, entranceNumber);
 	return true;
 }
 

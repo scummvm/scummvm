@@ -113,7 +113,7 @@ public:
 	bool _doorEnabled = false;
 	uint16 DAT_2c85_825c = 0;
 	uint16 DAT_2c85_819c = 0;
-	bool BoolEnum_2c85_985a = false;
+	bool _scaleSequence = false;
 	bool useDoorTarget = false;
 
 	uint16 DAT_2c85_81e0 = 0;
@@ -184,6 +184,7 @@ public:
 
 	void updateDisplay();
 	void setupOtherNspAnimation(int nspAnimIdx, int animId);
+	void debugTeleportToRoom(int newRoomNumber, int entranceNumber);
 
 private:
 	void updateAnimation();
@@ -198,6 +199,8 @@ private:
 	void handleObjCollision(int objNum);
 
 	void eyeCode(int objNum);
+	void wongame();
+	void getPackage(int state);
 };
 
 extern DarkseedEngine *g_engine;
