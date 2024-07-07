@@ -58,6 +58,8 @@ private:
 	uint32 Duration;
 
 	bool IsLerping = false;
+	// TODO: Need to consistently reset this one to false
+	bool LerpIgnoresObstacles = false;
 
 	// If this is set, a lerp to a location becomes picking up
 	// TODO: Replace by more proper task implementation later
@@ -84,7 +86,7 @@ private:
 		// TODO: Will need time handling
 	Macs2::AnimFrame *GetCurrentAnimationFrame();
 		Macs2::AnimFrame *GetCurrentPortrait();
-		void StartLerpTo(const Common::Point &target, uint32 duration);
+		void StartLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles = false);
 
 		void StartPickup(Character *object);
 

@@ -1550,7 +1550,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Need to be able to address the character objects by ID, now relying
 			// on the fact that they were added in a specific order
 			Character *c = currentView->GetCharacterByIndex(objectID);
-			c->StartLerpTo(Common::Point(x, y), 2 * 1000);
+			// TODO: Figure out what determines if a movement ignores obstacles on the way
+			c->StartLerpTo(Common::Point(x, y), 2 * 1000, true);
 		} else if (opcode1 == 0x11) {
 			// Wait for last movement to be finished
 			// Note that there can be several in a row, and they will apply to the character in question
