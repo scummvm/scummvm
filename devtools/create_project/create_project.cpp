@@ -1112,6 +1112,7 @@ const Feature s_features[] = {
 	{             "aspect",                    "USE_ASPECT", false, true,  "Aspect ratio correction" },
 	{              "16bit",                 "USE_RGB_COLOR", false, true,  "16bit color support" },
 	{            "highres",                   "USE_HIGHRES", false, true,  "high resolution" },
+	{              "imgui",                     "USE_IMGUI", false, true,  "Dear ImGui based debugger" },
 	{            "mt32emu",                   "USE_MT32EMU", false, true,  "integrated MT-32 emulator" },
 	{                "lua",                       "USE_LUA", false, true,  "lua" },
 	{               "nasm",                      "USE_NASM", false, true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
