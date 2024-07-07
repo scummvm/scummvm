@@ -25,7 +25,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/adpcm.h"
 #include "common/bitstream.h"
-#include "common/huffman.h"
+#include "common/compression/huffman.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
