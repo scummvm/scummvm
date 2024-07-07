@@ -321,6 +321,8 @@ public:
 		if (!cur_video_) return false;
 		return true;
 	}
+
+	void continueVideo();
 	bool is_video_playing(qdVideo *p) {
 		return (cur_video_ == p);
 	}
@@ -693,3 +695,4 @@ qdGameDispatcher *qd_get_game_dispatcher();
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_GAME_DISPATCHER_H
+

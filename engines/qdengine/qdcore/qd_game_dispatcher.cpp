@@ -302,6 +302,8 @@ void qdGameDispatcher::quant(float dt) {
 		if (is_video_playing()) {
 			if (is_video_finished()) {
 				close_video();
+			} else {
+				continueVideo();
 			}
 		}
 
@@ -1929,7 +1931,8 @@ bool qdGameDispatcher::stop_video() {
 }
 
 bool qdGameDispatcher::close_video() {
-	if (!cur_video_) return false;
+	if (!cur_video_)
+		return false;
 
 	video_player_.stop();
 	video_player_.close_file();
@@ -1968,6 +1971,11 @@ bool qdGameDispatcher::close_video() {
 bool qdGameDispatcher::is_video_finished() {
 	if (!cur_video_) return false;
 	return video_player_.is_playback_finished();
+}
+
+void qdGameDispatcher::continueVideo() {
+	if (!cur_video_) return;
+	video_player_.play();
 }
 
 bool qdGameDispatcher::merge_global_objects(qdGameObject *obj) {
