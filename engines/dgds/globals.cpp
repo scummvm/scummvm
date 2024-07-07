@@ -61,8 +61,6 @@ _lastOpcode1SceneChageNum(0), _sceneOp12SceneNum(0), _currentSelectedItem(0),
 _gameMinsToAddOnLClick(0), _gameMinsToAddOnStartDrag(0), _gameMinsToAddOnRClick(0), _gameMinsToAddOnDragFinished(0),
 _gameMinsToAddOnObjInteraction(0), _gameIsInteractiveGlobal(0), _sceneOpcode15FromScene(0),
 _sceneOpcode15ToScene(0) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-
 	_globals.push_back(clock.getGameMinsAddedGlobal(1));
 	_globals.push_back(clock.getGameTicksUpGlobal(0x64));
 	_globals.push_back(clock.getGameTicksDownGlobal(0x63));
