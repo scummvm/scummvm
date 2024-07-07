@@ -153,13 +153,22 @@ private:
 	// HoC-specific globals
 	int16 _unk39;
 	int16 _unk40;
+	int16 _unk41;
+	int16 _unk42;
+	int16 _unk43;
+	int16 _unk44;
 	int16 _unk45;
 	int16 _unk46;
+	int16 _unk47;
 	int16 _unk48;
-	int16 _unk51;
-	int16 _characterCount;
+	int16 _unk49;
+	int16 _unk50;
 	int16 _currentCharacter;
-	int16 _unk54;
+	int16 _currentCharacter2;
+	int16 _unkDlgDlgNum;
+	int16 _unkDlgFileNum;
+	int16 _unk55;
+	int16 _unk82;
 
 	Common::Error syncState(Common::Serializer &s) override;
 };
