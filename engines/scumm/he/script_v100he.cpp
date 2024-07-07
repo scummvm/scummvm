@@ -2400,7 +2400,16 @@ void ScummEngine_v100he::o100_writeFile() {
 
 	byte subOp = fetchScriptByte();
 
-	assert(_hOutFileTable[slot]);
+	// The original doesn't make assumptions of any
+	// kind when the slot is -1 (which is a possible
+	// value from the scripts) and does NOPs instead...
+	if (slot != -1)
+		assert(_hOutFileTable[slot]);
+
+	// Arrays will handle the -1 value by themselves...
+	if (slot == -1 && subOp != SO_ARRAY)
+		return;
+
 	switch (subOp) {
 	case SO_ARRAY:
 		fetchScriptByte();
@@ -2777,20 +2786,35 @@ void ScummEngine_v100he::o100_readFile() {
 		break;
 	case SO_INT:
 		slot = pop();
-		assert(_hInFileTable[slot]);
-		val = _hInFileTable[slot]->readUint16LE();
+		if (slot == -1) {
+			val = 0;
+		} else {
+			assert(_hInFileTable[slot]);
+			val = _hInFileTable[slot]->readUint16LE();
+		}
+
 		push(val);
 		break;
 	case SO_DWORD:
 		slot = pop();
-		assert(_hInFileTable[slot]);
-		val = _hInFileTable[slot]->readUint32LE();
+		if (slot == -1) {
+			val = 0;
+		} else {
+			assert(_hInFileTable[slot]);
+			val = _hInFileTable[slot]->readUint32LE();
+		}
+
 		push(val);
 		break;
 	case SO_BYTE:
 		slot = pop();
-		assert(_hInFileTable[slot]);
-		val = _hInFileTable[slot]->readByte();
+		if (slot == -1) {
+			val = 0;
+		} else {
+			assert(_hInFileTable[slot]);
+			val = _hInFileTable[slot]->readByte();
+		}
+
 		push(val);
 		break;
 	default:

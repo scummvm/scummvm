@@ -1695,10 +1695,16 @@ int ScummEngine_v72he::readFileToArray(int slot, int32 size) {
 	byte *data = defineArray(0, kByteArray, 0, 0, 0, size);
 
 	if (slot != -1) {
+		assert(_hInFileTable[slot]);
 		_hInFileTable[slot]->read(data, size + 1);
 	}
 
-	return readVar(0);
+	int returnValue = readVar(0);
+
+	if (_game.heversion >= 80)
+		returnValue |= MAGIC_ARRAY_NUMBER;
+
+	return returnValue;
 }
 
 void ScummEngine_v72he::o72_readFile() {
@@ -1709,28 +1715,43 @@ void ScummEngine_v72he::o72_readFile() {
 	switch (subOp) {
 	case SO_BYTE:
 		slot = pop();
-		assert(_hInFileTable[slot]);
-		val = _hInFileTable[slot]->readByte();
+		if (slot == -1) {
+			val = 0;
+		} else {
+			assert(_hInFileTable[slot]);
+			val = _hInFileTable[slot]->readByte();
+		}
+
 		push(val);
 		break;
 	case SO_INT:
 		slot = pop();
-		assert(_hInFileTable[slot]);
-		val = _hInFileTable[slot]->readUint16LE();
+		if (slot == -1) {
+			val = 0;
+		} else {
+			assert(_hInFileTable[slot]);
+			val = _hInFileTable[slot]->readUint16LE();
+		}
+
 		push(val);
 		break;
 	case SO_DWORD:
 		slot = pop();
-		assert(_hInFileTable[slot]);
-		val = _hInFileTable[slot]->readUint32LE();
+		if (slot == -1) {
+			val = 0;
+		} else {
+			assert(_hInFileTable[slot]);
+			val = _hInFileTable[slot]->readUint32LE();
+		}
+
 		push(val);
 		break;
 	case SO_ARRAY:
 		fetchScriptByte();
 		size = pop();
 		slot = pop();
-		assert(_hInFileTable[slot]);
 		val = readFileToArray(slot, size);
+
 		push(val);
 		break;
 	default:
@@ -1744,6 +1765,7 @@ void ScummEngine_v72he::writeFileFromArray(int slot, int32 resID) {
 		(FROM_LE_32(ah->downMax) - FROM_LE_32(ah->downMin) + 1);
 
 	if (slot != -1) {
+		assert(_hInFileTable[slot]);
 		_hOutFileTable[slot]->write(ah->data, size);
 	}
 }
@@ -1773,7 +1795,16 @@ void ScummEngine_v72he::o72_writeFile() {
 	int slot = pop();
 	byte subOp = fetchScriptByte();
 
-	assert(_hOutFileTable[slot]);
+	// The original doesn't make assumptions of any
+	// kind when the slot is -1 (which is a possible
+	// value from the scripts) and does NOPs instead...
+	if (slot != -1)
+		assert(_hOutFileTable[slot]);
+
+	// Arrays will handle the -1 value by themselves...
+	if (slot == -1 && subOp != SO_ARRAY)
+		return;
+
 	switch (subOp) {
 	case SO_BYTE:
 		_hOutFileTable[slot]->writeByte(resID);
