@@ -415,6 +415,49 @@ void EclipseEngine::drawAnalogClockHand(Graphics::Surface *surface, int x, int y
 	surface->drawLine(x, y, x+(int)w, y+(int)h, color);
 }
 
+void EclipseEngine::drawCompass(Graphics::Surface *surface, int x, int y, double degrees, double magnitude, uint32 color) {
+	const double degtorad = (M_PI * 2) / 360;
+	double w = magnitude * cos(-degrees * degtorad);
+	double h = magnitude * sin(-degrees * degtorad);
+
+	int dx = 0;
+	int dy = 0;
+
+	// Adjust dx and dy to make the compass look like a compass
+	if (degrees == 0 || degrees == 360) {
+		dx = 0;
+		dy = 2;
+	} else if (degrees > 0 && degrees < 90) {
+		dx = 1;
+		dy = 1;
+	} else if (degrees == 90) {
+		dx = 2;
+		dy = 0;
+	} else if (degrees > 90 && degrees < 180) {
+		dx = 1;
+		dy = -1;
+	} else if (degrees == 180) {
+		dx = 0;
+		dy = 2;
+	} else if (degrees > 180 && degrees < 270) {
+		dx = -1;
+		dy = -1;
+	} else if (degrees == 270) {
+		dx = 2;
+		dy = 0;
+	} else if (degrees > 270 && degrees < 360) {
+		dx = -1;
+		dy = 1;
+	}
+
+	surface->drawLine(x, y, x+(int)w, y+(int)h, color);
+	surface->drawLine(x - dx, y - dy, x+(int)w, y+(int)h, color);
+	surface->drawLine(x + dx, y + dy, x+(int)w, y+(int)h, color);
+
+	surface->drawLine(x - dx, y - dy, x+(int)-w, y+(int)-h, color);
+	surface->drawLine(x + dx, y + dy, x+(int)-w, y+(int)-h, color);
+}
+
 // Copied from BITMAP::circlefill in engines/ags/lib/allegro/surface.cpp
 void fillCircle(Graphics::Surface *surface, int x, int y, int radius, int color) {
 	int cx = 0;

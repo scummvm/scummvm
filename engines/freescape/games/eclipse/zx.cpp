@@ -204,6 +204,10 @@ void EclipseEngine::drawZXUI(Graphics::Surface *surface) {
 		drawStringInSurface("<", 240, 141, back, yellow, surface, 'Z' - '$' + 1);
 	}
 	drawAnalogClock(surface, 89, 172, back, back, gray);
+
+	surface->fillRect(Common::Rect(227, 168, 235, 187), gray);
+	drawCompass(surface, 231, 177, _yaw, 10, back);
+
 	drawIndicator(surface, 65, 7, 8);
 	drawEclipseIndicator(surface, 215, 3, front, gray);
 }
