@@ -5233,15 +5233,20 @@ echo "$_retrowave"
 #
 # Check for FLAC
 #
-echocheck "FLAC >= 1.0.1"
+echocheck "FLAC >= 1.1.3"
 if test "$_flac" = auto ; then
 	_flac=no
 	cat > $TMPC << EOF
 #define FLAC__NO_DLL // Like in audio/decoders/flac.cpp
 
+#include <FLAC/export.h>
 #include <FLAC/stream_decoder.h>
 #include <FLAC/format.h>
+
 int main(void) {
+#if !defined(FLAC_API_VERSION_CURRENT) || FLAC_API_VERSION_CURRENT < 8
+	syntax error
+#endif
 	FLAC__StreamDecoder *decoder = FLAC__stream_decoder_new();
 	FLAC__stream_decoder_delete(decoder);
 	return FLAC__STREAM_SYNC_LEN >> 30; /* guaranteed to be 0 */
