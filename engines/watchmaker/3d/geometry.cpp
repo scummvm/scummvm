@@ -2809,8 +2809,7 @@ void t3dCheckMaterialVB(MaterialPtr mat) {
 //	gv = rLockVertexPtr(mat->VB, DDLOCK_WRITEONLY | DDLOCK_NOSYSLOCK);
 	mat->VBO->_buffer.clear();
 	for (int i = 0; i < mat->NumAllocatedVerts(); i++) {
-		auto vert = *mat->VertsList[i];
-		mat->VBO->_buffer.push_back(vert);
+		mat->VBO->_buffer.push_back(*mat->VertsList[i]);
 		//memcpy(gv, mat->VertsList[i], sizeof(gVertex));
 	}
 
