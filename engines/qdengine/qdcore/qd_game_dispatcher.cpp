@@ -25,14 +25,16 @@
 #include "common/savefile.h"
 #include "common/stream.h"
 #include "common/system.h"
+#include "video/video_decoder.h"
+#include "video/mpegps_decoder.h"
+
 #include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
+#include "qdengine/parser/qdscr_parser.h"
 #include "qdengine/parser/xml_parser.h"
 
 #include "qdengine/qdcore/util/plaympp_api.h"
-
 #include "qdengine/qdcore/qd_game_dispatcher.h"
-
 #include "qdengine/qdcore/qd_textdb.h"
 #include "qdengine/qdcore/qd_sound.h"
 #include "qdengine/qdcore/qd_music_track.h"
@@ -43,6 +45,7 @@
 #include "qdengine/qdcore/qd_game_scene.h"
 #include "qdengine/qdcore/qd_game_object_mouse.h"
 #include "qdengine/qdcore/qd_game_object_moving.h"
+#include "qdengine/qdcore/qd_setup.h"
 #include "qdengine/qdcore/qd_trigger_chain.h"
 #include "qdengine/qdcore/qd_trigger_profiler.h"
 #include "qdengine/qdcore/qd_named_object_reference.h"
@@ -56,9 +59,6 @@
 #include "qdengine/system/app_core.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 #include "qdengine/system/graphics/gr_font.h"
-
-#include "qdengine/qdcore/qd_setup.h"
-#include "qdengine/parser/qdscr_parser.h"
 #include "qdengine/system/sound/snd_dispatcher.h"
 #include "qdengine/system/input/keyboard_input.h"
 
@@ -1910,46 +1910,10 @@ bool qdGameDispatcher::play_video(const char *vid_name) {
 }
 
 bool qdGameDispatcher::play_video(qdVideo *p) {
-	if (cur_video_) {
-		video_player_.stop();
-		video_player_.close_file();
-	}
-
 	if (!video_player_.open_file(find_file(p->file_name(), *p)))
 		return false;
 
-	sndDispatcher *sp = sndDispatcher::get_dispatcher();
-	if (sp) sp->pause_sounds();
-
-	if (!p->check_flag(qdVideo::VID_ENABLE_MUSIC))
-		mpegPlayer::instance().pause();
-
 	cur_video_ = p;
-
-	if (p->background_file_name())
-		p->draw_background();
-
-	if (p->check_flag(qdVideo::VID_FULLSCREEN_FLAG)) {
-		video_player_.set_window(appGetHandle(), 0, 0, qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy());
-	} else {
-		int sx, sy;
-		video_player_.get_movie_size(sx, sy);
-
-		if (p->check_flag(qdVideo::VID_CENTER_FLAG)) {
-			int x = (qdGameConfig::get_config().screen_sx() - sx) >> 1;
-			int y = (qdGameConfig::get_config().screen_sy() - sy) >> 1;
-
-			video_player_.set_window(appGetHandle(), x, y, sx, sy);
-		} else
-			video_player_.set_window(appGetHandle(), p->position().x, p->position().y, sx, sy);
-	}
-
-	if ((sp = sndDispatcher::get_dispatcher())) {
-		if (sp->is_enabled())
-			video_player_.set_volume(sp->volume_dB());
-		else
-			video_player_.set_volume(0);
-	}
 
 	return video_player_.play();
 }
@@ -3130,9 +3094,9 @@ bool qdGameDispatcher::get_files_list(qdFileNameList &files_to_copy, qdFileNameL
 }
 
 bool qdGameDispatcher::start_intro_videos() {
-	for (qdVideoList::const_iterator it = video_list().begin(); it != video_list().end(); ++it) {
-		if ((*it)->is_intro_movie()) {
-			if (play_video(*it)) {
+	for (auto &it : video_list()) {
+		if (it->is_intro_movie()) {
+			if (play_video(it)) {
 				set_flag(INTRO_MODE_FLAG);
 				return true;
 			}
@@ -3502,3 +3466,4 @@ bool qdGameDispatcher::update_hall_of_fame_names() {
 }
 
 } // namespace QDEngine
+

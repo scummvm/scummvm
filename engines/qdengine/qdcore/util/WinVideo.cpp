@@ -18,9 +18,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/file.h"
+#include "video/mpegps_decoder.h"
 
 #include "qdengine/qd_precomp.h"
+#include "qdengine/qdengine.h"
 #include "qdengine/qdcore/util/WinVideo.h"
+
+#include "qdengine/system/graphics/gr_dispatcher.h"
 
 
 namespace QDEngine {
@@ -38,23 +44,15 @@ winVideo::winVideo() : graph_builder_(NULL),
 	basic_video_(NULL),
 	basic_audio_(NULL),
 	hwnd_(NULL) {
+	_decoder = new Video::MPEGPSDecoder();
 }
 
 winVideo::~winVideo() {
 	close_file();
+	delete _decoder;
 }
 
 bool winVideo::init() {
-	if (is_initialized) return false;
-
-	CoInitialize(NULL);
-	is_initialized = true;
-
-#ifdef __WINVIDEO_LOG__
-	log_file_handle_ = CreateFile("qd_video.log", GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS, NULL);
-#endif
-
-	return true;
 }
 
 bool winVideo::done() {
@@ -100,89 +98,65 @@ void winVideo::set_window(void *hwnd, int x, int y, int xsize, int ysize) {
 }
 
 bool winVideo::open_file(const char *fname) {
-	close_file();
+	Common::File *videoFile = new Common::File();
 
-	CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC, IID_IGraphBuilder, (void **)&graph_builder_);
-	if (!graph_builder_) {
-		close_file();
-		return false;
+	if (videoFile->open(fname)) {
+		_videostream = videoFile;
+		return true;
 	}
 
-#ifdef __WINVIDEO_LOG__
-	graph_builder_->SetLogFile((DWORD)log_file_handle_);
-#endif
-
-	warning("STUB: winVideo::open_file");
-#if 0
-	graph_builder_->QueryInterface(IID_IMediaControl, (void **)&media_control_);
-	if (!media_control_) {
-		close_file();
-		return false;
-	}
-
-	graph_builder_-> QueryInterface(IID_IVideoWindow, (void **)&video_window_);
-	if (!video_window_) {
-		close_file();
-		return false;
-	}
-
-	graph_builder_-> QueryInterface(IID_IMediaEvent, (void **)&media_event_);
-	if (!media_event_) {
-		close_file();
-		return false;
-	}
-
-	graph_builder_-> QueryInterface(IID_IBasicVideo, (void **)&basic_video_);
-	if (!basic_video_) {
-		close_file();
-		return false;
-	}
-
-	graph_builder_-> QueryInterface(IID_IBasicAudio, (void **)&basic_audio_);
-	if (!basic_audio_) {
-		close_file();
-		return false;
-	}
-#endif
-
-	wchar_t wPath[MAX_PATH];
-	MultiByteToWideChar(CP_ACP, 0, fname, -1, wPath, MAX_PATH);
-
-#if 0
-	if (graph_builder_->RenderFile(wPath, NULL)) {
-		close_file();
-		return false;
-	}
-#endif
-	if (hwnd_) set_window(hwnd_);
-
-	return true;
+	delete videoFile;
+	return false;
 }
 
 bool winVideo::play() {
-	if (graph_builder_ && video_window_ && media_control_ && hwnd_) {
-		warning("STUB: winVideo::play");
-#if 0
-		video_window_->put_AutoShow(-1);
-		video_window_->put_Visible(-1);
-		video_window_->SetWindowForeground(-1);
-		media_control_->Run();
-#endif
-		return true;
+	if (!_videostream) {
+		warning("WinVideo::play: No video stream loaded");
+		return false;
 	}
-	return false;
+
+	if (!_decoder->loadStream(_videostream)) {
+		warning("WinVideo::play: Failed to Load Stream");
+		return false;
+	}
+
+	// Calculating the coordinates to center the video
+	int32 x = 0, y = 0;
+	int32 videoWidth = _decoder->getWidth(), videoHeight = _decoder->getHeight();
+
+	int screenWidth = grDispatcher::instance()->Get_SizeX();
+	int screenHeight = grDispatcher::instance()->Get_SizeY();
+
+	x = (screenWidth - videoWidth) / 2;
+	y = (screenHeight - videoHeight) / 2;
+
+	if (x < 0) {
+		x = 0;
+		videoWidth = screenWidth;
+	}
+
+	if (y < 0) {
+		y = 0;
+		videoHeight = screenHeight;
+	}
+
+	// Video Playback loop
+	_decoder->start();
+	while (!_decoder->endOfVideo()) {
+		if (_decoder->needsUpdate()) {
+			const Graphics::Surface *frame = _decoder->decodeNextFrame();
+			if (frame) {
+				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, videoWidth, videoHeight);
+			}
+			g_system->updateScreen();
+		}
+	}
+	return true;
 }
 
 bool winVideo::stop() {
-	if (graph_builder_ && video_window_ && media_control_ && hwnd_) {
-		warning("STUB: winVideo::stop");
-#if 0
-		media_control_->Stop();
-#endif
-		return true;
-	}
-
-	return false;
+	warning("STUB: winVideo::stop()");
+	return true;
 }
 
 winVideo::PlaybackStatus winVideo::playback_status() {
@@ -294,44 +268,8 @@ bool winVideo::set_window_size(int sx, int sy) {
 
 void winVideo::close_file() {
 	warning("STUB: winVideo::close_file()");
-#if 0
-	if (video_window_) {
-		video_window_->put_Visible(0);
-//		video_window_->put_Owner(NULL);
-	}
-
-	if (media_event_) {
-		media_event_->Release();
-		media_event_ = NULL;
-	}
-
-	if (media_control_) {
-		media_control_->Release();
-		media_control_ = NULL;
-	}
-
-	if (basic_video_) {
-		basic_video_->Release();
-		basic_video_ = NULL;
-	}
-
-	if (basic_audio_) {
-		basic_audio_->Release();
-		basic_audio_ = NULL;
-	}
-
-	if (video_window_) {
-		video_window_->Release();
-		video_window_ = NULL;
-	}
-
-	if (graph_builder_) {
-		graph_builder_->Release();
-		graph_builder_ = NULL;
-	}
-
-	hwnd_ = NULL;
-#endif
+	return;
 }
 
 } // namespace QDEngine
+

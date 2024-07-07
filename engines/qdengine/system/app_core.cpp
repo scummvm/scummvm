@@ -20,6 +20,7 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/archive.h"
 #include "common/file.h"
 #include "common/textconsole.h"
 #include "qdengine/qd_precomp.h"
@@ -73,12 +74,10 @@ bool is_file_exist(const char *file_name) {
 	    }
 
 	    return false;*/
-	warning("STUB: is_file_exist()");
-#if 0
-	return (GetFileAttributes(file_name) != -1);
-#endif
+	bool hasFile = SearchMan.hasFile(Common::Path(file_name));
+	warning("STUB: is_file_exist(): %s %d", file_name, hasFile);
 
-	return false;
+	return hasFile;
 }
 
 const char *strip_path(const char *file_name) {

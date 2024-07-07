@@ -24,7 +24,9 @@
 
 //#define __WINVIDEO_LOG__
 
-
+namespace Video {
+class MPEGPSDecoder;
+}
 
 namespace QDEngine {
 
@@ -71,6 +73,10 @@ private:
 	struct IBasicAudio *basic_audio_;
 	struct IBasicVideo *basic_video_;
 
+	// Video decoder
+	Video::MPEGPSDecoder *_decoder;
+	Common::SeekableReadStream *_videostream;
+
 	void *hwnd_;
 
 #ifdef __WINVIDEO_LOG__
@@ -83,3 +89,4 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_UTIL_WINVIDEO_H
+
