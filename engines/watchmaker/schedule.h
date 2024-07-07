@@ -50,7 +50,7 @@ public:
 	pqueue Game;
 	// message *TheMessage; // TODO: Replace the global variable with this
 	message idlemessage  = {EventClass::MC_IDLE, 0, MP_DEFAULT};
-	uint8 SuperEventActivate;
+	uint8 SuperEventActivate = false;
 private:
 	int _maxmsg = 0;
 	message _waitingMsg[MAXWAITINGMSGS];
