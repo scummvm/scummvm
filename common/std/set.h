@@ -27,7 +27,7 @@
 namespace Std {
 
 /**
- * Derives the ScummVM SortedArray to match the Std::set class
+ * Derives the ScummVM SortedArray to match the std::set class
  */
 template<class T, class Comparitor = Common::Less<T> >
 class set : public Common::SortedArray<T, const T &> {

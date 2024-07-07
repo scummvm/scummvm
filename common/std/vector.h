@@ -557,7 +557,7 @@ protected:
 
 	/**
 	 * Insert a range of elements coming from this or another array.
-	 * Unlike Std::vector::insert, this method does not accept
+	 * Unlike std::vector::insert, this method does not accept
 	 * arbitrary iterators, mainly because our iterator system is
 	 * seriously limited and does not distinguish between input iterators,
 	 * output iterators, forward iterators, or random access iterators.
