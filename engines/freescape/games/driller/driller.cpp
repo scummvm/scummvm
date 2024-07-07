@@ -59,10 +59,7 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 		initC64();
 
 	_playerHeightNumber = 1;
-	_playerHeights.push_back(16);
-	_playerHeights.push_back(48);
-	_playerHeights.push_back(80);
-	_playerHeights.push_back(112);
+	_playerHeightMaxNumber = 3;
 
 	_angleRotations.push_back(5);
 	_angleRotations.push_back(10);
@@ -71,7 +68,6 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_angleRotations.push_back(45);
 	_angleRotations.push_back(90);
 
-	_playerHeight = _playerHeights[_playerHeightNumber];
 	_playerWidth = 12;
 	_playerDepth = 32;
 	_stepUpDistance = 64;
@@ -768,7 +764,6 @@ void DrillerEngine::initGameState() {
 	_gameStateVars[k8bitVariableShieldDrillerJet] = _initialJetShield;
 
 	_playerHeightNumber = 1;
-	_playerHeight = _playerHeights[_playerHeightNumber];
 	_demoIndex = 0;
 	_demoEvents.clear();
 

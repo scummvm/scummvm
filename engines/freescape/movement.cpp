@@ -140,18 +140,10 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 
 	debugC(1, kFreescapeDebugMove, "entrace position: %f %f %f", _position.x(), _position.y(), _position.z());
 
-	int delta = 0;
-	if (scale == 2)
-		delta = 8;
-	else if (scale == 4)
-		delta = 12;
-
-	if (_playerHeightNumber >= 0)
-		_playerHeight = _playerHeights[_playerHeightNumber] + delta;
-	else
-		_playerHeight = 2;
+	// Set the player height
+	_playerHeight = 0;
+	changePlayerHeight(_playerHeightNumber);
 	debugC(1, kFreescapeDebugMove, "player height: %d", _playerHeight);
-	_position.setValue(1, _position.y() + _playerHeight);
 
 	_sensors = _currentArea->getSensors();
 	_gfx->_scale = _currentArea->_scale;
@@ -222,14 +214,10 @@ void FreescapeEngine::shoot() {
 
 void FreescapeEngine::changePlayerHeight(int index) {
 	int scale = _currentArea->getScale();
-	int delta = 0;
-	if (scale == 2)
-		delta = 8;
-	else if (scale == 4 || scale == 5)
-		delta = 12;
 
 	_position.setValue(1, _position.y() - _playerHeight);
-	_playerHeight = _playerHeights[index] + delta;
+	_playerHeight = 32 * (index + 1) - 16 / scale;
+	assert(_playerHeight > 0);
 	_position.setValue(1, _position.y() + _playerHeight);
 }
 
@@ -255,7 +243,7 @@ void FreescapeEngine::rise() {
 		destination.y() = destination.y() + _playerSteps[_playerStepIndex];
 		resolveCollisions(destination);
 	} else {
-		if (_playerHeightNumber == int(_playerHeights.size()) - 1)
+		if (_playerHeightNumber >= _playerHeightMaxNumber)
 			return;
 
 		_playerHeightNumber++;

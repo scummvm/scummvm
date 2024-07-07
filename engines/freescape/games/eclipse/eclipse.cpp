@@ -38,9 +38,7 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 		initAmigaAtari();
 
 	_playerHeightNumber = 1;
-	_playerHeights.push_back(32);
-	_playerHeights.push_back(48);
-	_playerHeight = _playerHeights[_playerHeightNumber];
+	_playerHeightMaxNumber = 1;
 
 	_playerWidth = 8;
 	_playerDepth = 8;
@@ -74,7 +72,6 @@ void EclipseEngine::initGameState() {
 	FreescapeEngine::initGameState();
 
 	_playerHeightNumber = 1;
-	_playerHeight = _playerHeights[_playerHeightNumber];
 
 	_gameStateVars[k8bitVariableEnergy] = _initialEnergy;
 	_gameStateVars[k8bitVariableShield] = _initialShield;

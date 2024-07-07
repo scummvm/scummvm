@@ -43,10 +43,8 @@ DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 		initAmigaAtari();
 
 	_playerHeightNumber = 1;
-	_playerHeights.push_back(16);
-	_playerHeights.push_back(48);
+	_playerHeightMaxNumber = 1;
 
-	_playerHeight = _playerHeights[_playerHeightNumber];
 	_playerWidth = 12;
 	_playerDepth = 32;
 	_stepUpDistance = 64;
@@ -178,7 +176,6 @@ void DarkEngine::initGameState() {
 	_gameStateVars[kVariableActiveECDs] = 100;
 
 	_playerHeightNumber = 1;
-	_playerHeight = _playerHeights[_playerHeightNumber];
 	_exploredAreas.clear();
 	_exploredAreas[_startArea] = true;
 

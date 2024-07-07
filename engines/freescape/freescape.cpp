@@ -113,6 +113,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_syncSound = false;
 	_firstSound = false;
 	_playerHeightNumber = 1;
+	_playerHeightMaxNumber = 1;
 	_angleRotationIndex = 0;
 
 	// TODO: this is not the same for every game

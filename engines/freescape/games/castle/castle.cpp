@@ -33,9 +33,7 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 		initZX();
 
 	_playerHeightNumber = 1;
-	_playerHeights.push_back(16);
-	_playerHeights.push_back(48);
-	_playerHeight = _playerHeights[_playerHeightNumber];
+	_playerHeightMaxNumber = 1;
 
 	_playerSteps.clear();
 	_playerSteps.push_back(15);
@@ -169,7 +167,6 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 void CastleEngine::initGameState() {
 	FreescapeEngine::initGameState();
 	_playerHeightNumber = 1;
-	_playerHeight = _playerHeights[_playerHeightNumber];
 
 	_gameStateVars[k8bitVariableShield] = 16;
 	_gameStateVars[k8bitVariableEnergy] = 1;
