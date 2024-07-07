@@ -110,14 +110,14 @@ void decodeLoaderFlags(uint32 flags) {
 }
 
 Common::String constructPath(const Common::String &prefix, const Common::String &filename, const char *suffix) {
-	Common::String Name = prefix + filename;
-	uint16 len = Name.size();
+	Common::String name = prefix + filename;
+	uint16 len = name.size();
 	if (suffix != nullptr) {
 		uint16 suffixLen = strlen(suffix);
-		Name = Name.substr(0, len - suffixLen) + suffix;
+		name = name.substr(0, len - suffixLen) + suffix;
 		assert(suffixLen == 3);
 	}
-	return Common::String(Common::move(Name));
+	return Common::String(Common::move(name));
 }
 
 class RoomManagerImplementation : public RoomManager {
