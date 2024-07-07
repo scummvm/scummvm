@@ -135,12 +135,13 @@ static const char *ttmOpName(uint16 op) {
 	case 0x0000: return "FINISH";
 	case 0x0020: return "SAVE(free?) BACKGROUND";
 	case 0x0070: return "FREE PALETTE";
-	case 0x0080: return "FREE SHAPE / DRAW BACKGROUND??";
+	case 0x0080: return "FREE SHAPE";
 	case 0x0090: return "FREE FONT";
 	case 0x00B0: return "NULLOP";
 	case 0x0110: return "PURGE";
 	case 0x0400: return "PALETTE RESET ?";
-	case 0x0510: return "UNKNOWN 0x0510";
+	case 0x0500: return "UNKNOWN 0x0500 (flip mode ?)";
+	case 0x0510: return "UNKNOWN 0x0510 (flip mode off?)";
 	case 0x0ff0: return "FINISH FRAME / DRAW";
 	case 0x1020: return "SET DELAY";
 	case 0x1030: return "SET BRUSH";
@@ -168,7 +169,7 @@ static const char *ttmOpName(uint16 op) {
 	case 0x4200: return "STORE AREA";
 	case 0x4210: return "SAVE GETPUT REGION";
 	case 0xa000: return "DRAW PIXEL";
-	case 0xa010: return "WIPE 10?";
+	case 0xa010: return "WIPE DISSOLVE";
 	case 0xa020: return "WIPE 20?";
 	case 0xa030: return "WIPE OUT-TO-IN";
 	case 0xa040: return "WIPE INTERLACED";
@@ -226,6 +227,7 @@ static const char *ttmOpName(uint16 op) {
 	case 0xc040: return "DESELECT_SAMPLE";
 	case 0xc050: return "PLAY_SAMPLE";
 	case 0xc060: return "STOP_SAMPLE";
+	case 0xc0e0: return "FADE SONG";
 
 	default: return "UNKNOWN!!";
 	}
@@ -895,6 +897,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	case 0xb600: // DRAW SCREEN?? 6 args		// HoC onward
 	case 0xc040: // DESELECT_SAMPLE				// SQ5 demo onward
 	case 0xc060: // STOP_SAMPLE					// SQ5 demo onward
+	case 0xc0e0: // FADE SONG songnum, destvol, ticks (1/60th sec)
 
 	default:
 		if (count < 15)
