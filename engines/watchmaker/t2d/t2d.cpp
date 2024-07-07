@@ -123,7 +123,7 @@ void delSpaces(Common::String &str) {
 			result += *it;
 		}
 	}
-	str = result;
+	str = Common::move(result);
 }
 
 t2dWINDOW t2dWin[T2D_MAX_WINDOWS];

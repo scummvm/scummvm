@@ -117,7 +117,7 @@ Common::String constructPath(const Common::String &prefix, const Common::String 
 		Name = Name.substr(0, len - suffixLen) + suffix;
 		assert(suffixLen == 3);
 	}
-	return Common::String(Name);
+	return Common::String(Common::move(Name));
 }
 
 class RoomManagerImplementation : public RoomManager {
