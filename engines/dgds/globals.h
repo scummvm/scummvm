@@ -156,7 +156,8 @@ private:
 	int16 _unk45;
 	int16 _unk48;
 	int16 _unk51;
-	int16 _unk52;
+	int16 _characterCount;
+	int16 _currentCharacter;
 	int16 _unk54;
 
 	Common::Error syncState(Common::Serializer &s) override;
