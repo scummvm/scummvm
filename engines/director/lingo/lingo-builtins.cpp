@@ -3360,7 +3360,9 @@ void LB::b_member(int nargs) {
 	CastMemberID res;
 	if (nargs == 1) {
 		Datum member = g_lingo->pop();
-		if (member.isNumeric()) {
+		if (member.isCastRef()) {
+			res = member.asMemberID();
+		} else if (member.isNumeric()) {
 			res = movie->getCastMemberIDByMember(member.asInt());
 		} else {
 			res = movie->getCastMemberIDByName(member.asString());
@@ -3374,7 +3376,9 @@ void LB::b_member(int nargs) {
 		} else {
 			libId = movie->getCastLibIDByName(library.asString());
 		}
-		if (member.isNumeric()) {
+		if (member.isCastRef()) {
+			res = member.asMemberID();
+		} else if (member.isNumeric()) {
 			res = CastMemberID(member.asInt(), libId);
 		} else {
 			res = movie->getCastMemberIDByNameAndType(member.asString(), libId, kCastTypeAny);
