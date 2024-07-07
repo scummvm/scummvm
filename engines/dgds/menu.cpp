@@ -460,6 +460,7 @@ void Menu::handleClickSkipPlayIntroMenu(const Common::Point &mouse) {
 			engine->changeScene(24);
 		break;
 	case kMenuIntroJumpToGame:
+		hideMenu();
 		if (engine->getGameId() == GID_HOC)
 			engine->changeScene(24);
 		else if (engine->getGameId() == GID_WILLY)
