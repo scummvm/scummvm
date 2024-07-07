@@ -108,7 +108,7 @@ void t3dLoadMaterials(WGame &game, t3dBODY *b, Common::SeekableReadStream &strea
 
 void t3dLoadMeshes(t3dBODY *b, uint32 numMeshes, t3dMESH *&ReceiveRipples, uint8 &Mirror, Common::SeekableReadStream &stream) {
 	b->MeshTable.clear();
-	for (uint16 mesh = 0; mesh < numMeshes; mesh++) {
+	for (uint32 mesh = 0; mesh < numMeshes; mesh++) {
 		b->MeshTable.push_back(t3dMESH(b, stream, ReceiveRipples, Mirror));
 	}
 }
