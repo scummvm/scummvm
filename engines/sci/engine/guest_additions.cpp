@@ -377,27 +377,45 @@ void GuestAdditions::patchGameSaveRestore() const {
 static const byte kSaveRestorePatch[] = {
 	0x39, 0x03,        // pushi 03
 	0x76,              // push0
-	0x38, 0xff, 0xff,  // pushi -1
+	0x39, 0xff,        // pushi -1
 	0x76,              // push0
 	0x43, 0xff, 0x06,  // callk kRestoreGame/kSaveGame (will get changed afterwards)
 	0x48               // ret
 };
 
-static void patchKSaveRestore(SegManager *segMan, reg_t methodAddress, byte id) {
-	Script *script = segMan->getScript(methodAddress.getSegment());
-	byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.getOffset()));
-	memcpy(patchPtr, kSaveRestorePatch, sizeof(kSaveRestorePatch));
-	patchPtr[8] = id;
+static void patchKSaveRestore(SegManager *segMan, Kernel *kernel, const Object *object, const char *selectorName, byte kernelFunctionId) {
+	uint16 methodCount = object->getMethodCount();
+	for (uint16 methodNr = 0; methodNr < methodCount; methodNr++) {
+		uint16 selectorId = object->getFuncSelector(methodNr);
+		const Common::String methodName = kernel->getSelectorName(selectorId);
+		if (methodName == selectorName) {
+			reg_t methodAddress = object->getFunction(methodNr);
+			Script *script = segMan->getScript(methodAddress.getSegment());
+			byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.getOffset()));
+			memcpy(patchPtr, kSaveRestorePatch, sizeof(kSaveRestorePatch));
+			patchPtr[7] = kernelFunctionId;
+		}
+	}
 }
 
 void GuestAdditions::patchGameSaveRestoreSCI16() const {
+	// Determine which game objects and which methods to patch, if any, based on the game/version.
+	// The game object in script 0 is a subclass of the Game class that's usually in script 994.
+	// Normally, the Game class contains the save and restore methods that launch the UI scripts
+	// and then call kSaveGame or kRestoreGame. We patch these large methods to only call
+	// kSaveGame or kRestoreGame with a special parameter sequence that causes our implementations
+	// to launch the ScummVM save/load UI and apply the results.
+	// Some game objects override the save/restore methods to add a game-specific code before
+	// or after calling the superclass method. We want to keep this behavior, so we still only
+	// patch the superclass. Other games only use their game object's methods and never call the
+	// superclass, so for those we must patch the game object in script 0.
 	const Object *gameObject = _segMan->getObject(g_sci->getGameObject());
 	const Object *gameSuperObject = _segMan->getObject(gameObject->getSuperClassSelector());
 	if (!gameSuperObject)
 		gameSuperObject = gameObject;	// happens in KQ5CD, when loading saved games before r54510
-	byte kernelIdRestore = 0;
-	byte kernelIdSave = 0;
-
+	
+	const Object *patchObjectSave = gameSuperObject;    // default behavior: patch Game class
+	const Object *patchObjectRestore = gameSuperObject; // default behavior: patch Game class
 	switch (g_sci->getGameId()) {
 	case GID_HOYLE1: // gets confused, although the game doesn't support saving/restoring at all
 	case GID_HOYLE2: // gets confused, see hoyle1
@@ -405,52 +423,38 @@ void GuestAdditions::patchGameSaveRestoreSCI16() const {
 	case GID_MOTHERGOOSE: // mother goose EGA saves/restores directly and has no save/restore dialogs
 	case GID_MOTHERGOOSE256: // mother goose saves/restores directly and has no save/restore dialogs
 		return;
+	case GID_FAIRYTALES:
+		patchObjectSave = nullptr; // Fairy Tales saves automatically without a dialog
+		break;
+	case GID_KQ5:
+		if (g_sci->getPlatform() == Common::kPlatformFMTowns) {
+			// KQ5 FM-Towns only uses the game object's save and restore methods.
+			patchObjectSave = gameObject;
+			patchObjectRestore = gameObject;
+		}
+		break;
 	default:
 		break;
 	}
 
-	uint16 kernelNamesSize = _kernel->getKernelNamesSize();
+	// Get the kernel function IDs of kSaveGame and kRestoreGame
+	byte kernelIdRestore = 0;
+	byte kernelIdSave = 0;
+	const uint16 kernelNamesSize = _kernel->getKernelNamesSize();
 	for (uint16 kernelNr = 0; kernelNr < kernelNamesSize; kernelNr++) {
 		Common::String kernelName = _kernel->getKernelName(kernelNr);
 		if (kernelName == "RestoreGame")
 			kernelIdRestore = kernelNr;
-		if (kernelName == "SaveGame")
+		else if (kernelName == "SaveGame")
 			kernelIdSave = kernelNr;
-		if (kernelName == "Save")
-			kernelIdSave = kernelIdRestore = kernelNr;
 	}
 
-	// Search for gameobject superclass ::restore
-	uint16 gameSuperObjectMethodCount = gameSuperObject->getMethodCount();
-	for (uint16 methodNr = 0; methodNr < gameSuperObjectMethodCount; methodNr++) {
-		uint16 selectorId = gameSuperObject->getFuncSelector(methodNr);
-		Common::String methodName = _kernel->getSelectorName(selectorId);
-		if (methodName == "restore") {
-				patchKSaveRestore(_segMan, gameSuperObject->getFunction(methodNr), kernelIdRestore);
-		} else if (methodName == "save") {
-			if (g_sci->getGameId() != GID_FAIRYTALES) {	// Fairy Tales saves automatically without a dialog
-					patchKSaveRestore(_segMan, gameSuperObject->getFunction(methodNr), kernelIdSave);
-			}
-		}
+	// Patch the appropriate object methods to call kSaveGame or kRestoreGame
+	if (patchObjectSave != nullptr) {
+		patchKSaveRestore(_segMan, _kernel, patchObjectSave, "save", kernelIdSave);
 	}
-
-	// Patch gameobject ::save for now for SCI0 - SCI1.1
-	// TODO: It seems this was never adjusted to superclass, but adjusting it now may cause
-	// issues with some game. Needs to get checked and then possibly changed.
-	const Object *patchObjectSave = gameObject;
-
-	// Search for gameobject ::save, if there is one patch that one too
-	uint16 patchObjectMethodCount = patchObjectSave->getMethodCount();
-	for (uint16 methodNr = 0; methodNr < patchObjectMethodCount; methodNr++) {
-		uint16 selectorId = patchObjectSave->getFuncSelector(methodNr);
-		Common::String methodName = _kernel->getSelectorName(selectorId);
-		if (methodName == "save") {
-			if (g_sci->getGameId() != GID_FAIRYTALES &&  // Fairy Tales saves automatically without a dialog
-				g_sci->getGameId() != GID_QFG3) { // QFG3 does automatic saving in Glory:save
-					patchKSaveRestore(_segMan, patchObjectSave->getFunction(methodNr), kernelIdSave);
-			}
-			break;
-		}
+	if (patchObjectRestore != nullptr) {
+		patchKSaveRestore(_segMan, _kernel, patchObjectRestore, "restore", kernelIdRestore);
 	}
 }
 
