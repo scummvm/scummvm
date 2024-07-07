@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-07 06:01+0000\n"
-"PO-Revision-Date: 2024-06-15 18:43+0000\n"
+"PO-Revision-Date: 2024-07-07 10:20+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -878,21 +878,30 @@ msgid ""
 "If you are sure that this is a valid unknown variant, please send the "
 "following e-mail to integrity@scummvm.org"
 msgstr ""
+"### Ergebnis\n"
+"Deine Spiel-Dateien sind uns noch nicht bekannt.\n"
+"\n"
+"Wenn du dir sicher bist, dass es sich tatsächlich um eine noch unbekannte "
+"Variante handelt, schicke uns bitte folgende E-Mail an integrity@scummvm.org"
 
 #: gui/integrity-dialog.cpp:537
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr ""
+"Für dieses Spiel wurden keine Dateien gefunden. Bist du sicher, dass der "
+"Pfad korrekt ist?"
 
 #: gui/integrity-dialog.cpp:542
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
 msgstr ""
+"Diesem Spiel wurden keine Meta-Daten zugeordnet, weshalb wir es nicht "
+"zuordnen konnten. Bitte füge die korrekten Meta-Daten für das Spiel hinzu."
 
 #: gui/integrity-dialog.cpp:569
 msgid "Files all OK"
-msgstr ""
+msgstr "Alle Dateien sind in Ordnung"
 
 #: gui/filebrowser-dialog.cpp:53
 msgid "Choose file for loading"
@@ -3365,16 +3374,12 @@ msgstr ""
 "Öffne ScummVM und füge deine Spiele hinzu."
 
 #: dists/android.strings.xml.cpp:59
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game icon"
-msgstr "Spiel-Optionen"
+msgstr "Spiel-Icon"
 
 #: dists/android.strings.xml.cpp:60
-#, fuzzy
-#| msgid "Show object labels"
 msgid "Shortcut label"
-msgstr "Objektnamen zeigen"
+msgstr "Shortcut-Bezeichnung"
 
 #: dists/android.strings.xml.cpp:61
 msgid "Shortcut icon"
@@ -5600,10 +5605,8 @@ msgid "Select Playlist directory"
 msgstr "Verzeichnis mit Playlisten auswählen"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:170
-#, fuzzy
-#| msgid "Generate playlist"
 msgid "Libretro playlist"
-msgstr "Playlist erzeugen"
+msgstr "Libretro-Playlist"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:173
 msgid ""
@@ -6283,10 +6286,8 @@ msgstr "Zwischensequenz-Datei \"%s\" nicht gefunden!"
 #: engines/lure/metaengine.cpp:37 engines/mads/metaengine.cpp:47
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:746
-#, fuzzy
-#| msgid "Enable Discord integration"
 msgid "Enable copy protection"
-msgstr "Discord-Integration aktivieren"
+msgstr "Kopierschutz aktivieren"
 
 #: engines/agos/metaengine.cpp:45 engines/dreamweb/metaengine.cpp:37
 #: engines/lure/metaengine.cpp:38 engines/mads/metaengine.cpp:48
@@ -6294,6 +6295,8 @@ msgstr "Discord-Integration aktivieren"
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:747
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
+"Aktiviere Kopierschutz-Mechanismen, die ansonsten standardmäßig übersprungen "
+"werden."
 
 #: engines/agos/metaengine.cpp:55
 msgid "AdLib OPL3 mode"
