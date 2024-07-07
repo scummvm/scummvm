@@ -65,7 +65,7 @@ inline void outputConfigurationType(const BuildSetup &setup, std::ostream &proje
 	}
 	project << "\t\t<PlatformToolset>" << (config == "LLVM" ? msvc.toolsetLLVM : msvc.toolsetMSVC ) << "</PlatformToolset>\n";
 	project << "\t\t<CharacterSet>" << (setup.useWindowsUnicode ? "Unicode" : "NotSet") << "</CharacterSet>\n";
-	if (msvc.version >= 16 && config == "Analysis") {
+	if (msvc.version >= 16 && config == "ASan") {
 		project << "\t\t<EnableASAN>true</EnableASAN>\n";
 	}	
 	project << "\t</PropertyGroup>\n";
@@ -95,7 +95,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 
 	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
 		outputConfiguration(project, "Debug", *arch);
-		outputConfiguration(project, "Analysis", *arch);
+		outputConfiguration(project, "ASan", *arch);
 		outputConfiguration(project, "LLVM", *arch);
 		outputConfiguration(project, "Release", *arch);
 	}
@@ -114,7 +114,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 
 	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
 		outputConfigurationType(setup, project, name, "Release", *arch, _msvcVersion);
-		outputConfigurationType(setup, project, name, "Analysis", *arch, _msvcVersion);
+		outputConfigurationType(setup, project, name, "ASan", *arch, _msvcVersion);
 		outputConfigurationType(setup, project, name, "LLVM", *arch, _msvcVersion);
 		outputConfigurationType(setup, project, name, "Debug", *arch, _msvcVersion);
 	}
@@ -125,14 +125,14 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 
 	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
 		outputProperties(setup, project, "Release", *arch);
-		outputProperties(setup, project, "Analysis", *arch);
+		outputProperties(setup, project, "ASan", *arch);
 		outputProperties(setup, project, "LLVM", *arch);
 		outputProperties(setup, project, "Debug", *arch);
 	}
 
 	project << "\t<PropertyGroup Label=\"UserMacros\" />\n";
 
-	// Project-specific settings (analysis uses debug properties)
+	// Project-specific settings (asan uses debug properties)
 	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
 		BuildSetup archsetup = setup;
 		std::map<MSVC_Architecture, StringList>::const_iterator disabled_features_it = _arch_disabled_features.find(*arch);
@@ -142,7 +142,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 			}
 		}
 		outputProjectSettings(project, name, archsetup, false, *arch, "Debug");
-		outputProjectSettings(project, name, archsetup, false, *arch, "Analysis");
+		outputProjectSettings(project, name, archsetup, false, *arch, "ASan");
 		outputProjectSettings(project, name, archsetup, false, *arch, "LLVM");
 		outputProjectSettings(project, name, archsetup, true, *arch, "Release");
 	}
@@ -356,32 +356,13 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	if (setup.runBuildEvents)
 		definesList += REVISION_DEFINE ";";
 
-	std::string includeDirsList;
-	for (StringList::const_iterator i = setup.includeDirs.begin(); i != setup.includeDirs.end(); ++i)
-		includeDirsList += convertPathToWin(*i) + ';';
-
-	std::string libraryDirsList;
-	for (StringList::const_iterator i = setup.libraryDirs.begin(); i != setup.libraryDirs.end(); ++i)
-		libraryDirsList += convertPathToWin(*i) + ';';
-
 	std::string includeSDL = (setup.useSDL2 ? "SDL2" : "SDL");
+
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 			   << "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 			   << "\t<PropertyGroup>\n"
-			   << "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_Global</_PropertySheetDisplayName>\n";
-
-	std::string libsPath;
-	if (setup.libsDir.empty())
-		libsPath = "$(" LIBS_DEFINE ")";
-	else
-		libsPath = convertPathToWin(setup.libsDir);
-
-	if (!setup.useVcpkg) {
-		properties << "\t\t<ExecutablePath>" << libsPath << "\\bin;" << libsPath << "\\bin\\" << getMSVCArchName(arch) << ";" << libsPath << "\\$(Configuration)\\bin;$(ExecutablePath)</ExecutablePath>\n"
-				   << "\t\t<LibraryPath>" << libraryDirsList << libsPath << "\\lib\\" << getMSVCArchName(arch) << ";" << libsPath << "\\lib\\" << getMSVCArchName(arch) << "\\$(Configuration);" << libsPath << "\\lib;" << libsPath << "\\$(Configuration)\\lib;$(LibraryPath)</LibraryPath>\n"
-				   << "\t\t<IncludePath>" << includeDirsList << libsPath << "\\include;" << libsPath << "\\include\\" << includeSDL << ";$(IncludePath)</IncludePath>\n";
-	}
-	properties << "\t\t<OutDir>$(Configuration)" << getMSVCArchName(arch) << "\\</OutDir>\n"
+			   << "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_Global</_PropertySheetDisplayName>\n"
+			   << "\t\t<OutDir>$(Configuration)" << getMSVCArchName(arch) << "\\</OutDir>\n"
 			   << "\t\t<IntDir>$(Configuration)" << getMSVCArchName(arch) << "\\$(ProjectName)\\</IntDir>\n"
 			   << "\t</PropertyGroup>\n"
 			   << "\t<ItemDefinitionGroup>\n"
@@ -444,6 +425,24 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, M
 		return;
 	}
 
+	std::string includeDirsList;
+	for (StringList::const_iterator i = setup.includeDirs.begin(); i != setup.includeDirs.end(); ++i)
+		includeDirsList += convertPathToWin(*i) + ';';
+
+	std::string includeSDL = (setup.useSDL2 ? "SDL2" : "SDL");
+
+	std::string libraryDirsList;
+	for (StringList::const_iterator i = setup.libraryDirs.begin(); i != setup.libraryDirs.end(); ++i)
+		libraryDirsList += convertPathToWin(*i) + ';';
+
+	std::string libsPath;
+	if (setup.libsDir.empty())
+		libsPath = "$(" LIBS_DEFINE ")";
+	else
+		libsPath = convertPathToWin(setup.libsDir);
+
+	std::string cfgPath = (isRelease ? "Release" : "Debug");
+
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 	           << "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	           << "\t<ImportGroup Label=\"PropertySheets\">\n"
@@ -451,12 +450,16 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, M
 	           << "\t</ImportGroup>\n"
 	           << "\t<PropertyGroup>\n"
 	           << "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_" << configuration << getMSVCArchName(arch) << "</_PropertySheetDisplayName>\n"
-			   << "\t\t<LinkIncremental>" << ((isRelease || configuration == "Analysis") ? "false" : "true") << "</LinkIncremental>\n"
+			   << "\t\t<LinkIncremental>" << ((isRelease || configuration == "ASan") ? "false" : "true") << "</LinkIncremental>\n"
 	           << "\t\t<GenerateManifest>false</GenerateManifest>\n";
 
-	if (setup.useVcpkg) {
+	if (!setup.useVcpkg) {
+		properties << "\t\t<ExecutablePath>" << libsPath << "\\bin;" << libsPath << "\\bin\\" << getMSVCArchName(arch) << ";" << libsPath << "\\" << cfgPath << "\\bin;$(ExecutablePath)</ExecutablePath>\n"
+				   << "\t\t<LibraryPath>" << libraryDirsList << libsPath << "\\lib\\" << getMSVCArchName(arch) << ";" << libsPath << "\\lib\\" << getMSVCArchName(arch) << "\\" << cfgPath << ";" << libsPath << "\\lib;" << libsPath << "\\" << cfgPath << "\\lib;$(LibraryPath)</LibraryPath>\n"
+				   << "\t\t<IncludePath>" << includeDirsList << libsPath << "\\include;" << libsPath << "\\include\\" << includeSDL << ";$(IncludePath)</IncludePath>\n";
+	} else {
 		properties << "\t\t<VcpkgTriplet>" << getMSVCArchName(arch) << "-windows</VcpkgTriplet>\n";
-		properties << "\t\t<VcpkgConfiguration>" << (isRelease ? "Release" : "Debug") << "</VcpkgConfiguration>\n";
+		properties << "\t\t<VcpkgConfiguration>" << cfgPath << "</VcpkgConfiguration>\n";
 	}
 
 	properties << "\t</PropertyGroup>\n"
@@ -488,12 +491,11 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, M
 		           << "\t\t\t<FunctionLevelLinking>true</FunctionLevelLinking>\n"
 				   << "\t\t\t<TreatWarningAsError>false</TreatWarningAsError>\n";
 		// Since MSVC 2015 Edit and Continue is supported for x86 and x86-64, but not for ARM.
-		if (configuration != "Analysis" && (arch == ARCH_X86 || (arch == ARCH_AMD64 && _version >= 14))) {
+		if (configuration != "ASan" && (arch == ARCH_X86 || (arch == ARCH_AMD64 && _version >= 14))) {
 			properties << "\t\t\t<DebugInformationFormat>EditAndContinue</DebugInformationFormat>\n";
 		} else {
 			properties << "\t\t\t<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>\n";
 		}
-		properties << "\t\t\t<EnablePREfast>" << (configuration == "Analysis" ? "true" : "false") << "</EnablePREfast>\n";
 
 		if (configuration == "LLVM") {
 			properties << "\t\t\t<AdditionalOptions>-Wno-microsoft -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder -Wpointer-arith -Wcast-qual -Wshadow -Wnon-virtual-dtor -Wwrite-strings -Wno-conversion -Wno-shorten-64-to-32 -Wno-sign-compare -Wno-four-char-constants -Wno-nested-anon-types -Qunused-arguments %(AdditionalOptions)</AdditionalOptions>\n";
@@ -625,7 +627,7 @@ void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ostream &
 			            << "\t\t\t<FileType>Document</FileType>\n";
 
 			outputNasmCommand(projectFile, "Debug", (*entry).prefix);
-			outputNasmCommand(projectFile, "Analysis", (*entry).prefix);
+			outputNasmCommand(projectFile, "ASan", (*entry).prefix);
 			outputNasmCommand(projectFile, "Release", (*entry).prefix);
 			outputNasmCommand(projectFile, "LLVM", (*entry).prefix);
 
