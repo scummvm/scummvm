@@ -76,6 +76,10 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	// GOG release is NOT on this engine
 	GAME("pilots3", "33dfc61046e5af85b570eda24e0afe6d", 14452732),
 
+	// Особенности национальной рыбалки
+	// 2004/09/15. Melnitsa / Lazy Games
+	GAME("rybalka", "4113d7f0f67cf9563f4c62f999898426", 16892191),
+
 	// Братья Пилоты 3D. Дело об Огородных вредителях
 	// 2004/10/22. K D-Lab
 	GAME("pilots3d", "c836992c240990f199947e8a362ea867", 5741533),
@@ -89,10 +93,6 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	// 2005/08/05. Melnitsa / Lazy Games
 	GAME("mng", "9a1b9134f914f22682fbc0604f4eed81", 20704192),
 	GAMEd("mng", "da3a6e591d4896ca3176c5866aef278f", 2541094),
-
-	// Особенности национальной рыбалки
-	// 2004/09/15. Melnitsa / Lazy Games
-	GAME("rybalka", "4113d7f0f67cf9563f4c62f999898426", 16892191),
 
 	// Маски-шоу
 	// 2005/12/16. Lazy Games

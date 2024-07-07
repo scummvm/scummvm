@@ -171,15 +171,23 @@ int engineMain() {
 		sp.show();
 	}
 
-	// searchTagMap(QDSCR_SCREEN_TRANSFORM, 232);
+	searchTagMap(QDSCR_GAME_TITLE, 182);
 
 	Common::String gameID = g_engine->getGameId();
 	if (gameID == "karliknos") {
 		generateTagMap(20030919);		// QDSCR_GAME_TITLE = 182
+	} else if (gameID == "nupogodi3") {
+		generateTagMap(20031014);		// QDSCR_TEXT_DB = 184
 	} else if (gameID == "pilots3") {
 		generateTagMap(20040519);		// QDSCR_GAME_TITLE = 203
+	} else if (gameID == "rybalka") {
+		generateTagMap(20040601);		// QDSCR_GAME_TITLE = 206
 	} else if (gameID == "pilots3d") {
 		generateTagMap(20040601);		// QDSCR_GAME_TITLE = 206
+	} else if (gameID == "mng") {
+		// QDSCR_GAME_TITLE = 208
+	} else if (gameID == "maski") {
+		generateTagMap(20060129);		// QDSCR_GAME_TITLE = 214
 	} else if (gameID == "3mice1") {
 		generateTagMap(20060715);		// QDSCR_SCREEN_TRANSFORM = 232
 	} else if (gameID == "shveik") {
