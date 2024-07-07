@@ -20,7 +20,7 @@
  */
 
 #include "ags/shared/ac/sprite_file.h"
-#include "ags/lib/std/algorithm.h"
+#include "common/std/algorithm.h"
 #include "ags/shared/core/asset_manager.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/util/compress.h"
@@ -64,7 +64,7 @@ static size_t lookup_palette(uint32_t col, uint32_t palette[256], uint32_t ncols
 // Converts a 16/32-bit image into the indexed 8-bit pixel data with palette;
 // NOTE: the palette will contain colors in the same format as the source image.
 // only succeeds if the total number of colors used in the image is < 257.
-static bool CreateIndexedBitmap(const Bitmap *image, std::vector<uint8_t> &dst_data,
+static bool CreateIndexedBitmap(const Bitmap *image, Std::vector<uint8_t> &dst_data,
 	uint32_t palette[256], uint32_t &pal_count) {
 	const int src_bpp = image->GetBPP();
 	if (src_bpp < 2) { assert(0); return false; }
@@ -157,7 +157,7 @@ SpriteFile::SpriteFile() {
 }
 
 HError SpriteFile::OpenFile(const String &filename, const String &sprindex_filename,
-		std::vector<Size> &metrics) {
+		Std::vector<Size> &metrics) {
 	Close();
 
 	char buff[20];
@@ -251,7 +251,7 @@ sprkey_t SpriteFile::GetTopmostSprite() const {
 }
 
 bool SpriteFile::LoadSpriteIndexFile(const String &filename, int expectedFileID,
-	soff_t spr_initial_offs, sprkey_t topmost, std::vector<Size> &metrics) {
+	soff_t spr_initial_offs, sprkey_t topmost, Std::vector<Size> &metrics) {
 	Stream *fidx = _GP(AssetMgr)->OpenAsset(filename);
 	if (fidx == nullptr) {
 		return false;
@@ -291,9 +291,9 @@ bool SpriteFile::LoadSpriteIndexFile(const String &filename, int expectedFileID,
 	}
 
 	sprkey_t numsprits = topmost_index + 1;
-	std::vector<int16_t> rspritewidths; rspritewidths.resize(numsprits);
-	std::vector<int16_t> rspriteheights; rspriteheights.resize(numsprits);
-	std::vector<soff_t>  spriteoffs; spriteoffs.resize(numsprits);
+	Std::vector<int16_t> rspritewidths; rspritewidths.resize(numsprits);
+	Std::vector<int16_t> rspriteheights; rspriteheights.resize(numsprits);
+	Std::vector<soff_t>  spriteoffs; spriteoffs.resize(numsprits);
 
 	fidx->ReadArrayOfInt16(&rspritewidths[0], numsprits);
 	fidx->ReadArrayOfInt16(&rspriteheights[0], numsprits);
@@ -336,7 +336,7 @@ static inline void ReadSprHeader(SpriteDatHeader &hdr, Stream *in,
 }
 
 HError SpriteFile::RebuildSpriteIndex(Stream *in, sprkey_t topmost,
-		std::vector<Size> &metrics) {
+		Std::vector<Size> &metrics) {
 	topmost = MIN(topmost, (sprkey_t)_spriteData.size() - 1);
 	for (sprkey_t i = 0; !in->EOS() && (i <= topmost); ++i) {
 		_spriteData[i].Offset = in->GetPosition();
@@ -378,7 +378,7 @@ HError SpriteFile::LoadSprite(sprkey_t index, Shared::Bitmap *&sprite) {
 	}
 	ImBufferPtr im_data(image->GetDataForWriting(), w * h * bpp, bpp);
 	// (Optional) Handle storage options, reverse
-	std::vector<uint8_t> indexed_buf;
+	Std::vector<uint8_t> indexed_buf;
 	uint32_t palette[256];
 	uint32_t pal_bpp = GetPaletteBPP(hdr.SFormat);
 	if (pal_bpp > 0) { // read palette if format assumes one
@@ -438,7 +438,7 @@ HError SpriteFile::LoadSprite(sprkey_t index, Shared::Bitmap *&sprite) {
 	return HError::None();
 }
 
-HError SpriteFile::LoadRawData(sprkey_t index, SpriteDatHeader &hdr, std::vector<uint8_t> &data) {
+HError SpriteFile::LoadRawData(sprkey_t index, SpriteDatHeader &hdr, Std::vector<uint8_t> &data) {
 	hdr = SpriteDatHeader();
 	data.resize(0);
 	if (index < 0 || (size_t)index >= _spriteData.size())
@@ -483,7 +483,7 @@ void SpriteFile::SeekToSprite(sprkey_t index) {
 
 
 // Finds the topmost occupied slot index
-static sprkey_t FindTopmostSprite(const std::vector<std::pair<bool, Bitmap *>> &sprites) {
+static sprkey_t FindTopmostSprite(const Std::vector<Std::pair<bool, Bitmap *>> &sprites) {
 	sprkey_t topmost = -1;
 	for (sprkey_t i = 0; i < static_cast<sprkey_t>(sprites.size()); ++i)
 		if (sprites[i].first)
@@ -492,10 +492,10 @@ static sprkey_t FindTopmostSprite(const std::vector<std::pair<bool, Bitmap *>> &
 }
 
 int SaveSpriteFile(const String &save_to_file,
-		const std::vector<std::pair<bool, Bitmap *> > &sprites,
+		const Std::vector<Std::pair<bool, Bitmap *> > &sprites,
 		SpriteFile *read_from_file,
 		int store_flags, SpriteCompression compress, SpriteFileIndex &index) {
-	std::unique_ptr<Stream> output(File::CreateFile(save_to_file));
+	Std::unique_ptr<Stream> output(File::CreateFile(save_to_file));
 	if (output == nullptr)
 		return -1;
 
@@ -503,9 +503,9 @@ int SaveSpriteFile(const String &save_to_file,
 	SpriteFileWriter writer(output);
 	writer.Begin(store_flags, compress, lastslot);
 
-	std::unique_ptr<Bitmap> temp_bmp; // for disposing temp sprites
-	std::vector<uint8_t> membuf; // for loading raw sprite data
-	std::vector<uint32_t> palette;
+	Std::unique_ptr<Bitmap> temp_bmp; // for disposing temp sprites
+	Std::vector<uint8_t> membuf; // for loading raw sprite data
+	Std::vector<uint32_t> palette;
 
 	const bool diff_compress =
 		read_from_file &&
@@ -575,7 +575,7 @@ int SaveSpriteIndex(const String &filename, const SpriteFileIndex &index) {
 	return 0;
 }
 
-SpriteFileWriter::SpriteFileWriter(std::unique_ptr<Stream> &out) : _out(out) {
+SpriteFileWriter::SpriteFileWriter(Std::unique_ptr<Stream> &out) : _out(out) {
 }
 
 void SpriteFileWriter::Begin(int store_flags, SpriteCompression compress, sprkey_t last_slot) {
@@ -616,7 +616,7 @@ void SpriteFileWriter::WriteBitmap(Bitmap *image) {
 	int h = image->GetHeight();
 	ImBufferCPtr im_data(image->GetData(), w * h * bpp, bpp);
 	// (Optional) Handle storage options
-	std::vector<uint8_t> indexed_buf;
+	Std::vector<uint8_t> indexed_buf;
 	uint32_t palette[256];
 	uint32_t pal_count = 0;
 	SpriteFormat sformat = kSprFmt_Undefined;

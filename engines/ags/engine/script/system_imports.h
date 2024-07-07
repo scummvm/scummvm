@@ -22,7 +22,7 @@
 #ifndef AGS_ENGINE_SCRIPT_CC_SYSTEM_IMPORTS_H
 #define AGS_ENGINE_SCRIPT_CC_SYSTEM_IMPORTS_H
 
-#include "ags/lib/std/map.h"
+#include "common/std/map.h"
 #include "ags/engine/script/cc_instance.h"    // ccInstance
 
 namespace AGS3 {
@@ -46,9 +46,9 @@ struct SystemImports {
 private:
 	// Note we can't use a hash-map here, because we sometimes need to search
 	// by partial keys.
-	typedef std::map<String, uint32_t> IndexMap;
+	typedef Std::map<String, uint32_t> IndexMap;
 
-	std::vector<ScriptImport> imports;
+	Std::vector<ScriptImport> imports;
 	IndexMap btree;
 
 public:

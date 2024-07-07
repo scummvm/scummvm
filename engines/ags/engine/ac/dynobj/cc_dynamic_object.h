@@ -28,7 +28,7 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_CC_DYNAMIC_OBJECT_H
 #define AGS_ENGINE_AC_DYNOBJ_CC_DYNAMIC_OBJECT_H
 
-#include "ags/lib/std/utility.h"
+#include "common/std/utility.h"
 #include "ags/shared/core/types.h"
 
 namespace AGS3 {
@@ -43,7 +43,7 @@ class Stream;
 using namespace AGS; // FIXME later
 
 // A pair of managed handle and abstract object pointer
-typedef std::pair<int32_t, void *> DynObjectRef;
+typedef Std::pair<int32_t, void *> DynObjectRef;
 
 
 // OBJECT-BASED SCRIPTING RUNTIME FUNCTIONS

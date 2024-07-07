@@ -30,10 +30,10 @@
 #ifndef AGS_SHARED_GAME_MAIN_GAME_FILE_H
 #define AGS_SHARED_GAME_MAIN_GAME_FILE_H
 
-#include "ags/lib/std/functional.h"
-#include "ags/lib/std/memory.h"
-#include "ags/lib/std/set.h"
-#include "ags/lib/std/vector.h"
+#include "common/std/functional.h"
+#include "common/std/memory.h"
+#include "common/std/set.h"
+#include "common/std/vector.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/ac/view.h"
@@ -79,7 +79,7 @@ String GetMainGameFileErrorText(MainGameFileErrorType err);
 
 typedef TypedCodeError<MainGameFileErrorType, GetMainGameFileErrorText> MainGameFileError;
 typedef ErrorHandle<MainGameFileError> HGameFileError;
-typedef std::unique_ptr<Stream> UStream;
+typedef Std::unique_ptr<Stream> UStream;
 
 // MainGameSource defines a successfully opened main game file
 struct MainGameSource {
@@ -97,7 +97,7 @@ struct MainGameSource {
 	String              CompiledWith;
 	// Extended engine capabilities required by the game; their primary use
 	// currently is to let "alternate" game formats indicate themselves
-	std::set<String>    Caps;
+	Std::set<String>    Caps;
 	// A ponter to the opened stream
 	UStream             InputStream;
 
@@ -111,25 +111,25 @@ struct MainGameSource {
 // code refactoring.
 struct LoadedGameEntities {
 	GameSetupStruct &Game;
-	std::vector<DialogTopic> Dialogs;
-	std::vector<ViewStruct> Views;
+	Std::vector<DialogTopic> Dialogs;
+	Std::vector<ViewStruct> Views;
 	PScript                 GlobalScript;
 	PScript                 DialogScript;
-	std::vector<PScript>    ScriptModules;
-	std::vector<PluginInfo> PluginInfos;
+	Std::vector<PScript>    ScriptModules;
+	Std::vector<PluginInfo> PluginInfos;
 
 	// Original sprite data (when it was read into const-sized arrays)
 	size_t                  SpriteCount;
-	std::vector<uint8_t>	SpriteFlags; // SPF_* flags
+	Std::vector<uint8_t>	SpriteFlags; // SPF_* flags
 
 	// Old dialog support
 	// legacy compiled dialog script of its own format,
 	// requires separate interpreting
-	std::vector<std::vector<uint8_t>> OldDialogScripts;
+	Std::vector<Std::vector<uint8_t>> OldDialogScripts;
 	// probably, actual dialog script sources kept within some older games
-	std::vector<String>     OldDialogSources;
+	Std::vector<String>     OldDialogSources;
 	// speech texts displayed during dialog
-	std::vector<String>     OldSpeechLines;
+	Std::vector<String>     OldSpeechLines;
 
 	LoadedGameEntities(GameSetupStruct &game);
 	~LoadedGameEntities();
@@ -156,7 +156,7 @@ HGameFileError     UpdateGameData(LoadedGameEntities &ents, GameDataVersion data
 // Ensures that the game saves directory path is valid
 void               FixupSaveDirectory(GameSetupStruct &game);
 // Maps legacy sound numbers to real audio clips
-void               RemapLegacySoundNums(GameSetupStruct &game, std::vector<ViewStruct> &views, GameDataVersion data_ver);
+void               RemapLegacySoundNums(GameSetupStruct &game, Std::vector<ViewStruct> &views, GameDataVersion data_ver);
 
 } // namespace Shared
 } // namespace AGS

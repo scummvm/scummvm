@@ -19,36 +19,16 @@
  *
  */
 
-#ifndef AGS_STD_MEMORY_H
-#define AGS_STD_MEMORY_H
+#ifndef COMMON_STD_MUTEX_H
+#define COMMON_STD_MUTEX_H
 
-#include "common/ptr.h"
-#include "common/textconsole.h"
+#include "common/mutex.h"
 
-namespace AGS3 {
-namespace std {
+namespace Std {
 
-template<class T>
-using shared_ptr = Common::SharedPtr<T>;
+class recursive_mutex : public Common::Mutex {
+};
 
-template<class T>
-using weak_ptr = Common::WeakPtr<T>;
-
-template<typename T, class DL = Common::DefaultDeleter<T> >
-using unique_ptr = Common::ScopedPtr<T, DL>;
-
-template<class T>
-T *memcpy(T *dest, const T *src, size_t n) {
-	return (T *)::memcpy(dest, src, n);
-}
-
-template<class T>
-shared_ptr<T> static_pointer_cast(const shared_ptr<T> &src) {
-	T *ptr = src.get();
-	return shared_ptr<T>(ptr);
-}
-
-} // namespace std
-} // namespace AGS3
+} // namespace Std
 
 #endif

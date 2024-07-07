@@ -55,7 +55,7 @@ struct ScummVMPlatformDriver : AGSPlatformDriver {
 	void ShutdownCDPlayer() override;
 	bool LockMouseToWindow() override;
 	void UnlockMouse() override;
-	void GetSystemDisplayModes(std::vector<Engine::DisplayMode> &dms) override;
+	void GetSystemDisplayModes(Std::vector<Engine::DisplayMode> &dms) override;
 };
 
 
@@ -144,7 +144,7 @@ bool ScummVMPlatformDriver::LockMouseToWindow() {
 void ScummVMPlatformDriver::UnlockMouse() {
 }
 
-void ScummVMPlatformDriver::GetSystemDisplayModes(std::vector<Engine::DisplayMode> &dms) {
+void ScummVMPlatformDriver::GetSystemDisplayModes(Std::vector<Engine::DisplayMode> &dms) {
 	dms.clear();
 	GFX_MODE_LIST *gmlist = get_gfx_mode_list(GFX_SCUMMVM);
 	for (int i = 0; i < gmlist->num_modes; ++i) {

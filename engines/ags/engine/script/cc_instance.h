@@ -22,8 +22,8 @@
 #ifndef AGS_ENGINE_SCRIPT_CC_INSTANCE_H
 #define AGS_ENGINE_SCRIPT_CC_INSTANCE_H
 
-#include "ags/lib/std/memory.h"
-#include "ags/lib/std/map.h"
+#include "common/std/memory.h"
+#include "common/std/map.h"
 #include "ags/engine/ac/timer.h"
 #include "ags/shared/script/cc_internal.h"
 #include "ags/shared/script/cc_script.h"  // ccScript
@@ -98,8 +98,8 @@ struct ScriptPosition {
 // Running instance of the script
 struct ccInstance {
 public:
-	typedef std::unordered_map<int32_t, ScriptVariable> ScVarMap;
-	typedef std::shared_ptr<ScVarMap>                   PScVarMap;
+	typedef Std::unordered_map<int32_t, ScriptVariable> ScVarMap;
+	typedef Std::shared_ptr<ScVarMap>                   PScVarMap;
 public:
 	int32_t flags;
 	PScVarMap globalvars;

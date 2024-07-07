@@ -66,10 +66,10 @@ void Test_GfxSpeed(bool enableSimd, size_t blenderModeStart, size_t blenderModeE
 					uint32 start, end;
 					_G(_blender_mode) = (AGS3::BlenderMode)blenderModes[mode];
 					//if (runs == 2) debug("Dest: %d bpp, Gfx: %d bpp, Blender: %s, Stretched: false, Iters: %d\n", bpps[dest], bpps[gfx], modeNames[mode], benchRuns[runs]);
-					start = std::chrono::high_resolution_clock::now();
+					start = Std::chrono::high_resolution_clock::now();
 					for (int i = 0; i < benchRuns[runs]; i++)
 						destinations[dest]->Blit(graphics[gfx], 0, 0, kBitmap_Transparency);
-					end = std::chrono::high_resolution_clock::now();
+					end = Std::chrono::high_resolution_clock::now();
 					timeNotStretched += end - start;
 					numItersNotStretched += benchRuns[runs];
 					if (mode == kArgbToArgbBlender || mode == kRgbToRgbBlender || mode == kRgbToArgbBlender || mode == kArgbToRgbBlender) {
@@ -79,10 +79,10 @@ void Test_GfxSpeed(bool enableSimd, size_t blenderModeStart, size_t blenderModeE
 					time += end - start;
 					//if (runs == 2) debug("exec time (mills): %u\n\n", end - start);
 					//if (runs == 2) debug("Dest: %d bpp, Gfx: %d bpp, Blender: %s, Stretched: true, Iters: %d\n", bpps[dest], bpps[gfx], modeNames[mode], benchRuns[runs]);
-					start = std::chrono::high_resolution_clock::now();
+					start = Std::chrono::high_resolution_clock::now();
 					for (int i = 0; i < benchRuns[runs]; i++)
 						destinations[dest]->StretchBlt(graphics[gfx], Rect(0, 0, 99, 99), kBitmap_Transparency);
-					end = std::chrono::high_resolution_clock::now();
+					end = Std::chrono::high_resolution_clock::now();
 					time += end - start;
 					numIters += benchRuns[runs] * 2;
 					//if (runs == 2) debug("exec time (mills): %u\n\n", end - start);
@@ -208,31 +208,31 @@ void Test_BlenderModes() {
 											default:
 												tolerance = 0;
 											}
-											if (std::abs((int)a - (int)(simdCol >> 24)) > tolerance) {
+											if (Std::abs((int)a - (int)(simdCol >> 24)) > tolerance) {
 												printInfo();
 												assert(false && "a is over the tolerance");
 											}
-											if (std::abs((int)r - (int)((simdCol >> 16) & 0xff)) > tolerance) {
+											if (Std::abs((int)r - (int)((simdCol >> 16) & 0xff)) > tolerance) {
 												printInfo();
 												assert(false && "r is over the tolerance");
 											}
-											if (std::abs((int)g - (int)((simdCol >> 8) & 0xff)) > tolerance) {
+											if (Std::abs((int)g - (int)((simdCol >> 8) & 0xff)) > tolerance) {
 												printInfo();
 												assert(false && "g is over the tolerance");
 											}
-											if (std::abs((int)b - (int)(simdCol & 0xff)) > tolerance) {
+											if (Std::abs((int)b - (int)(simdCol & 0xff)) > tolerance) {
 												printInfo();
 												assert(false && "b is over the tolerance");
 											}
-											if (std::abs((int)b16 - (int)(simd2bppCol & 0x1f)) > tolerance16) {
+											if (Std::abs((int)b16 - (int)(simd2bppCol & 0x1f)) > tolerance16) {
 												printInfo();
 												assert(false && "b16 is over the tolerance");
 											}
-											if (std::abs((int)g16 - (int)((simd2bppCol >> 5) & 0x3f)) > tolerance16) {
+											if (Std::abs((int)g16 - (int)((simd2bppCol >> 5) & 0x3f)) > tolerance16) {
 												printInfo();
 												assert(false && "g16 is over the tolerance");
 											}
-											if (std::abs((int)r16 - (int)(simd2bppCol >> 11)) > tolerance16) {
+											if (Std::abs((int)r16 - (int)(simd2bppCol >> 11)) > tolerance16) {
 												printInfo();
 												assert(false && "r16 is over the tolerance");
 											}

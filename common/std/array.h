@@ -19,27 +19,23 @@
  *
  */
 
-#ifndef AGS_STD_XTR1COMMON_H
-#define AGS_STD_XTR1COMMON_H
+#ifndef COMMON_STD_ARRAY_H
+#define COMMON_STD_ARRAY_H
 
-namespace AGS3 {
-namespace std {
+#include "common/array.h"
 
-// STRUCT TEMPLATE conditional
-template <bool _Test, class _Ty1, class _Ty2>
-struct conditional { // Choose _Ty1 if _Test is true, and _Ty2 otherwise
-	using type = _Ty1;
+namespace Std {
+
+template<class T>
+class array : public Common::Array<T> {
+public:
+	array() : Common::Array<T>() {
+	}
+	array(size_t size) : Common::Array<T>() {
+		Common::Array<T>::resize(size);
+	}
 };
 
-template <class _Ty1, class _Ty2>
-struct conditional<false, _Ty1, _Ty2> {
-	using type = _Ty2;
-};
-
-template <bool _Test, class _Ty1, class _Ty2>
-using conditional_t = typename conditional<_Test, _Ty1, _Ty2>::type;
-
-} // namespace std
-} // namespace AGS3
+} // namespace Std
 
 #endif

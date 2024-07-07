@@ -28,9 +28,9 @@
 #ifndef AGS_ENGINE_GFX_GFX_DRIVER_BASE_H
 #define AGS_ENGINE_GFX_GFX_DRIVER_BASE_H
 
-#include "ags/lib/std/memory.h"
-#include "engines/ags/lib/std/map.h"
-#include "ags/lib/std/vector.h"
+#include "common/std/memory.h"
+#include "common/std/map.h"
+#include "common/std/vector.h"
 #include "ags/engine/gfx/ddb.h"
 #include "ags/shared/gfx/gfx_def.h"
 #include "ags/engine/gfx/graphics_driver.h"
@@ -67,7 +67,7 @@ struct SpriteBatchDesc {
 	}
 };
 
-typedef std::vector<SpriteBatchDesc> SpriteBatchDescs;
+typedef Std::vector<SpriteBatchDesc> SpriteBatchDescs;
 
 // The single sprite entry in the render list
 template<class T_DDB>
@@ -179,7 +179,7 @@ protected:
 	SpriteBatchDescs _spriteBatchDesc;
 	// The range of sprites in this sprite batch (counting nested sprites):
 	// the last of the previous batch, and the last of the current.
-	std::vector<std::pair<size_t, size_t>> _spriteBatchRange;
+	Std::vector<Std::pair<size_t, size_t>> _spriteBatchRange;
 	// The index of a currently filled sprite batch
 	size_t _actSpriteBatch;
 	// The index of a currently rendered sprite batch
@@ -266,10 +266,10 @@ protected:
 	// Update texture data from the given bitmap
 	virtual void UpdateTextureData(TextureData *txdata, Bitmap *bmp, bool opaque, bool hasAlpha) = 0;
 	// Create DDB using preexisting texture data
-	virtual IDriverDependantBitmap *CreateDDB(std::shared_ptr<TextureData> txdata,
+	virtual IDriverDependantBitmap *CreateDDB(Std::shared_ptr<TextureData> txdata,
 		  int width, int height, int color_depth, bool opaque) = 0;
 	// Retrieve shared texture data object from the given DDB
-	virtual std::shared_ptr<TextureData> GetTextureData(IDriverDependantBitmap *ddb) = 0;
+	virtual Std::shared_ptr<TextureData> GetTextureData(IDriverDependantBitmap *ddb) = 0;
 	virtual void DestroyDDBImpl(IDriverDependantBitmap* ddb) = 0;
 
 	// Stage screens are raw bitmap buffers meant to be sent to plugins on demand
@@ -325,10 +325,10 @@ private:
 	// pair, and subbitmaps for raw drawing on separate stages.
 	struct StageScreen {
 		Rect Position; // bitmap size and pos preset (bitmap may be created later)
-		std::unique_ptr<Bitmap> Raw;
+		Std::unique_ptr<Bitmap> Raw;
 		IDriverDependantBitmap *DDB = nullptr;
 	};
-	std::vector<StageScreen> _stageScreens;
+	Std::vector<StageScreen> _stageScreens;
 	// Flag which indicates whether stage screen was drawn upon during engine
 	// callback and has to be inserted into sprite stack.
 	bool _stageScreenDirty;
@@ -341,7 +341,7 @@ private:
 		int Green = -1;
 		int Blue = -1;
 	};
-	std::vector<ScreenFx> _fxPool;
+	Std::vector<ScreenFx> _fxPool;
 	size_t _fxIndex; // next free pool item
 
 	// Texture short-term cache:
@@ -353,12 +353,12 @@ private:
 	// textures of the same size (research potential performance impact).
 	struct TextureCacheItem {
 		GraphicResolution Res;
-		std::weak_ptr<TextureData> Data;
+		Std::weak_ptr<TextureData> Data;
 		TextureCacheItem() = default;
-		TextureCacheItem(std::shared_ptr<TextureData> data, const GraphicResolution &res)
+		TextureCacheItem(Std::shared_ptr<TextureData> data, const GraphicResolution &res)
 			: Data(data), Res(res) {}
 	};
-	std::unordered_map<uint32_t, TextureCacheItem> _txRefs;
+	Std::unordered_map<uint32_t, TextureCacheItem> _txRefs;
 };
 
 } // namespace Engine

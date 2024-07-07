@@ -19,23 +19,40 @@
  *
  */
 
-#ifndef AGS_STD_XUTILITY_H
-#define AGS_STD_XUTILITY_H
+#ifndef COMMON_STD_FUNCTIONAL_H
+#define COMMON_STD_FUNCTIONAL_H
 
-#include "common/algorithm.h"
-#include "common/util.h"
+namespace Std {
 
-namespace AGS3 {
-namespace std {
+template <class _Arg, class _Result>
+struct unary_function { // base class for unary functions
+	using argument_type = _Arg;
+	using result_type = _Result;
+};
 
-template <class T>
-void reverse(T *First, T *Last) {
-	for (--Last; First < Last; ++First, --Last) {
-		SWAP(*First, *Last);
+template <class _Arg1, class _Arg2, class _Result>
+struct binary_function { // base class for binary functions
+	using first_argument_type = _Arg1;
+	using second_argument_type = _Arg2;
+	using result_type = _Result;
+};
+
+template <typename _Fty>
+struct function {
+	_Fty *_fn;
+
+	function() : _fn(nullptr) {}
+	function(_Fty *fn) : _fn(fn) {}
+
+	operator _Fty &() {
+		return *_fn;
 	}
-}
 
-} // namespace std
-} // namespace AGS3
+	operator bool() const {
+		return _fn != nullptr;
+	}
+};
+
+} // namespace Std
 
 #endif

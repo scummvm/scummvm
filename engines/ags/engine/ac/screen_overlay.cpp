@@ -19,7 +19,7 @@
  *
  */
 
-#include "ags/lib/std/utility.h"
+#include "common/std/utility.h"
 #include "ags/engine/ac/screen_overlay.h"
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/shared/util/stream.h"

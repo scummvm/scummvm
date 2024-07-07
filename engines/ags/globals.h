@@ -25,7 +25,7 @@
 #include "ags/shared/core/platform.h"
 #define AGS_PLATFORM_DEFINES_PSP_VARS (AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID)
 
-#include "ags/lib/std/queue.h"
+#include "common/std/queue.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/ac/keycode.h"
 #include "ags/shared/util/stdio_compat.h"
@@ -43,10 +43,10 @@
 #include "ags/engine/media/audio/audio_defines.h"
 #include "ags/engine/script/script.h"
 #include "ags/engine/script/script_runtime.h"
-#include "ags/lib/std/array.h"
-#include "ags/lib/std/chrono.h"
-#include "ags/lib/std/memory.h"
-#include "ags/lib/std/set.h"
+#include "common/std/array.h"
+#include "common/std/chrono.h"
+#include "common/std/memory.h"
+#include "common/std/set.h"
 #include "ags/lib/allegro/color.h"
 #include "ags/lib/allegro/fixed.h"
 #include "ags/lib/allegro/aintern.h"
@@ -269,7 +269,7 @@ public:
 	 * @{
 	 */
 
-	std::unique_ptr<Shared::AssetManager> *_AssetMgr;
+	Std::unique_ptr<Shared::AssetManager> *_AssetMgr;
 
 	/**@}*/
 
@@ -282,7 +282,7 @@ public:
 	// We don't have many places where we delay longer than a frame, but where we
 	// do, we should give the audio layer a chance to update.
 	// 16 milliseconds is rough period for 60fps
-	const std::chrono::milliseconds _MaximumDelayBetweenPolling = std::chrono::milliseconds(16);
+	const Std::chrono::milliseconds _MaximumDelayBetweenPolling = Std::chrono::milliseconds(16);
 
 	/**@}*/
 
@@ -313,8 +313,8 @@ public:
 	 * @{
 	 */
 
-	std::array<SOUNDCLIP *> *_audioChannels;
-	std::array<AmbientSound> *_ambient;
+	Std::array<SOUNDCLIP *> *_audioChannels;
+	Std::array<AmbientSound> *_ambient;
 
 	ScriptAudioChannel *_scrAudioChannel;
 	int _reserved_channel_count = 0;
@@ -341,7 +341,7 @@ public:
 	 * @{
 	 */
 
-	std::vector<AnimatingGUIButton> *_animbuts;
+	Std::vector<AnimatingGUIButton> *_animbuts;
 
 	/**@}*/
 
@@ -384,7 +384,7 @@ public:
 	// In AGS currently only one thread is running, others are waiting in the queue.
 	// An example situation is repeatedly_execute_always callback running while
 	// another instance is waiting at the blocking action or Wait().
-	std::deque<ccInstance *> *_InstThreads;
+	Std::deque<ccInstance *> *_InstThreads;
 	// [IKM] 2012-10-21:
 	// NOTE: This is temporary solution (*sigh*, one of many) which allows certain
 	// exported functions return value as a RuntimeScriptValue object;
@@ -506,7 +506,7 @@ public:
 		int lineNumber = 0;
 	};
 
-	std::vector<Breakpoint> _breakpoints;
+	Std::vector<Breakpoint> _breakpoints;
 
 	int _debug_flags = 0;
 
@@ -515,9 +515,9 @@ public:
 
 	float _fps;
 	int _display_fps;
-	std::unique_ptr<AGS::Engine::MessageBuffer> *_DebugMsgBuff;
-	std::unique_ptr<AGS::Engine::LogFile> *_DebugLogFile;
-	std::unique_ptr<AGS::Engine::ConsoleOutputTarget> *_DebugConsole;
+	Std::unique_ptr<AGS::Engine::MessageBuffer> *_DebugMsgBuff;
+	Std::unique_ptr<AGS::Engine::LogFile> *_DebugLogFile;
+	Std::unique_ptr<AGS::Engine::ConsoleOutputTarget> *_DebugConsole;
 
 	/**@}*/
 
@@ -537,7 +537,7 @@ public:
 	 * @{
 	 */
 
-	std::vector<DialogTopic> _dialog;
+	Std::vector<DialogTopic> _dialog;
 	ScriptDialogOptionsRendering *_ccDialogOptionsRendering;
 	ScriptDrawingSurface *_dialogOptionsRenderingSurface = nullptr;
 
@@ -549,8 +549,8 @@ public:
 	int _said_text = 0;
 	int _longestline = 0;
 	// Old dialog support
-	std::vector<std::vector<uint8_t>> _old_dialog_scripts;
-	std::vector<String> _old_speech_lines;
+	Std::vector<Std::vector<uint8_t>> _old_dialog_scripts;
+	Std::vector<String> _old_speech_lines;
 
 	/**@}*/
 
@@ -578,11 +578,11 @@ public:
 	 * @{
 	 */
 
-	std::vector<RoomCameraDrawData> *_CameraDrawData;
+	Std::vector<RoomCameraDrawData> *_CameraDrawData;
 	// Two lists of sprites to push into renderer during next render pass
 	// thingsToDrawList - is the main list, unsorted, drawn in the index order
-	std::vector<SpriteListEntry> *_thingsToDrawList;
-	std::vector<SpriteListEntry> *_sprlist;
+	Std::vector<SpriteListEntry> *_thingsToDrawList;
+	Std::vector<SpriteListEntry> *_sprlist;
 
 	AGS::Engine::IGraphicsDriver *_gfxDriver = nullptr;
 	AGS::Engine::IDriverDependantBitmap *_blankImage = nullptr;
@@ -592,17 +592,17 @@ public:
 	// actsps is used for temporary storage of the bitamp and texture
 	// of the latest version of the sprite (room objects and characters);
 	// objects sprites begin with index 0, characters are after ACTSP_OBJSOFF
-	std::vector<ObjTexture> *_actsps;
+	Std::vector<ObjTexture> *_actsps;
 	// Walk-behind textures (3D renderers only)
-	std::vector<ObjTexture> *_walkbehindobj;
+	Std::vector<ObjTexture> *_walkbehindobj;
 	// GUI surfaces
-	std::vector<ObjTexture> *_guibg;
+	Std::vector<ObjTexture> *_guibg;
 	// GUI control surfaces
-	std::vector<ObjTexture> *_guiobjbg;
+	Std::vector<ObjTexture> *_guiobjbg;
 	// first control texture index of each GUI
-	std::vector<int> *_guiobjddbref;
+	Std::vector<int> *_guiobjddbref;
 	// Overlay's cached transformed bitmap, for software mode
-	std::vector<std::unique_ptr<Shared::Bitmap> > *_overlaybmp;
+	Std::vector<Std::unique_ptr<Shared::Bitmap> > *_overlaybmp;
 	// For debugging room masks
 	ObjTexture *_debugRoomMaskObj;
 	ObjTexture *_debugMoveListObj;
@@ -621,8 +621,8 @@ public:
 	color *_palette;
 	COLOR_MAP *_maincoltable;
 
-	std::vector<Engine::IDriverDependantBitmap *> *_guiobjddb;
-	std::vector<Point> *_guiobjoff; // because surface may be larger than logical position
+	Std::vector<Engine::IDriverDependantBitmap *> *_guiobjddb;
+	Std::vector<Point> *_guiobjoff; // because surface may be larger than logical position
 
 	/**@}*/
 
@@ -638,10 +638,10 @@ public:
 	DirtyRects *_BlackRects;
 	Point *_GlobalOffs;
 	// Dirty rects object for the single room camera
-	std::vector<DirtyRects> *_RoomCamRects;
+	Std::vector<DirtyRects> *_RoomCamRects;
 	// Saved room camera offsets to know if we must invalidate whole surface.
 	// TODO: if we support rotation then we also need to compare full transform!
-	std::vector<std::pair<int, int> > *_RoomCamPositions;
+	Std::vector<Std::pair<int, int> > *_RoomCamPositions;
 
 	/**@}*/
 
@@ -686,7 +686,7 @@ public:
 	int _in_enters_screen = 0, _done_es_error = 0;
 	int _in_leaves_screen = -1;
 
-	std::vector<EventHappened> *_events;
+	Std::vector<EventHappened> *_events;
 
 	const char *_evblockbasename = nullptr;
 	int _evblocknum = 0;
@@ -721,7 +721,7 @@ public:
 	 * @{
 	 */
 
-	std::vector<AGS::Shared::Font> *_fonts;
+	Std::vector<AGS::Shared::Font> *_fonts;
 	TTFFontRenderer *_ttfRenderer;
 	WFNFontRenderer *_wfnRenderer;
 	SplitLines *_Lines;
@@ -742,7 +742,7 @@ public:
 	AGS::Shared::RoomStruct *_thisroom;
 	RoomStatus *_troom; // used for non-saveable rooms, eg. intro
 
-	std::vector<AGS::Shared::GUIMain> *_guis;
+	Std::vector<AGS::Shared::GUIMain> *_guis;
 	CCGUIObject *_ccDynamicGUIObject;
 	CCCharacter *_ccDynamicCharacter;
 	CCHotspot *_ccDynamicHotspot;
@@ -766,16 +766,16 @@ public:
 	ScriptRegion *_scrRegion;
 	ScriptInvItem *_scrInv;
 	ScriptDialog *_scrDialog = nullptr;
-	std::vector<ViewStruct> *_views;
+	Std::vector<ViewStruct> *_views;
 	// Cached character and object states, used to determine
 	// whether these require texture update
-	std::vector<ObjectCache> *_charcache;
+	Std::vector<ObjectCache> *_charcache;
 	ObjectCache *_objcache;
-	std::vector<Point> *_screenovercache;
-	std::vector<CharacterExtras> *_charextra;
+	Std::vector<Point> *_screenovercache;
+	Std::vector<CharacterExtras> *_charextra;
 	// MoveLists for characters and room objects; NOTE: 1-based array!
 	// object sprites begin with index 1, characters are after MAX_ROOM_OBJECTS + 1
-	std::vector<MoveList> *_mls;
+	Std::vector<MoveList> *_mls;
 
 	GameSetup *_usetup;
 	AGS::Shared::String _saveGameDirectory;
@@ -969,7 +969,7 @@ public:
 	 * @{
 	 */
 
-	std::vector<AGS::Shared::GUIButton> *_guibuts;
+	Std::vector<AGS::Shared::GUIButton> *_guibuts;
 
 	/**@}*/
 
@@ -1002,7 +1002,7 @@ public:
 	 * @{
 	 */
 
-	std::vector<AGS::Shared::GUIInvWindow> *_guiinv;
+	Std::vector<AGS::Shared::GUIInvWindow> *_guiinv;
 
 	/**@}*/
 
@@ -1012,7 +1012,7 @@ public:
 	 * @{
 	 */
 
-	std::vector<AGS::Shared::GUILabel> *_guilabels;
+	Std::vector<AGS::Shared::GUILabel> *_guilabels;
 
 	/**@}*/
 
@@ -1022,7 +1022,7 @@ public:
 	 * @{
 	 */
 
-	std::vector<AGS::Shared::GUIListBox> *_guilist;
+	Std::vector<AGS::Shared::GUIListBox> *_guilist;
 
 	/**@}*/
 
@@ -1044,7 +1044,7 @@ public:
 	 * @{
 	 */
 
-	std::vector<AGS::Shared::GUISlider> *_guislider;
+	Std::vector<AGS::Shared::GUISlider> *_guislider;
 
 	/**@}*/
 
@@ -1054,7 +1054,7 @@ public:
 	 * @{
 	 */
 
-	std::vector<AGS::Shared::GUITextBox> *_guitext;
+	Std::vector<AGS::Shared::GUITextBox> *_guitext;
 
 	/**@}*/
 
@@ -1108,7 +1108,7 @@ public:
 	bool _justDisplayVersion = false;
 	bool _justRunSetup = false;
 	bool _justTellInfo = false;
-	std::set<String> _tellInfoKeys;
+	Std::set<String> _tellInfoKeys;
 	int _loadSaveGameOnStartup = -1;
 
 	// ScummVM GUIO-controlled flags
@@ -1185,7 +1185,7 @@ public:
 	 * @{
 	 */
 
-	std::vector<ScreenOverlay> *_screenover;
+	Std::vector<ScreenOverlay> *_screenover;
 	int _is_complete_overlay = 0;
 
 	/**@}*/
@@ -1238,7 +1238,7 @@ public:
 	int _num_navpoints = 0;
 	AGS::Shared::Bitmap *_wallscreen = nullptr;
 	int _lastcx = 0, _lastcy = 0;
-	std::unique_ptr<IRouteFinder> *_route_finder_impl;
+	Std::unique_ptr<IRouteFinder> *_route_finder_impl;
 
 	/**@}*/
 
@@ -1288,10 +1288,10 @@ public:
 
 	ScriptSystem *_scsystem;
 
-	std::vector<PScript> *_scriptModules;
-	std::vector<ccInstance *> *_moduleInst;
-	std::vector<ccInstance *> *_moduleInstFork;
-	std::vector<RuntimeScriptValue> *_moduleRepExecAddr;
+	Std::vector<PScript> *_scriptModules;
+	Std::vector<ccInstance *> *_moduleInst;
+	Std::vector<ccInstance *> *_moduleInstFork;
+	Std::vector<RuntimeScriptValue> *_moduleRepExecAddr;
 	size_t _numScriptModules = 0;
 
 	/**@}*/
@@ -1360,7 +1360,7 @@ public:
 	 * @{
 	 */
 
-	std::chrono::microseconds _tick_duration = std::chrono::microseconds(1000000LL / 40);
+	Std::chrono::microseconds _tick_duration = Std::chrono::microseconds(1000000LL / 40);
 	bool _framerate_maxed = false;
 	int _framerate = 0;
 
@@ -1380,8 +1380,8 @@ public:
 	String _trans_name, _trans_filename;
 	long _lang_offs_start = 0;
 	char _transFileName[MAX_PATH_SZ] = { 0 };
-	std::vector<uint16> _wcsbuf; // widechar buffer
-	std::vector<char> _mbbuf;  // utf8 buffer
+	Std::vector<uint16> _wcsbuf; // widechar buffer
+	Std::vector<char> _mbbuf;  // utf8 buffer
 
 	/**@}*/
 
@@ -1411,7 +1411,7 @@ public:
 	WalkBehindMethodEnum _walkBehindMethod = DrawOverCharSprite;
 	int _walk_behind_baselines_changed = 0;
 	Rect _walkBehindAABB[MAX_WALK_BEHINDS]; // WB bounding box
-	std::vector<WalkBehindColumn> _walkBehindCols; // precalculated WB positions
+	Std::vector<WalkBehindColumn> _walkBehindCols; // precalculated WB positions
 
 	/**@}*/
 

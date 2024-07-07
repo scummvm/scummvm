@@ -19,7 +19,7 @@
  *
  */
 
-#include "ags/lib/std/algorithm.h"
+#include "common/std/algorithm.h"
 #include "ags/shared/gui/gui_main.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/ac/sprite_cache.h"
@@ -145,7 +145,7 @@ int32_t GUIMain::GetControlID(int32_t index) const {
 	return _ctrlRefs[index].second;
 }
 
-const std::vector<int> &GUIMain::GetControlsDrawOrder() const {
+const Std::vector<int> &GUIMain::GetControlsDrawOrder() const {
 	return _ctrlDrawOrder;
 }
 
@@ -403,8 +403,8 @@ bool GUIControlZOrder(const GUIObject *e1, const GUIObject *e2) {
 }
 
 void GUIMain::ResortZOrder() {
-	std::vector<GUIObject *> ctrl_sort = _controls;
-	std::sort(ctrl_sort.begin(), ctrl_sort.end(), GUIControlZOrder);
+	Std::vector<GUIObject *> ctrl_sort = _controls;
+	Std::sort(ctrl_sort.begin(), ctrl_sort.end(), GUIControlZOrder);
 
 	_ctrlDrawOrder.resize(ctrl_sort.size());
 	for (size_t i = 0; i < ctrl_sort.size(); ++i)
@@ -661,8 +661,8 @@ Line CalcFontGraphicalVExtent(int font) {
 	// * custom vertical offset set by user (if non-zero),
 	// * font's real graphical height
 	int font_yoffset = get_fontinfo(font).YOffset;
-	int yoff = std::min(0, font_yoffset);       // only if yoff is negative
-	int height_off = std::max(0, font_yoffset); // only if yoff is positive
+	int yoff = Std::min(0, font_yoffset);       // only if yoff is negative
+	int height_off = Std::max(0, font_yoffset); // only if yoff is positive
 	return Line(0, yoff, 0, get_font_surface_height(font) + height_off);
 }
 

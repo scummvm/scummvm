@@ -19,7 +19,7 @@
  *
  */
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/engine/ac/dynobj/managed_object_pool.h"
 #include "ags/engine/ac/dynobj/cc_dynamic_array.h" // globalDynamicArray, constants
 #include "ags/shared/debugging/out.h"
@@ -230,7 +230,7 @@ void ManagedObjectPool::WriteToDisk(Stream *out) {
 	// use this opportunity to clean up any non-referenced pointers
 	RunGarbageCollection();
 
-	std::vector<char> serializeBuffer;
+	Std::vector<char> serializeBuffer;
 	serializeBuffer.resize(SERIALIZE_BUFFER_SIZE);
 
 	out->WriteInt32(OBJECT_CACHE_MAGIC_NUMBER);
@@ -278,7 +278,7 @@ int ManagedObjectPool::ReadFromDisk(Stream *in, ICCObjectReader *reader) {
 	}
 
 	char typeNameBuffer[200];
-	std::vector<char> serializeBuffer;
+	Std::vector<char> serializeBuffer;
 	serializeBuffer.resize(SERIALIZE_BUFFER_SIZE);
 
 	auto version = in->ReadInt32();

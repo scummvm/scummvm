@@ -28,7 +28,7 @@
 #ifndef AGS_SHARED_UTIL_MATH_H
 #define AGS_SHARED_UTIL_MATH_H
 
-#include "ags/lib/std/limits.h"
+#include "common/std/limits.h"
 
 namespace AGS3 {
 
@@ -80,7 +80,7 @@ inline T Surplus(const T &larger, const T &smaller) {
 // returns same value converted if it's in range, or provided replacement if it's not.
 template <typename T, typename TBig>
 inline T InRangeOrDef(const TBig &val, const T &def) {
-	return (val >= std::numeric_limits<T>::min() && val <= std::numeric_limits<T>::max()) ?
+	return (val >= Std::numeric_limits<T>::min() && val <= Std::numeric_limits<T>::max()) ?
 		static_cast<T>(val) : def;
 }
 

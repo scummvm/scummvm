@@ -19,7 +19,7 @@
  *
  */
 
-#include "ags/lib/std/utility.h"
+#include "common/std/utility.h"
 #include "ags/shared/script/cc_common.h"
 #include "ags/shared/util/string.h"
 #include "ags/globals.h"

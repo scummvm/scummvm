@@ -19,18 +19,23 @@
  *
  */
 
-#ifndef AGS_STD_STACK_H
-#define AGS_STD_STACK_H
+#ifndef COMMON_STD_REGEX_H
+#define COMMON_STD_REGEX_H
 
-#include "common/stack.h"
+#include "common/str.h"
+#include "common/textconsole.h"
 
-namespace AGS3 {
-namespace std {
+namespace Std {
 
-template<class T>
-using stack = Common::Stack<T>;
+struct regex {
+public:
+	regex(const char *) {}
+};
 
-} // namespace std
-} // namespace AGS3
+inline Common::String regex_replace(const char *wildcard, const regex &esc, const char *fmt) {
+	error("TODO: Implement if engine needs it");
+}
+
+} // namespace Std
 
 #endif

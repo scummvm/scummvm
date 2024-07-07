@@ -30,7 +30,7 @@
 #ifndef AGS_ENGINE_DEBUGGING_MESSAGE_BUFFER_H
 #define AGS_ENGINE_DEBUGGING_MESSAGE_BUFFER_H
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/shared/debugging/output_handler.h"
 
 namespace AGS3 {
@@ -55,7 +55,7 @@ public:
 
 private:
 	const size_t    _bufferLimit;
-	std::vector<DebugMessage> _buffer;
+	Std::vector<DebugMessage> _buffer;
 	size_t          _msgLost;
 };
 

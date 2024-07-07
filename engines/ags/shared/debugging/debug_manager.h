@@ -46,8 +46,8 @@
 #ifndef AGS_SHARED_DEBUGGING_DEBUG_MANAGER_H
 #define AGS_SHARED_DEBUGGING_DEBUG_MANAGER_H
 
-#include "ags/lib/std/memory.h"
-#include "ags/lib/std/map.h"
+#include "common/std/memory.h"
+#include "common/std/map.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/shared/debugging/output_handler.h"
 #include "ags/shared/util/string.h"
@@ -97,13 +97,13 @@ private:
 	bool            _enabled;
 	MessageType     _defaultVerbosity;
 	// Set of permitted groups' numeric IDs
-	std::vector<MessageType> _groupFilter;
+	Std::vector<MessageType> _groupFilter;
 	// Set of unresolved groups, which numeric IDs are not yet known
-	typedef std::unordered_map<String, MessageType, IgnoreCase_Hash, IgnoreCase_EqualTo> GroupNameToMTMap;
+	typedef Std::unordered_map<String, MessageType, IgnoreCase_Hash, IgnoreCase_EqualTo> GroupNameToMTMap;
 	GroupNameToMTMap _unresolvedGroups;
 };
 
-typedef std::shared_ptr<DebugOutput> PDebugOutput;
+typedef Std::shared_ptr<DebugOutput> PDebugOutput;
 
 
 class DebugManager {
@@ -147,9 +147,9 @@ private:
 		}
 	};
 
-	typedef std::vector<DebugGroup> GroupVector;
-	typedef std::unordered_map<String, DebugGroupID, IgnoreCase_Hash, IgnoreCase_EqualTo> GroupByStringMap;
-	typedef std::unordered_map<String, OutputSlot, IgnoreCase_Hash, IgnoreCase_EqualTo> OutMap;
+	typedef Std::vector<DebugGroup> GroupVector;
+	typedef Std::unordered_map<String, DebugGroupID, IgnoreCase_Hash, IgnoreCase_EqualTo> GroupByStringMap;
+	typedef Std::unordered_map<String, OutputSlot, IgnoreCase_Hash, IgnoreCase_EqualTo> OutMap;
 
 	void RegisterGroup(const DebugGroup &id);
 	void SendMessage(OutputSlot &out, const DebugMessage &msg);

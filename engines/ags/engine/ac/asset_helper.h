@@ -28,8 +28,8 @@
 #ifndef AGS_ENGINE_AC_ASSET_HELPER_H
 #define AGS_ENGINE_AC_ASSET_HELPER_H
 
-#include "ags/lib/std/memory.h"
-#include "ags/lib/std/utility.h"
+#include "common/std/memory.h"
+#include "common/std/utility.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/core/asset_manager.h"
 
@@ -59,7 +59,7 @@ AssetPath get_voice_over_assetpath(const String &filename);
 // TODO: it is preferrable to let our Stream define custom readable window instead,
 // keeping this as simple as possible for now (we may require a stream classes overhaul).
 struct AGS_PACKFILE_OBJ {
-	std::unique_ptr<Stream> stream;
+	Std::unique_ptr<Stream> stream;
 	size_t asset_size = 0u;
 	size_t remains = 0u;
 };

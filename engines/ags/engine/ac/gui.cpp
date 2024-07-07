@@ -19,7 +19,7 @@
  *
  */
 
-#include "ags/lib/std/algorithm.h"
+#include "common/std/algorithm.h"
 #include "ags/engine/ac/gui.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/draw.h"
@@ -412,7 +412,7 @@ bool sort_gui_less(const int g1, const int g2) {
 }
 
 void update_gui_zorder() {
-	std::sort(_GP(play).gui_draw_order.begin(), _GP(play).gui_draw_order.end(), sort_gui_less);
+	Std::sort(_GP(play).gui_draw_order.begin(), _GP(play).gui_draw_order.end(), sort_gui_less);
 }
 
 void export_gui_controls(int ee) {

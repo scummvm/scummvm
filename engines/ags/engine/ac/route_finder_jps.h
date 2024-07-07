@@ -19,11 +19,11 @@
  *
  */
 
-#include "ags/lib/std/queue.h"
-#include "ags/lib/std/vector.h"
-#include "ags/lib/std/algorithm.h"
-#include "ags/lib/std/functional.h"
-#include "ags/lib/std/xutility.h"
+#include "common/std/queue.h"
+#include "common/std/vector.h"
+#include "common/std/algorithm.h"
+#include "common/std/functional.h"
+#include "common/std/xutility.h"
 
 // Not all platforms define INFINITY
 #ifndef INFINITY
@@ -54,13 +54,13 @@ public:
 
 	// ncpath = navpoint-compressed path
 	// opath = path composed of individual grid elements
-	NavResult NavigateRefined(int sx, int sy, int ex, int ey, std::vector<int> &opath,
-	                          std::vector<int> &ncpath);
+	NavResult NavigateRefined(int sx, int sy, int ex, int ey, Std::vector<int> &opath,
+	                          Std::vector<int> &ncpath);
 
-	NavResult Navigate(int sx, int sy, int ex, int ey, std::vector<int> &opath);
+	NavResult Navigate(int sx, int sy, int ex, int ey, Std::vector<int> &opath);
 
 	bool TraceLine(int srcx, int srcy, int targx, int targy, int &lastValidX, int &lastValidY) const;
-	bool TraceLine(int srcx, int srcy, int targx, int targy, std::vector<int> *rpath = nullptr) const;
+	bool TraceLine(int srcx, int srcy, int targx, int targy, Std::vector<int> *rpath = nullptr) const;
 
 	inline void SetMapRow(int y, const unsigned char *row) {
 		map[y] = row;
@@ -93,7 +93,7 @@ private:
 
 	int mapWidth;
 	int mapHeight;
-	std::vector<const unsigned char *> map;
+	Std::vector<const unsigned char *> map;
 
 	typedef unsigned short tFrameId;
 	typedef int tPrev;
@@ -116,15 +116,15 @@ private:
 	static const float DIST_SCALE_PACK;
 	static const float DIST_SCALE_UNPACK;
 
-	std::vector<NodeInfo> mapNodes;
+	Std::vector<NodeInfo> mapNodes;
 	tFrameId frameId;
 
-	std::priority_queue<Entry, std::vector<Entry>, Common::Greater<Entry> > pq;
+	Std::priority_queue<Entry, Std::vector<Entry>, Common::Greater<Entry> > pq;
 
 	// temporary buffers:
-	mutable std::vector<int> fpath;
-	std::vector<int> ncpathIndex;
-	std::vector<int> rayPath, orayPath;
+	mutable Std::vector<int> fpath;
+	Std::vector<int> ncpathIndex;
+	Std::vector<int> rayPath, orayPath;
 
 	// temps for routing towards unreachable areas
 	int cnode;

@@ -22,7 +22,7 @@
 #ifndef AGS_SHARED_FONT_TTF_FONT_RENDERER_H
 #define AGS_SHARED_FONT_TTF_FONT_RENDERER_H
 
-#include "ags/lib/std/map.h"
+#include "common/std/map.h"
 #include "ags/shared/font/ags_font_renderer.h"
 #include "ags/shared/util/string.h"
 
@@ -74,7 +74,7 @@ private:
 		ALFONT_FONT *AlFont;
 		FontRenderParams Params;
 	};
-	std::map<int, FontData> _fontData;
+	Std::map<int, FontData> _fontData;
 };
 
 } // namespace AGS3

@@ -22,7 +22,7 @@
 #ifndef AGS_ENGINE_AC_DRAW_H
 #define AGS_ENGINE_AC_DRAW_H
 
-#include "ags/lib/std/memory.h"
+#include "common/std/memory.h"
 #include "ags/shared/core/types.h"
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/gfx/gfx_def.h"
@@ -33,7 +33,7 @@
 namespace AGS3 {
 namespace AGS {
 namespace Shared {
-typedef std::shared_ptr<Shared::Bitmap> PBitmap;
+typedef Std::shared_ptr<Shared::Bitmap> PBitmap;
 } // namespace Shared
 
 namespace Engine {
@@ -67,7 +67,7 @@ struct ObjTexture {
 	uint32_t SpriteID = UINT32_MAX;
 	// Raw bitmap; used for software render mode,
 	// or when particular object types require generated image.
-	std::unique_ptr<Shared::Bitmap> Bmp;
+	Std::unique_ptr<Shared::Bitmap> Bmp;
 	// Corresponding texture, created by renderer
 	Engine::IDriverDependantBitmap *Ddb = nullptr;
 	// Sprite's position
@@ -89,7 +89,7 @@ struct ObjTexture {
 // ObjectCache stores cached object data, used to determine
 // if active sprite / texture should be reconstructed
 struct ObjectCache {
-	std::unique_ptr<AGS::Shared::Bitmap> image;
+	Std::unique_ptr<AGS::Shared::Bitmap> image;
 	bool  in_use = false;
 	int   sppic = 0;
 	short tintr = 0, tintg = 0, tintb = 0, tintamnt = 0, tintlight = 0;
@@ -151,7 +151,7 @@ void mark_current_background_dirty();
 
 // Avoid freeing and reallocating the memory if possible
 Shared::Bitmap *recycle_bitmap(Shared::Bitmap *bimp, int coldep, int wid, int hit, bool make_transparent = false);
-void recycle_bitmap(std::unique_ptr<Shared::Bitmap> &bimp, int coldep, int wid, int hit, bool make_transparent = false);
+void recycle_bitmap(Std::unique_ptr<Shared::Bitmap> &bimp, int coldep, int wid, int hit, bool make_transparent = false);
 Engine::IDriverDependantBitmap* recycle_ddb_sprite(Engine::IDriverDependantBitmap *ddb, uint32_t sprite_id, Shared::Bitmap *source, bool has_alpha = false, bool opaque = false);
 inline Engine::IDriverDependantBitmap* recycle_ddb_bitmap(Engine::IDriverDependantBitmap *ddb, Shared::Bitmap *source, bool has_alpha = false, bool opaque = false) {
 	return recycle_ddb_sprite(ddb, UINT32_MAX, source, has_alpha, opaque);
@@ -244,7 +244,7 @@ Shared::Bitmap *ReplaceBitmapWithSupportedFormat(Shared::Bitmap *bitmap);
 // (old systems or uncommon gfx modes, and similar stuff).
 // Original bitmap **gets deleted** if a new bitmap had to be created.
 Shared::Bitmap *PrepareSpriteForUse(Shared::Bitmap *bitmap, bool has_alpha);
-// Same as above, but compatible for std::shared_ptr.
+// Same as above, but compatible for Std::shared_ptr.
 Shared::PBitmap PrepareSpriteForUse(Shared::PBitmap bitmap, bool has_alpha);
 // Makes a screenshot corresponding to the last screen render and returns it as a bitmap
 // of the requested width and height and game's native color depth.

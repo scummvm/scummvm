@@ -28,7 +28,7 @@
 #ifndef AGS_ENGINE_PLATFORM_BASE_AGS_PLATFORM_DRIVER_H
 #define AGS_ENGINE_PLATFORM_BASE_AGS_PLATFORM_DRIVER_H
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/engine/ac/date_time.h"
 #include "ags/engine/ac/path_helper.h"
 #include "ags/shared/debugging/output_handler.h"
@@ -158,7 +158,7 @@ struct AGSPlatformDriver
 	// Called when the application is being resumed.
 	virtual void ResumeApplication();
 	// Returns a list of supported display modes
-	virtual void GetSystemDisplayModes(std::vector<Engine::DisplayMode> &dms);
+	virtual void GetSystemDisplayModes(Std::vector<Engine::DisplayMode> &dms);
 	// Switch to system fullscreen mode; store previous mode parameters
 	virtual bool EnterFullscreenMode(const Engine::DisplayMode &dm);
 	// Return back to the mode was before switching to fullscreen

@@ -22,7 +22,7 @@
 #ifndef AGS_SHARED_GUI_GUI_BUTTON_H
 #define AGS_SHARED_GUI_GUI_BUTTON_H
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/engine/ac/button.h"
 #include "ags/shared/gui/gui_object.h"
 #include "ags/shared/util/string.h"

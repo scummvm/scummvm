@@ -22,7 +22,7 @@
 #ifndef AGS_ENGINE_AC_DIALOG_H
 #define AGS_ENGINE_AC_DIALOG_H
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/shared/ac/dialog_topic.h"
 #include "ags/engine/ac/dynobj/script_dialog.h"
 

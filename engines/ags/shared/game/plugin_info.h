@@ -28,7 +28,7 @@
 #ifndef AGS_SHARED_GAME_PLUGIN_INFO_H
 #define AGS_SHARED_GAME_PLUGIN_INFO_H
 
-#include "ags/lib/std/memory.h"
+#include "common/std/memory.h"
 #include "ags/shared/util/string.h"
 
 // TODO: why 10 MB limit?
@@ -42,7 +42,7 @@ struct PluginInfo {
 	// (File)name of plugin
 	String      Name;
 	// Custom data for plugin
-	std::vector<char> Data;
+	Std::vector<char> Data;
 	size_t      DataLen;
 
 	PluginInfo() : DataLen(0) {

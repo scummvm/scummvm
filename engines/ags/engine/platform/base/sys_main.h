@@ -29,7 +29,7 @@
 
 #include "ags/shared/core/platform.h"
 #include "ags/shared/util/string.h"
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/engine/gfx/gfx_defines.h"
 
 namespace AGS3 {
@@ -50,7 +50,7 @@ void sys_set_background_mode(bool on);
 // Queries current desktop resolution.
 int sys_get_desktop_resolution(int &width, int &height);
 // Queries supported desktop modes.
-void sys_get_desktop_modes(std::vector<AGS::Engine::DisplayMode> &dms, int color_depth = 0);
+void sys_get_desktop_modes(Std::vector<AGS::Engine::DisplayMode> &dms, int color_depth = 0);
 // Sets output driver for the backend's renderer
 void sys_renderer_set_output(const AGS::Shared::String &name);
 

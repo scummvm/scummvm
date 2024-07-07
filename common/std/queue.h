@@ -19,15 +19,14 @@
  *
  */
 
-#ifndef AGS_STD_QUEUE_H
-#define AGS_STD_QUEUE_H
+#ifndef COMMON_STD_QUEUE_H
+#define COMMON_STD_QUEUE_H
 
-#include "ags/lib/std/algorithm.h"
-#include "ags/lib/std/vector.h"
+#include "common/std/algorithm.h"
+#include "common/std/vector.h"
 #include "common/queue.h"
 
-namespace AGS3 {
-namespace std {
+namespace Std {
 
 template<class T>
 using queue = Common::Queue<T>;
@@ -137,7 +136,6 @@ public:
 	}
 };
 
-} // namespace std
-} // namespace AGS3
+} // namespace Std
 
 #endif

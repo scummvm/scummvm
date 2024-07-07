@@ -29,7 +29,7 @@
 #define AGS_ENGINE_GFX_GRAPHICS_DRIVER_H
 
 //#include "math/matrix.h"
-#include "ags/lib/std/memory.h"
+#include "common/std/memory.h"
 #include "ags/lib/allegro.h" // RGB, PALETTE
 #include "ags/shared/gfx/gfx_def.h"
 #include "ags/engine/gfx/gfx_defines.h"
@@ -41,7 +41,7 @@ namespace AGS {
 
 namespace Shared {
 class Bitmap;
-typedef std::shared_ptr<Shared::Bitmap> PBitmap;
+typedef Std::shared_ptr<Shared::Bitmap> PBitmap;
 } // namespace Shared
 
 namespace Engine {
@@ -49,7 +49,7 @@ namespace Engine {
 // Forward declaration
 class IDriverDependantBitmap;
 class IGfxFilter;
-typedef std::shared_ptr<IGfxFilter> PGfxFilter;
+typedef Std::shared_ptr<IGfxFilter> PGfxFilter;
 using Shared::PBitmap;
 
 enum TintMethod {

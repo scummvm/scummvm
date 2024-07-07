@@ -19,7 +19,7 @@
  *
  */
 
-#include "ags/lib/std/memory.h"
+#include "common/std/memory.h"
 #include "ags/shared/util/file.h"
 #include "ags/shared/util/ini_util.h"
 #include "ags/shared/util/ini_file.h"
@@ -125,7 +125,7 @@ void CfgWriteString(ConfigTree &cfg, const String &sectn, const String &item, co
 // IniUtil
 //-----------------------------------------------------------------------------
 
-typedef std::unique_ptr<Stream>       UStream;
+typedef Std::unique_ptr<Stream>       UStream;
 typedef StringOrderMap::const_iterator StrStrOIter;
 typedef ConfigTree::const_iterator    ConfigNode;
 typedef IniFile::SectionIterator      SectionIterator;
@@ -212,7 +212,7 @@ bool IniUtil::Merge(const String &file, const ConfigTree &tree) {
 
 	// Remember the sections we find in file, if some sections are not found,
 	// they will be appended to the end of file.
-	std::map<String, bool> sections_found;
+	Std::map<String, bool> sections_found;
 	for (ConfigNode it = tree.begin(); it != tree.end(); ++it)
 		sections_found[it->_key] = false;
 
@@ -228,7 +228,7 @@ bool IniUtil::Merge(const String &file, const ConfigTree &tree) {
 		// Remember the items we find in this section, if some items are not found,
 		// they will be appended to the end of section.
 		const StringOrderMap &subtree = tree_node->_value;
-		std::map<String, bool> items_found;
+		Std::map<String, bool> items_found;
 		for (StrStrOIter keyval = subtree.begin(); keyval != subtree.end(); ++keyval)
 			items_found[keyval->_key] = false;
 
@@ -248,7 +248,7 @@ bool IniUtil::Merge(const String &file, const ConfigTree &tree) {
 
 		// Append new items
 		if (!sections_found[secname]) {
-			for (std::map<String, bool>::const_iterator item_f = items_found.begin(); item_f != items_found.end(); ++item_f) {
+			for (Std::map<String, bool>::const_iterator item_f = items_found.begin(); item_f != items_found.end(); ++item_f) {
 				if (item_f->_value)
 					continue; // item was already found
 				StrStrOIter keyval = subtree.find(item_f->_key);
@@ -259,7 +259,7 @@ bool IniUtil::Merge(const String &file, const ConfigTree &tree) {
 	}
 
 	// Add new sections
-	for (std::map<String, bool>::const_iterator sec_f = sections_found.begin(); sec_f != sections_found.end(); ++sec_f) {
+	for (Std::map<String, bool>::const_iterator sec_f = sections_found.begin(); sec_f != sections_found.end(); ++sec_f) {
 		if (sec_f->_value)
 			continue;
 		SectionIterator sec = ini.InsertSection(ini.End(), sec_f->_key);

@@ -64,7 +64,7 @@ int CharacterInfo::get_blocking_bottom() {
 	return y + 3;
 }
 
-void CharacterInfo::UpdateMoveAndAnim(int &char_index, CharacterExtras *chex, std::vector<int> &followingAsSheep) {
+void CharacterInfo::UpdateMoveAndAnim(int &char_index, CharacterExtras *chex, Std::vector<int> &followingAsSheep) {
 	int res;
 
 	if (on != 1) return;
@@ -344,7 +344,7 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 	return 0;
 }
 
-void CharacterInfo::update_character_follower(int &aa, std::vector<int> &followingAsSheep, int &doing_nothing) {
+void CharacterInfo::update_character_follower(int &aa, Std::vector<int> &followingAsSheep, int &doing_nothing) {
 	if ((following >= 0) && (followinfo == FOLLOW_ALWAYSONTOP)) {
 		// an always-on-top follow
 		followingAsSheep.push_back(aa);

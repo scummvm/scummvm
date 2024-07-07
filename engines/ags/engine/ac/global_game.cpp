@@ -176,7 +176,7 @@ int LoadSaveSlotScreenshot(int slnum, int width, int height) {
 	return gotSlot;
 }
 
-void FillSaveList(std::vector<SaveListItem> &saves, size_t max_count) {
+void FillSaveList(Std::vector<SaveListItem> &saves, size_t max_count) {
 	if (max_count == 0)
 		return; // duh
 

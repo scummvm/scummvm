@@ -34,7 +34,7 @@
 #ifndef AGS_ENGINE_DEBUGGING_LOG_FILE_H
 #define AGS_ENGINE_DEBUGGING_LOG_FILE_H
 
-#include "ags/lib/std/memory.h"
+#include "common/std/memory.h"
 #include "ags/shared/debugging/output_handler.h"
 
 namespace AGS3 {
@@ -76,7 +76,7 @@ public:
 	void         CloseFile();
 
 private:
-	std::unique_ptr<Stream> _file;
+	Std::unique_ptr<Stream> _file;
 	String                _filePath;
 	OpenMode              _openMode;
 };

@@ -34,8 +34,8 @@
 #ifndef AGS_ENGINE_GFX_ALI_3D_SCUMMVM_H
 #define AGS_ENGINE_GFX_ALI_3D_SCUMMVM_H
 
-#include "ags/lib/std/memory.h"
-#include "ags/lib/std/vector.h"
+#include "common/std/memory.h"
+#include "common/std/vector.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/ddb.h"
@@ -115,7 +115,7 @@ public:
 
 class ScummVMRendererGfxModeList : public IGfxModeList {
 public:
-	ScummVMRendererGfxModeList(const std::vector<DisplayMode> &modes)
+	ScummVMRendererGfxModeList(const Std::vector<DisplayMode> &modes)
 		: _modes(modes) {
 	}
 
@@ -132,7 +132,7 @@ public:
 	}
 
 private:
-	std::vector<DisplayMode> _modes;
+	Std::vector<DisplayMode> _modes;
 };
 
 
@@ -146,13 +146,13 @@ struct ALSpriteBatch {
 	// Optional model transformation, to be applied to each sprite
 	SpriteTransform Transform;
 	// Intermediate surface which will be drawn upon and transformed if necessary
-	std::shared_ptr<Bitmap> Surface;
+	Std::shared_ptr<Bitmap> Surface;
 	// Whether surface is a parent surface's region (e.g. virtual screen)
 	bool IsParentRegion = false;
 	// Tells whether the surface is treated as opaque or transparent
 	bool Opaque = false;
 };
-typedef std::vector<ALSpriteBatch> ALSpriteBatches;
+typedef Std::vector<ALSpriteBatch> ALSpriteBatches;
 
 
 class ScummVMRendererGraphicsDriver : public GraphicsDriverBase {
@@ -233,7 +233,7 @@ public:
 		return false; /* not supported */
 	}
 
-	typedef std::shared_ptr<ScummVMRendererGfxFilter> PSDLRenderFilter;
+	typedef Std::shared_ptr<ScummVMRendererGfxFilter> PSDLRenderFilter;
 
 	void SetGraphicsFilter(PSDLRenderFilter filter);
 
@@ -263,7 +263,7 @@ private:
 	int _lastTexPitch = -1;
 
 	// Original virtual screen created and managed by the renderer.
-	std::unique_ptr<Bitmap> _origVirtualScreen;
+	Std::unique_ptr<Bitmap> _origVirtualScreen;
 	// Current virtual screen bitmap; may be either pointing to _origVirtualScreen,
 	// or provided by external user (for example - plugin).
 	// Its pixels are copied to the video texture to be presented by SDL_Renderer.
@@ -277,7 +277,7 @@ private:
 	// Sprite batches (parent scene nodes)
 	ALSpriteBatches _spriteBatches;
 	// List of sprites to render
-	std::vector<ALDrawListEntry> _spriteList;
+	Std::vector<ALDrawListEntry> _spriteList;
 
 	void InitSpriteBatch(size_t index, const SpriteBatchDesc &desc) override;
 	void ResetAllBatches() override;

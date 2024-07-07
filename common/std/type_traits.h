@@ -19,13 +19,12 @@
  *
  */
 
-#ifndef AGS_STD_TYPE_TRAITS_H
-#define AGS_STD_TYPE_TRAITS_H
+#ifndef COMMON_STD_TYPE_TRAITS_H
+#define COMMON_STD_TYPE_TRAITS_H
 
 #include "common/scummsys.h"
 
-namespace AGS3 {
-namespace std {
+namespace Std {
 
 // STRUCT TEMPLATE remove_extent
 template <class _Ty>
@@ -46,7 +45,6 @@ struct remove_extent<_Ty[]> {
 template <class _Ty>
 using remove_extent_t = typename remove_extent<_Ty>::type;
 
-} // namespace std
-} // namespace AGS3
+} // namespace Std
 
 #endif

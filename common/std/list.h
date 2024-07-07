@@ -19,13 +19,12 @@
  *
  */
 
-#ifndef AGS_STD_LIST_H
-#define AGS_STD_LIST_H
+#ifndef COMMON_STD_LIST_H
+#define COMMON_STD_LIST_H
 
 #include "common/list.h"
 
-namespace AGS3 {
-namespace std {
+namespace Std {
 
 template<class T>
 class list : public Common::List<T> {
@@ -86,7 +85,6 @@ public:
 	}
 };
 
-} // namespace std
-} // namespace AGS3
+} // namespace Std
 
 #endif

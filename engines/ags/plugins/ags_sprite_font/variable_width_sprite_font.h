@@ -33,7 +33,7 @@ namespace AGSSpriteFont {
 class VariableWidthSpriteFontRenderer : public IAGSFontRenderer2 {
 protected:
 	IAGSEngine *_engine;
-	std::vector<VariableWidthFont *> _fonts;
+	Std::vector<VariableWidthFont *> _fonts;
 
 	VariableWidthFont *getFontFor(int fontNum);
 	void Draw(BITMAP *src, BITMAP *dest, int destx, int desty, int srcx, int srcy, int width, int height);

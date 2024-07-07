@@ -19,7 +19,7 @@
  *
  */
 
-#include "ags/lib/std/algorithm.h"
+#include "common/std/algorithm.h"
 #include "ags/engine/ac/walk_behind.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/common_defines.h"

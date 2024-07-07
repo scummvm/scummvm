@@ -227,7 +227,7 @@ HGameFileError ReadDialogScript(PScript &dialog_script, Stream *in, GameDataVers
 	return HGameFileError::None();
 }
 
-HGameFileError ReadScriptModules(std::vector<PScript> &sc_mods, Stream *in, GameDataVersion data_ver) {
+HGameFileError ReadScriptModules(Std::vector<PScript> &sc_mods, Stream *in, GameDataVersion data_ver) {
 	if (data_ver >= kGameVersion_270) { // 2.7.0+ script modules
 		int count = in->ReadInt32();
 		sc_mods.resize(count);
@@ -242,7 +242,7 @@ HGameFileError ReadScriptModules(std::vector<PScript> &sc_mods, Stream *in, Game
 	return HGameFileError::None();
 }
 
-void ReadViewStruct272_Aligned(std::vector<ViewStruct272> &oldv, Stream *in, size_t count) {
+void ReadViewStruct272_Aligned(Std::vector<ViewStruct272> &oldv, Stream *in, size_t count) {
 	AlignedStream align_s(in, Shared::kAligned_Read);
 	oldv.resize(count);
 	for (size_t i = 0; i < count; ++i) {
@@ -251,7 +251,7 @@ void ReadViewStruct272_Aligned(std::vector<ViewStruct272> &oldv, Stream *in, siz
 	}
 }
 
-void ReadViews(GameSetupStruct &game, std::vector<ViewStruct> &views, Stream *in, GameDataVersion data_ver) {
+void ReadViews(GameSetupStruct &game, Std::vector<ViewStruct> &views, Stream *in, GameDataVersion data_ver) {
 	views.resize(game.numviews);
 	if (data_ver > kGameVersion_272) // 3.x views
 	{
@@ -260,16 +260,16 @@ void ReadViews(GameSetupStruct &game, std::vector<ViewStruct> &views, Stream *in
 		}
 	} else // 2.x views
 	{
-		std::vector<ViewStruct272> oldv;
+		Std::vector<ViewStruct272> oldv;
 		ReadViewStruct272_Aligned(oldv, in, game.numviews);
 		Convert272ViewsToNew(oldv, views);
 	}
 }
 
-void ReadDialogs(std::vector<DialogTopic> &dialog,
-                 std::vector<std::vector<uint8_t>> &old_dialog_scripts,
-                 std::vector<String> &old_dialog_src,
-                 std::vector<String> &old_speech_lines,
+void ReadDialogs(Std::vector<DialogTopic> &dialog,
+                 Std::vector<Std::vector<uint8_t>> &old_dialog_scripts,
+                 Std::vector<String> &old_dialog_src,
+                 Std::vector<String> &old_speech_lines,
                  Stream *in, GameDataVersion data_ver, int dlg_count) {
 	dialog.resize(dlg_count);
 	for (int i = 0; i < dlg_count; ++i) {
@@ -364,7 +364,7 @@ void ReadDialogs(std::vector<DialogTopic> &dialog,
 	}
 }
 
-HGameFileError ReadPlugins(std::vector<PluginInfo> &infos, Stream *in) {
+HGameFileError ReadPlugins(Std::vector<PluginInfo> &infos, Stream *in) {
 	int fmt_ver = in->ReadInt32();
 	if (fmt_ver != 1)
 		return new MainGameFileError(kMGFErr_PluginDataFmtNotSupported, String::FromFormat("Version: %d, supported: %d", fmt_ver, 1));
@@ -392,7 +392,7 @@ HGameFileError ReadPlugins(std::vector<PluginInfo> &infos, Stream *in) {
 // Create the missing audioClips data structure for 3.1.x games.
 // This is done by going through the data files and adding all music*.*
 // and sound*.* files to it.
-void BuildAudioClipArray(const std::vector<String> &assets, std::vector<ScriptAudioClip> &audioclips) {
+void BuildAudioClipArray(const Std::vector<String> &assets, Std::vector<ScriptAudioClip> &audioclips) {
 	char temp_name[30];
 	int temp_number;
 	char temp_extension[10];
@@ -507,8 +507,8 @@ void UpgradeAudio(GameSetupStruct &game, LoadedGameEntities &ents, GameDataVersi
 	// ourselves, then add this information to game struct.
 
 	// Create soundClips and audioClipTypes structures.
-	std::vector<AudioClipType> audiocliptypes;
-	std::vector<ScriptAudioClip> audioclips;
+	Std::vector<AudioClipType> audiocliptypes;
+	Std::vector<ScriptAudioClip> audioclips;
 
 	// TODO: find out what is 4 (maybe music, sound, ambient sound, voice?)
 	audiocliptypes.resize(4);
@@ -520,7 +520,7 @@ void UpgradeAudio(GameSetupStruct &game, LoadedGameEntities &ents, GameDataVersi
 	audiocliptypes[3].reservedChannels = 0;
 
 	audioclips.reserve(1000);
-	std::vector<String> assets;
+	Std::vector<String> assets;
 	// Read audio clip names from from registered libraries
 	for (size_t i = 0; i < _GP(AssetMgr)->GetLibraryCount(); ++i) {
 		const AssetLibInfo *game_lib = _GP(AssetMgr)->GetLibraryInfo(i);
@@ -609,7 +609,7 @@ void UpgradeMouseCursors(GameSetupStruct &game, GameDataVersion data_ver) {
 }
 
 // Adjusts score clip id, depending on game data version
-void RemapLegacySoundNums(GameSetupStruct &game, std::vector<ViewStruct> &views, GameDataVersion data_ver) {
+void RemapLegacySoundNums(GameSetupStruct &game, Std::vector<ViewStruct> &views, GameDataVersion data_ver) {
 	if (data_ver >= kGameVersion_320)
 		return;
 

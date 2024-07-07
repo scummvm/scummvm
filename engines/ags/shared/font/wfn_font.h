@@ -45,7 +45,7 @@
 #ifndef AGS_SHARED_FONT_WFN_FONT_H
 #define AGS_SHARED_FONT_WFN_FONT_H
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/shared/core/types.h"
 
 namespace AGS3 {
@@ -98,9 +98,9 @@ public:
 	WFNError ReadFromFile(AGS::Shared::Stream *in, const soff_t data_size = 0);
 
 protected:
-	std::vector<const WFNChar *> _refs;      // reference array, contains pointers to elements of _items
-	std::vector<WFNChar>        _items;     // actual character items
-	std::vector<uint8_t>        _pixelData; // pixel data array
+	Std::vector<const WFNChar *> _refs;      // reference array, contains pointers to elements of _items
+	Std::vector<WFNChar>        _items;     // actual character items
+	Std::vector<uint8_t>        _pixelData; // pixel data array
 };
 
 } // namespace AGS3

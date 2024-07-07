@@ -46,7 +46,7 @@
 #ifndef AGS_SHARED_GAME_ROOM_INFO_H
 #define AGS_SHARED_GAME_ROOM_INFO_H
 
-#include "ags/lib/std/memory.h"
+#include "common/std/memory.h"
 #include "ags/lib/allegro.h" // RGB
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/game/interactions.h"
@@ -57,7 +57,7 @@ namespace AGS3 {
 
 struct ccScript;
 struct SpriteInfo;
-typedef std::shared_ptr<ccScript> PScript;
+typedef Std::shared_ptr<ccScript> PScript;
 
 // TODO: move the following enums under AGS::Shared namespace
 // later, when more engine source is put in AGS namespace and
@@ -120,7 +120,7 @@ namespace Shared {
 class Bitmap;
 class Stream;
 
-typedef std::shared_ptr<Bitmap> PBitmap;
+typedef Std::shared_ptr<Bitmap> PBitmap;
 
 // Various room options
 struct RoomOptions {
@@ -350,7 +350,7 @@ public:
 	// Room entities
 	size_t                  HotspotCount;
 	RoomHotspot             Hotspots[MAX_ROOM_HOTSPOTS];
-	std::vector<RoomObjectInfo> Objects;
+	Std::vector<RoomObjectInfo> Objects;
 	size_t                  RegionCount;
 	RoomRegion              Regions[MAX_ROOM_REGIONS];
 	size_t                  WalkAreaCount;
@@ -382,7 +382,7 @@ private:
 
 
 // Loads new room data into the given RoomStruct object
-void load_room(const String &filename, RoomStruct *room, bool game_is_hires, const std::vector<SpriteInfo> &sprinfos);
+void load_room(const String &filename, RoomStruct *room, bool game_is_hires, const Std::vector<SpriteInfo> &sprinfos);
 // Checks if it's necessary and upscales low-res room backgrounds and masks for the high resolution game
 // NOTE: it does not upscale object coordinates, because that is usually done when the room is loaded
 void UpscaleRoomBackground(RoomStruct *room, bool game_is_hires);

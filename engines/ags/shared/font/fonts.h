@@ -22,7 +22,7 @@
 #ifndef AGS_SHARED_FONT_FONTS_H
 #define AGS_SHARED_FONT_FONTS_H
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/shared/ac/game_struct_defines.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/ac/game_struct_defines.h"
@@ -144,7 +144,7 @@ bool ShouldAntiAliasText();
 
 // SplitLines class represents a list of lines and is meant to reduce
 // subsequent memory (de)allocations if used often during game loops
-// and drawing. For that reason it is not equivalent to std::vector,
+// and drawing. For that reason it is not equivalent to Std::vector,
 // but keeps constructed String buffers intact for most time.
 // TODO: implement proper strings pool.
 class SplitLines {
@@ -171,10 +171,10 @@ public:
 	}
 
 	// An auxiliary line processing buffer
-	std::vector<char> LineBuf;
+	Std::vector<char> LineBuf;
 
 private:
-	std::vector<Shared::String> _pool;
+	Std::vector<Shared::String> _pool;
 	size_t _count; // actual number of lines in use
 };
 

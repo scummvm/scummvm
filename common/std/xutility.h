@@ -19,25 +19,21 @@
  *
  */
 
-#ifndef AGS_STD_ARRAY_H
-#define AGS_STD_ARRAY_H
+#ifndef COMMON_STD_XUTILITY_H
+#define COMMON_STD_XUTILITY_H
 
-#include "common/array.h"
+#include "common/algorithm.h"
+#include "common/util.h"
 
-namespace AGS3 {
-namespace std {
+namespace Std {
 
-template<class T>
-class array : public Common::Array<T> {
-public:
-	array() : Common::Array<T>() {
+template <class T>
+void reverse(T *First, T *Last) {
+	for (--Last; First < Last; ++First, --Last) {
+		SWAP(*First, *Last);
 	}
-	array(size_t size) : Common::Array<T>() {
-		Common::Array<T>::resize(size);
-	}
-};
+}
 
-} // namespace std
-} // namespace AGS3
+} // namespace Std
 
 #endif

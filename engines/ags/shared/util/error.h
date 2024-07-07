@@ -29,7 +29,7 @@
 #ifndef AGS_SHARED_UTIL_ERROR_H
 #define AGS_SHARED_UTIL_ERROR_H
 
-#include "ags/lib/std/memory.h"
+#include "common/std/memory.h"
 #include "ags/shared/util/string.h"
 
 namespace AGS3 {
@@ -37,11 +37,11 @@ namespace AGS {
 namespace Shared {
 
 class Error;
-typedef std::shared_ptr<Error> PError;
+typedef Std::shared_ptr<Error> PError;
 
 //
 // A simple struct, that provides several fields to describe an error in the program.
-// If wanted, may be reworked into subclass of std::exception.
+// If wanted, may be reworked into subclass of Std::exception.
 //
 class Error {
 public:
@@ -72,7 +72,7 @@ public:
 		return _innerError;
 	}
 	// Full error message combines general description and comment.
-	// NOTE: if made a child of std::exception, FullMessage may be substituted
+	// NOTE: if made a child of Std::exception, FullMessage may be substituted
 	// or complemented with virtual const char* what().
 	String FullMessage() const {
 		String msg;
@@ -116,7 +116,7 @@ public:
 	ErrorHandle() {}
 	ErrorHandle(T *err) : _error(err) {
 	}
-	ErrorHandle(std::shared_ptr<T> err) : _error(err) {
+	ErrorHandle(Std::shared_ptr<T> err) : _error(err) {
 	}
 
 	bool HasError() const {
@@ -136,7 +136,7 @@ public:
 	}
 
 private:
-	std::shared_ptr<T> _error;
+	Std::shared_ptr<T> _error;
 };
 
 

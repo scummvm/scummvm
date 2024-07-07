@@ -26,11 +26,11 @@
 //
 //=============================================================================
 
-#include "ags/lib/std/queue.h"
-#include "ags/lib/std/vector.h"
-#include "ags/lib/std/algorithm.h"
-#include "ags/lib/std/functional.h"
-#include "ags/lib/std/xutility.h"
+#include "common/std/queue.h"
+#include "common/std/vector.h"
+#include "common/std/algorithm.h"
+#include "common/std/functional.h"
+#include "common/std/xutility.h"
 
 namespace AGS3 {
 
@@ -56,13 +56,13 @@ public:
 
 	// ncpath = navpoint-compressed path
 	// opath = path composed of individual grid elements
-	NavResult NavigateRefined(int sx, int sy, int ex, int ey, std::vector<int> &opath,
-	                          std::vector<int> &ncpath);
+	NavResult NavigateRefined(int sx, int sy, int ex, int ey, Std::vector<int> &opath,
+	                          Std::vector<int> &ncpath);
 
-	NavResult Navigate(int sx, int sy, int ex, int ey, std::vector<int> &opath);
+	NavResult Navigate(int sx, int sy, int ex, int ey, Std::vector<int> &opath);
 
 	bool TraceLine(int srcx, int srcy, int targx, int targy, int &lastValidX, int &lastValidY) const;
-	bool TraceLine(int srcx, int srcy, int targx, int targy, std::vector<int> *rpath = nullptr) const;
+	bool TraceLine(int srcx, int srcy, int targx, int targy, Std::vector<int> *rpath = nullptr) const;
 
 	inline void SetMapRow(int y, const unsigned char *row) {
 		map[y] = row;
@@ -95,7 +95,7 @@ private:
 
 	int mapWidth;
 	int mapHeight;
-	std::vector<const unsigned char *> map;
+	Std::vector<const unsigned char *> map;
 
 	typedef unsigned short tFrameId;
 	typedef int tPrev;
@@ -118,15 +118,15 @@ private:
 	static const float DIST_SCALE_PACK;
 	static const float DIST_SCALE_UNPACK;
 
-	std::vector<NodeInfo> mapNodes;
+	Std::vector<NodeInfo> mapNodes;
 	tFrameId frameId;
 
-	std::priority_queue<Entry, std::vector<Entry>, Common::Less<Entry> > pq;
+	Std::priority_queue<Entry, Std::vector<Entry>, Common::Less<Entry> > pq;
 
 	// temporary buffers:
-	mutable std::vector<int> fpath;
-	std::vector<int> ncpathIndex;
-	std::vector<int> rayPath, orayPath;
+	mutable Std::vector<int> fpath;
+	Std::vector<int> ncpathIndex;
+	Std::vector<int> rayPath, orayPath;
 
 	// temps for routing towards unreachable areas
 	int cnode;
@@ -327,7 +327,7 @@ int Navigation::FindJump(int x, int y, int dx, int dy, int ex, int ey) {
 	return nodiag ? -1 : FindJump(x, y, dx, dy, ex, ey);
 }
 
-Navigation::NavResult Navigation::Navigate(int sx, int sy, int ex, int ey, std::vector<int> &opath) {
+Navigation::NavResult Navigation::Navigate(int sx, int sy, int ex, int ey, Std::vector<int> &opath) {
 	IncFrameId();
 
 	if (!Passable(sx, sy)) {
@@ -472,7 +472,7 @@ Navigation::NavResult Navigation::Navigate(int sx, int sy, int ex, int ey, std::
 			sort[ni].index = pneig[ni];
 		}
 
-		std::sort(sort, sort + ncount);
+		Std::sort(sort, sort + ncount);
 
 		int succ[8];
 		int nsucc = 0;
@@ -612,12 +612,12 @@ Navigation::NavResult Navigation::Navigate(int sx, int sy, int ex, int ey, std::
 		}
 	}
 
-	std::reverse(opath.begin(), opath.end());
+	Std::reverse(opath.begin(), opath.end());
 	return NAV_PATH;
 }
 
 Navigation::NavResult Navigation::NavigateRefined(int sx, int sy, int ex, int ey,
-	std::vector<int> &opath, std::vector<int> &ncpath) {
+	Std::vector<int> &opath, Std::vector<int> &ncpath) {
 	ncpath.clear();
 
 	NavResult res = Navigate(sx, sy, ex, ey, opath);
@@ -654,7 +654,7 @@ Navigation::NavResult Navigation::NavigateRefined(int sx, int sy, int ex, int ey
 
 		if (!TraceLine(fx, fy, tx, ty, &rayPath)) {
 			assert(rayPath.back() == opath[i]);
-			std::swap(rayPath, orayPath);
+			Std::swap(rayPath, orayPath);
 
 			if (!last)
 				continue;
@@ -689,7 +689,7 @@ Navigation::NavResult Navigation::NavigateRefined(int sx, int sy, int ex, int ey
 		fy = ty;
 	}
 
-	std::swap(opath, fpath);
+	Std::swap(opath, fpath);
 
 	// validate cpath
 	for (int i = 0; i < (int)ncpath.size() - 1; i++) {
@@ -781,7 +781,7 @@ bool Navigation::TraceLine(int srcx, int srcy, int targx, int targy, int &lastVa
 	return res;
 }
 
-bool Navigation::TraceLine(int srcx, int srcy, int targx, int targy, std::vector<int> *rpath) const {
+bool Navigation::TraceLine(int srcx, int srcy, int targx, int targy, Std::vector<int> *rpath) const {
 	if (rpath)
 		rpath->clear();
 

@@ -19,7 +19,7 @@
  *
  */
 
-#include "ags/lib/std/algorithm.h"
+#include "common/std/algorithm.h"
 #include "ags/lib/aastr-0.1.1/aastr.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/ac/common.h"
@@ -79,7 +79,7 @@ using namespace AGS::Engine;
 int _places_r = 3, _places_g = 2, _places_b = 3;
 
 ObjTexture::ObjTexture(ObjTexture &&o) {
-	*this = std::move(o);
+	*this = Std::move(o);
 }
 
 ObjTexture::~ObjTexture() {
@@ -96,7 +96,7 @@ ObjTexture &ObjTexture::operator=(ObjTexture &&o) {
 		assert(_G(gfxDriver));
 		_G(gfxDriver)->DestroyDDB(Ddb);
 	}
-	Bmp = std::move(o.Bmp);
+	Bmp = Std::move(o.Bmp);
 	Ddb = o.Ddb;
 	o.Ddb = nullptr;
 	Pos = o.Pos;
@@ -871,7 +871,7 @@ static bool spritelistentry_room_less(const SpriteListEntry &e1, const SpriteLis
 
 // copy the sorted sprites into the Things To Draw list
 static void draw_sprite_list(bool is_room) {
-	std::sort(_GP(sprlist).begin(), _GP(sprlist).end(), is_room ? spritelistentry_room_less : spritelistentry_less);
+	Std::sort(_GP(sprlist).begin(), _GP(sprlist).end(), is_room ? spritelistentry_room_less : spritelistentry_less);
 	_GP(thingsToDrawList).insert(_GP(thingsToDrawList).end(),
 		_GP(sprlist).begin(), _GP(sprlist).end());
 }
@@ -948,7 +948,7 @@ Bitmap *recycle_bitmap(Bitmap *bimp, int coldep, int wid, int hit, bool make_tra
 	return bimp;
 }
 
-void recycle_bitmap(std::unique_ptr<Shared::Bitmap> &bimp, int coldep, int wid, int hit, bool make_transparent) {
+void recycle_bitmap(Std::unique_ptr<Shared::Bitmap> &bimp, int coldep, int wid, int hit, bool make_transparent) {
 	bimp.reset(recycle_bitmap(bimp.release(), coldep, wid, hit, make_transparent));
 }
 
@@ -1056,14 +1056,14 @@ static void apply_tint_or_light(int actspsindex, int light_level,
 	auto &actsp = _GP(actsps)[actspsindex];
 	// we can only do tint/light if the colour depths match
 	if (_GP(game).GetColorDepth() == actsp.Bmp->GetColorDepth()) {
-		std::unique_ptr<Bitmap> oldwas;
+		Std::unique_ptr<Bitmap> oldwas;
 		// if the caller supplied a source bitmap, ->Blit from it
 		// (used as a speed optimisation where possible)
 		if (blitFrom)
 			oldwas.reset(blitFrom);
 		// otherwise, make a new target bmp
 		else {
-			oldwas = std::move(actsp.Bmp);
+			oldwas = Std::move(actsp.Bmp);
 			actsp.Bmp.reset(BitmapHelper::CreateBitmap(oldwas->GetWidth(), oldwas->GetHeight(), coldept));
 		}
 		Bitmap *active_spr = actsp.Bmp.get();
@@ -1110,7 +1110,7 @@ static void apply_tint_or_light(int actspsindex, int light_level,
 // * if transformation is necessary - writes into dst and returns dst;
 // * if no transformation is necessary - simply returns src;
 // Used for software render mode only.
-static Bitmap *transform_sprite(Bitmap *src, bool src_has_alpha, std::unique_ptr<Bitmap> &dst,
+static Bitmap *transform_sprite(Bitmap *src, bool src_has_alpha, Std::unique_ptr<Bitmap> &dst,
 								const Size dst_sz, GraphicFlip flip = Shared::kFlip_None) {
 	if ((src->GetSize() == dst_sz) && (flip == kFlip_None))
 		return src; // No transform: return source image
@@ -2000,7 +2000,7 @@ void draw_gui_and_overlays() {
 	}
 	// If adding control textures, sort the ui list, and then pass into renderer,
 	// adding controls and creating sub-batches as necessary
-	std::sort(_GP(sprlist).begin(), _GP(sprlist).end(), spritelistentry_less);
+	Std::sort(_GP(sprlist).begin(), _GP(sprlist).end(), spritelistentry_less);
 	for (const auto &s : _GP(sprlist)) {
 		invalidate_sprite(s.x, s.y, s.ddb, false);
 		_G(gfxDriver)->DrawSprite(s.x, s.y, s.ddb);

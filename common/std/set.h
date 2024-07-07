@@ -19,16 +19,15 @@
  *
  */
 
-#ifndef AGS_STD_SET_H
-#define AGS_STD_SET_H
+#ifndef COMMON_STD_SET_H
+#define COMMON_STD_SET_H
 
 #include "common/array.h"
 
-namespace AGS3 {
-namespace std {
+namespace Std {
 
 /**
- * Derives the ScummVM SortedArray to match the std::set class
+ * Derives the ScummVM SortedArray to match the Std::set class
  */
 template<class T, class Comparitor = Common::Less<T> >
 class set : public Common::SortedArray<T, const T &> {
@@ -130,7 +129,6 @@ public:
 	}
 };
 
-} // namespace std
-} // namespace AGS3
+} // namespace Std
 
 #endif

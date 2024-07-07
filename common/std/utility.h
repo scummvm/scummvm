@@ -19,13 +19,12 @@
  *
  */
 
-#ifndef AGS_STD_UTILITY_H
-#define AGS_STD_UTILITY_H
+#ifndef COMMON_STD_UTILITY_H
+#define COMMON_STD_UTILITY_H
 
 #include "common/textconsole.h"
 
-namespace AGS3 {
-namespace std {
+namespace Std {
 
 template<class T1, class T2>
 struct pair {
@@ -64,13 +63,12 @@ using remove_reference_t = typename remove_reference<_Ty>::type;
 
 // FUNCTION TEMPLATE move
 // TODO: Haven't been able to get this to properly work to reset
-// the source when moving the contents of std::vector arrays
+// the source when moving the contents of Std::vector arrays
 template <class _Ty>
 constexpr remove_reference_t<_Ty> &&move(_Ty &&_Arg) noexcept {
 	return static_cast<remove_reference_t<_Ty> &&>(_Arg);
 }
 
-} // namespace std
-} // namespace AGS3
+} // namespace Std
 
 #endif

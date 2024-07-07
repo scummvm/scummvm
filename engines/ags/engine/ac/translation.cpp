@@ -60,7 +60,7 @@ bool init_translation(const String &lang, const String &fallback_lang) {
 	_G(trans_name) = lang;
 	_G(trans_filename) = String::FromFormat("%s.tra", lang.GetCStr());
 
-	std::unique_ptr<Stream> in(_GP(AssetMgr)->OpenAsset(_G(trans_filename)));
+	Std::unique_ptr<Stream> in(_GP(AssetMgr)->OpenAsset(_G(trans_filename)));
 	if (in == nullptr) {
 		Debug::Printf(kDbgMsg_Error, "Cannot open translation: %s", _G(trans_filename).GetCStr());
 		return false;
@@ -126,12 +126,12 @@ bool init_translation(const String &lang, const String &fallback_lang) {
 		Debug::Printf("Game's source encoding hint: own: %d, from TRA: %s", game_codepage, _GP(trans).StrOptions["gameencoding"].GetCStr());
 		if (!key_enc.IsEmpty()) {
 			StringMap conv_map;
-			std::vector<char> ascii; // ascii buffer
+			Std::vector<char> ascii; // ascii buffer
 			Debug::Printf("Converting UTF-8 TRA keys to the game's encoding (%s)", key_enc.GetCStr());
 			for (const auto &item : _GP(trans).Dict) {
 				ascii.resize(item._key.GetLength() + 1); // ascii len will be <= utf-8 len
 				StrUtil::ConvertUtf8ToAscii(item._key.GetCStr(), key_enc.GetCStr(), &ascii[0], ascii.size());
-				conv_map.insert(std::make_pair(String(&ascii[0]), item._value));
+				conv_map.insert(Std::make_pair(String(&ascii[0]), item._value));
 			}
 			_GP(trans).Dict = conv_map;
 		}

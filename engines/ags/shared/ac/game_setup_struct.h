@@ -22,7 +22,7 @@
 #ifndef AGS_SHARED_AC_GAME_SETUP_STRUCT_H
 #define AGS_SHARED_AC_GAME_SETUP_STRUCT_H
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/shared/ac/audio_clip_type.h"
 #include "ags/shared/ac/character_info.h" // TODO: constants to separate header
 #include "ags/shared/ac/game_setup_struct_base.h"
@@ -39,8 +39,8 @@ namespace Shared {
 struct AssetLibInfo;
 struct Interaction;
 struct InteractionScripts;
-typedef std::shared_ptr<Interaction> PInteraction;
-typedef std::shared_ptr<InteractionScripts> PInteractionScripts;
+typedef Std::shared_ptr<Interaction> PInteraction;
+typedef Std::shared_ptr<InteractionScripts> PInteractionScripts;
 } // namespace Shared
 } // namespace AGS
 
@@ -54,36 +54,36 @@ struct GameSetupStruct : public GameSetupStructBase {
 	// This array is used only to read data into;
 	// font parameters are then put and queried in the fonts module
 	// TODO: split into installation params (used only when reading) and runtime params
-	std::vector<FontInfo> fonts;
+	Std::vector<FontInfo> fonts;
 	InventoryItemInfo invinfo[MAX_INV]{};
-	std::vector<MouseCursor> mcurs;
-	std::vector<PInteraction> intrChar;
+	Std::vector<MouseCursor> mcurs;
+	Std::vector<PInteraction> intrChar;
 	PInteraction intrInv[MAX_INV];
-	std::vector<PInteractionScripts> charScripts;
-	std::vector<PInteractionScripts> invScripts;
+	Std::vector<PInteractionScripts> charScripts;
+	Std::vector<PInteractionScripts> invScripts;
 	// TODO: why we do not use this in the engine instead of
 	// _G(loaded_game_file_version)?
 	int               filever;  // just used by editor
 	Shared::String    compiled_with; // version of AGS this data was created by
 	char              lipSyncFrameLetters[MAXLIPSYNCFRAMES][50];
 	AGS::Shared::PropertySchema propSchema;
-	std::vector<AGS::Shared::StringIMap> charProps;
+	Std::vector<AGS::Shared::StringIMap> charProps;
 	AGS::Shared::StringIMap invProps[MAX_INV];
 	// NOTE: although the view names are stored in game data, they are never
 	// used, nor registered as script exports; numeric IDs are used to
 	// reference views instead.
-	std::vector<Shared::String> viewNames;
+	Std::vector<Shared::String> viewNames;
 	Shared::String    invScriptNames[MAX_INV];
-	std::vector<Shared::String> dialogScriptNames;
+	Std::vector<Shared::String> dialogScriptNames;
 	char              guid[MAX_GUID_LENGTH];
 	char              saveGameFileExtension[MAX_SG_EXT_LENGTH];
 	// NOTE: saveGameFolderName is generally used to create game subdirs in common user directories
 	char              saveGameFolderName[MAX_SG_FOLDER_LEN];
 	int               roomCount;
-	std::vector<int>  roomNumbers;
-	std::vector<Shared::String> roomNames;
-	std::vector<ScriptAudioClip> audioClips;
-	std::vector<AudioClipType> audioClipTypes;
+	Std::vector<int>  roomNumbers;
+	Std::vector<Shared::String> roomNames;
+	Std::vector<ScriptAudioClip> audioClips;
+	Std::vector<AudioClipType> audioClipTypes;
 	// A clip to play when player gains score in game
 	// TODO: find out why OPT_SCORESOUND option cannot be used to store this in >=3.2 games
 	int               scoreClipID;
@@ -102,7 +102,7 @@ struct GameSetupStruct : public GameSetupStructBase {
 	// There could be other collection types, more optimal for this case. For example,
 	// we could use a kind of hash map containing fixed-sized arrays, where size of
 	// array is calculated based on key spread factor.
-	std::vector<SpriteInfo> SpriteInfos;
+	Std::vector<SpriteInfo> SpriteInfos;
 
 	// Get game's native color depth (bits per pixel)
 	inline int GetColorDepth() const {
@@ -160,7 +160,7 @@ struct GameSetupStruct : public GameSetupStructBase {
 
 	// Functions for reading and writing appropriate data from/to save game
 	void ReadFromSaveGame_v321(Shared::Stream *in, GameDataVersion data_ver, char *gswas, ccScript *compsc, CharacterInfo *chwas,
-							   WordsDictionary *olddict, std::vector<String> &mesbk);
+							   WordsDictionary *olddict, Std::vector<String> &mesbk);
 
 	void ReadFromSavegame(Shared::Stream *in);
 	void WriteForSavegame(Shared::Stream *out);

@@ -19,7 +19,7 @@
  *
  */
 
-#include "ags/lib/std/memory.h"
+#include "common/std/memory.h"
 #include "ags/shared/util/stream.h"
 #include "ags/engine/ac/dynobj/script_user_object.h"
 

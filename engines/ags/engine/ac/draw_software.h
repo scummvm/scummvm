@@ -71,7 +71,7 @@ struct DirtyRects {
 	// The dirty rects are saved in coordinates limited to (0,0)->(camera size) rather than room or screen coords
 	PlaneScaling Screen2DirtySurf;
 
-	std::vector<IRRow> DirtyRows;
+	Std::vector<IRRow> DirtyRows;
 	Rect DirtyRegions[MAXDIRTYREGIONS];
 	size_t NumDirtyRegions;
 

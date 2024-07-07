@@ -19,7 +19,7 @@
  *
  */
 
-#include "ags/lib/std/algorithm.h"
+#include "common/std/algorithm.h"
 #include "ags/engine/ac/overlay.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/sprite_cache.h"
@@ -423,7 +423,7 @@ size_t add_screen_overlay_impl(bool roomlayer, int x, int y, int type, int sprnu
 		_GP(play).speech_face_schandle = over.associatedOverlayHandle;
 	}
 	over.MarkChanged();
-	_GP(screenover).push_back(std::move(over));
+	_GP(screenover).push_back(Std::move(over));
 	return _GP(screenover).size() - 1;
 }
 
@@ -456,10 +456,10 @@ Point get_overlay_position(const ScreenOverlay &over) {
 			data_to_game_coord(_GP(game).chars[charid].x),
 			data_to_game_coord(_GP(game).chars[charid].get_effective_y()) - height).first;
 		Bitmap *pic = over.GetImage();
-		int tdxp = std::max(0, screenpt.X - pic->GetWidth() / 2);
+		int tdxp = Std::max(0, screenpt.X - pic->GetWidth() / 2);
 		int tdyp = screenpt.Y - get_fixed_pixel_size(5);
 		tdyp -= pic->GetHeight();
-		tdyp = std::max(5, tdyp);
+		tdyp = Std::max(5, tdyp);
 
 		if ((tdxp + pic->GetWidth()) >= ui_view.GetWidth())
 			tdxp = (ui_view.GetWidth() - pic->GetWidth()) - 1;

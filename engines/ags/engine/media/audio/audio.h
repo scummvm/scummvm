@@ -22,7 +22,7 @@
 #ifndef AGS_ENGINE_MEDIA_AUDIO_AUDIO_H
 #define AGS_ENGINE_MEDIA_AUDIO_AUDIO_H
 
-#include "ags/lib/std/array.h"
+#include "common/std/array.h"
 #include "ags/engine/media/audio/audio_defines.h"
 #include "ags/shared/ac/dynobj/script_audio_clip.h"
 #include "ags/engine/ac/dynobj/script_audio_channel.h"
@@ -118,7 +118,7 @@ void        newmusic(int mnum);
 
 extern void cancel_scheduled_music_update();
 extern void schedule_music_update_at(AGS_Clock::time_point);
-extern void postpone_scheduled_music_update_by(std::chrono::milliseconds);
+extern void postpone_scheduled_music_update_by(Std::chrono::milliseconds);
 
 } // namespace AGS3
 

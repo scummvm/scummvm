@@ -62,7 +62,7 @@ void start_game_init_editor_debugging() {
 	_GP(usetup).override_multitasking = -1;
 	SetMultitasking(1);
 
-	auto waitUntil = AGS_Clock::now() + std::chrono::milliseconds(500);
+	auto waitUntil = AGS_Clock::now() + Std::chrono::milliseconds(500);
 	while (waitUntil > AGS_Clock::now()) {
 		// pick up any breakpoints in game_start
 		check_for_messages_from_debugger();

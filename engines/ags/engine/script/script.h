@@ -22,7 +22,7 @@
 #ifndef AGS_ENGINE_SCRIPT_SCRIPT_H
 #define AGS_ENGINE_SCRIPT_SCRIPT_H
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 
 #include "ags/engine/script/cc_instance.h"
 #include "ags/engine/script/executing_script.h"

@@ -330,7 +330,7 @@ void engine_init_audio() {
 		Debug::Printf("Initializing audio");
 		try {
 			audio_core_init(); // audio core system
-		} catch (std::runtime_error ex) {
+		} catch (Std::runtime_error ex) {
 			Debug::Printf(kDbgMsg_Error, "Failed to initialize audio: %s", ex.what());
 			usetup.audio_backend = 0;
 		}
@@ -978,12 +978,12 @@ void engine_set_config(const ConfigTree cfg) {
 	post_config();
 }
 
-static bool print_info_needs_game(const std::set<String> &keys) {
+static bool print_info_needs_game(const Std::set<String> &keys) {
 	return keys.count("all") > 0 || keys.count("config") > 0 || keys.count("configpath") > 0 ||
 	       keys.count("data") > 0 || keys.count("filepath") > 0 || keys.count("gameproperties") > 0;
 }
 
-static void engine_print_info(const std::set<String> &keys, ConfigTree *user_cfg) {
+static void engine_print_info(const Std::set<String> &keys, ConfigTree *user_cfg) {
 	const bool all = keys.count("all") > 0;
 	ConfigTree data;
 	if (all || keys.count("engine") > 0) {

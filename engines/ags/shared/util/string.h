@@ -49,7 +49,7 @@
 
 #include "common/str.h"
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/core/types.h"
 
@@ -265,7 +265,7 @@ public:
 	// Splits the string into segments divided by the instances of a given character,
 	// including empty segments e.g. if separators follow each other;
 	// returns at least one segment (equal to full string if no separator was found)
-	std::vector<String> Split(char separator) const;
+	Std::vector<String> Split(char separator) const;
 
 	//-------------------------------------------------------------------------
 	// String modification methods

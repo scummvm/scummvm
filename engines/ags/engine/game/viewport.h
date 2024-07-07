@@ -28,8 +28,8 @@
 #ifndef AGS_ENGINE_GAME_VIEWPORT_H
 #define AGS_ENGINE_GAME_VIEWPORT_H
 
-#include "ags/lib/std/memory.h"
-#include "ags/lib/std/vector.h"
+#include "common/std/memory.h"
+#include "common/std/vector.h"
 #include "ags/shared/util/geometry.h"
 #include "ags/shared/util/scaling.h"
 
@@ -38,17 +38,17 @@ namespace AGS3 {
 class Camera;
 class Viewport;
 
-typedef std::shared_ptr<Camera> PCamera;
-typedef std::shared_ptr<Viewport> PViewport;
-typedef std::weak_ptr<Camera> CameraRef;
-typedef std::weak_ptr<Viewport> ViewportRef;
+typedef Std::shared_ptr<Camera> PCamera;
+typedef Std::shared_ptr<Viewport> PViewport;
+typedef Std::weak_ptr<Camera> CameraRef;
+typedef Std::weak_ptr<Viewport> ViewportRef;
 
 // TODO: move to utility header
 // From https://stackoverflow.com/questions/45507041/how-to-check-if-weak-ptr-is-empty-non-assigned
 // Tests that weak_ptr is empty (was not initialized with valid reference)
 template <typename T>
-bool is_uninitialized(std::weak_ptr<T> const &weak) {
-	using wt = std::weak_ptr<T>;
+bool is_uninitialized(Std::weak_ptr<T> const &weak) {
+	using wt = Std::weak_ptr<T>;
 	return !weak.owner_before(wt{}) &&!wt{} .owner_before(weak);
 }
 
@@ -88,7 +88,7 @@ public:
 	// Unlinks this camera from a given viewport; does nothing if link did not exist
 	void UnlinkFromViewport(int id);
 	// Get the array of linked viewport references
-	const std::vector<ViewportRef> &GetLinkedViewports() const;
+	const Std::vector<ViewportRef> &GetLinkedViewports() const;
 
 	// Tell if this camera has changed recently
 	inline bool HasChangedPosition() const {
@@ -110,7 +110,7 @@ private:
 	// Locked or following player automatically
 	bool _locked = false;
 	// Linked viewport refs, used to notify viewports of camera changes
-	std::vector<ViewportRef> _viewportRefs;
+	Std::vector<ViewportRef> _viewportRefs;
 	// Flags that tell whether this camera's position on screen has changed recently
 	bool _hasChangedPosition = false;
 	bool _hasChangedSize = false;
@@ -119,7 +119,7 @@ private:
 
 // A result of coordinate conversion between screen and the room,
 // tells which viewport was used to pass the "touch" through.
-typedef std::pair<Point, int> VpPoint;
+typedef Std::pair<Point, int> VpPoint;
 
 
 // Viewport class defines a rectangular area on game screen where the contents

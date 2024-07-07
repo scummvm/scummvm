@@ -27,7 +27,6 @@ MODULE_OBJS = \
 	lib/allegro/surface_generic.o \
 	lib/allegro/system.o \
 	lib/allegro/unicode.o \
-	lib/std/std.o \
 	lib/system/datetime.o \
 	shared/ac/dynobj/script_audio_clip.o \
 	shared/ac/audio_clip_type.o \

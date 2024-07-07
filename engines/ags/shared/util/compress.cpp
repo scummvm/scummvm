@@ -20,7 +20,7 @@
  */
 
 #include "ags/shared/util/compress.h"
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/shared/ac/common.h"   // quit, update_polled_stuff
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/util/file.h"
@@ -320,7 +320,7 @@ void skip_rle_bitmap8(Stream *in) {
 	int w = in->ReadInt16();
 	int h = in->ReadInt16();
 	// Unpack the pixels into temp buf
-	std::vector<uint8_t> buf;
+	Std::vector<uint8_t> buf;
 	buf.resize(w * h);
 	cunpackbitl(&buf[0], w * h, in);
 	// Skip RGB palette
@@ -347,7 +347,7 @@ void lzw_decompress(uint8_t *data, size_t data_sz, int /*image_bpp*/, Shared::St
 		in->Read(data, data_sz);
 		return;
 	}
-	std::vector<uint8_t> in_buf(in_sz);
+	Std::vector<uint8_t> in_buf(in_sz);
 	in->Read(in_buf.data(), in_sz);
 	lzwexpand(in_buf.data(), in_sz, data, data_sz);
 }
@@ -356,7 +356,7 @@ void save_lzw(Stream *out, const Bitmap *bmpp, const RGB(*pal)[256]) {
 	// First write original bitmap's info and data into the memory buffer
 	// NOTE: we must do this purely for backward compatibility with old room formats:
 	// because they also included bmp width and height into compressed data!
-	std::vector<uint8_t> membuf;
+	Std::vector<uint8_t> membuf;
 	{
 		VectorStream memws(membuf, kStream_Write);
 		int w = bmpp->GetWidth(), h = bmpp->GetHeight(), bpp = bmpp->GetBPP();
@@ -402,8 +402,8 @@ Bitmap *load_lzw(Stream *in, int dst_bpp, RGB(*pal)[256]) {
 	const soff_t end_pos = in->GetPosition() + comp_sz;
 
 	// First decompress data into the memory buffer
-	std::vector<uint8_t> inbuf(comp_sz);
-	std::vector<uint8_t> membuf(uncomp_sz);
+	Std::vector<uint8_t> inbuf(comp_sz);
+	Std::vector<uint8_t> membuf(uncomp_sz);
 	in->Read(inbuf.data(), comp_sz);
 	lzwexpand(inbuf.data(), comp_sz, membuf.data(), uncomp_sz);
 

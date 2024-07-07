@@ -19,7 +19,7 @@
  *
  */
 
-#include "ags/lib/std/algorithm.h"
+#include "common/std/algorithm.h"
 #include "ags/shared/ac/words_dictionary.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string_compat.h"

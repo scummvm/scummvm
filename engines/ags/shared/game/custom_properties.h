@@ -35,7 +35,7 @@
 #ifndef AGS_SHARED_GAME_CUSTOM_PROPERTIES_H
 #define AGS_SHARED_GAME_CUSTOM_PROPERTIES_H
 
-#include "ags/lib/std/map.h"
+#include "common/std/map.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/string_types.h"
 
@@ -86,7 +86,7 @@ struct PropertyDesc {
 
 // NOTE: AGS has case-insensitive property IDs
 // Schema - a map of property descriptions
-typedef std::unordered_map<String, PropertyDesc, IgnoreCase_Hash, IgnoreCase_EqualTo> PropertySchema;
+typedef Std::unordered_map<String, PropertyDesc, IgnoreCase_Hash, IgnoreCase_EqualTo> PropertySchema;
 
 
 namespace Properties {

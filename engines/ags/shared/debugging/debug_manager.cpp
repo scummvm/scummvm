@@ -56,7 +56,7 @@ void DebugOutput::SetGroupFilter(DebugGroupID id, MessageType verbosity) {
 	if (key != kDbgGroup_None)
 		_groupFilter[key] = verbosity;
 	else
-		_unresolvedGroups.insert(std::make_pair(id.SID, verbosity));
+		_unresolvedGroups.insert(Std::make_pair(id.SID, verbosity));
 }
 
 void DebugOutput::SetAllGroupFilters(MessageType verbosity) {

@@ -24,7 +24,7 @@
 
 #include "ags/plugins/ags_sprite_font/character_entry.h"
 #include "ags/plugins/ags_plugin.h"
-#include "ags/lib/std/map.h"
+#include "common/std/map.h"
 
 namespace AGS3 {
 namespace Plugins {
@@ -35,7 +35,7 @@ public:
 	int SpriteNumber = 0;
 	int FontReplaced = 0;
 	int Spacing = 0;
-	std::map<char, CharacterEntry> characters;
+	Std::map<char, CharacterEntry> characters;
 	// Clifftop Games custom plugin support
 	int LineHeightAdjust = 0;
 	int LineSpacingAdjust = 0;

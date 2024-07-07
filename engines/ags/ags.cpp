@@ -36,7 +36,7 @@
 
 #include "ags/shared/core/platform.h"
 
-#include "ags/lib/std/set.h"
+#include "common/std/set.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/game.h"
 #include "ags/globals.h"

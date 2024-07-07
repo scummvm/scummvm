@@ -19,29 +19,16 @@
  *
  */
 
-#ifndef AGS_STD_THREAD_H
-#define AGS_STD_THREAD_H
+#ifndef COMMON_STD_INITIALIZER_LIST_H
+#define COMMON_STD_INITIALIZER_LIST_H
 
-#include "ags/lib/std/chrono.h"
-#include "common/textconsole.h"
+#include "common/scummsys.h"
 
-namespace AGS3 {
-namespace std {
+namespace Std {
 
-class this_thread {
-public:
-static void yield() {
-	warning("TODO: this_thread::yield");
-}
+template<class T>
+using initializer_list = ::std::initializer_list<T>;
 
-static void sleep_for(uint32 milli) {
-	g_system->delayMillis(milli);
-}
-//	template <class Rep, class Period>
-//	static void sleep_for(const chrono::duration<Rep, Period> &rel_time);
-};
-
-} // namespace std
-} // namespace AGS3
+} // namespace Std
 
 #endif

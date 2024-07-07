@@ -28,7 +28,7 @@
 #include "common/system.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/util/stream.h"
-#include "ags/lib/std/algorithm.h"
+#include "common/std/algorithm.h"
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/shared/ac/game_struct_defines.h"
 #include "ags/shared/debugging/out.h"
@@ -60,7 +60,7 @@ SpriteInfo::SpriteInfo()
 namespace AGS {
 namespace Shared {
 
-SpriteCache::SpriteCache(std::vector<SpriteInfo> &sprInfos)
+SpriteCache::SpriteCache(Std::vector<SpriteInfo> &sprInfos)
 	: _sprInfos(sprInfos), _maxCacheSize(DEFAULTCACHESIZE_KB * 1024u),
 	_cacheSize(0u), _lockedSize(0u) {
 }
@@ -235,7 +235,7 @@ void SpriteCache::DisposeOldest() {
 	assert(_mru.size() > 0);
 	if (_mru.size() == 0)
 		return;
-	auto it = std::prev(_mru.end());
+	auto it = Std::prev(_mru.end());
 	const auto sprnum = *it;
 	// Safety check: must be a sprite from resources
 	// TODO: compare with latest upstream
@@ -248,7 +248,7 @@ void SpriteCache::DisposeOldest() {
 		if (!(_spriteData[sprnum].Flags & SPRCACHEFLAG_REMAPPED))
 			Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Error, "SpriteCache::DisposeOldest: in MRU list sprite %d is external or does not exist", sprnum);
 		_mru.erase(it);
-		// std::list::erase() invalidates iterators to the erased item.
+		// Std::list::erase() invalidates iterators to the erased item.
 		// But our implementation does not.
 		_spriteData[sprnum].MruIt._node = nullptr;
 		return;
@@ -263,7 +263,7 @@ void SpriteCache::DisposeOldest() {
 	}
 	// Remove from the mru list
 	_mru.erase(it);
-	// std::list::erase() invalidates iterators to the erased item.
+	// Std::list::erase() invalidates iterators to the erased item.
 	// But our implementation does not.
 	_spriteData[sprnum].MruIt._node = nullptr;
 }
@@ -295,7 +295,7 @@ void SpriteCache::Precache(sprkey_t index) {
 		sprSize = _spriteData[index].Size;
 		// Remove locked sprite from the MRU list
 		_mru.erase(_spriteData[index].MruIt);
-		// std::list::erase() invalidates iterators to the erased item.
+		// Std::list::erase() invalidates iterators to the erased item.
 		// But our implementation does not.
 		_spriteData[index].MruIt._node = nullptr;
 	}
@@ -366,7 +366,7 @@ void SpriteCache::RemapSpriteToSprite0(sprkey_t index) {
 }
 
 int SpriteCache::SaveToFile(const String &filename, int store_flags, SpriteCompression compress, SpriteFileIndex &index) {
-	std::vector<std::pair<bool, Bitmap *>> sprites;
+	Std::vector<Std::pair<bool, Bitmap *>> sprites;
 	for (size_t i = 0; i < _spriteData.size(); ++i) {
 		// NOTE: this is a horrible hack:
 		// because Editor expects slightly different RGB order, it swaps colors
@@ -374,7 +374,7 @@ int SpriteCache::SaveToFile(const String &filename, int store_flags, SpriteCompr
 		// unfix that fix to save the data in a way that engine will expect.
 		// TODO: perhaps adjust the editor to NOT need this?!
 		pre_save_sprite(_spriteData[i].Image);
-		sprites.push_back(std::make_pair(DoesSpriteExist(i), _spriteData[i].Image));
+		sprites.push_back(Std::make_pair(DoesSpriteExist(i), _spriteData[i].Image));
 	}
 	return SaveSpriteFile(filename, sprites, &_file, store_flags, compress, index);
 }
@@ -382,7 +382,7 @@ int SpriteCache::SaveToFile(const String &filename, int store_flags, SpriteCompr
 HError SpriteCache::InitFile(const String &filename, const String &sprindex_filename) {
 	Reset();
 
-	std::vector<Size> metrics;
+	Std::vector<Size> metrics;
 	HError err = _file.OpenFile(filename, sprindex_filename, metrics);
 	if (!err)
 		return err;

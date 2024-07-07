@@ -19,7 +19,7 @@
  *
  */
 
-#include "ags/lib/std/algorithm.h"
+#include "common/std/algorithm.h"
 #include "ags/shared/gui/gui_listbox.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/font/fonts.h"

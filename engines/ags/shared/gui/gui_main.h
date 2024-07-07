@@ -22,7 +22,7 @@
 #ifndef AGS_SHARED_GUI_GUI_MAIN_H
 #define AGS_SHARED_GUI_GUI_MAIN_H
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/common_defines.h" // TODO: split out gui drawing helpers
@@ -124,7 +124,7 @@ public:
 	// Gets child control's global ID, looks up with child's index
 	int32_t GetControlID(int32_t index) const;
 	// Gets an array of child control indexes in the z-order, from bottom to top
-	const std::vector<int> &GetControlsDrawOrder() const;
+	const Std::vector<int> &GetControlsDrawOrder() const;
 
 	// Child control management
 	// Note that currently GUIMain does not own controls (should not delete them)
@@ -205,12 +205,12 @@ private:
 
 	// Array of types and control indexes in global GUI object arrays;
 	// maps GUI child slots to actual controls and used for rebuilding Controls array
-	typedef std::pair<GUIControlType, int32_t> ControlRef;
-	std::vector<ControlRef> _ctrlRefs;
+	typedef Std::pair<GUIControlType, int32_t> ControlRef;
+	Std::vector<ControlRef> _ctrlRefs;
 	// Array of child control references (not exclusively owned!)
-	std::vector<GUIObject *> _controls;
+	Std::vector<GUIObject *> _controls;
 	// Sorted array of controls in z-order.
-	std::vector<int>         _ctrlDrawOrder;
+	Std::vector<int>         _ctrlDrawOrder;
 };
 
 

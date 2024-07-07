@@ -87,12 +87,12 @@ static int GetAlfontFlags(int load_mode) {
 
 // Loads a TTF font of a certain size
 static ALFONT_FONT *LoadTTF(const String &filename, int fontSize, int alfont_flags) {
-	std::unique_ptr<Stream> reader(_GP(AssetMgr)->OpenAsset(filename));
+	Std::unique_ptr<Stream> reader(_GP(AssetMgr)->OpenAsset(filename));
 	if (!reader)
 		return nullptr;
 
 	const size_t lenof = reader->GetLength();
-	std::vector<char> buf; buf.resize(lenof);
+	Std::vector<char> buf; buf.resize(lenof);
 	reader->Read(&buf.front(), lenof);
 	reader.reset();
 

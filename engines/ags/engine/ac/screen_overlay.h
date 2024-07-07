@@ -27,7 +27,7 @@
 #ifndef AGS_ENGINE_AC_SCREEN_OVERLAY_H
 #define AGS_ENGINE_AC_SCREEN_OVERLAY_H
 
-#include "ags/lib/std/memory.h"
+#include "common/std/memory.h"
 #include "ags/shared/core/types.h"
 
 namespace AGS3 {
@@ -120,7 +120,7 @@ struct ScreenOverlay {
 private:
 	int _flags = 0; // OverlayFlags
 	bool _hasChanged = false;
-	std::shared_ptr<Shared::Bitmap> _pic; // owned bitmap
+	Std::shared_ptr<Shared::Bitmap> _pic; // owned bitmap
 	int _sprnum = -1; // sprite reference
 };
 

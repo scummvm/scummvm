@@ -19,18 +19,25 @@
  *
  */
 
-#ifndef AGS_STD_INITIALIZER_LIST_H
-#define AGS_STD_INITIALIZER_LIST_H
+#ifndef COMMON_STD_XTR1COMMON_H
+#define COMMON_STD_XTR1COMMON_H
 
-#include "common/scummsys.h"
+namespace Std {
 
-namespace AGS3 {
-namespace std {
+// STRUCT TEMPLATE conditional
+template <bool _Test, class _Ty1, class _Ty2>
+struct conditional { // Choose _Ty1 if _Test is true, and _Ty2 otherwise
+	using type = _Ty1;
+};
 
-template<class T>
-using initializer_list = ::std::initializer_list<T>;
+template <class _Ty1, class _Ty2>
+struct conditional<false, _Ty1, _Ty2> {
+	using type = _Ty2;
+};
 
-} // namespace std
-} // namespace AGS3
+template <bool _Test, class _Ty1, class _Ty2>
+using conditional_t = typename conditional<_Test, _Ty1, _Ty2>::type;
+
+} // namespace Std
 
 #endif

@@ -20,7 +20,7 @@
  */
 
 #include "common/config-manager.h"
-#include "ags/lib/std/algorithm.h"
+#include "common/std/algorithm.h"
 #include "ags/engine/ac/display.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/font/ags_font_renderer.h"

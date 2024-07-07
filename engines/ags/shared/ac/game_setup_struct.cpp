@@ -352,7 +352,7 @@ void GameSetupStruct::ReadAudioClips_Aligned(Shared::Stream *in, size_t count) {
 }
 
 void GameSetupStruct::ReadFromSaveGame_v321(Stream *in, GameDataVersion data_ver, char *gswas, ccScript *compsc, CharacterInfo *chwas,
-											WordsDictionary *olddict, std::vector<String> &mesbk) {
+											WordsDictionary *olddict, Std::vector<String> &mesbk) {
 	ReadInvInfo_Aligned(in);
 	ReadMouseCursors_Aligned(in);
 

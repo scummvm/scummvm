@@ -45,7 +45,8 @@ MODULE_OBJS := \
 	ustr.o \
 	util.o \
 	xpfloat.o \
-	zip-set.o
+	zip-set.o \
+	std/std.o
 
 ifdef ENABLE_EVENTRECORDER
 MODULE_OBJS += \

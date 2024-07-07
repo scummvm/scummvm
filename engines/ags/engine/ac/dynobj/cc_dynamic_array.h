@@ -22,7 +22,7 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_CC_DYNAMICARRAY_H
 #define AGS_ENGINE_AC_DYNOBJ_CC_DYNAMICARRAY_H
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/engine/ac/dynobj/cc_dynamic_object.h"   // ICCDynamicObject
 
 namespace AGS3 {
@@ -58,7 +58,7 @@ struct CCDynamicArray final : ICCDynamicObject {
 // Helper functions for setting up dynamic arrays.
 namespace DynamicArrayHelpers {
 // Create array of managed strings
-DynObjectRef CreateStringArray(const std::vector<const char *>);
+DynObjectRef CreateStringArray(const Std::vector<const char *>);
 } // namespace DynamicArrayHelpers
 
 } // namespace AGS3

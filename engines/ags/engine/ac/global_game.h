@@ -51,7 +51,7 @@ void RestoreGameSlot(int slnum);
 void DeleteSaveSlot(int slnum);
 int  GetSaveSlotDescription(int slnum, char *desbuf);
 int  LoadSaveSlotScreenshot(int slnum, int width, int height);
-void FillSaveList(std::vector<SaveListItem> &saves, size_t max_count = -1);
+void FillSaveList(Std::vector<SaveListItem> &saves, size_t max_count = -1);
 void PauseGame();
 void UnPauseGame();
 int  IsGamePaused();

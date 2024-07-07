@@ -19,13 +19,12 @@
  *
  */
 
-#ifndef AGS_STD_CHRONO_H
-#define AGS_STD_CHRONO_H
+#ifndef COMMON_STD_CHRONO_H
+#define COMMON_STD_CHRONO_H
 
 #include "common/system.h"
 
-namespace AGS3 {
-namespace std {
+namespace Std {
 
 namespace chrono {
 
@@ -96,8 +95,6 @@ duration duration_cast(T param) {
 }
 
 } // namespace chrono
-
-} // namespace std
-} // namespace AGS3
+} // namespace Std
 
 #endif

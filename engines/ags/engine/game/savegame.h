@@ -22,7 +22,7 @@
 #ifndef AGS_ENGINE_GAME_SAVEGAME_H
 #define AGS_ENGINE_GAME_SAVEGAME_H
 
-#include "ags/lib/std/memory.h"
+#include "common/std/memory.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/util/error.h"
@@ -45,7 +45,7 @@ using Shared::Stream;
 using Shared::String;
 using Shared::Version;
 
-typedef std::shared_ptr<Stream> PStream;
+typedef Std::shared_ptr<Stream> PStream;
 
 //-----------------------------------------------------------------------------
 // Savegame version history
@@ -111,7 +111,7 @@ struct SavegameSource {
 	// Savegame format version
 	SavegameVersion     Version;
 	// A ponter to the opened stream
-	std::unique_ptr<Stream> InputStream;
+	Std::unique_ptr<Stream> InputStream;
 
 	SavegameSource();
 };
@@ -150,7 +150,7 @@ struct SavegameDescription {
 	int                 ColorDepth;
 
 	String              UserText;
-	std::unique_ptr<Bitmap> UserImage;
+	Std::unique_ptr<Bitmap> UserImage;
 
 	SavegameDescription();
 };

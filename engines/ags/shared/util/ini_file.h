@@ -32,8 +32,8 @@
 #ifndef AGS_SHARED_UTIL_INIFILE_H
 #define AGS_SHARED_UTIL_INIFILE_H
 
-#include "ags/lib/std/list.h"
-#include "ags/lib/std/utility.h"
+#include "common/std/list.h"
+#include "common/std/utility.h"
 #include "ags/shared/util/string.h"
 
 namespace AGS3 {
@@ -44,10 +44,10 @@ class IniFile {
 public:
 	// Position of a string in the line of text:
 	// is defined by a pair of first and next-after-last character indices
-	typedef std::pair<size_t, size_t> StrPos;
+	typedef Std::pair<size_t, size_t> StrPos;
 	// Location of section in the array of text lines:
 	// is defined by a pair of first and next-after-last line indices
-	typedef std::pair<size_t, size_t> SectionPos;
+	typedef Std::pair<size_t, size_t> SectionPos;
 
 	inline static bool IsValidStrPos(const StrPos &pos) {
 		return pos.first < pos.second;
@@ -83,7 +83,7 @@ public:
 		StrPos  Value; // position of item value
 	};
 	// Linked list of items
-	typedef std::list<ItemDef> LItems;
+	typedef Std::list<ItemDef> LItems;
 	typedef LItems::iterator          ItemIterator;
 	typedef LItems::const_iterator    ConstItemIterator;
 
@@ -129,7 +129,7 @@ public:
 	};
 
 	// Linked list of sections
-	typedef std::list<SectionDef>     LSections;
+	typedef Std::list<SectionDef>     LSections;
 	typedef LSections::iterator       SectionIterator;
 	typedef LSections::const_iterator ConstSectionIterator;
 

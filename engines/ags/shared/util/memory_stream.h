@@ -26,7 +26,7 @@
  // itself, but works with the provided C-buffer pointer, which means that the
  // buffer object *must* persist until stream is closed.
  //
- // VectorStream is a specialized implementation that works with std::vector.
+ // VectorStream is a specialized implementation that works with Std::vector.
  // Unlike base MemoryStream provides continiously resizing buffer for writing.
  // TODO: separate StringStream for reading & writing String object?
  //
@@ -35,7 +35,7 @@
 #ifndef AGS_SHARED_UTIL_MEMORY_STREAM_H
 #define AGS_SHARED_UTIL_MEMORY_STREAM_H
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/shared/util/data_stream.h"
 #include "ags/shared/util/string.h"
 
@@ -91,12 +91,12 @@ private:
 
 class VectorStream : public MemoryStream {
 public:
-	// Construct memory stream in the read-only mode over a const std::vector;
+	// Construct memory stream in the read-only mode over a const Std::vector;
 	// vector must persist in memory until the stream is closed.
-	VectorStream(const std::vector<uint8_t> &cbuf, DataEndianess stream_endianess = kLittleEndian);
-	// Construct memory stream in the chosen mode over a given std::vector;
+	VectorStream(const Std::vector<uint8_t> &cbuf, DataEndianess stream_endianess = kLittleEndian);
+	// Construct memory stream in the chosen mode over a given Std::vector;
 	// vector must persist in memory until the stream is closed.
-	VectorStream(std::vector<uint8_t> &buf, StreamWorkMode mode, DataEndianess stream_endianess = kLittleEndian);
+	VectorStream(Std::vector<uint8_t> &buf, StreamWorkMode mode, DataEndianess stream_endianess = kLittleEndian);
 	~VectorStream() override {}
 
 	void    Close() override;
@@ -108,7 +108,7 @@ public:
 	int32_t WriteByte(uint8_t b) override;
 
 private:
-	std::vector<uint8_t> *_vec = nullptr; // writeable vector (may be null)
+	Std::vector<uint8_t> *_vec = nullptr; // writeable vector (may be null)
 };
 
 } // namespace Shared

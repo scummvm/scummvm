@@ -36,8 +36,8 @@
 #include "ags/engine/ac/timer.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/lib/system/datetime.h"
-#include "ags/lib/std/algorithm.h"
-#include "ags/lib/std/thread.h"
+#include "common/std/algorithm.h"
+#include "common/std/thread.h"
 #include "ags/globals.h"
 
 #if defined (AGS_HAS_CD_AUDIO)
@@ -75,7 +75,7 @@ void AGSPlatformDriver::PauseApplication() {
 void AGSPlatformDriver::ResumeApplication() {
 }
 
-void AGSPlatformDriver::GetSystemDisplayModes(std::vector<DisplayMode> &dms) {
+void AGSPlatformDriver::GetSystemDisplayModes(Std::vector<DisplayMode> &dms) {
 }
 
 bool AGSPlatformDriver::EnterFullscreenMode(const DisplayMode &dm) {
@@ -148,7 +148,7 @@ void AGSPlatformDriver::YieldCPU() {
 	// NOTE: this is called yield, but if we actually yield instead of delay,
 	// we get a massive increase in CPU usage.
 	this->Delay(10);
-	//std::this_thread::yield();
+	//Std::this_thread::yield();
 }
 
 void AGSPlatformDriver::InitialiseAbufAtStartup() {
@@ -255,16 +255,16 @@ int cd_player_control(int cmdd, int datt) {
 
 void AGSPlatformDriver::Delay(int millis) {
 	auto now = AGS_Clock::now();
-	auto delayUntil = now + std::chrono::milliseconds(millis);
+	auto delayUntil = now + Std::chrono::milliseconds(millis);
 
 	for (;;) {
 		if (now >= delayUntil) {
 			break;
 		}
 
-		auto duration = MIN<std::chrono::milliseconds>(delayUntil - now,
+		auto duration = MIN<Std::chrono::milliseconds>(delayUntil - now,
 		                _G(MaximumDelayBetweenPolling));
-		std::this_thread::sleep_for(duration);
+		Std::this_thread::sleep_for(duration);
 		now = AGS_Clock::now(); // update now
 
 		if (now >= delayUntil) {

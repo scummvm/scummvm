@@ -684,7 +684,7 @@ void schedule_music_update_at(AGS_Clock::time_point at) {
 	_G(music_update_at) = at;
 }
 
-void postpone_scheduled_music_update_by(std::chrono::milliseconds duration) {
+void postpone_scheduled_music_update_by(Std::chrono::milliseconds duration) {
 	if (!_G(music_update_scheduled)) {
 		return;
 	}

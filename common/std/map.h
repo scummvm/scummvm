@@ -19,14 +19,13 @@
  *
  */
 
-#ifndef AGS_STD_MAP_H
-#define AGS_STD_MAP_H
+#ifndef COMMON_STD_MAP_H
+#define COMMON_STD_MAP_H
 
 #include "common/hashmap.h"
-#include "ags/lib/std/utility.h"
+#include "common/std/utility.h"
 
-namespace AGS3 {
-namespace std {
+namespace Std {
 
 template<class Key, class Val, class CompFunc = Common::Less<Key> >
 class map {
@@ -210,7 +209,6 @@ public:
 	}
 };
 
-} // namespace std
-} // namespace AGS3
+} // namespace Std
 
 #endif

@@ -89,7 +89,7 @@ bool GraphicsDriverBase::GetVsync() const {
 void GraphicsDriverBase::BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
 	GraphicFlip flip, PBitmap surface) {
 	_spriteBatchDesc.push_back(SpriteBatchDesc(_actSpriteBatch, viewport, transform, flip, surface));
-	_spriteBatchRange.push_back(std::make_pair(GetLastDrawEntryIndex(), (size_t) SIZE_MAX));
+	_spriteBatchRange.push_back(Std::make_pair(GetLastDrawEntryIndex(), (size_t) SIZE_MAX));
 	_actSpriteBatch = _spriteBatchDesc.size() - 1;
 	InitSpriteBatch(_actSpriteBatch, _spriteBatchDesc[_actSpriteBatch]);
 }
@@ -213,7 +213,7 @@ IDriverDependantBitmap *VideoMemoryGraphicsDriver::GetSharedDDB(uint32_t sprite_
 	}
 
 	// Create and add a new element
-	std::shared_ptr<TextureData> txdata(CreateTextureData(bitmap->GetWidth(), bitmap->GetHeight(), opaque));
+	Std::shared_ptr<TextureData> txdata(CreateTextureData(bitmap->GetWidth(), bitmap->GetHeight(), opaque));
 	txdata->ID = sprite_id;
 	UpdateTextureData(txdata.get(), bitmap, opaque, hasAlpha);
 	// only add into the map when has valid sprite ID

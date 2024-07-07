@@ -32,7 +32,7 @@
 #ifndef AGS_ENGINE_GFX_GFX_DRIVER_FACTORY_H
 #define AGS_ENGINE_GFX_GFX_DRIVER_FACTORY_H
 
-#include "ags/lib/std/memory.h"
+#include "common/std/memory.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/string_types.h"
 
@@ -45,7 +45,7 @@ using Shared::StringV;
 class IGraphicsDriver;
 class IGfxFilter;
 struct GfxFilterInfo;
-typedef std::shared_ptr<IGfxFilter> PGfxFilter;
+typedef Std::shared_ptr<IGfxFilter> PGfxFilter;
 
 
 class IGfxDriverFactory {

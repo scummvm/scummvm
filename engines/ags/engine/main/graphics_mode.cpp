@@ -23,7 +23,7 @@
 // Graphics initialization
 //
 
-#include "ags/lib/std/algorithm.h"
+#include "common/std/algorithm.h"
 #include "ags/shared/core/platform.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/debugging/debugger.h"
@@ -214,7 +214,7 @@ bool try_init_compatible_mode(const DisplayMode &dm) {
 		Debug::Printf("Maximal allowed window size: %d x %d", device_size.Width, device_size.Height);
 	DisplayMode dm_compat = dm;
 
-	std::unique_ptr<IGfxModeList> modes(_G(gfxDriver)->GetSupportedModeList(dm.ColorDepth));
+	Std::unique_ptr<IGfxModeList> modes(_G(gfxDriver)->GetSupportedModeList(dm.ColorDepth));
 
 	// Windowed mode
 	if (dm.IsWindowed()) {

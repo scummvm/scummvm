@@ -455,9 +455,9 @@ int ccInstance::Run(int32_t curpc) {
 	unsigned loopIterations = 0u;      // any loop iterations (needed for timeout test)
 	unsigned loopCheckIterations = 0u; // loop iterations accumulated only if check is enabled
 
-	const auto timeout = std::chrono::milliseconds(_G(timeoutCheckMs));
+	const auto timeout = Std::chrono::milliseconds(_G(timeoutCheckMs));
 	// NOTE: removed timeout_abort check for now: was working *logically* wrong;
-	//const auto timeout_abort = std::chrono::milliseconds(_G(timeoutAbortMs));
+	//const auto timeout_abort = Std::chrono::milliseconds(_G(timeoutAbortMs));
 	_lastAliveTs = AGS_Clock::now();
 
 	while ((flags & INSTF_ABORTED) == 0) {
@@ -802,7 +802,7 @@ int ccInstance::Run(int32_t curpc) {
 					cc_error("!Script appears to be hung (a while loop ran %d times). The problem may be in a calling function; check the call stack.", (int)loopCheckIterations);
 					return -1;
 				} else if ((loopIterations & 0x3FF) == 0 && // test each 1024 loops (arbitrary)
-						   (std::chrono::duration_cast<std::chrono::milliseconds>(AGS_Clock::now() - _lastAliveTs) > timeout)) {
+						   (Std::chrono::duration_cast<Std::chrono::milliseconds>(AGS_Clock::now() - _lastAliveTs) > timeout)) {
 					// minimal timeout occurred
 					// NOTE: removed timeout_abort check for now: was working *logically* wrong;
 					sys_evt_process_pending();
@@ -1626,7 +1626,7 @@ bool ccInstance::AddGlobalVar(const ScriptVariable &glvar) {
 		/* return false; */
 		Debug::Printf(kDbgMsg_Warn, "WARNING: global variable refers to data beyond allocated buffer (%d, %d)", glvar.ScAddress, globaldatasize);
 	}
-	globalvars->insert(std::make_pair(glvar.ScAddress, glvar));
+	globalvars->insert(Std::make_pair(glvar.ScAddress, glvar));
 	return true;
 }
 

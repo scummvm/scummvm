@@ -19,14 +19,13 @@
  *
  */
 
-#ifndef AGS_STD_ALGORITHM_H
-#define AGS_STD_ALGORITHM_H
+#ifndef COMMON_STD_ALGORITHM_H
+#define COMMON_STD_ALGORITHM_H
 
 #include "common/algorithm.h"
 #include "common/util.h"
 
-namespace AGS3 {
-namespace std {
+namespace Std {
 
 template<typename T> inline T abs(T x) {
 	return ABS(x);
@@ -141,7 +140,6 @@ BidirIt prev(BidirIt it, int n = 1) {
 	return it2;
 }
 
-} // namespace std
-} // namespace AGS3
+} // namespace Std
 
 #endif

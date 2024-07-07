@@ -22,7 +22,7 @@
 #ifndef AGS_SHARED_UTIL_MEMORY_COMPAT_H
 #define AGS_SHARED_UTIL_MEMORY_COMPAT_H
 
-#include "ags/lib/std/memory.h"
+#include "common/std/memory.h"
 
 namespace AGS3 {
 
@@ -30,8 +30,8 @@ namespace AGS3 {
 #if __cplusplus < 201402L && !((defined(_MSC_VER) && _MSC_VER >= 1900))
 namespace std {
 template<typename T, typename... Args>
-std::unique_ptr<T> make_unique(Args &&... args) {
-return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+Std::unique_ptr<T> make_unique(Args &&... args) {
+return Std::unique_ptr<T>(new T(Std::forward<Args>(args)...));
 }
 } // std
 #endif

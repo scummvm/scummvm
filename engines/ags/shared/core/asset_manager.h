@@ -40,8 +40,8 @@
 #define AGS_SHARED_CORE_ASSET_MANAGER_H
 
 #include "common/stream.h"
-#include "ags/lib/std/functional.h"
-#include "ags/lib/std/memory.h"
+#include "common/std/functional.h"
+#include "common/std/memory.h"
 #include "ags/shared/core/asset.h"
 #include "ags/shared/util/file.h" // TODO: extract filestream mode constants or introduce generic ones
 
@@ -111,7 +111,7 @@ public:
 	}
 	// Searches in all the registered locations and collects a list of
     // assets using given wildcard pattern
-    void FindAssets(std::vector<String> &assets, const String &wildcard,
+    void FindAssets(Std::vector<String> &assets, const String &wildcard,
 		const String &filter = "") const;
 	// Open asset stream in the given work mode; returns null if asset is not found or cannot be opened
 	// This method only searches in libraries that do not have any defined filters
@@ -130,8 +130,8 @@ public:
 private:
 	// AssetLibEx combines library info with extended internal data required for the manager
 	struct AssetLibEx : AssetLibInfo {
-		std::vector<String> Filters; // asset filters this library is matching to
-		std::vector<String> RealLibFiles; // fixed up library filenames
+		Std::vector<String> Filters; // asset filters this library is matching to
+		Std::vector<String> RealLibFiles; // fixed up library filenames
 
 		bool TestFilter(const String &filter) const;
 	};
@@ -143,8 +143,8 @@ private:
 	Stream *OpenAssetFromLib(const AssetLibEx *lib, const String &asset_name) const;
 	Stream *OpenAssetFromDir(const AssetLibEx *lib, const String &asset_name) const;
 
-	std::vector<AssetLibEx *> _libs;
-	std::vector<AssetLibEx *> _activeLibs;
+	Std::vector<AssetLibEx *> _libs;
+	Std::vector<AssetLibEx *> _activeLibs;
 
 	struct LibsByPriority {
 		AssetSearchPriority Priority = kAssetPriorityDir;

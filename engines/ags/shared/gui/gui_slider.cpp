@@ -19,7 +19,7 @@
  *
  */
 
-#include "ags/lib/std/algorithm.h"
+#include "common/std/algorithm.h"
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/shared/gui/gui_main.h"
 #include "ags/shared/gui/gui_slider.h"

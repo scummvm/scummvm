@@ -29,15 +29,15 @@
 #ifndef AGS_SHARED_UTIL_INI_UTIL_H
 #define AGS_SHARED_UTIL_INI_UTIL_H
 
-#include "ags/lib/std/map.h"
+#include "common/std/map.h"
 #include "ags/shared/util/string.h"
 
 namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
-typedef std::map<String, String>         StringOrderMap;
-typedef std::map<String, StringOrderMap> ConfigTree;
+typedef Std::map<String, String>         StringOrderMap;
+typedef Std::map<String, StringOrderMap> ConfigTree;
 
 //
 // Helper functions for parsing values in a ConfigTree

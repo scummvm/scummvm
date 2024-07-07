@@ -21,7 +21,7 @@
 
 #include "ags/engine/gfx/gfxfilter_scummvm_renderer.h"
 #include "ags/engine/gfx/ali_3d_scummvm.h"
-#include "ags/lib/std/algorithm.h"
+#include "common/std/algorithm.h"
 #include "ags/engine/ac/sys_events.h"
 #include "ags/engine/gfx/gfxfilter_scummvm_renderer.h"
 #include "ags/engine/gfx/gfx_util.h"
@@ -77,7 +77,7 @@ int ScummVMRendererGraphicsDriver::GetDisplayDepthForNativeDepth(int native_colo
 }
 
 IGfxModeList *ScummVMRendererGraphicsDriver::GetSupportedModeList(int color_depth) {
-	std::vector<DisplayMode> modes;
+	Std::vector<DisplayMode> modes;
 	sys_get_desktop_modes(modes, color_depth);
 	if ((modes.size() == 0) && color_depth == 32) {
 		// Pretend that 24-bit are 32-bit

@@ -19,7 +19,7 @@
  *
  */
 
-#include "ags/lib/std/algorithm.h"
+#include "common/std/algorithm.h"
 #include "ags/shared/font/wfn_font.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/shared/util/memory.h"
@@ -98,7 +98,7 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 	in->ReadArrayOfInt16((int16_t *)offset_table, char_count);
 
 	// Read all referenced offsets in an unsorted vector
-	std::vector<uint16_t> offs;
+	Std::vector<uint16_t> offs;
 	offs.reserve(char_count); // reserve max possible offsets
 	for (size_t i = 0; i < char_count; ++i) {
 		const uint16_t off = offset_table[i];
@@ -111,12 +111,12 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 		offs.push_back(off);
 	}
 	// sort offsets vector and remove any duplicates
-	std::sort(offs.begin(), offs.end());
+	Std::sort(offs.begin(), offs.end());
 #if AGS_PLATFORM_SCUMMVM
 	// TODO: See if this works correctly
-	std::unique(offs.begin(), offs.end());
+	Std::unique(offs.begin(), offs.end());
 #else
-	std::vector<uint16_t>(offs.begin(), std::unique(offs.begin(), offs.end())).swap(offs);
+	Std::vector<uint16_t>(offs.begin(), Std::unique(offs.begin(), offs.end())).swap(offs);
 #endif
 
 	// Now that we know number of valid character items, parse and store character data
@@ -135,7 +135,7 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 	// since the items are sorted, the pixel data will be stored sequentially as well.
 	// At this point offs and _items have related elements in the same order.
 	_pixelData.resize(total_pixel_size);
-	std::vector<uint8_t>::iterator pixel_it = _pixelData.begin(); // write ptr
+	Std::vector<uint8_t>::iterator pixel_it = _pixelData.begin(); // write ptr
 	for (size_t i = 0; i < _items.size(); ++i) {
 		const size_t pixel_data_size = _items[i].GetRequiredPixelSize();
 		if (pixel_data_size == 0) {
@@ -179,7 +179,7 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 				_refs[i] = &_items[i];
 			else {
 				// we know beforehand that such item must exist
-				std::vector<uint16_t>::const_iterator at = std::lower_bound(offs.begin(), offs.end(), off);
+				Std::vector<uint16_t>::const_iterator at = Std::lower_bound(offs.begin(), offs.end(), off);
 				assert(at != offs.end() && *at == off && // should not normally fail
 				       at - offs.begin() >= 0 && static_cast<size_t>(at - offs.begin()) < _items.size());
 				_refs[i] = &_items[at - offs.begin()]; // set up reference to item

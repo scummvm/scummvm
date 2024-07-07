@@ -24,7 +24,7 @@
 
 #include "common/savefile.h"
 #include "common/stream.h"
-#include "ags/lib/std/functional.h"
+#include "common/std/functional.h"
 #include "ags/shared/util/data_stream.h"
 #include "ags/shared/util/file.h" // TODO: extract filestream mode constants
 
@@ -40,7 +40,7 @@ public:
 	};
 
 	// Represents an open file object
-	// The constructor may raise std::runtime_error if
+	// The constructor may raise Std::runtime_error if
 	// - there is an issue opening the file (does not exist, locked, permissions, etc)
 	// - the open mode could not be determined
 	FileStream(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode,

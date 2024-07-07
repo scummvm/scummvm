@@ -112,7 +112,7 @@ int Dict_GetItemCount(ScriptDictBase *dic) {
 }
 
 void *Dict_GetKeysAsArray(ScriptDictBase *dic) {
-	std::vector<const char *> items;
+	Std::vector<const char *> items;
 	dic->GetKeys(items);
 	if (items.size() == 0)
 		return nullptr;
@@ -121,7 +121,7 @@ void *Dict_GetKeysAsArray(ScriptDictBase *dic) {
 }
 
 void *Dict_GetValuesAsArray(ScriptDictBase *dic) {
-	std::vector<const char *> items;
+	Std::vector<const char *> items;
 	dic->GetValues(items);
 	if (items.size() == 0)
 		return nullptr;
@@ -241,7 +241,7 @@ int Set_GetItemCount(ScriptSetBase *set) {
 }
 
 void *Set_GetItemsAsArray(ScriptSetBase *set) {
-	std::vector<const char *> items;
+	Std::vector<const char *> items;
 	set->GetItems(items);
 	if (items.size() == 0)
 		return nullptr;

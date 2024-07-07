@@ -84,7 +84,7 @@ HError ReadTraBlock(Translation &tra, Stream *in, TraFileBlock block, const Stri
 			read_string_decrypt(in, translation, sizeof(translation));
 			if (!original[0] && !translation[0])
 				break;
-			tra.Dict.insert(std::make_pair(String(original), String(translation)));
+			tra.Dict.insert(Std::make_pair(String(original), String(translation)));
 		}
 		return HError::None();
 	}
@@ -184,7 +184,7 @@ HError ReadTraData(Translation &tra, Stream *in) {
 }
 
 // TODO: perhaps merge with encrypt/decrypt utilities
-static const char *EncryptText(std::vector<char> &en_buf, const String &s) {
+static const char *EncryptText(Std::vector<char> &en_buf, const String &s) {
 	if (en_buf.size() < s.GetLength() + 1)
 		en_buf.resize(s.GetLength() + 1);
 	strncpy(&en_buf.front(), s.GetCStr(), s.GetLength() + 1);
@@ -193,20 +193,20 @@ static const char *EncryptText(std::vector<char> &en_buf, const String &s) {
 }
 
 // TODO: perhaps merge with encrypt/decrypt utilities
-static const char *EncryptEmptyString(std::vector<char> &en_buf) {
+static const char *EncryptEmptyString(Std::vector<char> &en_buf) {
 	en_buf[0] = 0;
 	encrypt_text(&en_buf.front());
 	return &en_buf.front();
 }
 
 void WriteGameID(const Translation &tra, Stream *out) {
-	std::vector<char> en_buf;
+	Std::vector<char> en_buf;
 	out->WriteInt32(tra.GameUid);
 	StrUtil::WriteString(EncryptText(en_buf, tra.GameName), tra.GameName.GetLength() + 1, out);
 }
 
 void WriteDict(const Translation &tra, Stream *out) {
-	std::vector<char> en_buf;
+	Std::vector<char> en_buf;
 	for (const auto &kv : tra.Dict) {
 		const String &src = kv._key;
 		const String &dst = kv._value;

@@ -20,7 +20,7 @@
  */
 
 #include "ags/shared/core/platform.h"
-#include "ags/lib/std/set.h"
+#include "common/std/set.h"
 #include "ags/lib/allegro.h" // allegro_exit
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/game_setup.h"

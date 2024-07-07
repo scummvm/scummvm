@@ -19,14 +19,12 @@
  *
  */
 
-#ifndef AGS_STD_UNORDERED_SET_H
-#define AGS_STD_UNORDERED_SET_H
+#ifndef COMMON_STD_UNORDERED_SET_H
+#define COMMON_STD_UNORDERED_SET_H
 
 #include "common/array.h"
-//#include "ags/lib/std/unordered_set.h"
 
-namespace AGS3 {
-namespace std {
+namespace Std {
 
 /**
  * Unordered set
@@ -84,7 +82,6 @@ public:
 	}
 };
 
-} // namespace std
-} // namespace AGS3
+} // namespace Std
 
 #endif

@@ -19,23 +19,22 @@
  *
  */
 
-#ifndef AGS_STD_VECTOR_H
-#define AGS_STD_VECTOR_H
+#ifndef COMMON_STD_VECTOR_H
+#define COMMON_STD_VECTOR_H
 
-#include "ags/lib/std/type_traits.h"
-#include "ags/lib/std/utility.h"
+#include "common/std/type_traits.h"
+#include "common/std/utility.h"
 #include "common/scummsys.h"
 #include "common/algorithm.h"
 #include "common/memory.h"
 
-namespace AGS3 {
-namespace std {
+namespace Std {
 
 template<class In, class Type>
 Type *uninitialized_move(In first, In last, Type *dst) {
 	while (first != last) {
 		Type &t = *new ((void *)dst++) Type();
-		t = std::move(*first++);
+		t = Std::move(*first++);
 	}
 
 	return dst;
@@ -558,7 +557,7 @@ protected:
 
 	/**
 	 * Insert a range of elements coming from this or another array.
-	 * Unlike std::vector::insert, this method does not accept
+	 * Unlike Std::vector::insert, this method does not accept
 	 * arbitrary iterators, mainly because our iterator system is
 	 * seriously limited and does not distinguish between input iterators,
 	 * output iterators, forward iterators, or random access iterators.
@@ -624,7 +623,6 @@ protected:
 	}
 };
 
-} // namespace std
-} // namespace AGS3
+} // namespace Std
 
 #endif

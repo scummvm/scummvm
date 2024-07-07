@@ -28,7 +28,7 @@
 #ifndef AGS_SHARED_CORE_ASSET_H
 #define AGS_SHARED_CORE_ASSET_H
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/shared/util/string.h"
 
 namespace AGS3 {
@@ -51,10 +51,10 @@ struct AssetLibInfo {
 	String BasePath;                   // full path to the base filename
 	String BaseDir;                    // library's directory
 	String BaseFileName;               // library's base (head) filename
-	std::vector<String> LibFileNames;  // filename for each library part
+	Std::vector<String> LibFileNames;  // filename for each library part
 
 	// Library contents
-	std::vector<AssetInfo> AssetInfos; // information on contained assets
+	Std::vector<AssetInfo> AssetInfos; // information on contained assets
 };
 
 } // namespace Shared

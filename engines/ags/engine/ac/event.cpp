@@ -356,7 +356,7 @@ void processallevents() {
 	// and they must NOT be processed here, but instead discarded at the end
 	// of this function; otherwise game may glitch.
 	// TODO: need to redesign engine events system?
-	std::vector<EventHappened> evtCopy = _GP(events);
+	Std::vector<EventHappened> evtCopy = _GP(events);
 
 	int room_was = _GP(play).room_changes;
 

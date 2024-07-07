@@ -30,8 +30,8 @@
 #ifndef AGS_SHARED_GAME_ROOM_FILE_H
 #define AGS_SHARED_GAME_ROOM_FILE_H
 
-#include "ags/lib/std/memory.h"
-#include "ags/lib/std/vector.h"
+#include "common/std/memory.h"
+#include "common/std/vector.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/game/room_version.h"
 #include "ags/shared/util/error.h"
@@ -91,9 +91,9 @@ String GetRoomBlockName(RoomFileBlock id);
 typedef TypedCodeError<RoomFileErrorType, GetRoomFileErrorText> RoomFileError;
 typedef ErrorHandle<RoomFileError> HRoomFileError;
 #ifdef AGS_PLATFORM_SCUMMVM
-typedef std::shared_ptr<Stream> UStream;
+typedef Std::shared_ptr<Stream> UStream;
 #else
-typedef std::unique_ptr<Stream> UStream;
+typedef Std::unique_ptr<Stream> UStream;
 #endif
 
 
@@ -117,7 +117,7 @@ HRoomFileError OpenRoomFileFromAsset(const String &filename, RoomDataSource &src
 HRoomFileError ReadRoomData(RoomStruct *room, Stream *in, RoomFileVersion data_ver);
 // Applies necessary updates, conversions and fixups to the loaded data
 // making it compatible with current engine
-HRoomFileError UpdateRoomData(RoomStruct *room, RoomFileVersion data_ver, bool game_is_hires, const std::vector<SpriteInfo> &sprinfos);
+HRoomFileError UpdateRoomData(RoomStruct *room, RoomFileVersion data_ver, bool game_is_hires, const Std::vector<SpriteInfo> &sprinfos);
 // Extracts text script from the room file, if it's available.
 // Historically, text sources were kept inside packed room files before AGS 3.*.
 HRoomFileError ExtractScriptText(String &script, Stream *in, RoomFileVersion data_ver);

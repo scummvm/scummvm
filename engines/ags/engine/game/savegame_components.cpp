@@ -19,7 +19,7 @@
  *
  */
 
-#include "ags/lib/std/map.h"
+#include "common/std/map.h"
 #include "ags/engine/game/savegame_components.h"
 #include "ags/shared/ac/audio_clip_type.h"
 #include "ags/shared/ac/common.h"
@@ -778,7 +778,7 @@ HSaveError ReadOverlays(Stream *in, int32_t cmp_ver, const PreservedParams & /*p
 			over.scaleWidth = over.GetImage()->GetWidth();
 			over.scaleHeight = over.GetImage()->GetHeight();
 		}
-		_GP(screenover).push_back(std::move(over));
+		_GP(screenover).push_back(Std::move(over));
 	}
 	return HSaveError::None();
 }
@@ -1154,7 +1154,7 @@ void component_handlers_free() {
 	delete g_componentHandlers;
 }
 
-typedef std::map<String, ComponentHandler> HandlersMap;
+typedef Std::map<String, ComponentHandler> HandlersMap;
 void GenerateHandlersMap(HandlersMap &map) {
 	map.clear();
 	for (int i = 0; !(*g_componentHandlers)[i].Name.IsEmpty(); ++i)
@@ -1204,7 +1204,7 @@ HSaveError ReadComponent(Stream *in, SvgCmpReadHelper &hlp, ComponentInfo &info)
 		componentName = "Dynamic Surfaces";
 
 	const ComponentHandler *handler = nullptr;
-	std::map<String, ComponentHandler>::const_iterator it_hdr = hlp.Handlers.find(componentName);
+	Std::map<String, ComponentHandler>::const_iterator it_hdr = hlp.Handlers.find(componentName);
 	if (it_hdr != hlp.Handlers.end())
 		handler = &it_hdr->_value;
 

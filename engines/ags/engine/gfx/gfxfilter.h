@@ -28,7 +28,7 @@
 #ifndef AGS_ENGINE_GFX_GFXFILTER_H
 #define AGS_ENGINE_GFX_GFXFILTER_H
 
-#include "ags/lib/std/memory.h"
+#include "common/std/memory.h"
 #include "ags/shared/util/geometry.h"
 #include "ags/shared/util/string.h"
 
@@ -69,7 +69,7 @@ public:
 	virtual Rect GetDestination() const = 0;
 };
 
-typedef std::shared_ptr<IGfxFilter> PGfxFilter;
+typedef Std::shared_ptr<IGfxFilter> PGfxFilter;
 
 } // namespace Engine
 } // namespace AGS

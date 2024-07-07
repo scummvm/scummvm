@@ -55,7 +55,7 @@ namespace AGS3 {
 using AGS::Shared::AssetManager;
 
 static bool play_video(Video::VideoDecoder *decoder, const char *name, int flags, VideoSkipType skip, bool showError) {
-	std::unique_ptr<Stream> video_stream(_GP(AssetMgr)->OpenAsset(name));
+	Std::unique_ptr<Stream> video_stream(_GP(AssetMgr)->OpenAsset(name));
 	if (!video_stream) {
 		if (showError)
 			Display("Unable to load video '%s'", name);

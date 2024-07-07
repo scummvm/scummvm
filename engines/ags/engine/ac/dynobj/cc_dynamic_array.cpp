@@ -131,7 +131,7 @@ void CCDynamicArray::WriteFloat(const char *address, intptr_t offset, float val)
 	*(float *)(const_cast<char *>(address) + offset) = val;
 }
 
-DynObjectRef DynamicArrayHelpers::CreateStringArray(const std::vector<const char *> items) {
+DynObjectRef DynamicArrayHelpers::CreateStringArray(const Std::vector<const char *> items) {
 	// NOTE: we need element size of "handle" for array of managed pointers
 	DynObjectRef arr = _GP(globalDynamicArray).Create(items.size(), sizeof(int32_t), true);
 	if (!arr.second)

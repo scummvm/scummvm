@@ -21,7 +21,7 @@
 
 //=============================================================================
 //
-// Managed script object wrapping std::set<String> and unordered_set<String>.
+// Managed script object wrapping Std::set<String> and unordered_set<String>.
 //
 // TODO: support wrapping non-owned Set, passed by the reference, -
 // that would let expose internal engine's sets using same interface.
@@ -34,8 +34,8 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTSET_H
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTSET_H
 
-#include "ags/lib/std/set.h"
-#include "ags/lib/std/unordered_set.h"
+#include "common/std/set.h"
+#include "common/std/unordered_set.h"
 #include "ags/engine/ac/dynobj/cc_ags_dynamic_object.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string.h"
@@ -59,7 +59,7 @@ public:
 	virtual bool Contains(const char *item) const = 0;
 	virtual bool Remove(const char *item) = 0;
 	virtual int GetItemCount() const = 0;
-	virtual void GetItems(std::vector<const char *> &buf) const = 0;
+	virtual void GetItems(Std::vector<const char *> &buf) const = 0;
 
 protected:
 	// Write object data into the provided stream
@@ -106,7 +106,7 @@ public:
 	int GetItemCount() const override {
 		return _set.size();
 	}
-	void GetItems(std::vector<const char *> &buf) const override {
+	void GetItems(Std::vector<const char *> &buf) const override {
 		for (auto it = _set.begin(); it != _set.end(); ++it)
 			buf.push_back(it->GetCStr());
 	}
@@ -146,10 +146,10 @@ private:
 	TSet _set;
 };
 
-typedef ScriptSetImpl< std::set<String>, true, true > ScriptSet;
-typedef ScriptSetImpl< std::set<String, IgnoreCase_LessThan>, true, false > ScriptSetCI;
-typedef ScriptSetImpl< std::unordered_set<String>, false, true > ScriptHashSet;
-typedef ScriptSetImpl< std::unordered_set<String, IgnoreCase_Hash, IgnoreCase_EqualTo>, false, false > ScriptHashSetCI;
+typedef ScriptSetImpl< Std::set<String>, true, true > ScriptSet;
+typedef ScriptSetImpl< Std::set<String, IgnoreCase_LessThan>, true, false > ScriptSetCI;
+typedef ScriptSetImpl< Std::unordered_set<String>, false, true > ScriptHashSet;
+typedef ScriptSetImpl< Std::unordered_set<String, IgnoreCase_Hash, IgnoreCase_EqualTo>, false, false > ScriptHashSetCI;
 
 } // namespace AGS3
 

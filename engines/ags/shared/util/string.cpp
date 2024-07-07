@@ -378,8 +378,8 @@ String String::Section(char separator, size_t first, size_t last,
 	return String();
 }
 
-std::vector<String> String::Split(char separator) const {
-	std::vector<String> result;
+Std::vector<String> String::Split(char separator) const {
+	Std::vector<String> result;
 	if (!separator)
 		return result;
 

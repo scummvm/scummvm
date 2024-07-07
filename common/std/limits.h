@@ -19,25 +19,16 @@
  *
  */
 
-#ifndef AGS_STD_REGEX_H
-#define AGS_STD_REGEX_H
+#ifndef COMMON_STD_LIMITS_H
+#define COMMON_STD_LIMITS_H
 
-#include "common/str.h"
-#include "common/textconsole.h"
+#include "common/scummsys.h"
 
-namespace AGS3 {
-namespace std {
+namespace Std {
 
-struct regex {
-public:
-	regex(const char *) {}
-};
+template<class T>
+using numeric_limits = ::std::numeric_limits<T>;
 
-inline Common::String regex_replace(const char *wildcard, const regex &esc, const char *fmt) {
-	error("TODO: Implement if engine needs it");
-}
-
-} // namespace std
-} // namespace AGS3
+} // namespace Std
 
 #endif

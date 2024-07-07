@@ -23,7 +23,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
 
 #include "ags/lib/allegro.h"
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/shared/core/platform.h"
 #include "ags/plugins/ags_plugin.h"
 #include "ags/plugins/core/core.h"
@@ -843,7 +843,7 @@ void pl_run_plugin_init_gfx_hooks(const char *driverName, void *data) {
 	}
 }
 
-Engine::GameInitError pl_register_plugins(const std::vector<PluginInfo> &infos) {
+Engine::GameInitError pl_register_plugins(const Std::vector<PluginInfo> &infos) {
 	_GP(plugins).clear();
 	_GP(plugins).reserve(MAXPLUGINS);
 

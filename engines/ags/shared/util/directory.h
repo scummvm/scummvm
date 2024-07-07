@@ -30,7 +30,7 @@
 
 #include "common/fs.h"
 #include "common/stack.h"
-#include "ags/lib/std/memory.h"
+#include "common/std/memory.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/util/string.h"
 
@@ -53,9 +53,9 @@ String SetCurrentDirectory(const String &path);
 String GetCurrentDirectory();
 
 // Get list of subdirs found in the given directory
-bool   GetDirs(const String &dir_path, std::vector<String> &dirs);
+bool   GetDirs(const String &dir_path, Std::vector<String> &dirs);
 // Get list of files found in the given directory
-bool   GetFiles(const String &dir_path, std::vector<String> &files);
+bool   GetFiles(const String &dir_path, Std::vector<String> &files);
 
 } // namespace Directory
 

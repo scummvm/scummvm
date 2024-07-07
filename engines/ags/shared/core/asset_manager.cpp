@@ -20,8 +20,8 @@
  */
 
 #include "common/memstream.h"
-#include "ags/lib/std/algorithm.h"
-#include "ags/lib/std/utility.h"
+#include "common/std/algorithm.h"
+#include "common/std/utility.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/core/asset_manager.h"
 #include "ags/shared/util/directory.h"
@@ -39,7 +39,7 @@ inline static bool IsAssetLibDir(const AssetLibInfo *lib) {
 
 bool AssetManager::AssetLibEx::TestFilter(const String &filter) const {
 	return filter == "*" ||
-		(std::find(Filters.begin(), Filters.end(), filter) != Filters.end());
+		(Std::find(Filters.begin(), Filters.end(), filter) != Filters.end());
 }
 
 bool AssetManager::LibsByPriority::operator()(const AssetLibInfo *lib1, const AssetLibInfo *lib2) const {
@@ -82,7 +82,7 @@ AssetManager::AssetManager() {
 void AssetManager::SetSearchPriority(AssetSearchPriority priority) {
 	_libsByPriority.Priority = priority;
 
-	std::sort(_activeLibs.begin(), _activeLibs.end(), _libsByPriority);
+	Std::sort(_activeLibs.begin(), _activeLibs.end(), _libsByPriority);
 }
 
 AssetSearchPriority AssetManager::GetSearchPriority() const {
@@ -112,7 +112,7 @@ AssetError AssetManager::AddLibrary(const String &path, const String &filters, c
 	if (err != kAssetNoError)
 		return err;
 	lib->Filters = filters.Split(',');
-	auto place = std::upper_bound(_activeLibs.begin(), _activeLibs.end(), lib, _libsByPriority);
+	auto place = Std::upper_bound(_activeLibs.begin(), _activeLibs.end(), lib, _libsByPriority);
 	_activeLibs.insert(place, lib);
 	if (out_lib)
 		*out_lib = lib;
@@ -163,12 +163,12 @@ bool AssetManager::DoesAssetExist(const String &asset_name, const String &filter
 	return false;
 }
 
-void AssetManager::FindAssets(std::vector<String> &assets, const String &wildcard,
+void AssetManager::FindAssets(Std::vector<String> &assets, const String &wildcard,
 		const String &filter) const {
 	String pattern = StrUtil::WildcardToRegex(wildcard);
 
 	for (const auto *lib : _activeLibs) {
-		auto match = std::find(lib->Filters.begin(), lib->Filters.end(), filter);
+		auto match = Std::find(lib->Filters.begin(), lib->Filters.end(), filter);
 		if (match == lib->Filters.end())
 			continue; // filter does not match
 
@@ -186,13 +186,13 @@ void AssetManager::FindAssets(std::vector<String> &assets, const String &wildcar
 	}
 
 	// Sort and remove duplicates
-	std::sort(assets.begin(), assets.end());
-	assets.erase(std::unique(assets.begin(), assets.end()), assets.end());
+	Std::sort(assets.begin(), assets.end());
+	assets.erase(Std::unique(assets.begin(), assets.end()), assets.end());
 }
 
 AssetError AssetManager::RegisterAssetLib(const String &path, AssetLibEx *&out_lib) {
 	// Test for a directory
-	std::unique_ptr<AssetLibEx> lib;
+	Std::unique_ptr<AssetLibEx> lib;
 	if (File::IsDirectory(path)) {
 		lib.reset(new AssetLibEx());
 		lib->BasePath = Path::MakeAbsolutePath(path);

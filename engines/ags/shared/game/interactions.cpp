@@ -141,7 +141,7 @@ void InteractionCommandList::Reset() {
 	TimesRun = 0;
 }
 
-void InteractionCommandList::Read_Aligned(Stream *in, std::vector<bool> &cmd_children) {
+void InteractionCommandList::Read_Aligned(Stream *in, Std::vector<bool> &cmd_children) {
 	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (size_t i = 0; i < Cmds.size(); ++i) {
 		bool has_children;
@@ -155,7 +155,7 @@ void InteractionCommandList::Read_v321(Stream *in) {
 	size_t cmd_count = in->ReadInt32();
 	TimesRun = in->ReadInt32();
 
-	std::vector<bool> cmd_children;
+	Std::vector<bool> cmd_children;
 	Cmds.resize(cmd_count);
 	cmd_children.resize(cmd_count);
 	Read_Aligned(in, cmd_children);

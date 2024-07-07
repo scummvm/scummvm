@@ -22,7 +22,7 @@
 #ifndef AGS_SHARED_GUI_GUI_LISTBOX_H
 #define AGS_SHARED_GUI_GUI_LISTBOX_H
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/shared/gui/gui_object.h"
 #include "ags/shared/util/string.h"
 
@@ -75,8 +75,8 @@ public:
 	int32_t               RowHeight;
 	int32_t               VisibleItemCount;
 
-	std::vector<String>   Items;
-	std::vector<int16_t>  SavedGameIndex;
+	Std::vector<String>   Items;
+	Std::vector<int16_t>  SavedGameIndex;
 	int32_t               SelectedItem;
 	int32_t               TopItem;
 	Point                 MousePos;
