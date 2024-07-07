@@ -286,10 +286,10 @@ struct t3dLIGHT {
 	t3dF32      HotSpot, FallOff;           // spot ranges
 	t3dV3F      Color;                      // orig color
 	uint8       Flicker;                    // flicker activated
-	uint8       FlickerDelay;               // flicker delay
-	int8       LightRandomizer;            // flicker randomizer
+	uint8       FlickerDelay = 0;           // flicker delay
+	int8       LightRandomizer = 0;         // flicker randomizer
 	Common::SharedPtr<t3dParticle> Particle;  // paticles attached
-	t3dF32      FlareSize;                  // flare size
+	t3dF32      FlareSize = 0;              // flare size
 	gMaterial   Material[2];                // flare material
 	t3dAnimLight AnimLight;                 // animation attached
 	t3dV3F      SolarColor[4];              // Ambient color value for solar movement
