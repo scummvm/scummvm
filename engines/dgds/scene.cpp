@@ -83,6 +83,8 @@ Common::String _sceneConditionStr(SceneCondition cflag) {
 		ret += "equal";
 	if (cflag & kSceneCondNegate)
 		ret += "-not";
+	if (cflag & kSceneCondAbsVal)
+		ret += "(abs)";
 
 	return ret;
 }

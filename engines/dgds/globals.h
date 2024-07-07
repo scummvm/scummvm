@@ -45,11 +45,12 @@ class Global {
 public:
 	Global(uint16 num) : _num(num) {}
 	virtual ~Global() {}
-	uint16 _num;
 	virtual int16 get() = 0;
 	virtual int16 set(int16 val) = 0;
 	virtual uint16 getNum() const { return _num; }
 	virtual void setRaw(int16 val) = 0; /// only for use in loading state.
+private:
+	uint16 _num;
 };
 
 /*

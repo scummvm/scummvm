@@ -82,16 +82,14 @@ _sceneOpcode15ToScene(0) {
 }
 
 Globals::~Globals() {
-	for (auto &g : _globals) {
+	for (auto &g : _globals)
 		delete g;
-	}
 }
 
 int16 Globals::getGlobal(uint16 num) {
 	for (auto &global : _globals) {
-		if (global->_num == num) {
+		if (global->getNum() == num)
 			return global->get();
-		}
 	}
 
 	error("getGlobal: requested non-existing global %d", num);
@@ -99,9 +97,8 @@ int16 Globals::getGlobal(uint16 num) {
 
 int16 Globals::setGlobal(uint16 num, int16 val) {
 	for (auto &global : _globals) {
-		if (global->_num == num) {
+		if (global->getNum() == num)
 			return global->set(val);
-		}
 	}
 
 	error("setGlobal: requested non-existing global %d", num);

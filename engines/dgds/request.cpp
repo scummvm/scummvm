@@ -366,19 +366,19 @@ void ButtonGadget::draw(Graphics::ManagedSurface *dst) const {
 
 		int fontHeight = font->getFontHeight();
 
-		bool twoline;
+		//bool twoline;
 		int yoffset;
 		uint32 linebreak = name.find('&');
 
 		Common::String line1, line2;
 		if (linebreak != Common::String::npos) {
-			twoline = true;
+			//twoline = true;
 			name.setChar(' ', linebreak);
 			yoffset = _height + 1 - fontHeight * 2;
 			line1 = _buttonName.substr(0, linebreak);
 			line2 = _buttonName.substr(linebreak + 1);
 		} else {
-			twoline = false;
+			//twoline = false;
 			yoffset = _height - fontHeight;
 			line1 = _buttonName;
 		}
