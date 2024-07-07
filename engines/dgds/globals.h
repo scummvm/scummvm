@@ -154,6 +154,7 @@ private:
 	int16 _unk39;
 	int16 _unk40;
 	int16 _unk45;
+	int16 _unk46;
 	int16 _unk48;
 	int16 _unk51;
 	int16 _characterCount;

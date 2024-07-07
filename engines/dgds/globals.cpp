@@ -205,12 +205,14 @@ Common::Error DragonGlobals::syncState(Common::Serializer &s) {
 }
 
 HocGlobals::HocGlobals(Clock &clock) : Globals(clock),
-	_unk39(0), _unk40(0), _unk45(0), _unk48(0), _unk51(0), _characterCount(0), _currentCharacter(0), _unk54(0) {
+	_unk39(0), _unk40(0), _unk45(0), _unk46(0), _unk48(0),
+	_unk51(0), _characterCount(0), _currentCharacter(0), _unk54(0) {
 	_globals.push_back(new RWI16Global(0x36, &_unk54));
 	_globals.push_back(new RWI16Global(0x35, &_currentCharacter));
 	_globals.push_back(new RWI16Global(0x34, &_characterCount));
 	_globals.push_back(new RWI16Global(0x33, &_unk51));
 	_globals.push_back(new RWI16Global(0x30, &_unk48));
+	_globals.push_back(new RWI16Global(0x2E, &_unk46));
 	_globals.push_back(new RWI16Global(0x2D, &_unk45));
 	_globals.push_back(new RWI16Global(0x28, &_unk40));
 	_globals.push_back(new RWI16Global(0x27, &_unk39));
@@ -221,6 +223,7 @@ Common::Error HocGlobals::syncState(Common::Serializer &s) {
 	s.syncAsSint16LE(_unk39);
 	s.syncAsSint16LE(_unk40);
 	s.syncAsSint16LE(_unk45);
+	s.syncAsSint16LE(_unk46);
 	s.syncAsSint16LE(_unk48);
 	s.syncAsSint16LE(_unk51);
 	s.syncAsSint16LE(_characterCount);
