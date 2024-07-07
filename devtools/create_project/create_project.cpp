@@ -353,6 +353,13 @@ int main(int argc, char *argv[]) {
 	if (!getFeatureBuildState("opengl", setup.features)) {
 		setFeatureBuildState("opengl_game_classic", setup.features, false);
 		setFeatureBuildState("opengl_game_shaders", setup.features, false);
+
+	// HACK: Check IMGUI dependencies
+	if (!getFeatureBuildState("opengl", setup.features) ||
+		!getFeatureBuildState("freetype2", setup.features) ||
+		!setup.useSDL2) {
+		std::cerr << "WARNING: imgui requires opengl, freetype2 and sdl2\n";
+		setFeatureBuildState("imgui", setup.features, false);
 	}
 
 	// Disable engines for which we are missing dependencies
