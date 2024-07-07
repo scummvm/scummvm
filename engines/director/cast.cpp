@@ -1265,16 +1265,18 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 		error("Cast::loadLingoContext: unsupported Director version (%d)", _version);
 	}
 
-	// Rewind stream
-	stream.seek(0);
-	_chunkResolver = new ChunkResolver(this);
-	_lingodec = new LingoDec::ScriptContext(_version, _chunkResolver);
-	_lingodec->read(stream);
+	if (debugChannelSet(-1, kDebugImGui) || ConfMan.getBool("dump_scripts")) {
+		// Rewind stream
+		stream.seek(0);
+		_chunkResolver = new ChunkResolver(this);
+		_lingodec = new LingoDec::ScriptContext(_version, _chunkResolver);
+		_lingodec->read(stream);
 
-	_lingodec->parseScripts();
+		_lingodec->parseScripts();
 
-	for (auto it = _lingodec->scripts.begin(); it != _lingodec->scripts.end(); ++it) {
-		debugC(9, kDebugCompile, "[%d/%d] %s", it->second->castID, it->first, it->second->scriptText("\n", false).c_str());
+		for (auto it = _lingodec->scripts.begin(); it != _lingodec->scripts.end(); ++it) {
+			debugC(9, kDebugCompile, "[%d/%d] %s", it->second->castID, it->first, it->second->scriptText("\n", false).c_str());
+		}
 	}
 }
 
