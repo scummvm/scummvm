@@ -946,12 +946,13 @@ Macs2::AnimFrame *Character::GetCurrentPortrait() {
 	// TODO: Think about proper memory management
 }
 
-void Character::StartLerpTo(const Common::Point &target, uint32 duration) {
+void Character::StartLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles) {
 	StartPosition = GetPosition();
 	EndPosition = target;
 	StartTime = g_events->currentMillis;
 	Duration = duration;
 	IsLerping = true;
+	LerpIgnoresObstacles = ignoreObstacles;
 }
 
 void Character::StartPickup(Character *object) {
@@ -1020,7 +1021,7 @@ void Character::Update() {
 
 	float progress = (float) (g_events->currentMillis - StartTime) / (float) Duration;
 	SetPosition(StartPosition + (EndPosition - StartPosition) * progress);
-	if (HandleWalkability(this)) {
+	if (!LerpIgnoresObstacles && HandleWalkability(this)) {
 		IsLerping = false;
 		// TODO: Copy & paste code
 		if (!g_engine->_scriptExecutor->IsExecuting()) {
