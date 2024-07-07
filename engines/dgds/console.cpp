@@ -30,10 +30,12 @@
 #include "dgds/console.h"
 #include "dgds/decompress.h"
 #include "dgds/dgds.h"
+#include "dgds/globals.h"
 #include "dgds/includes.h"
 #include "dgds/image.h"
 #include "dgds/parser.h"
 #include "dgds/resource.h"
+#include "dgds/scene.h"
 #include "dgds/game_palettes.h"
 #include "gui/debugger.h"
 
@@ -45,6 +47,7 @@ Console::Console(DgdsEngine *vm) : _vm(vm) {
 	registerCmd("filedump", WRAP_METHOD(Console, cmdFileDump));
 	registerCmd("imagedump", WRAP_METHOD(Console, cmdImageDump));
 	registerCmd("imagedumpall", WRAP_METHOD(Console, cmdImageDumpAll));
+	registerCmd("global", WRAP_METHOD(Console, cmdGlobal));
 }
 
 bool Console::cmdFileInfo(int argc, const char **argv) {
@@ -241,6 +244,29 @@ bool Console::cmdImageDump(int argc, const char **argv) {
 	warning("dumpimage needs png support");
 	return true;
 #endif // USE_PNG
+}
+
+bool Console::cmdGlobal(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: %s <num> <val>\n", argv[0]);
+		debugPrintf("%s <num> returns the value of a global\n", argv[0]);
+		debugPrintf("%s <num> <val> sets the value of a global\n", argv[0]);
+		return true;
+	}
+
+	GDSScene *scene = _vm->getGDSScene();
+	int num = atoi(argv[1]);
+
+	if (argc == 2) {
+		int16 val = scene->getGlobal(num);
+		debugPrintf("Global %d is %d\n", num, val);
+	} else if (argc == 3) {
+		int16 newVal = atoi(argv[2]);
+		scene->setGlobal(num, newVal);
+		debugPrintf("Global %d set to %d\n", num, newVal);
+	}
+
+	return true;
 }
 
 } // End of namespace Dgds

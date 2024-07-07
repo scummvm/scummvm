@@ -40,6 +40,7 @@ private:
 	bool dumpImageFrame(const char *fname, int frame, const char *outpath);
 	bool cmdImageDumpAll(int argc, const char **argv);
 	bool cmdImageDump(int argc, const char **argv);
+	bool cmdGlobal(int argc, const char **argv);
 	DgdsEngine *_vm;
 };
 
