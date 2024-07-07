@@ -359,13 +359,8 @@ void ButtonGadget::draw(Graphics::ManagedSurface *dst) const {
 
 	if (!_buttonName.empty()) {
 		const DgdsFont *font = RequestData::getMenuFont();
-
-		// TODO: Depending on some flags, the game toggles " ON " to " OFF" at the
-		// end of the string.
 		Common::String name = _buttonName;
-
 		int fontHeight = font->getFontHeight();
-
 		//bool twoline;
 		int yoffset;
 		uint32 linebreak = name.find('&');

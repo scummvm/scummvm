@@ -59,6 +59,8 @@ public:
 
 	bool playPCM(const byte *data, uint32 size);
 
+	DgdsMidiPlayer *getMidiPlayer() { return _midiMusicPlayer; }
+
 private:
 	void loadPCSound(const Common::String &filename, Common::Array<uint32> &sizeArray, Common::Array<byte *> &dataArray);
 	void playPCSound(uint num, const Common::Array<uint32> &sizeArray, const Common::Array<byte *> &dataArray, DgdsMidiPlayer *midiPlayer);

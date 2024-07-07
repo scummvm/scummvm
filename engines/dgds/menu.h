@@ -94,6 +94,7 @@ private:
 	void drawMenuText(Graphics::ManagedSurface &dst);
 	void toggleGadget(int16 gadgetId, bool enable);
 	void configureGadget(MenuId menu, Gadget *gadget);
+	bool updateOptionsGadget(Gadget *gadget);
 	void handleClick(const Common::Point &mouse);
 	void handleClickOptionsMenu(const Common::Point &mouse);
 	void handleClickSkipPlayIntroMenu(const Common::Point &mouse);

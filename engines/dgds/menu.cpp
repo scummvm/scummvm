@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 
+#include "audio/mixer.h"
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
@@ -31,7 +32,9 @@
 #include "dgds/includes.h"
 #include "dgds/font.h"
 #include "dgds/menu.h"
+#include "dgds/music.h"
 #include "dgds/request.h"
+#include "dgds/sound.h"
 
 namespace Dgds {
 
@@ -53,9 +56,13 @@ enum MenuButtonIds {
 	kMenuSliderControlsDetailLevel = 131,
 
 	kMenuOptionsJoystickOnOff = 139,
+	kMenuOptionsJoystickOnOffHoC = 174,
 	kMenuOptionsMouseOnOff = 138,
+	kMenuOptionsMouseOnOffHoC = 173,
 	kMenuOptionsSoundsOnOff = 137,
 	kMenuOptionsMusicOnOff = 140,
+	kMenuOptionsSoundsOnOffHoC = 175,
+	kMenuOptionsMusicOnOffHoC = 171,
 	kMenuOptionsVCR = 135,
 	kMenuOptionsPlay = 136,
 
@@ -129,8 +136,35 @@ void Menu::setScreenBuffer() {
 	g_system->unlockScreen();
 }
 
-void Menu::configureGadget(MenuId menu, Gadget* gadget) {
+bool Menu::updateOptionsGadget(Gadget *gadget) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	Audio::Mixer *mixer = engine->_mixer;
+
+	switch (gadget->_gadgetNo) {
+	case kMenuOptionsJoystickOnOff:
+	case kMenuOptionsJoystickOnOffHoC:
+		gadget->_buttonName = "JOYSTICK ON";
+		return false;
+	case kMenuOptionsMouseOnOff:
+	case kMenuOptionsMouseOnOffHoC:
+		gadget->_buttonName = "MOUSE ON";
+		return false;
+	case kMenuOptionsSoundsOnOff: // same id as kMenuMaybeBetterSaveYes
+	case kMenuOptionsSoundsOnOffHoC:
+		gadget->_buttonName = (!mixer->isSoundTypeMuted(Audio::Mixer::kSFXSoundType)) ? "SOUNDS ON" : "SOUNDS OFF";
+		return true;
+	case kMenuOptionsMusicOnOff:
+	case kMenuOptionsMusicOnOffHoC:
+		gadget->_buttonName = (!mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType)) ? "MUSIC ON" : "MUSIC OFF";
+		return true;
+	default:
+		return false;
+	}
+}
+
+void Menu::configureGadget(MenuId menu, Gadget *gadget) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+
 	// a bit of a hack - set up the gadget with the correct value before we draw it.
 	if (menu == kMenuControls) {
 		SliderGadget *slider = dynamic_cast<SliderGadget *>(gadget);
@@ -154,6 +188,8 @@ void Menu::configureGadget(MenuId menu, Gadget* gadget) {
 			break;
 			// do nothing.
 		}
+	} else if (menu == kMenuOptions) {
+		updateOptionsGadget(gadget);
 	}
 }
 
@@ -272,13 +308,14 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 	_dragGadget = nullptr;
 
 	Gadget *gadget = getClickedMenuItem(mouse);
+	bool isToggle = false;
 	if (!gadget)
 		return;
 
 	// Click animation
-	// TODO: Handle on/off buttons
 	if (dynamic_cast<ButtonGadget *>(gadget)) {
 		gadget->toggle(false);
+		isToggle = updateOptionsGadget(gadget);
 		drawMenu(_curMenu);
 		g_system->delayMillis(500);
 		gadget->toggle(true);
@@ -290,6 +327,9 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 		handleClickSkipPlayIntroMenu(mouse);
 	else
 		handleClick(mouse);
+
+	if (isToggle)
+		drawMenu(_curMenu);
 }
 
 void Menu::handleClick(const Common::Point &mouse) {
@@ -419,18 +459,37 @@ void Menu::handleClick(const Common::Point &mouse) {
 }
 
 void Menu::handleClickOptionsMenu(const Common::Point &mouse) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	Audio::Mixer *mixer = engine->_mixer;
 	Gadget *gadget = getClickedMenuItem(mouse);
 	int16 clickedMenuItem = gadget->_gadgetNo;
+	Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType;
+	DgdsMidiPlayer *midiPlayer = engine->_soundPlayer->getMidiPlayer();
 
 	switch (clickedMenuItem) {
 	case kMenuOptionsJoystickOnOff:
+	case kMenuOptionsJoystickOnOffHoC:
 	case kMenuOptionsMouseOnOff:  // same id as kMenuMaybeBetterSaveNo
+	case kMenuOptionsMouseOnOffHoC:
 		// Do nothing - we don't toggle joystick or mouse functionality
 		break;
 	case kMenuOptionsSoundsOnOff: // same id as kMenuMaybeBetterSaveYes
+	case kMenuOptionsSoundsOnOffHoC:
+		soundType = Audio::Mixer::kSFXSoundType;
+		// fall through
 	case kMenuOptionsMusicOnOff:
-		// TODO
-		debug("Clicked option with ID %d", clickedMenuItem);
+	case kMenuOptionsMusicOnOffHoC:
+		if (!mixer->isSoundTypeMuted(soundType)) {
+			mixer->muteSoundType(soundType, true);
+			midiPlayer->syncVolume();
+			midiPlayer->pause();
+		} else {
+			mixer->muteSoundType(soundType, false);
+			midiPlayer->syncVolume();
+			midiPlayer->resume();
+		}
+
+		updateOptionsGadget(gadget);
 		break;
 	default:
 		handleClick(mouse);
