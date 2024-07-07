@@ -419,6 +419,8 @@ void Menu::handleClickOptionsMenu(const Common::Point &mouse) {
 	switch (clickedMenuItem) {
 	case kMenuOptionsJoystickOnOff:
 	case kMenuOptionsMouseOnOff:  // same id as kMenuMaybeBetterSaveNo
+		// Do nothing - we don't toggle joystick or mouse functionality
+		break;
 	case kMenuOptionsSoundsOnOff: // same id as kMenuMaybeBetterSaveYes
 	case kMenuOptionsMusicOnOff:
 		// TODO
@@ -452,8 +454,10 @@ void Menu::handleClickSkipPlayIntroMenu(const Common::Point &mouse) {
 			engine->changeScene(24);
 		break;
 	case kMenuIntroJumpToGame:
-		// TODO
-		debug("Clicked option with ID %d", clickedMenuItem);
+		if (engine->getGameId() == GID_HOC)
+			engine->changeScene(24);
+		else if (engine->getGameId() == GID_WILLY)
+			warning("TODO: Jump to game");
 		break;
 	default:
 		handleClick(mouse);
