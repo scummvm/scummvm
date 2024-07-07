@@ -1177,3 +1177,4 @@ int grDispatcher::TextHeight(const char *str, int vspace, const grFont *font) co
 }
 
 } // namespace QDEngine
+

@@ -53,6 +53,7 @@ winVideo::~winVideo() {
 }
 
 bool winVideo::init() {
+	return true;
 }
 
 bool winVideo::done() {
@@ -100,23 +101,26 @@ void winVideo::set_window(void *hwnd, int x, int y, int xsize, int ysize) {
 bool winVideo::open_file(const char *fname) {
 	Common::File *videoFile = new Common::File();
 
-	if (videoFile->open(fname)) {
-		_videostream = videoFile;
-		return true;
+	if (!videoFile->open(fname)) {
+		warning("WinVideo::open: Failed to open file %s", fname);
+		delete videoFile;
+		return false;
 	}
 
-	delete videoFile;
-	return false;
+	_videostream = videoFile;
+
+	if (!_decoder->loadStream(_videostream)) {
+		warning("WinVideo::play: Failed to Load Stream");
+		delete videoFile;
+		return false;
+	}
+
+	return true;
 }
 
 bool winVideo::play() {
 	if (!_videostream) {
 		warning("WinVideo::play: No video stream loaded");
-		return false;
-	}
-
-	if (!_decoder->loadStream(_videostream)) {
-		warning("WinVideo::play: Failed to Load Stream");
 		return false;
 	}
 
@@ -141,16 +145,18 @@ bool winVideo::play() {
 	}
 
 	// Video Playback loop
+	debugC(9, kDebugGraphics, "WinVideo::play: Video Playback loop");
+
 	_decoder->start();
-	while (!_decoder->endOfVideo()) {
-		if (_decoder->needsUpdate()) {
-			const Graphics::Surface *frame = _decoder->decodeNextFrame();
-			if (frame) {
-				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, videoWidth, videoHeight);
-			}
-			g_system->updateScreen();
+	if (_decoder->needsUpdate()) {
+		const Graphics::Surface *frame = _decoder->decodeNextFrame();
+		if (frame) {
+			g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, videoWidth, videoHeight);
 		}
+		g_system->updateScreen();
 	}
+
+
 	return true;
 }
 
@@ -190,19 +196,8 @@ bool winVideo::wait_end() {
 }
 
 bool winVideo::is_playback_finished() {
-	warning("STUB: winVideo::is_playback_finished");
-
-	if (!media_event_) return true;
-#if 0
-	long evCode, param1, param2;
-
-	while (media_event_->GetEvent(&evCode, &param1, &param2, 0) == S_OK) {
-		media_event_->FreeEventParams(evCode, param1, param2);
-		if ((EC_COMPLETE == evCode) || (EC_USERABORT == evCode))
-			return true;
-	}
-#endif
-	return false;
+	warning("STUB: winVideo::is_playback_finished %d", _decoder->endOfVideo());
+	return _decoder->endOfVideo();
 }
 
 bool winVideo::toggle_fullscreen(bool fullscr) {
