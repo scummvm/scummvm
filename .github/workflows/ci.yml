@@ -24,7 +24,7 @@ jobs:
           - platform: arm64
             arch: arm64
             triplet: arm64-windows
-            configFlags: --enable-discord --enable-faad --enable-gif --enable-mikmod --enable-mpeg2 --enable-vpx --disable-opengl
+            configFlags: --enable-discord --enable-faad --enable-gif --enable-mikmod --enable-mpeg2 --enable-vpx
     env:
       CONFIGURATION: Debug
       PLATFORM: ${{ matrix.platform }}
@@ -175,7 +175,7 @@ jobs:
         shell: bash
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Add Ubuntu Xenial package sources
         if: matrix.platform == 'ubuntu-20.04'
         run: |
