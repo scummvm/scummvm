@@ -189,6 +189,7 @@ enum TheFieldType {
 	kTheLocV,
 	kTheLong,
 	kTheLoop,
+	kTheMember,
 	kTheMemberNum,
 	kTheModal,
 	kTheModified,
