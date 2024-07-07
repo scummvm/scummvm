@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-07 20:11+0000\n"
+"POT-Creation-Date: 2024-07-07 21:25+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -7255,17 +7255,17 @@ msgstr "مهاجم الأيمن"
 msgid "Info Menu"
 msgstr "القائمة"
 
-#: engines/freescape/games/dark/dark.cpp:166
+#: engines/freescape/games/dark/dark.cpp:164
 msgid "Enable/Disable Jetpack"
 msgstr ""
 
-#: engines/freescape/games/driller/driller.cpp:109
+#: engines/freescape/games/driller/driller.cpp:105
 #, fuzzy
 #| msgid "Debug Apply Celling Grid"
 msgid "Deploy drilling rig"
 msgstr "تصحيح الأخطاء تطبيق Celling Grid"
 
-#: engines/freescape/games/driller/driller.cpp:115
+#: engines/freescape/games/driller/driller.cpp:111
 msgid "Collect drilling rig"
 msgstr ""
 

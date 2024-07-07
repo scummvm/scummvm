@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-07 20:11+0000\n"
+"POT-Creation-Date: 2024-07-07 21:25+0000\n"
 "PO-Revision-Date: 2024-07-05 12:13+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -7513,15 +7513,15 @@ msgstr "Ruota verso destra"
 msgid "Info Menu"
 msgstr "Menù Informazioni"
 
-#: engines/freescape/games/dark/dark.cpp:166
+#: engines/freescape/games/dark/dark.cpp:164
 msgid "Enable/Disable Jetpack"
 msgstr "Attiva/disattiva jetpack"
 
-#: engines/freescape/games/driller/driller.cpp:109
+#: engines/freescape/games/driller/driller.cpp:105
 msgid "Deploy drilling rig"
 msgstr "Deposita trivella"
 
-#: engines/freescape/games/driller/driller.cpp:115
+#: engines/freescape/games/driller/driller.cpp:111
 msgid "Collect drilling rig"
 msgstr "Ritira trivella"
 

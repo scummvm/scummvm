@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-07 20:11+0000\n"
+"POT-Creation-Date: 2024-07-07 21:25+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -7126,15 +7126,15 @@ msgstr "Deslizar à direita"
 msgid "Info Menu"
 msgstr "Menu"
 
-#: engines/freescape/games/dark/dark.cpp:166
+#: engines/freescape/games/dark/dark.cpp:164
 msgid "Enable/Disable Jetpack"
 msgstr ""
 
-#: engines/freescape/games/driller/driller.cpp:109
+#: engines/freescape/games/driller/driller.cpp:105
 msgid "Deploy drilling rig"
 msgstr ""
 
-#: engines/freescape/games/driller/driller.cpp:115
+#: engines/freescape/games/driller/driller.cpp:111
 msgid "Collect drilling rig"
 msgstr ""
 
