@@ -71,7 +71,7 @@ struct t3dMESH {
 	t3dV3F                SolarRGBVar[4];             // Override ambient color variation for solar movement
 
 	uint32                Flags;                      // Flags
-	t3dBODY              *PortalList;            // Pointer to portal connected
+	t3dBODY              *PortalList = nullptr;       // Pointer to portal connected
 	Common::Array<t3dMESH *> RejectedMeshes;      // rejected mesh from portal
 
 	void saveVertexBuffer() { // Scorre le mesh
