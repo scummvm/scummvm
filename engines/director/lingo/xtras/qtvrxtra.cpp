@@ -275,12 +275,23 @@ void QtvrxtraXtra::close(ObjectType type) {
 }
 
 void QtvrxtraXtra::m_new(int nargs) {
-	g_lingo->printSTUBWithArglist("QtvrxtraXtra::m_new", nargs);
-	g_lingo->dropStack(nargs);
+	g_lingo->printArgs("QtvrxtraXtra::m_new", nargs);
+	ARGNUMCHECK(0);
+
 	g_lingo->push(g_lingo->_state->me);
 }
 
-XOBJSTUB(QtvrxtraXtra::m_forget, 0)
+void QtvrxtraXtra::m_forget(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_forget", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	if (me->_video) {
+		me->_video->close();
+		delete me->_video;
+	}
+}
 
 void QtvrxtraXtra::m_QTVREnter(int nargs) {
 	g_lingo->printArgs("QtvrxtraXtra::m_QTVREnter", nargs);
