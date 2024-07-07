@@ -26,6 +26,10 @@
 #include "common/rect.h"
 namespace Darkseed {
 
+enum ObjType {
+	OBJ_21_HEADBAND = 21
+};
+
 class Objects {
 private:
 	Common::Array<int16> _objectVar;

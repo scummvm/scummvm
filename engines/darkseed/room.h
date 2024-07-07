@@ -91,6 +91,7 @@ public:
 	void printRoomDescriptionText() const;
 	void calculateScaledSpriteDimensions(int width, int height, int curYPosition);
 	bool isOutside();
+	void runRoomObjects();
 private:
 	bool load();
 	static Common::String stripSpaces(Common::String source);

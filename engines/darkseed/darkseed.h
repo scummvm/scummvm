@@ -90,7 +90,6 @@ public:
 
 	bool isPlayingAnimation_maybe = false;
 	uint16 otherNspAnimationType_maybe = 0;
-	bool isWearingHeadBand = false;
 	uint16 headAcheMessageCounter = 0;
 	uint16 trunkPushCounter = 0;
 
@@ -102,7 +101,7 @@ public:
 	int nsp_sprite_scaling_y_position = 0;
 
 	bool player_sprite_related_2c85_82f3 = false;
-	int DAT_2c85_8326_blit_related = 0;
+	int _frameBottom = 0;
 	bool isAnimFinished_maybe = false;
 	bool animFrameChanged = false;
 	char prefsCutsceneId = 'I';
@@ -111,12 +110,8 @@ public:
 
 	// Unknown variables
 	bool _doorEnabled = false;
-	uint16 DAT_2c85_825c = 0;
-	uint16 DAT_2c85_819c = 0;
 	bool _scaleSequence = false;
 	bool useDoorTarget = false;
-
-	uint16 DAT_2c85_81e0 = 0;
 
 	int16 counter_2c85_888b = 0;
 

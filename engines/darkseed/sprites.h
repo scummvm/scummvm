@@ -44,7 +44,7 @@ private:
 	Common::Array<SpriteDrawInstruction> spriteDrawList;
 public:
 	Sprites();
-	void addSpriteToDrawList(uint16 destX, uint16 destY, const Sprite *sprite, uint8 order, uint8 destW, uint8 destH, bool unk10);
+	void addSpriteToDrawList(uint16 destX, uint16 destY, const Sprite *sprite, uint8 order, uint8 destW, uint8 destH, bool flip);
 	void clearSpriteDrawList();
 
 	void drawSprites();

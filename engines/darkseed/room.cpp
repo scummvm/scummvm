@@ -326,9 +326,10 @@ void Darkseed::Room::update() {
 		}
 
 		int objectUnderCursor = checkCursorAndStaticObjects(g_engine->_cursor.getX(), g_engine->_cursor.getY());
-		if ((objectUnderCursor == -1 || _roomObj[objectUnderCursor].objNum > 5 || _roomObj[objectUnderCursor].type != 0) &&
+		if (objectUnderCursor == -1 ||
+			((_roomObj[objectUnderCursor].objNum > 5 || _roomObj[objectUnderCursor].type != 0) &&
 			(g_engine->_objectVar[59] != 2 || _roomObj[objectUnderCursor].objNum != 59) &&
-			(g_engine->_objectVar[78] != 2 || _roomObj[objectUnderCursor].objNum != 78)
+			(g_engine->_objectVar[78] != 2 || _roomObj[objectUnderCursor].objNum != 78))
 			) {
 			g_engine->_cursor.setCursorType(Pointer);
 		} else {
@@ -719,4 +720,22 @@ bool Darkseed::Room::isOutside() {
 		isRoomOutside = true;
 	}
 	return isRoomOutside;
+}
+
+void Darkseed::Room::runRoomObjects() {
+	if (_roomNumber == 0 && g_engine->_objectVar[78] == 2) {
+		const Sprite &sprite = _locationSprites.getSpriteAt(0);
+		g_engine->_sprites.addSpriteToDrawList(519, 80, &sprite, 255, sprite.width, sprite.height, false);
+	}
+	if (_roomNumber == 0 && g_engine->isPlayingAnimation_maybe) {
+		const Sprite &sprite = _locationSprites.getSpriteAt(1);
+		g_engine->_sprites.addSpriteToDrawList(111, 136, &sprite, 255, sprite.width, sprite.height, false);
+	}
+	if (_roomNumber == 2 && g_engine->_player->_isAutoWalkingToBed && g_engine->_player->_position.x < 150) {
+			g_engine->_objectVar[78] = 2; // open door for player.
+	}
+	if (_roomNumber == 2 && g_engine->_objectVar[78] == 2) {
+		const Sprite &sprite = _locationSprites.getSpriteAt(0);
+		g_engine->_sprites.addSpriteToDrawList(69, 104, &sprite, 255, sprite.width, sprite.height, false);
+	}
 }
