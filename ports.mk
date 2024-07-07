@@ -238,6 +238,18 @@ ios7bundle: scummvm-static-ios
 			print "\t\t</dict>";\
 			print "\t</dict>";\
 			s=2}\
+		/<key>CFBundleIcons~ipad<\/key>/ {\
+			print $$0;\
+			print "\t<dict>";\
+			print "\t\t<key>CFBundlePrimaryIcon</key>";\
+			print "\t\t<dict>";\
+			print "\t\t\t<key>CFBundleIconFiles</key>";\
+			print "\t\t\t<array>";\
+			print "\t\t\t\t<string>AppIcon76x76</string>";\
+			print "\t\t\t</array>";\
+			print "\t\t</dict>";\
+			print "\t</dict>";\
+			s=2}\
 		/<key>UILaunchImages<\/key>/ {\
 			print $$0;\
 			print "\t<array>";\
