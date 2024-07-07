@@ -38,7 +38,7 @@ class Renderer;
 
 struct GameVars {
 private:
-	int32 CurRoom;
+	int32 CurRoom = 0;
 
 public:
 	void setCurRoomId(int32 room) {
@@ -53,9 +53,9 @@ class MeshModifiers;
 class RoomManager;
 
 class WGame {
-	bool g_bReady, g_bActive;
+	bool g_bReady = false, g_bActive = false;
 	//bool g_bSkipActive = false;
-	const char *CharName[32];
+	const char *CharName[32] = {};
 	uint32 LoadChar;
 	MeshModifiers *_meshModifiers;
 
