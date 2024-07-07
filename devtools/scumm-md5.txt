@@ -432,6 +432,7 @@ dig	The Dig
 	362c1d281fb9899254cda66ad246c66a	3472	en	All	Demo	Demo	-	Fingolfin
 	cd9c05e755d7bf8e9b9590ad1ebe273e	45156007	en	Mac	Demo	Demo	Mac bundle	Fingolfin
 	3221ab85c833fbc0e6cf54ad55b4c082	16304	he	DOS	-	-	-	Hebrew fan translation
+	a2ac6b38420db5f4c2225759ac3d8d46	3314	en	DOS	-	Super Sampler Demo	-	Bosca
 
 comi	The Curse of Monkey Island
 	fe60d6b5ff51b0553ac59963123b5777	76791	All	Windows	-	-	-	Fingolfin
