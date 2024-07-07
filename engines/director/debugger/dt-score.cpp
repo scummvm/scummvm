@@ -61,13 +61,13 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 	{
 		ImGui::TableNextColumn();
 
-		float indentSize = 17.0;
+		float indentSize = 17.0f;
 
 		if (mode < kChTempo && modeSel == kModeExtended)
-			indentSize = 10.0;
+			indentSize = 10.0f;
 
 		if (modeSel == kModeExtended && mode == kModeExtended)
-			indentSize = 0.1;
+			indentSize = 0.1f;
 
 		ImGui::Indent(indentSize);
 

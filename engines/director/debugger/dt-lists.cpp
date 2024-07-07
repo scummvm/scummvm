@@ -257,7 +257,7 @@ void showArchive() {
 	ImVec2 pos(40, 40);
 	ImGui::SetNextWindowPos(pos, ImGuiCond_FirstUseEver);
 
-	ImVec2 windowSize = ImGui::GetMainViewport()->Size * 0.8;
+	ImVec2 windowSize = ImGui::GetMainViewport()->Size * 0.8f;
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Archive", &_state->_w.archive)) {
