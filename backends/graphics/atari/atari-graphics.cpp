@@ -345,9 +345,9 @@ OSystem::TransactionError AtariGraphicsManager::endGFXTransaction() {
 	_chunkySurface.init(_pendingState.width, _pendingState.height, _pendingState.width,
 		_chunkySurface.getPixels(), _pendingState.format);
 
-	_screen[FRONT_BUFFER]->reset(_pendingState.width, _pendingState.height, 8);
-	_screen[BACK_BUFFER1]->reset(_pendingState.width, _pendingState.height, 8);
-	_screen[BACK_BUFFER2]->reset(_pendingState.width, _pendingState.height, 8);
+	_screen[FRONT_BUFFER]->reset(_pendingState.width, _pendingState.height, 8, true);
+	_screen[BACK_BUFFER1]->reset(_pendingState.width, _pendingState.height, 8, true);
+	_screen[BACK_BUFFER2]->reset(_pendingState.width, _pendingState.height, 8, true);
 	_workScreen = _screen[_pendingState.mode <= GraphicsMode::SingleBuffering ? FRONT_BUFFER : BACK_BUFFER1];
 
 	s_screenSurf = nullptr;
@@ -360,15 +360,6 @@ OSystem::TransactionError AtariGraphicsManager::endGFXTransaction() {
 
 	_palette.clear();
 	_pendingScreenChange = kPendingScreenChangeMode | kPendingScreenChangeScreen | kPendingScreenChangePalette;
-
-	static bool firstRun = true;
-	if (firstRun) {
-		_cursor.setPosition(getOverlayWidth() / 2, getOverlayHeight() / 2);
-		_cursor.swap();
-		firstRun = false;
-	}
-
-	warpMouse(_pendingState.width / 2, _pendingState.height / 2);
 
 	_currentState = _pendingState;
 
@@ -513,30 +504,29 @@ void AtariGraphicsManager::updateScreen() {
 		_checkUnalignedPitch = false;
 	}
 
-	// updates outOfScreen OR srcRect/dstRect (only if visible/needed)
-	_cursor.update(*lockScreen(), _workScreen->cursorPositionChanged || _workScreen->cursorSurfaceChanged);
+	_workScreen->cursor.update();
 
 	bool screenUpdated = false;
 
 	if (isOverlayVisible()) {
 		assert(_workScreen == _screen[OVERLAY_BUFFER]);
 		if (isOverlayDirectRendering())
-			screenUpdated = updateScreenInternal<true>(Graphics::Surface());
+			screenUpdated = updateScreenInternal(Graphics::Surface());
 		else
-			screenUpdated = updateScreenInternal<false>(_overlaySurface);
+			screenUpdated = updateScreenInternal(_overlaySurface);
 	} else {
 		switch (_currentState.mode) {
 		case GraphicsMode::DirectRendering:
 			assert(_workScreen == _screen[FRONT_BUFFER]);
-			screenUpdated = updateScreenInternal<true>(Graphics::Surface());
+			screenUpdated = updateScreenInternal(Graphics::Surface());
 			break;
 		case GraphicsMode::SingleBuffering:
 			assert(_workScreen == _screen[FRONT_BUFFER]);
-			screenUpdated = updateScreenInternal<false>(_chunkySurface);
+			screenUpdated = updateScreenInternal(_chunkySurface);
 			break;
 		case GraphicsMode::TripleBuffering:
 			assert(_workScreen == _screen[BACK_BUFFER1]);
-			screenUpdated = updateScreenInternal<false>(_chunkySurface);
+			screenUpdated = updateScreenInternal(_chunkySurface);
 			break;
 		}
 	}
@@ -725,21 +715,17 @@ void AtariGraphicsManager::showOverlay(bool inGUI) {
 		return;
 
 	if (_currentState.mode == GraphicsMode::DirectRendering) {
-		// make sure that _oldCursorRect is used to restore the original game graphics
-		// (but only if resolution hasn't changed, see endGFXTransaction())
-		bool wasVisible = showMouse(false);
-
-		// revert back but don't update screen
-		_cursor.visible = wasVisible;
+		_workScreen->cursor.restoreBackground(Graphics::Surface(), true);
 	}
 
-	_cursor.swap();
 	_oldWorkScreen = _workScreen;
 	_workScreen = _screen[OVERLAY_BUFFER];
 
 	// do not cache dirtyRects and oldCursorRect
 	const int bitsPerPixel = getBitsPerPixel(getOverlayFormat());
-	_workScreen->reset(getOverlayWidth(), getOverlayHeight(), bitsPerPixel);
+	static bool resetCursorPosition = true;
+	_workScreen->reset(getOverlayWidth(), getOverlayHeight(), bitsPerPixel, resetCursorPosition);
+	resetCursorPosition = false;
 
 	_pendingScreenChange = kPendingScreenChangeMode | kPendingScreenChangeScreen | kPendingScreenChangePalette;
 
@@ -756,7 +742,6 @@ void AtariGraphicsManager::hideOverlay() {
 
 	_workScreen = _oldWorkScreen;
 	_oldWorkScreen = nullptr;
-	_cursor.swap();
 
 	// FIXME: perhaps there's a better way but this will do for now
 	_checkUnalignedPitch = true;
@@ -886,14 +871,13 @@ void AtariGraphicsManager::copyRectToOverlay(const void *buf, int pitch, int x, 
 bool AtariGraphicsManager::showMouse(bool visible) {
 	//debug("showMouse: %d", visible);
 
-	if (_cursor.visible == visible) {
-		return visible;
+	bool last = _workScreen->cursor.setVisible(visible);
+
+	if (!isOverlayVisible() && _currentState.mode == GraphicsMode::TripleBuffering) {
+		_screen[BACK_BUFFER2]->cursor.setVisible(visible);
+		_screen[FRONT_BUFFER]->cursor.setVisible(visible);
 	}
 
-	bool last = _cursor.visible;
-	_cursor.visible = visible;
-
-	cursorVisibilityChanged();
 	// don't rely on engines to call it (if they don't it confuses the cursor restore logic)
 	updateScreen();
 
@@ -903,8 +887,12 @@ bool AtariGraphicsManager::showMouse(bool visible) {
 void AtariGraphicsManager::warpMouse(int x, int y) {
 	//debug("warpMouse: %d, %d", x, y);
 
-	_cursor.setPosition(x, y);
-	cursorPositionChanged();
+	_workScreen->cursor.setPosition(x, y);
+
+	if (!isOverlayVisible() && _currentState.mode == GraphicsMode::TripleBuffering) {
+		_screen[BACK_BUFFER2]->cursor.setPosition(x, y);
+		_screen[FRONT_BUFFER]->cursor.setPosition(x, y);
+	}
 }
 
 void AtariGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor,
@@ -917,20 +905,33 @@ void AtariGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int h
 	if (format)
 		assert(*format == PIXELFORMAT_CLUT8);
 
-	_cursor.setSurface(buf, (int)w, (int)h, hotspotX, hotspotY, keycolor);
-	cursorSurfaceChanged();
+	_workScreen->cursor.setSurface(buf, (int)w, (int)h, hotspotX, hotspotY, keycolor);
+
+	if (!isOverlayVisible() && _currentState.mode == GraphicsMode::TripleBuffering) {
+		_screen[BACK_BUFFER2]->cursor.setSurface(buf, (int)w, (int)h, hotspotX, hotspotY, keycolor);
+		_screen[FRONT_BUFFER]->cursor.setSurface(buf, (int)w, (int)h, hotspotX, hotspotY, keycolor);
+	}
 }
 
 void AtariGraphicsManager::setCursorPalette(const byte *colors, uint start, uint num) {
 	debug("setCursorPalette: %d, %d", start, num);
 
-	memcpy(&_cursor.palette[start * 3], colors, num * 3);
-	cursorSurfaceChanged();
+	_workScreen->cursor.setPalette(colors, start, num);
+
+	if (!isOverlayVisible() && _currentState.mode == GraphicsMode::TripleBuffering) {
+		// avoid copying the same (shared) palette two more times...
+		_screen[BACK_BUFFER2]->cursor.setPalette(nullptr, 0, 0);
+		_screen[FRONT_BUFFER]->cursor.setPalette(nullptr, 0, 0);
+	}
 }
 
 void AtariGraphicsManager::updateMousePosition(int deltaX, int deltaY) {
-	_cursor.updatePosition(deltaX, deltaY, *lockScreen());
-	cursorPositionChanged();
+	_workScreen->cursor.updatePosition(deltaX, deltaY);
+
+	if (!isOverlayVisible() && _currentState.mode == GraphicsMode::TripleBuffering) {
+		_screen[BACK_BUFFER2]->cursor.updatePosition(deltaX, deltaY);
+		_screen[FRONT_BUFFER]->cursor.updatePosition(deltaX, deltaY);
+	}
 }
 
 bool AtariGraphicsManager::notifyEvent(const Common::Event &event) {
@@ -983,103 +984,38 @@ void AtariGraphicsManager::freeSurfaces() {
 	_overlaySurface.free();
 }
 
-template <bool directRendering>	// hopefully compiler optimizes all the branching out
 bool AtariGraphicsManager::updateScreenInternal(const Graphics::Surface &srcSurface) {
 	//debug("updateScreenInternal");
 
 	const Screen::DirtyRects &dirtyRects = _workScreen->dirtyRects;
 	Graphics::Surface *dstSurface        = _workScreen->offsettedSurf;
-	bool &cursorPositionChanged          = _workScreen->cursorPositionChanged;
-	bool &cursorSurfaceChanged           = _workScreen->cursorSurfaceChanged;
-	bool &cursorVisibilityChanged        = _workScreen->cursorVisibilityChanged;
-	Common::Rect &oldCursorRect          = _workScreen->oldCursorRect;
-	const bool &fullRedraw               = _workScreen->fullRedraw;
+	Cursor &cursor                       = _workScreen->cursor;
 
+	const bool directRendering           = srcSurface.getPixels() == nullptr;
 	const int dstBitsPerPixel            = getBitsPerPixel(dstSurface->format);
 
 	bool updated = false;
 
-	const bool cursorDrawEnabled = !_cursor.outOfScreen && _cursor.visible;
-	bool drawCursor = cursorDrawEnabled
-		&& (cursorPositionChanged || cursorSurfaceChanged || cursorVisibilityChanged || fullRedraw);
-
-	assert(!fullRedraw || oldCursorRect.isEmpty());
-
-	bool restoreCursor = !oldCursorRect.isEmpty()
-		&& (cursorPositionChanged || cursorSurfaceChanged || (cursorVisibilityChanged && !_cursor.visible));
+	const bool cursorDrawEnabled = cursor.isVisible();
+	bool forceCursorDraw = cursorDrawEnabled && (_workScreen->fullRedraw || cursor.isChanged());
 
 	lockSuperBlitter();
 
 	for (auto it = dirtyRects.begin(); it != dirtyRects.end(); ++it) {
-		if (cursorDrawEnabled && !drawCursor)
-			drawCursor = it->intersects(_cursor.dstRect);
+		if (cursorDrawEnabled && !forceCursorDraw)
+			forceCursorDraw = cursor.intersects(*it);
 
 		if (!directRendering) {
 			copyRectToSurface(*dstSurface, dstBitsPerPixel, srcSurface, it->left, it->top, *it);
-			updated = true;
+			updated |= true;
 		}
 	}
 
-	if (restoreCursor) {
-		//debug("Restore cursor: %d %d %d %d", oldCursorRect.left, oldCursorRect.top, oldCursorRect.width(), oldCursorRect.height());
-
-		// always restore aligned oldCursorRect
-		oldCursorRect = alignRect(oldCursorRect);
-
-		if (!directRendering) {
-			copyRectToSurface(
-				*dstSurface, dstBitsPerPixel, srcSurface,
-				oldCursorRect.left, oldCursorRect.top,
-				oldCursorRect);
-		} else {
-			_workScreen->restoreBackground(oldCursorRect);
-		}
-
-		oldCursorRect = Common::Rect();
-
-		updated = true;
-	}
+	updated |= cursor.restoreBackground(srcSurface, false);
 
 	unlockSuperBlitter();
 
-	if (drawCursor) {
-		//debug("Redraw cursor: %d %d %d %d", _cursor.dstRect.left, _cursor.dstRect.top, _cursor.dstRect.width(), _cursor.dstRect.height());
-
-		if (cursorSurfaceChanged || _cursor.isClipped()) {
-			_cursor.convertTo(dstSurface->format);
-			{
-				// copy in-place (will do nothing on regular Surface::copyRectToSurface)
-				Graphics::Surface surf;
-				surf.init(
-					_cursor.surface.w,
-					_cursor.surface.h,
-					_cursor.surface.pitch * dstBitsPerPixel / 8,	// 4bpp is not byte per pixel anymore
-					_cursor.surface.getPixels(),
-					_cursor.surface.format);
-				copyRectToSurface(
-					surf, dstBitsPerPixel, _cursor.surface,
-					0, 0,
-					Common::Rect(_cursor.surface.w, _cursor.surface.h));
-			}
-		}
-
-		if (directRendering)
-			_workScreen->storeBackground(alignRect(_cursor.dstRect));
-
-		// don't use _cursor.srcRect for width as this must be aligned first
-		// (_cursor.surface.w is recalculated thanks to _cursor.isClipped())
-		drawMaskedSprite(
-			*dstSurface, dstBitsPerPixel, _cursor.surface, _cursor.surfaceMask,
-			_cursor.dstRect.left, _cursor.dstRect.top,
-			Common::Rect(0, _cursor.srcRect.top, _cursor.surface.w, _cursor.srcRect.bottom));
-
-		cursorPositionChanged = cursorSurfaceChanged = false;
-		oldCursorRect = _cursor.dstRect;
-
-		updated = true;
-	}
-
-	cursorVisibilityChanged = false;
+	updated |= cursor.draw(directRendering, forceCursorDraw);
 
 	return updated;
 }

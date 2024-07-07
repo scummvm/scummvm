@@ -28,6 +28,8 @@
 #include "common/rect.h"
 #include "graphics/surface.h"
 
+#include "atari-cursor.h"
+
 template<>
 struct std::hash<Common::Rect>
 {
@@ -58,7 +60,7 @@ struct Screen {
 	Screen(AtariGraphicsManager *manager, int width, int height, const Graphics::PixelFormat &format, const Palette *palette);
 	~Screen();
 
-	void reset(int width, int height, int bitsPerPixel);
+	void reset(int width, int height, int bitsPerPixel, bool resetCursorPosition);
 	// must be called before any rectangle drawing
 	void addDirtyRect(const Graphics::Surface &srcSurface, const Common::Rect &rect, bool directRendering);
 
@@ -67,17 +69,13 @@ struct Screen {
 		fullRedraw = false;
 	}
 
-	void storeBackground(const Common::Rect &rect);
-	void restoreBackground(const Common::Rect &rect);
-
 	Graphics::Surface surf;
 	const Palette *palette;
-	bool cursorPositionChanged = true;
-	bool cursorSurfaceChanged = true;
-	bool cursorVisibilityChanged = false;
 	DirtyRects dirtyRects;
 	bool fullRedraw = false;
-	Common::Rect oldCursorRect;
+
+	Cursor cursor;
+
 	int rez = -1;
 	int mode = -1;
 	Graphics::Surface *const offsettedSurf = &_offsettedSurf;
@@ -103,8 +101,6 @@ private:
 	const AtariGraphicsManager *_manager;
 
 	Graphics::Surface _offsettedSurf;
-	// used by direct rendering
-	Graphics::Surface _cursorBackgroundSurf;
 };
 
 #endif // BACKENDS_GRAPHICS_ATARI_SCREEN_H

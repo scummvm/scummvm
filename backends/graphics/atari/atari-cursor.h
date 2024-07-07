@@ -26,51 +26,100 @@
 #include "common/scummsys.h"
 #include "graphics/surface.h"
 
-struct Cursor {
-	void update(const Graphics::Surface &screen, bool isModified);
+class AtariGraphicsManager;
+struct Screen;
 
-	bool visible = false;
+// Global state consists of:
+//	- palette (used for the overlay only atm)
+//	- shape (surface, dimensions, hotspot, keycolor)
+//	- visibility
+// These always get updates by ScummVM, no need to differentiate between engines and the overlay.
+
+struct Cursor {
+	Cursor(AtariGraphicsManager *manager, Screen *screen)
+		: _manager(manager)
+		, _parentScreen(screen) {
+	}
+
+	void reset() {
+		_positionChanged = true;
+		_surfaceChanged = true;
+		_visibilityChanged = false;
+
+		_savedRect = Common::Rect();
+	}
+
+	// updates outOfScreen OR srcRect/dstRect (only if visible/needed)
+	void update();
+
+	// visibility
+	bool setVisible(bool visible) {
+		if (_visible == visible) {
+			return _visible;
+		}
+
+		bool last = _visible;
+
+		_visible = visible;
+
+		_visibilityChanged = true;
+
+		return last;
+	}
 
 	// position
 	Common::Point getPosition() const {
 		return Common::Point(_x, _y);
 	}
 	void setPosition(int x, int y) {
+		if (_x == x && _y == y)
+			return;
+
 		_x = x;
 		_y = y;
-	}
-	void updatePosition(int deltaX, int deltaY, const Graphics::Surface &screen);
-	void swap() {
-		const int tmpX = _oldX;
-		const int tmpY = _oldY;
 
-		_oldX = _x;
-		_oldY = _y;
-
-		_x = tmpX;
-		_y = tmpY;
+		_positionChanged = true;
 	}
+	void updatePosition(int deltaX, int deltaY);
 
 	// surface
 	void setSurface(const void *buf, int w, int h, int hotspotX, int hotspotY, uint32 keycolor);
+	void setPalette(const byte *colors, uint start, uint num);
 	void convertTo(const Graphics::PixelFormat &format);
-	Graphics::Surface surface;
-	Graphics::Surface surfaceMask;
 
-	// rects (valid only if !outOfScreen)
-	bool isClipped() const {
-		return outOfScreen ? false : _width != srcRect.width();
+	bool isVisible() const {
+		return !_outOfScreen && _visible;
 	}
-	bool outOfScreen = true;
-	Common::Rect srcRect;
-	Common::Rect dstRect;
+	bool isChanged() const {
+		return _positionChanged || _surfaceChanged || _visibilityChanged;
+	}
 
-	// palette (only used for the overlay)
-	byte palette[256*3] = {};
+	bool intersects(const Common::Rect &rect) const {
+		return rect.intersects(_dstRect);
+	}
+
+	void flushBackground(const Graphics::Surface &srcSurface, const Common::Rect &rect);
+	bool restoreBackground(const Graphics::Surface &srcSurface, bool force);
+	bool draw(bool directRendering, bool force);
 
 private:
+	static byte _palette[256*3];
+
+	AtariGraphicsManager *_manager;
+	Screen *_parentScreen;
+
+	bool _positionChanged = true;
+	bool _surfaceChanged = true;
+	bool _visibilityChanged = false;
+
+	bool _visible = false;
 	int _x = -1, _y = -1;
-	int _oldX = -1, _oldY = -1;
+	bool _outOfScreen = true;
+	Common::Rect _srcRect;
+	Common::Rect _dstRect;
+
+	Graphics::Surface _savedBackground;	// used by direct rendering
+	Common::Rect _savedRect;
 
 	// related to 'surface'
 	const byte *_buf = nullptr;
@@ -80,6 +129,8 @@ private:
 	int _hotspotY;
 	uint32 _keycolor;
 
+	Graphics::Surface _surface;
+	Graphics::Surface _surfaceMask;
 	int _rShift, _gShift, _bShift;
 	int _rMask, _gMask, _bMask;
 };

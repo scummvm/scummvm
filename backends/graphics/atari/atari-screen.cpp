@@ -23,13 +23,12 @@
 
 #include <mint/falcon.h>
 
-#include "graphics/blit.h"
-
 #include "atari-graphics.h"
 #include "atari-graphics-superblitter.h"
 
 Screen::Screen(AtariGraphicsManager *manager, int width, int height, const Graphics::PixelFormat &format, const Palette *palette_)
 	: _manager(manager)
+	, cursor(manager, this)
 	, palette(palette_) {
 	const AtariGraphicsManager::AtariMemAlloc &allocFunc = _manager->getStRamAllocFunc();
 
@@ -64,12 +63,11 @@ Screen::~Screen() {
 	freeFunc((void *)*((uintptr *)surf.getPixels() - 1));
 }
 
-void Screen::reset(int width, int height, int bitsPerPixel) {
-	cursorPositionChanged = true;
-	cursorSurfaceChanged = true;
-	cursorVisibilityChanged = false;
+void Screen::reset(int width, int height, int bitsPerPixel, bool resetCursorPosition) {
 	clearDirtyRects();
-	oldCursorRect = Common::Rect();
+	cursor.reset();
+	if (resetCursorPosition)
+		cursor.setPosition(width / 2, height / 2);
 	rez = -1;
 	mode = -1;
 
@@ -147,62 +145,13 @@ void Screen::addDirtyRect(const Graphics::Surface &srcSurface, const Common::Rec
 		dirtyRects.clear();
 		dirtyRects.emplace(srcSurface.w, srcSurface.h);
 
-		oldCursorRect = Common::Rect();
+		cursor.reset();
 
 		fullRedraw = true;
-		return;
+	} else {
+		dirtyRects.insert(rect);
+
+		// do it now to avoid checking in AtariGraphicsManager::updateScreenInternal()
+		cursor.flushBackground(directRendering ? Graphics::Surface() : srcSurface, rect);
 	}
-
-	dirtyRects.insert(rect);
-
-	if (!oldCursorRect.isEmpty()) {
-		const Common::Rect alignedOldCursorRect = _manager->alignRect(oldCursorRect);
-
-		// we have to check *aligned* oldCursorRect because it is background which gets copied,
-		// i.e. it has to be up to date even outside the cursor rectangle.
-		// do it now to avoid complex checking in updateScreenInternal()
-		if (rect.contains(alignedOldCursorRect)) {
-			oldCursorRect = Common::Rect();
-		} else if (rect.intersects(alignedOldCursorRect)) {
-			if (!directRendering) {
-				_manager->copyRectToSurface(
-					*offsettedSurf, _manager->getBitsPerPixel(offsettedSurf->format), srcSurface,
-					alignedOldCursorRect.left, alignedOldCursorRect.top,
-					alignedOldCursorRect);
-			} else {
-				restoreBackground(alignedOldCursorRect);
-			}
-
-			oldCursorRect = Common::Rect();
-		}
-	}
-}
-
-void Screen::storeBackground(const Common::Rect &rect) {
-	const int bitsPerPixel = _manager->getBitsPerPixel(offsettedSurf->format);
-
-	if (_cursorBackgroundSurf.w != rect.width()
-		|| _cursorBackgroundSurf.h != rect.height()
-		|| _cursorBackgroundSurf.format != offsettedSurf->format) {
-		_cursorBackgroundSurf.create(rect.width(), rect.height(), offsettedSurf->format);
-		_cursorBackgroundSurf.pitch = _cursorBackgroundSurf.pitch * bitsPerPixel / 8;
-	}
-
-	Graphics::copyBlit(
-		(byte *)_cursorBackgroundSurf.getPixels(),
-		(const byte *)offsettedSurf->getPixels() + rect.top * offsettedSurf->pitch + rect.left * bitsPerPixel / 8,
-		_cursorBackgroundSurf.pitch, offsettedSurf->pitch,
-		rect.width() * bitsPerPixel / 8, rect.height(),	// fake 4bpp by 8bpp's width/2
-		offsettedSurf->format.bytesPerPixel);
-}
-
-void Screen::restoreBackground(const Common::Rect &rect) {
-	const int bitsPerPixel = _manager->getBitsPerPixel(offsettedSurf->format);
-
-	Graphics::copyBlit(
-		(byte *)offsettedSurf->getPixels() + rect.top * offsettedSurf->pitch + rect.left * bitsPerPixel / 8,
-		(const byte *)_cursorBackgroundSurf.getPixels(),
-		offsettedSurf->pitch, _cursorBackgroundSurf.pitch,
-		rect.width() * bitsPerPixel / 8, rect.height(),	// fake 4bpp by 8bpp's width/2
-		offsettedSurf->format.bytesPerPixel);
 }

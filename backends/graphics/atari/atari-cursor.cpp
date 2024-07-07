@@ -23,44 +23,56 @@
 
 #include <cassert>
 
+#include "graphics/blit.h"
+
+#include "atari-graphics.h"
+#include "atari-screen.h"
+
 extern bool g_unalignedPitch;
 
-void Cursor::update(const Graphics::Surface &screen, bool isModified) {
+byte Cursor::_palette[256*3] = {};
+
+void Cursor::update() {
 	if (!_buf) {
-		outOfScreen = true;
+		_outOfScreen = true;
 		return;
 	}
 
-	if (!visible || !isModified)
+	if (!_visible || (!_positionChanged && !_surfaceChanged))
 		return;
 
-	srcRect = Common::Rect(_width, _height);
+	_srcRect = Common::Rect(_width, _height);
 
-	dstRect = Common::Rect(
+	_dstRect = Common::Rect(
 		_x - _hotspotX,	// left
 		_y - _hotspotY,	// top
 		_x - _hotspotX + _width,	// right
 		_y - _hotspotY + _height);	// bottom
 
-	outOfScreen = !screen.clip(srcRect, dstRect);
+	_outOfScreen = !_parentScreen->offsettedSurf->clip(_srcRect, _dstRect);
 
-	assert(srcRect.width() == dstRect.width());
-	assert(srcRect.height() == dstRect.height());
+	assert(_srcRect.width() == _dstRect.width());
+	assert(_srcRect.height() == _dstRect.height());
 }
 
-void Cursor::updatePosition(int deltaX, int deltaY, const Graphics::Surface &screen) {
+void Cursor::updatePosition(int deltaX, int deltaY) {
+	if (deltaX == 0 && deltaY == 0)
+		return;
+
 	_x += deltaX;
 	_y += deltaY;
 
 	if (_x < 0)
 		_x = 0;
-	else if (_x >= screen.w)
-		_x = screen.w - 1;
+	else if (_x >= _parentScreen->offsettedSurf->w)
+		_x = _parentScreen->offsettedSurf->w - 1;
 
 	if (_y < 0)
 		_y = 0;
-	else if (_y >= screen.h)
-		_y = screen.h - 1;
+	else if (_y >= _parentScreen->offsettedSurf->h)
+		_y = _parentScreen->offsettedSurf->h - 1;
+
+	_positionChanged = true;
 }
 
 void Cursor::setSurface(const void *buf, int w, int h, int hotspotX, int hotspotY, uint32 keycolor) {
@@ -75,15 +87,24 @@ void Cursor::setSurface(const void *buf, int w, int h, int hotspotX, int hotspot
 	_hotspotX = hotspotX;
 	_hotspotY = hotspotY;
 	_keycolor = keycolor;
+
+	_surfaceChanged = true;
+}
+
+void Cursor::setPalette(const byte *colors, uint start, uint num) {
+	if (colors)
+		memcpy(&_palette[start * 3], colors, num * 3);
+
+	_surfaceChanged = true;
 }
 
 void Cursor::convertTo(const Graphics::PixelFormat &format) {
-	const int cursorWidth = (srcRect.width() + 15) & (-16);
+	const int cursorWidth = (_srcRect.width() + 15) & (-16);
 	const int cursorHeight = _height;
 	const bool isCLUT8 = format.isCLUT8();
 
-	if (surface.w != cursorWidth || surface.h != cursorHeight || surface.format != format) {
-		if (!isCLUT8 && surface.format != format) {
+	if (_surface.w != cursorWidth || _surface.h != cursorHeight || _surface.format != format) {
+		if (!isCLUT8 && _surface.format != format) {
 			_rShift = format.rLoss - format.rShift;
 			_gShift = format.gLoss - format.gShift;
 			_bShift = format.bLoss - format.bShift;
@@ -93,21 +114,21 @@ void Cursor::convertTo(const Graphics::PixelFormat &format) {
 			_bMask = format.bMax() << format.bShift;
 		}
 
-		surface.create(cursorWidth, cursorHeight, format);
+		_surface.create(cursorWidth, cursorHeight, format);
 
 		const bool old_unalignedPitch = g_unalignedPitch;
 		g_unalignedPitch = true;
-		surfaceMask.create(surface.w / 8, surface.h, format);	// 1 bpl
+		_surfaceMask.create(_surface.w / 8, _surface.h, format);	// 1 bpl
 		g_unalignedPitch = old_unalignedPitch;
 	}
 
-	const int srcRectWidth = srcRect.width();
+	const int srcRectWidth = _srcRect.width();
 
-	const byte *src = _buf + srcRect.left;
-	byte *dst = (byte *)surface.getPixels();
-	uint16 *dstMask = (uint16 *)surfaceMask.getPixels();
+	const byte *src = _buf + _srcRect.left;
+	byte *dst = (byte *)_surface.getPixels();
+	uint16 *dstMask = (uint16 *)_surfaceMask.getPixels();
 	const int srcPadding = _width - srcRectWidth;
-	const int dstPadding = surface.w - srcRectWidth;
+	const int dstPadding = _surface.w - srcRectWidth;
 
 	for (int j = 0; j < cursorHeight; ++j) {
 		for (int i = 0; i < srcRectWidth; ++i) {
@@ -117,9 +138,9 @@ void Cursor::convertTo(const Graphics::PixelFormat &format) {
 			if (color != _keycolor) {
 				if (!isCLUT8) {
 					// Convert CLUT8 to RGB332/RGB121 palette
-					*dst++ = ((palette[color*3 + 0] >> _rShift) & _rMask)
-						   | ((palette[color*3 + 1] >> _gShift) & _gMask)
-						   | ((palette[color*3 + 2] >> _bShift) & _bMask);
+					*dst++ = ((_palette[color*3 + 0] >> _rShift) & _rMask)
+						   | ((_palette[color*3 + 1] >> _gShift) & _gMask)
+						   | ((_palette[color*3 + 2] >> _bShift) & _bMask);
 				} else {
 					*dst++ = color;
 				}
@@ -147,4 +168,107 @@ void Cursor::convertTo(const Graphics::PixelFormat &format) {
 			dstMask++;
 		}
 	}
+}
+
+void Cursor::flushBackground(const Graphics::Surface &srcSurface, const Common::Rect &rect) {
+	if (_savedRect.isEmpty())
+		return;
+
+	if (rect.contains(_savedRect)) {
+		_savedRect = Common::Rect();
+	} else if (rect.intersects(_savedRect)) {
+		restoreBackground(srcSurface, true);
+	}
+}
+
+bool Cursor::restoreBackground(const Graphics::Surface &srcSurface, bool force) {
+	if (_savedRect.isEmpty() || (!force && !isChanged()))
+		return false;
+
+	Graphics::Surface &dstSurface = *_parentScreen->offsettedSurf;
+	const int dstBitsPerPixel     = _manager->getBitsPerPixel(dstSurface.format);
+
+	//debug("Cursor::restoreBackground: %d %d %d %d", _savedRect.left, _savedRect.top, _savedRect.width(), _savedRect.height());
+
+	if (srcSurface.getPixels()) {
+		_manager->copyRectToSurface(
+			dstSurface, dstBitsPerPixel, srcSurface,
+			_savedRect.left, _savedRect.top,
+			_savedRect);
+	} else {
+		const int bytesPerPixel = dstSurface.format.bytesPerPixel;
+
+		// restore native pixels (i.e. bitplanes)
+		Graphics::copyBlit(
+			(byte *)dstSurface.getPixels() + _savedRect.top * dstSurface.pitch + _savedRect.left * dstBitsPerPixel / 8,
+			(const byte *)_savedBackground.getPixels(),
+			dstSurface.pitch, _savedBackground.pitch,
+			_savedRect.width() * dstBitsPerPixel / 8, _savedRect.height(),	// fake 4bpp by 8bpp's width/2
+			bytesPerPixel);
+	}
+
+	_savedRect = Common::Rect();
+	return true;
+}
+
+bool Cursor::draw(bool directRendering, bool force) {
+	if (!isVisible() || (!force && !isChanged())) {
+		 _visibilityChanged = _positionChanged = _surfaceChanged = false;
+		return false;
+	}
+
+	Graphics::Surface &dstSurface = *_parentScreen->offsettedSurf;
+	const int dstBitsPerPixel     = _manager->getBitsPerPixel(dstSurface.format);
+
+	//debug("Cursor::draw: %d %d %d %d", _dstRect.left, _dstRect.top, _dstRect.width(), _dstRect.height());
+
+	// always work with aligned rect
+	_savedRect = _manager->alignRect(_dstRect);
+
+	if (_surfaceChanged || _width != _srcRect.width()) {
+		// TODO: check for change, not just different width so it's not called over and over again ...
+		// TODO: some sort of in-place C2P directly into convertTo() ...
+		convertTo(dstSurface.format);
+		{
+			// c2p in-place (will do nothing on regular Surface::copyRectToSurface)
+			Graphics::Surface surf;
+			surf.init(
+				_surface.w,
+				_surface.h,
+				_surface.pitch * dstBitsPerPixel / 8,	// 4bpp is not byte per pixel anymore
+				_surface.getPixels(),
+				_surface.format);
+			_manager->copyRectToSurface(
+				surf, dstBitsPerPixel, _surface,
+				0, 0,
+				Common::Rect(_surface.w, _surface.h));
+		}
+	}
+
+	if (directRendering) {
+		// store native pixels (i.e. bitplanes)
+		if (_savedBackground.w != _savedRect.width()
+			|| _savedBackground.h != _savedRect.height()
+			|| _savedBackground.format != dstSurface.format) {
+			_savedBackground.create(_savedRect.width(), _savedRect.height(), dstSurface.format);
+			_savedBackground.pitch = _savedBackground.pitch * dstBitsPerPixel / 8;
+		}
+
+		Graphics::copyBlit(
+			(byte *)_savedBackground.getPixels(),
+			(const byte *)dstSurface.getPixels() + _savedRect.top * dstSurface.pitch + _savedRect.left * dstBitsPerPixel / 8,
+			_savedBackground.pitch, dstSurface.pitch,
+			_savedRect.width() * dstBitsPerPixel / 8, _savedRect.height(),	// fake 4bpp by 8bpp's width/2
+			dstSurface.format.bytesPerPixel);
+	}
+
+	// don't use _srcRect.right as 'x2' as this must be aligned first
+	// (_surface.w is recalculated thanks to convertTo())
+	_manager->drawMaskedSprite(
+		dstSurface, dstBitsPerPixel, _surface, _surfaceMask,
+		_dstRect.left, _dstRect.top,
+		Common::Rect(0, _srcRect.top, _surface.w, _srcRect.bottom));
+
+	_visibilityChanged = _positionChanged = _surfaceChanged = false;
+	return true;
 }

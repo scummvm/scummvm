@@ -37,6 +37,7 @@
 #define MAX_V_SHAKE  16
 
 class AtariGraphicsManager : public GraphicsManager, Common::EventObserver {
+	friend class Cursor;
 	friend class Screen;
 
 public:
@@ -97,7 +98,7 @@ public:
 						bool dontScale = false, const Graphics::PixelFormat *format = NULL, const byte *mask = NULL) override;
 	void setCursorPalette(const byte *colors, uint start, uint num) override;
 
-	Common::Point getMousePosition() const { return _cursor.getPosition(); }
+	Common::Point getMousePosition() const { return _workScreen->cursor.getPosition(); }
 	void updateMousePosition(int deltaX, int deltaY);
 
 	bool notifyEvent(const Common::Event &event) override;
@@ -118,7 +119,6 @@ private:
 	int16 getMaximumScreenHeight() const { return 480; }
 	int16 getMaximumScreenWidth() const { return _tt ? 320 : (_vgaMonitor ? 640 : 640*1.2); }
 
-	template <bool directRendering>
 	bool updateScreenInternal(const Graphics::Surface &srcSurface);
 
 	void copyRectToScreenInternal(const void *buf, int pitch, int x, int y, int w, int h,
@@ -150,39 +150,6 @@ private:
 
 	Common::Rect alignRect(const Common::Rect &rect) const {
 		return alignRect(rect.left, rect.top, rect.width(), rect.height());
-	}
-
-	void cursorPositionChanged() {
-		if (_overlayVisible) {
-			_screen[OVERLAY_BUFFER]->cursorPositionChanged = true;
-		} else {
-			_screen[FRONT_BUFFER]->cursorPositionChanged
-				= _screen[BACK_BUFFER1]->cursorPositionChanged
-				= _screen[BACK_BUFFER2]->cursorPositionChanged
-				= true;
-		}
-	}
-
-	void cursorSurfaceChanged() {
-		if (_overlayVisible) {
-			_screen[OVERLAY_BUFFER]->cursorSurfaceChanged = true;
-		} else {
-			_screen[FRONT_BUFFER]->cursorSurfaceChanged
-				= _screen[BACK_BUFFER1]->cursorSurfaceChanged
-				= _screen[BACK_BUFFER2]->cursorSurfaceChanged
-				= true;
-		}
-	}
-
-	void cursorVisibilityChanged() {
-		if (_overlayVisible) {
-			_screen[OVERLAY_BUFFER]->cursorVisibilityChanged = true;
-		} else {
-			_screen[FRONT_BUFFER]->cursorVisibilityChanged
-				= _screen[BACK_BUFFER1]->cursorVisibilityChanged
-				= _screen[BACK_BUFFER2]->cursorVisibilityChanged
-				= true;
-		}
 	}
 
 	int getOverlayPaletteSize() const {
@@ -243,8 +210,6 @@ private:
 
 	bool _overlayVisible = false;
 	Graphics::Surface _overlaySurface;
-
-	Cursor _cursor;
 
 	Palette _palette;
 	Palette _overlayPalette;
