@@ -694,6 +694,7 @@ airport	Let's Explore the Airport with Buzzy
 	e144f5f49d9241d2a9dee2576b3d09cb	51152	en	Windows	-	Demo	-	khalek
 	86c9902b7bec1a17926d4dae85beaa45	51131	en	Windows	HE 71	Demo	-	khalek
 	3c90d2a39cafa60b8ebce70a34a59a41	51152	nl	Windows	-	Demo	-	Ben Castricum
+	44ec2ceab5eb103e37b25264e3a86271	78063	en	Windows	HE 71	Early Version	-	PaulPfenning
 
 farm	Let's Explore the Farm with Buzzy
 	f4357cf21ba59889d6d5bcc431140238	-1	en	Windows	-	-	-	MrEightThreeOne
