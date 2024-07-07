@@ -353,6 +353,7 @@ int main(int argc, char *argv[]) {
 	if (!getFeatureBuildState("opengl", setup.features)) {
 		setFeatureBuildState("opengl_game_classic", setup.features, false);
 		setFeatureBuildState("opengl_game_shaders", setup.features, false);
+	}
 
 	// HACK: Check IMGUI dependencies
 	if (!getFeatureBuildState("opengl", setup.features) ||
