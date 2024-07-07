@@ -110,17 +110,6 @@ protected:
 	int16 _gameIsInteractiveGlobal; // used to decide if the game can start a "meanwhile" sequence
 	int16 _sceneOpcode15FromScene;
 	int16 _sceneOpcode15ToScene;
-	// HoC
-	int16 _unk39;
-	int16 _unk40;
-	int16 _unk45;
-	int16 _unk51;
-	int16 _unk52;
-	int16 _unk54;
-	// Beamish
-	int16 _unk2;
-	int16 _unk5;
-	int16 _unk81;
 
 	Common::Array<Global *> _globals;
 };
@@ -151,6 +140,35 @@ private:
 	int16 _arcadeModeState;
 	int16 _opcode106EndMinutes;
 	DragonDataTable _table;
+
+	Common::Error syncState(Common::Serializer &s) override;
+};
+
+class HocGlobals : public Globals {
+public:
+	HocGlobals(Clock &clock);
+
+private:
+	// HoC-specific globals
+	int16 _unk39;
+	int16 _unk40;
+	int16 _unk45;
+	int16 _unk51;
+	int16 _unk52;
+	int16 _unk54;
+
+	Common::Error syncState(Common::Serializer &s) override;
+};
+
+class WillyGlobals : public Globals {
+public:
+	WillyGlobals(Clock &clock);
+
+private:
+	// Willy-specific globals
+	int16 _unk2;
+	int16 _unk5;
+	int16 _unk81;
 
 	Common::Error syncState(Common::Serializer &s) override;
 };

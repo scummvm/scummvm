@@ -317,8 +317,7 @@ void DgdsEngine::loadGameFiles() {
 		reqParser.parse(&vcrRequestData, "DVCR.REQ");
 		break;
 	case GID_HOC:
-		// TODO: Create a better type for this..
-		_gameGlobals = new Globals(_clock);
+		_gameGlobals = new HocGlobals(_clock);
 		_gamePals->loadPalette("HOC.PAL");
 		_gdsScene->load("HOC.GDS", _resource, _decompressor);
 		_rstFileName = "HOC.RST";
@@ -330,8 +329,7 @@ void DgdsEngine::loadGameFiles() {
 		reqParser.parse(&vcrRequestData, "HVCR.REQ");
 		break;
 	case GID_WILLY:
-		// TODO: Create a better type for this..
-		_gameGlobals = new Globals(_clock);
+		_gameGlobals = new WillyGlobals(_clock);
 		if (_resource->hasResource("WILLY.GDS")) {
 			_gdsScene->load("WILLY.GDS", _resource, _decompressor);
 			_rstFileName = "WILLY.RST";
