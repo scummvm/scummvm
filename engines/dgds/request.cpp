@@ -790,7 +790,7 @@ void RequestData::fillBackground(Graphics::ManagedSurface *dst, uint16 x, uint16
 		}
 	} else {
 		byte bgCol = DragonFallbackColors[0];
-		if (engine->getGameId() == GID_CHINA)
+		if (engine->getGameId() == GID_HOC)
 			bgCol = ChinaBakgroundColor;
 		dst->fillRect(Common::Rect(Common::Point(x, y), width, height), bgCol);
 	}
