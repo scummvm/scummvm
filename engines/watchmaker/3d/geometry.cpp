@@ -1610,7 +1610,7 @@ void t3dLightCharacter(t3dCHARACTER *Ch) {
 	for (j = 0; j < mesh->NumVerts; j++, gv++)
 		gv->diffuse = amb;
 
-	auto light = Ch->CurRoom->LightTable[0];
+	const auto &light = Ch->CurRoom->LightTable[0];
 	if (light.Type & T3D_LIGHT_ALLLIGHTSOFF) {
 		mesh->VBptr = nullptr;
 		return;
