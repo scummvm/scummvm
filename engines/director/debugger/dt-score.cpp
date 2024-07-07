@@ -223,7 +223,7 @@ void showScore() {
 			ImGui::BeginChild("Image", ImVec2(200.0f, 70.0f));
 
 			if (castMember || shape) {
-				ImGuiImage imgID;
+				ImGuiImage imgID = {};
 
 				if (castMember)
 					imgID = getImageID(castMember);
