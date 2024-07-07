@@ -268,7 +268,7 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 				continue;
 
 			distance = object->_boundingBox.distance(centerPlanar);
-			if (distance.length() > 0)
+			if (distance.length() > 0.0001)
 				continue;
 
 			if (planar->getSize().x() == 0) {
