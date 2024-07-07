@@ -344,13 +344,15 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 			break;
 		case QDSCR_GAME_TITLE:
 			game_title_ = it->data();
-			debug("Game title: '%s', id: %d", transCyrillic(game_title_.c_str()), it->origID());
+			debug("> Game title: '%s', id: %d", transCyrillic(game_title_.c_str()), it->origID());
 			break;
 		case QDSCR_TEXT_DB:
 			texts_database_ = it->data();
+			debug("> Text db: '%s', id: %d", transCyrillic(texts_database_.c_str()), it->origID());
 			break;
 		case QDSCR_CD_KEY:
 			cd_key_ = it->data();
+			debug("> CD key: '%s', id: %d", transCyrillic(cd_key_.c_str()), it->origID());
 			break;
 		case QDSCR_STARTUP_SCENE:
 			set_startup_scene(it->data());
@@ -3474,4 +3476,3 @@ bool qdGameDispatcher::update_hall_of_fame_names() {
 }
 
 } // namespace QDEngine
-
