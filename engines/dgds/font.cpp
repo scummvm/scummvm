@@ -253,11 +253,11 @@ void FontManager::loadFonts(DgdsGameId gameId, ResourceManager *resMgr, Decompre
 			tryLoadFont("DRAGON.FNT", resMgr, decomp);
 			tryLoadFont("7X8.FNT", resMgr, decomp);
 			tryLoadFont("P6X6.FNT", resMgr, decomp);
-		} else if (gameId == GID_CHINA) {
+		} else if (gameId == GID_HOC) {
 			tryLoadFont("HOC.FNT", resMgr, decomp);
 			tryLoadFont("CHINA.FNT", resMgr, decomp);
 			tryLoadFont("CHINESE.FNT", resMgr, decomp);
-		} else if (gameId == GID_BEAMISH) {
+		} else if (gameId == GID_WILLY) {
 			tryLoadFont("WILLY.FNT", resMgr, decomp);
 			tryLoadFont("WVCR.FNT", resMgr, decomp);
 			tryLoadFont("COMIX_16.FNT", resMgr, decomp);

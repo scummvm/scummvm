@@ -86,7 +86,7 @@ void Inventory::setRequestData(const REQFileData &data) {
 	_fullWidth = req._rect.width;
 
 	// TODO! Beamish doesn't have a zoom box, or it's a different ID?
-	if (static_cast<DgdsEngine *>(g_engine)->getGameId() == GID_BEAMISH)
+	if (static_cast<DgdsEngine *>(g_engine)->getGameId() == GID_WILLY)
 		_itemZoomBox = _itemBox;
 
 	if (!_prevPageBtn || !_nextPageBtn || !_itemZoomBox || !_exitButton || !_itemArea)

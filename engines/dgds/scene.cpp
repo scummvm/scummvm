@@ -745,10 +745,10 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 *
 			case GID_DRAGON:
 				keepGoing = runDragonOp(op);
 				break;
-			case GID_CHINA:
+			case GID_HOC:
 				keepGoing = runChinaOp(op);
 				break;
-			case GID_BEAMISH:
+			case GID_WILLY:
 				keepGoing = runBeamishOp(op);
 				break;
 			default:

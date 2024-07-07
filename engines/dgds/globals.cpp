@@ -83,7 +83,7 @@ _sceneOpcode15ToScene(0), _unk2(0), _unk5(0), _unk39(0), _unk40(0), _unk45(0), _
 	_globals.push_back(new RWI16Global(0x55, &_sceneOpcode15FromScene));
 	_globals.push_back(new RWI16Global(0x54, &_sceneOpcode15ToScene));
 
-	if (gameId == GID_CHINA) {
+	if (gameId == GID_HOC) {
 		_globals.push_back(new RWI16Global(0x36, &_unk54));
 		_globals.push_back(new RWI16Global(0x34, &_unk52));
 		_globals.push_back(new RWI16Global(0x33, &_unk51));
@@ -92,7 +92,7 @@ _sceneOpcode15ToScene(0), _unk2(0), _unk5(0), _unk39(0), _unk40(0), _unk45(0), _
 		_globals.push_back(new RWI16Global(0x27, &_unk39));
 	}
 
-	if (gameId == GID_BEAMISH) {
+	if (gameId == GID_WILLY) {
 		_globals.push_back(new RWI16Global(0x51, &_unk81));
 		_globals.push_back(new RWI16Global(0x05, &_unk5));
 		_globals.push_back(new RWI16Global(0x02, &_unk2));

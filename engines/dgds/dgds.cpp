@@ -87,9 +87,9 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	if (!strcmp(gameDesc->gameId, "rise"))
 		_gameId = GID_DRAGON;
 	else if (!strcmp(gameDesc->gameId, "china"))
-		_gameId = GID_CHINA;
+		_gameId = GID_HOC;
 	else if (!strcmp(gameDesc->gameId, "beamish"))
-		_gameId = GID_BEAMISH;
+		_gameId = GID_WILLY;
 	else if (!strcmp(gameDesc->gameId, "sq5demo"))
 		_gameId = GID_SQ5DEMO;
 	else if (!strcmp(gameDesc->gameId, "comingattractions"))
@@ -318,7 +318,7 @@ void DgdsEngine::loadGameFiles() {
 		reqParser.parse(&invRequestData, "DINV.REQ");
 		reqParser.parse(&vcrRequestData, "DVCR.REQ");
 		break;
-	case GID_CHINA:
+	case GID_HOC:
 		// TODO: Create a better type for this..
 		_gameGlobals = new Globals(_clock);
 		_gamePals->loadPalette("HOC.PAL");
@@ -331,7 +331,7 @@ void DgdsEngine::loadGameFiles() {
 		reqParser.parse(&invRequestData, "HINV.REQ");
 		reqParser.parse(&vcrRequestData, "HVCR.REQ");
 		break;
-	case GID_BEAMISH:
+	case GID_WILLY:
 		// TODO: Create a better type for this..
 		_gameGlobals = new Globals(_clock);
 		if (_resource->hasResource("WILLY.GDS")) {

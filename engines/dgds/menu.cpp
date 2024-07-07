@@ -413,7 +413,6 @@ void Menu::handleClick(const Common::Point &mouse) {
 }
 
 void Menu::handleClickOptionsMenu(const Common::Point &mouse) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	Gadget *gadget = getClickedMenuItem(mouse);
 	int16 clickedMenuItem = gadget->_gadgetNo;
 
@@ -447,9 +446,9 @@ void Menu::handleClickSkipPlayIntroMenu(const Common::Point &mouse) {
 		break;
 	case kMenuIntroJumpToIntroduction:
 		hideMenu();
-		if (engine->getGameId() == GID_CHINA)
+		if (engine->getGameId() == GID_HOC)
 			engine->changeScene(98);
-		else if (engine->getGameId() == GID_BEAMISH)
+		else if (engine->getGameId() == GID_WILLY)
 			engine->changeScene(24);
 		break;
 	case kMenuIntroJumpToGame:
