@@ -39,7 +39,7 @@
 
 namespace Watchmaker {
 
-Rect gBlitterExtends;
+Common::Rect gBlitterExtends;
 int gStencilBitDepth;
 
 unsigned int CurLoaderFlags;
@@ -101,14 +101,14 @@ void rGetExtends(int *x1, int *y1, int *x2, int *y2) {
 
 //************************************************************************************************************************
 void rResetExtends() {
-	gBlitterExtends.left = 99999999;
-	gBlitterExtends.top = 99999999;
-	gBlitterExtends.right = -99999999;
-	gBlitterExtends.bottom = -99999999;
+	gBlitterExtends.left = SHRT_MAX;
+	gBlitterExtends.top = SHRT_MAX;
+	gBlitterExtends.right = SHRT_MIN;
+	gBlitterExtends.bottom = SHRT_MIN;
 }
 
 // TODO: Move this to Renderer
-extern Rect gBlitterViewport;
+extern Common::Rect gBlitterViewport;
 bool gClipToBlitterViewport(int *sposx, int *sposy, int *sdimx, int *sdimy,
                             int *dposx, int *dposy) {
 	int dwWidth, dwHeight;
@@ -141,7 +141,7 @@ bool gClipToBlitterViewport(int *sposx, int *sposy, int *sdimx, int *sdimy,
 	return true;
 }
 
-void renderTexture(WGame &game, gTexture &bitmap, Rect srcRect, Rect dstRect) {
+void renderTexture(WGame &game, gTexture &bitmap, Common::Rect srcRect, Common::Rect dstRect) {
 	checkGlError("Entering renderTexture");
 	glClearColor(0, 0, 1, 0);
 	glEnable(GL_TEXTURE_2D);
@@ -160,7 +160,7 @@ void renderTexture(WGame &game, gTexture &bitmap, Rect srcRect, Rect dstRect) {
 	float leftSrc = ((float)srcRect.left) / bitmap.RealDimX;
 	float rightSrc = ((float)srcRect.right) / bitmap.RealDimX;
 
-	Rect viewport = game._renderer->_viewport;
+	Common::Rect viewport = game._renderer->_viewport;
 	float bottomDst = 1.0 - ((dstRect.bottom == 0 ? 0 : ((double)dstRect.bottom) / viewport.height()) * 2.0);
 	float topDst = 1.0 - ((dstRect.top == 0 ? 0 : ((double)dstRect.top) / viewport.height()) * 2.0);
 	float leftDst = ((dstRect.left == 0 ? 0 : ((double)dstRect.left) / viewport.width()) * 2.0) - 1.0;
@@ -186,7 +186,7 @@ void renderTexture(WGame &game, gTexture &bitmap, Rect srcRect, Rect dstRect) {
 	checkGlError("Exiting renderTexture");
 }
 
-void gTexture::render(WGame &game, Rect src, Rect dst) {
+void gTexture::render(WGame &game, Common::Rect src, Common::Rect dst) {
 	// Render self
 	if (_texture) {
 		renderTexture(game, *this, src, dst);
@@ -256,14 +256,14 @@ void rBlitter(WGame &game, int dst, int src, int dposx, int dposy,
 	}
 
 	{
-		Rect srcRect;
+		Common::Rect srcRect;
 		// Source rect
 		srcRect.top = sposy;
 		srcRect.left = sposx;
 		srcRect.right = sposx + sdimx;
 		srcRect.bottom = sposy + sdimy;
 
-		Rect dstRect;
+		Common::Rect dstRect;
 		// Destination rect
 		// Convention in dpos is that 0,0 is upper left hand corner, increasing down the y-axis.
 		dstRect.top = dposy;

@@ -51,15 +51,15 @@ struct gTexture {
 		warning("Clearing %d", _blitsOnTop.size());
 		_blitsOnTop.clear();
 	}
-	void render(WGame &game, Rect src, Rect dst);
-	void blitInto(gTexture *texture, Rect src, Rect dst) {
+	void render(WGame &game, Common::Rect src, Common::Rect dst);
+	void blitInto(gTexture *texture, Common::Rect src, Common::Rect dst) {
 		_blitsOnTop.push_back({texture, src, dst});
 	}
 private:
 	struct Blit {
 		gTexture *texture;
-		Rect src;
-		Rect dst;
+		Common::Rect src;
+		Common::Rect dst;
 	};
 	Common::Array<Blit> _blitsOnTop;
 };
