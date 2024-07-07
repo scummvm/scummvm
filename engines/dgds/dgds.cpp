@@ -158,9 +158,7 @@ bool DgdsEngine::changeScene(int sceneNum) {
 		return false;
 	}
 
-	// TODO: For non-dragon games this will need tweaking.
-	DragonGlobals *globals = static_cast<DragonGlobals *>(_gameGlobals);
-	globals->setLastSceneNum(sceneNum);
+	_gameGlobals->setLastSceneNum(sceneNum);
 
 	// Save the current foreground if we are going to the inventory, clear it otherwise.
 	if (sceneNum == 2)
@@ -325,7 +323,7 @@ void DgdsEngine::loadGameFiles() {
 		_gdsScene->load("HOC.GDS", _resource, _decompressor);
 		_rstFileName = "HOC.RST";
 
-		//debug("%s", _gdsScene->dump("").c_str());
+		debug("%s", _gdsScene->dump("").c_str());
 
 		loadCorners("HCORNERS.BMP");
 		reqParser.parse(&invRequestData, "HINV.REQ");

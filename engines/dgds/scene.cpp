@@ -1283,7 +1283,7 @@ void SDSScene::mouseLDown(const Common::Point &pt) {
 			area->_rect.width, area->_rect.height, area->_cursorNum);
 
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	int16 addmins = static_cast<DragonGlobals *>(engine->getGameGlobals())->getGameMinsToAddOnStartDrag();
+	int16 addmins = engine->getGameGlobals()->getGameMinsToAddOnStartDrag();
 	runOps(area->onLDownOps, addmins);
 	GameItem *item = dynamic_cast<GameItem *>(area);
 	if (item) {
@@ -1320,7 +1320,7 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 		engine->getInventory()->open();
 	} else {
 		debug(" --> exec %d click ops for area %d", area->onLClickOps.size(), area->_num);
-		int16 addmins = static_cast<DragonGlobals *>(engine->getGameGlobals())->getGameMinsToAddOnLClick();
+		int16 addmins = engine->getGameGlobals()->getGameMinsToAddOnLClick();
 		runOps(area->onLClickOps, addmins);
 	}
 }
@@ -1340,7 +1340,7 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 	GameItem *dragItem = _dragItem;
 
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	const DragonGlobals *globals = static_cast<DragonGlobals *>(engine->getGameGlobals());
+	const Globals *globals = engine->getGameGlobals();
 
 	runOps(dragItem->onDragFinishedOps, globals->getGameMinsToAddOnDragFinished());
 
@@ -1407,7 +1407,7 @@ void SDSScene::mouseRUp(const Common::Point &pt) {
 		return;
 	}
 
-	int16 addmins = static_cast<DragonGlobals *>(engine->getGameGlobals())->getGameMinsToAddOnLClick();
+	int16 addmins = engine->getGameGlobals()->getGameMinsToAddOnLClick();
 	runOps(area->onRClickOps, addmins);
 }
 
