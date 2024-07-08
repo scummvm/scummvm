@@ -110,7 +110,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 
 	// Клёпа: Символические Заклепки
 	// 2007/10/19. K-D Logic
-	GAME("klepa", "???", 30233418),
+	GAME("klepa", "a09e1f072942d88c06abccfb820f46a9", 20260975),
 
 	// Три маленькие белые мышки. День рождения морской крысы
 	// 2007/12/27. Lazy Games

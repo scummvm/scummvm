@@ -171,7 +171,7 @@ int engineMain() {
 		sp.show();
 	}
 
-	searchTagMap(QDSCR_GAME_TITLE, 182);
+	// searchTagMap(QDSCR_GAME_TITLE, 182);
 
 	Common::String gameID = g_engine->getGameId();
 	if (gameID == "karliknos") {
@@ -191,7 +191,15 @@ int engineMain() {
 	} else if (gameID == "3mice1") {
 		generateTagMap(20060715);		// QDSCR_SCREEN_TRANSFORM = 232
 	} else if (gameID == "shveik") {
-		generateTagMap(20070503);
+		generateTagMap(20070503);		// QDSCR_GAME_TITLE = 231, QDSCR_RESOURCE_COMPRESSION = 243
+	} else if (gameID == "klepa") {
+		generateTagMap(20070503);		// QDSCR_GAME_TITLE = 231, QDSCR_RESOURCE_COMPRESSION = 243
+	} else if (gameID == "3mice2") {
+		generateTagMap(20070503);		// QDSCR_RESOURCE_COMPRESSION = 243
+	} else if (gameID == "dogncat") {
+		generateTagMap(20070503);		// QDSCR_RESOURCE_COMPRESSION = 243
+	} else if (gameID == "dogncat2") {
+		generateTagMap(20070503);		// QDSCR_RESOURCE_COMPRESSION = 243
 	} else {
 		warning("Unprocessed tagMap, switching to shveik");
 

@@ -359,6 +359,7 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 			break;
 		case QDSCR_RESOURCE_COMPRESSION:
 			xml::tag_buffer(*it) > resource_compression_;
+			debug("> Resource compression: '%d', id: %d", resource_compression_, it->origID());
 			break;
 		case QDSCR_CD:
 			set_CD_info(xml::tag_buffer(*it).get_uint());
