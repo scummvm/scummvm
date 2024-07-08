@@ -98,9 +98,9 @@ public:
 	WFNError ReadFromFile(AGS::Shared::Stream *in, const soff_t data_size = 0);
 
 protected:
-	Std::vector<const WFNChar *> _refs;      // reference array, contains pointers to elements of _items
-	Std::vector<WFNChar>        _items;     // actual character items
-	Std::vector<uint8_t>        _pixelData; // pixel data array
+	std::vector<const WFNChar *> _refs;      // reference array, contains pointers to elements of _items
+	std::vector<WFNChar>        _items;     // actual character items
+	std::vector<uint8_t>        _pixelData; // pixel data array
 };
 
 } // namespace AGS3

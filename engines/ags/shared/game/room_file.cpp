@@ -487,7 +487,7 @@ HRoomFileError ReadRoomData(RoomStruct *room, Stream *in, RoomFileVersion data_v
 		new RoomFileError(kRoomFileErr_BlockListFailed, err);
 }
 
-HRoomFileError UpdateRoomData(RoomStruct *room, RoomFileVersion data_ver, bool game_is_hires, const Std::vector<SpriteInfo> &sprinfos) {
+HRoomFileError UpdateRoomData(RoomStruct *room, RoomFileVersion data_ver, bool game_is_hires, const std::vector<SpriteInfo> &sprinfos) {
 	if (data_ver < kRoomVersion_200_final)
 		room->MaskResolution = room->BgFrames[0].Graphic->GetWidth() > 320 ? kRoomHiRes : kRoomLoRes;
 	if (data_ver < kRoomVersion_3508) {

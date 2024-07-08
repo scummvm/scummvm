@@ -226,7 +226,7 @@ int RoomStruct::GetRegionTintLuminance(int id) const {
 	return 0;
 }
 
-void load_room(const String &filename, RoomStruct *room, bool game_is_hires, const Std::vector<SpriteInfo> &sprinfos) {
+void load_room(const String &filename, RoomStruct *room, bool game_is_hires, const std::vector<SpriteInfo> &sprinfos) {
 	room->Free();
 	room->InitDefaults();
 

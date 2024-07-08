@@ -382,7 +382,7 @@ static void update_all_viewcams_with_newroom() {
 // from the room file itself.
 HError LoadRoomScript(RoomStruct *room, int newnum) {
 	String filename = String::FromFormat("room%d.o", newnum);
-	Std::unique_ptr<Stream> in(_GP(AssetMgr)->OpenAsset(filename));
+	std::unique_ptr<Stream> in(_GP(AssetMgr)->OpenAsset(filename));
 	if (in) {
 		PScript script(ccScript::CreateFromStream(in.get()));
 		if (!script)
@@ -896,7 +896,7 @@ void new_room(int newnum, CharacterInfo *forchar) {
 
 void set_room_placeholder() {
 	_GP(thisroom).InitDefaults();
-	Std::shared_ptr<Bitmap> dummy_bg(new Bitmap(1, 1, 8));
+	std::shared_ptr<Bitmap> dummy_bg(new Bitmap(1, 1, 8));
 	_GP(thisroom).BgFrames[0].Graphic = dummy_bg;
 	_GP(thisroom).HotspotMask = dummy_bg;
 	_GP(thisroom).RegionMask = dummy_bg;

@@ -1088,7 +1088,7 @@ int Character_GetAnimationVolume(CharacterInfo *chaa) {
 
 void Character_SetAnimationVolume(CharacterInfo *chaa, int newval) {
 
-	_GP(charextra)[chaa->index_id].anim_volume = Std::min(newval, 100); // negative means default
+	_GP(charextra)[chaa->index_id].anim_volume = std::min(newval, 100); // negative means default
 }
 
 int Character_GetBaseline(CharacterInfo *chaa) {
@@ -2100,7 +2100,7 @@ int GetCharacterFrameVolume(CharacterInfo * chi) {
 		if (zoom_level <= 0)
 			zoom_level = 100;
 		else
-			zoom_level = Std::min(zoom_level, 100);
+			zoom_level = std::min(zoom_level, 100);
 		frame_vol = frame_vol * zoom_level / 100;
 	}
 	return frame_vol;
@@ -2335,7 +2335,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 	_GP(play).speech_in_post_state = false;
 
 	if (isPause) {
-		postpone_scheduled_music_update_by(Std::chrono::milliseconds(_GP(play).messagetime * 1000 / _G(frames_per_second)));
+		postpone_scheduled_music_update_by(std::chrono::milliseconds(_GP(play).messagetime * 1000 / _G(frames_per_second)));
 		// Set a post-state right away, as we only need to wait for a messagetime timer
 		_GP(play).speech_in_post_state = true;
 		GameLoopUntilValueIsNegative(&_GP(play).messagetime);

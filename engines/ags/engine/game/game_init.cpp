@@ -287,7 +287,7 @@ void LoadFonts(GameSetupStruct &game, GameDataVersion data_ver) {
 }
 
 void LoadLipsyncData() {
-	Std::unique_ptr<Stream> speechsync(_GP(AssetMgr)->OpenAsset("syncdata.dat", "voice"));
+	std::unique_ptr<Stream> speechsync(_GP(AssetMgr)->OpenAsset("syncdata.dat", "voice"));
 	if (!speechsync)
 		return;
 	// this game has voice lip sync
@@ -360,12 +360,12 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	_GP(charextra).resize(game.numcharacters);
 	_GP(mls).resize(game.numcharacters + MAX_ROOM_OBJECTS + 1);
 	init_game_drawdata();
-	_GP(views) = Std::move(ents.Views);
+	_GP(views) = std::move(ents.Views);
 
 	_GP(play).charProps.resize(game.numcharacters);
-	_G(dialog) = Std::move(ents.Dialogs);
-	_G(old_dialog_scripts) = Std::move(ents.OldDialogScripts);
-	_G(old_speech_lines) = Std::move(ents.OldSpeechLines);
+	_G(dialog) = std::move(ents.Dialogs);
+	_G(old_dialog_scripts) = std::move(ents.OldDialogScripts);
+	_G(old_speech_lines) = std::move(ents.OldSpeechLines);
 	_G(old_dialog_scripts) = ents.OldDialogScripts;
 	_G(old_speech_lines) = ents.OldSpeechLines;
 

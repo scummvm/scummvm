@@ -124,7 +124,7 @@ bool MemoryStream::Seek(soff_t offset, StreamSeek origin) {
 		return false;
 	}
 	_pos = static_cast<size_t>(MAX<soff_t>(0, pos));
-	_pos = Std::min(_len, _pos); // clamp to EOS
+	_pos = std::min(_len, _pos); // clamp to EOS
 	return true;
 }
 
@@ -152,12 +152,12 @@ int32_t MemoryStream::WriteByte(uint8_t val) {
 }
 
 
-VectorStream::VectorStream(const Std::vector<uint8_t> &cbuf, DataEndianess stream_endianess)
+VectorStream::VectorStream(const std::vector<uint8_t> &cbuf, DataEndianess stream_endianess)
 	: MemoryStream(&cbuf.front(), cbuf.size(), stream_endianess)
 	, _vec(nullptr) {
 }
 
-VectorStream::VectorStream(Std::vector<uint8_t> &buf, StreamWorkMode mode, DataEndianess stream_endianess)
+VectorStream::VectorStream(std::vector<uint8_t> &buf, StreamWorkMode mode, DataEndianess stream_endianess)
 	: MemoryStream(((mode == kStream_Read) && (buf.size() > 0)) ? &buf.front() : nullptr, buf.size(), mode, stream_endianess)
 	, _vec(&buf) {
 }

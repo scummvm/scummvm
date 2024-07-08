@@ -118,7 +118,7 @@ void        newmusic(int mnum);
 
 extern void cancel_scheduled_music_update();
 extern void schedule_music_update_at(AGS_Clock::time_point);
-extern void postpone_scheduled_music_update_by(Std::chrono::milliseconds);
+extern void postpone_scheduled_music_update_by(std::chrono::milliseconds);
 
 } // namespace AGS3
 

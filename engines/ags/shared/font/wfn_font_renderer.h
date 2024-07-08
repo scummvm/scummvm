@@ -63,7 +63,7 @@ private:
 		WFNFont *Font;
 		FontRenderParams Params;
 	};
-	Std::map<int, FontData> _fontData;
+	std::map<int, FontData> _fontData;
 };
 
 } // namespace AGS3

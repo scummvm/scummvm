@@ -57,16 +57,16 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 // Test if engine supports extended capabilities required to run the game
-bool test_game_caps(const Std::set<String> &caps, Std::set<String> &failed_caps) {
+bool test_game_caps(const std::set<String> &caps, std::set<String> &failed_caps) {
 	// Currently we support nothing special
 	failed_caps = caps;
 	return caps.size() == 0;
 }
 
 // Forms a simple list of capability names
-String get_caps_list(const Std::set<String> &caps) {
+String get_caps_list(const std::set<String> &caps) {
 	String caps_list;
-	for (Std::set<String>::const_iterator it = caps.begin(); it != caps.end(); ++it) {
+	for (std::set<String>::const_iterator it = caps.begin(); it != caps.end(); ++it) {
 		caps_list.Append("\n\t");
 		caps_list.Append(*it);
 	}
@@ -95,7 +95,7 @@ HGameFileError game_file_first_open(MainGameSource &src) {
 		return err;
 
 	// Test the extended caps
-	Std::set<String> failed_caps;
+	std::set<String> failed_caps;
 	if (!test_game_caps(src.Caps, failed_caps)) {
 		String caps_list = get_caps_list(failed_caps);
 		return new MainGameFileError(kMGFErr_CapsNotSupported, String::FromFormat("Missing engine caps: %s", caps_list.GetCStr()));
@@ -127,7 +127,7 @@ static inline HError MakeScriptLoadError(const char *name) {
 // in the already loaded game data.
 HError LoadGameScripts(LoadedGameEntities &ents) {
 	// Global script
-	Std::unique_ptr<Stream> in(_GP(AssetMgr)->OpenAsset("GlobalScript.o"));
+	std::unique_ptr<Stream> in(_GP(AssetMgr)->OpenAsset("GlobalScript.o"));
 	if (in) {
 		PScript script(ccScript::CreateFromStream(in.get()));
 		if (!script)
@@ -144,7 +144,7 @@ HError LoadGameScripts(LoadedGameEntities &ents) {
 	}
 	// Script modules
 	// First load a modules list
-	Std::vector<String> modules;
+	std::vector<String> modules;
 	in.reset(_GP(AssetMgr)->OpenAsset("ScriptModules.lst"));
 	if (in) {
 		TextStreamReader reader(in.get());

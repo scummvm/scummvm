@@ -144,7 +144,7 @@ bool ShouldAntiAliasText();
 
 // SplitLines class represents a list of lines and is meant to reduce
 // subsequent memory (de)allocations if used often during game loops
-// and drawing. For that reason it is not equivalent to Std::vector,
+// and drawing. For that reason it is not equivalent to std::vector,
 // but keeps constructed String buffers intact for most time.
 // TODO: implement proper strings pool.
 class SplitLines {
@@ -171,10 +171,10 @@ public:
 	}
 
 	// An auxiliary line processing buffer
-	Std::vector<char> LineBuf;
+	std::vector<char> LineBuf;
 
 private:
-	Std::vector<Shared::String> _pool;
+	std::vector<Shared::String> _pool;
 	size_t _count; // actual number of lines in use
 };
 

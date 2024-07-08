@@ -55,7 +55,7 @@ public:
 
 private:
 	const size_t    _bufferLimit;
-	Std::vector<DebugMessage> _buffer;
+	std::vector<DebugMessage> _buffer;
 	size_t          _msgLost;
 };
 

@@ -129,7 +129,7 @@ static int mouse_button_poll() {
 	int result = _G(mouse_button_state) | _G(mouse_accum_button_state);
 	if (now >= _G(mouse_clear_at_time)) {
 		_G(mouse_accum_button_state) = 0;
-		_G(mouse_clear_at_time) = now + Std::chrono::milliseconds(50);
+		_G(mouse_clear_at_time) = now + std::chrono::milliseconds(50);
 	}
 	return result;
 }

@@ -83,7 +83,7 @@ inline bool AssertGameContent(HSaveError &err, int game_val, int sav_val, const 
 }
 
 template<typename TObject>
-inline bool AssertAndCopyGameContent(const Std::vector<TObject> &old_list, Std::vector<TObject> &new_list,
+inline bool AssertAndCopyGameContent(const std::vector<TObject> &old_list, std::vector<TObject> &new_list,
 									 HSaveError &err, const char *content_name, bool warn_only = false) {
 	if (!AssertGameContent(err, old_list.size(), new_list.size(), content_name, warn_only))
 		return false;
@@ -254,13 +254,13 @@ static HSaveError restore_game_gui(Stream *in) {
 	// (could be unintentional side effect). Here we emulate this for
 	// upgraded games by letting read **less** data from saves, and copying
 	// missing elements from reserved game data.
-	const Std::vector<GUIMain> res_guis = Std::move(_GP(guis));
-	const Std::vector<GUIButton> res_guibuts = Std::move(_GP(guibuts));
-	const Std::vector<GUIInvWindow> res_guiinv = Std::move(_GP(guiinv));
-	const Std::vector<GUILabel> res_guilabels = Std::move(_GP(guilabels));
-	const Std::vector<GUIListBox> res_guilist = Std::move(_GP(guilist));
-	const Std::vector<GUISlider> res_guislider = Std::move(_GP(guislider));
-	const Std::vector<GUITextBox> res_guitext = Std::move(_GP(guitext));
+	const std::vector<GUIMain> res_guis = std::move(_GP(guis));
+	const std::vector<GUIButton> res_guibuts = std::move(_GP(guibuts));
+	const std::vector<GUIInvWindow> res_guiinv = std::move(_GP(guiinv));
+	const std::vector<GUILabel> res_guilabels = std::move(_GP(guilabels));
+	const std::vector<GUIListBox> res_guilist = std::move(_GP(guilist));
+	const std::vector<GUISlider> res_guislider = std::move(_GP(guislider));
+	const std::vector<GUITextBox> res_guitext = std::move(_GP(guitext));
 
 	HError guierr = GUI::ReadGUI(in, true);
 	if (!guierr)
@@ -319,7 +319,7 @@ static void restore_game_ambientsounds(Stream *in, RestoredData &r_data) {
 	}
 }
 
-static void ReadOverlays_Aligned(Stream *in, Std::vector<bool> &has_bitmap, size_t num_overs) {
+static void ReadOverlays_Aligned(Stream *in, std::vector<bool> &has_bitmap, size_t num_overs) {
 	AlignedStream align_s(in, Shared::kAligned_Read);
 	has_bitmap.resize(num_overs);
 	for (size_t i = 0; i < num_overs; ++i) {
@@ -333,7 +333,7 @@ static void ReadOverlays_Aligned(Stream *in, Std::vector<bool> &has_bitmap, size
 static void restore_game_overlays(Stream *in) {
 	size_t num_overs = in->ReadInt32();
 	_GP(screenover).resize(num_overs);
-	Std::vector<bool> has_bitmap;
+	std::vector<bool> has_bitmap;
 	ReadOverlays_Aligned(in, has_bitmap, num_overs);
 	for (size_t i = 0; i < num_overs; ++i) {
 		if (has_bitmap[i])
@@ -463,7 +463,7 @@ HSaveError restore_save_data_v321(Stream *in, GameDataVersion data_ver, const Pr
 	ccScript *compsc = _GP(game).compiled_script;
 	CharacterInfo *chwas = _GP(game).chars;
 	WordsDictionary *olddict = _GP(game).dict;
-	Std::vector<String> mesbk(MAXGLOBALMES);
+	std::vector<String> mesbk(MAXGLOBALMES);
 	for (size_t i = 0; i < MAXGLOBALMES; ++i)
 		mesbk[i] = _GP(game).messages[i];
 

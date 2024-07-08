@@ -105,9 +105,9 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
-typedef Std::vector<String> StringV;
-typedef Std::unordered_map<String, String> StringMap;
-typedef Std::unordered_map<String, String, IgnoreCase_Hash, IgnoreCase_EqualTo> StringIMap;
+typedef std::vector<String> StringV;
+typedef std::unordered_map<String, String> StringMap;
+typedef std::unordered_map<String, String, IgnoreCase_Hash, IgnoreCase_EqualTo> StringIMap;
 
 } // namespace Shared
 } // namespace AGS

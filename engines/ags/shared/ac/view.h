@@ -58,7 +58,7 @@ struct ViewFrame {
 struct ViewLoopNew {
 	int numFrames;
 	int   flags;
-	Std::vector<ViewFrame> frames;
+	std::vector<ViewFrame> frames;
 	// NOTE: we still need numFrames for backward compatibility:
 	// some older versions could allocate extra frame(s) for safety,
 	// but have to report "logical" number of frames for the engine API.
@@ -75,7 +75,7 @@ struct ViewLoopNew {
 
 struct ViewStruct {
 	int numLoops;
-	Std::vector<ViewLoopNew> loops;
+	std::vector<ViewLoopNew> loops;
 
 	ViewStruct();
 	void Initialize(int loopCount);
@@ -94,7 +94,7 @@ struct ViewStruct272 {
 	void ReadFromFile(Shared::Stream *in);
 };
 
-extern void Convert272ViewsToNew(const Std::vector<ViewStruct272> &oldv, Std::vector<ViewStruct> &newv);
+extern void Convert272ViewsToNew(const std::vector<ViewStruct272> &oldv, std::vector<ViewStruct> &newv);
 
 } // namespace AGS3
 

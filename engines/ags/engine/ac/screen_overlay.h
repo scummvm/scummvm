@@ -120,7 +120,7 @@ struct ScreenOverlay {
 private:
 	int _flags = 0; // OverlayFlags
 	bool _hasChanged = false;
-	Std::shared_ptr<Shared::Bitmap> _pic; // owned bitmap
+	std::shared_ptr<Shared::Bitmap> _pic; // owned bitmap
 	int _sprnum = -1; // sprite reference
 };
 

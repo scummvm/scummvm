@@ -36,8 +36,8 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
-typedef Std::map<String, String>         StringOrderMap;
-typedef Std::map<String, StringOrderMap> ConfigTree;
+typedef std::map<String, String>         StringOrderMap;
+typedef std::map<String, StringOrderMap> ConfigTree;
 
 //
 // Helper functions for parsing values in a ConfigTree

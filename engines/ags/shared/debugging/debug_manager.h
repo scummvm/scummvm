@@ -97,13 +97,13 @@ private:
 	bool            _enabled;
 	MessageType     _defaultVerbosity;
 	// Set of permitted groups' numeric IDs
-	Std::vector<MessageType> _groupFilter;
+	std::vector<MessageType> _groupFilter;
 	// Set of unresolved groups, which numeric IDs are not yet known
-	typedef Std::unordered_map<String, MessageType, IgnoreCase_Hash, IgnoreCase_EqualTo> GroupNameToMTMap;
+	typedef std::unordered_map<String, MessageType, IgnoreCase_Hash, IgnoreCase_EqualTo> GroupNameToMTMap;
 	GroupNameToMTMap _unresolvedGroups;
 };
 
-typedef Std::shared_ptr<DebugOutput> PDebugOutput;
+typedef std::shared_ptr<DebugOutput> PDebugOutput;
 
 
 class DebugManager {
@@ -147,9 +147,9 @@ private:
 		}
 	};
 
-	typedef Std::vector<DebugGroup> GroupVector;
-	typedef Std::unordered_map<String, DebugGroupID, IgnoreCase_Hash, IgnoreCase_EqualTo> GroupByStringMap;
-	typedef Std::unordered_map<String, OutputSlot, IgnoreCase_Hash, IgnoreCase_EqualTo> OutMap;
+	typedef std::vector<DebugGroup> GroupVector;
+	typedef std::unordered_map<String, DebugGroupID, IgnoreCase_Hash, IgnoreCase_EqualTo> GroupByStringMap;
+	typedef std::unordered_map<String, OutputSlot, IgnoreCase_Hash, IgnoreCase_EqualTo> OutMap;
 
 	void RegisterGroup(const DebugGroup &id);
 	void SendMessage(OutputSlot &out, const DebugMessage &msg);

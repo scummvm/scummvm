@@ -124,7 +124,7 @@ public:
 	// Gets child control's global ID, looks up with child's index
 	int32_t GetControlID(int32_t index) const;
 	// Gets an array of child control indexes in the z-order, from bottom to top
-	const Std::vector<int> &GetControlsDrawOrder() const;
+	const std::vector<int> &GetControlsDrawOrder() const;
 
 	// Child control management
 	// Note that currently GUIMain does not own controls (should not delete them)
@@ -205,12 +205,12 @@ private:
 
 	// Array of types and control indexes in global GUI object arrays;
 	// maps GUI child slots to actual controls and used for rebuilding Controls array
-	typedef Std::pair<GUIControlType, int32_t> ControlRef;
-	Std::vector<ControlRef> _ctrlRefs;
+	typedef std::pair<GUIControlType, int32_t> ControlRef;
+	std::vector<ControlRef> _ctrlRefs;
 	// Array of child control references (not exclusively owned!)
-	Std::vector<GUIObject *> _controls;
+	std::vector<GUIObject *> _controls;
 	// Sorted array of controls in z-order.
-	Std::vector<int>         _ctrlDrawOrder;
+	std::vector<int>         _ctrlDrawOrder;
 };
 
 

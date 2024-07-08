@@ -552,7 +552,7 @@ static void stop_voice_clip_impl() {
 	_GP(play).music_master_volume = _GP(play).music_vol_was;
 	// update the music in a bit (fixes two speeches follow each other
 	// and music going up-then-down)
-	schedule_music_update_at(AGS_Clock::now() + Std::chrono::milliseconds(500));
+	schedule_music_update_at(AGS_Clock::now() + std::chrono::milliseconds(500));
 	stop_and_destroy_channel(SCHAN_SPEECH);
 }
 

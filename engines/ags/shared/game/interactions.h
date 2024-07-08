@@ -90,7 +90,7 @@ struct InteractionValue {
 
 
 struct InteractionCommandList;
-typedef Std::unique_ptr<InteractionCommandList> UInterCmdList;
+typedef std::unique_ptr<InteractionCommandList> UInterCmdList;
 
 // InteractionCommand represents a single command (action), an item of Command List
 struct InteractionCommand {
@@ -116,7 +116,7 @@ struct InteractionCommand {
 };
 
 
-typedef Std::vector<InteractionCommand> InterCmdVector;
+typedef std::vector<InteractionCommand> InterCmdVector;
 // InteractionCommandList represents a list of commands (actions) that need to be
 // performed on particular game event
 struct InteractionCommandList {
@@ -132,7 +132,7 @@ struct InteractionCommandList {
 	void Write_v321(Stream *out) const;
 
 protected:
-	void Read_Aligned(Shared::Stream *in, Std::vector<bool> &cmd_children);
+	void Read_Aligned(Shared::Stream *in, std::vector<bool> &cmd_children);
 	void Write_Aligned(Shared::Stream *out) const;
 };
 
@@ -149,7 +149,7 @@ struct InteractionEvent {
 	InteractionEvent &operator = (const InteractionEvent &ic);
 };
 
-typedef Std::vector<InteractionEvent> InterEvtVector;
+typedef std::vector<InteractionEvent> InterEvtVector;
 // Interaction is the list of events and responses for a game or game object
 struct Interaction {
 	// The first few event types depend on the item - ID's of 100+ are
@@ -178,7 +178,7 @@ struct Interaction {
 	Interaction &operator =(const Interaction &inter);
 };
 
-typedef Std::shared_ptr<Interaction> PInteraction;
+typedef std::shared_ptr<Interaction> PInteraction;
 
 
 // Legacy pre-3.0 kind of global and local room variables
@@ -194,7 +194,7 @@ struct InteractionVariable {
 	void Write(Stream *out) const;
 };
 
-typedef Std::vector<InteractionVariable> InterVarVector;
+typedef std::vector<InteractionVariable> InterVarVector;
 
 
 // A list of script function names for all supported events
@@ -204,7 +204,7 @@ struct InteractionScripts {
 	static InteractionScripts *CreateFromStream(Stream *in);
 };
 
-typedef Std::shared_ptr<InteractionScripts> PInteractionScripts;
+typedef std::shared_ptr<InteractionScripts> PInteractionScripts;
 
 } // namespace Shared
 } // namespace AGS

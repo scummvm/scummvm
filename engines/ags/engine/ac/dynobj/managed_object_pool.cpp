@@ -230,7 +230,7 @@ void ManagedObjectPool::WriteToDisk(Stream *out) {
 	// use this opportunity to clean up any non-referenced pointers
 	RunGarbageCollection();
 
-	Std::vector<char> serializeBuffer;
+	std::vector<char> serializeBuffer;
 	serializeBuffer.resize(SERIALIZE_BUFFER_SIZE);
 
 	out->WriteInt32(OBJECT_CACHE_MAGIC_NUMBER);
@@ -278,7 +278,7 @@ int ManagedObjectPool::ReadFromDisk(Stream *in, ICCObjectReader *reader) {
 	}
 
 	char typeNameBuffer[200];
-	Std::vector<char> serializeBuffer;
+	std::vector<char> serializeBuffer;
 	serializeBuffer.resize(SERIALIZE_BUFFER_SIZE);
 
 	auto version = in->ReadInt32();

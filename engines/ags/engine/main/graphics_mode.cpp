@@ -214,7 +214,7 @@ bool try_init_compatible_mode(const DisplayMode &dm) {
 		Debug::Printf("Maximal allowed window size: %d x %d", device_size.Width, device_size.Height);
 	DisplayMode dm_compat = dm;
 
-	Std::unique_ptr<IGfxModeList> modes(_G(gfxDriver)->GetSupportedModeList(dm.ColorDepth));
+	std::unique_ptr<IGfxModeList> modes(_G(gfxDriver)->GetSupportedModeList(dm.ColorDepth));
 
 	// Windowed mode
 	if (dm.IsWindowed()) {

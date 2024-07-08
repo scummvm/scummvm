@@ -76,7 +76,7 @@ public:
 			return PGfxFilter();
 		}
 
-		Std::shared_ptr<TGfxFilterClass> filter(CreateFilter(id));
+		std::shared_ptr<TGfxFilterClass> filter(CreateFilter(id));
 		if (!filter) {
 			filter_error = "Filter does not exist";
 			return PGfxFilter();

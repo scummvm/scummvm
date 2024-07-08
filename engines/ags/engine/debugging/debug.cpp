@@ -73,7 +73,7 @@ IAGSEditorDebugger *GetEditorDebugger(const char * /*instanceToken*/) {
 
 #endif
 
-void send_message_to_debugger(const Std::vector<Std::pair<String, String> > &tag_values, const String &command) {
+void send_message_to_debugger(const std::vector<std::pair<String, String> > &tag_values, const String &command) {
 	String messageToSend = String::FromFormat(R"(<?xml version=" 1.0 " encoding=" Windows - 1252 "?><Debugger Command=" % s ">)", command.GetCStr());
 #if AGS_PLATFORM_OS_WINDOWS
 	messageToSend.Append(String::FromFormat("  <EngineWindow>%d</EngineWindow> ", (int)sys_win_get_window()));
@@ -118,8 +118,8 @@ PDebugOutput create_log_output(const String &name, const String &path = "", LogF
 }
 
 // Parses a string where each character defines a single log group; returns list of real group names.
-Std::vector<String> parse_log_multigroup(const String &group_str) {
-	Std::vector<String> grplist;
+std::vector<String> parse_log_multigroup(const String &group_str) {
+	std::vector<String> grplist;
 	for (size_t i = 0; i < group_str.GetLength(); ++i) {
 		switch (group_str[i]) {
 		case 'm':
@@ -157,11 +157,11 @@ MessageType get_messagetype_from_string(const String &mt) {
 	return kDbgMsg_None;
 }
 
-typedef Std::pair<CommonDebugGroup, MessageType> DbgGroupOption;
+typedef std::pair<CommonDebugGroup, MessageType> DbgGroupOption;
 
 void apply_log_config(const ConfigTree &cfg, const String &log_id,
                       bool def_enabled,
-                      Std::initializer_list<DbgGroupOption> def_opts) {
+                      std::initializer_list<DbgGroupOption> def_opts) {
 	String value = CfgReadString(cfg, "log", log_id);
 	if (value.IsEmpty() && !def_enabled)
 		return;
@@ -337,7 +337,7 @@ bool send_state_to_debugger(const String& msg, const String& errorMsg) {
 	if (callStack.IsEmpty())
 		return false;
 
-	Std::vector<Std::pair<String, String>> script_info = {{"ScriptState", callStack}};
+	std::vector<std::pair<String, String>> script_info = {{"ScriptState", callStack}};
 
 	if (!errorMsg.IsEmpty()) {
 		script_info.emplace_back("ErrorMessage", errorMsg);

@@ -76,9 +76,9 @@ private:
 	int objectCreationCounter;  // used to do garbage collection every so often
 
 	int32_t nextHandle{}; // TODO: manage nextHandle's going over INT32_MAX !
-	Std::queue<int32_t> available_ids;
-	Std::vector<ManagedObject> objects;
-	Std::unordered_map<const char *, int32_t, Pointer_Hash> handleByAddress;
+	std::queue<int32_t> available_ids;
+	std::vector<ManagedObject> objects;
+	std::unordered_map<const char *, int32_t, Pointer_Hash> handleByAddress;
 
 	void Init(int32_t theHandle, const char *theAddress, ICCDynamicObject *theCallback, ScriptValueType objType);
 	int Remove(ManagedObject &o, bool force = false);

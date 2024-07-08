@@ -43,7 +43,7 @@ class Stream;
 using namespace AGS; // FIXME later
 
 // A pair of managed handle and abstract object pointer
-typedef Std::pair<int32_t, void *> DynObjectRef;
+typedef std::pair<int32_t, void *> DynObjectRef;
 
 
 // OBJECT-BASED SCRIPTING RUNTIME FUNCTIONS

@@ -59,7 +59,7 @@ BufferedStream::~BufferedStream() {
 void BufferedStream::FillBufferFromPosition(soff_t position) {
 	FileStream::Seek(position, kSeekBegin);
 	// remember to restrict to the end position!
-	size_t fill_size = Std::min(BufferSize, static_cast<size_t>(_end - position));
+	size_t fill_size = std::min(BufferSize, static_cast<size_t>(_end - position));
 	_buffer.resize(fill_size);
 	auto sz = FileStream::Read(_buffer.data(), fill_size);
 	_buffer.resize(sz);
@@ -106,7 +106,7 @@ size_t BufferedStream::Read(void *buffer, size_t size) {
 	if (size >= BufferSize) {
 		FileStream::Seek(_position, kSeekBegin);
 		// remember to restrict to the end position!
-		size_t fill_size = Std::min(size, static_cast<size_t>(_end - _position));
+		size_t fill_size = std::min(size, static_cast<size_t>(_end - _position));
 		size_t sz = FileStream::Read(buffer, fill_size);
 		_position += sz;
 		return sz;
@@ -154,7 +154,7 @@ size_t BufferedStream::Write(const void *buffer, size_t size) {
 			FlushBuffer(_position);
 		}
 		size_t pos_in_buff = static_cast<size_t>(_position - _bufferPosition);
-		size_t chunk_sz = Std::min(size, BufferSize - pos_in_buff);
+		size_t chunk_sz = std::min(size, BufferSize - pos_in_buff);
 		if (_buffer.size() < pos_in_buff + chunk_sz)
 			_buffer.resize(pos_in_buff + chunk_sz);
 		memcpy(_buffer.data() + pos_in_buff, from, chunk_sz);
@@ -163,7 +163,7 @@ size_t BufferedStream::Write(const void *buffer, size_t size) {
 		size -= chunk_sz;
 	}
 
-	_end = Std::max(_end, _position);
+	_end = std::max(_end, _position);
 	return from - static_cast<const uint8_t*>(buffer);
 
 }

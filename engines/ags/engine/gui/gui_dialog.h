@@ -48,7 +48,7 @@ void preparesavegamelist(int ctrllist);
 void enterstringwindow(const char *prompttext, char *stouse);
 int  enternumberwindow(char *prompttext);
 int  roomSelectorWindow(int currentRoom, int numRooms,
-	const Std::vector<int> &roomNumbers, const Std::vector<AGS::Shared::String> &roomNames);
+	const std::vector<int> &roomNumbers, const std::vector<AGS::Shared::String> &roomNames);
 int  myscimessagebox(const char *lpprompt, char *btn1, char *btn2);
 int  quitdialog();
 

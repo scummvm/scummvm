@@ -61,17 +61,17 @@ enum RoomStatSvgVersion {
 struct RoomStatus {
 	int   beenhere = 0;
 	uint32_t numobj = 0;
-	Std::vector<RoomObject> obj;
+	std::vector<RoomObject> obj;
 	uint32_t tsdatasize = 0;
-	Std::vector<char> tsdata;
+	std::vector<char> tsdata;
 	Interaction intrHotspot[MAX_ROOM_HOTSPOTS];
-	Std::vector<Interaction> intrObject;
+	std::vector<Interaction> intrObject;
 	Interaction intrRegion[MAX_ROOM_REGIONS];
 	Interaction intrRoom;
 
 	Shared::StringIMap roomProps;
 	Shared::StringIMap hsProps[MAX_ROOM_HOTSPOTS];
-	Std::vector<Shared::StringIMap> objProps;
+	std::vector<Shared::StringIMap> objProps;
 	HotspotState hotspot[MAX_ROOM_HOTSPOTS];
 	int8  region_enabled[MAX_ROOM_REGIONS];
 	short walkbehind_base[MAX_WALK_BEHINDS];

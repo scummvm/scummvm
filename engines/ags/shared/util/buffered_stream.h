@@ -42,7 +42,7 @@ public:
 	// Needs tuning depending on the platform.
 	static const size_t BufferSize = 1024u * 8;
 
-	// The constructor may raise Std::runtime_error if
+	// The constructor may raise std::runtime_error if
 	// - there is an issue opening the file (does not exist, locked, permissions, etc)
 	// - the open mode could not be determined
 	// - could not determine the length of the stream
@@ -79,7 +79,7 @@ private:
 
 	soff_t _position = 0; // absolute read/write offset
 	soff_t _bufferPosition = 0; // buffer's location relative to file
-	Std::vector<uint8_t> _buffer;
+	std::vector<uint8_t> _buffer;
 };
 
 

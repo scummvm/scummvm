@@ -158,7 +158,7 @@ void ViewStruct272::ReadFromFile(Stream *in) {
 	}
 }
 
-void Convert272ViewsToNew(const Std::vector<ViewStruct272> &oldv, Std::vector<ViewStruct> &newv) {
+void Convert272ViewsToNew(const std::vector<ViewStruct272> &oldv, std::vector<ViewStruct> &newv) {
 	for (size_t a = 0; a < oldv.size(); a++) {
 		newv[a].Initialize(oldv[a].numloops);
 

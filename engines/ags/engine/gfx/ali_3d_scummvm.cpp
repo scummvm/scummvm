@@ -77,7 +77,7 @@ int ScummVMRendererGraphicsDriver::GetDisplayDepthForNativeDepth(int native_colo
 }
 
 IGfxModeList *ScummVMRendererGraphicsDriver::GetSupportedModeList(int color_depth) {
-	Std::vector<DisplayMode> modes;
+	std::vector<DisplayMode> modes;
 	sys_get_desktop_modes(modes, color_depth);
 	if ((modes.size() == 0) && color_depth == 32) {
 		// Pretend that 24-bit are 32-bit

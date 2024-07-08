@@ -152,7 +152,7 @@ Stream *File::OpenFile(const String &filename, FileOpenMode open_mode, FileWorkM
 		delete fs;
 		fs = nullptr;
 	}
-	//  } catch (Std::runtime_error) {
+	//  } catch (std::runtime_error) {
 	//      fs = nullptr;
 	//  }
 

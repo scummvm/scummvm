@@ -122,18 +122,18 @@ Globals::Globals() {
 	_GameStaticManager = new StaticGame();
 
 	// asset_manager.cpp globals
-	_AssetMgr = new Std::unique_ptr<Shared::AssetManager>();
+	_AssetMgr = new std::unique_ptr<Shared::AssetManager>();
 
 	// audio.cpp globals
-	_audioChannels = new Std::array<SOUNDCLIP *>(TOTAL_AUDIO_CHANNELS);
-	_ambient = new Std::array<AmbientSound>(MAX_GAME_CHANNELS);
+	_audioChannels = new std::array<SOUNDCLIP *>(TOTAL_AUDIO_CHANNELS);
+	_ambient = new std::array<AmbientSound>(MAX_GAME_CHANNELS);
 	_scrAudioChannel = new ScriptAudioChannel[MAX_GAME_CHANNELS];
 
 	// button.cpp globals
-	_animbuts = new Std::vector<AnimatingGUIButton>();
+	_animbuts = new std::vector<AnimatingGUIButton>();
 
 	// cc_instance.cpp globals
-	_InstThreads = new Std::deque<ccInstance *>();
+	_InstThreads = new std::deque<ccInstance *>();
 	_GlobalReturnValue = new RuntimeScriptValue();
 
 	// cc_options.cpp globals
@@ -157,12 +157,12 @@ Globals::Globals() {
 	_pushbuttonlightcolor = COL253;
 
 	// debug.cpp globals
-	_fps = Std::numeric_limits<float>::quiet_NaN();
+	_fps = std::numeric_limits<float>::quiet_NaN();
 	_display_fps = kFPS_Hide;
 	_debug_line = new String[DEBUG_CONSOLE_NUMLINES];
-	_DebugMsgBuff = new Std::unique_ptr<AGS::Engine::MessageBuffer>();
-	_DebugLogFile = new Std::unique_ptr<AGS::Engine::LogFile>();
-	_DebugConsole = new Std::unique_ptr<AGS::Engine::ConsoleOutputTarget>();
+	_DebugMsgBuff = new std::unique_ptr<AGS::Engine::MessageBuffer>();
+	_DebugLogFile = new std::unique_ptr<AGS::Engine::LogFile>();
+	_DebugConsole = new std::unique_ptr<AGS::Engine::ConsoleOutputTarget>();
 
 	// debug_manager.cpp globals
 	_DbgMgr = new AGS::Shared::DebugManager();
@@ -174,22 +174,22 @@ Globals::Globals() {
 	_topBar = new TopBarSettings();
 
 	// draw.cpp globals
-	_CameraDrawData = new Std::vector<RoomCameraDrawData>();
-	_sprlist = new Std::vector<SpriteListEntry>();
-	_thingsToDrawList = new Std::vector<SpriteListEntry>();
+	_CameraDrawData = new std::vector<RoomCameraDrawData>();
+	_sprlist = new std::vector<SpriteListEntry>();
+	_thingsToDrawList = new std::vector<SpriteListEntry>();
 	_dynamicallyCreatedSurfaces = new AGS::Shared::Bitmap *[MAX_DYNAMIC_SURFACES];
 	Common::fill(_dynamicallyCreatedSurfaces, _dynamicallyCreatedSurfaces +
 	             MAX_DYNAMIC_SURFACES, (AGS::Shared::Bitmap *)nullptr);
 
-	_actsps = new Std::vector<ObjTexture>();
-	_walkbehindobj = new Std::vector<ObjTexture>();
-	_guibg = new Std::vector<ObjTexture>();
-	_guiobjbg = new Std::vector<ObjTexture>();
+	_actsps = new std::vector<ObjTexture>();
+	_walkbehindobj = new std::vector<ObjTexture>();
+	_guibg = new std::vector<ObjTexture>();
+	_guiobjbg = new std::vector<ObjTexture>();
 
-	_guiobjddb = new Std::vector<Engine::IDriverDependantBitmap *>();
-	_guiobjoff = new Std::vector<Point>();
-	_guiobjddbref = new Std::vector<int>();
-	_overlaybmp = new Std::vector<Std::unique_ptr<Shared::Bitmap> >();
+	_guiobjddb = new std::vector<Engine::IDriverDependantBitmap *>();
+	_guiobjoff = new std::vector<Point>();
+	_guiobjddbref = new std::vector<int>();
+	_overlaybmp = new std::vector<std::unique_ptr<Shared::Bitmap> >();
 	_debugRoomMaskObj =  new ObjTexture();
 	_debugMoveListObj = new ObjTexture();
 
@@ -202,17 +202,17 @@ Globals::Globals() {
 	// draw_software.cpp globals
 	_BlackRects = new DirtyRects();
 	_GlobalOffs = new Point();
-	_RoomCamRects = new Std::vector<DirtyRects>();
-	_RoomCamPositions = new Std::vector<Std::pair<int, int> >();
+	_RoomCamRects = new std::vector<DirtyRects>();
+	_RoomCamPositions = new std::vector<std::pair<int, int> >();
 
 	// engine.cpp globals
 	_ResPaths = new ResourcePaths();
 
 	// event.cpp globals
-	_events = new Std::vector<EventHappened>();
+	_events = new std::vector<EventHappened>();
 
 	// fonts.cpp globals
-	_fonts = new Std::vector<AGS::Shared::Font>();
+	_fonts = new std::vector<AGS::Shared::Font>();
 	_ttfRenderer = new TTFFontRenderer();
 	_wfnRenderer = new WFNFontRenderer();
 	_Lines = new SplitLines();
@@ -229,7 +229,7 @@ Globals::Globals() {
 	_ccDynamicAudioClip = new CCAudioClip();
 	_ccDynamicAudio = new CCAudioChannel();
 	_myScriptStringImpl = new ScriptString();
-	_guis = new Std::vector<AGS::Shared::GUIMain>();
+	_guis = new std::vector<AGS::Shared::GUIMain>();
 	_play = new GameState();
 	_game = new GameSetupStruct();
 	_spriteset = new AGS::Shared::SpriteCache(_game->SpriteInfos);
@@ -240,12 +240,12 @@ Globals::Globals() {
 	_scrHotspot = new ScriptHotspot[MAX_ROOM_HOTSPOTS];
 	_scrRegion = new ScriptRegion[MAX_ROOM_REGIONS];
 	_scrInv = new ScriptInvItem[MAX_INV];
-	_charcache = new Std::vector<ObjectCache>();
+	_charcache = new std::vector<ObjectCache>();
 	_objcache = new ObjectCache[MAX_ROOM_OBJECTS];
-	_screenovercache = new Std::vector<Point>();
-	_charextra = new Std::vector<CharacterExtras>();
-	_mls = new Std::vector<MoveList>();
-	_views = new Std::vector<ViewStruct>();
+	_screenovercache = new std::vector<Point>();
+	_charextra = new std::vector<CharacterExtras>();
+	_mls = new std::vector<MoveList>();
+	_views = new std::vector<ViewStruct>();
 	_saveGameDirectory = AGS::Shared::SAVE_FOLDER_PREFIX;
 
 	// game_init.cpp globals
@@ -284,7 +284,7 @@ Globals::Globals() {
 	_GameScaling = new AGS::Shared::PlaneScaling();
 
 	// gui_button.cpp globals
-	_guibuts = new Std::vector<AGS::Shared::GUIButton>();
+	_guibuts = new std::vector<AGS::Shared::GUIButton>();
 
 	// gui_dlaog.cpp globals
 	Common::fill(_filenumbers, _filenumbers + MAXSAVEGAMES_20, 0);
@@ -295,19 +295,19 @@ Globals::Globals() {
 	_smes = new CSCIMessage();
 
 	// gui_inv.cpp globals
-	_guiinv = new Std::vector<AGS::Shared::GUIInvWindow>();
+	_guiinv = new std::vector<AGS::Shared::GUIInvWindow>();
 
 	// gui_label.cpp globals
-	_guilabels = new Std::vector<AGS::Shared::GUILabel>();
+	_guilabels = new std::vector<AGS::Shared::GUILabel>();
 
 	// gui_listbox.cpp globals
-	_guilist = new Std::vector<AGS::Shared::GUIListBox>();
+	_guilist = new std::vector<AGS::Shared::GUIListBox>();
 
 	// gui_slider.cpp globals
-	_guislider = new Std::vector<AGS::Shared::GUISlider>();
+	_guislider = new std::vector<AGS::Shared::GUISlider>();
 
 	// gui_textbox.cpp globals
-	_guitext = new Std::vector<AGS::Shared::GUITextBox>();
+	_guitext = new std::vector<AGS::Shared::GUITextBox>();
 
 	// interactions.cpp globals
 	_globalvars = new InteractionVariable[MAX_GLOBAL_VARIABLES];
@@ -324,7 +324,7 @@ Globals::Globals() {
 	_mouse = new Mouse();
 
 	// overlay.cpp globals
-	_screenover = new Std::vector<ScreenOverlay>();
+	_screenover = new std::vector<ScreenOverlay>();
 
 	// plugins globals
 	_engineExports = new Plugins::Core::EngineExports();
@@ -340,7 +340,7 @@ Globals::Globals() {
 	// route_finder_impl.cpp globals
 	_navpoints = new int32_t[MAXNEEDSTAGES];
 	_nav = new Navigation();
-	_route_finder_impl = new Std::unique_ptr<IRouteFinder>();
+	_route_finder_impl = new std::unique_ptr<IRouteFinder>();
 
 	// screen.cpp globals
 	_old_palette = new color[256];
@@ -360,10 +360,10 @@ Globals::Globals() {
 	_runDialogOptionRepExecFunc = new NonBlockingScriptFunction("dialog_options_repexec", 1);
 	_runDialogOptionCloseFunc = new NonBlockingScriptFunction("dialog_options_close", 1);
 	_scsystem = new ScriptSystem();
-	_scriptModules = new Std::vector<PScript>();
-	_moduleInst = new Std::vector<ccInstance *>();
-	_moduleInstFork = new Std::vector<ccInstance *>();
-	_moduleRepExecAddr = new Std::vector<RuntimeScriptValue>();
+	_scriptModules = new std::vector<PScript>();
+	_moduleInst = new std::vector<ccInstance *>();
+	_moduleInstFork = new std::vector<ccInstance *>();
+	_moduleRepExecAddr = new std::vector<RuntimeScriptValue>();
 
 	// script_runtime.cpp globals
 	Common::fill(_loadedInstances, _loadedInstances + MAX_LOADED_INSTANCES,

@@ -108,8 +108,8 @@ String StrUtil::Unescape(const String &s) {
 String StrUtil::WildcardToRegex(const String &wildcard) {
 	// https://stackoverflow.com/questions/40195412/c11-regex-search-for-exact-string-escape
 	// matches any characters that need to be escaped in RegEx
-	Std::regex esc{ R"([-[\]{}()*+?.,\^$|#\s])" };
-	Common::String sanitized = Std::regex_replace(wildcard.GetCStr(), esc, R"(\$&)");
+	std::regex esc{ R"([-[\]{}()*+?.,\^$|#\s])" };
+	Common::String sanitized = std::regex_replace(wildcard.GetCStr(), esc, R"(\$&)");
 	// convert (now escaped) wildcard "\\*" and "\\?" into ".*" and "." respectively
 	String pattern(sanitized.c_str());
 	pattern.Replace("\\*", ".*");
@@ -238,7 +238,7 @@ void StrUtil::ReadStringMap(StringMap &map, Stream *in) {
 	for (size_t i = 0; i < count; ++i) {
 		String key = StrUtil::ReadString(in);
 		String value = StrUtil::ReadString(in);
-		map.insert(Std::make_pair(key, value));
+		map.insert(std::make_pair(key, value));
 	}
 }
 
@@ -257,7 +257,7 @@ size_t StrUtil::ConvertUtf8ToAscii(const char *mbstr, const char *loc_name, char
 		return static_cast<size_t>(snprintf(out_cstr, out_sz, "%s", mbstr));
 	}
 	// First convert utf-8 string into widestring;
-	Std::vector<wchar_t> wcsbuf; // widechar buffer
+	std::vector<wchar_t> wcsbuf; // widechar buffer
 	wcsbuf.resize(Utf8::GetLength(mbstr) + 1);
 	// NOTE: we don't use mbstowcs, because unfortunately ".utf-8" locale
 	// is not normally supported on all systems (e.g. Windows 7 and earlier)

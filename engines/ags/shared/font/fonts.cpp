@@ -90,7 +90,7 @@ static void font_post_init(size_t fontNumber) {
 			height = font.Renderer->GetTextHeight(height_test_string, fontNumber);
 		}
 
-		font.Metrics.Height = Std::max(0, height);
+		font.Metrics.Height = std::max(0, height);
 		font.Metrics.RealHeight = font.Metrics.Height;
 	}
 	// Use either nominal or real pixel height to define font's logical height
@@ -298,7 +298,7 @@ int get_text_lines_surf_height(size_t fontNumber, size_t numlines) {
 }
 
 // Replaces AGS-specific linebreak tags with common '\n'
-void unescape_script_string(const char *cstr, Std::vector<char> &out) {
+void unescape_script_string(const char *cstr, std::vector<char> &out) {
 	out.clear();
 	// Handle the special case of the first char
 	if (cstr[0] == '[') {

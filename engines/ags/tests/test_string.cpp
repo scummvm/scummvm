@@ -468,7 +468,7 @@ void Test_String() {
 	// Test Split
 	{
 		String str1 = "C:\\Games\\AGS\\MyNewGame\\";
-		Std::vector<String> result = str1.Split('\\');
+		std::vector<String> result = str1.Split('\\');
 		assert(result.size() == 5);
 		assert(strcmp(result[0], "C:") == 0);
 		assert(strcmp(result[1], "Games") == 0);
