@@ -87,8 +87,8 @@ void winVideo::set_window(int x, int y, int xsize, int ysize) {
 	_vidWidth = xsize;
 	_vidHeight = ysize;
 
-	_tempSurf = new Graphics::ManagedSurface();
-	_tempSurf->create(xsize, ysize, g_engine->_pixelformat);
+	if (_vidWidth != _decoder->getWidth() || _vidHeight != _decoder->getHeight())
+		_tempSurf = new Graphics::ManagedSurface(xsize, ysize, g_engine->_pixelformat);
 }
 
 bool winVideo::open_file(const char *fname) {
@@ -133,7 +133,7 @@ bool winVideo::quant() {
 
 		if (frame) {
 			// Check if frame needs to be stretched
-			if (_vidWidth > frameWidth || _vidHeight > frameHeight) {
+			if (_vidWidth != frameWidth || _vidHeight != frameHeight) {
 				const Common::Rect srcRect(0, 0, frameWidth, frameHeight);
 				const Common::Rect destRect(_x, _y, _vidWidth, _vidHeight);
 
@@ -149,7 +149,9 @@ bool winVideo::quant() {
 }
 
 bool winVideo::stop() {
-	warning("STUB: winVideo::stop()");
+	delete _tempSurf;
+	_tempSurf = NULL;
+
 	return true;
 }
 
