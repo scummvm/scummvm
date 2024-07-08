@@ -39,7 +39,9 @@ RTE1::RTE1(Cast *cast, Common::SeekableReadStreamEndian &stream) : _cast(cast) {
 }
 
 RTE2::RTE2(Cast *cast, Common::SeekableReadStreamEndian &stream) : _cast(cast) {
-	stream.hexdump(stream.size());
+	if (debugChannelSet(2, kDebugText))
+		stream.hexdump(stream.size());
+
 	width = stream.readUint16BE();
 	height = stream.readUint16BE();
 	bpp = stream.readUint16BE();
