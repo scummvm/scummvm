@@ -1919,7 +1919,9 @@ bool qdGameDispatcher::play_video(qdVideo *p) {
 		return false;
 
 	if (!p->check_flag(qdVideo::VID_ENABLE_MUSIC)) {
-		warning("qdGameDispatcher::play_video(): disable music");
+		mpegPlayer::instance().pause();
+	} else {
+		warning("STUB: qdGameDispatcher::play_video(): music is enabled");
 	}
 
 	cur_video_ = p;
@@ -3496,4 +3498,3 @@ bool qdGameDispatcher::update_hall_of_fame_names() {
 }
 
 } // namespace QDEngine
-
