@@ -976,6 +976,7 @@ void Character::Update() {
 		// TODO: Consider which run function to use
 		if (ExecuteScriptOnFinishLerp) {
 			ExecuteScriptOnFinishLerp = false;
+			g_engine->_scriptExecutor->global1032 = false;
 			g_engine->ScheduleRun();
 		}
 		return;
@@ -1003,6 +1004,7 @@ void Character::Update() {
 		// TODO: Consider which run function to use
 		if (ExecuteScriptOnFinishLerp) {
 			ExecuteScriptOnFinishLerp = false;
+			g_engine->_scriptExecutor->global1032 = false;
 			g_engine->ScheduleRun();
 		}
 
@@ -1027,6 +1029,7 @@ void Character::Update() {
 		if (!g_engine->_scriptExecutor->IsExecuting()) {
 			g_engine->_scriptExecutor->Rewind();
 			// TODO: Get rid of the different copies of the position
+			// TODO: Not sure if we should set g_engine->_scriptExecutor->global1032 = false;
 			View1 *currentView = (View1 *)g_engine->findView("View1");
 			g_engine->ScheduleRun();
 		}

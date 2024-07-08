@@ -631,7 +631,11 @@ l0037_A1B9:
 
 		// TODO: Expose the position of the character sprite (or his feet)
 		const Common::Point &charPos = GetCharPosition();
-		out1 = Func101D(charPos.x, charPos.y);
+		if (global1032) {
+			out1 = Func101D(charPos.x, charPos.y);
+		} else {
+			out1 = 0; //  
+		}
 		
 		// TODO: In the logs there is also a value out2 (DX) returned - where
 		// does that come from?
@@ -1099,6 +1103,7 @@ void ScriptExecutor::Step() {
 	_stream->seek(0, SEEK_SET);
 	scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 	_state = ExecutorState::Idle;
+	g_engine->_scriptExecutor->global1032 = true;
 }
 	
 	
@@ -1594,7 +1599,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 
 			// TODO: Exception for 0x401 since we assume the protagonist is always in the scene
 			// TODO: Even more evidence that we need a refactor!
-			if (sceneID > 0x401) {
+			if (sceneID > 0x400) {
 				// This is the special case of adding a child to an object
 				// TODO: This is hardcoded to fit to the special case of the hat,
 				// with this addition, the function needs to be refactored to still
