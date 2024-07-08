@@ -638,7 +638,7 @@ void ScummEngine_v72he::o72_startScript() {
 			return;
 	}
 
-	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
+	runScript(script, (flags == SO_BAK || flags == SO_BAKREC), (flags == SO_REC || flags == SO_BAKREC), args);
 }
 
 void ScummEngine_v72he::o72_startObject() {
@@ -650,7 +650,7 @@ void ScummEngine_v72he::o72_startObject() {
 	entryp = pop();
 	script = pop();
 	flags = fetchScriptByte();
-	runObjectScript(script, entryp, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
+	runObjectScript(script, entryp, (flags == SO_BAK || flags == SO_BAKREC), (flags == SO_REC || flags == SO_BAKREC), args);
 }
 
 void ScummEngine_v72he::o72_drawObject() {
@@ -1645,7 +1645,7 @@ void ScummEngine_v72he::o72_jumpToScript() {
 	script = pop();
 	flags = fetchScriptByte();
 	stopObjectCode();
-	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
+	runScript(script, (flags == SO_BAK || flags == SO_BAKREC), (flags == SO_REC || flags == SO_BAKREC), args);
 }
 
 void ScummEngine_v72he::o72_openFile() {
