@@ -21,7 +21,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/file.h"
 #include "video/mpegps_decoder.h"
-
+#include "graphics/managed_surface.h"
 #include "qdengine/qd_precomp.h"
 #include "qdengine/qdengine.h"
 #include "qdengine/qdcore/util/WinVideo.h"
@@ -87,7 +87,8 @@ void winVideo::set_window(int x, int y, int xsize, int ysize) {
 	_vidWidth = xsize;
 	_vidHeight = ysize;
 
-	return;
+	_tempSurf = new Graphics::ManagedSurface();
+	_tempSurf->create(xsize, ysize, g_engine->_pixelformat);
 }
 
 bool winVideo::open_file(const char *fname) {
@@ -122,13 +123,24 @@ bool winVideo::play() {
 }
 
 bool winVideo::quant() {
-	// Video Playback loop
 	debugC(9, kDebugGraphics, "WinVideo::play: Video Playback loop");
 
+	// Video Playback loop
 	if (_decoder->needsUpdate()) {
 		const Graphics::Surface *frame = _decoder->decodeNextFrame();
+		int frameWidth = _decoder->getWidth();
+		int frameHeight = _decoder->getHeight();
+
 		if (frame) {
-			g_system->copyRectToScreen(frame->getPixels(), frame->pitch, _x, _y, _vidWidth, _vidHeight);
+			// Check if frame needs to be stretched
+			if (_vidWidth > frameWidth || _vidHeight > frameHeight) {
+				const Common::Rect srcRect(0, 0, frameWidth, frameHeight);
+				const Common::Rect destRect(_x, _y, _vidWidth, _vidHeight);
+
+				_tempSurf->blitFrom(*frame, srcRect, destRect);
+				g_system->copyRectToScreen(_tempSurf->getPixels(), _tempSurf->pitch, _x, _y, _vidWidth, _vidHeight);
+			} else
+				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, _x, _y, _vidWidth, _vidHeight);
 		}
 		g_system->updateScreen();
 	}
