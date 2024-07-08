@@ -79,7 +79,7 @@ String GetMainGameFileErrorText(MainGameFileErrorType err);
 
 typedef TypedCodeError<MainGameFileErrorType, GetMainGameFileErrorText> MainGameFileError;
 typedef ErrorHandle<MainGameFileError> HGameFileError;
-typedef Std::unique_ptr<Stream> UStream;
+typedef std::unique_ptr<Stream> UStream;
 
 // MainGameSource defines a successfully opened main game file
 struct MainGameSource {
@@ -97,7 +97,7 @@ struct MainGameSource {
 	String              CompiledWith;
 	// Extended engine capabilities required by the game; their primary use
 	// currently is to let "alternate" game formats indicate themselves
-	Std::set<String>    Caps;
+	std::set<String>    Caps;
 	// A ponter to the opened stream
 	UStream             InputStream;
 
@@ -111,25 +111,25 @@ struct MainGameSource {
 // code refactoring.
 struct LoadedGameEntities {
 	GameSetupStruct &Game;
-	Std::vector<DialogTopic> Dialogs;
-	Std::vector<ViewStruct> Views;
+	std::vector<DialogTopic> Dialogs;
+	std::vector<ViewStruct> Views;
 	PScript                 GlobalScript;
 	PScript                 DialogScript;
-	Std::vector<PScript>    ScriptModules;
-	Std::vector<PluginInfo> PluginInfos;
+	std::vector<PScript>    ScriptModules;
+	std::vector<PluginInfo> PluginInfos;
 
 	// Original sprite data (when it was read into const-sized arrays)
 	size_t                  SpriteCount;
-	Std::vector<uint8_t>	SpriteFlags; // SPF_* flags
+	std::vector<uint8_t>	SpriteFlags; // SPF_* flags
 
 	// Old dialog support
 	// legacy compiled dialog script of its own format,
 	// requires separate interpreting
-	Std::vector<Std::vector<uint8_t>> OldDialogScripts;
+	std::vector<std::vector<uint8_t>> OldDialogScripts;
 	// probably, actual dialog script sources kept within some older games
-	Std::vector<String>     OldDialogSources;
+	std::vector<String>     OldDialogSources;
 	// speech texts displayed during dialog
-	Std::vector<String>     OldSpeechLines;
+	std::vector<String>     OldSpeechLines;
 
 	LoadedGameEntities(GameSetupStruct &game);
 	~LoadedGameEntities();
@@ -156,7 +156,7 @@ HGameFileError     UpdateGameData(LoadedGameEntities &ents, GameDataVersion data
 // Ensures that the game saves directory path is valid
 void               FixupSaveDirectory(GameSetupStruct &game);
 // Maps legacy sound numbers to real audio clips
-void               RemapLegacySoundNums(GameSetupStruct &game, Std::vector<ViewStruct> &views, GameDataVersion data_ver);
+void               RemapLegacySoundNums(GameSetupStruct &game, std::vector<ViewStruct> &views, GameDataVersion data_ver);
 
 } // namespace Shared
 } // namespace AGS

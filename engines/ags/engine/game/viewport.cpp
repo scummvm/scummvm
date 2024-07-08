@@ -121,7 +121,7 @@ void Camera::UnlinkFromViewport(int id) {
 	}
 }
 
-const Std::vector<ViewportRef> &Camera::GetLinkedViewports() const {
+const std::vector<ViewportRef> &Camera::GetLinkedViewports() const {
 	return _viewportRefs;
 }
 
@@ -187,21 +187,21 @@ void Viewport::LinkCamera(PCamera cam) {
 VpPoint Viewport::RoomToScreen(int roomx, int roomy, bool clip) const {
 	auto cam = _camera.lock();
 	if (!cam)
-		return Std::make_pair(Point(), -1);
+		return std::make_pair(Point(), -1);
 	const Rect &camr = cam->GetRect();
 	Point screen_pt = _transform.Scale(Point(roomx - camr.Left, roomy - camr.Top));
 	if (clip && !_position.IsInside(screen_pt))
-		return Std::make_pair(Point(), -1);
-	return Std::make_pair(screen_pt, _id);
+		return std::make_pair(Point(), -1);
+	return std::make_pair(screen_pt, _id);
 }
 
 VpPoint Viewport::ScreenToRoom(int scrx, int scry, bool clip, bool convert_cam_to_data) const {
 	Point screen_pt(scrx, scry);
 	if (clip && !_position.IsInside(screen_pt))
-		return Std::make_pair(Point(), -1);
+		return std::make_pair(Point(), -1);
 	auto cam = _camera.lock();
 	if (!cam)
-		return Std::make_pair(Point(), -1);
+		return std::make_pair(Point(), -1);
 
 	const Rect &camr = cam->GetRect();
 	Point p = _transform.UnScale(screen_pt);
@@ -212,7 +212,7 @@ VpPoint Viewport::ScreenToRoom(int scrx, int scry, bool clip, bool convert_cam_t
 		p.X += camr.Left;
 		p.Y += camr.Top;
 	}
-	return Std::make_pair(p, _id);
+	return std::make_pair(p, _id);
 }
 
 } // namespace AGS3

@@ -103,10 +103,10 @@ static int RenderChar(Bitmap *ds, const int at_x, const int at_y, Rect clip,
 	const unsigned char *actdata = wfn_char.Data;
 	const int bytewid = wfn_char.GetRowByteCount();
 
-	int sx = Std::max(at_x, clip.Left), ex = clip.Right + 1;
-	int sy = Std::max(at_y, clip.Top), ey = clip.Bottom + 1;
-	int sw = Std::max(0, clip.Left - at_x);
-	int sh = Std::max(0, clip.Top - at_y);
+	int sx = std::max(at_x, clip.Left), ex = clip.Right + 1;
+	int sy = std::max(at_y, clip.Top), ey = clip.Bottom + 1;
+	int sw = std::max(0, clip.Left - at_x);
+	int sh = std::max(0, clip.Top - at_y);
 	for (int h = sh, y = sy; h < height && y < ey; ++h, y += scale) {
 		for (int w = sw, x = sx; w < width && x < ex; ++w, x += scale) {
 			if (((actdata[h * bytewid + (w / 8)] & (0x80 >> (w % 8))) != 0)) {

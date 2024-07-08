@@ -201,7 +201,7 @@ void update_player_view() {
 		_G(playerchar)->view = _G(playerchar)->defview;
 }
 
-void update_character_move_and_anim(Std::vector<int> &followingAsSheep) {
+void update_character_move_and_anim(std::vector<int> &followingAsSheep) {
 	// move & animate characters
 	for (int aa = 0; aa < _GP(game).numcharacters; aa++) {
 		if (_GP(game).chars[aa].on != 1) continue;
@@ -213,7 +213,7 @@ void update_character_move_and_anim(Std::vector<int> &followingAsSheep) {
 	}
 }
 
-void update_following_exactly_characters(const Std::vector<int> &followingAsSheep) {
+void update_following_exactly_characters(const std::vector<int> &followingAsSheep) {
 	// update location of all following_exactly characters
 	for (size_t i = 0; i < followingAsSheep.size(); ++i) {
 		CharacterInfo *chi = &_GP(game).chars[followingAsSheep[i]];
@@ -437,7 +437,7 @@ void update_stuff() {
 
 	_G(our_eip) = 22;
 
-	Std::vector<int> followingAsSheep;
+	std::vector<int> followingAsSheep;
 
 	update_character_move_and_anim(followingAsSheep);
 

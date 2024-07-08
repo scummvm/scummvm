@@ -35,7 +35,7 @@ protected:
 	IAGSEngine *_engine;
 	SpriteFont *getFontFor(int fontNum);
 	void Draw(BITMAP *src, BITMAP *dest, int destx, int desty, int srcx, int srcy, int width, int height);
-	Std::vector<SpriteFont *> _fonts;
+	std::vector<SpriteFont *> _fonts;
 
 public:
 	SpriteFontRenderer(IAGSEngine *engine);

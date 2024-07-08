@@ -59,7 +59,7 @@ AssetPath get_voice_over_assetpath(const String &filename);
 // TODO: it is preferrable to let our Stream define custom readable window instead,
 // keeping this as simple as possible for now (we may require a stream classes overhaul).
 struct AGS_PACKFILE_OBJ {
-	Std::unique_ptr<Stream> stream;
+	std::unique_ptr<Stream> stream;
 	size_t asset_size = 0u;
 	size_t remains = 0u;
 };

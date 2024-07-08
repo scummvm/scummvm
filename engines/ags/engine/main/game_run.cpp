@@ -748,10 +748,10 @@ static void game_loop_update_loop_counter() {
 
 static void game_loop_update_fps() {
 	auto t2 = AGS_Clock::now();
-	auto duration = Std::chrono::duration_cast<Std::chrono::milliseconds>(t2 - _G(t1));
+	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - _G(t1));
 	auto frames = _G(loopcounter) - _G(lastcounter);
 
-	if (duration >= Std::chrono::milliseconds(1000) && frames > 0) {
+	if (duration >= std::chrono::milliseconds(1000) && frames > 0) {
 		_G(fps) = 1000.0f * frames / duration.count();
 		_G(t1) = t2;
 		_G(lastcounter) = _G(loopcounter);
@@ -771,7 +771,7 @@ void set_loop_counter(unsigned int new_counter) {
 	_G(loopcounter) = new_counter;
 	_G(t1) = AGS_Clock::now();
 	_G(lastcounter) = _G(loopcounter);
-	_G(fps) = Std::numeric_limits<float>::quiet_NaN();
+	_G(fps) = std::numeric_limits<float>::quiet_NaN();
 }
 
 void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int extraX, int extraY) {

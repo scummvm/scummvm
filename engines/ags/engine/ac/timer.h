@@ -32,9 +32,9 @@ namespace AGS3 {
 
 // use high resolution clock only if we know it is monotonic/steady.
 // refer to https://stackoverflow.com/a/38253266/84262
-using AGS_Clock = Std::conditional <
-                  Std::chrono::high_resolution_clock::is_steady,
-                  Std::chrono::high_resolution_clock, Std::chrono::steady_clock
+using AGS_Clock = std::conditional <
+                  std::chrono::high_resolution_clock::is_steady,
+                  std::chrono::high_resolution_clock, std::chrono::steady_clock
                   >::type;
 
 // Sleeps for time remaining until the next game frame, updates next frame timestamp

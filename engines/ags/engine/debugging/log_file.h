@@ -76,7 +76,7 @@ public:
 	void         CloseFile();
 
 private:
-	Std::unique_ptr<Stream> _file;
+	std::unique_ptr<Stream> _file;
 	String                _filePath;
 	OpenMode              _openMode;
 };

@@ -51,10 +51,10 @@ struct AssetLibInfo {
 	String BasePath;                   // full path to the base filename
 	String BaseDir;                    // library's directory
 	String BaseFileName;               // library's base (head) filename
-	Std::vector<String> LibFileNames;  // filename for each library part
+	std::vector<String> LibFileNames;  // filename for each library part
 
 	// Library contents
-	Std::vector<AssetInfo> AssetInfos; // information on contained assets
+	std::vector<AssetInfo> AssetInfos; // information on contained assets
 };
 
 } // namespace Shared

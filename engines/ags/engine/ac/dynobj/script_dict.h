@@ -21,7 +21,7 @@
 
 //=============================================================================
 //
-// Managed script object wrapping Std::map<String, String> and
+// Managed script object wrapping std::map<String, String> and
 // unordered_map<String, String>.
 //
 // TODO: support wrapping non-owned Dictionary, passed by the reference, -
@@ -61,8 +61,8 @@ public:
 	virtual bool Remove(const char *key) = 0;
 	virtual bool Set(const char *key, const char *value) = 0;
 	virtual int GetItemCount() = 0;
-	virtual void GetKeys(Std::vector<const char *> &buf) const = 0;
-	virtual void GetValues(Std::vector<const char *> &buf) const = 0;
+	virtual void GetKeys(std::vector<const char *> &buf) const = 0;
+	virtual void GetValues(std::vector<const char *> &buf) const = 0;
 protected:
 	// Write object data into the provided stream
 	void Serialize(const char *address, AGS::Shared::Stream *out) override;
@@ -124,11 +124,11 @@ public:
 	int GetItemCount() override {
 		return _dic.size();
 	}
-	void GetKeys(Std::vector<const char *> &buf) const override {
+	void GetKeys(std::vector<const char *> &buf) const override {
 		for (auto it = _dic.begin(); it != _dic.end(); ++it)
 			buf.push_back(it->_key.GetCStr());
 	}
-	void GetValues(Std::vector<const char *> &buf) const override {
+	void GetValues(std::vector<const char *> &buf) const override {
 		for (auto it = _dic.begin(); it != _dic.end(); ++it)
 			buf.push_back(it->_value.GetCStr());
 	}
@@ -180,10 +180,10 @@ private:
 	TDict _dic;
 };
 
-typedef ScriptDictImpl< Std::map<String, String>, true, true > ScriptDict;
-typedef ScriptDictImpl< Std::map<String, String, IgnoreCase_LessThan>, true, false > ScriptDictCI;
-typedef ScriptDictImpl< Std::unordered_map<String, String>, false, true > ScriptHashDict;
-typedef ScriptDictImpl< Std::unordered_map<String, String, IgnoreCase_Hash, IgnoreCase_EqualTo>, false, false > ScriptHashDictCI;
+typedef ScriptDictImpl< std::map<String, String>, true, true > ScriptDict;
+typedef ScriptDictImpl< std::map<String, String, IgnoreCase_LessThan>, true, false > ScriptDictCI;
+typedef ScriptDictImpl< std::unordered_map<String, String>, false, true > ScriptHashDict;
+typedef ScriptDictImpl< std::unordered_map<String, String, IgnoreCase_Hash, IgnoreCase_EqualTo>, false, false > ScriptHashDictCI;
 
 } // namespace AGS3
 

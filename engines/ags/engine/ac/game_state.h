@@ -44,7 +44,7 @@ namespace AGS {
 namespace Shared {
 class Bitmap;
 class Stream;
-typedef Std::shared_ptr<Bitmap> PBitmap;
+typedef std::shared_ptr<Bitmap> PBitmap;
 } // namespace Shared
 
 namespace Engine {
@@ -228,14 +228,14 @@ struct GameState {
 	int   gamma_adjustment = 0;
 	short temporarily_turned_off_character = 0;  // Hide Player Charactr ticked
 	short inv_backwards_compatibility = 0;  // tells to use legacy inv_* variables
-	Std::vector<int> gui_draw_order; // used only for hit detection now
-	Std::vector<AGS::Shared::String> do_once_tokens;
+	std::vector<int> gui_draw_order; // used only for hit detection now
+	std::vector<AGS::Shared::String> do_once_tokens;
 	int   text_min_display_time_ms = 0;
 	int   ignore_user_input_after_text_timeout_ms = 0;
 	int32_t default_audio_type_volumes[MAX_AUDIO_TYPES];
 
 	// Dynamic custom property values for characters and items
-	Std::vector<AGS::Shared::StringIMap> charProps;
+	std::vector<AGS::Shared::StringIMap> charProps;
 	AGS::Shared::StringIMap invProps[MAX_INV];
 
 	// Dynamic speech state
@@ -286,7 +286,7 @@ struct GameState {
 	// Returns Room viewport object by it's main index
 	PViewport  GetRoomViewport(int index) const;
 	// Returns Room viewport object by index in z-order
-	const Std::vector<PViewport> &GetRoomViewportsZOrdered() const;
+	const std::vector<PViewport> &GetRoomViewportsZOrdered() const;
 	// Finds room viewport at the given screen coordinates; returns nullptr if non found
 	PViewport  GetRoomViewportAt(int x, int y) const;
 	// Returns Room viewport position in absolute coordinates (with main viewport offset);
@@ -407,15 +407,15 @@ private:
 	Rect _uiViewport;
 	// Room viewports define place on screen where the room camera's
 	// contents are drawn.
-	Std::vector<PViewport> _roomViewports;
+	std::vector<PViewport> _roomViewports;
 	// Vector of viewports sorted in z-order.
-	Std::vector<PViewport> _roomViewportsSorted;
+	std::vector<PViewport> _roomViewportsSorted;
 	// Cameras defines the position of a "looking eye" inside the room.
-	Std::vector<PCamera> _roomCameras;
+	std::vector<PCamera> _roomCameras;
 	// We keep handles to the script refs to viewports and cameras, so that we
 	// could address them and invalidate as the actual object gets destroyed.
-	Std::vector<int32_t> _scViewportHandles;
-	Std::vector<int32_t> _scCameraHandles;
+	std::vector<int32_t> _scViewportHandles;
+	std::vector<int32_t> _scCameraHandles;
 
 	// Tells that the main viewport's position has changed since last game update
 	bool  _mainViewportHasChanged = false;

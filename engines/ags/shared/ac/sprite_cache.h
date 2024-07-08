@@ -89,7 +89,7 @@ public:
 	static const sprkey_t MAX_SPRITE_INDEX = INT32_MAX - 1;
 	static const size_t   MAX_SPRITE_SLOTS = INT32_MAX;
 
-	SpriteCache(Std::vector<SpriteInfo> &sprInfos);
+	SpriteCache(std::vector<SpriteInfo> &sprInfos);
 	~SpriteCache();
 
 	// Loads sprite reference information and inits sprite stream
@@ -166,7 +166,7 @@ private:
 		// (some of these bitmaps may be assigned from outside of the cache)
 		Shared::Bitmap *Image = nullptr; // actual bitmap
 		// MRU list reference
-		Std::list<sprkey_t>::iterator MruIt;
+		std::list<sprkey_t>::iterator MruIt;
 
 		// Tells if there actually is a registered sprite in this slot
 		bool DoesSpriteExist() const;
@@ -179,9 +179,9 @@ private:
 	};
 
 	// Provided map of sprite infos, to fill in loaded sprite properties
-	Std::vector<SpriteInfo> &_sprInfos;
+	std::vector<SpriteInfo> &_sprInfos;
 	// Array of sprite references
-	Std::vector<SpriteData> _spriteData;
+	std::vector<SpriteData> _spriteData;
 
 	SpriteFile _file;
 
@@ -192,7 +192,7 @@ private:
 	// MRU list: the way to track which sprites were used recently.
 	// When clearing up space for new sprites, cache first deletes the sprites
 	// that were last time used long ago.
-	Std::list<sprkey_t> _mru;
+	std::list<sprkey_t> _mru;
 
 	// Initialize the empty sprite slot
 	void        InitNullSpriteParams(sprkey_t index);

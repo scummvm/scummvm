@@ -78,7 +78,7 @@ protected:
 	void        Free();
 };
 
-typedef Std::shared_ptr<ccScript> PScript;
+typedef std::shared_ptr<ccScript> PScript;
 
 } // namespace AGS3
 

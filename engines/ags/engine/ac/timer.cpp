@@ -33,9 +33,9 @@ namespace {
 const auto MAXIMUM_FALL_BEHIND = 3; // number of full frames
 }
 
-Std::chrono::microseconds GetFrameDuration() {
+std::chrono::microseconds GetFrameDuration() {
 	if (_G(framerate_maxed)) {
-		return Std::chrono::microseconds(0);
+		return std::chrono::microseconds(0);
 	}
 	return _G(tick_duration);
 }
@@ -45,7 +45,7 @@ int setTimerFps(int new_fps) {
 	if (new_fps <= 0)
 		return _G(framerate);
 	int old_fps = _G(framerate);
-	_G(tick_duration) = Std::chrono::microseconds(1000000LL / new_fps);
+	_G(tick_duration) = std::chrono::microseconds(1000000LL / new_fps);
 	_G(framerate) = new_fps;
 	_G(framerate_maxed) = new_fps >= 1000;
 
@@ -63,7 +63,7 @@ void WaitForNextFrame() {
 	const auto frameDuration = GetFrameDuration();
 
 	// early exit if we're trying to maximise framerate
-	if (frameDuration <= Std::chrono::milliseconds::zero()) {
+	if (frameDuration <= std::chrono::milliseconds::zero()) {
 		_G(last_tick_time) = _G(next_frame_timestamp);
 		_G(next_frame_timestamp) = now;
 		// suspend while the game is being switched out
@@ -81,7 +81,7 @@ void WaitForNextFrame() {
 
 	if (_G(next_frame_timestamp) > now) {
 		auto frame_time_remaining = _G(next_frame_timestamp) - now;
-		Std::this_thread::sleep_for(frame_time_remaining);
+		std::this_thread::sleep_for(frame_time_remaining);
 	}
 
 	_G(last_tick_time) = _G(next_frame_timestamp);

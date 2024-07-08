@@ -46,9 +46,9 @@ struct SystemImports {
 private:
 	// Note we can't use a hash-map here, because we sometimes need to search
 	// by partial keys.
-	typedef Std::map<String, uint32_t> IndexMap;
+	typedef std::map<String, uint32_t> IndexMap;
 
-	Std::vector<ScriptImport> imports;
+	std::vector<ScriptImport> imports;
 	IndexMap btree;
 
 public:

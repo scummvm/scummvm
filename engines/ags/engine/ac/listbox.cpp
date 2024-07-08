@@ -67,7 +67,7 @@ void ListBox_Clear(GUIListBox *listbox) {
 	listbox->Clear();
 }
 
-static void FillSaveList(Std::set<String> &files, const String &filePattern) {
+static void FillSaveList(std::set<String> &files, const String &filePattern) {
 	size_t wildcard = filePattern.FindChar('*');
 	assert(wildcard != String::NoIndex);
 	Common::String prefix(filePattern.GetCStr(), wildcard);
@@ -92,7 +92,7 @@ static void FillSaveList(Std::set<String> &files, const String &filePattern) {
 	}
 }
 
-void FillDirList(Std::set<String> &files, const String &path) {
+void FillDirList(std::set<String> &files, const String &path) {
 	String dirName = Path::GetDirectoryPath(path);
 	String filePattern = Path::get_filename(path);
 
@@ -124,13 +124,13 @@ void ListBox_FillDirList(GUIListBox *listbox, const char *filemask) {
 
 	// TODO: support listing assets from AssetMgr
 
-	Std::set<String> files;
+	std::set<String> files;
 	FillDirList(files, rp.FullPath);
 	if (!rp.AltPath.IsEmpty() && rp.AltPath.Compare(rp.FullPath) != 0)
 		FillDirList(files, rp.AltPath);
 
 	// TODO: method for adding item batch to speed up update
-	for (Std::set<String>::const_iterator it = files.begin(); it != files.end(); ++it) {
+	for (std::set<String>::const_iterator it = files.begin(); it != files.end(); ++it) {
 		listbox->AddItem(*it);
 	}
 }

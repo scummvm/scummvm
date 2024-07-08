@@ -412,7 +412,7 @@ bool sort_gui_less(const int g1, const int g2) {
 }
 
 void update_gui_zorder() {
-	Std::sort(_GP(play).gui_draw_order.begin(), _GP(play).gui_draw_order.end(), sort_gui_less);
+	std::sort(_GP(play).gui_draw_order.begin(), _GP(play).gui_draw_order.end(), sort_gui_less);
 }
 
 void export_gui_controls(int ee) {

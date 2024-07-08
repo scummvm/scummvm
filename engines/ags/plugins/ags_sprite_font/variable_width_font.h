@@ -35,7 +35,7 @@ public:
 	int SpriteNumber = 0;
 	int FontReplaced = 0;
 	int Spacing = 0;
-	Std::map<char, CharacterEntry> characters;
+	std::map<char, CharacterEntry> characters;
 	// Clifftop Games custom plugin support
 	int LineHeightAdjust = 0;
 	int LineSpacingAdjust = 0;

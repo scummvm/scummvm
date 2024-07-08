@@ -91,7 +91,7 @@ String GetCurrentDirectory() {
 #endif
 }
 
-static bool GetFilesImpl(const String &dir_path, Std::vector<String> &files, bool isDirectories) {
+static bool GetFilesImpl(const String &dir_path, std::vector<String> &files, bool isDirectories) {
 	Common::FSNode fsNode(dir_path.GetCStr());
 	Common::FSList fsList;
 
@@ -104,11 +104,11 @@ static bool GetFilesImpl(const String &dir_path, Std::vector<String> &files, boo
 	return true;
 }
 
-bool GetDirs(const String &dir_path, Std::vector<String> &dirs) {
+bool GetDirs(const String &dir_path, std::vector<String> &dirs) {
 	return GetFilesImpl(dir_path, dirs, true);
 }
 
-bool GetFiles(const String &dir_path, Std::vector<String> &files) {
+bool GetFiles(const String &dir_path, std::vector<String> &files) {
 	return GetFilesImpl(dir_path, files, false);
 }
 
@@ -153,8 +153,8 @@ FindFileRecursive FindFileRecursive::Open(const String &path, const String &wild
 	if (ffile.AtEnd() && fdir.AtEnd())
 		return {}; // return invalid object
 	FindFileRecursive ff;
-	ff._fdir = Std::move(fdir);
-	ff._ffile = Std::move(ffile);
+	ff._fdir = std::move(fdir);
+	ff._ffile = std::move(ffile);
 	// Try get the first matching entry
 	if (ff._ffile.AtEnd() && !ff.Next())
 		return {}; // return invalid object
@@ -202,9 +202,9 @@ bool FindFileRecursive::PushDir(const String &sub) {
 	FindFile ffile = FindFile::OpenFiles(path);
 	if (ffile.AtEnd() && fdir.AtEnd())
 		return false; // dir is empty, or error
-	_fdirs.push(Std::move(_fdir)); // save previous dir iterator
-	_fdir = Std::move(fdir);
-	_ffile = Std::move(ffile);
+	_fdirs.push(std::move(_fdir)); // save previous dir iterator
+	_fdir = std::move(fdir);
+	_ffile = std::move(ffile);
 	_fullDir = path;
 	_curDir = Path::ConcatPaths(_curDir, sub);
 	return true;
@@ -214,7 +214,7 @@ bool FindFileRecursive::PopDir() {
 	if (_fdirs.empty())
 		return false; // no more parent levels
 	// restore parent level
-	_fdir = Std::move(_fdirs.top());
+	_fdir = std::move(_fdirs.top());
 	_fdirs.pop();
 	_fullDir = Path::GetParent(_fullDir);
 	_curDir = Path::GetParent(_curDir);

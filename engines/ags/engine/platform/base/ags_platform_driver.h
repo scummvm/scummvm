@@ -158,7 +158,7 @@ struct AGSPlatformDriver
 	// Called when the application is being resumed.
 	virtual void ResumeApplication();
 	// Returns a list of supported display modes
-	virtual void GetSystemDisplayModes(Std::vector<Engine::DisplayMode> &dms);
+	virtual void GetSystemDisplayModes(std::vector<Engine::DisplayMode> &dms);
 	// Switch to system fullscreen mode; store previous mode parameters
 	virtual bool EnterFullscreenMode(const Engine::DisplayMode &dm);
 	// Return back to the mode was before switching to fullscreen

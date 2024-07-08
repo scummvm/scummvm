@@ -110,7 +110,7 @@ PViewport GameState::GetRoomViewport(int index) const {
 	return _roomViewports[index];
 }
 
-const Std::vector<PViewport> &GameState::GetRoomViewportsZOrdered() const {
+const std::vector<PViewport> &GameState::GetRoomViewportsZOrdered() const {
 	return _roomViewportsSorted;
 }
 
@@ -142,7 +142,7 @@ void GameState::UpdateViewports() {
 	if (_roomViewportZOrderChanged) {
 		auto old_sort = _roomViewportsSorted;
 		_roomViewportsSorted = _roomViewports;
-		Std::sort(_roomViewportsSorted.begin(), _roomViewportsSorted.end(), ViewportZOrder);
+		std::sort(_roomViewportsSorted.begin(), _roomViewportsSorted.end(), ViewportZOrder);
 		for (size_t i = 0; i < _roomViewportsSorted.size(); ++i) {
 			if (i >= old_sort.size() || _roomViewportsSorted[i] != old_sort[i])
 				_roomViewportsSorted[i]->SetChangedVisible();
@@ -213,7 +213,7 @@ VpPoint GameState::ScreenToRoomImpl(int scrx, int scry, int view_index, bool cli
 		view = GetRoomViewportAt(scrx, scry);
 		if (!view) {
 			if (clip_viewport)
-				return Std::make_pair(Point(), -1);
+				return std::make_pair(Point(), -1);
 			view = _roomViewports[0]; // use primary viewport
 		}
 	} else {
@@ -379,8 +379,8 @@ bool GameState::IsIgnoringInput() const {
 }
 
 void GameState::SetIgnoreInput(int timeout_ms) {
-	if (AGS_Clock::now() + Std::chrono::milliseconds(timeout_ms) > _ignoreUserInputUntilTime)
-		_ignoreUserInputUntilTime = AGS_Clock::now() + Std::chrono::milliseconds(timeout_ms);
+	if (AGS_Clock::now() + std::chrono::milliseconds(timeout_ms) > _ignoreUserInputUntilTime)
+		_ignoreUserInputUntilTime = AGS_Clock::now() + std::chrono::milliseconds(timeout_ms);
 }
 
 void GameState::ClearIgnoreInput() {

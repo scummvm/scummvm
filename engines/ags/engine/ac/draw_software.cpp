@@ -134,7 +134,7 @@ void init_invalid_regions(int view_index, const Size &surf_size, const Rect &vie
 			_GP(RoomCamPositions).resize(view_index + 1);
 		}
 		_GP(RoomCamRects)[view_index].Init(surf_size, viewport);
-		_GP(RoomCamPositions)[view_index] = Std::make_pair(-1000, -1000);
+		_GP(RoomCamPositions)[view_index] = std::make_pair(-1000, -1000);
 	}
 }
 
@@ -202,7 +202,7 @@ void invalidate_rect_on_surf(int x1, int y1, int x2, int y2, DirtyRects &rects) 
 	rects.NumDirtyRegions++;
 
 	// ** Span code
-	Std::vector<IRRow> &dirtyRow = rects.DirtyRows;
+	std::vector<IRRow> &dirtyRow = rects.DirtyRows;
 	int s, foundOne;
 	// add this rect to the list for this row
 	for (a = y1; a <= y2; a++) {
@@ -326,7 +326,7 @@ void update_invalid_region(Bitmap *ds, Bitmap *src, const DirtyRects &rects, boo
 	if (rects.NumDirtyRegions == WHOLESCREENDIRTY) {
 		ds->Blit(src, src_x, src_y, dst_x, dst_y, rects.SurfaceSize.Width, rects.SurfaceSize.Height);
 	} else {
-		const Std::vector<IRRow> &dirtyRow = rects.DirtyRows;
+		const std::vector<IRRow> &dirtyRow = rects.DirtyRows;
 		const int surf_height = rects.SurfaceSize.Height;
 		// TODO: is this IsMemoryBitmap check is still relevant?
 		// If bitmaps properties match and no transform required other than linear offset
@@ -370,7 +370,7 @@ void update_invalid_region(Bitmap *ds, color_t fill_color, const DirtyRects &rec
 	if (rects.NumDirtyRegions == WHOLESCREENDIRTY) {
 		ds->FillRect(rects.Viewport, fill_color);
 	} else {
-		const Std::vector<IRRow> &dirtyRow = rects.DirtyRows;
+		const std::vector<IRRow> &dirtyRow = rects.DirtyRows;
 		const int surf_height = rects.SurfaceSize.Height;
 		{
 			const AGS::Shared::PlaneScaling &tf = rects.Room2Screen;

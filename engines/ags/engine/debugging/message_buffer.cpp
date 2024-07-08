@@ -55,7 +55,7 @@ void MessageBuffer::Send(const String &out_id) {
 			String::FromFormat("WARNING: output %s lost exceeding buffer: %zu debug messages\n", out_id.GetCStr(), (unsigned)_msgLost),
 		    gr.UID.ID, gr.OutputName, kDbgMsg_All));
 	}
-	for (Std::vector<DebugMessage>::const_iterator it = _buffer.begin(); it != _buffer.end(); ++it) {
+	for (std::vector<DebugMessage>::const_iterator it = _buffer.begin(); it != _buffer.end(); ++it) {
 		_GP(DbgMgr).SendMessage(out_id, *it);
 	}
 }

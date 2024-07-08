@@ -45,7 +45,7 @@ using Shared::StringV;
 class IGraphicsDriver;
 class IGfxFilter;
 struct GfxFilterInfo;
-typedef Std::shared_ptr<IGfxFilter> PGfxFilter;
+typedef std::shared_ptr<IGfxFilter> PGfxFilter;
 
 
 class IGfxDriverFactory {

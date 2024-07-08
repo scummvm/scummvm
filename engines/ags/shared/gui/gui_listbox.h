@@ -75,8 +75,8 @@ public:
 	int32_t               RowHeight;
 	int32_t               VisibleItemCount;
 
-	Std::vector<String>   Items;
-	Std::vector<int16_t>  SavedGameIndex;
+	std::vector<String>   Items;
+	std::vector<int16_t>  SavedGameIndex;
 	int32_t               SelectedItem;
 	int32_t               TopItem;
 	Point                 MousePos;

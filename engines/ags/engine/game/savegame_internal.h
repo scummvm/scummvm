@@ -35,7 +35,7 @@ namespace Engine {
 
 using AGS::Shared::Bitmap;
 
-typedef Std::shared_ptr<Bitmap> PBitmap;
+typedef std::shared_ptr<Bitmap> PBitmap;
 
 // PreservedParams keeps old values of particular gameplay
 // parameters that are saved before the save restoration
@@ -49,7 +49,7 @@ struct PreservedParams {
 	int GameOptions[GameSetupStructBase::MAX_OPTIONS]{};
 	// Script global data sizes
 	size_t GlScDataSize = 0u;
-	Std::vector<size_t> ScMdDataSize;
+	std::vector<size_t> ScMdDataSize;
 
 	PreservedParams();
 };
@@ -71,16 +71,16 @@ enum ViewportSaveFlags {
 struct RestoredData {
 	int                     FPS;
 	// Unserialized bitmaps for dynamic surfaces
-	Std::vector<Bitmap *>    DynamicSurfaces;
+	std::vector<Bitmap *>    DynamicSurfaces;
 	// Scripts global data
 	struct ScriptData {
-		Std::vector<char>	Data;
+		std::vector<char>	Data;
 		size_t              Len;
 
 		ScriptData();
 	};
 	ScriptData              GlobalScript;
-	Std::vector<ScriptData> ScriptModules;
+	std::vector<ScriptData> ScriptModules;
 	// Room data (has to be be preserved until room is loaded)
 	PBitmap                 RoomBkgScene[MAX_ROOM_BGFRAMES];
 	int16_t                 RoomLightLevels[MAX_ROOM_REGIONS];
@@ -129,8 +129,8 @@ struct RestoredData {
 		int Width = 0;
 		int Height = 0;
 	};
-	Std::vector<ViewportData> Viewports;
-	Std::vector<CameraData> Cameras;
+	std::vector<ViewportData> Viewports;
+	std::vector<CameraData> Cameras;
 	int32_t Camera0_Flags = 0; // flags for primary camera, when data is read in legacy order
 
 	RestoredData();

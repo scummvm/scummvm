@@ -69,7 +69,7 @@ public:
 	virtual Rect GetDestination() const = 0;
 };
 
-typedef Std::shared_ptr<IGfxFilter> PGfxFilter;
+typedef std::shared_ptr<IGfxFilter> PGfxFilter;
 
 } // namespace Engine
 } // namespace AGS

@@ -98,8 +98,8 @@ struct ScriptPosition {
 // Running instance of the script
 struct ccInstance {
 public:
-	typedef Std::unordered_map<int32_t, ScriptVariable> ScVarMap;
-	typedef Std::shared_ptr<ScVarMap>                   PScVarMap;
+	typedef std::unordered_map<int32_t, ScriptVariable> ScVarMap;
+	typedef std::shared_ptr<ScVarMap>                   PScVarMap;
 public:
 	int32_t flags;
 	PScVarMap globalvars;

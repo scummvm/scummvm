@@ -61,7 +61,7 @@ int sys_get_desktop_resolution(int &width, int &height) {
 	return 0;
 }
 
-void sys_get_desktop_modes(Std::vector<AGS::Engine::DisplayMode> &dms, int color_depth) {
+void sys_get_desktop_modes(std::vector<AGS::Engine::DisplayMode> &dms, int color_depth) {
 #ifdef TODO
 	SDL_DisplayMode mode;
 	const int display_id = DEFAULT_DISPLAY_INDEX;

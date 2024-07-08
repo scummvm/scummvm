@@ -45,7 +45,7 @@ using Shared::Stream;
 using Shared::String;
 using Shared::Version;
 
-typedef Std::shared_ptr<Stream> PStream;
+typedef std::shared_ptr<Stream> PStream;
 
 //-----------------------------------------------------------------------------
 // Savegame version history
@@ -111,7 +111,7 @@ struct SavegameSource {
 	// Savegame format version
 	SavegameVersion     Version;
 	// A ponter to the opened stream
-	Std::unique_ptr<Stream> InputStream;
+	std::unique_ptr<Stream> InputStream;
 
 	SavegameSource();
 };
@@ -150,7 +150,7 @@ struct SavegameDescription {
 	int                 ColorDepth;
 
 	String              UserText;
-	Std::unique_ptr<Bitmap> UserImage;
+	std::unique_ptr<Bitmap> UserImage;
 
 	SavegameDescription();
 };

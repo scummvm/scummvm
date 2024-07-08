@@ -203,7 +203,7 @@ int create_global_script() {
 
 	ccSetOption(SCOPT_AUTOIMPORT, 1);
 
-	Std::vector<ccInstance *> instances_for_resolving;
+	std::vector<ccInstance *> instances_for_resolving;
 	for (size_t i = 0; i < _G(numScriptModules); ++i) {
 		_GP(moduleInst)[i] = ccInstance::CreateFromScript(_GP(scriptModules)[i]);
 		if (_GP(moduleInst)[i] == nullptr)

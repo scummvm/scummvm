@@ -28,7 +28,7 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
-// TODO: replace with Std::shared_ptr!!!
+// TODO: replace with std::shared_ptr!!!
 enum ObjectOwnershipPolicy {
 	kReleaseAfterUse,
 	kDisposeAfterUse

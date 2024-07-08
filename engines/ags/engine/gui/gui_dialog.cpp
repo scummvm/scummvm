@@ -350,7 +350,7 @@ int enternumberwindow(char *prompttext) {
 }
 
 int roomSelectorWindow(int currentRoom, int numRooms,
-		const Std::vector<int> &roomNumbers, const Std::vector<String> &roomNames) {
+		const std::vector<int> &roomNumbers, const std::vector<String> &roomNames) {
 	char labeltext[200];
 	Common::strcpy_s(labeltext, get_global_message(MSG_SAVEDIALOG));
 	const int wnd_width = 240;

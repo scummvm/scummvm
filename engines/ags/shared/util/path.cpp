@@ -226,7 +226,7 @@ String MakePath(const String &parent, const String &filename, const String &ext)
 	return path;
 }
 
-Std::vector<String> Split(const String &path) {
+std::vector<String> Split(const String &path) {
 	return path.Split('/');
 }
 

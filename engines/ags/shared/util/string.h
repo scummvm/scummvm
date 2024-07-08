@@ -265,7 +265,7 @@ public:
 	// Splits the string into segments divided by the instances of a given character,
 	// including empty segments e.g. if separators follow each other;
 	// returns at least one segment (equal to full string if no separator was found)
-	Std::vector<String> Split(char separator) const;
+	std::vector<String> Split(char separator) const;
 
 	//-------------------------------------------------------------------------
 	// String modification methods

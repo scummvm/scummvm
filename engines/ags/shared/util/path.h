@@ -88,7 +88,7 @@ String  ConcatPaths(String &buf, const String &parent, const String &child);
 // Creates path by combining directory, file name and extension
 String  MakePath(const String &parent, const String &filename, const String &ext);
 // Splits path into components, divided by path separator
-Std::vector<String> Split(const String &path);
+std::vector<String> Split(const String &path);
 
 // Subsitutes illegal characters with '_'. This function uses a combined set
 // of illegal chars from all the supported platforms to make a name that
