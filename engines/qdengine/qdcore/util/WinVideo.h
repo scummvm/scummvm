@@ -47,11 +47,12 @@ public:
 	//! Установка громкости звука, параметр - в децибелах [-10000, 0].
 	bool set_volume(int volume_db);
 
-	void set_window(void *hwnd, int x = 0, int y = 0, int xsize = 0, int ysize = 0);
+	void set_window(int x = 0, int y = 0, int xsize = 0, int ysize = 0);
 	bool open_file(const char *fname);
 	void close_file();
 
 	bool play();
+	bool quant();
 	bool stop();
 	bool wait_end();
 
@@ -72,6 +73,14 @@ private:
 	struct IMediaEvent *media_event_;
 	struct IBasicAudio *basic_audio_;
 	struct IBasicVideo *basic_video_;
+
+
+	// Coordinates of the top left corner of the video
+	int _x;
+	int _y;
+
+	int _vidWidth;
+	int _vidHeight;
 
 	// Video decoder
 	Video::MPEGPSDecoder *_decoder;

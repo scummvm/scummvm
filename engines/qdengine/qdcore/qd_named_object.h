@@ -167,3 +167,4 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_NAMED_OBJECT_H
+
