@@ -99,19 +99,19 @@ Common::KeymapArray MadeMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 	using namespace Made;
 
-	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "made-main", "MADE main");
-	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game Keymappings"));
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "made-default", _("Default keymappings"));
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
 
 	Action *act;
 
-	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act = new Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	act->addDefaultInputMapping("KP_PLUS");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act = new Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
@@ -125,28 +125,28 @@ Common::KeymapArray MadeMetaEngine::initKeymaps(const char *target) const {
 	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
-	act = new Action("CRSORUP", _("Cursor Up"));
+	act = new Action("CRSORUP", _("Cursor up"));
 	act->setCustomEngineActionEvent(kActionCursorUp);
 	act->addDefaultInputMapping("UP");
 	act->addDefaultInputMapping("KP8");
 	act->allowKbdRepeats();
 	gameKeyMap->addAction(act);
 
-	act = new Action("CRSORDOWN", _("Cursor Down"));
+	act = new Action("CRSORDOWN", _("Cursor down"));
 	act->setCustomEngineActionEvent(kActionCursorDown);
 	act->addDefaultInputMapping("DOWN");
 	act->addDefaultInputMapping("KP2");
 	act->allowKbdRepeats();
 	gameKeyMap->addAction(act);
 
-	act = new Action("CRSORLEFT", _("Cursor Left"));
+	act = new Action("CRSORLEFT", _("Cursor left"));
 	act->setCustomEngineActionEvent(kActionCursorLeft);
 	act->addDefaultInputMapping("LEFT");
 	act->addDefaultInputMapping("KP4");
 	act->allowKbdRepeats();
 	gameKeyMap->addAction(act);
 
-	act = new Action("CRSORRIGHT", _("Cursor Right"));
+	act = new Action("CRSORRIGHT", _("Cursor right"));
 	act->setCustomEngineActionEvent(kActionCursorRight);
 	act->addDefaultInputMapping("RIGHT");
 	act->addDefaultInputMapping("KP6");
@@ -159,19 +159,19 @@ Common::KeymapArray MadeMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_GUIDE"); 
 	gameKeyMap->addAction(act);
 
-	act = new Action("SAVEGAME", _("Save Game"));
+	act = new Action("SAVEGAME", _("Save game"));
 	act->setCustomEngineActionEvent(kActionSaveGame);
 	act->addDefaultInputMapping("F2");
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER"); 
 	gameKeyMap->addAction(act);
 
-	act = new Action("LOADGAME", _("Load Game"));
+	act = new Action("LOADGAME", _("Load game"));
 	act->setCustomEngineActionEvent(kActionLoadGame);
 	act->addDefaultInputMapping("F3");
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER"); 
 	gameKeyMap->addAction(act);
 
-	act = new Action("RPTMSG", _("Repeat Last Message"));
+	act = new Action("RPTMSG", _("Repeat last message"));
 	act->setCustomEngineActionEvent(kActionRepeatMessage);
 	act->addDefaultInputMapping("F4");
 	act->addDefaultInputMapping("JOY_X");
