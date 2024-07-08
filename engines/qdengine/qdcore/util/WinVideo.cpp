@@ -135,7 +135,7 @@ bool winVideo::quant() {
 		int frameHeight = _decoder->getHeight();
 
 		if (frame) {
-			Graphics::ManagedSurface *surf;
+			Graphics::ManagedSurface *surf = nullptr;
 			surf->copyFrom(*frame);
 
 			if (_tempSurf) {
