@@ -421,6 +421,11 @@ bool Scene::readDialogList(Common::SeekableReadStream *s, Common::Array<Dialog> 
 			dst._nextDialogDlgNum = s->readUint16LE();
 		}
 
+		if (isVersionOver(" 1.216")) {
+			dst._unk1 = s->readUint16LE();
+			dst._unk2 = s->readUint16LE();
+		}
+
 		uint16 nbytes = s->readUint16LE();
 		if (nbytes > 0) {
 			dst._str = s->readString('\0', nbytes);

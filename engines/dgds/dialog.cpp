@@ -59,7 +59,7 @@ Dialog *Dialog::_lastDialogSelectionChangedFor = nullptr;
 
 Dialog::Dialog() : _num(0), _bgColor(0), _fontColor(0), _selectionBgCol(0), _selectonFontCol(0),
 	_fontSize(0), _flags(kDlgFlagNone), _frameType(kDlgFramePlain), _time(0), _nextDialogDlgNum(0),
-	_nextDialogFileNum(0), _fileNum(0)
+	_nextDialogFileNum(0), _fileNum(0), _unk1(0), _unk2(0)
 {}
 
 

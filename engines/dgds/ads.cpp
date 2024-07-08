@@ -140,7 +140,7 @@ bool ADSInterpreter::updateSeqTimeAndFrame(const TTMEnviro *env, TTMSeq &seq) {
 		uint32 now = g_engine->getTotalPlayTime();
 		if (now < seq._timeNext) {
 			debug(10, "env %d seq %d (%s) not advancing from frame %d (now %d timeNext %d interval %d)", seq._enviro,
-					seq._seqNum, env->_tags[seq._seqNum].c_str(), seq._currentFrame, now, seq._timeNext, seq._timeInterval);
+					seq._seqNum, env->_tags.getValOrDefault(seq._seqNum).c_str(), seq._currentFrame, now, seq._timeNext, seq._timeInterval);
 			return false;
 		}
 		seq._timeNext = now + seq._timeInterval;
@@ -149,11 +149,11 @@ bool ADSInterpreter::updateSeqTimeAndFrame(const TTMEnviro *env, TTMSeq &seq) {
 	seq._executed = false;
 	if (seq._gotoFrame == -1) {
 		debug(10, "env %d seq %d (%s) advance to frame %d->%d (start %d last %d)", seq._enviro, seq._seqNum,
-				env->_tags[seq._seqNum].c_str(), seq._currentFrame, seq._currentFrame + 1, seq._startFrame, seq._lastFrame);
+				env->_tags.getValOrDefault(seq._seqNum).c_str(), seq._currentFrame, seq._currentFrame + 1, seq._startFrame, seq._lastFrame);
 		seq._currentFrame++;
 	} else {
 		debug(10, "env %d seq %d (%s) goto to frame %d->%d (start %d last %d)", seq._enviro, seq._seqNum,
-				env->_tags[seq._seqNum].c_str(), seq._currentFrame, seq._gotoFrame, seq._startFrame, seq._lastFrame);
+				env->_tags.getValOrDefault(seq._seqNum).c_str(), seq._currentFrame, seq._gotoFrame, seq._startFrame, seq._lastFrame);
 		seq._currentFrame = seq._gotoFrame;
 		seq._gotoFrame = -1;
 	}
@@ -566,7 +566,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 			error("ADS invalid seq requested %d %d", enviro, seqnum);
 
 		debug(10, "ADS 0x%04x: add scene - env %d seq %d (%s) runCount %d prop %d", code,
-					enviro, seqnum, env->_tags[seqnum].c_str(), runCount, unk);
+					enviro, seqnum, env->_tags.getValOrDefault(seqnum).c_str(), runCount, unk);
 
 		if (code == 0x2000)
 			seq->_currentFrame = seq->_startFrame;
@@ -592,7 +592,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		_currentTTMSeq = findTTMSeq(enviro, seqnum);
 		const TTMEnviro *env = findTTMEnviro(enviro);
 		debug(10, "ADS 0x2010: stop seq env %d seq %d (%s) prop %d", enviro, seqnum,
-				env->_tags[seqnum].c_str(), unk);
+				env->_tags.getValOrDefault(seqnum).c_str(), unk);
 		if (_currentTTMSeq)
 			_currentTTMSeq->_runFlag = kRunTypeStopped;
 		break;
@@ -604,7 +604,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		_currentTTMSeq = findTTMSeq(enviro, seqnum);
 		const TTMEnviro *env = findTTMEnviro(enviro);
 		debug(10, "ADS 0x2015: set runflag5 env %d seq %d (%s) prop %d", enviro, seqnum,
-				env->_tags[seqnum].c_str(), unk);
+				env->_tags.getValOrDefault(seqnum).c_str(), unk);
 		if (_currentTTMSeq)
 			_currentTTMSeq->_runFlag = kRunType5;
 		break;
@@ -616,7 +616,7 @@ bool ADSInterpreter::handleOperation(uint16 code, Common::SeekableReadStream *sc
 		_currentTTMSeq = findTTMSeq(enviro, seqnum);
 		const TTMEnviro *env = findTTMEnviro(enviro);
 		debug(10, "ADS 0x2020: reset scene env %d seq %d (%s) prop %d", enviro, seqnum,
-				env->_tags[seqnum].c_str(), unk);
+				env->_tags.getValOrDefault(seqnum).c_str(), unk);
 		if (_currentTTMSeq)
 			_currentTTMSeq->reset();
 		break;
