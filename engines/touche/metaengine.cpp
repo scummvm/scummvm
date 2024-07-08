@@ -23,6 +23,11 @@
 #include "engines/advancedDetector.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 
 #include "base/plugins.h"
 
@@ -44,6 +49,8 @@ public:
 			target = getName();
 		return Touche::generateGameStateFileName(target, saveGameIdx, saveGameIdx == kSavegameFilePattern);
 	}
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool ToucheMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -102,6 +109,105 @@ int ToucheMetaEngine::getMaximumSaveSlot() const {
 void ToucheMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Touche::generateGameStateFileName(target, slot);
 	g_system->getSavefileManager()->removeSavefile(filename);
+}
+
+Common::KeymapArray ToucheMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Touche;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "touche-default", "Default keymappings");
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Left click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Right click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	{
+		act = new Action("SKIPORQUIT", _("Skip sequence/open quit dialogue"));
+		act->setCustomEngineActionEvent(kToucheActionSkipOrQuit);
+		act->addDefaultInputMapping("ESCAPE");
+		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+		gameKeyMap->addAction(act);
+
+		act = new Action("SKIPDILOG", _("Skip Dialogue"));
+		act->setCustomEngineActionEvent(kToucheActionSkipDialogue);
+		act->addDefaultInputMapping("SPACE");
+		act->addDefaultInputMapping("JOY_X");
+		gameKeyMap->addAction(act);
+
+		act = new Action("OPTIONS", _("Open options menu"));
+		act->setCustomEngineActionEvent(kToucheActionOpenOptions);
+		act->addDefaultInputMapping("F5");
+		act->addDefaultInputMapping("JOY_Y");
+		gameKeyMap->addAction(act);
+
+		// I18N: The actor walking pace is increased
+		act = new Action("ENABLEFASTWALK", _("Enable fast walk"));
+		act->setCustomEngineActionEvent(kToucheActionEnableFastWalk);
+		act->addDefaultInputMapping("F9");
+		act->addDefaultInputMapping("JOY_LEFT");
+		gameKeyMap->addAction(act);
+
+		// I18N: The actor walking pace is decreased
+		act = new Action("DISABLEFASTWALK", _("Disable fast walk"));
+		act->setCustomEngineActionEvent(kToucheActionDisableFastWalk);
+		act->addDefaultInputMapping("F10");
+		act->addDefaultInputMapping("JOY_LEFT_STICK");
+		gameKeyMap->addAction(act);
+
+		act = new Action("TGGLFASTMODE", _("Toggle fast mode"));
+		act->setCustomEngineActionEvent(kToucheActionToggleFastMode);
+		act->addDefaultInputMapping("C+f");
+		act->addDefaultInputMapping("JOY_RIGHT_STICK");
+		gameKeyMap->addAction(act);
+
+		act = new Action("TGGLTALKTEXT", _("Toggle between voice/text/text and voice"));
+		act->setCustomEngineActionEvent(kToucheActionToggleTalkTextMode);
+		act->addDefaultInputMapping("t");
+		act->addDefaultInputMapping("JOY_RIGHT");
+		gameKeyMap->addAction(act);
+
+		String s = ConfMan.get("language", target);
+		Language l = Common::parseLanguage(s);
+
+		act = new Action("YES", _("Press \"Yes\" Key"));
+		act->setCustomEngineActionEvent(kToucheActionYes);
+		act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+		switch (l) {
+		case FR_FRA:
+			act->addDefaultInputMapping("o");
+			break;
+		case DE_DEU:
+			act->addDefaultInputMapping("j");
+			break;
+		case ES_ESP:
+			act->addDefaultInputMapping("s");
+			break;
+		case PL_POL:
+			act->addDefaultInputMapping("s");
+			act->addDefaultInputMapping("t");
+			break;
+		default:
+			act->addDefaultInputMapping("y");
+			break;
+		}
+		gameKeyMap->addAction(act);
+	}
+
+	KeymapArray keymaps(2);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeyMap;
+
+	return keymaps;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TOUCHE)

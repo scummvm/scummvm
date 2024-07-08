@@ -400,41 +400,45 @@ void ToucheEngine::processEvents(bool handleKeyEvents) {
 	Common::Event event;
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 			if (!handleKeyEvents) {
 				break;
 			}
-			_flagsTable[600] = event.kbd.keycode;
-			if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+			if (event.customType == kToucheActionSkipOrQuit) {
+				_flagsTable[600] = Common::KEYCODE_ESCAPE;
 				if (_displayQuitDialog) {
 					if (displayQuitDialog()) {
 						quitGame();
 					}
 				}
-			} else if (event.kbd.keycode == Common::KEYCODE_F5) {
+			} else if (event.customType == kToucheActionOpenOptions) {
 				if (_flagsTable[618] == 0 && !_hideInventoryTexts) {
 					handleOptions(0);
 				}
-			} else if (event.kbd.keycode == Common::KEYCODE_F9) {
+			} else if (event.customType == kToucheActionEnableFastWalk) {
 				_fastWalkMode = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_F10) {
+			} else if (event.customType == kToucheActionDisableFastWalk) {
 				_fastWalkMode = false;
 			}
-			if (event.kbd.hasFlags(Common::KBD_CTRL)) {
-				if (event.kbd.keycode == Common::KEYCODE_f) {
-					_fastMode = !_fastMode;
-				}
+			if (event.customType == kToucheActionToggleFastMode) {
+				_fastMode = !_fastMode;
 			} else {
-				if (event.kbd.keycode == Common::KEYCODE_t) {
+				if (event.customType == kToucheActionToggleTalkTextMode) {
 					++_talkTextMode;
 					if (_talkTextMode == kTalkModeCount) {
 						_talkTextMode = 0;
 					}
 					displayTextMode(-(92 + _talkTextMode));
-				} else if (event.kbd.keycode == Common::KEYCODE_SPACE) {
+				} else if (event.customType == kToucheActionSkipDialogue) {
 					updateKeyCharTalk(2);
 				}
 			}
+			break;
+		case Common::EVENT_KEYDOWN:
+			if (!handleKeyEvents) {
+				break;
+			}
+			_flagsTable[600] = event.kbd.keycode;
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 			_inp_leftMouseButtonPressed = true;
