@@ -221,19 +221,21 @@ Common::KeymapArray AgosMetaEngine::initKeymaps(const char *target) const {
 	using namespace AGOS;
 
 	Common::String gameId = ConfMan.get("gameid", target);
-	
+
+	// I18N: "AGOS main" refers to the main keymappings for the agos engine.
+	// It is never disabled and it is not game specific
 	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "agos-main", _("AGOS main"));
-	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game Keymappings"));
-	Keymap *yesNoKeymap = new Keymap(Keymap::kKeymapTypeGame, "game-Yes/No", _("Yes/No Keymapping"));
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
+	Keymap *yesNoKeymap = new Keymap(Keymap::kKeymapTypeGame, "game-Yes/No", _("Yes/No keymapping"));
 	Action *act;
 
-	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act = new Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act = new Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
@@ -263,17 +265,17 @@ Common::KeymapArray AgosMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("PLUS");
 	gameKeyMap->addAction(act);
 
-	act = new Action("MUTEMSC", _("Toggle Music on/off"));
+	act = new Action("MUTEMSC", _("Toggle music on/off"));
 	act->setCustomEngineActionEvent(kActionToggleMusic);
 	act->addDefaultInputMapping("m");
 	gameKeyMap->addAction(act);
 
-	act = new Action("SNDEFFECT", _("Toggle Sound effect on/off"));
+	act = new Action("SNDEFFECT", _("Toggle sound effect on/off"));
 	act->setCustomEngineActionEvent(kActionToggleSoundEffects);
 	act->addDefaultInputMapping("s");
 	gameKeyMap->addAction(act);
 
-	act = new Action("FSTMODE", _("Toggle Fast mode on/off"));
+	act = new Action("FSTMODE", _("Toggle fast mode on/off"));
 	act->setCustomEngineActionEvent(kActionToggleFastMode);
 	act->addDefaultInputMapping("C+f");
 	gameKeyMap->addAction(act);
@@ -333,7 +335,7 @@ Common::KeymapArray AgosMetaEngine::initKeymaps(const char *target) const {
 		gameKeyMap->addAction(act);
 
 		if (gameId == "simon2") {
-			act = new Action("BACKGRNDSND", _("Toggle background sounds On/Off"));
+			act = new Action("BACKGRNDSND", _("Toggle background sounds on/off"));
 			act->setCustomEngineActionEvent(kActionToggleBackgroundSound);
 			act->addDefaultInputMapping("b");
 			gameKeyMap->addAction(act);
@@ -377,12 +379,12 @@ Common::KeymapArray AgosMetaEngine::initKeymaps(const char *target) const {
 		gameKeyMap->addAction(act);
 	}
 
-	act = new Action("KEYYES", _("Press Yes Key"));
+	act = new Action("KEYYES", _("Press \"Yes\" key"));
 	act->setCustomEngineActionEvent(kActionKeyYes);
 	act->addDefaultInputMapping("JOY_A");
 	yesNoKeymap->addAction(act);
 
-	act = new Action("KEYNO", _("Press No Key"));
+	act = new Action("KEYNO", _("Press \"No\" key"));
 	act->setCustomEngineActionEvent(kActionKeyNo);
 	act->addDefaultInputMapping("JOY_B");
 	yesNoKeymap->addAction(act);
