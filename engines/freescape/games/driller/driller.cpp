@@ -872,6 +872,31 @@ void DrillerEngine::updateTimeVariables() {
 	}
 }
 
+void DrillerEngine::drawCompass(Graphics::Surface *surface, int x, int y, double degrees, double magnitude, uint32 color) {
+	double fov = 60;
+	degrees = degrees + fov;
+	if (degrees >= 360)
+		degrees = degrees - 360;
+
+	const double degtorad = (M_PI * 2) / 360;
+	double w = magnitude * cos(-degrees * degtorad);
+	double h = magnitude * sin(-degrees * degtorad);
+
+	surface->drawLine(x, y, x+(int)w, y+(int)h, color);
+
+
+	degrees = degrees - fov;
+	if (degrees < 0)
+		degrees = degrees + 360;
+
+	w = magnitude * cos(-degrees * degtorad);
+	h = magnitude * sin(-degrees * degtorad);
+
+	surface->drawLine(x, y, x+(int)w, y+(int)h, color);
+	//surface->drawLine(x, y, x+(int)-w, y+(int)h, color);
+}
+
+
 Common::Error DrillerEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
 	for (auto &it : _areaMap) { // All but skip area 255
 		if (it._key == 255)

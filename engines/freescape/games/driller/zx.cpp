@@ -151,6 +151,9 @@ void DrillerEngine::drawZXUI(Graphics::Surface *surface) {
 		Common::Rect shieldBar(106 - shield, 181, 106, 187);
 		surface->fillRect(shieldBar, front);
 	}
+
+	drawCompass(surface, 103, 160, _yaw, 10, front);
+	drawCompass(surface, 220 - 3, 160, _pitch - 30, 10, front);
 }
 
 } // End of namespace Freescape

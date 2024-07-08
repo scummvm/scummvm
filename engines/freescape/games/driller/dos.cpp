@@ -472,6 +472,13 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 		surface->copyRectToSurface(*_indicators[0], 132, 128, Common::Rect(_indicators[0]->w, _indicators[0]->h));
 	else
 		surface->copyRectToSurface(*_indicators[1], 132, 128, Common::Rect(_indicators[1]->w, _indicators[1]->h));
+
+	color = 2;
+	_gfx->readFromPalette(color, r, g, b);
+	uint32 other = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+
+	drawCompass(surface, 87, 156, _yaw, 10, other);
+	drawCompass(surface, 230, 156, _pitch - 30, 10, other);
 }
 
 } // End of namespace Freescape
