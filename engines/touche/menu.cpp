@@ -24,6 +24,8 @@
 #include "common/system.h"
 #include "common/savefile.h"
 
+#include "backends/keymapper/keymapper.h"
+
 #include "touche/graphics.h"
 #include "touche/midi.h"
 #include "touche/touche.h"
@@ -303,6 +305,10 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 				updateScreenArea(90, 102, 460, 196);
 				doRedraw = false;
 			}
+
+			Common::Keymapper *keymapper = _eventMan->getKeymapper();
+			keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+
 			Common::Event event;
 			while (_eventMan->pollEvent(event)) {
 				const Button *button = 0;
@@ -341,6 +347,9 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 					break;
 				}
 			}
+
+			keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+
 			_system->updateScreen();
 			_system->delayMillis(10);
 		}
@@ -476,38 +485,15 @@ int ToucheEngine::displayQuitDialog() {
 				quitLoop = true;
 				ret = 1;
 				break;
-			case Common::EVENT_KEYDOWN:
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				quitLoop = true;
-				switch (_language) {
-				case Common::FR_FRA:
-					if (event.kbd.keycode == Common::KEYCODE_o) {
-						ret = 1;
-					}
-					break;
-				case Common::DE_DEU:
-					if (event.kbd.keycode == Common::KEYCODE_j) {
-						ret = 1;
-					}
-					break;
-				case Common::ES_ESP:
-					if (event.kbd.keycode == Common::KEYCODE_s) {
-						ret = 1;
-					}
-					break;
-				case Common::PL_POL:
-					if (event.kbd.keycode == Common::KEYCODE_s || event.kbd.keycode == Common::KEYCODE_t) {
-						ret = 1;
-					}
-					break;
-				default:
-					// According to cyx, the Italian version uses the same
-					// keys as the English one.
-					if (event.kbd.keycode == Common::KEYCODE_y) {
-						ret = 1;
-					}
-					break;
+				if (event.customType == kToucheActionYes) {
+					ret = 1;
 				}
 				break;
+			case Common::EVENT_JOYBUTTON_DOWN:
+			case Common::EVENT_KEYDOWN:
+				quitLoop = true;
 			default:
 				break;
 			}

@@ -45,6 +45,18 @@
  */
 namespace Touche {
 
+enum TOUCHEAction {
+	kToucheActionNone,
+	kToucheActionYes,
+	kToucheActionSkipOrQuit,
+	kToucheActionOpenOptions,
+	kToucheActionEnableFastWalk,
+	kToucheActionDisableFastWalk,
+	kToucheActionToggleFastMode,
+	kToucheActionToggleTalkTextMode,
+	kToucheActionSkipDialogue
+};
+
 struct Area {
 	Common::Rect r;
 	int16 srcX, srcY;
