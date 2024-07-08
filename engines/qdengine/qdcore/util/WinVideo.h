@@ -28,6 +28,10 @@ namespace Video {
 class MPEGPSDecoder;
 }
 
+namespace Graphics {
+class ManagedSurface;
+}
+
 namespace QDEngine {
 
 class winVideo {
@@ -81,6 +85,8 @@ private:
 
 	int _vidWidth;
 	int _vidHeight;
+
+	Graphics::ManagedSurface *_tempSurf;
 
 	// Video decoder
 	Video::MPEGPSDecoder *_decoder;
