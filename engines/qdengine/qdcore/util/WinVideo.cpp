@@ -87,6 +87,9 @@ void winVideo::set_window(int x, int y, int xsize, int ysize) {
 	_vidWidth = xsize;
 	_vidHeight = ysize;
 
+	delete _tempSurf;
+	_tempSurf = nullptr;
+
 	if (_vidWidth != _decoder->getWidth() || _vidHeight != _decoder->getHeight())
 		_tempSurf = new Graphics::ManagedSurface(xsize, ysize, g_engine->_pixelformat);
 }
@@ -132,16 +135,20 @@ bool winVideo::quant() {
 		int frameHeight = _decoder->getHeight();
 
 		if (frame) {
-			// Check if frame needs to be stretched
-			if (_vidWidth != frameWidth || _vidHeight != frameHeight) {
+			Graphics::ManagedSurface *surf;
+			surf->copyFrom(*frame);
+
+			if (_tempSurf) {
 				const Common::Rect srcRect(0, 0, frameWidth, frameHeight);
-				const Common::Rect destRect(_x, _y, _vidWidth, _vidHeight);
+				const Common::Rect destRect(0, 0, _vidWidth, _vidHeight);
 
 				_tempSurf->blitFrom(*frame, srcRect, destRect);
-				g_system->copyRectToScreen(_tempSurf->getPixels(), _tempSurf->pitch, _x, _y, _vidWidth, _vidHeight);
-			} else
-				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, _x, _y, _vidWidth, _vidHeight);
+				surf = _tempSurf;
+			}
+
+			g_system->copyRectToScreen(surf->getPixels(), surf->pitch, _x, _y, _vidWidth, _vidHeight);
 		}
+
 		g_system->updateScreen();
 	}
 

@@ -86,7 +86,7 @@ private:
 	int _vidWidth;
 	int _vidHeight;
 
-	Graphics::ManagedSurface *_tempSurf;
+	Graphics::ManagedSurface *_tempSurf = nullptr;
 
 	// Video decoder
 	Video::MPEGPSDecoder *_decoder;
