@@ -106,17 +106,17 @@ Common::KeymapArray ComposerMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 	using namespace Composer;
 
-	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "composer-main", "COMPOSER main");
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "composer-engine", "Composer engine");
 
 	Action *act;
 
-	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act = new Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act = new Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
