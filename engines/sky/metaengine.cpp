@@ -45,7 +45,7 @@ class SkyMetaEngine : public MetaEngine {
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	Common::Error createInstance(OSystem *syst, Engine **engine,
-	                             const DetectedGame &gameDescriptor, const void *metaEngineDescriptor);
+	                             const DetectedGame &gameDescriptor, const void *metaEngineDescriptor) override;
 
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 
