@@ -362,6 +362,12 @@ int main(int argc, char *argv[]) {
 		std::cerr << "WARNING: imgui requires opengl, freetype2 and sdl2\n";
 		setFeatureBuildState("imgui", setup.features, false);
 	}
+	// HACK: IMGUI is not available on Xcode
+#ifdef ENABLE_XCODE
+	if (projectType == kProjectXcode) {
+		setFeatureBuildState("imgui", setup.features, false);
+	}
+#endif
 
 	// Disable engines for which we are missing dependencies
 	for (EngineDescList::const_iterator i = setup.engines.begin(); i != setup.engines.end(); ++i) {
