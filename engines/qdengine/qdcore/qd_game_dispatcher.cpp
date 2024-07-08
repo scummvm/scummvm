@@ -1918,7 +1918,26 @@ bool qdGameDispatcher::play_video(qdVideo *p) {
 	if (!video_player_.open_file(find_file(p->file_name(), *p)))
 		return false;
 
+	if (!p->check_flag(qdVideo::VID_ENABLE_MUSIC)) {
+		warning("qdGameDispatcher::play_video(): disable music\n");
+	}
+
 	cur_video_ = p;
+
+	if (p->check_flag(qdVideo::VID_FULLSCREEN_FLAG)) {
+		video_player_.set_window(0, 0, qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy());
+	} else {
+		int sx, sy;
+		video_player_.get_movie_size(sx, sy);
+
+		if (p->check_flag(qdVideo::VID_CENTER_FLAG)) {
+			int x = (qdGameConfig::get_config().screen_sx() - sx) >> 1;
+			int y = (qdGameConfig::get_config().screen_sy() - sy) >> 1;
+
+			video_player_.set_window(x, y, sx, sy);
+		} else
+			video_player_.set_window(p->position().x, p->position().y, sx, sy);
+	}
 
 	return video_player_.play();
 }
@@ -1978,7 +1997,7 @@ bool qdGameDispatcher::is_video_finished() {
 
 void qdGameDispatcher::continueVideo() {
 	if (!cur_video_) return;
-	video_player_.play();
+	video_player_.quant();
 }
 
 bool qdGameDispatcher::merge_global_objects(qdGameObject *obj) {

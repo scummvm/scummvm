@@ -80,22 +80,14 @@ bool winVideo::set_volume(int volume_db) {
 	return false;
 }
 
-void winVideo::set_window(void *hwnd, int x, int y, int xsize, int ysize) {
-	warning("STUB: winVideo::set_window");
+void winVideo::set_window(int x, int y, int xsize, int ysize) {
+	_x = x;
+	_y = y;
 
-	winVideo::hwnd_ = hwnd;
-	if (video_window_ && hwnd) { // Set the video window
-#if 0
-		video_window_->put_Owner((OAHWND)hwnd);
-		video_window_->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS);
-//		video_window_->put_WindowStyleEx(WS_EX_TOPMOST);
+	_vidWidth = xsize;
+	_vidHeight = ysize;
 
-		RECT grc = { x, y, xsize, ysize };
-		if (!grc.right || !grc.bottom) GetClientRect((HWND)hwnd, &grc);
-		video_window_->SetWindowPosition(grc.left, grc.top, grc.right, grc.bottom);
-#endif
-		toggle_cursor(false);
-	}
+	return;
 }
 
 bool winVideo::open_file(const char *fname) {
@@ -124,38 +116,22 @@ bool winVideo::play() {
 		return false;
 	}
 
-	// Calculating the coordinates to center the video
-	int32 x = 0, y = 0;
-	int32 videoWidth = _decoder->getWidth(), videoHeight = _decoder->getHeight();
+	_decoder->start();
 
-	int screenWidth = grDispatcher::instance()->Get_SizeX();
-	int screenHeight = grDispatcher::instance()->Get_SizeY();
+	return true;
+}
 
-	x = (screenWidth - videoWidth) / 2;
-	y = (screenHeight - videoHeight) / 2;
-
-	if (x < 0) {
-		x = 0;
-		videoWidth = screenWidth;
-	}
-
-	if (y < 0) {
-		y = 0;
-		videoHeight = screenHeight;
-	}
-
+bool winVideo::quant() {
 	// Video Playback loop
 	debugC(9, kDebugGraphics, "WinVideo::play: Video Playback loop");
 
-	_decoder->start();
 	if (_decoder->needsUpdate()) {
 		const Graphics::Surface *frame = _decoder->decodeNextFrame();
 		if (frame) {
-			g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, videoWidth, videoHeight);
+			g_system->copyRectToScreen(frame->getPixels(), frame->pitch, _x, _y, _vidWidth, _vidHeight);
 		}
 		g_system->updateScreen();
 	}
-
 
 	return true;
 }
@@ -196,7 +172,6 @@ bool winVideo::wait_end() {
 }
 
 bool winVideo::is_playback_finished() {
-	warning("STUB: winVideo::is_playback_finished %d", _decoder->endOfVideo());
 	return _decoder->endOfVideo();
 }
 
@@ -225,27 +200,11 @@ bool winVideo::toggle_cursor(bool visible) {
 }
 
 bool winVideo::get_movie_size(int &sx, int &sy) {
-	/*  if(!video_window_) return false;
-
-	    long sx_,sy_;
-	    video_window_->get_Width(&sx_);
-	    video_window_->get_Height(&sy_);
-
-	    sx = sx_;
-	    sy = sy_;
-	*/
-	warning("STUB: winVideo::get_movie_size()");
-
-	if (!basic_video_) return false;
-
-#if 0
-	long width, height;
-	if (basic_video_->GetVideoSize(&width, &height) == E_NOINTERFACE)
+	if (!_decoder)
 		return false;
-	sx = width;
-	sy = height;
 
-#endif
+	sx = _decoder->getWidth();
+	sy = _decoder->getHeight();
 
 	return true;
 }
