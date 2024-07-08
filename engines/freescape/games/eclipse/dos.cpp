@@ -189,6 +189,8 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 
 	drawIndicator(surface, 41, 4, 16);
 	drawEclipseIndicator(surface, 228, 0, yellow, green);
+	surface->fillRect(Common::Rect(225, 168, 235, 187), white);
+	drawCompass(surface, 229, 177, _yaw, 10, black);
 }
 
 soundFx *EclipseEngine::load1bPCM(Common::SeekableReadStream *file, int offset) {
