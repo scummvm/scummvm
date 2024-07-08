@@ -30,6 +30,8 @@
 
 #include "common/std/limits.h"
 
+#include "ags/lib/std.h"
+
 namespace AGS3 {
 
 #ifndef M_PI

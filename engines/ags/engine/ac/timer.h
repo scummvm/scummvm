@@ -26,6 +26,8 @@
 #include "common/std/chrono.h"
 #include "common/std/xtr1common.h"
 
+#include "ags/lib/std.h"
+
 namespace AGS3 {
 
 // use high resolution clock only if we know it is monotonic/steady.
