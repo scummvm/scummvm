@@ -19,6 +19,15 @@
  *
  */
 
+/********************************************
+   DISCLAIMER:
+
+   This is a wrapper code to mimic the relevant std:: class
+   Please use it ONLY when porting an existing code e.g. from the original sources
+
+   For all new development please use classes from Common::
+ *********************************************/
+
 #ifndef COMMON_STD_LIMITS_H
 #define COMMON_STD_LIMITS_H
 
