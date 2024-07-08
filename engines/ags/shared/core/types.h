@@ -29,6 +29,7 @@
 #define AGS_SHARED_CORE_TYPES_H
 
 #include "common/scummsys.h"
+#include "ags/lib/std.h"
 
 namespace AGS3 {
 

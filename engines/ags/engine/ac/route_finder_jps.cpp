@@ -32,6 +32,8 @@
 #include "common/std/functional.h"
 #include "common/std/xutility.h"
 
+#include "ags/lib/std.h"
+
 namespace AGS3 {
 
 // TODO: this could be cleaned up/simplified ...
