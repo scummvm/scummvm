@@ -1136,6 +1136,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		s.syncAsUint16LE(currentObject->Index);
 		s.syncAsSint16LE(currentObject->Position.x);
 		s.syncAsSint16LE(currentObject->Position.y);
+		s.syncAsUint16LE(currentObject->SceneIndex);
 	}
 
 	// Handle the view
@@ -1165,7 +1166,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		}		
 	}
 
-	uint32 numInventoryItems;
+	/* uint32 numInventoryItems;
 	if (s.isSaving()) {
 		numInventoryItems = currentView->inventoryItems.size();
 	} else {
@@ -1184,6 +1185,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 			currentView->inventoryItems.push_back(currentItem);
 		}
 	}
+	*/
 
 	return Common::kNoError;
 }
