@@ -134,16 +134,15 @@ bool winVideo::quant() {
 		int frameWidth = _decoder->getWidth();
 		int frameHeight = _decoder->getHeight();
 
-		if (frame) {
-			Graphics::ManagedSurface *surf = nullptr;
-			surf->copyFrom(*frame);
+		const Graphics::Surface *surf = frame;
 
+		if (frame) {
 			if (_tempSurf) {
 				const Common::Rect srcRect(0, 0, frameWidth, frameHeight);
 				const Common::Rect destRect(0, 0, _vidWidth, _vidHeight);
 
 				_tempSurf->blitFrom(*frame, srcRect, destRect);
-				surf = _tempSurf;
+				surf = _tempSurf->surfacePtr();
 			}
 
 			g_system->copyRectToScreen(surf->getPixels(), surf->pitch, _x, _y, _vidWidth, _vidHeight);
@@ -247,4 +246,3 @@ void winVideo::close_file() {
 }
 
 } // namespace QDEngine
-
