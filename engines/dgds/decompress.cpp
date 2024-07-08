@@ -77,6 +77,8 @@ void LzwDecompressor::reset() {
 	_codeLen = 0;
 
 	_cacheBits = 0;
+	_bitsData = 0;
+	_bitsSize = 0;
 }
 
 uint32 LzwDecompressor::decompress(byte *dest, uint32 sz, Common::SeekableReadStream &input) {
