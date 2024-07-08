@@ -89,69 +89,69 @@ Common::KeymapArray HugoMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 	using namespace Hugo;
 
-	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "hugo-main", "HUGO main");
-	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game Keymappings"));
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "hugo-default", _("Default keymappings"));
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
 
 	Action *act;
 
-	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act = new Action(kStandardActionLeftClick, _("Left click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	act->addDefaultInputMapping("KP_PLUS");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act = new Action(kStandardActionRightClick, _("Right click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
 	act->addDefaultInputMapping("KP_MINUS");
 	engineKeyMap->addAction(act);
 	
-	act = new Action("USERHELP", _("User Help"));
+	act = new Action("USERHELP", _("User help"));
 	act->setCustomEngineActionEvent(kActionUserHelp);
 	act->addDefaultInputMapping("F1");
 	act->addDefaultInputMapping("JOY_Y");
 	engineKeyMap->addAction(act);
 
-	act = new Action("TOGGLESOUND", _("Toggle Sound"));
+	act = new Action("TOGGLESOUND", _("Toggle sound"));
 	act->setCustomEngineActionEvent(kActionToggleSound);
 	act->addDefaultInputMapping("F2");
 	engineKeyMap->addAction(act);
 
-	act = new Action("REPEATLINE", _("Repeat Last Line"));
+	act = new Action("REPEATLINE", _("Repeat last line"));
 	act->setCustomEngineActionEvent(kActionRepeatLine);
 	act->addDefaultInputMapping("F3");
 	act->addDefaultInputMapping("JOY_RIGHT_STICK");
 	engineKeyMap->addAction(act);
 
-	act = new Action("SAVEGAME", _("Save Game"));
+	act = new Action("SAVEGAME", _("Save game"));
 	act->setCustomEngineActionEvent(kActionSaveGame);
 	act->addDefaultInputMapping("F4");
 	act->addDefaultInputMapping("C+s");
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("RESTOREGAME", _("Restore Game"));
+	act = new Action("RESTOREGAME", _("Restore game"));
 	act->setCustomEngineActionEvent(kActionRestoreGame);
 	act->addDefaultInputMapping("F5");
 	act->addDefaultInputMapping("C+l");
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("NEWGAME", _("New Game"));
+	act = new Action("NEWGAME", _("New game"));
 	act->setCustomEngineActionEvent(kActionNewGame);
 	act->addDefaultInputMapping("C+n");
 	act->addDefaultInputMapping("JOY_GUIDE");
 	engineKeyMap->addAction(act);
 
-	act = new Action("INVENTORY", _("Show Inventory"));
+	act = new Action("INVENTORY", _("Show inventory"));
 	act->setCustomEngineActionEvent(kActionInventory);
 	act->addDefaultInputMapping("F6");
 	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
 
-	act = new Action("TURBOMODE", _("Turbo Mode"));
+	act = new Action("TURBOMODE", _("Turbo mode"));
 	act->setCustomEngineActionEvent(kActionToggleTurbo);
 	act->addDefaultInputMapping("F8");
 	act->addDefaultInputMapping("JOY_LEFT_STICK");
@@ -163,50 +163,58 @@ Common::KeymapArray HugoMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_BACK");
 	engineKeyMap->addAction(act);
 
-	act = new Action("MOVETOP", _("Move Top"));
+	// I18N: Move actor in the top direction
+	act = new Action("MOVETOP", _("Move to top"));
 	act->setCustomEngineActionEvent(kActionMoveTop);
 	act->addDefaultInputMapping("KP8");
 	act->addDefaultInputMapping("UP");
 	act->addDefaultInputMapping("JOY_UP");
 	gameKeyMap->addAction(act);
 
-	act = new Action("MOVEBOTTOM", _("Move Bottom"));
+	// I18N: Move actor in the bottom direction
+	act = new Action("MOVEBOTTOM", _("Move to bottom"));
 	act->setCustomEngineActionEvent(kActionMoveBottom);
 	act->addDefaultInputMapping("KP2");
 	act->addDefaultInputMapping("DOWN");
 	act->addDefaultInputMapping("JOY_DOWN");
 	gameKeyMap->addAction(act);
 
-	act = new Action("MOVELEFT", _("Move Left"));
+	// I18N: Move actor in the left direction
+	act = new Action("MOVELEFT", _("Move to left"));
 	act->setCustomEngineActionEvent(kActionMoveLeft);
 	act->addDefaultInputMapping("KP4");
 	act->addDefaultInputMapping("LEFT");
 	act->addDefaultInputMapping("JOY_LEFT");
 	gameKeyMap->addAction(act);
 
-	act = new Action("MOVERIGHT", _("Move Right"));
+	// I18N: Move actor in the right direction
+	act = new Action("MOVERIGHT", _("Move to right"));
 	act->setCustomEngineActionEvent(kActionMoveRight);
 	act->addDefaultInputMapping("KP6");
 	act->addDefaultInputMapping("RIGHT");
 	act->addDefaultInputMapping("JOY_RIGHT");
 	gameKeyMap->addAction(act);
 
-	act = new Action("MOVETOPLEFT", _("Move Top Left"));
+	// I18N: Move actor in the top-left direction
+	act = new Action("MOVETOPLEFT", _("Move to top left"));
 	act->setCustomEngineActionEvent(kActionMoveTopLeft);
 	act->addDefaultInputMapping("KP7");
 	gameKeyMap->addAction(act);
 
-	act = new Action("MOVETOPRIGHT", _("Move Top Right"));
+	// I18N: Move actor in the top-right direction
+	act = new Action("MOVETOPRIGHT", _("Move to top right"));
 	act->setCustomEngineActionEvent(kActionMoveTopRight);
 	act->addDefaultInputMapping("KP9");
 	gameKeyMap->addAction(act);
 
-	act = new Action("MOVEBTMLEFT", _("Move Bottom Left"));
+	// I18N: Move actor in the bottom-left direction
+	act = new Action("MOVEBTMLEFT", _("Move to bottom left"));
 	act->setCustomEngineActionEvent(kActionMoveBottomLeft);
 	act->addDefaultInputMapping("KP1");
 	gameKeyMap->addAction(act);
 
-	act = new Action("MOVEBTMRIGHT", _("Move Bottom Right"));
+	// I18N: Move actor in the bottom-right direction
+	act = new Action("MOVEBTMRIGHT", _("Move to bottom right"));
 	act->setCustomEngineActionEvent(kActionMoveBottomRight);
 	act->addDefaultInputMapping("KP3");
 	gameKeyMap->addAction(act);
