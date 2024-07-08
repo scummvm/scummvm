@@ -274,29 +274,32 @@ Common::KeymapArray SagaMetaEngine::initKeymaps(const char *target) const {
 	Action *act;
 
 	{
-		act = new Action(kStandardActionLeftClick, _("Left Click"));
+		act = new Action(kStandardActionLeftClick, _("Left click"));
 		act->setLeftClickEvent();
 		act->addDefaultInputMapping("MOUSE_LEFT");
 		act->addDefaultInputMapping("JOY_A");
 		engineKeyMap->addAction(act);
 
-		act = new Action(kStandardActionMiddleClick, _("Middle Click"));
+		act = new Action(kStandardActionMiddleClick, _("Middle click"));
 		act->addDefaultInputMapping("MOUSE_MIDDLE");
 		act->setMiddleClickEvent();
 		engineKeyMap->addAction(act);
 
-		act = new Action(kStandardActionRightClick, _("Right Click"));
+		act = new Action(kStandardActionRightClick, _("Right click"));
 		act->setRightClickEvent();
 		act->addDefaultInputMapping("MOUSE_RIGHT");
 		act->addDefaultInputMapping("JOY_B");
 		engineKeyMap->addAction(act);
 
-		act = new Action("BOSSKEY", _("Boss Key"));
+		// I18N: the boss key is a feature,
+		// that allows players to quickly switch to a fake screen that looks like a business application,
+		// typically to avoid detection if someone, like a boss, walks by while they are playing.
+		act = new Action("BOSSKEY", _("Boss key"));
 		act->setCustomEngineActionEvent(kActionBossKey);
 		act->addDefaultInputMapping("F9");
 		engineKeyMap->addAction(act);
 
-		act = new Action("SHOWOPTION", _("Show Options"));
+		act = new Action("SHOWOPTION", _("Show options"));
 		act->setCustomEngineActionEvent(kActionOptions);
 		act->addDefaultInputMapping("F5");
 		act->addDefaultInputMapping("C+o");
@@ -304,7 +307,7 @@ Common::KeymapArray SagaMetaEngine::initKeymaps(const char *target) const {
 	}
 
 	{
-		act = new Action("EXITCONVO", _("Exit Conversation"));
+		act = new Action("EXITCONVO", _("Exit conversation"));
 		act->setCustomEngineActionEvent(kActionConverseExit);
 		act->addDefaultInputMapping("x");
 		converseKeyMap->addAction(act);
@@ -326,23 +329,23 @@ Common::KeymapArray SagaMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("ESCAPE");
 		gameKeyMap->addAction(act);
 
-		act = new Action("PAUSE", _("Pause Game"));
+		act = new Action("PAUSE", _("Pause game"));
 		act->setCustomEngineActionEvent(kActionPause);
 		act->addDefaultInputMapping("z");
 		act->addDefaultInputMapping("PAUSE");
 		gameKeyMap->addAction(act);
 
-		act = new Action("ABRTSPEECH", _("Abort Speech"));
+		act = new Action("ABRTSPEECH", _("Abort speech"));
 		act->setCustomEngineActionEvent(kActionAbortSpeech);
 		act->addDefaultInputMapping("SPACE");
 		gameKeyMap->addAction(act);
 
-		act = new Action("SHOWDILOG", _("Show Dialogue"));
+		act = new Action("SHOWDILOG", _("Show dialogue"));
 		act->setCustomEngineActionEvent(kActionShowDialogue);
 		act->addDefaultInputMapping("r");
 		gameKeyMap->addAction(act);
 
-		act = new Action("WALK", _("Walk"));
+		act = new Action("WALK", _("Walk to"));
 		act->setCustomEngineActionEvent(kActionWalkTo);
 		act->addDefaultInputMapping("w");
 		gameKeyMap->addAction(act);
@@ -399,42 +402,42 @@ Common::KeymapArray SagaMetaEngine::initKeymaps(const char *target) const {
 	}
 
 	{
-		act = new Action("READSPEED", _("Reading Speed"));
+		act = new Action("READSPEED", _("Reading speed"));
 		act->setCustomEngineActionEvent(kActionOptionReadingSpeed);
 		act->addDefaultInputMapping("r");
 		optionKeyMap->addAction(act);
 
-		act = new Action("MUSIC", _("Change Music"));
+		act = new Action("MUSIC", _("Change music"));
 		act->setCustomEngineActionEvent(kActionOptionMusic);
 		act->addDefaultInputMapping("m");
 		optionKeyMap->addAction(act);
 
-		act = new Action("SOUND", _("Change Sound"));
+		act = new Action("SOUND", _("Change sound"));
 		act->setCustomEngineActionEvent(kActionOptionSound);
 		act->addDefaultInputMapping("n");
 		optionKeyMap->addAction(act);
 
-		act = new Action("VOICES", _("Change Voices"));
+		act = new Action("VOICES", _("Change voices"));
 		act->setCustomEngineActionEvent(kActionOptionVoices);
 		act->addDefaultInputMapping("v");
 		optionKeyMap->addAction(act);
 
-		act = new Action("CONTGAME", _("Continue Game"));
+		act = new Action("CONTGAME", _("Continue game"));
 		act->setCustomEngineActionEvent(kActionOptionContinue);
 		act->addDefaultInputMapping("c");
 		optionKeyMap->addAction(act);
 
-		act = new Action("LOAD", _("Load Game"));
+		act = new Action("LOAD", _("Load game"));
 		act->setCustomEngineActionEvent(kActionOptionLoad);
 		act->addDefaultInputMapping("l");
 		optionKeyMap->addAction(act);
 
-		act = new Action("QUITGAME", _("Quit Game"));
+		act = new Action("QUITGAME", _("Quit game"));
 		act->setCustomEngineActionEvent(kActionOptionQuitGame);
 		act->addDefaultInputMapping("q");
 		optionKeyMap->addAction(act);
 
-		act = new Action("SAVEGAME", _("Save Game"));
+		act = new Action("SAVEGAME", _("Save game"));
 		act->setCustomEngineActionEvent(kActionOptionSaveGame);
 		act->addDefaultInputMapping("s");
 		optionKeyMap->addAction(act);
@@ -446,17 +449,17 @@ Common::KeymapArray SagaMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("q");
 		quitKeyMap->addAction(act);
 
-		act = new Action("CNCLQUIT", _("Cancel Quit"));
+		act = new Action("CNCLQUIT", _("Cancel quit"));
 		act->setCustomEngineActionEvent(kActionOptionCancel);
 		act->addDefaultInputMapping("c");
 		quitKeyMap->addAction(act);
 
-		act = new Action("OKAY", _("okay"));
+		act = new Action("OKAY", _("Okay"));
 		act->setCustomEngineActionEvent(kActionOptionOkay);
 		act->addDefaultInputMapping("o");
 		loadKeyMap->addAction(act);
 
-		act = new Action("CNCLLOAD", _("Cancel Load"));
+		act = new Action("CNCLLOAD", _("Cancel load"));
 		act->setCustomEngineActionEvent(kActionOptionCancel);
 		act->addDefaultInputMapping("c");
 		loadKeyMap->addAction(act);
@@ -466,7 +469,7 @@ Common::KeymapArray SagaMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("s");
 		saveKeyMap->addAction(act);
 
-		act = new Action("CNCLSAVE", _("Cancel Save"));
+		act = new Action("CNCLSAVE", _("Cancel save"));
 		act->setCustomEngineActionEvent(kActionOptionCancel);
 		act->addDefaultInputMapping("c");
 		saveKeyMap->addAction(act);
