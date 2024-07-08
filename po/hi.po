@@ -231,9 +231,7 @@ msgstr "मैन्युअल मोड: चरण २"
 
 #: gui/cloudconnectionwizard.cpp:359
 msgid "Copy the JSON code from the browser here and press Next:"
-msgstr ""
-"ब्राउज़र से JSON कोड कॉपी करें और यहां नीचे पेस्ट करें, फिर \"आगे बढ़ें\" "
-"दबाएं:"
+msgstr "ब्राउज़र से JSON कोड कॉपी करें और यहां नीचे पेस्ट करें, फिर \"आगे बढ़ें\" दबाएं:"
 
 #: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:258
 #: gui/gui-manager.cpp:273
@@ -267,8 +265,7 @@ msgstr "क्लाउड स्टोरेज कनेक्ट नहीं
 
 #: gui/cloudconnectionwizard.cpp:384
 msgid "Make sure the JSON code was copied correctly and retry."
-msgstr ""
-"सुनिश्चित करें कि JSON कोड सही ढंग से कॉपी किया गया है और पुनः प्रयास करें।"
+msgstr "सुनिश्चित करें कि JSON कोड सही ढंग से कॉपी किया गया है और पुनः प्रयास करें।"
 
 #: gui/cloudconnectionwizard.cpp:385
 msgid "If that doesn't work, try again from the beginning."
