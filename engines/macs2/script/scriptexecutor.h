@@ -100,6 +100,9 @@ class GameObject;
 			 * 
 			 */
 
+			
+
+
 			private:
 
 			// State variables from here
@@ -124,6 +127,7 @@ class GameObject;
 
 			uint16 executingObjectIndex;
 
+		
 			ScriptExecutionState scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 
 			// Returns true iff the object is relevant to be executing in the current scene
@@ -203,6 +207,12 @@ class GameObject;
 			
 
 			public:
+
+			// Determines if we actually look something up when looking up 9F4D FF 27
+			// in the obstacles/pathfinding map
+			// Should be 1 while we execute a "character stopped walking" script,
+			// otherwise 0
+			bool global1032;
 
 			// Scene data [di+53B7h] - TODO: Confirm that we use a script variable as well as this thing
 			int chosenDialogueOption = 0;
