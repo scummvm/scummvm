@@ -278,7 +278,6 @@ void Parser::keyHandler(Common::Event event) {
 	debugC(1, kDebugParser, "keyHandler(%d)", event.kbd.keycode);
 
 	Status &gameStatus = _vm->getGameStatus();
-	uint16 nChar = event.kbd.keycode;
 
 	if (event.kbd.flags & (Common::KBD_ALT | Common::KBD_SCRL))
 		return;
