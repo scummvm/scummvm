@@ -48,6 +48,7 @@ Console::Console(DgdsEngine *vm) : _vm(vm) {
 	registerCmd("imagedump", WRAP_METHOD(Console, cmdImageDump));
 	registerCmd("imagedumpall", WRAP_METHOD(Console, cmdImageDumpAll));
 	registerCmd("global", WRAP_METHOD(Console, cmdGlobal));
+	registerCmd("scene", WRAP_METHOD(Console, cmdScene));
 }
 
 bool Console::cmdFileInfo(int argc, const char **argv) {
@@ -264,6 +265,20 @@ bool Console::cmdGlobal(int argc, const char **argv) {
 		int16 newVal = atoi(argv[2]);
 		scene->setGlobal(num, newVal);
 		debugPrintf("Global %d set to %d\n", num, newVal);
+	}
+
+	return true;
+}
+
+bool Console::cmdScene(int argc, const char **argv) {
+	if (argc == 1) {
+		int curSceneNum = _vm->getScene()->getNum();
+		debugPrintf("Current scene is %d\n", curSceneNum);
+		debugPrintf("Use %s <num> to change the scene\n", argv[0]);
+	} else {
+		int num = atoi(argv[1]);
+		_vm->changeScene(num);
+		debugPrintf("Scene changed to %d\n", num);
 	}
 
 	return true;
