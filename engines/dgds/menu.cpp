@@ -528,7 +528,7 @@ void Menu::handleClickSkipPlayIntroMenu(const Common::Point &mouse) {
 		if (engine->getGameId() == GID_HOC)
 			engine->changeScene(24);
 		else if (engine->getGameId() == GID_WILLY)
-			warning("TODO: Jump to game");
+			engine->changeScene(4);
 		break;
 	default:
 		handleClick(mouse);
