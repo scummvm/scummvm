@@ -318,7 +318,7 @@ void ScummEngine_v72he::arrayBlockOperation(
 		debug("ScummEngine_v72he::arrayBlockOperation(): "
 			"{%8d}[ %4d to %4d ][ %4d to %4d ] = "
 			"({%8d}[ %4d to %4d ][ %4d to %4d ] <?> "
-			"{%8d}[ %4d to %4d ][ %4d to %4d ] <%d>)\n",
+			"{%8d}[ %4d to %4d ][ %4d to %4d ] <?>)\n",
 			dstVariable, dstDownMin, dstDownMax, dstAcrossMin, dstAcrossMax,
 			a2Variable, a2DownMin, a2DownMax, a2AcrossMin, a2AcrossMax,
 			a1Variable, a1DownMin, a1DownMax, a1AcrossMin, a1AcrossMax);
