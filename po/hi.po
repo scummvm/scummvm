@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-07 21:25+0000\n"
-"PO-Revision-Date: 2024-07-08 11:48+0000\n"
+"PO-Revision-Date: 2024-07-09 19:01+0000\n"
 "Last-Translator: Krish <ganatrakrish2882005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
@@ -380,10 +380,8 @@ msgstr "scummvm.org साइट से कॉपी किए गए JSON फ�
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:637
-#, fuzzy
-#| msgid "Failed to save game"
 msgid "Failed to load JSON file"
-msgstr "गेम सेव नहीं हो पाया"
+msgstr "JSON फ़ाइल लोड नहीं हो सकी"
 
 #: gui/dlcsdialog.cpp:41
 msgid "Download Freeware Games and Demos"
@@ -394,10 +392,8 @@ msgid "Fetching DLCs..."
 msgstr "DLCs प्राप्त हो रहे हैं..."
 
 #: gui/dlcsdialog.cpp:60
-#, fuzzy
-#| msgid "Download"
 msgid "All Downloads"
-msgstr "डाउनलोड"
+msgstr "सभी डाउनलोड"
 
 #: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:267
 msgid "Download"
@@ -481,10 +477,8 @@ msgid "Currently Downloading Games"
 msgstr "गेम फाइल डाउनलोड करे"
 
 #: gui/downloaddlcsdialog.cpp:55
-#, fuzzy
-#| msgid "Download"
 msgid "Pending Downloads"
-msgstr "डाउनलोड"
+msgstr "लंबित डाउनलोड"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
@@ -669,11 +663,11 @@ msgstr "पाथ"
 
 #: gui/editgamedialog.cpp:291
 msgid "Check Integrity"
-msgstr ""
+msgstr "अखंडता की जाँच करें"
 
 #: gui/editgamedialog.cpp:291
 msgid "Perform integrity check for all game files"
-msgstr ""
+msgstr "सभी गेम फ़ाइलों की अखंडता जाँच करें"
 
 #: gui/editgamedialog.cpp:296
 msgid "Game Path:"
@@ -840,25 +834,24 @@ msgstr "टिप्पणियाँ:"
 #: gui/integrity-dialog.cpp:100
 msgid ""
 "Verifying file integrity may take a long time to complete. Please wait...\n"
-msgstr ""
+msgstr "फ़ाइल अखंडता सत्यापन में अधिक समय लग सकता है। कृपया प्रतीक्षा करें...\n"
 
 #: gui/integrity-dialog.cpp:107 gui/integrity-dialog.cpp:168
 msgid "Calculating file checksums..."
-msgstr ""
+msgstr "फ़ाइल चेकसम की गणना हो रही है..."
 
 #: gui/integrity-dialog.cpp:120
 msgid "Launch Email Client"
-msgstr ""
+msgstr "ईमेल क्लाइंट प्रारंभ करें"
 
 #: gui/integrity-dialog.cpp:174
 msgid "Calculation complete"
-msgstr ""
+msgstr "गणना पूर्ण"
 
 #: gui/integrity-dialog.cpp:263
-#, fuzzy, c-format
-#| msgid "Downloaded %s %S / %s %S"
+#, c-format
 msgid "Calculated %s %S / %s %S"
-msgstr "%s %S / %s %S डाउनलोड कर लिया"
+msgstr "गणना पूरी हुई: %s %S / %s %S"
 
 #: gui/integrity-dialog.cpp:513
 msgid ""
@@ -868,21 +861,30 @@ msgid ""
 "If you are sure that this is a valid unknown variant, please send the "
 "following e-mail to integrity@scummvm.org"
 msgstr ""
+"### परिणाम\n"
+"आपके गेम फ़ाइलों का सेट हमें अज्ञात प्रतीत होता है।\n"
+"\n"
+"यदि आप सुनिश्चित हैं कि यह एक मान्य अज्ञात संस्करण है, तो कृपया निम्नलिखित "
+"ईमेल integrity@scummvm.org पर भेजें"
 
 #: gui/integrity-dialog.cpp:537
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr ""
+"ऐसा लगता है कि इस गेम में कोई फ़ाइल नहीं है। क्या आप सुनिश्चित हैं कि पथ सही "
+"है?"
 
 #: gui/integrity-dialog.cpp:542
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
 msgstr ""
+"ऐसा लगता है कि इस गेम से कोई मेटाडेटा जुड़ा नहीं है, इसलिए इसका मिलान नहीं हो"
+" पा रहा है। कृपया गेम के लिए सही मेटाडेटा भरें।"
 
 #: gui/integrity-dialog.cpp:569
 msgid "Files all OK"
-msgstr ""
+msgstr "सभी फ़ाइलें ठीक हैं"
 
 #: gui/filebrowser-dialog.cpp:53
 msgid "Choose file for loading"
@@ -894,7 +896,7 @@ msgstr "सेव करने के लिए फाइल का नाम �
 
 #: gui/filebrowser-dialog.cpp:135
 msgid "Do you really want to overwrite the file?"
-msgstr ""
+msgstr "क्या आप वाकई फ़ाइल को अधिलेखित करना चाहते हैं?"
 
 #: gui/fluidsynth-dialog.cpp:68
 msgid "Reverb"
@@ -902,11 +904,11 @@ msgstr "रीवर्ब"
 
 #: gui/fluidsynth-dialog.cpp:70 gui/fluidsynth-dialog.cpp:102
 msgid "Active"
-msgstr ""
+msgstr "सक्रिय"
 
 #: gui/fluidsynth-dialog.cpp:72
 msgid "Room:"
-msgstr ""
+msgstr "कक्ष:"
 
 #: gui/fluidsynth-dialog.cpp:79
 msgid "Damp:"
@@ -914,11 +916,11 @@ msgstr ""
 
 #: gui/fluidsynth-dialog.cpp:86
 msgid "Width:"
-msgstr ""
+msgstr "चौड़ाई:"
 
 #: gui/fluidsynth-dialog.cpp:93 gui/fluidsynth-dialog.cpp:111
 msgid "Level:"
-msgstr ""
+msgstr "स्तर:"
 
 #: gui/fluidsynth-dialog.cpp:100
 msgid "Chorus"
@@ -930,15 +932,15 @@ msgstr ""
 
 #: gui/fluidsynth-dialog.cpp:118
 msgid "Speed:"
-msgstr ""
+msgstr "रफ़्तार:"
 
 #: gui/fluidsynth-dialog.cpp:125
 msgid "Depth:"
-msgstr ""
+msgstr "गहराई:"
 
 #: gui/fluidsynth-dialog.cpp:132
 msgid "Type:"
-msgstr ""
+msgstr "प्रकार:"
 
 #: gui/fluidsynth-dialog.cpp:135
 msgid "Sine"
@@ -947,19 +949,19 @@ msgstr ""
 #: gui/fluidsynth-dialog.cpp:136 backends/platform/sdl/ps3/ps3.cpp:43
 #: backends/platform/sdl/psp2/psp2.cpp:46 engines/dragons/metaengine.cpp:189
 msgid "Triangle"
-msgstr ""
+msgstr "त्रिभुज"
 
 #: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:2311
 msgid "Misc"
-msgstr ""
+msgstr "विविध"
 
 #: gui/fluidsynth-dialog.cpp:140
 msgid "Interpolation:"
-msgstr ""
+msgstr "अंतर्वेशन:"
 
 #: gui/fluidsynth-dialog.cpp:143
 msgid "None (fastest)"
-msgstr ""
+msgstr "कोई नहीं (सबसे तेज़)"
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "Linear"
@@ -976,16 +978,18 @@ msgstr ""
 #. I18N: Button to reset keymap mappings to defaults
 #: gui/fluidsynth-dialog.cpp:150 backends/keymapper/remap-widget.cpp:327
 msgid "Reset"
-msgstr ""
+msgstr "रीसेट"
 
 #: gui/fluidsynth-dialog.cpp:150
 msgid "Reset all FluidSynth settings to their default values."
-msgstr ""
+msgstr "सभी FluidSynth सेटिंग्स को उनके डिफ़ॉल्ट मानों पर पुनःस्थापित करें।"
 
 #: gui/fluidsynth-dialog.cpp:209
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr ""
+"क्या आप वाकई सभी FluidSynth सेटिंग्स को उनके डिफ़ॉल्ट मानों पर पुनःस्थापित "
+"करना चाहते हैं?"
 
 #: gui/gui-manager.cpp:161 gui/options.cpp:2302
 msgid "GUI"
@@ -1059,18 +1063,16 @@ msgid "Right"
 msgstr "दाएँ"
 
 #: gui/gui-manager.cpp:200
-#, fuzzy
-#| msgid "Backend"
 msgid "Backspace"
-msgstr "बैकेंड"
+msgstr "बैकस्पेस"
 
 #: gui/gui-manager.cpp:206
 msgid "Delete Character"
-msgstr ""
+msgstr "अक्षर हटाएँ"
 
 #: gui/gui-manager.cpp:212
 msgid "Go to end of line"
-msgstr ""
+msgstr "पंक्ति के अंत में जाएँ"
 
 #: gui/gui-manager.cpp:222
 #, fuzzy
@@ -1086,15 +1088,15 @@ msgstr "उस फोल्डर को चुने जिसमे गेम 
 
 #: gui/gui-manager.cpp:242
 msgid "Go to start of line"
-msgstr ""
+msgstr "पंक्ति के प्रारंभ में जाएँ"
 
 #: gui/gui-manager.cpp:253 gui/gui-manager.cpp:268
 msgid "Cut"
-msgstr ""
+msgstr "काटें"
 
 #: gui/gui-manager.cpp:263 gui/gui-manager.cpp:278
 msgid "Copy"
-msgstr ""
+msgstr "कॉपी"
 
 #: gui/gui-manager.cpp:284 engines/pegasus/pegasus.cpp:2819
 #: engines/wintermute/keymapper_tables.h:305
@@ -1119,7 +1121,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1944
 #: engines/wintermute/keymapper_tables.h:2002
 msgid "???"
-msgstr ""
+msgstr "???"
 
 #: gui/helpdialog.cpp:38
 msgid "General"
@@ -1167,6 +1169,37 @@ msgid ""
 "eBay, Game Trading Zone, or other auction sites. Be cautious of faulty games "
 "and illegal game copies.\n"
 msgstr ""
+"## ScummVM: एक दृष्टि में\n"
+"\n"
+"ScummVM विभिन्न गेम इंजनों का एक आधुनिक पुनर्निर्माण है। जब आप मूल गेम डेटा "
+"को अपने डिवाइस पर स्थानांतरित करते हैं, तो यह मूल गेमिंग अनुभव को ठीक उसी "
+"तरह से फिर से बनाने का प्रयास करता है।\n"
+"\n"
+"ScummVM, DOS, Windows या किसी कंसोल का एक आम एमुलेटर नहीं है। एक ही तरीके से "
+"सब कुछ चलाने की बजाय, यह एक बारीक रास्ता अपनाता है, हर एक विशिष्ट गेम या इं"
+"जन के लिए सटीक गेम लॉजिक को लागू करता है। ScummVM उन गेम इंजनों के साथ काम "
+"नहीं करेगा जिनका यह समर्थन नहीं करता...\n"
+"\n"
+"ScummVM स्वयंसेवकों की एक टीम द्वारा विकसित किया गया है और यह एक मुफ्त "
+"सॉफ्टवेयर है। हमारे पास एक विस्तृत परीक्षण टीम का अभाव है, सीमित उपकरण हैं, "
+"और हम हमेशा हर अनुरोध को पूरा नहीं कर सकते। हम विज्ञापन भी नहीं चलाते हैं या "
+"आपको कुछ भी नहीं बेचते हैं। जब आप कोई शिकायत या बग रिपोर्ट सबमिट करें तो "
+"कृपया इस बात का ध्यान रखें।\n"
+"\n"
+"[हमारे Wiki](ttps://wiki.scummvm.org/index.php?title=Where_to_get_the_games) "
+"पर जाएं जहां समर्थित खेलों और उन्हें खरीदने के स्थानों की विस्तृत सूची उपलब्"
+"ध है।\n"
+"\n"
+"वैकल्पिक रूप से, आप हमारी वेबसाइट से सीधे विभिन्न [फ्रीवेयर "
+"गेम](https://scummvm.org/games) और [डेमो](https://www.scummvm.org/demos/) "
+"डाउनलोड कर सकते हैं।\n"
+"\n"
+"इसके अतिरिक्त, ZOOM-Platform पर उपलब्ध न होने वाले गेम अन्य आपूर्तिकर्ताओं "
+"जैसे GOG.com और Steam पर पाए जा सकते हैं।\n"
+"\n"
+"अन्य (प्रिंट से बाहर) गेम्स के लिए, Amazon, eBay, Game Trading Zone, या अन्य "
+"नीलामी साइटों जैसे प्लेटफार्मों पर जाँच करने पर विचार करें। दोषपूर्ण गेम्स "
+"और अवैध गेम कॉपियों से सावधान रहें।\n"
 
 #: gui/helpdialog.cpp:68 gui/options.cpp:2323
 msgid "Cloud"
