@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-07 21:25+0000\n"
-"PO-Revision-Date: 2024-06-30 06:43+0000\n"
+"PO-Revision-Date: 2024-07-10 04:43+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -5830,10 +5830,8 @@ msgstr "No s'ha trobat el fitxer d'escena '%s'!"
 #: engines/lure/metaengine.cpp:37 engines/mads/metaengine.cpp:47
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:746
-#, fuzzy
-#| msgid "Enable Discord integration"
 msgid "Enable copy protection"
-msgstr "Habilita la integració amb Discord"
+msgstr "Habilita la protecció contra còpia"
 
 #: engines/agos/metaengine.cpp:45 engines/dreamweb/metaengine.cpp:37
 #: engines/lure/metaengine.cpp:38 engines/mads/metaengine.cpp:48
@@ -8686,34 +8684,24 @@ msgid "I Have No Mouth support not compiled in"
 msgstr "No s'ha compilat el suport per a I Have No Mouth"
 
 #: engines/saga/metaengine.cpp:267
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game keymapping"
-msgstr "Assignacions de tecles del joc"
+msgstr "Assignació de tecles del joc"
 
 #: engines/saga/metaengine.cpp:268
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Option panel keymapping"
-msgstr "Assignacions de tecles del joc"
+msgstr "Assignació de tecles del panell d'opcions"
 
 #: engines/saga/metaengine.cpp:269
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Save panel keymapping"
-msgstr "Assignacions de tecles del joc"
+msgstr "Assignació de tecles del panell de desar"
 
 #: engines/saga/metaengine.cpp:270
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Load panel keymapping"
-msgstr "Assignacions de tecles del joc"
+msgstr "Assignació de tecles del panell de càrrega"
 
 #: engines/saga/metaengine.cpp:271
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Quit panel keymapping"
-msgstr "Assignacions de tecles del joc"
+msgstr "Assignació de tecles del panell de sortida"
 
 #: engines/saga/metaengine.cpp:272
 msgid "Converse panel keymapping"
@@ -8724,16 +8712,12 @@ msgid "Boss Key"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:299
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Show Options"
-msgstr "Opcions de veus"
+msgstr "Mostra les opcions"
 
 #: engines/saga/metaengine.cpp:307
-#, fuzzy
-#| msgid "Next location"
 msgid "Exit Conversation"
-msgstr "Ubicació següent"
+msgstr "Surt de la conversa"
 
 #: engines/saga/metaengine.cpp:312
 msgid "Conversation position - Up"
@@ -8744,22 +8728,16 @@ msgid "Conversation position - Down"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:329
-#, fuzzy
-#| msgid "Pause game"
 msgid "Pause Game"
 msgstr "Pausa la partida"
 
 #: engines/saga/metaengine.cpp:335
-#, fuzzy
-#| msgid "Speech"
 msgid "Abort Speech"
-msgstr "Veus"
+msgstr "Interromp la veu"
 
 #: engines/saga/metaengine.cpp:340
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Show Dialogue"
-msgstr "Omet la línia de diàleg"
+msgstr "Mostra el diàleg"
 
 #: engines/saga/metaengine.cpp:345 engines/scumm/help.cpp:226
 msgid "Walk"
@@ -8773,8 +8751,6 @@ msgid "Look at"
 msgstr "Mira"
 
 #: engines/saga/metaengine.cpp:355
-#, fuzzy
-#| msgid "Pick up"
 msgid "Pickup"
 msgstr "Agafa"
 
@@ -8806,66 +8782,48 @@ msgid "Push"
 msgstr "Empeny"
 
 #: engines/saga/metaengine.cpp:390
-#, fuzzy
-#| msgid "Take off"
 msgid "Take"
-msgstr "Aixecar el vol"
+msgstr "Agafa"
 
 #: engines/saga/metaengine.cpp:395
 msgid "Swallow"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:402
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "Reading Speed"
-msgstr "Ha fallat la lectura de dades"
+msgstr "Velocitat de lectura"
 
 #: engines/saga/metaengine.cpp:407
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change Music"
-msgstr "Canvia la mida del tipus de lletra"
+msgstr "Canvia la música"
 
 #: engines/saga/metaengine.cpp:412
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change Sound"
-msgstr "Canvia el mode"
+msgstr "Canvia el so"
 
 #: engines/saga/metaengine.cpp:417
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change Voices"
-msgstr "Canvia el mode"
+msgstr "Canvia les veus"
 
 #: engines/saga/metaengine.cpp:422
-#, fuzzy
-#| msgid "Continue"
 msgid "Continue Game"
-msgstr "Continua"
+msgstr "Continua la partida"
 
 #: engines/saga/metaengine.cpp:449
-#, fuzzy
-#| msgid "Cancel input"
 msgid "Cancel Quit"
-msgstr "Cancel·la l'entrada"
+msgstr "Cancel·la la sortida"
 
 #: engines/saga/metaengine.cpp:454
 msgid "okay"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:459
-#, fuzzy
-#| msgid "Cancel download"
 msgid "Cancel Load"
-msgstr "Cancel·la la baixada"
+msgstr "Cancel·la la càrrega"
 
 #: engines/saga/metaengine.cpp:469
-#, fuzzy
-#| msgid "Cancel autosave"
 msgid "Cancel Save"
-msgstr "Cancel·la el desament automàtic"
+msgstr "Cancel·la el desament"
 
 #: engines/saga/music.cpp:98
 #, c-format
@@ -11184,10 +11142,8 @@ msgid "Uses 16-color graphics."
 msgstr "Utilitza gràfics de 16 colors."
 
 #: engines/vcruise/metaengine.cpp:97
-#, fuzzy
-#| msgid "Prerecorded sounds"
 msgid "Preload sounds"
-msgstr "Sons pregravats"
+msgstr "Precarrega els sons"
 
 #: engines/vcruise/metaengine.cpp:98
 msgid "Preload sounds. May improve performance on slow hard drives."
@@ -11419,7 +11375,7 @@ msgstr "Variant B de la interfície gràfica"
 #: engines/wintermute/keymapper_tables.h:547
 #: engines/wintermute/keymapper_tables.h:1117
 msgid "Phone cancel button"
-msgstr ""
+msgstr "Botó de cancel·lar del telèfon"
 
 #: engines/wintermute/keymapper_tables.h:288
 #: engines/wintermute/keymapper_tables.h:419
@@ -11433,7 +11389,7 @@ msgstr "Botó amunt del telèfon"
 #: engines/wintermute/keymapper_tables.h:558
 #: engines/wintermute/keymapper_tables.h:1128
 msgid "Phone down button"
-msgstr ""
+msgstr "Botó de baixar del telèfon"
 
 #. I18N: Some items are scripted to have alternative "Use" action, when MiddleClick is used
 #. It may result in actor saying different text or item being decomposed to it's parts
@@ -11552,7 +11508,7 @@ msgstr "Desplaçament avall"
 
 #: engines/wintermute/keymapper_tables.h:690
 msgid "Change shadow type"
-msgstr ""
+msgstr "Canvia el tipus d'ombra"
 
 #: engines/wintermute/keymapper_tables.h:700
 #: engines/wintermute/keymapper_tables.h:819
