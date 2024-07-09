@@ -193,7 +193,8 @@ private:
 	void changeToRoom(int newRoomNumber);
 	void handleObjCollision(int objNum);
 
-	void eyeCode(int objNum);
+	void lookCode(int objNum);
+	void useCode(int objNum);
 	void wongame();
 	void getPackage(int state);
 };

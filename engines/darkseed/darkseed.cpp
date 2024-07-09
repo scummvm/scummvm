@@ -1034,7 +1034,8 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 					} else if (otherNspAnimationType_maybe == 37) {
 
 					} else if (otherNspAnimationType_maybe == 10 || otherNspAnimationType_maybe == 11) {
-
+						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
+						_sprites.addSpriteToDrawList(118, 62, &animSprite, 0xf0 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
 					} else if (otherNspAnimationType_maybe == 12 || otherNspAnimationType_maybe == 13) {
 
 					} else if (otherNspAnimationType_maybe == 20) {
@@ -1282,6 +1283,15 @@ void DarkseedEngine::updateAnimation() {
 			}
 		}
 		break;
+	case 10:
+		advanceAnimationFrame(0);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]];
+		} else {
+			_previousRoomNumber = _room->_roomNumber;
+			changeToRoom(61);
+		}
+		break;
 	case 14:
 	case 15:
 	case 24:
@@ -1449,9 +1459,10 @@ void DarkseedEngine::handleObjCollision(int objNum) {
 		} else {
 			switch (_actionMode) {
 			case HandAction:
+				useCode(objNum);
 				break;
 			case LookAction:
-				eyeCode(objNum);
+				lookCode(objNum);
 				break;
 			// TODO lots of extra switch cases here for inventory usages.
 			default:
@@ -1464,7 +1475,16 @@ void DarkseedEngine::handleObjCollision(int objNum) {
 	}
 }
 
-void DarkseedEngine::eyeCode(int objNum) {
+void DarkseedEngine::useCode(int objNum) {
+	debug("useCode: objNum = %d", objNum);
+
+	if (objNum == 139) {
+		_player->loadAnimations("ltladder.nsp");
+		setupOtherNspAnimation(0,10);
+	}
+}
+
+void DarkseedEngine::lookCode(int objNum) {
 	// TODO lots of custom eye code here.
 	if (_cursor.getY() > 39 && objNum != 77) {
 		int eyeTosIdx = _objectVar.getEyeDescriptionTosIdx(objNum);
