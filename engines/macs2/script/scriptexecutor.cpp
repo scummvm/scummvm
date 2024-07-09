@@ -693,10 +693,7 @@ l0037_A209:
 
 */
 	else if (value == 0x28) {
-		// TODO: Get actual value of the global
-		static int count = 0;
-		count++;
-		out1 = count == 1 ? 0x1 : 0x0;
+		out1 = global103C ? 1 : 0;
 		out2 = 0x0;
 		debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
@@ -1928,8 +1925,10 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Guess is that we check if we have an inventory item
 			// This gets saved into [103Ch]
 			// TODO: This is handled as an object ID
-			Func9F4D_Placeholder();
-			Func9F4D_Placeholder();
+			uint16 objectID = Func9F4D_16() - 0x400;
+			uint16 parentID = Func9F4D_16() - 0x400;
+			const GameObject* object = GameObjects::GetObjectByIndex(objectID);
+			global103C = object->SceneIndex == parentID;
 		} else if (opcode1 == 0x2D) {
 			// TODO: This one seems to adjust something about pathfinding, but not sure what exactly
 			// It impacts the field di+22Fh of the object data, which is a bool
