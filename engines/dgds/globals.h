@@ -180,8 +180,17 @@ public:
 private:
 	// Willy-specific globals
 	int16 _unk2;
+	int16 _unk3;
+	int16 _unk4;
 	int16 _unk5;
+	int16 _unk74;
+	int16 _unk75;
+	int16 _unk77;
+	int16 _unk78;
+	int16 _unk79;
+	int16 _unk80;
 	int16 _unk81;
+	int16 _unk82;
 
 	Common::Error syncState(Common::Serializer &s) override;
 };

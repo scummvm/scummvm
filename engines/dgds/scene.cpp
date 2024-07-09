@@ -362,7 +362,7 @@ bool Scene::readOpList(Common::SeekableReadStream *s, Common::Array<SceneOp> &li
 	for (SceneOp &dst : list) {
 		readConditionList(s, dst._conditionList);
 		dst._opCode = static_cast<SceneOpCode>(s->readUint16LE());
-		if (dst._opCode > kSceneOpMaxCode || dst._opCode == kSceneOpNone)
+		if ((dst._opCode & 0x7fff) > kSceneOpMaxCode || dst._opCode == kSceneOpNone)
 			error("Unexpected scene opcode %d", (int)dst._opCode);
 		uint16 nvals = s->readUint16LE();
 		_checkListNotTooLong(nvals, "scene op args");
@@ -461,6 +461,19 @@ bool Scene::readTriggerList(Common::SeekableReadStream *s, Common::Array<SceneTr
 		readOpList(s, list.back().sceneOpList);
 	}
 
+	return !s->err();
+}
+
+bool Scene::readConditionalSceneOpList(Common::SeekableReadStream *s, Common::Array<ConditionalSceneOp> &list) const {
+	uint16 num = s->readUint16LE();
+	_checkListNotTooLong(num, "conditional scene ops");
+	list.resize(num);
+
+	for (ConditionalSceneOp &dst : list) {
+		dst._opCode = s->readUint16LE();
+		readConditionList(s, dst._conditionList);
+		readOpList(s, dst._opList);
+	}
 	return !s->err();
 }
 
@@ -755,6 +768,16 @@ bool Scene::runChinaOp(const SceneOp &op) {
 
 bool Scene::runBeamishOp(const SceneOp &op) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	if (op._opCode & 0x8000) {
+		uint16 opcode = op._opCode & 0x7fff;
+		for (const ConditionalSceneOp &op : _conditionalOps) {
+			if (op._opCode == opcode && checkConditions(op._conditionList)) {
+				if (!runOps(op._opList))
+					return false;
+			}
+		}
+		return true;
+	}
 	switch (op._opCode) {
 	case kSceneOpOpenBeamishOpenSkipCreditsMenu:
 		engine->setMenuToTrigger(kMenuBeamishSkipCredits);
@@ -927,6 +950,7 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 		readTriggerList(stream, _triggers);
 	}
 	if (isVersionOver(" 1.223")) {
+		readConditionalSceneOpList(stream, _conditionalOps);
 		warning("TODO: SDSScene::parse read another list here for version %s", _version.c_str());
 	}
 
@@ -2043,7 +2067,7 @@ int16 GDSScene::setGlobal(uint16 num, int16 val) {
 			// This looks like a script bug, set it anyway
 			warning("setGlobal: scene global %d is not in scene %d", num, curSceneNum);
 			global._val = val;
-			return val;			
+			return val;
 		}
 	}
 	Globals *gameGlobals = engine->getGameGlobals();

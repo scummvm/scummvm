@@ -145,6 +145,15 @@ public:
 	Common::String dump(const Common::String &indent) const;
 };
 
+class ConditionalSceneOp {
+public:
+	uint _opCode;
+	Common::Array<SceneConditions> _conditionList;
+	Common::Array<SceneOp> _opList;
+
+	Common::String dump(const Common::String &indent) const;
+};
+
 class GameItem : public HotArea {
 public:
 	Common::Array<SceneOp> onDragFinishedOps;
@@ -311,6 +320,7 @@ protected:
 	bool readDialogList(Common::SeekableReadStream *s, Common::Array<Dialog> &list, int16 filenum = 0) const;
 	bool readTriggerList(Common::SeekableReadStream *s, Common::Array<SceneTrigger> &list) const;
 	bool readDialogActionList(Common::SeekableReadStream *s, Common::Array<DialogAction> &list) const;
+	bool readConditionalSceneOpList(Common::SeekableReadStream *s, Common::Array<ConditionalSceneOp> &list) const;
 
 	bool checkConditions(const Common::Array<SceneConditions> &cond) const;
 
@@ -334,6 +344,7 @@ protected:
 
 	Common::Array<SceneOp> _preTickOps;
 	Common::Array<SceneOp> _postTickOps;
+	Common::Array<ConditionalSceneOp> _conditionalOps; // Beamish only
 };
 
 
