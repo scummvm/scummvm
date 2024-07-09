@@ -402,6 +402,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "rhem1",				"Rhem" },
 	{ "rhlava",				"Rescue Heroes: Lava Landslide" },
 	{ "rhmeteor",			"Rescue Heroes: Meteor Madness" },
+	{ "robinson",			"Robinson Crusoe" },
+	{ "robinson-makingof",	"Robinson Crusoe: Making-of" },
 	{ "rodneyfs",			"Rodney's Funscreen" },
 	{ "rodneyfs2",			"Rodney's Funscreen² Extreme: Dinky's Revenge" },
 	{ "rodneyww",			"Rodney's Wonder Window" },
@@ -6910,6 +6912,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("raveshuttle", "", "Rave Shuttle", "7b0837f93c5de519acdf1feea2a4ccf2", 705673, Common::DE_DEU, 500),
 	WINGAME1_l("raveshuttle", "", "RAVES.EXE", "2e62abdad839e42068afdcd0644d7dcf", 1000911, Common::DE_DEU, 500),
+
+	// German variant of "Robinson Crusoe", published by Tivola
+	// PC/Mac hybrid, but the Projector for the Mac version is embedded into an installer.
+	// The disc contains two versions in two Projector files. The "Standard Version" doesn't use the QTVR features,
+	// while the "Enhanced version" does.
+	WINGAME1_l("robinson",          "Standard Version", "CRUSOE8.EXE", "t:98c98c109102a10f75bd05b76f49a009", 1398759, Common::DE_DEU, 500),
+	WINGAME1_l("robinson",          "Enhanced Version", "CRUSOE16.EXE","t:97c3d5d1472bab61962837b0bf820912", 1398987, Common::DE_DEU, 500),
+	WINGAME1_l("robinson-makingof", "",                 "MAKING.EXE",  "t:4c5428c6b5e493da6fe35daccded70a0", 1410487, Common::DE_DEU, 501),
 
 	// Released only in Japan by Interlink of Minato City, Tokyo (1997)
 	// Games play fully in English with Japanese credits only
