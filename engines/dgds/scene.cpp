@@ -2043,10 +2043,16 @@ void GDSScene::globalOps(const Common::Array<uint16> &args) {
 int16 GDSScene::getGlobal(uint16 num) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	int curSceneNum = engine->getScene()->getNum();
+	DgdsGameId gameId = engine->getGameId();
+
 	for (const auto &global : _perSceneGlobals) {
 		if (global.matches(num, curSceneNum))
 			return global._val;
 		else if (!global.matches(num, curSceneNum) && global.numMatches(num)) {
+			// Don't warn on known reusable scene globals
+			if (gameId == GID_WILLY && num == 185)
+				return global._val;
+
 			// This looks like a script bug, get it anyway
 			warning("getGlobal: scene global %d is not in scene %d", num, curSceneNum);
 			return global._val;
