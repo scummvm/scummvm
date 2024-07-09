@@ -317,7 +317,7 @@ Archive *DirectorEngine::loadEXE(const Common::Path &movie) {
 		result = new RIFFArchive();
 
 		if (!result->openStream(exeStream, 0)) {
-			debugC(5, kDebugLoading, "Window::loadEXE(): Failed to load RIFF from '%s'", movie.toString().c_str());
+			debugC(5, kDebugLoading, "DirectorEngine::loadEXE(): Failed to load RIFF from '%s'", movie.toString().c_str());
 			delete result;
 			return nullptr;
 		}
