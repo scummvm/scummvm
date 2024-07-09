@@ -770,9 +770,9 @@ bool Scene::runBeamishOp(const SceneOp &op) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	if (op._opCode & 0x8000) {
 		uint16 opcode = op._opCode & 0x7fff;
-		for (const ConditionalSceneOp &op : _conditionalOps) {
-			if (op._opCode == opcode && checkConditions(op._conditionList)) {
-				if (!runOps(op._opList))
+		for (const ConditionalSceneOp &cop : _conditionalOps) {
+			if (cop._opCode == opcode && checkConditions(cop._conditionList)) {
+				if (!runOps(cop._opList))
 					return false;
 			}
 		}
@@ -951,7 +951,6 @@ bool SDSScene::parse(Common::SeekableReadStream *stream) {
 	}
 	if (isVersionOver(" 1.223")) {
 		readConditionalSceneOpList(stream, _conditionalOps);
-		warning("TODO: SDSScene::parse read another list here for version %s", _version.c_str());
 	}
 
 	return !stream->err();
