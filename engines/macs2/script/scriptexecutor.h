@@ -230,6 +230,9 @@ class GameObject;
 			uint16 _interactedObjectID = 0;
 			uint16 _interactedOtherObjectID = 0;
 
+			// Is set to true in opcode 2C if an object is inside another target object
+			bool global103C = false;
+
 			// TODO: Mockup variable to simulate conditions where the scripting
 			// function would be called again, like after a walk to event
 			// TODO: Rename to reflect this
