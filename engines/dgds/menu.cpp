@@ -66,12 +66,12 @@ enum MenuButtonIds {
 	kMenuOptionsVCR = 135,
 	kMenuOptionsPlay = 136,
 
-	kMenuCalibrateJoystickBtn = 145,
-	kMenuCalibrateMouseBtn = 146,
-	kMenuCalibrateVCR = 144,
-	kMenuCalibratePlay = 147,
-	kMenuCalibrateVCRHoC = 159,
-	kMenuCalibratePlayHoC = 158,
+	//kMenuCalibrateJoystickBtn = 145,
+	//kMenuCalibrateMouseBtn = 146,
+	//kMenuCalibrateVCR = 144,
+	//kMenuCalibratePlay = 147,
+	//kMenuCalibrateVCRHoC = 159,
+	//kMenuCalibratePlayHoC = 158,
 
 	kMenuFilesSave = 107,
 	kMenuFilesRestore = 106,
@@ -79,19 +79,18 @@ enum MenuButtonIds {
 	kMenuFilesVCR = 103,
 	kMenuFilesPlay = 130,
 
-	kMenuSavePrevious = 58,
-	kMenuSaveNext = 59,
-	kMenuSaveSave = 53,
-	kMenuSaveCancel = 54,
-	kMenuSaveChangeDirectory = 55,
+	//kMenuSavePrevious = 58,
+	//kMenuSaveNext = 59,
+	//kMenuSaveSave = 53,
+	//kMenuSaveCancel = 54,
+	//kMenuSaveChangeDirectory = 55,
+	//kMenuChangeDirectoryOK = 95,
+	//kMenuChangeDirectoryCancel = 96,
 
-	kMenuChangeDirectoryOK = 95,
-	kMenuChangeDirectoryCancel = 96,
+	//kMenuMouseCalibrationCalibrate = 157,
+	//kMenuMouseCalibrationPlay = 155,
 
-	kMenuMouseCalibrationCalibrate = 157,
-	kMenuMouseCalibrationPlay = 155,
-
-	kMenuJoystickCalibrationOK = 132,
+	//kMenuJoystickCalibrationOK = 132,
 
 	kMenuQuitYes = 134,
 	kMenuQuitNo = 133,
@@ -341,11 +340,11 @@ void Menu::handleClick(const Common::Point &mouse) {
 	case kMenuMainPlay:
 	case kMenuControlsPlay:
 	case kMenuOptionsPlay:
-	case kMenuCalibratePlay:
-	case kMenuCalibratePlayHoC:
 	case kMenuFilesPlay:
-	case kMenuMouseCalibrationPlay:
 	case kMenuMaybeBetterSaveNo:
+	//case kMenuCalibratePlay:
+	//case kMenuCalibratePlayHoC:
+	//case kMenuMouseCalibrationPlay:
 		_curMenu = kMenuNone;
 		CursorMan.showMouse(false);
 		break;
@@ -356,43 +355,48 @@ void Menu::handleClick(const Common::Point &mouse) {
 		drawMenu(kMenuOptions);
 		break;
 	case kMenuMainCalibrate:
-	case kMenuJoystickCalibrationOK:
-	case kMenuMouseCalibrationCalibrate: // NOTE: same ID as kMenuJumpToGame (for HOC)
+	//case kMenuJoystickCalibrationOK:
+	//case kMenuMouseCalibrationCalibrate: // NOTE: same ID as kMenuIntroJumpToGame (for HOC)
+	case kMenuIntroJumpToGame:
 		if (_curMenu == kMenuSkipPlayIntro) {
 			hideMenu();
 			engine->setShowClock(true);
 			engine->changeScene(24);
 		} else {
-			drawMenu(kMenuCalibrate);
+			// Do nothing - the calibrate menu doesn't offer
+			// any functionality in ScummVM
+			//drawMenu(kMenuCalibrate);
+			drawMenu(_curMenu);
 		}
 		break;
 	case kMenuMainFiles:
-	case kMenuSaveCancel:
+	//case kMenuSaveCancel:
 		drawMenu(kMenuFiles);
 		break;
 	case kMenuMainQuit:
 		drawMenu(kMenuReallyQuit);
 		break;
-	case kMenuCalibrateVCR: // NOTE: same ID as kMenuIntroPlay
+	//case kMenuCalibrateVCR: // NOTE: same ID as kMenuIntroPlay
+	case kMenuIntroPlay:
 		drawMenu(kMenuMain);
 		break;
 	case kMenuControlsVCR:
 	case kMenuOptionsVCR:
-	case kMenuCalibrateVCRHoC:
+	//case kMenuCalibrateVCRHoC:
 	case kMenuFilesVCR:
 	case kMenuQuitNo:
 	case kMenuRestartNo:
 		drawMenu(kMenuMain);
 		break;
-	case kMenuCalibrateJoystickBtn:
-		drawMenu(kMenuCalibrateJoystick);
-		break;
-	case kMenuCalibrateMouseBtn:
-		drawMenu(kMenuCalibrateMouse);
-		break;
-	case kMenuChangeDirectoryCancel:
-		drawMenu(kMenuSaveDlg);
-		break;
+	//case kMenuCalibrateJoystickBtn:
+	//	drawMenu(kMenuCalibrateJoystick);
+	//	break;
+	//case kMenuCalibrateMouseBtn:
+	//	drawMenu(kMenuCalibrateMouse);
+	//	break;
+	//case kMenuChangeDirectoryCancel:
+	//	drawMenu(kMenuSaveDlg);
+	//	break;
 	case kMenuFilesRestore:
 	case kMenuGameOverRestore:
 	case kMenuIntroRestore:
@@ -405,22 +409,23 @@ void Menu::handleClick(const Common::Point &mouse) {
 		drawMenu(kMenuRestart);
 		break;
 	case kMenuFilesSave: // TODO: Add an option to support original save/load dialogs?
-	case kMenuSavePrevious:
-	case kMenuSaveNext:
-	case kMenuSaveSave:
+	//case kMenuSavePrevious:
+	//case kMenuSaveNext:
+	//case kMenuSaveSave:
 	case kMenuMaybeBetterSaveYes:
 		if (g_engine->saveGameDialog())
 			hideMenu();
 		else
 			drawMenu(_curMenu);
 		break;
-	case kMenuSaveChangeDirectory:
-		drawMenu(kMenuChangeDir);
-		break;
-	case kMenuChangeDirectoryOK:
-		// TODO
-		debug("Clicked change directory - %d", clickedMenuItem);
-		break;
+	//case kMenuSaveChangeDirectory:
+	//	drawMenu(kMenuChangeDir);
+	//	break;
+	//case kMenuChangeDirectoryOK:
+	//	// Do nothing - the change directory menu doesn't offer
+	//	// any functionality in ScummVM
+	//	drawMenu(_curMenu);
+	//	break;
 	case kMenuQuitYes:
 		g_engine->quitGame();
 		break;
