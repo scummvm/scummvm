@@ -806,7 +806,6 @@ void qdGameDispatcher::redraw_scene(bool draw_interface) {
 		}
 
 		screen_texts.redraw();
-#ifndef _QUEST_EDITOR
 		cur_scene_->debug_redraw();
 
 		if (check_flag(FADE_IN_FLAG | FADE_OUT_FLAG)) {
@@ -821,7 +820,6 @@ void qdGameDispatcher::redraw_scene(bool draw_interface) {
 			        qdGameConfig::get_config().screen_sy(),
 			        0, round(phase * 255.f));
 		}
-#endif
 	}
 }
 
@@ -2476,7 +2474,7 @@ bool qdGameDispatcher::keyboard_handler(int vkey, bool event) {
 }
 
 bool qdGameDispatcher::load_save(const char *fname) {
-	debugC(3, kDebugLog, "[%d] Save loading %s", g_system->getMillis(), transCyrillic(fname));
+	debugC(3, kDebugSave, "[%d] Save loading %s", g_system->getMillis(), transCyrillic(fname));
 
 	if (sndDispatcher * p = sndDispatcher::get_dispatcher()) {
 		p->stop_sounds();
@@ -2488,7 +2486,9 @@ bool qdGameDispatcher::load_save(const char *fname) {
 	free_resources();
 
 	Common::SeekableReadStream *fh;
-	fh = g_engine->_savefileMan->openForLoading(Common::Path(fname, '\\').toString());
+	Common::Path fpath(fname, '\\');
+	fpath = fpath.getLastComponent();
+	fh = g_engine->_savefileMan->openForLoading(fpath.toString());
 	int save_version;
 	save_version = fh->readSint32LE();
 
@@ -2579,7 +2579,8 @@ bool qdGameDispatcher::load_save(const char *fname) {
 bool qdGameDispatcher::save_save(const char *fname) const {
 	Common::OutSaveFile *fh;
 	Common::Path fpath(fname, '\\');
-	fh = g_engine->_savefileMan->openForSaving(fpath.getLastComponent().toString());
+	fpath = fpath.getLastComponent();
+	fh = g_engine->_savefileMan->openForSaving(fpath.toString());
 
 	const int save_version = 107;
 	fh->writeUint32LE(save_version);
