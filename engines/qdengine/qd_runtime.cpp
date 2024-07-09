@@ -171,7 +171,7 @@ int engineMain() {
 		sp.show();
 	}
 
-	// searchTagMap(QDSCR_GAME_TITLE, 182);
+	searchTagMap(QDSCR_GLOBAL_DEPEND, 214);
 
 	Common::String gameID = g_engine->getGameId();
 	if (gameID == "karliknos") {
@@ -185,7 +185,7 @@ int engineMain() {
 	} else if (gameID == "pilots3d") {
 		generateTagMap(20040601);		// QDSCR_GAME_TITLE = 206
 	} else if (gameID == "mng") {
-		// QDSCR_GAME_TITLE = 208
+		generateTagMap(20050101);		// QDSCR_GLOBAL_DEPEND = 214
 	} else if (gameID == "maski") {
 		generateTagMap(20060129);		// QDSCR_GAME_TITLE = 214
 	} else if (gameID == "3mice1") {
