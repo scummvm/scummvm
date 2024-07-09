@@ -123,7 +123,6 @@ void grDispatcher::PutTileSpr(int x, int y, const grTileSprite &sprite, bool has
 
 	const unsigned char *data_ptr = (const unsigned char *)(sprite.data() + px + py * GR_TILE_SPRITE_SIZE_X);
 
-	warning("STUB: grDispatcher::PutTileSpr");
 	for (int i = 0; i < psy; i ++) {
 		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
 		const unsigned char *data_line = data_ptr;
@@ -192,3 +191,4 @@ bool grTileSprite::uncompress(const unsigned *in_data, unsigned in_data_length, 
 }
 
 } // namespace QDEngine
+
