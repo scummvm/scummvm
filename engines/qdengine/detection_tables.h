@@ -86,8 +86,8 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 
 	// Братья Пилоты 3D-2. Тайны Клуба Собаководов
 	// 2005/04/29. K D-Lab
-	GAMEe("pilots3d-2", "cd1", "7f9eeee513eadbd0f2431bca880df1d1", 4266775),
-	GAMEe("pilots3d-2", "cd2", "dbf676d0d9f4f8d968352918e7ecaffe", 9689557),
+	GAMEe("pilots3d-2", "Part I", "7f9eeee513eadbd0f2431bca880df1d1", 4266775),
+	GAMEe("pilots3d-2", "Part II", "dbf676d0d9f4f8d968352918e7ecaffe", 9689557),
 
 	// Мама не горюй
 	// 2005/08/05. Melnitsa / Lazy Games
