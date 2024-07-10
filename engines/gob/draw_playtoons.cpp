@@ -40,7 +40,6 @@ Draw_Playtoons::Draw_Playtoons(GobEngine *vm) : Draw_v2(vm) {
 void Draw_Playtoons::spriteOperation(int16 operation) {
 	int16 len;
 	int16 x, y;
-	SurfacePtr sourceSurf, destSurf;
 	bool deltaVeto;
 	int16 left;
 	int16 ratio;
@@ -127,10 +126,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		}
 	}
 
-	sourceSurf = _spritesArray[_sourceSurface];
-	destSurf = _spritesArray[_destSurface];
-
-	if (!destSurf) {
+	if (!_spritesArray[_destSurface]) {
 		warning("Can't do operation %d on surface %d: nonexistent", operation, _destSurface);
 		return;
 	}
@@ -138,7 +134,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 	switch (operation) {
 	case DRAW_BLITSURF:
 	case DRAW_DRAWLETTER:
-		if (!sourceSurf || !destSurf)
+		if (!_spritesArray[_sourceSurface] || !_spritesArray[_destSurface])
 			break;
 
 		_spritesArray[_destSurface]->blit(*_spritesArray[_sourceSurface],
@@ -325,7 +321,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 			}
 
 		} else {
-			sourceSurf = _spritesArray[_fontToSprite[_fontIndex].sprite];
+			SurfacePtr sourceSurf = _spritesArray[_fontToSprite[_fontIndex].sprite];
 			ratio = ((sourceSurf == _frontSurface) || (sourceSurf == _backSurface)) ?
 				320 : sourceSurf->getWidth();
 			ratio /= _fontToSprite[_fontIndex].width;
