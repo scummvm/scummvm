@@ -174,11 +174,11 @@ static MethodProto xlibMethods[] = {
 	{ "QTVRMouseDown",				QtvrxtraXtra::m_QTVRMouseDown,		 0, 0,	500 },
 	{ "QTVRMouseOver",				QtvrxtraXtra::m_QTVRMouseOver,		 0, 0,	500 },
 	{ "QTVRGetPanAngle",				QtvrxtraXtra::m_QTVRGetPanAngle,		 0, 0,	500 },
-	{ "QTVRSetPanAngle",				QtvrxtraXtra::m_QTVRSetPanAngle,		 1, 0,	500 },
+	{ "QTVRSetPanAngle",				QtvrxtraXtra::m_QTVRSetPanAngle,		 1, 1,	500 },
 	{ "QTVRGetTiltAngle",				QtvrxtraXtra::m_QTVRGetTiltAngle,		 0, 0,	500 },
-	{ "QTVRSetTiltAngle",				QtvrxtraXtra::m_QTVRSetTiltAngle,		 1, 0,	500 },
+	{ "QTVRSetTiltAngle",				QtvrxtraXtra::m_QTVRSetTiltAngle,		 1, 1,	500 },
 	{ "QTVRGetFOV",				QtvrxtraXtra::m_QTVRGetFOV,		 0, 0,	500 },
-	{ "QTVRSetFOV",				QtvrxtraXtra::m_QTVRSetFOV,		 1, 0,	500 },
+	{ "QTVRSetFOV",				QtvrxtraXtra::m_QTVRSetFOV,		 1, 1,	500 },
 	{ "QTVRGetClickLoc",				QtvrxtraXtra::m_QTVRGetClickLoc,		 0, 0,	500 },
 	{ "QTVRSetClickLoc",				QtvrxtraXtra::m_QTVRSetClickLoc,		 1, 0,	500 },
 	{ "QTVRGetClickPanAngles",				QtvrxtraXtra::m_QTVRGetClickPanAngles,		 0, 0,	500 },
@@ -383,12 +383,61 @@ void QtvrxtraXtra::m_QTVRGetQTVRType(int nargs) {
 XOBJSTUB(QtvrxtraXtra::m_QTVRIdle, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRMouseDown, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRMouseOver, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetPanAngle, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetPanAngle, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetTiltAngle, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetTiltAngle, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetFOV, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetFOV, 0)
+
+void QtvrxtraXtra::m_QTVRGetPanAngle(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetPanAngle", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(Common::String::format("%f", me->_video->getPanAngle()));
+}
+
+void QtvrxtraXtra::m_QTVRSetPanAngle(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetPanAngle", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setPanAngle(atof(g_lingo->pop().asString().c_str()));
+}
+
+void QtvrxtraXtra::m_QTVRGetTiltAngle(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetTiltAngle", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(Common::String::format("%f", me->_video->getTiltAngle()));
+}
+
+void QtvrxtraXtra::m_QTVRSetTiltAngle(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetTiltAngle", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setTiltAngle(atof(g_lingo->pop().asString().c_str()));
+}
+
+void QtvrxtraXtra::m_QTVRGetFOV(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetFOV", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(Common::String::format("%f", me->_video->getFOV()));
+}
+
+void QtvrxtraXtra::m_QTVRSetFOV(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetFOV", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setFOV(atof(g_lingo->pop().asString().c_str()));
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetClickLoc, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetClickLoc, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetClickPanAngles, 0)
