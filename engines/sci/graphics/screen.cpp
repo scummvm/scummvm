@@ -189,6 +189,17 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 		default:
 			break;
 		}
+	} else {
+		switch (renderMode) {
+		case Common::kRenderEGA:
+			_gfxDrv = new SCI1_EGADriver(requestRGB);
+			break;
+		case Common::kRenderVGAGrey:
+			_gfxDrv = new SCI1_VGAGreyScaleDriver(requestRGB);
+			break;
+		default:
+			break;
+		}
 	}
 
 	if (_gfxDrv == nullptr)

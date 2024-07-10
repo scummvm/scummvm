@@ -327,7 +327,9 @@ Common::Error SciEngine::run() {
 
 		// Check if the selected render mode is available for the game. This is quite specific for each game.
 		// Sometime it is only EGA, sometimes only CGA b/w without CGA 4 colors, etc. Also set default mode if undithering is enabled.
-		if ((renderMode == Common::kRenderEGA && ((getSciVersion() <= SCI_VERSION_0_LATE || getSciVersion() == SCI_VERSION_1_EGA_ONLY) && undither)) ||
+		if ((renderMode == Common::kRenderEGA && (((getSciVersion() <= SCI_VERSION_0_LATE || getSciVersion() == SCI_VERSION_1_EGA_ONLY) && undither) ||
+			(getSciVersion() >= SCI_VERSION_1_EARLY && getSciVersion() <= SCI_VERSION_1_1 && !SCI1_EGADriver::validateMode()))) ||
+			(renderMode == Common::kRenderVGAGrey && !SCI1_VGAGreyScaleDriver::validateMode()) ||
 			(renderMode == Common::kRenderCGA && !SCI0_CGADriver::validateMode()) ||
 			(renderMode == Common::kRenderCGA_BW && !SCI0_CGABWDriver::validateMode()) ||
 			((renderMode == Common::kRenderHercA || renderMode == Common::kRenderHercG) && !SCI0_HerculesDriver::validateMode()))

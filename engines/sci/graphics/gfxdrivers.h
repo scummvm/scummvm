@@ -154,6 +154,46 @@ private:
 	static const char *_driverFile;
 };
 
+class SCI1_VGAGreyScaleDriver final : public GfxDefaultDriver {
+public:
+	SCI1_VGAGreyScaleDriver(bool rgbRendering);
+	~SCI1_VGAGreyScaleDriver() override;
+	void setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod *palMods, const byte *palModMapping) override;
+	static bool validateMode() { return checkDriver(&_driverFile, 1); }
+private:
+	byte *_greyScalePalette;
+	static const char *_driverFile;
+};
+
+class SCI1_EGADriver final : public GfxDriver {
+public:
+	SCI1_EGADriver(bool rgbRendering);
+	~SCI1_EGADriver() override;
+	void initScreen(const Graphics::PixelFormat*) override;
+	void setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod*, const byte*) override;
+	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h, const PaletteMod*, const byte*) override;
+	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
+	void copyCurrentBitmap(byte *dest, uint32 size) const override;
+	void copyCurrentPalette(byte *dest, int start, int num) const override;
+	Common::Point getMousePos() const override;
+	void clearRect(const Common::Rect &r) const override;
+	bool supportsPalIntensity() const override { return false; }
+	static bool validateMode() { return checkDriver(&_driverFile, 1); }
+private:
+	bool _ready;
+	byte *_compositeBuffer;
+	byte *_currentBitmap;
+	byte *_currentPalette;
+	byte *_egaColorPatterns;
+	uint8 _colAdjust;
+	const byte *_internalPalette;
+	const byte *_egaMatchTable;
+	const bool _requestRGBMode;
+	typedef void (*LineProc)(byte*&, const byte*, int, const byte*, const byte*);
+	LineProc _renderLine;
+	static const char *_driverFile;
+};
+
 } // End of namespace Sci
 
 #endif // SCI_GRAPHICS_GFXDRIVERS_H
