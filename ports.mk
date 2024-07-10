@@ -246,6 +246,7 @@ ios7bundle: scummvm-static-ios
 			print "\t\t\t<key>CFBundleIconFiles</key>";\
 			print "\t\t\t<array>";\
 			print "\t\t\t\t<string>AppIcon76x76</string>";\
+			print "\t\t\t\t<string>AppIcon83.5x83.5</string>";\
 			print "\t\t\t</array>";\
 			print "\t\t</dict>";\
 			print "\t</dict>";\
