@@ -83,6 +83,13 @@ public:
 	float getFOV() const { return ((VideoTrackHandler *)_nextVideoTrack)->getFOV(); }
 	void setFOV(float fov) { ((VideoTrackHandler *)_nextVideoTrack)->setFOV(fov); }
 
+	int getCurrentRow() { return _nextVideoTrack->getCurFrame() / _nav.columns; }
+	void setCurrentRow(int row);
+	int getCurrentColumn() { return _nextVideoTrack->getCurFrame() % _nav.columns; }
+	void setCurrentColumn(int column);
+
+	void nudge(const Common::String &direction);
+
 	bool isVR() const { return _isVR; }
 	QTVRType getQTVRType() const { return _qtvrType; }
 
