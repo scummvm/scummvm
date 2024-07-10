@@ -502,6 +502,7 @@ bool TextCastMember::hasField(int field) {
 	case kTheTextHeight:
 	case kTheTextSize:
 	case kTheTextStyle:
+	case kTheScrollTop:
 		return true;
 	default:
 		break;
@@ -548,6 +549,9 @@ Datum TextCastMember::getField(int field) {
 		break;
 	case kTheTextStyle:
 		d = (int)_textSlant;
+		break;
+	case kTheScrollTop:
+		d = _scroll;
 		break;
 	default:
 		d = CastMember::getField(field);
@@ -651,6 +655,9 @@ bool TextCastMember::setField(int field, const Datum &d) {
 		}
 		_ptext = ((Graphics::MacText *)toEdit->_widget)->getPlainText();
 		_ftext = ((Graphics::MacText *)toEdit->_widget)->getTextChunk(0, 0, -1, -1, true);
+		return true;
+	case kTheScrollTop:
+		_scroll = d.asInt();
 		return true;
 	default:
 		break;
