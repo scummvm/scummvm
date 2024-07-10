@@ -6917,9 +6917,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// PC/Mac hybrid, but the Projector for the Mac version is embedded into an installer.
 	// The disc contains two versions in two Projector files. The "Standard Version" doesn't use the QTVR features,
 	// while the "Enhanced version" does.
-	WINGAME1_l("robinson",          "Standard Version", "CRUSOE8.EXE", "t:98c98c109102a10f75bd05b76f49a009", 1398759, Common::DE_DEU, 500),
-	WINGAME1_l("robinson",          "Enhanced Version", "CRUSOE16.EXE","t:97c3d5d1472bab61962837b0bf820912", 1398987, Common::DE_DEU, 500),
-	WINGAME1_l("robinson-makingof", "",                 "MAKING.EXE",  "t:4c5428c6b5e493da6fe35daccded70a0", 1410487, Common::DE_DEU, 501),
+	WINGAME2_l("robinson",          "Standard Version", "CRUSOE8.EXE", "t:98c98c109102a10f75bd05b76f49a009", 1398759,
+														"CHAP0.DXR",   "5bdff5b8f1eb8928f76fee5939798137",   1111290,  Common::DE_DEU, 500),
+	WINGAME2_l("robinson",          "Enhanced Version", "CRUSOE16.EXE","t:97c3d5d1472bab61962837b0bf820912", 1398987,
+														"CHAP0.DXR",   "5bdff5b8f1eb8928f76fee5939798137",   1111290,  Common::DE_DEU, 500),
+	WINGAME2_l("robinson-makingof", "",                 "MAKING.EXE",  "t:4c5428c6b5e493da6fe35daccded70a0", 1410487,
+														"MOF.DXR",     "904c146c3faeddfbb1e9341b28a88400",   16490984, Common::DE_DEU, 501),
 
 	// Released only in Japan by Interlink of Minato City, Tokyo (1997)
 	// Games play fully in English with Japanese credits only
