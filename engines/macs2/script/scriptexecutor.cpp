@@ -160,6 +160,23 @@ void ScriptExecutor::FuncA37A() {
 	isSkipping = false;
 }
 
+void ScriptExecutor::SkipUntil14() {
+	uint16 tag = ReadWord();
+	_stream->seek(0, SEEK_SET);
+	while (_stream->pos() < _stream->size()) {
+		uint8 opcode = ReadByte();
+		uint8 length = ReadByte();
+		if (opcode == 0x14) {
+			uint16 tag14 = ReadWord();
+			if (tag14 == tag) {
+				return;
+			}
+		} else {
+			_stream->seek(length, SEEK_CUR);
+		}
+	}
+}
+
 void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 	// Results are [bp-4h] and [bp-2h]
 	// TODO: Implement the actual prelude here correctly, documenting which lables we pass as we go
@@ -1572,8 +1589,13 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// that things happen out of order if not ending any timers active
 			EndTimer();
 			return ExecutionResult::WaitingForCallback;
+		} else if (opcode1 == 0x13) {
+			SkipUntil14();
+			expectedEndLocation = _stream->pos();
+		} else if (opcode1 == 0x14) {
+			// If we reach opcode 14 regularly, just discard the payload and continue
+			ReadWord();
 		}
-
 		else if (opcode1 == 0x0a) {
 			ScriptPrintString();
 			// TODO: Proper end handling
@@ -1936,6 +1958,13 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			Func9F4D_Placeholder();
 			// This must return a bool
 			Func9F4D_Placeholder();
+		} else if (opcode1 == 0x30) {
+			// TODO: This calls the same function as the print string but adds a param
+			// which changes behaviour in the function
+			// TODO: Implement the change by the flag
+			ScriptPrintString();
+			// TODO: Proper end handling
+			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x34) {
 			// TODO: Unknown opcode so far
 			// TODO: What do 8XXh objects signify? Both return values are those
