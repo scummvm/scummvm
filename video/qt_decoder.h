@@ -86,6 +86,24 @@ public:
 	bool isVR() const { return _isVR; }
 	QTVRType getQTVRType() const { return _qtvrType; }
 
+	struct NodeData {
+		uint32 nodeID;
+
+		float defHPan;
+		float defVPan;
+		float defZoom;
+
+		float minHPan;
+		float minVPan;
+		float maxHPan;
+		float maxVPan;
+		float minZoom;
+
+		Common::String name;
+	};
+
+	NodeData getNodeData(uint32 nodeID);
+
 protected:
 	Common::QuickTimeParser::SampleDesc *readSampleDesc(Common::QuickTimeParser::Track *track, uint32 format, uint32 descSize);
 

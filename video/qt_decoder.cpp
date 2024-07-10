@@ -671,6 +671,28 @@ void QuickTimeDecoder::handleMouseButton(bool isDown, int16 x, int16 y) {
 	}
 }
 
+QuickTimeDecoder::NodeData QuickTimeDecoder::getNodeData(uint32 nodeID) {
+	for (const auto &sample : _panoTrack->panoSamples) {
+		if (sample.hdr.nodeID == nodeID) {
+			return {
+				nodeID,
+				sample.hdr.defHPan,
+				sample.hdr.defVPan,
+				sample.hdr.defZoom,
+				sample.hdr.minHPan,
+				sample.hdr.minVPan,
+				sample.hdr.maxHPan,
+				sample.hdr.maxVPan,
+				sample.hdr.minZoom,
+				sample.strTable.getString(sample.hdr.nameStrOffset)};
+		}
+	}
+
+	error("QuickTimeDecoder::getNodeData(): Node with nodeID %d not found!", nodeID);
+
+	return {};
+}
+
 Audio::Timestamp QuickTimeDecoder::VideoTrackHandler::getFrameTime(uint frame) const {
 	// TODO: This probably doesn't work right with edit lists
 	int cumulativeDuration = 0;
