@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-07 21:25+0000\n"
-"PO-Revision-Date: 2024-07-10 18:53+0000\n"
+"PO-Revision-Date: 2024-07-10 19:26+0000\n"
 "Last-Translator: Krish <ganatrakrish2882005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
@@ -1261,7 +1261,7 @@ msgstr ""
 
 #: gui/imagealbum-dialog.cpp:103 gui/saveload-dialog.cpp:828
 msgid "Prev"
-msgstr ""
+msgstr "पिछला"
 
 #: gui/imagealbum-dialog.cpp:129
 #, fuzzy
@@ -1272,7 +1272,7 @@ msgstr "गेम सेव करें"
 #: gui/imagealbum-dialog.cpp:263
 #, c-format
 msgid "%u of %u"
-msgstr ""
+msgstr "%u में से %u"
 
 #: gui/imagealbum-dialog.cpp:376
 #, fuzzy
@@ -1290,7 +1290,7 @@ msgstr "कोई नहीं"
 #: gui/launcher.cpp:108
 msgctxt "group"
 msgid "First letter"
-msgstr ""
+msgstr "पहला अक्षर"
 
 #: gui/launcher.cpp:108
 msgctxt "group"
@@ -1313,7 +1313,7 @@ msgstr ""
 #: gui/launcher.cpp:114
 msgctxt "group"
 msgid "Publisher"
-msgstr ""
+msgstr "प्रकाशक"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:116
@@ -1331,7 +1331,7 @@ msgstr "प्लैटफॉर्म"
 #: gui/launcher.cpp:120
 msgctxt "year"
 msgid "Year"
-msgstr ""
+msgstr "वर्ष"
 
 #: gui/launcher.cpp:230
 msgid "Select Group by"
@@ -1343,11 +1343,11 @@ msgstr ""
 
 #: gui/launcher.cpp:236
 msgid "Select a criteria to group the entries"
-msgstr ""
+msgstr "प्रविष्टियों को समूहित करने के लिए एक मानदंड चुनें"
 
 #: gui/launcher.cpp:263
 msgid "Click here to see Help"
-msgstr ""
+msgstr "सहायता देखने के लिए यहाँ क्लिक करें"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
 #: gui/launcher.cpp:267 engines/dialogs.cpp:91
@@ -1389,7 +1389,7 @@ msgstr "गेम फाइल डाउनलोड करे"
 
 #: gui/launcher.cpp:277
 msgid "Download freeware games for ScummVM"
-msgstr ""
+msgstr "ScummVM के लिए फ्रीवेयर गेम्स डाउनलोड करें"
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
 #: gui/launcher.cpp:284
@@ -1398,7 +1398,7 @@ msgstr "नया गेम जोड़ें (A)..."
 
 #: gui/launcher.cpp:284
 msgid "Add games to the list"
-msgstr ""
+msgstr "सूची में गेम जोड़ें"
 
 #: gui/launcher.cpp:284
 msgctxt "lowres"
@@ -1433,7 +1433,7 @@ msgstr "अनेक गेम add करे..."
 #: gui/launcher.cpp:302 gui/launcher.cpp:868 gui/shaderbrowser-dialog.cpp:61
 #: gui/shaderbrowser-dialog.cpp:97
 msgid "Search in game list"
-msgstr ""
+msgstr "गेम सूची में खोजें"
 
 #: gui/launcher.cpp:306 gui/launcher.cpp:889 gui/shaderbrowser-dialog.cpp:65
 #: gui/shaderbrowser-dialog.cpp:107
@@ -1445,7 +1445,7 @@ msgstr "तलाशें:"
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:638
 #: engines/wage/saveload.cpp:736
 msgid "Load game:"
-msgstr ""
+msgstr "गेम लोड करें:"
 
 #: gui/launcher.cpp:409
 msgid "This directory cannot be used yet, it is being downloaded into!"
@@ -1489,15 +1489,15 @@ msgstr "ScummVM इस डायरेक्टरी में कोई गे
 #. I18N: Unknown game variant
 #: gui/launcher.cpp:707
 msgid "Unknown variant"
-msgstr ""
+msgstr "अज्ञात संस्करण"
 
 #: gui/launcher.cpp:938 gui/saveload-dialog.cpp:381
 msgid "List view"
-msgstr ""
+msgstr "सूची दृश्य"
 
 #: gui/launcher.cpp:939 gui/saveload-dialog.cpp:382
 msgid "Grid view"
-msgstr ""
+msgstr "जालक दृश्य"
 
 #: gui/launcher.cpp:1103
 msgid "~S~tart"
@@ -1542,40 +1542,38 @@ msgstr "अनजान इंजन"
 #. I18N: List group when no publisher is specified
 #: gui/launcher.cpp:1229 gui/launcher.cpp:1425
 msgid "Unknown Publisher"
-msgstr ""
+msgstr "अज्ञात प्रकाशक"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
 #: gui/launcher.cpp:1246 gui/launcher.cpp:1442
 msgid "No Series"
-msgstr ""
+msgstr "श्रृंखला नहीं"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
 #: gui/launcher.cpp:1260 gui/launcher.cpp:1456
 msgid "Language not detected"
-msgstr ""
+msgstr "भाषा का पता नहीं चला"
 
 #. I18N: List group when no platform is specified
 #: gui/launcher.cpp:1274 gui/launcher.cpp:1470
 msgid "Platform not detected"
-msgstr ""
+msgstr "प्लेटफ़ॉर्म का पता नहीं चला"
 
 #. I18N: List group when no year is specified
 #: gui/launcher.cpp:1291 gui/launcher.cpp:1487
-#, fuzzy
-#| msgid "Unknown Engine"
 msgid "Unknown Year"
-msgstr "अनजान इंजन"
+msgstr "अज्ञात वर्ष"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1494 gui/widgets/groupedlist.cpp:81
 msgid "All"
-msgstr ""
+msgstr "सभी"
 
 #: gui/launcher.cpp:1649
 msgid "Icons per row:"
-msgstr ""
+msgstr "प्रति पंक्ति आइकन:"
 
 #: gui/massadd.cpp:77 gui/massadd.cpp:80
 msgid "... progress ..."
@@ -1583,26 +1581,26 @@ msgstr "... प्रगति ..."
 
 #: gui/massadd.cpp:283
 msgid "Scan complete!"
-msgstr ""
+msgstr "स्कैन पूर्ण!"
 
 #: gui/massadd.cpp:286
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
-msgstr ""
+msgstr "%d नए गेम मिले, %d पहले से जोड़े गए गेम अनदेखे किए गए।"
 
 #: gui/massadd.cpp:290
 #, c-format
 msgid "Scanned %d directories ..."
-msgstr ""
+msgstr "%d निर्देशिकाएँ स्कैन की गईं ..."
 
 #: gui/massadd.cpp:293
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
-msgstr ""
+msgstr "%d नए गेम मिले, %d पहले से जोड़े गए गेम अनदेखे किए गए।"
 
 #: gui/onscreendialog.cpp:95 gui/onscreendialog.cpp:97
 msgid "Stop"
-msgstr ""
+msgstr "रोकें"
 
 #: gui/onscreendialog.cpp:100
 msgid "Edit record description"
@@ -1614,7 +1612,7 @@ msgstr "गेम पर स्विच करे"
 
 #: gui/onscreendialog.cpp:104
 msgid "Fast replay"
-msgstr ""
+msgstr "तेज़ पुनरावृत्ति"
 
 #: gui/options.cpp:150 common/updates.cpp:55
 msgid "Never"
@@ -1640,131 +1638,131 @@ msgstr "हर 30 मिनट में"
 #: gui/options.cpp:155
 #, c-format
 msgid "200% - Extremely large"
-msgstr ""
+msgstr "200% - अत्यधिक बड़ा"
 
 #. I18N: Very very large GUI scale
 #: gui/options.cpp:157
 msgid "175% - Very large"
-msgstr ""
+msgstr "175% - बहुत बड़ा"
 
 #. I18N: Very large GUI scale
 #: gui/options.cpp:159
 #, c-format
 msgid "150% - Larger"
-msgstr ""
+msgstr "150% - बड़ा"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:161
 #, c-format
 msgid "125% - Large"
-msgstr ""
+msgstr "125% - थोड़ा बड़ा"
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:163
 msgid "100% - Medium"
-msgstr ""
+msgstr "100% - मध्यम"
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:165
 #, c-format
 msgid "75% - Small"
-msgstr ""
+msgstr "75% - छोटा"
 
 #. I18N: Smaller GUI scale
 #: gui/options.cpp:167
 #, c-format
 msgid "50% - Smaller"
-msgstr ""
+msgstr "50% - और छोटा"
 
 #. I18N: Smallest GUI scale
 #: gui/options.cpp:169
 #, c-format
 msgid "25% - Smallest"
-msgstr ""
+msgstr "25% - सबसे छोटा"
 
 #: gui/options.cpp:816
 msgid "Failed to apply some of the graphic options changes:"
-msgstr ""
+msgstr "कुछ ग्राफ़िक विकल्प परिवर्तन लागू करने में विफल:"
 
 #: gui/options.cpp:828
 msgid "the video mode could not be changed"
-msgstr ""
+msgstr "वीडियो मोड बदला नहीं जा सका"
 
 #: gui/options.cpp:841
 msgid "the stretch mode could not be changed"
-msgstr ""
+msgstr "स्ट्रेच मोड बदला नहीं जा सका"
 
 #: gui/options.cpp:847
 msgid "the aspect ratio setting could not be changed"
-msgstr ""
+msgstr "पक्षानुपात सेटिंग को बदला नहीं जा सका"
 
 #: gui/options.cpp:853
 msgid "the fullscreen setting could not be changed"
-msgstr ""
+msgstr "फुलस्क्रीन सेटिंग को बदला नहीं जा सका"
 
 #: gui/options.cpp:859
 msgid "the filtering setting could not be changed"
-msgstr ""
+msgstr "फ़िल्टरिंग सेटिंग को बदला नहीं जा सका"
 
 #: gui/options.cpp:865
 msgid "the vsync setting could not be changed"
-msgstr ""
+msgstr "vsync सेटिंग को बदला नहीं जा सका"
 
 #: gui/options.cpp:879
 msgid "the shader could not be changed"
-msgstr ""
+msgstr "शेडर बदला नहीं जा सका"
 
 #: gui/options.cpp:1403
 msgid "Touchpad mouse mode"
-msgstr ""
+msgstr "टचपैड माउस मोड"
 
 #: gui/options.cpp:1408
 msgid "Pointer Speed:"
-msgstr ""
+msgstr "पोइंटर की गति:"
 
 #: gui/options.cpp:1408 gui/options.cpp:1410 gui/options.cpp:1411
 msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr ""
+msgstr "कीबोर्ड/जॉयस्टिक माउस पॉइंटर नियंत्रण के लिए गति"
 
 #: gui/options.cpp:1410
 msgctxt "lowres"
 msgid "Pointer Speed:"
-msgstr ""
+msgstr "पोइंटर की गति:"
 
 #: gui/options.cpp:1421
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "जॉय डेडज़ोन:"
 
 #: gui/options.cpp:1421 gui/options.cpp:1423 gui/options.cpp:1424
 msgid "Analog joystick Deadzone"
-msgstr ""
+msgstr "एनालॉग जॉयस्टिक डेडज़ोन"
 
 #: gui/options.cpp:1423
 msgctxt "lowres"
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "जॉय डेडज़ोन:"
 
 #: gui/options.cpp:1519
 #, c-format
 msgid "%d hidden achievements remaining"
-msgstr ""
+msgstr "%d छिपी हुई उपलब्धियाँ शेष"
 
 #: gui/options.cpp:1524
 #, c-format
 msgid "Achievements unlocked: %d/%d"
-msgstr ""
+msgstr "उपलब्धियाँ अनलॉक: %d/%d"
 
 #: gui/options.cpp:1570
 msgid "Graphics mode:"
-msgstr "ग्राफिक्स मोड:"
+msgstr "ग्राफ़िक्स मोड:"
 
 #: gui/options.cpp:1586
 msgid "Render mode:"
-msgstr ""
+msgstr "रेंडर मोड:"
 
 #: gui/options.cpp:1586 gui/options.cpp:1589
 msgid "Special dithering modes supported by some games"
-msgstr ""
+msgstr "कुछ गेमों द्वारा समर्थित विशेष डीथरिंग मोड"
 
 #: gui/options.cpp:1602
 msgid "Stretch mode:"
