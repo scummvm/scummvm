@@ -208,10 +208,10 @@ static MethodProto xlibMethods[] = {
 	{ "QTVRCollapseToHotSpotRgn",				QtvrxtraXtra::m_QTVRCollapseToHotSpotRgn,		 0, 0,	500 },
 	{ "QTVRZoomOutEffect",				QtvrxtraXtra::m_QTVRZoomOutEffect,		 3, 0,	500 },
 	{ "QTVRGetColumn",				QtvrxtraXtra::m_QTVRGetColumn,		 0, 0,	500 },
-	{ "QTVRSetColumn",				QtvrxtraXtra::m_QTVRSetColumn,		 1, 0,	500 },
+	{ "QTVRSetColumn",				QtvrxtraXtra::m_QTVRSetColumn,		 1, 1,	500 },
 	{ "QTVRGetRow",				QtvrxtraXtra::m_QTVRGetRow,		 0, 0,	500 },
-	{ "QTVRSetRow",				QtvrxtraXtra::m_QTVRSetRow,		 1, 0,	500 },
-	{ "QTVRNudge",				QtvrxtraXtra::m_QTVRNudge,		 1, 0,	500 },
+	{ "QTVRSetRow",				QtvrxtraXtra::m_QTVRSetRow,		 1, 1,	500 },
+	{ "QTVRNudge",				QtvrxtraXtra::m_QTVRNudge,		 1, 1,	500 },
 	{ "QTVRGetMouseDownHandler",				QtvrxtraXtra::m_QTVRGetMouseDownHandler,		 0, 0,	500 },
 	{ "QTVRSetMouseDownHandler",				QtvrxtraXtra::m_QTVRSetMouseDownHandler,		 1, 0,	500 },
 	{ "QTVRGetMouseOverHandler",				QtvrxtraXtra::m_QTVRGetMouseOverHandler,		 0, 0,	500 },
@@ -584,11 +584,60 @@ XOBJSTUB(QtvrxtraXtra::m_QTVRGetWarpMode, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetWarpMode, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRCollapseToHotSpotRgn, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRZoomOutEffect, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetColumn, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetColumn, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetRow, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetRow, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRNudge, 0)
+
+void QtvrxtraXtra::m_QTVRGetColumn(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetColumn", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(Common::String::format("%d", me->_video->getCurrentColumn()));
+}
+
+void QtvrxtraXtra::m_QTVRSetColumn(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetColumn", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setCurrentColumn(atoi(g_lingo->pop().asString().c_str()));
+}
+
+void QtvrxtraXtra::m_QTVRGetRow(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetRow", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(Common::String::format("%d", me->_video->getCurrentRow()));
+}
+
+void QtvrxtraXtra::m_QTVRSetRow(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetRow", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setCurrentRow(atoi(g_lingo->pop().asString().c_str()));
+}
+
+void QtvrxtraXtra::m_QTVRNudge(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRNudge", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	Common::String direction = g_lingo->pop().asString();
+
+	if (!(direction.equalsIgnoreCase("left") || direction.equalsIgnoreCase("right") ||
+		  direction.equalsIgnoreCase("top") || direction.equalsIgnoreCase("bottom"))) {
+		error("QtvrxtraXtra::m_QTVRNudge(): Invald direction: ('%s')!", direction.c_str());
+		return;
+	}
+
+	me->_video->nudge(direction);
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetMouseDownHandler, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetMouseDownHandler, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetMouseOverHandler, 0)
