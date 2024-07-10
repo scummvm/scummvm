@@ -169,6 +169,10 @@ class GameObject;
 			void FuncA3D2();
 			void FuncA37A();
 
+			// Implementation of opcode 13
+			// 0037h:0A439h
+			void SkipUntil14();
+
 			// void Func101D(uint16 x, uint16 y);
 			
 			void Func9F4D(uint16 &out1, uint16 &out2);
