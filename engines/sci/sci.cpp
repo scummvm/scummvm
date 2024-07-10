@@ -322,24 +322,20 @@ Common::Error SciEngine::run() {
 		Common::RenderMode renderMode = Common::kRenderDefault;
 
 		bool undither = ConfMan.getBool("disable_dithering");
+		if (ConfMan.hasKey("render_mode"))
+			renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
 
-		if (getSciVersion() <= SCI_VERSION_0_LATE || getSciVersion() == SCI_VERSION_1_EGA_ONLY) {
-			if (ConfMan.hasKey("render_mode"))
-				renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
+		// Check if the selected render mode is available for the game. This is quite specific for each game.
+		// Sometime it is only EGA, sometimes only CGA b/w without CGA 4 colors, etc. Also set default mode if undithering is enabled.
+		if ((renderMode == Common::kRenderEGA && ((getSciVersion() <= SCI_VERSION_0_LATE || getSciVersion() == SCI_VERSION_1_EGA_ONLY) && undither)) ||
+			(renderMode == Common::kRenderCGA && !SCI0_CGADriver::validateMode()) ||
+			(renderMode == Common::kRenderCGA_BW && !SCI0_CGABWDriver::validateMode()) ||
+			((renderMode == Common::kRenderHercA || renderMode == Common::kRenderHercG) && !SCI0_HerculesDriver::validateMode()))
+			renderMode = Common::kRenderDefault;
 
-			// Check if the selected render mode is available for the game. This is quite specific for
-			// each SCI0 game. Sometime it is only EGA, sometimes only CGA b/w without CGA 4 colors, etc.
-			// Also set default mode if undithering is enabled.
-			if ((renderMode == Common::kRenderEGA && undither) ||
-				(renderMode == Common::kRenderCGA && !SCI0_CGADriver::validateMode()) ||
-				(renderMode == Common::kRenderCGA_BW && !SCI0_CGABWDriver::validateMode()) ||
-				((renderMode == Common::kRenderHercA || renderMode == Common::kRenderHercG) && !SCI0_HerculesDriver::validateMode()))
-				renderMode = Common::kRenderDefault;
-
-			// Disable undithering for CGA and Hercules modes
-			if (renderMode != Common::kRenderDefault)
-				undither = false;
-		}
+		// Disable undithering for CGA and Hercules modes
+		if (renderMode != Common::kRenderDefault)
+			undither = false;
 
 		// Initialize the game screen
 		_gfxScreen = new GfxScreen(_resMan, renderMode);

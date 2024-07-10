@@ -96,7 +96,7 @@ public:
 	void bakDiscard();
 
 	// video frame displaying
-	void copyVideoFrameToScreen(const byte *buffer, int pitch, const Common::Rect &rect, bool is8bit);
+	void copyVideoFrameToScreen(const byte *buffer, int pitch, const Common::Rect &rect);
 
 	// Vector drawing
 private:
@@ -173,8 +173,6 @@ private:
 	uint16 _displayHeight;
 	uint _displayPixels;
 
-	Graphics::PixelFormat _format;
-
 	byte _colorWhite;
 	byte _colorDefaultVectorData;
 
@@ -207,13 +205,10 @@ private:
 	Graphics::Surface _displayScreenSurface;
 
 	/**
-	 * CGA and Hercules support
+	 * Support for CGA and Hercules and other graphic modes that the original
+	 * interpreters allowed. It also performs the rgb rendering if needed.
 	 */
 	GfxDriver *_gfxDrv;
-
-	// Screens for RGB mode support
-	byte *_displayedScreen;
-	byte *_rgbScreen;
 
 	// For RGB per-view/pic palette mods
 	byte *_paletteMapScreen;
@@ -223,10 +218,7 @@ private:
 
 	byte *_backupScreen; // for bak* functions
 
-	void convertToRGB(const Common::Rect &rect);
-	void displayRectRGB(const Common::Rect &rect, int x, int y);
 	void displayRect(const Common::Rect &rect, int x, int y);
-	byte *_palette;
 
 	ResourceManager *_resMan;
 

@@ -23,102 +23,134 @@
 #define SCI_GRAPHICS_GFXDRIVERS_H
 
 #include "common/rect.h"
+#include "graphics//pixelformat.h"
 
 namespace Sci {
 
+struct PaletteMod;
+
 class GfxDriver {
 public:
-	GfxDriver(uint16 screenWidth, uint16 screenHeight, int numColors, int horizontalAlignment) : _screenW(screenWidth), _screenH(screenHeight), _numColors(numColors), _hAlign(horizontalAlignment) {}
+	GfxDriver(uint16 screenWidth, uint16 screenHeight, int numColors, int horizontalAlignment) : _screenW(screenWidth), _screenH(screenHeight), _numColors(numColors), _hAlign(horizontalAlignment), _ready(false), _pixelSize(1) {}
 	virtual ~GfxDriver() {}
-
-	uint16 screenWidth() const { return _screenW; }
-	uint16 screenHeight() const { return _screenH; }
-	uint16 numColors() const { return _numColors; }
-	byte hAlignment() const { return _hAlign; }
-	
-	virtual bool allowRGBRendering() const = 0;
-	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
-	virtual void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) = 0;
+	virtual void initScreen(const Graphics::PixelFormat *srcRGBFormat = nullptr) = 0; // srcRGBFormat: expect incoming data to have the specified rgb pixel format (used for Mac hicolor videos)
+	virtual void setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod *palMods, const byte *palModMapping) = 0;
+	virtual void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h, const PaletteMod *palMods, const byte *palModMapping) = 0;
 	virtual void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) = 0;
 	virtual Common::Point getMousePos() const;
 	virtual void clearRect(const Common::Rect &r) const;
-
+	virtual void copyCurrentBitmap(byte *dest, uint32 size) const = 0;
+	virtual void copyCurrentPalette(byte *dest, int start, int num) const;
+	virtual bool supportsPalIntensity() const = 0;
+	uint16 numColors() const { return _numColors; }
+	byte hAlignment() const { return _hAlign; }
+	byte pixelSize() const { return _pixelSize; }
 protected:
+	bool _ready;
+	static bool checkDriver(const char *const *driverNames, int listSize);
 	const uint16 _screenW;
 	const uint16 _screenH;
 	uint16 _numColors;
+	byte _pixelSize;
 	const byte _hAlign;
 };
 
-class GfxDefaultDriver final : public GfxDriver {
+class GfxDefaultDriver : public GfxDriver {
 public:
-	GfxDefaultDriver(uint16 screenWidth, uint16 screenHeight);
-	~GfxDefaultDriver() override {}
-	bool allowRGBRendering() const override { return true; }
-	void setPalette(const byte *colors, uint start, uint num) override;
-	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) override;
+	GfxDefaultDriver(uint16 screenWidth, uint16 screenHeight, bool rgbRendering);
+	~GfxDefaultDriver() override;
+	void initScreen(const Graphics::PixelFormat *srcRGBFormat) override; // srcRGBFormat: expect incoming data to have the specified rgb pixel format (used for Mac hicolor videos)
+	void setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod *palMods, const byte *palModMapping) override;
+	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h, const PaletteMod *palMods, const byte *palModMapping) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
+	void copyCurrentBitmap(byte *dest, uint32 size) const override;
+	void copyCurrentPalette(byte *dest, int start, int num) const override;
+	bool supportsPalIntensity() const override { return true; }
+protected:
+	void updatePalette(const byte *colors, uint start, uint num, bool skipRGBPalette);
+	byte *_compositeBuffer;
+	byte *_currentBitmap;
+	byte *_currentPalette;
+	byte *_internalPalette;
+	Graphics::PixelFormat _format;
+	byte _srcPixelSize;
+	const bool _requestRGBMode;
+private:
+	void generateOutput(byte *dst, const byte *src, int pitch, int w, int h, const PaletteMod *palMods, const byte *palModMapping);
 };
 
 class SCI0_DOSPreVGADriver : public GfxDriver {
 public:
-	SCI0_DOSPreVGADriver(int numColors, int screenW, int screenH, int horizontalAlignment);
+	SCI0_DOSPreVGADriver(int numColors, int screenW, int screenH, int horizontalAlignment, bool rgbRendering);
 	~SCI0_DOSPreVGADriver() override;
-	bool allowRGBRendering() const override { return false; }
-	void setPalette(const byte*, uint, uint) override;
+	void initScreen(const Graphics::PixelFormat*) override;
+	void setPalette(const byte*, uint, uint, bool, const PaletteMod*, const byte*) {}
+	void copyCurrentBitmap(byte*, uint32) const override;
+	void copyCurrentPalette(byte *dest, int start, int num) const override;
+	bool supportsPalIntensity() const override { return false; }
 protected:
-	static bool checkDriver(const char *const *driverNames, int listSize);
 	void assignPalette(const byte *colors);
 	byte *_compositeBuffer;
+	const byte *_internalPalette;
 private:
-	bool _palNeedUpdate;
+	virtual void setupRenderProc() = 0;
+	const bool _requestRGBMode;
 	const byte *_colors;
 };
 
 class SCI0_CGADriver final : public SCI0_DOSPreVGADriver {
 public:
-	SCI0_CGADriver(bool emulateCGAModeOnEGACard);
+	SCI0_CGADriver(bool emulateCGAModeOnEGACard, bool rgbRendering);
 	~SCI0_CGADriver() override;
-	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) override;
+	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h, const PaletteMod*, const byte*) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	static bool validateMode() { return checkDriver(&_driverFile, 1); }
 private:
+	void setupRenderProc() override;
 	uint16 *_cgaPatterns;
 	byte _palette[12];
 	const bool _disableMode5;
+	typedef void (*LineProc)(byte*&, const byte*, int, int, int, const uint16*, const byte*);
+	LineProc _renderLine;
 	static const char *_driverFile;
 };
 
 class SCI0_CGABWDriver final : public SCI0_DOSPreVGADriver {
 public:
-	SCI0_CGABWDriver(uint32 monochromeColor);
+	SCI0_CGABWDriver(uint32 monochromeColor, bool rgbRendering);
 	~SCI0_CGABWDriver() override;
-	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) override;
+	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h, const PaletteMod*, const byte*) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	Common::Point getMousePos() const override;
 	void clearRect(const Common::Rect &r) const override;
 	static bool validateMode() { return checkDriver(_driverFiles, 2); }
 private:
+	void setupRenderProc() override;
 	byte _monochromePalette[6];
 	const byte *_monochromePatterns;
 	bool _earlyVersion;
+	typedef void (*LineProc)(byte*&, const byte*, int, int, int, const byte*, const byte*);
+	LineProc _renderLine;
 	static const char *_driverFiles[2];
 };
 
 class SCI0_HerculesDriver final : public SCI0_DOSPreVGADriver {
 public:
-	SCI0_HerculesDriver(uint32 monochromeColor, bool cropImage);
+	SCI0_HerculesDriver(uint32 monochromeColor, bool rgbRendering, bool cropImage);
 	~SCI0_HerculesDriver() override;
-	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) override;
+	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h, const PaletteMod*, const byte*) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	Common::Point getMousePos() const override;
 	void clearRect(const Common::Rect &r) const override;
 	static bool validateMode() { return checkDriver(&_driverFile, 1); }
 private:
+	void setupRenderProc() override;
 	const uint16 _centerX;
 	const uint16 _centerY;
 	byte _monochromePalette[6];
 	const byte *_monochromePatterns;
+	typedef void (*LineProc)(byte*&, const byte*, int, int, int, const byte*, const byte*);
+	LineProc _renderLine;
 	static const char *_driverFile;
 };
 
