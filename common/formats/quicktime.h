@@ -99,6 +99,12 @@ public:
 	/** Find out if this parser has an open file handle */
 	bool isOpen() const { return _fd != nullptr; }
 
+	enum class QTVRType {
+		OTHER,
+		OBJECT,
+		PANORAMA
+	};
+
 protected:
 	// This is the file handle from which data is read from. It can be the actual file handle or a decompressed stream.
 	SeekableReadStream *_fd;
@@ -338,12 +344,6 @@ protected:
 		float endVPan;
 		float initialHPan;
 		float initialVPan;
-	};
-
-	enum class QTVRType {
-		OTHER,
-		OBJECT,
-		PANORAMA
 	};
 
 	virtual SampleDesc *readSampleDesc(Track *track, uint32 format, uint32 descSize) = 0;
