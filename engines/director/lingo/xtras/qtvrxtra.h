@@ -49,6 +49,11 @@ public:
 	Common::String _updateMode;
 
 	bool _capEventsMouseOver;
+	bool _capEventsMouseDown;
+
+	bool _passMouseDown;
+
+	Common::String _mouseDownHandler;
 };
 
 namespace QtvrxtraXtra {
