@@ -77,6 +77,7 @@ public:
 	void handleMouseButton(bool isDown, int16 x = -1, int16 y = -1);
 
 	bool isVR() const { return _isVR; }
+	QTVRType getQTVRType() const { return _qtvrType; }
 
 protected:
 	Common::QuickTimeParser::SampleDesc *readSampleDesc(Common::QuickTimeParser::Track *track, uint32 format, uint32 descSize);
