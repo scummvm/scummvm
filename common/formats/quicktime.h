@@ -358,6 +358,8 @@ protected:
 	uint16 _winX;
 	uint16 _winY;
 
+	Track *_panoTrack;
+
 	void init();
 
 private:
@@ -377,8 +379,6 @@ private:
 	uint32 _beginOffset;
 	MacResManager *_resFork;
 	bool _foundMOOV;
-
-	Track *_panoTrack;
 
 	void initParseTable();
 
