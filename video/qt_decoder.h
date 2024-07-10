@@ -93,6 +93,9 @@ public:
 	bool isVR() const { return _isVR; }
 	QTVRType getQTVRType() const { return _qtvrType; }
 
+	uint8 getWarpMode() const { return _warpMode; }
+	void setWarpMode(uint8 warpMode) { _warpMode = warpMode; }
+
 	struct NodeData {
 		uint32 nodeID;
 
@@ -125,6 +128,8 @@ private:
 	bool _isMouseButtonDown;
 
 	bool _isVR;
+
+	uint8 _warpMode; // (2 | 1 | 0) for 2-d, 1-d or no warping
 
 	Graphics::Surface *_scaledSurface;
 	void scaleSurface(const Graphics::Surface *src, Graphics::Surface *dst,
