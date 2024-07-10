@@ -829,6 +829,249 @@ void SCI0_HerculesDriver::setupRenderProc() {
 
 const char *SCI0_HerculesDriver::_driverFile = "HERCMONO.DRV";
 
+
+SCI1_VGAGreyScaleDriver::SCI1_VGAGreyScaleDriver(bool rgbRendering) : GfxDefaultDriver(320, 200, rgbRendering), _greyScalePalette(nullptr) {
+	_greyScalePalette = new byte[_numColors * 3]();
+}
+
+SCI1_VGAGreyScaleDriver::~SCI1_VGAGreyScaleDriver() {
+	delete[] _greyScalePalette;
+}
+
+void SCI1_VGAGreyScaleDriver::setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod *palMods, const byte *palModMapping) {
+	GFXDRV_ASSERT_READY; 
+	byte *d = _greyScalePalette;
+	for (uint i = 0; i < num; ++i) {
+		// In the driver files I inspected there were never any other color distributions than this.
+		// So I guess it is safe to hardcode that instead of loading it from the driver file.
+		d[0] = d[1] = d[2] = (colors[0] * 77 + colors[1] * 150 + colors[2] * 28) >> 8;
+		colors += 3;
+		d += 3;
+	}
+
+	GfxDefaultDriver::setPalette(_greyScalePalette, start, num, update, palMods, palModMapping);
+}
+
+const char *SCI1_VGAGreyScaleDriver::_driverFile = "VGA320BW.DRV";
+
+SCI1_EGADriver::SCI1_EGADriver(bool rgbRendering) : GfxDriver(320, 200, 256, 1), _requestRGBMode(rgbRendering), _egaColorPatterns(nullptr), _egaMatchTable(nullptr),
+	_currentBitmap(nullptr), _compositeBuffer(nullptr), _currentPalette(nullptr), _internalPalette(nullptr), _colAdjust(0), _ready(false) {
+	Common::File drv;
+	if (!drv.open(_driverFile))
+		error("SCI1_EGADriver: Failed to open '%s'", _driverFile);
+
+	uint16 eprcOffs = 0;
+
+	uint32 cmd = drv.readUint32LE();
+	if ((cmd & 0xFF) == 0xE9)
+		eprcOffs = ((cmd >> 8) & 0xFFFF) + 3;
+
+	if (!eprcOffs || drv.readUint32LE() != 0x87654321 || !drv.skip(1) || !drv.seek(drv.readByte(), SEEK_CUR) || !drv.seek(drv.readByte(), SEEK_CUR) || drv.readUint32LE() != 0xFEDCBA98 || !drv.skip(4))
+		error("SCI1_EGADriver: Driver file '%s' unknown version", _driverFile);
+
+	drv.skip(drv.readByte() == 0x90 ? 20 : 19);
+
+	drv.seek(drv.readUint16LE());
+	byte *buff = new byte[128];
+	drv.read(buff, 128);
+
+	uint16 tableOffs = 0;
+	for (int i = 0; i < 120 && !tableOffs; ++i) {
+		uint32 c = READ_BE_UINT32(buff + i);
+		if (c == 0x8BD82E8A) {
+			if (buff[i + 4] == 0x87)
+				tableOffs = READ_LE_UINT16(buff + i + 5);
+		} else if (c == 0xD0E8D0E8) {
+			for (int ii = 4; ii < 14; ++ii) {
+				if (READ_BE_UINT16(buff + i + ii) == 0x83C0) {
+					c = READ_BE_UINT32(buff + i + ii + 2);
+					if ((c & 0xFFFFFF) == 0x83F83F)
+						_colAdjust = c >> 24;
+				}
+			}
+		}
+	}
+	delete[] buff;
+
+	if (!tableOffs)
+		error("SCI1_EGADriver: Failed to load color data from '%s'", _driverFile);
+
+	drv.seek(tableOffs);
+	byte *table = new byte[512]();
+	drv.read(table, 512);
+	_egaMatchTable = table;
+
+	if (drv.readUint16LE() != 152 || drv.readUint16LE() != 160)
+		error("SCI1_EGADriver: Driver file '%s' unknown version", _driverFile);
+
+	drv.close();
+}
+
+SCI1_EGADriver::~SCI1_EGADriver() {
+	delete[] _egaMatchTable;
+	delete[] _egaColorPatterns;
+	delete[] _compositeBuffer;
+	delete[] _currentBitmap;
+	delete[] _currentPalette;
+	delete[] _internalPalette;
+}
+
+template <typename T> void ega640RenderLine(byte *&dst, const byte *src, int w, const byte *patterns, const byte *pal) {
+	const T *p = reinterpret_cast<const T*>(pal);
+	T *d1 = reinterpret_cast<T*>(dst);
+	T *d2 = d1 + (w << 1);
+
+	for (int i = 0; i < w; ++i) {
+		byte pt = patterns[*src++];
+		if (sizeof(T) == 1) {
+			*d1++ = *d2++ = pt >> 4;
+			*d1++ = *d2++ = pt & 0x0f;
+		} else {
+			*d1++ = *d2++ = p[pt >> 4];
+			*d1++ = *d2++ = p[pt & 0x0f];
+		}
+	}
+	dst = reinterpret_cast<byte*>(d2);
+}
+
+void SCI1_EGADriver::initScreen(const Graphics::PixelFormat*) {
+	Graphics::PixelFormat format(Graphics::PixelFormat::createFormatCLUT8());
+	initGraphics(_screenW << 1, _screenH << 1, _requestRGBMode ? nullptr : &format);
+	format = g_system->getScreenFormat();
+	_pixelSize = format.bytesPerPixel;
+
+	if (_requestRGBMode && _pixelSize == 1)
+		warning("SCI1_EGADriver::initScreen(): RGB rendering not available in this ScummVM build");
+
+	static const byte egaColors[48] = {
+		0x00, 0x00, 0x00, 0x00, 0x00, 0xAA, 0x00, 0xAA, 0x00, 0x00, 0xAA, 0xAA,
+		0xAA, 0x00, 0x00, 0xAA, 0x00, 0xAA, 0xAA, 0x55, 0x00, 0xAA, 0xAA, 0xAA,
+		0x55, 0x55, 0x55, 0x55, 0x55, 0xFF, 0x55, 0xFF, 0x55, 0x55, 0xFF, 0xFF,
+		0xFF, 0x55, 0x55, 0xFF, 0x55, 0xFF, 0xFF, 0xFF, 0x55, 0xFF, 0xFF, 0xFF
+	};
+
+	if (_pixelSize == 1) {
+		g_system->getPaletteManager()->setPalette(egaColors, 0, ARRAYSIZE(egaColors) / 3);
+	} else {
+		byte *rgbpal = new byte[_numColors * _pixelSize]();
+		assert(rgbpal);
+
+		if (_pixelSize == 2)
+			updateRGBPalette<uint16>(rgbpal, egaColors, 0, ARRAYSIZE(egaColors) / 3, format);
+		else if (_pixelSize == 4)
+			updateRGBPalette<uint32>(rgbpal, egaColors, 0, ARRAYSIZE(egaColors) / 3, format);
+		else
+			error("SCI1_EGADriver::initScreen(): Unsupported screen format");
+		_internalPalette = rgbpal;
+		CursorMan.replaceCursorPalette(egaColors, 0, ARRAYSIZE(egaColors) / 3);
+	}
+
+	_compositeBuffer = new byte[(_screenW << 1) * (_screenH << 1) * _pixelSize]();
+	assert(_compositeBuffer);
+	_currentBitmap = new byte[_screenW * _screenH]();
+	assert(_currentBitmap);
+	_currentPalette = new byte[256 * 3]();
+	assert(_currentPalette);
+	_egaColorPatterns = new byte[256]();
+	assert(_egaColorPatterns);
+
+	static const LineProc lineProcs[] = {
+		&ega640RenderLine<byte>,
+		&ega640RenderLine<uint16>,
+		&ega640RenderLine<uint32>
+	};
+
+	assert((_pixelSize >> 1) < ARRAYSIZE(lineProcs));
+	_renderLine = lineProcs[_pixelSize >> 1];
+
+	_ready = true;
+}
+
+void SCI1_EGADriver::setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod*, const byte*) {
+	GFXDRV_ASSERT_READY;
+	memcpy(_currentPalette + start * 3, colors, num * 3);
+	byte *d = &_egaColorPatterns[start];
+	for (uint i = 0; i < num; ++i) {
+		*d++ = _egaMatchTable[((MIN<byte>((colors[0] >> 2) + _colAdjust, 63) & 0x38) << 3) | (MIN<byte>((colors[1] >> 2) + _colAdjust, 63) & 0x38) | (MIN<byte>((colors[2] >> 2) + _colAdjust, 63) >> 3)];
+		colors += 3;
+	}
+	if (update)
+		copyRectToScreen(_currentBitmap, _screenW, 0, 0, _screenW, _screenH, nullptr, nullptr);
+}
+
+void SCI1_EGADriver::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h, const PaletteMod*, const byte*) {
+	GFXDRV_ASSERT_READY;
+	GFXDRV_ASSERT_ALIGNED; // We can't fix the boundaries here, it has to happen before this call
+
+	if (src != _currentBitmap)
+		updateBitmapBuffer(_currentBitmap, _screenW, src, pitch, x, y, w, h);
+
+	byte *dst = _compositeBuffer;
+	for (int i = 0; i < h; ++i) {
+		_renderLine(dst, src, w, _egaColorPatterns, _internalPalette);
+		src += pitch;
+	}
+
+	g_system->copyRectToScreen(_compositeBuffer, (w << 1) * _pixelSize, x << 1, y << 1, w << 1, h << 1);
+}
+
+void SCI1_EGADriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
+	GFXDRV_ASSERT_READY;
+	const byte *s = reinterpret_cast<const byte*>(cursor);
+	int dstPitch = (w << 1);
+	byte *d1 = _compositeBuffer;
+	byte *d2 = _compositeBuffer + dstPitch;
+	uint32 newKeyColor = 0xFF;
+
+	for (uint i = 0; i < h; ++i) {
+		for (uint ii = 0; ii < w; ++ii) {
+			byte col = *s++;
+			if (col == keycolor) {
+				*d1++ = *d2++ = newKeyColor;
+				*d1++ = *d2++ = newKeyColor;
+			} else {
+				byte pt = _egaColorPatterns[col];
+				*d1++ = *d2++ = pt >> 4;
+				*d1++ = *d2++ = pt & 0x0f;
+			}
+		}
+		d1 += dstPitch;
+		d2 += dstPitch;
+	}
+
+	keycolor = newKeyColor;
+
+	CursorMan.replaceCursor(_compositeBuffer, w << 1, h << 1, hotspotX << 1, hotspotY << 1, newKeyColor);
+}
+
+void SCI1_EGADriver::copyCurrentBitmap(byte *dest, uint32 size) const {
+	GFXDRV_ASSERT_READY;
+	assert(dest);
+	assert(size <= (uint32)(_screenW * _screenH));
+	memcpy(dest, _currentBitmap, size);
+}
+
+void SCI1_EGADriver::copyCurrentPalette(byte *dest, int start, int num) const {
+	GFXDRV_ASSERT_READY;
+	assert(dest);
+	assert(start + num <= 256);
+	memcpy(dest + start * 3, _currentPalette + start * 3, num * 3);
+}
+
+Common::Point SCI1_EGADriver::getMousePos() const {
+	Common::Point res = GfxDriver::getMousePos();
+	res.x >>= 1;
+	res.y >>= 1;
+	return res;
+}
+
+void SCI1_EGADriver::clearRect(const Common::Rect &r) const {
+	Common::Rect r2(r.left << 1, r.top << 1, r.right << 1, r.bottom << 1);
+	GfxDriver::clearRect(r2);
+}
+
+const char *SCI1_EGADriver::_driverFile = "EGA640.DRV";
+
 #undef GFXDRV_ASSERT_READY
 #undef GFXDRV_ASEERT_ALIGNED
 
