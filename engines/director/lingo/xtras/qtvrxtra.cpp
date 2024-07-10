@@ -665,8 +665,24 @@ void QtvrxtraXtra::m_QTVRSetVisible(int nargs) {
 	me->_visible = (bool)g_lingo->pop().asInt();
 }
 
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetWarpMode, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetWarpMode, 0)
+void QtvrxtraXtra::m_QTVRGetWarpMode(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetWarpMode", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_video->getWarpMode());
+}
+
+void QtvrxtraXtra::m_QTVRSetWarpMode(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetWarpMode", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setWarpMode(g_lingo->pop().asInt());
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRCollapseToHotSpotRgn, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRZoomOutEffect, 0)
 
