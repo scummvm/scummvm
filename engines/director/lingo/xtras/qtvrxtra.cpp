@@ -359,7 +359,27 @@ void QtvrxtraXtra::m_QTVRClose(int nargs) {
 }
 
 XOBJSTUB(QtvrxtraXtra::m_QTVRUpdate, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetQTVRType, 0)
+
+void QtvrxtraXtra::m_QTVRGetQTVRType(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetQTVRType", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	switch (me->_video->getQTVRType()) {
+	case Common::QuickTimeParser::QTVRType::PANORAMA:
+		g_lingo->push(Common::String("QTVRPanorama"));
+		break;
+	case Common::QuickTimeParser::QTVRType::OBJECT:
+		g_lingo->push(Common::String("QTVRObject"));
+		break;
+	case Common::QuickTimeParser::QTVRType::OTHER:
+	default:
+		g_lingo->push(Common::String("NotAQTVRType"));
+		break;
+	}
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRIdle, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRMouseDown, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRMouseOver, 0)
