@@ -70,6 +70,7 @@
 #define GUIO_RENDERCPC      	"\x27"
 #define GUIO_RENDERZX	    	"\x28"
 #define GUIO_RENDERC64	    	"\x29"
+#define GUIO_RENDERVGAGREY    	"\x2A"
 
 #define GUIO_LINKSPEECHTOSFX "\x30"
 #define GUIO_LINKMUSICTOSFX  "\x31"

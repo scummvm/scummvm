@@ -53,6 +53,7 @@ const RenderModeDescription g_renderModes[] = {
 	{ "cpc", "Amstrad CPC", kRenderCPC },
 	{ "zx", "ZX Spectrum", kRenderZX },
 	{ "c64", "Commodore 64", kRenderC64 },
+	{ "vgaGrey", "VGA Grey Scale", kRenderVGAGrey },
 	{nullptr, nullptr, kRenderDefault}
 };
 
@@ -82,7 +83,8 @@ static const RenderGUIOMapping s_renderGUIOMapping[] = {
 	{ kRenderCGA_BW,	    GUIO_RENDERCGABW },
 	{ kRenderCPC,		    GUIO_RENDERCPC },
 	{ kRenderZX,			GUIO_RENDERZX },
-	{ kRenderC64,			GUIO_RENDERC64 }
+	{ kRenderC64,			GUIO_RENDERC64 },
+	{ kRenderVGAGrey,		GUIO_RENDERVGAGREY }
 };
 
 DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Hercules Green", "lowres")

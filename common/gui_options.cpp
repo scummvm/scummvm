@@ -79,6 +79,7 @@ const struct GameOpt {
 	{ GUIO_RENDERCPC,			"cpc" },
 	{ GUIO_RENDERZX,			"zx" },
 	{ GUIO_RENDERC64,			"c64" },
+	{ GUIO_RENDERVGAGREY,		"vgaGray" },
 
 	{ GUIO_GAMEOPTIONS1, "gameOption1" },
 	{ GUIO_GAMEOPTIONS2, "gameOption2" },
