@@ -57,13 +57,12 @@ public:
 	int _scale;
 	int _step;
 	bool _active;
-	bool _finished;
 
 	ObjectType getType() override { return ObjectType::kGroupType; };
 	bool isDrawable() override { return true; }
 	void draw(Renderer *gfx, float offset = 0.0) override;
 	void scale(int scale_) override { _scale = scale_; };
-	bool isActive() { return !isDestroyed() && !isInvisible() && _step > 0 && !_finished; };
+	bool isActive() { return !isDestroyed() && !isInvisible() && _step > 0 && _active; };
 	Object *duplicate() override;
 };
 

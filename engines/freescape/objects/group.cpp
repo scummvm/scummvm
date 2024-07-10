@@ -31,8 +31,7 @@ const Common::Array<AnimationOpcode *> operations_) {
 	_objectID = objectID_;
 	_flags = flags_;
 	_scale = 0;
-	_active = false;
-	_finished = false;
+	_active = true;
 	_step = 0;
 
 	for (int i = 0; i < int(objectIds_.size()); i++) {
@@ -97,39 +96,46 @@ void Group::assemble(int index) {
 }
 
 void Group::run() {
-	if (_finished || _step < 0)
+	if (!_active)
 		return;
 
 	int opcode = _operations[_step]->opcode;
 	debugC(1, kFreescapeDebugCode, "Executing opcode 0x%x at step %d", opcode, _step);
 	if (opcode == 0x80 || opcode == 0xff) {
-		reset();
+		debugC(1, kFreescapeDebugCode, "Executing group rewind");
+		_active = true;
+		_step = -1;
+		//reset();
 	} else if (opcode == 0x01) {
 		debugC(1, kFreescapeDebugCode, "Executing group condition %s", _operations[_step]->conditionSource.c_str());
 		g_freescape->executeCode(_operations[_step]->condition, false, true, false, false);
+	} else if (opcode == 0x04) {
+		debugC(1, kFreescapeDebugCode, "Ignoring unknown opcode");
+	} else if (opcode == 0x10) {
+		uint32 groupSize = _objects.size();
+		for (uint32 i = 0; i < groupSize ; i++)
+			assemble(i);
+		_active = false;
+		_step++;
 	} else if (opcode == 0x6e) {
 		uint32 groupSize = _objects.size();
 		for (uint32 i = 0; i < groupSize ; i++)
 			_objects[i]->makeInvisible();
-	} else {
+	} else if (opcode == 0x68) {
+		debugC(1, kFreescapeDebugCode, "Ignoring unknown opcode");
+	} else if (opcode == 0x0) {
+		debugC(1, kFreescapeDebugCode, "Executing group assemble");
 		uint32 groupSize = _objects.size();
 		for (uint32 i = 0; i < groupSize ; i++)
 			assemble(i);
-
-		if (opcode == 0x10) {
-			if (!_active) {
-				_step = -1;
-				return;
-			}
-		}
+	} else {
+		debug("Unknown opcode 0x%x", opcode);
+		assert(0);
 	}
 }
 
 void Group::reset() {
-	_step = -1;
-	_active = false;
-	_finished = false;
-	uint32 groupSize = _objects.size();
+	/*uint32 groupSize = _objects.size();
 	for (uint32 i = 0; i < groupSize ; i++) {
 		GeometricObject *gobj = (GeometricObject *)_objects[i];
 		if (GeometricObject::isPolygon(_objects[i]->getType())) {
@@ -137,10 +143,13 @@ void Group::reset() {
 			gobj->restoreOrdinates();
 			//gobj->makeInvisible();
 		}
-	}
+	}*/
 }
 
 void Group::draw(Renderer *gfx, float offset) {
+	if (!_active)
+		return;
+
 	uint32 groupSize = _objects.size();
 	for (uint32 i = 0; i < groupSize ; i++) {
 		if (!_objects[i]->isDestroyed() && !_objects[i]->isInvisible())
@@ -149,14 +158,15 @@ void Group::draw(Renderer *gfx, float offset) {
 }
 
 void Group::step() {
-	if (_finished)
+	if (!_active)
 		return;
 
 	debugC(1, kFreescapeDebugCode, "Stepping group %d", _objectID);
 	if (_step < int(_operations.size() - 1))
 		_step++;
 	else {
-		_finished = true;
+		_active = false;
+		_step = -1;
 	}
 }
 
