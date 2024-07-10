@@ -51,6 +51,27 @@ Common::SeekableReadStream *CastleEngine::decryptFile(const Common::Path &filena
 extern byte kEGADefaultPalette[16][3];
 extern Common::MemoryReadStream *unpackEXE(Common::File &ms);
 
+void CastleEngine::loadDOSFonts(Common::SeekableReadStream *file, int pos) {
+	file->seek(pos);
+	byte *buffer = (byte *)malloc(sizeof(byte) * 59 * 8);
+
+	for (int i = 0; i < 59 * 8; i++) {
+		//debug("%lx", file->pos());
+		for (int j = 0; j < 4; j++) {
+			uint16 c = readField(file, 16);
+			if (j == 3) {
+				//debugN("0x%x, ", c);
+				assert(c < 256);
+				buffer[i] = c;
+			}
+		}
+		//debugN("\n");
+	}
+	debug("%lx", file->pos());
+	loadFonts(buffer, 59);
+	free(buffer);
+}
+
 void CastleEngine::loadAssetsDOSFullGame() {
 	Common::File file;
 	Common::SeekableReadStream *stream = nullptr;
@@ -62,6 +83,7 @@ void CastleEngine::loadAssetsDOSFullGame() {
 		stream = unpackEXE(file);
 		if (stream) {
 			loadSpeakerFxDOS(stream, 0x636d + 0x200, 0x63ed + 0x200);
+			loadDOSFonts(stream, 0x29696);
 		}
 
 		delete stream;
@@ -103,7 +125,6 @@ void CastleEngine::loadAssetsDOSFullGame() {
 				error("Invalid or unsupported language: %x", _language);
 		}
 
-		loadFonts(kFreescapeCastleFont, 59);
 		delete stream;
 
 		stream = decryptFile("CMEDF");
@@ -140,6 +161,7 @@ void CastleEngine::loadAssetsDOSDemo() {
 		stream = unpackEXE(file);
 		if (stream) {
 			loadSpeakerFxDOS(stream, 0x636d + 0x200, 0x63ed + 0x200);
+			loadDOSFonts(stream, 0x29696);
 		}
 
 		delete stream;
@@ -161,18 +183,8 @@ void CastleEngine::loadAssetsDOSDemo() {
 		file.close();
 
 		stream = decryptFile("CMLD"); // Only english
-		loadFonts(kFreescapeCastleFont, 59);
 		loadMessagesVariableSize(stream, 0x11, 164);
 		loadRiddles(stream, 0xaae, 10);
-
-		/*for (int i = 0; i < 16; i++) {
-			debug("%lx", stream->pos());
-			for (int j = 0; j < 16; j++) {
-				byte c = stream->readByte();
-				debugN("%x/%c", c, c);
-			}
-			debugN("\n");
-		}*/
 		delete stream;
 
 		stream = decryptFile("CDEDF");
@@ -183,9 +195,9 @@ void CastleEngine::loadAssetsDOSDemo() {
 		_areaMap[1]->addFloor();
 		_areaMap[2]->addFloor();
 		delete stream;
-		_background = loadBundledImage("background");
-		assert(_background);
-		_background->convertToInPlace(_gfx->_texturePixelFormat);
+		//_background = loadBundledImage("background");
+		//assert(_background);
+		//_background->convertToInPlace(_gfx->_texturePixelFormat);
 	} else
 		error("Not implemented yet");
 }

@@ -53,8 +53,8 @@ void CastleEngine::loadAssetsZXFullGame() {
 		error("Failed to open castlemaster.zx.data");
 
 	//loadMessagesFixedSize(&file, 0x4bc + 1, 16, 27);
-    loadFonts(kFreescapeCastleFont, 59);
-    loadMessagesVariableSize(&file, 0x4bd, 71);
+	loadFonts(&file, 0x1219, _font);
+	loadMessagesVariableSize(&file, 0x4bd, 71);
 
     load8bitBinary(&file, 0x6a3b, 16);
 	loadSpeakerFxZX(&file, 0xc91, 0xccd);
