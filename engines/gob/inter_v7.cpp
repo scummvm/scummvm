@@ -95,6 +95,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0xA4, o7_loadIFFPalette);
 	OPCODEDRAW(0xAA, o7_draw0xAA);
 	OPCODEDRAW(0xAC, o7_draw0xAC);
+	OPCODEDRAW(0xAD, o7_draw0xAD);
 	OPCODEDRAW(0xAE, o7_draw0xAE);
 	OPCODEDRAW(0xAF, o7_draw0xAF);
 	OPCODEDRAW(0xB0, o7_draw0xB0);
@@ -1042,6 +1043,12 @@ void Inter_v7::o7_draw0xAC() {
 	_vm->_game->_script->readValExpr();
 	_vm->_game->_script->readValExpr();
 	warning("STUB: o7_draw0xAC (Adibou/Anglais)");
+}
+
+void Inter_v7::o7_draw0xAD() {
+	_vm->_game->_script->readValExpr();
+	_vm->_game->_script->readValExpr();
+	warning("STUB: o7_draw0xAD (Adibou/Anglais)");
 }
 
 void Inter_v7::o7_draw0xAE() {

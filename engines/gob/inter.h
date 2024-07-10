@@ -733,6 +733,7 @@ protected:
 	void o7_loadIFFPalette();
 	void o7_draw0xAA();
 	void o7_draw0xAC();
+	void o7_draw0xAD();
 	void o7_draw0xAE();
 	void o7_draw0xAF();
 	void o7_draw0xB0();
