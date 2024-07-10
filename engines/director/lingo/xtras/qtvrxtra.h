@@ -22,9 +22,7 @@
 #ifndef DIRECTOR_LINGO_XTRAS_QTVRXTRA_H
 #define DIRECTOR_LINGO_XTRAS_QTVRXTRA_H
 
-namespace Video {
-class QuickTimeDecoder;
-}
+#include "video/qt_decoder.h"
 
 namespace Director {
 
@@ -39,6 +37,8 @@ public:
 
 	Common::Rect _rect;
 	bool _visible;
+
+	Video::QuickTimeDecoder::NodeData _currentNode;
 };
 
 namespace QtvrxtraXtra {

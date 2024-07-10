@@ -191,7 +191,7 @@ static MethodProto xlibMethods[] = {
 	{ "QTVRGetObjectViewAngles",				QtvrxtraXtra::m_QTVRGetObjectViewAngles,		 0, 0,	500 },
 	{ "QTVRGetObjectZoomRect",				QtvrxtraXtra::m_QTVRGetObjectZoomRect,		 0, 0,	500 },
 	{ "QTVRGetNodeID",				QtvrxtraXtra::m_QTVRGetNodeID,		 0, 0,	500 },
-	{ "QTVRSetNodeID",				QtvrxtraXtra::m_QTVRSetNodeID,		 1, 0,	500 },
+	{ "QTVRSetNodeID",				QtvrxtraXtra::m_QTVRSetNodeID,		 1, 1,	500 },
 	{ "QTVRGetNodeName",				QtvrxtraXtra::m_QTVRGetNodeName,		 0, 0,	500 },
 	{ "QTVRGetQuality",				QtvrxtraXtra::m_QTVRGetQuality,		 0, 0,	500 },
 	{ "QTVRSetQuality",				QtvrxtraXtra::m_QTVRSetQuality,		 1, 0,	500 },
@@ -449,9 +449,41 @@ XOBJSTUB(QtvrxtraXtra::m_QTVRGetHotSpotType, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetHotSpotViewAngles, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetObjectViewAngles, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetObjectZoomRect, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetNodeID, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetNodeID, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetNodeName, 0)
+
+void QtvrxtraXtra::m_QTVRGetNodeID(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetNodeID", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push((int)me->_currentNode.nodeID);
+}
+
+void QtvrxtraXtra::m_QTVRSetNodeID(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetNodeID", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	Video::QuickTimeDecoder::NodeData newNode = me->_video->getNodeData(g_lingo->pop().asInt());
+
+	if (newNode.nodeID)
+		me->_currentNode = newNode;
+
+	me->_video->setPanAngle(me->_currentNode.defHPan);
+	me->_video->setTiltAngle(me->_currentNode.defVPan);
+	me->_video->setFOV(me->_currentNode.defZoom);
+}
+
+void QtvrxtraXtra::m_QTVRGetNodeName(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetNodeName", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_currentNode.name);
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetQuality, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetQuality, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetTransitionMode, 0)
