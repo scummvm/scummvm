@@ -387,20 +387,32 @@ void QtvrxtraXtra::m_QTVRGetQTVRType(int nargs) {
 }
 
 XOBJSTUB(QtvrxtraXtra::m_QTVRIdle, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRMouseDown, 0)
 
 bool QtvrxtraXtraObject::processEvent(Common::Event &event) {
 	// FIXME: This class needs to inherit from MacWidget and override this function
 
-	if (!_capEventsMouseOver)
+	if (!(_capEventsMouseOver && _capEventsMouseDown))
 		return false;
 
 	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
-		_video->handleMouseButton(true, event.mouse.x, event.mouse.y);
+		if (_mouseDownHandler.empty()) {
+			_video->handleMouseButton(true, event.mouse.x, event.mouse.y);
+		} else {
+			_passMouseDown = false;
+
+			g_lingo->executeHandler(_mouseDownHandler);
+
+			if (_passMouseDown) {
+				_video->handleMouseButton(true, event.mouse.x, event.mouse.y);
+				_passMouseDown = false;
+			}
+		}
 		return true;
 	case Common::EVENT_LBUTTONUP:
 		_video->handleMouseButton(false);
+		if (_capEventsMouseDown)
+			_capEventsMouseDown = false;
 		return true;
 	case Common::EVENT_MOUSEMOVE:
 		_video->handleMouseMove(event.mouse.x, event.mouse.y);
@@ -428,6 +440,17 @@ bool QtvrxtraXtraObject::processEvent(Common::Event &event) {
 	default:
 		return false;
 	}
+}
+
+void QtvrxtraXtra::m_QTVRMouseDown(int nargs) {
+	g_lingo->printSTUBWithArglist("QtvrxtraXtra::m_QTVRMouseDown", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_capEventsMouseDown = true;
+
+	g_lingo->push(Datum(0));
 }
 
 void QtvrxtraXtra::m_QTVRMouseOver(int nargs) {
@@ -689,8 +712,24 @@ void QtvrxtraXtra::m_QTVRNudge(int nargs) {
 	me->_video->nudge(direction);
 }
 
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetMouseDownHandler, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetMouseDownHandler, 0)
+void QtvrxtraXtra::m_QTVRGetMouseDownHandler(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetMouseDownHandler", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_mouseDownHandler);
+}
+
+void QtvrxtraXtra::m_QTVRSetMouseDownHandler(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetMouseDownHandler", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_mouseDownHandler = g_lingo->pop().asString();
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetMouseOverHandler, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetMouseOverHandler, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetMouseStillDownHandler, 0)
@@ -711,7 +750,14 @@ void QtvrxtraXtra::m_QTVRExitMouseOver(int nargs) {
 	me->_capEventsMouseOver = false;
 }
 
-XOBJSTUB(QtvrxtraXtra::m_QTVRPassMouseDown, 0)
+void QtvrxtraXtra::m_QTVRPassMouseDown(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRPassMouseDown", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_passMouseDown = true;
+}
 
 void QtvrxtraXtra::m_IsQTVRMovie(int nargs) {
 	g_lingo->printArgs("QtvrxtraXtra::m_IsQTVRMovie", nargs);
