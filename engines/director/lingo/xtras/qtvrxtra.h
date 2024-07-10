@@ -33,6 +33,8 @@ public:
 	bool hasProp(const Common::String &propName) override;
 	Datum getProp(const Common::String &propName) override;
 
+	bool processEvent(Common::Event &event);
+
 	Video::QuickTimeDecoder *_video;
 
 	Common::Rect _rect;
@@ -45,6 +47,8 @@ public:
 	float _transitionSpeed;
 
 	Common::String _updateMode;
+
+	bool _capEventsMouseOver;
 };
 
 namespace QtvrxtraXtra {
