@@ -346,7 +346,7 @@ void Dialog::drawFindSelectionXY() {
 		if (hasFlag(kDlgFlagLeftJust)) {
 			x = x + (_state->_loc.width - maxWidth - 1) / 2;
 			_state->_lastMouseX = x;
-			y = y + (_state->_loc.height - (lines.size() * _state->_charHeight) - 1) / 2;
+			y = y + (_state->_loc.height - ((int)lines.size() * _state->_charHeight) - 1) / 2;
 			_state->_lastMouseY = y;
 		}
 
@@ -358,7 +358,7 @@ void Dialog::drawFindSelectionXY() {
 		for (uint lineno = 0; lineno < lines.size(); lineno++) {
 			// +1 char for the space or CR that caused the wrap.
 			int nexttotalchars = totalchars + lines[lineno].size() + 1;
-			if (nexttotalchars > _state->_strMouseLoc)
+			if (nexttotalchars >= _state->_strMouseLoc)
 				break;
 			totalchars = nexttotalchars;
 			y += _state->_charHeight;
@@ -439,8 +439,7 @@ void Dialog::drawFindSelectionTxtOffset() {
 		dlgy += lineHeight;
 	}
 
-	int startx = dlgx;
-	while (lineno < lines.size()) {
+	if (lineno < lines.size()) {
 		const Common::String &line = lines[lineno];
 		for (uint charno = 0; charno < line.size(); charno++) {
 			int charwidth = font->getCharWidth(line[charno]);
@@ -450,9 +449,10 @@ void Dialog::drawFindSelectionTxtOffset() {
 			}
 			dlgx += charwidth;
 		}
-		dlgx = startx;
+		// Mouse is off the end of the line
 		totalchars += line.size() + 1;
-		lineno++;
+		_state->_strMouseLoc = totalchars;
+		return;
 	}
 
 	_state->_strMouseLoc = _str.size();
@@ -537,13 +537,13 @@ void Dialog::clear() {
 }
 
 void Dialog::updateSelectedAction(int delta) {
-	if (!_lastDialogSelectionChangedFor)
-		_lastDialogSelectionChangedFor = this;
-	else
-		_lastSelectedDialogItemNum = 0;
-
 	if (!_state)
 		return;
+
+	if (_lastDialogSelectionChangedFor != this) {
+		_lastDialogSelectionChangedFor = this;
+		_lastSelectedDialogItemNum = 0;
+	}
 
 	if (_state->_selectedAction) {
 		for (uint i = 0; i < _action.size(); i++) {
@@ -553,13 +553,13 @@ void Dialog::updateSelectedAction(int delta) {
 			}
 		}
 	}
+
 	_lastSelectedDialogItemNum += delta;
 	if (!_action.empty()) {
 		while (_lastSelectedDialogItemNum < 0)
 			_lastSelectedDialogItemNum += _action.size();
 		_lastSelectedDialogItemNum = _lastSelectedDialogItemNum % _action.size();
 	}
-	_lastDialogSelectionChangedFor = this;
 
 	int mouseX = _state->_loc.x + _state->_loc.width;
 	int mouseY = _state->_loc.y + _state->_loc.height - 2;
@@ -571,6 +571,7 @@ void Dialog::updateSelectedAction(int delta) {
 	}
 
 	if (_action.size() > 1 || !delta) {
+		debug("Dialog: update mouse to %d, %d (mouseloc %d, selnum %d)", mouseX, mouseY, _state->_strMouseLoc, _lastSelectedDialogItemNum);
 		g_system->warpMouse(mouseX, mouseY);
 	}
 }

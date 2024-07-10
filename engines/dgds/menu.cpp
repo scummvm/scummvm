@@ -548,4 +548,13 @@ void Menu::toggleGadget(int16 gadgetId, bool enable) {
 	}
 }
 
+void Menu::prevChoice() {
+	warning("TODO: Implement Menu::prevChoice");
+}
+
+void Menu::nextChoice() {
+	warning("TODO: Implement Menu::nextChoice");
+}
+
+
 } // End of namespace Dgds

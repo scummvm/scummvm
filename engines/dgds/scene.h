@@ -202,13 +202,13 @@ private:
 
 class SceneTrigger {
 public:
-	SceneTrigger(uint16 num) : _num(num), _enabled(false), _unk(0) {}
+	SceneTrigger(uint16 num) : _num(num), _enabled(false), _timesToCheckBeforeRunning(0) {}
 	Common::String dump(const Common::String &indent) const;
 
 	Common::Array<SceneConditions> conditionList;
 	Common::Array<SceneOp> sceneOpList;
 
-	uint16 _unk; // Only used in Beamish.
+	uint16 _timesToCheckBeforeRunning; // Only used in Beamish.
 	bool _enabled;
 	uint16 getNum() const { return _num; }
 
@@ -457,6 +457,8 @@ public:
 	void addAndShowTiredDialog();
 	void sceneOpUpdatePasscodeGlobal();
 
+	void prevChoice();
+	void nextChoice();
 
 protected:
 	HotArea *findAreaUnderMouse(const Common::Point &pt);

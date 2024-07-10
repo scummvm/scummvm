@@ -204,7 +204,7 @@ Common::String ObjectInteraction::dump(const Common::String &indent) const {
 
 
 Common::String SceneTrigger::dump(const Common::String &indent) const {
-	Common::String str = Common::String::format("%sSceneTrigger<num %d %s %d", indent.c_str(), _num, _enabled ? "enabled" : "disabled", _unk);
+	Common::String str = Common::String::format("%sSceneTrigger<num %d %s %d", indent.c_str(), _num, _enabled ? "enabled" : "disabled", _timesToCheckBeforeRunning);
 	str += _dumpStructList(indent, "conditionList", conditionList);
 	str += _dumpStructList(indent, "opList", sceneOpList);
 	str += "\n";
@@ -456,7 +456,7 @@ bool Scene::readTriggerList(Common::SeekableReadStream *s, Common::Array<SceneTr
 	for (uint16 i = 0; i < num; i++) {
 		list.push_back(SceneTrigger(s->readUint16LE()));
 		if (isVersionOver(" 1.219"))
-			list.back()._unk = s->readUint16LE();
+			list.back()._timesToCheckBeforeRunning = s->readUint16LE();
 		readConditionList(s, list.back().conditionList);
 		readOpList(s, list.back().sceneOpList);
 	}
@@ -1007,6 +1007,11 @@ void SDSScene::checkTriggers() {
 	for (SceneTrigger &trigger : _triggers) {
 		if (!trigger._enabled)
 			continue;
+
+		if (trigger._timesToCheckBeforeRunning) {
+			trigger._timesToCheckBeforeRunning--;
+			continue;
+		}
 
 		if (!checkConditions(trigger.conditionList))
 			continue;
@@ -1792,6 +1797,21 @@ Common::Error SDSScene::syncState(Common::Serializer &s) {
 
 	return Common::kNoError;
 }
+
+void SDSScene::prevChoice() {
+	Dialog *dlg = getVisibleDialog();
+	if (!dlg)
+		return;
+	dlg->updateSelectedAction(-1);
+}
+
+void SDSScene::nextChoice() {
+	Dialog *dlg = getVisibleDialog();
+	if (!dlg)
+		return;
+	dlg->updateSelectedAction(1);
+}
+
 
 GDSScene::GDSScene() : _field38(0), _field3a(0), _field3c(0), _field3e(0), _field40(0) {
 }

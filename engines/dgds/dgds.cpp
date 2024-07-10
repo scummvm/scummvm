@@ -418,10 +418,16 @@ Common::Error DgdsEngine::run() {
 					_clock.toggleVisibleUser();
 					break;
 				case kDgdsKeyNextChoice:
-					warning("TODO: Implement kDgdsKeyNextChoice");
+					if (_menu->menuShown())
+						_menu->nextChoice();
+					else if (_scene->hasVisibleDialog())
+						_scene->nextChoice();
 					break;
 				case kDgdsKeyPrevChoice:
-					warning("TODO: Implement kDgdsKeyPrevChoice");
+					if (_menu->menuShown())
+						_menu->prevChoice();
+					else if (_scene->hasVisibleDialog())
+						_scene->prevChoice();
 					break;
 				case kDgdsKeyNextItem:
 					warning("TODO: Implement kDgdsKeyNextItem");

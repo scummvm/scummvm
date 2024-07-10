@@ -88,6 +88,8 @@ public:
 	void hideMenu() { _curMenu = kMenuNone; }
 
 	void setRequestData(const REQFileData &data);
+	void prevChoice();
+	void nextChoice();
 
 private:
 	Gadget *getClickedMenuItem(const Common::Point &mouseClick);
