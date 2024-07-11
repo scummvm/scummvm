@@ -40,6 +40,8 @@ struct FocusMessage : public Message {
 };
 
 struct UnfocusMessage : public Message {};
+struct MouseEnterMessage : public Message {};
+struct MouseLeaveMessage : public Message {};
 
 struct KeypressMessage : public Message, public Common::KeyState {
 	KeypressMessage() : Message() {}
