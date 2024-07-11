@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-11 05:03+0000\n"
-"PO-Revision-Date: 2024-07-01 22:43+0000\n"
+"PO-Revision-Date: 2024-07-11 17:47+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -9242,82 +9242,60 @@ msgid "I Have No Mouth support not compiled in"
 msgstr "I Have No Mouth-tukea ei ole käännetty mukaan"
 
 #: engines/saga/metaengine.cpp:267
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game keymapping"
 msgstr "Pelin näppäinkartta"
 
 #: engines/saga/metaengine.cpp:268
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Option panel keymapping"
-msgstr "Pelin näppäinkartta"
+msgstr "Asetuspaneelin näppäinkartta"
 
 #: engines/saga/metaengine.cpp:269
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Save panel keymapping"
-msgstr "Pelin näppäinkartta"
+msgstr "Tallennuspaneelin näppäinkartta"
 
 #: engines/saga/metaengine.cpp:270
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Load panel keymapping"
-msgstr "Pelin näppäinkartta"
+msgstr "Latauspaneelin näppäinkartta"
 
 #: engines/saga/metaengine.cpp:271
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Quit panel keymapping"
-msgstr "Pelin näppäinkartta"
+msgstr "Lopetuspaneelin näppäinkartta"
 
 #: engines/saga/metaengine.cpp:272
 msgid "Converse panel keymapping"
-msgstr ""
+msgstr "Keskustelupaneelin näppäinkartta"
 
 #: engines/saga/metaengine.cpp:294
-#, fuzzy
-#| msgid "Press No Key"
 msgid "Boss Key"
-msgstr "Paina Ei-näppäintä"
+msgstr "Pomonäppäin"
 
 #: engines/saga/metaengine.cpp:299
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Show Options"
-msgstr "Puheasetukset"
+msgstr "Näytä asetukset"
 
 #: engines/saga/metaengine.cpp:307
-#, fuzzy
-#| msgid "Next location"
 msgid "Exit Conversation"
-msgstr "Seuraava lokaatio"
+msgstr "Poistu keskustelusta"
 
 #: engines/saga/metaengine.cpp:312
 msgid "Conversation position - Up"
-msgstr ""
+msgstr "Keskustelun sijainti - ylhäällä"
 
 #: engines/saga/metaengine.cpp:317
 msgid "Conversation position - Down"
-msgstr ""
+msgstr "Keskustelun sijainti - alhaalla"
 
 #: engines/saga/metaengine.cpp:329
-#, fuzzy
-#| msgid "Pause game"
 msgid "Pause Game"
-msgstr "Pause"
+msgstr "Pysäytä peli"
 
 #: engines/saga/metaengine.cpp:335
-#, fuzzy
-#| msgid "Speech"
 msgid "Abort Speech"
-msgstr "Puhe"
+msgstr "Lopeta puhe"
 
 #: engines/saga/metaengine.cpp:340
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Show Dialogue"
-msgstr "Ohita dialogi"
+msgstr "Näytä dialogi"
 
 #: engines/saga/metaengine.cpp:345 engines/scumm/help.cpp:226
 msgid "Walk"
@@ -9331,10 +9309,8 @@ msgid "Look at"
 msgstr "Katso"
 
 #: engines/saga/metaengine.cpp:355
-#, fuzzy
-#| msgid "Pick up"
 msgid "Pickup"
-msgstr "Ota"
+msgstr "Poimi"
 
 #: engines/saga/metaengine.cpp:360 engines/scumm/help.cpp:200
 #: engines/scumm/help.cpp:216 engines/scumm/help.cpp:252
@@ -9364,66 +9340,48 @@ msgid "Push"
 msgstr "Työnnä"
 
 #: engines/saga/metaengine.cpp:390
-#, fuzzy
-#| msgid "Take off"
 msgid "Take"
-msgstr "Riisu"
+msgstr "Ota"
 
 #: engines/saga/metaengine.cpp:395
 msgid "Swallow"
-msgstr ""
+msgstr "Niele"
 
 #: engines/saga/metaengine.cpp:402
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "Reading Speed"
-msgstr "Tiedon lukeminen epäonnistui"
+msgstr "Lukunopeus"
 
 #: engines/saga/metaengine.cpp:407
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change Music"
-msgstr "Muuta fontin kokoa"
+msgstr "Muuta musiikkia"
 
 #: engines/saga/metaengine.cpp:412
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change Sound"
-msgstr "Vaihda tilaa"
+msgstr "Muuta ääntä"
 
 #: engines/saga/metaengine.cpp:417
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change Voices"
-msgstr "Vaihda tilaa"
+msgstr "Muuta puheääntä"
 
 #: engines/saga/metaengine.cpp:422
-#, fuzzy
-#| msgid "Continue"
 msgid "Continue Game"
-msgstr "Jatka"
+msgstr "Jatka peliä"
 
 #: engines/saga/metaengine.cpp:449
-#, fuzzy
-#| msgid "Cancel input"
 msgid "Cancel Quit"
-msgstr "Peruuta syöte"
+msgstr "Peruuta lopetus"
 
 #: engines/saga/metaengine.cpp:454
 msgid "okay"
-msgstr ""
+msgstr "okei"
 
 #: engines/saga/metaengine.cpp:459
-#, fuzzy
-#| msgid "Cancel download"
 msgid "Cancel Load"
 msgstr "Peruuta lataus"
 
 #: engines/saga/metaengine.cpp:469
-#, fuzzy
-#| msgid "Cancel autosave"
 msgid "Cancel Save"
-msgstr "Peruuta automaattitallennus"
+msgstr "Peruuta tallennus"
 
 #: engines/saga/music.cpp:98
 #, c-format
@@ -11912,14 +11870,12 @@ msgid "Uses 16-color graphics."
 msgstr "Käyttää 16-väristä grafiikkaa."
 
 #: engines/vcruise/metaengine.cpp:97
-#, fuzzy
-#| msgid "Prerecorded sounds"
 msgid "Preload sounds"
-msgstr "Esiäänitetyt äänet"
+msgstr "Esilataa äänet"
 
 #: engines/vcruise/metaengine.cpp:98
 msgid "Preload sounds. May improve performance on slow hard drives."
-msgstr ""
+msgstr "Esilataa äänet. Saattaa parantaa suorituskykyä hitailla kovalevyillä."
 
 #: engines/vcruise/metaengine.cpp:146
 msgid "Display help screen"
