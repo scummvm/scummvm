@@ -52,6 +52,13 @@ public:
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
 
 	Common::StringArray _riddleList;
+	Common::BitArray _fontPlane1;
+	Common::BitArray _fontPlane2;
+	Common::BitArray _fontPlane3;
+
+	void drawStringInSurface(const Common::String &str, int x, int y, uint32 fontColor, uint32 backColor, Graphics::Surface *surface, int offset = 0) override;
+	//void drawStringInSurface(const Common::String &str, int x, int y, uint32 primaryFontColor, uint32 secondaryFontColor, uint32 backColor, Graphics::Surface *surface, int offset = 0) override;
+
 private:
 	Common::SeekableReadStream *decryptFile(const Common::Path &filename);
 	void loadRiddles(Common::SeekableReadStream *file, int offset, int number);

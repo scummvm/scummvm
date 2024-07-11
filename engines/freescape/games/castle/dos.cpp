@@ -53,23 +53,38 @@ extern Common::MemoryReadStream *unpackEXE(Common::File &ms);
 
 void CastleEngine::loadDOSFonts(Common::SeekableReadStream *file, int pos) {
 	file->seek(pos);
-	byte *buffer = (byte *)malloc(sizeof(byte) * 59 * 8);
+	byte *bufferPlane1 = (byte *)malloc(sizeof(byte) * 59 * 8);
+	byte *bufferPlane2 = (byte *)malloc(sizeof(byte) * 59 * 8);
+	byte *bufferPlane3 = (byte *)malloc(sizeof(byte) * 59 * 8);
 
 	for (int i = 0; i < 59 * 8; i++) {
 		//debug("%lx", file->pos());
 		for (int j = 0; j < 4; j++) {
 			uint16 c = readField(file, 16);
-			if (j == 3) {
-				//debugN("0x%x, ", c);
-				assert(c < 256);
-				buffer[i] = c;
+			assert(c < 256);
+			if (j == 1) {
+				bufferPlane1[i] = c;
+			} else if (j == 2) {
+				bufferPlane2[i] = c;
+			} else if (j == 3) {
+				bufferPlane3[i] = c;
 			}
 		}
 		//debugN("\n");
 	}
 	debug("%lx", file->pos());
-	loadFonts(buffer, 59);
-	free(buffer);
+	_fontPlane1.set_size(64 * 59);
+	_fontPlane1.set_bits(bufferPlane1);
+
+	_fontPlane2.set_size(64 * 59);
+	_fontPlane2.set_bits(bufferPlane2);
+
+	_fontPlane3.set_size(64 * 59);
+	_fontPlane3.set_bits(bufferPlane3);
+	_fontLoaded = true;
+	free(bufferPlane1);
+	free(bufferPlane2);
+	free(bufferPlane3);
 }
 
 void CastleEngine::loadAssetsDOSFullGame() {

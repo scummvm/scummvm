@@ -331,6 +331,26 @@ void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics
 	drawFullscreenSurface(surface);
 }
 
+void CastleEngine::drawStringInSurface(const Common::String &str, int x, int y, uint32 fontColor, uint32 backColor, Graphics::Surface *surface, int offset) {
+	if (isSpectrum() || isCPC()) {
+		FreescapeEngine::drawStringInSurface(str, x, y, fontColor, backColor, surface, offset);
+		return;
+	}
+
+	uint32 transparent = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
+	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0x00);
+	//uint32 green = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x80, 0x00);
+
+	_font = _fontPlane1;
+	FreescapeEngine::drawStringInSurface(str, x, y, fontColor, backColor, surface, offset);
+
+	_font = _fontPlane2;
+	FreescapeEngine::drawStringInSurface(str, x, y, yellow, transparent, surface, offset);
+
+	//_font = _fontPlane3;
+	//FreescapeEngine::drawStringInSurface(str, x, y, transparent, green, surface, offset);
+}
+
 void CastleEngine::drawEnergyMeter(Graphics::Surface *surface) {
 	uint32 back = 0;
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
