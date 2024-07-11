@@ -74,7 +74,7 @@
 	0, 0, 0
 },
 
-//  -- German: ADI Jr. --
+//  -- German: ADI Jr. Spielerisch lernen --
 
 {
 	{ // 1994 CD version
@@ -135,7 +135,6 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-
 
 // -- Amiga Floppy --
 
