@@ -85,14 +85,22 @@ uint16 TrecisionEngine::getKey() {
 	}
 }
 
+uint16 TrecisionEngine::getAction() {
+	Common::CustomEventType customType = _curAction;
+	_curAction = kActionNone;
+
+	return customType;
+}
+
 Common::KeyCode TrecisionEngine::waitKey() {
 	_graphicsMgr->hideCursor();
-	while (_curKey == Common::KEYCODE_INVALID)
+	while (_curKey == Common::KEYCODE_INVALID && _curAction == kActionNone && !_joyButtonUp)
 		checkSystem();
 	_graphicsMgr->showCursor();
 
 	Common::KeyCode t = _curKey;
 	_curKey = Common::KEYCODE_INVALID;
+	_joyButtonUp = false;
 
 	return t;
 }
