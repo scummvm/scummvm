@@ -610,7 +610,7 @@
 		"",
 		AD_ENTRY2s("intro.stk", "c65e9cc8ba23a38456242e1f2b1caad4", 135561,
 		           "disk1.stk", "6797b5dbdace1518ecf93dc0414970d8", 367110),
-		UNK_LANG,
+		EN_ANY,
 		kPlatformAmiga,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
@@ -632,7 +632,62 @@
 	kFeaturesNone,
 	0, 0, 0
 },
-
+{
+	{
+		"gob1",
+		"",
+		AD_ENTRY2s("intro.stk", "c65e9cc8ba23a38456242e1f2b1caad4", 135561,
+		           "disk1.stk", "6797b5dbdace1518ecf93dc0414970d8", 367110),
+		DE_DEU,
+		kPlatformAmiga,
+		ADGF_NO_FLAGS,
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
+	},
+	kFeaturesNone,
+	0, 0, 0
+},
+{
+	{
+		"gob1",
+		"",
+		AD_ENTRY2s("intro.stk", "c65e9cc8ba23a38456242e1f2b1caad4", 135561,
+		           "disk1.stk", "6797b5dbdace1518ecf93dc0414970d8", 367110),
+		FR_FRA,
+		kPlatformAmiga,
+		ADGF_NO_FLAGS,
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
+	},
+	kFeaturesNone,
+	0, 0, 0
+},
+{
+	{
+		"gob1",
+		"",
+		AD_ENTRY2s("intro.stk", "c65e9cc8ba23a38456242e1f2b1caad4", 135561,
+		           "disk1.stk", "6797b5dbdace1518ecf93dc0414970d8", 367110),
+		ES_ESP,
+		kPlatformAmiga,
+		ADGF_NO_FLAGS,
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
+	},
+	kFeaturesNone,
+	0, 0, 0
+},
+{
+	{
+		"gob1",
+		"",
+		AD_ENTRY2s("intro.stk", "c65e9cc8ba23a38456242e1f2b1caad4", 135561,
+		           "disk1.stk", "6797b5dbdace1518ecf93dc0414970d8", 367110),
+		IT_ITA,
+		kPlatformAmiga,
+		ADGF_NO_FLAGS,
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GAMEOPTION_COPY_PROTECTION)
+	},
+	kFeaturesNone,
+	0, 0, 0
+},
 
 // -- Demos --
 
