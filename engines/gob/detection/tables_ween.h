@@ -84,7 +84,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{ // Bugreport #11524
+{ // Supplied by eolyn in Bugreport #11524
 	{
 		"ween",
 		"",
@@ -293,7 +293,7 @@
 	0, 0, 0
 },
 {
-	{
+	{ // Supplied by trembyle
 		"ween",
 		"v1.2 Demo",
 		AD_ENTRY1s("intro.stk", "dcff8f3a7dd1f4c33fd94aa7659b7578", 2425477),

@@ -45,7 +45,7 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
-{
+{ // Supplied by microdxr in Bugreport #3400
 	{
 		"gob2",
 		"v1.03",

@@ -191,7 +191,7 @@
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
-{ // Bug #7052
+{ // Supplied by SF/mevi01 in Bugreport #7052
 	{
 		"playtoons2",
 		"v1.002",
@@ -337,7 +337,7 @@
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
-{ // Supplied by indy4fan in bug report #13100. Orig title: "Der Mandarin-Prinz"
+{ // Supplied by Indy4-Fan in bug report #13100. Orig title: "Der Mandarin-Prinz"
 	{
 		"playtoons4",
 		"",
@@ -382,7 +382,7 @@
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
-{ // Supplied by indy4fan in bug report #13099. Orig title: "Der Stein von Wakan"
+{ // Supplied by Indy4-Fan in bug report #13099. Orig title: "Der Stein von Wakan"
 	{
 		"playtoons5",
 		"v1.002",

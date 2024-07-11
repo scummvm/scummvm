@@ -128,7 +128,7 @@
 // -- German: Addy --
 
 {
-	{
+	{ // Supplied by Indy4-Fan
 		"adi4",
 		"Addy 4.00 Erdkunde",
 		AD_ENTRY1s("intro.stk", "fda1566d233ee55d65b2ad014c1cb485", 188),
