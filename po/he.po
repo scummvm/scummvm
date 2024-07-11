@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-07 21:25+0000\n"
+"POT-Creation-Date: 2024-07-11 05:03+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -3030,12 +3030,12 @@ msgstr "PC-9801 (16 צבעים)"
 msgid "Macintosh b/w"
 msgstr "מקינטוש שחור לבן"
 
-#: common/rendermode.cpp:88
+#: common/rendermode.cpp:90
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr "הרקולס ירוק"
 
-#: common/rendermode.cpp:89
+#: common/rendermode.cpp:91
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "הרקולס ענבר"
@@ -9329,7 +9329,7 @@ msgstr ""
 "התגלו משאבי משחק חסרים או פגומים. ייתכן שתכונות משחק מסוימות לא יעבדו כראוי. "
 "אנא בדוק במסוף מידע נוסף וודא שקבצי המשחק שלך תקפים."
 
-#: engines/sci/sci.cpp:422
+#: engines/sci/sci.cpp:420
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -9342,7 +9342,7 @@ msgstr ""
 "מהמשחק המקורי, הם לא תמיד נותנים כראוי או משקפים את נאום המשחק בפועל. זה לא "
 "באג ScummVM - זו בעיה עם נכסי המשחק."
 
-#: engines/sci/sci.cpp:446
+#: engines/sci/sci.cpp:444
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI Utility"
@@ -9362,11 +9362,11 @@ msgstr ""
 "המשויך ל- 4.PAT ולהניח אותו בתיקיית המשחק. ללא התיקון הזה, מוזיקת MIDI כללית "
 "למשחק זה תישמע מעוותת קשה."
 
-#: engines/sci/sci.cpp:538
+#: engines/sci/sci.cpp:536
 msgid "Download patch"
 msgstr "ההורדה הושלמה"
 
-#: engines/sci/sci.cpp:539
+#: engines/sci/sci.cpp:537
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
@@ -9374,7 +9374,7 @@ msgstr ""
 "(או ללחוץ על כפתור 'הורדת טלאי'. אך יש לשים לב - רק ההורדה תתבצע, עדיין יש "
 "להמשיך משם)\n"
 
-#: engines/sci/sci.cpp:546
+#: engines/sci/sci.cpp:544
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -9390,7 +9390,7 @@ msgstr ""
 "- הורידו את הקובץ http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 
-#: engines/sci/sci.cpp:979
+#: engines/sci/sci.cpp:977
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "

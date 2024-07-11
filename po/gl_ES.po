@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-07 21:25+0000\n"
+"POT-Creation-Date: 2024-07-11 05:03+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -3090,12 +3090,12 @@ msgstr "PC-9801 (16 cores)"
 msgid "Macintosh b/w"
 msgstr ""
 
-#: common/rendermode.cpp:88
+#: common/rendermode.cpp:90
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr "Hercules verde"
 
-#: common/rendermode.cpp:89
+#: common/rendermode.cpp:91
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules ámbar"
@@ -9442,7 +9442,7 @@ msgstr ""
 "poderán non funcionar correctamente. Consulta a consola para obter máis "
 "información e verifica que os ficheiros do xogo son válidos."
 
-#: engines/sci/sci.cpp:422
+#: engines/sci/sci.cpp:420
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -9456,7 +9456,7 @@ msgstr ""
 "non sempre son reproducidos correctamente e poden non reflectir os diálogos "
 "do xogo: non é un erro de ScummVM, é un problema dos recursos do xogo."
 
-#: engines/sci/sci.cpp:446
+#: engines/sci/sci.cpp:444
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI Utility"
@@ -9478,18 +9478,18 @@ msgstr ""
 "no cartafol do xogo. Sen o parche, a música General MIDI deste xogo soará "
 "moi distorsionada."
 
-#: engines/sci/sci.cpp:538
+#: engines/sci/sci.cpp:536
 #, fuzzy
 msgid "Download patch"
 msgstr "Descargar"
 
-#: engines/sci/sci.cpp:539
+#: engines/sci/sci.cpp:537
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
 msgstr ""
 
-#: engines/sci/sci.cpp:546
+#: engines/sci/sci.cpp:544
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -9499,7 +9499,7 @@ msgid ""
 "GK2Subtitles.zip\n"
 msgstr ""
 
-#: engines/sci/sci.cpp:979
+#: engines/sci/sci.cpp:977
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "

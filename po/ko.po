@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-07 21:25+0000\n"
+"POT-Creation-Date: 2024-07-11 05:03+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -3074,12 +3074,12 @@ msgstr "PC-9801 (16색)"
 msgid "Macintosh b/w"
 msgstr "Macintosh 흑백"
 
-#: common/rendermode.cpp:88
+#: common/rendermode.cpp:90
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr "Hercules Green"
 
-#: common/rendermode.cpp:89
+#: common/rendermode.cpp:91
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules Amber"
@@ -9449,7 +9449,7 @@ msgstr ""
 "이 정상적으로 동작하지 않을 수 있습니다. 콘솔 창을 확인해 추가 정보를 확인하"
 "고 게임 파일이 정상인지 확인해 주십시오."
 
-#: engines/sci/sci.cpp:422
+#: engines/sci/sci.cpp:420
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -9462,7 +9462,7 @@ msgstr ""
 "음성과 차이가 발생할 수 있습니다. 이것은 ScummVM의 버그가 아니며 게임 애셋 파"
 "일의 문제입니다."
 
-#: engines/sci/sci.cpp:446
+#: engines/sci/sci.cpp:444
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI Utility"
@@ -9482,11 +9482,11 @@ msgstr ""
 "뒤 게임 폴더에 넣을 수도 있습니다. 이 패치를 사용하지 않으면 이 게임의 "
 "General MIDI 음악이 심하게 왜곡되어 들립니다."
 
-#: engines/sci/sci.cpp:538
+#: engines/sci/sci.cpp:536
 msgid "Download patch"
 msgstr "패치 다운로드"
 
-#: engines/sci/sci.cpp:539
+#: engines/sci/sci.cpp:537
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
@@ -9494,7 +9494,7 @@ msgstr ""
 "(혹은 '패치 다운로드' 버튼을 클릭합니다. 다만 다운로드 이후의 작업은 직접 해"
 "야 합니다)\n"
 
-#: engines/sci/sci.cpp:546
+#: engines/sci/sci.cpp:544
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -9509,7 +9509,7 @@ msgstr ""
 "- http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip 을 "
 "다운로드\n"
 
-#: engines/sci/sci.cpp:979
+#: engines/sci/sci.cpp:977
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "

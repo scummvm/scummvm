@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-07 21:25+0000\n"
+"POT-Creation-Date: 2024-07-11 05:03+0000\n"
 "PO-Revision-Date: 2024-06-30 06:43+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -3160,12 +3160,12 @@ msgstr "PC-9801 (16 Cores)"
 msgid "Macintosh b/w"
 msgstr "Macintosh p/b"
 
-#: common/rendermode.cpp:88
+#: common/rendermode.cpp:90
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr "Hercules Verde"
 
-#: common/rendermode.cpp:89
+#: common/rendermode.cpp:91
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules Âmbar"
@@ -9753,7 +9753,7 @@ msgstr ""
 "do jogo podem não funcionar corretamente. Por favor verifique o console para "
 "mais informação, e verifique se seus arquivos de jogos são válidos."
 
-#: engines/sci/sci.cpp:422
+#: engines/sci/sci.cpp:420
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -9767,7 +9767,7 @@ msgstr ""
 "elas nem sempre renderizam corretamente ou refletem a fala atual no jogo. "
 "Isto não é um bug do ScummVM -- é um problema com os ativos do jogo."
 
-#: engines/sci/sci.cpp:446
+#: engines/sci/sci.cpp:444
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI Utility"
@@ -9790,11 +9790,11 @@ msgstr ""
 "correção, a música por MIDI Geral para este jogo irá soar gravemente "
 "distorcida."
 
-#: engines/sci/sci.cpp:538
+#: engines/sci/sci.cpp:536
 msgid "Download patch"
 msgstr "Baixar correção"
 
-#: engines/sci/sci.cpp:539
+#: engines/sci/sci.cpp:537
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
@@ -9802,7 +9802,7 @@ msgstr ""
 "(ou clique no botão 'Baixar correção'. Mas observe - somente baixa, você tem "
 "que dar continuidade a partir daí)\n"
 
-#: engines/sci/sci.cpp:546
+#: engines/sci/sci.cpp:544
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -9818,7 +9818,7 @@ msgstr ""
 "- baixe http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles."
 "zip\n"
 
-#: engines/sci/sci.cpp:979
+#: engines/sci/sci.cpp:977
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
