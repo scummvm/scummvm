@@ -65,8 +65,8 @@ public:
 	Graphics::Surface *_matte;
 
 	uint16 _pitch;
-	uint16 _regX;
-	uint16 _regY;
+	int16 _regX;
+	int16 _regY;
 	uint16 _flags2;
 	uint16 _bytes;
 	CastMemberID _clut;

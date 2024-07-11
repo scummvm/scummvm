@@ -66,8 +66,8 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 		_bytes = stream.readUint16();
 		_initialRect = Movie::readRect(stream);
 		_boundingRect = Movie::readRect(stream);
-		_regY = stream.readUint16();
-		_regX = stream.readUint16();
+		_regY = stream.readSint16();
+		_regX = stream.readSint16();
 
 		if (_bytes & 0x8000) {
 			_bitsPerPixel = stream.readUint16();
