@@ -25,7 +25,7 @@
  *
  */
 
-/* Detection tables for the ADI / Addy 2 series. */
+/* Detection tables for the ADI 2 series. */
 
 #ifndef GOB_DETECTION_TABLES_ADI2_H
 #define GOB_DETECTION_TABLES_ADI2_H
@@ -111,7 +111,7 @@
 	"adi2.stk", "ediintro.tot", 0
 },
 
-// -- German: Addy --
+// -- German: ADI Spielerisch lernen --
 
 {
 	{
