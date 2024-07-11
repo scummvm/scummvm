@@ -1388,32 +1388,19 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			continue;
 		} // l0037_DBCD:
 		else if (opcode1 == 0x02) {
-			ScriptUnimplementedOpcode(0x02)
-			/*
-			l0037_DBD1:
-			call	far 0037h:9F07h
-			call	far 0037h:9F23h
-			mov	[bp-11h],ax
-			call	far 0037h:9F4Dh
-			mov	cx,10h
-			xor	bx,bx
-			call	far 00CDh:0D93h
-			mov	[bp-7h],ax
-			mov	[bp-5h],dx
-			call	far 0037h:9F4Dh
-			or	ax,[bp-7h]
-			or	dx,[bp-5h]
-			mov	[bp-7h],ax
-			mov	[bp-5h],dx
-			mov	cx,[bp-7h]
-			mov	bx,[bp-5h]
-			mov	ax,[bp-11h]
-			shl	ax,2h
-			les	di,[06C6h]
-			add	di,ax
-			mov	es:[di-4h],cx
-			mov	es:[di-2h],bx
-			jmp	0E3BAh*/
+			// TODO: No idea what this byte achieves
+			ReadByte();
+			uint16 variableIndex = ReadWord();
+			// We skip the left shift and just read the first value directly
+			uint16 throwaway;
+			uint16 value1;
+			Func9F4D(throwaway, value1);
+			uint16 value2;
+			uint16 value3;
+			Func9F4D(value2, value3);
+			value2 |= value1;
+			value3 |= 0x00;
+			SetVariableValue(variableIndex, value2, value3);
 		} // l0037_DC21:
 		else if (opcode1 == 0x03) {
 			uint16 res1;
@@ -1970,6 +1957,10 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// TODO: What do 8XXh objects signify? Both return values are those
 			Func9F4D_Placeholder();
 			Func9F4D_Placeholder();
+		} else if (opcode1 == 0x038) {
+			// TODO: Unknown opcode so far
+			// Seems to load something from an object or scene, but not sure
+			ReadByte();
 		} else if (opcode1 == 0x3E) {
 			// TODO: Seems to have no visual difference
 			// TODO: No idea what the byte does

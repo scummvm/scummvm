@@ -753,7 +753,8 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		// ground during the stick throw. Need to check how this is handled it the game
 		// TODO: I'm kind of guessing that nr. 10 also is not visible, it does not appear
 		// to have a lot of data to it. Random guess maybe this is the cup which is static?
-		if (index == 0x50) { // || index == 0x10) {
+		// TODO: Check what objects 17 and 18 in the machine room scene might be
+		if (is_in_list<uint16, 0x50, 0x17, 0x18>(index)) { // || index == 0x10) {
 			continue;
 		}
 		AnimFrame* frame = current->GetCurrentAnimationFrame();
