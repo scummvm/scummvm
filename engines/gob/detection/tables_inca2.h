@@ -103,7 +103,7 @@
 	0, 0, 0
 },
 {
-	{
+	{	// Bugreport #12757
 		"inca2",
 		"v1.07",
 		AD_ENTRY1s("intro.stk", "b56e4147acc5852c6fc2de5985ab94b0", 804796),

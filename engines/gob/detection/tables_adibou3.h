@@ -36,7 +36,7 @@
 // -- French: Adibou 3 --
 
 {
-	{
+	{ // Supplied by BJNFNE
 		"adibou3",
 		_s("Missing game code"), // Adibou 3 3.00 (Engine: DEV7 version 1.2.0.0)
 		AD_ENTRY1s("b3_common.stk", "8819bc86b7af241ed336b1a84e34de07", 499731),
@@ -50,7 +50,7 @@
 },
 
 {
-	{
+	{ // Supplied by BJNFNE
 		"adibou3",
 		_s("Missing game code"), // Adibou 3 3.00 (Engine: DEV7 version 1.2.0.0)
 		AD_ENTRY1s("b3_common.stk", "8819bc86b7af241ed336b1a84e34de07", 499731),
@@ -62,8 +62,11 @@
 	kFeatures800x600,
 	0, 0, 0
 },
+
+// -- German: Adiboo 3 --
+
 {
-	{
+	{ // Supplied by BJNFNE
 
 		"adibou3",
 		_s("Missing game code"), // Adiboo 3 3.10 (shipped with Nature Application) (Engine: DEV7 version 1.3.0.0)
@@ -77,10 +80,8 @@
 	0,0,0
 },
 
-// -- German: Adiboo 3 --
-
 {
-	{
+	{ // Supplied by BJNFNE
 
 		"adibou3",
 		_s("Missing game code"), // Adiboo 3 3.00 (Engine: DEV7 version 1.2.0.0)
@@ -95,7 +96,7 @@
 },
 
 {
-	{
+	{ // Supplied by BJNFNE
 
 		"adibou3",
 		_s("Missing game code"), // Adiboo 3 3.10 (Engine: DEV7 version 1.3.0.0)
@@ -110,7 +111,7 @@
 },
 
 {
-	{
+	{ // Supplied by BJNFNE
 
 		"adibou3",
 		_s("Missing game code"), // Adiboo 3 3.10 Demo (Engine: DEV7 version 1.3.0.0)
@@ -124,7 +125,7 @@
 	0,0,0
 },
 {
-	{
+	{ // Supplied by BJNFNE
 
 		"adibou3",
 		_s("Missing game code"), // Adiboo 3 3.10 (shipped with English Application) (Engine: DEV7 version 1.3.0.0)
@@ -138,7 +139,7 @@
 	0,0,0
 },
 {
-	{
+	{ // Supplied by BJNFNE
 
 		"adibou3",
 		_s("Missing game code"), // Adiboo 3 3.10 (shipped with Nature Application) (Engine: DEV7 version 1.3.0.0)
@@ -155,7 +156,7 @@
 // -- English: Adiboo 3 --
 
 {
-	{
+	{ // Supplied by BJNFNE
 
 		"adibou3",
 		_s("Missing game code"), // Adiboo 3 3.00 (Engine: DEV7 version 1.2.0.0)
@@ -172,7 +173,7 @@
 // -- Dutch: Adiboo 3 --
 
 {
-	{
+	{ // Supplied by Coby Cat
 
 		"adibou3",
 		_s("Missing game code"), // Adiboo 3 3.00 (Published by Transposia) (Engine: DEV7 version 1.2.0.0)

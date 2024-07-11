@@ -191,7 +191,7 @@
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
-{ // Bug #7052
+{ // Bugreport #7052
 	{
 		"playtoons2",
 		"v1.002",

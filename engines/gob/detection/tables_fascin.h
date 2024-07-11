@@ -181,7 +181,7 @@
 	kFeaturesCD,
 	"intro.stk", 0, 0
 },
-{ // From bug #7069
+{ // Supplied by dianiu in Bugreport #7069
 	{
 		"fascination",
 		"",

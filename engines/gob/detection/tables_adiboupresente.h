@@ -36,7 +36,7 @@
 // -- French: Adibou présente Dessin --
 
 {
-	{
+	{ // Supplied by BJNFNE
 		"adiboudessin",
 		_s("Missing game code"), // Adibou présente Dessin 1.00 (Engine: DEV7 version 1.1.0.0)
 		AD_ENTRY1s("adibou.stk", "14e3f8e9c237d4236d93e08c60b784bc", 217172),
@@ -52,7 +52,7 @@
 // -- French: Adibou présente Cuisine --
 
 {
-	{
+	{ // Supplied by BJNFNE
 		"adiboucuisine",
 		_s("Missing game code"), // Adibou présente Cuisine 1.00 (Engine: DEV7 version 1.0.0.0)
 		AD_ENTRY1s("adibou.stk", "cb2d576f6d546485af7693d4eaf1142b", 174027),

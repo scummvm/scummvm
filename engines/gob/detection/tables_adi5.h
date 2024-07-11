@@ -36,7 +36,7 @@
 // -- French: Adi 5 --
 
 {
-	{
+	{ // Supplied by BJNFNE
 
 		"adi5",
 		_s("Missing game code"), // Adi 5 5.01 (Engine: DEV7 version unknown)
@@ -50,7 +50,7 @@
 	0,0,0
 },
 {
-	{
+	{ // Supplied by BJNFNE
 
 		"adi5",
 		_s("Missing game code"), // Adi 5 5.04 (Engine: DEV7 version 1.1.0.0)
@@ -67,7 +67,7 @@
 // -- German: Addy 5 --
 
 {
-	{
+	{ // Supplied by laenion in Bugreport #14956
 
 		"adi5",
 		_s("Missing game code"), // Addy 5 5.01 (Engine: DEV7 version unknown)
@@ -81,7 +81,7 @@
 	0,0,0
 },
 {
-	{
+	{ // Supplied by Indy4-Fan
 
 		"adi5",
 		_s("Missing game code"), // Addy 5 5.03 (Engine: DEV7 version 1.1.0.0)
@@ -95,7 +95,7 @@
 	0,0,0
 },
 {
-	{
+	{ // Supplied by BJNFNE
 
 		"adi5",
 		_s("Missing game code"), // Addy 5 5.04 (Engine: DEV7 version 1.1.0.0)
@@ -109,7 +109,7 @@
 	0,0,0
 },
 {
-	{
+	{ // Supplied by BJNFNE
 
 		"adi5",
 		_s("Missing game code"), // Addy 5 Mathe Demo (Engine: DEV7 version unknown)

@@ -33,7 +33,7 @@
 // -- DOS VGA Floppy --
 
 {
-	{
+	{ // Supplied by DrMcCoy
 		"crousti",
 		"v1.01",
 		AD_ENTRY1s("intro.stk", "63fd795818fa72c32b903bbd99e18ea1", 851926),

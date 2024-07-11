@@ -38,7 +38,7 @@
 // -- German: Addy Buschu series --
 
 {
-	{
+	{ // Supplied by BJNFNE
 		"adiboudchoumer",
 		_s("Missing game code"), // Addy Buschu am Meer 1.01 (Engine: DEV7 version unknown)
 		AD_ENTRY1s("adbc_envir_obc.stk", "46b7db9f7e77a077d9ac8506130ba9a2", 2830950),
@@ -52,7 +52,7 @@
 },
 
 {
-	{
+	{ // Supplied by BJNFNE
 
 		"adiboudchoubanquise",
 		_s("Missing game code"), // Addy Buschu Schnee & Eis 1.00 (Engine: DEV7 version 1.0.0.0)
@@ -66,7 +66,7 @@
 	0,0,0
 },
 {
-	{
+	{ // Supplied by BJNFNE
 		"adiboudchoucampagne",
 		_s("Missing game code"), // Addy Buschu auf dem Land 1.00 (Engine: DEV7 version unknown)
 		AD_ENTRY1s("adbc_envir_obc.stk", "4b43d3d1a8bc908d80e729069c5bb59f", 2831471),
@@ -79,7 +79,7 @@
 	0,0,0
 },
 {
-	{
+	{ // Supplied by BJNFNE
 		"adiboudchoujunglesavane",
 		_s("Missing game code"), // Addy Buschu Die bunte Tierwelt 1.00 (Engine: DEV7 version 1.0.0.0)
 		AD_ENTRY1s("adbc_envir_obc.stk", "7f33561f295030cbe64a21f941ef1efc", 3188852),
