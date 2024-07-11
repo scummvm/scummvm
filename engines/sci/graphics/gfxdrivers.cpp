@@ -320,6 +320,11 @@ void SCI0_DOSPreVGADriver::initScreen(const Graphics::PixelFormat*) {
 	if (_requestRGBMode && _pixelSize == 1)
 		warning("SCI0_DOSPreVGADriver::initScreen(): RGB rendering not available in this ScummVM build");
 
+	delete[] _compositeBuffer;
+	delete[] _internalPalette;
+	_internalPalette = nullptr;
+	_compositeBuffer = nullptr;
+
 	assert(_colors);
 	if (_pixelSize == 1) {
 		g_system->getPaletteManager()->setPalette(_colors, 0, _numColors);
@@ -869,8 +874,16 @@ SCI1_EGADriver::SCI1_EGADriver(bool rgbRendering) : GfxDriver(320, 200, 256, 1),
 	if (!eprcOffs || drv.readUint32LE() != 0x87654321 || !drv.skip(1) || !drv.seek(drv.readByte(), SEEK_CUR) || !drv.seek(drv.readByte(), SEEK_CUR) || drv.readUint32LE() != 0xFEDCBA98 || !drv.skip(4))
 		error("SCI1_EGADriver: Driver file '%s' unknown version", _driverFile);
 
-	drv.skip(drv.readByte() == 0x90 ? 20 : 19);
+	uint32 pos = (drv.pos() + 1) & ~1;
 
+	drv.seek(pos);
+	drv.seek(drv.readUint16LE());
+	uint32 colResponse = drv.readUint32LE();
+	_numColors = (colResponse >> 8) & 0xffff;
+	if (_numColors < 16 || _numColors > 256 || (colResponse & 0xff0000ff) != 0xC30000B8)
+		error("SCI1_EGADriver: Failed to retrieve color info from '%s'", _driverFile);
+	
+	drv.seek(pos + 20);
 	drv.seek(drv.readUint16LE());
 	byte *buff = new byte[128];
 	drv.read(buff, 128);
@@ -949,6 +962,14 @@ void SCI1_EGADriver::initScreen(const Graphics::PixelFormat*) {
 		0x55, 0x55, 0x55, 0x55, 0x55, 0xFF, 0x55, 0xFF, 0x55, 0x55, 0xFF, 0xFF,
 		0xFF, 0x55, 0x55, 0xFF, 0x55, 0xFF, 0xFF, 0xFF, 0x55, 0xFF, 0xFF, 0xFF
 	};
+
+	delete[] _egaColorPatterns;
+	delete[] _compositeBuffer;
+	delete[] _currentBitmap;
+	delete[] _currentPalette;
+	delete[] _internalPalette;
+	_internalPalette = nullptr;
+	_egaColorPatterns = _compositeBuffer = _currentBitmap = _currentPalette = nullptr;
 
 	if (_pixelSize == 1) {
 		g_system->getPaletteManager()->setPalette(egaColors, 0, ARRAYSIZE(egaColors) / 3);
