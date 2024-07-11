@@ -616,8 +616,6 @@ void grDispatcher::PutSpr(int x, int y, int sx, int sy, const unsigned char *p, 
 	} else
 		dy = 1;
 
-	x <<= 1;
-
 	sx *= 3;
 	px *= 3;
 
