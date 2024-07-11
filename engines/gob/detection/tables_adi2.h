@@ -127,7 +127,7 @@
 	"adi2.stk", "ediintro.tot", 0
 },
 {
-	{ // 1994 CD version
+	{ // 1994 CD version - Supplied by BJNFNE in commit: 238df35
 		"adi2",
 		"Adi 2 (CD)",
 		AD_ENTRY1s("adi2.stk", "157a26943a021d92f5c76f6eb8f18f2a", 12960390),
@@ -153,7 +153,7 @@
 	"adi2.stk", "ediintro.tot", 0
 },
 {
-	{
+	{ // Supplied by Indy4-Fan in BJNFNE's commit: 01b5da8
 		"adi2",
 		"Adi 2.5",
 		AD_ENTRY1s("adi2.stk", "f44526b8ce3a96f966ffce0ba81d6d25", 16918426),
@@ -207,7 +207,7 @@
 
 // -- Spanish: Adi --
 
-{
+{ // Supplied by Strangerke in commit: e845db8
 	{
 		"adi2",
 		"Adi 2",
@@ -238,7 +238,7 @@
 },
 {
 	{
-		"adi2", // This version comes from the Sierra's Schoolhouse Math 
+		"adi2", // This version comes from the Sierra's Schoolhouse Math - Supplied by BJNFNE in commit: 7c67849
 		"Adi 2",
 		AD_ENTRY1s("adi2.stk", "da5c5b4a6b56ed34d10ae5e0acfb9f8d", 11690760),
 		EN_USA,
@@ -251,7 +251,7 @@
 },
 {
 	{
-		"adi2", // This version comes from the Sierra's Schoolhouse Math 
+		"adi2", // This version comes from the Sierra's Schoolhouse Math - Supplied by BJNFNE in commit: 7f6b97b
 		"Adi 2 Math",
 		AD_ENTRY1s("adi2.stk", "0f102a6e4fac493162dfb70144c662bf", 12112994),
 		EN_USA,
@@ -282,7 +282,7 @@
 	0, 0, 1
 },
 {
-	{
+	{ // Supplied by BJNFNE in commit: 4aa0bdd
 		"adi2",
 		"Non-Interactive Demo",
 		AD_ENTRY4s("demo.scn", "16331b4db31b153f241ebcee49b7383d", 170,
@@ -298,7 +298,7 @@
 	0, 0, 1
 },
 {
-	{
+	{ // Supplied by BJNFNE in commit: ccfa408
 		"adi2",
 		"Non-Interactive Demo",
 		AD_ENTRY3s("demo.scn", "8b5ba359fd87d586ad39c1754bf6ea35", 168,

@@ -36,7 +36,7 @@
 // -- French: Adibou présente Dessin --
 
 {
-	{
+	{ // Supplied by BJNFNE in commit: 0b809f4
 		"adiboudessin",
 		_s("Missing game code"), // Adibou présente Dessin 1.00 (Engine: DEV7 version 1.1.0.0)
 		AD_ENTRY1s("adibou.stk", "14e3f8e9c237d4236d93e08c60b784bc", 217172),
@@ -52,7 +52,7 @@
 // -- French: Adibou présente Cuisine --
 
 {
-	{
+	{ // Supplied by BJNFNE in commit: 6ff0e8d
 		"adiboucuisine",
 		_s("Missing game code"), // Adibou présente Cuisine 1.00 (Engine: DEV7 version 1.0.0.0)
 		AD_ENTRY1s("adibou.stk", "cb2d576f6d546485af7693d4eaf1142b", 174027),
@@ -68,7 +68,7 @@
 // -- French: Adibou présente Magie --
 
 {
-	{
+	{ // Supplied by Strangerke in commit: e845db8
 		"adiboumagie",
 		_s("Missing game code"), // Adibou présente Magie 1.00 (Engine: DEV7 version 1.0.0.0)
 		AD_ENTRY2s("adibou.stk", "977d2449d398f3df23238d718fca35b5", 61097,

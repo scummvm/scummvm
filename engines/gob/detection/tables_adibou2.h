@@ -160,7 +160,7 @@
 },
 
 {
-	{
+	{ // Supplied by lotharsm in commit: 4dfafbb Later renamed by BJNFNE since its an normal retail release, for more Information see PR #4882
 		"adibou2",
 		"ADI Junior 2",
 		AD_ENTRY1s("intro.stk", "80588ad3b5510bb44d3f40d6b07b81e7", 956328),
@@ -174,7 +174,7 @@
 },
 
 {
-	{
+	{ // Supplied by BJNFNE in sdelamarre's commit: 172d05a
 		"adibou2",
 		"ADI Jr.",
 		AD_ENTRY2s("intro.stk", "718a51862406136c28639489a9ba950a", 956350,
@@ -189,7 +189,7 @@
 },
 
 {
-	{
+	{ // Supplied by BJNFNE in commit: 674befe
 		"adibou2",
 		"ADDY JR 2.13 Basisprogramm",
 		AD_ENTRY2s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958,
@@ -221,7 +221,7 @@
 
 // -- Spanish: Adibù --
 {
-	{
+	{ // Supplied by eientei95 in commit: fbca4f5
 		"adibou2",
 		"ADIBÙ 2",
 		AD_ENTRY1s("intro.stk", "0b996fcd8929245fecddc4d9169843d0", 956682),
@@ -236,7 +236,7 @@
 
 // -- English: Adiboo --
 {
-	{
+	{ // Supplied by sdelamarre in commit: f187fdf
 		"adibou2",
 		"ADIBOO 2",
 		AD_ENTRY2s("intro.stk", "718a51862406136c28639489a9ba950a", 956350,
@@ -267,6 +267,7 @@
 },
 {
 	// Titlescreen says "ADIBOO: Limited version!", Sierra setup says "Adiboo 2 Demo"
+	// Supplied by eientei95 in commit: fbca4f5
 	{
 		"adibou2",
 		"ADIBOO 2 Demo",
@@ -322,6 +323,7 @@
 	0, 0, 11
 },
 { // Shipped as an Demo / Preview for Nature et Sciences on Adibou presente Dessin CD
+  // Supplied by BJNFNE in commit: 661b06c
   // ToDo: adding unimplemented opcodes is required.
   // Also support needs added for static images (.TGA files), The Banner for Nature et Sciences can't be loaded because of the missing opcode.
 	{

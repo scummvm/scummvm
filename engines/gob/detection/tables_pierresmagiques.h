@@ -36,7 +36,7 @@
 // -- French: Le pays des Pierres Magiques --
 
 {
-	{
+	{ // Supplied by Strangerke
 
 		"pierresmagiques",
 		_s("Missing game code"), // Le pays des Pierres Magiques (Engine: DEV7 version 1.2.0.0)
