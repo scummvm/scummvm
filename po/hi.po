@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-11 05:03+0000\n"
-"PO-Revision-Date: 2024-07-10 19:26+0000\n"
+"PO-Revision-Date: 2024-07-11 17:47+0000\n"
 "Last-Translator: Krish <ganatrakrish2882005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
@@ -1776,6 +1776,8 @@ msgstr "शेडर:"
 #: gui/options.cpp:1632 gui/options.cpp:1634 gui/options.cpp:1635
 msgid "Specifies path to the shader used for scaling the game screen"
 msgstr ""
+"गेम स्क्रीन को स्केल करने के लिए उपयोग किए जाने वाले शेडर का पथ निर्दिष्ट "
+"करता है"
 
 #: gui/options.cpp:1634
 msgctxt "lowres"
@@ -1788,18 +1790,16 @@ msgid "None"
 msgstr "कोई नहीं"
 
 #: gui/options.cpp:1640
-#, fuzzy
-#| msgid "Download game files"
 msgid "Download Shaders"
-msgstr "गेम फाइल डाउनलोड करे"
+msgstr "शेडर डाउनलोड करें"
 
 #: gui/options.cpp:1640
 msgid "Check on the scummvm.org website for updates of shader packs"
-msgstr ""
+msgstr "scummvm.org वेबसाइट पर शेडर पैक के अपडेट की जांच करें"
 
 #: gui/options.cpp:1646 backends/graphics/sdl/sdl-graphics.cpp:433
 msgid "Fullscreen mode"
-msgstr ""
+msgstr "पूर्ण स्क्रीन मोड"
 
 #: gui/options.cpp:1649
 msgid "V-Sync"
@@ -1810,23 +1810,25 @@ msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
 msgstr ""
+"स्क्रीन फाड़ने से बचने के लिए स्क्रीन को रिफ़्रेश करने के लिए वर्टिकल सिंक की"
+" प्रतीक्षा करें"
 
 #: gui/options.cpp:1654
 msgid "Game 3D Renderer:"
-msgstr ""
+msgstr "गेम त्रि-आयामी रेंडरर:"
 
 #: gui/options.cpp:1656
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
-msgstr ""
+msgstr "गेम त्रि-आयामी रेंडरर:"
 
 #: gui/options.cpp:1673
 msgid "3D Anti-aliasing:"
-msgstr ""
+msgstr "त्रि-आयामी एंटी-एलियासिंग:"
 
 #: gui/options.cpp:1677 engines/mohawk/dialogs.cpp:364
 msgid "Disabled"
-msgstr ""
+msgstr "अक्षम"
 
 #: gui/options.cpp:1685
 msgid "Filter graphics"
@@ -1834,23 +1836,23 @@ msgstr "फ़िल्टर ग्राफिक्स"
 
 #: gui/options.cpp:1685
 msgid "Use linear filtering when scaling graphics"
-msgstr ""
+msgstr "ग्राफ़िक्स स्केल करते समय रैखिक फ़िल्टरिंग का उपयोग करें"
 
 #: gui/options.cpp:1689
 msgid "Aspect ratio correction"
-msgstr ""
+msgstr "पहलू अनुपात सुधार"
 
 #: gui/options.cpp:1689
 msgid "Correct aspect ratio for games"
-msgstr ""
+msgstr "गेम्स के लिए सही आस्पेक्ट रेशियो"
 
 #: gui/options.cpp:1706
 msgid "Preferred device:"
-msgstr ""
+msgstr "पसंदीदा उपकरण:"
 
 #: gui/options.cpp:1706
 msgid "Music device:"
-msgstr ""
+msgstr "संगीत उपकरण:"
 
 #: gui/options.cpp:1706 gui/options.cpp:1708
 msgid "Specifies preferred sound device or sound card emulator"
