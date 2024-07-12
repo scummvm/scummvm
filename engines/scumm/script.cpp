@@ -42,6 +42,14 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 	byte scriptType;
 	int slot;
 
+	// WORKAROUND for crash (#15256) in Maniac Mansion C64 demo:
+	// Attempting to, as any character, give the can of Pepsi to any other character
+	// attempts to start script 43. Unfortunately script 43 does not exist in
+	// the resources and crashes the game even on the original executable :-)
+	if (enhancementEnabled(kEnhGameBreakingBugFixes) && _game.id == GID_MANIAC &&
+		_game.version == 0 && (_game.features & GF_DEMO) && script == 43)
+		return;
+
  	if (!script)
 		return;
 
