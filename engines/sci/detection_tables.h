@@ -3666,12 +3666,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 							 GUIO_NOMIDI, \
 							 GUIO_NOLAUNCHLOAD, \
 							 GAMEOPTION_LARRYSCALE)
-#define GUIO_LSL7      GUIO6(GUIO_NOASPECT, \
+#define GUIO_LSL7      GUIO7(GUIO_NOASPECT, \
 							 GUIO_NOMIDI, \
 							 GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
 							 GAMEOPTION_ORIGINAL_SAVELOAD, \
 							 GAMEOPTION_HQ_VIDEO, \
-							 GAMEOPTION_LARRYSCALE)
+							 GAMEOPTION_LARRYSCALE, \
+							 GAMEOPTION_HARD_MODE)
 
 	// Larry 7 - English DOS Demo (provided by richiefs in bug report #4214)
 	// SCI interpreter version 2.100.002

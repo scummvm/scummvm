@@ -835,10 +835,19 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 		}
 
 		int findSaveNo = -1;
-		if (g_sci->getGameId() == GID_LSL7 && name == "autosvsg.000") {
-			// LSL7 checks to see if the autosave save exists when deciding whether
-			// to go to the main menu or not on startup
-			findSaveNo = kAutoSaveId;
+		if (g_sci->getGameId() == GID_LSL7) {
+			if (name == "autosvsg.000") {
+				// LSL7 checks to see if the autosave save exists when deciding
+				// whether to go to the main menu or not on startup
+				findSaveNo = kAutoSaveId;
+			} else if (name == "get_hard") {
+				// As mentioned in the Spring 1997 issue of Interaction
+				// Magazine, page 58, placing a file named GET_HARD in your
+				// game directory will make the game "brutally difficult" in
+				// ways never really explained. But that's not really
+				// discoverable, so we make it an option instead.
+				return ConfMan.getBool("hard_mode") ? TRUE_REG : NULL_REG;
+			}
 		} else if (g_sci->getGameId() == GID_RAMA) {
 			// RAMA checks to see if save game files exist before showing them in
 			// the native save/load dialogue

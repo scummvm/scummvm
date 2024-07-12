@@ -230,6 +230,18 @@ const ADExtraGuiOptionsMap optionsList[] = {
  	},
 #endif
 
+	{
+		GAMEOPTION_HARD_MODE,
+		{
+			_s("Enable hard mode"),
+			_s("Make the game \"brutally difficult\". This was originally triggered by the presence of a file named GET_HARD."),
+			"hard_mode",
+			false,
+			0,
+			0
+		}
+	},
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
