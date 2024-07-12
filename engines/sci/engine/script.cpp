@@ -1042,7 +1042,7 @@ void Script::initializeClasses(SegManager *segMan) {
 		return;
 
 	bool isClass = false;
-	int16 species = 0;
+	uint16 species = 0;
 
 	for (;;) {
 		// In SCI0-SCI1, this is the segment type. In SCI11, it's a marker (0x1234)
@@ -1069,23 +1069,21 @@ void Script::initializeClasses(SegManager *segMan) {
 		}
 
 		if (isClass) {
-			// WORKAROUNDs for off-by-one script errors
-			if (species == (int)segMan->classTableSize()) {
-				if (g_sci->getGameId() == GID_LSL2 && g_sci->isDemo())
+			// WORKAROUND: The class table (vocab 996) is incomplete in some games.
+			// Because of this, scripts can contain species (class indexes) beyond
+			// the table's limit. In SCI2 this was a fatal error, but prior to this
+			// the interpreter would write to memory beyond the class table boundary
+			// and then read it back. We accommodate this by resizing the class table
+			// for plausible species values in earlier games.
+			// Ex: sq3 1.018 scripts 93 & 99, lsl3 script 500, kq5 amiga script 220
+			if (species >= segMan->classTableSize()) {
+				if (species <= 255 && getSciVersion() < SCI_VERSION_2) {
+					warning("Resizing class table for species %d in script %d", species, _nr);
 					segMan->resizeClassTable(species + 1);
-				else if (g_sci->getGameId() == GID_LSL3 && !g_sci->isDemo() && _nr == 500)
-					segMan->resizeClassTable(species + 1);
-				else if (g_sci->getGameId() == GID_SQ3 && !g_sci->isDemo() && _nr == 93)
-					segMan->resizeClassTable(species + 1);
-				else if (g_sci->getGameId() == GID_SQ3 && !g_sci->isDemo() && _nr == 99)
-					segMan->resizeClassTable(species + 1);
-				else if (g_sci->getGameId() == GID_KQ5 && g_sci->getPlatform() == Common::kPlatformAmiga && _nr == 220)
-					segMan->resizeClassTable(species + 1);
+				} else {
+					error("Invalid species %d in script %d", species, _nr);
+				}
 			}
-
-			if (species < 0 || species >= (int)segMan->classTableSize())
-				error("Invalid species %d(0x%x) unknown max %d(0x%x) while instantiating script %d",
-						  species, species, segMan->classTableSize(), segMan->classTableSize(), _nr);
 
 			segMan->setClassOffset(species, make_reg32(segMan->getScriptSegment(_nr), classpos));
 		}
