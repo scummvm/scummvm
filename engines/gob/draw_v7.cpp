@@ -182,8 +182,7 @@ bool Draw_v7::loadCursorFromFile(Common::String cursorName) {
 	return true;
 }
 
-void Draw_v7::initScreen()
-{
+void Draw_v7::initScreen() {
 	_vm->_game->_preventScroll = false;
 
 	_scrollOffsetX = 0;
