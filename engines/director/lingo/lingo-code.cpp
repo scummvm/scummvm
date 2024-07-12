@@ -226,7 +226,7 @@ void Lingo::switchStateFromWindow() {
 	_state = window->getLingoState();
 }
 
-void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal, int paramCount) {
+void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal, int paramCount, int nargs) {
 	Common::Array<CFrame *> &callstack = _state->callstack;
 
 	debugC(5, kDebugLingoExec, "Pushing frame %d", callstack.size() + 1);
@@ -240,8 +240,8 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 	fp->sp = funcSym;
 	fp->allowRetVal = allowRetVal;
 	fp->defaultRetVal = defaultRetVal;
-	fp->paramCount = paramCount;
-	for (int i = 0; i < paramCount; i++) {
+	fp->paramCount = paramCount;  // number of args, excluding nulls for missing named args
+	for (int i = 0; i < nargs; i++) { // number of args on the stack
 		fp->paramList.insert_at(0, pop());
 	}
 
@@ -267,13 +267,13 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 	}
 
 	if (funcSym.argNames) {
-		if ((int)funcSym.argNames->size() > fp->paramCount) {
-			warning("%d arg names defined for %d args! Ignoring the last %d names", funcSym.argNames->size(), fp->paramCount, funcSym.argNames->size() - fp->paramCount);
+		if ((int)funcSym.argNames->size() > fp->paramList.size()) {
+			debugC(1, kDebugLingoExec, "%d arg names defined for %d args! Ignoring the last %d names", funcSym.argNames->size(), fp->paramList.size(), funcSym.argNames->size() - fp->paramList.size());
 		}
 		for (int i = (int)funcSym.argNames->size() - 1; i >= 0; i--) {
 			Common::String name = (*funcSym.argNames)[i];
 			if (!localvars->contains(name)) {
-				if (i < fp->paramCount) {
+				if (i < fp->paramList.size()) {
 					Datum value = fp->paramList[i];
 					(*localvars)[name] = value;
 				} else {
@@ -1711,7 +1711,6 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 					d.type = VOID;
 					g_lingo->push(d);
 					nargs++;
-					paramCount++;
 				}
 			}
 		} else if (funcSym.nargs > nargs || funcSym.maxArgs < nargs) {
@@ -1783,7 +1782,7 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 		defaultRetVal = funcSym.target; // return me
 	}
 
-	g_lingo->pushContext(funcSym, allowRetVal, defaultRetVal, paramCount);
+	g_lingo->pushContext(funcSym, allowRetVal, defaultRetVal, paramCount, nargs);
 }
 
 void LC::c_procret() {

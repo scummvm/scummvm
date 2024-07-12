@@ -409,7 +409,7 @@ public:
 	void switchStateFromWindow();
 	void freezeState();
 	void freezePlayState();
-	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal, int paramCount);
+	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal, int paramCount, int nargs);
 	void popContext(bool aborting = false);
 	void cleanLocalVars();
 	void varAssign(const Datum &var, const Datum &value);
