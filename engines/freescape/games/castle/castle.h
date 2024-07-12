@@ -58,6 +58,10 @@ public:
 
 	void drawStringInSurface(const Common::String &str, int x, int y, uint32 fontColor, uint32 backColor, Graphics::Surface *surface, int offset = 0) override;
 	//void drawStringInSurface(const Common::String &str, int x, int y, uint32 primaryFontColor, uint32 secondaryFontColor, uint32 backColor, Graphics::Surface *surface, int offset = 0) override;
+	Graphics::Surface *loadFrames(Common::SeekableReadStream *file, int pos, int numFrames, uint32 back);
+
+	Graphics::Surface *_keysFrame;
+	int _numberKeys;
 
 private:
 	Common::SeekableReadStream *decryptFile(const Common::Path &filename);

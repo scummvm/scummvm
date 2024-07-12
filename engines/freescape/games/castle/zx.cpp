@@ -31,8 +31,37 @@ void CastleEngine::initZX() {
 	_viewArea = Common::Rect(64, 36, 256, 148);
 }
 
+Graphics::Surface *CastleEngine::loadFrames(Common::SeekableReadStream *file, int pos, int numFrames, uint32 back) {
+	Graphics::Surface *surface = new Graphics::Surface();
+	file->seek(pos);
+	int16 width = file->readByte();
+	int16 height = file->readByte();
+	surface->create(width * 8, height, _gfx->_texturePixelFormat);
+
+	/*byte mask =*/ file->readByte();
+
+	uint8 r, g, b;
+	_gfx->readFromPalette(7, r, g, b);
+	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+
+	surface->fillRect(Common::Rect(0, 0, width * 8, height), white);
+	/*int frameSize =*/ file->readUint16LE();
+
+	for (int i = 0; i < width * height; i++) {
+		byte color = file->readByte();
+		for (int n = 0; n < 8; n++) {
+			int y = i / width;
+			int x = (i % width) * 8 + (7 - n);
+			if ((color & (1 << n)))
+				surface->setPixel(x, y, back);
+		}
+	}
+	return surface;
+}
+
 void CastleEngine::loadAssetsZXFullGame() {
 	Common::File file;
+	uint8 r, g, b;
 
 	file.open("castlemaster.zx.title");
 	if (file.isOpen()) {
@@ -58,6 +87,11 @@ void CastleEngine::loadAssetsZXFullGame() {
 
     load8bitBinary(&file, 0x6a3b, 16);
 	loadSpeakerFxZX(&file, 0xc91, 0xccd);
+
+	loadColorPalette();
+	_gfx->readFromPalette(2, r, g, b);
+	uint32 red = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+	_keysFrame = loadFrames(&file, 0xdf7, 1, red);
 
 	for (auto &it : _areaMap) {
 		it._value->addStructure(_areaMap[255]);
@@ -97,6 +131,10 @@ void CastleEngine::drawZXUI(Graphics::Surface *surface) {
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else
 		drawStringInSurface(_currentArea->_name, 120, 179, front, black, surface);
+
+	for (int k = 0; k < _numberKeys; k++) {
+		surface->copyRectToSurface((const Graphics::Surface)*_keysFrame, 99 - k * 4, 177, Common::Rect(0, 0, 6, 11));
+	}
 
 	//drawEnergyMeter(surface);
 }

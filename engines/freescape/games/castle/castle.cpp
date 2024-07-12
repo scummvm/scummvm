@@ -48,6 +48,9 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_maxShield = 24;
 	_option = nullptr;
 	_optionTexture = nullptr;
+	_keysFrame = nullptr;
+
+	_numberKeys = 0;
 }
 
 CastleEngine::~CastleEngine() {
@@ -109,6 +112,7 @@ void CastleEngine::initGameState() {
 	_gameStateVars[k8bitVariableShield] = 16;
 	_gameStateVars[k8bitVariableEnergy] = 1;
 	_countdown = INT_MAX;
+	_numberKeys = 0;
 }
 
 void CastleEngine::endGame() {
@@ -454,6 +458,7 @@ void CastleEngine::updateTimeVariables() {
 	if (_gameStateVars[32] > 0) { // Key collected!
 		setGameBit(_gameStateVars[32]);
 		_gameStateVars[32] = 0;
+		_numberKeys++;
 	}
 }
 
