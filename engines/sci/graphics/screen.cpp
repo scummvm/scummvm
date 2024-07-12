@@ -271,7 +271,7 @@ GfxScreen::~GfxScreen() {
 void GfxScreen::displayRect(const Common::Rect &rect, int x, int y) {
 	// Display rect from _activeScreen to screen location x, y.
 	// Clipping is assumed to be done already.
-	_gfxDrv->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left,
+	_gfxDrv->copyRectToScreen(_activeScreen, rect.left, rect.top,
 		_displayWidth, x, y, rect.width(), rect.height(), _paletteModsEnabled ? _paletteMods : nullptr, _paletteMapScreen);
 }
 
@@ -294,9 +294,7 @@ void GfxScreen::copyToScreen() {
 }
 
 void GfxScreen::copyVideoFrameToScreen(const byte *buffer, int pitch, const Common::Rect &rect) {
-	uint8 align = _gfxDrv->hAlignment();
-	Common::Rect r(rect.left & ~align, rect.top, (rect.right + align) & ~align, rect.bottom);
-	_gfxDrv->copyRectToScreen(buffer, pitch, r.left, r.top, r.width(), r.height(), _paletteModsEnabled ? _paletteMods : nullptr, _paletteMapScreen);
+	_gfxDrv->copyRectToScreen(buffer, rect.left, rect.top, pitch, rect.left, rect.top, rect.width(), rect.height(), _paletteModsEnabled ? _paletteMods : nullptr, _paletteMapScreen);
 }
 
 void GfxScreen::kernelSyncWithFramebuffer() {
@@ -305,9 +303,7 @@ void GfxScreen::kernelSyncWithFramebuffer() {
 
 void GfxScreen::copyRectToScreen(const Common::Rect &rect) {
 	if (!_upscaledHires)  {
-		uint8 align = _gfxDrv->hAlignment();
-		Common::Rect r(rect.left & ~align, rect.top, (rect.right + align) & ~align, rect.bottom);
-		displayRect(r, r.left, r.top);
+		displayRect(rect, rect.left, rect.top);
 	} else {
 		int rectHeight = _upscaledHeightMapping[rect.bottom] - _upscaledHeightMapping[rect.top];
 		int rectWidth  = _upscaledWidthMapping[rect.right] - _upscaledWidthMapping[rect.left];
@@ -334,9 +330,7 @@ void GfxScreen::copyDisplayRectToScreen(const Common::Rect &rect) {
 
 void GfxScreen::copyRectToScreen(const Common::Rect &rect, int16 x, int16 y) {
 	if (!_upscaledHires)  {
-		uint8 align = _gfxDrv->hAlignment();
-		Common::Rect r(rect.left & ~align, rect.top, (rect.right + align) & ~align, rect.bottom);
-		displayRect(r, x & ~align, y);
+		displayRect(rect, x, y);
 	} else {
 		int rectHeight = _upscaledHeightMapping[rect.bottom] - _upscaledHeightMapping[rect.top];
 		int rectWidth  = _upscaledWidthMapping[rect.right] - _upscaledWidthMapping[rect.left];
@@ -954,9 +948,7 @@ void GfxScreen::bakDiscard() {
 
 void GfxScreen::bakCopyRectToScreen(const Common::Rect &rect, int16 x, int16 y) {
 	assert(_backupScreen);
-	uint8 align = _gfxDrv->hAlignment();
-	Common::Rect r(rect.left & ~align, rect.top, (rect.right + align) & ~align, rect.bottom);
-	_gfxDrv->copyRectToScreen(_backupScreen + r.left + r.top * _displayWidth, _displayWidth, x & ~align, y, r.width(), r.height(), _paletteModsEnabled ? _paletteMods : nullptr, _paletteMapScreen);
+	_gfxDrv->copyRectToScreen(_backupScreen, rect.left, rect.top, _displayWidth, x, y, rect.width(), rect.height(), _paletteModsEnabled ? _paletteMods : nullptr, _paletteMapScreen);
 }
 
 void GfxScreen::setPaletteMods(const PaletteMod *mods, unsigned int count) {

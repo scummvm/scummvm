@@ -36,8 +36,6 @@ namespace Sci {
 #define GFXDRV_ASSERT_READY \
 	if (!_ready) \
 		error("%s: initScreen() must be called before using this method", __FUNCTION__)
-#define GFXDRV_ASSERT_ALIGNED \
-	assert(!(w & _hAlign) && !(x & _hAlign))
 
 Common::Point GfxDriver::getMousePos() const {
 	return g_system->getEventManager()->getMousePos();
@@ -68,7 +66,7 @@ bool GfxDriver::checkDriver(const char *const *driverNames, int listSize) {
 	return false;
 }
 
-GfxDefaultDriver::GfxDefaultDriver(uint16 screenWidth, uint16 screenHeight, bool rgbRendering) : GfxDriver(screenWidth, screenHeight, 0, 1),
+GfxDefaultDriver::GfxDefaultDriver(uint16 screenWidth, uint16 screenHeight, bool rgbRendering) : GfxDriver(screenWidth, screenHeight, 0),
 	_srcPixelSize(1), _requestRGBMode(rgbRendering), _compositeBuffer(nullptr), _currentBitmap(nullptr), _internalPalette(nullptr), _currentPalette(nullptr) {
 	switch (g_sci->getResMan()->getViewType()) {
 	case kViewEga:
@@ -145,7 +143,7 @@ void GfxDefaultDriver::setPalette(const byte *colors, uint start, uint num, bool
 	if (_pixelSize > 1) {
 		updatePalette(colors, start, num, (_srcPixelSize == _pixelSize) || (palMods != nullptr && palModMapping != nullptr));
 		if (update)
-			copyRectToScreen(_currentBitmap, _screenW, 0, 0, _screenW, _screenH, palMods, palModMapping);
+			copyRectToScreen(_currentBitmap, 0, 0, _screenW, 0, 0, _screenW, _screenH, palMods, palModMapping);
 		CursorMan.replaceCursorPalette(_currentPalette, 0, 256);
 	} else {
 		g_system->getPaletteManager()->setPalette(colors, start, num);
@@ -170,20 +168,21 @@ void updateBitmapBuffer(byte *dst, int dstPitch, const byte *src, int srcPitch, 
 	}
 }
 
-void GfxDefaultDriver::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h, const PaletteMod *palMods, const byte *palModMapping) {
+void GfxDefaultDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) {
 	GFXDRV_ASSERT_READY;
-	GFXDRV_ASSERT_ALIGNED; // We can't fix the boundaries here, it has to happen before this call
+
+	src += (srcY * pitch + srcX);
 
 	if (src != _currentBitmap)
-		updateBitmapBuffer(_currentBitmap, _screenW * _srcPixelSize, src, pitch, x * _srcPixelSize, y, w * _srcPixelSize, h);
+		updateBitmapBuffer(_currentBitmap, _screenW * _srcPixelSize, src, pitch, destX * _srcPixelSize, destY, w * _srcPixelSize, h);
 
 	if (_pixelSize != _srcPixelSize) {
-		generateOutput(_compositeBuffer, src, pitch, w, h, palMods, palModMapping + y * pitch + x);
+		generateOutput(_compositeBuffer, src, pitch, w, h, palMods, palModMapping + destY * pitch + destX);
 		src = _compositeBuffer;
 		pitch = w * _pixelSize;
 	}
 
-	g_system->copyRectToScreen(src, pitch, x, y, w, h);
+	g_system->copyRectToScreen(src, pitch, destX, destY, w, h);
 }
 
 void GfxDefaultDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
@@ -298,8 +297,8 @@ void GfxDefaultDriver::generateOutput(byte *dst, const byte *src, int pitch, int
 	}
 }
 
-SCI0_DOSPreVGADriver::SCI0_DOSPreVGADriver(int numColors, int screenW, int screenH, int horizontalAlignment, bool rgbRendering) :
-	GfxDriver(screenW, screenH, numColors, horizontalAlignment), _requestRGBMode(rgbRendering), _colors(nullptr), _compositeBuffer(nullptr), _internalPalette(nullptr) {
+SCI0_DOSPreVGADriver::SCI0_DOSPreVGADriver(int numColors, int screenW, int screenH, bool rgbRendering) :
+	GfxDriver(screenW, screenH, numColors), _requestRGBMode(rgbRendering), _colors(nullptr), _compositeBuffer(nullptr), _internalPalette(nullptr) {
 }
 
 SCI0_DOSPreVGADriver::~SCI0_DOSPreVGADriver() {
@@ -367,7 +366,7 @@ void SCI0_DOSPreVGADriver::copyCurrentPalette(byte *dest, int start, int num) co
 	memcpy(dest + start * 3, _colors + start * 3, MIN<int>(num, _numColors) * 3);
 }
 
-SCI0_CGADriver::SCI0_CGADriver(bool emulateCGAModeOnEGACard, bool rgbRendering) : SCI0_DOSPreVGADriver(4, 320, 200, 1, rgbRendering), _cgaPatterns(nullptr), _disableMode5(emulateCGAModeOnEGACard) {
+SCI0_CGADriver::SCI0_CGADriver(bool emulateCGAModeOnEGACard, bool rgbRendering) : SCI0_DOSPreVGADriver(4, 320, 200, rgbRendering), _cgaPatterns(nullptr), _disableMode5(emulateCGAModeOnEGACard) {
 	static const byte cgaColors[48] = {
 		/*
 		// Canonical CGA palette
@@ -466,19 +465,24 @@ SCI0_CGADriver::~SCI0_CGADriver() {
 	delete[] _cgaPatterns;
 }
 
-void SCI0_CGADriver::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h, const PaletteMod*, const byte*) {
+void SCI0_CGADriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod*, const byte*) {
 	GFXDRV_ASSERT_READY;
-	GFXDRV_ASSERT_ALIGNED; // We can't fix the boundaries here, it has to happen before this call
+
+	srcX &= ~1;
+	destX &= ~1;
+	w = (w + 1) & ~1;
+
+	src += (srcY * pitch + srcX);
 
 	byte *dst = _compositeBuffer;
-	int ty = y;
+	int ty = destY;
 
 	for (int i = 0; i < h; ++i) {
-		_renderLine(dst, src, w, x & 3, ++ty, _cgaPatterns, _internalPalette);
+		_renderLine(dst, src, w, destX & 3, ++ty, _cgaPatterns, _internalPalette);
 		src += pitch;
 	}
 
-	g_system->copyRectToScreen(_compositeBuffer, w * _pixelSize, x, y, w, h);
+	g_system->copyRectToScreen(_compositeBuffer, w * _pixelSize, destX, destY, w, h);
 }
 
 void SCI0_CGADriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
@@ -576,7 +580,7 @@ const byte *monochrInit(const char *drvFile, bool &earlyVersion) {
 	return result;
 }
 
-SCI0_CGABWDriver::SCI0_CGABWDriver(uint32 monochromeColor, bool rgbRendering) : SCI0_DOSPreVGADriver(2, 640, 400, 1, rgbRendering), _monochromePatterns(nullptr), _earlyVersion(false) {
+SCI0_CGABWDriver::SCI0_CGABWDriver(uint32 monochromeColor, bool rgbRendering) : SCI0_DOSPreVGADriver(2, 640, 400, rgbRendering), _monochromePatterns(nullptr), _earlyVersion(false) {
 	_monochromePalette[0] = _monochromePalette[1] = _monochromePalette[2] = 0;
 	_monochromePalette[3] = (monochromeColor >> 16) & 0xff;
 	_monochromePalette[4] = (monochromeColor >> 8) & 0xff;
@@ -591,22 +595,28 @@ SCI0_CGABWDriver::~SCI0_CGABWDriver() {
 	delete[] _monochromePatterns;
 }
 
-void SCI0_CGABWDriver::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h, const PaletteMod*, const byte*) {
+void SCI0_CGABWDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod*, const byte*) {
 	GFXDRV_ASSERT_READY;
-	GFXDRV_ASSERT_ALIGNED; // We can't fix the boundaries here, it has to happen before this call
 
 	byte *dst = _compositeBuffer;
-	int ty = y & 7;
-	if (_earlyVersion)
+	int ty = destY & 7;
+
+	if (_earlyVersion) {
 		++ty;
+		srcX &= ~1;
+		destX &= ~1;
+		w = (w + 1) & ~1;
+	}
+
+	src += (srcY * pitch + srcX);
 
 	for (int i = 0; i < h; ++i) {
-		_renderLine(dst, src, w, x & 3, ty, _monochromePatterns, _internalPalette);
+		_renderLine(dst, src, w, destX & 3, ty, _monochromePatterns, _internalPalette);
 		ty = (ty + 1) & 7;
 		src += pitch;
 	}
 
-	g_system->copyRectToScreen(_compositeBuffer, (w << 1) * _pixelSize, x << 1, y << 1, w << 1, h << 1);
+	g_system->copyRectToScreen(_compositeBuffer, (w << 1) * _pixelSize, destX << 1, destY << 1, w << 1, h << 1);
 }
 
 void SCI0_CGABWDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
@@ -715,7 +725,7 @@ void SCI0_CGABWDriver::setupRenderProc() {
 
 const char *SCI0_CGABWDriver::_driverFiles[2] = { "CGA320BW.DRV", "CGA320M.DRV" };
 
-SCI0_HerculesDriver::SCI0_HerculesDriver(uint32 monochromeColor, bool rgbRendering, bool cropImage) : SCI0_DOSPreVGADriver(2, cropImage ? 640 : 720, cropImage ? 300 : 350, 0, rgbRendering),
+SCI0_HerculesDriver::SCI0_HerculesDriver(uint32 monochromeColor, bool rgbRendering, bool cropImage) : SCI0_DOSPreVGADriver(2, cropImage ? 640 : 720, cropImage ? 300 : 350, rgbRendering),
 	_centerX(cropImage ? 0 : 40), _centerY(cropImage ? 0 : 25), _monochromePatterns(nullptr) {
 	_monochromePalette[0] = _monochromePalette[1] = _monochromePalette[2] = 0;
 	_monochromePalette[3] = (monochromeColor >> 16) & 0xff;
@@ -732,19 +742,19 @@ SCI0_HerculesDriver::~SCI0_HerculesDriver() {
 	delete[] _monochromePatterns;
 }
 
-void SCI0_HerculesDriver::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h, const PaletteMod*, const byte*) {
+void SCI0_HerculesDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod*, const byte*) {
 	GFXDRV_ASSERT_READY;
-	GFXDRV_ASSERT_ALIGNED; // We can't fix the boundaries here, it has to happen before this call
 
 	byte *dst = _compositeBuffer;
-	byte sw = y & 1;
-	y = (y & ~1) * 3 / 2 + (y & 1);
-	int ty = y & 7;
+	byte sw = destY & 1;
+	src += (srcY * pitch + srcX);
+	destY = (destY & ~1) * 3 / 2 + (destY & 1);
+	int ty = destY & 7;
 	int rh = 0;
 
 	for (int i = 0; i < h; ++i) {
 		const byte *src2 = src;
-		_renderLine(dst, src2, w, x & 3, ty, _monochromePatterns, _internalPalette);
+		_renderLine(dst, src2, w, destX & 3, ty, _monochromePatterns, _internalPalette);
 		ty = (ty + 1) & 7;
 		++rh;
 
@@ -759,7 +769,7 @@ void SCI0_HerculesDriver::copyRectToScreen(const byte *src, int pitch, int x, in
 		}
 	}
 
-	g_system->copyRectToScreen(_compositeBuffer, (w << 1) * _pixelSize, (x << 1) + _centerX, y + _centerY, w << 1, rh);
+	g_system->copyRectToScreen(_compositeBuffer, (w << 1) * _pixelSize, (destX << 1) + _centerX, destY + _centerY, w << 1, rh);
 }
 
 void SCI0_HerculesDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
@@ -859,7 +869,7 @@ void SCI1_VGAGreyScaleDriver::setPalette(const byte *colors, uint start, uint nu
 
 const char *SCI1_VGAGreyScaleDriver::_driverFile = "VGA320BW.DRV";
 
-SCI1_EGADriver::SCI1_EGADriver(bool rgbRendering) : GfxDriver(320, 200, 256, 1), _requestRGBMode(rgbRendering), _egaColorPatterns(nullptr), _egaMatchTable(nullptr),
+SCI1_EGADriver::SCI1_EGADriver(bool rgbRendering) : GfxDriver(320, 200, 256), _requestRGBMode(rgbRendering), _egaColorPatterns(nullptr), _egaMatchTable(nullptr),
 	_currentBitmap(nullptr), _compositeBuffer(nullptr), _currentPalette(nullptr), _internalPalette(nullptr), _colAdjust(0), _ready(false) {
 	Common::File drv;
 	if (!drv.open(_driverFile))
@@ -1017,15 +1027,16 @@ void SCI1_EGADriver::setPalette(const byte *colors, uint start, uint num, bool u
 		colors += 3;
 	}
 	if (update)
-		copyRectToScreen(_currentBitmap, _screenW, 0, 0, _screenW, _screenH, nullptr, nullptr);
+		copyRectToScreen(_currentBitmap, 0, 0, _screenW, 0, 0, _screenW, _screenH, nullptr, nullptr);
 }
 
-void SCI1_EGADriver::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h, const PaletteMod*, const byte*) {
+void SCI1_EGADriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod*, const byte*) {
 	GFXDRV_ASSERT_READY;
-	GFXDRV_ASSERT_ALIGNED; // We can't fix the boundaries here, it has to happen before this call
+
+	src += (srcY * pitch + srcX);
 
 	if (src != _currentBitmap)
-		updateBitmapBuffer(_currentBitmap, _screenW, src, pitch, x, y, w, h);
+		updateBitmapBuffer(_currentBitmap, _screenW, src, pitch, destX, destY, w, h);
 
 	byte *dst = _compositeBuffer;
 	for (int i = 0; i < h; ++i) {
@@ -1033,7 +1044,7 @@ void SCI1_EGADriver::copyRectToScreen(const byte *src, int pitch, int x, int y, 
 		src += pitch;
 	}
 
-	g_system->copyRectToScreen(_compositeBuffer, (w << 1) * _pixelSize, x << 1, y << 1, w << 1, h << 1);
+	g_system->copyRectToScreen(_compositeBuffer, (w << 1) * _pixelSize, destX << 1, destY << 1, w << 1, h << 1);
 }
 
 void SCI1_EGADriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {

@@ -31,11 +31,11 @@ struct PaletteMod;
 
 class GfxDriver {
 public:
-	GfxDriver(uint16 screenWidth, uint16 screenHeight, int numColors, int horizontalAlignment) : _screenW(screenWidth), _screenH(screenHeight), _numColors(numColors), _hAlign(horizontalAlignment), _ready(false), _pixelSize(1) {}
+	GfxDriver(uint16 screenWidth, uint16 screenHeight, int numColors) : _screenW(screenWidth), _screenH(screenHeight), _numColors(numColors), _ready(false), _pixelSize(1) {}
 	virtual ~GfxDriver() {}
 	virtual void initScreen(const Graphics::PixelFormat *srcRGBFormat = nullptr) = 0; // srcRGBFormat: expect incoming data to have the specified rgb pixel format (used for Mac hicolor videos)
 	virtual void setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod *palMods, const byte *palModMapping) = 0;
-	virtual void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h, const PaletteMod *palMods, const byte *palModMapping) = 0;
+	virtual void copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) = 0;
 	virtual void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) = 0;
 	virtual Common::Point getMousePos() const;
 	virtual void clearRect(const Common::Rect &r) const;
@@ -43,7 +43,6 @@ public:
 	virtual void copyCurrentPalette(byte *dest, int start, int num) const;
 	virtual bool supportsPalIntensity() const = 0;
 	uint16 numColors() const { return _numColors; }
-	byte hAlignment() const { return _hAlign; }
 	byte pixelSize() const { return _pixelSize; }
 protected:
 	bool _ready;
@@ -52,7 +51,6 @@ protected:
 	const uint16 _screenH;
 	uint16 _numColors;
 	byte _pixelSize;
-	const byte _hAlign;
 };
 
 class GfxDefaultDriver : public GfxDriver {
@@ -61,7 +59,7 @@ public:
 	~GfxDefaultDriver() override;
 	void initScreen(const Graphics::PixelFormat *srcRGBFormat) override; // srcRGBFormat: expect incoming data to have the specified rgb pixel format (used for Mac hicolor videos)
 	void setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod *palMods, const byte *palModMapping) override;
-	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h, const PaletteMod *palMods, const byte *palModMapping) override;
+	void copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	void copyCurrentBitmap(byte *dest, uint32 size) const override;
 	void copyCurrentPalette(byte *dest, int start, int num) const override;
@@ -81,7 +79,7 @@ private:
 
 class SCI0_DOSPreVGADriver : public GfxDriver {
 public:
-	SCI0_DOSPreVGADriver(int numColors, int screenW, int screenH, int horizontalAlignment, bool rgbRendering);
+	SCI0_DOSPreVGADriver(int numColors, int screenW, int screenH, bool rgbRendering);
 	~SCI0_DOSPreVGADriver() override;
 	void initScreen(const Graphics::PixelFormat*) override;
 	void setPalette(const byte*, uint, uint, bool, const PaletteMod*, const byte*) {}
@@ -102,7 +100,7 @@ class SCI0_CGADriver final : public SCI0_DOSPreVGADriver {
 public:
 	SCI0_CGADriver(bool emulateCGAModeOnEGACard, bool rgbRendering);
 	~SCI0_CGADriver() override;
-	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h, const PaletteMod*, const byte*) override;
+	void copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod*, const byte*) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	static bool validateMode() { return checkDriver(&_driverFile, 1); }
 private:
@@ -119,7 +117,7 @@ class SCI0_CGABWDriver final : public SCI0_DOSPreVGADriver {
 public:
 	SCI0_CGABWDriver(uint32 monochromeColor, bool rgbRendering);
 	~SCI0_CGABWDriver() override;
-	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h, const PaletteMod*, const byte*) override;
+	void copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod*, const byte*) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	Common::Point getMousePos() const override;
 	void clearRect(const Common::Rect &r) const override;
@@ -138,7 +136,7 @@ class SCI0_HerculesDriver final : public SCI0_DOSPreVGADriver {
 public:
 	SCI0_HerculesDriver(uint32 monochromeColor, bool rgbRendering, bool cropImage);
 	~SCI0_HerculesDriver() override;
-	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h, const PaletteMod*, const byte*) override;
+	void copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod*, const byte*) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	Common::Point getMousePos() const override;
 	void clearRect(const Common::Rect &r) const override;
@@ -171,7 +169,7 @@ public:
 	~SCI1_EGADriver() override;
 	void initScreen(const Graphics::PixelFormat*) override;
 	void setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod*, const byte*) override;
-	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h, const PaletteMod*, const byte*) override;
+	void copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod*, const byte*) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	void copyCurrentBitmap(byte *dest, uint32 size) const override;
 	void copyCurrentPalette(byte *dest, int start, int num) const override;
