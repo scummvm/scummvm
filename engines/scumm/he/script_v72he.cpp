@@ -2014,6 +2014,7 @@ void ScummEngine_v72he::checkArrayLimits(int array, int downMin, int downMax, in
 	}
 }
 
+// TODO: Have patience with this one, I'll restore it ASAP...
 #if 0
 void ScummEngine_v72he::copyArray(int dstVariable, int dstDownMin, int dstDownMax, int dstAcrossMin, int dstAcrossMax,
 				int srcVariable, int srcDownMin, int srcDownMax, int srcAcrossMin, int srcAcrossMax) {
