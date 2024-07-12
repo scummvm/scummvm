@@ -326,7 +326,7 @@ void Lingo::initXLibs() {
 				continue;
 
 			if (_xlibOpeners.contains(lib->names[i].name))
-				warning("Lingo::initXLibs(): Duplicate enttry for %s", lib->names[i].name);
+				warning("Lingo::initXLibs(): Duplicate entry for %s", lib->names[i].name);
 
 			_xlibOpeners[lib->names[i].name] = lib->opener;
 			_xlibClosers[lib->names[i].name] = lib->closer;
