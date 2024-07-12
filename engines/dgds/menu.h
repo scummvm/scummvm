@@ -90,6 +90,7 @@ public:
 	void setRequestData(const REQFileData &data);
 	void prevChoice();
 	void nextChoice();
+	void activateChoice();
 
 private:
 	Gadget *getClickedMenuItem(const Common::Point &mouseClick);
@@ -101,10 +102,15 @@ private:
 	void handleClickOptionsMenu(const Common::Point &mouse);
 	void handleClickSkipPlayIntroMenu(const Common::Point &mouse);
 
+	void putMouseOnSelectedItem();
+	Gadget *getSelectedItem();
+
 	Common::HashMap<int, RequestData> _menuRequests;
 
 	SliderGadget *_dragGadget;
 	Common::Point _dragStartPt;
+	int _selectedItem;
+	int _numSelectable;
 };
 
 } // End of namespace Dgds

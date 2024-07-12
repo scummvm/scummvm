@@ -115,7 +115,7 @@ enum MenuButtonIds {
 	kMenuGameOverRestore = 170,
 };
 
-Menu::Menu() : _curMenu(kMenuNone), _dragGadget(nullptr) {
+Menu::Menu() : _curMenu(kMenuNone), _dragGadget(nullptr), _selectedItem(0), _numSelectable(0) {
 	_screenBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 }
 
@@ -207,13 +207,19 @@ void Menu::drawMenu(MenuId menu) {
 	managed.blitFrom(*screen);
 	_menuRequests[_curMenu].drawBg(&managed);
 
+	_numSelectable = 0;
 	for (Common::SharedPtr<Gadget> &gptr : gadgets) {
 		Gadget *gadget = gptr.get();
 		if (gadget->_gadgetType == kGadgetButton || gadget->_gadgetType == kGadgetSlider) {
 			if (firstDraw)
 				configureGadget(menu, gadget);
 			gadget->draw(&managed);
+			_numSelectable++;
 		}
+	}
+	if (firstDraw) {
+		_selectedItem = _numSelectable - 1;
+		putMouseOnSelectedItem();
 	}
 
 	drawMenuText(managed);
@@ -224,6 +230,32 @@ void Menu::drawMenu(MenuId menu) {
 	g_system->unlockScreen();
 	g_system->updateScreen();
 }
+
+Gadget *Menu::getSelectedItem() {
+	int item = 0;
+	Common::Array<Common::SharedPtr<Gadget> > gadgets = _menuRequests[_curMenu]._gadgets;
+	for (Common::SharedPtr<Gadget> &gptr : gadgets) {
+		Gadget *gadget = gptr.get();
+		if (gadget->_gadgetType == kGadgetButton || gadget->_gadgetType == kGadgetSlider) {
+			if (item == _selectedItem)
+				return gadget;
+			item++;
+		}
+	}
+	return nullptr;
+}
+
+void Menu::putMouseOnSelectedItem() {
+	Gadget *selected = getSelectedItem();
+	if (!selected)
+		return;
+
+	const Common::Point midPt = selected->midPoint();
+	// put the mouse on the first button/slider
+	g_system->warpMouse(midPt.x, midPt.y);
+	return;
+}
+
 
 void Menu::drawMenuText(Graphics::ManagedSurface &dst) {
 	Common::Array<Common::SharedPtr<Gadget> > gadgets = _menuRequests[_curMenu]._gadgets;
@@ -548,13 +580,30 @@ void Menu::toggleGadget(int16 gadgetId, bool enable) {
 	}
 }
 
-void Menu::prevChoice() {
-	warning("TODO: Implement Menu::prevChoice");
-}
-
+/**
+ * Choose the next menu item via keyboard - items are numbered backwards
+ * so this *decreases* the counter.
+ */
 void Menu::nextChoice() {
-	warning("TODO: Implement Menu::nextChoice");
+	_selectedItem--;
+	if (_selectedItem < 0)
+		_selectedItem = _numSelectable - 1;
+	putMouseOnSelectedItem();
 }
 
+void Menu::prevChoice() {
+	_selectedItem++;
+	if (_selectedItem >= _numSelectable)
+		_selectedItem = 0;
+	putMouseOnSelectedItem();
+}
+
+void Menu::activateChoice() {
+	Gadget *selected = getSelectedItem();
+	if (!selected)
+		return;
+
+	handleClick(selected->midPoint());
+}
 
 } // End of namespace Dgds

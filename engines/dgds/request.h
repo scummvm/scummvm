@@ -103,6 +103,7 @@ public:
 	bool containsPoint(const Common::Point &pt);
 
 	Common::Point topLeft() const;
+	Common::Point midPoint() const;
 };
 
 // Button gadget has no additional fields, but some behavior differences.

@@ -436,10 +436,20 @@ Common::Error DgdsEngine::run() {
 					warning("TODO: Implement kDgdsKeyPrevItem");
 					break;
 				case kDgdsKeyPickUp:
-					warning("TODO: Implement kDgdsKeyPickUp");
+					if (_menu->menuShown())
+						_menu->activateChoice();
+					else if (_scene->hasVisibleDialog())
+						_scene->activateChoice();
+					else
+						warning("TODO: Implement kDgdsKeyPickUp");
 					break;
 				case kDgdsKeyLook:
-					warning("TODO: Implement kDgdsKeyLook");
+					if (_menu->menuShown())
+						_menu->activateChoice();
+					else if (_scene->hasVisibleDialog())
+						_scene->activateChoice();
+					else
+						warning("TODO: Implement kDgdsKeyLook");
 					break;
 				case kDgdsKeyActivate:
 					warning("TODO: Implement kDgdsKeyActivate");

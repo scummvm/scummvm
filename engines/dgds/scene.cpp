@@ -1812,6 +1812,13 @@ void SDSScene::nextChoice() {
 	dlg->updateSelectedAction(1);
 }
 
+void SDSScene::activateChoice() {
+	Dialog *dlg = getVisibleDialog();
+	if (!dlg)
+		return;
+	_shouldClearDlg = true;
+}
+
 
 GDSScene::GDSScene() : _field38(0), _field3a(0), _field3c(0), _field3e(0), _field40(0) {
 }

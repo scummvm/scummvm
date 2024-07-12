@@ -306,6 +306,10 @@ Common::Point Gadget::topLeft() const {
 	return Common::Point(_x + _parentX, _y + _parentY);
 }
 
+Common::Point Gadget::midPoint() const {
+	return topLeft() + Common::Point(_width / 2, _height / 2);
+}
+
 bool Gadget::containsPoint(const Common::Point &pt) {
 	Common::Point tl = topLeft();
 	Common::Rect gadgetRect(tl, _width, _height - 1);

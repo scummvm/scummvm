@@ -79,7 +79,7 @@ Common::KeymapArray DgdsMetaEngine::initKeymaps(const char *target) const {
 		{ Dgds::kDgdsKeyNextItem, "NEXT_ITEM", _("Next object"), "TAB", "w" },
 		{ Dgds::kDgdsKeyPrevItem, "PREV_ITEM", _("Previous object"), "S+TAB", "q" },
 		{ Dgds::kDgdsKeyPickUp, "PICK_UP", _("Pick up / Operate"), "SPACE", "KP5" },
-		{ Dgds::kDgdsKeyLook, "LOOK", _("Look"), "ENTER", "," },
+		{ Dgds::kDgdsKeyLook, "LOOK", _("Look"), "RETURN", "," },
 		{ Dgds::kDgdsKeyActivate, "ACTIVATE", _("Activate Inventory Object"), "BACKSPACE", nullptr },
 	};
 
