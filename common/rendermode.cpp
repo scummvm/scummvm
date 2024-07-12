@@ -53,7 +53,7 @@ const RenderModeDescription g_renderModes[] = {
 	{ "cpc", "Amstrad CPC", kRenderCPC },
 	{ "zx", "ZX Spectrum", kRenderZX },
 	{ "c64", "Commodore 64", kRenderC64 },
-	{ "vgaGrey", "VGA Grey Scale", kRenderVGAGrey },
+	{ "vgaGrey", _s("VGA Grey Scale"), kRenderVGAGrey },
 	{nullptr, nullptr, kRenderDefault}
 };
 
