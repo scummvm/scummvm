@@ -48,7 +48,7 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 	if (ConfMan.hasKey("render_mode"))
 		_egaMode = (Common::parseRenderMode(ConfMan.get("render_mode").c_str()) == Common::kRenderEGA) && (_vm->getGameType() != GType_STJR) && !(_vm->getFeatures() & GF_DEMO);
 
-	if (_vm->getGameType() == GType_ST25 && _vm->getPlatform() == Common::kPlatformDOS)
+	if (_vm->getGameType() == GType_ST25 && _vm->getPlatform() != Common::kPlatformAmiga)
 		_font = new Font(_vm);
 
 	_numSprites = 0;

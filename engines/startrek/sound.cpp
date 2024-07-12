@@ -40,7 +40,7 @@ Sound::Sound(StarTrekEngine *vm) : _vm(vm) {
 	_midiDriver = nullptr;
 	_loopingMidiTrack = MIDITRACK_0;
 
-	if (_vm->getPlatform() == Common::kPlatformDOS || _vm->getPlatform() == Common::kPlatformMacintosh) {
+	if (_vm->getPlatform() == Common::kPlatformDOS) {
 		_midiDevice = MidiDriver::detectDevice(MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32);
 		_midiDriver = MidiDriver::createMidi(_midiDevice);
 		_midiDriver->open();
@@ -60,6 +60,8 @@ Sound::Sound(StarTrekEngine *vm) : _vm(vm) {
 		}
 
 		_midiDriver->setTimerCallback(this, Sound::midiDriverCallback);
+	} else {
+		_vm->_musicWorking = false;
 	}
 
 	_soundHandle = new Audio::SoundHandle();
@@ -424,6 +426,9 @@ void Sound::loadPCMusicFile(const Common::String &baseSoundName) {
 }
 
 void Sound::clearMidiSlot(int slot) {
+	if (!_vm->_musicWorking)
+		return;
+
 	_midiSlots[slot].midiParser->stopPlaying();
 	_midiSlots[slot].midiParser->unloadMusic();
 	_midiSlots[slot].track = -1;
