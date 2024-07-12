@@ -72,6 +72,7 @@
 #include "director/lingo/xlibs/getscreenrectsxfcn.h"
 #include "director/lingo/xlibs/getscreensizexfcn.h"
 #include "director/lingo/xlibs/gpid.h"
+#include "director/lingo/xlibs/henry.h"
 #include "director/lingo/xlibs/hitmap.h"
 #include "director/lingo/xlibs/inixobj.h"
 #include "director/lingo/xlibs/instobj.h"
@@ -114,6 +115,7 @@
 #include "director/lingo/xlibs/soundjam.h"
 #include "director/lingo/xlibs/spacemgr.h"
 #include "director/lingo/xlibs/stagetc.h"
+#include "director/lingo/xlibs/syscolor.h"
 #include "director/lingo/xlibs/unittest.h"
 #include "director/lingo/xlibs/valkyrie.h"
 #include "director/lingo/xlibs/videodiscxobj.h"
@@ -250,6 +252,7 @@ static struct XLibProto {
 	XLIBDEF(GetScreenRectsXFCN,	kXObj,			300),	// D3
 	XLIBDEF(GetScreenSizeXFCN,	kXObj,			300),	// D3
 	XLIBDEF(GpidXObj,			kXObj,			400),	// D4
+	XLIBDEF(HenryXObj,			kXObj,					400),	// D4
 	XLIBDEF(HitMap,				kXObj,			400),	// D4
 	XLIBDEF(IniXObj,			kXObj,			400),	// D4
 	XLIBDEF(InstObjXObj,		kXObj,			400),	// D4
@@ -297,6 +300,7 @@ static struct XLibProto {
 	XLIBDEF(SoundJam,			kXObj,			400),	// D4
 	XLIBDEF(SpaceMgr,			kXObj,			400),	// D4
 	XLIBDEF(StageTCXObj,		kXObj,			400),	// D4
+	XLIBDEF(SysColorXObj,			kXObj,					400),	// D4
 	XLIBDEF(TimextraXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(UnitTestXObj,		kXObj,			400),	// D4
 	XLIBDEF(VMisOnXFCN,			kXObj,			400),	// D4

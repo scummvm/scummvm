@@ -101,6 +101,7 @@ MODULE_OBJS = \
 	lingo/xlibs/getscreenrectsxfcn.o \
 	lingo/xlibs/getscreensizexfcn.o \
 	lingo/xlibs/gpid.o \
+	lingo/xlibs/henry.o \
 	lingo/xlibs/hitmap.o \
 	lingo/xlibs/inixobj.o \
 	lingo/xlibs/instobj.o \
@@ -143,6 +144,7 @@ MODULE_OBJS = \
 	lingo/xlibs/soundjam.o \
 	lingo/xlibs/spacemgr.o \
 	lingo/xlibs/stagetc.o \
+	lingo/xlibs/syscolor.o \
 	lingo/xlibs/unittest.o \
 	lingo/xlibs/valkyrie.o \
 	lingo/xlibs/videodiscxobj.o \
