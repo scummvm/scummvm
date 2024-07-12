@@ -956,7 +956,7 @@ void GfxScreen::bakCopyRectToScreen(const Common::Rect &rect, int16 x, int16 y) 
 	assert(_backupScreen);
 	uint8 align = _gfxDrv->hAlignment();
 	Common::Rect r(rect.left & ~align, rect.top, (rect.right + align) & ~align, rect.bottom);
-	_gfxDrv->copyRectToScreen(_backupScreen + r.left + r.top * _displayWidth, _displayWidth, x, y, r.width(), r.height(), _paletteModsEnabled ? _paletteMods : nullptr, _paletteMapScreen);
+	_gfxDrv->copyRectToScreen(_backupScreen + r.left + r.top * _displayWidth, _displayWidth, x & ~align, y, r.width(), r.height(), _paletteModsEnabled ? _paletteMods : nullptr, _paletteMapScreen);
 }
 
 void GfxScreen::setPaletteMods(const PaletteMod *mods, unsigned int count) {
