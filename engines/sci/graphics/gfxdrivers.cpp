@@ -141,7 +141,7 @@ void GfxDefaultDriver::initScreen(const Graphics::PixelFormat *srcRGBFormat) {
 void GfxDefaultDriver::setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod *palMods, const byte *palModMapping) {
 	GFXDRV_ASSERT_READY;
 	if (_pixelSize > 1) {
-		updatePalette(colors, start, num, (_srcPixelSize == _pixelSize) || (palMods != nullptr && palModMapping != nullptr));
+		updatePalette(colors, start, num);
 		if (update)
 			copyRectToScreen(_currentBitmap, 0, 0, _screenW, 0, 0, _screenW, _screenH, palMods, palModMapping);
 		CursorMan.replaceCursorPalette(_currentPalette, 0, 256);
@@ -172,7 +172,6 @@ void GfxDefaultDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int
 	GFXDRV_ASSERT_READY;
 
 	src += (srcY * pitch + srcX);
-
 	if (src != _currentBitmap)
 		updateBitmapBuffer(_currentBitmap, _screenW * _srcPixelSize, src, pitch, destX * _srcPixelSize, destY, w * _srcPixelSize, h);
 
@@ -230,12 +229,8 @@ template <typename T> void updateRGBPalette(byte *dest, const byte *src, uint st
 	}
 }
 
-void GfxDefaultDriver::updatePalette(const byte *colors, uint start, uint num, bool skipRGBPalette) {
+void GfxDefaultDriver::updatePalette(const byte *colors, uint start, uint num) {
 	memcpy(_currentPalette + start * 3, colors, num * 3);
-	// If palette mods are on we don't need to update the internal palette,
-	// since the colors have to be generated on the fly anyway.
-	if (skipRGBPalette)
-		return;
 	if (_pixelSize == 4)
 		updateRGBPalette<uint32>(_internalPalette, colors, start, num, _format);
 	else if (_pixelSize == 2)
@@ -258,20 +253,22 @@ template <typename T> void render(byte *dst, const byte *src, int pitch, int w, 
 }
 
 #define applyMod(a, b) MIN<uint>(a * (128 + b) / 128, 255)
-template <typename T> void renderMod(byte *dst, const byte *src, int pitch, int w, int h, const byte *pal, Graphics::PixelFormat &f, const PaletteMod *mods, const byte *modMapping) {
+template <typename T> void renderMod(byte *dst, const byte *src, int pitch, int w, int h, const byte *srcPal, const byte *internalPal, Graphics::PixelFormat &f, const PaletteMod *mods, const byte *modMapping) {
 	T *d = reinterpret_cast<T*>(dst);
+	const T *p = reinterpret_cast<const T*>(internalPal);
 	const byte *s1 = src;
 	const byte *s2 = modMapping;
 	pitch -= w;
 
 	while (h--) {
 		for (int i = 0; i < w; ++i) {
-			const byte *col = &pal[*s1++ * 3];
 			byte m = *s2++;
-			if (m)
+			if (m) {
+				const byte *col = &srcPal[*s1++ * 3];
 				*d++ = f.RGBToColor(applyMod(col[0], mods[m].r), applyMod(col[1], mods[m].g), applyMod(col[2], mods[m].b));
-			else
-				*d++ = f.RGBToColor(col[0], col[1], col[2]);
+			} else {
+				*d++ = p[*s1++];
+			}
 		}
 		s1 += pitch;
 		s2 += pitch;
@@ -282,9 +279,9 @@ template <typename T> void renderMod(byte *dst, const byte *src, int pitch, int 
 void GfxDefaultDriver::generateOutput(byte *dst, const byte *src, int pitch, int w, int h, const PaletteMod *palMods, const byte *palModMapping) {
 	if (palMods && palModMapping) {
 		if (_pixelSize == 2)
-			renderMod<uint16>(dst, src, pitch, w, h, _currentPalette, _format, palMods, palModMapping);
+			renderMod<uint16>(dst, src, pitch, w, h, _currentPalette, _internalPalette, _format, palMods, palModMapping);
 		else if (_pixelSize == 4)
-			renderMod<uint32>(dst, src, pitch, w, h, _currentPalette, _format, palMods, palModMapping);
+			renderMod<uint32>(dst, src, pitch, w, h, _currentPalette, _internalPalette, _format, palMods, palModMapping);
 		else
 			error("GfxDefaultDriver::generateOutput(): Unsupported pixel size %d", _pixelSize);
 	} else {

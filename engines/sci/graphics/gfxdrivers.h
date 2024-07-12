@@ -23,7 +23,7 @@
 #define SCI_GRAPHICS_GFXDRIVERS_H
 
 #include "common/rect.h"
-#include "graphics//pixelformat.h"
+#include "graphics/pixelformat.h"
 
 namespace Sci {
 
@@ -65,7 +65,7 @@ public:
 	void copyCurrentPalette(byte *dest, int start, int num) const override;
 	bool supportsPalIntensity() const override { return true; }
 protected:
-	void updatePalette(const byte *colors, uint start, uint num, bool skipRGBPalette);
+	void updatePalette(const byte *colors, uint start, uint num);
 	byte *_compositeBuffer;
 	byte *_currentBitmap;
 	byte *_currentPalette;
