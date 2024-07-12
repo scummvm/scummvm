@@ -95,6 +95,8 @@ void CastleEngine::loadAssetsZXFullGame() {
 
 	for (auto &it : _areaMap) {
 		it._value->addStructure(_areaMap[255]);
+
+		it._value->addObjectFromArea(164, _areaMap[255]);
 		for (int16 id = 136; id < 140; id++) {
 			it._value->addObjectFromArea(id, _areaMap[255]);
 		}
