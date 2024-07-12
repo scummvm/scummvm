@@ -47,6 +47,11 @@ static const DebugChannelDef debugFlagList[] = {
 
 namespace StarTrek {
 
+static const char *const directoryGlobs[] = {
+	"misc",
+	0
+};
+
 static const StarTrekGameDescription gameDescriptions[] = {
 	{ // ST25 DOS CD-ROM edition (EN)
 		{
@@ -355,6 +360,8 @@ static const StarTrekGameDescription gameDescriptions[] = {
 class StarTrekMetaEngineDetection : public AdvancedMetaEngineDetection<StarTrek::StarTrekGameDescription> {
 public:
 	StarTrekMetaEngineDetection() : AdvancedMetaEngineDetection(StarTrek::gameDescriptions, starTrekGames) {
+		_maxScanDepth = 2;
+		_directoryGlobs = StarTrek::directoryGlobs;
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {
