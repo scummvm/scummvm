@@ -1775,9 +1775,7 @@ msgstr "शेडर:"
 
 #: gui/options.cpp:1632 gui/options.cpp:1634 gui/options.cpp:1635
 msgid "Specifies path to the shader used for scaling the game screen"
-msgstr ""
-"गेम स्क्रीन को स्केल करने के लिए उपयोग किए जाने वाले शेडर का पथ निर्दिष्ट "
-"करता है"
+msgstr "गेम स्क्रीन को स्केल करने के लिए उपयोग किए जाने वाले शेडर का पथ निर्दिष्ट करता है"
 
 #: gui/options.cpp:1634
 msgctxt "lowres"
@@ -1810,8 +1808,7 @@ msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
 msgstr ""
-"स्क्रीन फाड़ने से बचने के लिए स्क्रीन को रिफ़्रेश करने के लिए वर्टिकल सिंक की"
-" प्रतीक्षा करें"
+"स्क्रीन फाड़ने से बचने के लिए स्क्रीन को रिफ़्रेश करने के लिए वर्टिकल सिंक की प्रतीक्षा करें"
 
 #: gui/options.cpp:1654
 msgid "Game 3D Renderer:"
