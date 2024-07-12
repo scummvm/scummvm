@@ -727,7 +727,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 #ifdef ENABLE_SCI32
 	{ "GetSaveFiles", kGetSaveFiles32, SIG_THRU_SCI21EARLY, SIGFOR_ALL, "rrr",        NULL,            NULL },
 #endif
-	{ MAP_CALL(GetSaveFiles),      SIG_EVERYWHERE,           "rrr",                   NULL,            NULL },
+	{ MAP_CALL(GetSaveFiles),      SIG_EVERYWHERE,           "rrr",                   NULL,            kGetSaveFiles_workarounds },
 	{ MAP_CALL(GetTime),           SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
 	{ MAP_CALL(GlobalToLocal),     SIG_SCI16, SIGFOR_ALL,    "o",                     NULL,            NULL },
 #ifdef ENABLE_SCI32

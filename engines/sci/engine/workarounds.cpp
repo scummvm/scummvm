@@ -359,6 +359,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_KQ5,            25,    25,  0,              "rm025", "doit",                         nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // inside witch forest, when going to the room where the walking rock is
 	{ GID_KQ5,            55,    55,  0,         "helpScript", "doit",                         nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // when giving the tambourine to the monster in the labyrinth (only happens at one of the locations) - bug #5198
 	{ GID_KQ5,            -1,   755,  0,              "gcWin", "open",                         nullptr,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // when entering control menu in the FM-Towns version
+	{ GID_KQ5,            -1,   764,  0,              "trash", "select",                       nullptr,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // when clicking delete button on save/restore dialog in the FM-Towns version
 	{ GID_KQ6,            -1,    30,  0,               "rats", "changeState",                  nullptr,     0,     5, { WORKAROUND_FAKE,   0 } }, // rats in the catacombs (temps 0-5, all temps!) - bugs #4958, #4998, #5017
 	{ GID_KQ6,           210,   210,  0,              "rm210", "scriptCheck",                  nullptr,     0,     0, { WORKAROUND_FAKE,   1 } }, // using inventory in that room - bug #4953
 	{ GID_KQ6,           500,   500,  0,              "rm500", "init",                         nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // going to island of the beast
@@ -702,6 +703,12 @@ const SciWorkaroundEntry kGetAngle_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index-range,   workaround
 const SciWorkaroundEntry kGetCWD_workarounds[] = {
 	{ GID_LSL6,           -1,     0,  0,               "LSL6", "play",                   nullptr,     0,     0, { WORKAROUND_IGNORE,    0 } }, // Mac version passes uninitialized global (zero) on startup, then immediately overwrites it with kGetSaveDir
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index-range,   workaround
+const SciWorkaroundEntry kGetSaveFiles_workarounds[] = {
+	{ GID_KQ5,            -1,   764,  0,              "trash", "select",                 nullptr,     0,     0, { WORKAROUND_FAKE,      0 } }, // FM-Towns version when clicking delete save button, save-catalog code passes buffers by value instead of address
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
