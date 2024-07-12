@@ -56,8 +56,8 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_sineTable(1024),
 	_cosineTable(1024) {
 
-	if (getPlatform() != Common::kPlatformDOS)
-		error("Only DOS versions of Star Trek: 25th Anniversary are currently supported");
+	if (getPlatform() == Common::kPlatformAmiga)
+		error("Amiga versions of Star Trek: 25th Anniversary are not yet supported");
 	else if (getGameType() == GType_STJR)
 		error("Star Trek: Judgment Rites is not yet supported");
 
@@ -142,6 +142,7 @@ Common::Error StarTrekEngine::run() {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "misc");
 
 	bool isDemo = getFeatures() & GF_DEMO;
+	bool isCd = getFeatures() & GF_CDROM;
 	_resource = new Resource(getPlatform(), isDemo);
 	_gfx = new Graphics(this);
 	_sound = new Sound(this);
@@ -164,7 +165,7 @@ Common::Error StarTrekEngine::run() {
 	}
 
 	if (!loadedSave) {
-		if (!isDemo) {
+		if (isCd || !isDemo) {
 			playIntro();
 			_missionToLoad = "DEMON";
 			_bridgeSequenceToLoad = 0;

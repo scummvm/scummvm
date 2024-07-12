@@ -221,6 +221,21 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		GF_DEMO,
 	},
 
+	{ // ST25 MAC CD demo
+		{
+			"st25",
+			"Demo",
+			AD_ENTRY1s("Star Trek Data", "r:871fa51c7680c0a43df9622128f1569f", 42361),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK | ADGF_CD | ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
+		},
+		GType_ST25,
+		GF_CDROM | GF_DEMO,
+	},
+
+
 	// These are commented until future notice because I don't have complete information
 	// on them (the file size for data.000 / data.001). Will be relying on people to
 	// report the missing data.
