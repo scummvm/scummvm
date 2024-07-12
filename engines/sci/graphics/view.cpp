@@ -872,8 +872,16 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 		_palette->set(&_viewPalette, false);
 
 	Common::Array<uint16> scalingX, scalingY;
-	createScalingTable(scalingX, celWidth, _screen->getWidth(), scaleX);
-	createScalingTable(scalingY, celHeight, _screen->getHeight(), scaleY);
+	const bool mirrorFlag = _loop[CLIP<int16>(loopNo, 0, _loop.size() - 1)].mirrorFlag;
+	createScalingTable(scalingX, celWidth, _screen->getWidth(), scaleX, mirrorFlag);
+	if (mirrorFlag) {
+		// reverse the table when mirroring; we already reversed the bitmap
+		uint scaleTableSize = scalingX.size();
+		for (uint i = 0; i < scaleTableSize / 2; i++) {
+			SWAP(scalingX[i], scalingX[scaleTableSize - i - 1]);
+		}
+	}
+	createScalingTable(scalingY, celHeight, _screen->getHeight(), scaleY, false);
 
 	int16 scaledWidth = MIN(clipRect.width(), (int16)scalingX.size());
 	int16 scaledHeight = MIN(clipRect.height(), (int16)scalingY.size());
@@ -894,7 +902,7 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	}
 }
 
-void GfxView::createScalingTable(Common::Array<uint16> &table, int16 celSize, uint16 maxSize, int16 scale) {
+void GfxView::createScalingTable(Common::Array<uint16> &table, int16 celSize, uint16 maxSize, int16 scale, bool mirrorFlag) {
 	const int16 scaledSize = (celSize * scale) >> 7;
 	const int16 clippedScaledSize = CLIP<int16>(scaledSize, 0, maxSize);
 	const int16 stepCount = scaledSize - 1;
@@ -904,10 +912,10 @@ void GfxView::createScalingTable(Common::Array<uint16> &table, int16 celSize, ui
 		return;
 	}
 
-	// SSCI used the mirror flag when creating the scaling table by swapping start and end.
-	// We don't do this because we reverse the cel's bitmap in memory before drawing.
-	const int16 start = 0;
-	const int16 end = (celSize - 1);
+	// Note that the table produced by this algorithm when mirroring
+	// is slightly different than simply reversing the normal table.
+	const int16 start = mirrorFlag ? (celSize - 1) : 0;
+	const int16 end   = mirrorFlag ? 0 : (celSize - 1);
 
 	int32 acc;
 	int32 inc;

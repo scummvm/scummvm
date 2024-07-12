@@ -86,7 +86,7 @@ private:
 	void unditherBitmap(SciSpan<byte> &bitmap, int16 width, int16 height, byte clearKey);
 	byte getMappedColor(byte color, uint16 scaleSignal, const Palette *palette, int x2, int y2);
 
-	static void createScalingTable(Common::Array<uint16> &table, int16 celSize, uint16 maxSize, int16 scale);
+	static void createScalingTable(Common::Array<uint16> &table, int16 celSize, uint16 maxSize, int16 scale, bool mirrorFlag);
 
 	ResourceManager *_resMan;
 	GfxCoordAdjuster16 *_coordAdjuster;
