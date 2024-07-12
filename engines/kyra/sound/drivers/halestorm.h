@@ -28,14 +28,24 @@ namespace Audio {
 	class Mixer;
 }
 
+namespace Common {
+	class SeekableReadStream;
+}
+
 namespace Kyra {
 
 class HSSoundSystem;
-class SoundMacRes;
+
+class HalestormLoader {
+public:
+	virtual ~HalestormLoader() {}
+
+	virtual Common::SeekableReadStream *getResource(uint16 id, uint32 type) = 0;
+};
 
 class HalestormDriver {
 public:
-	HalestormDriver(SoundMacRes *res, Audio::Mixer *mixer);
+	HalestormDriver(HalestormLoader *res, Audio::Mixer *mixer);
 	~HalestormDriver();
 
 	enum InterpolationMode {

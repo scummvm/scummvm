@@ -19,14 +19,19 @@
  *
  */
 
-#include "kyra/kyra_v1.h"
-#include "kyra/sound/sound_mac_res.h"
 #include "kyra/sound/drivers/halestorm.h"
 
 #include "audio/audiostream.h"
+#include "audio/mixer.h"
 
+#include "common/array.h"
+#include "common/endian.h"
 #include "common/func.h"
+#include "common/mutex.h"
 #include "common/queue.h"
+#include "common/stream.h"
+#include "common/textconsole.h"
+#include "common/util.h"
 
 #define ASC_DEVICE_RATE		22254
 
@@ -249,7 +254,7 @@ private:
 class HSLowLevelDriver {
 	friend class HSMidiParser;
 public:
-	HSLowLevelDriver(SoundMacRes *res, Common::Mutex &mutex);
+	HSLowLevelDriver(HalestormLoader *res, Common::Mutex &mutex);
 	~HSLowLevelDriver();
 
 	HSAudioStream *init(uint32 scummVMOutputrate, bool output16bit);
@@ -286,7 +291,7 @@ private:
 	int cmd_25(va_list&);
 	template<int res> int cmd_void(va_list&);
 
-	SoundMacRes *_res;
+	HalestormLoader *_res;
 	HSAudioStream *_vcstr;
 	Common::Mutex &_mutex;
 
@@ -412,11 +417,11 @@ private:
 
 class HSSoundSystem {
 private:
-	HSSoundSystem(SoundMacRes *res, Audio::Mixer *mixer);
+	HSSoundSystem(HalestormLoader *res, Audio::Mixer *mixer);
 public:
 	~HSSoundSystem();
 
-	static HSSoundSystem *open(SoundMacRes *res, Audio::Mixer *mixer);
+	static HSSoundSystem *open(HalestormLoader *res, Audio::Mixer *mixer);
 	static void close();
 
 	bool init(bool hiQuality, uint8 interpolationMode, uint8 numChanSfx, bool output16bit);
@@ -513,7 +518,7 @@ private:
 
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
-	SoundMacRes *_res;
+	HalestormLoader *_res;
 	HSAudioStream *_voicestr;
 	HSLowLevelDriver *_driver;
 	HSAudioStream::CallbackProc *_vblTask;
@@ -887,7 +892,7 @@ void HSMidiParser::noteOnOff(HSSong &song, TrackState *s, uint8 chan, uint8 note
 		_driver->noteOff(chan, note, s);
 }
 
-HSLowLevelDriver::HSLowLevelDriver(SoundMacRes *res, Common::Mutex &mutex) : _res(res), _vcstr(nullptr), _mutex(mutex), _sampleConvertBuffer(nullptr), _interpolationTable(nullptr),
+HSLowLevelDriver::HSLowLevelDriver(HalestormLoader *res, Common::Mutex &mutex) : _res(res), _vcstr(nullptr), _mutex(mutex), _sampleConvertBuffer(nullptr), _interpolationTable(nullptr),
 _transCycleLenDef(0), _interpolationTable2(nullptr), _amplitudeScaleBuffer(nullptr), _interpolationMode(kNone), _wtable(nullptr), _wtableCount(0), _midi(nullptr),
 _convertBufferNumUnits(0), _chan(nullptr), _samplesPerTick(0), _smpTransLen(0), _transCycleLenInter(0), _updateTypeHq(0), _instruments(nullptr), _pcmDstBufferSize(370),
 _transBuffer(nullptr), _convertUnitSizeLast(0), _numChanSfxLast(0), _wtableCount2(0), _pmDataTrm(0x8000) {
@@ -2035,7 +2040,7 @@ const uint32 HSLowLevelDriver::_periods[156] = {
 HSSoundSystem *HSSoundSystem::_refInstance = nullptr;
 int HSSoundSystem::_refCount = 0;
 
-HSSoundSystem::HSSoundSystem(SoundMacRes *res, Audio::Mixer *mixer) : _res(res), _mixer(mixer), _driver(nullptr), _voicestr(nullptr), _vblTask(nullptr), _sampleSlots(nullptr), _voices(nullptr), _sync(0),
+HSSoundSystem::HSSoundSystem(HalestormLoader *res, Audio::Mixer *mixer) : _res(res), _mixer(mixer), _driver(nullptr), _voicestr(nullptr), _vblTask(nullptr), _sampleSlots(nullptr), _voices(nullptr), _sync(0),
 _numChanSfx(0), _numSampleSlots(0), _currentSong(-1), _ready(false), _isFading(false), _sfxDuration(0), _fadeState(0), _fadeStep(0), _fadeStepTicksCounter(0), _fadeDirection(false),
 _fadeComplete(false), _fadeStepTicks(0), _volumeMusic(Audio::Mixer::kMaxMixerVolume), _volumeSfx(Audio::Mixer::kMaxMixerVolume), _mutex(mixer->mutex()) {
 	DEBUG_BUFFERS_COUNT = 0;
@@ -2051,7 +2056,7 @@ HSSoundSystem::~HSSoundSystem() {
 	releaseSamples();
 }
 
-HSSoundSystem *HSSoundSystem::open(SoundMacRes *res, Audio::Mixer *mixer) {
+HSSoundSystem *HSSoundSystem::open(HalestormLoader *res, Audio::Mixer *mixer) {
 	_refCount++;
 
 	if (_refCount == 1 && _refInstance == nullptr)
@@ -2763,7 +2768,7 @@ bool HSTriangulizer::process(const ShStBuffer &src, uint8 *dst, uint16, uint16) 
 	return true;
 }
 
-HalestormDriver::HalestormDriver(SoundMacRes *res, Audio::Mixer *mixer) : _hs(nullptr) {
+HalestormDriver::HalestormDriver(HalestormLoader *res, Audio::Mixer *mixer) : _hs(nullptr) {
 	_hs = HSSoundSystem::open(res, mixer);
 }
 
