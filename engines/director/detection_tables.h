@@ -2616,6 +2616,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("hodolores", "", "Dolores Claiborne Interactive", "r:7f443f2e63fd497a9ad85b10dc880a91", 1475680, 313),
 	WINGAME1("hodolores", "", "DOLRES.EXE", "65d06b5fef155a2473434571aff5bc29", 1671516, 313),
 
+	WINGAME1("horobroy", "", "ROBROY.EXE",	"d:65d06b5fef155a2473434571aff5bc29", 2047746, 310),
+
 	MACGAME1("hostargate", "", "Stargate Interactive", "r:7f443f2e63fd497a9ad85b10dc880a91", 1394098, 313),
 
 	MACGAME1("hothenet", "", "The Net Interactive Kit", "r:7f443f2e63fd497a9ad85b10dc880a91", 2027129, 313),
@@ -4386,7 +4388,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 							 "KINTRO",	  "b3fc8f8073f442573a371729d242c6c6", 971508, 404),
 
 	MACGAME1("horobroy", "", "Rob Roy",		"r:01be45e7241194dad07938e7059b88e3", 483126, 404),
-	WINGAME1("horobroy", "", "ROBROY.EXE",	"d:65d06b5fef155a2473434571aff5bc29", 2047746, 400),
 	WINGAME1("horobroy", "", "ROBROY.EXE",	"d:6b339ff6cb7a40e4dd794049ef93600d", 29786023, 404),
 
 	MACGAME1("horrortour1", "",	  "ZEDDAS(7M)",		"r:da0da5d543b237051975ad70bec129f4", 483187, 404),
