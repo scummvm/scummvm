@@ -1101,7 +1101,6 @@ int SegManager::instantiateScript(int scriptNum, bool applyScriptPatches) {
 
 	scr->load(scriptNum, _resMan, _scriptPatcher, applyScriptPatches);
 	scr->initializeLocals(this);
-	scr->initializeClasses(this);
 	scr->initializeObjects(this, segmentId, applyScriptPatches);
 #ifdef ENABLE_SCI32
 	g_sci->_guestAdditions->instantiateScriptHook(*scr);

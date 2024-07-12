@@ -176,13 +176,15 @@ public:
 	void initializeLocals(SegManager *segMan);
 
 	/**
-	 * Adds the script's classes to the segment manager's class table
+	 * Adds a script's class to the segment manager's class table
 	 * @param segMan	A reference to the segment manager
+	 * @param species	The class number (index)
+	 * @param position	The position of the class (object) in the script
 	 */
-	void initializeClasses(SegManager *segMan);
+	void initializeClass(SegManager *segMan, uint16 species, uint32 position);
 
 	/**
-	 * Initializes the script's objects (SCI0)
+	 * Initializes the script's objects
 	 * @param segMan	          A reference to the segment manager
 	 * @param segmentId	          The script's segment id
 	 * @param applyScriptPatches  Apply patches for the script, if available
