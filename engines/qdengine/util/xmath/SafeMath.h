@@ -28,11 +28,11 @@
 namespace QDEngine {
 
 inline float cycle(float f, float size) {
-	return fmodFast(fmodFast(f, size) + size, size);
+	return fmod(fmod(f, size) + size, size);
 }
 
 inline float getDist(float v0, float v1, float size) {
-	float d = fmodFast(v0 - v1, size);
+	float d = fmod(v0 - v1, size);
 	float ad = (float)fabs(d);
 	float dd = size - ad;
 	if (ad <= dd) return d;
@@ -67,3 +67,4 @@ inline bool isGreater(float x, float y, float eps = FLT_EPS) {
 } // namespace QDEngine
 
 #endif // QDENGINE_UTIL_XMATH_SAFEMATH_H
+

@@ -43,24 +43,6 @@ inline float invSqrtFast(float x) {
 }
 
 // В 3 раза быстрее за счет проверки аргументов, точная.
-inline float fmodFast(float a, float b) {
-	float result = 0.0f;
-	warning("STUB: fmodFast()");
-#if 0
-	_asm {
-		fld b
-		fld a
-		cycle_fast_fmod:
-		fprem
-		fnstsw ax
-		sahf
-		jp short cycle_fast_fmod
-		fstp st(1)
-		fstp result
-	}
-#endif
-	return result;
-}
 
 inline unsigned int F2DW(float f) {
 	return *((unsigned int *)&f);
@@ -70,3 +52,4 @@ inline float DW2F(unsigned int f) {
 	return *((float *)&f);
 }
 } // namespace QDEngine
+
