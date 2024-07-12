@@ -583,8 +583,7 @@ void Inter_v7::o7_initScreen() {
 	_vm->_global->_mouseMaxY = (_vm->_video->_surfHeight + _vm->_video->_screenDeltaY) - offY - 1;
 	_vm->_global->_mouseMinY = _vm->_video->_screenDeltaY;
 
-	if (videoMode != 0x18)
-	{
+	if (videoMode != 0x18) {
 		_vm->_draw->closeScreen();
 		_vm->_util->clearPalette();
 		memset(_vm->_global->_redPalette, 0, 256);
