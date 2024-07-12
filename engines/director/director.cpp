@@ -119,17 +119,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 		SearchMan.addSubDirectoryMatching(_gameDataDir, directoryGlob, 0, 5);
 	}
 
-	if (debugChannelSet(-1, kDebug32bpp) || (getGameFlags() & GF_TRUECOLOR)) {
-#ifdef USE_RGB_COLOR
-		_colorDepth = 32;
-#else
-		warning("32-bpp color dept is not supported, forcing 8-bit");
-		_colorDepth = 8;
-#endif
-	} else {
-		_colorDepth = 8;	// 256-color
-	}
-
 	switch (getPlatform()) {
 	case Common::kPlatformMacintoshII:
 		_machineType = 4;
@@ -219,10 +208,8 @@ Common::Error DirectorEngine::run() {
 	if (!debugChannelSet(-1, kDebugDesktop))
 		_wmMode |= Graphics::kWMModeFullscreen | Graphics::kWMModeNoDesktop;
 
-#ifdef USE_RGB_COLOR
 	if (debugChannelSet(-1, kDebug32bpp) || (getGameFlags() & GF_TRUECOLOR))
 		_wmMode |= Graphics::kWMModeTrueColor;
-#endif
 
 	if (getGameFlags() & GF_DESKTOP)
 		_wmMode &= ~Graphics::kWMModeNoDesktop;
@@ -242,6 +229,7 @@ Common::Error DirectorEngine::run() {
 	_wm->printWMMode();
 
 	_pixelformat = _wm->_pixelformat;
+	_colorDepth = _pixelformat.bytesPerPixel * 8;
 
 	debug("Director pixelformat is: %s", _pixelformat.toString().c_str());
 
