@@ -294,7 +294,7 @@ void GfxScreen::copyToScreen() {
 }
 
 void GfxScreen::copyVideoFrameToScreen(const byte *buffer, int pitch, const Common::Rect &rect) {
-	_gfxDrv->copyRectToScreen(buffer, rect.left, rect.top, pitch, rect.left, rect.top, rect.width(), rect.height(), _paletteModsEnabled ? _paletteMods : nullptr, _paletteMapScreen);
+	_gfxDrv->copyRectToScreen(buffer, 0, 0, pitch, rect.left, rect.top, rect.width(), rect.height(), _paletteModsEnabled ? _paletteMods : nullptr, _paletteMapScreen);
 }
 
 void GfxScreen::kernelSyncWithFramebuffer() {

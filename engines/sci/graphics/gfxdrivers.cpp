@@ -171,7 +171,7 @@ void updateBitmapBuffer(byte *dst, int dstPitch, const byte *src, int srcPitch, 
 void GfxDefaultDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) {
 	GFXDRV_ASSERT_READY;
 
-	src += (srcY * pitch + srcX);
+	src += (srcY * pitch + srcX * _srcPixelSize);
 	if (src != _currentBitmap)
 		updateBitmapBuffer(_currentBitmap, _screenW * _srcPixelSize, src, pitch, destX * _srcPixelSize, destY, w * _srcPixelSize, h);
 
