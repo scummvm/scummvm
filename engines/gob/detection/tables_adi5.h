@@ -36,7 +36,7 @@
 // -- French: Adi 5 --
 
 {
-	{ // Supplied by BJNFNE in commit: 46b44bf
+	{ // Supplied by BJNFNE
 
 		"adi5",
 		_s("Missing game code"), // Adi 5 5.01 (Engine: DEV7 version unknown)
@@ -50,7 +50,7 @@
 	0,0,0
 },
 {
-	{ // Supplied by BJNFNE in commit: 09072bf
+	{ // Supplied by BJNFNE
 
 		"adi5",
 		_s("Missing game code"), // Adi 5 5.04 (Engine: DEV7 version 1.1.0.0)
@@ -81,7 +81,7 @@
 	0,0,0
 },
 {
-	{ // Supplied by Indy4-Fan in commit: 65ff88a
+	{ // Supplied by Indy4-Fan
 
 		"adi5",
 		_s("Missing game code"), // Addy 5 5.03 (Engine: DEV7 version 1.1.0.0)
@@ -95,7 +95,7 @@
 	0,0,0
 },
 {
-	{ // Supplied by BJNFNE in commit: bfe90c6
+	{ // Supplied by BJNFNE
 
 		"adi5",
 		_s("Missing game code"), // Addy 5 5.04 (Engine: DEV7 version 1.1.0.0)
@@ -109,7 +109,7 @@
 	0,0,0
 },
 {
-	{ // Supplied by BJNFNE in commit: 7134daa
+	{ // Supplied by BJNFNE
 
 		"adi5",
 		_s("Missing game code"), // Addy 5 Mathe Demo (Engine: DEV7 version unknown)

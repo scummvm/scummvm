@@ -47,7 +47,7 @@
 },
 
 {
-	{ // Supplied by sdelamarre in commit: a0c30a9
+	{ // Supplied by sdelamarre
 		"adibou1",
 		"ADIBOU 1 Environnement 4-7 ans",
 		AD_ENTRY1s("intro.stk", "904a93f46687617bb34e672020fc17a4", 248724),
@@ -61,7 +61,7 @@
 },
 
 {
-	{ // Supplied by sdelamarre in commit: a0c30a9
+	{ // Supplied by sdelamarre
 		"adibou1",
 		"ADIBOU 1 Environnement 4-7 ans",
 		AD_ENTRY1s("intro.stk", "228edf921ebcd9f1c6d566856f264ea4", 2647968),
@@ -91,7 +91,7 @@
 	0, 0, 0
 },
 {
-	{ // 1994 CD version - Supplied by Indy4-Fan in BJNFNE's commit: 381daf2
+	{ // 1994 CD version - Supplied by Indy4-Fan
 		"adibou1",
 		"ADI Jr. 6-7 Jahre (CD)",
 		AD_ENTRY2s("intro.stk", "4d4c23da4cd7e080cb1769b49ace1805", 4731020,
@@ -139,7 +139,7 @@
 // -- Amiga Floppy --
 
 {
-	{ // Supplied by eientei95 in commit: e6cbd14
+	{ // Supplied by eientei95
 		"adibou1",
 		"Adi Jnr",
 		AD_ENTRY1s("intro.stk", "71e7db034890885ac96dd1be43a21c38", 556834),

@@ -36,7 +36,7 @@
 // -- French: Adibou présente Dessin --
 
 {
-	{ // Supplied by BJNFNE in commit: 0b809f4
+	{ // Supplied by BJNFNE
 		"adiboudessin",
 		_s("Missing game code"), // Adibou présente Dessin 1.00 (Engine: DEV7 version 1.1.0.0)
 		AD_ENTRY1s("adibou.stk", "14e3f8e9c237d4236d93e08c60b784bc", 217172),
