@@ -138,6 +138,9 @@ StarTrekEngine::~StarTrekEngine() {
 }
 
 Common::Error StarTrekEngine::run() {
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "misc");
+
 	bool isDemo = getFeatures() & GF_DEMO;
 	_resource = new Resource(getPlatform(), isDemo);
 	_gfx = new Graphics(this);
