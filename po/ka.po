@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-12 15:43+0000\n"
+"POT-Creation-Date: 2024-07-12 21:53+0000\n"
 "PO-Revision-Date: 2024-06-28 08:08+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -2921,6 +2921,10 @@ msgstr "PC-9801 (16 ფერი)"
 #: common/rendermode.cpp:52
 msgid "Macintosh b/w"
 msgstr "Macintosh შ/თ"
+
+#: common/rendermode.cpp:56
+msgid "VGA Grey Scale"
+msgstr ""
 
 #: common/rendermode.cpp:90
 msgctxt "lowres"

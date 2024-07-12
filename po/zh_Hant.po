@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-12 15:43+0000\n"
+"POT-Creation-Date: 2024-07-12 21:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -2909,6 +2909,10 @@ msgstr ""
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:52
 msgid "Macintosh b/w"
+msgstr ""
+
+#: common/rendermode.cpp:56
+msgid "VGA Grey Scale"
 msgstr ""
 
 #: common/rendermode.cpp:90

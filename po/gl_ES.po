@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-12 15:43+0000\n"
+"POT-Creation-Date: 2024-07-12 21:53+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -3088,6 +3088,10 @@ msgstr "PC-9801 (16 cores)"
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:52
 msgid "Macintosh b/w"
+msgstr ""
+
+#: common/rendermode.cpp:56
+msgid "VGA Grey Scale"
 msgstr ""
 
 #: common/rendermode.cpp:90
