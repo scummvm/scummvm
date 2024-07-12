@@ -26,6 +26,8 @@
 #include "common/str.h"
 #include "common/mutex.h"
 
+#include "kyra/sound/drivers/halestorm.h"
+
 namespace Common {
 	class Archive;
 	class MacResManager;
@@ -36,13 +38,13 @@ namespace Kyra {
 
 class KyraEngine_v1;
 
-class SoundMacRes {
+class SoundMacRes final : public HalestormLoader {
 public:
 	SoundMacRes(KyraEngine_v1 *vm);
-	~SoundMacRes();
+	~SoundMacRes() override;
 	bool init();
 	bool setQuality(bool hi);
-	Common::SeekableReadStream *getResource(uint16 id, uint32 type);
+	Common::SeekableReadStream *getResource(uint16 id, uint32 type) override;
 
 private:
 	Common::Path _kyraMacExe;
