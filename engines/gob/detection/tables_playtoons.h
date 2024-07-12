@@ -113,7 +113,7 @@
 },
 {
 	{
-		"playtoonsdemo",
+		"playtoons1",
 		"Non-Interactive Demo",
 		AD_ENTRY2s("e.scn",			"8a0db733c3f77be86e74e8242e5caa61", 124,
 				   "demarchg.vmd",	"d14a95da7d8792faf5503f649ffcbc12", 5619415),
@@ -127,7 +127,7 @@
 },
 {
 	{
-		"playtoonsdemo",
+		"playtoons1",
 		"Non-Interactive Demo",
 		AD_ENTRY6s("i.scn",	"8b3294474d39970463663edd22341730", 285,
 				   "demarita.vmd", "84c8672b91c7312462603446e224bfec", 5742533,
@@ -145,7 +145,7 @@
 },
 {
 	{
-		"playtoonsdemo",
+		"playtoons1",
 		"Non-Interactive Demo",
 		AD_ENTRY5s("s.scn",	"1f527010626b5490761f16ba7a6f639a", 251,
 				   "demaresp.vmd", "3f860f944056842b35a5fd05416f208e", 5720619,
