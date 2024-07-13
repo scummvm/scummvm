@@ -35,18 +35,29 @@ void Darkseed::Inventory::reset() {
 	_viewOffset = 0;
 	_inventory[0] = 8;
 	_inventoryLength = 1;
+	update();
 }
 
 void Darkseed::Inventory::addItem(uint8 item) {
 	_inventory[_inventoryLength] = item;
 	_inventoryLength++;
 	// TODO playsound(6, 5, -1);
+	update();
 }
 
-void Darkseed::Inventory::draw() {
-	if (g_engine->_cursor.getY() > 40 || g_engine->isPlayingAnimation_maybe || (g_engine->_objectVar[141] >= 1 && g_engine->_objectVar[141] <= 3)) {
-		return;
+void Darkseed::Inventory::removeItem(uint8 item) {
+	for (int i = 0; i < _inventoryLength; i++) {
+		if (_inventory[i] == item) {
+			for (int j = i; j < _inventoryLength - 1; j++) {
+				_inventory[j] = _inventory[j+1];
+			}
+			_inventoryLength--;
+			break;
+		}
 	}
+}
+
+void Darkseed::Inventory::update() {
 	if (_viewOffset != 0) {
 		if (_inventoryLength <= _viewOffset + MAX_ICONS) {
 			_viewOffset = _inventoryLength - MAX_ICONS;
@@ -72,9 +83,15 @@ void Darkseed::Inventory::draw() {
 			_iconList[1] = 42;
 		}
 	}
-	int numIcons = MIN(_inventoryLength + 1, 9);
+	_numIcons = MIN(_inventoryLength + 1, 9);
+}
 
-	for(int i = 0; i < numIcons; i++) {
+void Darkseed::Inventory::draw() {
+	if (g_engine->_cursor.getY() > 40 || g_engine->isPlayingAnimation_maybe || (g_engine->_objectVar[141] >= 1 && g_engine->_objectVar[141] <= 3)) {
+		return;
+	}
+
+	for(int i = 0; i < _numIcons; i++) {
 		int icon = _iconList[i];
 		if (icon != 42 && icon != 43) {
 			icon += 42;
@@ -83,4 +100,49 @@ void Darkseed::Inventory::draw() {
 		const Sprite &animSprite = g_engine->_baseSprites.getSpriteAt(icon);
 		g_engine->_sprites.addSpriteToDrawList(140 + i * 37, 20 - animSprite.height / 2, &animSprite, 255, animSprite.width, animSprite.height, false);
 	}
+}
+
+void Darkseed::Inventory::handleClick() {
+	Common::Point clickPos = g_engine->_cursor.getPosition();
+	if (clickPos.x < 140 || clickPos.x > 140 + _numIcons * 37) {
+		return;
+	}
+	int iconIdx = (clickPos.x - 140) / 37;
+	int icon = _iconList[iconIdx];
+	if (icon == 42) {
+		leftArrowClicked();
+	} else if (icon == 43) {
+		rightArrowClicked();
+	} else if (icon == 4) {
+		// TODO handle in-game menu
+	} else if (icon == 21) {
+		g_engine->_console->printTosText(935);
+		g_engine->_objectVar[21] = 1;
+		g_engine->_room->_collisionType = 1;
+		g_engine->_room->removeObjectFromRoom(21);
+		removeItem(21);
+	} else if ((g_engine->_actionMode == 25 && icon == 20) ||
+			   (g_engine->_actionMode == 20 && icon == 25)
+			   ) {
+
+	} else if (g_engine->_actionMode == HandAction && icon == 35) {
+		g_engine->_objectVar[35] = 0x7080;
+		g_engine->_console->printTosText(669);
+	} else if (g_engine->_actionMode == LookAction) {
+		g_engine->lookCode(icon);
+	} else {
+
+	}
+}
+
+void Darkseed::Inventory::leftArrowClicked() {
+	if (_viewOffset > 0) {
+		_viewOffset--;
+		update();
+	}
+}
+
+void Darkseed::Inventory::rightArrowClicked() {
+	_viewOffset++;
+	update();
 }

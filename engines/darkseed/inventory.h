@@ -31,12 +31,21 @@ private:
 	int _inventoryLength = 0;
 	Common::Array<uint8> _iconList;
 	int _viewOffset = 0;
+	int _numIcons = 0;
 
 public:
 	Inventory();
 	void reset();
 	void addItem(uint8 item);
+	void removeItem(uint8 item);
 	void draw();
+	void handleClick();
+
+private:
+	void update();
+	void leftArrowClicked();
+	void rightArrowClicked();
+
 };
 
 } // namespace Darkseed
