@@ -62,6 +62,7 @@ private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	Pic _frame;
+	Pic *_fullscreenPic = nullptr;
 
 protected:
 	// Engine APIs
@@ -180,6 +181,7 @@ public:
 	void updateDisplay();
 	void setupOtherNspAnimation(int nspAnimIdx, int animId);
 	void debugTeleportToRoom(int newRoomNumber, int entranceNumber);
+	void showFullscreenPic(const Common::String &filename);
 
 private:
 	void updateAnimation();
@@ -197,6 +199,9 @@ private:
 	void useCode(int objNum);
 	void wongame();
 	void getPackage(int state);
+	void printTime();
+	void keeperanim();
+	void sargoanim();
 };
 
 extern DarkseedEngine *g_engine;

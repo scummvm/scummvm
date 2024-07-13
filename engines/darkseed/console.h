@@ -41,6 +41,8 @@ public:
 	Console(TosText *tostext);
 
 	void printTosText(int tosIndex);
+	void addTextLine(const Common::String &text);
+	void addToCurrentLine(const Common::String &text);
 
 	void draw();
 

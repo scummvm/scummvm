@@ -31,6 +31,7 @@ private:
 public:
 	Inventory();
 	void reset();
+	void addItem(uint8 item);
 };
 
 } // namespace Darkseed

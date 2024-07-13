@@ -30,3 +30,8 @@ void Darkseed::Inventory::reset() {
 	_inventory.clear();
 	_inventory.push_back(8);
 }
+
+void Darkseed::Inventory::addItem(uint8 item) {
+	_inventory.push_back(item);
+	// TODO playsound(6, 5, -1);
+}
