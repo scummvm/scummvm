@@ -3064,10 +3064,21 @@ bool TuckerEngine::testLocationMask(int x, int y) {
 	if (_locationMaskType > 0 || _locationMaskIgnore) {
 		return true;
 	}
-	if (_location == kLocationSubwayTunnel || _location == kLocationKitchen) {
+
+	if (_location == kLocationSubwayTunnel
+		|| _location == kLocationKitchen
+		|| (_location == kLocationTopCorridor && _nextLocation == kLocationBottomCorridor)
+		) {
 		y -= 3;
 	}
 	const int offset = y * 640 + x;
+	if (offset >= (640 * 140)) {
+		// NOTE This causes multiple warning printouts in the console in problematic locations such as kLocationTopCorridor.
+		// TODO If all problematic locations are accounted for and returning true is the proper thing to do for all,
+		// we could keep only the "return true" statement here and remove the warning (or change it to a high level debug).
+		warning("testLocationMask: offset (%d, %d) is out of bounds for location: %d, nextLocation: %d", x, y, _location, _nextLocation);
+		return true;
+	}
 	return (_locationBackgroundMaskBuf[offset] > 0);
 }
 
