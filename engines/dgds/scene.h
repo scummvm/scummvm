@@ -302,9 +302,6 @@ public:
 	bool runPreTickOps() { return runOps(_preTickOps); }
 	bool runPostTickOps() { return runOps(_postTickOps); }
 
-	void mouseMoved(const Common::Point pt);
-	void mouseClicked(const Common::Point pt);
-
 	bool runOps(const Common::Array<SceneOp> &ops, int16 addMinutes = 0);
 	virtual Common::Error syncState(Common::Serializer &s) = 0;
 	virtual void enableTrigger(uint16 numm, bool enable = true) {}
@@ -330,9 +327,6 @@ protected:
 
 	void setItemAttrOp(const Common::Array<uint16> &args);
 	void setDragItemOp(const Common::Array<uint16> &args);
-
-	void drawDragonCountdown1();
-	void drawDragonCountdown2();
 
 	bool runSceneOp(const SceneOp &op);
 	bool runDragonOp(const SceneOp &op);
