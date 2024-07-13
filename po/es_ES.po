@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-12 21:53+0000\n"
-"PO-Revision-Date: 2024-07-12 19:24+0000\n"
+"PO-Revision-Date: 2024-07-13 09:33+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -3176,7 +3176,7 @@ msgstr "B/N Macintosh"
 
 #: common/rendermode.cpp:56
 msgid "VGA Grey Scale"
-msgstr ""
+msgstr "Escala de grises en VGA"
 
 #: common/rendermode.cpp:90
 msgctxt "lowres"
