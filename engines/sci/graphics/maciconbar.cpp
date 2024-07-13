@@ -23,6 +23,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/state.h"
+#include "sci/graphics/gfxdrivers.h"
 #include "sci/graphics/maciconbar.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/screen.h"
@@ -199,15 +200,15 @@ void GfxMacIconBar::drawImage(Graphics::Surface *surface, const Common::Rect &re
 			upscaleSurface.init(dstRect.width(), dstRect.height(), dstRect.width(), _upscaleBuffer->getUnsafeDataAt(0, upscaleSize), surface->format);
 			drawDisabledPattern(upscaleSurface, dstRect);
 		}
-		g_system->copyRectToScreen(_upscaleBuffer->getUnsafeDataAt(0, upscaleSize), dstRect.width(), dstRect.left, dstRect.top, dstRect.width(), dstRect.height());
+		_screen->gfxDriver()->copyRectToScreen(_upscaleBuffer->getUnsafeDataAt(0, upscaleSize), 0, 0, dstRect.width(), dstRect.left, dstRect.top, dstRect.width(), dstRect.height(), nullptr, nullptr);
 	} else {
 		if (!enable) {
 			Graphics::Surface disableSurface;
 			disableSurface.copyFrom(*surface);
 			drawDisabledPattern(disableSurface, rect);
-			g_system->copyRectToScreen(disableSurface.getPixels(), disableSurface.pitch, rect.left, rect.top, rect.width(), rect.height());
+			_screen->gfxDriver()->copyRectToScreen((const byte*)disableSurface.getPixels(), 0, 0, disableSurface.pitch, rect.left, rect.top, rect.width(), rect.height(), nullptr, nullptr);
 		} else {
-			g_system->copyRectToScreen(surface->getPixels(), surface->pitch, rect.left, rect.top, rect.width(), rect.height());
+			_screen->gfxDriver()->copyRectToScreen((const byte*)surface->getPixels(), 0, 0, surface->pitch, rect.left, rect.top, rect.width(), rect.height(), nullptr, nullptr);
 		}
 	}
 }
