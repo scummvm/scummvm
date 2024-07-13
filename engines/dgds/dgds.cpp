@@ -251,10 +251,27 @@ void DgdsEngine::checkDrawInventoryButton() {
 			_scene->getHotAreas().size() < 1 || _scene->getHotAreas().front()._num != 0)
 		return;
 
-	int x = SCREEN_WIDTH - _icons->width(2) - 5;
-	int y = SCREEN_HEIGHT - _icons->height(2) - 5;
 	static const Common::Rect drawWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	_icons->drawBitmap(2, x, y, drawWin, _compositionBuffer);
+
+	int16 invButtonIcon = 2;
+	if (getGameId() == GID_HOC) {
+		static const byte HOC_INV_ICONS[] = { 0, 2, 18, 19 };
+		invButtonIcon = HOC_INV_ICONS[_gdsScene->getGlobal(0x33)];
+
+		// draw the swap char button if needed
+		int16 otherChar = _gdsScene->getGlobal(0x34);
+		if (otherChar) {
+			// FIXME: This list repeated in scene too
+			static const byte HOC_CHAR_SWAP_ICONS[] = { 0, 20, 21, 22 };
+			int16 swapCharIcon = HOC_CHAR_SWAP_ICONS[otherChar];
+			int sy = SCREEN_HEIGHT - _icons->height(swapCharIcon) - 5;
+			_icons->drawBitmap(swapCharIcon, 5, sy, drawWin, _compositionBuffer);
+		}
+	}
+
+	int x = SCREEN_WIDTH - _icons->width(invButtonIcon) - 5;
+	int y = SCREEN_HEIGHT - _icons->height(invButtonIcon) - 5;
+	_icons->drawBitmap(invButtonIcon, x, y, drawWin, _compositionBuffer);
 }
 
 void DgdsEngine::init(bool restarting) {

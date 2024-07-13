@@ -1608,6 +1608,17 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 	if (area && area->_num == 0) {
 		debug("Mouseup on inventory.");
 		engine->getInventory()->open();
+	} else if (area && area->_num == 0xffff) {
+		debug("Mouseup on swap characters.");
+		GDSScene *gds = engine->getGDSScene();
+		bool haveInvBtn = _hotAreaList.size() && _hotAreaList.front()._num == 0;
+		if (haveInvBtn)
+			removeInvButtonFromHotAreaList();
+		int16 prevChar = gds->getGlobal(0x33);
+		gds->setGlobal(0x33, gds->getGlobal(0x34));
+		gds->setGlobal(0x34, prevChar);
+		if (haveInvBtn)
+			addInvButtonToHotAreaList();
 	} else {
 		debug(" --> exec %d click ops for area %d", area->onLClickOps.size(), area->_num);
 		int16 addmins = engine->getGameGlobals()->getGameMinsToAddOnLClick();
@@ -1657,6 +1668,11 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 		if (area._num == 0) {
 			debug("Item %d dropped on inventory.", dragItem->_num);
 			dragItem->_inSceneNum = 2;
+			if (engine->getGameId() == GID_HOC) {
+				// FIXME: This is copied in inventory too
+				static const byte HOC_CHARACTER_QUALS[] = {0, 9, 7, 8};
+				dragItem->_quality = HOC_CHARACTER_QUALS[engine->getGDSScene()->getGlobal(0x33)];
+			}
 		} else {
 			debug("Dragged item %d onto area %d @ (%d, %d)", dragItem->_num, area._num, pt.x, pt.y);
 			for (const auto &i : engine->getScene()->getObjInteractions1()) {
@@ -1752,21 +1768,49 @@ void SDSScene::addInvButtonToHotAreaList() {
 	if (_hotAreaList.size() && _hotAreaList.front()._num == 0)
 		return;
 
+	int16 invButtonIcon = 2;
+	if (engine->getGameId() == GID_HOC) {
+		static const byte HOC_INV_ICONS[] = { 0, 2, 18, 19 };
+		invButtonIcon = HOC_INV_ICONS[engine->getGDSScene()->getGlobal(0x33)];
+	}
+
 	HotArea area;
 	area._num = 0;
 	area._cursorNum = 0;
-	area._rect.width = icons->width(2);
-	area._rect.height = icons->height(2);
+	area._rect.width = icons->width(invButtonIcon);
+	area._rect.height = icons->height(invButtonIcon);
 	area._rect.x = SCREEN_WIDTH - area._rect.width;
 	area._rect.y = SCREEN_HEIGHT - area._rect.height;
 	area._unk1 = 0;
 	area._unk2 = 0;
+
+	// Add swap character button for HoC
+	if (engine->getGameId() == GID_HOC && engine->getGDSScene()->getGlobal(0x34) != 0) {
+		static const byte HOC_CHAR_SWAP_ICONS[] = { 0, 20, 21, 22 };
+		int16 charNum = engine->getGDSScene()->getGlobal(0x34);
+		assert(charNum < ARRAYSIZE(HOC_CHAR_SWAP_ICONS));
+		int16 iconNum = HOC_CHAR_SWAP_ICONS[charNum];
+		HotArea area2;
+		area2._num = 0xffff;
+		area2._cursorNum = 0;
+		area2._rect.width = icons->width(iconNum);
+		area2._rect.height = icons->height(iconNum);
+		area2._rect.x = 5;
+		area2._rect.y = SCREEN_HEIGHT - area2._rect.height - 5;
+		area2._unk1 = 0;
+		area2._unk2 = 0;
+
+		_hotAreaList.push_front(area2);
+	}
 
 	_hotAreaList.push_front(area);
 }
 
 void SDSScene::removeInvButtonFromHotAreaList() {
 	if (_hotAreaList.size() && _hotAreaList.front()._num == 0)
+		_hotAreaList.pop_front();
+	// Also remove character swap button in HoC
+	if (_hotAreaList.size() && _hotAreaList.front()._num == 0xffff)
 		_hotAreaList.pop_front();
 }
 
@@ -1778,12 +1822,18 @@ Common::Error SDSScene::syncState(Common::Serializer &s) {
 	// The dialogs and triggers are stateful, everthing else is stateless.
 	uint16 ndlgs = _dialogs.size();
 	s.syncAsUint16LE(ndlgs);
-	if (ndlgs != _dialogs.size()) {
+	if (_dialogs.size() && ndlgs != _dialogs.size()) {
 		error("Dialog count in save doesn't match count in game (%d vs %d)",
 				ndlgs, _dialogs.size());
-	}
-	for (auto &dlg : _dialogs) {
-		dlg.syncState(s);
+	} else if (_dialogs.size()) {
+		for (auto &dlg : _dialogs) {
+			dlg.syncState(s);
+		}
+	} else if (ndlgs && s.isLoading()) {
+		warning("Skipping dialog data in save");
+		Dialog dlg;
+		for (uint i = 0; i < ndlgs; i++)
+			dlg.syncState(s);
 	}
 
 	uint16 ntrig = _triggers.size();
