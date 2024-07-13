@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-13 11:03+0000\n"
-"PO-Revision-Date: 2024-07-05 11:50+0000\n"
+"PO-Revision-Date: 2024-07-13 17:43+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -3191,7 +3191,7 @@ msgstr "Macintosh n/b"
 
 #: common/rendermode.cpp:56
 msgid "VGA Grey Scale"
-msgstr ""
+msgstr "VGA Nuances de gris"
 
 #: common/rendermode.cpp:90
 msgctxt "lowres"
@@ -7903,26 +7903,20 @@ msgid "GroovieV2 support is not compiled in"
 msgstr "La prise en charge de GroovieV2 n'a pas été activée dans cette version"
 
 #: engines/groovie/metaengine.cpp:201
-#, fuzzy
-#| msgid "Available engines:"
 msgid "Groovie engine"
-msgstr "Moteurs disponibles :"
+msgstr "Moteur Groovie"
 
 #: engines/groovie/metaengine.cpp:205
-#, fuzzy
-#| msgid "Left Click"
 msgid "Left click"
-msgstr "Clic Gauche"
+msgstr "Clic gauche"
 
 #: engines/groovie/metaengine.cpp:211
 msgid "Right click"
 msgstr "Clic droit"
 
 #: engines/groovie/metaengine.cpp:217
-#, fuzzy
-#| msgid "Skip the Hall of Records storyboard scenes"
 msgid "Skip or fast forward scene"
-msgstr "Passer les scènes storyboard de la Salle des Archives"
+msgstr "Passer ou avance rapide d'une scène"
 
 #: engines/groovie/saveload.cpp:52
 msgid "Reserved"
