@@ -29,15 +29,22 @@
 
 namespace Freescape {
 
+extern FCLInstructionVector *duplicateCondition(FCLInstructionVector *condition);
+
 class Entrance : public Object {
 public:
 	Entrance(
 		uint16 objectID_,
 		const Math::Vector3d &origin_,
-		const Math::Vector3d &rotation_) {
+		const Math::Vector3d &rotation_,
+		FCLInstructionVector conditionInstructions_,
+		Common::String conditionSource_) {
 		_objectID = objectID_;
 		_origin = origin_;
 		_rotation = rotation_;
+
+		_condition = conditionInstructions_;
+		_conditionSource = conditionSource_;
 		_flags = 0;
 	}
 	virtual ~Entrance() {}
@@ -45,10 +52,18 @@ public:
 	bool isDrawable() override { return false; }
 	bool isPlanar() override { return true; }
 	void scale(int factor) override { _origin = _origin / factor; };
-	Object *duplicate() override { return (new Entrance(_objectID, _origin, _rotation)); };
+	Object *duplicate() override {
+		FCLInstructionVector *conditionCopy = nullptr;
+		conditionCopy = duplicateCondition(&_condition);
+		assert(conditionCopy);
+		return (new Entrance(_objectID, _origin, _rotation, *conditionCopy, _conditionSource));
+	};
 
 	ObjectType getType() override { return ObjectType::kEntranceType; };
 	Math::Vector3d getRotation() { return _rotation; }
+
+	Common::String _conditionSource;
+	FCLInstructionVector _condition;
 
 	void draw(Freescape::Renderer *gfx, float offset = 0.0) override { error("cannot render Entrance"); };
 };

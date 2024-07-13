@@ -103,6 +103,9 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	swapPalette(areaID);
 	resetInput();
+	Entrance *entrance = (Entrance *)_currentArea->entranceWithID(entranceID);
+	assert(entrance);
+	executeEntranceConditions(entrance);
 }
 
 void CastleEngine::initGameState() {

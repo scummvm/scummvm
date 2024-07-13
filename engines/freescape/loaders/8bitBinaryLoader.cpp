@@ -424,14 +424,15 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 	} break;
 	case kEntranceType: {
 		debugC(1, kFreescapeDebugParser, "rotation: %f %f %f", v.x(), v.y(), v.z());
+		FCLInstructionVector instructions;
+		Common::String conditionSource;
+
 		if (byteSizeOfObject > 0) {
 			if (!isCastle()) {
 				debugC(1, kFreescapeDebugParser, "Warning: extra %d bytes in entrance", byteSizeOfObject);
 				while (byteSizeOfObject--)
 					debugC(1, kFreescapeDebugParser, "b: %x", readField(file, 8));
 			} else {
-				FCLInstructionVector instructions;
-				Common::String conditionSource;
 				Common::Array<uint16> conditionArray = readArray(file, byteSizeOfObject);
 				conditionSource = detokenise8bitCondition(conditionArray, instructions, isAmiga() || isAtariST());
 				debugC(1, kFreescapeDebugParser, "Entrance condition:");
@@ -445,7 +446,9 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		return new Entrance(
 			objectID,
 			32 * position,
-			5 * v); // rotation
+			5 * v, // rotation
+			instructions,
+			conditionSource);
 	} break;
 
 	case kSensorType: {

@@ -337,6 +337,7 @@ public:
 	Math::Vector3d _objExecutingCodeSize;
 	virtual void executeMovementConditions();
 	bool executeObjectConditions(GeometricObject *obj, bool shot, bool collided, bool activated);
+	void executeEntranceConditions(Entrance *entrance);
 	void executeLocalGlobalConditions(bool shot, bool collided, bool timer);
 	void executeCode(FCLInstructionVector &code, bool shot, bool collided, bool timer, bool activated);
 
