@@ -1250,6 +1250,11 @@ void DarkseedEngine::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 	case 58:
 //		PlaySound(48,5,-1);
 		break;
+	case 63:
+		_player->_position.x = 249;
+		_player->_position.y = 92;
+		_phoneStatus = 1;
+		break;
 	default:
 		break;
 	}
@@ -1317,6 +1322,58 @@ void DarkseedEngine::updateAnimation() {
 			if (!isAnimFinished_maybe) {
 				_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]];
 			}
+		}
+		break;
+	case 8: //phone call
+	case 63:
+		if (otherNspAnimationType_maybe == 8) {
+			advanceAnimationFrame(0);
+		} else {
+			advanceAnimationFrame(2);
+			if (_phoneStatus == 1) {
+				_phoneStatus = 2;
+			}
+		}
+		if (!isAnimFinished_maybe) {
+			if (otherNspAnimationType_maybe == 8) {
+				_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]];
+			} else {
+				_player->_frameIdx = _player->_animations.getAnimAt(2).frameNo[_player->_animations.getAnimAt(2).frameNo[animIndexTbl[2]]];
+			}
+		} else {
+			if (otherNspAnimationType_maybe == 63) {
+				_console->printTosText(44);
+				setupOtherNspAnimation(1, 64);
+			} else {
+				_objectVar.setObjectRunningCode(47, 0);
+				if (_currentDay == 1) {
+					_console->printTosText(904);
+					_objectVar[47] = 1;
+					_objectVar[46] = 1;
+				}
+				else {
+					_objectVar[51] = 2;
+					_objectVar[47] = 1;
+					_console->printTosText(922);
+				}
+				// TODO
+//				WaitForSpeech();
+				setupOtherNspAnimation(1, 9);
+			}
+		}
+		break;
+	case 9: // hang up phone
+	case 64:
+		advanceAnimationFrame(1);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(1).frameNo[_player->_animations.getAnimAt(1).frameNo[animIndexTbl[1]]];
+		} else {
+			_player->_position.x = 300;
+			_player->_position.y = 183;
+			_player->_walkTarget.x = 300;
+			_player->_walkTarget.y = 183;
+			_player->_direction = 3;
+			_player->updateSprite();
 		}
 		break;
 	case 16:
@@ -1527,6 +1584,58 @@ void DarkseedEngine::handleObjCollision(int objNum) {
 void DarkseedEngine::useCode(int objNum) {
 	debug("useCode: objNum = %d", objNum);
 
+	if (objNum == 141) {
+		_console->addTextLine("You touch Delbert...");
+		return;
+	}
+	if (objNum == 189) {
+		_console->addTextLine("You touch the cold iron bars.");
+		return;
+	}
+	if (objNum == 42) {
+		switch(_objectVar[42]) {
+		case 0:
+			_console->printTosText(653);
+			break;
+		case 1:
+			_console->printTosText(655);
+			_objectVar[42] = 0;
+			break;
+		case 2:
+			_console->printTosText(660);
+			_inventory.addItem(6);
+			_objectVar[42] = 3;
+			break;
+		case 3:
+			_console->printTosText(655);
+			_objectVar[42] = 4;
+			break;
+		case 4:
+			_console->printTosText(653);
+		}
+		return;
+	}
+	if (objNum == 9) {
+		_room->_collisionType = 0;
+		_room->removeObjectFromRoom(9);
+		_objectVar.setMoveObjectRoom(9, 100);
+		showFullscreenPic(g_engine->isCdVersion() ? "paper_c.pic" : "paper-c.pic");
+		return;
+	}
+	if (objNum == 35) {
+		_objectVar[35] = 3600;
+	}
+	if (objNum == 47) {
+		_player->loadAnimations("phone.nsp");
+		if (_objectVar.getObjectRunningCode(47) == 0) {
+			setupOtherNspAnimation(2,63);
+		}
+		else {
+			setupOtherNspAnimation(0,8);
+		}
+		_player->_direction = 3;
+	}
+	// TODO more code here.
 	if (objNum == 139) {
 		_player->loadAnimations("ltladder.nsp");
 		setupOtherNspAnimation(0,10);
