@@ -121,6 +121,7 @@ public:
 	uint8 systemTimerCounter = 0;
 
 	bool _debugShowWalkPath = false;
+	int _phoneStatus = 0;
 public:
 	DarkseedEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~DarkseedEngine() override;
