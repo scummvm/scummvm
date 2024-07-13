@@ -184,7 +184,7 @@ void Inventory::drawItems(Graphics::ManagedSurface &surf) {
 	int offset = _itemOffset;
 	Common::Array<GameItem> &items = engine->getGDSScene()->getGameItems();
 	for (auto & item: items) {
-		if (item._inSceneNum != 2) //  || !(item._flags & 4))
+		if (!isItemInInventory(item))
 			continue;
 
 		if (offset) {
@@ -257,7 +257,7 @@ GameItem *Inventory::itemUnderMouse(const Common::Point &pt) {
 		int itemnum = numacross * itemrow + itemcol;
 
 		for (auto &item: items) {
-			if (item._inSceneNum != 2) // || !(item._flags & 4))
+			if (!isItemInInventory(item))
 				continue;
 
 			if (itemnum) {
@@ -268,6 +268,20 @@ GameItem *Inventory::itemUnderMouse(const Common::Point &pt) {
 		}
 	}
 	return nullptr;
+}
+
+bool Inventory::isItemInInventory(GameItem &item) {
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsGameId gameId = engine->getGameId();
+	bool result = item._inSceneNum == 2; // || (item._flags & 4)
+	if (gameId == GID_HOC) {
+		byte gameCharacterQuality[] = { 0, 9, 7, 8 };	// TODO: Move this elsewhere?
+		int16 currentCharacter = engine->getGDSScene()->getGlobal(0x33);
+		assert(currentCharacter < 4);
+		result = result && item._quality == gameCharacterQuality[currentCharacter];
+	}
+
+	return result;
 }
 
 void Inventory::mouseLDown(const Common::Point &pt) {
@@ -311,7 +325,7 @@ void Inventory::mouseLUp(const Common::Point &pt) {
 		int numInvItems = 0;
 		Common::Array<GameItem> &items = engine->getGDSScene()->getGameItems();
 		for (auto &item: items) {
-			if (item._inSceneNum == 2) // && item._flags & 4)
+			if (isItemInInventory(item))
 				numInvItems++;
 		}
 		if (_itemOffset < numInvItems)

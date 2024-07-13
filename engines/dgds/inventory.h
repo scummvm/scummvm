@@ -59,6 +59,7 @@ public:
 
 private:
 	GameItem *itemUnderMouse(const Common::Point &pt);
+	bool isItemInInventory(GameItem &item);
 
 	uint16 _openedFromSceneNum;
 
