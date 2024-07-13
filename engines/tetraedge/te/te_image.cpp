@@ -33,7 +33,8 @@ namespace Tetraedge {
 TeImage::TeImage() : ManagedSurface(), _teFormat(INVALID) {
 }
 
-TeImage::TeImage(const TeImage &other) : ManagedSurface(other), _teFormat(INVALID) {
+TeImage::TeImage(const TeImage &other) : ManagedSurface(), _teFormat(other._teFormat) {
+	copyFrom(other);
 	error("TODO: Implement TeImage::TeImage copy constructor");
 }
 
