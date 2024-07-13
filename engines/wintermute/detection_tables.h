@@ -142,8 +142,9 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"reversion2",      "Reversion: The Meeting"},
 	{"reversion3",      "Reversion: The Return"},
 	{"rhiannon",        "Rhiannon: Curse of the four Branches"},
-	{"rhiannonghostspast", "Rhiannon: Ghosts of the Past"},
+	{"rhiannonghosts",  "Rhiannon: Ghosts of the Past"},
 	{"ritter",          "1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde"},
+	{"roadsantiago",    "The Road to Santiago"},
 	{"rosemary",        "Rosemary"},
 	{"royalmahjong",    "Royal Mahjong: King's Journey"},
 	{"satanandsons",    "Satan and Sons"},
@@ -4202,7 +4203,7 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "52f111205bf294e8630652981eb31c3d", 79687595), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_6),
 
 	// Rhiannon: Ghosts of the Past (Premium Edition)
-	WME_WINENTRY("rhiannonghostspast", "Premium Edition",
+	WME_WINENTRY("rhiannonghosts", "Premium Edition",
 		WME_ENTRY1s("data.dcp", "785d2fcea73508ea40a5b00869b12b03", 946473152), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_1),
 
 	// 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde (German)
@@ -4218,9 +4219,15 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("ritter", "Demo",
 		WME_ENTRY1s("data.dcp", "7fadb30dbe987528489f50bd85cc0c12", 99975952), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_6),
 
-	// Satan and Sons (Demo)
-	WME_WINENTRY("satanandsons", "Demo",
-		WME_ENTRY1s("data.dcp", "16a6ba8174b697bbba9299619d1e20c4", 67539054), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_3_2),
+	// The Road to Santiago (English)
+	WME_WINENTRY("roadsantiago", "",
+		WME_ENTRY2s("data.dcp", "7501579c6a455c25cd0bbedef7c4d9eb", 64363410,
+					"language.dcp", "b1ad8de1256cb37f46c4d92b22557de4", 10653707), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_6),
+
+	// The Road to Santiago (Spanish)
+	WME_WINENTRY("roadsantiago", "",
+		WME_ENTRY2s("data.dcp", "7501579c6a455c25cd0bbedef7c4d9eb", 64363410,
+					"language_1.dcp", "508ead0ed375c4b88f092d40adec91de", 10840449), Common::ES_ESP, ADGF_UNSTABLE, WME_1_8_6),
 
 	// Rosemary
 	WME_WINENTRY("rosemary", "",
@@ -4244,6 +4251,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Royal Mahjong: King's Journey (English)
 	WME_WINENTRY("royalmahjong", "",
 		WME_ENTRY1s("data.dcp", "f8f8b0308693d07261373766e001bb61", 28856313), Common::EN_ANY, ADGF_UNSTABLE, WME_MAHJONG),
+
+	// Satan and Sons (Demo)
+	WME_WINENTRY("satanandsons", "Demo",
+		WME_ENTRY1s("data.dcp", "16a6ba8174b697bbba9299619d1e20c4", 67539054), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_3_2),
 
 	// Securanote
 	WME_PLATENTRY("securanote", "",
