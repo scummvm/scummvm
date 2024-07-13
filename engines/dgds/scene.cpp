@@ -1711,6 +1711,13 @@ void SDSScene::mouseRUp(const Common::Point &pt) {
 		engine->getInventory()->setShowZoomBox(true);
 		engine->getInventory()->open();
 		return;
+	} else if (area->_num == 0xffff) {
+		debug("Right mouseup on character swap.");
+		int16 swapDlgFile = engine->getGDSScene()->getGlobal(0x36);
+		int16 swapDlgNum = engine->getGDSScene()->getGlobal(0x35);
+		if (swapDlgFile && swapDlgNum)
+			showDialog(swapDlgFile, swapDlgNum);
+		return;
 	}
 
 	int16 addmins = engine->getGameGlobals()->getGameMinsToAddOnLClick();

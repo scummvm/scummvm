@@ -206,6 +206,7 @@ public:
 	void setBackgroundFile(const Common::String &name) { _backgroundFile = name; }
 	const Common::String &getBackgroundFile() const { return _backgroundFile; }
 	void setMenuToTrigger(MenuId menu) { _menuToTrigger = menu; }
+	bool isInvButtonVisible() const;
 
 private:
 	Common::Error syncGame(Common::Serializer &s);

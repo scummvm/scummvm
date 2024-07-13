@@ -204,6 +204,22 @@ Common::Error DragonGlobals::syncState(Common::Serializer &s) {
 	return Common::kNoError;
 }
 
+class HocCharacterGlobal : public RWI16Global {
+public:
+	HocCharacterGlobal(uint16 num, int16 *val) : RWI16Global(num, val) {}
+	int16 set(int16 val) override {
+		DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+		bool buttonVisible = engine->isInvButtonVisible();
+		if (buttonVisible)
+			engine->getScene()->removeInvButtonFromHotAreaList();
+		RWI16Global::set(val);
+		if (buttonVisible)
+			engine->getScene()->addInvButtonToHotAreaList();
+		return get();
+	}
+};
+
+
 HocGlobals::HocGlobals(Clock &clock) : Globals(clock), _unk82(1), _unk55(0),
 	_unkDlgFileNum(0), _unkDlgDlgNum(0),  _currentCharacter2(0), _currentCharacter(0),
 	_unk50(0), _unk49(0), _unk48(0), _unk47(0), _unk46(0), _unk45(0x3f), _unk44(0),
@@ -213,8 +229,8 @@ HocGlobals::HocGlobals(Clock &clock) : Globals(clock), _unk82(1), _unk55(0),
 	_globals.push_back(new RWI16Global(0x37, &_unk55)); // TODO: Special update function FUN_1407_080d, sound init related
 	_globals.push_back(new RWI16Global(0x36, &_unkDlgFileNum));
 	_globals.push_back(new RWI16Global(0x35, &_unkDlgDlgNum));
-	_globals.push_back(new RWI16Global(0x34, &_currentCharacter)); // TODO: Special update function FUN_174e_8f31
-	_globals.push_back(new RWI16Global(0x33, &_currentCharacter2)); // TODO: Special update function FUN_174e_8ee0
+	_globals.push_back(new HocCharacterGlobal(0x34, &_currentCharacter));
+	_globals.push_back(new HocCharacterGlobal(0x33, &_currentCharacter2));
 	_globals.push_back(new RWI16Global(0x32, &_unk50));
 	_globals.push_back(new RWI16Global(0x31, &_unk49));
 	_globals.push_back(new RWI16Global(0x30, &_unk48));

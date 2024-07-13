@@ -246,11 +246,14 @@ void DgdsEngine::setShowClock(bool val) {
 	_clock.setVisibleScript(val);
 }
 
-void DgdsEngine::checkDrawInventoryButton() {
-	if (_gdsScene->getCursorList().size() < 2 || _icons->loadedFrameCount() < 2 ||
-			_scene->getHotAreas().size() < 1 || _scene->getHotAreas().front()._num != 0)
-		return;
+bool DgdsEngine::isInvButtonVisible() const {
+	return (_gdsScene->getCursorList().size() >= 2 && _icons->loadedFrameCount() >= 2 &&
+			!_scene->getHotAreas().empty() && _scene->getHotAreas().front()._num == 0);
+}
 
+void DgdsEngine::checkDrawInventoryButton() {
+	if (!isInvButtonVisible())
+		return;
 	static const Common::Rect drawWin(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	int16 invButtonIcon = 2;
