@@ -56,12 +56,19 @@ void Inter_Inca2::setupOpcodesGob() {
 }
 
 void Inter_Inca2::oInca2_spaceShooter(OpFuncParams &params) {
-	// TODO: Not yet implemented. We'll pretend we won the match for now
-	_vm->_game->_script->skip(4);
-	uint16 resVar = _vm->_game->_script->readUint16();
-	_vm->_game->_script->skip(4);
+    // TODO: Not yet implemented. We'll pretend we won the match for now
+    _vm->_game->_script->skip(4);
+    uint16 resVar = _vm->_game->_script->readUint16();
+    _vm->_game->_script->skip(4);
 
-	WRITE_VAR(resVar, 1);
+    // FIX: This fixes the crash at startup for some Inca2 variants
+    // Ensure the offset is within bounds
+    if ((resVar + 3) < _vm->_game->_script->getSize()) {
+        WRITE_VAR(resVar, 1);
+    } else {
+        warning("oInca2_spaceShooter: Offset out of bounds: %u", resVar);
+    }
+
 }
 
 } // End of namespace Gob
