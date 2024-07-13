@@ -172,7 +172,7 @@ void Darkseed::Room::draw() {
 }
 
 int Darkseed::Room::checkCursorAndMoveableObjects() {
-	ActionMode actionMode = g_engine->_actionMode;
+	int actionMode = g_engine->_actionMode;
 	const Sprite &cursorSprite = (actionMode == LookAction)
 									 ? g_engine->_cursor.getSpriteForType(ExclamationMark)
 									 : g_engine->_cursor.getSprite();
@@ -207,7 +207,7 @@ int Darkseed::Room::checkCursorAndMoveableObjects() {
 }
 
 int Darkseed::Room::checkCursorAndStaticObjects(int x, int y) {
-	ActionMode actionMode = g_engine->_actionMode;
+	int actionMode = g_engine->_actionMode;
 	const Sprite &cursorSprite = (actionMode == LookAction)
 									 ? g_engine->_cursor.getSpriteForType(ExclamationMark)
 									 : g_engine->_cursor.getSprite();
@@ -257,7 +257,7 @@ int Darkseed::Room::checkCursorAndStaticObjects(int x, int y) {
 }
 
 int Darkseed::Room::CheckCursorAndMovedObjects() {
-	ActionMode actionMode = g_engine->_actionMode;
+	int actionMode = g_engine->_actionMode;
 	const Sprite &cursorSprite = (actionMode == LookAction)
 									 ? g_engine->_cursor.getSpriteForType(ExclamationMark)
 									 : g_engine->_cursor.getSprite();
@@ -292,7 +292,7 @@ int Darkseed::Room::CheckCursorAndMovedObjects() {
 }
 
 void Darkseed::Room::update() {
-	if (g_engine->_actionMode == HandAction) {
+	if (g_engine->_actionMode == HandAction || g_engine->_actionMode > 4) {
 		int moveableObj = checkCursorAndMoveableObjects();
 		if (moveableObj == -1) {
 			int objectUnderCursor = checkCursorAndStaticObjects(g_engine->_cursor.getX(), g_engine->_cursor.getY());

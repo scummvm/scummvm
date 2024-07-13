@@ -77,7 +77,7 @@ public:
 	TosText *_tosText = nullptr;
 	Console *_console = nullptr;
 	Room *_room = nullptr;
-	ActionMode _actionMode = PointerAction;
+	int _actionMode = PointerAction;
 	Player *_player = nullptr;
 	Sprites _sprites;
 	Objects _objectVar;
@@ -183,6 +183,7 @@ public:
 	void debugTeleportToRoom(int newRoomNumber, int entranceNumber);
 	void showFullscreenPic(const Common::String &filename);
 	void lookCode(int objNum);
+	void handleObjCollision(int objNum);
 
 private:
 	void updateAnimation();
@@ -194,7 +195,6 @@ private:
 	void wait();
 	void handlePointerAction();
 	void changeToRoom(int newRoomNumber);
-	void handleObjCollision(int objNum);
 
 	void useCode(int objNum);
 	void wongame();

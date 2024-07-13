@@ -87,7 +87,7 @@ void Darkseed::Inventory::update() {
 }
 
 void Darkseed::Inventory::draw() {
-	if (g_engine->_cursor.getY() > 40 || g_engine->isPlayingAnimation_maybe || (g_engine->_objectVar[141] >= 1 && g_engine->_objectVar[141] <= 3)) {
+	if ((g_engine->_actionMode <= 4 && g_engine->_cursor.getY() > 40) || g_engine->isPlayingAnimation_maybe || (g_engine->_objectVar[141] >= 1 && g_engine->_objectVar[141] <= 3)) {
 		return;
 	}
 
@@ -97,8 +97,13 @@ void Darkseed::Inventory::draw() {
 			icon += 42;
 		}
 
-		const Sprite &animSprite = g_engine->_baseSprites.getSpriteAt(icon);
-		g_engine->_sprites.addSpriteToDrawList(140 + i * 37, 20 - animSprite.height / 2, &animSprite, 255, animSprite.width, animSprite.height, false);
+		if (g_engine->_actionMode == _iconList[i] && g_engine->_actionMode > 4) {
+			const Sprite &selectedSprite = g_engine->_baseSprites.getSpriteAt(95);
+			g_engine->_sprites.addSpriteToDrawList(139 + i * 37, 20 - selectedSprite.height / 2, &selectedSprite, 255, selectedSprite.width, selectedSprite.height, false);
+
+		}
+		const Sprite &iconSprite = g_engine->_baseSprites.getSpriteAt(icon);
+		g_engine->_sprites.addSpriteToDrawList(140 + i * 37, 20 - iconSprite.height / 2, &iconSprite, 255, iconSprite.width, iconSprite.height, false);
 	}
 }
 
@@ -124,14 +129,16 @@ void Darkseed::Inventory::handleClick() {
 	} else if ((g_engine->_actionMode == 25 && icon == 20) ||
 			   (g_engine->_actionMode == 20 && icon == 25)
 			   ) {
-
+		g_engine->handleObjCollision(icon);
 	} else if (g_engine->_actionMode == HandAction && icon == 35) {
 		g_engine->_objectVar[35] = 0x7080;
 		g_engine->_console->printTosText(669);
 	} else if (g_engine->_actionMode == LookAction) {
 		g_engine->lookCode(icon);
 	} else {
-
+		g_engine->_actionMode = icon;
+		g_engine->_console->printTosText(972);
+		g_engine->_console->addToCurrentLine(Common::String::format("%s.", g_engine->_objectVar.getObjectName(icon)));
 	}
 }
 

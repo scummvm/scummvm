@@ -471,6 +471,8 @@ void DarkseedEngine::handleInput() {
 						_actionMode = HandAction;
 					} else if (_actionMode == HandAction) {
 						_actionMode = LookAction;
+					} else {
+						_actionMode = PointerAction;
 					}
 					_cursor.setCursorType((CursorType)_actionMode);
 				}
