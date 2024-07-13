@@ -57,6 +57,7 @@ public:
 
 	bool _resting;
 	int _lastThirtySeconds;
+	int _lastSecond;
 	void updateTimeVariables() override;
 
 	void initDOS();

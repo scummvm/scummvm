@@ -65,6 +65,7 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_endEntrance = 33;
 
 	_lastThirtySeconds = 0;
+	_lastSecond = -1;
 	_resting = false;
 }
 
@@ -616,6 +617,15 @@ void EclipseEngine::updateTimeVariables() {
 		}
 
 		executeLocalGlobalConditions(false, false, true);
+	}
+
+	if (isEclipse() && isSpectrum() && _currentArea->getAreaID() == 42) {
+		if (_lastSecond != seconds) { // Swap ink and paper colors every second
+			_lastSecond = seconds;
+			int tmp = _gfx->_inkColor;
+			_gfx->_inkColor = _gfx->_paperColor;
+			_gfx->_paperColor = tmp;
+		}
 	}
 }
 

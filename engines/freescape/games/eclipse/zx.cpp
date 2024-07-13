@@ -65,6 +65,9 @@ void EclipseEngine::loadAssetsZXFullGame() {
 		loadFonts(&file, 0x6163, _font);
 		loadSpeakerFxZX(&file, 0x816, 0x86a);
 		load8bitBinary(&file, 0x635b, 4);
+
+		_areaMap[42]->_paperColor = 0;
+		_areaMap[42]->_underFireBackgroundColor = 0;
 	}
 
 	for (auto &it : _areaMap) {
