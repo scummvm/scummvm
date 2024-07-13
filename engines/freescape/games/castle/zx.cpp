@@ -81,6 +81,7 @@ void CastleEngine::loadAssetsZXFullGame() {
 	if (!file.isOpen())
 		error("Failed to open castlemaster.zx.data");
 
+	loadRiddles(&file, 0x1460 - 1 - 3, 8);
 	//loadMessagesFixedSize(&file, 0x4bc + 1, 16, 27);
 	loadFonts(&file, 0x1219, _font);
 	loadMessagesVariableSize(&file, 0x4bd, 71);

@@ -188,11 +188,25 @@ void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int
 		for (int j = 0; j < 6; j++) {
 			int size = file->readByte();
 			debugC(1, kFreescapeDebugParser, "size: %d (max 22?)", size);
+
+			Common::String message = "";
+			if (size == 255) {
+				size = 19;
+				while (size-- > 0)
+					message = message + "*";
+
+				_riddleList.push_back(message);
+				debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
+				debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
+				debugC(1, kFreescapeDebugParser, "'%s'", message.c_str());
+				continue;
+			}
+
 			//if (size > 22)
 			//	size = 22;
 			int padSpaces = (22 - size) / 2;
 			debugC(1, kFreescapeDebugParser, "extra byte: %x", file->readByte());
-			Common::String message = "";
+
 			int k = padSpaces;
 
 			if (size > 0) {
@@ -235,24 +249,26 @@ void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int
 
 void CastleEngine::drawFullscreenRiddleAndWait(uint16 riddle) {
 	_savedScreen = _gfx->getScreenshot();
-	uint32 color = 0;
+	int frontColor = 6;
+	int backColor = 0;
 	switch (_renderMode) {
 		case Common::kRenderCPC:
-			color = 14;
+			backColor = 14;
 			break;
 		case Common::kRenderCGA:
-			color = 1;
+			backColor = 1;
 			break;
 		case Common::kRenderZX:
-			color = 6;
+			backColor = 0;
+			frontColor = 7;
 			break;
 		default:
-			color = 14;
+			backColor = 14;
 	}
 	uint8 r, g, b;
-	_gfx->readFromPalette(6, r, g, b);
+	_gfx->readFromPalette(frontColor, r, g, b);
 	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
-	_gfx->readFromPalette(color, r, g, b);
+	_gfx->readFromPalette(backColor, r, g, b);
 	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	Graphics::Surface *surface = new Graphics::Surface();
@@ -311,12 +327,26 @@ void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics
 	uint32 grey = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x60, 0x60, 0x60);
 	uint32 frame = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xA7, 0xA7, 0xA7);
 
+	Common::Rect outerFrame(47, 47, 271, 147);
+	Common::Rect innerFrame(53, 53, 266, 141);
+
+	if (isDOS()) {
+		black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+		grey = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x60, 0x60, 0x60);
+		frame = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xA7, 0xA7, 0xA7);
+	} else {
+		outerFrame = Common::Rect(67, 47, 251, 143 - 5);
+		innerFrame = Common::Rect(70, 49, 249, 141 - 5);
+		grey = noColor;
+		frame = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xD8, 0xD8, 0xD8);
+	}
+
 	surface->fillRect(_fullscreenViewArea, noColor);
 	surface->fillRect(_viewArea, black);
 
-	surface->fillRect(Common::Rect(47, 47, 271, 147), grey);
-	surface->frameRect(Common::Rect(47, 47, 271, 147), frame);
-	surface->frameRect(Common::Rect(53, 53, 266, 141), frame);
+	surface->fillRect(outerFrame, grey);
+	surface->frameRect(outerFrame, frame);
+	surface->frameRect(innerFrame, frame);
 
 	surface->fillRect(Common::Rect(54, 54, 265, 140), back);
 	int x = 0;
