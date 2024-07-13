@@ -246,7 +246,7 @@
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
-	kFeaturesNone, // When Assertion bug is fixed check if this version also needs kFeatures600x400
+	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 {
@@ -259,7 +259,7 @@
 		ADGF_UNSTABLE,
 		GUIO0()
 	},
-	kFeaturesNone, // When Assertion bug is fixed check if this version also needs kFeatures600x400
+	kFeatures640x400,
 	"adi2.stk", "ediintro.tot", 0
 },
 
