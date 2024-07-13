@@ -267,13 +267,13 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 	}
 
 	if (funcSym.argNames) {
-		if ((int)funcSym.argNames->size() > fp->paramList.size()) {
+		if (funcSym.argNames->size() > fp->paramList.size()) {
 			debugC(1, kDebugLingoExec, "%d arg names defined for %d args! Ignoring the last %d names", funcSym.argNames->size(), fp->paramList.size(), funcSym.argNames->size() - fp->paramList.size());
 		}
 		for (int i = (int)funcSym.argNames->size() - 1; i >= 0; i--) {
 			Common::String name = (*funcSym.argNames)[i];
 			if (!localvars->contains(name)) {
-				if (i < fp->paramList.size()) {
+				if (i < (int)fp->paramList.size()) {
 					Datum value = fp->paramList[i];
 					(*localvars)[name] = value;
 				} else {
@@ -1597,23 +1597,18 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 		}
 	}
 
-	// Fallback for the edge case where a local factory method is called,
-	// but with an invalid first argument.
-	// If there is a current me object, and it has a function handler
-	// with a matching name, then the first argument will be replaced with the me object.
-	// If there are no arguments at all, one will be added.
+	// If we're calling from within a me object, and it has a function handler with a
+	// matching name, include the me object in the CFrame (so we still get property lookups).
+	// Doesn't matter that the first arg isn't the me object (which would have been caught
+	// by the Factory/XObject code above).
+	//
+	// If the method is called from outside and without the object as the first arg,
+	// it will still work using the normal getHandler lookup.
+	// However properties will return garbage (the number 3??).
 	if (g_lingo->_state->me.type == OBJECT) {
 		AbstractObject *target = g_lingo->_state->me.u.obj;
 		funcSym = target->getMethod(name);
 		if (funcSym.type != VOIDSYM) {
-			if (nargs == 0) {
-				debugC(3, kDebugLingoExec, "Factory method call detected with missing first arg");
-				g_lingo->_stack.push_back(Datum());
-				nargs = 1;
-			} else {
-				debugC(3, kDebugLingoExec, "Factory method call detected with invalid first arg: <%s>", g_lingo->_stack[g_lingo->_stack.size() - nargs].asString(true).c_str());
-			}
-			g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target; // Set first arg to target
 			call(funcSym, nargs, allowRetVal);
 			return;
 		}
