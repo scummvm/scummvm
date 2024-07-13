@@ -27,6 +27,7 @@
 
 #include "image/png.h"
 
+#include "dgds/ads.h"
 #include "dgds/console.h"
 #include "dgds/decompress.h"
 #include "dgds/dgds.h"
@@ -49,6 +50,7 @@ Console::Console(DgdsEngine *vm) : _vm(vm) {
 	registerCmd("imagedumpall", WRAP_METHOD(Console, cmdImageDumpAll));
 	registerCmd("global", WRAP_METHOD(Console, cmdGlobal));
 	registerCmd("scene", WRAP_METHOD(Console, cmdScene));
+	registerCmd("scriptdump", WRAP_METHOD(Console, cmdScriptDump));
 }
 
 bool Console::cmdFileInfo(int argc, const char **argv) {
@@ -279,6 +281,189 @@ bool Console::cmdScene(int argc, const char **argv) {
 		int num = atoi(argv[1]);
 		_vm->changeScene(num);
 		debugPrintf("Scene changed to %d\n", num);
+	}
+
+	return true;
+}
+
+void Console::printOp(int indent, const char *text) {
+	for (int i = 0; i < indent; i++) {
+		debugPrintf("\t");
+	}
+	debugPrintf("%s", text);
+}
+
+bool Console::cmdScriptDump(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: %s <filename>\n", argv[0]);
+		debugPrintf("  eg: %s CLBATH.ADS\n", argv[0]);
+		return true;
+	}
+
+	Common::String fname(argv[1]);
+
+	Common::SeekableReadStream *resStream = _vm->getResource(fname, false);
+	if (resStream == nullptr) {
+		debugPrintf("Resource %s not found\n", fname.c_str());
+		return true;
+	}
+
+	ADSData adsData;
+	ADSInterpreter interp(_vm);
+	ADSParser dgds(_vm->getResourceManager(), _vm->getDecompressor());
+	dgds.parse(&adsData, fname);
+
+	adsData.scr->seek(0);
+
+	uint8 segno = 0;
+	uint8 indent = 1;
+	uint16 opcode;
+	uint16 tag = 1;
+	while (!adsData.scr->eos()) {
+		opcode = adsData.scr->readUint16LE();
+		switch (opcode) {
+		case 0xFFFF:
+			printOp(indent, "END\n");
+			tag = adsData.scr->readUint16LE();
+			segno++;
+			// Fall through
+		case 0x0001:
+			if (adsData._tags.contains(tag))
+				debugPrintf("\n%d: %s\n", segno, adsData._tags[tag].c_str());
+			continue;
+		case 0x0003:
+			printOp(indent, "unknown");
+			break;
+		case 0x0005:
+			printOp(indent, "init");
+			break;
+		case 0x1010:
+			printOp(indent++, "WHILE runtype");
+			break;
+		case 0x1020:
+			printOp(indent++, "WHILE not runtype");
+			break;
+		case 0x1030:
+			printOp(indent++, "WHILE NOT_PLAYED");
+			break;
+		case 0x1040:
+			printOp(indent++, "WHILE PLAYED");
+			break;
+		case 0x1050:
+			printOp(indent++, "WHILE FINISHED");
+			break;
+		case 0x1060:
+			printOp(indent++, "WHILE NOT_RUNNING");
+			break;
+		case 0x1070:
+			printOp(indent++, "WHILE RUNNING");
+			break;
+		case 0x1080:
+			printOp(indent++, "WHILE count?");
+			break;
+		case 0x1090:
+			printOp(indent++, "WHILE ??");
+			break;
+		case 0x1310:
+			printOp(indent++, "IF runtype 5");
+			break;
+		case 0x1320:
+			printOp(indent++, "IF not runtype 5");
+			break;
+		case 0x1330:
+			printOp(indent++, "IF NOT_PLAYED");
+			break;
+		case 0x1340:
+			printOp(indent++, "IF PLAYED");
+			break;
+		case 0x1350:
+			printOp(indent++, "IF FINISHED");
+			break;
+		case 0x1360:
+			printOp(indent++, "IF NOT_RUNNING");
+			break;
+		case 0x1370:
+			printOp(indent++, "IF RUNNING");
+			break;
+		case 0x1380:
+			printOp(indent++, "IF DETAIL LEVEL <=");
+			break;
+		case 0x1390:
+			printOp(indent++, "IF DETAIL LEVEL >=");
+			break;
+		case 0x1500:
+			printOp(--indent, "ELSE / Skip to end-if");
+			break;	
+		case 0x1510:
+			printOp(--indent, "END IF");
+			break;
+		case 0x1520:
+			printOp(--indent, "END WHILE");
+			break;
+		case 0x2000:
+			printOp(indent, "ADD sequence");
+			break;
+		case 0x2005:
+			printOp(indent, "ADD sequence");
+			break;
+		case 0x2010:
+			printOp(indent, "STOP SCENE");
+			break;
+		case 0x2015:
+			printOp(indent, "SET RUNFLAG 5");
+			break;
+		case 0x2020:
+			printOp(indent, "RESET SEQ");
+			break;
+		case 0x3020:
+			printOp(indent, "RANDOM_NOOP");
+			break;
+		case 0x3010:
+			printOp(indent++, "RANDOM_START");
+			break;
+		case 0x30FF:
+			printOp(--indent, "RANDOM_END");
+			break;
+		case 0x4000:
+			printOp(indent, "MOVE SEQ TO BACK");
+			break;
+		case 0x4010:
+			printOp(indent, "MOVE SEQ TO FRONT");
+			break;
+		case 0xF000:
+			printOp(indent, "SET STATE 2");
+			break;
+		case 0xF010:
+			printOp(indent, "FADE_OUT");
+			break;
+		case 0xF200:
+			printOp(indent, "RUN_SCRIPT");
+			break;
+		case 0xF210:
+			printOp(indent, "RUN_SCRIPT");
+			break;
+		case 0x1420:
+			printOp(--indent, "AND");
+			break;
+		case 0x1430:
+			printOp(--indent, "OR");
+			break;
+		case 0xFF10:
+			printOp(indent, "UNKNOWN");
+			break;
+		case 0xFFF0:
+			printOp(indent, "END_IF");
+			break;
+		default:
+			printOp(indent, "UNKNOWN");
+			debugPrintf("(%04x)", opcode);
+			break;
+		}
+		int numArgs = interp.numArgs(opcode);
+		for (int i = 0; i < numArgs; i++) {
+			debugPrintf(" %d", adsData.scr->readUint16LE());
+		}
+		debugPrintf("\n");
 	}
 
 	return true;
