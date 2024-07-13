@@ -739,3 +739,21 @@ void Darkseed::Room::runRoomObjects() {
 		g_engine->_sprites.addSpriteToDrawList(69, 104, &sprite, 255, sprite.width, sprite.height, false);
 	}
 }
+
+bool Darkseed::Room::isGiger() {
+	return _roomNumber >= 38 && (_roomNumber <= 60 || _roomNumber >= 66);
+}
+
+void Darkseed::Room::removeObjectFromRoom(int16 objNum) {
+	if (_collisionType == 0) {
+		for (auto &roomObj : _roomObj) {
+			if (roomObj.objNum == objNum) {
+				roomObj.type = 255;
+				roomObj.objNum = 999;
+				break;
+			}
+		}
+	} else {
+		g_engine->_objectVar.setMoveObjectRoom(objNum, 253);
+	}
+}

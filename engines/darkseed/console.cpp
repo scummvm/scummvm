@@ -35,10 +35,20 @@ void Console::printTosText(int tosIndex) {
 	const Common::String &text = _tosText->getText(tosIndex);
 	debug(text.c_str());
 	addLine(" ");
+	addTextLine(text);
+}
+
+void Console::addTextLine(const Common::String &text) {
 	auto lines = wrapText(text);
 	for (auto &line : lines) {
 		addLine(line);
 	}
+}
+
+void Console::addToCurrentLine(const Common::String &text) {
+	int curIdx = _startIdx == 0 ? _text.size() - 1 : _startIdx - 1;
+	_startIdx = curIdx;
+	addTextLine(_text[_startIdx] + text);
 }
 
 void Console::draw() {
@@ -58,7 +68,9 @@ Common::Array<Common::String> Console::wrapText(const Common::String &text) {
 	int lineLength = 0;
 
 	for (int i = 0; i < text.size(); i++) {
-		word += text[i];
+		if (text[i] != '\r') {
+			word += text[i];
+		}
 		if (text[i] == ' ' || text[i] == '\r') {
 			int wordLength = _font.stringLength(word);
 			if (lineLength + wordLength > 0x1a0) {

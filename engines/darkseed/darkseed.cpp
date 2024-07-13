@@ -182,6 +182,14 @@ void DarkseedEngine::fadeInner(int startValue, int endValue, int increment) {
 void DarkseedEngine::gameloop() {
 	while (!shouldQuit()) {
 		updateEvents();
+		if (_fullscreenPic) {
+			if (_isLeftMouseClicked || _isRightMouseClicked) {
+				_isRightMouseClicked = false;
+				_isLeftMouseClicked = false;
+				delete _fullscreenPic;
+				_fullscreenPic = nullptr;
+			}
+		}
 		counter_2c85_888b = (counter_2c85_888b + 1) & 0xff;
 		if (systemTimerCounter == 5) {
 			handleInput();
@@ -191,11 +199,15 @@ void DarkseedEngine::gameloop() {
 		}
 		_room->update();
 		_frame.draw();
-		_room->draw();
-		_sprites.drawSprites();
-		_player->draw();
-		_console->draw();
-		_cursor.draw();
+		if (_fullscreenPic) {
+			_fullscreenPic->draw(0x45, 0x28);
+		} else {
+			_room->draw();
+			_sprites.drawSprites();
+			_player->draw();
+			_console->draw();
+			_cursor.draw();
+		}
 		_screen->makeAllDirty();
 		_screen->update();
 		wait();
@@ -838,6 +850,16 @@ void DarkseedEngine::handlePointerAction() {
 void DarkseedEngine::changeToRoom(int newRoomNumber) {
 	delete _room;
 	_room = new Room(newRoomNumber);
+	// TODO more logic here.
+	if (_room->_roomNumber == 54) {
+		_objectVar[21] = 0;
+	}
+	if ((_room->_roomNumber == 9 && _previousRoomNumber == 3) || (_room->_roomNumber == 3 && _previousRoomNumber == 9)) {
+		_objectVar[59] = 1;
+	}
+	if ((_room->_roomNumber == 0 && _previousRoomNumber == 2) || (_room->_roomNumber == 2 && _previousRoomNumber == 0)) {
+		_objectVar[78] = 1;
+	}
 	if (newRoomNumber == 5 && _previousRoomNumber == 6) {
 		_player->loadAnimations("stairs.nsp");
 		_player->_position.x = 0x174;
@@ -848,7 +870,17 @@ void DarkseedEngine::changeToRoom(int newRoomNumber) {
 		_player->_position.x = 0x19f;
 		_player->_position.y = 0x8c;
 		setupOtherNspAnimation(0,7);
-	} // TODO a bunch of other room codes here.
+	} else if (newRoomNumber == 32 && _previousRoomNumber == 13) {
+		_player->loadAnimations("slide.nsp");
+		setupOtherNspAnimation(0,16);
+	} else if (newRoomNumber == 10 && _previousRoomNumber == 6) {
+		_player->loadAnimations("rm10strs.nsp");
+		setupOtherNspAnimation(1,54);
+	} else if (newRoomNumber == 11 && _previousRoomNumber == 15) {
+		_player->loadAnimations("rm11strs.nsp");
+		setupOtherNspAnimation(1,56);
+	}
+	// TODO a bunch of other room codes here.
 	else if (newRoomNumber != 0x22 && (newRoomNumber < 0x13 || newRoomNumber > 0x17)) {
 		for (int i = 0; i < _room->room1.size(); i++) {
 			const RoomExit &roomExit = _room->room1[i];
@@ -1035,9 +1067,10 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 
 					} else if (otherNspAnimationType_maybe == 10 || otherNspAnimationType_maybe == 11) {
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
-						_sprites.addSpriteToDrawList(118, 62, &animSprite, 0xf0 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
+						_sprites.addSpriteToDrawList(118, 62, &animSprite, 0xf0 - _player->_position.y, animSprite.width, animSprite.height, false);
 					} else if (otherNspAnimationType_maybe == 12 || otherNspAnimationType_maybe == 13) {
-
+						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
+						_sprites.addSpriteToDrawList(407, 73, &animSprite, 0xf0 - _player->_position.y, animSprite.width, animSprite.height, false);
 					} else if (otherNspAnimationType_maybe == 20) {
 
 					} else if (otherNspAnimationType_maybe < 30 || otherNspAnimationType_maybe > 34) {
@@ -1283,6 +1316,19 @@ void DarkseedEngine::updateAnimation() {
 			}
 		}
 		break;
+	case 16:
+		advanceAnimationFrame(0);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]];
+		} else {
+			_player->_position.x = 336;
+			_player->_position.y = 195;
+			_player->_walkTarget.x = 336;
+			_player->_walkTarget.y = 195;
+			_player->_direction = 1;
+			_player->updateSprite();
+		}
+		break;
 	case 10:
 		advanceAnimationFrame(0);
 		if (!isAnimFinished_maybe) {
@@ -1485,7 +1531,236 @@ void DarkseedEngine::useCode(int objNum) {
 }
 
 void DarkseedEngine::lookCode(int objNum) {
-	// TODO lots of custom eye code here.
+	if (objNum == 71 && _objectVar[71] == 2) {
+		_console->addTextLine("You see the car keys in the ignition.");
+		return;
+	}
+	if (objNum == 189) {
+		_console->addTextLine("You see the iron bars of your cell.");
+		return;
+	}
+	if (objNum == 141) {
+		_console->addTextLine("You see Delbert, not much to look at.");
+		return;
+	}
+	if (objNum == 42) {
+		switch(_objectVar[42]) {
+		case 0:
+			_console->printTosText(652);
+			break;
+		case 1:
+			_console->printTosText(659);
+			_objectVar[42] = 2;
+			break;
+		case 2:
+			_console->printTosText(659);
+			break;
+		case 3:
+			_console->printTosText(658);
+			break;
+		case 4:
+			_console->printTosText(652);
+			break;
+		default:
+			break;
+		}
+		return;
+	}
+	if (objNum == 101) {
+		switch(_objectVar[101]) {
+		case 0:
+		case 4:
+			_console->printTosText(732);
+			break;
+		case 1:
+		case 2:
+			_console->printTosText(734);
+			_objectVar[101] = 2;
+			break;
+		case 3:
+			_console->printTosText(735);
+			break;
+		default:
+			break;
+		}
+		return;
+	}
+	if (objNum == 25 && _cursor.getY() > 40) {
+		if (_objectVar[80] > 1) {
+			if (_objectVar[25] == 0 || _objectVar[25] == 100) {
+				_console->printTosText(691);
+			}
+			else if (_objectVar[25] == 1 || _objectVar[25] == 2) {
+				_objectVar[25] = 2;
+				_console->printTosText(697);
+			}
+			else {
+				_console->printTosText(693);
+			}
+		}
+		return;
+	}
+	if (objNum == 138) {
+		_console->addTextLine("You see the clerk.");
+		return;
+	}
+	if (objNum == 86 && _objectVar[86] != 0) {
+		_console->addTextLine("You see the open glove box.");
+		return;
+	}
+	if (objNum == 9) {
+		_room->_collisionType = 0;
+		_room->removeObjectFromRoom(9);
+		_objectVar.setMoveObjectRoom(9, 100);
+		showFullscreenPic(g_engine->isCdVersion() ? "paper_c.pic" : "paper-c.pic");
+		return;
+	}
+	if (objNum == 30) {
+		_objectVar[30] = 1;
+		_room->_collisionType = 0;
+		_room->removeObjectFromRoom(30);
+		_objectVar.setMoveObjectRoom(30, 100);
+		showFullscreenPic(g_engine->isCdVersion() ? "note_c.pic" : "note-c.pic");
+		return;
+	}
+	if (objNum == 194) {
+		if (_objectVar[53] == 2) {
+			_console->printTosText(494);
+		}
+		else {
+			_console->printTosText(496);
+		}
+		return;
+	}
+	if (objNum > 103 && objNum < 111) {
+		int baseIdx = 370;
+		if (objNum == 108) {
+			baseIdx = 382;
+		} else if (objNum == 110) {
+			baseIdx = 388;
+		}
+		_console->printTosText(baseIdx + _objectVar[objNum] * 2);
+		return;
+	}
+	if (objNum == 137) {
+		if (_objectVar[30] == 0) {
+			_console->printTosText(293);
+		} else {
+			_console->printTosText(295);
+		}
+		return;
+	}
+	if (objNum == 59) {
+		if (_objectVar[59] == 2) {
+			_console->printTosText(408);
+		} else {
+			_console->printTosText(31);
+		}
+	}
+	if (objNum == 78) {
+		if (_objectVar[78] == 2) {
+			_console->printTosText(408);
+		} else {
+			_console->printTosText(406);
+		}
+	}
+	if (objNum == 48 && _objectVar[48] == 0) {
+		sargoanim();
+		return;
+	}
+	if (objNum == 35 && _cursor.getY() < 40) {
+		if (_objectVar[35] == 0) {
+			_console->printTosText(670);
+		} else {
+			printTime();
+		}
+		return;
+	}
+	if (objNum == 46) {
+		if (_objectVar[46] == 1) {
+			_console->printTosText(538);
+		} else {
+			_console->printTosText(536);
+		}
+	}
+	if (objNum == 84) {
+		_console->printTosText(565);
+	}
+	if ((objNum == 14) && (_objectVar[86] == 0)) {
+		return;
+	}
+	if (objNum == 51) {
+		if (_objectVar[187] == 0) {
+			_console->printTosText(851);
+		}
+		else if (_objectVar[51] == 0) {
+			_console->printTosText(853);
+			_objectVar[51] = 1;
+			keeperanim();
+			_objectVar.setObjectRunningCode(72, 1);
+			_inventory.addItem(24);
+			_console->printTosText(959);
+		}
+		else {
+			_console->printTosText(960);
+		}
+	}
+	if (objNum == 55) {
+		_console->printTosText(776);
+		showFullscreenPic("diagram.pic");
+		return;
+	}
+	if (objNum == 34) {
+		_objectVar[34] = 1;
+		showFullscreenPic(_room->isGiger() ? "gbprint1.pic" : "bprint1.pic");
+		return;
+	}
+	if (objNum == 18 && _cursor.getY() < 40) {
+		showFullscreenPic(_room->isGiger() ? "gbcard.pic" : "cbcard.pic");
+		return;
+	}
+	if (objNum == 6 && _cursor.getY() < 40) {
+		showFullscreenPic(_room->isGiger() ? "gdiary.pic" : "cdiary.pic");
+		_objectVar[6] = 1;
+		return;
+	}
+	if (objNum == 12) {
+		if (_cursor.getY() < 40) {
+			showFullscreenPic(_room->isGiger() ? "gjourn01.pic" : "cjourn01.pic");
+			_objectVar[12] = 2;
+		} else if (_objectVar[12] < 2) {
+			_console->printTosText(567);
+		} else {
+			_console->printTosText(566);
+		}
+		return;
+	}
+	if (objNum == 29) {
+		showFullscreenPic(_room->isGiger() ? "gjour201.pic" : "cjour201.pic");
+		if (_objectVar[29] == 0) {
+			_objectVar[29] = 1;
+		}
+		return;
+	}
+	if (objNum == 10) {
+		showFullscreenPic(_room->isGiger() ? "glcard.pic" : "clcard.pic");
+		return;
+	}
+	if (objNum == 100) {
+		if (_objectVar[100] == 0) {
+			_console->printTosText(139);
+			_objectVar[100] = 1;
+		} else if (_objectVar[100] == 1 || _objectVar[100] == 2) {
+			_objectVar[100] = 2;
+			_console->printTosText(141);
+		} else if (_objectVar[100] == 3) {
+			_console->printTosText(143);
+		}
+		return;
+	}
+	if (objNum == 103) {
+		printTime();
+	}
 	if (_cursor.getY() > 39 && objNum != 77) {
 		int eyeTosIdx = _objectVar.getEyeDescriptionTosIdx(objNum);
 		if (eyeTosIdx < 979 && eyeTosIdx != 0)  {
@@ -1505,6 +1780,32 @@ void DarkseedEngine::wongame() {
 void DarkseedEngine::getPackage(int state) {
 	_console->printTosText(424);
 	// TODO handle different getPackage states.
+}
+
+void DarkseedEngine::printTime() {
+	_console->printTosText(958);
+	int hour = g_engine->_currentTimeInSeconds / 60 / 60 + 1;
+	_console->addToCurrentLine(Common::String::format("%d: %02d %s", hour % 12, (g_engine->_currentTimeInSeconds / 60) % 60, hour < 12 ? "a.m." : "p.m."));
+}
+
+void DarkseedEngine::showFullscreenPic(const Common::String &filename) {
+	if (_fullscreenPic) {
+		delete _fullscreenPic;
+	}
+	_fullscreenPic = new Pic();
+	if(!_fullscreenPic->load(filename)) {
+		delete _fullscreenPic;
+		_fullscreenPic = nullptr;
+		error("Failed to load %s", filename.c_str());
+	}
+}
+
+void DarkseedEngine::keeperanim() {
+	// TODO
+}
+
+void DarkseedEngine::sargoanim() {
+	// TODO
 }
 
 } // End of namespace Darkseed
