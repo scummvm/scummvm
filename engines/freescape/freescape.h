@@ -417,6 +417,8 @@ public:
 	Math::Vector3d _scaleVector;
 	float _nearClipPlane;
 	float _farClipPlane;
+	float _yminValue;
+	float _ymaxValue;
 
 	// Text messages and Fonts
 	void insertTemporaryMessage(const Common::String message, int deadline);

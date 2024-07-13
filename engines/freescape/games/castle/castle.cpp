@@ -46,6 +46,7 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_stepUpDistance = 32;
 	_maxFallingDistance = 8192;
 	_maxShield = 24;
+
 	_option = nullptr;
 	_optionTexture = nullptr;
 	_keysFrame = nullptr;
@@ -102,6 +103,8 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	}
 
 	swapPalette(areaID);
+	if (isSpectrum() || isCPC())
+		_gfx->_paperColor = 0;
 	resetInput();
 	Entrance *entrance = (Entrance *)_currentArea->entranceWithID(entranceID);
 	assert(entrance);

@@ -96,7 +96,7 @@ void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 	tglBlit(((TinyGLTexture *)texture)->getBlitTexture(), transform);
 }
 
-void TinyGLRenderer::updateProjectionMatrix(float fov, float nearClipPlane, float farClipPlane) {
+void TinyGLRenderer::updateProjectionMatrix(float fov, float yminValue, float ymaxValue, float nearClipPlane, float farClipPlane) {
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
 
@@ -108,7 +108,7 @@ void TinyGLRenderer::updateProjectionMatrix(float fov, float nearClipPlane, floa
 	// debug("max values: %f %f", xmaxValue, ymaxValue);
 
 	tglFrustumf(xmaxValue, -xmaxValue, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);*/
-	tglFrustumf(1.5, -1.5, -0.625, 0.625, nearClipPlane, farClipPlane);
+	tglFrustumf(1.5, -1.5, yminValue, ymaxValue, nearClipPlane, farClipPlane);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
 }

@@ -29,6 +29,8 @@ namespace Freescape {
 
 void CastleEngine::initZX() {
 	_viewArea = Common::Rect(64, 36, 256, 148);
+	_yminValue = -1;
+	_ymaxValue = 1;
 }
 
 Graphics::Surface *CastleEngine::loadFrames(Common::SeekableReadStream *file, int pos, int numFrames, uint32 back) {
