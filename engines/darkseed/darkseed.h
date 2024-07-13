@@ -182,6 +182,7 @@ public:
 	void setupOtherNspAnimation(int nspAnimIdx, int animId);
 	void debugTeleportToRoom(int newRoomNumber, int entranceNumber);
 	void showFullscreenPic(const Common::String &filename);
+	void lookCode(int objNum);
 
 private:
 	void updateAnimation();
@@ -195,7 +196,6 @@ private:
 	void changeToRoom(int newRoomNumber);
 	void handleObjCollision(int objNum);
 
-	void lookCode(int objNum);
 	void useCode(int objNum);
 	void wongame();
 	void getPackage(int state);

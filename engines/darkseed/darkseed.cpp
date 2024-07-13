@@ -477,8 +477,8 @@ void DarkseedEngine::handleInput() {
 				if (_player->isAtWalkTarget() && _player->_heroMoving && _player->walkPathIndex != -1) {
 					_player->walkToNextConnector();
 				}
-				if (_isLeftMouseClicked && _cursor.getY() < 0x29) {
-					// TODO handle inventory click.
+				if (_isLeftMouseClicked && _cursor.getY() < 41) {
+					_inventory.handleClick();
 				}
 				_room->calculateScaledSpriteDimensions(_player->getWidth(), _player->getHeight(), _player->_position.y);
 
@@ -1772,6 +1772,7 @@ void DarkseedEngine::lookCode(int objNum) {
 //		}
 		return;
 	}
+	_console->addTextLine(Common::String::format("You see the %s.", _objectVar.getObjectName(objNum)));
 }
 
 void DarkseedEngine::wongame() {
