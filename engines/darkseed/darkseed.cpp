@@ -203,6 +203,7 @@ void DarkseedEngine::gameloop() {
 			_fullscreenPic->draw(0x45, 0x28);
 		} else {
 			_room->draw();
+			_inventory.draw();
 			_sprites.drawSprites();
 			_player->draw();
 			_console->draw();

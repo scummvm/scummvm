@@ -27,11 +27,16 @@ namespace Darkseed {
 
 class Inventory {
 private:
-	Common::List<uint8> _inventory;
+	Common::Array<uint8> _inventory;
+	int _inventoryLength = 0;
+	Common::Array<uint8> _iconList;
+	int _viewOffset = 0;
+
 public:
 	Inventory();
 	void reset();
 	void addItem(uint8 item);
+	void draw();
 };
 
 } // namespace Darkseed
