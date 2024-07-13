@@ -273,7 +273,7 @@ GameItem *Inventory::itemUnderMouse(const Common::Point &pt) {
 bool Inventory::isItemInInventory(GameItem &item) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	DgdsGameId gameId = engine->getGameId();
-	bool result = item._inSceneNum == 2; // || (item._flags & 4)
+	bool result = item._inSceneNum == 2; // && (item._flags & 4)
 	if (gameId == GID_HOC) {
 		byte gameCharacterQuality[] = { 0, 9, 7, 8 };	// TODO: Move this elsewhere?
 		int16 currentCharacter = engine->getGDSScene()->getGlobal(0x33);
