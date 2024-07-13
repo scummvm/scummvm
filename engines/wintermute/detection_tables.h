@@ -99,6 +99,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"klaymen1",        "Klaymen Episodes: Pilot"},
 	{"knossos",         "K'NOSSOS"},
 	{"kulivocko",       "Kulivocko"},
+	{"leyendabiblio",   "La Leyenda de la Biblioteca"},
 	{"lifein3minutes",  "Life In 3 Minutes"},
 	{"lonelyrobot",     "Project Lonely Robot"},
 	{"looky",           "Looky"},
@@ -124,8 +125,10 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"one",             "One"},
 	{"onehelluvaday",   "One Helluva Day"},
 	{"openquest",       "Open Quest"},
+	{"operacionbomba",  "Operación: Bomba"},
 	{"paintaria",       "Paintaria"},
 	{"palladion",       "Palladion"},
+	{"pangea",          "Pangea 1/2"},
 	{"papasdaughters1", "Papa's Daughters"},
 	{"papasdaughters2", "Papa's Daughters Go to the Sea"},
 	{"petka02",         "Red Comrades 0.2: Operation F."},
@@ -1718,6 +1721,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("kulivocko", "Demo 2",
 		WME_ENTRY1s("data.dcp", "501c59ddb787646d87dead183199c8ed", 73601289), Common::CS_CZE, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
+	// La Leyenda de la Biblioteca
+	WME_WINENTRY("leyendabiblio", "",
+		WME_ENTRY1s("data.dcp", "95493a5293b0a3320159fab276fe128d", 63490845), Common::ES_ESP, ADGF_UNSTABLE, WME_1_8_10),
+
 	// Life In 3 Minutes
 	WME_WINENTRY("lifein3minutes", "",
 		WME_ENTRY1s("data.dcp", "c6368950e37a95bf098b02b4eaa5b929", 141787214), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
@@ -1884,6 +1891,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("openquest", "",
 		WME_ENTRY1s("data.dcp", "16893e3fc15a211a49654ae66f684f28", 82281736), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, WME_1_9_1),
 
+	// Operacion: Bomba
+	WME_WINENTRY("operacionbomba", "",
+		WME_ENTRY1s("data.dcp", "4f5168a95b5ca46889221c5e9dabe691", 4176238), Common::ES_ESP, ADGF_UNSTABLE, WME_1_8_11),
+
 	// Paintaria
 	WME_WINENTRY("paintaria", "",
 		WME_ENTRY1s("data.dcp", "354c08440c98150ff0d4008dd2865880", 48326040), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
@@ -1891,6 +1902,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Palladion (Alpha6h)
 	WME_WINENTRY("palladion", "Alpha6h",
 		WME_ENTRY1s("Palladion_Alpha6h.exe", "55aec582159410ec6221d4c3fd53db24", 95240860), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_8_6),
+
+	// Pangea 1/2
+	WME_WINENTRY("pangea", "",
+		WME_ENTRY1s("Pangea.exe", "02aa4b7c3c81aeec418e3069c9a76a6b", 121986692), Common::ES_ESP, ADGF_UNSTABLE, WME_1_8_10),
 
 	// Papa's Daughters
 	WME_WINENTRY("papasdaughters1", "",
