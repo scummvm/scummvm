@@ -42,6 +42,8 @@ private:
 	bool cmdImageDump(int argc, const char **argv);
 	bool cmdGlobal(int argc, const char **argv);
 	bool cmdScene(int argc, const char **argv);
+	void printOp(int indent, const char *text);
+	bool cmdScriptDump(int argc, const char **argv);
 	DgdsEngine *_vm;
 };
 
