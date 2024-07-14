@@ -173,7 +173,7 @@
 {
 	{
 		"inca2",
-		"",
+		"v1.000",
 		AD_ENTRY1s("intro.stk", "d33011df8758ac64ca3dca77c7719001", 908612),
 		EN_USA,
 		kPlatformWindows,
@@ -186,7 +186,7 @@
 {
 	{
 		"inca2",
-		"",
+		"v1.000",
 		AD_ENTRY1s("intro.stk", "d33011df8758ac64ca3dca77c7719001", 908612),
 		DE_DEU,
 		kPlatformWindows,
@@ -199,7 +199,7 @@
 {
 	{
 		"inca2",
-		"",
+		"v1.000",
 		AD_ENTRY1s("intro.stk", "d33011df8758ac64ca3dca77c7719001", 908612),
 		IT_ITA,
 		kPlatformWindows,
@@ -212,7 +212,7 @@
 {
 	{
 		"inca2",
-		"",
+		"v1.000",
 		AD_ENTRY1s("intro.stk", "d33011df8758ac64ca3dca77c7719001", 908612),
 		ES_ESP,
 		kPlatformWindows,
@@ -225,7 +225,7 @@
 {
 	{
 		"inca2",
-		"",
+		"v1.000",
 		AD_ENTRY1s("intro.stk", "d33011df8758ac64ca3dca77c7719001", 908612),
 		FR_FRA,
 		kPlatformWindows,
