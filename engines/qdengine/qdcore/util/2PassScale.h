@@ -90,26 +90,10 @@ private:
 	}
 
 	static inline int round(double x) {
-		int a = 0;
-		warning("STUB: C2PassScale::round(double)");
-#if 0
-		_asm {
-			fld x
-			fistp dword ptr a
-		}
-#endif
-		return a;
+		return std::round(x);
 	}
 	static inline int round(float x) {
-		int a = 0;
-		warning("STUB: C2PassScale::round(float)");
-#if 0
-		_asm {
-			fld x
-			fistp dword ptr a
-		}
-#endif
-		return a;
+		return std::round(x);
 	}
 };
 
@@ -303,3 +287,4 @@ COLORREF *C2PassScale<FilterClass>::Scale(COLORREF *pOrigImage, UINT uOrigWidth,
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_UTIL_2_PASS_SCALE_H
+
