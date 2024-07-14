@@ -130,6 +130,58 @@ static constexpr uint16 eyeDescriptionsTbl[] = {
 	671, 321, 163
 };
 
+static constexpr uint16 handDescriptionsTbl[] = {
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+	791, 0, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 652, 0,
+	729, 0, 0, 0,
+	0, 0, 0, 852,
+	0, 0, 0, 772,
+	0, 0, 846, 0,
+	0, 453, 0, 0,
+	484, 0, 0, 0,
+	0, 0, 0, 706,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 609,
+	611, 607, 605, 603,
+	601, 599, 597, 595,
+	593, 591, 589, 0,
+	0, 0, 0, 355,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 827,
+	839, 0, 798, 807,
+	803, 441, 449, 118,
+	260, 272, 306, 91,
+	162, 137, 377, 399,
+	415, 475, 478, 481,
+	0, 0, 999, 253,
+	0, 0, 171, 183,
+	213, 220, 285, 316,
+	329, 338, 338, 357,
+	516, 527, 534, 0,
+	548, 562, 571, 576,
+	614, 616, 621, 625,
+	637, 0, 642, 644,
+	646, 0, 674, 678,
+	681, 684, 689, 0,
+	726, 747, 0, 760,
+	766, 781, 788, 819,
+	823, 825, 0, 0,
+	863, 0, 881, 888,
+	892, 901, 0, 0,
+	672, 322, 164
+};
 
 static constexpr char objectNameTbl[199][21] = {
 	"Nothing.",
@@ -341,6 +393,13 @@ int Darkseed::Objects::getEyeDescriptionTosIdx(uint16 objNum) {
 		error("getEyeDescriptionTosIdx: Object Index out of range! %d", objNum);
 	}
 	return eyeDescriptionsTbl[objNum];
+}
+
+int Darkseed::Objects::getHandDescriptionTosIdx(uint16 objNum) {
+	if (objNum >= MAX_OBJECTS) {
+		error("getHandDescriptionTosIdx: Object Index out of range! %d", objNum);
+	}
+	return handDescriptionsTbl[objNum];
 }
 
 int Darkseed::Objects::getMoveObjectRoom(uint16 idx) {

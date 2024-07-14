@@ -1101,7 +1101,12 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 							_sprites.addSpriteToDrawList(_player->_position.x - animSprite.width / 2, _player->_position.y - animSprite.height, &animSprite, 0xf0 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
 						}
 					} else {
-						// 2022:5ae5
+						// drinking water in bathroom
+						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
+						_sprites.addSpriteToDrawList(448, 97, &animSprite, 0xf0 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
+						const Sprite &legsSprite = _player->_animations.getSpriteAt(0);
+						_sprites.addSpriteToDrawList(451, 160, &legsSprite, 0xf0 - _player->_position.y, legsSprite.width, legsSprite.height, player_sprite_related_2c85_82f3);
+
 					}
 				} else if (otherNspAnimationType_maybe == 6) {
 					// stairs up
@@ -1233,6 +1238,10 @@ void DarkseedEngine::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 		_player->_position.x = 432;
 		_player->_position.y = 78;
 		break;
+	case 44:
+	case 46:
+		playSound(30,5,-1);
+		break;
 	case 53 :
 	case 54 :
 		_player->_position.x = 308;
@@ -1276,6 +1285,28 @@ void DarkseedEngine::updateAnimation() {
 			_player->_walkTarget.y = 0xbe;
 			_player->updateSprite();
 		}
+		break;
+	case 5: // goto sleep animation
+		_player->_position.x = 135;
+		_player->_position.y = 91;
+		advanceAnimationFrame(1);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(1).frameNo[_player->_animations.getAnimAt(1).frameNo[animIndexTbl[1]]];
+		}
+		else {
+			// advanceToNextMorning();
+			_player->_position.x = 242;
+			_player->_position.y = 187;
+			if (_currentDay == 4) {
+				playCutscene("Y");
+			} else if (_currentDay == 2) {
+				playCutscene("B");
+			} else if (_currentDay == 3) {
+				playCutscene("C");
+			}
+		}
+		_player->_position.x = 242;
+		_player->_position.y = 187;
 		break;
 	case 6: // stairs up
 		if (currentRoomNumber == 6) {
@@ -1389,6 +1420,19 @@ void DarkseedEngine::updateAnimation() {
 			_player->updateSprite();
 		}
 		break;
+	case 18: // push trunk
+		advanceAnimationFrame(0);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]];
+		}
+		if (_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]] == 3 && _currentDay != 0) {
+			_console->printTosText(_objectVar[22] + 662);
+			_objectVar[22] = _objectVar[22] + 1;
+			if (_objectVar[22] == 3) {
+//				getmovedtrunkbkgnd(); TODO
+			}
+		}
+		break;
 	case 10:
 		advanceAnimationFrame(0);
 		if (!isAnimFinished_maybe) {
@@ -1441,6 +1485,15 @@ void DarkseedEngine::updateAnimation() {
 			}
 		}
 		break;
+	case 26: // climb down rope.
+		advanceAnimationFrame(1);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(1).frameNo[_player->_animations.getAnimAt(1).frameNo[animIndexTbl[1]]];
+		} else {
+			_previousRoomNumber = _room->_roomNumber;
+			changeToRoom(32);
+		}
+		break;
 	case 27:
 		advanceAnimationFrame(0);
 		if (!isAnimFinished_maybe) {
@@ -1450,6 +1503,33 @@ void DarkseedEngine::updateAnimation() {
 			changeToRoom(38);
 		}
 		break;
+	case 30:
+	case 31: {
+		int animIdx = otherNspAnimationType_maybe - 30;
+		advanceAnimationFrame(animIdx);
+		if (isPlayingAnimation_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(animIdx).frameNo[animIndexTbl[animIdx]];
+		}
+		if (isAnimFinished_maybe && otherNspAnimationType_maybe == 30) {
+			setupOtherNspAnimation(1, 31);
+		}
+		break;
+	}
+	case 32:
+	case 33:
+	case 34: {
+		_objectVar[112] = 1;
+		int animIdx = otherNspAnimationType_maybe - 30;
+		advanceAnimationFrame(animIdx);
+		// TODO play sfx.
+		if (isPlayingAnimation_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(animIdx).frameNo[animIndexTbl[animIdx]];
+		}
+		if (isAnimFinished_maybe && (otherNspAnimationType_maybe == 32 || otherNspAnimationType_maybe == 33)) {
+			setupOtherNspAnimation(otherNspAnimationType_maybe - 29, otherNspAnimationType_maybe + 1);
+		}
+		break;
+	}
 	case 41:
 		advanceAnimationFrame(0);
 		if (!isAnimFinished_maybe) {
@@ -1459,6 +1539,35 @@ void DarkseedEngine::updateAnimation() {
 			changeToRoom(7);
 		}
 		break;
+	case 43:
+	case 44:
+	case 45:
+	case 46: {
+		int iVar4 = 0;
+		if ((otherNspAnimationType_maybe == 44) || (otherNspAnimationType_maybe == 46)) {
+			iVar4 = 1;
+		}
+		advanceAnimationFrame(iVar4);
+		_player->_frameIdx = _player->_animations.getAnimAt(iVar4).frameNo[_player->_animations.getAnimAt(iVar4).frameNo[animIndexTbl[iVar4]]];
+//		_HeroSpr = (uint) * (byte *)((int)&DAT_1060_7eb8 + *(int *)((int)&_ObjFrame + iVar4 * 2) + iVar4 * 202);
+		if (!isAnimFinished_maybe || (otherNspAnimationType_maybe != 46 && otherNspAnimationType_maybe != 44)) {
+			if (otherNspAnimationType_maybe == 45) {
+				_objectVar[117] = 1;
+			} else if (isAnimFinished_maybe) {
+				if ((_objectVar[71] == 2) && (_objectVar[44] != 0)) {
+					_console->printTosText(896);
+					_objectVar[57] = 1;
+				} else {
+					_console->printTosText(897);
+				}
+			}
+		} else {
+//			LoadModeSong(7); TODO
+			playSound(0, 6, -1);
+//			stuffplayer(); TODO
+		}
+		break;
+	}
 	case 53 :
 	case 54 :
 	case 55 :
@@ -1635,10 +1744,322 @@ void DarkseedEngine::useCode(int objNum) {
 		}
 		_player->_direction = 3;
 	}
-	// TODO more code here.
-	if (objNum == 139) {
-		_player->loadAnimations("ltladder.nsp");
-		setupOtherNspAnimation(0,10);
+	if (objNum == 194) {
+		if (_objectVar[53] == 2) {
+			_console->printTosText(948);
+			for (int i = 0; i < Objects::MAX_MOVED_OBJECTS; i++) {
+				if (_objectVar.getMoveObjectRoom(i) == 252) {
+					_objectVar.setMoveObjectRoom(i, 254);
+					_inventory.addItem(i);
+				}
+			}
+			_objectVar[53] = 3;
+		} else {
+			_console->printTosText(566);
+		}
+		return;
+	}
+	if (objNum == 113) {
+		bool foundMatch = false;
+		for (int i = 0; i < Objects::MAX_MOVED_OBJECTS; i++) {
+			if (_objectVar.getMoveObjectRoom(i) == 250) {
+				_objectVar.setMoveObjectRoom(i, 254);
+				_inventory.addItem(i);
+				foundMatch = true;
+			}
+		}
+		if (foundMatch) {
+			_objectVar[113] = 0;
+			_console->printTosText(948);
+		} else {
+			_console->printTosText(751);
+		}
+	}
+	if (objNum == 123) {
+		if (_currentTimeInSeconds < 61200) {
+			_console->printTosText(119);
+		} else {
+			_player->loadAnimations("bedsleep.nsp");
+			setupOtherNspAnimation(1, 5);
+		}
+		return;
+	}
+	if (objNum == 71 && _objectVar[71] == 2) { // car ignition
+		_objectVar[71] = 0;
+		_console->printTosText(949);
+		_inventory.addItem(26);
+		return;
+	}
+	if ((162 < objNum) && (objNum < 169)) {
+		playSound(47,5,-1);
+	}
+	if (objNum == 175) {
+		playSound(39,5,-1);
+//		while (iVar2 = VOCPlaying(), iVar2 != 0) {
+//			VOCPoll();
+//		}
+		_console->printTosText(719);
+		return;
+	}
+	if (objNum == 187) {
+		if (_objectVar[187] == 0) {
+			_console->printTosText(856);
+			setupOtherNspAnimation(0, 60);
+		} else {
+			setupOtherNspAnimation(1, 61);
+		}
+		return;
+	}
+	if (objNum == 137 || objNum == 30) {
+		if (_objectVar[30] == 0) {
+			_objectVar[30] = 1;
+			_room->_collisionType = 0;
+			_room->removeObjectFromRoom(30);
+			_objectVar.setMoveObjectRoom(30, 100);
+			showFullscreenPic(g_engine->isCdVersion() ? "note_c.pic" : "note-c.pic");
+		} else {
+			_console->printTosText(296);
+		}
+		return;
+	}
+	if (_room->_roomNumber == 21 && objNum == 12) {
+		if (_objectVar[12] == 0 && _objectVar[10] == 1) {
+			_objectVar[12] = 1;
+			_inventory.addItem(12);
+			_console->printTosText(568);
+		} else {
+			_console->printTosText(566);
+		}
+		return;
+	}
+	if (objNum == 46) {
+		if (_objectVar[46] == 1) {
+			setupOtherNspAnimation(0,19);
+		} else {
+			_console->printTosText(539);
+		}
+		return;
+	}
+	if (objNum != 7 && objNum != 36 && objNum != 37 && objNum != 38 && objNum != 39 && objNum != 40) {
+		int handTosIdx = _objectVar.getHandDescriptionTosIdx(objNum);
+		if (handTosIdx != 0 && handTosIdx < 979) {
+			_console->printTosText(handTosIdx);
+		} else if (handTosIdx > 978) {
+			// TODO genericresponse
+		}
+		if (objNum == 80) {
+			_console->printTosText(553 + (_objectVar[80] & 1));
+			_objectVar[80] = (_objectVar[80] & 2) + ((_objectVar[80] & 1) == 0 ? 1 : 0);
+			return;
+		}
+		if (objNum == 59 || objNum == 78 && _objectVar[34] == 0) {
+			return;
+		}
+		if (objNum == 100) {
+			if (_objectVar[100] == 0 || _objectVar[100] == 1 || _objectVar[100] == 3) {
+				_console->printTosText(140);
+			} else if (_objectVar[100] == 2) {
+				_objectVar[100] = 3;
+				_inventory.addItem(10);
+				_objectVar[10] = 254;
+				_console->printTosText(142);
+			}
+			return;
+		}
+		if (objNum == 114) {
+			gancanim();
+			return;
+		}
+		if ((objNum == 28) && (_objectVar[28] == 2)) {
+			_console->addTextLine("The sergeant says 'Nice gun eh? It's a Browning'");
+			return;
+		}
+		if (objNum > 103 && objNum < 111) {
+			if (objNum < 110) {
+				_player->loadAnimations("opendrwr.nsp");
+				if (objNum == 108) {
+					if (_objectVar[108] == 0) {
+						_console->printTosText(383);
+					}
+					else {
+						_console->printTosText(385);
+					}
+					setupOtherNspAnimation(0, 52);
+				}
+				else {
+					if (_objectVar[objNum] == 0) {
+						_console->printTosText(371);
+					}
+					else {
+						_console->printTosText(373);
+					}
+					setupOtherNspAnimation(0,objNum - 56);
+				}
+			}
+			else {
+				if (_objectVar[objNum] == 0) {
+					_console->printTosText(389);
+				}
+				else {
+					_console->printTosText(391);
+				}
+				_objectVar[objNum] = _objectVar[objNum] == 0 ? 1 : 0;
+			}
+			return;
+		}
+		if (objNum == 111) { // tap
+			_player->loadAnimations("aspirin.nsp");
+			setupOtherNspAnimation(0,30);
+			_console->printTosText(242);
+			return;
+		}
+		if (objNum == 112) { // mirror cabinet
+			_player->loadAnimations("aspirin.nsp");
+			setupOtherNspAnimation(2,32);
+			return;
+		}
+		if (objNum > 30 && objNum < 34) {
+			_room->removeObjectFromRoom(objNum);
+			getPackageObj(objNum - 30);
+			return;
+		}
+		if ((objNum == 14) && (_objectVar[86] == 0)) {
+			_objectVar[86] = 1;
+			return;
+		}
+		if ((objNum == 102) && (_objectVar[23] == 1)) {
+			_player->loadAnimations("slide.nsp");
+			setupOtherNspAnimation(1, 26);
+			return;
+		}
+		if (objNum == 101) {
+			switch(_objectVar[101]) {
+			case 0:
+				_player->loadAnimations("opendoor.nsp");
+				setupOtherNspAnimation(0,65);
+				playSound(31,5,-1);
+				_objectVar[101] = 1;
+				_console->printTosText(733);
+				break;
+			case 1:
+				_player->loadAnimations("opendoor.nsp");
+				setupOtherNspAnimation(0,65);
+				playSound(31,5,-1);
+				_objectVar[101] = 0;
+				_console->printTosText(737);
+				break;
+			case 2:
+				_inventory.addItem(5);
+				_console->printTosText(950);
+				_objectVar[101] = 3;
+				return;
+			case 3:
+				_player->loadAnimations("opendoor.nsp");
+				setupOtherNspAnimation(0,65);
+				playSound(31,5,-1);
+				_objectVar[101] = 4;
+				_console->printTosText(737);
+				break;
+			case 4:
+				_player->loadAnimations("opendoor.nsp");
+				setupOtherNspAnimation(0,65);
+				playSound(31,5,-1);
+				_objectVar[101] = 3;
+				_console->printTosText(733);
+				break;
+			default:
+				break;
+			}
+		}
+		if (objNum == 81) {
+			if (_objectVar[81] == 0) {
+				_console->printTosText(951);
+				for (int i = 0; i < Objects::MAX_MOVED_OBJECTS; i++) {
+					if (_objectVar.getMoveObjectRoom(i) == 251) {
+						_objectVar.setMoveObjectRoom(i, 254);
+						_inventory.addItem(i);
+					}
+				}
+				_objectVar[81] = 1;
+			} else {
+				_console->printTosText(952);
+			}
+			return;
+		}
+		if (objNum == 25) {
+			if (1 < _objectVar[80]) {
+				if (_objectVar[25] == 0) {
+					_objectVar[25] = 1;
+					_console->printTosText(953);
+					_inventory.addItem(25);
+				} else if (_objectVar[25] == 2) {
+					_objectVar[26] = 1;
+					_console->printTosText(954);
+					_inventory.addItem(26);
+					_objectVar[25] = _objectVar[25] + 1;
+				} else if (_objectVar[25] == 1 || _objectVar[25] == 3 ||
+						 _objectVar[25] == 101 || _objectVar[25] == 103) {
+					_console->printTosText(694);
+				}
+			}
+			return;
+		}
+		if (objNum < 42 && objNum != 22 && (objNum != 7 || _objectVar[7] == 1) &&
+			objNum != 31 && objNum != 33 && objNum != 32 && objNum != 86) {
+			_console->printTosText(955); // "You pick up the "
+			_console->addToCurrentLine(Common::String::format("%s.", _objectVar.getObjectName(objNum)));
+			_inventory.addItem(objNum);
+			_room->_collisionType = 0;
+			if (((objNum != 25) || (_objectVar[25] == 1)) || (_objectVar[25] == 101)) {
+				_room->removeObjectFromRoom(objNum);
+			}
+			_objectVar.setMoveObjectRoom(objNum, 254);
+			if (objNum == 28) {
+				_objectVar[28] = 1;
+			}
+		} else if (objNum == 86) {
+			_objectVar[86] = _objectVar[86] == 0 ? 1 : 0;
+			playSound(42,5,-1);
+		} else if (objNum == 22) {
+			if (_objectVar[22] < 4) {
+				_player->loadAnimations("push.nsp");
+				setupOtherNspAnimation(0, 18);
+			} else {
+				_console->printTosText(665);
+			}
+		} else if (objNum == 165) {
+			if (_objectVar[165] == 0) {
+				_objectVar[165] = 1;
+				_console->printTosText(639);
+				_inventory.addItem(13);
+			} else {
+				_console->printTosText(640);
+			}
+		} else if (objNum == 57) {
+			_player->loadAnimations("instrshp.nsp");
+			if (_objectVar[71] == 2) {
+				_console->printTosText(4);
+				setupOtherNspAnimation(1, 44);
+			} else {
+				setupOtherNspAnimation(0, 43);
+			}
+		} else if (objNum == 117) {
+			_player->loadAnimations("obslev.nsp");
+			setupOtherNspAnimation(1, 46);
+		}
+		// TODO more code here.
+		if (objNum == 139) {
+			_player->loadAnimations("ltladder.nsp");
+			setupOtherNspAnimation(0,10);
+		}
+		// TODO more code here.
+		return;
+	}
+	if (_objectVar[138] == 0) {
+		_console->printTosText(906);
+	}
+	else {
+		// TODO
 	}
 }
 
@@ -1919,6 +2340,33 @@ void DarkseedEngine::keeperanim() {
 
 void DarkseedEngine::sargoanim() {
 	// TODO
+}
+
+void DarkseedEngine::playCutscene(const Common::String cutsceneId) {
+	debug("Play Cutscene %s", cutsceneId.c_str()); // TODO play cutscenes.
+}
+
+void DarkseedEngine::gancanim() {
+	// TODO
+}
+
+void DarkseedEngine::getPackageObj(int packageType) {
+	_console->printTosText(424);
+	if (packageType == 1) {
+		playCutscene("D");
+	}
+	if (packageType == 2) {
+		_inventory.addItem(15);
+		showFullscreenPic("shard.pic");
+	}
+	if (packageType == 3) {
+		_inventory.addItem(20);
+		showFullscreenPic("handle.pic");
+	}
+}
+
+void DarkseedEngine::playSound(int16 unk, uint8 unk1, int16 unk2) {
+	// TODO...
 }
 
 } // End of namespace Darkseed
