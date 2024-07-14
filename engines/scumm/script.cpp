@@ -1514,9 +1514,14 @@ int ScummEngine::resStrLen(const byte *src) {
 			chr = *src++;
 			num++;
 
-			// WORKAROUND for bug #1675, a script bug in Indy3. See also
-			// the corresponding code in ScummEngine::convertMessageToString().
-			if (_game.id == GID_INDY3 && chr == 0x2E) {
+			// WORKAROUND for bugs #1675 and #2715, script bugs in German Indy3.
+			// For more information, See the the corresponding workaround in
+			// ScummEngine::convertMessageToString().
+			if (_game.id == GID_INDY3 && _language == Common::DE_DEU &&
+			    ((_roomResource == 23 && chr == 0x2E) ||
+			     (_roomResource == 21 && chr == 0x20))) {
+				num--;
+				src--;
 				continue;
 			}
 
