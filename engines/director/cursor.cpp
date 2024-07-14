@@ -124,8 +124,17 @@ void Cursor::readFromCast(Datum cursorCasts) {
 	}
 
 	BitmapCastMember *bc = (BitmapCastMember *)(cursorCast);
-	_hotspotX = bc->_regX - bc->_initialRect.left;
-	_hotspotY = bc->_regY - bc->_initialRect.top;
+	int offX = bc->_regX - bc->_initialRect.left;
+	int offY = bc->_regY - bc->_initialRect.top;
+	if ((offX < 0) || (offX >= 16) || (offY < 0) || (offY >= 16) ||
+		(g_director->getVersion() < 500 && g_director->getPlatform() == Common::kPlatformWindows)) {
+		// Hotspots that are outside the 16x16 crop will be recentered in the middle.
+		// Pre-5 versions of Windows Director do not respect hotspots at all?
+		offX = 8;
+		offY = 8;
+	}
+	_hotspotX = (uint16)offX;
+	_hotspotY = (uint16)offY;
 }
 
 void Cursor::readBuiltinType(Datum resourceId) {
