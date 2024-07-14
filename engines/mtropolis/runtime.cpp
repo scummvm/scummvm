@@ -2913,14 +2913,33 @@ MiniscriptInstructionOutcome RuntimeObject::ParentWriteProxyInterface::write(Min
 	return static_cast<RuntimeObject *>(objectRef)->scriptSetParent(thread, dest);
 }
 
+RuntimeObject *RuntimeObject::ParentWriteProxyInterface::resolveObjectParent(RuntimeObject *obj) {
+	if (obj->isStructural())
+		return static_cast<Structural *>(obj)->getParent();
+	else if (obj->isModifier())
+		return static_cast<Modifier *>(obj)->getParent().lock().get();
+
+	return nullptr;
+}
+
 MiniscriptInstructionOutcome RuntimeObject::ParentWriteProxyInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) {
+	RuntimeObject *parent = resolveObjectParent(static_cast<RuntimeObject *>(objectRef));
+
+	if (!parent)
+		return kMiniscriptInstructionOutcomeFailed;
+
 	DynamicValueWriteProxy tempProxy;
-	DynamicValueWriteObjectHelper::create(static_cast<RuntimeObject *>(objectRef), tempProxy);
+	DynamicValueWriteObjectHelper::create(static_cast<RuntimeObject *>(parent), tempProxy);
 
 	return tempProxy.pod.ifc->refAttrib(thread, proxy, tempProxy.pod.objectRef, tempProxy.pod.ptrOrOffset, attrib);
 }
 
 MiniscriptInstructionOutcome RuntimeObject::ParentWriteProxyInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) {
+	RuntimeObject *parent = resolveObjectParent(static_cast<RuntimeObject *>(objectRef));
+
+	if (!parent)
+		return kMiniscriptInstructionOutcomeFailed;
+
 	DynamicValueWriteProxy tempProxy;
 	DynamicValueWriteObjectHelper::create(static_cast<RuntimeObject *>(objectRef), tempProxy);
 
