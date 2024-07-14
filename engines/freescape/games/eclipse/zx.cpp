@@ -66,6 +66,11 @@ void EclipseEngine::loadAssetsZXFullGame() {
 		loadSpeakerFxZX(&file, 0x816, 0x86a);
 		load8bitBinary(&file, 0x635b, 4);
 
+		// These paper colors are invalid, probably to signal the use of floor/sky colors
+		_areaMap[1]->_paperColor = 1;
+		_areaMap[51]->_paperColor = 1;
+
+		// These paper colors are also invalid, but to signal the use of a special effect
 		_areaMap[42]->_paperColor = 0;
 		_areaMap[42]->_underFireBackgroundColor = 0;
 	}
