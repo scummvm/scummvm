@@ -29,7 +29,7 @@
 #include "qdengine/qdcore/qd_game_scene.h"
 #include "qdengine/qdcore/qd_trigger_chain.h"
 #include "qdengine/qdcore/qd_setup.h"
-#include "qdengine/system/sound/ds_snd_dispatcher.h"
+#include "qdengine/system/sound/snd_dispatcher.h"
 #include "qdengine/qdcore/qd_trigger_profiler.h"
 #include "qdengine/qdcore/qd_file_manager.h"
 #include "qdengine/qdcore/util/plaympp_api.h"
@@ -236,7 +236,7 @@ int engineMain() {
 
 	init_graphics();
 
-	ds_sndDispatcher *sndD = new ds_sndDispatcher;
+	sndDispatcher *sndD = new sndDispatcher;
 
 	qdGameConfig::get_config().update_sound_settings();
 	qdGameConfig::get_config().update_music_settings();

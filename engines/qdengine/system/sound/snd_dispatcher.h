@@ -23,37 +23,36 @@
 #define QDENGINE_SYSTEM_SOUND_SND_DISPATCHER_H
 
 #include "qdengine/system/sound/snd_sound.h"
-
+#include "qdengine/system/sound/ds_sound.h"
 
 namespace QDEngine {
 
-class wavSound;
-//! Диспетчер звука.
+//! Диспетчер звуков на DirectSound.
 class sndDispatcher {
 public:
 	sndDispatcher();
-	virtual ~sndDispatcher();
+	~sndDispatcher();
 
 	//! Логический квант.
-	virtual void quant() = 0;
+	void quant();
 	//! Запускает проигрывание звука.
-	virtual bool play_sound(const sndSound *snd, bool loop, float start_position = 0.0f, int vol = 255) = 0;
+	bool play_sound(const sndSound *snd, bool loop, float start_position = 0.0f, int vol = 255);
 	//! Останавливает проигрывание звука.
-	virtual bool stop_sound(const sndSound *snd) = 0;
+	bool stop_sound(const sndSound *snd);
 	//! Останавливает проигрывание звука.
-	virtual bool stop_sound(const sndHandle *handle) = 0;
+	bool stop_sound(const sndHandle *handle);
 	//! Возвращает состояние звука (играется/остановлен и т.д.).
-	virtual sndSound::status_t sound_status(const sndHandle *handle) const = 0;
+	sndSound::status_t sound_status(const sndHandle *handle) const;
 	//! Возвращает состояние звука (играется/остановлен и т.д.).
-	virtual sndSound::status_t sound_status(const sndSound *snd) const = 0;
+	sndSound::status_t sound_status(const sndSound *snd) const;
 	//! Возвращает текущую позицию звука, от 0.0 (начало) до 1.0 (конец).
-	virtual float sound_position(const sndHandle *snd) const = 0;
+	float sound_position(const sndHandle *snd) const;
 	//! Изменение частоты звука.
-	virtual bool set_sound_frequency(const sndHandle *snd, float coeff) = 0;
+	bool set_sound_frequency(const sndHandle *snd, float coeff);
 
 	//! Изменение громкости, диапазон значений - [0, 255].
 	void set_volume(unsigned int vol);
-	//! Возвращает установленную громкость, диапазон значений - [0, 255].
+
 	unsigned int volume() const {
 		return _volume;
 	}
@@ -75,11 +74,11 @@ public:
 	static int convert_volume_to_dB(int vol);
 
 	//! Останавливает все звуки.
-	virtual void stop_sounds() = 0;
+	void stop_sounds();
 	//! Ставит все играющие в данный момент звуки на паузу.
-	virtual void pause_sounds() = 0;
+	void pause_sounds();
 	//! Возобновляет проигрывание всех звуков, которые были поставлены на паузу.
-	virtual void resume_sounds() = 0;
+	void resume_sounds();
 
 	//! Ставит все звуки на паузу до вызова resume().
 	void pause() {
@@ -124,8 +123,9 @@ public:
 protected:
 
 	//! Обновление установки громкости.
-	virtual bool update_volume() = 0;
-	virtual bool update_frequency() = 0;
+	bool update_volume();
+
+	bool update_frequency();
 
 private:
 
@@ -151,8 +151,16 @@ private:
 	//! Пауза.
 	bool _is_paused;
 
+	typedef std::list<dsSound> sound_list_t;
+	//! Список активных звуков.
+	sound_list_t _sounds;
+
 	//! Текущий диспетчер.
 	static sndDispatcher *_dispatcher_ptr;
+
+	//! Указатель на DirectSound интерфейс.
+	LPDIRECTSOUND _sound_device;
+//	Audio::SeekableAudioStream *_audioStream;
 };
 
 } // namespace QDEngine
