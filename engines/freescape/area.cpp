@@ -228,6 +228,7 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 	ObjectArray planarObjects;
 	ObjectArray nonPlanarObjects;
 	Object *floor = nullptr;
+	Common::HashMap<Object *, float> sizes;
 	float offset = !gfx->_isAccelerated ? 2.0 : 1.0;
 
 	for (auto &obj : _drawableObjects) {
@@ -270,6 +271,12 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 			distance = object->_boundingBox.distance(centerPlanar);
 			if (distance.length() > 0.0001)
 				continue;
+
+			float sizeNonPlanar = object->_boundingBox.getSize().length();
+			if (sizes[planar] >= sizeNonPlanar)
+				continue;
+
+			sizes[planar] = sizeNonPlanar;
 
 			if (planar->getSize().x() == 0) {
 				if (object->getOrigin().x() >= centerPlanar.x())
