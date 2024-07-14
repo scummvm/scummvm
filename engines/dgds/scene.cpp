@@ -1164,6 +1164,10 @@ bool SDSScene::loadTalkData(uint16 num) {
 			result = readTalkData(stream, _talkData.front());
 			_talkData.front()._num = num;
 			_version = oldVer;
+
+			Image *img = new Image(resourceManager, decompressor);
+			img->loadBitmap(_talkData.front()._bmpFile);
+			_talkData.front()._shape.reset(img);
 		}
 	}
 
@@ -1193,6 +1197,8 @@ void SDSScene::updateVisibleTalkers() {
 
 void SDSScene::drawHead(Graphics::ManagedSurface *dst, const TalkData &data, const TalkDataHead &head) {
 	uint drawtype = head._drawType ? head._drawType : 1;
+	if (!data._shape)
+		return;
 	switch (drawtype) {
 	case 1:
 		drawHeadType1(dst, head, *data._shape);

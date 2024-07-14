@@ -618,6 +618,7 @@ Common::Error DgdsEngine::run() {
 		bool haveActiveDialog = _scene->checkDialogActive();
 
 		_scene->drawAndUpdateDialogs(&_compositionBuffer);
+		_scene->drawVisibleHeads(&_compositionBuffer);
 
 		bool gameRunning = (!haveActiveDialog && _gameGlobals->getGlobal(0x57) /* TODO: && _dragItem == nullptr*/);
 		_clock.update(gameRunning);
