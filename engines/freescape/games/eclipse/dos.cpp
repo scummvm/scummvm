@@ -90,7 +90,7 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 		if (!file.isOpen())
 			error("Failed to open TOTEE.EXE");
 
-		loadMessagesFixedSize(&file, 0x710f, 16, 17);
+		loadMessagesFixedSize(&file, 0x710f, 16, 20);
 		loadSoundsFx(&file, 0xd670, 1);
 		loadSpeakerFxDOS(&file, 0x7396 + 0x200, 0x72a1 + 0x200);
 		loadFonts(&file, 0xd403, _font);
@@ -120,7 +120,7 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 		if (!file.isOpen())
 			error("Failed to open TOTEC.EXE");
 
-		loadMessagesFixedSize(&file, 0x594f, 16, 17);
+		loadMessagesFixedSize(&file, 0x594f, 16, 20);
 		load1bPCM(&file, 0xd038 - 4);
 		loadFonts(&file, 0xb785, _font);
 		load8bitBinary(&file, 0x2530, 4);
