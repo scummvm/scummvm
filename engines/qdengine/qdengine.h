@@ -47,12 +47,13 @@ struct QDEngineGameDescription;
 
 enum QDEngineDebugChannels {
 	kDebugGraphics = 1,
+	kDebugInput,
 	kDebugLoad,
+	kDebugLog,
+	kDebugSave,
+	kDebugSound,
 	kDebugTemp,
 	kDebugQuant,
-	kDebugSave,
-	kDebugLog,
-	kDebugSound,
 };
 
 class QDEngineEngine : public Engine {
@@ -123,3 +124,4 @@ extern QDEngineEngine *g_engine;
 byte *transCyrillic(const Common::String &str);
 
 #endif // QDENGINE_H
+

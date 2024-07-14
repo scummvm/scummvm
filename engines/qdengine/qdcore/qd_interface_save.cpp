@@ -44,6 +44,7 @@ qdInterfaceSave::qdInterfaceSave() : save_ID_(0),
 	thumbnail_size_y_(0),
 	text_dx_(0),
 	text_dy_(0) {
+	debugC(3, kDebugSave, "qdInterfaceSave::qdInterfaceSave()");
 	thumbnail_.set_owner(this);
 	frame_.set_owner(this);
 
@@ -94,11 +95,13 @@ qdInterfaceSave &qdInterfaceSave::operator = (const qdInterfaceSave &sv) {
 
 bool qdInterfaceSave::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
 	frame_.mouse_handler(x, y, ev);
+	debugC(3, kDebugInput, "qdInterfaceSave::mouse_handler(): ev = %d, x = %d, y = %d", ev, x, y);
 
 	switch (ev) {
 	case mouseDispatcher::EV_LEFT_DOWN:
 	case mouseDispatcher::EV_RIGHT_DOWN:
 		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
+		debugC(3, kDebugSave, "qdInterfaceSave::mouse_handler(): save_mode_ = %d", save_mode_);
 			clear_screen_region();
 
 			if (save_mode_) {
@@ -121,6 +124,7 @@ bool qdInterfaceSave::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev
 
 				return true;
 			} else {
+				debugC(3, kDebugSave, "qdInterfaceSave::mouse_handler(): load_game() save_ID_ = %d", save_ID_);
 				dp->load_game(save_ID_);
 				if (qdInterfaceDispatcher * ip = qdInterfaceDispatcher::get_dispatcher())
 					ip->handle_event(qdInterfaceEvent::EVENT_RESUME_GAME, NULL);

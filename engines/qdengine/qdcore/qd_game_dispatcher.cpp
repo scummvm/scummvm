@@ -826,17 +826,21 @@ void qdGameDispatcher::redraw_scene(bool draw_interface) {
 }
 
 bool qdGameDispatcher::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
+	debugC(9, kDebugInput, "qdGameDispatcher::mouse_handler(%d, %d, %d)", x, y, ev);
 	if ((ev == mouseDispatcher::EV_LEFT_DOWN || ev == mouseDispatcher::EV_RIGHT_DOWN) && mouse_obj_->object()) {
 		set_flag(OBJECT_CLICK_FLAG);
 		mouse_click_obj_ = mouse_obj_->object();
 	}
 
 	if (!is_paused()) {
-		if (cur_inventory_ && cur_inventory_->mouse_handler(x, y, ev))
+		if (cur_inventory_ && cur_inventory_->mouse_handler(x, y, ev)) {
+			debugC(3, kDebugInput, "qdGameDispatcher::mouse_handler(%d, %d, %d) Not paused...", x, y, ev);
 			return true;
+		}
 	}
 
 	if (interface_dispatcher_.mouse_handler(x, y, ev)) {
+		debugC(9, kDebugInput, "qdGameDispatcher::mouse_handler(%d, %d, %d) Interface...", x, y, ev);
 		mouseDispatcher::instance()->deactivate_event(ev);
 		return true;
 	}

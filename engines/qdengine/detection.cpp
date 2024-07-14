@@ -35,12 +35,13 @@
 
 static const DebugChannelDef debugFlagList[] = {
 	{ QDEngine::kDebugGraphics, "graphics", "Graphics debug level" },
+	{ QDEngine::kDebugInput, "input", "Enable user input tracing"},
 	{ QDEngine::kDebugLoad, "load", "Enable load tracing" },
+	{ QDEngine::kDebugLog, "log", "See log messages"},
+	{ QDEngine::kDebugSave, "save", "Enable save tracing"},
+	{ QDEngine::kDebugSound, "sound", "Sound debug level"},
 	{ QDEngine::kDebugTemp, "temp", "Enable temporary tracing" },
 	{ QDEngine::kDebugQuant, "quant", "Enable quant tracing"},
-	{ QDEngine::kDebugSave, "save", "Enable save tracing"},
-	{ QDEngine::kDebugLog, "log", "See log messages"},
-	{ QDEngine::kDebugSound, "sound", "Sound debug level"},
 	DEBUG_CHANNEL_END
 };
 
@@ -72,3 +73,4 @@ public:
 
 
 REGISTER_PLUGIN_STATIC(QDENGINE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, QDEngineMetaEngineDetection);
+
