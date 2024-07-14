@@ -2929,7 +2929,7 @@ MiniscriptInstructionOutcome RuntimeObject::ParentWriteProxyInterface::refAttrib
 		return kMiniscriptInstructionOutcomeFailed;
 
 	DynamicValueWriteProxy tempProxy;
-	DynamicValueWriteObjectHelper::create(static_cast<RuntimeObject *>(parent), tempProxy);
+	DynamicValueWriteObjectHelper::create(parent, tempProxy);
 
 	return tempProxy.pod.ifc->refAttrib(thread, proxy, tempProxy.pod.objectRef, tempProxy.pod.ptrOrOffset, attrib);
 }
@@ -2941,7 +2941,7 @@ MiniscriptInstructionOutcome RuntimeObject::ParentWriteProxyInterface::refAttrib
 		return kMiniscriptInstructionOutcomeFailed;
 
 	DynamicValueWriteProxy tempProxy;
-	DynamicValueWriteObjectHelper::create(static_cast<RuntimeObject *>(objectRef), tempProxy);
+	DynamicValueWriteObjectHelper::create(parent, tempProxy);
 
 	return tempProxy.pod.ifc->refAttribIndexed(thread, proxy, tempProxy.pod.objectRef, tempProxy.pod.ptrOrOffset, attrib, index);
 }
