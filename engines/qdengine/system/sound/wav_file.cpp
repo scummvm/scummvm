@@ -33,6 +33,8 @@
 namespace QDEngine {
 
 bool wav_file_load(const char *fname, class wavSound *snd) {
+	debugC(3, kDebugSound, "[%d] Loading Wav: %s", g_system->getMillis(), transCyrillic(fname));
+
 	if (!fname) {
 		return false;
 	}
