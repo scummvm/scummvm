@@ -121,16 +121,6 @@ public:
 		return old_p;
 	}
 
-#ifdef _QUEST_EDITOR
-	//! \brief в кострукторе звук отключается(если был включен). в деструкторе включается,
-	//! если был отключен
-	class SoundDisabler {
-		bool soundEnabled_;
-	public:
-		SoundDisabler();
-		~SoundDisabler();
-	};
-#endif // _QUEST_EDITOR
 protected:
 
 	//! Обновление установки громкости.
