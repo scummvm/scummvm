@@ -195,12 +195,15 @@ void EclipseEngine::drawZXUI(Graphics::Surface *surface) {
 	else if (shield < 100)
 		x = 175;
 
+	if (energy < 0)
+		energy = 0;
+
 	drawStringInSurface(shieldStr, x, 161, back, red, surface);
 
 	Common::Rect jarBackground(120, 162, 144, 192 - 4);
 	surface->fillRect(jarBackground, back);
 
-	Common::Rect jarWater(120, 192 - energy - 3, 144, 192 - 4);
+	Common::Rect jarWater(120, 192 - energy - 4, 144, 192 - 4);
 	surface->fillRect(jarWater, blue);
 
 	drawStringInSurface(Common::String('0' + _angleRotationIndex - 3), 79, 141, back, yellow, surface, 'Z' - '$' + 1);
