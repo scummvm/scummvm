@@ -1020,6 +1020,8 @@ Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream
 	_ticks = 0;
 	if (!_currentArea || _currentArea->getAreaID() != areaID)
 		gotoArea(areaID, -1); // Do not change position nor rotation
+
+	_playerHeight = 32 * (_playerHeightNumber + 1) - 16 / _currentArea->_scale;
 	return loadGameStreamExtended(stream);
 }
 
