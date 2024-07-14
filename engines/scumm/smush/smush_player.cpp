@@ -248,9 +248,9 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 	_pauseStartTime = 0;
 	_pauseTime = 0;
 
-	memset(_pal, 0, sizeof(byte));
-	memset(_deltaPal, 0, sizeof(int16));
-	memset(_shiftedDeltaPal, 0, sizeof(int32));
+	memset(_pal, 0, sizeof(_pal));
+	memset(_deltaPal, 0, sizeof(_deltaPal));
+	memset(_shiftedDeltaPal, 0, sizeof(_shiftedDeltaPal));
 
 	for (int i = 0; i < 4; i++)
 		_iactTable[i] = 0;
