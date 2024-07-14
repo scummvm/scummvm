@@ -9327,6 +9327,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1_l("adiboumots", "", "ADBR_EX56.exe", "t:aee1d0997a82c796292b59d9c398ca20", 3872922, Common::FR_FRA, 1010),
 
+	MACGAME1_l("adiboumots", "", "ADBR_EX56.osx", "t:4284f511d1d68b28640a0c3db6d02ba2", 4557102, Common::FR_FRA, 1010),
+
 	// TRAC report #14403
 	WINGAME1_l("adibounature", "", "ADBS_EX48.exe", "t:aee1d0997a82c796292b59d9c398ca20", 3873754, Common::FR_FRA, 1010),
 
