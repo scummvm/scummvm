@@ -264,17 +264,18 @@ bool qdInterfaceScreen::is_element_in_list(const qdInterfaceElement *el) const {
 }
 
 bool qdInterfaceScreen::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
-	if (qdInterfaceDispatcher * dp = dynamic_cast<qdInterfaceDispatcher * >(owner())) {
-		for (sorted_element_list_t::const_iterator it = sorted_elements_.begin(); it != sorted_elements_.end(); ++it) {
-			if ((*it)->hit_test(x, y)) {
+	debugC(3, kDebugInput, "qdInterfaceScreen::mouse_handler(%d, %d, %lu)", x, y, sorted_elements_.size());
+	if (qdInterfaceDispatcher *dp = dynamic_cast<qdInterfaceDispatcher* >(owner())) {
+		for (auto &it : sorted_elements_) {
+			if (it->hit_test(x, y)) {
 				dp->toggle_mouse_hover();
-				if ((*it)->get_element_type() != qdInterfaceElement::EL_TEXT_WINDOW)
+				if (it->get_element_type() != qdInterfaceElement::EL_TEXT_WINDOW)
 					dp->disable_autohide();
 
-				if (!(*it)->is_locked() && (*it)->mouse_handler(x, y, ev))
+				if (it->mouse_handler(x, y, ev) && !it->is_locked())
 					return true;
 			} else
-				(*it)->hover_clear();
+				it->hover_clear();
 		}
 	}
 
@@ -424,3 +425,4 @@ void qdInterfaceScreen::update_personage_buttons() {
 	}
 }
 } // namespace QDEngine
+

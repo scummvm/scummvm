@@ -237,10 +237,12 @@ bool qdInterfaceDispatcher::quant(float dt) {
 }
 
 bool qdInterfaceDispatcher::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
+	debugC(9, kDebugInput, "qdInterfaceDispatcher::mouse_handler() x: %d, y: %d, ev: %d", x, y, ev);
 	is_mouse_hover_ = false;
 	autohide_disable_ = false;
 
 	if (end_game_mode_) {
+		debugC(3, kDebugInput, "qdInterfaceDispatcher::mouse_handler() end_game_mode_: %d", end_game_mode_);
 		if (ev == mouseDispatcher::EV_LEFT_DOWN || ev == mouseDispatcher::EV_RIGHT_DOWN) {
 			handle_event(qdInterfaceEvent::EVENT_CHANGE_INTERFACE_SCREEN, main_menu_screen_name());
 			end_game_mode_ = false;
@@ -248,8 +250,10 @@ bool qdInterfaceDispatcher::mouse_handler(int x, int y, mouseDispatcher::mouseEv
 		}
 	}
 
-	if (cur_screen_)
+	if (cur_screen_) {
+		debugC(9, kDebugInput, "qdInterfaceDispatcher::mouse_handler() cur_screen_");
 		return cur_screen_->mouse_handler(x, y, ev);
+	}
 
 	return false;
 }

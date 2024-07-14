@@ -211,6 +211,7 @@ bool qdInterfaceElement::remove_resource(const char *file_name, const qdInterfac
 }
 
 qdInterfaceElement *qdInterfaceElement::create_element(element_type tp) {
+	debugC(3, kDebugSave, "Creating element of type %d", tp);
 	switch (tp) {
 	case EL_BACKGROUND:
 		return new qdInterfaceBackground;
@@ -267,3 +268,4 @@ qdInterfaceElement::state_status_t qdInterfaceElement::state_status(const qdInte
 	return STATE_DONE;
 }
 } // namespace QDEngine
+
