@@ -305,11 +305,6 @@ Yes, it's a hack. :) Owners of a CRT monitor can achieve the same effect by the
 analog knobs -- stretch and move the 320x200 picture unless black borders are no
 longer visible. This hack provides a more elegant and per-game functionality.
 
-Realtime aspect ratio correction (CTRL+ALT+a) should be used with caution in
-Direct rendering mode because there's no way to refresh the screen. So if you
-change the setting and there isn't any game screen update coming, screen will
-stay black.
-
 
 Audio mixing
 ------------

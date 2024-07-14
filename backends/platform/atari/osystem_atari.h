@@ -51,7 +51,6 @@ public:
 private:
 	long _startTime;
 
-	bool _videoInitialized = false;
 	bool _timerInitialized = false;
 
 	int16 _vdi_handle;

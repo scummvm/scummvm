@@ -45,10 +45,13 @@ class Palette {
 public:
 	void clear() {
 		memset(data, 0, sizeof(data));
+		entries = 0;
 	}
 
 	uint16 *const tt = reinterpret_cast<uint16*>(data);
 	_RGB *const falcon = reinterpret_cast<_RGB*>(data);
+
+	int entries = 0;
 
 private:
 	byte data[256*4] = {};
@@ -79,12 +82,6 @@ struct Screen {
 	int rez = -1;
 	int mode = -1;
 	Graphics::Surface *const offsettedSurf = &_offsettedSurf;
-
-	int oldScreenSurfaceWidth = -1;
-	int oldScreenSurfaceHeight = -1;
-	int oldScreenSurfacePitch = -1;
-	int oldOffsettedSurfaceWidth = -1;
-	int oldOffsettedSurfaceHeight = -1;
 
 private:
 	static constexpr size_t ALIGN = 16;	// 16 bytes

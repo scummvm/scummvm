@@ -25,12 +25,10 @@
 #include <mint/falcon.h>
 #include <mint/osbind.h>
 #include <mint/ostruct.h>
+#include <usound.h>	// https://github.com/mikrosk/usound
 
 #include "common/config-manager.h"
 #include "common/debug.h"
-
-// see https://github.com/mikrosk/atari_sound_setup
-#include "../../../../atari_sound_setup.git/atari_sound_setup.h"
 
 #define DEFAULT_OUTPUT_RATE 24585
 #define DEFAULT_OUTPUT_CHANNELS 2

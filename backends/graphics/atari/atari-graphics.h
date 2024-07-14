@@ -112,12 +112,24 @@ protected:
 	void freeSurfaces();
 
 private:
+	enum class GraphicsMode : int {
+		Unknown			= -1,
+		DirectRendering = 0,
+		SingleBuffering = 1,
+		TripleBuffering = 3
+	};
+
 	enum CustomEventAction {
 		kActionToggleAspectRatioCorrection = 100,
 	};
 
+#ifndef DISABLE_FANCY_THEMES
 	int16 getMaximumScreenHeight() const { return 480; }
 	int16 getMaximumScreenWidth() const { return _tt ? 320 : (_vgaMonitor ? 640 : 640*1.2); }
+#else
+	int16 getMaximumScreenHeight() const { return _tt ? 480 : 240; }
+	int16 getMaximumScreenWidth() const { return _tt ? 320 : (_vgaMonitor ? 320 : 320*1.2); }
+#endif
 
 	bool updateScreenInternal(const Graphics::Surface &srcSurface);
 
@@ -162,38 +174,28 @@ private:
 
 	bool _vgaMonitor = true;
 	bool _tt = false;
-	bool _aspectRatioCorrection = false;
-	bool _oldAspectRatioCorrection = false;
 	bool _checkUnalignedPitch = false;
 
-	enum class GraphicsMode : int {
-		DirectRendering = 0,
-		SingleBuffering = 1,
-		TripleBuffering = 3
-	};
-
 	struct GraphicsState {
-		GraphicsState(GraphicsMode mode_)
-			: mode(mode_)
-			, width(0)
-			, height(0) {
-		}
-
-		GraphicsMode mode;
-		int width;
-		int height;
+		GraphicsMode mode = GraphicsMode::Unknown;
+		int width = 0;
+		int height = 0;
 		Graphics::PixelFormat format;
-	};
-	GraphicsState _pendingState{ (GraphicsMode)getDefaultGraphicsMode() };
-	GraphicsState _currentState{ (GraphicsMode)getDefaultGraphicsMode() };
+		bool aspectRatioCorrection = false;
 
-	enum PendingScreenChange {
-		kPendingScreenChangeNone	= 0,
-		kPendingScreenChangeMode	= 1<<0,
-		kPendingScreenChangeScreen	= 1<<1,
-		kPendingScreenChangePalette	= 1<<2
+		enum PendingScreenChange {
+			kNone					= 0,
+			kVideoMode				= 1<<0,
+			kScreenAddress			= 1<<1,
+			kPalette				= 1<<2,
+			kAspectRatioCorrection	= 1<<3,
+			kShakeScreen            = 1<<4,
+			kAll					= kVideoMode | kScreenAddress | kPalette | kAspectRatioCorrection | kShakeScreen,
+		};
+		int change = kNone;
 	};
-	int _pendingScreenChange = kPendingScreenChangeNone;
+	GraphicsState _pendingState;
+	GraphicsState _currentState;
 
 	enum {
 		FRONT_BUFFER,
@@ -208,7 +210,9 @@ private:
 
 	Graphics::Surface _chunkySurface;
 
-	bool _overlayVisible = false;
+	bool _overlayVisible = true;
+	bool _overlayPending = true;
+	bool _ignoreHideOverlay = true;
 	Graphics::Surface _overlaySurface;
 
 	Palette _palette;

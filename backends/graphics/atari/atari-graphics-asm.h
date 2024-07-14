@@ -27,24 +27,6 @@
 extern "C" {
 
 /**
- * Save Atari TT video registers.
- */
-void asm_screen_tt_save(void);
-/**
- * Save Atari Falcon video registers.
- */
-void asm_screen_falcon_save(void);
-
-/**
- * Restore Atari TT video registers.
- */
-void asm_screen_tt_restore(void);
-/**
- * Restore Atari Falcon video registers.
- */
-void asm_screen_falcon_restore(void);
-
-/**
  * Copy 4bpl sprite into 4bpl buffer. Sprite's width must be multiply of 16.
  *
  * @param dstBuffer destination buffer (four bitplanes)

@@ -24,6 +24,7 @@
 #include "atari-graphics.h"
 
 #include <mint/cookie.h>
+#include <mint/falcon.h>
 #include <mint/osbind.h>
 #include <mint/sysvars.h>
 
@@ -49,18 +50,49 @@ static const Graphics::PixelFormat PIXELFORMAT_CLUT8 = Graphics::PixelFormat::cr
 static const Graphics::PixelFormat PIXELFORMAT_RGB332 = Graphics::PixelFormat(1, 3, 3, 2, 0, 5, 2, 0, 0);
 static const Graphics::PixelFormat PIXELFORMAT_RGB121 = Graphics::PixelFormat(1, 1, 2, 1, 0, 3, 1, 0, 0);
 
+static bool s_shrinkVidelVisibleArea;
+
+static void shrinkVidelVisibleArea() {
+	// Active VGA screen area consists of 960 half-lines, i.e. 480 raster lines.
+	// In case of 320x240, the number is still 480 but data is fetched
+	// only for 240 lines so it doesn't make a difference to us.
+
+	if (hasSuperVidel()) {
+		const int vOffset = ((480 - 400) / 2) * 2;	// *2 because of half-lines
+
+		// VDB = VBE = VDB + paddding/2
+		*((volatile uint16*)0xFFFF82A8) = *((volatile uint16*)0xFFFF82A6) = *((volatile uint16*)0xFFFF82A8) + vOffset;
+		// VDE = VBB = VDE - padding/2
+		*((volatile uint16*)0xFFFF82AA) = *((volatile uint16*)0xFFFF82A4) = *((volatile uint16*)0xFFFF82AA) - vOffset;
+	} else {
+		// 31500/60.1 = 524 raster lines
+		// vft = 524 * 2 + 1 = 1049 half-lines
+		// 480 visible lines = 960 half-lines
+		// 1049 - 960 = 89 half-lines reserved for borders
+		// we want 400 visible lines = 800 half-lines
+		// vft = 800 + 89 = 889 half-lines in total ~ 70.1 Hz vertical frequency
+		int16 vft = *((volatile int16*)0xFFFF82A2);
+		int16 vss = *((volatile int16*)0xFFFF82AC);	// vss = vft - vss_sync
+		vss -= vft;	// -vss_sync
+		*((volatile int16*)0xFFFF82A2) = 889;
+		*((volatile int16*)0xFFFF82AC) = 889 + vss;
+	}
+}
+
 static bool s_tt;
 static int s_shakeXOffset;
 static int s_shakeYOffset;
-
+static int s_aspectRatioCorrectionYOffset;
 static Graphics::Surface *s_screenSurf;
+
 static void VblHandler() {
 	if (s_screenSurf) {
 #ifdef SCREEN_ACTIVE
-		const int bitsPerPixel = (s_screenSurf->format == PIXELFORMAT_RGB121 ? 4 : 8);
-		uintptr p = (uintptr)s_screenSurf->getBasePtr(0, MAX_V_SHAKE + s_shakeYOffset);
+		uintptr p = (uintptr)s_screenSurf->getBasePtr(0, MAX_V_SHAKE + s_shakeYOffset + s_aspectRatioCorrectionYOffset);
 
 		if (!s_tt) {
+			const int bitsPerPixel = (s_screenSurf->format == PIXELFORMAT_RGB121 ? 4 : 8);
+
 			s_shakeXOffset = -s_shakeXOffset;
 
 			if (s_shakeXOffset >= 0) {
@@ -84,6 +116,11 @@ static void VblHandler() {
 		*((volatile byte *)0xFFFF820D) = sptr.c[3];
 #endif
 		s_screenSurf = nullptr;
+	}
+
+	if (s_shrinkVidelVisibleArea) {
+		shrinkVidelVisibleArea();
+		s_shrinkVidelVisibleArea = false;
 	}
 }
 
@@ -119,50 +156,36 @@ static uint32 UninstallVblHandler() {
 	return uninstalled;
 }
 
-static void shrinkVidelVisibleArea() {
-	// Active VGA screen area consists of 960 half-lines, i.e. 480 raster lines.
-	// In case of 320x240, the number is still 480 but data is fetched
-	// only for 240 lines so it doesn't make a difference to us.
-	Vsync();
-
-	if (hasSuperVidel()) {
-		const int vOffset = ((480 - 400) / 2) * 2;	// *2 because of half-lines
-
-		// VDB = VBE = VDB + paddding/2
-		*((volatile uint16*)0xFFFF82A8) = *((volatile uint16*)0xFFFF82A6) = *((volatile uint16*)0xFFFF82A8) + vOffset;
-		// VDE = VBB = VDE - padding/2
-		*((volatile uint16*)0xFFFF82AA) = *((volatile uint16*)0xFFFF82A4) = *((volatile uint16*)0xFFFF82AA) - vOffset;
-	} else {
-		// 31500/60.1 = 524 raster lines
-		// vft = 524 * 2 + 1 = 1049 half-lines
-		// 480 visible lines = 960 half-lines
-		// 1049 - 960 = 89 half-lines reserved for borders
-		// we want 400 visible lines = 800 half-lines
-		// vft = 800 + 89 = 889 half-lines in total ~ 70.1 Hz vertical frequency
-		int16 vft = *((volatile int16*)0xFFFF82A2);
-		int16 vss = *((volatile int16*)0xFFFF82AC);	// vss = vft - vss_sync
-		vss -= vft;	// -vss_sync
-		*((volatile int16*)0xFFFF82A2) = 889;
-		*((volatile int16*)0xFFFF82AC) = 889 + vss;
-	}
-}
-
 static int  s_oldRez = -1;
 static int  s_oldMode = -1;
 static void *s_oldPhysbase = nullptr;
+static Palette s_oldPalette;
 
 void AtariGraphicsShutdown() {
 	Supexec(UninstallVblHandler);
 
 	if (s_oldRez != -1) {
 		Setscreen(SCR_NOCHANGE, s_oldPhysbase, s_oldRez);
+
+		EsetPalette(0, s_oldPalette.entries, s_oldPalette.tt);
 	} else if (s_oldMode != -1) {
-		// prevent setting video base address just on the VDB line
-		Vsync();
-		if (hasSuperVidel())
-			VsetMode(SVEXT | SVEXT_BASERES(0) | COL80 | BPS8C);	// resync to proper 640x480
-		VsetMode(s_oldMode);
+		static _RGB black[256];
+		VsetRGB(0, 256, black);
+
 		VsetScreen(SCR_NOCHANGE, s_oldPhysbase, SCR_NOCHANGE, SCR_NOCHANGE);
+
+		if (hasSuperVidel()) {
+			// SuperVidel XBIOS does not restore those (unlike TOS/EmuTOS)
+			long ssp = Super(SUP_SET);
+			//*((volatile char *)0xFFFF8265) = 0;
+			*((volatile short *)0xFFFF820E) = 0;
+			Super(ssp);
+
+			VsetMode(SVEXT | SVEXT_BASERES(0) | COL80 | BPS8C);	// resync to proper 640x480
+		}
+		VsetMode(s_oldMode);
+
+		VsetRGB(0, s_oldPalette.entries, s_oldPalette.falcon);
 	}
 }
 
@@ -226,12 +249,31 @@ AtariGraphicsManager::AtariGraphicsManager() {
 		}
 	}
 
-	// although we store/restore video hardware in OSystem_Atari,
-	// make sure that internal OS structures are updated correctly, too
 	if (_tt) {
 		s_oldRez = Getrez();
+		// EgetPalette / EsetPalette doesn't care about current resolution's number of colors
+		s_oldPalette.entries = 256;
+		EgetPalette(0, 256, s_oldPalette.tt);
 	} else {
 		s_oldMode = VsetMode(VM_INQUIRE);
+		switch (s_oldMode & NUMCOLS) {
+		case BPS1:
+			s_oldPalette.entries = 2;
+			break;
+		case BPS2:
+			s_oldPalette.entries = 4;
+			break;
+		case BPS4:
+			s_oldPalette.entries = 16;
+			break;
+		case BPS8:
+		case BPS8C:
+			s_oldPalette.entries = 256;
+			break;
+		default:
+			s_oldPalette.entries = 0;
+		}
+		VgetRGB(0, s_oldPalette.entries, s_oldPalette.falcon);
 	}
 	s_oldPhysbase = Physbase();
 
@@ -253,7 +295,7 @@ AtariGraphicsManager::~AtariGraphicsManager() {
 bool AtariGraphicsManager::hasFeature(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::Feature::kFeatureAspectRatioCorrection:
-		//debug("hasFeature(kFeatureAspectRatioCorrection): %d", !_vgaMonitor);
+		//debug("hasFeature(kFeatureAspectRatioCorrection): %d", !_tt);
 		return !_tt;
 	case OSystem::Feature::kFeatureCursorPalette:
 		// FIXME: pretend to have cursor palette at all times, this function
@@ -266,14 +308,21 @@ bool AtariGraphicsManager::hasFeature(OSystem::Feature f) const {
 	default:
 		return false;
 	}
+
+	// TODO: kFeatureDisplayLogFile?, kFeatureClipboardSupport, kFeatureSystemBrowserDialog
 }
 
 void AtariGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
+	if (!hasFeature(f))
+		return;
+	
 	switch (f) {
 	case OSystem::Feature::kFeatureAspectRatioCorrection:
 		//debug("setFeatureState(kFeatureAspectRatioCorrection): %d", enable);
-		_oldAspectRatioCorrection = _aspectRatioCorrection;
-		_aspectRatioCorrection = enable;
+		_pendingState.aspectRatioCorrection = enable;
+
+		if (_currentState.aspectRatioCorrection != _pendingState.aspectRatioCorrection)
+			_pendingState.change |= GraphicsState::kAspectRatioCorrection;
 		break;
 	default:
 		break;
@@ -284,7 +333,7 @@ bool AtariGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::Feature::kFeatureAspectRatioCorrection:
 		//debug("getFeatureState(kFeatureAspectRatioCorrection): %d", _aspectRatioCorrection);
-		return _aspectRatioCorrection;
+		return _currentState.aspectRatioCorrection;
 	case OSystem::Feature::kFeatureCursorPalette:
 		//debug("getFeatureState(kFeatureCursorPalette): %d", isOverlayVisible());
 		//return isOverlayVisible();
@@ -297,14 +346,13 @@ bool AtariGraphicsManager::getFeatureState(OSystem::Feature f) const {
 bool AtariGraphicsManager::setGraphicsMode(int mode, uint flags) {
 	debug("setGraphicsMode: %d, %d", mode, flags);
 
-	GraphicsMode graphicsMode = (GraphicsMode)mode;
+	_pendingState.mode = (GraphicsMode)mode;
 
-	if (graphicsMode >= GraphicsMode::DirectRendering && graphicsMode <= GraphicsMode::TripleBuffering) {
-		_pendingState.mode = graphicsMode;
-		return true;
-	}
+	if (_currentState.mode != _pendingState.mode)
+		_pendingState.change |= GraphicsState::kScreenAddress;
 
-	return false;
+	// this doesn't seem to be checked anywhere
+	return true;
 }
 
 void AtariGraphicsManager::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
@@ -313,10 +361,20 @@ void AtariGraphicsManager::initSize(uint width, uint height, const Graphics::Pix
 	_pendingState.width = width;
 	_pendingState.height = height;
 	_pendingState.format = format ? *format : PIXELFORMAT_CLUT8;
+
+	if ((_pendingState.width > 0 && _pendingState.height > 0)
+		&& (_currentState.width != _pendingState.width || _currentState.height != _pendingState.height)) {
+		_pendingState.change |= GraphicsState::kVideoMode;
+	}
 }
 
 void AtariGraphicsManager::beginGFXTransaction() {
 	debug("beginGFXTransaction");
+
+	// these serve as a flag whether we are launching a game; if not, they will be always zeroed
+	_pendingState.width = 0;
+	_pendingState.height = 0;
+	_pendingState.change &= ~GraphicsState::kVideoMode;
 }
 
 OSystem::TransactionError AtariGraphicsManager::endGFXTransaction() {
@@ -324,22 +382,40 @@ OSystem::TransactionError AtariGraphicsManager::endGFXTransaction() {
 
 	int error = OSystem::TransactionError::kTransactionSuccess;
 
+	if (_pendingState.mode < GraphicsMode::DirectRendering || _pendingState.mode > GraphicsMode::TripleBuffering)
+		error |= OSystem::TransactionError::kTransactionModeSwitchFailed;
+
 	if (_pendingState.format != PIXELFORMAT_CLUT8)
 		error |= OSystem::TransactionError::kTransactionFormatNotSupported;
 
-	if (_pendingState.width > getMaximumScreenWidth() || _pendingState.height > getMaximumScreenHeight())
-		error |= OSystem::TransactionError::kTransactionSizeChangeFailed;
+	if (_pendingState.width > 0 && _pendingState.height > 0) {
+		if (_pendingState.width > getMaximumScreenWidth() || _pendingState.height > getMaximumScreenHeight())
+			error |= OSystem::TransactionError::kTransactionSizeChangeFailed;
 
-	if (_pendingState.width % 16 != 0 && !hasSuperVidel()) {
-		warning("Requested width not divisible by 16, please report");
-		error |= OSystem::TransactionError::kTransactionSizeChangeFailed;
+		if (_pendingState.width % 16 != 0 && !hasSuperVidel()) {
+			warning("Requested width not divisible by 16, please report");
+			error |= OSystem::TransactionError::kTransactionSizeChangeFailed;
+		}
 	}
 
 	if (error != OSystem::TransactionError::kTransactionSuccess) {
 		warning("endGFXTransaction failed: %02x", (int)error);
-		// all our errors are fatal but engine.cpp takes only this one seriously
+		// all our errors are fatal as we don't support rollback so make sure that
+		// initGraphicsAny() fails (note: setupGraphics() doesn't check errors at all)
 		error |= OSystem::TransactionError::kTransactionSizeChangeFailed;
 		return static_cast<OSystem::TransactionError>(error);
+	}
+
+	// don't exit overlay unless there is real video mode to be set
+	if (_pendingState.width == 0 || _pendingState.height == 0) {
+		_ignoreHideOverlay = true;
+		return OSystem::kTransactionSuccess;
+	} else if (_overlayVisible) {
+		// that's it, really. updateScreen() will take care of everything.
+		_ignoreHideOverlay = false;
+		_overlayVisible = false;
+		// if being in the overlay, reset everything (same as hideOverlay() does)
+		_pendingState.change |= GraphicsState::kAll;
 	}
 
 	_chunkySurface.init(_pendingState.width, _pendingState.height, _pendingState.width,
@@ -350,18 +426,16 @@ OSystem::TransactionError AtariGraphicsManager::endGFXTransaction() {
 	_screen[BACK_BUFFER2]->reset(_pendingState.width, _pendingState.height, 8, true);
 	_workScreen = _screen[_pendingState.mode <= GraphicsMode::SingleBuffering ? FRONT_BUFFER : BACK_BUFFER1];
 
-	s_screenSurf = nullptr;
-	s_shakeXOffset = 0;
-	s_shakeYOffset = 0;
-
-	// in case of resolution change from GUI
-	if (_oldWorkScreen)
-		_oldWorkScreen = _workScreen;
-
 	_palette.clear();
-	_pendingScreenChange = kPendingScreenChangeMode | kPendingScreenChangeScreen | kPendingScreenChangePalette;
+	_pendingState.change |= GraphicsState::kPalette;
 
+	// no point of setting this in updateScreen(), it would only complicate code
 	_currentState = _pendingState;
+	// currently there is no use for this
+	_currentState.change = GraphicsState::kNone;
+
+	// apply new screen changes
+	updateScreen();
 
 	return OSystem::kTransactionSuccess;
 }
@@ -387,7 +461,7 @@ void AtariGraphicsManager::setPalette(const byte *colors, uint start, uint num) 
 		}
 	}
 
-	_pendingScreenChange |= kPendingScreenChangePalette;
+	_pendingState.change |= GraphicsState::kPalette;
 }
 
 void AtariGraphicsManager::grabPalette(byte *colors, uint start, uint num) const {
@@ -464,6 +538,8 @@ void AtariGraphicsManager::fillScreen(uint32 col) {
 }
 
 void AtariGraphicsManager::fillScreen(const Common::Rect &r, uint32 col) {
+	debug("fillScreen: %dx%d %d", r.width(), r.height(), col);
+
 	Graphics::Surface *screen = lockScreen();
 	if (screen)
 		screen->fillRect(r, col);
@@ -528,26 +604,20 @@ void AtariGraphicsManager::updateScreen() {
 			assert(_workScreen == _screen[BACK_BUFFER1]);
 			screenUpdated = updateScreenInternal(_chunkySurface);
 			break;
+		default:
+			warning("Unknown graphics mode %d", (int)_currentState.mode);
 		}
 	}
 
 	_workScreen->clearDirtyRects();
 
-#ifdef SCREEN_ACTIVE
-	// first change video mode so we can modify video regs later
-	if (_pendingScreenChange & kPendingScreenChangeMode) {
-		if (_workScreen->rez != -1) {
-			// unfortunately this reinitializes VDI, too
-			Setscreen(SCR_NOCHANGE, SCR_NOCHANGE, _workScreen->rez);
-		} else if (_workScreen->mode != -1) {
-			VsetMode(_workScreen->mode);
-		}
+	if (!_overlayPending && (_pendingState.width == 0 || _pendingState.height == 0)) {
+		return;
 	}
 
-	if (_pendingScreenChange & kPendingScreenChangeScreen) {
-		// calling (V)SetScreen without Vsync() is dangerous (at least on Falcon)
-		s_screenSurf = isOverlayVisible() ? &_screen[OVERLAY_BUFFER]->surf : &_screen[FRONT_BUFFER]->surf;
-	} else if (screenUpdated && !isOverlayVisible() && _currentState.mode == GraphicsMode::TripleBuffering) {
+	if (screenUpdated
+		&& !isOverlayVisible()
+		&& _currentState.mode == GraphicsMode::TripleBuffering) {
 		// Triple buffer:
 		// - alternate BACK_BUFFER1 and BACK_BUFFER2
 		// - check if FRONT_BUFFER has been displayed for at least one frame
@@ -585,111 +655,125 @@ void AtariGraphicsManager::updateScreen() {
 		// FRONT_BUFFER is displayed and still contains previously finished frame
 	}
 
-	if (_pendingScreenChange & kPendingScreenChangePalette) {
-		if (_tt)
-			EsetPalette(0, isOverlayVisible() ? getOverlayPaletteSize() : 256, _workScreen->palette->tt);
-		else
-			VsetRGB(0, isOverlayVisible() ? getOverlayPaletteSize() : 256, _workScreen->palette->falcon);
+	const GraphicsState oldPendingState = _pendingState;
+	if (_overlayPending) {
+		debug("Forcing overlay pending state");
+		_pendingState.change = GraphicsState::kAll;
 	}
 
-	_pendingScreenChange = kPendingScreenChangeNone;
+	bool doShrinkVidelVisibleArea = false;
+	bool doSuperVidelReset = false;
+	if (_pendingState.change & GraphicsState::kAspectRatioCorrection) {
+		assert(_workScreen->mode != -1);
 
-	if (_oldAspectRatioCorrection != _aspectRatioCorrection) {
-		if (!isOverlayVisible() && _currentState.height == 200) {
+		if (_pendingState.aspectRatioCorrection && _currentState.height == 200 && !isOverlayVisible()) {
+			// apply machine-specific aspect ratio correction
 			if (!_vgaMonitor) {
-				short mode = VsetMode(VM_INQUIRE);
-				if (_aspectRatioCorrection) {
-					// 60 Hz
-					mode &= ~PAL;
-					mode |= NTSC;
-				} else {
-					// 50 Hz
-					mode &= ~NTSC;
-					mode |= PAL;
-				}
-				VsetMode(mode);
-			} else if (hasSuperVidel() || !_tt) {
-				if (_aspectRatioCorrection) {
-					for (int screenId : { FRONT_BUFFER, BACK_BUFFER1, BACK_BUFFER2 }) {
-						Screen *screen = _screen[screenId];
-						Graphics::Surface *offsettedSurf = screen->offsettedSurf;
-
-						// erase old screen
-						offsettedSurf->fillRect(Common::Rect(offsettedSurf->w, offsettedSurf->h), 0);
-
-						// setup new screen
-						screen->oldScreenSurfaceWidth = screen->surf.w;
-						screen->oldScreenSurfaceHeight = screen->surf.h;
-						screen->oldScreenSurfacePitch = screen->surf.pitch;
-						screen->oldOffsettedSurfaceWidth = offsettedSurf->w;
-						screen->oldOffsettedSurfaceHeight = offsettedSurf->h;
-
-						screen->surf.w = 320 + 2 * MAX_HZ_SHAKE;
-						screen->surf.h = 200 + 2 * MAX_V_SHAKE;
-						screen->surf.pitch = screen->surf.w;
-
-						offsettedSurf->init(
-							320, 200, screen->surf.pitch,
-							screen->surf.getBasePtr((screen->surf.w - 320) / 2, (screen->surf.h - 200) / 2),
-							screen->surf.format);
-
-						screen->addDirtyRect(*lockScreen(), Common::Rect(offsettedSurf->w, offsettedSurf->h), _currentState.mode == GraphicsMode::DirectRendering);
-					}
-
-					Supexec(shrinkVidelVisibleArea);
-				} else {
-					for (int screenId : { FRONT_BUFFER, BACK_BUFFER1, BACK_BUFFER2 }) {
-						Screen *screen = _screen[screenId];
-						Graphics::Surface *offsettedSurf = screen->offsettedSurf;
-
-						assert(screen->oldScreenSurfaceWidth != -1);
-						assert(screen->oldScreenSurfaceHeight != -1);
-						assert(screen->oldScreenSurfacePitch != -1);
-						assert(screen->oldOffsettedSurfaceWidth != -1);
-						assert(screen->oldOffsettedSurfaceHeight != -1);
-
-						// erase old screen
-						offsettedSurf->fillRect(Common::Rect(offsettedSurf->w, offsettedSurf->h), 0);
-
-						// setup new screen
-						screen->surf.w = screen->oldScreenSurfaceWidth;
-						screen->surf.h = screen->oldScreenSurfaceHeight;
-						screen->surf.pitch = screen->oldScreenSurfacePitch;
-
-						offsettedSurf->init(
-							screen->oldOffsettedSurfaceWidth, screen->oldOffsettedSurfaceHeight, screen->surf.pitch,
-							screen->surf.getBasePtr(
-								(screen->surf.w - screen->oldOffsettedSurfaceWidth) / 2,
-								(screen->surf.h - screen->oldOffsettedSurfaceHeight) / 2),
-							screen->surf.format);
-
-						screen->oldScreenSurfaceWidth = -1;
-						screen->oldScreenSurfaceHeight = -1;
-						screen->oldScreenSurfacePitch = -1;
-						screen->oldOffsettedSurfaceWidth = -1;
-						screen->oldOffsettedSurfaceHeight = -1;
-
-						screen->addDirtyRect(*lockScreen(), Common::Rect(offsettedSurf->w, offsettedSurf->h), _currentState.mode == GraphicsMode::DirectRendering);
-					}
-
-					if (hasSuperVidel())
-						VsetMode(SVEXT | SVEXT_BASERES(0) | COL80 | BPS8C);	// resync to proper 640x480
-					VsetMode(_workScreen->mode);
-				}
+				_workScreen->mode &= ~PAL;
+				// 60 Hz
+				_workScreen->mode |= NTSC;
+				_pendingState.change |= GraphicsState::kVideoMode;
 			} else {
-				// TODO: some tricks with TT's 480 lines?
+				Screen *screen = _screen[FRONT_BUFFER];
+				s_aspectRatioCorrectionYOffset = (screen->surf.h - 2*MAX_V_SHAKE - screen->offsettedSurf->h) / 2;
+				_pendingState.change |= GraphicsState::kShakeScreen;
+
+				if (_pendingState.change & GraphicsState::kVideoMode)
+					doShrinkVidelVisibleArea = true;
+				else
+					s_shrinkVidelVisibleArea = true;
+			}
+		} else {
+			// reset back to default mode
+			if (!_vgaMonitor) {
+				_workScreen->mode &= ~NTSC;
+				// 50 Hz
+				_workScreen->mode |= PAL;
+				_pendingState.change |= GraphicsState::kVideoMode;
+			} else {
+				s_aspectRatioCorrectionYOffset = 0;
+				s_shrinkVidelVisibleArea = false;
+
+				if (hasSuperVidel())
+					doSuperVidelReset = true;
+				_pendingState.change |= GraphicsState::kVideoMode;
+			}
+		}
+
+		_pendingState.change &= ~GraphicsState::kAspectRatioCorrection;
+	}
+
+#ifdef SCREEN_ACTIVE
+	if (_pendingState.change & GraphicsState::kVideoMode) {
+		if (_workScreen->rez != -1) {
+			// unfortunately this reinitializes VDI, too
+			Setscreen(SCR_NOCHANGE, SCR_NOCHANGE, _workScreen->rez);
+
+			// strictly speaking, this is necessary only if kScreenAddress is set but makes code easier
+			static uint16 black[256];
+			// Vsync();	// done by Setscreen() above
+			EsetPalette(0, isOverlayVisible() ? 16 : 256, black);
+		} else if (_workScreen->mode != -1) {
+			// VsetMode() must be called first: it resets all hz/v, scrolling and line width registers
+			// so even if kScreenAddress wasn't scheduled, we have to set new s_screenSurf to refresh them
+			static _RGB black[256];
+			VsetRGB(0, 256, black);
+			// Vsync();	// done by (either) VsetMode() below
+
+			if (doSuperVidelReset) {
+				VsetMode(SVEXT | SVEXT_BASERES(0) | COL80 | BPS8C);	// resync to proper 640x480
+				doSuperVidelReset = false;
 			}
 
-			_oldAspectRatioCorrection = _aspectRatioCorrection;
-
-			_pendingScreenChange |= kPendingScreenChangeScreen;
-			updateScreen();
-		} else {
-			// ignore new value in overlay
-			_aspectRatioCorrection = _oldAspectRatioCorrection;
+			debug("VsetMode: %04x", _workScreen->mode);
+			VsetMode(_workScreen->mode);
 		}
+
+		// due to implied Vsync() above
+		assert(s_screenSurf == nullptr);
+
+		// refresh Videl register settings
+		s_screenSurf = isOverlayVisible() ? &_screen[OVERLAY_BUFFER]->surf : &_screen[FRONT_BUFFER]->surf;
+		s_shrinkVidelVisibleArea = doShrinkVidelVisibleArea;
+
+		// keep kVideoMode for resetting the palette later
+		_pendingState.change &= ~(GraphicsState::kScreenAddress | GraphicsState::kShakeScreen);
+	}
+
+	if (_pendingState.change & GraphicsState::kScreenAddress) {
+		// takes effect in the nearest VBL interrupt but we always wait for Vsync() in this case
+		Vsync();
+		assert(s_screenSurf == nullptr);
+
+		s_screenSurf = isOverlayVisible() ? &_screen[OVERLAY_BUFFER]->surf : &_screen[FRONT_BUFFER]->surf;
+		_pendingState.change &= ~GraphicsState::kScreenAddress;
+	}
+
+	if (_pendingState.change & GraphicsState::kShakeScreen) {
+		// takes effect in the nearest VBL interrupt
+		if (!s_screenSurf)
+			s_screenSurf = isOverlayVisible() ? &_screen[OVERLAY_BUFFER]->surf : &_screen[FRONT_BUFFER]->surf;
+		_pendingState.change &= ~GraphicsState::kShakeScreen;
+	}
+
+	if (_pendingState.change & (GraphicsState::kVideoMode | GraphicsState::kPalette)) {
+		if (!_tt) {
+			// takes effect in the nearest VBL interrupt
+			VsetRGB(0, isOverlayVisible() ? getOverlayPaletteSize() : 256, _workScreen->palette->falcon);
+		} else {
+			// takes effect immediatelly (it's possible that Vsync() hasn't been called: that's expected,
+			// don't cripple framerate only for a palette change)
+			EsetPalette(0, isOverlayVisible() ? getOverlayPaletteSize() : 256, _workScreen->palette->tt);
+		}
+		_pendingState.change &= ~(GraphicsState::kVideoMode | GraphicsState::kPalette);
 	}
 #endif
+
+	if (_overlayPending) {
+		_pendingState = oldPendingState;
+		_overlayPending = false;
+	}
+
 	//debug("end of updateScreen");
 }
 
@@ -704,12 +788,11 @@ void AtariGraphicsManager::setShakePos(int shakeXOffset, int shakeYOffset) {
 		s_shakeYOffset = shakeYOffset;
 	}
 
-	_pendingScreenChange |= kPendingScreenChangeScreen;
-	updateScreen();
+	_pendingState.change |= GraphicsState::kShakeScreen;
 }
 
 void AtariGraphicsManager::showOverlay(bool inGUI) {
-	debug("showOverlay");
+	debug("showOverlay (visible: %d)", _overlayVisible);
 
 	if (_overlayVisible)
 		return;
@@ -722,23 +805,27 @@ void AtariGraphicsManager::showOverlay(bool inGUI) {
 	_workScreen = _screen[OVERLAY_BUFFER];
 
 	// do not cache dirtyRects and oldCursorRect
-	const int bitsPerPixel = getBitsPerPixel(getOverlayFormat());
-	static bool resetCursorPosition = true;
-	_workScreen->reset(getOverlayWidth(), getOverlayHeight(), bitsPerPixel, resetCursorPosition);
-	resetCursorPosition = false;
-
-	_pendingScreenChange = kPendingScreenChangeMode | kPendingScreenChangeScreen | kPendingScreenChangePalette;
+	_workScreen->reset(getOverlayWidth(), getOverlayHeight(), getBitsPerPixel(getOverlayFormat()), false);
 
 	_overlayVisible = true;
 
+	assert(_pendingState.change == GraphicsState::kNone);
+	_overlayPending = true;
 	updateScreen();
 }
 
 void AtariGraphicsManager::hideOverlay() {
-	debug("hideOverlay");
+	debug("hideOverlay (ignore: %d, visible: %d)", _ignoreHideOverlay, _overlayVisible);
 
 	if (!_overlayVisible)
 		return;
+
+	if (_ignoreHideOverlay) {
+		// faster than _workScreen->reset()
+		_workScreen->clearDirtyRects();
+		_workScreen->cursor.reset();
+		return;
+	}
 
 	_workScreen = _oldWorkScreen;
 	_oldWorkScreen = nullptr;
@@ -746,10 +833,10 @@ void AtariGraphicsManager::hideOverlay() {
 	// FIXME: perhaps there's a better way but this will do for now
 	_checkUnalignedPitch = true;
 
-	_pendingScreenChange = kPendingScreenChangeMode | kPendingScreenChangeScreen | kPendingScreenChangePalette;
-
 	_overlayVisible = false;
 
+	assert(_pendingState.change == GraphicsState::kNone);
+	_pendingState.change = GraphicsState::kAll;
 	updateScreen();
 }
 
@@ -935,14 +1022,36 @@ void AtariGraphicsManager::updateMousePosition(int deltaX, int deltaY) {
 }
 
 bool AtariGraphicsManager::notifyEvent(const Common::Event &event) {
-	if (event.type != Common::EVENT_CUSTOM_BACKEND_ACTION_START) {
-		return false;
-	}
+	switch (event.type) {
+	case Common::EVENT_RETURN_TO_LAUNCHER:
+	case Common::EVENT_QUIT:
+		if (isOverlayVisible()) {
+			_ignoreHideOverlay = true;
+			return false;
+		}
+		break;
 
-	switch ((CustomEventAction) event.customType) {
-	case kActionToggleAspectRatioCorrection:
-		_aspectRatioCorrection = !_aspectRatioCorrection;
-		return true;
+	case Common::EVENT_CUSTOM_BACKEND_ACTION_START:
+		switch ((CustomEventAction) event.customType) {
+		case kActionToggleAspectRatioCorrection:
+			if (hasFeature(OSystem::Feature::kFeatureAspectRatioCorrection)) {
+				_pendingState.aspectRatioCorrection = !_pendingState.aspectRatioCorrection;
+
+				if (_currentState.aspectRatioCorrection != _pendingState.aspectRatioCorrection) {
+					_pendingState.change |= GraphicsState::kAspectRatioCorrection;
+
+					// would be updated in updateScreen() anyway
+					_currentState.aspectRatioCorrection = _pendingState.aspectRatioCorrection;
+					updateScreen();
+				}
+				return true;
+			}
+			break;
+		}
+		break;
+
+	default:
+		return false;
 	}
 
 	return false;
@@ -967,7 +1076,9 @@ void AtariGraphicsManager::allocateSurfaces() {
 		_screen[i] = new Screen(this, getMaximumScreenWidth(), getMaximumScreenHeight(), PIXELFORMAT_CLUT8, &_palette);
 	}
 
-	_screen[OVERLAY_BUFFER] = new Screen(this, getOverlayWidth(), getOverlayHeight(), getOverlayFormat(), &_overlayPalette);
+	// overlay is the default screen upon start
+	_workScreen = _screen[OVERLAY_BUFFER] = new Screen(this, getOverlayWidth(), getOverlayHeight(), getOverlayFormat(), &_overlayPalette);
+	_workScreen->reset(getOverlayWidth(), getOverlayHeight(), getBitsPerPixel(getOverlayFormat()), true);
 
 	_chunkySurface.create(getMaximumScreenWidth(), getMaximumScreenHeight(), PIXELFORMAT_CLUT8);
 	_overlaySurface.create(getOverlayWidth(), getOverlayHeight(), getOverlayFormat());
