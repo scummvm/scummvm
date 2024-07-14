@@ -1286,6 +1286,21 @@ void DarkseedEngine::updateAnimation() {
 			_player->updateSprite();
 		}
 		break;
+	case 2:
+		advanceAnimationFrame(0);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]];
+		} else {
+			_player->_position.x = 218;
+			_player->_position.y = 198;
+			_player->_direction = 2;
+			_player->updateSprite();
+			_player->_walkTarget.x = 218;
+			_player->_walkTarget.y = 198;
+			_objectVar[52] = 0;
+//			StopVOC(); TODO
+		}
+		break;
 	case 5: // goto sleep animation
 		_player->_position.x = 135;
 		_player->_position.y = 91;
@@ -1852,7 +1867,7 @@ void DarkseedEngine::useCode(int objNum) {
 			_objectVar[80] = (_objectVar[80] & 2) + ((_objectVar[80] & 1) == 0 ? 1 : 0);
 			return;
 		}
-		if (objNum == 59 || objNum == 78 && _objectVar[34] == 0) {
+		if ((objNum == 59 || objNum == 78) && _objectVar[34] == 0) {
 			return;
 		}
 		if (objNum == 100) {
@@ -2046,9 +2061,95 @@ void DarkseedEngine::useCode(int objNum) {
 		} else if (objNum == 117) {
 			_player->loadAnimations("obslev.nsp");
 			setupOtherNspAnimation(1, 46);
-		}
-		// TODO more code here.
-		if (objNum == 139) {
+		} else if (objNum == 62) {
+			if (((_objectVar[49] == 0) || (1 < _objectVar[62])) || (_currentDay != 1)) {
+				if (((_objectVar[49] == 0) || (1 < _objectVar[62])) || (_currentDay != 2)) {
+					if (((_objectVar[49] == 0) || (1 < _objectVar[62])) || (_currentDay != 3)) {
+						if (_objectVar[62] < 101) {
+//							LoadModeSong(9);
+							playSound(0,6,-1);
+							_objectVar[62] = 101;
+							_console->addTextLine("You turn on the music.");
+						} else if (_objectVar[62] == 101) {
+//							KillAllSound();
+//							TerminateRoomSong();
+							_objectVar[62] = 100;
+							_console->addTextLine("You turn off the music.");
+						}
+					} else {
+						_objectVar[62] = _objectVar[62] + 1;
+						_console->printTosText(921);
+					}
+				} else {
+					_objectVar[62] = _objectVar[62] + 1;
+					_console->printTosText(920);
+				}
+			} else {
+				_objectVar[62] = _objectVar[62] + 1;
+				_console->printTosText(919);
+			}
+		} else if (objNum == 63) {
+//			Ordinal_184(unaff_CS,(int)&_file_name,4192,(int)s_room33.nnn_1060_319f);
+//			_Room = 33;
+//			InitRoom();
+//			LoadRoomAndDumpPic();
+//			SetHeroSpriteNumber();
+		} else if (objNum == 83) {
+//			Ordinal_184(unaff_CS,(int)&_file_name,4192,(int)s_room28.nnn_1060_31ab);
+//			_Room = 28;
+//			InitRoom();
+//			LoadRoomAndDumpPic();
+//			SetHeroSpriteNumber();
+		} else if (objNum == 82) {
+			if (_room->_roomNumber == 41) {
+				_room->_roomNumber = 44;
+				_console->printTosText(956);
+			}
+			else {
+				_room->_roomNumber = 41;
+				_console->printTosText(957);
+			}
+//			LoadRoomAndDumpPic();
+//			InitRoom();
+//			SetHeroSpriteNumber();
+		} else if (objNum == 52) {
+//			_NoScroll = 0;
+			if (_objectVar[52] == 1) {
+				_player->loadAnimations("shower.nsp");
+				setupOtherNspAnimation(0, 2);
+				_console->printTosText(193);
+				playSound(2,4,-1);
+			} else {
+				_console->printTosText(194);
+			}
+		} else if (objNum == 59) {
+			if (_objectVar[59] == 2) {
+				_objectVar[59] = 1;
+				if (_room->_roomNumber == 0 || _room->_roomNumber == 9) {
+					_console->printTosText(409);
+				}
+			}
+			else {
+				if (_room->_roomNumber == 0 || _room->_roomNumber == 9) {
+					_console->printTosText(407);
+				}
+				_objectVar[59] = 2;
+			}
+		} else if (objNum == 78) {
+			if (_objectVar[78] == 2) {
+				_objectVar[78] = 1;
+				if (_room->_roomNumber == 0 || _room->_roomNumber == 9) {
+					_console->printTosText(409);
+				}
+			}
+			else {
+				playSound(41,5,-1);
+				if (_room->_roomNumber == 0 || _room->_roomNumber == 9) {
+					_console->printTosText(32);
+				}
+				_objectVar[78] = 2;
+			}
+		} else if (objNum == 139) {
 			_player->loadAnimations("ltladder.nsp");
 			setupOtherNspAnimation(0,10);
 		}
