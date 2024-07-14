@@ -3300,7 +3300,7 @@ Structural::Structural(Runtime *runtime) : _parent(nullptr), _paused(false), _lo
 }
 
 Structural::Structural(const Structural &other)
-	: RuntimeObject(other), _parent(other._parent), _children(other._children), _modifiers(other._modifiers), _name(other._name), _assets(other._assets)
+	: RuntimeObject(other), Debuggable(other), _parent(other._parent), _children(other._children), _modifiers(other._modifiers), _name(other._name), _assets(other._assets)
 	, _paused(other._paused), _loop(other._loop), _flushPriority(other._flushPriority)/*, _hooks(other._hooks)*/, _runtime(other._runtime) {
 }
 
