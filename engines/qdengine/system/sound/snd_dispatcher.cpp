@@ -26,19 +26,6 @@ namespace QDEngine {
 
 sndDispatcher *sndDispatcher::dispatcher_ptr_;
 
-#ifdef _QUEST_EDITOR
-sndDispatcher::SoundDisabler::SoundDisabler() {
-	if (sndDispatcher * p = sndDispatcher::get_dispatcher()) {
-		soundEnabled_ = p->is_enabled();
-		p->disable();
-	}
-}
-sndDispatcher::SoundDisabler::~SoundDisabler() {
-	if (sndDispatcher * p = sndDispatcher::get_dispatcher())
-		if (soundEnabled_) p ->enable();
-}
-#endif // _QUEST_EDITOR
-
 sndDispatcher::sndDispatcher() : is_enabled_(true),
 	is_paused_(false),
 	volume_(255),
