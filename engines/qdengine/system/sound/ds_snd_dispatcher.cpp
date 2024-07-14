@@ -35,46 +35,46 @@ static bool operator == (const dsSound &snd, const sndHandle &h) {
 	return snd.handle() == &h;
 }
 
-ds_sndDispatcher::ds_sndDispatcher() : sound_device_(NULL) {
+ds_sndDispatcher::ds_sndDispatcher() : _sound_device(NULL) {
 	warning("STUB: ds_sndDispatcher::ds_sndDispatcher()");
 #if 0
-	HRESULT res = DirectSoundCreate(NULL, &sound_device_, NULL);
-	if (FAILED(res) || sound_device_ == NULL)
+	HRESULT res = DirectSoundCreate(NULL, &_sound_device, NULL);
+	if (FAILED(res) || _sound_device == NULL)
 		return;
 
 	HWND hWnd = static_cast<HWND>(appGetHandle());
 	grDispatcher *gp = grDispatcher::instance();
 
 	if (gp && gp->is_in_fullscreen_mode()) {
-		res = sound_device_->SetCooperativeLevel(hWnd, DSSCL_EXCLUSIVE);
+		res = _sound_device->SetCooperativeLevel(hWnd, DSSCL_EXCLUSIVE);
 		if (FAILED(res))
-			sound_device_->SetCooperativeLevel(hWnd, DSSCL_PRIORITY);
+			_sound_device->SetCooperativeLevel(hWnd, DSSCL_PRIORITY);
 	} else {
-		sound_device_->SetCooperativeLevel(hWnd, DSSCL_PRIORITY);
+		_sound_device->SetCooperativeLevel(hWnd, DSSCL_PRIORITY);
 	}
 #endif
 }
 
 ds_sndDispatcher::~ds_sndDispatcher() {
-	sounds_.clear();
+	_sounds.clear();
 
 	warning("STUB: ds_sndDispatcher::~ds_sndDispatcher()");
 #if 0
-	if (sound_device_)
-		sound_device_-> Release();
+	if (_sound_device)
+		_sound_device-> Release();
 #endif
 }
 
 void ds_sndDispatcher::quant() {
-	sounds_.remove_if(std::mem_fn(&dsSound::is_stopped));
+	_sounds.remove_if(std::mem_fn(&dsSound::is_stopped));
 }
 
 bool ds_sndDispatcher::play_sound(const sndSound *snd, bool loop, float start_position, int vol) {
-	if (!sound_device_) return false;
+	if (!_sound_device) return false;
 
 	if (is_enabled()) {
-		sounds_.push_back(dsSound(*snd, sound_device_));
-		dsSound &p = sounds_.back();
+		_sounds.push_back(dsSound(*snd, _sound_device));
+		dsSound &p = _sounds.back();
 
 		if (loop)
 			p.toggle_looping();
@@ -96,13 +96,13 @@ bool ds_sndDispatcher::play_sound(const sndSound *snd, bool loop, float start_po
 }
 
 bool ds_sndDispatcher::stop_sound(const sndSound *snd) {
-	if (!sound_device_) return false;
+	if (!_sound_device) return false;
 
-	sound_list_t::iterator it = std::find(sounds_.begin(), sounds_.end(), *snd);
+	sound_list_t::iterator it = std::find(_sounds.begin(), _sounds.end(), *snd);
 
-	if (it != sounds_.end()) {
+	if (it != _sounds.end()) {
 		it->stop();
-		sounds_.erase(it);
+		_sounds.erase(it);
 
 		return true;
 	}
@@ -111,13 +111,13 @@ bool ds_sndDispatcher::stop_sound(const sndSound *snd) {
 }
 
 bool ds_sndDispatcher::stop_sound(const sndHandle *handle) {
-	if (!sound_device_) return false;
+	if (!_sound_device) return false;
 
-	sound_list_t::iterator it = std::find(sounds_.begin(), sounds_.end(), *handle);
+	sound_list_t::iterator it = std::find(_sounds.begin(), _sounds.end(), *handle);
 
-	if (it != sounds_.end()) {
+	if (it != _sounds.end()) {
 		it->stop();
-		sounds_.erase(it);
+		_sounds.erase(it);
 
 		return true;
 	}
@@ -126,9 +126,9 @@ bool ds_sndDispatcher::stop_sound(const sndHandle *handle) {
 }
 
 sndSound::status_t ds_sndDispatcher::sound_status(const sndHandle *handle) const {
-	sound_list_t::const_iterator it = std::find(sounds_.begin(), sounds_.end(), *handle);
+	sound_list_t::const_iterator it = std::find(_sounds.begin(), _sounds.end(), *handle);
 
-	if (it != sounds_.end()) {
+	if (it != _sounds.end()) {
 		if (is_paused())
 			return sndSound::SOUND_PAUSED;
 
@@ -139,39 +139,39 @@ sndSound::status_t ds_sndDispatcher::sound_status(const sndHandle *handle) const
 }
 
 sndSound::status_t ds_sndDispatcher::sound_status(const sndSound *snd) const {
-	sound_list_t::const_iterator it = std::find(sounds_.begin(), sounds_.end(), *snd);
+	sound_list_t::const_iterator it = std::find(_sounds.begin(), _sounds.end(), *snd);
 
-	if (it != sounds_.end())
+	if (it != _sounds.end())
 		return it->status();
 
 	return sndSound::SOUND_STOPPED;
 }
 
 bool ds_sndDispatcher::update_volume() {
-	for (sound_list_t::iterator it = sounds_.begin(); it != sounds_.end(); ++it)
+	for (sound_list_t::iterator it = _sounds.begin(); it != _sounds.end(); ++it)
 		it->set_volume(volume_dB());
 
 	return true;
 }
 
 bool ds_sndDispatcher::update_frequency() {
-	for (sound_list_t::iterator it = sounds_.begin(); it != sounds_.end(); ++it)
+	for (sound_list_t::iterator it = _sounds.begin(); it != _sounds.end(); ++it)
 		it->change_frequency(frequency_coeff());
 
 	return true;
 }
 
 void ds_sndDispatcher::stop_sounds() {
-	for (sound_list_t::iterator it = sounds_.begin(); it != sounds_.end(); ++it)
+	for (sound_list_t::iterator it = _sounds.begin(); it != _sounds.end(); ++it)
 		it->stop();
 
-	sounds_.clear();
+	_sounds.clear();
 }
 
 bool ds_sndDispatcher::set_sound_frequency(const sndHandle *snd, float coeff) {
-	sound_list_t::iterator it = std::find(sounds_.begin(), sounds_.end(), *snd);
+	sound_list_t::iterator it = std::find(_sounds.begin(), _sounds.end(), *snd);
 
-	if (it != sounds_.end()) {
+	if (it != _sounds.end()) {
 		it->change_frequency(frequency_coeff() * coeff);
 		return true;
 	}
@@ -180,21 +180,21 @@ bool ds_sndDispatcher::set_sound_frequency(const sndHandle *snd, float coeff) {
 }
 
 float ds_sndDispatcher::sound_position(const sndHandle *snd) const {
-	sound_list_t::const_iterator it = std::find(sounds_.begin(), sounds_.end(), *snd);
+	sound_list_t::const_iterator it = std::find(_sounds.begin(), _sounds.end(), *snd);
 
-	if (it != sounds_.end())
+	if (it != _sounds.end())
 		return it->position();
 
 	return 0.0f;
 }
 
 void ds_sndDispatcher::pause_sounds() {
-	for (sound_list_t::iterator it = sounds_.begin(); it != sounds_.end(); ++it)
+	for (sound_list_t::iterator it = _sounds.begin(); it != _sounds.end(); ++it)
 		it->pause();
 }
 
 void ds_sndDispatcher::resume_sounds() {
-	for (sound_list_t::iterator it = sounds_.begin(); it != sounds_.end(); ++it) {
+	for (sound_list_t::iterator it = _sounds.begin(); it != _sounds.end(); ++it) {
 		if (it->is_paused())
 			it->resume();
 	}

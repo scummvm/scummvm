@@ -24,24 +24,26 @@
 
 namespace QDEngine {
 
-sndDispatcher *sndDispatcher::dispatcher_ptr_;
+sndDispatcher *sndDispatcher::_dispatcher_ptr;
 
-sndDispatcher::sndDispatcher() : is_enabled_(true),
-	is_paused_(false),
-	volume_(255),
-	volume_dB_(0),
-	frequency_coeff_(1.0f) {
-	if (!dispatcher_ptr_) dispatcher_ptr_ = this;
+sndDispatcher::sndDispatcher() : _is_enabled(true),
+	_is_paused(false),
+	_volume(255),
+	_volume_dB(0),
+	_frequency_coeff(1.0f) {
+	if (!_dispatcher_ptr)
+		_dispatcher_ptr = this;
 }
 
 sndDispatcher::~sndDispatcher() {
-	if (dispatcher_ptr_ == this) dispatcher_ptr_ = NULL;
+	if (_dispatcher_ptr == this)
+		_dispatcher_ptr = NULL;
 }
 
 void sndDispatcher::set_volume(unsigned int vol) {
-	volume_ = vol & 0xFF;
+	_volume = vol & 0xFF;
 
-	volume_dB_ = convert_volume_to_dB(volume_);
+	_volume_dB = convert_volume_to_dB(_volume);
 
 	update_volume();
 }

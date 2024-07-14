@@ -55,20 +55,20 @@ public:
 	void set_volume(unsigned int vol);
 	//! Возвращает установленную громкость, диапазон значений - [0, 255].
 	unsigned int volume() const {
-		return volume_;
+		return _volume;
 	}
 
 	//! Возвращает установленную громкость в децибелах.
 	int volume_dB() const {
-		return volume_dB_;
+		return _volume_dB;
 	}
 
 	void set_frequency_coeff(float coeff) {
-		frequency_coeff_ = coeff;
+		_frequency_coeff = coeff;
 		update_frequency();
 	}
 	float frequency_coeff() const {
-		return frequency_coeff_;
+		return _frequency_coeff;
 	}
 
 	//! Пересчет громкости в децибелы.
@@ -83,41 +83,41 @@ public:
 
 	//! Ставит все звуки на паузу до вызова resume().
 	void pause() {
-		is_paused_ = true;
+		_is_paused = true;
 		pause_sounds();
 	}
 	//! Возобновляет проигрывание всех звуков.
 	void resume() {
-		is_paused_ = false;
+		_is_paused = false;
 		resume_sounds();
 	}
 	//! Возвращает true, если звуки поставлены на паузу.
 	bool is_paused() const {
-		return is_paused_;
+		return _is_paused;
 	}
 
 	//! Возвращает true, если звук выключен.
 	bool is_enabled() const {
-		return is_enabled_;
+		return _is_enabled;
 	}
 	//! Включает звук.
 	void enable() {
-		is_enabled_ = true;
+		_is_enabled = true;
 	}
 	//! Выключает звук.
 	void disable() {
-		is_enabled_ = false;
+		_is_enabled = false;
 		stop_sounds();
 	}
 
 	//! Возвращает указатель на текущий диспетчер.
 	static inline sndDispatcher *get_dispatcher() {
-		return dispatcher_ptr_;
+		return _dispatcher_ptr;
 	}
 	//! Устанавливает указатель на текущий диспетчер.
 	static inline sndDispatcher *set_dispatcher(sndDispatcher *p) {
-		sndDispatcher *old_p = dispatcher_ptr_;
-		dispatcher_ptr_ = p;
+		sndDispatcher *old_p = _dispatcher_ptr;
+		_dispatcher_ptr = p;
 		return old_p;
 	}
 
@@ -130,29 +130,29 @@ protected:
 private:
 
 	//! Звук выключен, если false.
-	bool is_enabled_;
+	bool _is_enabled;
 
 	//! Громкость, диапазон значений - [0, 255].
 	/**
 	0 - звук полностью давится
 	255 - звук играется в полную громкость
 	*/
-	unsigned int volume_;
+	unsigned int _volume;
 
 	//! Громкость в децибелах, диапазон значений - [-10000, 0].
 	/**
 	-10000 - звук полностью давится
 	0 - звук играется в полную громкость
 	*/
-	int volume_dB_;
+	int _volume_dB;
 
-	float frequency_coeff_;
+	float _frequency_coeff;
 
 	//! Пауза.
-	bool is_paused_;
+	bool _is_paused;
 
 	//! Текущий диспетчер.
-	static sndDispatcher *dispatcher_ptr_;
+	static sndDispatcher *_dispatcher_ptr;
 };
 
 } // namespace QDEngine
