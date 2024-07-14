@@ -9332,6 +9332,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// TRAC report #14403
 	WINGAME1_l("adibounature", "", "ADBS_EX48.exe", "t:aee1d0997a82c796292b59d9c398ca20", 3873754, Common::FR_FRA, 1010),
 
+	MACGAME1_l("adibounature", "", "ADBS_EX48.osx", "t:f2d35f22e06b4a3ff1ab3d960538d27b", 4491818, Common::FR_FRA, 1010),
+
 	// Found on AOL 9.0 promo CD
 	// Game description is based on desktop shortcut after installation
 	WINGAME2("aolstarwars", "", "STARWARS.EXE", 		"bcf64185ce848b7b70858d62945f48a8", 25472412,
