@@ -433,7 +433,11 @@ bool FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, 
 	Math::Vector3d direction = newPosition - lastPosition;
 	direction.normalize();
 	ray = Math::Ray(lastPosition, direction);
-	collided = _currentArea->checkCollisionRay(ray, 45);
+	int rayLenght = 45;
+	if (_currentArea->getScale() >= 5)
+		rayLenght = 45 / (2 * _currentArea->getScale());
+
+	collided = _currentArea->checkCollisionRay(ray, rayLenght);
 	if (collided) {
 		gobj = (GeometricObject *)collided;
 		debugC(1, kFreescapeDebugMove, "Collided with object id %d of size %f %f %f", gobj->getObjectID(), gobj->getSize().x(), gobj->getSize().y(), gobj->getSize().z());
