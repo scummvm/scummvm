@@ -79,23 +79,27 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_gdsScene(nullptr), _resource(nullptr), _gamePals(nullptr), _gameGlobals(nullptr),
 	_detailLevel(kDgdsDetailHigh), _textSpeed(1), _justChangedScene1(false), _justChangedScene2(false),
 	_random("dgds"), _currentCursor(-1), _menuToTrigger(kMenuNone), _isLoading(true),
-	_rstFileName(nullptr), _difficulty(1), _menu(nullptr), _adsInterp(nullptr) {
+	_rstFileName(nullptr), _difficulty(1), _menu(nullptr), _adsInterp(nullptr), _isDemo(false) {
 	syncSoundSettings();
 
 	_platform = gameDesc->platform;
 
-	if (!strcmp(gameDesc->gameId, "rise"))
+	if (!strcmp(gameDesc->gameId, "rise")) {
 		_gameId = GID_DRAGON;
-	else if (!strcmp(gameDesc->gameId, "china"))
+	} else if (!strcmp(gameDesc->gameId, "china")) {
 		_gameId = GID_HOC;
-	else if (!strcmp(gameDesc->gameId, "beamish"))
+	} else if (!strcmp(gameDesc->gameId, "beamish")) {
+		_isDemo = (gameDesc->flags & ADGF_DEMO);
 		_gameId = GID_WILLY;
-	else if (!strcmp(gameDesc->gameId, "sq5demo"))
+	} else if (!strcmp(gameDesc->gameId, "sq5demo")) {
+		_isDemo = true;
 		_gameId = GID_SQ5DEMO;
-	else if (!strcmp(gameDesc->gameId, "comingattractions"))
+	} else if (!strcmp(gameDesc->gameId, "comingattractions")) {
+		_isDemo = true;
 		_gameId = GID_COMINGATTRACTIONS;
-	else
+	} else {
 		error("Unknown game ID");
+	}
 
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "patches");
@@ -186,7 +190,8 @@ bool DgdsEngine::changeScene(int sceneNum) {
 
 	_scene->load(sceneFile, _resource, _decompressor);
 	// These are done inside the load function in the original.. cleaner here..
-	_scene->addInvButtonToHotAreaList();
+	if (!_isDemo)
+		_scene->addInvButtonToHotAreaList();
 	if (_gameId == GID_DRAGON)
 		_clock.setVisibleScript(true);
 
@@ -647,14 +652,13 @@ Common::SeekableReadStream *DgdsEngine::getResource(const Common::String &name, 
 
 
 bool DgdsEngine::canLoadGameStateCurrently(Common::U32String *msg /*= nullptr*/) {
-	return _gdsScene != nullptr;
+	return !_isDemo && _gdsScene != nullptr;
 }
 
 
 bool DgdsEngine::canSaveGameStateCurrently(Common::U32String *msg /*= nullptr*/) {
-	// Doesn't make sense to save non-interactive demos..
-	bool isSavableGame = getGameId() != GID_SQ5DEMO && getGameId() != GID_COMINGATTRACTIONS;
-	return isSavableGame && _gdsScene && _scene && _scene->getNum() != 2
+	// The demos are all non-interactive, so it doesn't make sense to save them.
+	return !_isDemo && _gdsScene && _scene && _scene->getNum() != 2
 			&& _scene->getDragItem() == nullptr && !_isLoading;
 }
 
@@ -697,7 +701,8 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 		_scene->unload();
 		_adsInterp->unload();
 		_scene->load(sceneFile, _resource, _decompressor);
-		_scene->addInvButtonToHotAreaList();
+		if (!_isDemo)
+			_scene->addInvButtonToHotAreaList();
 	}
 
 	result = _scene->syncState(s);

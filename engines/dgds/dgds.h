@@ -137,6 +137,8 @@ private:
 	bool _isLoading;
 	const char *_rstFileName;
 
+	bool _isDemo;
+
 public:
 	DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	virtual ~DgdsEngine();
