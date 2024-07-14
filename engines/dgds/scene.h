@@ -254,6 +254,8 @@ enum HeadFlags {
 	kHeadFlag8 = 8,
 	kHeadFlag10 = 0x10,
 	kHeadFlagVisible = 0x20,
+	kHeadFlag40 = 0x40,
+	kHeadFlag80 = 0x80,
 };
 
 class TalkDataHead {
@@ -444,8 +446,9 @@ public:
 	void freeDialogData(uint16 num);
 	bool loadTalkData(uint16 num);
 	void freeTalkData(uint16 num);
-	void drawVisibleTalkers();
-	void loadTalkDataAndSomething(uint16 talknum, uint16 headnum);
+	void updateVisibleTalkers();
+	void loadTalkDataAndSetFlags(uint16 talknum, uint16 headnum);
+	void drawVisibleHeads(Graphics::ManagedSurface *dst);
 
 	// dragon-specific scene ops
 	void addAndShowTiredDialog();

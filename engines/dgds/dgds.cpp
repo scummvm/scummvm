@@ -247,7 +247,7 @@ void DgdsEngine::setShowClock(bool val) {
 }
 
 bool DgdsEngine::isInvButtonVisible() const {
-	return (_gdsScene->getCursorList().size() >= 2 && _icons->loadedFrameCount() >= 2 &&
+	return (_gdsScene->getCursorList().size() >= 2 && _icons && _icons->loadedFrameCount() >= 2 &&
 			!_scene->getHotAreas().empty() && _scene->getHotAreas().front()._num == 0);
 }
 

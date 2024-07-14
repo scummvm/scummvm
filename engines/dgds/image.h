@@ -66,6 +66,7 @@ public:
 	int16 height(uint frameno) const;
 
 	int loadedFrameCount() const { return _frames.size(); }
+	bool isLoaded() const { return !_frames.empty(); }
 
 	const Common::String &getFilename() const { return _filename; }
 

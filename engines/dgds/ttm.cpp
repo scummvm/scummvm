@@ -806,7 +806,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		break;
 	case 0xb010: {
 		const Image *img = env._scriptShapes[seq._currentBmpId].get();
-		if (img && img->loadedFrameCount()) {
+		if (img && img->isLoaded()) {
 			bool finished = doOpCreditsScroll(env._scriptShapes[seq._currentBmpId].get(), ivals[0], env._creditScrollYOffset,
 							ivals[2], env._creditScrollMeasure, seq._drawWin);
 			env._creditScrollYOffset += ivals[1];

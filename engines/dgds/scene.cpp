@@ -676,10 +676,10 @@ bool Scene::runSceneOp(const SceneOp &op) {
 		CursorMan.showMouse(false);
 		break;
 	case kSceneOpLoadTalkDataAndSetFlags: // args: tdsnum to load, headnum
-		engine->getScene()->loadTalkDataAndSomething(op._args[0], op._args[1]);
+		engine->getScene()->loadTalkDataAndSetFlags(op._args[0], op._args[1]);
 		break;
 	case kSceneOpDrawVisibleTalkHeads: // args: none
-		engine->getScene()->drawVisibleTalkers();
+		engine->getScene()->updateVisibleTalkers();
 		break;
 	case kSceneOpLoadTalkData: 	// args: tds num to load
 		engine->getScene()->loadTalkData(op._args[0]);
@@ -1181,7 +1181,7 @@ void SDSScene::freeTalkData(uint16 num) {
 	}
 }
 
-void SDSScene::drawVisibleTalkers() {
+void SDSScene::updateVisibleTalkers() {
 	for (auto &data : _talkData) {
 		for (auto &head : data._heads) {
 			if (head._flags & kHeadFlagVisible)
@@ -1189,6 +1189,7 @@ void SDSScene::drawVisibleTalkers() {
 		}
 	}
 }
+
 
 void SDSScene::drawHead(Graphics::ManagedSurface *dst, const TalkData &data, const TalkDataHead &head) {
 	uint drawtype = head._drawType ? head._drawType : 1;
@@ -1208,24 +1209,72 @@ void SDSScene::drawHead(Graphics::ManagedSurface *dst, const TalkData &data, con
 }
 
 void SDSScene::drawHeadType1(Graphics::ManagedSurface *dst, const TalkDataHead &head, const Image &img) {
-
+	Common::Rect r = head._rect.toCommonRect();
+	dst->fillRect(r, head._drawCol);
+	r.grow(-1);
+	dst->fillRect(r, head._drawCol == 0 ? 15 : 0);
+	r.left += 2;
+	r.top += 2;
+	const int x = head._rect.x;
+	const int y = head._rect.y;
+	if (img.isLoaded()) {
+		for (const auto &frame : head._headFrames) {
+			img.drawBitmap(frame._frameNo, x + frame._xoff, y + frame._yoff, r, *dst);
+		}
+	}
 }
 
 void SDSScene::drawHeadType2(Graphics::ManagedSurface *dst, const TalkDataHead &head, const Image &img) {
-
+	if (!img.isLoaded())
+		return;
+	const Common::Rect r = head._rect.toCommonRect();
+	for (const auto &frame : head._headFrames) {
+		img.drawBitmap(frame._frameNo, r.left + frame._xoff, r.top + frame._yoff, r, *dst);
+	}
 }
 
 void SDSScene::drawHeadType3(Graphics::ManagedSurface *dst, const TalkDataHead &head, const Image &img) {
-
+	Common::Rect r = head._rect.toCommonRect();
+	dst->fillRect(r, 0);
+	if (!img.isLoaded())
+		return;
+	for (const auto &frame : head._headFrames) {
+		if (frame._frameNo < img.loadedFrameCount())
+			img.drawBitmap(frame._frameNo, r.left + frame._xoff, r.top + frame._yoff, r, *dst);
+		else
+			dst->fillRect(r, 4);
+	}
 }
 
 void SDSScene::updateHead(TalkDataHead &head) {
 	warning("TODO: Update head");
 	head._flags = static_cast<HeadFlags>(head._flags & ~(kHeadFlag1 | kHeadFlag8 | kHeadFlag10 | kHeadFlagVisible));
+
+	/* This seems to just be a "needs redraw" flag, but we always redraw
+	for (auto tds : _talkData) {
+		for (auto h : tds._heads) {
+			if ((h._flags & kHeadFlagVisible) && !(h._flags & (kHeadFlag8 | kHeadFlag10 | kHeadFlag80))) {
+				if (h._rect.toCommonRect().intersects(head._rect.toCommonRect())) {
+					h._flags = static_cast<HeadFlags>(h._flags | kHeadFlag4);
+				}
+			}
+		}
+	}
+	*/
 }
 
-void SDSScene::loadTalkDataAndSomething(uint16 talknum, uint16 headnum) {
-	drawVisibleTalkers();
+void SDSScene::drawVisibleHeads(Graphics::ManagedSurface *dst) {
+	for (auto tds : _talkData) {
+		for (auto h : tds._heads) {
+			if ((h._flags & kHeadFlagVisible) && !(h._flags & kHeadFlag40)) {
+				drawHead(dst, tds, h);
+			}
+		}
+	}
+}
+
+void SDSScene::loadTalkDataAndSetFlags(uint16 talknum, uint16 headnum) {
+	updateVisibleTalkers();
 	if (loadTalkData(talknum)) {
 		for (auto &data : _talkData) {
 			if (data._num != talknum)
