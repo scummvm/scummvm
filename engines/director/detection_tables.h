@@ -9325,6 +9325,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1_l("adibouhumain", "", "Adibou_CH.exe", "t:d955b857b9e506d1e3141ca4d81b59d5", 2633827, Common::FR_FRA, 1010),
 
+	MACGAME1_l("adibouhumain", "", "Adibou Aventure.osx", "t:5ec290fb9b3b46624b1f30630a39a456", 3126433, Common::FR_FRA, 1010),
+
 	WINGAME1_l("adiboumots", "", "ADBR_EX56.exe", "t:aee1d0997a82c796292b59d9c398ca20", 3872922, Common::FR_FRA, 1010),
 
 	MACGAME1_l("adiboumots", "", "ADBR_EX56.osx", "t:4284f511d1d68b28640a0c3db6d02ba2", 4557102, Common::FR_FRA, 1010),
