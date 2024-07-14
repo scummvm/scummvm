@@ -25,11 +25,11 @@
 
 namespace QDEngine {
 
-wavSound::wavSound() : data_(NULL) {
-	data_length_ = 0;
-	bits_per_sample_ = 0;
-	channels_ = 0;
-	samples_per_sec_ = 0;
+wavSound::wavSound() : _data(NULL) {
+	_data_length = 0;
+	_bits_per_sample = 0;
+	_channels = 0;
+	_samples_per_sec = 0;
 }
 
 wavSound::~wavSound() {
@@ -39,25 +39,25 @@ wavSound::~wavSound() {
 bool wavSound::init(int data_len, int bits, int chn, int samples) {
 	free_data();
 
-	data_length_ = data_len;
-	data_ = new char[data_length_];
+	_data_length = data_len;
+	_data = new char[_data_length];
 
-	channels_ = chn;
-	bits_per_sample_ = bits;
-	samples_per_sec_ = samples;
+	_channels = chn;
+	_bits_per_sample = bits;
+	_samples_per_sec = samples;
 
 	return true;
 }
 
 void wavSound::free_data() {
-	if (data_) {
-		delete [] data_;
-		data_ = NULL;
+	if (_data) {
+		delete [] _data;
+		_data = NULL;
 	}
 
-	data_length_ = 0;
-	bits_per_sample_ = 0;
-	channels_ = 0;
-	samples_per_sec_ = 0;
+	_data_length = 0;
+	_bits_per_sample = 0;
+	_channels = 0;
+	_samples_per_sec = 0;
 }
 } // namespace QDEngine

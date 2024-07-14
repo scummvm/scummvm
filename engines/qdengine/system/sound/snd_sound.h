@@ -39,15 +39,15 @@ public:
 //! Базовый класс для звуков.
 class sndSound {
 public:
-	explicit sndSound(const wavSound *snd, const sndHandle *h = NULL) : sound_(snd), handle_(h) { }
-	sndSound(const sndSound &snd) : sound_(snd.sound_), handle_(snd.handle_) { }
+	explicit sndSound(const wavSound *snd, const sndHandle *h = NULL) : _sound(snd), _handle(h) { }
+	sndSound(const sndSound &snd) : _sound(snd._sound), _handle(snd._handle) { }
 	virtual ~sndSound() { };
 
 	sndSound &operator = (const sndSound &s) {
 		if (this == &s) return *this;
 
-		sound_ = s.sound_;
-		handle_ = s.handle_;
+		_sound = s._sound;
+		_handle = s._handle;
 
 		return *this;
 	}
@@ -69,18 +69,18 @@ public:
 
 	//! Возвращает указатель на данные звука.
 	const wavSound *sound() const {
-		return sound_;
+		return _sound;
 	}
 	//! Возвращает указатель на хэндл звука.
 	const sndHandle *handle() const {
-		return handle_;
+		return _handle;
 	}
 
 private:
 	//! Указатель на данные.
-	const wavSound *sound_;
+	const wavSound *_sound;
 	//! Указатель на хэндл звука.
-	const sndHandle *handle_;
+	const sndHandle *_handle;
 };
 
 } // namespace QDEngine

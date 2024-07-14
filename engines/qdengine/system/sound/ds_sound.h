@@ -47,7 +47,7 @@ public:
 	void resume();
 	//! Возвращает true, если звук на паузе.
 	bool is_paused() const {
-		if (flags_ & SOUND_FLAG_PAUSED) return true;
+		if (_flags & SOUND_FLAG_PAUSED) return true;
 		else return false;
 	}
 
@@ -79,14 +79,14 @@ public:
 
 	//! Включает/выключает зацикливание звука.
 	void toggle_looping() {
-		flags_ ^= SOUND_FLAG_LOOPING;
+		_flags ^= SOUND_FLAG_LOOPING;
 	}
 
 private:
 	//! Указатель на объект DirectSound.
-	const LPDIRECTSOUND sound_device_;
+	const LPDIRECTSOUND _sound_device;
 	//! Указатель на DirectSoundBuffer.
-	LPDIRECTSOUNDBUFFER  sound_buffer_;
+	LPDIRECTSOUNDBUFFER  _sound_buffer;
 
 	//! флаги
 	enum {
@@ -95,7 +95,7 @@ private:
 	};
 
 	//! флаги
-	int flags_;
+	int _flags;
 };
 
 } // namespace QDEngine

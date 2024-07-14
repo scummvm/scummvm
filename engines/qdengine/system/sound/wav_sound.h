@@ -33,19 +33,19 @@ public:
 	~wavSound();
 
 	const char *data() const {
-		return data_;
+		return _data;
 	}
 	int data_length() const {
-		return data_length_;
+		return _data_length;
 	}
 	int bits_per_sample() const {
-		return bits_per_sample_;
+		return _bits_per_sample;
 	}
 	int channels() const {
-		return channels_;
+		return _channels;
 	}
 	int samples_per_sec() const {
-		return samples_per_sec_;
+		return _samples_per_sec;
 	}
 
 	bool init(int data_len, int bits, int chn, int samples);
@@ -53,9 +53,9 @@ public:
 
 	//! Возвращает true, если звук валиден (т.е. параметры допустимые).
 	bool is_valid() const {
-		if (bits_per_sample_ != 8 && bits_per_sample_ != 16) return false;
-		if (channels_ != 1 && channels_ != 2) return false;
-		if (!samples_per_sec_) return false;
+		if (_bits_per_sample != 8 && _bits_per_sample != 16) return false;
+		if (_channels != 1 && _channels != 2) return false;
+		if (!_samples_per_sec) return false;
 
 		return true;
 	}
@@ -63,24 +63,24 @@ public:
 	//! Возвращает длительность звука в секундах.
 	float length() const {
 		if (!is_valid()) return 0.0f;
-		return float(data_length_ / channels_ / (bits_per_sample_ >> 3)) / float(samples_per_sec_);
+		return float(_data_length / _channels / (_bits_per_sample >> 3)) / float(_samples_per_sec);
 	}
 
 private:
 
 	//! Данные.
-	char *data_;
+	char *_data;
 	//! Длина данных.
-	int data_length_;
+	int _data_length;
 	//! Количество бит на сэмпл (8/16).
-	int bits_per_sample_;
+	int _bits_per_sample;
 	//! Количество каналов (1/2 - моно/стерео).
-	int channels_;
+	int _channels;
 	//! Частота дискретизации - количество сэмплов в секунду.
 	/**
 	Значения: 8.0, 11.025, 22.05, 44.1 x1000 Hz.
 	 */
-	int samples_per_sec_;
+	int _samples_per_sec;
 
 	Audio::SeekableAudioStream *_audiostream;
 

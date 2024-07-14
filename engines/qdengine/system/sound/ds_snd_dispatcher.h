@@ -69,10 +69,10 @@ private:
 
 	typedef std::list<dsSound> sound_list_t;
 	//! Список активных звуков.
-	sound_list_t sounds_;
+	sound_list_t _sounds;
 
 	//! Указатель на DirectSound интерфейс.
-	LPDIRECTSOUND sound_device_;
+	LPDIRECTSOUND _sound_device;
 //	Audio::SeekableAudioStream *_audioStream;
 };
 
