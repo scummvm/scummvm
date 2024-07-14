@@ -185,7 +185,8 @@ public:
 	void showFullscreenPic(const Common::String &filename);
 	void lookCode(int objNum);
 	void handleObjCollision(int objNum);
-
+	void playCutscene(const Common::String cutsceneId);
+	void playSound(int16 unk, uint8 unk1, int16 unk2);
 private:
 	void updateAnimation();
 	void advanceAnimationFrame(int nspAminIdx);
@@ -198,11 +199,13 @@ private:
 	void changeToRoom(int newRoomNumber);
 
 	void useCode(int objNum);
+	void getPackageObj(int packageType);
 	void wongame();
 	void getPackage(int state);
 	void printTime();
 	void keeperanim();
 	void sargoanim();
+	void gancanim();
 };
 
 extern DarkseedEngine *g_engine;

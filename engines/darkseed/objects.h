@@ -51,6 +51,7 @@ public:
 
 	Common::Point getMoveObjectPosition(uint8 objIdx);
 	int getEyeDescriptionTosIdx(uint16 objNum);
+	int getHandDescriptionTosIdx(uint16 objNum);
 
 	int getMoveObjectRoom(uint16 idx);
 	void setMoveObjectRoom(uint16 idx, uint8 value);
