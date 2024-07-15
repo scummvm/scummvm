@@ -151,7 +151,7 @@ static inline uint32x4_t rgbBlendSIMD(uint32x4_t srcCols, uint32x4_t destCols, u
 	srcCols = vandq_u32(srcCols, vmovq_n_u32(0xff00));
 	srcCols = vorrq_u32(srcCols, srcColsCopy);
 
-	// Remeber that alpha is not alphas, but rather the alpha of destCols
+	// Remember that alpha is not alphas, but rather the alpha of destCols
 	if (preserveAlpha) {
 		srcCols = vandq_u32(srcCols, vmovq_n_u32(0x00ffffff));
 		srcCols = vorrq_u32(srcCols, alpha);
@@ -203,7 +203,7 @@ static inline uint32x4_t blendTintSpriteSIMD(uint32x4_t srcCols, uint32x4_t dest
 	// srcCols[2] = A | R | G | B
 	// srcCols[3] = A | R | G | B
 	//  ->
-	// to 4 float32x4_t's each being a seperate channel with each lane
+	// to 4 float32x4_t's each being a separate channel with each lane
 	// corresponding to their respective srcCols lane
 	// dda = { A[0], A[1], A[2], A[3] }
 	// ddr = { R[0], R[1], R[2], R[3] }
@@ -220,7 +220,7 @@ static inline uint32x4_t blendTintSpriteSIMD(uint32x4_t srcCols, uint32x4_t dest
 	ssg = vmulq_n_f32(vcvtq_f32_u32(vandq_u32(vshrq_n_u32(srcCols, 8), vmovq_n_u32(0xff))), 1.0 / 255.0);
 	ssb = vmulq_n_f32(vcvtq_f32_u32(vandq_u32(srcCols, vmovq_n_u32(0xff))), 1.0 / 255.0);
 
-	// Get the maxes and mins (needed for HSV->RGB and visa-versa)
+	// Get the maxes and mins (needed for HSV->RGB and vice-versa)
 	float32x4_t dmaxes = vmaxq_f32(ddr, vmaxq_f32(ddg, ddb));
 	float32x4_t smaxes = vmaxq_f32(ssr, vmaxq_f32(ssg, ssb));
 	float32x4_t smins = vminq_f32(ssr, vminq_f32(ssg, ssb));
@@ -255,9 +255,9 @@ static inline uint32x4_t blendTintSpriteSIMD(uint32x4_t srcCols, uint32x4_t dest
 		val = vmaxq_f32(val, vmovq_n_f32(0.0));
 	}
 
-	// then it stiches the HSV back together
+	// then it stitches the HSV back together
 	// the hue and saturation come from the source (tint) color, and the value comes from
-	// the destinaion (real source) color
+	// the destination (real source) color
 	chroma = vmulq_f32(val, vmulq_f32(vsubq_f32(smaxes, smins), vrecpeq_f32(vaddq_f32(smaxes, eplison0))));
 	float32x4_t hprime_mod2 = vmulq_n_f32(hue, 1.0 / 2.0);
 	hprime_mod2 = vmulq_n_f32(vsubq_f32(hprime_mod2, vcvtq_f32_s32(vcvtq_s32_f32(hprime_mod2))), 2.0);
@@ -472,7 +472,7 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 	const uint32x4_t addIndexesFlipped = {3, 2, 1, 0};
 	uint32x4_t addIndexes = args.horizFlip ? addIndexesFlipped : addIndexesNormal;
 
-	// This is so that we can calculate in parralell the pixel indexes for scaled drawing
+	// This is so that we can calculate in parallel the pixel indexes for scaled drawing
 	uint32x4_t scaleAdds = {0, (uint32)args.scaleX, (uint32)args.scaleX*2, (uint32)args.scaleX*3};
 
 	// Clip the bounds ahead of time (so we don't waste time checking if we are in bounds when
@@ -561,7 +561,7 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 				scaleXCtr += args.scaleX*4;
 
 				// Now this is pretty much the same as before with non-scaled code, except that we use
-				// our dummy source buffer instead of the actuall source bitmap
+				// our dummy source buffer instead of the actual source bitmap
 				byte *destPtr = &destP[destX * (uintptr_t)DestBytesPerPixel];
 				uint32x4_t skipMask = vcgeq_u32(vaddq_u32(vdupq_n_u32(xCtr), addIndexes), xCtrWidthSIMD);
 				drawPixelSIMD<DestBytesPerPixel, SrcBytesPerPixel>(destPtr, (const byte *)srcBuffer, tint, alphas, maskedAlphas, transColors, 1, 0, args.srcAlpha, args.skipTrans, args.horizFlip, args.useTint, skipMask);
@@ -571,7 +571,7 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 			// The only exception here is scaling drawing this is because:
 			// 1) if statements are costly, and the less we do the faster this loop is
 			// 2) with this, the only branch in the normal drawing loop is the width check
-			// 3) the scaling code will actually draw the until the last 4 pixels of the image
+			// 3) the scaling code will actually draw until the last 4 pixels of the image
 			//    and do the extra if checks because the scaling code is already much slower
 			//    than the normal drawing loop, and the less duplicate code helps here.
 			if (yCtr + 1 != yCtrHeight) destP += args.destArea.pitch;
@@ -651,7 +651,7 @@ static void drawInner2Bpp(BITMAP::DrawInnerArgs &args) {
 	uint16x8_t addIndexesFlipped = {7, 6, 5, 4, 3, 2, 1, 0};
 	uint16x8_t addIndexes = args.horizFlip ? addIndexesFlipped : addIndexesNormal;
 
-	// This is so that we can calculate in parralell the pixel indexes for scaled drawing
+	// This is so that we can calculate in parallel the pixel indices for scaled drawing
 	uint32x4_t scaleAdds = {0, (uint32)args.scaleX, (uint32)args.scaleX*2, (uint32)args.scaleX*3};
 	uint32x4_t scaleAdds2 = {(uint32)args.scaleX*4, (uint32)args.scaleX*5, (uint32)args.scaleX*6, (uint32)args.scaleX*7};
 
@@ -732,7 +732,7 @@ static void drawInner2Bpp(BITMAP::DrawInnerArgs &args) {
 			for (int xCtr = xCtrStart, xCtrBpp = xCtrBppStart, destX = args.xStart, scaleXCtr = xCtrStart * args.scaleX; xCtr < xCtrWidth; destX += 8, xCtr += 8, xCtrBpp += 16) {
 				if (yCtr + 1 == yCtrHeight && xCtr + 8 > xCtrWidth) break;
 				uint32x4_t indexes = vdupq_n_u32(scaleXCtr), indexes2 = vdupq_n_u32(scaleXCtr);
-				// Calculate in parallel the indexes of the pixels
+				// Calculate in parallel the indices of the pixels
 				indexes = vmulq_n_u32(vshrq_n_u32(vaddq_u32(indexes, scaleAdds), BITMAP::SCALE_THRESHOLD_BITS), 2);
 				indexes2 = vmulq_n_u32(vshrq_n_u32(vaddq_u32(indexes2, scaleAdds2), BITMAP::SCALE_THRESHOLD_BITS), 2);
 				// Simply memcpy them in. memcpy has no real performance overhead here
@@ -747,7 +747,7 @@ static void drawInner2Bpp(BITMAP::DrawInnerArgs &args) {
 				scaleXCtr += args.scaleX*8;
 
 				// Now this is pretty much the same as before with non-scaled code, except that we use
-				// our dummy source buffer instead of the actuall source bitmap
+				// our dummy source buffer instead of the actual source bitmap
 				byte *destPtr = &destP[destX * 2];
 				uint16x8_t skipMask = vcgeq_u16(vaddq_u16(vdupq_n_u16(xCtr), addIndexes), xCtrWidthSIMD);
 				drawPixelSIMD2Bpp(destPtr, (const byte *)srcBuffer, tint, alphas, transColors, 1, 0, args.srcAlpha, args.skipTrans, args.horizFlip, args.useTint, skipMask);
@@ -757,7 +757,7 @@ static void drawInner2Bpp(BITMAP::DrawInnerArgs &args) {
 			// The only exception here is scaling drawing this is because:
 			// 1) if statements are costly, and the less we do the faster this loop is
 			// 2) with this, the only branch in the normal drawing loop is the width check
-			// 3) the scaling code will actually draw the until the last 4 pixels of the image
+			// 3) the scaling code will actually draw until the last 4 pixels of the image
 			//    and do the extra if checks because the scaling code is already much slower
 			//    than the normal drawing loop, and the less duplicate code helps here.
 			if (yCtr + 1 != yCtrHeight) destP += args.destArea.pitch;
@@ -827,7 +827,7 @@ static void drawInner1Bpp(BITMAP::DrawInnerArgs &args) {
 	const int xDir = args.horizFlip ? -1 : 1;
 	uint8x16_t transColors = vmovq_n_u8(args.transColor);
 
-	// This is so that we can calculate in parralell the pixel indexes for scaled drawing
+	// This is so that we can calculate in parallel the pixel indices for scaled drawing
 	uint32x4_t scaleAdds1 = {0, (uint32)args.scaleX, (uint32)args.scaleX*2, (uint32)args.scaleX*3};
 	uint32x4_t scaleAdds2 = {(uint32)args.scaleX*4, (uint32)args.scaleX*5, (uint32)args.scaleX*6, (uint32)args.scaleX*7};
 	uint32x4_t scaleAdds3 = {(uint32)args.scaleX*8, (uint32)args.scaleX*9, (uint32)args.scaleX*10, (uint32)args.scaleX*11};
@@ -878,7 +878,7 @@ static void drawInner1Bpp(BITMAP::DrawInnerArgs &args) {
 		for (; xCtr + 16 < xCtrWidth; destX += 16, xCtr += 16) {
 			byte *destPtr = &destP[destX];
 
-			// Here we dont use the drawPixelSIMD function because 1bpp bitmaps in allegro
+			// Here we don't use the drawPixelSIMD function because 1bpp bitmaps in allegro
 			// can't have any blending applied to them
 			uint8x16_t destCols = vld1q_u8(destPtr);
 			uint8x16_t srcCols = vld1q_u8(srcP + xDir * xCtr);
@@ -936,7 +936,7 @@ static void drawInner1Bpp(BITMAP::DrawInnerArgs &args) {
 			*destVal = *srcCol;
 		}
 		if (args.horizFlip) srcP -= 15; // Undo what we did up there
-		destP += args.destArea.pitch; // Goto next row
+		destP += args.destArea.pitch; // Go to next row
 		// Only advance the src row by 1 every time like this if we don't scale
 		if (!Scale) srcP += args.vertFlip ? -args.src.pitch : args.src.pitch;
 	}
