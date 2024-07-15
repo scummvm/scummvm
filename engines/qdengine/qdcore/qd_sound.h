@@ -58,18 +58,18 @@ public:
 	}
 #ifdef __QD_DEBUG_ENABLE__
 	unsigned resource_data_size() const {
-		return sound_.data_length();
+		return _sound.data_length();
 	}
 #endif
 
 	//! Возвращает имя файла, в котором хранится звук.
 	const char *file_name() const {
-		if (!file_name_.empty()) return file_name_.c_str();
+		if (!_file_name.empty()) return _file_name.c_str();
 		return 0;
 	}
 	//! Устанавливает имя файла, в котором хранится звук.
 	void set_file_name(const char *fname) {
-		file_name_ = fname;
+		_file_name = fname;
 	}
 
 	//! Запускает проигрывание звука.
@@ -96,27 +96,27 @@ public:
 
 	//! Возвращает длительность звука в секундах.
 	float length() const {
-		return sound_.length();
+		return _sound.length();
 	}
 
 	//! Возвращает true, если звук не проигрывается.
 	bool is_stopped(const qdSoundHandle *handle = NULL) const;
 
 	int volume() const {
-		return volume_;
+		return _volume;
 	}
 	void set_volume(int vol) {
-		volume_ = vol;
+		_volume = vol;
 	}
 
 private:
 
 	//! Имя файла.
-	std::string file_name_;
+	std::string _file_name;
 	//! Громкость звука, [0, 255].
-	int volume_;
+	int _volume;
 	//! Данные.
-	wavSound sound_;
+	wavSound _sound;
 };
 
 typedef std::list<qdSound *> qdSoundList;

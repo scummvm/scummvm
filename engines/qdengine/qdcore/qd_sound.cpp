@@ -34,26 +34,26 @@ namespace QDEngine {
 //#define __QD_SOUND_LOG__
 #endif
 
-qdSound::qdSound() : volume_(255) {
+qdSound::qdSound() : _volume(255) {
 }
 
 qdSound::~qdSound() {
-	sound_.free_data();
+	_sound.free_data();
 }
 
 bool qdSound::free_resource() {
 	toggle_resource_status(false);
-	sound_.free_data();
+	_sound.free_data();
 
 	return true;
 }
 
 bool qdSound::load_resource() {
-	if (file_name_.empty()) return false;
+	if (_file_name.empty()) return false;
 
 	toggle_resource_status(true);
 
-	return wav_file_load(file_name_.c_str(), &sound_);
+	return wav_file_load(_file_name.c_str(), &_sound);
 }
 
 void qdSound::load_script(const xml::tag *p) {
@@ -66,7 +66,7 @@ void qdSound::load_script(const xml::tag *p) {
 			set_file_name(Common::Path(it->data(), '\\').toString().c_str());
 			break;
 		case QDSCR_SOUND_VOLUME:
-			xml::tag_buffer(*it) > volume_;
+			xml::tag_buffer(*it) > _volume;
 			break;
 		}
 	}
@@ -85,12 +85,12 @@ bool qdSound::save_script(Common::SeekableWriteStream &fh, int indent) const {
 		fh.writeString("\" \"");
 	}
 
-	if (volume_ != 255) {
-		fh.writeString(Common::String::format(" volume=\"%d\"", volume_));
+	if (_volume != 255) {
+		fh.writeString(Common::String::format(" volume=\"%d\"", _volume));
 	}
 
-	if (!file_name_.empty()) {
-		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(file_name_.c_str())));
+	if (!_file_name.empty()) {
+		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(_file_name.c_str())));
 	}
 
 	fh.writeString("/>\r\n");
@@ -107,8 +107,8 @@ bool qdSound::play(const qdSoundHandle *handle, bool loop, float start_position)
 	}
 
 	if (sndDispatcher *p = sndDispatcher::get_dispatcher()) {
-		sndSound sound(&sound_, handle);
-		return p->play_sound(&sound, loop, start_position, volume_);
+		sndSound sound(&_sound, handle);
+		return p->play_sound(&sound, loop, start_position, _volume);
 	}
 
 	return false;
@@ -118,7 +118,7 @@ bool qdSound::stop(const qdSoundHandle *handle) const {
 	debugC(3, kDebugSound, "[%d] sound stop %p owner: %s", g_system->getMillis(), (void *)this, handle->owner()->toString().c_str());
 	if (sndDispatcher *p = sndDispatcher::get_dispatcher()) {
 		if (!handle) {
-			sndSound sound(&sound_);
+			sndSound sound(&_sound);
 			return p->stop_sound(&sound);
 		} else {
 			return p->stop_sound(handle);
@@ -143,7 +143,7 @@ bool qdSound::is_stopped(const qdSoundHandle *handle) const {
 		if (handle) {
 			return (p->sound_status(handle) == sndSound::SOUND_STOPPED);
 		} else {
-			sndSound sound(&sound_);
+			sndSound sound(&_sound);
 			return (p->sound_status(&sound) == sndSound::SOUND_STOPPED);
 		}
 	}
