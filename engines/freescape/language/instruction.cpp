@@ -369,6 +369,8 @@ void FreescapeEngine::executeSPFX(FCLInstruction &instruction) {
 			_currentArea->remapColor(_currentArea->_usualBackgroundColor, _renderMode == Common::kRenderCGA ? 1 : _currentArea->_underFireBackgroundColor);
 		else if (src == 0 && dst == 0)
 			_currentArea->unremapColor(_currentArea->_usualBackgroundColor);
+		else if (src == 15 && dst == 15) // Found in Total Eclipse (DOS)
+			_currentArea->unremapColor(_currentArea->_usualBackgroundColor);
 		else
 			_currentArea->remapColor(src, dst);
 	}
