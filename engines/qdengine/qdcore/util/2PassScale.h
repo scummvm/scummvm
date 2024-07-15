@@ -88,13 +88,6 @@ private:
 	static inline COLORREF make_rgba(BYTE r, BYTE g, BYTE b, BYTE a) {
 		return (r << 16) | (g << 8) | (b << 0) | (a << 24);
 	}
-
-	static inline int round(double x) {
-		return std::round(x);
-	}
-	static inline int round(float x) {
-		return std::round(x);
-	}
 };
 
 template<class FilterClass>
