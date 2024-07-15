@@ -34,7 +34,7 @@ struct SpriteListEntry {
 	int x = 0, y = 0;
 	int zorder = 0;
 	// Tells if this item should take priority during sort if z1 == z2
-	// TODO: this is some compatibility feature - find out if may be omited and done without extra struct?
+	// TODO: this is some compatibility feature - find out if may be omitted and done without extra struct?
 	bool takesPriorityIfEqual = false;
 	// Mark for the render stage callback (if >= 0 other fields are ignored)
 	int renderStage = -1;
