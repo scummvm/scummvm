@@ -212,6 +212,11 @@ void FreescapeEngine::shoot() {
 	executeLocalGlobalConditions(true, false, false); // Only execute "on shot" room/global conditions
 }
 
+void FreescapeEngine::changeAngle() {
+	_angleRotationIndex++;
+	_angleRotationIndex = _angleRotationIndex % int(_angleRotations.size());
+}
+
 void FreescapeEngine::changePlayerHeight(int index) {
 	int scale = _currentArea->getScale();
 
@@ -219,6 +224,11 @@ void FreescapeEngine::changePlayerHeight(int index) {
 	_playerHeight = 32 * (index + 1) - 16 / scale;
 	assert(_playerHeight > 0);
 	_position.setValue(1, _position.y() + _playerHeight);
+}
+
+void FreescapeEngine::changeStepSize() {
+	_playerStepIndex++;
+	_playerStepIndex = _playerStepIndex % int(_playerSteps.size());
 }
 
 void FreescapeEngine::increaseStepSize() {

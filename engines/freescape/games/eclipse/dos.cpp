@@ -171,7 +171,7 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 	Common::String shieldStr = Common::String::format("%d", shield);
 	drawStringInSurface(shieldStr, x, 162, black, redish, surface);
 
-	drawStringInSurface(Common::String('0' + _angleRotationIndex - 3), 79, 135, black, yellow, surface, 'Z' - '$' + 1);
+	drawStringInSurface(Common::String('0' - _angleRotationIndex), 79, 135, black, yellow, surface, 'Z' - '$' + 1);
 	drawStringInSurface(Common::String('3' - _playerStepIndex), 63, 135, black, yellow, surface, 'Z' - '$' + 1);
 	drawStringInSurface(Common::String('7' - _playerHeightNumber), 240, 135, black, yellow, surface, 'Z' - '$' + 1);
 

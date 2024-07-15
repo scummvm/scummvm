@@ -283,6 +283,9 @@ public:
 	void changePlayerHeight(int index);
 	void increaseStepSize();
 	void decreaseStepSize();
+	void changeStepSize();
+
+	void changeAngle();
 	void rise();
 	void lower();
 	bool checkFloor(Math::Vector3d currentPosition);
