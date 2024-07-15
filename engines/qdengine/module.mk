@@ -10,8 +10,8 @@ MODULE_OBJS = \
 	parser/xml_parser.o \
 	parser/xml_tag_buffer.o \
 	system/app_core.o \
-	system/sound/ds_sound.o \
 	system/sound/snd_dispatcher.o \
+	system/sound/snd_sound.o \
 	system/sound/wav_file.o \
 	system/sound/wav_sound.o \
 	system/graphics/gr_dispatcher.o \
