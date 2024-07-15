@@ -2265,8 +2265,13 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 	// palette so that it matches the way these lines have been redrawn in the
 	// FM-TOWNS release.  We take care not to apply this palette change to the
 	// text or inventory, as they still require the original colors.
+	//
+	// The background was redrawn in the German release, for censorhip reasons,
+	// so we have to take care of the different resource size there.
 	if (_vm->_game.id == GID_INDY3 && (_vm->_game.features & GF_OLD256) && _vm->_game.platform != Common::kPlatformFMTowns
-		&& _vm->_roomResource == 46 && smapLen == 43159 && vs->number == kMainVirtScreen && _vm->enhancementEnabled(kEnhMinorBugFixes)) {
+		&& _vm->_roomResource == 46 && vs->number == kMainVirtScreen
+		&& (smapLen == 43159 || (smapLen == 42953 && _vm->_language == Common::DE_DEU))
+		&& _vm->enhancementEnabled(kEnhMinorBugFixes)) {
 		if (_roomPalette[11] == 11 && _roomPalette[86] == 86)
 			_roomPalette[11] = 86;
 		if (_roomPalette[13] == 13 && _roomPalette[80] == 80)
