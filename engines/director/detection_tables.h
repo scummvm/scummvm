@@ -1703,6 +1703,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "timelapse",			"Timelapse" },
 	{ "trekfinalunity",		"Star Trek: The Next Generation - \"A Final Unity\"" },
 	{ "ultrobot",			"Isaac Asimov's The Ultimate Robot" },
+	{ "virgincdrom",		"Virgin Sound and Vision CD-ROM Sampler" },
 	{ "voyeur2",			"Voyeur 2" },
 	{ "wep",				"The Best of Microsoft Entertainment Pack" },
 	{ "windows31",			"Microsoft Windows 3.1" },
@@ -5776,6 +5777,17 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// System 6 version is D3
 	MACGAME1("videocasino", "", "xn--Video Casino PowerMac-pb4m", "ccf864a8dc6e9d0d26eb73b4683e634b", 60068, 404),
 	MACDEMO1("videocasino", "Demo", "VC.Demo.14.7.Start", "17efee018a660458fae80de4364021ac", 483490, 404),
+
+	// Found in "Get Ready for School, Charlie Brown!" and "One Small Square: Backyard"
+	MACGAME2("virgincdrom", "1995", "CD-ROM Sampler", "rt:d6981e0f81c391ade813edaab25998a3", 483490,
+									"sassets/samp_32.dxr", "t:92c50f1bd7e356130e61782a4fa4becd", 4608510, 404),
+	WINGAME2("virgincdrom", "1995", "SAMPLER.EXE", "t:8def0620c3c35990d38c3728f7ae2785", 697097,
+									"sassets/samp_32.dxr", "t:92c50f1bd7e356130e61782a4fa4becd", 4608510, 404),
+	// Found in "Mysterious Island"
+	MACGAME2("virgincdrom", "1996", "CD-ROM Sampler", "rt:d6981e0f81c391ade813edaab25998a3", 483490,
+									"sassets/samp_32.dxr", "t:3318f992097610d0309885cff440a6c9", 2045566, 404),
+	WINGAME2("virgincdrom", "1996", "SAMPLER.EXE", "t:4a880cb2e7ef8963fd8e50612d1b89ab", 6389135,
+									"sassets/samp_32.dxr", "t:3318f992097610d0309885cff440a6c9", 2045566, 404),
 
 	MACGAME1_l("virtualmuseum", "", "Virtual Museum Vol.1", "8b138db44d4421cc7294a9dc792ccf1b", 503337, Common::JA_JPN, 403),
 
