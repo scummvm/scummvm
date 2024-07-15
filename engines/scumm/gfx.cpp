@@ -62,8 +62,6 @@ struct StripTable {
 	int zrun[120];		// FIXME: Why only 120 here?
 };
 
-static const byte bitMasks[9] = { 0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF };
-
 enum {
 	kNoDelay = 0,
 	// This should actually be 3 in all games using it;
@@ -2497,6 +2495,8 @@ void GdiV2::decodeMask(int x, int y, const int width, const int height,
 }
 
 #ifdef ENABLE_HE
+static const byte bitMasks[9] = { 0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF };
+
 /**
  * Draw a bitmap onto a virtual screen. This is main drawing method for room backgrounds
  * used throughout HE71+ versions.
