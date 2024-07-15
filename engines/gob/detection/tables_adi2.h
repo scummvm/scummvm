@@ -239,7 +239,7 @@
 {
 	{
 		"adi2", // This version comes from the Sierra's Schoolhouse Math - Supplied by BJNFNE
-		"Adi 2",
+		"Adi 2.5",
 		AD_ENTRY1s("adi2.stk", "da5c5b4a6b56ed34d10ae5e0acfb9f8d", 11690760),
 		EN_USA,
 		kPlatformDOS,
