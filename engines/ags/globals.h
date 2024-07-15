@@ -758,7 +758,7 @@ public:
 	// TODO: IMPORTANT!!
 	// we cannot simply replace these arrays with vectors, or other C++ containers,
 	// until we implement safe management of such containers in script exports
-	// system. Noteably we would need an alternate to StaticArray class to track
+	// system. Notably we would need an alternate to StaticArray class to track
 	// access to their elements.
 	ScriptObject *_scrObj;
 	ScriptGUI *_scrGui = nullptr;
@@ -839,7 +839,7 @@ public:
 	 */
 
 	 // Following struct instructs the engine to run game loops until
-	 // certain condition is not fullfilled.
+	 // certain condition is not fulfilled.
 	struct RestrictUntil {
 		int type = 0; // type of condition, UNTIL_* constant
 		int disabled_for = 0; // FOR_* constant
