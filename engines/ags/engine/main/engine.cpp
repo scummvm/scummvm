@@ -745,7 +745,7 @@ void engine_init_game_settings() {
 
 	GUI::Options.DisabledStyle = static_cast<GuiDisableStyle>(_GP(game).options[OPT_DISABLEOFF]);
 	GUI::Options.ClipControls = _GP(game).options[OPT_CLIPGUICONTROLS] != 0;
-	// Force GUI metrics recalculation, accomodating for loaded fonts
+	// Force GUI metrics recalculation, accommodating for loaded fonts
 	GUI::MarkForFontUpdate(-1);
 
 	memset(&_GP(play).walkable_areas_on[0], 1, MAX_WALK_AREAS + 1);
