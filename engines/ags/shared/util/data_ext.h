@@ -21,13 +21,13 @@
 
  //=============================================================================
  //
- // A simple data extension format which may be useful as an ammendment to
+ // A simple data extension format which may be useful as an amendment to
  // any data file in the game.
  //
  // Format consists of a list of "blocks", each preceded with an integer and an
  // optional string identifier, and a size in bytes which lets a reader to skip
  // the block completely if necessary.
- // Because the serialization algorithm was accomodated to be shared among
+ // Because the serialization algorithm was accommodated to be shared among
  // several existing data files, few things in the meta info may be read
  // slightly differently depending on flags passed into the function.
  //
