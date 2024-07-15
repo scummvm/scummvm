@@ -23,7 +23,6 @@
 #include "engines/advancedDetector.h"
 
 static const PlainGameDescriptor dgdsGames[] = {
-	{"dgds", "Dynamix DGDS game"},
 	{"rise", "Rise of the Dragon"},
 	{"china", "Heart of China"},
 	{"beamish", "The Adventures of Willy Beamish"},

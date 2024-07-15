@@ -393,7 +393,7 @@ bool Console::cmdScriptDump(int argc, const char **argv) {
 			break;
 		case 0x1500:
 			printOp(--indent, "ELSE / Skip to end-if");
-			break;	
+			break;
 		case 0x1510:
 			printOp(--indent, "END IF");
 			break;
@@ -465,6 +465,8 @@ bool Console::cmdScriptDump(int argc, const char **argv) {
 		}
 		debugPrintf("\n");
 	}
+
+	delete resStream;
 
 	return true;
 }

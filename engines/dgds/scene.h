@@ -274,7 +274,7 @@ public:
 
 class TalkData {
 public:
-	TalkData() : _num(0) {}
+	TalkData() : _num(0), _val(0) {}
 	Common::String dump(const Common::String &indent) const;
 
 	uint16 _num;

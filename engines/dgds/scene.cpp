@@ -1087,7 +1087,7 @@ void SDSScene::freeDialogData(uint16 num) {
 	if (!num)
 		return;
 
-	for (uint i = 0; i < _dialogs.size(); i++) {
+	for (int i = 0; i < (int)_dialogs.size(); i++) {
 		if (_dialogs[i]._num == num) {
 			_dialogs.remove_at(i);
 			i--;
@@ -1177,7 +1177,7 @@ bool SDSScene::loadTalkData(uint16 num) {
 }
 
 void SDSScene::freeTalkData(uint16 num) {
-	for (uint i = 0; i < _talkData.size(); i++) {
+	for (int i = 0; i < (int)_talkData.size(); i++) {
 		if (_talkData[i]._num == num) {
 			_talkData.remove_at(i);
 			i--;
@@ -1270,8 +1270,8 @@ void SDSScene::updateHead(TalkDataHead &head) {
 }
 
 void SDSScene::drawVisibleHeads(Graphics::ManagedSurface *dst) {
-	for (auto tds : _talkData) {
-		for (auto h : tds._heads) {
+	for (const auto &tds : _talkData) {
+		for (const auto &h : tds._heads) {
 			if ((h._flags & kHeadFlagVisible) && !(h._flags & kHeadFlag40)) {
 				drawHead(dst, tds, h);
 			}
