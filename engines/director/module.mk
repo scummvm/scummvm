@@ -122,6 +122,7 @@ MODULE_OBJS = \
 	lingo/xlibs/movemousexobj.o \
 	lingo/xlibs/movieidxxobj.o \
 	lingo/xlibs/movutils.o \
+	lingo/xlibs/mystisle.o \
 	lingo/xlibs/openbleedwindowxcmd.o \
 	lingo/xlibs/orthoplayxobj.o \
 	lingo/xlibs/paco.o \

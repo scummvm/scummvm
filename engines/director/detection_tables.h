@@ -338,6 +338,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "myfavmonster",		"My Favourite Monster" },
 	{ "myfirstwords",		"My First Reading & Spelling Words" },
 	{ "mylk",				"Mylk" },
+	{ "mysteriousisland",	"Mysterious Island: A Race Against Time and Hot Lava" },
 	{ "myworld",			"Me & My World" },
 	{ "necrobius",			"Necrobius" },
 	{ "necromancer",		"Necromancer" },
@@ -5030,6 +5031,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("mysteriousegypt", "", "EGYPTI.EXE",				   "8bdf5baaa1fd82daf59fe0a96d356530", 1295295, Common::FI_FIN, 404),
 	MACDEMO1_l("mysteriousegypt", "Demo", "Egypti demo", "337c94c66b435e075a2d7f94b3cffc49", 483746, Common::FI_FIN, 404),
 	WINDEMO1_l("mysteriousegypt", "Demo", "EGYPTI.EXE",	 "2e8cba31e473bd1567476f57d6aeb4d6", 5574413, Common::FI_FIN, 404),
+
+	// version comes from debug mode (hold Ctrl+Shift when clicking on New Game/Load Game)
+	MACGAME2("mysteriousisland", "v96.04.23", "Mysterious Island", "r:17efee018a660458fae80de4364021ac", 483518,
+											  "INIT.DXR", "t:22a5a1e7542a1abd92c40beb1ca7b61e", 920290, 404),
+	WINGAME2("mysteriousisland", "v96.04.23", "ISLAND.EXE", "t:d8c7d6a10e60da366408d2cee6510f79", 697057,
+											  "INIT.DXR", "t:22a5a1e7542a1abd92c40beb1ca7b61e", 920290, 404),
 
 	MACGAME1("myworld", "", "Me & My World", "bda8fd92e5483a1fa311e9fc68e355fe", 295773, 404),
 	WINGAME1t("myworld", "", "MYWORLD.EXE", "c1be044a34660346d843cf51faca4604", 2138764, 404),
