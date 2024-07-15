@@ -388,7 +388,7 @@ void ScummVMRendererGraphicsDriver::RenderToBackBuffer() {
 	// with blending and translucency; it seems you'd have to first stretch the original sprite onto a
 	// temp buffer and then TransBlendBlt / LitBlendBlt it to the final destination. Of course, doing
 	// that here would slow things down significantly, so if we ever go that way sprite caching will
-	// be required (similarily to how AGS caches flipped/scaled object sprites now for).
+	// be required (similarly to how AGS caches flipped/scaled object sprites now for).
 	//
 
 	const size_t last_batch_to_rend = _spriteBatchDesc.size() - 1;
