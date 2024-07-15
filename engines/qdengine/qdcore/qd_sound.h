@@ -112,7 +112,7 @@ public:
 private:
 
 	//! Имя файла.
-	std::string _file_name;
+	Common::String _file_name;
 	//! Громкость звука, [0, 255].
 	int _volume;
 	//! Данные.
