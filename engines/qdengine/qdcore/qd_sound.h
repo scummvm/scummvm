@@ -27,10 +27,7 @@
 #include "qdengine/qdcore/qd_resource.h"
 #include "qdengine/qdcore/qd_sound_handle.h"
 
-
-#ifndef __QD_SYSLIB__
 #include "qdengine/system/sound/wav_sound.h"
-#endif
 
 namespace QDEngine {
 
@@ -99,9 +96,7 @@ public:
 
 	//! Возвращает длительность звука в секундах.
 	float length() const {
-#ifndef __QD_SYSLIB__
 		return sound_.length();
-#endif
 	}
 
 	//! Возвращает true, если звук не проигрывается.
@@ -121,9 +116,7 @@ private:
 	//! Громкость звука, [0, 255].
 	int volume_;
 	//! Данные.
-#ifndef __QD_SYSLIB__
 	wavSound sound_;
-#endif
 };
 
 typedef std::list<qdSound *> qdSoundList;

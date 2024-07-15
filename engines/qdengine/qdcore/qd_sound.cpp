@@ -22,12 +22,8 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
-
-#ifndef __QD_SYSLIB__
 #include "qdengine/parser/xml_tag_buffer.h"
 #include "qdengine/parser/qdscr_parser.h"
-#endif
-
 #include "qdengine/qdcore/qd_sound.h"
 #include "qdengine/system/sound/snd_dispatcher.h"
 
@@ -42,17 +38,13 @@ qdSound::qdSound() : volume_(255) {
 }
 
 qdSound::~qdSound() {
-#ifndef __QD_SYSLIB__
 	sound_.free_data();
-#endif
 }
 
 bool qdSound::free_resource() {
 	toggle_resource_status(false);
-
-#ifndef __QD_SYSLIB__
 	sound_.free_data();
-#endif
+
 	return true;
 }
 
@@ -61,15 +53,10 @@ bool qdSound::load_resource() {
 
 	toggle_resource_status(true);
 
-#ifndef __QD_SYSLIB__
 	return wav_file_load(file_name_.c_str(), &sound_);
-#else
-	return true;
-#endif
 }
 
 void qdSound::load_script(const xml::tag *p) {
-#ifndef __QD_SYSLIB__
 	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		switch (it->ID()) {
 		case QDSCR_NAME:
@@ -83,7 +70,6 @@ void qdSound::load_script(const xml::tag *p) {
 			break;
 		}
 	}
-#endif
 }
 
 bool qdSound::save_script(Common::SeekableWriteStream &fh, int indent) const {
@@ -112,29 +98,25 @@ bool qdSound::save_script(Common::SeekableWriteStream &fh, int indent) const {
 }
 
 bool qdSound::play(const qdSoundHandle *handle, bool loop, float start_position) const {
-#ifdef __QD_SOUND_LOG__
 	if (handle && handle->owner()) {
-		debugCN(3, kDebugLog, "[%d] sound start %p owner: %s", g_system->getMillis(), (void *)this, handle->owner().toString());
+		debugCN(3, kDebugSound, "[%d] sound start %p owner: %s", g_system->getMillis(), (void *)this, handle->owner()->toString().c_str());
 
 		if (loop)
-			debugCN(3, kDebugLog, " cycled");
-		debugC(3, kDebugLog, "")
+			debugCN(3, kDebugSound, " cycled");
+		debugC(3, kDebugSound, "");
 	}
-#endif
 
-#ifndef __QD_SYSLIB__
-	if (sndDispatcher * p = sndDispatcher::get_dispatcher()) {
+	if (sndDispatcher *p = sndDispatcher::get_dispatcher()) {
 		sndSound sound(&sound_, handle);
 		return p->play_sound(&sound, loop, start_position, volume_);
 	}
-#endif
 
 	return false;
 }
 
 bool qdSound::stop(const qdSoundHandle *handle) const {
 	debugC(3, kDebugSound, "[%d] sound stop %p owner: %s", g_system->getMillis(), (void *)this, handle->owner()->toString().c_str());
-	if (sndDispatcher * p = sndDispatcher::get_dispatcher()) {
+	if (sndDispatcher *p = sndDispatcher::get_dispatcher()) {
 		if (!handle) {
 			sndSound sound(&sound_);
 			return p->stop_sound(&sound);
@@ -147,19 +129,17 @@ bool qdSound::stop(const qdSoundHandle *handle) const {
 }
 
 float qdSound::position(const qdSoundHandle *handle) const {
-	if (!handle) return 0.0f;
+	if (!handle)
+		return 0.0f;
 
-#ifndef __QD_SYSLIB__
-	if (sndDispatcher * p = sndDispatcher::get_dispatcher())
+	if (sndDispatcher *p = sndDispatcher::get_dispatcher())
 		return p->sound_position(handle);
-#endif
 
 	return 0.0f;
 }
 
 bool qdSound::is_stopped(const qdSoundHandle *handle) const {
-#ifndef __QD_SYSLIB__
-	if (sndDispatcher * p = sndDispatcher::get_dispatcher()) {
+	if (sndDispatcher *p = sndDispatcher::get_dispatcher()) {
 		if (handle) {
 			return (p->sound_status(handle) == sndSound::SOUND_STOPPED);
 		} else {
@@ -167,16 +147,14 @@ bool qdSound::is_stopped(const qdSoundHandle *handle) const {
 			return (p->sound_status(&sound) == sndSound::SOUND_STOPPED);
 		}
 	}
-#endif
 
 	return true;
 }
 
 bool qdSound::set_frequency(const qdSoundHandle *handle, float frequency_coeff) const {
-#ifndef __QD_SYSLIB__
-	if (sndDispatcher * p = sndDispatcher::get_dispatcher())
+	if (sndDispatcher *p = sndDispatcher::get_dispatcher())
 		return p->set_sound_frequency(handle, frequency_coeff);
-#endif
+
 	return false;
 }
 } // namespace QDEngine
