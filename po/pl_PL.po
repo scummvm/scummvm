@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-15 17:43+0000\n"
+"POT-Creation-Date: 2024-07-15 17:49+0000\n"
 "PO-Revision-Date: 2024-02-08 20:26+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -3423,7 +3423,7 @@ msgstr ""
 msgid "Achievement unlocked!"
 msgstr "Odblokowano osiągnięcie!"
 
-#: engines/advancedDetector.cpp:236
+#: engines/advancedDetector.cpp:237
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
 "Wykryto nielegalną kopię gry. Nie zapewniamy żadnego wsparcia w takich "
@@ -3516,7 +3516,7 @@ msgstr ""
 "informacje i instrukcje dotyczące uzyskania dalszej pomocy można znaleźć w "
 "pliku README."
 
-#: engines/dialogs.cpp:193 engines/ags/ags.cpp:328
+#: engines/dialogs.cpp:193 engines/ags/ags.cpp:349
 #: engines/glk/magnetic/magnetic.cpp:197 engines/scumm/saveload.cpp:170
 msgid "This game does not support saving from the menu. Use in-game interface"
 msgstr "Ta gra nie obsługuje zapisywania z menu. Użyj interfejsu gry"
@@ -3534,7 +3534,7 @@ msgstr ""
 "Zapis stanu gry nie powiódł się (%s)! Aby uzyskać podstawowe informacje oraz "
 "dowiedzieć się, jak szukać dalszej pomocy, sprawdź plik README."
 
-#: engines/dialogs.cpp:234 engines/ags/ags.cpp:313
+#: engines/dialogs.cpp:234 engines/ags/ags.cpp:334
 #: engines/glk/magnetic/magnetic.cpp:187 engines/scumm/saveload.cpp:98
 msgid "This game does not support loading from the menu. Use in-game interface"
 msgstr "Ta gra nie obsługuje wczytywania gry z menu. Użyj interfejsu gry"
@@ -6531,7 +6531,7 @@ msgstr ""
 "%s lub %s. Bez któregokolwiek z tych pliików\n"
 "muzyka nie będzie brzmiała tak samo jak w oryginalnej grze."
 
-#: engines/ags/ags.cpp:135
+#: engines/ags/ags.cpp:152
 msgid ""
 "The selected game uses a pre-2.5 version of the AGS engine, which is not "
 "supported."
@@ -6539,7 +6539,7 @@ msgstr ""
 "Wybrana gra wykorzystuje silnik AGS w wersji wcześniejszej niż 2.5, który "
 "nie jest obsługiwany."
 
-#: engines/ags/ags.cpp:143
+#: engines/ags/ags.cpp:160
 msgid ""
 "The selected game has a data file greater than 2Gb, which isn't supported by "
 "your version of ScummVM yet."
@@ -6547,7 +6547,7 @@ msgstr ""
 "Wybrana gra ma plik danych większy niż 2 GB, który nie jest obsługiwany "
 "przez twoją wersję ScummVM."
 
-#: engines/ags/ags.cpp:317
+#: engines/ags/ags.cpp:338
 msgid ""
 "To preserve the original experience, this game should be loaded using the in-"
 "game interface.\n"
@@ -6557,7 +6557,7 @@ msgstr ""
 "interfejsu gry.\n"
 "Możesz jednak zastąpić to ustawienie w Opcjach gry."
 
-#: engines/ags/ags.cpp:332
+#: engines/ags/ags.cpp:353
 msgid ""
 "To preserve the original experience, this game should be saved using the in-"
 "game interface.\n"

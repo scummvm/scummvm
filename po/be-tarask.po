@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-15 17:43+0000\n"
+"POT-Creation-Date: 2024-07-15 17:49+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -3369,7 +3369,7 @@ msgstr ""
 msgid "Achievement unlocked!"
 msgstr "Дасягненьне разблякавана!"
 
-#: engines/advancedDetector.cpp:236
+#: engines/advancedDetector.cpp:237
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr "Знойдзена нелегальная копія гульні. Такія гульні мы не падтрымліваем"
 
@@ -3460,7 +3460,7 @@ msgstr ""
 "праглядзіце файл README з асноўнай інфармацыяй й інструкцыямі, як атрымаць "
 "дадатковую дапамогу."
 
-#: engines/dialogs.cpp:193 engines/ags/ags.cpp:328
+#: engines/dialogs.cpp:193 engines/ags/ags.cpp:349
 #: engines/glk/magnetic/magnetic.cpp:197 engines/scumm/saveload.cpp:170
 #, fuzzy
 #| msgid "This game does not support loading games from the launcher."
@@ -3480,7 +3480,7 @@ msgstr ""
 "Ня выйшла захаваць гульню (%s)! Калі ласка, праглядзіце файл README з "
 "асноўнай інфармацыяй й інструкцыямі, як атрымаць дадатковую дапамогу."
 
-#: engines/dialogs.cpp:234 engines/ags/ags.cpp:313
+#: engines/dialogs.cpp:234 engines/ags/ags.cpp:334
 #: engines/glk/magnetic/magnetic.cpp:187 engines/scumm/saveload.cpp:98
 #, fuzzy
 #| msgid "This game does not support loading games from the launcher."
@@ -6214,7 +6214,7 @@ msgstr ""
 "інструмэнтаў AdLib. Бяз гэтых файлаў,\n"
 "музыка будзе гучаць ня так, як у арыґінале."
 
-#: engines/ags/ags.cpp:135
+#: engines/ags/ags.cpp:152
 msgid ""
 "The selected game uses a pre-2.5 version of the AGS engine, which is not "
 "supported."
@@ -6222,7 +6222,7 @@ msgstr ""
 "Гэтая гульня выкарыстоўвае рухавік AGS engine вэрсіі да 2.5, якая не "
 "падтрымліваецца."
 
-#: engines/ags/ags.cpp:143
+#: engines/ags/ags.cpp:160
 msgid ""
 "The selected game has a data file greater than 2Gb, which isn't supported by "
 "your version of ScummVM yet."
@@ -6230,14 +6230,14 @@ msgstr ""
 "Гэтая гульня мае файл зьвестак памерам больш за 2 Гб, што не падтрымліваецца "
 "ў вашай вэрсіі ScummVM."
 
-#: engines/ags/ags.cpp:317
+#: engines/ags/ags.cpp:338
 msgid ""
 "To preserve the original experience, this game should be loaded using the in-"
 "game interface.\n"
 "You can, however, override this setting in Game Options."
 msgstr ""
 
-#: engines/ags/ags.cpp:332
+#: engines/ags/ags.cpp:353
 msgid ""
 "To preserve the original experience, this game should be saved using the in-"
 "game interface.\n"
