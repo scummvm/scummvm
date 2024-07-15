@@ -90,7 +90,7 @@ void FT_Free(FT_Memory memory, void **P);
 /*                                                                       */
 /* The following macros are variants of their FT_MEM_XXXX equivalents;   */
 /* they are used to set an _implicit_ `error' variable and return TRUE   */
-/* if an error occured (i.e. if 'error != 0').                           */
+/* if an error occurred (i.e. if 'error != 0').                           */
 /*                                                                       */
 
 #define FT_ALLOC(_pointer_, _size_) FT_SET_ERROR(FT_MEM_ALLOC(_pointer_, _size_))
