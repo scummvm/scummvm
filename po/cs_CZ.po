@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-13 11:03+0000\n"
+"POT-Creation-Date: 2024-07-15 04:53+0000\n"
 "PO-Revision-Date: 2023-12-14 14:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -545,7 +545,7 @@ msgstr "Stahování dokončeno, staženo %d balíčků, %s %S"
 #: gui/integrity-dialog.cpp:276 gui/gui-manager.cpp:170
 #: gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
-#: engines/saga/metaengine.cpp:370 engines/scumm/help.cpp:127
+#: engines/saga/metaengine.cpp:373 engines/scumm/help.cpp:127
 #: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
 #: engines/scumm/help.cpp:195 engines/scumm/help.cpp:213
 #: engines/twp/metaengine.cpp:179
@@ -3190,7 +3190,7 @@ msgstr ""
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:326 engines/cge2/metaengine.cpp:239
 #: engines/hdb/metaengine.cpp:275 engines/mohawk/myst_stacks/menu.cpp:317
-#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/saga/metaengine.cpp:444
+#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/saga/metaengine.cpp:447
 #: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
 #: engines/zvision/metaengine.cpp:272 engines/zvision/metaengine.cpp:290
 msgid "Quit"
@@ -3431,7 +3431,7 @@ msgstr "Uložit hru:"
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
 #: engines/neverhood/menumodule.cpp:923 engines/parallaction/metaengine.cpp:131
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:407
-#: engines/prince/saveload.cpp:54 engines/saga/metaengine.cpp:464
+#: engines/prince/saveload.cpp:54 engines/saga/metaengine.cpp:467
 #: engines/sci/engine/guest_additions.cpp:747 engines/sci/engine/kfile.cpp:1104
 #: engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
@@ -3660,30 +3660,27 @@ msgid "Default game keymap"
 msgstr "Výchozí rozložení kláves"
 
 #: engines/metaengine.cpp:60 backends/platform/maemo/maemo.cpp:161
-#: engines/agos/metaengine.cpp:230 engines/asylum/metaengine.cpp:159
-#: engines/hdb/metaengine.cpp:207 engines/made/metaengine.cpp:107
-#: engines/parallaction/metaengine.cpp:112 engines/saga/metaengine.cpp:277
+#: engines/asylum/metaengine.cpp:159 engines/hdb/metaengine.cpp:207
+#: engines/parallaction/metaengine.cpp:112
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
 msgstr "Levé Kliknutí"
 
 #: engines/metaengine.cpp:66 backends/platform/maemo/maemo.cpp:165
-#: engines/saga/metaengine.cpp:283 engines/wintermute/keymapper_tables.h:256
+#: engines/wintermute/keymapper_tables.h:256
 #: engines/wintermute/keymapper_tables.h:300
 #: engines/wintermute/keymapper_tables.h:2166
 msgid "Middle Click"
 msgstr "Kliknutí prostředním tlačítkem"
 
 #: engines/metaengine.cpp:71 backends/platform/maemo/maemo.cpp:169
-#: engines/agos/metaengine.cpp:236 engines/asylum/metaengine.cpp:165
-#: engines/made/metaengine.cpp:114 engines/parallaction/metaengine.cpp:118
-#: engines/saga/metaengine.cpp:288 engines/wintermute/keymapper_tables.h:48
-#: engines/zvision/metaengine.cpp:189
+#: engines/asylum/metaengine.cpp:165 engines/parallaction/metaengine.cpp:118
+#: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr "Pravé kliknutí"
 
 #. I18N: Action in In Cold Blood
-#: engines/metaengine.cpp:77 engines/agos/metaengine.cpp:250
+#: engines/metaengine.cpp:77 engines/agos/metaengine.cpp:252
 #: engines/crab/input/input.cpp:261 engines/grim/grim.cpp:541
 #: engines/hdb/metaengine.cpp:258 engines/icb/icb.cpp:137
 #: engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
@@ -6020,57 +6017,70 @@ msgstr ""
 msgid "AGOS 2 support is not compiled in"
 msgstr "Zakompilované funkce:"
 
-#: engines/agos/metaengine.cpp:225
+#. I18N: "AGOS main" refers to the main keymappings for the agos engine.
+#. It is never disabled and it is not game specific
+#: engines/agos/metaengine.cpp:227
 msgid "AGOS main"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:226 engines/cge/metaengine.cpp:199
-#: engines/cge2/metaengine.cpp:212 engines/made/metaengine.cpp:103
+#: engines/agos/metaengine.cpp:228 engines/made/metaengine.cpp:103
 #, fuzzy
-msgid "Game Keymappings"
+msgid "Game keymappings"
 msgstr "~V~olby..."
 
-#: engines/agos/metaengine.cpp:227
+#: engines/agos/metaengine.cpp:229
 #, fuzzy
-msgid "Yes/No Keymapping"
+msgid "Yes/No keymapping"
 msgstr "~V~olby..."
 
-#: engines/agos/metaengine.cpp:242
+#: engines/agos/metaengine.cpp:232 engines/groovie/metaengine.cpp:205
+#: engines/made/metaengine.cpp:107 engines/saga/metaengine.cpp:277
+#, fuzzy
+#| msgid "Left Click"
+msgid "Left click"
+msgstr "Levé Kliknutí"
+
+#: engines/agos/metaengine.cpp:238 engines/groovie/metaengine.cpp:211
+#: engines/made/metaengine.cpp:114 engines/saga/metaengine.cpp:288
+msgid "Right click"
+msgstr "Pravé kliknutí"
+
+#: engines/agos/metaengine.cpp:244
 #, fuzzy
 #| msgid "Skip cutscene"
 msgid "Exit cutscene"
 msgstr "Přeskočit video"
 
-#: engines/agos/metaengine.cpp:255 engines/vcruise/metaengine.cpp:187
+#: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:187
 #, fuzzy
 #| msgid "Music volume up / down"
 msgid "Music volume down"
 msgstr "Hlasitost hudby nahoru / dolů"
 
-#: engines/agos/metaengine.cpp:260 engines/vcruise/metaengine.cpp:192
+#: engines/agos/metaengine.cpp:262 engines/vcruise/metaengine.cpp:192
 #, fuzzy
 #| msgid "Music volume: "
 msgid "Music volume up"
 msgstr "Hlasitost hudby: "
 
-#: engines/agos/metaengine.cpp:266
+#: engines/agos/metaengine.cpp:268 engines/vcruise/metaengine.cpp:177
 #, fuzzy
 #| msgid "Toggle fullscreen"
-msgid "Toggle Music on/off"
+msgid "Toggle music on/off"
 msgstr "Přepnout celou obrazovku"
 
-#: engines/agos/metaengine.cpp:271
+#: engines/agos/metaengine.cpp:273
 #, fuzzy
 #| msgid "Special sound effects volume"
-msgid "Toggle Sound effect on/off"
+msgid "Toggle sound effect on/off"
 msgstr "Hlasitost speciálních zvukových efektů"
 
-#: engines/agos/metaengine.cpp:276
+#: engines/agos/metaengine.cpp:278
 #, fuzzy
-msgid "Toggle Fast mode on/off"
+msgid "Toggle fast mode on/off"
 msgstr "Rychlý režim"
 
-#: engines/agos/metaengine.cpp:288 engines/wintermute/keymapper_tables.h:149
+#: engines/agos/metaengine.cpp:290 engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
 #: engines/wintermute/keymapper_tables.h:2116
 #: engines/wintermute/keymapper_tables.h:2216
@@ -6078,12 +6088,12 @@ msgstr "Rychlý režim"
 msgid "Walk forward"
 msgstr "Přejít na"
 
-#: engines/agos/metaengine.cpp:294
+#: engines/agos/metaengine.cpp:296
 #, fuzzy
 msgid "Turn backward"
 msgstr "Vpřed"
 
-#: engines/agos/metaengine.cpp:300 engines/mohawk/riven.cpp:901
+#: engines/agos/metaengine.cpp:302 engines/mohawk/riven.cpp:901
 #: engines/wintermute/keymapper_tables.h:161
 #: engines/wintermute/keymapper_tables.h:741
 #: engines/wintermute/keymapper_tables.h:2122
@@ -6092,7 +6102,7 @@ msgstr "Vpřed"
 msgid "Turn left"
 msgstr "Otočit se doleva"
 
-#: engines/agos/metaengine.cpp:306 engines/mohawk/riven.cpp:907
+#: engines/agos/metaengine.cpp:308 engines/mohawk/riven.cpp:907
 #: engines/wintermute/keymapper_tables.h:167
 #: engines/wintermute/keymapper_tables.h:746
 #: engines/wintermute/keymapper_tables.h:2128
@@ -6101,65 +6111,65 @@ msgstr "Otočit se doleva"
 msgid "Turn right"
 msgstr "Otočit se doprava"
 
-#: engines/agos/metaengine.cpp:314
+#: engines/agos/metaengine.cpp:316
 #, fuzzy
 #| msgid "Text speed slower / faster"
 msgid "Text speed - Fast"
 msgstr "Zvýšit / Snížit rychlost textu"
 
-#: engines/agos/metaengine.cpp:319
+#: engines/agos/metaengine.cpp:321
 msgid "Text speed - Medium"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:324
+#: engines/agos/metaengine.cpp:326
 #, fuzzy
 #| msgid "Text speed slower / faster"
 msgid "Text speed - Slow"
 msgstr "Zvýšit / Snížit rychlost textu"
 
-#: engines/agos/metaengine.cpp:329
+#: engines/agos/metaengine.cpp:331
 #, fuzzy
 #| msgid "Show Object Line"
 msgid "Show objects to interact"
 msgstr "Zobrazit řádek objektů"
 
-#: engines/agos/metaengine.cpp:336
+#: engines/agos/metaengine.cpp:338
 #, fuzzy
 #| msgid "Special sound effects volume"
-msgid "Toggle background sounds On/Off"
+msgid "Toggle background sounds on/off"
 msgstr "Hlasitost speciálních zvukových efektů"
 
 #. I18N: Characters are game actors
-#: engines/agos/metaengine.cpp:345
+#: engines/agos/metaengine.cpp:347
 #, fuzzy
 #| msgid "Switching characters:"
 msgid "Switch characters"
 msgstr "Měnění postav:"
 
-#: engines/agos/metaengine.cpp:351
+#: engines/agos/metaengine.cpp:353
 #, fuzzy
 #| msgid "Toggle fullscreen"
 msgid "Toggle hitbox names on/off"
 msgstr "Přepnout celou obrazovku"
 
-#: engines/agos/metaengine.cpp:358
+#: engines/agos/metaengine.cpp:360
 msgid "Switches between speech only and combined speech and subtitles"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:364
+#: engines/agos/metaengine.cpp:366
 msgid "Switches between subtitles only and combined speech and subtitles"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:374
+#: engines/agos/metaengine.cpp:376
 msgid "High speed mode on/off in Swampy Adventures"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:380
-msgid "Press Yes Key"
+#: engines/agos/metaengine.cpp:382
+msgid "Press \"Yes\" key"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:385
-msgid "Press No Key"
+#: engines/agos/metaengine.cpp:387
+msgid "Press \"No\" key"
 msgstr ""
 
 #: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
@@ -6661,8 +6671,7 @@ msgstr "Povolit zachycování myši"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330 engines/cge2/metaengine.cpp:221
-#: engines/made/metaengine.cpp:162 engines/pegasus/pegasus.cpp:2825
-#: engines/saga/metaengine.cpp:437
+#: engines/pegasus/pegasus.cpp:2825
 msgid "Save Game"
 msgstr "Uložit hru"
 
@@ -6671,8 +6680,7 @@ msgstr "Uložit hru"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339 engines/cge2/metaengine.cpp:226
-#: engines/made/metaengine.cpp:168 engines/pegasus/pegasus.cpp:2831
-#: engines/saga/metaengine.cpp:427
+#: engines/pegasus/pegasus.cpp:2831
 msgid "Load Game"
 msgstr "Nahrát hru"
 
@@ -6705,7 +6713,6 @@ msgstr ""
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. QUIT GAME
 #: engines/bladerunner/metaengine.cpp:375 engines/dragons/metaengine.cpp:224
-#: engines/saga/metaengine.cpp:432
 #, fuzzy
 msgid "Quit Game"
 msgstr " (Hra)"
@@ -6775,6 +6782,11 @@ msgstr "Použít Text ke čtení"
 #, fuzzy
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Použít zvuky na CD místo ve hře, pokud je dostupné"
+
+#: engines/cge/metaengine.cpp:199 engines/cge2/metaengine.cpp:212
+#, fuzzy
+msgid "Game Keymappings"
+msgstr "~V~olby..."
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:204 engines/cge2/metaengine.cpp:216
@@ -7550,16 +7562,6 @@ msgstr "Zakompilované funkce:"
 msgid "Groovie engine"
 msgstr "Dostupná jádra:"
 
-#: engines/groovie/metaengine.cpp:205
-#, fuzzy
-#| msgid "Left Click"
-msgid "Left click"
-msgstr "Levé Kliknutí"
-
-#: engines/groovie/metaengine.cpp:211
-msgid "Right click"
-msgstr "Pravé kliknutí"
-
 #: engines/groovie/metaengine.cpp:217
 #, fuzzy
 #| msgid "Skip the Hall of Records storyboard scenes"
@@ -7607,7 +7609,7 @@ msgstr ""
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/hdb/metaengine.cpp:237 engines/mm/mm1/metaengine.cpp:81
-#: engines/saga/metaengine.cpp:375 engines/scumm/help.cpp:130
+#: engines/saga/metaengine.cpp:378 engines/scumm/help.cpp:130
 #: engines/scumm/help.cpp:154 engines/scumm/help.cpp:172
 #: engines/scumm/help.cpp:202 engines/scumm/help.cpp:217
 #: engines/scumm/help.cpp:228 engines/scumm/help.cpp:254
@@ -8123,25 +8125,52 @@ msgid ""
 "Otherwise, it will play MIDI music."
 msgstr ""
 
+#: engines/made/metaengine.cpp:102
+#, fuzzy
+#| msgid "Default game keymap"
+msgid "Default keymappings"
+msgstr "Výchozí rozložení kláves"
+
 #: engines/made/metaengine.cpp:128
-msgid "Cursor Up"
+#, fuzzy
+#| msgid "Cursor Up"
+msgid "Cursor up"
 msgstr "Šipka Nahoru"
 
 #: engines/made/metaengine.cpp:135
-msgid "Cursor Down"
+#, fuzzy
+#| msgid "Cursor Down"
+msgid "Cursor down"
 msgstr "Šipka Dolů"
 
 #: engines/made/metaengine.cpp:142
-msgid "Cursor Left"
+#, fuzzy
+#| msgid "Cursor Left"
+msgid "Cursor left"
 msgstr "Šipka Doleva"
 
 #: engines/made/metaengine.cpp:149
-msgid "Cursor Right"
+#, fuzzy
+#| msgid "Cursor Right"
+msgid "Cursor right"
 msgstr "Šipka Doprava"
+
+#: engines/made/metaengine.cpp:162 engines/saga/metaengine.cpp:440
+#: engines/vcruise/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:920
+msgid "Save game"
+msgstr "Uložit hru"
+
+#: engines/made/metaengine.cpp:168 engines/mohawk/myst_stacks/menu.cpp:283
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:430
+#: engines/vcruise/metaengine.cpp:156 engines/wintermute/keymapper_tables.h:925
+#: engines/wintermute/keymapper_tables.h:1265
+#, fuzzy
+msgid "Load game"
+msgstr "Nahrát hru:"
 
 #: engines/made/metaengine.cpp:174
 #, fuzzy
-msgid "Repeat Last Message"
+msgid "Repeat last message"
 msgstr "Neuložena žádná data"
 
 #: engines/mads/metaengine.cpp:59
@@ -8194,7 +8223,7 @@ msgstr ""
 
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
-#: engines/saga/metaengine.cpp:324 engines/twine/metaengine.cpp:436
+#: engines/saga/metaengine.cpp:327 engines/twine/metaengine.cpp:436
 #: engines/wintermute/keymapper_tables.h:60
 #, fuzzy
 msgid "Escape"
@@ -8520,14 +8549,6 @@ msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
 msgstr "   Jste si jisti, že chcete odejít ?   "
-
-#: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/vcruise/metaengine.cpp:156
-#: engines/wintermute/keymapper_tables.h:925
-#: engines/wintermute/keymapper_tables.h:1265
-#, fuzzy
-msgid "Load game"
-msgstr "Nahrát hru:"
 
 #: engines/mohawk/myst_stacks/menu.cpp:299
 #: engines/mohawk/riven_stacks/aspit.cpp:370
@@ -9075,145 +9096,162 @@ msgstr "~V~olby..."
 msgid "Converse panel keymapping"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:294
-msgid "Boss Key"
+#: engines/saga/metaengine.cpp:283
+#, fuzzy
+#| msgid "Middle Click"
+msgid "Middle click"
+msgstr "Kliknutí prostředním tlačítkem"
+
+#. I18N: the boss key is a feature,
+#. that allows players to quickly switch to a fake screen that looks like a business application,
+#. typically to avoid detection if someone, like a boss, walks by while they are playing.
+#: engines/saga/metaengine.cpp:297
+msgid "Boss key"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:299
+#: engines/saga/metaengine.cpp:302
 #, fuzzy
-msgid "Show Options"
+msgid "Show options"
 msgstr "Pouze Řeč"
 
-#: engines/saga/metaengine.cpp:307
+#: engines/saga/metaengine.cpp:310
 #, fuzzy
-msgid "Exit Conversation"
+msgid "Exit conversation"
 msgstr "~P~ředchozí"
 
-#: engines/saga/metaengine.cpp:312
+#: engines/saga/metaengine.cpp:315
 msgid "Conversation position - Up"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:317
+#: engines/saga/metaengine.cpp:320
 msgid "Conversation position - Down"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:329
-#, fuzzy
-#| msgid "Pause game"
-msgid "Pause Game"
+#: engines/saga/metaengine.cpp:332 engines/scumm/help.cpp:80
+#: engines/vcruise/metaengine.cpp:171
+msgid "Pause game"
 msgstr "Pozastavit hru"
 
-#: engines/saga/metaengine.cpp:335
+#: engines/saga/metaengine.cpp:338
 #, fuzzy
 #| msgid "Speech"
-msgid "Abort Speech"
+msgid "Abort speech"
 msgstr "Řeč"
 
-#: engines/saga/metaengine.cpp:340
+#: engines/saga/metaengine.cpp:343
 #, fuzzy
-msgid "Show Dialogue"
+msgid "Show dialogue"
 msgstr "Přeskočit řádek"
 
-#: engines/saga/metaengine.cpp:345 engines/scumm/help.cpp:226
-msgid "Walk"
-msgstr "Jít"
+#: engines/saga/metaengine.cpp:348 engines/scumm/help.cpp:144
+#: engines/scumm/help.cpp:169 engines/scumm/help.cpp:198
+#: engines/wintermute/keymapper_tables.h:1540
+msgid "Walk to"
+msgstr "Přejít na"
 
-#: engines/saga/metaengine.cpp:350 engines/scumm/help.cpp:203
+#: engines/saga/metaengine.cpp:353 engines/scumm/help.cpp:203
 #: engines/scumm/help.cpp:215 engines/twp/metaengine.cpp:182
 #: engines/wintermute/keymapper_tables.h:122
 #: engines/wintermute/keymapper_tables.h:1534
 msgid "Look at"
 msgstr "Dívat se na"
 
-#: engines/saga/metaengine.cpp:355
+#: engines/saga/metaengine.cpp:358
 #, fuzzy
 #| msgid "Pick up"
 msgid "Pickup"
 msgstr "Sebrat"
 
-#: engines/saga/metaengine.cpp:360 engines/scumm/help.cpp:200
+#: engines/saga/metaengine.cpp:363 engines/scumm/help.cpp:200
 #: engines/scumm/help.cpp:216 engines/scumm/help.cpp:252
 #: engines/twp/metaengine.cpp:183 engines/wintermute/keymapper_tables.h:128
 #: engines/wintermute/keymapper_tables.h:1558
 msgid "Talk to"
 msgstr "Mluvit s"
 
-#: engines/saga/metaengine.cpp:365 engines/scumm/help.cpp:126
+#: engines/saga/metaengine.cpp:368 engines/scumm/help.cpp:126
 #: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
 #: engines/scumm/help.cpp:194 engines/scumm/help.cpp:212
 #: engines/twp/metaengine.cpp:178
 msgid "Open"
 msgstr "Otevřít"
 
-#: engines/saga/metaengine.cpp:380 engines/scumm/help.cpp:125
+#: engines/saga/metaengine.cpp:383 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:201 engines/scumm/help.cpp:211
 #: engines/twp/metaengine.cpp:180
 msgid "Give"
 msgstr "Dát"
 
-#: engines/saga/metaengine.cpp:385 engines/scumm/help.cpp:123
+#: engines/saga/metaengine.cpp:388 engines/scumm/help.cpp:123
 #: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
 #: engines/twp/metaengine.cpp:184
 msgid "Push"
 msgstr "Tlačit"
 
-#: engines/saga/metaengine.cpp:390
+#: engines/saga/metaengine.cpp:393
 #, fuzzy
 #| msgid "Take off"
 msgid "Take"
 msgstr "Svléct"
 
-#: engines/saga/metaengine.cpp:395
+#: engines/saga/metaengine.cpp:398
 msgid "Swallow"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:402
+#: engines/saga/metaengine.cpp:405
 #, fuzzy
 #| msgid "Reading data failed"
-msgid "Reading Speed"
+msgid "Reading speed"
 msgstr "Čtení dat selhalo"
 
-#: engines/saga/metaengine.cpp:407
+#: engines/saga/metaengine.cpp:410
 #, fuzzy
 #| msgid "Fast mode"
-msgid "Change Music"
+msgid "Change music"
 msgstr "Rychlý režim"
 
-#: engines/saga/metaengine.cpp:412
+#: engines/saga/metaengine.cpp:415
 #, fuzzy
 #| msgid "Fast mode"
-msgid "Change Sound"
+msgid "Change sound"
 msgstr "Rychlý režim"
 
-#: engines/saga/metaengine.cpp:417
+#: engines/saga/metaengine.cpp:420
 #, fuzzy
 #| msgid "Fast mode"
-msgid "Change Voices"
+msgid "Change voices"
 msgstr "Rychlý režim"
 
-#: engines/saga/metaengine.cpp:422
-msgid "Continue Game"
-msgstr ""
-
-#: engines/saga/metaengine.cpp:449
+#: engines/saga/metaengine.cpp:425
 #, fuzzy
-msgid "Cancel Quit"
+#| msgid "Pause game"
+msgid "Continue game"
+msgstr "Pozastavit hru"
+
+#: engines/saga/metaengine.cpp:435 engines/vcruise/metaengine.cpp:166
+#, fuzzy
+msgid "Quit game"
+msgstr " (Hra)"
+
+#: engines/saga/metaengine.cpp:452
+#, fuzzy
+msgid "Cancel quit"
 msgstr "Zrušit"
 
-#: engines/saga/metaengine.cpp:454
-msgid "okay"
+#: engines/saga/metaengine.cpp:457
+msgid "Okay"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:459
+#: engines/saga/metaengine.cpp:462
 #, fuzzy
 #| msgid "Cancel download"
-msgid "Cancel Load"
+msgid "Cancel load"
 msgstr "Zrušit stahování"
 
-#: engines/saga/metaengine.cpp:469
+#: engines/saga/metaengine.cpp:472
 #, fuzzy
-msgid "Cancel Save"
+msgid "Cancel save"
 msgstr "Bezejmenná uložená hra"
 
 #: engines/saga/music.cpp:98
@@ -9873,10 +9911,6 @@ msgstr "Mezerník"
 msgid "Space"
 msgstr "Mezerník"
 
-#: engines/scumm/help.cpp:80 engines/vcruise/metaengine.cpp:171
-msgid "Pause game"
-msgstr "Pozastavit hru"
-
 #. I18N: Drafts is set of notes in Loom to invoke spells
 #: engines/scumm/help.cpp:81 engines/scumm/help.cpp:86
 #: engines/scumm/help.cpp:97 engines/scumm/help.cpp:98
@@ -10006,11 +10040,6 @@ msgstr "Zapnout"
 msgid "Turn off"
 msgstr "Vypnout"
 
-#: engines/scumm/help.cpp:144 engines/scumm/help.cpp:169
-#: engines/scumm/help.cpp:198 engines/wintermute/keymapper_tables.h:1540
-msgid "Walk to"
-msgstr "Přejít na"
-
 #: engines/scumm/help.cpp:145 engines/scumm/help.cpp:170
 #: engines/scumm/help.cpp:199 engines/scumm/help.cpp:214
 #: engines/scumm/help.cpp:231 engines/twp/metaengine.cpp:181
@@ -10124,6 +10153,10 @@ msgstr "KlávesaDolů"
 #: engines/scumm/help.cpp:222
 msgid "Highlight next dialogue"
 msgstr "Zvýraznit následující dialog"
+
+#: engines/scumm/help.cpp:226
+msgid "Walk"
+msgstr "Jít"
 
 #: engines/scumm/help.cpp:230
 msgid "Object"
@@ -11676,26 +11709,11 @@ msgstr ""
 msgid "Display help screen"
 msgstr "Zobrazit/Skrýto obrazovku informací"
 
-#: engines/vcruise/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:920
-msgid "Save game"
-msgstr "Uložit hru"
-
 #: engines/vcruise/metaengine.cpp:161
 #, fuzzy
 #| msgid "Override global audio settings"
 msgid "Open sound settings"
 msgstr "Potlačit globální nastavení zvuku"
-
-#: engines/vcruise/metaengine.cpp:166
-#, fuzzy
-msgid "Quit game"
-msgstr " (Hra)"
-
-#: engines/vcruise/metaengine.cpp:177
-#, fuzzy
-#| msgid "Toggle fullscreen"
-msgid "Toggle music on/off"
-msgstr "Přepnout celou obrazovku"
 
 #: engines/vcruise/metaengine.cpp:182
 #, fuzzy
@@ -12538,6 +12556,21 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#, fuzzy
+#~| msgid "Toggle fullscreen"
+#~ msgid "Toggle Music on/off"
+#~ msgstr "Přepnout celou obrazovku"
+
+#, fuzzy
+#~| msgid "Special sound effects volume"
+#~ msgid "Toggle Sound effect on/off"
+#~ msgstr "Hlasitost speciálních zvukových efektů"
+
+#, fuzzy
+#~| msgid "Pause game"
+#~ msgid "Pause Game"
+#~ msgstr "Pozastavit hru"
 
 #, fuzzy
 #~| msgid "The game in '%s' seems to be unknown."
