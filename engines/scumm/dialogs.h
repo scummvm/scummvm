@@ -421,7 +421,9 @@ private:
 
 	GUI::EditTextWidget *_lobbyServerAddr;
 
+#ifdef USE_LIBCURL
 	GUI::CheckboxWidget *_enableCompetitiveMods;
+#endif
 
 	GUI::StaticTextWidget *_networkVersion;
 };
