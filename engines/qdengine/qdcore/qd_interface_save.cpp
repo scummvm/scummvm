@@ -95,13 +95,13 @@ qdInterfaceSave &qdInterfaceSave::operator = (const qdInterfaceSave &sv) {
 
 bool qdInterfaceSave::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
 	frame_.mouse_handler(x, y, ev);
-	debugC(3, kDebugInput, "qdInterfaceSave::mouse_handler(): ev = %d, x = %d, y = %d", ev, x, y);
+	debugC(9, kDebugInput, "qdInterfaceSave::mouse_handler(): ev = %d, x = %d, y = %d", ev, x, y);
 
 	switch (ev) {
 	case mouseDispatcher::EV_LEFT_DOWN:
 	case mouseDispatcher::EV_RIGHT_DOWN:
 		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-		debugC(3, kDebugSave, "qdInterfaceSave::mouse_handler(): save_mode_ = %d", save_mode_);
+			debugC(3, kDebugSave, "qdInterfaceSave::mouse_handler(): save_mode_ = %d", save_mode_);
 			clear_screen_region();
 
 			if (save_mode_) {
@@ -169,6 +169,7 @@ bool qdInterfaceSave::init(bool is_game_active) {
 
 	if (!save_mode_ && !app_io::is_file_exist(save_file())) {
 		if (is_visible()) {
+			debugC(3, kDebugInput, "qdInterfaceSave::init(): Hide %s", save_file());
 			hide();
 
 			if (qdInterfaceScreen * sp = dynamic_cast<qdInterfaceScreen * >(owner()))
