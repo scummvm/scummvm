@@ -59,7 +59,7 @@ inline const char *ScriptVSprintf(char *buffer, size_t buf_length, const char *f
 }
 
 // Helper macros for script functions;
-// asserting for internal mistakes; supressing "unused param" warnings
+// asserting for internal mistakes; suppressing "unused param" warnings
 #define ASSERT_SELF(METHOD) \
     (void)params; (void)param_count; \
     assert((self != NULL) && "Object pointer is null in call to API function")
