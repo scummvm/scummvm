@@ -48,6 +48,7 @@ private:
 	uint32 _priorFrameTime;
 	uint32 _priorTimerTime;
 	Common::KeyCode _keyCode;
+	Common::CustomEventType _customAction;
 
 	Graphics::Surface _invCursor;
 	bool checkForNextFrameCounter();

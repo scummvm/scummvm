@@ -1378,7 +1378,7 @@ void MinigameBbLoogie::update() {
 		_gameTicks = _vm->_system->getMillis();
 	}
 
-	if (_vm->_keyCode == Common::KEYCODE_ESCAPE) {
+	if (_vm->_customAction == kActionEscape) {
 		_gameDone = true;
 		return;
 	}
@@ -1392,7 +1392,7 @@ void MinigameBbLoogie::update() {
 		done = !updateStatus(_vm->_mouseX, _vm->_mouseY, _vm->_mouseButtons);
 		_vm->_mouseButtons &= ~kLeftButtonClicked;
 		_vm->_mouseButtons &= ~kRightButtonClicked;
-		_vm->_keyCode = Common::KEYCODE_INVALID;
+		_vm->_customAction = kActionNone;
 	} while (--inputTicks && _gameTicks > 0 && !done);
 
 	drawSprites();
