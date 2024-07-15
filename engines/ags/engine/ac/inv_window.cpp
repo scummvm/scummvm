@@ -222,7 +222,7 @@ void InventoryScreen::Prepare() {
 	// the engine to be used in the built-in inventory window.
 	// If they did not exist engine first fell back to sprites 0, 1, 2 instead.
 	// Fun fact: this fallback does not seem to be intentional, and was a
-	// coincidental result of SpriteCache incorrectly remembering "last seeked
+	// coincidental result of SpriteCache incorrectly remembering "last seek'd
 	// sprite" as 2041/2042/2043 while in fact stream was after sprite 0.
 	if (!_GP(spriteset).DoesSpriteExist(2041) || !_GP(spriteset).DoesSpriteExist(2042) || !_GP(spriteset).DoesSpriteExist(2043)) {
 		debug_script_warn("InventoryScreen: one or more of the inventory screen graphics (sprites 2041, 2042, 2043) does not exist, fallback to sprites 0, 1, 2 instead");
