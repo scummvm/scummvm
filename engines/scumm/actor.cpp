@@ -437,7 +437,10 @@ void Actor_v3::setupActorScale() {
 	// script when Henry escapes from his room). Maybe there's a problem
 	// in the German release (and then it'd probably be better to restore
 	// that safeguard instead, since the game clearly doesn't expect you
-	// to go back inside the castle), but I don't own this version.  -dwa
+	// to go back inside the castle), but so far I haven't been able to
+	// replicate the issue with my German copy. I will dig deeper, but
+	// I think that fingolfin was right when he said that this looks more
+	// like a bug in the game data, back in 2011.  -dwa
 	if (_number == 2 && _costume == 7 && _vm->_game.id == GID_INDY3 && _vm->_currentRoom == 12 && _vm->enhancementEnabled(kEnhMinorBugFixes)) {
 		_scalex = 0x50;
 		_scaley = 0x50;
