@@ -190,7 +190,7 @@ static inline __m256i blendTintSpriteSIMD(__m256i srcCols, __m256i destCols, __m
 	// srcCols[2] = A | R | G | B
 	// srcCols[3] = A | R | G | B
 	//  ->
-	// to 4 float32x4_t's each being a seperate channel with each lane
+	// to 4 float32x4_t's each being a separate channel with each lane
 	// corresponding to their respective srcCols lane
 	// dda = { A[0], A[1], A[2], A[3] }
 	// ddr = { R[0], R[1], R[2], R[3] }
