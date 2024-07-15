@@ -94,9 +94,11 @@ public:
 	bool isGiger();
 	void runRoomObjects();
 	void removeObjectFromRoom(int16 objNum);
+	void updateRoomObj(int16 objNum, int16 x, int16 width, int16 y, int16 height);
 private:
 	bool load();
 	static Common::String stripSpaces(Common::String source);
+	void drawTrunk();
 };
 
 } // namespace Darkseed

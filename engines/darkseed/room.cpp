@@ -723,6 +723,9 @@ bool Darkseed::Room::isOutside() {
 }
 
 void Darkseed::Room::runRoomObjects() {
+	if (_roomNumber == 61) {
+		drawTrunk();
+	}
 	if (_roomNumber == 0 && g_engine->_objectVar[78] == 2) {
 		const Sprite &sprite = _locationSprites.getSpriteAt(0);
 		g_engine->_sprites.addSpriteToDrawList(519, 80, &sprite, 255, sprite.width, sprite.height, false);
@@ -756,4 +759,70 @@ void Darkseed::Room::removeObjectFromRoom(int16 objNum) {
 	} else {
 		g_engine->_objectVar.setMoveObjectRoom(objNum, 253);
 	}
+}
+
+void Darkseed::Room::updateRoomObj(int16 objNum, int16 x, int16 width, int16 y, int16 height) {
+	for (auto &roomObj : _roomObj) {
+		if (roomObj.type == 0 && roomObj.objNum == objNum) {
+			roomObj.xOffset = x;
+			roomObj.yOffset = y;
+			roomObj.width = width;
+			roomObj.height = height;
+			return;
+		}
+	}
+
+	for (auto &roomObj : _roomObj) {
+		if (roomObj.type > 10) {
+			roomObj.type = 0;
+			roomObj.objNum = objNum;
+			roomObj.xOffset = x;
+			roomObj.yOffset = y;
+			roomObj.width = width;
+			roomObj.height = height;
+			return;
+		}
+	}
+}
+
+void Darkseed::Room::drawTrunk() {
+	int trunkXPos;
+	int trunkYPos;
+	int spriteIdx;
+  
+	if (g_engine->_objectVar[22] == 0) {
+		trunkXPos = 460;
+		trunkYPos = 132;
+	} else if (g_engine->_objectVar[22] == 1) {
+		trunkXPos = 458;
+		trunkYPos = 127;
+	} else if (g_engine->_objectVar[22] == 2) {
+		trunkXPos = 451;
+		trunkYPos = 117;
+	} else {
+		trunkXPos = 410;
+		trunkYPos = 98;
+	}
+
+	if (g_engine->_objectVar[42] == 1 || g_engine->_objectVar[42] == 2 || g_engine->_objectVar[42] == 3) {
+		spriteIdx = 1;
+	} else {
+		spriteIdx = 0;
+	}
+
+	const Sprite &sprite = _locationSprites.getSpriteAt(spriteIdx);
+	g_engine->sprite_y_scaling_threshold_maybe = 211;
+	calculateScaledSpriteDimensions(sprite.width, sprite.height, trunkYPos + sprite.height);
+	g_engine->sprite_y_scaling_threshold_maybe = 240;
+	updateRoomObj(42, trunkXPos + 20,6, trunkYPos + 34,8);
+	updateRoomObj(22, trunkXPos + 60,12, trunkYPos + 46,8);
+	g_engine->_sprites.addSpriteToDrawList(
+		trunkXPos,
+		trunkYPos + sprite.height - g_engine->scaledSpriteHeight,
+		&sprite,
+		254,
+		g_engine->scaledSpriteWidth,
+		g_engine->scaledSpriteHeight,
+		false);
+	return;
 }

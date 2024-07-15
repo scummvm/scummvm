@@ -1453,7 +1453,7 @@ void DarkseedEngine::updateAnimation() {
 		if (!isAnimFinished_maybe) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]];
 		}
-		if (_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]] == 3 && _currentDay != 0) {
+		if (_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]] == 3 && animFrameChanged) {
 			_console->printTosText(_objectVar[22] + 662);
 			_objectVar[22] = _objectVar[22] + 1;
 			if (_objectVar[22] == 3) {
