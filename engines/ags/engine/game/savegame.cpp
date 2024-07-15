@@ -179,9 +179,9 @@ HSaveError ReadDescription(Stream *in, SavegameVersion &svg_ver, SavegameDescrip
 		return new SavegameError(kSvgErr_FormatVersionNotSupported,
 		                         String::FromFormat("Required: %d, supported: %d - %d.", svg_ver, kSvgVersion_LowestSupported, kSvgVersion_Current));
 
-	// Enviroment information
+	// Environment information
 	if (svg_ver >= kSvgVersion_351)
-		in->ReadInt32(); // enviroment info size
+		in->ReadInt32(); // environment info size
 	if (elems & kSvgDesc_EnvInfo) {
 		desc.EngineName = StrUtil::ReadString(in);
 		desc.EngineVersion.SetFromString(StrUtil::ReadString(in));
@@ -682,7 +682,7 @@ void WriteDescription(Stream *out, const String &user_text, const Bitmap *user_i
 	out->WriteInt32(kSvgVersion_Current);
 	soff_t env_pos = out->GetPosition();
 	out->WriteInt32(0);
-	// Enviroment information
+	// Environment information
 	StrUtil::WriteString(get_engine_name(), out);
 	StrUtil::WriteString(_G(EngineVersion).LongString, out);
 	StrUtil::WriteString(_GP(game).guid, out);
