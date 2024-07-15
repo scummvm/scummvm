@@ -39,9 +39,8 @@ public:
 //! Базовый класс для звуков.
 class sndSound {
 public:
-	explicit sndSound(const wavSound *snd, const sndHandle *h = NULL) : _sound(snd), _handle(h) { }
-	sndSound(const sndSound &snd) : _sound(snd._sound), _handle(snd._handle) { }
-	virtual ~sndSound() { };
+	explicit sndSound(const wavSound *snd, const sndHandle *h = NULL) : _sound(snd), _handle(h), _flags(0) {}
+	~sndSound();
 
 	sndSound &operator = (const sndSound &s) {
 		if (this == &s) return *this;
@@ -63,9 +62,7 @@ public:
 	};
 
 	//! Возвращает состояние звука.
-	virtual status_t status() const {
-		return SOUND_STOPPED;
-	}
+	status_t status() const;
 
 	//! Возвращает указатель на данные звука.
 	const wavSound *sound() const {
@@ -76,11 +73,64 @@ public:
 		return _handle;
 	}
 
+	//! Запускает проигрывание звука.
+	bool play();
+	//! Останавливает проигрывание звука.
+	bool stop();
+	//! Ставит звук на паузу.
+	void pause();
+	//! Возобновляет проигрывание.
+	void resume();
+	//! Возвращает true, если звук на паузе.
+	bool is_paused() const {
+		if (_flags & SOUND_FLAG_PAUSED) return true;
+		else return false;
+	}
+
+	//! Возвращает true, если звук не проигрывается.
+	bool is_stopped() const;
+
+	//! Устанавливает громкость звука, параметр - в децибелах.
+	/**
+	Диапазон значений громкости - [-10000, 0]
+
+	-10000 - звук совсем не слышен,
+	0 - громкость самого звука по умолчанию.
+	*/
+	bool set_volume(int vol);
+
+	bool change_frequency(float coeff = 1.0f);
+
+	//! Возвращает текущую позицию звука, диапазон возвращаемых значений - [0.0, 1.0].
+	float position() const;
+	//! Устанавливает текущую позицию звука, диапазон значений параметра - [0.0, 1.0].
+	bool set_position(float pos);
+
+	//! Создает DirectSoundBuffer.
+	bool create_sound_buffer();
+	//! Удаляет DirectSoundBuffer.
+	bool release_sound_buffer();
+
+	//! Включает/выключает зацикливание звука.
+	void toggle_looping() {
+		_flags ^= SOUND_FLAG_LOOPING;
+	}
+
 private:
 	//! Указатель на данные.
 	const wavSound *_sound;
 	//! Указатель на хэндл звука.
 	const sndHandle *_handle;
+
+	//! Указатель на DirectSoundBuffer.
+	//! флаги
+	enum {
+		SOUND_FLAG_LOOPING  = 0x01,
+		SOUND_FLAG_PAUSED   = 0x02
+	};
+
+	//! флаги
+	int _flags;
 };
 
 } // namespace QDEngine

@@ -23,7 +23,6 @@
 #define QDENGINE_SYSTEM_SOUND_SND_DISPATCHER_H
 
 #include "qdengine/system/sound/snd_sound.h"
-#include "qdengine/system/sound/ds_sound.h"
 
 namespace QDEngine {
 
@@ -151,7 +150,7 @@ private:
 	//! Пауза.
 	bool _is_paused;
 
-	typedef std::list<dsSound> sound_list_t;
+	typedef std::list<sndSound> sound_list_t;
 	//! Список активных звуков.
 	sound_list_t _sounds;
 

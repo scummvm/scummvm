@@ -20,33 +20,21 @@
  */
 
 #include "qdengine/qd_precomp.h"
-#include "qdengine/system/sound/ds_sound.h"
+#include "qdengine/system/sound/snd_sound.h"
 #include "qdengine/system/sound/wav_sound.h"
 
 
 namespace QDEngine {
 
-dsSound::dsSound(const sndSound &snd, LPDIRECTSOUND sound_device) : sndSound(snd),
-	_sound_device(sound_device),
-	_sound_buffer(NULL),
-	_flags(0) {
-}
-
-dsSound::dsSound(const dsSound &snd) : sndSound(snd),
-	_sound_device(snd._sound_device),
-	_sound_buffer(snd._sound_buffer),
-	_flags(snd._flags) {
-}
-
-dsSound::~dsSound() {
+sndSound::~sndSound() {
 	release_sound_buffer();
 }
 
-bool dsSound::create_sound_buffer() {
+bool sndSound::create_sound_buffer() {
 	if (!sound())
 		return false;
 
-	warning("STUB: dsSound::create_sound_buffer()");
+	warning("STUB: sndSound::create_sound_buffer()");
 #if 0
 	WAVEFORMATEX wfx;
 
@@ -90,26 +78,23 @@ bool dsSound::create_sound_buffer() {
 	return true;
 }
 
-bool dsSound::release_sound_buffer() {
-	if (_sound_buffer) {
-		if (!is_stopped())
-			stop();
+bool sndSound::release_sound_buffer() {
+	if (!is_stopped())
+		stop();
 
-		warning("STUB: dsSound::release_sound_buffer()");
+		warning("STUB: sndSound::release_sound_buffer()");
 #if 0
 		_sound_buffer->Release();
 		_sound_buffer = NULL;
 #endif
-	}
 
 	return true;
 }
 
-bool dsSound::play() {
+bool sndSound::play() {
 	_flags &= ~SOUND_FLAG_PAUSED;
 
-	if (!_sound_buffer) return false;
-	warning("STUB: dsSound::play()");
+	warning("STUB: sndSound::play()");
 #if 0
 	DWORD flags = (_flags & SOUND_FLAG_LOOPING) ? DSBPLAY_LOOPING : 0;
 	_sound_buffer->Play(0, 0, flags);
@@ -117,29 +102,26 @@ bool dsSound::play() {
 	return true;
 }
 
-bool dsSound::stop() {
-	if (!_sound_buffer) return false;
-	warning("STUB: dsSound::stop()");
+bool sndSound::stop() {
+	warning("STUB: sndSound::stop()");
 #if 0
 	_sound_buffer->Stop();
 #endif
 	return true;
 }
 
-void dsSound::pause() {
+void sndSound::pause() {
 	_flags |= SOUND_FLAG_PAUSED;
 	stop();
 }
 
-void dsSound::resume() {
+void sndSound::resume() {
 	play();
 }
 
-sndSound::status_t dsSound::status() const {
-	if (!_sound_buffer) return sndSound::SOUND_STOPPED;
-
+sndSound::status_t sndSound::status() const {
 	if (is_paused()) return sndSound::SOUND_PAUSED;
-	warning("STUB: dsSound::status()");
+	warning("STUB: sndSound::status()");
 #if 0
 	DWORD st;
 	_sound_buffer->GetStatus(&st);
@@ -149,7 +131,7 @@ sndSound::status_t dsSound::status() const {
 	return SOUND_STOPPED;
 }
 
-bool dsSound::is_stopped() const {
+bool sndSound::is_stopped() const {
 	switch (status()) {
 	case SOUND_PLAYING:
 	case SOUND_PAUSED:
@@ -159,18 +141,16 @@ bool dsSound::is_stopped() const {
 	}
 }
 
-bool dsSound::set_volume(int vol) {
-	if (!_sound_buffer) return false;
-	warning("STUB: dsSound::set_volume()");
+bool sndSound::set_volume(int vol) {
+	warning("STUB: sndSound::set_volume()");
 #if 0
 	_sound_buffer->SetVolume(vol);
 #endif
 	return true;
 }
 
-bool dsSound::change_frequency(float coeff) {
-	if (!_sound_buffer) return false;
-	warning("STUB: dsSound::change_frequency()");
+bool sndSound::change_frequency(float coeff) {
+	warning("STUB: sndSound::change_frequency()");
 #if 0
 	DWORD freq;
 	if (_sound_buffer->GetFrequency(&freq) != DS_OK)
@@ -188,9 +168,8 @@ bool dsSound::change_frequency(float coeff) {
 	return true;
 }
 
-float dsSound::position() const {
-	if (!_sound_buffer) return 0.0f;
-	warning("STUB: dsSound::position()");
+float sndSound::position() const {
+	warning("STUB: sndSound::position()");
 #if 0
 	DWORD pos = 0;
 	if (_sound_buffer->GetCurrentPosition(&pos, NULL) == DS_OK) {
@@ -205,16 +184,14 @@ float dsSound::position() const {
 	return 0.0f;
 }
 
-bool dsSound::set_position(float pos) {
-	if (_sound_buffer) {
-		warning("STUB: dsSound::set_position()");
+bool sndSound::set_position(float pos) {
+	warning("STUB: sndSound::set_position()");
 #if 0
-		DWORD npos = DWORD(float(sound()->data_length() * pos));
+	DWORD npos = DWORD(float(sound()->data_length() * pos));
 
-		if (_sound_buffer->SetCurrentPosition(npos) == DS_OK)
-			return true;
+	if (_sound_buffer->SetCurrentPosition(npos) == DS_OK)
+		return true;
 #endif
-	}
 
 	return false;
 }

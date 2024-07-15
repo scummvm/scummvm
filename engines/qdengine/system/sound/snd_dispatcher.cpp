@@ -29,11 +29,11 @@ namespace QDEngine {
 
 sndDispatcher *sndDispatcher::_dispatcher_ptr;
 
-static bool operator == (const dsSound &snd0, const sndSound &snd1) {
+static bool operator == (const sndSound &snd0, const sndSound &snd1) {
 	return snd0.sound() == snd1.sound();
 }
 
-static bool operator == (const dsSound &snd, const sndHandle &h) {
+static bool operator == (const sndSound &snd, const sndHandle &h) {
 	return snd.handle() == &h;
 }
 
@@ -102,15 +102,15 @@ int sndDispatcher::convert_volume_to_dB(int vol) {
 }
 
 void sndDispatcher::quant() {
-	_sounds.remove_if(std::mem_fn(&dsSound::is_stopped));
+	_sounds.remove_if(std::mem_fn(&sndSound::is_stopped));
 }
 
 bool sndDispatcher::play_sound(const sndSound *snd, bool loop, float start_position, int vol) {
 	if (!_sound_device) return false;
 
 	if (is_enabled()) {
-		_sounds.push_back(dsSound(*snd, _sound_device));
-		dsSound &p = _sounds.back();
+		_sounds.push_back(sndSound(*snd));
+		sndSound &p = _sounds.back();
 
 		if (loop)
 			p.toggle_looping();
