@@ -306,7 +306,7 @@ void ReadDialogs(std::vector<DialogTopic> &dialog,
 
 	// Read the dialog lines
 	//
-	// TODO: investigate this: these strings were read much simplier in the editor, see code:
+	// TODO: investigate this: these strings were read much simpler in the editor, see code:
 	/*
 	    char stringbuffer[1000];
 	    for (bb=0;bb<thisgame.numdlgmessage;bb++) {
