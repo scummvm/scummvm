@@ -977,7 +977,7 @@ HSaveError load_game(const String &path, int slotNumber, bool &data_overwritten)
 	SavegameDescription desc;
 	err = OpenSavegame(path, src, desc, kSvgDesc_EnvInfo);
 
-	// saved in incompatible enviroment
+	// saved in incompatible environment
 	if (!err)
 		return err;
 	// CHECKME: is this color depth test still essential? if yes, is there possible workaround?
