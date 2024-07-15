@@ -208,15 +208,18 @@ bool GobConsole::cmd_cheat(int argc, const char **argv) {
 bool GobConsole::cmd_listArchives(int argc, const char **argv) {
 	Common::Array<ArchiveInfo> info;
 
-	_vm->_dataIO->getArchiveInfo(info);
+    _vm->_dataIO->getArchiveInfo(info);
 
-	debugPrintf("   Archive    | Base | FileCount\n");
-	debugPrintf("--------------------------------\n");
-	for (Common::Array<ArchiveInfo>::const_iterator it = info.begin(); it != info.end(); ++it)
-		if (!it->name.empty())
-		debugPrintf("%13s |   %d  | %d\n", it->name.c_str(), it->base, it->fileCount);
+    debugPrintf(" Archive        | Base | FileCount | FileSize\n");
+    debugPrintf("----------------------------------------------\n");
+    for (Common::Array<ArchiveInfo>::const_iterator it = info.begin(); it != info.end(); ++it) {
+        if (!it->name.empty()) {
+            uint32 size = _vm->_dataIO->fileSize(it->name.c_str());
+            debugPrintf("%-15s | %4d | %9d | %6u KB\n", it->name.c_str(), it->base, it->fileCount, size);
+        }
+    }
 
-	return true;
+    return true;
 }
 
 } // End of namespace Gob
