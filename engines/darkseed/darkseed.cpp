@@ -1422,6 +1422,19 @@ void DarkseedEngine::updateAnimation() {
 			_player->updateSprite();
 		}
 		break;
+	case 12:
+		advanceAnimationFrame(0);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]];
+		} else {
+			_player->_position.x = 360;
+			_player->_position.y = 238;
+			_player->_walkTarget.x = 360;
+			_player->_walkTarget.y = 238;
+			_player->_direction = 3;
+			changeToRoom(2);
+		}
+		break;
 	case 16:
 		advanceAnimationFrame(0);
 		if (!isAnimFinished_maybe) {
@@ -2152,15 +2165,85 @@ void DarkseedEngine::useCode(int objNum) {
 		} else if (objNum == 139) {
 			_player->loadAnimations("ltladder.nsp");
 			setupOtherNspAnimation(0,10);
+		} else if (objNum == 76) {
+//			_NoScroll = 0;
+//			Ordinal_184(unaff_CS,(int)&_file_name,4192,(int)s_room3.nnn_1060_31e1);
+//			_Room = 3;
+//			LoadRoomAndDumpPic();
+//			InitRoom();
+//			SetHeroSpriteNumber();
+		} else if (objNum == 77) {
+			_player->loadAnimations("rtladder.nsp");
+			setupOtherNspAnimation(0, 12);
+		} else if (objNum == 66 && _objectVar[68] == 0) {
+			if (_objectVar[12] == 2) {
+				playSound(5,5,-1);
+				if (_objectVar[66] == 0) {
+					if (_objectVar[67] == 0 && _objectVar[68] == 0) {
+						_objectVar[66] = 1;
+					} else {
+						_objectVar[66] = 2;
+					}
+				} else {
+					_objectVar[66] = 0;
+				}
+			} else {
+				_console->addTextLine("You touch the surface of the ornate sigil.");
+			}
+		} else if (objNum == 67 && _objectVar[68] == 0) {
+			if (_objectVar[12] == 2) {
+				playSound(5,5,-1);
+				if (_objectVar[67] == 0) {
+					if (_objectVar[66] == 1 && _objectVar[68] == 0) {
+						_objectVar[67] = 1;
+					} else {
+						_objectVar[67] = 2;
+					}
+				} else {
+					_objectVar[67] = 0;
+				}
+			} else {
+				_console->addTextLine("You touch the surface of the ornate sigil.");
+			}
+		} else if ((objNum == 68) && (_objectVar[68] == 0)) {
+			if (_objectVar[12] == 2) {
+				if (true) {
+					if ((_objectVar[66] == 1) && (_objectVar[67] == 1)) {
+						playSound(13,5,-1);
+						_objectVar[68] = 1;
+						setupOtherNspAnimation(0,23);
+					} else {
+						_objectVar[68] = 2;
+					}
+				} else {
+					_objectVar[68] = 0;
+				}
+			} else {
+				_console->addTextLine("You touch the surface of the ornate sigil.");
+			}
 		}
-		// TODO more code here.
+		else if (objNum == 84) {
+			_console->printTosText(566);
+		}
+//		_NoScroll = 0;
 		return;
 	}
 	if (_objectVar[138] == 0) {
 		_console->printTosText(906);
 	}
 	else {
-		// TODO
+		_inventory.addItem(objNum);
+		_room->removeObjectFromRoom(objNum);
+		_objectVar[138] = 0;
+		updateDisplay();
+		if ((objNum == 7) && _currentDay == 1) {
+			_console->printTosText(905);
+			_objectVar[141] = 1;
+			_player->loadAnimations("delstore.nsp");
+			_objectVar.setMoveObjectPosition(141, {60, 221});
+			_objectVar.setMoveObjectRoom(7, 100);
+			_objectVar[7] = 1;
+		}
 	}
 }
 
