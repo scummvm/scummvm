@@ -206,7 +206,7 @@ private:
 	// Position of the viewport on screen
 	Rect _position;
 	// TODO: Camera reference (when supporting multiple cameras)
-	// Coordinate tranform between camera and viewport
+	// Coordinate transform between camera and viewport
 	// TODO: need to add rotate conversion to let script API support that;
 	// (maybe use full 3D matrix for that)
 	AGS::Shared::PlaneScaling _transform;
