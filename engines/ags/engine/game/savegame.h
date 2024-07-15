@@ -126,7 +126,7 @@ enum SavegameDescElem {
 	kSvgDesc_All = kSvgDesc_EnvInfo | kSvgDesc_UserText | kSvgDesc_UserImage
 };
 
-// SavegameDescription describes savegame with information about the enviroment
+// SavegameDescription describes savegame with information about the environment
 // it was created in, and custom data provided by user
 struct SavegameDescription {
 	// Name of the engine that saved the game
