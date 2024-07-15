@@ -3665,6 +3665,8 @@ if test -n "$_host"; then
 				#append_var DEFINES  "-DDISABLE_TEXT_CONSOLE"
 			fi
 
+			append_var LDFLAGS "-Wl,--msuper-memory"
+
 			_seq_midi=no
 			_timidity=no
 			;;

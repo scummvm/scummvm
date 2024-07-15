@@ -11,7 +11,7 @@ FASTCALL=false
 
 export ASFLAGS="-m68030"
 export CXXFLAGS="-m68030 -DDISABLE_FANCY_THEMES"
-export LDFLAGS="-m68030 -Wl,--msuper-memory"
+export LDFLAGS="-m68030"
 export PKG_CONFIG_LIBDIR="$(${PLATFORM}-gcc -print-sysroot)/usr/lib/m68020-60/pkgconfig"
 
 if $FASTCALL
