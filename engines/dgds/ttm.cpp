@@ -199,6 +199,8 @@ static const char *ttmOpName(uint16 op) {
 	case 0xa520: return "DRAW SPRITE FLIPH";
 	case 0xa530: return "DRAW SPRITE FLIPHV";
 	case 0xa600: return "DRAW GETPUT";
+	case 0xaf10: return "DRAW EMPTY POLY";
+	case 0xaf20: return "DRAW FILLED POLY";
 	case 0xb000: return "INIT CREDITS SCROLL";
 	case 0xb010: return "DRAW CREDITS SCROLL";
 	case 0xf010: return "LOAD SCR";
@@ -221,7 +223,7 @@ static const char *ttmOpName(uint16 op) {
 	case 0x00C0: return "FREE BACKGROUND";
 	case 0x0230: return "reset current music?";
 	case 0x1310: return "STOP SFX";
-	case 0xb600: return "DRAW SCREEN";
+	case 0xb600: return "COPY BUFFER";
 	case 0xc020: return "LOAD_SAMPLE";
 	case 0xc030: return "SELECT_SAMPLE";
 	case 0xc040: return "DESELECT_SAMPLE";
@@ -798,6 +800,12 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 						Common::Point(r.left, r.top));
 		break;
 	}
+	case 0xaf10:
+		warning("TT3 TODO: Implement 0xAF10 DRAW EMPTY POLY");
+		break;
+	case 0xaf20:
+		warning("TT3 TODO: Implement 0xAF20 DRAW FILLED POLY");
+		break;
 	case 0xb000:
 		if (seq._executed) // this is a one-shot op
 			break;
@@ -813,6 +821,21 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 			if (finished)
 				_vm->adsInterpreter()->setHitTTMOp0110();
 		}
+		break;
+	}
+	case 0xb600: { // COPY BUFFER: x, y, w, h, buf1, buf2
+		// buf1 and buf2 are buffer numbers.
+		// 	0 - composition
+		// 	1 - stored area
+		// 	2 - background
+		if (seq._executed) // this is a one-shot op
+			break;
+		const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
+		int16 b1 = ivals[4];
+		int16 b2 = ivals[5];
+		Graphics::ManagedSurface &s1 = ((b1 == 0) ? _vm->_compositionBuffer : (b1 == 2 ? _vm->getBackgroundBuffer() : _vm->getStoredAreaBuffer()));
+		Graphics::ManagedSurface &s2 = ((b2 == 0) ? _vm->_compositionBuffer : (b2 == 2 ? _vm->getBackgroundBuffer() : _vm->getStoredAreaBuffer()));
+		s2.blitFrom(s1, r, r);
 		break;
 	}
 	case 0xc020: {	// LOAD SAMPLE: filename:str
@@ -894,7 +917,6 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	case 0x2010: // SET FRAME?? x,y
 	case 0xa400: // DRAW FILLED CIRCLE
 	case 0xa420: // DRAW EMPTY CIRCLE
-	case 0xb600: // DRAW SCREEN?? 6 args		// HoC onward
 	case 0xc040: // DESELECT_SAMPLE				// SQ5 demo onward
 	case 0xc060: // STOP_SAMPLE					// SQ5 demo onward
 	case 0xc0e0: // FADE SONG songnum, destvol, ticks (1/60th sec)
@@ -930,19 +952,31 @@ bool TTMInterpreter::run(TTMEnviro &env, TTMSeq &seq) {
 			error("Invalid TTM opcode %04x requires %d locals", code, count);
 
 		debugN(10, "\tOP: 0x%4.4x %2u ", op, count);
+
 		if (count == 0x0F) {
-			byte ch[2];
+			// Special case for these codes, they are data blocks
+			// with length arg rather than strings.
+			if (code == 0xaf1f || code == 0xaf2f) {
+				int16 nbytes = scr->readSint16LE() * 4;
+				byte *buf = new byte[nbytes + 1];
+				scr->read(buf, nbytes);
+				buf[nbytes] = 0;
+				debugN(10, "\"%d bytes\"", nbytes);
+				delete [] buf; // TODO: use this data as a set of points in a polygon
+			} else {
+				byte ch[2];
 
-			do {
-				ch[0] = scr->readByte();
-				ch[1] = scr->readByte();
-				if (ch[0])
-					sval += ch[0];
-				if (ch[1])
-					sval += ch[1];
-			} while (ch[0] != 0 && ch[1] != 0);
+				do {
+					ch[0] = scr->readByte();
+					ch[1] = scr->readByte();
+					if (ch[0])
+						sval += ch[0];
+					if (ch[1])
+						sval += ch[1];
+				} while (ch[0] != 0 && ch[1] != 0);
+				debugN(10, "\"%s\"", sval.c_str());
+			}
 
-			debugN(10, "\"%s\"", sval.c_str());
 		} else {
 			for (byte i = 0; i < count; i++) {
 				ivals[i] = scr->readSint16LE();
@@ -989,8 +1023,6 @@ void TTMInterpreter::findAndAddSequences(TTMEnviro &env, Common::Array<TTMSeq> &
 		op = env.scr->readUint16LE();
 		while (op != 0x0ff0 && env.scr->pos() < env.scr->size()) {
 			//debug("findAndAddSequences: check ttm op %04x", op);
-			if (op == 0xaf1f || op == 0xaf2f)
-				warning("TODO: Fix findAndAddSequences for opcode %x which has variable length arg", op);
 			switch (op & 0xf) {
 			case 0:
 				break;
@@ -1009,12 +1041,17 @@ void TTMInterpreter::findAndAddSequences(TTMEnviro &env, Common::Array<TTMSeq> &
 				}
 				break;
 			case 0xf: {
-				byte ch[2];
-				do {
-					ch[0] = env.scr->readByte();
-					ch[1] = env.scr->readByte();
-				} while (ch[0] != 0 && ch[1] != 0);
-				break;
+				if (op == 0xaf1f || op == 0xaf2f) {
+					int16 nbytes = env.scr->readUint16LE() * 4;
+					env.scr->skip(nbytes);
+				} else {
+					byte ch[2];
+					do {
+						ch[0] = env.scr->readByte();
+						ch[1] = env.scr->readByte();
+					} while (ch[0] != 0 && ch[1] != 0);
+					break;
+				}
 			}
 			default:
 				env.scr->skip((op & 0xf) * 2);
