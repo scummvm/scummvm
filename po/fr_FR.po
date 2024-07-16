@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-15 17:49+0000\n"
-"PO-Revision-Date: 2024-07-16 09:26+0000\n"
+"PO-Revision-Date: 2024-07-16 10:37+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -6287,9 +6287,7 @@ msgstr "Charger"
 
 #: engines/agos/saveload.cpp:139
 msgid "Quick load or save game isn't supported in this location"
-msgstr ""
-"Le chargement ou sauvegarde rapide d'une partie n'est pas possible à cet "
-"endroit"
+msgstr "Le chargement ou sauvegarde rapide n'est pas possible à cet endroit"
 
 #: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2909
 #, c-format
@@ -7675,12 +7673,12 @@ msgstr "Fichier de sauvegarde créé par une version différente."
 #: engines/gob/inter_geisha.cpp:237 engines/gob/inter_playtoons.cpp:265
 #: engines/gob/inter_v2.cpp:1512 engines/tinsel/saveload.cpp:590
 msgid "Failed to load saved game from file."
-msgstr "Échec du chargement de la sauvegarde depuis le fichier."
+msgstr "Échec du chargement de la sauvegarde depuis un fichier."
 
 #: engines/gob/inter_geisha.cpp:268 engines/gob/inter_v2.cpp:1582
 #: engines/gob/inter_v7.cpp:1411 engines/tinsel/saveload.cpp:603
 msgid "Failed to save game to file."
-msgstr "Échec de l'enregistrement de la sauvegarde sur le disque."
+msgstr "Échec de l'enregistrement de la sauvegarde vers un fichier."
 
 #: engines/gob/inter_v5.cpp:112
 msgid "Failed to delete file."
@@ -7748,7 +7746,7 @@ msgstr "Examiner/Regarder"
 
 #: engines/grim/grim.cpp:1370
 msgid "Error: the game could not be saved."
-msgstr "Erreur : le jeu n'a pas été sauvegardé."
+msgstr "Erreur : la partie n'a pas été sauvegardée."
 
 #: engines/grim/inputdialog.cpp:79
 msgid "Input text"
@@ -7928,7 +7926,7 @@ msgstr "Échec de la sauvegarde"
 
 #: engines/groovie/script.cpp:854 engines/lab/savegame.cpp:237
 msgid "Would you like to save or restore a game?"
-msgstr "Voulez-vous sauver ou restaurer une partie ?"
+msgstr "Voulez-vous sauvegarder ou charger une partie ?"
 
 #: engines/hadesch/rooms/daedalus.cpp:213
 msgid "The Minotaur minigame is not supported yet. Skipping"
@@ -8381,9 +8379,11 @@ msgid ""
 "'import_savefile'.\n"
 "\n"
 msgstr ""
-"%d sauvegardes originales ont été importées avec succès. Si vous voulez\n"
-"importer d'autres sauvegardes originales plus tard, vous devrez ouvrir la\n"
-"console de debug de ScummVM et utiliser la commande 'import_savefile'.\n"
+"%d sauvegardes originales ont été importées avec succès dans\n"
+"ScummVM. Si vous voulez importer d'autres sauvegardes originales plus tard, "
+"vous devrez\n"
+"ouvrir la console de debug de ScummVM et utiliser la commande "
+"'import_savefile'.\n"
 "\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:279
@@ -8763,8 +8763,8 @@ msgid ""
 "Toggle screen transitions on or off. Turning off screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
-"Active ou désactive la transition entre les écrans, ce qui vous permet de "
-"parcourir plus rapidement le jeu."
+"Active ou désactive la transition entre écrans. Désactiver les transitions "
+"vous permet de naviguer dans le jeu plus rapidement."
 
 #: engines/mohawk/dialogs.cpp:120
 msgid "Play the Myst fly by movie"
@@ -8841,8 +8841,8 @@ msgid ""
 "Adjusts the speed of screen transitions. Disabling screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
-"Règle la vitesse des transitions d'écran. En désactivant les transitions "
-"d'écran, vous pourrez naviguer plus rapidement dans le jeu."
+"Règle la vitesse des transitions entre écrans. Désactiver les transitions "
+"vous permet de naviguer dans le jeu plus rapidement."
 
 #: engines/mohawk/dialogs.cpp:365
 msgid "Fastest"
@@ -9121,12 +9121,11 @@ msgstr ""
 msgid "An internal error occurred while attempting to write save game data"
 msgstr ""
 "Une erreur interne s'est produite lors de l'écriture des données de "
-"sauvegarde de la partie"
+"sauvegarde"
 
 #: engines/mtropolis/saveload.cpp:242
 msgid "An error occurred while writing the save game"
-msgstr ""
-"Une erreur s'est produite lors de l'écriture de la sauvegarde de la partie"
+msgstr "Une erreur s'est produite lors de l'écriture de la sauvegarde"
 
 #: engines/mtropolis/mtropolis.cpp:111
 msgid ""
@@ -9265,7 +9264,7 @@ msgstr "Corrige divers désagréments mineurs."
 
 #: engines/nancy/metaengine.cpp:93
 msgid "Extend endgame timer"
-msgstr "Prolonger le minuteur en fin de jeu"
+msgstr "Prolonger le minuteur en fin de partie"
 
 #: engines/nancy/metaengine.cpp:94
 msgid ""
@@ -9326,7 +9325,7 @@ msgstr "Charger une partie"
 
 #: engines/parallaction/saveload.cpp:200
 msgid "Loading game..."
-msgstr "Chargement en cours..."
+msgstr "Chargement..."
 
 #: engines/parallaction/saveload.cpp:208
 msgid "Save file"
@@ -9334,7 +9333,7 @@ msgstr "Sauver une partie"
 
 #: engines/parallaction/saveload.cpp:215
 msgid "Saving game..."
-msgstr "Sauvegarde en cours..."
+msgstr "Sauvegarde..."
 
 #: engines/parallaction/saveload.cpp:268
 msgid ""
@@ -9420,7 +9419,7 @@ msgstr "Intro alternative"
 
 #: engines/queen/metaengine.cpp:37
 msgid "Use an alternative game intro (CD version only)"
-msgstr "Utiliser une intro alternative (version CD uniquement)"
+msgstr "Utilise une intro alternative (version CD uniquement)"
 
 #: engines/queen/metaengine.cpp:47
 msgid "Improved font"
@@ -9649,22 +9648,22 @@ msgstr "Affiche des lignes noires sur les vidéos pour les rendre plus nettes"
 
 #: engines/sci/detection_options.h:70
 msgid "Use high-quality video scaling"
-msgstr "Utiliser une mise à l'échelle vidéo de haute qualité"
+msgstr "Utiliser une mise à l'échelle vidéo haute qualité"
 
 #: engines/sci/detection_options.h:71
 msgid "Use linear interpolation when upscaling videos, where possible"
 msgstr ""
-"Utiliser une interpolation linéaire lors de l'agrandissement des vidéos, si "
+"Utilise une interpolation linéaire lors de l'agrandissement des vidéos, si "
 "possible"
 
 #: engines/sci/detection_options.h:83
 msgid "Use high-quality \"LarryScale\" cel scaling"
-msgstr "Utiliser \"LarryScale\" (mise à l'échelle Cartoon de haute qualité)"
+msgstr "Utiliser \"LarryScale\" (mise à l'échelle Cartoon haute qualité)"
 
 #: engines/sci/detection_options.h:84
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr ""
-"Utiliser un scaleur spécial cartoon pour dessiner les sprites de personnages"
+"Utilise un scaleur spécial cartoon pour dessiner les sprites de personnages"
 
 #: engines/sci/detection_options.h:119
 msgid "Use CD audio"
@@ -9673,8 +9672,8 @@ msgstr "Utiliser la musique du CD"
 #: engines/sci/detection_options.h:120
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr ""
-"Utiliser la musique du CD quand elle est disponible au lieu de la musique du "
-"jeu"
+"Utilise la musique du CD quand elle est disponible au lieu de la musique "
+"intégrée"
 
 #: engines/sci/detection_options.h:132
 msgid "Use Windows cursors"
@@ -9684,7 +9683,7 @@ msgstr "Utiliser les curseurs Windows"
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
-"Utiliser les curseurs Windows (plus petits et monochromes) au lieu des "
+"Utilise les curseurs Windows (plus petits et monochromes) au lieu des "
 "curseurs DOS"
 
 #: engines/sci/detection_options.h:145
@@ -9694,7 +9693,7 @@ msgstr "Utiliser les curseurs argentés"
 #: engines/sci/detection_options.h:146
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
-msgstr "Utiliser les curseurs argentés au lieu des curseurs normaux dorés"
+msgstr "Utilise les curseurs argentés au lieu des curseurs normaux dorés"
 
 #: engines/sci/detection_options.h:158
 msgid "Enable content censoring"
@@ -9790,7 +9789,7 @@ msgstr "(Sauvegarde automatique)"
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
-"Veuillez utiliser une application externe pour ouvrir le fichier d'Aide du "
+"Veuillez utiliser une application externe pour ouvrir le fichier d'aide du "
 "jeu : %s"
 
 #: engines/sci/engine/kmisc.cpp:894
@@ -9806,7 +9805,7 @@ msgstr ""
 #: engines/sci/engine/savegame.cpp:1455
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr ""
-"Le format de cette sauvegarde est obsolète, elle ne peut pas être chargé"
+"Le format de cette sauvegarde est obsolète, elle ne peut pas être chargée"
 
 #: engines/sci/engine/savegame.cpp:1457
 #, c-format
@@ -9820,8 +9819,8 @@ msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
 msgstr ""
-"Cette sauvegarde a été créée par une version différente du jeu et ne peut "
-"pas être chargée"
+"Cette sauvegarde a été créée avec une version différente du jeu, elle ne "
+"peut pas être chargée"
 
 #: engines/sci/graphics/video32.cpp:68
 #, c-format
@@ -9920,11 +9919,11 @@ msgid ""
 "Example: 'qfg2-thief.sav'."
 msgstr ""
 "Les personnages sauvegardés depuis ScummVM sont listés automatiquement. Les "
-"personages sauvegardés avec l'exécutable d'origine doivent être déplacés "
-"dans le répertoire de Sauvegarde de ScummVM et renommés avec un préfix "
-"indiquant le jeux à partir duquel ils ont été sauvegardés : 'qfg1' pour "
-"Quest for Glory 1, 'qfg2' for Quest for Glory 2. Par exemple : 'qfg2-thief."
-"sav'."
+"fichiers de personages sauvegardés avec l'exécutable d'origine doivent être "
+"déplacés dans le répertoire des sauvegardes de ScummVM et renommés avec un "
+"préfix indiquant le jeu à partir duquel ils ont été sauvegardés : 'qfg1' "
+"pour Quest for Glory 1, 'qfg2' for Quest for Glory 2. Par exemple : "
+"'qfg2-thief.sav'."
 
 #: engines/sci/sound/music.cpp:173
 msgid ""
@@ -10004,7 +10003,7 @@ msgstr "Héberger"
 #. I18N: Retrieving list of online multiplayer games
 #: engines/scumm/dialog-sessionselector.cpp:51
 msgid "Querying games..."
-msgstr "Interrogation des jeux..."
+msgstr "Recherche de parties..."
 
 #. I18N: Join online multiplayer game
 #: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3913
@@ -10015,7 +10014,7 @@ msgstr "Rejoindre"
 #: engines/scumm/dialog-sessionselector.cpp:118
 #, c-format
 msgid "Found %d available games."
-msgstr "%d jeux disponibles trouvés."
+msgstr "%d parties disponibles trouvées."
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:285
@@ -10297,7 +10296,7 @@ msgstr "Héberger des jeux en LAN"
 
 #: engines/scumm/dialogs.cpp:1718
 msgid "Allows the game sessions to be discovered over your local area network."
-msgstr "Permet de trouver les parties sur votre réseau local."
+msgstr "Permet aux sessions d'être découvertes sur votre réseau local."
 
 #: engines/scumm/dialogs.cpp:1721
 msgid "Generate random maps"
@@ -10425,7 +10424,7 @@ msgstr "  Ctrl-g n'est pas recommandée, car"
 
 #: engines/scumm/help.cpp:111
 msgid "  since they may cause crashes"
-msgstr "  elle peut causer des plantages ou"
+msgstr "  elle peut causer des plantages"
 
 #: engines/scumm/help.cpp:112
 msgid "  or incorrect game behavior."
@@ -10690,7 +10689,7 @@ msgstr "* Le clavier peut toujours être utilisé pour les combats,"
 
 #: engines/scumm/help.cpp:301
 msgid "  so despite the in-game message this"
-msgstr "  donc malgré le message dans le jeu cela simplement"
+msgstr "  donc malgré le message dans le jeu cela"
 
 #: engines/scumm/help.cpp:302
 msgid "  actually toggles Mouse Fighting Off/On"
@@ -10919,8 +10918,8 @@ msgid ""
 msgstr ""
 "Permet au jeu d'utiliser une latence audio faible, au détriment de la "
 "précision du son. \t\tIl est recommandé d'activer cette fonctionnalité "
-"uniquement si vous rencontrez des problèmes de latence audio pendant le jeu "
-"normal."
+"uniquement si vous rencontrez des problèmes de latence audio pendant une "
+"partie normale."
 
 #: engines/scumm/metaengine.cpp:736
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
@@ -11387,8 +11386,7 @@ msgstr "Impossible de trouver le bloc de données pour l'épisode %d"
 #, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
 msgstr ""
-"Le fichier '%s' n'a pu être trouvé dans le dossier du jeu ou le fichier de "
-"donnée."
+"'%s' introuvable dans le dossier du jeu ou le fichier de donnée du moteur."
 
 #: engines/supernova/supernova.cpp:832
 msgid ""
@@ -12871,9 +12869,9 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
-"Ce fichier de sauvegarde est en version %u, mais ce moteur ne supporte que "
-"les versions %d ou inférieures. Vous devez utiliser une version plus récente "
-"de ScummVM pour pouvoir charger cette sauvegarde."
+"Cette sauvegarde est en version %u, mais ce moteur ne supporte que les "
+"versions %d ou inférieures. Une version plus récente du moteur est "
+"nécessaire pour utiliser cette sauvegarde."
 
 #: engines/zvision/metaengine.cpp:58
 msgid "Double FPS"
@@ -12955,8 +12953,8 @@ msgstr ""
 "Garamond, Courier New et Arial. Vous pouvez également télécharger les "
 "polices Liberation ou le paquet GNU FreeFont. Vous aurez besoin de toutes "
 "les polices du paquet de polices que vous avez choisi, c'est-à-dire "
-"LiberationMono, LiberationSans et LiberationSerif, ou respectivement "
-"FreeMono, FreeSans et FreeSerif."
+"LiberationMono, LiberationSans et LiberationSerif, ou FreeMono, FreeSans et "
+"FreeSerif respectivement."
 
 #~ msgid "Toggle Music on/off"
 #~ msgstr "Act./Désact. la musique"
