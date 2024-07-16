@@ -33,7 +33,7 @@ void CastleEngine::initZX() {
 	_ymaxValue = 1;
 }
 
-Graphics::Surface *CastleEngine::loadFrames(Common::SeekableReadStream *file, int pos, int numFrames, uint32 back) {
+Graphics::Surface *CastleEngine::loadFramesWithHeader(Common::SeekableReadStream *file, int pos, int numFrames, uint32 back) {
 	Graphics::Surface *surface = new Graphics::Surface();
 	file->seek(pos);
 	int16 width = file->readByte();
@@ -48,7 +48,11 @@ Graphics::Surface *CastleEngine::loadFrames(Common::SeekableReadStream *file, in
 
 	surface->fillRect(Common::Rect(0, 0, width * 8, height), white);
 	/*int frameSize =*/ file->readUint16LE();
+	return loadFrames(file, surface, width, height, back);
+}
 
+
+Graphics::Surface *CastleEngine::loadFrames(Common::SeekableReadStream *file, Graphics::Surface *surface, int width, int height, uint32 back) {
 	for (int i = 0; i < width * height; i++) {
 		byte color = file->readByte();
 		for (int n = 0; n < 8; n++) {
@@ -94,7 +98,19 @@ void CastleEngine::loadAssetsZXFullGame() {
 	loadColorPalette();
 	_gfx->readFromPalette(2, r, g, b);
 	uint32 red = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
-	_keysFrame = loadFrames(&file, 0xdf7, 1, red);
+	_keysFrame = loadFramesWithHeader(&file, 0xdf7, 1, red);
+	Graphics::Surface *background = new Graphics::Surface();
+
+	_gfx->readFromPalette(4, r, g, b);
+	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+
+	int backgroundWidth = 16;
+	int backgroundHeight = 18;
+	background->create(backgroundWidth * 8, backgroundHeight, _gfx->_texturePixelFormat);
+	background->fillRect(Common::Rect(0, 0, backgroundWidth * 8, backgroundHeight), 0);
+
+	file.seek(0xfc4);
+	_background = loadFrames(&file, background, backgroundWidth, backgroundHeight, front);
 
 	for (auto &it : _areaMap) {
 		it._value->addStructure(_areaMap[255]);
@@ -140,7 +156,7 @@ void CastleEngine::drawZXUI(Graphics::Surface *surface) {
 	for (int k = 0; k < _numberKeys; k++) {
 		surface->copyRectToSurface((const Graphics::Surface)*_keysFrame, 99 - k * 4, 177, Common::Rect(0, 0, 6, 11));
 	}
-
+	//surface->copyRectToSurface((const Graphics::Surface)*_background, 0, 0, Common::Rect(0, 0, 8 * 16, 18));
 	//drawEnergyMeter(surface);
 }
 
