@@ -867,7 +867,7 @@ void SCI1_VGAGreyScaleDriver::setPalette(const byte *colors, uint start, uint nu
 const char *SCI1_VGAGreyScaleDriver::_driverFile = "VGA320BW.DRV";
 
 SCI1_EGADriver::SCI1_EGADriver(bool rgbRendering) : GfxDriver(320, 200, 256), _requestRGBMode(rgbRendering), _egaColorPatterns(nullptr), _egaMatchTable(nullptr),
-	_currentBitmap(nullptr), _compositeBuffer(nullptr), _currentPalette(nullptr), _internalPalette(nullptr), _colAdjust(0), _ready(false) {
+	_currentBitmap(nullptr), _compositeBuffer(nullptr), _currentPalette(nullptr), _internalPalette(nullptr), _colAdjust(0) {
 	Common::File drv;
 	if (!drv.open(_driverFile))
 		error("SCI1_EGADriver: Failed to open '%s'", _driverFile);

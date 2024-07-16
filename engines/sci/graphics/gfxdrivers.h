@@ -178,7 +178,6 @@ public:
 	bool supportsPalIntensity() const override { return false; }
 	static bool validateMode() { return checkDriver(&_driverFile, 1); }
 private:
-	bool _ready;
 	byte *_compositeBuffer;
 	byte *_currentBitmap;
 	byte *_currentPalette;
