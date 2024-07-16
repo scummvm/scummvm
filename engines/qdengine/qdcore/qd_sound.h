@@ -111,11 +111,9 @@ public:
 
 private:
 
-	//! Имя файла.
 	Common::String _file_name;
-	//! Громкость звука, [0, 255].
+	//! Sound volume, [0, 255].
 	int _volume;
-	//! Данные.
 	wavSound _sound;
 };
 
