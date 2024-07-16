@@ -9922,8 +9922,8 @@ msgstr ""
 "fichiers de personages sauvegardés avec l'exécutable d'origine doivent être "
 "déplacés dans le répertoire des sauvegardes de ScummVM et renommés avec un "
 "préfix indiquant le jeu à partir duquel ils ont été sauvegardés : 'qfg1' "
-"pour Quest for Glory 1, 'qfg2' for Quest for Glory 2. Par exemple : "
-"'qfg2-thief.sav'."
+"pour Quest for Glory 1, 'qfg2' for Quest for Glory 2. Par exemple : 'qfg2-"
+"thief.sav'."
 
 #: engines/sci/sound/music.cpp:173
 msgid ""
@@ -12228,7 +12228,8 @@ msgstr ""
 
 #: engines/vcruise/vcruise.cpp:377
 msgid "An unknown error occurred while attempting to load the saved game."
-msgstr "Une erreur inconnue s'est produite lors du chargement de la sauvegarde."
+msgstr ""
+"Une erreur inconnue s'est produite lors du chargement de la sauvegarde."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
