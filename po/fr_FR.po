@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-15 17:49+0000\n"
-"PO-Revision-Date: 2024-07-16 09:08+0000\n"
+"PO-Revision-Date: 2024-07-16 09:26+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -6167,7 +6167,7 @@ msgstr ""
 #: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:37
 #: engines/ultima/metaengine.cpp:52 engines/zvision/metaengine.cpp:46
 msgid "Use original save/load screens"
-msgstr "Écrans sauvegarde/chargement d'origine"
+msgstr "Écrans sauvegarder/charger d'origine"
 
 #: engines/agi/metaengine.cpp:112 engines/bagel/metaengine.cpp:51
 #: engines/chewy/metaengine.cpp:37 engines/cine/metaengine.cpp:43
@@ -6179,7 +6179,7 @@ msgstr "Écrans sauvegarde/chargement d'origine"
 #: engines/ultima/metaengine.cpp:53 engines/zvision/metaengine.cpp:47
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
-"Utiliser les écrans de sauvegarde/chargement d'origine plutôt que ceux de "
+"Utilise les écrans de sauvegarde/chargement d'origine plutôt que ceux de "
 "ScummVM"
 
 #: engines/agi/metaengine.cpp:123
@@ -6191,7 +6191,7 @@ msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
 msgstr ""
-"Utiliser une palette de remplacement commune à tous les jeux Amiga. C'est "
+"Utilise une palette de remplacement commune à tous les jeux Amiga. C'était "
 "l'ancien comportement"
 
 #: engines/agi/metaengine.cpp:135
@@ -6202,8 +6202,8 @@ msgstr "Support de la souris"
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr ""
-"Activer le support de la souris. Cela permet d'utiliser la souris pour les "
-"mouvements et la navigation dans les menus."
+"Active le support de la souris. Cela permet d'utiliser la souris pour les "
+"mouvements et la navigation dans les menus de jeu."
 
 #: engines/agi/metaengine.cpp:147
 msgid "Use Hercules hires font"
@@ -6379,7 +6379,7 @@ msgstr "Préférer les effets sonores digitaux"
 
 #: engines/agos/metaengine.cpp:89 engines/sci/detection_options.h:96
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr "Préférer les effets sonores digitaux plutôt que ceux synthétisés"
+msgstr "Préfère les effets sonores digitaux plutôt que ceux synthétisés"
 
 #: engines/agos/metaengine.cpp:99
 msgid "Disable fade-out effects"
@@ -6431,11 +6431,11 @@ msgstr "Hausse du volume de la musique"
 
 #: engines/agos/metaengine.cpp:268 engines/vcruise/metaengine.cpp:177
 msgid "Toggle music on/off"
-msgstr "Activer/Désactiver la musique"
+msgstr "Act./Désact. la musique"
 
 #: engines/agos/metaengine.cpp:273
 msgid "Toggle sound effect on/off"
-msgstr "Activer/Désactiver les effets sonores"
+msgstr "Act./Désact. les effets sonores"
 
 #: engines/agos/metaengine.cpp:278
 msgid "Toggle fast mode on/off"
