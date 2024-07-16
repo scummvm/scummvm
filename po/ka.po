@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-15 17:49+0000\n"
-"PO-Revision-Date: 2024-06-28 08:08+0000\n"
+"PO-Revision-Date: 2024-07-16 09:08+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -5615,10 +5615,8 @@ msgstr ""
 #: engines/lure/metaengine.cpp:37 engines/mads/metaengine.cpp:47
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:746
-#, fuzzy
-#| msgid "Enable Discord integration"
 msgid "Enable copy protection"
-msgstr "Discord-ის ინტეგრაციის ჩართვა"
+msgstr "კოპირებისგან დაცვის ჩართვა"
 
 #: engines/agos/metaengine.cpp:45 engines/dreamweb/metaengine.cpp:37
 #: engines/lure/metaengine.cpp:38 engines/mads/metaengine.cpp:48
@@ -5676,30 +5674,22 @@ msgid "AGOS main"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:228 engines/made/metaengine.cpp:103
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game keymappings"
 msgstr "თამაშის კლავიატურის მალსახმობები"
 
 #: engines/agos/metaengine.cpp:229
-#, fuzzy
-#| msgid "Yes/No Keymapping"
 msgid "Yes/No keymapping"
 msgstr "დიახ/არა კლავიატურის მალსახმობები"
 
 #: engines/agos/metaengine.cpp:232 engines/groovie/metaengine.cpp:205
 #: engines/made/metaengine.cpp:107 engines/saga/metaengine.cpp:277
-#, fuzzy
-#| msgid "Left Click"
 msgid "Left click"
-msgstr "მარცხენა-წკაპი"
+msgstr "მარცხენა წკაპი"
 
 #: engines/agos/metaengine.cpp:238 engines/groovie/metaengine.cpp:211
 #: engines/made/metaengine.cpp:114 engines/saga/metaengine.cpp:288
-#, fuzzy
-#| msgid "Right Click"
 msgid "Right click"
-msgstr "მარჯვენა-წკაპი"
+msgstr "მარჯვენა წკაპი"
 
 #: engines/agos/metaengine.cpp:244
 msgid "Exit cutscene"
@@ -5718,14 +5708,10 @@ msgid "Toggle music on/off"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:273
-#, fuzzy
-#| msgid "Toggle Fast mode on/off"
 msgid "Toggle sound effect on/off"
-msgstr "სწრაფი რეჟიმის ჩართვა/გამორთვა"
+msgstr "ხმოვანი ეფექტის ჩართ/გამორთ"
 
 #: engines/agos/metaengine.cpp:278
-#, fuzzy
-#| msgid "Toggle Fast mode on/off"
 msgid "Toggle fast mode on/off"
 msgstr "სწრაფი რეჟიმის ჩართვა/გამორთვა"
 
@@ -5773,10 +5759,8 @@ msgid "Show objects to interact"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:338
-#, fuzzy
-#| msgid "Toggle Fast mode on/off"
 msgid "Toggle background sounds on/off"
-msgstr "სწრაფი რეჟიმის ჩართვა/გამორთვა"
+msgstr "ფონური ხმების ჩართვა/გამორთვა"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:347
@@ -7059,10 +7043,8 @@ msgid "GroovieV2 support is not compiled in"
 msgstr ""
 
 #: engines/groovie/metaengine.cpp:201
-#, fuzzy
-#| msgid "Available engines:"
 msgid "Groovie engine"
-msgstr "ხელმისაწვდომი ძრავები:"
+msgstr "ძრავა Groovie"
 
 #: engines/groovie/metaengine.cpp:217
 msgid "Skip or fast forward scene"
@@ -7573,34 +7555,24 @@ msgid ""
 msgstr ""
 
 #: engines/made/metaengine.cpp:102
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Default keymappings"
-msgstr "თამაშის კლავიატურის მალსახმობები"
+msgstr "ნაგულისხმევი კლავიატურის მალსახმობები"
 
 #: engines/made/metaengine.cpp:128
-#, fuzzy
-#| msgid "Scroll Down"
 msgid "Cursor up"
-msgstr "ქვემოთ ჩამოწევა"
+msgstr "კურსორი ზემოთ"
 
 #: engines/made/metaengine.cpp:135
-#, fuzzy
-#| msgid "Scroll Down"
 msgid "Cursor down"
-msgstr "ქვემოთ ჩამოწევა"
+msgstr "კურსორი ქვემოთ"
 
 #: engines/made/metaengine.cpp:142
-#, fuzzy
-#| msgid "Turn Left"
 msgid "Cursor left"
-msgstr "მარცხნივ მობრუნება"
+msgstr "კურსორი მარცხნივ"
 
 #: engines/made/metaengine.cpp:149
-#, fuzzy
-#| msgid "Turn Right"
 msgid "Cursor right"
-msgstr "მარჯვნივ მობრუნება"
+msgstr "კურსორი მარჯვნივ"
 
 #: engines/made/metaengine.cpp:162 engines/saga/metaengine.cpp:440
 #: engines/vcruise/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:920
@@ -8433,44 +8405,32 @@ msgid "I Have No Mouth support not compiled in"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:267
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game keymapping"
 msgstr "თამაშის კლავიატურის მალსახმობები"
 
 #: engines/saga/metaengine.cpp:268
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Option panel keymapping"
-msgstr "თამაშის კლავიატურის მალსახმობები"
+msgstr "პარამეტრების პანელის კლავიატურის მალსახმობები"
 
 #: engines/saga/metaengine.cpp:269
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Save panel keymapping"
-msgstr "თამაშის კლავიატურის მალსახმობები"
+msgstr "პანელის კლავიატურის მალსახმობების შენახვა"
 
 #: engines/saga/metaengine.cpp:270
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Load panel keymapping"
-msgstr "თამაშის კლავიატურის მალსახმობები"
+msgstr "პანელის კლავიატურის მალსახმობების ჩატვირთვა"
 
 #: engines/saga/metaengine.cpp:271
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Quit panel keymapping"
-msgstr "თამაშის კლავიატურის მალსახმობები"
+msgstr "პანელის კლავიატურის მალსახმობების ფანჯრიდან გასვლა"
 
 #: engines/saga/metaengine.cpp:272
 msgid "Converse panel keymapping"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:283
-#, fuzzy
-#| msgid "Middle Click"
 msgid "Middle click"
-msgstr "შუა-წკაპი"
+msgstr "შუა წკაპი"
 
 #. I18N: the boss key is a feature,
 #. that allows players to quickly switch to a fake screen that looks like a business application,
@@ -8480,16 +8440,12 @@ msgid "Boss key"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:302
-#, fuzzy
-#| msgid "Show options menu"
 msgid "Show options"
-msgstr "პარამეტრების მენიუს ჩვენება"
+msgstr "პარამეტრების ჩვენება"
 
 #: engines/saga/metaengine.cpp:310
-#, fuzzy
-#| msgid "Next location"
 msgid "Exit conversation"
-msgstr "შემდეგი მდებარეობა"
+msgstr "საუბრიდან გასვლა"
 
 #: engines/saga/metaengine.cpp:315
 msgid "Conversation position - Up"
@@ -8505,16 +8461,12 @@ msgid "Pause game"
 msgstr "თამაშის შეჩერება"
 
 #: engines/saga/metaengine.cpp:338
-#, fuzzy
-#| msgid "Speech"
 msgid "Abort speech"
-msgstr "საუბარი"
+msgstr "საუბრის შეწყვეტა"
 
 #: engines/saga/metaengine.cpp:343
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Show dialogue"
-msgstr "დიალოგის გამოტოვება"
+msgstr "დიალოგის ჩვენება"
 
 #: engines/saga/metaengine.cpp:348 engines/scumm/help.cpp:144
 #: engines/scumm/help.cpp:169 engines/scumm/help.cpp:198
@@ -8530,8 +8482,6 @@ msgid "Look at"
 msgstr "შეხედე"
 
 #: engines/saga/metaengine.cpp:358
-#, fuzzy
-#| msgid "Pick up"
 msgid "Pickup"
 msgstr "აღება"
 
@@ -8563,8 +8513,6 @@ msgid "Push"
 msgstr "გადაცემა"
 
 #: engines/saga/metaengine.cpp:393
-#, fuzzy
-#| msgid "Take off"
 msgid "Take"
 msgstr "აიღე"
 
@@ -8573,60 +8521,44 @@ msgid "Swallow"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:405
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "Reading speed"
-msgstr "მონაცემების კითხვის შეცდომა"
+msgstr "კითხვის სიჩქარე"
 
 #: engines/saga/metaengine.cpp:410
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change music"
-msgstr "რეჟიმის შეცვლა"
+msgstr "მუსიკის შეცვლა"
 
 #: engines/saga/metaengine.cpp:415
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change sound"
-msgstr "რეჟიმის შეცვლა"
+msgstr "ხმის შეცვლა"
 
 #: engines/saga/metaengine.cpp:420
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change voices"
-msgstr "რეჟიმის შეცვლა"
+msgstr "ხმების შეცვლა"
 
 #: engines/saga/metaengine.cpp:425
-#, fuzzy
-#| msgid "Continue"
 msgid "Continue game"
-msgstr "გაგრძელება"
+msgstr "თამაშის გაგრძელება"
 
 #: engines/saga/metaengine.cpp:435 engines/vcruise/metaengine.cpp:166
 msgid "Quit game"
 msgstr "თამაშიდან გასვლა"
 
 #: engines/saga/metaengine.cpp:452
-#, fuzzy
-#| msgid "Cancel"
 msgid "Cancel quit"
-msgstr "გაუქმება"
+msgstr "გასვლის გაუქმება"
 
 #: engines/saga/metaengine.cpp:457
 msgid "Okay"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:462
-#, fuzzy
-#| msgid "Cancel download"
 msgid "Cancel load"
-msgstr "გადმოწერის გაუქმება"
+msgstr "ჩატვირთვის გაუქმება"
 
 #: engines/saga/metaengine.cpp:472
-#, fuzzy
-#| msgid "Cancel"
 msgid "Cancel save"
-msgstr "გაუქმება"
+msgstr "შენახვის გაუქმება"
 
 #: engines/saga/music.cpp:98
 #, c-format
@@ -10907,10 +10839,8 @@ msgid "Uses 16-color graphics."
 msgstr "იყენებს 16-ფერიან გრაფიკას."
 
 #: engines/vcruise/metaengine.cpp:97
-#, fuzzy
-#| msgid "Prerecorded sounds"
 msgid "Preload sounds"
-msgstr "წინასწარ ჩაწერილი ხმები"
+msgstr "ხმების წინასწარი ჩატვირთვა"
 
 #: engines/vcruise/metaengine.cpp:98
 msgid "Preload sounds. May improve performance on slow hard drives."
