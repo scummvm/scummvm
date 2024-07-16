@@ -22,7 +22,9 @@
 #ifndef QDENGINE_SYSTEM_APP_CORE_H
 #define QDENGINE_SYSTEM_APP_CORE_H
 
-
+namespace Common {
+class String;
+}
 
 namespace QDEngine {
 
@@ -36,6 +38,8 @@ typedef void (*SetFunc)(const char *);
 typedef const char *(*GetFunc)(void);
 
 namespace app_io {
+
+bool saveFileExists(Common::String &fpath);
 
 bool is_file_exist(const char *file_name);
 bool is_directory_exist(const char *dir_name);
@@ -57,3 +61,4 @@ void adjust_dir_end_slash(std::string &str);
 } // namespace QDEngine
 
 #endif // QDENGINE_SYSTEM_APP_CORE_H
+
