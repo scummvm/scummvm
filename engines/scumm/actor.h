@@ -223,8 +223,8 @@ public:
 	void setActorWalkSpeed(uint newSpeedX, uint newSpeedY);
 protected:
 	virtual int calcMovementFactor(const Common::Point& next);
-	int actorWalkStep();
-	int remapDirection(int dir, bool is_walking);
+	virtual int actorWalkStep();
+	virtual int remapDirection(int dir, bool is_walking);
 	virtual void setupActorScale();
 
 	void setBox(int box);
@@ -362,13 +362,12 @@ public:
 
 protected:
 	int calcMovementFactor(const Common::Point& next) override;
-	int actorWalkStep();
-
 	void setupActorScale() override;
 	void findPathTowardsOld(byte box, byte box2, byte box3, Common::Point &p2, Common::Point &p3);
-
+	uint _stepThreshold;
 private:
-	uint _stepX, _stepThreshold;
+	virtual int actorWalkStep();
+	uint _stepX;
 	const int _facingXYratio;
 };
 
@@ -383,6 +382,9 @@ public:
 protected:
 	bool isPlayer() override;
 	void prepareDrawActorCostume(BaseCostumeRenderer *bcr) override;
+private:
+	int actorWalkStep() override;
+	int remapDirection(int dir, bool is_walking) override;
 };
 
 class Actor_v7 final : public Actor {

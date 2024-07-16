@@ -1760,6 +1760,13 @@ void ScummEngine::resetScumm() {
 	setShake(0);
 	_cursor.animate = 1;
 
+	if (_actors) {
+		for (i = 0; i < _numActors; ++i)
+			delete _actors[i];
+		delete[] _actors;
+	}
+	delete[] _sortedActors;
+
 	// Allocate and Initialize actors
 	Actor::kInvalidBox = ((_game.features & GF_SMALL_HEADER) ? kOldInvalidBox : kNewInvalidBox);
 	_actors = new Actor * [_numActors];
