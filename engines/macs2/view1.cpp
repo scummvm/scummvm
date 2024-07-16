@@ -25,6 +25,8 @@
 #include "macs2/macs2.h"
 #include "macs2/gameobjects.h"
 #include <graphics/cursorman.h>
+#include <math/angle.h>
+#include <math/vector2d.h>
 
 namespace Macs2 {
 void View1::SetInventorySource(GameObject *newInventorySource) {
@@ -753,8 +755,8 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		// ground during the stick throw. Need to check how this is handled it the game
 		// TODO: I'm kind of guessing that nr. 10 also is not visible, it does not appear
 		// to have a lot of data to it. Random guess maybe this is the cup which is static?
-		// TODO: Check what objects 17 and 18 in the machine room scene might be
-		if (is_in_list<uint16, 0x50, 0x17, 0x18>(index)) { // || index == 0x10) {
+		// TODO: Check what objects 17 and 18 and 23 in the machine room scene might be
+		if (is_in_list<uint16, 0x50, 0x17, 0x18, 0x23>(index)) { // || index == 0x10) {
 			continue;
 		}
 		AnimFrame* frame = current->GetCurrentAnimationFrame();
@@ -935,7 +937,7 @@ Macs2::AnimFrame *Character::GetCurrentPortrait() {
 	AnimFrame *result = new AnimFrame();
 	Common::MemoryReadStream stream(this->GameObject->Blobs[17].data(), this->GameObject->Blobs[17].size());
 	// TODO: Need to check how the offset really is calculated by the game code, this will not hold
-	if (is_in_list<uint16, 2, 4, 6, 0xd, 0xf, 0x16>(GameObject->Index)) {
+	if (is_in_list<uint16, 2, 4, 6, 0xd, 0xf, 0x12, 0x16>(GameObject->Index)) {
 		// GameObject->Index == 2 || GameObject->Index == 4 || GameObject->Index == 6 || GameObject->Index == 0xd || GameObject ->Index == 0xf) {
 		stream.seek(35, SEEK_SET);
 	} else {
@@ -950,10 +952,23 @@ Macs2::AnimFrame *Character::GetCurrentPortrait() {
 void Character::StartLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles) {
 	StartPosition = GetPosition();
 	EndPosition = target;
+	float Angle = 
 	StartTime = g_events->currentMillis;
 	Duration = duration;
 	IsLerping = true;
 	LerpIgnoresObstacles = ignoreObstacles;
+
+	// Calculate orientation
+	Common::Point direction = EndPosition - StartPosition;
+	Math::Vector2d directionVector = Math::Vector2d(direction.x, direction.y);
+	directionVector.normalize();
+
+
+	Math::Angle angle = directionVector.getAngle();
+	float degrees = angle.getDegrees();
+	uint8 segment = degrees / (360.0f / 8.0f);
+	// TODO: Try out first which values we get
+	debug("Degrees: %f Segment: %u", degrees, segment);
 }
 
 void Character::StartPickup(Character *object) {
