@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-15 17:49+0000\n"
-"PO-Revision-Date: 2024-07-16 10:37+0000\n"
+"PO-Revision-Date: 2024-07-16 10:46+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -7599,7 +7599,7 @@ msgstr "Impossible de lancer le jeu AdvSys"
 
 #: engines/glk/advsys/advsys.cpp:47 engines/glk/advsys/vm.cpp:319
 msgid "Sorry, the savegame couldn't be restored"
-msgstr "Désolé, la sauvegarde n'a pas pu être restaurée"
+msgstr "Désolé, la sauvegarde n'a pas pu être chargée"
 
 #: engines/glk/advsys/vm.cpp:314
 msgid "Sorry, the savegame couldn't be created"
