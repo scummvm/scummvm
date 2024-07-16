@@ -2492,7 +2492,7 @@ bool qdGameDispatcher::load_save(const char *fname) {
 	free_resources();
 
 	Common::SeekableReadStream *fh;
-	fh = g_engine->_savefileMan->openForLoading(Common::Path(fname, '\\').toString());
+	fh = g_engine->_savefileMan->openForLoading(Common::Path(fname).toString());
 	int save_version;
 	save_version = fh->readSint32LE();
 
@@ -2582,7 +2582,7 @@ bool qdGameDispatcher::load_save(const char *fname) {
 
 bool qdGameDispatcher::save_save(const char *fname) const {
 	Common::OutSaveFile *fh;
-	Common::Path fpath(fname, '\\');
+	Common::Path fpath(fname);
 	fh = g_engine->_savefileMan->openForSaving(fpath.getLastComponent().toString());
 
 	const int save_version = 107;
@@ -2843,10 +2843,10 @@ bool qdGameDispatcher::init() {
 }
 
 bool qdGameDispatcher::load_game(int slot_id) {
-	const char *save_name = get_save_name(slot_id);
+	Common::String saveName = Common::String(get_save_name(slot_id));
 
-	if (app_io::is_file_exist(save_name)) {
-		if (!load_save(save_name))
+	if (app_io::saveFileExists(saveName)) {
+		if (!load_save(saveName.c_str()))
 			error("Save game format error");
 	}
 
@@ -2866,7 +2866,7 @@ const char *qdGameDispatcher::get_save_name(int slot_id, SaveFileType file_type)
 	static XBuffer file_name(_MAX_PATH);
 
 	file_name.init();
-	file_name < "Saves\\save";
+	file_name < "save";
 	if (slot_id < 10) file_name < "0";
 	file_name <= slot_id;
 

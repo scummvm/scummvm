@@ -109,11 +109,12 @@ bool qdInterfaceSave::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev
 					return true;
 
 				qdInterfaceDispatcher *ip = qdInterfaceDispatcher::get_dispatcher();
+				Common::String saveFile = Common::String(save_file());
 				if (ip) {
 					if (ip->has_save_title_screen()) {
 						ip->setModalScreenMode(qdInterfaceDispatcher::MODAL_SCREEN_SAVE_NAME_EDIT);
 						ip->handle_event(qdInterfaceEvent::EVENT_SHOW_INTERFACE_SCREEN_AS_MODAL, ip->save_title_screen_name(), this);
-					} else if (ip->has_save_prompt_screen() && app_io::is_file_exist(save_file())) {
+					} else if (ip->has_save_prompt_screen() && app_io::saveFileExists(saveFile)) {
 						ip->setModalScreenMode(qdInterfaceDispatcher::MODAL_SCREEN_SAVE_OVERWRITE);
 						ip->handle_event(qdInterfaceEvent::EVENT_SHOW_INTERFACE_SCREEN_AS_MODAL, ip->save_prompt_screen_name(), this);
 					} else {
@@ -167,7 +168,8 @@ bool qdInterfaceSave::init(bool is_game_active) {
 
 	set_state(&frame_);
 
-	if (!save_mode_ && !app_io::is_file_exist(save_file())) {
+	Common::String saveFile = Common::String(save_file());
+	if (!save_mode_ && !app_io::saveFileExists(saveFile)) {
 		if (is_visible()) {
 			debugC(3, kDebugInput, "qdInterfaceSave::init(): Hide %s", save_file());
 			hide();

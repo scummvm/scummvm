@@ -22,6 +22,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/archive.h"
 #include "common/file.h"
+#include "common/savefile.h"
 #include "common/textconsole.h"
 #include "qdengine/qd_precomp.h"
 #include "qdengine/system/app_core.h"
@@ -65,18 +66,14 @@ unsigned app_memory_usage() {
 
 namespace app_io {
 
+bool saveFileExists(Common::String &fpath) {
+	debugC(3, kDebugSave, "saveFileExists(%s)", fpath.c_str());
+	return g_engine->_savefileMan->exists(fpath);
+}
+
 bool is_file_exist(const char *file_name) {
-	/*  XStream fh(0);
-
-	    if(fh.open(file_name,XS_IN)){
-	        fh.close();
-	        return true;
-	    }
-
-	    return false;*/
 	bool hasFile = SearchMan.hasFile(Common::Path(file_name));
 	warning("STUB: is_file_exist(): %s %d", file_name, hasFile);
-
 	return hasFile;
 }
 
