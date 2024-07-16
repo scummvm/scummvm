@@ -32,13 +32,13 @@ void drawVLine(int x, int y1, int y2, uint32 color, void (*plotProc)(int, int, i
 void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
 void drawThickLine2(int x1, int y1, int x2, int y2, int thick, uint32 color,
 								void (*plotProc)(int, int, int, void *), void *data);
-void drawFilledRect(Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
-void drawFilledRect1(Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
-void drawRect(Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
-void drawRect1(Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
-void drawRoundRect(Common::Rect &rect, int arc, uint32 color, bool filled, void (*plotProc)(int, int, int, void *), void *data);
-void drawRoundRect1(Common::Rect &rect, int arc, uint32 color, bool filled, void (*plotProc)(int, int, int, void *), void *data);
-void drawPolygonScan(int *polyX, int *polyY, int npoints, Common::Rect &bbox, uint32 color,
+void drawFilledRect(const Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
+void drawFilledRect1(const Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
+void drawRect(const Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
+void drawRect1(const Common::Rect &rect, uint32 color, void (*plotProc)(int, int, int, void *), void *data);
+void drawRoundRect(const Common::Rect &rect, int arc, uint32 color, bool filled, void (*plotProc)(int, int, int, void *), void *data);
+void drawRoundRect1(const Common::Rect &rect, int arc, uint32 color, bool filled, void (*plotProc)(int, int, int, void *), void *data);
+void drawPolygonScan(const int *polyX, const int *polyY, int npoints, const Common::Rect &bbox, uint32 color,
 								void (*plotProc)(int, int, int, void *), void *data);
 void drawEllipse(int x0, int y0, int x1, int y1, uint32 color, bool filled, void (*plotProc)(int, int, int, void *), void *data);
 
