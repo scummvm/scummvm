@@ -2266,8 +2266,8 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 	// FM-TOWNS release.  We take care not to apply this palette change to the
 	// text or inventory, as they still require the original colors.
 	//
-	// The background was redrawn in the German release, for censorhip reasons,
-	// so we have to take care of the different resource size there.
+	// Also, the background was redrawn for censorship reasons in the German
+	// release, so we have to take care of the different resource size there.
 	if (_vm->_game.id == GID_INDY3 && (_vm->_game.features & GF_OLD256) && _vm->_game.platform != Common::kPlatformFMTowns
 		&& _vm->_roomResource == 46 && vs->number == kMainVirtScreen
 		&& (smapLen == 43159 || (smapLen == 42953 && _vm->_language == Common::DE_DEU))
