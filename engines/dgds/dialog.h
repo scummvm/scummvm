@@ -143,6 +143,7 @@ private:
 
 	void drawType2BackgroundDragon(Graphics::ManagedSurface *dst, const Common::String &title);
 	void drawType2BackgroundChina(Graphics::ManagedSurface *dst, const Common::String &title);
+	void drawType2BackgroundBeamish(Graphics::ManagedSurface *dst, const Common::String &title);
 
 	void drawFindSelectionXY();
 	void drawFindSelectionTxtOffset();

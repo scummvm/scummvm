@@ -51,7 +51,10 @@ static const byte DragonFallbackColors[] = {
 	0x8, 0x7, 0x0, 0x7, 0x7
 };
 
-static const byte ChinaBakgroundColor = 23;
+static const byte ChinaBackgroundColor = 23;
+
+// TODO: Work out correct fill color for willy beamish
+static const byte WillyBackgroundColor = 23;
 
 static const byte MenuBackgroundColors[] {
 	0x71, 0x71, 0x71, 0x71, 0x71, 0x7B, 0x71, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B,
@@ -756,8 +759,13 @@ void RequestData::drawBackgroundWithSliderArea(Graphics::ManagedSurface *dst, in
 
 void RequestData::drawBackgroundNoSliders(Graphics::ManagedSurface *dst, const Common::String &header) const {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	fillBackground(dst, _rect.x, _rect.y, _rect.width, _rect.height, 0);
-	drawCorners(dst, engine->getGameId() == GID_DRAGON ? 11 : 1, _rect.x, _rect.y, _rect.width, _rect.height);
+	DgdsGameId gameId = engine->getGameId();
+	if (gameId != GID_WILLY)
+		fillBackground(dst, _rect.x, _rect.y, _rect.width, _rect.height, 0);
+	else
+		fillBackground(dst, _rect.x + 5, _rect.y + 5, _rect.width - 10, _rect.height - 10, 0);
+	uint16 cornerOffset = (gameId == GID_DRAGON ? 11 : (gameId == GID_HOC ? 1 : 0));
+	drawCorners(dst, cornerOffset, _rect.x, _rect.y, _rect.width, _rect.height);
 	drawHeader(dst, _rect.x, _rect.y, _rect.width, 4, header, 0,
 		engine->getGameId() == GID_DRAGON);
 }
@@ -790,7 +798,9 @@ void RequestData::fillBackground(Graphics::ManagedSurface *dst, uint16 x, uint16
 	} else {
 		byte bgCol = DragonFallbackColors[0];
 		if (engine->getGameId() == GID_HOC)
-			bgCol = ChinaBakgroundColor;
+			bgCol = ChinaBackgroundColor;
+		else if (engine->getGameId() == GID_WILLY)
+			bgCol = WillyBackgroundColor;
 		dst->fillRect(Common::Rect(Common::Point(x, y), width, height), bgCol);
 	}
 }

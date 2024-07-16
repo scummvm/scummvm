@@ -113,7 +113,7 @@ public:
 	void findAndAddSequences(TTMEnviro &scriptData, Common::Array<TTMSeq> &seqArray);
 
 protected:
-	void handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval);
+	void handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval, const Common::Array<Common::Point> &pts);
 	int32 findGOTOTarget(TTMEnviro &env, TTMSeq &seq, int16 frame);
 	void doWipeOp(uint16 code, TTMEnviro &env, TTMSeq &seq, const Common::Rect &r);
 	int16 doOpInitCreditScroll(const Image *img);

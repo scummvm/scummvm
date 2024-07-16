@@ -155,6 +155,22 @@ void Dialog::drawType2BackgroundChina(Graphics::ManagedSurface *dst, const Commo
 	}
 }
 
+void Dialog::drawType2BackgroundBeamish(Graphics::ManagedSurface *dst, const Common::String &title) {
+	// TODO: This needs updating.
+	_state->_loc = DgdsRect(_rect.x + 12, _rect.y + 10, _rect.width - 24, _rect.height - 20);
+	if (title.empty()) {
+		RequestData::fillBackground(dst, _rect.x, _rect.y, _rect.width, _rect.height, 0);
+		RequestData::drawCorners(dst, 54, _rect.x, _rect.y, _rect.width, _rect.height);
+	} else {
+		dst->fillRect(Common::Rect(Common::Point(_rect.x + 2, _rect.y + 2), _rect.width - 4, _rect.height - 4), 0);
+		RequestData::drawCorners(dst, 46, _rect.x, _rect.y, _rect.width, _rect.height);
+		// TODO: Maybe should measure the font?
+		_state->_loc.y += 11;
+		_state->_loc.height -= 11;
+		RequestData::drawHeader(dst, _rect.x, _rect.y, _rect.width, 2, title, _fontColor, false);
+	}
+}
+
 // box with fancy frame and optional title (everything before ":")
 void Dialog::drawType2(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 	if (!_state)
@@ -177,8 +193,10 @@ void Dialog::drawType2(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 		DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 		if (engine->getGameId() == GID_DRAGON)
 			drawType2BackgroundDragon(dst, title);
-		else
+		else if (engine->getGameId() == GID_HOC)
 			drawType2BackgroundChina(dst, title);
+		else
+			drawType2BackgroundBeamish(dst, title);
 
 	} else if (stage == kDlgDrawFindSelectionPointXY) {
 		drawFindSelectionXY();

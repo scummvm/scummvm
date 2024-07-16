@@ -235,7 +235,10 @@ static const char *ttmOpName(uint16 op) {
 	}
 }
 
-struct ClipSurface {
+class ClipSurface {
+public:
+	ClipSurface(const Common::Rect &clipWin, Graphics::Surface *surf)
+		: _surf(surf), _clipWin(clipWin) { }
 	Graphics::Surface *_surf;
 	Common::Rect _clipWin;
 };
@@ -459,7 +462,7 @@ void TTMInterpreter::doDrawDialogForStrings(TTMEnviro &env, TTMSeq &seq, int16 x
 }
 
 
-void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval) {
+void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval, const Common::Array<Common::Point> &pts) {
 	switch (op) {
 	case 0x0000: // FINISH:	void
 		break;
@@ -701,9 +704,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		doWipeOp(op, env, seq, Common::Rect(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]));
 		break;
 	case 0xa0a0: { // DRAW LINE  x1,y1,x2,y2:int
-		ClipSurface clipSurf;
-		clipSurf._clipWin = seq._drawWin;
-		clipSurf._surf = _vm->_compositionBuffer.surfacePtr();
+		ClipSurface clipSurf(seq._drawWin, _vm->_compositionBuffer.surfacePtr());
 		Graphics::drawLine(ivals[0], ivals[1], ivals[2], ivals[3], seq._drawColFG, plotClippedPoint, &clipSurf);
 		break;
 	}
@@ -800,12 +801,30 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 						Common::Point(r.left, r.top));
 		break;
 	}
-	case 0xaf10:
-		warning("TT3 TODO: Implement 0xAF10 DRAW EMPTY POLY");
+	case 0xaf10: { // DRAW EMPTY POLY
+		ClipSurface clipSurf(seq._drawWin, _vm->_compositionBuffer.surfacePtr());
+		for (uint i = 1; i < pts.size(); i++) {
+			const Common::Point &p1 = pts[i - 1];
+			const Common::Point &p2 = pts[i];
+			Graphics::drawLine(p1.x, p1.y, p2.x, p2.y, seq._drawColFG, plotClippedPoint, &clipSurf);
+		}
+		if (pts.size() > 2)
+			Graphics::drawLine(pts.back().x, pts.back().y, pts[0].x, pts[0].y, seq._drawColFG,
+				plotClippedPoint, &clipSurf);
 		break;
-	case 0xaf20:
-		warning("TT3 TODO: Implement 0xAF20 DRAW FILLED POLY");
+	}
+	case 0xaf20: { // DRAW FILLED POLY
+		ClipSurface clipSurf(seq._drawWin, _vm->_compositionBuffer.surfacePtr());
+		Common::Array<int> xvals(pts.size());
+		Common::Array<int> yvals(pts.size());
+		for (uint i = 0; i < pts.size(); i++) {
+			xvals[i] = pts[i].x;
+			yvals[i] = pts[i].y;
+		}
+		Graphics::drawPolygonScan(xvals.data(), yvals.data(), pts.size(), seq._drawWin,
+					seq._drawColFG, plotClippedPoint, &clipSurf);
 		break;
+	}
 	case 0xb000:
 		if (seq._executed) // this is a one-shot op
 			break;
@@ -833,8 +852,10 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		const Common::Rect r(Common::Point(ivals[0], ivals[1]), ivals[2], ivals[3]);
 		int16 b1 = ivals[4];
 		int16 b2 = ivals[5];
-		Graphics::ManagedSurface &s1 = ((b1 == 0) ? _vm->_compositionBuffer : (b1 == 2 ? _vm->getBackgroundBuffer() : _vm->getStoredAreaBuffer()));
-		Graphics::ManagedSurface &s2 = ((b2 == 0) ? _vm->_compositionBuffer : (b2 == 2 ? _vm->getBackgroundBuffer() : _vm->getStoredAreaBuffer()));
+		Graphics::ManagedSurface &s1 = ((b1 == 0) ? _vm->_compositionBuffer :
+				(b1 == 2 ? _vm->getBackgroundBuffer() : _vm->getStoredAreaBuffer()));
+		Graphics::ManagedSurface &s2 = ((b2 == 0) ? _vm->_compositionBuffer :
+				(b2 == 2 ? _vm->getBackgroundBuffer() : _vm->getStoredAreaBuffer()));
 		s2.blitFrom(s1, r, r);
 		break;
 	}
@@ -947,6 +968,7 @@ bool TTMInterpreter::run(TTMEnviro &env, TTMSeq &seq) {
 		byte count = code & 0x000F;
 		int16 ivals[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 		Common::String sval;
+		Common::Array<Common::Point> pts;
 
 		if (count > 8 && count != 0x0f)
 			error("Invalid TTM opcode %04x requires %d locals", code, count);
@@ -954,15 +976,19 @@ bool TTMInterpreter::run(TTMEnviro &env, TTMSeq &seq) {
 		debugN(10, "\tOP: 0x%4.4x %2u ", op, count);
 
 		if (count == 0x0F) {
-			// Special case for these codes, they are data blocks
-			// with length arg rather than strings.
+			// Special case for these codes, they are not strings,
+			// but lists of points.
 			if (code == 0xaf1f || code == 0xaf2f) {
-				int16 nbytes = scr->readSint16LE() * 4;
-				byte *buf = new byte[nbytes + 1];
-				scr->read(buf, nbytes);
-				buf[nbytes] = 0;
-				debugN(10, "\"%d bytes\"", nbytes);
-				delete [] buf; // TODO: use this data as a set of points in a polygon
+				uint16 npoints = scr->readSint16LE();
+				pts.resize(npoints);
+				for (uint i = 0; i < npoints; i++)
+					pts[i].x = scr->readUint16LE();
+				for (uint i = 0; i < npoints; i++)
+					pts[i].y = scr->readUint16LE();
+				debugN(10, "%d points: [", npoints);
+				for (uint i = 0; i < npoints; i++)
+					debugN(10, "(%d,%d)", pts[i].x, pts[i].y);
+				debugN(10, "]");
 			} else {
 				byte ch[2];
 
@@ -987,7 +1013,7 @@ bool TTMInterpreter::run(TTMEnviro &env, TTMSeq &seq) {
 		}
 		debug(10, " (%s)", ttmOpName(op));
 
-		handleOperation(env, seq, op, count, ivals, sval);
+		handleOperation(env, seq, op, count, ivals, sval, pts);
 	}
 
 	return true;
