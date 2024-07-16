@@ -1501,7 +1501,12 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 					shouldSkip = v1 < v3;
 				}
 				shouldSkip = !shouldSkip;
-			} else if (opcode2 <= 0x5) {
+			} else if (opcode2 == 0x06) {
+				// TODO: I need a good way of naming these values in both the disassembly
+				// and here, I mixed them up in the implementation here already
+				shouldSkip = v2 > v4 || (v2 == v4 && v1 >= v3);
+				shouldSkip = !shouldSkip;
+			} else if (opcode2 <= 0x6) {
 				ScriptUnimplementedOpcode(opcode2);
 				break;
 			}
@@ -1952,6 +1957,9 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			ScriptPrintString();
 			// TODO: Proper end handling
 			return ExecutionResult::WaitingForCallback;
+		} else if (opcode1 == 0x31) {
+			// TODO: Unknown opcode, reads a value, caps it to 64h and does something with it
+			Func9F4D_Placeholder();
 		} else if (opcode1 == 0x34) {
 			// TODO: Unknown opcode so far
 			// TODO: What do 8XXh objects signify? Both return values are those

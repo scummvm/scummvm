@@ -24,6 +24,8 @@
 #include "macs2/macs2.h"
 #include "macs2/gameobjects.h"
 
+#include <string>
+
 
 namespace Macs2 {
 
@@ -31,6 +33,8 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("dumpblobs", WRAP_METHOD(Console, Cmd_dumpBlobs));
 	registerCmd("autoclick", WRAP_METHOD(Console, Cmd_toggleAutoClick));
 	registerCmd("marker", WRAP_METHOD(Console, Cmd_marker));
+	registerCmd("addItem", WRAP_METHOD(Console, Cmd_addItem));
+	registerCmd("removeItem", WRAP_METHOD(Console, Cmd_removeItem));
 }
 
 Console::~Console() {
@@ -74,6 +78,28 @@ bool Console::Cmd_marker(int argc, const char **argv) {
 		marker += " ";
 	}
 	debug("***** %s", marker.c_str());
+	return true;
+}
+
+bool Console::Cmd_addItem(int argc, const char** argv) {
+	// TODO: Just realizing this - can we have multiple of an item in the inventory?
+	// TODO: Check args count
+	int index = std::stoi(argv[1], nullptr, 16);
+	for (GameObject* obj : GameObjects::instance().Objects) {
+		if (obj->Index == index) {
+			obj->SceneIndex = 0x1;
+		}
+	}
+	return true;
+}
+
+bool Console::Cmd_removeItem(int argc, const char **argv) {
+	int index = std::stoi(argv[1], nullptr, 16);
+	for (GameObject* obj : GameObjects::instance().Objects) {
+		if (obj->Index == index) {
+			obj->SceneIndex = 0x0;
+		}
+	}
 	return true;
 }
 
