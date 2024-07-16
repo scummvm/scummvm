@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-15 17:49+0000\n"
-"PO-Revision-Date: 2024-07-13 09:33+0000\n"
+"PO-Revision-Date: 2024-07-16 09:08+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -6385,14 +6385,10 @@ msgid "AGOS main"
 msgstr "AGOS - Principal"
 
 #: engines/agos/metaengine.cpp:228 engines/made/metaengine.cpp:103
-#, fuzzy
-#| msgid "Game keymapping"
 msgid "Game keymappings"
 msgstr "Asignaciones del juego"
 
 #: engines/agos/metaengine.cpp:229
-#, fuzzy
-#| msgid "Yes/No Keymapping"
 msgid "Yes/No keymapping"
 msgstr "Asignación a Sí/No"
 
@@ -6423,14 +6419,10 @@ msgid "Toggle music on/off"
 msgstr "Activar/Desactivar música"
 
 #: engines/agos/metaengine.cpp:273
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Toggle sound effect on/off"
 msgstr "Activar/Desactivar efectos de sonido"
 
 #: engines/agos/metaengine.cpp:278
-#, fuzzy
-#| msgid "Toggle Fast mode on/off"
 msgid "Toggle fast mode on/off"
 msgstr "Activar/Desactivar modo rápido"
 
@@ -6478,8 +6470,6 @@ msgid "Show objects to interact"
 msgstr "Mostrar objetos interactuables"
 
 #: engines/agos/metaengine.cpp:338
-#, fuzzy
-#| msgid "Toggle background sounds On/Off"
 msgid "Toggle background sounds on/off"
 msgstr "Activar/Desactivar sonidos de fondo"
 
@@ -6505,14 +6495,10 @@ msgid "High speed mode on/off in Swampy Adventures"
 msgstr "Activa o desactiva el modo de alta velocidad en Swampy Adventures"
 
 #: engines/agos/metaengine.cpp:382
-#, fuzzy
-#| msgid "Press Yes Key"
 msgid "Press \"Yes\" key"
 msgstr "Pulsar tecla «Sí»"
 
 #: engines/agos/metaengine.cpp:387
-#, fuzzy
-#| msgid "Press No Key"
 msgid "Press \"No\" key"
 msgstr "Pulsar tecla «No»"
 
@@ -8497,34 +8483,24 @@ msgstr ""
 "música en formato MIDI."
 
 #: engines/made/metaengine.cpp:102
-#, fuzzy
-#| msgid "Default game keymap"
 msgid "Default keymappings"
-msgstr "Asignación predet. del juego"
+msgstr "Asignaciones predeterminadas"
 
 #: engines/made/metaengine.cpp:128
-#, fuzzy
-#| msgid "Cursor Up"
 msgid "Cursor up"
-msgstr "Arriba"
+msgstr "Cursor arriba"
 
 #: engines/made/metaengine.cpp:135
-#, fuzzy
-#| msgid "Cursor Down"
 msgid "Cursor down"
-msgstr "Abajo"
+msgstr "Cursor abajo"
 
 #: engines/made/metaengine.cpp:142
-#, fuzzy
-#| msgid "Cursor Left"
 msgid "Cursor left"
-msgstr "Izquierda"
+msgstr "Cursor izquierda"
 
 #: engines/made/metaengine.cpp:149
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Cursor right"
-msgstr "Derecha"
+msgstr "Cursor derecha"
 
 #: engines/made/metaengine.cpp:162 engines/saga/metaengine.cpp:440
 #: engines/vcruise/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:920
@@ -8539,8 +8515,6 @@ msgid "Load game"
 msgstr "Cargar juego"
 
 #: engines/made/metaengine.cpp:174
-#, fuzzy
-#| msgid "Repeat Last Message"
 msgid "Repeat last message"
 msgstr "Repetir el último mensaje"
 
@@ -9475,8 +9449,6 @@ msgid "Converse panel keymapping"
 msgstr "Asignaciones del panel de conversación"
 
 #: engines/saga/metaengine.cpp:283
-#, fuzzy
-#| msgid "Middle Click"
 msgid "Middle click"
 msgstr "Clic central"
 
@@ -9484,20 +9456,14 @@ msgstr "Clic central"
 #. that allows players to quickly switch to a fake screen that looks like a business application,
 #. typically to avoid detection if someone, like a boss, walks by while they are playing.
 #: engines/saga/metaengine.cpp:297
-#, fuzzy
-#| msgid "Boss Key"
 msgid "Boss key"
 msgstr "Tecla antijefes"
 
 #: engines/saga/metaengine.cpp:302
-#, fuzzy
-#| msgid "Show Options"
 msgid "Show options"
 msgstr "Mostrar opciones"
 
 #: engines/saga/metaengine.cpp:310
-#, fuzzy
-#| msgid "Exit Conversation"
 msgid "Exit conversation"
 msgstr "Dejar conversación"
 
@@ -9515,14 +9481,10 @@ msgid "Pause game"
 msgstr "Pausar el juego"
 
 #: engines/saga/metaengine.cpp:338
-#, fuzzy
-#| msgid "Abort Speech"
 msgid "Abort speech"
 msgstr "Abortar voz"
 
 #: engines/saga/metaengine.cpp:343
-#, fuzzy
-#| msgid "Show Dialogue"
 msgid "Show dialogue"
 msgstr "Mostrar diálogo"
 
@@ -9579,32 +9541,22 @@ msgid "Swallow"
 msgstr "Tragar"
 
 #: engines/saga/metaengine.cpp:405
-#, fuzzy
-#| msgid "Reading Speed"
 msgid "Reading speed"
 msgstr "Velocidad de lectura"
 
 #: engines/saga/metaengine.cpp:410
-#, fuzzy
-#| msgid "Change Music"
 msgid "Change music"
 msgstr "Cambiar música"
 
 #: engines/saga/metaengine.cpp:415
-#, fuzzy
-#| msgid "Change Sound"
 msgid "Change sound"
 msgstr "Cambiar sonido"
 
 #: engines/saga/metaengine.cpp:420
-#, fuzzy
-#| msgid "Change Voices"
 msgid "Change voices"
 msgstr "Cambiar voces"
 
 #: engines/saga/metaengine.cpp:425
-#, fuzzy
-#| msgid "Continue Game"
 msgid "Continue game"
 msgstr "Continuar partida"
 
@@ -9613,24 +9565,18 @@ msgid "Quit game"
 msgstr "Salir del juego"
 
 #: engines/saga/metaengine.cpp:452
-#, fuzzy
-#| msgid "Cancel Quit"
 msgid "Cancel quit"
 msgstr "Cancelar salida"
 
 #: engines/saga/metaengine.cpp:457
 msgid "Okay"
-msgstr ""
+msgstr "Aceptar"
 
 #: engines/saga/metaengine.cpp:462
-#, fuzzy
-#| msgid "Cancel Load"
 msgid "Cancel load"
 msgstr "Cancelar carga"
 
 #: engines/saga/metaengine.cpp:472
-#, fuzzy
-#| msgid "Cancel Save"
 msgid "Cancel save"
 msgstr "Cancelar guardado"
 
