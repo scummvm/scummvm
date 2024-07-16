@@ -584,6 +584,7 @@ protected:
 	void setupOpcodesGob() override;
 
 	void oInca2_spaceShooter(OpFuncParams &params);
+	void oInca2_goblinFunc(OpFuncParams &params);
 };
 
 class Inter_v4 : public Inter_v3 {
