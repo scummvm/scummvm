@@ -92,7 +92,12 @@ int16 Globals::getGlobal(uint16 num) {
 			return global->get();
 	}
 
-	error("getGlobal: requested non-existing global %d", num);
+	if (num)
+		error("getGlobal: requested non-existing global %d", num);
+
+	// Bug in HoC?
+	warning("getGlobal: requested global 0");
+	return 0;
 }
 
 int16 Globals::setGlobal(uint16 num, int16 val) {
