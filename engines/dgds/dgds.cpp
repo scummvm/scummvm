@@ -701,8 +701,6 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 		_scene->unload();
 		_adsInterp->unload();
 		_scene->load(sceneFile, _resource, _decompressor);
-		if (!_isDemo)
-			_scene->addInvButtonToHotAreaList();
 	}
 
 	result = _scene->syncState(s);
@@ -716,6 +714,11 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 
 	result = _inventory->syncState(s);
 	if (result.getCode() != Common::kNoError) return result;
+
+	// Add inv button - we deferred this to now to make sure globals etc
+	// are in the right state.
+	if (s.isLoading())
+		_scene->addInvButtonToHotAreaList();
 
 	if (s.getVersion() < 4) {
 		result = _gamePals->syncState(s);
