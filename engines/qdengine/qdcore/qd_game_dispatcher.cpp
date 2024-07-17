@@ -2843,7 +2843,7 @@ bool qdGameDispatcher::init() {
 }
 
 bool qdGameDispatcher::load_game(int slot_id) {
-	Common::String saveName = Common::String(get_save_name(slot_id));
+	Common::String saveName(get_save_name(slot_id));
 
 	if (app_io::saveFileExists(saveName)) {
 		if (!load_save(saveName.c_str()))
