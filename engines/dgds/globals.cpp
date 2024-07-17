@@ -227,7 +227,7 @@ public:
 
 HocGlobals::HocGlobals(Clock &clock) : Globals(clock), _unk82(1), _unk55(0),
 	_unkDlgFileNum(0), _unkDlgDlgNum(0),  _currentCharacter2(0), _currentCharacter(0),
-	_unk50(0), _unk49(0), _unk48(0), _unk47(0), _unk46(0), _unk45(0x3f), _unk44(0),
+	_unk50(0), _unk49(0), _unk48(0), _unk47(0), _unk46(0), _unk45(0x3f), _sheckels(0),
 	_unk43(0), _unk42(0), _unk41(0), _unk40(3), _unk39(0) {
 	_globals.push_back(new DetailLevelROGlobal(0x53));
 	_globals.push_back(new RWI16Global(0x52, &_unk82));
@@ -242,7 +242,7 @@ HocGlobals::HocGlobals(Clock &clock) : Globals(clock), _unk82(1), _unk55(0),
 	_globals.push_back(new RWI16Global(0x2F, &_unk47));
 	_globals.push_back(new RWI16Global(0x2E, &_unk46));
 	_globals.push_back(new RWI16Global(0x2D, &_unk45)); // TODO: Special update function FUN_1407_0784, palette related?
-	_globals.push_back(new RWI16Global(0x2C, &_unk44)); // dialog related..
+	_globals.push_back(new RWI16Global(0x2C, &_sheckels));	// used as currency in Istanbul
 	_globals.push_back(new RWI16Global(0x2B, &_unk43));
 	_globals.push_back(new RWI16Global(0x2A, &_unk42));
 	_globals.push_back(new RWI16Global(0x29, &_unk41));
@@ -258,7 +258,7 @@ Common::Error HocGlobals::syncState(Common::Serializer &s) {
 	s.syncAsSint16LE(_unk41);
 	s.syncAsSint16LE(_unk42);
 	s.syncAsSint16LE(_unk43);
-	s.syncAsSint16LE(_unk44);
+	s.syncAsSint16LE(_sheckels);
 	s.syncAsSint16LE(_unk45);
 	s.syncAsSint16LE(_unk46);
 	s.syncAsSint16LE(_unk47);

@@ -156,7 +156,7 @@ private:
 	int16 _unk41;
 	int16 _unk42;
 	int16 _unk43;
-	int16 _unk44;
+	int16 _sheckels;
 	int16 _unk45;
 	int16 _unk46;
 	int16 _unk47;
