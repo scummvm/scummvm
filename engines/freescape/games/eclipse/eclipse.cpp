@@ -21,6 +21,11 @@
 
 #include "common/file.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
+#include "common/translation.h"
+
 #include "freescape/freescape.h"
 #include "freescape/games/eclipse/eclipse.h"
 #include "freescape/language/8bitDetokeniser.h"
@@ -162,6 +167,73 @@ void EclipseEngine::endGame() {
 		_gameStateControl = kFreescapeGameStateRestart;
 	}
 	_endGameKeyPressed = false;
+}
+
+void EclipseEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) {
+	FreescapeEngine::initKeymaps(engineKeyMap, infoScreenKeyMap, target);
+	Common::Action *act;
+
+	{
+		act = new Common::Action("SAVE", _("Save Game"));
+		act->setCustomEngineActionEvent(kActionSave);
+		act->addDefaultInputMapping("s");
+		infoScreenKeyMap->addAction(act);
+
+		act = new Common::Action("LOAD", _("Load Game"));
+		act->setCustomEngineActionEvent(kActionLoad);
+		act->addDefaultInputMapping("l");
+		infoScreenKeyMap->addAction(act);
+
+		act = new Common::Action("QUIT", _("Quit Game"));
+		act->setCustomEngineActionEvent(kActionEscape);
+		if (isSpectrum())
+			act->addDefaultInputMapping("1");
+		else
+			act->addDefaultInputMapping("ESCAPE");
+		infoScreenKeyMap->addAction(act);
+
+		act = new Common::Action("TOGGLESOUND", _("Toggle Sound"));
+		act->setCustomEngineActionEvent(kActionToggleSound);
+		act->addDefaultInputMapping("t");
+		infoScreenKeyMap->addAction(act);
+	}
+
+	{
+		act = new Common::Action("ROTL", _("Rotate Left"));
+		act->setCustomEngineActionEvent(kActionRotateLeft);
+		act->addDefaultInputMapping("q");
+		engineKeyMap->addAction(act);
+
+		act = new Common::Action("ROTR", _("Rotate Right"));
+		act->setCustomEngineActionEvent(kActionRotateRight);
+		act->addDefaultInputMapping("w");
+		engineKeyMap->addAction(act);
+
+		act = new Common::Action("CHNGANGLE", _("Change Angle"));
+		act->setCustomEngineActionEvent(kActionChangeAngle);
+		act->addDefaultInputMapping("a");
+		engineKeyMap->addAction(act);
+
+		act = new Common::Action("CHNGSTEPSIZE", _("Change Step Size"));
+		act->setCustomEngineActionEvent(kActionChangeStepSize);
+		act->addDefaultInputMapping("s");
+		engineKeyMap->addAction(act);
+
+		act = new Common::Action("TGGLHEIGHT", _("Toggle Height"));
+		act->setCustomEngineActionEvent(kActionToggleRiseLower);
+		act->addDefaultInputMapping("h");
+		engineKeyMap->addAction(act);
+
+		act = new Common::Action("REST", _("Rest"));
+		act->setCustomEngineActionEvent(kActionRest);
+		act->addDefaultInputMapping("r");
+		engineKeyMap->addAction(act);
+
+		act = new Common::Action("FACEFRWARD", _("Face Forward"));
+		act->setCustomEngineActionEvent(kActionFaceForward);
+		act->addDefaultInputMapping("f");
+		engineKeyMap->addAction(act);
+	}
 }
 
 void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
@@ -322,26 +394,26 @@ void EclipseEngine::drawInfoMenu() {
 
 			// Events
 			switch (event.type) {
-				case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_l) {
+				case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionLoad) {
 					_gfx->setViewport(_fullscreenViewArea);
 					_eventManager->purgeKeyboardEvents();
 					loadGameDialog();
 					_gfx->setViewport(_viewArea);
-				} else if (event.kbd.keycode == Common::KEYCODE_s) {
+				} else if (event.customType == kActionSave) {
 					_gfx->setViewport(_fullscreenViewArea);
 					_eventManager->purgeKeyboardEvents();
 					saveGameDialog();
 					_gfx->setViewport(_viewArea);
-				} else if (isDOS() && event.kbd.keycode == Common::KEYCODE_t) {
+				} else if (isDOS() && event.customType == kActionToggleSound) {
 					playSound(6, true);
-				} else if ((isDOS() || isCPC()) && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					_forceEndGame = true;
-					cont = false;
-				} else if (isSpectrum() && event.kbd.keycode == Common::KEYCODE_1) {
+				} else if ((isDOS() || isCPC() || isSpectrum()) && event.customType == kActionEscape) {
 					_forceEndGame = true;
 					cont = false;
 				} else
+					cont = false;
+				break;
+				case Common::EVENT_KEYDOWN:
 					cont = false;
 				break;
 			case Common::EVENT_SCREEN_CHANGED:
@@ -369,22 +441,22 @@ void EclipseEngine::drawInfoMenu() {
 }
 
 void EclipseEngine::pressedKey(const int keycode) {
-	if (keycode == Common::KEYCODE_q) {
+	if (keycode == kActionRotateLeft) {
 		rotate(-_angleRotations[_angleRotationIndex], 0);
-	} else if (keycode == Common::KEYCODE_w) {
+	} else if (keycode == kActionRotateRight) {
 		rotate(_angleRotations[_angleRotationIndex], 0);
-	} else if (keycode == Common::KEYCODE_a) {
+	} else if (keycode == kActionChangeAngle) {
 		changeAngle();
-	} else if (keycode == Common::KEYCODE_s) {
+	} else if (keycode == kActionChangeStepSize) {
 		changeStepSize();
-	} else if (keycode == Common::KEYCODE_h) {
+	} else if (keycode == kActionToggleRiseLower) {
 		if (_playerHeightNumber == 0)
 			rise();
 		else if (_playerHeightNumber == 1)
 			lower();
 		else
 			error("Invalid player height index: %d", _playerHeightNumber);
-	} else if (keycode == Common::KEYCODE_r) {
+	} else if (keycode == kActionRest) {
 		if (_currentArea->getAreaID() == 1) {
 			playSoundFx(3, false);
 			if (_temporaryMessages.empty())
@@ -395,14 +467,14 @@ void EclipseEngine::pressedKey(const int keycode) {
 				insertTemporaryMessage(_messagesList[7], _countdown - 2);
 			_countdown = _countdown - 5;
 		}
-	} else if (keycode == Common::KEYCODE_f) {
+	} else if (keycode == kActionFaceForward) {
 		_pitch = 0;
 		updateCamera();
 	}
 }
 
 void EclipseEngine::releasedKey(const int keycode) {
-	if (keycode == Common::KEYCODE_r)
+	if (keycode == kActionRiseOrFlyUp)
 		_resting = false;
 }
 

@@ -71,6 +71,7 @@ public:
 	void loadAssetsCPCDemo() override;
 	void loadAssetsZXDemo() override;
 
+	void initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) override;
 	void initGameState() override;
 	void executePrint(FCLInstruction &instruction) override;
 

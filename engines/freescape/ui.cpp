@@ -41,9 +41,9 @@ void FreescapeEngine::titleScreen() {
 				_gfx->computeScreenViewport();
 				_gfx->clear(0, 0, 0, true);
 				break;
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_SPACE:
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				switch (event.customType) {
+				case kActionChangeModeOrSkip:
 					i = maxWait;
 					break;
 				default:
@@ -200,11 +200,17 @@ void FreescapeEngine::drawBorderScreenAndWait(Graphics::Surface *surface, int ma
 				_gfx->computeScreenViewport();
 				_gfx->clear(0, 0, 0, true);
 				break;
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_SPACE:
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				switch (event.customType) {
+				case kActionChangeModeOrSkip:
 					maxWait = -1;
 					break;
+				default:
+					break;
+				}
+				break;
+			case Common::EVENT_KEYDOWN:
+				switch (event.kbd.keycode) {
 				case Common::KEYCODE_d:
 					_demoMode = true;
 					maxWait = -1;

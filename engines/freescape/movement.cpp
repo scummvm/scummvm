@@ -29,69 +29,69 @@
 
 namespace Freescape {
 
-void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, const char *target) {
+void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) {
 	Common::Action *act;
 
 	act = new Common::Action(Common::kStandardActionMoveUp, _("Up"));
-	act->setKeyEvent(Common::KEYCODE_UP);
+	act->setCustomEngineActionEvent(kActionMoveUp);
+	act->addDefaultInputMapping("UP");
 	act->addDefaultInputMapping("JOY_UP");
 	act->addDefaultInputMapping("o");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action(Common::kStandardActionMoveDown, _("Down"));
-	act->setKeyEvent(Common::KEYCODE_DOWN);
+	act->setCustomEngineActionEvent(kActionMoveDown);
+	act->addDefaultInputMapping("DOWN");
 	act->addDefaultInputMapping("JOY_DOWN");
 	act->addDefaultInputMapping("k");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action(Common::kStandardActionMoveLeft, _("Strafe Left"));
-	act->setKeyEvent(Common::KEYCODE_LEFT);
+	act->setCustomEngineActionEvent(kActionMoveLeft);
+	act->addDefaultInputMapping("LEFT");
 	act->addDefaultInputMapping("JOY_LEFT");
-	//act->addDefaultInputMapping("q");
+	// act->addDefaultInputMapping("q");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action(Common::kStandardActionMoveRight, _("Strafe Right"));
-	act->setKeyEvent(Common::KEYCODE_RIGHT);
+	act->setCustomEngineActionEvent(kActionMoveRight);
+	act->addDefaultInputMapping("RIGHT");
 	act->addDefaultInputMapping("JOY_RIGHT");
-	//act->addDefaultInputMapping("w");
+	// act->addDefaultInputMapping("w");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("SHOOT", _("Shoot"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_KP5, '5'));
+	act->setCustomEngineActionEvent(kActionShoot);
 	act->addDefaultInputMapping("JOY_A");
+	act->addDefaultInputMapping("KP5");
 	act->addDefaultInputMapping("5");
+	act->addDefaultInputMapping("KP0");
+	act->addDefaultInputMapping("0");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action("RISE", _("Rise/Fly up"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_r, 'r'));
-	act->addDefaultInputMapping("JOY_B");
-	act->addDefaultInputMapping("r");
+	act = new Common::Action("ROTUP", _("Rotate up"));
+	act->setCustomEngineActionEvent(kActionRotateUp);
+	act->addDefaultInputMapping("p");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action("LOWER", _("Lower/Fly down"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_f, 'f'));
-	act->addDefaultInputMapping("JOY_Y");
-	act->addDefaultInputMapping("f");
+	act = new Common::Action("ROTDN", _("Rotate down"));
+	act->setCustomEngineActionEvent(kActionRotateDown);
+	act->addDefaultInputMapping("l");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action("SWITCH", _("Change mode"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_SPACE, Common::ASCII_SPACE));
+	act = new Common::Action("SWITCH", _("Change mode/Skip"));
+	act->setCustomEngineActionEvent(kActionChangeModeOrSkip);
 	act->addDefaultInputMapping("SPACE");
 	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
 
-	act = new Common::Action("ROTL", _("Rotate Left"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_q, 'q'));
-	act->addDefaultInputMapping("q");
-	engineKeyMap->addAction(act);
-
-	act = new Common::Action("ROTR", _("Rotate Right"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_w, 'w'));
-	act->addDefaultInputMapping("w");
+	act = new Common::Action("ESCAPE", _("Escape"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	act->addDefaultInputMapping("ESCAPE");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("MENU", _("Info Menu"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_i, 'i'));
+	act->setCustomEngineActionEvent(kActionInfoMenu);
 	act->addDefaultInputMapping("i");
 	act->addDefaultInputMapping("JOY_GUIDE");
 	engineKeyMap->addAction(act);

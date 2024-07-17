@@ -57,6 +57,40 @@ enum CameraMovement {
 	kRightMovement
 };
 
+enum FREESCAPEAction {
+	kActionNone,
+	kActionEscape,
+	kActionSave,
+	kActionLoad,
+	kActionToggleSound,
+	kActionMoveUp,
+	kActionMoveDown,
+	kActionMoveLeft,
+	kActionMoveRight,
+	kActionShoot,
+	kActionRunMode,
+	kActionRest,
+	kActionChangeAngle,
+	kActionChangeStepSize,
+	kActionToggleRiseLower,
+	kActionRiseOrFlyUp,
+	kActionLowerOrFlyDown,
+	kActionChangeModeOrSkip,
+	kActionFaceForward,
+	kActionRotateUp,
+	kActionRotateDown,
+	kActionRotateLeft,
+	kActionRotateRight,
+	kActionTurnBack,
+	kActionInfoMenu,
+	kActionIncreaseStepSize,
+	kActionDecreaseStepSize,
+	kActionToggleFlyMode,
+	kActionToggleClipMode,
+	kActionDeployDrillingRig,
+	kActionCollectDrillingRig
+};
+
 typedef Common::HashMap<uint16, Area *> AreaMap;
 typedef Common::Array<byte *> ColorMap;
 typedef Common::HashMap<uint16, int32> StateVars;
@@ -101,6 +135,7 @@ private:
 	Common::EventManager *_delegate;
 
 	Common::KeyState _currentKeyDown;
+	Common::CustomEventType _currentActionDown;
 	uint32 _keyRepeatTime;
 };
 
@@ -269,7 +304,7 @@ public:
 	bool _shootMode;
 	bool _noClipMode;
 	bool _invertY;
-	virtual void initKeymaps(Common::Keymap *engineKeyMap, const char *target);
+	virtual void initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target);
 	EventManagerWrapper *_eventManager;
 	void processInput();
 	void resetInput();

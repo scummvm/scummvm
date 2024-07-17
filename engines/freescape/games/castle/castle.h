@@ -28,6 +28,8 @@ public:
 
 	Graphics::ManagedSurface *_option;
 	Graphics::Surface *_menu;
+
+	void initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) override;
 	void initGameState() override;
 	void endGame() override;
 
