@@ -90,12 +90,18 @@ struct ObjTexture {
 // if active sprite / texture should be reconstructed
 struct ObjectCache {
 	std::unique_ptr<AGS::Shared::Bitmap> image;
-	bool  in_use = false;
+	bool  in_use = false;  // CHECKME: possibly may be removed
 	int   sppic = 0;
 	short tintr = 0, tintg = 0, tintb = 0, tintamnt = 0, tintlight = 0;
 	short lightlev = 0, zoom = 0;
 	bool  mirrored = 0;
 	int   x = 0, y = 0;
+
+	ObjectCache() = default;
+	ObjectCache(int pic_, int tintr_, int tintg_, int tintb_, int tint_amnt_, int tint_light_,
+				int light_, int zoom_, bool mirror_, int posx_, int posy_)
+		: sppic(pic_), tintr(tintr_), tintg(tintg_), tintb(tintb_), tintamnt(tint_amnt_), tintlight(tint_light_)
+		, lightlev(light_), zoom(zoom_), mirrored(mirror_), x(posx_), y(posy_) {}
 };
 
 // Converts AGS color index to the actual bitmap color using game's color depth
