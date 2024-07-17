@@ -620,7 +620,7 @@ bool Scene::runSceneOp(const SceneOp &op) {
 	case kSceneOpShowDlg:
 		if (op._args.size() == 1)
 			showDialog(0, op._args[0]);
-		else
+		else if(op._args.size() > 1)
 			showDialog(op._args[0], op._args[1]);
 		break;
 	case kSceneOpShowInvButton:
