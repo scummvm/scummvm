@@ -672,7 +672,7 @@ void KyraEngine_HoF::freeSceneShapePtrs() {
 
 void KyraEngine_HoF::fadeScenePal(int srcIndex, int delayTime) {
 	_screen->getPalette(0).copy(_scenePal, srcIndex << 4, 16, 112);
-	_screen->fadePalette(_screen->getPalette(0), delayTime, &_updateFunctor);
+	_screen->fadePalette(_screen->getPalette(0), delayTime, delayTime ? &_updateFunctor : nullptr);
 }
 
 #pragma mark -
