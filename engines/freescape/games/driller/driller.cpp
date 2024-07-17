@@ -106,21 +106,80 @@ DrillerEngine::~DrillerEngine() {
 	delete _drillBase;
 }
 
-void DrillerEngine::initKeymaps(Common::Keymap *engineKeyMap, const char *target) {
-	FreescapeEngine::initKeymaps(engineKeyMap, target);
+void DrillerEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) {
+	FreescapeEngine::initKeymaps(engineKeyMap, infoScreenKeyMap, target);
 	Common::Action *act;
 
-	act = new Common::Action("DEPLOY", _("Deploy drilling rig"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_d, 'd'));
-	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
-	act->addDefaultInputMapping("d");
-	engineKeyMap->addAction(act);
+	if (!(isAmiga() || isAtariST())) {
+		act = new Common::Action("SAVE", _("Save Game"));
+		act->setCustomEngineActionEvent(kActionSave);
+		act->addDefaultInputMapping("s");
+		infoScreenKeyMap->addAction(act);
 
-	act = new Common::Action("COLLECT", _("Collect drilling rig"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_c, 'c'));
-	act->addDefaultInputMapping("c");
-	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
-	engineKeyMap->addAction(act);
+		act = new Common::Action("LOAD", _("Load Game"));
+		act->setCustomEngineActionEvent(kActionLoad);
+		act->addDefaultInputMapping("l");
+		infoScreenKeyMap->addAction(act);
+
+		act = new Common::Action("QUIT", _("Quit Game"));
+		act->setCustomEngineActionEvent(kActionEscape);
+		if (isSpectrum())
+			act->addDefaultInputMapping("1");
+		else
+			act->addDefaultInputMapping("ESCAPE");
+		infoScreenKeyMap->addAction(act);
+
+		act = new Common::Action("TOGGLESOUND", _("Toggle Sound"));
+		act->setCustomEngineActionEvent(kActionToggleSound);
+		act->addDefaultInputMapping("t");
+		infoScreenKeyMap->addAction(act);
+	}
+
+	{
+		act = new Common::Action("ROTL", _("Rotate Left"));
+		act->setCustomEngineActionEvent(kActionRotateLeft);
+		act->addDefaultInputMapping("q");
+		engineKeyMap->addAction(act);
+
+		act = new Common::Action("ROTR", _("Rotate Right"));
+		act->setCustomEngineActionEvent(kActionRotateRight);
+		act->addDefaultInputMapping("w");
+		engineKeyMap->addAction(act);
+
+		act = new Common::Action("INCSTEPSIZE", _("Increase Step Size"));
+		act->setCustomEngineActionEvent(kActionIncreaseStepSize);
+		act->addDefaultInputMapping("s");
+		engineKeyMap->addAction(act);
+
+		act = new Common::Action("DECSTEPSIZE", _("Decrease Step Size"));
+		act->setCustomEngineActionEvent(kActionDecreaseStepSize);
+		act->addDefaultInputMapping("x");
+		engineKeyMap->addAction(act);
+
+		act = new Common::Action("RISE", _("Rise/Fly up"));
+		act->setCustomEngineActionEvent(kActionRiseOrFlyUp);
+		act->addDefaultInputMapping("JOY_B");
+		act->addDefaultInputMapping("r");
+		engineKeyMap->addAction(act);
+
+		act = new Common::Action("LOWER", _("Lower/Fly down"));
+		act->setCustomEngineActionEvent(kActionLowerOrFlyDown);
+		act->addDefaultInputMapping("JOY_Y");
+		act->addDefaultInputMapping("f");
+		engineKeyMap->addAction(act);
+
+		act = new Common::Action("DEPLOY", _("Deploy drilling rig"));
+		act->setCustomEngineActionEvent(kActionDeployDrillingRig);
+		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+		act->addDefaultInputMapping("d");
+		engineKeyMap->addAction(act);
+
+		act = new Common::Action("COLLECT", _("Collect drilling rig"));
+		act->setCustomEngineActionEvent(kActionCollectDrillingRig);
+		act->addDefaultInputMapping("c");
+		act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+		engineKeyMap->addAction(act);
+	}
 }
 
 void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
@@ -336,26 +395,26 @@ void DrillerEngine::drawInfoMenu() {
 
 			// Events
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_l) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionLoad) {
 					_gfx->setViewport(_fullscreenViewArea);
 					_eventManager->purgeKeyboardEvents();
 					loadGameDialog();
 					_gfx->setViewport(_viewArea);
-				} else if (event.kbd.keycode == Common::KEYCODE_s) {
+				} else if (event.customType == kActionSave) {
 					_gfx->setViewport(_fullscreenViewArea);
 					_eventManager->purgeKeyboardEvents();
 					saveGameDialog();
 					_gfx->setViewport(_viewArea);
-				} else if (isDOS() && event.kbd.keycode == Common::KEYCODE_t) {
+				} else if (isDOS() && event.customType == kActionToggleSound) {
 					// TODO
-				} else if ((isDOS() || isCPC()) && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					_forceEndGame = true;
-					cont = false;
-				} else if (isSpectrum() && event.kbd.keycode == Common::KEYCODE_1) {
+				} else if ((isDOS() || isCPC() || isSpectrum()) && event.customType == kActionEscape) {
 					_forceEndGame = true;
 					cont = false;
 				} else
+					cont = false;
+				break;
+			case Common::EVENT_KEYDOWN:
 					cont = false;
 				break;
 			case Common::EVENT_SCREEN_CHANGED:
@@ -399,19 +458,19 @@ Math::Vector3d getProjectionToPlane(const Math::Vector3d &vect, const Math::Vect
 }
 
 void DrillerEngine::pressedKey(const int keycode) {
-	if (keycode == Common::KEYCODE_q) {
+	if (keycode == kActionRotateLeft) {
 		rotate(-_angleRotations[_angleRotationIndex], 0);
-	} else if (keycode == Common::KEYCODE_w) {
+	} else if (keycode == kActionRotateRight) {
 		rotate(_angleRotations[_angleRotationIndex], 0);
-	} else if (keycode == Common::KEYCODE_s) {
+	} else if (keycode == kActionIncreaseStepSize) {
 		increaseStepSize();
-	} else if (keycode ==  Common::KEYCODE_x) {
+	} else if (keycode == kActionDecreaseStepSize) {
 		decreaseStepSize();
-	} else if (keycode == Common::KEYCODE_r) {
+	} else if (keycode == kActionRiseOrFlyUp) {
 		rise();
-	} else if (keycode == Common::KEYCODE_f) {
+	} else if (keycode == kActionLowerOrFlyDown) {
 		lower();
-	} else if (keycode == Common::KEYCODE_d) {
+	} else if (keycode == kActionDeployDrillingRig) {
 		if (isDOS() && isDemo()) // No support for drilling here yet
 			return;
 		clearTemporalMessages();
@@ -476,7 +535,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 		} else
 			_drillStatusByArea[_currentArea->getAreaID()] = kDrillerRigOutOfPlace;
 		executeMovementConditions();
-	} else if (keycode == Common::KEYCODE_c) {
+	} else if (keycode == kActionCollectDrillingRig) {
 		if (isDOS() && isDemo()) // No support for drilling here yet
 			return;
 		uint32 gasPocketRadius = _currentArea->_gasPocketRadius;
@@ -826,7 +885,7 @@ bool DrillerEngine::onScreenControls(Common::Point mouse) {
 		lower();
 		return true;
 	} else if (_deployDrillArea.contains(mouse)) {
-		pressedKey(Common::KEYCODE_d);
+		pressedKey(kActionDeployDrillingRig);
 		return true;
 	} else if (_infoScreenArea.contains(mouse)) {
 		drawInfoMenu();

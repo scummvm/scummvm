@@ -52,7 +52,7 @@ public:
 	uint32 _jetFuelSeconds;
 	void addSkanner(Area *area);
 
-	void initKeymaps(Common::Keymap *engineKeyMap, const char *target) override;
+	void initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) override;
 	void initGameState() override;
 	void borderScreen() override;
 	bool checkIfGameEnded() override;
