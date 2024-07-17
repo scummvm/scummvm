@@ -22,7 +22,7 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_CC_DYNAMICARRAY_H
 #define AGS_ENGINE_AC_DYNOBJ_CC_DYNAMICARRAY_H
 
-#include "ags/lib/std/vector.h"
+#include "common/std/vector.h"
 #include "ags/engine/ac/dynobj/cc_ags_dynamic_object.h"
 #include "ags/shared/util/stream.h"
 

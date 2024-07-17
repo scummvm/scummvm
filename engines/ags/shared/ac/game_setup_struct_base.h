@@ -30,8 +30,8 @@
 #define AGS_SHARED_AC_GAME_SETUP_STRUCT_BASE_H
 
 #include "ags/lib/allegro.h" // RGB
-#include "ags/lib/std/memory.h"
-#include "ags/lib/std/vector.h"
+#include "common/std/memory.h"
+#include "common/std/vector.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/ac/game_struct_defines.h"
 #include "ags/shared/util/string.h"
