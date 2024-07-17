@@ -124,6 +124,7 @@ enum SceneOpCode {
 	kSceneOpOpenBetterSaveGameMenu = 108,			// args: none. DRAGON: Show menu 46, the "Before arcade maybe you better save your game" menu.
 
 	// China-specific opcodes
+	kSceneOpOpenChinaTankMenu = 102,
 	kSceneOpOpenChinaOpenGameOverMenu = 114,	// args: none.
 	kSceneOpOpenChinaOpenSkipCreditsMenu = 115,	// args: none.
 	kSceneOpOpenChinaStartIntro = 116,	// args: none.

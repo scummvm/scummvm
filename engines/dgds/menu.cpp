@@ -113,6 +113,10 @@ enum MenuButtonIds {
 	kMenuGameOverQuit = 169,
 	kMenuGameOverRestart = 168,
 	kMenuGameOverRestore = 170,
+
+	// Tank menu in Heart of China
+	kMenuTankSkipArcade = 153,
+	kMenuTankPlayArcade = 154,
 };
 
 Menu::Menu() : _curMenu(kMenuNone), _dragGadget(nullptr), _selectedItem(0), _numSelectable(0) {
@@ -489,6 +493,15 @@ void Menu::handleClick(const Common::Point &mouse) {
 		drawMenu(_curMenu);
 		break;
 	}
+	case kMenuTankSkipArcade:
+		hideMenu();
+		engine->changeScene(12);
+		break;
+	case kMenuTankPlayArcade:
+		// TODO
+		warning("Play tank mini-game");
+		drawMenu(_curMenu);
+		break;
 	default:
 		debug("Clicked ID %d", clickedMenuItem);
 		break;
