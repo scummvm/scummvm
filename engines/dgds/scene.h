@@ -125,6 +125,7 @@ enum SceneOpCode {
 
 	// China-specific opcodes
 	kSceneOpOpenChinaTankMenu = 102,
+	kSceneOpShellGame = 110,
 	kSceneOpOpenChinaOpenGameOverMenu = 114,	// args: none.
 	kSceneOpOpenChinaOpenSkipCreditsMenu = 115,	// args: none.
 	kSceneOpOpenChinaStartIntro = 116,	// args: none.

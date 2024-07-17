@@ -758,6 +758,9 @@ bool Scene::runChinaOp(const SceneOp &op) {
 	case kSceneOpOpenChinaTankMenu:
 		engine->setMenuToTrigger(kMenuSkipArcade);
 		break;
+	case kSceneOpShellGame:
+		warning("TODO: Implement shell game");
+		break;
 	case kSceneOpOpenChinaStartIntro:
 		// The game first jumps to scene 100, and then to 98
 		engine->changeScene(98);
