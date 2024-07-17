@@ -51,6 +51,7 @@ Console::Console(DgdsEngine *vm) : _vm(vm) {
 	registerCmd("global", WRAP_METHOD(Console, cmdGlobal));
 	registerCmd("scene", WRAP_METHOD(Console, cmdScene));
 	registerCmd("scriptdump", WRAP_METHOD(Console, cmdScriptDump));
+	registerCmd("trigger", WRAP_METHOD(Console, cmdTrigger));
 }
 
 bool Console::cmdFileInfo(int argc, const char **argv) {
@@ -281,6 +282,29 @@ bool Console::cmdScene(int argc, const char **argv) {
 		int num = atoi(argv[1]);
 		_vm->changeScene(num);
 		debugPrintf("Scene changed to %d\n", num);
+	}
+
+	return true;
+}
+
+bool Console::cmdTrigger(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: %s <num> <val>\n", argv[0]);
+		debugPrintf("%s <num> returns the status of a trigger\n", argv[0]);
+		debugPrintf("%s <num> <val> sets the status of a trigger\n", argv[0]);
+		return true;
+	}
+
+	SDSScene *scene = _vm->getScene();
+	int num = atoi(argv[1]);
+
+	if (argc == 2) {
+		bool val = scene->isTriggerEnabled(num);
+		debugPrintf("Trigger %d is %d\n", num, val);
+	} else if (argc == 3) {
+		bool enable = atoi(argv[2]);
+		scene->enableTrigger(num, enable);
+		debugPrintf("Trigger %d set to %d\n", num, enable);
 	}
 
 	return true;

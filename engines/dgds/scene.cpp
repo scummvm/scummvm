@@ -995,9 +995,22 @@ void SDSScene::enableTrigger(uint16 num, bool enable /* = true */) {
 	for (auto &trigger : _triggers) {
 		if (trigger.getNum() == num) {
 			trigger._enabled = enable;
-			break;
+			return;
 		}
 	}
+
+	warning("Trigger %d not found", num);
+}
+
+bool SDSScene::isTriggerEnabled(uint16 num) {
+	for (auto &trigger : _triggers) {
+		if (trigger.getNum() == num) {
+			return trigger._enabled;
+		}
+	}
+
+	warning("Trigger %d not found", num);
+	return false;
 }
 
 void SDSScene::checkTriggers() {

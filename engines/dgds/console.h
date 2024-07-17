@@ -44,6 +44,7 @@ private:
 	bool cmdScene(int argc, const char **argv);
 	void printOp(int indent, const char *text);
 	bool cmdScriptDump(int argc, const char **argv);
+	bool cmdTrigger(int argc, const char **argv);
 	DgdsEngine *_vm;
 };
 

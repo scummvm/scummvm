@@ -457,6 +457,7 @@ public:
 	void prevChoice();
 	void nextChoice();
 	void activateChoice();
+	bool isTriggerEnabled(uint16 num);
 
 protected:
 	HotArea *findAreaUnderMouse(const Common::Point &pt);
