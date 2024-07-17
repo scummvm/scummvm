@@ -620,7 +620,7 @@ bool Scene::runSceneOp(const SceneOp &op) {
 	case kSceneOpShowDlg:
 		if (op._args.size() == 1)
 			showDialog(0, op._args[0]);
-		else if(op._args.size() > 1)
+		else if (op._args.size() > 1)
 			showDialog(op._args[0], op._args[1]);
 		break;
 	case kSceneOpShowInvButton:
@@ -759,6 +759,7 @@ bool Scene::runChinaOp(const SceneOp &op) {
 		engine->setMenuToTrigger(kMenuSkipArcade);
 		break;
 	case kSceneOpShellGame:
+		// TODO: Shell game in scene 81 (accessible from scene 16)
 		warning("TODO: Implement shell game");
 		break;
 	case kSceneOpOpenChinaStartIntro:
