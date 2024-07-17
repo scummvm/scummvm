@@ -201,9 +201,10 @@ void putpixel_compensate(Shared::Bitmap *g, int xx, int yy, int col);
 // so they only detect whether the sprite ID itself has changed.
 // Software renderers modify the cached bitmap whenever any visual
 // effect changes (scaling, tint, etc).
-// * alwaysUseSoftware option forces HW renderers to  construct the image
+// * force_software option forces HW renderers to  construct the image
 // in software mode as well.
-bool construct_object_gfx(int objid, bool alwaysUseSoftware);
+bool construct_object_gfx(int objid, bool force_software);
+bool construct_char_gfx(int charid, bool force_software);
 // Returns a cached character image prepared for the render
 Shared::Bitmap *get_cached_character_image(int charid);
 // Returns a cached object image prepared for the render
