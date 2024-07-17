@@ -1765,7 +1765,7 @@ void ScummEngine_v72he::writeFileFromArray(int slot, int32 resID) {
 		(FROM_LE_32(ah->downMax) - FROM_LE_32(ah->downMin) + 1);
 
 	if (slot != -1) {
-		assert(_hInFileTable[slot]);
+		assert(_hOutFileTable[slot]);
 		_hOutFileTable[slot]->write(ah->data, size);
 	}
 }
