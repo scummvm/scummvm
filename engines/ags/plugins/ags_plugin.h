@@ -159,8 +159,8 @@ struct AGSCharacter {
 };
 
 // AGSObject.flags
-#define OBJF_NOINTERACT 1     // not clickable
-#define OBJF_NOWALKBEHINDS 2  // ignore walk-behinds
+#define OBJF_NOINTERACT 0x01     // not clickable
+#define OBJF_NOWALKBEHINDS 0x02  // ignore walk-behinds
 
 struct AGSObject {
 	int32 x = 0, y = 0;

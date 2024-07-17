@@ -107,14 +107,15 @@ namespace AGS3 {
 #define HIRES_COORD_MULTIPLIER 2
 
 // Room object flags (currently limited by a byte)
-#define OBJF_NOINTERACT        1  // not clickable
-#define OBJF_NOWALKBEHINDS     2  // ignore walk-behinds
-#define OBJF_HASTINT           4  // the tint_* members are valid
-#define OBJF_USEREGIONTINTS    8  // obey region tints/light areas
+#define OBJF_NOINTERACT     0x01  // not clickable
+#define OBJF_NOWALKBEHINDS  0x02  // ignore walk-behinds
+#define OBJF_HASTINT        0x04  // the tint_* members are valid
+#define OBJF_USEREGIONTINTS 0x08  // obey region tints/light areas
 #define OBJF_USEROOMSCALING 0x10  // obey room scaling areas
 #define OBJF_SOLID          0x20  // blocks characters from moving
 #define OBJF_LEGACY_LOCKED  0x40  // object position is locked in the editor (OBSOLETE since 3.5.0)
 #define OBJF_HASLIGHT       0x80  // the tint_light is valid and treated as brightness
+#define OBJF_TINTLIGHTMASK (OBJF_HASTINT | OBJF_HASLIGHT | OBJF_USEREGIONTINTS)
 
 // Animation flow mode
 // NOTE: had to move to common_defines, because used by CharacterInfo
