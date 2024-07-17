@@ -26,6 +26,7 @@
 #include "ags/shared/ac/common_defines.h" // constants
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/core/types.h"
+#include "ags/shared/util/bbop.h"
 
 namespace AGS3 {
 
@@ -68,6 +69,18 @@ using namespace AGS; // FIXME later
 #define CHANIM_ON           0x01
 #define CHANIM_REPEAT       0x02
 #define CHANIM_BACKWARDS    0x04
+
+// Converts character flags (CHF_*) to matching RoomObject flags (OBJF_*)
+inline int CharFlagsToObjFlags(int chflags) {
+	using namespace AGS::Shared;
+	return FlagToFlag(chflags, CHF_NOINTERACT, OBJF_NOINTERACT) |
+		   FlagToFlag(chflags, CHF_NOWALKBEHINDS, OBJF_NOWALKBEHINDS) |
+		   FlagToFlag(chflags, CHF_HASTINT, OBJF_HASTINT) |
+		   FlagToFlag(NegateFlag(chflags, CHF_NOLIGHTING), CHF_NOLIGHTING, OBJF_USEREGIONTINTS) |
+		   FlagToFlag(NegateFlag(chflags, CHF_MANUALSCALING), CHF_MANUALSCALING, OBJF_USEROOMSCALING) |
+		   FlagToFlag(NegateFlag(chflags, CHF_NOBLOCKING), CHF_NOBLOCKING, OBJF_SOLID) |
+		   FlagToFlag(chflags, CHF_HASLIGHT, OBJF_HASLIGHT);
+}
 
 // Length of deprecated character name field, in bytes
 #define MAX_CHAR_NAME_LEN 40
