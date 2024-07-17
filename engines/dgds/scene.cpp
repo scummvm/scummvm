@@ -760,6 +760,11 @@ bool Scene::runChinaOp(const SceneOp &op) {
 		break;
 	case kSceneOpShellGame:
 		// TODO: Shell game in scene 81 (accessible from scene 16)
+		// We set a high number of sheckels for now
+		engine->getGDSScene()->setGlobal(0x2C, 400);
+		// We clear the gambler's talk data, as it's not cleared
+		// by the game scripts
+		engine->getScene()->freeTalkData(8);
 		warning("TODO: Implement shell game");
 		break;
 	case kSceneOpOpenChinaStartIntro:
