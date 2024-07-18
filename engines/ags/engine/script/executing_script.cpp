@@ -101,7 +101,7 @@ void ExecutingScript::run_another(const char *namm, ScriptInstType scinst, size_
 
 void ExecutingScript::init() {
 	inst = nullptr;
-	forked = 0;
+	forked = false;
 	numanother = 0;
 	numPostScriptActions = 0;
 

@@ -59,7 +59,7 @@ struct QueuedScript {
 };
 
 struct ExecutingScript {
-	ccInstance *inst;
+	PInstance inst;
 	PostScriptAction postScriptActions[MAX_QUEUED_ACTIONS];
 	const char *postScriptActionNames[MAX_QUEUED_ACTIONS];
 	ScriptPosition  postScriptActionPositions[MAX_QUEUED_ACTIONS];
@@ -68,7 +68,7 @@ struct ExecutingScript {
 	int  numPostScriptActions;
 	QueuedScript ScFnQueue[MAX_QUEUED_SCRIPTS];
 	int  numanother;
-	int8 forked;
+	bool forked;
 
 	int queue_action(PostScriptAction act, int data, const char *aname);
 	void run_another(const char *namm, ScriptInstType scinst, size_t param_count, const RuntimeScriptValue *params);
