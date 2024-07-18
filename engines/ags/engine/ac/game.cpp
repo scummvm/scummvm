@@ -464,40 +464,53 @@ int Game_GetSpriteHeight(int spriteNum) {
 	return game_to_data_coord(_GP(game).SpriteInfos[spriteNum].Height);
 }
 
-int Game_GetLoopCountForView(int viewNumber) {
-	if ((viewNumber < 1) || (viewNumber > _GP(game).numviews))
-		quit("!GetGameParameter: invalid view specified");
-
-	return _GP(views)[viewNumber - 1].numLoops;
+void AssertView(const char *apiname, int view) {
+	// NOTE: we assume (here and below) that the view is already in an internal 0-based range.
+	// but when printing an error we will use (view + 1) for compliance with the script API.
+	if ((view < 0) || (view >= _GP(game).numviews))
+		quitprintf("!%s: invalid view %d (range is 1..%d)", apiname, view + 1, _GP(game).numviews);
 }
 
-int Game_GetRunNextSettingForLoop(int viewNumber, int loopNumber) {
-	if ((viewNumber < 1) || (viewNumber > _GP(game).numviews))
-		quit("!GetGameParameter: invalid view specified");
-	if ((loopNumber < 0) || (loopNumber >= _GP(views)[viewNumber - 1].numLoops))
-		quit("!GetGameParameter: invalid loop specified");
-
-	return (_GP(views)[viewNumber - 1].loops[loopNumber].RunNextLoop()) ? 1 : 0;
+void AssertLoop(const char *apiname, int view, int loop) {
+	AssertView(apiname, view);
+	if (_GP(views)[view].numLoops == 0)
+		quitprintf("!%s: view %d does not have any loops.", apiname, view + 1);
+	if ((loop < 0) || (loop >= _GP(views)[view].numLoops))
+		quitprintf("!%s: invalid loop number %d for view %d (range is 0..%d).",
+				   apiname, loop, view + 1, _GP(views)[view].numLoops - 1);
 }
 
-int Game_GetFrameCountForLoop(int viewNumber, int loopNumber) {
-	if ((viewNumber < 1) || (viewNumber > _GP(game).numviews))
-		quit("!GetGameParameter: invalid view specified");
-	if ((loopNumber < 0) || (loopNumber >= _GP(views)[viewNumber - 1].numLoops))
-		quit("!GetGameParameter: invalid loop specified");
-
-	return _GP(views)[viewNumber - 1].loops[loopNumber].numFrames;
+void AssertFrame(const char *apiname, int view, int loop, int frame) {
+	AssertLoop(apiname, view, loop);
+	if (_GP(views)[view].loops[loop].numFrames == 0)
+		quitprintf("!%s: view %d loop %d does not have any frames", apiname, view + 1, loop);
+	if ((frame < 0) || (frame >= _GP(views)[view].loops[loop].numFrames))
+		quitprintf("!%s: invalid frame number %d for view %d loop %d (range is 0..%d)",
+				   apiname, frame, view + 1, loop, _GP(views)[view].loops[loop].numFrames - 1);
 }
 
-ScriptViewFrame *Game_GetViewFrame(int viewNumber, int loopNumber, int frame) {
-	if ((viewNumber < 1) || (viewNumber > _GP(game).numviews))
-		quit("!GetGameParameter: invalid view specified");
-	if ((loopNumber < 0) || (loopNumber >= _GP(views)[viewNumber - 1].numLoops))
-		quit("!GetGameParameter: invalid loop specified");
-	if ((frame < 0) || (frame >= _GP(views)[viewNumber - 1].loops[loopNumber].numFrames))
-		quit("!GetGameParameter: invalid frame specified");
+int Game_GetLoopCountForView(int view) {
+	view--; // convert to 0-based
+	AssertView("Game.GetLoopCountForView", view);
+	return _GP(views)[view].numLoops;
+}
 
-	ScriptViewFrame *sdt = new ScriptViewFrame(viewNumber - 1, loopNumber, frame);
+int Game_GetRunNextSettingForLoop(int view, int loop) {
+	view--; // convert to 0-based
+	AssertLoop("Game.GetRunNextSettingForLoop", view, loop);
+	return (_GP(views)[view].loops[loop].RunNextLoop()) ? 1 : 0;
+}
+
+int Game_GetFrameCountForLoop(int view, int loop) {
+	view--; // convert to 0-based
+	AssertLoop("Game.GetFrameCountForLoop", view, loop);
+	return _GP(views)[view].loops[loop].numFrames;
+}
+
+ScriptViewFrame *Game_GetViewFrame(int view, int loop, int frame) {
+	view--; // convert to 0-based
+	AssertFrame("Game.GetViewFrame", view, loop, frame);
+	ScriptViewFrame *sdt = new ScriptViewFrame(view, loop, frame);
 	ccRegisterManagedObject(sdt, sdt);
 	return sdt;
 }

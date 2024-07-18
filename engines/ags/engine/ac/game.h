@@ -98,6 +98,12 @@ const char *Game_GetSaveSlotDescription(int slnum);
 
 const char *Game_GetGlobalStrings(int index);
 
+// View, loop, frame parameter assertions.
+// WARNING: these functions assume that view is already in an internal 0-based range.
+void AssertView(const char *apiname, int view);
+void AssertLoop(const char *apiname, int view, int loop);
+void AssertFrame(const char *apiname, int view, int loop, int frame);
+
 int Game_GetInventoryItemCount();
 int Game_GetFontCount();
 int Game_GetMouseCursorCount();
