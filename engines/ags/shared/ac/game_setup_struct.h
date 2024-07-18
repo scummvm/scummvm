@@ -111,7 +111,10 @@ struct GameSetupStruct : public GameSetupStructBase {
 
 
 	GameSetupStruct();
+	GameSetupStruct(GameSetupStruct &&gss) = default;
 	~GameSetupStruct();
+
+	GameSetupStruct &operator=(GameSetupStruct &&gss) = default;
 
 	void Free();
 

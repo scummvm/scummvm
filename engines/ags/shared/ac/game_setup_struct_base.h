@@ -34,6 +34,7 @@
 #include "common/std/vector.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/ac/game_struct_defines.h"
+#include "ags/shared/ac/words_dictionary.h"
 #include "ags/shared/util/string.h"
 #include "ags/globals.h"
 
@@ -48,7 +49,6 @@ class Stream;
 
 using namespace AGS; // FIXME later
 
-struct WordsDictionary;
 struct CharacterInfo;
 struct ccScript;
 
@@ -95,7 +95,10 @@ struct GameSetupStructBase {
 	// pointer is used for that instead.
 
 	GameSetupStructBase();
+	GameSetupStructBase(GameSetupStructBase &&gss) = default;
 	~GameSetupStructBase();
+
+	GameSetupStructBase &operator=(GameSetupStructBase &&gss) = default;
 
 	void Free();
 	void SetDefaultResolution(GameResolutionType type);
