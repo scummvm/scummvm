@@ -60,7 +60,7 @@ int run_claimable_event(const char *tsname, bool includeRoom, int numParams, con
 	int toret;
 
 	if (includeRoom && _G(roominst)) {
-		toret = RunScriptFunction(_G(roominst).get(), tsname, numParams, params);
+		toret = RunScriptFunction(_G(roominst), tsname, numParams, params);
 		if (_G(abort_engine))
 			return -1;
 
@@ -72,7 +72,7 @@ int run_claimable_event(const char *tsname, bool includeRoom, int numParams, con
 
 	// run script modules
 	for (auto &module_inst : _GP(moduleInst)) {
-		toret = RunScriptFunction(module_inst.get(), tsname, numParams, params);
+		toret = RunScriptFunction(module_inst, tsname, numParams, params);
 
 		if (_G(eventClaimed) == EVENT_CLAIMED) {
 			_G(eventClaimed) = eventClaimedOldValue;
