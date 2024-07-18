@@ -356,26 +356,12 @@ void DoBeforeRestore(PreservedParams &pp) {
 
 	// preserve script data sizes and cleanup scripts
 	pp.GlScDataSize = _G(gameinst)->globaldatasize;
-	delete _G(gameinstFork);
-	delete _G(gameinst);
-	_G(gameinstFork) = nullptr;
-	_G(gameinst) = nullptr;
 	pp.ScMdDataSize.resize(_G(numScriptModules));
 	for (size_t i = 0; i < _G(numScriptModules); ++i) {
 		pp.ScMdDataSize[i] = _GP(moduleInst)[i]->globaldatasize;
-		delete _GP(moduleInstFork)[i];
-		delete _GP(moduleInst)[i];
-		_GP(moduleInstFork)[i] = nullptr;
-		_GP(moduleInst)[i] = nullptr;
 	}
 
-	delete _G(roominstFork);
-	delete _G(roominst);
-	_G(roominstFork) = nullptr;
-	_G(roominst) = nullptr;
-
-	delete _G(dialogScriptsInst);
-	_G(dialogScriptsInst) = nullptr;
+	FreeAllScriptInstances();
 
 	// reset saved room states
 	resetRoomStatuses();
@@ -481,6 +467,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 
 	update_gui_zorder();
 
+	AllocScriptModules();
 	if (create_global_script()) {
 		return new SavegameError(kSvgErr_GameObjectInitFailed,
 		                         String::FromFormat("Unable to recreate global script: %s", cc_get_error().ErrorString.GetCStr()));
