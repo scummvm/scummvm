@@ -50,12 +50,12 @@ int     run_interaction_script(InteractionScripts *nint, int evnt, int chkAny = 
 int     create_global_script();
 void    cancel_all_scripts();
 
-ccInstance *GetScriptInstanceByType(ScriptInstType sc_inst);
+PInstance GetScriptInstanceByType(ScriptInstType sc_inst);
 // Queues a script function to be run either called by the engine or from another script
 void    QueueScriptFunction(ScriptInstType sc_inst, const char *fn_name, size_t param_count = 0,
 	const RuntimeScriptValue *params = nullptr);
 // Try to run a script function on a given script instance
-int     RunScriptFunction(ccInstance *sci, const char *tsname, size_t param_count = 0,
+int     RunScriptFunction(PInstance sci, const char *tsname, size_t param_count = 0,
 	const RuntimeScriptValue *params = nullptr);
 // Run a script function in all the regular script modules, in order, where available
 // includes globalscript, but not the current room script.
@@ -99,19 +99,6 @@ void    can_run_delayed_command();
 // Gets current running script position
 bool    get_script_position(ScriptPosition &script_pos);
 AGS::Shared::String cc_get_callstack(int max_lines = INT_MAX);
-
-// [ikm] we keep ccInstances saved in unique_ptrs globally for now
-// (e.g. as opposed to shared_ptrs), because the script handling part of the
-// engine is quite fragile and prone to errors whenever the instance is not
-// **deleted** in precise time. This is related to:
-// - ccScript's "instances" counting, which affects script exports reg/unreg;
-// - loadedInstances array.
-// One of the examples is the save restoration, that may occur in the midst
-// of a post-script cleanup process, whilst the engine's stack still has
-// references to the ccInstances that are going to be deleted on cleanup.
-// Ideally, this part of the engine should be refactored awhole with a goal
-// to make it safe and consistent.
-typedef std::unique_ptr<ccInstance> UInstance;
 
 } // namespace AGS3
 
