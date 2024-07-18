@@ -268,8 +268,6 @@ struct GameState {
 
 
 	GameState();
-	// Free game resources
-	void Free();
 
 	//
 	// Viewport and camera control.
@@ -391,6 +389,8 @@ struct GameState {
 	void WriteCustomProperties_v340(Shared::Stream *out, GameDataVersion data_ver) const;
 	void ReadFromSavegame(Shared::Stream *in, GameDataVersion data_ver, GameStateSvgVersion svg_ver, AGS::Engine::RestoredData &r_data);
 	void WriteForSavegame(Shared::Stream *out) const;
+	// This is required for freeing only particular parts when restoring the game;
+	// FIXME: investigate and refactor to be able to simply reset whole object
 	void FreeProperties();
 	void FreeViewportsAndCameras();
 

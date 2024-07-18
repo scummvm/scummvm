@@ -261,7 +261,11 @@ int RunAGSGame(const String &newgame, unsigned int mode, int data) {
 		return 0;
 	}
 
-	int ee;
+	// Optionally save legacy GlobalInts
+	int savedscriptvars[MAXGSVALUES];
+	if ((mode & RAGMODE_PRESERVEGLOBALINT) != 0) {
+		memcpy(savedscriptvars, _GP(play).globalscriptvars, sizeof(_GP(play).globalscriptvars));
+	}
 
 	unload_old_room();
 	_G(displayed_room) = -10;
@@ -292,10 +296,9 @@ int RunAGSGame(const String &newgame, unsigned int mode, int data) {
 	if (!err)
 		quitprintf("!RunAGSGame: error loading new sprites:\n%s", err->FullMessage().GetCStr());
 
-	if ((mode & RAGMODE_PRESERVEGLOBALINT) == 0) {
-		// reset GlobalInts
-		for (ee = 0; ee < MAXGSVALUES; ee++)
-			_GP(play).globalscriptvars[ee] = 0;
+	// Restore saved GlobalInts
+	if ((mode & RAGMODE_PRESERVEGLOBALINT) != 0) {
+		memcpy(_GP(play).globalscriptvars, savedscriptvars, sizeof(_GP(play).globalscriptvars));
 	}
 
 	engine_init_game_settings();
