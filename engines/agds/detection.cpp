@@ -29,9 +29,9 @@ static const PlainGameDescriptor agdsGames[] = {
 
 #include "agds/detection_tables.h"
 
-class AGDSMetaEngineDetection : public AdvancedMetaEngineDetection {
+class AGDSMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	AGDSMetaEngineDetection() : AdvancedMetaEngineDetection(AGDS::gameDescriptions, sizeof(ADGameDescription), agdsGames) {
+	AGDSMetaEngineDetection() : AdvancedMetaEngineDetection(AGDS::gameDescriptions, agdsGames) {
 		_maxScanDepth = 3;
 	}
 

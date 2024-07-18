@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/str.h"
 
 namespace Common	{ class SeekableReadStream; }
 namespace Graphics	{ struct Surface; struct ManagedSurface; }

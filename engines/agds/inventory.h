@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "common/ptr.h"
 #include "common/rect.h"
+#include "common/str.h"
 
 namespace Common { class ReadStream; class WriteStream; }
 
