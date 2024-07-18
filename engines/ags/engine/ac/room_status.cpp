@@ -214,17 +214,15 @@ void RoomStatus::WriteToSavegame(Stream *out, GameDataVersion data_ver) const {
 	out->WriteInt32(0);
 }
 
-// JJS: Replacement for the global roomstats array in the original engine.
-
-RoomStatus *room_statuses[MAX_ROOMS];
+std::unique_ptr<RoomStatus> room_statuses[MAX_ROOMS];
 
 // Replaces all accesses to the roomstats array
 RoomStatus *getRoomStatus(int room) {
-	if (room_statuses[room] == nullptr) {
+	if (!room_statuses[room]) {
 		// First access, allocate and initialise the status
-		room_statuses[room] = new RoomStatus();
+		room_statuses[room].reset(new RoomStatus());
 	}
-	return room_statuses[room];
+	return room_statuses[room].get();
 }
 
 // Used in places where it is only important to know whether the player
@@ -237,10 +235,7 @@ bool isRoomStatusValid(int room) {
 
 void resetRoomStatuses() {
 	for (int i = 0; i < MAX_ROOMS; i++) {
-		if (room_statuses[i] != nullptr) {
-			delete room_statuses[i];
-			room_statuses[i] = nullptr;
-		}
+		room_statuses[i].reset();
 	}
 }
 
