@@ -1197,7 +1197,7 @@ static bool construct_object_gfx(const ViewFrame *vf, int pic,
 		light_level = objsrc.tintlight;
 	} else {
 		// get the ambient or region tint
-		get_local_tint(objsrc.x, objsrc.y, (tint_flags & OBJF_USEREGIONTINTS) == 0,
+		get_local_tint(objsrc.x, objsrc.y, (tint_flags & OBJF_USEREGIONTINTS) != 0,
 		               &tint_level, &tint_red, &tint_green, &tint_blue,
 		               &tint_light, &light_level);
 	}
