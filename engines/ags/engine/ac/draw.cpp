@@ -957,7 +957,7 @@ void recycle_bitmap(std::unique_ptr<Shared::Bitmap> &bimp, int coldep, int wid, 
 // room regions and SetAmbientTint
 // tint_amnt will be set to 0 if there is no tint enabled
 // if this is the case, then light_lev holds the light level (0=none)
-void get_local_tint(int xpp, int ypp, int nolight,
+void get_local_tint(int xpp, int ypp, bool use_region_tint,
                     int *tint_amnt, int *tint_r, int *tint_g,
                     int *tint_b, int *tint_lit,
                     int *light_lev) {
@@ -969,7 +969,7 @@ void get_local_tint(int xpp, int ypp, int nolight,
 	int tint_blue = 0;
 	int tint_light = 255;
 
-	if (nolight == 0) {
+	if (use_region_tint) {
 
 		int onRegion = 0;
 
@@ -1205,10 +1205,7 @@ static bool construct_object_gfx(const ViewFrame *vf, int pic,
 	// check whether the image should be flipped
 	bool is_mirrored = false;
 	int specialpic = pic;
-	if ( //(obj.view != (uint16_t)-1) &&
-		vf &&
-		(vf->pic == pic) &&
-		((vf->flags & VFLG_FLIPSPRITE) != 0)) {
+	if (vf && (vf->pic == pic) && ((vf->flags & VFLG_FLIPSPRITE) != 0)) {
 		is_mirrored = true;
 		specialpic = -pic;
 	}
