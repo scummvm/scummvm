@@ -24,6 +24,7 @@
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/character.h"
+#include "ags/engine/ac/game.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_object.h"
 #include "ags/engine/ac/global_translation.h"
@@ -612,12 +613,7 @@ void ValidateViewAnimParams(const char *apiname, int &repeat, int &blocking, int
 void ValidateViewAnimVLF(const char *apiname, int view, int loop, int &sframe) {
 	// NOTE: we assume that the view is already in an internal 0-based range.
 	// but when printing an error we will use (view + 1) for compliance with the script API.
-	if ((view < 0) || (view >= _GP(game).numviews))
-		quitprintf("!%s: invalid view %d (range is 1..%d).", apiname, view + 1, _GP(game).numviews);
-	if (_GP(views)[view].numLoops == 0)
-		quitprintf("!%s: view %d does not have any loops.", apiname, view + 1);
-	if (loop < 0 || loop >= _GP(views)[view].numLoops)
-		quitprintf("!%s: invalid loop number %d for view %d (range is 0..%d).", apiname, loop, view + 1, _GP(views)[view].numLoops - 1);
+	AssertLoop(apiname, view, loop);
 
 	if (_GP(views)[view].loops[loop].numFrames < 1)
 		debug_script_warn("%s: view %d loop %d does not have any frames, will use a frame placeholder.",
