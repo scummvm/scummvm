@@ -373,36 +373,9 @@ void unload_game() {
 
 	// Free all script instances and script modules
 	ccInstance::FreeInstanceStack();
-	delete _G(gameinstFork);
-	delete _G(gameinst);
-	_G(gameinstFork) = nullptr;
-	_G(gameinst) = nullptr;
-	_GP(gamescript).reset();
 
-	delete _G(dialogScriptsInst);
-	_G(dialogScriptsInst) = nullptr;
-	_GP(dialogScriptsScript).reset();
-
-	for (size_t i = 0; i < _G(numScriptModules); ++i) {
-		delete _GP(moduleInstFork)[i];
-		delete _GP(moduleInst)[i];
-		_GP(scriptModules)[i].reset();
-	}
-
-	_GP(moduleInstFork).resize(0);
-	_GP(moduleInst).resize(0);
-	_GP(scriptModules).resize(0);
-	_GP(repExecAlways).moduleHasFunction.resize(0);
-	_GP(lateRepExecAlways).moduleHasFunction.resize(0);
-	_GP(getDialogOptionsDimensionsFunc).moduleHasFunction.resize(0);
-	_GP(renderDialogOptionsFunc).moduleHasFunction.resize(0);
-	_GP(getDialogOptionUnderCursorFunc).moduleHasFunction.resize(0);
-	_GP(runDialogOptionMouseClickHandlerFunc).moduleHasFunction.resize(0);
-	_GP(runDialogOptionKeyPressHandlerFunc).moduleHasFunction.resize(0);
-	_GP(runDialogOptionTextInputHandlerFunc).moduleHasFunction.resize(0);
-	_GP(runDialogOptionRepExecFunc).moduleHasFunction.resize(0);
-	_GP(runDialogOptionCloseFunc).moduleHasFunction.resize(0);
-	_G(numScriptModules) = 0;
+	FreeAllScriptInstances();
+	FreeGlobalScripts();
 
 	_GP(charextra).clear();
 	_GP(mls).clear();
