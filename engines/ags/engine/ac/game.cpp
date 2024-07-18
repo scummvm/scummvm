@@ -385,10 +385,6 @@ void unload_game() {
 	_G(numLipLines) = 0;
 	_G(curLipLine) = -1;
 
-	for (auto &dlg : _G(dialog)) {
-		if (dlg.optionscripts != nullptr)
-			free(dlg.optionscripts);
-	}
 	_G(dialog).clear();
 	_GP(scrDialog).clear();
 
