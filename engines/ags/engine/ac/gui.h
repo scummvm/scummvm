@@ -75,8 +75,8 @@ void    update_gui_zorder();
 void    export_gui_controls(int ee);
 void    unexport_gui_controls(int ee);
 void    update_gui_disabled_status();
-int     adjust_x_for_guis(int xx, int yy);
-int     adjust_y_for_guis(int yy);
+int     adjust_x_for_guis(int x, int y, bool assume_blocking = false);
+int     adjust_y_for_guis(int y, bool assume_blocking = false);
 
 int     gui_get_interactable(int x, int y);
 int     gui_on_mouse_move();
