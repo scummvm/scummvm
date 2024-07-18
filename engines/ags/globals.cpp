@@ -369,8 +369,8 @@ Globals::Globals() {
 	_runDialogOptionCloseFunc = new NonBlockingScriptFunction("dialog_options_close", 1);
 	_scsystem = new ScriptSystem();
 	_scriptModules = new std::vector<PScript>();
-	_moduleInst = new std::vector<PInstance>();
-	_moduleInstFork = new std::vector<PInstance>();
+	_moduleInst = new std::vector<UInstance>();
+	_moduleInstFork = new std::vector<UInstance>();
 	_moduleRepExecAddr = new std::vector<RuntimeScriptValue>();
 
 	// script_runtime.cpp globals
