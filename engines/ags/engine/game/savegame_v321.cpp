@@ -179,16 +179,6 @@ static void ReadGameState_Aligned(Stream *in, GameDataVersion data_ver, Restored
 	_GP(play).ReadFromSavegame(&align_s, data_ver, kGSSvgVersion_OldFormat, r_data);
 }
 
-static void restore_game_play_ex_data(Stream *in) {
-	char rbuffer[200];
-	for (size_t i = 0; i < _GP(play).do_once_tokens.size(); ++i) {
-		StrUtil::ReadCStr(rbuffer, in, sizeof(rbuffer));
-		_GP(play).do_once_tokens[i] = rbuffer;
-	}
-
-	in->Seek(_GP(game).numgui * sizeof(int32_t)); // gui_draw_order
-}
-
 static void restore_game_play(Stream *in, GameDataVersion data_ver, RestoredData &r_data) {
 	int screenfadedout_was = _GP(play).screen_is_faded_out;
 	int roomchanges_was = _GP(play).room_changes;
@@ -199,7 +189,14 @@ static void restore_game_play(Stream *in, GameDataVersion data_ver, RestoredData
 	_GP(play).screen_is_faded_out = screenfadedout_was;
 	_GP(play).room_changes = roomchanges_was;
 
-	restore_game_play_ex_data(in);
+	char rbuffer[200]; // old doonceonly token length
+	for (size_t i = 0; i < r_data.DoOnceCount; ++i) {
+		StrUtil::ReadCStr(rbuffer, in, sizeof(rbuffer));
+		_GP(play).do_once_tokens.insert(rbuffer);
+	}
+
+	// Skip gui_draw_order (no longer applied from saves)
+	in->Seek(_GP(game).numgui * sizeof(int32_t));
 }
 
 static void ReadMoveList_Aligned(Stream *in) {
