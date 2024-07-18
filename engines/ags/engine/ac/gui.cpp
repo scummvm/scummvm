@@ -459,9 +459,9 @@ static bool should_skip_adjust_for_gui(const GUIMain &gui) {
 		((gui.BgColor == 0) && (gui.BgImage < 1)) || (gui.Transparency == 255);
 }
 
-int adjust_x_for_guis(int x, int y) {
-	if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) && (_G(all_buttons_disabled) >= 0))
-		return x;
+int adjust_x_for_guis(int x, int y, bool assume_blocking) {
+	if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) && (_G(all_buttons_disabled) >= 0 || assume_blocking))
+		return x;  // All GUI off (or will be when the message is displayed)
 	// If it's covered by a GUI, move it right a bit
 	for (const auto &gui : _GP(guis)) {
 		if (should_skip_adjust_for_gui(gui))
@@ -480,9 +480,9 @@ int adjust_x_for_guis(int x, int y) {
 	return x;
 }
 
-int adjust_y_for_guis(int y) {
-	if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) && (_G(all_buttons_disabled) >= 0))
-		return y;
+int adjust_y_for_guis(int y, bool assume_blocking) {
+	if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) && (_G(all_buttons_disabled) >= 0 || assume_blocking))
+		return y;  // All GUI off (or will be when the message is displayed)
 	// If it's covered by a GUI, move it down a bit
 	for (const auto &gui : _GP(guis)) {
 		if (should_skip_adjust_for_gui(gui))
