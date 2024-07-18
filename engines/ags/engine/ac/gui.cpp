@@ -449,50 +449,56 @@ void update_gui_disabled_status() {
 	}
 }
 
-int adjust_x_for_guis(int xx, int yy) {
-	if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) && (_G(all_buttons_disabled) >= 0))
-		return xx;
-	// If it's covered by a GUI, move it right a bit
-	for (int aa = 0; aa < _GP(game).numgui; aa++) {
-		if (!_GP(guis)[aa].IsDisplayed())
-			continue;
-		if ((_GP(guis)[aa].X > xx) || (_GP(guis)[aa].Y > yy) || (_GP(guis)[aa].Y + _GP(guis)[aa].Height < yy))
-			continue;
-		// totally transparent GUI, ignore
-		if (((_GP(guis)[aa].BgColor == 0) && (_GP(guis)[aa].BgImage < 1)) || (_GP(guis)[aa].Transparency == 255))
-			continue;
-
-		// try to deal with full-width GUIs across the top
-		if (_GP(guis)[aa].X + _GP(guis)[aa].Width >= get_fixed_pixel_size(280))
-			continue;
-
-		if (xx < _GP(guis)[aa].X + _GP(guis)[aa].Width)
-			xx = _GP(guis)[aa].X + _GP(guis)[aa].Width + 2;
-	}
-	return xx;
+static bool should_skip_adjust_for_gui(const GUIMain &gui) {
+	return
+		// not shown
+		!gui.IsDisplayed() ||
+		// completely offscreen
+		!IsRectInsideRect(_GP(play).GetUIViewport(), RectWH(gui.X, gui.Y, gui.Width, gui.Height)) ||
+		// fully transparent (? FIXME: this only checks background, but not controls)
+		((gui.BgColor == 0) && (gui.BgImage < 1)) || (gui.Transparency == 255);
 }
 
-int adjust_y_for_guis(int yy) {
+int adjust_x_for_guis(int x, int y) {
 	if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) && (_G(all_buttons_disabled) >= 0))
-		return yy;
-	// If it's covered by a GUI, move it down a bit
-	for (int aa = 0; aa < _GP(game).numgui; aa++) {
-		if (!_GP(guis)[aa].IsDisplayed())
+		return x;
+	// If it's covered by a GUI, move it right a bit
+	for (const auto &gui : _GP(guis)) {
+		if (should_skip_adjust_for_gui(gui))
 			continue;
-		if (_GP(guis)[aa].Y > yy)
+		// higher, lower or to the right from the message (?)
+		if ((gui.X > x) || (gui.Y > y) || (gui.Y + gui.Height < y))
 			continue;
-		// totally transparent GUI, ignore
-		if (((_GP(guis)[aa].BgColor == 0) && (_GP(guis)[aa].BgImage < 1)) || (_GP(guis)[aa].Transparency == 255))
+		// try to deal with full-width GUIs across the top
+		// FIXME: using a harcoded width in pixels...
+		if (gui.X + gui.Width >= get_fixed_pixel_size(280))
 			continue;
-
-		// try to deal with full-height GUIs down the left or right
-		if (_GP(guis)[aa].Height > get_fixed_pixel_size(50))
-			continue;
-
-		if (yy < _GP(guis)[aa].Y + _GP(guis)[aa].Height)
-			yy = _GP(guis)[aa].Y + _GP(guis)[aa].Height + 2;
+		// Fix coordinates if x is inside the gui
+		if (x < gui.X + gui.Width)
+			x = gui.X + gui.Width + 2;
 	}
-	return yy;
+	return x;
+}
+
+int adjust_y_for_guis(int y) {
+	if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) && (_G(all_buttons_disabled) >= 0))
+		return y;
+	// If it's covered by a GUI, move it down a bit
+	for (const auto &gui : _GP(guis)) {
+		if (should_skip_adjust_for_gui(gui))
+			continue;
+		// lower than the message
+		if (gui.Y > y)
+			continue;
+		// try to deal with full-height GUIs down the left or right
+		// FIXME: using a harcoded height in pixels...
+		if (gui.Height > get_fixed_pixel_size(50))
+			continue;
+		// Fix coordinates if y is inside the gui
+		if (y < gui.Y + gui.Height)
+			y = gui.Y + gui.Height + 2;
+	}
+	return y;
 }
 
 int gui_get_interactable(int x, int y) {
