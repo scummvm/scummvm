@@ -221,7 +221,7 @@ int16 getRoomFromStr(Init &init, const Common::String &s) {
  *              CreateTooltipBitmap
  * --------------------------------------------------*/
 int32 CreateTooltipBitmap(Renderer &renderer, char *tooltip, FontColor color, uint8 r, uint8 g, uint8 b) {
-	int32 dimx, dimy, surf, enlarge = 5;
+	int32 dimx, dimy, enlarge = 5;
 	char info[100];
 
 	if (!tooltip || !strcmp(tooltip, "")) return -1;
@@ -231,7 +231,7 @@ int32 CreateTooltipBitmap(Renderer &renderer, char *tooltip, FontColor color, ui
 	dimx += renderer.rFitX(enlarge * 2);
 	dimy += renderer.rFitY(enlarge * 2);
 
-	surf = rCreateSurface(dimx, dimy, 0);
+	int32 surf = rCreateSurface(dimx, dimy, 0);
 	if (surf <= 0) return -1;
 
 	Common::strlcpy(info, "tooltip: ", 400);

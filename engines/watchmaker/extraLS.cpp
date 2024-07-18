@@ -32,7 +32,7 @@ char *ExtraLS[MAX_EXTRALS];
 #define EXTRALS_BKG_COLOR_G     0
 #define EXTRALS_BKG_COLOR_B     224
 
-uint32 extraLS_BMP = 0;
+int32 extraLS_BMP = 0;
 uint32 extraLS_currentID = 0;
 int32 extraLS_bmpPosX = 0;
 int32 extraLS_bmpPosY = 0;
