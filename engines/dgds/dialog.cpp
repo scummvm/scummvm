@@ -189,8 +189,18 @@ void Dialog::drawType2(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 		txt = _str;
 	}
 
+	// Special case for HoC to update the Shekel count in their description.
+	// This is how the original game does it too.
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	if (_fileNum == 0x5d && _num == 0x32 && engine->getGameId() == GID_HOC) {
+		int16 shekels = engine->getGDSScene()->getGlobal(44);
+		const Common::String numstr = Common::String::format("%3d", shekels);
+		uint32 offset = txt.find("###");
+		if (offset != Common::String::npos)
+			txt.replace(offset, 3, numstr);
+	}
+
 	if (stage == kDlgDrawStageBackground) {
-		DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 		if (engine->getGameId() == GID_DRAGON)
 			drawType2BackgroundDragon(dst, title);
 		else if (engine->getGameId() == GID_HOC)
