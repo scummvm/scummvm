@@ -92,6 +92,12 @@ int16 Globals::getGlobal(uint16 num) {
 			return global->get();
 	}
 
+	if (num == 333) {
+		// Bug in HoC (scene 21)?
+		warning("getGlobal: requested global 333");
+		return 0;
+	}
+
 	if (num)
 		error("getGlobal: requested non-existing global %d", num);
 
