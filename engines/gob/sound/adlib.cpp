@@ -504,7 +504,7 @@ void AdLib::writeTremoloVibratoDepthPercMode() {
 
 	value |= _tremoloDepth       ? 0x80 : 0;
 	value |= _vibratoDepth       ? 0x40 : 0;
-	value |= isPercussionMode() ? 0x20 : 0;
+	value |= isPercussionMode()  ? 0x20 : 0;
 	value |= _percussionBits;
 
 	writeOPL(0xBD, value);
