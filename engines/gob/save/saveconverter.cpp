@@ -82,7 +82,7 @@ char *SaveConverter::getDescription(const Common::String &fileName) {
 char *SaveConverter::getDescription() const {
 	Common::InSaveFile *save;
 
-	// Test if it's an old savd
+	// Test if it's an old save data
 	if (!isOldSave(&save) || !save)
 		return nullptr;
 

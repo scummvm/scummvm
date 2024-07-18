@@ -103,7 +103,7 @@ bool SaveConverter_v4::load() {
 
 	Common::InSaveFile *save;
 
-	// Test if it's an old savd
+	// Test if it's an old save data
 	if (!isOldSave(&save) || !save)
 		return false;
 
