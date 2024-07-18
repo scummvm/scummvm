@@ -885,6 +885,8 @@ void save_game(int slotn, const char *descript) {
 
 	// Actual dynamic game data is saved here
 	SaveGameState(out.get());
+	// call "After Save" event callback
+	run_on_event(GE_SAVE_GAME, RuntimeScriptValue().SetInt32(slotn));
 
 	if (screenShot != nullptr) {
 		int screenShotOffset = out->GetPosition() - sizeof(RICH_GAME_MEDIA_HEADER);
