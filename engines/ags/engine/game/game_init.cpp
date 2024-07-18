@@ -396,25 +396,6 @@ void InitGameResolution(GameSetupStruct &game, GameDataVersion data_ver) {
 	_GP(scsystem).viewport_height = game_to_data_coord(_GP(play).GetMainViewport().GetHeight());
 }
 
-void AllocScriptModules() {
-	_GP(moduleInst).resize(_G(numScriptModules), nullptr);
-	_GP(moduleInstFork).resize(_G(numScriptModules), nullptr);
-	_GP(moduleRepExecAddr).resize(_G(numScriptModules));
-	_GP(repExecAlways).moduleHasFunction.resize(_G(numScriptModules), true);
-	_GP(lateRepExecAlways).moduleHasFunction.resize(_G(numScriptModules), true);
-	_GP(getDialogOptionsDimensionsFunc).moduleHasFunction.resize(_G(numScriptModules), true);
-	_GP(renderDialogOptionsFunc).moduleHasFunction.resize(_G(numScriptModules), true);
-	_GP(getDialogOptionUnderCursorFunc).moduleHasFunction.resize(_G(numScriptModules), true);
-	_GP(runDialogOptionMouseClickHandlerFunc).moduleHasFunction.resize(_G(numScriptModules), true);
-	_GP(runDialogOptionKeyPressHandlerFunc).moduleHasFunction.resize(_G(numScriptModules), true);
-	_GP(runDialogOptionTextInputHandlerFunc).moduleHasFunction.resize(_G(numScriptModules), true);
-	_GP(runDialogOptionRepExecFunc).moduleHasFunction.resize(_G(numScriptModules), true);
-	_GP(runDialogOptionCloseFunc).moduleHasFunction.resize(_G(numScriptModules), true);
-	for (auto &val : _GP(moduleRepExecAddr)) {
-		val.Invalidate();
-	}
-}
-
 HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion data_ver) {
 	GameSetupStruct &game = ents.Game;
 	const ScriptAPIVersion base_api = (ScriptAPIVersion)game.options[OPT_BASESCRIPTAPI];
