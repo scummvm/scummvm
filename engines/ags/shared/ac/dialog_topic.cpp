@@ -29,8 +29,6 @@ using AGS::Shared::Stream;
 void DialogTopic::ReadFromFile(Stream *in) {
 	in->ReadArray(optionnames, 150 * sizeof(char), MAXTOPICOPTIONS);
 	in->ReadArrayOfInt32(optionflags, MAXTOPICOPTIONS);
-	// optionscripts pointer is not used anywhere in the engine
-	optionscripts = nullptr;
 	in->ReadInt32(); // optionscripts 32-bit pointer
 	in->ReadArrayOfInt16(entrypoints, MAXTOPICOPTIONS);
 	startupentrypoint = in->ReadInt16();
