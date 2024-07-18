@@ -198,8 +198,11 @@ bool DgdsEngine::changeScene(int sceneNum) {
 	if (_scene->getMagic() != _gdsScene->getMagic())
 		error("Scene %s magic does (0x%08x) not match GDS magic (0x%08x)", sceneFile.c_str(), _scene->getMagic(), _gdsScene->getMagic());
 
-	if (!_scene->getAdsFile().empty())
-		_adsInterp->load(_scene->getAdsFile());
+	Common::String adsFile = _scene->getAdsFile();
+	adsFile.trim();
+
+	if (!adsFile.empty())
+		_adsInterp->load(adsFile);
 	else
 		_adsInterp->unload();
 
