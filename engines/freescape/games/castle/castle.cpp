@@ -107,9 +107,12 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (isSpectrum() || isCPC())
 		_gfx->_paperColor = 0;
 	resetInput();
-	Entrance *entrance = (Entrance *)_currentArea->entranceWithID(entranceID);
-	assert(entrance);
-	executeEntranceConditions(entrance);
+
+	if (entranceID > 0) {
+		Entrance *entrance = (Entrance *)_currentArea->entranceWithID(entranceID);
+		assert(entrance);
+		executeEntranceConditions(entrance);
+	}
 }
 
 void CastleEngine::initGameState() {
@@ -526,13 +529,31 @@ void CastleEngine::addGhosts() {
 	for (auto &it : _areaMap) {
 		for (auto &sensor : it._value->getSensors()) {
 			if (sensor->getObjectID() == 125) {
-				_areaMap[it._key]->addGroupFromArea(195, _areaMap[255]);
-				_areaMap[it._key]->addGroupFromArea(212, _areaMap[255]);
-			} else if (sensor->getObjectID() == 126)
-				_areaMap[it._key]->addGroupFromArea(191, _areaMap[255]);
-			else if (sensor->getObjectID() == 127)
-				_areaMap[it._key]->addGroupFromArea(182, _areaMap[255]);
-			else
+				if (isDOS()) {
+					_areaMap[it._key]->addGroupFromArea(195, _areaMap[255]);
+					_areaMap[it._key]->addGroupFromArea(212, _areaMap[255]);
+				} else if (isSpectrum()) {
+					_areaMap[it._key]->addObjectFromArea(170, _areaMap[255]);
+					_areaMap[it._key]->addObjectFromArea(172, _areaMap[255]);
+					_areaMap[it._key]->addObjectFromArea(173, _areaMap[255]);
+				}
+			} else if (sensor->getObjectID() == 126) {
+				if (isDOS())
+					_areaMap[it._key]->addGroupFromArea(191, _areaMap[255]);
+				else if (isSpectrum()) {
+					_areaMap[it._key]->addObjectFromArea(145, _areaMap[255]);
+					_areaMap[it._key]->addObjectFromArea(165, _areaMap[255]);
+					_areaMap[it._key]->addObjectFromArea(166, _areaMap[255]);
+				}
+			} else if (sensor->getObjectID() == 127) {
+				if (isDOS())
+					_areaMap[it._key]->addGroupFromArea(182, _areaMap[255]);
+				else if (isSpectrum()) {
+					_areaMap[it._key]->addObjectFromArea(142, _areaMap[255]);
+					_areaMap[it._key]->addObjectFromArea(143, _areaMap[255]);
+					_areaMap[it._key]->addObjectFromArea(144, _areaMap[255]);
+				}
+			} else
 				debugC(1, kFreescapeDebugParser, "Sensor %d in area %d", sensor->getObjectID(), it._key);
 		}
 	}
@@ -551,31 +572,33 @@ void CastleEngine::checkSensors() {
 		return;
 
 	Sensor *sensor = (Sensor *)&_sensors[0];
-	if (sensor->getObjectID() == 125) {
-		Group *group = (Group *)_currentArea->objectWithID(195);
-		if (!group->isDestroyed() && !group->isInvisible()) {
-			group->_active = true;
-		} else
-			return;
+	if (isDOS()) { // Should be similar to Amiga/AtariST
+		if (sensor->getObjectID() == 125) {
+			Group *group = (Group *)_currentArea->objectWithID(195);
+			if (!group->isDestroyed() && !group->isInvisible()) {
+				group->_active = true;
+			} else
+				return;
 
-		group = (Group *)_currentArea->objectWithID(212);
-		if (!group->isDestroyed() && !group->isInvisible()) {
-			group->_active = true;
-		} else
-			return;
+			group = (Group *)_currentArea->objectWithID(212);
+			if (!group->isDestroyed() && !group->isInvisible()) {
+				group->_active = true;
+			} else
+				return;
 
-	} else if (sensor->getObjectID() == 126) {
-		Group *group = (Group *)_currentArea->objectWithID(191);
-		if (!group->isDestroyed() && !group->isInvisible()) {
-			group->_active = true;
-		} else
-			return;
-	} else if (sensor->getObjectID() == 197) {
-		Group *group = (Group *)_currentArea->objectWithID(182);
-		if (!group->isDestroyed() && !group->isInvisible()) {
-			group->_active = true;
-		} else
-			return;
+		} else if (sensor->getObjectID() == 126) {
+			Group *group = (Group *)_currentArea->objectWithID(191);
+			if (!group->isDestroyed() && !group->isInvisible()) {
+				group->_active = true;
+			} else
+				return;
+		} else if (sensor->getObjectID() == 197) {
+			Group *group = (Group *)_currentArea->objectWithID(182);
+			if (!group->isDestroyed() && !group->isInvisible()) {
+				group->_active = true;
+			} else
+				return;
+		}
 	}
 
 	/*int firingInterval = 10; // This is fixed for all the ghosts?

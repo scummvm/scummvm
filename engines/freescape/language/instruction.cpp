@@ -552,7 +552,18 @@ void FreescapeEngine::executeMakeVisible(FCLInstruction &instruction) {
 		Object *obj = _areaMap[areaID]->objectWithID(objectID);
 		if (!obj && isCastle())
 			return; // No side effects
-		assert(obj); // We assume an object should be there
+
+		if (!obj) {
+			obj = _areaMap[255]->objectWithID(objectID);
+			if (!obj) {
+				error("obj %d does not exists in area %d nor in the global one!", objectID, areaID);
+				return;
+			}
+			_currentArea->addObjectFromArea(objectID, _areaMap[255]);
+			obj = _areaMap[areaID]->objectWithID(objectID);
+			assert(obj); // We know that an object should be there
+		}
+
 		obj->makeVisible();
 		if (!isDriller()) {
 			Math::AABB boundingBox = createPlayerAABB(_position, _playerHeight);

@@ -124,7 +124,7 @@ void CastleEngine::loadAssetsZXFullGame() {
 			it._value->addObjectFromArea(id, _areaMap[255]);
 		}
 	}
-
+	addGhosts();
 	_areaMap[1]->addFloor();
 	_areaMap[2]->addFloor();
 }
