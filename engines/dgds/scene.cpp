@@ -1723,15 +1723,16 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	const Globals *globals = engine->getGameGlobals();
+	GDSScene *gdsScene = engine->getGDSScene();
 
 	runOps(dragItem->onDragFinishedOps, globals->getGameMinsToAddOnDragFinished());
 
 	// TODO: Both these loops are very similar.. there should be a cleaner way.
 
-	for (const auto &item : engine->getGDSScene()->getGameItems()) {
+	for (const auto &item : gdsScene->getGameItems()) {
 		if (item._inSceneNum == _num && _isInRect(pt, item._rect)) {
 			debug("Dragged item %d onto item %d @ (%d, %d)", dragItem->_num, item._num, pt.x, pt.y);
-			for (const auto &i : engine->getGDSScene()->getObjInteractions2()) {
+			for (const auto &i : gdsScene->getObjInteractions2()) {
 				if (i.matches(dragItem->_num, item._num)) {
 					debug(" --> exec %d drag ops for item %d", i.opList.size(), item._num);
 					if (!runOps(i.opList, globals->getGameMinsToAddOnObjInteraction()))
@@ -1752,13 +1753,18 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 			if (engine->getGameId() == GID_HOC) {
 				// FIXME: This is copied in inventory too
 				static const byte HOC_CHARACTER_QUALS[] = {0, 9, 7, 8};
-				dragItem->_quality = HOC_CHARACTER_QUALS[engine->getGDSScene()->getGlobal(0x33)];
+				dragItem->_quality = HOC_CHARACTER_QUALS[gdsScene->getGlobal(0x33)];
 			}
 		} else {
 			debug("Dragged item %d onto area %d @ (%d, %d)", dragItem->_num, area._num, pt.x, pt.y);
 			for (const auto &i : engine->getScene()->getObjInteractions1()) {
 				if (i.matches(dragItem->_num, area._num)) {
 					debug(" --> exec %d drag ops for area %d", i.opList.size(), area._num);
+					if (engine->getGameId() == GID_HOC && dragItem->_num == 98 && area._num == 25 && gdsScene->getGlobal(355) == 0) {
+						// FIXME: Why is that not executed by the runOps() call below?
+						warning("HACK for giving money to the ticket agent");
+						gdsScene->setGlobal(355, 1);
+					}
 					if (!runOps(i.opList, globals->getGameMinsToAddOnObjInteraction()))
 						return;
 					break;
