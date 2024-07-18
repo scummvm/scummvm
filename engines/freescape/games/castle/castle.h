@@ -27,8 +27,11 @@ public:
 	~CastleEngine();
 
 	Graphics::ManagedSurface *_option;
+	Graphics::Surface *_menu;
 	void initGameState() override;
 	void endGame() override;
+
+	void drawInfoMenu() override;
 	void loadAssetsDOSFullGame() override;
 	void loadAssetsDOSDemo() override;
 	void loadAssetsAmigaDemo() override;
