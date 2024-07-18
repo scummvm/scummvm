@@ -109,10 +109,6 @@ struct ScriptPosition {
 	int32_t         Line;
 };
 
-
-struct ccInstance;
-typedef std::shared_ptr<ccInstance> PInstance;
-
 // Running instance of the script
 struct ccInstance {
 public:
@@ -165,14 +161,14 @@ public:
 	// when destroying all script instances, e.g. on game quit.
 	static void FreeInstanceStack();
 	// create a runnable instance of the supplied script
-	static PInstance CreateFromScript(PScript script);
-	static PInstance CreateEx(PScript scri, ccInstance *joined);
+	static ccInstance *CreateFromScript(PScript script);
+	static ccInstance *CreateEx(PScript scri, ccInstance *joined);
 	static void SetExecTimeout(unsigned sys_poll_ms, unsigned abort_ms, unsigned abort_loops);
 
 	ccInstance();
 	~ccInstance();
 	// Create a runnable instance of the same script, sharing global memory
-	PInstance Fork();
+	ccInstance *Fork();
 	// Specifies that when the current function returns to the script, it
 	// will stop and return from CallInstance
 	void    Abort();
