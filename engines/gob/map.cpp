@@ -342,7 +342,7 @@ Direction Map::getDirection(int16 x0, int16 y0, int16 x1, int16 y1) {
 		return kDirNone;
 	}
 
-	warning("Map::getDirection(): Invalid direction?!?");
+	warning("Map::getDirection(): Invalid direction?");
 	return kDirNone;
 }
 
