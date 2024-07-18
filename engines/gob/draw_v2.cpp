@@ -95,7 +95,7 @@ void Draw_v2::animateCursor(int16 cursor) {
 
 	_showCursor |= 1;
 
-	// .-- _draw_animateCursorSUB1 ---
+	// --- _draw_animateCursorSUB1 ---
 	if (cursorIndex == -1) {
 		cursorIndex =
 			_vm->_game->_hotspots->findCursor(_vm->_global->_inter_mouseX,
@@ -104,10 +104,10 @@ void Draw_v2::animateCursor(int16 cursor) {
 		if (_cursorAnimLow[cursorIndex] == -1)
 			cursorIndex = 1;
 	}
-	// '------
+	// -------
 
 	if (_cursorAnimLow[cursorIndex] != -1) {
-		// .-- _draw_animateCursorSUB2 ---
+		// --- _draw_animateCursorSUB2 ---
 		if (cursorIndex == _cursorIndex) {
 			if ((_cursorAnimDelays[_cursorIndex] != 0) &&
 					((_cursorTimeKey + (_cursorAnimDelays[_cursorIndex] * 10)) <=
@@ -139,7 +139,7 @@ void Draw_v2::animateCursor(int16 cursor) {
 
 			cursorIndex = _cursorAnim;
 		}
-		// '------
+		// -------
 
 		hotspotX = 0;
 		hotspotY = 0;
