@@ -760,14 +760,19 @@ void RequestData::drawBackgroundWithSliderArea(Graphics::ManagedSurface *dst, in
 void RequestData::drawBackgroundNoSliders(Graphics::ManagedSurface *dst, const Common::String &header) const {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	DgdsGameId gameId = engine->getGameId();
+
+	if (_rect.width == 0 || _rect.height == 0) {
+		warning("drawBackgroundNoSliders: empty rect");
+		return;
+	}
+
 	if (gameId != GID_WILLY)
 		fillBackground(dst, _rect.x, _rect.y, _rect.width, _rect.height, 0);
 	else
 		fillBackground(dst, _rect.x + 5, _rect.y + 5, _rect.width - 10, _rect.height - 10, 0);
 	uint16 cornerOffset = (gameId == GID_DRAGON ? 11 : (gameId == GID_HOC ? 1 : 0));
 	drawCorners(dst, cornerOffset, _rect.x, _rect.y, _rect.width, _rect.height);
-	drawHeader(dst, _rect.x, _rect.y, _rect.width, 4, header, 0,
-		engine->getGameId() == GID_DRAGON);
+	drawHeader(dst, _rect.x, _rect.y, _rect.width, 4, header, 0, gameId == GID_DRAGON);
 }
 
 /*static*/
