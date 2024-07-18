@@ -95,7 +95,6 @@ static const int kTextAreaLeft   =   9;
 static const int kTextAreaTop    =   7;
 static const int kTextAreaRight  = 104;
 static const int kTextAreaBottom = 107;
-
 static const int kTextAreaBigBottom = 142;
 
 const byte Penetration::kPalettes[kFloorCount][3 * kPaletteSize] = {
