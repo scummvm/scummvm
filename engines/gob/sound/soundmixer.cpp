@@ -178,7 +178,7 @@ int SoundMixer::readBuffer(int16 *buffer, const int numSamples) {
 		if (_end)
 			return i;
 
-		// Linear interpolation. See sound/rate.cpp
+		// Linear interpolation. See audio/rate.cpp
 
 		int16 val = (_last + (((_cur - _last) * _offsetFrac +
 					FRAC_HALF) >> FRAC_BITS)) << (_16bit ? 0 : 8);
