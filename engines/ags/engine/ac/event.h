@@ -39,6 +39,7 @@ namespace AGS3 {
 #define GE_RESTORE_GAME  9
 #define GE_ENTER_ROOM_AFTERFADE 10
 #define GE_LEAVE_ROOM_AFTERFADE 11
+#define GE_SAVE_GAME     12
 
 // Game event types:
 // common script callback
