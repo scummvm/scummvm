@@ -22,6 +22,7 @@
 #ifndef AGS_ENGINE_SCRIPT_SCRIPT_H
 #define AGS_ENGINE_SCRIPT_SCRIPT_H
 
+#include "common/std/memory.h"
 #include "common/std/vector.h"
 
 #include "ags/engine/script/cc_instance.h"
@@ -49,12 +50,12 @@ int     run_interaction_script(InteractionScripts *nint, int evnt, int chkAny = 
 int     create_global_script();
 void    cancel_all_scripts();
 
-ccInstance *GetScriptInstanceByType(ScriptInstType sc_inst);
+PInstance GetScriptInstanceByType(ScriptInstType sc_inst);
 // Queues a script function to be run either called by the engine or from another script
 void    QueueScriptFunction(ScriptInstType sc_inst, const char *fn_name, size_t param_count = 0,
 	const RuntimeScriptValue *params = nullptr);
 // Try to run a script function on a given script instance
-int     RunScriptFunction(ccInstance *sci, const char *tsname, size_t param_count = 0,
+int     RunScriptFunction(PInstance sci, const char *tsname, size_t param_count = 0,
 	const RuntimeScriptValue *params = nullptr);
 // Run a script function in all the regular script modules, in order, where available
 // includes globalscript, but not the current room script.
@@ -67,6 +68,16 @@ int     RunScriptFunctionInRoom(const char *tsname, size_t param_count = 0,
 // depending on the type may run a claimable callback chain
 int     RunScriptFunctionAuto(ScriptInstType sc_inst, const char *fn_name, size_t param_count = 0,
 	const RuntimeScriptValue *params = nullptr);
+
+// Preallocates script module instances
+void	AllocScriptModules();
+// Delete all the script instance objects
+void	FreeAllScriptInstances();
+// Delete only the current room script instance
+void	FreeRoomScriptInstance();
+// Deletes all the global scripts and modules;
+// this frees all of the bytecode and runtime script memory.
+void	FreeGlobalScripts();
 
 AGS::Shared::String GetScriptName(ccInstance *sci);
 
