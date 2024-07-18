@@ -23,6 +23,7 @@
 #define AGS_ENGINE_AC_GAME_STATE_H
 
 #include "common/std/memory.h"
+#include "common/std/unordered_set.h"
 #include "common/std/vector.h"
 #include "ags/shared/ac/character_info.h"
 #include "ags/shared/ac/keycode.h"
@@ -229,7 +230,7 @@ struct GameState {
 	short temporarily_turned_off_character = 0;  // Hide Player Charactr ticked
 	short inv_backwards_compatibility = 0;  // tells to use legacy inv_* variables
 	std::vector<int> gui_draw_order; // used only for hit detection now
-	std::vector<AGS::Shared::String> do_once_tokens;
+	std::unordered_set<AGS::Shared::String> do_once_tokens;
 	int   text_min_display_time_ms = 0;
 	int   ignore_user_input_after_text_timeout_ms = 0;
 	int32_t default_audio_type_volumes[MAX_AUDIO_TYPES];

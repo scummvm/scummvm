@@ -104,6 +104,7 @@ RestoredData::ScriptData::ScriptData()
 
 RestoredData::RestoredData()
 	: FPS(0)
+	, DoOnceCount(0u)
 	, RoomVolume(kRoomVolumeNormal)
 	, CursorID(0)
 	, CursorMode(0) {

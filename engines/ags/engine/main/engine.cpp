@@ -651,7 +651,6 @@ void engine_init_game_settings() {
 	_GP(play).temporarily_turned_off_character = -1;
 	_GP(play).inv_backwards_compatibility = 0;
 	_GP(play).gamma_adjustment = 100;
-	_GP(play).do_once_tokens.resize(0);
 	_GP(play).music_queue_size = 0;
 	_GP(play).shakesc_length = 0;
 	_GP(play).wait_counter = 0;

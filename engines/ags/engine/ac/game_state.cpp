@@ -617,11 +617,10 @@ void GameState::ReadFromSavegame(Shared::Stream *in, GameDataVersion data_ver, G
 		in->ReadInt32(); // gui_draw_order
 		in->ReadInt32(); // do_once_tokens;
 	}
-	int num_do_once_tokens = in->ReadInt32();
-	do_once_tokens.resize(num_do_once_tokens);
+	r_data.DoOnceCount = static_cast<uint32_t>(in->ReadInt32());
 	if (!old_save) {
-		for (int i = 0; i < num_do_once_tokens; ++i) {
-			StrUtil::ReadString(do_once_tokens[i], in);
+		for (size_t i = 0; i < r_data.DoOnceCount; ++i) {
+			do_once_tokens.insert(StrUtil::ReadString(in));
 		}
 	}
 	text_min_display_time_ms = in->ReadInt32();
@@ -805,9 +804,9 @@ void GameState::WriteForSavegame(Shared::Stream *out) const {
 	out->WriteInt32(gamma_adjustment);
 	out->WriteInt16(temporarily_turned_off_character);
 	out->WriteInt16(inv_backwards_compatibility);
-	out->WriteInt32(do_once_tokens.size());
-	for (int i = 0; i < (int)do_once_tokens.size(); ++i) {
-		StrUtil::WriteString(do_once_tokens[i], out);
+	out->WriteInt32(static_cast<uint32_t>(do_once_tokens.size()));
+	for (const auto &token : do_once_tokens) {
+		StrUtil::WriteString(token, out);
 	}
 	out->WriteInt32(text_min_display_time_ms);
 	out->WriteInt32(ignore_user_input_after_text_timeout_ms);
