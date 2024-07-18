@@ -1702,6 +1702,15 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 			addInvButtonToHotAreaList();
 	} else {
 		debug(" --> exec %d click ops for area %d", area->onLClickOps.size(), area->_num);
+		if ((area->_num == 58 || area->_num == 62) && engine->getScene()->getNum() == 53 && engine->getGameId() == GID_HOC) {
+			// FIXME: Handle gun (crosshair icon, action on snakes)
+			warning("HACK for the snake scene");
+			GDSScene *gds = engine->getGDSScene();
+			gds->setGlobal(126, 1);		// kill left snake
+			gds->setGlobal(132, 1);		// kill right snake
+			gds->setGlobal(110, 86);	// save Kate and open balcony door
+			return;
+		}
 		int16 addmins = engine->getGameGlobals()->getGameMinsToAddOnLClick();
 		runOps(area->onLClickOps, addmins);
 	}
