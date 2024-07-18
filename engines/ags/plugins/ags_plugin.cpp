@@ -601,18 +601,16 @@ int IAGSEngine::IsSpriteAlphaBlended(int32 slot) {
 void IAGSEngine::DisableSound() {
 	shutdown_sound();
 }
-
 int IAGSEngine::CanRunScriptFunctionNow() {
 	if (_G(inside_script))
 		return 0;
 	return 1;
 }
-
 int IAGSEngine::CallGameScriptFunction(const char *name, int32 globalScript, int32 numArgs, long arg1, long arg2, long arg3) {
 	if (_G(inside_script))
 		return -300;
 
-	ccInstance *toRun = GetScriptInstanceByType(globalScript ? kScInstGame : kScInstRoom);
+	PInstance toRun = GetScriptInstanceByType(globalScript ? kScInstGame : kScInstRoom);
 
 	RuntimeScriptValue params[]{
 		   RuntimeScriptValue().SetPluginArgument(arg1),
