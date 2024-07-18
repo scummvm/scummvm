@@ -623,14 +623,10 @@ void draw_button_background(Bitmap *ds, int xx1, int yy1, int xx2, int yy2, GUIM
 		ds->FillRect(Rect(xx1, yy1, xx2, yy2), draw_color);
 		draw_color = ds->GetCompatibleColor(16);
 		ds->DrawRect(Rect(xx1, yy1, xx2, yy2), draw_color);
-		/*    draw_color = ds->GetCompatibleColor(opts.tws.backcol); ds->FillRect(Rect(xx1,yy1,xx2,yy2);
-		draw_color = ds->GetCompatibleColor(opts.tws.ds->GetTextColor()); ds->DrawRect(Rect(xx1+1,yy1+1,xx2-1,yy2-1);*/
 	} else {
-		if (_G(loaded_game_file_version) < kGameVersion_262) { // < 2.62
-			// Color 0 wrongly shows as transparent instead of black
-			// From the changelog of 2.62:
-			//  - Fixed text windows getting a black background if colour 0 was
-			//    specified, rather than being transparent.
+		if (_G(loaded_game_file_version) < kGameVersion_262) {
+			// In pre-2.62 color 0 should be treated as "black" instead of "transparent";
+			// this was an unintended effect in older versions (see 2.62 changelog fixes).
 			if (iep->BgColor == 0)
 				iep->BgColor = 16;
 		}
@@ -645,12 +641,7 @@ void draw_button_background(Bitmap *ds, int xx1, int yy1, int xx2, int yy2, GUIM
 		const int topBottomHeight = _GP(game).SpriteInfos[get_but_pic(iep, 6)].Height;
 		// GUI middle space
 		if (iep->BgImage > 0) {
-			if ((_G(loaded_game_file_version) <= kGameVersion_272) // 2.xx
-			        && (_GP(spriteset)[iep->BgImage]->GetWidth() == 1)
-			        && (_GP(spriteset)[iep->BgImage]->GetHeight() == 1)
-			        && (*((const unsigned int *)_GP(spriteset)[iep->BgImage]->GetData()) == 0x00FF00FF)) {
-				// Don't draw fully transparent dummy GUI backgrounds
-			} else {
+			{
 				// offset the background image and clip it so that it is drawn
 				// such that the border graphics can have a transparent outside
 				// edge
