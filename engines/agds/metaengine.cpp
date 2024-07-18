@@ -23,10 +23,11 @@
 #include "agds/object.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "engines/advancedDetector.h"
 
 namespace AGDS {
 
-class AGDSMetaEngine : public AdvancedMetaEngine {
+class AGDSMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
@@ -47,7 +48,7 @@ public:
 		return 24;
 	}
 
-	SaveStateList listSaves(const char *target) const {
+	SaveStateList listSaves(const char *target) const override {
 		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 		Common::StringArray filenames;
 		Common::String pattern(getSavegameFilePattern(target));
