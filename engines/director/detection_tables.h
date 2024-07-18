@@ -143,6 +143,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "egplayground",		"eGames Galaxy of Games: Playground" },
 	{ "egsnowboard",		"eGames Galaxy of Games: Snowboard Sheri" },
 	{ "egwendy",			"eGames Galaxy of Games: Wendi's Word Game" },
+	{ "electro",			"Jumbo Electro" },
 	{ "elmopreschool",		"Elmo's Preschool" },
 	{ "elroybug",			"Elroy Goes Bugzerk" },
 	{ "elroycostume",		"Elroy's Costume Closet" },
@@ -966,6 +967,7 @@ static const PlainGameDescriptor directorGames[] = {
 
 	// Hebrew titles
 	{ "petel",				"מיץ פטל" },
+	{ "harating",			"בתככי הרייטינג" },  // BeTchachey HaRating - TV Ratings Intrigue
 
 	// Italian titles
 	{ "fuzzyfloppy2",		"Fuzzy e Floppy: Il Furto Della Rotonda" },
@@ -6489,6 +6491,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("gussshc", "", "Write On", "9e9309ff1b58f6b56a440893e9723bd6", 705585, 500),
 	WINGAME1("gussshc", "", "SCHOOL.EXE", "2e62abdad839e42068afdcd0644d7dcf", 917645, 500),
 
+	// Developed by Guillotine, published by Hed Arzi Multimedia
+	WINGAME1_l("harating", "", "EGOZ95.EXE", "t:5f4579c128fb5d75c696d0e2dd982aae", 1393991, Common::HE_ISR, 500),
+
 	// Sourced from Dimension Q disc
 	MACGAME1("headbone", "Sampler 2", "Sampler 2",	 "35dbf55e70f69e00ca016e3663379970", 705671, 500),
 	WINGAME2("headbone", "Sampler 2", "SAMPLER.EXE", "c3c38bd3907ca7e13220b74bd0317a6c", 1019877,
@@ -8267,6 +8272,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME2("easports2000", "", "PC.EXE",	  "c1a2e8b7e41fa204009324a9c7db1030", 2212134,
 								 "INTRO.DXR", "209cd844f714140413eb58c3a69db454", 5179191, 700),
+
+	// PC "conversion" of the Jumbo Electro educational toys
+	// Multilanguage En-Fr-De-Nl
+	// Requires proprietary light pen
+	WINGAME1("electro", "", "Electro.exe", "t:df787ac8bdec095a5d45976ce1568d6d", 174066, 702),
 
 	WINGAME1t("elfascd", "", "Inledning.exe", "f8b837454677411e751f7a774f1bec14", 2427558, 700),
 
