@@ -57,7 +57,7 @@ void Init_v7::initGame() {
 	for (const Common::FSNode &subdirNode : subdirs) {
 		Common::FSDirectory subdir(subdirNode);
 		if (subdir.hasFile("intro_ap.stk")) {
-			debugC(1, kDebugFileIO, "Found Adibou/Adi application subdirectory \"%s\", adding it to the search path", subdir.getFSNode().getName().c_str());
+			debugC(1, kDebugFileIO, "Found Adi/Adibou application subdirectory \"%s\", adding it to the search path", subdir.getFSNode().getName().c_str());
 			SearchMan.addSubDirectoryMatching(gameDataDir, subdir.getFSNode().getName(), 0, 4, true);
 		}
 	}
