@@ -427,9 +427,9 @@ void unload_game() {
 	resetRoomStatuses();
 	_GP(thisroom).Free();
 
-	// free game struct last because it contains object counts
-	_GP(game).Free();
-	_GP(play).Free();
+	// Free game state and game struct
+	_GP(play) = GameState();
+	_GP(game) = GameSetupStruct();
 
 	// Reset all resource caches
 	// IMPORTANT: this is hard reset, including locked items
