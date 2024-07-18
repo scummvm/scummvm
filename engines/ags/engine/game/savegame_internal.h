@@ -81,6 +81,8 @@ struct RestoredData {
 	};
 	ScriptData              GlobalScript;
 	std::vector<ScriptData> ScriptModules;
+	// Game state data (loaded ahead)
+	uint32_t				DoOnceCount;
 	// Room data (has to be be preserved until room is loaded)
 	PBitmap                 RoomBkgScene[MAX_ROOM_BGFRAMES];
 	int16_t                 RoomLightLevels[MAX_ROOM_REGIONS];
