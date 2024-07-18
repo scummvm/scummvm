@@ -152,7 +152,7 @@ void Draw_v7::animateCursor(int16 cursor) {
 
 	_showCursor |= 1;
 
-	// .-- _draw_animateCursorSUB1 ---
+	// --- _draw_animateCursorSUB1 ---
 	if (cursorIndex == -1) {
 		cursorIndex =
 			_vm->_game->_hotspots->findCursor(_vm->_global->_inter_mouseX,
@@ -161,7 +161,7 @@ void Draw_v7::animateCursor(int16 cursor) {
 		if (_cursorAnimLow[cursorIndex] == -1)
 			cursorIndex = 1;
 	}
-	// '------
+	// -------
 
 	if (_cursorAnimLow[cursorIndex] != -1) {
 		// --- Advance cursor animation
@@ -197,7 +197,7 @@ void Draw_v7::animateCursor(int16 cursor) {
 
 			cursorIndex = _cursorAnim;
 		}
-		// '------
+		// -------
 
 		if (cursorIndex == -1)
 			return;
