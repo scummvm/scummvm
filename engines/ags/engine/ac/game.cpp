@@ -541,6 +541,10 @@ int Game_DoOnceOnly(const char *token) {
 	return 1;
 }
 
+void Game_ResetDoOnceOnly() {
+	free_do_once_tokens();
+}
+
 int Game_GetTextReadingSpeed() {
 	return _GP(play).text_speed;
 }
@@ -1480,6 +1484,10 @@ RuntimeScriptValue Sc_Game_DoOnceOnly(const RuntimeScriptValue *params, int32_t 
 	API_SCALL_INT_POBJ(Game_DoOnceOnly, const char);
 }
 
+RuntimeScriptValue Sc_Game_ResetDoOnceOnly(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_VOID(Game_ResetDoOnceOnly);
+}
+
 // int (int red, int grn, int blu)
 RuntimeScriptValue Sc_Game_GetColorFromRGB(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT_PINT3(Game_GetColorFromRGB);
@@ -1738,6 +1746,7 @@ void RegisterGameAPI() {
 	ccAddExternalStaticFunction("Game::InputBox^1",                             Sc_Game_InputBox);
 	ccAddExternalStaticFunction("Game::SetSaveGameDirectory^1",                 Sc_Game_SetSaveGameDirectory);
 	ccAddExternalStaticFunction("Game::StopSound^1",                            Sc_StopAllSounds);
+	ccAddExternalStaticFunction("Game::ResetDoOnceOnly",                        Sc_Game_ResetDoOnceOnly);
 	ccAddExternalStaticFunction("Game::get_CharacterCount",                     Sc_Game_GetCharacterCount);
 	ccAddExternalStaticFunction("Game::get_DialogCount",                        Sc_Game_GetDialogCount);
 	ccAddExternalStaticFunction("Game::get_FileName",                           Sc_Game_GetFileName);
