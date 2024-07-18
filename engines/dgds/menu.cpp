@@ -34,6 +34,7 @@
 #include "dgds/menu.h"
 #include "dgds/music.h"
 #include "dgds/request.h"
+#include "dgds/scene.h"
 #include "dgds/sound.h"
 
 namespace Dgds {
@@ -114,9 +115,9 @@ enum MenuButtonIds {
 	kMenuGameOverRestart = 168,
 	kMenuGameOverRestore = 170,
 
-	// Tank menu in Heart of China
-	kMenuTankSkipArcade = 153,
-	kMenuTankPlayArcade = 154,
+	// Tank/train menu in Heart of China
+	kMenuTankTrainSkipArcade = 153,
+	kMenuTankTrainPlayArcade = 154,
 };
 
 Menu::Menu() : _curMenu(kMenuNone), _dragGadget(nullptr), _selectedItem(0), _numSelectable(0) {
@@ -369,6 +370,7 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 
 void Menu::handleClick(const Common::Point &mouse) {
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	int currentScene = engine->getScene()->getNum();
 	Gadget *gadget = getClickedMenuItem(mouse);
 	int16 clickedMenuItem = gadget->_gadgetNo;
 
@@ -493,13 +495,19 @@ void Menu::handleClick(const Common::Point &mouse) {
 		drawMenu(_curMenu);
 		break;
 	}
-	case kMenuTankSkipArcade:
+	case kMenuTankTrainSkipArcade:
 		hideMenu();
-		engine->changeScene(12);
+		if (currentScene == 73)
+			engine->changeScene(12);	// skip tank mini-game
+		else if (currentScene == 84)
+			engine->changeScene(106);	// skip train mini-game
 		break;
-	case kMenuTankPlayArcade:
+	case kMenuTankTrainPlayArcade:
 		// TODO
-		warning("Play tank mini-game");
+		if (currentScene == 73)
+			warning("Play tank mini-game");
+		else if (currentScene == 84)
+			warning("Play train mini-game");
 		drawMenu(_curMenu);
 		break;
 	default:

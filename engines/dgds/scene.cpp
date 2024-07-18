@@ -756,6 +756,7 @@ bool Scene::runChinaOp(const SceneOp &op) {
 		engine->setMenuToTrigger(kMenuSkipPlayIntro);
 		break;
 	case kSceneOpOpenChinaTankMenu:
+	case kSceneOpOpenChinaTrainMenu:
 		engine->setMenuToTrigger(kMenuSkipArcade);
 		break;
 	case kSceneOpShellGame:
