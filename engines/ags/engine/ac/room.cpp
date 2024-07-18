@@ -265,7 +265,10 @@ void unload_old_room() {
 	if (_G(croom) == nullptr) ;
 	else if (_G(roominst) != nullptr) {
 		save_room_data_segment();
-		FreeRoomScriptInstance();
+		delete _G(roominstFork);
+		delete _G(roominst);
+		_G(roominstFork) = nullptr;
+		_G(roominst) = nullptr;
 	} else _G(croom)->tsdatasize = 0;
 	memset(&_GP(play).walkable_areas_on[0], 1, MAX_WALK_AREAS + 1);
 	_GP(play).bg_frame = 0;
