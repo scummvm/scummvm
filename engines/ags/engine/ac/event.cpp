@@ -30,6 +30,7 @@
 #include "ags/engine/ac/gui.h"
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/screen.h"
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/main/game_run.h"
 #include "ags/shared/script/cc_common.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
@@ -193,6 +194,7 @@ void process_event(const EventHappened *evp) {
 		if ((evp->data1 == EVB_ROOM) && (evp->data3 == EVROM_BEFOREFADEIN))
 			_G(in_enters_screen)--;
 	} else if (evp->type == EV_FADEIN) {
+		debug_script_log("Transition-in in room %d", _G(displayed_room));
 		// if they change the transition type before the fadein, make
 		// sure the screen doesn't freeze up
 		_GP(play).screen_is_faded_out = 0;

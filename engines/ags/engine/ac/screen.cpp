@@ -28,6 +28,7 @@
 #include "ags/engine/ac/screen.h"
 #include "ags/engine/ac/dynobj/script_viewport.h"
 #include "ags/engine/ac/dynobj/script_user_object.h"
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/plugins/ags_plugin.h"
@@ -56,6 +57,7 @@ void fadein_impl(PALETTE p, int speed) {
 }
 
 void current_fade_out_effect() {
+	debug_script_log("Transition-out in room %d", _G(displayed_room));
 	if (pl_run_plugin_hooks(AGSE_TRANSITIONOUT, 0))
 		return;
 

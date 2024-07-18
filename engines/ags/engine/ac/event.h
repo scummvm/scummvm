@@ -38,6 +38,7 @@ namespace AGS3 {
 #define GE_LOSE_INV      8
 #define GE_RESTORE_GAME  9
 #define GE_ENTER_ROOM_AFTERFADE 10
+#define GE_LEAVE_ROOM_AFTERFADE 11
 
 // Game event types:
 // common script callback
@@ -80,6 +81,10 @@ namespace AGS3 {
 #define EVROM_REPEXEC      6
 // after fade-in
 #define EVROM_AFTERFADEIN  7
+// leave room (before fade-out)
+#define EVROM_LEAVE        8
+// unload room; aka after fade-out
+#define EVROM_AFTERFADEOUT 9
 // Hotspot event types:
 // player stands on hotspot
 #define EVHOT_STANDSON  0
