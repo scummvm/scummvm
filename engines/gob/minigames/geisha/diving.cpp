@@ -72,9 +72,9 @@ enum Animation {
 	kAnimationPearl         =  4,
 	kAnimationJellyfish     =  6,
 	kAnimationWater         =  7,
-	kAnimationShot          = 17,
-	kAnimationSwarmRedGreen = 32,
-	kAnimationSwarmOrange   = 33
+	kAnimationShot          =  17,
+	kAnimationSwarmRedGreen =  32,
+	kAnimationSwarmOrange   =  33
 };
 
 
