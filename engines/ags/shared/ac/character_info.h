@@ -39,6 +39,7 @@ class Stream;
 using namespace AGS; // FIXME later
 
 #define MAX_INV             301
+// Character flags
 #define CHF_MANUALSCALING   1
 #define CHF_FIXVIEW         2     // between SetCharView and ReleaseCharView
 #define CHF_NOINTERACT      4
@@ -58,6 +59,7 @@ using namespace AGS; // FIXME later
 #define CHF_MOVENOTWALK     0x10000   // engine only - do not do walk anim
 #define CHF_ANTIGLIDE       0x20000
 #define CHF_HASLIGHT        0x40000
+#define CHF_TINTLIGHTMASK   (CHF_NOLIGHTING | CHF_HASTINT | CHF_HASLIGHT)
 // Speechcol is no longer part of the flags as of v2.5
 #define OCHF_SPEECHCOL      0xff000000
 #define OCHF_SPEECHCOLSHIFT 24
@@ -76,10 +78,11 @@ inline int CharFlagsToObjFlags(int chflags) {
 	return FlagToFlag(chflags, CHF_NOINTERACT, OBJF_NOINTERACT) |
 		   FlagToFlag(chflags, CHF_NOWALKBEHINDS, OBJF_NOWALKBEHINDS) |
 		   FlagToFlag(chflags, CHF_HASTINT, OBJF_HASTINT) |
-		   FlagToFlag(NegateFlag(chflags, CHF_NOLIGHTING), CHF_NOLIGHTING, OBJF_USEREGIONTINTS) |
-		   FlagToFlag(NegateFlag(chflags, CHF_MANUALSCALING), CHF_MANUALSCALING, OBJF_USEROOMSCALING) |
-		   FlagToFlag(NegateFlag(chflags, CHF_NOBLOCKING), CHF_NOBLOCKING, OBJF_SOLID) |
-		   FlagToFlag(chflags, CHF_HASLIGHT, OBJF_HASLIGHT);
+		   FlagToFlag(chflags, CHF_HASLIGHT, OBJF_HASLIGHT) |
+		   // following flags are inverse
+		   FlagToNoFlag(chflags, CHF_NOLIGHTING, OBJF_USEREGIONTINTS) |
+		   FlagToNoFlag(chflags, CHF_MANUALSCALING, OBJF_USEROOMSCALING) |
+		   FlagToNoFlag(chflags, CHF_NOBLOCKING, OBJF_SOLID);
 }
 
 // Length of deprecated character name field, in bytes

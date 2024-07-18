@@ -54,21 +54,15 @@ enum DataEndianess {
 //
 // Various bit flags operations
 //
-// Negates only the given bit flags in the value
-inline int NegateFlag(int value, int flag) {
-	return value & (~flag);
-}
-// Converts a bit flag value into the lowest bit (1 or 0)
-inline int FlagToOne(int value, int flag) {
-	return ((value & flag) >> flag);
-}
-// Converts a lowest bit (1 or 0) into a bit flag value
-inline int OneToFlag(int value, int flag) {
-	return ((value & 0x1) << flag);
-}
-// Converts from one flag into another
+// Converts from one flag into another:
+// sets flag2 if flag1 IS set
+// TODO: find more optimal way, using bitwise ops?
 inline int FlagToFlag(int value, int flag1, int flag2) {
-	return OneToFlag(FlagToOne(value, flag1), flag2);
+	return ((value & flag1) != 0) * flag2;
+}
+// Sets flag2 if flag1 is NOT set
+inline int FlagToNoFlag(int value, int flag1, int flag2) {
+	return ((value & flag1) == 0) * flag2;
 }
 
 
