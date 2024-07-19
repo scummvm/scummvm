@@ -1181,6 +1181,7 @@ public:
 	 */
 
 	std::vector<ScreenOverlay> *_screenover;
+	std::vector<int> *_overlookup;
 	int _is_complete_overlay = 0;
 
 	/**@}*/
