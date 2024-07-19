@@ -319,9 +319,10 @@ static void restore_game_ambientsounds(Stream *in, RestoredData &r_data) {
 static void ReadOverlays_Aligned(Stream *in, std::vector<bool> &has_bitmap, size_t num_overs) {
 	AlignedStream align_s(in, Shared::kAligned_Read);
 	has_bitmap.resize(num_overs);
+	auto &overs = get_overlays();
 	for (size_t i = 0; i < num_overs; ++i) {
 		bool has_bm;
-		_GP(screenover)[i].ReadFromFile(&align_s, has_bm, 0);
+		overs[i].ReadFromFile(&align_s, has_bm, 0);
 		has_bitmap[i] = has_bm;
 		align_s.Reset();
 	}
@@ -329,12 +330,13 @@ static void ReadOverlays_Aligned(Stream *in, std::vector<bool> &has_bitmap, size
 
 static void restore_game_overlays(Stream *in) {
 	size_t num_overs = in->ReadInt32();
-	_GP(screenover).resize(num_overs);
+	auto &overs = get_overlays();
+	overs.resize(num_overs);
 	std::vector<bool> has_bitmap;
 	ReadOverlays_Aligned(in, has_bitmap, num_overs);
 	for (size_t i = 0; i < num_overs; ++i) {
 		if (has_bitmap[i])
-			_GP(screenover)[i].SetImage(read_serialized_bitmap(in), _GP(screenover)[i].offsetX, _GP(screenover)[i].offsetY);
+			overs[i].SetImage(read_serialized_bitmap(in), overs[i].offsetX, overs[i].offsetY);
 	}
 }
 

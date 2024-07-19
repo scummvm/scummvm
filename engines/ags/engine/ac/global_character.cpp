@@ -531,19 +531,20 @@ void DisplaySpeechAt(int xx, int yy, int wii, int aschar, const char *spch) {
 
 int DisplaySpeechBackground(int charid, const char *speel) {
 	// remove any previous background speech for this character
-	for (size_t i = 0; i < _GP(screenover).size();) {
-		if (_GP(screenover)[i].bgSpeechForChar == charid)
+	const auto &overs = get_overlays();
+	for (size_t i = 0; i < overs.size(); ++i) {
+		if (overs[i].bgSpeechForChar == charid) {
 			remove_screen_overlay_index(i);
-		else
-			i++;
+			break;
+		}
 	}
 
 	int ovrl = CreateTextOverlay(OVR_AUTOPLACE, charid, _GP(play).GetUIViewport().GetWidth() / 2, FONT_SPEECH,
 	                             -_GP(game).chars[charid].talkcolor, get_translation(speel), DISPLAYTEXT_NORMALOVERLAY);
 
-	int scid = find_overlay_of_type(ovrl);
-	_GP(screenover)[scid].bgSpeechForChar = charid;
-	_GP(screenover)[scid].timeout = GetTextDisplayTime(speel, 1);
+	auto *over = find_overlay_of_type(ovrl);
+	over->bgSpeechForChar = charid;
+	over->timeout = GetTextDisplayTime(speel, 1);
 	return ovrl;
 }
 
