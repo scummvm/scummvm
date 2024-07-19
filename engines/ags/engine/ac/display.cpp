@@ -276,11 +276,12 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 	}
 
 	size_t nse = add_screen_overlay(roomlayer, xx, yy, ovrtype, text_window_ds, adjustedXX - xx, adjustedYY - yy, alphaChannel);
+	auto &over = get_overlay(nse); // FIXME: optimize return value
 	// we should not delete text_window_ds here, because it is now owned by Overlay
 
 	// If it's a non-blocking overlay type, then we're done here
 	if (disp_type >= DISPLAYTEXT_NORMALOVERLAY) {
-		return &_GP(screenover)[nse];
+		return &over;
 	}
 
 	//
@@ -371,10 +372,10 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 			_GP(play).messagetime = 2;
 
 		if (!overlayPositionFixed) {
-			_GP(screenover)[nse].SetRoomRelative(true);
-			VpPoint vpt = _GP(play).GetRoomViewport(0)->ScreenToRoom(_GP(screenover)[nse].x, _GP(screenover)[nse].y, false);
-			_GP(screenover)[nse].x = vpt.first.X;
-			_GP(screenover)[nse].y = vpt.first.Y;
+			over.SetRoomRelative(true);
+			VpPoint vpt = _GP(play).GetRoomViewport(0)->ScreenToRoom(over.x, over.y, false);
+			over.x = vpt.first.X;
+			over.y = vpt.first.Y;
 		}
 
 		GameLoopUntilNoOverlay();
