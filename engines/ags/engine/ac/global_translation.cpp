@@ -52,7 +52,7 @@ const char *get_translation(const char *text) {
 #endif
 
 	const auto &transtree = get_translation_tree();
-	const auto it = transtree.find(text);
+	const auto it = transtree.find(String::Wrapper(text));
 	if (it != transtree.end())
 		return it->_value.GetCStr();
 
