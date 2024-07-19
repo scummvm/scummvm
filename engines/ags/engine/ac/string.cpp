@@ -273,7 +273,7 @@ DynObjectRef CreateNewScriptStringObj(const char *fromText, bool reAllocate) {
 	return DynObjectRef(handle, obj_ptr);
 }
 
-size_t break_up_text_into_lines(const char *todis, SplitLines &lines, int wii, int fonnt, size_t max_lines) {
+size_t break_up_text_into_lines(const char *todis, bool apply_direction, SplitLines &lines, int wii, int fonnt, size_t max_lines) {
 	if (fonnt == -1)
 		fonnt = _GP(play).normal_font;
 
@@ -295,7 +295,7 @@ size_t break_up_text_into_lines(const char *todis, SplitLines &lines, int wii, i
 
 	// Right-to-left just means reverse the text then
 	// write it as normal
-	if (_GP(game).options[OPT_RIGHTLEFTWRITE])
+	if (apply_direction && (_GP(game).options[OPT_RIGHTLEFTWRITE] != 0))
 		for (size_t rr = 0; rr < lines.Count(); rr++) {
 			(get_uformat() == U_UTF8) ?
 				lines[rr].ReverseUTF8() :
