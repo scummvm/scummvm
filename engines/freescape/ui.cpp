@@ -83,7 +83,7 @@ Graphics::Surface *FreescapeEngine::drawStringsInSurface(const Common::Array<Com
 			color = 1;
 			break;
 		case Common::kRenderZX:
-			color = 6;
+			color = isCastle() ? 7 : 6;
 			break;
 		case Common::kRenderCPC:
 			color = _gfx->_underFireBackgroundColor;
@@ -139,9 +139,16 @@ void FreescapeEngine::borderScreen() {
 		lines.push_back("   2: IBM JOYSTICK    ");
 		lines.push_back("   3: AMSTRAD JOYSTICK");
 		lines.push_back("");
-		lines.push_back(" SPACEBAR:  BEGIN MISSION");
+		if (isDOS())
+			lines.push_back(" SPACEBAR:  BEGIN MISSION");
+		else
+			lines.push_back("   ENTER: BEGIN MISSION");
 		lines.push_back("");
-		lines.push_back(" COPYRIGHT 1988 INCENTIVE");
+		if (isDOS())
+			lines.push_back(" COPYRIGHT 1988 INCENTIVE");
+		else
+			lines.push_back("   (C) 1988 INCENTIVE");
+
 		lines.push_back("");
 		Graphics::Surface *surface = drawStringsInSurface(lines);
 		drawBorderScreenAndWait(surface);
@@ -167,8 +174,8 @@ void FreescapeEngine::drawFullscreenMessage(Common::String message, uint32 front
 		letterPerLine = 28;
 		numberOfLines = 10;
 	} else if (isSpectrum() || isCPC()) {
-		x = 60;
-		y = 40;
+		x = _viewArea.left;
+		y = _viewArea.top;
 		letterPerLine = 24;
 		numberOfLines = 12;
 	} else if (isAtariST()) {
