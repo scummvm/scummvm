@@ -130,6 +130,21 @@ struct t3dBONEANIM {
 	t3dF32      *Dist = nullptr;                // distanca form start frame (for walk and default)
 	uint16      NumBones = 0;                   // num bones
 	uint16      NumFrames = 0;                  // num frames
+
+	t3dBONEANIM() = default;
+	t3dBONEANIM(const t3dBONEANIM &other) = default;
+	t3dBONEANIM& operator=(const t3dBONEANIM &rhs) = default;
+	t3dBONEANIM(t3dBONEANIM &&old) :
+		BoneTable(old.BoneTable),
+		Dist(old.Dist),
+		NumBones(old.NumBones),
+		NumFrames(old.NumFrames) {
+
+		old.BoneTable = nullptr;
+		old.Dist = nullptr;
+		old.NumBones = 0;
+		old.NumFrames = 0;
+	}
 };
 
 struct t3dMODVERTS {

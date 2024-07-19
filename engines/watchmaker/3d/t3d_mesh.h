@@ -141,6 +141,9 @@ struct t3dMESH {
 
 	t3dMESH() = default;
 	t3dMESH(t3dBODY *b, Common::SeekableReadStream &stream, t3dMESH *&ReceiveRipples, uint8 &Mirror);
+	t3dMESH(const t3dMESH &other);
+	t3dMESH(t3dMESH &&old);
+	t3dMESH& operator=(t3dMESH rhs);
 	~t3dMESH();
 	void loadFaces(t3dBODY *b, Common::SeekableReadStream &stream, int numFaces);
 	void release();

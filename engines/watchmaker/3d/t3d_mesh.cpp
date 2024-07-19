@@ -187,6 +187,170 @@ t3dMESH::t3dMESH(t3dBODY *b, Common::SeekableReadStream &stream, t3dMESH *&Recei
 	}
 }
 
+t3dMESH &t3dMESH::operator=(t3dMESH rhs) {
+	SWAP(name, rhs.name);
+	SWAP(portalName, rhs.portalName);
+	SWAP(NumVerts, rhs.NumVerts);
+	SWAP(NumNormals, rhs.NumNormals);
+	SWAP(NumVerticesNormals, rhs.NumVerticesNormals);
+	SWAP(SavedVertexBuffer, rhs.SavedVertexBuffer);
+	SWAP(VertexBuffer, rhs.VertexBuffer);
+	SWAP(OldVertexBuffer, rhs.OldVertexBuffer);
+	SWAP(VertsInterpolants, rhs.VertsInterpolants);
+	SWAP(VBptr, rhs.VBptr);
+	SWAP(MorphFrames, rhs.MorphFrames);
+	SWAP(FList, rhs.FList);
+	SWAP(NList, rhs.NList);
+	SWAP(Pos, rhs.Pos);
+	SWAP(Trasl, rhs.Trasl);
+	SWAP(Radius, rhs.Radius);
+	SWAP(BBoxAverageZ, rhs.BBoxAverageZ);
+	SWAP(Intersection, rhs.Intersection);
+	SWAP(Matrix, rhs.Matrix);
+	SWAP(LightmapDim, rhs.LightmapDim);
+	SWAP(ModVertices, rhs.ModVertices);
+	SWAP(CurFrame, rhs.CurFrame);
+	SWAP(LastFrame, rhs.LastFrame);
+	SWAP(BlendPercent, rhs.BlendPercent);
+	SWAP(LastBlendPercent, rhs.LastBlendPercent);
+	SWAP(ExpressionFrame, rhs.ExpressionFrame);
+	SWAP(LastExpressionFrame, rhs.LastExpressionFrame);
+	SWAP(DefaultAnim, rhs.DefaultAnim);
+	SWAP(Anim, rhs.Anim);
+	SWAP(WaterBuffer1, rhs.WaterBuffer1);
+	SWAP(WaterBuffer2, rhs.WaterBuffer2);
+	SWAP(WavesSpeed, rhs.WavesSpeed);
+	SWAP(YSpeed, rhs.YSpeed);
+	SWAP(XInc, rhs.XInc);
+	SWAP(YInc, rhs.YInc);
+	SWAP(Flags, rhs.Flags);
+	SWAP(PortalList, rhs.PortalList);
+	SWAP(RejectedMeshes, rhs.RejectedMeshes);
+
+	Common::copy(rhs.BBox, rhs.BBox + 8, BBox);
+	Common::copy(rhs.BBoxNormal, rhs.BBoxNormal + 6, BBoxNormal);
+	Common::copy(rhs.SolarRGBVar, rhs.SolarRGBVar + 4, SolarRGBVar);
+
+	return *this;
+}
+
+t3dMESH::t3dMESH(const t3dMESH &other) :
+	name(other.name),
+	portalName(other.portalName),
+	NumVerts(other.NumVerts),
+	NumNormals(other.NumNormals),
+	NumVerticesNormals(other.NumVerticesNormals),
+	SavedVertexBuffer(nullptr),
+	VertexBuffer(new gVertex[other.NumVerts]()),
+	OldVertexBuffer(nullptr),
+	VertsInterpolants(nullptr),
+	VBptr(other.VBptr),
+	MorphFrames(other.MorphFrames),
+	FList(other.FList),
+	NList(other.NList),
+	Pos(other.Pos),
+	Trasl(other.Trasl),
+	Radius(other.Radius),
+	BBoxAverageZ(other.BBoxAverageZ),
+	Intersection(other.Intersection),
+	Matrix(other.Matrix),
+	LightmapDim(other.LightmapDim),
+	ModVertices(other.ModVertices),
+	CurFrame(other.CurFrame),
+	LastFrame(other.LastFrame),
+	BlendPercent(other.BlendPercent),
+	LastBlendPercent(other.LastBlendPercent),
+	ExpressionFrame(other.ExpressionFrame),
+	LastExpressionFrame(other.LastExpressionFrame),
+	DefaultAnim(other.DefaultAnim),
+	Anim(other.Anim),
+	WaterBuffer1(other.WaterBuffer1),
+	WaterBuffer2(other.WaterBuffer2),
+	WavesSpeed(other.WavesSpeed),
+	YSpeed(other.YSpeed),
+	XInc(other.XInc),
+	YInc(other.YInc),
+	Flags(other.Flags),
+	PortalList(other.PortalList),
+	RejectedMeshes(other.RejectedMeshes) {
+
+	Common::copy(other.VertexBuffer, other.VertexBuffer + NumVerts, VertexBuffer);
+	if (other.SavedVertexBuffer) {
+		SavedVertexBuffer = new gVertex[other.NumVerts]();
+		Common::copy(other.SavedVertexBuffer, other.SavedVertexBuffer + NumVerts, SavedVertexBuffer);
+	}
+	if (other.OldVertexBuffer) {
+		OldVertexBuffer = new gVertex[other.NumVerts]();
+		Common::copy(other.OldVertexBuffer, other.OldVertexBuffer + NumVerts, OldVertexBuffer);
+	}
+	if (other.VertsInterpolants) {
+		VertsInterpolants = t3dCalloc<t3dV3F>(NumVerts);
+		Common::copy(other.VertsInterpolants, other.VertsInterpolants + NumVerts, VertsInterpolants);
+	}
+	Common::copy(other.BBox, other.BBox + 8, BBox);
+	Common::copy(other.BBoxNormal, other.BBoxNormal + 6, BBoxNormal);
+	Common::copy(other.SolarRGBVar, other.SolarRGBVar + 4, SolarRGBVar);
+}
+
+
+t3dMESH::t3dMESH(t3dMESH &&old) :
+	name(Common::move(old.name)),
+	portalName(Common::move(old.portalName)),
+	NumVerts(old.NumVerts),
+	NumNormals(old.NumNormals),
+	NumVerticesNormals(old.NumVerticesNormals),
+	SavedVertexBuffer(old.SavedVertexBuffer),
+	VertexBuffer(old.VertexBuffer),
+	OldVertexBuffer(old.OldVertexBuffer),
+	VertsInterpolants(old.VertsInterpolants),
+	VBptr(old.VBptr),
+	MorphFrames(Common::move(old.MorphFrames)),
+	FList(Common::move(old.FList)),
+	NList(Common::move(old.NList)),
+	Pos(Common::move(old.Pos)),
+	Trasl(Common::move(old.Trasl)),
+	Radius(old.Radius),
+	BBoxAverageZ(old.BBoxAverageZ),
+	Intersection(Common::move(old.Intersection)),
+	Matrix(Common::move(old.Matrix)),
+	LightmapDim(old.LightmapDim),
+	ModVertices(Common::move(old.ModVertices)),
+	CurFrame(old.CurFrame),
+	LastFrame(old.LastFrame),
+	BlendPercent(old.BlendPercent),
+	LastBlendPercent(old.LastBlendPercent),
+	ExpressionFrame(old.ExpressionFrame),
+	LastExpressionFrame(old.LastExpressionFrame),
+	DefaultAnim(Common::move(old.DefaultAnim)),
+	Anim(Common::move(old.Anim)),
+	WaterBuffer1(old.WaterBuffer1),
+	WaterBuffer2(old.WaterBuffer2),
+	WavesSpeed(old.WavesSpeed),
+	YSpeed(old.YSpeed),
+	XInc(old.XInc),
+	YInc(old.YInc),
+	Flags(old.Flags),
+	PortalList(old.PortalList),
+	RejectedMeshes(Common::move(old.RejectedMeshes)) {
+
+	old.SavedVertexBuffer = nullptr;
+	old.VertexBuffer = nullptr;
+	old.OldVertexBuffer = nullptr;
+	old.VertsInterpolants = nullptr;
+	old.VBptr = nullptr;
+	for (int i = 0; i < 8; i++) {
+		BBox[i] = Common::move(old.BBox[i]);
+	}
+	for (int i = 0; i < 6; i++) {
+		BBoxNormal[i] = Common::move(old.BBoxNormal[i]);
+	}
+	old.WaterBuffer1 = nullptr;
+	old.WaterBuffer2 = nullptr;
+	for (int i = 0; i < 4; i++) {
+		SolarRGBVar[i] = Common::move(old.SolarRGBVar[i]);
+	}
+}
+
 t3dMESH::~t3dMESH() {
 	release();
 }
