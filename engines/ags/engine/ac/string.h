@@ -55,7 +55,11 @@ class SplitLines;
 // Break up the text into lines restricted by the given width;
 // returns number of lines, or 0 if text cannot be split well to fit in this width.
 // Does additional processing, like removal of voice-over tags and text reversal if right-to-left text display is on.
-size_t break_up_text_into_lines(const char *todis, SplitLines &lines, int wii, int fonnt, size_t max_lines = -1);
+// Optionally applies text direction rules (apply_direction param), otherwise leaves left-to-right always.
+size_t break_up_text_into_lines(const char *todis, bool apply_direction, SplitLines &lines, int wii, int fonnt, size_t max_lines = -1);
+inline size_t break_up_text_into_lines(const char *todis, SplitLines &lines, int wii, int fonnt, size_t max_lines = -1) {
+	return break_up_text_into_lines(todis, true, lines, wii, fonnt, max_lines);
+}
 void check_strlen(char *ptt);
 void my_strncpy(char *dest, const char *src, int len);
 
