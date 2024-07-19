@@ -109,6 +109,8 @@ public:
 	// Tells if there is a sprite registered for the given index;
 	// this includes sprites that were explicitly assigned but failed to init and were remapped
 	bool        DoesSpriteExist(sprkey_t index) const;
+	// Returns sprite's resolution; or empty Size if sprite does not exist
+	Size		GetSpriteResolution(sprkey_t index) const;
 	// Makes sure sprite cache has allocated slots for all sprites up to the given inclusive limit;
 	// returns requested index on success, or -1 on failure.
 	sprkey_t    EnlargeTo(sprkey_t topmost);

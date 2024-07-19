@@ -168,12 +168,13 @@ void RawPrintMessageWrapped(int xx, int yy, int wid, int font, int msgm) {
 }
 
 void RawDrawImageCore(int xx, int yy, int slot, int alpha) {
-	if ((slot < 0) || (_GP(spriteset)[slot] == nullptr))
+	if ((slot < 0) || (!_GP(spriteset).DoesSpriteExist(slot)))
 		quit("!RawDrawImage: invalid sprite slot number specified");
 	RAW_START();
 
-	if (_GP(spriteset)[slot]->GetColorDepth() != RAW_SURFACE()->GetColorDepth()) {
-		debug_script_warn("RawDrawImage: Sprite %d colour depth %d-bit not same as background depth %d-bit", slot, _GP(spriteset)[slot]->GetColorDepth(), RAW_SURFACE()->GetColorDepth());
+	Bitmap *sprite = _GP(spriteset)[slot];
+	if (sprite->GetColorDepth() != RAW_SURFACE()->GetColorDepth()) {
+		debug_script_warn("RawDrawImage: Sprite %d colour depth %d-bit not same as background depth %d-bit", slot, sprite->GetColorDepth(), RAW_SURFACE()->GetColorDepth());
 	}
 
 	draw_sprite_slot_support_alpha(RAW_SURFACE(), false, xx, yy, slot, kBlendMode_Alpha, alpha);
@@ -224,7 +225,7 @@ void RawDrawImageTransparent(int xx, int yy, int slot, int legacy_transparency) 
 	RawDrawImageTrans(xx, yy, slot, GfxDef::LegacyTrans100ToAlpha255(legacy_transparency));
 }
 void RawDrawImageResized(int xx, int yy, int gotSlot, int width, int height) {
-	if ((gotSlot < 0) || (_GP(spriteset)[gotSlot] == nullptr))
+	if ((gotSlot < 0) || (!_GP(spriteset).DoesSpriteExist(gotSlot)))
 		quit("!RawDrawImageResized: invalid sprite slot number specified");
 	// very small, don't draw it
 	if ((width < 1) || (height < 1))
@@ -234,10 +235,11 @@ void RawDrawImageResized(int xx, int yy, int gotSlot, int width, int height) {
 	data_to_game_coords(&width, &height);
 
 	// resize the sprite to the requested size
-	Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, _GP(spriteset)[gotSlot]->GetColorDepth());
-	newPic->StretchBlt(_GP(spriteset)[gotSlot],
-	                   RectWH(0, 0, _GP(game).SpriteInfos[gotSlot].Width, _GP(game).SpriteInfos[gotSlot].Height),
-	                   RectWH(0, 0, width, height));
+	Bitmap *sprite = _GP(spriteset)[gotSlot];
+	Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, sprite->GetColorDepth());
+	newPic->StretchBlt(sprite,
+					   RectWH(0, 0, _GP(game).SpriteInfos[gotSlot].Width, _GP(game).SpriteInfos[gotSlot].Height),
+					   RectWH(0, 0, width, height));
 
 	RAW_START();
 	if (newPic->GetColorDepth() != RAW_SURFACE()->GetColorDepth())

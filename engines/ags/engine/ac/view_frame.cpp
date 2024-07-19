@@ -151,8 +151,8 @@ void CheckViewFrame(int view, int loop, int frame, int sound_volume) {
 void DrawViewFrame(Bitmap *ds, const ViewFrame *vframe, int x, int y, bool alpha_blend) {
 	// NOTE: DrawViewFrame supports alpha blending only since OPT_SPRITEALPHA;
 	// this is why there's no sense in blending if it's not set (will do no good anyway).
+	Bitmap *vf_bmp = _GP(spriteset)[vframe->pic];
 	if (alpha_blend && _GP(game).options[OPT_SPRITEALPHA] == kSpriteAlphaRender_Proper) {
-		Bitmap *vf_bmp = _GP(spriteset)[vframe->pic];
 		Bitmap *src = vf_bmp;
 		if (vframe->flags & VFLG_FLIPSPRITE) {
 			src = new Bitmap(vf_bmp->GetWidth(), vf_bmp->GetHeight(), vf_bmp->GetColorDepth());
@@ -163,9 +163,9 @@ void DrawViewFrame(Bitmap *ds, const ViewFrame *vframe, int x, int y, bool alpha
 			delete src;
 	} else {
 		if (vframe->flags & VFLG_FLIPSPRITE)
-			ds->FlipBlt(_GP(spriteset)[vframe->pic], x, y, Shared::kFlip_Horizontal);
+			ds->FlipBlt(vf_bmp, x, y, Shared::kFlip_Horizontal);
 		else
-			ds->Blit(_GP(spriteset)[vframe->pic], x, y, Shared::kBitmap_Transparency);
+			ds->Blit(vf_bmp, x, y, Shared::kBitmap_Transparency);
 	}
 }
 
