@@ -1887,6 +1887,32 @@ static const uint16 fanmadePatchDemoQuestInfiniteLoop[] = {
 	PATCH_END
 };
 
+// WORKAROUND
+// Betrayed Alliance contains a malformed menu string that happens to have no
+//  visible effect in the original interpreter, but does in ours. The speed menu
+//  string has the word "Music" at the end, making it appear to be part of the
+//  previous menu item shortcut. Sierra's parser happened to ignore this invalid
+//  suffix, but ours accepts it and displays it in the speed menu.
+//
+// It would take significant modifications to our menu parser to match the
+//  original interpreter's undefined behavior, and the string has already been
+//  fixed in newer versions of the game, so we just patch the bad menu string.
+//
+// Applies to: Betrayed Alliance version 1.3.2 and below
+// Responsible method: heap in script 997
+// Fixes bug: #15159
+static const uint16 fangameSignatureBetrayedAllianceMenu[] = {
+	SIG_MAGICDWORD,                                 // :Slower
+	0x60, 0x2d, 0x4d, 0x75, 0x73, 0x69, 0x63, 0x00, // `-Music
+	SIG_END
+};
+
+static const uint16 fangamePatchBetrayedAllianceMenu[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x00,                                           // :Slower`-
+	PATCH_END
+};
+
 // This patch is for a bug that first appeared in the LSL3 volume dialog and was
 //  then copied into the templates included with SCI Studio and SCI Companion,
 //  causing it to appear in fan games. See larry3SignatureVolumeSlider.
@@ -1976,6 +2002,7 @@ static const SciScriptPatcherEntry fanmadeSignatures[] = {
 	{  true,     0, "SCI Template: disable volume reset",          1, fangameSignatureVolumeReset2,              fangamePatchVolumeReset2 },
 	{  true,   994, "Cascade Quest: fix auto-saving",              1, fanmadeSignatureCascadeQuestFixAutoSaving, fanmadePatchCascadeQuestFixAutoSaving },
 	{  true,   997, "SCI Template: fix volume slider",             1, fangameSignatureVolumeSlider1,             fangamePatchVolumeSlider1 },
+	{  true,   997, "Betrayed Alliance: fix menu",                 1, fangameSignatureBetrayedAllianceMenu,      fangamePatchBetrayedAllianceMenu },
 	{  true,   997, "SCI Template: fix volume slider",             1, fangameSignatureVolumeSlider2,             fangamePatchVolumeSlider2 },
 	{  true,   999, "Demo Quest: infinite loop on typo",           1, fanmadeSignatureDemoQuestInfiniteLoop,     fanmadePatchDemoQuestInfiniteLoop },
 	SCI_SIGNATUREENTRY_TERMINATOR
