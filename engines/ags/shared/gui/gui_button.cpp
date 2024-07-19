@@ -113,7 +113,7 @@ Rect GUIButton::CalcGraphicRect(bool clipped) {
 		if (IsClippingImage())
 			return rc;
 		// Main button graphic
-		if (CurrentImage >= 0 && _GP(spriteset)[CurrentImage] != nullptr)
+		if (CurrentImage >= 0 && _GP(spriteset).DoesSpriteExist(CurrentImage))
 			rc = SumRects(rc, RectWH(0, 0, get_adjusted_spritewidth(CurrentImage), get_adjusted_spriteheight(CurrentImage)));
 		// Optionally merge with the inventory pic
 		if (_placeholder != kButtonPlace_None && _G(gui_inv_pic) >= 0) {
@@ -340,7 +340,7 @@ void GUIButton::DrawImageButton(Bitmap *ds, int x, int y, bool draw_disabled) {
 	// NOTE: the CLIP flag only clips the image, not the text
 	if (IsClippingImage() && !GUI::Options.ClipControls)
 		ds->SetClip(RectWH(x, y, Width, Height));
-	if (_GP(spriteset)[CurrentImage] != nullptr)
+	if (_GP(spriteset).DoesSpriteExist(CurrentImage))
 		draw_gui_sprite(ds, CurrentImage, x, y, true);
 
 	// Draw active inventory item
@@ -365,9 +365,8 @@ void GUIButton::DrawImageButton(Bitmap *ds, int x, int y, bool draw_disabled) {
 
 	if ((draw_disabled) && (GUI::Options.DisabledStyle == kGuiDis_Greyout)) {
 		// darken the button when disabled
-		GUI::DrawDisabledEffect(ds, RectWH(x, y,
-			_GP(spriteset)[CurrentImage]->GetWidth(),
-			_GP(spriteset)[CurrentImage]->GetHeight()));
+		const Size sz = _GP(spriteset).GetSpriteResolution(CurrentImage);
+		GUI::DrawDisabledEffect(ds, RectWH(x, y, sz.Width, sz.Height));
 	}
 
 	// Don't print Text of (INV) (INVSHR) (INVNS)

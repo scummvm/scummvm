@@ -602,7 +602,7 @@ int get_font_outline_padding(int font) {
 
 void do_corner(Bitmap *ds, int sprn, int x, int y, int offx, int offy) {
 	if (sprn < 0) return;
-	if (_GP(spriteset)[sprn] == nullptr) {
+	if (!_GP(spriteset).DoesSpriteExist(sprn)) {
 		sprn = 0;
 	}
 

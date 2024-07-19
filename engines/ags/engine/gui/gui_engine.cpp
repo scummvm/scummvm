@@ -76,11 +76,11 @@ bool GUIMain::HasAlphaChannel() const {
 //=============================================================================
 
 int get_adjusted_spritewidth(int spr) {
-	return _GP(spriteset)[spr]->GetWidth();
+	return _GP(game).SpriteInfos[spr].Width;
 }
 
 int get_adjusted_spriteheight(int spr) {
-	return _GP(spriteset)[spr]->GetHeight();
+	return _GP(game).SpriteInfos[spr].Height;
 }
 
 bool is_sprite_alpha(int spr) {
