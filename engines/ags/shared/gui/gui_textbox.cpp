@@ -153,9 +153,6 @@ void GUITextBox::ReadFromFile(Stream *in, GuiVersion gui_version) {
 
 	if (TextColor == 0)
 		TextColor = 16;
-	// Text boxes input is never "translated" in regular sense,
-	// but they use this flag to apply text direction
-	Flags |= kGUICtrl_Translated;
 }
 
 void GUITextBox::ReadFromSavegame(Stream *in, GuiSvgVersion svg_ver) {
