@@ -236,6 +236,8 @@ struct SpriteInfo {
 
 	SpriteInfo();
 
+	inline Size GetResolution() const { return Size(Width, Height); }
+
 	//
 	// Legacy game support
 	//

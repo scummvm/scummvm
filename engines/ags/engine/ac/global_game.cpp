@@ -164,10 +164,11 @@ int LoadSaveSlotScreenshot(int slnum, int width, int height) {
 		return gotSlot;
 
 	// resize the sprite to the requested size
-	Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, _GP(spriteset)[gotSlot]->GetColorDepth());
-	newPic->StretchBlt(_GP(spriteset)[gotSlot],
-	                   RectWH(0, 0, _GP(game).SpriteInfos[gotSlot].Width, _GP(game).SpriteInfos[gotSlot].Height),
-	                   RectWH(0, 0, width, height));
+	Bitmap *sprite = _GP(spriteset)[gotSlot];
+	Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, sprite->GetColorDepth());
+	newPic->StretchBlt(sprite,
+					   RectWH(0, 0, _GP(game).SpriteInfos[gotSlot].Width, _GP(game).SpriteInfos[gotSlot].Height),
+					   RectWH(0, 0, width, height));
 
 	// replace the bitmap in the sprite set
 	free_dynamic_sprite(gotSlot);
