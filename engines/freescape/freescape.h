@@ -338,6 +338,7 @@ public:
 
 	bool runCollisionConditions(Math::Vector3d const lastPosition, Math::Vector3d const newPosition);
 	Math::Vector3d _objExecutingCodeSize;
+	bool _executingGlobalCode;
 	virtual void executeMovementConditions();
 	bool executeObjectConditions(GeometricObject *obj, bool shot, bool collided, bool activated);
 	void executeEntranceConditions(Entrance *entrance);

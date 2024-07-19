@@ -166,6 +166,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_lastMinute = -1;
 	_frameLimiter = nullptr;
 	_vsyncEnabled = false;
+	_executingGlobalCode = false;
 
 	_underFireFrames = 0;
 	_shootingFrames = 0;

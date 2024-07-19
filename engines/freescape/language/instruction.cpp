@@ -131,11 +131,13 @@ void FreescapeEngine::executeLocalGlobalConditions(bool shot, bool collided, boo
 		executeCode(conditions[i], shot, collided, timer, false);
 	}
 
+	_executingGlobalCode = true;
 	debugC(1, kFreescapeDebugCode, "Executing global conditions (%d)", _conditions.size());
 	for (uint i = 0; i < _conditions.size(); i++) {
 		debugC(1, kFreescapeDebugCode, "%s", _conditionSources[i].c_str());
 		executeCode(_conditions[i], shot, collided, timer, false);
 	}
+	_executingGlobalCode = false;
 }
 
 void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool collided, bool timer, bool activated) {
@@ -550,7 +552,7 @@ void FreescapeEngine::executeMakeVisible(FCLInstruction &instruction) {
 	debugC(1, kFreescapeDebugCode, "Making obj %d visible in area %d!", objectID, areaID);
 	if (_areaMap.contains(areaID)) {
 		Object *obj = _areaMap[areaID]->objectWithID(objectID);
-		if (!obj && isCastle())
+		if (!obj && isCastle() && _executingGlobalCode)
 			return; // No side effects
 
 		if (!obj) {
