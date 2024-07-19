@@ -531,10 +531,11 @@ void DisplaySpeechAt(int xx, int yy, int wii, int aschar, const char *spch) {
 
 int DisplaySpeechBackground(int charid, const char *speel) {
 	// remove any previous background speech for this character
+	// TODO: have a map character -> bg speech over?
 	const auto &overs = get_overlays();
 	for (size_t i = 0; i < overs.size(); ++i) {
 		if (overs[i].bgSpeechForChar == charid) {
-			remove_screen_overlay_index(i);
+			remove_screen_overlay(i);
 			break;
 		}
 	}
@@ -542,7 +543,7 @@ int DisplaySpeechBackground(int charid, const char *speel) {
 	int ovrl = CreateTextOverlay(OVR_AUTOPLACE, charid, _GP(play).GetUIViewport().GetWidth() / 2, FONT_SPEECH,
 	                             -_GP(game).chars[charid].talkcolor, get_translation(speel), DISPLAYTEXT_NORMALOVERLAY);
 
-	auto *over = find_overlay_of_type(ovrl);
+	auto *over = get_overlay(ovrl);
 	over->bgSpeechForChar = charid;
 	over->timeout = GetTextDisplayTime(speel, 1);
 	return ovrl;

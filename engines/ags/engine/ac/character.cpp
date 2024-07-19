@@ -714,7 +714,7 @@ void Character_SayAt(CharacterInfo *chaa, int x, int y, int width, const char *t
 
 ScriptOverlay *Character_SayBackground(CharacterInfo *chaa, const char *texx) {
 	int ovltype = DisplaySpeechBackground(chaa->index_id, texx);
-	auto *over = find_overlay_of_type(ovltype);
+	auto *over = get_overlay(ovltype);
 	if (!over)
 		quit("!SayBackground internal error: no overlay");
 
@@ -2338,11 +2338,9 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 	if (_GP(play).bgspeech_stay_on_display == 0) {
 		// remove any background speech
 		auto &overs = get_overlays();
-		for (size_t i = 0; i < overs.size();) {
-			if (overs[i].timeout > 0)
-				remove_screen_overlay(overs[i].type);
-			else
-				i++;
+		for (auto &over : overs) {
+			if (over.timeout > 0)
+				remove_screen_overlay(over.type);
 		}
 	}
 	_G(said_text) = 1;

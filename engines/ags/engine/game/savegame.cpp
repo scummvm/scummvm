@@ -336,7 +336,7 @@ void DoBeforeRestore(PreservedParams &pp) {
 	unload_old_room();
 	delete _G(raw_saved_screen);
 	_G(raw_saved_screen) = nullptr;
-	remove_screen_overlay(-1);
+	remove_all_overlays();
 	_GP(play).complete_overlay_on = 0;
 	_GP(play).text_overlay_on = 0;
 
@@ -621,7 +621,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 
 	adjust_fonts_for_render_mode(_GP(game).options[OPT_ANTIALIASFONTS] != 0);
 
-	recreate_overlay_ddbs();
+	restore_overlays();
 
 	GUI::MarkAllGUIForUpdate(true, true);
 
