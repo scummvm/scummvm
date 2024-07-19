@@ -157,13 +157,13 @@ void IAGSEngine::UnrequestEventHook(int32 event) {
 }
 
 int IAGSEngine::GetSavedData(char *buffer, int32 bufsize) {
-	int savedatasize = _GP(plugins)[this->pluginId].savedatasize;
+	int savedatasize = _GP(plugins)[this->pluginId].savedata.size();
 
 	if (bufsize < savedatasize)
 		quit("!IAGSEngine::GetSavedData: buffer too small");
 
 	if (savedatasize > 0)
-		memcpy(buffer, _GP(plugins)[this->pluginId].savedata, savedatasize);
+		memcpy(buffer, &_GP(plugins)[this->pluginId].savedata.front(), savedatasize);
 
 	return savedatasize;
 }
@@ -782,10 +782,6 @@ void pl_stop_plugins() {
 		if (_GP(plugins)[a].available) {
 			_GP(plugins)[a]._plugin->AGS_EngineShutdown();
 			_GP(plugins)[a].wantHook = 0;
-			if (_GP(plugins)[a].savedata) {
-				free(_GP(plugins)[a].savedata);
-				_GP(plugins)[a].savedata = nullptr;
-			}
 			if (!_GP(plugins)[a].builtin) {
 				_GP(plugins)[a].library.Unload();
 			}
@@ -848,8 +844,6 @@ Engine::GameInitError pl_register_plugins(const std::vector<PluginInfo> &infos) 
 		String name = info.Name;
 		if (name.GetLast() == '!')
 			continue; // editor-only plugin, ignore it
-		if (_GP(plugins).size() == MAXPLUGINS)
-			return kGameInitErr_TooManyPlugins;
 		// AGS Editor currently saves plugin names in game data with
 		// ".dll" extension appended; we need to take care of that
 		const String name_ext = ".dll";
@@ -865,11 +859,7 @@ Engine::GameInitError pl_register_plugins(const std::vector<PluginInfo> &infos) 
 
 		// Copy plugin info
 		apl->filename = name;
-		if (info.DataLen > 0) {
-			apl->savedata = (char *)malloc(info.DataLen);
-			memcpy(apl->savedata, &info.Data.front(), info.DataLen);
-		}
-		apl->savedatasize = info.DataLen;
+		apl->savedata = info.Data;
 
 		// Compatibility with the old SnowRain module
 		if (apl->filename.CompareNoCase("ags_SnowRain20") == 0) {
