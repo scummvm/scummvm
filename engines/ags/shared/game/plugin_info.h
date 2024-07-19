@@ -42,11 +42,9 @@ struct PluginInfo {
 	// (File)name of plugin
 	String      Name;
 	// Custom data for plugin
-	std::vector<char> Data;
-	size_t      DataLen;
+	std::vector<uint8_t> Data;
 
-	PluginInfo() : DataLen(0) {
-	}
+	PluginInfo() = default;
 };
 
 } // namespace Shared

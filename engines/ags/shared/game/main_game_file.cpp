@@ -385,7 +385,6 @@ HGameFileError ReadPlugins(std::vector<PluginInfo> &infos, Stream *in) {
 			info.Data.resize(datasize);
 			in->Read(&info.Data.front(), datasize);
 		}
-		info.DataLen = datasize;
 		infos.push_back(info);
 	}
 	return HGameFileError::None();
