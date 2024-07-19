@@ -28,8 +28,6 @@
 
 namespace AGS3 {
 
-class SplitLines;
-
 namespace AGS {
 namespace Shared {
 
@@ -63,11 +61,11 @@ public:
 
 private:
 	void PrepareTextToDraw();
-	size_t SplitLinesForDrawing(SplitLines &lines);
 
 	// Information on macros contained within Text field
 	GUILabelMacro _textMacro;
 	// prepared text buffer/cache
+	// TODO: cache split lines instead?
 	String _textToDraw;
 };
 
