@@ -758,29 +758,44 @@ HSaveError ReadDynamicSprites(Stream *in, int32_t /*cmp_ver*/, const PreservedPa
 
 HSaveError WriteOverlays(Stream *out) {
 	const auto &overs = get_overlays();
-	out->WriteInt32(overs.size());
+	// Calculate and save valid overlays only
+	uint32_t valid_count = 0;
+	soff_t count_off = out->GetPosition();
+	out->WriteInt32(0);
 	for (const auto &over : overs) {
+		if (over.type < 0)
+			continue;
+		valid_count++;
 		over.WriteToFile(out);
 		if (!over.IsSpriteReference())
 			serialize_bitmap(over.GetImage(), out);
 	}
+	out->Seek(count_off, kSeekBegin);
+	out->WriteInt32(valid_count);
+	out->Seek(0, kSeekEnd);
 	return HSaveError::None();
 }
 
 HSaveError ReadOverlays(Stream *in, int32_t cmp_ver, const PreservedParams & /*pp*/, RestoredData & /*r_data*/) {
+	// Remember that overlay indexes may be non-sequential
+	// the vector may be resized during read
 	size_t over_count = in->ReadInt32();
 	auto &overs = get_overlays();
+	overs.resize(over_count); // reserve minimal size
 	for (size_t i = 0; i < over_count; ++i) {
 		ScreenOverlay over;
 		bool has_bitmap;
 		over.ReadFromFile(in, has_bitmap, cmp_ver);
+		assert(over.type >= 0);
 		if (has_bitmap)
 			over.SetImage(read_serialized_bitmap(in), over.offsetX, over.offsetY);
 		if (has_bitmap && (over.scaleWidth <= 0 || over.scaleHeight <= 0)) {
 			over.scaleWidth = over.GetImage()->GetWidth();
 			over.scaleHeight = over.GetImage()->GetHeight();
 		}
-		overs.push_back(std::move(over));
+		if (overs.size() <= over.type)
+			overs.resize(over.type + 1);
+		overs[over.type] = std::move(over);
 	}
 	return HSaveError::None();
 }
