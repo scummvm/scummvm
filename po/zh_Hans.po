@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-19 05:13+0000\n"
+"POT-Creation-Date: 2024-07-19 17:39+0000\n"
 "PO-Revision-Date: 2024-07-04 15:43+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
@@ -301,7 +301,7 @@ msgstr "另一存储正工作中。您要中断它吗？"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:143
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3907
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3909
 #: engines/toon/toon.cpp:1538
 msgid "Yes"
 msgstr "是"
@@ -314,7 +314,7 @@ msgstr "是"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:149
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3907
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3909
 #: engines/toon/toon.cpp:1538
 msgid "No"
 msgstr "否"
@@ -9697,7 +9697,7 @@ msgid "Your Name:"
 msgstr "你的名字："
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3913
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3915
 msgid "Host"
 msgstr "主机"
 
@@ -9707,7 +9707,7 @@ msgid "Querying games..."
 msgstr "读取游戏中..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3913
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3915
 msgid "Join"
 msgstr "加入"
 
@@ -10682,7 +10682,7 @@ msgstr ""
 "已知此版本的 Monkey Island 1 缺失\n"
 "MT-32 所需的一些资源。将转而使用 AdLib。"
 
-#: engines/scumm/scumm.cpp:3802
+#: engines/scumm/scumm.cpp:3804
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -10691,7 +10691,7 @@ msgstr ""
 "Maniac Mansion 此时通常会启动。但要启动，Maniac Mansion 的游戏文件必须放在 "
 "Tentacle 游戏目录下的“Maniac”目录中，同时游戏必须添加到 ScummVM 中。"
 
-#: engines/scumm/scumm.cpp:3913
+#: engines/scumm/scumm.cpp:3915
 msgid "Would you like to host or join a network play session?"
 msgstr "你想启动还是加入网络游玩会话？"
 
