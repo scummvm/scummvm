@@ -761,6 +761,20 @@ void SaveGameState(Stream *out) {
 	SavegameComponents::WriteAllCommon(out);
 }
 
+void ReadPluginSaveData(Stream *in) {
+	auto pluginFileHandle = AGSE_RESTOREGAME;
+	pl_set_file_handle(pluginFileHandle, in);
+	pl_run_plugin_hooks(AGSE_RESTOREGAME, pluginFileHandle);
+	pl_clear_file_handle();
+}
+
+void WritePluginSaveData(Stream *out) {
+	auto pluginFileHandle = AGSE_SAVEGAME;
+	pl_set_file_handle(pluginFileHandle, out);
+	pl_run_plugin_hooks(AGSE_SAVEGAME, pluginFileHandle);
+	pl_clear_file_handle();
+}
+
 } // namespace Engine
 } // namespace AGS
 } // namespace AGS3
