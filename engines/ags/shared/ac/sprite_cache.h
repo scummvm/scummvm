@@ -126,8 +126,10 @@ public:
 	void        Precache(sprkey_t index);
 	// Remap the given index to the sprite 0
 	void        RemapSpriteToSprite0(sprkey_t index);
-	// Unregisters sprite from the bank and optionally deletes bitmap
-	void        RemoveSprite(sprkey_t index, bool freeMemory);
+	// Unregisters sprite from the bank and returns the bitmap
+	Bitmap		*RemoveSprite(sprkey_t index);
+	// Deletes particular sprite, marks slot as unused
+	void		DisposeSprite(sprkey_t index);
 	// Deletes all loaded (non-locked, non-external) images from the cache;
 	// this keeps all the auxiliary sprite information intact
 	void        DisposeAll();
