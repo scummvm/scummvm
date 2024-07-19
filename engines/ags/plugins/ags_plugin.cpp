@@ -562,7 +562,7 @@ int IAGSEngine::GetFontType(int32 fontNum) {
 	if ((fontNum < 0) || (fontNum >= _GP(game).numfonts))
 		return FNT_INVALID;
 
-	if (font_supports_extended_characters(fontNum))
+	if (is_bitmap_font(fontNum))
 		return FNT_TTF;
 
 	return FNT_SCI;
