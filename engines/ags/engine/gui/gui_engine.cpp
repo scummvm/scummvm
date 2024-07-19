@@ -98,6 +98,18 @@ int get_eip_guiobj() {
 namespace AGS {
 namespace Shared {
 
+String GUI::TransformTextForDrawing(const String &text, bool translate) {
+	String res_text = translate ? String(get_translation(text.GetCStr())) : text;
+	if (_GP(game).options[OPT_RIGHTLEFTWRITE] != 0)
+		(get_uformat() == U_UTF8) ? res_text.ReverseUTF8() : res_text.Reverse();
+	return res_text;
+}
+
+size_t GUI::SplitLinesForDrawing(const char *text, SplitLines &lines, int font, int width, size_t max_lines) {
+	// Use the engine's word wrap tool, to have RTL writing and other features
+	return break_up_text_into_lines(text, lines, width, font);
+}
+
 bool GUIObject::IsClickable() const {
 	return (Flags & kGUICtrl_Clickable) != 0;
 }
@@ -123,11 +135,6 @@ void GUILabel::PrepareTextToDraw() {
 	replace_macro_tokens((Flags & kGUICtrl_Translated) ? get_translation(Text.GetCStr()) : Text.GetCStr(), _textToDraw);
 }
 
-size_t GUILabel::SplitLinesForDrawing(SplitLines &lines) {
-	// Use the engine's word wrap tool, to have hebrew-style writing and other features
-	return break_up_text_into_lines(_textToDraw.GetCStr(), lines, Width, Font);
-}
-
 void GUITextBox::DrawTextBoxContents(Bitmap *ds, int x, int y, color_t text_color) {
 	wouttext_outline(ds, x + 1 + get_fixed_pixel_size(1), y + 1 + get_fixed_pixel_size(1), Font, text_color, Text.GetCStr());
 	if (IsGUIEnabled(this)) {
@@ -139,17 +146,11 @@ void GUITextBox::DrawTextBoxContents(Bitmap *ds, int x, int y, color_t text_colo
 }
 
 void GUIListBox::PrepareTextToDraw(const String &text) {
-	if (Flags & kGUICtrl_Translated)
-		_textToDraw = get_translation(text.GetCStr());
-	else
-		_textToDraw = text;
+	_textToDraw = GUI::TransformTextForDrawing(text, (Flags & kGUICtrl_Translated) != 0);
 }
 
 void GUIButton::PrepareTextToDraw() {
-	if (Flags & kGUICtrl_Translated)
-		_textToDraw = get_translation(_text.GetCStr());
-	else
-		_textToDraw = _text;
+	_textToDraw = GUI::TransformTextForDrawing(_text, (Flags & kGUICtrl_Translated) != 0);
 }
 
 } // namespace Shared
