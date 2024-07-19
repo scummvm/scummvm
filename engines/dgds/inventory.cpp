@@ -40,7 +40,7 @@ Inventory::Inventory() : _isOpen(false), _prevPageBtn(nullptr), _nextPageBtn(nul
 
 void Inventory::open() {
 	// Allow double-open becuase that's how the inventory shows item
-	// descriptions.r
+	// descriptions.
 	_isOpen = true;
 	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
 	int curScene = engine->getScene()->getNum();
@@ -160,7 +160,7 @@ void Inventory::drawTime(Graphics::ManagedSurface &surf) {
 	surf.fillRect(Common::Rect(clockpos, _invClock->_width, _invClock->_height), 0);
 	RequestData::drawCorners(&surf, 19, clockpos.x - 2, clockpos.y - 2,
 								_invClock->_width + 4, _invClock->_height + 4);
-	font->drawString(&surf, timeStr, clockpos.x, clockpos.y, font->getStringWidth(timeStr), _invClock->_col3);
+	font->drawString(&surf, timeStr, clockpos.x + 4, clockpos.y, font->getStringWidth(timeStr), _invClock->_col3);
 }
 
 void Inventory::drawItems(Graphics::ManagedSurface &surf) {

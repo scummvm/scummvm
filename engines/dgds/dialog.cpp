@@ -122,8 +122,8 @@ void Dialog::drawType2BackgroundDragon(Graphics::ManagedSurface *dst, const Comm
 	RequestData::drawCorners(dst, 11, _rect.x, _rect.y, _rect.width, _rect.height);
 	if (!title.empty()) {
 		// TODO: Maybe should measure the font?
-		_state->_loc.y += 10;
-		_state->_loc.height -= 10;
+		_state->_loc.y += 11;
+		_state->_loc.height -= 11;
 		RequestData::drawHeader(dst, _rect.x, _rect.y, _rect.width, 4, title, 0, true);
 	}
 
@@ -136,6 +136,8 @@ void Dialog::drawType2BackgroundDragon(Graphics::ManagedSurface *dst, const Comm
 	RequestData::drawCorners(dst, 19, _state->_loc.x - 2, _state->_loc.y - 2,
 							_state->_loc.width + 4, _state->_loc.height + 4);
 
+	_state->_loc.y++;
+	_state->_loc.height--;
 	_state->_loc.x += 8;
 	_state->_loc.width -= 16;
 }

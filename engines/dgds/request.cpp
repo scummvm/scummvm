@@ -707,7 +707,7 @@ void RequestData::drawHeader(Graphics::ManagedSurface *dst, int16 x, int16 y, in
 			dst->drawLine(hleft - 3, htop, hright, htop, 0);
 			dst->drawLine(hright, htop + 1, hright, hbottom, 0);
 			dst->drawLine(hleft - 3, htop + 1, hleft - 3, hbottom, 15);
-			dst->drawLine(hleft - 2, hbottom, hleft + hwidth, hbottom, 15);
+			dst->drawLine(hleft - 2, hbottom, hleft + hwidth + 2, hbottom, 15);
 		}
 	}
 }

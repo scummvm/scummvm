@@ -165,10 +165,13 @@ bool DgdsEngine::changeScene(int sceneNum) {
 	_gameGlobals->setLastSceneNum(sceneNum);
 
 	// Save the current foreground if we are going to the inventory, clear it otherwise.
-	if (sceneNum == 2)
+	if (sceneNum == 2) {
+		// Slight hack - draw the inv button here to keep it in the scene
+		checkDrawInventoryButton();
 		_backgroundBuffer.blitFrom(_compositionBuffer);
-	else
+	} else {
 		_backgroundBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+	}
 
 	_scene->runLeaveSceneOps();
 
