@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-19 05:13+0000\n"
-"PO-Revision-Date: 2024-07-16 09:08+0000\n"
+"PO-Revision-Date: 2024-07-19 16:20+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -7277,50 +7277,36 @@ msgid "Default keymappings"
 msgstr "Asignaciones predeterminadas"
 
 #: engines/cine/metaengine.cpp:260
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Key to mouse keymappings"
-msgstr "Asignaciones del juego"
+msgstr "Asignaciones de teclado a ratón"
 
 #: engines/cine/metaengine.cpp:261
-#, fuzzy
-#| msgid "Quit panel keymapping"
 msgid "Exit screen keymappings"
-msgstr "Asignaciones del panel de salida"
+msgstr "Asignaciones de la pantalla de salida"
 
 #: engines/cine/metaengine.cpp:277
 msgid "Exit Sony intro screen"
-msgstr ""
+msgstr "Salir de la introducción de Sony"
 
 #: engines/cine/metaengine.cpp:283
-#, fuzzy
-#| msgid "Select to end of line"
 msgid "Select option / Click in game"
-msgstr "Seleccionar hasta el final de la línea"
+msgstr "Seleccionar opción/Clic dentro del juego"
 
 #: engines/cine/metaengine.cpp:290
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open action menu / Close menu"
-msgstr "Abrir menú principal"
+msgstr "Abrir menú de acciones/Cerrar menú"
 
 #: engines/cine/metaengine.cpp:295
-#, fuzzy
-#| msgid "Default game keymap"
 msgid "Default game speed"
-msgstr "Asignación predet. del juego"
+msgstr "Velocidad predeterminada del juego"
 
 #: engines/cine/metaengine.cpp:300
-#, fuzzy
-#| msgid "Show game credits"
 msgid "Slower game speed"
-msgstr "Mostrar créditos"
+msgstr "Ralentizar velocidad del juego"
 
 #: engines/cine/metaengine.cpp:307
-#, fuzzy
-#| msgid "Fast movie speed"
 msgid "Faster game speed"
-msgstr "Acelerar velocidad de vídeos"
+msgstr "Acelerar velocidad del juego"
 
 #: engines/cine/metaengine.cpp:315 engines/grim/grim.cpp:498
 #: engines/hpl1/metaengine.cpp:90 engines/scumm/help.cpp:243
@@ -7357,69 +7343,53 @@ msgid "Use"
 msgstr "Usar"
 
 #: engines/cine/metaengine.cpp:335
-#, fuzzy
-#| msgid "Active"
 msgid "Activate"
-msgstr "Activa"
+msgstr "Activar"
 
 #: engines/cine/metaengine.cpp:340
 msgid "Speak"
-msgstr ""
+msgstr "Hablar"
 
 #: engines/cine/metaengine.cpp:345
-#, fuzzy
-#| msgid "Action"
 msgid "Action menu"
-msgstr "Acción"
+msgstr "Menú de acciones"
 
 #: engines/cine/metaengine.cpp:351
-#, fuzzy
-#| msgid "Pause/Game menu"
 msgid "System menu"
-msgstr "Pausa/Menú del juego"
+msgstr "Menú del sistema"
 
 #. I18N: Opens collision map of where the actor can freely move
 #: engines/cine/metaengine.cpp:358
-#, fuzzy
-#| msgid "Show options"
 msgid "Show collisions"
-msgstr "Mostrar opciones"
+msgstr "Mostrar colisiones"
 
 #. I18N: Move Actor to top-left direction
 #: engines/cine/metaengine.cpp:393
-#, fuzzy
-#| msgid "Move left"
 msgid "Move up-left"
-msgstr "Mover hacia la izquierda"
+msgstr "Mover hacia arriba a la izquierda"
 
 #. I18N: Move Actor to top-right direction
 #: engines/cine/metaengine.cpp:399
-#, fuzzy
-#| msgid "Move right"
 msgid "Move up-right"
-msgstr "Mover hacia la derecha"
+msgstr "Mover hacia arriba a la derecha"
 
 #. I18N: Move Actor to bottom-left direction
 #: engines/cine/metaengine.cpp:405
-#, fuzzy
-#| msgid "Move down"
 msgid "Move down-left"
-msgstr "Mover hacia abajo"
+msgstr "Mover hacia abajo a la izquierda"
 
 #. I18N: Move Actor to bottom-right direction
 #: engines/cine/metaengine.cpp:411
-#, fuzzy
-#| msgid "Move right"
 msgid "Move down-right"
-msgstr "Mover hacia la derecha"
+msgstr "Mover hacia abajo a la derecha"
 
 #: engines/cine/metaengine.cpp:416
 msgid "Menu option up"
-msgstr ""
+msgstr "Subir de opción en menú"
 
 #: engines/cine/metaengine.cpp:421
 msgid "Menu option down"
-msgstr ""
+msgstr "Bajar de opción en menú"
 
 #: engines/cine/saveload.cpp:860
 msgid ""
