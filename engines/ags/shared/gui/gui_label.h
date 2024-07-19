@@ -60,7 +60,9 @@ public:
 	HorAlignment TextAlignment;
 
 private:
-	void PrepareTextToDraw();
+	// Transforms the Text property to a drawn text, applies translation,
+	// replaces macros, splits and wraps, etc; returns number of lines.
+	int PrepareTextToDraw();
 
 	// Information on macros contained within Text field
 	GUILabelMacro _textMacro;
