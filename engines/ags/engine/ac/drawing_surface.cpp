@@ -322,7 +322,8 @@ void DrawingSurface_DrawString(ScriptDrawingSurface *sds, int xx, int yy, int fo
 		text_color = ds->GetCompatibleColor(1);
 		debug_script_warn("RawPrint: Attempted to use hi-color on 256-col background");
 	}
-	wouttext_outline(ds, xx, yy, font, text_color, text);
+	String res_str = GUI::ApplyTextDirection(text);
+	wouttext_outline(ds, xx, yy, font, text_color, res_str.GetCStr());
 	sds->FinishedDrawing();
 }
 
