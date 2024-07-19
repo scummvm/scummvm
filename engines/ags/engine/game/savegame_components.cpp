@@ -786,7 +786,8 @@ HSaveError ReadOverlays(Stream *in, int32_t cmp_ver, const PreservedParams & /*p
 		ScreenOverlay over;
 		bool has_bitmap;
 		over.ReadFromFile(in, has_bitmap, cmp_ver);
-		assert(over.type >= 0);
+		if (over.type < 0)
+			continue; // safety abort
 		if (has_bitmap)
 			over.SetImage(read_serialized_bitmap(in), over.offsetX, over.offsetY);
 		if (has_bitmap && (over.scaleWidth <= 0 || over.scaleHeight <= 0)) {
