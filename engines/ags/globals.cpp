@@ -333,7 +333,7 @@ Globals::Globals() {
 
 	// overlay.cpp globals
 	_screenover = new std::vector<ScreenOverlay>();
-	_overlookup = new std::vector<int>(128);
+	_over_free_ids = new std::queue<int32_t>();
 
 	// plugins globals
 	_engineExports = new Plugins::Core::EngineExports();
