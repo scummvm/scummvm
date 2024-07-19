@@ -3200,6 +3200,8 @@ void ScummEngine_v3::terminateSaveMenuScript() {
 
 		runScript(scriptToChain, vm.slot[cur].freezeResistant, vm.slot[cur].recursive, chainedArgs);
 
+		_currentScript = cur;
+
 		// Stop code for all the objects in the save screen
 		stopObjectCode();
 	}
