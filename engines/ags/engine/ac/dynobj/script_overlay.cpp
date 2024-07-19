@@ -37,9 +37,12 @@ int ScriptOverlay::Dispose(const char *address, bool force) {
 	// since the managed object is being deleted, remove the
 	// reference so it doesn't try and dispose something else
 	// with that handle later
-	int overlayIndex = find_overlay_of_type(overlayId);
-	if (overlayIndex >= 0) {
-		_GP(screenover)[overlayIndex].associatedOverlayHandle = 0;
+	if (overlayId >= 0) {
+		int overlayIndex = find_overlay_of_type(overlayId);
+		if (overlayIndex >= 0) {
+			_GP(screenover)
+			[overlayIndex].associatedOverlayHandle = 0;
+		}
 	}
 
 	// if this is being removed voluntarily (ie. pointer out of
