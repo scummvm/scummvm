@@ -59,6 +59,7 @@ public:
 
 private:
 	int32_t TextBoxFlags;
+	String  _textToDraw;
 
 	void DrawTextBoxContents(Bitmap *ds, int x, int y, color_t text_color);
 };
