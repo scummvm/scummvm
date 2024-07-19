@@ -30,6 +30,8 @@
 #include "ags/shared/core/asset_manager.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/shared/game/main_game_file.h"
+#include "ags/shared/gui/gui_button.h"
+#include "ags/shared/gui/gui_label.h"
 #include "ags/shared/font/fonts.h"
 #include "ags/shared/gui/gui_main.h"
 #include "ags/shared/script/cc_common.h"
@@ -596,6 +598,16 @@ void UpgradeCharacters(GameSetupStruct &game, GameDataVersion data_ver) {
 	}
 }
 
+void UpgradeGUI(GameSetupStruct &game, GameDataVersion data_ver) {
+	// Previously, Buttons and Labels had a fixed Translated behavior
+	if (data_ver < kGameVersion_361) {
+		for (auto &btn : _GP(guibuts))
+			btn.SetTranslated(true); // always translated
+		for (auto &lbl : _GP(guilabels))
+			lbl.SetTranslated(true); // always translated
+	}
+}
+
 void UpgradeMouseCursors(GameSetupStruct &game, GameDataVersion data_ver) {
 	if (data_ver <= kGameVersion_272) {
 		// Change cursor.view from 0 to -1 for non-animating cursors.
@@ -833,6 +845,7 @@ HGameFileError UpdateGameData(LoadedGameEntities &ents, GameDataVersion data_ver
 	UpgradeFonts(game, data_ver);
 	UpgradeAudio(game, ents, data_ver);
 	UpgradeCharacters(game, data_ver);
+	UpgradeGUI(game, data_ver);
 	UpgradeMouseCursors(game, data_ver);
 	SetDefaultGlobalMessages(game);
 	// Global talking animation speed
