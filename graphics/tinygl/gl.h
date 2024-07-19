@@ -31,7 +31,6 @@
 #define GRAPHICS_TGL_H
 
 #define TGL_VERSION_1_1 1
-#define TGL_VERSION_1_2 1
 
 enum {
 	// --- GL 1.0 ---
@@ -606,66 +605,24 @@ enum {
 	TGL_MAX_CLIENT_ATTRIB_STACK_DEPTH = 0x0D3B,
 
 
-	// --- GL 1.2 ---
-
-	// Texture mapping
-	TGL_TEXTURE_BINDING_3D          = 0x806A,
-	TGL_TEXTURE_3D                  = 0x806F,
-	TGL_PROXY_TEXTURE_3D            = 0x8070,
-	TGL_TEXTURE_DEPTH               = 0x8071,
-	TGL_TEXTURE_WRAP_R              = 0x8072,
-	TGL_CLAMP_TO_EDGE               = 0x812F,
-	TGL_TEXTURE_MIN_LOD             = 0x813A,
-	TGL_TEXTURE_MAX_LOD             = 0x813B,
-	TGL_TEXTURE_BASE_LEVEL          = 0x813C,
-	TGL_TEXTURE_MAX_LEVEL           = 0x813D,
-
-	// Pixel Mode / Transfer
-	TGL_PACK_SKIP_IMAGES            = 0x806B,
-	TGL_PACK_IMAGE_HEIGHT           = 0x806C,
-	TGL_UNPACK_SKIP_IMAGES          = 0x806D,
-	TGL_UNPACK_IMAGE_HEIGHT         = 0x806E,
-
-	// Implementation limits
-	TGL_MAX_3D_TEXTURE_SIZE         = 0x8073,
-	TGL_MAX_ELEMENTS_VERTICES       = 0x80E8,
-	TGL_MAX_ELEMENTS_INDICES        = 0x80E9,
-
-	// Internal texture formats
-	TGL_UNSIGNED_BYTE_3_3_2         = 0x8032,
-	TGL_UNSIGNED_BYTE_2_3_3_REV     = 0x8362,
-	TGL_UNSIGNED_INT_10_10_10_2     = 0x8036,
-	TGL_UNSIGNED_INT_2_10_10_10_REV = 0x8368,
+	// --- GL 1.2 / GL ES 1.0 ---
 	TGL_UNSIGNED_SHORT_5_6_5        = 0x8363,
-	TGL_UNSIGNED_SHORT_5_6_5_REV    = 0x8364,
-	TGL_UNSIGNED_INT_8_8_8_8        = 0x8035,
-	TGL_UNSIGNED_INT_8_8_8_8_REV    = 0x8367,
+
+
+	// --- GL 1.2 / GL ES 1.0 / GL_EXT_packed_pixels ---
 	TGL_UNSIGNED_SHORT_5_5_5_1      = 0x8034,
-	TGL_UNSIGNED_SHORT_1_5_5_5_REV  = 0x8366,
 	TGL_UNSIGNED_SHORT_4_4_4_4      = 0x8033,
-	TGL_UNSIGNED_SHORT_4_4_4_4_REV  = 0x8365,
-	TGL_BGR                         = 0x80E0,
-	TGL_BGRA                        = 0x80E1,
-
-	// Gets
-	TGL_SMOOTH_POINT_SIZE_RANGE     = 0x0B12,
-	TGL_SMOOTH_POINT_SIZE_GRANULARITY = 0x0B13,
-	TGL_SMOOTH_LINE_WIDTH_RANGE     = 0x0B22,
-	TGL_SMOOTH_LINE_WIDTH_GRANULARITY = 0x0B23,
-	TGL_ALIASED_LINE_WIDTH_RANGE    = 0x846E,
-	TGL_RESCALE_NORMAL              = 0x803A,
-	TGL_LIGHT_MODEL_COLOR_CONTROL   = 0x81F8,
-	TGL_SINGLE_COLOR                = 0x81F9,
-	TGL_SEPARATE_SPECULAR_COLOR     = 0x81FA,
-	TGL_ALIASED_POINT_SIZE_RANGE    = 0x846D,
 
 
-	// --- GL 1.4 --- selected
+	// --- GL 1.2 / GL ES 1.0 / GL_SGIS_texture_edge_clamp ---
+	TGL_CLAMP_TO_EDGE               = 0x812F,
 
-	// Texture mapping
+
+	// --- GL 1.4 / GL_ARB_texture_mirrored_repeat / GL_OES_texture_mirrored_repeat --- */
 	TGL_MIRRORED_REPEAT             = 0x8370,
 
-	// Stencil
+
+	// --- GL 1.4 / GL_EXT_stencil_wrap / GL_OES_stencil_wrap --- */
 	TGL_INCR_WRAP                   = 0x8507,
 	TGL_DECR_WRAP                   = 0x8508,
 };
@@ -1148,24 +1105,6 @@ void tglIndexubv(const TGLubyte *c);
 // misc
 void tglPopClientAttrib();
 void tglPushClientAttrib(TGLbitfield mask);
-
-
-// --- GL 1.2 ---
-
-// arrays
-void tglDrawRangeElements(TGLenum mode, TGLuint start, TGLuint end,
-                          TGLsizei count, TGLenum type, const void *indices);
-
-// textures
-void tglTexImage3D(TGLenum target, TGLint level, TGLint internalformat,
-                   TGLsizei width, TGLsizei height, TGLsizei depth,
-                   TGLint border, TGLenum format, TGLenum type,
-                   const void *data);
-void tglTexSubImage3D(TGLenum target, TGLint level, TGLint xoffset, TGLint yoffset,
-                      TGLint zoffset, TGLsizei width, TGLsizei height, TGLsizei depth,
-                      TGLenum format, TGLenum type, const void *pixels);
-void tglCopyTexSubImage3D(TGLenum target, TGLint level, TGLint xoffset, TGLint yoffset,
-                          TGLint zoffset, TGLint x, TGLint y, TGLsizei width, TGLsizei height);
 
 
 // --- GL ES 1.0 / GL_OES_single_precision ---
