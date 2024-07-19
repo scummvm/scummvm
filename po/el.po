@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-17 07:57+0000\n"
+"POT-Creation-Date: 2024-07-19 05:13+0000\n"
 "PO-Revision-Date: 2024-05-16 08:20+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -6272,7 +6272,7 @@ msgstr ""
 "αντιγράψετε στο φάκελο παιχνιδιού"
 
 #: engines/agi/metaengine.cpp:111 engines/bagel/metaengine.cpp:50
-#: engines/chewy/metaengine.cpp:36 engines/cine/metaengine.cpp:42
+#: engines/chewy/metaengine.cpp:36 engines/cine/metaengine.cpp:46
 #: engines/crab/metaengine.cpp:34 engines/drascula/metaengine.cpp:38
 #: engines/dreamweb/metaengine.cpp:48 engines/groovie/metaengine.cpp:53
 #: engines/m4/metaengine.cpp:37 engines/neverhood/dialogs.cpp:47
@@ -6283,7 +6283,7 @@ msgid "Use original save/load screens"
 msgstr "Χρήση αρχικών οθονών αποθήκευσης/φόρτωσης"
 
 #: engines/agi/metaengine.cpp:112 engines/bagel/metaengine.cpp:51
-#: engines/chewy/metaengine.cpp:37 engines/cine/metaengine.cpp:43
+#: engines/chewy/metaengine.cpp:37 engines/cine/metaengine.cpp:47
 #: engines/crab/metaengine.cpp:35 engines/drascula/metaengine.cpp:39
 #: engines/dreamweb/metaengine.cpp:49 engines/groovie/metaengine.cpp:54
 #: engines/m4/metaengine.cpp:38 engines/neverhood/dialogs.cpp:48
@@ -6515,7 +6515,8 @@ msgstr "Η υποστήριξη για το AGOS 2 δεν έχει ενσωμα�
 msgid "AGOS main"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:228 engines/made/metaengine.cpp:103
+#: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
+#: engines/made/metaengine.cpp:103
 #, fuzzy
 #| msgid "Game Keymappings"
 msgid "Game keymappings"
@@ -6527,15 +6528,17 @@ msgstr "Αντιστοίχιση Πλήκτρων"
 msgid "Yes/No keymapping"
 msgstr "Αντιστοίχιση Πλήκτρων"
 
-#: engines/agos/metaengine.cpp:232 engines/groovie/metaengine.cpp:205
-#: engines/made/metaengine.cpp:107 engines/saga/metaengine.cpp:277
+#: engines/agos/metaengine.cpp:232 engines/cine/metaengine.cpp:265
+#: engines/groovie/metaengine.cpp:205 engines/made/metaengine.cpp:107
+#: engines/saga/metaengine.cpp:277
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left click"
 msgstr "Αριστερό Click"
 
-#: engines/agos/metaengine.cpp:238 engines/groovie/metaengine.cpp:211
-#: engines/made/metaengine.cpp:114 engines/saga/metaengine.cpp:288
+#: engines/agos/metaengine.cpp:238 engines/cine/metaengine.cpp:271
+#: engines/groovie/metaengine.cpp:211 engines/made/metaengine.cpp:114
+#: engines/saga/metaengine.cpp:288
 msgid "Right click"
 msgstr "Δεξί click"
 
@@ -6828,23 +6831,31 @@ msgstr "Εμφάνιση Μενού Παιχνιδιού"
 msgid "Open character inventory"
 msgstr "Άνοιγμα Υπαρχόντων"
 
+#. I18N: Move Actor to upwards direction
 #: engines/asylum/metaengine.cpp:171 engines/asylum/metaengine.cpp:198
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:195
+#: engines/cine/metaengine.cpp:365 engines/hdb/metaengine.cpp:213
+#: engines/nancy/input.cpp:195
 msgid "Move up"
 msgstr "Κίνηση πάνω"
 
+#. I18N: Move Actor to downwards direction
 #: engines/asylum/metaengine.cpp:177 engines/asylum/metaengine.cpp:205
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:201
+#: engines/cine/metaengine.cpp:372 engines/hdb/metaengine.cpp:219
+#: engines/nancy/input.cpp:201
 msgid "Move down"
 msgstr "Κίνηση κάτω"
 
+#. I18N: Move Actor to left direction
 #: engines/asylum/metaengine.cpp:183 engines/asylum/metaengine.cpp:212
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:207
+#: engines/cine/metaengine.cpp:379 engines/hdb/metaengine.cpp:225
+#: engines/nancy/input.cpp:207
 msgid "Move left"
 msgstr "Κίνηση αριστερά"
 
+#. I18N: Move Actor to right direction
 #: engines/asylum/metaengine.cpp:189 engines/asylum/metaengine.cpp:219
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:213
+#: engines/cine/metaengine.cpp:386 engines/hdb/metaengine.cpp:231
+#: engines/nancy/input.cpp:213
 msgid "Move right"
 msgstr "Κίνηση δεξιά"
 
@@ -7409,11 +7420,11 @@ msgstr ""
 msgid "Close the Dialogue box"
 msgstr "Κλείσιμο παραθύρου διαλόγου"
 
-#: engines/cine/metaengine.cpp:53
+#: engines/cine/metaengine.cpp:57
 msgid "Use transparent dialog boxes in 16 color scenes"
 msgstr "Χρήση διάφανων διαλόγων σε σκηνές με 16 χρώματα"
 
-#: engines/cine/metaengine.cpp:54
+#: engines/cine/metaengine.cpp:58
 msgid ""
 "Use transparent dialog boxes in 16 color scenes even if the original game "
 "version did not support them"
@@ -7421,17 +7432,170 @@ msgstr ""
 "Χρήση διάφανων διαλόγων σε σκηνές με 16 χρώματα ακόμα κι αν το αρχικό "
 "παιχνίδι δεν υποστήριζε κάτι τέτοιο"
 
-#: engines/cine/metaengine.cpp:158
+#: engines/cine/metaengine.cpp:164
 msgid "Unnamed autosave"
 msgstr "Ανώνυμη αυτόματη αποθήκευση"
 
-#: engines/cine/metaengine.cpp:160 engines/cine/metaengine.cpp:232
+#: engines/cine/metaengine.cpp:166 engines/cine/metaengine.cpp:238
 msgid "Unnamed savegame"
 msgstr "Αποθηκευμένο παιχνίδι χωρίς όνομα"
 
-#: engines/cine/metaengine.cpp:177 engines/cine/metaengine.cpp:240
+#: engines/cine/metaengine.cpp:183 engines/cine/metaengine.cpp:246
 msgid "Empty autosave"
 msgstr "Κενή αυτόματη αποθήκευση"
+
+#: engines/cine/metaengine.cpp:258 engines/made/metaengine.cpp:102
+#, fuzzy
+#| msgid "Default game keymap"
+msgid "Default keymappings"
+msgstr "Προκαθορισμένες αντιστοιχίες"
+
+#: engines/cine/metaengine.cpp:260
+#, fuzzy
+#| msgid "Game Keymappings"
+msgid "Key to mouse keymappings"
+msgstr "Αντιστοίχιση Πλήκτρων"
+
+#: engines/cine/metaengine.cpp:261
+#, fuzzy
+#| msgid "Game Keymappings"
+msgid "Exit screen keymappings"
+msgstr "Αντιστοίχιση Πλήκτρων"
+
+#: engines/cine/metaengine.cpp:277
+msgid "Exit Sony intro screen"
+msgstr ""
+
+#: engines/cine/metaengine.cpp:283
+#, fuzzy
+#| msgid "Select to end of line"
+msgid "Select option / Click in game"
+msgstr "Επιλογή μέχρι το τέλος γραμμής"
+
+#: engines/cine/metaengine.cpp:290
+#, fuzzy
+#| msgid "Open main menu"
+msgid "Open action menu / Close menu"
+msgstr "Άνοιγμα κεντρικού μενού"
+
+#: engines/cine/metaengine.cpp:295
+#, fuzzy
+#| msgid "Default game keymap"
+msgid "Default game speed"
+msgstr "Προκαθορισμένες αντιστοιχίες"
+
+#: engines/cine/metaengine.cpp:300
+#, fuzzy
+#| msgid "Show game credits"
+msgid "Slower game speed"
+msgstr "Προβολή συντελεστών παιχνιδιού"
+
+#: engines/cine/metaengine.cpp:307
+#, fuzzy
+#| msgid "Fast movie speed"
+msgid "Faster game speed"
+msgstr "Γρήγορη ταχύτητα ταινιών"
+
+#: engines/cine/metaengine.cpp:315 engines/grim/grim.cpp:498
+#: engines/hpl1/metaengine.cpp:90 engines/scumm/help.cpp:243
+#: engines/scumm/help.cpp:251
+msgid "Examine"
+msgstr "Εξέτασε"
+
+#: engines/cine/metaengine.cpp:320 engines/saga/metaengine.cpp:393
+#, fuzzy
+#| msgid "Take off"
+msgid "Take"
+msgstr "Βγάλε"
+
+#. I18N: Action in In Cold Blood
+#: engines/cine/metaengine.cpp:325 engines/crab/input/input.cpp:251
+#: engines/dragons/metaengine.cpp:148 engines/griffon/metaengine.cpp:152
+#: engines/grim/grim.cpp:513 engines/grim/grim.cpp:609
+#: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:94
+#: engines/icb/icb.cpp:101 engines/icb/icb.cpp:179 engines/scumm/help.cpp:229
+#: engines/scumm/help.cpp:238 engines/scumm/help.cpp:245
+#: engines/scumm/help.cpp:253 engines/twine/metaengine.cpp:418
+#: engines/zvision/metaengine.cpp:232
+msgid "Inventory"
+msgstr "Υπάρχοντα"
+
+#. I18N: Combat command in Might & Magic 1
+#: engines/cine/metaengine.cpp:330 engines/hdb/metaengine.cpp:237
+#: engines/mm/mm1/metaengine.cpp:81 engines/saga/metaengine.cpp:378
+#: engines/scumm/help.cpp:130 engines/scumm/help.cpp:154
+#: engines/scumm/help.cpp:172 engines/scumm/help.cpp:202
+#: engines/scumm/help.cpp:217 engines/scumm/help.cpp:228
+#: engines/scumm/help.cpp:254 engines/sky/metaengine.cpp:95
+#: engines/twp/metaengine.cpp:186 engines/wintermute/keymapper_tables.h:140
+#: engines/wintermute/keymapper_tables.h:1552
+msgid "Use"
+msgstr "Χρήση"
+
+#: engines/cine/metaengine.cpp:335
+#, fuzzy
+#| msgid "Active"
+msgid "Activate"
+msgstr "Ενεργό"
+
+#: engines/cine/metaengine.cpp:340
+msgid "Speak"
+msgstr ""
+
+#: engines/cine/metaengine.cpp:345
+#, fuzzy
+#| msgid "Action"
+msgid "Action menu"
+msgstr "Πράξη"
+
+#: engines/cine/metaengine.cpp:351
+#, fuzzy
+#| msgid "Pause/Game menu"
+msgid "System menu"
+msgstr "Διακοπή/Μενού Παιχνιδιού"
+
+#. I18N: Opens collision map of where the actor can freely move
+#: engines/cine/metaengine.cpp:358
+#, fuzzy
+#| msgid "Speech Options"
+msgid "Show collisions"
+msgstr "Επιλογές Ομιλίας"
+
+#. I18N: Move Actor to top-left direction
+#: engines/cine/metaengine.cpp:393
+#, fuzzy
+#| msgid "Move left"
+msgid "Move up-left"
+msgstr "Κίνηση αριστερά"
+
+#. I18N: Move Actor to top-right direction
+#: engines/cine/metaengine.cpp:399
+#, fuzzy
+#| msgid "Move right"
+msgid "Move up-right"
+msgstr "Κίνηση δεξιά"
+
+#. I18N: Move Actor to bottom-left direction
+#: engines/cine/metaengine.cpp:405
+#, fuzzy
+#| msgid "Move down"
+msgid "Move down-left"
+msgstr "Κίνηση κάτω"
+
+#. I18N: Move Actor to bottom-right direction
+#: engines/cine/metaengine.cpp:411
+#, fuzzy
+#| msgid "Move right"
+msgid "Move down-right"
+msgstr "Κίνηση δεξιά"
+
+#: engines/cine/metaengine.cpp:416
+msgid "Menu option up"
+msgstr ""
+
+#: engines/cine/metaengine.cpp:421
+msgid "Menu option down"
+msgstr ""
 
 #: engines/cine/saveload.cpp:860
 msgid ""
@@ -7506,18 +7670,6 @@ msgstr "Αντιστοίχιση"
 #: engines/crab/input/input.cpp:246
 msgid "Journal"
 msgstr "Ημερολόγιο"
-
-#. I18N: Action in In Cold Blood
-#: engines/crab/input/input.cpp:251 engines/dragons/metaengine.cpp:148
-#: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:513
-#: engines/grim/grim.cpp:609 engines/hdb/metaengine.cpp:251
-#: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
-#: engines/icb/icb.cpp:179 engines/scumm/help.cpp:229
-#: engines/scumm/help.cpp:238 engines/scumm/help.cpp:245
-#: engines/scumm/help.cpp:253 engines/twine/metaengine.cpp:418
-#: engines/zvision/metaengine.cpp:232
-msgid "Inventory"
-msgstr "Υπάρχοντα"
 
 #: engines/crab/input/input.cpp:256
 msgid "Traits"
@@ -7881,11 +8033,6 @@ msgstr ""
 msgid "Run"
 msgstr "Εκτέλεση"
 
-#: engines/grim/grim.cpp:498 engines/hpl1/metaengine.cpp:90
-#: engines/scumm/help.cpp:243 engines/scumm/help.cpp:251
-msgid "Examine"
-msgstr "Εξέτασε"
-
 #: engines/grim/grim.cpp:503 engines/grim/grim.cpp:599
 msgid "Use/Talk"
 msgstr "Χρησιμοποίησε/Μίλα"
@@ -8127,18 +8274,6 @@ msgstr "Ενεργοποίηση cheat"
 #: engines/hdb/metaengine.cpp:45
 msgid "Debug info and level selection becomes available"
 msgstr "Γίνεται διαθέσιμη πληροφορία και επιλογή επιπέδου αποσφαλμάτωσης"
-
-#. I18N: Combat command in Might & Magic 1
-#: engines/hdb/metaengine.cpp:237 engines/mm/mm1/metaengine.cpp:81
-#: engines/saga/metaengine.cpp:378 engines/scumm/help.cpp:130
-#: engines/scumm/help.cpp:154 engines/scumm/help.cpp:172
-#: engines/scumm/help.cpp:202 engines/scumm/help.cpp:217
-#: engines/scumm/help.cpp:228 engines/scumm/help.cpp:254
-#: engines/sky/metaengine.cpp:95 engines/twp/metaengine.cpp:186
-#: engines/wintermute/keymapper_tables.h:140
-#: engines/wintermute/keymapper_tables.h:1552
-msgid "Use"
-msgstr "Χρήση"
 
 #: engines/hdb/metaengine.cpp:244
 msgid "Clear waypoints"
@@ -8665,12 +8800,6 @@ msgid ""
 msgstr ""
 "Με την επιλογή αυτή, το παιχνίδι θα χρησιμοποιήσει ψηφιακή μουσική (digital "
 "soundtrack) κατά την εισαγωγή. Αλλιώς, θα παίξει μουσική MIDI."
-
-#: engines/made/metaengine.cpp:102
-#, fuzzy
-#| msgid "Default game keymap"
-msgid "Default keymappings"
-msgstr "Προκαθορισμένες αντιστοιχίες"
 
 #: engines/made/metaengine.cpp:128
 #, fuzzy
@@ -9774,12 +9903,6 @@ msgstr "Δώσε"
 #: engines/twp/metaengine.cpp:184
 msgid "Push"
 msgstr "Σπρώξε"
-
-#: engines/saga/metaengine.cpp:393
-#, fuzzy
-#| msgid "Take off"
-msgid "Take"
-msgstr "Βγάλε"
 
 #: engines/saga/metaengine.cpp:398
 msgid "Swallow"
@@ -14351,9 +14474,6 @@ msgstr ""
 
 #~ msgid "Skip dialog line (some games)"
 #~ msgstr "Παράκαμψη γραμμής διαλόγου (σε μερικά παιχνίδια)"
-
-#~ msgid "Pause/Game menu"
-#~ msgstr "Διακοπή/Μενού Παιχνιδιού"
 
 #~ msgid "DS Options menu"
 #~ msgstr "Μενού Επιλογών DS"

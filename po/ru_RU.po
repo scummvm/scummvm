@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-17 07:57+0000\n"
+"POT-Creation-Date: 2024-07-19 05:13+0000\n"
 "PO-Revision-Date: 2024-06-05 08:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -6067,7 +6067,7 @@ msgstr ""
 "скопировать его в каталог с игрой"
 
 #: engines/agi/metaengine.cpp:111 engines/bagel/metaengine.cpp:50
-#: engines/chewy/metaengine.cpp:36 engines/cine/metaengine.cpp:42
+#: engines/chewy/metaengine.cpp:36 engines/cine/metaengine.cpp:46
 #: engines/crab/metaengine.cpp:34 engines/drascula/metaengine.cpp:38
 #: engines/dreamweb/metaengine.cpp:48 engines/groovie/metaengine.cpp:53
 #: engines/m4/metaengine.cpp:37 engines/neverhood/dialogs.cpp:47
@@ -6078,7 +6078,7 @@ msgid "Use original save/load screens"
 msgstr "Использовать оригинальные экраны записи/чтения игры"
 
 #: engines/agi/metaengine.cpp:112 engines/bagel/metaengine.cpp:51
-#: engines/chewy/metaengine.cpp:37 engines/cine/metaengine.cpp:43
+#: engines/chewy/metaengine.cpp:37 engines/cine/metaengine.cpp:47
 #: engines/crab/metaengine.cpp:35 engines/drascula/metaengine.cpp:39
 #: engines/dreamweb/metaengine.cpp:49 engines/groovie/metaengine.cpp:54
 #: engines/m4/metaengine.cpp:38 engines/neverhood/dialogs.cpp:48
@@ -6304,7 +6304,8 @@ msgstr "Поддержка для AGOS 2 не скомпилирована"
 msgid "AGOS main"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:228 engines/made/metaengine.cpp:103
+#: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
+#: engines/made/metaengine.cpp:103
 #, fuzzy
 #| msgid "Game Keymappings"
 msgid "Game keymappings"
@@ -6316,15 +6317,17 @@ msgstr "Раскладки клавиш игры"
 msgid "Yes/No keymapping"
 msgstr "Раскладки клавиш игры"
 
-#: engines/agos/metaengine.cpp:232 engines/groovie/metaengine.cpp:205
-#: engines/made/metaengine.cpp:107 engines/saga/metaengine.cpp:277
+#: engines/agos/metaengine.cpp:232 engines/cine/metaengine.cpp:265
+#: engines/groovie/metaengine.cpp:205 engines/made/metaengine.cpp:107
+#: engines/saga/metaengine.cpp:277
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left click"
 msgstr "Левый щелчок"
 
-#: engines/agos/metaengine.cpp:238 engines/groovie/metaengine.cpp:211
-#: engines/made/metaengine.cpp:114 engines/saga/metaengine.cpp:288
+#: engines/agos/metaengine.cpp:238 engines/cine/metaengine.cpp:271
+#: engines/groovie/metaengine.cpp:211 engines/made/metaengine.cpp:114
+#: engines/saga/metaengine.cpp:288
 msgid "Right click"
 msgstr "Правый щелчок"
 
@@ -6611,23 +6614,31 @@ msgstr "Открыть внутриигровое меню"
 msgid "Open character inventory"
 msgstr "Открыть инвентарь героя"
 
+#. I18N: Move Actor to upwards direction
 #: engines/asylum/metaengine.cpp:171 engines/asylum/metaengine.cpp:198
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:195
+#: engines/cine/metaengine.cpp:365 engines/hdb/metaengine.cpp:213
+#: engines/nancy/input.cpp:195
 msgid "Move up"
 msgstr "Идти вверх"
 
+#. I18N: Move Actor to downwards direction
 #: engines/asylum/metaengine.cpp:177 engines/asylum/metaengine.cpp:205
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:201
+#: engines/cine/metaengine.cpp:372 engines/hdb/metaengine.cpp:219
+#: engines/nancy/input.cpp:201
 msgid "Move down"
 msgstr "Идти вниз"
 
+#. I18N: Move Actor to left direction
 #: engines/asylum/metaengine.cpp:183 engines/asylum/metaengine.cpp:212
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:207
+#: engines/cine/metaengine.cpp:379 engines/hdb/metaengine.cpp:225
+#: engines/nancy/input.cpp:207
 msgid "Move left"
 msgstr "Идти влево"
 
+#. I18N: Move Actor to right direction
 #: engines/asylum/metaengine.cpp:189 engines/asylum/metaengine.cpp:219
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:213
+#: engines/cine/metaengine.cpp:386 engines/hdb/metaengine.cpp:231
+#: engines/nancy/input.cpp:213
 msgid "Move right"
 msgstr "Идти вправо"
 
@@ -7175,11 +7186,11 @@ msgstr "Использовать TTS для чтения субтитров вс
 msgid "Close the Dialogue box"
 msgstr "Закрыть окно диалога"
 
-#: engines/cine/metaengine.cpp:53
+#: engines/cine/metaengine.cpp:57
 msgid "Use transparent dialog boxes in 16 color scenes"
 msgstr "Использовать прозрачные диалоговые окна в 16-цветных сценах"
 
-#: engines/cine/metaengine.cpp:54
+#: engines/cine/metaengine.cpp:58
 msgid ""
 "Use transparent dialog boxes in 16 color scenes even if the original game "
 "version did not support them"
@@ -7187,17 +7198,170 @@ msgstr ""
 "Использовать прозрачные диалоговые окна в 16-цветных сценах даже если "
 "оригинальная игра их не поддерживала"
 
-#: engines/cine/metaengine.cpp:158
+#: engines/cine/metaengine.cpp:164
 msgid "Unnamed autosave"
 msgstr "Автосохранение без имени"
 
-#: engines/cine/metaengine.cpp:160 engines/cine/metaengine.cpp:232
+#: engines/cine/metaengine.cpp:166 engines/cine/metaengine.cpp:238
 msgid "Unnamed savegame"
 msgstr "Сохранённая игра без имени"
 
-#: engines/cine/metaengine.cpp:177 engines/cine/metaengine.cpp:240
+#: engines/cine/metaengine.cpp:183 engines/cine/metaengine.cpp:246
 msgid "Empty autosave"
 msgstr "Пустое автосохранение"
+
+#: engines/cine/metaengine.cpp:258 engines/made/metaengine.cpp:102
+#, fuzzy
+#| msgid "Default game keymap"
+msgid "Default keymappings"
+msgstr "Раскладка клавиш по умолчанию"
+
+#: engines/cine/metaengine.cpp:260
+#, fuzzy
+#| msgid "Game Keymappings"
+msgid "Key to mouse keymappings"
+msgstr "Раскладки клавиш игры"
+
+#: engines/cine/metaengine.cpp:261
+#, fuzzy
+#| msgid "Game Keymappings"
+msgid "Exit screen keymappings"
+msgstr "Раскладки клавиш игры"
+
+#: engines/cine/metaengine.cpp:277
+msgid "Exit Sony intro screen"
+msgstr ""
+
+#: engines/cine/metaengine.cpp:283
+#, fuzzy
+#| msgid "Select to end of line"
+msgid "Select option / Click in game"
+msgstr "Выделить до конца строки"
+
+#: engines/cine/metaengine.cpp:290
+#, fuzzy
+#| msgid "Open main menu"
+msgid "Open action menu / Close menu"
+msgstr "Открыть главное меню"
+
+#: engines/cine/metaengine.cpp:295
+#, fuzzy
+#| msgid "Default game keymap"
+msgid "Default game speed"
+msgstr "Раскладка клавиш по умолчанию"
+
+#: engines/cine/metaengine.cpp:300
+#, fuzzy
+#| msgid "Show game credits"
+msgid "Slower game speed"
+msgstr "Показать авторов игры"
+
+#: engines/cine/metaengine.cpp:307
+#, fuzzy
+#| msgid "Fast movie speed"
+msgid "Faster game speed"
+msgstr "Режим ускоренного видео"
+
+#: engines/cine/metaengine.cpp:315 engines/grim/grim.cpp:498
+#: engines/hpl1/metaengine.cpp:90 engines/scumm/help.cpp:243
+#: engines/scumm/help.cpp:251
+msgid "Examine"
+msgstr "Проверить"
+
+#: engines/cine/metaengine.cpp:320 engines/saga/metaengine.cpp:393
+#, fuzzy
+#| msgid "Take off"
+msgid "Take"
+msgstr "Поднять"
+
+#. I18N: Action in In Cold Blood
+#: engines/cine/metaengine.cpp:325 engines/crab/input/input.cpp:251
+#: engines/dragons/metaengine.cpp:148 engines/griffon/metaengine.cpp:152
+#: engines/grim/grim.cpp:513 engines/grim/grim.cpp:609
+#: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:94
+#: engines/icb/icb.cpp:101 engines/icb/icb.cpp:179 engines/scumm/help.cpp:229
+#: engines/scumm/help.cpp:238 engines/scumm/help.cpp:245
+#: engines/scumm/help.cpp:253 engines/twine/metaengine.cpp:418
+#: engines/zvision/metaengine.cpp:232
+msgid "Inventory"
+msgstr "Инвентарь"
+
+#. I18N: Combat command in Might & Magic 1
+#: engines/cine/metaengine.cpp:330 engines/hdb/metaengine.cpp:237
+#: engines/mm/mm1/metaengine.cpp:81 engines/saga/metaengine.cpp:378
+#: engines/scumm/help.cpp:130 engines/scumm/help.cpp:154
+#: engines/scumm/help.cpp:172 engines/scumm/help.cpp:202
+#: engines/scumm/help.cpp:217 engines/scumm/help.cpp:228
+#: engines/scumm/help.cpp:254 engines/sky/metaengine.cpp:95
+#: engines/twp/metaengine.cpp:186 engines/wintermute/keymapper_tables.h:140
+#: engines/wintermute/keymapper_tables.h:1552
+msgid "Use"
+msgstr "Использовать"
+
+#: engines/cine/metaengine.cpp:335
+#, fuzzy
+#| msgid "Active"
+msgid "Activate"
+msgstr "Активно"
+
+#: engines/cine/metaengine.cpp:340
+msgid "Speak"
+msgstr ""
+
+#: engines/cine/metaengine.cpp:345
+#, fuzzy
+#| msgid "Action"
+msgid "Action menu"
+msgstr "Действие"
+
+#: engines/cine/metaengine.cpp:351
+#, fuzzy
+#| msgid "Pause/Game menu"
+msgid "System menu"
+msgstr "Пауза/Меню игры"
+
+#. I18N: Opens collision map of where the actor can freely move
+#: engines/cine/metaengine.cpp:358
+#, fuzzy
+#| msgid "Speech Options"
+msgid "Show collisions"
+msgstr "Опции озвучки"
+
+#. I18N: Move Actor to top-left direction
+#: engines/cine/metaengine.cpp:393
+#, fuzzy
+#| msgid "Move left"
+msgid "Move up-left"
+msgstr "Идти влево"
+
+#. I18N: Move Actor to top-right direction
+#: engines/cine/metaengine.cpp:399
+#, fuzzy
+#| msgid "Move right"
+msgid "Move up-right"
+msgstr "Идти вправо"
+
+#. I18N: Move Actor to bottom-left direction
+#: engines/cine/metaengine.cpp:405
+#, fuzzy
+#| msgid "Move down"
+msgid "Move down-left"
+msgstr "Идти вниз"
+
+#. I18N: Move Actor to bottom-right direction
+#: engines/cine/metaengine.cpp:411
+#, fuzzy
+#| msgid "Move right"
+msgid "Move down-right"
+msgstr "Идти вправо"
+
+#: engines/cine/metaengine.cpp:416
+msgid "Menu option up"
+msgstr ""
+
+#: engines/cine/metaengine.cpp:421
+msgid "Menu option down"
+msgstr ""
 
 #: engines/cine/saveload.cpp:860
 msgid ""
@@ -7271,18 +7435,6 @@ msgstr "Назначить"
 #: engines/crab/input/input.cpp:246
 msgid "Journal"
 msgstr "Журнал"
-
-#. I18N: Action in In Cold Blood
-#: engines/crab/input/input.cpp:251 engines/dragons/metaengine.cpp:148
-#: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:513
-#: engines/grim/grim.cpp:609 engines/hdb/metaengine.cpp:251
-#: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
-#: engines/icb/icb.cpp:179 engines/scumm/help.cpp:229
-#: engines/scumm/help.cpp:238 engines/scumm/help.cpp:245
-#: engines/scumm/help.cpp:253 engines/twine/metaengine.cpp:418
-#: engines/zvision/metaengine.cpp:232
-msgid "Inventory"
-msgstr "Инвентарь"
 
 #: engines/crab/input/input.cpp:256
 msgid "Traits"
@@ -7637,11 +7789,6 @@ msgstr ""
 msgid "Run"
 msgstr "Бежать"
 
-#: engines/grim/grim.cpp:498 engines/hpl1/metaengine.cpp:90
-#: engines/scumm/help.cpp:243 engines/scumm/help.cpp:251
-msgid "Examine"
-msgstr "Проверить"
-
 #: engines/grim/grim.cpp:503 engines/grim/grim.cpp:599
 msgid "Use/Talk"
 msgstr "Использовать/Говорить"
@@ -7869,18 +8016,6 @@ msgstr "Включить чит-режим"
 #: engines/hdb/metaengine.cpp:45
 msgid "Debug info and level selection becomes available"
 msgstr "Отладочная информация и выбор уровня становятся доступными"
-
-#. I18N: Combat command in Might & Magic 1
-#: engines/hdb/metaengine.cpp:237 engines/mm/mm1/metaengine.cpp:81
-#: engines/saga/metaengine.cpp:378 engines/scumm/help.cpp:130
-#: engines/scumm/help.cpp:154 engines/scumm/help.cpp:172
-#: engines/scumm/help.cpp:202 engines/scumm/help.cpp:217
-#: engines/scumm/help.cpp:228 engines/scumm/help.cpp:254
-#: engines/sky/metaengine.cpp:95 engines/twp/metaengine.cpp:186
-#: engines/wintermute/keymapper_tables.h:140
-#: engines/wintermute/keymapper_tables.h:1552
-msgid "Use"
-msgstr "Использовать"
 
 #: engines/hdb/metaengine.cpp:244
 msgid "Clear waypoints"
@@ -8396,12 +8531,6 @@ msgid ""
 msgstr ""
 "Если выбрано, то игра будет использовать цифровой трек во вступлении. Иначе "
 "будет проигрываться MIDI-музыка."
-
-#: engines/made/metaengine.cpp:102
-#, fuzzy
-#| msgid "Default game keymap"
-msgid "Default keymappings"
-msgstr "Раскладка клавиш по умолчанию"
 
 #: engines/made/metaengine.cpp:128
 #, fuzzy
@@ -9471,12 +9600,6 @@ msgstr "Дать"
 #: engines/twp/metaengine.cpp:184
 msgid "Push"
 msgstr "Толкать"
-
-#: engines/saga/metaengine.cpp:393
-#, fuzzy
-#| msgid "Take off"
-msgid "Take"
-msgstr "Поднять"
 
 #: engines/saga/metaengine.cpp:398
 msgid "Swallow"
@@ -13605,9 +13728,6 @@ msgstr ""
 
 #~ msgid "Skip dialog line (some games)"
 #~ msgstr "Пропустить строчку диалога (некоторые игры)"
-
-#~ msgid "Pause/Game menu"
-#~ msgstr "Пауза/Меню игры"
 
 #~ msgid "DS Options menu"
 #~ msgstr "Меню опций DS"

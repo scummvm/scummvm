@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-17 07:57+0000\n"
+"POT-Creation-Date: 2024-07-19 05:13+0000\n"
 "PO-Revision-Date: 2024-07-11 17:47+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -6063,7 +6063,7 @@ msgstr ""
 "kansioon"
 
 #: engines/agi/metaengine.cpp:111 engines/bagel/metaengine.cpp:50
-#: engines/chewy/metaengine.cpp:36 engines/cine/metaengine.cpp:42
+#: engines/chewy/metaengine.cpp:36 engines/cine/metaengine.cpp:46
 #: engines/crab/metaengine.cpp:34 engines/drascula/metaengine.cpp:38
 #: engines/dreamweb/metaengine.cpp:48 engines/groovie/metaengine.cpp:53
 #: engines/m4/metaengine.cpp:37 engines/neverhood/dialogs.cpp:47
@@ -6074,7 +6074,7 @@ msgid "Use original save/load screens"
 msgstr "Käytä alkuperäisiä tallenna/lataa valikkoja"
 
 #: engines/agi/metaengine.cpp:112 engines/bagel/metaengine.cpp:51
-#: engines/chewy/metaengine.cpp:37 engines/cine/metaengine.cpp:43
+#: engines/chewy/metaengine.cpp:37 engines/cine/metaengine.cpp:47
 #: engines/crab/metaengine.cpp:35 engines/drascula/metaengine.cpp:39
 #: engines/dreamweb/metaengine.cpp:49 engines/groovie/metaengine.cpp:54
 #: engines/m4/metaengine.cpp:38 engines/neverhood/dialogs.cpp:48
@@ -6296,7 +6296,8 @@ msgstr "AGOS 2-tukea ei ole käännetty mukaan"
 msgid "AGOS main"
 msgstr "AGOS päätaso"
 
-#: engines/agos/metaengine.cpp:228 engines/made/metaengine.cpp:103
+#: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
+#: engines/made/metaengine.cpp:103
 #, fuzzy
 #| msgid "Game keymapping"
 msgid "Game keymappings"
@@ -6308,15 +6309,17 @@ msgstr "Pelin näppäinkartta"
 msgid "Yes/No keymapping"
 msgstr "Kyllä/Ei näppäinkomennot"
 
-#: engines/agos/metaengine.cpp:232 engines/groovie/metaengine.cpp:205
-#: engines/made/metaengine.cpp:107 engines/saga/metaengine.cpp:277
+#: engines/agos/metaengine.cpp:232 engines/cine/metaengine.cpp:265
+#: engines/groovie/metaengine.cpp:205 engines/made/metaengine.cpp:107
+#: engines/saga/metaengine.cpp:277
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left click"
 msgstr "Vasen klikkaus"
 
-#: engines/agos/metaengine.cpp:238 engines/groovie/metaengine.cpp:211
-#: engines/made/metaengine.cpp:114 engines/saga/metaengine.cpp:288
+#: engines/agos/metaengine.cpp:238 engines/cine/metaengine.cpp:271
+#: engines/groovie/metaengine.cpp:211 engines/made/metaengine.cpp:114
+#: engines/saga/metaengine.cpp:288
 msgid "Right click"
 msgstr "Oikea klikkaus"
 
@@ -6597,23 +6600,31 @@ msgstr "Avaa pelin sisäinen valikko"
 msgid "Open character inventory"
 msgstr "Avaa hahmon inventaario"
 
+#. I18N: Move Actor to upwards direction
 #: engines/asylum/metaengine.cpp:171 engines/asylum/metaengine.cpp:198
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:195
+#: engines/cine/metaengine.cpp:365 engines/hdb/metaengine.cpp:213
+#: engines/nancy/input.cpp:195
 msgid "Move up"
 msgstr "Liiku ylöspäin"
 
+#. I18N: Move Actor to downwards direction
 #: engines/asylum/metaengine.cpp:177 engines/asylum/metaengine.cpp:205
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:201
+#: engines/cine/metaengine.cpp:372 engines/hdb/metaengine.cpp:219
+#: engines/nancy/input.cpp:201
 msgid "Move down"
 msgstr "Liiku alaspäin"
 
+#. I18N: Move Actor to left direction
 #: engines/asylum/metaengine.cpp:183 engines/asylum/metaengine.cpp:212
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:207
+#: engines/cine/metaengine.cpp:379 engines/hdb/metaengine.cpp:225
+#: engines/nancy/input.cpp:207
 msgid "Move left"
 msgstr "Liiku vasemmalle"
 
+#. I18N: Move Actor to right direction
 #: engines/asylum/metaengine.cpp:189 engines/asylum/metaengine.cpp:219
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:213
+#: engines/cine/metaengine.cpp:386 engines/hdb/metaengine.cpp:231
+#: engines/nancy/input.cpp:213
 msgid "Move right"
 msgstr "Liiku oikealle"
 
@@ -7146,11 +7157,11 @@ msgstr "Käytä TTS:ää tekstitysten lukemiseen (jos TTS on saatavilla)"
 msgid "Close the Dialogue box"
 msgstr "Sulje dialogilaatiko"
 
-#: engines/cine/metaengine.cpp:53
+#: engines/cine/metaengine.cpp:57
 msgid "Use transparent dialog boxes in 16 color scenes"
 msgstr "Käytä läpinäkyviä dialogilaatikoita 16-värisissä näkymissä"
 
-#: engines/cine/metaengine.cpp:54
+#: engines/cine/metaengine.cpp:58
 msgid ""
 "Use transparent dialog boxes in 16 color scenes even if the original game "
 "version did not support them"
@@ -7158,17 +7169,168 @@ msgstr ""
 "Käytä läpinäkyviä dialogilaatikoita 16-värisissä näkymissä vaikka "
 "alkuperäinen peli ei niitä tukisikaan"
 
-#: engines/cine/metaengine.cpp:158
+#: engines/cine/metaengine.cpp:164
 msgid "Unnamed autosave"
 msgstr "Nimetön automaattinen tallennus"
 
-#: engines/cine/metaengine.cpp:160 engines/cine/metaengine.cpp:232
+#: engines/cine/metaengine.cpp:166 engines/cine/metaengine.cpp:238
 msgid "Unnamed savegame"
 msgstr "Nimetön pelitallennus"
 
-#: engines/cine/metaengine.cpp:177 engines/cine/metaengine.cpp:240
+#: engines/cine/metaengine.cpp:183 engines/cine/metaengine.cpp:246
 msgid "Empty autosave"
 msgstr "Tyhjä autom. tallennus"
+
+#: engines/cine/metaengine.cpp:258 engines/made/metaengine.cpp:102
+#, fuzzy
+#| msgid "Default game keymap"
+msgid "Default keymappings"
+msgstr "Oletusnäppäinasetukset"
+
+#: engines/cine/metaengine.cpp:260
+#, fuzzy
+#| msgid "Game keymapping"
+msgid "Key to mouse keymappings"
+msgstr "Pelin näppäinkartta"
+
+#: engines/cine/metaengine.cpp:261
+#, fuzzy
+#| msgid "Quit panel keymapping"
+msgid "Exit screen keymappings"
+msgstr "Lopetuspaneelin näppäinkartta"
+
+#: engines/cine/metaengine.cpp:277
+msgid "Exit Sony intro screen"
+msgstr ""
+
+#: engines/cine/metaengine.cpp:283
+#, fuzzy
+#| msgid "Select to end of line"
+msgid "Select option / Click in game"
+msgstr "Valinta rivin loppuun"
+
+#: engines/cine/metaengine.cpp:290
+#, fuzzy
+#| msgid "Open main menu"
+msgid "Open action menu / Close menu"
+msgstr "Avaa päävalikko"
+
+#: engines/cine/metaengine.cpp:295
+#, fuzzy
+#| msgid "Default game keymap"
+msgid "Default game speed"
+msgstr "Oletusnäppäinasetukset"
+
+#: engines/cine/metaengine.cpp:300
+#, fuzzy
+#| msgid "Show game credits"
+msgid "Slower game speed"
+msgstr "Näytä pelin lopputekstit"
+
+#: engines/cine/metaengine.cpp:307
+#, fuzzy
+#| msgid "Fast movie speed"
+msgid "Faster game speed"
+msgstr "Nopea videontoisto"
+
+#: engines/cine/metaengine.cpp:315 engines/grim/grim.cpp:498
+#: engines/hpl1/metaengine.cpp:90 engines/scumm/help.cpp:243
+#: engines/scumm/help.cpp:251
+msgid "Examine"
+msgstr "Tutki"
+
+#: engines/cine/metaengine.cpp:320 engines/saga/metaengine.cpp:393
+msgid "Take"
+msgstr "Ota"
+
+#. I18N: Action in In Cold Blood
+#: engines/cine/metaengine.cpp:325 engines/crab/input/input.cpp:251
+#: engines/dragons/metaengine.cpp:148 engines/griffon/metaengine.cpp:152
+#: engines/grim/grim.cpp:513 engines/grim/grim.cpp:609
+#: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:94
+#: engines/icb/icb.cpp:101 engines/icb/icb.cpp:179 engines/scumm/help.cpp:229
+#: engines/scumm/help.cpp:238 engines/scumm/help.cpp:245
+#: engines/scumm/help.cpp:253 engines/twine/metaengine.cpp:418
+#: engines/zvision/metaengine.cpp:232
+msgid "Inventory"
+msgstr "Tavarat"
+
+#. I18N: Combat command in Might & Magic 1
+#: engines/cine/metaengine.cpp:330 engines/hdb/metaengine.cpp:237
+#: engines/mm/mm1/metaengine.cpp:81 engines/saga/metaengine.cpp:378
+#: engines/scumm/help.cpp:130 engines/scumm/help.cpp:154
+#: engines/scumm/help.cpp:172 engines/scumm/help.cpp:202
+#: engines/scumm/help.cpp:217 engines/scumm/help.cpp:228
+#: engines/scumm/help.cpp:254 engines/sky/metaengine.cpp:95
+#: engines/twp/metaengine.cpp:186 engines/wintermute/keymapper_tables.h:140
+#: engines/wintermute/keymapper_tables.h:1552
+msgid "Use"
+msgstr "Käytä"
+
+#: engines/cine/metaengine.cpp:335
+#, fuzzy
+#| msgid "Active"
+msgid "Activate"
+msgstr "Aktiivinen"
+
+#: engines/cine/metaengine.cpp:340
+msgid "Speak"
+msgstr ""
+
+#: engines/cine/metaengine.cpp:345
+#, fuzzy
+#| msgid "Action"
+msgid "Action menu"
+msgstr "Toiminta"
+
+#: engines/cine/metaengine.cpp:351
+#, fuzzy
+#| msgid "Pause/Game menu"
+msgid "System menu"
+msgstr "Pause / Pelivalikko"
+
+#. I18N: Opens collision map of where the actor can freely move
+#: engines/cine/metaengine.cpp:358
+#, fuzzy
+#| msgid "Show Options"
+msgid "Show collisions"
+msgstr "Näytä asetukset"
+
+#. I18N: Move Actor to top-left direction
+#: engines/cine/metaengine.cpp:393
+#, fuzzy
+#| msgid "Move left"
+msgid "Move up-left"
+msgstr "Liiku vasemmalle"
+
+#. I18N: Move Actor to top-right direction
+#: engines/cine/metaengine.cpp:399
+#, fuzzy
+#| msgid "Move right"
+msgid "Move up-right"
+msgstr "Liiku oikealle"
+
+#. I18N: Move Actor to bottom-left direction
+#: engines/cine/metaengine.cpp:405
+#, fuzzy
+#| msgid "Move down"
+msgid "Move down-left"
+msgstr "Liiku alaspäin"
+
+#. I18N: Move Actor to bottom-right direction
+#: engines/cine/metaengine.cpp:411
+#, fuzzy
+#| msgid "Move right"
+msgid "Move down-right"
+msgstr "Liiku oikealle"
+
+#: engines/cine/metaengine.cpp:416
+msgid "Menu option up"
+msgstr ""
+
+#: engines/cine/metaengine.cpp:421
+msgid "Menu option down"
+msgstr ""
 
 #: engines/cine/saveload.cpp:860
 msgid ""
@@ -7242,18 +7404,6 @@ msgstr "Näppäinkartta"
 #: engines/crab/input/input.cpp:246
 msgid "Journal"
 msgstr "Päiväkirja"
-
-#. I18N: Action in In Cold Blood
-#: engines/crab/input/input.cpp:251 engines/dragons/metaengine.cpp:148
-#: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:513
-#: engines/grim/grim.cpp:609 engines/hdb/metaengine.cpp:251
-#: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
-#: engines/icb/icb.cpp:179 engines/scumm/help.cpp:229
-#: engines/scumm/help.cpp:238 engines/scumm/help.cpp:245
-#: engines/scumm/help.cpp:253 engines/twine/metaengine.cpp:418
-#: engines/zvision/metaengine.cpp:232
-msgid "Inventory"
-msgstr "Tavarat"
 
 #: engines/crab/input/input.cpp:256
 msgid "Traits"
@@ -7609,11 +7759,6 @@ msgstr ""
 msgid "Run"
 msgstr "Juokse"
 
-#: engines/grim/grim.cpp:498 engines/hpl1/metaengine.cpp:90
-#: engines/scumm/help.cpp:243 engines/scumm/help.cpp:251
-msgid "Examine"
-msgstr "Tutki"
-
 #: engines/grim/grim.cpp:503 engines/grim/grim.cpp:599
 msgid "Use/Talk"
 msgstr "Käytä/Puhu"
@@ -7842,18 +7987,6 @@ msgstr "Salli huijaustila"
 #: engines/hdb/metaengine.cpp:45
 msgid "Debug info and level selection becomes available"
 msgstr "Debuggaustiedot ja tason valinta tulevat saataville"
-
-#. I18N: Combat command in Might & Magic 1
-#: engines/hdb/metaengine.cpp:237 engines/mm/mm1/metaengine.cpp:81
-#: engines/saga/metaengine.cpp:378 engines/scumm/help.cpp:130
-#: engines/scumm/help.cpp:154 engines/scumm/help.cpp:172
-#: engines/scumm/help.cpp:202 engines/scumm/help.cpp:217
-#: engines/scumm/help.cpp:228 engines/scumm/help.cpp:254
-#: engines/sky/metaengine.cpp:95 engines/twp/metaengine.cpp:186
-#: engines/wintermute/keymapper_tables.h:140
-#: engines/wintermute/keymapper_tables.h:1552
-msgid "Use"
-msgstr "Käytä"
 
 #: engines/hdb/metaengine.cpp:244
 msgid "Clear waypoints"
@@ -8365,12 +8498,6 @@ msgid ""
 msgstr ""
 "Jos valittu, peli käyttää digitaalista musiikkia intron aikana. Muutoin se "
 "käyttää MIDI-musiikkia."
-
-#: engines/made/metaengine.cpp:102
-#, fuzzy
-#| msgid "Default game keymap"
-msgid "Default keymappings"
-msgstr "Oletusnäppäinasetukset"
 
 #: engines/made/metaengine.cpp:128
 #, fuzzy
@@ -9422,10 +9549,6 @@ msgstr "Anna"
 #: engines/twp/metaengine.cpp:184
 msgid "Push"
 msgstr "Työnnä"
-
-#: engines/saga/metaengine.cpp:393
-msgid "Take"
-msgstr "Ota"
 
 #: engines/saga/metaengine.cpp:398
 msgid "Swallow"
@@ -13847,9 +13970,6 @@ msgstr ""
 
 #~ msgid "Skip dialog line (some games)"
 #~ msgstr "Ohita dialogi (joissain peleissä)"
-
-#~ msgid "Pause/Game menu"
-#~ msgstr "Pause / Pelivalikko"
 
 #~ msgid "DS Options menu"
 #~ msgstr "DS asetusvalikko"

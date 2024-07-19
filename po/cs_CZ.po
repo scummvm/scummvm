@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-17 07:57+0000\n"
+"POT-Creation-Date: 2024-07-19 05:13+0000\n"
 "PO-Revision-Date: 2023-12-14 14:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -5789,7 +5789,7 @@ msgid ""
 msgstr ""
 
 #: engines/agi/metaengine.cpp:111 engines/bagel/metaengine.cpp:50
-#: engines/chewy/metaengine.cpp:36 engines/cine/metaengine.cpp:42
+#: engines/chewy/metaengine.cpp:36 engines/cine/metaengine.cpp:46
 #: engines/crab/metaengine.cpp:34 engines/drascula/metaengine.cpp:38
 #: engines/dreamweb/metaengine.cpp:48 engines/groovie/metaengine.cpp:53
 #: engines/m4/metaengine.cpp:37 engines/neverhood/dialogs.cpp:47
@@ -5800,7 +5800,7 @@ msgid "Use original save/load screens"
 msgstr "Použít původní obrazovky načtení/uložení"
 
 #: engines/agi/metaengine.cpp:112 engines/bagel/metaengine.cpp:51
-#: engines/chewy/metaengine.cpp:37 engines/cine/metaengine.cpp:43
+#: engines/chewy/metaengine.cpp:37 engines/cine/metaengine.cpp:47
 #: engines/crab/metaengine.cpp:35 engines/drascula/metaengine.cpp:39
 #: engines/dreamweb/metaengine.cpp:49 engines/groovie/metaengine.cpp:54
 #: engines/m4/metaengine.cpp:38 engines/neverhood/dialogs.cpp:48
@@ -6023,7 +6023,8 @@ msgstr "Zakompilované funkce:"
 msgid "AGOS main"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:228 engines/made/metaengine.cpp:103
+#: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
+#: engines/made/metaengine.cpp:103
 #, fuzzy
 msgid "Game keymappings"
 msgstr "~V~olby..."
@@ -6033,15 +6034,17 @@ msgstr "~V~olby..."
 msgid "Yes/No keymapping"
 msgstr "~V~olby..."
 
-#: engines/agos/metaengine.cpp:232 engines/groovie/metaengine.cpp:205
-#: engines/made/metaengine.cpp:107 engines/saga/metaengine.cpp:277
+#: engines/agos/metaengine.cpp:232 engines/cine/metaengine.cpp:265
+#: engines/groovie/metaengine.cpp:205 engines/made/metaengine.cpp:107
+#: engines/saga/metaengine.cpp:277
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left click"
 msgstr "Levé Kliknutí"
 
-#: engines/agos/metaengine.cpp:238 engines/groovie/metaengine.cpp:211
-#: engines/made/metaengine.cpp:114 engines/saga/metaengine.cpp:288
+#: engines/agos/metaengine.cpp:238 engines/cine/metaengine.cpp:271
+#: engines/groovie/metaengine.cpp:211 engines/made/metaengine.cpp:114
+#: engines/saga/metaengine.cpp:288
 msgid "Right click"
 msgstr "Pravé kliknutí"
 
@@ -6323,26 +6326,34 @@ msgstr ""
 msgid "Open character inventory"
 msgstr "Otevřít/Zavřít Inventář"
 
+#. I18N: Move Actor to upwards direction
 #: engines/asylum/metaengine.cpp:171 engines/asylum/metaengine.cpp:198
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:195
+#: engines/cine/metaengine.cpp:365 engines/hdb/metaengine.cpp:213
+#: engines/nancy/input.cpp:195
 #, fuzzy
 msgid "Move up"
 msgstr "Vzad"
 
+#. I18N: Move Actor to downwards direction
 #: engines/asylum/metaengine.cpp:177 engines/asylum/metaengine.cpp:205
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:201
+#: engines/cine/metaengine.cpp:372 engines/hdb/metaengine.cpp:219
+#: engines/nancy/input.cpp:201
 #, fuzzy
 msgid "Move down"
 msgstr "Zrušit stahování"
 
+#. I18N: Move Actor to left direction
 #: engines/asylum/metaengine.cpp:183 engines/asylum/metaengine.cpp:212
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:207
+#: engines/cine/metaengine.cpp:379 engines/hdb/metaengine.cpp:225
+#: engines/nancy/input.cpp:207
 #, fuzzy
 msgid "Move left"
 msgstr "Přesunout se doleva"
 
+#. I18N: Move Actor to right direction
 #: engines/asylum/metaengine.cpp:189 engines/asylum/metaengine.cpp:219
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:213
+#: engines/cine/metaengine.cpp:386 engines/hdb/metaengine.cpp:231
+#: engines/nancy/input.cpp:213
 #, fuzzy
 msgid "Move right"
 msgstr "Přesunout se doprava"
@@ -6897,30 +6908,172 @@ msgstr "Použít zvuky na CD místo ve hře, pokud je dostupné"
 msgid "Close the Dialogue box"
 msgstr "Zavřít"
 
-#: engines/cine/metaengine.cpp:53
+#: engines/cine/metaengine.cpp:57
 msgid "Use transparent dialog boxes in 16 color scenes"
 msgstr ""
 
-#: engines/cine/metaengine.cpp:54
+#: engines/cine/metaengine.cpp:58
 msgid ""
 "Use transparent dialog boxes in 16 color scenes even if the original game "
 "version did not support them"
 msgstr ""
 
-#: engines/cine/metaengine.cpp:158
+#: engines/cine/metaengine.cpp:164
 #, fuzzy
 msgid "Unnamed autosave"
 msgstr "Bezejmenná uložená hra"
 
-#: engines/cine/metaengine.cpp:160 engines/cine/metaengine.cpp:232
+#: engines/cine/metaengine.cpp:166 engines/cine/metaengine.cpp:238
 #, fuzzy
 msgid "Unnamed savegame"
 msgstr "Bezejmenná uložená hra"
 
-#: engines/cine/metaengine.cpp:177 engines/cine/metaengine.cpp:240
+#: engines/cine/metaengine.cpp:183 engines/cine/metaengine.cpp:246
 #, fuzzy
 msgid "Empty autosave"
 msgstr "Automatické ukládání"
+
+#: engines/cine/metaengine.cpp:258 engines/made/metaengine.cpp:102
+#, fuzzy
+#| msgid "Default game keymap"
+msgid "Default keymappings"
+msgstr "Výchozí rozložení kláves"
+
+#: engines/cine/metaengine.cpp:260
+#, fuzzy
+msgid "Key to mouse keymappings"
+msgstr "~V~olby..."
+
+#: engines/cine/metaengine.cpp:261
+#, fuzzy
+msgid "Exit screen keymappings"
+msgstr "~V~olby..."
+
+#: engines/cine/metaengine.cpp:277
+msgid "Exit Sony intro screen"
+msgstr ""
+
+#: engines/cine/metaengine.cpp:283
+#, fuzzy
+#| msgid "Select SoundFont"
+msgid "Select option / Click in game"
+msgstr "Vybrat SoundFont"
+
+#: engines/cine/metaengine.cpp:290
+#, fuzzy
+msgid "Open action menu / Close menu"
+msgstr "~N~ávrat do Spouštěče"
+
+#: engines/cine/metaengine.cpp:295
+#, fuzzy
+#| msgid "Default game keymap"
+msgid "Default game speed"
+msgstr "Výchozí rozložení kláves"
+
+#: engines/cine/metaengine.cpp:300
+#, fuzzy
+msgid "Slower game speed"
+msgstr "Zobrazit kurzor myši"
+
+#: engines/cine/metaengine.cpp:307
+#, fuzzy
+#| msgid "Fast movie speed"
+msgid "Faster game speed"
+msgstr "Zvýšená rychlost videa"
+
+#: engines/cine/metaengine.cpp:315 engines/grim/grim.cpp:498
+#: engines/hpl1/metaengine.cpp:90 engines/scumm/help.cpp:243
+#: engines/scumm/help.cpp:251
+msgid "Examine"
+msgstr "Prohlédnout"
+
+#: engines/cine/metaengine.cpp:320 engines/saga/metaengine.cpp:393
+#, fuzzy
+#| msgid "Take off"
+msgid "Take"
+msgstr "Svléct"
+
+#. I18N: Action in In Cold Blood
+#: engines/cine/metaengine.cpp:325 engines/crab/input/input.cpp:251
+#: engines/dragons/metaengine.cpp:148 engines/griffon/metaengine.cpp:152
+#: engines/grim/grim.cpp:513 engines/grim/grim.cpp:609
+#: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:94
+#: engines/icb/icb.cpp:101 engines/icb/icb.cpp:179 engines/scumm/help.cpp:229
+#: engines/scumm/help.cpp:238 engines/scumm/help.cpp:245
+#: engines/scumm/help.cpp:253 engines/twine/metaengine.cpp:418
+#: engines/zvision/metaengine.cpp:232
+msgid "Inventory"
+msgstr "Inventář"
+
+#. I18N: Combat command in Might & Magic 1
+#: engines/cine/metaengine.cpp:330 engines/hdb/metaengine.cpp:237
+#: engines/mm/mm1/metaengine.cpp:81 engines/saga/metaengine.cpp:378
+#: engines/scumm/help.cpp:130 engines/scumm/help.cpp:154
+#: engines/scumm/help.cpp:172 engines/scumm/help.cpp:202
+#: engines/scumm/help.cpp:217 engines/scumm/help.cpp:228
+#: engines/scumm/help.cpp:254 engines/sky/metaengine.cpp:95
+#: engines/twp/metaengine.cpp:186 engines/wintermute/keymapper_tables.h:140
+#: engines/wintermute/keymapper_tables.h:1552
+msgid "Use"
+msgstr "Použít"
+
+#: engines/cine/metaengine.cpp:335
+#, fuzzy
+#| msgid "Active"
+msgid "Activate"
+msgstr "Aktivní"
+
+#: engines/cine/metaengine.cpp:340
+msgid "Speak"
+msgstr ""
+
+#: engines/cine/metaengine.cpp:345
+#, fuzzy
+msgid "Action menu"
+msgstr "Aktivní"
+
+#: engines/cine/metaengine.cpp:351
+#, fuzzy
+msgid "System menu"
+msgstr "Menu Hry"
+
+#. I18N: Opens collision map of where the actor can freely move
+#: engines/cine/metaengine.cpp:358
+#, fuzzy
+msgid "Show collisions"
+msgstr "Pouze Řeč"
+
+#. I18N: Move Actor to top-left direction
+#: engines/cine/metaengine.cpp:393
+#, fuzzy
+msgid "Move up-left"
+msgstr "Přesunout se doleva"
+
+#. I18N: Move Actor to top-right direction
+#: engines/cine/metaengine.cpp:399
+#, fuzzy
+msgid "Move up-right"
+msgstr "Přesunout se doprava"
+
+#. I18N: Move Actor to bottom-left direction
+#: engines/cine/metaengine.cpp:405
+#, fuzzy
+msgid "Move down-left"
+msgstr "Zrušit stahování"
+
+#. I18N: Move Actor to bottom-right direction
+#: engines/cine/metaengine.cpp:411
+#, fuzzy
+msgid "Move down-right"
+msgstr "Přesunout se doprava"
+
+#: engines/cine/metaengine.cpp:416
+msgid "Menu option up"
+msgstr ""
+
+#: engines/cine/metaengine.cpp:421
+msgid "Menu option down"
+msgstr ""
 
 #: engines/cine/saveload.cpp:860
 msgid ""
@@ -7001,18 +7154,6 @@ msgstr "Mapovat"
 #, fuzzy
 msgid "Journal"
 msgstr "Zobrazit Vše"
-
-#. I18N: Action in In Cold Blood
-#: engines/crab/input/input.cpp:251 engines/dragons/metaengine.cpp:148
-#: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:513
-#: engines/grim/grim.cpp:609 engines/hdb/metaengine.cpp:251
-#: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
-#: engines/icb/icb.cpp:179 engines/scumm/help.cpp:229
-#: engines/scumm/help.cpp:238 engines/scumm/help.cpp:245
-#: engines/scumm/help.cpp:253 engines/twine/metaengine.cpp:418
-#: engines/zvision/metaengine.cpp:232
-msgid "Inventory"
-msgstr "Inventář"
 
 #: engines/crab/input/input.cpp:256
 msgid "Traits"
@@ -7390,11 +7531,6 @@ msgstr ""
 msgid "Run"
 msgstr ""
 
-#: engines/grim/grim.cpp:498 engines/hpl1/metaengine.cpp:90
-#: engines/scumm/help.cpp:243 engines/scumm/help.cpp:251
-msgid "Examine"
-msgstr "Prohlédnout"
-
 #: engines/grim/grim.cpp:503 engines/grim/grim.cpp:599
 #, fuzzy
 msgid "Use/Talk"
@@ -7606,18 +7742,6 @@ msgstr "Zapnout héliový režim"
 #: engines/hdb/metaengine.cpp:45
 msgid "Debug info and level selection becomes available"
 msgstr ""
-
-#. I18N: Combat command in Might & Magic 1
-#: engines/hdb/metaengine.cpp:237 engines/mm/mm1/metaengine.cpp:81
-#: engines/saga/metaengine.cpp:378 engines/scumm/help.cpp:130
-#: engines/scumm/help.cpp:154 engines/scumm/help.cpp:172
-#: engines/scumm/help.cpp:202 engines/scumm/help.cpp:217
-#: engines/scumm/help.cpp:228 engines/scumm/help.cpp:254
-#: engines/sky/metaengine.cpp:95 engines/twp/metaengine.cpp:186
-#: engines/wintermute/keymapper_tables.h:140
-#: engines/wintermute/keymapper_tables.h:1552
-msgid "Use"
-msgstr "Použít"
 
 #: engines/hdb/metaengine.cpp:244
 msgid "Clear waypoints"
@@ -8124,12 +8248,6 @@ msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
 msgstr ""
-
-#: engines/made/metaengine.cpp:102
-#, fuzzy
-#| msgid "Default game keymap"
-msgid "Default keymappings"
-msgstr "Výchozí rozložení kláves"
 
 #: engines/made/metaengine.cpp:128
 #, fuzzy
@@ -9188,12 +9306,6 @@ msgstr "Dát"
 #: engines/twp/metaengine.cpp:184
 msgid "Push"
 msgstr "Tlačit"
-
-#: engines/saga/metaengine.cpp:393
-#, fuzzy
-#| msgid "Take off"
-msgid "Take"
-msgstr "Svléct"
 
 #: engines/saga/metaengine.cpp:398
 msgid "Swallow"
@@ -13093,10 +13205,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Skip dialog line (some games)"
 #~ msgstr "Přeskočit řádek"
-
-#, fuzzy
-#~ msgid "Pause/Game menu"
-#~ msgstr "Menu Hry"
 
 #, fuzzy
 #~ msgid "DS Options menu"
