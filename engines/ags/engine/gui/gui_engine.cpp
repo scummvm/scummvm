@@ -146,12 +146,24 @@ int GUILabel::PrepareTextToDraw() {
 }
 
 void GUITextBox::DrawTextBoxContents(Bitmap *ds, int x, int y, color_t text_color) {
-	wouttext_outline(ds, x + 1 + get_fixed_pixel_size(1), y + 1 + get_fixed_pixel_size(1), Font, text_color, Text.GetCStr());
+	_textToDraw = Text;
+	bool reverse = false;
+	if ((_G(loaded_game_file_version) >= kGameVersion_361) && ((Flags & kGUICtrl_Translated) != 0)) {
+		_textToDraw = GUI::ApplyTextDirection(Text);
+		reverse = _GP(game).options[OPT_RIGHTLEFTWRITE] != 0;
+	}
+
+	Line tpos = GUI::CalcTextPositionHor(_textToDraw.GetCStr(), Font,
+										 x + 1 + get_fixed_pixel_size(1), x + Width - 1, y + 1 + get_fixed_pixel_size(1),
+										 reverse ? kAlignTopRight : kAlignTopLeft);
+	wouttext_outline(ds, tpos.X1, tpos.Y1, Font, text_color, _textToDraw.GetCStr());
+
 	if (IsGUIEnabled(this)) {
 		// draw a cursor
-		int draw_at_x = x + get_text_width(Text.GetCStr(), Font) + 3;
+		const int cursor_width = get_fixed_pixel_size(5);
+		int draw_at_x = reverse ? tpos.X1 - 3 - cursor_width : tpos.X2 + 3;
 		int draw_at_y = y + 1 + get_font_height(Font);
-		ds->DrawRect(Rect(draw_at_x, draw_at_y, draw_at_x + get_fixed_pixel_size(5), draw_at_y + (get_fixed_pixel_size(1) - 1)), text_color);
+		ds->DrawRect(Rect(draw_at_x, draw_at_y, draw_at_x + cursor_width, draw_at_y + (get_fixed_pixel_size(1) - 1)), text_color);
 	}
 }
 
