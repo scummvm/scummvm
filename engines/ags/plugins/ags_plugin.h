@@ -592,8 +592,7 @@ struct EnginePlugin {
 	AGS::Engine::Library library;
 	Plugins::PluginBase *_plugin = nullptr;
 	bool available = false;
-	char *savedata = nullptr;
-	int savedatasize = 0;
+	std::vector<uint8_t> savedata;
 	int wantHook = 0;
 	int invalidatedRegion = 0;
 	bool builtin = false;

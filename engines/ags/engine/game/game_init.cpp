@@ -76,8 +76,6 @@ String GetGameInitErrorText(GameInitErrorType err) {
 		return "Too many audio types for this engine to handle.";
 	case kGameInitErr_EntityInitFail:
 		return "Failed to initialize game entities.";
-	case kGameInitErr_TooManyPlugins:
-		return "Too many plugins for this engine to handle.";
 	case kGameInitErr_PluginNameInvalid:
 		return "Plugin name is invalid.";
 	case kGameInitErr_NoGlobalScript:
