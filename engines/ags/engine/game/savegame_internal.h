@@ -34,6 +34,7 @@ namespace AGS {
 namespace Engine {
 
 using AGS::Shared::Bitmap;
+using AGS::Shared::Stream;
 
 typedef std::shared_ptr<Bitmap> PBitmap;
 
@@ -137,6 +138,13 @@ struct RestoredData {
 
 	RestoredData();
 };
+
+// Runs plugin events, requesting to read save data from the given stream.
+// NOTE: there's no error check in this function, because plugin API currently
+// does not let plugins report any errors when restoring their saved data.
+void ReadPluginSaveData(Stream *in);
+// Runs plugin events, requesting to write save data into the given stream.
+void WritePluginSaveData(Stream *out);
 
 } // namespace Engine
 } // namespace AGS
