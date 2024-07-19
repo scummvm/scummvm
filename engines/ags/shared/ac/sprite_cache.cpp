@@ -143,14 +143,22 @@ void SpriteCache::SubstituteBitmap(sprkey_t index, Bitmap *sprite) {
 	SprCacheLog("SubstituteBitmap: %d", index);
 }
 
-void SpriteCache::RemoveSprite(sprkey_t index, bool freeMemory) {
+Bitmap *SpriteCache::RemoveSprite(sprkey_t index) {
 	if (index < 0 || (size_t)index >= _spriteData.size())
-		return;
-
-	if (freeMemory)
-		delete _spriteData[index].Image;
+		return nullptr;
+	Bitmap *image = _spriteData[index].Image;
 	InitNullSpriteParams(index);
 	SprCacheLog("RemoveSprite: %d", index);
+	return image;
+}
+
+void SpriteCache::DisposeSprite(sprkey_t index) {
+	assert(index >= 0); // out of positive range indexes are valid to fail
+	if (index < 0 || (size_t)index >= _spriteData.size())
+		return;
+	delete _spriteData[index].Image;
+	InitNullSpriteParams(index);
+	SprCacheLog("RemoveAndDispose: %d", index);
 }
 
 sprkey_t SpriteCache::EnlargeTo(sprkey_t topmost) {
