@@ -19,8 +19,13 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "audio/decoders/wave.h"
+
+#include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
 #include "qdengine/system/sound/wav_sound.h"
+#include "qdengine/qdcore/qd_file_manager.h"
 
 
 namespace QDEngine {
@@ -60,4 +65,22 @@ void wavSound::free_data() {
 	_channels = 0;
 	_samples_per_sec = 0;
 }
+
+bool wavSound::wav_file_load(const char *fname) {
+	debugC(3, kDebugSound, "[%d] Loading Wav: %s", g_system->getMillis(), transCyrillic(fname));
+
+	if (!fname) {
+		return false;
+	}
+
+	Common::Path fpath(fname, '\\');
+	Common::SeekableReadStream *stream;
+
+	if (qdFileManager::instance().open_file(&stream, fpath.toString().c_str(), false))
+		_audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+
+	warning("STUB: wav_file_load() %s", transCyrillic(fname));
+	return true;
+}
+
 } // namespace QDEngine

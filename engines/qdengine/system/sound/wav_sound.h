@@ -66,6 +66,8 @@ public:
 		return float(_data_length / _channels / (_bits_per_sample >> 3)) / float(_samples_per_sec);
 	}
 
+	bool wav_file_load(const char *fname);
+
 private:
 
 	//! Данные.
@@ -82,10 +84,7 @@ private:
 	 */
 	int _samples_per_sec;
 
-	Audio::SeekableAudioStream *_audiostream;
-
-	friend bool wav_file_load(const char *fname, class wavSound *snd);
-
+	Audio::SeekableAudioStream *_audioStream = nullptr;
 };
 
 } // namespace QDEngine
