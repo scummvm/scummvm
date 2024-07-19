@@ -224,10 +224,12 @@ void update_following_exactly_characters(const std::vector<int> &followingAsShee
 
 void update_overlay_timers() {
 	// update overlay timers
-	for (size_t i = 0; i < _GP(screenover).size();) {
-		if (_GP(screenover)[i].timeout > 0) {
-			_GP(screenover)[i].timeout--;
-			if (_GP(screenover)[i].timeout == 0) {
+	auto &overs = get_overlays();
+	for (size_t i = 0; i < overs.size();) {
+		auto &over = overs[i];
+		if (over.timeout > 0) {
+			over.timeout--;
+			if (over.timeout == 0) {
 				remove_screen_overlay_index(i);
 				continue;
 			}
@@ -388,7 +390,8 @@ void update_sierra_speech() {
 			int view_frame_x = 0;
 			int view_frame_y = 0;
 
-			Bitmap *frame_pic = _GP(screenover)[_G(face_talking)].GetImage();
+			auto &face_over = get_overlay(_G(face_talking));
+			Bitmap *frame_pic = face_over.GetImage();
 			if (_GP(game).options[OPT_SPEECHTYPE] == 3) {
 				// QFG4-style fullscreen dialog
 				if (_G(facetalk_qfg4_override_placement_x)) {
@@ -415,8 +418,8 @@ void update_sierra_speech() {
 				DrawViewFrame(frame_pic, blink_vf, view_frame_x, view_frame_y, face_has_alpha);
 			}
 
-			_GP(screenover)[_G(face_talking)].SetAlphaChannel(face_has_alpha);
-			_GP(screenover)[_G(face_talking)].MarkChanged();
+			face_over.SetAlphaChannel(face_has_alpha);
+			face_over.MarkChanged();
 		}  // end if updatedFrame
 	}
 }
