@@ -109,15 +109,20 @@ const int LegacyRoomVolumeFactor = 30;
 #define MODE_CUSTOM1 8
 #define MODE_CUSTOM2 9
 
+// Fixed Overlay IDs
 #define OVER_TEXTMSG  1
 #define OVER_COMPLETE 2
 #define OVER_PICTURE  3
 #define OVER_TEXTSPEECH 4
-#define OVER_CUSTOM   100
+#define OVER_FIRSTFREE 5
+#define OVER_CUSTOM   -1
+// Overlay parameters
 #define OVR_AUTOPLACE 30000
+
 #define FOR_ANIMATION 1
 #define FOR_SCRIPT    2
 #define FOR_EXITLOOP  3
+
 // an actsps index offset for characters
 #define ACTSP_OBJSOFF (MAX_ROOM_OBJECTS)
 // a 1-based movelist index offset for characters

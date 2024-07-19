@@ -38,7 +38,7 @@ int ScriptOverlay::Dispose(const char *address, bool force) {
 	// reference so it doesn't try and dispose something else
 	// with that handle later
 	if (overlayId >= 0) {
-		auto *over = find_overlay_of_type(overlayId);
+		auto *over = get_overlay(overlayId);
 		if (over) {
 			over->associatedOverlayHandle = 0;
 		}
@@ -79,12 +79,11 @@ void ScriptOverlay::Unserialize(int index, Stream *in, size_t data_sz) {
 }
 
 void ScriptOverlay::Remove() {
-	int overlayIndex = find_overlay_index(overlayId);
-	if (overlayIndex < 0) {
+	if (overlayId < 0) {
 		debug_script_warn("Overlay.Remove: overlay is invalid, could have been removed earlier.");
 		return;
 	}
-	remove_screen_overlay_index(overlayIndex);
+	remove_screen_overlay(overlayId);
 	overlayId = -1;
 }
 

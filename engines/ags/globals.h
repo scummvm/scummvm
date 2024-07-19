@@ -1181,7 +1181,7 @@ public:
 	 */
 
 	std::vector<ScreenOverlay> *_screenover;
-	std::vector<int> *_overlookup;
+	std::queue<int32_t> *_over_free_ids;
 	int _is_complete_overlay = 0;
 
 	/**@}*/
