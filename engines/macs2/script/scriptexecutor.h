@@ -203,7 +203,11 @@ class GameObject;
 			// 01E7:A903
 			void ScriptPrintString();
 
-
+			Common::StringArray debugBuffer;
+			bool lastOpcodeTriggeredSkip = false;
+			void BeginBuffering();
+			void EndBuffering(bool shouldMark = false);
+			void SIS_Debug(const char *format, ...);
 			
 
 			

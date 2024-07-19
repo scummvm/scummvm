@@ -86,7 +86,7 @@ View1::View1() : UIElement("View1") {
 	AnimFrame *View1::GetInventoryIcon(GameObject *gameObject) {
 		AnimFrame *result = new AnimFrame();
 		int index = 5 - 1;
-		if (is_in_list<uint16, 0x11, 0x17, 0x18, 0x22, 0x23, 0x19, 0x1A, 0x14>(gameObject->Index)) {
+		if (is_in_list<uint16, 0x10, 0x11, 0x17, 0x18, 0x1B, 0x22, 0x23, 0x19, 0x1A, 0x14>(gameObject->Index)) {
 			// gameObject->Index == 0x23 || gameObject->Index == 0x22) {
 			// TODO Figure out these - the mug has a different blob
 			index = 0x13;
@@ -389,18 +389,6 @@ View1::View1() : UIElement("View1") {
 			}
 			if (index != 0) {
 				debug("*** New interaction started");
-				// TODO: Mode hardcoded
-				// TODO: Probably superfluous now
-				Script::MouseMode m = Script::MouseMode::Use;
-				if (g_engine->_scriptExecutor->_mouseMode == Script::MouseMode::Talk) {
-					m = Script::MouseMode::Talk;
-				}
-				if (activeInventoryItem != nullptr) {
-					m = Script::MouseMode::UseInventory;
-					
-				}
-				// We need this to override to use inventory - probably handled better otherwise
-				g_engine->_scriptExecutor->_mouseMode = m;
 				g_engine->_scriptExecutor->_interactedObjectID = index;
 				g_engine->_scriptExecutor->_interactedOtherObjectID = activeInventoryItem != nullptr ? activeInventoryItem->Index + 0x0400 : 0x0000;
 
@@ -893,9 +881,12 @@ void Character::SetPosition(const Common::Point &newPosition) {
 
 Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	// We choose looking towards the screen first
-	int blobIndex = 0x0;
+	int blobIndex = GameObject->Orientation;
 	// If we don't have this direction, try others until we find one that we have
+	// TODO: Log this properly or even assert
 	if (GameObject->Blobs[blobIndex].size() == 0) {
+		// TODO: Consider a placeholder or an assert to figure out these cases
+		debug("No animation blob found for object %.4x with orientation %.4x", GameObject->Index, GameObject->Orientation);
 		for (int i = 0; i < 0x11; i++) {
 			if (GameObject->Blobs[i].size() != 0) {
 				blobIndex = i;
@@ -965,10 +956,12 @@ void Character::StartLerpTo(const Common::Point &target, uint32 duration, bool i
 
 
 	Math::Angle angle = directionVector.getAngle();
-	float degrees = angle.getDegrees();
+	float degrees = angle.getDegrees() + 180.0f;
 	uint8 segment = degrees / (360.0f / 8.0f);
 	// TODO: Try out first which values we get
-	debug("Degrees: %f Segment: %u", degrees, segment);
+	Common::String message = Common::String::format("Degrees: %f Segment: %u", degrees, segment);
+	debug(message.c_str());
+	GameObject->Orientation = segment;
 }
 
 void Character::StartPickup(Character *object) {
@@ -1013,6 +1006,8 @@ void Character::Update() {
 			// Give it to the protagonist
 			objectToPickUp->GameObject->SceneIndex = 1;
 			objectToPickUp = nullptr;
+			// From here on the interacted object should become 0
+			g_engine->_scriptExecutor->_interactedObjectID = 0x0000;
 		}
 
 

@@ -56,12 +56,13 @@ ScriptExecutor::ScriptExecutor() {
 }
 
 inline void ScriptExecutor::FuncA3D2() {
+	lastOpcodeTriggeredSkip = true;
 	// TODO: Quality is not at the level of the rest - consider
 	// rewriting from the deassembly
 	if (DebugMan.isDebugChannelEnabled(DebugFlag::DEBUG_SV)) {
-		debug("-- Entering A3D2");
+		SIS_Debug("-- Entering A3D2");
 	} else {
-		debug("-- Skipping using A3D2");
+		SIS_Debug("-- Skipping using A3D2");
 	}
 	
 	isSkipping = true;
@@ -105,7 +106,7 @@ inline void ScriptExecutor::FuncA3D2() {
 	// Fix up the expected location after skipping
 	expectedEndLocation = _stream->pos();
 	if (DebugMan.isDebugChannelEnabled(DebugFlag::DEBUG_SV)) {
-		debug("-- Leaving A3D2");
+		SIS_Debug("-- Leaving A3D2");
 	}
 	isSkipping = false;
 }
@@ -114,9 +115,9 @@ void ScriptExecutor::FuncA37A() {
 	// TODO: Quality is not at the level of the rest - consider
 	// rewriting from the deassembly
 	if (DebugMan.isDebugChannelEnabled(DebugFlag::DEBUG_SV)) {
-		debug("-- Entering A37A");
+		SIS_Debug("-- Entering A37A");
 	} else {
-		debug("-- Skipping using A37A");
+		SIS_Debug("-- Skipping using A37A");
 	}
 
 	isSkipping = true;
@@ -155,7 +156,7 @@ void ScriptExecutor::FuncA37A() {
 	// Fix up the expected location after skipping
 	expectedEndLocation = _stream->pos();
 	if (DebugMan.isDebugChannelEnabled(DebugFlag::DEBUG_SV)) {
-		debug("-- Leaving A37A");
+		SIS_Debug("-- Leaving A37A");
 	}
 	isSkipping = false;
 }
@@ -190,7 +191,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 
 	Common::String opcodeInfo = SIS_OpcodeID::IdentifyHelperOpcode(opcode1, value).c_str();
 
-	debug("- 9F4D opcode: %.2x %.4x %s", opcode1, value, opcodeInfo.c_str());
+	SIS_Debug("- 9F4D opcode: %.2x %.4x %s", opcode1, value, opcodeInfo.c_str());
 
 
 	if (opcode1 == 0x0) {
@@ -198,7 +199,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 		out1 = value;
 		out2 = 0;
 		// TODO: Do we need to do something to exit?
-		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 	// l0037_9F72:
@@ -215,7 +216,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 				*/
 				// TODO: Implement the jump
 				// TODO: Add a return macro
-				debug("- 9F4D results: %.4x %.4x", out1, out2);
+				SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 				return;
 			}
 			else {
@@ -225,7 +226,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 				out1 = var.a;
 				out2 = var.b;
 				// TODO: Centralized return handling
-				debug("- 9F4D results: %.4x %.4x", out1, out2);
+				SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 				return;
 			}
 		}
@@ -233,7 +234,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 	// l0037_9FAE:
 	if (opcode1 != 0xFF) {
 		// TODO: Do we write out a 0 for the values?
-		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 	// We are starting to execute opcode FFh here
@@ -244,14 +245,14 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 			// l0037_9FC7:
 			out1 = _interactedObjectID;
 			out2 = _interactedOtherObjectID;
-			debug("- 9F4D results: %.4x %.4x", out1, out2);
+			SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 			return;
 		} else if (_mouseMode == MouseMode::UseInventory) {
 			// l0037_9FD9:
 			// TODO: Not sure why the original code looks so complex
 			out1 = _interactedObjectID;
 			out2 = _interactedOtherObjectID;
-			debug("- 9F4D results: %.4x %.4x", out1, out2);
+			SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 			return;
 		} else {
 			out1 = out2 = 0x0000;
@@ -260,7 +261,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 		// TODO: We should actually look up the cursor mode and the interacted object
 		// Hardcoding for now
 		out1 = out2 = 0x0000;
-		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	} else if (value == 0x3) {
 		if (_mouseMode == MouseMode::Talk) {
@@ -269,7 +270,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 		} else {
 			out1 = out2 = 0x0000;
 		}	
-		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	// l0037_A050:
 	} else if (value == 0x4) {
@@ -280,7 +281,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 		out2 = 0;
 		// TODO: In the logs there is also a value out2 (DX) returned - where
 		// does that come from?
-		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 		/*
 		mov	di,[0776h]
@@ -297,7 +298,7 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 	} else if (value == 0x7) {
 		// l0037_A095:
 		out1 = out2 = 0;
-		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 
@@ -439,13 +440,13 @@ else if (value == 0x6) {
 	
 	out1 = 1;
 	out2 = 0;
-	debug("- 9F4D results: %.4x %.4x", out1, out2);
+	SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 	return;
 	} else if (value == 0xb) {
 
 		out1 = (uint16)IsRepeatRun;
 		out2 = 0;
-		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 
@@ -488,7 +489,7 @@ l0037_A0C0:
 
 		out1 = 1;
 		out2 = 0;
-		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 		/*
@@ -543,7 +544,7 @@ else if (value == 0x0d) {
 	// TODO: Confirm this one
 	out1 = chosenDialogueOption;
 	out2 = 0;
-	debug("- 9F4D results: %.4x %.4x", out1, out2);
+	SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 	return;
 }
 	/*
@@ -635,7 +636,7 @@ l0037_A1B9:
 		*/
 		out1 = (uint16)IsSceneInitRun;
 		out2 = 0;
-		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 	else if (value == 0x27) {
@@ -658,7 +659,7 @@ l0037_A1B9:
 		// does that come from?
 		// TODO: Fixing to 0 for now
 		out2 = 0;
-		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 	
@@ -712,7 +713,7 @@ l0037_A209:
 	else if (value == 0x28) {
 		out1 = global103C ? 1 : 0;
 		out2 = 0x0;
-		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 
@@ -763,7 +764,7 @@ l0037_A242:
 		// TODO: Just hardcoded for now to be able to progress
 		out1 = 0x0;
 		out2 = 0;
-		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 
@@ -861,7 +862,7 @@ l0037_A2CF:
 		// TODO: Should look up current scene ID, hardcoded for now
 		out1 = 0x6;
 		out2 = 0;
-		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	}
 /*
@@ -917,7 +918,7 @@ l0037_A324:
 		// TODO: We need the values of two globals here, for now returning fixed 0
 		out1 = 0;
 		out2 = 0;
-		debug("- 9F4D results: %.4x %.4x", out1, out2);
+		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
 	} else {
 		// TODO: Handle others
@@ -935,7 +936,7 @@ l0037_A32C:
 	retf
 	*/
 
-	debug("- 9F4D results: %.4x %.4x", out1, out2);
+	SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 	// debug("-- Leaving 94FD");
 }
 
@@ -1036,6 +1037,34 @@ void ScriptExecutor::ScriptPrintString() {
 	// TODO: Look for good pattern for the view, this feels like it is not intended this way
 	View1 *currentView = (View1 *)_engine->findView("View1");
 	currentView->setStringBox(strings);
+}
+
+void ScriptExecutor::BeginBuffering() {
+	lastOpcodeTriggeredSkip = false;
+}
+
+void ScriptExecutor::EndBuffering(bool shouldMark) {
+	for (const Common::String &currentString : debugBuffer) {
+		const Common::String prefix = shouldMark ? "** " : "";
+		debug("%s%s", prefix.c_str(), currentString.c_str());
+	}
+	debugBuffer.clear();
+}
+
+
+
+void ScriptExecutor::SIS_Debug(const char *format, ...) {
+	// TODO: Consider a refactor of the script execution, with the endbuffer needed
+	// when we finished executing one opcode, the endbuffer ends up being in too many places
+	// Would be cleaner if there was one exit of the function
+	va_list args;
+	va_start(args, format);
+
+	const Common::String line = Common::String::vformat(format, args);
+	debugBuffer.push_back(line);
+	
+
+	va_end(args);
 }
 
 void ScriptExecutor::SetVariableValue(uint16 index, uint16 a, uint16 b) {
@@ -1178,18 +1207,19 @@ bool ScriptExecutor::LoadNextScript() {
 byte Script::ScriptExecutor::ReadByte() {
 	const int64 pos = _stream->pos();
 	const byte result = _stream->readByte();
-	if (isSkipping) {
-		debugC(DEBUG_SV,"Script read (byte): %.2x at location %.4x", result, pos);
-	} else {
-		debug("Script read (byte): %.2x at location %.4x", result, pos);
-	}
+	//if (isSkipping) {
+		// TODO: This had the output channel active, to consider if I want to handle this separately
+		//debugC(DEBUG_SV,"Script read (byte): %.2x at location %.4x", result, pos);
+	//} else {
+		SIS_Debug("Script read (byte): %.2x at location %.4x", result, pos);
+	//}
 	return result;
 }
 
 uint16 Script::ScriptExecutor::ReadWord() {
 	const int64 pos = _stream->pos();
 	const uint16 result = _stream->readUint16LE();
-	debug("Script read (word): %.4x at location %.4x", result, pos);
+	SIS_Debug("Script read (word): %.4x at location %.4x", result, pos);
 	return result;
 }
 	
@@ -1371,7 +1401,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		if (opcode1 != 0x5) {
 			opcodeInfo = SIS_OpcodeID::IdentifyScriptOpcode(opcode1, 0).c_str();
 		}	
-		debug("- First block opcode: %.2x %s", opcode1, opcodeInfo.c_str());
+		SIS_Debug("- First block opcode: %.2x %s", opcode1, opcodeInfo.c_str());
 		byte length = ReadByte();  // [bp-2h]
 		expectedEndLocation += length + 2;
 
@@ -1385,7 +1415,6 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			ScriptVariable var;
 			Func9F4D(var.a, var.b);
 			_variables[variableIndex] = var;
-			continue;
 		} // l0037_DBCD:
 		else if (opcode1 == 0x02) {
 			// TODO: No idea what this byte achieves
@@ -1439,12 +1468,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			if ((result1 | result2) == 0) {
 				FuncA3D2();
 				// TODO: Handle end condition
-				continue;
-			} else {
-				// Making it explicit with a continue
-				continue;
 			}
-
 
 			/*
 			l0037_DC44:
@@ -1468,7 +1492,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// [bp-3h]
 			uint8 opcode2 = ReadByte();
 			opcodeInfo = SIS_OpcodeID::IdentifyScriptOpcode(opcode1, opcode2).c_str();
-			debug("- Second block opcode: %.2x %s", opcode2, opcodeInfo.c_str());
+			SIS_Debug("- Second block opcode: %.2x %s", opcode2, opcodeInfo.c_str());
 			// [bp-7h]
 			uint16 v1;
 			// [bp-5h]
@@ -1508,16 +1532,17 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				shouldSkip = !shouldSkip;
 			} else if (opcode2 <= 0x6) {
 				ScriptUnimplementedOpcode(opcode2);
+				EndBuffering(lastOpcodeTriggeredSkip);
 				break;
 			}
 			// TODO Find the proper place
 			if (shouldSkip) {
 				FuncA3D2();
 				// TODO: Check end condition
-				continue;
 			}
 			// TODO: Need a cleaner way of mapping the assembler loop continue
 			if (opcode2 == 0x1) {
+				// TODO: Why?
 				continue;
 			}
 			// TODO: Temporary code until I figure out a cleaner way
@@ -1541,7 +1566,6 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				// TODO: Would it make more sense to return and then to start skipping?
 				FuncA3D2();
 			}
-			continue;
 		} else if (opcode1 == 0x07) {
 			// TODO: Need to figure out what exactly this does
 			// It has no specific case handling code in the original
@@ -1580,6 +1604,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Could be special for me with the short timer times, but it can happen
 			// that things happen out of order if not ending any timers active
 			EndTimer();
+			EndBuffering(lastOpcodeTriggeredSkip);
 			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x13) {
 			SkipUntil14();
@@ -1591,8 +1616,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		else if (opcode1 == 0x0a) {
 			ScriptPrintString();
 			// TODO: Proper end handling
-			isAwaitingCallback = true;
-			break;
+			EndBuffering(lastOpcodeTriggeredSkip);
+			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x0b) {
 			// Load and move an object
 			// Lives in fn0037_AA83 proc
@@ -1618,6 +1643,8 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 				GameObject* parentObject = GameObjects::instance().Objects[sceneID - 0x400 - 1];
 				GameObject *childObject = GameObjects::instance().Objects[objectID - 1];
 				childObject->SceneIndex = parentObject->Index;
+				// TODO: Clean up
+				EndBuffering(lastOpcodeTriggeredSkip);
 				continue;
 			}
 
@@ -1702,6 +1729,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Could be special for me with the short timer times, but it can happen
 			// that things happen out of order if not ending any timers active
 			EndTimer();
+			EndBuffering(lastOpcodeTriggeredSkip);
 			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x0d) {
 			// Show a dialogue option
@@ -1720,6 +1748,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Could be special for me with the short timer times, but it can happen
 			// that things happen out of order if not ending any timers active
 			EndTimer();
+			EndBuffering(lastOpcodeTriggeredSkip);
 			return ExecutionResult::WaitingForCallback;
 		}
 		else
@@ -1736,6 +1765,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			constexpr uint32 durationMultiplier = 5;
 			StartTimer(duration * durationMultiplier);
 			isAwaitingCallback = true;
+			EndBuffering(lastOpcodeTriggeredSkip);
 			return ExecutionResult::WaitingForCallback;
 		}
 		else if (opcode1 == 0x12) {
@@ -1775,11 +1805,13 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Could be special for me with the short timer times, but it can happen
 			// that things happen out of order if not ending any timers active
 			EndTimer();
+			EndBuffering(lastOpcodeTriggeredSkip);
 			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x18) {
 			// Set the stream to the end and let the calling code figure out that we are done
 			// for this run
 			_stream->seek(_stream->size(), SEEK_SET);
+			EndBuffering(lastOpcodeTriggeredSkip);
 			return ExecutionResult::ScriptFinished;
 		} else if (opcode1 == 0x19) {
 			// Walk to and pick up an object
@@ -1796,6 +1828,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Could be special for me with the short timer times, but it can happen
 			// that things happen out of order if not ending any timers active
 			EndTimer();
+			EndBuffering(lastOpcodeTriggeredSkip);
 			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x1b) {
 			// TODO: No idea yet what this does, it seems to be around move commands in some cases,
@@ -1804,23 +1837,18 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			Func9F4D_32();
 			Func9F4D_32();
 			// TODO: Still need to check if the object is actually already living in the scene at game start
-
-			continue;
 		} else if (opcode1 == 0x1c) {
 			// Working assumption is that this has something to do with guarding against executing
 			// object scripts, it only changes the value of global [102Ah]
-			continue;
 		} else if (opcode1 == 0x1d) {
 			// Working assumption is that this has something to do with guarding against executing
 			// object scripts, it only changes the value of global [102Ah]
-			continue;
 		} else if (opcode1 == 0x1e) {
 			// This is playing an animation
 			// TODO: Skipped for now until the animation system is more in the focus
 			Func9F4D_32();
 			Func9F4D_32();
 			Func9F4D_32();
-			continue;
 		} else if (opcode1 == 0x1f) {
 			// TODO: We should run a pathfinding test and save the result for 9F4D opcode 23 to read
 			// Object ID
@@ -1828,8 +1856,6 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// Target x and y
 			Func9F4D_Placeholder();
 			Func9F4D_Placeholder();
-
-			continue;
 		} else if (opcode1 == 0x20) {
 			// TODO: This one should add an offset to the y axis, skipping for now
 
@@ -1928,7 +1954,6 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// c->Position = c->GameObject->Position = Common::Point(x, y);
 			// c->GameObject->SceneIndex = sceneID;
 			currentView->characters.push_back(c);
-			continue;
 		} else if (opcode1 == 0x2B) {
 			// TODO: Mocking this one for now to see if this unlocks something
 			// It loads an object index, checks if it has a certain pointer in its
@@ -1956,6 +1981,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			// TODO: Implement the change by the flag
 			ScriptPrintString();
 			// TODO: Proper end handling
+			EndBuffering(lastOpcodeTriggeredSkip);
 			return ExecutionResult::WaitingForCallback;
 		} else if (opcode1 == 0x31) {
 			// TODO: Unknown opcode, reads a value, caps it to 64h and does something with it
@@ -2009,9 +2035,10 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		}
 		else {
 			ScriptUnimplementedOpcode(opcode1)
+			EndBuffering(lastOpcodeTriggeredSkip);
 			break;
 		}
-		
+		EndBuffering(lastOpcodeTriggeredSkip);
 	}
 		isRunningScript = false;
 		debug("----- Scripting function left");
