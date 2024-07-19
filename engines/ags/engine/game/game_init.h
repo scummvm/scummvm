@@ -45,7 +45,6 @@ enum GameInitErrorType {
 	kGameInitErr_NoFonts,
 	kGameInitErr_TooManyAudioTypes,
 	kGameInitErr_EntityInitFail,
-	kGameInitErr_TooManyPlugins,
 	kGameInitErr_PluginNameInvalid,
 	kGameInitErr_NoGlobalScript,
 	kGameInitErr_ScriptLinkFailed
