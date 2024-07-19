@@ -53,7 +53,6 @@
 #include "ags/shared/gui/gui_main.h"
 #include "ags/shared/gui/gui_slider.h"
 #include "ags/shared/gui/gui_textbox.h"
-#include "ags/plugins/ags_plugin.h"
 #include "ags/plugins/plugin_engine.h"
 #include "ags/shared/script/cc_common.h"
 #include "ags/engine/script/script.h"
@@ -999,18 +998,12 @@ HSaveError ReadManagedPool(Stream *in, int32_t cmp_ver, const PreservedParams & 
 }
 
 HSaveError WritePluginData(Stream *out) {
-	auto pluginFileHandle = AGSE_SAVEGAME;
-	pl_set_file_handle(pluginFileHandle, out);
-	pl_run_plugin_hooks(AGSE_SAVEGAME, pluginFileHandle);
-	pl_clear_file_handle();
+	WritePluginSaveData(out);
 	return HSaveError::None();
 }
 
 HSaveError ReadPluginData(Stream *in, int32_t cmp_ver, const PreservedParams & /*pp*/, RestoredData & /*r_data*/) {
-	auto pluginFileHandle = AGSE_RESTOREGAME;
-	pl_set_file_handle(pluginFileHandle, in);
-	pl_run_plugin_hooks(AGSE_RESTOREGAME, pluginFileHandle);
-	pl_clear_file_handle();
+	ReadPluginSaveData(in);
 	return HSaveError::None();
 }
 
