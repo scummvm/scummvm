@@ -386,13 +386,25 @@ void remove_screen_overlay(int type) {
 }
 
 int find_overlay_of_type(int type) {
-	for (size_t i = 0; i < _GP(screenover).size(); ++i) {
-		if (_GP(screenover)[i].type == type) return i;
+	assert(type >= 0);
+	int idx = _GP(overlookup)[type];
+	if (idx >= 0 && idx < (int)_GP(screenover).size() && _GP(screenover)[idx].type == type)
+		return idx;
+	for (idx = 0; idx < (int)_GP(screenover).size(); ++idx) {
+		if (_GP(screenover)[idx].type == type) {
+			_GP(overlookup)
+			[type] = idx;
+			return idx;
+		}
 	}
 	return -1;
 }
+
 size_t add_screen_overlay_impl(bool roomlayer, int x, int y, int type, int sprnum, Bitmap *piccy,
-	int pic_offx, int pic_offy, bool has_alpha) {
+							   int pic_offx, int pic_offy, bool has_alpha) {
+	const auto new_size = _GP(screenover).size() + OVER_CUSTOM + 2;
+	if (_GP(overlookup).size() < new_size)
+		_GP(overlookup).resize(new_size);
 	if (type == OVER_CUSTOM) {
 		// find an unused custom ID; TODO: find a better approach!
 		for (int id = OVER_CUSTOM + 1; (size_t)id <= _GP(screenover).size() + OVER_CUSTOM + 1; ++id) {
@@ -435,6 +447,7 @@ size_t add_screen_overlay_impl(bool roomlayer, int x, int y, int type, int sprnu
 		_GP(play).speech_face_schandle = over.associatedOverlayHandle;
 	}
 	over.MarkChanged();
+	_GP(overlookup)[type] = _GP(screenover).size();
 	_GP(screenover).push_back(std::move(over));
 	return _GP(screenover).size() - 1;
 }
@@ -492,7 +505,10 @@ Point get_overlay_position(const ScreenOverlay &over) {
 }
 
 void recreate_overlay_ddbs() {
-	for (auto &over : _GP(screenover)) {
+	_GP(overlookup).resize(_GP(screenover).size() + OVER_CUSTOM + 2);
+	for (size_t i = 0; i < _GP(screenover).size(); i++) {
+		auto &over = _GP(screenover)[i];
+		_GP(overlookup)[over.type] = i;
 		if (over.ddb)
 			_G(gfxDriver)->DestroyDDB(over.ddb);
 		over.ddb = nullptr; // is generated during first draw pass
