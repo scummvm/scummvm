@@ -53,7 +53,7 @@ bool qdSound::load_resource() {
 
 	toggle_resource_status(true);
 
-	return wav_file_load(_file_name.c_str(), &_sound);
+	return _sound.wav_file_load(_file_name.c_str());
 }
 
 void qdSound::load_script(const xml::tag *p) {

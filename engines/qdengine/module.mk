@@ -12,7 +12,6 @@ MODULE_OBJS = \
 	system/app_core.o \
 	system/sound/snd_dispatcher.o \
 	system/sound/snd_sound.o \
-	system/sound/wav_file.o \
 	system/sound/wav_sound.o \
 	system/graphics/gr_dispatcher.o \
 	system/graphics/gr_draw_sprite_rle_z.o \
