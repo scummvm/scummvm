@@ -794,7 +794,7 @@ HSaveError ReadOverlays(Stream *in, int32_t cmp_ver, const PreservedParams & /*p
 			over.scaleWidth = over.GetImage()->GetWidth();
 			over.scaleHeight = over.GetImage()->GetHeight();
 		}
-		if (overs.size() <= over.type)
+		if (overs.size() <= static_cast<uint32_t>(over.type))
 			overs.resize(over.type + 1);
 		overs[over.type] = std::move(over);
 	}
