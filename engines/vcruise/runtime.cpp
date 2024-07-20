@@ -25,7 +25,6 @@
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/file.h"
-#include "common/math.h"
 #include "common/ptr.h"
 #include "common/random.h"
 #include "common/savefile.h"
@@ -43,6 +42,8 @@
 #include "image/ani.h"
 #include "image/bmp.h"
 #include "image/icocur.h"
+
+#include "math/utils.h"
 
 #include "audio/decoders/wave.h"
 #include "audio/decoders/vorbis.h"
@@ -5131,7 +5132,7 @@ bool Runtime::computeEffectiveVolumeAndBalance(SoundInstance &snd) {
 	uint effectiveVolume = applyVolumeScale(snd.volume);
 	int32 effectiveBalance = applyBalanceScale(snd.balance);
 
-	double radians = Common::deg2rad<double>(_listenerAngle);
+	double radians = Math::deg2rad<double>(_listenerAngle);
 	int32 cosAngle = static_cast<int32>(cos(radians) * (1 << 15));
 	int32 sinAngle = static_cast<int32>(sin(radians) * (1 << 15));
 

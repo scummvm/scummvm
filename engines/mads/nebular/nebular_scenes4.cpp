@@ -20,7 +20,7 @@
  */
 
 #include "common/scummsys.h"
-#include "common/math.h"
+#include "math/utils.h"
 #include "mads/mads.h"
 #include "mads/scene.h"
 #include "mads/nebular/nebular_scenes.h"
@@ -149,7 +149,7 @@ void Scene401::step() {
 	}
 
 	if (_scene->_frameStartTime >= _timer) {
-		int dist = 64 - ((Common::hypotenuse(_game._player._playerPos.x - 219, _game._player._playerPos.y - 115) * 64) / 120);
+		int dist = 64 - ((Math::hypotenuse(_game._player._playerPos.x - 219, _game._player._playerPos.y - 115) * 64) / 120);
 
 		if (dist > 64)
 			dist = 64;

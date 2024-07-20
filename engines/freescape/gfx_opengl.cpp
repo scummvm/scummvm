@@ -23,7 +23,6 @@
 // available at https://github.com/TomHarte/Phantasma/ (MIT)
 
 #include "common/config-manager.h"
-#include "common/math.h"
 #include "common/system.h"
 #include "math/glmath.h"
 

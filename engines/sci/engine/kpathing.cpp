@@ -36,7 +36,7 @@
 #include "common/debug-channels.h"
 #include "common/list.h"
 #include "common/system.h"
-#include "common/math.h"
+#include "math/utils.h"
 
 //#define DEBUG_MERGEPOLY
 
@@ -1986,7 +1986,7 @@ static int intersectDir(const Vertex *v1, const Vertex *v2) {
 // Direction of edge in degrees from pos. x-axis, between -180 and 180
 static int edgeDir(const Vertex *v) {
 	Common::Point p = v->_next->v - v->v;
-	int deg = Common::rad2deg<float,int>((float)atan2((double)p.y, (double)p.x));
+	int deg = Math::rad2deg<float,int>((float)atan2((double)p.y, (double)p.x));
 	if (deg < -180) deg += 360;
 	if (deg > 180) deg -= 360;
 	return deg;

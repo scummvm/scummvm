@@ -24,8 +24,6 @@
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/te/te_input_mgr.h"
 
-#include "common/math.h"
-
 namespace Tetraedge {
 
 TeScrollingLayout::TeScrollingLayout() : _contentLayout(nullptr),

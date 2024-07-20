@@ -26,7 +26,7 @@
 
 #include "engines/icb/common/px_2drealline.h"
 
-#include "common/math.h"
+#include "math/utils.h"
 
 namespace ICB {
 

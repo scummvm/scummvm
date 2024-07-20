@@ -19,7 +19,7 @@
  *
  */
 
-#include "common/math.h"
+#include "math/utils.h"
 
 #include "petka/walk.h"
 #include "petka/petka.h"
@@ -365,7 +365,7 @@ int Walk::sub_422EA0(Point p1, Point p2) {
 
 	double v28 = p2.x - p1.x;
 	double v26 = p2.y - p1.y;
-	double v12 = Common::hypotenuse(p2.x - p1.x, p2.y - p1.y);
+	double v12 = Math::hypotenuse(p2.x - p1.x, p2.y - p1.y);
 
 	double v39 = 1.0 / sqrt(field_D0[resId] * field_D0[resId] - -1.0);
 	if (v39 == 0.0)
@@ -610,8 +610,8 @@ double Walk::angle(DBLPoint p1, DBLPoint p2, DBLPoint p3) { // CHECKED
 	double yv1 = p2.y - p1.y;
 	double yv2 = p3.y - p1.y;
 
-	double mv1 = Common::hypotenuse(xv1, yv1);
-	double mv2 = Common::hypotenuse(xv2, yv2);
+	double mv1 = Math::hypotenuse(xv1, yv1);
+	double mv2 = Math::hypotenuse(xv2, yv2);
 	double v13 = (xv1 * xv2 + yv1 * yv2) / (mv1 * mv2);
 	if ((xv2 / mv2 * (yv1 / mv1) - yv2 / mv2 * (xv1 / mv1)) < 0.0) // Not sure
 		return -acos(v13);

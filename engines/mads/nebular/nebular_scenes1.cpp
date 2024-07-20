@@ -20,7 +20,7 @@
  */
 
 #include "common/scummsys.h"
-#include "common/math.h"
+#include "math/utils.h"
 #include "mads/mads.h"
 #include "mads/scene.h"
 #include "mads/nebular/nebular_scenes.h"
@@ -1375,14 +1375,14 @@ void Scene103::step() {
 
 	case 72: {
 		Common::Point pt = _vm->_game->_player._playerPos;
-		int dist = Common::hypotenuse(pt.x - 58, pt.y - 93);
+		int dist = Math::hypotenuse(pt.x - 58, pt.y - 93);
 		_vm->_sound->command(27, (dist * -128 / 378) + 127);
 		}
 		break;
 
 	case 73: {
 		Common::Point pt = _vm->_game->_player._playerPos;
-		int dist = Common::hypotenuse(pt.x - 266, pt.y - 81);
+		int dist = Math::hypotenuse(pt.x - 266, pt.y - 81);
 		_vm->_sound->command(27, (dist * -127 / 378) + 127);
 		}
 		break;
@@ -1393,15 +1393,15 @@ void Scene103::step() {
 
 	if (_scene->_frameStartTime >= _updateClock) {
 		Common::Point pt = _vm->_game->_player._playerPos;
-		int dist = Common::hypotenuse(pt.x - 79, pt.y - 137);
+		int dist = Math::hypotenuse(pt.x - 79, pt.y - 137);
 		_vm->_sound->command(29, (dist * -127 / 378) + 127);
 
 		pt = _vm->_game->_player._playerPos;
-		dist = Common::hypotenuse(pt.x - 69, pt.y - 80);
+		dist = Math::hypotenuse(pt.x - 69, pt.y - 80);
 		_vm->_sound->command(30, (dist * -127 / 378) + 127);
 
 		pt = _vm->_game->_player._playerPos;
-		dist = Common::hypotenuse(pt.x - 266, pt.y - 138);
+		dist = Math::hypotenuse(pt.x - 266, pt.y - 138);
 		_vm->_sound->command(32, (dist * -127 / 378) + 127);
 
 		_updateClock = _scene->_frameStartTime + _vm->_game->_player._ticksAmount;

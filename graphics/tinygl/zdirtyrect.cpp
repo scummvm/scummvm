@@ -24,7 +24,6 @@
 #include "graphics/tinygl/gl.h"
 
 #include "common/debug.h"
-#include "common/math.h"
 
 namespace TinyGL {
 

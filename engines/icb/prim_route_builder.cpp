@@ -37,7 +37,7 @@
 #include "engines/icb/global_objects.h"
 
 #include "common/system.h"
-#include "common/math.h"
+#include "math/utils.h"
 
 namespace ICB {
 

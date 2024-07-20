@@ -20,7 +20,7 @@
  */
 
 #include "common/util.h"
-#include "common/math.h"
+#include "math/utils.h"
 #include "tetraedge/te/te_frame_anim.h"
 
 namespace Tetraedge {

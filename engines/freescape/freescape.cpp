@@ -21,12 +21,12 @@
 
 #include "common/config-manager.h"
 #include "common/events.h"
-#include "common/math.h"
 #include "common/random.h"
 #include "common/timer.h"
 #include "graphics/cursorman.h"
 #include "image/neo.h"
 #include "image/scr.h"
+#include "math/utils.h"
 
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
@@ -312,8 +312,8 @@ Math::Vector3d FreescapeEngine::directionToVector(float pitch, float heading, bo
 		v.setValue(1, (int8)kCosineSineTable[pitchIndex][1] / 64.0);
 		v.setValue(2, ((int8)kCosineSineTable[pitchIndex][0] / 64.0) * (int8)kCosineSineTable[headingIndex][1] / 64.0);
 	} else {
-		float radHeading = Common::deg2rad(heading);
-		float radPitch = Common::deg2rad(pitch);
+		float radHeading = Math::deg2rad(heading);
+		float radPitch = Math::deg2rad(pitch);
 
 		v.setValue(0, cos(radPitch) * cos(radHeading));
 		v.setValue(1, sin(radPitch));

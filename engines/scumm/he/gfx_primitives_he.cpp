@@ -22,7 +22,6 @@
 #ifdef ENABLE_HE
 
 #include "common/system.h"
-#include "common/math.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/he/wiz_he.h"
 

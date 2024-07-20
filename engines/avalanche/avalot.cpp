@@ -28,11 +28,11 @@
 
 #include "avalanche/avalanche.h"
 
-#include "common/math.h"
 #include "common/random.h"
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "graphics/paletteman.h"
+#include "math/utils.h"
 
 namespace Avalanche {
 
@@ -1308,7 +1308,7 @@ uint16 AvalancheEngine::bearing(byte whichPed) {
 
 	int16 deltaX = avvy->_x - curPed->_x;
 	int16 deltaY = avvy->_y - curPed->_y;
-	uint16 result = Common::rad2deg<float,uint16>(atan((float)deltaY / (float)deltaX)); // TODO: Would atan2 be preferable?
+	uint16 result = Math::rad2deg<float,uint16>(atan((float)deltaY / (float)deltaX)); // TODO: Would atan2 be preferable?
 	if (avvy->_x < curPed->_x) {
 		return result + 90;
 	} else {

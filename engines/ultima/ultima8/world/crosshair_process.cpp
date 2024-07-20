@@ -29,7 +29,7 @@
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/ultima8.h"
 
-#include "common/math.h"
+#include "math/utils.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -73,7 +73,7 @@ void CrosshairProcess::run() {
 			return;
 		}
 		// Convert angle to 0~2pi
-		double rads = Common::deg2rad(angle);
+		double rads = Math::deg2rad(angle);
 		float xoff = CROSSHAIR_DIST * cos(rads);
 		float yoff = CROSSHAIR_DIST * sin(rads);
 		pt.x -= static_cast<int32>(xoff);
