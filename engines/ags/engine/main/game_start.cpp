@@ -110,7 +110,6 @@ void initialize_start_and_play_game(int override_start_room, int loadSave) {
 
 	set_cursor_mode(MODE_WALK);
 
-	::AGS::g_vm->setRandomNumberSeed(_GP(play).randseed);
 	if (override_start_room)
 		_G(playerchar)->room = override_start_room;
 

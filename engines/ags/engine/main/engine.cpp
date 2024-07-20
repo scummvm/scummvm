@@ -271,13 +271,11 @@ void engine_locate_speech_pak() {
 }
 
 void engine_locate_audio_pak() {
-	_GP(play).separate_music_lib = false;
 	String music_file = _GP(game).GetAudioVOXName();
 	String music_filepath = find_assetlib(music_file);
 	if (!music_filepath.IsEmpty()) {
 		if (_GP(AssetMgr)->AddLibrary(music_filepath) == kAssetNoError) {
 			Debug::Printf(kDbgMsg_Info, "%s found and initialized.", music_file.GetCStr());
-			_GP(play).separate_music_lib = true;
 			_GP(ResPaths).AudioPak.Name = music_file;
 			_GP(ResPaths).AudioPak.Path = music_filepath;
 		} else {
@@ -333,8 +331,6 @@ void engine_init_audio() {
 
 	if (!_GP(usetup).audio_enabled) {
 		// all audio is disabled
-		_GP(play).voice_avail = false;
-		_GP(play).separate_music_lib = false;
 		Debug::Printf(kDbgMsg_Info, "Audio is disabled");
 	}
 }
@@ -350,11 +346,6 @@ void engine_init_debug() {
 		                           "the engine passes a point where it is crashing on you normally.\n"
 		                           "[Debug flags enabled: 0x%02X]", _G(debug_flags));
 	}
-}
-
-void engine_init_rand() {
-	_GP(play).randseed = g_system->getMillis();
-	::AGS::g_vm->setRandomNumberSeed(_GP(play).randseed);
 }
 
 void engine_init_pathfinder() {
@@ -526,6 +517,18 @@ void engine_init_game_settings() {
 	_G(our_eip) = -7;
 	Debug::Printf("Initialize game settings");
 
+	// Initialize randomizer
+	_GP(play).randseed = g_system->getMillis();
+	::AGS::g_vm->setRandomNumberSeed(_GP(play).randseed);
+
+	if (_GP(usetup).audio_enabled) {
+		_GP(play).separate_music_lib = !_GP(ResPaths).AudioPak.Name.IsEmpty();
+		_GP(play).voice_avail = _GP(ResPaths).VoiceAvail;
+	} else {
+		_GP(play).voice_avail = false;
+		_GP(play).separate_music_lib = false;
+	}
+
 	// Setup a text encoding mode depending on the game data hint
 	if (_GP(game).options[OPT_GAMETEXTENCODING] == 65001) // utf-8 codepage number
 		set_uformat(U_UTF8);
@@ -633,6 +636,7 @@ void engine_init_game_settings() {
 	_GP(play).bg_frame_locked = 0;
 	_GP(play).bg_anim_delay = 0;
 	_GP(play).anim_background_speed = 0;
+	_GP(play).mouse_cursor_hidden = 0;
 	_GP(play).silent_midi = 0;
 	_GP(play).current_music_repeating = 0;
 	_GP(play).skip_until_char_stops = -1;
@@ -711,6 +715,7 @@ void engine_init_game_settings() {
 	_GP(play).show_single_dialog_option = 0;
 	_GP(play).keep_screen_during_instant_transition = 0;
 	_GP(play).read_dialog_option_colour = -1;
+	_GP(play).stop_dialog_at_end = DIALOG_NONE;
 	_GP(play).speech_portrait_placement = 0;
 	_GP(play).speech_portrait_x = 0;
 	_GP(play).speech_portrait_y = 0;
@@ -1112,8 +1117,6 @@ int initialize_engine(const ConfigTree &startup_opts) {
 	engine_init_debug();
 
 	_G(our_eip) = -10;
-
-	engine_init_rand();
 
 	engine_init_pathfinder();
 
