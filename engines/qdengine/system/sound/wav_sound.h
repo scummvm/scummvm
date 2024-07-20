@@ -68,8 +68,8 @@ public:
 
 	bool wav_file_load(const char *fname);
 
-
 	Audio::SeekableAudioStream *_audioStream = nullptr;
+	Common::String _fname;
 
 private:
 
