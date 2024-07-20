@@ -61,6 +61,7 @@ struct ResourcePaths {
 	PackLocation AudioPak;   // audio package
 	PackLocation SpeechPak;  // voice-over package
 	String       DataDir;    // path to the data directory
+	bool		 VoiceAvail = false; // tells whether voice files available in either location
 	// NOTE: optional directories are currently only for compatibility with Editor (game test runs)
 	// This is bit ugly, but remain so until more flexible configuration is designed
 	String       DataDir2;   // optional data directory
