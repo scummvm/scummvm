@@ -73,6 +73,8 @@ bool wavSound::wav_file_load(const char *fname) {
 		return false;
 	}
 
+	_fname = fname;
+
 	Common::Path fpath(fname, '\\');
 	Common::SeekableReadStream *stream;
 

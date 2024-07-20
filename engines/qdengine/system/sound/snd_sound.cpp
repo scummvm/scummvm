@@ -22,6 +22,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "audio/audiostream.h"
 
+#include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
 #include "qdengine/system/sound/snd_sound.h"
 #include "qdengine/system/sound/wav_sound.h"
@@ -147,7 +148,8 @@ bool sndSound::set_volume(int vol) {
 }
 
 bool sndSound::change_frequency(float coeff) {
-	warning("STUB: sndSound::change_frequency()");
+	if (coeff != 1.0)
+		warning("STUB: sndSound::change_frequency(%f) '%s'", coeff, transCyrillic(sound()->_fname.c_str()));
 #if 0
 	DWORD freq;
 	if (_sound_buffer->GetFrequency(&freq) != DS_OK)
@@ -182,7 +184,8 @@ float sndSound::position() const {
 }
 
 bool sndSound::set_position(float pos) {
-	warning("STUB: sndSound::set_position()");
+	if (pos != 0.0)
+		warning("STUB: sndSound::set_position(%f) '%s'", pos, transCyrillic(sound()->_fname.c_str()));
 #if 0
 	DWORD npos = DWORD(float(sound()->data_length() * pos));
 
