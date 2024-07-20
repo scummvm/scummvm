@@ -588,8 +588,11 @@ void ImageGadget::draw(Graphics::ManagedSurface *dst) const {
 	// Note: not quite the same as the original logic here, but gets the same result.
 	_drawFrame(dst, xoff, yoff, _width, _height, _sval1I, _sval1I);
 
-	// NOTE: This only get done in inventory in original?
-	RequestData::drawCorners(dst, 19, xoff - 2, yoff - 2, _width + 4, _height + 4);
+	// NOTE: This only done in inventory in originals
+	if (static_cast<DgdsEngine *>(g_engine)->getGameId() == GID_DRAGON)
+		RequestData::drawCorners(dst, 19, xoff - 2, yoff - 2, _width + 4, _height + 4);
+	else
+		RequestData::drawCorners(dst, 19, xoff - 4, yoff - 4, _width + 8, _height + 8);
 }
 
 Common::String RequestData::dump() const {

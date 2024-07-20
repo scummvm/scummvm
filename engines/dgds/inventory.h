@@ -75,6 +75,8 @@ private:
 	ButtonGadget *_clockSkipHrBtn;
 	ButtonGadget *_dropBtn;
 	ImageGadget *_itemArea;
+	ButtonGadget *_giveToBtn;
+	ButtonGadget *_changeCharBtn;
 
 	REQFileData _reqData;
 	int _highlightItemNo;	// -1 means no item highlighted.

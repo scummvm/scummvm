@@ -33,8 +33,8 @@ namespace Dgds {
 Inventory::Inventory() : _isOpen(false), _prevPageBtn(nullptr), _nextPageBtn(nullptr),
 	_invClock(nullptr), _itemZoomBox(nullptr), _exitButton(nullptr), _clockSkipMinBtn(nullptr),
 	_itemArea(nullptr), _clockSkipHrBtn(nullptr), _dropBtn(nullptr), _itemBox(nullptr),
-	_highlightItemNo(-1), _itemOffset(0), _openedFromSceneNum(0), _showZoomBox(false),
-	_fullWidth(-1)
+	_giveToBtn(nullptr), _changeCharBtn(nullptr), _highlightItemNo(-1), _itemOffset(0),
+	_openedFromSceneNum(0), _showZoomBox(false), _fullWidth(-1)
 {
 }
 
@@ -81,6 +81,10 @@ void Inventory::setRequestData(const REQFileData &data) {
 
 	_clockSkipMinBtn = dynamic_cast<ButtonGadget *>(req.findGadgetByNumWithFlags3Not0x40(24));
 	_clockSkipHrBtn = dynamic_cast<ButtonGadget *>(req.findGadgetByNumWithFlags3Not0x40(25));
+
+	_giveToBtn = dynamic_cast<ButtonGadget *>(req.findGadgetByNumWithFlags3Not0x40(29));
+	_changeCharBtn = dynamic_cast<ButtonGadget *>(req.findGadgetByNumWithFlags3Not0x40(27));
+
 	_dropBtn = dynamic_cast<ButtonGadget *>(req.findGadgetByNumWithFlags3Not0x40(16));
 	_itemArea = dynamic_cast<ImageGadget *>(req.findGadgetByNumWithFlags3Not0x40(8));
 
@@ -119,6 +123,8 @@ void Inventory::drawHeader(Graphics::ManagedSurface &surf) {
 
 void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount) {
 	RequestData &boxreq = _reqData._requests[0];
+	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsGameId gameId = engine->getGameId();
 
 	if (_showZoomBox) {
 		_itemZoomBox->_flags3 &= ~0x40;
@@ -140,6 +146,30 @@ void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount) {
 		// clear flag 0x40 - visible.
 		_prevPageBtn->_flags3 &= ~0x40;
 		_nextPageBtn->_flags3 &= ~0x40;
+	}
+
+	//
+	// Decide whether the time buttons should be visible (only in Dragon)
+	//
+	if (gameId != GID_DRAGON) {
+		if (_clockSkipMinBtn)
+			_clockSkipMinBtn->_flags3 |= 0x40;
+		if (_clockSkipHrBtn)
+			_clockSkipHrBtn->_flags3 |= 0x40;
+	}
+
+	//
+	// Decide whether the give-to and swap char buttons should be visible (only in China)
+	//
+	if (gameId == GID_HOC) {
+		if (engine->getGDSScene()->getGlobal(0x34) != 0) {
+			// other char available, buttons visible
+			_giveToBtn->_flags3 &= ~0x40;
+			_changeCharBtn->_flags3 &= ~0x40;
+		} else {
+			_giveToBtn->_flags3 |= 0x40;
+			_changeCharBtn->_flags3 |= 0x40;
+		}
 	}
 
 	boxreq.drawInvType(&surf);
