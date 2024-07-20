@@ -622,8 +622,10 @@ int32 LoadSpriteSeriesDirect(const char *assetName, MemHandle *seriesHandle, int
 	// Lock the handle and read the contents of the file intoit
 	HLock(workHandle);
 	mainAssetPtr = (char *)*workHandle;
-	if (f.read(mainAssetPtr, assetSize) < assetSize)
+	if (f.read(mainAssetPtr, assetSize) < assetSize) {
+		mem_free(workHandle);
 		return -1;
+	}
 
 	// Close the file
 	f.close();
@@ -1113,6 +1115,7 @@ int32 LoadSpriteSeriesDirect(const char *assetName, Handle *seriesHandle, int32 
 	mainAssetPtr = (char *)*workHandle;
 	if (f.read(mainAssetPtr, assetSize) < assetSize) {
 		f.close();
+		mem_free(workHandle);
 		return -1;
 	}
 
