@@ -30,7 +30,6 @@
 #include "ags/engine/ac/game.h"
 #include "ags/engine/ac/game_setup.h"
 #include "ags/shared/ac/game_setup_struct.h"
-#include "ags/engine/ac/game_state.h"
 #include "ags/shared/ac/game_struct_defines.h"
 #include "ags/engine/ac/gui.h"
 #include "ags/engine/ac/view_frame.h"
