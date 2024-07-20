@@ -366,7 +366,7 @@ protected:
 	void findPathTowardsOld(byte box, byte box2, byte box3, Common::Point &p2, Common::Point &p3);
 	uint _stepThreshold;
 private:
-	virtual int actorWalkStep();
+	virtual int actorWalkStep() override;
 	uint _stepX;
 	const int _facingXYratio;
 };
