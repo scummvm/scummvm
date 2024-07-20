@@ -318,12 +318,6 @@ void engine_init_keyboard() {
 	/* do nothing */
 }
 
-void engine_init_timer() {
-	Debug::Printf(kDbgMsg_Info, "Install timer");
-
-	skipMissedTicks();
-}
-
 void engine_init_audio() {
 #if !AGS_PLATFORM_SCUMMVM
 	if (usetup.audio_backend != 0) {
@@ -1108,10 +1102,6 @@ int initialize_engine(const ConfigTree &startup_opts) {
 	_G(our_eip) = -196;
 
 	engine_init_mouse();
-
-	_G(our_eip) = -197;
-
-	engine_init_timer();
 
 	_G(our_eip) = -198;
 
