@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-19 22:39+0000\n"
-"PO-Revision-Date: 2024-07-16 10:46+0000\n"
+"PO-Revision-Date: 2024-07-20 05:27+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -3771,7 +3771,7 @@ msgstr "IDs de jeu trouvés pour le moteur %s :"
 
 #: engines/metaengine.cpp:56 engines/saga/metaengine.cpp:266
 msgid "Default game keymap"
-msgstr "Contrôles par défaut du jeu"
+msgstr "Conf. de touches par défaut"
 
 #: engines/metaengine.cpp:60 backends/platform/maemo/maemo.cpp:161
 #: engines/asylum/metaengine.cpp:159 engines/hdb/metaengine.cpp:207
@@ -7280,50 +7280,36 @@ msgid "Default keymappings"
 msgstr "Touches par défaut"
 
 #: engines/cine/metaengine.cpp:260
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Key to mouse keymappings"
-msgstr "Conf. des touches du jeu"
+msgstr "Conf. des touches de souris"
 
 #: engines/cine/metaengine.cpp:261
-#, fuzzy
-#| msgid "Quit panel keymapping"
 msgid "Exit screen keymappings"
-msgstr "Conf. des touches du panneau Quitter"
+msgstr "Conf. des touches Ecran de sortie"
 
 #: engines/cine/metaengine.cpp:277
 msgid "Exit Sony intro screen"
-msgstr ""
+msgstr "Quitter l'écran d'intro Sony"
 
 #: engines/cine/metaengine.cpp:283
-#, fuzzy
-#| msgid "Select to end of line"
 msgid "Select option / Click in game"
-msgstr "Sélectionner jusqu'en fin de ligne"
+msgstr "Choisir une option / Clic en jeu"
 
 #: engines/cine/metaengine.cpp:290
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open action menu / Close menu"
-msgstr "Ouvrir le menu principal"
+msgstr "Ouvrir le menu action / Fermer le menu"
 
 #: engines/cine/metaengine.cpp:295
-#, fuzzy
-#| msgid "Default game keymap"
 msgid "Default game speed"
-msgstr "Contrôles par défaut du jeu"
+msgstr "Vitesse du jeu par défaut"
 
 #: engines/cine/metaengine.cpp:300
-#, fuzzy
-#| msgid "Show game credits"
 msgid "Slower game speed"
-msgstr "Afficher les crédits du jeu"
+msgstr "Vitesse du jeu plus lente"
 
 #: engines/cine/metaengine.cpp:307
-#, fuzzy
-#| msgid "Fast movie speed"
 msgid "Faster game speed"
-msgstr "Vidéo rapide"
+msgstr "Vitesse du jeu plus rapide"
 
 #: engines/cine/metaengine.cpp:315 engines/grim/grim.cpp:498
 #: engines/hpl1/metaengine.cpp:90 engines/scumm/help.cpp:243
@@ -7360,69 +7346,53 @@ msgid "Use"
 msgstr "Utiliser"
 
 #: engines/cine/metaengine.cpp:335
-#, fuzzy
-#| msgid "Active"
 msgid "Activate"
-msgstr "Actif"
+msgstr "Activer"
 
 #: engines/cine/metaengine.cpp:340
 msgid "Speak"
-msgstr ""
+msgstr "Parler"
 
 #: engines/cine/metaengine.cpp:345
-#, fuzzy
-#| msgid "Action"
 msgid "Action menu"
-msgstr "Action"
+msgstr "Menu Action"
 
 #: engines/cine/metaengine.cpp:351
-#, fuzzy
-#| msgid "Pause/Game menu"
 msgid "System menu"
-msgstr "Pause/Menu du jeu"
+msgstr "Menu Système"
 
 #. I18N: Opens collision map of where the actor can freely move
 #: engines/cine/metaengine.cpp:358
-#, fuzzy
-#| msgid "Show options"
 msgid "Show collisions"
-msgstr "Afficher les options"
+msgstr "Afficher les collisions"
 
 #. I18N: Move Actor to top-left direction
 #: engines/cine/metaengine.cpp:393
-#, fuzzy
-#| msgid "Move left"
 msgid "Move up-left"
-msgstr "Déplacement gauche"
+msgstr "Déplacement haut-gauche"
 
 #. I18N: Move Actor to top-right direction
 #: engines/cine/metaengine.cpp:399
-#, fuzzy
-#| msgid "Move right"
 msgid "Move up-right"
-msgstr "Déplacement droite"
+msgstr "Déplacement haut-droite"
 
 #. I18N: Move Actor to bottom-left direction
 #: engines/cine/metaengine.cpp:405
-#, fuzzy
-#| msgid "Move down"
 msgid "Move down-left"
-msgstr "Déplacement bas"
+msgstr "Déplacement bas-gauche"
 
 #. I18N: Move Actor to bottom-right direction
 #: engines/cine/metaengine.cpp:411
-#, fuzzy
-#| msgid "Move right"
 msgid "Move down-right"
-msgstr "Déplacement droite"
+msgstr "Déplacement bas-droite"
 
 #: engines/cine/metaengine.cpp:416
 msgid "Menu option up"
-msgstr ""
+msgstr "Option du menu haut"
 
 #: engines/cine/metaengine.cpp:421
 msgid "Menu option down"
-msgstr ""
+msgstr "Option du menu bas"
 
 #: engines/cine/saveload.cpp:860
 msgid ""
