@@ -249,6 +249,8 @@ TheEntityField fields[] = {
 	{ kTheCast,		"textHeight",	kTheTextHeight,	300 },//		D3 p
 	{ kTheCast,		"textSize",		kTheTextSize,	300 },//		D3 p
 	{ kTheCast,		"textStyle",	kTheTextStyle,	300 },//		D3 p
+	{ kTheCast,		"scrollTop",	kTheScrollTop,  300 },//						D5 p
+
 
 	// Field fields
 	{ kTheField,	"foreColor",	kTheForeColor,	400 },//				D4 p
@@ -260,6 +262,7 @@ TheEntityField fields[] = {
 	{ kTheField,	"textHeight",	kTheTextHeight,	300 },//		D3 p
 	{ kTheField,	"textSize",		kTheTextSize,	300 },//		D3 p
 	{ kTheField,	"textStyle",	kTheTextStyle,	300 },//		D3 p
+	{ kTheField,	"scrollTop",	kTheScrollTop,  300 },//						D5 p
 
 	// Chunk fields
 	{ kTheChunk,	"foreColor",	kTheForeColor,	400 },//				D4 p
