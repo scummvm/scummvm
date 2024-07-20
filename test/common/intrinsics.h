@@ -1,8 +1,8 @@
 #include <cxxtest/TestSuite.h>
 
-#include "common/math.h"
+#include "common/intrinsics.h"
 
-class MathTestSuite : public CxxTest::TestSuite
+class IntrinsicsTestSuite : public CxxTest::TestSuite
 {
 	public:
 	void test_intLog2() {

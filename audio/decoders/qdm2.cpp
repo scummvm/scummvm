@@ -33,7 +33,7 @@
 
 #include "common/array.h"
 #include "common/debug.h"
-#include "common/math.h"
+#include "common/intrinsics.h"
 #include "common/stream.h"
 #include "common/memstream.h"
 #include "common/bitstream.h"

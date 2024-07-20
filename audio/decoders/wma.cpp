@@ -23,7 +23,7 @@
 // Largely based on the WMA implementation found in FFmpeg.
 
 #include "common/util.h"
-#include "common/math.h"
+#include "common/intrinsics.h"
 #include "common/error.h"
 #include "common/memstream.h"
 #include "common/compression/huffman.h"
