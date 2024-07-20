@@ -701,10 +701,12 @@ void CastleEngine::selectCharacterScreen() {
 }
 
 Common::Error CastleEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
+	stream->writeUint32LE(_numberKeys);
 	return Common::kNoError;
 }
 
 Common::Error CastleEngine::loadGameStreamExtended(Common::SeekableReadStream *stream) {
+	_numberKeys = stream->readUint32LE();
 	return Common::kNoError;
 }
 
