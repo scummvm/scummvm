@@ -46,6 +46,7 @@
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/ddb.h"
 #include "ags/shared/gui/gui_label.h"
+#include "ags/shared/gui/gui_inv.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/plugins/plugin_engine.h"
@@ -308,6 +309,95 @@ void LoadLipsyncData() {
 	Debug::Printf(kDbgMsg_Info, "Lipsync data found and loaded");
 }
 
+// Convert guis position and size to proper game resolution.
+// Necessary for pre 3.1.0 games only to sync with modern engine.
+static void ConvertGuiToGameRes(GameSetupStruct &game, GameDataVersion data_ver) {
+	if (data_ver >= kGameVersion_310)
+		return;
+
+	const int mul = game.GetDataUpscaleMult();
+	for (int i = 0; i < game.numcursors; ++i) {
+		game.mcurs[i].hotx *= mul;
+		game.mcurs[i].hoty *= mul;
+	}
+
+	for (int i = 0; i < game.numinvitems; ++i) {
+		game.invinfo[i].hotx *= mul;
+		game.invinfo[i].hoty *= mul;
+	}
+
+	for (int i = 0; i < game.numgui; ++i) {
+		GUIMain *cgp = &_GP(guis)[i];
+		cgp->X *= mul;
+		cgp->Y *= mul;
+		if (cgp->Width < 1)
+			cgp->Width = 1;
+		if (cgp->Height < 1)
+			cgp->Height = 1;
+		// This is probably a way to fix GUIs meant to be covering whole screen
+		if (cgp->Width == game.GetDataRes().Width - 1)
+			cgp->Width = game.GetDataRes().Width;
+
+		cgp->Width *= mul;
+		cgp->Height *= mul;
+
+		cgp->PopupAtMouseY *= mul;
+
+		for (int j = 0; j < cgp->GetControlCount(); ++j) {
+			GUIObject *guio = cgp->GetControl(j);
+			guio->X *= mul;
+			guio->Y *= mul;
+			guio->Width *= mul;
+			guio->Height *= mul;
+			guio->IsActivated = false;
+			guio->OnResized();
+		}
+	}
+}
+
+// Convert certain coordinates to data resolution (only if it's different from game resolution).
+// Necessary for 3.1.0 and above games with legacy "low-res coordinates" setting.
+static void ConvertObjectsToDataRes(GameSetupStruct &game, GameDataVersion data_ver) {
+	if (data_ver < kGameVersion_310 || game.GetDataUpscaleMult() == 1)
+		return;
+
+	const int mul = game.GetDataUpscaleMult();
+	for (int i = 0; i < game.numcharacters; ++i) {
+		game.chars[i].x /= mul;
+		game.chars[i].y /= mul;
+	}
+
+	for (auto &inv : _GP(guiinv)) {
+		inv.ItemWidth /= mul;
+		inv.ItemHeight /= mul;
+		inv.OnResized();
+	}
+}
+
+void InitGameResolution(GameSetupStruct &game, GameDataVersion data_ver) {
+	Debug::Printf("Initializing resolution settings");
+	const Size game_size = game.GetGameRes();
+	_GP(usetup).textheight = get_font_height_outlined(0) + 1;
+
+	Debug::Printf(kDbgMsg_Info, "Game native resolution: %d x %d (%d bit)%s", game_size.Width, game_size.Height, game.color_depth * 8,
+				  game.IsLegacyLetterbox() ? " letterbox-by-design" : "");
+
+	// Backwards compatible resolution conversions
+	ConvertGuiToGameRes(game, data_ver);
+	ConvertObjectsToDataRes(game, data_ver);
+
+	// Assign general game viewports
+	Rect viewport = RectWH(game_size);
+	_GP(play).SetMainViewport(viewport);
+	_GP(play).SetUIViewport(viewport);
+
+	// Assign ScriptSystem's resolution variables
+	_GP(scsystem).width = game.GetGameRes().Width;
+	_GP(scsystem).height = game.GetGameRes().Height;
+	_GP(scsystem).viewport_width = game_to_data_coord(_GP(play).GetMainViewport().GetWidth());
+	_GP(scsystem).viewport_height = game_to_data_coord(_GP(play).GetMainViewport().GetHeight());
+}
+
 void AllocScriptModules() {
 	_GP(moduleInst).resize(_G(numScriptModules), nullptr);
 	_GP(moduleInstFork).resize(_G(numScriptModules), nullptr);
@@ -400,6 +490,7 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	//
 	// 5. Initialize runtime state of certain game objects
 	//
+	InitGameResolution(game, data_ver);
 	for (auto &label : _GP(guilabels)) {
 		// labels are not clickable by default
 		label.SetClickable(false);
