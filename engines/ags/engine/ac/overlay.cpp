@@ -349,8 +349,7 @@ static void dispose_overlay(ScreenOverlay &over) {
 }
 
 void remove_screen_overlay(int type) {
-	assert(type >= 0 && type < _GP(screenover).size());
-	if (type < 0 || type >= _GP(screenover).size() || _GP(screenover)[type].type < 0)
+	if (type < 0 || static_cast<uint32_t>(type) >= _GP(screenover).size() || _GP(screenover)[type].type < 0)
 		return; // something is wrong
 
 	ScreenOverlay &over = _GP(screenover)[type];
@@ -376,13 +375,12 @@ void remove_screen_overlay(int type) {
 }
 
 void remove_all_overlays() {
-	for (int i = 0; i < _GP(screenover).size(); ++i)
-		remove_screen_overlay(i);
+	for (auto &over : _GP(screenover))
+		remove_screen_overlay(over.type);
 }
 
-ScreenOverlay *get_overlay(int index) {
-	assert(index >= 0 && index < _GP(screenover).size());
-	return (index >= 0 && index < _GP(screenover).size()) ? &_GP(screenover)[index] : nullptr;
+ScreenOverlay *get_overlay(int type) {
+	return (type >= 0 && static_cast<uint32_t>(type) < _GP(screenover).size() && _GP(screenover)[type].type >= 0) ? &_GP(screenover)[type] : nullptr;
 }
 
 size_t add_screen_overlay_impl(bool roomlayer, int x, int y, int type, int sprnum, Bitmap *piccy,
@@ -397,7 +395,7 @@ size_t add_screen_overlay_impl(bool roomlayer, int x, int y, int type, int sprnu
 		}
 	}
 
-	if (_GP(screenover).size() <= type)
+	if (_GP(screenover).size() <= static_cast<uint32_t>(type))
 		_GP(screenover).resize(type + 1);
 	ScreenOverlay over;
 	if (piccy) {

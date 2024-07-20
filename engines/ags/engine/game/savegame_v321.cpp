@@ -328,7 +328,7 @@ static void ReadOverlays_Aligned(Stream *in, std::vector<bool> &has_bitmap, size
 		align_s.Reset();
 		if (over.type < 0)
 			continue; // safety abort
-		if (overs.size() <= over.type) {
+		if (overs.size() <= static_cast<uint32_t>(over.type)) {
 			overs.resize(over.type + 1);
 			has_bitmap.resize(over.type + 1);
 		}
