@@ -74,8 +74,9 @@ public:
 	/**
 	 * Insert an @p element before @p pos.
 	 */
-	void insert(iterator pos, const t_T &element) {
+	iterator insert(iterator pos, const t_T &element) {
 		insert(pos._node, element);
+		return --pos;
 	}
 
 	/**

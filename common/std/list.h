@@ -64,12 +64,6 @@ public:
 	}
 };
 public:
-	typename Common::List<T>::iterator insert(typename Common::List<T>::iterator pos,
-			const T &element) {
-		Common::List<T>::insert(pos, element);
-		return --pos;
-	}
-
 	reverse_iterator rbegin() {
 		return reverse_iterator(Common::List<T>::reverse_begin());
 	}

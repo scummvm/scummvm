@@ -1200,7 +1200,7 @@ bool CurrentMap::sweepTest(const Point3 &start, const Point3 &end,
 					}
 
 					// Now add it
-					sw_it = hit->insert(sw_it, SweepItem(other_item->getObjId(), first, last, touch, touch_floor, blocking, dirs));
+					hit->insert(sw_it, SweepItem(other_item->getObjId(), first, last, touch, touch_floor, blocking, dirs));
 
 					//debugC(kDebugCollision, "Hit item %u (%d, %d, %d) at first: %d, last: %d",
 					//	   other_item->getObjId(), other[0], other[1], other[2], first, last);
