@@ -107,6 +107,10 @@ Graphics::Surface *FreescapeEngine::drawStringsInSurface(const Common::Array<Com
 	int x = isCastle() ? 45 : 55;
 	int y = isEclipse() || isCastle() ? 40 : 32;
 
+	if (isSpectrum() || isCPC()) {
+		black = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
+	}
+
 	for (int i = 0; i < int(lines.size()); i++) {
 		drawStringInSurface(lines[i], x, y, front, black, surface);
 		y = y + 9;
