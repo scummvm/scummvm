@@ -258,7 +258,7 @@ struct GameState {
 
 	// Dynamic custom property values for characters and items
 	std::vector<AGS::Shared::StringIMap> charProps;
-	AGS::Shared::StringIMap invProps[MAX_INV]{};
+	AGS::Shared::StringIMap invProps[MAX_INV];
 
 	// Dynamic speech state
 	//
