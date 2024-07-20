@@ -1041,9 +1041,9 @@ int EoBCoreEngine::generateCharacterHitpointsByLevel(int charIndex, int levelInd
 		int d = getCharacterClassType(c->cClass, i);
 
 		if (c->level[i] <= (d >= 0 ? _hpIncrPerLevel[6 + d] : 0))
-			h += rollDice(1, (d >= 0) ? _hpIncrPerLevel[d] : 0);
+			h += rollDice(1, d >= 0 ? _hpIncrPerLevel[d] : 0);
 		else
-			h += (d >= 0 ?_hpIncrPerLevel[12 + d] : 0);
+			h += (d >= 0 ? _hpIncrPerLevel[12 + d] : 0);
 
 		h += m;
 	}
