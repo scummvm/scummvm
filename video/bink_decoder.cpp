@@ -28,7 +28,7 @@
 
 #include "common/util.h"
 #include "common/textconsole.h"
-#include "common/math.h"
+#include "common/intrinsics.h"
 #include "common/stream.h"
 #include "common/substream.h"
 #include "common/file.h"

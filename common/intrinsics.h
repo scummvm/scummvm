@@ -21,8 +21,8 @@
 
 // Based on eos' math code
 
-#ifndef COMMON_MATH_H
-#define COMMON_MATH_H
+#ifndef COMMON_INTRINSICS_H
+#define COMMON_INTRINSICS_H
 
 #include "common/scummsys.h"
 #ifdef _MSC_VER
@@ -96,4 +96,4 @@ inline int intLog2(uint32 v) {
 
 } // End of namespace Common
 
-#endif // COMMON_MATH_H
+#endif // COMMON_INTRINSICS_H
