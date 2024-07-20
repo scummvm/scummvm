@@ -645,6 +645,8 @@ void ImmortalEngine::loadSprites() {
 			initDataSprite(file, &d, n / 2, centerXY[s * 2], centerXY[(s * 2) + 1]);
 			_dataSprites[s] = d;
 		}
+
+		delete file;
 	}
 }
 
