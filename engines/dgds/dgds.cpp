@@ -73,6 +73,10 @@
 
 namespace Dgds {
 
+/*static*/
+const byte DgdsEngine::HOC_CHAR_SWAP_ICONS[] = { 0, 20, 21, 22 };
+
+
 DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	: Engine(syst), _fontManager(nullptr), _console(nullptr), _inventory(nullptr),
 	_soundPlayer(nullptr), _decompressor(nullptr), _scene(nullptr),
@@ -276,7 +280,6 @@ void DgdsEngine::checkDrawInventoryButton() {
 		int16 otherChar = _gdsScene->getGlobal(0x34);
 		if (otherChar) {
 			// FIXME: This list repeated in scene too
-			static const byte HOC_CHAR_SWAP_ICONS[] = { 0, 20, 21, 22 };
 			int16 swapCharIcon = HOC_CHAR_SWAP_ICONS[otherChar];
 			int sy = SCREEN_HEIGHT - _icons->height(swapCharIcon) - 5;
 			_icons->drawBitmap(swapCharIcon, 5, sy, drawWin, _compositionBuffer);

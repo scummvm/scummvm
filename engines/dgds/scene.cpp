@@ -1764,14 +1764,11 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 		if (!_isInRect(pt, area._rect))
 			continue;
 
-		// FIXME: This is copied in inventory too
-		static const byte HOC_CHARACTER_QUALS[] = {0, 9, 7, 8};
-
 		if (area._num == 0) {
 			debug("Item %d dropped on inventory.", dragItem->_num);
 			dragItem->_inSceneNum = 2;
 			if (engine->getGameId() == GID_HOC)
-				dragItem->_quality = HOC_CHARACTER_QUALS[gdsScene->getGlobal(0x33)];
+				dragItem->_quality = Inventory::HOC_CHARACTER_QUALS[gdsScene->getGlobal(0x33)];
 
 			const ObjectInteraction *i = _findInteraction(scene->getObjInteractions1(), dragItem->_num, 0xffff);
 			if (i) {
@@ -1783,7 +1780,7 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 			debug("Item %d dropped on other character button.", dragItem->_num);
 			dragItem->_inSceneNum = 2;
 			if (engine->getGameId() == GID_HOC)
-				dragItem->_quality = HOC_CHARACTER_QUALS[gdsScene->getGlobal(0x34)];
+				dragItem->_quality = Inventory::HOC_CHARACTER_QUALS[gdsScene->getGlobal(0x34)];
 
 			const ObjectInteraction *i = _findInteraction(scene->getObjInteractions1(), dragItem->_num, 0xffff);
 			if (i) {
@@ -1914,10 +1911,8 @@ void SDSScene::addInvButtonToHotAreaList() {
 
 	// Add swap character button for HoC
 	if (engine->getGameId() == GID_HOC && engine->getGDSScene()->getGlobal(0x34) != 0) {
-		static const byte HOC_CHAR_SWAP_ICONS[] = { 0, 20, 21, 22 };
 		int16 charNum = engine->getGDSScene()->getGlobal(0x34);
-		assert(charNum < ARRAYSIZE(HOC_CHAR_SWAP_ICONS));
-		int16 iconNum = HOC_CHAR_SWAP_ICONS[charNum];
+		int16 iconNum = DgdsEngine::HOC_CHAR_SWAP_ICONS[charNum];
 		HotArea area2;
 		area2._num = 0xffff;
 		area2._cursorNum = 0;

@@ -94,6 +94,8 @@ public:
 	Sound *_soundPlayer;
 	Graphics::ManagedSurface _compositionBuffer;
 
+	static const byte HOC_CHAR_SWAP_ICONS[];
+
 private:
 	Console *_console;
 

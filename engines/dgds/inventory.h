@@ -57,6 +57,7 @@ public:
 
 	Common::Error syncState(Common::Serializer &s);
 
+	static const byte HOC_CHARACTER_QUALS[];
 private:
 	GameItem *itemUnderMouse(const Common::Point &pt);
 	bool isItemInInventory(GameItem &item);

@@ -319,6 +319,13 @@ bool Gadget::containsPoint(const Common::Point &pt) {
 	return gadgetRect.contains(pt);
 }
 
+void Gadget::setVisible(bool visible) {
+	if (visible)
+		_flags3 &= ~0x40;
+	else
+		_flags3 |= 0x40;
+}
+
 void ButtonGadget::draw(Graphics::ManagedSurface *dst) const {
 	// TODO: Bounds calculation here might depend on parent.
 

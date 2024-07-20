@@ -101,6 +101,8 @@ public:
 	virtual void toggle(bool enable) {}
 
 	bool containsPoint(const Common::Point &pt);
+	bool isVisible() const { return !(_flags3 & 0x40); }
+	void setVisible(bool visible);
 
 	Common::Point topLeft() const;
 	Common::Point midPoint() const;
