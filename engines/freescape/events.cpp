@@ -91,7 +91,7 @@ void EventManagerWrapper::pushEvent(Common::Event &event) {
 
 void EventManagerWrapper::clearExitEvents() {
 	_delegate->resetQuit();
-	_delegate->resetReturnToLauncher();
+	//_delegate->resetReturnToLauncher();
 
 }
 
