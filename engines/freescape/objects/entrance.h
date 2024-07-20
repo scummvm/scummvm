@@ -53,10 +53,11 @@ public:
 	bool isPlanar() override { return true; }
 	void scale(int factor) override { _origin = _origin / factor; };
 	Object *duplicate() override {
-		FCLInstructionVector *conditionCopy = nullptr;
-		conditionCopy = duplicateCondition(&_condition);
+		FCLInstructionVector *conditionCopy = duplicateCondition(&_condition);
 		assert(conditionCopy);
-		return (new Entrance(_objectID, _origin, _rotation, *conditionCopy, _conditionSource));
+		Entrance *entrance = new Entrance(_objectID, _origin, _rotation, *conditionCopy, _conditionSource);
+		delete conditionCopy;
+		return entrance;
 	};
 
 	ObjectType getType() override { return ObjectType::kEntranceType; };
