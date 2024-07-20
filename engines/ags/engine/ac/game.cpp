@@ -543,10 +543,10 @@ ScriptViewFrame *Game_GetViewFrame(int view, int loop, int frame) {
 }
 
 int Game_DoOnceOnly(const char *token) {
-	if (_GP(play).do_once_tokens.count(String::Wrapper(token)) > 0)
+	if (_GP(play).do_once_tokens.find(String::Wrapper(token)) != _GP(play).do_once_tokens.end())
 		return 0;
-	_GP(play).do_once_tokens.insert(token);
 
+	_GP(play).do_once_tokens.insert(token);
 	return 1;
 }
 
