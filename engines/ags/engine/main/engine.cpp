@@ -513,6 +513,8 @@ int engine_init_sprites() {
 	return 0;
 }
 
+// TODO: this should not be a part of "engine_" function group,
+// move this elsewhere (InitGameState?).
 void engine_init_game_settings() {
 	_G(our_eip) = -7;
 	Debug::Printf("Initialize game settings");
@@ -596,6 +598,9 @@ void engine_init_game_settings() {
 		if (_GP(game).invinfo[ee].flags & IFLG_STARTWITH) _G(playerchar)->inv[ee] = 1;
 		else _G(playerchar)->inv[ee] = 0;
 	}
+
+	//
+	// TODO: following big initialization sequence could be in GameState ctor
 	_GP(play).score = 0;
 	_GP(play).sierra_inv_color = 7;
 	// copy the value set by the editor
@@ -749,14 +754,6 @@ void engine_init_game_settings() {
 	memset(&_GP(play).walkable_areas_on[0], 1, MAX_WALK_AREAS + 1);
 	memset(&_GP(play).script_timers[0], 0, MAX_TIMERS * sizeof(int));
 	memset(&_GP(play).default_audio_type_volumes[0], -1, MAX_AUDIO_TYPES * sizeof(int));
-
-	// reset graphical script vars (they're still used by some games)
-	for (ee = 0; ee < MAXGLOBALVARS; ee++)
-		_GP(play).globalvars[ee] = 0;
-	for (ee = 0; ee < MAXGSVALUES; ee++)
-		_GP(play).globalscriptvars[ee] = 0;
-	for (ee = 0; ee < MAXGLOBALSTRINGS; ee++)
-		_GP(play).globalstrings[ee][0] = 0;
 
 	if (!_GP(usetup).translation.IsEmpty())
 		Game_ChangeTranslation(_GP(usetup).translation.GetCStr());
