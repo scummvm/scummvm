@@ -112,6 +112,7 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 		Entrance *entrance = (Entrance *)_currentArea->entranceWithID(entranceID);
 		assert(entrance);
 		executeEntranceConditions(entrance);
+		executeMovementConditions();
 	}
 }
 
