@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-19 22:39+0000\n"
-"PO-Revision-Date: 2024-07-16 09:08+0000\n"
+"PO-Revision-Date: 2024-07-21 01:43+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -6489,48 +6489,36 @@ msgid "Default keymappings"
 msgstr "ნაგულისხმევი კლავიატურის მალსახმობები"
 
 #: engines/cine/metaengine.cpp:260
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Key to mouse keymappings"
-msgstr "თამაშის კლავიატურის მალსახმობები"
+msgstr "ღილაკების თაგუნაზე ასახვა"
 
 #: engines/cine/metaengine.cpp:261
-#, fuzzy
-#| msgid "Quit panel keymapping"
 msgid "Exit screen keymappings"
-msgstr "პანელის კლავიატურის მალსახმობების ფანჯრიდან გასვლა"
+msgstr "გასვლის ეკრანის კლავიატურის ასახვები"
 
 #: engines/cine/metaengine.cpp:277
 msgid "Exit Sony intro screen"
 msgstr ""
 
 #: engines/cine/metaengine.cpp:283
-#, fuzzy
-#| msgid "Select to end of line"
 msgid "Select option / Click in game"
-msgstr "მონიშვნა ხაზის ბოლომდე"
+msgstr "აირჩიეთ პარამეტრი / დააწკაპუნეთ თამაშში"
 
 #: engines/cine/metaengine.cpp:290
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open action menu / Close menu"
-msgstr "მთავარი მენიუს გახსნა"
+msgstr "ქმედებების მენიუს გახსნა / მენიუს დახურვა"
 
 #: engines/cine/metaengine.cpp:295
 msgid "Default game speed"
 msgstr ""
 
 #: engines/cine/metaengine.cpp:300
-#, fuzzy
-#| msgid "Save game state"
 msgid "Slower game speed"
-msgstr "თამაშის მდგომარეობის შენახვა"
+msgstr "უფრო ნელი თამაშის სიჩქარე"
 
 #: engines/cine/metaengine.cpp:307
-#, fuzzy
-#| msgid "Save game state"
 msgid "Faster game speed"
-msgstr "თამაშის მდგომარეობის შენახვა"
+msgstr "უფრო სწრაფი თამაშის სიჩქარე"
 
 #: engines/cine/metaengine.cpp:315 engines/grim/grim.cpp:498
 #: engines/hpl1/metaengine.cpp:90 engines/scumm/help.cpp:243
@@ -6567,20 +6555,16 @@ msgid "Use"
 msgstr "გამოყენება"
 
 #: engines/cine/metaengine.cpp:335
-#, fuzzy
-#| msgid "Active"
 msgid "Activate"
-msgstr "აქტიური"
+msgstr "გააქტიურება"
 
 #: engines/cine/metaengine.cpp:340
 msgid "Speak"
 msgstr ""
 
 #: engines/cine/metaengine.cpp:345
-#, fuzzy
-#| msgid "Action"
 msgid "Action menu"
-msgstr "ქმედება"
+msgstr "ქმედების მენიუ"
 
 #: engines/cine/metaengine.cpp:351
 #, fuzzy
