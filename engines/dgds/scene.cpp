@@ -711,7 +711,7 @@ bool Scene::runDragonOp(const SceneOp &op) {
 	case kSceneOpMeanwhile:
 		// TODO: Should we draw "meanwhile" like the original? it just gets overwritten with the image anyway.
 		// Probably need to do something here to avoid flashing..
-		//engine->_compositionBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		//engine->_compositionBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		break;
 	case kSceneOpOpenGameOverMenu:
 		engine->setMenuToTrigger(kMenuGameOver);
@@ -2103,7 +2103,7 @@ bool GDSScene::loadRestart(const Common::String &filename, ResourceManager *reso
 		triggers[i] = file->readUint16LE();
 	}
 
-	engine->_compositionBuffer.fillRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+	engine->_compositionBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 	// TODO: FIXME: What should this scene num be? For now hacked to work with Dragon.
 	engine->changeScene(3);
 	SDSScene *scene = engine->getScene();

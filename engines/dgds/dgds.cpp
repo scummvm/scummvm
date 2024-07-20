@@ -168,9 +168,11 @@ bool DgdsEngine::changeScene(int sceneNum) {
 
 	_gameGlobals->setLastSceneNum(sceneNum);
 
-	// Save the current foreground if we are going to the inventory, clear it otherwise.
-	if (sceneNum == 2) {
-		// Slight hack - draw the inv button here to keep it in the scene
+	// Save the current foreground if we are going to the inventory,
+	// *except* for HoC zoomed inventory - that also clears background
+	// because it uses a different palette for the zoomed item view.
+	if (sceneNum == 2 && (!(getGameId() == GID_HOC && _inventory->isZoomVisible()))) {
+		// Force-draw the inv button here to keep it in background
 		checkDrawInventoryButton();
 		_backgroundBuffer.blitFrom(_compositionBuffer);
 	} else {

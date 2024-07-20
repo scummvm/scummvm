@@ -27,6 +27,7 @@
 #include "dgds/image.h"
 #include "dgds/font.h"
 #include "dgds/request.h"
+#include "dgds/includes.h"
 
 namespace Dgds {
 
@@ -398,6 +399,13 @@ void Inventory::mouseRUp(const Common::Point &pt) {
 		GameItem *underMouse = itemUnderMouse(pt);
 		if (underMouse) {
 			setShowZoomBox(true);
+			if (engine->getGameId() == GID_HOC) {
+				// Slight hack - blank the background if zooming in HOC because it uses
+				// different palettes for zoomed items (original does this too)
+				// We also do this on scene transition, but need to do it again
+				// here for zooming within the box.
+				engine->getBackgroundBuffer().fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+			}
 			engine->getScene()->runOps(underMouse->onRClickOps);
 		}
 	} else {
