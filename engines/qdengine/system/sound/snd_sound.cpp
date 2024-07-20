@@ -19,6 +19,9 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "audio/audiostream.h"
+
 #include "qdengine/qd_precomp.h"
 #include "qdengine/system/sound/snd_sound.h"
 #include "qdengine/system/sound/wav_sound.h"
@@ -94,40 +97,37 @@ bool sndSound::release_sound_buffer() {
 bool sndSound::play() {
 	_flags &= ~SOUND_FLAG_PAUSED;
 
-	warning("STUB: sndSound::play()");
-#if 0
-	DWORD flags = (_flags & SOUND_FLAG_LOOPING) ? DSBPLAY_LOOPING : 0;
-	_sound_buffer->Play(0, 0, flags);
-#endif
+	if (_flags & SOUND_FLAG_LOOPING) {
+		Audio::AudioStream *audio = new Audio::LoopingAudioStream(_sound->_audioStream, 0, DisposeAfterUse::NO);
+		g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_audHandle, audio);
+	} else {
+		g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_audHandle, _sound->_audioStream);
+	}
+
 	return true;
 }
 
 bool sndSound::stop() {
-	warning("STUB: sndSound::stop()");
-#if 0
-	_sound_buffer->Stop();
-#endif
+	g_system->getMixer()->stopHandle(_audHandle);
 	return true;
 }
 
 void sndSound::pause() {
 	_flags |= SOUND_FLAG_PAUSED;
-	stop();
+	g_system->getMixer()->pauseHandle(_audHandle, true);
 }
 
 void sndSound::resume() {
-	play();
+	g_system->getMixer()->pauseHandle(_audHandle, false);
 }
 
 sndSound::status_t sndSound::status() const {
-	if (is_paused()) return sndSound::SOUND_PAUSED;
-	warning("STUB: sndSound::status()");
-#if 0
-	DWORD st;
-	_sound_buffer->GetStatus(&st);
+	if (is_paused())
+		return sndSound::SOUND_PAUSED;
 
-	if (st & (DSBSTATUS_PLAYING | DSBSTATUS_LOOPING)) return SOUND_PLAYING;
-#endif
+	if (g_system->getMixer()->isSoundHandleActive(_audHandle))
+		return SOUND_PLAYING;
+
 	return SOUND_STOPPED;
 }
 
@@ -142,10 +142,7 @@ bool sndSound::is_stopped() const {
 }
 
 bool sndSound::set_volume(int vol) {
-	warning("STUB: sndSound::set_volume()");
-#if 0
-	_sound_buffer->SetVolume(vol);
-#endif
+	g_system->getMixer()->setChannelVolume(_audHandle, vol);
 	return true;
 }
 

@@ -68,6 +68,9 @@ public:
 
 	bool wav_file_load(const char *fname);
 
+
+	Audio::SeekableAudioStream *_audioStream = nullptr;
+
 private:
 
 	//! Данные.
@@ -83,8 +86,6 @@ private:
 	Значения: 8.0, 11.025, 22.05, 44.1 x1000 Hz.
 	 */
 	int _samples_per_sec;
-
-	Audio::SeekableAudioStream *_audioStream = nullptr;
 };
 
 } // namespace QDEngine
