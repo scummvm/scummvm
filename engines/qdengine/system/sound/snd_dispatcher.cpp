@@ -37,8 +37,7 @@ static bool operator == (const sndSound &snd, const sndHandle &h) {
 	return snd.handle() == &h;
 }
 
-sndDispatcher::sndDispatcher() : _sound_device(NULL),
-		_is_enabled(true),
+sndDispatcher::sndDispatcher() : _is_enabled(true),
 		_is_paused(false),
 		_volume(255),
 		_volume_dB(0),
@@ -46,24 +45,6 @@ sndDispatcher::sndDispatcher() : _sound_device(NULL),
 
 	if (!_dispatcher_ptr)
 		_dispatcher_ptr = this;
-
-	warning("STUB: sndDispatcher::sndDispatcher()");
-#if 0
-	HRESULT res = DirectSoundCreate(NULL, &_sound_device, NULL);
-	if (FAILED(res) || _sound_device == NULL)
-		return;
-
-	HWND hWnd = static_cast<HWND>(appGetHandle());
-	grDispatcher *gp = grDispatcher::instance();
-
-	if (gp && gp->is_in_fullscreen_mode()) {
-		res = _sound_device->SetCooperativeLevel(hWnd, DSSCL_EXCLUSIVE);
-		if (FAILED(res))
-			_sound_device->SetCooperativeLevel(hWnd, DSSCL_PRIORITY);
-	} else {
-		_sound_device->SetCooperativeLevel(hWnd, DSSCL_PRIORITY);
-	}
-#endif
 }
 
 sndDispatcher::~sndDispatcher() {
@@ -71,12 +52,6 @@ sndDispatcher::~sndDispatcher() {
 
 	if (_dispatcher_ptr == this)
 		_dispatcher_ptr = NULL;
-
-	warning("STUB: sndDispatcher::~sndDispatcher()");
-#if 0
-	if (_sound_device)
-		_sound_device-> Release();
-#endif
 }
 
 void sndDispatcher::set_volume(unsigned int vol) {
@@ -106,8 +81,6 @@ void sndDispatcher::quant() {
 }
 
 bool sndDispatcher::play_sound(const sndSound *snd, bool loop, float start_position, int vol) {
-	if (!_sound_device) return false;
-
 	if (is_enabled()) {
 		_sounds.push_back(sndSound(*snd));
 		sndSound &p = _sounds.back();
@@ -132,8 +105,6 @@ bool sndDispatcher::play_sound(const sndSound *snd, bool loop, float start_posit
 }
 
 bool sndDispatcher::stop_sound(const sndSound *snd) {
-	if (!_sound_device) return false;
-
 	sound_list_t::iterator it = std::find(_sounds.begin(), _sounds.end(), *snd);
 
 	if (it != _sounds.end()) {
@@ -147,8 +118,6 @@ bool sndDispatcher::stop_sound(const sndSound *snd) {
 }
 
 bool sndDispatcher::stop_sound(const sndHandle *handle) {
-	if (!_sound_device) return false;
-
 	sound_list_t::iterator it = std::find(_sounds.begin(), _sounds.end(), *handle);
 
 	if (it != _sounds.end()) {
