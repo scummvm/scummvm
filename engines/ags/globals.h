@@ -43,6 +43,7 @@
 #include "ags/engine/media/audio/audio_defines.h"
 #include "ags/engine/script/script.h"
 #include "ags/engine/script/script_runtime.h"
+#include "common/std/algorithm.h"
 #include "common/std/array.h"
 #include "common/std/chrono.h"
 #include "common/std/memory.h"
