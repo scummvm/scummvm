@@ -107,6 +107,7 @@ protected:
 
 	void setBuiltinCursor(int index) override;
 	void setSnailCursor() override;
+	void adaptCursorToVideoMode();
 
 	void drawPreposition(int index);
 
