@@ -77,7 +77,7 @@ bool wavSound::wav_file_load(const char *fname) {
 	Common::SeekableReadStream *stream;
 
 	if (qdFileManager::instance().open_file(&stream, fpath.toString().c_str(), false))
-		_audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+		_audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::NO);
 
 	warning("STUB: wav_file_load() %s", transCyrillic(fname));
 	return true;

@@ -23,6 +23,7 @@
 #ifndef QDENGINE_SYSTEM_SOUND_SND_SOUND_H
 #define QDENGINE_SYSTEM_SOUND_SND_SOUND_H
 
+#include "audio/mixer.h"
 
 namespace QDEngine {
 
@@ -131,6 +132,8 @@ private:
 
 	//! флаги
 	int _flags;
+
+	Audio::SoundHandle _audHandle;
 };
 
 } // namespace QDEngine
