@@ -141,7 +141,6 @@ void FreescapeEngine::executeLocalGlobalConditions(bool shot, bool collided, boo
 }
 
 void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool collided, bool timer, bool activated) {
-	assert(!(shot && collided));
 	int ip = 0;
 	bool skip = false;
 	int codeSize = code.size();
