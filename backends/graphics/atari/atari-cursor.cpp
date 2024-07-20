@@ -92,8 +92,7 @@ void Cursor::setSurface(const void *buf, int w, int h, int hotspotX, int hotspot
 }
 
 void Cursor::setPalette(const byte *colors, uint start, uint num) {
-	if (colors)
-		memcpy(&_palette[start * 3], colors, num * 3);
+	memcpy(&_palette[start * 3], colors, num * 3);
 
 	_surfaceChanged = true;
 }

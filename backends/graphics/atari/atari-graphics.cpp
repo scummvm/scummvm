@@ -412,6 +412,7 @@ OSystem::TransactionError AtariGraphicsManager::endGFXTransaction() {
 		return OSystem::kTransactionSuccess;
 	} else if (_overlayVisible) {
 		// that's it, really. updateScreen() will take care of everything.
+		_checkUnalignedPitch = true;
 		_ignoreHideOverlay = false;
 		_overlayVisible = false;
 		// if being in the overlay, reset everything (same as hideOverlay() does)
@@ -574,6 +575,8 @@ void AtariGraphicsManager::updateScreen() {
 				|| engineId == "teenagent"
 				|| engineId == "tsage") {
 				g_unalignedPitch = true;
+			} else {
+				g_unalignedPitch = false;
 			}
 		}
 
@@ -830,9 +833,6 @@ void AtariGraphicsManager::hideOverlay() {
 	_workScreen = _oldWorkScreen;
 	_oldWorkScreen = nullptr;
 
-	// FIXME: perhaps there's a better way but this will do for now
-	_checkUnalignedPitch = true;
-
 	_overlayVisible = false;
 
 	assert(_pendingState.change == GraphicsState::kNone);
@@ -1003,12 +1003,9 @@ void AtariGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int h
 void AtariGraphicsManager::setCursorPalette(const byte *colors, uint start, uint num) {
 	debug("setCursorPalette: %d, %d", start, num);
 
-	_workScreen->cursor.setPalette(colors, start, num);
-
-	if (!isOverlayVisible() && _currentState.mode == GraphicsMode::TripleBuffering) {
-		// avoid copying the same (shared) palette two more times...
-		_screen[BACK_BUFFER2]->cursor.setPalette(nullptr, 0, 0);
-		_screen[FRONT_BUFFER]->cursor.setPalette(nullptr, 0, 0);
+	if (isOverlayVisible()) {
+		// cursor palette is supported only in the overlay
+		_workScreen->cursor.setPalette(colors, start, num);
 	}
 }
 
