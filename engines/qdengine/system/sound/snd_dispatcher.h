@@ -157,8 +157,6 @@ private:
 	//! Текущий диспетчер.
 	static sndDispatcher *_dispatcher_ptr;
 
-	//! Указатель на DirectSound интерфейс.
-	LPDIRECTSOUND _sound_device;
 //	Audio::SeekableAudioStream *_audioStream;
 };
 
