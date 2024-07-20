@@ -224,6 +224,16 @@ static void _filledCircle(int x, int y, int xr, int yr, Graphics::ManagedSurface
 	Graphics::drawEllipse(x - xr, y - yr, x + xr, y + yr, fgcol, false, _drawPixel, dst);
 }
 
+// Find the last line that will be printed - we don't use empty lines
+static uint _countPrintedLines(const Common::Array<Common::String> &lines) {
+	uint nprinted = 0;
+	for (uint i = 0; i < lines.size(); i++) {
+		if (!lines[i].empty())
+			nprinted = i;
+	}
+	return nprinted + 1;
+}
+
 // Comic thought box made up of circles with 2 circles going up to it.
 // Draw circles with 5/4 more pixels in x because the pixels are not square.
 void Dialog::drawType3(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
@@ -372,11 +382,12 @@ void Dialog::drawFindSelectionXY() {
 	if (_state->_strMouseLoc) {
 		Common::Array<Common::String> lines;
 		int maxWidth = font->wordWrapText(_str, _state->_loc.width, lines);
+		uint nlines = _countPrintedLines(lines);
 
 		if (hasFlag(kDlgFlagLeftJust)) {
 			x = x + (_state->_loc.width - maxWidth - 1) / 2;
 			_state->_lastMouseX = x;
-			y = y + (_state->_loc.height - ((int)lines.size() * _state->_charHeight) - 1) / 2;
+			y = y + (_state->_loc.height - ((int)nlines * _state->_charHeight) - 1) / 2;
 			_state->_lastMouseY = y;
 		}
 
@@ -453,9 +464,10 @@ void Dialog::drawFindSelectionTxtOffset() {
 
 	Common::Array<Common::String> lines;
 	int maxWidth = font->wordWrapText(_str, _state->_loc.width, lines);
+	uint numPrintedLines = _countPrintedLines(lines);
 
 	if (hasFlag(kDlgFlagLeftJust)) {
-		int textHeight = lines.size() * lineHeight;
+		int textHeight = numPrintedLines * lineHeight;
 		dlgx += (_state->_loc.width - maxWidth - 1) / 2;
 		dlgy += (_state->_loc.height - textHeight - 1) / 2;
 	}
@@ -498,8 +510,9 @@ void Dialog::drawForeground(Graphics::ManagedSurface *dst, uint16 fontcol, const
 	const DgdsFont *font = getDlgTextFont();
 	const int h = font->getFontHeight();
 	font->wordWrapText(txt, _state->_loc.width, lines);
+	uint numPrintedLines = _countPrintedLines(lines);
 
-	int ystart = _state->_loc.y + (_state->_loc.height - (int)lines.size() * h) / 2;
+	int ystart = _state->_loc.y + (_state->_loc.height - (int)numPrintedLines * h) / 2;
 
 	int x = _state->_loc.x;
 
