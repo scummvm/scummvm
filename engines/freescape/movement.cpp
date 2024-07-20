@@ -209,6 +209,7 @@ void FreescapeEngine::shoot() {
 
 		_delayedShootObject = gobj;
 	}
+
 	executeLocalGlobalConditions(true, false, false); // Only execute "on shot" room/global conditions
 }
 

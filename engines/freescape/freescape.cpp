@@ -731,7 +731,8 @@ Common::Error FreescapeEngine::run() {
 
 		if (_shootingFrames == 0) {
 			if (_delayedShootObject) {
-				executeObjectConditions(_delayedShootObject, true, false, false);
+				bool rockTravel = isCastle() && getGameBit(k8bitGameBitTravelRock);
+				executeObjectConditions(_delayedShootObject, true, rockTravel, false);
 				executeLocalGlobalConditions(true, false, false); // Only execute "on shot" room/global conditions
 				_delayedShootObject = nullptr;
 			}
