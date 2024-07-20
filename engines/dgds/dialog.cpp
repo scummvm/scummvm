@@ -124,7 +124,7 @@ void Dialog::drawType2BackgroundDragon(Graphics::ManagedSurface *dst, const Comm
 		// TODO: Maybe should measure the font?
 		_state->_loc.y += 11;
 		_state->_loc.height -= 11;
-		RequestData::drawHeader(dst, _rect.x, _rect.y, _rect.width, 4, title, 0, true);
+		RequestData::drawHeader(dst, _rect.x, _rect.y, _rect.width, 4, title, 0, true, 0, 15);
 	}
 
 	if (hasFlag(kDlgFlagFlatBg)) {
@@ -153,7 +153,7 @@ void Dialog::drawType2BackgroundChina(Graphics::ManagedSurface *dst, const Commo
 		// TODO: Maybe should measure the font?
 		_state->_loc.y += 11;
 		_state->_loc.height -= 11;
-		RequestData::drawHeader(dst, _rect.x, _rect.y, _rect.width, 2, title, _fontColor, false);
+		RequestData::drawHeader(dst, _rect.x, _rect.y, _rect.width, 2, title, _fontColor, false, 0, 0);
 	}
 }
 
@@ -169,7 +169,7 @@ void Dialog::drawType2BackgroundBeamish(Graphics::ManagedSurface *dst, const Com
 		// TODO: Maybe should measure the font?
 		_state->_loc.y += 11;
 		_state->_loc.height -= 11;
-		RequestData::drawHeader(dst, _rect.x, _rect.y, _rect.width, 2, title, _fontColor, false);
+		RequestData::drawHeader(dst, _rect.x, _rect.y, _rect.width, 2, title, _fontColor, false, 0, 0);
 	}
 }
 
