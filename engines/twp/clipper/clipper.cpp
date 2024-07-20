@@ -1169,7 +1169,7 @@ void ClipperBase::Reset() {
 		return; // ie nothing to process
 	Common::sort(m_MinimaList.begin(), m_MinimaList.end(), LocMinSorter());
 
-	m_Scanbeam = ScanbeamList(); // clears/resets priority_queue
+	m_Scanbeam = ScanbeamList(); // clears/resets PriorityQueue
 	// reset all edges ...
 	for (MinimaList::iterator lm = m_MinimaList.begin(); lm != m_MinimaList.end(); ++lm) {
 		InsertScanbeam(lm->Y);

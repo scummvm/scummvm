@@ -50,6 +50,7 @@
 //#define use_deprecated
 
 #include "common/array.h"
+#include "common/queue.h"
 
 namespace ClipperLib {
 
@@ -73,72 +74,6 @@ typedef int64 long64;     //used by Int128 class
 typedef uint64 ulong64;
 
 #endif
-
-/**
- * Queue ordered by a provided priority function
- * NOTE: Unlike in the C std library, we have to provde a comparitor that sorts
- * the array so that the smallest priority comes last
- */
-template <class _Ty, class _Container = Common::Array<_Ty>, class _Pr = Common::Less<_Ty>>
-class priority_queue {
-public:
-	typedef const _Ty& const_reference;
-
-public:
-	priority_queue() : c(), comp() {}
-
-	explicit priority_queue(const _Pr &_Pred) : c(), comp(_Pred) {}
-
-	priority_queue(const _Pr &_Pred, const _Container &_Cont) : c(_Cont), comp(_Pred) {
-		make_heap(c.begin(), c.end(), comp);
-	}
-
-	template <class _InIt>
-	priority_queue(_InIt _First, _InIt _Last, const _Pr &_Pred, const _Container &_Cont) : c(_Cont), comp(_Pred) {
-		c.insert(c.end(), _First, _Last);
-		make_heap(c.begin(), c.end(), comp);
-	}
-
-	template <class _InIt>
-	priority_queue(_InIt _First, _InIt _Last) : c(_First, _Last), comp() {
-		make_heap(c.begin(), c.end(), comp);
-	}
-
-	template <class _InIt>
-	priority_queue(_InIt _First, _InIt _Last, const _Pr &_Pred) : c(_First, _Last), comp(_Pred) {
-		make_heap(c.begin(), c.end(), comp);
-	}
-
-	bool empty() const {
-		return c.empty();
-	}
-
-	size_t size() const {
-		return c.size();
-	}
-
-	const_reference top() const {
-		return c.back();
-	}
-
-	void push(const typename _Container::value_type &_Val) {
-		c.push_back(_Val);
-		Common::sort(c.begin(), c.end(), comp);
-	}
-
-	void pop() {
-		c.pop_back();
-	}
-
-	void swap(priority_queue &_Right) {
-		SWAP(c, _Right.c);
-		SWAP(comp, _Right.comp);
-	}
-
-protected:
-	_Container c;
-	_Pr comp;
-};
 
 struct IntPoint {
   cInt X;
@@ -275,7 +210,7 @@ protected:
   PolyOutList m_PolyOuts;
   TEdge *m_ActiveEdges;
 
-  typedef priority_queue<cInt> ScanbeamList;
+  typedef Common::PriorityQueue<cInt> ScanbeamList;
   ScanbeamList m_Scanbeam;
 };
 //------------------------------------------------------------------------------

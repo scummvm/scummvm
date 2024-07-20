@@ -67,7 +67,7 @@ public:
 	}
 	sint32 step_cost(const MapCoord &c1, const MapCoord &c2) override;
 protected:
-	/* FIXME: These node functions can be replaced with a priority_queue and a list. */
+	/* FIXME: These node functions can be replaced with a PriorityQueue and a List. */
 	astar_node *find_open_node(astar_node *ncmp);
 	void push_open_node(astar_node *node);
 	astar_node *pop_open_node();
