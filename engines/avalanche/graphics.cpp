@@ -27,10 +27,10 @@
 #include "avalanche/avalanche.h"
 #include "avalanche/graphics.h"
 
-#include "common/math.h"
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/paletteman.h"
+#include "math/utils.h"
 
 namespace Avalanche {
 
@@ -242,7 +242,7 @@ Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16
 	uint16 deltaEnd = 91;
 
 	// Set the end point.
-	float tempTerm = Common::deg2rad<float>(endAngle);
+	float tempTerm = Math::deg2rad<float>(endAngle);
 	endPoint.x = (int16)floor(xRadius * cos(tempTerm) + 0.5) + x;
 	endPoint.y = (int16)floor(yRadius * sin(tempTerm + M_PI) + 0.5) + y;
 
@@ -253,7 +253,7 @@ Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16
 		int16 xTemp = xNext;
 		int16 yTemp = yNext;
 		// This is used by both sin and cos.
-		tempTerm = Common::deg2rad<float>(j + delta);
+		tempTerm = Math::deg2rad<float>(j + delta);
 
 		xNext = (int16)floor(xRadius * cos(tempTerm) + 0.5);
 		yNext = (int16)floor(yRadius * sin(tempTerm + M_PI) + 0.5);

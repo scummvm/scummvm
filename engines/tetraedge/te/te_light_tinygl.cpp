@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/math.h"
-
 #include "graphics/tinygl/tinygl.h"
 
 #include "tetraedge/te/te_light_tinygl.h"

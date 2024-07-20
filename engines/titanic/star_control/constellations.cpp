@@ -26,7 +26,7 @@
 #include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
 
-#include "common/math.h"
+#include "math/utils.h"
 
 namespace Titanic {
 
@@ -55,8 +55,8 @@ bool CConstellations::initialize() {
 				dec = (double)stream->readSint32LE() / 100.0f;
 
 				// Work the polar coordinates
-				phi = Common::deg2rad<double>(ra);
-				theta = Common::deg2rad<double>(dec);
+				phi = Math::deg2rad<double>(ra);
+				theta = Math::deg2rad<double>(dec);
 
 				vectors[fctr]->_x = UNIVERSE_SCALE * cos(theta) * cos(phi);
 				vectors[fctr]->_y = UNIVERSE_SCALE * cos(theta) * sin(phi);

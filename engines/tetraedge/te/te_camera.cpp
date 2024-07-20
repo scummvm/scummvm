@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/math.h"
 #include "math/ray.h"
 
 #include "tetraedge/tetraedge.h"

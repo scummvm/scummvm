@@ -29,11 +29,12 @@
 #include "common/system.h"
 #include "common/str.h"
 #include "common/config-manager.h"
-#include "common/math.h"
 #include "common/memstream.h"
 
 #include "graphics/surface.h"
 #include "graphics/thumbnail.h"
+
+#include "math/utils.h"
 
 #include "engines/util.h"
 
@@ -246,7 +247,7 @@ public:
 
 	PixelWriterColorNTSC() {
 		for (uint phase = 0; phase < kColorPhases; ++phase) {
-			double phi = Common::deg2rad(phase * 90.0 + 45.0);
+			double phi = Math::deg2rad(phase * 90.0 + 45.0);
 			for (uint s = 0; s < kColors; ++s) {
 				uint t = s;
 				double y;
@@ -266,7 +267,7 @@ public:
 						i = i + (c * cos(phi) - i) / 8.0;
 						q = q + (c * sin(phi) - q) / 8.0;
 
-						phi += Common::deg2rad(45.0);
+						phi += Math::deg2rad(45.0);
 					}
 				}
 

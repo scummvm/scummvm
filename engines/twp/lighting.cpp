@@ -19,7 +19,7 @@
  *
  */
 
-#include "common/math.h"
+#include "math/utils.h"
 #include "twp/lighting.h"
 #include "twp/room.h"
 #include "twp/twp.h"
@@ -208,9 +208,9 @@ void Lighting::update(const Lights &lights) {
 		u_lightPos[u_numberLights * 3 + 0] = light.pos.getX();
 		u_lightPos[u_numberLights * 3 + 1] = light.pos.getY();
 		u_lightPos[u_numberLights * 3 + 2] = 1.f;
-		u_coneDirection[u_numberLights * 2 + 0] = cos(Common::deg2rad(direction));
-		u_coneDirection[u_numberLights * 2 + 1] = sin(Common::deg2rad(direction));
-		u_coneCosineHalfConeAngle[u_numberLights] = cos(Common::deg2rad(light.coneAngle / 2.f));
+		u_coneDirection[u_numberLights * 2 + 0] = cos(Math::deg2rad(direction));
+		u_coneDirection[u_numberLights * 2 + 1] = sin(Math::deg2rad(direction));
+		u_coneCosineHalfConeAngle[u_numberLights] = cos(Math::deg2rad(light.coneAngle / 2.f));
 		u_coneFalloff[u_numberLights] = light.coneFalloff;
 		u_lightColor[u_numberLights * 3 + 0] = light.color.rgba.r;
 		u_lightColor[u_numberLights * 3 + 1] = light.color.rgba.g;

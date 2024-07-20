@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/math.h"
 #include "common/savefile.h"
 
 #include "tetraedge/tetraedge.h"

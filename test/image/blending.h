@@ -37,7 +37,6 @@
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/rect.h"
-#include "common/math.h"
 #include "common/textconsole.h"
 #include "graphics/blit.h"
 #include "graphics/primitives.h"

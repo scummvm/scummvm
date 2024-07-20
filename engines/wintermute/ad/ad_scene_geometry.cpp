@@ -25,7 +25,6 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#include "common/math.h"
 #include "common/util.h"
 
 #include "engines/wintermute/ad/ad_block.h"

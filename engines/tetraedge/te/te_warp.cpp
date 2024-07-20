@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/math.h"
-
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/application.h"
 #include "tetraedge/te/te_warp.h"

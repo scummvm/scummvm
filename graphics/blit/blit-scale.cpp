@@ -28,8 +28,8 @@
 #include "graphics/pixelformat.h"
 #include "graphics/transform_struct.h"
 
-#include "common/math.h"
 #include "common/rect.h"
+#include "math/utils.h"
 
 namespace Graphics {
 
@@ -306,7 +306,7 @@ void rotoscaleBlitLogic(byte *dst, const byte *src,
 	}
 
 	uint32 invAngle = 360 - (transform._angle % 360);
-	float invAngleRad = Common::deg2rad<uint32,float>(invAngle);
+	float invAngleRad = Math::deg2rad<uint32,float>(invAngle);
 	float invCos = cos(invAngleRad);
 	float invSin = sin(invAngleRad);
 

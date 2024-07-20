@@ -25,7 +25,7 @@
 #include "titanic/star_control/surface_area.h"
 #include "titanic/titanic.h"
 
-#include "common/math.h"
+#include "math/utils.h"
 
 namespace Titanic {
 
@@ -83,7 +83,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 			e->_pixel3 = 0x40;
 			e->_field8 = g_vm->getRandomNumber(3) + 3;
 			e->_fieldC = g_vm->getRandomNumber(255);
-			e->_field10 = Common::deg2rad<double>(7.0);
+			e->_field10 = Math::deg2rad<double>(7.0);
 			e->_field14 = 0.0084687499;
 
 			++e;
@@ -93,7 +93,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 			e->_pixel3 = 0;
 			e->_field8 = g_vm->getRandomNumber(3) + 3;
 			e->_fieldC = g_vm->getRandomNumber(255);
-			e->_field10 = Common::deg2rad<double>(3.0);
+			e->_field10 = Math::deg2rad<double>(3.0);
 			e->_field14 = 0.021011719;
 
 			++e;
@@ -113,7 +113,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 			e->_pixel3 = 0;
 			e->_field8 = g_vm->getRandomNumber(3) + 3;
 			e->_fieldC = g_vm->getRandomNumber(255);
-			e->_field10 = Common::deg2rad<double>(2.0);
+			e->_field10 = Math::deg2rad<double>(2.0);
 			e->_field14 = 0.01178125;
 
 			++e;
@@ -123,7 +123,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 			e->_pixel3 = 0;
 			e->_field8 = g_vm->getRandomNumber(3) + 3;
 			e->_fieldC = g_vm->getRandomNumber(255);
-			e->_field10 = Common::deg2rad<double>(1.0);
+			e->_field10 = Math::deg2rad<double>(1.0);
 			e->_field14 = 0.24791406;
 
 			++e;
@@ -133,7 +133,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 			e->_pixel3 = 0xe6;
 			e->_field8 = g_vm->getRandomNumber(3) + 3;
 			e->_fieldC = g_vm->getRandomNumber(255);
-			e->_field10 = Common::deg2rad<double>(3.0);
+			e->_field10 = Math::deg2rad<double>(3.0);
 			e->_field14 = 0.20832032;
 
 			++e;
@@ -143,7 +143,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 			e->_pixel3 = 0x28;
 			e->_field8 = g_vm->getRandomNumber(3) + 3;
 			e->_fieldC = g_vm->getRandomNumber(255);
-			e->_field10 = Common::deg2rad<double>(1.0);
+			e->_field10 = Math::deg2rad<double>(1.0);
 			e->_field14 = 0.088164061;
 
 			++e;
@@ -153,7 +153,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 			e->_pixel3 = 0xf0;
 			e->_field8 = g_vm->getRandomNumber(3) + 3;
 			e->_fieldC = g_vm->getRandomNumber(255);
-			e->_field10 = Common::deg2rad<double>(2.0);
+			e->_field10 = Math::deg2rad<double>(2.0);
 			e->_field14 = 0.084375001;
 
 			++e;
@@ -163,7 +163,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 			e->_pixel3 = 0x20;
 			e->_field8 = g_vm->getRandomNumber(3) + 3;
 			e->_fieldC = g_vm->getRandomNumber(255);
-			e->_field10 = Common::deg2rad<double>(17.0);
+			e->_field10 = Math::deg2rad<double>(17.0);
 			e->_field14 = 1 / 256.0;
 		} else {
 			for (int ctr = 0; ctr < 5; ++ctr) {
@@ -175,7 +175,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 				e->_pixel3 = (val >> 16) & 0xff;
 				e->_field8 = g_vm->getRandomNumber(3) + 3;
 				e->_fieldC = g_vm->getRandomNumber(255);
-				e->_field10 = Common::deg2rad<double>((double)g_vm->getRandomNumber(15));
+				e->_field10 = Math::deg2rad<double>((double)g_vm->getRandomNumber(15));
 				e->_field14 = ((float)g_vm->getRandomNumber(0xfffffffe)
 					* 50.0 / 65536.0) / 256.0;
 			}
@@ -509,12 +509,12 @@ bool CStarCloseup::setupEntry(int width, int height, int index, float val) {
 
 	for (ctr = height - 2, idx = 1, yVal = vy; ctr > 0; --ctr, yVal += vy) {
 		degrees = 0.0;
-		cosVal = cos(Common::deg2rad<float>(yVal));
-		sinVal = sin(Common::deg2rad<float>(yVal));
+		cosVal = cos(Math::deg2rad<float>(yVal));
+		sinVal = sin(Math::deg2rad<float>(yVal));
 
 		if (width > 0) {
 			for (int xCtr = 0; xCtr < width; ++xCtr, ++idx, degrees += vx) {
-				angle = Common::deg2rad<float>(degrees);
+				angle = Math::deg2rad<float>(degrees);
 
 				FVector &tempV = entry._data2[idx];
 				tempV._x = sin(angle) * sinVal * val;

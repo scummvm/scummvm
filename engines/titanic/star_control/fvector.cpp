@@ -23,7 +23,7 @@
 #include "titanic/star_control/fpose.h"
 
 #include "common/str.h"
-#include "common/math.h"
+#include "math/utils.h"
 
 namespace Titanic {
 
@@ -45,8 +45,8 @@ FVector FVector::crossProduct(const FVector &src) const {
 }
 
 void FVector::rotVectAxisY(float angleDeg) {
-	float sinVal = sin(Common::deg2rad<double>(angleDeg));
-	float cosVal = cos(Common::deg2rad<double>(angleDeg));
+	float sinVal = sin(Math::deg2rad<double>(angleDeg));
+	float cosVal = cos(Math::deg2rad<double>(angleDeg));
 	float x = cosVal * _x - sinVal * _z;
 	float z = cosVal * _z + sinVal * _x;
 
@@ -109,14 +109,14 @@ FPose FVector::getFrameTransform(const FVector &v) {
 	FPose matrix1, matrix2, matrix3, matrix4;
 
 	FVector vector1 = getPolarCoord();
-	matrix1.setRotationMatrix(X_AXIS, Common::rad2deg<double>(vector1._y));
-	matrix2.setRotationMatrix(Y_AXIS, Common::rad2deg<double>(vector1._z));
+	matrix1.setRotationMatrix(X_AXIS, Math::rad2deg<double>(vector1._y));
+	matrix2.setRotationMatrix(Y_AXIS, Math::rad2deg<double>(vector1._z));
 	fposeProd(matrix1, matrix2, matrix3);
 	matrix4 = matrix3.inverseTransform();
 
 	vector1 = v.getPolarCoord();
-	matrix1.setRotationMatrix(X_AXIS, Common::rad2deg<double>(vector1._y));
-	matrix2.setRotationMatrix(Y_AXIS, Common::rad2deg<double>(vector1._z));
+	matrix1.setRotationMatrix(X_AXIS, Math::rad2deg<double>(vector1._y));
+	matrix2.setRotationMatrix(Y_AXIS, Math::rad2deg<double>(vector1._z));
 	fposeProd(matrix1, matrix2, matrix3);
 	fposeProd(matrix4, matrix3, matrix1);
 
@@ -126,8 +126,8 @@ FPose FVector::getFrameTransform(const FVector &v) {
 FPose FVector::formRotXY() const {
 	FVector v1 = getPolarCoord();
 	FPose m1, m2;
-	m1.setRotationMatrix(X_AXIS, Common::rad2deg<double>(v1._y));
-	m2.setRotationMatrix(Y_AXIS, Common::rad2deg<double>(v1._z));
+	m1.setRotationMatrix(X_AXIS, Math::rad2deg<double>(v1._y));
+	m2.setRotationMatrix(Y_AXIS, Math::rad2deg<double>(v1._z));
 	FPose m3;
 	fposeProd(m1, m2, m3);
 	return m3;

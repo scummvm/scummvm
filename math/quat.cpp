@@ -37,8 +37,8 @@
 
 #include "common/streamdebug.h"
 
-#include "common/math.h"
 #include "math/quat.h"
+#include "math/utils.h"
 
 namespace Math {
 
@@ -208,7 +208,7 @@ Vector3d Quaternion::directionVector(const int col) const {
 
 Angle Quaternion::getAngleBetween(const Quaternion &to) {
 	Quaternion q = this->inverse() * to;
-	Angle diff(Common::rad2deg(2 * acos(q.w())));
+	Angle diff(Math::rad2deg(2 * acos(q.w())));
 	return diff;
 }
 

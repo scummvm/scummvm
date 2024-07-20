@@ -31,9 +31,9 @@
 
 #include "common/config-manager.h"
 #include "common/events.h"
-#include "common/math.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "math/utils.h"
 
 namespace Mohawk {
 namespace MystStacks {
@@ -3279,7 +3279,7 @@ Common::Point Myst::towerRotationMapComputeCoords(uint16 angle) {
 	Common::Point end;
 
 	// Polar to rect coords
-	float radians = Common::deg2rad<uint16,float>(angle);
+	float radians = Math::deg2rad<uint16,float>(angle);
 	end.x = (int16)(_towerRotationCenter.x + cos(radians) * 310.0f);
 	end.y = (int16)(_towerRotationCenter.y + sin(radians) * 310.0f);
 

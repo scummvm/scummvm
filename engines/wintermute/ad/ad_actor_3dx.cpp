@@ -25,8 +25,8 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#include "common/math.h"
 #include "common/util.h"
+#include "math/utils.h"
 
 #include "engines/wintermute/ad/ad_actor_3dx.h"
 #include "engines/wintermute/ad/ad_attach_3dx.h"
@@ -665,9 +665,9 @@ void AdActor3DX::initLine3D(Math::Vector3d startPt, Math::Vector3d endPt, bool f
 		// wme subtracted 90 dregrees from the angle, so that the angle zero points downwards
 		// and the angle 90 goes left
 		// now we have a right handed coordinate system, so we add 90 degrees instead
-		turnTo(Common::rad2deg(-atan2(endPt.z() - startPt.z(), endPt.x() - startPt.x())) + 90);
+		turnTo(Math::rad2deg(-atan2(endPt.z() - startPt.z(), endPt.x() - startPt.x())) + 90);
 	} else {
-		_turningLeft = prepareTurn(Common::rad2deg(-atan2(endPt.z() - startPt.z(), endPt.x() - startPt.x())) + 90);
+		_turningLeft = prepareTurn(Math::rad2deg(-atan2(endPt.z() - startPt.z(), endPt.x() - startPt.x())) + 90);
 	}
 }
 
@@ -1647,7 +1647,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			BaseObject *obj = (BaseObject *)val->getNative();
 			Math::Vector3d objPos;
 			((AdGame *)_gameRef)->_scene->_sceneGeometry->convert2Dto3D(obj->_posX, obj->_posY, &objPos);
-			angle = Common::rad2deg(-atan2(objPos.z() - _posVector.z(), objPos.x() - _posVector.x())) + 90;
+			angle = Math::rad2deg(-atan2(objPos.z() - _posVector.z(), objPos.x() - _posVector.x())) + 90;
 		} else {
 			// otherwise turn to direction
 			dir = val->getInt();

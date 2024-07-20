@@ -29,7 +29,7 @@
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/persistent.h"
-#include "common/math.h"
+#include "math/utils.h"
 
 namespace Wintermute {
 
@@ -119,7 +119,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Cos") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(cos(Common::deg2rad<double>(stack->pop()->getFloat())));
+		stack->pushFloat(cos(Math::deg2rad<double>(stack->pop()->getFloat())));
 		return STATUS_OK;
 	}
 
@@ -128,7 +128,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Cosh") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(cosh(Common::deg2rad<double>(stack->pop()->getFloat())));
+		stack->pushFloat(cosh(Math::deg2rad<double>(stack->pop()->getFloat())));
 		return STATUS_OK;
 	}
 
@@ -185,7 +185,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Sin") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(sin(Common::deg2rad<double>(stack->pop()->getFloat())));
+		stack->pushFloat(sin(Math::deg2rad<double>(stack->pop()->getFloat())));
 		return STATUS_OK;
 	}
 
@@ -194,7 +194,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Sinh") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(sinh(Common::deg2rad<double>(stack->pop()->getFloat())));
+		stack->pushFloat(sinh(Math::deg2rad<double>(stack->pop()->getFloat())));
 		return STATUS_OK;
 	}
 
@@ -203,7 +203,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Tan") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(tan(Common::deg2rad<double>(stack->pop()->getFloat())));
+		stack->pushFloat(tan(Math::deg2rad<double>(stack->pop()->getFloat())));
 		return STATUS_OK;
 	}
 
@@ -212,7 +212,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Tanh") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(tanh(Common::deg2rad<double>(stack->pop()->getFloat())));
+		stack->pushFloat(tanh(Math::deg2rad<double>(stack->pop()->getFloat())));
 		return STATUS_OK;
 	}
 
@@ -230,7 +230,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DegToRad") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(Common::deg2rad<double>(stack->pop()->getFloat()));
+		stack->pushFloat(Math::deg2rad<double>(stack->pop()->getFloat()));
 		return STATUS_OK;
 	}
 
@@ -239,7 +239,7 @@ bool SXMath::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RadToDeg") == 0) {
 		stack->correctParams(1);
-		stack->pushFloat(Common::rad2deg<double>(stack->pop()->getFloat()));
+		stack->pushFloat(Math::rad2deg<double>(stack->pop()->getFloat()));
 		return STATUS_OK;
 	} else {
 		return STATUS_FAILED;

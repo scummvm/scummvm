@@ -21,9 +21,9 @@
 
 #include "zvision/graphics/render_table.h"
 
-#include "common/math.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
+#include "math/utils.h"
 
 namespace ZVision {
 
@@ -154,7 +154,7 @@ void RenderTable::generatePanoramaLookupTable() {
 	float halfWidth = (float)_numColumns / 2.0f;
 	float halfHeight = (float)_numRows / 2.0f;
 
-	float fovInRadians = Common::deg2rad<float>(_panoramaOptions.fieldOfView);
+	float fovInRadians = Math::deg2rad<float>(_panoramaOptions.fieldOfView);
 	float cylinderRadius = halfHeight / tan(fovInRadians);
 
 	for (uint x = 0; x < _numColumns; ++x) {
@@ -186,7 +186,7 @@ void RenderTable::generateTiltLookupTable() {
 	float halfWidth = (float)_numColumns / 2.0f;
 	float halfHeight = (float)_numRows / 2.0f;
 
-	float fovInRadians = Common::deg2rad<float>(_tiltOptions.fieldOfView);
+	float fovInRadians = Math::deg2rad<float>(_tiltOptions.fieldOfView);
 	float cylinderRadius = halfWidth / tan(fovInRadians);
 	_tiltOptions.gap = cylinderRadius * atan2((float)(halfHeight / cylinderRadius), 1.0f) * _tiltOptions.linearScale;
 
