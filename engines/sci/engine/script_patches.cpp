@@ -9269,10 +9269,37 @@ static const uint16 larry5PatchRoom500PaletteAnimation[] = {
 	PATCH_END
 };
 
+// The poker jackpot is incorrectly reset to zero when restarting the game.
+//  When starting a new game by starting the program, the jackpot's global
+//  is initialized from the password file MEMORY.DRV with a default value
+//  of one thousand. But when restarting, the password prompt is skipped,
+//  and the jackpot global is left with its initial heap value of zero.
+//
+// We fix this by setting the jackpot's initial heap value to one thousand.
+//
+// Applies to: All versions
+// Responsible method: heap in script 0
+static const uint16 larry5SignaturePokerJackpotInit[] = {
+	SIG_MAGICDWORD,
+	SIG_UINT16(0x03e7),                // global 20 = 999
+	SIG_UINT16(0x0014),                // global 21 = 20
+	SIG_UINT16(0x0001),                // global 22 = 1
+	SIG_ADDTOOFFSET(+0x118),
+	SIG_UINT16(0x0000),                // global 163 = 0 [ jackpot ]
+	SIG_END
+};
+
+static const uint16 larry5PatchPokerJackpotInit[] = {
+	PATCH_ADDTOOFFSET(+0x011e),
+	PATCH_UINT16(0x03e8),              // global 163 = 1000 [ jackpot ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                               patch
 static const SciScriptPatcherEntry larry5Signatures[] = {
 	{  true,     0, "update stopGroop client",                     1, larry5SignatureUpdateStopGroopClient,   larry5PatchUpdateStopGroopClient },
 	{  true,     0, "TPrint uninit parameter",                     1, larry5SignatureHTPrintUninitParameter,  larry5PatchTPrintUninitParameter },
+	{  true,     0, "poker jackpot init",                          1, larry5SignaturePokerJackpotInit,        larry5PatchPokerJackpotInit },
 	{  true,   130, "speed up palette animation",                  1, larry5SignatureMrBiggPaletteAnimation,  larry5PatchMrBiggPaletteAnimation },
 	{  true,   190, "hollywood sign",                              1, larry5SignatureHollywoodSign,           larry5PatchHollywoodSign },
 	{  true,   280, "English-only: fix green card limo bug",       1, larry5SignatureGreenCardLimoBug,        larry5PatchGreenCardLimoBug },
