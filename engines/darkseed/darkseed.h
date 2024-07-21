@@ -106,8 +106,8 @@ public:
 	bool isAnimFinished_maybe = false;
 	bool animFrameChanged = false;
 	char prefsCutsceneId = 'I';
-	int animIndexTbl[20];
-	int spriteAnimCountdownTimer[20];
+	int animIndexTbl[30];
+	int spriteAnimCountdownTimer[30];
 
 	// Unknown variables
 	bool _doorEnabled = false;
@@ -187,6 +187,8 @@ public:
 	void handleObjCollision(int objNum);
 	void playCutscene(const Common::String cutsceneId);
 	void playSound(int16 unk, uint8 unk1, int16 unk2);
+	void nextFrame(int nspAminIdx);
+	void stuffPlayer();
 private:
 	void updateAnimation();
 	void advanceAnimationFrame(int nspAminIdx);
