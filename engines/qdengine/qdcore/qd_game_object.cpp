@@ -166,9 +166,9 @@ bool qdGameObject::update_screen_pos() {
 bool qdGameObject::load_data(Common::SeekableReadStream &fh, int saveVersion) {
 	if (!qdNamedObject::load_data(fh, saveVersion)) return false;
 
-	r_.x = fh.readSint32LE();
-	r_.y = fh.readSint32LE();
-	r_.z = fh.readSint32LE();
+	r_.x = fh.readFloatLE();
+	r_.y = fh.readFloatLE();
+	r_.z = fh.readFloatLE();
 	return true;
 }
 

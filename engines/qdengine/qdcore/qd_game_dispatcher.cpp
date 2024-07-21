@@ -2493,7 +2493,8 @@ bool qdGameDispatcher::load_save(const char *fname) {
 
 	Common::InSaveFile *fh;
 	fh = g_engine->_savefileMan->openForLoading(Common::Path(fname).toString());
-	int save_version;
+
+	int32 save_version;
 	save_version = fh->readSint32LE();
 
 	qdNamedObjectReference ref;
@@ -2509,13 +2510,13 @@ bool qdGameDispatcher::load_save(const char *fname) {
 		play_music_track(p);
 	}
 
-	int flag = fh->readSint32LE();
+	int32 flag = fh->readSint32LE();
 	if (flag)
 		toggle_inventory(true);
 	else
 		toggle_inventory(false);
 
-	int size = fh->readSint32LE();
+	int32 size = fh->readSint32LE();
 	if (size != global_object_list().size()) return false;
 
 	for (auto &it : global_object_list()) {
@@ -2582,10 +2583,9 @@ bool qdGameDispatcher::load_save(const char *fname) {
 
 bool qdGameDispatcher::save_save(const char *fname) const {
 	Common::OutSaveFile *fh;
-	Common::Path fpath(fname);
-	fh = g_engine->_savefileMan->openForSaving(fpath.getLastComponent().toString());
+	fh = g_engine->_savefileMan->openForSaving(fname);
 
-	const int save_version = 107;
+	int32 save_version = 107;
 	fh->writeUint32LE(save_version);
 
 	if (get_active_scene()) {

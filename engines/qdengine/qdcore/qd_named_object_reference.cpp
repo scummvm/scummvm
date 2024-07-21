@@ -184,7 +184,8 @@ bool qdNamedObjectReference::save_data(Common::SeekableWriteStream &fh) const {
 
 	for (int i = 0; i < num_levels(); i ++) {
 		fh.writeSint32LE(object_types_[i]);
-		fh.writeUint32LE(strlen(object_names_[i].c_str()) + 1);
+		fh.writeUint32LE(object_names_[i].size());
+		fh.writeString(object_names_[i].c_str());
 	}
 
 	return true;
@@ -196,4 +197,5 @@ qdNamedObject *qdNamedObjectReference::object() const {
 
 	return NULL;
 }
+
 } // namespace QDEngine
