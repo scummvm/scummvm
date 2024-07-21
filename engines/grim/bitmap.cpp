@@ -67,7 +67,6 @@ BitmapData::BitmapData(const Common::String &fname) {
 	_format = 0;
 	_numTex = 0;
 	_bpp = 0;
-	_colorFormat = 0;
 	_texIds = nullptr;
 	_hasTransparency = 0;
 
@@ -134,7 +133,6 @@ bool BitmapData::loadGrimBm(Common::SeekableReadStream *data) {
 	data->seek(128, SEEK_SET);
 	_width = data->readUint32LE();
 	_height = data->readUint32LE();
-	_colorFormat = BM_RGB565;
 	_hasTransparency = false;
 
 	_data = new Graphics::Surface[_numImages];
@@ -157,11 +155,9 @@ bool BitmapData::loadGrimBm(Common::SeekableReadStream *data) {
 			Debug::error(Debug::Bitmaps, "Unknown image codec in BitmapData ctor!");
 
 #ifdef SCUMM_BIG_ENDIAN
-		if (_format == 1) {
-			uint16 *d = (uint16 *)_data[i].getPixels();
-			for (int j = 0; j < _width * _height; ++j) {
-				d[j] = SWAP_BYTES_16(d[j]);
-			}
+		uint16 *d = (uint16 *)_data[i].getPixels();
+		for (int j = 0; j < _width * _height; ++j) {
+			d[j] = SWAP_BYTES_16(d[j]);
 		}
 #endif
 	}
@@ -188,7 +184,6 @@ BitmapData::BitmapData(const Graphics::Surface &buf, int w, int h, const char *f
 	_texIds = nullptr;
 	_bpp = buf.format.bytesPerPixel * 8;
 	_hasTransparency = false;
-	_colorFormat = BM_RGB565;
 	_data = new Graphics::Surface[_numImages];
 	_data[0].copyFrom(buf);
 	_loaded = true;
@@ -204,7 +199,7 @@ BitmapData::BitmapData(const Graphics::Surface &buf, int w, int h, const char *f
 
 BitmapData::BitmapData() :
 		_numImages(0), _width(0), _height(0), _x(0), _y(0), _format(0), _numTex(0),
-		_bpp(0), _colorFormat(0), _texIds(nullptr), _hasTransparency(false), _data(nullptr),
+		_bpp(0), _texIds(nullptr), _hasTransparency(false), _data(nullptr),
 		_refCount(1), _loaded(false), _keepData(false), _texc(nullptr), _verts(nullptr),
 		_layers(nullptr), _numCoords(0), _numVerts(0), _numLayers(0), _userData(nullptr) {
 }
@@ -246,24 +241,20 @@ bool BitmapData::loadTGA(Common::SeekableReadStream *data) {
 	if (!success)
 		return false;
 
-	const Graphics::Surface *origSurf = dec.getSurface();
-	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-	Graphics::Surface *surf = origSurf->convertTo(pixelFormat);
+	const Graphics::Surface *surf = dec.getSurface();
 
 	_width = surf->w;
 	_height = surf->h;
 	_format = 1;
 	_x = _y = 0;
-	_bpp = 4;
-	_colorFormat = BM_RGBA;
+	_bpp = surf->format.bytesPerPixel * 8;
 	_numImages = 1;
 	_data = new Graphics::Surface[1];
-	_data[0].init(surf->w, surf->h, surf->pitch, surf->getPixels(), surf->format);
+	_data[0].copyFrom(*surf);
 
 	g_driver->createBitmap(this);
 
 	freeData();
-	delete surf;
 
 	return true;
 }
@@ -316,36 +307,41 @@ bool BitmapData::loadTile(Common::SeekableReadStream *o) {
 	o->seek(-8, SEEK_CUR);
 
 	_data = new Graphics::Surface[_numImages];
-	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+
+	Graphics::PixelFormat format_16bpp = Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15);
+#ifdef SCUMM_BIG_ENDIAN
+	Graphics::PixelFormat format_32bpp = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#else
+	Graphics::PixelFormat format_32bpp = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#endif
+
 	int width = 256;
 	int height = 256;
 
 	for (int i = 0; i < _numImages; ++i) {
-		_data[i].create(width, height, pixelFormat);
+		_data[i].create(width, height, (_bpp == 16) ? format_16bpp : format_32bpp);
+		uint8 *d = (uint8 *)_data[i].getPixels();
 		o->seek(8, SEEK_CUR);
-		if (_bpp == 16) {
-			uint32 *d = (uint32 *)_data[i].getPixels();
-			for (int j = 0; j < _width * _height; ++j) {
-				uint16 p = o->readUint16LE();
-				// These values are shifted left by 3 so that they saturate the color channel
-				uint8 b = (p & 0x7C00) >> 7;
-				uint8 g = (p & 0x03E0) >> 2;
-				uint8 r = (p & 0x001F) << 3;
-				uint8 a = (p & 0x8000) ? 0xFF : 0x00;
-				// Recombine the color components into a 32 bit RGB value
-				uint32 tmp = (r << 24) | (g << 16) | (b << 8) | a;
-				WRITE_BE_UINT32(&d[j], tmp);
+		switch (_bpp) {
+		case 16:
+#ifndef SCUMM_LITTLE_ENDIAN
+			for (int y = 0; y < _height; ++y) {
+				uint16 *d16 = (uint16 *)d;
+				for (int x = 0; x < _width; ++x) {
+					d16[x] = o->readUint16LE();
+				d += _data[i].pitch;
 			}
-		} else if (_bpp == 32) {
-			uint32 *d = (uint32 *)_data[i].getPixels();
-			for (int j = 0; j < _width * _height; ++j) {
-				o->read(&(d[j]), 4);
+			break;
+#endif
+		case 32:
+			for (int y = 0; y < _height; ++y) {
+				o->read(d, _width * (_bpp / 8));
+				d += _data[i].pitch;
 			}
+			break;
 		}
 	}
 
-	_bpp = 32;
-	_colorFormat = BM_RGBA;
 	_width = width;
 	_height = height;
 

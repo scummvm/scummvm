@@ -204,10 +204,7 @@ bool BinkPlayer::loadFile(const Common::String &filename) {
 
 	Common::SeekableReadStream *bink = nullptr;
 	bink = new Common::SeekableSubReadStream(stream, startBinkPos, stream->size(), DisposeAfterUse::YES);
-	if (!_videoDecoder->loadStream(bink))
-		return false;
-	_videoDecoder->setOutputPixelFormat(Graphics::PixelFormat(4, 8, 8, 8, 0, 8, 16, 24, 0));
-	return true;
+	return _videoDecoder->loadStream(bink);
 }
 
 } // end of namespace Grim
