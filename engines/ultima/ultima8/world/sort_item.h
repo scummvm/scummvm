@@ -120,10 +120,10 @@ struct SortItem {
 
 	int32   _order;      // Rendering _order. -1 is not yet drawn
 
-	// Note that Common::PriorityQueue could be used here, BUT there is no guarentee that it's implementation
-	// will be friendly to insertions
-	// Alternatively i could use Std::list, BUT there is no guarentee that it will keep wont delete
-	// the unused nodes after doing a clear
+	// Note that Common::PriorityQueue could be used here, BUT there is no guarantee that its implementation
+	// will be friendly to insertions.
+	// Alternatively, we could use Std::list, BUT there is no guarantee that it will keep and won't delete
+	// the unused nodes, after performing a clear()
 	// So the only reasonable solution is to write my own list
 	struct DependsList {
 		struct Node {
