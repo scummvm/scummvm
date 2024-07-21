@@ -653,6 +653,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "ashortnightmare", "A Short Nightmare" },
 	{ "asimplefix", "A Simple Fix" },
 	{ "asledmundo", "ASL: Edmundo with music" },
+	{ "asotc", "A Stain on the Company" },
 	{ "asporia", "Asporia: Hidden Threat" },
 	{ "asterix", "Asterix and the Roman Underground" },
 	{ "astranded", "Astranded (Astro-Stranded)" },
@@ -1241,6 +1242,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "easterinron", "Easter in Reality-on-the-Norm" },
 	{ "easterislanddefender", "Easter Island Defender" },
 	{ "echidna", "Echidna Chwest" },
+	{ "echoesinstatic", "Echoes in the Static" },
 	{ "echoesofterra", "Echoes of Terra" },
 	{ "echoesofthepast", "Echoes of the Past" },
 	{ "echointheclouds", "Echo in the Clouds" },
@@ -2498,6 +2500,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "petshopincident", "The Pet Shop Incident" },
 	{ "petalrose", "Petals Around the Rose" },
 	{ "pharmacistjones", "Pharmacist Jones" },
+	{ "philadvch1", "Phil's Adventure - Chapitre 1" },
 	{ "philococoa", "Philosophers Like Hot Cocoa" },
 	{ "phoenix1", "Phoenix1" },
 	{ "phonoi", "Phonoi" },
@@ -2983,7 +2986,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "sqvn", "Space Quest Visual Novel" },
 	{ "sqvsb", "Space Quest: Vohaul Strikes Back" },
 	{ "sram2", "SRAM 2 - Cinomeh's Revenge" },
-	{ "sstrek25", "Super Star Trek 25th" },
+	{ "sstrek25", "Super Star Trek meets 25th Anniversary" },
 	{ "stablepeteandthejoust", "Stable Pete and the Joust" },
 	{ "stairquest", "Stair Quest" },
 	{ "stanamespiepisode1", "Stan Ames, Private Eye - Episode 1: Murder Incorporated" },
@@ -3076,6 +3079,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "taoch2ep2", "Tao - Chapter 2: L'Université Faërique (Ep. 2)" },
 	{ "taoch2ep3", "Tao - Chapter 2: L'Université Faërique (Ep. 3)" },
 	{ "taoch2ep4", "Tao - Chapter 2: L'Université Faërique (Ep. 4)" },
+	{ "taoch3", "Tao - Chapter 3: Le Dernier Combat" },
 	{ "taospacetime", "Tao Through Space and Time" },
 	{ "tarthenia", "Tarthenia" },
 	{ "tasteblood", "Taste the blood of darkness" },
@@ -3602,12 +3606,14 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "gloriouswolfcomicsep1", "Glorious Wolf - Interactive Musical Comics Ep. 1" },
 	{ "gloriouswolfcomicsep2", "Glorious Wolf - Interactive Musical Comics Ep. 2" },
 	{ "hydrahead", "Hydra's Head" },
+	{ "hydrahead2", "Hydra's Head 2" },
 	{ "jakoquest", "JaKo Quest" },
 	{ "jaro", "Jaro" },
 	{ "lonelyspaces", "Lonely Spaces" },
 	{ "mathildedream", "Mathilde's Dream" },
 	{ "metrocityresistance", "METRO CITY: Resistance" },
 	{ "paintedhills", "Painted Hills" },
+	{ "sarimento", "Sarimento on Hyperborean Island" },
 	{ "stewlasmoras", "The Stew of Las Moras" },
 	{ "strangerutopia", "Stranger in Utopia" },
 	{ "thezooags", "The Zoo" },
@@ -4078,6 +4084,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY("federicoreturns", "Federico Returns.exe", "031470656455b56887aa57a3cff9e016", 35338182),
 	UNSUPPORTED_GAME_ENTRY("flowproblem", "Flow Problem.ags", "4e82d48102ea7ca1d72d675db69ddec3", 177517),  // v1.01
 	UNSUPPORTED_GAME_ENTRY("hydrahead", "Hydra.ags", "6283040a165e21b0c2dc4faa020a1861", 185123953),
+	UNSUPPORTED_GAME_ENTRY("hydrahead2", "HH2.ags", "540e3621845b004129a6247a8a7e8d68", 405115833),
 	UNSUPPORTED_GAME_ENTRY("jaro", "Jaro.ags", "73ea767bec41a9e0bb7dc16ce74b35e4", 20333293),  // Polish
 	UNSUPPORTED_GAME_ENTRY("jakoquest", "JakoQuest.exe", "0b66b6f4745d0d997d2d07402d2fa7af", 9243132),
 	UNSUPPORTED_GAME_ENTRY("jakoquest", "JakoQuest.ags", "30e193ae11033abafd33825595e449a5", 6103016),
@@ -4089,7 +4096,13 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_DEMO_ENTRY("phantomfellows", "TPF.exe", "59651b6757f7322d7c3775565d021b3a", 2882837211),
 	UNSUPPORTED_DEMO_ENTRY("phantomfellows", "TPF.ags", "91fb3711824240b12ced92e50af85df4", 2840396090),
 	UNSUPPORTED_DEMO_ENTRY("phantomfellows", "TPF.ags", "ebe481bbfcb6045be57ed9772cd2faaa", 2879679687),
+	UNSUPPORTED_GAME_ENTRY("sarimento", "SarimentoAGS.ags", "cf2e483168c275c25697dc5c97be1df4", 45530253),
+	UNSUPPORTED_GAME_ENTRY("spacemisadventures", "Space Misadventures DX.exe", "e01325356fc4666f13e90d7cb8dfdbd6", 8167901),  // DX, windows
+	UNSUPPORTED_GAME_ENTRY("spacemisadventures", "Space Misadventures DX.ags", "5cf9a3c00a70f70976961a8ea01fd249", 5134793),  // DX, linux
+	UNSUPPORTED_GAME_ENTRY("sstrek25", "startrek.exe", "9952a3da8575c86fc35ffc02bafba147", 12793368), // v1.13b Win
+	UNSUPPORTED_GAME_ENTRY("sstrek25", "startrek.ags", "d339b6f11561d0b74e90c475d8f4d5c5", 9605882), // v1.13a Linux/Mac
 	UNSUPPORTED_GAME_ENTRY("stewlasmoras", "Stew.ags", "b3b5f1ce9819edb24eeb1dce759a2177", 7645078),
+	UNSUPPORTED_GAME_ENTRY("stewlasmoras", "Stew.ags", "3abadfacf5722459f8217afb1e1e90f3", 7606074),  // v1.0.1
 	UNSUPPORTED_GAME_ENTRY("strangerutopia", "StrangerInUtopia.exe", "5c3a31d27beb519dfe291ea27ead1371", 61286148), // Win
 	UNSUPPORTED_GAME_ENTRY("strangerutopia", "StrangerInUtopia.exe", "5c3a31d27beb519dfe291ea27ead1371", 61904777),
 	UNSUPPORTED_GAME_ENTRY("strangerutopia", "StrangerInUtopia.exe", "5c3a31d27beb519dfe291ea27ead1371", 62289972), // Win Fr
@@ -4097,6 +4110,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY("strangerutopia", "StrangerInUtopia.ags", "7343e94d0afe0d24d49f0451cf6c56dd", 58653045),
 	UNSUPPORTED_GAME_ENTRY("thezooags", "The Zoo.exe", "031470656455b56887aa57a3cff9e016", 5221113),
 	UNSUPPORTED_GAME_ENTRY("thezooags", "The Zoo.ags", "f2693962a476d108249433b555e87e7a", 2085605),
+
 
 	// AGS 4 games
 	UNSUPPORTED_GAME_ENTRY("achristmasnightmare", "xmasnightmare.exe", "53db6ba4864b17a28b8176d92459c7bc", 49689828),  // v1.3 Windows En-Es-It
@@ -4117,6 +4131,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("3geeks", "3GEEKS-Adventure.exe", "7ddb9e776648faed5a51170d087074e9", 597467679), // En-Fr
 	GAME_ENTRY("7metresaway", "7 Meters away.exe", "5e5cdce3a9549bca34fb3b0e52074977", 691572532),  // itch.io Eng-Esp 1.3
 	GAME_ENTRY("7metresaway", "7 Meters away.exe", "5e5cdce3a9549bca34fb3b0e52074977", 691675737),  // itch.io Eng-Esp 1.4
+	GAME_ENTRY("7metresaway", "7 Meters away.exe", "5e5cdce3a9549bca34fb3b0e52074977", 691675944),  // itch.io Eng-Esp 1.5
 	GAME_ENTRY_EN_STEAM("abscission", "Abscission.exe", "7633f0919378749cebf6dacba61ca0e1", 350299379),
 	GAME_ENTRY_EN_STEAM("abscission", "Abscission.exe", "7633f0919378749cebf6dacba61ca0e1", 350300404),
 	GAME_ENTRY_EN_STEAM("alemmo", "al-emmo.exe", "ff22fd118f18eca884dc7ed2a5be3877", 19045178),
@@ -5336,7 +5351,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY("sphonx", "Sphonx.exe", "7e4ab16deb62ffe46b9da2229672845c", 289700610),     // Windows  Tech Demo Eng/Deu
 	DEMO_ENTRY("sphonx", "Sphonx.ags", "d51d6d1c979b7571c81b45f681be58da", 286653166),     // Linux    Tech Demo Eng/Deu
 	DEMO_ENTRY_EN("sphonx", "Sphonx - Demo.exe", "7e4ab16deb62ffe46b9da2229672845c", 279952170),  // Windows  Demo
+	DEMO_ENTRY_EN("sphonx", "Sphonx - Demo.exe", "80f839db9d4ee450fff2eaefcf0fb9df", 280677499),  // Windows  Demo
 	DEMO_ENTRY_EN("sphonx", "Sphonx - Demo.ags", "47fe5f46944eba084fcbf812ffe8304f", 276904726),  // Linux    Demo
+	DEMO_ENTRY_EN("sphonx", "Sphonx - Demo.ags", "7dd66185d0df199783d2f0f893e2c5f6", 277551719),  // Linux    Demo
 	DEMO_ENTRY_EN("splendorsolis", "Splendor Solis #1.ags", "dd87d9b18bd1824d10829610c37aba4c", 3186720),
 	DEMO_ENTRY_EN("splendorsolis", "Splendor Solis #1.exe", "03741a77615d6ae1bf2cfb9e7dc8d347", 6294580),
 	DEMO_ENTRY_EN("spoonsiii", "spoonsIII.exe", "2ca80bd50763378b72cd1e1cf25afac3", 7316512),
@@ -5686,6 +5703,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("ashortnightmare", "a_short_nightmare.exe", "b142b43c146c25443a1d155d441a6a81", 94221930),
 	GAME_ENTRY_EN("asimplefix", "A simple fix.exe", "615e73fc1874e92d60a1996c2330ea36", 27488921),
 	GAME_ENTRY_EN("asledmundo", "asl.exe", "6e3d6225dee662ff6450a3bfa942773b", 2749868),
+	GAME_ENTRY_EN("asotc", "A Stain on the Company.ags", "2def04d9c498cb1f121bcfa2a3fe2b8f", 12916626),  // itch.io 0.9
 	GAME_ENTRY("asporia", "rpg.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 7094164),  //Eng-Tur
 	GAME_ENTRY_EN("asterix", "asterix.exe", "06a03fe35791b0578068ab1873455463", 62405430),
 	GAME_ENTRY_EN("astranded", "astranded.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 1845395),
@@ -6422,6 +6440,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("easterinron", "puzzles.exe", "02094e217c23e1d40a84891ee95010cb", 3239060),
 	GAME_ENTRY_EN("easterislanddefender", "Moia 'n Seek.exe", "804add6fbbb791b7be195dc0097434a1", 6359079),
 	GAME_ENTRY_EN("echidna", "Echidna Chwest.exe", "dbe281d93c914899886e77c09c3c65ec", 8769591),
+	GAME_ENTRY_EN("echoesinstatic", "Echoes.ags", "65a86d4f5cc76b81c30f006bc30f2fc5", 166223457),
 	GAME_ENTRY_EN("echoesofterra", "echoes.exe", "a524cbb1c51589903c4043b98917f1d9", 42866707),
 	GAME_ENTRY_EN("echoesofthepast", "Echoes of the Past.exe", "111542004299dae82a02e750fdb97e59", 612857584),
 	GAME_ENTRY_EN("edmund", "Edmundand the potato.exe", "615e73fc1874e92d60a1996c2330ea36", 4533124),
@@ -7666,6 +7685,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("mort", "MORT.ags", "bf38464d610f68f57d375008cd32afe5", 1245969),
 	GAME_ENTRY_EN("mort", "MORT.ags", "8af20df3f0243715ddc95bd707789b08", 1251609),  // patch2
 	GAME_ENTRY_EN("mort", "MORT.ags", "d5779acfacdde353d9a26239c224ce4d", 1256471),  // patch3
+	GAME_ENTRY_EN("mort", "MORT.ags", "c6ab754bd829fe00c1ac8073d3082721", 1260574),  // itch.io client
 	GAME_ENTRY_LANG("mortifer", "Nous les Mortifer.exe", "7ddb9e776648faed5a51170d087074e9", 187358960, Common::FR_FRA),
 	GAME_ENTRY_LANG("mortifer", "Nous les Mortifer.ags", "b67c4e1005f5ab6002a56bf959009986", 146208681, Common::FR_FRA),
 	GAME_ENTRY_EN("motlpaa", "MOTLPAA.exe", "0710e2ec71042617f565c01824f0cf3c", 1575258),
@@ -7955,6 +7975,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("petalrose", "petalrose.exe", "949f7440e3692b7366c2029979dee9a0", 748315),
 	GAME_ENTRY_EN("petshopincident", "petshop.exe", "64fcaf7da0b257ea831f89c54be0ad72", 3660347),
 	GAME_ENTRY_EN("pharmacistjones", "Pharmacist Jones.exe", "00bb363ccb0acfe57893dd3ba6f1719c", 8285817),
+	GAME_ENTRY_LANG("philadvch1", "Phil's Adventure v1.1.exe", "1d1deb6497d935c825b0398806e8306e", 40332015, Common::FR_FRA),
 	GAME_ENTRY_EN("philococoa", "PLHC.exe", "06a03fe35791b0578068ab1873455463", 1662310),
 	GAME_ENTRY_EN("phoenix1", "phoenix1-ags.exe", "a524cbb1c51589903c4043b98917f1d9", 149928937),
 	GAME_ENTRY_EN("pickpocketrpg", "Pickpocket RPG.exe", "82da2565c456dcfb265ded6fe3189c0b", 44540638),
@@ -8568,6 +8589,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("stateofmind", "State of Mind.exe", "be13cb758d3568b0532695081ab64683", 15933385),
 	GAME_ENTRY_EN("stateofmind", "State of Mind.exe", "dbe9bab672130b9a84925cb6da64a3db", 15934766),
 	GAME_ENTRY_EN("steamedhams", "Steamed Hams.exe", "d278eb385f1f7acabdcb6d3b331fea38", 13160830),
+	GAME_ENTRY_EN("steamedhams", "Steamed Hams.exe", "99f1151d9c98ccf906c0ae7059a4854a", 13222965),  // v1.1
 	GAME_ENTRY_EN("steamsquares", "Steamsquares.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 1993722),
 	GAME_ENTRY_EN("steamtrek", "steamtrek.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 14807756),
 	GAME_ENTRY_EN("stediddyip1employment", "stediddy1.exe", "5872fea5a958bc74c2d9ca7b2d196c42", 27136166),
@@ -8619,6 +8641,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("superpitstopracing", "Super Racing.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 3660473),  //v1.0
 	GAME_ENTRY_EN("superpitstopracing", "Super Racing.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 3660481),  //v1.01
 	GAME_ENTRY_EN("suppaninja", "Suppa.exe", "a3c0ebdda1294f7a9eda08240a6faf69", 7322838),
+	GAME_ENTRY_EN("suppaninja", "Suppa.exe", "d45d8959ea9932c62218905672363dbc", 8630975),
 	GAME_ENTRY_EN("surreality", "Surreality.exe", "3128b9f90e2f954ba704414ae854d10b", 10773443),
 	GAME_ENTRY("suspiciousmind", "MAGS March 2019.exe", "c7211b1db56a231ff1f8454704c086f1", 20550294),  // En-Fr
 	GAME_ENTRY_EN("svengordan1", "Sven Gordan.exe", "0710e2ec71042617f565c01824f0cf3c", 4930040),
@@ -8653,6 +8676,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("taoch2ep2", "Tao - Chapitre 2,  Episode 2.ags", "f2e667c31a4cd7a77ea84e2f459a8498", 226549126),  // En-Fr
 	GAME_ENTRY("taoch2ep3", "Tao - Chapitre 2,  Episode 3.ags", "97a36c15a4c29c2906bcd1f9c6bb670b", 231332200),  // En-Fr
 	GAME_ENTRY("taoch2ep4", "Tao - Chapitre 2,  Episode 4.ags", "66a97826a927258600605178be1961c5", 262605201),  // En-Fr
+	GAME_ENTRY("taoch3", "Tao - Chapitre 3.ags", "5967c290ecf0475c60ef78ba7a09bb29", 541109600),  // En-Fr
 	GAME_ENTRY_LANG("taospacetime", "Tao through space and time AGS.exe", "7a3096ac0237cb6aa8e1718e28caf039", 35930047, Common::FR_FRA),  // Win French
 	GAME_ENTRY_LANG("taospacetime", "Tao through space and time AGS.ags", "50e4bd3554f1b1d5bf9b7b7c83920c8b", 33452975, Common::FR_FRA),  // Linux French
 	GAME_ENTRY("taospacetime", "Tao through space and time AGS.exe", "7a3096ac0237cb6aa8e1718e28caf039", 35931108),  // Win   En-Fr
