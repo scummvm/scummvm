@@ -261,6 +261,12 @@ void FontManager::loadFonts(DgdsGameId gameId, ResourceManager *resMgr, Decompre
 			tryLoadFont("WILLY.FNT", resMgr, decomp);
 			tryLoadFont("WVCR.FNT", resMgr, decomp);
 			tryLoadFont("COMIX_16.FNT", resMgr, decomp);
+		} else if (gameId == GID_QUARKY) {
+			tryLoadFont("MRALLY.FNT", resMgr, decomp);
+			tryLoadFont("MVCR.FNT", resMgr, decomp);
+			tryLoadFont("RUDEFONT.FNT", resMgr, decomp);
+			_fonts.setVal(kDefaultFont, _fonts.getVal(k8x8Font));
+			return;
 		}
 	}
 

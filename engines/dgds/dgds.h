@@ -67,6 +67,7 @@ enum DgdsGameId {
 	GID_WILLY,
 	GID_SQ5DEMO,
 	GID_COMINGATTRACTIONS,
+	GID_QUARKY
 };
 
 enum DgdsDetailLevel {

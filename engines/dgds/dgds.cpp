@@ -95,6 +95,8 @@ DgdsEngine::DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	} else if (!strcmp(gameDesc->gameId, "beamish")) {
 		_isDemo = (gameDesc->flags & ADGF_DEMO);
 		_gameId = GID_WILLY;
+	} else if (!strcmp(gameDesc->gameId, "quarky")) {
+		_gameId = GID_QUARKY;
 	} else if (!strcmp(gameDesc->gameId, "sq5demo")) {
 		_isDemo = true;
 		_gameId = GID_SQ5DEMO;
@@ -383,6 +385,17 @@ void DgdsEngine::loadGameFiles() {
 		reqParser.parse(&invRequestData, "WINV.REQ");
 		reqParser.parse(&vcrRequestData, "WVCR.REQ");
 
+		break;
+	case GID_QUARKY:
+		_gameGlobals = new Globals(_clock);
+		_gamePals->loadPalette("MRALLY.PAL");
+		_gdsScene->load("MRALLY.GDS", _resource, _decompressor);
+
+		debug("%s", _gdsScene->dump("").c_str());
+
+		loadCorners("MCORNERS.BMP");
+		reqParser.parse(&invRequestData, "TOOLINFO.REQ");
+		reqParser.parse(&vcrRequestData, "MVCR.REQ");
 		break;
 	case GID_SQ5DEMO:
 		_gameGlobals = new Globals(_clock);

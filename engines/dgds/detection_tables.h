@@ -308,6 +308,23 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Quarky And Quaysoo's Turbo Science
+	{
+		"quarky",
+		0,
+		{
+			{"resource.map", 0, "639885b4a7c6b8e395b6ca969c94ffd9", 7595},
+			{"resource.001", 0, "67a4ebacfa73d3f54e9c489d46f3e512", 1393208},
+			{"resource.002", 0, "de8375a3cf6bf347a0d8604b871883d3", 1456460},
+			{"resource.003", 0, "d22b65b330873828b18377a8276c071a", 1177135},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
 	// SQ5 demo
 	{
 		"sq5demo",
