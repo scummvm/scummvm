@@ -203,6 +203,14 @@ void RippedLetterPuzzle::execute() {
 			_puzzleState->order = _initOrder;
 			_puzzleState->rotations = _initRotations;
 			_puzzleState->playerHasTriedPuzzle = true;
+		} else if (_puzzleState->_pickedUpPieceID != -1) {
+			// Puzzle was left while still holding a piece (e.g. by clicking a scene item).
+			// Make sure we put the held piece back in its place
+			_puzzleState->order[_puzzleState->_pickedUpPieceLastPos] = _puzzleState->_pickedUpPieceID;
+			_puzzleState->rotations[_puzzleState->_pickedUpPieceLastPos] = _puzzleState->_pickedUpPieceRot;
+			_puzzleState->_pickedUpPieceID = -1;
+			_puzzleState->_pickedUpPieceLastPos = -1;
+			_puzzleState->_pickedUpPieceRot = 0;
 		}
 
 		for (uint i = 0; i < _puzzleState->order.size(); ++i) {
@@ -275,7 +283,7 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 		Common::Rect screenHotspot = NancySceneState.getViewport().convertViewportToScreen(_destRects[i]);
 		if (screenHotspot.contains(input.mousePos)) {
 			Common::Rect insideRect;
-			if (_pickedUpPieceID == -1) {
+			if (_puzzleState->_pickedUpPieceID == -1) {
 				// No piece picked up
 
 				// Check if the mouse is inside the rotation hotspot
@@ -320,9 +328,10 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 						_pickedUpPiece.pickUp();
 
 						// ...then change the data...
-						_pickedUpPieceID = _puzzleState->order[i];
-						_pickedUpPieceRot = _puzzleState->rotations[i];
+						_puzzleState->_pickedUpPieceID = _puzzleState->order[i];
+						_puzzleState->_pickedUpPieceRot = _puzzleState->rotations[i];
 						_puzzleState->order[i] = -1;
+						_puzzleState->_pickedUpPieceLastPos = i;
 
 						// ...then clear the piece from the drawSurface
 						drawPiece(i, 0);
@@ -360,8 +369,9 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 							_pickedUpPiece.setTransparent(true);
 						}
 
-						SWAP<int8>(_puzzleState->order[i], _pickedUpPieceID);
-						SWAP<byte>(_puzzleState->rotations[i], _pickedUpPieceRot);
+						SWAP<int8>(_puzzleState->order[i], _puzzleState->_pickedUpPieceID);
+						SWAP<byte>(_puzzleState->rotations[i], _puzzleState->_pickedUpPieceRot);
+						_puzzleState->_pickedUpPieceLastPos = -1;
 
 						// Draw the newly placed piece
 						drawPiece(i, _puzzleState->rotations[i], _puzzleState->order[i]);
@@ -377,7 +387,7 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 
 	_pickedUpPiece.handleInput(input);
 
-	if (_pickedUpPieceID == -1) {
+	if (_puzzleState->_pickedUpPieceID == -1) {
 		// No piece picked up, check the exit hotspot
 		if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
 			g_nancy->_cursor->setCursorType(_customCursorID != -1 ? (CursorManager::CursorType)_customCursorID : g_nancy->_cursor->_puzzleExitCursor);

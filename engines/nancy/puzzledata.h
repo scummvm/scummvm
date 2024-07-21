@@ -61,6 +61,11 @@ struct RippedLetterPuzzleData : public PuzzleData {
 	Common::Array<int8> order;
 	Common::Array<byte> rotations;
 	bool playerHasTriedPuzzle;
+
+	// Temporary values, do not save to file
+	int8 _pickedUpPieceID = -1;
+	byte _pickedUpPieceRot = 0;
+	int _pickedUpPieceLastPos = -1;
 };
 
 struct TowerPuzzleData : public PuzzleData {
