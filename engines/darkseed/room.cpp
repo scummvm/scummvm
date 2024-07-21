@@ -1029,7 +1029,115 @@ void Darkseed::Room::runRoomObjects() {
 		const Sprite &sprite = _locationSprites.getSpriteAt(0);
 		g_engine->_sprites.addSpriteToDrawList(473, 116, &sprite, 255, sprite.width, sprite.height, false);
 	}
-	// TODO more code here
+	if (_roomNumber == 14) { // tuttle tome
+		if (g_engine->_objectVar[99] == 0) {
+			if (!g_engine->isPlayingAnimation_maybe || g_engine->otherNspAnimationType_maybe != 23) {
+				const Sprite &sprite = _locationSprites.getSpriteAt(g_engine->_objectVar[66] != 0 ? 1 : 0);
+				g_engine->_sprites.addSpriteToDrawList(245, 140, &sprite, 255, sprite.width, sprite.height, false);
+				const Sprite &sprite1 = _locationSprites.getSpriteAt(g_engine->_objectVar[67] == 0 ? 2 : 3);
+				g_engine->_sprites.addSpriteToDrawList(295, 93, &sprite1, 255, sprite1.width, sprite1.height, false);
+				const Sprite &sprite2 = _locationSprites.getSpriteAt(g_engine->_objectVar[68] == 0 ? 4 : 5);
+				g_engine->_sprites.addSpriteToDrawList(334, 153, &sprite2, 255, sprite2.width, sprite2.height, false);
+			} else {
+				advanceLocAnimFrame(0);
+				if (!_ObjRestarted) {
+					const Sprite &sprite = _locationSprites.getSpriteAt(_locationSprites.getAnimAt(0).frameNo[_locObjFrame[0]]);
+					g_engine->_sprites.addSpriteToDrawList(245, 93, &sprite, 255, sprite.width, sprite.height, false);
+				} else {
+					const Sprite &sprite = _locationSprites.getSpriteAt(9);
+					g_engine->_sprites.addSpriteToDrawList(245, 93, &sprite, 255, sprite.width, sprite.height, false);
+				}
+			}
+		} else {
+			const Sprite &sprite = _locationSprites.getSpriteAt(9);
+			g_engine->_sprites.addSpriteToDrawList(245, 93, &sprite, 255, sprite.width, sprite.height, false);
+		}
+	}
+	if (_roomNumber == 34) { // in car
+		if (g_engine->_objectVar[86] != 0) {
+			const Sprite &sprite = _locationSprites.getSpriteAt(0);
+			g_engine->_sprites.addSpriteToDrawList(470, 124, &sprite, 255, sprite.width, sprite.height, false);
+		}
+		if (g_engine->_objectVar[71] != 0) {
+			const Sprite &sprite = _locationSprites.getSpriteAt(26);
+			g_engine->_sprites.addSpriteToDrawList(261, 165, &sprite, 255, sprite.width, sprite.height, false);
+		}
+	}
+	if (_roomNumber == 33) { // in garage
+		if (g_engine->isPlayingAnimation_maybe && g_engine->otherNspAnimationType_maybe == 25) {
+			const Sprite &sprite = _locationSprites.getSpriteAt(0);
+			g_engine->_sprites.addSpriteToDrawList(370, 128, &sprite, 255, sprite.width, sprite.height, false);
+		}
+		if (g_engine->_objectVar[101] >= 1 && g_engine->_objectVar[101] <= 3) {
+			const Sprite &sprite = _locationSprites.getSpriteAt(1);
+			g_engine->_sprites.addSpriteToDrawList(488, 127, &sprite, 255, sprite.width, sprite.height, false);
+		}
+	}
+	if (_roomNumber == 9) { // study
+		int moveObj = g_engine->_objectVar.getMoveObjectRoom(34);
+		if (moveObj == 100 || (moveObj >= 252 && moveObj <= 254)) {
+			const Sprite &sprite = _locationSprites.getSpriteAt(2);
+			g_engine->_sprites.addSpriteToDrawList(322, 147, &sprite, 255, sprite.width, sprite.height, false);
+		}
+	}
+	if (_roomNumber == 7 && g_engine->_objectVar[137] == 0) { // mirror
+		const Sprite &sprite = _locationSprites.getSpriteAt(8);
+		g_engine->_sprites.addSpriteToDrawList(455, 149, &sprite, 255, sprite.width, sprite.height, false);
+	}
+	if (_roomNumber == 62 && g_engine->_objectVar[25] != 0) {
+		const Sprite &sprite = _locationSprites.getSpriteAt(0);
+		g_engine->_sprites.addSpriteToDrawList(291, 185, &sprite, 255, sprite.width, sprite.height, false);
+	}
+	if (_roomNumber == 11 && g_engine->_currentTimeInSeconds > 64800) { // street
+		const Sprite &sprite = _locationSprites.getSpriteAt(0);
+		g_engine->_sprites.addSpriteToDrawList(424, 182, &sprite, 255, sprite.width, sprite.height, false);
+	}
+	if (_roomNumber == 64 && g_engine->_currentTimeInSeconds > 64800) {
+		const Sprite &sprite = _locationSprites.getSpriteAt(0);
+		g_engine->_sprites.addSpriteToDrawList(212, 124, &sprite, 255, sprite.width, sprite.height, false);
+		const Sprite &sprite2 = _locationSprites.getSpriteAt(1);
+		g_engine->_sprites.addSpriteToDrawList(305, 124, &sprite2, 255, sprite2.width, sprite2.height, false);
+		const Sprite &sprite3 = _locationSprites.getSpriteAt(2);
+		g_engine->_sprites.addSpriteToDrawList(322, 138, &sprite3, 255, sprite3.width, sprite3.height, false);
+	}
+	if (_roomNumber == 39 && g_engine->_objectVar[117] != 0) {
+		const Sprite &sprite = _locationSprites.getSpriteAt(12);
+		g_engine->_sprites.addSpriteToDrawList(190, 68, &sprite, 255, sprite.width, sprite.height, false);
+	}
+	if (_roomNumber == 8) { // kitchen
+		if (g_engine->_objectVar[104] != 0) {
+			const Sprite &sprite = _locationSprites.getSpriteAt(0);
+			g_engine->_sprites.addSpriteToDrawList(194, 162, &sprite, 255, sprite.width, sprite.height, false);
+		}
+		if (g_engine->_objectVar[105] != 0) {
+			const Sprite &sprite = _locationSprites.getSpriteAt(1);
+			g_engine->_sprites.addSpriteToDrawList(230, 162, &sprite, 255, sprite.width, sprite.height, false);
+		}
+		if (g_engine->_objectVar[106] != 0) {
+			const Sprite &sprite = _locationSprites.getSpriteAt(2);
+			g_engine->_sprites.addSpriteToDrawList(266, 162, &sprite, 255, sprite.width, sprite.height, false);
+		}
+		if (g_engine->_objectVar[107] != 0) {
+			const Sprite &sprite = _locationSprites.getSpriteAt(3);
+			g_engine->_sprites.addSpriteToDrawList(302, 162, &sprite, 255, sprite.width, sprite.height, false);
+		}
+		if (g_engine->_objectVar[108] != 0) {
+			const Sprite &sprite = _locationSprites.getSpriteAt(4);
+			g_engine->_sprites.addSpriteToDrawList(452, 158, &sprite, 255, sprite.width, sprite.height, false);
+		}
+		if (g_engine->_objectVar[109] != 0) {
+			const Sprite &sprite = _locationSprites.getSpriteAt(5);
+			g_engine->_sprites.addSpriteToDrawList(300, 151, &sprite, 255, sprite.width, sprite.height, false);
+		}
+		if (g_engine->_objectVar[110] != 0) { // tap drip
+			const Sprite &sprite = _locationSprites.getSpriteAt((g_engine->counter_2c85_888b & 1) + 6); // TODO double check counter_2c85_888b is actually _ConstantTick
+			g_engine->_sprites.addSpriteToDrawList(266, 141, &sprite, 255, sprite.width, sprite.height, false);
+		}
+	}
+	if (_roomNumber == 7 && g_engine->_objectVar[137] == 2) {
+		const Sprite &sprite = g_engine->_player->_animations.getSpriteAt(12);
+		g_engine->_sprites.addSpriteToDrawList(428, 78, &sprite, 255, sprite.width, sprite.height, false);
+	}
 }
 
 bool Darkseed::Room::isGiger() {
