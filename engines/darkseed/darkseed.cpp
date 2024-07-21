@@ -902,6 +902,12 @@ void DarkseedEngine::changeToRoom(int newRoomNumber) {
 		}
 	}
 
+	if (!g_engine->isPlayingAnimation_maybe) {
+		g_engine->_player->updateSprite();
+	}
+	_room->initRoom();
+	updateDisplay();
+	// TODO load room song.
 	_room->printRoomDescriptionText();
 }
 
@@ -1592,10 +1598,13 @@ void DarkseedEngine::updateAnimation() {
 		} else {
 //			LoadModeSong(7); TODO
 			playSound(0, 6, -1);
-//			stuffplayer(); TODO
+			stuffPlayer();
 		}
 		break;
 	}
+	case 47:
+		_room->runAnim47();
+		break;
 	case 53 :
 	case 54 :
 	case 55 :
@@ -2551,6 +2560,24 @@ void DarkseedEngine::getPackageObj(int packageType) {
 
 void DarkseedEngine::playSound(int16 unk, uint8 unk1, int16 unk2) {
 	// TODO...
+}
+
+void DarkseedEngine::nextFrame(int nspAminIdx) {
+	isAnimFinished_maybe = false;
+	spriteAnimCountdownTimer[nspAminIdx]--;
+	if (spriteAnimCountdownTimer[nspAminIdx] < 1) {
+		const Obt &anim = _player->_animations.getAnimAt(nspAminIdx);
+		animIndexTbl[nspAminIdx]++;
+		if (animIndexTbl[nspAminIdx] == anim.numFrames) {
+			animIndexTbl[nspAminIdx] = 0;
+			isAnimFinished_maybe = true;
+		}
+		spriteAnimCountdownTimer[nspAminIdx] = anim.frameDuration[animIndexTbl[nspAminIdx]];
+	}
+}
+
+void DarkseedEngine::stuffPlayer() {
+	// TODO
 }
 
 } // End of namespace Darkseed

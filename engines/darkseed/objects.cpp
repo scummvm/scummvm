@@ -71,6 +71,13 @@ void Darkseed::Objects::setMoveObjectPosition(uint8 objIdx, const Common::Point 
 	_moveObjectXY[objIdx] = newPoint;
 }
 
+void Darkseed::Objects::setMoveObjectX(uint8 objIdx, int16 xPos) {
+	if (objIdx >= MAX_OBJECTS) {
+		error("setMoveObjectX: Object Index out of range! %d", objIdx);
+	}
+	_moveObjectXY[objIdx].x = xPos;
+}
+
 int16 &Darkseed::Objects::operator[](uint16 varIdx) {
 	if (varIdx >= MAX_OBJECTS) {
 		error("getVar: Object Index out of range! %d", varIdx);

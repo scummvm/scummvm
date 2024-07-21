@@ -60,6 +60,9 @@ public:
 	Pic pic;
 	Pal _pal;
 	Nsp _locationSprites;
+	Common::Array<int16> _locObjFrame;
+	Common::Array<int16> _locObjFrameTimer;
+	bool _ObjRestarted = false;
 
 	Common::Array<RoomExit> room1;
 	Common::Array<RoomStruct2> walkableLocationsMap;
@@ -72,6 +75,7 @@ public:
 public:
 	explicit Room(int roomNumber);
 
+	void initRoom();
 	void draw();
 
 	void update();
@@ -95,10 +99,13 @@ public:
 	void runRoomObjects();
 	void removeObjectFromRoom(int16 objNum);
 	void updateRoomObj(int16 objNum, int16 x, int16 width, int16 y, int16 height);
+	bool advanceFrame(int animIdx);
+	void runAnim47();
 private:
 	bool load();
 	static Common::String stripSpaces(Common::String source);
 	void drawTrunk();
+	void advanceLocAnimFrame(int roomObjIdx);
 };
 
 } // namespace Darkseed
