@@ -131,6 +131,7 @@ protected:
 		uint16 panAnchorFrame = 0;
 		bool isPanning = false;
 		Audio::SeekableAudioStream *stream = nullptr;
+		Audio::AudioStream *streamForMixer = nullptr;
 		Audio::SoundHandle handle;
 		bool isPersistent = false;
 
