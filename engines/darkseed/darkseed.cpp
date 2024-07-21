@@ -1653,6 +1653,14 @@ void DarkseedEngine::updateAnimation() {
 		} else {
 			_player->_direction = 2;
 		}
+	case 65:
+		advanceAnimationFrame(0);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]];
+		} else {
+			_player->updateSprite();
+		}
+		break;
 	default:
 		error("Unhandled animation type! %d", otherNspAnimationType_maybe);
 	}
