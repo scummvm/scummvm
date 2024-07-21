@@ -1263,7 +1263,7 @@ void DarkseedEngine::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 		break;
 	case 57:
 	case 58:
-//		PlaySound(48,5,-1);
+		playSound(48,5,-1);
 		break;
 	case 63:
 		_player->_position.x = 249;
@@ -1605,6 +1605,26 @@ void DarkseedEngine::updateAnimation() {
 	case 47:
 		_room->runAnim47();
 		break;
+	case 48:
+	case 49:
+	case 50:
+	case 51:
+	case 52:
+		// open/close cupbords, oven
+		advanceAnimationFrame(0);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]];
+		}
+		else {
+			if (otherNspAnimationType_maybe == 52) {
+				_objectVar[108] = (_objectVar[108] == 0) ? 1 : 0;
+			}
+			else {
+				_objectVar[56 + otherNspAnimationType_maybe] = _objectVar[56 + otherNspAnimationType_maybe] == 0 ? 1 : 0;
+			}
+			playSound(42,5,-1);
+		}
+		break;
 	case 53 :
 	case 54 :
 	case 55 :
@@ -1653,6 +1673,7 @@ void DarkseedEngine::updateAnimation() {
 		} else {
 			_player->_direction = 2;
 		}
+		break;
 	case 65:
 		advanceAnimationFrame(0);
 		if (!isAnimFinished_maybe) {
