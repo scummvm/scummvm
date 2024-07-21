@@ -89,8 +89,8 @@ private:
 
 /**
  * Queue ordered by a provided priority function
- * NOTE: Unlike in the C std library, we have to provde a comparitor that sorts
- * the array so that the smallest priority comes last
+ * NOTE: Unlike in the C std library, we have to provide a comparator that sorts
+ * the array, so that the smallest priority comes last
  */
 template <class _Ty, class _Container = Common::Array<_Ty>, class _Pr = Common::Less<_Ty>>
 class PriorityQueue {
