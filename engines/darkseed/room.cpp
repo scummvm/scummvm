@@ -750,7 +750,6 @@ void Darkseed::Room::runRoomObjects() {
 	if (_roomNumber == 61) {
 		drawTrunk();
 	}
-//	for (auto &roomObj : _roomObj) {
 	for (int roomObjIdx = 0; roomObjIdx < _roomObj.size(); roomObjIdx++) {
 		auto &roomObj = _roomObj[roomObjIdx];
 		int xPos = roomObj.xOffset;
@@ -821,7 +820,6 @@ void Darkseed::Room::runRoomObjects() {
 			} else {
 				if (_roomNumber != 64 || g_engine->_currentTimeInSeconds < 64800) {
 					advanceLocAnimFrame(roomObjIdx);
-					// ForwardFrameOnObj(roomObjIdx);
 				}
 				spriteNum = _locationSprites.getAnimAt(_roomObj[roomObjIdx].spriteNum).frameNo[_locObjFrame[roomObjIdx]];
 			}
