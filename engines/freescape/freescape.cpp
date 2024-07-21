@@ -731,7 +731,9 @@ Common::Error FreescapeEngine::run() {
 
 		if (_shootingFrames == 0) {
 			if (_delayedShootObject) {
-				bool rockTravel = isCastle() && getGameBit(k8bitGameBitTravelRock);
+				bool rockTravel = isSpectrum() && isCastle() && getGameBit(k8bitGameBitTravelRock);
+				// If rock travel is enabled for other platforms than ZX and CPC,
+				// then this variable should be false since the game scripts will take care
 				executeObjectConditions(_delayedShootObject, true, rockTravel, false);
 				executeLocalGlobalConditions(true, false, false); // Only execute "on shot" room/global conditions
 				_delayedShootObject = nullptr;

@@ -66,6 +66,7 @@ public:
 
 	Graphics::Surface *_keysFrame;
 	int _numberKeys;
+	bool _useRockTravel;
 
 private:
 	Common::SeekableReadStream *decryptFile(const Common::Path &filename);

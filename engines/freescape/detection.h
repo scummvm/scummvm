@@ -34,4 +34,9 @@
 // Driller options
 #define GAMEOPTION_AUTOMATIC_DRILLING   GUIO_GAMEOPTIONS8
 
+// Castle Master options
+
+#define GAMEOPTION_TRAVEL_ROCK   GUIO_GAMEOPTIONS8
+
+
 #endif

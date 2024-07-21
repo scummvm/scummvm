@@ -122,6 +122,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_TRAVEL_ROCK,
+		{
+			_s("Enable rock travel"),
+			_s("Enable traveling using a rock shoot at start"),
+			"rock_travel",
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

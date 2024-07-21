@@ -21,6 +21,7 @@
 
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/config-manager.h"
 
 #include "freescape/freescape.h"
 #include "freescape/games/castle/castle.h"
@@ -29,6 +30,10 @@
 namespace Freescape {
 
 CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
+
+	if (!Common::parseBool(ConfMan.get("rock_travel"), _useRockTravel))
+		error("Failed to parse bool from rock_travel option");
+
 	if (isSpectrum())
 		initZX();
 
@@ -124,6 +129,9 @@ void CastleEngine::initGameState() {
 	_gameStateVars[k8bitVariableEnergy] = 1;
 	_countdown = INT_MAX;
 	_numberKeys = 0;
+
+	if (_useRockTravel) // Enable cheat
+		setGameBit(k8bitGameBitTravelRock);
 }
 
 void CastleEngine::endGame() {
@@ -723,6 +731,9 @@ Common::Error CastleEngine::saveGameStreamExtended(Common::WriteStream *stream, 
 
 Common::Error CastleEngine::loadGameStreamExtended(Common::SeekableReadStream *stream) {
 	_numberKeys = stream->readUint32LE();
+
+	if (_useRockTravel) // Enable cheat
+		setGameBit(k8bitGameBitTravelRock);
 	return Common::kNoError;
 }
 
