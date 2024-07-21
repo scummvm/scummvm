@@ -585,7 +585,7 @@ int32 CheckPathNodes(int32 oc) {
  * --------------------------------------------------*/
 bool CheckCharacterWithBounds(WGame &game, int32 oc, t3dV3F *Pos, uint8 dp, uint8 back) {
 	t3dCHARACTER *Char = Character[oc];
-	int32 i, j, st;
+	int32 st;
 	t3dV3F tmp;
 	t3dPAN *p;
 
@@ -605,11 +605,11 @@ bool CheckCharacterWithBounds(WGame &game, int32 oc, t3dV3F *Pos, uint8 dp, uint
 		CurFloorY = t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel];
 	}
 
-	for (i = 0; i < T3D_MAX_CHARACTERS; i++) {
-//		Se il personaggio non e' nascosto e ha pannelli, li aggiunge
+	for (int i = 0; i < T3D_MAX_CHARACTERS; i++) {
+		// If the character is not hidden and has panels, adds them
 		if (Character[i] && (Character[i] != Char) && !(Character[i]->Flags & (T3D_CHARACTER_HIDE | T3D_CHARACTER_BNDHIDE)) && (p = Character[i]->Body->Panel[0])) {
 			st = Char->Walk.PanelNum;
-			for (j = 0; j < Character[i]->Body->NumPanels[0]; j++, p++, Char->Walk.PanelNum++) {
+			for (int j = 0; j < Character[i]->Body->NumPanels[0]; j++, p++, Char->Walk.PanelNum++) {
 				tmp.x = p->x1;
 				tmp.y = CurFloorY;
 				tmp.z = p->z1;
