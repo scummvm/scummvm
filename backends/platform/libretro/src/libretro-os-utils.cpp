@@ -22,6 +22,9 @@
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "base/commandLine.h"
+#include "base/plugins.h"
+#include "engines/game.h"
+#include "engines/metaengine.h"
 
 #include "backends/platform/libretro/include/libretro-defs.h"
 #include "backends/platform/libretro/include/libretro-core.h"
