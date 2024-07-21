@@ -194,6 +194,9 @@ void RippedLetterPuzzle::readData(Common::SeekableReadStream &stream) {
 void RippedLetterPuzzle::execute() {
 	switch (_state) {
 	case kBegin:
+		_puzzleState = (RippedLetterPuzzleData *)NancySceneState.getPuzzleData(RippedLetterPuzzleData::getTag());
+		assert(_puzzleState);
+
 		init();
 		registerGraphics();
 

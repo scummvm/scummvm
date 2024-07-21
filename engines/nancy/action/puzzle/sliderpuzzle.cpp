@@ -109,6 +109,9 @@ void SliderPuzzle::readData(Common::SeekableReadStream &stream) {
 void SliderPuzzle::execute() {
 	switch (_state) {
 	case kBegin:
+		_puzzleState = (SliderPuzzleData *)NancySceneState.getPuzzleData(SliderPuzzleData::getTag());
+		assert(_puzzleState);
+
 		init();
 		registerGraphics();
 		if (!_puzzleState->playerHasTriedPuzzle || !_retainState) {

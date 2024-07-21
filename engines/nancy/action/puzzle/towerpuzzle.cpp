@@ -96,6 +96,9 @@ void TowerPuzzle::readData(Common::SeekableReadStream &stream) {
 void TowerPuzzle::execute() {
 	switch (_state) {
 	case kBegin:
+		_puzzleState = (TowerPuzzleData *)NancySceneState.getPuzzleData(TowerPuzzleData::getTag());
+		assert(_puzzleState);
+
 		init();
 		registerGraphics();
 		_numRings = _numRingsByDifficulty[NancySceneState.getDifficulty()];

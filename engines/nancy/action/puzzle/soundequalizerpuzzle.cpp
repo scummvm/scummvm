@@ -192,6 +192,9 @@ void SoundEqualizerPuzzle::readData(Common::SeekableReadStream &stream) {
 void SoundEqualizerPuzzle::execute() {
 	switch(_state) {
 	case kBegin:
+		_puzzleState = (SoundEqualizerPuzzleData *)NancySceneState.getPuzzleData(SoundEqualizerPuzzleData::getTag());
+		assert(_puzzleState);
+
 		init();
 		registerGraphics();
 

@@ -118,6 +118,9 @@ void AssemblyPuzzle::readData(Common::SeekableReadStream &stream) {
 void AssemblyPuzzle::execute() {
 	switch (_state) {
 	case kBegin:
+		_puzzleState = (AssemblyPuzzleData *)NancySceneState.getPuzzleData(AssemblyPuzzleData::getTag());
+		assert(_puzzleState);
+
 		init();
 		registerGraphics();
 

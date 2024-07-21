@@ -97,6 +97,9 @@ void RiddlePuzzle::readData(Common::SeekableReadStream &stream) {
 void RiddlePuzzle::execute() {
 	switch (_state) {
 	case kBegin: {
+		_puzzleState = (RiddlePuzzleData *)NancySceneState.getPuzzleData(RiddlePuzzleData::getTag());
+		assert(_puzzleState);
+
 		init();
 		registerGraphics();
 		_nextBlinkTime = g_nancy->getTotalPlayTime() + _cursorBlinkTime;
