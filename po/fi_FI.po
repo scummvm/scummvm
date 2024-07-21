@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-19 22:39+0000\n"
-"PO-Revision-Date: 2024-07-11 17:47+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"PO-Revision-Date: 2024-07-21 23:43+0000\n"
+"Last-Translator: Linus Väinämö Virtanen <linus.virtanen@protonmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -3135,7 +3135,7 @@ msgstr "Macintosh mustavalkoinen"
 
 #: common/rendermode.cpp:56
 msgid "VGA Grey Scale"
-msgstr ""
+msgstr "VGA-harmaasävy"
 
 #: common/rendermode.cpp:90
 msgctxt "lowres"
@@ -6298,24 +6298,18 @@ msgstr "AGOS päätaso"
 
 #: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
 #: engines/made/metaengine.cpp:103
-#, fuzzy
-#| msgid "Game keymapping"
 msgid "Game keymappings"
-msgstr "Pelin näppäinkartta"
+msgstr "Pelin näppäinkartoitukset"
 
 #: engines/agos/metaengine.cpp:229
-#, fuzzy
-#| msgid "Yes/No Keymapping"
 msgid "Yes/No keymapping"
-msgstr "Kyllä/Ei näppäinkomennot"
+msgstr "Näppäinkartoitukset päällä/pois"
 
 #: engines/agos/metaengine.cpp:232 engines/cine/metaengine.cpp:265
 #: engines/groovie/metaengine.cpp:205 engines/made/metaengine.cpp:107
 #: engines/saga/metaengine.cpp:277
-#, fuzzy
-#| msgid "Left Click"
 msgid "Left click"
-msgstr "Vasen klikkaus"
+msgstr "Vasen napsautus"
 
 #: engines/agos/metaengine.cpp:238 engines/cine/metaengine.cpp:271
 #: engines/groovie/metaengine.cpp:211 engines/made/metaengine.cpp:114
@@ -6340,16 +6334,12 @@ msgid "Toggle music on/off"
 msgstr "Musiikki päälle/pois"
 
 #: engines/agos/metaengine.cpp:273
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Toggle sound effect on/off"
-msgstr "Ääniefektit päälle/pois"
+msgstr "Kytke äänitehoste päälle/pois"
 
 #: engines/agos/metaengine.cpp:278
-#, fuzzy
-#| msgid "Toggle Fast mode on/off"
 msgid "Toggle fast mode on/off"
-msgstr "Nopea tila päälle / pois"
+msgstr "Kytke nopeutettu tila päälle/pois"
 
 #: engines/agos/metaengine.cpp:290 engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
@@ -6395,10 +6385,8 @@ msgid "Show objects to interact"
 msgstr "Näytä käytettävät esineet"
 
 #: engines/agos/metaengine.cpp:338
-#, fuzzy
-#| msgid "Toggle background sounds On/Off"
 msgid "Toggle background sounds on/off"
-msgstr "Taustaäänet päälle/pois"
+msgstr "Kytke taustaäänet päälle/pois"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:347
@@ -6422,16 +6410,12 @@ msgid "High speed mode on/off in Swampy Adventures"
 msgstr "Nopea tila päälle/pois Swampy Adventures:issa"
 
 #: engines/agos/metaengine.cpp:382
-#, fuzzy
-#| msgid "Press Yes Key"
 msgid "Press \"Yes\" key"
-msgstr "Paina Kyllä-näppäintä"
+msgstr "Paina \"Kyllä\" -painiketta"
 
 #: engines/agos/metaengine.cpp:387
-#, fuzzy
-#| msgid "Press No Key"
 msgid "Press \"No\" key"
-msgstr "Paina Ei-näppäintä"
+msgstr "Paina \"Ei\" -painiketta"
 
 #: engines/agos/midi.cpp:187 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -7182,56 +7166,40 @@ msgid "Empty autosave"
 msgstr "Tyhjä autom. tallennus"
 
 #: engines/cine/metaengine.cpp:258 engines/made/metaengine.cpp:102
-#, fuzzy
-#| msgid "Default game keymap"
 msgid "Default keymappings"
-msgstr "Oletusnäppäinasetukset"
+msgstr "Näppäinten oletuskartoitukset"
 
 #: engines/cine/metaengine.cpp:260
-#, fuzzy
-#| msgid "Game keymapping"
 msgid "Key to mouse keymappings"
-msgstr "Pelin näppäinkartta"
+msgstr "Näppäin hiiren painikkeiden kartoituksille"
 
 #: engines/cine/metaengine.cpp:261
-#, fuzzy
-#| msgid "Quit panel keymapping"
 msgid "Exit screen keymappings"
-msgstr "Lopetuspaneelin näppäinkartta"
+msgstr "Lopetusnäkymän näppäinkartta"
 
 #: engines/cine/metaengine.cpp:277
 msgid "Exit Sony intro screen"
-msgstr ""
+msgstr "Poistu Sonyn alkunäkymistä"
 
 #: engines/cine/metaengine.cpp:283
-#, fuzzy
-#| msgid "Select to end of line"
 msgid "Select option / Click in game"
-msgstr "Valinta rivin loppuun"
+msgstr "Valitse vaihtoehto / napsautus pelin ollessa käynnissä"
 
 #: engines/cine/metaengine.cpp:290
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open action menu / Close menu"
-msgstr "Avaa päävalikko"
+msgstr "Avaa toimintavalikko / sulje valikko"
 
 #: engines/cine/metaengine.cpp:295
-#, fuzzy
-#| msgid "Default game keymap"
 msgid "Default game speed"
-msgstr "Oletusnäppäinasetukset"
+msgstr "Pelin oletusnopeus"
 
 #: engines/cine/metaengine.cpp:300
-#, fuzzy
-#| msgid "Show game credits"
 msgid "Slower game speed"
-msgstr "Näytä pelin lopputekstit"
+msgstr "Hitaampi pelinopeus"
 
 #: engines/cine/metaengine.cpp:307
-#, fuzzy
-#| msgid "Fast movie speed"
 msgid "Faster game speed"
-msgstr "Nopea videontoisto"
+msgstr "Vauhdikkaampi pelinopeus"
 
 #: engines/cine/metaengine.cpp:315 engines/grim/grim.cpp:498
 #: engines/hpl1/metaengine.cpp:90 engines/scumm/help.cpp:243
@@ -7268,69 +7236,53 @@ msgid "Use"
 msgstr "Käytä"
 
 #: engines/cine/metaengine.cpp:335
-#, fuzzy
-#| msgid "Active"
 msgid "Activate"
-msgstr "Aktiivinen"
+msgstr "Toimeenpane"
 
 #: engines/cine/metaengine.cpp:340
 msgid "Speak"
-msgstr ""
+msgstr "Puhu"
 
 #: engines/cine/metaengine.cpp:345
-#, fuzzy
-#| msgid "Action"
 msgid "Action menu"
-msgstr "Toiminta"
+msgstr "Toimintavalikko"
 
 #: engines/cine/metaengine.cpp:351
-#, fuzzy
-#| msgid "Pause/Game menu"
 msgid "System menu"
-msgstr "Pause / Pelivalikko"
+msgstr "Järjestelmävalikko"
 
 #. I18N: Opens collision map of where the actor can freely move
 #: engines/cine/metaengine.cpp:358
-#, fuzzy
-#| msgid "Show Options"
 msgid "Show collisions"
-msgstr "Näytä asetukset"
+msgstr "Näytä liikkumavarat"
 
 #. I18N: Move Actor to top-left direction
 #: engines/cine/metaengine.cpp:393
-#, fuzzy
-#| msgid "Move left"
 msgid "Move up-left"
-msgstr "Liiku vasemmalle"
+msgstr "Liiku vasemmalle ylös"
 
 #. I18N: Move Actor to top-right direction
 #: engines/cine/metaengine.cpp:399
-#, fuzzy
-#| msgid "Move right"
 msgid "Move up-right"
-msgstr "Liiku oikealle"
+msgstr "Liiku oikealle ylös"
 
 #. I18N: Move Actor to bottom-left direction
 #: engines/cine/metaengine.cpp:405
-#, fuzzy
-#| msgid "Move down"
 msgid "Move down-left"
-msgstr "Liiku alaspäin"
+msgstr "Liiku alas vasemmalle"
 
 #. I18N: Move Actor to bottom-right direction
 #: engines/cine/metaengine.cpp:411
-#, fuzzy
-#| msgid "Move right"
 msgid "Move down-right"
-msgstr "Liiku oikealle"
+msgstr "Liiku alas oikealle"
 
 #: engines/cine/metaengine.cpp:416
 msgid "Menu option up"
-msgstr ""
+msgstr "Valikossa ylöspäin"
 
 #: engines/cine/metaengine.cpp:421
 msgid "Menu option down"
-msgstr ""
+msgstr "Valikossa alaspäin"
 
 #: engines/cine/saveload.cpp:860
 msgid ""
@@ -7945,16 +7897,12 @@ msgid "GroovieV2 support is not compiled in"
 msgstr "GroovieV2-tukea ei ole käännetty mukaan"
 
 #: engines/groovie/metaengine.cpp:201
-#, fuzzy
-#| msgid "Available engines:"
 msgid "Groovie engine"
-msgstr "Tuetut pelimoottorit:"
+msgstr "Groovie-pelimoottori"
 
 #: engines/groovie/metaengine.cpp:217
-#, fuzzy
-#| msgid "Skip the Hall of Records storyboard scenes"
 msgid "Skip or fast forward scene"
-msgstr "Ohita Hall of Records storyboardkohtaukset"
+msgstr "Ohita- tai pikakelaa kohtaus"
 
 #: engines/groovie/saveload.cpp:52
 msgid "Reserved"
@@ -8500,28 +8448,20 @@ msgstr ""
 "käyttää MIDI-musiikkia."
 
 #: engines/made/metaengine.cpp:128
-#, fuzzy
-#| msgid "Cursor Up"
 msgid "Cursor up"
-msgstr "Kursori ylös"
+msgstr "Osoitin ylös"
 
 #: engines/made/metaengine.cpp:135
-#, fuzzy
-#| msgid "Cursor Down"
 msgid "Cursor down"
-msgstr "Kursori alas"
+msgstr "Osoitin alas"
 
 #: engines/made/metaengine.cpp:142
-#, fuzzy
-#| msgid "Cursor Left"
 msgid "Cursor left"
-msgstr "Kursori vasemmalle"
+msgstr "Osoitin vasen"
 
 #: engines/made/metaengine.cpp:149
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Cursor right"
-msgstr "Kursori oikealle"
+msgstr "Osoitin oikea"
 
 #: engines/made/metaengine.cpp:162 engines/saga/metaengine.cpp:440
 #: engines/vcruise/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:920
@@ -8536,10 +8476,8 @@ msgid "Load game"
 msgstr "Lataa peli"
 
 #: engines/made/metaengine.cpp:174
-#, fuzzy
-#| msgid "Repeat Last Message"
 msgid "Repeat last message"
-msgstr "Toista viimeisin viesti"
+msgstr "Toista viimeinen viesti"
 
 #: engines/mads/metaengine.cpp:59
 msgid "Easy mouse interface"
@@ -9455,29 +9393,21 @@ msgid "Converse panel keymapping"
 msgstr "Keskustelupaneelin näppäinkartta"
 
 #: engines/saga/metaengine.cpp:283
-#, fuzzy
-#| msgid "Middle Click"
 msgid "Middle click"
-msgstr "Keskiklikkaus"
+msgstr "Keskinapsautus"
 
 #. I18N: the boss key is a feature,
 #. that allows players to quickly switch to a fake screen that looks like a business application,
 #. typically to avoid detection if someone, like a boss, walks by while they are playing.
 #: engines/saga/metaengine.cpp:297
-#, fuzzy
-#| msgid "Boss Key"
 msgid "Boss key"
-msgstr "Pomonäppäin"
+msgstr "Hätänappi (työpaikalle, tms.)"
 
 #: engines/saga/metaengine.cpp:302
-#, fuzzy
-#| msgid "Show Options"
 msgid "Show options"
 msgstr "Näytä asetukset"
 
 #: engines/saga/metaengine.cpp:310
-#, fuzzy
-#| msgid "Exit Conversation"
 msgid "Exit conversation"
 msgstr "Poistu keskustelusta"
 
@@ -9495,16 +9425,12 @@ msgid "Pause game"
 msgstr "Pause"
 
 #: engines/saga/metaengine.cpp:338
-#, fuzzy
-#| msgid "Abort Speech"
 msgid "Abort speech"
 msgstr "Lopeta puhe"
 
 #: engines/saga/metaengine.cpp:343
-#, fuzzy
-#| msgid "Show Dialogue"
 msgid "Show dialogue"
-msgstr "Näytä dialogi"
+msgstr "Näytä ilmoitteet"
 
 #: engines/saga/metaengine.cpp:348 engines/scumm/help.cpp:144
 #: engines/scumm/help.cpp:169 engines/scumm/help.cpp:198
@@ -9555,32 +9481,22 @@ msgid "Swallow"
 msgstr "Niele"
 
 #: engines/saga/metaengine.cpp:405
-#, fuzzy
-#| msgid "Reading Speed"
 msgid "Reading speed"
 msgstr "Lukunopeus"
 
 #: engines/saga/metaengine.cpp:410
-#, fuzzy
-#| msgid "Change Music"
 msgid "Change music"
 msgstr "Muuta musiikkia"
 
 #: engines/saga/metaengine.cpp:415
-#, fuzzy
-#| msgid "Change Sound"
 msgid "Change sound"
 msgstr "Muuta ääntä"
 
 #: engines/saga/metaengine.cpp:420
-#, fuzzy
-#| msgid "Change Voices"
 msgid "Change voices"
 msgstr "Muuta puheääntä"
 
 #: engines/saga/metaengine.cpp:425
-#, fuzzy
-#| msgid "Continue Game"
 msgid "Continue game"
 msgstr "Jatka peliä"
 
@@ -9589,24 +9505,18 @@ msgid "Quit game"
 msgstr "Lopeta peli"
 
 #: engines/saga/metaengine.cpp:452
-#, fuzzy
-#| msgid "Cancel Quit"
 msgid "Cancel quit"
 msgstr "Peruuta lopetus"
 
 #: engines/saga/metaengine.cpp:457
 msgid "Okay"
-msgstr ""
+msgstr "Selvä"
 
 #: engines/saga/metaengine.cpp:462
-#, fuzzy
-#| msgid "Cancel Load"
 msgid "Cancel load"
 msgstr "Peruuta lataus"
 
 #: engines/saga/metaengine.cpp:472
-#, fuzzy
-#| msgid "Cancel Save"
 msgid "Cancel save"
 msgstr "Peruuta tallennus"
 
