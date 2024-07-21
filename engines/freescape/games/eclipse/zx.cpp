@@ -35,7 +35,6 @@ void EclipseEngine::initZX() {
 
 void EclipseEngine::loadAssetsZXFullGame() {
 	Common::File file;
-	bool isTotalEclipse2 = _targetName.hasPrefix("totaleclipse2");
 
 	file.open("totaleclipse.zx.title");
 	if (file.isOpen()) {
@@ -55,7 +54,7 @@ void EclipseEngine::loadAssetsZXFullGame() {
 	if (!file.isOpen())
 		error("Failed to open totaleclipse.zx.data");
 
-	if (isTotalEclipse2) {
+	if (isEclipse2()) {
 		loadMessagesFixedSize(&file, 0x2ac, 16, 30);
 		loadFonts(&file, 0x61c3, _font);
 		loadSpeakerFxZX(&file, 0x8c6, 0x91a);
@@ -66,11 +65,7 @@ void EclipseEngine::loadAssetsZXFullGame() {
 		loadSpeakerFxZX(&file, 0x816, 0x86a);
 		load8bitBinary(&file, 0x635b, 4);
 
-		// These paper colors are invalid, probably to signal the use of floor/sky colors
-		_areaMap[1]->_paperColor = 1;
-		_areaMap[51]->_paperColor = 1;
-
-		// These paper colors are also invalid, but to signal the use of a special effect
+		// These paper colors are also invalid, but to signal the use of a special effect (only in zx release)
 		_areaMap[42]->_paperColor = 0;
 		_areaMap[42]->_underFireBackgroundColor = 0;
 	}
@@ -78,7 +73,7 @@ void EclipseEngine::loadAssetsZXFullGame() {
 	for (auto &it : _areaMap) {
 		it._value->addStructure(_areaMap[255]);
 
-		if (isTotalEclipse2 && it._value->getAreaID() == 1)
+		if (isEclipse2() && it._value->getAreaID() == 1)
 			continue;
 
 		if (isEclipse2() && it._value->getAreaID() == _startArea)

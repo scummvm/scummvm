@@ -91,9 +91,15 @@ void EclipseEngine::loadAssets() {
 	//_noEnergyMessage = _messagesList[16];
 	_fallenMessage = _messagesList[3];
 	_crushedMessage = _messagesList[2];
+
 	_areaMap[1]->addFloor();
-	if (!isDemo())
+	if (isSpectrum())
+		_areaMap[1]->_paperColor = 1;
+
+	if (!isDemo() && !isEclipse2()) {
 		_areaMap[51]->addFloor();
+		_areaMap[51]->_paperColor = 1;
+	}
 }
 
 bool EclipseEngine::checkIfGameEnded() {
