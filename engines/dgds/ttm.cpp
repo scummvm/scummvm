@@ -158,11 +158,13 @@ static const char *ttmOpName(uint16 op) {
 	case 0x2000: return "SET DRAW COLORS";
 	case 0x2010: return "SET FRAME";
 	case 0x2020: return "SET RANDOM DELAY";
+	case 0x2030: return "SET SCROLL 2030??";
 	case 0x2300: return "PAL SET BLOCK SWAP 0";
 	case 0x2310: return "PAL SET BLOCK SWAP 1";
 	case 0x2320: return "PAL SET BLOCK SWAP 2";
 	case 0x2400: return "PAL DO BLOCK SWAP";
 	case 0x3000: return "GOSUB";
+	case 0x3100: return "SCROLL 3100??";
 	case 0x4000: return "SET CLIP WINDOW";
 	case 0x4110: return "FADE OUT";
 	case 0x4120: return "FADE IN";
@@ -199,6 +201,7 @@ static const char *ttmOpName(uint16 op) {
 	case 0xa520: return "DRAW SPRITE FLIPH";
 	case 0xa530: return "DRAW SPRITE FLIPHV";
 	case 0xa600: return "DRAW GETPUT";
+	case 0xa700: return "DRAW A700??";
 	case 0xaf00: return "DRAW FLOOD FILL";
 	case 0xaf10: return "DRAW EMPTY POLY";
 	case 0xaf20: return "DRAW FILLED POLY";
@@ -603,7 +606,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 			break;
 		warning("TODO: 0x%04x Palette do block swaps 0x%x, 0x%x", op, ivals[0], ivals[1]);
 		break;
-	case 0x3000: {
+	case 0x3000: { // GOSUB ??,??,frame
 		_stackDepth++;
 		bool prevHitOp0110Val = _vm->adsInterpreter()->getHitTTMOp0110();
 		int32 target = findGOTOTarget(env, seq, ivals[2]);
@@ -613,7 +616,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		env.scr->seek(env._frameOffsets[target]);
 
 		// TODO: Set some other render-related globals here
-		warning("TODO: TTM 0x3000 GOSUB %d %d, use other args", ivals[0], ivals[1]);
+		if (ivals[0] || ivals[1])
+			warning("TODO: TTM 0x3000 GOSUB use offsets (%d, %d)", ivals[0], ivals[1]);
 
 		run(env, seq);
 		env.scr->seek(prevPos);
@@ -623,6 +627,11 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 
 		_stackDepth--;
 		break;
+	}
+	case 0x3100: { // SCROLL ??,??,??
+		if (seq._executed) // this is a one-shot op.
+			break;
+		warning("TODO: TTM 0x3100 SCROLL %d %d %d", ivals[0], ivals[1], ivals[2]);
 	}
 	case 0x4000: // SET CLIP WINDOW x,y,x2,y2:int	[0..320,0..200]
 		// NOTE: params are xmax/ymax, NOT w/h

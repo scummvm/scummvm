@@ -494,7 +494,8 @@ Common::Error DgdsEngine::run() {
 					break;
 				}
 			} else if (ev.type == Common::EVENT_LBUTTONDOWN || ev.type == Common::EVENT_LBUTTONUP
-					|| ev.type == Common::EVENT_RBUTTONUP || ev.type == Common::EVENT_MOUSEMOVE) {
+					|| ev.type == Common::EVENT_RBUTTONDOWN || ev.type == Common::EVENT_RBUTTONUP
+					|| ev.type == Common::EVENT_MOUSEMOVE) {
 				mouseEvent = ev.type;
 				_lastMouse = ev.mouse;
 			}
@@ -583,6 +584,9 @@ Common::Error DgdsEngine::run() {
 					break;
 				case Common::EVENT_LBUTTONUP:
 					_scene->mouseLUp(_lastMouse);
+					break;
+				case Common::EVENT_RBUTTONDOWN:
+					_scene->mouseRDown(_lastMouse);
 					break;
 				case Common::EVENT_RBUTTONUP:
 					_scene->mouseRUp(_lastMouse);

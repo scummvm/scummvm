@@ -378,7 +378,7 @@ void Inventory::mouseLUp(const Common::Point &pt) {
 				break;
 			}
 		}
-	} else if (_changeCharBtn && _changeCharBtn->isVisible() && _changeCharBtn->containsPoint(pt)) {
+	} else if (_changeCharBtn && _changeCharBtn->containsPoint(pt)) {
 		int16 prevChar = gds->getGlobal(0x33);
 		gds->setGlobal(0x33, gds->getGlobal(0x34));
 		gds->setGlobal(0x34, prevChar);

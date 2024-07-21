@@ -160,7 +160,7 @@ public:
 class GameItem : public HotArea {
 public:
 	Common::Array<SceneOp> onDragFinishedOps;
-	Common::Array<SceneOp> opList5;
+	Common::Array<SceneOp> onBothButtonsOps;
 	uint16 _altCursor;
 	uint16 _iconNum;
 
@@ -377,6 +377,7 @@ public:
 
 	Common::Error syncState(Common::Serializer &s) override;
 	void initIconSizes();
+	GameItem *getActiveItem();
 
 private:
 	Common::String _iconFile;
@@ -386,8 +387,8 @@ private:
 	Common::Array<SceneOp> _onChangeSceneOps;
 	Common::Array<MouseCursor> _cursorList;
 	Common::Array<PerSceneGlobal> _perSceneGlobals;
-	Common::Array<ObjectInteraction> _objInteractions1;
 	Common::Array<ObjectInteraction> _objInteractions2;
+	Common::Array<ObjectInteraction> _objInteractions1;
 
 	// Additional fields that appear in Willy Beamish (unused in others)
 	uint16 _field38;
@@ -423,6 +424,7 @@ public:
 	void mouseMoved(const Common::Point &pt);
 	void mouseLDown(const Common::Point &pt);
 	void mouseLUp(const Common::Point &pt);
+	void mouseRDown(const Common::Point &pt);
 	void mouseRUp(const Common::Point &pt);
 
 	void addInvButtonToHotAreaList();
@@ -497,6 +499,7 @@ private:
 	GameItem *_dragItem;
 	bool _shouldClearDlg;
 	bool _ignoreMouseUp;
+	bool _rbuttonDown;
 
 	static bool _dlgWithFlagLo8IsClosing;
 	static DialogFlags _sceneDialogFlags;
