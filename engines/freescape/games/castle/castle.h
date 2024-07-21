@@ -36,7 +36,7 @@ public:
 	void loadAssetsDOSDemo() override;
 	void loadAssetsAmigaDemo() override;
 	void loadAssetsZXFullGame() override;
-	void titleScreen() override;
+	void borderScreen() override;
 	void selectCharacterScreen();
 	void drawOption();
 

@@ -622,8 +622,8 @@ void CastleEngine::updateTimeVariables() {
 	}
 }
 
-void CastleEngine::titleScreen() {
-	FreescapeEngine::titleScreen();
+void CastleEngine::borderScreen() {
+	FreescapeEngine::borderScreen();
 	selectCharacterScreen();
 }
 
@@ -641,18 +641,29 @@ void CastleEngine::drawOption() {
 	_gfx->setViewport(_viewArea);
 }
 
+extern Common::String centerAndPadString(const Common::String &x, int y);
+
 void CastleEngine::selectCharacterScreen() {
-	if (!_option)
-		return;
+	Common::Array<Common::String> lines;
+	if (isDOS()) {
+		lines.push_back("Select your character");
+		lines.push_back("");
+		lines.push_back("");
+		lines.push_back("            1. Prince");
+		lines.push_back("            2. Princess");
+	} else if (isSpectrum()) {
+		lines.push_back(centerAndPadString("*******************", 21));
+		lines.push_back(centerAndPadString("Select your character", 21));
+		lines.push_back(centerAndPadString("you wish to play", 21));
+		lines.push_back(centerAndPadString("and press enter", 21));
+		lines.push_back("");
+		lines.push_back(centerAndPadString("1. Prince  ", 21));
+		lines.push_back(centerAndPadString("2. Princess", 21));
+		lines.push_back("");
+		lines.push_back(centerAndPadString("*******************", 21));
+	}
 
-	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
-
-	uint32 green = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0xFF, 0x00);
-	uint32 transparent = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
-	drawStringInSurface("Select your character", 63, 16, green, transparent, surface);
-	drawStringInSurface("1. Prince", 150, 82, green, transparent, surface);
-	drawStringInSurface("1. Princess", 150, 92, green, transparent, surface);
+	Graphics::Surface *surface = drawStringsInSurface(lines);
 
 	bool selected = false;
 	while (!selected) {
@@ -690,7 +701,10 @@ void CastleEngine::selectCharacterScreen() {
 			}
 		}
 		_gfx->clear(0, 0, 0, true);
-		drawOption();
+		if (_option)
+			drawOption();
+		else
+			drawBorder();
 		drawFullscreenSurface(surface);
 		_gfx->flipBuffer();
 		g_system->updateScreen();

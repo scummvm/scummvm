@@ -149,7 +149,7 @@ public:
 	void clearBackground();
 	virtual void drawUI();
 	virtual void drawInfoMenu();
-	void drawBorderScreenAndWait(Graphics::Surface *surface);
+	void drawBorderScreenAndWait(Graphics::Surface *surface, int maxWait = INT_MAX);
 
 	virtual void drawCrossair(Graphics::Surface *surface);
 	Graphics::ManagedSurface *_border;

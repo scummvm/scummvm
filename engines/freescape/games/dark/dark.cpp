@@ -640,6 +640,12 @@ void DarkEngine::updateTimeVariables() {
 void DarkEngine::borderScreen() {
 	if (_border) {
 		drawBorder();
+		// Modify and reload the border
+		_border->fillRect(_viewArea, _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0, 0, 0));
+		delete _borderTexture;
+		_borderTexture = nullptr;
+		loadBorder();
+
 		if (isDemo()) {
 			drawFullscreenMessageAndWait(_messagesList[27]);
 			drawFullscreenMessageAndWait(_messagesList[28]);
