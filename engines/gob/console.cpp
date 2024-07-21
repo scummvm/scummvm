@@ -87,22 +87,41 @@ bool GobConsole::cmd_varSize(int argc, const char **argv) {
 }
 
 bool GobConsole::cmd_dumpVars(int argc, const char **argv) {
-	if (!_vm->_inter->_variables)
-		return true;
+    if (argc > 1 && strcmp(argv[1], "--help") == 0) {
+        debugPrintf("Usage: dumpVars [output_file]\n");
+        debugPrintf("If no output_file is specified, 'variables.dmp' will be saved in the ScummVM directory.\n");
+        debugPrintf("You can specify a different path to save the file elsewhere.\n");
+        return true;
+    }
 
-	Common::DumpFile file;
+    if (!_vm->_inter->_variables)
+        return true;
 
-	const char *outFile = "variables.dmp";
-	if (!file.open(outFile))
-		return true;
+    Common::DumpFile file;
 
-	file.write(_vm->_inter->_variables->getAddressOff8(0), _vm->_inter->_variables->getSize());
+    const char *outFile = "variables.dmp";
+    bool isDefaultPath = true;
 
-	file.flush();
-	file.close();
+    if (argc > 1 && argv[1] != nullptr) {
+        outFile = argv[1];
+        isDefaultPath = false;
+    }
 
-	debugPrintf("Dumped %s successfully to ScummVM directory\n", outFile);
-	return true;
+    if (!file.open(outFile))
+        return true;
+
+    file.write(_vm->_inter->_variables->getAddressOff8(0), _vm->_inter->_variables->getSize());
+
+    file.flush();
+    file.close();
+
+    if (isDefaultPath) {
+        debugPrintf("Dumped %s successfully to ScummVM directory\n", outFile);
+    } else {
+        debugPrintf("Dumped variables.dmp successfully to %s\n", outFile);
+    }
+
+    return true;
 }
 
 bool GobConsole::cmd_var8(int argc, const char **argv) {
