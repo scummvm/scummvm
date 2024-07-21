@@ -683,9 +683,11 @@ void CastleEngine::selectCharacterScreen() {
 				switch (event.kbd.keycode) {
 				case Common::KEYCODE_1:
 					selected = true;
+					// Nothing, since game bit should be already zero
 					break;
 				case Common::KEYCODE_2:
 					selected = true;
+					setGameBit(32);
 					break;
 				default:
 					break;
