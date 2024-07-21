@@ -2491,7 +2491,7 @@ bool qdGameDispatcher::load_save(const char *fname) {
 
 	free_resources();
 
-	Common::SeekableReadStream *fh;
+	Common::InSaveFile *fh;
 	fh = g_engine->_savefileMan->openForLoading(Common::Path(fname).toString());
 	int save_version;
 	save_version = fh->readSint32LE();
@@ -3502,4 +3502,3 @@ bool qdGameDispatcher::update_hall_of_fame_names() {
 }
 
 } // namespace QDEngine
-
