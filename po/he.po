@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-19 22:39+0000\n"
+"POT-Creation-Date: 2024-07-22 13:12+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -7910,100 +7910,110 @@ msgstr "החלפת כפתור קרב L / R"
 msgid "Left button to attack, right button to pick up items"
 msgstr "כפתור שמאלי לתקוף, כפתור ימין לאיסוף פריטים"
 
-#: engines/kyra/metaengine.cpp:239
+#: engines/kyra/metaengine.cpp:159
+msgid "Faithful AD&D rules"
+msgstr ""
+
+#: engines/kyra/metaengine.cpp:160
+msgid ""
+"Make implementation of AD&D rules more compliant with the AD&D 2nd edition "
+"handbook"
+msgstr ""
+
+#: engines/kyra/metaengine.cpp:251
 msgid "Lands of Lore support is not compiled in"
 msgstr "תמיכה במשחק Lands of Lore לא נבנתה"
 
-#: engines/kyra/metaengine.cpp:249
+#: engines/kyra/metaengine.cpp:261
 msgid ""
 "EOB II FM-TOWNS requires support of 16bit color modes which has not been "
 "activated in your ScummVM build"
 msgstr "EOB II FM-TOWNS דורש תמיכה במצבי 16 צבעים שלא הופעלו בגרסת ScummVM זו"
 
-#: engines/kyra/metaengine.cpp:255
+#: engines/kyra/metaengine.cpp:267
 msgid "Eye of Beholder support is not compiled in"
 msgstr "תמיכה במשחק Eye of Beholder לא נבנתה"
 
-#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:502
+#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:502
 #: engines/ultima/ultima4/metaengine.cpp:224
 #: engines/ultima/nuvie/metaengine.cpp:217
 #: engines/ultima/ultima8/metaengine.cpp:145
 msgid "Interact via Left Click"
 msgstr "פעולה באמצעות לחיצה שמאלית"
 
-#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:503
+#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:503
 #: engines/ultima/ultima4/metaengine.cpp:230
 #: engines/ultima/nuvie/metaengine.cpp:223
 #: engines/ultima/ultima8/metaengine.cpp:151
 msgid "Interact via Right Click"
 msgstr "פעולה באמצעות לחיצה ימנית"
 
-#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:510
+#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:510
 #: engines/twine/metaengine.cpp:380
 msgid "Move Forward"
 msgstr "להתקדם"
 
-#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:511
+#: engines/kyra/engine/eobcommon.cpp:372 engines/kyra/engine/lol.cpp:511
 msgid "Move Back"
 msgstr "לחזור"
 
-#: engines/kyra/engine/eobcommon.cpp:372
+#: engines/kyra/engine/eobcommon.cpp:373
 msgid "Move Left"
 msgstr "זוז שמאלה"
 
-#: engines/kyra/engine/eobcommon.cpp:373
+#: engines/kyra/engine/eobcommon.cpp:374
 msgid "Move Right"
 msgstr "זוז ימינה"
 
-#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:514
+#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:514
 #: engines/mm/mm1/metaengine.cpp:97 engines/pegasus/pegasus.cpp:2740
 #: engines/twine/metaengine.cpp:401 engines/zvision/metaengine.cpp:209
 msgid "Turn Left"
 msgstr "פונה שמאלה"
 
-#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:515
+#: engines/kyra/engine/eobcommon.cpp:376 engines/kyra/engine/lol.cpp:515
 #: engines/mm/mm1/metaengine.cpp:98 engines/pegasus/pegasus.cpp:2747
 #: engines/twine/metaengine.cpp:394 engines/zvision/metaengine.cpp:215
 msgid "Turn Right"
 msgstr "פנה ימינה"
 
-#: engines/kyra/engine/eobcommon.cpp:376
+#: engines/kyra/engine/eobcommon.cpp:377
 msgid "Open/Close Inventory"
 msgstr "מלאי פתוח / סגור"
 
-#: engines/kyra/engine/eobcommon.cpp:377
+#: engines/kyra/engine/eobcommon.cpp:378
 msgid "Switch Inventory/Character screen"
 msgstr "החלף מסך מלאי / תו"
 
-#: engines/kyra/engine/eobcommon.cpp:378
+#: engines/kyra/engine/eobcommon.cpp:379
 msgid "Camp"
 msgstr "מחנה"
 
-#: engines/kyra/engine/eobcommon.cpp:379 engines/mm/mm1/metaengine.cpp:102
+#: engines/kyra/engine/eobcommon.cpp:380 engines/mm/mm1/metaengine.cpp:102
 msgid "Cast Spell"
 msgstr "להטיל כישוף"
 
-#: engines/kyra/engine/eobcommon.cpp:382
+#: engines/kyra/engine/eobcommon.cpp:383
 msgid "Spell Level 1"
 msgstr "איות ברמה 1"
 
-#: engines/kyra/engine/eobcommon.cpp:383
+#: engines/kyra/engine/eobcommon.cpp:384
 msgid "Spell Level 2"
 msgstr "איות ברמה 2"
 
-#: engines/kyra/engine/eobcommon.cpp:384
+#: engines/kyra/engine/eobcommon.cpp:385
 msgid "Spell Level 3"
 msgstr "איות ברמה 3"
 
-#: engines/kyra/engine/eobcommon.cpp:385
+#: engines/kyra/engine/eobcommon.cpp:386
 msgid "Spell Level 4"
 msgstr "איות ברמה 4"
 
-#: engines/kyra/engine/eobcommon.cpp:386
+#: engines/kyra/engine/eobcommon.cpp:387
 msgid "Spell Level 5"
 msgstr "איות ברמה 5"
 
-#: engines/kyra/engine/eobcommon.cpp:388
+#: engines/kyra/engine/eobcommon.cpp:389
 msgid "Spell Level 6"
 msgstr "איות ברמה 6"
 
