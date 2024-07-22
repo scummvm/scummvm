@@ -153,6 +153,18 @@ const ADExtraGuiOptionsMap gameGuiOptions[] = {
 		}
 	},
 
+	{
+		GAMEOPTION_EOB_ADDRULES,
+		{
+			_s("Faithful AD&D rules"),
+			_s("Make implementation of AD&D rules more compliant with the AD&D 2nd edition handbook"),
+			"addrules",
+			false,
+			0,
+			0
+		}
+	},
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

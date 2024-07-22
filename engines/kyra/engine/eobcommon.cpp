@@ -138,6 +138,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_charExchangeSwap = 0;
 	_configHpBarGraphs = true;
 	_configMouseBtSwap = false;
+	_configADDRuleEnhancements = false;
 
 	_npcSequenceSub = 0;
 	_moveCounter = 0;
@@ -684,12 +685,14 @@ void EoBCoreEngine::registerDefaultSettings() {
 	KyraEngine_v1::registerDefaultSettings();
 	ConfMan.registerDefault("hpbargraphs", true);
 	ConfMan.registerDefault("mousebtswap", false);
+	ConfMan.registerDefault("addrules", false);
 	ConfMan.registerDefault("importOrigSaves", true);
 }
 
 void EoBCoreEngine::readSettings() {
 	_configHpBarGraphs = ConfMan.getBool("hpbargraphs");
 	_configMouseBtSwap = ConfMan.getBool("mousebtswap");
+	_configADDRuleEnhancements = ConfMan.getBool("addrules");
 	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
 	_configMusic = (_flags.platform == Common::kPlatformPC98 || _flags.platform == Common::kPlatformSegaCD) ? (ConfMan.getBool("music_mute") ? 0 : 1) : (_configSounds ? 1 : 0);
 
@@ -702,6 +705,7 @@ void EoBCoreEngine::readSettings() {
 void EoBCoreEngine::writeSettings() {
 	ConfMan.setBool("hpbargraphs", _configHpBarGraphs);
 	ConfMan.setBool("mousebtswap", _configMouseBtSwap);
+	ConfMan.setBool("addrules", _configADDRuleEnhancements);
 	ConfMan.setBool("sfx_mute", _configSounds == 0);
 	if (_flags.platform == Common::kPlatformPC98 || _flags.platform == Common::kPlatformSegaCD)
 		ConfMan.setBool("music_mute", _configMusic == 0);

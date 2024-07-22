@@ -846,6 +846,7 @@ protected:
 	uint8 *_swapShape;
 	bool _configHpBarGraphs;
 	bool _configMouseBtSwap;
+	bool _configADDRuleEnhancements;
 
 	Graphics::Surface _thumbNail;
 
