@@ -566,6 +566,11 @@ SayLineAt::SayLineAt(const Math::Vector2d &pos, const Color &color, Common::Shar
 
 void SayLineAt::say(const Common::String &text) {
 	Common::String txt(text);
+	if (txt.size() == 0) {
+		debugC(kDebugGame, "say: skipping empty line");
+		return;
+	}
+
 	if (txt[0] == '$') {
 		HSQUIRRELVM v = g_twp->getVm();
 		SQInteger top = sq_gettop(v);
@@ -662,7 +667,8 @@ void SayLineAt::onUpdate(float elapsed) {
 
 void SayLineAt::disable() {
 	Motor::disable();
-	_node->remove();
+	if (_node)
+		_node->remove();
 }
 
 Jiggle::Jiggle(Node *node, float amount) : _amount(amount), _node(node) {
