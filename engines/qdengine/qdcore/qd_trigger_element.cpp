@@ -869,6 +869,7 @@ bool qdTriggerElement::set_parent_link_status(qdTriggerElementConstPtr parent, q
 }
 
 bool qdTriggerElement::load_data(Common::SeekableReadStream &fh, int saveVersion) {
+	debugC(5, kDebugSave, "      qdTriggerElement::load_data before: %ld", fh.pos());
 	char st = fh.readByte();
 	set_status(ElementStatus(st));
 
@@ -882,10 +883,12 @@ bool qdTriggerElement::load_data(Common::SeekableReadStream &fh, int saveVersion
 		it.set_status(qdTriggerLink::LinkStatus(st));
 	}
 
+	debugC(5, kDebugSave, "      qdTriggerElement::load_data after: %ld", fh.pos());
 	return true;
 }
 
 bool qdTriggerElement::save_data(Common::SeekableWriteStream &fh) const {
+	debugC(5, kDebugSave, "      qdTriggerElement::save_data before: %ld", fh.pos());
 	/*  switch(status_){
 	    case TRIGGER_EL_INACTIVE:
 	        for(qdTriggerLinkList::const_iterator it = parents_.begin(); it != parents_.end(); ++it){
@@ -921,6 +924,7 @@ bool qdTriggerElement::save_data(Common::SeekableWriteStream &fh) const {
 		fh.writeByte(it.status());
 	}
 
+	debugC(5, kDebugSave, "      qdTriggerElement::save_data after: %ld", fh.pos());
 	return true;
 }
 
@@ -1049,4 +1053,3 @@ bool qdTriggerElement::clear_object_trigger_references() {
 	return false;
 }
 } // namespace QDEngine
-

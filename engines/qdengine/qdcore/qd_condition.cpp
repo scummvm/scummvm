@@ -412,6 +412,7 @@ void qdCondition::quant(float dt) {
 }
 
 bool qdCondition::load_data(Common::SeekableReadStream &fh, int save_version) {
+	debugC(5, kDebugSave, "      qdCondition::load_data(): before %ld", fh.pos());
 	if (type_ == CONDITION_TIMER) {
 		int state;
 		float timer;
@@ -423,10 +424,12 @@ bool qdCondition::load_data(Common::SeekableReadStream &fh, int save_version) {
 		if (!put_value(TIMER_RND, state, 1)) return false;
 	}
 
+	debugC(5, kDebugSave, "      qdCondition::load_data(): after %ld", fh.pos());
 	return true;
 }
 
 bool qdCondition::save_data(Common::SeekableWriteStream &fh) const {
+	debugC(5, kDebugSave, "      qdCondition::save_data(): before %ld", fh.pos());
 	if (type_ == CONDITION_TIMER) {
 		float timer;
 		if (!get_value(TIMER_PERIOD, timer, 1)) {
@@ -442,6 +445,7 @@ bool qdCondition::save_data(Common::SeekableWriteStream &fh) const {
 		fh.writeSint32LE(state);
 	}
 
+	debugC(5, kDebugSave, "      qdCondition::save_data(): after %ld", fh.pos());
 	return true;
 }
 

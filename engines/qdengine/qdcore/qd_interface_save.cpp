@@ -100,7 +100,7 @@ bool qdInterfaceSave::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev
 	case mouseDispatcher::EV_LEFT_DOWN:
 	case mouseDispatcher::EV_RIGHT_DOWN:
 		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-			debugC(3, kDebugSave, "qdInterfaceSave::mouse_handler(): save_mode_ = %d", save_mode_);
+			debugC(1, kDebugSave, "qdInterfaceSave::mouse_handler(): save_mode_ = %d", save_mode_);
 			clear_screen_region();
 
 			if (save_mode_) {
@@ -124,7 +124,7 @@ bool qdInterfaceSave::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev
 
 				return true;
 			} else {
-				debugC(3, kDebugSave, "qdInterfaceSave::mouse_handler(): load_game() save_ID_ = %d", save_ID_);
+				debugC(1, kDebugSave, "qdInterfaceSave::mouse_handler(): load_game() save_ID_ = %d", save_ID_);
 				dp->load_game(save_ID_);
 				if (qdInterfaceDispatcher * ip = qdInterfaceDispatcher::get_dispatcher())
 					ip->handle_event(qdInterfaceEvent::EVENT_RESUME_GAME, NULL);
@@ -189,7 +189,7 @@ bool qdInterfaceSave::init(bool is_game_active) {
 }
 
 bool qdInterfaceSave::redraw() const {
-	warning("STUB: qdInterfaceSave::redraw()");
+	//warning("STUB: qdInterfaceSave::redraw()");
 	if (qdInterfaceDispatcher * pid = qdInterfaceDispatcher::get_dispatcher()) {
 		if (pid->need_save_screenshot())
 			if (const qdAnimation * p = thumbnail_.animation())
@@ -326,10 +326,10 @@ bool qdInterfaceSave::hit_test(int x, int y) const {
 bool qdInterfaceSave::perform_save() {
 	bool is_ok = true;
 	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-		debugC(3, kDebugSave, "qdInterfaceSave::perform_save(): save_ID_ = %d", save_ID_);
+		debugC(1, kDebugSave, "qdInterfaceSave::perform_save(): save_ID_ = %d", save_ID_);
 		is_ok &= dp->save_game(save_ID_);
 
-		debugC(3, kDebugSave, "qdInterfaceSave::perform_save(): is_ok = %d", is_ok);
+		debugC(1, kDebugSave, "qdInterfaceSave::perform_save(): is_ok = %d", is_ok);
 
 		if (!save_title_.empty()) {
 			warning("STUB: Test qdInterfaceSave::perform_save()");

@@ -906,6 +906,8 @@ Vect2i qdAnimation::remove_edges() {
 }
 
 bool qdAnimation::load_data(Common::SeekableReadStream &fh, int save_version) {
+	debugC(3, kDebugSave, "  qdAnimation::load_data(): before %ld", fh.pos());
+
 	if (!qdNamedObject::load_data(fh, save_version))
 		return false;
 
@@ -940,10 +942,14 @@ bool qdAnimation::load_data(Common::SeekableReadStream &fh, int save_version) {
 
 	status_ = st;
 	is_finished_ = (finished) ? true : false;
+
+	debugC(2, kDebugSave, "  qdAnimation::load_data(): after %ld", fh.pos());
 	return true;
 }
 
 bool qdAnimation::save_data(Common::SeekableWriteStream &fh) const {
+	debugC(3, kDebugSave, "  qdAnimation::save_data(): before %ld", fh.pos());
+
 	if (!qdNamedObject::save_data(fh)) return false;
 
 	if (check_flag(QD_ANIMATION_FLAG_REFERENCE) && parent_) {
@@ -959,6 +965,8 @@ bool qdAnimation::save_data(Common::SeekableWriteStream &fh) const {
 	fh.writeByte(is_finished_);
 	fh.writeFloatLE(cur_time_);
 	fh.writeFloatLE(length_);
+
+	debugC(3, kDebugSave, "  qdAnimation::save_data(): after %ld", fh.pos());
 	return true;
 }
 

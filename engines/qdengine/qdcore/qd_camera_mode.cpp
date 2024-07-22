@@ -93,6 +93,7 @@ bool qdCameraMode::save_script(Common::SeekableWriteStream &fh, int indent) cons
 }
 
 bool qdCameraMode::load_data(Common::SeekableReadStream &fh, int save_version) {
+	debugC(4, kDebugSave, "    qdCameraMode::load_data(): before %ld", fh.pos());
 	int mode;
 	mode = fh.readSint32LE();
 	work_time_ = fh.readFloatLE();
@@ -103,11 +104,14 @@ bool qdCameraMode::load_data(Common::SeekableReadStream &fh, int save_version) {
 
 	char switch_flag = fh.readByte();
 	smooth_switch_ = (switch_flag) ? true : false;
+	debugC(4, kDebugSave, "    qdCameraMode::load_data(): after %ld", fh.pos());
 
 	return true;
 }
 
 bool qdCameraMode::save_data(Common::SeekableWriteStream &fh) const {
+	debugC(4, kDebugSave, "    qdCameraMode::save_data(): before %ld", fh.pos());
+
 	fh.writeSint32LE((int)camera_mode_);
 	fh.writeFloatLE(work_time_);
 	fh.writeFloatLE(scrolling_speed_);
@@ -122,6 +126,7 @@ bool qdCameraMode::save_data(Common::SeekableWriteStream &fh) const {
 		fh.writeByte(0);
 	}
 
+	debugC(4, kDebugSave, "    qdCameraMode::save_data(): after %ld", fh.pos());
 	return true;
 }
 

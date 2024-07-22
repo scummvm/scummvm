@@ -628,6 +628,7 @@ void qdGameObjectState::set_bound(const Vect3f &b) {
 }
 
 bool qdGameObjectState::load_data(Common::SeekableReadStream &fh, int save_version) {
+	debugC(3, kDebugSave, "  qdGameObjectState::load_data before: %ld", fh.pos());
 	if (!qdConditionalObject::load_data(fh, save_version)) return false;
 
 	cur_time_ = fh.readFloatLE();
@@ -664,10 +665,12 @@ bool qdGameObjectState::load_data(Common::SeekableReadStream &fh, int save_versi
 		}
 	}
 
+	debugC(3, kDebugSave, "  qdGameObjectState::load_data after: %ld", fh.pos());
 	return true;
 }
 
 bool qdGameObjectState::save_data(Common::SeekableWriteStream &fh) const {
+	debugC(3, kDebugSave, "  qdGameObjectState::save_data before: %ld", fh.pos());
 	if (!qdConditionalObject::save_data(fh)) return false;
 
 	fh.writeFloatLE(cur_time_);
@@ -699,6 +702,7 @@ bool qdGameObjectState::save_data(Common::SeekableWriteStream &fh) const {
 	} else
 		fh.writeByte(0);
 
+	debugC(3, kDebugSave, "  qdGameObjectState::save_data after: %ld", fh.pos());
 	return true;
 }
 
@@ -1569,4 +1573,3 @@ bool qdGameObjectStateMask::load_resources() {
 	return true;
 }
 } // namespace QDEngine
-

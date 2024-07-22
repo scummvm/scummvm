@@ -807,6 +807,7 @@ bool qdGameScene::is_music_track_in_list(qdMusicTrack *p) const {
 }
 
 bool qdGameScene::load_data(Common::SeekableReadStream &fh, int save_version) {
+	debugC(3, kDebugSave, "  qdGameScene::load_data before: %ld", fh.pos());
 	if (!qdConditionalObject::load_data(fh, save_version)) {
 		return false;
 	}
@@ -814,13 +815,12 @@ bool qdGameScene::load_data(Common::SeekableReadStream &fh, int save_version) {
 	if (!camera.load_data(fh, save_version))
 		return false;
 
-	debugC(3, kDebugLog, "qdGameScene::load_data(%d): Loading objects %d", object_list().size(), fh.pos());
+	debugC(3, kDebugSave, "  qdGameScene::load_data(%zu): Loading objects %ld", object_list().size(), fh.pos());
 	for (auto &it : object_list()) {
 		if (!it->load_data(fh, save_version)) {
 			return false;
 		}
 	}
-
 
 	size_t sz = grid_zone_list().size();
 	if (sz) {
@@ -841,7 +841,6 @@ bool qdGameScene::load_data(Common::SeekableReadStream &fh, int save_version) {
 	}
 
 	int fl = fh.readUint32LE();
-	debugC(3, kDebugLog, "qdGameScene::load_data(%d): flag", fl);
 	if (fl) {
 		qdNamedObjectReference ref;
 		if (!ref.load_data(fh, save_version))
@@ -873,12 +872,13 @@ bool qdGameScene::load_data(Common::SeekableReadStream &fh, int save_version) {
 			minigame_->load_game(save_buf, fl, this);
 	}
 
-	debugC(3, kDebugLog, "qdGameScene::load_data(%d): Loaded", object_list().size());
+	debugC(3, kDebugSave, "  qdGameScene::load_data after: %ld", fh.pos());
 
 	return true;
 }
 
 bool qdGameScene::save_data(Common::SeekableWriteStream &fh) const {
+	debugC(3, kDebugSave, "  qdGameScene::save_data before: %ld", fh.pos());
 	if (!qdConditionalObject::save_data(fh)) {
 		return false;
 	}
@@ -887,7 +887,7 @@ bool qdGameScene::save_data(Common::SeekableWriteStream &fh) const {
 		return false;
 	}
 
-	debugC(3, kDebugLog, "qdGameSceen::save_data(%d): Saving objects %d", object_list().size(), fh.pos());
+	debugC(3, kDebugSave, "  qdGameSceen::save_data(%zu): Saving objects %ld", object_list().size(), fh.pos());
 	for (auto &it : object_list()) {
 		if (!it->save_data(fh)) {
 			return false;
@@ -922,6 +922,7 @@ bool qdGameScene::save_data(Common::SeekableWriteStream &fh) const {
 		fh.writeUint32LE(0);
 	}
 
+	debugC(3, kDebugSave, "  qdGameScene::save_data after: %ld", fh.pos());
 	return true;
 }
 

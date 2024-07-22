@@ -161,6 +161,7 @@ bool qdNamedObjectReference::save_script(Common::SeekableWriteStream &fh, int in
 }
 
 bool qdNamedObjectReference::load_data(Common::SeekableReadStream &fh, int version) {
+	debugC(5, kDebugSave, "      qdNamedObjectReference::load_data before: %ld", fh.pos());
 	int nlevels = fh.readSint32LE();
 
 	object_types_.resize(nlevels);
@@ -176,10 +177,12 @@ bool qdNamedObjectReference::load_data(Common::SeekableReadStream &fh, int versi
 		object_names_[i] = str.c_str();
 	}
 
+	debugC(5, kDebugSave, "      qdNamedObjectReference::load_data after: %ld", fh.pos());
 	return true;
 }
 
 bool qdNamedObjectReference::save_data(Common::SeekableWriteStream &fh) const {
+	debugC(5, kDebugSave, "      qdNamedObjectReference::save_data before: %ld", fh.pos());
 	fh.writeSint32LE(num_levels());
 
 	for (int i = 0; i < num_levels(); i ++) {
@@ -188,6 +191,7 @@ bool qdNamedObjectReference::save_data(Common::SeekableWriteStream &fh) const {
 		fh.writeString(object_names_[i].c_str());
 	}
 
+	debugC(5, kDebugSave, "      qdNamedObjectReference::save_data after: %ld", fh.pos());
 	return true;
 }
 

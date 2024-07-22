@@ -1322,6 +1322,7 @@ int qdGameObjectAnimated::get_state_index(const qdGameObjectState *p) const {
 }
 
 bool qdGameObjectAnimated::load_data(Common::SeekableReadStream &fh, int save_version) {
+	debugC(4, kDebugSave, "    qdGameObjectAnimated::load_data before: %ld", fh.pos());
 	if (!qdGameObject::load_data(fh, save_version)) return false;
 
 	cur_state_ = fh.readSint32LE();
@@ -1356,10 +1357,13 @@ bool qdGameObjectAnimated::load_data(Common::SeekableReadStream &fh, int save_ve
 	inventory_cell_index_ = fh.readSint32LE();
 	last_chg_time_ = fh.readUint32LE();
 
+	debugC(4, kDebugSave, "    qdGameObjectAnimated::load_data after: %ld", fh.pos());
+
 	return true;
 }
 
 bool qdGameObjectAnimated::save_data(Common::SeekableWriteStream &fh) const {
+	debugC(4, kDebugSave, "    qdGameObjectAnimated::save_data before: %ld", fh.pos());
 	if (!qdGameObject::save_data(fh)) return false;
 
 	fh.writeSint32LE(cur_state_);
@@ -1390,6 +1394,7 @@ bool qdGameObjectAnimated::save_data(Common::SeekableWriteStream &fh) const {
 
 	fh.writeSint32LE(last_chg_time_);
 
+	debugC(4, kDebugSave, "    qdGameObjectAnimated::save_data after: %ld", fh.pos());
 	return true;
 }
 
@@ -1672,4 +1677,3 @@ bool qdGameObjectAnimated::get_debug_info(XBuffer &buf) const {
 	return true;
 }
 } // namespace QDEngine
-
