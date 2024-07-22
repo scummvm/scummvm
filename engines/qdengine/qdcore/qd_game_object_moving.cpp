@@ -1836,8 +1836,8 @@ bool qdGameObjectMoving::load_data(Common::SeekableReadStream &fh, int save_vers
 	if (!qdGameObjectAnimated::load_data(fh, save_version)) return false;
 
 	int idx = fh.readSint32LE();
-	walk_grid_size_.x = fh.readSint16LE();
-	walk_grid_size_.y = fh.readSint16LE();
+	walk_grid_size_.x = fh.readSint32LE();
+	walk_grid_size_.y = fh.readSint32LE();
 
 	if (idx != -1)
 		last_walk_state_ = get_state(idx);
@@ -2796,4 +2796,3 @@ bool qdGameObjectMoving::get_debug_info(XBuffer &buf) const {
 	return true;
 }
 } // namespace QDEngine
-
