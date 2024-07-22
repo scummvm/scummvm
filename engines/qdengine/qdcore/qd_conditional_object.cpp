@@ -250,16 +250,19 @@ bool qdConditionalObject::restore_object() {
 #endif
 
 bool qdConditionalObject::load_data(Common::SeekableReadStream &fh, int save_version) {
+	debugC(4, kDebugSave, "    qdConditionalObject::load_data(): before %ld", fh.pos());
 	if (!qdNamedObject::load_data(fh, save_version))
 		return false;
 
 	for (auto &it : conditions_)
 		it.load_data(fh, save_version);
 
+	debugC(4, kDebugSave, "    qdConditionalObject::load_data(): after %ld", fh.pos());
 	return true;
 }
 
 bool qdConditionalObject::save_data(Common::SeekableWriteStream &fh) const {
+	debugC(4, kDebugSave, "    qdConditionalObject::save_data(): before %ld", fh.pos());
 	if (!qdNamedObject::save_data(fh)) {
 		return false;
 	}
@@ -267,6 +270,7 @@ bool qdConditionalObject::save_data(Common::SeekableWriteStream &fh) const {
 	for (auto &it : conditions_)
 		it.save_data(fh);
 
+	debugC(4, kDebugSave, "    qdConditionalObject::save_data(): after %ld", fh.pos());
 	return true;
 }
 

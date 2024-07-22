@@ -304,6 +304,7 @@ qdGridZoneState *qdGridZone::get_state(const char *state_name) {
 }
 
 bool qdGridZone::load_data(Common::SeekableReadStream &fh, int saveVersion) {
+	debugC(3, kDebugSave, "  qdGridZone::load_data before: %ld", fh.pos());
 	if (!qdNamedObject::load_data(fh, saveVersion)) {
 		return false;
 	}
@@ -312,11 +313,13 @@ bool qdGridZone::load_data(Common::SeekableReadStream &fh, int saveVersion) {
 	update_timer_ = fh.readSint32LE();
 
 	state_ = (st) ? true : false;
+	debugC(3, kDebugSave, "  qdGridZone::load_data after: %ld", fh.pos());
 	return true;
 }
 
 
 bool qdGridZone::save_data(Common::SeekableWriteStream &fh) const {
+	debugC(3, kDebugSave, "  qdGridZone::save_data before: %ld", fh.pos());
 	if (!qdNamedObject::save_data(fh)) {
 		return false;
 	}
@@ -324,6 +327,7 @@ bool qdGridZone::save_data(Common::SeekableWriteStream &fh) const {
 	fh.writeByte(state_);
 	fh.writeSint32LE(update_timer_);
 
+	debugC(3, kDebugSave, "  qdGridZone::save_data after: %ld", fh.pos());
 	return true;
 }
 

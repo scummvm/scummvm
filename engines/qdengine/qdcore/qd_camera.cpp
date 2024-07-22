@@ -960,6 +960,8 @@ const sGridCell *qdCamera::get_cell(const Vect2s &cell_pos) const {
 }
 
 bool qdCamera::load_data(Common::SeekableReadStream &fh, int save_version) {
+	debugC(3, kDebugSave, "  qdCamera::load_data(): before %ld", fh.pos());
+
 	int x, y;
 	char flag;
 	scrCenter.x = fh.readSint32LE();
@@ -993,10 +995,12 @@ bool qdCamera::load_data(Common::SeekableReadStream &fh, int save_version) {
 		default_object_ = dynamic_cast<qdGameObjectAnimated *>(qdGameDispatcher::get_dispatcher()->get_named_object(&ref));
 	}
 
+	debugC(3, kDebugSave, "  qdCamera::load_data(): after %ld", fh.pos());
 	return true;
 }
 
 bool qdCamera::save_data(Common::SeekableWriteStream &fh) const {
+	debugC(3, kDebugSave, "  qdCamera::save_data(): before %ld", fh.pos());
 	fh.writeSint32LE(scrCenter.x);
 	fh.writeSint32LE(scrCenter.y);
 	fh.writeSint32LE(GSX);
@@ -1023,6 +1027,7 @@ bool qdCamera::save_data(Common::SeekableWriteStream &fh) const {
 		fh.writeByte(char(0));
 	}
 
+	debugC(3, kDebugSave, "  qdCamera::save_data(): after %ld", fh.pos());
 	return true;
 }
 

@@ -461,6 +461,8 @@ void qdCoordsAnimation::set_time_rel(float tm) {
 }
 
 bool qdCoordsAnimation::load_data(Common::SeekableReadStream &fh, int save_version) {
+	debugC(4, kDebugSave, "    qdCoordsAnimation::load_data(): before %ld", fh.pos());
+
 	if (!qdNamedObject::load_data(fh, save_version)) return false;
 
 	int v;
@@ -493,10 +495,12 @@ bool qdCoordsAnimation::load_data(Common::SeekableReadStream &fh, int save_versi
 	vec.z = fh.readFloatLE();
 	start_point_.set_dest_pos(vec);
 
+	debugC(4, kDebugSave, "    qdCoordsAnimation::load_data(): after %ld", fh.pos());
 	return true;
 }
 
 bool qdCoordsAnimation::save_data(Common::SeekableWriteStream &fh) const {
+	debugC(4, kDebugSave, "    qdCoordsAnimation::save_data(): before %ld", fh.pos());
 	if (!qdNamedObject::save_data(fh)) return false;
 
 	fh.writeSint32LE(static_cast<int>(status_));
@@ -512,10 +516,11 @@ bool qdCoordsAnimation::save_data(Common::SeekableWriteStream &fh) const {
 		it->save_data(fh);
 
 	start_point_.save_data(fh);
-	
+
 	fh.writeFloatLE(start_point_.dest_pos().x);
 	fh.writeFloatLE(start_point_.dest_pos().y);
 	fh.writeFloatLE(start_point_.dest_pos().z);
+	debugC(4, kDebugSave, "    qdCoordsAnimation::save_data(): after %ld", fh.pos());
 	return true;
 }
 } // namespace QDEngine

@@ -275,6 +275,7 @@ bool qdCounter::save_script(Common::SeekableWriteStream &fh, int indent) const {
 }
 
 bool qdCounter::load_data(Common::SeekableReadStream &fh, int save_version) {
+	debugC(3, kDebugSave, "  qdCounter::load_data(): before %ld", fh.pos());
 	int sz;
 	value_ = fh.readSint32LE();
 	sz = fh.readSint32LE();
@@ -285,10 +286,12 @@ bool qdCounter::load_data(Common::SeekableReadStream &fh, int save_version) {
 	for (auto &it : elements_)
 		it.load_data(fh, save_version);
 
+	debugC(3, kDebugSave, "  qdCounter::load_data(): after %ld", fh.pos());
 	return true;
 }
 
 bool qdCounter::save_data(Common::SeekableWriteStream &fh) const {
+	debugC(3, kDebugSave, "  qdCounter::save_data(): before %ld", fh.pos());
 	fh.writeSint32LE(value_);
 	fh.writeSint32LE(elements_.size());
 
@@ -296,6 +299,7 @@ bool qdCounter::save_data(Common::SeekableWriteStream &fh) const {
 		it.save_data(fh);
 	}
 
+	debugC(3, kDebugSave, "  qdCounter::save_data(): after %ld", fh.pos());
 	return true;
 }
 
@@ -307,4 +311,3 @@ void qdCounter::init() {
 }
 
 } // namespace QDEngine
-

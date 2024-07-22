@@ -124,6 +124,7 @@ bool qdGameObjectMouse::save_script(Common::SeekableWriteStream &fh, int indent)
 }
 
 bool qdGameObjectMouse::load_data(Common::SeekableReadStream &fh, int save_version) {
+	debugC(3, kDebugSave, "  qdGameObjectMouse::load_data before: %ld", fh.pos());
 	if (!qdGameObjectAnimated::load_data(fh, save_version))
 		return false;
 
@@ -140,10 +141,12 @@ bool qdGameObjectMouse::load_data(Common::SeekableReadStream &fh, int save_versi
 		if (!object_) return false;
 	}
 
+	debugC(3, kDebugSave, "  qdGameObjectMouse::load_data after: %ld", fh.pos());
 	return true;
 }
 
 bool qdGameObjectMouse::save_data(Common::SeekableWriteStream &fh) const {
+	debugC(3, kDebugSave, "  qdGameObjectMouse::save_data before: %ld", fh.pos());
 
 	if (object_) {
 		fh.writeUint32LE(1);
@@ -155,8 +158,8 @@ bool qdGameObjectMouse::save_data(Common::SeekableWriteStream &fh) const {
 		fh.writeUint32LE(0);
 	}
 
+	debugC(3, kDebugSave, "  qdGameObjectMouse::save_data after: %ld", fh.pos());
 	return true;
-
 }
 
 void qdGameObjectMouse::redraw(int offs_x, int offs_y) const {
@@ -287,4 +290,3 @@ bool qdGameObjectMouse::update_screen_pos() {
 	return false;
 }
 } // namespace QDEngine
-

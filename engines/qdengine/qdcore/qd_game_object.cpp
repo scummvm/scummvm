@@ -164,30 +164,31 @@ bool qdGameObject::update_screen_pos() {
 }
 
 bool qdGameObject::load_data(Common::SeekableReadStream &fh, int saveVersion) {
+	debugC(3, kDebugSave, "  qdGameObject::load_data(): before %ld", fh.pos());
+
 	if (!qdNamedObject::load_data(fh, saveVersion)) {
 		return false;
 	}
-
-	debugC(3, kDebugLog, "qdGameobject::load_data afer flag: %d", fh.pos());
 
 	r_.x = fh.readFloatLE();
 	r_.y = fh.readFloatLE();
 	r_.z = fh.readFloatLE();
 
+	debugC(3, kDebugSave, "  qdGameObject::load_data(): after %ld", fh.pos());
 	return true;
 }
 
 bool qdGameObject::save_data(Common::SeekableWriteStream &fh) const {
+	debugC(3, kDebugSave, "  qdGameObject::save_data(): before %ld", fh.pos());
 	if (!qdNamedObject::save_data(fh)) {
 		return false;
 	}
-
-	debugC(3, kDebugLog, "qdGameobject::save_data afer flag: %d", fh.pos());
 
 	fh.writeFloatLE(r_.x);
 	fh.writeFloatLE(r_.y);
 	fh.writeFloatLE(r_.z);
 
+	debugC(3, kDebugSave, "  qdGameObject::save_data(): after %ld", fh.pos());
 	return true;
 }
 

@@ -436,6 +436,7 @@ const char *qdTriggerChain::debug_comline() {
 }
 
 bool qdTriggerChain::load_data(Common::SeekableReadStream &fh, int save_version) {
+	debugC(4, kDebugSave, "    qdTriggerChain::load_data before: %ld", fh.pos());
 	int32 size = fh.readSint32LE();
 
 	if (size != elements_.size()) {
@@ -451,11 +452,13 @@ bool qdTriggerChain::load_data(Common::SeekableReadStream &fh, int save_version)
 			return false;
 		}
 	}
+	debugC(4, kDebugSave, "    qdTriggerChain::load_data after: %ld", fh.pos());
 
 	return true;
 }
 
 bool qdTriggerChain::save_data(Common::SeekableWriteStream &fh) const {
+	debugC(4, kDebugSave, "    qdTriggerChain::save_data before: %ld", fh.pos());
 	fh.writeUint32LE(elements_.size());
 
 	if (!root_element()->save_data(fh)) {
@@ -468,6 +471,7 @@ bool qdTriggerChain::save_data(Common::SeekableWriteStream &fh) const {
 		}
 	}
 
+	debugC(4, kDebugSave, "    qdTriggerChain::save_data after: %ld", fh.pos());
 	return true;
 }
 
@@ -522,4 +526,3 @@ bool qdTriggerChain::deactivate_object_triggers(const qdNamedObject *p) {
 	return ret;
 }
 } // namespace QDEngine
-
