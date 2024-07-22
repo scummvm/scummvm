@@ -44,7 +44,6 @@ qdInterfaceSave::qdInterfaceSave() : save_ID_(0),
 	thumbnail_size_y_(0),
 	text_dx_(0),
 	text_dy_(0) {
-	debugC(3, kDebugSave, "qdInterfaceSave::qdInterfaceSave()");
 	thumbnail_.set_owner(this);
 	frame_.set_owner(this);
 

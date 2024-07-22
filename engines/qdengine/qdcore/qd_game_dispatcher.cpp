@@ -2515,7 +2515,7 @@ bool qdGameDispatcher::load_save(const char *fname) {
 	else
 		toggle_inventory(false);
 
-	int32 size = fh->readSint32LE();
+	uint32 size = fh->readUint32LE();
 	if (size != global_object_list().size()) return false;
 
 	for (auto &it : global_object_list()) {
@@ -2523,7 +2523,7 @@ bool qdGameDispatcher::load_save(const char *fname) {
 			return false;
 	}
 
-	size = fh->readSint32LE();
+	size = fh->readUint32LE();
 	if (size != counter_list().size()) return false;
 
 	for (auto &it : counter_list()) {
@@ -2531,14 +2531,16 @@ bool qdGameDispatcher::load_save(const char *fname) {
 			return false;
 	}
 
-	size = fh->readSint32LE();
+	size = fh->readUint32LE();
 	if (size != scene_list().size()) return false;
 
+	debugC(3, kDebugLog, "Scene list size: %d pos: %d", scene_list().size(), fh->pos());
 	for (auto &it : scene_list()) {
 		if (!it->load_data(*fh, save_version))
 			return false;
 	}
 
+	debugC(3, kDebugLog, "Global object list size: %d pos: %d", global_object_list().size(), fh->pos());
 	size = fh->readSint32LE();
 	if (size != global_object_list().size()) return false;
 
@@ -2584,7 +2586,7 @@ bool qdGameDispatcher::save_save(const char *fname) const {
 	Common::OutSaveFile *fh;
 	fh = g_engine->_savefileMan->openForSaving(fname);
 
-	int32 save_version = 107;
+	const int32 save_version = 107;
 	fh->writeUint32LE(save_version);
 
 	if (get_active_scene()) {
@@ -2631,11 +2633,13 @@ bool qdGameDispatcher::save_save(const char *fname) const {
 	}
 
 	fh->writeUint32LE(scene_list().size());
+	debugC(3, kDebugLog, "Scene list size: %d pos: %d", scene_list().size(), fh->pos());
 	for (auto &it : scene_list()) {
 		if (!it->save_data(*fh))
 			return false;
 	}
 
+	debugC(3, kDebugLog, "Global object list size: %d pos: %d", global_object_list().size(), fh->pos());
 	fh->writeUint32LE(global_object_list().size());
 	for (auto &it : global_object_list()) {
 		if (!it->save_data(*fh)) {

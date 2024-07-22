@@ -807,19 +807,25 @@ bool qdGameScene::is_music_track_in_list(qdMusicTrack *p) const {
 }
 
 bool qdGameScene::load_data(Common::SeekableReadStream &fh, int save_version) {
-	if (!qdConditionalObject::load_data(fh, save_version)) return false;
+	if (!qdConditionalObject::load_data(fh, save_version)) {
+		return false;
+	}
 
 	if (!camera.load_data(fh, save_version))
 		return false;
 
-	for (qdGameObjectList::const_iterator it = object_list().begin(); it != object_list().end(); ++it) {
-		if (!(*it)->load_data(fh, save_version))
+	debugC(3, kDebugLog, "qdGameScene::load_data(%d): Loading objects %d", object_list().size(), fh.pos());
+	for (auto &it : object_list()) {
+		if (!it->load_data(fh, save_version)) {
 			return false;
+		}
 	}
 
-	if (size_t sz = grid_zone_list().size()) {
-		for (qdGridZoneList::const_iterator it = grid_zone_list().begin(); it != grid_zone_list().end(); ++it) {
-			if (!(*it)->load_data(fh, save_version))
+
+	size_t sz = grid_zone_list().size();
+	if (sz) {
+		for (auto &it : grid_zones.get_list()) {
+			if (!it->load_data(fh, save_version))
 				return false;
 		}
 
@@ -835,7 +841,7 @@ bool qdGameScene::load_data(Common::SeekableReadStream &fh, int save_version) {
 	}
 
 	int fl = fh.readUint32LE();
-
+	debugC(3, kDebugLog, "qdGameScene::load_data(%d): flag", fl);
 	if (fl) {
 		qdNamedObjectReference ref;
 		if (!ref.load_data(fh, save_version))
@@ -858,11 +864,16 @@ bool qdGameScene::load_data(Common::SeekableReadStream &fh, int save_version) {
 		char save_buf[save_buf_sz];
 
 		fl = fh.readSint32LE();
-		if (fl)
+		debugC(3, kDebugLog, "qdGameScene::load_data(%d): minigame", fl);
+		if (fl) {
+			debugC(3, kDebugLog, "qdGameScene::load_data(%d): minigame", fl);
 			fh.read(save_buf, fl);
+		}
 		if (minigame_)
 			minigame_->load_game(save_buf, fl, this);
 	}
+
+	debugC(3, kDebugLog, "qdGameScene::load_data(%d): Loaded", object_list().size());
 
 	return true;
 }
@@ -870,13 +881,14 @@ bool qdGameScene::load_data(Common::SeekableReadStream &fh, int save_version) {
 bool qdGameScene::save_data(Common::SeekableWriteStream &fh) const {
 	if (!qdConditionalObject::save_data(fh)) {
 		return false;
-	};
+	}
 
 	if (!camera.save_data(fh)) {
 		return false;
-	};
+	}
 
-	for (auto &it : objects.get_list()) {
+	debugC(3, kDebugLog, "qdGameSceen::save_data(%d): Saving objects %d", object_list().size(), fh.pos());
+	for (auto &it : object_list()) {
 		if (!it->save_data(fh)) {
 			return false;
 		}

@@ -80,7 +80,7 @@ bool qdNamedObject::load_data(Common::SeekableReadStream &fh, int saveVersion) {
 }
 
 bool qdNamedObject::save_data(Common::SeekableWriteStream &fh) const {
-	fh.writeSint32BE(flags_);
+	fh.writeSint32LE(flags_);
 	return true;
 }
 
@@ -154,4 +154,3 @@ const char *objectType2str(int id) {
 }
 
 } // namespace QDEngine
-

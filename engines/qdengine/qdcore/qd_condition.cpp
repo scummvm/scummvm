@@ -438,7 +438,7 @@ bool qdCondition::save_data(Common::SeekableWriteStream &fh) const {
 			return false;
 		}
 
-		fh.writeSint32LE(timer);
+		fh.writeFloatLE(timer);
 		fh.writeSint32LE(state);
 	}
 
