@@ -820,6 +820,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		Graphics::FloodFill f(_vm->_compositionBuffer.surfacePtr(), 0, seq._drawColFG);
 		f.addSeed(ivals[0], ivals[1]);
 		f.fill();
+		break;
 	}
 	case 0xaf10: { // DRAW EMPTY POLY
 		ClipSurface clipSurf(seq._drawWin, _vm->_compositionBuffer.surfacePtr());
