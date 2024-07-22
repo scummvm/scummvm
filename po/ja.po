@@ -877,7 +877,9 @@ msgstr "ゲームのファイルが見つかりません。正しいパスです
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
-msgstr "このゲームにはメタデータが関連付けられていないようです。正しいデータを記入してください。"
+msgstr ""
+"このゲームにはメタデータが関連付けられていないようです。正しいデータを記入し"
+"てください。"
 
 #: gui/integrity-dialog.cpp:569
 msgid "Files all OK"
