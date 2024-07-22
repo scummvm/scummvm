@@ -148,6 +148,9 @@ bool qdGameObjectMouse::load_data(Common::SeekableReadStream &fh, int save_versi
 bool qdGameObjectMouse::save_data(Common::SeekableWriteStream &fh) const {
 	debugC(3, kDebugSave, "  qdGameObjectMouse::save_data before: %ld", fh.pos());
 
+	if (!qdGameObjectAnimated::save_data(fh))
+		return false;
+
 	if (object_) {
 		fh.writeUint32LE(1);
 		qdNamedObjectReference ref(object_);
