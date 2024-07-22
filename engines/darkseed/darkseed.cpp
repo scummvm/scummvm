@@ -882,6 +882,38 @@ void DarkseedEngine::changeToRoom(int newRoomNumber) {
 	} else if (newRoomNumber == 11 && _previousRoomNumber == 15) {
 		_player->loadAnimations("rm11strs.nsp");
 		setupOtherNspAnimation(1,56);
+	} else if (newRoomNumber == 46 && _previousRoomNumber == 60 && _objectVar[57] == 1) {
+		_console->printTosText(62);
+		// TODO wait logic here.
+		g_engine->playCutscene("E");
+		return;
+	} else if (newRoomNumber == 7 && _previousRoomNumber == 38) {
+		_player->loadAnimations("mirror.nsp");
+		setupOtherNspAnimation(1,28);
+		if (_objectVar[47] == 0 && _currentDay == 3 && _objectVar[51] == 1) {
+			_objectVar.setObjectRunningCode(47, 2);
+		}
+	} else if ((newRoomNumber == 38) && (_previousRoomNumber == 7)) {
+		_player->loadAnimations("darkout.nsp");
+		setupOtherNspAnimation(1, 42);
+	} else if ((_previousRoomNumber == 2) && (newRoomNumber == 3)) {
+		_player->loadAnimations("rtladder.nsp");
+		setupOtherNspAnimation(1, 13);
+	} else if ((_previousRoomNumber == 61) && (newRoomNumber == 5)) {
+		_player->loadAnimations("ltladder.nsp");
+		setupOtherNspAnimation(1, 11);
+	} else if ((_previousRoomNumber == 41 && newRoomNumber == 44) || (_previousRoomNumber == 44 && newRoomNumber == 41)) {
+		_player->loadAnimations("beamer.nsp");
+		setupOtherNspAnimation(1, 58);
+		for (auto &exit : _room->room1) {
+			if (exit.roomNumber == _previousRoomNumber) {
+				_player->_position.x = exit.x + exit.width / 2;
+				_player->_position.y = exit.y;
+				_player->_direction = exit.direction;
+				_player->updatePlayerPositionAfterRoomChange();
+				_player->_walkTarget = _player->_position;
+			}
+		}
 	}
 	// TODO a bunch of other room codes here.
 	else if (newRoomNumber != 0x22 && (newRoomNumber < 0x13 || newRoomNumber > 0x17)) {
@@ -1441,6 +1473,19 @@ void DarkseedEngine::updateAnimation() {
 			changeToRoom(2);
 		}
 		break;
+	case 13:
+		advanceAnimationFrame(1);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(1).frameNo[animIndexTbl[1]];
+		} else {
+			_player->_position.x = 450;
+			_player->_position.y = 217;
+			_player->_walkTarget.x = 450;
+			_player->_walkTarget.y = 217;
+			_player->_direction = 3;
+			_player->updateSprite();
+		}
+		break;
 	case 16:
 		advanceAnimationFrame(0);
 		if (!isAnimFinished_maybe) {
@@ -1537,6 +1582,18 @@ void DarkseedEngine::updateAnimation() {
 			changeToRoom(38);
 		}
 		break;
+	case 28: // step out of mirror normal world
+		advanceAnimationFrame(1);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(1).frameNo[animIndexTbl[1]];
+		} else {
+			_player->_position.x = 418;
+			_player->_position.y = 170;
+			_player->_direction = 3;
+			_player->updateSprite();
+			_player->_walkTarget = _player->_position;
+		}
+		break;
 	case 30:
 	case 31: {
 		int animIdx = otherNspAnimationType_maybe - 30;
@@ -1567,10 +1624,22 @@ void DarkseedEngine::updateAnimation() {
 	case 41:
 		advanceAnimationFrame(0);
 		if (!isAnimFinished_maybe) {
-			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]];
+			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]];
 		} else {
 			_previousRoomNumber = _room->_roomNumber;
 			changeToRoom(7);
+		}
+		break;
+	case 42: // step out of mirror giger world
+		advanceAnimationFrame(1);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(1).frameNo[animIndexTbl[1]];
+		} else {
+			_player->_position.x = 456;
+			_player->_position.y = 173;
+			_player->_direction = 3;
+			_player->updateSprite();
+			_player->_walkTarget = _player->_position;
 		}
 		break;
 	case 43:
@@ -1667,8 +1736,9 @@ void DarkseedEngine::updateAnimation() {
 	case 58:
 		advanceAnimationFrame((otherNspAnimationType_maybe - 57) & 1);
 		if (!isAnimFinished_maybe) {
-			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]];
+			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]; //_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]];
 		} else if (otherNspAnimationType_maybe == 57) {
+			_previousRoomNumber = _room->_roomNumber;
 			changeToRoom(_room->_roomNumber == 41 ? 44 : 41);
 		} else {
 			_player->_direction = 2;
