@@ -433,8 +433,8 @@ bool qdInventoryCellSet::free_resources() {
 bool qdInventoryCellSet::load_data(Common::SeekableReadStream &fh, int save_version) {
 	debugC(4, kDebugSave, "    qdInventoryCellSet::load_data before: %ld", fh.pos());
 	if (save_version >= 102) {
-		additional_cells_.x = fh.readSint16LE();
-		additional_cells_.y = fh.readSint16LE();
+		additional_cells_.x = fh.readSint32LE();
+		additional_cells_.y = fh.readSint32LE();
 	}
 	for (auto &it : cells_) {
 		if (!it.load_data(fh, save_version))
