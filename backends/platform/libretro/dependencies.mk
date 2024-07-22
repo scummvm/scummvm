@@ -133,7 +133,7 @@ endif
 ######################################################################
 
 ifeq ($(USE_VORBIS), 1)
-DEFINES += -DUSE_VORBIS
+DEFINES += -DUSE_VORBIS -DUSE_OGG
 this_lib_subpath :=
 this_lib_header := vorbis/codec.h
 this_lib_flags := -lvorbis
@@ -174,7 +174,7 @@ endif
 ######################################################################
 
 ifeq ($(USE_TREMOR), 1)
-DEFINES += -DUSE_TREMOR -DUSE_VORBIS
+DEFINES += -DUSE_TREMOR -DUSE_VORBIS -DUSE_OGG
 this_lib_subpath :=
 this_lib_header := tremor/ivorbiscodec.h
 this_lib_flags := -ltremor
@@ -204,7 +204,7 @@ endif
 ######################################################################
 
 ifeq ($(USE_ZLIB), 1)
-DEFINES += -DUSE_ZLIB  -DWANT_ZLIB
+DEFINES += -DUSE_ZLIB -DWANT_ZLIB
 this_lib_subpath :=
 this_lib_header := zlib.h
 this_lib_flags := -lz
