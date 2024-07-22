@@ -85,6 +85,8 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		in.read(c->level, 3);
 		for (int ii = 0; ii < 3; ii++)
 			c->experience[ii] = in.readUint32BE();
+		if (header.version >= 22)
+			c->hitPointsDividend = in.readSint16BE();
 		delete[] c->faceShape;
 		c->faceShape = 0;
 		in.read(c->mageSpells, 80);
@@ -381,6 +383,7 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 		out->write(c->level, 3);
 		for (int ii = 0; ii < 3; ii++)
 			out->writeUint32BE(c->experience[ii]);
+		out->writeSint16BE(c->hitPointsDividend);
 		out->write(c->mageSpells, 80);
 		out->write(c->clericSpells, 80);
 		out->writeUint32BE(c->mageSpellsAvailableFlags);

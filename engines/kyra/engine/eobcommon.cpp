@@ -598,7 +598,7 @@ void EoBCoreEngine::loadFonts() {
 			_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, "FONT12.FNT");
 			_bookFont = Screen::FID_SJIS_SMALL_FNT;
 			_invFont4 = _invFont5 = _invFont6 = Screen::FID_SJIS_FNT;
-		}		
+		}
 		_titleFont = _conFont = _invFont3 = Screen::FID_SJIS_FNT;
 		_invFont1 = Screen::FID_SJIS_SMALL_FNT;
 	} else if (_flags.platform == Common::kPlatformSegaCD) {
@@ -850,7 +850,7 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 		}
 	}
 
-	_thrownItemShapes = new const uint8*[_numThrownItemShapes];	
+	_thrownItemShapes = new const uint8*[_numThrownItemShapes];
 	_firebeamShapes = new const uint8*[3];
 
 	_screen->loadShapeSetBitmap("THROWN", 5, 3);
@@ -892,7 +892,7 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 
 	_teleporterShapes = new const uint8*[6];
 	_sparkShapes = new const uint8*[4];
-	_compassShapes = new const uint8*[12];		
+	_compassShapes = new const uint8*[12];
 
 	_screen->loadShapeSetBitmap("DECORATE", 5, 3);
 	if (_flags.gameID == GI_EOB2) {
@@ -1032,39 +1032,62 @@ int EoBCoreEngine::getDexterityArmorClassModifier(int dexterity) {
 	return mod[dexterity];
 }
 
-int EoBCoreEngine::generateCharacterHitpointsByLevel(int charIndex, int levelIndex) {
+int EoBCoreEngine::rollHitDie(int charIndex, int levelIndex) {
 	EoBCharacter *c = &_characters[charIndex];
-	int m = getClassAndConstHitpointsModifier(c->cClass, c->constitutionCur);
+	int classOffset = getCharacterClassType(c->cClass, levelIndex);
+	int die = classOffset >= 0 ? _hpIncrPerLevel[classOffset] : 1;
+	int roll = rollDice(1, die);
+	return roll;
+}
 
-	int h = 0;
+int EoBCoreEngine::generateCharacterHitpointsByLevel(int charIndex, int levelIndex, int hitDieRoll) {
+	const unsigned int kOffsetHPRollMaxLevel = 6;
+	const unsigned int kOffsetStaticHPBonus = 12;
 
-	for (int i = 0; i < 3; i++) {
-		if (!(levelIndex & (1 << i)))
-			continue;
+	EoBCharacter *c = &_characters[charIndex];
+	int d = getCharacterClassType(c->cClass, levelIndex);
 
-		int d = getCharacterClassType(c->cClass, i);
+	int hp = 0;
 
-		if (c->level[i] <= (d >= 0 ? _hpIncrPerLevel[6 + d] : 0)) {
-			int hpAdjustment = m;
-			hpAdjustment += rollDice(1, (d >= 0) ? _hpIncrPerLevel[d] : 0);
-			// According to the AD&D handbook the const bonus shouldn't be added here
-			// when the dice roll is 0, but it is like that in the original interpreter.
-			h += (hpAdjustment < 1 && _configADDRuleEnhancements) ? 1 : hpAdjustment;
-		} else {
-			h += (d >= 0 ? _hpIncrPerLevel[12 + d] : 0);
-			// The const bonus shouldn't be added here according to
-			// the AD&D handbook, but the game does it anyway.
-			if (!_configADDRuleEnhancements)
-				h += m;
-		}
+	if (c->level[levelIndex] <= (d >= 0 ? _hpIncrPerLevel[kOffsetHPRollMaxLevel + d] : 0))
+		hp += hitDieRoll;
+	else
+		hp += d >= 0 ? _hpIncrPerLevel[kOffsetStaticHPBonus + d] : 0;
+
+	hp += getClassAndConstHitpointsModifier(c->cClass, c->constitutionCur);
+
+	hp /= _numLevelsPerClass[c->cClass];
+
+	if (hp < 1)
+		hp = 1;
+
+	return hp;
+}
+
+int EoBCoreEngine::incrCharacterHitPointsDividendByLevel(int charIndex, int levelIndex, int hitDieRoll) {
+	const unsigned int kOffsetHPRollMaxLevel = 6;
+	const unsigned int kOffsetStaticHPBonus = 12;
+
+	EoBCharacter *c = &_characters[charIndex];
+	int d = getCharacterClassType(c->cClass, levelIndex);
+
+	if (c->level[levelIndex] <= (d >= 0 ? _hpIncrPerLevel[kOffsetHPRollMaxLevel + d] : 0)) {
+		/*
+		 * Per AD&D 2nd Edition Player's Handbook, HP adjustment is added
+		 * or substracted from each Hit Die rolled for the character.
+		 *
+		 * If the adjustment would lower the number rolled to 0 or less,
+		 * the final result should be considered to be 1.
+		 *
+		 * The original game adds the HP adjustment even when Hit Die
+		 * is not rolled.
+		 */
+		int hpAdjustment = getClassAndConstHitpointsModifier(c->cClass, c->constitutionCur);
+		int hp = hitDieRoll + hpAdjustment;
+		return hp < 1 ? 1 : hp;
+	} else {
+		return d >= 0 ? _hpIncrPerLevel[kOffsetStaticHPBonus + d] : 0;
 	}
-
-	h /= _numLevelsPerClass[c->cClass];
-
-	if (h < 1)
-		h = 1;
-
-	return h;
 }
 
 int EoBCoreEngine::getClassAndConstHitpointsModifier(int cclass, int constitution) {
@@ -1544,10 +1567,34 @@ uint32 EoBCoreEngine::getRequiredExperience(int cClass, int levelIndex, int leve
 }
 
 void EoBCoreEngine::increaseCharacterLevel(int charIndex, int levelIndex) {
+	uint8 numSubclasses = _numLevelsPerClass[(_characters[charIndex].cClass)];
+
+	if (_characters[charIndex].hitPointsDividend == 0) {
+		_characters[charIndex].hitPointsDividend = _characters[charIndex].hitPointsMax * numSubclasses;
+	}
+
+	int hitDieRoll = rollHitDie(charIndex, levelIndex);
+
+	_characters[charIndex].hitPointsDividend += incrCharacterHitPointsDividendByLevel(charIndex, levelIndex, hitDieRoll);
+
+	if (_configADDRuleEnhancements) {
+		/*
+		 * The original game introduces a rounding error when
+		 * calculating HP gains for multi-class characters.
+		 * To avoid accumulating such round-off errors, we
+		 * store the dividend of the total Hit Points, and
+		 * recalculate Hit Points from it on every level up.
+		 */
+		int hpNew = _characters[charIndex].hitPointsDividend / numSubclasses;
+		_characters[charIndex].hitPointsCur += hpNew - _characters[charIndex].hitPointsMax;
+		_characters[charIndex].hitPointsMax = hpNew;
+	} else {
+		int hpInc = generateCharacterHitpointsByLevel(charIndex, levelIndex, hitDieRoll);
+		_characters[charIndex].hitPointsCur += hpInc;
+		_characters[charIndex].hitPointsMax += hpInc;
+	}
+
 	_characters[charIndex].level[levelIndex]++;
-	int hpInc = generateCharacterHitpointsByLevel(charIndex, 1 << levelIndex);
-	_characters[charIndex].hitPointsCur += hpInc;
-	_characters[charIndex].hitPointsMax += hpInc;
 
 	gui_drawCharPortraitWithStats(charIndex);
 	_txt->printMessage(_levelGainStrings[0], -1, _characters[charIndex].name);
