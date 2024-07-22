@@ -164,11 +164,16 @@ bool qdGameObject::update_screen_pos() {
 }
 
 bool qdGameObject::load_data(Common::SeekableReadStream &fh, int saveVersion) {
-	if (!qdNamedObject::load_data(fh, saveVersion)) return false;
+	if (!qdNamedObject::load_data(fh, saveVersion)) {
+		return false;
+	}
+
+	debugC(3, kDebugLog, "qdGameobject::load_data afer flag: %d", fh.pos());
 
 	r_.x = fh.readFloatLE();
 	r_.y = fh.readFloatLE();
 	r_.z = fh.readFloatLE();
+
 	return true;
 }
 
@@ -176,6 +181,8 @@ bool qdGameObject::save_data(Common::SeekableWriteStream &fh) const {
 	if (!qdNamedObject::save_data(fh)) {
 		return false;
 	}
+
+	debugC(3, kDebugLog, "qdGameobject::save_data afer flag: %d", fh.pos());
 
 	fh.writeFloatLE(r_.x);
 	fh.writeFloatLE(r_.y);
@@ -186,14 +193,8 @@ bool qdGameObject::save_data(Common::SeekableWriteStream &fh) const {
 
 bool qdGameObject::init() {
 	drop_flag(QD_OBJ_SCREEN_COORDS_FLAG);
-
 	drop_flag(QD_OBJ_STATE_CHANGE_FLAG | QD_OBJ_IS_IN_TRIGGER_FLAG | QD_OBJ_STATE_CHANGE_FLAG | QD_OBJ_IS_IN_INVENTORY_FLAG);
-
-#ifndef _QUEST_EDITOR
 	drop_flag(QD_OBJ_HIDDEN_FLAG);
-#endif
-
 	return true;
 }
 } // namespace QDEngine
-

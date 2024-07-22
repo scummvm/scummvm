@@ -180,4 +180,3 @@ void adjust_dir_end_slash(std::string &str) {
 }; /* namespace app_io */
 
 } // namespace QDEngine
-
