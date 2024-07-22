@@ -1044,12 +1044,19 @@ int EoBCoreEngine::generateCharacterHitpointsByLevel(int charIndex, int levelInd
 
 		int d = getCharacterClassType(c->cClass, i);
 
-		if (c->level[i] <= (d >= 0 ? _hpIncrPerLevel[6 + d] : 0))
-			h += rollDice(1, d >= 0 ? _hpIncrPerLevel[d] : 0);
-		else
+		if (c->level[i] <= (d >= 0 ? _hpIncrPerLevel[6 + d] : 0)) {
+			int hpAdjustment = m;
+			hpAdjustment += rollDice(1, (d >= 0) ? _hpIncrPerLevel[d] : 0);
+			// According to the AD&D handbook the const bonus shouldn't be added here
+			// when the dice roll is 0, but it is like that in the original interpreter.
+			h += (hpAdjustment < 1 && _configADDRuleEnhancements) ? 1 : hpAdjustment;
+		} else {
 			h += (d >= 0 ? _hpIncrPerLevel[12 + d] : 0);
-
-		h += m;
+			// The const bonus shouldn't be added here according to
+			// the AD&D handbook, but the game does it anyway.
+			if (!_configADDRuleEnhancements)
+				h += m;
+		}
 	}
 
 	h /= _numLevelsPerClass[c->cClass];
