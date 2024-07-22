@@ -219,6 +219,7 @@ else ifeq ($(platform), gcw0)
    AR = /opt/gcw0-toolchain/usr/bin/mipsel-linux-ar cru
    RANLIB = /opt/gcw0-toolchain/usr/bin/mipsel-linux-ranlib
    DEFINES += -DDINGUX -fomit-frame-pointer -ffast-math -march=mips32 -mtune=mips32r2 -mhard-float -fPIC
+   DEFINES += -DPRId64 #Workaround to avoid compilation error in retro_common_api.h. Root cause to be investigated.
    DEFINES += -ffunction-sections -fdata-sections -DDEFAULT_PERF_TUNER
    LDFLAGS += -shared -Wl,--gc-sections -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
    CFLAGS += -std=gnu99
