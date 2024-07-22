@@ -164,7 +164,7 @@ CharacterGenerator::CharacterGenerator(EoBCoreEngine *vm, Screen_EoB *screen) : 
 	memset(_chargenMaxStats, 0, sizeof(_chargenMaxStats));
 	memset(_chargenButtonLabels, 0, sizeof(_chargenButtonLabels));
 	memset(_nameLabelsZH, 0, sizeof(_nameLabelsZH));
-	
+
 	int temp;
 	_chargenStrings1 = _vm->staticres()->loadStrings(kEoBBaseChargenStrings1, temp);
 	_chargenStrings2 = _vm->staticres()->loadStrings(kEoBBaseChargenStrings2, temp);
@@ -860,7 +860,7 @@ int CharacterGenerator::classMenu(int raceSex) {
 					      _chargenButtonDefs[41].x + _chargenButtonDefs[41].w, _chargenButtonDefs[41].y + _chargenButtonDefs[41].h)) {
 			if (in == 199 || in == 201) {
 				res = _vm->_keyMap[Common::KEYCODE_ESCAPE];
-			} else { 
+			} else {
 				if (_vm->_flags.lang == Common::ZH_TWN && !backBtnHiLite) {
 					drawButton(5, 1);
 					_vm->_gui->simpleMenu_unselect(2, _chargenClassStrings, 0, itemsMask, 0);
@@ -1038,10 +1038,18 @@ void CharacterGenerator::generateStats(int index) {
 	c->charismaCur = c->charismaMax = sv[5] & 0xFF;
 	c->armorClass = 10 + _vm->getDexterityArmorClassModifier(sv[3] & 0xFF);
 	c->hitPointsCur = 0;
+	c->hitPointsDividend = 0;
 
 	for (int l = 0; l < 3; l++) {
-		for (int i = 0; i < c->level[l]; i++)
-			c->hitPointsCur += _vm->generateCharacterHitpointsByLevel(index, 1 << l);
+		for (int i = 0; i < c->level[l]; i++) {
+			int hitDieRoll = _vm->rollHitDie(index, l);
+			c->hitPointsDividend += _vm->incrCharacterHitPointsDividendByLevel(index, l, hitDieRoll);
+			if (_vm->_configADDRuleEnhancements) {
+				c->hitPointsCur = c->hitPointsDividend / _vm->_numLevelsPerClass[c->cClass];
+			} else {
+				c->hitPointsCur += _vm->generateCharacterHitpointsByLevel(index, l, hitDieRoll);
+			}
+		}
 	}
 
 	c->hitPointsMax = c->hitPointsCur;
@@ -1363,7 +1371,7 @@ void CharacterGenerator::processNameInput(int index, int textColor) {
 	} else {
 		_screen->fillRect(_chargenNameFieldX[index], _chargenNameFieldY[index], _chargenNameFieldX[index] + 59, _chargenNameFieldY[index] + 5, _vm->guiSettings()->colors.guiColorBlack);
 		_screen->printText(_characters[index].name, _chargenNameFieldX[index] + ((60 - _screen->getTextWidth(_characters[index].name)) >> 1), _chargenNameFieldY[index], textColor, 0);
-	}	
+	}
 	_screen->updateScreen();
 	_screen->setFont(of);
 }
@@ -1481,8 +1489,10 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 
 		*s1 = v1;
 
-		if (index == 6)
+		if (index == 6) {
 			_characters[_activeBox].hitPointsMax = v1;
+			_characters[_activeBox].hitPointsDividend = c->hitPointsMax * _vm->_numLevelsPerClass[c->cClass];
+		}
 
 		bool hpChanged = false;
 		bool acChanged = false;
@@ -2156,7 +2166,7 @@ bool TransferPartyWiz::selectAndLoadTransferFile() {
 	Common::String target = _vm->_gui->transferTargetMenu(eobTargets);
 	_screen->clearPage(0);
 	_screen->copyPage(12, 0);
-	
+
 	if (target.empty())
 		return true;
 
