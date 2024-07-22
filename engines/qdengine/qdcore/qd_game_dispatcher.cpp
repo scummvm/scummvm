@@ -2578,10 +2578,10 @@ bool qdGameDispatcher::load_save(const char *fname) {
 	if (save_version >= 10)
 		mouse_obj_->load_data(*fh, save_version);
 
+	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): TOTAL SIZE %ld", fh->pos());
+
 	if (cur_scene_ptr)
 		select_scene(cur_scene_ptr, false);
-
-	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): TOTAL SIZE %ld", fh->pos());
 
 	load_resources();
 
