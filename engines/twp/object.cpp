@@ -27,7 +27,7 @@
 #include "twp/squtil.h"
 
 #define MIN_TALK_DIST 60
-#define MIN_GIVE_DIST 30
+#define MIN_GIVE_DIST 35
 #define MIN_USE_DIST 15
 
 namespace Twp {
