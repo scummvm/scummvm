@@ -163,7 +163,7 @@ void OPL3_Generate4Ch(opl3_chip *chpi, int16_t *buf4);
 void OPL3_Generate4ChResampled(opl3_chip *chip, int16_t *buf4);
 void OPL3_Generate4ChStream(opl3_chip *chip, int16_t *sndptr1, int16_t *sndptr2, uint32_t numsamples);
 
-class OPL : public ::OPL::EmulatedOPL {
+class OPL : public ::OPL::OPL, public Audio::EmulatedChip {
 private:
 	Config::OplType _type;
 	uint _rate;

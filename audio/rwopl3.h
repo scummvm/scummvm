@@ -34,7 +34,7 @@
 namespace OPL {
 namespace RetroWaveOPL3 {
 
-class OPL : public ::OPL::RealOPL {
+class OPL : public ::OPL::OPL, public Audio::RealChip {
 private:
 	enum RWConnType {
 		RWCONNTYPE_POSIX_SERIAL,

@@ -173,7 +173,7 @@ void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length);
 FM_OPL *makeAdLibOPL(int rate);
 
 // OPL API implementation
-class OPL : public ::OPL::EmulatedOPL {
+class OPL : public ::OPL::OPL, public Audio::EmulatedChip {
 private:
 	FM_OPL *_opl;
 public:

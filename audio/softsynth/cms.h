@@ -64,7 +64,7 @@ struct SAA1099 {
 	struct saa1099_noise noise[2];		/* noise generators */
 };
 
-class DOSBoxCMS : public ::CMS::EmulatedCMS {
+class DOSBoxCMS : public ::CMS::CMS, public Audio::EmulatedChip {
 public:
 	DOSBoxCMS(uint32 basePort = 0x220) {
 		memset(_saa1099, 0, sizeof(SAA1099)*2);

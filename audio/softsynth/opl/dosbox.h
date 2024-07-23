@@ -68,13 +68,13 @@ namespace DBOPL {
 struct Chip;
 } // end of namespace DBOPL
 
-class OPL : public ::OPL::EmulatedOPL {
+class OPL : public ::OPL::OPL, public Audio::EmulatedChip {
 private:
 	Config::OplType _type;
 	uint _rate;
 
 	DBOPL::Chip *_emulator;
-	Chip _chip[2];
+	::OPL::DOSBox::Chip _chip[2];
 	union {
 		uint16 normal;
 		uint8 dual[2];

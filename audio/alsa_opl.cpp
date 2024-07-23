@@ -43,7 +43,7 @@
 namespace OPL {
 namespace ALSA {
 
-class OPL : public ::OPL::RealOPL {
+class OPL : public ::OPL::OPL, public Audio::RealChip {
 private:
 	enum {
 		kOpl2Voices = 9,

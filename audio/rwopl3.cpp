@@ -229,7 +229,7 @@ void OPL::onTimer() {
 		_rwMutex->unlock();
 	}
 
-	RealOPL::onTimer();
+	Audio::RealChip::onTimer();
 }
 
 OPL *create(Config::OplType type) {
