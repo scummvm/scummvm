@@ -70,8 +70,8 @@ const struct GameOpt {
 	{ GUIO_RENDERVGA,			"vga" },
 	{ GUIO_RENDERAMIGA,			"amiga" },
 	{ GUIO_RENDERFMTOWNS,		"fmtowns" },
-	{ GUIO_RENDERPC9821,		"pc9821" },
-	{ GUIO_RENDERPC9801,		"pc9801" },
+	{ GUIO_RENDERPC98_256C,		"pc98-256c" },
+	{ GUIO_RENDERPC98_16C,		"pc98-16c" },
 	{ GUIO_RENDERAPPLE2GS,		"2gs" },
 	{ GUIO_RENDERATARIST,		"atari" },
 	{ GUIO_RENDERMACINTOSH,		"macintosh" },
@@ -80,6 +80,7 @@ const struct GameOpt {
 	{ GUIO_RENDERZX,			"zx" },
 	{ GUIO_RENDERC64,			"c64" },
 	{ GUIO_RENDERVGAGREY,		"vgaGray" },
+	{ GUIO_RENDERPC98_8C,		"pc98-8c" },
 
 	{ GUIO_GAMEOPTIONS1, "gameOption1" },
 	{ GUIO_GAMEOPTIONS2, "gameOption2" },
