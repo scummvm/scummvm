@@ -46,9 +46,27 @@ public:
 	constexpr AlphaBlend(const uint32 color) : BaseBlend<rgbmod, alphamod>(color) {}
 
 	inline void normal(const byte *in, byte *out) const {
-		uint32 ina = in[BlendBlit::kAIndex] * this->ca >> 8;
+		uint32 ina;
 
-		if (ina != 0) {
+		if (alphamod) {
+			ina = in[BlendBlit::kAIndex] * this->ca >> 8;
+		} else {
+			ina = in[BlendBlit::kAIndex];
+		}
+
+		if (ina == 255) {
+			if (rgbmod) {
+				out[BlendBlit::kAIndex] = 255;
+				out[BlendBlit::kBIndex] = (in[BlendBlit::kBIndex] * this->cb >> 8);
+				out[BlendBlit::kGIndex] = (in[BlendBlit::kGIndex] * this->cg >> 8);
+				out[BlendBlit::kRIndex] = (in[BlendBlit::kRIndex] * this->cr >> 8);
+			} else {
+				out[BlendBlit::kAIndex] = 255;
+				out[BlendBlit::kBIndex] = in[BlendBlit::kBIndex];
+				out[BlendBlit::kGIndex] = in[BlendBlit::kGIndex];
+				out[BlendBlit::kRIndex] = in[BlendBlit::kRIndex];
+			}
+		} else if (ina != 0) {
 			if (rgbmod) {
 				const uint outb = (out[BlendBlit::kBIndex] * (255 - ina) >> 8);
 				const uint outg = (out[BlendBlit::kGIndex] * (255 - ina) >> 8);
@@ -75,12 +93,34 @@ public:
 	constexpr MultiplyBlend(const uint32 color) : BaseBlend<rgbmod, alphamod>(color) {}
 
 	inline void normal(const byte *in, byte *out) const {
-		uint32 ina = in[BlendBlit::kAIndex] * this->ca >> 8;
+		uint32 ina;
 
-		if (ina != 0) {
-			out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] * ((in[BlendBlit::kBIndex] * this->cb * ina) >> 16) >> 8;
-			out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] * ((in[BlendBlit::kGIndex] * this->cg * ina) >> 16) >> 8;
-			out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] * ((in[BlendBlit::kRIndex] * this->cr * ina) >> 16) >> 8;
+		if (alphamod) {
+			ina = in[BlendBlit::kAIndex] * this->ca >> 8;
+		} else {
+			ina = in[BlendBlit::kAIndex];
+		}
+
+		if (ina == 255) {
+			if (rgbmod) {
+				out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] * ((in[BlendBlit::kBIndex] * this->cb) >> 8) >> 8;
+				out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] * ((in[BlendBlit::kGIndex] * this->cg) >> 8) >> 8;
+				out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] * ((in[BlendBlit::kRIndex] * this->cr) >> 8) >> 8;
+			} else {
+				out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] * in[BlendBlit::kBIndex] >> 8;
+				out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] * in[BlendBlit::kGIndex] >> 8;
+				out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] * in[BlendBlit::kRIndex] >> 8;
+			}
+		} else if (ina != 0) {
+			if (rgbmod) {
+				out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] * ((in[BlendBlit::kBIndex] * this->cb * ina) >> 16) >> 8;
+				out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] * ((in[BlendBlit::kGIndex] * this->cg * ina) >> 16) >> 8;
+				out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] * ((in[BlendBlit::kRIndex] * this->cr * ina) >> 16) >> 8;
+			} else {
+				out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] * ((in[BlendBlit::kBIndex] * ina) >> 8) >> 8;
+				out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] * ((in[BlendBlit::kGIndex] * ina) >> 8) >> 8;
+				out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] * ((in[BlendBlit::kRIndex] * ina) >> 8) >> 8;
+			}
 		}
 	}
 };
@@ -102,11 +142,10 @@ public:
 
 	inline void normal(const byte *in, byte *out) const {
 		uint32 pix = *(const uint32 *)in;
-		int a = in[BlendBlit::kAIndex];
+		uint32 a = pix & BlendBlit::kAModMask;
 
 		if (a != 0) {   // Full opacity (Any value not exactly 0 is Opaque here)
-			*(uint32 *)out = pix;
-			out[BlendBlit::kAIndex] = 0xFF;
+			*(uint32 *)out = pix | BlendBlit::kAModMask;
 		}
 	}
 };
@@ -117,12 +156,34 @@ public:
 	constexpr AdditiveBlend(const uint32 color) : BaseBlend<rgbmod, alphamod>(color) {}
 
 	inline void normal(const byte *in, byte *out) const {
-		uint32 ina = in[BlendBlit::kAIndex] * this->ca >> 8;
+		uint32 ina;
 
-		if (ina != 0) {
-			out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] + ((in[BlendBlit::kBIndex] * this->cb * ina) >> 16);
-			out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] + ((in[BlendBlit::kGIndex] * this->cg * ina) >> 16);
-			out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] + ((in[BlendBlit::kRIndex] * this->cr * ina) >> 16);
+		if (alphamod) {
+			ina = in[BlendBlit::kAIndex] * this->ca >> 8;
+		} else {
+			ina = in[BlendBlit::kAIndex];
+		}
+
+		if (ina == 255) {
+			if (rgbmod) {
+				out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] + ((in[BlendBlit::kBIndex] * this->cb) >> 8);
+				out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] + ((in[BlendBlit::kGIndex] * this->cg) >> 8);
+				out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] + ((in[BlendBlit::kRIndex] * this->cr) >> 8);
+			} else {
+				out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] + in[BlendBlit::kBIndex];
+				out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] + in[BlendBlit::kGIndex];
+				out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] + in[BlendBlit::kRIndex];
+			}
+		} else if (ina != 0) {
+			if (rgbmod) {
+				out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] + ((in[BlendBlit::kBIndex] * this->cb * ina) >> 16);
+				out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] + ((in[BlendBlit::kGIndex] * this->cg * ina) >> 16);
+				out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] + ((in[BlendBlit::kRIndex] * this->cr * ina) >> 16);
+			} else {
+				out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] + ((in[BlendBlit::kBIndex] * ina) >> 8);
+				out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] + ((in[BlendBlit::kGIndex] * ina) >> 8);
+				out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] + ((in[BlendBlit::kRIndex] * ina) >> 8);
+			}
 		}
 	}
 };
@@ -133,10 +194,30 @@ public:
 	constexpr SubtractiveBlend(const uint32 color) : BaseBlend<rgbmod, alphamod>(color) {}
 
 	inline void normal(const byte *in, byte *out) const {
+		uint32 ina = in[BlendBlit::kAIndex];
 		out[BlendBlit::kAIndex] = 255;
-		out[BlendBlit::kBIndex] = MAX<int32>(out[BlendBlit::kBIndex] - ((in[BlendBlit::kBIndex] * this->cb * (out[BlendBlit::kBIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
-		out[BlendBlit::kGIndex] = MAX<int32>(out[BlendBlit::kGIndex] - ((in[BlendBlit::kGIndex] * this->cg * (out[BlendBlit::kGIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
-		out[BlendBlit::kRIndex] = MAX<int32>(out[BlendBlit::kRIndex] - ((in[BlendBlit::kRIndex] * this->cr * (out[BlendBlit::kRIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
+
+		if (ina == 255) {
+			if (rgbmod) {
+				out[BlendBlit::kBIndex] = MAX<int32>(out[BlendBlit::kBIndex] - ((in[BlendBlit::kBIndex] * this->cb * (out[BlendBlit::kBIndex])) >> 16), 0);
+				out[BlendBlit::kGIndex] = MAX<int32>(out[BlendBlit::kGIndex] - ((in[BlendBlit::kGIndex] * this->cg * (out[BlendBlit::kGIndex])) >> 16), 0);
+				out[BlendBlit::kRIndex] = MAX<int32>(out[BlendBlit::kRIndex] - ((in[BlendBlit::kRIndex] * this->cr * (out[BlendBlit::kRIndex])) >> 16), 0);
+			} else {
+				out[BlendBlit::kBIndex] = MAX<int32>(out[BlendBlit::kBIndex] - ((in[BlendBlit::kBIndex] * (out[BlendBlit::kBIndex])) >> 8), 0);
+				out[BlendBlit::kGIndex] = MAX<int32>(out[BlendBlit::kGIndex] - ((in[BlendBlit::kGIndex] * (out[BlendBlit::kGIndex])) >> 8), 0);
+				out[BlendBlit::kRIndex] = MAX<int32>(out[BlendBlit::kRIndex] - ((in[BlendBlit::kRIndex] * (out[BlendBlit::kRIndex])) >> 8), 0);
+			}
+		} else if (ina != 0) {
+			if (rgbmod) {
+				out[BlendBlit::kBIndex] = MAX<int32>(out[BlendBlit::kBIndex] - ((in[BlendBlit::kBIndex] * this->cb * (out[BlendBlit::kBIndex]) * ina) >> 24), 0);
+				out[BlendBlit::kGIndex] = MAX<int32>(out[BlendBlit::kGIndex] - ((in[BlendBlit::kGIndex] * this->cg * (out[BlendBlit::kGIndex]) * ina) >> 24), 0);
+				out[BlendBlit::kRIndex] = MAX<int32>(out[BlendBlit::kRIndex] - ((in[BlendBlit::kRIndex] * this->cr * (out[BlendBlit::kRIndex]) * ina) >> 24), 0);
+			} else {
+				out[BlendBlit::kBIndex] = MAX<int32>(out[BlendBlit::kBIndex] - ((in[BlendBlit::kBIndex] * (out[BlendBlit::kBIndex]) * ina) >> 16), 0);
+				out[BlendBlit::kGIndex] = MAX<int32>(out[BlendBlit::kGIndex] - ((in[BlendBlit::kGIndex] * (out[BlendBlit::kGIndex]) * ina) >> 16), 0);
+				out[BlendBlit::kRIndex] = MAX<int32>(out[BlendBlit::kRIndex] - ((in[BlendBlit::kRIndex] * (out[BlendBlit::kRIndex]) * ina) >> 16), 0);
+			}
+		}
 	}
 };
 
