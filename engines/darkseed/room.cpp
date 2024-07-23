@@ -78,16 +78,16 @@ void Darkseed::Room::initRoom() {
 
 bool Darkseed::Room::load() {
 	Common::String filenameBase = getRoomFilenameBase(_roomNumber);
-	Common::String romFilename;
+	Common::Path romFilename;
 	Common::File file;
-	romFilename = g_engine->getRoomFilePath(Common::String::format("%s.rom", filenameBase.c_str(), _roomNumber));
+	romFilename = g_engine->getRoomFilePath(Common::Path(Common::String::format("%s.rom", filenameBase.c_str(), _roomNumber)));
 	if(!file.open(romFilename)) {
 		return false;
 	}
 
 	Common::String nspFilename = stripSpaces(file.readString());
 	file.seek(0xd);
-	Common::String picFilename = stripSpaces(file.readString());
+	Common::Path picFilename = Common::Path(stripSpaces(file.readString()));
 	file.seek(0x1a);
 	Common::String palFilename = stripSpaces(file.readString());
 	file.seek(0x27);
@@ -158,9 +158,9 @@ bool Darkseed::Room::load() {
 		return false;
 	}
 
-	_pal.load(g_engine->getPictureFilePath(Common::String::format("%s.pal", filenameBase.c_str())));
+	_pal.load(g_engine->getPictureFilePath(Common::Path(Common::String::format("%s.pal", filenameBase.c_str()))));
 
-	_locationSprites.load(Common::String::format("%s.nsp", filenameBase.c_str()));
+	_locationSprites.load(Common::Path(Common::String::format("%s.nsp", filenameBase.c_str())));
 
 	return true;
 }

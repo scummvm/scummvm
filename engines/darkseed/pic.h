@@ -38,7 +38,7 @@ private:
 	byte currentDataByte = 0;
 
 public:
-	bool load(const Common::String &filename);
+	bool load(const Common::Path &filename);
 	Common::Array<uint8> &getPixels() {
 		return pixels;
 	}

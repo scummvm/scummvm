@@ -22,7 +22,7 @@
 #ifndef DARKSEED_PAL_H
 #define DARKSEED_PAL_H
 
-#include "common/str.h"
+#include "common/path.h"
 namespace Darkseed {
 
 #define DARKSEED_NUM_PAL_ENTRIES 16
@@ -34,7 +34,7 @@ public:
 	byte palData[DARKSEED_PAL_SIZE];
 
 public:
-	bool load(const Common::String &filename);
+	bool load(const Common::Path &filename);
 };
 
 } // namespace Darkseed
