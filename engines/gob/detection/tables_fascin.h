@@ -98,7 +98,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kFeaturesAdLib,
-	"intro.stk", 0, 0
+	0, 0, 0
 },
 { // Supplied by windlepoons in bug report #4371
 	{
@@ -127,7 +127,7 @@
 		GUIO1(GUIO_NOSUBTITLES)
 	},
 	kFeaturesCD,
-	"intro.stk", 0, 0
+	0, 0, 0
 },
 {
 	{
@@ -140,7 +140,7 @@
 		GUIO1(GUIO_NOSUBTITLES)
 	},
 	kFeaturesCD,
-	"intro.stk", 0, 0
+	0, 0, 0
 },
 {
 	{
@@ -153,7 +153,7 @@
 		GUIO1(GUIO_NOSUBTITLES)
 	},
 	kFeaturesCD,
-	"intro.stk", 0, 0
+	0, 0, 0
 },
 {
 	{
@@ -166,7 +166,7 @@
 		GUIO1(GUIO_NOSUBTITLES)
 	},
 	kFeaturesCD,
-	"intro.stk", 0, 0
+	0, 0, 0
 },
 {
 	{
@@ -179,7 +179,7 @@
 		GUIO1(GUIO_NOSUBTITLES)
 	},
 	kFeaturesCD,
-	"intro.stk", 0, 0
+	0, 0, 0
 },
 { // Supplied by dianiu in Bugreport #7069
 	{
