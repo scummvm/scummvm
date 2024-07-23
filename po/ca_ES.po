@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-22 13:12+0000\n"
+"POT-Creation-Date: 2024-07-22 22:37+0000\n"
 "PO-Revision-Date: 2024-07-10 04:43+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -5187,11 +5187,11 @@ msgstr "Ha fallat, no s'han pogut crear els fitxers d'enllaç"
 msgid "Select Playlist directory"
 msgstr "Seleccioneu el directori de la llista de reproducció"
 
-#: backends/platform/libretro/src/libretro-os-utils.cpp:170
+#: backends/platform/libretro/src/libretro-os-utils.cpp:173
 msgid "Libretro playlist"
 msgstr ""
 
-#: backends/platform/libretro/src/libretro-os-utils.cpp:173
+#: backends/platform/libretro/src/libretro-os-utils.cpp:176
 msgid ""
 "## Libretro playlists for ScummVM core\n"
 "Playlists used in Libretro frontends (e.g. Retroarch) are plain text lists "

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-22 13:12+0000\n"
+"POT-Creation-Date: 2024-07-22 22:37+0000\n"
 "PO-Revision-Date: 2024-07-21 01:43+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -4992,11 +4992,11 @@ msgstr "ჩავარდა. ღუზის ფაილები ვერ �
 msgid "Select Playlist directory"
 msgstr "აირჩიეთ დასაკრავი სიის საქაღალდე"
 
-#: backends/platform/libretro/src/libretro-os-utils.cpp:170
+#: backends/platform/libretro/src/libretro-os-utils.cpp:173
 msgid "Libretro playlist"
 msgstr ""
 
-#: backends/platform/libretro/src/libretro-os-utils.cpp:173
+#: backends/platform/libretro/src/libretro-os-utils.cpp:176
 msgid ""
 "## Libretro playlists for ScummVM core\n"
 "Playlists used in Libretro frontends (e.g. Retroarch) are plain text lists "

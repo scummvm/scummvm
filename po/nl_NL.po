@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-22 13:12+0000\n"
+"POT-Creation-Date: 2024-07-22 22:37+0000\n"
 "PO-Revision-Date: 2024-03-24 18:22+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -5302,11 +5302,11 @@ msgstr "Bestand lezen niet gelukt!"
 msgid "Select Playlist directory"
 msgstr "Selecteer additionele speldatamap"
 
-#: backends/platform/libretro/src/libretro-os-utils.cpp:170
+#: backends/platform/libretro/src/libretro-os-utils.cpp:173
 msgid "Libretro playlist"
 msgstr ""
 
-#: backends/platform/libretro/src/libretro-os-utils.cpp:173
+#: backends/platform/libretro/src/libretro-os-utils.cpp:176
 msgid ""
 "## Libretro playlists for ScummVM core\n"
 "Playlists used in Libretro frontends (e.g. Retroarch) are plain text lists "
