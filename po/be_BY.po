@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-22 22:37+0000\n"
+"POT-Creation-Date: 2024-07-23 21:48+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -317,7 +317,7 @@ msgstr "Цяпер працуе іншае сховішча. Перапыніц�
 #: base/main.cpp:585 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
-#: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
+#: engines/kyra/gui/saveload_eob.cpp:601 engines/kyra/gui/saveload_eob.cpp:634
 #: engines/parallaction/metaengine.cpp:143
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3916
 #: engines/toon/toon.cpp:1538
@@ -330,7 +330,7 @@ msgstr "Так"
 #: gui/launcher.cpp:502 gui/options.cpp:3459 gui/options.cpp:3842
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
-#: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
+#: engines/kyra/gui/saveload_eob.cpp:601 engines/kyra/gui/saveload_eob.cpp:634
 #: engines/parallaction/metaengine.cpp:149
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3916
 #: engines/toon/toon.cpp:1538
@@ -8144,7 +8144,7 @@ msgstr "Опцыі"
 msgid "Choose Spell"
 msgstr "Абраць загавор"
 
-#: engines/kyra/gui/saveload_eob.cpp:598
+#: engines/kyra/gui/saveload_eob.cpp:601
 #, fuzzy, c-format
 #| msgid ""
 #| "The following original saved game file has been found in your game path:\n"
@@ -8169,7 +8169,7 @@ msgstr ""
 "Ці жадаеце выкарыстоўваць гэтае захаванне ў ScummVM?\n"
 "\n"
 
-#: engines/kyra/gui/saveload_eob.cpp:631
+#: engines/kyra/gui/saveload_eob.cpp:634
 #, c-format
 msgid ""
 "A saved game file was found in the specified slot %d. Overwrite?\n"
@@ -8178,7 +8178,7 @@ msgstr ""
 "У азначаным слоце %d ужо ёсць захаванне гульні. Перазапісаць?\n"
 "\n"
 
-#: engines/kyra/gui/saveload_eob.cpp:664
+#: engines/kyra/gui/saveload_eob.cpp:667
 #, c-format
 msgid ""
 "%d original saved games have been successfully imported into\n"
