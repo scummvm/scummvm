@@ -315,7 +315,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
 		kFeaturesEGA | kFeaturesAdLib,
-		"disk1.stk", "intro.tot", 0
+		"disk1.stk", 0, 0
 	},
 	{ //22
 		{
@@ -367,7 +367,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 		},
 		kFeatures640x400,
-		"adi2.stk", 0, 0
+		"adi2.stk", "ediintro.tot", 0
 	},
 	{ //26
 		{
