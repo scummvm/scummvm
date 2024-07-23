@@ -27,10 +27,26 @@ class BlendBlitImpl_Base {
 	friend class BlendBlit;
 protected:
 
-template<bool doscale, bool rgbmod, bool alphamod>
-struct AlphaBlend {
-	static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
-		uint32 ina = in[BlendBlit::kAIndex] * ca >> 8;
+template<bool rgbmod, bool alphamod>
+struct BaseBlend {
+public:
+	constexpr BaseBlend(const uint32 color) :
+		ca(alphamod ? ((color >> BlendBlit::kAModShift) & 0xFF) : 255),
+		cr(rgbmod   ? ((color >> BlendBlit::kRModShift) & 0xFF) : 255),
+		cg(rgbmod   ? ((color >> BlendBlit::kGModShift) & 0xFF) : 255),
+		cb(rgbmod   ? ((color >> BlendBlit::kBModShift) & 0xFF) : 255) {}
+
+protected:
+	const byte ca, cr, cg, cb;
+};
+
+template<bool rgbmod, bool alphamod>
+struct AlphaBlend : public BaseBlend<rgbmod, alphamod> {
+public:
+	constexpr AlphaBlend(const uint32 color) : BaseBlend<rgbmod, alphamod>(color) {}
+
+	inline void normal(const byte *in, byte *out) const {
+		uint32 ina = in[BlendBlit::kAIndex] * this->ca >> 8;
 
 		if (ina != 0) {
 			if (rgbmod) {
@@ -39,9 +55,9 @@ struct AlphaBlend {
 				const uint outr = (out[BlendBlit::kRIndex] * (255 - ina) >> 8);
 
 				out[BlendBlit::kAIndex] = 255;
-				out[BlendBlit::kBIndex] = outb + (in[BlendBlit::kBIndex] * ina * cb >> 16);
-				out[BlendBlit::kGIndex] = outg + (in[BlendBlit::kGIndex] * ina * cg >> 16);
-				out[BlendBlit::kRIndex] = outr + (in[BlendBlit::kRIndex] * ina * cr >> 16);
+				out[BlendBlit::kBIndex] = outb + (in[BlendBlit::kBIndex] * ina * this->cb >> 16);
+				out[BlendBlit::kGIndex] = outg + (in[BlendBlit::kGIndex] * ina * this->cg >> 16);
+				out[BlendBlit::kRIndex] = outr + (in[BlendBlit::kRIndex] * ina * this->cr >> 16);
 			} else {
 				out[BlendBlit::kAIndex] = 255;
 				out[BlendBlit::kBIndex] = (out[BlendBlit::kBIndex] * (255 - ina) + in[BlendBlit::kBIndex] * ina) >> 8;
@@ -53,29 +69,38 @@ struct AlphaBlend {
 	}
 };
 
-template<bool doscale, bool rgbmod, bool alphamod>
-struct MultiplyBlend {
-	static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
-		uint32 ina = in[BlendBlit::kAIndex] * ca >> 8;
+template<bool rgbmod, bool alphamod>
+struct MultiplyBlend : public BaseBlend<rgbmod, alphamod> {
+public:
+	constexpr MultiplyBlend(const uint32 color) : BaseBlend<rgbmod, alphamod>(color) {}
+
+	inline void normal(const byte *in, byte *out) const {
+		uint32 ina = in[BlendBlit::kAIndex] * this->ca >> 8;
 
 		if (ina != 0) {
-			out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] * ((in[BlendBlit::kBIndex] * cb * ina) >> 16) >> 8;
-			out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] * ((in[BlendBlit::kGIndex] * cg * ina) >> 16) >> 8;
-			out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] * ((in[BlendBlit::kRIndex] * cr * ina) >> 16) >> 8;
+			out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] * ((in[BlendBlit::kBIndex] * this->cb * ina) >> 16) >> 8;
+			out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] * ((in[BlendBlit::kGIndex] * this->cg * ina) >> 16) >> 8;
+			out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] * ((in[BlendBlit::kRIndex] * this->cr * ina) >> 16) >> 8;
 		}
 	}
 };
 
-template<bool doscale, bool rgbmod, bool alphamod>
-struct OpaqueBlend {
-	static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
+template<bool rgbmod, bool alphamod>
+struct OpaqueBlend : public BaseBlend<rgbmod, alphamod> {
+public:
+	constexpr OpaqueBlend(const uint32 color) : BaseBlend<rgbmod, alphamod>(color) {}
+
+	inline void normal(const byte *in, byte *out) const {
 		*(uint32 *)out = *(const uint32 *)in | BlendBlit::kAModMask;
 	}
 };
 
-template<bool doscale, bool rgbmod, bool alphamod>
-struct BinaryBlend {
-	static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
+template<bool rgbmod, bool alphamod>
+struct BinaryBlend : public BaseBlend<rgbmod, alphamod> {
+public:
+	constexpr BinaryBlend(const uint32 color) : BaseBlend<rgbmod, alphamod>(color) {}
+
+	inline void normal(const byte *in, byte *out) const {
 		uint32 pix = *(const uint32 *)in;
 		int a = in[BlendBlit::kAIndex];
 
@@ -86,26 +111,32 @@ struct BinaryBlend {
 	}
 };
 
-template<bool doscale, bool rgbmod, bool alphamod>
-struct AdditiveBlend {
-	static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
-		uint32 ina = in[BlendBlit::kAIndex] * ca >> 8;
+template<bool rgbmod, bool alphamod>
+struct AdditiveBlend : public BaseBlend<rgbmod, alphamod> {
+public:
+	constexpr AdditiveBlend(const uint32 color) : BaseBlend<rgbmod, alphamod>(color) {}
+
+	inline void normal(const byte *in, byte *out) const {
+		uint32 ina = in[BlendBlit::kAIndex] * this->ca >> 8;
 
 		if (ina != 0) {
-			out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] + ((in[BlendBlit::kBIndex] * cb * ina) >> 16);
-			out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] + ((in[BlendBlit::kGIndex] * cg * ina) >> 16);
-			out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] + ((in[BlendBlit::kRIndex] * cr * ina) >> 16);
+			out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] + ((in[BlendBlit::kBIndex] * this->cb * ina) >> 16);
+			out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] + ((in[BlendBlit::kGIndex] * this->cg * ina) >> 16);
+			out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] + ((in[BlendBlit::kRIndex] * this->cr * ina) >> 16);
 		}
 	}
 };
 
-template<bool doscale, bool rgbmod, bool alphamod>
-struct SubtractiveBlend {
-	static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
+template<bool rgbmod, bool alphamod>
+struct SubtractiveBlend : public BaseBlend<rgbmod, alphamod> {
+public:
+	constexpr SubtractiveBlend(const uint32 color) : BaseBlend<rgbmod, alphamod>(color) {}
+
+	inline void normal(const byte *in, byte *out) const {
 		out[BlendBlit::kAIndex] = 255;
-		out[BlendBlit::kBIndex] = MAX<int32>(out[BlendBlit::kBIndex] - ((in[BlendBlit::kBIndex] * cb  * (out[BlendBlit::kBIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
-		out[BlendBlit::kGIndex] = MAX<int32>(out[BlendBlit::kGIndex] - ((in[BlendBlit::kGIndex] * cg  * (out[BlendBlit::kGIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
-		out[BlendBlit::kRIndex] = MAX<int32>(out[BlendBlit::kRIndex] - ((in[BlendBlit::kRIndex] * cr *  (out[BlendBlit::kRIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
+		out[BlendBlit::kBIndex] = MAX<int32>(out[BlendBlit::kBIndex] - ((in[BlendBlit::kBIndex] * this->cb * (out[BlendBlit::kBIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
+		out[BlendBlit::kGIndex] = MAX<int32>(out[BlendBlit::kGIndex] - ((in[BlendBlit::kGIndex] * this->cg * (out[BlendBlit::kGIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
+		out[BlendBlit::kRIndex] = MAX<int32>(out[BlendBlit::kRIndex] - ((in[BlendBlit::kRIndex] * this->cr * (out[BlendBlit::kRIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
 	}
 };
 
@@ -117,114 +148,114 @@ void BlendBlit::blitT(Args &args, const TSpriteBlendMode &blendMode, const Alpha
 	bool alphamod = ((args.color & kAModMask)   != kAModMask);
 	if (args.scaleX == SCALE_THRESHOLD && args.scaleY == SCALE_THRESHOLD) {
 		if (args.color == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_OPAQUE) {
-			T::template blitInnerLoop<T::template OpaqueBlend, false, false, false, false, true>(args);
+			T::template blitInnerLoop<T::template OpaqueBlend, false, false, false>(args);
 		} else if (args.color == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_BINARY) {
-			T::template blitInnerLoop<T::template BinaryBlend, false, false, false, false, true>(args);
+			T::template blitInnerLoop<T::template BinaryBlend, false, false, false>(args);
 		} else {
 			if (blendMode == BLEND_ADDITIVE) {
 				if (rgbmod) {
 					if (alphamod) {
-						T::template blitInnerLoop<T::template AdditiveBlend, false, true, true, false, true>(args);
+						T::template blitInnerLoop<T::template AdditiveBlend, false, true, true>(args);
 					} else {
-						T::template blitInnerLoop<T::template AdditiveBlend, false, true, false, false, true>(args);
+						T::template blitInnerLoop<T::template AdditiveBlend, false, true, false>(args);
 					}
 				} else {
 					if (alphamod) {
-						T::template blitInnerLoop<T::template AdditiveBlend, false, false, true, false, true>(args);
+						T::template blitInnerLoop<T::template AdditiveBlend, false, false, true>(args);
 					} else {
-						T::template blitInnerLoop<T::template AdditiveBlend, false, false, false, false, true>(args);
+						T::template blitInnerLoop<T::template AdditiveBlend, false, false, false>(args);
 					}
 				}
 			} else if (blendMode == BLEND_SUBTRACTIVE) {
 				if (rgbmod) {
-					T::template blitInnerLoop<T::template SubtractiveBlend, false, true, false, false, true>(args);
+					T::template blitInnerLoop<T::template SubtractiveBlend, false, true, false>(args);
 				} else {
-					T::template blitInnerLoop<T::template SubtractiveBlend, false, false, false, false, true>(args);
+					T::template blitInnerLoop<T::template SubtractiveBlend, false, false, false>(args);
 				}
 			} else if (blendMode == BLEND_MULTIPLY) {
 				if (rgbmod) {
 					if (alphamod) {
-						T::template blitInnerLoop<T::template MultiplyBlend, false, true, true, false, true>(args);
+						T::template blitInnerLoop<T::template MultiplyBlend, false, true, true>(args);
 					} else {
-						T::template blitInnerLoop<T::template MultiplyBlend, false, true, false, false, true>(args);
+						T::template blitInnerLoop<T::template MultiplyBlend, false, true, false>(args);
 					}
 				} else {
 					if (alphamod) {
-						T::template blitInnerLoop<T::template MultiplyBlend, false, false, true, false, true>(args);
+						T::template blitInnerLoop<T::template MultiplyBlend, false, false, true>(args);
 					} else {
-						T::template blitInnerLoop<T::template MultiplyBlend, false, false, false, false, true>(args);
+						T::template blitInnerLoop<T::template MultiplyBlend, false, false, false>(args);
 					}
 				}
 			} else {
 				assert(blendMode == BLEND_NORMAL);
 				if (rgbmod) {
 					if (alphamod) {
-						T::template blitInnerLoop<T::template AlphaBlend, false, true, true, false, true>(args);
+						T::template blitInnerLoop<T::template AlphaBlend, false, true, true>(args);
 					} else {
-						T::template blitInnerLoop<T::template AlphaBlend, false, true, false, false, true>(args);
+						T::template blitInnerLoop<T::template AlphaBlend, false, true, false>(args);
 					}
 				} else {
 					if (alphamod) {
-						T::template blitInnerLoop<T::template AlphaBlend, false, false, true, false, true>(args);
+						T::template blitInnerLoop<T::template AlphaBlend, false, false, true>(args);
 					} else {
-						T::template blitInnerLoop<T::template AlphaBlend, false, false, false, false, true>(args);
+						T::template blitInnerLoop<T::template AlphaBlend, false, false, false>(args);
 					}
 				}
 			}
 		}
 	} else {
 		if (args.color == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_OPAQUE) {
-			T::template blitInnerLoop<T::template OpaqueBlend, true, false, false, false, true>(args);
+			T::template blitInnerLoop<T::template OpaqueBlend, true, false, false>(args);
 		} else if (args.color == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_BINARY) {
-			T::template blitInnerLoop<T::template BinaryBlend, true, false, false, false, true>(args);
+			T::template blitInnerLoop<T::template BinaryBlend, true, false, false>(args);
 		} else {
 			if (blendMode == BLEND_ADDITIVE) {
 				if (rgbmod) {
 					if (alphamod) {
-						T::template blitInnerLoop<T::template AdditiveBlend, true, true, true, false, true>(args);
+						T::template blitInnerLoop<T::template AdditiveBlend, true, true, true>(args);
 					} else {
-						T::template blitInnerLoop<T::template AdditiveBlend, true, true, false, false, true>(args);
+						T::template blitInnerLoop<T::template AdditiveBlend, true, true, false>(args);
 					}
 				} else {
 					if (alphamod) {
-						T::template blitInnerLoop<T::template AdditiveBlend, true, false, true, false, true>(args);
+						T::template blitInnerLoop<T::template AdditiveBlend, true, false, true>(args);
 					} else {
-						T::template blitInnerLoop<T::template AdditiveBlend, true, false, false, false, true>(args);
+						T::template blitInnerLoop<T::template AdditiveBlend, true, false, false>(args);
 					}
 				}
 			} else if (blendMode == BLEND_SUBTRACTIVE) {
 				if (rgbmod) {
-					T::template blitInnerLoop<T::template SubtractiveBlend, true, true, false, false, true>(args);
+					T::template blitInnerLoop<T::template SubtractiveBlend, true, true, false>(args);
 				} else {
-					T::template blitInnerLoop<T::template SubtractiveBlend, true, false, false, false, true>(args);
+					T::template blitInnerLoop<T::template SubtractiveBlend, true, false, false>(args);
 				}
 			} else if (blendMode == BLEND_MULTIPLY) {
 				if (rgbmod) {
 					if (alphamod) {
-						T::template blitInnerLoop<T::template MultiplyBlend, true, true, true, false, true>(args);
+						T::template blitInnerLoop<T::template MultiplyBlend, true, true, true>(args);
 					} else {
-						T::template blitInnerLoop<T::template MultiplyBlend, true, true, false, false, true>(args);
+						T::template blitInnerLoop<T::template MultiplyBlend, true, true, false>(args);
 					}
 				} else {
 					if (alphamod) {
-						T::template blitInnerLoop<T::template MultiplyBlend, true, false, true, false, true>(args);
+						T::template blitInnerLoop<T::template MultiplyBlend, true, false, true>(args);
 					} else {
-						T::template blitInnerLoop<T::template MultiplyBlend, true, false, false, false, true>(args);
+						T::template blitInnerLoop<T::template MultiplyBlend, true, false, false>(args);
 					}
 				}
 			} else {
 				assert(blendMode == BLEND_NORMAL);
 				if (rgbmod) {
 					if (alphamod) {
-						T::template blitInnerLoop<T::template AlphaBlend, true, true, true, false, true>(args);
+						T::template blitInnerLoop<T::template AlphaBlend, true, true, true>(args);
 					} else {
-						T::template blitInnerLoop<T::template AlphaBlend, true, true, false, false, true>(args);
+						T::template blitInnerLoop<T::template AlphaBlend, true, true, false>(args);
 					}
 				} else {
 					if (alphamod) {
-						T::template blitInnerLoop<T::template AlphaBlend, true, false, true, false, true>(args);
+						T::template blitInnerLoop<T::template AlphaBlend, true, false, true>(args);
 					} else {
-						T::template blitInnerLoop<T::template AlphaBlend, true, false, false, false, true>(args);
+						T::template blitInnerLoop<T::template AlphaBlend, true, false, false>(args);
 					}
 				}
 			}
