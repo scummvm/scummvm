@@ -155,6 +155,7 @@ static const char *const selectorNameTable[] = {
 	"fade",         // Longbow, Shivers
 	"enable",       // Longbow, SQ6
 	"alterEgo",     // LSL5
+	"normalize",    // Pepper, GK1, QFG4
 	"delete",       // EcoQuest 1
 	"size",         // EcoQuest 1
 	"signal",       // EcoQuest 1, GK1
@@ -167,7 +168,6 @@ static const char *const selectorNameTable[] = {
 	"printLang",    // GK2
 	"test",         // Torin
 	"get",          // Torin, GK1
-	"normalize",    // GK1
 	"setReal",      // GK1
 	"set",          // Torin
 	"clear",        // Torin
@@ -297,6 +297,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_fade,
 	SELECTOR_enable,
 	SELECTOR_alterEgo,
+	SELECTOR_normalize,
 	SELECTOR_delete,
 	SELECTOR_size,
 	SELECTOR_signal,
@@ -310,7 +311,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_printLang,
 	SELECTOR_test,
 	SELECTOR_get,
-	SELECTOR_normalize,
 	SELECTOR_setReal,
 	SELECTOR_set,
 	SELECTOR_clear,
@@ -13435,9 +13435,49 @@ static const uint16 pepperPatchMustyMessage[] = {
 	PATCH_END
 };
 
+// In Act 6, exiting the Penn Mansion kitchen and re-entering while the butler
+//  is standing guard can lockup the game. This also occurs in the original.
+//  The bug can be triggered by clicking Walk on the kitchen when the speed
+//  slider is set to slow, or by first clicking the Truth icon on the kitchen.
+//
+// When clicking Walk on the kitchen, ego starts turning and a 3 cycle timer is
+//  set. When the timer cues, sCaughtGoToKitchen:changeState(0) calls handsOff
+//  and sets ego's motion to zero. But if ego is in the middle of turning, the
+//  turn will complete and ego will then begin walking. This cannot be seen,
+//  because the script hides ego so that the butler's view can contain Pepper.
+//  When the scene completes, ego suddenly appears in an unexpected location,
+//  causing ego's final motion to fail to reach the new-room trigger.
+//
+// We fix this by calling pepper:normalize instead of pepper:setMotion(0) in
+//  sCaughtGoToKitchen:changeState(0). This stops ego's turn in addition to
+//  their motion. The setMotion call is redundant because it is preceded
+//  by a handsOff call that also calls setMotion(0).
+//
+// Applies to: All versions
+// Responsible method: sCaughtGoToKitchen:changeState(0)
+// Fixes bug: #15263
+static const uint16 pepperSignatureKitchenLockup[] = {
+	0x38, SIG_SELECTOR16(setMotion),     // pushi setMotion
+	0x78,                                // push1
+	0x76,                                // push0
+	0x81, 0x00,                          // lag 00
+	0x4a, SIG_MAGICDWORD, 0x06,          // send 06 [ pepper setMotion: 0 ]
+	0x38, SIG_SELECTOR16(stop),          // pushi stop
+	SIG_END
+};
+
+static const uint16 pepperPatchKitchenLockup[] = {
+	0x38, PATCH_SELECTOR16(normalize),  // pushi normalize
+	0x39, 0x00,                         // pushi 00
+	PATCH_ADDTOOFFSET(+2),
+	0x4a, 0x04,                         // send 04 [ pepper normalize: ]
+	PATCH_END
+};
+
 //          script, description,                                         signature                            patch
 static const SciScriptPatcherEntry pepperSignatures[] = {
 	{  true,   116, "puzzle box fix",                                 1, pepperSignaturePuzzleBox,            pepperPatchPuzzleBox },
+	{  true,   380, "kitchen lockup fix",                             1, pepperSignatureKitchenLockup,        pepperPatchKitchenLockup },
 	{  true,   400, "musty message fix",                              1, pepperSignatureMustyMessage,         pepperPatchMustyMessage },
 	{  true,   894, "glass jar fix",                                  1, pepperSignatureGlassJar,             pepperPatchGlassJar },
 	{  true,   928, "Narrator lockup fix",                            1, sciNarratorLockupSignature,          sciNarratorLockupPatch },
