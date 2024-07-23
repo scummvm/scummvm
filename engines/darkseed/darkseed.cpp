@@ -1785,16 +1785,16 @@ void DarkseedEngine::advanceAnimationFrame(int nspAminIdx) {
 	}
 }
 
-Common::String DarkseedEngine::getRoomFilePath(const Common::String &filename) {
+Common::Path DarkseedEngine::getRoomFilePath(const Common::Path &filename) {
 	if (isCdVersion()) {
-		return "room/" + filename;
+		return Common::Path("room").join(filename);
 	}
 	return filename;
 }
 
-Common::String DarkseedEngine::getPictureFilePath(const Common::String &filename) {
+Common::Path DarkseedEngine::getPictureFilePath(const Common::Path &filename) {
 	if (isCdVersion()) {
-		return "picture/" + filename;
+		return Common::Path("picture").join(filename);
 	}
 	return filename;
 }
@@ -2614,7 +2614,7 @@ void DarkseedEngine::printTime() {
 	_console->addToCurrentLine(Common::String::format("%d: %02d %s", hour % 12, (g_engine->_currentTimeInSeconds / 60) % 60, hour < 12 ? "a.m." : "p.m."));
 }
 
-void DarkseedEngine::showFullscreenPic(const Common::String &filename) {
+void DarkseedEngine::showFullscreenPic(const Common::Path &filename) {
 	if (_fullscreenPic) {
 		delete _fullscreenPic;
 	}
@@ -2622,7 +2622,7 @@ void DarkseedEngine::showFullscreenPic(const Common::String &filename) {
 	if(!_fullscreenPic->load(filename)) {
 		delete _fullscreenPic;
 		_fullscreenPic = nullptr;
-		error("Failed to load %s", filename.c_str());
+		error("Failed to load %s", filename.toString().c_str());
 	}
 }
 
