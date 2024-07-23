@@ -141,6 +141,19 @@
 	0, "GA2INTRO.TOT", 0
 },
 {
+	{ // Supplied by fischbeck
+		"adi4",
+		"Addi Simule", // That is not an typo in the name "Addi" thats how this version is called.
+		AD_ENTRY1s("simule.stk", "66d97fe54bbf8ea4bbb18534cb28b13f", 2523796),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+	kFeatures640x480,
+	"simule.stk", "INTRODD.TOT", 0 // INTRODD.TOT brings up a main menu to select various environmental learning tasks.
+},
+{
 	{
 		"adi4",
 		"Addy 4 Grundschule Basisprogramm",
