@@ -34,7 +34,7 @@ private:
 	uint16 assetOffset = 0;
 
 public:
-	bool load(const Common::String &filename);
+	bool load(const Common::Path &filename);
 	bool getImg(uint16 index, Img &img);
 };
 

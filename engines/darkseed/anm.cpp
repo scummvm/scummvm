@@ -23,7 +23,7 @@
 #include "common/debug.h"
 
 namespace Darkseed {
-bool Anm::load(const Common::String &filename) {
+bool Anm::load(const Common::Path &filename) {
 	if(!file.open(filename)) {
 		return false;
 	}

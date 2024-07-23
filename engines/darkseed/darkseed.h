@@ -151,10 +151,10 @@ public:
 		    (f == kSupportsReturnToLauncher);
 	};
 
-	bool canLoadGameStateCurrently() override {
+	bool canLoadGameStateCurrently(Common::U32String *msg) override {
 		return true;
 	}
-	bool canSaveGameStateCurrently() override {
+	bool canSaveGameStateCurrently(Common::U32String *msg) override {
 		return true;
 	}
 
@@ -173,8 +173,8 @@ public:
 		return syncGame(s);
 	}
 
-	Common::String getRoomFilePath(const Common::String &filename);
-	Common::String getPictureFilePath(const Common::String &filename);
+	Common::Path getRoomFilePath(const Common::Path &filename);
+	Common::Path getPictureFilePath(const Common::Path &filename);
 
 	void fadeIn();
 	void fadeOut();
@@ -182,7 +182,7 @@ public:
 	void updateDisplay();
 	void setupOtherNspAnimation(int nspAnimIdx, int animId);
 	void debugTeleportToRoom(int newRoomNumber, int entranceNumber);
-	void showFullscreenPic(const Common::String &filename);
+	void showFullscreenPic(const Common::Path &filename);
 	void lookCode(int objNum);
 	void handleObjCollision(int objNum);
 	void playCutscene(const Common::String cutsceneId);
