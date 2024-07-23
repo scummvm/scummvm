@@ -1040,19 +1040,29 @@ int EoBCoreEngine::rollHitDie(int charIndex, int levelIndex) {
 	return roll;
 }
 
-int EoBCoreEngine::generateCharacterHitpointsByLevel(int charIndex, int levelIndex, int hitDieRoll) {
+bool EoBCoreEngine::shouldRollHitDieAtCurrentLevel(int charIndex, int levelIndex) {
 	const unsigned int kOffsetHPRollMaxLevel = 6;
-	const unsigned int kOffsetStaticHPBonus = 12;
-
 	EoBCharacter *c = &_characters[charIndex];
 	int d = getCharacterClassType(c->cClass, levelIndex);
+	return c->level[levelIndex] <= (d >= 0 ? _hpIncrPerLevel[kOffsetHPRollMaxLevel + d] : 0);
+}
+
+uint8 EoBCoreEngine::getStaticHitPointBonus(int charIndex, int levelIndex) {
+	const unsigned int kOffsetStaticHPBonus = 12;
+	EoBCharacter *c = &_characters[charIndex];
+	int d = getCharacterClassType(c->cClass, levelIndex);
+	return d >= 0 ? _hpIncrPerLevel[kOffsetStaticHPBonus + d] : 0;
+}
+
+int EoBCoreEngine::generateCharacterHitpointsByLevel(int charIndex, int levelIndex, int hitDieRoll) {
+	EoBCharacter *c = &_characters[charIndex];
 
 	int hp = 0;
 
-	if (c->level[levelIndex] <= (d >= 0 ? _hpIncrPerLevel[kOffsetHPRollMaxLevel + d] : 0))
+	if (shouldRollHitDieAtCurrentLevel(charIndex, levelIndex))
 		hp += hitDieRoll;
 	else
-		hp += d >= 0 ? _hpIncrPerLevel[kOffsetStaticHPBonus + d] : 0;
+		hp += getStaticHitPointBonus(charIndex, levelIndex);
 
 	hp += getClassAndConstHitpointsModifier(c->cClass, c->constitutionCur);
 
@@ -1065,13 +1075,9 @@ int EoBCoreEngine::generateCharacterHitpointsByLevel(int charIndex, int levelInd
 }
 
 int EoBCoreEngine::incrCharacterHitPointsDividendByLevel(int charIndex, int levelIndex, int hitDieRoll) {
-	const unsigned int kOffsetHPRollMaxLevel = 6;
-	const unsigned int kOffsetStaticHPBonus = 12;
-
 	EoBCharacter *c = &_characters[charIndex];
-	int d = getCharacterClassType(c->cClass, levelIndex);
 
-	if (c->level[levelIndex] <= (d >= 0 ? _hpIncrPerLevel[kOffsetHPRollMaxLevel + d] : 0)) {
+	if (shouldRollHitDieAtCurrentLevel(charIndex, levelIndex)) {
 		/*
 		 * Per AD&D 2nd Edition Player's Handbook, HP adjustment is added
 		 * or substracted from each Hit Die rolled for the character.
@@ -1086,7 +1092,7 @@ int EoBCoreEngine::incrCharacterHitPointsDividendByLevel(int charIndex, int leve
 		int hp = hitDieRoll + hpAdjustment;
 		return hp < 1 ? 1 : hp;
 	} else {
-		return d >= 0 ? _hpIncrPerLevel[kOffsetStaticHPBonus + d] : 0;
+		return (int)getStaticHitPointBonus(charIndex, levelIndex);
 	}
 }
 
@@ -1573,7 +1579,9 @@ void EoBCoreEngine::increaseCharacterLevel(int charIndex, int levelIndex) {
 		_characters[charIndex].hitPointsDividend = _characters[charIndex].hitPointsMax * numSubclasses;
 	}
 
-	int hitDieRoll = rollHitDie(charIndex, levelIndex);
+	_characters[charIndex].level[levelIndex]++;
+
+	int hitDieRoll = shouldRollHitDieAtCurrentLevel(charIndex, levelIndex) ? rollHitDie(charIndex, levelIndex) : 0;
 
 	_characters[charIndex].hitPointsDividend += incrCharacterHitPointsDividendByLevel(charIndex, levelIndex, hitDieRoll);
 
@@ -1593,8 +1601,6 @@ void EoBCoreEngine::increaseCharacterLevel(int charIndex, int levelIndex) {
 		_characters[charIndex].hitPointsCur += hpInc;
 		_characters[charIndex].hitPointsMax += hpInc;
 	}
-
-	_characters[charIndex].level[levelIndex]++;
 
 	gui_drawCharPortraitWithStats(charIndex);
 	_txt->printMessage(_levelGainStrings[0], -1, _characters[charIndex].name);

@@ -399,6 +399,8 @@ protected:
 	// Characters
 	int getDexterityArmorClassModifier(int dexterity);
 	int rollHitDie(int charIndex, int levelIndex);
+	bool shouldRollHitDieAtCurrentLevel(int charIndex, int levelIndex);
+	uint8 getStaticHitPointBonus(int charIndex, int levelIndex);
 	int generateCharacterHitpointsByLevel(int charIndex, int levelIndex, int hitDieRoll);
 	int incrCharacterHitPointsDividendByLevel(int charIndex, int levelIndex, int hitDieRoll);
 	int getClassAndConstHitpointsModifier(int cclass, int constitution);
