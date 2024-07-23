@@ -43,7 +43,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kFeaturesEGA | kFeaturesAdLib,
-	"disk1.stk", "intro.tot", 0
+	"disk1.stk", 0, 0
 },
 {
 	{
@@ -56,7 +56,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kFeaturesEGA | kFeaturesAdLib,
-	"disk1.stk", "intro.tot", 0
+	"disk1.stk", 0, 0
 },
 { // Supplied by misterhands in bug report #6079
 	{
@@ -69,7 +69,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kFeaturesEGA | kFeaturesAdLib,
-	"disk1.stk", "intro.tot", 0
+	"disk1.stk", 0, 0
 },
 { // Supplied by einstein95 in bug report #6102
 	{
@@ -82,7 +82,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kFeaturesEGA | kFeaturesAdLib,
-	"disk1.stk", "intro.tot", 0
+	"disk1.stk", 0, 0
 },
 { // Supplied by einstein95 in bug report #6102
 	{
@@ -95,7 +95,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kFeaturesEGA | kFeaturesAdLib,
-	"disk1.stk", "intro.tot", 0
+	"disk1.stk", 0, 0
 },
 { // Supplied by alestedx in bug report #6269
 	{
@@ -108,7 +108,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kFeaturesEGA | kFeaturesAdLib,
-	"disk1.stk", "intro.tot", 0
+	"disk1.stk", 0, 0
 },
 { // Supplied by Hkz
 	{
@@ -121,7 +121,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kFeaturesEGA | kFeaturesAdLib,
-	"disk1.stk", "intro.tot", 0
+	"disk1.stk", 0, 0
 },
 {
 	{
@@ -134,7 +134,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kFeaturesEGA | kFeaturesAdLib,
-	"disk1.stk", "intro.tot", 0
+	"disk1.stk", 0, 0
 },
 
 // -- Amiga --
@@ -150,7 +150,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kFeaturesEGA,
-	"disk1.stk", "intro.tot", 0
+	"disk1.stk", 0, 0
 },
 
 { // Supplied by CaptainHIT in bug report #11594
@@ -164,7 +164,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kFeaturesEGA,
-	"disk1.stk", "intro.tot", 0
+	"disk1.stk", 0, 0
 },
 
 { // Supplied by CaptainHIT in bug report #11593
@@ -178,7 +178,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kFeaturesEGA,
-	"disk1.stk", "intro.tot", 0
+	"disk1.stk", 0, 0
 },
 
 { // Supplied by CaptainHIT in bug report #11595
@@ -192,7 +192,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kFeaturesEGA,
-	"disk1.stk", "intro.tot", 0
+	"disk1.stk", 0, 0
 },
 
 #endif // GOB_DETECTION_TABLES_GEISHA_H
