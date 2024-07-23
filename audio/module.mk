@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	adlib_ms.o \
 	audiostream.o \
 	casio.o \
+	chip.o \
 	cms.o \
 	fmopl.o \
 	mac_plugin.o \

@@ -55,7 +55,7 @@ static const uint8 OPL2LPTRegisterWrite[] = {
 namespace OPL {
 namespace OPL2LPT {
 
-class OPL : public ::OPL::RealOPL {
+class OPL : public ::OPL::OPL, public Audio::RealChip {
 private:
 	struct parport *_pport;
 	Config::OplType _type;
