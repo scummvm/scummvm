@@ -60,7 +60,8 @@ enum GameType {
 	kGameTypeOnceUponATime, // Need more inspection to see if Baba Yaga or Abracadabra
 	//kGameTypeAJWorld -> Deprecated, duplicated with kGameTypeAdibou1
 	kGameTypeCrousti = 24, // Explicit value needed to not invalidate save games after removing kGameTypeAJWorld
-	kGameTypeDynastyWood
+	kGameTypeDynastyWood,
+	kGameTypeAdi1
 };
 
 enum Features {

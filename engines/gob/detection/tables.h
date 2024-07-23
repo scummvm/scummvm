@@ -67,6 +67,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{"bambou", "Playtoons Limited Edition - Bambou le sauveur de la jungle"},
 	{"fascination", "Fascination"},
 	{"geisha", "Geisha"},
+	{"adi1", "ADI 1"},
 	{"adi2", "ADI 2"},
 	{"adi4", "ADI 4"},
 	{"adi5", "ADI 5"},
@@ -102,7 +103,8 @@ static const GOBGameDescription gameDescriptions[] = {
 	#include "gob/detection/tables_urban.h"     // Urban Runner
 	#include "gob/detection/tables_playtoons.h" // The Playtoons series
 	#include "gob/detection/tables_pierresmagiques.h" // Le pays des Pierres Magiques / The Land of the Magic Stones
-	#include "gob/detection/tables_adi2.h"      // The ADI / Addy 2 series
+	#include "gob/detection/tables_adi1.h"      // The ADI 1 series
+	#include "gob/detection/tables_adi2.h"      // The ADI 2 series
 	#include "gob/detection/tables_adi4.h"      // The ADI / Addy 4 series
 	#include "gob/detection/tables_adi5.h"      // The ADI / Addy 5 series
 	#include "gob/detection/tables_adibou1.h"   // Adibou 1 / A.J.'s World of Discovery / ADI Jr.
