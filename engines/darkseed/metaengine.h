@@ -24,7 +24,7 @@
 
 #include "engines/advancedDetector.h"
 
-class DarkseedMetaEngine : public AdvancedMetaEngine {
+class DarkseedMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override;
 

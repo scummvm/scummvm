@@ -23,17 +23,17 @@
 #include "common/debug.h"
 #include "darkseed.h"
 
-bool Darkseed::Pic::load(const Common::String &filename) {
+bool Darkseed::Pic::load(const Common::Path &filename) {
 	Common::File file;
-	Common::String fullPath = g_engine->getPictureFilePath(filename);
+	Common::Path fullPath = g_engine->getPictureFilePath(filename);
 	if(!file.open(fullPath)) {
-		debug("Failed to load %s", fullPath.c_str());
+		debug("Failed to load %s", fullPath.toString().c_str());
 		return false;
 	}
 	bool ret = load(file);
 	file.close();
 	if (ret) {
-		debug("Loaded %s (%d,%d)", fullPath.c_str(), width, height);
+		debug("Loaded %s (%d,%d)", fullPath.toString().c_str(), width, height);
 	}
 	return ret;
 }

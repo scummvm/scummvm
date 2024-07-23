@@ -119,17 +119,18 @@ void Darkseed::Sprite::drawScaled(int destX, int destY, int destWidth, int destH
 	}
 }
 
-bool Darkseed::Nsp::load(const Common::String &filename) {
+bool Darkseed::Nsp::load(const Common::Path &filename) {
 	Common::File file;
-	Common::String filePath = g_engine->getRoomFilePath(filename);
+	Common::Path filePath = g_engine->getRoomFilePath(filename);
 	if(!file.open(filePath)) {
 		return false;
 	}
 	bool ret = load(file);
 	file.close();
 	if (ret) {
-		debug("Loaded %s", filePath.c_str());
-		Common::String obtFilename = filePath.substr(0, filePath.size() - 4) + ".obt";
+		Common::String filePathStr = filePath.toString();
+		debug("Loaded %s", filePathStr.c_str());
+		Common::Path obtFilename = Common::Path(filePathStr.substr(0, filePathStr.size() - 4) + ".obt");
 		ret = loadObt(obtFilename);
 	}
 	return ret;
@@ -160,7 +161,7 @@ const Darkseed::Sprite &Darkseed::Nsp::getSpriteAt(int index) {
 	return frames[index];
 }
 
-bool Darkseed::Nsp::loadObt(const Common::String &filename) {
+bool Darkseed::Nsp::loadObt(const Common::Path &filename) {
 	Common::File file;
 	if(!file.open(filename)) {
 		return false;
@@ -189,7 +190,7 @@ bool Darkseed::Nsp::loadObt(const Common::String &filename) {
 
 	file.close();
 
-	debug("Loaded %s", filename.c_str());
+	debug("Loaded %s", filename.toString().c_str());
 	return true;
 }
 

@@ -38,8 +38,7 @@ const DebugChannelDef DarkseedMetaEngineDetection::debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-DarkseedMetaEngineDetection::DarkseedMetaEngineDetection() : AdvancedMetaEngineDetection(Darkseed::gameDescriptions,
-	sizeof(ADGameDescription), Darkseed::darkseedGames) {
+DarkseedMetaEngineDetection::DarkseedMetaEngineDetection() : AdvancedMetaEngineDetection(Darkseed::gameDescriptions, Darkseed::darkseedGames) {
 }
 
 REGISTER_PLUGIN_STATIC(DARKSEED_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, DarkseedMetaEngineDetection);

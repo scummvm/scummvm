@@ -36,7 +36,7 @@ private:
 	byte mode;
 	Common::Array<uint8> pixels;
 public:
-	bool load(const Common::String &filename);
+	bool load(const Common::Path &filename);
 	bool load(Common::SeekableReadStream &readStream);
 	bool loadWithoutPosition(Common::SeekableReadStream &readStream);
 

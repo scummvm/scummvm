@@ -25,7 +25,7 @@
 
 namespace Darkseed {
 
-bool Img::load(const Common::String &filename) {
+bool Img::load(const Common::Path &filename) {
 	Common::File file;
 	if(!file.open(filename)) {
 		return false;
@@ -33,7 +33,7 @@ bool Img::load(const Common::String &filename) {
 	bool ret = load(file);
 	file.close();
 	if (ret) {
-		debug("Loaded %s (%d,%d) (%d,%d) %x", filename.c_str(), x, y, width, height, mode);
+		debug("Loaded %s (%d,%d) (%d,%d) %x", filename.toString().c_str(), x, y, width, height, mode);
 	}
 	return ret;
 }

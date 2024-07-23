@@ -34,7 +34,7 @@ const Darkseed::Sprite &Darkseed::Player::getSprite(int frameNo) {
 	return _cPlayerSprites.getSpriteAt(frameNo);
 }
 
-bool Darkseed::Player::loadAnimations(const Common::String &filename) {
+bool Darkseed::Player::loadAnimations(const Common::Path &filename) {
 	return _animations.load(filename);
 }
 

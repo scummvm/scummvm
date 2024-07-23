@@ -42,7 +42,7 @@ extern const ADGameDescription gameDescriptions[];
 
 } // End of namespace Darkseed
 
-class DarkseedMetaEngineDetection : public AdvancedMetaEngineDetection {
+class DarkseedMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:

@@ -59,13 +59,13 @@ private:
 	Common::Array<Obt> animations;
 
 public:
-	bool load(const Common::String &filename);
+	bool load(const Common::Path &filename);
 	const Sprite &getSpriteAt(int index);
 	const Obt &getAnimAt(int index);
 
 private:
 	bool load(Common::SeekableReadStream &readStream);
-	bool loadObt(const Common::String &filename);
+	bool loadObt(const Common::Path &filename);
 };
 
 } // namespace Darkseed
