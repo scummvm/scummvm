@@ -2112,17 +2112,26 @@ void Actor::adjustActorPos() {
 }
 
 int ScummEngine::getActorFromPos(int x, int y) {
-	int i;
-
 	if (!testGfxAnyUsageBits(x / 8))
 		return 0;
 
-	for (i = 1; i < _numActors; i++) {
-		if (testGfxUsageBit(x / 8, i) && !getClass(i, kObjectClassUntouchable)
-			&& y >= _actors[i]->_top && y <= _actors[i]->_bottom) {
-			if (_game.version > 2 || i != VAR(VAR_EGO))
-				return i;
+	for (int i = 1; i < _numActors; i++) {
+		int16 y1 = _actors[i]->_top;
+		int16 y2 = _actors[i]->_bottom;
+
+		if (_game.version <= 2) {
+			if (i == VAR(VAR_EGO))
+				continue;
+			y2 = _actors[i]->getPos().y;
+			y1 = _actors[i]->getPos().y - 40 * V12_Y_MULTIPLIER;
+			// Yes, it's really like this in the original code. And it works as intended for
+			// e. g. bug #15277 ("MANIAC: Man-Eating Plant should not be selectable as actor")
+			if ((uint16)y1 > 128)
+				y1 = 1;
 		}
+
+		if (testGfxUsageBit(x / 8, i) && !getClass(i, kObjectClassUntouchable) && y >= y1 && y <= y2)
+			return i;
 	}
 
 	return 0;
