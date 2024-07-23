@@ -68,7 +68,8 @@ EmulatedCMS::~EmulatedCMS() {
 }
 
 int EmulatedCMS::readBuffer(int16 *buffer, const int numSamples) {
-	int len = numSamples / 2;
+	const int stereoFactor = isStereo() ? 2 : 1;
+	int len = numSamples / stereoFactor;
 	int step;
 
 	do {
@@ -76,7 +77,7 @@ int EmulatedCMS::readBuffer(int16 *buffer, const int numSamples) {
 		if (step > (_nextTick >> FIXP_SHIFT))
 			step = (_nextTick >> FIXP_SHIFT);
 
-		generateSamples(buffer, step);
+		generateSamples(buffer, step * stereoFactor);
 
 		_nextTick -= step << FIXP_SHIFT;
 		if (!(_nextTick >> FIXP_SHIFT)) {
@@ -86,7 +87,7 @@ int EmulatedCMS::readBuffer(int16 *buffer, const int numSamples) {
 			_nextTick += _samplesPerTick;
 		}
 
-		buffer += step * 2;
+		buffer += step * stereoFactor;
 		len -= step;
 	} while (len);
 
@@ -95,14 +96,6 @@ int EmulatedCMS::readBuffer(int16 *buffer, const int numSamples) {
 
 int EmulatedCMS::getRate() const {
 	return g_system->getMixer()->getOutputRate();
-}
-
-bool EmulatedCMS::endOfData() const {
-	return false;
-}
-
-bool EmulatedCMS::isStereo() const {
-	return true;
 }
 
 void EmulatedCMS::startCallbacks(int timerFrequency) {

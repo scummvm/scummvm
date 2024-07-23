@@ -140,8 +140,7 @@ public:
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples) override;
 	int getRate() const override;
-	bool endOfData() const override;
-	bool isStereo() const override;
+	bool endOfData() const override { return false; }
 
 protected:
 	// CMS API
@@ -151,11 +150,12 @@ protected:
 	/**
 	 * Read up to 'length' samples.
 	 *
-	 * Data will be in native endianess, 16 bit per sample, signed. buffer will
-	 * be filled with interleaved left and right channel samples, starting with
-	 * a left sample. The requested number of samples is stereo samples, so if
-	 * you request 2 samples, you will get a total of two left channel and two
-	 * right channel samples.
+	 * Data will be in native endianess, 16 bit per sample, signed.
+	 * For stereo OPL, buffer will be filled with interleaved
+	 * left and right channel samples, starting with a left sample.
+	 * Furthermore, the samples in the left and right are summed up.
+	 * So if you request 4 samples from a stereo OPL, you will get
+	 * a total of two left channel and two right channel samples.
 	 */
 	virtual void generateSamples(int16 *buffer, int numSamples) = 0;
 

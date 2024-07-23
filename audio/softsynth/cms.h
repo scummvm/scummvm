@@ -78,6 +78,8 @@ public:
 	void write(int a, int v) override;
 	void writeReg(int r, int v) override;
 
+	bool isStereo() const { return true; }
+
 protected:
 	void generateSamples(int16 *buffer, int numSamples) override;
 
