@@ -59,6 +59,12 @@ static const chapterEntry rawChapterTable[] = {
 	{0,  {0,  0},   {0,   0},   {0,   0},   {0, 0},     0, kHypnoColorRed}    	// NULL
 };
 
+static const chapterEntry rawChapterTableEarlyDemo[] = {
+	{31, {49, 12}, {205, 12}, {0,   0},   {127, 172}, 0,   kHypnoColorRed}, 	 // c31
+	{41, {49, 12}, {205, 12}, {0,   0},   {127, 172}, 0,   kHypnoColorRed}, 	 // c41
+	{0,  {0,  0},   {0,   0},   {0,   0},   {0, 0},     0, kHypnoColorRed}    	// NULL
+};
+
 WetEngine::WetEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {
 	_screenW = 320;
 	_screenH = 200;
@@ -98,6 +104,8 @@ void WetEngine::loadAssets() {
 
 	if (_variant == "Demo" || _variant == "DemoHebrew" || _variant == "M&MCD")
 		loadAssetsDemoDisc();
+	else if (_variant == "EarlyDemo")
+		loadAssetsEarlyDemo();
 	else if (_variant == "Gen4")
 		loadAssetsGen4();
 	else if (_variant == "PCWDemo")
@@ -242,6 +250,39 @@ void WetEngine::loadAssetsDemoDisc() {
 	loadLib("", "wetlands/c_misc/fonts.lib", true);
 	loadFonts();
 	loadLib("wetlands/sound/", "wetlands/c_misc/sound.lib", true);
+	_nextLevel = "<start>";
+}
+
+
+void WetEngine::loadAssetsEarlyDemo() {
+
+	Transition *intro;
+	intro = new Transition("c_misc/c31.mis");
+
+	intro->prefix = "c_misc/";
+	intro->intros.push_back("nw_logo.smk");
+	intro->intros.push_back("h.s");
+	intro->intros.push_back("w.s");
+	intro->frameImage = "c.s";
+	intro->frameNumber = 0;
+	_levels["<start>"] = intro;
+
+	loadArcadeLevel("c_misc/c31.mis", "c_misc/c41.mis", "c_misc/c41.mis", "");
+	loadArcadeLevel("c_misc/c41.mis", "c_misc/c61.mis", "c_misc/c61.mis", "");
+	loadArcadeLevel("c_misc/c61.mis", "<quit>", "<quit>", "");
+
+	Transition *over = new Transition("<quit>");
+	over->intros.push_back("g.s");
+	_levels["<game_over>"] = over;
+
+	loadFonts("c_misc/");
+
+	const chapterEntry *entry = rawChapterTableEarlyDemo;
+	while (entry->id) {
+		_chapterTable[entry->id] = entry;
+		entry++;
+	}
+
 	_nextLevel = "<start>";
 }
 
@@ -576,37 +617,15 @@ void WetEngine::showCredits() {
 	}
 }
 
-void WetEngine::loadFonts() {
-	Common::File file;
-
-	if (!file.open("block05.fgx"))
-		error("Cannot open font");
-
-	byte *font = (byte *)malloc(file.size());
-	file.read(font, file.size());
-
-	_font05.set_size(file.size()*8);
-	_font05.set_bits((byte *)font);
-
-	file.close();
-	free(font);
-	if (!file.open("scifi08.fgx"))
-		error("Cannot open font");
-
-	font = (byte *)malloc(file.size());
-	file.read(font, file.size());
-
-	_font08.set_size(file.size()*8);
-	_font08.set_bits((byte *)font);
-
-	file.close();
-	free(font);
-
+void WetEngine::loadFonts(const Common::String prefix) {
+	HypnoEngine::loadFonts(prefix);
 	if (_language == Common::KO_KOR) {
+		Common::File file;
+
 		if (!file.open("C_MISC/G9A.SYF"))
 			error("Cannot open Korean font");
 
-		font = (byte *)malloc(file.size());
+		byte *font = (byte *)malloc(file.size());
 		file.read(font, file.size());
 
 		_fontg9a.set_size(file.size()*8);

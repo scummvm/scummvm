@@ -337,7 +337,9 @@ public:
 	uint32 _objMissesAllowed[2];
 
 	// Fonts
-	virtual void loadFonts();
+	Common::BitArray _font05;
+	Common::BitArray _font08;
+	virtual void loadFonts(const Common::String prefix = "");
 	virtual void drawString(const Filename &name, const Common::String &str, int x, int y, int w, uint32 c);
 
 	// Conversation
@@ -383,13 +385,14 @@ public:
 
 	void loadAssets() override;
 	void loadAssetsDemoDisc();
+	void loadAssetsEarlyDemo();
 	void loadAssetsGen4();
 	void loadAssetsPCW();
 	void loadAssetsPCG();
 	void loadAssetsFullGame();
 	void loadAssetsNI();
 
-	void loadFonts() override;
+	void loadFonts(const Common::String prefix = "") override;
 	void drawString(const Filename &name, const Common::String &str, int x, int y, int w, uint32 c) override;
 	void changeCursor(const Common::String &cursor) override;
 
@@ -452,8 +455,6 @@ private:
 	bool _c33UseMouse;
 	void generateStaticEffect();
 
-	Common::BitArray _font05;
-	Common::BitArray _font08;
 	Common::BitArray _fontg9a;
 	Common::Array<uint32> _c40SegmentPath;
 	Common::Array<uint32> _c40SegmentNext;
@@ -491,7 +492,7 @@ public:
 	Common::String findNextLevel(const Common::String &level) override;
 	Common::String findNextLevel(const Transition *trans) override;
 
-	void loadFonts() override;
+	void loadFonts(const Common::String prefix = "") override;
 	void drawString(const Filename &name, const Common::String &str, int x, int y, int w, uint32 c) override;
 
 	void showConversation() override;
@@ -584,7 +585,6 @@ public:
 	void initSegment(ArcadeShooting *arc) override;
 	bool checkTransition(ArcadeTransitions &transitions, ArcadeShooting *arc) override;
 
-	void loadFonts() override;
 	void drawString(const Filename &name, const Common::String &str, int x, int y, int w, uint32 c) override;
 
 	// Saves

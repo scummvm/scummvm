@@ -640,6 +640,24 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 		_playerFrames = decodeFrames(arc->player);
 	}
 
+	if (_variant == "EarlyDemo" && (arc->id == 31 || arc->id == 41)) {
+		int cutX = 36;
+		for (int i = 0; i < int(_playerFrames.size()); i++) {
+			Graphics::Surface *frame = _playerFrames[i];
+			Graphics::Surface *newFrame = new Graphics::Surface();
+			newFrame->create(320, 200, frame->format);
+			newFrame->fillRect(Common::Rect(0, 0, 320, 200), frame->format.ARGBToColor(0, 0, 0, 0));
+			newFrame->copyRectToSurfaceWithKey(*frame, 0, 0, Common::Rect(0, 0, 320, cutX), 0);
+			newFrame->copyRectToSurfaceWithKey(*frame, 0, 200 - (frame->h - cutX - 1), Common::Rect(0, cutX, 320, frame->h - 1), 0);
+
+			frame->free();
+			delete frame;
+			_playerFrames[i] = newFrame;
+		}
+
+	}
+
+
 	if (arc->mode == "Y4" || arc->mode == "Y5")  { // These images are flipped, for some reason
 		for (Frames::iterator it = _playerFrames.begin(); it != _playerFrames.end(); ++it) {
 			for (int i = 0 ; i < (*it)->w ; i++)
@@ -1053,7 +1071,7 @@ void WetEngine::drawPlayer() {
 
 	int offset = 0;
 	// Ugly, but seems to be necessary
-	if (_levelId == 31)
+	if (_levelId == 31 && _variant != "EarlyDemo")
 		offset = 2;
 	else if (_levelId == 52)
 		offset = 2;

@@ -298,8 +298,34 @@ void HypnoEngine::loadGame(const Common::String &nextLevel, int score, int puzzl
 	error("Function \"%s\" not implemented", __FUNCTION__);
 }
 
-void HypnoEngine::loadFonts() {
-	error("Function \"%s\" not implemented", __FUNCTION__);
+void HypnoEngine::loadFonts(const Common::String prefix) {
+	Common::File file;
+	Common::Path path = Common::Path(prefix).append("block05.fgx");
+
+	if (!file.open(path))
+		error("Cannot open font %s", path.toString().c_str());
+
+	byte *font = (byte *)malloc(file.size());
+	file.read(font, file.size());
+
+	_font05.set_size(file.size()*8);
+	_font05.set_bits((byte *)font);
+
+	file.close();
+	free(font);
+	path = Common::Path(prefix).append("scifi08.fgx");
+
+	if (!file.open(path))
+		error("Cannot open font %s", path.toString().c_str());
+
+	font = (byte *)malloc(file.size());
+	file.read(font, file.size());
+
+	_font08.set_size(file.size()*8);
+	_font08.set_bits((byte *)font);
+
+	file.close();
+	free(font);
 }
 
 void HypnoEngine::drawString(const Filename &name, const Common::String &str, int x, int y, int w, uint32 c) {

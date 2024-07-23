@@ -111,6 +111,16 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
+		"wetlands", // Wetlands Demo PC Spiel (October 1995)
+		"EarlyDemo",
+		AD_ENTRY2s("wetlands.exe", "edc5b0c0caf3d5b01d344cb555d9a085", 641411,
+			  "c61.mis", "11e384b3abe0f42995bb61566d877e45", 18497),
+		Common::EN_USA,
+		Common::kPlatformDOS,
+		ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
 		"wetlands", // Wetlands Demo Disc (November 1995)
 		"Demo",
 		AD_ENTRY3s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 642231,
