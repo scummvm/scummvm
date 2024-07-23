@@ -28,18 +28,12 @@ class BlendBlitImpl_Default : public BlendBlitImpl_Base {
 	friend class BlendBlit;
 public:
 
-template<template <bool DOSCALE, bool RGBMOD, bool ALPHAMOD> class PixelFunc, bool doscale, bool rgbmod, bool alphamod, bool coloradd1, bool loaddst>
+template<template <bool RGBMOD, bool ALPHAMOD> class PixelFunc, bool doscale, bool rgbmod, bool alphamod>
 static inline void blitInnerLoop(BlendBlit::Args &args) {
 	const byte *in;
 	byte *out;
 
-	const byte rawcr = (args.color >> BlendBlit::kRModShift) & 0xFF;
-	const byte rawcg = (args.color >> BlendBlit::kGModShift) & 0xFF;
-	const byte rawcb = (args.color >> BlendBlit::kBModShift) & 0xFF;
-	const byte ca = alphamod ? ((args.color >> BlendBlit::kAModShift) & 0xFF) : 255;
-	const uint32 cr = coloradd1 ? (rgbmod   ? (rawcr == 255 ? 256 : rawcr) : 256) : (rgbmod   ? rawcr : 255);
-	const uint32 cg = coloradd1 ? (rgbmod   ? (rawcg == 255 ? 256 : rawcg) : 256) : (rgbmod   ? rawcg : 255);
-	const uint32 cb = coloradd1 ? (rgbmod   ? (rawcb == 255 ? 256 : rawcb) : 256) : (rgbmod   ? rawcb : 255);
+	const PixelFunc<rgbmod, alphamod> pixelFunc(args.color);
 
 	int scaleXCtr, scaleYCtr = args.scaleYoff;
 	const byte *inBase;
@@ -58,7 +52,7 @@ static inline void blitInnerLoop(BlendBlit::Args &args) {
 				in = inBase + scaleXCtr / BlendBlit::SCALE_THRESHOLD * args.inStep;
 			}
 
-			PixelFunc<doscale, rgbmod, alphamod>::normal(in, out, ca, cr, cg, cb);
+			pixelFunc.normal(in, out);
 
 			if (doscale)
 				scaleXCtr += args.scaleX;
@@ -158,22 +152,22 @@ static void doBlitBinaryBlendLogicGeneric(BlendBlit::Args &args) {
 }; // end of class BlendBlitImpl_Default
 
 template<>
-inline void BlendBlitImpl_Default::blitInnerLoop<BlendBlitImpl_Default::OpaqueBlend, true, false, false, false, true>(BlendBlit::Args &args) {
+inline void BlendBlitImpl_Default::blitInnerLoop<BlendBlitImpl_Default::OpaqueBlend, true, false, false>(BlendBlit::Args &args) {
 	doBlitOpaqueBlendLogicGeneric<true>(args);
 }
 
 template<>
-inline void BlendBlitImpl_Default::blitInnerLoop<BlendBlitImpl_Default::OpaqueBlend, false, false, false, false, true>(BlendBlit::Args &args) {
+inline void BlendBlitImpl_Default::blitInnerLoop<BlendBlitImpl_Default::OpaqueBlend, false, false, false>(BlendBlit::Args &args) {
 	doBlitOpaqueBlendLogicGeneric<false>(args);
 }
 
 template<>
-inline void BlendBlitImpl_Default::blitInnerLoop<BlendBlitImpl_Default::BinaryBlend, true, false, false, false, true>(BlendBlit::Args &args) {
+inline void BlendBlitImpl_Default::blitInnerLoop<BlendBlitImpl_Default::BinaryBlend, true, false, false>(BlendBlit::Args &args) {
 	doBlitBinaryBlendLogicGeneric<true>(args);
 }
 
 template<>
-inline void BlendBlitImpl_Default::blitInnerLoop<BlendBlitImpl_Default::BinaryBlend, false, false, false, false, true>(BlendBlit::Args &args) {
+inline void BlendBlitImpl_Default::blitInnerLoop<BlendBlitImpl_Default::BinaryBlend, false, false, false>(BlendBlit::Args &args) {
 	doBlitBinaryBlendLogicGeneric<false>(args);
 }
 
