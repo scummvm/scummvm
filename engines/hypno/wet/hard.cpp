@@ -342,7 +342,7 @@ Common::String WetEngine::getLocalizedString(const Common::String name) {
 		case Common::ES_ESP:
 			return "ENERGIA";
 		default:
-			return "HEALTH";
+			return "ENERGY";
 		}
 	} else if (name == "objectives") {
 		switch (_language) {

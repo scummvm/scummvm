@@ -234,6 +234,9 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	anchor.x = 0;	// This is almost always zero, except when the screen starts at the middle
 					// We don't really need it
 	anchor.y = MAX(0, anchor.y - arc->mouseBox.bottom);
+
+	// Correct mouseBox
+	arc->mouseBox.moveTo(anchor.x, anchor.y);
 	_background = new MVideo(arc->backgroundVideo, anchor, false, false, false);
 
 	drawCursorArcade(mousePos);
@@ -323,6 +326,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				drawCursorArcade(mousePos);
 				if (mousePos.x >= arc->mouseBox.right-1) {
 					g_system->warpMouse(arc->mouseBox.right-1, mousePos.y);
+				} else if (mousePos.y < arc->mouseBox.top) { // Usually top is zero
+					g_system->warpMouse(mousePos.x, arc->mouseBox.top + 1);
 				} else if (mousePos.y >= arc->mouseBox.bottom-1) {
 					g_system->warpMouse(mousePos.x, arc->mouseBox.bottom-1);
 				} else if (mousePos.x <= 40 && offset.x < 0) {
