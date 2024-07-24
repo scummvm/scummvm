@@ -638,6 +638,7 @@ public:
 	 */
 	void copyRectToSurface(const void *buffer, int srcPitch, int destX, int destY, int width, int height) {
 		_innerSurface.copyRectToSurface(buffer, srcPitch, destX, destY, width, height);
+		addDirtyRect(Common::Rect(destX, destY, destX + width, destY + height));
 	}
 
 	/**
@@ -647,6 +648,7 @@ public:
 	 */
 	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect) {
 		_innerSurface.copyRectToSurface(srcSurface, destX, destY, subRect);
+		addDirtyRect(Common::Rect(destX, destY, destX + subRect.width(), destY + subRect.height()));
 	}
 
 	/**
@@ -656,6 +658,7 @@ public:
 	 */
 	void copyRectToSurfaceWithKey(const void *buffer, int srcPitch, int destX, int destY, int width, int height, uint32 key) {
 		_innerSurface.copyRectToSurfaceWithKey(buffer, srcPitch, destX, destY, width, height, key);
+		addDirtyRect(Common::Rect(destX, destY, destX + width, destY + height));
 	}
 
 	/**
@@ -665,6 +668,7 @@ public:
 	 */
 	void copyRectToSurfaceWithKey(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect, uint32 key) {
 		_innerSurface.copyRectToSurfaceWithKey(srcSurface, destX, destY, subRect, key);
+		addDirtyRect(Common::Rect(destX, destY, destX + subRect.width(), destY + subRect.height()));
 	}
 
 	/**
