@@ -56,7 +56,7 @@ struct RoomObjElement {
 class Room {
 public:
 	static constexpr int MAX_CONNECTORS = 12;
-	int _roomNumber;
+	uint8 _roomNumber;
 	Pic pic;
 	Pal _pal;
 	Nsp _locationSprites;

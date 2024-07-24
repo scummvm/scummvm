@@ -159,12 +159,18 @@ Common::Error DarkseedEngine::run() {
 }
 
 Common::Error DarkseedEngine::syncGame(Common::Serializer &s) {
-	// The Serializer has methods isLoading() and isSaving()
-	// if you need to specific steps; for example setting
-	// an array size after reading it's length, whereas
-	// for saving it would write the existing array's length
-	int dummy = 0;
-	s.syncAsUint32LE(dummy);
+	if (_objectVar.sync(s).getCode() != Common::kNoError) {
+		error("Failed to sync objects");
+	}
+	if (_inventory.sync(s).getCode() != Common::kNoError) {
+		error("Failed to sync inventory");
+	}
+	s.syncAsUint32LE(_currentTimeInSeconds);
+	s.syncAsByte(_currentDay);
+	s.syncAsByte(_room->_roomNumber);
+	s.syncAsByte(_previousRoomNumber);
+	s.syncAsSint16LE(_player->_position.x);
+	s.syncAsSint16LE(_player->_position.y);
 
 	return Common::kNoError;
 }
