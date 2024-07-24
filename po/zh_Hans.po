@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-23 21:48+0000\n"
+"POT-Creation-Date: 2024-07-24 07:51+0000\n"
 "PO-Revision-Date: 2024-07-04 15:43+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
@@ -7360,6 +7360,16 @@ msgstr "仿真图形"
 #: engines/freescape/metaengine.cpp:118
 msgid "Keep graphics as close as possible to the original"
 msgstr "使图形尽可能与原游戏相近"
+
+#: engines/freescape/metaengine.cpp:128
+#, fuzzy
+#| msgid "Enable storage"
+msgid "Enable rock travel"
+msgstr "启用存储"
+
+#: engines/freescape/metaengine.cpp:129
+msgid "Enable traveling using a rock shoot at start"
+msgstr ""
 
 #: engines/freescape/movement.cpp:47 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99

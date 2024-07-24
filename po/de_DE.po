@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-23 21:48+0000\n"
+"POT-Creation-Date: 2024-07-24 07:51+0000\n"
 "PO-Revision-Date: 2024-07-07 10:20+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -7680,6 +7680,16 @@ msgstr "Bilineare Filterung"
 
 #: engines/freescape/metaengine.cpp:118
 msgid "Keep graphics as close as possible to the original"
+msgstr ""
+
+#: engines/freescape/metaengine.cpp:128
+#, fuzzy
+#| msgid "Enable storage"
+msgid "Enable rock travel"
+msgstr "Cloud aktivieren"
+
+#: engines/freescape/metaengine.cpp:129
+msgid "Enable traveling using a rock shoot at start"
 msgstr ""
 
 #: engines/freescape/movement.cpp:47 engines/hpl1/metaengine.cpp:78

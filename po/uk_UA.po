@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-23 21:48+0000\n"
+"POT-Creation-Date: 2024-07-24 07:51+0000\n"
 "PO-Revision-Date: 2024-06-05 08:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -7584,6 +7584,16 @@ msgstr "Фільтрування графіки"
 
 #: engines/freescape/metaengine.cpp:118
 msgid "Keep graphics as close as possible to the original"
+msgstr ""
+
+#: engines/freescape/metaengine.cpp:128
+#, fuzzy
+#| msgid "Enable storage"
+msgid "Enable rock travel"
+msgstr "Ввімкнути сховище"
+
+#: engines/freescape/metaengine.cpp:129
+msgid "Enable traveling using a rock shoot at start"
 msgstr ""
 
 #: engines/freescape/movement.cpp:47 engines/hpl1/metaengine.cpp:78

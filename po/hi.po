@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-23 21:48+0000\n"
+"POT-Creation-Date: 2024-07-24 07:51+0000\n"
 "PO-Revision-Date: 2024-07-11 17:47+0000\n"
 "Last-Translator: Krish <ganatrakrish2882005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -6967,6 +6967,15 @@ msgstr "फ़िल्टर ग्राफिक्स"
 msgid "Keep graphics as close as possible to the original"
 msgstr ""
 
+#: engines/freescape/metaengine.cpp:128
+#, fuzzy
+msgid "Enable rock travel"
+msgstr "खेल का पूरा नाम"
+
+#: engines/freescape/metaengine.cpp:129
+msgid "Enable traveling using a rock shoot at start"
+msgstr ""
+
 #: engines/freescape/movement.cpp:47 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
 msgid "Strafe Left"
@@ -12062,10 +12071,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Move cursor right"
 #~ msgstr "दायें मुड़िए"
-
-#, fuzzy
-#~ msgid "Enable voices"
-#~ msgstr "खेल का पूरा नाम"
 
 #, fuzzy
 #~ msgid "Enable the voices for the game"
