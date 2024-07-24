@@ -77,6 +77,7 @@ enum {
 	kContainerWidget	= 'CTNR',
 	kScrollContainerWidget = 'SCTR',
 	kRichTextWidget		= 'RTXT',
+	kEEWidget			= 'EEGG',
 };
 
 enum {
