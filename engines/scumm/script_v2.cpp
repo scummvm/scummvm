@@ -1550,7 +1550,7 @@ void ScummEngine_v2::o2_endCutscene() {
 	// Reset user state to values before cutscene
 	setUserState(vm.cutSceneData[0] | USERSTATE_SET_IFACE | USERSTATE_SET_CURSOR | USERSTATE_SET_FREEZE);
 
-	if ((_game.id == GID_MANIAC) && !(_game.platform == Common::kPlatformNES)) {
+	if (_game.id == GID_MANIAC && _game.version < 2 && _game.platform != Common::kPlatformNES) {
 		camera._mode = (byte) vm.cutSceneData[3];
 		if (camera._mode == kFollowActorCameraMode) {
 			actorFollowCamera(VAR(VAR_EGO));
