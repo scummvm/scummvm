@@ -909,8 +909,8 @@ char *yytext;
 #include "hypno/grammar.h"
 #include "hypno/tokens_mis.h"
 
-#line 904 "engines/hypno/lexer_mis.cpp"
-#line 905 "engines/hypno/lexer_mis.cpp"
+#line 912 "engines/hypno/lexer_mis.cpp"
+#line 913 "engines/hypno/lexer_mis.cpp"
 
 #define INITIAL 0
 
@@ -1125,9 +1125,9 @@ YY_DECL
 		}
 
 	{
-#line 41 "engines/hypno/lexer_mis.l"
+#line 49 "engines/hypno/lexer_mis.l"
 
-#line 1122 "engines/hypno/lexer_mis.cpp"
+#line 1130 "engines/hypno/lexer_mis.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1192,261 +1192,261 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 42 "engines/hypno/lexer_mis.l"
+#line 50 "engines/hypno/lexer_mis.l"
 /* return COMMENT; */
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 43 "engines/hypno/lexer_mis.l"
+#line 51 "engines/hypno/lexer_mis.l"
 /* return COMMENT; */
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 44 "engines/hypno/lexer_mis.l"
+#line 52 "engines/hypno/lexer_mis.l"
 return MENUTOK;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 45 "engines/hypno/lexer_mis.l"
+#line 53 "engines/hypno/lexer_mis.l"
 return AMBITOK;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 46 "engines/hypno/lexer_mis.l"
+#line 54 "engines/hypno/lexer_mis.l"
 return BACKTOK;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 47 "engines/hypno/lexer_mis.l"
+#line 55 "engines/hypno/lexer_mis.l"
 return CUTSTOK;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 48 "engines/hypno/lexer_mis.l"
+#line 56 "engines/hypno/lexer_mis.l"
 return GLOBTOK;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 49 "engines/hypno/lexer_mis.l"
+#line 57 "engines/hypno/lexer_mis.l"
 return PALETOK;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 50 "engines/hypno/lexer_mis.l"
+#line 58 "engines/hypno/lexer_mis.l"
 return HOTSTOK;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 51 "engines/hypno/lexer_mis.l"
+#line 59 "engines/hypno/lexer_mis.l"
 return MICETOK;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 52 "engines/hypno/lexer_mis.l"
+#line 60 "engines/hypno/lexer_mis.l"
 return ENDTOK;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 53 "engines/hypno/lexer_mis.l"
+#line 61 "engines/hypno/lexer_mis.l"
 return TIMETOK;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 54 "engines/hypno/lexer_mis.l"
+#line 62 "engines/hypno/lexer_mis.l"
 return OVERTOK;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 55 "engines/hypno/lexer_mis.l"
+#line 63 "engines/hypno/lexer_mis.l"
 return SMENTOK;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 56 "engines/hypno/lexer_mis.l"
+#line 64 "engines/hypno/lexer_mis.l"
 return ESCPTOK;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 57 "engines/hypno/lexer_mis.l"
+#line 65 "engines/hypno/lexer_mis.l"
 return PLAYTOK;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 58 "engines/hypno/lexer_mis.l"
+#line 66 "engines/hypno/lexer_mis.l"
 return SONDTOK;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 59 "engines/hypno/lexer_mis.l"
+#line 67 "engines/hypno/lexer_mis.l"
 return TALKTOK;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 60 "engines/hypno/lexer_mis.l"
+#line 68 "engines/hypno/lexer_mis.l"
 return INACTOK;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 61 "engines/hypno/lexer_mis.l"
+#line 69 "engines/hypno/lexer_mis.l"
 return FDTOK;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 62 "engines/hypno/lexer_mis.l"
+#line 70 "engines/hypno/lexer_mis.l"
 return BOXXTOK;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 63 "engines/hypno/lexer_mis.l"
+#line 71 "engines/hypno/lexer_mis.l"
 return MPTRTOK;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 64 "engines/hypno/lexer_mis.l"
+#line 72 "engines/hypno/lexer_mis.l"
 return ESCAPETOK;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 65 "engines/hypno/lexer_mis.l"
+#line 73 "engines/hypno/lexer_mis.l"
 return SECONDTOK;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 66 "engines/hypno/lexer_mis.l"
+#line 74 "engines/hypno/lexer_mis.l"
 return INTROTOK;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 67 "engines/hypno/lexer_mis.l"
+#line 75 "engines/hypno/lexer_mis.l"
 return INTRTOK;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 68 "engines/hypno/lexer_mis.l"
+#line 76 "engines/hypno/lexer_mis.l"
 return SWPTTOK;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 69 "engines/hypno/lexer_mis.l"
+#line 77 "engines/hypno/lexer_mis.l"
 return DEFAULTTOK;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 70 "engines/hypno/lexer_mis.l"
+#line 78 "engines/hypno/lexer_mis.l"
 HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return WALNTOK;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 71 "engines/hypno/lexer_mis.l"
+#line 79 "engines/hypno/lexer_mis.l"
 HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PS;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 72 "engines/hypno/lexer_mis.l"
+#line 80 "engines/hypno/lexer_mis.l"
 HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PG;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 73 "engines/hypno/lexer_mis.l"
+#line 81 "engines/hypno/lexer_mis.l"
 HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PP;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 74 "engines/hypno/lexer_mis.l"
+#line 82 "engines/hypno/lexer_mis.l"
 HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PI;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 75 "engines/hypno/lexer_mis.l"
+#line 83 "engines/hypno/lexer_mis.l"
 HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PH;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 76 "engines/hypno/lexer_mis.l"
+#line 84 "engines/hypno/lexer_mis.l"
 HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PA;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 77 "engines/hypno/lexer_mis.l"
+#line 85 "engines/hypno/lexer_mis.l"
 HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PD;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 78 "engines/hypno/lexer_mis.l"
+#line 86 "engines/hypno/lexer_mis.l"
 HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PF;
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 79 "engines/hypno/lexer_mis.l"
+#line 87 "engines/hypno/lexer_mis.l"
 return PE;
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 80 "engines/hypno/lexer_mis.l"
+#line 88 "engines/hypno/lexer_mis.l"
 return PL;
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 81 "engines/hypno/lexer_mis.l"
+#line 89 "engines/hypno/lexer_mis.l"
 HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return ENCTOK;
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 82 "engines/hypno/lexer_mis.l"
+#line 90 "engines/hypno/lexer_mis.l"
 HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return ENCTOK;
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 83 "engines/hypno/lexer_mis.l"
+#line 91 "engines/hypno/lexer_mis.l"
 HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return GSSWITCH;
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 84 "engines/hypno/lexer_mis.l"
+#line 92 "engines/hypno/lexer_mis.l"
 return BBOXTOK;
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 85 "engines/hypno/lexer_mis.l"
+#line 93 "engines/hypno/lexer_mis.l"
 HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return FLAG;
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 86 "engines/hypno/lexer_mis.l"
+#line 94 "engines/hypno/lexer_mis.l"
 HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return NAME;
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 87 "engines/hypno/lexer_mis.l"
+#line 95 "engines/hypno/lexer_mis.l"
 HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return FILENAME;
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 88 "engines/hypno/lexer_mis.l"
+#line 96 "engines/hypno/lexer_mis.l"
 HYPNO_MIS_lval.i = atoi(HYPNO_MIS_text); return NUM;
 	YY_BREAK
 case 48:
 /* rule 48 can match eol */
 YY_RULE_SETUP
-#line 89 "engines/hypno/lexer_mis.l"
+#line 97 "engines/hypno/lexer_mis.l"
 return RETTOK;
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 90 "engines/hypno/lexer_mis.l"
+#line 98 "engines/hypno/lexer_mis.l"
 /* ignore whitespace */;
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 91 "engines/hypno/lexer_mis.l"
+#line 99 "engines/hypno/lexer_mis.l"
 debugC(1, Hypno::kHypnoDebugParser, "<no match: %c>", *yytext); return *yytext;
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 92 "engines/hypno/lexer_mis.l"
+#line 100 "engines/hypno/lexer_mis.l"
 ECHO;
 	YY_BREAK
-#line 1441 "engines/hypno/lexer_mis.cpp"
+#line 1449 "engines/hypno/lexer_mis.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2423,7 +2423,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 92 "engines/hypno/lexer_mis.l"
+#line 100 "engines/hypno/lexer_mis.l"
 
 
 namespace Hypno {

@@ -139,7 +139,9 @@ hline: 	CTOK NUM {
 		debugC(1, kHypnoDebugParser, "D %d", $2);
 	}
 	| PTOK NUM NUM { debugC(1, kHypnoDebugParser, "P %d %d", $2, $3); }
-	| ATOK NUM NUM { debugC(1, kHypnoDebugParser, "A %d %d", $2, $3); }
+	| ATOK NUM NUM { g_parsedArc->anchor = Common::Point($2, $3);
+		debugC(1, kHypnoDebugParser, "A %d %d", $2, $3);
+	}
 	| MTOK FILENAME {
 		debugC(1, kHypnoDebugParser, "M %s", $2);
 		g_parsedArc->maskVideo = $2;

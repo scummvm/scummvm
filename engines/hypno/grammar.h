@@ -644,6 +644,7 @@ public:
 		objMissesAllowed[0] = 0;
 		objMissesAllowed[1] = 0;
 		mouseBox = Common::Rect(0, 0, 320, 200);
+		anchor = Common::Point(0, 0);
 		targetSoundRate = 0;
 		shootSoundRate = 0;
 		enemySoundRate = 0;
@@ -655,6 +656,7 @@ public:
 	uint32 frameDelay;
 	Common::String mode;
 	Common::Rect mouseBox;
+	Common::Point anchor;
 	ArcadeTransitions transitions;
 	Segments segments;
 

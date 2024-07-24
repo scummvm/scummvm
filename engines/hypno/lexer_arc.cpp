@@ -879,8 +879,8 @@ char *yytext;
 #include "hypno/grammar.h"
 #include "hypno/tokens_arc.h"
 
-#line 874 "engines/hypno/lexer_arc.cpp"
-#line 875 "engines/hypno/lexer_arc.cpp"
+#line 882 "engines/hypno/lexer_arc.cpp"
+#line 883 "engines/hypno/lexer_arc.cpp"
 
 #define INITIAL 0
 
@@ -1095,9 +1095,9 @@ YY_DECL
 		}
 
 	{
-#line 42 "engines/hypno/lexer_arc.l"
+#line 50 "engines/hypno/lexer_arc.l"
 
-#line 1092 "engines/hypno/lexer_arc.cpp"
+#line 1100 "engines/hypno/lexer_arc.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1162,306 +1162,306 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 43 "engines/hypno/lexer_arc.l"
+#line 51 "engines/hypno/lexer_arc.l"
 return NONETOK;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 44 "engines/hypno/lexer_arc.l"
+#line 52 "engines/hypno/lexer_arc.l"
 return CTOK;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 45 "engines/hypno/lexer_arc.l"
+#line 53 "engines/hypno/lexer_arc.l"
 return DTOK;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 46 "engines/hypno/lexer_arc.l"
+#line 54 "engines/hypno/lexer_arc.l"
 return HETOK;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 47 "engines/hypno/lexer_arc.l"
+#line 55 "engines/hypno/lexer_arc.l"
 return HLTOK;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 48 "engines/hypno/lexer_arc.l"
+#line 56 "engines/hypno/lexer_arc.l"
 return HUTOK;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 49 "engines/hypno/lexer_arc.l"
+#line 57 "engines/hypno/lexer_arc.l"
 HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return H12TOK;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 50 "engines/hypno/lexer_arc.l"
+#line 58 "engines/hypno/lexer_arc.l"
 return HTOK;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 51 "engines/hypno/lexer_arc.l"
+#line 59 "engines/hypno/lexer_arc.l"
 return PTOK;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 52 "engines/hypno/lexer_arc.l"
+#line 60 "engines/hypno/lexer_arc.l"
 return ABTOK;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 53 "engines/hypno/lexer_arc.l"
+#line 61 "engines/hypno/lexer_arc.l"
 return ALTOK;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 54 "engines/hypno/lexer_arc.l"
+#line 62 "engines/hypno/lexer_arc.l"
 return AVTOK;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 55 "engines/hypno/lexer_arc.l"
+#line 63 "engines/hypno/lexer_arc.l"
 return ATOK;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 56 "engines/hypno/lexer_arc.l"
+#line 64 "engines/hypno/lexer_arc.l"
 return VTOK;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 57 "engines/hypno/lexer_arc.l"
+#line 65 "engines/hypno/lexer_arc.l"
 return OTOK;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 58 "engines/hypno/lexer_arc.l"
+#line 66 "engines/hypno/lexer_arc.l"
 HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return ONTOK;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 59 "engines/hypno/lexer_arc.l"
+#line 67 "engines/hypno/lexer_arc.l"
 return LTOK;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 60 "engines/hypno/lexer_arc.l"
+#line 68 "engines/hypno/lexer_arc.l"
 return NTOK;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 61 "engines/hypno/lexer_arc.l"
+#line 69 "engines/hypno/lexer_arc.l"
 return NRTOK;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 62 "engines/hypno/lexer_arc.l"
+#line 70 "engines/hypno/lexer_arc.l"
 return NSTOK;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 63 "engines/hypno/lexer_arc.l"
+#line 71 "engines/hypno/lexer_arc.l"
 return MTOK;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 64 "engines/hypno/lexer_arc.l"
+#line 72 "engines/hypno/lexer_arc.l"
 return RTOK;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 65 "engines/hypno/lexer_arc.l"
+#line 73 "engines/hypno/lexer_arc.l"
 return R0TOK;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 66 "engines/hypno/lexer_arc.l"
+#line 74 "engines/hypno/lexer_arc.l"
 return R1TOK;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 67 "engines/hypno/lexer_arc.l"
+#line 75 "engines/hypno/lexer_arc.l"
 return ITOK;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 68 "engines/hypno/lexer_arc.l"
+#line 76 "engines/hypno/lexer_arc.l"
 return I1TOK;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 69 "engines/hypno/lexer_arc.l"
+#line 77 "engines/hypno/lexer_arc.l"
 return J0TOK;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 70 "engines/hypno/lexer_arc.l"
+#line 78 "engines/hypno/lexer_arc.l"
 return JTOK;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 71 "engines/hypno/lexer_arc.l"
+#line 79 "engines/hypno/lexer_arc.l"
 return KTOK;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 72 "engines/hypno/lexer_arc.l"
+#line 80 "engines/hypno/lexer_arc.l"
 return GTOK;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 73 "engines/hypno/lexer_arc.l"
+#line 81 "engines/hypno/lexer_arc.l"
 return QTOK;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 74 "engines/hypno/lexer_arc.l"
+#line 82 "engines/hypno/lexer_arc.l"
 return UTOK;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 75 "engines/hypno/lexer_arc.l"
+#line 83 "engines/hypno/lexer_arc.l"
 return ZTOK;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 76 "engines/hypno/lexer_arc.l"
+#line 84 "engines/hypno/lexer_arc.l"
 return WTOK;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 77 "engines/hypno/lexer_arc.l"
+#line 85 "engines/hypno/lexer_arc.l"
 return XTOK;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 78 "engines/hypno/lexer_arc.l"
+#line 86 "engines/hypno/lexer_arc.l"
 return TTOK;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 79 "engines/hypno/lexer_arc.l"
+#line 87 "engines/hypno/lexer_arc.l"
 return TPTOK;
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 80 "engines/hypno/lexer_arc.l"
+#line 88 "engines/hypno/lexer_arc.l"
 return TSTOK;
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 81 "engines/hypno/lexer_arc.l"
+#line 89 "engines/hypno/lexer_arc.l"
 return TATOK;
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 82 "engines/hypno/lexer_arc.l"
+#line 90 "engines/hypno/lexer_arc.l"
 HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return FNTOK;
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 83 "engines/hypno/lexer_arc.l"
+#line 91 "engines/hypno/lexer_arc.l"
 return FTOK;
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 84 "engines/hypno/lexer_arc.l"
+#line 92 "engines/hypno/lexer_arc.l"
 HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return SNTOK;
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 85 "engines/hypno/lexer_arc.l"
+#line 93 "engines/hypno/lexer_arc.l"
 HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return SNTOK;
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 86 "engines/hypno/lexer_arc.l"
+#line 94 "engines/hypno/lexer_arc.l"
 return A0TOK;
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 87 "engines/hypno/lexer_arc.l"
+#line 95 "engines/hypno/lexer_arc.l"
 HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return BNTOK;
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 88 "engines/hypno/lexer_arc.l"
+#line 96 "engines/hypno/lexer_arc.l"
 return KNTOK;
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 89 "engines/hypno/lexer_arc.l"
+#line 97 "engines/hypno/lexer_arc.l"
 return P0TOK;
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 90 "engines/hypno/lexer_arc.l"
+#line 98 "engines/hypno/lexer_arc.l"
 HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return YXTOK;
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 91 "engines/hypno/lexer_arc.l"
+#line 99 "engines/hypno/lexer_arc.l"
 HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return ENCTOK;
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 92 "engines/hypno/lexer_arc.l"
+#line 100 "engines/hypno/lexer_arc.l"
 HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return ENCTOK;
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 93 "engines/hypno/lexer_arc.l"
+#line 101 "engines/hypno/lexer_arc.l"
 HYPNO_ARC_lval.i = atoi(HYPNO_ARC_text); return NUM;
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 94 "engines/hypno/lexer_arc.l"
+#line 102 "engines/hypno/lexer_arc.l"
 HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return NAME;
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 95 "engines/hypno/lexer_arc.l"
+#line 103 "engines/hypno/lexer_arc.l"
 HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return FILENAME;
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 96 "engines/hypno/lexer_arc.l"
+#line 104 "engines/hypno/lexer_arc.l"
 HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return FILENAME;
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 97 "engines/hypno/lexer_arc.l"
+#line 105 "engines/hypno/lexer_arc.l"
 return RESTOK;
 	YY_BREAK
 case 56:
 /* rule 56 can match eol */
 YY_RULE_SETUP
-#line 98 "engines/hypno/lexer_arc.l"
+#line 106 "engines/hypno/lexer_arc.l"
 return RETTOK;
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 99 "engines/hypno/lexer_arc.l"
+#line 107 "engines/hypno/lexer_arc.l"
 /* ignore comment */
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 100 "engines/hypno/lexer_arc.l"
+#line 108 "engines/hypno/lexer_arc.l"
 /* ignore whitespace */;
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 101 "engines/hypno/lexer_arc.l"
+#line 109 "engines/hypno/lexer_arc.l"
 HYPNO_ARC_lval.i = HYPNO_ARC_text[0]; return BYTE;
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 102 "engines/hypno/lexer_arc.l"
+#line 110 "engines/hypno/lexer_arc.l"
 ECHO;
 	YY_BREAK
-#line 1456 "engines/hypno/lexer_arc.cpp"
+#line 1464 "engines/hypno/lexer_arc.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2438,7 +2438,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 102 "engines/hypno/lexer_arc.l"
+#line 110 "engines/hypno/lexer_arc.l"
 
 
 namespace Hypno {
