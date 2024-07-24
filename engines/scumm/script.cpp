@@ -865,6 +865,10 @@ void ScummEngine::runInventoryScript(int i) {
 	}
 }
 
+void ScummEngine::runInventoryScriptEx(int i) {
+	runInventoryScript(i);
+}
+
 void ScummEngine::freezeScripts(int flag) {
 	int i;
 

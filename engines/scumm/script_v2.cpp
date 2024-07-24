@@ -1654,7 +1654,7 @@ void ScummEngine_v2::setUserState(byte state) {
 
 	// Draw all verbs and inventory
 	redrawVerbs();
-	runInventoryScript(1);
+	runInventoryScriptEx(1);
 }
 
 void ScummEngine_v2::o2_getActorWalkBox() {
@@ -1688,8 +1688,14 @@ void ScummEngine_v2::resetSentence() {
 	VAR(VAR_SENTENCE_PREPOSITION) = 0;
 }
 
-void ScummEngine_v2::runInventoryScript(int i) {
+void ScummEngine_v2::runInventoryScript(int) {
 	redrawV2Inventory();
+}
+
+void ScummEngine_v2::runInventoryScriptEx(int) {
+	redrawV2Inventory();
+	if (_game.version > 0)
+		drawSentence();
 }
 
 } // End of namespace Scumm

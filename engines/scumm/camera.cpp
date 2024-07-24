@@ -82,7 +82,7 @@ void ScummEngine::setCameraFollows(Actor *a, bool setCamera) {
 		if (_actors[i]->isInCurrentRoom())
 			_actors[i]->_needRedraw = true;
 	}
-	runInventoryScript(0);
+	runInventoryScriptEx(0);
 }
 
 void ScummEngine::clampCameraPos(Common::Point *pt) {
@@ -205,7 +205,7 @@ void ScummEngine::actorFollowCamera(int act) {
 		old = camera._follows;
 		setCameraFollows(derefActor(act, "actorFollowCamera"));
 		if (camera._follows != old)
-			runInventoryScript(0);
+			runInventoryScriptEx(0);
 
 		camera._movingToActor = false;
 	}

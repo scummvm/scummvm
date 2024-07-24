@@ -1006,6 +1006,7 @@ protected:
 	void executeScript();
 	void updateScriptPtr();
 	virtual void runInventoryScript(int i);
+	virtual void runInventoryScriptEx(int i);
 	virtual void checkAndRunSentenceScript();
 	void runExitScript();
 	void runEntryScript();
