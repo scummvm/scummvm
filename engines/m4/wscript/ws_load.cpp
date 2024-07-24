@@ -272,6 +272,10 @@ void ShutdownWSAssets(void) {
 	_GWS(wsloaderInitialized) = false;
 }
 
+bool LoadWSAssets(const char *wsAssetName) {
+	return LoadWSAssets(wsAssetName, _G(master_palette));
+}
+
 bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette) {
 	MemHandle workHandle;
 	char *mainAssetPtr, *parseAssetPtr, *endOfAssetBlock;

@@ -81,6 +81,7 @@ bool InitWSAssets();
 bool ClearWSAssets(uint32 assetType, int32 minHash, int32 maxHash);
 void ShutdownWSAssets();
 
+bool LoadWSAssets(const char *wsAssetName);
 bool LoadWSAssets(const char *wsAssetName, RGB8 *myPalette);
 int32 AddWSAssetCELS(const char *wsAssetName, int32 hash, RGB8 *myPalette);
 M4sprite *GetWSAssetSprite(char *spriteName, uint32 hash, uint32 index, M4sprite *mySprite, bool *streamSeries);

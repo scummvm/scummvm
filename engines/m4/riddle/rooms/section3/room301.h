@@ -29,10 +29,38 @@ namespace Riddle {
 namespace Rooms {
 
 class Room301 : public Room {
+private:
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+	int _val5 = -1;
+	int _val6 = 2;
+	int _val7 = 2;
+	int _val8 = 0;
+	int _val9 = 0;
+	int _val10 = 0;
+	int _val11 = 0;
+	int _val12 = 0;
+	int _val13 = 0;
+	int _val14 = 0;
+	int _ripTrekHandTalk3 = 0;
+	int _ripTrekTalker3 = 0;
+	int _ripTrekTravel = 0;
+	int _agentStander = 0;
+	int _agentCheckingList = 0;
+	int _agentSlidesPaper = 0;
+	int _agentTakesMoney = 0;
+	int _agentTakesTelegram = 0;
+	int _agentTalk = 0;
+	int _agentSalutes = 0;
+	machine *_machine1 = nullptr;
+
 public:
 	Room301() : Room() {}
 	~Room301() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
 };

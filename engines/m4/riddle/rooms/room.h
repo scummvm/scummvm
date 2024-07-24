@@ -35,10 +35,21 @@ namespace Rooms {
 class Room : public M4::Room {
 protected:
 	static void intrMsgNull(frac16 myMessage, machine *sender) {}
-	static void triggerMachineByHashCallback(frac16 myMessage, machine *sender);
+	static void triggerMachineByHashCallback(frac16 myMessage, machine *sender = nullptr);
+	static void triggerMachineByHashCallbackNegative(frac16 myMessage, machine *sender = nullptr);
 
 	void restoreAutosave();
-	int _roomVal1 = 0;
+
+	/**
+	 * Checks various game flags for updates
+	 * @param flag		If set, does extra checks
+	 * @return	A count of the flag changes done
+	 */
+	int checkFlags(bool flag);
+
+	void setFlag45();
+
+	int _roomVal1 = 0;		// TODO: deprecate
 
 public:
 	Room() : M4::Room() {}

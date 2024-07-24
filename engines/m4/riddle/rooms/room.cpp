@@ -39,11 +39,92 @@ void Room::restoreAutosave() {
 	}
 }
 
-void Room::triggerMachineByHashCallback(frac16 myMessage, machine *sender) {
+void Room::triggerMachineByHashCallback(frac16 myMessage, machine *) {
 	int32 hi = myMessage >> 16;
 
 	if (hi >= 0)
 		kernel_trigger_dispatch_now(hi);
+}
+
+void Room::triggerMachineByHashCallbackNegative(frac16 myMessage, machine *) {
+	int32 hi = myMessage >> 16;
+
+	if (hi < 0)
+		kernel_trigger_dispatchx(hi);
+}
+
+int Room::checkFlags(bool flag) {
+	int count = 0;
+
+	if (_G(flags)[V364] == 1) {
+		++count;
+		switch (_G(flags)[V005]) {
+		case 1:
+			_G(flags)[V351] = 1;
+			break;
+		case 2:
+			_G(flags)[V352] = 1;
+			break;
+		case 3:
+			_G(flags)[V353] = 1;
+			break;
+		case 4:
+			_G(flags)[V354] = 1;
+			break;
+		default:
+			break;
+		}
+	}
+
+	if (_G(flags)[V365] == 1) {
+		_G(flags)[V355] = 1;
+		++count;
+	}
+	if (_G(flags)[V366] == 1) {
+		_G(flags)[V356] = 1;
+		++count;
+	}
+
+	if (flag) {
+		if (_G(flags)[V367] == 1) {
+			_G(flags)[V357] = 1;
+			++count;
+		}
+		if (_G(flags)[V368] == 1) {
+			_G(flags)[V358] = 1;
+			++count;
+		}
+		if (_G(flags)[V369] == 1) {
+			_G(flags)[V359] = 1;
+			++count;
+		}
+	}
+
+	if (_G(game).room_id == 501 && _G(flags)[V370] == 1) {
+		_G(flags)[V360] = 1;
+		++count;
+	}
+
+	if (_G(game).room_id != 401 && _G(flags)[V373] == 1) {
+		_G(flags)[V363] = 1;
+		++count;
+	}
+
+	if (_G(game).room_id != 501 && _G(flags)[V371] == 1) {
+		_G(flags)[V361] = 1;
+		++count;
+	}
+
+	if (_G(flags)[V372] == 1) {
+		_G(flags)[V362] = 1;
+		++count;
+	}
+
+	return count;
+}
+
+void Room::setFlag45() {
+	_G(flags)[V045] = 1;
 }
 
 } // namespace Rooms
