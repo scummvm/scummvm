@@ -2124,10 +2124,20 @@ int ScummEngine::getActorFromPos(int x, int y) {
 				continue;
 			y2 = _actors[i]->getPos().y;
 			y1 = _actors[i]->getPos().y - 40 * V12_Y_MULTIPLIER;
-			// Yes, it's really like this in the original code. And it works as intended for
-			// e. g. bug #15277 ("MANIAC: Man-Eating Plant should not be selectable as actor")
-			if ((uint16)y1 > 128)
-				y1 = 1;
+
+			if (_game.version < 2 && _game.id == GID_MANIAC) {
+				// I have found this only in MMv1. The other v1/v2 games have leftovers of this
+				// (they read the elevation value from the array, but then don't use that value).
+				// I have no way to check MMv0 (which also uses this opcode), but I assume it's
+				// more likely that it also has this.
+				y2 = (byte)(y2 - _actors[i]->getElevation());
+				y1 = (byte)(y1 - _actors[i]->getElevation());
+			} else {
+				// Yes, it's really like this in the original code. And it works as intended for
+				// e. g. bug #15277 ("MANIAC: Man-Eating Plant should not be selectable as actor")
+				if ((uint16)y1 > 128)
+					y1 = 1;
+			}
 		}
 
 		if (testGfxUsageBit(x / 8, i) && !getClass(i, kObjectClassUntouchable) && y >= y1 && y <= y2)
