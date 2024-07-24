@@ -128,7 +128,7 @@ IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String domain)
 		refreshWidgets();
 
 		g_checksum_state->endpoint = endpoint;
-		g_checksum_state->gamePath = Common::Path(ConfMan.get("path", domain));
+		g_checksum_state->gamePath = Common::Path(ConfMan.getPath("path", domain));
 		g_checksum_state->gameid = ConfMan.get("gameid", domain);
 		g_checksum_state->engineid = ConfMan.get("engineid", domain);
 		g_checksum_state->extra = ConfMan.get("extra", domain);
