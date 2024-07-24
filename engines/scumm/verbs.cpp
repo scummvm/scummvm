@@ -1133,7 +1133,7 @@ void ScummEngine::drawVerb(int verb, int mode) {
 
 		if (isRtl)
 			vs->curRect.left = _charset->_str.left;
-		vs->curRect.right = _charset->_str.right;
+		vs->curRect.right = (_game.version <= 2) ? MIN<int>(vs->curRect.left + (getResourceSize(rtVerb, verb) - 1) * 8, _screenWidth) : _charset->_str.right;
 		vs->curRect.bottom = _charset->_str.bottom;
 		vs->oldRect = _charset->_str;
 		_charset->_str.left = _charset->_str.right;
