@@ -60,8 +60,8 @@ static const chapterEntry rawChapterTable[] = {
 };
 
 static const chapterEntry rawChapterTableEarlyDemo[] = {
-	{31, {49, 12}, {205, 12}, {0,   0},   {127, 172}, 0,   kHypnoColorRed}, 	 // c31
-	{41, {49, 12}, {205, 12}, {0,   0},   {127, 172}, 0,   kHypnoColorRed}, 	 // c41
+	{31, {48, 15}, {205, 15}, {0,   0},   {0, 0}, 0,   kHypnoColorRed}, 	 // c31
+	{41, {48, 15}, {205, 15}, {0,   0},   {0, 0}, 0,   kHypnoColorRed}, 	 // c41
 	{0,  {0,  0},   {0,   0},   {0,   0},   {0, 0},     0, kHypnoColorRed}    	// NULL
 };
 
@@ -731,7 +731,7 @@ void WetEngine::drawString(const Common::String &font, const Common::String &str
 			else if (chr == '.')
 				offset = 4;
 
-			drawGlyph(_font05, curx + 1, offset + y, 275 + 40*chr, 5, 5, 8, color, false);
+			drawGlyph(_font05, curx + 1, offset + y, 275 + 40*chr, 5, 5, 8, color, _variant == "EarlyDemo");
 			curx += 6;
 		}
 	} else if (font == "scifi08.fgx") {
@@ -753,7 +753,7 @@ void WetEngine::drawString(const Common::String &font, const Common::String &str
 			else if (Common::isLower(chr) || chr == ':')
 				offset = 2;
 
-			drawGlyph(_font08, curx + 1, offset + y, 1554 + 72*(chr-32), 6, 8, 8, color, false);
+			drawGlyph(_font08, curx + 1, offset + y, 1554 + 72*(chr-32), 6, 8, 8, color, _variant == "EarlyDemo");
 			curx += 7;
 		}
 	} else
