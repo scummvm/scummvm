@@ -729,7 +729,7 @@ void ScummEngine_v2::checkExecVerbs() {
 		if (zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
 			// Click into V2 sentence line
 			runInputScript(kSentenceClickArea, 0, 0);
-		} else if (zone->number == kVerbVirtScreen && _mouse.y > zone->topline + inventoryArea) {
+		} else if (zone->number == kVerbVirtScreen && _mouse.y >= zone->topline + inventoryArea) {
 			// Click into V2 inventory
 			int object = checkV2Inventory(_mouse.x, _mouse.y);
 			if (object > 0)
