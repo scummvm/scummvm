@@ -219,6 +219,18 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'EEDialog' overlays = 'screen' inset = '8' shading = 'dim'>
+		<layout type = 'vertical' align = 'center' padding = '3, 3, 3, 3'>
+			<widget name = 'Widget'/>
+			<layout type = 'horizontal' padding = '8, 0, 4, 0'>
+				<space/>
+				<widget name = 'Close'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
 	<dialog name = 'HelpDialog' overlays = 'screen' inset = '8' shading = 'dim'>
 		<layout type = 'vertical' align = 'center' padding = '3, 3, 3, 3'>
 			<widget name = 'TabWidget' type = 'TabWidget'/>
