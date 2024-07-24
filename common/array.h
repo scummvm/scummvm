@@ -138,12 +138,52 @@ public:
 		_capacity = _size = 0;
 	}
 
+	/** Construct an element into a position in the array. */
+	template<class... TArgs>
+	void emplace(const_iterator pos, TArgs&&... args) {
+		assert(pos >= _storage && pos <= _storage + _size);
+
+		const size_type index = static_cast<size_type>(pos - _storage);
+
+		if (_size != _capacity && index == _size) {
+			// Added at the end in the existing storage
+			new (_storage + index) T(Common::forward<TArgs>(args)...);
+		} else {
+			// Either added in the middle, or ran out of space
+			// In the added-in-the-middle case, the copy is required because the parameters
+			// may contain a const ref to the original storage.
+			T *oldStorage = _storage;
+
+			allocCapacity(roundUpCapacity(_size + 1));
+
+			// Construct the new element first, since it may copy-construct from
+			// the original array
+			new (_storage + index) T(Common::forward<TArgs>(args)...);
+
+			// Move the original data
+			uninitialized_move(oldStorage, oldStorage + index, _storage);
+			uninitialized_move(oldStorage + index, oldStorage + _size, _storage + index + 1);
+
+			freeStorage(oldStorage, _size);
+		}
+
+		_size++;
+	}
+
+	/** Construct an element into a position in the array. */
+	template<class... TArgs>
+	void emplace_back(TArgs &&...args) {
+		emplace(begin() + _size, Common::forward<TArgs>(args)...);
+	}
+
 	/** Append an element to the end of the array. */
 	void push_back(const T &element) {
-		if (_size + 1 <= _capacity)
-			new ((void *)&_storage[_size++]) T(element);
-		else
-			insert_aux(end(), &element, &element + 1);
+		emplace_back(element);
+	}
+
+	/** Append an element to the end of the array. */
+	void push_back(T &&element) {
+		emplace_back(Common::move(element));
 	}
 
 	/** Append an element to the end of the array. */
