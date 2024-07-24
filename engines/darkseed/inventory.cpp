@@ -153,3 +153,11 @@ void Darkseed::Inventory::rightArrowClicked() {
 	_viewOffset++;
 	update();
 }
+
+Common::Error Darkseed::Inventory::sync(Common::Serializer &s) {
+	s.syncAsSint16LE(_inventoryLength);
+	for (int i = 0; i < _inventoryLength; i++) {
+		s.syncAsByte(_inventory[i]);
+	}
+	return Common::kNoError;
+}

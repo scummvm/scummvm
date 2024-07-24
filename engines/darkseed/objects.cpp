@@ -451,3 +451,17 @@ const char *Darkseed::Objects::getObjectName(int idx) {
 
 	return objectNameTbl[idx];
 }
+
+static inline void syncPoint(Common::Serializer &s, Common::Point &value) {
+	s.syncAsSint16LE(value.x);
+	s.syncAsSint16LE(value.y);
+}
+
+Common::Error Darkseed::Objects::sync(Common::Serializer &s) {
+	s.syncArray(_objectVar.data(), _objectVar.size(), Common::Serializer::Sint16LE);
+	s.syncArray(_objectRunningCode.data(), _objectRunningCode.size(), Common::Serializer::Sint16LE);
+	s.syncArray(_objectRunningCode.data(), _objectRunningCode.size(), Common::Serializer::Sint16LE);
+	s.syncArray(_moveObjectXY.data(), _moveObjectXY.size(), syncPoint);
+	s.syncArray(_moveObjectRoom.data(), _moveObjectRoom.size(), Common::Serializer::Byte);
+	return Common::kNoError;
+}

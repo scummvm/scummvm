@@ -28,7 +28,7 @@ namespace Darkseed {
 class Inventory {
 private:
 	Common::Array<uint8> _inventory;
-	int _inventoryLength = 0;
+	int16 _inventoryLength = 0;
 	Common::Array<uint8> _iconList;
 	int _viewOffset = 0;
 	int _numIcons = 0;
@@ -40,6 +40,8 @@ public:
 	void removeItem(uint8 item);
 	void draw();
 	void handleClick();
+
+	Common::Error sync(Common::Serializer &s);
 
 private:
 	void update();

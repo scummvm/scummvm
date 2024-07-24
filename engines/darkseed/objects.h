@@ -23,7 +23,9 @@
 #define DARKSEED_OBJECTS_H
 
 #include "common/array.h"
+#include "common/error.h"
 #include "common/rect.h"
+#include "common/serializer.h"
 namespace Darkseed {
 
 enum ObjType {
@@ -42,6 +44,8 @@ public:
 	static constexpr int MAX_OBJECTS = 199;
 	Objects();
 	void reset();
+
+	Common::Error sync(Common::Serializer &s);
 
 	void setVar(uint16 varIdx, int16 newValue);
 	int16 getVar(uint16 varIdx);

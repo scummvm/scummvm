@@ -83,10 +83,10 @@ public:
 	Objects _objectVar;
 	Inventory _inventory;
 
-	int _currentDay = 1;
+	uint8 _currentDay = 1;
 	int _currentTimeInSeconds = 0x7e8e;
 
-	uint16 _previousRoomNumber = 0;
+	uint8 _previousRoomNumber = 0;
 	uint16 targetRoomNumber = 0;
 
 	bool isPlayingAnimation_maybe = false;
@@ -152,10 +152,11 @@ public:
 	};
 
 	bool canLoadGameStateCurrently(Common::U32String *msg) override {
-		return true;
+		return !isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed;
 	}
+
 	bool canSaveGameStateCurrently(Common::U32String *msg) override {
-		return true;
+		return !isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed;
 	}
 
 	/**
@@ -168,9 +169,14 @@ public:
 		Common::Serializer s(nullptr, stream);
 		return syncGame(s);
 	}
+
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override {
 		Common::Serializer s(stream, nullptr);
-		return syncGame(s);
+		Common::Error syncResult = syncGame(s);
+		if (syncResult.getCode() == Common::kNoError) {
+			changeToRoom(_room->_roomNumber);
+		}
+		return syncResult;
 	}
 
 	Common::Path getRoomFilePath(const Common::Path &filename);
