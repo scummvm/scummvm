@@ -3118,6 +3118,7 @@ void ScummEngine_v3::terminateSaveMenuScript() {
 		// If local variable 0 and the override flag are set, chain script 119
 		if (readVar(0x4000)) {
 			if (VAR(VAR_OVERRIDE) && _currentScript != 0xFF) {
+				// --- Start of code from o5_chainScript() with arguments (119, [])...
 				int cur = _currentScript;
 
 				vm.slot[cur].number = 0;
@@ -3125,6 +3126,24 @@ void ScummEngine_v3::terminateSaveMenuScript() {
 				_currentScript = 0xFF;
 
 				runScript(119, vm.slot[cur].freezeResistant, vm.slot[cur].recursive, nullptr);
+				// --- End of code from o5_chainScript()...
+			}
+
+			if (readVar(0x4002) != 168) {
+				if (readVar(0x4000) == 3) {
+					restart(); // Call to o5_systemOps() with argument 1
+					stopObjectCode();// Call to o5_stopScript() with argument 0
+				}
+
+				// --- Start of code from o5_chainScript() with arguments (119, [])...
+				int cur = _currentScript;
+
+				vm.slot[cur].number = 0;
+				vm.slot[cur].status = ssDead;
+				_currentScript = 0xFF;
+
+				runScript(119, vm.slot[cur].freezeResistant, vm.slot[cur].recursive, nullptr);
+				// --- End of code from o5_chainScript()...
 			}
 		}
 
@@ -3194,23 +3213,23 @@ void ScummEngine_v3::terminateSaveMenuScript() {
 		// Enable user interaction
 		_userPut = 1;
 
-		// Chain script 5 (or 6 for FM-Towns)
+		// --- Start of code from o5_chainScript() with arguments (6, [0]), or (5, [0]) for FM-Towns...
 		int chainedArgs[NUM_SCRIPT_LOCAL];
-		int cur = _currentScript;
-		int scriptToChain = _game.platform == Common::kPlatformFMTowns ? 6 : 5;
+		// We only needed the first slot (0), but just like getWordVararg(), let's not leave memory uninitalized...
+		for (int i = 0; i < NUM_SCRIPT_LOCAL; i++)
+			chainedArgs[i] = 0; 
 
+		int cur = _currentScript;
+		int scriptToChain = _game.platform == Common::kPlatformFMTowns ? 5 : 6;
+		
 		assert(cur != 0xFF);
-		chainedArgs[0] = 0;
+		
 		vm.slot[cur].number = 0;
 		vm.slot[cur].status = ssDead;
 		_currentScript = 0xFF;
 
 		runScript(scriptToChain, vm.slot[cur].freezeResistant, vm.slot[cur].recursive, chainedArgs);
-
-		_currentScript = cur;
-
-		// Stop code for all the objects in the save screen
-		stopObjectCode();
+		// --- End of code from o5_chainScript()...
 	}
 }
 
