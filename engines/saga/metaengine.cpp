@@ -56,7 +56,8 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0,
 			0
 		},
-	}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
 bool SagaEngine::isBigEndian() const { return (isMacResources() || (getPlatform() == Common::kPlatformAmiga)) && getGameId() == GID_ITE; }
