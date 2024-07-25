@@ -930,7 +930,7 @@ void Darkseed::Room::runRoomObjects() {
 						xPos,
 						yPos,
 						&sprite,
-						240 - yPos + sprite.height,
+						240 - (yPos + sprite.height),
 						sprite.width,
 						sprite.height,
 						false);
@@ -994,7 +994,7 @@ void Darkseed::Room::runRoomObjects() {
 	}
 	if (_roomNumber == 0 && g_engine->isPlayingAnimation_maybe) {
 		const Sprite &sprite = _locationSprites.getSpriteAt(1);
-		g_engine->_sprites.addSpriteToDrawList(111, 136, &sprite, 255, sprite.width, sprite.height, false);
+		g_engine->_sprites.addSpriteToDrawList(111, 136, &sprite, 1, sprite.width, sprite.height, false);
 	}
 	if (_roomNumber == 2 && g_engine->_player->_isAutoWalkingToBed && g_engine->_player->_position.x < 150) {
 			g_engine->_objectVar[78] = 2; // open door for player.
@@ -1125,7 +1125,7 @@ void Darkseed::Room::runRoomObjects() {
 		}
 		if (g_engine->_objectVar[109] != 0) {
 			const Sprite &sprite = _locationSprites.getSpriteAt(5);
-			g_engine->_sprites.addSpriteToDrawList(300, 151, &sprite, 255, sprite.width, sprite.height, false);
+			g_engine->_sprites.addSpriteToDrawList(300, 151, &sprite, 254, sprite.width, sprite.height, false);
 		}
 		if (g_engine->_objectVar[110] != 0) { // tap drip
 			const Sprite &sprite = _locationSprites.getSpriteAt((g_engine->counter_2c85_888b & 1) + 6); // TODO double check counter_2c85_888b is actually _ConstantTick
