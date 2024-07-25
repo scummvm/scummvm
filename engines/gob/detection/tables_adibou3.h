@@ -46,7 +46,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0, 0, 0
+	"b3_common.stk", "b3_storyboard.obc", 0
 },
 
 {
@@ -60,7 +60,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0, 0, 0
+	"b3_common.stk", "b3_storyboard.obc", 0
 },
 
 // -- German: Adiboo 3 --
@@ -77,7 +77,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"b3_common.stk", "b3_storyboard.obc", 0
 },
 
 {
@@ -92,7 +92,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"b3_common.stk", "b3_storyboard.obc", 0
 },
 
 {
@@ -107,7 +107,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"b3_common.stk", "b3_storyboard.obc", 0
 },
 
 {
@@ -122,7 +122,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"b3_common.stk", "b3_storyboard.obc", 0
 },
 {
 	{ // Supplied by BJNFNE
@@ -136,7 +136,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"b3_common.stk", "b3_storyboard.obc", 0
 },
 {
 	{ // Supplied by BJNFNE
@@ -150,7 +150,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"b3_common.stk", "b3_storyboard.obc", 0
 },
 
 // -- English: Adiboo 3 --
@@ -167,7 +167,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"b3_common.stk", "b3_storyboard.obc", 0
 },
 
 // -- Dutch: Adiboo 3 --
@@ -184,7 +184,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"b3_common.stk", "b3_storyboard.obc", 0
 },
 
 #endif // GOB_DETECTION_TABLES_ADIBOU3_H

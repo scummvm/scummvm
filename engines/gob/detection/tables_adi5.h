@@ -47,7 +47,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"adi5.stk", "adi5.obc", 0
 },
 {
 	{ // Supplied by BJNFNE
@@ -61,7 +61,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"adi5.stk", "adi5.obc", 0
 },
 
 // -- German: Addy 5 --
@@ -78,7 +78,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"adi5.stk", "adi5.obc", 0
 },
 {
 	{ // Supplied by Indy4-Fan
@@ -92,7 +92,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"adi5.stk", "adi5.obc", 0
 },
 {
 	{ // Supplied by BJNFNE
@@ -106,7 +106,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"adi5.stk", "adi5.obc", 0
 },
 {
 	{ // Supplied by BJNFNE
@@ -120,7 +120,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"adi5.stk", "adi5.obc", 0
 },
 
 #endif // GOB_DETECTION_TABLES_ADI5_H

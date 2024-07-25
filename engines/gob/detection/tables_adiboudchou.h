@@ -48,9 +48,8 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0, 0, 0
+	"adbc_envir_obc.stk", "adbc_init.obc", 0
 },
-
 {
 	{ // Supplied by BJNFNE
 
@@ -63,7 +62,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"adbc_envir_obc.stk", "adbc_init.obc", 0
 },
 {
 	{ // Supplied by BJNFNE
@@ -76,7 +75,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"adbc_envir_obc.stk", "adbc_init.obc", 0
 },
 {
 	{ // Supplied by BJNFNE
@@ -89,7 +88,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0,0,0
+	"adbc_envir_obc.stk", "adbc_init.obc", 0
 },
 
 #endif // GOB_DETECTION_TABLES_ADIBOUDCHOU_H
