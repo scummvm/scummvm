@@ -103,6 +103,17 @@ void qdFileManager::Finit() {
 bool qdFileManager::open_file(Common::SeekableReadStream **fh, const char *file_name, bool err_message) {
 	debugC(4, kDebugLoad, "qdFileManager::open_file(%s)", transCyrillic(file_name));
 
+	if (SearchMan.hasFile(Common::Path(file_name))) {
+		Common::File *f = new Common::File;
+
+		if (f->open(Common::Path(file_name)))
+			*fh = f;
+		else
+			return false;
+
+		return true;
+	}
+
 	for (int i = 0; i < _packageCount; i++) {
 		if (!_packages[i].is_open())
 			_packages[i].open();
