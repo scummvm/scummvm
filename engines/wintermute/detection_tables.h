@@ -1401,10 +1401,16 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("english.dcp", "e21c7278071cd2ee216ae72d5a39de29", 12008908,
 					"data.dcp", "43ba03f37a0f97249c1e0c3cf7d6f9a9", 167980), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_0),
 
-	// Ghost in the Sheet (aka S.C.A.R.E.) (German)
+	// Ghost in the Sheet (aka S.C.A.R.E.) (2007) (German)
 	WME_WINENTRY("ghostsheet", "",
 		WME_ENTRY2s("german.dcp", "7fe6c0b28ebdfa55f432805ebc524cc3", 209496295,
 					"data.dcp", "4e4e5fdff0f7a5f4aa5db51c5c7e94d3", 3759113), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_0),
+
+	// Ghost in the Sheet (aka Mystery Places - Das Geheimnis von Sektor Omega) (2011) (German)
+	WME_WINENTRY("ghostsheet", "",
+		WME_ENTRY3s("german_2.dcp", "1b034ed144db60e46fcd5333b6da1948", 741394,
+					"german.dcp", "7fe6c0b28ebdfa55f432805ebc524cc3", 209496295,
+					"data.dcp", "4e4e5fdff0f7a5f4aa5db51c5c7e94d3", 3759113), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_2),
 
 	// Ghost in the Sheet (Italian)
 	WME_WINENTRY("ghostsheet", "",
