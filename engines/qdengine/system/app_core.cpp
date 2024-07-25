@@ -71,9 +71,12 @@ bool saveFileExists(Common::String &fpath) {
 	return g_engine->_savefileMan->exists(fpath);
 }
 
-bool is_file_exist(const char *file_name) {
-	debugC(5, kDebugLoad, "is_file_exist(%s)", transCyrillic(file_name));
-	return SearchMan.hasFile(Common::Path(file_name));
+bool is_file_exist(Common::String file_name) {
+	bool res = SearchMan.hasFile(Common::Path(file_name));
+
+	debugC(5, kDebugLoad, "is_file_exist(%s): %s", transCyrillic(file_name), res ? "yes" : "no");
+
+	return res;
 }
 
 const char *strip_path(const char *file_name) {

@@ -538,7 +538,7 @@ public:
 	};
 
 	//! Возвращает имя файла сэйва или имя файла превью сэйва.
-	static const char *get_save_name(int slot_id, SaveFileType file_type = SAVE_FILE);
+	static Common::String get_save_name(int slot_id, SaveFileType file_type = SAVE_FILE);
 
 	static grFont *create_font(int font_idx);
 	static void free_font(grFont *fnt);
