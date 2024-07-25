@@ -221,7 +221,7 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 						unsigned cl = make_rgb565u(src_data[2], src_data[1], src_data[0]);
 
 						if (a) {
-							unsigned scl;
+							uint16 scl;
 							GetPixel(x + j, y + i, scl);
 
 							SetPixelFast(x + j, y + i, alpha_blend_565(cl, scl, a));
@@ -297,7 +297,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 				}
 			}
 		}
-		unsigned mr, mg, mb;
+		byte mr, mg, mb;
 		split_rgb565u(mask_color, mr, mg, mb);
 
 		mr = (mr * (255 - mask_alpha)) >> 8;
@@ -422,7 +422,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 		ix = -1;
 	}
 	if (!alpha_flag) {
-		unsigned mr, mg, mb;
+		byte mr, mg, mb;
 		split_rgb565u(mask_color, mr, mg, mb);
 
 		mr = (mr * (255 - mask_alpha)) >> 8;
@@ -443,7 +443,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 				if (ClipCheck(x + j, y + i)) {
 					const unsigned char *src_buf = line_src + ((fx >> 16) << 2);
 					if (src_buf[0] || src_buf[1] || src_buf[2]) {
-						unsigned scl;
+						uint16 scl;
 						GetPixel(x + j, y + i, scl);
 						SetPixelFast(x + j, y + i, alpha_blend_565(mcl, scl, mask_alpha));
 					}
@@ -453,7 +453,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 		}
 	} else {
 		const unsigned char *line_src = rleBuffer::get_buffer(0);
-		unsigned mr, mg, mb;
+		byte mr, mg, mb;
 		split_rgb565u(mask_color, mr, mg, mb);
 
 		for (int i = y0; i != y1; i += iy) {
@@ -467,7 +467,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 					const unsigned char *src_buf = line_src + ((fx >> 16) << 2);
 					unsigned a = src_buf[3];
 					if (a != 255) {
-						unsigned scl;
+						uint16 scl;
 						GetPixel(x + j, y + i, scl);
 
 						a = mask_alpha + ((a * (255 - mask_alpha)) >> 8);

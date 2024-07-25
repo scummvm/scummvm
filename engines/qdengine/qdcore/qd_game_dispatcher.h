@@ -486,6 +486,7 @@ public:
 	}
 
 	bool game_screenshot(const char *file_name, int sx, int sy) const;
+	bool game_screenshot(Graphics::Surface &thumb) const;
 
 	void scan_files(qdLoadingProgressFnc progress_fnc, void *context_ptr);
 	/**
@@ -695,4 +696,3 @@ qdGameDispatcher *qd_get_game_dispatcher();
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_GAME_DISPATCHER_H
-

@@ -78,7 +78,7 @@ void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const unsigned char *p
 
 			if (a != 255 && ClipCheck(x + j, y + i)) {
 				if (a) {
-					unsigned sc;
+					uint16 sc;
 					GetPixel(x + j, y + i, sc);
 					SetPixel(x + j, y + i, alpha_blend_565(make_rgb565u(src_data[2], src_data[1], src_data[0]), sc, a));
 				} else
@@ -405,7 +405,7 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const u
 	int cos_a = round(cs * float(1 << F_PREC));
 
 	if (has_alpha) {
-		unsigned mr, mg, mb;
+		byte mr, mg, mb;
 		split_rgb565u(mask_color, mr, mg, mb);
 
 		for (int y = 0; y <= sy; y++) {
@@ -448,7 +448,7 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const u
 		}
 
 	} else {
-		unsigned mr, mg, mb;
+		byte mr, mg, mb;
 		split_rgb565u(mask_color, mr, mg, mb);
 
 		mr = (mr * (255 - mask_alpha)) >> 8;
@@ -513,7 +513,7 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const u
 	Vect2i scaled_size = Vect2i(iscale.x * size.x, iscale.y * size.y);
 
 	if (has_alpha) {
-		unsigned mr, mg, mb;
+		byte mr, mg, mb;
 		split_rgb565u(mask_color, mr, mg, mb);
 
 		for (int y = 0; y <= sy; y++) {
@@ -555,7 +555,7 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const u
 			}
 		}
 	} else {
-		unsigned mr, mg, mb;
+		byte mr, mg, mb;
 		split_rgb565u(mask_color, mr, mg, mb);
 
 		mr = (mr * (255 - mask_alpha)) >> 8;
@@ -1003,7 +1003,7 @@ void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const unsigned char 
 
 	const unsigned char *data_ptr = p + py * sx + px;
 
-	unsigned mr, mg, mb;
+	byte mr, mg, mb;
 	split_rgb565u(mask_color, mr, mg, mb);
 
 	mr = (mr * (255 - mask_alpha)) >> 8;
@@ -1060,7 +1060,7 @@ void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const unsigned char 
 		ix = -1;
 	}
 
-	unsigned mr, mg, mb;
+	byte mr, mg, mb;
 	split_rgb565u(mask_color, mr, mg, mb);
 
 	mr = (mr * (255 - mask_alpha)) >> 8;
@@ -1080,7 +1080,7 @@ void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const unsigned char 
 		for (int j = x0; j != x1; j += ix) {
 			const unsigned char *src_data = line_src + (fx >> 16) * 3;
 			if (src_data[0] || src_data[1] || src_data[2]) {
-				unsigned scl;
+				uint16 scl;
 				GetPixel(x + j, y + i, scl);
 				SetPixel(x + j, y + i, alpha_blend_565(mcl, scl, mask_alpha));
 			}
@@ -1118,7 +1118,7 @@ void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const unsigned cha
 
 	const unsigned char *data_ptr = p + py * sx + px;
 
-	unsigned mr, mg, mb;
+	byte mr, mg, mb;
 	split_rgb565u(mask_color, mr, mg, mb);
 
 	warning("STUB: grDispatcher::PutSprMask_a");
@@ -1182,7 +1182,7 @@ void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const unsigned cha
 	}
 
 	sx <<= 1;
-	unsigned mr, mg, mb;
+	byte mr, mg, mb;
 	split_rgb565u(mask_color, mr, mg, mb);
 
 	for (i = y0; i != y1; i += iy) {
@@ -1196,7 +1196,7 @@ void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const unsigned cha
 			unsigned a = src_data[3];
 
 			if (a != 255 && ClipCheck(x + j, y + i)) {
-				unsigned sc;
+				uint16 sc;
 				GetPixel(x + j, y + i, sc);
 
 				a = mask_alpha + ((a * (255 - mask_alpha)) >> 8);
@@ -1215,4 +1215,3 @@ void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const unsigned cha
 }
 
 } // namespace QDEngine
-

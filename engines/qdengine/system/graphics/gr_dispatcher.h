@@ -269,8 +269,8 @@ public:
 
 	void SetPixel(int x, int y, int r, int g, int b);
 
-	void GetPixel(int x, int y, unsigned &col);
-	void GetPixel(int x, int y, unsigned &r, unsigned &g, unsigned &b);
+	void GetPixel(int x, int y, uint16 &col);
+	void GetPixel(int x, int y, byte &r, byte &g, byte &b);
 
 	void Line(int x1, int y1, int x2, int y2, int col, int line_style = 0, bool inverse_col = false);
 
@@ -360,12 +360,12 @@ public:
 		return (((r >> 3) << 10) | ((g >> 3) << 5) | ((b >> 3) << 0));
 	}
 
-	static inline void split_rgb565u(unsigned col, unsigned &r, unsigned &g, unsigned &b) {
+	static inline void split_rgb565u(unsigned col, byte &r, byte &g, byte &b) {
 		r = ((col & mask_565_r) >> 11) << 3;
 		g = ((col & mask_565_g) >> 5) << 2;
 		b = ((col & mask_565_b) >> 0) << 3;
 	}
-	static inline void split_rgb555u(unsigned col, unsigned &r, unsigned &g, unsigned &b) {
+	static inline void split_rgb555u(unsigned col, byte &r, byte &g, byte &b) {
 		r = ((col & mask_555_r) >> 10) << 3;
 		g = ((col & mask_555_g) >> 5) << 3;
 		b = ((col & mask_555_b) >> 0) << 3;
