@@ -99,7 +99,7 @@
 	{ // Supplied by BJNFNE
 
 		"adibou3",
-		_s("Missing game code"), // Adiboo 3 3.10 (Engine: DEV7 version 1.3.0.0)
+		_s("Missing game code"), // Adiboo 3 3.10 (Engine: DEV7 version 1.30b)
 		AD_ENTRY1s("b3_common.stk", "2293ff44a5bb7a36f5219443f0ede5cf", 554569),
 		DE_DEU,
 		kPlatformWindows,
@@ -114,7 +114,7 @@
 	{ // Supplied by BJNFNE
 
 		"adibou3",
-		_s("Missing game code"), // Adiboo 3 3.10 Demo (Engine: DEV7 version 1.3.0.0)
+		_s("Missing game code"), // Adiboo 3 3.10 Demo (Engine: DEV7 version 1.30b)
 		AD_ENTRY1s("b3_common.stk", "0c7624de252a9be3c67616f298ecb34a", 558632),
 		DE_DEU,
 		kPlatformWindows,
@@ -128,7 +128,7 @@
 	{ // Supplied by BJNFNE
 
 		"adibou3",
-		_s("Missing game code"), // Adiboo 3 3.10 (shipped with English Application) (Engine: DEV7 version 1.3.0.0)
+		_s("Missing game code"), // Adiboo 3 3.10 (shipped with English Application) (Engine: DEV7 version 1.30b)
 		AD_ENTRY1s("b3_common.stk", "fc3a619b44366ded7027bc458d34be6a", 554569),
 		DE_DEU,
 		kPlatformWindows,
@@ -142,7 +142,7 @@
 	{ // Supplied by BJNFNE
 
 		"adibou3",
-		_s("Missing game code"), // Adiboo 3 3.10 (shipped with Nature Application) (Engine: DEV7 version 1.3.0.0)
+		_s("Missing game code"), // Adiboo 3 3.10 (shipped with Nature Application) (Engine: DEV7 version 1.30b)
 		AD_ENTRY1s("b3_common.stk", "814d8edb015969618dbcc670b18fcfb4", 554569),
 		DE_DEU,
 		kPlatformWindows,
