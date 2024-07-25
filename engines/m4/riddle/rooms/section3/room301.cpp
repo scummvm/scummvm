@@ -170,16 +170,100 @@ void Room301::parser() {
 					nullptr, 2, 3);
 				break;
 			case 2:
-				// TODO
+				setGlobals1(_ripTrekHandTalk3, 1, 7, 8, 9, 1, 0, 0,
+					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+				sendWSMessage_110000(-1);
+				break;
+			case 3:
+				sendWSMessage_140000(-1);
+				_val14 = 5;
+				_val6 = 1;
+				_val7 = 1;
+				_val16 = 4;
+				_soundName = "301a02";
+				break;
+			case 4:
+				_val14 = 0;
+				_val5 = kernel_trigger_create(5);
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_timing_trigger(1, 11);
+				_G(kernel).trigger_mode = oldMode;
+				break;
+			case 5:
+				player_set_commands_allowed(true);
+				_G(globals)[V033] = 1;
 				break;
 			default:
 				break;
 			}
 		}
+	} else if (player_said_any("AMERICAN CURRENCY", "CHINESE CURRENCY") &&
+			player_said("AGENT")) {
+		digi_play("301r30", 1);
+	} else if (lookFlag && player_said_any("sofa", "chair")) {
+		digi_play("301r29", 1);
+	} else if (_G(kernel).trigger == 747) {
+		player_set_commands_allowed(false);
+		_val14 = 0;
+		_val15 = 4;
+
+		if (_val1) {
+			switch (_val1) {
+			case 1:
+				_G(globals)[V129] = 0;
+				break;
+			case 2:
+				_G(globals)[V129] = 2;
+				break;
+			case 3:
+				_G(globals)[V129] = 3;
+				break;
+			case 4:
+				_G(globals)[V129] = 4;
+				break;
+			default:
+				break;
+			}
+
+			disable_player_commands_and_fade_init(748);
+		}
+
+	} else if (_G(kernel).trigger == 748) {
+		_G(game).setRoom(495);
+
+	} else if (talkFlag && player_said("agent")) {
+		ws_hide_walker();
+		player_set_commands_allowed(false);
+		player_update_info();
+
+		_machine3 = series_show("safari shadow 3", 0xf00, 0, -1, -1, 0,
+			_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+		_machine4 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			triggerMachineByHashCallbackNegative, "rip");
+
+		_G(kernel).trigger_mode = KT_DAEMON;
+		_val19 = 0;
+		_val15 = 5;
+		sendWSMessage_10000(1, _machine4, _ripTrekTravel, 1, 9, 20,
+			_ripTrekTravel, 10, 10, 0);
+		_val14 = 4;
+	} else if (takeFlag && player_said("postcards")) {
+		digi_play("301r09", 1);
+	} else if (takeFlag && player_said("water cooler")) {
+		digi_play("301r10", 1);
+	} else if (takeFlag && player_said("magazines")) {
+		digi_play("301r11", 1);
+	} else if (useFlag && player_said_any("sofa", "chair")) {
+		digi_play("301r31", 1);
+	} else if (useFlag && player_said("telephone")) {
+		digi_play("301r32", 1);
+	} else if (useFlag && _G(player).click_y <= 374 &&
+			!inv_player_has(_G(player).noun)) {
+		digi_play("301r33", 1);
+	} else {
+		return;
 	}
 
-
-	// TODO
 	_G(player).command_ready = false;
 }
 

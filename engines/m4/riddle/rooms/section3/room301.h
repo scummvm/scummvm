@@ -48,6 +48,7 @@ private:
 	int _val16 = 0;
 	int _val17 = 0;
 	int _val18 = 0;
+	int _val19 = 0;
 	int _ripTrekHandTalk3 = 0;
 	int _ripTrekTalker3 = 0;
 	int _ripTrekTravel = 0;
@@ -62,6 +63,8 @@ private:
 	int _marshalMatt = 0;
 	machine *_machine1 = nullptr;
 	machine *_machine2 = nullptr;
+	machine *_machine3 = nullptr;
+	machine *_machine4 = nullptr;
 
 	void conv301a();
 
