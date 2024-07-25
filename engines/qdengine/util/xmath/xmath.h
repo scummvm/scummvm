@@ -68,8 +68,6 @@ class Se3d;
 
 class Vect4f;
 
-class XBuffer;
-
 ///////////////////////////////////////////////////////////////////////////////
 //		Axes
 ///////////////////////////////////////////////////////////////////////////////
@@ -486,11 +484,6 @@ public:
 	friend istream &operator>> (istream &is, Vect2f &v);
 #endif
 
-	friend XBuffer &operator<= (XBuffer &b, const Vect2f &v);
-	friend XBuffer &operator>= (XBuffer &b, Vect2f &v);
-	friend XBuffer &operator< (XBuffer &b, const Vect2f &v);
-	friend XBuffer &operator> (XBuffer &b, Vect2f &v);
-
 	static const Vect2f ZERO;
 	static const Vect2f ID;
 };
@@ -651,11 +644,6 @@ public:
 	friend istream &operator>> (istream &is, Vect2i &v);
 #endif
 
-	friend XBuffer &operator<= (XBuffer &b, const Vect2i &v);
-	friend XBuffer &operator>= (XBuffer &b, Vect2i &v);
-	friend XBuffer &operator< (XBuffer &b, const Vect2i &v);
-	friend XBuffer &operator> (XBuffer &b, Vect2i &v);
-
 	static const Vect2i ZERO;
 	static const Vect2i ID;
 };
@@ -780,10 +768,6 @@ public:
 	friend istream &operator>> (istream &is, Vect2s &v);
 #endif
 
-	friend XBuffer &operator<= (XBuffer &b, const Vect2s &v);
-	friend XBuffer &operator>= (XBuffer &b, Vect2s &v);
-	friend XBuffer &operator< (XBuffer &b, const Vect2s &v);
-	friend XBuffer &operator> (XBuffer &b, Vect2s &v);
 };
 
 
@@ -1095,11 +1079,6 @@ public:
 	friend istream &operator>> (istream &is, Vect3f &v);
 #endif
 
-	friend XBuffer &operator<= (XBuffer &b, const Vect3f &v);
-	friend XBuffer &operator>= (XBuffer &b, Vect3f &v);
-	friend XBuffer &operator< (XBuffer &b, const Vect3f &v);
-	friend XBuffer &operator> (XBuffer &b, Vect3f &v);
-
 	//  Swap  /////////////////////////
 	xm_inline void swap(Vect3f &other);
 	xm_inline friend void swap(Vect3f &u, Vect3f &v) {
@@ -1313,11 +1292,6 @@ public:
 	friend ostream &operator<< (ostream &os, const Vect3d &v);
 	friend istream &operator>> (istream &is, Vect3d &v);
 #endif
-
-	friend XBuffer &operator<= (XBuffer &b, const Vect3d &v);
-	friend XBuffer &operator>= (XBuffer &b, Vect3d &v);
-	friend XBuffer &operator< (XBuffer &b, const Vect3d &v);
-	friend XBuffer &operator> (XBuffer &b, Vect3d &v);
 
 	//  Swap  /////////////////////////
 	xm_inline void swap(Vect3d &other);
@@ -1638,11 +1612,6 @@ public:
 	friend istream &operator>> (istream &is, Mat3f &M);
 #endif
 
-	friend XBuffer &operator<= (XBuffer &b, const Mat3f &M);
-	friend XBuffer &operator>= (XBuffer &b, Mat3f &M);
-	friend XBuffer &operator< (XBuffer &b, const Mat3f &M);
-	friend XBuffer &operator> (XBuffer &b, Mat3f &M);
-
 	// Mat3f constants ////////////////////////////////////////////////////////////
 
 	static const Mat3f ZERO;    // zero matrix
@@ -1945,11 +1914,6 @@ public:
 	friend ostream &operator<< (ostream &os, const Mat3d &M);
 	friend istream &operator>> (istream &is, Mat3d &M);
 #endif
-
-	friend XBuffer &operator<= (XBuffer &b, const Mat3d &M);
-	friend XBuffer &operator>= (XBuffer &b, Mat3d &M);
-	friend XBuffer &operator< (XBuffer &b, const Mat3d &M);
-	friend XBuffer &operator> (XBuffer &b, Mat3d &M);
 
 	// Mat3d constants ////////////////////////////////////////////////////////////
 
@@ -2393,11 +2357,6 @@ public:
 	friend istream &operator>> (istream &is, QuatF &q);
 #endif
 
-	friend XBuffer &operator<= (XBuffer &b, const QuatF &q);
-	friend XBuffer &operator>= (XBuffer &b, QuatF &q);
-	friend XBuffer &operator< (XBuffer &b, const QuatF &q);
-	friend XBuffer &operator> (XBuffer &b, QuatF &q);
-
 	// miscellaneous /////////////////////////////////////////////////////////////
 	xm_inline void slerp(const QuatF &a, const QuatF &b, float t);
 
@@ -2589,11 +2548,6 @@ public:
 	friend istream &operator>> (istream &is, QuatD &q);
 #endif
 
-	friend XBuffer &operator<= (XBuffer &b, const QuatD &q);
-	friend XBuffer &operator>= (XBuffer &b, QuatD &q);
-	friend XBuffer &operator< (XBuffer &b, const QuatD &q);
-	friend XBuffer &operator> (XBuffer &b, QuatD &q);
-
 	// miscellaneous /////////////////////////////////////////////////////////////
 	xm_inline void slerp(const QuatD &a, const QuatD &b, double t);
 
@@ -2711,11 +2665,6 @@ public:
 	friend istream &operator>>(istream &is, Se3f &se3);
 #endif
 
-	friend XBuffer &operator<= (XBuffer &b, const Se3f &v);
-	friend XBuffer &operator>= (XBuffer &b, Se3f &v);
-	friend XBuffer &operator< (XBuffer &b, const Se3f &v);
-	friend XBuffer &operator> (XBuffer &b, Se3f &v);
-
 	// Se3f constants /////////////////////////////////////////////////////////////
 
 	static const Se3f ID;     // identity Se3f
@@ -2818,11 +2767,6 @@ public:
 	friend ostream &operator<<(ostream &os, const Se3d &se3);
 	friend istream &operator>>(istream &is, Se3d &se3);
 #endif
-
-	friend XBuffer &operator<= (XBuffer &b, const Se3d &v);
-	friend XBuffer &operator>= (XBuffer &b, Se3d &v);
-	friend XBuffer &operator< (XBuffer &b, const Se3d &v);
-	friend XBuffer &operator> (XBuffer &b, Se3d &v);
 
 	// Se3d constants /////////////////////////////////////////////////////////////
 
@@ -2965,11 +2909,6 @@ public:
 	friend ostream &operator<< (ostream &os, const Vect4f &v);
 	friend istream &operator>> (istream &is, Vect4f &v);
 #endif
-
-	friend XBuffer &operator<= (XBuffer &b, const Vect4f &v);
-	friend XBuffer &operator>= (XBuffer &b, Vect4f &v);
-	friend XBuffer &operator< (XBuffer &b, const Vect4f &v);
-	friend XBuffer &operator> (XBuffer &b, Vect4f &v);
 
 	//  Swap  /////////////////////////
 	xm_inline void swap(Vect4f &other);
