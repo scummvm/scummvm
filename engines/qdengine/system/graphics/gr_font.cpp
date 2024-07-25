@@ -22,8 +22,10 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #define _NO_ZIP_
 #include "common/file.h"
+#include "common/memstream.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
+
 #include "qdengine/qd_precomp.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 #include "qdengine/system/graphics/gr_font.h"
@@ -62,19 +64,24 @@ bool grFont::load(const char *fname) {
 }
 
 bool grFont::load_index(Common::SeekableReadStream *fh) {
-	int64 bufSize = fh->size();
-	byte *buf = new byte[bufSize];
-	fh->read(buf, bufSize);
-
-	XBuffer XBuf(buf, bufSize);
+	Common::String buf = fh->readString();
+	char *pos = buf.begin();
 
 	int num_ch, sx, sy;
-	XBuf >= sx >= sy >= num_ch;
+
+	sx = strtol(pos, &pos, 0);
+	sy = strtol(pos, &pos, 0);
+	num_ch = strtol(pos, &pos, 0);
 
 	grFontChar chr;
 	for (int i = 0; i < num_ch; i ++) {
 		int x, y;
-		XBuf >= chr.code_ >= x >= y >= sx >= sy;
+
+		chr.code_ = strtol(pos, &pos, 0);
+		x = strtol(pos, &pos, 0);
+		y = strtol(pos, &pos, 0);
+		sx = strtol(pos, &pos, 0);
+		sy = strtol(pos, &pos, 0);
 
 		chr.region_ = grScreenRegion(x, y, sx, sy);
 		chars_.push_back(chr);
@@ -82,8 +89,6 @@ bool grFont::load_index(Common::SeekableReadStream *fh) {
 		if (sx > size_x_) size_x_ = sx;
 		if (sy > size_y_) size_y_ = sy;
 	};
-
-	delete[] buf;
 
 	return true;
 }
@@ -123,6 +128,4 @@ bool grFont::load_alpha(Common::SeekableReadStream *fh) {
 	return true;
 }
 
-
 } // namespace QDEngine
-

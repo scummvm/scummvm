@@ -44,11 +44,7 @@ bool saveFileExists(Common::String &fpath);
 bool is_file_exist(Common::String file_name);
 bool is_directory_exist(const char *dir_name);
 
-bool set_current_directory(const char *file_name);
-const char *strip_path(const char *file_name);
-const char *strip_file_name(const char *path);
-const char *get_ext(const char *file_name);
-const char *change_ext(const char *file_name, const char *new_ext);
+Common::String change_ext(const char *file_name, const char *new_ext);
 
 unsigned file_size(const char *file_name);
 

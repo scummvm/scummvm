@@ -1918,7 +1918,7 @@ bool qdGameDispatcher::play_video(const char *vid_name) {
 }
 
 bool qdGameDispatcher::play_video(qdVideo *p) {
-	if (!video_player_.open_file(find_file(p->file_name(), *p)))
+	if (!video_player_.open_file(find_file(p->file_name(), *p).c_str()))
 		return false;
 
 	if (!p->check_flag(qdVideo::VID_ENABLE_MUSIC)) {
@@ -2708,16 +2708,18 @@ bool qdGameDispatcher::play_music_track(const qdMusicTrack *p, bool interface_mo
 		cur_interface_music_track_ = p;
 	}
 
-	const char *file_name = NULL;
+	Common::String fname;
 
 	if (cur_scene_)
-		file_name = find_file(p->file_name(), *cur_scene_);
+		fname = find_file(p->file_name(), *cur_scene_);
 	else
-		file_name = find_file(p->file_name(), *this);
+		fname = find_file(p->file_name(), *this);
 
 	interface_music_mode_ = interface_mode;
 
-	return mpegPlayer::instance().play(file_name, p->is_cycled(), p->volume());
+	debugC(3, kDebugLoad, "qdGameDispatcher::play_music_track() %s", transCyrillic(fname));
+
+	return mpegPlayer::instance().play(fname.c_str(), p->is_cycled(), p->volume());
 }
 
 bool qdGameDispatcher::stop_music() {
@@ -3166,10 +3168,9 @@ bool qdGameDispatcher::get_files_list(qdFileNameList &files_to_copy, qdFileNameL
 
 	interface_dispatcher_.get_file_list(files_to_copy, files_to_pack);
 
-	for (qdFontInfoList::const_iterator it = fonts_list().begin();
-	        it != fonts_list().end(); ++it) {
-		files_to_pack.push_back((*it)->font_file_name()); // tga
-		files_to_pack.push_back(app_io::change_ext((*it)->font_file_name(), ".idx"));
+	for (auto &it : fonts_list()) {
+		files_to_pack.push_back(it->font_file_name()); // tga
+		files_to_pack.push_back(app_io::change_ext(it->font_file_name(), ".idx").c_str());
 	}
 
 	if (hall_of_fame_size_)
@@ -3219,7 +3220,7 @@ void qdGameDispatcher::request_CD(const qdFileOwner &file_owner) const {
 	mpegPlayer::instance().stop();
 
 	while (1) {
-		switch (MessageBox(NULL, cd_request_string(cd_id), game_title(), MB_OKCANCEL | MB_ICONEXCLAMATION)) {
+		switch (MessageBox(NULL, cd_request_string(cd_id).c_str(), game_title(), MB_OKCANCEL | MB_ICONEXCLAMATION)) {
 		case IDOK:
 			if (qdFileManager::instance().scan_drives(&file_owner)) {
 				qdFileManager::instance().set_last_CD_id(cd_id);
@@ -3240,7 +3241,7 @@ void qdGameDispatcher::request_CD(int cd_id) const {
 	mpegPlayer::instance().stop();
 
 	while (1) {
-		switch (MessageBox(NULL, cd_request_string(cd_id), game_title(), MB_OKCANCEL | MB_ICONEXCLAMATION)) {
+		switch (MessageBox(NULL, cd_request_string(cd_id).c_str(), game_title(), MB_OKCANCEL | MB_ICONEXCLAMATION)) {
 		case IDOK:
 			if (qdFileManager::instance().scan_drives(cd_id)) {
 				qdFileManager::instance().update_packages();
@@ -3253,16 +3254,15 @@ void qdGameDispatcher::request_CD(int cd_id) const {
 	}
 }
 
-const char *qdGameDispatcher::cd_request_string(int cd_id) const {
-	static XBuffer str;
-	str.init();
-
-	str < "Вставьте CD";
+Common::String qdGameDispatcher::cd_request_string(int cd_id) const {
+	Common::String str;
+	str += "Вставьте CD";
 
 	if (CD_count() > 1)
-		str < " " <= cd_id + 1;
+		str += Common::String(" %d", cd_id + 1);
 
-	return str.c_str();
+	warning("STUB: cd_request_string %s", str.c_str());
+	return str;
 }
 
 void qdGameDispatcher::request_file_package(const qdFileOwner &file_owner) const {
@@ -3285,18 +3285,16 @@ void qdGameDispatcher::startup_check() const {
 		request_CD(*this);
 }
 
-const char *qdGameDispatcher::find_file(const char *file_name, const qdFileOwner &file_owner) const {
+Common::String qdGameDispatcher::find_file(const char *file_name, const qdFileOwner &file_owner) const {
 	debugC(4, kDebugLoad, "qdGameDispatcher::find_file(%s)", file_name);
 
 	if (enable_file_packages_ && !app_io::is_file_exist(Common::String(file_name))) {
 		request_CD(file_owner);
 
-		static XBuffer fname(MAX_PATH);
-		fname.init();
-
-		fname < qdFileManager::instance().CD_path(file_owner) < file_name;
-
-		return fname.c_str();
+		Common::String fname;
+		fname += qdFileManager::instance().CD_path(file_owner);
+		fname += file_name;
+		return fname;
 	}
 
 	return file_name;

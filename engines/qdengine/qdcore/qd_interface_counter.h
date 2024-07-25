@@ -96,7 +96,7 @@ protected:
 	//! Загрузка данных из скрипта.
 	bool load_script_body(const xml::tag *p);
 
-	const char *data() const;
+	Common::String data() const;
 
 private:
 

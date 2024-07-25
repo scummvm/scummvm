@@ -79,21 +79,6 @@ bool is_file_exist(Common::String file_name) {
 	return res;
 }
 
-const char *strip_path(const char *file_name) {
-	static XBuffer name_buf(_MAX_PATH);
-	char fname[_MAX_FNAME];
-	char ext[_MAX_EXT];
-
-
-	_splitpath(file_name, NULL, NULL, fname, ext);
-
-	name_buf.init();
-	name_buf.operator < (fname).operator < (ext);
-
-
-	return name_buf.c_str();
-}
-
 bool is_directory_exist(const char *dir_name) {
 	warning("STUB: is_directory_exist()");
 #if 0
@@ -104,48 +89,11 @@ bool is_directory_exist(const char *dir_name) {
 	return false;
 }
 
-const char *strip_file_name(const char *path) {
-	char drive[_MAX_DRIVE];
-	char dir[_MAX_DIR];
-
-	static XBuffer name_buf(_MAX_PATH);
-
-	_splitpath(path, drive, dir, NULL, NULL);
-
-	name_buf.init();
-	name_buf.operator < (drive).operator < (dir);
-
-	return name_buf.c_str();
-
-}
-
-const char *get_ext(const char *file_name) {
-	char fname[_MAX_FNAME];
-	char ext[_MAX_EXT];
-
-	static XBuffer name_buf(_MAX_PATH);
-
-	_splitpath(file_name, NULL, NULL, fname, ext);
-
-	name_buf.init();
-	name_buf.operator < (ext);
-
-	return name_buf.c_str();
-}
-
-const char *change_ext(const char *file_name, const char *new_ext) {
-	char drive[_MAX_DRIVE];
-	char dir[_MAX_DIR];
-	char fname[_MAX_FNAME];
-
-	static XBuffer name_buf(_MAX_PATH);
-
-	_splitpath(file_name, drive, dir, fname, NULL);
-
-	name_buf.init();
-	name_buf.operator < (drive).operator < (dir).operator < (fname).operator < (new_ext);
-
-	return name_buf.c_str();
+Common::String change_ext(const char *file_name, const char *new_ext) {
+	warning("app_io::change_ext(%s)", file_name);
+	Common::String fpath(file_name);
+	Common::replace(fpath, ".tga", new_ext);
+	return fpath;
 }
 
 unsigned file_size(const char *file_name) {

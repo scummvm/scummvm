@@ -99,7 +99,7 @@ public:
 	void request_CD(int cd_id) const;
 
 	void request_file_package(const qdFileOwner &file_owner) const;
-	const char *find_file(const char *file_name, const qdFileOwner &file_owner) const;
+	Common::String find_file(const char *file_name, const qdFileOwner &file_owner) const;
 	void startup_check() const;
 
 	qdLoadingProgressFnc set_scene_loading_progress_callback(qdLoadingProgressFnc p, void *dp = 0) {
@@ -682,7 +682,7 @@ private:
 	void redraw(const grScreenRegion &reg);
 	void redraw_scene(bool draw_interface = true);
 
-	const char *cd_request_string(int cd_id) const;
+	Common::String cd_request_string(int cd_id) const;
 
 	/// включает нужный экран внутриигрового интерфейса
 	bool update_ingame_interface();

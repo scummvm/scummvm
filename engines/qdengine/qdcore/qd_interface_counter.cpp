@@ -101,28 +101,26 @@ bool qdInterfaceCounter::load_script_body(const xml::tag *p) {
 	return true;
 }
 
-const char *qdInterfaceCounter::data() const {
-	static XBuffer str;
-	str.init();
+Common::String qdInterfaceCounter::data() const {
+	Common::String str;
 
 	int val = 0;
 	if (counter_)
 		val = counter_->value();
 
 	if (val < 0)
-		str < "-";
+		str += "-";
 
 	int delta = 10;
-
 	for (int i = 1; i < digits_; i++) {
 		if (abs(val) < abs(delta))
-			str < "0";
+			str += "0";
 
 		delta *= 10;
 	}
 
-	str <= abs(val);
-
+	str += Common::String::format("%d", abs(val));
+	debugC(3, kDebugLog, "qdInterfaceCounter::data() %s", str.c_str());
 	return str;
 }
 
@@ -156,7 +154,7 @@ bool qdInterfaceCounter::redraw() const {
 		Vect2i sz = Vect2i(size_x(), size_y());
 		Vect2i pos = r() - sz / 2;
 		grDispatcher::instance()->DrawAlignedText(pos.x, pos.y, sz.x, sz.y,
-		        textFormat_.color(), data(), GR_ALIGN_LEFT, 0, 0, font);
+		        textFormat_.color(), data().c_str(), GR_ALIGN_LEFT, 0, 0, font);
 	}
 
 	return true;
@@ -184,13 +182,13 @@ bool qdInterfaceCounter::post_redraw() {
 int qdInterfaceCounter::size_x() const {
 	const grFont *font = qdGameDispatcher::get_dispatcher()->
 	                     find_font(textFormat_.font_type());
-	return grDispatcher::instance()->TextWidth(data(), 0, font);
+	return grDispatcher::instance()->TextWidth(data().c_str(), 0, font);
 }
 
 int qdInterfaceCounter::size_y() const {
 	const grFont *font = qdGameDispatcher::get_dispatcher()->
 	                     find_font(textFormat_.font_type());
-	return grDispatcher::instance()->TextHeight(data(), 0, font);
+	return grDispatcher::instance()->TextHeight(data().c_str(), 0, font);
 }
 
 void qdInterfaceCounter::setCounter(const qdCounter *counter) {

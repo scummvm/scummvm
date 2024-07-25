@@ -1138,9 +1138,8 @@ void qdGameObjectMoving::debug_redraw() const {
 		}
 	}
 
-	XBuffer str;
-	str < "movement_mode: " <= (int)movement_mode_;
-	grDispatcher::instance()->DrawText(10, 110, grDispatcher::instance()->make_rgb888(255, 255, 255), str);
+	Common::String str = Common::String::format("movement_mode: %d", movement_mode_);
+	grDispatcher::instance()->DrawText(10, 110, grDispatcher::instance()->make_rgb888(255, 255, 255), str.c_str());
 
 //	draw_bound();
 
@@ -2792,11 +2791,12 @@ void qdGameObjectMoving::draw_shadow(int offs_x, int offs_y, unsigned color, int
 		get_animation()->draw_mask(r.x, r.y, screen_depth(), grDispatcher::instance()->make_rgb(color), alpha, calc_scale());
 }
 
-bool qdGameObjectMoving::get_debug_info(XBuffer &buf) const {
+bool qdGameObjectMoving::get_debug_info(Common::String &buf) const {
 	qdGameObjectAnimated::get_debug_info(buf);
 #ifdef __QD_DEBUG_ENABLE__
-	buf < "scale: " <= calc_scale() < "\n";
+	buf += Common::String::format("scale:%d\n", calc_scale());
 #endif
 	return true;
 }
 } // namespace QDEngine
+
