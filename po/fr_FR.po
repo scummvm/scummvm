@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-24 12:42+0000\n"
-"PO-Revision-Date: 2024-07-24 08:03+0000\n"
+"PO-Revision-Date: 2024-07-25 07:55+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -7637,14 +7637,12 @@ msgid "Keep graphics as close as possible to the original"
 msgstr "Conserve les graphismes aussi proches que possible de l'original"
 
 #: engines/freescape/metaengine.cpp:128
-#, fuzzy
-#| msgid "Enable storage"
 msgid "Enable rock travel"
-msgstr "Activer le service de stockage"
+msgstr "Activer le rock travel"
 
 #: engines/freescape/metaengine.cpp:129
 msgid "Enable traveling using a rock shoot at start"
-msgstr ""
+msgstr "Permet le déplacement à l'aide d'un rocher tiré au départ"
 
 #: engines/freescape/movement.cpp:47 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
