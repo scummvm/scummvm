@@ -2794,7 +2794,7 @@ void qdGameObjectMoving::draw_shadow(int offs_x, int offs_y, unsigned color, int
 bool qdGameObjectMoving::get_debug_info(Common::String &buf) const {
 	qdGameObjectAnimated::get_debug_info(buf);
 #ifdef __QD_DEBUG_ENABLE__
-	buf += Common::String::format("scale: %d\n", calc_scale());
+	buf += Common::String::format("scale: %f\n", calc_scale());
 #endif
 	return true;
 }
