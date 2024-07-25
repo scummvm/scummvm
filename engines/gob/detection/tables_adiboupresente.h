@@ -46,7 +46,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0, 0, 0
+	"adibou.stk", "main.obc", 0
 },
 
 // -- French: Adibou présente Cuisine --
@@ -62,7 +62,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0, 0, 0
+	"adibou.stk", "main.obc", 0
 },
 
 // -- French: Adibou présente Magie --
@@ -79,7 +79,7 @@
 		GUIO0()
 	},
 	kFeatures800x600,
-	0, 0, 0
+	"adibou.stk", "main.obc", 0
 },
 
 #endif // GOB_DETECTION_TABLES_ADIBOUPRESENTE_H
