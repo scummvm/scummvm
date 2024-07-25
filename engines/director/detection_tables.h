@@ -100,6 +100,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "casinopoker",		"Casino Poker" },
 	{ "casinoslots",		"Casino Slots" },
 	{ "casperact",			"Casper Activity Center" },
+	{ "casperadv",			"Casper: The Interactive Adventure" },
 	{ "cassandra",			"The Cassandra Galleries" },
 	{ "catcameback",		"The Cat Came Back" },
 	{ "catshats",			"Black Cats and Pointed Hats" },
@@ -7402,6 +7403,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("casperact", "", "Casper Activity Center", "904cb6465321d8e1d12d2a5a29612050", 1029165, 600),
 	WINGAME1("casperact", "", "CASPER32.EXE", "a593079aecf5bd938ce75264cac24b2d", 1819279, 600),
+
+	WINGAME2("casperadv", "", "Casper.exe", "t:bad431801fb440c49a98bd3ab5fb6c39", 1824319,
+							  "LSG.dxr",	"d:ec1cd0f8cdd1dd409ced038a88da1565", 2742700, 601),
 
 	// Earlier entries use Director 4
 	MACGAME1("catseyeview", "Vol. 4 v2.0", "Cat'sEyeView vol.4_v2.0", "55d01cca925752c170ac1e9c01d1f87e", 1032146, 601),
