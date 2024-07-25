@@ -68,11 +68,8 @@ char *getIniKey(const char *fname, const char *section, const char *key) {
 }
 
 void putIniKey(const char *fname, const char *section, const char *key, int val) {
-	static XBuffer str;
-
-	str.init();
-	str <= val;
-
+	Common::String str;
+	str += Common::String::format("%d", val);
 	putIniKey(fname, section, key, str.c_str());
 }
 
@@ -276,4 +273,3 @@ bool qdGameConfig::update_music_settings() const {
 	return true;
 }
 } // namespace QDEngine
-

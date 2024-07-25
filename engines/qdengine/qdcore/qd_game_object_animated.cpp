@@ -392,9 +392,9 @@ bool qdGameObjectAnimated::insert_state(int iBefore, qdGameObjectState *p) {
 	states.insert(states.begin() + iBefore, p);
 
 	if (!p->name()) {
-		XBuffer name_str(64);
-		name_str < "Состояние " <= max_state();
-		p->set_name(name_str.c_str());
+		Common::String nameStr;
+		nameStr += Common::String::format("Состояние %d", max_state());
+		p->set_name(nameStr.c_str());
 	}
 	return true;
 }
@@ -406,9 +406,9 @@ bool qdGameObjectAnimated::add_state(qdGameObjectState *p) {
 	states.push_back(p);
 
 	if (!p->name()) {
-		XBuffer name_str(64);
-		name_str < "Состояние " <= max_state();
-		p->set_name(name_str.c_str());
+		Common::String nameStr;
+		nameStr += Common::String::format("Состояние %d", max_state());
+		p->set_name(nameStr.c_str());
 	}
 
 	return true;
@@ -857,22 +857,9 @@ void qdGameObjectAnimated::debug_redraw() const {
 	    4, 4,
 	    0x00FF0000, 0x000000FF, GR_FILLED);
 
-	static XBuffer buf(1024);
-	buf.init();
+	static Common::String buf;
 	if (get_debug_info(buf))
 		grDispatcher::instance()->DrawText(scr_pos.x, scr_pos.y - 20, grDispatcher::instance()->make_rgb888(255, 255, 255), buf.c_str());
-	/*
-	    for(int i = 0; i < qdGameConfig::get_config().screen_sy(); i++){
-	        for(int j = 0; j < qdGameConfig::get_config().screen_sx(); j++){
-	            if(hit(j,i))
-	                grDispatcher::instance()->SetPixel(j, i, 0x0000FF00);
-	        }
-	    }
-	*/
-// debugC(3, kDebugLog, "%s screen_pos: %d %d", transCyrillic(name()), screen_pos().x, screen_pos().y);
-
-//	if(const qdGameObjectStateMask* st = dynamic_cast<const qdGameObjectStateMask*>(get_cur_state()))
-//		st->draw_mask(grDispatcher::instance()->make_rgb(255,255,255));
 }
 
 bool qdGameObjectAnimated::hit(int x, int y) const {
@@ -1664,16 +1651,17 @@ void qdGameObjectAnimated::draw_shadow(int offs_x, int offs_y, unsigned color, i
 	}
 }
 
-bool qdGameObjectAnimated::get_debug_info(XBuffer &buf) const {
+bool qdGameObjectAnimated::get_debug_info(Common::String &buf) const {
 	qdGameObject::get_debug_info(buf);
 #ifdef __QD_DEBUG_ENABLE__
 	if (const qdGameObjectState * p = get_cur_state()) {
-		buf < p->name() < " " <= animation_.cur_time() < "\n";
+		buf += Common::String::format("%s %f", p->name(), animation_.cur_time());
 
 		if (queued_state())
-			buf < "wait: " < queued_state()->name() < "\n";
+			buf += Common::String::format("wait %s", queued_state()->name());
 	}
 #endif
 	return true;
 }
 } // namespace QDEngine
+

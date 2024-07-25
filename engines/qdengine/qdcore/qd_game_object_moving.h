@@ -246,7 +246,7 @@ public:
 	void draw_contour(unsigned color) const;
 	void draw_shadow(int offs_x, int offs_y, unsigned color, int alpha) const;
 
-	bool get_debug_info(XBuffer &buf) const;
+	bool get_debug_info(Common::String &buf) const;
 
 	grScreenRegion screen_region() const;
 
@@ -504,3 +504,4 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_GAME_OBJECT_MOVING_H
+

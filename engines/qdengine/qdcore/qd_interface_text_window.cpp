@@ -214,9 +214,9 @@ bool qdInterfaceTextWindow::init(bool is_game_active) {
 			break;
 		case INFO_PLAYER_SCORE:
 			if (dp->hall_of_fame_player_score(playerID_)) {
-				XBuffer buf;
-				buf <= dp->hall_of_fame_player_score(playerID_);
-				inputString_ = buf;
+				Common::String buf;
+				buf += Common::String::format("%d", dp->hall_of_fame_player_score(playerID_));
+				inputString_ = buf.c_str();
 			} else
 				inputString_ = "";
 			break;

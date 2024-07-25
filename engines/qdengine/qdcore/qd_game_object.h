@@ -143,7 +143,7 @@ public:
 	}
 
 	//! Копирует в буфер отладочную информацию для вывода на экран в отладочном режиме.
-	virtual bool get_debug_info(XBuffer &buf) const {
+	virtual bool get_debug_info(Common::String &buf) const {
 		return true;
 	}
 

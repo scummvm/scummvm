@@ -1806,19 +1806,18 @@ void qdGameScene::reload_personage_list() {
 
 #ifndef _QUEST_EDITOR
 void qdGameScene::create_minigame_objects() {
-	static XBuffer name_buf(1024);
+	Common::String name_buf;
 	for (qdMiniGame::config_container_t::const_iterator it = minigame_->config().begin(); it != minigame_->config().end(); ++it) {
 		if (it->data_type() == qdMinigameConfigParameter::PRM_DATA_OBJECT) {
 			if (const qdGameObject * obj = get_object(it->data_string())) {
 				for (int i = 0; i < it->data_count(); i++) {
-					name_buf.init();
-					name_buf < obj->name();
+					name_buf += obj->name();
 					int j = 1000;
 					while (j > 1) {
-						if (i < j) name_buf < "0";
+						if (i < j) name_buf += "0";
 						j /= 10;
 					}
-					name_buf <= i;
+					name_buf += Common::String::format("%d", i);
 
 					qdGameObject *new_obj = NULL;
 					switch (obj->named_object_type()) {
