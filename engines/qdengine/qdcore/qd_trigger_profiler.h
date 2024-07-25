@@ -169,8 +169,6 @@ public:
 		return activation_comline_;
 	}
 
-	static const char *record_text(const qdTriggerProfilerRecord &rec, char separator = ' ');
-
 	static int record_text_format() {
 		return record_text_format_;
 	}
@@ -198,7 +196,6 @@ private:
 
 	static const char *const activation_comline_;
 
-	static const char *element_text(qdTriggerElementPtr el);
 
 	static qdTriggerElementPtr get_record_element(const qdTriggerProfilerRecord &rec);
 	static qdTriggerLink *get_record_link(const qdTriggerProfilerRecord &rec);
@@ -210,4 +207,3 @@ private:
 #endif /* __QD_TRIGGER_PROFILER__ */
 
 #endif // QDENGINE_QDCORE_QD_TRIGGER_PROFILER_H
-

@@ -151,102 +151,6 @@ bool qdTriggerProfiler::load_from_work_file() {
 	return false;
 }
 
-const char *qdTriggerProfiler::record_text(const qdTriggerProfilerRecord &rec, char separator) {
-	static XBuffer text(1024, 1);
-	text.init();
-
-	if (record_text_format_ & PROFILER_TEXT_TIME) {
-		// time = hsec * 10 + sec * 1000 + min * 60 * 1000 + hrs * 60 * 60 * 1000
-		int hrs = rec.time() / (1000 * 60 * 60);
-		if (hrs < 10) text < "0";
-		text <= hrs < ":";
-
-		int min = (rec.time() % (1000 * 60 * 60)) / (1000 * 60);
-		if (min < 10) text < "0";
-		text <= min < ":";
-
-		int sec = (rec.time() % (1000 * 60)) / 1000;
-		if (sec < 10) text < "0";
-		text <= sec < ":";
-
-		int hsec = (rec.time() % 1000) / 10;
-		if (hsec < 10) text < "0";
-		text <= hsec < separator;
-	}
-
-	if (record_text_format_ & PROFILER_TEXT_TRIGGER_NAME) {
-		if (qdTriggerChain * tp = get_record_trigger(rec)) {
-			if (tp->name())
-				text < "[" < tp->name() < "]" < separator;
-		}
-	}
-
-	switch (rec.event()) {
-	case qdTriggerProfilerRecord::ELEMENT_STATUS_UPDATE:
-		switch (rec.status()) {
-		case qdTriggerElement::TRIGGER_EL_INACTIVE:
-			text < "триггер выключен";
-			break;
-		case qdTriggerElement::TRIGGER_EL_WAITING:
-			text < "триггер ждет";
-			break;
-		case qdTriggerElement::TRIGGER_EL_WORKING:
-			text < "триггер работает";
-			break;
-		case qdTriggerElement::TRIGGER_EL_DONE:
-			text < "триггер закончен";
-			break;
-		}
-		text < separator;
-		break;
-	case qdTriggerProfilerRecord::PARENT_LINK_STATUS_UPDATE:
-	case qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE:
-		switch (rec.status()) {
-		case qdTriggerLink::LINK_INACTIVE:
-			text < "линк выключен";
-			break;
-		case qdTriggerLink::LINK_ACTIVE:
-			text < "линк включен";
-			break;
-		case qdTriggerLink::LINK_DONE:
-			text < "линк отработан";
-			break;
-		}
-		text < separator;
-		break;
-	}
-
-	if (qdTriggerElementPtr el = get_record_element(rec)) {
-		switch (rec.event()) {
-		case qdTriggerProfilerRecord::ELEMENT_STATUS_UPDATE:
-			text < element_text(el);
-			break;
-		case qdTriggerProfilerRecord::PARENT_LINK_STATUS_UPDATE:
-			if (qdTriggerLink * lp = get_record_link(rec))
-				text < element_text(lp->element());
-			else
-				text < "???";
-
-			text < " ->" < separator;
-
-			text < element_text(el);
-			break;
-		case qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE:
-			text < element_text(el);
-
-			text < " ->" < separator;
-
-			if (qdTriggerLink * lp = get_record_link(rec))
-				text < element_text(lp->element());
-			else
-				text < "???";
-			break;
-		}
-	}
-
-	return text.c_str();
-}
-
 qdTriggerElementPtr qdTriggerProfiler::get_record_element(const qdTriggerProfilerRecord &rec) {
 	if (qdTriggerChain * p = get_record_trigger(rec))
 		return p->search_element(rec.element_id());
@@ -307,60 +211,11 @@ qdTriggerProfiler &qdTriggerProfiler::instance() {
 	return pr;
 }
 
-const char *qdTriggerProfiler::element_text(qdTriggerElementPtr el) {
-	static XBuffer text(1024, 1);
-	text.init();
-
-	qdNamedObject *p;
-
-	if (el->object()) {
-		if (record_text_format_ & PROFILER_TEXT_SCENE_NAME) {
-			if ((p = el->object()->owner(QD_NAMED_OBJECT_SCENE))) {
-				if (p->name())
-					text < p->name() < "::";
-				else
-					text < "???::";
-			}
-		}
-
-		if ((p = el->object()->owner(QD_NAMED_OBJECT_ANIMATED_OBJ))) {
-			if (p->name())
-				text < p->name() < "::";
-			else
-				text < "???::";
-		} else {
-			if ((p = el->object()->owner(QD_NAMED_OBJECT_MOVING_OBJ))) {
-				if (p->name())
-					text < p->name() < "::";
-				else
-					text < "???::";
-			} else {
-				if ((p = el->object()->owner(QD_NAMED_OBJECT_GRID_ZONE))) {
-					if (p->name())
-						text < p->name() < "::";
-					else
-						text < "???::";
-				}
-			}
-		}
-
-		if (el->object()->name())
-			text < el->object()->name();
-		else
-			text < "???";
-	} else {
-		if (el->ID() == qdTriggerElement::ROOT_ID)
-			text < "Старт";
-	}
-
-	return text.c_str();
-}
-
 void qdTriggerProfiler::set_work_file(const char *fname) {
 	if (NULL != fname) work_file_ = fname;
 	else work_file_.clear();
 }
 
 #endif /* __QD_TRIGGER_PROFILER__ */
-} // namespace QDEngine
 
+} // namespace QDEngine

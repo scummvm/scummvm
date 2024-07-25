@@ -156,12 +156,8 @@ bool qdInterfaceSave::init(bool is_game_active) {
 	if (app_io::is_file_exist(description_file())) {
 		Common::File fh;
 		fh.open(description_file().c_str());
-		XBuffer buf(fh.size() + 1);
-		buf.fill(0);
-		fh.read(buf.buffer(), fh.size());
+		save_title_ = fh.readString().c_str();
 		fh.close();
-
-		save_title_ = buf;
 	} else
 		save_title_ = "";
 

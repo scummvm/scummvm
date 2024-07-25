@@ -1811,13 +1811,7 @@ void qdGameScene::create_minigame_objects() {
 		if (it->data_type() == qdMinigameConfigParameter::PRM_DATA_OBJECT) {
 			if (const qdGameObject * obj = get_object(it->data_string())) {
 				for (int i = 0; i < it->data_count(); i++) {
-					name_buf += obj->name();
-					int j = 1000;
-					while (j > 1) {
-						if (i < j) name_buf += "0";
-						j /= 10;
-					}
-					name_buf += Common::String::format("%d", i);
+					name_buf = Common::String::format("%s%03d", obj->name(), i);
 
 					qdGameObject *new_obj = NULL;
 					switch (obj->named_object_type()) {
