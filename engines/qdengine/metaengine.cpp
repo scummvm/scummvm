@@ -19,9 +19,10 @@
  *
  */
 
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "qdengine/metaengine.h"
 #include "qdengine/qdengine.h"
+#include "qdengine/qdcore/qd_game_dispatcher.h"
 
 const char *QDEngineMetaEngine::getName() const {
 	return "qdengine";
@@ -41,6 +42,12 @@ bool QDEngineMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSavesSupportMetaInfo) ||
 	    (f == kSavesSupportThumbnail) ||
 	    (f == kSupportsLoadingDuringStartup);
+}
+
+void QDEngineMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	QDEngine::qdGameDispatcher *dp = QDEngine::qdGameDispatcher::get_dispatcher();
+	if (dp)
+		dp->game_screenshot(thumb);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(QDENGINE)
