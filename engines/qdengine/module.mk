@@ -105,10 +105,6 @@ MODULE_OBJS = \
 	qdcore/qd_trigger_element.o \
 	qdcore/qd_trigger_profiler.o \
 	qdcore/qd_video.o \
-	xutil/xbuffer/xbcnvin.o \
-	xutil/xbuffer/xbcnvout.o \
-	xutil/xbuffer/xbcore.o \
-	xutil/xbuffer/xbsearch.o \
 	util/xmath/XMath.o
 
 # This module can be built as a plugin
