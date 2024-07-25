@@ -37,6 +37,8 @@ public:
 	 * Used by e.g. the launcher to determine whether to enable the Load button.
 	 */
 	bool hasFeature(MetaEngineFeature f) const override;
+
+	virtual void getSavegameThumbnail(Graphics::Surface &thumb) override;
 };
 
 #endif // QDENGINE_METAENGINE_H

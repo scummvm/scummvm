@@ -2912,11 +2912,38 @@ const char *qdGameDispatcher::get_save_name(int slot_id, SaveFileType file_type)
 	return file_name.c_str();
 }
 
+bool qdGameDispatcher::game_screenshot(Graphics::Surface &thumb) const {
+	int w = qdGameConfig::get_config().screen_sx();
+	int h = qdGameConfig::get_config().screen_sy();
+
+	thumb.create(w, h, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+
+	if (qdGameScene * sp = get_active_scene()) {
+		qdSprite sprite(w, h, GR_RGB565);
+
+		sp->redraw();
+
+		uint16 col;
+		for (int i = 0; i < h; i++) {
+			uint16 *dst = (uint16 *)thumb.getBasePtr(0, i);
+			for (int j = 0; j < w; j++) {
+				grDispatcher::instance()->GetPixel(j, i, col);
+				*dst = col;
+				dst++;
+			}
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
 bool qdGameDispatcher::game_screenshot(const char *file_name, int sx, int sy) const {
 	if (qdGameScene * sp = get_active_scene()) {
 		qdSprite sprite(qdGameConfig::get_config().screen_sx(),
 		                qdGameConfig::get_config().screen_sy(),
-		                GR_RGB888);
+		                GR_RGB565);
 
 		sp->redraw();
 
