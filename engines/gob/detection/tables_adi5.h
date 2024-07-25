@@ -53,7 +53,7 @@
 	{ // Supplied by BJNFNE
 
 		"adi5",
-		_s("Missing game code"), // Adi 5 5.04 (Engine: DEV7 version 1.1.0.0)
+		_s("Missing game code"), // Adi 5 5.04 (Engine: DEV7 version 1.10a)
 		AD_ENTRY1s("adi5.stk", "17754a1b942c3af34e86820f19971895", 891549),
 		FR_FRA,
 		kPlatformWindows,
@@ -84,7 +84,7 @@
 	{ // Supplied by Indy4-Fan
 
 		"adi5",
-		_s("Missing game code"), // Addy 5 5.03 (Engine: DEV7 version 1.1.0.0)
+		_s("Missing game code"), // Addy 5 5.03 (Engine: DEV7 version 1.10a)
 		AD_ENTRY1s("adi5.stk", "b45a85ac21fccbb890edcbba36d11f42", 885616),
 		DE_DEU,
 		kPlatformWindows,
@@ -98,7 +98,7 @@
 	{ // Supplied by BJNFNE
 
 		"adi5",
-		_s("Missing game code"), // Addy 5 5.04 (Engine: DEV7 version 1.1.0.0)
+		_s("Missing game code"), // Addy 5 5.04 (Engine: DEV7 version 1.10a)
 		AD_ENTRY1s("adi5.stk", "7af169c901981f1fbf4535c194aa4cc0", 892359),
 		DE_DEU,
 		kPlatformWindows,
