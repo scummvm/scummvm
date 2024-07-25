@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-24 12:42+0000\n"
+"POT-Creation-Date: 2024-07-25 19:12+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -541,7 +541,7 @@ msgstr "اكتمل التنزيل ، تم تنزيل %d حزم ,%s%S"
 #: gui/integrity-dialog.cpp:276 gui/gui-manager.cpp:170
 #: gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
-#: engines/saga/metaengine.cpp:373 engines/scumm/help.cpp:127
+#: engines/saga/metaengine.cpp:374 engines/scumm/help.cpp:127
 #: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
 #: engines/scumm/help.cpp:195 engines/scumm/help.cpp:213
 #: engines/twp/metaengine.cpp:179
@@ -3221,7 +3221,7 @@ msgstr ""
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:326 engines/cge2/metaengine.cpp:239
 #: engines/hdb/metaengine.cpp:275 engines/mohawk/myst_stacks/menu.cpp:317
-#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/saga/metaengine.cpp:447
+#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/saga/metaengine.cpp:448
 #: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
 #: engines/zvision/metaengine.cpp:272 engines/zvision/metaengine.cpp:290
 msgid "Quit"
@@ -3481,7 +3481,7 @@ msgstr "حفظ اللعبة:"
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
 #: engines/neverhood/menumodule.cpp:923 engines/parallaction/metaengine.cpp:131
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:407
-#: engines/prince/saveload.cpp:54 engines/saga/metaengine.cpp:467
+#: engines/prince/saveload.cpp:54 engines/saga/metaengine.cpp:468
 #: engines/sci/engine/guest_additions.cpp:747 engines/sci/engine/kfile.cpp:1104
 #: engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
@@ -3707,7 +3707,7 @@ msgstr ""
 msgid "Matched game IDs for the %s engine:"
 msgstr "معرّفات اللعبة المتطابقة لمحرك%s:"
 
-#: engines/metaengine.cpp:56 engines/saga/metaengine.cpp:266
+#: engines/metaengine.cpp:56 engines/saga/metaengine.cpp:267
 msgid "Default game keymap"
 msgstr "خريطة مفاتيح اللعبة الافتراضية"
 
@@ -6076,7 +6076,7 @@ msgstr "خيارات اللعبة"
 
 #: engines/agos/metaengine.cpp:232 engines/cine/metaengine.cpp:265
 #: engines/groovie/metaengine.cpp:205 engines/made/metaengine.cpp:107
-#: engines/saga/metaengine.cpp:277
+#: engines/saga/metaengine.cpp:278
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left click"
@@ -6084,7 +6084,7 @@ msgstr "الزر الأيسر"
 
 #: engines/agos/metaengine.cpp:238 engines/cine/metaengine.cpp:271
 #: engines/groovie/metaengine.cpp:211 engines/made/metaengine.cpp:114
-#: engines/saga/metaengine.cpp:288
+#: engines/saga/metaengine.cpp:289
 #, fuzzy
 #| msgid "Right Click"
 msgid "Right click"
@@ -7035,7 +7035,7 @@ msgstr "سرعة الفيلم السريع"
 msgid "Examine"
 msgstr "يفحص"
 
-#: engines/cine/metaengine.cpp:320 engines/saga/metaengine.cpp:393
+#: engines/cine/metaengine.cpp:320 engines/saga/metaengine.cpp:394
 #, fuzzy
 #| msgid "Take off"
 msgid "Take"
@@ -7055,7 +7055,7 @@ msgstr "قائمة الجرد"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/cine/metaengine.cpp:330 engines/hdb/metaengine.cpp:237
-#: engines/mm/mm1/metaengine.cpp:81 engines/saga/metaengine.cpp:378
+#: engines/mm/mm1/metaengine.cpp:81 engines/saga/metaengine.cpp:379
 #: engines/scumm/help.cpp:130 engines/scumm/help.cpp:154
 #: engines/scumm/help.cpp:172 engines/scumm/help.cpp:202
 #: engines/scumm/help.cpp:217 engines/scumm/help.cpp:228
@@ -8370,13 +8370,13 @@ msgstr "انعطف لليسار"
 msgid "Cursor right"
 msgstr "انعطف يمينا"
 
-#: engines/made/metaengine.cpp:162 engines/saga/metaengine.cpp:440
+#: engines/made/metaengine.cpp:162 engines/saga/metaengine.cpp:441
 #: engines/vcruise/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "حفظ اللعبة"
 
 #: engines/made/metaengine.cpp:168 engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:430
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:431
 #: engines/vcruise/metaengine.cpp:156 engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
@@ -8438,7 +8438,7 @@ msgstr ""
 
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
-#: engines/saga/metaengine.cpp:327 engines/twine/metaengine.cpp:436
+#: engines/saga/metaengine.cpp:328 engines/twine/metaengine.cpp:436
 #: engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
 msgstr "يهرب"
@@ -9267,45 +9267,45 @@ msgstr "الإصدار التجريبي من macOS غير مدعوم"
 msgid "Pocket PC Trial version is not supported"
 msgstr "الإصدار التجريبي لجهاز كمبيوتر الجيب غير مدعوم"
 
-#: engines/saga/metaengine.cpp:136
+#: engines/saga/metaengine.cpp:137
 msgid "I Have No Mouth support not compiled in"
 msgstr "ليس لدي دعم الفم لم يتم تجميعه في"
 
-#: engines/saga/metaengine.cpp:267
+#: engines/saga/metaengine.cpp:268
 #, fuzzy
 #| msgid "Game Options"
 msgid "Game keymapping"
 msgstr "خيارات اللعبة"
 
-#: engines/saga/metaengine.cpp:268
+#: engines/saga/metaengine.cpp:269
 #, fuzzy
 #| msgid "Game Options"
 msgid "Option panel keymapping"
 msgstr "خيارات اللعبة"
 
-#: engines/saga/metaengine.cpp:269
+#: engines/saga/metaengine.cpp:270
 #, fuzzy
 #| msgid "Game Options"
 msgid "Save panel keymapping"
 msgstr "خيارات اللعبة"
 
-#: engines/saga/metaengine.cpp:270
+#: engines/saga/metaengine.cpp:271
 #, fuzzy
 #| msgid "Game Options"
 msgid "Load panel keymapping"
 msgstr "خيارات اللعبة"
 
-#: engines/saga/metaengine.cpp:271
+#: engines/saga/metaengine.cpp:272
 #, fuzzy
 #| msgid "Game Options"
 msgid "Quit panel keymapping"
 msgstr "خيارات اللعبة"
 
-#: engines/saga/metaengine.cpp:272
+#: engines/saga/metaengine.cpp:273
 msgid "Converse panel keymapping"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:283
+#: engines/saga/metaengine.cpp:284
 #, fuzzy
 #| msgid "Middle Click"
 msgid "Middle click"
@@ -9314,150 +9314,150 @@ msgstr "النقر الأوسط"
 #. I18N: the boss key is a feature,
 #. that allows players to quickly switch to a fake screen that looks like a business application,
 #. typically to avoid detection if someone, like a boss, walks by while they are playing.
-#: engines/saga/metaengine.cpp:297
+#: engines/saga/metaengine.cpp:298
 msgid "Boss key"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:302
+#: engines/saga/metaengine.cpp:303
 #, fuzzy
 #| msgid "Speech Options"
 msgid "Show options"
 msgstr "خيارات الكلام"
 
-#: engines/saga/metaengine.cpp:310
+#: engines/saga/metaengine.cpp:311
 #, fuzzy
 #| msgid "Next location"
 msgid "Exit conversation"
 msgstr "الموقع التالي"
 
-#: engines/saga/metaengine.cpp:315
+#: engines/saga/metaengine.cpp:316
 msgid "Conversation position - Up"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:320
+#: engines/saga/metaengine.cpp:321
 msgid "Conversation position - Down"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:332 engines/scumm/help.cpp:80
+#: engines/saga/metaengine.cpp:333 engines/scumm/help.cpp:80
 #: engines/vcruise/metaengine.cpp:171
 msgid "Pause game"
 msgstr "وقفة اللعبة"
 
-#: engines/saga/metaengine.cpp:338
+#: engines/saga/metaengine.cpp:339
 #, fuzzy
 #| msgid "Speech"
 msgid "Abort speech"
 msgstr "خطاب"
 
-#: engines/saga/metaengine.cpp:343
+#: engines/saga/metaengine.cpp:344
 #, fuzzy
 #| msgid "Skip dialogue"
 msgid "Show dialogue"
 msgstr "تخطي الحوار"
 
-#: engines/saga/metaengine.cpp:348 engines/scumm/help.cpp:144
+#: engines/saga/metaengine.cpp:349 engines/scumm/help.cpp:144
 #: engines/scumm/help.cpp:169 engines/scumm/help.cpp:198
 #: engines/wintermute/keymapper_tables.h:1540
 msgid "Walk to"
 msgstr "امشي الى"
 
-#: engines/saga/metaengine.cpp:353 engines/scumm/help.cpp:203
+#: engines/saga/metaengine.cpp:354 engines/scumm/help.cpp:203
 #: engines/scumm/help.cpp:215 engines/twp/metaengine.cpp:182
 #: engines/wintermute/keymapper_tables.h:122
 #: engines/wintermute/keymapper_tables.h:1534
 msgid "Look at"
 msgstr "ينظر الى"
 
-#: engines/saga/metaengine.cpp:358
+#: engines/saga/metaengine.cpp:359
 #, fuzzy
 #| msgid "Pick up"
 msgid "Pickup"
 msgstr "يلتقط"
 
-#: engines/saga/metaengine.cpp:363 engines/scumm/help.cpp:200
+#: engines/saga/metaengine.cpp:364 engines/scumm/help.cpp:200
 #: engines/scumm/help.cpp:216 engines/scumm/help.cpp:252
 #: engines/twp/metaengine.cpp:183 engines/wintermute/keymapper_tables.h:128
 #: engines/wintermute/keymapper_tables.h:1558
 msgid "Talk to"
 msgstr "تحدث الي"
 
-#: engines/saga/metaengine.cpp:368 engines/scumm/help.cpp:126
+#: engines/saga/metaengine.cpp:369 engines/scumm/help.cpp:126
 #: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
 #: engines/scumm/help.cpp:194 engines/scumm/help.cpp:212
 #: engines/twp/metaengine.cpp:178
 msgid "Open"
 msgstr "يفتح"
 
-#: engines/saga/metaengine.cpp:383 engines/scumm/help.cpp:125
+#: engines/saga/metaengine.cpp:384 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:201 engines/scumm/help.cpp:211
 #: engines/twp/metaengine.cpp:180
 msgid "Give"
 msgstr "يعطي"
 
-#: engines/saga/metaengine.cpp:388 engines/scumm/help.cpp:123
+#: engines/saga/metaengine.cpp:389 engines/scumm/help.cpp:123
 #: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
 #: engines/twp/metaengine.cpp:184
 msgid "Push"
 msgstr "Push"
 
-#: engines/saga/metaengine.cpp:398
+#: engines/saga/metaengine.cpp:399
 msgid "Swallow"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:405
+#: engines/saga/metaengine.cpp:406
 #, fuzzy
 #| msgid "Reading data failed"
 msgid "Reading speed"
 msgstr "فشلت قراءة البيانات"
 
-#: engines/saga/metaengine.cpp:410
+#: engines/saga/metaengine.cpp:411
 #, fuzzy
 #| msgid "Change font size"
 msgid "Change music"
 msgstr "تغيير حجم الخط"
 
-#: engines/saga/metaengine.cpp:415
+#: engines/saga/metaengine.cpp:416
 #, fuzzy
 #| msgid "Change Command"
 msgid "Change sound"
 msgstr "تغيير الأمر"
 
-#: engines/saga/metaengine.cpp:420
+#: engines/saga/metaengine.cpp:421
 #, fuzzy
 #| msgid "Change Command"
 msgid "Change voices"
 msgstr "تغيير الأمر"
 
-#: engines/saga/metaengine.cpp:425
+#: engines/saga/metaengine.cpp:426
 #, fuzzy
 #| msgid "Continue"
 msgid "Continue game"
 msgstr "مواصلة"
 
-#: engines/saga/metaengine.cpp:435 engines/vcruise/metaengine.cpp:166
+#: engines/saga/metaengine.cpp:436 engines/vcruise/metaengine.cpp:166
 #, fuzzy
 #| msgid "Quit Game"
 msgid "Quit game"
 msgstr "قم بإنهاء اللعبة"
 
-#: engines/saga/metaengine.cpp:452
+#: engines/saga/metaengine.cpp:453
 #, fuzzy
 #| msgid "Cancel input"
 msgid "Cancel quit"
 msgstr "إلغاء الإدخال"
 
-#: engines/saga/metaengine.cpp:457
+#: engines/saga/metaengine.cpp:458
 msgid "Okay"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:462
+#: engines/saga/metaengine.cpp:463
 #, fuzzy
 #| msgid "Cancel download"
 msgid "Cancel load"
 msgstr "إلغاء التحميل"
 
-#: engines/saga/metaengine.cpp:472
+#: engines/saga/metaengine.cpp:473
 #, fuzzy
 #| msgid "Cancel"
 msgid "Cancel save"
