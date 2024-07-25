@@ -65,6 +65,7 @@
  * - Bargon Attack
  * - Le pays des Pierres Magiques
  * - Lost in Time
+ * - Nathan Vacances CM1/CE2
  * - The Bizarre Adventures of Woodruff and the Schnibble
  * - Fascination
  * - Inca II: Nations of Immortality 
