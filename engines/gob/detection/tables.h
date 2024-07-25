@@ -49,6 +49,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{"lit", "Lost in Time"},
 	{"lit1", "Lost in Time Part 1"},
 	{"lit2", "Lost in Time Part 2"},
+	{"nathanvacances", "Nathan Vacances"},
 	{"inca2", "Inca II: Wiracocha"},
 	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble"},
 	{"dynasty", "The Last Dynasty"},
@@ -95,6 +96,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	#include "gob/detection/tables_littlered.h" // Once Upon A Time: Little Red Riding Hood
 	#include "gob/detection/tables_onceupon.h"  // Once Upon A Time: Baba Yaga and Abracadabra
 	#include "gob/detection/tables_lit.h"       // Lost in Time
+	#include "gob/detection/tables_nathanvacances.h" // Nathan Vacances series
 	#include "gob/detection/tables_fascin.h"    // Fascination
 	#include "gob/detection/tables_geisha.h"    // Geisha
 	#include "gob/detection/tables_inca2.h"     // Inca II: Wiracocha

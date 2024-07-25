@@ -51,6 +51,7 @@ static const GameIdToType gameIdToType[] = {
 	{                     "lit", kGameTypeLostInTime },
 	{                    "lit1", kGameTypeLostInTime },
 	{                    "lit2", kGameTypeLostInTime },
+	{          "nathanvacances", kGameTypeNone },
 	{                   "inca2", kGameTypeInca2 },
 	{                "woodruff", kGameTypeWoodruff },
 	{                 "dynasty", kGameTypeDynasty },
