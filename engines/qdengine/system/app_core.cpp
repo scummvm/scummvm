@@ -72,9 +72,8 @@ bool saveFileExists(Common::String &fpath) {
 }
 
 bool is_file_exist(const char *file_name) {
-	bool hasFile = SearchMan.hasFile(Common::Path(file_name));
-	warning("STUB: is_file_exist(): %s %d", file_name, hasFile);
-	return hasFile;
+	debugC(5, kDebugLoad, "is_file_exist(%s)", transCyrillic(file_name));
+	return SearchMan.hasFile(Common::Path(file_name));
 }
 
 const char *strip_path(const char *file_name) {
