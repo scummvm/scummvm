@@ -2920,7 +2920,7 @@ bool qdGameDispatcher::game_screenshot(const char *file_name, int sx, int sy) co
 
 		sp->redraw();
 
-		unsigned int r, g, b;
+		byte r, g, b;
 		for (int i = 0; i < qdGameConfig::get_config().screen_sy(); i++)
 			for (int j = 0; j < qdGameConfig::get_config().screen_sx(); j++) {
 				grDispatcher::instance()->GetPixel(j, i, r, g, b);

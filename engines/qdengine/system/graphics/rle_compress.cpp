@@ -202,7 +202,7 @@ bool rleBuffer::convert_data(int bits_per_pixel) {
 			unsigned char *char_ptr = reinterpret_cast<unsigned char *>(&*data_.begin());
 
 			for (int i = 0; i < sz; i ++) {
-				unsigned r, g, b;
+				byte r, g, b;
 
 				if (bits_per_pixel_ == 15)
 					grDispatcher::split_rgb555u(*short_ptr++, r, g, b);
@@ -221,7 +221,7 @@ bool rleBuffer::convert_data(int bits_per_pixel) {
 			unsigned short *short_ptr = reinterpret_cast<unsigned short *>(&*data_.begin());
 
 			for (int i = 0; i < sz; i ++) {
-				unsigned r, g, b;
+				byte r, g, b;
 
 				if (bits_per_pixel_ == 15) {
 					grDispatcher::split_rgb555u(*short_ptr, r, g, b);
@@ -321,4 +321,3 @@ bool rleBuffer::load(Common::SeekableReadStream *fh) {
 }
 
 } // namespace QDEngine
-

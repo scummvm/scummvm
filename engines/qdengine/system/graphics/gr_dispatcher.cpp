@@ -365,7 +365,7 @@ void grDispatcher::RectangleAlpha(int x, int y, int sx, int sy, unsigned color, 
 	int dx = 1;
 	int dy = 1;
 
-	unsigned mr, mg, mb;
+	byte mr, mg, mb;
 	split_rgb565u(color, mr, mg, mb);
 
 	mr = (mr * (255 - alpha)) >> 8;
@@ -420,11 +420,11 @@ void grDispatcher::SetPixel(int x, int y, int r, int g, int b) {
 	*p = (((r >> 3) << 11) + ((g >> 2) << 5) + ((b >> 3) << 0));
 }
 
-void grDispatcher::GetPixel(int x, int y, unsigned &col) {
+void grDispatcher::GetPixel(int x, int y, uint16 &col) {
 	col = *(uint16 *)(_screenBuf->getBasePtr(x, y));
 }
 
-void grDispatcher::GetPixel(int x, int y, unsigned &r, unsigned &g, unsigned &b) {
+void grDispatcher::GetPixel(int x, int y, byte &r, byte &g, byte &b) {
 	uint16 col = *(uint16 *)(_screenBuf->getBasePtr(x, y));
 	split_rgb565u(col, r, g, b);
 }
@@ -852,7 +852,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 		if (src_fmt == GR_RGB565) {
 			unsigned short *p = reinterpret_cast<unsigned short *>(data);
 			for (int i = 0; i < sx * sy; i ++) {
-				unsigned r, g, b;
+				byte r, g, b;
 				split_rgb565u(*p, r, g, b);
 				*p++ = make_rgb555u(r, g, b);
 				if (has_alpha) p++;
@@ -880,7 +880,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 		if (src_fmt == GR_ARGB1555) {
 			unsigned short *p = reinterpret_cast<unsigned short *>(data);
 			for (int i = 0; i < sx * sy; i ++) {
-				unsigned r, g, b;
+				byte r, g, b;
 				split_rgb555u(*p, r, g, b);
 				*p++ = make_rgb565u(r, g, b);
 
@@ -911,7 +911,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 			unsigned char *dp = data + sx * sy * 3 - 1;
 
 			for (int i = 0; i < sx * sy; i++) {
-				unsigned r, g, b;
+				byte r, g, b;
 
 				if (src_fmt == GR_ARGB1555)
 					split_rgb555u(*p--, r, g, b);
@@ -936,7 +936,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 			p = reinterpret_cast<unsigned short *>(data);
 			unsigned char *dp = data;
 			for (int i = 0; i < sx * sy; i ++) {
-				unsigned r, g, b;
+				byte r, g, b;
 
 				if (src_fmt == GR_ARGB1555)
 					split_rgb555u(*p++, r, g, b);
@@ -1177,4 +1177,3 @@ int grDispatcher::TextHeight(const char *str, int vspace, const grFont *font) co
 }
 
 } // namespace QDEngine
-
