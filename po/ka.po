@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-24 12:42+0000\n"
-"PO-Revision-Date: 2024-07-21 01:43+0000\n"
+"PO-Revision-Date: 2024-07-25 14:43+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -6567,45 +6567,33 @@ msgid "Action menu"
 msgstr "ქმედების მენიუ"
 
 #: engines/cine/metaengine.cpp:351
-#, fuzzy
-#| msgid "Game menu"
 msgid "System menu"
-msgstr "თამაშის მენიუ"
+msgstr "სისტემის მენიუ"
 
 #. I18N: Opens collision map of where the actor can freely move
 #: engines/cine/metaengine.cpp:358
-#, fuzzy
-#| msgid "Show options"
 msgid "Show collisions"
-msgstr "პარამეტრების ჩვენება"
+msgstr "შეჯახებების ჩვენება"
 
 #. I18N: Move Actor to top-left direction
 #: engines/cine/metaengine.cpp:393
-#, fuzzy
-#| msgid "Move left"
 msgid "Move up-left"
-msgstr "მარცხნივ გაწევა"
+msgstr "მარცხნივ-მაღლა გაწევა"
 
 #. I18N: Move Actor to top-right direction
 #: engines/cine/metaengine.cpp:399
-#, fuzzy
-#| msgid "Move right"
 msgid "Move up-right"
-msgstr "მარჯვნივ გაწევა"
+msgstr "მარჯვნივ-მაღლა გაწევა"
 
 #. I18N: Move Actor to bottom-left direction
 #: engines/cine/metaengine.cpp:405
-#, fuzzy
-#| msgid "Move down"
 msgid "Move down-left"
-msgstr "ქვემოთ ჩამოწევა"
+msgstr "ქვემოთ-მარცხნივ ჩამოწევა"
 
 #. I18N: Move Actor to bottom-right direction
 #: engines/cine/metaengine.cpp:411
-#, fuzzy
-#| msgid "Move right"
 msgid "Move down-right"
-msgstr "მარჯვნივ გაწევა"
+msgstr "მარჯვნივ-დაბლა ჩაწევა"
 
 #: engines/cine/metaengine.cpp:416
 msgid "Menu option up"
@@ -6827,10 +6815,8 @@ msgid "Keep graphics as close as possible to the original"
 msgstr ""
 
 #: engines/freescape/metaengine.cpp:128
-#, fuzzy
-#| msgid "Enable storage"
 msgid "Enable rock travel"
-msgstr "საცავის ჩართვა"
+msgstr "Rock travel-ის ჩართვა"
 
 #: engines/freescape/metaengine.cpp:129
 msgid "Enable traveling using a rock shoot at start"
