@@ -41,7 +41,7 @@ namespace app_io {
 
 bool saveFileExists(Common::String &fpath);
 
-bool is_file_exist(const char *file_name);
+bool is_file_exist(Common::String file_name);
 bool is_directory_exist(const char *dir_name);
 
 bool set_current_directory(const char *file_name);
@@ -61,4 +61,3 @@ void adjust_dir_end_slash(std::string &str);
 } // namespace QDEngine
 
 #endif // QDENGINE_SYSTEM_APP_CORE_H
-

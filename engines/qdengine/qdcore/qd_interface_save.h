@@ -114,11 +114,11 @@ public:
 	}
 
 	//! Возвращает имя сэйв-файла.
-	const char *save_file() const;
+	Common::String save_file() const;
 	//! Возвращает имя файла картинки-превью сэйва.
-	const char *thumbnail_file() const;
+	Common::String thumbnail_file() const;
 	//! Возвращает имя файла описания сэйва.
-	const char *description_file() const;
+	Common::String description_file() const;
 
 	//! Устанавливает режим работы - записывать (state == true) или загружать (state == false) сэйвы.
 	static void set_save_mode(bool state) {
@@ -225,4 +225,3 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_INTERFACE_SAVE_H
-

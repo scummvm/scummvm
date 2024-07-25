@@ -151,11 +151,11 @@ bool qdInterfaceSave::init(bool is_game_active) {
 		set_lock(false);
 
 	if (app_io::is_file_exist(thumbnail_file()))
-		thumbnail_.set_animation_file(thumbnail_file());
+		thumbnail_.set_animation_file(thumbnail_file().c_str());
 
 	if (app_io::is_file_exist(description_file())) {
 		Common::File fh;
-		fh.open(description_file());
+		fh.open(description_file().c_str());
 		XBuffer buf(fh.size() + 1);
 		buf.fill(0);
 		fh.read(buf.buffer(), fh.size());
@@ -170,7 +170,7 @@ bool qdInterfaceSave::init(bool is_game_active) {
 	Common::String saveFile(save_file());
 	if (!save_mode_ && !app_io::saveFileExists(saveFile)) {
 		if (is_visible()) {
-			debugC(3, kDebugInput, "qdInterfaceSave::init(): Hide %s", save_file());
+			debugC(3, kDebugInput, "qdInterfaceSave::init(): Hide %s", save_file().c_str());
 			hide();
 
 			if (qdInterfaceScreen *sp = dynamic_cast<qdInterfaceScreen * >(owner()))
@@ -284,12 +284,12 @@ bool qdInterfaceSave::perform_save() {
 		if (!save_title_.empty()) {
 			warning("STUB: Test qdInterfaceSave::perform_save()");
 			Common::DumpFile fh;
-			fh.open(description_file());
+			fh.open(description_file().c_str());
 			fh.write(save_title_.c_str(), strlen(save_title_.c_str()));
 			fh.close();
 		}
 
-		is_ok &= dp->game_screenshot(qdGameDispatcher::get_save_name(save_ID_, qdGameDispatcher::SAVE_THUMBNAIL), thumbnail_size_x_, thumbnail_size_y_);
+		is_ok &= dp->game_screenshot(qdGameDispatcher::get_save_name(save_ID_, qdGameDispatcher::SAVE_THUMBNAIL).c_str(), thumbnail_size_x_, thumbnail_size_y_);
 		is_ok &= init(true);
 		return is_ok;
 	}
@@ -354,15 +354,15 @@ bool qdInterfaceSave::load_script_body(const xml::tag *p) {
 	return true;
 }
 
-const char *qdInterfaceSave::save_file() const {
+Common::String qdInterfaceSave::save_file() const {
 	return qdGameDispatcher::get_save_name(save_ID_);
 }
 
-const char *qdInterfaceSave::thumbnail_file() const {
+ Common::String qdInterfaceSave::thumbnail_file() const {
 	return qdGameDispatcher::get_save_name(save_ID_, qdGameDispatcher::SAVE_THUMBNAIL);
 }
 
-const char *qdInterfaceSave::description_file() const {
+ Common::String qdInterfaceSave::description_file() const {
 	return qdGameDispatcher::get_save_name(save_ID_, qdGameDispatcher::SAVE_DESCRIPTION);
 }
 

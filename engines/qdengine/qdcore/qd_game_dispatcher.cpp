@@ -2885,31 +2885,26 @@ bool qdGameDispatcher::load_game(int slot_id) {
 bool qdGameDispatcher::save_game(int slot_id) const {
 	if (!get_active_scene()) return false;
 
-	debugC(1, kDebugSave, "qdGameDispatcher::save_game(%d): filename: %s", slot_id, get_save_name(slot_id));
-	return save_save(get_save_name(slot_id));
+	debugC(1, kDebugSave, "qdGameDispatcher::save_game(%d): filename: %s", slot_id, get_save_name(slot_id).c_str());
+	return save_save(get_save_name(slot_id).c_str());
 }
 
-const char *qdGameDispatcher::get_save_name(int slot_id, SaveFileType file_type) {
-	static XBuffer file_name(_MAX_PATH);
-
-	file_name.init();
-	file_name < "save";
-	if (slot_id < 10) file_name < "0";
-	file_name <= slot_id;
+Common::String qdGameDispatcher::get_save_name(int slot_id, SaveFileType file_type) {
+	Common::String res = Common::String::format("%s%02d", g_engine->getGameId().c_str(), slot_id);
 
 	switch (file_type) {
 	case SAVE_FILE:
-		file_name < ".sav";
+		res += ".sav";
 		break;
 	case SAVE_THUMBNAIL:
-		file_name < ".tga";
+		res += ".tga";
 		break;
 	case SAVE_DESCRIPTION:
-		file_name < ".txt";
+		res += ".txt";
 		break;
 	}
 
-	return file_name.c_str();
+	return res;
 }
 
 bool qdGameDispatcher::game_screenshot(Graphics::Surface &thumb) const {
@@ -2943,7 +2938,7 @@ bool qdGameDispatcher::game_screenshot(const char *file_name, int sx, int sy) co
 	if (qdGameScene * sp = get_active_scene()) {
 		qdSprite sprite(qdGameConfig::get_config().screen_sx(),
 		                qdGameConfig::get_config().screen_sy(),
-		                GR_RGB565);
+		                GR_RGB888);
 
 		sp->redraw();
 
@@ -3293,7 +3288,7 @@ void qdGameDispatcher::startup_check() const {
 const char *qdGameDispatcher::find_file(const char *file_name, const qdFileOwner &file_owner) const {
 	debugC(4, kDebugLoad, "qdGameDispatcher::find_file(%s)", file_name);
 
-	if (enable_file_packages_ && !app_io::is_file_exist(file_name)) {
+	if (enable_file_packages_ && !app_io::is_file_exist(Common::String(file_name))) {
 		request_CD(file_owner);
 
 		static XBuffer fname(MAX_PATH);
