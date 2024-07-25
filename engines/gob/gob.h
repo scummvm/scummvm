@@ -44,6 +44,7 @@
  * Status of this engine: Supported
  *
  * Games using this engine:
+ * - Adi 1
  * - Adi 2
  * - Adi 4
  * - Adi 5
