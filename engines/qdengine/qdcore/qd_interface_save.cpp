@@ -99,7 +99,7 @@ bool qdInterfaceSave::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev
 	switch (ev) {
 	case mouseDispatcher::EV_LEFT_DOWN:
 	case mouseDispatcher::EV_RIGHT_DOWN:
-		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
+		if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher()) {
 			debugC(1, kDebugSave, "qdInterfaceSave::mouse_handler(): save_mode_ = %d", save_mode_);
 			clear_screen_region();
 
@@ -126,7 +126,7 @@ bool qdInterfaceSave::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev
 			} else {
 				debugC(1, kDebugSave, "qdInterfaceSave::mouse_handler(): load_game() save_ID_ = %d", save_ID_);
 				dp->load_game(save_ID_);
-				if (qdInterfaceDispatcher * ip = qdInterfaceDispatcher::get_dispatcher())
+				if (qdInterfaceDispatcher *ip = qdInterfaceDispatcher::get_dispatcher())
 					ip->handle_event(qdInterfaceEvent::EVENT_RESUME_GAME, NULL);
 
 				return true;
@@ -173,14 +173,14 @@ bool qdInterfaceSave::init(bool is_game_active) {
 			debugC(3, kDebugInput, "qdInterfaceSave::init(): Hide %s", save_file());
 			hide();
 
-			if (qdInterfaceScreen * sp = dynamic_cast<qdInterfaceScreen * >(owner()))
+			if (qdInterfaceScreen *sp = dynamic_cast<qdInterfaceScreen * >(owner()))
 				sp->build_visible_elements_list();
 		}
 	} else {
 		if (!is_visible()) {
 			show();
 
-			if (qdInterfaceScreen * sp = dynamic_cast<qdInterfaceScreen * >(owner()))
+			if (qdInterfaceScreen *sp = dynamic_cast<qdInterfaceScreen * >(owner()))
 				sp->build_visible_elements_list();
 		}
 	}
@@ -190,9 +190,9 @@ bool qdInterfaceSave::init(bool is_game_active) {
 
 bool qdInterfaceSave::redraw() const {
 	//warning("STUB: qdInterfaceSave::redraw()");
-	if (qdInterfaceDispatcher * pid = qdInterfaceDispatcher::get_dispatcher()) {
+	if (qdInterfaceDispatcher *pid = qdInterfaceDispatcher::get_dispatcher()) {
 		if (pid->need_save_screenshot())
-			if (const qdAnimation * p = thumbnail_.animation())
+			if (const qdAnimation *p = thumbnail_.animation())
 				p->redraw(r().x, r().y, 0);
 
 		std::string text;
@@ -204,39 +204,6 @@ bool qdInterfaceSave::redraw() const {
 		}
 
 		grDispatcher *gr_disp = grDispatcher::instance();
-		if (pid->need_show_save_time() && gr_disp) {
-#ifndef _QUEST_EDITOR
-#if 0
-			FILETIME file_time;
-			SYSTEMTIME global_time, time;
-			std::string str = save_file();
-			HANDLE hFile = CreateFile(str.c_str(),
-			                          GENERIC_READ,
-			                          0,
-			                          NULL,
-			                          OPEN_EXISTING,
-			                          FILE_ATTRIBUTE_NORMAL,
-			                          NULL);
-			if (INVALID_HANDLE_VALUE != hFile &&
-			        GetFileTime(hFile, NULL, NULL, &file_time) &&
-			        FileTimeToSystemTime(&file_time, &global_time) &&
-			        SystemTimeToTzSpecificLocalTime(NULL, &global_time, &time)) {
-				XBuffer buf;
-				if (time.wDay < 10) buf < "0";
-				buf <= time.wDay < ".";
-				if (time.wMonth < 10) buf < "0";
-				buf <= time.wMonth < "." <= time.wYear < " ";
-				if (time.wHour < 10) buf < "0";
-				buf <= time.wHour < ":";
-				if (time.wMinute < 10) buf < "0";
-				buf <= time.wMinute;
-
-				text += buf;
-			}
-			CloseHandle(hFile);
-#endif
-		}
-
 		if (!text.empty()) {
 			qdGameDispatcher *game_disp = qdGameDispatcher::get_dispatcher();
 			const grFont *font = NULL;
@@ -250,23 +217,6 @@ bool qdInterfaceSave::redraw() const {
 
 			gr_disp->DrawText(tx, ty, pid->save_font_color(), text.c_str(), 0, 0, font);
 		}
-#else
-
-			if (qdInterfaceDispatcher * id = qdInterfaceDispatcher::get_dispatcher()) {
-				qdGameDispatcher *game_disp = qdGameDispatcher::get_dispatcher();
-				const grFont *font = NULL;
-				if ((QD_FONT_TYPE_NONE != pid->save_font_type()) && game_disp)
-					font = game_disp->find_font(pid->save_font_type());
-				else
-					font = gr_disp->get_default_font();
-
-				int tx = r().x - size_x() / 2 + text_dx();
-				int ty = r().y - size_y() / 2 + text_dy();
-
-				gr_disp->DrawText(tx, ty, id->save_font_color(), "30.01.2005 12:59", 0, 0, font);
-			}
-		}
-#endif
 	}
 
 	return qdInterfaceElement::redraw();
@@ -283,7 +233,7 @@ grScreenRegion qdInterfaceSave::screen_region() const {
 
 int qdInterfaceSave::size_x() const {
 	int x = thumbnail_size_x_;
-	if (const qdAnimation * p = frame_.animation()) {
+	if (const qdAnimation *p = frame_.animation()) {
 		if (x < p->size_x())
 			x = p->size_x();
 	}
@@ -293,7 +243,7 @@ int qdInterfaceSave::size_x() const {
 
 int qdInterfaceSave::size_y() const {
 	int y = thumbnail_size_y_;
-	if (const qdAnimation * p = frame_.animation()) {
+	if (const qdAnimation *p = frame_.animation()) {
 		if (y < p->size_y())
 			y = p->size_y();
 	}
@@ -325,7 +275,7 @@ bool qdInterfaceSave::hit_test(int x, int y) const {
 
 bool qdInterfaceSave::perform_save() {
 	bool is_ok = true;
-	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
+	if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher()) {
 		debugC(1, kDebugSave, "qdInterfaceSave::perform_save(): save_ID_ = %d", save_ID_);
 		is_ok &= dp->save_game(save_ID_);
 
