@@ -32,7 +32,7 @@ class Room301 : public Room {
 private:
 	int _val1 = 0;
 	int _val2 = 0;
-	int _val3 = 0;
+	const char *_soundName = nullptr;
 	int _val4 = 0;
 	int _val5 = -1;
 	int _val6 = 2;
@@ -44,6 +44,10 @@ private:
 	int _val12 = 0;
 	int _val13 = 0;
 	int _val14 = 0;
+	int _val15 = 0;
+	int _val16 = 0;
+	int _val17 = 0;
+	int _val18 = 0;
 	int _ripTrekHandTalk3 = 0;
 	int _ripTrekTalker3 = 0;
 	int _ripTrekTravel = 0;
@@ -54,7 +58,12 @@ private:
 	int _agentTakesTelegram = 0;
 	int _agentTalk = 0;
 	int _agentSalutes = 0;
+	int _ripTrekArms = 0;
+	int _marshalMatt = 0;
 	machine *_machine1 = nullptr;
+	machine *_machine2 = nullptr;
+
+	void conv301a();
 
 public:
 	Room301() : Room() {}
@@ -63,6 +72,8 @@ public:
 	void preload() override;
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms

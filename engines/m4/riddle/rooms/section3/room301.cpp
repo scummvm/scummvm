@@ -41,7 +41,7 @@ void Room301::init() {
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
 		_val1 = 0;
 		_val2 = 0;
-		_val3 = 0;
+		_soundName = nullptr;
 		_val4 = 0;
 		_val5 = -1;
 		_val6 = 2;
@@ -96,6 +96,137 @@ void Room301::init() {
 }
 
 void Room301::daemon() {
+	// TODO
+}
+
+void Room301::pre_parser() {
+	if (player_said("exit") && _G(globals)[GLB_TEMP_1]) {
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+	}
+}
+
+void Room301::parser() {
+	auto oldMode = _G(kernel).trigger_mode;
+	bool lookFlag = player_said_any("look", "look at");		// ecx
+	bool talkFlag = player_said_any("talk", "talk to");
+	bool takeFlag = player_said("take");					// edi
+	bool useFlag = player_said_any("push", "pull", "gear", "open", "close"); // esi
+
+	if (player_said("con301a")) {
+		conv301a();
+	} else if (player_said("exit")) {
+		if (_G(globals)[GLB_TEMP_1]) {
+			if (_G(kernel).trigger == -1) {
+				player_set_commands_allowed(false);
+				_marshalMatt = series_load("marshall matt");
+				digi_preload("301s01");
+				_ripTrekArms = series_load("rip trek arms x pos3");
+				ws_walk(200, 269, nullptr, 1, 9);
+			} else if (_G(kernel).trigger == 1) {
+				_G(kernel).trigger_mode = KT_DAEMON;
+				_machine2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+					triggerMachineByHashCallbackNegative, "marshal");
+				sendWSMessage(1, _machine2, _marshalMatt, 1, 2, 202, _marshalMatt, 3, 3, 0);
+				_val17 = 0;
+				_val18 = 0;
+			}
+		} else {
+			if (_G(kernel).trigger == -1) {
+				player_set_commands_allowed(false);
+				disable_player_commands_and_fade_init(1);
+			} else if (_G(kernel).trigger == 1) {
+				_G(game).new_room = 303;
+			}
+		}
+	} else if (lookFlag && player_said("poster")) {
+		digi_play("301r04", 1);
+	} else if (lookFlag && player_said("window")) {
+		digi_play(_G(player).been_here_before ? "301r15" : "301r05", 1);
+	} else if (lookFlag && player_said("magazines")) {
+		digi_play("301r06", 1);
+	} else if (lookFlag && player_said("water cooler")) {
+		digi_play(_G(player).been_here_before ? "301r16" : "301r07", 1);
+	} else if (lookFlag && player_said("agent")) {
+		digi_play("301r08", 1);
+	} else if (lookFlag && player_said("telephone")) {
+		digi_play("301r27", 1);
+	} else if (lookFlag && player_said("plant")) {
+		digi_play("301r28", 1);
+	} else if (lookFlag && player_said("postcards")) {
+		if (_G(globals)[V033]) {
+			digi_play("301r14", 1);
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				digi_play("301r03", 1, 255, 3);
+				kernel_timing_trigger(260, 1);
+				break;
+			case 1:
+				player_update_info();
+				ws_walk(_G(player_info).x, _G(player_info).y,
+					nullptr, 2, 3);
+				break;
+			case 2:
+				// TODO
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+
+	// TODO
+	_G(player).command_ready = false;
+}
+
+void Room301::conv301a() {
+	const char *sound = conv_sound_to_play();
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+
+	if (_G(kernel).trigger == 1 || !sound) {
+		if (who <= 0) {
+			if (node != 3) {
+				_val14 = 4;
+				conv_resume();
+			}
+		} else if (who == 1) {
+			if (node == 11) {
+				_val14 = 12;
+			} else if (node != 13) {
+				_val15 = 0;
+				conv_resume();
+			} else {
+				conv_resume();
+			}
+		} else {
+			conv_resume();
+		}
+	} else {
+		if (who <= 0) {
+			if (node == 3) {
+				_val14 = 15;
+			} else if (node != 2) {
+				_val14 = imath_ranged_rand(5, 6);
+			} else {
+				_val14 = 2;
+				_soundName = sound;
+				_val16 = 1;
+				return;
+			}
+		} else if (who == 1) {
+			if (node == 13)
+				_val14 = 13;
+			else
+				_val15 = 1;
+		}
+
+		digi_play(sound, 1, 255, 1);
+	}
 }
 
 } // namespace Rooms
