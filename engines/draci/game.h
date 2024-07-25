@@ -300,7 +300,7 @@ public:
 	void inventoryDraw();
 	void inventoryDone();
 	void inventoryReload();
-	void inventorySwitch(int keycode);
+	void inventorySwitch(int action);
 
 	void dialogueMenu(int dialogueID);
 	int dialogueDraw();

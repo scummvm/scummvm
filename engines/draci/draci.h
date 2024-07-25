@@ -41,6 +41,19 @@ class OSystem;
  */
 namespace Draci {
 
+enum DRACIAction {
+	kActionNone,
+	kActionEscape,
+	kActionMap,
+	kActionShowWalkMap,
+	kActionToggleWalkSpeed,
+	kActionInventory,
+	kActionOpenMainMenu,
+	kActionTogglePointerItem,
+	kActionInvRotatePrevious,
+	kActionInvRotateNext
+};
+
 class Screen;
 class Mouse;
 class Game;
