@@ -22,8 +22,13 @@
 #include "draci/draci.h"
 #include "draci/saveload.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "base/plugins.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "engines/advancedDetector.h"
 #include "engines/metaengine.h"
 
@@ -39,6 +44,8 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool DraciMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -122,6 +129,90 @@ SaveStateDescriptor DraciMetaEngine::querySaveMetaInfos(const char *target, int 
 Common::Error DraciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new Draci::DraciEngine(syst, desc);
 	return Common::kNoError;
+}
+
+Common::KeymapArray DraciMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Draci;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "draci-default", _("Default keymappings"));
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Left click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Right click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("ESCAPE", _("Skip intro/Exit map or inventory"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MAP", _("Open map"));
+	act->setCustomEngineActionEvent(kActionMap);
+	act->addDefaultInputMapping("m");
+	act->addDefaultInputMapping("JOY_A");
+	gameKeyMap->addAction(act);
+
+	// I18N: shows where the game actor is able to move
+	act = new Action("WALKMAP", _("Show walking map"));
+	act->setCustomEngineActionEvent(kActionShowWalkMap);
+	act->addDefaultInputMapping("w");
+	act->addDefaultInputMapping("JOY_LEFT_STICK");
+	gameKeyMap->addAction(act);
+
+	act = new Action("TOGGLEWALKSPEED", _("Toggle walk speed"));
+	act->setCustomEngineActionEvent(kActionToggleWalkSpeed);
+	act->addDefaultInputMapping("q");
+	act->addDefaultInputMapping("JOY_RIGHT_STICK");
+	gameKeyMap->addAction(act);
+
+	act = new Action("INV", _("Inventory"));
+	act->setCustomEngineActionEvent(kActionInventory);
+	act->addDefaultInputMapping("i");
+	act->addDefaultInputMapping("JOY_B");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MAINMENU", _("Open main menu"));
+	act->setCustomEngineActionEvent(kActionOpenMainMenu);
+	act->addDefaultInputMapping("F5");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	gameKeyMap->addAction(act);
+
+	act = new Action("POINTERORITEM", _("Toggle between mouse pointer and the last game item"));
+	act->setCustomEngineActionEvent(kActionTogglePointerItem);
+	act->addDefaultInputMapping("SLASH");
+	act->addDefaultInputMapping("JOY_LEFT");
+	gameKeyMap->addAction(act);
+
+	act = new Action("PREVITEM", _("Previous item in inventory"));
+	act->setCustomEngineActionEvent(kActionInvRotatePrevious);
+	act->addDefaultInputMapping("COMMA");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	gameKeyMap->addAction(act);
+
+	act = new Action("NEXTITEM", _("Next item in inventory"));
+	act->setCustomEngineActionEvent(kActionInvRotateNext);
+	act->addDefaultInputMapping("PERIOD");
+	act->addDefaultInputMapping("JOY_UP");
+	gameKeyMap->addAction(act);
+
+	
+	KeymapArray keymaps(2);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeyMap;
+
+	return keymaps;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(DRACI)
