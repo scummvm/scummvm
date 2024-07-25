@@ -769,14 +769,16 @@ void Darkseed::Room::runRoomObjects() {
 				xPos = (sprite.width / 2 + xPos) - g_engine->scaledSpriteHeight / 2;
 			}
 			if (roomObj.spriteNum == 14) {
-				g_engine->_sprites.addSpriteToDrawList(
-					xPos,
-					(yPos + sprite.height) - g_engine->scaledSpriteHeight,
-					&sprite,
-					240 - (yPos + sprite.height),
-					g_engine->scaledSpriteWidth,
-					g_engine->scaledSpriteHeight,
-					false);
+				if (g_engine->_objectVar[86] != 0) {
+					g_engine->_sprites.addSpriteToDrawList(
+						xPos,
+						(yPos + sprite.height) - g_engine->scaledSpriteHeight,
+						&sprite,
+						240 - (yPos + sprite.height),
+						g_engine->scaledSpriteWidth,
+						g_engine->scaledSpriteHeight,
+						false);
+				}
 			} else {
 				g_engine->_sprites.addSpriteToDrawList(
 					xPos,
