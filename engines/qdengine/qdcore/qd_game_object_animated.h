@@ -22,7 +22,6 @@
 #ifndef QDENGINE_QDCORE_QD_GAME_OBJECT_ANIMATED_H
 #define QDENGINE_QDCORE_QD_GAME_OBJECT_ANIMATED_H
 
-#include <vector>
 #include "qdengine/parser/xml_fwd.h"
 #include "qdengine/qdcore/qd_animation.h"
 #include "qdengine/qdcore/qd_coords_animation.h"

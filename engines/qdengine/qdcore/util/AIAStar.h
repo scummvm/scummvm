@@ -23,7 +23,6 @@
 #pragma once
 
 #include <map>
-#include <vector>
 #include "qdengine/qd_precomp.h"
 
 

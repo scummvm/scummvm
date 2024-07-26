@@ -22,7 +22,6 @@
 #ifndef QDENGINE_QDCORE_QD_CONTOUR_H
 #define QDENGINE_QDCORE_QD_CONTOUR_H
 
-#include <vector>
 #include "qdengine/parser/xml_fwd.h"
 
 namespace Common {

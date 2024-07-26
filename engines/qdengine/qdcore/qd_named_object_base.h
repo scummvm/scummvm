@@ -22,8 +22,6 @@
 #ifndef QDENGINE_QDCORE_QD_NAMED_OBJECT_BASE_H
 #define QDENGINE_QDCORE_QD_NAMED_OBJECT_BASE_H
 
-#include <string>
-
 namespace QDEngine {
 
 //! Базовый поименованный объект.

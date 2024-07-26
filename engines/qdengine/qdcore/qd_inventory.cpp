@@ -27,10 +27,6 @@
 #include "qdengine/qd_precomp.h"
 #include "qdengine/qdengine.h"
 
-#ifdef _QUEST_EDITOR
-#include <functional>
-#endif // _QUEST_EDITOR
-
 #include "qdengine/parser/xml_tag_buffer.h"
 
 #include "qdengine/parser/qdscr_parser.h"
