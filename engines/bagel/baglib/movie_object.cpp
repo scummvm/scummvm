@@ -471,7 +471,7 @@ ParseCodes CBagMovieObject::setInfo(CBagIfstream &istr) {
 		break;
 
 		//
-		//  No match return from funtion
+		//  No match return from function
 		//
 		default: {
 			const ParseCodes parseCode = CBagObject::setInfo(istr);
