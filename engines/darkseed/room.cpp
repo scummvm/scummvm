@@ -210,6 +210,7 @@ int Darkseed::Room::checkCursorAndMoveableObjects() {
 			&& _roomObj[i].yOffset <= cursorSprite.height + g_engine->_cursor.getY()
 			&& g_engine->_cursor.getY() <= _roomObj[i].height + _roomObj[i].yOffset
 		) {
+			hasObject = true;
 			if (_roomObj[i].objNum == 25) {
 				if (g_engine->_objectVar.getVar(80) < 3) {
 					hasObject = false;
