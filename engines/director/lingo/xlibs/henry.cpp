@@ -39,49 +39,49 @@
 --Henry
 ISS    mNew                --Creates a new instance of the XObject
 X      mDispose            --Disposes of XObject instance
-S      mName            
-SIIS           mUserHitMouse                   -- 
-XSSS           mStartNewPosition                       -- 
-XSS            mStartNewPositionSubView -- 
-S                      mCommittNewPosition -- 
-S                      mDoLeftTurn                             -- 
-S              mDoRightTurn            -- 
-SII    mCheckCursor            -- 
-SII    mGetRollOverActions -- 
-S              mGetEntryActions        -- 
-S              mPeekEntryActions       -- 
-S              mGetExitActions         -- 
-S              mSetSavedPosition 
-IS             mGetStateVariable       -- 
-XSI    mSetStateVariable       -- 
-SS             mGetStringVariable      -- 
-XSS    mSetStringVariable      -- 
-XSI    mStartTimer             -- 
-XS             mAbortTimer             -- 
-S              mCheckTimers            -- 
-SS             mGetTimerStatus 
-SS             mPickUpItem 
-XS             mDropItem               -- 
-XS             mDumpItem 
-SS             mReturnItem 
-SS             mIngestItem 
-SSS    mPutItemInContainer 
-SSSSS  mPutItemAtLocation 
-S              mGetCurrentPosition 
-S              mGetPlayerProperties 
-SSS    mSaveGame               -- 
-SS             mLoadGame               -- 
-XI             mShowCursor             -- 
-X              mReleaseCursor          -- 
-S              mGetRoomList            -- 
-SI             mGetItemList -- 
-S              mGetCurrentItem -- 
-S              mGetCurrentContainer -- 
-S              mGetCurrentInteraction -- 
-SS             mGetItemLocation -- 
-SS             mGetContainerContents -- 
-X              mPauseGame -- 
-X              mResumeGame -- 
+S      mName
+SIIS           mUserHitMouse                   --
+XSSS           mStartNewPosition                       --
+XSS            mStartNewPositionSubView --
+S                      mCommittNewPosition --
+S                      mDoLeftTurn                             --
+S              mDoRightTurn            --
+SII    mCheckCursor            --
+SII    mGetRollOverActions --
+S              mGetEntryActions        --
+S              mPeekEntryActions       --
+S              mGetExitActions         --
+S              mSetSavedPosition
+IS             mGetStateVariable       --
+XSI    mSetStateVariable       --
+SS             mGetStringVariable      --
+XSS    mSetStringVariable      --
+XSI    mStartTimer             --
+XS             mAbortTimer             --
+S              mCheckTimers            --
+SS             mGetTimerStatus
+SS             mPickUpItem
+XS             mDropItem               --
+XS             mDumpItem
+SS             mReturnItem
+SS             mIngestItem
+SSS    mPutItemInContainer
+SSSSS  mPutItemAtLocation
+S              mGetCurrentPosition
+S              mGetPlayerProperties
+SSS    mSaveGame               --
+SS             mLoadGame               --
+XI             mShowCursor             --
+X              mReleaseCursor          --
+S              mGetRoomList            --
+SI             mGetItemList --
+S              mGetCurrentItem --
+S              mGetCurrentContainer --
+S              mGetCurrentInteraction --
+SS             mGetItemLocation --
+SS             mGetContainerContents --
+X              mPauseGame --
+X              mResumeGame --
  */
 
 namespace Director {
