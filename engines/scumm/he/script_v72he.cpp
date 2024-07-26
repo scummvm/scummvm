@@ -2014,10 +2014,8 @@ void ScummEngine_v72he::checkArrayLimits(int array, int downMin, int downMax, in
 	}
 }
 
-// TODO: Have patience with this one, I'll restore it ASAP...
-#if 0
 void ScummEngine_v72he::copyArray(int dstVariable, int dstDownMin, int dstDownMax, int dstAcrossMin, int dstAcrossMax,
-				int srcVariable, int srcDownMin, int srcDownMax, int srcAcrossMin, int srcAcrossMax) {
+								  int srcVariable, int srcDownMin, int srcDownMax, int srcAcrossMin, int srcAcrossMax) {
 	byte *dstPtr, *srcPtr;
 	int dstOffset, srcOffset;
 	int dataSize;
@@ -2031,7 +2029,7 @@ void ScummEngine_v72he::copyArray(int dstVariable, int dstDownMin, int dstDownMa
 	int srcAcrossCount = srcAcrossMax - srcAcrossMin + 1;
 
 	if (srcDownCount != dstDownCount || srcAcrossCount != dstAcrossCount) {
-		error("Operation dataOffsetPtr mismatch (%d vs %d)(%d vs %d)", dstDownCount, srcDownCount, dstAcrossCount, srcAcrossCount);
+		error("Operation size mismatch (%d vs %d)(%d vs %d)", dstDownCount, srcDownCount, dstAcrossCount, srcAcrossCount);
 	}
 
 	if (dstVariable != srcVariable) {
@@ -2056,8 +2054,8 @@ void ScummEngine_v72he::copyArray(int dstVariable, int dstDownMin, int dstDownMa
 				int srcAcrossIndex = srcAcrossMin;
 
 				for (int dstAcrossCounter = dstAcrossMin; dstAcrossCounter <= dstAcrossMax; dstAcrossCounter++) {
-					writeArray(dstVariable, dstDownMin, dstAcrossCounter,
-						readArray(srcVariable, srcDownMin, srcAcrossIndex++));
+					writeArray(dstVariable, dstDownCounter, dstAcrossCounter,
+						readArray(srcVariable, srcDownIndex, srcAcrossIndex++));
 				}
 
 				srcDownIndex++;
@@ -2075,10 +2073,7 @@ void ScummEngine_v72he::copyArray(int dstVariable, int dstDownMin, int dstDownMa
 			}
 
 			bool useMemcpy = false;
-
-			// Calculate the check for overlap or flipped reads on src and dst pointers
-			// and setup the copy operation variables...
-			if ((dstDownMin < srcDownMin) || (_game.heversion > 99 || _isHE995)) {
+			if ((dstDownMin < srcDownMin) || _game.heversion > 99) {
 				useMemcpy = true;
 
 				getArrayDataPtrAndDataSize(dstArrayPtr, dstDownMin, dstAcrossMin, dstAcrossMax, &dstPtr, &dstOffset, &dataSize);
@@ -2089,7 +2084,7 @@ void ScummEngine_v72he::copyArray(int dstVariable, int dstDownMin, int dstDownMa
 
 				useMemcpy = (dstAcrossMin <= srcAcrossMin);
 			}
-
+			
 			if (useMemcpy) {
 				for (int dstDownCounter = dstDownMin; dstDownCounter <= dstDownMax; dstDownCounter++) {
 					memcpy(dstPtr, srcPtr, dataSize);
@@ -2106,68 +2101,6 @@ void ScummEngine_v72he::copyArray(int dstVariable, int dstDownMin, int dstDownMa
 		}
 	}
 }
-#else
-void ScummEngine_v72he::copyArray(int array1, int a1_dim2start, int a1_dim2end, int a1_dim1start, int a1_dim1end,
-								  int array2, int a2_dim2start, int a2_dim2end, int a2_dim1start, int a2_dim1end) {
-	byte *dst, *src;
-	int dstPitch, srcPitch;
-	int rowSize;
-	checkArrayLimits(array1, a1_dim2start, a1_dim2end, a1_dim1start, a1_dim1end);
-	checkArrayLimits(array2, a2_dim2start, a2_dim2end, a2_dim1start, a2_dim1end);
-	int a12_num = a1_dim2end - a1_dim2start + 1;
-	int a11_num = a1_dim1end - a1_dim1start + 1;
-	int a22_num = a2_dim2end - a2_dim2start + 1;
-	int a21_num = a2_dim1end - a2_dim1start + 1;
-	if (a22_num != a12_num || a21_num != a11_num) {
-		error("Operation size mismatch (%d vs %d)(%d vs %d)", a12_num, a22_num, a11_num, a21_num);
-	}
-
-	if (array1 != array2) {
-		ArrayHeader *ah1 = (ArrayHeader *)getResourceAddress(rtString, readVar(array1));
-		assert(ah1);
-		ArrayHeader *ah2 = (ArrayHeader *)getResourceAddress(rtString, readVar(array2));
-		assert(ah2);
-		if (FROM_LE_32(ah1->type) == FROM_LE_32(ah2->type)) {
-			getArrayDataPtrAndDataSize(ah1, a1_dim2start, a1_dim1start, a1_dim1end, &dst, &dstPitch, &rowSize);
-			getArrayDataPtrAndDataSize(ah2, a2_dim2start, a2_dim1start, a2_dim1end, &src, &srcPitch, &rowSize);
-			for (; a1_dim2start <= a1_dim2end; ++a1_dim2start) {
-				memcpy(dst, src, rowSize);
-				dst += dstPitch;
-				src += srcPitch;
-			}
-		} else {
-			for (; a1_dim2start <= a1_dim2end; ++a1_dim2start, ++a2_dim2start) {
-				int a2dim1 = a2_dim1start;
-				int a1dim1 = a1_dim1start;
-				for (; a1dim1 <= a1_dim1end; ++a1dim1, ++a2dim1) {
-					int val = readArray(array2, a2_dim2start, a2dim1);
-					writeArray(array1, a1_dim2start, a1dim1, val);
-				}
-			}
-		}
-	} else {
-		if (a2_dim2start != a1_dim2start || a2_dim1start != a1_dim1start) {
-			ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array1));
-			assert(ah);
-			if (a2_dim2start > a1_dim2start) {
-				getArrayDataPtrAndDataSize(ah, a1_dim2start, a1_dim1start, a1_dim1end, &dst, &dstPitch, &rowSize);
-				getArrayDataPtrAndDataSize(ah, a2_dim2start, a2_dim1start, a2_dim1end, &src, &srcPitch, &rowSize);
-			} else {
-				// start at the end, so we copy backwards (in case the indices overlap)
-				getArrayDataPtrAndDataSize(ah, a1_dim2end, a1_dim1start, a1_dim1end, &dst, &dstPitch, &rowSize);
-				getArrayDataPtrAndDataSize(ah, a2_dim2end, a2_dim1start, a2_dim1end, &src, &srcPitch, &rowSize);
-				dstPitch = -dstPitch;
-				srcPitch = -srcPitch;
-			}
-			for (; a1_dim2start <= a1_dim2end; ++a1_dim2start) {
-				memcpy(dst, src, rowSize);
-				dst += dstPitch;
-				src += srcPitch;
-			}
-		}
-	}
-}
-#endif
 
 void ScummEngine_v72he::getArrayDataPtrAndDataSize(ArrayHeader *headerPtr, int down, int aMin, int aMax, byte **ptrPtr, int *dataOffsetPtr, int *dataSizePtr) {
 	const int acrossCount = FROM_LE_32(headerPtr->acrossMax) - FROM_LE_32(headerPtr->acrossMin) + 1;
