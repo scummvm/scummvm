@@ -30,6 +30,7 @@
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
 #include "graphics/paletteman.h"
+#include "graphics/screen.h"
 
 #include "qdengine/qdengine.h"
 #include "qdengine/console.h"

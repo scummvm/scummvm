@@ -21,6 +21,7 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/archive.h"
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"

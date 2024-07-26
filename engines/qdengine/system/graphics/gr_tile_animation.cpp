@@ -21,7 +21,9 @@
 
 #define _NO_ZIP_
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/debug.h"
 #include "common/file.h"
+
 #include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"

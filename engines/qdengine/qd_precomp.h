@@ -64,7 +64,6 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "engines/qdengine/qd_fwd.h"
-#include "common/textconsole.h"
 
 namespace QDEngine {
 
