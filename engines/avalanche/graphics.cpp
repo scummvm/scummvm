@@ -208,7 +208,7 @@ Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16
 	if (yRadius == 0)
 		yRadius++;
 
-	// Check for an ellipse with negligable x and y radius.
+	// Check for an ellipse with negligible x and y radius.
 	if ((xRadius <= 1) && (yRadius <= 1)) {
 		*(byte *)_scrolls.getBasePtr(x, y) = color;
 		endPoint.x = x;
