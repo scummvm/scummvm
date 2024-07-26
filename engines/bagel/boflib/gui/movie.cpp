@@ -158,7 +158,7 @@ void  CBofMovie::onMainLoop() {
 		updateWindow();
 	}
 
-	if (_eMovStatus == FOREWARD) {
+	if (_eMovStatus == FORWARD) {
 		if (_pSmk->getCurFrame() == (int)_pSmk->getFrameCount() - 1) {
 			if (_bLoop == false) {
 				onMovieDone();
@@ -234,7 +234,7 @@ bool CBofMovie::play() {
 		_pSmk->pauseVideo(false);
 		//_pSmk->setReverse(false); // TODO: Not supported by SMK
 		_pSmk->start();
-		_eMovStatus = FOREWARD;
+		_eMovStatus = FORWARD;
 		return true;
 	}
 
