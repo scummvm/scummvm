@@ -356,10 +356,12 @@ void apply_config(const ConfigTree &cfg) {
 
 		// Resource caches and options
 		_GP(usetup).clear_cache_on_room_change = CfgReadBoolInt(cfg, "misc", "clear_cache_on_room_change", _GP(usetup).clear_cache_on_room_change);
-		int cache_size_kb = CfgReadInt(cfg, "misc", "cachemax", DEFAULTCACHESIZE_KB);
+		int cache_size_kb = CfgReadInt(cfg, "graphics", "sprite_cache_size", GameSetup::DefSpriteCacheSize);
 		if (cache_size_kb > 0)
 			_GP(usetup).SpriteCacheSize = cache_size_kb * 1024;
-
+		cache_size_kb = CfgReadInt(cfg, "graphics", "texture_cache_size", GameSetup::DefTexCacheSize);
+		if (cache_size_kb > 0)
+			_GP(usetup).TextureCacheSize = cache_size_kb * 1024;
 		// Mouse options
 		_GP(usetup).mouse_auto_lock = CfgReadBoolInt(cfg, "mouse", "auto_lock");
 		_GP(usetup).mouse_speed = CfgReadFloat(cfg, "mouse", "speed", 1.f);
