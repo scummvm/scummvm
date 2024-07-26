@@ -24,9 +24,9 @@
 
 #include "common/system.h"
 #include "common/hashmap.h"
+#include "common/stack.h"
 
 #include "qdengine/parser/xml_tag_buffer.h"
-#include <stack>
 
 namespace QDEngine {
 
@@ -37,7 +37,7 @@ namespace xml {
 class parser {
 public:
 	typedef Common::HashMap<Common::String, tag> tag_format_t;
-	typedef std::stack<tag *> tag_stack_t;
+	typedef Common::Stack<tag *> tag_stack_t;
 
 	parser();
 	virtual ~parser();
