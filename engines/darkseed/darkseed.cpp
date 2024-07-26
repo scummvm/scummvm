@@ -1466,6 +1466,21 @@ void DarkseedEngine::updateAnimation() {
 			_player->updateSprite();
 		}
 		break;
+	case 11:
+		advanceAnimationFrame(1);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(1).frameNo[animIndexTbl[1]];
+		} else {
+			_player->_position.x = 175;
+			_player->_position.y = 200;
+			_player->_walkTarget.x = 175;
+			_player->_walkTarget.y = 200;
+			_player->updateSprite();
+			if (_player->_isAutoWalkingToBed) {
+				_player->setplayertowardsbedroom();
+			}
+		}
+		break;
 	case 12:
 		advanceAnimationFrame(0);
 		if (!isAnimFinished_maybe) {

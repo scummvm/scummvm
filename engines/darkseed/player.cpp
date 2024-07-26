@@ -436,3 +436,7 @@ void Darkseed::Player::OptimisePath() {
 		}
 	}
 }
+
+void Darkseed::Player::setplayertowardsbedroom() {
+	// TODO
+}
