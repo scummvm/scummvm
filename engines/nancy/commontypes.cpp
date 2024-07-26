@@ -563,7 +563,7 @@ void StaticData::readData(Common::SeekableReadStream &stream, Common::Language l
 		case MKTAG('P', 'A', 'T', 'C') :
 			// Patch file
 			patchBufSize = nextSectionOffset - stream.pos();
-			patchBuf = new byte[patchBufSize];
+			patchBuf = (byte *)malloc(patchBufSize);
 			stream.read(patchBuf, patchBufSize);
 			break;
 		case MKTAG('P', 'A', 'S', 'S') :
