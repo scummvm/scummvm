@@ -435,6 +435,23 @@ void DgdsEngine::loadRestartFile() {
 	_gdsScene->loadRestart(_rstFileName, _resource, _decompressor);
 }
 
+static void _dumpFrame(const Graphics::ManagedSurface &surf, const char *name) {
+#ifdef DUMP_FRAME_DATA
+	/* For debugging, dump the frame contents.. */
+	Common::DumpFile outf;
+	uint32 now = g_engine->getTotalPlayTime();
+
+	byte palbuf[768];
+	g_system->getPaletteManager()->grabPalette(palbuf, 0, 256);
+
+	outf.open(Common::Path(Common::String::format("/tmp/%07d-%s.png", now, name)));
+	// Operator magic - convert ManagedSurface reg to Surface ref.
+	::Image::writePNG(outf, *(&surf), palbuf);
+	outf.close();
+#endif
+}
+
+
 Common::Error DgdsEngine::run() {
 	_isLoading = true;
 	init(false);
@@ -620,28 +637,9 @@ Common::Error DgdsEngine::run() {
 		_scene->runPostTickOps();
 		_scene->checkTriggers();
 
-#ifdef DUMP_FRAME_DATA
-		/* For debugging, dump the frame contents.. */
-		{
-			Common::DumpFile outf;
-			uint32 now = g_engine->getTotalPlayTime();
-
-			byte palbuf[768];
-			g_system->getPaletteManager()->grabPalette(palbuf, 0, 256);
-
-			outf.open(Common::Path(Common::String::format("/tmp/%07d-back.png", now)));
-			::Image::writePNG(outf, *_backgroundBuffer.surfacePtr(), palbuf);
-			outf.close();
-
-			outf.open(Common::Path(Common::String::format("/tmp/%07d-stor.png", now)));
-			::Image::writePNG(outf, *_storedAreaBuffer.surfacePtr(), palbuf);
-			outf.close();
-
-			outf.open(Common::Path(Common::String::format("/tmp/%07d-comp.png", now)));
-			::Image::writePNG(outf, *_compositionBuffer.surfacePtr(), palbuf);
-			outf.close();
-		}
-#endif
+		_dumpFrame(_backgroundBuffer, "back");
+		_dumpFrame(_storedAreaBuffer, "stor");
+		_dumpFrame(_compositionBuffer, "comp");
 
 		if (!_inventory->isOpen()) {
 			_gdsScene->drawItems(_compositionBuffer);
@@ -655,6 +653,8 @@ Common::Error DgdsEngine::run() {
 
 		_scene->drawAndUpdateDialogs(&_compositionBuffer);
 		_scene->drawVisibleHeads(&_compositionBuffer);
+
+		_dumpFrame(_compositionBuffer, "comp-with-dlg");
 
 		bool gameRunning = (!haveActiveDialog && _gameGlobals->getGlobal(0x57) /* TODO: && _dragItem == nullptr*/);
 		_clock.update(gameRunning);
