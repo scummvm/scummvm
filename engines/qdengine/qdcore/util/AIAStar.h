@@ -22,7 +22,7 @@
 //K-D Lab / Balmer
 #pragma once
 
-#include <map>
+#include "common/multimap.h"
 #include "qdengine/qd_precomp.h"
 
 
@@ -55,7 +55,7 @@ public:
 	struct OnePoint;
 	typedef std::multimap<TypeH, OnePoint *> type_point_map;
 #else
-	typedef std::multimap<TypeH, Vect2i> type_point_map;
+	typedef Common::MultiMap<TypeH, Vect2i> type_point_map;
 #endif
 
 	struct OnePoint {
@@ -311,7 +311,7 @@ template<class Heuristic, class Node, class TypeH = float>
 class AIAStarGraph {
 public:
 	struct OnePoint;
-	typedef std::multimap<TypeH, OnePoint *> type_point_map;
+	typedef Common::MultiMap<TypeH, OnePoint *> type_point_map;
 
 	struct OnePoint {
 		TypeH g;//Затраты на продвижение до этой точки
