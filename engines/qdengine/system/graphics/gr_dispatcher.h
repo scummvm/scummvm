@@ -90,20 +90,6 @@ public:
 		return _isFullScreen;
 	}
 
-	bool is_mode_supported(int sx, int sy, grPixelFormat pixel_format) const {
-		warning("STUB: grDispatcher::is_mode_supported");
-		return true;
-	}
-	bool is_mode_supported(grPixelFormat pixel_format) const {
-		warning("STUB: grDispatcher::is_mode_supported");
-		return true;
-	}
-
-	bool get_current_mode(int sx, int sy, grPixelFormat grPixelformat) {
-		warning("STUB: grDispatcher::get_current_mode");
-		return true;
-	}
-
 	grPixelFormat adjust_mode(grPixelFormat pixel_format) const {
 		return GR_RGB565;
 	}
