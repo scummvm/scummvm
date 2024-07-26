@@ -22,25 +22,26 @@
 #ifndef QDENGINE_QDCORE_QD_RND_H
 #define QDENGINE_QDCORE_QD_RND_H
 
+#include "qdengine/qdengine.h"
 
 namespace QDEngine {
 
-extern RandomGenerator qd_random_generator;
-
 /// Возвращает случайное значение в интервале [0, m-1].
 inline unsigned qd_rnd(unsigned m) {
-	return qd_random_generator(m);
+	return g_engine->getRandomNumber(m - 1);
 }
 /// Возвращает случайное значение в интервале [-x, x].
 inline float qd_frnd(float x) {
-	return qd_random_generator.frnd(x);
+	return (float)(qd_rnd(0x7fff) * 2 - 0x7fff) * x / (float)0x7fff;
 }
 /// Возвращает случайное значение в интервале [0, x].
 inline float qd_fabs_rnd(float x) {
-	return qd_random_generator.fabsRnd(x);
+	return (float)qd_rnd(0x7fff) * x / (float)0x7fff;
 }
 
-bool qd_rnd_init(int seed = 83);
+inline void qd_rnd_init(int seed = 83) {
+	g_engine->setSeed(seed);
+}
 
 
 } // namespace QDEngine

@@ -91,7 +91,6 @@ MODULE_OBJS = \
 	qdcore/qd_named_object_indexer.o \
 	qdcore/qd_named_object_reference.o \
 	qdcore/qd_resource.o \
-	qdcore/qd_rnd.o \
 	qdcore/qd_scale_info.o \
 	qdcore/qd_screen_text.o \
 	qdcore/qd_screen_text_dispatcher.o \

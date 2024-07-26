@@ -47,11 +47,6 @@ const Vect3f Vect3f::ZERO(0, 0, 0);
 const QuatF QuatF::ID(1, 0, 0, 0);
 const QuatD QuatD::ID(1, 0, 0, 0);
 
-RandomGenerator xm_random_generator;
-int RandomGenerator::operator()() {
-	return ((value = value * 214013L + 2531011L) >> 16) & 0x7fff;
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 //
 //  class Vect2f

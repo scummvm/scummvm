@@ -86,6 +86,10 @@ public:
 		return _randomSource.getRandomNumber(maxNum);
 	}
 
+	void setSeed(uint32 seed) {
+		_randomSource.setSeed(seed);
+	}
+
 	bool hasFeature(EngineFeature f) const override {
 		return
 		    (f == kSupportsLoadingDuringRuntime) ||
