@@ -53,13 +53,13 @@ enum StreamWorkMode {
 class Stream : public IAGSStream {
 public:
 	Stream() = default;
-	Stream(const String &src_name)
-		: _srcName(src_name) {}
+	Stream(const String &path)
+		: _path(path) {}
 	virtual ~Stream() {}
 
-	// Returns an optional name of a stream's source, such as a filepath;
+	// Returns an optional path of a stream's source, such as a filepath;
 	// primarily for diagnostic purposes
-	const String &GetSrcName() const { return _srcName; }
+	const String &GetPath() const { return _path; }
 	// Tells if the stream has errors
 	virtual bool HasErrors() const {
 		return false;
@@ -100,7 +100,7 @@ public:
 	size_t WriteByteCount(uint8_t b, size_t count);
 
 protected:
-	String _srcName; // optional name of the stream's source (e.g. filepath)
+	String _path; // optional name of the stream's source (e.g. filepath)
 };
 
 class ScummVMReadStream : public Common::SeekableReadStream {
