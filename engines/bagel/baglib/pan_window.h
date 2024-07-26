@@ -75,7 +75,7 @@ private:
 	CBofList<CBagObject *> *_pFGObjectList; // Objects to be painted to the window
 
 public:
-	static CBagWield *_pWieldBmp; // Pointer to the WEILD object
+	static CBagWield *_pWieldBmp; // Pointer to the WIELD object
 
 	CBagPanWindow();
 	virtual ~CBagPanWindow();
