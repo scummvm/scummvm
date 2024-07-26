@@ -66,7 +66,7 @@ int File_Exists(const char *fnmm) {
 	if (rp.AssetMgr)
 		return _GP(AssetMgr)->DoesAssetExist(rp.FullPath);
 
-	return (File::TestReadFile(rp.FullPath) || File::TestReadFile(rp.AltPath)) ? 1 : 0;
+	return (File::IsFile(rp.FullPath) || File::IsFile(rp.AltPath)) ? 1 : 0;
 }
 
 int File_Delete(const char *fnmm) {
