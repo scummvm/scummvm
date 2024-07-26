@@ -513,7 +513,7 @@ static bool VildroidFilter(CBofBitmap *pBmp, CBofRect *pRect) {
 
 			case 24:
 			case 25:
-				paintText(pBmp, &txtRect, "9. Algorithms 1233B thru 1245DD: 12 Steps to Whiter Tiles", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
+				paintText(pBmp, &txtRect, "9. Algorithms 1233B through 1245DD: 12 Steps to Whiter Tiles", VILDROIDTIPSTEXTSIZE, TEXT_BOLD, RGB(255, 7, 0), JUSTIFY_CENTER, FORMAT_TOP_CENTER);
 				break;
 
 			case 26:
