@@ -1097,7 +1097,7 @@ bool grDispatcher::DrawParsedText(int x, int y, int sx, int sy, unsigned color, 
 				cur_x = x + sx - it->width - 1;
 				break;
 			default:
-				xassertStr(false, ":\\");
+				break;
 			}
 			break;
 

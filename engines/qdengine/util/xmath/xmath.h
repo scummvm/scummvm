@@ -32,7 +32,6 @@
 
 #include <math.h>
 #include "qdengine/util/xmath/fastMath.h"
-#include "qdengine/xutil/xutil.h"
 
 
 #ifdef _XMATH_USE_IOSTREAM

@@ -66,7 +66,7 @@ unsigned encodeRLE(const unsigned *in_data, unsigned *out_data) {
 		}
 
 		count = index;
-		xassert(index < GR_TILE_SPRITE_SIZE * 4);
+		assert(index < GR_TILE_SPRITE_SIZE * 4);
 	}
 
 	return size;
@@ -168,7 +168,7 @@ unsigned grTileSprite::compress(const unsigned *in_data, unsigned *out_data, grT
 		CLZ77 encoder;
 		long len = 0;
 		encoder.Encode((unsigned char *)(out_data + 1), len, (const unsigned char *)in_data, GR_TILE_SPRITE_SIZE_BYTES);
-		xassert(len);
+		assert(len);
 		out_data[0] = len;
 		return len / 4 + 2;
 	}

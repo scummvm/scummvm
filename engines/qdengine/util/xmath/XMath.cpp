@@ -30,7 +30,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 #include "qdengine/util/xmath/xmath.h"
-#include "qdengine/xutil/xutil.h"
 
 
 namespace QDEngine {
@@ -1141,7 +1140,7 @@ Vect3f &QuatF::invXform(Vect3f &v) const {
 void Mat2f::Invert() {
 	Mat2f out;
 	float det = xx * yy - xy * yx;
-	xassert(fabs(det) > FLT_EPS);
+	assert(fabs(det) > FLT_EPS);
 	float inv_det = 1 / det;
 	out.xx = yy * inv_det;
 	out.xy = -xy * inv_det;
