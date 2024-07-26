@@ -248,13 +248,13 @@ public:
 	// Creates new texture using given parameters
 	IDriverDependantBitmap *CreateDDB(int width, int height, int color_depth, bool opaque) override = 0;
 	// Creates new texture and copy bitmap contents over
-	IDriverDependantBitmap *CreateDDBFromBitmap(Bitmap *bitmap, bool hasAlpha, bool opaque = false) override;
+	IDriverDependantBitmap *CreateDDBFromBitmap(Bitmap *bitmap, bool has_alpha, bool opaque = false) override;
 	// Get shared texture from cache, or create from bitmap and assign ID
-	IDriverDependantBitmap *GetSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) override;
+	IDriverDependantBitmap *GetSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool has_alpha, bool opaque) override;
 	// Removes the shared texture reference, will force the texture to recreate next time
 	void ClearSharedDDB(uint32_t sprite_id) override;
 	// Updates shared texture data, but only if it is present in the cache
-	void UpdateSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) override;
+	void UpdateSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool has_alpha, bool opaque) override;
 	void DestroyDDB(IDriverDependantBitmap* ddb) override;
 
 	// Sets stage screen parameters for the current batch.
@@ -264,7 +264,7 @@ protected:
 	// Create texture data with the given parameters
 	virtual TextureData *CreateTextureData(int width, int height, bool opaque, bool as_render_target = false) = 0;
 	// Update texture data from the given bitmap
-	virtual void UpdateTextureData(TextureData *txdata, Bitmap *bmp, bool opaque, bool hasAlpha) = 0;
+	virtual void UpdateTextureData(TextureData *txdata, Bitmap *bmp, bool has_alpha, bool opaque) = 0;
 	// Create DDB using preexisting texture data
 	virtual IDriverDependantBitmap *CreateDDB(std::shared_ptr<TextureData> txdata,
 		  int width, int height, int color_depth, bool opaque) = 0;
