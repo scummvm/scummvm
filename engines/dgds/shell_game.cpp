@@ -73,8 +73,8 @@ static void _setPeaPosition(int16 val) {
 void ShellGame::drawShellGameStr(int16 count, int16 x, int16 y) const {
 	const Common::String countStr = Common::String::format("%d", count);
 	DgdsEngine *engine = DgdsEngine::getInstance();
-	const DgdsFont *fnt = engine->getFontMan()->getFont(FontManager::k6x6Font);
-	fnt->drawString(&engine->getStoredAreaBuffer(), countStr, x, y, 50, 0);
+	const DgdsFont *fnt = engine->getFontMan()->getFont(FontManager::k4x5Font);
+	fnt->drawString(&engine->getStoredAreaBuffer(), countStr, x, y, 50, 13);
 }
 
 void ShellGame::drawShells() const {
