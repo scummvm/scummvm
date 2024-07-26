@@ -499,7 +499,7 @@ ErrorCode CBofDataFile::writeRecord(int32 lRecNum, void *pBuf, int32 lSize, bool
 				// Write chunk to new position
 				write(pTmpBuf, lChunkSize);
 
-				// That much less to do next time thru
+				// That much less to do next time through
 				lBufLength -= lChunkSize;
 
 				// Last chunk is lBufLength
