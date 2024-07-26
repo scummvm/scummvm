@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-26 21:55+0000\n"
+"POT-Creation-Date: 2024-07-26 22:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5435,7 +5435,7 @@ msgstr ""
 #: engines/dreamweb/metaengine.cpp:48 engines/groovie/metaengine.cpp:53
 #: engines/m4/metaengine.cpp:37 engines/neverhood/dialogs.cpp:47
 #: engines/sci/detection_options.h:107 engines/sherlock/metaengine.cpp:39
-#: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:37
+#: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:41
 #: engines/ultima/metaengine.cpp:52 engines/zvision/metaengine.cpp:46
 msgid "Use original save/load screens"
 msgstr ""
@@ -5446,7 +5446,7 @@ msgstr ""
 #: engines/dreamweb/metaengine.cpp:49 engines/groovie/metaengine.cpp:54
 #: engines/m4/metaengine.cpp:38 engines/neverhood/dialogs.cpp:48
 #: engines/sci/detection_options.h:108 engines/sherlock/metaengine.cpp:40
-#: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:38
+#: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:42
 #: engines/ultima/metaengine.cpp:53 engines/zvision/metaengine.cpp:47
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
@@ -5643,7 +5643,7 @@ msgid "AGOS main"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
-#: engines/made/metaengine.cpp:103
+#: engines/made/metaengine.cpp:103 engines/trecision/metaengine.cpp:121
 msgid "Game keymappings"
 msgstr ""
 
@@ -5653,13 +5653,13 @@ msgstr ""
 
 #: engines/agos/metaengine.cpp:232 engines/cine/metaengine.cpp:265
 #: engines/groovie/metaengine.cpp:205 engines/made/metaengine.cpp:107
-#: engines/saga/metaengine.cpp:278
+#: engines/saga/metaengine.cpp:278 engines/trecision/metaengine.cpp:125
 msgid "Left click"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:238 engines/cine/metaengine.cpp:271
 #: engines/groovie/metaengine.cpp:211 engines/made/metaengine.cpp:114
-#: engines/saga/metaengine.cpp:289
+#: engines/saga/metaengine.cpp:289 engines/trecision/metaengine.cpp:131
 msgid "Right click"
 msgstr ""
 
@@ -5755,7 +5755,7 @@ msgstr ""
 msgid "High speed mode on/off in Swampy Adventures"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:382
+#: engines/agos/metaengine.cpp:382 engines/trecision/metaengine.cpp:181
 msgid "Press \"Yes\" key"
 msgstr ""
 
@@ -6454,6 +6454,7 @@ msgid "Empty autosave"
 msgstr ""
 
 #: engines/cine/metaengine.cpp:258 engines/made/metaengine.cpp:102
+#: engines/trecision/metaengine.cpp:120
 msgid "Default keymappings"
 msgstr ""
 
@@ -7659,13 +7660,15 @@ msgid "Cursor right"
 msgstr ""
 
 #: engines/made/metaengine.cpp:162 engines/saga/metaengine.cpp:441
-#: engines/vcruise/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:920
+#: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:151
+#: engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr ""
 
 #: engines/made/metaengine.cpp:168 engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:431
-#: engines/vcruise/metaengine.cpp:156 engines/wintermute/keymapper_tables.h:925
+#: engines/trecision/metaengine.cpp:175 engines/vcruise/metaengine.cpp:156
+#: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
 msgstr ""
@@ -8540,7 +8543,7 @@ msgid "Conversation position - Down"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:333 engines/scumm/help.cpp:80
-#: engines/vcruise/metaengine.cpp:171
+#: engines/trecision/metaengine.cpp:150 engines/vcruise/metaengine.cpp:171
 msgid "Pause game"
 msgstr ""
 
@@ -8620,7 +8623,8 @@ msgstr ""
 msgid "Continue game"
 msgstr ""
 
-#: engines/saga/metaengine.cpp:436 engines/vcruise/metaengine.cpp:166
+#: engines/saga/metaengine.cpp:436 engines/trecision/metaengine.cpp:156
+#: engines/vcruise/metaengine.cpp:166
 msgid "Quit game"
 msgstr ""
 
@@ -10360,6 +10364,19 @@ msgstr ""
 #: engines/toon/toon.cpp:1951
 #, c-format
 msgid "Unable to locate the '%s' data file."
+msgstr ""
+
+#: engines/trecision/metaengine.cpp:137
+msgid "Skip video"
+msgstr ""
+
+#. I18N: Toggles walking speed of actor
+#: engines/trecision/metaengine.cpp:144
+msgid "Toggle fast walk"
+msgstr ""
+
+#: engines/trecision/metaengine.cpp:163
+msgid "Open system menu"
 msgstr ""
 
 #: engines/twine/detection.cpp:175
