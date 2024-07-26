@@ -96,7 +96,234 @@ void Room301::init() {
 }
 
 void Room301::daemon() {
+	int frame;
+
 	switch (_G(kernel).trigger) {
+	// TODO: More cases
+
+	case 21:
+		if (!_val19) {
+			switch (_val15) {
+			case 0:
+				sendWSMessage_10000(1, _machine4, _ripTrekTravel,
+					10, 10, 20, _ripTrekTravel, 10, 10, 0);
+				break;
+
+			case 1:
+				frame = imath_ranged_rand(11, 19);
+				sendWSMessage_10000(1, _machine4, _ripTrekTravel,
+					frame, frame, 20, _ripTrekTravel, frame, frame, 0);
+				sendWSMessage_190000(_machine4, 13);
+				sendWSMessage_1a0000(_machine4, 13);
+				break;
+
+			case 2:
+				sendWSMessage_10000(1, _machine4, _ripTrekTravel,
+					20, 26, 20, _ripTrekTravel, 10, 10, 0);
+				break;
+
+			case 3:
+				sendWSMessage_10000(1, _machine4, _ripTrekTravel,
+					37, 50, 20, _ripTrekTravel, 10, 10, 0);
+				break;
+
+			case 4:
+				sendWSMessage_10000(1, _machine4, _ripTrekTravel,
+					9, 1, 22, _ripTrekTravel, 1, 1, 0);
+				break;
+
+			case 5:
+				_G(kernel).trigger_mode = KT_PARSE;
+				conv_load("conv301a", 10, 10, 747, player_commands_allowed());
+				_val1 = 0;
+
+				conv_export_value(conv_get_handle(), _G(globals)[V088] >= 3 ? 1 : 0, 0);
+				conv_export_value(conv_get_handle(), _G(globals)[V056], 1);
+				conv_export_value(conv_get_handle(), _G(globals)[V110], 2);
+				conv_export_pointer(conv_get_handle(), &_val1, 5);
+
+				if (player_been_here(201))
+					conv_export_value(conv_get_handle(), 2, 6);
+
+				conv_play(conv_get_handle());
+				_val15 = 0;
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_timing_trigger(1, 20);
+				break;
+
+			default:
+				break;
+			}
+		}
+		break;
+
+	case 22:
+		terminateMachineAndNull(_machine4);
+		terminateMachineAndNull(_machine3);
+		ws_unhide_walker();
+		player_set_commands_allowed(true);
+		break;
+
+	case 25:
+		sendWSMessage_10000(1, _machine1, _agentSlidesPaper, 50, 64, 26,
+			_agentSlidesPaper, 64, 64, 0);
+		digi_play("950_s35", 2);
+		break;
+
+	case 26:
+		sendWSMessage_10000(1, _machine1, _agentSlidesPaper, 49, 1, 27,
+			_agentStander, 1, 1, 0);
+		break;
+
+	case 27:
+		sendWSMessage_10000(1, _machine1, _agentTakesMoney, 52, 9, 28,
+			_agentTakesMoney, 9, 9, 0);
+		_val14 = 4;
+		_val13 = 4;
+		_val8 = 0;
+		_val15 = 0;
+		break;
+
+	case 28:
+		conv_resume();
+		kernel_timing_trigger(1, 13);
+		break;
+
+	case 51:
+		digi_unload("301r37");
+		setGlobals1(_ripTrekHandTalk3, 1, 7, 7, 7, 1);
+		sendWSMessage_110000(52);
+		digi_play("301r01", 1, 255, 53);
+		break;
+
+	case 52:
+		sendWSMessage_140000(-1);
+		break;
+
+	case 53:
+		_val14 = 6;
+		_soundName = "301a01";
+		_val16 = 56;
+		break;
+
+	case 56:
+		_val14 = 3;
+		kernel_timing_trigger(1, 11);
+		player_set_commands_allowed(true);
+		break;
+
+	case 60:
+		setGlobals1(_ripTrekHandTalk3, 1, 7, 7, 7, 1);
+		sendWSMessage_110000(62);
+		digi_play("301r01", 1);
+		break;
+
+	case 62:
+		sendWSMessage_140000(63);
+		break;
+
+	case 63:
+		_val14 = 6;
+		_val7 = 2;
+		_soundName = "301a01";
+		_val16 = 72;
+		break;
+
+	case 64:
+		if (_val12) {
+			_val14 = 5;
+			_soundName = (_val12 == 1) ? "301a03" : "301a04";
+			_val7 = 2;
+			_val16 = 71;
+		} else if (!player_been_here(401) && _G(globals)[V092] &&
+				!_G(globals)[V093]) {
+			kernel_timing_trigger(1, 1000);
+		}
+		break;
+
+	case 65:
+		_G(global301) = 0;
+		setGlobals1(_ripTrekTalker3, 1, 1, 1, 5, 1);
+		sendWSMessage_110000(68);
+		digi_play("301r01a", 1, 255, 68);
+		break;
+
+	case 68:
+		if (_G(global301) >= 1) {
+			_G(global301) = 0;
+			sendWSMessage_140000(-1);
+			_val14 = 0;
+			_soundName = "301a04a";
+			_val16 = 70;
+		} else {
+			++_G(global301);
+		}
+		break;
+
+	case 70:
+		_val14 = 0;
+		player_set_commands_allowed(true);
+		break;
+
+	case 71:
+		_val14 = 0;
+		kernel_timing_trigger(1, 999);
+		break;
+
+	case 72:
+		_val14 = 4;
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(1, 11);
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(10, 64);
+		break;
+
+	case 100:
+		sendWSMessage_10000(1, _machine1, _agentCheckingList, 8,
+			1, 10, _agentStander, 1, 1, 0);
+		break;
+
+	case 200:
+		if (_val18 || _val17 || _val5 == -1) {
+			kernel_timing_trigger(1, 201);
+		} else {
+			kernel_trigger_dispatchx(_val5);
+			_val5 = -1;
+		}
+
+	case 201:
+		if (_val18 <= 0) {
+			if (_val17 <= 0) {
+				kernel_timing_trigger(30, 201);
+			} if (_val17 == 1) {
+				sendWSMessage_10000(1, _machine2, _marshalMatt, 17, 51, 201,
+					_marshalMatt, 51, 51, 0);
+				_val18 = 1;
+				_val17 = 1;
+			}
+		} else if (_val18 == 1) {
+			if (_val17 == 1) {
+				frame = imath_ranged_rand(52, 55);
+				sendWSMessage_10000(1, _machine2, _marshalMatt, frame, frame, 201,
+					_marshalMatt, frame, frame, 0);
+				sendWSMessage_190000(_machine2, 13);
+				sendWSMessage_1a0000(_machine2, 13);
+
+			} else {
+				sendWSMessage_10000(1, _machine2, _marshalMatt, 52, 52, 200,
+					_marshalMatt, 52, 52, 0);
+			}
+		}
+		break;
+
+	case 202:
+		digi_play("301s01", 1, 255, 203);
+		sendWSMessage_10000(1, _machine2, _marshalMatt, 4, 16, 201,
+			_marshalMatt, 16, 16, 0);
+		_val17 = 0;
+		_val18 = 0;
+		break;
+
 	case 203:
 		setGlobals1(_ripTrekArms, 1, 15, 15, 15, 1);
 		sendWSMessage_110000(-1);

@@ -53,6 +53,7 @@ public:
 	Riddle::Walker _walker;
 	Riddle::Hotkeys _hotkeys;
 	Riddle::GUI::Interface _interface;
+	int _global301 = 0;
 
 public:
 	Vars();

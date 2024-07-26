@@ -218,6 +218,16 @@ void Room::sendWSMessage_150000(int trigger) {
 	sendWSMessage_150000(_G(my_walker), trigger);
 }
 
+void Room::sendWSMessage_190000(machine *recv, int trigger) {
+	_G(globals)[V023] = trigger << 16;
+	sendWSMessage(0x190000, 0, recv, 0, nullptr, 1);
+}
+
+void Room::sendWSMessage_1a0000(machine *recv, int trigger) {
+	_G(globals)[V024] = trigger << 16;
+	sendWSMessage(0x1a0000, 0, recv, 0, nullptr, 1);
+}
+
 } // namespace Rooms
 } // namespace Riddle
 } // namespace M4

@@ -30,7 +30,7 @@ namespace Rooms {
 
 class Room301 : public Room {
 private:
-	int _val1 = 0;
+	int32 _val1 = 0;
 	int _val2 = 0;
 	const char *_soundName = nullptr;
 	const char *_nextSound = nullptr;

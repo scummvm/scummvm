@@ -68,6 +68,8 @@ protected:
 	void sendWSMessage_140000(int trigger);
 	void sendWSMessage_150000(machine *walker, int trigger);
 	void sendWSMessage_150000(int trigger);
+	void sendWSMessage_190000(machine *recv, int trigger);
+	void sendWSMessage_1a0000(machine *recv, int trigger);
 
 	int _roomVal1 = 0;		// TODO: deprecate
 
