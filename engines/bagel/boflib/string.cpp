@@ -485,7 +485,7 @@ void CBofString::replaceChar(char chOld, char chNew) {
 	assert(chOld != '\0');
 
 	if (_pszData != nullptr) {
-		// Walk thru the string and replace the specified character
+		// Walk through the string and replace the specified character
 		char *p = _pszData;
 		for (int i = 0; i < _nLength; i++) {
 			if (*p == chOld) {
