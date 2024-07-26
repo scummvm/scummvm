@@ -73,6 +73,7 @@ public:
 	int getHeight();
 	void updatePlayerPositionAfterRoomChange();
 	void updateBedAutoWalkSequence();
+	void setplayertowardsbedroom();
 	void walkToNextConnector();
 
 private:
