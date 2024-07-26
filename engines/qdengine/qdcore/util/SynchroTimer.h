@@ -22,6 +22,8 @@
 #ifndef QDENGINE_QDCORE_UTIL_SYNCRO_TIMER
 #define QDENGINE_QDCORE_UTIL_SYNCRO_TIMER
 
+#include "common/system.h"
+
 typedef unsigned int time_type;
 
 namespace QDEngine {

@@ -20,8 +20,10 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
-#include "engines/util.h"
 #include "common/textconsole.h"
+#include "common/system.h"
+
+#include "engines/util.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/managed_surface.h"

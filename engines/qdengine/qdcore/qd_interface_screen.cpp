@@ -24,7 +24,6 @@
 
 #include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
-#include <algorithm>
 
 #include "qdengine/parser/xml_tag_buffer.h"
 #include "qdengine/parser/qdscr_parser.h"

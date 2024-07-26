@@ -22,9 +22,6 @@
 #ifndef QDENGINE_QDCORE_UTIL_2_PASS_SCALE_H
 #define QDENGINE_QDCORE_UTIL_2_PASS_SCALE_H
 
-#include <math.h>
-#include <vector>
-
 #include "qdengine/qdcore/util/Filters.h"
 
 #define TRACE(a)
