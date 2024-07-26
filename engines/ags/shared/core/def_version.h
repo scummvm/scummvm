@@ -22,9 +22,9 @@
 #ifndef AGS_SHARED_CORE_DEFVERSION_H
 #define AGS_SHARED_CORE_DEFVERSION_H
 
-#define ACI_VERSION_STR      "3.6.1.2"
+#define ACI_VERSION_STR      "3.6.1.3"
 #if defined (RC_INVOKED) // for MSVC resource compiler
-#define ACI_VERSION_MSRC_DEF  3.6.1.2
+#define ACI_VERSION_MSRC_DEF  3.6.1.3
 #endif
 
 #define SPECIAL_VERSION ""
