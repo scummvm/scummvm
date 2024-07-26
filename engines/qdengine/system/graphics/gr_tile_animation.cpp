@@ -267,7 +267,7 @@ void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float a
 		for (int j = 0; j < frameTileSize_.x; j++) {
 			unsigned char *buf_ptr = buf + (i * frameSize_.x + j) * 4;
 			const unsigned char *data_ptr = (const unsigned char *)getTile(*index_ptr++).data();
-			int dx = min(frameSize_.x - j * GR_TILE_SPRITE_SIZE_X, GR_TILE_SPRITE_SIZE_X) * 4;
+			int dx = MIN(frameSize_.x - j * GR_TILE_SPRITE_SIZE_X, GR_TILE_SPRITE_SIZE_X) * 4;
 			for (int k = 0; k < GR_TILE_SPRITE_SIZE_Y; k++) {
 				memcpy(buf_ptr, data_ptr, dx);
 				data_ptr += GR_TILE_SPRITE_SIZE_X * 4;

@@ -120,7 +120,7 @@ private:
 	}
 
 	void endLine() {
-		size_.x = max(size_.x, lineWidth_);
+		size_.x = MAX(size_.x, lineWidth_);
 
 		outNodes_[prevLineIndex_].width = lineWidth_;
 		lineWidth_ = 0;

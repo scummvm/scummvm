@@ -842,7 +842,7 @@ bool qdGameObjectMoving::future_pos_correct(float dt) {
 	int incorr_num = qdCamera::current_camera()->cells_num_with_exact_attributes(next_cen, next_size, sGridCell::CELL_IMPASSABLE);
 	bool all_ok;
 	if ((incorr_num >= 1 && (next_size.x <= 1 || next_size.y <= 1)) ||
-	        (incorr_num > max(next_size.x, next_size.y)))
+	        (incorr_num > MAX(next_size.x, next_size.y)))
 		all_ok = false;
 	else
 		all_ok = true;

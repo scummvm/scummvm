@@ -157,95 +157,6 @@ xm_inline float SIGN(float a, float b) {
 	return b >= 0.0f ? fabsf(a) : -fabsf(a);
 }
 
-#define NOMINMAX
-#undef min
-#undef max
-
-xm_inline int min(int x, int y) {
-	return x < y ? x : y;
-}
-xm_inline float min(float x, float y) {
-	return x < y ? x : y;
-}
-xm_inline double min(double x, double y) {
-	return x < y ? x : y;
-}
-
-xm_inline int max(int x, int y) {
-	return x > y ? x : y;
-}
-xm_inline float max(float x, float y) {
-	return x > y ? x : y;
-}
-xm_inline double max(double x, double y) {
-	return x > y ? x : y;
-}
-
-
-template <class T> xm_inline T min(const T &a, const T &b, const T &c) {
-	return min(min(a, b), c);
-}
-template <class T> xm_inline T max(const T &a, const T &b, const T &c) {
-	return max(max(a, b), c);
-}
-
-xm_inline int mina(int x, int y) {
-	return abs(x) < abs(y) ? x : y;
-}
-xm_inline int mina(int x, int y, int z) {
-	return mina(mina(x, y), z);
-}
-
-xm_inline int maxa(int x, int y) {
-	return abs(x) > abs(y) ? x : y;
-}
-xm_inline int maxa(int x, int y, int z) {
-	return maxa(maxa(x, y), z);
-}
-
-xm_inline double mina(double x, double y) {
-	return fabs(x) < fabs(y) ? x : y;
-}
-xm_inline double mina(double x, double y, double z) {
-	return mina(mina(x, y), z);
-}
-
-xm_inline double maxa(double x, double y) {
-	return fabs(x) > fabs(y) ? x : y;
-}
-xm_inline double maxa(double x, double y, double z) {
-	return maxa(maxa(x, y), z);
-}
-
-xm_inline int minAbs(int x, int y) {
-	return abs(x) < abs(y) ? abs(x) : abs(y);
-}
-xm_inline int minAbs(int x, int y, int z) {
-	return minAbs(minAbs(x, y), z);
-}
-
-xm_inline int maxAbs(int x, int y) {
-	return abs(x) > abs(y) ? abs(x) : abs(y);
-}
-xm_inline int maxAbs(int x, int y, int z) {
-	return maxAbs(maxAbs(x, y), z);
-}
-
-xm_inline double minAbs(double x, double y) {
-	return fabs(x) < fabs(y) ? fabs(x) : fabs(y);
-}
-xm_inline double minAbs(double x, double y, double z) {
-	return minAbs(minAbs(x, y), z);
-}
-
-xm_inline double maxAbs(double x, double y) {
-	return fabs(x) > fabs(y) ? fabs(x) : fabs(y);
-}
-xm_inline double maxAbs(double x, double y, double z) {
-	return maxAbs(maxAbs(x, y), z);
-}
-
-
 xm_inline void average(double &x_avr, double x, double tau) {
 	x_avr = x_avr * (1. - tau) + tau * x;
 }
@@ -269,13 +180,6 @@ xm_inline float Acos(float  x) {
 }
 xm_inline double Acos(double  x) {
 	return x > 1. ? 0 : (x < -1. ? M_PI : acos(x));
-}
-
-template<class T, class T1, class T2>
-xm_inline T clamp(const T &x, const T1 &xmin, const T2 &xmax) {
-	if (x < xmin) return xmin;
-	if (x > xmax) return xmax;
-	return x;
 }
 
 
