@@ -28,9 +28,6 @@
 
 #ifdef __QD_TRIGGER_PROFILER__
 
-#include <vector>
-
-
 namespace QDEngine {
 
 class qdTriggerElement;

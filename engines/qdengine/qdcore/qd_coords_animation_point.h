@@ -22,7 +22,6 @@
 #ifndef QDENGINE_QDCORE_QD_COORDS_ANIMATION_POINT_H
 #define QDENGINE_QDCORE_QD_COORDS_ANIMATION_POINT_H
 
-#include <vector>
 #include "qdengine/parser/xml_fwd.h"
 
 

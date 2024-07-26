@@ -22,7 +22,6 @@
 #ifndef QDENGINE_QDCORE_QD_COUNTER_H
 #define QDENGINE_QDCORE_QD_COUNTER_H
 
-#include <vector>
 #include "qdengine/parser/xml_fwd.h"
 #include "qdengine/qdcore/qd_named_object_reference.h"
 
