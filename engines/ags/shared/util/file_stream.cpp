@@ -190,7 +190,7 @@ void FileStream::Open(const String &file_name, FileOpenMode open_mode, FileWorkM
 		if (!_file)
 			error("Invalid attempt to create file - %s", file_name.GetCStr());
 
-		_fileName = file_name;
+		_srcName = file_name;
 	}
 }
 
