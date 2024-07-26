@@ -33,7 +33,7 @@ namespace Bagel {
 
 class CBofMovie : public CBofDialog {
 public:
-	enum MVSTATUS { STOPPED, PAUSED, FOREWARD, REVERSE};
+	enum MVSTATUS { STOPPED, PAUSED, FORWARD, REVERSE};
 protected:
 	Graphics::ManagedSurface *_pSbuf;
 	Video::SmackerDecoder *_pSmk;

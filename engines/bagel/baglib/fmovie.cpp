@@ -194,7 +194,7 @@ void CBagFMovie::onMainLoop() {
 	// Paint the buffer to the screen.
 	_filterBmp->paint(this, 0, 0);
 
-	if (_movieStatus == MOVIE_FOREWARD) {
+	if (_movieStatus == MOVIE_FORWARD) {
 		if (_smk->getCurFrame() == (int)_smk->getFrameCount() - 1) {
 			if (_loopFl == false) {
 				onMovieDone();
@@ -286,7 +286,7 @@ bool CBagFMovie::play() {
 	_smk->pauseVideo(false);
 	// _smk->setReverse(false); // TODO: Not supported by SMK
 	_smk->start();
-	_movieStatus = MOVIE_FOREWARD;
+	_movieStatus = MOVIE_FORWARD;
 	return true;
 }
 
