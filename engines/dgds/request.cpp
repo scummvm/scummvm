@@ -427,7 +427,7 @@ byte ButtonGadget::drawWillyBg(Graphics::ManagedSurface *dst, bool enabled) cons
 }
 
 void ButtonGadget::draw(Graphics::ManagedSurface *dst) const {
-	DgdsGameId gameId = static_cast<DgdsEngine *>(g_engine)->getGameId();
+	DgdsGameId gameId = DgdsEngine::getInstance()->getGameId();
 	bool enabled = !(_flags3 & 9);
 
 	byte textCol;
@@ -667,7 +667,7 @@ void ImageGadget::draw(Graphics::ManagedSurface *dst) const {
 	_drawFrame(dst, xoff, yoff, _width, _height, _sval1I, _sval1I);
 
 	// NOTE: This only done in inventory in originals
-	if (static_cast<DgdsEngine *>(g_engine)->getGameId() == GID_DRAGON)
+	if (DgdsEngine::getInstance()->getGameId() == GID_DRAGON)
 		RequestData::drawCorners(dst, 19, xoff - 2, yoff - 2, _width + 4, _height + 4);
 	else
 		RequestData::drawCorners(dst, 19, xoff - 4, yoff - 4, _width + 8, _height + 8);
@@ -737,12 +737,12 @@ void RequestData::drawInvType(Graphics::ManagedSurface *dst) {
 
 /*static*/
 const DgdsFont *RequestData::getMenuFont() {
-	return static_cast<DgdsEngine *>(g_engine)->getFontMan()->getFont(FontManager::kGameFont);
+	return DgdsEngine::getInstance()->getFontMan()->getFont(FontManager::kGameFont);
 }
 
 /*static*/
 const Image *RequestData::getCorners() {
-	return static_cast<DgdsEngine *>(g_engine)->getUICorners().get();
+	return DgdsEngine::getInstance()->getUICorners().get();
 }
 
 /*static*/
@@ -833,7 +833,7 @@ void RequestData::drawBackgroundWithSliderArea(Graphics::ManagedSurface *dst, in
 	dst->transBlitFrom(*corners[9], Common::Point(x, (y + sliderBgHeight) - corners[9]->h));
 	dst->transBlitFrom(*corners[10], Common::Point((x + width) - corners[10]->w, (y + sliderBgHeight) - corners[10]->h));
 
-	if (static_cast<DgdsEngine *>(g_engine)->getGameId() == GID_DRAGON)
+	if (DgdsEngine::getInstance()->getGameId() == GID_DRAGON)
 		drawHeader(dst, x, y, width, 9, header, DragonHeaderTxtColor, true, DragonHeaderTopColor, DragonHeaderBottomColor);
 	else
 		drawHeader(dst, x, y + 4, width, 9, header, ChinaHeaderTxtColor, true, ChinaHeaderTopColor, ChinaHeaderBottomColor);
@@ -841,8 +841,7 @@ void RequestData::drawBackgroundWithSliderArea(Graphics::ManagedSurface *dst, in
 
 
 void RequestData::drawBackgroundNoSliders(Graphics::ManagedSurface *dst, const Common::String &header) const {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	DgdsGameId gameId = engine->getGameId();
+	DgdsGameId gameId = DgdsEngine::getInstance()->getGameId();
 
 	if (_rect.width == 0 || _rect.height == 0) {
 		warning("drawBackgroundNoSliders: empty rect");
@@ -863,7 +862,7 @@ void RequestData::drawBackgroundNoSliders(Graphics::ManagedSurface *dst, const C
 
 /*static*/
 void RequestData::fillBackground(Graphics::ManagedSurface *dst, uint16 x, uint16 y, uint16 width, uint16 height, int16 startoffset) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 
 	if (engine->getGameId() == GID_DRAGON && engine->getDetailLevel() == kDgdsDetailHigh) {
 		Graphics::Surface area = dst->getSubArea(Common::Rect(Common::Point(x, y), width, height));

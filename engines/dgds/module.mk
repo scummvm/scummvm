@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	request.o \
 	resource.o \
 	scripts.o \
+	shell_game.o \
 	ttm.o \
 	scene.o \
 	sound.o

@@ -28,6 +28,7 @@
 
 #include "dgds/dialog.h"
 #include "dgds/dgds_rect.h"
+#include "dgds/shell_game.h"
 
 namespace Dgds {
 
@@ -125,7 +126,8 @@ enum SceneOpCode {
 
 	// China-specific opcodes
 	kSceneOpOpenChinaTankMenu = 102,
-	kSceneOpShellGame = 110,
+	kSceneOpShellGameEnd = 109,
+	kSceneOpShellGameTick = 110,
 	kSceneOpOpenChinaTrainMenu = 113,
 	kSceneOpOpenChinaOpenGameOverMenu = 114,	// args: none.
 	kSceneOpOpenChinaOpenSkipCreditsMenu = 115,	// args: none.

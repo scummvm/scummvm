@@ -43,7 +43,7 @@ void GetPutRegion::reset() {
 }
 
 Common::Error TTMEnviro::syncState(Common::Serializer &s) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	for (auto &shape : _scriptShapes) {
 		bool hasShape = shape.get() != nullptr;
 		s.syncAsByte(hasShape);

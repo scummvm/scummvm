@@ -23,6 +23,7 @@
 #define DGDS_IMAGE_H
 
 #include <common/ptr.h>
+#include <common/rect.h>
 #include <graphics/palette.h>
 
 namespace Common {

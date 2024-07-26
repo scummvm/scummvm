@@ -37,7 +37,7 @@ public:
 	GameIsInteractiveGlobal(uint16 num, int16 *ptr) : Global(num), _ptr(ptr), _isSetOff(false) {}
 
 	int16 get() override {
-		SDSScene *scene = static_cast<DgdsEngine *>(g_engine)->getScene();
+		SDSScene *scene = DgdsEngine::getInstance()->getScene();
 		bool nonInteractive = _isSetOff || scene->getDragItem() || scene->hasVisibleOrOpeningDialog();
 		*_ptr = !nonInteractive;
 		return *_ptr;
@@ -102,11 +102,12 @@ int16 Globals::getGlobal(uint16 num) {
 		error("getGlobal: requested non-existing global %d", num);
 
 	// Bug in HoC?
-	warning("getGlobal: requested global 0");
+	//warning("getGlobal: requested global 0");
 	return 0;
 }
 
 int16 Globals::setGlobal(uint16 num, int16 val) {
+	debug("setGlobal %d -> %d", num, val);
 	for (auto &global : _globals) {
 		if (global->getNum() == num)
 			return global->set(val);
@@ -135,8 +136,8 @@ Common::Error Globals::syncState(Common::Serializer &s) {
 class DetailLevelROGlobal : public Global {
 public:
 	DetailLevelROGlobal(uint16 num) : Global(num) {}
-	int16 get() override { return static_cast<DgdsEngine *>(g_engine)->getDetailLevel(); }
-	int16 set(int16 val) override { return static_cast<DgdsEngine *>(g_engine)->getDetailLevel(); }
+	int16 get() override { return DgdsEngine::getInstance()->getDetailLevel(); }
+	int16 set(int16 val) override { return DgdsEngine::getInstance()->getDetailLevel(); }
 	void setRaw(int16 val) override { }
 };
 
@@ -219,7 +220,7 @@ class HocCharacterGlobal : public RWI16Global {
 public:
 	HocCharacterGlobal(uint16 num, int16 *val) : RWI16Global(num, val) {}
 	int16 set(int16 val) override {
-		DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+		DgdsEngine *engine = DgdsEngine::getInstance();
 		bool buttonVisible = engine->isInvButtonVisible();
 		if (buttonVisible)
 			engine->getScene()->removeInvButtonFromHotAreaList();
@@ -233,8 +234,8 @@ public:
 
 HocGlobals::HocGlobals(Clock &clock) : Globals(clock), _unk82(1), _unk55(0),
 	_unkDlgFileNum(0), _unkDlgDlgNum(0),  _currentCharacter2(0), _currentCharacter(0),
-	_unk50(0), _unk49(0), _unk48(0), _unk47(0), _unk46(0), _unk45(0x3f), _sheckels(0),
-	_unk43(0), _unk42(0), _unk41(0), _unk40(3), _unk39(0) {
+	_unk50(0), _nativeGameState(0), _unk48(0), _unk47(0), _unk46(0), _unk45(0x3f), _sheckels(0),
+	_shellBet(0), _shellPea(0), _unk41(0), _unk40(3), _unk39(0) {
 	_globals.push_back(new DetailLevelROGlobal(0x53));
 	_globals.push_back(new RWI16Global(0x52, &_unk82));
 	_globals.push_back(new RWI16Global(0x37, &_unk55)); // TODO: Special update function FUN_1407_080d, sound init related
@@ -243,14 +244,14 @@ HocGlobals::HocGlobals(Clock &clock) : Globals(clock), _unk82(1), _unk55(0),
 	_globals.push_back(new HocCharacterGlobal(0x34, &_currentCharacter));
 	_globals.push_back(new HocCharacterGlobal(0x33, &_currentCharacter2));
 	_globals.push_back(new RWI16Global(0x32, &_unk50));
-	_globals.push_back(new RWI16Global(0x31, &_unk49));
+	_globals.push_back(new RWI16Global(0x31, &_nativeGameState));
 	_globals.push_back(new RWI16Global(0x30, &_unk48));
 	_globals.push_back(new RWI16Global(0x2F, &_unk47));
 	_globals.push_back(new RWI16Global(0x2E, &_unk46));
 	_globals.push_back(new RWI16Global(0x2D, &_unk45)); // TODO: Special update function FUN_1407_0784, palette related?
 	_globals.push_back(new RWI16Global(0x2C, &_sheckels));	// used as currency in Istanbul
-	_globals.push_back(new RWI16Global(0x2B, &_unk43));
-	_globals.push_back(new RWI16Global(0x2A, &_unk42));
+	_globals.push_back(new RWI16Global(0x2B, &_shellBet));
+	_globals.push_back(new RWI16Global(0x2A, &_shellPea));
 	_globals.push_back(new RWI16Global(0x29, &_unk41));
 	_globals.push_back(new RWI16Global(0x28, &_unk40));
 	_globals.push_back(new ROI16Global(0x27, &_unk39));
@@ -262,14 +263,14 @@ Common::Error HocGlobals::syncState(Common::Serializer &s) {
 	s.syncAsSint16LE(_unk39);
 	s.syncAsSint16LE(_unk40);
 	s.syncAsSint16LE(_unk41);
-	s.syncAsSint16LE(_unk42);
-	s.syncAsSint16LE(_unk43);
+	s.syncAsSint16LE(_shellPea);
+	s.syncAsSint16LE(_shellBet);
 	s.syncAsSint16LE(_sheckels);
 	s.syncAsSint16LE(_unk45);
 	s.syncAsSint16LE(_unk46);
 	s.syncAsSint16LE(_unk47);
 	s.syncAsSint16LE(_unk48);
-	s.syncAsSint16LE(_unk49);
+	s.syncAsSint16LE(_nativeGameState);
 	s.syncAsSint16LE(_unk50);
 	s.syncAsSint16LE(_currentCharacter);
 	s.syncAsSint16LE(_currentCharacter2);

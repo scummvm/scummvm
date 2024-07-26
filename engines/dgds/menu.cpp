@@ -141,8 +141,7 @@ void Menu::setScreenBuffer() {
 }
 
 bool Menu::updateOptionsGadget(Gadget *gadget) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	Audio::Mixer *mixer = engine->_mixer;
+	Audio::Mixer *mixer = DgdsEngine::getInstance()->_mixer;
 
 	switch (gadget->_gadgetNo) {
 	case kMenuOptionsJoystickOnOff:
@@ -167,7 +166,7 @@ bool Menu::updateOptionsGadget(Gadget *gadget) {
 }
 
 void Menu::configureGadget(MenuId menu, Gadget *gadget) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 
 	// a bit of a hack - set up the gadget with the correct value before we draw it.
 	if (menu == kMenuControls) {
@@ -322,7 +321,7 @@ void Menu::onMouseMove(const Common::Point &mouse) {
 }
 
 void Menu::onMouseLUp(const Common::Point &mouse) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	if (_dragGadget && mouse != _dragStartPt) {
 		int16 setting = _dragGadget->onDragFinish(mouse);
 		switch (_dragGadget->_gadgetNo) {
@@ -369,7 +368,7 @@ void Menu::onMouseLUp(const Common::Point &mouse) {
 }
 
 void Menu::handleClick(const Common::Point &mouse) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	int currentScene = engine->getScene()->getNum();
 	Gadget *gadget = getClickedMenuItem(mouse);
 	int16 clickedMenuItem = gadget->_gadgetNo;
@@ -517,7 +516,7 @@ void Menu::handleClick(const Common::Point &mouse) {
 }
 
 void Menu::handleClickOptionsMenu(const Common::Point &mouse) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	Audio::Mixer *mixer = engine->_mixer;
 	Gadget *gadget = getClickedMenuItem(mouse);
 	int16 clickedMenuItem = gadget->_gadgetNo;
@@ -556,7 +555,7 @@ void Menu::handleClickOptionsMenu(const Common::Point &mouse) {
 }
 
 void Menu::handleClickSkipPlayIntroMenu(const Common::Point &mouse) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	Gadget *gadget = getClickedMenuItem(mouse);
 	int16 clickedMenuItem = gadget->_gadgetNo;
 

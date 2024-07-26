@@ -379,11 +379,11 @@ bool ADSInterpreter::logicOpResult(uint16 code, const TTMEnviro *env, const TTMS
 		// FIXME: This should be right but we only have detail 0/1 and maybe HOC onward use
 		// different numbers?  HOC intro checks for >= 4.
 		return false;
-		//return ((int)static_cast<DgdsEngine *>(g_engine)->getDetailLevel() <= arg);
+		//return ((int)DgdsEngine::getInstance()->getDetailLevel() <= arg);
 	case 0x1390: // IF_DETAIL_GTE, 1 param
 		debugN(10, "ADS 0x%04x: if detail >= %d", code, arg);
 		return true;
-		//return ((int)static_cast<DgdsEngine *>(g_engine)->getDetailLevel() >= arg);
+		//return ((int)DgdsEngine::getInstance()->getDetailLevel() >= arg);
 	default:
 		error("Not an ADS logic op: %04x, how did we get here?", code);
 	}

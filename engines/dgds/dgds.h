@@ -58,6 +58,7 @@ class Menu;
 struct DgdsADS;
 class ADSInterpreter;
 class Globals;
+class ShellGame;
 
 const float MS_PER_FRAME = 16.6667f;
 
@@ -115,6 +116,9 @@ private:
 	GamePalettes *_gamePals;
 	Globals *_gameGlobals;
 	Inventory *_inventory;
+
+	// HoC only
+	ShellGame *_shellGame;
 
 	FontManager *_fontManager;
 	Common::SharedPtr<Image> _corners;
@@ -212,6 +216,9 @@ public:
 	const Common::String &getBackgroundFile() const { return _backgroundFile; }
 	void setMenuToTrigger(MenuId menu) { _menuToTrigger = menu; }
 	bool isInvButtonVisible() const;
+	ShellGame *getShellGame() { return _shellGame; }
+
+	static DgdsEngine *getInstance() { return static_cast<DgdsEngine *>(g_engine); }
 
 private:
 	Common::Error syncGame(Common::Serializer &s);

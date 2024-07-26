@@ -149,19 +149,30 @@ class HocGlobals : public Globals {
 public:
 	HocGlobals(Clock &clock);
 
+	int16 getSheckels() const { return _sheckels; }
+
+	int16 getShellBet() const { return _shellBet; }
+	void setShellBet(int16 bet) { _shellBet = bet; }
+
+	int16 getShellPea() const { return _shellPea; }
+	void setShellPea(int16 pea) { _shellPea = pea; }
+
+	int16 getNativeGameState() const { return _nativeGameState; }
+	void setNativeGameState(int16 state) { _nativeGameState = state; }
+
 private:
 	// HoC-specific globals
 	int16 _unk39;
 	int16 _unk40;
 	int16 _unk41;
-	int16 _unk42;
-	int16 _unk43;
+	int16 _shellPea;
+	int16 _shellBet;
 	int16 _sheckels;
 	int16 _unk45;
 	int16 _unk46;
 	int16 _unk47;
 	int16 _unk48;
-	int16 _unk49;
+	int16 _nativeGameState; // state for the shell game, tank game, etc.
 	int16 _unk50;
 	int16 _currentCharacter;
 	int16 _currentCharacter2;

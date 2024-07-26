@@ -46,7 +46,7 @@ void Inventory::open() {
 	// Allow double-open becuase that's how the inventory shows item
 	// descriptions.
 	_isOpen = true;
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	int curScene = engine->getScene()->getNum();
 	if (curScene != 2) {
 		_openedFromSceneNum = curScene;
@@ -61,7 +61,7 @@ void Inventory::close() {
 		return;
 	assert(_openedFromSceneNum != 0);
 	_isOpen = false;
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	engine->changeScene(_openedFromSceneNum);
 	_showZoomBox = false;
 	_openedFromSceneNum = 0;
@@ -95,7 +95,7 @@ void Inventory::setRequestData(const REQFileData &data) {
 	_fullWidth = req._rect.width;
 
 	// TODO! Beamish doesn't have a zoom box, or it's a different ID?
-	if (static_cast<DgdsEngine *>(g_engine)->getGameId() == GID_WILLY)
+	if (DgdsEngine::getInstance()->getGameId() == GID_WILLY)
 		_itemZoomBox = _itemBox;
 
 	if (!_prevPageBtn || !_nextPageBtn || !_itemZoomBox || !_exitButton || !_itemArea)
@@ -114,7 +114,7 @@ void Inventory::drawHeader(Graphics::ManagedSurface &surf) {
 	font->drawString(&surf, title, x1 + 4, y1 + 2, titleWidth, 0);
 
 	// Only draw the box around the title in DRAGON
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	if (engine->getGameId() == GID_DRAGON) {
 		int x2 = x1 + titleWidth + 6;
 		int y2 = y1 + font->getFontHeight();
@@ -127,7 +127,7 @@ void Inventory::drawHeader(Graphics::ManagedSurface &surf) {
 
 void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount) {
 	RequestData &boxreq = _reqData._requests[0];
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	DgdsGameId gameId = engine->getGameId();
 
 	if (_showZoomBox) {
@@ -182,7 +182,7 @@ void Inventory::draw(Graphics::ManagedSurface &surf, int itemCount) {
 }
 
 void Inventory::drawTime(Graphics::ManagedSurface &surf) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	if (engine->getGameId() != GID_DRAGON)
 		return;
 
@@ -196,7 +196,7 @@ void Inventory::drawTime(Graphics::ManagedSurface &surf) {
 }
 
 void Inventory::drawItems(Graphics::ManagedSurface &surf) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	const Common::SharedPtr<Image> &icons = engine->getIcons();
 	int x = 0;
 	int y = 0;
@@ -259,7 +259,7 @@ void Inventory::drawItems(Graphics::ManagedSurface &surf) {
 }
 
 void Inventory::mouseMoved(const Common::Point &pt) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	GameItem *dragItem = engine->getScene()->getDragItem();
 	if (dragItem) {
 		engine->setMouseCursor(dragItem->_iconNum);
@@ -278,7 +278,7 @@ GameItem *Inventory::itemUnderMouse(const Common::Point &pt) {
 	if (!_itemArea)
 		return nullptr;
 
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	Common::Array<GameItem> &items = engine->getGDSScene()->getGameItems();
 	if (_itemArea->containsPoint(pt)) {
 		const int imgAreaX = _itemArea->_parentX + _itemArea->_x;
@@ -303,7 +303,7 @@ GameItem *Inventory::itemUnderMouse(const Common::Point &pt) {
 }
 
 bool Inventory::isItemInInventory(GameItem &item) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	DgdsGameId gameId = engine->getGameId();
 	bool result = item._inSceneNum == 2; // && (item._flags & 4)
 	if (gameId == GID_HOC) {
@@ -322,7 +322,7 @@ void Inventory::mouseLDown(const Common::Point &pt) {
 	if (!boxreq._rect.contains(pt))
 		return;
 
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 
 	if (engine->getScene()->hasVisibleDialog() || !_itemBox->containsPoint(pt)) {
 		return engine->getScene()->mouseLDown(pt);
@@ -339,7 +339,7 @@ void Inventory::mouseLDown(const Common::Point &pt) {
 }
 
 void Inventory::mouseLUp(const Common::Point &pt) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	GameItem *dragItem = engine->getScene()->getDragItem();
 
 	if (dragItem) {
@@ -394,7 +394,7 @@ void Inventory::mouseLUp(const Common::Point &pt) {
 }
 
 void Inventory::mouseRUp(const Common::Point &pt) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	if (_itemBox->containsPoint(pt)) {
 		GameItem *underMouse = itemUnderMouse(pt);
 		if (underMouse) {

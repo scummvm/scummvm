@@ -502,7 +502,7 @@ void Scene::setItemAttrOp(const Common::Array<uint16> &args) {
 	if (args.size() < 3)
 		error("Expect 3 args for item attr opcode.");
 
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	for (auto &item : engine->getGDSScene()->getGameItems()) {
 		if (item._num != args[0])
 			continue;
@@ -520,7 +520,7 @@ void Scene::setItemAttrOp(const Common::Array<uint16> &args) {
 }
 
 void Scene::setDragItemOp(const Common::Array<uint16> &args) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 
 	for (auto &item : engine->getGDSScene()->getGameItems()) {
 		if (item._num != args[0])
@@ -539,7 +539,7 @@ void Scene::setDragItemOp(const Common::Array<uint16> &args) {
 }
 
 void Scene::segmentStateOps(const Common::Array<uint16> &args) {
-	ADSInterpreter *interp = static_cast<DgdsEngine *>(g_engine)->adsInterpreter();
+	ADSInterpreter *interp = DgdsEngine::getInstance()->adsInterpreter();
 
 	for (uint i = 0; i < args.size(); i += 2) {
 		uint16 subop = args[i];
@@ -582,7 +582,7 @@ void Scene::segmentStateOps(const Common::Array<uint16> &args) {
 }
 
 static void _drawDragonCountdown(FontManager::FontType fontType, int16 x, int16 y) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	int16 countdownEnd = engine->getGameGlobals()->getGlobal(0x22);
 	int16 currentMins = engine->getClock().getMins();
 	const DgdsFont *fnt = engine->getFontMan()->getFont(fontType);
@@ -592,7 +592,7 @@ static void _drawDragonCountdown(FontManager::FontType fontType, int16 x, int16 
 
 
 bool Scene::runSceneOp(const SceneOp &op) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	switch (op._opCode) {
 	case kSceneOpChangeScene:
 		if (engine->changeScene(op._args[0]))
@@ -703,7 +703,7 @@ bool Scene::runSceneOp(const SceneOp &op) {
 }
 
 bool Scene::runDragonOp(const SceneOp &op) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	switch (op._opCode) {
 	case kSceneOpPasscode:
 		engine->getScene()->sceneOpUpdatePasscodeGlobal();
@@ -746,8 +746,9 @@ bool Scene::runDragonOp(const SceneOp &op) {
 	return true;
 }
 
+
 bool Scene::runChinaOp(const SceneOp &op) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	switch (op._opCode) {
 	case kSceneOpOpenChinaOpenGameOverMenu:
 		engine->setMenuToTrigger(kMenuGameOver);
@@ -759,14 +760,11 @@ bool Scene::runChinaOp(const SceneOp &op) {
 	case kSceneOpOpenChinaTrainMenu:
 		engine->setMenuToTrigger(kMenuSkipArcade);
 		break;
-	case kSceneOpShellGame:
-		// TODO: Shell game in scene 81 (accessible from scene 16)
-		// We set a high number of sheckels for now
-		engine->getGDSScene()->setGlobal(0x2C, 400);
-		// We clear the gambler's talk data, as it's not cleared
-		// by the game scripts
-		engine->getScene()->freeTalkData(8);
-		warning("TODO: Implement shell game");
+	case kSceneOpShellGameTick:
+		engine->getShellGame()->shellGameTick();
+		break;
+	case kSceneOpShellGameEnd:
+		engine->getShellGame()->shellGameEnd();
 		break;
 	case kSceneOpOpenChinaStartIntro:
 		// The game first jumps to scene 100, and then to 98
@@ -780,7 +778,7 @@ bool Scene::runChinaOp(const SceneOp &op) {
 }
 
 bool Scene::runBeamishOp(const SceneOp &op) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	if (op._opCode & 0x8000) {
 		uint16 opcode = op._opCode & 0x7fff;
 		for (const ConditionalSceneOp &cop : _conditionalOps) {
@@ -803,7 +801,7 @@ bool Scene::runBeamishOp(const SceneOp &op) {
 }
 
 bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 */) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	for (const SceneOp &op : ops) {
 		if (!checkConditions(op._conditionList))
 			continue;
@@ -838,7 +836,7 @@ bool Scene::runOps(const Common::Array<SceneOp> &ops, int16 addMinuites /* = 0 *
 }
 
 bool Scene::checkConditions(const Common::Array<SceneConditions> &conds) const {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 
 	uint cnum = 0;
 	while (cnum < conds.size()) {
@@ -982,6 +980,7 @@ void SDSScene::unload() {
 	_objInteractions2.clear();
 	_dialogs.clear();
 	_triggers.clear();
+	_talkData.clear();
 	_sceneDialogFlags = kDlgFlagNone;
 }
 
@@ -1061,7 +1060,7 @@ Dialog *SDSScene::loadDialogData(uint16 num) {
 			return &dlg;
 
 	const Common::String filename = Common::String::format("D%d.DDS", num);
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	ResourceManager *resourceManager = engine->getResourceManager();
 	Common::SeekableReadStream *dlgFile = resourceManager->getResource(filename);
 	if (!dlgFile)
@@ -1158,7 +1157,7 @@ bool SDSScene::loadTalkData(uint16 num) {
 	}
 
 	const Common::String filename = Common::String::format("T%d.TDS", num);
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	ResourceManager *resourceManager = engine->getResourceManager();
 	Common::SeekableReadStream *dlgFile = resourceManager->getResource(filename);
 	if (!dlgFile)
@@ -1369,8 +1368,8 @@ static uint16 passcodeVal3 = 0;
 static uint16 passcodeVal4 = 0;
 
 void SDSScene::sceneOpUpdatePasscodeGlobal() {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	int16 globalval = engine->getGDSScene()->getGlobal(0x20);
+	GDSScene *gdsScene = DgdsEngine::getInstance()->getGDSScene();
+	int16 globalval = gdsScene->getGlobal(0x20);
 
 	if (globalval > 34)
 		return;
@@ -1430,7 +1429,7 @@ void SDSScene::sceneOpUpdatePasscodeGlobal() {
 		}
 	}
 
-	engine->getGDSScene()->setGlobal(0x20, globalval);
+	gdsScene->setGlobal(0x20, globalval);
 }
 
 void SDSScene::showDialog(uint16 fileNum, uint16 dlgNum) {
@@ -1624,13 +1623,13 @@ bool SDSScene::drawAndUpdateDialogs(Graphics::ManagedSurface *dst) {
 
 void SDSScene::globalOps(const Common::Array<uint16> &args) {
 	// The globals are held by the GDS scene
-	static_cast<DgdsEngine *>(g_engine)->getGDSScene()->globalOps(args);
+	DgdsEngine::getInstance()->getGDSScene()->globalOps(args);
 }
 
 void SDSScene::mouseMoved(const Common::Point &pt) {
 	Dialog *dlg = getVisibleDialog();
 	const HotArea *area = findAreaUnderMouse(pt);
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 
 	int16 cursorNum = (!dlg && area) ? area->_cursorNum : 0;
 	if (_dragItem) {
@@ -1659,7 +1658,7 @@ void SDSScene::mouseLDown(const Common::Point &pt) {
 	debug(9, "Mouse LDown on area %d (%d,%d,%d,%d) cursor %d", area->_num, area->_rect.x, area->_rect.y,
 			area->_rect.width, area->_rect.height, area->_cursorNum);
 
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	int16 addmins = engine->getGameGlobals()->getGameMinsToAddOnStartDrag();
 	runOps(area->onLDownOps, addmins);
 	GameItem *item = dynamic_cast<GameItem *>(area);
@@ -1703,7 +1702,7 @@ void SDSScene::mouseLUp(const Common::Point &pt) {
 	debug(9, "Mouse LUp on area %d (%d,%d,%d,%d) cursor %d", area->_num, area->_rect.x, area->_rect.y,
 			area->_rect.width, area->_rect.height, area->_cursorNum);
 
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	if (!_rbuttonDown)
 		engine->setMouseCursor(area->_cursorNum);
 
@@ -1762,7 +1761,7 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 
 	GameItem *dragItem = _dragItem;
 
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	const Globals *globals = engine->getGameGlobals();
 	GDSScene *gdsScene = engine->getGDSScene();
 
@@ -1852,7 +1851,7 @@ void SDSScene::mouseRUp(const Common::Point &pt) {
 	if (!area)
 		return;
 
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 
 	if (area->_num == 0) {
 		debug("Mouse RUp on inventory.");
@@ -1894,9 +1893,7 @@ bool SDSScene::hasVisibleOrOpeningDialog() const {
 }
 
 HotArea *SDSScene::findAreaUnderMouse(const Common::Point &pt) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-
-	for (auto &item : engine->getGDSScene()->getGameItems()) {
+	for (auto &item : DgdsEngine::getInstance()->getGDSScene()->getGameItems()) {
 		if (item._inSceneNum == _num && checkConditions(item.enableConditions)
 			&& _isInRect(pt, item._rect)) {
 			return &item;
@@ -1912,7 +1909,7 @@ HotArea *SDSScene::findAreaUnderMouse(const Common::Point &pt) {
 }
 
 void SDSScene::addInvButtonToHotAreaList() {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	const Common::Array<MouseCursor> &cursors = engine->getGDSScene()->getCursorList();
 	const Common::SharedPtr<Image> &icons = engine->getIcons();
 
@@ -2110,7 +2107,7 @@ bool GDSScene::loadRestart(const Common::String &filename, ResourceManager *reso
 
 	/*uint32 unk = */ file->readUint32LE();
 
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	Common::Array<Global *> &globs = engine->getGameGlobals()->getAllGlobals();
 
 	if (globs.size() > 50)
@@ -2148,8 +2145,7 @@ bool GDSScene::loadRestart(const Common::String &filename, ResourceManager *reso
 }
 
 void GDSScene::initIconSizes() {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
-	const Common::SharedPtr<Image> icons = engine->getIcons();
+	const Common::SharedPtr<Image> icons = DgdsEngine::getInstance()->getIcons();
 	uint16 nicons = icons ? icons->getFrames().size() : 0;
 	for (GameItem &item : _gameItems) {
 		if (item._iconNum < nicons) {
@@ -2269,7 +2265,7 @@ void GDSScene::globalOps(const Common::Array<uint16> &args) {
 }
 
 int16 GDSScene::getGlobal(uint16 num) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	int curSceneNum = engine->getScene()->getNum();
 	DgdsGameId gameId = engine->getGameId();
 
@@ -2291,7 +2287,7 @@ int16 GDSScene::getGlobal(uint16 num) {
 }
 
 int16 GDSScene::setGlobal(uint16 num, int16 val) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	int curSceneNum = engine->getScene()->getNum();
 	for (auto &global : _perSceneGlobals) {
 		if (global.matches(num, curSceneNum)) {
@@ -2309,7 +2305,7 @@ int16 GDSScene::setGlobal(uint16 num, int16 val) {
 }
 
 void GDSScene::drawItems(Graphics::ManagedSurface &surf) {
-	DgdsEngine *engine = static_cast<DgdsEngine *>(g_engine);
+	DgdsEngine *engine = DgdsEngine::getInstance();
 	const Common::SharedPtr<Image> &icons = engine->getIcons();
 	int currentScene = engine->getScene()->getNum();
 	if (!icons || icons->loadedFrameCount() < 3)
