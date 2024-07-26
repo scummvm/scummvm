@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	metaengine.o \
 	qd_precomp.o \
 	qd_runtime.o \
+	xmath.o \
 	parser/qdscr_parser.o \
 	parser/xml_parser.o \
 	parser/xml_tag_buffer.o \
@@ -103,8 +104,7 @@ MODULE_OBJS = \
 	qdcore/qd_trigger_chain.o \
 	qdcore/qd_trigger_element.o \
 	qdcore/qd_trigger_profiler.o \
-	qdcore/qd_video.o \
-	util/xmath/XMath.o
+	qdcore/qd_video.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_QDENGINE), DYNAMIC_PLUGIN)
