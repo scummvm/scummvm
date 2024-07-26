@@ -30,7 +30,7 @@
 #ifndef QDENGINE_UTIL_XMATH_H
 #define QDENGINE_UTIL_XMATH_H
 
-#include <math.h>
+#include "common/system.h"
 
 namespace QDEngine {
 
