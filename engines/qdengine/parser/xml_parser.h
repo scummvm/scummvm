@@ -22,8 +22,10 @@
 #ifndef QDENGINE_PARSER_XML_PARSER_H
 #define QDENGINE_PARSER_XML_PARSER_H
 
+#include "common/system.h"
+#include "common/hashmap.h"
+
 #include "qdengine/parser/xml_tag_buffer.h"
-#include <unordered_map>
 #include <stack>
 
 namespace QDEngine {
@@ -34,7 +36,7 @@ namespace xml {
 
 class parser {
 public:
-	typedef std::unordered_map<std::string, tag> tag_format_t;
+	typedef Common::HashMap<Common::String, tag> tag_format_t;
 	typedef std::stack<tag *> tag_stack_t;
 
 	parser();
@@ -69,13 +71,13 @@ public:
 		if (it != tag_format_.end())
 			return false;
 
-		tag_format_.insert(tag_format_t::value_type(tag_name, tg));
+		tag_format_[tag_name] = tg;
 		return true;
 	}
 	const tag *get_tag_format(const char *tag_name) const {
 		tag_format_t::const_iterator it = tag_format_.find(tag_name);
 		if (it != tag_format_.end())
-			return &it->second;
+			return &it->_value;
 
 		return NULL;
 	}
