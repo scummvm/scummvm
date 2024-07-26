@@ -197,14 +197,14 @@ bool VideoMemoryGraphicsDriver::GetStageMatrixes(RenderMatrixes &rm) {
 	return true;
 }
 
-IDriverDependantBitmap *VideoMemoryGraphicsDriver::CreateDDBFromBitmap(Bitmap *bitmap, bool hasAlpha, bool opaque) {
+IDriverDependantBitmap *VideoMemoryGraphicsDriver::CreateDDBFromBitmap(Bitmap *bitmap, bool has_alpha, bool opaque) {
 	IDriverDependantBitmap * ddb = CreateDDB(bitmap->GetWidth(), bitmap->GetHeight(), bitmap->GetColorDepth(), opaque);
 	if (ddb)
-		UpdateDDBFromBitmap(ddb, bitmap, hasAlpha);
+		UpdateDDBFromBitmap(ddb, bitmap, has_alpha);
 	return ddb;
 }
 
-IDriverDependantBitmap *VideoMemoryGraphicsDriver::GetSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) {
+IDriverDependantBitmap *VideoMemoryGraphicsDriver::GetSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool has_alpha, bool opaque) {
 	const auto found = _txRefs.find(sprite_id);
 	if (found != _txRefs.end()) {
 		const auto &item = found->_value;
@@ -215,7 +215,7 @@ IDriverDependantBitmap *VideoMemoryGraphicsDriver::GetSharedDDB(uint32_t sprite_
 	// Create and add a new element
 	std::shared_ptr<TextureData> txdata(CreateTextureData(bitmap->GetWidth(), bitmap->GetHeight(), opaque));
 	txdata->ID = sprite_id;
-	UpdateTextureData(txdata.get(), bitmap, opaque, hasAlpha);
+	UpdateTextureData(txdata.get(), bitmap, has_alpha, opaque);
 	// only add into the map when has valid sprite ID
 	if (sprite_id != UINT32_MAX) {
 		_txRefs[sprite_id] = TextureCacheItem(txdata,
@@ -224,7 +224,7 @@ IDriverDependantBitmap *VideoMemoryGraphicsDriver::GetSharedDDB(uint32_t sprite_
 	return CreateDDB(txdata, bitmap->GetWidth(), bitmap->GetHeight(), bitmap->GetColorDepth(), opaque);
 }
 
-void VideoMemoryGraphicsDriver::UpdateSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) {
+void VideoMemoryGraphicsDriver::UpdateSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool has_alpha, bool opaque) {
 	const auto found = _txRefs.find(sprite_id);
 	if (found == _txRefs.end())
 		return;
@@ -236,7 +236,7 @@ void VideoMemoryGraphicsDriver::UpdateSharedDDB(uint32_t sprite_id, Bitmap *bitm
 	// otherwise - detach shared texture (don't delete the data yet, as it may be in use)
 	const auto &res = found->_value.Res;
 	if (res.Width == bitmap->GetWidth() && res.Height == bitmap->GetHeight() && res.ColorDepth == bitmap->GetColorDepth()) {
-		UpdateTextureData(txdata.get(), bitmap, opaque, hasAlpha);
+		UpdateTextureData(txdata.get(), bitmap, has_alpha, opaque);
 	} else {
 		txdata->ID = UINT32_MAX;
 		_txRefs.erase(found);

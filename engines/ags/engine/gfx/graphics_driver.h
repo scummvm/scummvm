@@ -139,12 +139,12 @@ public:
 	// Creates a "raw" DDB, without pixel initialization
 	virtual IDriverDependantBitmap *CreateDDB(int width, int height, int color_depth, bool opaque = false) = 0;
 	// Creates DDB, initializes from the given bitmap.
-	virtual IDriverDependantBitmap *CreateDDBFromBitmap(Shared::Bitmap *bitmap, bool hasAlpha, bool opaque = false) = 0;
+	virtual IDriverDependantBitmap *CreateDDBFromBitmap(Shared::Bitmap *bitmap, bool has_alpha, bool opaque = false) = 0;
 	// Creates DDB intended to be used as a render target (allow render other DDBs on it).
 	virtual IDriverDependantBitmap *CreateRenderTargetDDB(int width, int height, int color_depth, bool opaque = false) = 0;
 	// Updates DBB using the given bitmap; bitmap must have same size and format
 	// as the one that this DDB was initialized with.
-	virtual void UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Shared::Bitmap *bitmap, bool hasAlpha) = 0;
+	virtual void UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Shared::Bitmap *bitmap, bool has_alpha) = 0;
 	// Destroy the DDB.
 	virtual void DestroyDDB(IDriverDependantBitmap *bitmap) = 0;
 
@@ -154,8 +154,8 @@ public:
 	// be applied to the shared texture data. Currently it's possible to share same
 	// texture data, but update it with different "opaque" values, which breaks logic.
 	virtual IDriverDependantBitmap *GetSharedDDB(uint32_t sprite_id,
-		Shared::Bitmap *bitmap = nullptr, bool hasAlpha = true, bool opaque = false) = 0;
-	virtual void UpdateSharedDDB(uint32_t sprite_id, Shared::Bitmap *bitmap = nullptr, bool hasAlpha = true, bool opaque = false) = 0;
+		Shared::Bitmap *bitmap = nullptr, bool has_alpha = true, bool opaque = false) = 0;
+	virtual void UpdateSharedDDB(uint32_t sprite_id, Shared::Bitmap *bitmap = nullptr, bool has_alpha = true, bool opaque = false) = 0;
 	// Removes the shared texture reference, will force the texture to recreate next time
 	virtual void ClearSharedDDB(uint32_t sprite_id) = 0;
 
