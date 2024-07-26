@@ -35,6 +35,7 @@
 #define AGS_SHARED_UTIL_STREAM_H
 
 #include "ags/shared/util/iags_stream.h"
+#include "ags/shared/util/string.h"
 #include "ags/lib/allegro/file.h"
 #include "common/stream.h"
 #include "common/types.h"
@@ -51,8 +52,14 @@ enum StreamWorkMode {
 
 class Stream : public IAGSStream {
 public:
+	Stream() = default;
+	Stream(const String &src_name)
+		: _srcName(src_name) {}
 	virtual ~Stream() {}
 
+	// Returns an optional name of a stream's source, such as a filepath;
+	// primarily for diagnostic purposes
+	const String &GetSrcName() const { return _srcName; }
 	// Tells if the stream has errors
 	virtual bool HasErrors() const {
 		return false;
@@ -91,6 +98,9 @@ public:
 
 	// Fill the requested number of bytes with particular value
 	size_t WriteByteCount(uint8_t b, size_t count);
+
+protected:
+	String _srcName; // optional name of the stream's source (e.g. filepath)
 };
 
 class ScummVMReadStream : public Common::SeekableReadStream {

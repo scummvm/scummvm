@@ -79,7 +79,6 @@ private:
 
 	Common::Stream *_file;
 	const FileWorkMode  _workMode;
-	String _fileName;
 };
 
 } // namespace Shared
