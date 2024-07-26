@@ -226,7 +226,7 @@ ErrorCode CBagStorageDev::activateLocalObject(CBagObject  *pObj) {
 			pObj->setActive();
 			pObj->attach();
 
-			// Preform an update and arrange objects in the storage device
+			// Perform an update and arrange objects in the storage device
 			if (g_allowattachActiveObjectsFl) {
 				attachActiveObjects();
 			}
@@ -1481,12 +1481,12 @@ void CBagStorageDevWnd::onMouseMove(uint32 n, CBofPoint *pPoint, void *) {
 			bWield = true;
 		}
 
-		// Run thru background object list and find if the cursor is over an object
+		// Run through background object list and find if the cursor is over an object
 		CBofList<CBagObject *> *pList = getObjectList();
 		if (pList != nullptr) {
 			CBofPoint cCursorLocation = devPtToViewPort(*_xCursorLocation);
 
-			// Go thru list backwards to find the 1st top-most object
+			// Go through list backwards to find the 1st top-most object
 			CBofListNode<CBagObject *> *pNode = pList->getTail();
 			while (pNode != nullptr) {
 				CBagObject *pObj = pNode->getNodeItem();
