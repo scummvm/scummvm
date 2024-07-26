@@ -128,7 +128,7 @@ grTileSprite grTileAnimation::getTile(int tile_index) const {
 		return grTileSprite(&*tileData_.begin() + tileOffsets_[tile_index]);
 	default:
 		if (!grTileSprite::uncompress(&*tileData_.begin() + tileOffsets_[tile_index], GR_TILE_SPRITE_SIZE, tile_buf, compression_)) {
-			xassert(0 && "Неизвестный алгоритм сжатия");
+			assert(0 && "Unknown compression algorithm");
 		}
 		return grTileSprite(tile_buf);
 	}

@@ -27,7 +27,6 @@
 #include "qdengine/qd_precomp.h"
 #include "qdengine/system/app_core.h"
 #include "qdengine/qdengine.h"
-#include "qdengine/xutil/xutil.h"
 
 namespace QDEngine {
 

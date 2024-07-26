@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #ifndef QDENGINE_QD_PRECOMP_H
 #define QDENGINE_QD_PRECOMP_H
 #ifndef _QUEST_EDITOR
@@ -57,7 +59,6 @@
 #pragma warning(disable : 4018)
 #pragma warning(disable : 4244)
 
-#include "qdengine/xutil/xutil.h"
 #include "qdengine/util/xmath/xmath.h"
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL

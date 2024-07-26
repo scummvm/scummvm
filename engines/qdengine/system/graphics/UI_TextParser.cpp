@@ -82,7 +82,7 @@ OutNodes::const_iterator UI_TextParser::getLineBegin(int lineNum) const {
 				return it;
 	}
 
-	xassert(lineNum == 0);
+	assert(lineNum == 0);
 	return outNodes_.end();
 }
 
@@ -119,7 +119,7 @@ void UI_TextParser::parseString(const char *text, int color, int fitIn) {
 	if (!font_)
 		setFont(grDispatcher::get_default_font());
 
-	xassert(font_);
+	assert(font_);
 	init();
 
 	fitIn_ = fitIn > 2 * fontHeight() ? fitIn : -1;

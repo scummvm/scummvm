@@ -234,7 +234,7 @@ void qdInventoryCellSet::redraw(int offs_x, int offs_y, bool inactive_mode) cons
 	for (int i = cells_shift_.y; i < size_.y + cells_shift_.y; i ++) {
 		idx = i * (size_.x + additional_cells_.x) + cells_shift_.x;
 		for (int j = cells_shift_.x; j < size_.x + cells_shift_.x; j ++) {
-			xassert(idx >= 0 && idx < cells_.size());
+			assert(idx >= 0 && idx < cells_.size());
 			cells_[idx].redraw(offs_x + pos.x, offs_y + pos.y, inactive_mode);
 			pos.x += cells_[idx].size_x();
 			idx++;
@@ -517,7 +517,7 @@ void qdInventoryCellSet::pre_redraw() const {
 	for (int i = cells_shift_.y; i < size().y + cells_shift_.y; i++) {
 		idx = i * (size_.x + additional_cells_.x) + cells_shift_.x;
 		for (int j = cells_shift_.x; j < size().x + cells_shift_.x; j++) {
-			xassert(idx >= 0 && idx < cells_.size());
+			assert(idx >= 0 && idx < cells_.size());
 			if (!cells_[idx].is_empty() && cells_[idx].object()->need_redraw()) {
 				dp->add_redraw_region(cells_[idx].object()->last_screen_region());
 				dp->add_redraw_region(cells_[idx].object()->screen_region());
@@ -538,7 +538,7 @@ void qdInventoryCellSet::post_redraw() {
 	for (int i = cells_shift_.y; i < size().y + cells_shift_.y; i++) {
 		idx = i * (size_.x + additional_cells_.x) + cells_shift_.x;
 		for (int j = cells_shift_.x; j < size().x + cells_shift_.x; j++) {
-			xassert(idx >= 0 && idx < cells_.size());
+			assert(idx >= 0 && idx < cells_.size());
 			if (!cells_[idx].is_empty())
 				cells_[idx].object()->post_redraw();
 			idx++;
@@ -553,7 +553,7 @@ bool qdInventoryCellSet::has_rect_objects(int left, int top, int right, int bott
 	for (int i = top; i <= bottom; i++)
 		for (int j = left; j <= right; j++) {
 			idx = i * (size_.x + additional_cells_.x) + j;
-			xassert(idx >= 0 && idx < cells_.size());
+			assert(idx >= 0 && idx < cells_.size());
 			// Нашли объект вне видимой области - значит скроллинг нужен
 			if (!cells_[idx].is_empty())
 				return true;

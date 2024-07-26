@@ -26,7 +26,6 @@
 #include "common/textconsole.h"
 #include "qdengine/qd_precomp.h"
 #include "qdengine/parser/xml_parser.h"
-#include "qdengine/xutil/xutil.h"
 
 namespace QDEngine {
 
