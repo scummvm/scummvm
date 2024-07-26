@@ -215,7 +215,7 @@ Common::SeekableReadStream *CifTree::createReadStreamForMember(const Common::Pat
 	}
 
 	const CifInfo &info = _fileMap[path];
-	byte *buf = new byte[info.size];
+	byte *buf = (byte *)malloc(info.size);
 
 	bool success = true;
 
@@ -237,7 +237,8 @@ Common::SeekableReadStream *CifTree::createReadStreamForMember(const Common::Pat
 
 	if (!success) {
 		warning("Failed to read data for '%s' from CifTree '%s'", info.name.toString().c_str(), _name.toString().c_str());
-		delete[] buf;
+		free(buf);
+		buf = nullptr;
 		_stream->clearErr();
 		return nullptr;
 	}
