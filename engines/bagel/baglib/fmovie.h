@@ -33,7 +33,7 @@ namespace Bagel {
 
 class CBagFMovie : public CBofDialog {
 public:
-	enum MovieStatus { MOVIE_STOPPED, MOVIE_PAUSED, MOVIE_FOREWARD, MOVIE_REVERSE };
+	enum MovieStatus { MOVIE_STOPPED, MOVIE_PAUSED, MOVIE_FORWARD, MOVIE_REVERSE };
 
 protected:
 	Video::SmackerDecoder *_smk;
