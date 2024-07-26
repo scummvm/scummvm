@@ -91,8 +91,8 @@ struct GameSetup {
 	MouseSpeedDef mouse_speed_def;
 	bool  RenderAtScreenRes; // render sprites at screen resolution, as opposed to native one
 	int   Supersampling;
-	size_t SpriteCacheSize = DefSpriteCacheSize;
-	size_t TextureCacheSize = DefTexCacheSize;
+	size_t SpriteCacheSize = DefSpriteCacheSize;  // in KB
+	size_t TextureCacheSize = DefTexCacheSize;  // in KB
 	bool  clear_cache_on_room_change; // for low-end devices: clear resource caches on room change
 	bool  load_latest_save; // load latest saved game on launch
 	ScreenRotation rotation;
