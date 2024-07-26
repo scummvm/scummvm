@@ -501,11 +501,11 @@ Vect2i AIFindMinium(int x, int y,
 	typename Maps::TypeH optium = maps.Get(x, y);
 	int optiumx = x, optiumy = y;
 
-	int maxi = max(max(x, dx - x), max(y, dy - y));
+	int maxi = MAX(MAX(x, dx - x), MAX(y, dy - y));
 	for (int i = 1; i < maxi; i++) {
 		int curx, cury;
-		int xmin = max(0, x - i), xmax = min(dx - 1, x + i);
-		int ymin = max(0, y - i), ymax = min(dy - 1, y + i);
+		int xmin = MAX(0, x - i), xmax = MIN(dx - 1, x + i);
+		int ymin = MAX(0, y - i), ymax = MIN(dy - 1, y + i);
 		//up
 		cury = y - i;
 		if (cury >= 0)

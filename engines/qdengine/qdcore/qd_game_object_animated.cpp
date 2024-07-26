@@ -1152,9 +1152,9 @@ bool qdGameObjectAnimated::inters_with_bound(Vect3f bnd, Vect3f cen,
 	Vect3f obj_a = R() - bound(perspective_correction) / 2;
 	Vect3f obj_b = R() + bound(perspective_correction) / 2;
 
-	if ((max(bnd_a.x, obj_a.x) <= min(bnd_b.x, obj_b.x)) &&
-	        (max(bnd_a.y, obj_a.y) <= min(bnd_b.y, obj_b.y)) &&
-	        (max(bnd_a.z, obj_a.z) <= min(bnd_b.z, obj_b.z)))
+	if ((MAX(bnd_a.x, obj_a.x) <= MIN(bnd_b.x, obj_b.x)) &&
+	        (MAX(bnd_a.y, obj_a.y) <= MIN(bnd_b.y, obj_b.y)) &&
+	        (MAX(bnd_a.z, obj_a.z) <= MIN(bnd_b.z, obj_b.z)))
 		return true;
 	else return false;
 }

@@ -139,8 +139,8 @@ LineContribType *C2PassScale<FilterClass>::CalcContributions(UINT uLineSize, UIN
 		// Scan through line of contributions
 		double dCenter = (double)u / dScale;   // Reverse mapping
 		// Find the significant edge points that affect the pixel
-		int iLeft = max(0, (int)floor(dCenter - dWidth));
-		int iRight = min((int)ceil(dCenter + dWidth), int(uSrcSize) - 1);
+		int iLeft = MAX(0, (int)floor(dCenter - dWidth));
+		int iRight = MIN((int)ceil(dCenter + dWidth), int(uSrcSize) - 1);
 
 		// Cut edge points to fit in filter window in case of spill-off
 		if (iRight - iLeft + 1 > iWindowSize) {

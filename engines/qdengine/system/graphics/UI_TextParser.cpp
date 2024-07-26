@@ -19,6 +19,9 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/util.h"
+
 #include "qdengine/qd_precomp.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 #include "qdengine/system/graphics/UI_TextParser.h"
@@ -183,7 +186,7 @@ void UI_TextParser::parseString(const char *text, int color, int fitIn) {
 	}
 
 	putText();
-	size_.x = max(size_.x, lineWidth_);
+	size_.x = MAX(size_.x, lineWidth_);
 	outNodes_[prevLineIndex_].width = lineWidth_;
 
 	size_.y = fontHeight() * lineCount_;

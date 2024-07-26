@@ -1167,9 +1167,9 @@ bool inters3f(const Vect3f &c1, const Vect3f &sz1, const Vect3f &c2, const Vect3
 	a2 = c2 - sz2 / 2;
 	b2 = a2 + sz2;
 
-	if ((max(a1.x, a2.x) <= min(b1.x, b2.x)) &&
-	        (max(a1.y, a2.y) <= min(b1.y, b2.y)) &&
-	        (max(a1.z, a2.z) <= min(b1.z, b2.z)))
+	if ((MAX(a1.x, a2.x) <= MIN(b1.x, b2.x)) &&
+	        (MAX(a1.y, a2.y) <= MIN(b1.y, b2.y)) &&
+	        (MAX(a1.z, a2.z) <= MIN(b1.z, b2.z)))
 		return true;
 	else return false;
 }
@@ -1186,8 +1186,8 @@ bool inters2s(Vect2s c1, Vect2s sz1, Vect2s c2, Vect2s sz2) {
 	b2.x--;
 	b2.y--;
 
-	if ((max(a1.x, a2.x) <= min(b1.x, b2.x)) &&
-	        (max(a1.y, a2.y) <= min(b1.y, b2.y)))
+	if ((MAX(a1.x, a2.x) <= MIN(b1.x, b2.x)) &&
+	        (MAX(a1.y, a2.y) <= MIN(b1.y, b2.y)))
 		return true;
 	else return false;
 }
