@@ -110,78 +110,13 @@ const int INT_INF = 0x7fffffff;
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef __ROUND__
-#define __ROUND__
-
-#if 0
-xm_inline int round(double x) {
-	int a;
-	_asm {
-		fld x
-		fistp dword ptr a
-	}
-	return a;
-}
-
-xm_inline int round(float x) {
-	int a;
-	_asm {
-		fld x
-		fistp dword ptr a
-	}
-	return a;
-}
-#endif
-
 template <class T>
 xm_inline T sqr(const T &x) {
 	return x*x;
 }
 
-#endif // __ROUND__
-
-xm_inline double SIGN(double x) {
-	return x < 0.0 ? -1.0 : 1.0;
-}
-xm_inline float SIGN(float x) {
-	return x < 0.0f ? -1.0f : 1.0f;
-}
-xm_inline int SIGN(int x) {
-	return x != 0 ? (x > 0 ? 1 : -1) : 0;
-}
-
-xm_inline double SIGN(double a, double b) {
-	return b >= 0.0 ? fabs(a) : -fabs(a);
-}
-xm_inline float SIGN(float a, float b) {
-	return b >= 0.0f ? fabsf(a) : -fabsf(a);
-}
-
-xm_inline void average(double &x_avr, double x, double tau) {
-	x_avr = x_avr * (1. - tau) + tau * x;
-}
-xm_inline void average(double &x_avr, double x, double tau, double factor) {
-	tau = pow(tau, factor);
-	x_avr = x_avr * (1. - tau) + tau * x;
-}
-xm_inline void average(float &x_avr, float x, float tau) {
-	x_avr = x_avr * (1.f - tau) + tau * x;
-}
-xm_inline void average(float &x_avr, float x, float tau, float factor) {
-	tau = (float)pow(tau, factor);
-	x_avr = x_avr * (1.f - tau) + tau * x;
-}
-
 #define G2R(x) ((x)*M_PI/180.f)
 #define R2G(x) ((x)*180.f/M_PI)
-
-xm_inline float Acos(float  x) {
-	return x > 1.f ? 0 : (x < -1.f ? M_PI : acosf(x));
-}
-xm_inline double Acos(double  x) {
-	return x > 1. ? 0 : (x < -1. ? M_PI : acos(x));
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -625,113 +560,6 @@ public:
 #endif
 
 };
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//			class Mat2f
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-class Mat2f {
-	float xx, xy,
-	      yx, yy;
-public:
-	Mat2f() {}
-	explicit Mat2f(float angle) {
-		set(angle);
-	}
-	explicit Mat2f(const Vect2f &xAxis) {
-		set(xAxis.x, xAxis.y, xAxis.y, -xAxis.x);
-	}
-	Mat2f(float xx_, float xy_, float yx_, float yy_) {
-		set(xx_, xy_, yx_, yy_);
-	}
-	void set(float angle) {
-		xx = yy = cosf(angle);
-		yx = sinf(angle);
-		xy = -yx;
-	}
-	void set(float xx_, float xy_, float yx_, float yy_) {
-		xx = xx_;
-		xy = xy_;
-		yx = yx_;
-		yy = yy_;
-	}
-
-	// Rows
-	xm_inline const Vect2f &operator[](int i) const {
-		return ((const Vect2f *)&xx)[i];
-	}
-	xm_inline Vect2f &operator[](int i)     {
-		return ((Vect2f *)&xx)[i];
-	}
-
-	// Columns
-	xm_inline Vect2f xcol() const {
-		return Vect2f(xx, yx);
-	}
-	xm_inline Vect2f ycol() const {
-		return Vect2f(xy, yy);
-	}
-	xm_inline Vect2f col(int axis) const {
-		return axis == X_AXIS ? Vect2f(xx, yx) : Vect2f(xy, yy);
-	}
-
-	void invert() {
-		float t = xy;
-		xy = yx;
-		yx = t;
-	}
-	void Invert();
-
-	xm_inline Mat2f &operator*= (const Mat2f &m) {
-		return (*this) = Mat2f(xx * m.xx + xy * m.yx, xx * m.xy + xy * m.yy, yx * m.xx + yy * m.yx, yx * m.xy + yy * m.yy);
-	}
-	xm_inline const Mat2f operator* (const Mat2f &m) const {
-		return Mat2f(*this) *= m;
-	}
-
-	// backward transform
-	xm_inline Vect2f invXform(const Vect2f &v) const {
-		return Vect2f(v.x * xx + v.y * yx, v.x * xy + v.y * yy);
-	}
-
-	static const Mat2f ID;
-};
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//			class MatX2f
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-class MatX2f {
-public:
-	Mat2f rot;
-	Vect2f trans;
-
-	MatX2f() {}
-	MatX2f(const Mat2f &r, const Vect2f &t) : rot(r), trans(t) {}
-	void set(const Mat2f &r, const Vect2f &t) {
-		rot = r;
-		trans = t;
-	}
-
-	void invert() {
-		rot.invert();
-		trans = -rot.invXform(trans);
-	}
-
-	// backward transform
-	Vect2f invXform(const Vect2f &v) const {
-		return rot.invXform(v - trans);
-	}
-
-	static const MatX2f ID;
-};
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
