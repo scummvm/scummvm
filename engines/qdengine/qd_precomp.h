@@ -260,49 +260,6 @@ namespace QDEngine {
 #define INFINITE                      0xFFFFFFFF
 #define WAVE_FORMAT_PCM               0x0001
 
-namespace mpp {
-
-enum MpegState {
-    MPEG_STOP = 0,
-    MPEG_PLAY = 1,
-    MPEG_PAUSE = 2,
-};
-
-void MpegInitLibrary(void *dsound_device);
-void MpegDeinitLibrary();
-void MpegOpenToPlay(const char *fname, bool cycled = true);
-void MpegStop();
-void MpegPause();
-void MpegResume();
-void MpegSetVolume(int volume);
-int MpegIsPlay();
-
-}
-
-struct KEY_EVENT_RECORD {
-	unsigned wVirtualScanCode;
-	unsigned wVirtualKeyCode;
-	unsigned wRepeatCount;
-	unsigned bKeyDown;
-};
-
-struct INPUT_RECORD {
-	unsigned EventType;
-	union {
-		KEY_EVENT_RECORD          KeyEvent;
-  } Event;
-};
-
-struct BITMAP {
-	int bmType;
-	int bmWidth;
-	int bmHeight;
-	int bmWidthBytes;
-	short bmPlanes;
-	short bmBitsPixel;
-	void *bmBits;
-};
-
 struct RECT {
 	int left;
 	int top;
@@ -313,17 +270,6 @@ struct RECT {
 struct HRGN {
 	int i;
 };
-
-//Balmer
-typedef struct {
-    WORD  wFormatTag;         // Format type
-    WORD  nChannels;          // Number of channels (mono, stereo, etc.)
-    DWORD nSamplesPerSec;     // Sample rate
-    DWORD nAvgBytesPerSec;    // For buffer estimation
-    WORD  nBlockAlign;        // Block size of data
-    WORD  wBitsPerSample;     // Bits per sample
-    WORD  cbSize;             // Size of extra format information
-} WAVEFORMATEX;
 
 typedef struct {
   int map[256];
