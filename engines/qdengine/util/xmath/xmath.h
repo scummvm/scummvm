@@ -32,15 +32,6 @@
 
 #include <math.h>
 
-#ifdef _XMATH_USE_IOSTREAM
-#include <iostream>
-using std::istream;
-using std::ostream;
-//#if (_MSC_VER >= 1300)
-//using std::endl;
-//#endif
-#endif
-
 namespace QDEngine {
 
 class Archive;
@@ -111,6 +102,27 @@ inline float invSqrtFast(float x) {
 	x = x * (1.5f - xhalf * x * x); // Newton step, repeating increases accuracy
 	return x;
 }
+
+inline float cycle(float f, float size) {
+	return fmod(fmod(f, size) + size, size);
+}
+
+inline float getDist(float v0, float v1, float size) {
+	float d = fmod(v0 - v1, size);
+	float ad = (float)fabs(d);
+	float dd = size - ad;
+	if (ad <= dd) return d;
+	return d < 0 ? d + size : d - size;
+}
+
+inline float getDeltaAngle(float to, float from) {
+	return getDist(to, from, 2 * M_PI);
+}
+
+inline float cycleAngle(float a) {
+	return cycle(a, 2 * M_PI);
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //
