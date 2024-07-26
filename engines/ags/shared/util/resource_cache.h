@@ -89,7 +89,7 @@ public:
 	inline size_t GetExternalSize() const { return _externalSize; }
 
 	// Set the MRU cache size limit
-	void SetMaxCacheSize(TSize size = 0u) {
+	void SetMaxCacheSize(TSize size) {
 		_maxSize = size;
 		FreeMem(0u); // makes sure it does not exceed max size
 	}
