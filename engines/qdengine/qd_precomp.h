@@ -59,7 +59,7 @@
 #pragma warning(disable : 4018)
 #pragma warning(disable : 4244)
 
-#include "qdengine/util/xmath/xmath.h"
+#include "qdengine/xmath.h"
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
