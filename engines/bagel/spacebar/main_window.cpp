@@ -31,7 +31,7 @@ namespace SpaceBar {
 
 #define PLAY_MODE_ONLY    1
 
-SBarThud *CMainWindow::_pThudBmp = nullptr;    // Pointer to the WEILD object
+SBarThud *CMainWindow::_pThudBmp = nullptr;    // Pointer to the WIELD object
 int CMainWindow::_nInstances = 0;      // Number of space bar windows
 bool CMainWindow::_bZzazzlVision = false;
 CBofRect *CMainWindow::_xFilterRect;
