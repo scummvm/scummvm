@@ -194,7 +194,7 @@ void stop_fast_forwarding();
 
 int __GetLocationType(int xxx, int yyy, int allowHotspot0);
 
-// Called whenever game looses input focus
+// Called whenever game loses input focus
 void display_switch_out();
 // Called whenever game gets input focus
 void display_switch_in();
