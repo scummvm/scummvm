@@ -1198,7 +1198,7 @@ int __GetLocationType(int xxx, int yyy, int allowHotspot0) {
 	return winner;
 }
 
-// Called whenever game looses input focus
+// Called whenever game loses input focus
 void display_switch_out() {
 	Debug::Printf("Switching out from the game");
 	_G(switched_away) = true;
