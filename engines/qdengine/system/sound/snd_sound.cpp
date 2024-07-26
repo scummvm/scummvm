@@ -39,45 +39,6 @@ bool sndSound::create_sound_buffer() {
 		return false;
 
 	warning("STUB: sndSound::create_sound_buffer()");
-#if 0
-	WAVEFORMATEX wfx;
-
-	wfx.wFormatTag = WAVE_FORMAT_PCM;
-	wfx.nChannels = WORD(sound()->channels());
-	wfx.nSamplesPerSec = sound()->samples_per_sec();
-	wfx.wBitsPerSample = WORD(sound()->bits_per_sample());
-	wfx.nBlockAlign = (wfx.nChannels * wfx.wBitsPerSample) / 8;
-	wfx.nAvgBytesPerSec = wfx.nSamplesPerSec * wfx.nBlockAlign;
-	wfx.cbSize = 0;
-
-	DSBUFFERDESC desc;
-	memset(&desc, 0, sizeof(DSBUFFERDESC));
-
-	desc.dwSize = sizeof(DSBUFFERDESC);
-	desc.dwFlags = DSBCAPS_STATIC | DSBCAPS_CTRLFREQUENCY | DSBCAPS_CTRLPAN | DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_CTRLVOLUME | DSBCAPS_GETCURRENTPOSITION2;
-	desc.dwBufferBytes = sound()->data_length();
-	desc.lpwfxFormat = &wfx;
-
-	release_sound_buffer();
-
-	HRESULT res = _sound_device->CreateSoundBuffer(&desc, &_sound_buffer, NULL);
-	if (FAILED(res))
-		return false;
-
-	LPVOID ptr_1 = NULL, ptr_2 = NULL;
-	DWORD size_1, size_2;
-	res = _sound_buffer->Lock(0, sound()->data_length(), &ptr_1, &size_1, &ptr_2, &size_2, 0L);
-	if (FAILED(res) || ptr_1 == NULL)
-		return false;
-
-	memcpy(ptr_1, sound()->data(), sound()->data_length());
-
-	res = _sound_buffer->Unlock(ptr_1, sound()->data_length(), NULL, 0L);
-	if (FAILED(res))
-		return false;
-
-	_sound_buffer->SetCurrentPosition(0);
-#endif
 
 	return true;
 }
