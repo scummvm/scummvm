@@ -24,7 +24,6 @@
 
 #include <map>
 #include <vector>
-#include <algorithm>
 #include "qdengine/qd_precomp.h"
 
 

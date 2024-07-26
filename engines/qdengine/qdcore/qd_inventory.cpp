@@ -21,7 +21,6 @@
 
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
-#include <algorithm>
 #include "common/debug.h"
 #include "common/stream.h"
 

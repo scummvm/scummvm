@@ -23,7 +23,6 @@
 #define QDENGINE_QDCORE_QD_INVENTORY_CELL_H
 
 #include <vector>
-#include <algorithm>
 #include "qdengine/parser/xml_fwd.h"
 #include "qdengine/qdcore/qd_sprite.h"
 

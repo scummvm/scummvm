@@ -20,13 +20,16 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
-#include "image/bmp.h"
 #include "common/events.h"
 #include "common/fs.h"
 #include "common/formats/winexe.h"
 #include "common/formats/winexe_pe.h"
+#include "common/system.h"
+
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
+
+#include "image/bmp.h"
 
 #include "qdengine/qd_precomp.h"
 #include "qdengine/qdcore/util/splash_screen.h"

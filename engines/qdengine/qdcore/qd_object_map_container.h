@@ -22,6 +22,8 @@
 #ifndef QDENGINE_QDCORE_QD_OBJECT_MAP_CONTAINER_H
 #define QDENGINE_QDCORE_QD_OBJECT_MAP_CONTAINER_H
 
+#include "common/system.h"
+
 #include "qdengine/qdengine.h"
 
 

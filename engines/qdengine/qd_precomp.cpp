@@ -19,8 +19,10 @@
  *
  */
 
-#include "qdengine/qd_precomp.h"
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/textconsole.h"
 
+#include "qdengine/qd_precomp.h"
 
 namespace QDEngine {
 

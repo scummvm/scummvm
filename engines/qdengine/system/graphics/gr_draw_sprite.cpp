@@ -21,6 +21,8 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include "common/textconsole.h"
+
 #include "graphics/managed_surface.h"
 
 #include "qdengine/qdengine.h"
