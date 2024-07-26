@@ -249,18 +249,18 @@ IDriverDependantBitmap *ScummVMRendererGraphicsDriver::CreateDDB(int width, int 
 	return new ALSoftwareBitmap(width, height, color_depth, opaque);
 }
 
-IDriverDependantBitmap *ScummVMRendererGraphicsDriver::CreateDDBFromBitmap(Bitmap *bitmap, bool hasAlpha, bool opaque) {
-	return new ALSoftwareBitmap(bitmap, opaque, hasAlpha);
+IDriverDependantBitmap *ScummVMRendererGraphicsDriver::CreateDDBFromBitmap(Bitmap *bitmap, bool has_alpha, bool opaque) {
+	return new ALSoftwareBitmap(bitmap, has_alpha, opaque);
 }
 
 IDriverDependantBitmap *ScummVMRendererGraphicsDriver::CreateRenderTargetDDB(int width, int height, int color_depth, bool opaque) {
 	return new ALSoftwareBitmap(width, height, color_depth, opaque);
 }
 
-void ScummVMRendererGraphicsDriver::UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Bitmap *bitmap, bool hasAlpha) {
+void ScummVMRendererGraphicsDriver::UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Bitmap *bitmap, bool has_alpha) {
 	ALSoftwareBitmap *alSwBmp = (ALSoftwareBitmap *)bitmapToUpdate;
 	alSwBmp->_bmp = bitmap;
-	alSwBmp->_hasAlpha = hasAlpha;
+	alSwBmp->_hasAlpha = has_alpha;
 }
 
 void ScummVMRendererGraphicsDriver::DestroyDDB(IDriverDependantBitmap *bitmap) {

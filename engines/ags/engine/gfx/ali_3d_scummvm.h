@@ -91,13 +91,13 @@ public:
 		_stretchToHeight = _height;
 	}
 
-	ALSoftwareBitmap(Bitmap *bmp, bool opaque, bool hasAlpha) {
+	ALSoftwareBitmap(Bitmap *bmp, bool has_alpha, bool opaque) {
 		_bmp = bmp;
 		_width = bmp->GetWidth();
 		_height = bmp->GetHeight();
 		_colDepth = bmp->GetColorDepth();
 		_opaque = opaque;
-		_hasAlpha = hasAlpha;
+		_hasAlpha = has_alpha;
 		_stretchToWidth = _width;
 		_stretchToHeight = _height;
 	}
@@ -181,18 +181,18 @@ public:
 	void ClearRectangle(int x1, int y1, int x2, int y2, RGB *colorToUse) override;
 	int  GetCompatibleBitmapFormat(int color_depth) override;
 	IDriverDependantBitmap *CreateDDB(int width, int height, int color_depth, bool opaque) override;
-	IDriverDependantBitmap *CreateDDBFromBitmap(Bitmap *bitmap, bool hasAlpha, bool opaque) override;
+	IDriverDependantBitmap *CreateDDBFromBitmap(Bitmap *bitmap, bool has_alpha, bool opaque) override;
 	IDriverDependantBitmap *CreateRenderTargetDDB(int width, int height, int color_depth, bool opaque) override;
-	void UpdateDDBFromBitmap(IDriverDependantBitmap *ddb, Bitmap *bitmap, bool hasAlpha) override;
+	void UpdateDDBFromBitmap(IDriverDependantBitmap *ddb, Bitmap *bitmap, bool has_alpha) override;
 	void DestroyDDB(IDriverDependantBitmap *ddb) override;
 
 	IDriverDependantBitmap *GetSharedDDB(uint32_t /*sprite_id*/,
-		Bitmap *bitmap, bool hasAlpha, bool opaque) override {
+		Bitmap *bitmap, bool has_alpha, bool opaque) override {
 		// Software renderer does not require a texture cache, because it uses bitmaps directly
-		return CreateDDBFromBitmap(bitmap, hasAlpha, opaque);
+		return CreateDDBFromBitmap(bitmap, has_alpha, opaque);
 	}
 
-	void UpdateSharedDDB(uint32_t /*sprite_id*/, Bitmap */*bitmap*/, bool /*hasAlpha*/, bool /*opaque*/) override {
+	void UpdateSharedDDB(uint32_t /*sprite_id*/, Bitmap */*bitmap*/, bool /*has_alpha*/, bool /*opaque*/) override {
 		/* do nothing */
 	}
 	void ClearSharedDDB(uint32_t /*sprite_id*/) override {
