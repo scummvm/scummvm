@@ -209,6 +209,15 @@ void Room::sendWSMessage_140000(int trigger) {
 	sendWSMessage_140000(_G(my_walker), trigger);
 }
 
+void Room::sendWSMessage_150000(machine *walker, int trigger) {
+	_G(globals)[V023] = kernel_trigger_create(trigger);
+	sendWSMessage(0x150000, 0, walker, 0, nullptr, 1);
+}
+
+void Room::sendWSMessage_150000(int trigger) {
+	sendWSMessage_150000(_G(my_walker), trigger);
+}
+
 } // namespace Rooms
 } // namespace Riddle
 } // namespace M4

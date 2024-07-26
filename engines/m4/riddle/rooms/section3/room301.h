@@ -33,7 +33,7 @@ private:
 	int _val1 = 0;
 	int _val2 = 0;
 	const char *_soundName = nullptr;
-	int _val4 = 0;
+	const char *_nextSound = nullptr;
 	int _val5 = -1;
 	int _val6 = 2;
 	int _val7 = 2;
@@ -65,6 +65,10 @@ private:
 	machine *_machine2 = nullptr;
 	machine *_machine3 = nullptr;
 	machine *_machine4 = nullptr;
+	const char *_digiSound1 = nullptr;
+	const char *_digiSound2 = nullptr;
+	const char *_digiSound3 = nullptr;
+	const char *_digiSound4 = nullptr;
 
 	void conv301a();
 

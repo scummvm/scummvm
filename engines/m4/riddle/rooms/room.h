@@ -53,10 +53,10 @@ protected:
 	 * Sets a bunch of globals. Sooooo many globals.
 	 */
 	void setGlobals1(int val1, int val2, int val3, int val4, int val5,
-		int val6, int val7, int val8, int val9, int val10,
-		int val11, int val12, int val13, int val14, int val15,
-		int val16, int val17, int val18, int val19, int val20,
-		int val21);
+		int val6, int val7 = 0, int val8 = 0, int val9 = 0, int val10 = 0,
+		int val11 = 0, int val12 = 0, int val13 = 0, int val14 = 0, int val15 = 0,
+		int val16 = 0, int val17 = 0, int val18 = 0, int val19 = 0, int val20 = 0,
+		int val21 = 0);
 
 	void sendWSMessage_10000(int val1, machine *recv, int val2, int val3,
 		int val4, int trigger, int val9, int val6, int val7, int val8);
@@ -66,6 +66,8 @@ protected:
 	void sendWSMessage_110000(int trigger);
 	void sendWSMessage_140000(machine *walker, int trigger);
 	void sendWSMessage_140000(int trigger);
+	void sendWSMessage_150000(machine *walker, int trigger);
+	void sendWSMessage_150000(int trigger);
 
 	int _roomVal1 = 0;		// TODO: deprecate
 

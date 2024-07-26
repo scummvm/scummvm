@@ -35,14 +35,14 @@ void Room301::preload() {
 }
 
 void Room301::init() {
-	_G(flags)[V000] = 1;
+	_G(globals)[V000] = 1;
 	digi_preload("950_s01");
 
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
 		_val1 = 0;
 		_val2 = 0;
 		_soundName = nullptr;
-		_val4 = 0;
+		_nextSound = nullptr;
 		_val5 = -1;
 		_val6 = 2;
 		_val7 = 2;
@@ -81,7 +81,7 @@ void Room301::init() {
 		player_set_commands_allowed(false);
 		ws_demand_location(55, 270, 3);
 
-		if (_val12 || (!player_been_here(401) && _G(flags)[V092] && !_G(flags)[V093])) {
+		if (_val12 || (!player_been_here(401) && _G(globals)[V092] && !_G(globals)[V093])) {
 			ws_walk(352, 269, nullptr, 60, 3);
 		} else if (!player_been_here(301)) {
 			digi_preload("301r37");
@@ -96,7 +96,165 @@ void Room301::init() {
 }
 
 void Room301::daemon() {
-	// TODO
+	switch (_G(kernel).trigger) {
+	case 203:
+		setGlobals1(_ripTrekArms, 1, 15, 15, 15, 1);
+		sendWSMessage_110000(-1);
+		digi_play("301r22", 1, 255, 204);
+		break;
+
+	case 204:
+		digi_play("301s02", 1, 255, 205);
+		_val17 = 1;
+		break;
+
+	case 205:
+		_val17 = 0;
+		kernel_timing_trigger(60, 206);
+		break;
+
+	case 206:
+		disable_player_commands_and_fade_init(207);
+		break;
+
+	case 207:
+		sendWSMessage_150000(208);
+		break;
+
+	case 208:
+		ws_demand_facing(3);
+		kernel_timing_trigger(1, 209);
+		break;
+
+	case 209:
+		_G(game).setRoom(413);
+		break;
+
+	case 300:
+		terminateMachineAndNull(_machine1);
+		_machine4 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			triggerMachineByHashCallbackNegative, "rip");
+		sendWSMessage_10000(1, _machine4, _agentStander, 7,
+			1, 304, _agentStander, 1, 1, 0);
+		break;
+
+	case 304:
+		ws_hide_walker();
+		sendWSMessage(1, _machine4, _agentTakesTelegram,
+			1, 53, 305, _agentTakesTelegram, 53, 53, 0);
+		break;
+
+	case 305:
+		kernel_timing_trigger(1, 990);
+		inv_give_to_player("MESSAGE LOG");
+		break;
+
+	case 320:
+		sendWSMessage(1, _machine4, _agentTakesTelegram,
+			54, 63, 322, _agentTakesTelegram, 63, 63, 0);
+		break;
+
+	case 322:
+		sendWSMessage_10000(1, _machine4, _ripTrekTravel,
+			10, 1, 324, _ripTrekTravel, 1, 1, 0);
+		_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			triggerMachineByHashCallbackNegative, "guy behind desk");
+		_val13 = 0;
+		_val14 = 0;
+		sendWSMessage_10000(1, _machine1, _agentStander, 1,
+			1, 10, _agentStander, 1, 1, 0);
+		break;
+
+	case 324:
+		terminateMachineAndNull(_machine4);
+		ws_unhide_walker();
+		kernel_timing_trigger(1, 1000);
+		break;
+
+	case 990:
+		_digiSound1 = _digiSound2 = 0;
+		_digiSound3 = _digiSound4 = 0;
+
+		if (_val12 <= 0) {
+			kernel_timing_trigger(1, 320);
+		} else if (_nextSound) {
+			_digiSound1 = _nextSound;
+			_nextSound = nullptr;
+			kernel_timing_trigger(1, 991);
+		} else  if (_G(globals)[V365] == 1) {
+			_digiSound1 = "201R61";
+			_G(globals)[V365] = 0;
+			kernel_timing_trigger(1, 991);
+		} else if (_G(globals)[V366] == 1) {
+			_digiSound1 = "401R31";
+			_G(globals)[V366] = 0;
+			kernel_timing_trigger(1, 991);
+		} else if (_G(globals)[V373] == 1) {
+			_digiSound1 = "401R36";
+			_G(globals)[V373] = 0;
+			kernel_timing_trigger(1, 991);
+		} else if (_G(globals)[V371] == 1) {
+			_digiSound1 = "501R03C";
+			_G(globals)[V371] = 0;
+			kernel_timing_trigger(1, 991);
+		} else if (_G(globals)[V372] == 1) {
+			_digiSound1 = "701R39";
+			_digiSound2 = "701R39A";
+			_G(globals)[V372] = 0;
+			kernel_timing_trigger(1, 991);
+		}
+		break;
+
+	case 991:
+		if (_digiSound1)
+			digi_play(_digiSound1, 1, 255, 993);
+		else
+			kernel_timing_trigger(1, 993);
+		break;
+
+	case 993:
+		if (_digiSound2)
+			digi_play(_digiSound2, 1, 255, 994);
+		else
+			kernel_timing_trigger(1, 994);
+		break;
+
+	case 994:
+		if (_digiSound3)
+			digi_play(_digiSound3, 1, 255, 995);
+		else
+			kernel_timing_trigger(1, 995);
+		break;
+
+	case 995:
+		if (_digiSound4)
+			digi_play(_digiSound4, 1, 255, 996);
+		else
+			kernel_timing_trigger(1, 996);
+		break;
+
+	case 996:
+		if (--_val12 == 0)
+			kernel_timing_trigger(1, 320);
+		else
+			kernel_timing_trigger(1, 990);
+		break;
+
+	case 999:
+		kernel_timing_trigger(1, !_val12 ? 1000 : 300);
+		break;
+
+	case 1000:
+		if (!player_been_here(401) && _G(globals)[V092]
+			&& !_G(globals)[V093]) {
+			_G(globals)[V092] = 0;
+			_G(globals)[V093] = 1;
+			kernel_timing_trigger(30, 65);
+		}
+
+		player_set_commands_allowed(true);
+		break;
+	}
 }
 
 void Room301::pre_parser() {
