@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-25 19:12+0000\n"
+"POT-Creation-Date: 2024-07-26 21:55+0000\n"
 "PO-Revision-Date: 2024-07-04 15:43+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
@@ -3690,31 +3690,31 @@ msgstr "使用着色器的 OpenGL"
 msgid "AdLib emulator"
 msgstr "AdLib 模拟器"
 
-#: audio/fmopl.cpp:85
+#: audio/fmopl.cpp:82
 msgid "MAME OPL emulator"
 msgstr "MAME OPL 模拟器"
 
-#: audio/fmopl.cpp:87
+#: audio/fmopl.cpp:84
 msgid "DOSBox OPL emulator"
 msgstr "DOSBox OPL 模拟器"
 
-#: audio/fmopl.cpp:90
+#: audio/fmopl.cpp:87
 msgid "Nuked OPL emulator"
 msgstr "Nuked OPL 模拟器"
 
-#: audio/fmopl.cpp:93
+#: audio/fmopl.cpp:90
 msgid "ALSA Direct FM"
 msgstr "ALSA Direct FM"
 
-#: audio/fmopl.cpp:96
+#: audio/fmopl.cpp:93
 msgid "OPL2LPT"
 msgstr "OPL2LPT"
 
-#: audio/fmopl.cpp:97
+#: audio/fmopl.cpp:94
 msgid "OPL3LPT"
 msgstr "OPL3LPT"
 
-#: audio/fmopl.cpp:100
+#: audio/fmopl.cpp:97
 msgid "RetroWave OPL3"
 msgstr "RetroWave OPL3"
 
