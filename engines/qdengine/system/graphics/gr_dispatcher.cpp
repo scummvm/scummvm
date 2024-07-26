@@ -138,9 +138,6 @@ bool grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, 
 
 	_isFullScreen = fullscreen;
 
-	if (!is_mode_supported(sx, sy, pixel_format_))
-		pixel_format_ = adjust_mode(pixel_format);
-
 	if (!hwnd) {
 		resize_window(sx, sy);
 		SizeX = sx;
