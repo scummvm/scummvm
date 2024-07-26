@@ -31,8 +31,6 @@
 #define QDENGINE_UTIL_XMATH_H
 
 #include <math.h>
-#include "qdengine/util/xmath/fastMath.h"
-
 
 #ifdef _XMATH_USE_IOSTREAM
 #include <iostream>
@@ -103,6 +101,16 @@ const int INT_INF = 0x7fffffff;
 #else
 #define xm_inline inline
 #endif //_MSC_VER
+
+inline float invSqrtFast(float x) {
+	x += 1e-7f; // Добавка, устраняющая деление на 0
+	float xhalf = 0.5f * x;
+	int i = *(int *)&x; // get bits for floating value
+	i = 0x5f375a86 - (i >> 1); // gives initial guess y0
+	x = *(float *)&i; // convert bits back to float
+	x = x * (1.5f - xhalf * x * x); // Newton step, repeating increases accuracy
+	return x;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //

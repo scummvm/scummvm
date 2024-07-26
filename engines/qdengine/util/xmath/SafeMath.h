@@ -22,9 +22,6 @@
 #ifndef QDENGINE_UTIL_XMATH_SAFEMATH_H
 #define QDENGINE_UTIL_XMATH_SAFEMATH_H
 
-#include "qdengine/util/xmath/fastMath.h"
-
-
 namespace QDEngine {
 
 inline float cycle(float f, float size) {
