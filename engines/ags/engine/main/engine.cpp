@@ -509,7 +509,7 @@ int engine_init_sprites() {
 	}
 
 	if (_GP(usetup).SpriteCacheSize > 0)
-		_GP(spriteset).SetMaxCacheSize(_GP(usetup).SpriteCacheSize);
+		_GP(spriteset).SetMaxCacheSize(_GP(usetup).SpriteCacheSize * 1024);
 	return 0;
 }
 

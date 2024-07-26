@@ -263,14 +263,20 @@ static void read_legacy_graphics_config(const ConfigTree &cfg) {
 	_GP(usetup).Screen.Params.RefreshRate = CfgReadInt(cfg, "misc", "refresh");
 }
 
+static void read_legacy_config(const ConfigTree &cfg) {
+	read_legacy_graphics_config(cfg);
+
+	_GP(usetup).SpriteCacheSize = CfgReadInt(cfg, "misc", "cachemax", _GP(usetup).SpriteCacheSize);
+}
+
 void override_config_ext(ConfigTree &cfg) {
 	_G(platform)->ReadConfiguration(cfg);
 }
 
 void apply_config(const ConfigTree &cfg) {
-	// Legacy graphics settings has to be translated into new options;
+	// Legacy settings have to be translated into new options;
 	// they must be read first, to let newer options override them, if ones are present
-	read_legacy_graphics_config(cfg);
+	read_legacy_config(cfg);
 
 	{
 		// Audio options
@@ -356,12 +362,9 @@ void apply_config(const ConfigTree &cfg) {
 
 		// Resource caches and options
 		_GP(usetup).clear_cache_on_room_change = CfgReadBoolInt(cfg, "misc", "clear_cache_on_room_change", _GP(usetup).clear_cache_on_room_change);
-		int cache_size_kb = CfgReadInt(cfg, "graphics", "sprite_cache_size", GameSetup::DefSpriteCacheSize);
-		if (cache_size_kb > 0)
-			_GP(usetup).SpriteCacheSize = cache_size_kb * 1024;
-		cache_size_kb = CfgReadInt(cfg, "graphics", "texture_cache_size", GameSetup::DefTexCacheSize);
-		if (cache_size_kb > 0)
-			_GP(usetup).TextureCacheSize = cache_size_kb * 1024;
+		_GP(usetup).SpriteCacheSize = CfgReadInt(cfg, "graphics", "sprite_cache_size", _GP(usetup).SpriteCacheSize);
+		_GP(usetup).TextureCacheSize = CfgReadInt(cfg, "graphics", "texture_cache_size", _GP(usetup).TextureCacheSize);
+
 		// Mouse options
 		_GP(usetup).mouse_auto_lock = CfgReadBoolInt(cfg, "mouse", "auto_lock");
 		_GP(usetup).mouse_speed = CfgReadFloat(cfg, "mouse", "speed", 1.f);
