@@ -53,9 +53,9 @@ void CBagChatWnd::onMouseMove(uint32 flags, CBofPoint *pos, void *) {
 	// If over a chat choice, then highlight it
 	CBofList<CBagObject *> *bagObjectList = getObjectList();
 
-	// Run thru background object list and find if the cursor is over an object
+	// Run through background object list and find if the cursor is over an object
 	if (bagObjectList != nullptr) {
-		// Go thru list backwards to find the 1st top-most object
+		// Go through list backwards to find the 1st top-most object
 		CBofListNode<CBagObject *> *currNode = bagObjectList->getTail();
 		while (currNode != nullptr) {
 			CBagObject *currNodeItem = currNode->getNodeItem();
