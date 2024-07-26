@@ -232,7 +232,7 @@ void AnimationType::walk() {
 		}
 
 		byte magicColor = _anim->checkFeet(_x, _x + _xLength, _oldY[_anim->_vm->_cp], _y, _yLength) - 1;
-		// -1  is because the modified array indexes of magics[] compared to Pascal .
+		// -1  is because the modified array indices of magics[] compared to Pascal.
 
 		if ((magicColor != 255) & !_anim->_vm->_doingSpriteRun) {
 			MagicType *magic = &_anim->_vm->_magics[magicColor];
