@@ -575,7 +575,7 @@ int num_open_script_files = 0;
 ScriptFileHandle *check_valid_file_handle_ptr(Stream *stream_ptr, const char *operation_name) {
 	if (stream_ptr) {
 		for (int i = 0; i < num_open_script_files; ++i) {
-			if (stream_ptr == valid_handles[i].stream) {
+			if (stream_ptr == valid_handles[i].stream.get()) {
 				return &valid_handles[i];
 			}
 		}
@@ -602,7 +602,7 @@ ScriptFileHandle *check_valid_file_handle_int32(int32_t handle, const char *oper
 
 Stream *get_valid_file_stream_from_handle(int32_t handle, const char *operation_name) {
 	ScriptFileHandle *sc_handle = check_valid_file_handle_int32(handle, operation_name);
-	return sc_handle ? sc_handle->stream : nullptr;
+	return sc_handle ? sc_handle->stream.get() : nullptr;
 }
 
 //=============================================================================
