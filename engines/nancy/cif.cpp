@@ -105,7 +105,7 @@ CifFile::~CifFile() {
 }
 
 Common::SeekableReadStream *CifFile::createReadStream() const {
-	byte *buf = new byte[_info.size];
+	byte *buf = (byte *)malloc(_info.size);
 
 	bool success = true;
 
@@ -127,7 +127,8 @@ Common::SeekableReadStream *CifFile::createReadStream() const {
 
 	if (!success) {
 		warning("Failed to read data for CifFile '%s'", _info.name.toString().c_str());
-		delete[] buf;
+		free(buf);
+		buf = nullptr;
 		_stream->clearErr();
 		return nullptr;
 	}
