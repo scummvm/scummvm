@@ -20,6 +20,8 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/debug.h"
+
 #include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
 #include "qdengine/qdcore/qd_named_object_indexer.h"

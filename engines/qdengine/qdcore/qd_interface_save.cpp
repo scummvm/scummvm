@@ -20,8 +20,10 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/stream.h"
+
 #include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
 #include "qdengine/parser/qdscr_parser.h"

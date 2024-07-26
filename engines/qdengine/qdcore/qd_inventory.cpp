@@ -22,7 +22,9 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include <algorithm>
+#include "common/debug.h"
 #include "common/stream.h"
+
 #include "qdengine/qd_precomp.h"
 #include "qdengine/qdengine.h"
 

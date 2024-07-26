@@ -20,7 +20,9 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/debug.h"
 #include "common/textconsole.h"
+
 #include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"

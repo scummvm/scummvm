@@ -23,23 +23,19 @@
 #ifndef QDENGINE_H
 #define QDENGINE_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
 #include "common/error.h"
-#include "common/fs.h"
-#include "common/hash-str.h"
 #include "common/random.h"
 #include "common/serializer.h"
-#include "common/util.h"
 #include "engines/engine.h"
-#include "engines/savestate.h"
 #include "graphics/pixelformat.h"
-#include "graphics/screen.h"
 
 #include "qdengine/parser/qdscr_parser.h"
 
-
 struct ADGameDescription;
+
+namespace Graphics {
+class Screen;
+}
 
 namespace QDEngine {
 

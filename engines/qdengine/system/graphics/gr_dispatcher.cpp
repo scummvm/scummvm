@@ -24,6 +24,7 @@
 #include "common/textconsole.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/managed_surface.h"
 
 #include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
