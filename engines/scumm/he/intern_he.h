@@ -46,11 +46,13 @@ class Sprite;
 class CUP_Player;
 
 class Moonbase;
+class Basketball;
 #endif
 
 class ScummEngine_v60he : public ScummEngine_v6 {
 #ifdef ENABLE_HE
 	friend class Moonbase;
+	friend class Basketball;
 #endif
 protected:
 	enum SubOpType {
@@ -84,6 +86,7 @@ public:
 #ifdef ENABLE_HE
 public:
 	Moonbase *_moonbase;
+	Basketball *_basketball;
 #endif
 
 public:
@@ -587,6 +590,7 @@ class ScummEngine_v90he : public ScummEngine_v80he {
 #endif
 #endif
 	friend class Moonbase;
+	friend class Basketball;
 	friend class MoviePlayer;
 	friend class Sprite;
 	friend class Wiz;
@@ -844,6 +848,8 @@ protected:
 class ScummEngine_v100he : public ScummEngine_v99he {
 friend class AI;
 friend class Moonbase;
+friend class LogicHEBasketball;
+friend class Basketball;
 
 // The following engine versions use sub opcodes from this version
 friend class ScummEngine_v71he;
@@ -1123,6 +1129,8 @@ protected:
 	byte VAR_U32_USER_VAR_D;
 	byte VAR_U32_USER_VAR_E;
 	byte VAR_U32_USER_VAR_F;
+	byte VAR_U32_USER_VAR_G;
+	byte VAR_U32_USER_VAR_H;
 
 	byte VAR_REMOTE_START_SCRIPT;
 	byte VAR_NETWORK_AVAILABLE;

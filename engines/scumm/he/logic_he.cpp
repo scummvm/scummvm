@@ -98,7 +98,7 @@ LogicHE *LogicHE::makeLogicHE(ScummEngine_v90he *vm) {
 		return makeLogicHEbaseball2001(vm);
 
 	case GID_BASKETBALL:
-		return makeLogicHEbasketball(vm);
+		return makeLogicHEbasketball((ScummEngine_v100he *)vm);
 
 	case GID_MOONBASE:
 		return makeLogicHEmoonbase((ScummEngine_v100he *)vm);

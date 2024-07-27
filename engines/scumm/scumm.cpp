@@ -72,6 +72,7 @@
 #include "scumm/players/player_he.h"
 #include "scumm/resource.h"
 #include "scumm/he/resource_he.h"
+#include "scumm/he/basketball/basketball.h"
 #include "scumm/he/moonbase/moonbase.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v8.h"
@@ -667,7 +668,8 @@ ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)
 ScummEngine_v60he::ScummEngine_v60he(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v6(syst, dr) {
 #ifdef ENABLE_HE
-	_moonbase = 0;
+	_moonbase = nullptr;
+	_basketball = nullptr;
 #endif
 
 	memset(_hInFileTable, 0, sizeof(_hInFileTable));
@@ -824,16 +826,22 @@ ScummEngine_v100he::ScummEngine_v100he(OSystem *syst, const DetectorResult &dr) 
 	if (_game.id == GID_MOONBASE)
 		_moonbase = new Moonbase(this);
 
+	if (_game.id == GID_BASKETBALL)
+		_basketball = new Basketball(this);
+
 	VAR_U32_USER_VAR_A = 0xFF;
 	VAR_U32_USER_VAR_B = 0xFF;
 	VAR_U32_USER_VAR_C = 0xFF;
 	VAR_U32_USER_VAR_D = 0xFF;
 	VAR_U32_USER_VAR_E = 0xFF;
 	VAR_U32_USER_VAR_F = 0xFF;
+	VAR_U32_USER_VAR_G = 0xFF;
+	VAR_U32_USER_VAR_H = 0xFF;
 }
 
 ScummEngine_v100he::~ScummEngine_v100he() {
 	delete _moonbase;
+	delete _basketball;
 }
 
 ScummEngine_vCUPhe::ScummEngine_vCUPhe(OSystem *syst, const DetectorResult &dr) : Engine(syst){
