@@ -498,10 +498,14 @@ void AssertView(const char *apiname, int view) {
 		quitprintf("!%s: invalid view %d (range is 1..%d)", apiname, view + 1, _GP(game).numviews);
 }
 
-void AssertLoop(const char *apiname, int view, int loop) {
+void AssertViewHasLoops(const char *apiname, int view) {
 	AssertView(apiname, view);
 	if (_GP(views)[view].numLoops == 0)
 		quitprintf("!%s: view %d does not have any loops.", apiname, view + 1);
+}
+
+void AssertLoop(const char *apiname, int view, int loop) {
+	AssertViewHasLoops(apiname, view);
 	if ((loop < 0) || (loop >= _GP(views)[view].numLoops))
 		quitprintf("!%s: invalid loop number %d for view %d (range is 0..%d).",
 				   apiname, loop, view + 1, _GP(views)[view].numLoops - 1);
