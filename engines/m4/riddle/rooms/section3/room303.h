@@ -39,9 +39,31 @@ private:
 	int _val7 = 0;
 	int _val8 = 0;
 	int _val9 = 0;
+	int _val10 = 0;
+	int _val11 = 0;
+	int _val12 = 0;
+	int _val13 = 0;
+	int _val14 = 0;
+	int _val15 = 0;
 	KernelTriggerType _triggerMode1 = KT_DAEMON;
 	KernelTriggerType _triggerMode2 = KT_DAEMON;
 	machine *_door = nullptr;
+	int _hands1 = 0;
+	int _hands2 = 0;
+	int _hands3 = 0;
+	machine *_hands4 = nullptr;
+	int _clasped1 = 0;
+	int _clasped2 = 0;
+	int _clasped3 = 0;
+	int _clasped4 = 0;
+	machine *_shadow4 = nullptr;
+	machine *_shadow5 = nullptr;
+
+	void loadHands();
+	void loadClasped();
+	void setFengActive(bool flag);
+	void setShadow4(bool active);
+	void setShadow5(bool active);
 
 public:
 	Room303() : Room() {}

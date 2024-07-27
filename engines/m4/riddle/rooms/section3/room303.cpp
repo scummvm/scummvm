@@ -84,6 +84,55 @@ void Room303::init() {
 void Room303::daemon() {
 }
 
+void Room303::loadHands() {
+	_hands1 = series_load("MC NY hands behind back pos4");
+	_hands2 = series_load("MC NY hand on hip pos4");
+	_hands3 = series_load("MC NY hand out talk pos4");
+	_hands4 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 357, 255, 86, 0xf00, 0,
+		triggerMachineByHashCallbackNegative, "mc");
+
+	_G(kernel).trigger_mode = KT_DAEMON;
+	sendWSMessage_10000(1, _hands4, _hands1, 1, 1, 200,
+		_hands1, 1, 1, 0);
+	_val10 = _val11 = 0;
+}
+
+void Room303::loadClasped() {
+	_clasped1 = series_load("hands clasped pos5");
+	_clasped2 = series_load("shrug head shake pos5");
+	_clasped3 = series_load("hands clasped bow pos5");
+	_clasped4 = series_load("hands clasped flame loop pos5");
+}
+
+void Room303::setFengActive(bool flag) {
+	for (HotSpotRec *hotspot = _G(currentSceneDef).hotspots;
+		hotspot; hotspot = hotspot->next) {
+		if (!strcmp(hotspot->vocab, "FENG LI")) {
+			if (flag) {
+				hotspot->active = hotspot->lr_x < 600;
+			} else {
+				hotspot->active = hotspot->lr_x > 600;
+			}
+		}
+	}
+}
+
+void Room303::setShadow4(bool active) {
+	if (active) {
+		_shadow4 = series_place_sprite("candleman shadow4", 0, 360, 252, -86, 0xe06);
+	} else {
+		terminateMachineAndNull(_shadow4);
+	}
+}
+
+void Room303::setShadow5(bool active) {
+	if (active) {
+		_shadow5 = series_place_sprite("candleman shadow5", 0, 480, 256, -84, 0xe06);
+	} else {
+		terminateMachineAndNull(_shadow5);
+	}
+}
+
 } // namespace Rooms
 } // namespace Riddle
 } // namespace M4
