@@ -30,6 +30,7 @@
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
 #include "m4/fileio/extensions.h"
+#include "m4/fileio/info.h"
 #include "m4/graphics/gr_pal.h"
 #include "m4/gui/gui_buffer.h"
 #include "m4/gui/gui_vmng.h"
@@ -187,6 +188,50 @@ bool kernel_load_room(int minPalEntry, int maxPalEntry, SceneDef *rdef, GrBuff *
 
 	_G(game).room_id = _G(game).new_room;
 	return true;
+}
+
+bool kernel_load_variant(const char *variant) {
+	auto &sceneDef = _G(currentSceneDef);
+	auto *codeBuff = _G(screenCodeBuff);
+	Common::String filename;
+
+	if (!codeBuff)
+		return false;
+
+	if (_G(kernel).hag_mode) {
+		filename = f_extension_new(variant, "COD");
+	} else {
+		char lastChar = variant[strlen(variant) - 1];
+
+		char *base = env_find(sceneDef.art_base);
+		char *dotPos = strchr(base, '.');
+		if (!dotPos)
+			return false;
+
+		*dotPos++ = lastChar;
+		*dotPos++ = '.';
+		filename = f_extension_new(base, "COD");
+
+		if (!f_info_exists(Common::Path(filename)))
+			return false;
+	}
+
+	SysFile code_file(filename);
+	if (!code_file.exists())
+		error("Failed to load variant %s", filename.c_str());
+
+	// TODO: This is just copied from the room loading code,
+	// rather than disassembling the reset of the original method.
+	// Need to determine whether this is correct or not
+	GrBuff *scr_orig_data = load_codes(&code_file);
+
+	code_file.close();
+
+	if (scr_orig_data) {
+		Buffer *scr_orig_data_buffer = scr_orig_data->get_buffer();
+		RestoreEdgeList(scr_orig_data_buffer);
+		scr_orig_data->release();
+	}	
 }
 
 GrBuff *load_codes(SysFile *code_file) {

@@ -29,10 +29,25 @@ namespace Riddle {
 namespace Rooms {
 
 class Room303 : public Room {
+private:
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+	int _val5 = 0;
+	int _val6 = 0;
+	int _val7 = 0;
+	int _val8 = 0;
+	int _val9 = 0;
+	KernelTriggerType _triggerMode1 = KT_DAEMON;
+	KernelTriggerType _triggerMode2 = KT_DAEMON;
+	machine *_door = nullptr;
+
 public:
 	Room303() : Room() {}
 	~Room303() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
 };

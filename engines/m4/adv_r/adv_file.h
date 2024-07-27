@@ -43,7 +43,7 @@ bool kernel_load_game(int slot);
 bool kernel_save_game_exists(int32 slot);
 int32 extract_room_num(const Common::String &name);
 
-bool kernel_load_variant(char *variant);
+bool kernel_load_variant(const char *variant);
 GrBuff *load_codes(SysFile *code_file);
 bool load_background(SysFile *pic_file, GrBuff **loadBuffer, RGB8 *palette);
 

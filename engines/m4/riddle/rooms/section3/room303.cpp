@@ -27,7 +27,58 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+void Room303::preload() {
+	LoadWSAssets("OTHER SCRIPT");
+
+	if (_G(flags)[V000]) {
+		_G(art_base_override) = player_been_here(201) ?
+			"EXHIBIT HALL-TREK" : "EH TREK NO SNAKE";
+		_G(use_alternate_attribute_file) = true;
+		_G(player).walker_type = 1;
+		_G(player).shadow_type = 1;
+		_G(player).walker_in_this_scene = true;
+
+	} else {
+		_G(player).walker_type = 0;
+		_G(player).shadow_type = 0;
+		_G(player).walker_in_this_scene = true;
+
+		if (_G(game).room_id == 352) {
+			_G(player).walker_in_this_scene = false;
+			_G(player).disable_hyperwalk = true;
+		}
+	}
+}
+
 void Room303::init() {
+	_val1 = _val2 = 0;
+
+	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
+		_val3 = 0;
+		_val4 = -1;
+		_triggerMode1 = _triggerMode2 = KT_DAEMON;
+		_val5 = 0;
+		_val6 = 0;
+		_val7 = 0;
+		_val8 = 0;
+	}
+
+	if (player_been_here(301)) {
+		hotspot_set_active("MEI CHEN", false);
+		hotspot_set_active("FENG LI", false);
+		hotspot_set_active("COVER", false);
+	}
+
+	if (_G(game).previous_room != 304) {
+		_door = series_show_sprite("DOOR", 0, 0xf05);
+	}
+
+	switch (_G(game).previous_room) {
+	case 301:
+		break;
+	default:
+		break;
+	}
 }
 
 void Room303::daemon() {
