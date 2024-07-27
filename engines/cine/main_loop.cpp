@@ -180,11 +180,13 @@ static void processEvent(Common::Event &event) {
 		case kActionMouseLeft:
 			if (allowPlayerInput) {
 				mouseLeft = 0;
-			} break;
+			}
+			break;
 		case kActionMouseRight:
 			if (allowPlayerInput) {
 				mouseRight = 0;
 			}
+			break;
 		case kActionMoveUp:
 		case kActionMoveDown:
 		case kActionMoveLeft:
