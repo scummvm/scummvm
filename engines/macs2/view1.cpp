@@ -910,6 +910,11 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 		blobIndex = 0x0c;
 	}
 	*/
+
+	AnimationReader testReader(this->GameObject->Blobs[blobIndex]);
+	uint16 numAnimations = testReader.readNumAnimations();
+	debug("Number of animation frames: %.4", numAnimations);
+
 	Common::MemoryReadStream stream(this->GameObject->Blobs[blobIndex].data(), this->GameObject->Blobs[blobIndex].size());
 	stream.seek(0xA, SEEK_SET);
 	uint16 offset = stream.readUint16LE();
