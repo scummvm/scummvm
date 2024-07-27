@@ -642,9 +642,9 @@ void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb, int ltextSize) co
 	byte *current = text;
 
 	int32 bufferSize = 384;
-	byte * const buff = (byte *)calloc(sizeof(byte), bufferSize);
+	byte * const buff = (byte *)calloc(bufferSize, sizeof(byte));
 	assert(buff);
-	byte * const stack = (byte *)calloc(sizeof(byte), bufferSize);
+	byte * const stack = (byte *)calloc(bufferSize, sizeof(byte));
 	assert(stack);
 
 	while (1) {
