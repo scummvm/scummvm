@@ -95,7 +95,7 @@ void Object_RemoveTint(ScriptObject *objj) {
 }
 
 void Object_SetView(ScriptObject *objj, int view, int loop, int frame) {
-	SetObjectFrame(objj->id, view, loop, frame);
+	SetObjectFrameSimple(objj->id, view, loop, frame);
 }
 
 void Object_SetTransparency(ScriptObject *objj, int trans) {

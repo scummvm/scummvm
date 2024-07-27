@@ -43,7 +43,10 @@ int  GetObjectIDAtRoom(int roomx, int roomy);
 void SetObjectTint(int obj, int red, int green, int blue, int opacity, int luminance);
 void RemoveObjectTint(int obj);
 void SetObjectView(int obn, int vii);
+// Assigns given object to the view's frame, and activates frame (plays linked sound, etc)
 void SetObjectFrame(int obn, int viw, int lop, int fra);
+// Assigns given object to the view's frame
+bool SetObjectFrameSimple(int obn, int viw, int lop, int fra);
 // pass trans=0 for fully solid, trans=100 for fully transparent
 void SetObjectTransparency(int obn, int trans);
 void SetObjectBaseline(int obn, int basel);
