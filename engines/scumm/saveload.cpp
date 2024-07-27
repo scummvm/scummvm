@@ -70,7 +70,7 @@ struct SaveInfoSection {
 
 #define SaveInfoSectionSize (4+4+4 + 4+4 + 4+2)
 
-#define CURRENT_VER 119
+#define CURRENT_VER 120
 #define INFOSECTION_VERSION 2
 
 #pragma mark -
@@ -1753,7 +1753,8 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	// Save/load misc stuff
 	//
 	s.syncArray(_verbs, _numVerbs, (_game.version < 7 && _language != Common::HE_ISR) ? syncWithSerializerDef : syncWithSerializerV7orISR);
-	s.syncArray(vm.nest, 16, syncWithSerializer);
+	s.syncArray(vm.nest, 16, syncWithSerializer, VER(0), VER(119));
+	s.syncArray(vm.nest, kMaxScriptNestingHE, syncWithSerializer, VER(120));
 	s.syncArray(_sentence, 6, syncWithSerializer);
 	s.syncArray(_string, 6, syncWithSerializer);
 	s.syncArray(_colorCycle, 16, syncWithSerializer);

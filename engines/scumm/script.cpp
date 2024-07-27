@@ -335,7 +335,8 @@ void ScummEngine::runScriptNested(int script) {
 
 	updateScriptPtr();
 
-	if (vm.numNestedScripts >= kMaxScriptNesting)
+	// Backyard Basketball is one of the games which requires more than 15 nested scripts
+	if (vm.numNestedScripts >= (_game.heversion >= 99 ? kMaxScriptNestingHE : kMaxScriptNesting))
 		error("Too many nested scripts");
 
 	nest = &vm.nest[vm.numNestedScripts];

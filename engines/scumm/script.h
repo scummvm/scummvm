@@ -113,7 +113,8 @@ enum {
 	/**
 	 * The maximal 'nesting' level for scripts.
 	 */
-	kMaxScriptNesting = 15
+	kMaxScriptNesting = 15,
+	kMaxScriptNestingHE = 40
 };
 
 struct VirtualMachineState {
