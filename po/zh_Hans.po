@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-26 21:55+0000\n"
+"POT-Creation-Date: 2024-07-26 22:36+0000\n"
 "PO-Revision-Date: 2024-07-04 15:43+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
@@ -5904,7 +5904,7 @@ msgstr ""
 #: engines/dreamweb/metaengine.cpp:48 engines/groovie/metaengine.cpp:53
 #: engines/m4/metaengine.cpp:37 engines/neverhood/dialogs.cpp:47
 #: engines/sci/detection_options.h:107 engines/sherlock/metaengine.cpp:39
-#: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:37
+#: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:41
 #: engines/ultima/metaengine.cpp:52 engines/zvision/metaengine.cpp:46
 msgid "Use original save/load screens"
 msgstr "使用原始存档/读档屏幕"
@@ -5915,7 +5915,7 @@ msgstr "使用原始存档/读档屏幕"
 #: engines/dreamweb/metaengine.cpp:49 engines/groovie/metaengine.cpp:54
 #: engines/m4/metaengine.cpp:38 engines/neverhood/dialogs.cpp:48
 #: engines/sci/detection_options.h:108 engines/sherlock/metaengine.cpp:40
-#: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:38
+#: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:42
 #: engines/ultima/metaengine.cpp:53 engines/zvision/metaengine.cpp:47
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "使用原始的存档/读档屏幕而非 ScummVM 的"
@@ -6125,7 +6125,7 @@ msgid "AGOS main"
 msgstr "AGOS 主页面"
 
 #: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
-#: engines/made/metaengine.cpp:103
+#: engines/made/metaengine.cpp:103 engines/trecision/metaengine.cpp:121
 #, fuzzy
 #| msgid "Game keymapping"
 msgid "Game keymappings"
@@ -6139,7 +6139,7 @@ msgstr "是/否绑定"
 
 #: engines/agos/metaengine.cpp:232 engines/cine/metaengine.cpp:265
 #: engines/groovie/metaengine.cpp:205 engines/made/metaengine.cpp:107
-#: engines/saga/metaengine.cpp:278
+#: engines/saga/metaengine.cpp:278 engines/trecision/metaengine.cpp:125
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left click"
@@ -6147,7 +6147,7 @@ msgstr "左键点击"
 
 #: engines/agos/metaengine.cpp:238 engines/cine/metaengine.cpp:271
 #: engines/groovie/metaengine.cpp:211 engines/made/metaengine.cpp:114
-#: engines/saga/metaengine.cpp:289
+#: engines/saga/metaengine.cpp:289 engines/trecision/metaengine.cpp:131
 #, fuzzy
 #| msgid "Right Click"
 msgid "Right click"
@@ -6251,7 +6251,7 @@ msgstr "切换仅字幕与语音+字幕模式"
 msgid "High speed mode on/off in Swampy Adventures"
 msgstr "Swampy Adventures 中开关高速模式"
 
-#: engines/agos/metaengine.cpp:382
+#: engines/agos/metaengine.cpp:382 engines/trecision/metaengine.cpp:181
 #, fuzzy
 #| msgid "Press Yes Key"
 msgid "Press \"Yes\" key"
@@ -6985,6 +6985,7 @@ msgid "Empty autosave"
 msgstr "空自动存档"
 
 #: engines/cine/metaengine.cpp:258 engines/made/metaengine.cpp:102
+#: engines/trecision/metaengine.cpp:120
 #, fuzzy
 #| msgid "Default game keymap"
 msgid "Default keymappings"
@@ -8319,13 +8320,15 @@ msgid "Cursor right"
 msgstr "光标右移"
 
 #: engines/made/metaengine.cpp:162 engines/saga/metaengine.cpp:441
-#: engines/vcruise/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:920
+#: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:151
+#: engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "保存游戏"
 
 #: engines/made/metaengine.cpp:168 engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:431
-#: engines/vcruise/metaengine.cpp:156 engines/wintermute/keymapper_tables.h:925
+#: engines/trecision/metaengine.cpp:175 engines/vcruise/metaengine.cpp:156
+#: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
 msgstr "载入游戏"
@@ -9246,7 +9249,7 @@ msgid "Conversation position - Down"
 msgstr "对话位置 - 下"
 
 #: engines/saga/metaengine.cpp:333 engines/scumm/help.cpp:80
-#: engines/vcruise/metaengine.cpp:171
+#: engines/trecision/metaengine.cpp:150 engines/vcruise/metaengine.cpp:171
 msgid "Pause game"
 msgstr "暂停游戏"
 
@@ -9340,7 +9343,8 @@ msgstr "更改语音"
 msgid "Continue game"
 msgstr "继续游戏"
 
-#: engines/saga/metaengine.cpp:436 engines/vcruise/metaengine.cpp:166
+#: engines/saga/metaengine.cpp:436 engines/trecision/metaengine.cpp:156
+#: engines/vcruise/metaengine.cpp:166
 msgid "Quit game"
 msgstr "退出游戏"
 
@@ -11184,6 +11188,25 @@ msgstr "你确定要退出吗？"
 #, c-format
 msgid "Unable to locate the '%s' data file."
 msgstr "无法定位“%s”数据文件。"
+
+#: engines/trecision/metaengine.cpp:137
+#, fuzzy
+#| msgid "Skip line"
+msgid "Skip video"
+msgstr "跳过行"
+
+#. I18N: Toggles walking speed of actor
+#: engines/trecision/metaengine.cpp:144
+#, fuzzy
+#| msgid "Toggle fast mode"
+msgid "Toggle fast walk"
+msgstr "开关快速模式"
+
+#: engines/trecision/metaengine.cpp:163
+#, fuzzy
+#| msgid "Game menu"
+msgid "Open system menu"
+msgstr "游戏菜单"
 
 #: engines/twine/detection.cpp:175
 msgid "This version requires Giflib which was not compiled into ScummVM"

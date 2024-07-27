@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-26 21:55+0000\n"
+"POT-Creation-Date: 2024-07-26 22:36+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -5771,7 +5771,7 @@ msgstr ""
 #: engines/dreamweb/metaengine.cpp:48 engines/groovie/metaengine.cpp:53
 #: engines/m4/metaengine.cpp:37 engines/neverhood/dialogs.cpp:47
 #: engines/sci/detection_options.h:107 engines/sherlock/metaengine.cpp:39
-#: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:37
+#: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:41
 #: engines/ultima/metaengine.cpp:52 engines/zvision/metaengine.cpp:46
 msgid "Use original save/load screens"
 msgstr "Nytt opprinnelege skjermar for lagring/lasting"
@@ -5782,7 +5782,7 @@ msgstr "Nytt opprinnelege skjermar for lagring/lasting"
 #: engines/dreamweb/metaengine.cpp:49 engines/groovie/metaengine.cpp:54
 #: engines/m4/metaengine.cpp:38 engines/neverhood/dialogs.cpp:48
 #: engines/sci/detection_options.h:108 engines/sherlock/metaengine.cpp:40
-#: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:38
+#: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:42
 #: engines/ultima/metaengine.cpp:53 engines/zvision/metaengine.cpp:47
 #, fuzzy
 msgid "Use the original save/load screens instead of the ScummVM ones"
@@ -5989,7 +5989,7 @@ msgid "AGOS main"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
-#: engines/made/metaengine.cpp:103
+#: engines/made/metaengine.cpp:103 engines/trecision/metaengine.cpp:121
 #, fuzzy
 #| msgid "Game Options"
 msgid "Game keymappings"
@@ -6003,7 +6003,7 @@ msgstr "Spelval"
 
 #: engines/agos/metaengine.cpp:232 engines/cine/metaengine.cpp:265
 #: engines/groovie/metaengine.cpp:205 engines/made/metaengine.cpp:107
-#: engines/saga/metaengine.cpp:278
+#: engines/saga/metaengine.cpp:278 engines/trecision/metaengine.cpp:125
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left click"
@@ -6011,7 +6011,7 @@ msgstr "Venstreklikk"
 
 #: engines/agos/metaengine.cpp:238 engines/cine/metaengine.cpp:271
 #: engines/groovie/metaengine.cpp:211 engines/made/metaengine.cpp:114
-#: engines/saga/metaengine.cpp:289
+#: engines/saga/metaengine.cpp:289 engines/trecision/metaengine.cpp:131
 msgid "Right click"
 msgstr "Høgreklikk"
 
@@ -6133,7 +6133,7 @@ msgstr ""
 msgid "High speed mode on/off in Swampy Adventures"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:382
+#: engines/agos/metaengine.cpp:382 engines/trecision/metaengine.cpp:181
 msgid "Press \"Yes\" key"
 msgstr ""
 
@@ -6895,6 +6895,7 @@ msgid "Empty autosave"
 msgstr "Autolagre:"
 
 #: engines/cine/metaengine.cpp:258 engines/made/metaengine.cpp:102
+#: engines/trecision/metaengine.cpp:120
 #, fuzzy
 #| msgid "Game Options"
 msgid "Default keymappings"
@@ -8239,14 +8240,16 @@ msgid "Cursor right"
 msgstr "Peikar høgre"
 
 #: engines/made/metaengine.cpp:162 engines/saga/metaengine.cpp:441
-#: engines/vcruise/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:920
+#: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:151
+#: engines/wintermute/keymapper_tables.h:920
 #, fuzzy
 msgid "Save game"
 msgstr "Lagra spel:"
 
 #: engines/made/metaengine.cpp:168 engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:431
-#: engines/vcruise/metaengine.cpp:156 engines/wintermute/keymapper_tables.h:925
+#: engines/trecision/metaengine.cpp:175 engines/vcruise/metaengine.cpp:156
+#: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 #, fuzzy
 msgid "Load game"
@@ -9213,7 +9216,7 @@ msgid "Conversation position - Down"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:333 engines/scumm/help.cpp:80
-#: engines/vcruise/metaengine.cpp:171
+#: engines/trecision/metaengine.cpp:150 engines/vcruise/metaengine.cpp:171
 msgid "Pause game"
 msgstr "Pause spel"
 
@@ -9308,7 +9311,8 @@ msgstr "Rask modus"
 msgid "Continue game"
 msgstr "Pause spel"
 
-#: engines/saga/metaengine.cpp:436 engines/vcruise/metaengine.cpp:166
+#: engines/saga/metaengine.cpp:436 engines/trecision/metaengine.cpp:156
+#: engines/vcruise/metaengine.cpp:166
 #, fuzzy
 msgid "Quit game"
 msgstr " (Spel)"
@@ -11137,6 +11141,23 @@ msgstr "   Er du sikker på at du vil avslutte?   "
 #, fuzzy, c-format
 msgid "Unable to locate the '%s' data file."
 msgstr "Klarte ikkje slette fil."
+
+#: engines/trecision/metaengine.cpp:137
+#, fuzzy
+#| msgid "Skip line"
+msgid "Skip video"
+msgstr "Hopp over linje"
+
+#. I18N: Toggles walking speed of actor
+#: engines/trecision/metaengine.cpp:144
+#, fuzzy
+msgid "Toggle fast walk"
+msgstr "Rask modus"
+
+#: engines/trecision/metaengine.cpp:163
+#, fuzzy
+msgid "Open system menu"
+msgstr "Spelmeny"
 
 #: engines/twine/detection.cpp:175
 msgid "This version requires Giflib which was not compiled into ScummVM"
