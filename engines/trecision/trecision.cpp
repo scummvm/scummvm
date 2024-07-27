@@ -281,9 +281,12 @@ void TrecisionEngine::eventLoop() {
 		case Common::EVENT_KEYUP:
 			_curKey = event.kbd.keycode;
 			_curAscii = event.kbd.ascii;
+			break;
 
 		case Common::EVENT_JOYBUTTON_UP:
 			_joyButtonUp = true;
+			break;
+
 		default:
 			break;
 		}
