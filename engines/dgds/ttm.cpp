@@ -170,6 +170,7 @@ static const char *ttmOpName(uint16 op) {
 	case 0x4120: return "FADE IN";
 	case 0x4200: return "STORE AREA";
 	case 0x4210: return "SAVE GETPUT REGION";
+
 	case 0xa000: return "DRAW PIXEL";
 	case 0xa010: return "WIPE DISSOLVE";
 	case 0xa020: return "WIPE 20?";
@@ -229,14 +230,25 @@ static const char *ttmOpName(uint16 op) {
 	case 0x00C0: return "FREE BACKGROUND";
 	case 0x0230: return "reset current music?";
 	case 0x1310: return "STOP SFX";
-	case 0xc020: return "LOAD_SAMPLE";
-	case 0xc030: return "SELECT_SAMPLE";
-	case 0xc040: return "DESELECT_SAMPLE";
-	case 0xc050: return "PLAY_SAMPLE";
-	case 0xc060: return "STOP_SAMPLE";
+
+	case 0xc020: return "LOAD SAMPLE";
+	case 0xc030: return "SELECT SAMPLE";
+	case 0xc040: return "DESELECT SAMPLE";
+	case 0xc050: return "PLAY SAMPLE";
+	case 0xc060: return "STOP SAMPLE";
+	case 0xc070: return "PAUSE SAMPLE";
+	case 0xc080: return "UNPAUSE SAMPLE";
+	case 0xc090: return "MUTE SAMPLE";
+	case 0xc0a0: return "UNMUTE SAMPLE";
+	case 0xc0b0: return "SAMPLE PRIORITY";
+	case 0xc0c0: return "SAMPLE HOLD";
+	case 0xc0d0: return "SAMPLE BEND";
 	case 0xc0e0: return "FADE SONG";
+	case 0xc0f0: return "SONG CONTROLLER??";
+	case 0xc100: return "SAMPLE VOL";
 	case 0xc210: return "LOAD RAW SFX";
 	case 0xc220: return "PLAY RAW SFX ??";
+	case 0xcf10: return "SFX MASTER VOL";
 
 	default: return "UNKNOWN!!";
 	}
@@ -705,7 +717,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		break;
 	}
 	case 0xa000: // DRAW PIXEL x,y:int
-		_vm->_compositionBuffer.setPixel(ivals[0], ivals[1], seq._drawColFG);
+		if (seq._drawWin.contains(ivals[0], ivals[1]))
+			_vm->_compositionBuffer.setPixel(ivals[0], ivals[1], seq._drawColFG);
 		break;
 	case 0xa010:
 	case 0xa020:
