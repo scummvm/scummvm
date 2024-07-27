@@ -39,6 +39,19 @@ namespace Macs2 {
 		class Common::MemoryReadStream *ReadSceneStrings(uint16 sceneIndex, Common::MemoryReadStream *fileStream);
 	};
 
+class AnimationReader {
+
+
+	private:
+		Common::MemoryReadStreamEndian readStream;
+
+	public:
+		AnimationReader(const Common::Array<uint8> &blob): readStream(blob.data(), blob.size(), false));
+
+		uint16 readNumAnimations();
+
+};
+
 class GameObject {
 public:
 
