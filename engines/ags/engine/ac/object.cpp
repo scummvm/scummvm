@@ -465,9 +465,9 @@ void update_object_scale(int &res_zoom, int &res_width, int &res_height,
 	if (use_region_scaling) {
 		// Only apply area zoom if we're on a a valid area:
 		// * either area is > 0, or
-		// * area 0 has valid scaling property
+		// * area 0 has valid scaling property (<> 0)
 		int onarea = get_walkable_area_at_location(objx, objy);
-		if ((onarea > 0) || (_GP(thisroom).WalkAreas[0].ScalingFar > 0)) {
+		if ((onarea > 0) || (_GP(thisroom).WalkAreas[0].ScalingFar != 0)) {
 			zoom = get_area_scaling(onarea, objx, objy);
 		}
 	}
