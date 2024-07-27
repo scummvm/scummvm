@@ -91,6 +91,8 @@ const DgdsFont *Dialog::getDlgTextFont() const {
 		fontType = FontManager::k8x8Font;
 	else if (_fontSize == 3)
 		fontType = FontManager::k4x5Font;
+	else if (_fontSize == 5 && DgdsEngine::getInstance()->getGameId() == GID_HOC)
+		fontType = FontManager::kChinaFont;
 	return fontman->getFont(fontType);
 }
 
@@ -326,7 +328,7 @@ void Dialog::drawType3(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 	}
 }
 
-// ellipse
+// ellipse in Dragon, text with no background in HoC
 void Dialog::drawType4(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 	if (!_state)
 		return;
@@ -351,16 +353,23 @@ void Dialog::drawType4(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 		//int radius = (midy * 5) / 4;
 
 		// This is not exactly the same as the original - might need some work to get pixel-perfect
-		Common::Rect drawRect(x, y, x + w, y + h);
-		Graphics::drawRoundRect(drawRect, midy, fillbgcolor, true, _drawPixel, dst);
-		Graphics::drawRoundRect(drawRect, midy, fillcolor, false, _drawPixel, dst);
+		if (DgdsEngine::getInstance()->getGameId() != GID_HOC) {
+			Common::Rect drawRect(x, y, x + w, y + h);
+			Graphics::drawRoundRect(drawRect, midy, fillbgcolor, true, _drawPixel, dst);
+			Graphics::drawRoundRect(drawRect, midy, fillcolor, false, _drawPixel, dst);
+		}
 	} else if (stage == kDlgDrawFindSelectionPointXY) {
 		drawFindSelectionXY();
 	} else if (stage == kDlgDrawFindSelectionTxtOffset) {
 		drawFindSelectionTxtOffset();
 	} else {
 		assert(_state);
-		_state->_loc = DgdsRect(x + midy, y + 1, w - midy, h - 1);
+		if (DgdsEngine::getInstance()->getGameId() != GID_HOC) {
+			_state->_loc = DgdsRect(x + midy, y + 1, w - midy, h - 1);
+		} else {
+			_state->_loc = DgdsRect(x, y, w, h);
+			fillcolor = 25; // ignore the color??
+		}
 		drawForeground(dst, fillcolor, _str);
 	}
 }
