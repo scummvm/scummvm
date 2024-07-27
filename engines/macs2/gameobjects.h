@@ -7,8 +7,10 @@ class gameobjects {
 #include "common/singleton.h"
 #include "common/rect.h"
 
+
 namespace Common {
 class MemoryReadStream;
+class MemoryReadStreamEndian;
 }
 
 namespace Macs2 {
@@ -43,10 +45,11 @@ class AnimationReader {
 
 
 	private:
-		Common::MemoryReadStreamEndian readStream;
+		Common::MemoryReadStreamEndian* readStream;
 
 	public:
-		AnimationReader(const Common::Array<uint8> &blob): readStream(blob.data(), blob.size(), false));
+		// TODO: Can the init list also go into the cpp file?
+		AnimationReader(const Common::Array<uint8> &blob);
 
 		uint16 readNumAnimations();
 

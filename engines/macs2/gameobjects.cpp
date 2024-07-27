@@ -77,33 +77,34 @@ Common::MemoryReadStream *Macs2::GameObject::GetScriptStream() {
 }
 
 Macs2::AnimationReader::AnimationReader(const Common::Array<uint8> &blob) {
-	
+	readStream = new Common::MemoryReadStreamEndian(blob.data(), blob.size(), false);
+
 }
 
 uint16 Macs2::AnimationReader::readNumAnimations() {
 	// Read the header
 
-	readStream.seek(0, SEEK_SET);
+	readStream->seek(0, SEEK_SET);
 
 	// bp-22h
-	readStream.readUint16();
+	readStream->readUint16();
 	// bp-6h
-	readStream.readUint16();
+	readStream->readUint16();
 	// bp-8h
-	readStream.readUint16();
+	readStream->readUint16();
 	// bp-0Ah
-	readStream.readUint16();
+	readStream->readUint16();
 	// bp-10h
-	readStream.readUint16();
+	readStream->readUint16();
 
 	// bp-0Eh
 	// TODO: Naming probably off
-	uint16 firstFrameAdditionalOffset = readStream.readUint16() + 1;
+	uint16 firstFrameAdditionalOffset = readStream->readUint16() + 1;
 
 	// Navigate to where bp-24h is saved
-	readStream.seek(0x0B + firstFrameAdditionalOffset);
+	readStream->seek(0x0B + firstFrameAdditionalOffset);
 
 	// bp-24h
-	uint16 result = readStream.readUint16();
+	uint16 result = readStream->readUint16();
 	return result;
 }
