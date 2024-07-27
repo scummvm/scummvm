@@ -95,6 +95,14 @@ void *sc_OpenFile(const char *fnmm, int mode) {
 	return scf;
 }
 
+const char *File_ResolvePath(const char *fnmm) {
+	ResolvedPath rp;
+	ResolveScriptPath(fnmm, true, rp);
+	// Make path pretty -
+	String path = Path::MakeAbsolutePath(rp.FullPath);
+	return CreateNewScriptString(path.GetCStr());
+}
+
 void File_Close(sc_File *fil) {
 	fil->Close();
 }
@@ -626,6 +634,10 @@ RuntimeScriptValue Sc_sc_OpenFile(const RuntimeScriptValue *params, int32_t para
 	API_SCALL_OBJAUTO_POBJ_PINT(sc_File, sc_OpenFile, const char);
 }
 
+RuntimeScriptValue Sc_File_ResolvePath(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_OBJ_POBJ(const char, _GP(myScriptStringImpl), File_ResolvePath, const char);
+}
+
 // void (sc_File *fil)
 RuntimeScriptValue Sc_File_Close(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID(sc_File, File_Close);
@@ -713,6 +725,7 @@ void RegisterFileAPI() {
 	ccAddExternalStaticFunction("File::Delete^1", Sc_File_Delete);
 	ccAddExternalStaticFunction("File::Exists^1", Sc_File_Exists);
 	ccAddExternalStaticFunction("File::Open^2", Sc_sc_OpenFile);
+	ccAddExternalStaticFunction("File::ResolvePath^1", Sc_File_ResolvePath);
 	ccAddExternalObjectFunction("File::Close^0", Sc_File_Close);
 	ccAddExternalObjectFunction("File::ReadInt^0", Sc_File_ReadInt);
 	ccAddExternalObjectFunction("File::ReadRawChar^0", Sc_File_ReadRawChar);
