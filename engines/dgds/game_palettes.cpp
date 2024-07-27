@@ -101,16 +101,16 @@ void GamePalettes::setFade(int col, int ncols, int targetcol, int fade) {
 	const DgdsPal &pal = _palettes[_curPalNum];
 
 	byte r2, b2, g2;
-	pal.get(targetcol, r2, b2, g2);
+	pal.get(targetcol, r2, g2, b2);
 
 	for (int c = col; c < col + ncols; c++) {
 		byte r, g, b;
 		pal.get(c, r, g, b);
 
 		_curPal.set(c,
-			r2 * fade / 255 + r * (255 - fade) / 255,
-			g2 * fade / 255 + g * (255 - fade) / 255,
-			b2 * fade / 255 + b * (255 - fade) / 255);
+			(r2 * fade + r * (255 - fade)) / 255,
+			(g2 * fade + g * (255 - fade)) / 255,
+			(b2 * fade + b * (255 - fade)) / 255);
 	}
 	g_system->getPaletteManager()->setPalette(_curPal.data(), 0, 256);
 }
