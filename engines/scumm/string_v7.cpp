@@ -719,7 +719,7 @@ void ScummEngine_v7::displayDialog() {
 			if (c == 13) {
 				// New line
 				if (subtitleLine != subtitleBuffer) {
-					addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID(), false, false);
+					addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID(), _haveActorSpeechMsg, false);
 					subtitleLine = subtitleBuffer;
 				}
 
@@ -743,7 +743,7 @@ void ScummEngine_v7::displayDialog() {
 		}
 
 		if (subtitleLine != subtitleBuffer) {
-			addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID(), false, false);
+			addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID(), _haveActorSpeechMsg, false);
 		}
 	} else {
 		_talkDelay = VAR(VAR_DEFAULT_TALK_DELAY);
