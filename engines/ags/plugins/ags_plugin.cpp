@@ -502,12 +502,6 @@ void IAGSEngine::PlaySoundChannel(int32 channel, int32 soundType, int32 volume, 
 		stop_voice_nonblocking();
 
 	SOUNDCLIP *newcha = nullptr;
-
-	if (((soundType == PSND_MP3STREAM) || (soundType == PSND_OGGSTREAM))
-	        && (loop != 0))
-		quit("IAGSEngine::PlaySoundChannel: streamed samples cannot loop");
-
-	// TODO: find out how engine was supposed to decide on where to load the sound from
 	AssetPath asset_name(filename, "audio");
 
 	switch (soundType) {
