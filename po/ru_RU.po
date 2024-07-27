@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-26 22:36+0000\n"
+"POT-Creation-Date: 2024-07-27 13:13+0000\n"
 "PO-Revision-Date: 2024-06-05 08:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -6770,9 +6770,9 @@ msgstr "Автор перевода не желает, чтобы его пер�
 #: engines/gob/detection/tables_adiboupresente.h:57
 #: engines/gob/detection/tables_adiboupresente.h:73
 #: engines/gob/detection/tables_adiboudchou.h:43
-#: engines/gob/detection/tables_adiboudchou.h:58
-#: engines/gob/detection/tables_adiboudchou.h:71
-#: engines/gob/detection/tables_adiboudchou.h:84
+#: engines/gob/detection/tables_adiboudchou.h:57
+#: engines/gob/detection/tables_adiboudchou.h:70
+#: engines/gob/detection/tables_adiboudchou.h:83
 #: engines/gob/detection/tables_pierresmagiques.h:42
 #: engines/groovie/detection.cpp:100 engines/lure/detection.cpp:229
 #: engines/mohawk/detection_tables.h:768 engines/mohawk/detection_tables.h:783

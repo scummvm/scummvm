@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-26 22:36+0000\n"
+"POT-Creation-Date: 2024-07-27 13:13+0000\n"
 "PO-Revision-Date: 2024-07-15 21:58+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -6807,9 +6807,9 @@ msgstr ""
 #: engines/gob/detection/tables_adiboupresente.h:57
 #: engines/gob/detection/tables_adiboupresente.h:73
 #: engines/gob/detection/tables_adiboudchou.h:43
-#: engines/gob/detection/tables_adiboudchou.h:58
-#: engines/gob/detection/tables_adiboudchou.h:71
-#: engines/gob/detection/tables_adiboudchou.h:84
+#: engines/gob/detection/tables_adiboudchou.h:57
+#: engines/gob/detection/tables_adiboudchou.h:70
+#: engines/gob/detection/tables_adiboudchou.h:83
 #: engines/gob/detection/tables_pierresmagiques.h:42
 #: engines/groovie/detection.cpp:100 engines/lure/detection.cpp:229
 #: engines/mohawk/detection_tables.h:768 engines/mohawk/detection_tables.h:783
