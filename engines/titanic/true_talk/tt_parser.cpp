@@ -154,13 +154,14 @@ int TTparser::normalize(TTsentence *sentence) {
 		} else if (Common::isUpper(c)) {
 			(*destLine) += tolower(c);
 		} else if (Common::isDigit(c)) {
+			++index;
 			if (c == '0' && isEmoticon(srcLine, index)) {
 				sentence->set38(10);
 			} else {
 				// Iterate through all the digits of the number
 				(*destLine) += c;
-				while (Common::isDigit(srcLine[index + 1]))
-					(*destLine) += srcLine[++index];
+				while (Common::isDigit(srcLine[index]))
+					(*destLine) += srcLine[index++];
 			}
 		} else if (Common::isPunct(c)) {
 			bool flag = false;
