@@ -585,7 +585,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			{
 				{ "Albert.exe",   0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 				{ "album411.MPL", 0, "08a742f5087d25e8ee45c2fcd57ad9a6", 17979781 },
-				{ "album412.MPX", 0, "79fabc94dafd0e0f3ab93c138c4c8c82", 298762355 },
+				// { "album412.MPX", 0, "79fabc94dafd0e0f3ab93c138c4c8c82", 298762355 },
 				// { "BASIC.X95",    0, "a1b474e90cc285bfdcfa87355f890b9e", 242688 },
 				// { "BITMAP.R95",   0, "2bf7305eca9df63dbc75f55093b84cc0", 81408 },
 				// { "CURSORS.C95",  0, "c1e2eebe7183b5ea33de7872a8ea4d2b", 87040 },
@@ -611,7 +611,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			{
 				{"ALBUM.EXE",    0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"album411.MPL", 0, "ad34822a1d7a4fd2c69487566c383b2e", 17658069},
-				{"album412.MPX", 0, "a2d01cdbed904f875fde71734b25f8d7", 308697831},
+				// {"album412.MPX", 0, "a2d01cdbed904f875fde71734b25f8d7", 308697831},
 				// { "BASIC.X95",    0, "a1b474e90cc285bfdcfa87355f890b9e", 242688 },
 				// { "BITMAP.R95",   0, "2bf7305eca9df63dbc75f55093b84cc0", 81408 },
 				// { "CURSORS.C95",  0, "c1e2eebe7183b5ea33de7872a8ea4d2b", 87040 },
@@ -638,7 +638,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			{
 				{"MTPLAY95.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"album421.MPL", 0, "2f3cc30f13ecc99e8e4818353cef1d34", 18879823},
-				{"album422.MPX", 0, "132db6e709ff40b49e5c702c6d14bd95", 293417240},
+				// {"album422.MPX", 0, "132db6e709ff40b49e5c702c6d14bd95", 293417240},
 				// { "BASIC.X95",    0, "a1b474e90cc285bfdcfa87355f890b9e", 242688 },
 				// { "BITMAP.R95",   0, "2bf7305eca9df63dbc75f55093b84cc0", 81408 },
 				// { "CURSORS.C95",  0, "c1e2eebe7183b5ea33de7872a8ea4d2b", 87040 },
@@ -665,7 +665,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			{
 				{"Boek.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"boek1.MPL", 0, "4d10ee9943bdf9d8b751c7527e1c3a13", 18053917},
-				{"boek2.MPX", 0, "53f3df424a09b957da89dbf84828d92b", 297560609},
+				// {"boek2.MPX", 0, "53f3df424a09b957da89dbf84828d92b", 297560609},
 				// { "BASIC.X95",    0, "a1b474e90cc285bfdcfa87355f890b9e", 242688 },
 				// { "BITMAP.R95",   0, "2bf7305eca9df63dbc75f55093b84cc0", 81408 },
 				// { "CURSORS.C95",  0, "c1e2eebe7183b5ea33de7872a8ea4d2b", 87040 },
@@ -692,7 +692,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			{
 				{ "reise.exe",    0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 				{ "voyage1.MPL",  0, "fe202ad897cb6cf5303f2f046e8123d5", 26122297 },
-				{ "voyage2.MPX",  0, "6554893511e08bf2e0d5770b7854589f", 261888657 },
+				// { "voyage2.MPX",  0, "6554893511e08bf2e0d5770b7854589f", 261888657 },
 				// { "BASIC.X95",    0, "a1b474e90cc285bfdcfa87355f890b9e", 242688 },
 				// { "BITMAP.R95",   0, "2bf7305eca9df63dbc75f55093b84cc0", 81408 },
 				// { "CURSORS.C95",  0, "c1e2eebe7183b5ea33de7872a8ea4d2b", 87040 },
@@ -718,7 +718,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			{
 				{"voyage.exe",  0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"voyage1.MPL", 0, "1859b9507c118f52402ecb248fa4ae9c", 25972983},
-				{"voyage2.MPX", 0, "639428214b71e057c825f41402d3694e", 254333940},
+				// {"voyage2.MPX", 0, "639428214b71e057c825f41402d3694e", 254333940},
 				// { "BASIC.X95",    0, "a1b474e90cc285bfdcfa87355f890b9e", 242688 },
 				// { "BITMAP.R95",   0, "2bf7305eca9df63dbc75f55093b84cc0", 81408 },
 				// { "CURSORS.C95",  0, "c1e2eebe7183b5ea33de7872a8ea4d2b", 87040 },
@@ -745,7 +745,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			{
 				{"voyage.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"voyage1.MPL", 0, "174683d29a1c8511830262940223cc8a", 27889879},
-				{"voyage2.MPX", 0, "e7204f9afcd19ad883ae33e63f199525", 240409364},
+				// {"voyage2.MPX", 0, "e7204f9afcd19ad883ae33e63f199525", 240409364},
 				// { "BASIC.X95",    0, "a1b474e90cc285bfdcfa87355f890b9e", 242688 },
 				// { "BITMAP.R95",   0, "2bf7305eca9df63dbc75f55093b84cc0", 81408 },
 				// { "CURSORS.C95",  0, "c1e2eebe7183b5ea33de7872a8ea4d2b", 87040 },
@@ -772,7 +772,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			{
 				{"reis.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"voyage1.MPL", 0, "1bda2dd6149cc398296031439dc3d25b", 25618601},
-				{"voyage2.MPX", 0, "a02b7be7dd5a2324bd691299c66e4477", 246786921},
+				// {"voyage2.MPX", 0, "a02b7be7dd5a2324bd691299c66e4477", 246786921},
 				// { "BASIC.X95",    0, "a1b474e90cc285bfdcfa87355f890b9e", 242688 },
 				// { "BITMAP.R95",   0, "2bf7305eca9df63dbc75f55093b84cc0", 81408 },
 				// { "CURSORS.C95",  0, "c1e2eebe7183b5ea33de7872a8ea4d2b", 87040 },
@@ -799,7 +799,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			{
 				{ "insel.exe",      0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 				{ "ile_myst1.MPL",  0, "44ac2e944a61303f4028408165bafeb4", 24080377 },
-				{ "ile_myst2.MPX",  0, "ecb1d2c8b99eb5b2ac6be55893b97f50", 283748531 },
+				// { "ile_myst2.MPX",  0, "ecb1d2c8b99eb5b2ac6be55893b97f50", 283748531 },
 				// { "BASIC.X95",     0, "a1b474e90cc285bfdcfa87355f890b9e", 242688 },
 				// { "BITMAP.R95",    0, "2bf7305eca9df63dbc75f55093b84cc0", 81408 },
 				// { "CURSORS.C95",   0, "c1e2eebe7183b5ea33de7872a8ea4d2b", 87040 },
@@ -825,7 +825,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			{
 				{"Ile_myst.exe",  0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"ile_myst1.MPL", 0, "90a71952e2336bddd30d0bacd59aa510", 22167812},
-				{"ile_myst2.MPX", 0, "aa49de0c8337ec97045c6af57ead02a3", 277412342},
+				// {"ile_myst2.MPX", 0, "aa49de0c8337ec97045c6af57ead02a3", 277412342},
 				// { "BASIC.X95",     0, "a1b474e90cc285bfdcfa87355f890b9e", 242688 },
 				// { "BITMAP.R95",    0, "2bf7305eca9df63dbc75f55093b84cc0", 81408 },
 				// { "CURSORS.C95",   0, "c1e2eebe7183b5ea33de7872a8ea4d2b", 87040 },
@@ -852,7 +852,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			{
 				{"Ile_myst.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"ile_myst1.MPL", 0, "426868b7ea8fa555fa9240594c5e9903", 22181982},
-				{"ile_myst2.MPX", 0, "c4343b14271ad3c73aed1114bab704ef", 264549665},
+				// {"ile_myst2.MPX", 0, "c4343b14271ad3c73aed1114bab704ef", 264549665},
 				// { "BASIC.X95",     0, "a1b474e90cc285bfdcfa87355f890b9e", 242688 },
 				// { "BITMAP.R95",    0, "2bf7305eca9df63dbc75f55093b84cc0", 81408 },
 				// { "CURSORS.C95",   0, "c1e2eebe7183b5ea33de7872a8ea4d2b", 87040 },
@@ -879,7 +879,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			{
 				{"Eiland.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"ile_myst1.MPL", 0, "d851ca7a48c7adc98445624e154dc0bb", 21866179},
-				{"ile_myst2.MPX", 0, "637470c04417dafb55dee53e954857d8", 277233382},
+				// {"ile_myst2.MPX", 0, "637470c04417dafb55dee53e954857d8", 277233382},
 				// { "BASIC.X95",     0, "a1b474e90cc285bfdcfa87355f890b9e", 242688 },
 				// { "BITMAP.R95",    0, "2bf7305eca9df63dbc75f55093b84cc0", 81408 },
 				// { "CURSORS.C95",   0, "c1e2eebe7183b5ea33de7872a8ea4d2b", 87040 },
@@ -906,7 +906,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			{
 				{"Ile_Myst.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"ile_myst1.MPL", 0, "9ca7bddd55bf755df6508dd4aca3fa69", 21280759},
-				{"ile_myst2.MPX", 0, "a0f49ee642ecc3b2bc18221f19855de1", 271726516},
+				// {"ile_myst2.MPX", 0, "a0f49ee642ecc3b2bc18221f19855de1", 271726516},
 				// { "BASIC.X95",     0, "a1b474e90cc285bfdcfa87355f890b9e", 242688 },
 				// { "BITMAP.R95",    0, "2bf7305eca9df63dbc75f55093b84cc0", 81408 },
 				// { "CURSORS.C95",   0, "c1e2eebe7183b5ea33de7872a8ea4d2b", 87040 },
@@ -930,7 +930,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			"",
 			{
 				{ "SPQR.MPL", 0, "da778ae00dd3e7596ba970a4dccd0a44", 3292503 },
-				{ "S_6842.MPX", 0, "506c04751bee9482f76333b0cf3c0e52", 577095784 },
+				// { "S_6842.MPX", 0, "506c04751bee9482f76333b0cf3c0e52", 577095784 },
 				{ "SPQR32.EXE", 0, "af2a7889779243c0d25392598e893137", 759296 },
 				AD_LISTEND
 			},
