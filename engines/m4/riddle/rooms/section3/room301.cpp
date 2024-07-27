@@ -35,7 +35,7 @@ void Room301::preload() {
 }
 
 void Room301::init() {
-	_G(globals)[V000] = 1;
+	_G(flags)[V000] = 1;
 	digi_preload("950_s01");
 
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
@@ -81,7 +81,7 @@ void Room301::init() {
 		player_set_commands_allowed(false);
 		ws_demand_location(55, 270, 3);
 
-		if (_val12 || (!player_been_here(401) && _G(globals)[V092] && !_G(globals)[V093])) {
+		if (_val12 || (!player_been_here(401) && _G(flags)[V092] && !_G(flags)[V093])) {
 			ws_walk(352, 269, nullptr, 60, 3);
 		} else if (!player_been_here(301)) {
 			digi_preload("301r37");
@@ -109,6 +109,7 @@ void Room301::daemon() {
 		_val13 = _val14 = 0;
 		sendWSMessage_10000(1, _machine1, _agentStander, 1,
 			1, 10, _agentStander, 1, 1, 0);
+		break;
 
 	case 10:
 		if (!_val13 && _val14 && _val5 != -1) {
@@ -228,8 +229,70 @@ void Room301::daemon() {
 			}
 			break;
 
+		case 1:
+			switch (_val14) {
+			case 1:
+				sendWSMessage_10000(1, _machine1, _agentCheckingList, 27, 27, 10,
+					_agentCheckingList, 27, 27, 0);
+				break;
+
+			case 2:
+				if (_soundName) {
+					_G(kernel).trigger_mode = KT_PARSE;
+					digi_play(_soundName, 1, 255, _val16);
+					_soundName = nullptr;
+					_G(kernel).trigger_mode = KT_DAEMON;
+				}
+
+				frame = imath_ranged_rand(27, 31);
+				sendWSMessage_10000(1, _machine1, _agentCheckingList, frame, frame, 10,
+					_agentCheckingList, frame, frame, 0);
+				break;
+
+			default:
+				sendWSMessage_10000(1, _machine1, _agentCheckingList, 27, 22, 100,
+					_agentCheckingList, 21, 21, 0);
+				_val8 = 0;
+				break;
+			}
+			break;
+
 		case 3:
-			// TODO
+			switch (_val14) {
+			case 3:
+				val = imath_ranged_rand(1, 2);
+				++_val8;
+
+				if (imath_ranged_rand(10, 40) <= _val8)
+					_val8 = 0;
+				else
+					val = 1;
+
+				if (val == 1) {
+					sendWSMessage_10000(1, _machine1, _agentStander, 7, 7, 10,
+						_agentStander, 7, 7, 0);
+				} else {
+					sendWSMessage_10000(1, _machine1, _agentStander, 7, 1, 10,
+						_agentStander, 1, 1, 0);
+					_val13 = _val14 = 0;
+					_val8 = 0;
+				}
+				break;
+
+			case 4:
+			case 5:
+			case 6:
+				sendWSMessage_10000(1, _machine1, _agentStander, 8, 12, 10,
+					_agentStander, 12, 12, 0);
+				_val13 = 4;
+				break;
+			default:
+				sendWSMessage_10000(1, _machine1, _agentStander, 7, 1, 10,
+					_agentStander, 1, 1, 0);
+				_val13 = 0;
+				_val8 = 0;
+				break;
+			}
 			break;
 
 		case 4:
@@ -389,7 +452,7 @@ void Room301::daemon() {
 		break;
 
 	case 15:
-		_G(globals)[GLB_TEMP_2] = 1;
+		_G(flags)[GLB_TEMP_2] = 1;
 		sendWSMessage_10000(1, _machine1, _agentSlidesPaper, 49, 1, 12,
 			_agentStander, 1, 1, 0);
 		break;
@@ -448,9 +511,9 @@ void Room301::daemon() {
 				conv_load("conv301a", 10, 10, 747, player_commands_allowed());
 				_val1 = 0;
 
-				conv_export_value(conv_get_handle(), _G(globals)[V088] >= 3 ? 1 : 0, 0);
-				conv_export_value(conv_get_handle(), _G(globals)[V056], 1);
-				conv_export_value(conv_get_handle(), _G(globals)[V110], 2);
+				conv_export_value(conv_get_handle(), _G(flags)[V088] >= 3 ? 1 : 0, 0);
+				conv_export_value(conv_get_handle(), _G(flags)[V056], 1);
+				conv_export_value(conv_get_handle(), _G(flags)[V110], 2);
 				conv_export_pointer(conv_get_handle(), &_val1, 5);
 
 				if (player_been_here(201))
@@ -546,8 +609,8 @@ void Room301::daemon() {
 			_soundName = (_val12 == 1) ? "301a03" : "301a04";
 			_val7 = KT_DAEMON;
 			_val16 = 71;
-		} else if (!player_been_here(401) && _G(globals)[V092] &&
-				!_G(globals)[V093]) {
+		} else if (!player_been_here(401) && _G(flags)[V092] &&
+				!_G(flags)[V093]) {
 			kernel_timing_trigger(1, 1000);
 		}
 		break;
@@ -601,6 +664,7 @@ void Room301::daemon() {
 			kernel_trigger_dispatchx(_val5);
 			_val5 = -1;
 		}
+		break;
 
 	case 201:
 		if (_val18 <= 0) {
@@ -719,26 +783,26 @@ void Room301::daemon() {
 			_digiSound1 = _nextSound;
 			_nextSound = nullptr;
 			kernel_timing_trigger(1, 991);
-		} else  if (_G(globals)[V365] == 1) {
+		} else  if (_G(flags)[V365] == 1) {
 			_digiSound1 = "201R61";
-			_G(globals)[V365] = 0;
+			_G(flags)[V365] = 0;
 			kernel_timing_trigger(1, 991);
-		} else if (_G(globals)[V366] == 1) {
+		} else if (_G(flags)[V366] == 1) {
 			_digiSound1 = "401R31";
-			_G(globals)[V366] = 0;
+			_G(flags)[V366] = 0;
 			kernel_timing_trigger(1, 991);
-		} else if (_G(globals)[V373] == 1) {
+		} else if (_G(flags)[V373] == 1) {
 			_digiSound1 = "401R36";
-			_G(globals)[V373] = 0;
+			_G(flags)[V373] = 0;
 			kernel_timing_trigger(1, 991);
-		} else if (_G(globals)[V371] == 1) {
+		} else if (_G(flags)[V371] == 1) {
 			_digiSound1 = "501R03C";
-			_G(globals)[V371] = 0;
+			_G(flags)[V371] = 0;
 			kernel_timing_trigger(1, 991);
-		} else if (_G(globals)[V372] == 1) {
+		} else if (_G(flags)[V372] == 1) {
 			_digiSound1 = "701R39";
 			_digiSound2 = "701R39A";
-			_G(globals)[V372] = 0;
+			_G(flags)[V372] = 0;
 			kernel_timing_trigger(1, 991);
 		}
 		break;
@@ -783,10 +847,10 @@ void Room301::daemon() {
 		break;
 
 	case 1000:
-		if (!player_been_here(401) && _G(globals)[V092]
-			&& !_G(globals)[V093]) {
-			_G(globals)[V092] = 0;
-			_G(globals)[V093] = 1;
+		if (!player_been_here(401) && _G(flags)[V092]
+			&& !_G(flags)[V093]) {
+			_G(flags)[V092] = 0;
+			_G(flags)[V093] = 1;
 			kernel_timing_trigger(30, 65);
 		}
 
@@ -796,7 +860,7 @@ void Room301::daemon() {
 }
 
 void Room301::pre_parser() {
-	if (player_said("exit") && _G(globals)[GLB_TEMP_1]) {
+	if (player_said("exit") && _G(flags)[GLB_TEMP_1]) {
 		_G(player).need_to_walk = false;
 		_G(player).ready_to_walk = true;
 		_G(player).waiting_for_walk = false;
@@ -813,7 +877,7 @@ void Room301::parser() {
 	if (player_said("con301a")) {
 		conv301a();
 	} else if (player_said("exit")) {
-		if (_G(globals)[GLB_TEMP_1]) {
+		if (_G(flags)[GLB_TEMP_1]) {
 			if (_G(kernel).trigger == -1) {
 				player_set_commands_allowed(false);
 				_marshalMatt = series_load("marshall matt");
@@ -851,7 +915,7 @@ void Room301::parser() {
 	} else if (lookFlag && player_said("plant")) {
 		digi_play("301r28", 1);
 	} else if (lookFlag && player_said("postcards")) {
-		if (_G(globals)[V033]) {
+		if (_G(flags)[V033]) {
 			digi_play("301r14", 1);
 		} else {
 			switch (_G(kernel).trigger) {
@@ -887,7 +951,7 @@ void Room301::parser() {
 				break;
 			case 5:
 				player_set_commands_allowed(true);
-				_G(globals)[V033] = 1;
+				_G(flags)[V033] = 1;
 				break;
 			default:
 				break;
@@ -906,16 +970,16 @@ void Room301::parser() {
 		if (_val1) {
 			switch (_val1) {
 			case 1:
-				_G(globals)[V129] = 0;
+				_G(flags)[V129] = 0;
 				break;
 			case 2:
-				_G(globals)[V129] = 2;
+				_G(flags)[V129] = 2;
 				break;
 			case 3:
-				_G(globals)[V129] = 3;
+				_G(flags)[V129] = 3;
 				break;
 			case 4:
-				_G(globals)[V129] = 4;
+				_G(flags)[V129] = 4;
 				break;
 			default:
 				break;
