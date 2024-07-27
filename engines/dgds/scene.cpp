@@ -155,7 +155,7 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 		default:
 			break;
 		}
-	} else if (DgdsEngine::getInstance()->getGameId() == GID_DRAGON) {
+	} else if (DgdsEngine::getInstance()->getGameId() == GID_HOC) {
 		switch (code) {
 		case kSceneOpOpenChinaTankMenu:		return "openTankMenu";
 		case kSceneOpShellGameEnd:			return "shellGameEnd";
