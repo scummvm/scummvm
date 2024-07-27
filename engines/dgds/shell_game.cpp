@@ -19,7 +19,7 @@
  *
  */
 
-#include "common/math.h"
+#include "common/intrinsics.h"
 
 #include "dgds/shell_game.h"
 #include "dgds/dgds.h"
