@@ -44,8 +44,8 @@ void Room301::init() {
 		_soundName = nullptr;
 		_nextSound = nullptr;
 		_val5 = -1;
-		_val6 = 2;
-		_val7 = 2;
+		_val6 = KT_DAEMON;
+		_val7 = KT_DAEMON;
 		_val8 = 0;
 		_val9 = 0;
 		_val10 = 0;
@@ -96,10 +96,321 @@ void Room301::init() {
 }
 
 void Room301::daemon() {
-	int frame;
+	int frame, val;
 
 	switch (_G(kernel).trigger) {
-	// TODO: More cases
+	case 1:
+		player_set_commands_allowed(true);
+		break;
+
+	case 9:
+		_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			triggerMachineByHashCallbackNegative, "guy behind desk");
+		_val13 = _val14 = 0;
+		sendWSMessage_10000(1, _machine1, _agentStander, 1,
+			1, 10, _agentStander, 1, 1, 0);
+
+	case 10:
+		if (!_val13 && _val14 && _val5 != -1) {
+			kernel_trigger_dispatchx(_val5);
+			_val5 = -1;
+
+			if (_val9) {
+				ws_unhide_walker();
+				_val9 = 0;
+			}
+			if (_val11) {
+				conv_resume();
+				_val11 = 0;
+			}
+			if (_val10) {
+				sendWSMessage_80000(_machine4);
+				sendWSMessage_10000(11, _machine4, _ripTrekTravel, 10,
+					10, 20, _ripTrekTravel, 10, 10, 0);
+			}
+		}
+
+		kernel_timing_trigger(1, 11);
+		break;
+
+	case 11:
+		switch (_val13) {
+		case 0:
+			switch (_val14) {
+			case 0:
+				val = imath_ranged_rand(1, 3);
+				++_val8;
+				if (imath_ranged_rand(10, 40) <= _val8)
+					_val8 = 0;
+				else
+					val = 1;
+
+				switch (val) {
+				case 1:
+					sendWSMessage_10000(1, _machine1, _agentStander, 1, 1, 10,
+						_agentStander, 1, 1, 0);
+					break;
+				case 2:
+					sendWSMessage_10000(1, _machine1, _agentStander, 1, 7, 10,
+						_agentStander, 7, 7, 0);
+					_val13 = _val14 = 3;
+					break;
+				case 3:
+					sendWSMessage_10000(1, _machine1, _agentTalk, 1, 6, 10,
+						_agentTalk, 6, 6, 0);
+					_val13 = _val14 = 7;
+					_val8 = 0;
+
+					digi_play((imath_ranged_rand(1, 2) == 1) ? "950_s06" : "950_s07",
+						2, 200);
+					break;
+				default:
+					break;
+				}
+				break;
+
+			case 1:
+			case 2:
+				sendWSMessage_10000(1, _machine1, _agentCheckingList,
+					1, 26, 10, _agentCheckingList, 27, 27, 0);
+				break;
+
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+				sendWSMessage_10000(1, _machine1, _agentStander, 1, 7, 10,
+					_agentStander, 7, 7, 0);
+				_val13 = 3;
+				_val8 = 0;
+				break;
+
+			case 7:
+			case 8:
+			case 9:
+				sendWSMessage_10000(1, _machine1, _agentTalk, 1, 6, 10,
+					_agentTalk, 6, 6, 0);
+				_val13 = 7;
+				_val8 = 0;
+				break;
+
+			case 10:
+				sendWSMessage_10000(1, _machine1, _agentSalutes, 1, 28, 10,
+					_agentStander, 1, 1, 0);
+				_val13 = _val14 = 0;
+				_val8 = 0;
+				break;
+
+			case 12:
+				terminateMachineAndNull(_machine4);
+				_val11 = 1;
+				sendWSMessage_10000(1, _machine1, _agentTakesMoney, 1, 52, 13,
+					_agentStander, 1, 1, 0);
+				_val13 = _val14 = 0;
+				_val8 = 0;
+				_val15 = 0;
+				break;
+
+			case 13:
+				terminateMachineAndNull(_machine4);
+				sendWSMessage_10000(1, _machine1, _agentSlidesPaper, 1, 49, 14,
+					_agentStander, 1, 1, 0);
+				break;
+
+			case 15:
+				terminateMachineAndNull(_machine4);
+				sendWSMessage_10000(1, _machine1, _agentSlidesPaper, 1, 49, 25,
+					_agentStander, 1, 1, 0);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 3:
+			// TODO
+			break;
+
+		case 4:
+			switch (_val14) {
+			case 4:
+				sendWSMessage_10000(1, _machine1, _agentStander, 12,
+					12, 10, _agentStander, 12, 12, 0);
+				break;
+			case 5:
+				if (_soundName) {
+					_G(kernel).trigger_mode = _val7;
+					digi_play(_soundName, 1, 255, _val16);
+					_soundName = nullptr;
+					_val7 = KT_DAEMON;
+					_G(kernel).trigger_mode = KT_DAEMON;
+				}
+
+				_G(kernel).trigger_mode = _val6;
+				frame = imath_ranged_rand(12, 17);
+				sendWSMessage_10000(1, _machine1, _agentStander, frame, frame,
+					10, _agentStander, frame, frame, 1);
+				sendWSMessage_190000(_machine1, 13);
+				sendWSMessage_1a0000(_machine1, 13);
+				_G(kernel).trigger_mode = KT_DAEMON;
+				_val6 = KT_DAEMON;
+				break;
+			case 6:
+				if (_soundName) {
+					_G(kernel).trigger_mode = _val7;
+					digi_play(_soundName, 1, 255, _val16);
+					_soundName = nullptr;
+					_G(kernel).trigger_mode = KT_DAEMON;
+				}
+
+				frame = imath_ranged_rand(18, 21);
+				sendWSMessage_10000(1, _machine1, _agentStander, frame, frame,
+					10, _agentStander, frame, frame, 1);
+				sendWSMessage_190000(_machine1, 13);
+				sendWSMessage_1a0000(_machine1, 13);
+				break;
+			default:
+				sendWSMessage(1, _machine1, _agentStander, 12,
+					8, 10, _agentStander, 7, 7, 0);
+				_val13 = 3;
+				_val8 = 0;
+				break;
+			}
+			break;
+
+		case 7:
+			switch (_val14) {
+			case 7:
+				val = imath_ranged_rand(1, 2);
+				if (imath_ranged_rand(10, 40) <= _val8)
+					_val8 = 0;
+				else
+					val = 1;
+
+				if (val == 1) {
+					sendWSMessage_10000(1, _machine1, _agentTalk, 6, 6, 10,
+						_agentTalk, 6, 6, 0);
+				} else if (val == 2) {
+					sendWSMessage_10000(1, _machine1, _agentTalk, 6, 1, 10,
+						_agentStander, 1, 1, 0);
+					_val13 = _val14 = 0;
+					_val8 = 0;
+
+					digi_play((imath_ranged_rand(1, 2) == 1) ? "950_s06" : "950_s07",
+						2, 200);
+				}
+				break;
+
+			case 8:
+			case 9:
+				sendWSMessage_10000(1, _machine1, _agentTalk, 6, 15, 10,
+					_agentTalk, 15, 15, 0);
+				break;
+
+			default:
+				sendWSMessage_10000(1, _machine1, _agentTalk, 6, 1, 10,
+					_agentStander, 1, 1, 0);
+				_val13 = 0;
+				break;
+			}
+			break;
+
+		case 8:
+			switch (_val14) {
+			case 8:
+				sendWSMessage_10000(1, _machine1, _agentTalk, 15, 15, 10,
+					_agentTalk, 15, 15, 0);
+				break;
+			case 9:
+				if (_soundName) {
+					digi_play(_soundName, 1, 255, _val16);
+					_soundName = nullptr;
+				}
+
+				sendWSMessage_10000(1, _machine1, _agentTalk, 16, 32, 10,
+					_agentTalk, 15, 15, 0);
+				break;
+			default:
+				sendWSMessage_10000(1, _machine1, _agentTalk, 15, 6, 10,
+					_agentTalk, 6, 6, 0);
+				_val13 = 7;
+				break;
+			}
+			break;
+
+		case 14:
+			if (_val14 == 14) {
+				if (_soundName) {
+					_G(kernel).trigger_mode = KT_PARSE;
+					digi_play(_soundName, 1, 255, _val16);
+					_soundName = nullptr;
+					_G(kernel).trigger_mode = KT_DAEMON;
+				}
+
+				sendWSMessage(1, _machine1, _agentSlidesPaper, 54, 54, 10,
+					_agentSlidesPaper, 54, 55, 1);
+
+			} else {
+				sendWSMessage_10000(1, _machine1, _agentSlidesPaper, 57, 76, 10,
+					_agentSlidesPaper, 76, 76, 0);
+				_val13 = _val14 = 0;
+				_val8 = 0;
+				_val10 = 1;
+				_val11 = 1;
+			}
+			break;
+		}
+		break;
+
+	case 12:
+		_machine4 = TriggerMachineByHash(triggerMachineByHashCallbackNegative, "rip");
+		sendWSMessage_10000(1, _machine4, _ripTrekTravel, 10, 10, 20,
+			_ripTrekTravel, 10, 10, 0);
+		_val15 = _val19 = 0;
+		kernel_timing_trigger(10, 10);
+		_val14 = 4;
+		_val8 = 0;
+		conv_resume();
+		break;
+
+	case 13:
+		_machine4 = TriggerMachineByHash(triggerMachineByHashCallbackNegative, "rip in conv");
+		sendWSMessage_10000(1, _machine4, _ripTrekTravel, 10, 10, 20,
+			_ripTrekTravel, 10, 10, 0);
+		_val15 = _val19 = 0;
+		kernel_timing_trigger(10, 10);
+		break;
+
+	case 14:
+		sendWSMessage_10000(1, _machine1, _agentSlidesPaper, 50, 63, 15,
+			_agentStander, 1, 1, 0);
+		digi_play("950_s35", 2);
+		break;
+
+	case 15:
+		_G(globals)[GLB_TEMP_2] = 1;
+		sendWSMessage_10000(1, _machine1, _agentSlidesPaper, 49, 1, 12,
+			_agentStander, 1, 1, 0);
+		break;
+
+	case 20:
+		if (!_val19 && !_val15 && _val5 != -1) {
+			kernel_trigger_dispatchx(_val5);
+			_val5 = -1;
+
+			if (_val9) {
+				ws_unhide_walker();
+				_val9 = 0;
+			}
+			if (_val10) {
+				sendWSMessage_80000(_machine4);
+				_val10 = 0;
+			}
+		}
+
+		kernel_timing_trigger(1, 21);
+		break;
 
 	case 21:
 		if (!_val19) {
@@ -224,7 +535,7 @@ void Room301::daemon() {
 
 	case 63:
 		_val14 = 6;
-		_val7 = 2;
+		_val7 = KT_DAEMON;
 		_soundName = "301a01";
 		_val16 = 72;
 		break;
@@ -233,7 +544,7 @@ void Room301::daemon() {
 		if (_val12) {
 			_val14 = 5;
 			_soundName = (_val12 == 1) ? "301a03" : "301a04";
-			_val7 = 2;
+			_val7 = KT_DAEMON;
 			_val16 = 71;
 		} else if (!player_been_here(401) && _G(globals)[V092] &&
 				!_G(globals)[V093]) {
@@ -562,8 +873,8 @@ void Room301::parser() {
 			case 3:
 				sendWSMessage_140000(-1);
 				_val14 = 5;
-				_val6 = 1;
-				_val7 = 1;
+				_val6 = KT_PARSE;
+				_val7 = KT_PARSE;
 				_val16 = 4;
 				_soundName = "301a02";
 				break;

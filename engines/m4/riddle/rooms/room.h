@@ -60,6 +60,7 @@ protected:
 
 	void sendWSMessage_10000(int val1, machine *recv, int val2, int val3,
 		int val4, int trigger, int val9, int val6, int val7, int val8);
+	void sendWSMessage_80000(machine *walker);
 	void sendWSMessage_C0000(machine *walker, int trigger);
 	void sendWSMessage_C0000(int trigger);
 	void sendWSMessage_110000(machine *walker, int trigger);

@@ -1049,6 +1049,11 @@ machine *TriggerMachineByHash(int32 myHash, Anim8 *parentAnim8, int32 dataHash, 
 	return m;
 }
 
+machine *TriggerMachineByHash(MessageCB intrMsg, const char *machName) {
+	return TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+		intrMsg, machName);
+}
+
 machine *TriggerMachineByHash(int32 val1, int32 val2, int32 val3, int32 val4, int32 val5, int32 val6,
 	int32 val7, int32 val8, int32 val9, int32 val10, bool flag,
 	MessageCB intrMsg, const char *machName) {

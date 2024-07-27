@@ -173,6 +173,10 @@ void Room::sendWSMessage_10000(int val1, machine *recv, int val2, int val3,
 	sendWSMessage(0x10000, 0, nullptr, 0, nullptr, 1);
 }
 
+void Room::sendWSMessage_80000(machine *walker) {
+	sendWSMessage(0x80000, 0, walker, 0, nullptr, 1);
+}
+
 void Room::sendWSMessage_C0000(machine *walker, int trigger) {
 	if (!trigger)
 		trigger = -1;

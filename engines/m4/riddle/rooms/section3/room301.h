@@ -35,8 +35,8 @@ private:
 	const char *_soundName = nullptr;
 	const char *_nextSound = nullptr;
 	int _val5 = -1;
-	int _val6 = 2;
-	int _val7 = 2;
+	KernelTriggerType _val6 = KT_DAEMON;
+	KernelTriggerType _val7 = KT_DAEMON;
 	int _val8 = 0;
 	int _val9 = 0;
 	int _val10 = 0;
