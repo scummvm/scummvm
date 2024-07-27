@@ -460,21 +460,13 @@ void add_dynamic_sprite(int gotSlot, Bitmap *redin, bool hasAlpha) {
 	_GP(game).SpriteInfos[gotSlot].Height = redin->GetHeight();
 }
 
-void free_dynamic_sprite(int gotSlot) {
+void free_dynamic_sprite(int slot) {
+	assert((slot > 0) && (_GP(game).SpriteInfos[slot].Flags & SPF_DYNAMICALLOC));
+	if (slot <= 0 || (_GP(game).SpriteInfos[slot].Flags & SPF_DYNAMICALLOC) == 0)
+		return;
 
-	if ((gotSlot < 0) || ((size_t)gotSlot >= _GP(spriteset).GetSpriteSlotCount()))
-		quit("!FreeDynamicSprite: invalid slot number");
-
-	if ((_GP(game).SpriteInfos[gotSlot].Flags & SPF_DYNAMICALLOC) == 0)
-		quitprintf("!DeleteSprite: Attempted to free static sprite %d that was not loaded by the script", gotSlot);
-
-	_GP(spriteset).DisposeSprite(gotSlot);
-
-	_GP(game).SpriteInfos[gotSlot].Flags = 0;
-	_GP(game).SpriteInfos[gotSlot].Width = 0;
-	_GP(game).SpriteInfos[gotSlot].Height = 0;
-
-	game_sprite_deleted(gotSlot);
+	_GP(spriteset).DisposeSprite(slot);
+	game_sprite_deleted(slot);
 }
 
 //=============================================================================
