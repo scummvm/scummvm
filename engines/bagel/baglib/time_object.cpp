@@ -149,7 +149,7 @@ CBofRect CBagTimeObject::getRect() {
 	if (_xDig1) {
 		s = _xDig1->getSize();
 
-		// Increase the width to accomodate all 5 sprites
+		// Increase the width to accommodate all 5 sprites
 		s.cx = s.cx * 5;
 	}
 	return CBofRect(p, s);

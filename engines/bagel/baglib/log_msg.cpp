@@ -90,7 +90,7 @@ CBofPoint CBagLog::arrangeFloater(CBofPoint &pos, CBagObject *bagObj) {
 		setNumFloatPages(pageNum);
 
 		const int totalPages = getCurFltPage();
-		// Now position this object int the sdev
+		// Now position this object into the sdev
 		// if it fell on this page, show it
 		if (pageNum == totalPages) {
 			CBofPoint pagePos = nextPos;

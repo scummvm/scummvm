@@ -43,7 +43,7 @@ public:
 	};
 
 private:
-	CBofRect _xCurrView;      // Viewport Window size (0->Width-1,0->Heigth-1,1->Width+Width/4,1->Heigth)
+	CBofRect _xCurrView;      // Viewport Window size (0->Width-1,0->Height-1,1->Width+Width/4,1->Height)
 	double _xFOVAngle;        // Field of view in radians
 	CBofPoint _xRotateRate;   // Rate of rotation on increment left, right ...
 	bool _bActiveScrolling;   // True when there should be screen updates

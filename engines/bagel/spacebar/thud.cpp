@@ -72,7 +72,7 @@ ErrorCode SBarThud::attach() {
 		}
 	}
 
-	// The weild has been loaded with too many active objects
+	// The wield has been loaded with too many active objects
 	_nObjects = nActiveObj;
 
 	return errorCode;

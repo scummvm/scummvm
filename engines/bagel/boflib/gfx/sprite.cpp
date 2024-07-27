@@ -413,7 +413,7 @@ bool CBofSprite::updateDirtyRect(CBofWindow *pWnd, CBofSprite *pPrimarySprite) {
 			}
 
 			CBofRect cRect, cSrcRect;
-			// Run thru the sprite list
+			// Run through the sprite list
 			while (pSprite != nullptr) {
 				// and paint each partial sprite overlap to the work area
 				if (pSprite->_bPositioned && cRect.intersectRect(&pSprite->_cRect, pRect)) {
@@ -462,7 +462,7 @@ bool CBofSprite::updateDirtyRect(CBofBitmap *pBmp, CBofSprite *pPrimarySprite) {
 	}
 
 	CBofRect cRect;
-	// Run thru the sprite list
+	// Run through the sprite list
 	while (pSprite != nullptr) {
 		// and paint each partial sprite overlap to the work area
 		if (pSprite->_bPositioned && cRect.intersectRect(&pSprite->_cRect, pRect)) {

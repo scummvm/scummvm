@@ -35,7 +35,7 @@ namespace Bagel {
 CBagPDA *CBagPanWindow::_pPDABmp;      // Pointer to the PDA object
 int CBagPanWindow::_nCorrection;
 int CBagPanWindow::_nPanSpeed;
-CBagWield *CBagPanWindow::_pWieldBmp;  // Pointer to the WEILD object
+CBagWield *CBagPanWindow::_pWieldBmp;  // Pointer to the WIELD object
 
 void CBagPanWindow::initialize() {
 	_pPDABmp = nullptr;
@@ -518,7 +518,7 @@ void CBagPanWindow::onMouseMove(uint32 nFlags, CBofPoint *p, void *) {
 
 
 	// Change cursor based on the Foreground object list
-	// Run thru background object list and find if the cursor is over an object
+	// Run through background object list and find if the cursor is over an object
 	CBofList<CBagObject *> *pList = _pFGObjectList;
 	if (pList != nullptr) {
 		CBagObject *pOverObj = nullptr;
