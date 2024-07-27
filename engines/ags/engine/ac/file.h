@@ -39,6 +39,7 @@ using AGS::Shared::Stream;
 int     File_Exists(const char *fnmm);
 int     File_Delete(const char *fnmm);
 void *sc_OpenFile(const char *fnmm, int mode);
+const char *File_ResolvePath(const char *fnmm);
 void    File_Close(sc_File *fil);
 void    File_WriteString(sc_File *fil, const char *towrite);
 void    File_WriteInt(sc_File *fil, int towrite);

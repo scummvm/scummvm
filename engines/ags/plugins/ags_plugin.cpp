@@ -32,6 +32,7 @@
 #include "ags/engine/ac/display.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/dynamic_sprite.h"
+#include "ags/engine/ac/file.h"
 #include "ags/engine/ac/game.h"
 #include "ags/engine/ac/game_setup.h"
 #include "ags/shared/ac/game_setup_struct.h"
@@ -745,6 +746,10 @@ IAGSFontRenderer *IAGSEngine::ReplaceFontRenderer(int fontNumber, IAGSFontRender
 	auto *old_render = font_replace_renderer(fontNumber, newRenderer);
 	GUI::MarkForFontUpdate(fontNumber);
 	return old_render;
+}
+
+const char *IAGSEngine::ResolveFilePath(const char *script_path) {
+	return File_ResolvePath(script_path);
 }
 
 void IAGSEngine::GetRenderStageDesc(AGSRenderStageDesc *desc) {
