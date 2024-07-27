@@ -235,6 +235,13 @@ int File_GetPosition(sc_File *fil) {
 	return (int)stream->GetPosition();
 }
 
+const char *File_GetPath(sc_File *fil) {
+	if (fil->handle <= 0)
+		return nullptr;
+	Stream *stream = get_valid_file_stream_from_handle(fil->handle, "File.Path");
+	return CreateNewScriptString(stream->GetPath());
+}
+
 //=============================================================================
 
 
@@ -720,6 +727,9 @@ RuntimeScriptValue Sc_File_GetPosition(void *self, const RuntimeScriptValue *par
 	API_OBJCALL_INT(sc_File, File_GetPosition);
 }
 
+RuntimeScriptValue Sc_File_GetPath(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_OBJ(sc_File, const char, _GP(myScriptStringImpl), File_GetPath);
+}
 
 void RegisterFileAPI() {
 	ccAddExternalStaticFunction("File::Delete^1", Sc_File_Delete);
@@ -743,6 +753,7 @@ void RegisterFileAPI() {
 	ccAddExternalObjectFunction("File::get_EOF", Sc_File_GetEOF);
 	ccAddExternalObjectFunction("File::get_Error", Sc_File_GetError);
 	ccAddExternalObjectFunction("File::get_Position", Sc_File_GetPosition);
+	ccAddExternalObjectFunction("File::get_Path", Sc_File_GetPath);
 }
 
 } // namespace AGS3
