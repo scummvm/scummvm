@@ -196,7 +196,7 @@ bool DgdsEngine::changeScene(int sceneNum) {
 	_gdsScene->runChangeSceneOps();
 
 	if (!_scene->getDragItem())
-		setMouseCursor(0);
+		setMouseCursor(_gdsScene->getDefaultMouseCursor());
 
 	_storedAreaBuffer.fillRect(Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 
@@ -419,7 +419,7 @@ void DgdsEngine::loadGameFiles() {
 	_gdsScene->runStartGameOps();
 	loadIcons();
 	_gdsScene->initIconSizes();
-	setMouseCursor(0);
+	setMouseCursor(_gdsScene->getDefaultMouseCursor());
 
 	_inventory->setRequestData(invRequestData);
 	_menu->setRequestData(vcrRequestData);
@@ -541,7 +541,7 @@ Common::Error DgdsEngine::run() {
 				_menu->setScreenBuffer();
 				// force mouse on
 				CursorMan.showMouse(true);
-				setMouseCursor(0);
+				setMouseCursor(_gdsScene->getDefaultMouseCursor());
 				_menu->drawMenu(_menuToTrigger);
 			} else {
 				_menu->hideMenu();

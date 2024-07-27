@@ -97,7 +97,7 @@ Common::String SceneConditions::dump(const Common::String &indent) const {
 
 Common::String HotArea::dump(const Common::String &indent) const {
 	Common::String str = Common::String::format("%sHotArea<%s num %d cursor %d unk1 %d unk2 %d",
-			indent.c_str(), _rect.dump("").c_str(), _num, _cursorNum, _unk1, _unk2);
+			indent.c_str(), _rect.dump("").c_str(), _num, _cursorNum, _otherCursorNum, _objInteractionListFlag);
 	str += _dumpStructList(indent, "enableConditions", enableConditions);
 	str += _dumpStructList(indent, "onRClickOps", onRClickOps);
 	str += _dumpStructList(indent, "onLDownOps", onLDownOps);
@@ -137,19 +137,48 @@ static Common::String _sceneOpCodeName(SceneOpCode code) {
 	case kSceneOpFreeDDSData: 	return "sceneOpFreeDDSData";
 	case kSceneOpFreeTalkData: 	return "sceneOpFreeTalkData";
 
-	// Dragon-specific
-	case kSceneOpPasscode:		return "passcode";
-	case kSceneOpMeanwhile:   	return "meanwhile";
-	case kSceneOpOpenGameOverMenu: return "openGameOverMenu";
-	case kSceneOpTiredDialog:	return "openTiredDialog";
-	case kSceneOpArcadeTick: 	return "sceneOpArcadeTick";
-	case kSceneOpDrawDragonCountdown1: 	return "drawDragonCountdown1";
-	case kSceneOpDrawDragonCountdown2:	return "drawDragonCountdown2";
-	case kSceneOpOpenPlaySkipIntroMenu: return "openPlaySkipIntroMovie";
-	case kSceneOpOpenBetterSaveGameMenu: return "openBetterSaveGameMenu";
 	default:
-		return Common::String::format("sceneOp%d", (int)code);
+		break;
 	}
+
+	if (DgdsEngine::getInstance()->getGameId() == GID_DRAGON) {
+		switch (code) {
+		case kSceneOpPasscode:		return "passcode";
+		case kSceneOpMeanwhile:   	return "meanwhile";
+		case kSceneOpOpenGameOverMenu: return "openGameOverMenu";
+		case kSceneOpTiredDialog:	return "openTiredDialog";
+		case kSceneOpArcadeTick: 	return "sceneOpArcadeTick";
+		case kSceneOpDrawDragonCountdown1: 	return "drawDragonCountdown1";
+		case kSceneOpDrawDragonCountdown2:	return "drawDragonCountdown2";
+		case kSceneOpOpenPlaySkipIntroMenu: return "openPlaySkipIntroMovie";
+		case kSceneOpOpenBetterSaveGameMenu: return "openBetterSaveGameMenu";
+		default:
+			break;
+		}
+	} else if (DgdsEngine::getInstance()->getGameId() == GID_DRAGON) {
+		switch (code) {
+		case kSceneOpOpenChinaTankMenu:		return "openTankMenu";
+		case kSceneOpShellGameEnd:			return "shellGameEnd";
+		case kSceneOpShellGameTick:			return "shellGameTick";
+		case kSceneOpOpenChinaTrainMenu:	return "trainMenu";
+		case kSceneOpOpenChinaOpenGameOverMenu: return "gameOverMenu";
+		case kSceneOpOpenChinaOpenSkipCreditsMenu: return "skipCreditsMenu";
+		case kSceneOpOpenChinaStartIntro:	return "startIntro";
+		case kSceneOpChina117:				return "hocSceneOp117";
+		case kSceneOpChina118:  			return "hocSceneOp118";
+		default:
+			break;
+		}
+	} else if (DgdsEngine::getInstance()->getGameId() == GID_WILLY) {
+		switch (code) {
+		case kSceneOpOpenBeamishGameOverMenu: return "openGameOverMenu";
+		case kSceneOpOpenBeamishOpenSkipCreditsMenu: return "skipCreditsMenu";
+		default:
+			break;
+		}
+	}
+
+	return Common::String::format("sceneOp%d", (int)code);
 }
 
 Common::String SceneOp::dump(const Common::String &indent) const {
@@ -264,17 +293,17 @@ bool Scene::readHotArea(Common::SeekableReadStream *s, HotArea &dst) const {
 	dst._num = s->readUint16LE();
 	dst._cursorNum = s->readUint16LE();
 	if (isVersionOver(" 1.217"))
-		dst._unk1 = s->readUint16LE();
+		dst._otherCursorNum = s->readUint16LE();
 	else
-		dst._unk1 = 0;
+		dst._otherCursorNum = 0;
 
 	if (isVersionOver(" 1.218")) {
-		dst._unk2 = s->readUint16LE();
-		if (dst._unk2) {
+		dst._objInteractionListFlag = s->readUint16LE();
+		if (dst._objInteractionListFlag) {
 			dst._rect = DgdsRect();
 		}
 	} else {
-		dst._unk2 = 0;
+		dst._objInteractionListFlag = 0;
 	}
 	readConditionList(s, dst.enableConditions);
 	readOpList(s, dst.onRClickOps);
@@ -790,8 +819,11 @@ bool Scene::runBeamishOp(const SceneOp &op) {
 		return true;
 	}
 	switch (op._opCode) {
+	case kSceneOpOpenBeamishGameOverMenu:
+		engine->setMenuToTrigger(kMenuGameOver);
+		break;
 	case kSceneOpOpenBeamishOpenSkipCreditsMenu:
-		engine->setMenuToTrigger(kMenuBeamishSkipCredits);
+		engine->setMenuToTrigger(kMenuSkipPlayIntro);
 		break;
 	default:
 		warning("TODO: Implement beamish-specific scene opcode %d", op._opCode);
@@ -1826,7 +1858,7 @@ void SDSScene::onDragFinish(const Common::Point &pt) {
 		}
 	}
 
-	engine->setMouseCursor(0);
+	engine->setMouseCursor(gdsScene->getDefaultMouseCursor());
 	_dragItem = nullptr;
 }
 
@@ -1919,7 +1951,7 @@ void SDSScene::addInvButtonToHotAreaList() {
 	if (_hotAreaList.size() && _hotAreaList.front()._num == 0)
 		return;
 
-	int16 invButtonIcon = 2;
+	int16 invButtonIcon = engine->getGDSScene()->getInvIconNum();
 	if (engine->getGameId() == GID_HOC) {
 		static const byte HOC_INV_ICONS[] = { 0, 2, 18, 19 };
 		invButtonIcon = HOC_INV_ICONS[engine->getGDSScene()->getGlobal(0x33)];
@@ -1927,13 +1959,13 @@ void SDSScene::addInvButtonToHotAreaList() {
 
 	HotArea area;
 	area._num = 0;
-	area._cursorNum = 0;
+	area._cursorNum = engine->getGDSScene()->getInvIconMouseCursor();
 	area._rect.width = icons->width(invButtonIcon);
 	area._rect.height = icons->height(invButtonIcon);
 	area._rect.x = SCREEN_WIDTH - area._rect.width;
 	area._rect.y = SCREEN_HEIGHT - area._rect.height;
-	area._unk1 = 0;
-	area._unk2 = 0;
+	area._otherCursorNum = 0;
+	area._objInteractionListFlag = 0;
 
 	// Add swap character button for HoC
 	if (engine->getGameId() == GID_HOC && engine->getGDSScene()->getGlobal(0x34) != 0) {
@@ -1946,8 +1978,8 @@ void SDSScene::addInvButtonToHotAreaList() {
 		area2._rect.height = icons->height(iconNum);
 		area2._rect.x = 5;
 		area2._rect.y = SCREEN_HEIGHT - area2._rect.height - 5;
-		area2._unk1 = 0;
-		area2._unk2 = 0;
+		area2._otherCursorNum = 0;
+		area2._objInteractionListFlag = 0;
 
 		_hotAreaList.push_front(area2);
 	}
@@ -2019,7 +2051,7 @@ void SDSScene::activateChoice() {
 }
 
 
-GDSScene::GDSScene() : _field38(0), _field3a(0), _field3c(0), _field3e(0), _field40(0) {
+GDSScene::GDSScene() : _defaultMouseCursor(0), _field3a(0), _invIconNum(0), _invIconMouseCursor(0), _field40(0) {
 }
 
 bool GDSScene::load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor) {
@@ -2193,16 +2225,16 @@ bool GDSScene::parse(Common::SeekableReadStream *stream) {
 		readObjInteractionList(stream, _objInteractions2);
 
 	if (isVersionOver(" 1.218")) {
-		_field38 = stream->readUint16LE();
+		_defaultMouseCursor = stream->readUint16LE();
 		_field3a = stream->readUint16LE();
-		_field3c = stream->readUint16LE();
-		_field3e = stream->readUint16LE();
+		_invIconNum = stream->readUint16LE();
+		_invIconMouseCursor = stream->readUint16LE();
 		_field40 = stream->readUint16LE();
 	} else {
-		_field38 = 0;
+		_defaultMouseCursor = 0;
 		_field3a = 1;
-		_field3c = 2;
-		_field3e = 0;
+		_invIconNum = 2;
+		_invIconMouseCursor = 0;
 		_field40 = 6;
 	}
 

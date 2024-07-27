@@ -62,12 +62,11 @@ enum MenuId {
 	kMenuCalibrateJoystick = 28,
 	kMenuCalibrateMouse = 32,
 	kMenuReallyQuit = 35,
+	kMenuReplayArcade = 45,
+	kMenuSaveBeforeArcade = 46,
+	kMenuArcadeFrustrated = 47,
 	kMenuSkipPlayIntro = 50,
 	kMenuSkipArcade = 52,
-	kMenuSaveBeforeArcade = 46,
-	kMenuReplayArcade = 45,
-	kMenuArcadeFrustrated = 47,
-	kMenuBeamishSkipCredits = 50,
 };
 
 class Menu {

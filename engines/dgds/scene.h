@@ -70,8 +70,8 @@ public:
 	uint16 _cursorNum;
 
 	// Used in Willy Beamish
-	uint16 _unk1;
-	uint16 _unk2;
+	uint16 _otherCursorNum;
+	uint16 _objInteractionListFlag;
 
 	Common::Array<SceneConditions> enableConditions;
 	Common::Array<SceneOp> onRClickOps;
@@ -136,6 +136,7 @@ enum SceneOpCode {
 	kSceneOpChina118 = 118,	// args: none. ??
 
 	// Beamish-specific opcodes
+	kSceneOpOpenBeamishGameOverMenu = 100,
 	kSceneOpOpenBeamishOpenSkipCreditsMenu = 101,
 
 	kSceneOpMaxCode = 255, // for checking file load
@@ -381,6 +382,10 @@ public:
 	void initIconSizes();
 	GameItem *getActiveItem();
 
+	uint16 getDefaultMouseCursor() const { return _defaultMouseCursor; }
+	uint16 getInvIconNum() const { return _invIconNum; }
+	uint16 getInvIconMouseCursor() const { return _invIconMouseCursor; }
+
 private:
 	Common::String _iconFile;
 	Common::Array<GameItem> _gameItems;
@@ -393,10 +398,10 @@ private:
 	Common::Array<ObjectInteraction> _objInteractions1;
 
 	// Additional fields that appear in Willy Beamish (unused in others)
-	uint16 _field38;
+	uint16 _defaultMouseCursor;
 	uint16 _field3a;
-	uint16 _field3c;
-	uint16 _field3e;
+	uint16 _invIconNum;
+	uint16 _invIconMouseCursor;
 	uint16 _field40;
 };
 
