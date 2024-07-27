@@ -585,6 +585,10 @@ public:
 	AGSIFUNC(IAGSFontRenderer*) ReplaceFontRenderer2(int fontNumber, IAGSFontRenderer2* newRenderer);
 	// notify the engine that certain custom font has been updated
 	AGSIFUNC(void)  NotifyFontUpdated(int fontNumber);
+
+	// *** BELOW ARE INTERFACE VERSION 27 AND ABOVE ONLY
+	// Resolves a script path to a system filepath, same way as script command File.Open does.
+	AGSIFUNC(const char *)	ResolveFilePath(const char *script_path);
 };
 
 struct EnginePlugin {
