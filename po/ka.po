@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-26 22:36+0000\n"
-"PO-Revision-Date: 2024-07-25 14:43+0000\n"
+"PO-Revision-Date: 2024-07-27 13:43+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -10398,23 +10398,17 @@ msgid "Unable to locate the '%s' data file."
 msgstr ""
 
 #: engines/trecision/metaengine.cpp:137
-#, fuzzy
-#| msgid "Skip line"
 msgid "Skip video"
-msgstr "ხაზის გამოტოვება"
+msgstr "ვიდეოს გამოტოვება"
 
 #. I18N: Toggles walking speed of actor
 #: engines/trecision/metaengine.cpp:144
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Toggle fast walk"
-msgstr "სუბტიტრების გადართვა"
+msgstr "სწრაფი სიარულის გადართვა"
 
 #: engines/trecision/metaengine.cpp:163
-#, fuzzy
-#| msgid "System menu"
 msgid "Open system menu"
-msgstr "სისტემის მენიუ"
+msgstr "სისტემის მენიუს გახსნა"
 
 #: engines/twine/detection.cpp:175
 msgid "This version requires Giflib which was not compiled into ScummVM"
