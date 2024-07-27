@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-26 22:36+0000\n"
-"PO-Revision-Date: 2024-07-25 07:55+0000\n"
+"PO-Revision-Date: 2024-07-27 07:42+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -11686,23 +11686,17 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Le fichier de données '%s' n'a pu être trouvé."
 
 #: engines/trecision/metaengine.cpp:137
-#, fuzzy
-#| msgid "Skip line"
 msgid "Skip video"
-msgstr "Passer la phrase"
+msgstr "Passer les vidéos"
 
 #. I18N: Toggles walking speed of actor
 #: engines/trecision/metaengine.cpp:144
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fast walk"
-msgstr "Act./Désact. mode rapide"
+msgstr "Act./Désact. la marche rapide"
 
 #: engines/trecision/metaengine.cpp:163
-#, fuzzy
-#| msgid "System menu"
 msgid "Open system menu"
-msgstr "Menu Système"
+msgstr "Ouvrir le menu système"
 
 #: engines/twine/detection.cpp:175
 msgid "This version requires Giflib which was not compiled into ScummVM"
