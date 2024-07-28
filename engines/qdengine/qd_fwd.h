@@ -23,6 +23,7 @@
 #define QDENGINE_QD_FWD_H
 
 #include <list>
+#include <string>
 
 namespace Common {
 class SeekableReadStream;
@@ -99,4 +100,3 @@ typedef std::list<qdFontInfo *> qdFontInfoList;
 } // namespace QDEngine
 
 #endif // QDENGINE_QD_FWD_H
-
