@@ -26,24 +26,24 @@ namespace QDEngine {
 
 namespace xml {
 
-tag_buffer::tag_buffer(const tag &tg) : data_size_(tg.data_size() * tg.data_element_size()),
-	data_offset_(0),
+tag_buffer::tag_buffer(const tag &tg) : _data_size(tg.data_size() * tg.data_element_size()),
+	_data_offset(0),
 #ifdef _DEBUG
 	data_format_(tg.data_format()),
 #endif
 	data_(tg.data()) {
 }
 
-tag_buffer::tag_buffer(const char *dp, int len) : data_size_(len),
-	data_offset_(0),
+tag_buffer::tag_buffer(const char *dp, int len) : _data_size(len),
+	_data_offset(0),
 #ifdef _DEBUG
 	data_format_(tag::TAG_DATA_VOID),
 #endif
 	data_(dp) {
 }
 
-tag_buffer::tag_buffer(const tag_buffer &tb) : data_size_(tb.data_size_),
-	data_offset_(tb.data_offset_),
+tag_buffer::tag_buffer(const tag_buffer &tb) : _data_size(tb._data_size),
+	_data_offset(tb._data_offset),
 #ifdef _DEBUG
 	data_format_(tb.data_format_),
 #endif
@@ -53,8 +53,8 @@ tag_buffer::tag_buffer(const tag_buffer &tb) : data_size_(tb.data_size_),
 tag_buffer &tag_buffer::operator = (const tag_buffer &tb) {
 	if (this == &tb) return *this;
 
-	data_size_ = tb.data_size_;
-	data_offset_ = tb.data_offset_;
+	_data_size = tb._data_size;
+	_data_offset = tb._data_offset;
 
 #ifdef _DEBUG
 	data_format_ = tb.data_format_;
@@ -69,40 +69,40 @@ tag_buffer::~tag_buffer() {
 
 tag_buffer &tag_buffer::operator >= (short &var) {
 	char *p;
-	var = (short)strtol(data_ + data_offset_, &p, 0);
-	data_offset_ += p - (data_ + data_offset_);
+	var = (short)strtol(data_ + _data_offset, &p, 0);
+	_data_offset += p - (data_ + _data_offset);
 
 	return *this;
 }
 
 tag_buffer &tag_buffer::operator >= (unsigned short &var) {
 	char *p;
-	var = (unsigned short)strtoul(data_ + data_offset_, &p, 0);
-	data_offset_ += p - (data_ + data_offset_);
+	var = (unsigned short)strtoul(data_ + _data_offset, &p, 0);
+	_data_offset += p - (data_ + _data_offset);
 
 	return *this;
 }
 
 tag_buffer &tag_buffer::operator >= (int &var) {
 	char *p;
-	var = (int)strtol(data_ + data_offset_, &p, 0);
-	data_offset_ += p - (data_ + data_offset_);
+	var = (int)strtol(data_ + _data_offset, &p, 0);
+	_data_offset += p - (data_ + _data_offset);
 
 	return *this;
 }
 
 tag_buffer &tag_buffer::operator >= (unsigned int &var) {
 	char *p;
-	var = (unsigned int)strtoul(data_ + data_offset_, &p, 0);
-	data_offset_ += p - (data_ + data_offset_);
+	var = (unsigned int)strtoul(data_ + _data_offset, &p, 0);
+	_data_offset += p - (data_ + _data_offset);
 
 	return *this;
 }
 
 tag_buffer &tag_buffer::operator >= (float &var) {
 	char *p;
-	var = (float)strtod(data_ + data_offset_, &p);
-	data_offset_ += p - (data_ + data_offset_);
+	var = (float)strtod(data_ + _data_offset, &p);
+	_data_offset += p - (data_ + _data_offset);
 
 	return *this;
 }
