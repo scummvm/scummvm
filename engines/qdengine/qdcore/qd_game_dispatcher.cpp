@@ -2868,7 +2868,7 @@ Common::String qdGameDispatcher::get_save_name(int slot_id, SaveFileType file_ty
 
 	switch (file_type) {
 	case SAVE_FILE:
-		res += ".sav";
+		res = g_engine->getSaveStateName(slot_id);
 		break;
 	case SAVE_THUMBNAIL:
 		res += ".tga";
