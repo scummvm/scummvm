@@ -53,36 +53,36 @@ public:
 		TAG_DATA_STRING
 	};
 
-	tag(int id = 0, tag_data_format data_fmt = TAG_DATA_VOID, int data_sz = 0, int data_offs = 0) : ID_(id), data_format_(data_fmt), data_size_(data_sz), data_offset_(data_offs), data_(NULL) { }
-	tag(const tag &tg) : ID_(tg.ID_), data_format_(tg.data_format_), data_size_(tg.data_size_), data_offset_(tg.data_offset_), data_(tg.data_), subtags_(tg.subtags_) { }
+	tag(int id = 0, tag_data_format data_fmt = TAG_DATA_VOID, int data_sz = 0, int data_offs = 0) : _ID(id), _data_format(data_fmt), _data_size(data_sz), _data_offset(data_offs), _data(NULL) { }
+	tag(const tag &tg) : _ID(tg._ID), _data_format(tg._data_format), _data_size(tg._data_size), _data_offset(tg._data_offset), _data(tg._data), _subtags(tg._subtags) { }
 	~tag() { }
 	bool readTag(Common::SeekableReadStream *ff, tag &tg);
 
 	tag &operator = (const tag &tg) {
 		if (this == &tg) return *this;
 
-		ID_ = tg.ID_;
-		data_format_ = tg.data_format_;
-		data_size_ = tg.data_size_;
-		data_offset_ = tg.data_offset_;
+		_ID = tg._ID;
+		_data_format = tg._data_format;
+		_data_size = tg._data_size;
+		_data_offset = tg._data_offset;
 
-		subtags_ = tg.subtags_;
+		_subtags = tg._subtags;
 
 		return *this;
 	}
 
 	//! Возвращает идентификатор тега.
 	int ID() const {
-		return g_engine->_tagMap[ID_ - 1];
+		return g_engine->_tagMap[_ID - 1];
 	}
 
 	int origID() const {
-		return ID_;
+		return _ID;
 	}
 
 	//! Возвращает формат данных тега.
 	tag_data_format data_format() const {
-		return data_format_;
+		return _data_format;
 	}
 
 	//! Возвращает количество элеметов данных тега.
@@ -91,11 +91,11 @@ public:
 	умножить на размер элемента данных в байтах - data_elemet_size().
 	*/
 	int data_size() const {
-		return data_size_;
+		return _data_size;
 	}
 	//! Возвращает размер элемента данных тега в байтах.
 	int data_element_size() const {
-		switch (data_format_) {
+		switch (_data_format) {
 		case TAG_DATA_VOID:
 			return 0;
 		case TAG_DATA_SHORT:
@@ -115,58 +115,58 @@ public:
 
 	//! Устанавливает количество элементов данных тега.
 	void set_data_size(int sz) {
-		data_size_ = sz;
+		_data_size = sz;
 	}
 
 	//! Возвращает смещение до данных тега в данных парсера.
 	int data_offset() const {
-		return data_offset_;
+		return _data_offset;
 	}
 	//! Устанавливает смещение до данных тега в данных парсера.
 	void set_data_offset(int off) {
-		data_offset_ = off;
+		_data_offset = off;
 	}
 
 	//! Возвращает указатель на данные тега.
 	const char *data() const {
-		return &*(data_->begin() + data_offset_);
+		return &*(_data->begin() + _data_offset);
 	}
 
 	//! Устанавливает указатель на общие данные.
 	void set_data(const std::vector<char> *p) {
-		data_ = p;
+		_data = p;
 
-		for (subtags_t::iterator it = subtags_.begin(); it != subtags_.end(); ++it)
+		for (subtags_t::iterator it = _subtags.begin(); it != _subtags.end(); ++it)
 			it->set_data(p);
 	}
 
 	//! Очистка вложенных тегов.
 	void clear() {
-		subtags_.clear();
+		_subtags.clear();
 	}
 	//! Добавляет вложенный тег.
 	/**
 	Возвращает ссылку на последний вложенный тег.
 	*/
 	tag &add_subtag(const tag &tg) {
-		subtags_.push_back(tg);
-		return subtags_.back();
+		_subtags.push_back(tg);
+		return _subtags.back();
 	}
 	//! Возвращает true, если список вложенных тегов не пустой .
 	bool has_subtags() const {
-		return !subtags_.empty();
+		return !_subtags.empty();
 	}
 	//! Возвращает количество вложенных тэгов.
 	int num_subtags() const {
-		return subtags_.size();
+		return _subtags.size();
 	}
 	//! Возвращает итератор начала списка вложенных тегов.
 	subtag_iterator subtags_begin() const {
-		return subtags_.begin();
+		return _subtags.begin();
 	}
 	//! Возвращает итератор конца списка вложенных тегов.
 	subtag_iterator subtags_end() const {
-		return subtags_.end();
+		return _subtags.end();
 	}
 	//! Поиск вложенного тега по его идентификатору.
 	const tag *search_subtag(int subtag_id) const {
@@ -179,18 +179,18 @@ public:
 private:
 
 	//! Идентификатор (тип) тега.
-	int ID_;
+	int _ID;
 	//! Формат данных тега.
-	tag_data_format data_format_;
+	tag_data_format _data_format;
 	//! Количество элементов данных тега.
-	int data_size_;
+	int _data_size;
 	//! Смещение до данных тега в общих данных.
-	int data_offset_;
+	int _data_offset;
 	//! Указатель на данные.
-	const std::vector<char> *data_;
+	const std::vector<char> *_data;
 
 	//! Список вложенных тегов.
-	subtags_t subtags_;
+	subtags_t _subtags;
 };
 
 }; /* namespace xml */
