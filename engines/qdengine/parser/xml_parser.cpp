@@ -101,31 +101,31 @@ static void character_data_handler(void *userData, const XML_Char *s, int len) {
 }
 #endif
 
-parser::parser() : data_pool_position_(0), data_buffer_(1024, 0), cur_level_(0), skip_mode_(false), binary_script_(false) {
-	root_tag_.set_data(&data_pool_);
+parser::parser() : _data_pool_position(0), _data_buffer(1024, 0), _cur_level(0), _skip_mode(false), _binary_script(false) {
+	_root_tag.set_data(&_data_pool);
 }
 
 parser::~parser() {
 }
 
 void parser::clear() {
-	root_tag_.clear();
-	while (!tag_stack_.empty()) tag_stack_.pop();
+	_root_tag.clear();
+	while (!_tag_stack.empty()) _tag_stack.pop();
 
-	cur_level_ = 0;
-	skip_mode_ = false;
+	_cur_level = 0;
+	_skip_mode = false;
 
-	data_pool_.clear();
-	std::vector<char>(data_pool_).swap(data_pool_);
+	_data_pool.clear();
+	std::vector<char>(_data_pool).swap(_data_pool);
 }
 
 #ifndef _XML_ONLY_BINARY_SCRIPT_
 void parser::start_element_handler(const char *tag_name, const char **tag_attributes) {
-	if (!skip_mode_) {
+	if (!_skip_mode) {
 		const tag *fmt = get_tag_format(tag_name);
 		if (fmt) {
 			tag tg(*fmt);
-			tg.set_data(&data_pool_);
+			tg.set_data(&_data_pool);
 
 			int sz = 0;
 			while (tag_attributes[sz]) sz++;
@@ -135,7 +135,7 @@ void parser::start_element_handler(const char *tag_name, const char **tag_attrib
 					const tag *afmt = get_tag_format(tag_attributes[i]);
 					if (afmt) {
 						tag att(*afmt);
-						att.set_data(&data_pool_);
+						att.set_data(&_data_pool);
 
 						read_tag_data(att, tag_attributes[i + 1], strlen(tag_attributes[i + 1]));
 						tg.add_subtag(att);
@@ -143,31 +143,31 @@ void parser::start_element_handler(const char *tag_name, const char **tag_attrib
 				}
 			}
 
-			if (!tag_stack_.empty())
-				tag_stack_.push(&tag_stack_.top()->add_subtag(tg));
+			if (!_tag_stack.empty())
+				_tag_stack.push(&_tag_stack.top()->add_subtag(tg));
 		} else {
-			skip_mode_ = true;
-			cur_level_ = 0;
+			_skip_mode = true;
+			_cur_level = 0;
 		}
 
-		data_buffer_.clear();
+		_data_buffer.clear();
 	} else
-		cur_level_ ++;
+		_cur_level ++;
 }
 
 void parser::end_element_handler(const char *tag_name) {
-	if (!skip_mode_) {
-		if (!tag_stack_.empty())
-			read_tag_data(*tag_stack_.top(), data_buffer_.c_str(), strlen(data_buffer_.c_str()));
+	if (!_skip_mode) {
+		if (!_tag_stack.empty())
+			read_tag_data(*_tag_stack.top(), _data_buffer.c_str(), strlen(_data_buffer.c_str()));
 
-		tag_stack_.pop();
+		_tag_stack.pop();
 	} else {
-		if (!cur_level_--) skip_mode_ = false;
+		if (!_cur_level--) _skip_mode = false;
 	}
 }
 
 void parser::character_data_handler(const char *data, int data_length) {
-	data_buffer_.append(data, data_length);
+	_data_buffer.append(data, data_length);
 }
 #endif
 
@@ -198,10 +198,10 @@ bool parser::parse_file(const char *fname) {
 	ff.read(static_cast<char *>(buf), fsize);
 	ff.close();
 #endif
-	if (data_pool_.size() < fsize / 2)
-		data_pool_.resize(fsize / 2);
+	if (_data_pool.size() < fsize / 2)
+		_data_pool.resize(fsize / 2);
 
-	tag_stack_.push(&root_tag_);
+	_tag_stack.push(&_root_tag);
 
 #if 0
 	if (XML_ParseBuffer(p, fsize, 1) == XML_STATUS_OK) {
@@ -228,15 +228,15 @@ bool parser::read_tag_data(tag &tg, const char *data_ptr, int data_length) {
 			const char *str = UTF8_convert(data_ptr, data_length);
 			tg.set_data_size(strlen(str) + 1);
 
-			tg.set_data_offset(data_pool_position_);
+			tg.set_data_offset(_data_pool_position);
 			unsigned int sz = tg.data_size() * tg.data_element_size();
-			if (data_pool_.size() < data_pool_position_ + sz)
-				data_pool_.resize(data_pool_position_ + sz);
+			if (_data_pool.size() < _data_pool_position + sz)
+				_data_pool.resize(_data_pool_position + sz);
 
-			char *p = &*(data_pool_.begin() + data_pool_position_);
-			size_t len = data_pool_.size() - data_pool_position_;
+			char *p = &*(_data_pool.begin() + _data_pool_position);
+			size_t len = _data_pool.size() - _data_pool_position;
 			Common::strlcpy(p, str, len);
-			data_pool_position_ += sz;
+			_data_pool_position += sz;
 
 			return true;
 		}
@@ -248,41 +248,41 @@ bool parser::read_tag_data(tag &tg, const char *data_ptr, int data_length) {
 			tg.set_data_size(sz);
 		}
 
-		tg.set_data_offset(data_pool_position_);
+		tg.set_data_offset(_data_pool_position);
 
 		unsigned int sz = tg.data_size() * tg.data_element_size();
-		if (data_pool_.size() < data_pool_position_ + sz)
-			data_pool_.resize(data_pool_position_ + sz);
+		if (_data_pool.size() < _data_pool_position + sz)
+			_data_pool.resize(_data_pool_position + sz);
 
 		switch (tg.data_format()) {
 		case tag::TAG_DATA_SHORT: {
-			short *p = reinterpret_cast<short *>(&*(data_pool_.begin() + data_pool_position_));
+			short *p = reinterpret_cast<short *>(&*(_data_pool.begin() + _data_pool_position));
 			for (int j = 0; j < tg.data_size(); j ++) buf >= p[j];
 		}
 		break;
 		case tag::TAG_DATA_UNSIGNED_SHORT: {
-			unsigned short *p = reinterpret_cast<unsigned short *>(&*(data_pool_.begin() + data_pool_position_));
+			unsigned short *p = reinterpret_cast<unsigned short *>(&*(_data_pool.begin() + _data_pool_position));
 			for (int j = 0; j < tg.data_size(); j ++) buf >= p[j];
 		}
 		break;
 		case tag::TAG_DATA_INT: {
-			int *p = reinterpret_cast<int *>(&*(data_pool_.begin() + data_pool_position_));
+			int *p = reinterpret_cast<int *>(&*(_data_pool.begin() + _data_pool_position));
 			for (int j = 0; j < tg.data_size(); j ++) buf >= p[j];
 		}
 		break;
 		case tag::TAG_DATA_UNSIGNED_INT: {
-			unsigned int *p = reinterpret_cast<unsigned int *>(&*(data_pool_.begin() + data_pool_position_));
+			unsigned int *p = reinterpret_cast<unsigned int *>(&*(_data_pool.begin() + _data_pool_position));
 			for (int j = 0; j < tg.data_size(); j ++) buf >= p[j];
 		}
 		break;
 		case tag::TAG_DATA_FLOAT: {
-			float *p = reinterpret_cast<float *>(&*(data_pool_.begin() + data_pool_position_));
+			float *p = reinterpret_cast<float *>(&*(_data_pool.begin() + _data_pool_position));
 			for (int j = 0; j < tg.data_size(); j ++) buf >= p[j];
 		}
 		break;
 		}
 
-		data_pool_position_ += sz;
+		_data_pool_position += sz;
 	}
 	return true;
 }
@@ -313,20 +313,20 @@ bool parser::read_binary_script(const char *fname) {
 	Common::File ff;
 	ff.open(fname);
 
-	binary_script_ = true;
+	_binary_script = true;
 
 	/* uint32 v = */ff.readUint32LE();
 	uint32 size = ff.readUint32LE();
 
-	if (data_pool_.size() < size)
-		data_pool_.resize(size);
+	if (_data_pool.size() < size)
+		_data_pool.resize(size);
 
-	ff.read(&*data_pool_.begin(), size);
+	ff.read(&*_data_pool.begin(), size);
 
-	root_tag_.clear();
-	root_tag_.readTag(&ff, root_tag_);
+	_root_tag.clear();
+	_root_tag.readTag(&ff, _root_tag);
 
-	root_tag_.set_data(&data_pool_);
+	_root_tag.set_data(&_data_pool);
 
 	ff.close();
 

@@ -36,7 +36,7 @@ namespace xml {
 
 class parser {
 public:
-	typedef Common::HashMap<Common::String, tag> tag_format_t;
+	typedef Common::HashMap<Common::String, tag> _tag_formatt;
 	typedef Common::Stack<tag *> tag_stack_t;
 
 	parser();
@@ -47,11 +47,11 @@ public:
 	bool read_binary_script(const char *fname);
 	bool is_script_binary(const char *fname) const;
 	bool is_script_binary() const {
-		return binary_script_;
+		return _binary_script;
 	}
 
 	const tag &root_tag() const {
-		return root_tag_;
+		return _root_tag;
 	}
 
 	void clear();
@@ -63,43 +63,43 @@ public:
 #endif
 
 	void resize_data_pool(unsigned int pool_sz) {
-		data_pool_.resize(pool_sz);
+		_data_pool.resize(pool_sz);
 	}
 
 	bool register_tag_format(const char *tag_name, const tag &tg) {
-		tag_format_t::iterator it = tag_format_.find(tag_name);
-		if (it != tag_format_.end())
+		_tag_formatt::iterator it = _tag_format.find(tag_name);
+		if (it != _tag_format.end())
 			return false;
 
-		tag_format_[tag_name] = tg;
+		_tag_format[tag_name] = tg;
 		return true;
 	}
 	const tag *get_tag_format(const char *tag_name) const {
-		tag_format_t::const_iterator it = tag_format_.find(tag_name);
-		if (it != tag_format_.end())
+		_tag_formatt::const_iterator it = _tag_format.find(tag_name);
+		if (it != _tag_format.end())
 			return &it->_value;
 
 		return NULL;
 	}
 
 	int num_tag_formats() const {
-		return tag_format_.size();
+		return _tag_format.size();
 	}
 
 private:
 
-	tag root_tag_;
+	tag _root_tag;
 
-	int data_pool_position_;
-	std::vector<char> data_pool_;
-	std::string data_buffer_;
+	int _data_pool_position;
+	std::vector<char> _data_pool;
+	std::string _data_buffer;
 
-	bool binary_script_;
+	bool _binary_script;
 
-	tag_stack_t tag_stack_;
-	tag_format_t tag_format_;
-	int cur_level_;
-	bool skip_mode_;
+	tag_stack_t _tag_stack;
+	_tag_formatt _tag_format;
+	int _cur_level;
+	bool _skip_mode;
 
 #ifndef _XML_ONLY_BINARY_SCRIPT_
 	bool read_tag_data(tag &tg, const char *data_ptr, int data_length);
