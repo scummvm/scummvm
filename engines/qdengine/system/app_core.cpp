@@ -66,11 +66,6 @@ unsigned app_memory_usage() {
 
 namespace app_io {
 
-bool saveFileExists(Common::String &fpath) {
-	debugC(3, kDebugSave, "saveFileExists(%s)", fpath.c_str());
-	return g_engine->_savefileMan->exists(fpath);
-}
-
 bool is_file_exist(Common::String file_name) {
 	bool res = SearchMan.hasFile(Common::Path(file_name));
 

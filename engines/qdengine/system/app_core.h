@@ -39,8 +39,6 @@ typedef const char *(*GetFunc)(void);
 
 namespace app_io {
 
-bool saveFileExists(Common::String &fpath);
-
 bool is_file_exist(Common::String file_name);
 bool is_directory_exist(const char *dir_name);
 

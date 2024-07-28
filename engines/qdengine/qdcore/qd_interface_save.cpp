@@ -22,6 +22,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/savefile.h"
 #include "common/stream.h"
 
 #include "qdengine/qdengine.h"
@@ -115,7 +116,7 @@ bool qdInterfaceSave::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev
 					if (ip->has_save_title_screen()) {
 						ip->setModalScreenMode(qdInterfaceDispatcher::MODAL_SCREEN_SAVE_NAME_EDIT);
 						ip->handle_event(qdInterfaceEvent::EVENT_SHOW_INTERFACE_SCREEN_AS_MODAL, ip->save_title_screen_name(), this);
-					} else if (ip->has_save_prompt_screen() && app_io::saveFileExists(saveFile)) {
+					} else if (ip->has_save_prompt_screen() && g_engine->_savefileMan->exists(saveFile)) {
 						ip->setModalScreenMode(qdInterfaceDispatcher::MODAL_SCREEN_SAVE_OVERWRITE);
 						ip->handle_event(qdInterfaceEvent::EVENT_SHOW_INTERFACE_SCREEN_AS_MODAL, ip->save_prompt_screen_name(), this);
 					} else {
@@ -166,7 +167,7 @@ bool qdInterfaceSave::init(bool is_game_active) {
 	set_state(&frame_);
 
 	Common::String saveFile(save_file());
-	if (!save_mode_ && !app_io::saveFileExists(saveFile)) {
+	if (!save_mode_ && !g_engine->_savefileMan->exists(saveFile)) {
 		if (is_visible()) {
 			debugC(3, kDebugInput, "qdInterfaceSave::init(): Hide %s", save_file().c_str());
 			hide();
