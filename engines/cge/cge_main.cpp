@@ -1091,7 +1091,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 		++shpcnt;
 	}
 
-	// make sprite of choosen type
+	// make sprite of chosen type
 	switch (type) {
 	case 1:
 		// AUTO
