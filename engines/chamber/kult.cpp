@@ -299,7 +299,7 @@ Common::Error ChamberEngine::init() {
 	if (_shouldQuit)
 		return Common::kNoError;
 
-	/* Patch resource names for choosen language */
+	/* Patch resource names for chosen language */
 	res_texts[0].name[4] = c;
 	res_texts[1].name[4] = c;
 	res_desci[0].name[4] = c;
@@ -324,7 +324,7 @@ Common::Error ChamberEngine::init() {
 	while (!loadFond() || !loadSpritesData() || !loadPersData())
 		askDisk2();
 
-	/*TODO: is this neccessary?*/
+	/*TODO: is this necessary?*/
 	cga_BackBufferToRealFull();
 
 	/* Create clean game state snapshot */

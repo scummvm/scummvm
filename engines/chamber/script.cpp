@@ -3634,7 +3634,7 @@ uint16 CMD_11_PsiTuneIn(void) {
 			command = 275;
 	}
 
-	/*TODO: is this really neccessary? Maybe it's always set when loaded from script vars?*/
+	/*TODO: is this really necessary? Maybe it's always set when loaded from script vars?*/
 	if (command & 0x8000) {
 		the_command = command;
 		return ScriptRerun;

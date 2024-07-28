@@ -491,7 +491,7 @@ void cga_DrawHLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
 /*
 Draw horizontal line of length l with color, add surrounding pixels (bmask, bpix, left in high byte, right in low)
 Return next line screen offset
-NB! Length specifies byte lenght of inner segment, not amount of pixels
+NB! Length specifies byte length of inner segment, not amount of pixels
  */
 uint16 cga_DrawHLineWithEnds(uint16 bmask, uint16 bpix, byte color, uint16 l, byte *target, uint16 ofs) {
 	target[ofs] = (target[ofs] & (bmask >> 8)) | (bpix >> 8);
@@ -514,7 +514,7 @@ Print a character at current cursor pos, then advance
 void cga_PrintChar(byte c, byte *target) {
 	uint16 i;
 	byte *font = carpc_data + c * g_vm->_fontHeight;
-	uint16 ofs = cga_CalcXY_p(char_draw_coords_x++, char_draw_coords_y); // TODO: hga_calcxy_p doesnt work with this??
+	uint16 ofs = cga_CalcXY_p(char_draw_coords_x++, char_draw_coords_y); // TODO: hga_calcxy_p doesn't work with this??
 	for (i = 0; i < g_vm->_fontHeight; i++) {
 		c = *font++;
 		c = char_xlat_table[c];

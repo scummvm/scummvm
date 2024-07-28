@@ -200,7 +200,7 @@ void processMenu(void) {
 rect_t menu_buttons_rects[] = {
 	{296 / 4, 312 / 4,  15,  30},   /*Room's Objects*/
 	{296 / 4, 312 / 4,  40,  56},   /*Psi Powers*/
-	{296 / 4, 312 / 4,  56,  72},   /*Posessions*/
+	{296 / 4, 312 / 4,  56,  72},   /*Possessions*/
 	{296 / 4, 312 / 4,  72,  88},   /*Energy Level*/
 	{296 / 4, 312 / 4,  88, 104},   /*Wait*/
 	{296 / 4, 312 / 4, 104, 120},   /*Load*/
