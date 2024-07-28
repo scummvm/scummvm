@@ -266,7 +266,7 @@ ResEntry_t res_person[] = {
 
 int16 loadPersData(void) {
 	/*Originally it tries to load pers1 + pers2 as a single contiguos resource, if have enough memory*/
-	/*If memory is low, neccessary file is loaded on demand, according to requested bank resource index*/
+	/*If memory is low, necessary file is loaded on demand, according to requested bank resource index*/
 	/*Here we load both parts to their own memory buffers then select one in LoadPersSprit()*/
 	return loadFilesList(res_person);
 }
