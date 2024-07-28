@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-27 13:13+0000\n"
+"POT-Creation-Date: 2024-07-28 19:03+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -5927,7 +5927,7 @@ msgid "Cutscene file '%s' not found!"
 msgstr "컷씬 파일 '%s' 을 찾을 수 없습니다!"
 
 #: engines/agos/metaengine.cpp:44 engines/dreamweb/metaengine.cpp:36
-#: engines/lure/metaengine.cpp:37 engines/mads/metaengine.cpp:47
+#: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:47
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:746
 #, fuzzy
@@ -5936,7 +5936,7 @@ msgid "Enable copy protection"
 msgstr "Discord 통합 사용"
 
 #: engines/agos/metaengine.cpp:45 engines/dreamweb/metaengine.cpp:37
-#: engines/lure/metaengine.cpp:38 engines/mads/metaengine.cpp:48
+#: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:48
 #: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:747
 msgid "Enable any copy protection that would otherwise be bypassed by default."
@@ -5992,7 +5992,8 @@ msgid "AGOS main"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
-#: engines/made/metaengine.cpp:103 engines/trecision/metaengine.cpp:121
+#: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:103
+#: engines/trecision/metaengine.cpp:121
 #, fuzzy
 #| msgid "Game Options"
 msgid "Game keymappings"
@@ -6005,16 +6006,18 @@ msgid "Yes/No keymapping"
 msgstr "게임 옵션"
 
 #: engines/agos/metaengine.cpp:232 engines/cine/metaengine.cpp:265
-#: engines/groovie/metaengine.cpp:205 engines/made/metaengine.cpp:107
-#: engines/saga/metaengine.cpp:278 engines/trecision/metaengine.cpp:125
+#: engines/groovie/metaengine.cpp:205 engines/lure/metaengine.cpp:177
+#: engines/made/metaengine.cpp:107 engines/saga/metaengine.cpp:278
+#: engines/trecision/metaengine.cpp:125
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left click"
 msgstr "왼쪽 클릭"
 
 #: engines/agos/metaengine.cpp:238 engines/cine/metaengine.cpp:271
-#: engines/groovie/metaengine.cpp:211 engines/made/metaengine.cpp:114
-#: engines/saga/metaengine.cpp:289 engines/trecision/metaengine.cpp:131
+#: engines/groovie/metaengine.cpp:211 engines/lure/metaengine.cpp:183
+#: engines/made/metaengine.cpp:114 engines/saga/metaengine.cpp:289
+#: engines/trecision/metaengine.cpp:131
 #, fuzzy
 #| msgid "Right Click"
 msgid "Right click"
@@ -6140,11 +6143,12 @@ msgstr ""
 msgid "High speed mode on/off in Swampy Adventures"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:382 engines/trecision/metaengine.cpp:181
+#: engines/agos/metaengine.cpp:382 engines/lure/metaengine.cpp:295
+#: engines/trecision/metaengine.cpp:181
 msgid "Press \"Yes\" key"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:387
+#: engines/agos/metaengine.cpp:387 engines/lure/metaengine.cpp:310
 msgid "Press \"No\" key"
 msgstr ""
 
@@ -6328,16 +6332,18 @@ msgid "Move down"
 msgstr "아래로 이동"
 
 #. I18N: Move Actor to left direction
+#. I18N: Move actor left during fight
 #: engines/asylum/metaengine.cpp:183 engines/asylum/metaengine.cpp:212
 #: engines/cine/metaengine.cpp:379 engines/hdb/metaengine.cpp:225
-#: engines/nancy/input.cpp:207
+#: engines/lure/metaengine.cpp:218 engines/nancy/input.cpp:207
 msgid "Move left"
 msgstr "왼쪽으로 이동"
 
 #. I18N: Move Actor to right direction
+#. I18N: Move actor right during fight
 #: engines/asylum/metaengine.cpp:189 engines/asylum/metaengine.cpp:219
 #: engines/cine/metaengine.cpp:386 engines/hdb/metaengine.cpp:231
-#: engines/nancy/input.cpp:213
+#: engines/lure/metaengine.cpp:226 engines/nancy/input.cpp:213
 msgid "Move right"
 msgstr "오른쪽으로 이동"
 
@@ -6865,7 +6871,7 @@ msgid "Enable Text to Speech for Objects and Options"
 msgstr "물체, 옵션 및 성경 인용문에 대해 TTS를 활성화"
 
 #: engines/cge2/metaengine.cpp:60 engines/dreamweb/metaengine.cpp:74
-#: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:50
+#: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:54
 #: engines/mads/metaengine.cpp:121 engines/sci/detection_options.h:224
 #: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:50
 #: engines/twine/metaengine.cpp:157
@@ -6911,8 +6917,8 @@ msgstr "제목 없음"
 msgid "Empty autosave"
 msgstr "비어있는 자동 저장"
 
-#: engines/cine/metaengine.cpp:258 engines/made/metaengine.cpp:102
-#: engines/trecision/metaengine.cpp:120
+#: engines/cine/metaengine.cpp:258 engines/lure/metaengine.cpp:168
+#: engines/made/metaengine.cpp:102 engines/trecision/metaengine.cpp:120
 #, fuzzy
 #| msgid "Default game keymap"
 msgid "Default keymappings"
@@ -8285,10 +8291,108 @@ msgstr ""
 msgid "This puzzle is not available in the trial version of the game"
 msgstr "게임 평가판에서는 현재 퍼즐을 이용할 수 없습니다"
 
-#: engines/lure/metaengine.cpp:49 engines/mads/metaengine.cpp:120
+#: engines/lure/metaengine.cpp:53 engines/mads/metaengine.cpp:120
 #: engines/sherlock/metaengine.cpp:112 engines/twine/metaengine.cpp:156
 msgid "TTS Narrator"
 msgstr "TTS 나레이터"
+
+#: engines/lure/metaengine.cpp:170
+#, fuzzy
+#| msgid "Game Options"
+msgid "Fight sequence keymappings"
+msgstr "게임 옵션"
+
+#: engines/lure/metaengine.cpp:171
+#, fuzzy
+#| msgid "Game Options"
+msgid "Index keymappings"
+msgstr "게임 옵션"
+
+#: engines/lure/metaengine.cpp:172
+#, fuzzy
+#| msgid "Game Options"
+msgid "Yes/No keymappings"
+msgstr "게임 옵션"
+
+#: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:162
+#: engines/saga/metaengine.cpp:441 engines/trecision/metaengine.cpp:169
+#: engines/vcruise/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:920
+msgid "Save game"
+msgstr "게임 저장"
+
+#: engines/lure/metaengine.cpp:197
+#, fuzzy
+#| msgid "Restore game:"
+msgid "Restore game"
+msgstr "게임 불러오기:"
+
+#: engines/lure/metaengine.cpp:203
+#, fuzzy
+#| msgid "Restore game:"
+msgid "Restart game"
+msgstr "게임 불러오기:"
+
+#. I18N: ESC key
+#: engines/lure/metaengine.cpp:209 engines/mm/mm1/metaengine.cpp:41
+#: engines/mm/mm1/metaengine.cpp:47 engines/saga/metaengine.cpp:328
+#: engines/twine/metaengine.cpp:436 engines/wintermute/keymapper_tables.h:60
+msgid "Escape"
+msgstr "탈출"
+
+#. I18N: Shift Cursor during fight to top left
+#: engines/lure/metaengine.cpp:233
+#, fuzzy
+#| msgid "Turn Left"
+msgid "Shift Cursor - Top left"
+msgstr "왼쪽으로 회전"
+
+#. I18N: Shift Cursor during fight to middle left
+#: engines/lure/metaengine.cpp:239
+msgid "Shift Cursor -  Middle left"
+msgstr ""
+
+#. I18N: Shift Cursor during fight to bottom left
+#: engines/lure/metaengine.cpp:245
+msgid "Shift Cursor - Bottom left"
+msgstr ""
+
+#. I18N: Shift Cursor during fight to top right
+#: engines/lure/metaengine.cpp:251
+#, fuzzy
+#| msgid "Turn Right"
+msgid "Shift Cursor - Top right"
+msgstr "오른쪽으로 회전"
+
+#. I18N: Shift Cursor during fight to middle right
+#: engines/lure/metaengine.cpp:257
+#, fuzzy
+#| msgid "Turn Right"
+msgid "Shift Cursor - Middle right"
+msgstr "오른쪽으로 회전"
+
+#. I18N: Shift Cursor during fight to bottom right
+#: engines/lure/metaengine.cpp:263
+#, fuzzy
+#| msgid "Turn Right"
+msgid "Shift Cursor - Bottom right"
+msgstr "오른쪽으로 회전"
+
+#: engines/lure/metaengine.cpp:270
+#, fuzzy
+#| msgid "Go to setup menu"
+msgid "Go to next index"
+msgstr "셋업 메뉴로 이동"
+
+#: engines/lure/metaengine.cpp:277
+#, fuzzy
+#| msgid "Go to previous directory level"
+msgid "Go to previous index"
+msgstr "상위 디렉토리로 이동합니다"
+
+#: engines/lure/metaengine.cpp:284
+#, fuzzy
+msgid "Select index"
+msgstr "테마 선택"
 
 #: engines/made/detection_tables.h:445 engines/made/detection_tables.h:462
 msgid "The game is using unsupported engine"
@@ -8329,12 +8433,6 @@ msgstr "왼쪽으로 회전"
 #| msgid "Turn Right"
 msgid "Cursor right"
 msgstr "오른쪽으로 회전"
-
-#: engines/made/metaengine.cpp:162 engines/saga/metaengine.cpp:441
-#: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:151
-#: engines/wintermute/keymapper_tables.h:920
-msgid "Save game"
-msgstr "게임 저장"
 
 #: engines/made/metaengine.cpp:168 engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:431
@@ -8398,13 +8496,6 @@ msgstr "HP 바 그래프를 활성화합니다"
 #: engines/mm/metaengine.cpp:80
 msgid "Replace a colored gem with bars for hit points and spell points."
 msgstr ""
-
-#. I18N: ESC key
-#: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
-#: engines/saga/metaengine.cpp:328 engines/twine/metaengine.cpp:436
-#: engines/wintermute/keymapper_tables.h:60
-msgid "Escape"
-msgstr "탈출"
 
 #: engines/mm/mm1/metaengine.cpp:54
 msgid "View Party Member 1"

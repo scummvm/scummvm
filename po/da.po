@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-27 13:13+0000\n"
+"POT-Creation-Date: 2024-07-28 19:03+0000\n"
 "PO-Revision-Date: 2023-09-07 17:04+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -5980,7 +5980,7 @@ msgid "Cutscene file '%s' not found!"
 msgstr "Filmsekvens fil '%s' ikke fundet!"
 
 #: engines/agos/metaengine.cpp:44 engines/dreamweb/metaengine.cpp:36
-#: engines/lure/metaengine.cpp:37 engines/mads/metaengine.cpp:47
+#: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:47
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:746
 #, fuzzy
@@ -5988,7 +5988,7 @@ msgid "Enable copy protection"
 msgstr "Aktivér indholdscensurering"
 
 #: engines/agos/metaengine.cpp:45 engines/dreamweb/metaengine.cpp:37
-#: engines/lure/metaengine.cpp:38 engines/mads/metaengine.cpp:48
+#: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:48
 #: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:747
 msgid "Enable any copy protection that would otherwise be bypassed by default."
@@ -6045,7 +6045,8 @@ msgid "AGOS main"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
-#: engines/made/metaengine.cpp:103 engines/trecision/metaengine.cpp:121
+#: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:103
+#: engines/trecision/metaengine.cpp:121
 #, fuzzy
 msgid "Game keymappings"
 msgstr "~I~ndstillinger ..."
@@ -6056,16 +6057,18 @@ msgid "Yes/No keymapping"
 msgstr "~I~ndstillinger ..."
 
 #: engines/agos/metaengine.cpp:232 engines/cine/metaengine.cpp:265
-#: engines/groovie/metaengine.cpp:205 engines/made/metaengine.cpp:107
-#: engines/saga/metaengine.cpp:278 engines/trecision/metaengine.cpp:125
+#: engines/groovie/metaengine.cpp:205 engines/lure/metaengine.cpp:177
+#: engines/made/metaengine.cpp:107 engines/saga/metaengine.cpp:278
+#: engines/trecision/metaengine.cpp:125
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left click"
 msgstr "Venstreklik"
 
 #: engines/agos/metaengine.cpp:238 engines/cine/metaengine.cpp:271
-#: engines/groovie/metaengine.cpp:211 engines/made/metaengine.cpp:114
-#: engines/saga/metaengine.cpp:289 engines/trecision/metaengine.cpp:131
+#: engines/groovie/metaengine.cpp:211 engines/lure/metaengine.cpp:183
+#: engines/made/metaengine.cpp:114 engines/saga/metaengine.cpp:289
+#: engines/trecision/metaengine.cpp:131
 msgid "Right click"
 msgstr "Højreklik"
 
@@ -6188,11 +6191,12 @@ msgstr ""
 msgid "High speed mode on/off in Swampy Adventures"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:382 engines/trecision/metaengine.cpp:181
+#: engines/agos/metaengine.cpp:382 engines/lure/metaengine.cpp:295
+#: engines/trecision/metaengine.cpp:181
 msgid "Press \"Yes\" key"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:387
+#: engines/agos/metaengine.cpp:387 engines/lure/metaengine.cpp:310
 msgid "Press \"No\" key"
 msgstr ""
 
@@ -6367,17 +6371,19 @@ msgid "Move down"
 msgstr "Annuller download"
 
 #. I18N: Move Actor to left direction
+#. I18N: Move actor left during fight
 #: engines/asylum/metaengine.cpp:183 engines/asylum/metaengine.cpp:212
 #: engines/cine/metaengine.cpp:379 engines/hdb/metaengine.cpp:225
-#: engines/nancy/input.cpp:207
+#: engines/lure/metaengine.cpp:218 engines/nancy/input.cpp:207
 #, fuzzy
 msgid "Move left"
 msgstr "Flyt til venstre"
 
 #. I18N: Move Actor to right direction
+#. I18N: Move actor right during fight
 #: engines/asylum/metaengine.cpp:189 engines/asylum/metaengine.cpp:219
 #: engines/cine/metaengine.cpp:386 engines/hdb/metaengine.cpp:231
-#: engines/nancy/input.cpp:213
+#: engines/lure/metaengine.cpp:226 engines/nancy/input.cpp:213
 #, fuzzy
 msgid "Move right"
 msgstr "Flyt til højre"
@@ -6918,7 +6924,7 @@ msgid "Enable Text to Speech for Objects and Options"
 msgstr "Brug tekst til tale"
 
 #: engines/cge2/metaengine.cpp:60 engines/dreamweb/metaengine.cpp:74
-#: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:50
+#: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:54
 #: engines/mads/metaengine.cpp:121 engines/sci/detection_options.h:224
 #: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:50
 #: engines/twine/metaengine.cpp:157
@@ -6966,8 +6972,8 @@ msgstr "Unavngivet savegame"
 msgid "Empty autosave"
 msgstr "Autogem:"
 
-#: engines/cine/metaengine.cpp:258 engines/made/metaengine.cpp:102
-#: engines/trecision/metaengine.cpp:120
+#: engines/cine/metaengine.cpp:258 engines/lure/metaengine.cpp:168
+#: engines/made/metaengine.cpp:102 engines/trecision/metaengine.cpp:120
 #, fuzzy
 msgid "Default keymappings"
 msgstr "~I~ndstillinger ..."
@@ -8306,10 +8312,106 @@ msgstr ""
 "Udforskning ud over dette punkt er kun tilgængelig i den fulde version af\n"
 "spillet."
 
-#: engines/lure/metaengine.cpp:49 engines/mads/metaengine.cpp:120
+#: engines/lure/metaengine.cpp:53 engines/mads/metaengine.cpp:120
 #: engines/sherlock/metaengine.cpp:112 engines/twine/metaengine.cpp:156
 msgid "TTS Narrator"
 msgstr ""
+
+#: engines/lure/metaengine.cpp:170
+#, fuzzy
+msgid "Fight sequence keymappings"
+msgstr "~I~ndstillinger ..."
+
+#: engines/lure/metaengine.cpp:171
+#, fuzzy
+msgid "Index keymappings"
+msgstr "~I~ndstillinger ..."
+
+#: engines/lure/metaengine.cpp:172
+#, fuzzy
+msgid "Yes/No keymappings"
+msgstr "~I~ndstillinger ..."
+
+#: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:162
+#: engines/saga/metaengine.cpp:441 engines/trecision/metaengine.cpp:169
+#: engines/vcruise/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:920
+#, fuzzy
+msgid "Save game"
+msgstr "Gemt spil:"
+
+#: engines/lure/metaengine.cpp:197
+#, fuzzy
+#| msgid "Restore game:"
+msgid "Restore game"
+msgstr "Gendan spil:"
+
+#: engines/lure/metaengine.cpp:203
+#, fuzzy
+#| msgid "Restore game:"
+msgid "Restart game"
+msgstr "Gendan spil:"
+
+#. I18N: ESC key
+#: engines/lure/metaengine.cpp:209 engines/mm/mm1/metaengine.cpp:41
+#: engines/mm/mm1/metaengine.cpp:47 engines/saga/metaengine.cpp:328
+#: engines/twine/metaengine.cpp:436 engines/wintermute/keymapper_tables.h:60
+#, fuzzy
+msgid "Escape"
+msgstr "Escape-tast"
+
+#. I18N: Shift Cursor during fight to top left
+#: engines/lure/metaengine.cpp:233
+#, fuzzy
+#| msgid "Cursor Left"
+msgid "Shift Cursor - Top left"
+msgstr "Pil til venstre"
+
+#. I18N: Shift Cursor during fight to middle left
+#: engines/lure/metaengine.cpp:239
+msgid "Shift Cursor -  Middle left"
+msgstr ""
+
+#. I18N: Shift Cursor during fight to bottom left
+#: engines/lure/metaengine.cpp:245
+msgid "Shift Cursor - Bottom left"
+msgstr ""
+
+#. I18N: Shift Cursor during fight to top right
+#: engines/lure/metaengine.cpp:251
+#, fuzzy
+#| msgid "Cursor Right"
+msgid "Shift Cursor - Top right"
+msgstr "Pil til højre"
+
+#. I18N: Shift Cursor during fight to middle right
+#: engines/lure/metaengine.cpp:257
+#, fuzzy
+#| msgid "Cursor Right"
+msgid "Shift Cursor - Middle right"
+msgstr "Pil til højre"
+
+#. I18N: Shift Cursor during fight to bottom right
+#: engines/lure/metaengine.cpp:263
+#, fuzzy
+#| msgid "Cursor Right"
+msgid "Shift Cursor - Bottom right"
+msgstr "Pil til højre"
+
+#: engines/lure/metaengine.cpp:270
+#, fuzzy
+msgid "Go to next index"
+msgstr "Indstillinger"
+
+#: engines/lure/metaengine.cpp:277
+#, fuzzy
+#| msgid "Go to previous directory level"
+msgid "Go to previous index"
+msgstr "Gå til forrige mappeniveau"
+
+#: engines/lure/metaengine.cpp:284
+#, fuzzy
+msgid "Select index"
+msgstr "Vælg et tema"
 
 #: engines/made/detection_tables.h:445 engines/made/detection_tables.h:462
 #, fuzzy
@@ -8349,13 +8451,6 @@ msgstr "Pil til venstre"
 #| msgid "Cursor Right"
 msgid "Cursor right"
 msgstr "Pil til højre"
-
-#: engines/made/metaengine.cpp:162 engines/saga/metaengine.cpp:441
-#: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:151
-#: engines/wintermute/keymapper_tables.h:920
-#, fuzzy
-msgid "Save game"
-msgstr "Gemt spil:"
 
 #: engines/made/metaengine.cpp:168 engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:431
@@ -8421,14 +8516,6 @@ msgstr "Aktivér træfpoint (HP) søjlediagrammer"
 #: engines/mm/metaengine.cpp:80
 msgid "Replace a colored gem with bars for hit points and spell points."
 msgstr ""
-
-#. I18N: ESC key
-#: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
-#: engines/saga/metaengine.cpp:328 engines/twine/metaengine.cpp:436
-#: engines/wintermute/keymapper_tables.h:60
-#, fuzzy
-msgid "Escape"
-msgstr "Escape-tast"
 
 #: engines/mm/mm1/metaengine.cpp:54
 msgid "View Party Member 1"

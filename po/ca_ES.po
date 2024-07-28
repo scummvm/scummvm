@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-27 13:13+0000\n"
+"POT-Creation-Date: 2024-07-28 19:03+0000\n"
 "PO-Revision-Date: 2024-07-10 04:43+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -5828,14 +5828,14 @@ msgid "Cutscene file '%s' not found!"
 msgstr "No s'ha trobat el fitxer d'escena '%s'!"
 
 #: engines/agos/metaengine.cpp:44 engines/dreamweb/metaengine.cpp:36
-#: engines/lure/metaengine.cpp:37 engines/mads/metaengine.cpp:47
+#: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:47
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:746
 msgid "Enable copy protection"
 msgstr "Habilita la protecció contra còpia"
 
 #: engines/agos/metaengine.cpp:45 engines/dreamweb/metaengine.cpp:37
-#: engines/lure/metaengine.cpp:38 engines/mads/metaengine.cpp:48
+#: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:48
 #: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:747
 msgid "Enable any copy protection that would otherwise be bypassed by default."
@@ -5896,7 +5896,8 @@ msgid "AGOS main"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
-#: engines/made/metaengine.cpp:103 engines/trecision/metaengine.cpp:121
+#: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:103
+#: engines/trecision/metaengine.cpp:121
 #, fuzzy
 #| msgid "Game keymapping"
 msgid "Game keymappings"
@@ -5909,16 +5910,18 @@ msgid "Yes/No keymapping"
 msgstr "Assignació de tecles Sí/No"
 
 #: engines/agos/metaengine.cpp:232 engines/cine/metaengine.cpp:265
-#: engines/groovie/metaengine.cpp:205 engines/made/metaengine.cpp:107
-#: engines/saga/metaengine.cpp:278 engines/trecision/metaengine.cpp:125
+#: engines/groovie/metaengine.cpp:205 engines/lure/metaengine.cpp:177
+#: engines/made/metaengine.cpp:107 engines/saga/metaengine.cpp:278
+#: engines/trecision/metaengine.cpp:125
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left click"
 msgstr "Clic esquerre"
 
 #: engines/agos/metaengine.cpp:238 engines/cine/metaengine.cpp:271
-#: engines/groovie/metaengine.cpp:211 engines/made/metaengine.cpp:114
-#: engines/saga/metaengine.cpp:289 engines/trecision/metaengine.cpp:131
+#: engines/groovie/metaengine.cpp:211 engines/lure/metaengine.cpp:183
+#: engines/made/metaengine.cpp:114 engines/saga/metaengine.cpp:289
+#: engines/trecision/metaengine.cpp:131
 msgid "Right click"
 msgstr "Clic dret"
 
@@ -6020,11 +6023,12 @@ msgstr ""
 msgid "High speed mode on/off in Swampy Adventures"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:382 engines/trecision/metaengine.cpp:181
+#: engines/agos/metaengine.cpp:382 engines/lure/metaengine.cpp:295
+#: engines/trecision/metaengine.cpp:181
 msgid "Press \"Yes\" key"
 msgstr ""
 
-#: engines/agos/metaengine.cpp:387
+#: engines/agos/metaengine.cpp:387 engines/lure/metaengine.cpp:310
 msgid "Press \"No\" key"
 msgstr ""
 
@@ -6188,16 +6192,18 @@ msgid "Move down"
 msgstr "Mou avall"
 
 #. I18N: Move Actor to left direction
+#. I18N: Move actor left during fight
 #: engines/asylum/metaengine.cpp:183 engines/asylum/metaengine.cpp:212
 #: engines/cine/metaengine.cpp:379 engines/hdb/metaengine.cpp:225
-#: engines/nancy/input.cpp:207
+#: engines/lure/metaengine.cpp:218 engines/nancy/input.cpp:207
 msgid "Move left"
 msgstr "Mou a l'esquerra"
 
 #. I18N: Move Actor to right direction
+#. I18N: Move actor right during fight
 #: engines/asylum/metaengine.cpp:189 engines/asylum/metaengine.cpp:219
 #: engines/cine/metaengine.cpp:386 engines/hdb/metaengine.cpp:231
-#: engines/nancy/input.cpp:213
+#: engines/lure/metaengine.cpp:226 engines/nancy/input.cpp:213
 msgid "Move right"
 msgstr "Mou a la dreta"
 
@@ -6714,7 +6720,7 @@ msgid "Enable Text to Speech for Objects and Options"
 msgstr "Activa la conversió de text a veu per als objectes i les opcions"
 
 #: engines/cge2/metaengine.cpp:60 engines/dreamweb/metaengine.cpp:74
-#: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:50
+#: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:54
 #: engines/mads/metaengine.cpp:121 engines/sci/detection_options.h:224
 #: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:50
 #: engines/twine/metaengine.cpp:157
@@ -6761,8 +6767,8 @@ msgstr "Partida desada sense nom"
 msgid "Empty autosave"
 msgstr "El desament automàtic és buit"
 
-#: engines/cine/metaengine.cpp:258 engines/made/metaengine.cpp:102
-#: engines/trecision/metaengine.cpp:120
+#: engines/cine/metaengine.cpp:258 engines/lure/metaengine.cpp:168
+#: engines/made/metaengine.cpp:102 engines/trecision/metaengine.cpp:120
 #, fuzzy
 #| msgid "Default game keymap"
 msgid "Default keymappings"
@@ -7992,10 +7998,109 @@ msgstr ""
 msgid "This puzzle is not available in the trial version of the game"
 msgstr ""
 
-#: engines/lure/metaengine.cpp:49 engines/mads/metaengine.cpp:120
+#: engines/lure/metaengine.cpp:53 engines/mads/metaengine.cpp:120
 #: engines/sherlock/metaengine.cpp:112 engines/twine/metaengine.cpp:156
 msgid "TTS Narrator"
 msgstr ""
+
+#: engines/lure/metaengine.cpp:170
+#, fuzzy
+#| msgid "Quit panel keymapping"
+msgid "Fight sequence keymappings"
+msgstr "Assignació de tecles del panell de sortida"
+
+#: engines/lure/metaengine.cpp:171
+#, fuzzy
+#| msgid "Game keymapping"
+msgid "Index keymappings"
+msgstr "Assignació de tecles del joc"
+
+#: engines/lure/metaengine.cpp:172
+#, fuzzy
+#| msgid "Yes/No Keymapping"
+msgid "Yes/No keymappings"
+msgstr "Assignació de tecles Sí/No"
+
+#: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:162
+#: engines/saga/metaengine.cpp:441 engines/trecision/metaengine.cpp:169
+#: engines/vcruise/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:920
+msgid "Save game"
+msgstr "Desa la partida"
+
+#: engines/lure/metaengine.cpp:197
+#, fuzzy
+#| msgid "Restore game:"
+msgid "Restore game"
+msgstr "Recupera la partida:"
+
+#: engines/lure/metaengine.cpp:203
+#, fuzzy
+#| msgid "Restore game:"
+msgid "Restart game"
+msgstr "Recupera la partida:"
+
+#. I18N: ESC key
+#: engines/lure/metaengine.cpp:209 engines/mm/mm1/metaengine.cpp:41
+#: engines/mm/mm1/metaengine.cpp:47 engines/saga/metaengine.cpp:328
+#: engines/twine/metaengine.cpp:436 engines/wintermute/keymapper_tables.h:60
+msgid "Escape"
+msgstr "Tecla Escapa"
+
+#. I18N: Shift Cursor during fight to top left
+#: engines/lure/metaengine.cpp:233
+#, fuzzy
+#| msgid "Cursor Left"
+msgid "Shift Cursor - Top left"
+msgstr "Cursor Esquerra"
+
+#. I18N: Shift Cursor during fight to middle left
+#: engines/lure/metaengine.cpp:239
+msgid "Shift Cursor -  Middle left"
+msgstr ""
+
+#. I18N: Shift Cursor during fight to bottom left
+#: engines/lure/metaengine.cpp:245
+msgid "Shift Cursor - Bottom left"
+msgstr ""
+
+#. I18N: Shift Cursor during fight to top right
+#: engines/lure/metaengine.cpp:251
+#, fuzzy
+#| msgid "Cursor Right"
+msgid "Shift Cursor - Top right"
+msgstr "Cursor Dreta"
+
+#. I18N: Shift Cursor during fight to middle right
+#: engines/lure/metaengine.cpp:257
+#, fuzzy
+#| msgid "Cursor Right"
+msgid "Shift Cursor - Middle right"
+msgstr "Cursor Dreta"
+
+#. I18N: Shift Cursor during fight to bottom right
+#: engines/lure/metaengine.cpp:263
+#, fuzzy
+#| msgid "Cursor Right"
+msgid "Shift Cursor - Bottom right"
+msgstr "Cursor Dreta"
+
+#: engines/lure/metaengine.cpp:270
+#, fuzzy
+#| msgid "Go to next object"
+msgid "Go to next index"
+msgstr "Ves al següent objecte"
+
+#: engines/lure/metaengine.cpp:277
+#, fuzzy
+#| msgid "Go to previous object"
+msgid "Go to previous index"
+msgstr "Ves a l'objecte anterior"
+
+#: engines/lure/metaengine.cpp:284
+#, fuzzy
+#| msgid "Select shader"
+msgid "Select index"
+msgstr "Seleccioneu un shader"
 
 #: engines/made/detection_tables.h:445 engines/made/detection_tables.h:462
 msgid "The game is using unsupported engine"
@@ -8034,12 +8139,6 @@ msgstr "Cursor Esquerra"
 #| msgid "Cursor Right"
 msgid "Cursor right"
 msgstr "Cursor Dreta"
-
-#: engines/made/metaengine.cpp:162 engines/saga/metaengine.cpp:441
-#: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:151
-#: engines/wintermute/keymapper_tables.h:920
-msgid "Save game"
-msgstr "Desa la partida"
 
 #: engines/made/metaengine.cpp:168 engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:431
@@ -8100,13 +8199,6 @@ msgstr "Punts de salut com barres"
 #: engines/mm/metaengine.cpp:80
 msgid "Replace a colored gem with bars for hit points and spell points."
 msgstr ""
-
-#. I18N: ESC key
-#: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
-#: engines/saga/metaengine.cpp:328 engines/twine/metaengine.cpp:436
-#: engines/wintermute/keymapper_tables.h:60
-msgid "Escape"
-msgstr "Tecla Escapa"
 
 #: engines/mm/mm1/metaengine.cpp:54
 msgid "View Party Member 1"
