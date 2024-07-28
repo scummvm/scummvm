@@ -101,6 +101,7 @@ public:
 	void updateRoomObj(int16 objNum, int16 x, int16 width, int16 y, int16 height);
 	bool advanceFrame(int animIdx);
 	void runAnim47();
+	void loadRoom61AWalkableLocations();
 private:
 	bool load();
 	static Common::String stripSpaces(Common::String source);

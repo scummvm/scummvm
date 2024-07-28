@@ -168,6 +168,10 @@ bool Darkseed::Room::load() {
 
 	_locationSprites.load(Common::Path(Common::String::format("%s.nsp", filenameBase.c_str())));
 
+	if (_roomNumber == 61 && g_engine->_objectVar[22] > 2) {
+		loadRoom61AWalkableLocations();
+	}
+	// TODO add more logic from getroomstuff();
 	return true;
 }
 
@@ -628,7 +632,7 @@ void Darkseed::Room::getWalkTargetForObjectType_maybe(int objId) {
 					&& _roomObj[selectedObjIndex].yOffset < room1[j].y
 					&& room1[j].y < _roomObj[selectedObjIndex].yOffset + _roomObj[selectedObjIndex].height
 					) {
-					if (_roomNumber != 0x3d || room1[j].roomNumber == 5 || g_engine->trunkPushCounter > 2) {
+					if (_roomNumber != 61 || room1[j].roomNumber == 5 || g_engine->_objectVar[22] > 2) {
 						g_engine->useDoorTarget = true;
 					}
 					g_engine->targetRoomNumber = room1[j].roomNumber;
@@ -1271,5 +1275,19 @@ void Darkseed::Room::runAnim47() {
 		g_engine->isPlayingAnimation_maybe = false;
 		g_engine->_inventory.removeItem(19);
 		g_engine->_objectVar.setMoveObjectRoom(19, 100);
+	}
+}
+
+void Darkseed::Room::loadRoom61AWalkableLocations() {
+	Common::File file;
+	Common::Path romFilename = g_engine->getRoomFilePath(Common::Path("room61a.rom"));
+	if(!file.open(romFilename)) {
+		return;
+	}
+
+	file.seek(0x7f);
+
+	for (int i = 0; i < 16; i++) {
+		file.read(walkableLocationsMap[i].strip, 40);
 	}
 }

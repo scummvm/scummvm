@@ -1022,16 +1022,13 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 //				iVar9 = *(int *)((int)otherNspWidthTbl + _player->_frameIdx * 2);
 //				iVar8 = *(int *)((int)&otherNspHeightTbl + _player->_frameIdx * 2);
 				if (otherNspAnimationType_maybe == 0x12) {
-					if (trunkPushCounter == 0) {
+					if (_objectVar[22] == 0) {
 						sprite_y_scaling_threshold_maybe = 0xcb;
-					}
-					else if (trunkPushCounter == 1) {
+					} else if (_objectVar[22] == 1) {
 						sprite_y_scaling_threshold_maybe = 0xcb;
-					}
-					else if (trunkPushCounter == 2) {
+					} else if (_objectVar[22] == 2) {
 						sprite_y_scaling_threshold_maybe = 0xc4;
-					}
-					else {
+					} else {
 						sprite_y_scaling_threshold_maybe = 0xaf;
 					}
 				}
@@ -1539,7 +1536,7 @@ void DarkseedEngine::updateAnimation() {
 			_console->printTosText(_objectVar[22] + 662);
 			_objectVar[22] = _objectVar[22] + 1;
 			if (_objectVar[22] == 3) {
-//				getmovedtrunkbkgnd(); TODO
+				_room->loadRoom61AWalkableLocations();
 			}
 		}
 		break;
