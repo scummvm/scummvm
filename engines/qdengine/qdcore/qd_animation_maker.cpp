@@ -28,18 +28,18 @@
 
 namespace QDEngine {
 
-qdAnimationMaker::qdAnimationMaker() : default_frame_length_(0.05f),
-	callback_data_(0),
-	progress_callback_(0) {
+qdAnimationMaker::qdAnimationMaker() : _default_frame_length(0.05f),
+	_callback_data(0),
+	_progress_callback(0) {
 }
 
 qdAnimationMaker::~qdAnimationMaker() {
 }
 
 maker_progress_fnc qdAnimationMaker::set_callback(maker_progress_fnc p, void *data) {
-	maker_progress_fnc old_p = progress_callback_;
-	progress_callback_ = p;
-	callback_data_ = data;
+	maker_progress_fnc old_p = _progress_callback;
+	_progress_callback = p;
+	_callback_data = data;
 
 	return old_p;
 }
@@ -48,7 +48,7 @@ bool qdAnimationMaker::insert_frame(class qdAnimation *p, const char *fname, int
 	// IMPORTANT(pabdulin): auto_ptr usage was removed
 	qdAnimationFrame *fp = new qdAnimationFrame;
 	fp->set_file(fname);
-	fp->set_length(default_frame_length_);
+	fp->set_length(_default_frame_length);
 
 	if (!fp->load_resources())
 		return false;
@@ -105,9 +105,9 @@ bool qdAnimationMaker::insert_frames(class qdAnimation *p, const char *folder, i
 			if (insert_frame(p, it.c_str(), insert_pos, insert_after, true))
 				result = true;
 
-			if (progress_callback_) {
+			if (_progress_callback) {
 				int percents = i++ * 100 / flist.size();
-				(*progress_callback_)(percents, callback_data_);
+				(*_progress_callback)(percents, _callback_data);
 			}
 		}
 		flist.clear();
