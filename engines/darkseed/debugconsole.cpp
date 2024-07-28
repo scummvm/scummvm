@@ -32,6 +32,8 @@ DebugConsole::DebugConsole(TosText *tosText) : GUI::Debugger(), tosText(tosText)
 	registerCmd("enablePathfinderOverlay",   WRAP_METHOD(DebugConsole, Cmd_enablePathfinderOverlay));
 	registerCmd("info",   WRAP_METHOD(DebugConsole, Cmd_info));
 	registerCmd("gotoRoom",   WRAP_METHOD(DebugConsole, Cmd_gotoRoom));
+	registerCmd("invAdd",   WRAP_METHOD(DebugConsole, Cmd_invAdd));
+	registerCmd("invRemove",   WRAP_METHOD(DebugConsole, Cmd_invRemove));
 }
 
 DebugConsole::~DebugConsole() {
@@ -133,6 +135,30 @@ bool DebugConsole::Cmd_gotoRoom(int argc, const char **argv) {
 	}
 
 	g_engine->debugTeleportToRoom(roomNumber, entranceNumber);
+	return true;
+}
+
+bool DebugConsole::Cmd_invAdd(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: invAdd <objNum>\n");
+		return true;
+	}
+
+	uint8 objNum = (uint8)atoi(argv[1]);
+
+	g_engine->_inventory.addItem(objNum);
+	return true;
+}
+
+bool DebugConsole::Cmd_invRemove(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: invRemove <objNum>\n");
+		return true;
+	}
+
+	uint8 objNum = (uint8)atoi(argv[1]);
+
+	g_engine->_inventory.removeItem(objNum);
 	return true;
 }
 

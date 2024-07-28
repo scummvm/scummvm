@@ -73,7 +73,7 @@ void Darkseed::Inventory::update() {
 			_iconList[i+1] = _inventory[i];
 		}
 	} else {
-		for (int i = 0; i < MAX_ICONS; i++) {
+		for (int i = 0; i < MAX_ICONS - 1; i++) {
 			_iconList[i+1] = _inventory[_viewOffset + i];
 		}
 		if (_viewOffset + 8 < _inventoryLength) {
@@ -159,5 +159,7 @@ Common::Error Darkseed::Inventory::sync(Common::Serializer &s) {
 	for (int i = 0; i < _inventoryLength; i++) {
 		s.syncAsByte(_inventory[i]);
 	}
+	_viewOffset = 0;
+	update();
 	return Common::kNoError;
 }

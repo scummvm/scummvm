@@ -79,33 +79,15 @@ Common::Error DarkseedEngine::run() {
 	Img letterD1;
 	lettersAnm.getImg(7, letterD1);
 
-	// Set the engine's debugger console
-	setDebugger(new DebugConsole(_tosText));
-
-	// If a savegame was selected from the launcher, load it
-	int saveSlot = ConfMan.getInt("save_slot");
-	if (saveSlot != -1)
-		(void)loadGameState(saveSlot);
-
-	// Draw a series of boxes on screen as a sample
-//	for (int i = 0; i < 100; ++i)
-//		_screen->frameRect(Common::Rect(i, i, 320 - i, 200 - i), i);
-//	Pal::load("art/ship.pal");
-//	_screen->copyRectToSurface(left00Img.getPixels().data(), left00Img.getWidth(), left00Img.getX(), left00Img.getY(), left00Img.getWidth(), left00Img.getHeight());
-//	_screen->copyRectToSurface(left01Img.getPixels().data(), left01Img.getWidth(), left01Img.getX(), left01Img.getY(), left01Img.getWidth(), left01Img.getHeight());
-
 	Pal housePalette;
 	housePalette.load("art/house.pal");
 	TitleFont titleFont;
 	titleFont.displayString(0x44, 0xa0, "DEVELOPING NEW WAYS TO AMAZE");
-	Img house;
-//	house.load("art/bdoll0.img");
-//		_screen->copyRectToSurface(house.getPixels().data(), house.getWidth(), house.getX(), house.getY(), house.getWidth(), house.getHeight());
-//	_screen->copyRectToSurfaceWithKey(letterD.getPixels().data(), letterD.getWidth(), 24, 24, letterD.getWidth(), letterD.getHeight(), 0);
-//	_screen->copyRectToSurfaceWithKey(letterD1.getPixels().data(), letterD1.getWidth(), 24+1, 24, letterD1.getWidth(), letterD1.getHeight(), 0);
+
+	// Set the engine's debugger console
+	setDebugger(new DebugConsole(_tosText));
 
 	_frame.load("cframe.pic");
-	_frame.draw();
 
 	_baseSprites.load("cbase.nsp");
 
@@ -117,36 +99,29 @@ Common::Error DarkseedEngine::run() {
 	_player->_direction = 1;
 	_player->_frameIdx = 0;
 
-//	Pic room;
-//	room.load("bed1a.pic");
-//	_screen->copyRectToSurface(room.getPixels().data(), room.getWidth(), 0x45, 0x28, room.getWidth(), room.getHeight());
-
-//	Pal roomPal;
-//	roomPal.load("room0.pal");
-
-//	Nsp playerNsp;
-//	playerNsp.load("bedsleep.nsp"); //"cplayer.nsp");
-//	const Sprite &s = playerNsp.getSpriteAt(11);
-//
-//	_screen->copyRectToSurfaceWithKey(s.pixels.data(), s.width, 0x45 + 220, 0x28 + 40, s.width, s.height, 0xf);
-
 	_room = new Room(0);
 
-	if (prefsCutsceneId == 'I' || ((prefsCutsceneId == 'S' || prefsCutsceneId == 'B' || prefsCutsceneId == 'C') &&
-		  _room->_roomNumber == 0)) {
-		_player->loadAnimations("bedsleep.nsp");
-		_player->_position.x = 0x87;
-		_player->_position.y = 0x5b;
-		_player->_frameIdx = 0;
-		_player->_direction = 1;
-		setupOtherNspAnimation(0, 1);
-//		bVar1 = true;
-		if (_currentDay == 1) {
-			_console->printTosText(8);
-		} else if (_currentDay == 2) {
-			_console->printTosText(0xc);
-		} else if (_currentDay == 3) {
-			_console->printTosText(0xe);
+	// If a savegame was selected from the launcher, load it
+	int saveSlot = ConfMan.getInt("save_slot");
+	if (saveSlot != -1) {
+		(void)loadGameState(saveSlot);
+	} else {
+		if (prefsCutsceneId == 'I' || ((prefsCutsceneId == 'S' || prefsCutsceneId == 'B' || prefsCutsceneId == 'C') &&
+			  _room->_roomNumber == 0)) {
+			_player->loadAnimations("bedsleep.nsp");
+			_player->_position.x = 0x87;
+			_player->_position.y = 0x5b;
+			_player->_frameIdx = 0;
+			_player->_direction = 1;
+			setupOtherNspAnimation(0, 1);
+	//		bVar1 = true;
+			if (_currentDay == 1) {
+				_console->printTosText(8);
+			} else if (_currentDay == 2) {
+				_console->printTosText(0xc);
+			} else if (_currentDay == 3) {
+				_console->printTosText(0xe);
+			}
 		}
 	}
 
@@ -159,6 +134,9 @@ Common::Error DarkseedEngine::run() {
 }
 
 Common::Error DarkseedEngine::syncGame(Common::Serializer &s) {
+	if (_room == nullptr) {
+		_room = new Room(0);
+	}
 	if (_objectVar.sync(s).getCode() != Common::kNoError) {
 		error("Failed to sync objects");
 	}
@@ -674,6 +652,18 @@ void DarkseedEngine::handleInput() {
 							}
 						}
 					}
+					if (objIdx == -1) {
+						_console->printTosText(938);
+						if (_actionMode > 3) {
+							_actionMode = PointerAction;
+							_cursor.setCursorType((CursorType)_actionMode);
+						}
+					} else {
+						if (_actionMode > 3) {
+							_actionMode = PointerAction;
+							_cursor.setCursorType((CursorType)_actionMode);
+						}
+					}
 				}
 				if (!isPlayingAnimation_maybe) {
 					// walk to destination point
@@ -933,10 +923,8 @@ void DarkseedEngine::changeToRoom(int newRoomNumber) {
 				_player->_walkTarget = _player->_position;
 			}
 		}
-		if (_previousRoomNumber == 10 && newRoomNumber == 6) {
-//			if (DAT_2c85_81a0 == 0 && _currentDay == 1) {
-//				DAT_2c85_6750 = 2;
-//			}
+		if (_previousRoomNumber == 10 && newRoomNumber == 6 && _objectVar[47] == 0 && _currentDay == 1) {
+			_objectVar.setObjectRunningCode(47, 2);
 		}
 	}
 
@@ -961,6 +949,7 @@ void DarkseedEngine::debugTeleportToRoom(int newRoomNumber, int entranceNumber) 
 		_player->updatePlayerPositionAfterRoomChange();
 		_player->_walkTarget = _player->_position;
 	}
+	g_engine->updateDisplay();
 }
 
 void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
@@ -1075,12 +1064,9 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 //									240 - playerSpriteY_maybe,uVar1,uVar2,uVar3 & 0xff00);
 //					bVar6 = extraout_AH_01;
 				} else if (!_scaleSequence) {
-					if (otherNspAnimationType_maybe == 0x11) {
-//						addSpriteToDraw(playerSpriteX_maybe - (int)otherNspWidthTbl[0] / 2,playerSpriteY_maybe - iVar8,iVar9,iVa r8,
-//										*(undefined2 *)((int)otherNspSpritePtr + _player->_frameIdx * 4),
-//										*(undefined2 *)((int)&otherNspSpritePtr[0].Offset + _player->_frameIdx * 4),
-//										240 - playerSpriteY_maybe,iVar9,iVar8,_player_sprite_related_2c85_82f3);
-//						bVar6 = extraout_AH_02;
+					if (otherNspAnimationType_maybe == 17) { // open trunk
+						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
+						_sprites.addSpriteToDrawList(_player->_position.x - animSprite.width / 2, _player->_position.y - animSprite.height, &animSprite, 240 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
 					} else if (otherNspAnimationType_maybe == 5 || otherNspAnimationType_maybe == 1) {
 						int x = 0xa6;
 						int y = 0x69;
@@ -1520,6 +1506,21 @@ void DarkseedEngine::updateAnimation() {
 			_player->updateSprite();
 		}
 		break;
+	case 17: // open trunk with crowbar
+		advanceAnimationFrame(0);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]];
+		}
+		if (animIndexTbl[0] == 5 && animFrameChanged) {
+			playSound(31,5,-1);
+			_console->printTosText(666);
+			if (_objectVar[42] == 0) {
+				_objectVar[42] = 1;
+			} else {
+				_objectVar[42] = 3;
+			}
+		}
+		break;
 	case 18: // push trunk
 		advanceAnimationFrame(0);
 		if (!isAnimFinished_maybe) {
@@ -1835,6 +1836,17 @@ void DarkseedEngine::handleObjCollision(int objNum) {
 				break;
 			case LookAction:
 				lookCode(objNum);
+				break;
+			case 5:
+				useCrowBar(objNum);
+				break;
+				// TODO lots of extra switch cases here for inventory usages.
+			case 8:
+				useCodeMoney(objNum);
+				break;
+				// TODO lots of extra switch cases here for inventory usages.
+			case 14:
+				useCodeGloves(objNum);
 				break;
 			// TODO lots of extra switch cases here for inventory usages.
 			default:
@@ -2376,6 +2388,73 @@ void DarkseedEngine::useCode(int objNum) {
 	}
 }
 
+void DarkseedEngine::useCodeGloves(int16 targetObjNum) {
+	if (targetObjNum == 113) {
+		putobjunderpillow(14);
+		return;
+	}
+
+	int16 tosIdx = _objectVar.getUseGlovesTosIdx(targetObjNum);
+	if (tosIdx != 0) {
+		if (tosIdx < 979) {
+			_console->printTosText(tosIdx);
+		} else {
+			genericresponse(14,targetObjNum, tosIdx);
+		}
+	}
+	if (targetObjNum == 57) {
+		_player->loadAnimations("instrshp.nsp");
+		setupOtherNspAnimation(0, 43);
+	} else if (targetObjNum == 117) {
+		_player->loadAnimations("obslev.nsp");
+		setupOtherNspAnimation(0, 45);
+	}
+}
+
+void DarkseedEngine::useCodeMoney(int16 targetObjNum) {
+	if ((targetObjNum != 138) && (targetObjNum != 152)) {
+		int16 tosIdx = _objectVar.getUseMoneyTosIdx(targetObjNum);
+		if (tosIdx == 0) {
+			if (targetObjNum == 7) {
+				_console->printTosText(961);
+			} else if (targetObjNum == 113) {
+				putobjunderpillow(8);
+			}
+		} else if (tosIdx < 979) {
+			_console->printTosText(tosIdx);
+		} else {
+			genericresponse(8, targetObjNum, tosIdx);
+		}
+		return;
+	}
+	if (_objectVar[138] == 0) {
+		_player->loadAnimations("givclerk.nsp");
+		setupOtherNspAnimation(6, 35);
+	} else {
+		_console->addTextLine("Choose an item before giving clerk more money.");
+	}
+}
+
+void DarkseedEngine::useCrowBar(int16 targetObjNum) {
+	int16 tosIdx = _objectVar.getUseCrowbarTosIdx(targetObjNum);
+	if (tosIdx != 0) {
+		if (tosIdx < 979) {
+			_console->printTosText(tosIdx);
+		} else {
+			genericresponse(5,targetObjNum, tosIdx);
+		}
+	}
+	if (targetObjNum == 42) {
+		if ((_objectVar[42] == 0) || (_objectVar[42] == 4)) {
+			_player->loadAnimations("crowbar.nsp");
+			setupOtherNspAnimation(0, 17);
+		} else {
+			_console->printTosText(962);
+		}
+	}
+}
+
+
 void DarkseedEngine::lookCode(int objNum) {
 	if (objNum == 71 && _objectVar[71] == 2) {
 		_console->addTextLine("You see the car keys in the ignition.");
@@ -2612,6 +2691,7 @@ void DarkseedEngine::lookCode(int objNum) {
 		if (eyeTosIdx < 979 && eyeTosIdx != 0)  {
 			_console->printTosText(eyeTosIdx);
 		}
+		// TODO
 //		else if (978 < *(int *)((int)_eyedescriptions + objNum * 2)) {
 //			genericresponse(3,objNum,*(undefined2 *)((int)_eyedescriptions + objNum * 2));
 //		}
@@ -2697,6 +2777,13 @@ void DarkseedEngine::nextFrame(int nspAminIdx) {
 }
 
 void DarkseedEngine::stuffPlayer() {
+	// TODO
+}
+void DarkseedEngine::putobjunderpillow(int objNum) {
+	// TODO
+}
+
+void DarkseedEngine::genericresponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx) {
 	// TODO
 }
 
