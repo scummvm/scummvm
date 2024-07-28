@@ -186,7 +186,7 @@ void qdGameDispatcher::quant() {
 	}
 	if (check_flag(LOAD_GAME_FLAG)) {
 		debugC(3, kDebugQuant, "qdGameDispatcher::quant() Loading game...");
-		load_game(autosave_slot_);
+		g_engine->loadGameState(autosave_slot_);
 		drop_flag(LOAD_GAME_FLAG);
 	}
 
@@ -2466,7 +2466,7 @@ bool qdGameDispatcher::keyboard_handler(int vkey, bool event) {
 			resume();
 			return true;
 		case VK_F6:
-			load_game(0);
+			g_engine->loadGameState(autosave_slot_);
 			return true;
 		case VK_PAUSE:
 			pause();
@@ -2478,9 +2478,7 @@ bool qdGameDispatcher::keyboard_handler(int vkey, bool event) {
 	return false;
 }
 
-bool qdGameDispatcher::load_save(const char *fname) {
-	debugC(3, kDebugLog, "[%d] Save loading %s", g_system->getMillis(), transCyrillic(fname));
-
+bool qdGameDispatcher::load_save(Common::SeekableReadStream *fh) {
 	if (sndDispatcher * p = sndDispatcher::get_dispatcher()) {
 		p->stop_sounds();
 		p->pause();
@@ -2489,9 +2487,6 @@ bool qdGameDispatcher::load_save(const char *fname) {
 	pause();
 
 	free_resources();
-
-	Common::InSaveFile *fh;
-	fh = g_engine->_savefileMan->openForLoading(Common::Path(fname).toString());
 
 	int32 save_version;
 	save_version = fh->readSint32LE();
@@ -2590,6 +2585,8 @@ bool qdGameDispatcher::load_save(const char *fname) {
 
 	interface_dispatcher_.update_personage_buttons();
 	resume();
+
+	scene_saved_ = true;
 
 	return true;
 }
@@ -2864,19 +2861,6 @@ bool qdGameDispatcher::init() {
 	cur_music_track_ = NULL;
 
 	return true;
-}
-
-bool qdGameDispatcher::load_game(int slot_id) {
-	Common::String saveName(get_save_name(slot_id));
-
-	if (app_io::saveFileExists(saveName)) {
-		if (!load_save(saveName.c_str()))
-			error("Save game format error");
-	}
-
-	scene_saved_ = true;
-
-	return false;
 }
 
 Common::String qdGameDispatcher::get_save_name(int slot_id, SaveFileType file_type) {

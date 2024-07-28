@@ -111,7 +111,10 @@ Common::Error QDEngineEngine::saveGameStream(Common::WriteStream *stream, bool i
 }
 
 Common::Error QDEngineEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	if (qdGameDispatcher::get_dispatcher()->load_save(stream))
 		return Common::kNoError;
+
+	return Common::kReadingFailed;
 }
 
 } // namespace QDEngine

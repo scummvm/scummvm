@@ -355,11 +355,10 @@ public:
 	bool save_script(const char *fname) const;
 
 	//! Загрузка данных из сэйва.
-	bool load_save(const char *fname);
+	bool load_save(Common::SeekableReadStream *fh);
 	//! Запись данных в сэйв.
 	bool save_save(Common::WriteStream *stream) const;
 
-	bool load_game(int slot_id);
 	bool save_game(int slot_id) const;
 
 	//! Инициализация данных, вызывается один раз сразу после загрузки скрипта.
