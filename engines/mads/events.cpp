@@ -149,6 +149,11 @@ void EventsManager::pollEvents() {
 		case Common::EVENT_RETURN_TO_LAUNCHER:
 			return;
 
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			_pendingActions.push(event.customType);
+			return;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			return;
 		case Common::EVENT_KEYDOWN:
 			// Check for debugger
 			_pendingKeys.push(event.kbd);
@@ -156,10 +161,10 @@ void EventsManager::pollEvents() {
 		case Common::EVENT_KEYUP:
 			return;
 		case Common::EVENT_WHEELUP:
-			_pendingKeys.push(Common::KeyState(Common::KEYCODE_PAGEUP));
+			_pendingActions.push(kActionScrollUp);
 			return;
 		case Common::EVENT_WHEELDOWN:
-			_pendingKeys.push(Common::KeyState(Common::KEYCODE_PAGEDOWN));
+			_pendingActions.push(kActionScrollDown);
 			return;
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
@@ -258,6 +263,7 @@ void EventsManager::initVars() {
 
 void EventsManager::clearEvents() {
 	_pendingKeys.clear();
+	_pendingActions.clear();
 }
 
 

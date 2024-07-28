@@ -199,34 +199,33 @@ bool MainMenu::onEvent(Common::Event &event) {
 		return false;
 
 	// Handle keypresses - these can be done at any time, even when the menu items are being drawn
-	if (event.type == Common::EVENT_KEYDOWN) {
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_ESCAPE:
-		case Common::KEYCODE_F6:
+	if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+		switch (event.customType) {
+		case kActionEscape:
 			handleAction(EXIT);
 			break;
 
-		case Common::KEYCODE_F1:
+		case kActionStartGame:
 			handleAction(START_GAME);
 			break;
 
-		case Common::KEYCODE_F2:
+		case kActionResumeGame:
 			handleAction(RESUME_GAME);
 			break;
 
-		case Common::KEYCODE_F3:
+		case kActionShowIntro:
 			handleAction(SHOW_INTRO);
 			break;
 
-		case Common::KEYCODE_F4:
+		case kActionCredits:
 			handleAction(CREDITS);
 			break;
 
-		case Common::KEYCODE_F5:
+		case kActionQuotes:
 			handleAction(QUOTES);
 			break;
 
-		case Common::KEYCODE_s: {
+		case kActionRestartAnimation: {
 			// Goodness knows why, but Rex has a key to restart the menuitem animations
 			// Restart the animation
 			_menuItemIndex = -1;
@@ -239,12 +238,15 @@ bool MainMenu::onEvent(Common::Event &event) {
 		}
 
 		default:
-			// Any other key skips the menu animation
 			_skipFlag = true;
 			return false;
 		}
 
 		return true;
+	} else if (event.type == Common::EVENT_KEYDOWN) {
+		// Any other key skips the menu animation
+		_skipFlag = true;
+		return false;
 	}
 
 	switch (event.type) {
@@ -406,7 +408,8 @@ void AdvertView::show() {
 }
 
 bool AdvertView::onEvent(Common::Event &event) {
-	if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN) {
+	if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START || event.type == Common::EVENT_KEYDOWN
+			|| event.type == Common::EVENT_JOYBUTTON_DOWN || event.type == Common::EVENT_LBUTTONDOWN) {
 		_breakFlag = true;
 		return true;
 	}

@@ -436,27 +436,28 @@ void Game::handleKeypress(const Common::KeyState &kbd) {
 			}
 		}
 	}
+}
 
+void Game::handleAction(const Common::CustomEventType &action) {
 	Scene &scene = _vm->_game->_scene;
-	switch (kbd.keycode) {
-	case Common::KEYCODE_F1:
+	switch (action) {
+	case kActionGameMenu:
 		_vm->_dialogs->_pendingDialog = DIALOG_GAME_MENU;
 		break;
-	case Common::KEYCODE_F5:
+	case kActionSave:
 		_vm->_dialogs->_pendingDialog = DIALOG_SAVE;
 		break;
-	case Common::KEYCODE_F7:
+	case kActionRestore:
 		_vm->_dialogs->_pendingDialog = DIALOG_RESTORE;
 		break;
-	case Common::KEYCODE_PAGEUP:
+	case kActionScrollUp:
 		scene._userInterface._scrollbarStrokeType = SCROLLBAR_UP;
 		scene._userInterface.changeScrollBar();
 		break;
-	case Common::KEYCODE_PAGEDOWN:
+	case kActionScrollDown:
 		scene._userInterface._scrollbarStrokeType = SCROLLBAR_DOWN;
 		scene._userInterface.changeScrollBar();
 		break;
-
 
 	default:
 		break;

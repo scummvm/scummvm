@@ -25,6 +25,10 @@
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/memstream.h"
@@ -173,6 +177,8 @@ public:
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool MADSMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -259,6 +265,121 @@ SaveStateDescriptor MADSMetaEngine::querySaveMetaInfos(const char *target, int s
 	}
 
 	return SaveStateDescriptor();
+}
+
+Common::KeymapArray MADSMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace MADS;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "mads-default", _("Default keymappings"));
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
+	Keymap *menuKeyMap = new Keymap(Keymap::kKeymapTypeGame, "menu-shortcuts", _("Start menu keymappings"));
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Left click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Right click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("ESCAPE", _("Escape"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	{
+		act = new Action("GAMEMENU", _("Open game menu"));
+		act->setCustomEngineActionEvent(kActionGameMenu);
+		act->addDefaultInputMapping("F1");
+		act->addDefaultInputMapping("JOY_Y");
+		gameKeyMap->addAction(act);
+
+		act = new Action("SAVE", _("Save game"));
+		act->setCustomEngineActionEvent(kActionSave);
+		act->addDefaultInputMapping("F5");
+		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+		gameKeyMap->addAction(act);
+
+		act = new Action("RESTORE", _("Restore game"));
+		act->setCustomEngineActionEvent(kActionRestore);
+		act->addDefaultInputMapping("F7");
+		act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+		gameKeyMap->addAction(act);
+
+		act = new Action("SCROLLUP", _("Scroll bar up"));
+		act->setCustomEngineActionEvent(kActionScrollUp);
+		act->addDefaultInputMapping("PAGEUP");
+		act->addDefaultInputMapping("JOY_UP");
+		gameKeyMap->addAction(act);
+
+		act = new Action("SCROLLDN", _("Scroll bar down"));
+		act->setCustomEngineActionEvent(kActionScrollDown);
+		act->addDefaultInputMapping("PAGEDOWN");
+		act->addDefaultInputMapping("JOY_DOWN");
+		gameKeyMap->addAction(act);
+	}
+
+	{
+		act = new Action("START", _("Start game"));
+		act->setCustomEngineActionEvent(kActionStartGame);
+		act->addDefaultInputMapping("F1");
+		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+		menuKeyMap->addAction(act);
+
+		act = new Action("RESUME", _("Resume game"));
+		act->setCustomEngineActionEvent(kActionResumeGame);
+		act->addDefaultInputMapping("F2");
+		act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+		menuKeyMap->addAction(act);
+
+		act = new Action("INTRO", _("Show intro"));
+		act->setCustomEngineActionEvent(kActionShowIntro);
+		act->addDefaultInputMapping("F3");
+		act->addDefaultInputMapping("JOY_LEFT");
+		menuKeyMap->addAction(act);
+
+		act = new Action("CREDITS", _("Show credits"));
+		act->setCustomEngineActionEvent(kActionCredits);
+		act->addDefaultInputMapping("F4");
+		act->addDefaultInputMapping("JOY_UP");
+		menuKeyMap->addAction(act);
+
+		act = new Action("QUOTES", _("Show quotes"));
+		act->setCustomEngineActionEvent(kActionQuotes);
+		act->addDefaultInputMapping("F5");
+		act->addDefaultInputMapping("JOY_RIGHT");
+		menuKeyMap->addAction(act);
+
+		act = new Action("EXIT", _("Exit game"));
+		act->setCustomEngineActionEvent(kActionEscape);
+		act->addDefaultInputMapping("F6");
+		act->addDefaultInputMapping("ESCAPE");
+		act->addDefaultInputMapping("JOY_X");
+		menuKeyMap->addAction(act);
+
+		act = new Action("RESTARTANIM", _("Restart animation"));
+		act->setCustomEngineActionEvent(kActionRestartAnimation);
+		act->addDefaultInputMapping("s");
+		act->addDefaultInputMapping("JOY_Y");
+		menuKeyMap->addAction(act);
+	}
+
+	KeymapArray keymaps(3);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeyMap;
+	keymaps[2] = menuKeyMap;
+
+	menuKeyMap->setEnabled(false);
+
+	return keymaps;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MADS)

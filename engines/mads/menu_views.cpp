@@ -70,7 +70,8 @@ void MenuView::display() {
 }
 
 bool MenuView::onEvent(Common::Event &event) {
-	if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN) {
+	if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START || event.type == Common::EVENT_KEYDOWN
+			|| event.type == Common::EVENT_JOYBUTTON_DOWN || event.type == Common::EVENT_LBUTTONDOWN) {
 		_breakFlag = true;
 		_vm->_dialogs->_pendingDialog = DIALOG_MAIN_MENU;
 		return true;
@@ -525,7 +526,7 @@ void AnimationView::display() {
 
 bool AnimationView::onEvent(Common::Event &event) {
 	// Wait for the Escape key or a mouse press
-	if (((event.type == Common::EVENT_KEYDOWN) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) ||
+	if (((event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) && (event.customType == kActionEscape)) ||
 			(event.type == Common::EVENT_LBUTTONUP)) {
 		scriptDone();
 		return true;
