@@ -44,7 +44,7 @@ public:
 	}
 
 	int size() const {
-		return animations_.size();
+		return _animations.size();
 	}
 	void resize(int sz);
 
@@ -94,10 +94,10 @@ public:
 	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 
 	float start_angle() const {
-		return start_angle_;
+		return _start_angle;
 	}
 	void set_start_angle(float v) {
-		start_angle_ = v;
+		_start_angle = v;
 	}
 
 private:
@@ -106,12 +106,12 @@ private:
 	/**
 	Если нулевой - первое направление вправо.
 	*/
-	float start_angle_;
+	float _start_angle;
 
-	qdAnimationInfoVector animations_;
-	qdAnimationInfoVector static_animations_;
-	qdAnimationInfoVector start_animations_;
-	qdAnimationInfoVector stop_animations_;
+	qdAnimationInfoVector _animations;
+	qdAnimationInfoVector _static_animations;
+	qdAnimationInfoVector _start_animations;
+	qdAnimationInfoVector _stop_animations;
 
 	/// анимация поворота, полный оборот начиная с направления вправо
 	qdAnimationInfo turn_animation_;

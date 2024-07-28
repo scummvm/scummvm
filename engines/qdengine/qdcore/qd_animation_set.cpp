@@ -29,32 +29,32 @@
 namespace QDEngine {
 
 qdAnimationSet::qdAnimationSet() {
-	start_angle_ = 0.0f;
+	_start_angle = 0.0f;
 }
 
 qdAnimationSet::qdAnimationSet(const qdAnimationSet &set) : qdNamedObject(set),
-	start_angle_(set.start_angle_),
-	animations_(set.animations_),
+	_start_angle(set._start_angle),
+	_animations(set._animations),
 	walk_sound_frequency_(set.walk_sound_frequency_),
-	static_animations_(set.static_animations_),
-	start_animations_(set.start_animations_),
-	stop_animations_(set.stop_animations_),
+	_static_animations(set._static_animations),
+	_start_animations(set._start_animations),
+	_stop_animations(set._stop_animations),
 	turn_animation_(set.turn_animation_) {
 	turn_animation_.set_owner(this);
 
 	for (int i = 0; i < size(); i ++) {
-		animations_[i].set_owner(this);
-		static_animations_[i].set_owner(this);
-		start_animations_[i].set_owner(this);
-		stop_animations_[i].set_owner(this);
+		_animations[i].set_owner(this);
+		_static_animations[i].set_owner(this);
+		_static_animations[i].set_owner(this);
+		_stop_animations[i].set_owner(this);
 	}
 }
 
 qdAnimationSet::~qdAnimationSet() {
-	animations_.clear();
-	static_animations_.clear();
-	start_animations_.clear();
-	stop_animations_.clear();
+	_animations.clear();
+	_static_animations.clear();
+	_start_animations.clear();
+	_stop_animations.clear();
 }
 
 qdAnimationSet &qdAnimationSet::operator = (const qdAnimationSet &set) {
@@ -62,43 +62,43 @@ qdAnimationSet &qdAnimationSet::operator = (const qdAnimationSet &set) {
 
 	*static_cast<qdNamedObject *>(this) = set;
 
-	start_angle_ = set.start_angle_;
+	_start_angle = set._start_angle;
 
-	animations_ = set.animations_;
-	static_animations_ = set.static_animations_;
-	start_animations_ = set.start_animations_;
-	stop_animations_ = set.stop_animations_;
+	_animations = set._animations;
+	_static_animations = set._static_animations;
+	_start_animations = set._stop_animations;
+	_stop_animations = set._stop_animations;
 	walk_sound_frequency_ = set.walk_sound_frequency_;
 
 	turn_animation_ = set.turn_animation_;
 	turn_animation_.set_owner(this);
 
 	for (int i = 0; i < size(); i ++) {
-		animations_[i].set_owner(this);
-		static_animations_[i].set_owner(this);
-		start_animations_[i].set_owner(this);
-		stop_animations_[i].set_owner(this);
+		_animations[i].set_owner(this);
+		_static_animations[i].set_owner(this);
+		_start_animations[i].set_owner(this);
+		_stop_animations[i].set_owner(this);
 	}
 
 	return *this;
 }
 
 void qdAnimationSet::resize(int sz) {
-	animations_.resize(sz);
-	static_animations_.resize(sz);
-	start_animations_.resize(sz);
-	stop_animations_.resize(sz);
+	_animations.resize(sz);
+	_static_animations.resize(sz);
+	_start_animations.resize(sz);
+	_stop_animations.resize(sz);
 	walk_sound_frequency_.resize(sz, 1);
 
 	for (int i = 0; i < size(); i ++) {
-		animations_[i].set_owner(this);
-		static_animations_[i].set_owner(this);
+		_animations[i].set_owner(this);
+		_static_animations[i].set_owner(this);
 	}
 }
 
 qdAnimationInfo *qdAnimationSet::get_animation_info(int index) {
 	if (index >= 0 && index < size())
-		return &animations_[index];
+		return &_animations[index];
 
 	return 0;
 }
@@ -123,11 +123,11 @@ float qdAnimationSet::get_index_angle(int index, int dir_count) {
 }
 
 float qdAnimationSet::get_index_angle(int direction_index) const {
-	return get_index_angle(direction_index, size()) + start_angle_;
+	return get_index_angle(direction_index, size()) + _start_angle;
 }
 
 int qdAnimationSet::get_angle_index(float direction_angle) const {
-	return get_angle_index(direction_angle - start_angle_, size());
+	return get_angle_index(direction_angle - _start_angle, size());
 }
 
 qdAnimationInfo *qdAnimationSet::get_animation_info(float direction_angle) {
@@ -137,7 +137,7 @@ qdAnimationInfo *qdAnimationSet::get_animation_info(float direction_angle) {
 
 qdAnimationInfo *qdAnimationSet::get_static_animation_info(int index) {
 	if (index >= 0 && index < size())
-		return &static_animations_[index];
+		return &_static_animations[index];
 
 	return 0;
 }
@@ -149,7 +149,7 @@ qdAnimationInfo *qdAnimationSet::get_static_animation_info(float direction_angle
 
 qdAnimationInfo *qdAnimationSet::get_start_animation_info(int index) {
 	if (index >= 0 && index < size())
-		return &start_animations_[index];
+		return &_start_animations[index];
 
 	return 0;
 }
@@ -161,7 +161,7 @@ qdAnimationInfo *qdAnimationSet::get_start_animation_info(float direction_angle)
 
 qdAnimationInfo *qdAnimationSet::get_stop_animation_info(int index) {
 	if (index >= 0 && index < size())
-		return &stop_animations_[index];
+		return &_stop_animations[index];
 
 	return 0;
 }
@@ -190,13 +190,13 @@ void qdAnimationSet::load_script(const xml::tag *p) {
 			break;
 		case QDSCR_ANIMATION_INFO:
 			if (index < size())
-				animations_[index].load_script(&*it);
+				_animations[index].load_script(&*it);
 			else if (index < size() * 2)
-				static_animations_[index - size()].load_script(&*it);
+				_static_animations[index - size()].load_script(&*it);
 			else if (index < size() * 3)
-				start_animations_[index - size() * 2].load_script(&*it);
+				_start_animations[index - size() * 2].load_script(&*it);
 			else
-				stop_animations_[index - size() * 3].load_script(&*it);
+				_stop_animations[index - size() * 3].load_script(&*it);
 
 			index ++;
 			break;
@@ -204,7 +204,7 @@ void qdAnimationSet::load_script(const xml::tag *p) {
 			turn_animation_.set_animation_name(it->data());
 			break;
 		case QDSCR_ANIMATION_SET_START_ANGLE:
-			xml::tag_buffer(*it) > start_angle_;
+			xml::tag_buffer(*it) > _start_angle;
 			break;
 		case QDSCR_OBJECT_STATE_WALK_SOUND_FREQUENCY: {
 			xml::tag_buffer buf(*it);
@@ -229,25 +229,25 @@ bool qdAnimationSet::save_script(Common::WriteStream &fh, int indent) const {
 
 	fh.writeString(Common::String::format(" size=\"%d\"", size()));
 
-	if (fabs(start_angle_) > FLT_EPS) {
-		fh.writeString(Common::String::format(" start_angle=\"%f\"", start_angle_));
+	if (fabs(_start_angle) > FLT_EPS) {
+		fh.writeString(Common::String::format(" start_angle=\"%f\"", _start_angle));
 	}
 
 	fh.writeString(">\r\n");
 
-	for (auto &it : animations_) {
+	for (auto &it : _animations) {
 		it.save_script(fh, indent + 1);
 	}
 
-	for (auto &it : static_animations_) {
+	for (auto &it : _static_animations) {
 		it.save_script(fh, indent + 1);
 	}
 
-	for (auto &it : start_animations_) {
+	for (auto &it : _start_animations) {
 		it.save_script(fh, indent + 1);
 	}
 
-	for (auto &it : stop_animations_) {
+	for (auto &it : _stop_animations) {
 		it.save_script(fh, indent + 1);
 	}
 
@@ -274,26 +274,26 @@ bool qdAnimationSet::save_script(Common::WriteStream &fh, int indent) const {
 
 bool qdAnimationSet::load_animations(const qdNamedObject *res_owner) {
 	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-		for (auto &it : animations_) {
+		for (auto &it : _animations) {
 			if (qdAnimation *p = it.animation()) {
 				dp->load_resource(p, res_owner);
 			}
 		}
 
-		for (auto &it : static_animations_) {
+		for (auto &it : _static_animations) {
 			if (qdAnimation *p = it.animation()) {
 				dp->load_resource(p, res_owner);
 			}
 		}
 
 
-		for (auto &it : start_animations_) {
+		for (auto &it : _start_animations) {
 			if (qdAnimation *p = it.animation()) {
 				dp->load_resource(p, res_owner);
 			}
 		}
 
-		for (auto &it : stop_animations_) {
+		for (auto &it : _stop_animations) {
 			if (qdAnimation *p = it.animation()) {
 				dp->load_resource(p, res_owner);
 			}
@@ -310,25 +310,25 @@ bool qdAnimationSet::load_animations(const qdNamedObject *res_owner) {
 
 bool qdAnimationSet::free_animations(const qdNamedObject *res_owner) {
 	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-		for (auto &it : animations_) {
+		for (auto &it : _animations) {
 			if (qdAnimation *p = it.animation()) {
 				dp->release_resource(p, res_owner);
 			}
 		}
 
-		for (auto &it : static_animations_) {
+		for (auto &it : _static_animations) {
 			if (qdAnimation *p = it.animation()) {
 				dp->release_resource(p, res_owner);
 			}
 		}
 
-		for (auto &it : start_animations_) {
+		for (auto &it : _start_animations) {
 			if (qdAnimation *p = it.animation()) {
 				dp->release_resource(p, res_owner);
 			}
 		}
 
-		for (auto &it : stop_animations_) {
+		for (auto &it : _stop_animations) {
 			if (qdAnimation *p = it.animation()) {
 				dp->release_resource(p, res_owner);
 			}
@@ -346,22 +346,22 @@ bool qdAnimationSet::free_animations(const qdNamedObject *res_owner) {
 bool qdAnimationSet::scale_animations(float coeff_x, float coeff_y) {
 	bool res = true;
 
-	for (auto &it : animations_) {
+	for (auto &it : _animations) {
 		qdAnimation *p = it.animation();
 		if (p)
 			if (!p->scale(coeff_x, coeff_y)) res = false;
 	}
-	for (auto &it : static_animations_) {
+	for (auto &it : _static_animations) {
 		qdAnimation *p = it.animation();
 		if (p)
 			if (!p->scale(coeff_x, coeff_y)) res = false;
 	}
-	for (auto &it : start_animations_) {
+	for (auto &it : _start_animations) {
 		qdAnimation *p = it.animation();
 		if (p)
 			if (!p->scale(coeff_x, coeff_y)) res = false;
 	}
-	for (auto &it : stop_animations_) {
+	for (auto &it : _stop_animations) {
 		qdAnimation *p = it.animation();
 		if (p)
 			if (!p->scale(coeff_x, coeff_y)) res = false;
@@ -375,19 +375,19 @@ bool qdAnimationSet::scale_animations(float coeff_x, float coeff_y) {
 
 bool qdAnimationSet::register_resources(const qdNamedObject *res_owner) {
 	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-		for (auto &it : animations_) {
+		for (auto &it : _animations) {
 			if (qdAnimation *p = it.animation())
 				dp->register_resource(p, res_owner);
 		}
-		for (auto &it : static_animations_) {
+		for (auto &it : _static_animations) {
 			if (qdAnimation *p = it.animation())
 				dp->register_resource(p, res_owner);
 		}
-		for (auto &it : start_animations_) {
+		for (auto &it : _start_animations) {
 			if (qdAnimation *p = it.animation())
 				dp->register_resource(p, res_owner);
 		}
-		for (auto &it : stop_animations_) {
+		for (auto &it : _stop_animations) {
 			if (qdAnimation *p = it.animation())
 				dp->register_resource(p, res_owner);
 		}
@@ -401,19 +401,19 @@ bool qdAnimationSet::register_resources(const qdNamedObject *res_owner) {
 
 bool qdAnimationSet::unregister_resources(const qdNamedObject *res_owner) {
 	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-		for (auto &it : animations_) {
+		for (auto &it : _animations) {
 			if (qdAnimation *p = it.animation())
 				dp->unregister_resource(p, res_owner);
 		}
-		for (auto &it : static_animations_) {
+		for (auto &it : _static_animations) {
 			if (qdAnimation *p = it.animation())
 				dp->unregister_resource(p, res_owner);
 		}
-		for (auto &it : start_animations_) {
+		for (auto &it : _start_animations) {
 			if (qdAnimation *p = it.animation())
 				dp->unregister_resource(p, res_owner);
 		}
-		for (auto &it : stop_animations_) {
+		for (auto &it : _stop_animations) {
 			if (qdAnimation *p = it.animation())
 				dp->unregister_resource(p, res_owner);
 		}
