@@ -989,6 +989,7 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 				}
 			} else {
 				if (otherNspAnimationType_maybe == 37) {
+					error("anim: 37");
 //					uVar1 = (uint)BYTE_ARRAY_2c85_41e7[1];
 //					uVar7 = *(undefined2 *)((int)CPlayerSpriteWidthTbl + uVar1 * 2);
 //					uVar4 = *(undefined2 *)((int)CPlayerSpriteHeightTbl + uVar1 * 2);
@@ -1087,17 +1088,23 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
 						_sprites.addSpriteToDrawList(x, y, &animSprite, 240 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
 					} else if (otherNspAnimationType_maybe == 43 || otherNspAnimationType_maybe == 44) {
-
+						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
+						_sprites.addSpriteToDrawList(303, 105, &animSprite, 240 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
 					} else if (otherNspAnimationType_maybe == 62) {
-
-					} else if (otherNspAnimationType_maybe == 45 || otherNspAnimationType_maybe == 46) {
-
+						// TODO
+						error("anim display 62");
+					} else if (otherNspAnimationType_maybe == 45 || otherNspAnimationType_maybe == 46) { // pull lever
+						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
+						_sprites.addSpriteToDrawList(446, 124, &animSprite, 240 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
 					} else if (otherNspAnimationType_maybe == 36) {
-
+						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
+						_sprites.addSpriteToDrawList(339, 78, &animSprite, 240 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
 					} else if (otherNspAnimationType_maybe == 59) {
-
+						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
+						_sprites.addSpriteToDrawList(433, 91, &animSprite, 240 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
 					} else if (otherNspAnimationType_maybe == 37) {
-
+						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
+						_sprites.addSpriteToDrawList(428, 78, &animSprite, 240 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
 					} else if (otherNspAnimationType_maybe == 10 || otherNspAnimationType_maybe == 11) {
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
 						_sprites.addSpriteToDrawList(118, 62, &animSprite, 240 - _player->_position.y, animSprite.width, animSprite.height, false);
@@ -1105,13 +1112,15 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
 						_sprites.addSpriteToDrawList(407, 73, &animSprite, 240 - _player->_position.y, animSprite.width, animSprite.height, false);
 					} else if (otherNspAnimationType_maybe == 20) {
-
+						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
+						_sprites.addSpriteToDrawList((_player->_position.x - animSprite.width / 2) - 4, _player->_position.y - animSprite.height, &animSprite, 240 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
 					} else if (otherNspAnimationType_maybe < 30 || otherNspAnimationType_maybe > 34) {
 						if (otherNspAnimationType_maybe == 40) {
-
+							error("anim 40 display"); // TODO
 						} else if (otherNspAnimationType_maybe < 48 || otherNspAnimationType_maybe > 52) {
 							if (otherNspAnimationType_maybe == 35) {
-
+								const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
+								_sprites.addSpriteToDrawList(_player->_position.x - 10, _player->_position.y - animSprite.height, &animSprite, 240 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
 							} else if (otherNspAnimationType_maybe >= 53 && otherNspAnimationType_maybe <= 56) {
 								const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
 								_sprites.addSpriteToDrawList(_player->_position.x, _player->_position.y, &animSprite, 240 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
@@ -1149,13 +1158,13 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 						scaledSpriteHeight,
 						player_sprite_related_2c85_82f3);
 				} else if (otherNspAnimationType_maybe == 22) {
-					// TODO
+					error("anim: 22"); // TODO
 				} else if (otherNspAnimationType_maybe == 4 || otherNspAnimationType_maybe == 21) {
-					// TODO
+					error("anim: 4 || 21"); // TODO
 				} else if (otherNspAnimationType_maybe == 39) {
-					// TODO
+					error("anim: 39"); // TODO
 				} else if (otherNspAnimationType_maybe == 47) {
-					// TODO
+					error("anim: 47"); // TODO
 				} else {
 					_sprites.addSpriteToDrawList(
 						_player->_position.x - scaledSpriteWidth / 2,
