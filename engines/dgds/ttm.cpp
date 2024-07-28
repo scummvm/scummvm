@@ -283,6 +283,36 @@ static void _copyRectToScreen(const Graphics::ManagedSurface &src, const Common:
 	g_system->unlockScreen();
 }
 
+static void _dissolveToScreen(const Graphics::ManagedSurface &src, const Common::Rect &r) {
+	if (r.isEmpty())
+		return;
+
+	// This is basically copied from SCI - it seems to be the same algo in DGDS?
+	uint16 mask = 0x40, stepNr = 0;
+	Common::Rect pixelRect;
+
+	Graphics::Surface *surf = g_system->lockScreen();
+
+	do {
+		mask = (mask & 1) ? (mask >> 1) ^ 0xB400 : mask >> 1;
+		if (mask >= SCREEN_WIDTH * SCREEN_HEIGHT)
+			continue;
+		pixelRect.left = mask % SCREEN_WIDTH; pixelRect.right = pixelRect.left + 1;
+		pixelRect.top = mask / SCREEN_WIDTH;  pixelRect.bottom = pixelRect.top + 1;
+		pixelRect.clip(r);
+		if (!pixelRect.isEmpty())
+			surf->copyRectToSurface(src.rawSurface(), pixelRect.left, pixelRect.top, pixelRect);
+		if ((stepNr & 0x3FF) == 0) {
+			g_system->unlockScreen();
+			g_system->updateScreen();
+			surf = g_system->lockScreen();
+		}
+		stepNr++;
+	} while (mask != 0x40);
+
+	g_system->unlockScreen();
+}
+
 
 void TTMInterpreter::doWipeOp(uint16 code, TTMEnviro &env, TTMSeq &seq, const Common::Rect &r) {
 	//
@@ -301,8 +331,7 @@ void TTMInterpreter::doWipeOp(uint16 code, TTMEnviro &env, TTMSeq &seq, const Co
 	switch(code) {
 	case 0xa010:
 		warning("TODO: Implement TTM 0xa010 wipe (dissolve) op");
-		_copyRectToScreen(_vm->_compositionBuffer, r);
-		g_system->updateScreen();
+		_dissolveToScreen(_vm->_compositionBuffer, r);
 		break;
 
 	case 0xa020:
