@@ -1003,7 +1003,7 @@ bool VQADecoder::VQAVideoTrack::readCPL0(Common::SeekableReadStream *s, uint32 s
 	}
 
 	// Add a new palette ONLY if the previous is not identical.
-	// This accomodates the VQA reel for Lands of Lore 2.
+	// This accommodates the VQA reel for Lands of Lore 2.
 	if (_currentPaletteId == -1) {
 		_cpalPointerSize = size;
 		s->read(_cpalPointer, roundup(size));
