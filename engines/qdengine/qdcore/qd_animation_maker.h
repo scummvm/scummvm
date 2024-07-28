@@ -38,14 +38,14 @@ public:
 	maker_progress_fnc set_callback(maker_progress_fnc p, void *data = 0);
 
 	void set_default_frame_length(float len) {
-		default_frame_length_ = len;
+		_default_frame_length = len;
 	}
 
 private:
-	float default_frame_length_;    // длительность кадра по умолчанию (в секундах)
+	float _default_frame_length;    // длительность кадра по умолчанию (в секундах)
 
-	void *callback_data_;
-	maker_progress_fnc progress_callback_;
+	void *_callback_data;
+	maker_progress_fnc _progress_callback;
 };
 
 } // namespace QDEngine
