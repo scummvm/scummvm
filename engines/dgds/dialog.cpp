@@ -91,6 +91,8 @@ const DgdsFont *Dialog::getDlgTextFont() const {
 		fontType = FontManager::k8x8Font;
 	else if (_fontSize == 3)
 		fontType = FontManager::k4x5Font;
+	else if (_fontSize == 4 && DgdsEngine::getInstance()->getGameId() == GID_WILLY)
+		fontType = FontManager::kGameFont;
 	else if (_fontSize == 5 && DgdsEngine::getInstance()->getGameId() == GID_HOC)
 		fontType = FontManager::kChinaFont;
 	return fontman->getFont(fontType);
@@ -171,7 +173,7 @@ void Dialog::drawType2BackgroundBeamish(Graphics::ManagedSurface *dst, const Com
 		// TODO: Maybe should measure the font?
 		_state->_loc.y += 11;
 		_state->_loc.height -= 11;
-		RequestData::drawHeader(dst, _rect.x, _rect.y, _rect.width, 2, title, _fontColor, false, 0, 0);
+		RequestData::drawHeader(dst, _rect.x, _rect.y + 5, _rect.width, 2, title, _fontColor, false, 0, 0);
 	}
 }
 

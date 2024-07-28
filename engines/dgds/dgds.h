@@ -145,6 +145,7 @@ private:
 	const char *_rstFileName;
 
 	bool _isDemo;
+	bool _flipMode;
 
 public:
 	DgdsEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -219,6 +220,7 @@ public:
 	ShellGame *getShellGame() { return _shellGame; }
 
 	static DgdsEngine *getInstance() { return static_cast<DgdsEngine *>(g_engine); }
+	void setFlipMode(bool mode) { _flipMode = mode; }
 
 private:
 	Common::Error syncGame(Common::Serializer &s);

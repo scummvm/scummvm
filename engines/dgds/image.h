@@ -58,6 +58,7 @@ public:
 	void loadBitmap(const Common::String &filename);
 	int frameCount(const Common::String &filename);
 	void drawBitmap(uint frameno, int x, int y, const Common::Rect &drawWin, Graphics::ManagedSurface &dst, ImageFlipMode flip = kImageFlipNone, int dstWidth = 0, int dstHeight = 0) const;
+	void drawScrollBitmap(int16 x, int16 y, int16 width, int16 height, int16 scrollX, int16 scrollY, const Common::Rect &drawWin, Graphics::ManagedSurface &dst) const;
 
 	Common::SharedPtr<Graphics::ManagedSurface> getSurface(uint frameno) const;
 
@@ -82,6 +83,11 @@ private:
 	Decompressor *_decompressor;
 
 	Common::String _filename; // the file this was loaded from - only used for debugging
+
+	// Used if the image is a scrolling image.
+	int16 _matrixX;
+	int16 _matrixY;
+	Common::Array<uint16> _tileMatrix;
 };
 
 } // End of namespace Dgds

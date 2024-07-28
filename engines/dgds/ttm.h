@@ -38,7 +38,8 @@ public:
 class TTMEnviro : public ScriptParserData {
 public:
 	TTMEnviro() : _totalFrames(330), _enviro(0), _creditScrollMeasure(0),
-			_creditScrollYOffset(0), ScriptParserData() {
+			_creditScrollYOffset(0), _xOff(0), _yOff(0), _xScroll(0), _yScroll(0),
+			ScriptParserData() {
 		ARRAYCLEAR(_scriptPals);
 	}
 
@@ -54,6 +55,13 @@ public:
 	Common::Array<FontManager::FontType> _fonts;
 	int16 _creditScrollMeasure;
 	int16 _creditScrollYOffset;
+	// The below are all globals in the original, but never get access from
+	// multiple environments so cleaner to keep here?
+	int16 _xOff;
+	int16 _yOff;
+	Common::SharedPtr<Image> _scrollShape;
+	int16 _xScroll;
+	int16 _yScroll;
 };
 
 enum TTMRunType {

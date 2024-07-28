@@ -158,7 +158,7 @@ static const char *ttmOpName(uint16 op) {
 	case 0x2000: return "SET DRAW COLORS";
 	case 0x2010: return "SET FRAME";
 	case 0x2020: return "SET RANDOM DELAY";
-	case 0x2030: return "SET SCROLL 2030??";
+	case 0x2030: return "SET SCROLL OFFSET";
 	case 0x2300: return "PAL SET BLOCK SWAP 0";
 	case 0x2310: return "PAL SET BLOCK SWAP 1";
 	case 0x2320: return "PAL SET BLOCK SWAP 2";
@@ -215,6 +215,7 @@ static const char *ttmOpName(uint16 op) {
 	case 0xf040: return "LOAD FONT";
 	case 0xf050: return "LOAD PAL";
 	case 0xf060: return "LOAD SONG";
+	case 0xf080: return "LOAD SCROLL";
 	case 0xf100: return "SET STRING 0";
 	case 0xf110: return "SET STRING 1";
 	case 0xf120: return "SET STRING 2";
@@ -542,6 +543,12 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 			break;
 		warning("TODO: 0x0400 Reset palette");
 		break;
+	case 0x0500: // FLIP MODE ON
+		DgdsEngine::getInstance()->setFlipMode(true);
+		break;
+	case 0x0510: // FLIP MODE OFF
+		DgdsEngine::getInstance()->setFlipMode(false);
+		break;
 	case 0x0ff0: // REFRESH:	void
 		break;
 	case 0x1020: // SET DELAY:	    i:int   [0..n]
@@ -604,6 +611,29 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		_vm->adsInterpreter()->setScriptDelay((int)(sleep * MS_PER_FRAME));
 		break;
 	}
+	case 0x2030: { // SET SCROLL mode,val: int
+		if (seq._executed) // this is a one-shot op.
+			break;
+
+		// mode chooses x/y and +/- for scroll offset.
+		switch(ivals[0]) {
+		case 0:
+			env._yScroll -= ivals[1];
+			break;
+		case 1:
+			env._yScroll += ivals[1];
+			break;
+		case 2:
+			env._xScroll -= ivals[1];
+			break;
+		case 3:
+			env._xScroll += ivals[1];
+			break;
+		default:
+			error("TTM 0x2030 Invalid scroll mode %d (should be 0-3)", ivals[0]);
+		}
+		break;
+	}
 	case 0x2300:
 	case 0x2310:
 	case 0x2320: {
@@ -627,9 +657,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		int64 prevPos = env.scr->pos();
 		env.scr->seek(env._frameOffsets[target]);
 
-		// TODO: Set some other render-related globals here
-		if (ivals[0] || ivals[1])
-			warning("TODO: TTM 0x3000 GOSUB use offsets (%d, %d)", ivals[0], ivals[1]);
+		env._xOff = ivals[0];
+		env._yOff = ivals[1];
 
 		run(env, seq);
 		env.scr->seek(prevPos);
@@ -644,6 +673,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		if (seq._executed) // this is a one-shot op.
 			break;
 		warning("TODO: TTM 0x3100 SCROLL %d %d %d", ivals[0], ivals[1], ivals[2]);
+		break;
 	}
 	case 0x4000: // SET CLIP WINDOW x,y,x2,y2:int	[0..320,0..200]
 		// NOTE: params are xmax/ymax, NOT w/h
@@ -810,7 +840,8 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 
 		Common::SharedPtr<Image> img = env._scriptShapes[bmpNo];
 		if (img)
-			img->drawBitmap(frameno, ivals[0], ivals[1], seq._drawWin, _vm->_compositionBuffer, flipMode, dstWidth, dstHeight);
+			img->drawBitmap(frameno, env._xOff + ivals[0], env._yOff + ivals[1],
+					seq._drawWin, _vm->_compositionBuffer, flipMode, dstWidth, dstHeight);
 		else
 			warning("Trying to draw image %d in env %d which is not loaded", bmpNo, env._enviro);
 		break;
@@ -827,6 +858,15 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 		// Getput should overwrite the contents
 		_vm->_compositionBuffer.blitFrom(*(env._getPuts[i]._surf.get()),
 						Common::Point(r.left, r.top));
+		break;
+	}
+	case 0xa700: { // DRAW scrollshape? x,y,w,h??
+		if (!env._scrollShape) {
+			warning("Trying to draw scroll with no scrollshape loaded");
+		} else {
+			env._scrollShape->drawScrollBitmap(ivals[0], ivals[1], ivals[2], ivals[3],
+						env._xScroll, env._yScroll, seq._drawWin, _vm->_compositionBuffer);
+		}
 		break;
 	}
 	case 0xaf00: { // FLOOD FILL x,y
@@ -950,6 +990,15 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 			_vm->_soundPlayer->playMusic(seq._currentSongId);
 		}
 		break;
+	case 0xf080: { // LOAD SCROLL: filename:str
+		if (seq._executed) // this is a one-shot op
+			break;
+		env._scrollShape.reset(new Image(_vm->getResourceManager(), _vm->getDecompressor()));
+		env._scrollShape->loadBitmap(sval);
+		env._xScroll = 0;
+		env._yScroll = 0;
+		break;
+	}
 	case 0xf100: // 0xf1n0 - SET STRING n: s:str - set the nth string in the table
 	case 0xf110:
 	case 0xf120:

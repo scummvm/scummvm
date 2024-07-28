@@ -37,7 +37,7 @@
 
 namespace Dgds {
 
-Image::Image(ResourceManager *resourceMan, Decompressor *decompressor) : _resourceMan(resourceMan), _decompressor(decompressor) {
+Image::Image(ResourceManager *resourceMan, Decompressor *decompressor) : _resourceMan(resourceMan), _decompressor(decompressor), _matrixX(0), _matrixY(0) {
 }
 
 Image::~Image() {
@@ -143,7 +143,7 @@ void Image::loadBitmap(const Common::String &filename) {
 		if (chunk.isSection(ID_INF)) {
 			Common::Array<Common::Point> tileSizes;
 			uint16 tileCount = stream->readUint16LE();
-			if (tileCount > 256)
+			if (tileCount > 1024)
 				error("Image::loadBitmap: Unexpectedly large number of tiles in image (%d)", tileCount);
 			_frames.resize(tileCount);
 			tileSizes.resize(tileCount);
@@ -159,20 +159,17 @@ void Image::loadBitmap(const Common::String &filename) {
 			}
 		} else if (chunk.isSection(ID_MTX)) {
 			// Scroll offset
-			Common::Array<uint16> mtxVals;
-			uint16 mw, mh;
-			mw = stream->readUint16LE();
-			mh = stream->readUint16LE();
-			uint32 mcount = uint32(mw) * mh;
-			mtxVals.resize(mcount);
-			debug("		%ux%u: mtx vals", mw, mh);
+			_matrixX = stream->readUint16LE();
+			_matrixY = stream->readUint16LE();
+			uint32 mcount = (uint32)_matrixX * _matrixY;
+			_tileMatrix.resize(mcount);
+			debug("		%u x %u: mtx vals", _matrixX, _matrixY);
 
 			for (uint32 k = 0; k < mcount; k++) {
 				uint16 tile;
 				tile = stream->readUint16LE();
-				mtxVals[k] = tile;
+				_tileMatrix[k] = tile;
 			}
-			// TODO: Use mtxVals ?
 		} else if (chunk.isSection(ID_BIN)) {
 			for (auto & frame : _frames) {
 				loadBitmap4(frame.get(), 0, stream, false);
@@ -282,6 +279,47 @@ void Image::drawBitmap(uint frameno, int x, int y, const Common::Rect &drawWin, 
 		dst += destSurf.pitch;
 	}
 }
+
+void Image::drawScrollBitmap(int16 x, int16 y, int16 width, int16 height, int16 scrollX, int16 scrollY, const Common::Rect &drawWin, Graphics::ManagedSurface &dstSurf) const {
+	if (_frames.empty())
+		error("Trying to draw scroll for empty image.");
+	if (_tileMatrix.empty())
+		error("Trying to draw scroll with non-tiled image.");
+	int tileW = _frames[0]->w;
+	int tileH = _frames[0]->h;
+	byte *dst = (byte *)dstSurf.getBasePtr(0, 0);
+
+	for (int yTile = 0; yTile < height / tileH; yTile++) {
+		int tileDstY = y + yTile * tileH;
+		int tileRowIndex = (yTile + scrollY) % _matrixY;
+		if (tileRowIndex < 0)
+			tileRowIndex += _matrixY;
+		for (int xTile = 0; xTile < width / tileW; xTile++) {
+			int tileDstX = x + xTile * tileW;
+			Common::Rect tileDest(Common::Point(tileDstX, tileDstY), tileW, tileH);
+			tileDest.clip(drawWin);
+			if (tileDest.isEmpty())
+				continue;
+
+			int tileColIndex = (xTile + scrollX) % _matrixX;
+			if (tileColIndex < 0)
+				tileColIndex += _matrixX;
+
+			uint16 tileNo = _tileMatrix[tileRowIndex + tileColIndex * _matrixY];
+			Common::SharedPtr<Graphics::ManagedSurface> tile = _frames[tileNo];
+			const byte *src = (const byte *)tile->getBasePtr(0, 0);
+
+			for (int dstY = tileDstY; dstY < tileDstY + tileH; dstY++) {
+				for (int dstX = tileDstX; dstX < tileDstX + tileW; dstX++) {
+					if (!tileDest.contains(dstX, dstY))
+						continue;
+					dst[dstY * dstSurf.pitch + dstX] = src[(dstY - tileDstY) * tile->pitch + (dstX - tileDstX)];
+				}
+			}
+		}
+	}
+}
+
 
 void Image::loadBitmap4(Graphics::ManagedSurface *surf, uint32 toffset, Common::SeekableReadStream *stream, bool highByte) {
 	uint32 tw = surf->w;
