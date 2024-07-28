@@ -26,6 +26,7 @@
 #include "illusions/bbdou/menusystem_bbdou.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
+#include "illusions/console.h"
 #include "illusions/cursor.h"
 #include "illusions/dictionary.h"
 #include "illusions/fileresourcereader.h"
@@ -153,6 +154,8 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	_resSys->addResourceLoader(0x00110000, new BackgroundResourceLoader(this));
 	_resSys->addResourceLoader(0x00120000, new FontResourceLoader(this));
 	_resSys->addResourceLoader(0x00170000, new SpecialCodeLoader(this));
+
+	setDebugger(new Console(this));
 
 	_screen = new Screen16Bit(this, 640, 480);
 	_screenPalette = new NullScreenPalette();

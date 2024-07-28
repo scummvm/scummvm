@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	bbdou/menusystem_bbdou.o \
 	bbdou/scriptopcodes_bbdou.o \
 	camera.o \
+	console.o \
 	cursor.o \
 	dictionary.o \
 	duckman/duckman_credits.o \

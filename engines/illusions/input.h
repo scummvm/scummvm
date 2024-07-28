@@ -91,6 +91,7 @@ public:
 	InputEvent& setInputEvent(uint evt, uint bitMask);
 	bool isCursorMovedByKeyboard() const { return _cursorMovedByKeyboard; }
 	bool isCheatModeActive();
+	void setCheatModeActive(bool active);
 protected:
 	uint _cheatCodeIndex;
 	uint _buttonStates, _newButtons, _buttonsDown;
