@@ -404,7 +404,7 @@ void Subtitles::loadOuttakeSubsText(const Common::String &outtakesName, int fram
 	      || fileIdx == 2
 	      || (fileIdx == 3 && (uint32)frame < 1200))) {
 		// "WSTLGO" or "BRLOGO" or "INTRO" affected
-		// NOTE fileIdx indexes the SUBTITLES_FILENAME_PREFIXES array
+		// NOTE fileIdx is indexing the SUBTITLES_FILENAME_PREFIXES array
 		return;
 	}
 
