@@ -44,17 +44,17 @@ public:
 	}
 
 	float speed() const {
-		return speed_;
+		return _speed;
 	}
 	void set_speed(float sp) {
-		speed_ = sp;
+		_speed = sp;
 	}
 
 	float animation_speed() const {
-		return animation_speed_;
+		return _animation_speed;
 	}
 	void set_animation_speed(float sp) {
-		animation_speed_ = sp;
+		_animation_speed = sp;
 	}
 
 	qdAnimation *animation() const;
@@ -74,8 +74,8 @@ public:
 
 private:
 
-	float speed_;
-	float animation_speed_;
+	float _speed;
+	float _animation_speed;
 };
 
 typedef std::vector<qdAnimationInfo> qdAnimationInfoVector;
