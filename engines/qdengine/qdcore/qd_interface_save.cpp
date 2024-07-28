@@ -127,7 +127,7 @@ bool qdInterfaceSave::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev
 				return true;
 			} else {
 				debugC(1, kDebugSave, "qdInterfaceSave::mouse_handler(): load_game() save_ID_ = %d", save_ID_);
-				dp->load_game(save_ID_);
+				g_engine->loadGameState(save_ID_);
 				if (qdInterfaceDispatcher *ip = qdInterfaceDispatcher::get_dispatcher())
 					ip->handle_event(qdInterfaceEvent::EVENT_RESUME_GAME, NULL);
 
