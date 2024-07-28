@@ -36,12 +36,12 @@
 
 namespace QDEngine {
 
-qdAnimationInfo::qdAnimationInfo() : speed_(0.0f), animation_speed_(1.0f) {
+qdAnimationInfo::qdAnimationInfo() : _speed(0.0f), _animation_speed(1.0f) {
 }
 
 qdAnimationInfo::qdAnimationInfo(const qdAnimationInfo &p) : qdNamedObject(p),
-	speed_(p.speed_),
-	animation_speed_(p.animation_speed_) {
+	_speed(p._speed),
+	_animation_speed(p._animation_speed) {
 }
 
 qdAnimationInfo::~qdAnimationInfo() {
@@ -53,10 +53,10 @@ void qdAnimationInfo::load_script(const xml::tag *p) {
 	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		switch (it->ID()) {
 		case QDSCR_SPEED:
-			xml::tag_buffer(*it) > speed_;
+			xml::tag_buffer(*it) > _speed;
 			break;
 		case QDSCR_ANIMATION_SPEED:
-			xml::tag_buffer(*it) > animation_speed_;
+			xml::tag_buffer(*it) > _animation_speed;
 			break;
 		case QDSCR_ANIMATION:
 			set_animation_name(it->data());
@@ -76,11 +76,11 @@ bool qdAnimationInfo::save_script(Common::WriteStream &fh, int indent) const {
 	if (flags())
 		res += Common::String::format(" flags=\"%d\"", flags());
 
-	if (speed_ > 0.01f)
-		res += Common::String::format(" speed=\"%f\"", speed_);
+	if (_speed > 0.01f)
+		res += Common::String::format(" speed=\"%f\"", _speed);
 
-	if (animation_speed_ != 1.0f)
-		res += Common::String::format(" animation_speed=\"%f\"", animation_speed_);
+	if (_animation_speed != 1.0f)
+		res += Common::String::format(" animation_speed=\"%f\"", _animation_speed);
 
 	if (animation_name())
 		res += Common::String::format(" animation=\"%s\"", qdscr_XML_string(animation_name()));
@@ -102,8 +102,8 @@ qdAnimationInfo &qdAnimationInfo::operator = (const qdAnimationInfo &p) {
 
 	*static_cast<qdNamedObject *>(this) = p;
 
-	speed_ = p.speed_;
-	animation_speed_ = p.animation_speed_;
+	_speed = p._speed;
+	_animation_speed = p._animation_speed;
 
 	return *this;
 }
