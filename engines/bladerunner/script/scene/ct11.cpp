@@ -86,7 +86,7 @@ void SceneScriptCT11::SceneLoaded() {
 			Scene_2D_Region_Add(1, 412, 258, 552, 358);
 #else
 			// expand region 1 a bit and add two more
-			// as auxilliary in order to better cover the car area
+			// as auxiliary in order to better cover the car area
 			Scene_2D_Region_Add(1, 365, 258, 552, 358);
 			Scene_2D_Region_Add(3, 267, 330, 365, 377);
 			Scene_2D_Region_Add(4, 365, 358, 454, 377);
