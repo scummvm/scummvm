@@ -195,6 +195,7 @@ public:
 	void playSound(int16 unk, uint8 unk1, int16 unk2);
 	void nextFrame(int nspAminIdx);
 	void stuffPlayer();
+	void genericresponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx);
 private:
 	void updateAnimation();
 	void advanceAnimationFrame(int nspAminIdx);
@@ -207,6 +208,9 @@ private:
 	void changeToRoom(int newRoomNumber);
 
 	void useCode(int objNum);
+	void useCodeGloves(int16 targetObjNum);
+	void useCodeMoney(int16 targetObjNum);
+	void useCrowBar(int16 targetObjNum);
 	void getPackageObj(int packageType);
 	void wongame();
 	void getPackage(int state);
@@ -214,6 +218,7 @@ private:
 	void keeperanim();
 	void sargoanim();
 	void gancanim();
+	void putobjunderpillow(int objNum);
 };
 
 extern DarkseedEngine *g_engine;

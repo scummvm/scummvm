@@ -58,6 +58,9 @@ public:
 	void setMoveObjectX(uint8 objIdx, int16 xPos);
 	int getEyeDescriptionTosIdx(uint16 objNum);
 	int getHandDescriptionTosIdx(uint16 objNum);
+	int16 getUseGlovesTosIdx(uint16 objNum);
+	int16 getUseMoneyTosIdx(uint16 objNum);
+	int16 getUseCrowbarTosIdx(uint16 objNum);
 
 	int getMoveObjectRoom(uint16 idx);
 	void setMoveObjectRoom(uint16 idx, uint8 value);

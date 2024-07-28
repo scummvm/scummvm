@@ -158,6 +158,12 @@ bool Darkseed::Room::load() {
 		return false;
 	}
 
+	for (auto &roomObj : _roomObj) {
+		if (roomObj.objNum < 42 && g_engine->_objectVar.getMoveObjectRoom(roomObj.objNum) != 255) {
+			removeObjectFromRoom(roomObj.objNum);
+		}
+	}
+
 	_pal.load(g_engine->getPictureFilePath(Common::Path(Common::String::format("%s.pal", filenameBase.c_str()))));
 
 	_locationSprites.load(Common::Path(Common::String::format("%s.nsp", filenameBase.c_str())));
@@ -767,9 +773,9 @@ void Darkseed::Room::runRoomObjects() {
 				calculateScaledSpriteDimensions(sprite.width, sprite.height, roomObj.yOffset + sprite.height);
 			}
 			if (((roomObj.spriteNum != 7) && (roomObj.spriteNum != 36)) && ((roomObj.spriteNum != 37 && (((roomObj.spriteNum != 38 && (roomObj.spriteNum != 39)) && (roomObj.spriteNum != 40))))) ) {
-				xPos = (sprite.width / 2 + xPos) - g_engine->scaledSpriteHeight / 2;
+				xPos = (sprite.width / 2 + xPos) - g_engine->scaledSpriteWidth / 2;
 			}
-			if (roomObj.spriteNum == 14) {
+			if (roomObj.spriteNum == 14) { // gloves
 				if (g_engine->_objectVar[86] != 0) {
 					g_engine->_sprites.addSpriteToDrawList(
 						xPos,
