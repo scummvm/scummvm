@@ -82,21 +82,21 @@ public:
 	void set_cell_size(int sz);
 
 	float personage_speed() const {
-		return personage_speed_;
+		return _personage_speed;
 	}
 	void set_personage_speed(float sp) {
-		personage_speed_ = sp;
+		_personage_speed = sp;
 	}
 
 	float personage_height() const {
-		return personage_height_;
+		return _personage_height;
 	}
 	void set_personage_height(float h) {
-		personage_height_ = h;
+		_personage_height = h;
 	}
 
 	int direction() const {
-		return direction_;
+		return _direction;
 	}
 	bool set_direction(int dir);
 
@@ -111,20 +111,20 @@ public:
 	void redraw();
 
 	const qdAnimation *cur_animation() const {
-		return animation_;
+		return _animation;
 	}
 
 private:
-	int start_time_;
+	int _start_time;
 
-	int direction_;
+	int _direction;
 	//float speed_;
 
-	float personage_speed_;
-	float personage_height_;
+	float _personage_speed;
+	float _personage_height;
 
-	qdAnimation *animation_;
-	qdAnimationSet *animation_set_;
+	qdAnimation *_animation;
+	qdAnimationSet *_animation_set;
 
 	qdCamera *camera_;
 	int camera_angle_;
