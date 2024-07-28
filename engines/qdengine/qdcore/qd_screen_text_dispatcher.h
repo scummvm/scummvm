@@ -56,7 +56,7 @@ public:
 	void pre_redraw() const;
 	void post_redraw();
 
-	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
+	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 
 private:
 

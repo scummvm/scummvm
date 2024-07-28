@@ -27,7 +27,7 @@
 #include "qdengine/qdcore/qd_grid_zone_state.h"
 
 namespace Common {
-class SeekableWriteStream;
+class WriteStream;
 }
 
 namespace QDEngine {
@@ -71,12 +71,12 @@ public:
 	//! Загрузка данных из скрипта.
 	bool load_script(const xml::tag *p);
 	//! Запись данных в скрипт.
-	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
+	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 
 	//! Загрузка данных из сэйва.
 	bool load_data(Common::SeekableReadStream &fh, int saveVersion);
 	//! Запись данных в сэйв.
-	bool save_data(Common::SeekableWriteStream &fh) const;
+	bool save_data(Common::WriteStream &fh) const;
 
 	bool state() const {
 		return state_;

@@ -43,7 +43,7 @@ bool qdGameObjectStatic::load_script(const xml::tag *p) {
 	return load_script_body(p);
 }
 
-bool qdGameObjectStatic::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdGameObjectStatic::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
@@ -73,7 +73,7 @@ bool qdGameObjectStatic::load_script_body(const xml::tag *p) {
 	return true;
 }
 
-bool qdGameObjectStatic::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
+bool qdGameObjectStatic::save_script_body(Common::WriteStream &fh, int indent) const {
 	qdGameObject::save_script_body(fh, indent);
 
 	for (int i = 0; i <= indent; i++) {

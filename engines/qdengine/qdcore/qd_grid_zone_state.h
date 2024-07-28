@@ -43,7 +43,7 @@ public:
 	//! Загрузка данных из скрипта.
 	bool load_script(const xml::tag *p);
 	//! Запись данных в скрипт.
-	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
+	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 
 	//! Включить или выключить зону.
 	bool state() const {
@@ -64,4 +64,3 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_GRID_ZONE_STATE_H
-

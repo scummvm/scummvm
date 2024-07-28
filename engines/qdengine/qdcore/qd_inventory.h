@@ -27,7 +27,7 @@
 #include "qdengine/qdcore/qd_inventory_cell.h"
 
 namespace  Common {
-class SeekableWriteStream;
+class WriteStream;
 }
 
 namespace QDEngine {
@@ -148,7 +148,7 @@ public:
 	}
 
 	bool load_script(const xml::tag *p);
-	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
+	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 
 	bool load_resources();
 	bool free_resources();
@@ -156,7 +156,7 @@ public:
 	//! Загрузка данных из сэйва.
 	bool load_data(Common::SeekableReadStream &fh, int save_version);
 	//! Запись данных в сэйв.
-	bool save_data(Common::SeekableWriteStream &fh) const;
+	bool save_data(Common::WriteStream &fh) const;
 
 	bool init(const qdInventoryCellTypeVector &tp);
 

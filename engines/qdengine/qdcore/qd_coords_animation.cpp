@@ -273,7 +273,7 @@ void qdCoordsAnimation::load_script(const xml::tag *p) {
 	}
 }
 
-bool qdCoordsAnimation::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdCoordsAnimation::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
@@ -502,7 +502,7 @@ bool qdCoordsAnimation::load_data(Common::SeekableReadStream &fh, int save_versi
 	return true;
 }
 
-bool qdCoordsAnimation::save_data(Common::SeekableWriteStream &fh) const {
+bool qdCoordsAnimation::save_data(Common::WriteStream &fh) const {
 	debugC(4, kDebugSave, "    qdCoordsAnimation::save_data(): before %ld", fh.pos());
 	if (!qdNamedObject::save_data(fh)) return false;
 

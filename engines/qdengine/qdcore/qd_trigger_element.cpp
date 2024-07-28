@@ -98,7 +98,7 @@ bool qdTriggerLink::load_script(const xml::tag *p) {
 	return true;
 }
 
-bool qdTriggerLink::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdTriggerLink::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
@@ -460,7 +460,7 @@ bool qdTriggerElement::load_links_script(const xml::tag *p, bool load_parents) {
 	return true;
 }
 
-bool qdTriggerElement::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdTriggerElement::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
@@ -889,7 +889,7 @@ bool qdTriggerElement::load_data(Common::SeekableReadStream &fh, int saveVersion
 	return true;
 }
 
-bool qdTriggerElement::save_data(Common::SeekableWriteStream &fh) const {
+bool qdTriggerElement::save_data(Common::WriteStream &fh) const {
 	debugC(5, kDebugSave, "      qdTriggerElement::save_data before: %ld", fh.pos());
 	/*  switch(status_){
 	    case TRIGGER_EL_INACTIVE:

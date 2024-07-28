@@ -134,7 +134,7 @@ bool qdInterfaceSlider::init(bool is_game_active) {
 	return true;
 }
 
-bool qdInterfaceSlider::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
+bool qdInterfaceSlider::save_script_body(Common::WriteStream &fh, int indent) const {
 	if (!background_.save_script(fh, indent)) {
 		return false;
 	}

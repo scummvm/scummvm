@@ -36,6 +36,7 @@
 #include "qdengine/console.h"
 #include "qdengine/qd_precomp.h"
 #include "qdengine/parser/qdscr_parser.h"
+#include "qdengine/qdcore/qd_game_dispatcher.h"
 
 namespace QDEngine {
 
@@ -98,15 +99,19 @@ Common::Error QDEngineEngine::run() {
 	return Common::kNoError;
 }
 
-Common::Error QDEngineEngine::syncGame(Common::Serializer &s) {
-	// The Serializer has methods isLoading() and isSaving()
-	// if you need to specific steps; for example setting
-	// an array size after reading it's length, whereas
-	// for saving it would write the existing array's length
-	int dummy = 0;
-	s.syncAsUint32LE(dummy);
+bool canSaveGameStateCurrently(Common::U32String *msg)  {
+	return qdGameDispatcher::get_dispatcher()->get_active_scene() != nullptr;
+}
 
-	return Common::kNoError;
+Common::Error QDEngineEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	if (qdGameDispatcher::get_dispatcher()->save_save(stream))
+		return Common::kNoError;
+
+	return Common::kWritingFailed;
+}
+
+Common::Error QDEngineEngine::loadGameStream(Common::SeekableReadStream *stream) {
+		return Common::kNoError;
 }
 
 } // namespace QDEngine

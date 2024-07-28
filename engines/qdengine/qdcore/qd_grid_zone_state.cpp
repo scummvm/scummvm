@@ -54,7 +54,7 @@ bool qdGridZoneState::load_script(const xml::tag *p) {
 	return load_conditions_script(p);
 }
 
-bool qdGridZoneState::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdGridZoneState::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}

@@ -70,7 +70,7 @@ void qdAnimationInfo::load_script(const xml::tag *p) {
 #endif
 }
 
-bool qdAnimationInfo::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdAnimationInfo::save_script(Common::WriteStream &fh, int indent) const {
 	Common::String res;
 
 	if (flags())

@@ -81,8 +81,8 @@ qdTriggerProfilerRecord &qdTriggerProfilerRecord::operator = (const qdTriggerPro
 	return *this;
 }
 
-bool qdTriggerProfilerRecord::save(Common::SeekableWriteStream &fh) const {
-	warning("STUB: Test qdTriggerProfilerRecord::save(Common::SeekableWriteStream &fh)");
+bool qdTriggerProfilerRecord::save(Common::WriteStream &fh) const {
+	warning("STUB: Test qdTriggerProfilerRecord::save(Common::WriteStream &fh)");
 
 	fh.writeUint32LE(time_);
 	fh.writeSint32LE((int)event_);

@@ -79,7 +79,7 @@ bool qdNamedObject::load_data(Common::SeekableReadStream &fh, int saveVersion) {
 	return true;
 }
 
-bool qdNamedObject::save_data(Common::SeekableWriteStream &fh) const {
+bool qdNamedObject::save_data(Common::WriteStream &fh) const {
 	fh.writeSint32LE(flags_);
 	return true;
 }

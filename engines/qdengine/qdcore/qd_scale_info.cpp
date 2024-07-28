@@ -44,7 +44,7 @@ void qdScaleInfo::load_script(const xml::tag *p) {
 	}
 }
 
-bool qdScaleInfo::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdScaleInfo::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}

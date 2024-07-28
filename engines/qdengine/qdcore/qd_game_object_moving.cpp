@@ -248,7 +248,7 @@ bool qdGameObjectMoving::load_script_body(const xml::tag *p) {
 	return true;
 }
 
-bool qdGameObjectMoving::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
+bool qdGameObjectMoving::save_script_body(Common::WriteStream &fh, int indent) const {
 	qdGameObjectAnimated::save_script_body(fh, indent);
 
 	for (int i = 0; i <= indent; i++) {
@@ -322,7 +322,7 @@ bool qdGameObjectMoving::load_script(const xml::tag *p) {
 	return load_script_body(p);
 }
 
-bool qdGameObjectMoving::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdGameObjectMoving::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
@@ -1901,7 +1901,7 @@ bool qdGameObjectMoving::load_data(Common::SeekableReadStream &fh, int save_vers
 	return true;
 }
 
-bool qdGameObjectMoving::save_data(Common::SeekableWriteStream &fh) const {
+bool qdGameObjectMoving::save_data(Common::WriteStream &fh) const {
 	debugC(3, kDebugSave, "  qdGameObjectMoving::save_data before: %ld", fh.pos());
 	if (!qdGameObjectAnimated::save_data(fh)) return false;
 

@@ -89,7 +89,7 @@ bool qdGameObject::load_script_body(const xml::tag *p) {
 	return true;
 }
 
-bool qdGameObject::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
+bool qdGameObject::save_script_body(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
@@ -180,7 +180,7 @@ bool qdGameObject::load_data(Common::SeekableReadStream &fh, int saveVersion) {
 	return true;
 }
 
-bool qdGameObject::save_data(Common::SeekableWriteStream &fh) const {
+bool qdGameObject::save_data(Common::WriteStream &fh) const {
 	debugC(3, kDebugSave, "  qdGameObject::save_data(): before %ld", fh.pos());
 	if (!qdNamedObject::save_data(fh)) {
 		return false;

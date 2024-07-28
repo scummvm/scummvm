@@ -70,7 +70,7 @@ qdInterfaceCounter &qdInterfaceCounter::operator = (const qdInterfaceCounter &co
 	return *this;
 }
 
-bool qdInterfaceCounter::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
+bool qdInterfaceCounter::save_script_body(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}

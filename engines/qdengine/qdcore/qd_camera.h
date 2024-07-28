@@ -26,7 +26,7 @@
 #include "qdengine/qdcore/qd_camera_mode.h"
 
 namespace Common {
-class SeekableWriteStream;
+class WriteStream;
 }
 
 namespace QDEngine {
@@ -336,12 +336,12 @@ public:
 	bool deselect_cell(int x, int y);
 
 	void load_script(const xml::tag *p);
-	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
+	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 
 	//! Загрузка данных из сэйва.
 	bool load_data(Common::SeekableReadStream &fh, int save_version);
 	//! Запись данных в сэйв.
-	bool save_data(Common::SeekableWriteStream &fh) const;
+	bool save_data(Common::WriteStream &fh) const;
 
 	//! Инициализация данных, вызывается при старте и перезапуске игры.
 	bool init();

@@ -91,7 +91,7 @@ public:
 	bool scale_animations(float coeff_x, float coeff_y);
 
 	void load_script(const xml::tag *p);
-	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
+	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 
 	float start_angle() const {
 		return start_angle_;

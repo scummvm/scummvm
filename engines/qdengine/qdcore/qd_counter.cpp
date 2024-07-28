@@ -93,7 +93,7 @@ bool qdCounterElement::load_script(const xml::tag *p) {
 	return true;
 }
 
-bool qdCounterElement::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdCounterElement::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
@@ -125,7 +125,7 @@ bool qdCounterElement::load_data(Common::SeekableReadStream &fh, int save_versio
 	return true;
 }
 
-bool qdCounterElement::save_data(Common::SeekableWriteStream &fh) const {
+bool qdCounterElement::save_data(Common::WriteStream &fh) const {
 	fh.writeByte(last_state_status_);
 	return true;
 }
@@ -246,7 +246,7 @@ bool qdCounter::load_script(const xml::tag *p) {
 	return true;
 }
 
-bool qdCounter::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdCounter::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
@@ -292,7 +292,7 @@ bool qdCounter::load_data(Common::SeekableReadStream &fh, int save_version) {
 	return true;
 }
 
-bool qdCounter::save_data(Common::SeekableWriteStream &fh) const {
+bool qdCounter::save_data(Common::WriteStream &fh) const {
 	debugC(3, kDebugSave, "  qdCounter::save_data(): before %ld", fh.pos());
 	fh.writeSint32LE(value_);
 	fh.writeSint32LE(elements_.size());

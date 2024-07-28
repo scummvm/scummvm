@@ -28,7 +28,7 @@
 #include "qdengine/qdcore/qd_trigger_profiler.h"
 
 namespace Common {
-class SeekableWriteStream;
+class WriteStream;
 }
 
 namespace QDEngine {
@@ -150,7 +150,7 @@ public:
 	}
 
 	bool load_script(const xml::tag *p);
-	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
+	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 
 	Common::String toString();
 
@@ -343,12 +343,12 @@ public:
 #endif
 
 	bool load_script(const xml::tag *p);
-	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
+	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 
 	//! Загрузка данных из сэйва.
 	bool load_data(Common::SeekableReadStream &fh, int save_version);
 	//! Запись данных в сэйв.
-	bool save_data(Common::SeekableWriteStream &fh) const;
+	bool save_data(Common::WriteStream &fh) const;
 
 	bool quant(float dt);
 
@@ -417,4 +417,3 @@ typedef std::vector<qdTriggerElementPtr> qdTriggerElementList;
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_TRIGGER_ELEMENT_H
-

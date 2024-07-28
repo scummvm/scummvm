@@ -59,7 +59,7 @@ bool qdInventoryCellType::load_script(const xml::tag *p) {
 	return true;
 }
 
-bool qdInventoryCellType::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdInventoryCellType::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
@@ -175,7 +175,7 @@ bool qdInventoryCell::load_data(Common::SeekableReadStream &fh, int saveVersion)
 	return true;
 }
 
-bool qdInventoryCell::save_data(Common::SeekableWriteStream &fh) const {
+bool qdInventoryCell::save_data(Common::WriteStream &fh) const {
 	debugC(5, kDebugSave, "      qdInventoryCell::save_data before: %ld", fh.pos());
 	if (object_) {
 		fh.writeByte(1);
@@ -357,7 +357,7 @@ bool qdInventoryCellSet::load_script(const xml::tag *p) {
 	return true;
 }
 
-bool qdInventoryCellSet::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdInventoryCellSet::save_script(Common::WriteStream &fh, int indent) const {
 	int tp = 0;
 	if (!cells_.empty()) {
 		tp = cells_.front().type();
@@ -447,7 +447,7 @@ bool qdInventoryCellSet::load_data(Common::SeekableReadStream &fh, int save_vers
 	return true;
 }
 
-bool qdInventoryCellSet::save_data(Common::SeekableWriteStream &fh) const {
+bool qdInventoryCellSet::save_data(Common::WriteStream &fh) const {
 	debugC(4, kDebugSave, "    qdInventoryCellSet::save_data before: %ld", fh.pos());
 	fh.writeSint32LE(additional_cells_.x);
 	fh.writeSint32LE(additional_cells_.y);

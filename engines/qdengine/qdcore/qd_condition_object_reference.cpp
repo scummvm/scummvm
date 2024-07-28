@@ -91,7 +91,7 @@ bool qdConditionObjectReference::load_script(const xml::tag *p) {
 	return true;
 }
 
-bool qdConditionObjectReference::save_script(Common::SeekableWriteStream &fh, int indent, int id) const {
+bool qdConditionObjectReference::save_script(Common::WriteStream &fh, int indent, int id) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}

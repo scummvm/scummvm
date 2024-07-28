@@ -172,7 +172,7 @@ bool qdInventory::load_script(const xml::tag *p) {
 
 	return true;
 }
-bool qdInventory::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdInventory::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
@@ -355,7 +355,7 @@ bool qdInventory::load_data(Common::SeekableReadStream &fh, int save_version) {
 	return true;
 }
 
-bool qdInventory::save_data(Common::SeekableWriteStream &fh) const {
+bool qdInventory::save_data(Common::WriteStream &fh) const {
 	debugC(3, kDebugSave, "  qdInventory::save_data before: %ld", fh.pos());
 	for (auto &it : cell_sets_) {
 		if (!it.save_data(fh)) {

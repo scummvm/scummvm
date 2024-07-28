@@ -409,7 +409,7 @@ void qdAnimation::load_script(const xml::tag *p) {
 #endif
 }
 
-bool qdAnimation::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdAnimation::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
@@ -947,7 +947,7 @@ bool qdAnimation::load_data(Common::SeekableReadStream &fh, int save_version) {
 	return true;
 }
 
-bool qdAnimation::save_data(Common::SeekableWriteStream &fh) const {
+bool qdAnimation::save_data(Common::WriteStream &fh) const {
 	debugC(3, kDebugSave, "  qdAnimation::save_data(): before %ld", fh.pos());
 
 	if (!qdNamedObject::save_data(fh)) return false;

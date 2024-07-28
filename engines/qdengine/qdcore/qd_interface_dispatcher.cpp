@@ -286,7 +286,7 @@ bool qdInterfaceDispatcher::char_input_handler(int vkey) {
 	return false;
 }
 
-bool qdInterfaceDispatcher::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdInterfaceDispatcher::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}

@@ -176,12 +176,12 @@ void qdGameDispatcher::quant() {
 
 	if (!scene_saved_ && cur_scene_ && cur_scene_->autosave_slot() != -1) {
 		debugC(3, kDebugQuant, "qdGameDispatcher::quant() Autosaving...");
-		save_game(cur_scene_->autosave_slot());
+		g_engine->saveGameState(cur_scene_->autosave_slot(), "Autosave", true);
 	}
 
 	if (check_flag(SAVE_GAME_FLAG)) {
 		debugC(3, kDebugQuant, "qdGameDispatcher::quant() Saving game...");
-		save_game(autosave_slot_);
+		g_engine->saveGameState(autosave_slot_, "Autosave", true);
 		drop_flag(SAVE_GAME_FLAG);
 	}
 	if (check_flag(LOAD_GAME_FLAG)) {
@@ -2462,7 +2462,7 @@ bool qdGameDispatcher::keyboard_handler(int vkey, bool event) {
 			return true;
 		case VK_F5:
 			pause();
-			save_game(0);
+			g_engine->saveGameState(autosave_slot_, "Autosave", true);
 			resume();
 			return true;
 		case VK_F6:
@@ -2594,10 +2594,7 @@ bool qdGameDispatcher::load_save(const char *fname) {
 	return true;
 }
 
-bool qdGameDispatcher::save_save(const char *fname) const {
-	Common::OutSaveFile *fh;
-	fh = g_engine->_savefileMan->openForSaving(fname);
-
+bool qdGameDispatcher::save_save(Common::WriteStream *fh) const {
 	const int32 save_version = 107;
 	fh->writeUint32LE(save_version);
 
@@ -2686,8 +2683,6 @@ bool qdGameDispatcher::save_save(const char *fname) const {
 	mouse_obj_->save_data(*fh);
 
 	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): TOTAL SIZE %ld", fh->pos());
-
-	delete fh;
 
 	return true;
 }
@@ -2882,13 +2877,6 @@ bool qdGameDispatcher::load_game(int slot_id) {
 	scene_saved_ = true;
 
 	return false;
-}
-
-bool qdGameDispatcher::save_game(int slot_id) const {
-	if (!get_active_scene()) return false;
-
-	debugC(1, kDebugSave, "qdGameDispatcher::save_game(%d): filename: %s", slot_id, get_save_name(slot_id).c_str());
-	return save_save(get_save_name(slot_id).c_str());
 }
 
 Common::String qdGameDispatcher::get_save_name(int slot_id, SaveFileType file_type) {

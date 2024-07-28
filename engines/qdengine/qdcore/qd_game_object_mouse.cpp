@@ -90,7 +90,7 @@ bool qdGameObjectMouse::load_script_body(const xml::tag *p) {
 	return true;
 }
 
-bool qdGameObjectMouse::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
+bool qdGameObjectMouse::save_script_body(Common::WriteStream &fh, int indent) const {
 	return qdGameObjectAnimated::save_script_body(fh, indent);
 }
 
@@ -98,7 +98,7 @@ bool qdGameObjectMouse::load_script(const xml::tag *p) {
 	return load_script_body(p);
 }
 
-bool qdGameObjectMouse::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdGameObjectMouse::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
@@ -145,7 +145,7 @@ bool qdGameObjectMouse::load_data(Common::SeekableReadStream &fh, int save_versi
 	return true;
 }
 
-bool qdGameObjectMouse::save_data(Common::SeekableWriteStream &fh) const {
+bool qdGameObjectMouse::save_data(Common::WriteStream &fh) const {
 	debugC(3, kDebugSave, "  qdGameObjectMouse::save_data before: %ld", fh.pos());
 
 	if (!qdGameObjectAnimated::save_data(fh))

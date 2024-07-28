@@ -171,7 +171,7 @@ public:
 	bool reverse_frame_range(int number0, int number1);
 
 	void load_script(const xml::tag *p);
-	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
+	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 
 	const char *qda_file() const {
 		if (!qda_file_.empty()) return qda_file_.c_str();
@@ -254,7 +254,7 @@ public:
 	//! Загрузка данных из сэйва.
 	bool load_data(Common::SeekableReadStream &fh, int save_version);
 	//! Запись данных в сэйв.
-	bool save_data(Common::SeekableWriteStream &fh) const;
+	bool save_data(Common::WriteStream &fh) const;
 
 	bool add_scale(float value);
 	bool create_scaled_frames();
@@ -314,4 +314,3 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_ANIMATION_H
-
