@@ -31,13 +31,13 @@
 
 namespace QDEngine {
 
-qdAnimationFrame::qdAnimationFrame() : start_time_(0.0f),
-	length_(0.0f) {
+qdAnimationFrame::qdAnimationFrame() : _start_time(0.0f),
+	_length(0.0f) {
 }
 
 qdAnimationFrame::qdAnimationFrame(const qdAnimationFrame &frm) : qdSprite(frm),
-	start_time_(frm.start_time_),
-	length_(frm.length_) {
+	_start_time(frm._start_time),
+	_length(frm._length) {
 }
 
 qdAnimationFrame::~qdAnimationFrame() {
@@ -49,8 +49,8 @@ qdAnimationFrame &qdAnimationFrame::operator = (const qdAnimationFrame &frm) {
 
 	*static_cast<qdSprite *>(this) = frm;
 
-	start_time_ = frm.start_time_;
-	length_ = frm.length_;
+	_start_time = frm._start_time;
+	_length = frm._length;
 
 	return *this;
 }
@@ -61,8 +61,8 @@ qdAnimationFrame *qdAnimationFrame::clone() const {
 
 void qdAnimationFrame::qda_load(Common::SeekableReadStream *fh, int version) {
 	/*int32 fl = */fh->readSint32LE();
-	start_time_ = fh->readFloatLE();
-	length_ = fh->readFloatLE();
+	_start_time = fh->readFloatLE();
+	_length = fh->readFloatLE();
 
 	qdSprite::qda_load(fh, version);
 }
@@ -77,4 +77,3 @@ void qdAnimationFrame::free_resources() {
 	free();
 }
 } // namespace QDEngine
-

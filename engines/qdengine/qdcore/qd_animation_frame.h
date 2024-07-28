@@ -39,20 +39,20 @@ public:
 	qdAnimationFrame *clone() const;
 
 	float start_time() const {
-		return start_time_;
+		return _start_time;
 	}
 	float end_time() const {
-		return start_time_ + length_;
+		return _start_time + _length;
 	}
 	float length() const {
-		return length_;
+		return _length;
 	}
 
 	void set_start_time(float tm) {
-		start_time_ = tm;
+		_start_time = tm;
 	}
 	void set_length(float tm) {
-		length_ = tm;
+		_length = tm;
 	}
 
 	virtual void qda_load(class Common::SeekableReadStream *fh, int version = 100);
@@ -61,8 +61,8 @@ public:
 	void free_resources();
 
 private:
-	float start_time_;
-	float length_;
+	float _start_time;
+	float _length;
 };
 
 typedef std::list<qdAnimationFrame *> qdAnimationFrameList;
@@ -70,4 +70,3 @@ typedef std::list<qdAnimationFrame *> qdAnimationFrameList;
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_ANIMATION_FRAME_H
-
