@@ -47,7 +47,7 @@ enum {
 };
 
 // commentID - Environment relative comment ID number
-// commentFlags - Flags definit this comment. These include type and special logic.
+// commentFlags - Flags defining this comment. These include type and special logic.
 // dependencyFlagOffset - Offset to dependency flag
 // dependencyValue - Maximum value for dependency condition to be true
 // statusFlagOffset - Offset to status flag to be incremented when this comment is played
