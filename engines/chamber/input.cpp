@@ -50,8 +50,8 @@ byte buttons_repeat = 0;
 byte buttons;
 byte right_button;
 byte key_direction_old;
-byte accell_countdown;
-uint16 accelleration = 1;
+byte accel_countdown;
+uint16 acceleration = 1;
 byte mouseButtons = 0;
 
 void pollDiscrete(void);
@@ -101,23 +101,23 @@ byte pollMouse(void) {
 byte pollKeyboard(void) {
 	byte direction = key_direction;
 	if (direction && direction == key_direction_old) {
-		if (++accell_countdown == 10) {
-			accelleration++;
-			accell_countdown = 0;
+		if (++accel_countdown == 10) {
+			acceleration++;
+			accel_countdown = 0;
 		}
 	} else {
-		accelleration = 1;
-		accell_countdown = 0;
+		acceleration = 1;
+		accel_countdown = 0;
 	}
 	key_direction_old = direction;
 
 	if (direction & 0x0F) {
 		if (direction == 1) {
-			cursor_x += accelleration;
+			cursor_x += acceleration;
 			if (cursor_x >= 304) /*TODO: >*/
 				cursor_x = 304;
 		} else {
-			cursor_x -= accelleration;
+			cursor_x -= acceleration;
 			if ((int16)cursor_x < 0)
 				cursor_x = 0;
 		}
@@ -125,11 +125,11 @@ byte pollKeyboard(void) {
 
 	if (direction & 0xF0) {
 		if (direction == 0x10) {
-			cursor_y += accelleration;
+			cursor_y += acceleration;
 			if (cursor_y >= 184) /*TODO: >*/
 				cursor_y = 184;
 		} else {
-			cursor_y -= accelleration;
+			cursor_y -= acceleration;
 			if ((int8)cursor_y < 0)
 				cursor_y = 0;
 		}
