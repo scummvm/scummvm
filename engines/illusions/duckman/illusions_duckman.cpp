@@ -254,26 +254,24 @@ bool IllusionsEngine_Duckman::hasFeature(EngineFeature f) const {
 
 void IllusionsEngine_Duckman::initInput() {
 	_input->setInputEvent(kEventLeftClick, 0x01)
-		.addMouseButton(MOUSE_LEFT_BUTTON)
-		.addKey(Common::KEYCODE_RETURN);
+		.addMouseButton(MOUSE_LEFT_BUTTON);
 	_input->setInputEvent(kEventRightClick, 0x02)
-		.addMouseButton(MOUSE_RIGHT_BUTTON)
-		.addKey(Common::KEYCODE_BACKSPACE);
+		.addMouseButton(MOUSE_RIGHT_BUTTON);
 	// 0x04 is unused
 	_input->setInputEvent(kEventInventory, 0x08)
-		.addKey(Common::KEYCODE_TAB);
+		.addKey(kActionInventory);
 	_input->setInputEvent(kEventAbort, 0x10)
-		.addKey(Common::KEYCODE_ESCAPE);
+		.addKey(kActionAbort);
 	_input->setInputEvent(kEventSkip, 0x20)
 		.addMouseButton(MOUSE_LEFT_BUTTON)
-		.addKey(Common::KEYCODE_SPACE);
+		.addKey(kActionSkip);
 	_input->setInputEvent(kEventUp, 0x40)
-		.addKey(Common::KEYCODE_UP);
+		.addKey(kActionCursorUp);
 	_input->setInputEvent(kEventDown, 0x80)
 		.addMouseButton(MOUSE_RIGHT_BUTTON)
-		.addKey(Common::KEYCODE_DOWN);
+		.addKey(kActionCursorDown);
 	_input->setInputEvent(kEventF1, 0x100)
-		.addKey(Common::KEYCODE_F1);
+		.addKey(kActionCheatMode);
 }
 
 #define UPDATEFUNCTION(priority, sceneId, callback) \

@@ -41,6 +41,18 @@
 
 namespace Illusions {
 
+enum ILLUSIONSAction {
+	kActionNone,
+	kActionCursorUp,
+	kActionCursorDown,
+	kActionCursorLeft,
+	kActionCursorRight,
+	kActionInventory,
+	kActionAbort,
+	kActionSkip,
+	kActionCheatMode
+};
+
 char *debugW2I(uint16 *wstr);
 void swapBytesInWideString(byte * wstr);
 
