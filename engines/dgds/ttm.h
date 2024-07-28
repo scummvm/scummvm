@@ -27,6 +27,8 @@
 
 namespace Dgds {
 
+class SoundRaw;
+
 class GetPutRegion {
 public:
 	Common::Rect _area;
@@ -62,6 +64,7 @@ public:
 	Common::SharedPtr<Image> _scrollShape;
 	int16 _xScroll;
 	int16 _yScroll;
+	Common::SharedPtr<SoundRaw> _soundRaw;
 };
 
 enum TTMRunType {

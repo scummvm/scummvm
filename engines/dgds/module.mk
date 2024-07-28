@@ -21,6 +21,7 @@ MODULE_OBJS := \
 	resource.o \
 	scripts.o \
 	shell_game.o \
+	sound_raw.o \
 	ttm.o \
 	scene.o \
 	sound.o

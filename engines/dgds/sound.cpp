@@ -229,7 +229,7 @@ bool Sound::playPCM(const byte *data, uint32 size) {
 		byte volume = 255;
 		Audio::AudioStream *input = Audio::makeRawStream(trackPtr[part], trackSiz[part],
 														 rate, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume, 0, DisposeAfterUse::YES);
 	}
 	return true;
 }

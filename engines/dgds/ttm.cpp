@@ -33,6 +33,7 @@
 #include "dgds/image.h"
 #include "dgds/sound.h"
 #include "dgds/font.h"
+#include "dgds/sound_raw.h"
 
 
 namespace Dgds {
@@ -972,6 +973,22 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	}
 	case 0xc050: {	// PLAY SAMPLE: int: i
 		_vm->_soundPlayer->playMusic(ivals[0]);
+		break;
+	}
+	case 0xc210: {  // LOAD RAW SFX filename:str
+		if (seq._executed) // this is a one-shot op
+			break;
+		SoundRaw *snd = new SoundRaw(_vm->getResourceManager(), _vm->getDecompressor());
+		snd->load(sval);
+		env._soundRaw.reset(snd);
+		break;
+	}
+	case 0xc220: {	// PLAY RAW SFX
+		if (seq._executed) // this is a one-shot op
+			break;
+		if (!env._soundRaw)
+			warning("TODO: Trying to play raw SFX but nothing loaded");
+		env._soundRaw->play();
 		break;
 	}
 	case 0xf010: { // LOAD SCR:	filename:str
