@@ -92,7 +92,6 @@ public:
 	bool isPlayingAnimation_maybe = false;
 	uint16 otherNspAnimationType_maybe = 0;
 	uint16 headAcheMessageCounter = 0;
-	uint16 trunkPushCounter = 0;
 
 	int sprite_y_scaling_threshold_maybe = 0xf0;
 	int scaledWalkSpeed_maybe = 0;
