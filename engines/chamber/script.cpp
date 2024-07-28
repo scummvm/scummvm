@@ -1860,7 +1860,7 @@ uint16 SCR_30_Fight(void) {
 	byte *old_script, *old_script_end = script_end_ptr;
 	pers_t *pers = (pers_t *)(script_vars[kScrPool8_CurrentPers]);
 
-	byte strenght, win, rnd;
+	byte strength, win, rnd;
 
 	script_ptr++;
 	old_script = script_ptr;
@@ -1904,12 +1904,12 @@ uint16 SCR_30_Fight(void) {
 
 	/*check fight outcome*/
 
-	strenght = 0;
+	strength = 0;
 
 	script_byte_vars.fight_status = 0;
 
 	if (script_byte_vars.extreme_violence == 0) {
-		static byte character_strenght[] = {
+		static byte character_strength[] = {
 			1,	/*THE MASTER OF ORDEALS*/
 			3,	/*PROTOZORQ*/
 			1,	/*VORT*/
@@ -1929,23 +1929,23 @@ uint16 SCR_30_Fight(void) {
 			1	/*ZORQ*/
 		};
 
-		strenght = character_strenght[pers->name - 42];
+		strength = character_strength[pers->name - 42];
 
 		/*check if can decrease*/
-		if (strenght != 1 && (pers->flags & PERSFLG_80))
-			strenght--;
+		if (strength != 1 && (pers->flags & PERSFLG_80))
+			strength--;
 
 		if (script_byte_vars.zapstiks_owned != 0 || script_byte_vars.bvar_66 != 0)
-			strenght--;
+			strength--;
 	}
 
 	/*check if can increase*/
-	if (strenght != 5) {
+	if (strength != 5) {
 		if ((pers->item >= kItemDagger1 && pers->item <= kItemDagger4)
 		        || (pers->item >= kItemZapstik1 && pers->item <= kItemZapstik13)	/*TODO: ignore kItemZapstik14?*/
 		        || pers->item == kItemBlade || pers->item == kItemChopper
 		        || ((pers->index >> 3) == 6))
-			strenght++;
+			strength++;
 	}
 
 	/*
@@ -1963,18 +1963,18 @@ uint16 SCR_30_Fight(void) {
 	rnd = script_byte_vars.rand_value;
 
 #ifdef CHEAT
-	strenght = 1;
+	strength = 1;
 #endif
 
-	if (strenght >= 2) {
-		if (strenght == 2) {
+	if (strength >= 2) {
+		if (strength == 2) {
 			if (rnd >= 205)
 				win = getRand() < 128 ? (0x40 | 0x10 | 1) : (0x40 | 0x10 | 2);
-		} else if (strenght == 4 && rnd < 100) {
+		} else if (strength == 4 && rnd < 100) {
 			win = getRand() < 128 ? (0x40 | 0x10 | 1) : (0x40 | 0x10 | 2);
 		} else {
 			win = 2;
-			if (strenght == 3) {
+			if (strength == 3) {
 				if (rnd < 128)  /*TODO: check me, maybe original bug (checks against wrong reg?)*/
 					win = getRand() < 51 ? (0x80 | 0x10 | 1) : (0x80 | 0x10 | 2);
 				else
@@ -3235,7 +3235,7 @@ uint16 CMD_2_PsiPowers(void) {
 /*
 Open normal inventory box
 */
-uint16 CMD_3_Posessions(void) {
+uint16 CMD_3_Possessions(void) {
 	updateUndrawCursor(CGA_SCREENBUFFER);
 	inv_bgcolor = 0x55;
 	openInventory(ITEMFLG_OWNED, ITEMFLG_OWNED);
@@ -4143,7 +4143,7 @@ cmdhandler_t command_handlers[] = {
 	0,
 	CMD_1_RoomObjects,
 	CMD_2_PsiPowers,
-	CMD_3_Posessions,
+	CMD_3_Possessions,
 	CMD_4_EnergyLevel,
 	CMD_5_Wait,
 	CMD_6_Load,
