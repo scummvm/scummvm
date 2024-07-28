@@ -632,6 +632,11 @@ void Scene::checkKeyboard() {
 		_vm->_game->handleKeypress(evt);
 	}
 
+	if (events.isActionTriggered()) {
+		Common::CustomEventType evt = events.getAction();
+		_vm->_game->handleAction(evt);
+	}
+
 	if ((events._mouseStatus & 3) == 3 && _vm->_game->_player._stepEnabled) {
 		_reloadSceneFlag = true;
 		_vm->_dialogs->_pendingDialog = DIALOG_GAME_MENU;

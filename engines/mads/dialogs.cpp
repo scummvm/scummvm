@@ -426,6 +426,7 @@ void TextDialog::show() {
 	if (!_vm->shouldQuit()) {
 		_vm->_events->waitForNextFrame();
 		_vm->_events->_pendingKeys.clear();
+		_vm->_events->_pendingActions.clear();
 	}
 
 	// Restore the background

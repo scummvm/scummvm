@@ -217,6 +217,11 @@ public:
 	void handleKeypress(const Common::KeyState &kbd);
 
 	/**
+	* Handle an action
+	*/
+	void handleAction(const Common::CustomEventType &action);
+
+	/**
 	 * Starts a savegame loading.
 	 * @remarks	Due to the way the engine is implemented, loading is done in two
 	 * parts, the second part after the specific scene has been loaded
