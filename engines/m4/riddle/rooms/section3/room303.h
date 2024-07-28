@@ -42,7 +42,7 @@ private:
 	int _val10 = 0;
 	int _val11 = 0;
 	int _val12 = 0;
-	int _val13 = 0;
+	bool _val13 = false;
 	int _val14 = 0;
 	int _val15 = 0;
 	KernelTriggerType _triggerMode1 = KT_DAEMON;
@@ -58,12 +58,19 @@ private:
 	int _clasped4 = 0;
 	machine *_shadow4 = nullptr;
 	machine *_shadow5 = nullptr;
+	machine *_machine1 = nullptr;
+	machine *_machine2 = nullptr;
+	int _gestTalk4 = 0;
+	int _ripBends = 0;
+
+	static void escapePressed(void *, void *);
 
 	void loadHands();
 	void loadClasped();
 	void setFengActive(bool flag);
 	void setShadow4(bool active);
 	void setShadow5(bool active);
+	void playSeries(bool cow = true);
 
 public:
 	Room303() : Room() {}

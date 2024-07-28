@@ -64,7 +64,7 @@ void ws_get_walker_info(machine *myWalker, int32 *x, int32 *y, int32 *s, int32 *
 bool ws_walk_init_system();
 
 bool ws_walk_load_series(const int16 *dir_array, const char *name_array[], bool shadow_flag, bool load_palette);
-bool ws_walk_load_walker_series(const int16 *dir_array, const char *name_array[], bool load_palette);
+bool ws_walk_load_walker_series(const int16 *dir_array, const char *name_array[], bool load_palette = false);
 bool ws_walk_load_shadow_series(const int16 *dir_array, const char *name_array[]);
 
 void ws_walk_dump_series(int16 num_directions, int16 start_hash);

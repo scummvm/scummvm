@@ -53,6 +53,34 @@ void Room::triggerMachineByHashCallbackNegative(frac16 myMessage, machine *) {
 		kernel_trigger_dispatchx(hi);
 }
 
+void Room::triggerMachineByHashCallback3000(frac16 myMessage, machine *sender) {
+	int triggerType = _G(globals)[GLB_TEMP_1] >> 16;
+	int param = _G(globals)[GLB_TEMP_2] >> 16;
+	int msg = myMessage >> 16;
+
+	switch (triggerType) {
+	case 0:
+		break;
+
+	case 1:
+	case 3:
+		if (msg >= 0)
+			kernel_trigger_dispatchx(myMessage);
+		break;
+
+	case 2:
+		if (param)
+			sendWSMessage(0x30000, triggerType, sender, 0, nullptr, 1);
+		else if(msg >= 0)
+			kernel_trigger_dispatchx(myMessage);
+		break;
+
+	default:
+		error("spawn walker callback with triggerType = %d", triggerType);
+		break;
+	}
+}
+
 int Room::checkFlags(bool flag) {
 	int count = 0;
 
@@ -171,6 +199,22 @@ void Room::sendWSMessage_10000(int val1, machine *recv, int val2, int val3,
 	_G(globals)[GLB_TEMP_9] = val9 << 24;
 
 	sendWSMessage(0x10000, 0, nullptr, 0, nullptr, 1);
+}
+
+machine *Room::triggerMachineByHash_3000(int val1, int val2, const int16 * normalDirs,
+		const int16 * shadowDirs, int val3, int val4, int val5,
+		MessageCB intrMsg, const char *machName) {
+#if 0
+	static const byte NUMS[14] = { 0, 0, 1, 2, 3, 4, 4, 5, 6, 7, 8, 9, 9, 0 };
+	byte  nums[14];
+	Common::copy(NUMS, NUMS + 14, nums);
+
+	_G(globals)[GLB_TEMP_1] = val2 << 16;
+	_G(globals)[GLB_TEMP_2] = val1 << 24;
+	_G(globals)[GLB_TEMP_3] = val3
+#else
+	error("sendWSMessage_3000");
+#endif
 }
 
 void Room::sendWSMessage_80000(machine *walker) {

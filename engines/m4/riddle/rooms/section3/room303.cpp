@@ -22,6 +22,10 @@
 #include "m4/riddle/rooms/section3/room303.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_file.h"
+#include "m4/gui/gui_vmng.h"
+#include "m4/gui/gui_sys.h"
+#include "m4/platform/keys.h"
 
 namespace M4 {
 namespace Riddle {
@@ -51,6 +55,32 @@ void Room303::preload() {
 }
 
 void Room303::init() {
+	static const int16 NORMAL_DIRS[] = { 200, 201, 202, -1 };
+	static const char *NORMAL_NAMES[] = {
+		"Feng Li walk pos3",
+		"Feng Li walk pos4",
+		"Feng Li walk pos5"
+	};
+	static const int16 SHADOW_DIRS[] = { 210, 211, 212, -1 };
+	static const char *SHADOW_NAMES[] = {
+		"candleman shadow3",
+		"candleman shadow4",
+		"candleman shadow5"
+	};
+
+	static const int16 NORMAL_DIRS2[] = { 220, 221, 222, -1 };
+	static const char *NORMAL_NAMES2[] = {
+		"mei chen ny walker pos3",
+		"mei chen ny walker pos4",
+		"mei chen ny walker pos5"
+	};
+	static const int16 SHADOW_DIRS2[] = { 230, 231, 232, -1 };
+	static const char *SHADOW_NAMES2[] = {
+		"candleman shadow3",
+		"candleman shadow4",
+		"candleman shadow5"
+	};
+
 	_val1 = _val2 = 0;
 
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
@@ -73,10 +103,215 @@ void Room303::init() {
 		_door = series_show_sprite("DOOR", 0, 0xf05);
 	}
 
+	int32 status;
+	ScreenContext *game_buff_ptr = vmng_screen_find(_G(gameDrawBuff), &status);
+	assert(game_buff_ptr);
+
 	switch (_G(game).previous_room) {
-	case 301:
+	case KERNEL_RESTORING_GAME:
+		if (!player_been_here(301)) {
+			kernel_load_variant(_val13 ? "303lock1" : "303lock2");
+			setFengActive(_val13);
+			loadHands();
+			setShadow4(true);
+
+			ws_walk_load_walker_series(NORMAL_DIRS, NORMAL_NAMES);
+			ws_walk_load_shadow_series(SHADOW_DIRS, SHADOW_NAMES);
+			loadClasped();
+
+			if (_val13) {
+				_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
+					triggerMachineByHashCallbackNegative, "fl");
+				setShadow5(true);
+			} else {
+				_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 706, 256, 86, 0xc00, 0,
+					triggerMachineByHashCallbackNegative, "fl state machine");
+				setShadow5(false);
+			}
+
+			sendWSMessage_10000(1, _machine1, _clasped4, 1, 1, 400,
+				_clasped4, 1, 6, 0);
+			_val14 = _val15 = 1;
+		}
+
+		playSeries();
 		break;
+
+	case 301:
+		MoveScreenDelta(game_buff_ptr, -641, 0);
+		playSeries();
+
+		kernel_timing_trigger(1, 9);
+		break;
+
+	case 304:
+		if (_G(flags)[V001]) {
+			_G(player).disable_hyperwalk = true;
+			LoadWSAssets("303 FL SCRIPT");
+
+			_G(camera_reacts_to_player) = true;
+			MoveScreenDelta(game_buff_ptr, -110, 0);
+			_val12 = 2;
+
+			player_set_commands_allowed(false);
+			playSeries(false);
+
+			_door = series_show_sprite("DOOR", 7, 0xf05);
+			ws_demand_location(393, 260, 5);
+
+			ws_walk_load_walker_series(NORMAL_DIRS, NORMAL_NAMES);
+			ws_walk_load_shadow_series(SHADOW_DIRS, SHADOW_NAMES);
+			_machine1 = triggerMachineByHash_3000(8, 2, NORMAL_DIRS, SHADOW_DIRS,
+				470, 226, 9, triggerMachineByHashCallback3000, "fl");
+			_val13 = 1;
+
+			kernel_load_variant("303lock1");
+			setFengActive(true);
+			loadClasped();
+
+			ws_walk_load_walker_series(NORMAL_DIRS2, NORMAL_NAMES2);
+			ws_walk_load_shadow_series(SHADOW_DIRS2, SHADOW_NAMES2);
+
+			_hands4 = triggerMachineByHash_3000(8, 3, NORMAL_DIRS2, SHADOW_DIRS2,
+				445, 215, 7, triggerMachineByHashCallback3000, "mc");
+			_gestTalk4 = series_load("mei ny lft hand gest talk pos4");
+			kernel_timing_trigger(1, 107);
+
+		} else {
+			player_set_commands_allowed(false);
+			kernel_timing_trigger(1, 10);
+			_door = series_show_sprite("DOOR", 7, 0xf05);
+
+			if (!player_been_here(301)) {
+				kernel_load_variant("303lock1");
+				setFengActive(true);
+				loadHands();
+				setShadow4(true);
+
+				ws_walk_load_walker_series(NORMAL_DIRS, NORMAL_NAMES);
+				ws_walk_load_shadow_series(SHADOW_DIRS, SHADOW_NAMES);
+				loadClasped();
+
+				_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
+					triggerMachineByHashCallbackNegative, "fl");
+				sendWSMessage_10000(1, _machine1, _clasped4, 1, 1, 400,
+					_clasped4, 1, 6, 0);
+
+				_val14 = _val15 = _val13 = 1;
+				setShadow5(true);
+			}
+
+			playSeries();
+		}
+		break;
+
+	case 305:
+		player_set_commands_allowed(false);
+		ws_demand_location(28, 267, 3);
+		playSeries();
+
+		if (!player_been_here(301)) {
+			kernel_timing_trigger(1, 6);
+			loadHands();
+			setShadow4(true);
+
+			ws_walk_load_walker_series(NORMAL_DIRS, NORMAL_NAMES);
+			ws_walk_load_shadow_series(SHADOW_DIRS, SHADOW_NAMES);
+			loadClasped();
+
+			_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
+				triggerMachineByHashCallbackNegative, "fl");
+			sendWSMessage_10000(1, _machine1, _clasped1, 1, 16, 400,
+				_clasped1, 1, 6, 0);
+			_val14 = _val15 = 1;
+			setShadow5(true);
+			_val13 = 1;
+
+			kernel_load_variant("303lock1");
+			setFengActive(true);
+		} else {
+			kernel_timing_trigger(1, 6);
+		}
+		break;
+
+	case 309:
+		interface_show();
+		ws_demand_location(230, 258, 10);
+		player_set_commands_allowed(false);
+
+		if (!player_been_here(301)) {
+			loadHands();
+			setShadow4(true);
+			ws_walk_load_walker_series(NORMAL_DIRS, NORMAL_NAMES);
+			ws_walk_load_shadow_series(SHADOW_DIRS, SHADOW_NAMES);
+			_val13 = 1;
+			loadClasped();
+
+			_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
+				triggerMachineByHashCallbackNegative, "fl");
+			sendWSMessage_10000(1, _machine1, _clasped4, 1, 16, 400,
+				_clasped4, 1, 6, 0);
+
+			_val14 = _val15 = 1;
+			setShadow5(true);
+			kernel_load_variant("303lock1");
+			setFengActive(true);
+		}
+
+		playSeries();
+
+		if (player_been_here(301)) {
+			_ripBends = series_load("rip trek bends to viewer");
+			setGlobals1(_ripBends, 17, 17, 17, 17, 1, 17, 1, 1, 1, 1);
+			sendWSMessage_110000(3);
+
+		} else {
+			_ripBends = series_load("RIP BENDS TO SEE CREATURE");
+			setGlobals1(_ripBends, 26, 1, 1, 1);
+		}
+		break;
+
+	case 352:
+		player_set_commands_allowed(false);
+		interface_hide();
+		digi_preload("303r02");
+		digi_preload("303m02");
+		digi_preload("303f01");
+
+		AddSystemHotkey(KEY_ESCAPE, escapePressed);
+		_G(kernel).call_daemon_every_loop = true;
+		digi_stop(3);
+
+		series_plain_play("303cow1", -1, 0, 100, 0, 9);
+		series_show_sprite("doorknob relocation", 0, 0xf04);
+		series_load("303 final frame");
+		_machine2 = series_stream("EVERYTHING IN 303", 5, 17, 21);
+		series_stream_break_on_frame(_machine2, 3, 18);
+
+		MoveScreenDelta(game_buff_ptr, -320, 0);
+		break;
+
 	default:
+		_val12 = 1;
+		kernel_load_variant("303lock1");
+		setFengActive(true);
+		ws_demand_location(145, 289, 3);
+		loadHands();
+		setShadow4(true);
+
+		ws_walk_load_walker_series(NORMAL_DIRS, NORMAL_NAMES);
+		ws_walk_load_shadow_series(SHADOW_DIRS, SHADOW_NAMES);
+
+		_val13 = 1;
+		loadClasped();
+		_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
+			triggerMachineByHashCallbackNegative, "fl");
+		sendWSMessage_10000(1, _machine1, _clasped4, 1, 1, 400,
+			_clasped4, 1, 6, 0);
+		_val14 = _val15 = 1;
+		setShadow5(true);
+
+		playSeries();
 		break;
 	}
 }
@@ -131,6 +366,17 @@ void Room303::setShadow5(bool active) {
 	} else {
 		terminateMachineAndNull(_shadow5);
 	}
+}
+
+void Room303::escapePressed(void *, void *) {
+	_G(kernel).trigger_mode = KT_DAEMON;
+	disable_player_commands_and_fade_init(56);
+}
+
+void Room303::playSeries(bool cow) {
+	series_plain_play("SPINNING TOMATO MAN", -1, 0, 100, 0, 7);
+	series_plain_play("PUFFBALL", -1, 0, 100, 0, 8);
+	series_plain_play("CREATURE FEATURE LONG VIEW", 1, 0, 100, 0xf05, 7, 70);
 }
 
 } // namespace Rooms
