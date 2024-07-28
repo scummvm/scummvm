@@ -249,4 +249,8 @@ bool Input::isCheatModeActive() {
 	return _cheatCodeIndex == 7;
 }
 
+void Input::setCheatModeActive(bool active) {
+	_cheatCodeIndex = active ? 7 : 0;
+}
+
 } // End of namespace Illusions

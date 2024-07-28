@@ -28,6 +28,7 @@
 #include "illusions/duckman/duckman_videoplayer.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
+#include "illusions/console.h"
 #include "illusions/cursor.h"
 #include "illusions/dictionary.h"
 #include "illusions/gamresourcereader.h"
@@ -101,6 +102,8 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_resSys->addResourceLoader(0x00110000, new BackgroundResourceLoader(this));
 	_resSys->addResourceLoader(0x00120000, new FontResourceLoader(this));
 	_resSys->addResourceLoader(0x00190000, new GenericResourceLoader(this));
+
+	setDebugger(new Console(this));
 
 	_screen = new Screen8Bit(this, 320, 200);
 	_screenPalette = new ScreenPalette(this);
