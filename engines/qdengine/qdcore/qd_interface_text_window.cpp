@@ -230,7 +230,7 @@ bool qdInterfaceTextWindow::init(bool is_game_active) {
 	return true;
 }
 
-bool qdInterfaceTextWindow::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
+bool qdInterfaceTextWindow::save_script_body(Common::WriteStream &fh, int indent) const {
 	if (border_background_.has_animation()) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");

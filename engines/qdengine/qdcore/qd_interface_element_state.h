@@ -252,7 +252,7 @@ public:
 	bool unregister_resources();
 
 	//! Запись данных в скрипт.
-	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
+	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 	//! Загрузка данных из скрипта.
 	bool load_script(const xml::tag *p);
 

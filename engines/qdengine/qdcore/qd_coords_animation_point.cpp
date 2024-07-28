@@ -48,7 +48,7 @@ void qdCoordsAnimationPoint::load_script(const xml::tag *p) {
 	}
 }
 
-bool qdCoordsAnimationPoint::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdCoordsAnimationPoint::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
@@ -83,7 +83,7 @@ bool qdCoordsAnimationPoint::load_data(Common::SeekableReadStream &fh, int save_
 	return true;
 }
 
-bool qdCoordsAnimationPoint::save_data(Common::SeekableWriteStream &fh) const {
+bool qdCoordsAnimationPoint::save_data(Common::WriteStream &fh) const {
 	fh.writeFloatLE(path_length_);
 	fh.writeFloatLE(passed_path_length_);
 

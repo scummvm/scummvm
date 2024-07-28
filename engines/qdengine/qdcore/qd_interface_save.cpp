@@ -275,7 +275,7 @@ bool qdInterfaceSave::perform_save() {
 	bool is_ok = true;
 	if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher()) {
 		debugC(1, kDebugSave, "qdInterfaceSave::perform_save(): save_ID_ = %d", save_ID_);
-		is_ok &= dp->save_game(save_ID_);
+		is_ok &= (g_engine->saveGameState(save_ID_, save_title_.c_str(), dp->is_autosave_slot(save_ID_)).getCode() == Common::kNoError);
 
 		debugC(1, kDebugSave, "qdInterfaceSave::perform_save(): is_ok = %d", is_ok);
 
@@ -294,7 +294,7 @@ bool qdInterfaceSave::perform_save() {
 	return false;
 }
 
-bool qdInterfaceSave::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
+bool qdInterfaceSave::save_script_body(Common::WriteStream &fh, int indent) const {
 	if (!frame_.save_script(fh, indent)) {
 		return false;
 	}

@@ -196,7 +196,7 @@ bool qdContour::is_inside(const Vect2s &pos) const {
 return false;
 }
 
-bool qdContour::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdContour::save_script(Common::WriteStream &fh, int indent) const {
 	if (contour_type_ == CONTOUR_POLYGON) {
 		for (int i = 0; i < indent; i++) {
 			fh.writeString("\t");

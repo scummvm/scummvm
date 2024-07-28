@@ -50,7 +50,7 @@ qdInterfaceBackground &qdInterfaceBackground::operator = (const qdInterfaceBackg
 	return *this;
 }
 
-bool qdInterfaceBackground::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
+bool qdInterfaceBackground::save_script_body(Common::WriteStream &fh, int indent) const {
 	if (!state_.save_script(fh, indent)) {
 		return false;
 	}

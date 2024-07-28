@@ -31,7 +31,7 @@
 #include "qdengine/qdcore/qd_game_dispatcher.h"
 
 namespace Common {
-class SeekableWriteStream;
+class WriteStream;
 }
 
 namespace QDEngine {
@@ -354,7 +354,7 @@ bool qdCondition::load_script(const xml::tag *p) {
 	return true;
 }
 
-bool qdCondition::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdCondition::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
@@ -430,7 +430,7 @@ bool qdCondition::load_data(Common::SeekableReadStream &fh, int save_version) {
 	return true;
 }
 
-bool qdCondition::save_data(Common::SeekableWriteStream &fh) const {
+bool qdCondition::save_data(Common::WriteStream &fh) const {
 	debugC(5, kDebugSave, "      qdCondition::save_data(): before %ld", fh.pos());
 	if (type_ == CONDITION_TIMER) {
 		float timer;

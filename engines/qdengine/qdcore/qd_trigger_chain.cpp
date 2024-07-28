@@ -356,7 +356,7 @@ bool qdTriggerChain::load_script(const xml::tag *p) {
 	return true;
 }
 
-bool qdTriggerChain::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdTriggerChain::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
@@ -459,7 +459,7 @@ bool qdTriggerChain::load_data(Common::SeekableReadStream &fh, int save_version)
 	return true;
 }
 
-bool qdTriggerChain::save_data(Common::SeekableWriteStream &fh) const {
+bool qdTriggerChain::save_data(Common::WriteStream &fh) const {
 	debugC(4, kDebugSave, "    qdTriggerChain::save_data before: %ld", fh.pos());
 	fh.writeUint32LE(elements_.size());
 

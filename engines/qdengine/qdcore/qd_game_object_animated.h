@@ -251,12 +251,12 @@ public:
 	int mouse_cursor_ID() const;
 
 	bool load_script(const xml::tag *p);
-	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
+	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 
 	//! Загрузка данных из сэйва.
 	bool load_data(Common::SeekableReadStream &fh, int save_version);
 	//! Запись данных в сэйв.
-	bool save_data(Common::SeekableWriteStream &fh) const;
+	bool save_data(Common::WriteStream &fh) const;
 
 	bool load_resources();
 	void free_resources();
@@ -338,7 +338,7 @@ public:
 protected:
 
 	bool load_script_body(const xml::tag *p);
-	bool save_script_body(Common::SeekableWriteStream &fh, int indent = 0) const;
+	bool save_script_body(Common::WriteStream &fh, int indent = 0) const;
 
 	void set_last_state(qdGameObjectState *p) {
 		if (!p || !p->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_STATE | qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_HOVER_STATE))
@@ -409,4 +409,3 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_GAME_OBJECT_ANIMATED_H
-

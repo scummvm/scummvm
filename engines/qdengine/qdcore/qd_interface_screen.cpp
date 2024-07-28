@@ -164,7 +164,7 @@ bool qdInterfaceScreen::quant(float dt) {
 	return true;
 }
 
-bool qdInterfaceScreen::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdInterfaceScreen::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
@@ -426,4 +426,3 @@ void qdInterfaceScreen::update_personage_buttons() {
 	}
 }
 } // namespace QDEngine
-

@@ -133,7 +133,7 @@ void qdNamedObjectReference::load_script(const xml::tag *p) {
 	}
 }
 
-bool qdNamedObjectReference::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdNamedObjectReference::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
@@ -182,7 +182,7 @@ bool qdNamedObjectReference::load_data(Common::SeekableReadStream &fh, int versi
 	return true;
 }
 
-bool qdNamedObjectReference::save_data(Common::SeekableWriteStream &fh) const {
+bool qdNamedObjectReference::save_data(Common::WriteStream &fh) const {
 	debugC(5, kDebugSave, "      qdNamedObjectReference::save_data before: %ld", fh.pos());
 	fh.writeSint32LE(num_levels());
 

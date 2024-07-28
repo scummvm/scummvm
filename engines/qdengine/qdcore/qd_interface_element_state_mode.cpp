@@ -75,7 +75,7 @@ void qdInterfaceElementStateMode::set_animation_file(const char *name) {
 		animation_file_.clear();
 }
 
-bool qdInterfaceElementStateMode::save_script(Common::SeekableWriteStream &fh, int type_id, int indent) const {
+bool qdInterfaceElementStateMode::save_script(Common::WriteStream &fh, int type_id, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}

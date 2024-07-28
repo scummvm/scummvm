@@ -402,7 +402,7 @@ void qdGameScene::load_script(const xml::tag *p) {
 	camera.set_cycle(check_flag(CYCLE_X), check_flag(CYCLE_Y));
 }
 
-bool qdGameScene::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdGameScene::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
@@ -878,7 +878,7 @@ bool qdGameScene::load_data(Common::SeekableReadStream &fh, int save_version) {
 	return true;
 }
 
-bool qdGameScene::save_data(Common::SeekableWriteStream &fh) const {
+bool qdGameScene::save_data(Common::WriteStream &fh) const {
 	debugC(3, kDebugSave, "  qdGameScene::save_data before: %ld", fh.pos());
 	if (!qdConditionalObject::save_data(fh)) {
 		return false;

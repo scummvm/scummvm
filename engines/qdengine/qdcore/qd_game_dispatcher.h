@@ -357,7 +357,7 @@ public:
 	//! Загрузка данных из сэйва.
 	bool load_save(const char *fname);
 	//! Запись данных в сэйв.
-	bool save_save(const char *fname) const;
+	bool save_save(Common::WriteStream *stream) const;
 
 	bool load_game(int slot_id);
 	bool save_game(int slot_id) const;
@@ -520,6 +520,10 @@ public:
 
 	const Vect2f &mouse_cursor_pos() const {
 		return mouse_cursor_pos_;
+	}
+
+	bool is_autosave_slot(int save_slot) {
+		return save_slot == autosave_slot_;
 	}
 
 	void set_auto_save(int save_slot) {

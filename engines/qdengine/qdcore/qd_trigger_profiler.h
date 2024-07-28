@@ -56,7 +56,7 @@ public:
 
 	qdTriggerProfilerRecord &operator = (const qdTriggerProfilerRecord &rec);
 
-	bool save(Common::SeekableWriteStream &fh) const;
+	bool save(Common::WriteStream &fh) const;
 	bool load(Common::SeekableReadStream &fh);
 
 	//! Время события (в миллисекундах от старта приложения).

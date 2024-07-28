@@ -195,7 +195,7 @@ void qdScreenTextSet::load_script(const xml::tag *p) {
 	}
 }
 
-bool qdScreenTextSet::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdScreenTextSet::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}

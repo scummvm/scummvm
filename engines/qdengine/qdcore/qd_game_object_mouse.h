@@ -25,7 +25,7 @@
 #include "qdengine/qdcore/qd_game_object_animated.h"
 
 namespace Common {
-class SeekableWriteStream;
+class WriteStream;
 }
 
 namespace QDEngine {
@@ -44,10 +44,10 @@ public:
 	}
 
 	bool load_script(const xml::tag *p);
-	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
+	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 
 	bool load_data(Common::SeekableReadStream &fh, int save_version);
-	bool save_data(Common::SeekableWriteStream &fh) const;
+	bool save_data(Common::WriteStream &fh) const;
 
 	void take_object(qdGameObjectAnimated *p);
 	qdGameObjectAnimated *object() {
@@ -104,7 +104,7 @@ public:
 protected:
 
 	bool load_script_body(const xml::tag *p);
-	bool save_script_body(Common::SeekableWriteStream &fh, int indent = 0) const;
+	bool save_script_body(Common::WriteStream &fh, int indent = 0) const;
 
 private:
 
@@ -125,4 +125,3 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_GAME_OBJECT_MOUSE_H
-

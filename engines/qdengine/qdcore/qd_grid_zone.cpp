@@ -120,7 +120,7 @@ bool qdGridZone::load_script(const xml::tag *p) {
 	return true;
 }
 
-bool qdGridZone::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdGridZone::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
@@ -320,7 +320,7 @@ bool qdGridZone::load_data(Common::SeekableReadStream &fh, int saveVersion) {
 }
 
 
-bool qdGridZone::save_data(Common::SeekableWriteStream &fh) const {
+bool qdGridZone::save_data(Common::WriteStream &fh) const {
 	debugC(3, kDebugSave, "  qdGridZone::save_data before: %ld", fh.pos());
 	if (!qdNamedObject::save_data(fh)) {
 		return false;

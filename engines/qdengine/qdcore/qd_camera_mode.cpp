@@ -68,7 +68,7 @@ bool qdCameraMode::load_script(const xml::tag *p) {
 	return true;
 }
 
-bool qdCameraMode::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdCameraMode::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
@@ -111,7 +111,7 @@ bool qdCameraMode::load_data(Common::SeekableReadStream &fh, int save_version) {
 	return true;
 }
 
-bool qdCameraMode::save_data(Common::SeekableWriteStream &fh) const {
+bool qdCameraMode::save_data(Common::WriteStream &fh) const {
 	debugC(4, kDebugSave, "    qdCameraMode::save_data(): before %ld", fh.pos());
 
 	fh.writeSint32LE((int)camera_mode_);

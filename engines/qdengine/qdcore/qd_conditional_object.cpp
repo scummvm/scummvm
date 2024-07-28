@@ -209,7 +209,7 @@ bool qdConditionalObject::load_conditions_script(const xml::tag *p) {
 	return true;
 }
 
-bool qdConditionalObject::save_conditions_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdConditionalObject::save_conditions_script(Common::WriteStream &fh, int indent) const {
 	if (conditions_.size()) {
 		for (auto &it : conditions_) {
 			it.save_script(fh, indent + 1);
@@ -263,7 +263,7 @@ bool qdConditionalObject::load_data(Common::SeekableReadStream &fh, int save_ver
 	return true;
 }
 
-bool qdConditionalObject::save_data(Common::SeekableWriteStream &fh) const {
+bool qdConditionalObject::save_data(Common::WriteStream &fh) const {
 	debugC(4, kDebugSave, "    qdConditionalObject::save_data(): before %ld", fh.pos());
 	if (!qdNamedObject::save_data(fh)) {
 		return false;

@@ -74,7 +74,7 @@ qdInterfaceElementState &qdInterfaceElementState::operator = (const qdInterfaceE
 	return *this;
 }
 
-bool qdInterfaceElementState::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdInterfaceElementState::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}

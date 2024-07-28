@@ -127,7 +127,7 @@ public:
 	//! Загрузка данных из сэйва.
 	virtual bool load_data(Common::SeekableReadStream &fh, int save_version);
 	//! Запись данных в сэйв.
-	virtual bool save_data(Common::SeekableWriteStream &fh) const;
+	virtual bool save_data(Common::WriteStream &fh) const;
 
 
 	//! Добавляет ссылку из триггеров на объект.
@@ -167,4 +167,3 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_NAMED_OBJECT_H
-

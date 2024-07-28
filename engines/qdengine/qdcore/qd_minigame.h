@@ -92,7 +92,7 @@ public:
 	//! Загрузка данных из скрипта.
 	bool load_script(const xml::tag *p);
 	//! Запись данных в скрипт.
-	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
+	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 
 	//! Добавляет в передаваемые списки имена файлов, необходимых для миниигры.
 	bool get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const;

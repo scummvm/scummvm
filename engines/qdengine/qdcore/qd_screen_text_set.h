@@ -82,7 +82,7 @@ public:
 	bool arrange_texts();
 
 	void load_script(const xml::tag *p);
-	bool save_script(Common::SeekableWriteStream &fh, int indent) const;
+	bool save_script(Common::WriteStream &fh, int indent) const;
 
 	bool need_redraw() const {
 		return need_redraw_;

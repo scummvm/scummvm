@@ -492,7 +492,7 @@ void qdCamera::load_script(const xml::tag *p) {
 	rotate_and_scale(xAngle, yAngle, zAngle, 1, 1, 1);
 }
 
-bool qdCamera::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdCamera::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
@@ -1001,7 +1001,7 @@ bool qdCamera::load_data(Common::SeekableReadStream &fh, int save_version) {
 	return true;
 }
 
-bool qdCamera::save_data(Common::SeekableWriteStream &fh) const {
+bool qdCamera::save_data(Common::WriteStream &fh) const {
 	debugC(3, kDebugSave, "  qdCamera::save_data(): before %ld", fh.pos());
 	fh.writeSint32LE(scrCenter.x);
 	fh.writeSint32LE(scrCenter.y);

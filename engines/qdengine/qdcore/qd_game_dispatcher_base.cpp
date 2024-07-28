@@ -68,7 +68,7 @@ void qdGameDispatcherBase::load_script_body(const xml::tag *p) {
 	}
 }
 
-bool qdGameDispatcherBase::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
+bool qdGameDispatcherBase::save_script_body(Common::WriteStream &fh, int indent) const {
 	for (auto &it : scale_infos) {
 		it.save_script(fh, indent + 1);
 	}

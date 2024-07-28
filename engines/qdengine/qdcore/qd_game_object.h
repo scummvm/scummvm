@@ -28,7 +28,7 @@
 #include "qdengine/qdcore/qd_named_object.h"
 
 namespace Common {
-class SeekableWriteStream;
+class WriteStream;
 }
 
 namespace QDEngine {
@@ -111,7 +111,7 @@ public:
 	}
 
 	virtual bool load_script(const xml::tag *p) = 0;
-	virtual bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const = 0;
+	virtual bool save_script(Common::WriteStream &fh, int indent = 0) const = 0;
 
 	virtual bool load_resources() {
 		return true;
@@ -150,7 +150,7 @@ public:
 	//! Загрузка данных из сэйва.
 	bool load_data(Common::SeekableReadStream &fh, int saveVersion);
 	//! Запись данных в сэйв.
-	bool save_data(Common::SeekableWriteStream &fh) const;
+	bool save_data(Common::WriteStream &fh) const;
 
 	const Vect2i &get_screen_R() const {
 		return screen_r_;
@@ -159,7 +159,7 @@ public:
 protected:
 
 	virtual bool load_script_body(const xml::tag *p);
-	virtual bool save_script_body(Common::SeekableWriteStream &fh, int indent = 0) const;
+	virtual bool save_script_body(Common::WriteStream &fh, int indent = 0) const;
 
 	void set_screen_R(const Vect2i &v) {
 		screen_r_ = v;
@@ -194,4 +194,3 @@ inline bool qdbg_is_object(const qdNamedObject *, const char *, const char *) {
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_GAME_OBJECT_H
-

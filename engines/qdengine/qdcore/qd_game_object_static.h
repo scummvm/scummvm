@@ -50,7 +50,7 @@ public:
 	void draw_shadow(int offs_x, int offs_y, unsigned color, int alpha) const { }
 
 	bool load_script(const xml::tag *p);
-	bool save_script(Common::SeekableWriteStream &fh, int indent = 0) const;
+	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 
 	bool mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
 		return false;
@@ -71,7 +71,7 @@ public:
 protected:
 
 	bool load_script_body(const xml::tag *p);
-	bool save_script_body(Common::SeekableWriteStream &fh, int indent = 0) const;
+	bool save_script_body(Common::WriteStream &fh, int indent = 0) const;
 
 private:
 	qdSprite sprite_;

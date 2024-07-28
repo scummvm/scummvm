@@ -449,7 +449,7 @@ bool qdGameObjectAnimated::remove_state(qdGameObjectState *p) {
 	return false;
 }
 
-bool qdGameObjectAnimated::save_script_body(Common::SeekableWriteStream &fh, int indent) const {
+bool qdGameObjectAnimated::save_script_body(Common::WriteStream &fh, int indent) const {
 	qdGameObject::save_script_body(fh, indent);
 
 	for (auto &is : states) {
@@ -496,7 +496,7 @@ bool qdGameObjectAnimated::load_script(const xml::tag *p) {
 	return load_script_body(p);
 }
 
-bool qdGameObjectAnimated::save_script(Common::SeekableWriteStream &fh, int indent) const {
+bool qdGameObjectAnimated::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
@@ -1349,7 +1349,7 @@ bool qdGameObjectAnimated::load_data(Common::SeekableReadStream &fh, int save_ve
 	return true;
 }
 
-bool qdGameObjectAnimated::save_data(Common::SeekableWriteStream &fh) const {
+bool qdGameObjectAnimated::save_data(Common::WriteStream &fh) const {
 	debugC(4, kDebugSave, "    qdGameObjectAnimated::save_data before: %ld", fh.pos());
 	if (!qdGameObject::save_data(fh)) return false;
 
@@ -1664,4 +1664,3 @@ bool qdGameObjectAnimated::get_debug_info(Common::String &buf) const {
 	return true;
 }
 } // namespace QDEngine
-
