@@ -40,7 +40,8 @@ _reverseDirection(0), _clockwise(false)
 
 void ShellGame::init() {
 	DgdsEngine *engine = DgdsEngine::getInstance();
-	HocGlobals *globals = dynamic_cast<HocGlobals *>(engine->getGameGlobals());
+	HocGlobals *globals = static_cast<HocGlobals *>(engine->getGameGlobals());
+	assert(globals);
 	_shellGameImg.reset(new Image(engine->getResourceManager(), engine->getDecompressor()));
 	_shellGameImg->loadBitmap("SHELLGM2.BMP");
 	globals->setShellPea(engine->getRandom().getRandomNumber(2));
@@ -85,7 +86,8 @@ void ShellGame::drawShells() const {
 
 void ShellGame::shellGameTick() {
 	DgdsEngine *engine = DgdsEngine::getInstance();
-	HocGlobals *globals = dynamic_cast<HocGlobals *>(engine->getGameGlobals());
+	HocGlobals *globals = static_cast<HocGlobals *>(engine->getGameGlobals());
+	assert(globals);
 
 	if (!_shellGameImg)
 		init();
