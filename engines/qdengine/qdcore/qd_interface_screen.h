@@ -149,15 +149,6 @@ public:
 		return _music_track.has_file_name();
 	}
 
-#ifdef _QUEST_EDITOR
-	bool select_element(qdInterfaceElement *pele, bool bselect);
-	bool is_selected(const qdInterfaceElement *p) const;
-	const element_list_t &selected_element_list() const {
-		return selected_elements_;
-	}
-	void clear_selection();
-#endif //_QUEST_EDITOR
-
 	void set_autohide_phase(float ph) {
 		_autohide_phase = ph;
 	}
@@ -171,11 +162,6 @@ public:
 	}
 
 private:
-
-#ifdef _QUEST_EDITOR
-	//! выбранные элементы
-	element_list_t selected_elements_;
-#endif // _QUEST_EDITOR
 
 	//! Список интерфейсных элементов экрана.
 	qdObjectListContainer<qdInterfaceElement> _elements;
