@@ -71,10 +71,10 @@ public:
 		_picture_offset = offs;
 	}
 
-	int picture__sizex() const {
+	int picture_size_x() const {
 		return _picture_size.x;
 	}
-	int _picture_sizey() const {
+	int picture_size_y() const {
 		return _picture_size.y;
 	}
 	void set_picture_size(const Vect2i &size) {
@@ -183,7 +183,7 @@ public:
 		return NULL;
 	}
 #ifdef __QD_DEBUG_ENABLE__
-	unsigned resource__datasize() const {
+	unsigned resource_data_size() const {
 		return data_size();
 	}
 #endif
