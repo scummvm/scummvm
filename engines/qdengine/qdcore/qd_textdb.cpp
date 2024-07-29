@@ -42,18 +42,18 @@ qdTextDB &qdTextDB::instance() {
 }
 
 const char *qdTextDB::getText(const char *text_id) const {
-	qdTextMap::const_iterator it = texts_.find(text_id);
-	if (it != texts_.end())
-		return it->second.text_.c_str();
+	qdTextMap::const_iterator it = _texts.find(text_id);
+	if (it != _texts.end())
+		return it->second._text.c_str();
 
 	static const char *const str = "";
 	return str;
 }
 
 const char *qdTextDB::getSound(const char *text_id) const {
-	qdTextMap::const_iterator it = texts_.find(text_id);
-	if (it != texts_.end())
-		return it->second.sound_.c_str();
+	qdTextMap::const_iterator it = _texts.find(text_id);
+	if (it != _texts.end())
+		return it->second._sound.c_str();
 
 	static const char *const str = "";
 	return str;
@@ -61,9 +61,9 @@ const char *qdTextDB::getSound(const char *text_id) const {
 
 const char *qdTextDB::getComment(const char *text_id) const {
 #ifndef _FINAL_VERSION_
-	qdTextMap::const_iterator it = texts_.find(text_id);
-	if (it != texts_.end())
-		return it->second.comment_.c_str();
+	qdTextMap::const_iterator it = _texts.find(text_id);
+	if (it != _texts.end())
+		return it->second._comment.c_str();
 #endif
 
 	static const char *const str = "";
@@ -87,7 +87,7 @@ bool qdTextDB::load(Common::SeekableReadStream *fh, const char *commentsFileName
 		int32 sndLength = fh->readSint32LE();
 		Common::String sndStr = fh->readString(0, sndLength);
 
-		texts_.insert(qdTextMap::value_type(idStr.c_str(), qdText(txtStr.c_str(), sndStr.c_str())));
+		_texts.insert(qdTextMap::value_type(idStr.c_str(), qdText(txtStr.c_str(), sndStr.c_str())));
 
 	}
 
@@ -109,9 +109,9 @@ bool qdTextDB::load(Common::SeekableReadStream *fh, const char *commentsFileName
 			int32 sndLength = fh->readSint32LE();
 			Common::String sndStr = fh->readString(0, sndLength);
 
-			qdTextMap::iterator it = texts_.find(idStr.c_str());
-			if (it != texts_.end())
-				it->second.comment_ = txtStr.c_str();
+			qdTextMap::iterator it = _texts.find(idStr.c_str());
+			if (it != _texts.end())
+				it->second._comment = txtStr.c_str();
 		}
 	}
 
@@ -122,7 +122,7 @@ void qdTextDB::getIdList(const char *mask, IdList &idList) const {
 	idList.clear();
 //	int const maskLen = _tcslen(mask);
 	int const maskLen = strlen(mask);
-	for (auto &i : texts_) {
+	for (auto &i : _texts) {
 		if (!i.first.find(mask)) {
 			std::string str = i.first;
 			str.erase(0, maskLen + 1);
@@ -156,7 +156,7 @@ bool qdTextDB::getIdList(IdList &idList) const {
 }
 
 bool qdTextDB::getRootIdList(IdList &idList) const {
-	qdTextMap::const_iterator i = texts_.begin(), e = texts_.end();
+	qdTextMap::const_iterator i = _texts.begin(), e = _texts.end();
 	std::string copy;
 	for (; i != e; ++i) {
 		std::string const &str = i->first;
@@ -172,4 +172,3 @@ bool qdTextDB::getRootIdList(IdList &idList) const {
 	return true;
 }
 } // namespace QDEngine
-
