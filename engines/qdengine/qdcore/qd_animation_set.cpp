@@ -35,12 +35,12 @@ qdAnimationSet::qdAnimationSet() {
 qdAnimationSet::qdAnimationSet(const qdAnimationSet &set) : qdNamedObject(set),
 	_start_angle(set._start_angle),
 	_animations(set._animations),
-	walk_sound_frequency_(set.walk_sound_frequency_),
+	_walk_sound_frequency(set._walk_sound_frequency),
 	_static_animations(set._static_animations),
 	_start_animations(set._start_animations),
 	_stop_animations(set._stop_animations),
-	turn_animation_(set.turn_animation_) {
-	turn_animation_.set_owner(this);
+	_turn_animation(set._turn_animation) {
+	_turn_animation.set_owner(this);
 
 	for (int i = 0; i < size(); i ++) {
 		_animations[i].set_owner(this);
@@ -68,10 +68,10 @@ qdAnimationSet &qdAnimationSet::operator = (const qdAnimationSet &set) {
 	_static_animations = set._static_animations;
 	_start_animations = set._stop_animations;
 	_stop_animations = set._stop_animations;
-	walk_sound_frequency_ = set.walk_sound_frequency_;
+	_walk_sound_frequency = set._walk_sound_frequency;
 
-	turn_animation_ = set.turn_animation_;
-	turn_animation_.set_owner(this);
+	_turn_animation = set._turn_animation;
+	_turn_animation.set_owner(this);
 
 	for (int i = 0; i < size(); i ++) {
 		_animations[i].set_owner(this);
@@ -88,7 +88,7 @@ void qdAnimationSet::resize(int sz) {
 	_static_animations.resize(sz);
 	_start_animations.resize(sz);
 	_stop_animations.resize(sz);
-	walk_sound_frequency_.resize(sz, 1);
+	_walk_sound_frequency.resize(sz, 1);
 
 	for (int i = 0; i < size(); i ++) {
 		_animations[i].set_owner(this);
@@ -172,7 +172,7 @@ qdAnimationInfo *qdAnimationSet::get_stop_animation_info(float direction_angle) 
 }
 
 qdAnimation *qdAnimationSet::get_turn_animation() const {
-	return turn_animation_.animation();
+	return _turn_animation.animation();
 }
 
 void qdAnimationSet::load_script(const xml::tag *p) {
@@ -201,16 +201,16 @@ void qdAnimationSet::load_script(const xml::tag *p) {
 			index ++;
 			break;
 		case QDSCR_ANIMATION_SET_TURN:
-			turn_animation_.set_animation_name(it->data());
+			_turn_animation.set_animation_name(it->data());
 			break;
 		case QDSCR_ANIMATION_SET_START_ANGLE:
 			xml::tag_buffer(*it) > _start_angle;
 			break;
 		case QDSCR_OBJECT_STATE_WALK_SOUND_FREQUENCY: {
 			xml::tag_buffer buf(*it);
-			walk_sound_frequency_.resize(it->data_size());
+			_walk_sound_frequency.resize(it->data_size());
 			for (int i = 0; i < it->data_size(); i++)
-				buf > walk_sound_frequency_[i];
+				buf > _walk_sound_frequency[i];
 		}
 		break;
 		}
@@ -223,8 +223,8 @@ bool qdAnimationSet::save_script(Common::WriteStream &fh, int indent) const {
 	}
 	fh.writeString(Common::String::format("<animation_set name=\"%s\"", qdscr_XML_string(name())));
 
-	if (turn_animation_.animation_name()) {
-		fh.writeString(Common::String::format(" animation_turn=\"%s\"", qdscr_XML_string(turn_animation_.animation_name())));
+	if (_turn_animation.animation_name()) {
+		fh.writeString(Common::String::format(" animation_turn=\"%s\"", qdscr_XML_string(_turn_animation.animation_name())));
 	}
 
 	fh.writeString(Common::String::format(" size=\"%d\"", size()));
@@ -251,14 +251,14 @@ bool qdAnimationSet::save_script(Common::WriteStream &fh, int indent) const {
 		it.save_script(fh, indent + 1);
 	}
 
-	if (walk_sound_frequency_.size()) {
+	if (_walk_sound_frequency.size()) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 
-		fh.writeString(Common::String::format("<walk_sound_frequency>%lu", walk_sound_frequency_.size()));
-		for (int i = 0; i < walk_sound_frequency_.size(); i++) {
-			fh.writeString(Common::String::format(" %f", walk_sound_frequency_[i]));
+		fh.writeString(Common::String::format("<walk_sound_frequency>%lu", _walk_sound_frequency.size()));
+		for (int i = 0; i < _walk_sound_frequency.size(); i++) {
+			fh.writeString(Common::String::format(" %f", _walk_sound_frequency[i]));
 		}
 
 		fh.writeString("</walk_sound_frequency>\r\n");
@@ -299,7 +299,7 @@ bool qdAnimationSet::load_animations(const qdNamedObject *res_owner) {
 			}
 		}
 
-		if (qdAnimation *p = turn_animation_.animation())
+		if (qdAnimation *p = _turn_animation.animation())
 			dp->load_resource(p, res_owner);
 
 		return true;
@@ -334,7 +334,7 @@ bool qdAnimationSet::free_animations(const qdNamedObject *res_owner) {
 			}
 		}
 
-		if (qdAnimation *p = turn_animation_.animation())
+		if (qdAnimation *p = _turn_animation.animation())
 			dp->release_resource(p, res_owner);
 
 		return true;
@@ -367,7 +367,7 @@ bool qdAnimationSet::scale_animations(float coeff_x, float coeff_y) {
 			if (!p->scale(coeff_x, coeff_y)) res = false;
 	}
 
-	if (qdAnimation *p = turn_animation_.animation())
+	if (qdAnimation *p = _turn_animation.animation())
 		if (!p->scale(coeff_x, coeff_y)) res = false;
 
 	return res;
@@ -391,7 +391,7 @@ bool qdAnimationSet::register_resources(const qdNamedObject *res_owner) {
 			if (qdAnimation *p = it.animation())
 				dp->register_resource(p, res_owner);
 		}
-		if (qdAnimation *p = turn_animation_.animation())
+		if (qdAnimation *p = _turn_animation.animation())
 			dp->register_resource(p, res_owner);
 		return true;
 	}
@@ -417,7 +417,7 @@ bool qdAnimationSet::unregister_resources(const qdNamedObject *res_owner) {
 			if (qdAnimation *p = it.animation())
 				dp->unregister_resource(p, res_owner);
 		}
-		if (qdAnimation *p = turn_animation_.animation())
+		if (qdAnimation *p = _turn_animation.animation())
 			dp->unregister_resource(p, res_owner);
 		return true;
 	}
@@ -433,10 +433,10 @@ float qdAnimationSet::adjust_angle(float angle) const {
 }
 
 float qdAnimationSet::walk_sound_frequency(int direction_index) const {
-	if (direction_index < 0 || direction_index >= walk_sound_frequency_.size())
+	if (direction_index < 0 || direction_index >= _walk_sound_frequency.size())
 		return 1;
 	else
-		return walk_sound_frequency_[direction_index];
+		return _walk_sound_frequency[direction_index];
 }
 
 float qdAnimationSet::walk_sound_frequency(float direction_angle) const {
@@ -447,9 +447,9 @@ float qdAnimationSet::walk_sound_frequency(float direction_angle) const {
 void qdAnimationSet::set_walk_sound_frequency(int direction_index, float freq) {
 	assert(direction_index >= 0);
 
-	if (direction_index >= walk_sound_frequency_.size())
-		walk_sound_frequency_.resize(direction_index + 1, 1);
+	if (direction_index >= _walk_sound_frequency.size())
+		_walk_sound_frequency.resize(direction_index + 1, 1);
 
-	walk_sound_frequency_[direction_index] = freq;
+	_walk_sound_frequency[direction_index] = freq;
 }
 } // namespace QDEngine
