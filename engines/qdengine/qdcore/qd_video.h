@@ -56,27 +56,27 @@ public:
 	}
 
 	const char *file_name() const {
-		return file_name_.c_str();
+		return _file_name.c_str();
 	}
 	void set_file_name(const char *fname) {
-		file_name_ = fname;
+		_file_name = fname;
 	}
 
 	// Фон, на котором будет проигрываться видео
 	void set_background_file_name(const char *fname) {
-		background_.set_file(fname);
+		_background.set_file(fname);
 	}
 	const char *background_file_name() const {
-		return background_.file();
+		return _background.file();
 	}
 	bool draw_background();
 
 	// Экранные координаты верхнего левого угла
 	const Vect2s &position() const {
-		return position_;
+		return _position;
 	}
 	void set_position(const Vect2s pos) {
-		position_ = pos;
+		_position = pos;
 	}
 
 	bool load_script(const xml::tag *p);
@@ -92,10 +92,10 @@ public:
 
 private:
 
-	Vect2s position_;
-	std::string file_name_;
+	Vect2s _position;
+	std::string _file_name;
 
-	qdSprite background_;
+	qdSprite _background;
 };
 
 } // namespace QDEngine

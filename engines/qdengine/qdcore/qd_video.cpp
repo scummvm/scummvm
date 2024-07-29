@@ -35,14 +35,14 @@
 
 namespace QDEngine {
 
-qdVideo::qdVideo() : position_(0, 0) {
+qdVideo::qdVideo() : _position(0, 0) {
 }
 
 qdVideo::qdVideo(const qdVideo &v):
 	qdConditionalObject(v),
-	position_(v.position_),
-	file_name_(v.file_name_),
-	background_(v.background_) {
+	_position(v._position),
+	_file_name(v._file_name),
+	_background(v._background) {
 }
 
 qdVideo::~qdVideo() {
@@ -53,9 +53,9 @@ qdVideo &qdVideo::operator = (const qdVideo &v) {
 
 	*static_cast<qdConditionalObject *>(this) = v;
 
-	position_ = v.position_;
-	file_name_ = v.file_name_;
-	background_ = v.background_;
+	_position = v._position;
+	_file_name = v._file_name;
+	_background = v._background;
 
 	return *this;
 }
@@ -113,13 +113,13 @@ bool qdVideo::save_script(Common::WriteStream &fh, int indent) const {
 		fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
 	}
 
-	if (!check_flag(VID_CENTER_FLAG | VID_FULLSCREEN_FLAG) && (position_.x || position_.y)) {
-		fh.writeString(Common::String::format(" video_position=\"%d %d\"", position_.x, position_.y)) ;
+	if (!check_flag(VID_CENTER_FLAG | VID_FULLSCREEN_FLAG) && (_position.x || _position.y)) {
+		fh.writeString(Common::String::format(" video_position=\"%d %d\"", _position.x, _position.y)) ;
 	}
 
 	fh.writeString(">\r\n");
 
-	if (background_.has_file()) {
+	if (_background.has_file()) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
@@ -129,7 +129,7 @@ bool qdVideo::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<file>%s</file>\r\n", qdscr_XML_string(file_name_.c_str())));
+	fh.writeString(Common::String::format("<file>%s</file>\r\n", qdscr_XML_string(_file_name.c_str())));
 
 	save_conditions_script(fh, indent);
 
@@ -142,16 +142,16 @@ bool qdVideo::save_script(Common::WriteStream &fh, int indent) const {
 }
 
 bool qdVideo::draw_background() {
-	if (background_.has_file()) {
-		background_.load();
+	if (_background.has_file()) {
+		_background.load();
 
 		grDispatcher::instance()->Fill(0);
 		int x = qdGameConfig::get_config().screen_sx() >> 1;
 		int y = qdGameConfig::get_config().screen_sy() >> 1;
-		background_.redraw(x, y, 0);
+		_background.redraw(x, y, 0);
 		grDispatcher::instance()->Flush();
 
-		background_.free();
+		_background.free();
 
 		return true;
 	}
@@ -174,8 +174,8 @@ qdConditionalObject::trigger_start_mode qdVideo::trigger_start() {
 }
 
 bool qdVideo::get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const {
-	if (!file_name_.empty())
-		files_to_copy.push_back(file_name_);
+	if (!_file_name.empty())
+		files_to_copy.push_back(_file_name);
 
 	if (background_file_name())
 		files_to_pack.push_back(background_file_name());
