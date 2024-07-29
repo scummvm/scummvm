@@ -71,10 +71,10 @@ public:
 
 	qdAnimation *get_turn_animation() const;
 	qdAnimationInfo *get_turn_animation_info() {
-		return &turn_animation_;
+		return &_turn_animation;
 	}
 	void set_turn_animation(const char *animation_name) {
-		turn_animation_.set_animation_name(animation_name);
+		_turn_animation.set_animation_name(animation_name);
 	}
 
 	float walk_sound_frequency(int direction_index) const;
@@ -114,10 +114,10 @@ private:
 	qdAnimationInfoVector _stop_animations;
 
 	/// анимация поворота, полный оборот начиная с направления вправо
-	qdAnimationInfo turn_animation_;
+	qdAnimationInfo _turn_animation;
 
 	//! Коэффициенты для частоты звука походки.
-	std::vector<float> walk_sound_frequency_;
+	std::vector<float> _walk_sound_frequency;
 
 	static int get_angle_index(float direction_angle, int dir_count);
 	static float get_index_angle(int index, int dir_count);
