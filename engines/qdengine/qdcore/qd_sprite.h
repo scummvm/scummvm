@@ -48,56 +48,56 @@ public:
 	qdSprite &operator = (const qdSprite &spr);
 
 	const Vect2i &size() const {
-		return size_;
+		return _size;
 	}
 	void set_size(const Vect2i &size) {
-		size_ = size;
+		_size = size;
 	}
 
 	int size_x() const {
-		return size_.x;
+		return _size.x;
 	}
 	int size_y() const {
-		return size_.y;
+		return _size.y;
 	}
 
 	int picture_x() const {
-		return picture_offset_.x;
+		return _picture_offset.x;
 	}
 	int picture_y() const {
-		return picture_offset_.y;
+		return _picture_offset.y;
 	}
 	void set_picture_offset(const Vect2i &offs) {
-		picture_offset_ = offs;
+		_picture_offset = offs;
 	}
 
-	int picture_size_x() const {
-		return picture_size_.x;
+	int picture__sizex() const {
+		return _picture_size.x;
 	}
-	int picture_size_y() const {
-		return picture_size_.y;
+	int _picture_sizey() const {
+		return _picture_size.y;
 	}
 	void set_picture_size(const Vect2i &size) {
-		picture_size_ = size;
+		_picture_size = size;
 	}
 
 	int format() const {
-		return format_;
+		return _format;
 	}
 	const unsigned char *data() const {
-		return data_;
+		return _data;
 	}
 	unsigned data_size() const;
 
 	void set_file(const char *fname) {
-		if (fname) file_ = fname;
-		else file_.clear();
+		if (fname) _file = fname;
+		else _file.clear();
 	}
 	const char *file() const {
-		return file_.c_str();
+		return _file.c_str();
 	}
 	bool has_file() const {
-		return !file_.empty();
+		return !_file.empty();
 	}
 
 	bool load(const char *fname = 0);
@@ -135,29 +135,29 @@ public:
 	bool compress();
 	bool uncompress();
 	bool is_compressed() const {
-		if (rle_data_) return true;
+		if (_rle_data) return true;
 		else return false;
 	}
 
 	bool scale(float coeff_x, float coeff_y);
 
 	void set_flag(int fl) {
-		flags_ |= fl;
+		_flags |= fl;
 	}
 	void drop_flag(int fl) {
-		flags_ &= ~fl;
+		_flags &= ~fl;
 	}
 	bool check_flag(int fl) const {
-		if (flags_ & fl) {
+		if (_flags & fl) {
 			return true;
 		}
 		return false;
 	}
 	void clear_flags() {
-		flags_ = 0;
+		_flags = 0;
 	}
 	int flags() const {
-		return flags_;
+		return _flags;
 	}
 
 	//! Загружает в память данные ресурса.
@@ -171,8 +171,8 @@ public:
 	}
 
 	//! Устанавливает имя файла, в котором хранятся данные ресурса.
-	void set_resource_file(const char *file_name) {
-		set_file(file_name);
+	void set_resource_file(const char *_filename) {
+		set_file(_filename);
 	}
 	//! Возвращает имя файла, в котором хранятся данные ресурса.
 	/**
@@ -183,7 +183,7 @@ public:
 		return NULL;
 	}
 #ifdef __QD_DEBUG_ENABLE__
-	unsigned resource_data_size() const {
+	unsigned resource__datasize() const {
 		return data_size();
 	}
 #endif
@@ -197,18 +197,18 @@ public:
 	grScreenRegion screen_region(int mode = 0, float scale = 1.0f) const;
 
 private:
-	int format_;
-	int flags_;
+	int _format;
+	int _flags;
 
-	Vect2i size_;
+	Vect2i _size;
 
-	Vect2i picture_size_;
-	Vect2i picture_offset_;
+	Vect2i _picture_size;
+	Vect2i _picture_offset;
 
-	unsigned char *data_;
-	class rleBuffer *rle_data_;
+	unsigned char *_data;
+	class rleBuffer *_rle_data;
 
-	std::string file_;
+	std::string _file;
 
 	friend bool operator == (const qdSprite &sp1, const qdSprite &sp2);
 };
