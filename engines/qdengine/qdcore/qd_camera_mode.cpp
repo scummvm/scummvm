@@ -31,12 +31,12 @@
 
 namespace QDEngine {
 
-qdCameraMode::qdCameraMode() : camera_mode_(MODE_UNASSIGNED),
-	work_time_(0.0f),
-	scrolling_speed_(100.0f),
-	scrolling_distance_(100),
-	smooth_switch_(false),
-	center_offset_(0, 0) {
+qdCameraMode::qdCameraMode() : _camera_mode(MODE_UNASSIGNED),
+	_work_time(0.0f),
+	_scrolling_speed(100.0f),
+	_scrolling_distance(100),
+	_smooth_switch(false),
+	_center_offset(0, 0) {
 }
 
 bool qdCameraMode::load_script(const xml::tag *p) {
@@ -57,10 +57,10 @@ bool qdCameraMode::load_script(const xml::tag *p) {
 			set_scrolling_distance(buf.get_int());
 			break;
 		case QDSCR_CAMERA_SMOOTH_SWITCH:
-			smooth_switch_ = (buf.get_int()) ? true : false;
+			_smooth_switch = (buf.get_int()) ? true : false;
 			break;
 		case QDSCR_CAMERA_SCREEN_CENTER:
-			buf > center_offset_.x > center_offset_.y;
+			buf > _center_offset.x > _center_offset.y;
 			break;
 		}
 	}
@@ -74,11 +74,11 @@ bool qdCameraMode::save_script(Common::WriteStream &fh, int indent) const {
 	}
 
 	fh.writeString(Common::String::format("<camera_mode type=\"%d\"", (int)camera_mode()));
-	fh.writeString(Common::String::format(" scrolling_speed=\"%f\"", scrolling_speed_));
-	fh.writeString(Common::String::format(" scrolling_dist=\"%d\"", scrolling_distance_));
+	fh.writeString(Common::String::format(" scrolling_speed=\"%f\"", _scrolling_speed));
+	fh.writeString(Common::String::format(" scrolling_dist=\"%d\"", _scrolling_distance));
 
-	if (center_offset_.x || center_offset_.y) {
-		fh.writeString(Common::String::format(" camera_screen_center=\"%d %d\"", center_offset_.x, center_offset_.y));
+	if (_center_offset.x || _center_offset.y) {
+		fh.writeString(Common::String::format(" camera_screen_center=\"%d %d\"", _center_offset.x, _center_offset.y));
 	}
 
 	if (has_work_time()) {
@@ -98,14 +98,14 @@ bool qdCameraMode::load_data(Common::SeekableReadStream &fh, int save_version) {
 	debugC(4, kDebugSave, "    qdCameraMode::load_data(): before %ld", fh.pos());
 	int mode;
 	mode = fh.readSint32LE();
-	work_time_ = fh.readFloatLE();
-	scrolling_speed_ = fh.readFloatLE();
-	scrolling_distance_ = fh.readSint32LE();
-	center_offset_.x = fh.readSint32LE();
-	center_offset_.y = fh.readSint32LE();
+	_work_time = fh.readFloatLE();
+	_scrolling_speed = fh.readFloatLE();
+	_scrolling_distance = fh.readSint32LE();
+	_center_offset.x = fh.readSint32LE();
+	_center_offset.y = fh.readSint32LE();
 
 	char switch_flag = fh.readByte();
-	smooth_switch_ = (switch_flag) ? true : false;
+	_smooth_switch = (switch_flag) ? true : false;
 	debugC(4, kDebugSave, "    qdCameraMode::load_data(): after %ld", fh.pos());
 
 	return true;
@@ -114,15 +114,15 @@ bool qdCameraMode::load_data(Common::SeekableReadStream &fh, int save_version) {
 bool qdCameraMode::save_data(Common::WriteStream &fh) const {
 	debugC(4, kDebugSave, "    qdCameraMode::save_data(): before %ld", fh.pos());
 
-	fh.writeSint32LE((int)camera_mode_);
-	fh.writeFloatLE(work_time_);
-	fh.writeFloatLE(scrolling_speed_);
-	fh.writeSint32LE(scrolling_distance_);
-	fh.writeSint32LE(center_offset_.x);
-	fh.writeSint32LE(center_offset_.y);
+	fh.writeSint32LE((int)_camera_mode);
+	fh.writeFloatLE(_work_time);
+	fh.writeFloatLE(_scrolling_speed);
+	fh.writeSint32LE(_scrolling_distance);
+	fh.writeSint32LE(_center_offset.x);
+	fh.writeSint32LE(_center_offset.y);
 
 
-	if (smooth_switch_) {
+	if (_smooth_switch) {
 		fh.writeByte(1);
 	} else {
 		fh.writeByte(0);
