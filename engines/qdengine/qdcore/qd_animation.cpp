@@ -44,44 +44,44 @@
 
 namespace QDEngine {
 
-qdAnimation::qdAnimation() : parent_(NULL) {
-	tileAnimation_ = 0;
+qdAnimation::qdAnimation() : _parent(NULL) {
+	_tileAnimation = 0;
 
-	length_ = cur_time_ = 0.0f;
-	status_ = QD_ANIMATION_STOPPED;
+	_length = _cur_time = 0.0f;
+	_status = QD_ANIMATION_STOPPED;
 
-	sx_ = sy_ = 0;
+	_sx = _sy = 0;
 
-	is_finished_ = false;
+	_is_finished = false;
 
-	playback_speed_ = 1.0f;
+	_playback_speed = 1.0f;
 
-	frames_ptr = &frames;
-	scaled_frames_ptr_ = &scaled_frames_;
+	_frames_ptr = &frames;
+	_scaled_frames_ptr = &_scaled_frames;
 }
 
 qdAnimation::qdAnimation(const qdAnimation &anm) : qdNamedObject(anm), qdResource(anm),
-	parent_(anm.parent_),
-	length_(anm.length_),
-	cur_time_(anm.cur_time_),
-	status_(anm.status_),
-	is_finished_(anm.is_finished_),
-	sx_(anm.sx_),
-	sy_(anm.sy_),
-	num_frames_(anm.num_frames_),
-	playback_speed_(1.0f),
-	tileAnimation_(0) {
+	_parent(anm._parent),
+	_length(anm._length),
+	_cur_time(anm._cur_time),
+	_status(anm._status),
+	_is_finished(anm._is_finished),
+	_sx(anm._sx),
+	_sy(anm._sy),
+	_num_frames(anm._num_frames),
+	_playback_speed(1.0f),
+	_tileAnimation(0) {
 	copy_frames(anm);
 
-	if (anm.tileAnimation_)
-		tileAnimation_ = new grTileAnimation(*anm.tileAnimation_);
+	if (anm._tileAnimation)
+		_tileAnimation = new grTileAnimation(*anm._tileAnimation);
 }
 
 qdAnimation::~qdAnimation() {
 	clear_frames();
-	qda_file_.clear();
+	_qda_file.clear();
 
-	delete tileAnimation_;
+	delete _tileAnimation;
 }
 
 qdAnimation &qdAnimation::operator = (const qdAnimation &anm) {
@@ -90,51 +90,51 @@ qdAnimation &qdAnimation::operator = (const qdAnimation &anm) {
 	*static_cast<qdNamedObject *>(this) = anm;
 	*static_cast<qdResource *>(this) = anm;
 
-	parent_ = anm.parent_;
+	_parent = anm._parent;
 
-	length_ = anm.length_;
-	cur_time_ = anm.cur_time_;
-	status_ = QD_ANIMATION_STOPPED;
-	is_finished_ = false;
+	_length = anm._length;
+	_cur_time = anm._cur_time;
+	_status = QD_ANIMATION_STOPPED;
+	_is_finished = false;
 
-	playback_speed_ = anm.playback_speed_;
+	_playback_speed = anm._playback_speed;
 
-	sx_ = anm.sx_;
-	sy_ = anm.sy_;
+	_sx = anm._sx;
+	_sy = anm._sy;
 
 	copy_frames(anm);
 
-	num_frames_ = anm.num_frames_;
+	_num_frames = anm._num_frames;
 
-	delete tileAnimation_;
-	tileAnimation_ = 0;
+	delete _tileAnimation;
+	_tileAnimation = 0;
 
-	if (anm.tileAnimation_)
-		tileAnimation_ = new grTileAnimation(*anm.tileAnimation_);
+	if (anm._tileAnimation)
+		_tileAnimation = new grTileAnimation(*anm._tileAnimation);
 
 	return *this;
 }
 
 void qdAnimation::quant(float dt) {
-	if (status_ == QD_ANIMATION_PLAYING) {
+	if (_status == QD_ANIMATION_PLAYING) {
 		if (need_stop()) {
 			stop();
 			return;
 		}
 
-		cur_time_ += dt * playback_speed_;
-		if (cur_time_ >= length()) {
+		_cur_time += dt * _playback_speed;
+		if (_cur_time >= length()) {
 			if (length() > 0.01f) {
 				if (!check_flag(QD_ANIMATION_FLAG_LOOP)) {
-					cur_time_ = length() - 0.01f;
-					status_ = QD_ANIMATION_END_PLAYING;
+					_cur_time = length() - 0.01f;
+					_status = QD_ANIMATION_END_PLAYING;
 				} else {
-					cur_time_ = fmodf(cur_time_, length());
+					_cur_time = fmodf(_cur_time, length());
 				}
 			} else
-				cur_time_ = 0.0f;
+				_cur_time = 0.0f;
 
-			is_finished_ = true;
+			_is_finished = true;
 		}
 	}
 }
@@ -298,7 +298,7 @@ void qdAnimation::draw_contour(int x, int y, unsigned color, float scale) const 
 }
 
 qdAnimationFrame *qdAnimation::get_cur_frame() {
-	for (qdAnimationFrameList::const_iterator iaf = frames_ptr->begin(); iaf != frames_ptr->end(); ++iaf) {
+	for (qdAnimationFrameList::const_iterator iaf = _frames_ptr->begin(); iaf != _frames_ptr->end(); ++iaf) {
 		if ((*iaf)->end_time() >= cur_time())
 			return *iaf;
 	}
@@ -307,7 +307,7 @@ qdAnimationFrame *qdAnimation::get_cur_frame() {
 }
 
 const qdAnimationFrame *qdAnimation::get_cur_frame() const {
-	for (qdAnimationFrameList::const_iterator iaf = frames_ptr->begin(); iaf != frames_ptr->end(); ++iaf) {
+	for (qdAnimationFrameList::const_iterator iaf = _frames_ptr->begin(); iaf != _frames_ptr->end(); ++iaf) {
 		if ((*iaf)->end_time() >= cur_time())
 			return *iaf;
 	}
@@ -334,7 +334,7 @@ bool qdAnimation::add_frame(qdAnimationFrame *p, qdAnimationFrame *insert_pos, b
 				if (insert_after)
 					++iaf;
 				frames.insert(iaf, p);
-				num_frames_ = frames.size();
+				_num_frames = frames.size();
 				return true;
 			}
 		}
@@ -353,40 +353,40 @@ bool qdAnimation::add_frame(qdAnimationFrame *p, qdAnimationFrame *insert_pos, b
 }
 
 void qdAnimation::init_size() {
-	length_ = 0.0f;
+	_length = 0.0f;
 	if (!tileAnimation()) {
-		sx_ = sy_ = 0;
+		_sx = _sy = 0;
 
-		for (qdAnimationFrameList::const_iterator iaf = frames_ptr->begin(); iaf != frames_ptr->end(); ++iaf) {
+		for (qdAnimationFrameList::const_iterator iaf = _frames_ptr->begin(); iaf != _frames_ptr->end(); ++iaf) {
 			qdAnimationFrame *p = *iaf;
 
-			p->set_start_time(length_);
+			p->set_start_time(_length);
 
-			if (p->size_x() > sx_)
-				sx_ = p->size_x();
+			if (p->size_x() > _sx)
+				_sx = p->size_x();
 
-			if (p->size_y() > sy_)
-				sy_ = p->size_y();
+			if (p->size_y() > _sy)
+				_sy = p->size_y();
 
-			length_ += p->length();
+			_length += p->length();
 		}
 	} else {
-		for (qdAnimationFrameList::const_iterator iaf = frames_ptr->begin(); iaf != frames_ptr->end(); ++iaf) {
+		for (qdAnimationFrameList::const_iterator iaf = _frames_ptr->begin(); iaf != _frames_ptr->end(); ++iaf) {
 			qdAnimationFrame *p = *iaf;
 
-			p->set_start_time(length_);
+			p->set_start_time(_length);
 			p->set_size(tileAnimation()->frameSize());
 			p->set_picture_offset(Vect2i(0, 0));
 			p->set_picture_size(tileAnimation()->frameSize());
 
-			length_ += p->length();
+			_length += p->length();
 		}
 	}
 
-	if (cur_time_ >= length_)
-		cur_time_ = length_ - 0.01f;
+	if (_cur_time >= _length)
+		_cur_time = _length - 0.01f;
 
-	num_frames_ = frames_ptr->size();
+	_num_frames = _frames_ptr->size();
 }
 
 void qdAnimation::load_script(const xml::tag *p) {
@@ -459,26 +459,26 @@ void qdAnimation::free_resources() {
 	for (qdAnimationFrameList::iterator iaf = frames.begin(); iaf != frames.end(); ++iaf)
 		(*iaf)->free_resources();
 
-	for (qdAnimationFrameList::iterator iaf = scaled_frames_.begin(); iaf != scaled_frames_.end(); ++iaf)
+	for (qdAnimationFrameList::iterator iaf = _scaled_frames.begin(); iaf != _scaled_frames.end(); ++iaf)
 		(*iaf)->free_resources();
 }
 
 void qdAnimation::create_reference(qdAnimation *p, const qdAnimationInfo *inf) const {
-	p->frames_ptr = &frames;
-	p->scaled_frames_ptr_ = &scaled_frames_;
+	p->_frames_ptr = &frames;
+	p->_scaled_frames_ptr = &_scaled_frames;
 
 	p->clear_flags();
 	p->set_flag(flags() | QD_ANIMATION_FLAG_REFERENCE);
 
-	p->length_ = length_;
-	p->cur_time_ = 0.0f;
+	p->_length = _length;
+	p->_cur_time = 0.0f;
 
-	p->sx_ = sx_;
-	p->sy_ = sy_;
+	p->_sx = _sx;
+	p->_sy = _sy;
 
-	p->num_frames_ = num_frames_;
+	p->_num_frames = _num_frames;
 
-	debugC(1, kDebugTemp, "num_frames_: %d empty?: %d, is_empty()?: %d", num_frames_, frames.empty(), is_empty());
+	debugC(1, kDebugTemp, "num_frames_: %d empty?: %d, is_empty()?: %d", _num_frames, frames.empty(), is_empty());
 
 #ifndef __QD_SYSLIB__
 	if (inf) {
@@ -491,11 +491,11 @@ void qdAnimation::create_reference(qdAnimation *p, const qdAnimationInfo *inf) c
 		if (inf->check_flag(QD_ANIMATION_FLAG_FLIP_VERTICAL))
 			p->set_flag(QD_ANIMATION_FLAG_FLIP_VERTICAL);
 
-		p->playback_speed_ = inf->animation_speed();
+		p->_playback_speed = inf->animation_speed();
 	}
 #endif
 
-	p->parent_ = this;
+	p->_parent = this;
 }
 
 bool qdAnimation::hit(int x, int y) const {
@@ -544,13 +544,13 @@ bool qdAnimation::qda_load(const char *fname) {
 	}
 
 	int32 version = fh->readSint32LE();
-	sx_ = fh->readSint32LE();
-	sy_ = fh->readSint32LE();
-	length_ = fh->readFloatLE();
+	_sx = fh->readSint32LE();
+	_sy = fh->readSint32LE();
+	_length = fh->readFloatLE();
 	int32 fl = fh->readSint32LE();
 	int32 num_fr = fh->readSint32LE();
 
-	debugC(3, kDebugLoad, "qdAnimation::qda_load(): vers: %d sx: %d x %d len: %f fl: %d num_fr: %d", version, sx_, sy_, length_, fl, num_fr);
+	debugC(3, kDebugLoad, "qdAnimation::qda_load(): vers: %d sx: %d x %d len: %f fl: %d num_fr: %d", version, _sx, _sy, _length, fl, num_fr);
 
 	int num_scales = 0;
 	if (version >= 103) {
@@ -564,11 +564,11 @@ bool qdAnimation::qda_load(const char *fname) {
 
 	if (!tile_flag) {
 		if (num_scales) {
-			scales_.resize(num_scales);
+			_scales.resize(num_scales);
 			for (int i = 0; i < num_scales; i++)
-				scales_[i] = fh->readFloatLE();
+				_scales[i] = fh->readFloatLE();
 		} else
-			scales_.clear();
+			_scales.clear();
 
 		set_flag(fl & (QD_ANIMATION_FLAG_CROP | QD_ANIMATION_FLAG_COMPRESS));
 
@@ -581,13 +581,13 @@ bool qdAnimation::qda_load(const char *fname) {
 		for (int i = 0; i < num_fr * num_scales; i ++) {
 			qdAnimationFrame *p = new qdAnimationFrame;
 			p->qda_load(fh, version);
-			scaled_frames_.push_back(p);
+			_scaled_frames.push_back(p);
 		}
 	} else {
 		set_flag(fl);
 
-		sx_ = fh->readSint32LE();
-		sy_ = fh->readSint32LE();
+		_sx = fh->readSint32LE();
+		_sy = fh->readSint32LE();
 
 		for (int i = 0; i < num_fr; i ++) {
 			float start_time, length;
@@ -601,8 +601,8 @@ bool qdAnimation::qda_load(const char *fname) {
 		}
 
 		debugC(1, kDebugLoad, "qdAnimation::qda_load() tileAnimation %s", transCyrillic(fname));
-		tileAnimation_ = new grTileAnimation;
-		tileAnimation_->load(fh);
+		_tileAnimation = new grTileAnimation;
+		_tileAnimation->load(fh);
 	}
 
 	init_size();
@@ -612,15 +612,15 @@ bool qdAnimation::qda_load(const char *fname) {
 
 void qdAnimation::qda_set_file(const char *fname) {
 	if (fname)
-		qda_file_ = fname;
+		_qda_file = fname;
 	else
-		qda_file_.clear();
+		_qda_file.clear();
 }
 
 bool qdAnimation::crop() {
 	for (qdAnimationFrameList::iterator it = frames.begin(); it != frames.end(); ++it)
 		(*it)->crop();
-	for (qdAnimationFrameList::iterator it = scaled_frames_.begin(); it != scaled_frames_.end(); ++it)
+	for (qdAnimationFrameList::iterator it = _scaled_frames.begin(); it != _scaled_frames.end(); ++it)
 		(*it)->crop();
 
 	return true;
@@ -629,7 +629,7 @@ bool qdAnimation::crop() {
 bool qdAnimation::undo_crop() {
 	for (qdAnimationFrameList::iterator it = frames.begin(); it != frames.end(); ++it)
 		(*it)->undo_crop();
-	for (qdAnimationFrameList::iterator it = scaled_frames_.begin(); it != scaled_frames_.end(); ++it)
+	for (qdAnimationFrameList::iterator it = _scaled_frames.begin(); it != _scaled_frames.end(); ++it)
 		(*it)->undo_crop();
 
 	return true;
@@ -642,7 +642,7 @@ bool qdAnimation::compress() {
 	for (qdAnimationFrameList::iterator it = frames.begin(); it != frames.end(); ++it) {
 		if (!(*it)->compress()) result = false;
 	}
-	for (qdAnimationFrameList::iterator it = scaled_frames_.begin(); it != scaled_frames_.end(); ++it) {
+	for (qdAnimationFrameList::iterator it = _scaled_frames.begin(); it != _scaled_frames.end(); ++it) {
 		if (!(*it)->compress()) result = false;
 	}
 
@@ -651,23 +651,23 @@ bool qdAnimation::compress() {
 }
 
 bool qdAnimation::tileCompress(grTileCompressionMethod method, int tolerance) {
-	if (!num_frames_ || check_flag(QD_ANIMATION_FLAG_TILE_COMPRESS)) return false;
+	if (!_num_frames || check_flag(QD_ANIMATION_FLAG_TILE_COMPRESS)) return false;
 
 	uncompress();
 	undo_crop();
 
 	grTileSprite::setComprasionTolerance(tolerance);
 
-	tileAnimation_ = new grTileAnimation;
-	tileAnimation_->init(num_frames_, Vect2i(sx_, sy_), frames.front()->check_flag(qdSprite::ALPHA_FLAG));
+	_tileAnimation = new grTileAnimation;
+	_tileAnimation->init(_num_frames, Vect2i(_sx, _sy), frames.front()->check_flag(qdSprite::ALPHA_FLAG));
 
-	for (int i = 0; i < num_frames_; i++)
-		tileAnimation_->addFrame((const unsigned *)get_frame(i)->data());
+	for (int i = 0; i < _num_frames; i++)
+		_tileAnimation->addFrame((const unsigned *)get_frame(i)->data());
 
 	if (method != TILE_UNCOMPRESSED)
-		tileAnimation_->compress(method);
+		_tileAnimation->compress(method);
 
-	tileAnimation_->compact();
+	_tileAnimation->compact();
 
 	set_flag(QD_ANIMATION_FLAG_TILE_COMPRESS);
 
@@ -682,7 +682,7 @@ bool qdAnimation::uncompress() {
 	for (qdAnimationFrameList::iterator it = frames.begin(); it != frames.end(); ++it) {
 		if (!(*it)->uncompress()) result = false;
 	}
-	for (qdAnimationFrameList::iterator it = scaled_frames_.begin(); it != scaled_frames_.end(); ++it) {
+	for (qdAnimationFrameList::iterator it = _scaled_frames.begin(); it != _scaled_frames.end(); ++it) {
 		if (!(*it)->uncompress()) result = false;
 	}
 
@@ -692,7 +692,7 @@ bool qdAnimation::uncompress() {
 
 int qdAnimation::get_cur_frame_number() const {
 	int num = 0;
-	for (qdAnimationFrameList::const_iterator iaf = frames_ptr->begin(); iaf != frames_ptr->end(); ++iaf) {
+	for (qdAnimationFrameList::const_iterator iaf = _frames_ptr->begin(); iaf != _frames_ptr->end(); ++iaf) {
 		if ((*iaf)->end_time() >= cur_time()) {
 			return num;
 		}
@@ -704,7 +704,7 @@ int qdAnimation::get_cur_frame_number() const {
 
 void qdAnimation::set_cur_frame(int number) {
 	int num = 0;
-	for (qdAnimationFrameList::const_iterator iaf = frames_ptr->begin(); iaf != frames_ptr->end(); ++iaf) {
+	for (qdAnimationFrameList::const_iterator iaf = _frames_ptr->begin(); iaf != _frames_ptr->end(); ++iaf) {
 		if (num ++ == number) {
 			set_time((*iaf)->start_time() + (*iaf)->length() / 2.0f);
 			return;
@@ -782,7 +782,7 @@ bool qdAnimation::reverse_frame_range(int number0, int number1) {
 
 qdAnimationFrame *qdAnimation::get_frame(int number) {
 	int num = 0;
-	for (qdAnimationFrameList::const_iterator iaf = frames_ptr->begin(); iaf != frames_ptr->end(); ++iaf) {
+	for (qdAnimationFrameList::const_iterator iaf = _frames_ptr->begin(); iaf != _frames_ptr->end(); ++iaf) {
 		if (num == number)
 			return *iaf;
 
@@ -806,27 +806,27 @@ bool qdAnimation::free_resource() {
 }
 
 void qdAnimation::advance_time(float tm) {
-	if (length_ <= 0.01f) return;
+	if (_length <= 0.01f) return;
 
-	tm *= playback_speed_;
+	tm *= _playback_speed;
 
-	if (cur_time_ + tm >= length()) {
+	if (_cur_time + tm >= length()) {
 		if (check_flag(QD_ANIMATION_FLAG_LOOP)) {
-			tm -= length() - cur_time_;
+			tm -= length() - _cur_time;
 			while (tm >= length())
 				tm -= length();
 
-			cur_time_ = tm;
+			_cur_time = tm;
 		} else
-			cur_time_ = length() - 0.01f;
+			_cur_time = length() - 0.01f;
 	} else
-		cur_time_ += tm;
+		_cur_time += tm;
 }
 
 int qdAnimation::picture_size_x() const {
 	int i = 0;
 	int sx = 0;
-	for (qdAnimationFrameList::const_iterator iaf = frames_ptr->begin(); iaf != frames_ptr->end(); ++iaf, i++) {
+	for (qdAnimationFrameList::const_iterator iaf = _frames_ptr->begin(); iaf != _frames_ptr->end(); ++iaf, i++) {
 		sx += (*iaf)->picture_size_x();
 	}
 
@@ -837,7 +837,7 @@ int qdAnimation::picture_size_x() const {
 int qdAnimation::picture_size_y() const {
 	int i = 0;
 	int sy = 0;
-	for (qdAnimationFrameList::const_iterator iaf = frames_ptr->begin(); iaf != frames_ptr->end(); ++iaf, i++) {
+	for (qdAnimationFrameList::const_iterator iaf = _frames_ptr->begin(); iaf != _frames_ptr->end(); ++iaf, i++) {
 		sy += (*iaf)->picture_size_y();
 	}
 
@@ -893,8 +893,8 @@ Vect2i qdAnimation::remove_edges() {
 		if (!(*iaf)->crop(left, top, right, bottom, false)) return Vect2i(0, 0);
 	}
 
-	sx_ -= left + right;
-	sy_ -= top + bottom;
+	_sx -= left + right;
+	_sy -= top + bottom;
 
 	if (crop_flag)
 		crop();
@@ -937,11 +937,11 @@ bool qdAnimation::load_data(Common::SeekableReadStream &fh, int save_version) {
 	char st, finished;
 	st = fh.readByte();
 	finished = fh.readByte();
-	cur_time_ = fh.readFloatLE();
-	length_ = fh.readFloatLE();
+	_cur_time = fh.readFloatLE();
+	_length = fh.readFloatLE();
 
-	status_ = st;
-	is_finished_ = (finished) ? true : false;
+	_status = st;
+	_is_finished = (finished) ? true : false;
 
 	debugC(2, kDebugSave, "  qdAnimation::load_data(): after %ld", fh.pos());
 	return true;
@@ -952,19 +952,19 @@ bool qdAnimation::save_data(Common::WriteStream &fh) const {
 
 	if (!qdNamedObject::save_data(fh)) return false;
 
-	if (check_flag(QD_ANIMATION_FLAG_REFERENCE) && parent_) {
+	if (check_flag(QD_ANIMATION_FLAG_REFERENCE) && _parent) {
 		fh.writeByte(1);
-		qdNamedObjectReference ref(parent_);
+		qdNamedObjectReference ref(_parent);
 
 		if (!ref.save_data(fh))
 			return false;
 	} else
 		fh.writeByte(0);
 
-	fh.writeByte(status_);
-	fh.writeByte(is_finished_);
-	fh.writeFloatLE(cur_time_);
-	fh.writeFloatLE(length_);
+	fh.writeByte(_status);
+	fh.writeByte(_is_finished);
+	fh.writeFloatLE(_cur_time);
+	fh.writeFloatLE(_length);
 
 	debugC(3, kDebugSave, "  qdAnimation::save_data(): after %ld", fh.pos());
 	return true;
@@ -987,20 +987,20 @@ bool qdAnimation::copy_frames(const qdAnimation &anm) {
 	if (!check_flag(QD_ANIMATION_FLAG_REFERENCE)) {
 		clear_frames();
 
-		frames_ptr = &frames;
+		_frames_ptr = &frames;
 
 		for (auto &it : anm.frames) {
 			frames.push_back(it->clone());
 		}
 
-		scaled_frames_ptr_ = &scaled_frames_;
+		_scaled_frames_ptr = &_scaled_frames;
 
-		for (auto &it : anm.scaled_frames_) {
-			scaled_frames_.push_back(it->clone());
+		for (auto &it : anm._scaled_frames) {
+			_scaled_frames.push_back(it->clone());
 		}
 	} else {
-		frames_ptr = anm.frames_ptr;
-		scaled_frames_ptr_ = anm.scaled_frames_ptr_;
+		_frames_ptr = anm._frames_ptr;
+		_scaled_frames_ptr = anm._scaled_frames_ptr;
 	}
 
 	return true;
@@ -1009,35 +1009,35 @@ bool qdAnimation::copy_frames(const qdAnimation &anm) {
 void qdAnimation::clear_frames() {
 	for (qdAnimationFrameList::iterator it = frames.begin(); it != frames.end(); ++it)
 		delete *it;
-	for (qdAnimationFrameList::iterator it = scaled_frames_.begin(); it != scaled_frames_.end(); ++it)
+	for (qdAnimationFrameList::iterator it = _scaled_frames.begin(); it != _scaled_frames.end(); ++it)
 		delete *it;
 
 	frames.clear();
-	scaled_frames_.clear();
+	_scaled_frames.clear();
 }
 
 bool qdAnimation::add_scale(float value) {
 	if (fabs(value - 1.0f) <= 0.01f || value <= 0.01f) return false;
 
-	std::vector<float>::const_iterator it = std::find(scales_.begin(), scales_.end(), value);
-	if (it != scales_.end()) return false;
+	std::vector<float>::const_iterator it = std::find(_scales.begin(), _scales.end(), value);
+	if (it != _scales.end()) return false;
 
-	scales_.push_back(value);
-	std::sort(scales_.begin(), scales_.end());
+	_scales.push_back(value);
+	std::sort(_scales.begin(), _scales.end());
 	return true;
 }
 
 bool qdAnimation::create_scaled_frames() {
 	if (check_flag(QD_ANIMATION_FLAG_REFERENCE)) return false;
 
-	for (qdAnimationFrameList::iterator it = scaled_frames_.begin(); it != scaled_frames_.end(); ++it)
+	for (qdAnimationFrameList::iterator it = _scaled_frames.begin(); it != _scaled_frames.end(); ++it)
 		delete *it;
-	scaled_frames_.clear();
+	_scaled_frames.clear();
 
-	for (int i = 0; i < scales_.size(); i++) {
+	for (int i = 0; i < _scales.size(); i++) {
 		for (qdAnimationFrameList::iterator it = frames.begin(); it != frames.end(); ++it) {
-			scaled_frames_.push_back((*it)->clone());
-			scaled_frames_.back()->scale(scales_[i], scales_[i]);
+			_scaled_frames.push_back((*it)->clone());
+			_scaled_frames.back()->scale(_scales[i], _scales[i]);
 		}
 	}
 
@@ -1048,7 +1048,7 @@ int qdAnimation::get_scale_index(float &scale_value) const {
 	int index = -1;
 	float scl = 1.0f;
 
-	const std::vector<float> &scales_vect = (check_flag(QD_ANIMATION_FLAG_REFERENCE) && parent_) ? parent_->scales_ : scales_;
+	const std::vector<float> &scales_vect = (check_flag(QD_ANIMATION_FLAG_REFERENCE) && _parent) ? _parent->_scales : _scales;
 
 	for (int i = 0; i < scales_vect.size(); i++) {
 		if (fabs(scale_value - scl) > fabs(scale_value - scales_vect[i])) {
@@ -1065,8 +1065,8 @@ int qdAnimation::get_scale_index(float &scale_value) const {
 
 const qdAnimationFrame *qdAnimation::get_scaled_frame(int number, int scale_index) const {
 	int num = 0;
-	number += scale_index * num_frames_;
-	for (qdAnimationFrameList::const_iterator it = scaled_frames_ptr_->begin(); it != scaled_frames_ptr_->end(); ++it) {
+	number += scale_index * _num_frames;
+	for (qdAnimationFrameList::const_iterator it = _scaled_frames_ptr->begin(); it != _scaled_frames_ptr->end(); ++it) {
 		if (num++ == number)
 			return *it;
 	}
@@ -1081,7 +1081,7 @@ unsigned qdAnimation::resource_data_size() const {
 	for (qdAnimationFrameList::const_iterator it = frames.begin(); it != frames.end(); ++it)
 		size += (*it)->resource_data_size();
 
-	for (qdAnimationFrameList::const_iterator it = scaled_frames_.begin(); it != scaled_frames_.end(); ++it)
+	for (qdAnimationFrameList::const_iterator it = _scaled_frames.begin(); it != _scaled_frames.end(); ++it)
 		size += (*it)->resource_data_size();
 
 	return size;

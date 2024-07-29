@@ -77,72 +77,72 @@ public:
 	const qdAnimationFrame *get_scaled_frame(int number, int scale_index) const;
 
 	int num_frames() const {
-		return num_frames_;
+		return _num_frames;
 	}
 
 	float length() const {
-		return length_;
+		return _length;
 	}
 	float cur_time() const {
-		return cur_time_;
+		return _cur_time;
 	}
 
 	void set_time(float tm) {
-		cur_time_ = tm;
+		_cur_time = tm;
 	}
 
 	float cur_time_rel() const {
-		if (length_ > 0.01f)
-			return cur_time_ / length_;
+		if (_length > 0.01f)
+			return _cur_time / _length;
 		return 0.0f;
 	}
 	void set_time_rel(float tm) {
 		if (tm < 0.0f) tm = 0.0f;
 		if (tm > 0.99f) tm = 0.99f;
-		cur_time_ = length_ * tm;
+		_cur_time = _length * tm;
 	}
 	void advance_time(float tm);
 
 	void init_size();
 	int size_x() const {
-		return sx_;
+		return _sx;
 	}
 	int size_y() const {
-		return sy_;
+		return _sy;
 	}
 
 	int picture_size_x() const;
 	int picture_size_y() const;
 
 	bool is_playing() const {
-		return (status_ == QD_ANIMATION_PLAYING ||
-		        status_ == QD_ANIMATION_END_PLAYING);
+		return (_status == QD_ANIMATION_PLAYING ||
+		        _status == QD_ANIMATION_END_PLAYING);
 	}
 
 	int status() const {
-		return status_;
+		return _status;
 	}
 	bool is_finished() const {
-		return is_finished_;
+		return _is_finished;
 	}
 	bool need_stop() const {
-		return status_ == QD_ANIMATION_END_PLAYING;
+		return _status == QD_ANIMATION_END_PLAYING;
 	}
 
 	void start() {
-		status_ = QD_ANIMATION_PLAYING;
-		is_finished_ = false;
-		cur_time_ = 0.0f;
+		_status = QD_ANIMATION_PLAYING;
+		_is_finished = false;
+		_cur_time = 0.0f;
 	}
 	void stop() {
-		status_ = QD_ANIMATION_STOPPED;
-		is_finished_ = true;
+		_status = QD_ANIMATION_STOPPED;
+		_is_finished = true;
 	}
 	void pause() {
-		status_ = QD_ANIMATION_PAUSED;
+		_status = QD_ANIMATION_PAUSED;
 	}
 	void resume() {
-		status_ = QD_ANIMATION_PLAYING;
+		_status = QD_ANIMATION_PLAYING;
 	}
 
 	void quant(float dt);
@@ -174,7 +174,7 @@ public:
 	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 
 	const char *qda_file() const {
-		if (!qda_file_.empty()) return qda_file_.c_str();
+		if (!_qda_file.empty()) return _qda_file.c_str();
 		return 0;
 	}
 	void qda_set_file(const char *fname);
@@ -201,18 +201,18 @@ public:
 
 	void create_reference(qdAnimation *p, const qdAnimationInfo *inf = NULL) const;
 	bool is_reference(const qdAnimation *p) const {
-		if (p->check_flag(QD_ANIMATION_FLAG_REFERENCE) && p->parent_ == this) return true;
+		if (p->check_flag(QD_ANIMATION_FLAG_REFERENCE) && p->_parent == this) return true;
 		return false;
 	}
 
 	void clear() {
 		stop();
-		frames_ptr = &frames;
-		parent_ = NULL;
+		_frames_ptr = &frames;
+		_parent = NULL;
 	}
 
 	bool is_empty() const {
-		return (frames_ptr->empty());
+		return (_frames_ptr->empty());
 	}
 
 	//! Возвращает область экрана, занимаемую анимацией.
@@ -224,7 +224,7 @@ public:
 	grScreenRegion screen_region(int mode = 0, float scale = 1.0f) const;
 
 	const qdAnimation *parent() const {
-		return parent_;
+		return _parent;
 	}
 
 	// qdResource
@@ -260,43 +260,43 @@ public:
 	bool create_scaled_frames();
 
 	const std::vector<float> &scales() const {
-		if (check_flag(QD_ANIMATION_FLAG_REFERENCE) && parent_) return parent_->scales_;
-		else return scales_;
+		if (check_flag(QD_ANIMATION_FLAG_REFERENCE) && _parent) return _parent->_scales;
+		else return _scales;
 	}
 	void clear_scales() {
-		scales_.clear();
+		_scales.clear();
 	}
 
 private:
-	int sx_;
-	int sy_;
+	int _sx;
+	int _sy;
 
 	enum {
 		qda_version = 104
 	};
 
-	float length_;
-	float cur_time_;
+	float _length;
+	float _cur_time;
 
-	float playback_speed_;
+	float _playback_speed;
 
-	int num_frames_;
+	int _num_frames;
 
-	const qdAnimationFrameList *frames_ptr;
+	const qdAnimationFrameList *_frames_ptr;
 	qdAnimationFrameList frames;
 
-	const qdAnimationFrameList *scaled_frames_ptr_;
-	qdAnimationFrameList scaled_frames_;
-	std::vector<float> scales_;
+	const qdAnimationFrameList *_scaled_frames_ptr;
+	qdAnimationFrameList _scaled_frames;
+	std::vector<float> _scales;
 
-	grTileAnimation *tileAnimation_;
+	grTileAnimation *_tileAnimation;
 
-	int status_;
-	bool is_finished_;
+	int _status;
+	bool _is_finished;
 
-	std::string qda_file_;
+	std::string _qda_file;
 
-	const qdAnimation *parent_;
+	const qdAnimation *_parent;
 
 	int get_scale_index(float &scale_value) const;
 
@@ -304,10 +304,10 @@ private:
 	void clear_frames();
 
 	const grTileAnimation *tileAnimation() const {
-		if (check_flag(QD_ANIMATION_FLAG_REFERENCE) && parent_)
-			return parent_->tileAnimation_;
+		if (check_flag(QD_ANIMATION_FLAG_REFERENCE) && _parent)
+			return _parent->_tileAnimation;
 		else
-			return tileAnimation_;
+			return _tileAnimation;
 	}
 };
 
