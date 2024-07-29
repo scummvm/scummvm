@@ -171,7 +171,25 @@ bool Darkseed::Room::load() {
 	if (_roomNumber == 61 && g_engine->_objectVar[22] > 2) {
 		loadRoom61AWalkableLocations();
 	}
-	// TODO add more logic from getroomstuff();
+	if (_roomNumber == 10 && ((g_engine->_currentDay == 3 && g_engine->_currentTimeInSeconds > 39600) || g_engine->_objectVar[88] != 0)) {
+		_locationSprites.load(Common::Path("room15.nsp"));
+		g_engine->_objectVar.setObjectRunningCode(72, 1);
+	}
+	g_engine->_objectVar.setMoveObjectX(45, 230);
+	if (g_engine->_objectVar[45] < 3) {
+		g_engine->_objectVar[45] = 0;
+		g_engine->_objectVar.setMoveObjectPosition(19, {230, 205});
+	}
+	if (g_engine->_objectVar[141] == 8) {
+		g_engine->_objectVar[141] = 7;
+	}
+	if (_roomNumber == 30) {
+		g_engine->_player->loadAnimations("copcard.nsp");
+		// TODO find the right vars in this code for these.
+//		*(undefined2 *)_ObjFrame = 0;
+//		*(undefined2 *)&_ObjFrameTimer = 3;
+		g_engine->_objectVar[1] = 2000;
+	}
 	return true;
 }
 
