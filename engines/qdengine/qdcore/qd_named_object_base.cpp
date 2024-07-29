@@ -27,7 +27,7 @@ namespace QDEngine {
 qdNamedObjectBase::qdNamedObjectBase() {
 }
 
-qdNamedObjectBase::qdNamedObjectBase(const qdNamedObjectBase &obj) : name_(obj.name_) {
+qdNamedObjectBase::qdNamedObjectBase(const qdNamedObjectBase &obj) : _name(obj._name) {
 }
 
 qdNamedObjectBase::~qdNamedObjectBase() {
@@ -36,7 +36,7 @@ qdNamedObjectBase::~qdNamedObjectBase() {
 qdNamedObjectBase &qdNamedObjectBase::operator = (const qdNamedObjectBase &obj) {
 	if (this == &obj) return *this;
 
-	name_ = obj.name_;
+	_name = obj._name;
 
 	return *this;
 }
