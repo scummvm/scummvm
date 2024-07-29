@@ -37,14 +37,13 @@ static const PlainGameDescriptor directorGames[] = {
 	// Commercially released games
 	{ "10plus2",			"10+2" },
 	{ "1stcdtoddler",		"My First CD-ROM: Toddler School" },
-//	{ "3bessones",			"Les Tres Bessones: Jugar i Aprendre" }, // Catalan title, English selectable in game
+	{ "3bessones",			"Les Tres Bessones: Jugar i Aprendre" }, // Catalan title, English selectable in game
 	{ "7invasores",			"Os 7 Invasores" }, // Portuguese title, English selectable in game
 	{ "abclunch",			"My Alphabet Lunch" },
 	{ "abcpacovska",		"Alphabet: Play with the ABCs"},
 	{ "abcpalsafety",		"Safety Scavenger Hunt" }, // Alphabet Pals
 	{ "abductthis",			"Abduct This!" },
 	{ "afiles",				"The A-Files" },
-//	{ "agapito",			"Agapito's Crazy Adventure" },   // Not director?
 	{ "alice",				"Alice: An Interactive Museum" },
 	{ "alphabet",			"The Interactive Alphabet" },
 	{ "amandastories",		"AmandaStories" },
@@ -3353,6 +3352,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 // Macromedia Director v4
 //
 //////////////////////////////////////////////////
+
+	// aka "Playing with the Triplets"
+	// Multilanguage Spanish/Catalan/English
+	MACGAME2("3bessones", "", "Triplets (8MB)",	"tr:7ee978d5a30b73c42e38eb03c95babea", 483518,
+							  "BARREJA1.DIR",	"d:e345cec29587fe9d36c7f70123ba52b9", 8735826, 404),
+	WINGAME2("3bessones", "", "INICI.EXE",		"t:78d640c774068bafee0884bade04472c", 895895,
+							  "BARREJA1.DIR",	"d:6158e3f997108345ce93bdb96f411fdf", 8313946, 404),
 
 	WINDEMO1("3datlas97", "Demo", "ATLAS97.EXE", "b5da314bdfd9344530a24093f2e0b566", 8300357, 404),
 
@@ -8389,8 +8395,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("maisybday", "", "Maisy BDay",		"r:0944b962ebb00f4b5d5149d220f8449b", 113458,  702),
 	WINGAME1("maisybday", "", "Maisy BDay.exe", "t:26fc28194d1991645a9a42794bcb1b36", 2619122, 702),
 
-	// Mia Muis Op Zoek naar Oma Mimi's Medicijn (CD1)
-	WINGAME1("miareading1", "", "Mia.exe", "7c18c9a6af2694156bf09ed195c1ab09", 2595806, 702),
+	// Mia Muis Op Zoek naar Oma Mimi's Medicijn (Dutch)
+	// English version is D10
+	MACGAME2_l("miareading1", "", "Mia",		  "rt:bd782e079df135d3410811818fe4d11d", 110498,
+							 	  "Data/Mia.cst", "d:190e340c72927f032b20a8687bc56c68", 20820654, Common::NL_NLD, 702),
+	WINGAME2_l("miareading1", "", "Mia.exe",	  "t:32c953dd6c53c52db504378a2f5ec7bc", 2595806,
+								  "Data/Mia.cst", "d:190e340c72927f032b20a8687bc56c68", 20820654, Common::NL_NLD, 702),
 
 	// Mac demo is from Disney Interactive Learning Sampler CD
 	// Installer also uses Director 7.0.2
@@ -8887,6 +8897,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("mathica", "", "Mathica.exe", "t:9b226694c9f0727b6e2d5025ecdb2187", 2240795, Common::RU_RUS, 851),
 
 	WINGAME1t_l("maus2", "", "Maus2.exe", "7b470c720b74aba9d7ac5d0706141a33", 1779882, Common::DE_DEU, 800),
+
+	// Actual game is D7
+	WINGAME2_l("miareading1", "Autorun", "Autorun.exe", "t:62bc020a3b36022da9d53b562acb2e7c", 56594,
+									     "copy.dir",	"d:c9dc5dd185a0e62eb9f9d1e564223ce3", 476823, Common::NL_NLD, 800),
 
 	MACDEMO1("mickeyk", "D8 Demo",	 "MickeyK",		 "4ea5fc09f79eee6dded94dc40f303779", 197114, 800),
 	WINDEMO1("mickeyk", "D8 Demo",	 "MickeyK.exe",	 "e24d4bab978b1a5c2326d2c56cf4d781", 2532440, 800),
@@ -9505,6 +9519,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("miamath", "OS X", "MiaOSX", "666bfa2ee1ae12443ce06f5dd142502b", 53741, 1000),
 	WINGAME1("miamath", "", "MiaMath.exe", "0c25e89b5084b272f0eab7827b6e411a", 2671820, 1000),
+
+	WINGAME2("miareading1", "",		   "Mia.exe",	   "t:61e9936be8c49d38395220b907d78f63", 2671820,
+									   "Data/Mia.cst", "d:3318c46c1d12364dfa462e800aaa9597", 20820518, 1000),
+	WINGAME2("miareading1", "Autorun", "Autorun.exe",  "t:afd92c9530a812f15d049f690b3bad94", 2637304,
+									   "kInstall.dir", "d:7f80606d6bdd66a79fee53e667c3fa91", 395151, 1000),
 
 	//Opera Fatale Rerelease
 	WINGAME1_l("operafatal", "", "Opera.exe", "t:4697e5faa068d6f7b445bd332b13218b", 2737592, Common::DE_DEU, 1010),
