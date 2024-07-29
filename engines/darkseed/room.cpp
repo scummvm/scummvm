@@ -1309,3 +1309,7 @@ void Darkseed::Room::loadRoom61AWalkableLocations() {
 		file.read(walkableLocationsMap[i].strip, 40);
 	}
 }
+
+void Darkseed::Room::updatePalette() {
+	_pal.installPalette();
+}

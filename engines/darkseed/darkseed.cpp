@@ -172,6 +172,7 @@ void DarkseedEngine::gameloop() {
 				_isLeftMouseClicked = false;
 				delete _fullscreenPic;
 				_fullscreenPic = nullptr;
+				_room->updatePalette();
 			}
 		}
 		counter_2c85_888b = (counter_2c85_888b + 1) & 0xff;
@@ -2731,6 +2732,11 @@ void DarkseedEngine::showFullscreenPic(const Common::Path &filename) {
 		_fullscreenPic = nullptr;
 		error("Failed to load %s", filename.toString().c_str());
 	}
+	Common::String filePathStr = filename.toString();
+	debug("Loaded %s", filePathStr.c_str());
+	Common::Path palFilename = Common::Path(filePathStr.substr(0, filePathStr.size() - 4) + ".pal");
+	Pal pal;
+	pal.load(palFilename);
 }
 
 void DarkseedEngine::keeperanim() {

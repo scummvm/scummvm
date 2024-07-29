@@ -38,9 +38,12 @@ bool Pal::load(const Common::Path &filename) {
 	for (int i=0; i < DARKSEED_PAL_SIZE; i++) {
 		palData[i] = palData[i] << 2;
 	}
-	g_system->getPaletteManager()->setPalette(palData, 0, DARKSEED_NUM_PAL_ENTRIES);
-
+	installPalette();
 	return true;
+}
+
+void Pal::installPalette() {
+	g_system->getPaletteManager()->setPalette(palData, 0, DARKSEED_NUM_PAL_ENTRIES);
 }
 
 } // namespace Darkseed

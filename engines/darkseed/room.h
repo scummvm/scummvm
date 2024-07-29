@@ -102,6 +102,7 @@ public:
 	bool advanceFrame(int animIdx);
 	void runAnim47();
 	void loadRoom61AWalkableLocations();
+	void updatePalette();
 private:
 	bool load();
 	static Common::String stripSpaces(Common::String source);

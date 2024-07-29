@@ -35,6 +35,7 @@ public:
 
 public:
 	bool load(const Common::Path &filename);
+	void installPalette();
 };
 
 } // namespace Darkseed
