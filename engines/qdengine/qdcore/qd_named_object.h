@@ -77,7 +77,7 @@ public:
 
 	//! Возвращает владельца объекта.
 	qdNamedObject *owner() const {
-		return owner_;
+		return _owner;
 	}
 	//! Возвращает владельца объекта, тип которого tp.
 	qdNamedObject *owner(qdNamedObjectType tp) const;
@@ -85,40 +85,40 @@ public:
 #ifndef _QUEST_EDITOR
 	//! Устанавливает владельца объекта.
 	void set_owner(qdNamedObject *p) {
-		owner_ = p;
+		_owner = p;
 	}
 #else
 	qdNamedObject *ref_owner() const {
-		return ref_owner_;
+		return ref__owner;
 	}
 	void set_ref_owner(qdNamedObject *p) {
-		ref_owner_ = p;
+		ref__owner = p;
 	}
 	void set_owner(qdNamedObject *p) {
-		owner_ = ref_owner_ = p;
+		_owner = ref__owner = p;
 	}
 #endif
 
 	//! Устанавливает флаг.
 	void set_flag(int fl) {
-		flags_ |= fl;
+		_flags |= fl;
 	}
 	//! Скидывает флаг.
 	void drop_flag(int fl) {
-		flags_ &= ~fl;
+		_flags &= ~fl;
 	}
 	//! Возвращает true, если установлен флаг fl.
 	bool check_flag(int fl) const {
-		if (flags_ & fl) return true;
+		if (_flags & fl) return true;
 		return false;
 	}
 	//! Очищает флаги.
 	void clear_flags() {
-		flags_ = 0;
+		_flags = 0;
 	}
 	//! Возвращает значение флагов объекта.
 	int flags() const {
-		return flags_;
+		return _flags;
 	}
 
 	//! Возвращает тип объекта.
@@ -132,19 +132,19 @@ public:
 
 	//! Добавляет ссылку из триггеров на объект.
 	void add_trigger_reference() {
-		trigger_reference_count_++;
+		_trigger_reference_count++;
 	}
 	//! Удаляет ссылку из триггеров на объект.
 	void remove_trigger_reference() {
-		if (trigger_reference_count_) trigger_reference_count_--;
+		if (_trigger_reference_count) _trigger_reference_count--;
 	}
 	//! Очищает счётчик ссылок из триггеров на объект.
 	void clear_trigger_references() {
-		trigger_reference_count_ = 0;
+		_trigger_reference_count = 0;
 	}
 	//! Возвращает true, если на объект есть ссылки из триггеров.
 	bool is_in_triggers() const {
-		return (trigger_reference_count_ > 0);
+		return (_trigger_reference_count > 0);
 	}
 
 	Common::String toString() const;
@@ -152,15 +152,15 @@ public:
 private:
 
 	//! Некие свойства объекта.
-	int flags_;
+	int _flags;
 
 	//! Количество ссылок на объект из триггеров.
-	int trigger_reference_count_;
+	int _trigger_reference_count;
 
 	//! Владелец объекта.
-	mutable qdNamedObject *owner_;
+	mutable qdNamedObject *_owner;
 #ifdef _QUEST_EDITOR
-	mutable qdNamedObject *ref_owner_;
+	mutable qdNamedObject *ref__owner;
 #endif
 };
 
