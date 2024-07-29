@@ -52,35 +52,35 @@ public:
 
 	tag_buffer &operator > (short &var) {
 		XML_ASSERT(data_format_ == tag::TAG_DATA_VOID || data_format_ == tag::TAG_DATA_SHORT);
-		var = (int16)READ_LE_UINT16(data_ + _data_offset);
+		var = (int16)READ_LE_UINT16(_data + _data_offset);
 		_data_offset += sizeof(int16);
 
 		return *this;
 	}
 	tag_buffer &operator > (unsigned short &var) {
 		XML_ASSERT(data_format_ == tag::TAG_DATA_VOID || data_format_ == tag::TAG_DATA_UNSIGNED_SHORT);
-		var = READ_LE_UINT16(data_ + _data_offset);
+		var = READ_LE_UINT16(_data + _data_offset);
 		_data_offset += sizeof(uint16);
 
 		return *this;
 	}
 	tag_buffer &operator > (int &var) {
 		XML_ASSERT(data_format_ == tag::TAG_DATA_VOID || data_format_ == tag::TAG_DATA_INT);
-		var = (int32)READ_LE_UINT32(data_ + _data_offset);
+		var = (int32)READ_LE_UINT32(_data + _data_offset);
 		_data_offset += sizeof(int32);
 
 		return *this;
 	}
 	tag_buffer &operator > (unsigned int &var) {
 		XML_ASSERT(data_format_ == tag::TAG_DATA_VOID || data_format_ == tag::TAG_DATA_UNSIGNED_INT);
-		var = READ_LE_UINT32(data_ + _data_offset);
+		var = READ_LE_UINT32(_data + _data_offset);
 		_data_offset += sizeof(uint32);
 
 		return *this;
 	}
 	tag_buffer &operator > (float &var) {
 		XML_ASSERT(data_format_ == tag::TAG_DATA_VOID || data_format_ == tag::TAG_DATA_FLOAT);
-		var = READ_LE_FLOAT32(data_ + _data_offset);
+		var = READ_LE_FLOAT32(_data + _data_offset);
 		_data_offset += 4;
 
 		return *this;
@@ -132,7 +132,7 @@ private:
 	tag::tag_data_format data_format_;
 #endif
 
-	const char *data_;
+	const char *_data;
 };
 
 }; /* namespace xml */
