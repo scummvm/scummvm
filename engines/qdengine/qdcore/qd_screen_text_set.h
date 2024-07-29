@@ -65,7 +65,7 @@ public:
 	qdScreenText *add_text(const qdScreenText &txt);
 	//! Очистка всех текстов набора.
 	void clear_texts() {
-		texts_.clear();
+		_texts.clear();
 		arrange_texts();
 	}
 	//! Очистка всех текстов с владельцем owner.
@@ -89,7 +89,7 @@ public:
 	}
 
 	bool is_empty() const {
-		return texts_.empty();
+		return _texts.empty();
 	}
 
 	void set_max_text_width(int width) {
@@ -132,7 +132,7 @@ private:
 
 	typedef std::vector<qdScreenText> texts_container_t;
 	//! Тексты.
-	texts_container_t texts_;
+	texts_container_t _texts;
 
 	//! Устанавливается в true при добавлении/удалении текстов.
 	bool _was_changed;
