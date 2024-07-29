@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-28 19:03+0000\n"
-"PO-Revision-Date: 2024-07-27 07:42+0000\n"
+"PO-Revision-Date: 2024-07-29 04:40+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -8610,20 +8610,14 @@ msgid "TTS Narrator"
 msgstr "Synthèse vocale"
 
 #: engines/lure/metaengine.cpp:170
-#, fuzzy
-#| msgid "Exit screen keymappings"
 msgid "Fight sequence keymappings"
-msgstr "Conf. des touches Ecran de sortie"
+msgstr "Conf. des touches Séquences de combat"
 
 #: engines/lure/metaengine.cpp:171
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Index keymappings"
-msgstr "Conf. des touches du jeu"
+msgstr "Conf. des touches Index"
 
 #: engines/lure/metaengine.cpp:172
-#, fuzzy
-#| msgid "Yes/No keymapping"
 msgid "Yes/No keymappings"
 msgstr "Conf. des touches Oui/Non"
 
@@ -8634,16 +8628,12 @@ msgid "Save game"
 msgstr "Sauvegarder"
 
 #: engines/lure/metaengine.cpp:197
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restore game"
-msgstr "Charger le jeu :"
+msgstr "Restaurer"
 
 #: engines/lure/metaengine.cpp:203
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restart game"
-msgstr "Charger le jeu :"
+msgstr "Redémarrer"
 
 #. I18N: ESC key
 #: engines/lure/metaengine.cpp:209 engines/mm/mm1/metaengine.cpp:41
@@ -8654,59 +8644,45 @@ msgstr "S'échapper"
 
 #. I18N: Shift Cursor during fight to top left
 #: engines/lure/metaengine.cpp:233
-#, fuzzy
-#| msgid "Cursor left"
 msgid "Shift Cursor - Top left"
-msgstr "Curseur gauche"
+msgstr "Déplacer curseur - Haut gauche"
 
 #. I18N: Shift Cursor during fight to middle left
 #: engines/lure/metaengine.cpp:239
 msgid "Shift Cursor -  Middle left"
-msgstr ""
+msgstr "Déplacer curseur - Milieu gauche"
 
 #. I18N: Shift Cursor during fight to bottom left
 #: engines/lure/metaengine.cpp:245
 msgid "Shift Cursor - Bottom left"
-msgstr ""
+msgstr "Déplacer curseur - Bas gauche"
 
 #. I18N: Shift Cursor during fight to top right
 #: engines/lure/metaengine.cpp:251
-#, fuzzy
-#| msgid "Cursor right"
 msgid "Shift Cursor - Top right"
-msgstr "Curseur droit"
+msgstr "Déplacer curseur - Haut droite"
 
 #. I18N: Shift Cursor during fight to middle right
 #: engines/lure/metaengine.cpp:257
-#, fuzzy
-#| msgid "Cursor right"
 msgid "Shift Cursor - Middle right"
-msgstr "Curseur droit"
+msgstr "Déplacer curseur - Milieu droite"
 
 #. I18N: Shift Cursor during fight to bottom right
 #: engines/lure/metaengine.cpp:263
-#, fuzzy
-#| msgid "Cursor right"
 msgid "Shift Cursor - Bottom right"
-msgstr "Curseur droit"
+msgstr "Déplacer curseur - Bas droite"
 
 #: engines/lure/metaengine.cpp:270
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Go to next index"
-msgstr "Objet suivant"
+msgstr "Index suivant"
 
 #: engines/lure/metaengine.cpp:277
-#, fuzzy
-#| msgid "Go to previous object"
 msgid "Go to previous index"
-msgstr "Objet précédent"
+msgstr "Index précédent"
 
 #: engines/lure/metaengine.cpp:284
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select index"
-msgstr "Sélectionner un shader"
+msgstr "Sélectionner un index"
 
 #: engines/made/detection_tables.h:445 engines/made/detection_tables.h:462
 msgid "The game is using unsupported engine"
