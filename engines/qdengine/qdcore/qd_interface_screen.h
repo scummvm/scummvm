@@ -71,7 +71,7 @@ public:
 	typedef std::list<qdInterfaceElement *> element_list_t;
 	//! Возвращает список элементов экрана.
 	const element_list_t &element_list() const {
-		return elements_.get_list();
+		return _elements.get_list();
 	}
 
 	//! Обработчик событий мыши.
@@ -86,7 +86,7 @@ public:
 	bool remove_resource(const char *file_name, const qdInterfaceElementState *res_owner);
 	//! Возвращает true, если на ресурс есть ссылки.
 	bool has_references(const qdResource *p) const {
-		return resources_.is_registered(p);
+		return _resources.is_registered(p);
 	}
 
 	//! Прячет элемент.
@@ -106,15 +106,15 @@ public:
 
 	//! Устанавливает, что ресурсы экрана не надо выгружать при выходе с него.
 	void lock_resources() {
-		is_locked_ = true;
+		_is_locked = true;
 	}
 	//! Устанавливает, что ресурсы экрана надо выгружать при выходе с него.
 	void unlock_resources() {
-		is_locked_ = false;
+		_is_locked = false;
 	}
 	//! Возвращает true, если ресурсы экрана не надо выгружать при выходе с него.
 	bool is_locked() const {
-		return is_locked_;
+		return _is_locked;
 	}
 
 	//! Включает кнопки, связанные с персонажем p, выключает кнопки остальных персонажей.
@@ -123,30 +123,30 @@ public:
 	void update_personage_buttons();
 
 	float autohide_time() const {
-		return autohide_time_;
+		return _autohide_time;
 	}
 	void set_autohide_time(float time) {
-		autohide_time_ = time;
+		_autohide_time = time;
 	}
 
 	const Vect2i &autohide_offset() const {
-		return autohide_offset_;
+		return _autohide_offset;
 	}
 	void set_autohide_offset(const Vect2i &offset) {
-		autohide_offset_ = offset;
+		_autohide_offset = offset;
 	}
 
 	//! Фоновая музыка.
 	const qdMusicTrack &music_track() const {
-		return music_track_;
+		return _music_track;
 	}
 	//! Устанавливает фоновую музыку.
 	void set_music_track(const qdMusicTrack &track) {
-		music_track_ = track;
+		_music_track = track;
 	}
 	//! Возвращает true, если экрану задана фоновая музыка.
 	bool has_music_track() const {
-		return music_track_.has_file_name();
+		return _music_track.has_file_name();
 	}
 
 #ifdef _QUEST_EDITOR
@@ -159,15 +159,15 @@ public:
 #endif //_QUEST_EDITOR
 
 	void set_autohide_phase(float ph) {
-		autohide_phase_ = ph;
+		_autohide_phase = ph;
 	}
 
 	// Указатель на объект, последним вызвавший данный как модальный экран
 	qdInterfaceObjectBase *modal_caller() {
-		return modal_caller_;
+		return _modal_caller;
 	}
 	void set_modal_caller(qdInterfaceObjectBase *caller) {
-		modal_caller_ = caller;
+		_modal_caller = caller;
 	}
 
 private:
@@ -178,34 +178,34 @@ private:
 #endif // _QUEST_EDITOR
 
 	//! Список интерфейсных элементов экрана.
-	qdObjectListContainer<qdInterfaceElement> elements_;
+	qdObjectListContainer<qdInterfaceElement> _elements;
 
 	//! Ресурсы, на которые ссылается экран.
-	qdResourceDispatcher<qdInterfaceElementState> resources_;
+	qdResourceDispatcher<qdInterfaceElementState> _resources;
 
 	typedef std::vector<qdInterfaceElement *> sorted_element_list_t;
 	//! Отсортированный по глубине список элементов экрана.
-	sorted_element_list_t sorted_elements_;
+	sorted_element_list_t _sorted_elements;
 
 	//! Сортирует элементы по глубине.
 	bool sort_elements();
 
 	//! true, если ресурсы экрана не надо выгружать при выходе с него.
-	bool is_locked_;
+	bool _is_locked;
 
 	//! Время всплывания экрана в секундах.
-	float autohide_time_;
+	float _autohide_time;
 	//! Смещение экрана, когда он минимизирован.
-	Vect2i autohide_offset_;
+	Vect2i _autohide_offset;
 
 	//! Текущая фаза всплывания экрана.
-	float autohide_phase_;
+	float _autohide_phase;
 
 	//! Фоновая музыка.
-	qdMusicTrack music_track_;
+	qdMusicTrack _music_track;
 
 	//! Указатель на объект, который последним вызвал данный экран в качестве модального
-	qdInterfaceObjectBase *modal_caller_;
+	qdInterfaceObjectBase *_modal_caller;
 };
 
 } // namespace QDEngine

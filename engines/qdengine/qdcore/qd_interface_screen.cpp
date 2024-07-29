@@ -46,16 +46,16 @@ struct qdInterfaceElementsOrdering {
 	}
 };
 
-qdInterfaceScreen::qdInterfaceScreen() : is_locked_(false),
-	autohide_time_(0.0f),
-	autohide_phase_(1.0f),
-	autohide_offset_(Vect2i(0, 0)),
-	modal_caller_(NULL) {
-	sorted_elements_.reserve(20);
+qdInterfaceScreen::qdInterfaceScreen() : _is_locked(false),
+	_autohide_time(0.0f),
+	_autohide_phase(1.0f),
+	_autohide_offset(Vect2i(0, 0)),
+	_modal_caller(NULL) {
+	_sorted_elements.reserve(20);
 }
 
 qdInterfaceScreen::~qdInterfaceScreen() {
-	elements_.clear();
+	_elements.clear();
 }
 
 #ifdef _QUEST_EDITOR
@@ -91,7 +91,7 @@ bool qdInterfaceScreen::redraw(int dx, int dy) const {
 	qdInventoryCell::set_screen_offset(Vect2i(dx, dy));
 #endif
 
-	for (sorted_element_list_t::const_reverse_iterator it = sorted_elements_.rbegin(); it != sorted_elements_.rend(); ++it)
+	for (sorted_element_list_t::const_reverse_iterator it = _sorted_elements.rbegin(); it != _sorted_elements.rend(); ++it)
 		(*it)->redraw();
 
 	return true;
@@ -102,14 +102,14 @@ bool qdInterfaceScreen::pre_redraw(bool force_full_redraw) {
 	if (!dp) return false;
 
 	if (force_full_redraw) {
-		for (sorted_element_list_t::iterator it = sorted_elements_.begin(); it != sorted_elements_.end(); ++it) {
+		for (sorted_element_list_t::iterator it = _sorted_elements.begin(); it != _sorted_elements.end(); ++it) {
 			if ((*it)->last_screen_region() != (*it)->screen_region())
 				dp->add_redraw_region((*it)->last_screen_region());
 
 			dp->add_redraw_region((*it)->screen_region());
 		}
 	} else {
-		for (sorted_element_list_t::iterator it = sorted_elements_.begin(); it != sorted_elements_.end(); ++it) {
+		for (sorted_element_list_t::iterator it = _sorted_elements.begin(); it != _sorted_elements.end(); ++it) {
 			if ((*it)->need_redraw()) {
 				if ((*it)->last_screen_region() != (*it)->screen_region())
 					dp->add_redraw_region((*it)->last_screen_region());
@@ -123,7 +123,7 @@ bool qdInterfaceScreen::pre_redraw(bool force_full_redraw) {
 }
 
 bool qdInterfaceScreen::post_redraw() {
-	for (sorted_element_list_t::iterator it = sorted_elements_.begin(); it != sorted_elements_.end(); ++it)
+	for (sorted_element_list_t::iterator it = _sorted_elements.begin(); it != _sorted_elements.end(); ++it)
 		(*it)->post_redraw();
 
 	return true;
@@ -131,21 +131,21 @@ bool qdInterfaceScreen::post_redraw() {
 
 bool qdInterfaceScreen::quant(float dt) {
 	debugC(9, "qdInterfaceScreen::quant(%f)", dt);
-	if (autohide_time_ > FLT_EPS) {
-		float delta = dt / autohide_time_;
+	if (_autohide_time > FLT_EPS) {
+		float delta = dt / _autohide_time;
 
 		qdInterfaceDispatcher *dp = dynamic_cast<qdInterfaceDispatcher *>(owner());
 
 		if (dp && !dp->is_autohide_enabled())
-			autohide_phase_ -= delta;
+			_autohide_phase -= delta;
 		else
-			autohide_phase_ += delta;
+			_autohide_phase += delta;
 
-		if (autohide_phase_ < 0.0f) autohide_phase_ = 0.0f;
-		if (autohide_phase_ > 1.0f) autohide_phase_ = 1.0f;
+		if (_autohide_phase < 0.0f) _autohide_phase = 0.0f;
+		if (_autohide_phase > 1.0f) _autohide_phase = 1.0f;
 
-		int x = round(float(autohide_offset_.x) * autohide_phase_);
-		int y = round(float(autohide_offset_.y) * autohide_phase_);
+		int x = round(float(_autohide_offset.x) * _autohide_phase);
+		int y = round(float(_autohide_offset.y) * _autohide_phase);
 
 		qdInterfaceElement::set_screen_offset(Vect2i(x, y));
 		qdInventoryCell::set_screen_offset(Vect2i(x, y));
@@ -174,17 +174,17 @@ bool qdInterfaceScreen::save_script(Common::WriteStream &fh, int indent) const {
 		fh.writeString(Common::String::format(" name=\"%s\"", qdscr_XML_string(name())));
 	}
 
-	if (autohide_time_ > FLT_EPS) {
-		fh.writeString(Common::String::format(" hide_time=\"%f\"", autohide_time_));
+	if (_autohide_time > FLT_EPS) {
+		fh.writeString(Common::String::format(" hide_time=\"%f\"", _autohide_time));
 	}
 
-	if (autohide_offset_.x || autohide_offset_.y) {
-		fh.writeString(Common::String::format(" hide_offset=\"%d %d\"", autohide_offset_.x, autohide_offset_.y));
+	if (_autohide_offset.x || _autohide_offset.y) {
+		fh.writeString(Common::String::format(" hide_offset=\"%d %d\"", _autohide_offset.x, _autohide_offset.y));
 	}
 	fh.writeString(">\r\n");
 
 	if (has_music_track()) {
-		music_track_.save_script(fh, indent + 1);
+		_music_track.save_script(fh, indent + 1);
 	}
 
 	for (auto &it : element_list()) {
@@ -216,13 +216,13 @@ bool qdInterfaceScreen::load_script(const xml::tag *p) {
 			}
 			break;
 		case QDSCR_INTERFACE_SCREEN_HIDE_TIME:
-			xml::tag_buffer(*it) > autohide_time_;
+			xml::tag_buffer(*it) > _autohide_time;
 			break;
 		case QDSCR_INTERFACE_SCREEN_HIDE_OFFSET:
-			xml::tag_buffer(*it) > autohide_offset_.x > autohide_offset_.y;
+			xml::tag_buffer(*it) > _autohide_offset.x > _autohide_offset.y;
 			break;
 		case QDSCR_MUSIC_TRACK:
-			music_track_.load_script(&*it);
+			_music_track.load_script(&*it);
 			break;
 		}
 	}
@@ -231,8 +231,8 @@ bool qdInterfaceScreen::load_script(const xml::tag *p) {
 }
 
 bool qdInterfaceScreen::add_element(qdInterfaceElement *p) {
-	if (elements_.add_object(p)) {
-		sorted_elements_.push_back(p);
+	if (_elements.add_object(p)) {
+		_sorted_elements.push_back(p);
 		sort_elements();
 		return true;
 	}
@@ -241,33 +241,33 @@ bool qdInterfaceScreen::add_element(qdInterfaceElement *p) {
 }
 
 bool qdInterfaceScreen::rename_element(qdInterfaceElement *p, const char *name) {
-	return elements_.rename_object(p, name);
+	return _elements.rename_object(p, name);
 }
 
 bool qdInterfaceScreen::remove_element(qdInterfaceElement *p) {
-	sorted_element_list_t::iterator it = std::find(sorted_elements_.begin(), sorted_elements_.end(), p);
-	if (it != sorted_elements_.end())
-		sorted_elements_.erase(it);
+	sorted_element_list_t::iterator it = std::find(_sorted_elements.begin(), _sorted_elements.end(), p);
+	if (it != _sorted_elements.end())
+		_sorted_elements.erase(it);
 
 #ifdef _QUEST_EDITOR
 	selected_elements_.remove(p);
 #endif // _QUEST_EDITOR
 
-	return elements_.remove_object(p);
+	return _elements.remove_object(p);
 }
 
 qdInterfaceElement *qdInterfaceScreen::get_element(const char *el_name) {
-	return elements_.get_object(el_name);
+	return _elements.get_object(el_name);
 }
 
 bool qdInterfaceScreen::is_element_in_list(const qdInterfaceElement *el) const {
-	return elements_.is_in_list(el);
+	return _elements.is_in_list(el);
 }
 
 bool qdInterfaceScreen::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
-	debugC(9, kDebugInput, "qdInterfaceScreen::mouse_handler(%d, %d, %lu)", x, y, sorted_elements_.size());
+	debugC(9, kDebugInput, "qdInterfaceScreen::mouse_handler(%d, %d, %lu)", x, y, _sorted_elements.size());
 	if (qdInterfaceDispatcher *dp = dynamic_cast<qdInterfaceDispatcher* >(owner())) {
-		for (auto &it : sorted_elements_) {
+		for (auto &it : _sorted_elements) {
 			if (it->hit_test(x, y)) {
 				dp->toggle_mouse_hover();
 				if (it->get_element_type() != qdInterfaceElement::EL_TEXT_WINDOW)
@@ -304,7 +304,7 @@ bool qdInterfaceScreen::char_input_handler(int vkey) {
 qdResource *qdInterfaceScreen::add_resource(const char *file_name, const qdInterfaceElementState *res_owner) {
 	if (qdInterfaceDispatcher * dp = dynamic_cast<qdInterfaceDispatcher * >(owner())) {
 		if (qdResource * p = dp->add_resource(file_name, res_owner)) {
-			resources_.register_resource(p, res_owner);
+			_resources.register_resource(p, res_owner);
 			if (dp->is_screen_active(this) && !p->is_resource_loaded())
 				p->load_resource();
 
@@ -318,7 +318,7 @@ qdResource *qdInterfaceScreen::add_resource(const char *file_name, const qdInter
 bool qdInterfaceScreen::remove_resource(const char *file_name, const qdInterfaceElementState *res_owner) {
 	if (qdInterfaceDispatcher * dp = dynamic_cast<qdInterfaceDispatcher * >(owner())) {
 		if (qdResource * p = dp->get_resource(file_name)) {
-			resources_.unregister_resource(p, res_owner);
+			_resources.unregister_resource(p, res_owner);
 			return dp->remove_resource(file_name, res_owner);
 		}
 	}
@@ -349,9 +349,9 @@ bool qdInterfaceScreen::hide_element(qdInterfaceElement *p, bool temporary_hide)
 	if (!temporary_hide)
 		p->hide();
 
-	sorted_element_list_t::iterator it = std::find(sorted_elements_.begin(), sorted_elements_.end(), p);
-	if (it != sorted_elements_.end())
-		sorted_elements_.erase(it);
+	sorted_element_list_t::iterator it = std::find(_sorted_elements.begin(), _sorted_elements.end(), p);
+	if (it != _sorted_elements.end())
+		_sorted_elements.erase(it);
 
 	return true;
 }
@@ -366,9 +366,9 @@ bool qdInterfaceScreen::show_element(const char *element_name) {
 bool qdInterfaceScreen::show_element(qdInterfaceElement *p) {
 	p->show();
 
-	sorted_element_list_t::iterator it = std::find(sorted_elements_.begin(), sorted_elements_.end(), p);
-	if (it == sorted_elements_.end()) {
-		sorted_elements_.push_back(p);
+	sorted_element_list_t::iterator it = std::find(_sorted_elements.begin(), _sorted_elements.end(), p);
+	if (it == _sorted_elements.end()) {
+		_sorted_elements.push_back(p);
 		sort_elements();
 	}
 
@@ -376,16 +376,16 @@ bool qdInterfaceScreen::show_element(qdInterfaceElement *p) {
 }
 
 bool qdInterfaceScreen::sort_elements() {
-	std::sort(sorted_elements_.begin(), sorted_elements_.end(), qdInterfaceElementsOrdering());
+	std::sort(_sorted_elements.begin(), _sorted_elements.end(), qdInterfaceElementsOrdering());
 	return true;
 }
 
 bool qdInterfaceScreen::build_visible_elements_list() {
-	sorted_elements_.clear();
+	_sorted_elements.clear();
 
 	for (element_list_t::const_iterator it = element_list().begin(); it != element_list().end(); ++it) {
 		if ((*it)->is_visible())
-			sorted_elements_.push_back(*it);
+			_sorted_elements.push_back(*it);
 	}
 
 	sort_elements();
