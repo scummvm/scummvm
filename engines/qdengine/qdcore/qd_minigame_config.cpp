@@ -30,9 +30,9 @@
 
 namespace QDEngine {
 
-qdMinigameConfigParameter::qdMinigameConfigParameter() : data_type_(PRM_DATA_STRING) {
-	data_count_ = 1;
-	is_data_valid_ = true;
+qdMinigameConfigParameter::qdMinigameConfigParameter() : _data_type(PRM_DATA_STRING) {
+	_data_count = 1;
+	_is_data_valid = true;
 }
 
 qdMinigameConfigParameter::~qdMinigameConfigParameter() {
@@ -68,13 +68,13 @@ bool qdMinigameConfigParameter::save_script(Common::WriteStream &fh, int indent)
 	fh.writeString("<minigame_config_prm");
 
 	fh.writeString(Common::String::format(" name=\"%s\"", qdscr_XML_string(name())));
-//	fh < " type=\"" <= int(data_type_) < "\"";
+//	fh < " type=\"" <= int(_data_type) < "\"";
 
 //	if(!comment_.empty())
 //		fh < " comment=\"" < qdscr_XML_string(comment()) < "\"";
 
-	if (data_count_ > 1) {
-		fh.writeString(Common::String::format(" size=\"%d\"", data_count_));
+	if (_data_count > 1) {
+		fh.writeString(Common::String::format(" size=\"%d\"", _data_count));
 	}
 
 	fh.writeString(">");
@@ -88,7 +88,7 @@ bool qdMinigameConfigParameter::save_script(Common::WriteStream &fh, int indent)
 }
 
 bool qdMinigameConfigParameter::validate_data() {
-	is_data_valid_ = true;
+	_is_data_valid = true;
 	return true;
 }
 
