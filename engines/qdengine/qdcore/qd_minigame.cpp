@@ -35,15 +35,15 @@
 
 namespace QDEngine {
 
-qdMiniGame::qdMiniGame() : dll_handle_(NULL),
-	interface_(NULL) {
+qdMiniGame::qdMiniGame() : _dll_handle(NULL),
+	_interface(NULL) {
 }
 
 qdMiniGame::qdMiniGame(const qdMiniGame &mg) : qdNamedObject(mg),
-	dll_name_(mg.dll_name_),
-	dll_handle_(mg.dll_handle_),
-	interface_(mg.interface_),
-	config_(mg.config_) {
+	_dll_name(mg._dll_name),
+	_dll_handle(mg._dll_handle),
+	_interface(mg._interface),
+	_config(mg._config) {
 }
 
 qdMiniGame::~qdMiniGame() {
@@ -51,25 +51,25 @@ qdMiniGame::~qdMiniGame() {
 
 bool qdMiniGame::start() {
 	if (load_interface()) {
-		return interface_->init(&qdmg::qdEngineInterfaceImpl::instance());
+		return _interface->init(&qdmg::qdEngineInterfaceImpl::instance());
 	}
 
 	return false;
 }
 
 bool qdMiniGame::is_started() const {
-	return interface_ != 0;
+	return _interface != 0;
 }
 
 bool qdMiniGame::quant(float dt) {
-	if (interface_)
-		interface_->quant(dt);
+	if (_interface)
+		_interface->quant(dt);
 	return true;
 }
 
 bool qdMiniGame::end() {
-	if (interface_)
-		interface_->finit();
+	if (_interface)
+		_interface->finit();
 
 	return release_interface();
 }
@@ -82,7 +82,7 @@ int qdMiniGame::save_game(char *buffer, int buffer_size, qdGameScene *scene) {
 	}
 
 	qdMinigameSceneInterface *scene_int = qdmg::qdEngineInterfaceImpl::instance().scene_interface(scene);
-	int size = interface_->save_game(&qdmg::qdEngineInterfaceImpl::instance(), scene_int, buffer, buffer_size);
+	int size = _interface->save_game(&qdmg::qdEngineInterfaceImpl::instance(), scene_int, buffer, buffer_size);
 	qdmg::qdEngineInterfaceImpl::instance().release_scene_interface(scene_int);
 
 	if (need_release)
@@ -99,7 +99,7 @@ int qdMiniGame::load_game(const char *buffer, int buffer_size, qdGameScene *scen
 	}
 
 	qdMinigameSceneInterface *scene_int = qdmg::qdEngineInterfaceImpl::instance().scene_interface(scene);
-	int size = interface_->load_game(&qdmg::qdEngineInterfaceImpl::instance(), scene_int, buffer, buffer_size);
+	int size = _interface->load_game(&qdmg::qdEngineInterfaceImpl::instance(), scene_int, buffer, buffer_size);
 	qdmg::qdEngineInterfaceImpl::instance().release_scene_interface(scene_int);
 
 	if (need_release)
@@ -135,15 +135,15 @@ bool qdMiniGame::load_script(const xml::tag *p) {
 			set_config_file_name(it->data());
 			load_config();
 #ifndef _QUEST_EDITOR
-			config_.reserve(config_.size() + config_size);
+			_config.reserve(_config.size() + config_size);
 #endif
 			break;
 		case QDSCR_MINIGAME_CONFIG_PARAMETER: {
 			if (!qdGameConfig::get_config().minigame_read_only_ini()) {
 				qdMinigameConfigParameter prm;
 				prm.load_script(&*it);
-				config_container_t::iterator cfg_it = std::find(config_.begin(), config_.end(), prm);
-				if (cfg_it != config_.end()) {
+				config_container_t::iterator cfg_it = std::find(_config.begin(), _config.end(), prm);
+				if (cfg_it != _config.end()) {
 					cfg_it->set_data_string(prm.data_string());
 					cfg_it->set_data_count(prm.data_count());
 				}
@@ -171,22 +171,22 @@ bool qdMiniGame::save_script(Common::WriteStream &fh, int indent) const {
 		fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
 	}
 
-	if (!config_file_name_.empty()) {
+	if (!_config_file_name.empty()) {
 		fh.writeString(Common::String::format(" config_file=\"%s\"", qdscr_XML_string(config_file_name())));
 	}
 
-	if (!dll_name_.empty()) {
+	if (!_dll_name.empty()) {
 		fh.writeString(Common::String::format(" dll_name=\"%s\"", qdscr_XML_string(dll_name())));
 	}
 
-	if (!game_name_.empty()) {
+	if (!_game_name.empty()) {
 		fh.writeString(Common::String::format(" game_name=\"%s\"", qdscr_XML_string(game_name())));
 	}
 
-	if (!config_.empty()) {
+	if (!_config.empty()) {
 		fh.writeString(">\r\n");
 
-		for (auto &it: config_) {
+		for (auto &it: _config) {
 			it.save_script(fh, indent + 1);
 		}
 
@@ -206,12 +206,12 @@ qdMiniGame &qdMiniGame::operator = (const qdMiniGame &mg) {
 
 	*static_cast<qdNamedObject *>(this) = mg;
 
-	dll_name_ = mg.dll_name_;
-	dll_handle_ = mg.dll_handle_;
-	interface_ = mg.interface_;
+	_dll_name = mg._dll_name;
+	_dll_handle = mg._dll_handle;
+	_interface = mg._interface;
 
-	config_file_name_ = mg.config_file_name_;
-	config_ = mg.config_;
+	_config_file_name = mg._config_file_name;
+	_config = mg._config;
 
 	return *this;
 }
@@ -227,21 +227,21 @@ bool qdMiniGame::init() {
 }
 
 bool qdMiniGame::load_config() {
-	if (config_file_name_.empty())
+	if (_config_file_name.empty())
 		return false;
 
-	config_.clear();
+	_config.clear();
 	Common::INIFile::SectionList section_list;
 	enumerateIniSections(config_file_name(), section_list);
 
 #ifndef _QUEST_EDITOR
-	config_.reserve(section_list.size());
+	_config.reserve(section_list.size());
 #endif
 
 	for (auto &it : section_list) {
 		qdMinigameConfigParameter prm;
 		prm.load_ini(config_file_name(), it.name.c_str());
-		config_.push_back(prm);
+		_config.push_back(prm);
 	}
 
 	return true;
@@ -254,7 +254,7 @@ bool qdMiniGame::get_files_list(qdFileNameList &files_to_copy, qdFileNameList &f
 	if (has_config_file())
 		files_to_copy.push_back(config_file_name());
 
-	for (config_container_t::const_iterator it = config_.begin(); it != config_.end(); ++it) {
+	for (config_container_t::const_iterator it = _config.begin(); it != _config.end(); ++it) {
 		if (it->data_type() == qdMinigameConfigParameter::PRM_DATA_FILE)
 			files_to_copy.push_back(it->data_string());
 	}
@@ -264,33 +264,33 @@ bool qdMiniGame::get_files_list(qdFileNameList &files_to_copy, qdFileNameList &f
 
 const char *qdMiniGame::config_parameter_value(const char *cfg_param_name) const {
 #ifndef _QUEST_EDITOR
-	config_container_t::const_iterator it = std::find(config_.begin(), config_.end(), cfg_param_name);
-	if (it != config_.end())
+	config_container_t::const_iterator it = std::find(_config.begin(), _config.end(), cfg_param_name);
+	if (it != _config.end())
 		return it->data_string();
 #endif
 	return NULL;
 }
 
 bool qdMiniGame::load_interface() {
-	if (!dll_name_.empty()) {
-		warning("STUB: Trying to load dll: %s", dll_name_.c_str());
+	if (!_dll_name.empty()) {
+		warning("STUB: Trying to load dll: %s", _dll_name.c_str());
 		// call here dll->open_game_interface(game_name())
-		interface_ = new qdEmptyMiniGameInterface;
+		_interface = new qdEmptyMiniGameInterface;
 		return true;
 	}
 	return false;
 }
 
 bool qdMiniGame::release_interface() {
-	if (dll_handle_) {
-		if (interface_) {
-			qdMiniGameInterface::interface_close_proc ip = (qdMiniGameInterface::interface_close_proc)(GetProcAddress(static_cast<HMODULE>(dll_handle_), "close_game_interface"));
-			if (ip)(*ip)(interface_);
+	if (_dll_handle) {
+		if (_interface) {
+			qdMiniGameInterface::interface_close_proc ip = (qdMiniGameInterface::interface_close_proc)(GetProcAddress(static_cast<HMODULE>(_dll_handle), "close_game_interface"));
+			if (ip)(*ip)(_interface);
 
-			interface_ = NULL;
+			_interface = NULL;
 		}
 
-		FreeLibrary(static_cast<HMODULE>(dll_handle_));
+		FreeLibrary(static_cast<HMODULE>(_dll_handle));
 		return true;
 	}
 

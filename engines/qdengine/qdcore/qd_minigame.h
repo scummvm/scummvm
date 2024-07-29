@@ -48,13 +48,13 @@ public:
 	bool init();
 
 	const char *config_file_name() const {
-		return config_file_name_.c_str();
+		return _config_file_name.c_str();
 	}
 	void set_config_file_name(const char *file_name) {
-		config_file_name_ = file_name;
+		_config_file_name = file_name;
 	}
 	bool has_config_file() const {
-		return !config_file_name_.empty();
+		return !_config_file_name.empty();
 	}
 
 	//! Старт игры, вызывается при заходе на сцену, которой управляет игра.
@@ -72,21 +72,21 @@ public:
 
 	//! Возвращает имя подгружаемой для игры dll.
 	const char *dll_name() const {
-		return dll_name_.c_str();
+		return _dll_name.c_str();
 	}
 	//! Устанавливает имя подгружаемой для игры dll.
 	void set_dll_name(const char *p) {
-		dll_name_ = p;
+		_dll_name = p;
 	}
 	bool has_dll() const {
-		return !dll_name_.empty();
+		return !_dll_name.empty();
 	}
 
 	const char *game_name() const {
-		return game_name_.c_str();
+		return _game_name.c_str();
 	}
 	void set_game_name(const char *p) {
-		game_name_ = p;
+		_game_name = p;
 	}
 
 	//! Загрузка данных из скрипта.
@@ -104,10 +104,10 @@ public:
 #endif
 
 	const config_container_t &config() const {
-		return config_;
+		return _config;
 	}
 	void set_config(const config_container_t &cfg) {
-		config_ = cfg;
+		_config = cfg;
 	}
 	bool load_config();
 
@@ -120,18 +120,18 @@ public:
 private:
 
 	//! Имя подгружаемой для игры dll.
-	std::string dll_name_;
+	std::string _dll_name;
 	//! .ini файл с настройками игры.
-	std::string config_file_name_;
+	std::string _config_file_name;
 	//! Имя игры, по которому она ищется в dll.
-	std::string game_name_;
+	std::string _game_name;
 	//! Хэндл подгруженной dll.
-	void *dll_handle_;
+	void *_dll_handle;
 	//! Интерфейс к игре из dll.
-	qdMiniGameInterface *interface_;
+	qdMiniGameInterface *_interface;
 
 	//! Настройки игры.
-	config_container_t config_;
+	config_container_t _config;
 
 	bool load_interface();
 	bool release_interface();
