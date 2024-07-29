@@ -33,22 +33,22 @@ public:
 	~qdGameConfig() { }
 
 	int screen_sx() const {
-		return screen_sx_;
+		return _screen_sx;
 	}
 	int screen_sy() const {
-		return screen_sy_;
+		return _screen_sy;
 	}
 
 	int driver_ID() const {
-		return driver_id_;
+		return _driver_id;
 	}
 	void set_driver_ID(int id) {
-		driver_id_ = id;
+		_driver_id = id;
 	}
 
 	void set_screen_size(int sx, int sy) {
-		screen_sx_ = sx;
-		screen_sy_ = sy;
+		_screen_sx = sx;
+		_screen_sy = sy;
 	}
 
 	int pixel_format() const;
@@ -58,169 +58,169 @@ public:
 	void set_bits_per_pixel(int bpp);
 
 	bool debug_draw() const {
-		return debug_draw_;
+		return _debug_draw;
 	}
 	void toggle_debug_draw() {
-		debug_draw_ = !debug_draw_;
+		_debug_draw = !_debug_draw;
 	}
 	bool debug_show_grid() const {
-		return debug_show_grid_;
+		return _debug_show_grid;
 	}
 	void toggle_show_grid() {
-		debug_show_grid_ = !debug_show_grid_;
+		_debug_show_grid = !_debug_show_grid;
 	}
 
 	bool force_full_redraw() const {
-		return force_full_redraw_;
+		return _force_full_redraw;
 	}
 	void toggle_full_redraw() {
-		force_full_redraw_ = !force_full_redraw_;
+		_force_full_redraw = !_force_full_redraw;
 	}
 
 	bool fullscreen() const {
-		return fullscreen_;
+		return _fullscreen;
 	}
 	void toggle_fullscreen() {
-		fullscreen_ = !fullscreen_;
+		_fullscreen = !_fullscreen;
 	}
 
 	const char *locale() const {
-		return locale_.c_str();
+		return _locale.c_str();
 	}
 
 	void load();
 	void save();
 
 	static qdGameConfig &get_config() {
-		return config_;
+		return _config;
 	}
 	static void set_config(const qdGameConfig &s) {
-		config_ = s;
+		_config = s;
 	}
 
 	static const char *ini_name() {
-		return ini_name_;
+		return _ini_name;
 	}
 
 	bool triggers_debug() const {
-		return triggers_debug_;
+		return _triggers_debug;
 	}
 	void toggle_triggers_debug(bool v) {
-		triggers_debug_ = v;
+		_triggers_debug = v;
 	}
 
 	bool show_fps() const {
-		return show_fps_;
+		return _show_fps;
 	}
 	void toggle_fps() {
-		show_fps_ = !show_fps_;
+		_show_fps = !_show_fps;
 	}
 
 	bool is_sound_enabled() const {
-		return enable_sound_;
+		return _enable_sound;
 	}
 	void toggle_sound(bool state) {
-		enable_sound_ = state;
+		_enable_sound = state;
 	}
 	unsigned int sound_volume() const {
-		return sound_volume_;
+		return _sound_volume;
 	}
 	void set_sound_volume(unsigned int vol) {
-		sound_volume_ = vol;
+		_sound_volume = vol;
 	}
 	bool update_sound_settings() const;
 
 	bool is_music_enabled() const {
-		return enable_music_;
+		return _enable_music;
 	}
 	void toggle_music(bool state) {
-		enable_music_ = state;
+		_enable_music = state;
 	}
 	unsigned int music_volume() const {
-		return music_volume_;
+		return _music_volume;
 	}
 	void set_music_volume(unsigned int vol) {
-		music_volume_ = vol;
+		_music_volume = vol;
 	}
 	bool update_music_settings() const;
 
 	int logic_period() const {
-		return logic_period_;
+		return _logic_period;
 	}
 	int logic_synchro_by_clock() const {
-		return logic_synchro_by_clock_;
+		return _logic_synchro_by_clock;
 	}
 
 	float game_speed() const {
-		return game_speed_;
+		return _game_speed;
 	}
 	void set_game_speed(float speed) {
-		game_speed_ = speed;
+		_game_speed = speed;
 	}
 
 	bool is_splash_enabled() const {
-		return is_splash_enabled_;
+		return _is_splash_enabled;
 	}
 	int splash_time() const {
-		return splash_time_;
+		return _splash_time;
 	}
 
 	bool is_profiler_enabled() const {
-		return enable_profiler_;
+		return _enable_profiler;
 	}
 	void toggle_profiler(bool state) {
-		enable_profiler_ = state;
+		_enable_profiler = state;
 	}
 	const char *profiler_file() const {
-		return profiler_file_.c_str();
+		return _profiler_file.c_str();
 	}
 	void set_profiler_file(const char *fname) {
-		profiler_file_ = fname;
+		_profiler_file = fname;
 	}
 
 	bool minigame_read_only_ini() const {
-		return minigame_read_only_ini_;
+		return _minigame_read_only_ini;
 	}
 
 private:
 
-	int bits_per_pixel_;
-	bool fullscreen_;
+	int _bits_per_pixel;
+	bool _fullscreen;
 
-	int driver_id_;
+	int _driver_id;
 
-	int screen_sx_;
-	int screen_sy_;
+	int _screen_sx;
+	int _screen_sy;
 
-	bool enable_sound_;
-	unsigned int sound_volume_;
+	bool _enable_sound;
+	unsigned int _sound_volume;
 
-	bool enable_music_;
-	unsigned int music_volume_;
+	bool _enable_music;
+	unsigned int _music_volume;
 
-	bool debug_draw_;
-	bool debug_show_grid_;
+	bool _debug_draw;
+	bool _debug_show_grid;
 
-	bool triggers_debug_;
-	bool show_fps_;
-	bool force_full_redraw_;
+	bool _triggers_debug;
+	bool _show_fps;
+	bool _force_full_redraw;
 
-	int logic_period_;
-	int logic_synchro_by_clock_;
-	float game_speed_;
+	int _logic_period;
+	int _logic_synchro_by_clock;
+	float _game_speed;
 
-	bool is_splash_enabled_;
-	int splash_time_;
+	bool _is_splash_enabled;
+	int _splash_time;
 
-	bool enable_profiler_;
-	std::string profiler_file_;
+	bool _enable_profiler;
+	std::string _profiler_file;
 
-	std::string locale_;
+	std::string _locale;
 
-	bool minigame_read_only_ini_;
+	bool _minigame_read_only_ini;
 
-	static qdGameConfig config_;
-	static const char *const ini_name_;
+	static qdGameConfig _config;
+	static const char *const _ini_name;
 };
 
 char *getIniKey(const char *fname, const char *section, const char *key);
