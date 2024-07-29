@@ -59,12 +59,12 @@ public:
 	~qdScreenTextFormat() { };
 
 	bool operator == (const qdScreenTextFormat &fmt) const {
-		return (color_ == fmt.color_ &&
-		        arrangement_ == fmt.arrangement_ &&
-		        alignment_ == fmt.alignment_ &&
-		        hover_color_ == fmt.hover_color_ &&
-		        font_type_ == fmt.font_type() &&
-		        global_depend_ == fmt.is_global_depend());
+		return (_color == fmt._color &&
+		        _arrangement == fmt._arrangement &&
+		        _alignment == fmt._alignment &&
+		        _hover_color == fmt._hover_color &&
+		        _font_type == fmt.font_type() &&
+		        _global_depend == fmt.is_global_depend());
 	}
 
 	bool operator != (const qdScreenTextFormat &fmt) const {
@@ -72,66 +72,66 @@ public:
 	}
 
 	void set_arrangement(arrangement_t al) {
-		arrangement_ = al;
+		_arrangement = al;
 	}
 	arrangement_t arrangement() const {
-		return arrangement_;
+		return _arrangement;
 	}
 
 	void set_alignment(alignment_t al) {
-		alignment_ = al;
+		_alignment = al;
 	}
 	alignment_t alignment() const {
-		return alignment_;
+		return _alignment;
 	}
 
 	void set_color(int color) {
-		color_ = color;
+		_color = color;
 	}
 	int color() const {
-		return color_;
+		return _color;
 	}
 
 	void set_hover_color(int color) {
-		hover_color_ = color;
+		_hover_color = color;
 	}
 	int hover_color() const {
-		return hover_color_;
+		return _hover_color;
 	}
 
 	//! Возвращает формат текста по умолчанию.
 	static const qdScreenTextFormat &default_format() {
-		return default_format_;
+		return _default_format;
 	}
 
 	/// Глобальные настройки формата текста.
 	static const qdScreenTextFormat &global_text_format() {
-		return global_text_format_;
+		return _global_text_format;
 	}
 	static void set_global_text_format(const qdScreenTextFormat &frmt) {
-		global_text_format_ = frmt;
+		_global_text_format = frmt;
 	}
 
 	/// Глобальные настройки формата текста для тем диалогов.
 	static const qdScreenTextFormat &global_topic_format() {
-		return global_topic_format_;
+		return _global_topic_format;
 	}
 	static void set_global_topic_format(const qdScreenTextFormat &frmt) {
-		global_topic_format_ = frmt;
+		_global_topic_format = frmt;
 	}
 
 	void set_font_type(int tp) {
-		font_type_ = tp;
+		_font_type = tp;
 	}
 	int font_type() const {
-		return font_type_;
+		return _font_type;
 	}
 
 	bool is_global_depend() const {
-		return global_depend_;
+		return _global_depend;
 	}
 	void toggle_global_depend(bool flag = true) {
-		global_depend_ = flag;
+		_global_depend = flag;
 	}
 
 	bool load_script(const xml::tag *p);
@@ -140,28 +140,28 @@ public:
 private:
 
 	//! Расположение относительно других текстов.
-	arrangement_t arrangement_;
+	arrangement_t _arrangement;
 	/// Выравнивание текста.
-	alignment_t alignment_;
+	alignment_t _alignment;
 	//! Цвет текста, RGB().
-	int color_;
+	int _color;
 	//! Цвет текста при наведении на него мыши, RGB().
-	int hover_color_;
+	int _hover_color;
 
 	//! Формат текста по умолчанию.
-	static qdScreenTextFormat default_format_;
+	static qdScreenTextFormat _default_format;
 
 	/// Глобальный формат.
-	static qdScreenTextFormat global_text_format_;
+	static qdScreenTextFormat _global_text_format;
 	/// Глобальный формат тем диалогов.
-	static qdScreenTextFormat global_topic_format_;
+	static qdScreenTextFormat _global_topic_format;
 
 	//! Тип шрифта
-	int font_type_;
+	int _font_type;
 
-	/** Флаг, означающий, что данные должны браться из global_text_format_ или
+	/** Флаг, означающий, что данные должны браться из _gloabal_text_format или
 	    global_topic_format_ вместо текущей переменной. */
-	bool global_depend_;
+	bool _global_depend;
 };
 
 //! Экранный текст.
@@ -173,15 +173,15 @@ public:
 
 	//! Экранные координаты центра текста.
 	Vect2i screen_pos() {
-		return pos_;
+		return _pos;
 	}
 	//! Устанавливает экранные координаты центра текста.
 	void set_screen_pos(const Vect2i &pos) {
-		pos_ = pos;
+		_pos = pos;
 	}
 
 	const char *data() const {
-		return data_.c_str();
+		return _data.c_str();
 	}
 	//! Устанавливает текст.
 	/**
@@ -191,62 +191,62 @@ public:
 
 	//! Горизонтальный размер текста в пикселах.
 	int size_x() const {
-		return size_.x;
+		return _size.x;
 	}
 	//! Вертикальный размер текста в пикселах.
 	int size_y() const {
-		return size_.y;
+		return _size.y;
 	}
 
 	qdScreenTextFormat::arrangement_t arrangement() const {
-		return text_format_.arrangement();
+		return _text_format.arrangement();
 	}
 	qdScreenTextFormat::alignment_t alignment() const {
-		return text_format_.alignment();
+		return _text_format.alignment();
 	}
 
 	qdScreenTextFormat text_format() const {
-		return text_format_;
+		return _text_format;
 	}
 	void set_text_format(const qdScreenTextFormat &fmt) {
-		text_format_ = fmt;
+		_text_format = fmt;
 	}
 
 	grScreenRegion screen_region() const {
-		return grScreenRegion(pos_.x, pos_.y, size_.x, size_.y);
+		return grScreenRegion(_pos.x, _pos.y, _size.x, _size.y);
 	}
 
 	//! Отрисовка текста.
 	void redraw(const Vect2i &owner_pos) const;
 
 	unsigned color() const {
-		return text_format_.color();
+		return _text_format.color();
 	}
 	void set_color(unsigned col) {
-		text_format_.set_color(col);
+		_text_format.set_color(col);
 	}
 
 	//! Возвращает указатель на владельца текста.
 	qdGameObjectState *owner() const {
-		return owner_;
+		return _owner;
 	}
 	//! Устанавливает владельца текста.
 	void set_owner(qdGameObjectState *p) {
-		owner_ = p;
+		_owner = p;
 	}
 	bool is_owned_by(const qdNamedObject *p) const;
 
 	//! Проверка попадания точки в текст, параметры в экранных координатах.
 	bool hit(int x, int y) const {
-		if (x >= pos_.x && x < pos_.x + size_.x) {
-			if (y >= pos_.y && y < pos_.y + size_.y)
+		if (x >= _pos.x && x < _pos.x + _size.x) {
+			if (y >= _pos.y && y < _pos.y + _size.y)
 				return true;
 		}
 		return false;
 	}
 
 	void set_hover_mode(bool state) {
-		hover_mode_ = state;
+		_hover_mode = state;
 	}
 
 	// форматирует текст так, чтобы его ширина не превышала max_width (размер в пикселах)
@@ -255,21 +255,21 @@ public:
 private:
 
 	//! Экранные координаты текста.
-	Vect2i pos_;
+	Vect2i _pos;
 	//! Размеры текста в пикселах.
-	Vect2i size_;
+	Vect2i _size;
 
 	//! Текст (данные).
-	std::string data_;
+	std::string _data;
 
 	//! true, если над текстом курсор мыши
-	bool hover_mode_;
+	bool _hover_mode;
 
 	//! Cпособ выравнивания текста.
-	qdScreenTextFormat text_format_;
+	qdScreenTextFormat _text_format;
 
 	//! Владелец текста.
-	mutable qdGameObjectState *owner_;
+	mutable qdGameObjectState *_owner;
 };
 
 } // namespace QDEngine
