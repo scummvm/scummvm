@@ -62,7 +62,6 @@ protected:
 public:
 	Graphics::Screen *_screen = nullptr;
 	Graphics::PixelFormat _pixelformat;
-	Common::SaveFileManager *_savefileMan;
 	int _tagMap[QDSCR_MAX_KEYWORD_ID];
 public:
 	QDEngineEngine(OSystem *syst, const ADGameDescription *gameDesc);

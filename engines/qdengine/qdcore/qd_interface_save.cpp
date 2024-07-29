@@ -25,6 +25,8 @@
 #include "common/savefile.h"
 #include "common/stream.h"
 
+#include "engines/metaengine.h"
+
 #include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
 #include "qdengine/parser/qdscr_parser.h"
@@ -116,7 +118,7 @@ bool qdInterfaceSave::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev
 					if (ip->has_save_title_screen()) {
 						ip->setModalScreenMode(qdInterfaceDispatcher::MODAL_SCREEN_SAVE_NAME_EDIT);
 						ip->handle_event(qdInterfaceEvent::EVENT_SHOW_INTERFACE_SCREEN_AS_MODAL, ip->save_title_screen_name(), this);
-					} else if (ip->has_save_prompt_screen() && g_engine->_savefileMan->exists(saveFile)) {
+					} else if (ip->has_save_prompt_screen() && g_engine->getSaveFileManager()->exists(saveFile)) {
 						ip->setModalScreenMode(qdInterfaceDispatcher::MODAL_SCREEN_SAVE_OVERWRITE);
 						ip->handle_event(qdInterfaceEvent::EVENT_SHOW_INTERFACE_SCREEN_AS_MODAL, ip->save_prompt_screen_name(), this);
 					} else {
@@ -153,23 +155,30 @@ bool qdInterfaceSave::init(bool is_game_active) {
 	else
 		set_lock(false);
 
+	Common::String saveFileName(save_file());
+	bool fileExists = false;
+
+	if (g_engine->getSaveFileManager()->exists(saveFileName)) {
+		Common::InSaveFile *saveFile = g_engine->getSaveFileManager()->openForLoading(saveFileName);
+
+		fileExists = true;
+
+		ExtendedSavegameHeader header;
+
+		if (MetaEngine::readSavegameHeader(saveFile, &header, false))
+			save_title_ =  header.description.c_str();
+	} else {
+		save_title_ = "";
+	}
+
 	if (app_io::is_file_exist(thumbnail_file()))
 		thumbnail_.set_animation_file(thumbnail_file().c_str());
 
-	if (app_io::is_file_exist(description_file())) {
-		Common::File fh;
-		fh.open(description_file().c_str());
-		save_title_ = fh.readString().c_str();
-		fh.close();
-	} else
-		save_title_ = "";
-
 	set_state(&frame_);
 
-	Common::String saveFile(save_file());
-	if (!save_mode_ && !g_engine->_savefileMan->exists(saveFile)) {
+	if (!save_mode_ && !fileExists) {
 		if (is_visible()) {
-			debugC(3, kDebugInput, "qdInterfaceSave::init(): Hide %s", save_file().c_str());
+			debugC(3, kDebugInput, "qdInterfaceSave::init(): Hide %s", saveFileName.c_str());
 			hide();
 
 			if (qdInterfaceScreen *sp = dynamic_cast<qdInterfaceScreen * >(owner()))
@@ -279,14 +288,6 @@ bool qdInterfaceSave::perform_save() {
 		is_ok &= (g_engine->saveGameState(save_ID_, save_title_.c_str(), dp->is_autosave_slot(save_ID_)).getCode() == Common::kNoError);
 
 		debugC(1, kDebugSave, "qdInterfaceSave::perform_save(): is_ok = %d", is_ok);
-
-		if (!save_title_.empty()) {
-			warning("STUB: Test qdInterfaceSave::perform_save()");
-			Common::DumpFile fh;
-			fh.open(description_file().c_str());
-			fh.write(save_title_.c_str(), strlen(save_title_.c_str()));
-			fh.close();
-		}
 
 		is_ok &= dp->game_screenshot(qdGameDispatcher::get_save_name(save_ID_, qdGameDispatcher::SAVE_THUMBNAIL).c_str(), thumbnail_size_x_, thumbnail_size_y_);
 		is_ok &= init(true);
