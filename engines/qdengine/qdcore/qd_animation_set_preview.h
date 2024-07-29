@@ -46,30 +46,30 @@ public:
 	~qdAnimationSetPreview();
 
 	preview_mode_t preview_mode() const {
-		return preview_mode_;
+		return _preview_mode;
 	}
 	void set_preview_mode(preview_mode_t md) {
-		preview_mode_ = md;
+		_preview_mode = md;
 	}
 
 	void set_screen(Vect2s offs, Vect2s size);
 
 	unsigned back_color() const {
-		return back_color_;
+		return _back_color;
 	}
 	void set_back_color(unsigned col) {
-		back_color_ = col;
+		_back_color = col;
 	}
 
 	unsigned grid_color() const {
-		return grid_color_;
+		return _grid_color;
 	}
 	void set_grid_color(unsigned col) {
-		grid_color_ = col;
+		_grid_color = col;
 	}
 
 	int camera_angle() const {
-		return camera_angle_;
+		return _camera_angle;
 	}
 	void set_camera_angle(int ang);
 
@@ -77,7 +77,7 @@ public:
 	void set_camera_focus(float f);
 
 	int cell_size() const {
-		return cell_size_;
+		return _cell_size;
 	}
 	void set_cell_size(int sz);
 
@@ -126,21 +126,21 @@ private:
 	qdAnimation *_animation;
 	qdAnimationSet *_animation_set;
 
-	qdCamera *camera_;
-	int camera_angle_;
+	qdCamera *_camera;
+	int _camera_angle;
 
-	grDispatcher *graph_d_;
+	grDispatcher *_graph_d;
 
-	unsigned back_color_;
-	unsigned grid_color_;
+	unsigned _back_color;
+	unsigned _grid_color;
 
-	int cell_size_;
-	float cell_offset_;
+	int _cell_size;
+	float _cell_offset;
 
-	Vect2s screen_offset_;
-	Vect2s screen_size_;
+	Vect2s _screen_offset;
+	Vect2s _screen_size;
 
-	preview_mode_t preview_mode_;
+	preview_mode_t _preview_mode;
 
 	void redraw_grid();
 };
