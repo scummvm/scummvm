@@ -175,14 +175,12 @@ void AdlEngine_v4::saveState(Common::WriteStream &stream) {
 }
 
 Common::String AdlEngine_v4::loadMessage(uint idx) const {
-	Common::String str = AdlEngine_v3::loadMessage(idx);
-
-	for (uint i = 0; i < str.size(); ++i) {
-		const char *xorStr = "AVISDURGAN";
-		str.setChar(str[i] ^ xorStr[i % strlen(xorStr)], i);
+	if (_messages[idx]) {
+		StreamPtr strStream(_messages[idx]->createReadStream());
+		return readString(*strStream, 0xff, "AVISDURGAN");
 	}
 
-	return str;
+	return Common::String();
 }
 
 Common::String AdlEngine_v4::getItemDescription(const Item &item) const {

@@ -274,7 +274,7 @@ protected:
 	virtual void gameLoop();
 	virtual void loadState(Common::ReadStream &stream);
 	virtual void saveState(Common::WriteStream &stream);
-	Common::String readString(Common::ReadStream &stream, byte until = 0) const;
+	Common::String readString(Common::ReadStream &stream, byte until = 0, const char *key = "") const;
 	Common::String readStringAt(Common::SeekableReadStream &stream, uint offset, byte until = 0) const;
 	void extractExeStrings(Common::ReadStream &stream, uint16 printAddr, Common::StringArray &strings) const;
 
