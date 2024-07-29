@@ -58,39 +58,7 @@ qdInterfaceScreen::~qdInterfaceScreen() {
 	_elements.clear();
 }
 
-#ifdef _QUEST_EDITOR
-bool qdInterfaceScreen::select_element(qdInterfaceElement *pele, bool bselect) {
-	assert(static_cast<qdInterfaceScreen *>(pele->owner()) == this);
-
-	element_list_t::iterator itr = std::find(selected_elements_.begin(),
-	                               selected_elements_.end(), pele);
-	if (bselect) {
-		if (itr == selected_elements_.end())
-			selected_elements_.push_back(pele);
-	} else {
-		if (itr == selected_elements_.end())
-			return false;
-		selected_elements_.erase(itr);
-	}
-	return true;
-}
-
-void qdInterfaceScreen::clear_selection() {
-	selected_elements_.clear();
-}
-
-bool qdInterfaceScreen::is_selected(const qdInterfaceElement *p) const {
-	return (std::find(selected_elements_.begin(), selected_elements_.end(), p)
-	        != selected_elements_.end());
-}
-#endif // _QUEST_EDITOR
-
 bool qdInterfaceScreen::redraw(int dx, int dy) const {
-#ifdef _QUEST_EDITOR
-	qdInterfaceElement::set_screen_offset(Vect2i(dx, dy));
-	qdInventoryCell::set_screen_offset(Vect2i(dx, dy));
-#endif
-
 	for (sorted_element_list_t::const_reverse_iterator it = _sorted_elements.rbegin(); it != _sorted_elements.rend(); ++it)
 		(*it)->redraw();
 
@@ -248,11 +216,6 @@ bool qdInterfaceScreen::remove_element(qdInterfaceElement *p) {
 	sorted_element_list_t::iterator it = std::find(_sorted_elements.begin(), _sorted_elements.end(), p);
 	if (it != _sorted_elements.end())
 		_sorted_elements.erase(it);
-
-#ifdef _QUEST_EDITOR
-	selected_elements_.remove(p);
-#endif // _QUEST_EDITOR
-
 	return _elements.remove_object(p);
 }
 
@@ -425,4 +388,5 @@ void qdInterfaceScreen::update_personage_buttons() {
 		}
 	}
 }
+
 } // namespace QDEngine
