@@ -30,21 +30,21 @@
 namespace QDEngine {
 
 
-qdNamedObject::qdNamedObject() : owner_(0),
-	trigger_reference_count_(0),
+qdNamedObject::qdNamedObject() : _owner(0),
+	_trigger_reference_count(0),
 #ifdef _QUEST_EDITOR
 	ref_owner_(0),
 #endif
-	flags_(0) {
+	_flags(0) {
 }
 
 qdNamedObject::qdNamedObject(const qdNamedObject &obj) : qdNamedObjectBase(obj),
-	owner_(obj.owner_),
+	_owner(obj._owner),
 #ifdef _QUEST_EDITOR
 	ref_owner_(obj.ref_owner_),
 #endif
-	flags_(obj.flags_),
-	trigger_reference_count_(0) {
+	_flags(obj._flags),
+	_trigger_reference_count(0) {
 }
 
 qdNamedObject::~qdNamedObject() {
@@ -55,8 +55,8 @@ qdNamedObject &qdNamedObject::operator = (const qdNamedObject &obj) {
 
 	*static_cast<qdNamedObjectBase *>(this) = obj;
 
-	flags_ = obj.flags_;
-	owner_ = obj.owner_;
+	_flags = obj._flags;
+	_owner = obj._owner;
 #ifdef _QUEST_EDITOR
 	ref_owner_ = obj.ref_owner_;
 #endif
@@ -75,12 +75,12 @@ qdNamedObject *qdNamedObject::owner(qdNamedObjectType tp) const {
 }
 
 bool qdNamedObject::load_data(Common::SeekableReadStream &fh, int saveVersion) {
-	flags_ = fh.readSint32LE();
+	_flags = fh.readSint32LE();
 	return true;
 }
 
 bool qdNamedObject::save_data(Common::WriteStream &fh) const {
-	fh.writeSint32LE(flags_);
+	fh.writeSint32LE(_flags);
 	return true;
 }
 
