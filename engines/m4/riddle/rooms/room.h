@@ -58,9 +58,13 @@ protected:
 		int val11 = 0, int val12 = 0, int val13 = 0, int val14 = 0, int val15 = 0,
 		int val16 = 0, int val17 = 0, int val18 = 0, int val19 = 0, int val20 = 0,
 		int val21 = 0);
+	void setGlobals4(int val1, int val2, int val3, int val4);
 
 	void sendWSMessage_10000(int val1, machine *recv, int val2, int val3,
 		int val4, int trigger, int val9, int val6, int val7, int val8);
+	void sendWSMessage_10000(machine *recv, int val1, int val2, int val3,
+		int trigger, int val4);
+
 	machine *triggerMachineByHash_3000(int val1, int val2, const int16 *normalDirs,
 		const int16 *shadowDirs, int val3, int val4, int val5,
 		MessageCB intrMsg, const char *machName);

@@ -72,7 +72,9 @@ private:
 	void setFengActive(bool flag);
 	void setShadow4(bool active);
 	void setShadow5(bool active);
+	void setShadow5Alt(bool active);
 	void playSeries(bool cow = true);
+	void conv303a();
 	void conv303b();
 
 public:

@@ -183,6 +183,13 @@ void Room::setGlobals1(int val1, int val2, int val3, int val4, int val5,
 	_G(globals)[V028] = val21 << 16;
 }
 
+void Room::setGlobals4(int val1, int val2, int val3, int val4) {
+	_G(globals)[GLB_TEMP_1] = val1;
+	_G(globals)[GLB_TEMP_2] = val2;
+	_G(globals)[GLB_TEMP_3] = val3;
+	_G(globals)[GLB_TEMP_4] = val4;
+}
+
 void Room::sendWSMessage_10000(int val1, machine *recv, int val2, int val3,
 		int val4, int trigger, int val9, int val6, int val7, int val8) {
 	if (!trigger)
@@ -199,6 +206,21 @@ void Room::sendWSMessage_10000(int val1, machine *recv, int val2, int val3,
 	_G(globals)[GLB_TEMP_9] = val9 << 24;
 
 	sendWSMessage(0x10000, 0, nullptr, 0, nullptr, 1);
+}
+
+void Room::sendWSMessage_10000(machine *recv, int val1, int val2, int val3,
+		int trigger, int val4) {
+	int val = ((val2 << 16) - _G(globals)[V002]) *_G(globals)[V006] +
+		_G(globals)[V004];
+
+	_G(globals)[GLB_TEMP_1] = val1 << 16;
+	_G(globals)[GLB_TEMP_2] = val2 << 16;
+	_G(globals)[GLB_TEMP_3] = val;
+	_G(globals)[GLB_TEMP_4] = (val3 > 0) ? val3 : 0xffff0000;
+	_G(globals)[GLB_TEMP_5] = kernel_trigger_create(trigger);
+	_G(globals)[GLB_TEMP_6] = val4 << 16;
+
+	sendWSMessage(0x10000, 0, recv, 0, nullptr, 1);
 }
 
 machine *Room::triggerMachineByHash_3000(int val1, int val2, const int16 * normalDirs,

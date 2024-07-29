@@ -332,7 +332,22 @@ void Room303::parser() {
 
 	if (player_said("conv303b")) {
 		conv303b();
+	} else if (player_said("conv303a")) {
+		conv303a();
+	} else if (lookFlag && _G(flags)[V000] == 0 && _val13 &&
+			player_said_any("cow", "giant matchstick")) {
+		switch (_G(kernel).trigger) {
+		case 1:
+			setShadow5(false);
+			if (player_said("giant matchstick"))
+				ws_demand_location(610, 256);
 
+			sendWSMessage_10000(_machine1, 706, 256, 5, 2, 1);
+			break;
+
+		default:
+			break;
+		}
 	// TODO
 	} else {
 		return;
@@ -390,6 +405,14 @@ void Room303::setShadow5(bool active) {
 	}
 }
 
+void Room303::setShadow5Alt(bool active) {
+	if (active) {
+		_shadow5 = series_place_sprite("candleman shadow5", 0, 706, 256, 84, 0xe06);
+	} else {
+		terminateMachineAndNull(_shadow5);
+	}
+}
+
 void Room303::escapePressed(void *, void *) {
 	_G(kernel).trigger_mode = KT_DAEMON;
 	disable_player_commands_and_fade_init(56);
@@ -399,6 +422,62 @@ void Room303::playSeries(bool cow) {
 	series_plain_play("SPINNING TOMATO MAN", -1, 0, 100, 0, 7);
 	series_plain_play("PUFFBALL", -1, 0, 100, 0, 8);
 	series_plain_play("CREATURE FEATURE LONG VIEW", 1, 0, 100, 0xf05, 7, 70);
+}
+
+void Room303::conv303a() {
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+	const char *sound = conv_sound_to_play();
+
+	if (_G(kernel).trigger == 1) {
+		if (who <= 0) {
+			_val15 = node != 3 || entry ? 1 : 0;
+
+		} else if (who == 1) {
+			if ((node == 0 && entry != 0) || (node == 0 && entry == 1)) {
+				if (!_lonelyFlag) {
+					midi_play("ppstreet", 140, 1, -1, 949);
+				}
+			}
+
+			if (node != 1 || entry != 1) {
+				if (node != 3 || entry != 1)
+					_val16 = 0;
+			} else {
+				_val16 = 3;
+			}
+		}
+
+		conv_resume();
+
+	} else if (!conv_sound_to_play()) {
+		conv_resume();
+
+	} else {
+		if (who <= 0) {
+			if (node == 3 && !entry)
+				_val16 = 2;
+			if ((node != 3 || entry != 1) && (node != 3 || entry))
+				_val15 = 2;
+			else
+				_val15 = 3;
+
+		} else if (who == 1) {
+			if (node != 1 || entry != 1) {
+				if (node != 5 || entry) {
+					if (node != 3 || entry != 1)
+						_val16 = 1;
+				} else {
+					_val16 = 0;
+				}
+			} else {
+				_val16 = 4;
+			}
+		}
+
+		digi_play(sound, 1, 255, 1);
+	}
 }
 
 void Room303::conv303b() {
