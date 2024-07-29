@@ -29,14 +29,14 @@
 
 namespace QDEngine {
 
-qdScreenTextSet::qdScreenTextSet() : ID_(0),
-	pos_(0, 0),
-	size_(0, 0),
-	space_(5),
-	was_changed_(false),
-	need_redraw_(false) {
-	max_text_width_ = 0;
-	new_texts_height_ = 0;
+qdScreenTextSet::qdScreenTextSet() : _ID(0),
+	_pos(0, 0),
+	_size(0, 0),
+	_space(5),
+	_was_changed(false),
+	_need_redraw(false) {
+	_max_text_width = 0;
+	_new_texts_height = 0;
 	texts_.reserve(16);
 }
 
@@ -45,7 +45,7 @@ qdScreenTextSet::~qdScreenTextSet() {
 
 void qdScreenTextSet::redraw() const {
 	for (auto &it : texts_) {
-		it.redraw(pos_);
+		it.redraw(_pos);
 	}
 
 //	grDispatcher::instance()->Rectangle(pos_.x - size_.x/2,pos_.y - size_.y/2,size_.x,size_.x,0xFFFFFF,0,GR_OUTLINED);
@@ -56,7 +56,7 @@ bool qdScreenTextSet::arrange_texts() {
 
 	int row_sy = texts_[0].size_y();
 
-	texts_[0].set_screen_pos(Vect2i(space_, 0));
+	texts_[0].set_screen_pos(Vect2i(_space, 0));
 
 	Vect2i text_pos(0, 0);
 
@@ -65,10 +65,10 @@ bool qdScreenTextSet::arrange_texts() {
 			if (row_sy < texts_[i].size_y())
 				row_sy = texts_[i].size_y();
 
-			text_pos.x += texts_[i - 1].size_x() + space_;
+			text_pos.x += texts_[i - 1].size_x() + _space;
 		} else {
 			text_pos.x = 0;
-			text_pos.y += row_sy + space_;
+			text_pos.y += row_sy + _space;
 
 			row_sy = texts_[i].size_y();
 		}
@@ -83,15 +83,15 @@ bool qdScreenTextSet::arrange_texts() {
 		if (texts_[i].arrangement() == qdScreenTextFormat::ARRANGE_VERTICAL || i == texts_.size() - 1) {
 			int sx = 0;
 			for (int j = 0; j < row_size; j++)
-				sx += texts_[row_start + j].size_x() + space_;
+				sx += texts_[row_start + j].size_x() + _space;
 
 			int dx = 0;
 			switch (texts_[row_start].alignment()) {
 			case qdScreenTextFormat::ALIGN_CENTER:
-				dx = (max_text_width_ - sx - space_) / 2;
+				dx = (_max_text_width - sx - _space) / 2;
 				break;
 			case qdScreenTextFormat::ALIGN_RIGHT:
-				dx = max_text_width_ - sx - space_;
+				dx = _max_text_width - sx - _space;
 				break;
 			default:
 				break;
@@ -119,20 +119,20 @@ bool qdScreenTextSet::arrange_texts() {
 			sy = texts_[i].screen_pos().y + texts_[i].size_y();
 	}
 
-	size_ = Vect2i(sx, sy);
+	_size = Vect2i(sx, sy);
 	for (int i = 0; i < texts_.size(); i ++) {
 		Vect2i pos = texts_[i].screen_pos();
-		pos -= size_ / 2;
+		pos -= _size / 2;
 		texts_[i].set_screen_pos(pos);
 	}
 
-	need_redraw_ = true;
+	_need_redraw = true;
 	return true;
 }
 
 qdScreenText *qdScreenTextSet::get_text(int x, int y) {
 	for (auto &it : texts_) {
-		if (it.hit(x - pos_.x, y - pos_.y)) return &it;
+		if (it.hit(x - _pos.x, y - _pos.y)) return &it;
 	}
 
 	return NULL;
@@ -147,17 +147,17 @@ void qdScreenTextSet::clear_texts(qdNamedObject *owner) {
 	}
 
 	if (ret) {
-		need_redraw_ = true;
+		_need_redraw = true;
 		arrange_texts();
 		toggle_changed(true);
 	}
 }
 
 bool qdScreenTextSet::pre_redraw() const {
-	if (need_redraw_) {
+	if (_need_redraw) {
 		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
 			dp->add_redraw_region(screen_region());
-			dp->add_redraw_region(last_screen_region_);
+			dp->add_redraw_region(_last_screen_region);
 		}
 	}
 
@@ -165,8 +165,8 @@ bool qdScreenTextSet::pre_redraw() const {
 }
 
 bool qdScreenTextSet::post_redraw() {
-	need_redraw_ = false;
-	last_screen_region_ = screen_region();
+	_need_redraw = false;
+	_last_screen_region = screen_region();
 	return true;
 }
 
@@ -182,14 +182,14 @@ void qdScreenTextSet::load_script(const xml::tag *p) {
 	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		switch (it->ID()) {
 		case QDSCR_ID:
-			xml::tag_buffer(*it) > ID_;
+			xml::tag_buffer(*it) > _ID;
 			break;
 		case QDSCR_POS2D:
 			xml::tag_buffer(*it) > r.x > r.y;
-			pos_ = r;
+			_pos = r;
 			break;
 		case QDSCR_SCREEN_SIZE:
-			xml::tag_buffer(*it) > size_.x > size_.y;
+			xml::tag_buffer(*it) > _size.x > _size.y;
 			break;
 		}
 	}
@@ -200,14 +200,14 @@ bool qdScreenTextSet::save_script(Common::WriteStream &fh, int indent) const {
 		fh.writeString("\t");
 	}
 
-	fh.writeString(Common::String::format("<text_set ID=\"%d\"", ID_));
+	fh.writeString(Common::String::format("<text_set ID=\"%d\"", _ID));
 
-	if (pos_.x || pos_.y) {
-		fh.writeString(Common::String::format(" pos_2d=\"%d %d\"", pos_.x, pos_.y));
+	if (_pos.x || _pos.y) {
+		fh.writeString(Common::String::format(" pos_2d=\"%d %d\"", _pos.x, _pos.y));
 	}
 
-	if (size_.x || size_.y) {
-		fh.writeString(Common::String::format(" screen_size=\"%d %d\"", size_.x, size_.y));
+	if (_size.x || _size.y) {
+		fh.writeString(Common::String::format(" screen_size=\"%d %d\"", _size.x, _size.y));
 	}
 
 	fh.writeString("/>\r\n");
@@ -216,17 +216,17 @@ bool qdScreenTextSet::save_script(Common::WriteStream &fh, int indent) const {
 }
 
 qdScreenText *qdScreenTextSet::add_text(const qdScreenText &txt) {
-	int sy = size_.y;
+	int sy = _size.y;
 
 	texts_.push_back(txt);
 
-	if (max_text_width_)
-		texts_.back().format_text(max_text_width_ - space_ * 2);
+	if (_max_text_width)
+		texts_.back().format_text(_max_text_width - _space * 2);
 
 	arrange_texts();
 	toggle_changed(true);
 
-	new_texts_height_ += size_.y - sy;
+	_new_texts_height += _size.y - sy;
 
 	return &texts_.back();
 }
@@ -238,9 +238,9 @@ void qdScreenTextSet::clear_hover_mode() {
 
 
 void qdScreenTextSet::format_texts() {
-	if (!max_text_width_) return;
+	if (!_max_text_width) return;
 
 	for (texts_container_t::iterator it = texts_.begin(); it != texts_.end(); ++it)
-		it->format_text(max_text_width_);
+		it->format_text(_max_text_width);
 }
 } // namespace QDEngine
