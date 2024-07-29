@@ -64,17 +64,17 @@ qdResource::file_format_t qdResource::file_format(const char *file_name) {
 }
 
 #ifdef __QD_DEBUG_ENABLE__
-qdResourceInfo::qdResourceInfo(const qdResource *res, const qdNamedObject *owner) : resource_(res), data_size_(0), resource_owner_(owner) {
-	if (resource_)
-		data_size_ = resource_->resource_data_size();
+qdResourceInfo::qdResourceInfo(const qdResource *res, const qdNamedObject *owner) : _resource(res), _data_size(0), _resource_owner(owner) {
+	if (_resource)
+		_data_size = _resource->resource_data_size();
 }
 
 qdResourceInfo::~qdResourceInfo() {
 }
 
 qdResource::file_format_t qdResourceInfo::file_format() const {
-	if (resource_)
-		return qdResource::file_format(resource_->resource_file());
+	if (_resource)
+		return qdResource::file_format(_resource->resource_file());
 
 	return qdResource::RES_UNKNOWN;
 }
@@ -82,4 +82,3 @@ qdResource::file_format_t qdResourceInfo::file_format() const {
 #endif
 
 } // namespace QDEngine
-

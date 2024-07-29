@@ -91,33 +91,33 @@ private:
 class qdResourceInfo {
 public:
 	qdResourceInfo(const qdResource *res = NULL, const qdNamedObject *owner = NULL);
-	qdResourceInfo(const qdResourceInfo &inf) : resource_(inf.resource_), data_size_(inf.data_size_), resource_owner_(inf.resource_owner_) { }
+	qdResourceInfo(const qdResourceInfo &inf) : _resource(inf._resource), _data_size(inf._data_size), _resource_owner(inf._resource_owner) { }
 	~qdResourceInfo();
 
 	qdResourceInfo &operator = (const qdResourceInfo &inf) {
 		if (this == &inf) return *this;
 
-		resource_ = inf.resource_;
-		resource_owner_ = inf.resource_owner_;
-		data_size_ = inf.data_size_;
+		_resource = inf._resource;
+		_resource_owner = inf._resource_owner;
+		_data_size = inf._data_size;
 
 		return *this;
 	}
 
 	bool operator < (const qdResourceInfo &inf) const {
-		return data_size_ < inf.data_size_;
+		return _data_size < inf._data_size;
 	}
 
 	unsigned data_size() const {
-		return data_size_;
+		return _data_size;
 	}
 
 	qdResource::file_format_t file_format() const;
 
 private:
-	unsigned data_size_;
-	const qdResource *resource_;
-	const qdNamedObject *resource_owner_;
+	unsigned _data_size;
+	const qdResource *_resource;
+	const qdNamedObject *_resource_owner;
 };
 
 typedef std::vector<qdResourceInfo> qdResourceInfoContainer;
