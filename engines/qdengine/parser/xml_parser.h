@@ -36,7 +36,7 @@ namespace xml {
 
 class parser {
 public:
-	typedef Common::HashMap<Common::String, tag> _tag_formatt;
+	typedef Common::HashMap<Common::String, tag> tag_format_t;
 	typedef Common::Stack<tag *> tag_stack_t;
 
 	parser();
@@ -67,7 +67,7 @@ public:
 	}
 
 	bool register_tag_format(const char *tag_name, const tag &tg) {
-		_tag_formatt::iterator it = _tag_format.find(tag_name);
+		tag_format_t::iterator it = _tag_format.find(tag_name);
 		if (it != _tag_format.end())
 			return false;
 
@@ -75,7 +75,7 @@ public:
 		return true;
 	}
 	const tag *get_tag_format(const char *tag_name) const {
-		_tag_formatt::const_iterator it = _tag_format.find(tag_name);
+		tag_format_t::const_iterator it = _tag_format.find(tag_name);
 		if (it != _tag_format.end())
 			return &it->_value;
 
@@ -97,7 +97,7 @@ private:
 	bool _binary_script;
 
 	tag_stack_t _tag_stack;
-	_tag_formatt _tag_format;
+	tag_format_t _tag_format;
 	int _cur_level;
 	bool _skip_mode;
 
