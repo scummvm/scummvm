@@ -28,14 +28,14 @@
 #include "qdengine/parser/xml_tag_buffer.h"
 #include "qdengine/parser/qdscr_parser.h"
 
-#include "qd_interface_element.h"
-#include "qd_interface_button.h"
-#include "qd_interface_screen.h"
-#include "qd_interface_dispatcher.h"
+#include "qdengine/qdcore/qd_interface_element.h"
+#include "qdengine/qdcore/qd_interface_button.h"
+#include "qdengine/qdcore/qd_interface_screen.h"
+#include "qdengine/qdcore/qd_interface_dispatcher.h"
 
-#include "qd_game_dispatcher.h"
-#include "qd_game_scene.h"
-#include "qd_game_object_moving.h"
+#include "qdengine/qdcore/qd_game_dispatcher.h"
+#include "qdengine/qdcore/qd_game_scene.h"
+#include "qdengine/qdcore/qd_game_object_moving.h"
 
 
 namespace QDEngine {
