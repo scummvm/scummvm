@@ -121,41 +121,41 @@ public:
 	bool load_from_work_file();
 
 	void add_record(const qdTriggerProfilerRecord &rec) {
-		if (is_logging_enabled_ && !is_read_only_) records_.push_back(rec);
+		if (_is_logging_enabled && !_is_read_only) _records.push_back(rec);
 	}
 
 	int num_records() const {
-		return records_.size();
+		return _records.size();
 	}
 
 	bool is_logging_enabled() const {
-		return is_logging_enabled_;
+		return _is_logging_enabled;
 	}
 	void enable() {
-		is_logging_enabled_ = true;
+		_is_logging_enabled = true;
 	}
 	void disable() {
-		is_logging_enabled_ = false;
+		_is_logging_enabled = false;
 	}
 
 	void set_read_only(bool v) {
-		is_read_only_ = v;
+		_is_read_only = v;
 	}
 	bool is_read_only() const {
-		return is_read_only_;
+		return _is_read_only;
 	}
 
 	typedef std::vector<qdTriggerProfilerRecord> record_container_t;
 	typedef record_container_t::const_iterator record_iterator_t;
 
 	record_iterator_t records_begin() const {
-		return records_.begin();
+		return _records.begin();
 	}
 	record_iterator_t records_end() const {
-		return records_.end();
+		return _records.end();
 	}
 	record_iterator_t get_record(int record_num = 0) const {
-		return records_.begin() + record_num;
+		return _records.begin() + record_num;
 	}
 
 	bool evolve(int record_num) const;
@@ -163,18 +163,18 @@ public:
 	static qdTriggerProfiler &instance();
 
 	static const char *activation_comline() {
-		return activation_comline_;
+		return _activation_comline;
 	}
 
 	static int record_text_format() {
-		return record_text_format_;
+		return _record_text_format;
 	}
 	static void set_record_text_format(int fmt) {
-		record_text_format_ = fmt;
+		_record_text_format = fmt;
 	}
 
 	const char *work_file() const {
-		return work_file_.c_str();
+		return _work_file.c_str();
 	}
 	void set_work_file(const char *fname);
 
@@ -182,16 +182,16 @@ private:
 
 	qdTriggerProfiler();
 
-	record_container_t records_;
+	record_container_t _records;
 
-	bool is_logging_enabled_;
-	bool is_read_only_;
+	bool _is_logging_enabled;
+	bool _is_read_only;
 
-	std::string work_file_;
+	std::string _work_file;
 
-	static int record_text_format_;
+	static int _record_text_format;
 
-	static const char *const activation_comline_;
+	static const char *const _activation_comline;
 
 
 	static qdTriggerElementPtr get_record_element(const qdTriggerProfilerRecord &rec);

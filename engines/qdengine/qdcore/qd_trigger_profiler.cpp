@@ -33,9 +33,9 @@
 
 namespace QDEngine {
 
-const char *const qdTriggerProfiler::activation_comline_ = "trigger_profiler";
+const char *const qdTriggerProfiler::_activation_comline = "trigger_profiler";
 
-int qdTriggerProfiler::record_text_format_ = PROFILER_TEXT_TIME | PROFILER_TEXT_TRIGGER_NAME | PROFILER_TEXT_SCENE_NAME;
+int qdTriggerProfiler::_record_text_format = PROFILER_TEXT_TIME | PROFILER_TEXT_TRIGGER_NAME | PROFILER_TEXT_SCENE_NAME;
 
 qdTriggerProfilerRecord::qdTriggerProfilerRecord() : time_(0),
 	event_(ELEMENT_STATUS_UPDATE),
@@ -109,12 +109,12 @@ bool qdTriggerProfilerRecord::load(Common::SeekableReadStream &fh) {
 	return true;
 }
 
-qdTriggerProfiler::qdTriggerProfiler() : is_logging_enabled_(false), is_read_only_(true) {
-	work_file_ = "trigger_profiler.dat";
+qdTriggerProfiler::qdTriggerProfiler() : _is_logging_enabled(false), _is_read_only(true) {
+	_work_file = "trigger_profiler.dat";
 }
 
 qdTriggerProfiler::~qdTriggerProfiler() {
-	if (is_logging_enabled_)
+	if (_is_logging_enabled)
 		save_to_work_file();
 }
 
@@ -122,8 +122,8 @@ bool qdTriggerProfiler::save_to_work_file() const {
 	warning("STUB: qdTriggerProfiler::save_to_work_file()");
 	Common::DumpFile fh;
 
-	fh.writeUint32LE(records_.size());
-	for (auto &it : records_) {
+	fh.writeUint32LE(_records.size());
+	for (auto &it : _records) {
 		it.save(fh);
 	}
 
@@ -135,13 +135,13 @@ bool qdTriggerProfiler::load_from_work_file() {
 	warning("STUB: qdTriggerProfiler::load_from_work_file()");
 	Common::File fh;
 
-	records_.clear();
+	_records.clear();
 
-	if (fh.open(work_file_.c_str())) {
+	if (fh.open(_work_file.c_str())) {
 		int size;
 		size = fh.readSint32LE();
-		records_.resize(size);
-		for (record_container_t::iterator it = records_.begin(); it != records_.end(); ++it)
+		_records.resize(size);
+		for (record_container_t::iterator it = _records.begin(); it != _records.end(); ++it)
 			it->load(fh);
 
 		fh.close();
@@ -183,21 +183,21 @@ qdTriggerChain *qdTriggerProfiler::get_record_trigger(const qdTriggerProfilerRec
 }
 
 bool qdTriggerProfiler::evolve(int record_num) const {
-	assert(record_num >= 0 && record_num < records_.size());
+	assert(record_num >= 0 && record_num < _records.size());
 
 	if (qdGameDispatcher * p = qdGameDispatcher::get_dispatcher())
 		p->reset_triggers();
 
 	for (int i = 0; i <= record_num; i++) {
-		switch (records_[i].event()) {
+		switch (_records[i].event()) {
 		case qdTriggerProfilerRecord::ELEMENT_STATUS_UPDATE:
-			if (qdTriggerElementPtr p = get_record_element(records_[i]))
-				p->set_status(qdTriggerElement::ElementStatus(records_[i].status()));
+			if (qdTriggerElementPtr p = get_record_element(_records[i]))
+				p->set_status(qdTriggerElement::ElementStatus(_records[i].status()));
 			break;
 		case qdTriggerProfilerRecord::PARENT_LINK_STATUS_UPDATE:
 		case qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE:
-			if (qdTriggerLink * p = get_record_link(records_[i]))
-				p->set_status(qdTriggerLink::LinkStatus(records_[i].status()));
+			if (qdTriggerLink * p = get_record_link(_records[i]))
+				p->set_status(qdTriggerLink::LinkStatus(_records[i].status()));
 			break;
 		}
 	}
@@ -212,8 +212,8 @@ qdTriggerProfiler &qdTriggerProfiler::instance() {
 }
 
 void qdTriggerProfiler::set_work_file(const char *fname) {
-	if (NULL != fname) work_file_ = fname;
-	else work_file_.clear();
+	if (NULL != fname) _work_file = fname;
+	else _work_file.clear();
 }
 
 #endif /* __QD_TRIGGER_PROFILER__ */
