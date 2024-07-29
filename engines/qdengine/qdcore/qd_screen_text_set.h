@@ -36,29 +36,29 @@ public:
 
 	//! Возвращает идентификатор набора.
 	int ID() const {
-		return ID_;
+		return _ID;
 	}
 	//! Устанавливает идентификатор набора.
 	void set_ID(int id) {
-		ID_ = id;
+		_ID = id;
 	}
 
 	//! Возвращает экранные координаты центра набора.
 	const Vect2i &screen_pos() const {
-		return pos_;
+		return _pos;
 	}
 	//! Устанавливает экранные координаты центра набора.
 	void set_screen_pos(const Vect2i &pos) {
-		pos_ = pos;
+		_pos = pos;
 	}
 
 	//! Возвращает размеры набора на экране.
 	const Vect2i &screen_size() const {
-		return size_;
+		return _size;
 	}
 	//! Устанавливает размеры набора на экране.
 	void set_screen_size(const Vect2i &sz) {
-		size_ = sz;
+		_size = sz;
 	}
 
 	//! Добавление текста в набор.
@@ -85,7 +85,7 @@ public:
 	bool save_script(Common::WriteStream &fh, int indent) const;
 
 	bool need_redraw() const {
-		return need_redraw_;
+		return _need_redraw;
 	}
 
 	bool is_empty() const {
@@ -93,7 +93,7 @@ public:
 	}
 
 	void set_max_text_width(int width) {
-		max_text_width_ = width;
+		_max_text_width = width;
 		format_texts();
 		arrange_texts();
 	}
@@ -102,17 +102,17 @@ public:
 	qdScreenText *get_text(int x, int y);
 
 	bool was_changed() const {
-		return was_changed_;
+		return _was_changed;
 	}
 	void toggle_changed(bool state) {
-		was_changed_ = state;
+		_was_changed = state;
 	}
 
 	int new_texts_height() const {
-		return new_texts_height_;
+		return _new_texts_height;
 	}
 	void clear_new_texts_height() {
-		new_texts_height_ = 0;
+		_new_texts_height = 0;
 	}
 
 	void clear_hover_mode();
@@ -120,33 +120,33 @@ public:
 private:
 
 	//! Идентификатор набора.
-	int ID_;
+	int _ID;
 
 	//! Экранные координаты центра набора.
-	Vect2i pos_;
+	Vect2i _pos;
 	//! Размеры области, отведенной под набор на экране.
-	Vect2i size_;
+	Vect2i _size;
 
 	//! Расстояние между соседними текстами в пикселах.
-	int space_;
+	int _space;
 
 	typedef std::vector<qdScreenText> texts_container_t;
 	//! Тексты.
 	texts_container_t texts_;
 
 	//! Устанавливается в true при добавлении/удалении текстов.
-	bool was_changed_;
+	bool _was_changed;
 
 	//! Максимальная ширина текста в пикселах.
 	/**
 	Если нулевая - не учитывается.
 	*/
-	int max_text_width_;
+	int _max_text_width;
 
-	int new_texts_height_;
+	int _new_texts_height;
 
-	bool need_redraw_;
-	grScreenRegion last_screen_region_;
+	bool _need_redraw;
+	grScreenRegion _last_screen_region;
 
 	//! Форматирует тексты по ширине, чтобы не вылезали за max_text_width_.
 	void format_texts();
