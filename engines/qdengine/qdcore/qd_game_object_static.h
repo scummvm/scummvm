@@ -38,10 +38,10 @@ public:
 	}
 
 	const qdSprite *get_sprite() const {
-		return &sprite_;
+		return &_sprite;
 	}
 	qdSprite *get_sprite() {
-		return &sprite_;
+		return &_sprite;
 	}
 
 	void redraw(int offs_x = 0, int offs_y = 0) const;
@@ -60,7 +60,7 @@ public:
 	void free_resources();
 
 	Vect2s screen_size() const {
-		return Vect2s(sprite_.size_x(), sprite_.size_y());
+		return Vect2s(_sprite.size_x(), _sprite.size_y());
 	}
 
 	bool hit(int x, int y) const;
@@ -74,7 +74,7 @@ protected:
 	bool save_script_body(Common::WriteStream &fh, int indent = 0) const;
 
 private:
-	qdSprite sprite_;
+	qdSprite _sprite;
 };
 
 } // namespace QDEngine
