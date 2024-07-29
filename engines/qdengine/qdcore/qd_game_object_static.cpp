@@ -96,10 +96,6 @@ void qdGameObjectStatic::free_resources() {
 }
 
 bool qdGameObjectStatic::hit(int x, int y) const {
-#ifdef _QUEST_EDITOR
-	Vect2s pos = screen_pos();
-	return _sprite.hit(x - pos.x, y - pos.y);
-#endif
 	return false;
 }
 
@@ -108,27 +104,4 @@ void qdGameObjectStatic::draw_contour(unsigned color) const {
 	_sprite.draw_contour(pos.x, pos.y, color);
 }
 
-#ifdef _QUEST_EDITOR
-bool qdGameObjectStatic::remove_sprite_edges() {
-	if (!qdCamera::current_camera()) return false;
-
-	qdCamera const  &camera = *qdCamera::current_camera();
-	int sx = _sprite.size_x();
-	int sy = _sprite.size_y();
-
-	Vect2i offs = _sprite.remove_edges();
-	_sprite.save();
-
-	offs.x = offs.x + _sprite.size_x() / 2 - sx / 2;
-	offs.y = offs.y + _sprite.size_y() / 2 - sy / 2;
-
-	Vect2s pos = screen_pos();
-//	float d = screen_depth();
-	Vect3f camPos = camera.global2camera_coord(R());
-	pos = camera.scr2rscr(pos + offs);
-	set_pos(camera.rscr2global(pos, camPos.z));
-
-	return true;
-}
-#endif //_QUEST_EDITOR
 } // namespace QDEngine

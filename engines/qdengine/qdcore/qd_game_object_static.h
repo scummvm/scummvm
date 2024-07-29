@@ -65,9 +65,6 @@ public:
 
 	bool hit(int x, int y) const;
 
-#ifdef _QUEST_EDITOR
-	bool remove_sprite_edges();
-#endif //_QUEST_EDITOR
 protected:
 
 	bool load_script_body(const xml::tag *p);
