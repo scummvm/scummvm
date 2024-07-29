@@ -42,23 +42,23 @@ public:
 	qdNamedObjectReference &operator = (const qdNamedObjectReference &ref);
 
 	int num_levels()            const {
-		return object_types_.size();
+		return _object_types.size();
 	}
 	int object_type(int level = 0)      const {
-		return object_types_[level];
+		return _object_types[level];
 	}
 	const char *object_name(int level = 0)  const {
-		return object_names_[level].c_str();
+		return _object_names[level].c_str();
 	}
 	bool is_empty()             const {
-		return object_types_.empty();
+		return _object_types.empty();
 	}
 
 	bool init(const qdNamedObject *p);
 
 	void clear() {
-		object_types_.clear();
-		object_names_.clear();
+		_object_types.clear();
+		_object_names.clear();
 	}
 
 	void load_script(const xml::tag *p);
@@ -75,9 +75,9 @@ public:
 
 private:
 
-	std::vector<int> object_types_;
-	std::vector<std::string> object_names_;
-	static int objects_counter_;
+	std::vector<int> _object_types;
+	std::vector<std::string> _object_names;
+	static int _objects_counter;
 };
 
 } // namespace QDEngine
