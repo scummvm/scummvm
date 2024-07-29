@@ -205,8 +205,8 @@ private:
 /// Интерфейс к счётчику.
 class qdMinigameCounterInterfaceImpl : public qdMinigameCounterInterface {
 public:
-	qdMinigameCounterInterfaceImpl(qdCounter *counter) : counter_(counter) {
-		assert(counter_);
+	qdMinigameCounterInterfaceImpl(qdCounter *counter) : _counter(counter) {
+		assert(_counter);
 	}
 
 	/// возвращает текущее значение счётчика
@@ -217,7 +217,7 @@ public:
 	void add_value(int value_delta);
 private:
 
-	qdCounter *counter_;
+	qdCounter *_counter;
 };
 
 }; // namespace qdmg
@@ -566,20 +566,20 @@ bool qdEngineInterfaceImpl::set_interface_text(const char *screen_name, const ch
 }
 
 int qdMinigameCounterInterfaceImpl::value() const {
-	if (counter_)
-		return counter_->value();
+	if (_counter)
+		return _counter->value();
 
 	return 0;
 }
 
 void qdMinigameCounterInterfaceImpl::set_value(int value) {
-	if (counter_)
-		counter_->set_value(value);
+	if (_counter)
+		_counter->set_value(value);
 }
 
 void qdMinigameCounterInterfaceImpl::add_value(int value_delta) {
-	if (counter_)
-		counter_->add_value(value_delta);
+	if (_counter)
+		_counter->add_value(value_delta);
 }
 
 }; // namespace qdmg
