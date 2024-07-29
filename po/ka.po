@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-07-28 19:03+0000\n"
-"PO-Revision-Date: 2024-07-27 13:43+0000\n"
+"PO-Revision-Date: 2024-07-29 15:43+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -6567,7 +6567,7 @@ msgstr "გააქტიურება"
 
 #: engines/cine/metaengine.cpp:340
 msgid "Speak"
-msgstr ""
+msgstr "წარმოთქმა"
 
 #: engines/cine/metaengine.cpp:345
 msgid "Action menu"
@@ -7667,20 +7667,14 @@ msgid "TTS Narrator"
 msgstr "TTS კომენტატორი"
 
 #: engines/lure/metaengine.cpp:170
-#, fuzzy
-#| msgid "Exit screen keymappings"
 msgid "Fight sequence keymappings"
-msgstr "გასვლის ეკრანის კლავიატურის ასახვები"
+msgstr "ბრძოლის მიმდევრობის კლავიატურის მალსახმობები"
 
 #: engines/lure/metaengine.cpp:171
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Index keymappings"
-msgstr "თამაშის კლავიატურის მალსახმობები"
+msgstr "ინდექსის კლავიატურის მალსახმობები"
 
 #: engines/lure/metaengine.cpp:172
-#, fuzzy
-#| msgid "Yes/No keymapping"
 msgid "Yes/No keymappings"
 msgstr "დიახ/არა კლავიატურის მალსახმობები"
 
@@ -7691,16 +7685,12 @@ msgid "Save game"
 msgstr "თამაშის შენახვა"
 
 #: engines/lure/metaengine.cpp:197
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restore game"
-msgstr "თამაშის აღდგენა:"
+msgstr "თამაშის აღდგენა"
 
 #: engines/lure/metaengine.cpp:203
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restart game"
-msgstr "თამაშის აღდგენა:"
+msgstr "თამაშის თავიდან დაწყება"
 
 #. I18N: ESC key
 #: engines/lure/metaengine.cpp:209 engines/mm/mm1/metaengine.cpp:41
@@ -7711,10 +7701,8 @@ msgstr "Escape"
 
 #. I18N: Shift Cursor during fight to top left
 #: engines/lure/metaengine.cpp:233
-#, fuzzy
-#| msgid "Cursor left"
 msgid "Shift Cursor - Top left"
-msgstr "კურსორი მარცხნივ"
+msgstr "კურსორის გადაადგილება - ზედა მარცხენა"
 
 #. I18N: Shift Cursor during fight to middle left
 #: engines/lure/metaengine.cpp:239
@@ -7728,40 +7716,30 @@ msgstr ""
 
 #. I18N: Shift Cursor during fight to top right
 #: engines/lure/metaengine.cpp:251
-#, fuzzy
-#| msgid "Cursor right"
 msgid "Shift Cursor - Top right"
-msgstr "კურსორი მარჯვნივ"
+msgstr "კურსორის გადაადგილება - ზედა მარჯვენა"
 
 #. I18N: Shift Cursor during fight to middle right
 #: engines/lure/metaengine.cpp:257
-#, fuzzy
-#| msgid "Cursor right"
 msgid "Shift Cursor - Middle right"
-msgstr "კურსორი მარჯვნივ"
+msgstr "კურსორის გადაადგილება - შუა მარჯვენა"
 
 #. I18N: Shift Cursor during fight to bottom right
 #: engines/lure/metaengine.cpp:263
-#, fuzzy
-#| msgid "Cursor right"
 msgid "Shift Cursor - Bottom right"
-msgstr "კურსორი მარჯვნივ"
+msgstr "კურსორის გადაადგილება - ქვედა მარჯვენა"
 
 #: engines/lure/metaengine.cpp:270
 msgid "Go to next index"
 msgstr ""
 
 #: engines/lure/metaengine.cpp:277
-#, fuzzy
-#| msgid "Go to previous object"
 msgid "Go to previous index"
-msgstr "გადასვლა წინა ობიექტზე"
+msgstr "გადასვლა წინა ინდექსზე"
 
 #: engines/lure/metaengine.cpp:284
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select index"
-msgstr "აირჩიეთ შეიდერი"
+msgstr "აირჩიეთ ინდექსი"
 
 #: engines/made/detection_tables.h:445 engines/made/detection_tables.h:462
 msgid "The game is using unsupported engine"
@@ -8722,7 +8700,7 @@ msgstr "გადაცემა"
 
 #: engines/saga/metaengine.cpp:399
 msgid "Swallow"
-msgstr ""
+msgstr "ჩაყლაპვა"
 
 #: engines/saga/metaengine.cpp:406
 msgid "Reading speed"
@@ -8755,7 +8733,7 @@ msgstr "გასვლის გაუქმება"
 
 #: engines/saga/metaengine.cpp:458
 msgid "Okay"
-msgstr ""
+msgstr "დიახ"
 
 #: engines/saga/metaengine.cpp:463
 msgid "Cancel load"
@@ -9197,7 +9175,7 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1300
 msgid "Overture Timing:"
-msgstr ""
+msgstr "ცდის დრო:"
 
 #: engines/scumm/dialogs.cpp:1304
 msgid ""
@@ -10647,11 +10625,11 @@ msgstr "აგრესიული ქცევა"
 
 #: engines/twine/metaengine.cpp:312 engines/twine/metaengine.cpp:332
 msgid "Discreet Behaviour"
-msgstr ""
+msgstr "ფრთხილი ქცევა"
 
 #: engines/twine/metaengine.cpp:337
 msgid "Behaviour Action"
-msgstr ""
+msgstr "ქცევის ქმედება"
 
 #: engines/twine/metaengine.cpp:343
 msgid "Change Behaviour"
@@ -10679,7 +10657,7 @@ msgstr "პროტოპაკის გამოყენება"
 
 #: engines/twine/metaengine.cpp:413
 msgid "Open Holomap"
-msgstr ""
+msgstr "ჰოლორუკის გახსნა"
 
 #: engines/twine/metaengine.cpp:426
 msgid "Special Action"
@@ -10915,7 +10893,7 @@ msgstr ""
 
 #: engines/ultima/metaengine.cpp:85
 msgid "Enable cheats"
-msgstr ""
+msgstr "ჩიტების ჩართვა"
 
 #: engines/ultima/metaengine.cpp:86
 msgid "Allow cheats by commands and a menu when player is clicked."
@@ -10980,7 +10958,7 @@ msgstr ""
 
 #: engines/ultima/nuvie/metaengine.cpp:41
 msgid "Original Save"
-msgstr ""
+msgstr "ორიგინალური შენახული"
 
 #: engines/ultima/nuvie/metaengine.cpp:206
 msgid "Ultima VI"
@@ -10996,7 +10974,7 @@ msgstr ""
 
 #: engines/ultima/nuvie/save/save_game.cpp:207
 msgid "Transfer Character"
-msgstr ""
+msgstr "გმირის გადაყვანა"
 
 #: engines/ultima/ultima8/metaengine.cpp:138
 msgid "Ultima VIII"
@@ -11233,7 +11211,7 @@ msgstr "შემდეგი გვერდი"
 #: engines/wintermute/keymapper_tables.h:1983
 #: engines/wintermute/keymapper_tables.h:2103
 msgid "Show hints"
-msgstr ""
+msgstr "მინიშნებების ჩვენება"
 
 #: engines/wintermute/keymapper_tables.h:249
 #: engines/wintermute/keymapper_tables.h:396
@@ -11246,7 +11224,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1688
 #: engines/wintermute/keymapper_tables.h:1950
 msgid "Show inventory"
-msgstr ""
+msgstr "ინვენტარის ჩვენება"
 
 #: engines/wintermute/keymapper_tables.h:269
 #: engines/wintermute/keymapper_tables.h:332
@@ -11295,7 +11273,7 @@ msgstr ""
 #. It may result in actor saying different text or item being decomposed to it's parts
 #: engines/wintermute/keymapper_tables.h:360
 msgid "Alternative action"
-msgstr ""
+msgstr "ალტერნატიული ქმედება"
 
 #: engines/wintermute/keymapper_tables.h:431
 #: engines/wintermute/keymapper_tables.h:564
@@ -11413,7 +11391,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:700
 #: engines/wintermute/keymapper_tables.h:819
 msgid "Volume max"
-msgstr ""
+msgstr "ხმა ბოლომდე"
 
 #. I18N: Displays a debug interface with a CLI for various features
 #: engines/wintermute/keymapper_tables.h:706
@@ -11427,7 +11405,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1833
 #: engines/wintermute/keymapper_tables.h:1878
 msgid "Debug print"
-msgstr ""
+msgstr "გამართვის გამოტანა"
 
 #. I18N: Exits the game
 #: engines/wintermute/keymapper_tables.h:720
@@ -11442,7 +11420,7 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:751
 msgid "Run forward"
-msgstr ""
+msgstr "გაქცევა წინ"
 
 #: engines/wintermute/keymapper_tables.h:756
 msgid "Run backward"
@@ -11459,7 +11437,7 @@ msgstr ""
 #. I18N: Displays a blueprint with robot parts
 #: engines/wintermute/keymapper_tables.h:772
 msgid "Show blueprint"
-msgstr ""
+msgstr "ნახაზების ჩვენება"
 
 #: engines/wintermute/keymapper_tables.h:792
 #: engines/wintermute/keymapper_tables.h:1587
@@ -11467,7 +11445,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1803
 #: engines/wintermute/keymapper_tables.h:2089
 msgid "Next action"
-msgstr ""
+msgstr "შემდეგი ქმედება"
 
 #: engines/wintermute/keymapper_tables.h:799
 #: engines/wintermute/keymapper_tables.h:1595
@@ -11475,7 +11453,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1810
 #: engines/wintermute/keymapper_tables.h:2097
 msgid "Previous action"
-msgstr ""
+msgstr "წინა ქმედება"
 
 #: engines/wintermute/keymapper_tables.h:826
 msgid "Volume off"
