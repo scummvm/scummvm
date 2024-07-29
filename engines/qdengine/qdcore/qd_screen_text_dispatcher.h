@@ -43,8 +43,8 @@ public:
 	qdScreenText *add_text(int set_ID, const qdScreenText &txt);
 	//! Добавление набора текстов.
 	qdScreenTextSet *add_text_set(const qdScreenTextSet &set) {
-		text_sets_.push_back(set);
-		return &text_sets_.back();
+		_text_sets.push_back(set);
+		return &_text_sets.back();
 	}
 	//! Поиск набора текстов.
 	const qdScreenTextSet *get_text_set(int id) const;
@@ -62,7 +62,7 @@ private:
 
 	typedef std::vector<qdScreenTextSet> text_sets_container_t;
 	//! Наборы текстов.
-	text_sets_container_t text_sets_;
+	text_sets_container_t _text_sets;
 };
 
 } // namespace QDEngine

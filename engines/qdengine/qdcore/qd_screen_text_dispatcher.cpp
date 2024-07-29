@@ -28,7 +28,7 @@
 namespace QDEngine {
 
 qdScreenTextDispatcher::qdScreenTextDispatcher() {
-	text_sets_.reserve(16);
+	_text_sets.reserve(16);
 }
 
 qdScreenTextDispatcher::~qdScreenTextDispatcher() {
@@ -38,7 +38,7 @@ qdScreenTextDispatcher::~qdScreenTextDispatcher() {
 void qdScreenTextDispatcher::redraw() const {
 #ifdef _QUEST_EDITOR
 	std::vector<qdScreenTextSet>::const_iterator is;
-	FOR_EACH(text_sets_, is)
+	FOR_EACH(_text_sets, is)
 	is->redraw();
 #endif
 }
@@ -48,30 +48,30 @@ static bool operator == (const qdScreenTextSet &set, int id) {
 }
 
 qdScreenText *qdScreenTextDispatcher::add_text(int set_ID, const qdScreenText &txt) {
-	std::vector<qdScreenTextSet>::iterator it = std::find(text_sets_.begin(), text_sets_.end(), set_ID);
+	std::vector<qdScreenTextSet>::iterator it = std::find(_text_sets.begin(), _text_sets.end(), set_ID);
 
-	if (it != text_sets_.end())
+	if (it != _text_sets.end())
 		return it->add_text(txt);
 
 	return NULL;
 }
 
 void qdScreenTextDispatcher::clear_texts() {
-	for (auto &it : text_sets_) {
+	for (auto &it : _text_sets) {
 		it.clear_texts();
 	}
 }
 
 void qdScreenTextDispatcher::clear_texts(qdNamedObject *p) {
-	for (auto &it : text_sets_) {
+	for (auto &it : _text_sets) {
 		it.clear_texts(p);
 	}
 }
 
 const qdScreenTextSet *qdScreenTextDispatcher::get_text_set(int id) const {
-	std::vector<qdScreenTextSet>::const_iterator it = std::find(text_sets_.begin(), text_sets_.end(), id);
+	std::vector<qdScreenTextSet>::const_iterator it = std::find(_text_sets.begin(), _text_sets.end(), id);
 
-	if (it != text_sets_.end())
+	if (it != _text_sets.end())
 		return &*it;
 
 	return NULL;
@@ -79,9 +79,9 @@ const qdScreenTextSet *qdScreenTextDispatcher::get_text_set(int id) const {
 
 qdScreenTextSet *qdScreenTextDispatcher::get_text_set(int id) {
 	std::vector<qdScreenTextSet>::iterator it =
-	    std::find(text_sets_.begin(), text_sets_.end(), id);
+	    std::find(_text_sets.begin(), _text_sets.end(), id);
 
-	if (it != text_sets_.end())
+	if (it != _text_sets.end())
 		return &*it;
 
 	return NULL;
@@ -89,18 +89,18 @@ qdScreenTextSet *qdScreenTextDispatcher::get_text_set(int id) {
 
 void qdScreenTextDispatcher::pre_redraw() const {
 #ifdef _QUEST_EDITOR
-	std::for_each(text_sets_.begin(), text_sets_.end(), std::mem_fun_ref(qdScreenTextSet::pre_redraw));
+	std::for_each(_text_sets.begin(), _text_sets.end(), std::mem_fun_ref(qdScreenTextSet::pre_redraw));
 #endif
 }
 
 void qdScreenTextDispatcher::post_redraw() {
 #ifdef _QUEST_EDITOR
-	std::for_each(text_sets_.begin(), text_sets_.end(), std::mem_fun_ref(qdScreenTextSet::post_redraw));
+	std::for_each(_text_sets.begin(), _text_sets.end(), std::mem_fun_ref(qdScreenTextSet::post_redraw));
 #endif
 }
 
 bool qdScreenTextDispatcher::save_script(Common::WriteStream &fh, int indent) const {
-	for (auto &it : text_sets_) {
+	for (auto &it : _text_sets) {
 		it.save_script(fh, indent);
 	}
 	return true;
