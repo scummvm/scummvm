@@ -30,18 +30,18 @@ namespace QDEngine {
 //! Класс для управления звуками.
 class qdSoundHandle : public sndHandle {
 public:
-	qdSoundHandle() : owner_(NULL) { };
+	qdSoundHandle() : _owner(NULL) { };
 	virtual ~qdSoundHandle() { };
 
 	void set_owner(qdNamedObject *p) {
-		owner_ = p;
+		_owner = p;
 	}
 	const qdNamedObject *owner() const {
-		return owner_;
+		return _owner;
 	}
 
 private:
-	qdNamedObject *owner_;
+	qdNamedObject *_owner;
 };
 
 } // namespace QDEngine
