@@ -196,7 +196,7 @@ public:
 	bool tileCompress(grTileCompressionMethod method = TILE_UNCOMPRESSED, int tolerance = 0);
 
 	qdAnimationFrameList &frames_list() {
-		return frames;
+		return _frames;
 	};
 
 	void create_reference(qdAnimation *p, const qdAnimationInfo *inf = NULL) const;
@@ -207,7 +207,7 @@ public:
 
 	void clear() {
 		stop();
-		_frames_ptr = &frames;
+		_frames_ptr = &_frames;
 		_parent = NULL;
 	}
 
@@ -237,9 +237,9 @@ public:
 	//! Возвращает имя файла, в котором хранится анимация.
 	const char *resource_file() const {
 		if (!qda_file()) {
-			if (!check_flag(QD_ANIMATION_FLAG_REFERENCE) && !frames.empty()) {
-				if (frames.front()->has_file())
-					return frames.front()->file();
+			if (!check_flag(QD_ANIMATION_FLAG_REFERENCE) && !_frames.empty()) {
+				if (_frames.front()->has_file())
+					return _frames.front()->file();
 				else
 					return NULL;
 			} else
@@ -283,7 +283,7 @@ private:
 	int _num_frames;
 
 	const qdAnimationFrameList *_frames_ptr;
-	qdAnimationFrameList frames;
+	qdAnimationFrameList _frames;
 
 	const qdAnimationFrameList *_scaled_frames_ptr;
 	qdAnimationFrameList _scaled_frames;
