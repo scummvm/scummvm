@@ -86,21 +86,21 @@ public:
 	}
 
 	int value() const {
-		return value_;
+		return _value;
 	}
 	void set_value(int value);
 	void add_value(int value_delta);
 
 	int value_limit() const {
-		return value_limit_;
+		return _value_limit;
 	}
 	void set_value_limit(int limit) {
-		value_limit_ = limit;
+		_value_limit = limit;
 	}
 
 	typedef std::vector<qdCounterElement> element_container_t;
 	const element_container_t &elements() const {
-		return elements_;
+		return _elements;
 	}
 
 	//! Добавление состояния. Возвращает false, если оно уже добавлено ранее.
@@ -128,15 +128,15 @@ protected:
 private:
 
 	//! Состояния, которые при включении изменяют значение счетчика.
-	element_container_t elements_;
+	element_container_t _elements;
 
 	//! Текущее значение счетчика.
-	int value_;
+	int _value;
 	//! Предельное значение, по достижении которого счетчик скидывается в ноль.
 	/**
 	Если меньше или равно нулю - не учитывается.
 	*/
-	int value_limit_;
+	int _value_limit;
 };
 
 } // namespace QDEngine

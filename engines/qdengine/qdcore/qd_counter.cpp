@@ -130,46 +130,46 @@ bool qdCounterElement::save_data(Common::WriteStream &fh) const {
 	return true;
 }
 
-qdCounter::qdCounter() : value_(0),
-	value_limit_(0) {
+qdCounter::qdCounter() : _value(0),
+	_value_limit(0) {
 }
 
 qdCounter::~qdCounter() {
 }
 
 void qdCounter::set_value(int value) {
-	value_ = value;
+	_value = value;
 
-	if (value_limit_ > 0 && value_ >= value_limit_)
-		value_ = 0;
+	if (_value_limit > 0 && _value >= _value_limit)
+		_value = 0;
 
-	if (check_flag(POSITIVE_VALUE) && value_ < 0)
-		value_ = 0;
+	if (check_flag(POSITIVE_VALUE) && _value < 0)
+		_value = 0;
 }
 
 void qdCounter::add_value(int value_delta) {
-	value_ += value_delta;
+	_value += value_delta;
 
-	if (value_limit_ > 0 && value_ >= value_limit_)
-		value_ = 0;
+	if (_value_limit > 0 && _value >= _value_limit)
+		_value = 0;
 
-	if (check_flag(POSITIVE_VALUE) && value_ < 0)
-		value_ = 0;
+	if (check_flag(POSITIVE_VALUE) && _value < 0)
+		_value = 0;
 }
 
 bool qdCounter::add_element(const qdGameObjectState *p, bool inc_value) {
-	element_container_t::const_iterator it = std::find(elements_.begin(), elements_.end(), p);
-	if (it != elements_.end())
+	element_container_t::const_iterator it = std::find(_elements.begin(), _elements.end(), p);
+	if (it != _elements.end())
 		return false;
 
-	elements_.push_back(qdCounterElement(p, inc_value));
+	_elements.push_back(qdCounterElement(p, inc_value));
 	return true;
 }
 
 bool qdCounter::remove_element(const qdGameObjectState *p) {
-	element_container_t::iterator it = std::find(elements_.begin(), elements_.end(), p);
-	if (it != elements_.end()) {
-		elements_.erase(it);
+	element_container_t::iterator it = std::find(_elements.begin(), _elements.end(), p);
+	if (it != _elements.end()) {
+		_elements.erase(it);
 		return true;
 	}
 
@@ -177,21 +177,21 @@ bool qdCounter::remove_element(const qdGameObjectState *p) {
 }
 
 bool qdCounter::remove_element(int idx) {
-	assert(idx >= 0 && idx < elements_.size());
+	assert(idx >= 0 && idx < _elements.size());
 
-	elements_.erase(elements_.begin() + idx);
+	_elements.erase(_elements.begin() + idx);
 	return true;
 }
 
 #ifdef _QUEST_EDITOR
 void qdCounter::remove_all_elements() {
-	elements_.clear();
+	_elements.clear();
 }
 #endif // _QUEST_EDITOR
 
 void qdCounter::quant() {
 	int value_change = 0;
-	for (element_container_t::iterator it = elements_.begin(); it != elements_.end(); ++it) {
+	for (element_container_t::iterator it = _elements.begin(); it != _elements.end(); ++it) {
 		if (it->quant()) {
 			if (it->increment_value())
 				value_change++;
@@ -200,13 +200,13 @@ void qdCounter::quant() {
 		}
 	}
 
-	value_ += value_change;
+	_value += value_change;
 
-	if (value_limit_ > 0 && value_ >= value_limit_)
-		value_ = 0;
+	if (_value_limit > 0 && _value >= _value_limit)
+		_value = 0;
 
-	if (check_flag(POSITIVE_VALUE) && value_ < 0)
-		value_ = 0;
+	if (check_flag(POSITIVE_VALUE) && _value < 0)
+		_value = 0;
 }
 
 bool qdCounter::load_script(const xml::tag *p) {
@@ -220,7 +220,7 @@ bool qdCounter::load_script(const xml::tag *p) {
 		}
 	}
 
-	elements_.reserve(num_elements);
+	_elements.reserve(num_elements);
 
 	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		xml::tag_buffer buf(*it);
@@ -234,11 +234,11 @@ bool qdCounter::load_script(const xml::tag *p) {
 		case QDSCR_COUNTER_ELEMENT: {
 			qdCounterElement el;
 			el.load_script(&*it);
-			elements_.push_back(el);
+			_elements.push_back(el);
 		}
 		break;
 		case QDSCR_COUNTER_LIMIT:
-			xml::tag_buffer(*it) > value_limit_;
+			xml::tag_buffer(*it) > _value_limit;
 			break;
 		}
 	}
@@ -255,8 +255,8 @@ bool qdCounter::save_script(Common::WriteStream &fh, int indent) const {
 
 	fh.writeString(Common::String::format(" name=\"%s\"", qdscr_XML_string(name())));
 
-	if (value_limit_) {
-		fh.writeString(Common::String::format(" limit=\"%d\"", value_limit_));
+	if (_value_limit) {
+		fh.writeString(Common::String::format(" limit=\"%d\"", _value_limit));
 	}
 
 	if (flags()) {
@@ -264,7 +264,7 @@ bool qdCounter::save_script(Common::WriteStream &fh, int indent) const {
 	}
 	fh.writeString(">\r\n");
 
-	for (auto &it : elements_) {
+	for (auto &it : _elements) {
 		it.save_script(fh, indent + 1);
 	}
 
@@ -279,13 +279,13 @@ bool qdCounter::save_script(Common::WriteStream &fh, int indent) const {
 bool qdCounter::load_data(Common::SeekableReadStream &fh, int save_version) {
 	debugC(3, kDebugSave, "  qdCounter::load_data(): before %ld", fh.pos());
 	int sz;
-	value_ = fh.readSint32LE();
+	_value = fh.readSint32LE();
 	sz = fh.readSint32LE();
 
-	if (sz != elements_.size())
+	if (sz != _elements.size())
 		return false;
 
-	for (auto &it : elements_)
+	for (auto &it : _elements)
 		it.load_data(fh, save_version);
 
 	debugC(3, kDebugSave, "  qdCounter::load_data(): after %ld", fh.pos());
@@ -294,10 +294,10 @@ bool qdCounter::load_data(Common::SeekableReadStream &fh, int save_version) {
 
 bool qdCounter::save_data(Common::WriteStream &fh) const {
 	debugC(3, kDebugSave, "  qdCounter::save_data(): before %ld", fh.pos());
-	fh.writeSint32LE(value_);
-	fh.writeSint32LE(elements_.size());
+	fh.writeSint32LE(_value);
+	fh.writeSint32LE(_elements.size());
 
-	for (auto &it : elements_) {
+	for (auto &it : _elements) {
 		it.save_data(fh);
 	}
 
@@ -306,10 +306,10 @@ bool qdCounter::save_data(Common::WriteStream &fh) const {
 }
 
 void qdCounter::init() {
-	for (element_container_t::iterator it = elements_.begin(); it != elements_.end(); ++it)
+	for (element_container_t::iterator it = _elements.begin(); it != _elements.end(); ++it)
 		it->init();
 
-	value_ = 0;
+	_value = 0;
 }
 
 } // namespace QDEngine
