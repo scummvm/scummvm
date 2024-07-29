@@ -32,17 +32,11 @@ namespace QDEngine {
 
 qdNamedObject::qdNamedObject() : _owner(0),
 	_trigger_reference_count(0),
-#ifdef _QUEST_EDITOR
-	ref_owner_(0),
-#endif
 	_flags(0) {
 }
 
 qdNamedObject::qdNamedObject(const qdNamedObject &obj) : qdNamedObjectBase(obj),
 	_owner(obj._owner),
-#ifdef _QUEST_EDITOR
-	ref_owner_(obj.ref_owner_),
-#endif
 	_flags(obj._flags),
 	_trigger_reference_count(0) {
 }
@@ -57,9 +51,6 @@ qdNamedObject &qdNamedObject::operator = (const qdNamedObject &obj) {
 
 	_flags = obj._flags;
 	_owner = obj._owner;
-#ifdef _QUEST_EDITOR
-	ref_owner_ = obj.ref_owner_;
-#endif
 	return *this;
 }
 

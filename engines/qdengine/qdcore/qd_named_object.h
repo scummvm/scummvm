@@ -159,9 +159,6 @@ private:
 
 	//! Владелец объекта.
 	mutable qdNamedObject *_owner;
-#ifdef _QUEST_EDITOR
-	mutable qdNamedObject *ref__owner;
-#endif
 };
 
 } // namespace QDEngine
