@@ -56,48 +56,48 @@ public:
 	};
 
 	void set_camera_mode(camera_mode_t mode) {
-		camera_mode_ = mode;
+		_camera_mode = mode;
 	}
 	camera_mode_t camera_mode() const {
-		return camera_mode_;
+		return _camera_mode;
 	}
 
 	void set_work_time(float tm) {
-		work_time_ = tm;
+		_work_time = tm;
 	}
 	float work_time() const {
-		return work_time_;
+		return _work_time;
 	}
 	bool has_work_time() const {
-		return work_time_ > 0.001f;
+		return _work_time > 0.001f;
 	}
 
 	void set_scrolling_speed(float v) {
-		scrolling_speed_ = v;
+		_scrolling_speed = v;
 	}
 	float scrolling_speed() const {
-		return scrolling_speed_;
+		return _scrolling_speed;
 	}
 
 	void set_scrolling_distance(int dist) {
-		scrolling_distance_ = dist;
+		_scrolling_distance = dist;
 	}
 	int scrolling_distance() const {
-		return scrolling_distance_;
+		return _scrolling_distance;
 	}
 
 	bool smooth_switch() const {
-		return smooth_switch_;
+		return _smooth_switch;
 	}
 	void set_smooth_switch(bool v) {
-		smooth_switch_ = v;
+		_smooth_switch = v;
 	}
 
 	const Vect2i &center_offset() const {
-		return center_offset_;
+		return _center_offset;
 	}
 	void set_center_offset(const Vect2i &offs) {
-		center_offset_ = offs;
+		_center_offset = offs;
 	}
 
 	bool load_script(const xml::tag *p);
@@ -111,7 +111,7 @@ public:
 private:
 
 	//! Идентификатор режима.
-	camera_mode_t camera_mode_;
+	camera_mode_t _camera_mode;
 
 	//! Время работы режима (в секундах).
 	/**
@@ -121,10 +121,10 @@ private:
 	Если это время нулевое, то сменить режим можно будет
 	только в принудительном порядке из триггера.
 	*/
-	float work_time_;
+	float _work_time;
 
 	//! Скорость, с которой камера скроллируется (в пикселах в секунду).
-	float scrolling_speed_;
+	float _scrolling_speed;
 
 	//! Расстояние от центра объекта до края экрана, при котором включается скроллинг.
 	/**
@@ -133,17 +133,17 @@ private:
 
 	Задается в пикселах.
 	*/
-	int scrolling_distance_;
+	int _scrolling_distance;
 
 	//! Смещение центра экрана в пикселах.
 	/**
 	Позволяет задавать режим, когда камера, центруясь на объекте,
 	держит его в определенной точке экрана.
 	*/
-	Vect2i center_offset_;
+	Vect2i _center_offset;
 
 	//! Плавное переключение в режим, если true.
-	bool smooth_switch_;
+	bool _smooth_switch;
 };
 
 } // namespace QDEngine
