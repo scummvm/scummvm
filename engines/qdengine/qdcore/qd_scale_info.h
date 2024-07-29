@@ -30,7 +30,7 @@ namespace QDEngine {
 
 class qdScaleInfo : public qdNamedObject {
 public:
-	qdScaleInfo() : scale_(1.0f) { }
+	qdScaleInfo() : _scale(1.0f) { }
 	qdScaleInfo(const qdScaleInfo &sc);
 	~qdScaleInfo() { }
 
@@ -39,10 +39,10 @@ public:
 	}
 
 	float scale() const {
-		return scale_;
+		return _scale;
 	}
 	void set_scale(float sc) {
-		scale_ = sc;
+		_scale = sc;
 	}
 
 	void load_script(const xml::tag *p);
@@ -50,7 +50,7 @@ public:
 
 private:
 
-	float scale_;
+	float _scale;
 };
 
 typedef std::list<qdScaleInfo *> qdScaleInfoList;
