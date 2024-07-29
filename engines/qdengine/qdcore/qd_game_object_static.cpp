@@ -36,7 +36,7 @@ qdGameObjectStatic::~qdGameObjectStatic() {
 
 void qdGameObjectStatic::redraw(int offs_x, int offs_y) const {
 	Vect2i scrCoord = screen_pos() + Vect2i(offs_x, offs_y);
-	sprite_.redraw(scrCoord.x, scrCoord.y, screen_depth(), 0);
+	_sprite.redraw(scrCoord.x, scrCoord.y, screen_depth(), 0);
 }
 
 bool qdGameObjectStatic::load_script(const xml::tag *p) {
@@ -65,7 +65,7 @@ bool qdGameObjectStatic::load_script_body(const xml::tag *p) {
 	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		switch (it->ID()) {
 		case QDSCR_FILE:
-			sprite_.set_file(Common::Path(it->data(), '\\').toString().c_str());
+			_sprite.set_file(Common::Path(it->data(), '\\').toString().c_str());
 			break;
 		}
 	}
@@ -80,32 +80,32 @@ bool qdGameObjectStatic::save_script_body(Common::WriteStream &fh, int indent) c
 		fh.writeString("\t");
 	}
 
-	if (sprite_.file()) {
-		fh.writeString(Common::String::format("<file>%s</file>\r\n", qdscr_XML_string(sprite_.file())));
+	if (_sprite.file()) {
+		fh.writeString(Common::String::format("<file>%s</file>\r\n", qdscr_XML_string(_sprite.file())));
 	}
 
 	return true;
 }
 
 bool qdGameObjectStatic::load_resources() {
-	return sprite_.load();
+	return _sprite.load();
 }
 
 void qdGameObjectStatic::free_resources() {
-	sprite_.free();
+	_sprite.free();
 }
 
 bool qdGameObjectStatic::hit(int x, int y) const {
 #ifdef _QUEST_EDITOR
 	Vect2s pos = screen_pos();
-	return sprite_.hit(x - pos.x, y - pos.y);
+	return _sprite.hit(x - pos.x, y - pos.y);
 #endif
 	return false;
 }
 
 void qdGameObjectStatic::draw_contour(unsigned color) const {
 	Vect2s pos = screen_pos();
-	sprite_.draw_contour(pos.x, pos.y, color);
+	_sprite.draw_contour(pos.x, pos.y, color);
 }
 
 #ifdef _QUEST_EDITOR
@@ -113,14 +113,14 @@ bool qdGameObjectStatic::remove_sprite_edges() {
 	if (!qdCamera::current_camera()) return false;
 
 	qdCamera const  &camera = *qdCamera::current_camera();
-	int sx = sprite_.size_x();
-	int sy = sprite_.size_y();
+	int sx = _sprite.size_x();
+	int sy = _sprite.size_y();
 
-	Vect2i offs = sprite_.remove_edges();
-	sprite_.save();
+	Vect2i offs = _sprite.remove_edges();
+	_sprite.save();
 
-	offs.x = offs.x + sprite_.size_x() / 2 - sx / 2;
-	offs.y = offs.y + sprite_.size_y() / 2 - sy / 2;
+	offs.x = offs.x + _sprite.size_x() / 2 - sx / 2;
+	offs.y = offs.y + _sprite.size_y() / 2 - sy / 2;
 
 	Vect2s pos = screen_pos();
 //	float d = screen_depth();
