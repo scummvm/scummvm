@@ -50,7 +50,7 @@ public:
 	~qdMinigameConfigParameter();
 
 	bool operator == (const qdMinigameConfigParameter &prm) const {
-		return (name_ == prm.name_);
+		return (_name == prm._name);
 	}
 	bool operator == (const char *str) const {
 		return !strcmp(str, name());
@@ -67,38 +67,38 @@ public:
 	};
 
 	const char *name() const {
-		return name_.c_str();
+		return _name.c_str();
 	}
 	void set_name(const char *name) {
-		name_ = name;
+		_name = name;
 	}
 
 	data_type_t data_type() const {
-		return data_type_;
+		return _data_type;
 	}
 	void set_data_type(data_type_t tp) {
-		data_type_ = tp;
+		_data_type = tp;
 	}
 
 	const char *data_string() const {
-		return data_string_.c_str();
+		return _data_string.c_str();
 	}
 	void set_data_string(const char *str) {
-		data_string_ = str;
+		_data_string = str;
 	}
 
 	const char *comment() const {
-		return comment_.c_str();
+		return _comment.c_str();
 	}
 	void set_comment(const char *str) {
-		comment_ = str;
+		_comment = str;
 	}
 
 	int data_count() const {
-		return data_count_;
+		return _data_count;
 	}
 	void set_data_count(int cnt) {
-		data_count_ = cnt;
+		_data_count = cnt;
 	}
 
 	/// Проверяет валидность данных.
@@ -108,7 +108,7 @@ public:
 	*/
 	bool validate_data();
 	bool is_data_valid() const {
-		return is_data_valid_;
+		return _is_data_valid;
 	}
 
 	//! Загрузка данных из скрипта.
@@ -122,10 +122,10 @@ public:
 private:
 
 	/// Имя параметра, данные из миниигры запрашиваются по нему.
-	std::string name_;
+	std::string _name;
 
 	/// Тип данных.
-	data_type_t data_type_;
+	data_type_t _data_type;
 
 	/// Количество данных.
 	/**
@@ -135,7 +135,7 @@ private:
 
 	По умолчанию = 1.
 	*/
-	int data_count_;
+	int _data_count;
 
 	/// Строка данных.
 	/**
@@ -143,13 +143,13 @@ private:
 	Для числовых данных - числа в текстовом виде через пробел, для
 	остальных типов - просто строка.
 	*/
-	std::string data_string_;
+	std::string _data_string;
 
 	/// Комментарий.
-	std::string comment_;
+	std::string _comment;
 
 	/// false если строка данных не того формата.
-	bool is_data_valid_;
+	bool _is_data_valid;
 };
 
 } // namespace QDEngine
