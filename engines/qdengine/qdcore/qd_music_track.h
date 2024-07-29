@@ -53,13 +53,13 @@ public:
 	}
 
 	void set_file_name(const char *fname) {
-		file_name_ = fname;
+		_file_name = fname;
 	}
 	const char *file_name() const {
-		return file_name_.c_str();
+		return _file_name.c_str();
 	}
 	bool has_file_name() const {
-		return !file_name_.empty();
+		return !_file_name.empty();
 	}
 
 	void toggle_cycle(bool v) {
@@ -71,12 +71,12 @@ public:
 	}
 
 	int volume() const {
-		return volume_;
+		return _volume;
 	}
 	void set_volume(int vol) {
 		if (vol < 0) vol = 0;
 		else if (vol > 256) vol = 256;
-		volume_ = vol;
+		_volume = vol;
 	}
 
 	//! Чтение данных из скрипта.
@@ -89,10 +89,10 @@ public:
 private:
 
 	//! Имя mp+ файла.
-	std::string file_name_;
+	std::string _file_name;
 
 	//! Громкость, [0, 256].
-	int volume_;
+	int _volume;
 };
 
 } // namespace QDEngine
