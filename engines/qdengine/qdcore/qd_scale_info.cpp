@@ -28,7 +28,7 @@
 namespace QDEngine {
 
 qdScaleInfo::qdScaleInfo(const qdScaleInfo &sc) : qdNamedObject(sc),
-	scale_(sc.scale_) {
+	_scale(sc._scale) {
 }
 
 void qdScaleInfo::load_script(const xml::tag *p) {
@@ -38,7 +38,7 @@ void qdScaleInfo::load_script(const xml::tag *p) {
 			set_name(it->data());
 			break;
 		case QDSCR_SCALE:
-			xml::tag_buffer(*it) > scale_;
+			xml::tag_buffer(*it) > _scale;
 			break;
 		}
 	}
