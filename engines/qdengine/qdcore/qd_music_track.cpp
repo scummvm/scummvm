@@ -28,13 +28,13 @@
 
 namespace QDEngine {
 
-qdMusicTrack::qdMusicTrack() : volume_(256) {
+qdMusicTrack::qdMusicTrack() : _volume(256) {
 	toggle_cycle(true);
 }
 
 qdMusicTrack::qdMusicTrack(const qdMusicTrack &trk) : qdConditionalObject(trk),
-	file_name_(trk.file_name_),
-	volume_(trk.volume_) {
+	_file_name(trk._file_name),
+	_volume(trk._volume) {
 }
 
 qdMusicTrack::~qdMusicTrack() {
@@ -45,8 +45,8 @@ qdMusicTrack &qdMusicTrack::operator = (const qdMusicTrack &trk) {
 
 	*static_cast<qdConditionalObject *>(this) = trk;
 
-	file_name_ = trk.file_name_;
-	volume_ = trk.volume_;
+	_file_name = trk._file_name;
+	_volume = trk._volume;
 
 	return *this;
 }
@@ -92,16 +92,16 @@ bool qdMusicTrack::save_script(Common::WriteStream &fh, int indent) const {
 
 	fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
 
-	if (!file_name_.empty()) {
-		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(file_name_.c_str())));
+	if (!_file_name.empty()) {
+		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(_file_name.c_str())));
 	}
 
 	if (is_cycled()) {
 		fh.writeString(" cycled=\"1\"");
 	}
 
-	if (volume_ != 256) {
-		fh.writeString(Common::String::format(" volume=\"%d\"", volume_));
+	if (_volume != 256) {
+		fh.writeString(Common::String::format(" volume=\"%d\"", _volume));
 	}
 
 	if (has_conditions()) {
