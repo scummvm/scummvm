@@ -31,7 +31,7 @@ namespace Rooms {
 class Room303 : public Room {
 private:
 	int _val1 = 0;
-	int _val2 = 0;
+	bool _lonelyFlag = 0;
 	int _val3 = 0;
 	int _val4 = 0;
 	int _val5 = 0;
@@ -45,6 +45,7 @@ private:
 	bool _val13 = false;
 	int _val14 = 0;
 	int _val15 = 0;
+	int _val16 = 0;
 	KernelTriggerType _triggerMode1 = KT_DAEMON;
 	KernelTriggerType _triggerMode2 = KT_DAEMON;
 	machine *_door = nullptr;
@@ -60,6 +61,7 @@ private:
 	machine *_shadow5 = nullptr;
 	machine *_machine1 = nullptr;
 	machine *_machine2 = nullptr;
+	machine *_ripPonders = nullptr;
 	int _gestTalk4 = 0;
 	int _ripBends = 0;
 
@@ -71,6 +73,7 @@ private:
 	void setShadow4(bool active);
 	void setShadow5(bool active);
 	void playSeries(bool cow = true);
+	void conv303b();
 
 public:
 	Room303() : Room() {}
@@ -79,6 +82,8 @@ public:
 	void preload() override;
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms

@@ -115,6 +115,7 @@ machine *series_plain_play(const char *seriesName, int32 loopCount, uint32 flags
 machine *series_stream(const char *seriesName, int32 frameRate, int32 layer, int32 trigger);
 bool series_stream_break_on_frame(machine *m, int32 frameNum, int32 trigger);
 void series_set_frame_rate(machine *m, int32 newFrameRate);
+void series_stream_check_series(machine *m, int val);
 
 } // namespace M4
 

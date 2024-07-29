@@ -81,7 +81,7 @@ void Room303::init() {
 		"candleman shadow5"
 	};
 
-	_val1 = _val2 = 0;
+	_val1 = _lonelyFlag = 0;
 
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
 		_val3 = 0;
@@ -319,6 +319,28 @@ void Room303::init() {
 void Room303::daemon() {
 }
 
+void Room303::pre_parser() {
+	if (player_said("open") && player_been_here(301)) {
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+	}
+}
+
+void Room303::parser() {
+	bool lookFlag = player_said_any("look", "look at");
+
+	if (player_said("conv303b")) {
+		conv303b();
+
+	// TODO
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
+}
+
 void Room303::loadHands() {
 	_hands1 = series_load("MC NY hands behind back pos4");
 	_hands2 = series_load("MC NY hand on hip pos4");
@@ -377,6 +399,134 @@ void Room303::playSeries(bool cow) {
 	series_plain_play("SPINNING TOMATO MAN", -1, 0, 100, 0, 7);
 	series_plain_play("PUFFBALL", -1, 0, 100, 0, 8);
 	series_plain_play("CREATURE FEATURE LONG VIEW", 1, 0, 100, 0xf05, 7, 70);
+}
+
+void Room303::conv303b() {
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+	const char *sound = conv_sound_to_play();
+
+	switch (_G(kernel).trigger) {
+	case 1:
+		if (who <= 0) {
+			_val11 = 4;
+
+			if (node == 1 && entry == 0) {
+				digi_unload("08_01n01");
+				digi_unload("08_02n01");
+			} else if (node == 2 && entry == 2) {
+				_val16 = 0;
+			} else if (node == 1 && entry == 2) {
+				digi_preload("com119");
+				_ripPonders = series_stream("303 rip reacts", 4, 0, 667);
+				series_stream_break_on_frame(_ripPonders, 5, 7);
+				return;
+			}
+
+		} else if (who == 1) {
+			if ((node == 0 && entry == 0) || (node == 0 && entry == 1)) {
+				if (!_lonelyFlag) {
+					midi_play("lonelyme", 140, 1, -1, 949);
+					_lonelyFlag = true;
+				}
+			}
+
+			if (node == 0 && entry == 0) {
+				series_unload(2);
+				series_unload(3);
+				series_unload(4);
+				_ripPonders = series_stream("303pu01", 4, 0x100, 666);
+				series_stream_break_on_frame(_ripPonders, 5, 700);
+			} else if (node == 1 && entry == 2) {
+				// No implementation
+			} else if ((node == 2 && entry == 0) || (node == 2 && entry == 2)) {
+				_val16 = 3;
+			} else {
+				_val16 = 0;
+			}
+		}
+		break;
+
+	case 2:
+		series_stream_check_series(_ripPonders, 20);
+		series_stream_break_on_frame(_ripPonders, 27, 3);
+		return;
+
+	case 3:
+		series_stream_check_series(_ripPonders, 5);
+		return;
+
+	case 4:
+		_val11 = 5;
+		return;
+
+	case 5:
+		digi_play("com119", 1, 255, 6);
+		return;
+
+	case 6:
+		digi_unload("com119");
+		return;
+
+	case 7:
+		_val16 = 0;
+		series_stream_break_on_frame(_ripPonders, 22, 5);
+		return;
+
+	case 666:
+		kernel_timing_trigger(1, 668);
+		break;
+
+	case 667:
+		kernel_timing_trigger(1, 670);
+		break;
+
+	case 668:
+		conv_resume();
+		digi_preload("08_01n01");
+		digi_preload("08_02n01");
+		_ripPonders = series_stream("303 rip ponders", 5, 0, -1);
+		series_stream_break_on_frame(_ripPonders, 5, 2);
+		return;
+
+	case 670:
+		series_load("test1");
+		series_load("test3");
+		series_load("test4");
+		series_load("test5");
+		break;
+
+	case 700:
+		_val16 = 0;
+		break;
+
+	default:
+		if (sound) {
+			if (who <= 0) {
+				if (node != 2 || entry != 1)
+					_val11 = 5;
+			} else if (who == 1) {
+				if (node == 1 && entry == 2) {
+					_val16 = 2;
+				} else if (node == 2 && entry == 1) {
+					_val11 = 6;
+					kernel_timing_trigger(150, 4);
+				} else if ((node == 2 && entry == 0) ||
+						(node == 2 && entry == 2)) {
+					_val16 = 4;
+				} else {
+					_val16 = 1;
+				}
+			}
+
+			digi_play(sound, 1, 255, 1);
+			return;
+		}
+		break;
+	}
+
+	conv_resume();
 }
 
 } // namespace Rooms

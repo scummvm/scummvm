@@ -321,5 +321,9 @@ machine *series_plain_play(const char *seriesName, int32 loopCount, uint32 flags
 	return series_play(seriesName, layer, flags, trigger, frameRate, loopCount, s);
 }
 
+void series_stream_check_series(machine *m, int val) {
+	// TODO: series_stream_check_series
+	error("TODO: series_stream_check_series");
+}
 
 } // namespace M4
