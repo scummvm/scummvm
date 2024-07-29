@@ -43,9 +43,9 @@ qdNamedObjectIndexer &qdNamedObjectIndexer::instance() {
 
 bool qdNamedObjectIndexer::qdNamedObjectReferenceLink::resolve() {
 	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-		object_ = dp->get_named_object(&reference_);
-		if (!object_) {
-			debugC(3, kDebugLog, "qdNamedObjectReferenceLink::resolve() failed\n%s", reference_.toString().c_str());
+		_object = dp->get_named_object(&_reference);
+		if (!_object) {
+			debugC(3, kDebugLog, "qdNamedObjectReferenceLink::resolve() failed\n%s", _reference.toString().c_str());
 		} else
 			return true;
 	}
@@ -54,20 +54,20 @@ bool qdNamedObjectIndexer::qdNamedObjectReferenceLink::resolve() {
 }
 
 qdNamedObjectReference &qdNamedObjectIndexer::add_reference(qdNamedObject *&p) {
-	links_.push_back(qdNamedObjectReferenceLink(p));
-	return links_.back().reference();
+	_links.push_back(qdNamedObjectReferenceLink(p));
+	return _links.back().reference();
 }
 
 void qdNamedObjectIndexer::resolve_references() {
-	for (link_container_t::iterator it = links_.begin(); it != links_.end(); ++it)
+	for (link_container_t::iterator it = _links.begin(); it != _links.end(); ++it)
 		it->resolve();
 }
 
 void qdNamedObjectIndexer::clear() {
 #ifdef _QD_DEBUG_ENABLE_
-	debugC(3, kDebugLog, "qdNamedObjectIndexer::links count - %d", links_.size());
+	debugC(3, kDebugLog, "qdNamedObjectIndexer::links count - %d", _links.size());
 #endif
 
-	links_.clear();
+	_links.clear();
 }
 } // namespace QDEngine

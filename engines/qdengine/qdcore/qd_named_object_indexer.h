@@ -43,23 +43,23 @@ private:
 
 	class qdNamedObjectReferenceLink {
 	public:
-		qdNamedObjectReferenceLink(qdNamedObject *&p) : object_(p) { }
+		qdNamedObjectReferenceLink(qdNamedObject *&p) : _object(p) { }
 		~qdNamedObjectReferenceLink() { }
 
 		bool resolve();
 
 		qdNamedObjectReference &reference() {
-			return reference_;
+			return _reference;
 		}
 
 	private:
 
-		qdNamedObjectReference reference_;
-		qdNamedObject *&object_;
+		qdNamedObjectReference _reference;
+		qdNamedObject *&_object;
 	};
 
 	typedef std::list<qdNamedObjectReferenceLink> link_container_t;
-	link_container_t links_;
+	link_container_t _links;
 };
 
 } // namespace QDEngine
