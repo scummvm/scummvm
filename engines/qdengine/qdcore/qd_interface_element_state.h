@@ -140,22 +140,6 @@ public:
 		return activation_;
 	}
 
-#ifdef _QUEST_EDITOR
-	//! Устанавливаем до или после включения анимации должно случиться событие
-	void set_before_animation(bool bFlag) {
-		is_before_animation_ = bFlag;
-	}
-	void set_event_data(const char *data) {
-		if (data)
-			event_data_ = data;
-		else
-			event_data_.clear();
-	}
-	void set_activation(activation_t act) {
-		activation_ = act;
-	}
-#endif // _QUEST_EDITOR
-
 private:
 
 	//! Код события.
