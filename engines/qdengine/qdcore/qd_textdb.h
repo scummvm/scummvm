@@ -36,7 +36,7 @@ public:
 
 	/// Очистка базы.
 	void clear() {
-		texts_.clear();
+		_texts.clear();
 	}
 
 	/// Возвращает текст с идентификатором text_id.
@@ -68,20 +68,19 @@ public:
 private:
 
 	struct qdText {
-		qdText(const char *text, const char *snd) : text_(text), sound_(snd) { }
+		qdText(const char *text, const char *snd) : _text(text), _sound(snd) { }
 
-		std::string text_;
-		std::string sound_;
+		std::string _text;
+		std::string _sound;
 #ifndef _FINAL_VERSION_
-		std::string comment_;
+		std::string _comment;
 #endif
 	};
 
 	typedef std::unordered_map<std::string, qdText> qdTextMap;
-	qdTextMap texts_;
+	qdTextMap _texts;
 };
 
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_QD_TEXTDB_H
-
