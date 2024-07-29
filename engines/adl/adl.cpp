@@ -120,8 +120,9 @@ bool AdlEngine::pollEvent(Common::Event &event) const {
 	return false;
 }
 
-Common::String AdlEngine::readString(Common::ReadStream &stream, byte until) const {
+Common::String AdlEngine::readString(Common::ReadStream &stream, byte until, const char *key) const {
 	Common::String str;
+	int keyLength = strlen(key);
 
 	while (1) {
 		byte b = stream.readByte();
@@ -132,8 +133,11 @@ Common::String AdlEngine::readString(Common::ReadStream &stream, byte until) con
 		if (b == until)
 			break;
 
+		if (keyLength)
+			b ^= key[str.size() % keyLength];
+
 		str += b;
-	};
+	}
 
 	return str;
 }
