@@ -36,19 +36,19 @@ public:
 
 	//! Возвращает имя объекта.
 	const char *name() const {
-		if (!name_.empty()) return name_.c_str();
+		if (!_name.empty()) return _name.c_str();
 		return NULL;
 	}
 	//! Устанавливает имя объекта.
 	void set_name(const char *p) {
-		if (p) name_ = p;
-		else name_.clear();
+		if (p) _name = p;
+		else _name.clear();
 	}
 
 private:
 
 	//! Имя объекта.
-	std::string name_;
+	std::string _name;
 };
 
 } // namespace QDEngine
