@@ -50,6 +50,7 @@ QDEngineEngine::QDEngineEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 QDEngineEngine::~QDEngineEngine() {
 	delete _screen;
+	cleanup_XML_Parser();
 }
 
 uint32 QDEngineEngine::getFeatures() const {

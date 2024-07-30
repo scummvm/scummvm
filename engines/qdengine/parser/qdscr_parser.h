@@ -705,6 +705,7 @@ const int idTagVersionAll[490] = {
 	20021114, QDSCR_MAX_KEYWORD_ID				// 245
 };
 
+void cleanup_XML_Parser();
 xml::parser &qdscr_XML_Parser();
 const char *qdscr_XML_string(const char *p);
 
