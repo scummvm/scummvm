@@ -39,10 +39,10 @@
 namespace QDEngine {
 
 
-qdInventory::qdInventory() : need_redraw_(false),
-	shadow_color_(INV_DEFAULT_SHADOW_COLOR),
-	shadow_alpha_(INV_DEFAULT_SHADOW_ALPHA),
-	additional_cells_(0, 0) {
+qdInventory::qdInventory() : _need_redraw(false),
+	_shadow_color(INV_DEFAULT_SHADOW_COLOR),
+	_shadow_alpha(INV_DEFAULT_SHADOW_ALPHA),
+	_additional_cells(0, 0) {
 #ifdef _QUEST_EDITOR
 	m_iActiveCellset = -1;
 #endif // _QUEST_EDITOR
@@ -53,7 +53,7 @@ qdInventory::~qdInventory() {
 }
 
 void qdInventory::redraw(int offs_x, int offs_y, bool inactive_mode) const {
-	qdInventoryCell::set_shadow(shadow_color_, shadow_alpha_);
+	qdInventoryCell::set_shadow(_shadow_color, _shadow_alpha);
 
 	for (qdInventoryCellSetVector::const_iterator it = cell_sets_.begin(); it != cell_sets_.end(); ++it)
 		it->redraw(offs_x, offs_y, inactive_mode);
@@ -63,7 +63,7 @@ void qdInventory::pre_redraw() const {
 	for (qdInventoryCellSetVector::const_iterator it = cell_sets_.begin(); it != cell_sets_.end(); ++it)
 		it->pre_redraw();
 
-	if (need_redraw_) {
+	if (_need_redraw) {
 		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
 			for (qdInventoryCellSetVector::const_iterator it = cell_sets_.begin(); it != cell_sets_.end(); ++it) {
 				dp->add_redraw_region(it->screen_region());
@@ -90,7 +90,7 @@ bool qdInventory::put_object(qdGameObjectAnimated *p) {
 		if (it.put_object(p)) {
 			p->set_inventory_cell_index(cell_index(p));
 			p->set_flag(QD_OBJ_IS_IN_INVENTORY_FLAG);
-			need_redraw_ = true;
+			_need_redraw = true;
 			return true;
 		}
 	}
@@ -103,7 +103,7 @@ bool qdInventory::put_object(qdGameObjectAnimated *p, const Vect2s &pos) {
 		if (it.put_object(p, pos)) {
 			p->set_inventory_cell_index(cell_index(p));
 			p->set_flag(QD_OBJ_IS_IN_INVENTORY_FLAG);
-			need_redraw_ = true;
+			_need_redraw = true;
 			return true;
 		}
 	}
@@ -126,7 +126,7 @@ bool qdInventory::remove_object(qdGameObjectAnimated *p) {
 	for (auto &it : cell_sets_) {
 		if (it.remove_object(p)) {
 			p->drop_flag(QD_OBJ_IS_IN_INVENTORY_FLAG);
-			need_redraw_ = true;
+			_need_redraw = true;
 			return true;
 		}
 	}
@@ -159,13 +159,13 @@ bool qdInventory::load_script(const xml::tag *p) {
 			add_cell_set(set);
 			break;
 		case QDSCR_GRID_ZONE_SHADOW_COLOR:
-			xml::tag_buffer(*it) > shadow_color_;
+			xml::tag_buffer(*it) > _shadow_color;
 			break;
 		case QDSCR_GRID_ZONE_SHADOW_ALPHA:
-			xml::tag_buffer(*it) > shadow_alpha_;
+			xml::tag_buffer(*it) > _shadow_alpha;
 			break;
 		case QDSCR_INVENTORY_CELL_SET_ADDITIONAL_CELLS:
-			xml::tag_buffer(*it) > additional_cells_.x > additional_cells_.y;
+			xml::tag_buffer(*it) > _additional_cells.x > _additional_cells.y;
 			break;
 		}
 	}
@@ -189,12 +189,12 @@ bool qdInventory::save_script(Common::WriteStream &fh, int indent) const {
 		fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
 	}
 
-	if (shadow_color_ != INV_DEFAULT_SHADOW_COLOR) {
-		fh.writeString(Common::String::format(" shadow_color=\"%u\"", shadow_color_));
+	if (_shadow_color != INV_DEFAULT_SHADOW_COLOR) {
+		fh.writeString(Common::String::format(" shadow_color=\"%u\"", _shadow_color));
 	}
 
-	if (shadow_alpha_ != INV_DEFAULT_SHADOW_ALPHA) {
-		fh.writeString(Common::String::format(" shadow_alpha=\"%d\"", shadow_alpha_));
+	if (_shadow_alpha != INV_DEFAULT_SHADOW_ALPHA) {
+		fh.writeString(Common::String::format(" shadow_alpha=\"%d\"", _shadow_alpha));
 	}
 
 	fh.writeString(">\r\n");
@@ -202,7 +202,7 @@ bool qdInventory::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<inventory_cell_set_additional_cells>%d %d</inventory_cell_set_additional_cells>\r\n", additional_cells_.x, additional_cells_.y));
+	fh.writeString(Common::String::format("<inventory_cell_set_additional_cells>%d %d</inventory_cell_set_additional_cells>\r\n", _additional_cells.x, _additional_cells.y));
 
 	for (auto &it : cell_sets_) {
 		it.save_script(fh, indent + 1);
@@ -221,7 +221,7 @@ bool qdInventory::init(const qdInventoryCellTypeVector &tp) {
 		if (!it.init(tp)) {
 			result = false;
 		}
-		it.set_additional_cells(additional_cells_);
+		it.set_additional_cells(_additional_cells);
 	}
 	return result;
 }

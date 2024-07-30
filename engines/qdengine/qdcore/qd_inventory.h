@@ -122,7 +122,7 @@ public:
 
 	void redraw(int offs_x = 0, int offs_y = 0, bool inactive_mode = false) const;
 	void toggle_redraw(bool state) {
-		need_redraw_ = state;
+		_need_redraw = state;
 	}
 	void pre_redraw() const;
 	void post_redraw();
@@ -134,17 +134,17 @@ public:
 	bool is_object_in_list(const qdGameObjectAnimated *p) const;
 
 	unsigned shadow_color() const {
-		return shadow_color_;
+		return _shadow_color;
 	}
 	void set_shadow_color(unsigned color) {
-		shadow_color_ = color;
+		_shadow_color = color;
 	}
 
 	int shadow_alpha() const {
-		return shadow_alpha_;
+		return _shadow_alpha;
 	}
 	void set_shadow_alpha(int alpha) {
-		shadow_alpha_ = alpha;
+		_shadow_alpha = alpha;
 	}
 
 	bool load_script(const xml::tag *p);
@@ -165,10 +165,10 @@ public:
 	void objects_quant(float dt);
 
 	Vect2s additional_cells() const {
-		return additional_cells_;
+		return _additional_cells;
 	}
 	void set_additional_cells(Vect2s val) {
-		additional_cells_ = val;
+		_additional_cells = val;
 	}
 
 	//! Скроллинг
@@ -183,13 +183,13 @@ private:
 
 	qdInventoryCellSetVector cell_sets_;
 
-	bool need_redraw_;
+	bool _need_redraw;
 
-	unsigned shadow_color_;
-	int shadow_alpha_;
+	unsigned _shadow_color;
+	int _shadow_alpha;
 
 	//! Дополнительные ячейки для всех наборов инвентори
-	Vect2s additional_cells_;
+	Vect2s _additional_cells;
 
 #ifdef _QUEST_EDITOR
 	mutable int m_iActiveCellset;
