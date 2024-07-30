@@ -37,11 +37,11 @@ public:
 
 	//! Устанавливает владельца объекта.
 	void set_owner(qdInterfaceObjectBase *p) {
-		owner_ = p;
+		_owner = p;
 	}
 	//! Возвращает указатель на владельца объекта.
 	qdInterfaceObjectBase *owner() const {
-		return owner_;
+		return _owner;
 	}
 
 protected:
@@ -51,7 +51,7 @@ protected:
 private:
 
 	//! Владелец объекта.
-	mutable qdInterfaceObjectBase *owner_;
+	mutable qdInterfaceObjectBase *_owner;
 };
 
 } // namespace QDEngine
