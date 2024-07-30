@@ -34,15 +34,15 @@
 
 namespace QDEngine {
 
-grFont::grFont() : alpha_buffer_(NULL) {
-	size_x_ = size_y_ = 0;
-	alpha_buffer_sx_ = alpha_buffer_sy_ = 0;
+grFont::grFont() : _alpha_buffer(NULL) {
+	_size_x = _size_y = 0;
+	_alpha_buffer_sx = _alpha_buffer_sy = 0;
 
-	chars_.reserve(256);
+	_chars.reserve(256);
 }
 
 grFont::~grFont() {
-	delete alpha_buffer_;
+	delete _alpha_buffer;
 }
 
 bool grFont::load(const char *fname) {
@@ -77,17 +77,17 @@ bool grFont::load_index(Common::SeekableReadStream *fh) {
 	for (int i = 0; i < num_ch; i ++) {
 		int x, y;
 
-		chr.code_ = strtol(pos, &pos, 0);
+		chr._code = strtol(pos, &pos, 0);
 		x = strtol(pos, &pos, 0);
 		y = strtol(pos, &pos, 0);
 		sx = strtol(pos, &pos, 0);
 		sy = strtol(pos, &pos, 0);
 
-		chr.region_ = grScreenRegion(x, y, sx, sy);
-		chars_.push_back(chr);
+		chr._region = grScreenRegion(x, y, sx, sy);
+		_chars.push_back(chr);
 
-		if (sx > size_x_) size_x_ = sx;
-		if (sy > size_y_) size_y_ = sy;
+		if (sx > _size_x) _size_x = sx;
+		if (sy > _size_y) _size_y = sy;
 	};
 
 	return true;
@@ -106,24 +106,24 @@ bool grFont::load_alpha(Common::SeekableReadStream *fh) {
 	if (header[2] != 2 && header[2] != 3)
 		return false;
 
-	int sx = alpha_buffer_sx_ = header[12] + (header[13] << 8);
-	int sy = alpha_buffer_sy_ = header[14] + (header[15] << 8);
+	int sx = _alpha_buffer_sx = header[12] + (header[13] << 8);
+	int sy = _alpha_buffer_sy = header[14] + (header[15] << 8);
 
 	int colors = header[16];
 	int flags = header[17];
 
 	int ssx = sx * colors / 8;
 
-	alpha_buffer_ = new unsigned char[ssx * sy];
+	_alpha_buffer = new unsigned char[ssx * sy];
 
 	if (!(flags & 0x20)) {
 		int idx = (sy - 1) * ssx;
 		for (int i = 0; i < sy; i ++) {
-			fh->read(alpha_buffer_ + idx, ssx);
+			fh->read(_alpha_buffer + idx, ssx);
 			idx -= ssx;
 		}
 	} else
-		fh->read(alpha_buffer_, ssx * sy);
+		fh->read(_alpha_buffer, ssx * sy);
 
 	return true;
 }
