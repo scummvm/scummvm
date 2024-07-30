@@ -37,15 +37,15 @@
 
 namespace QDEngine {
 
-qdInterfaceElementState::qdInterfaceElementState() : state_mode_(DEFAULT_MODE), prev_state_mode_(DEFAULT_MODE) {
+qdInterfaceElementState::qdInterfaceElementState() : _state_mode(DEFAULT_MODE), _prev_state_mode(DEFAULT_MODE) {
 }
 
 qdInterfaceElementState::qdInterfaceElementState(const qdInterfaceElementState &st) : qdInterfaceObjectBase(st),
-	events_(st.events_),
-	state_mode_(st.state_mode_),
-	prev_state_mode_(st.prev_state_mode_) {
+	_events(st._events),
+	_state_mode(st._state_mode),
+	_prev_state_mode(st._prev_state_mode) {
 	for (int i = 0; i < NUM_MODES; i ++)
-		modes_[i] = st.modes_[i];
+		_modes[i] = st._modes[i];
 
 	register_resources();
 }
@@ -61,15 +61,15 @@ qdInterfaceElementState &qdInterfaceElementState::operator = (const qdInterfaceE
 
 	this->qdInterfaceObjectBase::operator = (st);
 
-	events_ = st.events_;
+	_events = st._events;
 
 	for (int i = 0; i < NUM_MODES; i ++)
-		modes_[i] = st.modes_[i];
+		_modes[i] = st._modes[i];
 
 	register_resources();
 
-	state_mode_ = st.state_mode_;
-	prev_state_mode_ = st.prev_state_mode_;
+	_state_mode = st._state_mode;
+	_prev_state_mode = st._prev_state_mode;
 
 	return *this;
 }
@@ -87,22 +87,22 @@ bool qdInterfaceElementState::save_script(Common::WriteStream &fh, int indent) c
 
 	fh.writeString(">\r\n");
 
-	for (int j = 0; j < events_.size(); j++) {
+	for (int j = 0; j < _events.size(); j++) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<event type=\"%d\"", int(events_[j].event())));
+		fh.writeString(Common::String::format("<event type=\"%d\"", int(_events[j].event())));
 
-		if (events_[j].has_data()) {
-			fh.writeString(Common::String::format(" event_data=\"%s\"", qdscr_XML_string(events_[j].event_data())));
+		if (_events[j].has_data()) {
+			fh.writeString(Common::String::format(" event_data=\"%s\"", qdscr_XML_string(_events[j].event_data())));
 		}
 
-		if (events_[j].is_before_animation()) {
+		if (_events[j].is_before_animation()) {
 			fh.writeString(" before_animation=\"1\"");
 		}
 
-		if (events_[j].activation() != qdInterfaceEvent::EVENT_ACTIVATION_CLICK) {
-			fh.writeString(Common::String::format(" activation_type=\"%d\"", (int)events_[j].activation()));
+		if (_events[j].activation() != qdInterfaceEvent::EVENT_ACTIVATION_CLICK) {
+			fh.writeString(Common::String::format(" activation_type=\"%d\"", (int)_events[j].activation()));
 		}
 
 		fh.writeString("/>\r\n");
@@ -110,7 +110,7 @@ bool qdInterfaceElementState::save_script(Common::WriteStream &fh, int indent) c
 
 	for (int i = 0; i < NUM_MODES; i ++) {
 		if (has_state_mode(state_mode_t(i))) {
-			modes_[i].save_script(fh, i, indent + 1);
+			_modes[i].save_script(fh, i, indent + 1);
 		}
 	}
 
@@ -133,7 +133,7 @@ bool qdInterfaceElementState::load_script(const xml::tag *p) {
 	}
 
 	if (num_events)
-		events_.reserve(num_events);
+		_events.reserve(num_events);
 
 	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		switch (it->ID()) {
@@ -142,7 +142,7 @@ bool qdInterfaceElementState::load_script(const xml::tag *p) {
 			break;
 		case QDSCR_INTERFACE_ELEMENT_STATE_MODE:
 			if (const xml::tag * tg = it->search_subtag(QDSCR_TYPE))
-				modes_[state_mode_t(xml::tag_buffer(*tg).get_int())].load_script(&*it);
+				_modes[state_mode_t(xml::tag_buffer(*tg).get_int())].load_script(&*it);
 			break;
 		case QDSCR_INTERFACE_EVENT: {
 			qdInterfaceEvent::event_t ev = qdInterfaceEvent::EVENT_NONE;
@@ -161,7 +161,7 @@ bool qdInterfaceElementState::load_script(const xml::tag *p) {
 			if (const xml::tag * tg = it->search_subtag(QDSCR_INTERFACE_EVENT_ACTIVATION_TYPE))
 				act = qdInterfaceEvent::activation_t(xml::tag_buffer(*tg).get_int());
 
-			events_.push_back(qdInterfaceEvent(ev, ev_data, anm_flag, act));
+			_events.push_back(qdInterfaceEvent(ev, ev_data, anm_flag, act));
 			}
 			break;
 		default:
@@ -177,10 +177,10 @@ bool qdInterfaceElementState::load_script(const xml::tag *p) {
 bool qdInterfaceElementState::quant(float dt) {
 	debugC(9, kDebugQuant, "qdInterfaceElementState::quant(%f)", dt);
 	if (qdInterfaceElement * ep = dynamic_cast<qdInterfaceElement * >(owner())) {
-		if (prev_state_mode_ == MOUSE_HOVER_MODE && state_mode() == DEFAULT_MODE)
+		if (_prev_state_mode == MOUSE_HOVER_MODE && state_mode() == DEFAULT_MODE)
 			handle_events(qdInterfaceEvent::EVENT_ACTIVATION_HOVER, false);
 
-		prev_state_mode_ = state_mode();
+		_prev_state_mode = state_mode();
 
 		switch (ep->state_status(this)) {
 		case qdInterfaceElement::STATE_INACTIVE:
@@ -210,13 +210,13 @@ void qdInterfaceElementState::set_sound_file(const char *str, state_mode_t snd_i
 		if (qdInterfaceElement * p = dynamic_cast<qdInterfaceElement * >(owner()))
 			p->remove_resource(sound_file(snd_id), this);
 
-		modes_[snd_id].set_sound(NULL);
+		_modes[snd_id].set_sound(NULL);
 	}
 
-	modes_[snd_id].set_sound_file(str);
+	_modes[snd_id].set_sound_file(str);
 	if (has_sound(snd_id)) {
 		if (qdInterfaceElement * p = dynamic_cast<qdInterfaceElement * >(owner()))
-			modes_[snd_id].set_sound(dynamic_cast<const qdSound * >(p->add_resource(sound_file(snd_id), this)));
+			_modes[snd_id].set_sound(dynamic_cast<const qdSound * >(p->add_resource(sound_file(snd_id), this)));
 	}
 }
 
@@ -225,13 +225,13 @@ void qdInterfaceElementState::set_animation_file(const char *name, state_mode_t 
 		if (qdInterfaceElement * p = dynamic_cast<qdInterfaceElement * >(owner()))
 			p->remove_resource(animation_file(anm_id), this);
 
-		modes_[anm_id].set_animation(NULL);
+		_modes[anm_id].set_animation(NULL);
 	}
 
-	modes_[anm_id].set_animation_file(name);
+	_modes[anm_id].set_animation_file(name);
 	if (has_animation(anm_id)) {
 		if (qdInterfaceElement * p = dynamic_cast<qdInterfaceElement * >(owner()))
-			modes_[anm_id].set_animation(dynamic_cast<const qdAnimation * >(p->add_resource(animation_file(anm_id), this)));
+			_modes[anm_id].set_animation(dynamic_cast<const qdAnimation * >(p->add_resource(animation_file(anm_id), this)));
 	}
 }
 
@@ -244,7 +244,7 @@ bool qdInterfaceElementState::unregister_resources() {
 				if (!p->remove_resource(animation_file(state_mode_t(i)), this))
 					res = false;
 
-				modes_[i].set_animation(NULL);
+				_modes[i].set_animation(NULL);
 			}
 		}
 
@@ -253,7 +253,7 @@ bool qdInterfaceElementState::unregister_resources() {
 				if (!p->remove_resource(sound_file(state_mode_t(i)), this))
 					res = false;
 
-				modes_[i].set_sound(NULL);
+				_modes[i].set_sound(NULL);
 			}
 		}
 	}
@@ -267,16 +267,16 @@ bool qdInterfaceElementState::register_resources() {
 	for (int i = 0; i < NUM_MODES; i ++) {
 		if (has_animation(state_mode_t(i))) {
 			if (qdInterfaceElement * p = dynamic_cast<qdInterfaceElement * >(owner()))
-				modes_[i].set_animation(dynamic_cast<const qdAnimation * >(p->add_resource(animation_file(state_mode_t(i)), this)));
+				_modes[i].set_animation(dynamic_cast<const qdAnimation * >(p->add_resource(animation_file(state_mode_t(i)), this)));
 
-			if (!modes_[i].animation()) res = false;
+			if (!_modes[i].animation()) res = false;
 		}
 
 		if (has_sound(state_mode_t(i))) {
 			if (qdInterfaceElement * p = dynamic_cast<qdInterfaceElement * >(owner()))
-				modes_[i].set_sound(dynamic_cast<const qdSound * >(p->add_resource(sound_file(state_mode_t(i)), this)));
+				_modes[i].set_sound(dynamic_cast<const qdSound * >(p->add_resource(sound_file(state_mode_t(i)), this)));
 
-			if (!modes_[i].sound()) res = false;
+			if (!_modes[i].sound()) res = false;
 		}
 	}
 
@@ -291,7 +291,7 @@ bool qdInterfaceElementState::has_state_mode(state_mode_t mode) const {
 		if (has_animation(MOUSE_HOVER_MODE) || has_sound(MOUSE_HOVER_MODE) || has_contour(MOUSE_HOVER_MODE)) return true;
 		return false;
 	case EVENT_MODE:
-		if (events_.size()) return true;
+		if (_events.size()) return true;
 		if (has_animation(EVENT_MODE) || has_sound(EVENT_MODE) || has_contour(EVENT_MODE)) return true;
 		return false;
 	}
@@ -305,7 +305,7 @@ bool qdInterfaceElementState::mouse_handler(int x, int y, mouseDispatcher::mouse
 		if (state_mode() != EVENT_MODE) {
 			if (has_state_mode(MOUSE_HOVER_MODE)) {
 				set_state_mode(MOUSE_HOVER_MODE);
-				if (prev_state_mode_ != MOUSE_HOVER_MODE)
+				if (_prev_state_mode != MOUSE_HOVER_MODE)
 					handle_events(qdInterfaceEvent::EVENT_ACTIVATION_HOVER, true);
 				return true;
 			}
@@ -332,9 +332,9 @@ bool qdInterfaceElementState::keyboard_handler(int vkey) {
 
 bool qdInterfaceElementState::handle_events(qdInterfaceEvent::activation_t activation_type, bool before_animation) {
 	if (qdInterfaceDispatcher * dp = qdInterfaceDispatcher::get_dispatcher()) {
-		for (int i = 0; i < events_.size(); i ++) {
-			if (events_[i].activation() == activation_type && events_[i].is_before_animation() == before_animation) {
-				dp->handle_event(events_[i].event(), events_[i].event_data(), owner());
+		for (int i = 0; i < _events.size(); i ++) {
+			if (_events[i].activation() == activation_type && _events[i].is_before_animation() == before_animation) {
+				dp->handle_event(_events[i].event(), _events[i].event_data(), owner());
 			}
 		}
 
@@ -345,26 +345,26 @@ bool qdInterfaceElementState::handle_events(qdInterfaceEvent::activation_t activ
 }
 
 bool qdInterfaceElementState::get_contour(state_mode_t mode, qdContour &cnt) const {
-	modes_[mode].get_contour(cnt);
+	_modes[mode].get_contour(cnt);
 	return true;
 }
 
 bool qdInterfaceElementState::set_contour(state_mode_t mode, const qdContour &cnt) {
-	modes_[mode].set_contour(cnt);
+	_modes[mode].set_contour(cnt);
 	return true;
 }
 
 bool qdInterfaceElementState::need_active_game() const {
-	for (int i = 0; i < events_.size(); i ++) {
-		if (events_[i].event() == qdInterfaceEvent::EVENT_SAVE_GAME)
+	for (int i = 0; i < _events.size(); i ++) {
+		if (_events[i].event() == qdInterfaceEvent::EVENT_SAVE_GAME)
 			return true;
-		if (events_[i].event() == qdInterfaceEvent::EVENT_CHANGE_PERSONAGE)
+		if (_events[i].event() == qdInterfaceEvent::EVENT_CHANGE_PERSONAGE)
 			return true;
-		if (events_[i].event() == qdInterfaceEvent::EVENT_RESUME_GAME)
+		if (_events[i].event() == qdInterfaceEvent::EVENT_RESUME_GAME)
 			return true;
-		if (events_[i].event() == qdInterfaceEvent::EVENT_ACTIVATE_PERSONAGE)
+		if (_events[i].event() == qdInterfaceEvent::EVENT_ACTIVATE_PERSONAGE)
 			return true;
-		if (events_[i].event() == qdInterfaceEvent::EVENT_SET_SAVE_MODE)
+		if (_events[i].event() == qdInterfaceEvent::EVENT_SET_SAVE_MODE)
 			return true;
 	}
 
@@ -372,15 +372,15 @@ bool qdInterfaceElementState::need_active_game() const {
 }
 
 const qdInterfaceEvent *qdInterfaceElementState::find_event(qdInterfaceEvent::event_t type) const {
-	events_container_t::const_iterator it = std::find(events_.begin(), events_.end(), type);
-	if (it != events_.end())
+	events_container_t::const_iterator it = std::find(_events.begin(), _events.end(), type);
+	if (it != _events.end())
 		return &*it;
 
 	return NULL;
 }
 
 bool qdInterfaceElementState::has_event(qdInterfaceEvent::event_t type, const char *ev_data) const {
-	for (events_container_t::const_iterator it = events_.begin(); it != events_.end(); ++it) {
+	for (events_container_t::const_iterator it = _events.begin(); it != _events.end(); ++it) {
 		if (it->event() == type) {
 			if ((!ev_data && !it->event_data()) || (it->event_data() && !strcmp(ev_data, it->event_data())))
 				return true;
