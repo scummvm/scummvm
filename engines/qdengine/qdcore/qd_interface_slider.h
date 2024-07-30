@@ -80,52 +80,52 @@ public:
 	int size_y() const;
 
 	bool inverse_direction() const {
-		return inverse_direction_;
+		return _inverse_direction;
 	}
 	void set_inverse_direction(bool state) {
-		inverse_direction_ = state;
+		_inverse_direction = state;
 	}
 
 	const Vect2i &active_rectangle() const {
-		return active_rectangle_;
+		return _active_rectangle;
 	}
 	void set_active_rectangle(const Vect2i &rect) {
-		active_rectangle_ = rect;
+		_active_rectangle = rect;
 	}
 
 	const qdInterfaceElementState *background() const {
-		return &background_;
+		return &_background;
 	}
 	void update_background(const qdInterfaceElementState &st) {
-		background_ = st;
+		_background = st;
 	}
 
 	const Vect2i &background_offset() const {
-		return background_offset_;
+		return _background_offset;
 	}
 	void set_background_offset(const Vect2i &offs) {
-		background_offset_ = offs;
+		_background_offset = offs;
 	}
 
 	const qdInterfaceElementState *slider() const {
-		return &slider_;
+		return &_slider;
 	}
 	void update_slider(const qdInterfaceElementState &st) {
-		slider_ = st;
+		_slider = st;
 	}
 
 	float phase() const {
-		return phase_;
+		return _phase;
 	}
 	void set_phase(float ph) {
-		phase_ = ph;
+		_phase = ph;
 	}
 
 	orientation_t orientation() const {
-		return orientation_;
+		return _orientation;
 	}
 	void set_orientation(orientation_t v) {
-		orientation_ = v;
+		_orientation = v;
 	}
 
 	//! Возвращает true, если точка с экранными координатами (x,у) попадает в элемент.
@@ -140,32 +140,32 @@ protected:
 
 private:
 	//! Подложка под ползунком.
-	qdInterfaceElementState background_;
+	qdInterfaceElementState _background;
 	/// Смещение подложки относительно центра ползунка.
-	Vect2i background_offset_;
+	Vect2i _background_offset;
 
 	//! Ползунок.
-	qdInterfaceElementState slider_;
+	qdInterfaceElementState _slider;
 
 	//! Анимация ползунка.
-	qdAnimation slider_animation_;
+	qdAnimation _slider_animation;
 
 	//! Прямоугольник, внутри которого ездит ползунок.
 	/**
 	По нему же отслеживаются мышиные клики.
 	Отсчитывается от центра элемента, в экранных координатах.
 	*/
-	Vect2i active_rectangle_;
+	Vect2i _active_rectangle;
 
 	//! Текущая фаза, диапазон значений - [0.0, 1.0].
-	float phase_;
+	float _phase;
 
 	//! Ориентация - по горизонтали или по вертикали.
-	orientation_t orientation_;
-	bool inverse_direction_;
+	orientation_t _orientation;
+	bool _inverse_direction;
 
 	//! true, если слайдер следит за перемещениями мышиного курсора
-	bool track_mouse_;
+	bool _track_mouse;
 
 	bool set_slider_animation(const qdAnimation *anm, int anm_flags = 0);
 
