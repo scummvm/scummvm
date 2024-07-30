@@ -41,54 +41,54 @@ namespace QDEngine {
 bool qdGameObjectAnimated::fast_state_merge_ = false;
 #endif
 
-qdGameObjectAnimated::qdGameObjectAnimated() : cur_state_(-1),
-	inventory_type_(0),
-	last_state_(NULL),
-	default_r_(0, 0, 0),
-	grid_r_(0, 0, 0),
-	grid_size_(0, 0),
-	queued_state_(NULL),
-	last_frame_(NULL),
-	inventory_cell_index_(-1),
-	shadow_alpha_(QD_NO_SHADOW_ALPHA),
-	shadow_color_(0) {
+qdGameObjectAnimated::qdGameObjectAnimated() : _cur_state(-1),
+	_inventory_type(0),
+	_last_state(NULL),
+	_default_r(0, 0, 0),
+	_grid_r(0, 0, 0),
+	_grid_size(0, 0),
+	_queued_state(NULL),
+	_last_frame(NULL),
+	_inventory_cell_index(-1),
+	_shadow_alpha(QD_NO_SHADOW_ALPHA),
+	_shadow_color(0) {
 	set_animation(NULL);
 
 	set_bound(Vect3f(10, 10, 10));
 
-	last_screen_depth_ = 0;
+	_last_screen_depth = 0;
 
-	lastShadowColor_ = 0;
-	lastShadowAlpha_ = QD_NO_SHADOW_ALPHA;
+	_lastShadowColor = 0;
+	_lastShadowAlpha = QD_NO_SHADOW_ALPHA;
 
 	if (NULL != qdGameDispatcher::get_dispatcher())
-		last_chg_time_ = qdGameDispatcher::get_dispatcher()->time();
+		_last_chg_time = qdGameDispatcher::get_dispatcher()->time();
 	else
-		last_chg_time_ = 0;
+		_last_chg_time = 0;
 }
 
 qdGameObjectAnimated::qdGameObjectAnimated(const qdGameObjectAnimated &obj) : qdGameObject(obj),
-	cur_state_(-1),
-	queued_state_(NULL),
-	inventory_type_(obj.inventory_type_),
-	bound_(obj.bound_),
-	radius_(obj.radius_),
-	default_r_(obj.default_r_),
-	grid_r_(0, 0, 0),
-	grid_size_(0, 0),
-	inventory_name_(obj.inventory_name_),
-	last_state_(NULL),
-	inventory_cell_index_(-1),
-	last_frame_(NULL),
-	last_chg_time_(obj.last_chg_time_),
-	shadow_alpha_(obj.shadow_alpha_),
-	shadow_color_(obj.shadow_color_) {
-	last_screen_depth_ = 0;
+	_cur_state(-1),
+	_queued_state(NULL),
+	_inventory_type(obj._inventory_type),
+	_bound(obj._bound),
+	_radius(obj._radius),
+	_default_r(obj._default_r),
+	_grid_r(0, 0, 0),
+	_grid_size(0, 0),
+	_inventory_name(obj._inventory_name),
+	_last_state(NULL),
+	_inventory_cell_index(-1),
+	_last_frame(NULL),
+	_last_chg_time(obj._last_chg_time),
+	_shadow_alpha(obj._shadow_alpha),
+	_shadow_color(obj._shadow_color) {
+	_last_screen_depth = 0;
 
-	lastShadowColor_ = 0;
-	lastShadowAlpha_ = QD_NO_SHADOW_ALPHA;
+	_lastShadowColor = 0;
+	_lastShadowAlpha = QD_NO_SHADOW_ALPHA;
 
-	for (auto &it : obj.states) {
+	for (auto &it : obj._states) {
 		if (!it->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_GLOBAL_OWNER))
 			add_state(it->clone());
 		else
@@ -105,41 +105,41 @@ qdGameObjectAnimated &qdGameObjectAnimated::operator = (const qdGameObjectAnimat
 
 	*static_cast<qdGameObject *>(this) = obj;
 
-	cur_state_ = -1;
-	queued_state_ = NULL;
+	_cur_state = -1;
+	_queued_state = NULL;
 
-	inventory_type_ = obj.inventory_type_;
+	_inventory_type = obj._inventory_type;
 
-	animation_.clear();
+	_animation.clear();
 
-	set_bound(obj.bound_);
+	set_bound(obj._bound);
 
-	default_r_ = obj.default_r_;
+	_default_r = obj._default_r;
 
-	grid_r_ = obj.grid_r_;
-	grid_size_ = obj.grid_size_;
+	_grid_r = obj._grid_r;
+	_grid_size = obj._grid_size;
 
-	inventory_name_ = obj.inventory_name_;
+	_inventory_name = obj._inventory_name;
 
-	last_state_ = NULL;
+	_last_state = NULL;
 
-	inventory_cell_index_ = -1;
+	_inventory_cell_index = -1;
 
-	last_frame_ = NULL;
-	last_screen_region_ = grScreenRegion::EMPTY;
-	last_screen_depth_ = 0;
+	_last_frame = NULL;
+	_last_screen_region = grScreenRegion::EMPTY;
+	_last_screen_depth = 0;
 
-	lastShadowColor_ = 0;
-	lastShadowAlpha_ = QD_NO_SHADOW_ALPHA;
+	_lastShadowColor = 0;
+	_lastShadowAlpha = QD_NO_SHADOW_ALPHA;
 
-	shadow_alpha_ = obj.shadow_alpha_;
-	shadow_color_ = obj.shadow_color_;
+	_shadow_alpha = obj._shadow_alpha;
+	_shadow_color = obj._shadow_color;
 
-	last_chg_time_ = obj.last_chg_time();
+	_last_chg_time = obj.last_chg_time();
 
 	clear_states();
 
-	for (auto &it : obj.states) {
+	for (auto &it : obj._states) {
 		if (!(it->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_GLOBAL_OWNER))) {
 			add_state(it->clone());
 		} else {
@@ -151,7 +151,7 @@ qdGameObjectAnimated &qdGameObjectAnimated::operator = (const qdGameObjectAnimat
 }
 
 void qdGameObjectAnimated::clear_states() {
-	for (auto &it : states) {
+	for (auto &it : _states) {
 		it->dec_reference_count();
 
 		if (!it->reference_count()) {
@@ -167,10 +167,10 @@ void qdGameObjectAnimated::set_animation(qdAnimation *p, const qdAnimationInfo *
 		if (!p->is_resource_loaded())
 			p->load_resources();
 
-		p->create_reference(&animation_, inf);
-		animation_.start();
+		p->create_reference(&_animation, inf);
+		_animation.start();
 	} else
-		animation_.clear();
+		_animation.clear();
 }
 
 void qdGameObjectAnimated::set_animation_info(qdAnimationInfo *inf) {
@@ -178,58 +178,58 @@ void qdGameObjectAnimated::set_animation_info(qdAnimationInfo *inf) {
 		if (qdAnimation * p = inf->animation())
 			set_animation(p, inf);
 		else
-			animation_.clear();
+			_animation.clear();
 	} else
-		animation_.clear();
+		_animation.clear();
 }
 
 void qdGameObjectAnimated::set_screen_rotation(float target_angle, float speed) {
-	target_transform_.set_angle(target_angle);
-	transform_speed_.set_angle(speed);
+	_target_transform.set_angle(target_angle);
+	_transform_speed.set_angle(speed);
 }
 
 float qdGameObjectAnimated::screen_rotation() const {
-	return current_transform_.angle();
+	return _current_transform.angle();
 }
 
 void qdGameObjectAnimated::set_screen_scale(const Vect2f &scale, const Vect2f &speed) {
-	target_transform_.set_scale(scale);
-	transform_speed_.set_scale(speed);
+	_target_transform.set_scale(scale);
+	_transform_speed.set_scale(speed);
 }
 
 const Vect2f &qdGameObjectAnimated::screen_scale() const {
-	return current_transform_.scale();
+	return _current_transform.scale();
 }
 
 void qdGameObjectAnimated::redraw(int offs_x, int offs_y) const {
-	debugC(1, kDebugTemp, "qdGameObjectAnimated::redraw(), empty?: %d", animation_.is_empty());
-	if (!animation_.is_empty()) {
+	debugC(1, kDebugTemp, "qdGameObjectAnimated::redraw(), empty?: %d", _animation.is_empty());
+	if (!_animation.is_empty()) {
 		debugC(1, kDebugTemp, "anim is not empty");
 		Vect2i r = screen_pos() + Vect2i(offs_x, offs_y);
 
-		if (current_transform_()) {
+		if (_current_transform()) {
 			/*
-			            Vect2i delta = (cur_state_ != -1) ? states[cur_state_]->center_offset() : Vect2i(0,0);
+			            Vect2i delta = (_cur_state != -1) ? _states[_cur_state]->center_offset() : Vect2i(0,0);
 			            if(delta.x || delta.y){
 			                r -= delta;
 
-			                Vect2f scale(current_transform_.scale());
+			                Vect2f scale(_current_transform.scale());
 
 			                delta.x = round(float(delta.x) * scale.x);
 			                delta.y = round(float(delta.y) * scale.y);
 
-			                float angle = current_transform_.angle();
+			                float angle = _current_transform.angle();
 
 			                r.x += round(float(delta.x) * cosf(angle) - float(delta.y) * sinf(angle));
 			                r.y += round(float(delta.x) * sinf(angle) + float(delta.y) * cosf(angle));
 			            }
 			*/
-			if (current_transform_.has_scale())
-				animation_.redraw_rot(r.x, r.y, screen_depth(), current_transform_.angle(), current_transform_.scale());
+			if (_current_transform.has_scale())
+				_animation.redraw_rot(r.x, r.y, screen_depth(), _current_transform.angle(), _current_transform.scale());
 			else
-				animation_.redraw_rot(r.x, r.y, screen_depth(), current_transform_.angle());
+				_animation.redraw_rot(r.x, r.y, screen_depth(), _current_transform.angle());
 		} else
-			animation_.redraw(r.x, r.y, screen_depth());
+			_animation.redraw(r.x, r.y, screen_depth());
 	}
 
 	if (shadow_alpha() != QD_NO_SHADOW_ALPHA)
@@ -237,14 +237,14 @@ void qdGameObjectAnimated::redraw(int offs_x, int offs_y) const {
 }
 
 bool qdGameObjectAnimated::need_redraw() const {
-	unsigned color = (cur_state_ == -1) ? 0 : states[cur_state_]->shadow_color();
-	int alpha = (cur_state_ == -1) ? QD_NO_SHADOW_ALPHA : states[cur_state_]->shadow_alpha();
+	unsigned color = (_cur_state == -1) ? 0 : _states[_cur_state]->shadow_color();
+	int alpha = (_cur_state == -1) ? QD_NO_SHADOW_ALPHA : _states[_cur_state]->shadow_alpha();
 
-	return (animation_.get_cur_frame() != last_frame_) ||
-	       (last_screen_depth_ != screen_depth()) ||
-	       (screen_region() != last_screen_region_) ||
-	       (last_transform_ != current_transform_) ||
-	       lastShadowColor_ != color || lastShadowAlpha_ != alpha;
+	return (_animation.get_cur_frame() != _last_frame) ||
+	       (_last_screen_depth != screen_depth()) ||
+	       (screen_region() != _last_screen_region) ||
+	       (_last_transform != _current_transform) ||
+	       _lastShadowColor != color || _lastShadowAlpha != alpha;
 }
 
 void qdGameObjectAnimated::quant(float dt) {
@@ -254,46 +254,46 @@ void qdGameObjectAnimated::quant(float dt) {
 
 	get_animation()->quant(dt);
 
-	if (target_transform_ != current_transform_)
-		current_transform_.change(dt, target_transform_, transform_speed_);
+	if (_target_transform != _current_transform)
+		_current_transform.change(dt, _target_transform, _transform_speed);
 
 #ifndef _QUEST_EDITOR
-	for (qdGameObjectStateVector::iterator it = states.begin(); it != states.end(); ++it)
+	for (qdGameObjectStateVector::iterator it = _states.begin(); it != _states.end(); ++it)
 		(*it)->quant(dt);
 #endif // _QUEST_EDITOR
 
-	if (cur_state_ != -1) {
+	if (_cur_state != -1) {
 #ifdef _QUEST_EDITOR
-		states[cur_state_]->quant(dt);
+		_states[_cur_state]->quant(dt);
 #endif // _QUEST_EDITOR
-		if (!states[cur_state_]->coords_animation()->is_empty())
-			states[cur_state_]->coords_animation()->quant(dt);
+		if (!_states[_cur_state]->coords_animation()->is_empty())
+			_states[_cur_state]->coords_animation()->quant(dt);
 
 #ifndef _QUEST_EDITOR
-		if (!states[cur_state_]->is_in_triggers()) {
-			for (qdGameObjectStateVector::iterator it = states.begin(); it != states.end(); ++it) {
-				if (states[cur_state_] != *it)
-					(*it)->set_prev_state(states[cur_state_]);
+		if (!_states[_cur_state]->is_in_triggers()) {
+			for (qdGameObjectStateVector::iterator it = _states.begin(); it != _states.end(); ++it) {
+				if (_states[_cur_state] != *it)
+					(*it)->set_prev_state(_states[_cur_state]);
 			}
 		}
 
 		if (!check_flag(QD_OBJ_HIDDEN_FLAG) && !check_flag(QD_OBJ_IS_IN_TRIGGER_FLAG)) {
 			if (!check_flag(QD_OBJ_STATE_CHANGE_FLAG)) {
-				StateStatus status = state_status(states[cur_state_]);
-				for (qdGameObjectStateVector::iterator it = states.begin(); it != states.end(); ++it) {
+				StateStatus status = state_status(_states[_cur_state]);
+				for (qdGameObjectStateVector::iterator it = _states.begin(); it != _states.end(); ++it) {
 					if (!(*it)->is_in_triggers()) {
-						if (states[cur_state_] != *it || status == STATE_DONE) {
+						if (_states[_cur_state] != *it || status == STATE_DONE) {
 							if ((*it)->check_conditions()) {
 								set_state(*it);
 								set_flag(QD_OBJ_STATE_CHANGE_FLAG);
-								status = state_status(states[cur_state_]);
+								status = state_status(_states[_cur_state]);
 								break;
 							}
 						}
 					}
 				}
 			}
-			if (state_status(states[cur_state_]) == STATE_DONE)
+			if (state_status(_states[_cur_state]) == STATE_DONE)
 				handle_state_end();
 		}
 #endif
@@ -307,9 +307,9 @@ void qdGameObjectAnimated::quant(float dt) {
 	// Если текущ. позиция не соответствует той, что была в начале кванта, то
 	// объект изменился
 	if (R().x != beg_r.x || R().y != beg_r.y || R().z != beg_r.z)
-		last_chg_time_ = qdGameDispatcher::get_dispatcher()->time();
+		_last_chg_time = qdGameDispatcher::get_dispatcher()->time();
 
-// debugC(3, kDebugLog, "%s %d %d %d %d", name(), animation_.cur_time(), R().x, R().y, R().z);
+// debugC(3, kDebugLog, "%s %d %d %d %d", name(), _animation.cur_time(), R().x, R().y, R().z);
 }
 
 bool qdGameObjectAnimated::load_script_body(const xml::tag *p) {
@@ -362,25 +362,25 @@ bool qdGameObjectAnimated::load_script_body(const xml::tag *p) {
 }
 
 int qdGameObjectAnimated::idle_time() const {
-	return qdGameDispatcher::get_dispatcher()->time() - last_chg_time_;
+	return qdGameDispatcher::get_dispatcher()->time() - _last_chg_time;
 }
 
 int qdGameObjectAnimated::shadow_color() const {
-	if (shadow_alpha_ != QD_NO_SHADOW_ALPHA)
-		return shadow_color_;
+	if (_shadow_alpha != QD_NO_SHADOW_ALPHA)
+		return _shadow_color;
 
-	if (cur_state_ != -1)
-		return states[cur_state_]->shadow_color();
+	if (_cur_state != -1)
+		return _states[_cur_state]->shadow_color();
 
 	return 0;
 }
 
 int qdGameObjectAnimated::shadow_alpha() const {
-	if (shadow_alpha_ != QD_NO_SHADOW_ALPHA)
-		return shadow_alpha_;
+	if (_shadow_alpha != QD_NO_SHADOW_ALPHA)
+		return _shadow_alpha;
 
-	if (cur_state_ != -1)
-		return states[cur_state_]->shadow_alpha();
+	if (_cur_state != -1)
+		return _states[_cur_state]->shadow_alpha();
 
 	return QD_NO_SHADOW_ALPHA;
 }
@@ -389,7 +389,7 @@ bool qdGameObjectAnimated::insert_state(int iBefore, qdGameObjectState *p) {
 	p->set_owner(this);
 	p->inc_reference_count();
 
-	states.insert(states.begin() + iBefore, p);
+	_states.insert(_states.begin() + iBefore, p);
 
 	if (!p->name()) {
 		Common::String nameStr;
@@ -403,7 +403,7 @@ bool qdGameObjectAnimated::add_state(qdGameObjectState *p) {
 	p->set_owner(this);
 	p->inc_reference_count();
 
-	states.push_back(p);
+	_states.push_back(p);
 
 	if (!p->name()) {
 		Common::String nameStr;
@@ -417,32 +417,32 @@ bool qdGameObjectAnimated::add_state(qdGameObjectState *p) {
 qdGameObjectState *qdGameObjectAnimated::remove_state(int state_num) {
 	if (state_num < 0 || state_num >= max_state()) return 0;
 
-	qdGameObjectStateVector::iterator it = states.begin() + state_num;
+	qdGameObjectStateVector::iterator it = _states.begin() + state_num;
 
 	qdGameObjectState *p = *it;
-	states.erase(it);
+	_states.erase(it);
 
 	p->dec_reference_count();
 
 #ifdef _QUEST_EDITOR
-	if (cur_state_ >= max_state())
-		set_state(--cur_state_);
+	if (_cur_state >= max_state())
+		set_state(--_cur_state);
 #else
-	if (cur_state_ >= max_state())
-		--cur_state_;
+	if (_cur_state >= max_state())
+		--_cur_state;
 #endif
 
 	return p;
 }
 
 bool qdGameObjectAnimated::remove_state(qdGameObjectState *p) {
-	qdGameObjectStateVector::iterator it = std::find(states.begin(), states.end(), p);
-	if (it != states.end()) {
-		states.erase(it);
+	qdGameObjectStateVector::iterator it = std::find(_states.begin(), _states.end(), p);
+	if (it != _states.end()) {
+		_states.erase(it);
 		p->dec_reference_count();
 
-		if (cur_state_ >= max_state())
-			set_state(--cur_state_);
+		if (_cur_state >= max_state())
+			set_state(--_cur_state);
 
 		return true;
 	}
@@ -452,7 +452,7 @@ bool qdGameObjectAnimated::remove_state(qdGameObjectState *p) {
 bool qdGameObjectAnimated::save_script_body(Common::WriteStream &fh, int indent) const {
 	qdGameObject::save_script_body(fh, indent);
 
-	for (auto &is : states) {
+	for (auto &is : _states) {
 		if (!is->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_GLOBAL_OWNER) || owner()->named_object_type() == QD_NAMED_OBJECT_DISPATCHER) {
 			is->save_script(fh, indent + 1);
 		} else {
@@ -465,29 +465,29 @@ bool qdGameObjectAnimated::save_script_body(Common::WriteStream &fh, int indent)
 		}
 	}
 
-	if (inventory_type_) {
+	if (_inventory_type) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<inventory_cell_type>%d</inventory_cell_type>\r\n", inventory_type_));
+		fh.writeString(Common::String::format("<inventory_cell_type>%d</inventory_cell_type>\r\n", _inventory_type));
 	}
 
-	if (!inventory_name_.empty()) {
+	if (!_inventory_name.empty()) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<inventory>%s</inventory>\r\n", qdscr_XML_string(inventory_name_.c_str())));
+		fh.writeString(Common::String::format("<inventory>%s</inventory>\r\n", qdscr_XML_string(_inventory_name.c_str())));
 	}
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<bound>%f %f %f</bound>\r\n", bound_.x, bound_.y, bound_.z));
+	fh.writeString(Common::String::format("<bound>%f %f %f</bound>\r\n", _bound.x, _bound.y, _bound.z));
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<default_pos>%f %f %f</default_pos>\r\n", default_r_.x, default_r_.y, default_r_.z));
+	fh.writeString(Common::String::format("<default_pos>%f %f %f</default_pos>\r\n", _default_r.x, _default_r.y, _default_r.z));
 
 	return true;
 }
@@ -513,27 +513,27 @@ bool qdGameObjectAnimated::save_script(Common::WriteStream &fh, int indent) cons
 }
 
 bool qdGameObjectAnimated::load_resources() {
-	debugC(4, kDebugLoad, "qdGameObjectAnimated::load_resources(): name: %s cur_state_: %d max_state: %d", transCyrillic(name()), cur_state_, max_state());
-	if (cur_state_ != -1) {
-		states[cur_state_]->register_resources();
-		states[cur_state_]->load_resources();
+	debugC(4, kDebugLoad, "qdGameObjectAnimated::load_resources(): name: %s _cur_state: %d max_state: %d", transCyrillic(name()), _cur_state, max_state());
+	if (_cur_state != -1) {
+		_states[_cur_state]->register_resources();
+		_states[_cur_state]->load_resources();
 
-		if (animation_.parent()) {
-			int fl = animation_.flags();
-			float tm = animation_.cur_time_rel();
-			animation_.parent()->create_reference(&animation_);
-			animation_.clear_flags();
-			animation_.set_flag(fl);
-			animation_.set_time_rel(tm);
+		if (_animation.parent()) {
+			int fl = _animation.flags();
+			float tm = _animation.cur_time_rel();
+			_animation.parent()->create_reference(&_animation);
+			_animation.clear_flags();
+			_animation.set_flag(fl);
+			_animation.set_time_rel(tm);
 		}
 	} else
 		set_default_state();
 
 	for (int i = 0; i < max_state(); i++) {
-		debugC(1, kDebugTemp, "i: %d forced_load: %d", i, states[i]->forced_load());
-		if (i != cur_state_ && states[i]->forced_load()) {
-			states[i]->register_resources();
-			states[i]->load_resources();
+		debugC(1, kDebugTemp, "i: %d forced_load: %d", i, _states[i]->forced_load());
+		if (i != _cur_state && _states[i]->forced_load()) {
+			_states[i]->register_resources();
+			_states[i]->load_resources();
 		}
 	}
 
@@ -543,18 +543,18 @@ bool qdGameObjectAnimated::load_resources() {
 
 void qdGameObjectAnimated::free_resources() {
 	for (int i = 0; i < max_state(); i++) {
-		states[i]->unregister_resources();
-		states[i]->free_resources();
+		_states[i]->unregister_resources();
+		_states[i]->free_resources();
 	}
 }
 
 void qdGameObjectAnimated::set_state(int st) {
 	debugC(3, kDebugGraphics, "qdGameObjectAnimated::set_state(%d)", st);
 	// Указание на смену состояния => объект меняется (устанавливаем время изм.)
-	last_chg_time_ = qdGameDispatcher::get_dispatcher()->time();
+	_last_chg_time = qdGameDispatcher::get_dispatcher()->time();
 
 	if (max_state() && st >= 0 && st <= max_state()) {
-		qdGameObjectState *p = states[st];
+		qdGameObjectState *p = _states[st];
 
 #ifndef _QUEST_EDITOR
 		if (p->activation_delay() > 0.001f) {
@@ -582,12 +582,12 @@ void qdGameObjectAnimated::set_state(int st) {
 			static_cast<qdGameScene * >(owner())->set_camera_mode(p->camera_mode(), this);
 #endif
 
-		if (cur_state_ != -1 && cur_state_ < max_state()) {
-			states[cur_state_]->stop_sound();
-			if (!states[cur_state_]->forced_load() && cur_state_ != st) {
-				states[cur_state_]->unregister_resources();
+		if (_cur_state != -1 && _cur_state < max_state()) {
+			_states[_cur_state]->stop_sound();
+			if (!_states[_cur_state]->forced_load() && _cur_state != st) {
+				_states[_cur_state]->unregister_resources();
 				p->register_resources();
-				states[cur_state_]->free_resources();
+				_states[_cur_state]->free_resources();
 			} else
 				p->register_resources();
 		} else
@@ -601,7 +601,7 @@ void qdGameObjectAnimated::set_state(int st) {
 		//если оно вдруг было изменено предыдущим состоянием
 		set_pos(default_R());
 #else
-		if (cur_state_ != -1 && cur_state_ < max_state() && states[cur_state_]->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY) && !p->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY)) {
+		if (_cur_state != -1 && _cur_state < max_state() && _states[_cur_state]->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY) && !p->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY)) {
 			dp->remove_from_inventory(this);
 
 			drop_flag(QD_OBJ_SCREEN_COORDS_FLAG);
@@ -609,7 +609,7 @@ void qdGameObjectAnimated::set_state(int st) {
 		}
 #endif
 
-		if (cur_state_ != st) {
+		if (_cur_state != st) {
 			set_last_state(get_cur_state());
 			set_last_inventory_state(get_cur_state());
 			set_cur_state(st);
@@ -689,7 +689,7 @@ void qdGameObjectAnimated::set_state(int st) {
 			set_animation_info(static_cast<qdGameObjectStateStatic *>(p)->animation_info());
 			break;
 		case qdGameObjectState::STATE_MASK:
-			animation_.clear();
+			_animation.clear();
 			break;
 		default:
 			break;
@@ -704,8 +704,8 @@ void qdGameObjectAnimated::set_state(int st) {
 			set_screen_rotation(p->transform().angle(), p->transform_speed().angle());
 			set_screen_scale(p->transform().scale(), p->transform_speed().scale());
 
-			if (!last_state_)
-				current_transform_ = target_transform_;
+			if (!_last_state)
+				_current_transform = _target_transform;
 		}
 
 		if (!p->has_sound_delay())
@@ -714,10 +714,10 @@ void qdGameObjectAnimated::set_state(int st) {
 	}
 
 	if (st == -1) {
-		if (cur_state_ != -1 && cur_state_ < max_state()) {
-			states[cur_state_]->stop_sound();
-			states[cur_state_]->unregister_resources();
-			states[cur_state_]->free_resources();
+		if (_cur_state != -1 && _cur_state < max_state()) {
+			_states[_cur_state]->stop_sound();
+			_states[_cur_state]->unregister_resources();
+			_states[_cur_state]->free_resources();
 		}
 
 		set_cur_state(st);
@@ -727,7 +727,7 @@ void qdGameObjectAnimated::set_state(int st) {
 
 void qdGameObjectAnimated::set_state(qdGameObjectState *p) {
 	for (int i = 0; i < max_state(); i ++) {
-		if (states[i] == p) {
+		if (_states[i] == p) {
 			set_state(i);
 			return;
 		}
@@ -735,8 +735,8 @@ void qdGameObjectAnimated::set_state(qdGameObjectState *p) {
 }
 
 bool qdGameObjectAnimated::is_visible() const {
-	if (max_state() && cur_state_ != -1) {
-		if (states[cur_state_]->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_HIDDEN))
+	if (max_state() && _cur_state != -1) {
+		if (_states[_cur_state]->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_HIDDEN))
 			return false;
 	}
 
@@ -744,9 +744,9 @@ bool qdGameObjectAnimated::is_visible() const {
 }
 
 void qdGameObjectAnimated::set_bound(const Vect3f &b) {
-	bound_ = b;
+	_bound = b;
 	Vect3f b2 = b / 2.0f;
-	radius_ = b2.norm();
+	_radius = b2.norm();
 }
 
 bool qdGameObjectAnimated::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
@@ -761,7 +761,7 @@ void qdGameObjectAnimated::debug_redraw() const {
 
 	if (has_bound()) {
 		draw_bound();
-//		draw_grid_zone(grid_size_);
+//		draw_grid_zone(_grid_size);
 	}
 
 	Vect3f pos = R();
@@ -789,20 +789,20 @@ void qdGameObjectAnimated::debug_redraw() const {
 
 	Vect2s ssz = screen_size();
 
-	if (!current_transform_()) {
+	if (!_current_transform()) {
 		grDispatcher::instance()->Rectangle(
 		    scr_pos.x - ssz.x / 2,
 		    scr_pos.y - ssz.y / 2,
 		    ssz.x, ssz.y,
 		    0x00FF0000, 0x000000FF, GR_OUTLINED);
 	} else {
-		Vect2f scale(current_transform_.scale());
+		Vect2f scale(_current_transform.scale());
 
 		ssz.x = round(float(ssz.x) * scale.x);
 		ssz.y = round(float(ssz.y) * scale.y);
 
-		float sn = sinf(-current_transform_.angle());
-		float cs = cosf(-current_transform_.angle());
+		float sn = sinf(-_current_transform.angle());
+		float cs = cosf(-_current_transform.angle());
 
 		Vect2i v0, v1, p0, p1;
 
@@ -866,23 +866,23 @@ bool qdGameObjectAnimated::hit(int x, int y) const {
 	if (!is_visible()) return false;
 
 	Vect2s sr = screen_pos();
-	if (cur_state_ != -1) {
-		if (states[cur_state_]->state_type() == qdGameObjectState::STATE_MASK)
-			return static_cast<qdGameObjectStateMask * >(states[cur_state_])->hit(x, y);
+	if (_cur_state != -1) {
+		if (_states[_cur_state]->state_type() == qdGameObjectState::STATE_MASK)
+			return static_cast<qdGameObjectStateMask * >(_states[_cur_state])->hit(x, y);
 		else {
-			if (current_transform_()) {
+			if (_current_transform()) {
 				x -= sr.x;
 				y -= sr.y;
 
-				float cs = cosf(current_transform_.angle());
-				float sn = sinf(current_transform_.angle());
+				float cs = cosf(_current_transform.angle());
+				float sn = sinf(_current_transform.angle());
 
-				int xx = round(1.f / current_transform_.scale().x * (float(x) * cs + float(y) * sn));
-				int yy = round(1.f / current_transform_.scale().y * (float(-x) * sn + float(y) * cs));
+				int xx = round(1.f / _current_transform.scale().x * (float(x) * cs + float(y) * sn));
+				int yy = round(1.f / _current_transform.scale().y * (float(-x) * sn + float(y) * cs));
 
-				return animation_.hit(xx, yy);
+				return _animation.hit(xx, yy);
 			} else
-				return animation_.hit(x - sr.x, y - sr.y);
+				return _animation.hit(x - sr.x, y - sr.y);
 		}
 	}
 
@@ -890,7 +890,7 @@ bool qdGameObjectAnimated::hit(int x, int y) const {
 }
 
 qdGameObjectState *qdGameObjectAnimated::get_state(const char *state_name) {
-	for (auto &it : states) {
+	for (auto &it : _states) {
 		if (it-> name() && !strcmp(it->name(), state_name)) {
 			return it;
 		}
@@ -900,7 +900,7 @@ qdGameObjectState *qdGameObjectAnimated::get_state(const char *state_name) {
 }
 
 const qdGameObjectState *qdGameObjectAnimated::get_state(const char *state_name) const {
-	for (auto &it : states) {
+	for (auto &it : _states) {
 		const qdGameObjectState *p = it;
 		if (it->name() && !strcmp(it->name(), state_name))
 			return p;
@@ -911,23 +911,23 @@ const qdGameObjectState *qdGameObjectAnimated::get_state(const char *state_name)
 
 qdGameObjectState *qdGameObjectAnimated::get_state(int state_index) {
 	if (state_index >= 0 && state_index < max_state())
-		return states[state_index];
+		return _states[state_index];
 
 	return NULL;
 }
 
 const qdGameObjectState *qdGameObjectAnimated::get_state(int state_index) const {
 	if (state_index >= 0 && state_index < max_state())
-		return states[state_index];
+		return _states[state_index];
 
 	return NULL;
 }
 
 qdGameObjectAnimated::StateStatus qdGameObjectAnimated::state_status(const qdGameObjectState *p) const {
-	if (queued_state_ == p)
+	if (_queued_state == p)
 		return STATE_QUEUED;
 
-	if (cur_state_ != -1 && states[cur_state_] == p) {
+	if (_cur_state != -1 && _states[_cur_state] == p) {
 		if (p->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOVE_TO_INVENTORY_FAILED))
 			return STATE_ACTIVE;
 
@@ -965,7 +965,7 @@ qdGameObjectAnimated::StateStatus qdGameObjectAnimated::state_status(const qdGam
 			const qdGameObjectStateStatic *sp = static_cast<const qdGameObjectStateStatic *>(p);
 			if (const qdAnimation * anm = sp->animation()) {
 				if (anm->is_reference(get_animation())) {
-					if (!animation_.is_finished())
+					if (!_animation.is_finished())
 						return STATE_ACTIVE;
 				} else
 					return STATE_INACTIVE;
@@ -991,26 +991,26 @@ void qdGameObjectAnimated::draw_contour(unsigned color) const {
 }
 
 int qdGameObjectAnimated::mouse_cursor_ID() const {
-	if (cur_state_ != -1)
-		return states[cur_state_]->mouse_cursor_ID();
+	if (_cur_state != -1)
+		return _states[_cur_state]->mouse_cursor_ID();
 
 	return qdGameObjectState::CURSOR_UNASSIGNED;
 }
 
 void qdGameObjectAnimated::restore_state() {
-	if (qdGameObjectState * st = states[cur_state_]->prev_state()) {
-		states[cur_state_]->set_prev_state(0);
+	if (qdGameObjectState * st = _states[_cur_state]->prev_state()) {
+		_states[_cur_state]->set_prev_state(0);
 		set_state(st);
 	}
 }
 
 void qdGameObjectAnimated::merge_states(qdGameObjectAnimated *p) {
-	if (states.empty() || (!p->states.empty() && states[0] != p->states[0])) {
+	if (_states.empty() || (!p->_states.empty() && _states[0] != p->_states[0])) {
 		for (int i = 0; i < p->max_state(); i ++) {
-			insert_state(i, p->states[i]);
-			p->states[i]->set_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_GLOBAL_OWNER);
+			insert_state(i, p->_states[i]);
+			p->_states[i]->set_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_GLOBAL_OWNER);
 #ifdef _QUEST_EDITOR
-			p->states[i]->set_ref_owner(p);
+			p->_states[i]->set_ref_owner(p);
 #endif
 		}
 	}
@@ -1023,30 +1023,30 @@ void qdGameObjectAnimated::merge_states(qdGameObjectAnimated *p) {
 
 void qdGameObjectAnimated::split_states(qdGameObjectAnimated *p) {
 #ifndef _QUEST_EDITOR
-	int st = cur_state_;
+	int st = _cur_state;
 #endif
 
-	if (!states.empty() && !p->states.empty() && states[0] == p->states[0]) {
+	if (!_states.empty() && !p->_states.empty() && _states[0] == p->_states[0]) {
 		for (int i = 0; i < p->max_state(); i ++) {
 			remove_state(0);
-			p->states[i]->drop_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_GLOBAL_OWNER);
-			p->states[i]->set_owner(p);
+			p->_states[i]->drop_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_GLOBAL_OWNER);
+			p->_states[i]->set_owner(p);
 		}
 	}
 
 #ifndef _QUEST_EDITOR
-	cur_state_ = st;
+	_cur_state = st;
 #endif
 }
 
 bool qdGameObjectAnimated::init_grid_zone() {
 	if (has_bound() && owner() && owner()->named_object_type() == QD_NAMED_OBJECT_SCENE) {
 		Vect3f b = bound(false);
-		grid_size_.x = b.xi() / static_cast<qdGameScene *>(owner())->get_camera()->get_cell_sx();
-		grid_size_.y = b.yi() / static_cast<qdGameScene *>(owner())->get_camera()->get_cell_sy();
+		_grid_size.x = b.xi() / static_cast<qdGameScene *>(owner())->get_camera()->get_cell_sx();
+		_grid_size.y = b.yi() / static_cast<qdGameScene *>(owner())->get_camera()->get_cell_sy();
 
-		if (grid_size_.x < 1) grid_size_.x = 1;
-		if (grid_size_.y < 1) grid_size_.y = 1;
+		if (_grid_size.x < 1) _grid_size.x = 1;
+		if (_grid_size.y < 1) _grid_size.y = 1;
 
 		return true;
 	}
@@ -1061,7 +1061,7 @@ bool qdGameObjectAnimated::toggle_grid_zone(bool make_walkable) {
 }
 
 bool qdGameObjectAnimated::save_grid_zone() {
-	grid_r_ = R();
+	_grid_r = R();
 	return true;
 }
 
@@ -1071,10 +1071,10 @@ bool qdGameObjectAnimated::restore_grid_zone() {
 
 qdGameObjectState *qdGameObjectAnimated::get_inventory_state() {
 #ifndef _QUEST_EDITOR
-	if (last_inventory_state_) return last_inventory_state_;
+	if (_last_inventory_state) return _last_inventory_state;
 
-	if (states.size()) {
-		for (auto &it : states) {
+	if (_states.size()) {
+		for (auto &it : _states) {
 			if (it->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY))
 				return it;
 		}
@@ -1085,22 +1085,22 @@ qdGameObjectState *qdGameObjectAnimated::get_inventory_state() {
 
 #ifdef _QUEST_EDITOR
 const Vect3f &qdGameObjectAnimated::obj_bound() const {
-	return bound_;
+	return _bound;
 }
 #endif // _QUEST_EDITOR
 
 const Vect3f &qdGameObjectAnimated::bound(bool perspective_correction) const {
-	if (cur_state_ != -1 && states[cur_state_]->has_bound())
-		return states[cur_state_]->bound();
+	if (_cur_state != -1 && _states[_cur_state]->has_bound())
+		return _states[_cur_state]->bound();
 
-	return bound_;
+	return _bound;
 }
 
 float qdGameObjectAnimated::radius() const {
-	if (cur_state_ != -1 && states[cur_state_]->has_bound())
-		return states[cur_state_]->radius();
+	if (_cur_state != -1 && _states[_cur_state]->has_bound())
+		return _states[_cur_state]->radius();
 
-	return radius_;
+	return _radius;
 }
 
 void qdGameObjectAnimated::draw_bound(Vect3f r,
@@ -1160,8 +1160,8 @@ bool qdGameObjectAnimated::inters_with_bound(Vect3f bnd, Vect3f cen,
 }
 
 int qdGameObjectAnimated::num_directions() const {
-	if (cur_state_ != -1 && states[cur_state_]->state_type() == qdGameObjectState::STATE_WALK) {
-		qdAnimationSet *p = static_cast<qdGameObjectStateWalk *>(states[cur_state_])->animation_set();
+	if (_cur_state != -1 && _states[_cur_state]->state_type() == qdGameObjectState::STATE_WALK) {
+		qdAnimationSet *p = static_cast<qdGameObjectStateWalk *>(_states[_cur_state])->animation_set();
 		if (p)
 			return p->size();
 	}
@@ -1170,7 +1170,7 @@ int qdGameObjectAnimated::num_directions() const {
 }
 
 bool qdGameObjectAnimated::auto_bound() {
-	if (cur_state_ != -1) {
+	if (_cur_state != -1) {
 		qdAnimation *ap = NULL;
 
 		if (get_cur_state()->state_type() == qdGameObjectState::STATE_WALK) {
@@ -1200,7 +1200,7 @@ bool qdGameObjectAnimated::auto_bound() {
 }
 
 bool qdGameObjectAnimated::handle_state_end() {
-	qdGameObjectState *sp = states[cur_state_];
+	qdGameObjectState *sp = _states[_cur_state];
 
 	if (sp->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_RESTORE_PREV_STATE))
 		restore_state();
@@ -1213,7 +1213,7 @@ bool qdGameObjectAnimated::handle_state_end() {
 				gp->remove_from_inventory(this);
 		}
 		sp->stop_sound();
-		animation_.clear();
+		_animation.clear();
 		set_flag(QD_OBJ_HIDDEN_FLAG);
 	}
 
@@ -1242,16 +1242,16 @@ bool qdGameObjectAnimated::handle_state_end() {
 bool qdGameObjectAnimated::update_screen_pos() {
 	if (qdGameObject::update_screen_pos()) {
 		Vect2i r = get_screen_R();
-		Vect2i delta = (cur_state_ != -1) ? Vect2i(states[cur_state_]->center_offset()) : Vect2i(0, 0);
+		Vect2i delta = (_cur_state != -1) ? Vect2i(_states[_cur_state]->center_offset()) : Vect2i(0, 0);
 
-		if (current_transform_()) {
+		if (_current_transform()) {
 			if (delta.x || delta.y) {
-				Vect2f scale(current_transform_.scale());
+				Vect2f scale(_current_transform.scale());
 
 				delta.x = round(float(delta.x) * scale.x);
 				delta.y = round(float(delta.y) * scale.y);
 
-				float angle = current_transform_.angle();
+				float angle = _current_transform.angle();
 
 				r.x += round(float(delta.x) * cosf(angle) - float(delta.y) * sinf(angle));
 				r.y += round(float(delta.x) * sinf(angle) + float(delta.y) * cosf(angle));
@@ -1272,7 +1272,7 @@ void qdGameObjectAnimated::set_default_state() {
 		set_state(p);
 	else {
 #ifdef _QUEST_EDITOR
-		if (!states.empty()) {
+		if (!_states.empty()) {
 			set_state((int)0);
 			return;
 		}
@@ -1282,26 +1282,26 @@ void qdGameObjectAnimated::set_default_state() {
 }
 
 qdGameObjectState *qdGameObjectAnimated::get_default_state() {
-	for (int i = 0; i < states.size(); i ++) {
-		if (!states[i]->is_in_triggers() && !states[i]->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY))
-			return states[i];
+	for (int i = 0; i < _states.size(); i ++) {
+		if (!_states[i]->is_in_triggers() && !_states[i]->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY))
+			return _states[i];
 	}
 
 	return NULL;
 }
 
 const qdGameObjectState *qdGameObjectAnimated::get_default_state() const {
-	for (int i = 0; i < states.size(); i ++) {
-		if (!states[i]->is_in_triggers() && !states[i]->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY))
-			return states[i];
+	for (int i = 0; i < _states.size(); i ++) {
+		if (!_states[i]->is_in_triggers() && !_states[i]->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY))
+			return _states[i];
 	}
 
 	return NULL;
 }
 
 int qdGameObjectAnimated::get_state_index(const qdGameObjectState *p) const {
-	for (int i = 0; i < states.size(); i ++) {
-		if (states[i] == p)
+	for (int i = 0; i < _states.size(); i ++) {
+		if (_states[i] == p)
 			return i;
 	}
 
@@ -1312,37 +1312,37 @@ bool qdGameObjectAnimated::load_data(Common::SeekableReadStream &fh, int save_ve
 	debugC(4, kDebugSave, "    qdGameObjectAnimated::load_data before: %ld", fh.pos());
 	if (!qdGameObject::load_data(fh, save_version)) return false;
 
-	cur_state_ = fh.readSint32LE();
+	_cur_state = fh.readSint32LE();
 
-	for (int i = 0; i < states.size(); i++) {
-		if (!states[i]->load_data(fh, save_version))
+	for (int i = 0; i < _states.size(); i++) {
+		if (!_states[i]->load_data(fh, save_version))
 			return false;
 	}
 
-	if (!animation_.load_data(fh, save_version)) return false;
+	if (!_animation.load_data(fh, save_version)) return false;
 
 	int idx = fh.readSint32LE();
 	if (idx != -1)
-		queued_state_ = get_state(idx);
+		_queued_state = get_state(idx);
 	else
-		queued_state_ = NULL;
+		_queued_state = NULL;
 
 	idx = fh.readSint32LE();
 	if (idx != -1)
-		last_state_ = get_state(idx);
+		_last_state = get_state(idx);
 	else
-		last_state_ = NULL;
+		_last_state = NULL;
 
 	if (save_version >= 103) {
 		idx = fh.readSint32LE();
 		if (idx != -1)
-			last_inventory_state_ = get_state(idx);
+			_last_inventory_state = get_state(idx);
 		else
-			last_inventory_state_ = NULL;
+			_last_inventory_state = NULL;
 	}
 
-	inventory_cell_index_ = fh.readSint32LE();
-	last_chg_time_ = fh.readUint32LE();
+	_inventory_cell_index = fh.readSint32LE();
+	_last_chg_time = fh.readUint32LE();
 
 	debugC(4, kDebugSave, "    qdGameObjectAnimated::load_data after: %ld", fh.pos());
 
@@ -1353,63 +1353,63 @@ bool qdGameObjectAnimated::save_data(Common::WriteStream &fh) const {
 	debugC(4, kDebugSave, "    qdGameObjectAnimated::save_data before: %ld", fh.pos());
 	if (!qdGameObject::save_data(fh)) return false;
 
-	fh.writeSint32LE(cur_state_);
+	fh.writeSint32LE(_cur_state);
 
-	for (int i = 0; i < states.size(); i++) {
-		if (!states[i]->save_data(fh))
+	for (int i = 0; i < _states.size(); i++) {
+		if (!_states[i]->save_data(fh))
 			return false;
 	}
 
-	if (!animation_.save_data(fh)) return false;
+	if (!_animation.save_data(fh)) return false;
 
 	int idx = -1;
-	if (queued_state_)
-		idx = get_state_index(queued_state_);
+	if (_queued_state)
+		idx = get_state_index(_queued_state);
 	fh.writeSint32LE(idx);
 
 	idx = -1;
-	if (last_state_)
-		idx = get_state_index(last_state_);
+	if (_last_state)
+		idx = get_state_index(_last_state);
 	fh.writeSint32LE(idx);
 
 	idx = -1;
-	if (last_inventory_state_)
-		idx = get_state_index(last_inventory_state_);
+	if (_last_inventory_state)
+		idx = get_state_index(_last_inventory_state);
 	fh.writeSint32LE(idx);
 
-	fh.writeSint32LE(inventory_cell_index_);
+	fh.writeSint32LE(_inventory_cell_index);
 
-	fh.writeSint32LE(last_chg_time_);
+	fh.writeSint32LE(_last_chg_time);
 
 	debugC(4, kDebugSave, "    qdGameObjectAnimated::save_data after: %ld", fh.pos());
 	return true;
 }
 
 bool qdGameObjectAnimated::is_state_active(const char *state_name) const {
-	if (cur_state_ != -1 && !strcmp(states[cur_state_]->name(), state_name))
+	if (_cur_state != -1 && !strcmp(_states[_cur_state]->name(), state_name))
 		return true;
 
 	return false;
 }
 
 bool qdGameObjectAnimated::was_state_previous(const char *state_name) const {
-	if (last_state_ && !strcmp(last_state_->name(), state_name))
+	if (_last_state && !strcmp(_last_state->name(), state_name))
 		return true;
 
 	return false;
 }
 
 bool qdGameObjectAnimated::is_state_waiting(const char *state_name) const {
-	if (queued_state_ && !scumm_stricmp(queued_state_->name(), state_name))
+	if (_queued_state && !scumm_stricmp(_queued_state->name(), state_name))
 		return true;
 
 	return false;
 }
 
 bool qdGameObjectAnimated::was_state_active(const char *state_name) const {
-	for (int i = 0; i < states.size(); i++) {
-		if (!strcmp(states[i]->name(), state_name))
-			return states[i]->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_WAS_ACTIVATED);
+	for (int i = 0; i < _states.size(); i++) {
+		if (!strcmp(_states[i]->name(), state_name))
+			return _states[i]->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_WAS_ACTIVATED);
 	}
 
 	return false;
@@ -1431,7 +1431,7 @@ bool qdGameObjectAnimated::can_change_state(const qdGameObjectState *state) cons
 
 void qdGameObjectAnimated::draw_grid_zone(const Vect2s sz) const {
 	const qdCamera *cp = qdCamera::current_camera();
-	Vect2s gr = cp->get_cell_index(grid_r_.x, grid_r_.y);
+	Vect2s gr = cp->get_cell_index(_grid_r.x, _grid_r.y);
 
 	if (gr.x == -1) return;
 
@@ -1457,7 +1457,7 @@ bool qdGameObjectAnimated::set_grid_zone_attributes(const Vect2f &r, int attr) c
 
 		if (sr.x == -1) return false;
 
-		cp->set_grid_attributes(sr, grid_size_, attr);
+		cp->set_grid_attributes(sr, _grid_size, attr);
 
 		return true;
 	}
@@ -1472,7 +1472,7 @@ bool qdGameObjectAnimated::drop_grid_zone_attributes(const Vect2f &r, int attr) 
 
 		if (sr.x == -1) return false;
 
-		cp->drop_grid_attributes(sr, grid_size_, attr);
+		cp->drop_grid_attributes(sr, _grid_size, attr);
 
 		return true;
 	}
@@ -1487,34 +1487,34 @@ bool qdGameObjectAnimated::check_grid_zone_attributes(const Vect2f &r, int attr)
 
 		if (sr.x == -1) return false;
 
-		return cp->check_grid_attributes(sr, grid_size_, attr);
+		return cp->check_grid_attributes(sr, _grid_size, attr);
 	}
 
 	return false;
 }
 
 bool qdGameObjectAnimated::set_grid_zone_attributes(int attr) const {
-	return set_grid_zone_attributes(grid_r_, attr);
+	return set_grid_zone_attributes(_grid_r, attr);
 }
 
 bool qdGameObjectAnimated::drop_grid_zone_attributes(int attr) const {
-	return drop_grid_zone_attributes(grid_r_, attr);
+	return drop_grid_zone_attributes(_grid_r, attr);
 }
 
 bool qdGameObjectAnimated::check_grid_zone_attributes(int attr) const {
-	return check_grid_zone_attributes(grid_r_, attr);
+	return check_grid_zone_attributes(_grid_r, attr);
 }
 
 bool qdGameObjectAnimated::has_camera_mode() const {
-	if (cur_state_ != -1)
-		return states[cur_state_]->has_camera_mode();
+	if (_cur_state != -1)
+		return _states[_cur_state]->has_camera_mode();
 
 	return false;
 }
 
 const qdCameraMode &qdGameObjectAnimated::camera_mode() const {
-	if (cur_state_ != -1)
-		return states[cur_state_]->camera_mode();
+	if (_cur_state != -1)
+		return _states[_cur_state]->camera_mode();
 
 	static qdCameraMode md;
 	return md;
@@ -1523,16 +1523,16 @@ const qdCameraMode &qdGameObjectAnimated::camera_mode() const {
 bool qdGameObjectAnimated::init() {
 	if (!qdGameObject::init()) return false;
 
-	last_state_ = NULL;
+	_last_state = NULL;
 
 	set_pos(default_R());
 	set_cur_state(-1);
 
-	queued_state_ = NULL;
-	last_inventory_state_ = NULL;
+	_queued_state = NULL;
+	_last_inventory_state = NULL;
 
-	for (int i = 0; i < states.size(); i++)
-		states[i]->init();
+	for (int i = 0; i < _states.size(); i++)
+		_states[i]->init();
 
 	return true;
 }
@@ -1540,30 +1540,30 @@ bool qdGameObjectAnimated::init() {
 grScreenRegion qdGameObjectAnimated::screen_region() const {
 	if (is_visible()) {
 		grScreenRegion reg = grScreenRegion::EMPTY;
-		if (current_transform_()) {
+		if (_current_transform()) {
 			Vect2i r = screen_pos();
 			/*
-			            Vect2i delta = (cur_state_ != -1) ? states[cur_state_]->center_offset() : Vect2i(0,0);
+			            Vect2i delta = (_cur_state != -1) ? _states[_cur_state]->center_offset() : Vect2i(0,0);
 			            if(delta.x || delta.y){
 			                r -= delta;
 
-			                Vect2f scale(current_transform_.scale());
+			                Vect2f scale(_current_transform.scale());
 
 			                delta.x = round(float(delta.x) * scale.x);
 			                delta.y = round(float(delta.y) * scale.y);
 
-			                float angle = current_transform_.angle();
+			                float angle = _current_transform.angle();
 
 			                r.x += round(float(delta.x) * cosf(angle) - float(delta.y) * sinf(angle));
 			                r.y += round(float(delta.x) * sinf(angle) + float(delta.y) * cosf(angle));
 			            }
 			*/
-			if (const qdAnimationFrame * fp = animation_.get_cur_frame()) {
-				Vect2f scale(current_transform_.scale());
+			if (const qdAnimationFrame * fp = _animation.get_cur_frame()) {
+				Vect2f scale(_current_transform.scale());
 				Vect2f size(fp->size_x(), fp->size_y());
 
-				float sn = sinf(current_transform_.angle());
-				float cs = cosf(current_transform_.angle());
+				float sn = sinf(_current_transform.angle());
+				float cs = cosf(_current_transform.angle());
 
 				int sx = round(fabs(cs) * float(size.x) * scale.x + fabs(sn) * float(size.y) * scale.y) + 2;
 				int sy = round(fabs(sn) * float(size.x) * scale.x + fabs(cs) * float(size.y) * scale.y) + 2;
@@ -1572,7 +1572,7 @@ grScreenRegion qdGameObjectAnimated::screen_region() const {
 				reg.move(r.x, r.y);
 			}
 		} else {
-			reg = animation_.screen_region();
+			reg = _animation.screen_region();
 			reg.move(screen_pos().x, screen_pos().y);
 		}
 
@@ -1582,24 +1582,24 @@ grScreenRegion qdGameObjectAnimated::screen_region() const {
 }
 
 void qdGameObjectAnimated::post_redraw() {
-	last_screen_region_ = screen_region();
-	last_screen_depth_ = screen_depth();
-	last_frame_ = animation_.get_cur_frame();
-	last_transform_ = current_transform_;
+	_last_screen_region = screen_region();
+	_last_screen_depth = screen_depth();
+	_last_frame = _animation.get_cur_frame();
+	_last_transform = _current_transform;
 
-	lastShadowColor_ = shadow_color();
-	lastShadowAlpha_ = shadow_alpha();
+	_lastShadowColor = shadow_color();
+	_lastShadowAlpha = shadow_alpha();
 }
 
 void qdGameObjectAnimated::set_states_owner() {
 	for (int i = 0; i < max_state(); i++)
-		states[i]->set_owner(this);
+		_states[i]->set_owner(this);
 }
 
 qdGameObjectState *qdGameObjectAnimated::get_mouse_state() {
 #ifndef _QUEST_EDITOR
-	if (states.size()) {
-		for (auto &it : states) {
+	if (_states.size()) {
+		for (auto &it : _states) {
 			if (it->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_STATE))
 				return it;
 		}
@@ -1610,8 +1610,8 @@ qdGameObjectState *qdGameObjectAnimated::get_mouse_state() {
 
 qdGameObjectState *qdGameObjectAnimated::get_mouse_hover_state() {
 #ifndef _QUEST_EDITOR
-	if (states.size()) {
-		for (auto &it : states) {
+	if (_states.size()) {
+		for (auto &it : _states) {
 			if (it->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_HOVER_STATE))
 				return it;
 		}
@@ -1624,30 +1624,30 @@ void qdGameObjectAnimated::draw_shadow(int offs_x, int offs_y, unsigned color, i
 	if (alpha == QD_NO_SHADOW_ALPHA || get_animation()->is_empty())
 		return;
 
-	if (!animation_.is_empty()) {
+	if (!_animation.is_empty()) {
 		Vect2i r = screen_pos() + Vect2i(offs_x, offs_y);
-		if (current_transform_()) {
-			/*          Vect2i delta = (cur_state_ != -1) ? states[cur_state_]->center_offset() : Vect2i(0,0);
+		if (_current_transform()) {
+			/*          Vect2i delta = (_cur_state != -1) ? _states[_cur_state]->center_offset() : Vect2i(0,0);
 			            if(delta.x || delta.y){
 			                r -= delta;
 
-			                Vect2f scale(current_transform_.scale());
+			                Vect2f scale(_current_transform.scale());
 
 			                delta.x = round(float(delta.x) * scale.x);
 			                delta.y = round(float(delta.y) * scale.y);
 
-			                float angle = current_transform_.angle();
+			                float angle = _current_transform.angle();
 
 			                r.x += round(float(delta.x) * cosf(angle) - float(delta.y) * sinf(angle));
 			                r.y += round(float(delta.x) * sinf(angle) + float(delta.y) * cosf(angle));
 			            }
 			*/
-			if (current_transform_.has_scale())
-				animation_.draw_mask_rot(r.x, r.y, screen_depth(), current_transform_.angle(), grDispatcher::instance()->make_rgb(color), alpha, current_transform_.scale());
+			if (_current_transform.has_scale())
+				_animation.draw_mask_rot(r.x, r.y, screen_depth(), _current_transform.angle(), grDispatcher::instance()->make_rgb(color), alpha, _current_transform.scale());
 			else
-				animation_.draw_mask_rot(r.x, r.y, screen_depth(), current_transform_.angle(), grDispatcher::instance()->make_rgb(color), alpha);
+				_animation.draw_mask_rot(r.x, r.y, screen_depth(), _current_transform.angle(), grDispatcher::instance()->make_rgb(color), alpha);
 		} else
-			animation_.draw_mask(r.x, r.y, screen_depth(), grDispatcher::instance()->make_rgb(color), alpha);
+			_animation.draw_mask(r.x, r.y, screen_depth(), grDispatcher::instance()->make_rgb(color), alpha);
 	}
 }
 
@@ -1655,7 +1655,7 @@ bool qdGameObjectAnimated::get_debug_info(Common::String &buf) const {
 	qdGameObject::get_debug_info(buf);
 #ifdef __QD_DEBUG_ENABLE__
 	if (const qdGameObjectState * p = get_cur_state()) {
-		buf += Common::String::format("%s %f", p->name(), animation_.cur_time());
+		buf += Common::String::format("%s %f", p->name(), _animation.cur_time());
 
 		if (queued_state())
 			buf += Common::String::format("wait %s", queued_state()->name());

@@ -69,7 +69,7 @@ public:
 	//! Возвращает true, если у объекта выставлен баунд.
 	bool has_bound() const {
 		if (check_flag(QD_OBJ_HAS_BOUND_FLAG)) return true;
-		if (cur_state_ != -1 && states[cur_state_]->has_bound()) return true;
+		if (_cur_state != -1 && _states[_cur_state]->has_bound()) return true;
 		return false;
 	}
 	//! Отрисовка баунда (для отладки).
@@ -80,15 +80,15 @@ public:
 
 	//! Возвращает номер текущего состояния объекта.
 	int cur_state() const {
-		return cur_state_;
+		return _cur_state;
 	}
 	//! Устанавливает номер текущего состояния объекта.
 	void set_cur_state(int st) {
-		cur_state_ = st;
+		_cur_state = st;
 	}
 	//! Возвращает количество состояний объекта.
 	int max_state() const {
-		return states.size();
+		return _states.size();
 	}
 	//! Возвращает номер состояния или -1 если не может такое состояние найти.
 	int get_state_index(const qdGameObjectState *p) const;
@@ -103,7 +103,7 @@ public:
 
 	//! Возвращает true, если состояние state активно.
 	bool is_state_active(const qdGameObjectState *p) const {
-		if (cur_state_ != -1 && states[cur_state_] == p)
+		if (_cur_state != -1 && _states[_cur_state] == p)
 			return true;
 
 		return false;
@@ -113,7 +113,7 @@ public:
 	bool was_state_previous(const char *state_name) const;
 	//! Возвращает true, если состояние p было активно перед активным в данный момент состоянием.
 	bool was_state_previous(const qdGameObjectState *p) const {
-		return (last_state_ == p);
+		return (_last_state == p);
 	}
 
 	//! Возвращает true, если состояние state было активировано.
@@ -122,7 +122,7 @@ public:
 	}
 
 	bool is_state_waiting(const qdGameObjectState *p) const {
-		if (queued_state_ == p) return true;
+		if (_queued_state == p) return true;
 		return false;
 	}
 
@@ -130,7 +130,7 @@ public:
 
 	//! Возвращает состояния объекта.
 	const qdGameObjectStateVector &state_vector() const {
-		return states;
+		return _states;
 	}
 
 	//! Возвращает true, если объект в данный момент может менять состояние.
@@ -149,14 +149,14 @@ public:
 	}
 
 	void set_queued_state(qdGameObjectState *st) {
-		queued_state_ = st;
+		_queued_state = st;
 	}
 
 	qdGameObjectState *queued_state() {
-		return queued_state_;
+		return _queued_state;
 	}
 	const qdGameObjectState *queued_state() const {
-		return queued_state_;
+		return _queued_state;
 	}
 
 	void merge_states(qdGameObjectAnimated *p);
@@ -180,10 +180,10 @@ public:
 	int num_directions() const;
 
 	const Vect3f &default_R() const {
-		return default_r_;
+		return _default_r;
 	}
 	void set_default_pos(const Vect3f &r) {
-		default_r_ = r;
+		_default_r = r;
 	}
 
 	void set_default_state();
@@ -198,16 +198,16 @@ public:
 
 	// Animation
 	qdAnimation *get_animation() {
-		return &animation_;
+		return &_animation;
 	}
 	const qdAnimation *get_animation() const {
-		return &animation_;
+		return &_animation;
 	}
 
 	void set_animation(qdAnimation *p, const qdAnimationInfo *inf = NULL);
 	void set_animation_info(qdAnimationInfo *inf);
 	Vect2s screen_size() const {
-		return Vect2s(animation_.size_x(), animation_.size_y());
+		return Vect2s(_animation.size_x(), _animation.size_y());
 	}
 
 	void set_screen_rotation(float target_angle, float speed);
@@ -217,15 +217,15 @@ public:
 	const Vect2f &screen_scale() const;
 
 	bool has_screen_transform() const {
-		return current_transform_();
+		return _current_transform();
 	}
 
 	// Inventory
 	int inventory_type() const {
-		return inventory_type_;
+		return _inventory_type;
 	}
 	void set_inventory_type(int tp) {
-		inventory_type_ = tp;
+		_inventory_type = tp;
 	}
 
 	// Logic
@@ -267,7 +267,7 @@ public:
 	bool is_visible() const;
 
 	const Vect2s &grid_size() const {
-		return grid_size_;
+		return _grid_size;
 	}
 
 	bool init_grid_zone();
@@ -282,16 +282,16 @@ public:
 	bool drop_grid_zone_attributes(const Vect2f &r, int attr) const;
 
 	const char *inventory_name() const {
-		return inventory_name_.c_str();
+		return _inventory_name.c_str();
 	}
 	void set_inventory_name(const char *name) {
 		if (name)
-			inventory_name_ = name;
+			_inventory_name = name;
 		else
-			inventory_name_.clear();
+			_inventory_name.clear();
 	}
 	bool has_inventory_name() const {
-		return !inventory_name_.empty();
+		return !_inventory_name.empty();
 	}
 
 #ifdef _QUEST_EDITOR
@@ -300,22 +300,22 @@ public:
 #endif //_QUEST_EDITOR
 
 	const grScreenRegion &last_screen_region() const {
-		return last_screen_region_;
+		return _last_screen_region;
 	}
 	virtual grScreenRegion screen_region() const;
 
 	int inventory_cell_index() const {
-		return inventory_cell_index_;
+		return _inventory_cell_index;
 	}
 	void set_inventory_cell_index(int idx) {
-		inventory_cell_index_ = idx;
+		_inventory_cell_index = idx;
 	}
 
 	int last_chg_time() const {
-		return last_chg_time_;
+		return _last_chg_time;
 	}
 	void set_last_chg_time(int time) {
-		last_chg_time_ = time;
+		_last_chg_time = time;
 	}
 	int idle_time() const;
 
@@ -328,8 +328,8 @@ public:
 	int shadow_color() const;
 	int shadow_alpha() const;
 	void set_shadow(unsigned color, int alpha) {
-		shadow_color_ = color;
-		shadow_alpha_ = alpha;
+		_shadow_color = color;
+		_shadow_alpha = alpha;
 	}
 	void clear_shadow() {
 		set_shadow(0, QD_NO_SHADOW_ALPHA);
@@ -342,61 +342,61 @@ protected:
 
 	void set_last_state(qdGameObjectState *p) {
 		if (!p || !p->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_STATE | qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_HOVER_STATE))
-			last_state_ = p;
+			_last_state = p;
 	}
 
 	void set_last_inventory_state(qdGameObjectState *p) {
 		if (!p || (p->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY) && !p->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_STATE | qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_HOVER_STATE)))
-			last_inventory_state_ = p;
+			_last_inventory_state = p;
 	}
 
 private:
 
-	int cur_state_;
-	qdGameObjectStateVector states;
+	int _cur_state;
+	qdGameObjectStateVector _states;
 
-	qdGameObjectState *queued_state_;
-	qdGameObjectState *last_inventory_state_;
+	qdGameObjectState *_queued_state;
+	qdGameObjectState *_last_inventory_state;
 
-	int inventory_type_;
+	int _inventory_type;
 
-	qdAnimation animation_;
+	qdAnimation _animation;
 
-	Vect3f bound_;
-	float radius_;
+	Vect3f _bound;
+	float _radius;
 
-	Vect3f default_r_;
+	Vect3f _default_r;
 
-	Vect3f grid_r_;
-	Vect2s grid_size_;
+	Vect3f _grid_r;
+	Vect2s _grid_size;
 
-	std::string inventory_name_;
+	std::string _inventory_name;
 
-	qdScreenTransform current_transform_;
-	qdScreenTransform target_transform_;
-	qdScreenTransform transform_speed_;
+	qdScreenTransform _current_transform;
+	qdScreenTransform _target_transform;
+	qdScreenTransform _transform_speed;
 
-	qdScreenTransform last_transform_;
+	qdScreenTransform _last_transform;
 
-	qdGameObjectState *last_state_;
+	qdGameObjectState *_last_state;
 
 	//! Индекс ячейки инвентори, в которой лежал объект.
-	int inventory_cell_index_;
+	int _inventory_cell_index;
 
-	const qdAnimationFrame *last_frame_;
-	grScreenRegion last_screen_region_;
-	float last_screen_depth_;
+	const qdAnimationFrame *_last_frame;
+	grScreenRegion _last_screen_region;
+	float _last_screen_depth;
 
-	unsigned lastShadowColor_;
-	int lastShadowAlpha_;
+	unsigned _lastShadowColor;
+	int _lastShadowAlpha;
 
 	//! Последнее время изменения объекта
-	int last_chg_time_;
+	int _last_chg_time;
 
 	//! Цвет затенения.
-	unsigned shadow_color_;
+	unsigned _shadow_color;
 	//! Прозрачность затенения, значения - [0, 255], если равно QD_NO_SHADOW_ALPHA, то персонаж не затеняется.
-	int shadow_alpha_;
+	int _shadow_alpha;
 
 #ifdef _QUEST_EDITOR
 	/// если true, то глобальные состояния добавляются по-быстрому
