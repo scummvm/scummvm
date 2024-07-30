@@ -32,17 +32,17 @@
 
 namespace QDEngine {
 
-qdGameObject::qdGameObject() : r_(0, 0, 0),
-	parallax_offset_(0.0f, 0.0f),
-	screen_r_(0, 0),
-	screen_depth_(0.0f) {
+qdGameObject::qdGameObject() : _r(0, 0, 0),
+	_parallax_offset(0.0f, 0.0f),
+	_screen_r(0, 0),
+	_screen_depth(0.0f) {
 }
 
 qdGameObject::qdGameObject(const qdGameObject &obj) : qdNamedObject(obj),
-	r_(obj.r_),
-	parallax_offset_(obj.parallax_offset_),
-	screen_r_(obj.screen_r_),
-	screen_depth_(obj.screen_depth_) {
+	_r(obj._r),
+	_parallax_offset(obj._parallax_offset),
+	_screen_r(obj._screen_r),
+	_screen_depth(obj._screen_depth) {
 }
 
 qdGameObject::~qdGameObject() {
@@ -53,11 +53,11 @@ qdGameObject &qdGameObject::operator = (const qdGameObject &obj) {
 
 	*static_cast<qdNamedObject *>(this) = obj;
 
-	r_ = obj.r_;
-	parallax_offset_ = obj.parallax_offset_;
+	_r = obj._r;
+	_parallax_offset = obj._parallax_offset;
 
-	screen_r_ = obj.screen_r_;
-	screen_depth_ = obj.screen_depth_;
+	_screen_r = obj._screen_r;
+	_screen_depth = obj._screen_depth;
 
 	return *this;
 }
@@ -70,18 +70,18 @@ bool qdGameObject::load_script_body(const xml::tag *p) {
 			set_name(it->data());
 			break;
 		case QDSCR_POS2D:
-			xml::tag_buffer(*it) > r_.x > r_.y;
-			r_.z = 0.0f;
+			xml::tag_buffer(*it) > _r.x > _r.y;
+			_r.z = 0.0f;
 			break;
 		case QDSCR_POS3D:
-			xml::tag_buffer(*it) > r_.x > r_.y > r_.z;
+			xml::tag_buffer(*it) > _r.x > _r.y > _r.z;
 			break;
 		case QDSCR_FLAG:
 			xml::tag_buffer(*it) > fl;
 			set_flag(fl);
 			break;
 		case QDSCR_PARALLAX_OFFSET:
-			xml::tag_buffer(*it) > parallax_offset_.x > parallax_offset_.y;
+			xml::tag_buffer(*it) > _parallax_offset.x > _parallax_offset.y;
 			break;
 		}
 	}
@@ -94,13 +94,13 @@ bool qdGameObject::save_script_body(Common::WriteStream &fh, int indent) const {
 		fh.writeString("\t");
 	}
 
-	fh.writeString(Common::String::format("<pos_3d>%f %f %f</pos_3d>\r\n", r_.x, r_.y, r_.z));
+	fh.writeString(Common::String::format("<pos_3d>%f %f %f</pos_3d>\r\n", _r.x, _r.y, _r.z));
 
-	if (parallax_offset_.x || parallax_offset_.y) {
+	if (_parallax_offset.x || _parallax_offset.y) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<parallax_offset>%d %d</parallax_offset>", parallax_offset_.x, parallax_offset_.y));
+		fh.writeString(Common::String::format("<parallax_offset>%d %d</parallax_offset>", _parallax_offset.x, _parallax_offset.y));
 	}
 
 	if (flags()) {
@@ -116,7 +116,7 @@ bool qdGameObject::save_script_body(Common::WriteStream &fh, int indent) const {
 #ifdef _QUEST_EDITOR
 const Vect2i &qdGameObject::screen_pos() {
 	update_screen_pos();
-	return screen_r_;
+	return _screen_r;
 }
 #endif
 
@@ -130,36 +130,36 @@ bool qdGameObject::update_screen_pos() {
 			Vect3f v = cp->global2camera_coord(R());
 
 			if (check_flag(QD_OBJ_FIXED_SCREEN_COORDS_FLAG)) {
-				screen_r_ = cp->camera_coord2rscr(v);
-				screen_r_.x += cp->get_scr_sx() / 2;
-				screen_r_.y = cp->get_scr_sy() / 2 - screen_r_.y;
+				_screen_r = cp->camera_coord2rscr(v);
+				_screen_r.x += cp->get_scr_sx() / 2;
+				_screen_r.y = cp->get_scr_sy() / 2 - _screen_r.y;
 
-				screen_depth_ = 0.0f;
+				_screen_depth = 0.0f;
 			} else {
-				screen_r_ = cp->camera_coord2scr(v);
+				_screen_r = cp->camera_coord2scr(v);
 
 				Vect3f rr = R();
 				rr.z = cp->get_grid_center().z;
-				screen_depth_ = cp->global2camera_coord(rr).z;
+				_screen_depth = cp->global2camera_coord(rr).z;
 			}
 
-			if (parallax_offset_.x || parallax_offset_.y) {
-				screen_r_.x += round(float(parallax_offset_.x) * cp->scrolling_phase_x());
-				screen_r_.y += round(float(parallax_offset_.y) * cp->scrolling_phase_y());
+			if (_parallax_offset.x || _parallax_offset.y) {
+				_screen_r.x += round(float(_parallax_offset.x) * cp->scrolling_phase_x());
+				_screen_r.y += round(float(_parallax_offset.y) * cp->scrolling_phase_y());
 			}
 #else
 			Vect3f v = cp->global2camera_coord(R());
-			screen_r_ = cp->camera_coord2scr(v);
+			_screen_r = cp->camera_coord2scr(v);
 
 			v = R();
 			v.z = cp->get_grid_center().z;
-			screen_depth_ = cp->global2camera_coord(v).z;
+			_screen_depth = cp->global2camera_coord(v).z;
 #endif
 		} else
 			return false;
 	} else {
-		screen_r_ = Vect2i(R().xi(), R().yi());
-		screen_depth_ = 0.0f;
+		_screen_r = Vect2i(R().xi(), R().yi());
+		_screen_depth = 0.0f;
 	}
 
 	return true;
@@ -172,9 +172,9 @@ bool qdGameObject::load_data(Common::SeekableReadStream &fh, int saveVersion) {
 		return false;
 	}
 
-	r_.x = fh.readFloatLE();
-	r_.y = fh.readFloatLE();
-	r_.z = fh.readFloatLE();
+	_r.x = fh.readFloatLE();
+	_r.y = fh.readFloatLE();
+	_r.z = fh.readFloatLE();
 
 	debugC(3, kDebugSave, "  qdGameObject::load_data(): after %ld", fh.pos());
 	return true;
@@ -186,9 +186,9 @@ bool qdGameObject::save_data(Common::WriteStream &fh) const {
 		return false;
 	}
 
-	fh.writeFloatLE(r_.x);
-	fh.writeFloatLE(r_.y);
-	fh.writeFloatLE(r_.z);
+	fh.writeFloatLE(_r.x);
+	fh.writeFloatLE(_r.y);
+	fh.writeFloatLE(_r.z);
 
 	debugC(3, kDebugSave, "  qdGameObject::save_data(): after %ld", fh.pos());
 	return true;
