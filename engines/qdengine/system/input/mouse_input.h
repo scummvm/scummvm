@@ -64,8 +64,8 @@ public:
 
 	//! Установка обработчика события.
 	event_handler_t set_event_handler(mouseEvent ev, event_handler_t h) {
-		event_handler_t old_h = event_handlers_[ev];
-		event_handlers_[ev] = h;
+		event_handler_t old_h = _event_handlers[ev];
+		_event_handlers[ev] = h;
 		return old_h;
 	}
 
@@ -74,47 +74,47 @@ public:
 
 	//! Возвращает true, если событие происходило и пока не обработано.
 	bool check_event(mouseEvent ev) const {
-		if (events_ & (1 << ev)) return true;
+		if (_events & (1 << ev)) return true;
 		else return false;
 	}
 	//! Возвращает true, если событие происходило с момента вызова clear_events().
 	bool is_event_active(mouseEvent ev) const {
-		if (active_events_ & (1 << ev)) return true;
+		if (_active_events & (1 << ev)) return true;
 		else return false;
 	}
 	//! Очищает информацию о событиях.
 	bool clear_events() {
-		events_ = active_events_ = 0;
+		_events = _active_events = 0;
 		return true;
 	}
 	//! Очищает информацию о событии ev.
 	bool clear_event(mouseEvent ev) {
-		events_ &= ~(1 << ev);
+		_events &= ~(1 << ev);
 		return true;
 	}
 	//! Помечает событие, как непроисходившее.
 	bool deactivate_event(mouseEvent ev) {
-		active_events_ &= ~(1 << ev);
+		_active_events &= ~(1 << ev);
 		return true;
 	}
 	//! Помечает событие как произошедшее.
 	void toggle_event(mouseEvent ev) {
-		events_ |= (1 << ev);
-		active_events_ |= (1 << ev);
+		_events |= (1 << ev);
+		_active_events |= (1 << ev);
 	}
 
 	//! Возвращает горизонтальную координату мышиного курсора.
 	int mouse_x() const {
-		return mouse_x_;
+		return _mouse_x;
 	}
 	//! Возвращает вертикальную координату мышиного курсора.
 	int mouse_y() const {
-		return mouse_y_;
+		return _mouse_y;
 	}
 
 	//! Возвращает true, если кнопка bt_id нажата.
 	bool is_pressed(mouseButtonID bt_id) {
-		return (button_status_ & (1 << bt_id));
+		return (_button_status & (1 << bt_id));
 	}
 
 	//! Возвращает обработчик по-умолчанию.
@@ -131,20 +131,20 @@ public:
 
 private:
 	//! События - при успешной обработке события клиентом он скидывает соответсвующий флаг.
-	int events_;
+	int _events;
 	//! События - для проверки, происходило ли событие с момента вызова clear_events()
-	int active_events_;
+	int _active_events;
 
 	//! Статус кнопок - нажаты или нет.
-	int button_status_;
+	int _button_status;
 
 	//! Горизонтальная координата мышиного курсора.
-	int mouse_x_;
+	int _mouse_x;
 	//! Вертикальная координата мышиного курсора.
-	int mouse_y_;
+	int _mouse_y;
 
 	//! Обработчики событий.
-	event_handler_t event_handlers_[EV_MOUSE_MOVE + 1];
+	event_handler_t _event_handlers[EV_MOUSE_MOVE + 1];
 };
 
 } // namespace QDEngine

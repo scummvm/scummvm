@@ -28,9 +28,9 @@
 
 namespace QDEngine {
 
-mouseDispatcher::mouseDispatcher() : events_(0), active_events_(0), mouse_x_(0), mouse_y_(0), button_status_(0) {
+mouseDispatcher::mouseDispatcher() : _events(0), _active_events(0), _mouse_x(0), _mouse_y(0), _button_status(0) {
 	for (int i = 0; i < EV_MOUSE_MOVE + 1; i++)
-		event_handlers_[i] = 0;
+		_event_handlers[i] = 0;
 }
 
 mouseDispatcher::~mouseDispatcher() {
@@ -47,29 +47,29 @@ bool mouseDispatcher::handle_event(mouseEvent ev, int x, int y, int flags) {
 	if (y >= grDispatcher::instance()->Get_SizeY())
 		y = grDispatcher::instance()->Get_SizeY() - 1;
 
-	if (event_handlers_[ev])
-		(*event_handlers_[ev])(x, y, flags);
+	if (_event_handlers[ev])
+		(*_event_handlers[ev])(x, y, flags);
 
 	switch (ev) {
 	case EV_LEFT_DOWN:
-		button_status_ |= 1 << (ID_BUTTON_LEFT);
+		_button_status |= 1 << (ID_BUTTON_LEFT);
 		break;
 	case EV_LEFT_UP:
-		button_status_  &= ~(1 << ID_BUTTON_LEFT);
+		_button_status  &= ~(1 << ID_BUTTON_LEFT);
 		break;
 	case EV_RIGHT_DOWN:
-		button_status_ |= 1 << (ID_BUTTON_RIGHT);
+		_button_status |= 1 << (ID_BUTTON_RIGHT);
 		break;
 	case EV_RIGHT_UP:
-		button_status_  &= ~(1 << ID_BUTTON_RIGHT);
+		_button_status  &= ~(1 << ID_BUTTON_RIGHT);
 		break;
 	default:
 		break;
 	}
 
 	toggle_event(ev);
-	mouse_x_ = x;
-	mouse_y_ = y;
+	_mouse_x = x;
+	_mouse_y = y;
 
 	return true;
 }
