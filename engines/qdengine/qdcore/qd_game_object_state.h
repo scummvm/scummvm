@@ -50,8 +50,8 @@ public:
 		return *this != ID;
 	}
 
-	qdScreenTransform operator * (float value) const {
-		return qdScreenTransform(angle_ * value, scale_ * value);
+	qdScreenTransform operator *(float value) const {
+		return qdScreenTransform(angle_ *value, scale_ *value);
 	}
 
 	qdScreenTransform &operator += (const qdScreenTransform &trans) {
@@ -941,7 +941,7 @@ private:
 
 #ifdef __QD_DEBUG_ENABLE__
 inline bool qdbg_is_object_state(const qdNamedObject *obj, const char *scene_name, const char *object_name, const char *state_name) {
-	if (dynamic_cast<const qdGameObjectState * >(obj)) {
+	if (dynamic_cast<const qdGameObjectState *>(obj)) {
 		if (obj->name() && !strcmp(state_name, obj->name())) {
 			if (!object_name || (obj->owner() && obj->owner()->name() && !strcmp(object_name, obj->owner()->name()))) {
 				if (!scene_name || (obj->owner()->owner() && obj->owner()->owner()->name() && !strcmp(obj->owner()->owner()->name(), scene_name)))

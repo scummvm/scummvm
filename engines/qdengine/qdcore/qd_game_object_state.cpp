@@ -55,7 +55,7 @@ bool qdScreenTransform::change(float dt, const qdScreenTransform &target_trans, 
 	qdScreenTransform delta(getDeltaAngle(target_trans.angle(), angle()),
 	                        target_trans.scale() - scale());
 
-	qdScreenTransform delta_max = speed * dt;
+	qdScreenTransform delta_max = speed *dt;
 	delta.angle_ = CLIP(delta.angle_, -delta_max.angle_, delta_max.angle_);
 	delta.scale_.x = CLIP(delta.scale_.x, -delta_max.scale_.x, delta_max.scale_.x);
 	delta.scale_.y = CLIP(delta.scale_.y, -delta_max.scale_.y, delta_max.scale_.y);
@@ -194,8 +194,8 @@ qdGameObjectState &qdGameObjectState::operator = (const qdGameObjectState &st) {
 }
 
 bool qdGameObjectState::register_resources() {
-	if (qdSound * p = sound()) {
-		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher())
+	if (qdSound *p = sound()) {
+		if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher())
 			dp->register_resource(p, this);
 	}
 
@@ -203,8 +203,8 @@ bool qdGameObjectState::register_resources() {
 }
 
 bool qdGameObjectState::unregister_resources() {
-	if (qdSound * p = sound()) {
-		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher())
+	if (qdSound *p = sound()) {
+		if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher())
 			dp->unregister_resource(p, this);
 	}
 
@@ -212,8 +212,8 @@ bool qdGameObjectState::unregister_resources() {
 }
 
 bool qdGameObjectState::load_resources() {
-	if (qdSound * p = sound()) {
-		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher())
+	if (qdSound *p = sound()) {
+		if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher())
 			dp->load_resource(p, this);
 	}
 
@@ -221,8 +221,8 @@ bool qdGameObjectState::load_resources() {
 }
 
 bool qdGameObjectState::free_resources() {
-	if (qdSound * p = sound()) {
-		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher())
+	if (qdSound *p = sound()) {
+		if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher())
 			dp->release_resource(p, this);
 	}
 
@@ -230,14 +230,14 @@ bool qdGameObjectState::free_resources() {
 }
 
 bool qdGameObjectState::is_active() const {
-	if (owner() && static_cast<qdGameObjectAnimated * >(owner())->get_cur_state() == this)
+	if (owner() && static_cast<qdGameObjectAnimated *>(owner())->get_cur_state() == this)
 		return true;
 
 	return false;
 }
 
 bool qdGameObjectState::is_default() const {
-	if (owner() && static_cast<qdGameObjectAnimated * >(owner())->get_default_state() == this)
+	if (owner() && static_cast<qdGameObjectAnimated *>(owner())->get_default_state() == this)
 		return true;
 
 	return false;
@@ -267,8 +267,8 @@ qdConditionalObject::trigger_start_mode qdGameObjectState::trigger_start() {
 
 bool qdGameObjectState::trigger_can_start() const {
 	if (!qdConditionalObject::trigger_can_start()) {
-		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-			if (qdGameObjectAnimated * op = static_cast<qdGameObjectAnimated * >(owner())) {
+		if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher()) {
+			if (qdGameObjectAnimated *op = static_cast<qdGameObjectAnimated *>(owner())) {
 				if (dp->is_on_mouse(op) || dp->is_in_inventory(op))
 					return true;
 			}
@@ -306,7 +306,7 @@ bool qdGameObjectState::load_script_body(const xml::tag *p) {
 			break;
 		case QDSCR_SOUND:
 			set_sound_name(it->data());
-			if (const xml::tag * tg = it->search_subtag(QDSCR_FLAG))
+			if (const xml::tag *tg = it->search_subtag(QDSCR_FLAG))
 				sound_info_.set_flag(xml::tag_buffer(*tg).get_int());
 			break;
 		case QDSCR_OBJECT_STATE_CENTER_OFFSET:
@@ -519,7 +519,7 @@ bool qdGameObjectState::check_conditions() {
 
 float qdGameObjectState::work_time() const {
 	if (check_flag(QD_OBJ_STATE_FLAG_SOUND_SYNC)) {
-		if (qdSound * p = sound())
+		if (qdSound *p = sound())
 			return p->length() + sound_delay_;
 
 		return 0.0f;
@@ -532,7 +532,7 @@ void qdGameObjectState::quant(float dt) {
 	if (is_active()) {
 		cur_time_ += dt;
 
-		if (has_sound() && (state_type() != STATE_WALK || static_cast<qdGameObject * >(owner())->check_flag(QD_OBJ_MOVING_FLAG))) {
+		if (has_sound() && (state_type() != STATE_WALK || static_cast<qdGameObject *>(owner())->check_flag(QD_OBJ_MOVING_FLAG))) {
 			if (!is_sound_started_) {
 				if (!has_sound_delay() || cur_time_ >= sound_delay_) {
 					play_sound();
@@ -566,12 +566,12 @@ void qdGameObjectState::quant(float dt) {
 
 qdSound *qdGameObjectState::sound() const {
 	if (sound_info_.name()) {
-		if (qdGameScene * p = static_cast<qdGameScene * >(owner(QD_NAMED_OBJECT_SCENE))) {
-			if (qdSound * snd = p->get_sound(sound_info_.name()))
+		if (qdGameScene *p = static_cast<qdGameScene *>(owner(QD_NAMED_OBJECT_SCENE))) {
+			if (qdSound *snd = p->get_sound(sound_info_.name()))
 				return snd;
 		}
 
-		if (qdGameDispatcher * p = qd_get_game_dispatcher())
+		if (qdGameDispatcher *p = qd_get_game_dispatcher())
 			return p->get_sound(sound_info_.name());
 	}
 
@@ -579,7 +579,7 @@ qdSound *qdGameObjectState::sound() const {
 }
 
 bool qdGameObjectState::play_sound(float position) {
-	if (qdSound * p = sound()) {
+	if (qdSound *p = sound()) {
 		p->stop(sound_handle());
 		is_sound_started_ = true;
 		return p->play(sound_handle(), check_sound_flag(qdSoundInfo::LOOP_SOUND_FLAG), position);
@@ -589,7 +589,7 @@ bool qdGameObjectState::play_sound(float position) {
 }
 
 bool qdGameObjectState::set_sound_frequency(float frequency_coeff) const {
-	if (qdSound * p = sound())
+	if (qdSound *p = sound())
 		return p->set_frequency(sound_handle(), frequency_coeff);
 
 	return false;
@@ -598,21 +598,21 @@ bool qdGameObjectState::set_sound_frequency(float frequency_coeff) const {
 bool qdGameObjectState::is_sound_finished() const {
 	if (sound_delay_ > 0.01f && cur_time_ <= sound_delay_) return false;
 
-	if (qdSound * p = sound())
+	if (qdSound *p = sound())
 		return p->is_stopped(sound_handle());
 
 	return true;
 }
 
 bool qdGameObjectState::is_sound_playing() const {
-	if (qdSound * p = sound())
+	if (qdSound *p = sound())
 		return !p->is_stopped(sound_handle());
 
 	return false;
 }
 
 bool qdGameObjectState::stop_sound() const {
-	if (qdSound * p = sound()) {
+	if (qdSound *p = sound()) {
 		return p->stop(sound_handle());
 	}
 
@@ -634,7 +634,7 @@ bool qdGameObjectState::load_data(Common::SeekableReadStream &fh, int save_versi
 	int idx = fh.readSint32LE();
 
 	if (idx != -1)
-		prev_state_ = static_cast<qdGameObjectAnimated * >(owner())->get_state(idx);
+		prev_state_ = static_cast<qdGameObjectAnimated *>(owner())->get_state(idx);
 	else
 		prev_state_ = NULL;
 
@@ -644,8 +644,8 @@ bool qdGameObjectState::load_data(Common::SeekableReadStream &fh, int save_versi
 		if (cidx) {
 			float pos = fh.readFloatLE();
 
-			if (qdSound * snd = sound()) {
-				if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
+			if (qdSound *snd = sound()) {
+				if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher()) {
 					dp->load_resource(snd, this);
 					play_sound(pos);
 				}
@@ -675,13 +675,13 @@ bool qdGameObjectState::save_data(Common::WriteStream &fh) const {
 
 	int idx = -1;
 	if (prev_state_ && owner())
-		idx = static_cast<qdGameObjectAnimated * >(owner())->get_state_index(prev_state_);
+		idx = static_cast<qdGameObjectAnimated *>(owner())->get_state_index(prev_state_);
 	fh.writeSint32LE(idx);
 
 	if (is_active()) {
 		fh.writeByte(1);
 
-		if (const qdSound * snd = sound()) {
+		if (const qdSound *snd = sound()) {
 			if (!snd->is_stopped(&sound_handle_)) {
 				float pos = snd->position(&sound_handle_);
 				fh.writeByte(1);
@@ -705,7 +705,7 @@ bool qdGameObjectState::save_data(Common::WriteStream &fh) const {
 }
 
 bool qdGameObjectState::need_sound_restart() const {
-	if (sndDispatcher * p = sndDispatcher::get_dispatcher()) {
+	if (sndDispatcher *p = sndDispatcher::get_dispatcher()) {
 		if (p->sound_status(&sound_handle_) != sndSound::SOUND_PLAYING)
 			return true;
 	}
@@ -836,8 +836,8 @@ bool qdGameObjectStateStatic::save_script(Common::WriteStream &fh, int indent) c
 bool qdGameObjectStateStatic::register_resources() {
 	qdGameObjectState::register_resources();
 
-	if (qdAnimation * p = animation()) {
-		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
+	if (qdAnimation *p = animation()) {
+		if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher()) {
 			dp->register_resource(p, this);
 		}
 	}
@@ -848,8 +848,8 @@ bool qdGameObjectStateStatic::register_resources() {
 bool qdGameObjectStateStatic::unregister_resources() {
 	qdGameObjectState::unregister_resources();
 
-	if (qdAnimation * p = animation()) {
-		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
+	if (qdAnimation *p = animation()) {
+		if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher()) {
 			dp->unregister_resource(p, this);
 		}
 	}
@@ -860,8 +860,8 @@ bool qdGameObjectStateStatic::unregister_resources() {
 bool qdGameObjectStateStatic::load_resources() {
 	qdGameObjectState::load_resources();
 
-	if (qdAnimation * p = animation()) {
-		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher())
+	if (qdAnimation *p = animation()) {
+		if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher())
 			dp->load_resource(p, this);
 	}
 
@@ -871,8 +871,8 @@ bool qdGameObjectStateStatic::load_resources() {
 bool qdGameObjectStateStatic::free_resources() {
 	qdGameObjectState::free_resources();
 
-	if (qdAnimation * p = animation()) {
-		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher())
+	if (qdAnimation *p = animation()) {
+		if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher())
 			dp->release_resource(p, this);
 	}
 
@@ -1035,7 +1035,7 @@ float qdGameObjectStateWalk::adjust_direction_angle(float angle) const {
 	}
 	break;
 	default:
-		if (qdAnimationSet * p = animation_set())
+		if (qdAnimationSet *p = animation_set())
 			angle = p->adjust_angle(angle);
 		break;
 	}
@@ -1052,7 +1052,7 @@ bool qdGameObjectStateWalk::is_state_empty() const {
 
 bool qdGameObjectStateWalk::update_sound_frequency(float direction_angle) const {
 	float coeff = 1.0f;
-	if (qdAnimationSet * set = animation_set())
+	if (qdAnimationSet *set = animation_set())
 		coeff *= set->walk_sound_frequency(direction_angle);
 
 	return set_sound_frequency(coeff * walk_sound_frequency(direction_angle));
