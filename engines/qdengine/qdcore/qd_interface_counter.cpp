@@ -33,21 +33,21 @@
 
 namespace QDEngine {
 
-qdInterfaceCounter::qdInterfaceCounter() : counter_(0) {
-	digits_ = 4;
+qdInterfaceCounter::qdInterfaceCounter() : _counter(0) {
+	_digits = 4;
 
-	lastValue_ = -1;
+	_lastValue = -1;
 
-	textFormat_.toggle_global_depend(false);
+	_textFormat.toggle_global_depend(false);
 }
 
 qdInterfaceCounter::qdInterfaceCounter(const qdInterfaceCounter &counter) : qdInterfaceElement(counter),
-	textFormat_(counter.textFormat_),
-	digits_(counter.digits_),
-	counterName_(counter.counterName_),
-	counter_(counter.counter_) {
-	lastValue_ = -1;
-	textFormat_.toggle_global_depend(false);
+	_textFormat(counter._textFormat),
+	_digits(counter._digits),
+	_counterName(counter._counterName),
+	_counter(counter._counter) {
+	_lastValue = -1;
+	_textFormat.toggle_global_depend(false);
 }
 
 qdInterfaceCounter::~qdInterfaceCounter() {
@@ -58,14 +58,14 @@ qdInterfaceCounter &qdInterfaceCounter::operator = (const qdInterfaceCounter &co
 
 	*static_cast<qdInterfaceElement *>(this) = counter;
 
-	textFormat_ = counter.textFormat_;
+	_textFormat = counter._textFormat;
 
-	digits_ = counter.digits_;
+	_digits = counter._digits;
 
-	counterName_ = counter.counterName_;
-	counter_ = counter.counter_;
+	_counterName = counter._counterName;
+	_counter = counter._counter;
 
-	lastValue_ = -1;
+	_lastValue = -1;
 
 	return *this;
 }
@@ -76,12 +76,12 @@ bool qdInterfaceCounter::save_script_body(Common::WriteStream &fh, int indent) c
 	}
 	fh.writeString(Common::String::format("<counter_name>%s</counter_name>\r\n", qdscr_XML_string(counterName())));
 
-	textFormat_.save_script(fh, indent + 1);
+	_textFormat.save_script(fh, indent + 1);
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<digits>%d</digits>\r\n", digits_));
+	fh.writeString(Common::String::format("<digits>%d</digits>\r\n", _digits));
 
 	return true;
 }
@@ -93,10 +93,10 @@ bool qdInterfaceCounter::load_script_body(const xml::tag *p) {
 			setCounterName(it->data());
 			break;
 		case QDSCR_SCREEN_TEXT_FORMAT:
-			textFormat_.load_script(&*it);
+			_textFormat.load_script(&*it);
 			break;
 		case QDSCR_COUNTER_DIGITS:
-			digits_ = xml::tag_buffer(*it).get_int();
+			_digits = xml::tag_buffer(*it).get_int();
 			break;
 		}
 	}
@@ -108,14 +108,14 @@ Common::String qdInterfaceCounter::data() const {
 	Common::String str;
 
 	int val = 0;
-	if (counter_)
-		val = counter_->value();
+	if (_counter)
+		val = _counter->value();
 
 	if (val < 0)
 		str += "-";
 
 	int delta = 10;
-	for (int i = 1; i < digits_; i++) {
+	for (int i = 1; i < _digits; i++) {
 		if (abs(val) < abs(delta))
 			str += "0";
 
@@ -143,21 +143,21 @@ grScreenRegion qdInterfaceCounter::screen_region() const {
 }
 
 bool qdInterfaceCounter::init(bool is_game_active) {
-	counter_ = qdGameDispatcher::get_dispatcher()->get_counter(counterName());
+	_counter = qdGameDispatcher::get_dispatcher()->get_counter(counterName());
 	return true;
 }
 
 bool qdInterfaceCounter::redraw() const {
 	qdInterfaceElement::redraw();
 
-	if (counter_) {
+	if (_counter) {
 		const grFont *font = qdGameDispatcher::get_dispatcher()->
-		                     find_font(textFormat_.font_type());
+		                     find_font(_textFormat.font_type());
 
 		Vect2i sz = Vect2i(size_x(), size_y());
 		Vect2i pos = r() - sz / 2;
 		grDispatcher::instance()->DrawAlignedText(pos.x, pos.y, sz.x, sz.y,
-		        textFormat_.color(), data().c_str(), GR_ALIGN_LEFT, 0, 0, font);
+		        _textFormat.color(), data().c_str(), GR_ALIGN_LEFT, 0, 0, font);
 	}
 
 	return true;
@@ -167,8 +167,8 @@ bool qdInterfaceCounter::need_redraw() const {
 	if (qdInterfaceElement::need_redraw())
 		return true;
 
-	if (counter_)
-		return lastValue_ != counter_->value();
+	if (_counter)
+		return _lastValue != _counter->value();
 
 	return false;
 }
@@ -176,34 +176,34 @@ bool qdInterfaceCounter::need_redraw() const {
 bool qdInterfaceCounter::post_redraw() {
 	qdInterfaceElement::post_redraw();
 
-	if (counter_)
-		lastValue_ = counter_->value();
+	if (_counter)
+		_lastValue = _counter->value();
 
 	return true;
 }
 
 int qdInterfaceCounter::size_x() const {
 	const grFont *font = qdGameDispatcher::get_dispatcher()->
-	                     find_font(textFormat_.font_type());
+	                     find_font(_textFormat.font_type());
 	return grDispatcher::instance()->TextWidth(data().c_str(), 0, font);
 }
 
 int qdInterfaceCounter::size_y() const {
 	const grFont *font = qdGameDispatcher::get_dispatcher()->
-	                     find_font(textFormat_.font_type());
+	                     find_font(_textFormat.font_type());
 	return grDispatcher::instance()->TextHeight(data().c_str(), 0, font);
 }
 
 void qdInterfaceCounter::setCounter(const qdCounter *counter) {
-	counter_ = counter;
-	counterName_ = (counter) ? counter->name() : "";
+	_counter = counter;
+	_counterName = (counter) ? counter->name() : "";
 }
 
 const char *qdInterfaceCounter::counterName() const {
-	return counterName_.c_str();
+	return _counterName.c_str();
 }
 
 void qdInterfaceCounter::setCounterName(const char *name) {
-	counterName_ = name;
+	_counterName = name;
 }
 } // namespace QDEngine
