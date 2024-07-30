@@ -183,15 +183,15 @@ public:
 	void set_sound_file(const char *str, state_mode_t snd_id = DEFAULT_MODE);
 	//! Возвращает имя файла звукового эффекта, привязанного к состоянию.
 	const char *sound_file(state_mode_t snd_id = DEFAULT_MODE) const {
-		return modes_[snd_id].sound_file();
+		return _modes[snd_id].sound_file();
 	}
 	//! Возвращает указатель на звуковой эффект, привязанный к состоянию.
 	const qdSound *sound(state_mode_t snd_id = DEFAULT_MODE) const {
-		return modes_[snd_id].sound();
+		return _modes[snd_id].sound();
 	}
 	//! Возвращает true, если к состоянию привязан звук.
 	bool has_sound(state_mode_t snd_id = DEFAULT_MODE) const {
-		return modes_[snd_id].has_sound();
+		return _modes[snd_id].has_sound();
 	}
 
 	//! Устанавливает имя файла для анимации.
@@ -201,33 +201,33 @@ public:
 	void set_animation_file(const char *name, state_mode_t anm_id = DEFAULT_MODE);
 	//! Возвращает имя файла для анимации.
 	const char *animation_file(state_mode_t anm_id = DEFAULT_MODE) const {
-		return modes_[anm_id].animation_file();
+		return _modes[anm_id].animation_file();
 	}
 	//! Возвращает флаги анимации.
 	int animation_flags(state_mode_t anm_id = DEFAULT_MODE) const {
-		return modes_[anm_id].animation_flags();
+		return _modes[anm_id].animation_flags();
 	}
 
 	//! Устанавливает флаг анимации.
 	void set_animation_flag(int fl, state_mode_t anm_id = DEFAULT_MODE) {
-		modes_[anm_id].set_animation_flag(fl);
+		_modes[anm_id].set_animation_flag(fl);
 	}
 	//! Скидывает флаг анимации.
 	void drop_animation_flag(int fl, state_mode_t anm_id = DEFAULT_MODE) {
-		modes_[anm_id].drop_animation_flag(fl);
+		_modes[anm_id].drop_animation_flag(fl);
 	}
 	//! Возвращает true, если для анимации установлен флаг fl.
 	bool check_animation_flag(int fl, state_mode_t anm_id = DEFAULT_MODE) const {
-		return modes_[anm_id].check_animation_flag(fl);
+		return _modes[anm_id].check_animation_flag(fl);
 	}
 
 	//! Возвращает указатель на анимацию, привязанную к состоянию.
 	const qdAnimation *animation(state_mode_t anm_id = DEFAULT_MODE) const {
-		return modes_[anm_id].animation();
+		return _modes[anm_id].animation();
 	}
 	//! Возвращает true, если к состоянию привязана анимация.
 	bool has_animation(state_mode_t anm_id = DEFAULT_MODE) const {
-		return modes_[anm_id].has_animation();
+		return _modes[anm_id].has_animation();
 	}
 
 	//! Регистрирует ресурсы, связанные с состоянием (анимацию и звук).
@@ -248,18 +248,18 @@ public:
 
 	//! Устанавливает режим работы состояния.
 	void set_state_mode(state_mode_t mode) {
-		state_mode_ = mode;
+		_state_mode = mode;
 	}
 	//! Возвращает режим работы состояния.
 	state_mode_t state_mode() const {
-		return state_mode_;
+		return _state_mode;
 	}
 	//! Возвращает true, если у состояния может быть включен режим работы mode.
 	bool has_state_mode(state_mode_t mode) const;
 
 	//! Возвращает true, если у состояния задан контур для режима mode.
 	bool has_contour(state_mode_t mode) const {
-		return modes_[mode].has_contour();
+		return _modes[mode].has_contour();
 	}
 	//! Записывает контур режима mode в cnt.
 	bool get_contour(state_mode_t mode, qdContour &cnt) const;
@@ -268,7 +268,7 @@ public:
 
 	//! Возвращает true, если точка с экранными координатами (x,у) попадает внутрь контура режима mode.
 	bool hit_test(int x, int y, state_mode_t mode) const {
-		return modes_[mode].hit_test(x, y);
+		return _modes[mode].hit_test(x, y);
 	}
 
 	//! Обработчик событий мыши.
@@ -279,19 +279,19 @@ public:
 	typedef std::vector<qdInterfaceEvent> events_container_t;
 	//! Список событий.
 	const events_container_t &events() const {
-		return events_;
+		return _events;
 	}
 	//! Добавление события.
 	void add_event(const qdInterfaceEvent &ev) {
-		events_.push_back(ev);
+		_events.push_back(ev);
 	}
 	//! Уделение события
 	void erase_event(int iNum) {
-		events_.erase(events_.begin() + iNum);
+		_events.erase(_events.begin() + iNum);
 	}
 	//! Удаление всех событий
 	void erase_all_events() {
-		events_.clear();
+		_events.clear();
 	}
 
 	/**
@@ -306,15 +306,15 @@ public:
 private:
 
 	//! События, происходящие при активации состояния.
-	events_container_t events_;
+	events_container_t _events;
 
 	//! События состояния.
-	qdInterfaceElementStateMode modes_[NUM_MODES];
+	qdInterfaceElementStateMode _modes[NUM_MODES];
 
 	//! Текущий режим работы состояния.
-	state_mode_t state_mode_;
+	state_mode_t _state_mode;
 	//! Режим работы состояния в прошлый квант времени.
-	state_mode_t prev_state_mode_;
+	state_mode_t _prev_state_mode;
 
 	//! Обработка событий состояния.
 	/**
