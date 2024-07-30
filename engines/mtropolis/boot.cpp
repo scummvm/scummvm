@@ -1800,6 +1800,11 @@ const Game games[] = {
 		MTBOOT_SPQR_RETAIL_MAC,
 		&BootScriptContext::bootSPQRMac
 	},
+	// Star Trek: The Game Show - Retail - Windows
+	{
+		MTBOOT_STTGS_RETAIL_WIN,
+		&BootScriptContext::bootGeneric
+	},
 	// Star Trek: The Game Show - Demo - Windows
 	{
 		MTBOOT_STTGS_DEMO_WIN,
@@ -1808,6 +1813,236 @@ const Game games[] = {
 	// Unit: Rebooted
 	{
 		MTBOOT_UNIT_REBOOTED_WIN,
+		&BootScriptContext::bootGeneric
+	},
+	// Mind Gym - Windows - English
+	{
+		MTBOOT_MINDGYM_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Mind Gym - Windows - German
+	{
+		MTBOOT_MINDGYM_WIN_DE,
+		&BootScriptContext::bootGeneric
+	},
+	// Fun With Architecture - Windows - English
+	{
+		MTBOOT_ARCHITECTURE_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// The Magic World of Beatrix Potter - Windows - English
+	{
+		MTBOOT_BEATRIX_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// Whitetail Impact - Windows - English
+	{
+		MTBOOT_WT_IMPACT_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// The Day The World Broke - Windows - English
+	{
+		MTBOOT_WORLDBROKE_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// The Totally Techie World of Young Dilbert: Hi-Tech Hijinks - Windows - English
+	{
+		MTBOOT_DILBERT_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// Free Willy Activity Center - Windows - English
+	{
+		MTBOOT_FREEWILLY_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// Hercules & Xena Learning Adventure: Quest for the Scrolls - Windows - English
+	{
+		MTBOOT_HERCULES_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// I Can Be a Dinosaur Finder - Retail - Windows - English
+	{
+		MTBOOT_IDINO_RETAIL_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// I Can Be a Dinosaur Finder - Demo - Windows - English
+	{
+		MTBOOT_IDINO_DEMO_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// I Can Be an Animal Doctor - Retail - Windows - English
+	{
+		MTBOOT_IDOCTOR_RETAIL_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// I Can Be an Animal Doctor - Demo - Windows - English
+	{
+		MTBOOT_IDOCTOR_DEMO_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// How to Draw the Marvel Way - Windows - English
+	{
+		MTBOOT_MARVEL_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// FairyTale: A True Story - Activity Center - Windows - English
+	{
+		MTBOOT_FAIRY_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// Purple Moon Sampler - Demo - Windows - English
+	{
+		MTBOOT_PURPLEMOON_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// Chomp! The Video Game - Windows - English
+	{
+		MTBOOT_CHOMP_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// 24 Hours in Cyberspace - Windows - English
+	{
+		MTBOOT_CYBER24_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// IVOCLAR - Windows - English
+	{
+		MTBOOT_IVOCLAR_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// Real Wild Child! Australian Rock Music 1950s-90s - Windows - English
+	{
+		MTBOOT_REALWILD_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// How to Build a Telemedicine Program - Windows - English
+	{
+		MTBOOT_TELEMED_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// Rugrats: Totally Angelica Boredom Buster - Windows - English
+	{
+		MTBOOT_ANGELICA_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Babe and Friends: Animated Early Reader - Windows - English
+	{
+		MTBOOT_BABE_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Biologia Cellulare Evoluzione E Varietà Della Vita - Windows - Italian
+	{
+		MTBOOT_BIOCELLEVO_WIN_IT,
+		&BootScriptContext::bootGeneric
+	},
+	// Easy-Bake Kitchen - Windows - English
+	{
+		MTBOOT_EASYBAKE_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// The Forgotten: It Begins - Windows - English
+	{
+		MTBOOT_FORGOTTEN_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// The Mystery at Greveholm 2: The Journey to Planutus - Windows - Swedish
+	{
+		MTBOOT_GREVEHOLM2_WIN_SE,
+		&BootScriptContext::bootGeneric
+	},
+	// Itacante: La Cité des Robots - Windows - French
+	{
+		MTBOOT_ITACANTE_WIN_FR,
+		&BootScriptContext::bootGeneric
+	},
+	// King of Dragon Pass - Windows - English
+	{
+		MTBOOT_KINGOFDRAGONPASS_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// The Times Key Stage 1 English - Windows - English
+	{
+		MTBOOT_KS1ENG_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Maisy's Playhouse - Windows - English
+	{
+		MTBOOT_MAISY_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// The Magic School Bus Explores the World of Animals - Windows - English
+	{
+		MTBOOT_MSB_ANIMAL_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// The Magic School Bus Explores Bugs - Windows - English
+	{
+		MTBOOT_MSB_BUGS_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// The Magic School Bus In Concert - Windows - English
+	{
+		MTBOOT_MSB_CONCERT_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// The Magic School Bus Discovers Flight - Windows - English
+	{
+		MTBOOT_MSB_FLIGHT_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// The Magic School Bus Lands on Mars - Windows - English
+	{
+		MTBOOT_MSB_MARS_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// The Magic School Bus Volcano Adventure - Windows - English
+	{
+		MTBOOT_MSB_VOLCANO_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// The Magic School Bus Whales & Dolphins - Windows - English
+	{
+		MTBOOT_MSB_WHALES_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Mykropolis Planet der Roboter - Windows - German
+	{
+		MTBOOT_MYKROPOLIS_WIN_DE,
+		&BootScriptContext::bootGeneric
+	},
+	// Your Notebook (with help from Amelia) - Windows - English
+	{
+		MTBOOT_NOTEBOOK_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Pferd & Pony Lass uns reiten	- Windows - English
+	{
+		MTBOOT_PFERDPONY_WIN_DE,
+		&BootScriptContext::bootGeneric
+	},
+	// Pinnacle Systems miroVideo Studio DC10 Plus - Windows - English
+	{
+		MTBOOT_PINNACLE_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Pinnacle Systems miroVideo Studio DC10 Plus - Windows - German
+	{
+		MTBOOT_PINNACLE_WIN_DE,
+		&BootScriptContext::bootGeneric
+	},
+	// Poser 3 Content Sampler - Windows - English
+	{
+		MTBOOT_POSER3_SAMPLER_ZYGOTE_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Another Poser 3 content sampler - Windows - English
+	{
+		MTBOOT_POSER3_ZYGOTE_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Whitetail Extreme - Windows - English
+	{
+		MTBOOT_WT_EXTREME_WIN_EN,
 		&BootScriptContext::bootGeneric
 	},
 };
