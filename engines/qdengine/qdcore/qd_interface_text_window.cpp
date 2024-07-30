@@ -37,63 +37,63 @@ namespace QDEngine {
 
 const float qdInterfaceCaretPeriod = 0.3f;
 
-bool qdInterfaceTextWindow::caretVisible_ = false;
-float qdInterfaceTextWindow::caretTimer_ = 0.f;
+bool qdInterfaceTextWindow::_caretVisible = false;
+float qdInterfaceTextWindow::_caretTimer = 0.f;
 
-qdInterfaceTextWindow::qdInterfaceTextWindow() : text_size_(0, 0),
-	scrolling_speed_(0),
-	text_set_(NULL),
-	text_set_id_(qdGameDispatcher::TEXT_SET_DIALOGS),
-	slider_(NULL),
-	windowType_(WINDOW_DIALOGS),
-	infoType_(INFO_NONE) {
-	textFormat_.toggle_global_depend(false);
+qdInterfaceTextWindow::qdInterfaceTextWindow() : _text_size(0, 0),
+	_scrolling_speed(0),
+	_text_set(NULL),
+	_text_set_id(qdGameDispatcher::TEXT_SET_DIALOGS),
+	_slider(NULL),
+	_windowType(WINDOW_DIALOGS),
+	_infoType(INFO_NONE) {
+	_textFormat.toggle_global_depend(false);
 
-	inputStringLimit_ = 0;
-	scrolling_position_ = 0;
-	text_set_position_ = 0;
+	_inputStringLimit = 0;
+	_scrolling_position = 0;
+	_text_set_position = 0;
 
-	textVAlign_ = VALIGN_BOTTOM;
+	_textVAlign = VALIGN_BOTTOM;
 
-	background_color_ = 0;
-	has_background_color_ = false;
-	background_alpha_ = 0;
+	_background_color = 0;
+	_has_background_color = false;
+	_background_alpha = 0;
 
-	isEditing_ = false;
-	caretPose_ = -1;
+	_isEditing = false;
+	_caretPose = -1;
 
-	playerID_ = 0;
+	_playerID = 0;
 
-	border_background_.set_owner(this);
+	_border_background.set_owner(this);
 }
 
 qdInterfaceTextWindow::qdInterfaceTextWindow(const qdInterfaceTextWindow &wnd) : qdInterfaceElement(wnd),
-	text_size_(wnd.text_size_),
-	scrolling_speed_(wnd.scrolling_speed_),
-	text_set_(wnd.text_set_),
-	text_set_id_(wnd.text_set_id_),
-	slider_name_(wnd.slider_name_),
-	slider_(wnd.slider_),
-	windowType_(wnd.windowType_),
-	infoType_(wnd.infoType_),
-	playerID_(wnd.playerID_),
-	inputString_(wnd.inputString_),
-	inputStringBackup_(wnd.inputStringBackup_),
-	inputStringLimit_(wnd.inputStringLimit_),
-	textFormat_(wnd.textFormat_),
-	textVAlign_(wnd.textVAlign_) {
-	scrolling_position_ = 0;
-	text_set_position_ = 0;
+	_text_size(wnd._text_size),
+	_scrolling_speed(wnd._scrolling_speed),
+	_text_set(wnd._text_set),
+	_text_set_id(wnd._text_set_id),
+	_slider_name(wnd._slider_name),
+	_slider(wnd._slider),
+	_windowType(wnd._windowType),
+	_infoType(wnd._infoType),
+	_playerID(wnd._playerID),
+	_inputString(wnd._inputString),
+	_inputStringBackup(wnd._inputStringBackup),
+	_inputStringLimit(wnd._inputStringLimit),
+	_textFormat(wnd._textFormat),
+	_textVAlign(wnd._textVAlign) {
+	_scrolling_position = 0;
+	_text_set_position = 0;
 
-	background_color_ = wnd.background_color_;
-	has_background_color_ = wnd.has_background_color_;
-	background_alpha_ = wnd.background_alpha_;
+	_background_color = wnd._background_color;
+	_has_background_color = wnd._has_background_color;
+	_background_alpha = wnd._background_alpha;
 
-	isEditing_ = wnd.isEditing_;
-	caretPose_ = wnd.caretPose_;
+	_isEditing = wnd._isEditing;
+	_caretPose = wnd._caretPose;
 
-	border_background_.set_owner(this);
-	border_background_ = wnd.border_background_;
+	_border_background.set_owner(this);
+	_border_background = wnd._border_background;
 }
 
 qdInterfaceTextWindow &qdInterfaceTextWindow::operator = (const qdInterfaceTextWindow &wnd) {
@@ -101,43 +101,43 @@ qdInterfaceTextWindow &qdInterfaceTextWindow::operator = (const qdInterfaceTextW
 
 	*static_cast<qdInterfaceElement *>(this) = wnd;
 
-	text_size_ = wnd.text_size_;
-	scrolling_speed_ = wnd.scrolling_speed_;
-	text_set_ = wnd.text_set_;
-	text_set_id_ = wnd.text_set_id_;
-	slider_name_ = wnd.slider_name_;
-	slider_ = wnd.slider_;
+	_text_size = wnd._text_size;
+	_scrolling_speed = wnd._scrolling_speed;
+	_text_set = wnd._text_set;
+	_text_set_id = wnd._text_set_id;
+	_slider_name = wnd._slider_name;
+	_slider = wnd._slider;
 
-	windowType_ = wnd.windowType_;
-	infoType_ = wnd.infoType_;
-	playerID_ = wnd.playerID_;
+	_windowType = wnd._windowType;
+	_infoType = wnd._infoType;
+	_playerID = wnd._playerID;
 
-	inputString_ = wnd.inputString_;
-	inputStringBackup_ = wnd.inputStringBackup_;
-	inputStringLimit_ = wnd.inputStringLimit_;
-	textFormat_ = wnd.textFormat_;
+	_inputString = wnd._inputString;
+	_inputStringBackup = wnd._inputStringBackup;
+	_inputStringLimit = wnd._inputStringLimit;
+	_textFormat = wnd._textFormat;
 
-	textVAlign_ = wnd.textVAlign_;
+	_textVAlign = wnd._textVAlign;
 
-	isEditing_ = wnd.isEditing_;
-	caretPose_ = wnd.caretPose_;
+	_isEditing = wnd._isEditing;
+	_caretPose = wnd._caretPose;
 
-	border_background_ = wnd.border_background_;
-	background_color_ = wnd.background_color_;
+	_border_background = wnd._border_background;
+	_background_color = wnd._background_color;
 
 	return *this;
 }
 
 qdInterfaceTextWindow::~qdInterfaceTextWindow() {
-	border_background_.unregister_resources();
+	_border_background.unregister_resources();
 }
 
 bool qdInterfaceTextWindow::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
-	if (!text_set_) return false;
+	if (!_text_set) return false;
 
-	if (windowType_ == WINDOW_DIALOGS) {
+	if (_windowType == WINDOW_DIALOGS) {
 		if (ev == mouseDispatcher::EV_LEFT_DOWN) {
-			if (qdScreenText * p = text_set_->get_text(x, y)) {
+			if (qdScreenText * p = _text_set->get_text(x, y)) {
 				if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
 					dp->set_flag(qdGameDispatcher::DIALOG_CLICK_FLAG);
 					dp->set_mouse_click_state(p->owner());
@@ -145,8 +145,8 @@ bool qdInterfaceTextWindow::mouse_handler(int x, int y, mouseDispatcher::mouseEv
 				return true;
 			}
 		} else if (ev == mouseDispatcher::EV_MOUSE_MOVE) {
-			text_set_->clear_hover_mode();
-			if (qdScreenText * p = text_set_->get_text(x, y))
+			_text_set->clear_hover_mode();
+			if (qdScreenText * p = _text_set->get_text(x, y))
 				p->set_hover_mode(true);
 		}
 	}
@@ -155,7 +155,7 @@ bool qdInterfaceTextWindow::mouse_handler(int x, int y, mouseDispatcher::mouseEv
 }
 
 bool qdInterfaceTextWindow::keyboard_handler(int vkey) {
-	if (windowType_ == WINDOW_EDIT && isEditing_)
+	if (_windowType == WINDOW_EDIT && _isEditing)
 		return edit_input(vkey);
 
 	return false;
@@ -167,10 +167,10 @@ bool qdInterfaceTextWindow::char_input_handler(int input) {
 #if 0
 	bool ret = __super::char_input_handler(input);
 #endif
-	if (windowType_ == WINDOW_EDIT && isEditing_) {
-		if (!inputStringLimit_ || inputString_.length() < inputStringLimit_) {
+	if (_windowType == WINDOW_EDIT && _isEditing) {
+		if (!_inputStringLimit || _inputString.length() < _inputStringLimit) {
 			if (isprint(input) || input == '_' || input == '-' || input == ' ') {
-				inputString_.insert(caretPose_++, 1, input);
+				_inputString.insert(_caretPose++, 1, input);
 				return true;
 			}
 		}
@@ -180,141 +180,141 @@ bool qdInterfaceTextWindow::char_input_handler(int input) {
 }
 
 void qdInterfaceTextWindow::hover_clear() {
-	if (windowType_ == WINDOW_DIALOGS) {
-		if (text_set_)
-			text_set_->clear_hover_mode();
+	if (_windowType == WINDOW_DIALOGS) {
+		if (_text_set)
+			_text_set->clear_hover_mode();
 	}
 }
 
 bool qdInterfaceTextWindow::init(bool is_game_active) {
-	set_state(&border_background_);
+	set_state(&_border_background);
 
-	if (windowType_ == WINDOW_DIALOGS) {
-		if (!text_set_)
-			text_set_ = qdGameDispatcher::get_dispatcher()->screen_texts_dispatcher().get_text_set(text_set_id_);
+	if (_windowType == WINDOW_DIALOGS) {
+		if (!_text_set)
+			_text_set = qdGameDispatcher::get_dispatcher()->screen_texts_dispatcher().get_text_set(_text_set_id);
 
-		if (!slider_) {
+		if (!_slider) {
 			if (qdInterfaceScreen * p = static_cast<qdInterfaceScreen * >(owner()))
-				slider_ = dynamic_cast<qdInterfaceSlider * >(p->get_element(slider_name()));
+				_slider = dynamic_cast<qdInterfaceSlider * >(p->get_element(slider_name()));
 		}
 
-		if (text_set_) {
-			text_set_->set_max_text_width(text_size_.x);
+		if (_text_set) {
+			_text_set->set_max_text_width(_text_size.x);
 			update_text_position();
 		}
 	} else {
 #ifndef _QUEST_EDITOR
 		qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher();
 
-		switch (infoType_) {
+		switch (_infoType) {
 		case INFO_PLAYER_NAME:
-			inputString_ = dp->hall_of_fame_player_name(playerID_);
-			if (dp->is_hall_of_fame_updated(playerID_) && !isEditing_)
+			_inputString = dp->hall_of_fame_player_name(_playerID);
+			if (dp->is_hall_of_fame_updated(_playerID) && !_isEditing)
 				edit_start();
 			break;
 		case INFO_PLAYER_SCORE:
-			if (dp->hall_of_fame_player_score(playerID_)) {
+			if (dp->hall_of_fame_player_score(_playerID)) {
 				Common::String buf;
-				buf += Common::String::format("%d", dp->hall_of_fame_player_score(playerID_));
-				inputString_ = buf.c_str();
+				buf += Common::String::format("%d", dp->hall_of_fame_player_score(_playerID));
+				_inputString = buf.c_str();
 			} else
-				inputString_ = "";
+				_inputString = "";
 			break;
 		default:
 			break;
 		}
 #endif
-		if (windowType_ == WINDOW_TEXT)
+		if (_windowType == WINDOW_TEXT)
 			set_input_string(input_string());
 	}
 	return true;
 }
 
 bool qdInterfaceTextWindow::save_script_body(Common::WriteStream &fh, int indent) const {
-	if (border_background_.has_animation()) {
+	if (_border_background.has_animation()) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<border_back>%s</border_back>\r\n", qdscr_XML_string(border_background_.animation_file())));
+		fh.writeString(Common::String::format("<border_back>%s</border_back>\r\n", qdscr_XML_string(_border_background.animation_file())));
 	}
 
-	if (!slider_name_.empty()) {
+	if (!_slider_name.empty()) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<window_slider>%s</window_slider>\r\n", qdscr_XML_string(slider_name_.c_str())));
+		fh.writeString(Common::String::format("<window_slider>%s</window_slider>\r\n", qdscr_XML_string(_slider_name.c_str())));
 	}
 
-	if (text_size_.x || text_size_.y) {
+	if (_text_size.x || _text_size.y) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<screen_size>%d %d</screen_size>\r\n", text_size_.x, text_size_.y));
+		fh.writeString(Common::String::format("<screen_size>%d %d</screen_size>\r\n", _text_size.x, _text_size.y));
 	}
 
-	if (background_color_) {
+	if (_background_color) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<color>%u</color>\r\n", background_color_));
+		fh.writeString(Common::String::format("<color>%u</color>\r\n", _background_color));
 	}
 
-	if (has_background_color_) {
+	if (_has_background_color) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 		fh.writeString("<enable_background>1</enable_background>\r\n");
 	}
 
-	if (background_alpha_) {
+	if (_background_alpha) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<alpha>%d</alpha>\r\n", background_alpha_));
+		fh.writeString(Common::String::format("<alpha>%d</alpha>\r\n", _background_alpha));
 	}
 
-	if (windowType_ != WINDOW_DIALOGS) {
+	if (_windowType != WINDOW_DIALOGS) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<window_type>%d</window_type>\r\n", (int)windowType_));
+		fh.writeString(Common::String::format("<window_type>%d</window_type>\r\n", (int)_windowType));
 	}
 
-	if (infoType_ != INFO_NONE) {
+	if (_infoType != INFO_NONE) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<info_type>%d</info_type>\r\n", (int)infoType_));
+		fh.writeString(Common::String::format("<info_type>%d</info_type>\r\n", (int)_infoType));
 	}
 
-	if (playerID_) {
+	if (_playerID) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<player_id>%d</player_id>\r\n", playerID_));
+		fh.writeString(Common::String::format("<player_id>%d</player_id>\r\n", _playerID));
 	}
 
-	if (!inputString_.empty()) {
+	if (!_inputString.empty()) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<text>%s</text>\r\n", qdscr_XML_string(inputString_.c_str())));
+		fh.writeString(Common::String::format("<text>%s</text>\r\n", qdscr_XML_string(_inputString.c_str())));
 	}
 
-	if (inputStringLimit_) {
+	if (_inputStringLimit) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<string_length>%d</string_length>\r\n", inputStringLimit_));
+		fh.writeString(Common::String::format("<string_length>%d</string_length>\r\n", _inputStringLimit));
 	}
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<valign>%d</valign>\r\n", textVAlign_));
+	fh.writeString(Common::String::format("<valign>%d</valign>\r\n", _textVAlign));
 
-	if (textFormat_ != qdScreenTextFormat::default_format()) {
-		textFormat_.save_script(fh, indent + 1);
+	if (_textFormat != qdScreenTextFormat::default_format()) {
+		_textFormat.save_script(fh, indent + 1);
 	}
 
 	return true;
@@ -330,38 +330,38 @@ bool qdInterfaceTextWindow::load_script_body(const xml::tag *p) {
 			set_slider_name(it->data());
 			break;
 		case QDSCR_SCREEN_SIZE:
-			xml::tag_buffer(*it) > text_size_.x > text_size_.y;
+			xml::tag_buffer(*it) > _text_size.x > _text_size.y;
 			break;
 		case QDSCR_COLOR:
-			xml::tag_buffer(*it) > background_color_;
+			xml::tag_buffer(*it) > _background_color;
 			break;
 		case QDSCR_ALPHA:
-			xml::tag_buffer(*it) > background_alpha_;
+			xml::tag_buffer(*it) > _background_alpha;
 			break;
 		case QDSCR_ENABLE_BACKGROUND:
-			has_background_color_ = xml::tag_buffer(*it).get_int() != 0;
+			_has_background_color = xml::tag_buffer(*it).get_int() != 0;
 			break;
 		case QDSCR_TEXT_WINDOW_TYPE:
-			windowType_ = WindowType(xml::tag_buffer(*it).get_int());
+			_windowType = WindowType(xml::tag_buffer(*it).get_int());
 			break;
 		case QDSCR_TEXT_WINDOW_INFO_TYPE:
-			infoType_ = InfoType(xml::tag_buffer(*it).get_int());
+			_infoType = InfoType(xml::tag_buffer(*it).get_int());
 			break;
 		case QDSCR_TEXT_WINDOW_PLAYER_ID:
-			xml::tag_buffer(*it) > playerID_;
+			xml::tag_buffer(*it) > _playerID;
 			break;
 		case QDSCR_SCREEN_TEXT_FORMAT:
-			textFormat_.load_script(&*it);
-			textFormat_.toggle_global_depend(false);
+			_textFormat.load_script(&*it);
+			_textFormat.toggle_global_depend(false);
 			break;
 		case QDSCR_TEXT_WINDOW_MAX_STRING_LENGTH:
-			xml::tag_buffer(*it) > inputStringLimit_;
+			xml::tag_buffer(*it) > _inputStringLimit;
 			break;
 		case QDSCR_TEXT:
-			inputString_ = it->data();
+			_inputString = it->data();
 			break;
 		case QDSCR_VALIGN:
-			textVAlign_ = TextVAlign(xml::tag_buffer(*it).get_int());
+			_textVAlign = TextVAlign(xml::tag_buffer(*it).get_int());
 			break;
 		}
 	}
@@ -372,38 +372,38 @@ bool qdInterfaceTextWindow::load_script_body(const xml::tag *p) {
 bool qdInterfaceTextWindow::redraw() const {
 	qdInterfaceElement::redraw();
 
-	if (windowType_ == WINDOW_DIALOGS) {
-		if (text_set_) {
+	if (_windowType == WINDOW_DIALOGS) {
+		if (_text_set) {
 			int l_clip, t_clip, r_clip, b_clip;
 			grDispatcher::instance()->GetClip(l_clip, t_clip, r_clip, b_clip);
 
 			Vect2i ar = r();
-			grDispatcher::instance()->LimitClip(ar.x - text_size_.x / 2, ar.y - text_size_.y / 2, ar.x + text_size_.x / 2, ar.y + text_size_.y / 2);
+			grDispatcher::instance()->LimitClip(ar.x - _text_size.x / 2, ar.y - _text_size.y / 2, ar.x + _text_size.x / 2, ar.y + _text_size.y / 2);
 
-			if (has_background_color_) {
-				Vect2i text_r = text_set_->screen_pos();
-				Vect2i text_sz = text_set_->screen_size();
+			if (_has_background_color) {
+				Vect2i text_r = _text_set->screen_pos();
+				Vect2i text_sz = _text_set->screen_size();
 
-				if (!background_alpha_)
-					grDispatcher::instance()->Rectangle(ar.x - text_size_.x / 2, text_r.y - text_sz.y / 2, text_size_.x, text_sz.y, background_color_, background_color_, GR_FILLED);
+				if (!_background_alpha)
+					grDispatcher::instance()->Rectangle(ar.x - _text_size.x / 2, text_r.y - text_sz.y / 2, _text_size.x, text_sz.y, _background_color, _background_color, GR_FILLED);
 				else
-					grDispatcher::instance()->RectangleAlpha(ar.x - text_size_.x / 2, text_r.y - text_sz.y / 2, text_size_.x, text_sz.y, background_color_, background_alpha_);
+					grDispatcher::instance()->RectangleAlpha(ar.x - _text_size.x / 2, text_r.y - text_sz.y / 2, _text_size.x, text_sz.y, _background_color, _background_alpha);
 			}
 
-			text_set_->redraw();
+			_text_set->redraw();
 
 			grDispatcher::instance()->SetClip(l_clip, t_clip, r_clip, b_clip);
 
 			if (qdGameConfig::get_config().debug_draw())
-				grDispatcher::instance()->Rectangle(ar.x - text_size_.x / 2, ar.y - text_size_.y / 2, text_size_.x, text_size_.y, 0xFFFFFF, 0, GR_OUTLINED, 3);
+				grDispatcher::instance()->Rectangle(ar.x - _text_size.x / 2, ar.y - _text_size.y / 2, _text_size.x, _text_size.y, 0xFFFFFF, 0, GR_OUTLINED, 3);
 		}
-	} else if (windowType_ == WINDOW_EDIT || windowType_ == WINDOW_TEXT) {
-		if (has_background_color_) {
+	} else if (_windowType == WINDOW_EDIT || _windowType == WINDOW_TEXT) {
+		if (_has_background_color) {
 			Vect2i ar = r();
-			if (!background_alpha_)
-				grDispatcher::instance()->Rectangle(ar.x - text_size_.x / 2, ar.y - text_size_.y / 2, text_size_.x, text_size_.y, background_color_, background_color_, GR_FILLED);
+			if (!_background_alpha)
+				grDispatcher::instance()->Rectangle(ar.x - _text_size.x / 2, ar.y - _text_size.y / 2, _text_size.x, _text_size.y, _background_color, _background_color, GR_FILLED);
 			else
-				grDispatcher::instance()->RectangleAlpha(ar.x - text_size_.x / 2, ar.y - text_size_.y / 2, text_size_.x, text_size_.y, background_color_, background_alpha_);
+				grDispatcher::instance()->RectangleAlpha(ar.x - _text_size.x / 2, ar.y - _text_size.y / 2, _text_size.x, _text_size.y, _background_color, _background_alpha);
 		}
 
 		text_redraw();
@@ -429,13 +429,13 @@ bool qdInterfaceTextWindow::need_redraw() const {
 	if (qdInterfaceElement::need_redraw())
 		return true;
 
-	if (windowType_ == WINDOW_DIALOGS) {
-		if (text_set_ && text_set_->need_redraw())
+	if (_windowType == WINDOW_DIALOGS) {
+		if (_text_set && _text_set->need_redraw())
 			return true;
 
-		if (slider_ && slider_->need_redraw())
+		if (_slider && _slider->need_redraw())
 			return true;
-	} else if (windowType_ == WINDOW_EDIT || windowType_ == WINDOW_TEXT)
+	} else if (_windowType == WINDOW_EDIT || _windowType == WINDOW_TEXT)
 		return true;
 
 	return false;
@@ -444,33 +444,33 @@ bool qdInterfaceTextWindow::need_redraw() const {
 bool qdInterfaceTextWindow::quant(float dt) {
 	qdInterfaceElement::quant(dt);
 
-	if (isEditing_) {
-		caretTimer_ -= dt;
-		if (caretTimer_ < 0.f) {
-			caretVisible_ = !caretVisible_;
-			caretTimer_ = qdInterfaceCaretPeriod;
+	if (_isEditing) {
+		_caretTimer -= dt;
+		if (_caretTimer < 0.f) {
+			_caretVisible = !_caretVisible;
+			_caretTimer = qdInterfaceCaretPeriod;
 		}
 	}
 
-	if (windowType_ == WINDOW_DIALOGS) {
-		if (is_visible() && text_set_ && text_set_->was_changed())
+	if (_windowType == WINDOW_DIALOGS) {
+		if (is_visible() && _text_set && _text_set->was_changed())
 			update_text_position();
 
 #ifndef _QUEST_EDITOR
-		if (text_set_) {
-			if (fabs(scrolling_position_) > FLT_EPS) {
-				float delta = scrolling_speed_ * dt;
-				if (fabs(scrolling_position_) > delta)
-					scrolling_position_ += (scrolling_position_ > 0) ? -delta : delta;
+		if (_text_set) {
+			if (fabs(_scrolling_position) > FLT_EPS) {
+				float delta = _scrolling_speed * dt;
+				if (fabs(_scrolling_position) > delta)
+					_scrolling_position += (_scrolling_position > 0) ? -delta : delta;
 				else
-					scrolling_position_ = 0;
+					_scrolling_position = 0;
 
-				Vect2i pos = text_set_->screen_pos();
-				pos.y = text_set_position_ + round(scrolling_position_);
-				text_set_->set_screen_pos(pos);
+				Vect2i pos = _text_set->screen_pos();
+				pos.y = _text_set_position + round(_scrolling_position);
+				_text_set->set_screen_pos(pos);
 			}
 
-			if (text_set_->is_empty()) {
+			if (_text_set->is_empty()) {
 				if (is_visible()) {
 					hide();
 					if (qdInterfaceScreen * sp = dynamic_cast<qdInterfaceScreen * >(owner()))
@@ -486,10 +486,10 @@ bool qdInterfaceTextWindow::quant(float dt) {
 				}
 			}
 
-			if (slider_) {
-				if (!is_visible() || text_size_.y > text_set_->screen_size().y) {
-					if (slider_->is_visible()) {
-						slider_->hide();
+			if (_slider) {
+				if (!is_visible() || _text_size.y > _text_set->screen_size().y) {
+					if (_slider->is_visible()) {
+						_slider->hide();
 
 						if (qdInterfaceScreen * sp = dynamic_cast<qdInterfaceScreen * >(owner()))
 							sp->build_visible_elements_list();
@@ -497,8 +497,8 @@ bool qdInterfaceTextWindow::quant(float dt) {
 						qdGameDispatcher::get_dispatcher()->toggle_full_redraw();
 					}
 				} else {
-					if (!slider_->is_visible()) {
-						slider_->show();
+					if (!_slider->is_visible()) {
+						_slider->show();
 
 						if (qdInterfaceScreen * sp = dynamic_cast<qdInterfaceScreen * >(owner()))
 							sp->build_visible_elements_list();
@@ -513,25 +513,25 @@ bool qdInterfaceTextWindow::quant(float dt) {
 }
 
 void qdInterfaceTextWindow::update_text_position() {
-	if (text_set_) {
-		Vect2f rr = r() - text_size() / 2 + text_set_->screen_size() / 2;
-		switch (textVAlign_) {
+	if (_text_set) {
+		Vect2f rr = r() - text_size() / 2 + _text_set->screen_size() / 2;
+		switch (_textVAlign) {
 		case VALIGN_CENTER:
-			rr.y += (text_size().y - text_set_->screen_size().y) / 2;
+			rr.y += (text_size().y - _text_set->screen_size().y) / 2;
 			break;
 		case VALIGN_BOTTOM:
-			rr.y += text_size().y - text_set_->screen_size().y;
+			rr.y += text_size().y - _text_set->screen_size().y;
 			break;
 		default:
 			break;
 		}
-		text_set_->set_screen_pos(rr);
-		text_set_position_ = rr.y;
+		_text_set->set_screen_pos(rr);
+		_text_set_position = rr.y;
 
-		set_scrolling(text_set_->new_texts_height());
-		text_set_->clear_new_texts_height();
+		set_scrolling(_text_set->new_texts_height());
+		_text_set->clear_new_texts_height();
 
-		text_set_->toggle_changed(false);
+		_text_set->toggle_changed(false);
 	}
 }
 
@@ -550,65 +550,65 @@ grScreenRegion qdInterfaceTextWindow::screen_region() const {
 }
 
 int qdInterfaceTextWindow::size_x() const {
-	return (qdInterfaceElement::size_x() > text_size_.x) ? qdInterfaceElement::size_x() : text_size_.x;
+	return (qdInterfaceElement::size_x() > _text_size.x) ? qdInterfaceElement::size_x() : _text_size.x;
 }
 
 int qdInterfaceTextWindow::size_y() const {
-	return (qdInterfaceElement::size_y() > text_size_.y) ? qdInterfaceElement::size_y() : text_size_.y;
+	return (qdInterfaceElement::size_y() > _text_size.y) ? qdInterfaceElement::size_y() : _text_size.y;
 }
 
 void qdInterfaceTextWindow::set_scrolling(int y_delta) {
-	if (scrolling_speed_ > FLT_EPS)
-		scrolling_position_ = y_delta;
+	if (_scrolling_speed > FLT_EPS)
+		_scrolling_position = y_delta;
 	else
-		scrolling_position_ = 0;
+		_scrolling_position = 0;
 }
 
 void qdInterfaceTextWindow::text_redraw() const {
-	Vect2i ar = r() - text_size_ / 2;
+	Vect2i ar = r() - _text_size / 2;
 
-	unsigned col = textFormat_.color();
+	unsigned col = _textFormat.color();
 
 	const grFont *font = qdGameDispatcher::get_dispatcher()->
-	                     find_font(textFormat_.font_type());
+	                     find_font(_textFormat.font_type());
 
-	if (windowType_ == WINDOW_EDIT && isEditing_) {
+	if (_windowType == WINDOW_EDIT && _isEditing) {
 		int sz0 = grDispatcher::instance()->TextWidth("|", 0, font);
-		int sz1 = grDispatcher::instance()->TextWidth(inputString_.c_str(), 0, font);
+		int sz1 = grDispatcher::instance()->TextWidth(_inputString.c_str(), 0, font);
 		int x0 = ar.x;
-		switch (textFormat_.alignment()) {
+		switch (_textFormat.alignment()) {
 		case qdScreenTextFormat::ALIGN_LEFT:
 			break;
 		case qdScreenTextFormat::ALIGN_CENTER:
-			x0 += (text_size_.x - sz0 - sz1) / 2;
+			x0 += (_text_size.x - sz0 - sz1) / 2;
 			break;
 		case qdScreenTextFormat::ALIGN_RIGHT:
-			x0 += text_size_.x - sz0 - sz1;
+			x0 += _text_size.x - sz0 - sz1;
 			break;
 		}
 
-		std::string str = inputString_.substr(0, caretPose_);
+		std::string str = _inputString.substr(0, _caretPose);
 		if (!str.empty()) {
-			grDispatcher::instance()->DrawAlignedText(x0, ar.y, text_size_.x, text_size_.y, col, str.c_str(), GR_ALIGN_LEFT, 0, 0, font);
+			grDispatcher::instance()->DrawAlignedText(x0, ar.y, _text_size.x, _text_size.y, col, str.c_str(), GR_ALIGN_LEFT, 0, 0, font);
 			x0 += grDispatcher::instance()->TextWidth(str.c_str(), 0, font);
 		}
-		if (caretVisible_)
-			grDispatcher::instance()->DrawAlignedText(x0, ar.y, text_size_.x, text_size_.y, col, "|", GR_ALIGN_LEFT, 0, 0, font);
+		if (_caretVisible)
+			grDispatcher::instance()->DrawAlignedText(x0, ar.y, _text_size.x, _text_size.y, col, "|", GR_ALIGN_LEFT, 0, 0, font);
 		x0 += grDispatcher::instance()->TextWidth("|", 0, font);
 
-		str = inputString_.substr(caretPose_, std::string::npos);
+		str = _inputString.substr(_caretPose, std::string::npos);
 		if (!str.empty())
-			grDispatcher::instance()->DrawAlignedText(x0, ar.y, text_size_.x, text_size_.y, col, str.c_str(), GR_ALIGN_LEFT, 0, 0, font);
+			grDispatcher::instance()->DrawAlignedText(x0, ar.y, _text_size.x, _text_size.y, col, str.c_str(), GR_ALIGN_LEFT, 0, 0, font);
 	} else {
-		if (windowType_ == WINDOW_TEXT)
-			grDispatcher::instance()->DrawParsedText(ar.x, ar.y, text_size_.x, text_size_.y, col, &parser_, grTextAlign(textFormat_.alignment()), font);
+		if (_windowType == WINDOW_TEXT)
+			grDispatcher::instance()->DrawParsedText(ar.x, ar.y, _text_size.x, _text_size.y, col, &_parser, grTextAlign(_textFormat.alignment()), font);
 		else
-			grDispatcher::instance()->DrawAlignedText(ar.x, ar.y, text_size_.x, text_size_.y, col, inputString_.c_str(), grTextAlign(textFormat_.alignment()), 0, 0, font);
+			grDispatcher::instance()->DrawAlignedText(ar.x, ar.y, _text_size.x, _text_size.y, col, _inputString.c_str(), grTextAlign(_textFormat.alignment()), 0, 0, font);
 	}
 }
 
 bool qdInterfaceTextWindow::edit_input(int vkey) {
-	if (isEditing_) {
+	if (_isEditing) {
 		switch (vkey) {
 		case VK_ESCAPE:
 			if (!edit_done(true))
@@ -621,31 +621,31 @@ bool qdInterfaceTextWindow::edit_input(int vkey) {
 			return true;
 
 		case VK_LEFT:
-			if (caretPose_ > 0)
-				--caretPose_;
+			if (_caretPose > 0)
+				--_caretPose;
 			return true;
 
 		case VK_HOME:
-			caretPose_ = 0;
+			_caretPose = 0;
 			return true;
 
 		case VK_END:
-			caretPose_ = inputString_.size();
+			_caretPose = _inputString.size();
 			return true;
 
 		case VK_RIGHT:
-			if (caretPose_ < inputString_.size())
-				++caretPose_;
+			if (_caretPose < _inputString.size())
+				++_caretPose;
 			return true;
 
 		case VK_BACK:
-			if (caretPose_ > 0 && caretPose_ <= inputString_.size())
-				inputString_.erase(--caretPose_, 1);
+			if (_caretPose > 0 && _caretPose <= _inputString.size())
+				_inputString.erase(--_caretPose, 1);
 			return true;
 
 		case VK_DELETE:
-			if (caretPose_ >= 0 && caretPose_ < inputString_.size())
-				inputString_.erase(caretPose_, 1);
+			if (_caretPose >= 0 && _caretPose < _inputString.size())
+				_inputString.erase(_caretPose, 1);
 
 			return true;
 
@@ -658,19 +658,19 @@ bool qdInterfaceTextWindow::edit_input(int vkey) {
 }
 
 void qdInterfaceTextWindow::set_input_string(const char *str) {
-	inputString_ = str;
+	_inputString = str;
 
-	if (windowType_ == WINDOW_TEXT) {
-		parser_.setFont(qdGameDispatcher::get_dispatcher()->find_font(textFormat_.font_type()));
-		parser_.parseString(inputString_.c_str(), textFormat_.color());
+	if (_windowType == WINDOW_TEXT) {
+		_parser.setFont(qdGameDispatcher::get_dispatcher()->find_font(_textFormat.font_type()));
+		_parser.parseString(_inputString.c_str(), _textFormat.color());
 	}
 }
 
 bool qdInterfaceTextWindow::edit_start() {
-	if (!isEditing_) {
-		isEditing_ = true;
-		inputStringBackup_ = inputString_;
-		caretPose_ = inputString_.size();
+	if (!_isEditing) {
+		_isEditing = true;
+		_inputStringBackup = _inputString;
+		_caretPose = _inputString.size();
 		return true;
 	}
 
@@ -678,20 +678,20 @@ bool qdInterfaceTextWindow::edit_start() {
 }
 
 bool qdInterfaceTextWindow::edit_done(bool cancel) {
-	if (isEditing_) {
+	if (_isEditing) {
 		bool end_edit = true;
 
-		switch (infoType_) {
+		switch (_infoType) {
 		case INFO_NONE:
 			if (qdInterfaceDispatcher * dp = qdInterfaceDispatcher::get_dispatcher())
 				dp->handle_event(!cancel ? qdInterfaceEvent::EVENT_MODAL_OK : qdInterfaceEvent::EVENT_MODAL_CANCEL, 0, this);
 			break;
 		case INFO_PLAYER_NAME:
-			if (cancel || inputString_.empty()) {
+			if (cancel || _inputString.empty()) {
 				end_edit = false;
 			} else {
 				if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-					dp->set_hall_of_fame_player_name(playerID_, inputString_.c_str());
+					dp->set_hall_of_fame_player_name(_playerID, _inputString.c_str());
 					dp->save_hall_of_fame();
 				}
 			}
@@ -701,10 +701,10 @@ bool qdInterfaceTextWindow::edit_done(bool cancel) {
 		}
 
 		if (end_edit) {
-			isEditing_ = false;
+			_isEditing = false;
 
 			if (cancel)
-				inputString_ = inputStringBackup_;
+				_inputString = _inputStringBackup;
 		}
 
 		return true;
