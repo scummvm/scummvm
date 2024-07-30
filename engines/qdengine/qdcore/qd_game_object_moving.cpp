@@ -49,110 +49,110 @@ const int EIGHT_DIRS_OPT_ITER_MAX = 10;    // Макс. кол-во итерац
 // optimize_path_eight_dirs
 
 qdGameObjectMoving::qdGameObjectMoving() :
-	collision_radius_(0.0f),
-	collision_delay_(0.0f),
-	collision_path_(20.0f),
-	follow_min_radius_(0.0f),
-	follow_max_radius_(0.0f),
-	follow_condition_(FOLLOW_DONE),
+	_collision_radius(0.0f),
+	_collision_delay(0.0f),
+	_collision_path(20.0f),
+	_follow_min_radius(0.0f),
+	_follow_max_radius(0.0f),
+	_follow_condition(FOLLOW_DONE),
 	attacher_(NULL),
-	attach_shift_(Vect2s(0, 0)),
-	disable_control_(false),
-	scale_(1.0f),
-	direction_angle_(0.0f),
-	default_direction_angle_(0.0f),
-	rotation_angle_(0.0f),
-	rotation_angle_per_quant_(1.0f),
-	last_move_order_(Vect3f::ZERO),
-	target_r_(0, 0, 0),
-	path_length_(0),
-	cur_path_index_(0),
+	_attach_shift(Vect2s(0, 0)),
+	_disable_control(false),
+	_scale(1.0f),
+	_direction_angle(0.0f),
+	_default_direction_angle(0.0f),
+	_rotation_angle(0.0f),
+	_rotation_angle_per_quant(1.0f),
+	_last_move_order(Vect3f::ZERO),
+	_target_r(0, 0, 0),
+	_path_length(0),
+	_cur_path_index(0),
 #ifndef _QUEST_EDITOR
-	walk_grid_size_(0, 0),
-	last_walk_state_(NULL),
+	_walk_grid_size(0, 0),
+	_last_walk_state(NULL),
 #endif
-	impulse_movement_mode_(false),
-	speed_delta_(0.0f),
-	target_angle_(-1.0f),
-	impulse_timer_(0.0f),
-	impulse_start_timer_(0.0f),
-	impulse_direction_(-1.0f),
-	control_types_(CONTROL_MOUSE),
-	button_(NULL) {
-	ignore_personages_ = false;
-	is_selected_ = false;
+	_impulse_movement_mode(false),
+	_speed_delta(0.0f),
+	_target_angle(-1.0f),
+	_impulse_timer(0.0f),
+	_impulse_start_timer(0.0f),
+	_impulse_direction(-1.0f),
+	_control_types(CONTROL_MOUSE),
+	_button(NULL) {
+	_ignore_personages = false;
+	_is_selected = false;
 	set_flag(QD_OBJ_HAS_BOUND_FLAG);
-	movement_mode_ = MOVEMENT_MODE_STOP;
-	movement_mode_time_ = movement_mode_time_current_ = 0.f;
+	_movement_mode = MOVEMENT_MODE_STOP;
+	_movement_mode_time = _movement_mode_time_current = 0.f;
 }
 
 qdGameObjectMoving::qdGameObjectMoving(const qdGameObjectMoving &obj) : qdGameObjectAnimated(obj),
-	follow_min_radius_(obj.follow_min_radius()),
-	follow_max_radius_(obj.follow_min_radius()),
-	follow_condition_(obj.follow_condition()),
+	_follow_min_radius(obj.follow_min_radius()),
+	_follow_max_radius(obj.follow_min_radius()),
+	_follow_condition(obj.follow_condition()),
 	attacher_(obj.attacher()),
 	attacher_ref_(obj.attacher_ref()),
-	attach_shift_(obj.attach_shift()),
-	disable_control_(false),
-	scale_(obj.scale_),
-	direction_angle_(obj.direction_angle_),
-	default_direction_angle_(obj.default_direction_angle_),
-	rotation_angle_(obj.rotation_angle()),
-	rotation_angle_per_quant_(obj.rotation_angle_per_quant()),
-	last_move_order_(Vect3f::ZERO),
-	target_r_(0, 0, 0),
-	path_length_(0),
-	cur_path_index_(0),
+	_attach_shift(obj.attach_shift()),
+	_disable_control(false),
+	_scale(obj._scale),
+	_direction_angle(obj._direction_angle),
+	_default_direction_angle(obj._default_direction_angle),
+	_rotation_angle(obj.rotation_angle()),
+	_rotation_angle_per_quant(obj.rotation_angle_per_quant()),
+	_last_move_order(Vect3f::ZERO),
+	_target_r(0, 0, 0),
+	_path_length(0),
+	_cur_path_index(0),
 #ifndef _QUEST_EDITOR
-	walk_grid_size_(obj.walk_grid_size_),
-	last_walk_state_(NULL),
+	_walk_grid_size(obj._walk_grid_size),
+	_last_walk_state(NULL),
 #endif
-	impulse_movement_mode_(false),
-	speed_delta_(0.0f),
-	target_angle_(-1.0f),
-	impulse_timer_(0.0f),
-	impulse_start_timer_(0.0f),
-	impulse_direction_(-1.0f),
-	control_types_(obj.control_types_),
-	button_(NULL) {
-	ignore_personages_ = false;
-	is_selected_ = false;
+	_impulse_movement_mode(false),
+	_speed_delta(0.0f),
+	_target_angle(-1.0f),
+	_impulse_timer(0.0f),
+	_impulse_start_timer(0.0f),
+	_impulse_direction(-1.0f),
+	_control_types(obj._control_types),
+	_button(NULL) {
+	_ignore_personages = false;
+	_is_selected = false;
 	set_flag(QD_OBJ_HAS_BOUND_FLAG);
 
-	movement_mode_ = MOVEMENT_MODE_STOP;
-	movement_mode_time_ = movement_mode_time_current_ = 0.f;
+	_movement_mode = MOVEMENT_MODE_STOP;
+	_movement_mode_time = _movement_mode_time_current = 0.f;
 
-	circuit_objs_ = obj.const_ref_circuit_objs();
+	_circuit_objs = obj.const_ref_circuit_objs();
 }
 
 #ifdef _QUEST_EDITOR
 qdGameObjectMoving::qdGameObjectMoving(const qdGameObjectAnimated &obj)
 	:   qdGameObjectAnimated(obj),
-	    follow_min_radius_(0.0f),
-	    follow_max_radius_(0.0f),
-	    follow_condition_(FOLLOW_DONE),
+	    _follow_min_radius(0.0f),
+	    _follow_max_radius(0.0f),
+	    _follow_condition(FOLLOW_DONE),
 	    attacher_(NULL),
-	    attach_shift_(0, 0),
-	    disable_control_(false),
-	    scale_(1.0f),
-	    direction_angle_(0.0f),
-	    default_direction_angle_(0.0f),
-	    rotation_angle_(0.0f),
-	    rotation_angle_per_quant_(1.0f),
-	    last_move_order_(Vect3f::ZERO),
-	    target_r_(0, 0, 0),
-	    path_length_(0),
-	    cur_path_index_(0),
-	    impulse_movement_mode_(false),
-	    speed_delta_(0.0f),
-	    target_angle_(-1.0f),
-	    impulse_timer_(0.0f),
-	    impulse_start_timer_(0.0f),
-	    impulse_direction_(-1.0f),
-	    control_types_(CONTROL_MOUSE),
-	    button_(NULL) {
-	ignore_personages_ = false;
-	is_selected_ = false;
+	    _attach_shift(0, 0),
+	    _disable_control(false),
+	    _scale(1.0f),
+	    _direction_angle(0.0f),
+	    _default_direction_angle(0.0f),
+	    _rotation_angle(0.0f),
+	    _rotation_angle_per_quant(1.0f),
+	    _last_move_order(Vect3f::ZERO),
+	    _target_r(0, 0, 0),
+	    _path_length(0),
+	    _cur_path_index(0),
+	    _impulse_movement_mode(false),
+	    _speed_delta(0.0f),
+	    _target_angle(-1.0f),
+	    _impulse_timer(0.0f),
+	    _impulse_start_timer(0.0f),
+	    _impulse_direction(-1.0f),
+	    _control_types(CONTROL_MOUSE),
+	    _button(NULL) {
+	_ignore_personages = false;
+	_is_selected = false;
 	set_flag(QD_OBJ_HAS_BOUND_FLAG);
 }
 #endif // _QUEST_EDITOR
@@ -165,32 +165,32 @@ qdGameObjectMoving &qdGameObjectMoving::operator = (const qdGameObjectMoving &ob
 
 	*static_cast<qdGameObjectAnimated *>(this) = obj;
 
-	follow_min_radius_ = obj.follow_min_radius();
-	follow_max_radius_ = obj.follow_max_radius();
-	follow_condition_ = obj.follow_condition();
+	_follow_min_radius = obj.follow_min_radius();
+	_follow_max_radius = obj.follow_max_radius();
+	_follow_condition = obj.follow_condition();
 
-	circuit_objs_ = obj.const_ref_circuit_objs();
+	_circuit_objs = obj.const_ref_circuit_objs();
 
 	attacher_ = obj.attacher();
 	attacher_ref_ = obj.attacher_ref();
-	attach_shift_ = obj.attach_shift();
+	_attach_shift = obj.attach_shift();
 
-	scale_ = obj.scale_;
-	direction_angle_ = obj.direction_angle_;
-	default_direction_angle_ = obj.default_direction_angle_;
-	rotation_angle_ = obj.rotation_angle();
-	rotation_angle_per_quant_ = obj.rotation_angle_per_quant();
-	speed_delta_ = 0.0f;
+	_scale = obj._scale;
+	_direction_angle = obj._direction_angle;
+	_default_direction_angle = obj._default_direction_angle;
+	_rotation_angle = obj.rotation_angle();
+	_rotation_angle_per_quant = obj.rotation_angle_per_quant();
+	_speed_delta = 0.0f;
 
-	last_move_order_ = obj.last_move_order();
+	_last_move_order = obj.last_move_order();
 
 #ifndef _QUEST_EDITOR
-	walk_grid_size_ = obj.walk_grid_size_;
+	_walk_grid_size = obj._walk_grid_size;
 #endif
 
-	movement_mode_ = obj.movement_mode_;
-	movement_mode_time_ = obj.movement_mode_time_;
-	movement_mode_time_current_ = obj.movement_mode_time_current_;
+	_movement_mode = obj._movement_mode;
+	_movement_mode_time = obj._movement_mode_time;
+	_movement_mode_time_current = obj._movement_mode_time_current;
 
 	return *this;
 }
@@ -209,38 +209,38 @@ bool qdGameObjectMoving::load_script_body(const xml::tag *p) {
 			}
 			break;
 		case QDSCR_OBJECT_DIRECTION:
-			xml::tag_buffer(*it) > direction_angle_;
+			xml::tag_buffer(*it) > _direction_angle;
 			break;
 		case QDSCR_OBJECT_DEFAULT_DIRECTION:
-			xml::tag_buffer(*it) > direction_angle_;
-			default_direction_angle_ = direction_angle_;
+			xml::tag_buffer(*it) > _direction_angle;
+			_default_direction_angle = _direction_angle;
 			break;
 		case QDSCR_ROTATION_ANGLE_PER_QUANT:
-			xml::tag_buffer(*it) > rotation_angle_per_quant_;
+			xml::tag_buffer(*it) > _rotation_angle_per_quant;
 			break;
 		case QDSCR_COLLISION_DELAY:
-			xml::tag_buffer(*it) > collision_delay_;
+			xml::tag_buffer(*it) > _collision_delay;
 			break;
 		case QDSCR_COLLISION_RADIUS:
-			xml::tag_buffer(*it) > collision_radius_;
+			xml::tag_buffer(*it) > _collision_radius;
 			break;
 		case QDSCR_COLLISION_PATH:
-			xml::tag_buffer(*it) > collision_path_;
+			xml::tag_buffer(*it) > _collision_path;
 			break;
 		case QDSCR_FOLLOW_MIN_RADIUS:
-			xml::tag_buffer(*it) > follow_min_radius_;
+			xml::tag_buffer(*it) > _follow_min_radius;
 			break;
 		case QDSCR_FOLLOW_MAX_RADIUS:
-			xml::tag_buffer(*it) > follow_max_radius_;
+			xml::tag_buffer(*it) > _follow_max_radius;
 			break;
 		case QDSCR_NAMED_OBJECT:
 			attacher_ref_.load_script(&*it);
 			break;
 		case QDSCR_ATTACH_SHIFT:
-			xml::tag_buffer(*it) > attach_shift_.x > attach_shift_.y;
+			xml::tag_buffer(*it) > _attach_shift.x > _attach_shift.y;
 			break;
 		case QDSCR_PERSONAGE_CONTROL:
-			xml::tag_buffer(*it) > control_types_;
+			xml::tag_buffer(*it) > _control_types;
 			break;
 		}
 	}
@@ -254,66 +254,66 @@ bool qdGameObjectMoving::save_script_body(Common::WriteStream &fh, int indent) c
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<object_direction>%f</object_direction>\r\n", direction_angle_));
+	fh.writeString(Common::String::format("<object_direction>%f</object_direction>\r\n", _direction_angle));
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<default_direction>%f</default_direction>\r\n", default_direction_angle_));
+	fh.writeString(Common::String::format("<default_direction>%f</default_direction>\r\n", _default_direction_angle));
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<rotation_angle_per_quant>%f</rotation_angle_per_quant>\r\n", rotation_angle_per_quant_));
+	fh.writeString(Common::String::format("<rotation_angle_per_quant>%f</rotation_angle_per_quant>\r\n", _rotation_angle_per_quant));
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<collision_path>%f</collision_path>\r\n", collision_path_));
+	fh.writeString(Common::String::format("<collision_path>%f</collision_path>\r\n", _collision_path));
 
-	if (collision_radius_ > FLT_EPS) {
+	if (_collision_radius > FLT_EPS) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<collision_radius>%f</collision_radius>\r\n", collision_radius_));
+		fh.writeString(Common::String::format("<collision_radius>%f</collision_radius>\r\n", _collision_radius));
 	}
 
-	if (collision_delay_ > FLT_EPS) {
+	if (_collision_delay > FLT_EPS) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<collision_delay>%f</collision_delay>\r\n", collision_delay_));
+		fh.writeString(Common::String::format("<collision_delay>%f</collision_delay>\r\n", _collision_delay));
 	}
 
-	if (follow_min_radius_ > FLT_EPS) {
+	if (_follow_min_radius > FLT_EPS) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<follow_min_radius>%f</follow_min_radius>\r\n", follow_min_radius_));
+		fh.writeString(Common::String::format("<follow_min_radius>%f</follow_min_radius>\r\n", _follow_min_radius));
 	}
 
-	if (follow_max_radius_ > FLT_EPS) {
+	if (_follow_max_radius > FLT_EPS) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<follow_max_radius>%f</follow_max_radius>\r\n", follow_max_radius_));
+		fh.writeString(Common::String::format("<follow_max_radius>%f</follow_max_radius>\r\n", _follow_max_radius));
 	}
 
 	if (NULL != attacher_) {
 		attacher_ref_.save_script(fh, indent + 1);
 	}
 
-	if ((0 != attach_shift_.x) || (0 != attach_shift_.y)) {
+	if ((0 != _attach_shift.x) || (0 != _attach_shift.y)) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<attach_shift>%d %d</attach_shift>\r\n", attach_shift_.x, attach_shift_.y));
+		fh.writeString(Common::String::format("<attach_shift>%d %d</attach_shift>\r\n", _attach_shift.x, _attach_shift.y));
 	}
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<control>%d</control>\r\n", control_types_));
+	fh.writeString(Common::String::format("<control>%d</control>\r\n", _control_types));
 
 	return true;
 }
@@ -344,7 +344,7 @@ bool qdGameObjectMoving::move(const Vect3f &target, bool lock_target) {
 	if (false == enough_far_target(target))
 		return true;
 #ifndef _QUEST_EDITOR
-	if (is_selected_ && has_control_type(CONTROL_CLEAR_PATH)) {
+	if (_is_selected && has_control_type(CONTROL_CLEAR_PATH)) {
 		if (!find_path(target, true)) {
 			toggle_ignore_personages(true);
 			bool ret = find_path(target, true);
@@ -357,10 +357,10 @@ bool qdGameObjectMoving::move(const Vect3f &target, bool lock_target) {
 		}
 	}
 #endif
-	switch (movement_mode_) {
+	switch (_movement_mode) {
 	case MOVEMENT_MODE_STOP:
 	case MOVEMENT_MODE_END:
-		movement_mode_ = MOVEMENT_MODE_TURN;
+		_movement_mode = MOVEMENT_MODE_TURN;
 		break;
 	default:
 		break;
@@ -370,7 +370,7 @@ bool qdGameObjectMoving::move(const Vect3f &target, bool lock_target) {
 
 bool qdGameObjectMoving::move(const Vect3f &target, float angle, bool lock_target) {
 	if (move(target, lock_target)) {
-		target_angle_ = angle;
+		_target_angle = angle;
 		return true;
 	}
 
@@ -403,7 +403,7 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 
 	set_grid_zone_attributes(sGridCell::CELL_SELECTED);
 
-	target_angle_ = -1.0f;
+	_target_angle = -1.0f;
 
 	if (!is_walkable(trg)) {
 		if (lock_target || check_grid_zone_attributes(sGridCell::CELL_IMPASSABLE)) return false;
@@ -421,13 +421,13 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 			return false;
 		}
 
-		target_angle_ = calc_direction_angle(target);
+		_target_angle = calc_direction_angle(target);
 		trg = qdCamera::current_camera()->get_cell_coords(pt.x, pt.y);
 	}
 
 	if (allowed_directions_count() <= 2) {
 		if (is_path_walkable(R(), trg)) {
-			path_length_ = 0;
+			_path_length = 0;
 			move2position(trg);
 
 			drop_grid_zone_attributes(sGridCell::CELL_SELECTED);
@@ -475,7 +475,7 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 			drop_grid_zone_attributes(sGridCell::CELL_SELECTED);
 			return false;
 		}
-		target_angle_ = calc_direction_angle(target);
+		_target_angle = calc_direction_angle(target);
 		trg = qdCamera::current_camera()->get_cell_coords(pt.x, pt.y);
 
 		// Считаем путь с новым концом
@@ -515,7 +515,7 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 		finalize_path(R(), trg, path_vect, final_path);
 
 		for (int i = 0; i < final_path.size(); i++)
-			path_[i] = final_path[i];
+			_path[i] = final_path[i];
 
 		idx = final_path.size();
 
@@ -524,18 +524,18 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 	} else {
 		idx = 0;
 		for (std::vector<Vect2i>::const_iterator it = path_vect.begin(); it != path_vect.end(); ++it) {
-			path_[idx] = qdCamera::current_camera()->get_cell_coords(it->x, it->y);
+			_path[idx] = qdCamera::current_camera()->get_cell_coords(it->x, it->y);
 			idx ++;
 		}
-		path_[idx - 1] = trg;
+		_path[idx - 1] = trg;
 	}
 
-	cur_path_index_ = (idx > 1) ? 1 : 0;
-	path_length_ = idx;
-	move2position(path_[cur_path_index_++]);
+	_cur_path_index = (idx > 1) ? 1 : 0;
+	_path_length = idx;
+	move2position(_path[_cur_path_index++]);
 
-	if (cur_path_index_ >= path_length_)
-		path_length_ = 0;
+	if (_cur_path_index >= _path_length)
+		_path_length = 0;
 
 	drop_grid_zone_attributes(sGridCell::CELL_SELECTED);
 	return true;
@@ -549,24 +549,24 @@ bool qdGameObjectMoving::stop_movement() {
 		if (cur_state() == -1) return true;
 
 		qdGameObjectState *st = get_state(cur_state());
-//		if(movement_mode_ == MOVEMENT_MODE_MOVE && is_movement_finished() && st->state_type() == qdGameObjectState::STATE_WALK){
+//		if(_movement_mode == MOVEMENT_MODE_MOVE && is_movement_finished() && st->state_type() == qdGameObjectState::STATE_WALK){
 		if (is_movement_finished() && st->state_type() == qdGameObjectState::STATE_WALK) {
 			qdGameObjectStateWalk *wst = static_cast<qdGameObjectStateWalk *>(st);
 
 			if (qdAnimationSet * set = wst->animation_set()) {
-				qdAnimationInfo *inf = set->get_stop_animation_info(direction_angle_);
+				qdAnimationInfo *inf = set->get_stop_animation_info(_direction_angle);
 				if (qdAnimation * anm = inf->animation()) {
-					movement_mode_ = MOVEMENT_MODE_END;
+					_movement_mode = MOVEMENT_MODE_END;
 					float phase = get_animation()->cur_time_rel();
-					movement_mode_time_ = anm->length() * (1.f - phase);
-					movement_mode_time_current_ = 0.0f;
+					_movement_mode_time = anm->length() * (1.f - phase);
+					_movement_mode_time_current = 0.0f;
 					set_animation_info(inf);
 					get_animation()->set_time_rel(phase);
 					return true;
 				}
 			}
 
-			set_direction(direction_angle_);
+			set_direction(_direction_angle);
 			st->stop_sound();
 		}
 
@@ -578,7 +578,7 @@ bool qdGameObjectMoving::stop_movement() {
 
 bool qdGameObjectMoving::move2position(const Vect3f target) {
 	change_direction_angle(calc_direction_angle(target));
-	target_r_ = target;
+	_target_r = target;
 
 	return set_walk_animation();
 }
@@ -593,24 +593,24 @@ bool qdGameObjectMoving::skip_movement() {
 		float sp = speed();
 
 		if (sp > FLT_EPS) {
-			Vect3f dr = target_r_ - R();
+			Vect3f dr = _target_r - R();
 			dr.z = 0.0f;
 			float dist = dr.norm();
 			float time = dist / sp;
 			get_animation()->advance_time(time);
 		}
 
-		target_r_.z = R().z;
-		set_pos(target_r_);
+		_target_r.z = R().z;
+		set_pos(_target_r);
 		adjust_z();
 
-		if (path_length_) {
-			move2position(path_[cur_path_index_ ++]);
-			if (cur_path_index_ >= path_length_)
-				path_length_ = 0;
+		if (_path_length) {
+			move2position(_path[_cur_path_index ++]);
+			if (_cur_path_index >= _path_length)
+				_path_length = 0;
 			flag = true;
 		}
-	} while (path_length_ || flag);
+	} while (_path_length || flag);
 
 	return true;
 }
@@ -619,7 +619,7 @@ float qdGameObjectMoving::calc_direction_angle(const Vect3f &target) const {
 	Vect3f dr = target - R();
 	dr.z = 0.0f;
 	// Точки практически совпадают - угол неизменен
-	if (dr.norm2() <= 0.01f) return direction_angle_;
+	if (dr.norm2() <= 0.01f) return _direction_angle;
 
 	float angle = dr.psi() + qdCamera::current_camera()->get_z_angle() * M_PI / 180.0f;
 
@@ -631,7 +631,7 @@ float qdGameObjectMoving::calc_direction_angle(const Vect3f &target) const {
 
 float qdGameObjectMoving::animate_rotation(float dt) {
 	// Второе значение - на сколько повернуться за квант
-	float work_dt = fabs(rotation_angle_ / rotation_angle_per_quant());
+	float work_dt = fabs(_rotation_angle / rotation_angle_per_quant());
 	if (work_dt <= FLT_EPS) return dt;   // Поворачиваться не нужно
 	// Считаем на сколько можем повернуться и сколько после этого останется квантов
 	if (work_dt > dt) {
@@ -640,15 +640,15 @@ float qdGameObjectMoving::animate_rotation(float dt) {
 	} else
 		dt = dt - work_dt;
 
-	float delta = (rotation_angle_ < 0) ? -work_dt * rotation_angle_per_quant() : work_dt * rotation_angle_per_quant();
+	float delta = (_rotation_angle < 0) ? -work_dt * rotation_angle_per_quant() : work_dt * rotation_angle_per_quant();
 	// Поворачиваемся
-	direction_angle_ += delta;
-	rotation_angle_ -= delta; // Уже меньше нужно поворачиваться
+	_direction_angle += delta;
+	_rotation_angle -= delta; // Уже меньше нужно поворачиваться
 
-	// Циклим угол. Иначе могут происходить накрутки из-за rotation_angle_,
+	// Циклим угол. Иначе могут происходить накрутки из-за _rotation_angle,
 	// установленного постоянно в одном (скажем положительном) направлении
-	while (direction_angle_ > 2 * M_PI) direction_angle_ -= 2 * M_PI;
-	while (direction_angle_ < 0.0f) direction_angle_ += 2 * M_PI;
+	while (_direction_angle > 2 * M_PI) _direction_angle -= 2 * M_PI;
+	while (_direction_angle < 0.0f) _direction_angle += 2 * M_PI;
 
 	set_walk_animation();
 	return dt;
@@ -662,12 +662,12 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool &end_movement, bool real_
 
 	qdGameObjectState *st;
 
-	switch (movement_mode_) {
+	switch (_movement_mode) {
 	case MOVEMENT_MODE_START:
 		if (real_moving) {
-			movement_mode_time_current_ += dt;
-			if (movement_mode_time_current_ >= movement_mode_time_) {
-				movement_mode_ = MOVEMENT_MODE_MOVE;
+			_movement_mode_time_current += dt;
+			if (_movement_mode_time_current >= _movement_mode_time) {
+				_movement_mode = MOVEMENT_MODE_MOVE;
 				set_walk_animation();
 				get_animation()->set_time_rel(0.f);
 			}
@@ -679,11 +679,11 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool &end_movement, bool real_
 				dt = animate_rotation(dt);
 			// Считаем не для настоящего движения - после просчета восстанавл. направления
 			else {
-				float dir_buf = direction_angle_;
-				float rot_buf = rotation_angle_;
+				float dir_buf = _direction_angle;
+				float rot_buf = _rotation_angle;
 				dt = animate_rotation(dt);
-				direction_angle_ = dir_buf;
-				rotation_angle_ = rot_buf;
+				_direction_angle = dir_buf;
+				_rotation_angle = rot_buf;
 			}
 			// Не осталось квантов на движение. Возвращаем текущую позицию
 			end_movement = false;
@@ -696,12 +696,12 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool &end_movement, bool real_
 			qdGameObjectStateWalk *wst = static_cast<qdGameObjectStateWalk *>(st);
 
 			if (qdAnimationSet * set = wst->animation_set()) {
-				qdAnimationInfo *inf = set->get_start_animation_info(direction_angle_);
+				qdAnimationInfo *inf = set->get_start_animation_info(_direction_angle);
 				if (qdAnimation * anm = inf->animation()) {
 					if (real_moving) {
-						movement_mode_ = MOVEMENT_MODE_START;
-						movement_mode_time_ = anm->length();
-						movement_mode_time_current_ = 0.0f;
+						_movement_mode = MOVEMENT_MODE_START;
+						_movement_mode_time = anm->length();
+						_movement_mode_time_current = 0.0f;
 						set_walk_animation();
 						get_animation()->set_time_rel(0.f);
 					}
@@ -711,7 +711,7 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool &end_movement, bool real_
 		}
 
 		if (real_moving) {
-			movement_mode_ = MOVEMENT_MODE_MOVE;
+			_movement_mode = MOVEMENT_MODE_MOVE;
 			set_walk_animation();
 			get_animation()->set_time_rel(0.f);
 		}
@@ -722,11 +722,11 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool &end_movement, bool real_
 				dt = animate_rotation(dt);
 			// Считаем не для настоящего движения - после просчета восстанавл. направления
 			else {
-				float dir_buf = direction_angle_;
-				float rot_buf = rotation_angle_;
+				float dir_buf = _direction_angle;
+				float rot_buf = _rotation_angle;
 				dt = animate_rotation(dt);
-				direction_angle_ = dir_buf;
-				rotation_angle_ = rot_buf;
+				_direction_angle = dir_buf;
+				_rotation_angle = rot_buf;
 			}
 			// Не осталось квантов на движение. Возвращаем текущую позицию
 			end_movement = false;
@@ -735,9 +735,9 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool &end_movement, bool real_
 		break;
 	case MOVEMENT_MODE_END:
 		if (real_moving) {
-			movement_mode_time_current_ += dt;
-			if (movement_mode_time_current_ >= movement_mode_time_) {
-				movement_mode_ = MOVEMENT_MODE_STOP;
+			_movement_mode_time_current += dt;
+			if (_movement_mode_time_current >= _movement_mode_time) {
+				_movement_mode = MOVEMENT_MODE_STOP;
 				end_movement = true;
 			}
 		}
@@ -746,7 +746,7 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool &end_movement, bool real_
 		break;
 	}
 
-	movement_mode_ = MOVEMENT_MODE_MOVE;
+	_movement_mode = MOVEMENT_MODE_MOVE;
 
 	float sp, a, sp_max;
 	get_speed_parameters(sp, sp_max, a);
@@ -755,11 +755,11 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool &end_movement, bool real_
 	if (sp > FLT_EPS) {
 		end_movement = false;
 
-		if (!impulse_movement_mode_) {
-			speed_delta_ += a * dt;
-			sp += speed_delta_;
+		if (!_impulse_movement_mode) {
+			_speed_delta += a * dt;
+			sp += _speed_delta;
 			if (false == real_moving)
-				speed_delta_ -= a * dt;
+				_speed_delta -= a * dt;
 
 			if (sp_max > FLT_EPS && sp > sp_max)
 				sp = sp_max;
@@ -771,33 +771,33 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool &end_movement, bool real_
 
 			float dist = sp * dt;
 
-			Vect3f dr = target_r_ - R();
+			Vect3f dr = _target_r - R();
 			dr.z = 0.0f;
 
 			if (dr.norm2() <= dist * dist) {
-				r = target_r_;
+				r = _target_r;
 				r.z = R().z;
 				end_movement = true;
 			} else {
 				dr.normalize(dist);
 				r = R() + dr;
 			}
-		} else if (impulse_timer_ > FLT_EPS || has_control_type(CONTROL_AUTO_MOVE)) {
+		} else if (_impulse_timer > FLT_EPS || has_control_type(CONTROL_AUTO_MOVE)) {
 			float time = dt;
 			if (!has_control_type(CONTROL_AUTO_MOVE)) {
-				if (impulse_timer_ < dt) {
-					time = impulse_timer_;
+				if (_impulse_timer < dt) {
+					time = _impulse_timer;
 					if (real_moving)
-						impulse_timer_ = 0.0f;
+						_impulse_timer = 0.0f;
 					end_movement = true;
 				} else if (real_moving)
-					impulse_timer_ -= dt;
+					_impulse_timer -= dt;
 			}
 
-			speed_delta_ += a * time;
-			sp += speed_delta_;
+			_speed_delta += a * time;
+			sp += _speed_delta;
 			if (false == real_moving)
-				speed_delta_ -= a * time;
+				_speed_delta -= a * time;
 
 			if (sp_max > FLT_EPS && sp > sp_max)
 				sp = sp_max;
@@ -808,7 +808,7 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool &end_movement, bool real_
 			}
 
 			float dist = sp * time;
-			float angle = direction_angle_ + qdCamera::current_camera()->get_z_angle() * M_PI / 180.0f;
+			float angle = _direction_angle + qdCamera::current_camera()->get_z_angle() * M_PI / 180.0f;
 			r.x += dist * cos(angle);
 			r.y += dist * sin(angle);
 
@@ -858,7 +858,7 @@ bool qdGameObjectMoving::future_pos_correct(float dt) {
 }
 
 bool qdGameObjectMoving::is_movement_finished() const {
-	return (!path_length_ && (cur_state() == -1 || !get_cur_state()->coords_animation()->is_playing()));
+	return (!_path_length && (cur_state() == -1 || !get_cur_state()->coords_animation()->is_playing()));
 }
 
 void qdGameObjectMoving::quant(float dt) {
@@ -867,9 +867,9 @@ void qdGameObjectMoving::quant(float dt) {
 	if (can_change_state())
 		enable_control();
 
-	if (impulse_start_timer_ > FLT_EPS) {
-		impulse_start_timer_ -= dt;
-		if (impulse_start_timer_ <= 0.0f)
+	if (_impulse_start_timer > FLT_EPS) {
+		_impulse_start_timer -= dt;
+		if (_impulse_start_timer <= 0.0f)
 			movement_impulse();
 	}
 
@@ -886,51 +886,51 @@ void qdGameObjectMoving::quant(float dt) {
 			set_pos(r);
 
 			if (end_movement) {
-				impulse_movement_mode_ = false;
-				speed_delta_ = 0.0f;
+				_impulse_movement_mode = false;
+				_speed_delta = 0.0f;
 
-				if (path_length_) {
-					move2position(path_[cur_path_index_ ++]);
-					if (cur_path_index_ >= path_length_)
-						path_length_ = 0;
+				if (_path_length) {
+					move2position(_path[_cur_path_index ++]);
+					if (_cur_path_index >= _path_length)
+						_path_length = 0;
 				} else {
-					if (target_angle_ >= 0.0f)
-						direction_angle_ = target_angle_;
+					if (_target_angle >= 0.0f)
+						_direction_angle = _target_angle;
 
 					stop_movement();
 					/*
 					                    drop_flag(QD_OBJ_MOVING_FLAG);
 
-					                    set_direction(direction_angle_);
+					                    set_direction(_direction_angle);
 
 					                    if(get_cur_state())
 					                        get_cur_state()->stop_sound();
 
 					                    if(is_movement_finished())
-					                        movement_mode_ = MOVEMENT_MODE_STOP;
+					                        _movement_mode = MOVEMENT_MODE_STOP;
 					*/
 				}
 			}
 		} else
 			stop_movement();
 	} else {
-		speed_delta_ = 0.0f;
+		_speed_delta = 0.0f;
 
-		if (movement_mode_ == MOVEMENT_MODE_END) {
-			movement_mode_time_current_ += dt;
-			if (movement_mode_time_current_ >= movement_mode_time_) {
-				movement_mode_ = MOVEMENT_MODE_STOP;
-				movement_mode_time_current_ = movement_mode_time_ = 0.f;
-				set_direction(direction_angle_);
+		if (_movement_mode == MOVEMENT_MODE_END) {
+			_movement_mode_time_current += dt;
+			if (_movement_mode_time_current >= _movement_mode_time) {
+				_movement_mode = MOVEMENT_MODE_STOP;
+				_movement_mode_time_current = _movement_mode_time = 0.f;
+				set_direction(_direction_angle);
 				if (get_cur_state())
 					get_cur_state()->stop_sound();
 			}
-		} else if (movement_mode_ == MOVEMENT_MODE_MOVE) {
-			movement_mode_ = MOVEMENT_MODE_STOP;
-			movement_mode_time_current_ = movement_mode_time_ = 0.f;
+		} else if (_movement_mode == MOVEMENT_MODE_MOVE) {
+			_movement_mode = MOVEMENT_MODE_STOP;
+			_movement_mode_time_current = _movement_mode_time = 0.f;
 		}
 
-//		movement_mode_ = MOVEMENT_MODE_TURN;
+//		_movement_mode = MOVEMENT_MODE_TURN;
 	}
 
 	qdGameObjectAnimated::quant(dt);
@@ -953,7 +953,7 @@ bool qdGameObjectMoving::load_resources() {
 
 	qdGameObjectAnimated::load_resources();
 
-	button_ = NULL;
+	_button = NULL;
 
 	return true;
 }
@@ -983,7 +983,7 @@ bool qdGameObjectMoving::is_walkable(const Vect2s &pos) const {
 #ifdef _QUEST_EDITOR
 	return qdCamera::current_camera()->is_walkable(pos, size);
 #else
-	return qdCamera::current_camera()->is_walkable(pos, size, ignore_personages_);
+	return qdCamera::current_camera()->is_walkable(pos, size, _ignore_personages);
 #endif
 }
 
@@ -1002,14 +1002,14 @@ void qdGameObjectMoving::set_path_attributes(int attr) const {
 		assert(cp);
 
 		Vect2s v0 = cp->get_cell_index(R().x, R().y);
-		Vect2s v1 = cp->get_cell_index(target_r_.x, target_r_.y);
+		Vect2s v1 = cp->get_cell_index(_target_r.x, _target_r.y);
 
 		cp->set_grid_line_attributes(v0, v1, grid_size(), attr);
 
 		v0 = v1;
 
-		for (int i = cur_path_index_; i < path_length_; i ++) {
-			v1 = cp->get_cell_index(path_[i].x, path_[i].y);
+		for (int i = _cur_path_index; i < _path_length; i ++) {
+			v1 = cp->get_cell_index(_path[i].x, _path[i].y);
 			cp->set_grid_line_attributes(v0, v1, grid_size(), attr);
 			v0 = v1;
 		}
@@ -1022,14 +1022,14 @@ void qdGameObjectMoving::clear_path_attributes(int attr) const {
 		assert(cp);
 
 		Vect2s v0 = cp->get_cell_index(R().x, R().y);
-		Vect2s v1 = cp->get_cell_index(target_r_.x, target_r_.y);
+		Vect2s v1 = cp->get_cell_index(_target_r.x, _target_r.y);
 
 		cp->drop_grid_line_attributes(v0, v1, grid_size(), attr);
 
 		v0 = v1;
 
-		for (int i = cur_path_index_; i < path_length_; i ++) {
-			v1 = cp->get_cell_index(path_[i].x, path_[i].y);
+		for (int i = _cur_path_index; i < _path_length; i ++) {
+			v1 = cp->get_cell_index(_path[i].x, _path[i].y);
 			cp->drop_grid_line_attributes(v0, v1, grid_size(), attr);
 			v0 = v1;
 		}
@@ -1077,7 +1077,7 @@ bool qdGameObjectMoving::update_screen_pos() {
 
 			if (get_cur_state()->state_type() == qdGameObjectState::STATE_WALK) {
 				qdGameObjectStateWalk::OffsetType offs_type = qdGameObjectStateWalk::OFFSET_WALK;
-				switch (movement_mode_) {
+				switch (_movement_mode) {
 				case MOVEMENT_MODE_STOP:
 					offs_type = qdGameObjectStateWalk::OFFSET_STATIC;
 					break;
@@ -1095,7 +1095,7 @@ bool qdGameObjectMoving::update_screen_pos() {
 					break;
 				}
 
-				offs += static_cast<qdGameObjectStateWalk *>(get_cur_state())->center_offset(direction_angle_, offs_type);
+				offs += static_cast<qdGameObjectStateWalk *>(get_cur_state())->center_offset(_direction_angle, offs_type);
 			}
 
 			if (offs.x || offs.y) {
@@ -1129,18 +1129,18 @@ void qdGameObjectMoving::debug_redraw() const {
 		Vect3f r = R();
 		r.z = 0;
 		Vect2s v0 = qdCamera::current_camera()->global2scr(r);
-		Vect2s v1 = qdCamera::current_camera()->global2scr(target_r_);
+		Vect2s v1 = qdCamera::current_camera()->global2scr(_target_r);
 		grDispatcher::instance()->Line(v0.x, v0.y, v1.x, v1.y, cl, 2);
 		v0 = v1;
 
-		for (int i = cur_path_index_; i < path_length_; i ++) {
-			v1 = qdCamera::current_camera()->global2scr(path_[i]);
+		for (int i = _cur_path_index; i < _path_length; i ++) {
+			v1 = qdCamera::current_camera()->global2scr(_path[i]);
 			grDispatcher::instance()->Line(v0.x, v0.y, v1.x, v1.y, cl, 2);
 			v0 = v1;
 		}
 	}
 
-	Common::String str = Common::String::format("movement_mode: %d", movement_mode_);
+	Common::String str = Common::String::format("movement_mode: %d", _movement_mode);
 	grDispatcher::instance()->DrawText(10, 110, grDispatcher::instance()->make_rgb888(255, 255, 255), str.c_str());
 
 //	draw_bound();
@@ -1206,14 +1206,14 @@ bool qdGameObjectMoving::is_in_position(const Vect3f pos) const {
 
 bool qdGameObjectMoving::is_in_position(const Vect3f pos, float angle) const {
 	if (!is_in_position(pos)) return false;
-	if (fabs(direction_angle_ - angle) <= 0.01f) return true;
+	if (fabs(_direction_angle - angle) <= 0.01f) return true;
 
 	return false;
 }
 
 bool qdGameObjectMoving::is_moving2position(const Vect3f pos) const {
 	if (check_flag(QD_OBJ_MOVING_FLAG)) {
-		Vect3f target = (path_length_) ? path_[path_length_] : target_r_;
+		Vect3f target = (_path_length) ? _path[_path_length] : _target_r;
 
 		if (!adjust_position(target))
 			return false;
@@ -1237,7 +1237,7 @@ bool qdGameObjectMoving::is_moving2position(const Vect3f pos) const {
 bool qdGameObjectMoving::is_moving2position(const Vect3f pos, float angle) const {
 	if (!is_moving2position(pos)) return false;
 
-	if (fabs(angle - target_angle_) <= 0.01f)
+	if (fabs(angle - _target_angle) <= 0.01f)
 		return true;
 
 	return false;
@@ -1267,7 +1267,7 @@ const Vect3f &qdGameObjectMoving::bound(bool perspective_correction) const {
 		rr.z = qdCamera::current_camera()->get_grid_center().z;
 		b = b * calc_scale(rr);
 	} else
-		b = b * scale_;
+		b = b * _scale;
 
 	return b;
 }
@@ -1286,7 +1286,7 @@ Vect2s qdGameObjectMoving::walk_grid_size(const Vect3f &r) const {
 #ifdef _QUEST_EDITOR
 	Vect2s size = grid_size();
 #else
-	Vect2s size = walk_grid_size_;
+	Vect2s size = _walk_grid_size;
 #endif
 
 	if (qdCamera::current_camera() && qdCamera::current_camera()->need_perspective_correction()) {
@@ -1304,7 +1304,7 @@ Vect2s qdGameObjectMoving::walk_grid_size(const Vect2s &r) const {
 #ifdef _QUEST_EDITOR
 	Vect2s size = grid_size();
 #else
-	Vect2s size = walk_grid_size_;
+	Vect2s size = _walk_grid_size;
 #endif
 
 	if (qdCamera::current_camera() && qdCamera::current_camera()->need_perspective_correction()) {
@@ -1440,7 +1440,7 @@ void qdGameObjectMoving::set_state(int st) {
 			set_last_inventory_state(get_cur_state());
 			set_cur_state(st);
 
-			speed_delta_ = 0.0f;
+			_speed_delta = 0.0f;
 		}
 
 		p->load_resources();
@@ -1484,7 +1484,7 @@ void qdGameObjectMoving::set_state(int st) {
 
 		switch (p->state_type()) {
 		case qdGameObjectState::STATE_STATIC:
-			path_length_ = 0;
+			_path_length = 0;
 			drop_flag(QD_OBJ_MOVING_FLAG);
 			set_animation_info(static_cast<qdGameObjectStateStatic *>(p)->animation_info());
 			if (!p->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_ENABLE_INTERRUPT))
@@ -1506,31 +1506,31 @@ void qdGameObjectMoving::set_state(int st) {
 		case qdGameObjectState::STATE_WALK:
 			wp = static_cast<qdGameObjectStateWalk *>(p);
 
-			if (!impulse_movement_mode_) {
+			if (!_impulse_movement_mode) {
 				if (allowed_directions_count() <= 4)
-					direction_angle_ = wp->adjust_direction_angle(direction_angle_);
+					_direction_angle = wp->adjust_direction_angle(_direction_angle);
 
 				if (!check_flag(QD_OBJ_MOVING_FLAG)) {
 					if (wp->direction_angle() >= 0.0f)
-						direction_angle_ = wp->direction_angle();
+						_direction_angle = wp->direction_angle();
 
-					set_animation_info(static_cast<qdGameObjectStateWalk *>(p)->static_animation_info(direction_angle_));
+					set_animation_info(static_cast<qdGameObjectStateWalk *>(p)->static_animation_info(_direction_angle));
 					p->stop_sound();
 				} else
-					move2position(target_r_);
+					move2position(_target_r);
 			} else {
 				if (check_flag(QD_OBJ_MOVING_FLAG)) {
-					if (!is_direction_allowed(direction_angle_)) {
+					if (!is_direction_allowed(_direction_angle)) {
 						drop_flag(QD_OBJ_MOVING_FLAG);
-						direction_angle_ = wp->adjust_direction_angle(direction_angle_);
-						set_direction(direction_angle_);
+						_direction_angle = wp->adjust_direction_angle(_direction_angle);
+						set_direction(_direction_angle);
 						p->stop_sound();
 					}
 				} else {
 					if (allowed_directions_count() <= 4)
-						direction_angle_ = wp->adjust_direction_angle(direction_angle_);
+						_direction_angle = wp->adjust_direction_angle(_direction_angle);
 
-					set_direction(direction_angle_);
+					set_direction(_direction_angle);
 					p->stop_sound();
 				}
 			}
@@ -1539,11 +1539,11 @@ void qdGameObjectMoving::set_state(int st) {
 				p->coords_animation()->start();
 #ifndef _QUEST_EDITOR
 			else {
-				last_walk_state_ = p;
+				_last_walk_state = p;
 				if (p->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_GLOBAL_OWNER))
 					dp->update_walk_state(name(), p);
 
-				walk_grid_size_ = grid_size();
+				_walk_grid_size = grid_size();
 			}
 
 			if (has_control_type(CONTROL_AUTO_MOVE))
@@ -1713,9 +1713,9 @@ float qdGameObjectMoving::calc_scale(const Vect3f &r) const {
 		float scale;
 
 		if (!check_flag(QD_OBJ_INVERSE_PERSPECTIVE_FLAG))
-			scale = qdCamera::current_camera()->get_scale(r) * scale_;
+			scale = qdCamera::current_camera()->get_scale(r) * _scale;
 		else
-			scale = scale_ / qdCamera::current_camera()->get_scale(r);
+			scale = _scale / qdCamera::current_camera()->get_scale(r);
 
 		return scale;
 	}
@@ -1725,7 +1725,7 @@ float qdGameObjectMoving::calc_scale(const Vect3f &r) const {
 
 qdGameObjectState *qdGameObjectMoving::get_default_state() {
 #ifndef _QUEST_EDITOR
-	if (last_walk_state_) return last_walk_state_;
+	if (_last_walk_state) return _last_walk_state;
 #endif
 
 	for (int i = 0; i < max_state(); i ++) {
@@ -1746,7 +1746,7 @@ qdGameObjectState *qdGameObjectMoving::get_default_state() {
 
 const qdGameObjectState *qdGameObjectMoving::get_default_state() const {
 #ifndef _QUEST_EDITOR
-	if (last_walk_state_) return last_walk_state_;
+	if (_last_walk_state) return _last_walk_state;
 #endif
 
 	for (int i = 0; i < max_state(); i ++) {
@@ -1769,12 +1769,12 @@ bool qdGameObjectMoving::set_direction(float angle) {
 	angle = fmodf(angle, 2.0f * M_PI);
 	if (angle < 0.0f) angle += 2.0f * M_PI;
 
-	direction_angle_ = angle;
+	_direction_angle = angle;
 
 	if (!check_flag(QD_OBJ_MOVING_FLAG)) {
 		qdGameObjectState *st = get_state(cur_state());
 		if (st && st->state_type() == qdGameObjectState::STATE_WALK)
-			set_animation_info(static_cast<qdGameObjectStateWalk * >(st)->static_animation_info(direction_angle_));
+			set_animation_info(static_cast<qdGameObjectStateWalk * >(st)->static_animation_info(_direction_angle));
 
 		return true;
 	}
@@ -1813,17 +1813,17 @@ void qdGameObjectMoving::merge(qdGameObjectMoving *p) {
 	merge_states(p);
 
 #ifndef _QUEST_EDITOR
-	if (p->last_walk_state_)
-		last_walk_state_ = p->last_walk_state_;
+	if (p->_last_walk_state)
+		_last_walk_state = p->_last_walk_state;
 #endif
 }
 
 void qdGameObjectMoving::split(qdGameObjectMoving *p) {
 #ifndef _QUEST_EDITOR
-	if (last_walk_state_) {
+	if (_last_walk_state) {
 		for (int i = 0; i < p->max_state(); i ++) {
-			if (last_walk_state_ == p->get_state(i)) {
-				p->last_walk_state_ = last_walk_state_;
+			if (_last_walk_state == p->get_state(i)) {
+				p->_last_walk_state = _last_walk_state;
 				break;
 			}
 		}
@@ -1838,62 +1838,62 @@ bool qdGameObjectMoving::load_data(Common::SeekableReadStream &fh, int save_vers
 	if (!qdGameObjectAnimated::load_data(fh, save_version)) return false;
 
 	int idx = fh.readSint32LE();
-	walk_grid_size_.x = fh.readSint32LE();
-	walk_grid_size_.y = fh.readSint32LE();
+	_walk_grid_size.x = fh.readSint32LE();
+	_walk_grid_size.y = fh.readSint32LE();
 
 	if (idx != -1)
-		last_walk_state_ = get_state(idx);
+		_last_walk_state = get_state(idx);
 	else
-		last_walk_state_ = NULL;
+		_last_walk_state = NULL;
 
 	char mode;
-	scale_ = fh.readFloatLE();
-	direction_angle_ = fh.readFloatLE();
-	rotation_angle_ = fh.readFloatLE();
-	target_r_.x = fh.readFloatLE();
-	target_r_.y = fh.readFloatLE();
-	target_r_.z = fh.readFloatLE();
-	target_angle_ = fh.readFloatLE();
+	_scale = fh.readFloatLE();
+	_direction_angle = fh.readFloatLE();
+	_rotation_angle = fh.readFloatLE();
+	_target_r.x = fh.readFloatLE();
+	_target_r.y = fh.readFloatLE();
+	_target_r.z = fh.readFloatLE();
+	_target_angle = fh.readFloatLE();
 
-	path_length_ = fh.readSint32LE();
-	cur_path_index_ = fh.readSint32LE();
+	_path_length = fh.readSint32LE();
+	_cur_path_index = fh.readSint32LE();
 	mode = fh.readByte();
-	impulse_timer_ = fh.readFloatLE();
-	impulse_direction_ = fh.readFloatLE();
-	speed_delta_ = fh.readFloatLE();
+	_impulse_timer = fh.readFloatLE();
+	_impulse_direction = fh.readFloatLE();
+	_speed_delta = fh.readFloatLE();
 
 	if (save_version >= 104) {
 		char rot_mode = fh.readByte();
 		if (save_version >= 105) {
-			movement_mode_ = movement_mode_t(rot_mode);
-			movement_mode_time_ = fh.readFloatLE();
-			movement_mode_time_current_ = fh.readFloatLE();
+			_movement_mode = movement_mode_t(rot_mode);
+			_movement_mode_time = fh.readFloatLE();
+			_movement_mode_time_current = fh.readFloatLE();
 		} else {
 			if (rot_mode)
-				movement_mode_ = MOVEMENT_MODE_TURN;
+				_movement_mode = MOVEMENT_MODE_TURN;
 			else
-				movement_mode_ = MOVEMENT_MODE_STOP;
+				_movement_mode = MOVEMENT_MODE_STOP;
 		}
 	}
 
-	impulse_movement_mode_ = mode;
-	is_selected_ = false;
+	_impulse_movement_mode = mode;
+	_is_selected = false;
 
-	for (int i = 0; i < path_length_; i++) {
-		path_[i].x = fh.readFloatLE();
-		path_[i].y = fh.readFloatLE();
-		path_[i].z = fh.readFloatLE();
+	for (int i = 0; i < _path_length; i++) {
+		_path[i].x = fh.readFloatLE();
+		_path[i].y = fh.readFloatLE();
+		_path[i].z = fh.readFloatLE();
 	}
 
 
-	follow_condition_ = fh.readSint32LE();
+	_follow_condition = fh.readSint32LE();
 
 	int num = fh.readSint32LE();
-	circuit_objs_.clear();
+	_circuit_objs.clear();
 	for (int i = 0; i < num; i++) {
 		qdNamedObjectReference circ_ref;
 		circ_ref.load_data(fh, save_version);
-		circuit_objs_.push_back(dynamic_cast<qdGameObjectMoving *>(
+		_circuit_objs.push_back(dynamic_cast<qdGameObjectMoving *>(
 		                            qdGameDispatcher::get_dispatcher()->get_named_object(&circ_ref)));
 	}
 
@@ -1906,42 +1906,42 @@ bool qdGameObjectMoving::save_data(Common::WriteStream &fh) const {
 	if (!qdGameObjectAnimated::save_data(fh)) return false;
 
 	int idx = -1;
-	if (last_walk_state_) idx = get_state_index(last_walk_state_);
+	if (_last_walk_state) idx = get_state_index(_last_walk_state);
 
 	fh.writeSint32LE(idx);
-	fh.writeSint32LE(walk_grid_size_.x);
-	fh.writeSint32LE(walk_grid_size_.y);
+	fh.writeSint32LE(_walk_grid_size.x);
+	fh.writeSint32LE(_walk_grid_size.y);
 
-	fh.writeFloatLE(scale_);
-	fh.writeFloatLE(direction_angle_);
-	fh.writeFloatLE(rotation_angle_);
-	fh.writeFloatLE(target_r_.x);
-	fh.writeFloatLE(target_r_.y);
-	fh.writeFloatLE(target_r_.z);
-	fh.writeFloatLE(target_angle_);
+	fh.writeFloatLE(_scale);
+	fh.writeFloatLE(_direction_angle);
+	fh.writeFloatLE(_rotation_angle);
+	fh.writeFloatLE(_target_r.x);
+	fh.writeFloatLE(_target_r.y);
+	fh.writeFloatLE(_target_r.z);
+	fh.writeFloatLE(_target_angle);
 
-	fh.writeSint32LE(path_length_);
-	fh.writeSint32LE(cur_path_index_);
-	fh.writeByte(impulse_movement_mode_);
-	fh.writeFloatLE(impulse_timer_);
-	fh.writeFloatLE(impulse_direction_);
-	fh.writeFloatLE(speed_delta_);
-	fh.writeByte(char(movement_mode_));
+	fh.writeSint32LE(_path_length);
+	fh.writeSint32LE(_cur_path_index);
+	fh.writeByte(_impulse_movement_mode);
+	fh.writeFloatLE(_impulse_timer);
+	fh.writeFloatLE(_impulse_direction);
+	fh.writeFloatLE(_speed_delta);
+	fh.writeByte(char(_movement_mode));
 
-	fh.writeFloatLE(movement_mode_time_);
-	fh.writeFloatLE(movement_mode_time_current_);
+	fh.writeFloatLE(_movement_mode_time);
+	fh.writeFloatLE(_movement_mode_time_current);
 
-	for (int i = 0; i < path_length_; i++) {
-		fh.writeFloatLE(path_[i].x);
-		fh.writeFloatLE(path_[i].y);
-		fh.writeFloatLE(path_[i].z);
+	for (int i = 0; i < _path_length; i++) {
+		fh.writeFloatLE(_path[i].x);
+		fh.writeFloatLE(_path[i].y);
+		fh.writeFloatLE(_path[i].z);
 	}
 
-	fh.writeUint32LE(follow_condition_);
+	fh.writeUint32LE(_follow_condition);
 
-	fh.writeUint32LE(circuit_objs_.size());
-	for (int i = 0; i < circuit_objs_.size(); i++) {
-		qdNamedObjectReference circ_ref(circuit_objs_[i]);
+	fh.writeUint32LE(_circuit_objs.size());
+	for (int i = 0; i < _circuit_objs.size(); i++) {
+		qdNamedObjectReference circ_ref(_circuit_objs[i]);
 		circ_ref.save_data(fh);
 	}
 
@@ -1953,19 +1953,19 @@ bool qdGameObjectMoving::init() {
 	if (!qdGameObjectAnimated::init()) return false;
 
 #ifndef _QUEST_EDITOR
-	walk_grid_size_ = Vect2s(0, 0);
-	last_walk_state_ = NULL;
+	_walk_grid_size = Vect2s(0, 0);
+	_last_walk_state = NULL;
 #endif
 
-	impulse_movement_mode_ = false;
-	impulse_timer_ = 0.0f;
-	impulse_start_timer_ = 0.0f;
-	impulse_direction_ = -1.0f;
+	_impulse_movement_mode = false;
+	_impulse_timer = 0.0f;
+	_impulse_start_timer = 0.0f;
+	_impulse_direction = -1.0f;
 
 	drop_flag(QD_OBJ_MOVING_FLAG);
 
-	direction_angle_ = default_direction_angle_;
-	path_length_ = cur_path_index_ = 0;
+	_direction_angle = _default_direction_angle;
+	_path_length = _cur_path_index = 0;
 
 	// Грузим attacher_ по attacher_ref_
 	qdNamedObject *nam_obj = qdGameDispatcher::get_dispatcher()->
@@ -2029,9 +2029,9 @@ bool qdGameObjectMoving::keyboard_move() {
 			if (is_direction_allowed(direction))
 				set_movement_impulse(direction);
 		} else {
-			if (impulse_movement_mode_ && is_moving() && !has_control_type(CONTROL_AUTO_MOVE)) {
+			if (_impulse_movement_mode && is_moving() && !has_control_type(CONTROL_AUTO_MOVE)) {
 				stop_movement();
-				impulse_movement_mode_ = false;
+				_impulse_movement_mode = false;
 			}
 		}
 
@@ -2049,12 +2049,12 @@ bool qdGameObjectMoving::set_walk_animation() {
 
 #ifndef _QUEST_EDITOR
 	if (cur_state() == -1 || get_state(cur_state())->state_type() != qdGameObjectState::STATE_WALK) {
-		if (!last_walk_state_) {
+		if (!_last_walk_state) {
 			qdGameObjectState *p = get_default_state();
 			if (p && p->state_type() == qdGameObjectState::STATE_WALK)
 				set_state(p);
 		} else
-			set_state(last_walk_state_);
+			set_state(_last_walk_state);
 	}
 #endif
 
@@ -2064,12 +2064,12 @@ bool qdGameObjectMoving::set_walk_animation() {
 	if (st->state_type() == qdGameObjectState::STATE_WALK) {
 		qdGameObjectStateWalk *wst = static_cast<qdGameObjectStateWalk *>(st);
 
-		switch (movement_mode_) {
+		switch (_movement_mode) {
 		case MOVEMENT_MODE_TURN:
 			if (qdAnimationSet * set = wst->animation_set()) {
 				if (qdAnimation * anm = set->get_turn_animation()) {
 					set_animation_info(set->get_turn_animation_info());
-					get_animation()->set_time_rel(cycleAngle(direction_angle_) / (2.f * M_PI));
+					get_animation()->set_time_rel(cycleAngle(_direction_angle) / (2.f * M_PI));
 					set_flag(QD_OBJ_MOVING_FLAG);
 					return true;
 				}
@@ -2077,7 +2077,7 @@ bool qdGameObjectMoving::set_walk_animation() {
 			break;
 		case MOVEMENT_MODE_START:
 			if (qdAnimationSet * set = wst->animation_set()) {
-				qdAnimationInfo *inf = set->get_start_animation_info(direction_angle_);
+				qdAnimationInfo *inf = set->get_start_animation_info(_direction_angle);
 				if (inf->animation()) {
 					set_animation_info(inf);
 					get_animation()->set_time_rel(tm);
@@ -2088,7 +2088,7 @@ bool qdGameObjectMoving::set_walk_animation() {
 			break;
 		case MOVEMENT_MODE_END:
 			if (qdAnimationSet * set = wst->animation_set()) {
-				qdAnimationInfo *inf = set->get_stop_animation_info(direction_angle_);
+				qdAnimationInfo *inf = set->get_stop_animation_info(_direction_angle);
 				if (inf->animation()) {
 					set_animation_info(inf);
 					get_animation()->set_time_rel(tm);
@@ -2101,13 +2101,13 @@ bool qdGameObjectMoving::set_walk_animation() {
 			break;
 		}
 
-		set_animation_info(wst->animation_info(direction_angle_));
+		set_animation_info(wst->animation_info(_direction_angle));
 		get_animation()->set_time_rel(tm);
 
 		if (!check_flag(QD_OBJ_MOVING_FLAG))
 			st->play_sound();
 
-		wst->update_sound_frequency(direction_angle_);
+		wst->update_sound_frequency(_direction_angle);
 	}
 
 	set_flag(QD_OBJ_MOVING_FLAG);
@@ -2115,13 +2115,13 @@ bool qdGameObjectMoving::set_walk_animation() {
 }
 
 bool qdGameObjectMoving::set_movement_impulse(float dir_angle) {
-	if (impulse_direction_ >= 0.0f) return false;
+	if (_impulse_direction >= 0.0f) return false;
 
 	adjust_direction_angle(dir_angle);
-	impulse_direction_ = dir_angle;
+	_impulse_direction = dir_angle;
 
-	if (collision_delay_ > FLT_EPS)
-		impulse_start_timer_ = collision_delay_;
+	if (_collision_delay > FLT_EPS)
+		_impulse_start_timer = _collision_delay;
 	else
 		return movement_impulse();
 
@@ -2129,27 +2129,27 @@ bool qdGameObjectMoving::set_movement_impulse(float dir_angle) {
 }
 
 bool qdGameObjectMoving::movement_impulse() {
-	if (impulse_direction_ < 0.0f || !is_direction_allowed(impulse_direction_) || !can_move() || (is_moving() && !impulse_movement_mode_) || check_grid_zone_attributes(sGridCell::CELL_IMPASSABLE)) {
-		impulse_direction_ = -1.0f;
+	if (_impulse_direction < 0.0f || !is_direction_allowed(_impulse_direction) || !can_move() || (is_moving() && !_impulse_movement_mode) || check_grid_zone_attributes(sGridCell::CELL_IMPASSABLE)) {
+		_impulse_direction = -1.0f;
 		return false;
 	}
 
-	change_direction_angle(impulse_direction_);
+	change_direction_angle(_impulse_direction);
 
-//	direction_angle_ = impulse_direction_;
-	impulse_direction_ = -1.0f;
-	target_angle_ = -1.0f;
+//	_direction_angle = _impulse_direction;
+	_impulse_direction = -1.0f;
+	_target_angle = -1.0f;
 
-	if (movement_mode_ == MOVEMENT_MODE_STOP || movement_mode_ == MOVEMENT_MODE_END)
-		movement_mode_ = MOVEMENT_MODE_TURN;
+	if (_movement_mode == MOVEMENT_MODE_STOP || _movement_mode == MOVEMENT_MODE_END)
+		_movement_mode = MOVEMENT_MODE_TURN;
 
 	set_flag(QD_OBJ_MOVING_FLAG);
 
 	float sp = speed();
-	if (sp > FLT_EPS) impulse_timer_ = collision_path_ / sp;
-	else impulse_timer_ = 0.0f;
+	if (sp > FLT_EPS) _impulse_timer = _collision_path / sp;
+	else _impulse_timer = 0.0f;
 
-	impulse_movement_mode_ = true;
+	_impulse_movement_mode = true;
 
 	return true;
 }
@@ -2157,7 +2157,7 @@ bool qdGameObjectMoving::movement_impulse() {
 float qdGameObjectMoving::speed() {
 	if (qdGameObjectState * st = get_cur_state()) {
 		if (st->state_type() == qdGameObjectState::STATE_WALK) {
-			if (qdAnimationInfo * inf = static_cast<qdGameObjectStateWalk * >(st)->animation_info(direction_angle_))
+			if (qdAnimationInfo * inf = static_cast<qdGameObjectStateWalk * >(st)->animation_info(_direction_angle))
 				return inf->speed() * scale();
 		}
 	}
@@ -2641,15 +2641,15 @@ bool qdGameObjectMoving::adjust_direction_angle(float &angle) {
 
 void qdGameObjectMoving::change_direction_angle(float angle) {
 	if (!has_control_type(CONTROL_ANIMATED_ROTATION))
-		direction_angle_ = angle;
+		_direction_angle = angle;
 	else {
-		rotation_angle_ = angle - direction_angle_;
+		_rotation_angle = angle - _direction_angle;
 		// Приводим к диапазону -PI..PI
-		while (rotation_angle_ > 2 * M_PI)
-			rotation_angle_ -= 2 * M_PI;
-		while (rotation_angle_ < 0)
-			rotation_angle_ += 2 * M_PI;
-		if (rotation_angle_ > M_PI) rotation_angle_ -= 2 * M_PI;
+		while (_rotation_angle > 2 * M_PI)
+			_rotation_angle -= 2 * M_PI;
+		while (_rotation_angle < 0)
+			_rotation_angle += 2 * M_PI;
+		if (_rotation_angle > M_PI) _rotation_angle -= 2 * M_PI;
 	}
 }
 
@@ -2665,7 +2665,7 @@ bool qdGameObjectMoving::get_speed_parameters(float &speed, float &speed_max, fl
 			speed_max = sw->max_speed() * sc;
 			acceleration = sw->acceleration() * sc;
 
-			if (qdAnimationInfo * inf = sw->animation_info(direction_angle_))
+			if (qdAnimationInfo * inf = sw->animation_info(_direction_angle))
 				speed = inf->speed() * sc;
 		}
 	}
@@ -2709,7 +2709,7 @@ const qdGameObjectStateWalk *qdGameObjectMoving::current_walk_state() const {
 	const qdGameObjectState *st = get_cur_state();
 	if (!st || st->state_type() != qdGameObjectState::STATE_WALK) {
 #ifndef _QUEST_EDITOR
-		st = last_walk_state_;
+		st = _last_walk_state;
 		if (!st || st->state_type() != qdGameObjectState::STATE_WALK)
 			st = get_default_state();
 		else
@@ -2726,10 +2726,10 @@ const qdGameObjectStateWalk *qdGameObjectMoving::current_walk_state() const {
 
 bool qdGameObjectMoving::start_auto_move() {
 	if (can_move()) {
-		float angle = direction_angle_;
+		float angle = _direction_angle;
 		adjust_direction_angle(angle);
 		set_movement_impulse(angle);
-		impulse_timer_ = 0.0f;
+		_impulse_timer = 0.0f;
 		movement_impulse();
 
 		return true;

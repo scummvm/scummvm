@@ -101,14 +101,14 @@ public:
 	};
 
 	bool has_control_type(control_type_t type) const {
-		if (control_types_ & type) return true;
+		if (_control_types & type) return true;
 		return false;
 	}
 	void add_control_type(control_type_t type) {
-		control_types_ |= type;
+		_control_types |= type;
 	}
 	void remove_control_type(control_type_t type) {
-		control_types_ &= ~type;
+		_control_types &= ~type;
 	}
 
 	qdGameObjectStateWalk::movement_type_t movement_type() const;
@@ -129,29 +129,29 @@ public:
 	bool mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev);
 
 	float direction_angle() const {
-		return direction_angle_;
+		return _direction_angle;
 	}
 	float calc_direction_angle(const Vect3f &target) const;
 	float animate_rotation(float dt);
 	float rotation_angle() const {
-		return rotation_angle_;
+		return _rotation_angle;
 	}
 
 	float rotation_angle_per_quant() const {
-		return rotation_angle_per_quant_;
+		return _rotation_angle_per_quant;
 	}
 	void set_rotation_angle_per_quant(float ang) {
-		rotation_angle_per_quant_ = ang;
+		_rotation_angle_per_quant = ang;
 	}
 
 	bool set_direction(float angle);
 	int get_direction(float angle) const;
 
 	float default_direction_angle() const {
-		return default_direction_angle_;
+		return _default_direction_angle;
 	}
 	void set_default_direction(float ang) {
-		default_direction_angle_ = ang;
+		_default_direction_angle = ang;
 	}
 
 	void set_state(int st);
@@ -159,10 +159,10 @@ public:
 
 #ifndef _QUEST_EDITOR
 	void set_last_walk_state(qdGameObjectState *p) {
-		last_walk_state_ = p;
+		_last_walk_state = p;
 	}
 	qdGameObjectState *last_walk_state() {
-		return last_walk_state_;
+		return _last_walk_state;
 	}
 #endif // _QUEST_EDITOR
 
@@ -173,10 +173,10 @@ public:
 	void split(qdGameObjectMoving *p);
 
 	void set_button(qdInterfaceButton *p) {
-		button_ = p;
+		_button = p;
 	}
 	qdInterfaceButton *button() const {
-		return button_;
+		return _button;
 	}
 
 	bool move(const Vect3f &target, bool lock_target = false);
@@ -202,7 +202,7 @@ public:
 	//! Текущая точка, к которой движется персонаж.
 	Vect3f local_target_position() const {
 		if (is_moving())
-			return target_r_;
+			return _target_r;
 		else
 			return R();
 	}
@@ -210,16 +210,16 @@ public:
 	//! Точка, к которой движется персонаж.
 	Vect3f target_position() const {
 		if (is_moving())
-			return ((path_length_) ? path_[path_length_] : target_r_);
+			return ((_path_length) ? _path[_path_length] : _target_r);
 		else
 			return R();
 	}
 
 	void set_scale(float sc) {
-		scale_ = sc;
+		_scale = sc;
 	}
 	float scale() const {
-		return scale_;
+		return _scale;
 	}
 
 	bool load_script(const xml::tag *p);
@@ -256,13 +256,13 @@ public:
 	Vect2s screen_size() const;
 
 	void disable_control() {
-		disable_control_ = true;
+		_disable_control = true;
 	}
 	void enable_control() {
-		disable_control_ = false;
+		_disable_control = false;
 	}
 	bool is_control_disabled() const {
-		return disable_control_;
+		return _disable_control;
 	}
 
 	bool keyboard_move();
@@ -271,63 +271,63 @@ public:
 
 #ifdef _QUEST_EDITOR
 	float collision_radius() const {
-		return collision_radius_;
+		return _collision_radius;
 	}
 	void set_movement_mode(movement_mode_t mode) {
 		movement_mode_ = mode;
 	}
 #else
 	float collision_radius() const {
-		if (collision_radius_ > FLT_EPS)
-			return collision_radius_;
+		if (_collision_radius > FLT_EPS)
+			return _collision_radius;
 		else
 			return radius();
 	}
 #endif
 	void set_collision_radius(float r) {
-		collision_radius_ = r;
+		_collision_radius = r;
 	}
 
 	float collision_delay() const {
-		return collision_delay_;
+		return _collision_delay;
 	}
 	void set_collision_delay(float r) {
-		collision_delay_ = r;
+		_collision_delay = r;
 	}
 
 	float collision_path() const {
-		return collision_path_;
+		return _collision_path;
 	}
 	void set_collision_path(float path) {
-		collision_path_ = path;
+		_collision_path = path;
 	}
 
 	float follow_min_radius() const {
-		return follow_min_radius_;
+		return _follow_min_radius;
 	}
 	void set_follow_min_radius(float fmr) {
-		follow_min_radius_ = fmr;
+		_follow_min_radius = fmr;
 	}
 
 	float follow_max_radius() const {
-		return follow_max_radius_;
+		return _follow_max_radius;
 	}
 	void set_follow_max_radius(float fmr) {
-		follow_max_radius_ = fmr;
+		_follow_max_radius = fmr;
 	}
 
 	int follow_condition() const {
-		return follow_condition_;
+		return _follow_condition;
 	};
 	void set_follow_condition(int cond) {
-		follow_condition_ = cond;
+		_follow_condition = cond;
 	};
 
 	const std::vector<const qdGameObjectMoving *> &const_ref_circuit_objs() const {
-		return circuit_objs_;
+		return _circuit_objs;
 	};
 	std::vector<const qdGameObjectMoving *> &ref_circuit_objs() {
-		return circuit_objs_;
+		return _circuit_objs;
 	};
 
 	// Для CONTROL_ATTACHMENT
@@ -339,17 +339,17 @@ public:
 		return attacher_ref_;
 	}
 	Vect2s attach_shift() const {
-		return attach_shift_;
+		return _attach_shift;
 	}
 	void set_attach_shift(Vect2s shift) {
-		attach_shift_ = shift;
+		_attach_shift = shift;
 	}
 
 	Vect3f last_move_order() const {
-		return last_move_order_;
+		return _last_move_order;
 	};
 	void set_last_move_order(const Vect3f &pnt) {
-		last_move_order_ = pnt;
+		_last_move_order = pnt;
 	};
 
 	bool avoid_collision(const qdGameObjectMoving *p);
@@ -357,7 +357,7 @@ public:
 
 	bool toggle_grid_zone(bool make_walkable = false);
 	void toggle_selection(bool state) {
-		is_selected_ = state;
+		_is_selected = state;
 	}
 
 	void set_path_attributes(int attr) const;
@@ -374,66 +374,66 @@ private:
 	/**
 	Если не установлен, высчитывается по баунду персонажа.
 	*/
-	float collision_radius_;
+	float _collision_radius;
 	//! Задержка от момента столкновения с другим персонажем до начала движения.
-	float collision_delay_;
+	float _collision_delay;
 	//! Путь, который персонаж проходит после того, как другой персонаж его толкает.
-	float collision_path_;
+	float _collision_path;
 
 	//! Минимальный и максимальный радиусы следования
-	float follow_min_radius_;
-	float follow_max_radius_;
+	float _follow_min_radius;
+	float _follow_max_radius;
 
 	//! Состояние следования
-	int follow_condition_;
+	int _follow_condition;
 	//! Объекты, который текущий объект пытается обойти
-	std::vector<const qdGameObjectMoving *> circuit_objs_;
+	std::vector<const qdGameObjectMoving *> _circuit_objs;
 
 	//! Для CONTROL_HARD_ATTACHMENT
 	const qdGameObjectMoving *attacher_;   // Объект, который присоединяет к себе наш объект
 	qdNamedObjectReference attacher_ref_;
-	Vect2s attach_shift_;            // Позиция нашего объекта - смещение от центра attacher'а
+	Vect2s _attach_shift;            // Позиция нашего объекта - смещение от центра attacher'а
 
 	//! Режимы управления персонажем - комбинация значений control_type_t.
-	int control_types_;
+	int _control_types;
 
-	bool disable_control_;
+	bool _disable_control;
 
-	bool impulse_movement_mode_;
-	float impulse_timer_;
-	float impulse_start_timer_;
-	float impulse_direction_;
+	bool _impulse_movement_mode;
+	float _impulse_timer;
+	float _impulse_start_timer;
+	float _impulse_direction;
 
-	movement_mode_t movement_mode_;
-	float movement_mode_time_;
-	float movement_mode_time_current_;
+	movement_mode_t _movement_mode;
+	float _movement_mode_time;
+	float _movement_mode_time_current;
 
-	float scale_;
-	float direction_angle_;
-	float rotation_angle_;
-	float rotation_angle_per_quant_;
+	float _scale;
+	float _direction_angle;
+	float _rotation_angle;
+	float _rotation_angle_per_quant;
 
-	float default_direction_angle_;
+	float _default_direction_angle;
 
-	float speed_delta_;
+	float _speed_delta;
 
-	Vect3f last_move_order_; //! Точка, заданная последним приказом на движение
+	Vect3f _last_move_order; //! Точка, заданная последним приказом на движение
 
-	Vect3f target_r_;
-	int path_length_;
-	int cur_path_index_;
-	float target_angle_;
-	Vect3f path_[QD_MOVING_OBJ_PATH_LENGTH];
+	Vect3f _target_r;
+	int _path_length;
+	int _cur_path_index;
+	float _target_angle;
+	Vect3f _path[QD_MOVING_OBJ_PATH_LENGTH];
 
 #ifndef _QUEST_EDITOR
-	Vect2s walk_grid_size_;
-	qdGameObjectState *last_walk_state_;
+	Vect2s _walk_grid_size;
+	qdGameObjectState *_last_walk_state;
 #endif
 
-	bool ignore_personages_;
-	bool is_selected_;
+	bool _ignore_personages;
+	bool _is_selected;
 
-	mutable qdInterfaceButton *button_;
+	mutable qdInterfaceButton *_button;
 
 	Vect2s get_nearest_walkable_point(const Vect2s &target) const;
 	//! Возвращает доступную точку, предшествующую последней до target пустОте
@@ -446,7 +446,7 @@ private:
 	bool enough_far_target(const Vect3f &dest) const;
 
 	void toggle_ignore_personages(bool state) {
-		ignore_personages_ = state;
+		_ignore_personages = state;
 	}
 
 	bool find_path(const Vect3f target, bool lock_target = false);
