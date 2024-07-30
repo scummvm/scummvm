@@ -488,21 +488,21 @@ public:
 	qdCondition &operator = (const qdCondition &cnd);
 
 	ConditionType type() const {
-		return type_;
+		return _type;
 	}
 	void set_type(ConditionType tp);
 
 	bool put_value(int idx, const char *str);
 
 	bool is_click_condition() const {
-		return (type_ == CONDITION_MOUSE_CLICK || type_ == CONDITION_MOUSE_DIALOG_CLICK || type_ == CONDITION_MOUSE_ZONE_CLICK);
+		return (_type == CONDITION_MOUSE_CLICK || _type == CONDITION_MOUSE_DIALOG_CLICK || _type == CONDITION_MOUSE_ZONE_CLICK);
 	}
 	bool is_object_click_condition() const {
-		return (type_ == CONDITION_MOUSE_OBJECT_CLICK || type_ == CONDITION_MOUSE_OBJECT_ZONE_CLICK);
+		return (_type == CONDITION_MOUSE_OBJECT_CLICK || _type == CONDITION_MOUSE_OBJECT_ZONE_CLICK);
 	}
 
 	// val_index - индекс, по которому пропишется значение
-	// в qdConditionDataInt::data_ или qdConditionDataFloat::data_
+	// в qdConditionDataInt::_data или qdConditionDataFloat::_data
 	bool put_value(int idx, int val, int val_index = 0);
 	bool put_value(int idx, float val, int val_index = 0);
 
@@ -514,10 +514,10 @@ public:
 	const qdNamedObject *get_object(int idx) ;
 
 	const qdNamedObject *owner() const {
-		return owner_;
+		return _owner;
 	}
 	void set_owner(const qdNamedObject *p) {
-		owner_ = p;
+		_owner = p;
 	}
 
 	bool load_script(const xml::tag *p);
@@ -534,58 +534,58 @@ public:
 	bool init();
 
 	bool is_inversed() const {
-		return is_inversed_;
+		return _is_inversed;
 	}
 	void inverse(bool inverse_mode = true) {
-		is_inversed_ = inverse_mode;
+		_is_inversed = inverse_mode;
 	}
 
 	bool check();
 
 	bool is_in_group() const {
-		return is_in_group_;
+		return _is_in_group;
 	}
 	void add_group_reference() {
-		is_in_group_ = true;
+		_is_in_group = true;
 	}
 	void remove_group_reference() {
-		is_in_group_ = false;
+		_is_in_group = false;
 	}
 
 	static bool successful_click() {
-		return successful_click_;
+		return _successful_click;
 	}
 	static bool successful_object_click() {
-		return successful_object_click_;
+		return _successful_object_click;
 	}
 	static void clear_successful_clicks() {
-		successful_click_ = successful_object_click_ = false;
+		_successful_click = _successful_object_click = false;
 	}
 
 private:
 
-	ConditionType type_;
-	const qdNamedObject *owner_;
+	ConditionType _type;
+	const qdNamedObject *_owner;
 
 	typedef std::vector<qdConditionData> data_container_t;
-	data_container_t data_;
+	data_container_t _data;
 
 	typedef std::vector<qdConditionObjectReference> objects_container_t;
-	objects_container_t objects_;
+	objects_container_t _objects;
 
-	bool is_inversed_;
+	bool _is_inversed;
 
-	bool is_in_group_;
+	bool _is_in_group;
 
-	static bool successful_click_;
-	static bool successful_object_click_;
+	static bool _successful_click;
+	static bool _successful_object_click;
 
 	bool init_data(int data_index, qdConditionData::data_t data_type, int data_size = 0) {
-		assert(data_index >= 0 && data_index < data_.size());
+		assert(data_index >= 0 && data_index < _data.size());
 
-		data_[data_index].set_type(data_type);
+		_data[data_index].set_type(data_type);
 		if (data_size)
-			data_[data_index].alloc_data(data_size);
+			_data[data_index].alloc_data(data_size);
 
 		return true;
 	}
