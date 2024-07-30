@@ -37,15 +37,15 @@
 
 namespace QDEngine {
 
-void *grDispatcher::default_mouse_cursor_ = nullptr;
+void *grDispatcher::_default_mouse_cursor = nullptr;
 
-grDispatcher::char_input_hanler_t grDispatcher::input_handler_ = 0;
+grDispatcher::char_input_hanler_t grDispatcher::_input_handler = 0;
 
-bool grDispatcher::is_active_ = true; // We have system always active
-grDispatcher::restore_handler_t grDispatcher::restore_handler_ = 0;
+bool grDispatcher::_is_active = true; // We have system always active
+grDispatcher::restore_handler_t grDispatcher::_restore_handler = 0;
 
-grDispatcher *grDispatcher::dispatcher_ptr_;
-grFont *grDispatcher::default_font_;
+grDispatcher *grDispatcher::_dispatcher_ptr;
+grFont *grDispatcher::_default_font;
 
 static const int CURSOR_W = 12;
 static const int CURSOR_H = 20;
@@ -74,43 +74,43 @@ static const byte ARROW_CURSOR[CURSOR_W * CURSOR_H] = {
 static const byte CURSOR_PALETTE[] = { 0x80, 0x80, 0x80, 0, 0, 0, 0xff, 0xff, 0xff };
 
 
-grDispatcher::grDispatcher() : screenBuf(NULL),
+grDispatcher::grDispatcher() : _screenBuf(NULL),
 #ifdef _GR_ENABLE_ZBUFFER
 	zbuffer_(NULL),
 #endif
-	hWnd(NULL),
-	yTable(NULL),
-	temp_buffer_(0),
-	maximize_handler_(0) {
-	flags = 0;
+	_hWnd(NULL),
+	_yTable(NULL),
+	_temp_buffer(0),
+	_maximize_handler(0) {
+	_flags = 0;
 
-	temp_buffer_size_ = 0;
+	_temp_buffer_size = 0;
 
-	clipMode = 0;
+	_clipMode = 0;
 
-	SizeX = SizeY = 0;
-	wndSizeX = wndSizeY = 0;
-	wndPosX = wndPosY = 0;
+	_SizeX = _SizeY = 0;
+	_wndSizeX = _wndSizeY = 0;
+	_wndPosX = _wndPosY = 0;
 
-	changes_mask_size_x_ = changes_mask_size_y_ = 0;
+	_changes_mask_size_x = _changes_mask_size_y = 0;
 
-	hide_mouse_ = false;
-	mouse_cursor_ = NULL;
+	_hide_mouse = false;
+	_mouse_cursor = NULL;
 
-	pixel_format_ = GR_RGB565;
+	_pixel_format = GR_RGB565;
 
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 	CursorMan.replaceCursorPalette(CURSOR_PALETTE, 0, ARRAYSIZE(CURSOR_PALETTE) / 3);
 	CursorMan.replaceCursor(ARROW_CURSOR, CURSOR_W, CURSOR_H, 0, 0, 0, true, &format);
 	CursorMan.showMouse(true);
 
-	if (!dispatcher_ptr_) dispatcher_ptr_ = this;
+	if (!_dispatcher_ptr) _dispatcher_ptr = this;
 }
 
 grDispatcher::~grDispatcher() {
 	Finit();
 
-	if (dispatcher_ptr_ == this) dispatcher_ptr_ = 0;
+	if (_dispatcher_ptr == this) _dispatcher_ptr = 0;
 }
 
 bool grDispatcher::Finit() {
@@ -118,14 +118,14 @@ bool grDispatcher::Finit() {
 	free_zbuffer();
 #endif
 
-	flags &= ~GR_INITED;
-	SizeX = SizeY = 0;
-	wndPosX = wndPosY = 0;
-	screenBuf = NULL;
+	_flags &= ~GR_INITED;
+	_SizeX = _SizeY = 0;
+	_wndPosX = _wndPosY = 0;
+	_screenBuf = NULL;
 	delete _screenBuf;
 	_screenBuf = nullptr;
-	delete  yTable;
-	yTable = NULL;
+	delete  _yTable;
+	_yTable = NULL;
 
 	return true;
 }
@@ -133,7 +133,7 @@ bool grDispatcher::Finit() {
 bool grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, bool fullscreen) {
 	Finit();
 
-	pixel_format_ = pixel_format;
+	_pixel_format = pixel_format;
 
 	initGraphics(sx, sy, &g_engine->_pixelformat);
 	_screenBuf = new Graphics::ManagedSurface(sx, sy, g_engine->_pixelformat);
@@ -142,28 +142,28 @@ bool grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, 
 
 	if (!hwnd) {
 		resize_window(sx, sy);
-		SizeX = sx;
-		SizeY = sy;
+		_SizeX = sx;
+		_SizeY = sy;
 	} else {
 		set_window(hwnd);
 
 		if (sx && sy) {
-			SizeX = sx;
-			SizeY = sy;
+			_SizeX = sx;
+			_SizeY = sy;
 		}
 	}
 
-	changes_mask_size_x_ = SizeX >> changes_mask_tile_shift_;
-	if (SizeX % changes_mask_tile_) changes_mask_size_x_++;
-	changes_mask_size_y_ = SizeY >> changes_mask_tile_shift_;
-	if (SizeY % changes_mask_tile_) changes_mask_size_y_++;
+	_changes_mask_size_x = _SizeX >> changes_mask_tile_shift_;
+	if (_SizeX % changes_mask_tile_) _changes_mask_size_x++;
+	_changes_mask_size_y = _SizeY >> changes_mask_tile_shift_;
+	if (_SizeY % changes_mask_tile_) _changes_mask_size_y++;
 
-	changes_mask_.resize(changes_mask_size_x_ * changes_mask_size_y_);
+	_changes_mask.resize(_changes_mask_size_x * _changes_mask_size_y);
 
-	flags &= ~GR_REINIT;
+	_flags &= ~GR_REINIT;
 
 #ifdef _GR_ENABLE_ZBUFFER
-	alloc_zbuffer(SizeX, SizeY);
+	alloc_zbuffer(_SizeX, _SizeY);
 #endif
 
 	return true;
@@ -182,11 +182,11 @@ bool grDispatcher::Flush(int x, int y, int sx, int sy) {
 	if (y < 0)
 		y = 0;
 
-	if (x1 > SizeX)
-		x1 = SizeX;
+	if (x1 > _SizeX)
+		x1 = _SizeX;
 
-	if (y1 > SizeY)
-		y1 = SizeY;
+	if (y1 > _SizeY)
+		y1 = _SizeY;
 
 	debugC(8, kDebugGraphics, "grDispatcher::Flush(%d, %d, %d, %d)", x, y, x1 - x, y1 - y);
 
@@ -196,7 +196,7 @@ bool grDispatcher::Flush(int x, int y, int sx, int sy) {
 }
 
 bool grDispatcher::Flush() {
-	return Flush(0, 0, SizeX, SizeY);
+	return Flush(0, 0, _SizeX, _SizeY);
 }
 
 void grDispatcher::Line(int x1, int y1, int x2, int y2, int col, int line_style, bool inverse_col) {
@@ -388,7 +388,7 @@ void grDispatcher::RectangleAlpha(int x, int y, int sx, int sy, unsigned color, 
 }
 
 void grDispatcher::Erase(int x, int y, int sx, int sy, int col) {
-	if (clipMode)
+	if (_clipMode)
 		if (!clip_rectangle(x, y, sx, sy))
 			return;
 
@@ -397,7 +397,7 @@ void grDispatcher::Erase(int x, int y, int sx, int sy, int col) {
 }
 
 void grDispatcher::SetPixel(int x, int y, int col) {
-	if (clipMode && !ClipCheck(x, y)) return;
+	if (_clipMode && !ClipCheck(x, y)) return;
 
 	uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x, y));
 	*p = col;
@@ -414,7 +414,7 @@ void grDispatcher::SetPixelFast(int x, int y, int r, int g, int b) {
 }
 
 void grDispatcher::SetPixel(int x, int y, int r, int g, int b) {
-	if (clipMode && !ClipCheck(x, y)) return;
+	if (_clipMode && !ClipCheck(x, y)) return;
 
 	uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x * 2, y));
 	*p = (((r >> 3) << 11) + ((g >> 2) << 5) + ((b >> 3) << 0));
@@ -451,18 +451,18 @@ bool grDispatcher::clip_line(int &x0, int &y0, int &x1, int &y1) const {
 					outcodeOut = outcode1;
 
 				if (clTOP & outcodeOut) {
-					x = x0 + (x1 - x0) * (clipCoords[3] - y0 - 1) / (y1 - y0);
-					y = clipCoords[3] - 1;
+					x = x0 + (x1 - x0) * (_clipCoords[3] - y0 - 1) / (y1 - y0);
+					y = _clipCoords[3] - 1;
 				} else if (clBOTTOM & outcodeOut) {
-					x = x0 + (x1 - x0) * (clipCoords[1] - y0) / (y1 - y0);
-					y = clipCoords[1];
+					x = x0 + (x1 - x0) * (_clipCoords[1] - y0) / (y1 - y0);
+					y = _clipCoords[1];
 				}
 				if (clRIGHT & outcodeOut) {
-					y = y0 + (y1 - y0) * (clipCoords[2] - x0 - 1) / (x1 - x0);
-					x = clipCoords[2] - 1;
+					y = y0 + (y1 - y0) * (_clipCoords[2] - x0 - 1) / (x1 - x0);
+					x = _clipCoords[2] - 1;
 				} else if (clLEFT & outcodeOut) {
-					y = y0 + (y1 - y0) * (clipCoords[0] - x0) / (x1 - x0);
-					x = clipCoords[0];
+					y = y0 + (y1 - y0) * (_clipCoords[0] - x0) / (x1 - x0);
+					x = _clipCoords[0];
 				}
 
 				if (outcodeOut == outcode0) {
@@ -484,8 +484,8 @@ bool grDispatcher::clip_line(int &x0, int &y0, int &x1, int &y1) const {
 }
 
 bool grDispatcher::create_window(int sx, int sy) {
-	SizeX = sx;
-	SizeY = sy;
+	_SizeX = sx;
+	_SizeY = sy;
 	warning("STUB: grDispatcher::create_window()");
 #if 0
 	int px = GetSystemMetrics(SM_CXSCREEN);
@@ -494,11 +494,11 @@ bool grDispatcher::create_window(int sx, int sy) {
 	int wx = sx + GetSystemMetrics(SM_CXFIXEDFRAME) * 2;
 	int wy = sy + GetSystemMetrics(SM_CYFIXEDFRAME) * 2 + GetSystemMetrics(SM_CYCAPTION);
 
-	hWnd = CreateWindow(wnd_class_name(), "", WS_POPUP | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_CLIPCHILDREN, (px - wx) / 2, (py - wy) / 2, wx, wy, NULL, NULL, GetModuleHandle(NULL), NULL);
+	_hWnd = CreateWindow(wnd_class_name(), "", WS_POPUP | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_CLIPCHILDREN, (px - wx) / 2, (py - wy) / 2, wx, wy, NULL, NULL, GetModuleHandle(NULL), NULL);
 
-	if (hWnd) {
-		ShowWindow((HWND)hWnd, SW_SHOWNORMAL);
-		UpdateWindow((HWND)hWnd);
+	if (_hWnd) {
+		ShowWindow((HWND)_hWnd, SW_SHOWNORMAL);
+		UpdateWindow((HWND)_hWnd);
 		return true;
 	}
 
@@ -507,17 +507,17 @@ bool grDispatcher::create_window(int sx, int sy) {
 }
 
 bool grDispatcher::destroy_window() {
-	if (hWnd) {
-		ShowWindow((HWND)hWnd, SW_HIDE);
-		DestroyWindow((HWND)hWnd);
-		hWnd = NULL;
+	if (_hWnd) {
+		ShowWindow((HWND)_hWnd, SW_HIDE);
+		DestroyWindow((HWND)_hWnd);
+		_hWnd = NULL;
 		return true;
 	}
 	return false;
 }
 
 bool grDispatcher::resize_window(int sx, int sy) {
-	if (!hWnd) return false;
+	if (!_hWnd) return false;
 
 	warning("STUB: grDispatcher::resize_window()");
 #if 0
@@ -525,27 +525,27 @@ bool grDispatcher::resize_window(int sx, int sy) {
 	int py = GetSystemMetrics(SM_CYSCREEN);
 
 	if (!is_in_fullscreen_mode()) {
-		LONG styles = GetWindowLong((HWND)hWnd, GWL_STYLE);
+		LONG styles = GetWindowLong((HWND)_hWnd, GWL_STYLE);
 		LONG styles_new = styles | (WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX);
 
 		if (styles != styles_new)
-			SetWindowLong((HWND)hWnd, GWL_STYLE, styles_new);
+			SetWindowLong((HWND)_hWnd, GWL_STYLE, styles_new);
 
 		int wx = sx + GetSystemMetrics(SM_CXFIXEDFRAME) * 2;
 		int wy = sy + GetSystemMetrics(SM_CYFIXEDFRAME) * 2 + GetSystemMetrics(SM_CYCAPTION);
 
 		if (wy <= py)
-			SetWindowPos((HWND)hWnd, NULL, (px - wx) / 2, (py - wy) / 2, wx, wy, SWP_NOZORDER | SWP_NOCOPYBITS);
+			SetWindowPos((HWND)_hWnd, NULL, (px - wx) / 2, (py - wy) / 2, wx, wy, SWP_NOZORDER | SWP_NOCOPYBITS);
 		else
-			SetWindowPos((HWND)hWnd, NULL, (px - wx) / 2, -GetSystemMetrics(SM_CYCAPTION) - GetSystemMetrics(SM_CYFIXEDFRAME), wx, wy, SWP_NOZORDER | SWP_NOCOPYBITS);
+			SetWindowPos((HWND)_hWnd, NULL, (px - wx) / 2, -GetSystemMetrics(SM_CYCAPTION) - GetSystemMetrics(SM_CYFIXEDFRAME), wx, wy, SWP_NOZORDER | SWP_NOCOPYBITS);
 	} else {
-		LONG styles = GetWindowLong((HWND)hWnd, GWL_STYLE);
+		LONG styles = GetWindowLong((HWND)_hWnd, GWL_STYLE);
 		LONG styles_new = styles & ~(WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX);
 
 		if (styles != styles_new)
-			SetWindowLong((HWND)hWnd, GWL_STYLE, styles_new);
+			SetWindowLong((HWND)_hWnd, GWL_STYLE, styles_new);
 
-		SetWindowPos((HWND)hWnd, NULL, 0, 0, sx, sy, SWP_NOZORDER | SWP_NOCOPYBITS);
+		SetWindowPos((HWND)_hWnd, NULL, 0, 0, sx, sy, SWP_NOZORDER | SWP_NOCOPYBITS);
 	}
 #endif
 	return true;
@@ -556,9 +556,9 @@ bool grDispatcher::set_window(void *hwnd) {
 #if 0
 	RECT rc;
 	if (GetClientRect((HWND)hwnd, &rc)) {
-		SizeX = rc.right - rc.left;
-		SizeY = rc.bottom - rc.top;
-		hWnd = hwnd;
+		_SizeX = rc.right - rc.left;
+		_SizeY = rc.bottom - rc.top;
+		_hWnd = hwnd;
 
 		return true;
 	}
@@ -589,22 +589,22 @@ bool grDispatcher::clip_line(int &x0, int &y0, int &z0, int &x1, int &y1, int &z
 					outcodeOut = outcode1;
 
 				if (clTOP & outcodeOut) {
-					x = x0 + (x1 - x0) * (clipCoords[3] - y0 - 1) / (y1 - y0);
-					z = z0 + (z1 - z0) * (clipCoords[3] - y0 - 1) / (y1 - y0);
-					y = clipCoords[3] - 1;
+					x = x0 + (x1 - x0) * (_clipCoords[3] - y0 - 1) / (y1 - y0);
+					z = z0 + (z1 - z0) * (_clipCoords[3] - y0 - 1) / (y1 - y0);
+					y = _clipCoords[3] - 1;
 				} else if (clBOTTOM & outcodeOut) {
-					x = x0 + (x1 - x0) * (clipCoords[1] - y0) / (y1 - y0);
-					z = z0 + (z1 - z0) * (clipCoords[1] - y0) / (y1 - y0);
-					y = clipCoords[1];
+					x = x0 + (x1 - x0) * (_clipCoords[1] - y0) / (y1 - y0);
+					z = z0 + (z1 - z0) * (_clipCoords[1] - y0) / (y1 - y0);
+					y = _clipCoords[1];
 				}
 				if (clRIGHT & outcodeOut) {
-					y = y0 + (y1 - y0) * (clipCoords[2] - x0 - 1) / (x1 - x0);
-					z = z0 + (z1 - z0) * (clipCoords[2] - x0 - 1) / (x1 - x0);
-					x = clipCoords[2] - 1;
+					y = y0 + (y1 - y0) * (_clipCoords[2] - x0 - 1) / (x1 - x0);
+					z = z0 + (z1 - z0) * (_clipCoords[2] - x0 - 1) / (x1 - x0);
+					x = _clipCoords[2] - 1;
 				} else if (clLEFT & outcodeOut) {
-					y = y0 + (y1 - y0) * (clipCoords[0] - x0) / (x1 - x0);
-					z = z0 + (z1 - z0) * (clipCoords[0] - x0) / (x1 - x0);
-					x = clipCoords[0];
+					y = y0 + (y1 - y0) * (_clipCoords[0] - x0) / (x1 - x0);
+					z = z0 + (z1 - z0) * (_clipCoords[0] - x0) / (x1 - x0);
+					x = _clipCoords[0];
 				}
 
 				if (outcodeOut == outcode0) {
@@ -700,25 +700,25 @@ void grDispatcher::Line_z(int x1, int y1, int z1, int x2, int y2, int z2, int co
 #endif
 
 bool grDispatcher::clip_rectangle(int &x, int &y, int &pic_x, int &pic_y, int &pic_sx, int &pic_sy) const {
-	if (x < clipCoords[0]) {
-		pic_x += clipCoords[0] - x;
-		pic_sx += x - clipCoords[0];
+	if (x < _clipCoords[0]) {
+		pic_x += _clipCoords[0] - x;
+		pic_sx += x - _clipCoords[0];
 
-		x = clipCoords[0];
+		x = _clipCoords[0];
 	}
-	if (x + pic_sx >= clipCoords[2])
-		pic_sx += clipCoords[2] - (x + pic_sx);
-//		pic_sx += clipCoords[2] - 1 - (x + pic_sx);
+	if (x + pic_sx >= _clipCoords[2])
+		pic_sx += _clipCoords[2] - (x + pic_sx);
+//		pic_sx += _clipCoords[2] - 1 - (x + pic_sx);
 
-	if (y < clipCoords[1]) {
-		pic_y += clipCoords[1] - y;
-		pic_sy += y - clipCoords[1];
+	if (y < _clipCoords[1]) {
+		pic_y += _clipCoords[1] - y;
+		pic_sy += y - _clipCoords[1];
 
-		y = clipCoords[1];
+		y = _clipCoords[1];
 	}
-	if (y + pic_sy >= clipCoords[3])
-		pic_sy += clipCoords[3] - (y + pic_sy);
-//		pic_sy += clipCoords[3] - 1 - (y + pic_sy);
+	if (y + pic_sy >= _clipCoords[3])
+		pic_sy += _clipCoords[3] - (y + pic_sy);
+//		pic_sy += _clipCoords[3] - 1 - (y + pic_sy);
 
 	if (pic_x >= 0 && pic_y >= 0 && pic_sx > 0 && pic_sy > 0)
 		return true;
@@ -742,8 +742,8 @@ bool grDispatcher::free_zbuffer() {
 
 bool grDispatcher::clear_zbuffer() {
 	zbuf_t *p = zbuffer_;
-	for (int i = 0; i < SizeY; i ++) {
-		for (int j = 0; j < SizeX; j ++) {
+	for (int i = 0; i < _SizeY; i ++) {
+		for (int j = 0; j < _SizeX; j ++) {
 			*p ++ = GR_ZBUFFER_MAX_Z;
 		}
 	}
@@ -752,37 +752,37 @@ bool grDispatcher::clear_zbuffer() {
 #endif
 
 void grDispatcher::clear_changes_mask() {
-	std::fill(changes_mask_.begin(), changes_mask_.end(), 0);
+	std::fill(_changes_mask.begin(), _changes_mask.end(), 0);
 }
 
 void grDispatcher::build_changed_regions() {
-	changed_regions_.clear();
+	_changed_regions.clear();
 
 	bool flag = true;
 
 	while (flag) {
 		flag = false;
 
-		changes_mask_t::iterator it = std::find(changes_mask_.begin(), changes_mask_.end(), 1);
-		if (it != changes_mask_.end()) {
-			int x = (it - changes_mask_.begin()) % changes_mask_size_x_;
-			int y = (it - changes_mask_.begin()) / changes_mask_size_x_;
+		changes_mask_t::iterator it = std::find(_changes_mask.begin(), _changes_mask.end(), 1);
+		if (it != _changes_mask.end()) {
+			int x = (it - _changes_mask.begin()) % _changes_mask_size_x;
+			int y = (it - _changes_mask.begin()) / _changes_mask_size_x;
 
-			changes_mask_t::iterator it1 = std::find(it, it + (changes_mask_size_x_ - x), 0);
+			changes_mask_t::iterator it1 = std::find(it, it + (_changes_mask_size_x - x), 0);
 
 			int sx = it1 - it;
 			int sy = 0;
 
-			for (int i = 0; i < changes_mask_size_y_ - y; i++, sy++) {
+			for (int i = 0; i < _changes_mask_size_y - y; i++, sy++) {
 				changes_mask_t::iterator it2 = std::find(it, it1, 0);
 				if (it2 == it1)
 					std::fill(it, it1, 0);
 				else
 					break;
 
-				if (i < changes_mask_size_y_ - y - 1) {
-					it += changes_mask_size_x_;
-					it1 += changes_mask_size_x_;
+				if (i < _changes_mask_size_y - y - 1) {
+					it += _changes_mask_size_x;
+					it1 += _changes_mask_size_x;
 				}
 			}
 
@@ -792,7 +792,7 @@ void grDispatcher::build_changed_regions() {
 			sx <<= changes_mask_tile_shift_;
 			sy <<= changes_mask_tile_shift_;
 
-			changed_regions_.push_back(grScreenRegion(x + sx / 2, y + sy / 2, sx, sy));
+			_changed_regions.push_back(grScreenRegion(x + sx / 2, y + sy / 2, sx, sy));
 
 			flag = true;
 		}
@@ -813,17 +813,17 @@ bool grDispatcher::invalidate_region(const grScreenRegion &reg) {
 		x >>= changes_mask_tile_shift_;
 		y >>= changes_mask_tile_shift_;
 
-		if (x + sx > changes_mask_size_x_) sx = changes_mask_size_x_ - x;
-		if (y + sy > changes_mask_size_y_) sy = changes_mask_size_y_ - y;
+		if (x + sx > _changes_mask_size_x) sx = _changes_mask_size_x - x;
+		if (y + sy > _changes_mask_size_y) sy = _changes_mask_size_y - y;
 
 		if (sx <= 0 || sy <= 0) return false;
 
-		changes_mask_t::iterator it = changes_mask_.begin() + (x + y * changes_mask_size_x_);
+		changes_mask_t::iterator it = _changes_mask.begin() + (x + y * _changes_mask_size_x);
 
 		for (int i = 0; i < sy; i++) {
 			std::fill_n(it, sx, true);
 			if (i < sy - 1)
-				it += changes_mask_size_x_;
+				it += _changes_mask_size_x;
 		}
 	}
 
@@ -831,7 +831,7 @@ bool grDispatcher::invalidate_region(const grScreenRegion &reg) {
 }
 
 bool grDispatcher::FlushChanges() {
-	for (regions_container_t::const_iterator it = changed_regions_.begin(); it != changed_regions_.end(); ++it)
+	for (regions_container_t::const_iterator it = _changed_regions.begin(); it != _changed_regions.end(); ++it)
 		Flush(it->min_x() - 1, it->min_y() - 1, it->size_x() + 2, it->size_y() + 2);
 
 	return true;
@@ -973,18 +973,18 @@ grFont *grDispatcher::load_font(const char *file_name) {
 char *grDispatcher::temp_buffer(int size) {
 	if (size <= 0) size = 1;
 
-	if (size > temp_buffer_size_) {
-		delete temp_buffer_;
-		temp_buffer_ = new char[size];
-		temp_buffer_size_ = size;
+	if (size > _temp_buffer_size) {
+		delete _temp_buffer;
+		_temp_buffer = new char[size];
+		_temp_buffer_size = size;
 	}
 
-	return temp_buffer_;
+	return _temp_buffer;
 }
 
 bool grDispatcher::DrawText(int x, int y, unsigned color, const char *str, int hspace, int vspace, const grFont *font) {
 	if (!font)
-		font = default_font_;
+		font = _default_font;
 
 	if (!font || !font->alpha_buffer())
 		return false;
@@ -1016,7 +1016,7 @@ bool grDispatcher::DrawText(int x, int y, unsigned color, const char *str, int h
 
 bool grDispatcher::DrawAlignedText(int x, int y, int sx, int sy, unsigned color, const char *str, grTextAlign align, int hspace, int vspace, const grFont *font) {
 	if (!font)
-		font = default_font_;
+		font = _default_font;
 
 	if (!font || !font->alpha_buffer())
 		return false;
@@ -1074,7 +1074,7 @@ bool grDispatcher::DrawAlignedText(int x, int y, int sx, int sy, unsigned color,
 
 bool grDispatcher::DrawParsedText(int x, int y, int sx, int sy, unsigned color, const UI_TextParser *parser, grTextAlign align, const grFont *font) {
 	if (!font)
-		font = default_font_;
+		font = _default_font;
 
 	int hSize = parser->fontHeight();
 	y -= hSize;
@@ -1127,7 +1127,7 @@ bool grDispatcher::DrawParsedText(int x, int y, int sx, int sy, unsigned color, 
 
 int grDispatcher::TextWidth(const char *str, int hspace, const grFont *font, bool first_string_only) const {
 	if (!font)
-		font = default_font_;
+		font = _default_font;
 
 	if (!font)
 		return false;
@@ -1161,7 +1161,7 @@ int grDispatcher::TextWidth(const char *str, int hspace, const grFont *font, boo
 
 int grDispatcher::TextHeight(const char *str, int vspace, const grFont *font) const {
 	if (!font)
-		font = default_font_;
+		font = _default_font;
 
 	if (!font)
 		return false;
