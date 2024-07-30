@@ -109,13 +109,11 @@ int qdMiniGame::load_game(const char *buffer, int buffer_size, qdGameScene *scen
 }
 
 bool qdMiniGame::load_script(const xml::tag *p) {
-#ifndef _QUEST_EDITOR
 	int config_size = 0;
 	for (xml::tag::subtag_iterator it1 = p->subtags_begin(); it1 != p->subtags_end(); ++it1) {
 		if (it1->ID() == QDSCR_MINIGAME_CONFIG_PARAMETER)
 			config_size++;
 	}
-#endif
 
 	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		switch (it->ID()) {
@@ -134,9 +132,7 @@ bool qdMiniGame::load_script(const xml::tag *p) {
 		case QDSCR_MINIGAME_CONFIG_FILE:
 			set_config_file_name(it->data());
 			load_config();
-#ifndef _QUEST_EDITOR
 			_config.reserve(_config.size() + config_size);
-#endif
 			break;
 		case QDSCR_MINIGAME_CONFIG_PARAMETER: {
 			if (!qdGameConfig::get_config().minigame_read_only_ini()) {
@@ -234,9 +230,7 @@ bool qdMiniGame::load_config() {
 	Common::INIFile::SectionList section_list;
 	enumerateIniSections(config_file_name(), section_list);
 
-#ifndef _QUEST_EDITOR
 	_config.reserve(section_list.size());
-#endif
 
 	for (auto &it : section_list) {
 		qdMinigameConfigParameter prm;
@@ -263,11 +257,9 @@ bool qdMiniGame::get_files_list(qdFileNameList &files_to_copy, qdFileNameList &f
 }
 
 const char *qdMiniGame::config_parameter_value(const char *cfg_param_name) const {
-#ifndef _QUEST_EDITOR
 	config_container_t::const_iterator it = std::find(_config.begin(), _config.end(), cfg_param_name);
 	if (it != _config.end())
 		return it->data_string();
-#endif
 	return NULL;
 }
 
