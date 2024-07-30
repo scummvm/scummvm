@@ -67,11 +67,11 @@ public:
 
 	//! Возвращает состояние связи.
 	LinkStatus status() const {
-		return status_;
+		return _status;
 	}
 	//! Устанавливает состояние связи.
 	void set_status(LinkStatus st) {
-		status_ = st;
+		_status = st;
 	}
 
 	//! Возвращает тип связи.
@@ -163,7 +163,7 @@ private:
 	int element_ID_;
 
 	//! Состояние связи.
-	LinkStatus status_;
+	LinkStatus _status;
 
 	//! Если true, линк автоматом активируется после выключения.
 	bool auto_restart_;
@@ -251,11 +251,11 @@ public:
 
 	//! Возвращает true, если элемент помечен как активный для отладочной проверки.
 	bool is_active() const {
-		return is_active_;
+		return _is_active;
 	}
 	//! Помечает элемент как активный (или неактивный) для отладочной проверки.
 	void make_active(bool v) {
-		is_active_ = v;
+		_is_active = v;
 	}
 
 	//! Инициализация для отладочной проверки.
@@ -279,20 +279,20 @@ public:
 	bool check_internal_conditions();
 
 	ElementStatus status() const {
-		return status_;
+		return _status;
 	}
 	void set_status(ElementStatus st);
-//	void set_status(ElementStatus st){ status_ = st; }
+//	void set_status(ElementStatus st){ _status = st; }
 
 	int ID() const {
-		return ID_;
+		return _ID;
 	}
 	void set_id(int id) {
-		ID_ = id;
+		_ID = id;
 	}
 
 	qdNamedObject *object() const {
-		return object_;
+		return _object;
 	}
 	bool add_object_trigger_reference();
 	bool clear_object_trigger_references();
@@ -307,17 +307,17 @@ public:
 	bool retrieve_link_elements(qdTriggerChain *p);
 
 	qdTriggerLinkList &parents()  {
-		return parents_;
+		return _parents;
 	}
 	qdTriggerLinkList &children() {
-		return children_;
+		return _children;
 	}
 
 	const qdTriggerLinkList &parents()  const {
-		return parents_;
+		return _parents;
 	}
 	const qdTriggerLinkList &children() const {
-		return children_;
+		return _children;
 	}
 
 	bool is_parent(qdTriggerElementConstPtr p);
@@ -357,7 +357,7 @@ public:
 
 #ifdef __QD_TRIGGER_PROFILER__
 	void set_owner(const qdTriggerChain *p) {
-		owner_ = p;
+		_owner = p;
 	}
 #endif
 
@@ -371,24 +371,24 @@ private:
 		TRIGGER_EL_DONE_ALL
 	};
 
-	int ID_;
+	int _ID;
 
-	ElementStatus status_;
+	ElementStatus _status;
 
 	//! Является ли элемент активным (для отладки, при проверке триггеров).
-	bool is_active_;
+	bool _is_active;
 
-	qdNamedObject *object_;
+	qdNamedObject *_object;
 
 #ifdef _QUEST_EDITOR
 	qdNamedObjectReference object_reference_;
 #endif
 
-	qdTriggerLinkList parents_;
-	qdTriggerLinkList children_;
+	qdTriggerLinkList _parents;
+	qdTriggerLinkList _children;
 
 #ifdef __QD_TRIGGER_PROFILER__
-	const qdTriggerChain *owner_;
+	const qdTriggerChain *_owner;
 #endif
 
 #ifdef _QUEST_EDITOR
