@@ -29,8 +29,8 @@
 
 namespace QDEngine {
 
-UI_TextParser::UI_TextParser(const grFont *font) : font_(font) {
-	outNodes_.reserve(8);
+UI_TextParser::UI_TextParser(const grFont *font) : _font(font) {
+	_outNodes.reserve(8);
 	init();
 }
 
@@ -39,34 +39,34 @@ UI_TextParser::UI_TextParser(const UI_TextParser &src) {
 }
 
 void UI_TextParser::operator= (const UI_TextParser &src) {
-	font_ = src.font_;
+	_font = src._font;
 
-	outNodes_.reserve(8);
+	_outNodes.reserve(8);
 	init();
 }
 
 void UI_TextParser::init() {
-	tagWidth_ = 0;
-	lineWidth_ = 0;
+	_tagWidth = 0;
+	_lineWidth = 0;
 
-	lineBegin_ = 0;
-	pstr_ = 0;
+	_lineBegin = 0;
+	_pstr = 0;
 
-	fitIn_ = -1;
-	lastSpace_ = 0;
-	lastTagWidth_ = 0;
+	_fitIn = -1;
+	_lastSpace = 0;
+	_lastTagWidth = 0;
 
-	outNodes_.clear();
-	outNodes_.push_back(OutNode());
-	prevLineIndex_ = outNodes_.size() - 1;
+	_outNodes.clear();
+	_outNodes.push_back(OutNode());
+	_prevLineIndex = _outNodes.size() - 1;
 
-	size_.set(0, fontHeight());
+	_size.set(0, fontHeight());
 
-	lineCount_ = 1;
+	_lineCount = 1;
 }
 
 void UI_TextParser::setFont(const grFont *font) {
-	font_ = font;
+	_font = font;
 	init();
 }
 
@@ -74,41 +74,41 @@ OutNodes::const_iterator UI_TextParser::getLineBegin(int lineNum) const {
 	assert(lineNum >= 0);
 
 	if (!lineNum)
-		return outNodes_.begin();
+		return _outNodes.begin();
 
-	if (lineNum >= lineCount_)
-		return outNodes_.end();
+	if (lineNum >= _lineCount)
+		return _outNodes.end();
 
-	for (auto it = outNodes_.begin(); it != outNodes_.end(); it++) {
+	for (auto it = _outNodes.begin(); it != _outNodes.end(); it++) {
 		if (it->type == OutNode::NEW_LINE)
 			if (lineNum-- == 0)
 				return it;
 	}
 
 	assert(lineNum == 0);
-	return outNodes_.end();
+	return _outNodes.end();
 }
 
 bool UI_TextParser::testWidth(int width) {
-	if (fitIn_ < 0)
+	if (_fitIn < 0)
 		return true;
 
-	if (lineWidth_ + tagWidth_ + width > fitIn_) {
-		if (lastSpace_ != lineBegin_) {
-			outNodes_.push_back(OutNode(lineBegin_, lastSpace_, lastTagWidth_));
+	if (_lineWidth + _tagWidth + width > _fitIn) {
+		if (_lastSpace != _lineBegin) {
+			_outNodes.push_back(OutNode(_lineBegin, _lastSpace, _lastTagWidth));
 
-			lineWidth_ += lastTagWidth_;
+			_lineWidth += _lastTagWidth;
 			endLine();
 
-			lineBegin_ = lastSpace_ + 1;
-			lastSpace_ = lineBegin_;
-			tagWidth_ -= lastTagWidth_;
-			lastTagWidth_ = 0;
-		} else if (lineWidth_ > 0) {
-			assert(lastTagWidth_ == 0);
+			_lineBegin = _lastSpace + 1;
+			_lastSpace = _lineBegin;
+			_tagWidth -= _lastTagWidth;
+			_lastTagWidth = 0;
+		} else if (_lineWidth > 0) {
+			assert(_lastTagWidth == 0);
 			endLine();
 			testWidth(width);
-		} else if (tagWidth_ > 0) {
+		} else if (_tagWidth > 0) {
 			putText();
 			endLine();
 			skipNode();
@@ -119,23 +119,23 @@ bool UI_TextParser::testWidth(int width) {
 }
 
 void UI_TextParser::parseString(const char *text, int color, int fitIn) {
-	if (!font_)
+	if (!_font)
 		setFont(grDispatcher::get_default_font());
 
-	assert(font_);
+	assert(_font);
 	init();
 
-	fitIn_ = fitIn > 2 * fontHeight() ? fitIn : -1;
+	_fitIn = fitIn > 2 * fontHeight() ? fitIn : -1;
 
-	pstr_ = text;
+	_pstr = text;
 
-	lineBegin_ = text;
-	lastSpace_ = lineBegin_;
+	_lineBegin = text;
+	_lastSpace = _lineBegin;
 
-	while (unsigned char cc = *pstr_) {
+	while (unsigned char cc = *_pstr) {
 		if (cc == '\n') {
 			putText();
-			++pstr_;
+			++_pstr;
 
 			endLine();
 			skipNode();
@@ -144,39 +144,39 @@ void UI_TextParser::parseString(const char *text, int color, int fitIn) {
 		}
 
 		if (cc < 32) {
-			++pstr_;
+			++_pstr;
 			continue;
 		}
 
 		if (cc == ' ') {
-			lastTagWidth_ = tagWidth_;
-			lastSpace_ = pstr_;
+			_lastTagWidth = _tagWidth;
+			_lastSpace = _pstr;
 		}
 
 		//if(useWildChars)
 		if (cc == '&') {
-			if (pstr_[1] != '&') {
+			if (_pstr[1] != '&') {
 				putText();
-				++pstr_;
+				++_pstr;
 				getColor(color);
 				continue;
 			} else {
 				addChar('&');
 				putText();
-				++pstr_;
+				++_pstr;
 				skipNode();
 				continue;
 			}
 		} else if (cc == '<') {
-			if (pstr_[1] != '<') {
+			if (_pstr[1] != '<') {
 				putText();
-				++pstr_;
-				lineWidth_ += getToken();
+				++_pstr;
+				_lineWidth += getToken();
 				continue;
 			} else {
 				addChar('<');
 				putText();
-				++pstr_;
+				++_pstr;
 				skipNode();
 				continue;
 			}
@@ -186,23 +186,23 @@ void UI_TextParser::parseString(const char *text, int color, int fitIn) {
 	}
 
 	putText();
-	size_.x = MAX(size_.x, lineWidth_);
-	outNodes_[prevLineIndex_].width = lineWidth_;
+	_size.x = MAX(_size.x, _lineWidth);
+	_outNodes[_prevLineIndex].width = _lineWidth;
 
-	size_.y = fontHeight() * lineCount_;
+	_size.y = fontHeight() * _lineCount;
 }
 
 int UI_TextParser::getToken() {
 	char cc;
-	while ((cc = *pstr_) && cc != '=' && cc != '>')
-		++pstr_;
+	while ((cc = *_pstr) && cc != '=' && cc != '>')
+		++_pstr;
 
 	if (cc != '>') {
-		while ((cc = *pstr_) && cc != ';' && cc != '>')
-			++pstr_;
+		while ((cc = *_pstr) && cc != ';' && cc != '>')
+			++_pstr;
 		if (cc == ';') {
-			while ((cc = *pstr_) && cc != '>')
-				++pstr_;
+			while ((cc = *_pstr) && cc != '>')
+				++_pstr;
 		}
 	}
 
@@ -214,20 +214,20 @@ int UI_TextParser::getToken() {
 	/*  switch(tag_len){
 	    case 3:
 	        if(!strncmp(begin_tag, "img=", 4)){
-	            string img_name(begin_tag + 4, begin_style ? begin_style : pstr_);
+	            string img_name(begin_tag + 4, begin_style ? begin_style : _pstr);
 	            if(const UI_Sprite* sprite = UI_SpriteReference(img_name.c_str()))
 	                if(!sprite->isEmpty()){
 	                    OutNode node;
 	                    node.type = OutNode::SPRITE;
 	                    node.sprite = sprite;
-	                    node.style = getStyle(begin_style, pstr_);
+	                    node.style = getStyle(begin_style, _pstr);
 	                    if((node.style & 0x03) != 2)
 	                        node.width = sprite->size().xi();
 	                    else{
 	                        Vect2f size = sprite->size();
 	                        node.width = round(size.x / size.y * fontHeight());
 	                    }
-	                    ++pstr_;
+	                    ++_pstr;
 	                    testWidth(node.width);
 	                    putNode(node);
 	                    return node.width;
@@ -236,7 +236,7 @@ int UI_TextParser::getToken() {
 	        break;
 	    }*/
 
-	++pstr_;
+	++_pstr;
 	skipNode();
 	return 0;
 }
@@ -261,11 +261,11 @@ int UI_TextParser::getStyle(const char *styleptr, const char *end) {
 void UI_TextParser::getColor(int defColor) {
 	int color = defColor;
 
-	if (*pstr_ != '>') {
+	if (*_pstr != '>') {
 		DWORD s = 0;
 		int i = 0;
-		for (; i < 6; ++i, ++pstr_)
-			if (char k = *pstr_) {
+		for (; i < 6; ++i, ++_pstr)
+			if (char k = *_pstr) {
 				int a = fromHex(k);
 				if (a < 0)
 					break;
@@ -281,7 +281,7 @@ void UI_TextParser::getColor(int defColor) {
 			return;
 		}
 	} else
-		++pstr_;
+		++_pstr;
 
 	OutNode node(color);
 	putNode(node);
