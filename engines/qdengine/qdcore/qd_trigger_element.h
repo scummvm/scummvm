@@ -112,29 +112,6 @@ public:
 		return (element_ == e);
 	}
 
-#ifdef _QUEST_EDITOR
-	const SIZE &get_owner_offset() const {
-		return m_owner_offset;
-	}
-	void set_owner_offset(const SIZE &sz) {
-		m_owner_offset = sz;
-	}
-	void set_owner_offset(int x, int y) {
-		m_owner_offset.cx = x;
-		m_owner_offset.cy = y;
-	}
-
-	const SIZE &get_child_offset() const {
-		return m_child_offset;
-	}
-	void set_child_offset(const SIZE &sz) {
-		m_child_offset = sz;
-	}
-	void set_child_offset(int x, int y) {
-		m_child_offset.cx = x;
-		m_child_offset.cy = y;
-	}
-#endif
 	//! Активирует связь.
 	void activate();
 	//! Деактивирует связь.
@@ -168,22 +145,12 @@ private:
 	//! Если true, линк автоматом активируется после выключения.
 	bool auto_restart_;
 
-#ifdef _QUEST_EDITOR
-	//отступ от центра прямоугольника в родительском элементе
-	SIZE m_owner_offset;
-	//отступ от центра прямоугольника в дочернем элементе
-	SIZE m_child_offset;
-#endif // _QUEST_EDITOR
 };
 
 typedef std::vector<qdTriggerLink> qdTriggerLinkList;
 
 //! Элемент триггера.
-class qdTriggerElement
-#ifdef _QUEST_EDITOR
-	: public SharedCounter
-#endif // _QUEST_EDITOR
-{
+class qdTriggerElement {
 public:
 	qdTriggerElement();
 	qdTriggerElement(qdNamedObject *p);
@@ -201,47 +168,6 @@ public:
 		TRIGGER_EL_DONE
 	};
 
-#ifdef _QUEST_EDITOR
-	const std::string &title() const {
-		return m_strTitle;
-	}
-	void set_title(const std::string &strTitle) {
-		m_strTitle = strTitle;
-	}
-
-	const RECT &bounding_rect() const {
-		return m_rcBound;
-	}
-	void set_bounding_rect(const RECT &r) {
-		memcpy(&m_rcBound, &r, sizeof(r));
-	}
-
-	bool in_bound(const POINT &p) {
-		return static_cast<bool>(PtInRect(&m_rcBound, p));
-	}
-
-	const POINT left_top() const {
-		POINT p = {m_rcBound.left, m_rcBound.top};
-		return p;
-	}
-	void set_cell_number(int x, int y) {
-		m_vCellNumber.x = x;
-		m_vCellNumber.y = y;
-	}
-
-	const POINT &cell_number() const {
-		return m_vCellNumber;
-	}
-
-	void select(bool bs) {
-		m_bSelected = bs;
-	}
-	bool selected() const {
-		return m_bSelected;
-	}
-	bool update_object_reference();
-	void update_title();
-#endif //_QUEST_EDITOR
 
 	qdTriggerLink *find_child_link(qdTriggerElementConstPtr ptrChild);
 	qdTriggerLink *find_child_link(int child_id);
@@ -297,12 +223,6 @@ public:
 	bool add_object_trigger_reference();
 	bool clear_object_trigger_references();
 
-#ifdef _QUEST_EDITOR
-	qdNamedObjectReference *object_reference() {
-		return &object_reference_;
-	}
-#endif
-
 	bool retrieve_object(const qdNamedObjectReference &ref);
 	bool retrieve_link_elements(qdTriggerChain *p);
 
@@ -331,16 +251,6 @@ public:
 
 	bool set_child_link_status(qdTriggerElementConstPtr child, qdTriggerLink::LinkStatus st);
 	bool set_parent_link_status(qdTriggerElementConstPtr parent, qdTriggerLink::LinkStatus st);
-
-#ifdef _QUEST_EDITOR
-	bool set_parent_link_owner_offset(qdTriggerElementConstPtr el, int x, int y);
-	bool set_parent_link_child_offset(qdTriggerElementConstPtr el, int x, int y);
-	bool set_child_link_owner_offset(qdTriggerElementConstPtr el, int x, int y);
-	bool set_child_link_child_offset(qdTriggerElementConstPtr el, int x, int y);
-
-	void clear_parents();
-	void clear_children();
-#endif
 
 	bool load_script(const xml::tag *p);
 	bool save_script(Common::WriteStream &fh, int indent = 0) const;
@@ -380,27 +290,12 @@ private:
 
 	qdNamedObject *_object;
 
-#ifdef _QUEST_EDITOR
-	qdNamedObjectReference object_reference_;
-#endif
-
 	qdTriggerLinkList _parents;
 	qdTriggerLinkList _children;
 
 #ifdef __QD_TRIGGER_PROFILER__
 	const qdTriggerChain *_owner;
 #endif
-
-#ifdef _QUEST_EDITOR
-
-	//передаем элемент, на который указывает линк
-	//потому что он его однозначно идентифицирует
-
-	RECT m_rcBound;     // прямоугольник, охватывающий текст
-	std::string m_strTitle; // то что отображаем на экране
-	bool m_bSelected;
-	POINT m_vCellNumber;    //номер ячейки по х и по у.
-#endif //_QUEST_EDITOR
 
 	bool load_links_script(const xml::tag *p, bool load_parents);
 
