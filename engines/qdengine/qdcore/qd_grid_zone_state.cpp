@@ -28,7 +28,7 @@ namespace QDEngine {
 const char *const qdGridZoneState::ZONE_STATE_ON_NAME = "Вкл";
 const char *const qdGridZoneState::ZONE_STATE_OFF_NAME = "Выкл";
 
-qdGridZoneState::qdGridZoneState(bool st) : state_(st) {
+qdGridZoneState::qdGridZoneState(bool st) : _state(st) {
 	if (st)
 		set_name(ZONE_STATE_ON_NAME);
 	else
@@ -36,7 +36,7 @@ qdGridZoneState::qdGridZoneState(bool st) : state_(st) {
 }
 
 qdGridZoneState::qdGridZoneState(const qdGridZoneState &st) : qdConditionalObject(st),
-	state_(st.state_) {
+	_state(st._state) {
 }
 
 qdGridZoneState::~qdGridZoneState() {
@@ -45,7 +45,7 @@ qdGridZoneState::~qdGridZoneState() {
 qdGridZoneState &qdGridZoneState::operator = (const qdGridZoneState &st) {
 	if (this == &st) return *this;
 
-	state_ = st.state_;
+	_state = st._state;
 
 	return *this;
 }
@@ -60,7 +60,7 @@ bool qdGridZoneState::save_script(Common::WriteStream &fh, int indent) const {
 	}
 	fh.writeString("<grid_zone_state");
 
-	if (state_) {
+	if (_state) {
 		fh.writeString(" state=\"1\"");
 	} else {
 		fh.writeString(" state=\"0\"");
