@@ -162,10 +162,10 @@ public:
 	void cycle_coords(int &x, int &y) const;
 
 	void set_redraw_mode(int md) const {
-		redraw_mode = md;
+		_redraw_mode = md;
 	}
 	int get_redraw_mode() const {
-		return redraw_mode;
+		return _redraw_mode;
 	}
 
 	void set_grid_size(int xs, int ys);
@@ -174,26 +174,26 @@ public:
 	void resize_grid(int sx, int sy);
 
 	int get_grid_sx() const {
-		return GSX;
+		return _GSX;
 	}
 	int get_grid_sy() const {
-		return GSY;
+		return _GSY;
 	}
 
 	const sGridCell *get_grid() const {
-		return Grid;
+		return _Grid;
 	}
 
 	int get_cell_sx() const {
-		return cellSX;
+		return _cellSX;
 	}
 	int get_cell_sy() const {
-		return cellSY;
+		return _cellSY;
 	}
 
 	void set_cell_size(int csx, int csy) {
-		cellSX = csx;
-		cellSY = csy;
+		_cellSX = csx;
+		_cellSY = csy;
 	}
 
 	void clear_grid();
@@ -202,76 +202,76 @@ public:
 	void rotate_and_scale(float XA, float YA, float ZA, float kX, float kY, float kZ);
 
 	float get_focus() const {
-		return focus;
+		return _focus;
 	}
-	void set_focus(float _focus) {
-		focus = _focus;
+	void set_focus(float focus) {
+		_focus = focus;
 	}
 
 	void set_R(const float r);
 	float get_R() const {
-		return m_fR;
+		return _m_fR;
 	}
 
 	float get_x_angle() const {
-		return xAngle;
+		return _xAngle;
 	}
 	float get_y_angle() const {
-		return yAngle;
+		return _yAngle;
 	}
 	float get_z_angle() const {
-		return zAngle;
+		return _zAngle;
 	}
 
 	inline void set_scr_size(int xs, int ys) {
-		scrSize.x = xs;
-		scrSize.y = ys;
+		_scrSize.x = xs;
+		_scrSize.y = ys;
 	}
 
 	const Vect2i &get_scr_size() const {
-		return scrSize;
+		return _scrSize;
 	}
 
 	// getScrSizeX
 	int get_scr_sx() const {
-		return scrSize.x;
+		return _scrSize.x;
 	}
 	// getScrSizeY
 	int get_scr_sy() const {
-		return scrSize.y;
+		return _scrSize.y;
 	}
 
 	void set_scr_center(int xc, int yc) {
-		scrCenter.x = xc;
-		scrCenter.y = yc;
+		_scrCenter.x = xc;
+		_scrCenter.y = yc;
 	}
 
 	const Vect2i &get_scr_center() const {
-		return scrCenter;
+		return _scrCenter;
 	}
 
 	int get_scr_center_x() const {
-		return scrCenter.x;
+		return _scrCenter.x;
 	}
 	int get_scr_center_y() const {
-		return scrCenter.y;
+		return _scrCenter.y;
 	}
 
 	const Vect2i screen_center_limit_x() const;
 	const Vect2i screen_center_limit_y() const;
 
 	const Vect2i &get_scr_offset() const {
-		return scrOffset;
+		return _scrOffset;
 	}
 	void set_scr_offset(const Vect2i &offs) {
-		scrOffset = offs;
+		_scrOffset = offs;
 	}
 
 	const Vect2i &get_scr_center_initial() const {
-		return scrCenterInitial;
+		return _scrCenterInitial;
 	}
 	void set_scr_center_initial(const Vect2i &v) {
-		scrCenterInitial = v;
+		_scrCenterInitial = v;
 	}
 
 	void move_scr_center(int dxc, int dyc);
@@ -316,10 +316,10 @@ public:
 	float get_scale(const Vect3f &glCoord) const;
 
 	const Vect3f &get_grid_center() const {
-		return gridCenter;
+		return _gridCenter;
 	}
 	void set_grid_center(const Vect3f &v) {
-		gridCenter = v;
+		_gridCenter = v;
 	}
 
 	const sGridCell *get_cell(float _x, float _y) const;
@@ -362,7 +362,7 @@ public:
 
 	//! Установка объекта, за которым камера следит по умолчанию.
 	void set_default_object(qdGameObjectAnimated *p) {
-		default_object_ = p;
+		_default_object = p;
 	}
 
 	//! Обсчет логики (движения камеры и т.д), параметр - время в секундах.
@@ -375,108 +375,108 @@ public:
 	bool is_visible(const Vect2i &center_offs = Vect2i(0, 0)) const;
 
 	void set_cycle(bool cx, bool cy) {
-		cycle_x_ = cx;
-		cycle_y_ = cy;
+		_cycle_x = cx;
+		_cycle_y = cy;
 	}
 
 	void dump_grid(const char *file_name) const;
 
 	//! Параметры функции масштабирования
 	float scale_pow() const {
-		return scale_pow_;
+		return _scale_pow;
 	}
 	void set_scale_pow(float sp) {
-		scale_pow_ = sp;
+		_scale_pow = sp;
 	}
 	float scale_z_offset() const {
-		return scale_z_offset_;
+		return _scale_z_offset;
 	};
 	void set_scale_z_offset(float szo) {
-		scale_z_offset_ = szo;
+		_scale_z_offset = szo;
 	};
 
 	bool need_perspective_correction() const {
-		return (fabs(scale_pow_ - 1) > 0.001 || fabs(scale_z_offset_) > 0.001);
+		return (fabs(_scale_pow - 1) > 0.001 || fabs(_scale_z_offset) > 0.001);
 	}
 
 	//! Возвращает режим работы камеры по умолчанию.
 	const qdCameraMode &default_mode() const {
-		return default_mode_;
+		return _default_mode;
 	}
 	//! Установка режима работы камеры по умолчанию.
 	void set_default_mode(const qdCameraMode &mode) {
-		default_mode_ = mode;
+		_default_mode = mode;
 	}
 
 	static qdCamera *current_camera() {
-		return current_camera_;
+		return _current_camera;
 	}
 	static void set_current_camera(qdCamera *p) {
-		current_camera_ = p;
+		_current_camera = p;
 	}
 
 	MATRIX3D const &get_view_matrix() const {
-		return m_cam;
+		return _m_cam;
 	}
 
 private:
 
-	MATRIX3D m_cam;
-	float m_fR;
-	float xAngle, yAngle, zAngle;
+	MATRIX3D _m_cam;
+	float _m_fR;
+	float _xAngle, _yAngle, _zAngle;
 
-	int GSX, GSY;
-	sGridCell *Grid;
+	int _GSX, _GSY;
+	sGridCell *_Grid;
 
-	bool cycle_x_;
-	bool cycle_y_;
+	bool _cycle_x;
+	bool _cycle_y;
 
-	int cellSX, cellSY;
-	float focus;//! расстояние до ближней плоскости отсечения
+	int _cellSX, _cellSY;
+	float _focus;//! расстояние до ближней плоскости отсечения
 	// расстояние от центра рабочей области до
 	// верхнего левого угла окна
-	Vect2i scrCenter;
+	Vect2i _scrCenter;
 
 	// начальное расстояние от центра рабочей области до
 	// верхнего левого угла окна
-	Vect2i scrCenterInitial;
+	Vect2i _scrCenterInitial;
 
 	// размер рабочей области
-	Vect2i scrSize;
+	Vect2i _scrSize;
 	// смещение рабочей области
-	Vect2i scrOffset;
+	Vect2i _scrOffset;
 
 	// Координаты центра сетки
-	Vect3f gridCenter;
+	Vect3f _gridCenter;
 
-	mutable int redraw_mode;
+	mutable int _redraw_mode;
 
 	//! Текущий режим работы камеры.
-	qdCameraMode current_mode_;
+	qdCameraMode _current_mode;
 
 	//! Время в секуднах с установки текущего режима.
-	float current_mode_work_time_;
-	bool current_mode_switch_;
+	float _current_mode_work_time;
+	bool _current_mode_switch;
 
 	//! Объект, за которым следит камера.
-	qdGameObjectAnimated *current_object_;
+	qdGameObjectAnimated *_current_object;
 
 	//! Объект, за которым камера следит по умолчанию.
-	qdGameObjectAnimated *default_object_;
+	qdGameObjectAnimated *_default_object;
 	//! Режим работы камеры по умолчанию.
-	qdCameraMode default_mode_;
+	qdCameraMode _default_mode;
 
 	//! Параметры функции ускоренного масштабирования из get_scale()
-	float scale_pow_;
-	float scale_z_offset_;
+	float _scale_pow;
+	float _scale_z_offset;
 
-	static qdCamera *current_camera_;
+	static qdCamera *_current_camera;
 
-	static const Vect3f world_UP;
+	static const Vect3f _world_UP;
 	//точка, на которую мы смотрим
-	static const Vect3f atPoint;
-	static const float NEAR_PLANE; //ближная плоскость отсечения
-	static const float FAR_PLANE;  //дальняя
+	static const Vect3f _atPoint;
+	static const float _NEAR_PLANE; //ближная плоскость отсечения
+	static const float _FAR_PLANE;  //дальняя
 
 	enum {
 		clLEFT   = 1,
@@ -487,11 +487,11 @@ private:
 
 	inline int clip_out_code(const Vect2s &v) const {
 		int code = 0;
-		if (v.y >= GSY)
+		if (v.y >= _GSY)
 			code |= clTOP;
 		else if (v.y < 0)
 			code |= clBOTTOM;
-		if (v.x >= GSX)
+		if (v.x >= _GSX)
 			code |= clRIGHT;
 		else if (v.x < 0)
 			code |= clLEFT;

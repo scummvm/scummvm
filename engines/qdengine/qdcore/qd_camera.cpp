@@ -101,72 +101,72 @@ const DWORD NORMAL_CELL_CLR         = 0x00FFFFFF;
 
 const int DASH_LEN = 2;
 
-qdCamera *qdCamera::current_camera_ = NULL;
-const Vect3f qdCamera::world_UP = Vect3f(0, 1, 0);
-const Vect3f qdCamera::atPoint = Vect3f(0, 0, 0);
-const float qdCamera::NEAR_PLANE = 1;
-const float qdCamera::FAR_PLANE = 10000;
+qdCamera *qdCamera::_current_camera = NULL;
+const Vect3f qdCamera::_world_UP = Vect3f(0, 1, 0);
+const Vect3f qdCamera::_atPoint = Vect3f(0, 0, 0);
+const float qdCamera::_NEAR_PLANE = 1;
+const float qdCamera::_FAR_PLANE = 10000;
 
-//qdCameraMode qdCamera::default_mode_;
+//qdCameraMode qdCamera::_default_mode;
 
-qdCamera::qdCamera() : m_fR(300.0f), xAngle(45), yAngle(0), zAngle(0),
-	GSX(0), GSY(0), Grid(NULL),
-	cellSX(32), cellSY(32), focus(1000.0f),
-	gridCenter(0, 0, 0),
-	redraw_mode(QDCAM_GRID_ZBUFFER),
-	scrOffset(0, 0),
-	current_mode_work_time_(0.0f),
-	current_mode_switch_(false),
-	current_object_(NULL),
-	default_object_(NULL),
-	scale_pow_(1.0f),
-	scale_z_offset_(0.0f) {
+qdCamera::qdCamera() : _m_fR(300.0f), _xAngle(45), _yAngle(0), _zAngle(0),
+	_GSX(0), _GSY(0), _Grid(NULL),
+	_cellSX(32), _cellSY(32), _focus(1000.0f),
+	_gridCenter(0, 0, 0),
+	_redraw_mode(QDCAM_GRID_ZBUFFER),
+	_scrOffset(0, 0),
+	_current_mode_work_time(0.0f),
+	_current_mode_switch(false),
+	_current_object(NULL),
+	_default_object(NULL),
+	_scale_pow(1.0f),
+	_scale_z_offset(0.0f) {
 	set_grid_size(50, 50);
 	set_scr_size(640, 480);
 	set_scr_center(320, 240);
 	set_scr_center_initial(Vect2i(320, 240));
 
-	rotate_and_scale(xAngle, yAngle, zAngle, 1, 1, 1);
+	rotate_and_scale(_xAngle, _yAngle, _zAngle, 1, 1, 1);
 
-	cycle_x_ = cycle_y_ = false;
+	_cycle_x = _cycle_y = false;
 }
 
 qdCamera::~qdCamera() {
-	if (GSX) {
-		delete [] Grid;
+	if (_GSX) {
+		delete [] _Grid;
 	}
 }
 
 void qdCamera::set_grid_size(int xs, int ys) {
-	if (GSX == xs && GSY == ys) return;
+	if (_GSX == xs && _GSY == ys) return;
 
-	if (GSX)
-		delete [] Grid;
+	if (_GSX)
+		delete [] _Grid;
 
-	Grid = new sGridCell[xs * ys];
+	_Grid = new sGridCell[xs * ys];
 
-	GSX = xs;
-	GSY = ys;
+	_GSX = xs;
+	_GSY = ys;
 }
 
 void qdCamera::clear_grid() {
 	int cnt = 0;
-	for (int i = 0; i < GSY; i++) {
-		for (int j = 0; j < GSX; j++) {
-			Grid[cnt++].clear();
+	for (int i = 0; i < _GSY; i++) {
+		for (int j = 0; j < _GSX; j++) {
+			_Grid[cnt++].clear();
 		}
 	}
 }
 float qdCamera::get_scale(const Vect3f &glCoord) const {
-	if ((focus < 5000.0f) || (fabs(scale_pow_ - 1) > 0.001)) {
+	if ((_focus < 5000.0f) || (fabs(_scale_pow - 1) > 0.001)) {
 		Vect3f cameraCoord = global2camera_coord(glCoord);
-		float buf = cameraCoord.z + scale_z_offset_;
+		float buf = cameraCoord.z + _scale_z_offset;
 		// Если координата отрицательна, то масштабирование происходит по линейному
 		// закону. Иначе по общему (степенному) закону.
 		if (buf > 0)
-			buf = exp(scale_pow_ * log(buf));
+			buf = exp(_scale_pow * log(buf));
 
-		float scale = (focus / (buf + focus));
+		float scale = (_focus / (buf + _focus));
 		if (scale < 0)
 			return 0;
 		return scale;
@@ -177,11 +177,11 @@ float qdCamera::get_scale(const Vect3f &glCoord) const {
 const Vect2s qdCamera::scr2rscr(const Vect2s &v) const {
 	Vect2s res;
 #ifdef _QUEST_EDITOR
-	res.x = v.x - scrCenter.x ;
-	res.y = scrCenter.y  - v.y;
+	res.x = v.x - _scrCenter.x ;
+	res.y = _scrCenter.y  - v.y;
 #else
-	res.x = v.x - (scrCenter.x - scrOffset.x);
-	res.y = (scrCenter.y - scrOffset.y) - v.y;
+	res.x = v.x - (_scrCenter.x - _scrOffset.x);
+	res.y = (_scrCenter.y - _scrOffset.y) - v.y;
 #endif
 	return res;
 }
@@ -189,17 +189,17 @@ const Vect2s qdCamera::scr2rscr(const Vect2s &v) const {
 const Vect2s qdCamera::rscr2scr(const Vect2s &v) const {
 	Vect2s res;
 #ifdef _QUEST_EDITOR
-	res.x = scrCenter.x + v.x;
-	res.y = scrCenter.y - v.y;
+	res.x = _scrCenter.x + v.x;
+	res.y = _scrCenter.y - v.y;
 #else
-	res.x = scrCenter.x + v.x - scrOffset.x;
-	res.y = scrCenter.y - v.y - scrOffset.y;
+	res.x = _scrCenter.x + v.x - _scrOffset.x;
+	res.y = _scrCenter.y - v.y - _scrOffset.y;
 #endif
 	return res;
 }
 
 const Vect3f qdCamera::camera_coord2global(const Vect3f &v) const {
-	return TransformVector(v, MatrixInverse(m_cam));
+	return TransformVector(v, MatrixInverse(_m_cam));
 }
 
 const Vect3f qdCamera::scr2global(const Vect2s &vScrPoint, float zInCameraCoord) const {
@@ -214,18 +214,18 @@ const Vect3f qdCamera::rscr2global(const Vect2s rScrPoint, const float zInCamera
 };
 
 const Vect3f qdCamera::global2camera_coord(const Vect3f &glCoord) const {
-	return TransformVector(glCoord, m_cam);
+	return TransformVector(glCoord, _m_cam);
 };
 
 const Vect3f qdCamera::rscr2camera_coord(const Vect2s &rScrPoint, float z) const {
-	float x = ((float)rScrPoint.x * (z + focus)) / focus;
-	float y = ((float)rScrPoint.y * (z + focus)) / focus;
+	float x = ((float)rScrPoint.x * (z + _focus)) / _focus;
+	float y = ((float)rScrPoint.y * (z + _focus)) / _focus;
 	return Vect3f(x, y, z);
 };
 
 const Vect2s qdCamera::camera_coord2rscr(const Vect3f &coord) const {
-	short sx = round(coord.x * focus / (coord.z + focus));
-	short sy = round(coord.y * focus / (coord.z + focus));
+	short sx = round(coord.x * _focus / (coord.z + _focus));
+	short sy = round(coord.y * _focus / (coord.z + _focus));
 	return Vect2s(sx, sy);
 };
 
@@ -242,13 +242,13 @@ const Vect2s qdCamera::global2rscr(const Vect3f &glCoord) const {
 };
 
 void qdCamera::set_R(const float r) {
-	m_fR = r;
-	rotate_and_scale(xAngle, yAngle, zAngle, 1, 1, 1);
+	_m_fR = r;
+	rotate_and_scale(_xAngle, _yAngle, _zAngle, 1, 1, 1);
 }
 
 bool qdCamera::line_cutting(Vect3f &b, Vect3f &e) const {
 	//положение по Z плоскости отсечения
-	const float D = -focus * .9f;
+	const float D = -_focus * .9f;
 	if (b.z < D) { //первая лежит позади
 		if (e.z < D) //обе точки лежат позади
 			return false;
@@ -266,35 +266,35 @@ bool qdCamera::line_cutting(Vect3f &b, Vect3f &e) const {
 }
 
 void qdCamera::rotate_and_scale(float XA, float YA, float ZA, float kX, float kY, float kZ) {
-	xAngle = XA;
-	yAngle = YA;
-	zAngle = ZA;
+	_xAngle = XA;
+	_yAngle = YA;
+	_zAngle = ZA;
 	MATRIX3D rot = RotateXMatrix(XA * (M_PI / 180.f));
 	rot = MatrixMult(RotateYMatrix(-YA * (M_PI / 180.f)), rot);
 	rot = MatrixMult(RotateZMatrix(-ZA * (M_PI / 180.f)), rot);
 	//точка, из которой мы сомотрим
-	const Vect3f camPos(0, 0, m_fR);
+	const Vect3f camPos(0, 0, _m_fR);
 	//новая позиция камеры после поворота
 	Vect3f pos = TransformVector(camPos, rot);
 
 	//вычисляем, как измениться нормальный вектор камеры после поворота
-	Vect3f new_up = TransformVector(world_UP, rot);
+	Vect3f new_up = TransformVector(_world_UP, rot);
 
-	m_cam = ViewMatrix(pos, atPoint, world_UP, new_up);
+	_m_cam = ViewMatrix(pos, _atPoint, _world_UP, new_up);
 }
 
 const Vect3f qdCamera::rscr2plane_camera_coord(const Vect2s &scrPoint) const {
-	const int XSP = cellSX * GSX;
-	const int YSP = cellSY * GSY;
+	const int XSP = _cellSX * _GSX;
+	const int YSP = _cellSY * _GSY;
 	const float XSP05 = XSP * 0.5f;
 	const float YSP05 = YSP * 0.5f;
-	Vect3f p0 = global2camera_coord(Vect3f(-XSP05, -YSP05, 0) + gridCenter);
-	Vect3f p1 = global2camera_coord(Vect3f(-XSP05, +YSP05, 0) + gridCenter);
-	Vect3f p2 = global2camera_coord(Vect3f(+XSP05, +YSP05, 0) + gridCenter);
+	Vect3f p0 = global2camera_coord(Vect3f(-XSP05, -YSP05, 0) + _gridCenter);
+	Vect3f p1 = global2camera_coord(Vect3f(-XSP05, +YSP05, 0) + _gridCenter);
+	Vect3f p2 = global2camera_coord(Vect3f(+XSP05, +YSP05, 0) + _gridCenter);
 
 	sPlane4f plnT(p0, p1, p2);
-	Vect3f tlV((float)scrPoint.x, (float)scrPoint.y, focus);
-	Vect3f tlP(0, 0, -focus);
+	Vect3f tlV((float)scrPoint.x, (float)scrPoint.y, _focus);
+	Vect3f tlP(0, 0, -_focus);
 	float t = -(plnT.A * tlP.x + plnT.B * tlP.y + plnT.C * tlP.z + plnT.D) /
 	          (plnT.A * tlV.x + plnT.B * tlV.y + plnT.C * tlV.z);
 
@@ -325,37 +325,37 @@ const Vect2s qdCamera::plane2rscr(const Vect3f &plnPoint) const {
 
 	Vect3f res = global2camera_coord(plnPoint);
 
-	if (res.z < (SMALL_VALUE - focus)) return Vect2s(0, 0);
+	if (res.z < (SMALL_VALUE - _focus)) return Vect2s(0, 0);
 
-	int sx0 = round(res.x * focus / (res.z + focus));
-	int sy0 = round(res.y * focus / (res.z + focus));
+	int sx0 = round(res.x * _focus / (res.z + _focus));
+	int sy0 = round(res.y * _focus / (res.z + _focus));
 
 	return Vect2s(sx0, sy0);
 }
 
 const sGridCell *qdCamera::get_cell(float _x, float _y) const {
-	int x = round(_x - gridCenter.x);
-	int y = round(_y - gridCenter.y);
+	int x = round(_x - _gridCenter.x);
+	int y = round(_y - _gridCenter.y);
 
-	const int XSP = cellSX * GSX;
-	const int YSP = cellSY * GSY;
+	const int XSP = _cellSX * _GSX;
+	const int YSP = _cellSY * _GSY;
 	const int XSP05 = XSP / 2;
 	const int YSP05 = YSP / 2;
 
 	x += XSP05;
 	y += YSP05;
 	if (x < 0 || x >= XSP || y < 0 || y >= YSP) return 0;
-	x = x / cellSX;
-	y = y / cellSY;
-	return &Grid[y * GSX + x];
+	x = x / _cellSX;
+	y = y / _cellSY;
+	return &_Grid[y * _GSX + x];
 }
 
 const Vect2s qdCamera::get_cell_index(float _x, float _y, bool grid_crop) const {
-	int x = round(_x - gridCenter.x);
-	int y = round(_y - gridCenter.y);
+	int x = round(_x - _gridCenter.x);
+	int y = round(_y - _gridCenter.y);
 
-	const int XSP = cellSX * GSX;
-	const int YSP = cellSY * GSY;
+	const int XSP = _cellSX * _GSX;
+	const int YSP = _cellSY * _GSY;
 	const int XSP05 = XSP >> 1;
 	const int YSP05 = YSP >> 1;
 	x += XSP05;
@@ -364,11 +364,11 @@ const Vect2s qdCamera::get_cell_index(float _x, float _y, bool grid_crop) const 
 	if (grid_crop && (x < 0 || x >= XSP || y < 0 || y >= YSP))
 		return Vect2s(-1, -1);
 
-	return Vect2s(x / cellSX
+	return Vect2s(x / _cellSX
 #ifdef _QUEST_EDITOR
 	              - static_cast<int>(x < 0)
 #endif // _QUEST_EDITOR
-	              , y / cellSY
+	              , y / _cellSY
 #ifdef _QUEST_EDITOR
 	              - static_cast<int>(y < 0)
 #endif // _QUEST_EDITOR
@@ -380,13 +380,13 @@ const Vect2s qdCamera::get_cell_index(const Vect3f &v, bool grid_crop) const {
 }
 
 const Vect3f qdCamera::get_cell_coords(int _x_idx, int _y_idx) const {
-	//float xx = (_x_idx - (GSX>>1)) * cellSX + (cellSX>>1) + gridCenter.x;
-	//float yy = (_y_idx - (GSY>>1)) * cellSY + (cellSY>>1) + gridCenter.y;
+	//float xx = (_x_idx - (_GSX>>1)) * _cellSX + (_cellSX>>1) + _gridCenter.x;
+	//float yy = (_y_idx - (_GSY>>1)) * _cellSY + (_cellSY>>1) + _gridCenter.y;
 
-	float xx = (_x_idx - static_cast<float>(GSX) / 2 + 0.5) * cellSX + gridCenter.x;
-	float yy = (_y_idx - static_cast<float>(GSY) / 2 + 0.5) * cellSY + gridCenter.y;
+	float xx = (_x_idx - static_cast<float>(_GSX) / 2 + 0.5) * _cellSX + _gridCenter.x;
+	float yy = (_y_idx - static_cast<float>(_GSY) / 2 + 0.5) * _cellSY + _gridCenter.y;
 
-	return Vect3f(xx, yy, gridCenter.z);
+	return Vect3f(xx, yy, _gridCenter.z);
 }
 
 const Vect3f qdCamera::get_cell_coords(const Vect2s &idxs) const {
@@ -395,42 +395,42 @@ const Vect3f qdCamera::get_cell_coords(const Vect2s &idxs) const {
 
 void qdCamera::reset_all_select() {
 	int cnt = 0;
-	for (int i = 0; i < GSY; i++) {
-		for (int j = 0; j < GSX; j++) {
-			Grid[cnt++].deselect();
+	for (int i = 0; i < _GSY; i++) {
+		for (int j = 0; j < _GSX; j++) {
+			_Grid[cnt++].deselect();
 		}
 	}
 }
 
 bool qdCamera::select_cell(int x, int y) {
-	const int XSP = cellSX * GSX;
-	const int YSP = cellSY * GSY;
+	const int XSP = _cellSX * _GSX;
+	const int YSP = _cellSY * _GSY;
 	const int XSP05 = XSP >> 1;
 	const int YSP05 = YSP >> 1;
 
-	x += XSP05 - gridCenter.x;
-	y += YSP05 - gridCenter.y;
+	x += XSP05 - _gridCenter.x;
+	y += YSP05 - _gridCenter.y;
 
 	if (x < 0 || x >= XSP || y < 0 || y >= YSP) return false;
-	x = x / cellSX;
-	y = y / cellSY;
-	Grid[y * GSX + x].select();
+	x = x / _cellSX;
+	y = y / _cellSY;
+	_Grid[y * _GSX + x].select();
 	return true;
 }
 
 bool qdCamera::deselect_cell(int x, int y) {
-	const int XSP = cellSX * GSX;
-	const int YSP = cellSY * GSY;
+	const int XSP = _cellSX * _GSX;
+	const int YSP = _cellSY * _GSY;
 	const int XSP05 = XSP >> 1;
 	const int YSP05 = YSP >> 1;
 
-	x += XSP05 - gridCenter.x;
-	y += YSP05 - gridCenter.y;
+	x += XSP05 - _gridCenter.x;
+	y += YSP05 - _gridCenter.y;
 
 	if (x < 0 || x >= XSP || y < 0 || y >= YSP) return false;
-	x = x / cellSX;
-	y = y / cellSY;
-	Grid[y * GSX + x].deselect();
+	x = x / _cellSX;
+	y = y / _cellSY;
+	_Grid[y * _GSX + x].deselect();
 	return true;
 }
 
@@ -445,7 +445,7 @@ void qdCamera::load_script(const xml::tag *p) {
 			set_grid_size(x, y);
 			break;
 		case QDSCR_CAMERA_CELL_SIZE:
-			buf > cellSX > cellSY;
+			buf > _cellSX > _cellSY;
 			break;
 		case QDSCR_CAMERA_SCREEN_SIZE:
 			buf > x > y;
@@ -463,11 +463,11 @@ void qdCamera::load_script(const xml::tag *p) {
 			set_scr_center(x, y);
 			break;
 		case QDSCR_CAMERA_FOCUS:
-			buf > focus;
+			buf > _focus;
 			break;
 		case QDSCR_CAMERA_ANGLES:
-			buf > xAngle > yAngle > zAngle;
-			rotate_and_scale(xAngle, yAngle, zAngle, 1, 1, 1);
+			buf > _xAngle > _yAngle > _zAngle;
+			rotate_and_scale(_xAngle, _yAngle, _zAngle, 1, 1, 1);
 			break;
 		case QDSCR_CAMERA_GRID_CENTER: {
 			Vect3f v;
@@ -481,15 +481,15 @@ void qdCamera::load_script(const xml::tag *p) {
 			set_R(buf.get_float());
 			break;
 		case QDSCR_CAMERA_SCALE_POW:
-			buf > scale_pow_;
+			buf > _scale_pow;
 			break;
 		case QDSCR_CAMERA_SCALE_Z_OFFSET:
-			buf > scale_z_offset_;
+			buf > _scale_z_offset;
 			break;
 		}
 	}
 
-	rotate_and_scale(xAngle, yAngle, zAngle, 1, 1, 1);
+	rotate_and_scale(_xAngle, _yAngle, _zAngle, 1, 1, 1);
 }
 
 bool qdCamera::save_script(Common::WriteStream &fh, int indent) const {
@@ -499,14 +499,14 @@ bool qdCamera::save_script(Common::WriteStream &fh, int indent) const {
 
 	fh.writeString("<camera");
 
-	fh.writeString(Common::String::format(" camera_grid_size=\"%d %d\"", GSX, GSY));
+	fh.writeString(Common::String::format(" camera_grid_size=\"%d %d\"", _GSX, _GSY));
 
 	fh.writeString(">\r\n");
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<camera_cell_size>%d %d</camera_cell_size>\r\n", cellSX, cellSY));
+	fh.writeString(Common::String::format("<camera_cell_size>%d %d</camera_cell_size>\r\n", _cellSX, _cellSY));
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
@@ -516,32 +516,32 @@ bool qdCamera::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<camera_focus>%f</camera_focus>\r\n", focus));
+	fh.writeString(Common::String::format("<camera_focus>%f</camera_focus>\r\n", _focus));
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<camera_angles>%f %f %f</camera_angles>\r\n", xAngle, yAngle, zAngle));
+	fh.writeString(Common::String::format("<camera_angles>%f %f %f</camera_angles>\r\n", _xAngle, _yAngle, _zAngle));
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<camera_screen_size>%d %d</camera_screen_size>\r\n", scrSize.x, scrSize.y));
+	fh.writeString(Common::String::format("<camera_screen_size>%d %d</camera_screen_size>\r\n", _scrSize.x, _scrSize.y));
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<camera_screen_offset>%d %d</camera_screen_offset>\r\n", scrOffset.x, scrOffset.y));
+	fh.writeString(Common::String::format("<camera_screen_offset>%d %d</camera_screen_offset>\r\n", _scrOffset.x, _scrOffset.y));
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<camera_screen_center>%d %d</camera_screen_center>\r\n", scrCenterInitial.x, scrCenterInitial.y));
+	fh.writeString(Common::String::format("<camera_screen_center>%d %d</camera_screen_center>\r\n", _scrCenterInitial.x, _scrCenterInitial.y));
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<camera_grid_center>%f %f %f</camera_grid_center>\r\n", gridCenter.x, gridCenter.y, gridCenter.z));
+	fh.writeString(Common::String::format("<camera_grid_center>%f %f %f</camera_grid_center>\r\n", _gridCenter.x, _gridCenter.y, _gridCenter.z));
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
@@ -563,16 +563,16 @@ bool qdCamera::save_script(Common::WriteStream &fh, int indent) const {
 
 const Vect2i qdCamera::screen_center_limit_x() const {
 	int x0, x1;
-	if (scrSize.x < qdGameConfig::get_config().screen_sx()) {
+	if (_scrSize.x < qdGameConfig::get_config().screen_sx()) {
 		x0 = x1 = qdGameConfig::get_config().screen_sx() / 2;
 	} else {
-		x0 = -scrSize.x / 2 + qdGameConfig::get_config().screen_sx();
-		x1 = scrSize.x / 2;
+		x0 = -_scrSize.x / 2 + qdGameConfig::get_config().screen_sx();
+		x1 = _scrSize.x / 2;
 	}
 
-	if (cycle_x_) {
-		x0 -= scrSize.x;
-		x1 += scrSize.x;
+	if (_cycle_x) {
+		x0 -= _scrSize.x;
+		x1 += _scrSize.x;
 	}
 
 	return Vect2i(x0, x1);
@@ -580,72 +580,72 @@ const Vect2i qdCamera::screen_center_limit_x() const {
 
 const Vect2i qdCamera::screen_center_limit_y() const {
 	int y0, y1;
-	if (scrSize.y < qdGameConfig::get_config().screen_sy()) {
+	if (_scrSize.y < qdGameConfig::get_config().screen_sy()) {
 		y0 = y1 = qdGameConfig::get_config().screen_sy() / 2;
 	} else {
-		y0 = -scrSize.y / 2 + qdGameConfig::get_config().screen_sy();
-		y1 = scrSize.y / 2;
+		y0 = -_scrSize.y / 2 + qdGameConfig::get_config().screen_sy();
+		y1 = _scrSize.y / 2;
 	}
 
-	if (cycle_y_) {
-		y0 -= scrSize.y;
-		y1 += scrSize.y;
+	if (_cycle_y) {
+		y0 -= _scrSize.y;
+		y1 += _scrSize.y;
 	}
 
 	return Vect2i(y0, y1);
 }
 
 void qdCamera::move_scr_center(int dxc, int dyc) {
-	scrCenter.x += dxc;
-	scrCenter.y += dyc;
+	_scrCenter.x += dxc;
+	_scrCenter.y += dyc;
 
 #ifndef _QUEST_EDITOR
-	clip_center_coords(scrCenter.x, scrCenter.y);
+	clip_center_coords(_scrCenter.x, _scrCenter.y);
 #endif
 }
 
 float qdCamera::scrolling_phase_x() const {
-	if (scrSize.x <= qdGameConfig::get_config().screen_sx())
+	if (_scrSize.x <= qdGameConfig::get_config().screen_sx())
 		return 0.0f;
 	else
-		return float(scrCenter.x * 2 + scrSize.x - qdGameConfig::get_config().screen_sx() * 2) / float(scrSize.x - qdGameConfig::get_config().screen_sx()) - 1.0f;
+		return float(_scrCenter.x * 2 + _scrSize.x - qdGameConfig::get_config().screen_sx() * 2) / float(_scrSize.x - qdGameConfig::get_config().screen_sx()) - 1.0f;
 }
 
 float qdCamera::scrolling_phase_y() const {
-	if (scrSize.y <= qdGameConfig::get_config().screen_sy())
+	if (_scrSize.y <= qdGameConfig::get_config().screen_sy())
 		return 0.0f;
 	else
-		return float(scrCenter.y * 2 + scrSize.y - qdGameConfig::get_config().screen_sy() * 2) / float(scrSize.x - qdGameConfig::get_config().screen_sy()) - 1.0f;
+		return float(_scrCenter.y * 2 + _scrSize.y - qdGameConfig::get_config().screen_sy() * 2) / float(_scrSize.x - qdGameConfig::get_config().screen_sy()) - 1.0f;
 }
 
 bool qdCamera::draw_grid() const {
-	if (redraw_mode == QDCAM_GRID_NONE) return true;
+	if (_redraw_mode == QDCAM_GRID_NONE) return true;
 
 	int cnt = 0;
 
-	const int XSP = cellSX * GSX;
-	const int YSP = cellSY * GSY;
+	const int XSP = _cellSX * _GSX;
+	const int YSP = _cellSY * _GSY;
 	const float XSP05 = XSP / 2.f;
 	const float YSP05 = YSP / 2.f;
 
-	for (int i = 0; i < GSY; ++i) {
-		for (int j = 0; j < GSX; ++j) {
-			if (!Grid[cnt].is_walkable())
+	for (int i = 0; i < _GSY; ++i) {
+		for (int j = 0; j < _GSX; ++j) {
+			if (!_Grid[cnt].is_walkable())
 				draw_cell(j, i, 0, 1, IMPASSIBLE_CELL_CLR);
 
-			if (Grid[cnt].is_selected() || Grid[cnt].check_attribute(sGridCell::CELL_OCCUPIED | sGridCell::CELL_PERSONAGE_OCCUPIED))
+			if (_Grid[cnt].is_selected() || _Grid[cnt].check_attribute(sGridCell::CELL_OCCUPIED | sGridCell::CELL_PERSONAGE_OCCUPIED))
 				draw_cell(j, i, 0, 1, SELECTED_CELL_CLR);
 			++cnt;
 		}
 	}
 
-	if (redraw_mode == QDCAM_GRID_ZBUFFER) {
-		for (int i = 0; i <= GSX; i++) {
-			for (int j = 0; j < GSY; j++) {
-				Vect3f begPoint(-XSP05 + i * cellSX, -YSP05 + j * cellSY, 0);
-				Vect3f endPoint(-XSP05 + i * cellSX, -YSP05 + (j + 1)*cellSY, 0);
-				begPoint = global2camera_coord(begPoint + gridCenter);
-				endPoint = global2camera_coord(endPoint + gridCenter);
+	if (_redraw_mode == QDCAM_GRID_ZBUFFER) {
+		for (int i = 0; i <= _GSX; i++) {
+			for (int j = 0; j < _GSY; j++) {
+				Vect3f begPoint(-XSP05 + i * _cellSX, -YSP05 + j * _cellSY, 0);
+				Vect3f endPoint(-XSP05 + i * _cellSX, -YSP05 + (j + 1)*_cellSY, 0);
+				begPoint = global2camera_coord(begPoint + _gridCenter);
+				endPoint = global2camera_coord(endPoint + _gridCenter);
 				if (line_cutting(begPoint, endPoint)) {
 					Vect2s b = camera_coord2scr(begPoint);
 					Vect2s e = camera_coord2scr(endPoint);
@@ -658,12 +658,12 @@ bool qdCamera::draw_grid() const {
 				}
 			}
 		}
-		for (int i = 0; i <= GSY; i++) {
-			for (int j = 0; j < GSX; j++) {
-				Vect3f begPoint(-XSP05 + j * cellSX, -YSP05 + i * cellSY, 0);
-				Vect3f endPoint(-XSP05 + (j + 1)*cellSX, -YSP05 + i * cellSY, 0);
-				begPoint = global2camera_coord(begPoint + gridCenter);
-				endPoint = global2camera_coord(endPoint + gridCenter);
+		for (int i = 0; i <= _GSY; i++) {
+			for (int j = 0; j < _GSX; j++) {
+				Vect3f begPoint(-XSP05 + j * _cellSX, -YSP05 + i * _cellSY, 0);
+				Vect3f endPoint(-XSP05 + (j + 1)*_cellSX, -YSP05 + i * _cellSY, 0);
+				begPoint = global2camera_coord(begPoint + _gridCenter);
+				endPoint = global2camera_coord(endPoint + _gridCenter);
 				if (line_cutting(begPoint, endPoint)) {
 					Vect2s b = camera_coord2scr(begPoint);
 					Vect2s e = camera_coord2scr(endPoint);
@@ -677,11 +677,11 @@ bool qdCamera::draw_grid() const {
 			}
 		}
 	} else {
-		for (int i = 0; i <= GSX; i++) {
-			Vect3f begPoint(-XSP05 + i * cellSX, -YSP05, 0);
-			Vect3f endPoint(-XSP05 + i * cellSX, +YSP05, 0);
-			begPoint = global2camera_coord(begPoint + gridCenter);
-			endPoint = global2camera_coord(endPoint + gridCenter);
+		for (int i = 0; i <= _GSX; i++) {
+			Vect3f begPoint(-XSP05 + i * _cellSX, -YSP05, 0);
+			Vect3f endPoint(-XSP05 + i * _cellSX, +YSP05, 0);
+			begPoint = global2camera_coord(begPoint + _gridCenter);
+			endPoint = global2camera_coord(endPoint + _gridCenter);
 			if (line_cutting(begPoint, endPoint)) {
 				Vect2s b = camera_coord2scr(begPoint);
 				Vect2s e = camera_coord2scr(endPoint);
@@ -690,11 +690,11 @@ bool qdCamera::draw_grid() const {
 			}
 		}
 
-		for (int i = 0; i <= GSY; i++) {
-			Vect3f begPoint(-XSP05, -YSP05 + i * cellSY, 0);
-			Vect3f endPoint(+XSP05, -YSP05 + i * cellSY, 0);
-			begPoint = global2camera_coord(begPoint + gridCenter);
-			endPoint = global2camera_coord(endPoint + gridCenter);
+		for (int i = 0; i <= _GSY; i++) {
+			Vect3f begPoint(-XSP05, -YSP05 + i * _cellSY, 0);
+			Vect3f endPoint(+XSP05, -YSP05 + i * _cellSY, 0);
+			begPoint = global2camera_coord(begPoint + _gridCenter);
+			endPoint = global2camera_coord(endPoint + _gridCenter);
 			if (line_cutting(begPoint, endPoint)) {
 				Vect2s b = camera_coord2scr(begPoint);
 				Vect2s e = camera_coord2scr(endPoint);
@@ -705,10 +705,10 @@ bool qdCamera::draw_grid() const {
 	}
 
 	cnt = 0;
-	for (int i = 0; i < GSY; i++) {
-		for (int j = 0; j < GSX; j++, cnt++) {
-			if (Grid[cnt].height()) {
-				draw_cell(j, i, Grid[cnt].height(), 1, 0x00FFFFFF);
+	for (int i = 0; i < _GSY; i++) {
+		for (int j = 0; j < _GSX; j++, cnt++) {
+			if (_Grid[cnt].height()) {
+				draw_cell(j, i, _Grid[cnt].height(), 1, 0x00FFFFFF);
 			}
 		}
 	}
@@ -728,12 +728,12 @@ bool qdCamera::draw_cell(int x, int y, int z, int penWidth, unsigned color) cons
 	Vect3f point2((float)((x + 1)*get_cell_sx() - XSP05 - offset), (float)((y + 1)*get_cell_sy() - YSP05 - offset), (float)z);
 	Vect3f point3((float)(x * get_cell_sx() - XSP05 + offset), (float)((y + 1)*get_cell_sy() - YSP05 - offset), (float)z);
 
-	point0 = global2camera_coord(point0 + gridCenter);
-	point1 = global2camera_coord(point1 + gridCenter);
-	point2 = global2camera_coord(point2 + gridCenter);
-	point3 = global2camera_coord(point3 + gridCenter);
+	point0 = global2camera_coord(point0 + _gridCenter);
+	point1 = global2camera_coord(point1 + _gridCenter);
+	point2 = global2camera_coord(point2 + _gridCenter);
+	point3 = global2camera_coord(point3 + _gridCenter);
 
-	if (redraw_mode == QDCAM_GRID_ZBUFFER) {
+	if (_redraw_mode == QDCAM_GRID_ZBUFFER) {
 		if (line_cutting(point0, point1)) {
 			Vect2s p0 = camera_coord2scr(point0);
 			Vect2s p1 = camera_coord2scr(point1);
@@ -806,17 +806,17 @@ bool qdCamera::draw_cell(int x, int y, int z, int penWidth, unsigned color) cons
 }
 
 void qdCamera::scale_grid(int sx, int sy, int csx, int csy) {
-	if (GSX == sx && GSY == sy) return;
+	if (_GSX == sx && _GSY == sy) return;
 
 	sGridCell *new_grid = new sGridCell[sx * sy];
 
-	if (GSX) {
-		if (GSX >= sx && GSY >= sy) {
-			int dx = GSX / sx;
-			int dy = GSY / sy;
+	if (_GSX) {
+		if (_GSX >= sx && _GSY >= sy) {
+			int dx = _GSX / sx;
+			int dy = _GSY / sy;
 
 			sGridCell *new_p = new_grid;
-			sGridCell *old_p = Grid;
+			sGridCell *old_p = _Grid;
 
 			for (int i = 0; i < sy; i ++) {
 				for (int j = 0; j < sx; j ++) {
@@ -825,10 +825,10 @@ void qdCamera::scale_grid(int sx, int sy, int csx, int csy) {
 
 					for (int y = 0; y < dy; y ++) {
 						for (int x = 0; x < dx; x ++) {
-							if (!old_p[j * dx + x + y * GSX].is_walkable())
+							if (!old_p[j * dx + x + y * _GSX].is_walkable())
 								attr_count ++;
 
-							height_sum += old_p[j * dx + x + y * GSX].height();
+							height_sum += old_p[j * dx + x + y * _GSX].height();
 						}
 					}
 					if (attr_count >= dx * dy / 2)
@@ -838,18 +838,18 @@ void qdCamera::scale_grid(int sx, int sy, int csx, int csy) {
 
 					new_p ++;
 				}
-				old_p += GSX * dy;
+				old_p += _GSX * dy;
 			}
 		}
-		if (GSX <= sx && GSY <= sy) {
-			int dx = sx / GSX;
-			int dy = sy / GSY;
+		if (_GSX <= sx && _GSY <= sy) {
+			int dx = sx / _GSX;
+			int dy = sy / _GSY;
 
 			sGridCell *new_p = new_grid;
-			sGridCell *old_p = Grid;
+			sGridCell *old_p = _Grid;
 
-			for (int i = 0; i < GSY; i ++) {
-				for (int j = 0; j < GSX; j ++) {
+			for (int i = 0; i < _GSY; i ++) {
+				for (int j = 0; j < _GSX; j ++) {
 					for (int y = 0; y < dy; y ++) {
 						for (int x = 0; x < dx; x ++)
 							new_p[j * dx + x + y * sx] = *old_p;
@@ -860,67 +860,67 @@ void qdCamera::scale_grid(int sx, int sy, int csx, int csy) {
 			}
 		}
 
-		delete [] Grid;
+		delete [] _Grid;
 	}
 
-	Grid = new_grid;
+	_Grid = new_grid;
 
-	GSX = sx;
-	GSY = sy;
+	_GSX = sx;
+	_GSY = sy;
 
-	cellSX = csx;
-	cellSY = csy;
+	_cellSX = csx;
+	_cellSY = csy;
 }
 
 void qdCamera::resize_grid(int sx, int sy) {
-	if (GSX == sx && GSY == sy) return;
+	if (_GSX == sx && _GSY == sy) return;
 
 	sGridCell *new_grid = new sGridCell[sx * sy];
 
-	if (GSX) {
-		int x0 = (sx - GSX) / 2;
-		int y0 = (sy - GSY) / 2;
+	if (_GSX) {
+		int x0 = (sx - _GSX) / 2;
+		int y0 = (sy - _GSY) / 2;
 
-		for (int y = 0; y < GSY; y ++) {
-			for (int x = 0; x < GSX; x ++) {
+		for (int y = 0; y < _GSY; y ++) {
+			for (int x = 0; x < _GSX; x ++) {
 				if (x + x0 >= 0 && x + x0 < sx && y + y0 >= 0 && y + y0 < sy)
-					new_grid[x + x0 + (y + y0) * sx] = Grid[x + y * GSX];
+					new_grid[x + x0 + (y + y0) * sx] = _Grid[x + y * _GSX];
 			}
 		}
 
-		delete [] Grid;
+		delete [] _Grid;
 	}
 
-	Grid = new_grid;
+	_Grid = new_grid;
 
-	GSX = sx;
-	GSY = sy;
+	_GSX = sx;
+	_GSY = sy;
 }
 
 sGridCell *qdCamera::backup(sGridCell *ptrBuff) {
-	memcpy(ptrBuff, Grid, sizeof(sGridCell)*GSX * GSY);
+	memcpy(ptrBuff, _Grid, sizeof(sGridCell)*_GSX * _GSY);
 	return ptrBuff;
 }
 
 bool qdCamera::restore(sGridCell *grid, int sx, int sy, int csx, int csy) {
-	if (Grid)
-		delete [] Grid;
-	Grid  = new sGridCell[sx * sy];
-	if (!Grid)
+	if (_Grid)
+		delete [] _Grid;
+	_Grid  = new sGridCell[sx * sy];
+	if (!_Grid)
 		return false;
-	memcpy(Grid, grid, sizeof(sGridCell)*sx * sy);
+	memcpy(_Grid, grid, sizeof(sGridCell)*sx * sy);
 
-	GSX = sx;
-	GSY = sy;
-	cellSX = csx;
-	cellSY = csy;
+	_GSX = sx;
+	_GSY = sy;
+	_cellSX = csx;
+	_cellSY = csy;
 
 	return true;
 }
 
 bool qdCamera::set_grid_cell(const Vect2s &cell_pos, const sGridCell &cell) {
-	if (cell_pos.x >= 0 && cell_pos.x < GSX && cell_pos.y >= 0 && cell_pos.y < GSY) {
-		Grid[cell_pos.x + cell_pos.y * GSX] = cell;
+	if (cell_pos.x >= 0 && cell_pos.x < _GSX && cell_pos.y >= 0 && cell_pos.y < _GSY) {
+		_Grid[cell_pos.x + cell_pos.y * _GSX] = cell;
 		return true;
 	}
 
@@ -928,8 +928,8 @@ bool qdCamera::set_grid_cell(const Vect2s &cell_pos, const sGridCell &cell) {
 }
 
 bool qdCamera::set_grid_cell_attributes(const Vect2s &cell_pos, int attr) {
-	if (cell_pos.x >= 0 && cell_pos.x < GSX && cell_pos.y >= 0 && cell_pos.y < GSY) {
-		Grid[cell_pos.x + cell_pos.y * GSX].set_attributes(attr);
+	if (cell_pos.x >= 0 && cell_pos.x < _GSX && cell_pos.y >= 0 && cell_pos.y < _GSY) {
+		_Grid[cell_pos.x + cell_pos.y * _GSX].set_attributes(attr);
 		return true;
 	}
 
@@ -937,10 +937,10 @@ bool qdCamera::set_grid_cell_attributes(const Vect2s &cell_pos, int attr) {
 }
 
 bool qdCamera::restore_grid_cell(const Vect2s cell_pos) {
-	if (cell_pos.x >= 0 && cell_pos.x < GSX && cell_pos.y >= 0 && cell_pos.y < GSY) {
+	if (cell_pos.x >= 0 && cell_pos.x < _GSX && cell_pos.y >= 0 && cell_pos.y < _GSY) {
 		sGridCell cl;
 		cl.make_impassable();
-		Grid[cell_pos.x + cell_pos.y * GSX] = cl;
+		_Grid[cell_pos.x + cell_pos.y * _GSX] = cl;
 		return true;
 	}
 
@@ -948,15 +948,15 @@ bool qdCamera::restore_grid_cell(const Vect2s cell_pos) {
 }
 
 sGridCell *qdCamera::get_cell(const Vect2s &cell_pos) {
-	if (cell_pos.x >= 0 && cell_pos.x < GSX && cell_pos.y >= 0 && cell_pos.y < GSY) {
-		return &Grid[cell_pos.x + cell_pos.y * GSX];
+	if (cell_pos.x >= 0 && cell_pos.x < _GSX && cell_pos.y >= 0 && cell_pos.y < _GSY) {
+		return &_Grid[cell_pos.x + cell_pos.y * _GSX];
 	}
 	return NULL;
 }
 
 const sGridCell *qdCamera::get_cell(const Vect2s &cell_pos) const {
-	if (cell_pos.x >= 0 && cell_pos.x < GSX && cell_pos.y >= 0 && cell_pos.y < GSY) {
-		return &Grid[cell_pos.x + cell_pos.y * GSX];
+	if (cell_pos.x >= 0 && cell_pos.x < _GSX && cell_pos.y >= 0 && cell_pos.y < _GSY) {
+		return &_Grid[cell_pos.x + cell_pos.y * _GSX];
 	}
 	return NULL;
 }
@@ -966,19 +966,19 @@ bool qdCamera::load_data(Common::SeekableReadStream &fh, int save_version) {
 
 	int x, y;
 	char flag;
-	scrCenter.x = fh.readSint32LE();
-	scrCenter.y = fh.readSint32LE();
+	_scrCenter.x = fh.readSint32LE();
+	_scrCenter.y = fh.readSint32LE();
 	x = fh.readSint32LE();
 	y = fh.readSint32LE();
-	current_mode_work_time_ = fh.readFloatLE();
+	_current_mode_work_time = fh.readFloatLE();
 	flag = fh.readByte();
-	current_mode_switch_ = bool(flag);
+	_current_mode_switch = bool(flag);
 
-	if (x != GSX || y != GSY) return false;
+	if (x != _GSX || y != _GSY) return false;
 
-	if (!current_mode_.load_data(fh, save_version))
+	if (!_current_mode.load_data(fh, save_version))
 		return false;
-	if (!default_mode_.load_data(fh, save_version))
+	if (!_default_mode.load_data(fh, save_version))
 		return false;
 
 	flag = fh.readByte();
@@ -986,7 +986,7 @@ bool qdCamera::load_data(Common::SeekableReadStream &fh, int save_version) {
 		qdNamedObjectReference ref;
 		if (!ref.load_data(fh, save_version))
 			return false;
-		current_object_ = dynamic_cast<qdGameObjectAnimated *>(qdGameDispatcher::get_dispatcher()->get_named_object(&ref));
+		_current_object = dynamic_cast<qdGameObjectAnimated *>(qdGameDispatcher::get_dispatcher()->get_named_object(&ref));
 	}
 
 	flag = fh.readByte();
@@ -994,7 +994,7 @@ bool qdCamera::load_data(Common::SeekableReadStream &fh, int save_version) {
 		qdNamedObjectReference ref;
 		if (!ref.load_data(fh, save_version))
 			return false;
-		default_object_ = dynamic_cast<qdGameObjectAnimated *>(qdGameDispatcher::get_dispatcher()->get_named_object(&ref));
+		_default_object = dynamic_cast<qdGameObjectAnimated *>(qdGameDispatcher::get_dispatcher()->get_named_object(&ref));
 	}
 
 	debugC(3, kDebugSave, "  qdCamera::load_data(): after %ld", fh.pos());
@@ -1003,27 +1003,27 @@ bool qdCamera::load_data(Common::SeekableReadStream &fh, int save_version) {
 
 bool qdCamera::save_data(Common::WriteStream &fh) const {
 	debugC(3, kDebugSave, "  qdCamera::save_data(): before %ld", fh.pos());
-	fh.writeSint32LE(scrCenter.x);
-	fh.writeSint32LE(scrCenter.y);
-	fh.writeSint32LE(GSX);
-	fh.writeSint32LE(GSY);
-	fh.writeFloatLE(current_mode_work_time_);
-	fh.writeByte(char(current_mode_switch_));
+	fh.writeSint32LE(_scrCenter.x);
+	fh.writeSint32LE(_scrCenter.y);
+	fh.writeSint32LE(_GSX);
+	fh.writeSint32LE(_GSY);
+	fh.writeFloatLE(_current_mode_work_time);
+	fh.writeByte(char(_current_mode_switch));
 
-	current_mode_.save_data(fh);
-	default_mode_.save_data(fh);
+	_current_mode.save_data(fh);
+	_default_mode.save_data(fh);
 
-	if (current_object_) {
+	if (_current_object) {
 		fh.writeByte(char(1));
-		qdNamedObjectReference ref(current_object_);
+		qdNamedObjectReference ref(_current_object);
 		ref.save_data(fh);
 	} else {
 		fh.writeByte(char(0));
 	}
 
-	if (default_object_) {
+	if (_default_object) {
 		fh.writeByte(char(1));
-		qdNamedObjectReference ref(default_object_);
+		qdNamedObjectReference ref(_default_object);
 		ref.save_data(fh);
 	} else {
 		fh.writeByte(char(0));
@@ -1034,47 +1034,47 @@ bool qdCamera::save_data(Common::WriteStream &fh) const {
 }
 
 bool qdCamera::set_mode(const qdCameraMode &mode, qdGameObjectAnimated *object) {
-	current_mode_ = mode;
-	current_object_ = object;
+	_current_mode = mode;
+	_current_object = object;
 
-	current_mode_work_time_ = 0.0f;
-	current_mode_switch_ = current_mode_.smooth_switch();
+	_current_mode_work_time = 0.0f;
+	_current_mode_switch = _current_mode.smooth_switch();
 
 	return true;
 }
 
 bool qdCamera::quant(float dt) {
-	Vect2i last_pos = scrCenter;
+	Vect2i last_pos = _scrCenter;
 
 #ifndef _QUEST_EDITOR
-	qdGameObjectAnimated *p = current_object_;
-	if (!p) p = default_object_;
+	qdGameObjectAnimated *p = _current_object;
+	if (!p) p = _default_object;
 
 	if (p)
 		p->qdGameObject::update_screen_pos();
 
-	switch (current_mode_.camera_mode()) {
+	switch (_current_mode.camera_mode()) {
 	case qdCameraMode::MODE_CENTER_OBJECT:
 		if (p) {
-			Vect2i r = p->screen_pos() + current_mode_.center_offset();
+			Vect2i r = p->screen_pos() + _current_mode.center_offset();
 
-			int cx = scrCenter.x + qdGameConfig::get_config().screen_sx() / 2 - r.x;
-			int cy = scrCenter.y + qdGameConfig::get_config().screen_sy() / 2 - r.y;
+			int cx = _scrCenter.x + qdGameConfig::get_config().screen_sx() / 2 - r.x;
+			int cy = _scrCenter.y + qdGameConfig::get_config().screen_sy() / 2 - r.y;
 
 			clip_center_coords(cx, cy);
 
-			int dx = cx - scrCenter.x;
-			int dy = cy - scrCenter.y;
+			int dx = cx - _scrCenter.x;
+			int dy = cy - _scrCenter.y;
 
-			if (current_mode_switch_) {
+			if (_current_mode_switch) {
 				Vect2f dr(dx, dy);
 
-				float dr0 = current_mode_.scrolling_speed() * dt;
+				float dr0 = _current_mode.scrolling_speed() * dt;
 
 				if (dr.norm2() > dr0 * dr0)
 					dr.normalize(dr0);
 				else
-					current_mode_switch_ = false;
+					_current_mode_switch = false;
 
 				move_scr_center(dr.xi(), dr.yi());
 			} else
@@ -1088,37 +1088,37 @@ bool qdCamera::quant(float dt) {
 
 			int dx = 0;
 			int dy = 0;
-			if (r.x + sz + current_mode_.scrolling_distance() >= qdGameConfig::get_config().screen_sx()) {
-				dx = qdGameConfig::get_config().screen_sx() - (r.x + sz + current_mode_.scrolling_distance());
+			if (r.x + sz + _current_mode.scrolling_distance() >= qdGameConfig::get_config().screen_sx()) {
+				dx = qdGameConfig::get_config().screen_sx() - (r.x + sz + _current_mode.scrolling_distance());
 			} else {
-				if (r.x - sz - current_mode_.scrolling_distance() < 0)
-					dx = -r.x + sz + current_mode_.scrolling_distance();
+				if (r.x - sz - _current_mode.scrolling_distance() < 0)
+					dx = -r.x + sz + _current_mode.scrolling_distance();
 			}
 
-			if (r.y + sz + current_mode_.scrolling_distance() >= qdGameConfig::get_config().screen_sy()) {
-				dy = qdGameConfig::get_config().screen_sy() - (r.y + sz + current_mode_.scrolling_distance());
+			if (r.y + sz + _current_mode.scrolling_distance() >= qdGameConfig::get_config().screen_sy()) {
+				dy = qdGameConfig::get_config().screen_sy() - (r.y + sz + _current_mode.scrolling_distance());
 			} else {
-				if (r.y - sz - current_mode_.scrolling_distance() < 0)
-					dy = -r.y + sz + current_mode_.scrolling_distance();
+				if (r.y - sz - _current_mode.scrolling_distance() < 0)
+					dy = -r.y + sz + _current_mode.scrolling_distance();
 			}
 
-			if (current_mode_switch_) {
-				int cx = scrCenter.x + dx;
-				int cy = scrCenter.y + dy;
+			if (_current_mode_switch) {
+				int cx = _scrCenter.x + dx;
+				int cy = _scrCenter.y + dy;
 
 				clip_center_coords(cx, cy);
 
-				dx = cx - scrCenter.x;
-				dy = cy - scrCenter.y;
+				dx = cx - _scrCenter.x;
+				dy = cy - _scrCenter.y;
 
 				Vect2f dr(dx, dy);
 
-				float dr0 = current_mode_.scrolling_speed() * dt;
+				float dr0 = _current_mode.scrolling_speed() * dt;
 
 				if (dr.norm2() > dr0 * dr0)
 					dr.normalize(dr0);
 				else
-					current_mode_switch_ = false;
+					_current_mode_switch = false;
 
 				move_scr_center(dr.xi(), dr.yi());
 			} else
@@ -1127,42 +1127,42 @@ bool qdCamera::quant(float dt) {
 		break;
 	case qdCameraMode::MODE_FOLLOW_OBJECT:
 		if (p) {
-			Vect2s r = p->screen_pos() + current_mode_.center_offset();
+			Vect2s r = p->screen_pos() + _current_mode.center_offset();
 			int dx = -r.x + qdGameConfig::get_config().screen_sx() / 2;
 			int dy = -r.y + qdGameConfig::get_config().screen_sy() / 2;
 
 			if (dx || dy) {
 				Vect2f dr(dx, dy);
 
-				float dr0 = current_mode_.scrolling_speed() * dt;
+				float dr0 = _current_mode.scrolling_speed() * dt;
 
 				if (dr.norm2() > dr0 * dr0)
 					dr.normalize(dr0);
 
 				move_scr_center(dr.xi(), dr.yi());
 			}
-			current_mode_switch_ = false;
+			_current_mode_switch = false;
 		}
 		break;
 	case qdCameraMode::MODE_CENTER_OBJECT_WHEN_LEAVING:
 		if (p) {
-			Vect2s r = p->screen_pos() + current_mode_.center_offset();
+			Vect2s r = p->screen_pos() + _current_mode.center_offset();
 			float sz = p->radius();
 
 			int dx = 0;
 			int dy = 0;
-			if (r.x + sz + current_mode_.scrolling_distance() >= qdGameConfig::get_config().screen_sx()) {
-				dx = qdGameConfig::get_config().screen_sx() - (r.x + sz + current_mode_.scrolling_distance());
+			if (r.x + sz + _current_mode.scrolling_distance() >= qdGameConfig::get_config().screen_sx()) {
+				dx = qdGameConfig::get_config().screen_sx() - (r.x + sz + _current_mode.scrolling_distance());
 			} else {
-				if (r.x - sz - current_mode_.scrolling_distance() < 0)
-					dx = -r.x + sz + current_mode_.scrolling_distance();
+				if (r.x - sz - _current_mode.scrolling_distance() < 0)
+					dx = -r.x + sz + _current_mode.scrolling_distance();
 			}
 
-			if (r.y + sz + current_mode_.scrolling_distance() >= qdGameConfig::get_config().screen_sy()) {
-				dy = qdGameConfig::get_config().screen_sy() - (r.y + sz + current_mode_.scrolling_distance());
+			if (r.y + sz + _current_mode.scrolling_distance() >= qdGameConfig::get_config().screen_sy()) {
+				dy = qdGameConfig::get_config().screen_sy() - (r.y + sz + _current_mode.scrolling_distance());
 			} else {
-				if (r.y - sz - current_mode_.scrolling_distance() < 0)
-					dy = -r.y + sz + current_mode_.scrolling_distance();
+				if (r.y - sz - _current_mode.scrolling_distance() < 0)
+					dy = -r.y + sz + _current_mode.scrolling_distance();
 			}
 
 			if (dx || dy) {
@@ -1171,7 +1171,7 @@ bool qdCamera::quant(float dt) {
 
 				Vect2f dr(dx1, dy1);
 
-				float dr0 = current_mode_.scrolling_speed() * dt;
+				float dr0 = _current_mode.scrolling_speed() * dt;
 
 				if (dr.norm2() > dr0 * dr0)
 					dr.normalize(dr0);
@@ -1179,7 +1179,7 @@ bool qdCamera::quant(float dt) {
 				move_scr_center(dr.xi(), dr.yi());
 			}
 
-			current_mode_switch_ = false;
+			_current_mode_switch = false;
 		}
 		break;
 	default:
@@ -1189,17 +1189,17 @@ bool qdCamera::quant(float dt) {
 	if (p)
 		p->update_screen_pos();
 
-	clip_center_coords(scrCenter.x, scrCenter.y);
+	clip_center_coords(_scrCenter.x, _scrCenter.y);
 
-	if (!current_mode_switch_)
-		current_mode_work_time_ += dt;
+	if (!_current_mode_switch)
+		_current_mode_work_time += dt;
 
-	if (current_mode_.has_work_time() && current_mode_work_time_ > current_mode_.work_time())
-		set_mode(default_mode_, default_object_);
+	if (_current_mode.has_work_time() && _current_mode_work_time > _current_mode.work_time())
+		set_mode(_default_mode, _default_object);
 
 #endif
 
-	if (last_pos.x != scrCenter.x || last_pos.y != scrCenter.y)
+	if (last_pos.x != _scrCenter.x || last_pos.y != _scrCenter.y)
 		return true;
 
 	return false;
@@ -1213,18 +1213,18 @@ bool qdCamera::set_grid_attributes(const Vect2s &center_pos, const Vect2s &size,
 	int y1 = y0 + size.y;
 
 	if (x0 < 0) x0 = 0;
-	if (x1 > GSX - 1) x1 = GSX - 1;
+	if (x1 > _GSX - 1) x1 = _GSX - 1;
 	if (y0 < 0) y0 = 0;
-	if (y1 > GSY - 1) y1 = GSY - 1;
+	if (y1 > _GSY - 1) y1 = _GSY - 1;
 
-	sGridCell *cells = Grid + x0 + y0 * GSX;
+	sGridCell *cells = _Grid + x0 + y0 * _GSX;
 
 	for (int y = y0; y < y1; y ++) {
 		sGridCell *p = cells;
 		for (int x = x0; x < x1; x++, p++)
 			p->set_attribute(attr);
 
-		cells += GSX;
+		cells += _GSX;
 	}
 
 	return true;
@@ -1238,34 +1238,34 @@ bool qdCamera::drop_grid_attributes(const Vect2s &center_pos, const Vect2s &size
 	int y1 = y0 + size.y;
 
 	if (x0 < 0) x0 = 0;
-	if (x1 > GSX - 1) x1 = GSX - 1;
+	if (x1 > _GSX - 1) x1 = _GSX - 1;
 	if (y0 < 0) y0 = 0;
-	if (y1 > GSY - 1) y1 = GSY - 1;
+	if (y1 > _GSY - 1) y1 = _GSY - 1;
 
-	sGridCell *cells = Grid + x0 + y0 * GSX;
+	sGridCell *cells = _Grid + x0 + y0 * _GSX;
 
 	for (int y = y0; y < y1; y ++) {
 		sGridCell *p = cells;
 		for (int x = x0; x < x1; x++, p++)
 			p->drop_attribute(attr);
 
-		cells += GSX;
+		cells += _GSX;
 	}
 
 	return true;
 }
 
 bool qdCamera::set_grid_attributes(int attr) {
-	sGridCell *p = Grid;
-	for (int i = 0; i < GSX * GSY; i++, p++)
+	sGridCell *p = _Grid;
+	for (int i = 0; i < _GSX * _GSY; i++, p++)
 		p->set_attribute(attr);
 
 	return true;
 }
 
 bool qdCamera::drop_grid_attributes(int attr) {
-	sGridCell *p = Grid;
-	for (int i = 0; i < GSX * GSY; i++, p++)
+	sGridCell *p = _Grid;
+	for (int i = 0; i < _GSX * _GSY; i++, p++)
 		p->drop_attribute(attr);
 
 	return true;
@@ -1279,11 +1279,11 @@ bool qdCamera::check_grid_attributes(const Vect2s &center_pos, const Vect2s &siz
 	int y1 = y0 + size.y;
 
 	if (x0 < 0) x0 = 0;
-	if (x1 > GSX - 1) x1 = GSX - 1;
+	if (x1 > _GSX - 1) x1 = _GSX - 1;
 	if (y0 < 0) y0 = 0;
-	if (y1 > GSY - 1) y1 = GSY - 1;
+	if (y1 > _GSY - 1) y1 = _GSY - 1;
 
-	const sGridCell *cells = Grid + x0 + y0 * GSX;
+	const sGridCell *cells = _Grid + x0 + y0 * _GSX;
 
 	for (int y = y0; y < y1; y ++) {
 		const sGridCell *p = cells;
@@ -1292,7 +1292,7 @@ bool qdCamera::check_grid_attributes(const Vect2s &center_pos, const Vect2s &siz
 				return true;
 		}
 
-		cells += GSX;
+		cells += _GSX;
 	}
 
 	return false;
@@ -1306,11 +1306,11 @@ int qdCamera::cells_num_with_exact_attributes(const Vect2s &center_pos, const Ve
 	int y1 = y0 + size.y;
 
 	if (x0 < 0) x0 = 0;
-	if (x1 > GSX - 1) x1 = GSX - 1;
+	if (x1 > _GSX - 1) x1 = _GSX - 1;
 	if (y0 < 0) y0 = 0;
-	if (y1 > GSY - 1) y1 = GSY - 1;
+	if (y1 > _GSY - 1) y1 = _GSY - 1;
 
-	const sGridCell *cells = Grid + x0 + y0 * GSX;
+	const sGridCell *cells = _Grid + x0 + y0 * _GSX;
 
 	int ret = 0;
 	for (int y = y0; y < y1; y ++) {
@@ -1320,7 +1320,7 @@ int qdCamera::cells_num_with_exact_attributes(const Vect2s &center_pos, const Ve
 				ret++;
 		}
 
-		cells += GSX;
+		cells += _GSX;
 	}
 
 	return ret;
@@ -1334,11 +1334,11 @@ bool qdCamera::is_walkable(const Vect2s &center_pos, const Vect2s &size, bool ig
 	int y1 = y0 + size.y;
 
 	if (x0 < 0) x0 = 0;
-	if (x1 > GSX - 1) x1 = GSX - 1;
+	if (x1 > _GSX - 1) x1 = _GSX - 1;
 	if (y0 < 0) y0 = 0;
-	if (y1 > GSY - 1) y1 = GSY - 1;
+	if (y1 > _GSY - 1) y1 = _GSY - 1;
 
-	const sGridCell *cells = Grid + x0 + y0 * GSX;
+	const sGridCell *cells = _Grid + x0 + y0 * _GSX;
 	int attr = sGridCell::CELL_IMPASSABLE | sGridCell::CELL_OCCUPIED;
 	if (!ignore_personages)
 		attr |= sGridCell::CELL_PERSONAGE_OCCUPIED;
@@ -1350,7 +1350,7 @@ bool qdCamera::is_walkable(const Vect2s &center_pos, const Vect2s &size, bool ig
 				return false;
 		}
 
-		cells += GSX;
+		cells += _GSX;
 	}
 
 	return true;
@@ -1378,15 +1378,15 @@ bool qdCamera::clip_grid_line(Vect2s &v0, Vect2s &v1) const {
 					outcodeOut = outcode1;
 
 				if (clTOP & outcodeOut) {
-					x = v0.x + (v1.x - v0.x) * (GSY - v0.y - 1) / (v1.y - v0.y);
-					y = GSY - 1;
+					x = v0.x + (v1.x - v0.x) * (_GSY - v0.y - 1) / (v1.y - v0.y);
+					y = _GSY - 1;
 				} else if (clBOTTOM & outcodeOut) {
 					x = v0.x + (v1.x - v0.x) * (-v0.y) / (v1.y - v0.y);
 					y = 0;
 				}
 				if (clRIGHT & outcodeOut) {
-					y = v0.y + (v1.y - v0.y) * (GSX - v0.x - 1) / (v1.x - v0.x);
-					x = GSX - 1;
+					y = v0.y + (v1.y - v0.y) * (_GSX - v0.x - 1) / (v1.x - v0.x);
+					x = _GSX - 1;
 				} else if (clLEFT & outcodeOut) {
 					y = v0.y + (v1.y - v0.y) * (-v0.x) / (v1.x - v0.x);
 					x = 0;
@@ -1411,12 +1411,12 @@ bool qdCamera::clip_grid_line(Vect2s &v0, Vect2s &v1) const {
 }
 
 bool qdCamera::init() {
-	default_object_ = NULL;
-	current_object_ = NULL;
+	_default_object = NULL;
+	_current_object = NULL;
 
-	scrCenter = scrCenterInitial;
+	_scrCenter = _scrCenterInitial;
 
-	set_mode(default_mode_);
+	set_mode(_default_mode);
 
 	return true;
 }
@@ -1446,7 +1446,7 @@ bool qdCamera::is_visible(const Vect2i &center_offs) const {
 	pos.x -= center_offs.x;
 	pos.y += center_offs.y;
 
-	if (pos.x < -scrSize.x / 2 - sx || pos.x > scrSize.x / 2 + sx || pos.y < -scrSize.y / 2 - sy || pos.y > scrSize.y / 2 + sy)
+	if (pos.x < -_scrSize.x / 2 - sx || pos.x > _scrSize.x / 2 + sx || pos.y < -_scrSize.y / 2 - sy || pos.y > _scrSize.y / 2 + sy)
 		return false;
 
 	return true;
@@ -1455,17 +1455,17 @@ bool qdCamera::is_visible(const Vect2i &center_offs) const {
 void qdCamera::cycle_coords(int &x, int &y) const {
 	Vect2s pos = scr2rscr(Vect2s(x, y));
 
-	if (cycle_x_) {
-		if (pos.x < -scrSize.x / 2 + scrOffset.x)
-			pos.x += scrSize.x;
-		else if (pos.x > scrSize.x / 2 + scrOffset.x)
-			pos.x -= scrSize.x;
+	if (_cycle_x) {
+		if (pos.x < -_scrSize.x / 2 + _scrOffset.x)
+			pos.x += _scrSize.x;
+		else if (pos.x > _scrSize.x / 2 + _scrOffset.x)
+			pos.x -= _scrSize.x;
 	}
-	if (cycle_y_) {
-		if (pos.y < -scrSize.y / 2 + scrOffset.y)
-			pos.y += scrSize.y;
-		else if (pos.y > scrSize.y / 2 + scrOffset.y)
-			pos.y -= scrSize.y;
+	if (_cycle_y) {
+		if (pos.y < -_scrSize.y / 2 + _scrOffset.y)
+			pos.y += _scrSize.y;
+		else if (pos.y > _scrSize.y / 2 + _scrOffset.y)
+			pos.y -= _scrSize.y;
 	}
 
 	pos = rscr2scr(pos);
@@ -1486,7 +1486,7 @@ bool qdCamera::set_grid_line_attributes(const Vect2s &start_pos, const Vect2s &e
 	int dy = end_pos.y - start_pos.y;
 
 	Vect2f dr(dx, dy);
-	float d = cellSX / 3;
+	float d = _cellSX / 3;
 	if (d < 0.5f) d = 0.5f;
 	dr.normalize(d);
 
@@ -1519,7 +1519,7 @@ bool qdCamera::drop_grid_line_attributes(const Vect2s &start_pos, const Vect2s &
 	int dy = end_pos.y - start_pos.y;
 
 	Vect2f dr(dx, dy);
-	float d = cellSX / 3;
+	float d = _cellSX / 3;
 	if (d < 0.5f) d = 0.5f;
 	dr.normalize(d);
 
@@ -1550,7 +1550,7 @@ bool qdCamera::check_grid_line_attributes(const Vect2s &start_pos, const Vect2s 
 	int dy = end_pos.y - start_pos.y;
 
 	Vect2f dr(dx, dy);
-	float d = cellSX / 3;
+	float d = _cellSX / 3;
 	if (d < 0.5f) d = 0.5f;
 	dr.normalize(d);
 
@@ -1578,11 +1578,11 @@ void qdCamera::dump_grid(const char *file_name) const {
 	Common::DumpFile fh;
 	fh.open(Common::Path(file_name));
 
-	for (int i = 0; i < GSY; i++) {
-		for (int j = 0; j < GSX; j++) {
-			if (Grid[j + i * GSX].attributes() < 10)
+	for (int i = 0; i < _GSY; i++) {
+		for (int j = 0; j < _GSX; j++) {
+			if (_Grid[j + i * _GSX].attributes() < 10)
 				fh.writeString(" ");
-			fh.writeString(Common::String::format("%u ", Grid[j + i * GSX].attributes()));
+			fh.writeString(Common::String::format("%u ", _Grid[j + i * _GSX].attributes()));
 		}
 		fh.writeString("\r\n");
 	}
@@ -1592,7 +1592,7 @@ void qdCamera::dump_grid(const char *file_name) const {
 }
 
 bool qdCamera::can_change_mode() const {
-	if (current_mode_.has_work_time()) return false;
+	if (_current_mode.has_work_time()) return false;
 
 	return true;
 }
