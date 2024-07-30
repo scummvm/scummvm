@@ -64,18 +64,18 @@ public:
 	void parseString(const char *text, int color = 0, int fitIn = -1);
 
 	const OutNodes &outNodes() const {
-		return outNodes_;
+		return _outNodes;
 	}
 
 	int fontHeight() const {
-		return font_ ? font_->size_y() : 1;
+		return _font ? _font->size_y() : 1;
 	}
 	const Vect2i &size() const {
-		return size_;
+		return _size;
 	}
 
 	int lineCount() const {
-		return lineCount_;
+		return _lineCount;
 	}
 	OutNodes::const_iterator getLineBegin(int lineNum) const;
 
@@ -93,42 +93,42 @@ private:
 	}
 
 	inline void addChar(BYTE cc) {
-		int width = font_->char_width(cc);
+		int width = _font->char_width(cc);
 		if (testWidth(width) || cc != ' ')
-			tagWidth_ += width;
-		++pstr_;
+			_tagWidth += width;
+		++_pstr;
 	}
 
 	inline void skipNode() {
-		lineBegin_ = pstr_;
-		lastSpace_ = lineBegin_;
-		lastTagWidth_ = 0;
-		tagWidth_ = 0;
+		_lineBegin = _pstr;
+		_lastSpace = _lineBegin;
+		_lastTagWidth = 0;
+		_tagWidth = 0;
 	}
 
 	inline void putNode(OutNode &node) {
-		outNodes_.push_back(node);
+		_outNodes.push_back(node);
 		skipNode();
 	}
 
 	void putText() {
-		if (pstr_ == lineBegin_)
+		if (_pstr == _lineBegin)
 			return;
-		lineWidth_ += tagWidth_;
-		OutNode node(lineBegin_, pstr_, tagWidth_);
+		_lineWidth += _tagWidth;
+		OutNode node(_lineBegin, _pstr, _tagWidth);
 		putNode(node);
 	}
 
 	void endLine() {
-		size_.x = MAX(size_.x, lineWidth_);
+		_size.x = MAX(_size.x, _lineWidth);
 
-		outNodes_[prevLineIndex_].width = lineWidth_;
-		lineWidth_ = 0;
+		_outNodes[_prevLineIndex].width = _lineWidth;
+		_lineWidth = 0;
 
-		outNodes_.push_back(OutNode());
-		prevLineIndex_ = outNodes_.size() - 1;
+		_outNodes.push_back(OutNode());
+		_prevLineIndex = _outNodes.size() - 1;
 
-		++lineCount_;
+		++_lineCount;
 	}
 
 	void getColor(int defColor);
@@ -136,23 +136,23 @@ private:
 	int getToken();
 	bool testWidth(int width);
 
-	OutNodes outNodes_;
+	OutNodes _outNodes;
 
-	int prevLineIndex_;
-	const char *lastSpace_;
-	int lastTagWidth_;
+	int _prevLineIndex;
+	const char *_lastSpace;
+	int _lastTagWidth;
 
-	const char *lineBegin_;
-	const char *pstr_;
-	int tagWidth_;
-	int lineWidth_;
+	const char *_lineBegin;
+	const char *_pstr;
+	int _tagWidth;
+	int _lineWidth;
 
-	int fitIn_;
+	int _fitIn;
 
-	Vect2i size_;
-	int lineCount_;
+	Vect2i _size;
+	int _lineCount;
 
-	const grFont *font_;
+	const grFont *_font;
 
 };
 
