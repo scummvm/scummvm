@@ -65,7 +65,7 @@ public:
 
 	//! Возвращает true, если данные ресурса загружены в память.
 	bool is_resource_loaded() const {
-		return is_loaded_;
+		return _is_loaded;
 	}
 
 	static file_format_t file_format(const char *file_name);
@@ -78,13 +78,13 @@ protected:
 
 	//! Устанавливает или скидывает флаг, показывающий что данные ресурса загружены в память.
 	void toggle_resource_status(bool st = true) {
-		is_loaded_ = st;
+		_is_loaded = st;
 	}
 
 private:
 
 	//! Равно true, если данные ресурса загружены в память.
-	bool is_loaded_;
+	bool _is_loaded;
 };
 
 #ifdef __QD_DEBUG_ENABLE__
