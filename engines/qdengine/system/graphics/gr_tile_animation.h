@@ -38,22 +38,22 @@ public:
 	grTileAnimation();
 
 	bool isEmpty() const {
-		return !frameCount_;
+		return !_frameCount;
 	}
 
 	void clear();
 
 	int frameCount() const {
-		return frameCount_;
+		return _frameCount;
 	}
 	const Vect2i &frameSize() const {
-		return frameSize_;
+		return _frameSize;
 	}
 	const Vect2i &frameTileSize() const {
-		return frameTileSize_;
+		return _frameTileSize;
 	}
 	int tileCount() const {
-		return tileOffsets_.size() - 1;
+		return _tileOffsets.size() - 1;
 	}
 
 	void init(int frame_count, const Vect2i &frame_size, bool alpha_flag);
@@ -72,41 +72,41 @@ public:
 	void drawFrame(const Vect2i &position, int frame_index, float angle, int mode = 0) const;
 
 	static void setProgressHandler(CompressionProgressHandler handler, void *context) {
-		progressHandler_ = handler;
-		progressHandlerContext_ = context;
+		_progressHandler = handler;
+		_progressHandlerContext = context;
 	}
 
 private:
 
-	grTileCompressionMethod compression_;
+	grTileCompressionMethod _compression;
 
 	/// true если есть альфа-канал
-	bool hasAlpha_;
+	bool _hasAlpha;
 
 	/// размеры кадра в пикселах
 	/// могут быть невыровненными по рамерам тайла
-	Vect2i frameSize_;
+	Vect2i _frameSize;
 
 	/// размеры кадра в тайлах
-	Vect2i frameTileSize_;
+	Vect2i _frameTileSize;
 
 	/// количество кадров
-	int frameCount_;
+	int _frameCount;
 
 	typedef std::vector<uint32> FrameIndex;
 	/// индекс кадров - номера тайлов, из которых состоят кадры
-	/// frameTileSize_.x * frameTileSize_.y на кадр
-	FrameIndex frameIndex_;
+	/// _frameTileSize.x * _frameTileSize.y на кадр
+	FrameIndex _frameIndex;
 
 	typedef std::vector<uint32> TileOffsets;
 	/// смещения до данных каждого тайла
-	TileOffsets tileOffsets_;
+	TileOffsets _tileOffsets;
 	typedef std::vector<uint32> TileData;
 	/// данные тайлов
-	TileData tileData_;
+	TileData _tileData;
 
-	static CompressionProgressHandler progressHandler_;
-	static void *progressHandlerContext_;
+	static CompressionProgressHandler _progressHandler;
+	static void *_progressHandlerContext;
 };
 
 } // namespace QDEngine
