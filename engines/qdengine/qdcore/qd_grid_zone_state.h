@@ -47,7 +47,7 @@ public:
 
 	//! Включить или выключить зону.
 	bool state() const {
-		return state_;
+		return _state;
 	}
 
 	qdConditionalObject::trigger_start_mode trigger_start();
@@ -58,7 +58,7 @@ public:
 private:
 
 	//! Включить или выключить зону.
-	bool state_;
+	bool _state;
 };
 
 } // namespace QDEngine
