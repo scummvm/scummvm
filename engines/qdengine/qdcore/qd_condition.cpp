@@ -36,10 +36,8 @@ class WriteStream;
 
 namespace QDEngine {
 
-#ifndef _QUEST_EDITOR
 bool qdCondition::successful_click_ = false;
 bool qdCondition::successful_object_click_ = false;
-#endif
 
 qdCondition::qdCondition() : type_(CONDITION_FALSE), is_inversed_(false)
 #ifndef _QUEST_EDITOR
@@ -460,14 +458,12 @@ bool qdCondition::check() {
 			result = is_inversed_;
 	}
 
-#ifndef _QUEST_EDITOR
 	if (result) {
 		if (is_click_condition())
 			successful_click_ = true;
 		else if (is_object_click_condition())
 			successful_object_click_ = true;
 	}
-#endif
 
 	return result;
 }
@@ -489,27 +485,12 @@ const qdNamedObject *qdCondition::get_object(int idx) {
 	return NULL;
 }
 
-#ifdef _QUEST_EDITOR
-bool qdCondition::init_objects() {
-	bool result = true;
-
-	for (objects_container_t::iterator it = objects_.begin(); it != objects_.end(); ++it) {
-		if (!it->find_object())
-			result = false;
-	}
-
-	return result;
-}
-#endif
 
 bool qdCondition::init() {
 	if (type_ == CONDITION_TIMER) {
 		if (!put_value(TIMER_PERIOD, 0.0f, 1)) return false;
 		if (!put_value(TIMER_RND, 0, 1)) return false;
 	}
-#ifdef _QUEST_EDITOR
-	init_objects();
-#endif
 	return true;
 }
 } // namespace QDEngine

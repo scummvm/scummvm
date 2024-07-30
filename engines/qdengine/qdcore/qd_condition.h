@@ -542,7 +542,6 @@ public:
 
 	bool check();
 
-#ifndef _QUEST_EDITOR
 	bool is_in_group() const {
 		return is_in_group_;
 	}
@@ -562,9 +561,6 @@ public:
 	static void clear_successful_clicks() {
 		successful_click_ = successful_object_click_ = false;
 	}
-#else
-	bool init_objects();
-#endif
 
 private:
 
@@ -579,12 +575,10 @@ private:
 
 	bool is_inversed_;
 
-#ifndef _QUEST_EDITOR
 	bool is_in_group_;
 
 	static bool successful_click_;
 	static bool successful_object_click_;
-#endif
 
 	bool init_data(int data_index, qdConditionData::data_t data_type, int data_size = 0) {
 		assert(data_index >= 0 && data_index < data_.size());
