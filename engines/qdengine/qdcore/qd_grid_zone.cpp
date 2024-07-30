@@ -34,27 +34,27 @@
 namespace QDEngine {
 
 qdGridZone::qdGridZone() : qdContour(CONTOUR_POLYGON),
-	height_(0),
-	state_(false),
-	initial_state_(false),
-	state_on_(true),
-	state_off_(false),
-	update_timer_(0),
-	shadow_alpha_(QD_NO_SHADOW_ALPHA),
-	shadow_color_(0) {
-	state_on_.set_owner(this);
-	state_off_.set_owner(this);
+	_height(0),
+	_state(false),
+	_initial_state(false),
+	_state_on(true),
+	_state_off(false),
+	_update_timer(0),
+	_shadow_alpha(QD_NO_SHADOW_ALPHA),
+	_shadow_color(0) {
+	_state_on.set_owner(this);
+	_state_off.set_owner(this);
 }
 
 qdGridZone::qdGridZone(const qdGridZone &gz) : qdNamedObject(gz), qdContour(gz),
-	state_(gz.state_),
-	initial_state_(gz.initial_state_),
-	height_(gz.height_),
-	state_on_(gz.state_on_),
-	state_off_(gz.state_off_),
-	update_timer_(gz.update_timer_),
-	shadow_alpha_(gz.shadow_alpha_),
-	shadow_color_(gz.shadow_color_) {
+	_state(gz._state),
+	_initial_state(gz._initial_state),
+	_height(gz._height),
+	_state_on(gz._state_on),
+	_state_off(gz._state_off),
+	_update_timer(gz._update_timer),
+	_shadow_alpha(gz._shadow_alpha),
+	_shadow_color(gz._shadow_color) {
 }
 
 qdGridZone::~qdGridZone() {
@@ -66,17 +66,17 @@ qdGridZone &qdGridZone::operator = (const qdGridZone &gz) {
 	*static_cast<qdNamedObject *>(this) = gz;
 	*static_cast<qdContour *>(this) = gz;
 
-	state_ = gz.state_;
-	initial_state_ = gz.initial_state_;
+	_state = gz._state;
+	_initial_state = gz._initial_state;
 
-	height_ = gz.height_;
+	_height = gz._height;
 
-	state_on_ = gz.state_on_;
-	state_off_ = gz.state_off_;
-	update_timer_ = gz.update_timer_;
+	_state_on = gz._state_on;
+	_state_off = gz._state_off;
+	_update_timer = gz._update_timer;
 
-	shadow_alpha_ = gz.shadow_alpha_;
-	shadow_color_ = gz.shadow_color_;
+	_shadow_alpha = gz._shadow_alpha;
+	_shadow_color = gz._shadow_color;
 
 	return *this;
 }
@@ -91,28 +91,28 @@ bool qdGridZone::load_script(const xml::tag *p) {
 			set_flag(xml::tag_buffer(*it).get_int());
 			break;
 		case QDSCR_STATE:
-			initial_state_ = state_ = (xml::tag_buffer(*it).get_int()) ? true : false;
+			_initial_state = _state = (xml::tag_buffer(*it).get_int()) ? true : false;
 			break;
 		case QDSCR_GRID_ZONE_STATE:
 			if (const xml::tag * tg = it->search_subtag(QDSCR_STATE)) {
 				if (xml::tag_buffer(*tg).get_int())
-					state_on_.load_script(&*it);
+					_state_on.load_script(&*it);
 				else
-					state_off_.load_script(&*it);
+					_state_off.load_script(&*it);
 			}
 			break;
 		case QDSCR_GRID_ZONE_HEIGHT:
-			xml::tag_buffer(*it) > height_;
+			xml::tag_buffer(*it) > _height;
 			break;
 		case QDSCR_GRID_ZONE_CONTOUR:
 		case QDSCR_CONTOUR_POLYGON:
 			qdContour::load_script(&*it);
 			break;
 		case QDSCR_GRID_ZONE_SHADOW_COLOR:
-			xml::tag_buffer(*it) > shadow_color_;
+			xml::tag_buffer(*it) > _shadow_color;
 			break;
 		case QDSCR_GRID_ZONE_SHADOW_ALPHA:
-			xml::tag_buffer(*it) > shadow_alpha_;
+			xml::tag_buffer(*it) > _shadow_alpha;
 			break;
 		}
 	}
@@ -125,30 +125,30 @@ bool qdGridZone::save_script(Common::WriteStream &fh, int indent) const {
 		fh.writeString("\t");
 	}
 
-	fh.writeString(Common::String::format("<grid_zone name=\"%s\" grid_zone_height=\"%d\"", qdscr_XML_string(name()), height_));
+	fh.writeString(Common::String::format("<grid_zone name=\"%s\" grid_zone_height=\"%d\"", qdscr_XML_string(name()), _height));
 
 	if (flags()) {
 		fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
 	}
 
-	if (state_) {
+	if (_state) {
 		fh.writeString(" state=\"1\"");
 	} else {
 		fh.writeString(" state=\"0\"");
 	}
 
-	if (shadow_color_) {
-		fh.writeString(Common::String::format(" shadow_color=\"%d\"", shadow_color_));
+	if (_shadow_color) {
+		fh.writeString(Common::String::format(" shadow_color=\"%d\"", _shadow_color));
 	}
 
-	if (shadow_alpha_ != QD_NO_SHADOW_ALPHA) {
-		fh.writeString(Common::String::format(" shadow_alpha=\"%d\"", shadow_alpha_));
+	if (_shadow_alpha != QD_NO_SHADOW_ALPHA) {
+		fh.writeString(Common::String::format(" shadow_alpha=\"%d\"", _shadow_alpha));
 	}
 
 	fh.writeString(">\r\n");
 
-	state_on_.save_script(fh, indent + 1);
-	state_off_.save_script(fh, indent + 1);
+	_state_on.save_script(fh, indent + 1);
+	_state_off.save_script(fh, indent + 1);
 
 	if (contour_size()) {
 		qdContour::save_script(fh, indent + 1);
@@ -163,12 +163,12 @@ bool qdGridZone::save_script(Common::WriteStream &fh, int indent) const {
 }
 
 bool qdGridZone::set_height(int _h) {
-	height_ = _h;
-	if (state_) {
+	_height = _h;
+	if (_state) {
 		if (apply_zone()) {
 			qdGameScene *sp = static_cast<qdGameScene *>(owner());
 
-			update_timer_ = sp->zone_update_count();
+			_update_timer = sp->zone_update_count();
 			sp->inc_zone_update_count();
 
 			return true;
@@ -192,14 +192,14 @@ bool qdGridZone::apply_zone() const {
 
 //	const unsigned char* mask_ptr = mask_data();
 
-	if (state_) {
+	if (_state) {
 		for (int y = 0; y < mask_size().y; y ++) {
 			for (int x = 0; x < mask_size().x; x ++) {
 				if (is_inside(pos + Vect2s(x, y))) {
 //				if(*mask_ptr++){
 					if (sGridCell * p = camera->get_cell(pos + Vect2s(x, y))) {
 						p->make_walkable();
-						p->set_height(height_);
+						p->set_height(_height);
 					}
 				}
 			}
@@ -222,14 +222,14 @@ bool qdGridZone::apply_zone() const {
 }
 
 bool qdGridZone::set_state(bool st) {
-	state_ = st;
+	_state = st;
 
 	if (apply_zone()) {
 		debugC(3, kDebugLog, "[%d] zone condition: %s %s", g_system->getMillis(), transCyrillic(name()), (st) ? "on" : "off");
 
 		qdGameScene *sp = static_cast<qdGameScene *>(owner());
 
-		update_timer_ = sp->zone_update_count();
+		_update_timer = sp->zone_update_count();
 		sp->inc_zone_update_count();
 
 		return true;
@@ -300,9 +300,9 @@ bool qdGridZone::is_point_in_zone(const Vect2f &r) const {
 }
 
 qdGridZoneState *qdGridZone::get_state(const char *state_name) {
-	if (!strcmp(state_name, state_on_.name())) return &state_on_;
+	if (!strcmp(state_name, _state_on.name())) return &_state_on;
 
-	return &state_off_;
+	return &_state_off;
 }
 
 bool qdGridZone::load_data(Common::SeekableReadStream &fh, int saveVersion) {
@@ -312,9 +312,9 @@ bool qdGridZone::load_data(Common::SeekableReadStream &fh, int saveVersion) {
 	}
 
 	char st = fh.readByte();
-	update_timer_ = fh.readSint32LE();
+	_update_timer = fh.readSint32LE();
 
-	state_ = (st) ? true : false;
+	_state = (st) ? true : false;
 	debugC(3, kDebugSave, "  qdGridZone::load_data after: %ld", fh.pos());
 	return true;
 }
@@ -326,8 +326,8 @@ bool qdGridZone::save_data(Common::WriteStream &fh) const {
 		return false;
 	}
 
-	fh.writeByte(state_);
-	fh.writeSint32LE(update_timer_);
+	fh.writeByte(_state);
+	fh.writeSint32LE(_update_timer);
 
 	debugC(3, kDebugSave, "  qdGridZone::save_data after: %ld", fh.pos());
 	return true;
@@ -336,10 +336,10 @@ bool qdGridZone::save_data(Common::WriteStream &fh) const {
 
 bool qdGridZone::init() {
 #ifdef _QUEST_EDITOR
-	state_on_.init();
-	state_off_.init();
+	_state_on.init();
+	_state_off.init();
 #endif//_QUEST_EDITOR
-	return set_state(initial_state_);
+	return set_state(_initial_state);
 }
 
 bool qdGridZone::is_any_personage_in_zone() const {
@@ -348,4 +348,5 @@ bool qdGridZone::is_any_personage_in_zone() const {
 	const qdGameScene *p = static_cast<const qdGameScene *>(owner());
 	return p->is_any_personage_in_zone(this);
 }
+
 } // namespace QDEngine

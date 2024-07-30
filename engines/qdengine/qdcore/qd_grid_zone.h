@@ -79,15 +79,15 @@ public:
 	bool save_data(Common::WriteStream &fh) const;
 
 	bool state() const {
-		return state_;
+		return _state;
 	}
 	bool set_state(bool st);
 	bool toggle_state() {
-		return set_state(!state_);
+		return set_state(!_state);
 	}
 
 	unsigned height() const {
-		return height_;
+		return _height;
 	}
 	bool set_height(int _h);
 
@@ -98,7 +98,7 @@ public:
 	bool is_point_in_zone(const Vect2f &vPoint) const;
 
 	unsigned int update_timer() const {
-		return update_timer_;
+		return _update_timer;
 	}
 
 	qdGridZoneState *get_state(const char *state_name);
@@ -109,48 +109,48 @@ public:
 	bool is_any_personage_in_zone() const;
 
 	int shadow_alpha() const {
-		return shadow_alpha_;
+		return _shadow_alpha;
 	}
 	void set_shadow_alpha(int alpha) {
-		shadow_alpha_ = alpha;
+		_shadow_alpha = alpha;
 	}
 
 	unsigned shadow_color() const {
-		return shadow_color_;
+		return _shadow_color;
 	}
 	void set_shadow_color(unsigned color) {
-		shadow_color_ = color;
+		_shadow_color = color;
 	}
 	bool has_shadow() const {
-		return (shadow_alpha_ != QD_NO_SHADOW_ALPHA);
+		return (_shadow_alpha != QD_NO_SHADOW_ALPHA);
 	}
 
 private:
 
 	//! Текущее состояние зоны (вкл/выкл).
-	bool state_;
+	bool _state;
 	//! Начальное состояние зоны (вкл/выкл).
-	bool initial_state_;
+	bool _initial_state;
 
 	//! Цвет затенения персонажа, когда он находится в зоне, RGB().
-	unsigned shadow_color_;
+	unsigned _shadow_color;
 	//! Прозрачность затенения персонажа, когда он находится в зоне.
 	/**
 	Значения - [0, 255].
 	Допускается также QD_NO_SHADOW_ALPHA, затенения при этом отключается.
 	*/
-	int shadow_alpha_;
+	int _shadow_alpha;
 
 	//! Высота зоны.
-	unsigned int height_;
+	unsigned int _height;
 
 	//! Время изменения состояния.
-	unsigned int update_timer_;
+	unsigned int _update_timer;
 
 	//! Состояние включающее зону.
-	qdGridZoneState state_on_;
+	qdGridZoneState _state_on;
 	//! Состояние выключающее зону.
-	qdGridZoneState state_off_;
+	qdGridZoneState _state_off;
 
 	bool apply_zone() const;
 };
