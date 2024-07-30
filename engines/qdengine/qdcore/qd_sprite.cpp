@@ -210,24 +210,24 @@ bool qdSprite::load(const char *fname) {
 		Common::InSaveFile *saveFile = g_engine->getSaveFileManager()->openForLoading(&_file.c_str()[5]);
 
 		ExtendedSavegameHeader saveHeader;
-		if (MetaEngine::readSavegameHeader(saveFile, &saveHeader, true)) {
-			_size = _picture_size = Vect2i(qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy());
+		if (MetaEngine::readSavegameHeader(saveFile, &saveHeader, false)) {
+			_size = _picture_size = Vect2i(g_engine->_thumbSizeX, g_engine->_thumbSizeY);
 			_picture_offset = Vect2i(0, 0);
 
 			_format = GR_RGB565;
 
 			_data = new unsigned char[_size.x * _size.y * 2];
 
+			// Scale image down
+			float rx = static_cast<float>(qdGameConfig::get_config().screen_sx()) / g_engine->_thumbSizeX;
+			float ry = static_cast<float>(qdGameConfig::get_config().screen_sy()) / g_engine->_thumbSizeY;
+
 			for (int i = 0; i < _size.y; i++) {
-				uint16 *src = (uint16 *)saveHeader.thumbnail->getBasePtr(0, i);
 				uint16 *dst = (uint16 *)&_data[2 * _size.x * i];
 				for (int j = 0; j < _size.x; j++) {
-					*dst++ = *src++;
+					*dst++ = *(uint16 *)saveHeader.thumbnail->getBasePtr(rx * j, ry * i);
 				}
 			}
-
-			scale(static_cast<float>(g_engine->_thumbSizeX) / _size.x,
-				  static_cast<float>(g_engine->_thumbSizeY) / _size.y);
 		}
 
 		delete saveFile;

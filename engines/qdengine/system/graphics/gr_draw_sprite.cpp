@@ -617,25 +617,43 @@ void grDispatcher::PutSpr(int x, int y, int sx, int sy, const unsigned char *p, 
 	} else
 		dy = 1;
 
-	sx *= 3;
-	px *= 3;
+	sx *= bytes_per_pixel();
+	px *= bytes_per_pixel();
 
-	const unsigned char *data_ptr = p + py * sx;
+	const byte *data_ptr = p + py * sx;
 
-	for (int i = 0; i < psy; i ++) {
-		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
-		const unsigned char *data_line = data_ptr + px;
+	if (bytes_per_pixel() == 3) {
+		for (int i = 0; i < psy; i++) {
+			uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
+			const byte *data_line = data_ptr + px;
 
-		for (int j = 0; j < psx; j ++) {
-			if (*data_line)
-				*scr_buf = make_rgb565u(data_line[2], data_line[1], data_line[0]);
-			scr_buf += dx;
-			data_line += 3;
+			for (int j = 0; j < psx; j ++) {
+				if (*data_line)
+					*scr_buf = make_rgb565u(data_line[2], data_line[1], data_line[0]);
+				scr_buf += dx;
+				data_line += 3;
+			}
+
+			data_ptr += sx;
+			y += dy;
 		}
+	} else if (bytes_per_pixel() == 2) {
+		for (int i = 0; i < psy; i++) {
+			uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
+			const byte *data_line = data_ptr + px;
 
-		data_ptr += sx;
-		y += dy;
+			for (int j = 0; j < psx; j ++) {
+				if (*data_line)
+					*scr_buf = *(const uint16 *)data_line;
+				scr_buf += dx;
+				data_line += 2;
+			}
+
+			data_ptr += sx;
+			y += dy;
+		}
 	}
+
 }
 
 void grDispatcher::DrawSprContour_a(int x, int y, int sx, int sy, const unsigned char *p, int contour_color, int mode) {

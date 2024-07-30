@@ -52,7 +52,9 @@ qdResource::file_format_t qdResource::file_format(const char *file_name) {
 	uint len = strlen(file_name);
 
 	if (len < 4)
-	return RES_UNKNOWN;
+		return RES_UNKNOWN;
+
+	if (!strncmp(file_name, "save:", 5)) return RES_SPRITE;
 
 	Common::strlcpy(ext, &file_name[len - 4], _MAX_EXT);
 
