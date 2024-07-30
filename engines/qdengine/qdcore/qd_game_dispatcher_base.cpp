@@ -69,7 +69,7 @@ void qdGameDispatcherBase::load_script_body(const xml::tag *p) {
 }
 
 bool qdGameDispatcherBase::save_script_body(Common::WriteStream &fh, int indent) const {
-	for (auto &it : scale_infos) {
+	for (auto &it : _scale_infos) {
 		it.save_script(fh, indent + 1);
 	}
 
@@ -99,9 +99,9 @@ bool qdGameDispatcherBase::get_object_scale(const char *p, float &sc) {
 }
 
 bool qdGameDispatcherBase::remove_object_scale(const char *p) {
-	for (scale_info_container_t::iterator it = scale_infos.begin(); it != scale_infos.end(); ++it) {
+	for (scale_info_container_t::iterator it = _scale_infos.begin(); it != _scale_infos.end(); ++it) {
 		if (!strcmp(it->name(), p)) {
-			scale_infos.erase(it);
+			_scale_infos.erase(it);
 			return true;
 		}
 	}
@@ -110,7 +110,7 @@ bool qdGameDispatcherBase::remove_object_scale(const char *p) {
 }
 
 qdScaleInfo *qdGameDispatcherBase::get_scale_info(const char *p) {
-	for (scale_info_container_t::iterator it = scale_infos.begin(); it != scale_infos.end(); ++it) {
+	for (scale_info_container_t::iterator it = _scale_infos.begin(); it != _scale_infos.end(); ++it) {
 		if (!strcmp(it->name(), p)) {
 			return &*it;
 		}
@@ -120,7 +120,7 @@ qdScaleInfo *qdGameDispatcherBase::get_scale_info(const char *p) {
 }
 
 bool qdGameDispatcherBase::set_object_scale(const char *p, float sc) {
-	for (scale_info_container_t::iterator it = scale_infos.begin(); it != scale_infos.end(); ++it) {
+	for (scale_info_container_t::iterator it = _scale_infos.begin(); it != _scale_infos.end(); ++it) {
 		if (!strcmp(it->name(), p)) {
 			it->set_scale(sc);
 			return true;
@@ -155,11 +155,11 @@ int qdGameDispatcherBase::get_resources_size() {
 }
 
 void qdGameDispatcherBase::show_loading_progress(int sz) {
-	loading_progress_.show_progress(sz);
+	_loading_progress.show_progress(sz);
 }
 
 bool qdGameDispatcherBase::add_sound(qdSound *p) {
-	if (sounds.add_object(p)) {
+	if (_sounds.add_object(p)) {
 		p->set_owner(this);
 		return true;
 	}
@@ -168,27 +168,27 @@ bool qdGameDispatcherBase::add_sound(qdSound *p) {
 }
 
 bool qdGameDispatcherBase::remove_sound(const char *name) {
-	return sounds.remove_object(name);
+	return _sounds.remove_object(name);
 }
 
 bool qdGameDispatcherBase::remove_sound(qdSound *p) {
-	return sounds.remove_object(p);
+	return _sounds.remove_object(p);
 }
 
 qdSound *qdGameDispatcherBase::get_sound(const char *name) {
-	return sounds.get_object(name);
+	return _sounds.get_object(name);
 }
 
 bool qdGameDispatcherBase::is_sound_in_list(const char *name) {
-	return sounds.is_in_list(name);
+	return _sounds.is_in_list(name);
 }
 
 bool qdGameDispatcherBase::is_sound_in_list(qdSound *p) {
-	return sounds.is_in_list(p);
+	return _sounds.is_in_list(p);
 }
 
 bool qdGameDispatcherBase::add_animation(qdAnimation *p) {
-	if (animations.add_object(p)) {
+	if (_animations.add_object(p)) {
 		p->set_owner(this);
 		return true;
 	}
@@ -196,27 +196,27 @@ bool qdGameDispatcherBase::add_animation(qdAnimation *p) {
 }
 
 bool qdGameDispatcherBase::remove_animation(const char *name) {
-	return animations.remove_object(name);
+	return _animations.remove_object(name);
 }
 
 bool qdGameDispatcherBase::remove_animation(qdAnimation *p) {
-	return animations.remove_object(p);
+	return _animations.remove_object(p);
 }
 
 qdAnimation *qdGameDispatcherBase::get_animation(const char *name) {
-	return animations.get_object(name);
+	return _animations.get_object(name);
 }
 
 bool qdGameDispatcherBase::is_animation_in_list(const char *name) {
-	return animations.is_in_list(name);
+	return _animations.is_in_list(name);
 }
 
 bool qdGameDispatcherBase::is_animation_in_list(qdAnimation *p) {
-	return animations.is_in_list(p);
+	return _animations.is_in_list(p);
 }
 
 bool qdGameDispatcherBase::add_animation_set(qdAnimationSet *p) {
-	if (animation_sets.add_object(p)) {
+	if (_animation_sets.add_object(p)) {
 		p->set_owner(this);
 		return true;
 	}
@@ -224,23 +224,23 @@ bool qdGameDispatcherBase::add_animation_set(qdAnimationSet *p) {
 }
 
 bool qdGameDispatcherBase::remove_animation_set(const char *name) {
-	return animation_sets.remove_object(name);
+	return _animation_sets.remove_object(name);
 }
 
 bool qdGameDispatcherBase::remove_animation_set(qdAnimationSet *p) {
-	return animation_sets.remove_object(p);
+	return _animation_sets.remove_object(p);
 }
 
 qdAnimationSet *qdGameDispatcherBase::get_animation_set(const char *name) {
-	return animation_sets.get_object(name);
+	return _animation_sets.get_object(name);
 }
 
 bool qdGameDispatcherBase::is_animation_set_in_list(const char *name) {
-	return animation_sets.is_in_list(name);
+	return _animation_sets.is_in_list(name);
 }
 
 bool qdGameDispatcherBase::is_animation_set_in_list(qdAnimationSet *p) {
-	return animation_sets.is_in_list(p);
+	return _animation_sets.is_in_list(p);
 }
 
 #ifdef __QD_DEBUG_ENABLE__

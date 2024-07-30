@@ -37,40 +37,40 @@ namespace QDEngine {
 typedef void (*qdLoadingProgressFnc)(int percents_loaded, void *data);
 
 class qdLoadingProgressInfo {
-	unsigned total_size_;
-	unsigned loaded_size_;
-	void *data_;
-	qdLoadingProgressFnc progress_fnc_;
+	unsigned _total_size;
+	unsigned _loaded_size;
+	void *_data;
+	qdLoadingProgressFnc _progress_fnc;
 
 public:
 
 	qdLoadingProgressFnc set_callback_fnc(qdLoadingProgressFnc p, void *dp) {
-		qdLoadingProgressFnc old_fnc = progress_fnc_;
-		progress_fnc_ = p;
-		data_ = dp;
+		qdLoadingProgressFnc old_fnc = _progress_fnc;
+		_progress_fnc = p;
+		_data = dp;
 
 		return old_fnc;
 	}
 
 	void set_total_size(int sz) {
-		total_size_ = sz;
-		loaded_size_ = 0;
+		_total_size = sz;
+		_loaded_size = 0;
 	}
 	int total_size() const {
-		return total_size_;
+		return _total_size;
 	}
 
 	void show_progress(int sz) {
-		if (!total_size_ || !progress_fnc_) return;
-		loaded_size_ += sz;
-		unsigned percents = round(float(loaded_size_) / float(total_size_) * 100.0f);
-		(*progress_fnc_)(percents, data_);
+		if (!_total_size || !_progress_fnc) return;
+		_loaded_size += sz;
+		unsigned percents = round(float(_loaded_size) / float(_total_size) * 100.0f);
+		(*_progress_fnc)(percents, _data);
 	}
 
 	qdLoadingProgressInfo() {
-		progress_fnc_ = 0;
-		total_size_ = loaded_size_ = 0;
-		data_ = 0;
+		_progress_fnc = 0;
+		_total_size = _loaded_size = 0;
+		_data = 0;
 	}
 	~qdLoadingProgressInfo() { };
 };
@@ -81,11 +81,11 @@ public:
 	~qdGameDispatcherBase();
 
 	void set_resources_size(int sz) {
-		loading_progress_.set_total_size(sz);
+		_loading_progress.set_total_size(sz);
 	}
 
 	qdLoadingProgressFnc set_loading_progress_callback(qdLoadingProgressFnc p, void *dp = 0) {
-		return loading_progress_.set_callback_fnc(p, dp);
+		return _loading_progress.set_callback_fnc(p, dp);
 	}
 
 	void show_loading_progress(int sz = 0);
@@ -112,13 +112,13 @@ public:
 	bool is_animation_set_in_list(qdAnimationSet *p);
 
 	const qdSoundList &sound_list() const {
-		return sounds.get_list();
+		return _sounds.get_list();
 	}
 	const qdAnimationList &animation_list() const {
-		return animations.get_list();
+		return _animations.get_list();
 	}
 	const qdAnimationSetList &animation_set_list() const {
-		return animation_sets.get_list();
+		return _animation_sets.get_list();
 	}
 
 	virtual void load_script_body(const xml::tag *p);
@@ -130,7 +130,7 @@ public:
 	virtual void quant(float dt) { };
 
 	void add_scale_info(qdScaleInfo *p) {
-		scale_infos.push_back(*p);
+		_scale_infos.push_back(*p);
 	}
 	bool get_object_scale(const char *p, float &sc);
 	bool set_object_scale(const char *p, float sc);
@@ -150,14 +150,14 @@ public:
 
 private:
 
-	qdObjectMapContainer<qdAnimation> animations;
-	qdObjectMapContainer<qdAnimationSet> animation_sets;
-	qdObjectMapContainer<qdSound> sounds;
+	qdObjectMapContainer<qdAnimation> _animations;
+	qdObjectMapContainer<qdAnimationSet> _animation_sets;
+	qdObjectMapContainer<qdSound> _sounds;
 
 	typedef std::vector<qdScaleInfo> scale_info_container_t;
-	scale_info_container_t scale_infos;
+	scale_info_container_t _scale_infos;
 
-	qdLoadingProgressInfo loading_progress_;
+	qdLoadingProgressInfo _loading_progress;
 };
 
 } // namespace QDEngine
