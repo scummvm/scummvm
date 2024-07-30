@@ -24,8 +24,8 @@
 
 namespace QDEngine {
 
-keyboardDispatcher::keyboardDispatcher() : handler_(0) {
-	for (int i = 0; i < 256; i ++) key_states_[i] = false;
+keyboardDispatcher::keyboardDispatcher() : _handler(0) {
+	for (int i = 0; i < 256; i ++) _key_states[i] = false;
 }
 
 keyboardDispatcher::~keyboardDispatcher() {
