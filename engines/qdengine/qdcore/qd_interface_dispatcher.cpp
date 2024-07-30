@@ -21,6 +21,7 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/debug.h"
+#include "common/savefile.h"
 
 #include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
@@ -605,8 +606,8 @@ bool qdInterfaceDispatcher::handle_event(int event_code, const char *event_data,
 			} else if (modalScreenMode_ == MODAL_SCREEN_SAVE_NAME_EDIT) {
 				if (qdInterfaceEvent::EVENT_MODAL_OK == event_code) {
 					save_title_ = get_save_title();
-					if (qdInterfaceSave * save = dynamic_cast<qdInterfaceSave * >(modal_caller_ptr)) {
-						if (has_save_prompt_screen() && app_io::is_file_exist(save->save_file())) {
+					if (qdInterfaceSave *save = dynamic_cast<qdInterfaceSave * >(modal_caller_ptr)) {
+						if (has_save_prompt_screen() && g_engine->getSaveFileManager()->exists(g_engine->getSaveStateName(save->save_ID()))) {
 							setModalScreenMode(qdInterfaceDispatcher::MODAL_SCREEN_SAVE_OVERWRITE);
 							screen_ptr = dynamic_cast<qdInterfaceScreen *>(modal_caller_ptr->owner());
 							if (!screen_ptr)

@@ -113,12 +113,11 @@ bool qdInterfaceSave::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev
 					return true;
 
 				qdInterfaceDispatcher *ip = qdInterfaceDispatcher::get_dispatcher();
-				Common::String saveFile(save_file());
 				if (ip) {
 					if (ip->has_save_title_screen()) {
 						ip->setModalScreenMode(qdInterfaceDispatcher::MODAL_SCREEN_SAVE_NAME_EDIT);
 						ip->handle_event(qdInterfaceEvent::EVENT_SHOW_INTERFACE_SCREEN_AS_MODAL, ip->save_title_screen_name(), this);
-					} else if (ip->has_save_prompt_screen() && g_engine->getSaveFileManager()->exists(saveFile)) {
+					} else if (ip->has_save_prompt_screen() && g_engine->getSaveFileManager()->exists(g_engine->getSaveStateName(save_ID_))) {
 						ip->setModalScreenMode(qdInterfaceDispatcher::MODAL_SCREEN_SAVE_OVERWRITE);
 						ip->handle_event(qdInterfaceEvent::EVENT_SHOW_INTERFACE_SCREEN_AS_MODAL, ip->save_prompt_screen_name(), this);
 					} else {
@@ -155,7 +154,7 @@ bool qdInterfaceSave::init(bool is_game_active) {
 	else
 		set_lock(false);
 
-	Common::String saveFileName(save_file());
+	Common::String saveFileName(g_engine->getSaveStateName(save_ID_));
 	bool fileExists = false;
 
 	if (g_engine->getSaveFileManager()->exists(saveFileName)) {
@@ -290,7 +289,6 @@ bool qdInterfaceSave::perform_save() {
 
 		debugC(1, kDebugSave, "qdInterfaceSave::perform_save(): is_ok = %d", is_ok);
 
-		is_ok &= dp->game_screenshot(qdGameDispatcher::get_save_name(save_ID_, qdGameDispatcher::SAVE_THUMBNAIL).c_str(), thumbnail_size_x_, thumbnail_size_y_);
 		is_ok &= init(true);
 		return is_ok;
 	}
@@ -356,18 +354,6 @@ bool qdInterfaceSave::load_script_body(const xml::tag *p) {
 	}
 
 	return true;
-}
-
-Common::String qdInterfaceSave::save_file() const {
-	return qdGameDispatcher::get_save_name(save_ID_);
-}
-
- Common::String qdInterfaceSave::thumbnail_file() const {
-	return qdGameDispatcher::get_save_name(save_ID_, qdGameDispatcher::SAVE_THUMBNAIL);
-}
-
- Common::String qdInterfaceSave::description_file() const {
-	return qdGameDispatcher::get_save_name(save_ID_, qdGameDispatcher::SAVE_DESCRIPTION);
 }
 
 } // namespace QDEngine

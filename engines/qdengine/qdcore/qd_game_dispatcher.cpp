@@ -2863,24 +2863,6 @@ bool qdGameDispatcher::init() {
 	return true;
 }
 
-Common::String qdGameDispatcher::get_save_name(int slot_id, SaveFileType file_type) {
-	Common::String res = Common::String::format("%s%02d", g_engine->getGameId().c_str(), slot_id);
-
-	switch (file_type) {
-	case SAVE_FILE:
-		res = g_engine->getSaveStateName(slot_id);
-		break;
-	case SAVE_THUMBNAIL:
-		res += ".tga";
-		break;
-	case SAVE_DESCRIPTION:
-		res += ".txt";
-		break;
-	}
-
-	return res;
-}
-
 bool qdGameDispatcher::game_screenshot(Graphics::Surface &thumb) const {
 	int w = qdGameConfig::get_config().screen_sx();
 	int h = qdGameConfig::get_config().screen_sy();
@@ -2906,83 +2888,6 @@ bool qdGameDispatcher::game_screenshot(Graphics::Surface &thumb) const {
 	}
 
 	return false;
-}
-
-bool qdGameDispatcher::game_screenshot(const char *file_name, int sx, int sy) const {
-	if (qdGameScene * sp = get_active_scene()) {
-		qdSprite sprite(qdGameConfig::get_config().screen_sx(),
-		                qdGameConfig::get_config().screen_sy(),
-		                GR_RGB888);
-
-		sp->redraw();
-
-		byte r, g, b;
-		for (int i = 0; i < qdGameConfig::get_config().screen_sy(); i++)
-			for (int j = 0; j < qdGameConfig::get_config().screen_sx(); j++) {
-				grDispatcher::instance()->GetPixel(j, i, r, g, b);
-				sprite.put_pixel(j, i, r, g, b);
-			}
-
-		sprite.scale(static_cast<float>(sx) / qdGameConfig::get_config().screen_sx(),
-		             static_cast<float>(sy) / qdGameConfig::get_config().screen_sy());
-		sprite.save(file_name);
-		return true;
-	}
-	return false;
-	/*
-	if(qdGameScene* sp = get_active_scene()){
-	    static std::vector<char> screen_buf;
-	    if(screen_buf.size() < sx * sy * 3)
-	        screen_buf.resize(sx * sy * 3);
-
-	    sp->redraw();
-
-	    int dx = (qdGameConfig::get_config().screen_sx() << 16) / sx;
-	    int dy = (qdGameConfig::get_config().screen_sy() << 16) / sy;
-	    int fy = (1 << 15);
-
-	    char* p = &*screen_buf.begin();
-
-	    for(int y = 0; y < sy; y++){
-	        int y0 = (fy >> 16);
-	        fy += dy;
-	        int fx = (1 << 15);
-	        for(int x = 0; x < sx; x++){
-	            unsigned r,g,b;
-	            grDispatcher::instance()->GetPixel(fx >> 16,y0,r,g,b);
-
-	            p[2] = r;
-	            p[1] = g;
-	            p[0] = b;
-
-	            p += 3;
-
-	            fx += dx;
-	        }
-	    }
-
-	    static unsigned char header[18];
-
-	    memset(header,0,18);
-	    header[2] = 2;
-
-	    header[13] = (sx >> 8) & 0xFF;
-	    header[12] = sx & 0xFF;
-
-	    header[15] = (sy >> 8) & 0xFF;
-	    header[14] = sy & 0xFF;
-
-	    header[16] = 24;
-	    header[17] = 0x20;
-
-	    fh.write(header,18);
-
-	    fh.write(&*screen_buf.begin(),sx * sy * 3);
-
-	    fh.close();
-	}
-	return false;
-	*/
 }
 
 bool qdGameDispatcher::restart() {
