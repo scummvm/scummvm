@@ -80,31 +80,31 @@ public:
 	bool quant(float dt);
 
 	const char *border_background_file() const {
-		return border_background_.animation_file();
+		return _border_background.animation_file();
 	}
 	void set_border_background_file(const char *file_name) {
-		border_background_.set_animation_file(file_name);
+		_border_background.set_animation_file(file_name);
 	}
 
 	unsigned background_color() const {
-		return background_color_;
+		return _background_color;
 	}
 	void set_background_color(unsigned color) {
-		background_color_ = color;
+		_background_color = color;
 	}
 
 	int background_alpha() const {
-		return background_alpha_;
+		return _background_alpha;
 	}
 	void set_background_alpha(int alpha) {
-		background_alpha_ = alpha;
+		_background_alpha = alpha;
 	}
 
 	bool has_background_color() const {
-		return has_background_color_;
+		return _has_background_color;
 	}
 	void toggle_background_color(bool state) {
-		has_background_color_ = state;
+		_has_background_color = state;
 	}
 
 #ifndef _QUEST_EDITOR
@@ -126,69 +126,69 @@ public:
 	int size_y() const;
 
 	const Vect2i &text_size() const {
-		return text_size_;
+		return _text_size;
 	}
 	void set_text_size(const Vect2i &sz) {
-		text_size_ = sz;
+		_text_size = sz;
 	}
 
 	const char *slider_name() const {
-		return slider_name_.c_str();
+		return _slider_name.c_str();
 	}
 	void set_slider_name(const char *name) {
-		slider_name_ = name;
+		_slider_name = name;
 	}
 
 	//! Возвращает true, если точка с экранными координатами (x,у) попадает в элемент.
 	bool hit_test(int x, int y) const;
 
 	WindowType windowType() const {
-		return windowType_;
+		return _windowType;
 	}
 	void setWindowType(WindowType type) {
-		windowType_ = type;
+		_windowType = type;
 	}
 
 	InfoType infoType() const {
-		return infoType_;
+		return _infoType;
 	}
 	void setInfoType(InfoType type) {
-		infoType_ = type;
+		_infoType = type;
 	}
 
 	int playerID() const {
-		return playerID_;
+		return _playerID;
 	}
 	void setPlayerID(int id) {
-		playerID_ = id;
+		_playerID = id;
 	}
 
 	const char *input_string() const {
-		return inputString_.c_str();
+		return _inputString.c_str();
 	}
 	void set_input_string(const char *str);
 	bool edit_start();
 	bool edit_done(bool cancel = false);
 
 	TextVAlign text_valign() const {
-		return textVAlign_;
+		return _textVAlign;
 	}
 	void set_text_valign(TextVAlign align) {
-		textVAlign_ = align;
+		_textVAlign = align;
 	}
 
 	int inputStringLimit() const {
-		return inputStringLimit_;
+		return _inputStringLimit;
 	}
 	void setInputStringLimit(int length) {
-		inputStringLimit_ = length;
+		_inputStringLimit = length;
 	}
 
 	const qdScreenTextFormat &textFormat() const {
-		return textFormat_;
+		return _textFormat;
 	}
 	void setTextFormat(const qdScreenTextFormat &format) {
-		textFormat_ = format;
+		_textFormat = format;
 	}
 
 protected:
@@ -200,44 +200,44 @@ protected:
 
 private:
 
-	WindowType windowType_;
+	WindowType _windowType;
 
-	InfoType infoType_;
-	int playerID_;
+	InfoType _infoType;
+	int _playerID;
 
 	//! Размер текстовой области окна.
-	Vect2i text_size_;
+	Vect2i _text_size;
 
-	TextVAlign textVAlign_;
+	TextVAlign _textVAlign;
 
 	//! Скорость выезжания текста, если нулевая появляется мгновенно.
-	float scrolling_speed_;
+	float _scrolling_speed;
 
-	float scrolling_position_;
-	int text_set_position_;
+	float _scrolling_position;
+	int _text_set_position;
 
-	qdInterfaceElementState border_background_;
-	unsigned background_color_;
-	bool has_background_color_;
-	int background_alpha_;
+	qdInterfaceElementState _border_background;
+	unsigned _background_color;
+	bool _has_background_color;
+	int _background_alpha;
 
-	int text_set_id_;
-	qdScreenTextSet *text_set_;
+	int _text_set_id;
+	qdScreenTextSet *_text_set;
 
-	std::string slider_name_;
-	qdInterfaceSlider *slider_;
+	std::string _slider_name;
+	qdInterfaceSlider *_slider;
 
-	std::string inputString_;
-	std::string inputStringBackup_;
-	qdScreenTextFormat textFormat_;
-	int inputStringLimit_;
-	bool isEditing_;
-	int caretPose_;
+	std::string _inputString;
+	std::string _inputStringBackup;
+	qdScreenTextFormat _textFormat;
+	int _inputStringLimit;
+	bool _isEditing;
+	int _caretPose;
 
-	UI_TextParser parser_;
+	UI_TextParser _parser;
 
-	static bool caretVisible_;
-	static float caretTimer_;
+	static bool _caretVisible;
+	static float _caretTimer;
 
 	void update_text_position();
 	void set_scrolling(int y_delta);
