@@ -68,21 +68,21 @@ public:
 
 	/// количество отображаемых разрядов
 	int digits() const {
-		return digits_;
+		return _digits;
 	}
 	void setDigits(int digits) {
-		digits_ = digits;
+		_digits = digits;
 	}
 
 	const qdScreenTextFormat &textFormat() const {
-		return textFormat_;
+		return _textFormat;
 	}
 	void setTextFormat(const qdScreenTextFormat &text_format) {
-		textFormat_ = text_format;
+		_textFormat = text_format;
 	}
 
 	const qdCounter *counter() const {
-		return counter_;
+		return _counter;
 	}
 	void setCounter(const qdCounter *counter);
 
@@ -100,14 +100,14 @@ protected:
 
 private:
 
-	qdScreenTextFormat textFormat_;
+	qdScreenTextFormat _textFormat;
 
-	int digits_;
+	int _digits;
 
-	std::string counterName_;
-	const qdCounter *counter_;
+	std::string _counterName;
+	const qdCounter *_counter;
 
-	int lastValue_;
+	int _lastValue;
 };
 
 } // namespace QDEngine
