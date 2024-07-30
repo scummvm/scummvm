@@ -484,7 +484,6 @@ public:
 		return !startup_scene_.empty();
 	}
 
-	bool game_screenshot(const char *file_name, int sx, int sy) const;
 	bool game_screenshot(Graphics::Surface &thumb) const;
 
 	void scan_files(qdLoadingProgressFnc progress_fnc, void *context_ptr);
@@ -533,15 +532,6 @@ public:
 		set_flag(LOAD_GAME_FLAG);
 		autosave_slot_ = save_slot;
 	}
-
-	enum SaveFileType {
-		SAVE_FILE,
-		SAVE_THUMBNAIL,
-		SAVE_DESCRIPTION
-	};
-
-	//! Возвращает имя файла сэйва или имя файла превью сэйва.
-	static Common::String get_save_name(int slot_id, SaveFileType file_type = SAVE_FILE);
 
 	static grFont *create_font(int font_idx);
 	static void free_font(grFont *fnt);

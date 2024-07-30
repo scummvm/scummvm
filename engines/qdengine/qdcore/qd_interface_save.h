@@ -113,13 +113,6 @@ public:
 		save_ID_ = id;
 	}
 
-	//! Возвращает имя сэйв-файла.
-	Common::String save_file() const;
-	//! Возвращает имя файла картинки-превью сэйва.
-	Common::String thumbnail_file() const;
-	//! Возвращает имя файла описания сэйва.
-	Common::String description_file() const;
-
 	//! Устанавливает режим работы - записывать (state == true) или загружать (state == false) сэйвы.
 	static void set_save_mode(bool state) {
 		save_mode_ = state;
