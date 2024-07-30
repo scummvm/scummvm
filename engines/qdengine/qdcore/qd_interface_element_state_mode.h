@@ -48,19 +48,19 @@ public:
 	void set_sound_file(const char *name);
 	//! Возвращает имя файла звука.
 	const char *sound_file() const {
-		return sound_file_.c_str();
+		return _sound_file.c_str();
 	}
 	//! Устанавливает звук события.
 	void set_sound(const qdSound *p) {
-		sound_ = p;
+		_sound = p;
 	}
 	//! Возвращает звук события.
 	const qdSound *sound() const {
-		return sound_;
+		return _sound;
 	}
 	//! Возвращает true, если к событию привязан звук.
 	bool has_sound() const {
-		return !sound_file_.empty();
+		return !_sound_file.empty();
 	}
 
 	//! Устанавливает имя файла для анимации.
@@ -70,56 +70,56 @@ public:
 	void set_animation_file(const char *name);
 	//! Возвращает имя файла для анимации.
 	const char *animation_file() const {
-		return animation_file_.c_str();
+		return _animation_file.c_str();
 	}
 	//! Возвращает флаги анимации.
 	int animation_flags() const {
-		return animation_flags_;
+		return _animation_flags;
 	}
 
 	//! Устанавливает флаг анимации.
 	void set_animation_flag(int fl) {
-		animation_flags_ |= fl;
+		_animation_flags |= fl;
 	}
 	//! Скидывает флаг анимации.
 	void drop_animation_flag(int fl) {
-		animation_flags_ &= ~fl;
+		_animation_flags &= ~fl;
 	}
 	//! Возвращает true, если для анимации установлен флаг fl.
 	bool check_animation_flag(int fl) const {
-		if (animation_flags_ & fl) return true;
+		if (_animation_flags & fl) return true;
 		return false;
 	}
 
 	//! Устанавливает указатель на анимацию события.
 	void set_animation(const qdAnimation *p) {
-		animation_ = p;
+		_animation = p;
 	}
 	//! Возвращает указатель на анимацию события.
 	const qdAnimation *animation() const {
-		return animation_;
+		return _animation;
 	}
 	//! Возвращает true, если к состоянию привязана анимация.
 	bool has_animation() const {
-		return !animation_file_.empty();
+		return !_animation_file.empty();
 	}
 	//! Возвращает true, если у состояния задан контур.
 	bool has_contour() const {
-		return !contour_.is_contour_empty();
+		return !_contour.is_contour_empty();
 	}
 	//! Возвращает true, если точка с экранными координатами (x,у) попадает внутрь контура.
 	bool hit_test(int x, int y) const {
-		return contour_.is_inside(Vect2s(x, y));
+		return _contour.is_inside(Vect2s(x, y));
 	}
 
 	//! Записывает контур в cnt.
 	bool get_contour(qdContour &cnt) const {
-		cnt = contour_;
+		cnt = _contour;
 		return true;
 	}
 	//! Устанавливает контур.
 	bool set_contour(const qdContour &cnt) {
-		contour_ = cnt;
+		_contour = cnt;
 		return true;
 	}
 
@@ -134,21 +134,21 @@ public:
 private:
 
 	//! Имя файла звука.
-	std::string sound_file_;
+	std::string _sound_file;
 
 	//! Звук, включаемый событием.
-	const qdSound *sound_;
+	const qdSound *_sound;
 
 	//! Имя файла для анимации
-	std::string animation_file_;
+	std::string _animation_file;
 	//! Флаги для анимации.
-	int animation_flags_;
+	int _animation_flags;
 
 	//! Анимация, включаемая событием.
-	const qdAnimation *animation_;
+	const qdAnimation *_animation;
 
 	//! Контур.
-	qdContour contour_;
+	qdContour _contour;
 };
 
 } // namespace QDEngine

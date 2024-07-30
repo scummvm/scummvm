@@ -29,18 +29,18 @@
 
 namespace QDEngine {
 
-qdInterfaceElementStateMode::qdInterfaceElementStateMode() : sound_(NULL),
-	animation_flags_(0),
-	animation_(NULL),
-	contour_(qdContour::CONTOUR_POLYGON) {
+qdInterfaceElementStateMode::qdInterfaceElementStateMode() : _sound(NULL),
+	_animation_flags(0),
+	_animation(NULL),
+	_contour(qdContour::CONTOUR_POLYGON) {
 }
 
-qdInterfaceElementStateMode::qdInterfaceElementStateMode(const qdInterfaceElementStateMode &ev) : sound_file_(ev.sound_file_),
-	sound_(ev.sound_),
-	animation_file_(ev.animation_file_),
-	animation_flags_(ev.animation_flags_),
-	animation_(ev.animation_),
-	contour_(ev.contour_) {
+qdInterfaceElementStateMode::qdInterfaceElementStateMode(const qdInterfaceElementStateMode &ev) : _sound_file(ev._sound_file),
+	_sound(ev._sound),
+	_animation_file(ev._animation_file),
+	_animation_flags(ev._animation_flags),
+	_animation(ev._animation),
+	_contour(ev._contour) {
 }
 
 qdInterfaceElementStateMode::~qdInterfaceElementStateMode() {
@@ -49,30 +49,30 @@ qdInterfaceElementStateMode::~qdInterfaceElementStateMode() {
 qdInterfaceElementStateMode &qdInterfaceElementStateMode::operator = (const qdInterfaceElementStateMode &ev) {
 	if (this == &ev) return *this;
 
-	sound_file_ = ev.sound_file_;
-	sound_ = ev.sound_;
+	_sound_file = ev._sound_file;
+	_sound = ev._sound;
 
-	animation_file_ = ev.animation_file_;
-	animation_flags_ = ev.animation_flags_;
-	animation_ = ev.animation_;
+	_animation_file = ev._animation_file;
+	_animation_flags = ev._animation_flags;
+	_animation = ev._animation;
 
-	contour_ = ev.contour_;
+	_contour = ev._contour;
 
 	return *this;
 }
 
 void qdInterfaceElementStateMode::set_sound_file(const char *name) {
 	if (name)
-		sound_file_ = name;
+		_sound_file = name;
 	else
-		sound_file_.clear();
+		_sound_file.clear();
 }
 
 void qdInterfaceElementStateMode::set_animation_file(const char *name) {
 	if (name)
-		animation_file_ = name;
+		_animation_file = name;
 	else
-		animation_file_.clear();
+		_animation_file.clear();
 }
 
 bool qdInterfaceElementStateMode::save_script(Common::WriteStream &fh, int type_id, int indent) const {
@@ -85,8 +85,8 @@ bool qdInterfaceElementStateMode::save_script(Common::WriteStream &fh, int type_
 		fh.writeString(Common::String::format(" animation=\"%s\"", qdscr_XML_string(animation_file())));
 	}
 
-	if (animation_flags_) {
-		fh.writeString(Common::String::format(" animation_flags=\"%d\"", animation_flags_));
+	if (_animation_flags) {
+		fh.writeString(Common::String::format(" animation_flags=\"%d\"", _animation_flags));
 	}
 
 	if (has_sound()) {
@@ -95,7 +95,7 @@ bool qdInterfaceElementStateMode::save_script(Common::WriteStream &fh, int type_
 
 	if (has_contour()) {
 		fh.writeString(">\r\n");
-		contour_.save_script(fh, indent + 1);
+		_contour.save_script(fh, indent + 1);
 		for (int i = 0; i < indent; i++) {
 			fh.writeString("\t");
 		}
@@ -114,22 +114,22 @@ bool qdInterfaceElementStateMode::load_script(const xml::tag *p) {
 			set_sound_file(it->data());
 			break;
 		case QDSCR_INTERFACE_ANIMATION_FLAGS:
-			xml::tag_buffer(*it) > animation_flags_;
+			xml::tag_buffer(*it) > _animation_flags;
 			break;
 		case QDSCR_ANIMATION:
 			set_animation_file(it->data());
 			break;
 		case QDSCR_CONTOUR_CIRCLE:
-			contour_.set_contour_type(qdContour::CONTOUR_CIRCLE);
-			contour_.load_script(&*it);
+			_contour.set_contour_type(qdContour::CONTOUR_CIRCLE);
+			_contour.load_script(&*it);
 			break;
 		case QDSCR_CONTOUR_RECTANGLE:
-			contour_.set_contour_type(qdContour::CONTOUR_RECTANGLE);
-			contour_.load_script(&*it);
+			_contour.set_contour_type(qdContour::CONTOUR_RECTANGLE);
+			_contour.load_script(&*it);
 			break;
 		case QDSCR_CONTOUR_POLYGON:
-			contour_.set_contour_type(qdContour::CONTOUR_POLYGON);
-			contour_.load_script(&*it);
+			_contour.set_contour_type(qdContour::CONTOUR_POLYGON);
+			_contour.load_script(&*it);
 			break;
 		}
 	}
