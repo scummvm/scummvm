@@ -68,16 +68,16 @@ public:
 
 	qdTriggerElementPtr root_element() {
 #ifdef _QUEST_EDITOR
-		return root_;
+		return _root;
 #else
-		return &root_;
+		return &_root;
 #endif // _QUEST_EDITOR
 	}
 	qdTriggerElementConstPtr root_element() const {
 #ifdef _QUEST_EDITOR
-		return root_;
+		return _root;
 #else
-		return &root_;
+		return &_root;
 #endif // _QUEST_EDITOR
 	}
 
@@ -99,7 +99,7 @@ public:
 	bool init_debug_check();
 
 	const qdTriggerElementList &elements_list() const {
-		return elements_;
+		return _elements;
 	}
 	bool is_element_in_list(const qdNamedObject *p) const;
 	bool is_element_in_list(qdTriggerElementConstPtr p) const;
@@ -135,11 +135,11 @@ public:
 private:
 
 #ifdef _QUEST_EDITOR
-	qdTriggerElementPtr root_;
+	qdTriggerElementPtr _root;
 #else
-	qdTriggerElement root_;
+	qdTriggerElement _root;
 #endif // _QUEST_EDITOR
-	qdTriggerElementList elements_;
+	qdTriggerElementList _elements;
 
 	bool reindex_elements();
 #ifdef _QUEST_EDITOR
