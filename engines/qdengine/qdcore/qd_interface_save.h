@@ -68,34 +68,34 @@ public:
 
 	//! Возвращает размер картики-превью по горизонтали в пикселах.
 	int thumbnail_size_x() const {
-		return thumbnail_size_x_;
+		return _thumbnail_size_x;
 	}
 	//! Возвращает размер картики-превью по вертикали в пикселах.
 	int thumbnail_size_y() const {
-		return thumbnail_size_y_;
+		return _thumbnail_size_y;
 	}
 
 	//! Назначает размер картики-превью по горизонтали в пикселах.
 	void set_thumbnail_size_x(int sx) {
-		thumbnail_size_x_ = sx;
+		_thumbnail_size_x = sx;
 	}
 	//! Назначает размер картики-превью по вертикали в пикселах.
 	void set_thumbnail_size_y(int sy) {
-		thumbnail_size_y_ = sy;
+		_thumbnail_size_y = sy;
 	}
 
 	//! Смещение текста, выводимого в сэйве, относительно левого-верхнего угла
 	int text_dx() const {
-		return text_dx_;
+		return _text_dx;
 	}
 	int text_dy() const {
-		return text_dy_;
+		return _text_dy;
 	}
 	void set_test_dx(int val) {
-		text_dx_ = val;
+		_text_dx = val;
 	}
 	void set_test_dy(int val) {
-		text_dy_ = val;
+		_text_dy = val;
 	}
 
 	//! Обсчет логики, параметр - время в секундах.
@@ -106,16 +106,16 @@ public:
 
 	//! Возвращает номер сэйва.
 	int save_ID() const {
-		return save_ID_;
+		return _save_ID;
 	}
 	//! Устанавливает номер сэйва.
 	void set_save_ID(int id) {
-		save_ID_ = id;
+		_save_ID = id;
 	}
 
 	//! Устанавливает режим работы - записывать (state == true) или загружать (state == false) сэйвы.
 	static void set_save_mode(bool state) {
-		save_mode_ = state;
+		_save_mode = state;
 	}
 
 	//! Устанавливает имя файла для анимации.
@@ -123,54 +123,54 @@ public:
 	Если надо убрать анимацию - передать NULL в качестве имени файла.
 	*/
 	void set_frame_animation_file(const char *name, qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) {
-		frame_.set_animation_file(name, mode);
+		_frame.set_animation_file(name, mode);
 	}
 	//! Возвращает имя файла для анимации.
 	const char *frame_animation_file(qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) const {
-		return frame_.animation_file(mode);
+		return _frame.animation_file(mode);
 	}
 	//! Возвращает флаги анимации.
 	int frame_animation_flags(qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) const {
-		return frame_.animation_flags(mode);
+		return _frame.animation_flags(mode);
 	}
 
 	//! Устанавливает флаг анимации.
 	void set_frame_animation_flag(int fl, qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) {
-		frame_.set_animation_flag(fl, mode);
+		_frame.set_animation_flag(fl, mode);
 	}
 	//! Скидывает флаг анимации.
 	void drop_frame_animation_flag(int fl, qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) {
-		frame_.drop_animation_flag(fl, mode);
+		_frame.drop_animation_flag(fl, mode);
 	}
 	//! Возвращает true, если для анимации установлен флаг fl.
 	bool check_frame_animation_flag(int fl, qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) const {
-		return frame_.check_animation_flag(fl, mode);
+		return _frame.check_animation_flag(fl, mode);
 	}
 
 	//! Возвращает true, если к сейву привязана анимация рамки.
 	bool frame_has_animation(qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) const {
-		return frame_.has_animation(mode);
+		return _frame.has_animation(mode);
 	}
 
 	void set_frame_sound_file(const char *name, qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) {
-		frame_.set_sound_file(name, mode);
+		_frame.set_sound_file(name, mode);
 	}
 	const char *frame_sound_file(qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) const {
-		return frame_.sound_file(mode);
+		return _frame.sound_file(mode);
 	}
 
 	bool isAutosaveSlot() const {
-		return isAutosaveSlot_;
+		return _isAutosaveSlot;
 	}
 	void setAutosaveSlot(bool state) {
-		isAutosaveSlot_ = state;
+		_isAutosaveSlot = state;
 	}
 
 	void set_title(const char *title) {
-		save_title_ = title;
+		_save_title = title;
 	}
 	const char *title() const {
-		return save_title_.c_str();
+		return _save_title.c_str();
 	}
 
 	//! Осуществить сохранение текущего состояния игры в ячейку сэйва.
@@ -186,33 +186,33 @@ protected:
 private:
 
 	//! Горизонтальный размер картинки-превью сэйва.
-	int thumbnail_size_x_;
+	int _thumbnail_size_x;
 	//! Вертикальный размер картинки-превью сэйва.
-	int thumbnail_size_y_;
+	int _thumbnail_size_y;
 
 	//! Смещение текста, выводимого в сэйве, относительно левого-верхнего угла
-	int text_dx_;
-	int text_dy_;
+	int _text_dx;
+	int _text_dy;
 
 	//! Номер сэйва, имя файла имеет вид saveNNN.dat, где NNN - save_ID_.
-	int save_ID_;
+	int _save_ID;
 
 	/// если true, то игрок сам не может записать игру в этот слот
-	bool isAutosaveSlot_;
+	bool _isAutosaveSlot;
 
 	//! Превью сэйва.
-	qdInterfaceElementState thumbnail_;
+	qdInterfaceElementState _thumbnail;
 
-	std::string save_title_;
+	std::string _save_title;
 
 	//! Опциональная рамка вокруг картинки-превью сэйва.
-	qdInterfaceElementState frame_;
+	qdInterfaceElementState _frame;
 
 	//! Режим работы сэйвов - чтение/запись (== false/true).
-	static bool save_mode_;
+	static bool _save_mode;
 
 	//! Текущий номер сэйва.
-	static int current_save_ID_;
+	static int _current_save_ID;
 };
 
 } // namespace QDEngine

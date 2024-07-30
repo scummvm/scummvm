@@ -41,39 +41,39 @@
 
 namespace QDEngine {
 
-bool qdInterfaceSave::save_mode_ = false;
-int qdInterfaceSave::current_save_ID_ = 0;
+bool qdInterfaceSave::_save_mode = false;
+int qdInterfaceSave::_current_save_ID = 0;
 
-qdInterfaceSave::qdInterfaceSave() : save_ID_(0),
-	thumbnail_size_x_(0),
-	thumbnail_size_y_(0),
-	text_dx_(0),
-	text_dy_(0) {
-	thumbnail_.set_owner(this);
-	frame_.set_owner(this);
+qdInterfaceSave::qdInterfaceSave() : _save_ID(0),
+	_thumbnail_size_x(0),
+	_thumbnail_size_y(0),
+	_text_dx(0),
+	_text_dy(0) {
+	_thumbnail.set_owner(this);
+	_frame.set_owner(this);
 
-	isAutosaveSlot_ = false;
+	_isAutosaveSlot = false;
 
-	save_ID_ = current_save_ID_++;
+	_save_ID = _current_save_ID++;
 }
 
 qdInterfaceSave::qdInterfaceSave(const qdInterfaceSave &sv) : qdInterfaceElement(sv),
-	save_ID_(sv.save_ID_),
-	thumbnail_size_x_(sv.thumbnail_size_x_),
-	thumbnail_size_y_(sv.thumbnail_size_y_),
-	text_dx_(sv.text_dx()),
-	text_dy_(sv.text_dy()),
-	isAutosaveSlot_(sv.isAutosaveSlot_) {
-	thumbnail_.set_owner(this);
-	thumbnail_ = sv.thumbnail_;
+	_save_ID(sv._save_ID),
+	_thumbnail_size_x(sv._thumbnail_size_x),
+	_thumbnail_size_y(sv._thumbnail_size_y),
+	_text_dx(sv.text_dx()),
+	_text_dy(sv.text_dy()),
+	_isAutosaveSlot(sv._isAutosaveSlot) {
+	_thumbnail.set_owner(this);
+	_thumbnail = sv._thumbnail;
 
-	frame_.set_owner(this);
-	frame_ = sv.frame_;
+	_frame.set_owner(this);
+	_frame = sv._frame;
 }
 
 qdInterfaceSave::~qdInterfaceSave() {
-	thumbnail_.unregister_resources();
-	frame_.unregister_resources();
+	_thumbnail.unregister_resources();
+	_frame.unregister_resources();
 }
 
 qdInterfaceSave &qdInterfaceSave::operator = (const qdInterfaceSave &sv) {
@@ -81,34 +81,34 @@ qdInterfaceSave &qdInterfaceSave::operator = (const qdInterfaceSave &sv) {
 
 	*static_cast<qdInterfaceElement *>(this) = sv;
 
-	save_ID_ = sv.save_ID_;
+	_save_ID = sv._save_ID;
 
-	thumbnail_size_x_ = sv.thumbnail_size_x_;
-	thumbnail_size_y_ = sv.thumbnail_size_y_;
+	_thumbnail_size_x = sv._thumbnail_size_x;
+	_thumbnail_size_y = sv._thumbnail_size_y;
 
-	isAutosaveSlot_ = sv.isAutosaveSlot_;
+	_isAutosaveSlot = sv._isAutosaveSlot;
 
-	text_dx_ = sv.text_dx();
-	text_dy_ = sv.text_dy();
+	_text_dx = sv.text_dx();
+	_text_dy = sv.text_dy();
 
-	thumbnail_ = sv.thumbnail_;
-	frame_ = sv.frame_;
+	_thumbnail = sv._thumbnail;
+	_frame = sv._frame;
 
 	return *this;
 }
 
 bool qdInterfaceSave::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
-	frame_.mouse_handler(x, y, ev);
+	_frame.mouse_handler(x, y, ev);
 	debugC(9, kDebugInput, "qdInterfaceSave::mouse_handler(): ev = %d, x = %d, y = %d", ev, x, y);
 
 	switch (ev) {
 	case mouseDispatcher::EV_LEFT_DOWN:
 	case mouseDispatcher::EV_RIGHT_DOWN:
 		if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher()) {
-			debugC(1, kDebugSave, "qdInterfaceSave::mouse_handler(): save_mode_ = %d", save_mode_);
+			debugC(1, kDebugSave, "qdInterfaceSave::mouse_handler(): _save_mode = %d", _save_mode);
 			clear_screen_region();
 
-			if (save_mode_) {
+			if (_save_mode) {
 				if (isAutosaveSlot())
 					return true;
 
@@ -117,7 +117,7 @@ bool qdInterfaceSave::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev
 					if (ip->has_save_title_screen()) {
 						ip->setModalScreenMode(qdInterfaceDispatcher::MODAL_SCREEN_SAVE_NAME_EDIT);
 						ip->handle_event(qdInterfaceEvent::EVENT_SHOW_INTERFACE_SCREEN_AS_MODAL, ip->save_title_screen_name(), this);
-					} else if (ip->has_save_prompt_screen() && g_engine->getSaveFileManager()->exists(g_engine->getSaveStateName(save_ID_))) {
+					} else if (ip->has_save_prompt_screen() && g_engine->getSaveFileManager()->exists(g_engine->getSaveStateName(_save_ID))) {
 						ip->setModalScreenMode(qdInterfaceDispatcher::MODAL_SCREEN_SAVE_OVERWRITE);
 						ip->handle_event(qdInterfaceEvent::EVENT_SHOW_INTERFACE_SCREEN_AS_MODAL, ip->save_prompt_screen_name(), this);
 					} else {
@@ -128,8 +128,8 @@ bool qdInterfaceSave::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev
 
 				return true;
 			} else {
-				debugC(1, kDebugSave, "qdInterfaceSave::mouse_handler(): load_game() save_ID_ = %d", save_ID_);
-				g_engine->loadGameState(save_ID_);
+				debugC(1, kDebugSave, "qdInterfaceSave::mouse_handler(): load_game() _save_ID = %d", _save_ID);
+				g_engine->loadGameState(_save_ID);
 				if (qdInterfaceDispatcher *ip = qdInterfaceDispatcher::get_dispatcher())
 					ip->handle_event(qdInterfaceEvent::EVENT_RESUME_GAME, NULL);
 
@@ -149,12 +149,12 @@ bool qdInterfaceSave::keyboard_handler(int vkey) {
 }
 
 bool qdInterfaceSave::init(bool is_game_active) {
-	if (!is_game_active && frame_.need_active_game())
+	if (!is_game_active && _frame.need_active_game())
 		set_lock(true);
 	else
 		set_lock(false);
 
-	Common::String saveFileName(g_engine->getSaveStateName(save_ID_));
+	Common::String saveFileName(g_engine->getSaveStateName(_save_ID));
 	bool fileExists = false;
 
 	if (g_engine->getSaveFileManager()->exists(saveFileName)) {
@@ -165,18 +165,18 @@ bool qdInterfaceSave::init(bool is_game_active) {
 		ExtendedSavegameHeader header;
 
 		if (MetaEngine::readSavegameHeader(saveFile, &header, true))
-			save_title_ =  header.description.c_str();
+			_save_title =  header.description.c_str();
 
 		delete saveFile;
 
-		thumbnail_.set_animation_file(Common::String::format("save:%s", saveFileName.c_str()).c_str());
+		_thumbnail.set_animation_file(Common::String::format("save:%s", saveFileName.c_str()).c_str());
 	} else {
-		save_title_ = "";
+		_save_title = "";
 	}
 
-	set_state(&frame_);
+	set_state(&_frame);
 
-	if (!save_mode_ && !fileExists) {
+	if (!_save_mode && !fileExists) {
 		if (is_visible()) {
 			debugC(3, kDebugInput, "qdInterfaceSave::init(): Hide %s", saveFileName.c_str());
 			hide();
@@ -200,7 +200,7 @@ bool qdInterfaceSave::redraw() const {
 	//warning("STUB: qdInterfaceSave::redraw()");
 	if (qdInterfaceDispatcher *pid = qdInterfaceDispatcher::get_dispatcher()) {
 		if (pid->need_save_screenshot())
-			if (const qdAnimation *p = thumbnail_.animation())
+			if (const qdAnimation *p = _thumbnail.animation())
 				p->redraw(r().x, r().y, 0);
 
 		std::string text;
@@ -232,7 +232,7 @@ bool qdInterfaceSave::redraw() const {
 
 grScreenRegion qdInterfaceSave::screen_region() const {
 	grScreenRegion reg0 = qdInterfaceElement::screen_region();
-	grScreenRegion reg1(r().x, r().y, thumbnail_size_x_, thumbnail_size_y_);
+	grScreenRegion reg1(r().x, r().y, _thumbnail_size_x, _thumbnail_size_y);
 
 	reg0 += reg1;
 
@@ -240,8 +240,8 @@ grScreenRegion qdInterfaceSave::screen_region() const {
 }
 
 int qdInterfaceSave::size_x() const {
-	int x = thumbnail_size_x_;
-	if (const qdAnimation *p = frame_.animation()) {
+	int x = _thumbnail_size_x;
+	if (const qdAnimation *p = _frame.animation()) {
 		if (x < p->size_x())
 			x = p->size_x();
 	}
@@ -250,8 +250,8 @@ int qdInterfaceSave::size_x() const {
 }
 
 int qdInterfaceSave::size_y() const {
-	int y = thumbnail_size_y_;
-	if (const qdAnimation *p = frame_.animation()) {
+	int y = _thumbnail_size_y;
+	if (const qdAnimation *p = _frame.animation()) {
 		if (y < p->size_y())
 			y = p->size_y();
 	}
@@ -262,7 +262,7 @@ int qdInterfaceSave::size_y() const {
 bool qdInterfaceSave::quant(float dt) {
 	qdInterfaceElement::quant(dt);
 
-	frame_.quant(dt);
+	_frame.quant(dt);
 
 	return true;
 }
@@ -275,7 +275,7 @@ bool qdInterfaceSave::hit_test(int x, int y) const {
 
 	bool result = false;
 
-	if (x >= -thumbnail_size_x_ / 2 && x < thumbnail_size_x_ / 2 && y >= -thumbnail_size_y_ / 2 && y < thumbnail_size_y_ / 2)
+	if (x >= -_thumbnail_size_x / 2 && x < _thumbnail_size_x / 2 && y >= -_thumbnail_size_y / 2 && y < _thumbnail_size_y / 2)
 		result = true;
 
 	return result;
@@ -284,8 +284,8 @@ bool qdInterfaceSave::hit_test(int x, int y) const {
 bool qdInterfaceSave::perform_save() {
 	bool is_ok = true;
 	if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher()) {
-		debugC(1, kDebugSave, "qdInterfaceSave::perform_save(): save_ID_ = %d", save_ID_);
-		is_ok &= (g_engine->saveGameState(save_ID_, save_title_.c_str(), dp->is_autosave_slot(save_ID_)).getCode() == Common::kNoError);
+		debugC(1, kDebugSave, "qdInterfaceSave::perform_save(): _save_ID = %d", _save_ID);
+		is_ok &= (g_engine->saveGameState(_save_ID, _save_title.c_str(), dp->is_autosave_slot(_save_ID)).getCode() == Common::kNoError);
 
 		debugC(1, kDebugSave, "qdInterfaceSave::perform_save(): is_ok = %d", is_ok);
 
@@ -296,27 +296,27 @@ bool qdInterfaceSave::perform_save() {
 }
 
 bool qdInterfaceSave::save_script_body(Common::WriteStream &fh, int indent) const {
-	if (!frame_.save_script(fh, indent)) {
+	if (!_frame.save_script(fh, indent)) {
 		return false;
 	}
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<ID>%d</ID>\r\n", save_ID_));
+	fh.writeString(Common::String::format("<ID>%d</ID>\r\n", _save_ID));
 
-	if (thumbnail_size_x_ || thumbnail_size_y_) {
+	if (_thumbnail_size_x || _thumbnail_size_y) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<thumbnail_size>%d %d</thumbnail_size>\r\n", thumbnail_size_x_, thumbnail_size_y_));
+		fh.writeString(Common::String::format("<thumbnail_size>%d %d</thumbnail_size>\r\n", _thumbnail_size_x, _thumbnail_size_y));
 	}
 
-	if (text_dx_ || text_dy_) {
+	if (_text_dx || _text_dy) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<text_shift>%d %d</text_shift>\r\n", text_dx_, text_dy_));
+		fh.writeString(Common::String::format("<text_shift>%d %d</text_shift>\r\n", _text_dx, _text_dy));
 	}
 
 	if (isAutosaveSlot()) {
@@ -333,19 +333,19 @@ bool qdInterfaceSave::load_script_body(const xml::tag *p) {
 	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		switch (it->ID()) {
 		case QDSCR_INTERFACE_ELEMENT_STATE:
-			if (!frame_.load_script(&*it)) return false;
+			if (!_frame.load_script(&*it)) return false;
 			break;
 		case QDSCR_INTERFACE_THUMBNAIL_SIZE:
-			xml::tag_buffer(*it) > thumbnail_size_x_ > thumbnail_size_y_;
+			xml::tag_buffer(*it) > _thumbnail_size_x > _thumbnail_size_y;
 
-			g_engine->_thumbSizeX = thumbnail_size_x_;
-			g_engine->_thumbSizeY = thumbnail_size_y_;
+			g_engine->_thumbSizeX = _thumbnail_size_x;
+			g_engine->_thumbSizeY = _thumbnail_size_y;
 			break;
 		case QDSCR_INTERFACE_TEXT_SHIFT:
-			xml::tag_buffer(*it) > text_dx_ > text_dy_;
+			xml::tag_buffer(*it) > _text_dx > _text_dy;
 			break;
 		case QDSCR_ID:
-			xml::tag_buffer(*it) > save_ID_;
+			xml::tag_buffer(*it) > _save_ID;
 			break;
 		case QDSCR_INTERFACE_SAVE_IS_AUTOSAVE:
 			setAutosaveSlot(xml::tag_buffer(*it).get_int() != 0);
