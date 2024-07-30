@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-28 19:03+0000\n"
+"POT-Creation-Date: 2024-07-30 23:50+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,6 +49,18 @@ msgstr ""
 
 #: gui/about.cpp:155
 msgid "Available engines:"
+msgstr ""
+
+#. I18N: Close dialog button
+#: gui/about.cpp:523 gui/downloadpacksdialog.cpp:297
+#: gui/downloadpacksdialog.cpp:388 gui/integrity-dialog.cpp:276
+#: gui/gui-manager.cpp:170 gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
+#: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
+#: engines/saga/metaengine.cpp:374 engines/scumm/help.cpp:127
+#: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
+#: engines/scumm/help.cpp:195 engines/scumm/help.cpp:213
+#: engines/twp/metaengine.cpp:179
+msgid "Close"
 msgstr ""
 
 #: gui/browser.cpp:74 backends/dialogs/macosx/macosx-dialogs.mm:90
@@ -490,18 +502,6 @@ msgstr ""
 #: gui/downloadpacksdialog.cpp:291
 #, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
-msgstr ""
-
-#. I18N: Close dialog button
-#: gui/downloadpacksdialog.cpp:297 gui/downloadpacksdialog.cpp:388
-#: gui/integrity-dialog.cpp:276 gui/gui-manager.cpp:170
-#: gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
-#: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
-#: engines/saga/metaengine.cpp:374 engines/scumm/help.cpp:127
-#: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
-#: engines/scumm/help.cpp:195 engines/scumm/help.cpp:213
-#: engines/twp/metaengine.cpp:179
-msgid "Close"
 msgstr ""
 
 #: gui/downloadpacksdialog.cpp:395 gui/downloadpacksdialog.cpp:440
