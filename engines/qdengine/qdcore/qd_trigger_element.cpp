@@ -52,10 +52,6 @@ qdTriggerLink::qdTriggerLink(qdTriggerElementPtr p, int tp)
 		element_ID_ = element_->ID();
 
 	set_status(LINK_INACTIVE);
-#ifdef _QUEST_EDITOR
-	m_owner_offset.cx = m_owner_offset.cy = 0;
-	m_child_offset.cx = m_child_offset.cy = 0;
-#endif // _QUEST_EDITOR
 }
 
 qdTriggerLink::qdTriggerLink() : element_(NULL),
@@ -63,10 +59,6 @@ qdTriggerLink::qdTriggerLink() : element_(NULL),
 	type_(0),
 	auto_restart_(false) {
 	set_status(LINK_INACTIVE);
-#ifdef _QUEST_EDITOR
-	m_owner_offset.cx = m_owner_offset.cy = 0;
-	m_child_offset.cx = m_child_offset.cy = 0;
-#endif // _QUEST_EDITOR
 }
 
 bool qdTriggerLink::load_script(const xml::tag *p) {
@@ -85,14 +77,6 @@ bool qdTriggerLink::load_script(const xml::tag *p) {
 			else
 				auto_restart_ = false;
 			break;
-#ifdef _QUEST_EDITOR
-		case QDSCR_TRIGGER_ELEMENT_LINK_OFFSETS:
-			m_owner_offset.cx = buf.get_int();
-			m_owner_offset.cy = buf.get_int();
-			m_child_offset.cx = buf.get_int();
-			m_child_offset.cy = buf.get_int();
-			break;
-#endif // _QUEST_EDITOR
 		}
 	}
 	return true;
@@ -127,63 +111,17 @@ qdTriggerElement::qdTriggerElement() : _object(NULL),
 	_owner(NULL),
 #endif
 	_status(TRIGGER_EL_INACTIVE) {
-#ifdef _QUEST_EDITOR
-	memset(&m_rcBound, 0, sizeof(RECT));
-	m_bSelected = false;
-	m_vCellNumber.x = m_vCellNumber.y = -1;
-#endif
 }
 
 qdTriggerElement::qdTriggerElement(qdNamedObject *p) : _object(p),
 	_ID(0),
 	_is_active(false),
-#ifdef _QUEST_EDITOR
-	object_reference_(p),
-#endif
 #ifdef __QD_TRIGGER_PROFILER__
 	_owner(NULL),
 #endif
 	_status(TRIGGER_EL_INACTIVE) {
-#ifdef _QUEST_EDITOR
-	memset(&m_rcBound, 0, sizeof(RECT));
-	m_bSelected = false;
-	m_vCellNumber.x = m_vCellNumber.y = -1;
-	update_title();
-#else
 	p->add_trigger_reference();
-#endif
 }
-
-#ifdef _QUEST_EDITOR
-void qdTriggerElement::update_title() {
-	if (object_reference_.is_empty()) return;
-	std::string res;
-	int nLevels = object_reference_.num_levels() - 1;
-	int i = 0;
-//	if (_object->ref_owner()!=_object->owner()) {
-//		i = 1;
-//	}
-	for (; i < nLevels; ++i) {
-		res += object_reference_.object_name(i);
-		res += "::";
-	}
-	res += object_reference_.object_name(nLevels);
-
-	m_strTitle = res;
-}
-
-bool qdTriggerElement::update_object_reference() {
-	if (_object) {
-		object_reference_.init(_object);
-		update_title();
-		return true;
-	} else
-		object_reference_.clear();
-
-	return true;
-}
-
-#endif // _QUEST_EDITOR
 
 qdTriggerElement::~qdTriggerElement() {
 #ifndef _QUEST_EDITOR
@@ -220,11 +158,7 @@ bool qdTriggerElement::check_internal_conditions() {
 }
 
 qdTriggerLink *qdTriggerElement::find_child_link(qdTriggerElementConstPtr ptrChild) {
-#ifdef _QUEST_EDITOR
-	qdTriggerLinkList::iterator itr = qls::find(_children.begin(), _children.end(), ptrChild);
-#else
 	qdTriggerLinkList::iterator itr = std::find(_children.begin(), _children.end(), ptrChild);
-#endif
 
 	if (itr != _children.end())
 		return &*itr;
@@ -241,11 +175,7 @@ qdTriggerLink *qdTriggerElement::find_child_link(int child_id) {
 }
 
 qdTriggerLink *qdTriggerElement::find_parent_link(qdTriggerElementConstPtr ptrParent) {
-#ifdef _QUEST_EDITOR
-	qdTriggerLinkList::iterator itr = qls::find(_parents.begin(), _parents.end(), ptrParent);
-#else
 	qdTriggerLinkList::iterator itr = std::find(_parents.begin(), _parents.end(), ptrParent);
-#endif
 
 	if (itr != _parents.end())
 		return &*itr;
@@ -261,74 +191,20 @@ qdTriggerLink *qdTriggerElement::find_parent_link(int parent_id) {
 	return NULL;
 }
 
-#ifdef _QUEST_EDITOR
-bool qdTriggerElement::set_parent_link_owner_offset(qdTriggerElementConstPtr el, int x, int y) {
-	qdTriggerLink *lp = find_parent_link(el);
-	if (lp) {
-		lp->set_owner_offset(x, y);
-		return true;
-	}
-	return false;
-}
-
-bool qdTriggerElement::set_parent_link_child_offset(qdTriggerElementConstPtr el, int x, int y) {
-	qdTriggerLink *lp = find_parent_link(el);
-	if (lp) {
-		lp->set_child_offset(x, y);
-		return true;
-	}
-	return false;
-}
-
-bool qdTriggerElement::set_child_link_owner_offset(qdTriggerElementConstPtr el, int x, int y) {
-	qdTriggerLink *lp = find_child_link(el);
-	if (lp) {
-		lp->set_owner_offset(x, y);
-		return true;
-	}
-	return false;
-}
-
-bool qdTriggerElement::set_child_link_child_offset(qdTriggerElementConstPtr el, int x, int y) {
-	qdTriggerLink *lp = find_child_link(el);
-	if (lp) {
-		lp->set_child_offset(x, y);
-		return true;
-	}
-	return false;
-}
-
-void qdTriggerElement::clear_parents() {
-	_parents.clear();
-}
-void qdTriggerElement::clear_children() {
-	_children.clear();
-}
-
-#endif//#ifdef _QUEST_EDITOR
-
 bool qdTriggerElement::is_parent(qdTriggerElementConstPtr p) {
-#ifdef _QUEST_EDITOR
-	return (find_parent_link(p) != NULL);
-#else
 	for (auto &it : _parents) {
 		if (it.element() == p) return true;
 	}
 
 	return false;
-#endif
 }
 
 bool qdTriggerElement::is_child(qdTriggerElementConstPtr p) {
-#ifdef _QUEST_EDITOR
-	return (find_child_link(p) != NULL);
-#else
 	for (auto &it : _children) {
 		if (it.element() == p) return true;
 	}
 
 	return false;
-#endif
 }
 
 bool qdTriggerElement::add_parent(qdTriggerElementPtr p, int link_type) {
@@ -347,40 +223,22 @@ bool qdTriggerElement::add_child(qdTriggerElementPtr p, int link_type, bool auto
 }
 
 bool qdTriggerElement::remove_parent(qdTriggerElementPtr p) {
-#ifdef _QUEST_EDITOR
-	qdTriggerLinkList::iterator res = qls::mutable_find(_parents.begin(),
-	                                  _parents.end(), p);
-	if (res != _parents.end()) {
-		_parents.erase(res);
-		return true;
-	}
-#else
 	for (auto it = _parents.begin(); it != _parents.end(); it++) {
 		if ((*it).element() == p) {
 			_parents.erase(it);
 			return true;
 		}
 	}
-#endif
 	return false;
 }
 
 bool qdTriggerElement::remove_child(qdTriggerElementPtr p) {
-#ifdef _QUEST_EDITOR
-	qdTriggerLinkList::iterator res = qls::mutable_find(
-	                                      _children.begin(), _children.end(), p);
-	if (res != _children.end()) {
-		_children.erase(res);
-		return true;
-	}
-#else
 	for (auto it = _children.begin(); it != _children.end(); it++) {
 		if ((*it).element() == p) {
 			_children.erase(it);
 			return true;
 		}
 	}
-#endif//#ifdef _QUEST_EDITOR
 	return false;
 }
 
@@ -394,9 +252,6 @@ bool qdTriggerElement::load_script(const xml::tag *p) {
 			qdNamedObjectReference ref;
 			ref.load_script(&*it);
 			retrieve_object(ref);
-#ifdef _QUEST_EDITOR
-			object_reference_ = ref;
-#endif
 		}
 		break;
 		case QDSCR_TRIGGER_START_ELEMENT:
@@ -411,25 +266,6 @@ bool qdTriggerElement::load_script(const xml::tag *p) {
 		case QDSCR_TRIGGER_ELEMENT_CHILD_LINKS:
 			load_links_script(&*it, false);
 			break;
-#ifdef _QUEST_EDITOR
-		case QDSCR_TRIGGER_BOUND: {
-			xml::tag_buffer buf(*it);
-			m_rcBound.left = buf.get_int();
-			m_rcBound.top = buf.get_int();
-			m_rcBound.right = buf.get_int();
-			m_rcBound.bottom = buf.get_int();
-		}
-		break;
-		case QDSCR_TRIGGER_ELEMENT_TITLE:
-			m_strTitle = it->data();
-			break;
-		case QDSCR_TRIGGER_ELEMENT_CELL_NUMBER: {
-			xml::tag_buffer buf(*it);
-			m_vCellNumber.x = buf.get_int();
-			m_vCellNumber.y = buf.get_int();
-		}
-		break;
-#endif
 		}
 	}
 
