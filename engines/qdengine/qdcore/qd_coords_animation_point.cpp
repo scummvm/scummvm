@@ -27,9 +27,9 @@
 namespace QDEngine {
 
 const float qdCoordsAnimationPoint::NO_DIRECTION = -1.f;
-qdCoordsAnimationPoint::qdCoordsAnimationPoint() : pos_(0, 0, 0),
-	direction_angle_(NO_DIRECTION) {
-	path_length_ = passed_path_length_ = 0.0f;
+qdCoordsAnimationPoint::qdCoordsAnimationPoint() : _pos(0, 0, 0),
+	_direction_angle(NO_DIRECTION) {
+	_path_length = _passed_path_length = 0.0f;
 }
 
 qdCoordsAnimationPoint::~qdCoordsAnimationPoint() {
@@ -39,10 +39,10 @@ void qdCoordsAnimationPoint::load_script(const xml::tag *p) {
 	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		switch (it->ID()) {
 		case QDSCR_DEST_POS:
-			xml::tag_buffer(*it) > pos_.x > pos_.y > pos_.z;
+			xml::tag_buffer(*it) > _pos.x > _pos.y > _pos.z;
 			break;
 		case QDSCR_OBJECT_DIRECTION:
-			xml::tag_buffer(*it) > direction_angle_;
+			xml::tag_buffer(*it) > _direction_angle;
 			break;
 		}
 	}
@@ -54,10 +54,10 @@ bool qdCoordsAnimationPoint::save_script(Common::WriteStream &fh, int indent) co
 	}
 
 	fh.writeString("<coords_animation_point");
-	fh.writeString(Common::String::format(" dest_pos=\"%f %f %f\"", pos_.x, pos_.y, pos_.z));
+	fh.writeString(Common::String::format(" dest_pos=\"%f %f %f\"", _pos.x, _pos.y, _pos.z));
 
-	if (direction_angle_ >= 0.0f) {
-		fh.writeString(Common::String::format(" object_direction=\"%f\"", direction_angle_));
+	if (_direction_angle >= 0.0f) {
+		fh.writeString(Common::String::format(" object_direction=\"%f\"", _direction_angle));
 	}
 
 	fh.writeString("/>\r\n");
@@ -66,26 +66,26 @@ bool qdCoordsAnimationPoint::save_script(Common::WriteStream &fh, int indent) co
 }
 
 void qdCoordsAnimationPoint::calc_path(const qdCoordsAnimationPoint &p, const Vect3f &shift) const {
-	Vect3f dr = pos_ - shift - p.dest_pos();
-	path_length_ = dr.norm();
+	Vect3f dr = _pos - shift - p.dest_pos();
+	_path_length = dr.norm();
 }
 
 float qdCoordsAnimationPoint::passed_path() const {
-	if (path_length_ < 0.01f) return 1.0f;
+	if (_path_length < 0.01f) return 1.0f;
 
-	return passed_path_length_ / path_length_;
+	return _passed_path_length / _path_length;
 }
 
 bool qdCoordsAnimationPoint::load_data(Common::SeekableReadStream &fh, int save_version) {
-	path_length_ = fh.readFloatLE();
-	passed_path_length_ = fh.readFloatLE();
+	_path_length = fh.readFloatLE();
+	_passed_path_length = fh.readFloatLE();
 
 	return true;
 }
 
 bool qdCoordsAnimationPoint::save_data(Common::WriteStream &fh) const {
-	fh.writeFloatLE(path_length_);
-	fh.writeFloatLE(passed_path_length_);
+	fh.writeFloatLE(_path_length);
+	fh.writeFloatLE(_passed_path_length);
 
 	return true;
 }

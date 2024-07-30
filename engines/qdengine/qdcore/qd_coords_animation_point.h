@@ -35,27 +35,27 @@ public:
 	static const float NO_DIRECTION;
 
 	const Vect3f &dest_pos() const {
-		return pos_;
+		return _pos;
 	}
 	void set_dest_pos(const Vect3f &r) {
-		pos_ = r;
+		_pos = r;
 	}
 
 	float direction_angle() const {
-		return direction_angle_;
+		return _direction_angle;
 	}
 	void set_direction_angle(float ang) {
-		direction_angle_ = ang;
+		_direction_angle = ang;
 	}
 
 	void start() const {
-		passed_path_length_ = 0.0f;
+		_passed_path_length = 0.0f;
 	}
 
 	bool move(float &path) const {
-		passed_path_length_ += path;
-		if (passed_path_length_ >= path_length_) {
-			path = passed_path_length_ - path_length_;
+		_passed_path_length += path;
+		if (_passed_path_length >= _path_length) {
+			path = _passed_path_length - _path_length;
 			return true;
 		}
 		return false;
@@ -64,7 +64,7 @@ public:
 	void calc_path(const qdCoordsAnimationPoint &p, const Vect3f &shift = Vect3f::ZERO) const;
 	float passed_path() const;
 	float path_length() const {
-		return path_length_;
+		return _path_length;
 	}
 
 	void load_script(const xml::tag *p);
@@ -77,11 +77,11 @@ public:
 
 private:
 
-	Vect3f pos_;
-	float direction_angle_;
+	Vect3f _pos;
+	float _direction_angle;
 
-	mutable float path_length_;
-	mutable float passed_path_length_;
+	mutable float _path_length;
+	mutable float _passed_path_length;
 };
 
 typedef std::vector<qdCoordsAnimationPoint> qdCoordsAnimationPointVector;
