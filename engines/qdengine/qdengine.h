@@ -101,6 +101,8 @@ public:
 
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+
+	int _thumbSizeX = 0, _thumbSizeY = 0;
 };
 
 extern QDEngineEngine *g_engine;

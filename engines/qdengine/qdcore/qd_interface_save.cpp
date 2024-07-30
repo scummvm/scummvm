@@ -165,14 +165,15 @@ bool qdInterfaceSave::init(bool is_game_active) {
 
 		ExtendedSavegameHeader header;
 
-		if (MetaEngine::readSavegameHeader(saveFile, &header, false))
+		if (MetaEngine::readSavegameHeader(saveFile, &header, true))
 			save_title_ =  header.description.c_str();
+
+		delete saveFile;
+
+		thumbnail_.set_animation_file(Common::String::format("save:%s", saveFileName.c_str()).c_str());
 	} else {
 		save_title_ = "";
 	}
-
-	if (app_io::is_file_exist(thumbnail_file()))
-		thumbnail_.set_animation_file(thumbnail_file().c_str());
 
 	set_state(&frame_);
 
@@ -338,6 +339,9 @@ bool qdInterfaceSave::load_script_body(const xml::tag *p) {
 			break;
 		case QDSCR_INTERFACE_THUMBNAIL_SIZE:
 			xml::tag_buffer(*it) > thumbnail_size_x_ > thumbnail_size_y_;
+
+			g_engine->_thumbSizeX = thumbnail_size_x_;
+			g_engine->_thumbSizeY = thumbnail_size_y_;
 			break;
 		case QDSCR_INTERFACE_TEXT_SHIFT:
 			xml::tag_buffer(*it) > text_dx_ > text_dy_;

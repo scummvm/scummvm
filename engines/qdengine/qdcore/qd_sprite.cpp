@@ -22,6 +22,10 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/savefile.h"
+
+#include "engines/metaengine.h"
+#include "graphics/surface.h"
 
 #include "qdengine/qdengine.h"
 #include "qdengine/qd_precomp.h"
@@ -201,6 +205,35 @@ bool qdSprite::load(const char *fname) {
 
 	Common::SeekableReadStream *fh;
 	Common::Path fpath(_file.c_str(), '\\');
+
+	if (!strncmp(_file.c_str(), "save:", 5)) {
+		Common::InSaveFile *saveFile = g_engine->getSaveFileManager()->openForLoading(&_file.c_str()[5]);
+
+		ExtendedSavegameHeader saveHeader;
+		if (MetaEngine::readSavegameHeader(saveFile, &saveHeader, true)) {
+			_size = _picture_size = Vect2i(qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy());
+			_picture_offset = Vect2i(0, 0);
+
+			_format = GR_RGB565;
+
+			_data = new unsigned char[_size.x * _size.y * 2];
+
+			for (int i = 0; i < _size.y; i++) {
+				uint16 *src = (uint16 *)saveHeader.thumbnail->getBasePtr(0, i);
+				uint16 *dst = (uint16 *)&_data[2 * _size.x * i];
+				for (int j = 0; j < _size.x; j++) {
+					*dst++ = *src++;
+				}
+			}
+
+			scale(static_cast<float>(g_engine->_thumbSizeX) / _size.x,
+				  static_cast<float>(g_engine->_thumbSizeY) / _size.y);
+		}
+
+		delete saveFile;
+
+		return true;
+	}
 
 	if (!qdFileManager::instance().open_file(&fh, fpath.toString().c_str())) {
 		return false;
