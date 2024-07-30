@@ -28,11 +28,11 @@ namespace QDEngine {
 //! Прямоугольная область на экране.
 class grScreenRegion {
 public:
-	grScreenRegion() : x_(0), y_(0), size_x_(0), size_y_(0) {}
-	grScreenRegion(int x, int y, int sx, int sy) : x_(x), y_(y), size_x_(sx), size_y_(sy) {}
+	grScreenRegion() : _x(0), _y(0), _size_x(0), _size_y(0) {}
+	grScreenRegion(int x, int y, int sx, int sy) : _x(x), _y(y), _size_x(sx), _size_y(sy) {}
 
 	bool operator == (const grScreenRegion &reg) const {
-		if (x_ == reg.x_ && y_ == reg.y_ && size_x_ == reg.size_x_ && size_y_ == reg.size_y_)
+		if (_x == reg._x && _y == reg._y && _size_x == reg._size_x && _size_y == reg._size_y)
 			return true;
 
 		if (is_empty() && reg.is_empty())
@@ -45,7 +45,7 @@ public:
 		if (is_empty() && reg.is_empty())
 			return false;
 
-		if (x_ != reg.x_ || y_ != reg.y_ || size_x_ != reg.size_x_ || size_y_ != reg.size_y_)
+		if (_x != reg._x || _y != reg._y || _size_x != reg._size_x || _size_y != reg._size_y)
 			return true;
 
 		return false;
@@ -65,50 +65,50 @@ public:
 		int y0 = (min_y() < reg.min_y()) ? min_y() : reg.min_y();
 		int y1 = (max_y() > reg.max_y()) ? max_y() : reg.max_y();
 
-		x_ = (x0 + x1) / 2;
-		y_ = (y0 + y1) / 2;
+		_x = (x0 + x1) / 2;
+		_y = (y0 + y1) / 2;
 
-		size_x_ = x1 - x0;
-		size_y_ = y1 - y0;
+		_size_x = x1 - x0;
+		_size_y = y1 - y0;
 
 		return *this;
 	}
 
 	int x() const {
-		return x_;
+		return _x;
 	}
 	int y() const {
-		return y_;
+		return _y;
 	}
 
 	int size_x() const {
-		return size_x_;
+		return _size_x;
 	}
 	int size_y() const {
-		return size_y_;
+		return _size_y;
 	}
 
 	int min_x() const {
-		return x_ - size_x_ / 2;
+		return _x - _size_x / 2;
 	}
 	int max_x() const {
-		return x_ + size_x_ / 2;
+		return _x + _size_x / 2;
 	}
 
 	int min_y() const {
-		return y_ - size_y_ / 2;
+		return _y - _size_y / 2;
 	}
 	int max_y() const {
-		return y_ + size_y_ / 2;
+		return _y + _size_y / 2;
 	}
 
 	void move(int dx, int dy) {
-		x_ += dx;
-		y_ += dy;
+		_x += dx;
+		_y += dy;
 	}
 
 	bool is_empty() const {
-		return (!size_x_ || !size_y_);
+		return (!_size_x || !_size_y);
 	}
 
 	bool is_inside(int x, int y) const {
@@ -117,7 +117,7 @@ public:
 	}
 
 	void clear() {
-		size_x_ = 0;
+		_size_x = 0;
 	}
 
 	static const grScreenRegion EMPTY;
@@ -125,11 +125,11 @@ public:
 private:
 
 	//! координаты центра области
-	int x_;
-	int y_;
+	int _x;
+	int _y;
 
-	int size_x_;
-	int size_y_;
+	int _size_x;
+	int _size_y;
 };
 
 } // namespace QDEngine
