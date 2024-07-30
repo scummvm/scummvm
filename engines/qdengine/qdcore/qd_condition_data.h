@@ -42,18 +42,18 @@ public:
 	qdConditionData &operator = (const qdConditionData &data);
 
 	data_t type() const {
-		return type_;
+		return _type;
 	}
 	void set_type(data_t tp) {
-		type_ = tp;
+		_type = tp;
 	}
 
 	int get_int(int index = 0) const {
-		return reinterpret_cast<const int *>(&*data_.begin())[index];
+		return reinterpret_cast<const int *>(&*_data.begin())[index];
 	}
 	bool put_int(int value, int index = 0) {
-		if (static_cast<int>(data_.size()) >= static_cast<int>((index - 1) * sizeof(int))) {
-			reinterpret_cast<int *>(&*data_.begin())[index] = value;
+		if (static_cast<int>(_data.size()) >= static_cast<int>((index - 1) * sizeof(int))) {
+			reinterpret_cast<int *>(&*_data.begin())[index] = value;
 			return true;
 		}
 
@@ -61,12 +61,12 @@ public:
 	}
 
 	float get_float(int index = 0) const {
-		return reinterpret_cast<const float *>(&*data_.begin())[index];
+		return reinterpret_cast<const float *>(&*_data.begin())[index];
 	}
 	bool put_float(float value, int index = 0) {
-		if (static_cast<int>(data_.size()) >=
+		if (static_cast<int>(_data.size()) >=
 		        static_cast<int>((index - 1) * sizeof(float))) {
-			reinterpret_cast<float *>(&*data_.begin())[index] = value;
+			reinterpret_cast<float *>(&*_data.begin())[index] = value;
 			return true;
 		}
 
@@ -74,15 +74,15 @@ public:
 	}
 
 	const char *get_string() const {
-		if (!data_.empty())
-			return &*data_.begin();
+		if (!_data.empty())
+			return &*_data.begin();
 		else
 			return NULL;
 	}
 
 	bool put_string(const char *str) {
 		if (alloc_data(strlen(str) + 1)) {
-			Common::strlcpy(&*data_.begin(), str, data_.size());
+			Common::strlcpy(&*_data.begin(), str, _data.size());
 			return true;
 		}
 
@@ -96,8 +96,8 @@ public:
 
 private:
 
-	data_t type_;
-	std::vector<char> data_;
+	data_t _type;
+	std::vector<char> _data;
 };
 
 } // namespace QDEngine

@@ -27,16 +27,16 @@
 
 namespace QDEngine {
 
-qdConditionData::qdConditionData() : type_(DATA_STRING) {
+qdConditionData::qdConditionData() : _type(DATA_STRING) {
 }
 
-qdConditionData::qdConditionData(data_t data_type, int data_size) : type_(data_type) {
+qdConditionData::qdConditionData(data_t data_type, int data_size) : _type(data_type) {
 	if (data_size)
 		alloc_data(data_size);
 }
 
-qdConditionData::qdConditionData(const qdConditionData &data) : type_(data.type_),
-	data_(data.data_) {
+qdConditionData::qdConditionData(const qdConditionData &data) : _type(data._type),
+	_data(data._data) {
 }
 
 qdConditionData::~qdConditionData() {
@@ -45,14 +45,14 @@ qdConditionData::~qdConditionData() {
 qdConditionData &qdConditionData::operator = (const qdConditionData &data) {
 	if (this == &data) return *this;
 
-	type_ = data.type_;
-	data_ = data.data_;
+	_type = data._type;
+	_data = data._data;
 
 	return *this;
 }
 
 bool qdConditionData::alloc_data(int size) {
-	switch (type_) {
+	switch (_type) {
 	case DATA_INT:
 		size *= sizeof(int);
 		break;
@@ -64,14 +64,14 @@ bool qdConditionData::alloc_data(int size) {
 		break;
 	}
 
-	if (data_.size() < size)
-		data_.resize(size);
+	if (_data.size() < size)
+		_data.resize(size);
 
 	return true;
 }
 
 bool qdConditionData::load_script(const xml::tag *p) {
-	switch (type_) {
+	switch (_type) {
 	case DATA_INT: {
 		xml::tag_buffer buf(*p);
 		for (int i = 0; i < p->data_size(); i ++)
@@ -97,25 +97,25 @@ bool qdConditionData::save_script(Common::WriteStream &fh, int indent) const {
 		fh.writeString("\t");
 	}
 
-	switch (type_) {
+	switch (_type) {
 	case DATA_INT:
-		fh.writeString(Common::String::format("<condition_data_int>%lu", data_.size() / sizeof(int32)));
-		for (int i = 0; i < data_.size() / sizeof(int32); i++) {
+		fh.writeString(Common::String::format("<condition_data_int>%lu", _data.size() / sizeof(int32)));
+		for (int i = 0; i < _data.size() / sizeof(int32); i++) {
 			fh.writeString(Common::String::format(" %d", get_int(i)));
 		}
 		fh.writeString("</condition_data_int>\r\n");
 		break;
 	case DATA_FLOAT:
-		fh.writeString(Common::String::format("<condition_data_float>%lu", data_.size() / sizeof(float)));
-		for (int i = 0; i < data_.size() / sizeof(float); i++) {
+		fh.writeString(Common::String::format("<condition_data_float>%lu", _data.size() / sizeof(float)));
+		for (int i = 0; i < _data.size() / sizeof(float); i++) {
 			fh.writeString(Common::String::format(" %f", get_float(i)));
 		}
 		fh.writeString("</condition_data_float>\r\n");
 		break;
 	case DATA_STRING:
 		fh.writeString("<condition_data_string>");
-		if (!data_.empty()) {
-			fh.writeString(Common::String::format("%s", qdscr_XML_string(&*data_.begin())));
+		if (!_data.empty()) {
+			fh.writeString(Common::String::format("%s", qdscr_XML_string(&*_data.begin())));
 		}
 		fh.writeString("</condition_data_string>\r\n");
 		break;
