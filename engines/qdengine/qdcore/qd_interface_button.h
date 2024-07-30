@@ -49,7 +49,7 @@ public:
 
 	//! Возвращает количество состояний кнопки.
 	int num_states() const {
-		return states_.size();
+		return _states.size();
 	}
 
 	//! Включает состояние номер state_num.
@@ -58,26 +58,26 @@ public:
 	bool activate_state(const char *state_name);
 
 	int option_value() const {
-		return cur_state_;
+		return _cur_state;
 	}
 	bool set_option_value(int value);
 
 	//! Возвращает указатель на состояние кнопки.
 	const qdInterfaceElementState *get_state(int state_num) const {
-		assert(state_num >= 0 && state_num < states_.size());
+		assert(state_num >= 0 && state_num < _states.size());
 #ifndef _QD_INTERFACE_BUTTON_PTR_CONTAINER
-		return &states_[state_num];
+		return &_states[state_num];
 #else
-		return &*states_[state_num];
+		return &*_states[state_num];
 #endif
 	}
 	//! Возвращает указатель на состояние кнопки.
 	qdInterfaceElementState *get_state(int state_num) {
-		assert(state_num >= 0 && state_num < states_.size());
+		assert(state_num >= 0 && state_num < _states.size());
 #ifndef _QD_INTERFACE_BUTTON_PTR_CONTAINER
-		return &states_[state_num];
+		return &_states[state_num];
 #else
-		return &*states_[state_num];
+		return &*_states[state_num];
 #endif
 	}
 
@@ -102,13 +102,13 @@ public:
 	Соответствующему состоянию присваивается значение st.
 	*/
 	bool modify_state(int state_num, const qdInterfaceElementState &st) {
-		assert(state_num >= 0 && state_num < states_.size());
+		assert(state_num >= 0 && state_num < _states.size());
 #ifdef _QD_INTERFACE_BUTTON_PTR_CONTAINER
-		*states_[state_num] = st;
-		states_[state_num]->set_owner(this);
+		*_states[state_num] = st;
+		_states[state_num]->set_owner(this);
 #else
-		states_[state_num] = st;
-		states_[state_num].set_owner(this);
+		_states[state_num] = st;
+		_states[state_num].set_owner(this);
 #endif
 		return true;
 	}
@@ -155,10 +155,10 @@ private:
 #endif
 
 	//! Состояния кнопки.
-	state_container_t states_;
+	state_container_t _states;
 
 	//! Текущее состояние кнопки.
-	int cur_state_;
+	int _cur_state;
 
 };
 
