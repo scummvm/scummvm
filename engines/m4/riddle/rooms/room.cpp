@@ -239,8 +239,20 @@ machine *Room::triggerMachineByHash_3000(int val1, int val2, const int16 * norma
 #endif
 }
 
+void Room::sendWSMessage_60000(machine *walker) {
+	sendWSMessage(0x60000, 0, walker, 0, nullptr, 1);
+}
+
 void Room::sendWSMessage_80000(machine *walker) {
 	sendWSMessage(0x80000, 0, walker, 0, nullptr, 1);
+}
+
+void Room::sendWSMessage_B0000(machine *walker, int trigger) {
+
+}
+
+void Room::sendWSMessage_B0000(int trigger) {
+	sendWSMessage_B0000(_G(my_walker), trigger);
 }
 
 void Room::sendWSMessage_C0000(machine *walker, int trigger) {
@@ -253,6 +265,22 @@ void Room::sendWSMessage_C0000(machine *walker, int trigger) {
 
 void Room::sendWSMessage_C0000(int trigger) {
 	sendWSMessage_C0000(_G(my_walker), trigger);
+}
+
+void Room::sendWSMessage_D0000(machine *walker) {
+	sendWSMessage(0xd0000, 0, walker, 0, nullptr, 1);
+}
+
+void Room::sendWSMessage_D0000() {
+	sendWSMessage_D0000(_G(my_walker));
+}
+
+void Room::sendWSMessage_E0000(machine *walker) {
+	sendWSMessage(0xe0000, 0, walker, 0, nullptr, 1);
+}
+
+void Room::sendWSMessage_E0000() {
+	sendWSMessage_E0000(_G(my_walker));
 }
 
 void Room::sendWSMessage_110000(machine *walker, int trigger) {

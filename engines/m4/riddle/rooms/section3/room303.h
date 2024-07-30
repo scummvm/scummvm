@@ -64,6 +64,7 @@ private:
 	machine *_ripPonders = nullptr;
 	int _gestTalk4 = 0;
 	int _ripBends = 0;
+	int _chinTalk4 = 0;
 
 	static void escapePressed(void *, void *);
 

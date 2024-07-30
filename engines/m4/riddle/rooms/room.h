@@ -68,9 +68,16 @@ protected:
 	machine *triggerMachineByHash_3000(int val1, int val2, const int16 *normalDirs,
 		const int16 *shadowDirs, int val3, int val4, int val5,
 		MessageCB intrMsg, const char *machName);
+	void sendWSMessage_60000(machine *walker);
 	void sendWSMessage_80000(machine *walker);
+	void sendWSMessage_B0000(machine *walker, int trigger);
+	void sendWSMessage_B0000(int trigger);
 	void sendWSMessage_C0000(machine *walker, int trigger);
 	void sendWSMessage_C0000(int trigger);
+	void sendWSMessage_D0000(machine *walker);
+	void sendWSMessage_D0000();
+	void sendWSMessage_E0000(machine *walker);
+	void sendWSMessage_E0000();
 	void sendWSMessage_110000(machine *walker, int trigger);
 	void sendWSMessage_110000(int trigger);
 	void sendWSMessage_140000(machine *walker, int trigger);

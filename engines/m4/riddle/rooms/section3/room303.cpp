@@ -337,6 +337,11 @@ void Room303::parser() {
 	} else if (lookFlag && _G(flags)[V000] == 0 && _val13 &&
 			player_said_any("cow", "giant matchstick")) {
 		switch (_G(kernel).trigger) {
+		case -1:
+			_val15 = 5;
+			player_set_commands_allowed(false);
+			break;
+
 		case 1:
 			setShadow5(false);
 			if (player_said("giant matchstick"))
@@ -345,10 +350,296 @@ void Room303::parser() {
 			sendWSMessage_10000(_machine1, 706, 256, 5, 2, 1);
 			break;
 
+		case 2:
+			setShadow5Alt(true);
+			_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 706, 256, 86, 0xc00, 0,
+				triggerMachineByHashCallbackNegative, "fl state machine");
+
+			_G(kernel).trigger_mode = KT_DAEMON;
+			sendWSMessage_10000(1, _machine1, _clasped1, 1, 16, 400,
+				_clasped4, 1, 6, 0);
+			_val14 = _val15 = 1;
+			setFengActive(false);
+			_val13 = 0;
+
+			kernel_load_variant("303lock2");
+			_G(kernel).trigger_mode = KT_PARSE;
+			kernel_timing_trigger(1, 666);
+			break;
+
 		default:
 			break;
 		}
-	// TODO
+	} else if (lookFlag && player_said("torso tomato") &&
+			!_G(flags)[V081] && !_G(flags)[V000] && !_val13) {
+		switch (_G(kernel).trigger) {
+		case 1:
+			setShadow5Alt(false);
+			sendWSMessage_10000(_machine1, 480, 256, 7, 2, 1);
+			break;
+
+		case 2:
+			setShadow5(true);
+			sendWSMessage_60000(_machine1);
+			_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
+				triggerMachineByHashCallbackNegative, "fl state machine");
+
+			_G(kernel).trigger_mode = KT_DAEMON;
+			sendWSMessage_10000(1, _machine1, _clasped1, 1, 16, 400,
+				_clasped4, 1, 6, 0);
+			_val14 = _val15 = 1;
+			setFengActive(true);
+			_val13 = 1;
+
+			kernel_load_variant("303lock1");
+			_G(kernel).trigger_mode = KT_PARSE;
+			kernel_timing_trigger(1, 666);
+			break;
+
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("puffball")) {
+		if (_G(flags)[V000] == 1) {
+			digi_play("303r37", 1);
+		} else if (_G(flags)[V080]) {
+			switch (_G(kernel).trigger) {
+			case -1:
+			case 666:
+				player_set_commands_allowed(false);
+				_chinTalk4 = series_load("suit chin in hand pos4");
+				setGlobals4(_chinTalk4, 15, 15, 15);
+				sendWSMessage_C0000(0);
+				digi_play("303r37", 1, 255, 2);
+				break;
+
+			case 2:
+				sendWSMessage_B0000(3);
+				break;
+
+			case 3:
+				series_unload(_chinTalk4);
+				player_set_commands_allowed(true);
+				break;
+
+			default:
+				break;
+			}
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+			case 666:
+				player_set_commands_allowed(false);
+				_chinTalk4 = series_load("rip hand to chin talk pos4");
+				setGlobals4(_chinTalk4, 15, 16, 19);
+				sendWSMessage_C0000(0);
+				digi_play("303F13", 1, 255, 1);
+				_val15 = 2;
+				break;
+
+			case 1:
+				_val15 = 1;
+				kernel_timing_trigger(30, 2);
+				break;
+
+			case 2:
+				sendWSMessage_D0000();
+				digi_play("303r26", 1, 255, 3);
+				break;
+
+			case 3:
+				sendWSMessage_E0000();
+				sendWSMessage(0xe0000, 0, _G(my_walker), 0, nullptr, 1);
+				kernel_timing_trigger(30, 4);
+				break;
+
+			case 4:
+				digi_play("303F14", 1, 255, 5);
+				_val15 = 2;
+				break;
+
+			case 5:
+				_val15 = 1;
+				kernel_timing_trigger(30, 6);
+				break;
+
+			case 6:
+				sendWSMessage_D0000();
+				digi_play("303r27", 1, 255, 7);
+				break;
+
+			case 7:
+				sendWSMessage_B0000(8);
+				break;
+
+			case 8:
+				series_unload(_chinTalk4);
+				player_set_commands_allowed(true);
+				_G(flags)[V080] = 1;
+				break;
+
+			default:
+				break;
+			}
+		}
+	} else if (lookFlag && player_said("copper tank") &&
+			(_G(flags)[V000] == 1 || _val13)) {
+		if (_G(flags)[V000] == 1) {
+			digi_play("303r31", 1);
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+			case 666:
+				player_set_commands_allowed(false);
+				_chinTalk4 = series_load("suit hand in pocket pos2");
+				setGlobals4(_chinTalk4, 19, 19, 19);
+				sendWSMessage_C0000(0);
+				digi_play("303r31", 1, 255, 2);
+				break;
+
+			case 2:
+				sendWSMessage_B0000(3);
+				break;
+
+			case 3:
+				series_unload(_chinTalk4);
+				break;
+
+			default:
+				break;
+			}
+		}
+	} else if (lookFlag && player_said("torso tomato")) {
+		if (_G(flags)[V000] == 1) {
+			digi_play("303r28a", 1);
+		} else if (_G(flags)[V081]) {
+			switch (_G(kernel).trigger) {
+			case -1:
+			case 666:
+				player_set_commands_allowed(false);
+				_chinTalk4 = series_load("suit chin in hand pos4");
+				setGlobals4(_chinTalk4, 15, 15, 15);
+				sendWSMessage_C0000(-2);
+				digi_play("303r28a", 1, 255, 1);
+				break;
+
+			case 1:
+				sendWSMessage_B0000(3);
+				break;
+
+			case 3:
+				series_unload(_chinTalk4);
+				break;
+
+			default:
+				break;
+			}
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+			case 666:
+				player_set_commands_allowed(false);
+				_chinTalk4 = series_load("rip suit talker pos4");
+				setGlobals4(_chinTalk4, 1, 1, 5);
+				sendWSMessage_C0000(-1);
+				digi_play("303F15", 1, 255, 1);
+				_val15 = 2;
+				break;
+
+			case 2:
+				sendWSMessage_D0000();
+				digi_play("303r28", 1, 255, 3);
+				break;
+
+			case 3:
+				sendWSMessage_B0000(4);
+				break;
+
+			case 4:
+				series_unload(_chinTalk4);
+				player_set_commands_allowed(true);
+				_G(flags)[V081] = 1;
+				break;
+
+			default:
+				break;
+			}
+		}
+	} else if (lookFlag && player_said("cow")) {
+		if (_G(flags)[V086] == 2) {
+			_G(flags)[V086] = 1;
+		} else if (_G(flags)[V086] == 3) {
+			_G(flags)[V086] = 0;
+		}
+
+		if (_G(flags)[V000] == 1) {
+			digi_play("303r23", 1);
+		} else if (_G(flags)[V082]) {
+			switch (_G(kernel).trigger) {
+			case -1:
+			case 666:
+				player_set_commands_allowed(false);
+				digi_play("303F09", 1, 255, 1);
+				_val15 = 2;
+				break;
+
+			case 1:
+				_val15 = 1;
+				player_set_commands_allowed(true);
+				break;
+
+			default:
+				break;
+			}
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+			case 666:
+				player_set_commands_allowed(false);
+				_chinTalk4 = series_load("rip hand to chin talk pos4");
+				setGlobals4(_chinTalk4, 15, 16, 19);
+				sendWSMessage_C0000(0);
+				digi_play("303F10", 1, 255, 6);
+				_val15 = 2;
+				break;
+
+			case 1:
+				digi_play("303r24", 1, 255, 3);
+				sendWSMessage_D0000();
+				_val15 = 0;
+				break;
+
+			case 3:
+				kernel_timing_trigger(30, 4);
+				break;
+
+			case 4:
+				sendWSMessage_B0000(7);
+				_val15 = 3;
+				digi_play("303f11", 1, 255, 5);
+				break;
+
+			case 5:
+				_val15 = 1;
+				player_set_commands_allowed(true);
+				_G(flags)[V082] = 1;
+				break;
+
+			case 6:
+				_val15 = 1;
+				kernel_timing_trigger(30, 1);
+				break;
+
+			case 7:
+				series_unload(_chinTalk4);
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		// TODO
 	} else {
 		return;
 	}
