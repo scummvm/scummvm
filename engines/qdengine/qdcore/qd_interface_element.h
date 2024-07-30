@@ -94,15 +94,15 @@ public:
 
 	//! Возвращает идентификатор настройки игры, связанной с элементом.
 	option_ID_t option_ID() const {
-		return option_ID_;
+		return _option_ID;
 	}
 	//! Устанавливает идентификатор настройки игры, связанной с элементом.
 	void set_option_ID(option_ID_t id) {
-		option_ID_ = id;
+		_option_ID = id;
 	}
 	//! Возвращает true, если с элементом связана настройка игры.
 	bool linked_to_option() const {
-		return (option_ID_ != OPTION_NONE);
+		return (_option_ID != OPTION_NONE);
 	}
 	//! Возвращает значение настройки игры, связанной с элементом.
 	virtual int option_value() const {
@@ -115,34 +115,34 @@ public:
 
 	//! Возвращает экранные координаты центра элемента.
 	virtual const Vect2i r() const {
-		return r_ + screen_offset_;
+		return _r + _screen_offset;
 	}
 	//! Устанавливает экранные координаты центра элемента.
 	void set_r(const Vect2i &v) {
-		r_ = v;
+		_r = v;
 	}
 
 	//! Возвращает размер элемента по горизонтали в пикселах.
 	virtual int size_x() const {
-		return animation_.size_x();
+		return _animation.size_x();
 	}
 	//! Возвращает размер элемента по вертикали в пикселах.
 	virtual int size_y() const {
-		return animation_.size_y();
+		return _animation.size_y();
 	}
 
 	virtual grScreenRegion screen_region() const;
 	const grScreenRegion &last_screen_region() const {
-		return last_screen_region_;
+		return _last_screen_region;
 	}
 
 	//! Устанавливает экранную глубину элемента.
 	void set_screen_depth(int v) {
-		screen_depth_ = v;
+		_screen_depth = v;
 	}
 	//! Возвращает экранную глубину эелмента.
 	int screen_depth() const {
-		return screen_depth_;
+		return _screen_depth;
 	}
 
 	//! Запись данных в скрипт.
@@ -177,7 +177,7 @@ public:
 	virtual bool quant(float dt);
 
 	const qdAnimation &animation() const {
-		return animation_;
+		return _animation;
 	}
 
 	//! Устанавливает анимацию для элемента.
@@ -198,31 +198,31 @@ public:
 
 	//! Прячет элемент.
 	void hide() {
-		is_visible_ = false;
+		_is_visible = false;
 	}
 	//! Показывает элемент.
 	void show() {
-		is_visible_ = true;
+		_is_visible = true;
 	}
 	//! Возвращает true, если элемент не спрятан.
 	bool is_visible() const {
-		return is_visible_;
+		return _is_visible;
 	}
 
 	//! Возвращает true, если элемент заблокирован.
 	bool is_locked() const {
-		return is_locked_;
+		return _is_locked;
 	}
 	//! Блокировка/разблокировка элемента.
 	void set_lock(bool state) {
-		is_locked_ = state;
+		_is_locked = state;
 	}
 
 	static const Vect2i &screen_offset() {
-		return screen_offset_;
+		return _screen_offset;
 	}
 	static void set_screen_offset(const Vect2i &offset) {
-		screen_offset_ = offset;
+		_screen_offset = offset;
 	}
 
 protected:
@@ -234,38 +234,38 @@ protected:
 	virtual bool load_script_body(const xml::tag *p) = 0;
 
 	void clear_screen_region() {
-		last_screen_region_ = grScreenRegion::EMPTY;
+		_last_screen_region = grScreenRegion::EMPTY;
 	}
 
 private:
 
 	//! Идентификатор настройки игры, связанной с элементом.
-	option_ID_t option_ID_;
+	option_ID_t _option_ID;
 	//! Данные для настройки игры, связанной с элементом.
-	std::string option_data_;
+	std::string _option_data;
 
 	//! Экранные координаты центра элемента.
-	Vect2i r_;
+	Vect2i _r;
 
 	//! Экранная глубина. Чем больше значение - тем дальше элемент.
-	int screen_depth_;
+	int _screen_depth;
 
 	//! Анимация элемента.
-	qdAnimation animation_;
+	qdAnimation _animation;
 
 	//! Хэндл для управления звуками.
-	qdSoundHandle sound_handle_;
+	qdSoundHandle _sound_handle;
 
 	//! Равно false, если элемент спрятан.
-	bool is_visible_;
+	bool _is_visible;
 
 	//! Равно true, если элемент заблокирован (не реагирует на клавиатуру/мышь).
-	bool is_locked_;
+	bool _is_locked;
 
-	grScreenRegion last_screen_region_;
-	const qdAnimationFrame *last_animation_frame_;
+	grScreenRegion _last_screen_region;
+	const qdAnimationFrame *_last_animation_frame;
 
-	static Vect2i screen_offset_;
+	static Vect2i _screen_offset;
 };
 
 } // namespace QDEngine
