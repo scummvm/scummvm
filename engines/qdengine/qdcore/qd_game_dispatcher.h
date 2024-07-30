@@ -77,20 +77,20 @@ public:
 	}
 
 	qdGameObjectMouse *mouse_object() {
-		return mouse_obj_;
+		return _mouse_obj;
 	}
 	qdGameObjectMouse const *mouse_object() const {
-		return mouse_obj_;
+		return _mouse_obj;
 	}
 	bool drop_mouse_object();
 
 	int CD_count() const;
 
 	int resource_compression() const {
-		return resource_compression_;
+		return _resource_compression;
 	}
 	void set_resource_compression(int compression) {
-		resource_compression_ = compression;
+		_resource_compression = compression;
 	}
 
 	//! Просит вставить диск с игрой.
@@ -105,7 +105,7 @@ public:
 	qdLoadingProgressFnc set_scene_loading_progress_callback(qdLoadingProgressFnc p, void *dp = 0) {
 		qdLoadingProgressFnc old_fnc = scene_loading_progress_fnc_;
 		scene_loading_progress_fnc_ = p;
-		scene_loading_progress_data_ = dp;
+		_scene_loading_progress_data = dp;
 
 		return old_fnc;
 	}
@@ -115,14 +115,14 @@ public:
 	}
 
 	void *get_scene_loading_progress_data() {
-		return scene_loading_progress_data_;
+		return _scene_loading_progress_data;
 	}
 
 	void set_time(int tm) {
-		timer_ = tm;
+		_timer = tm;
 	}
 	int time() const {
-		return timer_;
+		return _timer;
 	}
 
 	bool start_intro_videos();
@@ -161,46 +161,45 @@ public:
 	bool is_minigame_in_list(qdMiniGame *p);
 
 	void set_mouse_click_state(const qdGameObjectState *p) {
-		mouse_click_state_ = p;
+		_mouse_click_state = p;
 	}
 
 	bool add_inventory(qdInventory *p) {
-		if (inventories.add_object(p)) {
+		if (_inventories.add_object(p)) {
 			p->set_owner(this);
 			return 1;
 		}
 		return 0;
 	}
 	bool remove_inventory(const char *name) {
-		return inventories.remove_object(name);
+		return _inventories.remove_object(name);
 	}
 	bool remove_inventory(qdInventory *p) {
-		return inventories.remove_object(p);
+		return _inventories.remove_object(p);
 	}
 	qdInventory *get_inventory(const char *name) {
-		return inventories.get_object(name);
+		return _inventories.get_object(name);
 	}
 	bool is_inventory_in_list(const char *name) {
-		return inventories.is_in_list(name);
+		return _inventories.is_in_list(name);
 	}
 	bool is_inventory_in_list(qdInventory *p) {
-		return inventories.is_in_list(p);
+		return _inventories.is_in_list(p);
 	}
 	bool rename_inventory(qdInventory *p, const char *name);
 
 	const qdInventoryCellType *add_inventory_cell_type(const qdInventoryCellType &tp) {
 		//проверяем уникальность идентификатора, вставляемого типа
-		assert(find_inventory_cell_type(tp.type()) ==
-		       inventory_cell_types_.end());
-		inventory_cell_types_.push_back(tp);
+		assert(find_inventory_cell_type(tp.type()) == _inventory_cell_types.end());
+		_inventory_cell_types.push_back(tp);
 
-		return &inventory_cell_types_.back();
+		return &_inventory_cell_types.back();
 	}
 	bool remove_inventory_cell_type(int type) {
 		typedef qdInventoryCellTypeVector::iterator i_t;
 		i_t res = find_inventory_cell_type(type);
-		if (res != inventory_cell_types_.end()) {
-			inventory_cell_types_.erase(res);
+		if (res != _inventory_cell_types.end()) {
+			_inventory_cell_types.erase(res);
 			return true;
 		}
 		return false;
@@ -208,29 +207,29 @@ public:
 	const qdInventoryCellType *get_inventory_cell_type(int type) const {
 		typedef qdInventoryCellTypeVector::const_iterator ci_t;
 		ci_t res = find_inventory_cell_type(type);
-		if (res != inventory_cell_types_.end())
+		if (res != _inventory_cell_types.end())
 			return &*res;
 		return NULL;
 	}
 	int get_unique_inventory_cell_type() const {
-		if (inventory_cell_types_.empty()) return 0;
-		return inventory_cell_types_.back().type() + 1;
+		if (_inventory_cell_types.empty()) return 0;
+		return _inventory_cell_types.back().type() + 1;
 	}
 	bool set_inventory_cell_type(const qdInventoryCellType &tp) {
 		typedef qdInventoryCellTypeVector::iterator i_t;
 		i_t res = find_inventory_cell_type(tp.type());
-		if (res != inventory_cell_types_.end()) {
+		if (res != _inventory_cell_types.end()) {
 			*res = tp;
 			return true;
 		}
 		return false;
 	}
 	const qdInventoryCellTypeVector &inventory_cell_types() const {
-		return inventory_cell_types_;
+		return _inventory_cell_types;
 	}
 
 	qdInventoryCellTypeVector &not_const_inventory_cell_types() {
-		return inventory_cell_types_;
+		return _inventory_cell_types;
 	}
 
 	//! Операции со шрифтами
@@ -248,19 +247,19 @@ public:
 	int get_unique_font_info_type() const;
 	bool set_font_info(const qdFontInfo &fi);
 	const qdFontInfoList &fonts_list() const {
-		return fonts_.get_list();
+		return _fonts.get_list();
 	}
 
 	int default_font() const {
-		return default_font_;
+		return _default_font;
 	}
 	void set_default_font(int font) {
-		default_font_ = font;
+		_default_font = font;
 	}
 
 	bool toggle_inventory(bool state);
 	bool toggle_inventory() {
-		if (!cur_inventory_) return toggle_inventory(true);
+		if (!_cur_inventory) return toggle_inventory(true);
 		else return toggle_inventory(false);
 	}
 	bool put_to_inventory(qdGameObjectAnimated *p);
@@ -269,7 +268,7 @@ public:
 	bool is_on_mouse(const qdGameObjectAnimated *p) const;
 
 	const qdInventory *cur_inventory() const {
-		return cur_inventory_;
+		return _cur_inventory;
 	}
 
 	bool add_video(qdVideo *p, qdVideo const *before = NULL);
@@ -318,18 +317,18 @@ public:
 	bool close_video();
 	bool is_video_finished();
 	bool is_video_playing() {
-		if (!cur_video_) return false;
+		if (!_cur_video) return false;
 		return true;
 	}
 
 	void continueVideo();
 	bool is_video_playing(qdVideo *p) {
-		return (cur_video_ == p);
+		return (_cur_video == p);
 	}
 
 	bool play_music_track(const qdMusicTrack *p, bool interface_mode = false);
 	const qdMusicTrack *current_music() const {
-		return cur_music_track_;
+		return _cur_music_track;
 	}
 	bool stop_music();
 
@@ -342,7 +341,7 @@ public:
 	bool deactivate_scene_triggers(const qdGameScene *p);
 
 	void set_next_scene(qdGameScene *p) {
-		next_scene_ = p;
+		_next_scene = p;
 	}
 
 	int load_resources();
@@ -368,32 +367,32 @@ public:
 	bool reset_triggers();
 
 	const qdVideoList &video_list() const {
-		return videos.get_list();
+		return _videos.get_list();
 	}
 	const qdTriggerChainList &trigger_chain_list() const {
-		return trigger_chains.get_list();
+		return _trigger_chains.get_list();
 	}
 	const qdGameObjectList &global_object_list() const {
-		return global_objects.get_list();
+		return _global_objects.get_list();
 	}
 	const qdInventoryList &inventory_list() const {
-		return inventories.get_list();
+		return _inventories.get_list();
 	}
 	const qdMiniGameList &minigame_list() const {
-		return minigames.get_list();
+		return _minigames.get_list();
 	}
 	const qdGameEndList &game_end_list() const {
-		return game_ends_.get_list();
+		return _game_ends.get_list();
 	}
 	const qdGameSceneList &scene_list() const {
-		return scenes_.get_list();
+		return _scenes.get_list();
 	}
 	const qdCounterList &counter_list() const {
-		return counters_.get_list();
+		return _counters.get_list();
 	}
 
 	qdGameScene *get_active_scene() const {
-		return cur_scene_;
+		return _cur_scene;
 	}
 
 	qdSound *get_sound(const char *name);
@@ -410,26 +409,26 @@ public:
 	void pause();
 	void resume();
 	bool is_paused() {
-		return is_paused_;
+		return _is_paused;
 	}
 
 	bool restart();
 
 	qdScreenTextDispatcher &screen_texts_dispatcher() {
-		return screen_texts;
+		return _screen_texts;
 	}
 
 	bool toggle_main_menu() {
-		return toggle_main_menu(!interface_dispatcher_.is_active());
+		return toggle_main_menu(!_interface_dispatcher.is_active());
 	}
 	bool toggle_main_menu(bool state, const char *screen_name = NULL);
 	bool has_main_menu() const {
-		return interface_dispatcher_.has_main_menu();
+		return _interface_dispatcher.has_main_menu();
 	}
 	bool is_main_menu_exit_enabled() const;
 
 	void set_game_end(const qdGameEnd *p) {
-		game_end_ = p;
+		_game_end = p;
 	}
 	bool end_game(const qdGameEnd *p);
 
@@ -462,12 +461,12 @@ public:
 
 	static void set_dispatcher(qdGameDispatcher *p);
 	static qdGameDispatcher *get_dispatcher() {
-		return dispatcher_;
+		return _dispatcher;
 	}
 
 	//! Возвращает имя стартовой сцены игры.
 	const char *startup_scene() const {
-		return startup_scene_.c_str();
+		return _startup_scene.c_str();
 	}
 	//! Устанавливает имя стартовой сцены игры.
 	/**
@@ -475,13 +474,13 @@ public:
 	*/
 	void set_startup_scene(const char *name) {
 		if (name)
-			startup_scene_ = name;
+			_startup_scene = name;
 		else
-			startup_scene_.clear();
+			_startup_scene.clear();
 	}
 	//! Возвращает true, если задана стартовая сцена игры.
 	bool has_startup_scene() const {
-		return !startup_scene_.empty();
+		return !_startup_scene.empty();
 	}
 
 	bool game_screenshot(Graphics::Surface &thumb) const;
@@ -494,43 +493,43 @@ public:
 	bool get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const;
 
 	void set_game_title(const char *p) {
-		game_title_ = p;
+		_game_title = p;
 	}
 	const char *game_title() const {
-		return game_title_.c_str();
+		return _game_title.c_str();
 	}
 
 	void set_texts_database(const char *file_name) {
-		texts_database_ = file_name;
+		_texts_database = file_name;
 	}
 	const char *texts_database() const {
-		return texts_database_.c_str();
+		return _texts_database.c_str();
 	}
 
 	void set_cd_key(const char *key) {
-		cd_key_ = key;
+		_cd_key = key;
 	}
 	const char *cd_key() const {
-		return cd_key_.c_str();
+		return _cd_key.c_str();
 	}
 
 	bool add_dialog_state(qdGameObjectState *p);
 
 	const Vect2f &mouse_cursor_pos() const {
-		return mouse_cursor_pos_;
+		return _mouse_cursor_pos;
 	}
 
 	bool is_autosave_slot(int save_slot) {
-		return save_slot == autosave_slot_;
+		return save_slot == _autosave_slot;
 	}
 
 	void set_auto_save(int save_slot) {
 		set_flag(SAVE_GAME_FLAG);
-		autosave_slot_ = save_slot;
+		_autosave_slot = save_slot;
 	}
 	void set_auto_load(int save_slot) {
 		set_flag(LOAD_GAME_FLAG);
-		autosave_slot_ = save_slot;
+		_autosave_slot = save_slot;
 	}
 
 	static grFont *create_font(int font_idx);
@@ -546,10 +545,10 @@ public:
 	bool write_resource_stats(const char *file_name) const;
 
 	int hall_of_fame_size() const {
-		return hall_of_fame_size_;
+		return _hall_of_fame_size;
 	}
 	void set_hall_of_fame_size(int size) {
-		hall_of_fame_size_ = size;
+		_hall_of_fame_size = size;
 	}
 
 	const char *hall_of_fame_player_name(int place) const;
@@ -560,7 +559,7 @@ public:
 	bool is_hall_of_fame_updated(int place) const;
 
 	bool has_hall_of_fame() const {
-		return hall_of_fame_size_ != 0;
+		return _hall_of_fame_size != 0;
 	}
 	bool load_hall_of_fame();
 	bool save_hall_of_fame() const;
@@ -568,16 +567,16 @@ public:
 
 private:
 
-	int timer_;
+	int _timer;
 
-	bool is_paused_;
+	bool _is_paused;
 
-	bool enable_file_packages_;
+	bool _enable_file_packages;
 	/// компрессия ресурсов в архивах, 0 - отключена, 9 - максимальная
-	int resource_compression_;
+	int _resource_compression;
 
 	/// таблица рекордов, если нету - размер нулевой
-	int hall_of_fame_size_;
+	int _hall_of_fame_size;
 	struct HallOfFameEntry {
 		std::string player_name_;
 		int score_;
@@ -591,85 +590,85 @@ private:
 	};
 
 	typedef std::vector<HallOfFameEntry> HallOfFame;
-	HallOfFame hall_of_fame_;
+	HallOfFame _hall_of_fame;
 
-	qdInterfaceDispatcher interface_dispatcher_;
+	qdInterfaceDispatcher _interface_dispatcher;
 
-	winVideo video_player_;
-	qdVideo *cur_video_;
-	qdObjectListContainer<qdVideo> videos;
+	winVideo _video_player;
+	qdVideo *_cur_video;
+	qdObjectListContainer<qdVideo> _videos;
 
-	qdObjectListContainer<qdGameObject> global_objects;
-	qdObjectListContainer<qdTriggerChain> trigger_chains;
-	qdObjectListContainer<qdInventory> inventories;
-	qdObjectListContainer<qdGameEnd> game_ends_;
-	qdObjectListContainer<qdGameScene> scenes_;
-	qdObjectListContainer<qdCounter> counters_;
+	qdObjectListContainer<qdGameObject> _global_objects;
+	qdObjectListContainer<qdTriggerChain> _trigger_chains;
+	qdObjectListContainer<qdInventory> _inventories;
+	qdObjectListContainer<qdGameEnd> _game_ends;
+	qdObjectListContainer<qdGameScene> _scenes;
+	qdObjectListContainer<qdCounter> _counters;
 
-	qdGameScene *cur_scene_;
-	bool scene_saved_;
-	int autosave_slot_;
+	qdGameScene *_cur_scene;
+	bool _scene_saved;
+	int _autosave_slot;
 
 	//! Если ненулевой - игра заканчивается с переходом на него.
-	const qdGameEnd *game_end_;
+	const qdGameEnd *_game_end;
 
-	qdObjectListContainer<qdMiniGame> minigames;
+	qdObjectListContainer<qdMiniGame> _minigames;
 
-	qdInventory *cur_inventory_;
-	qdInventoryCellTypeVector inventory_cell_types_;
+	qdInventory *_cur_inventory;
+	qdInventoryCellTypeVector _inventory_cell_types;
 	//! Шрифты
-	qdObjectListContainer<qdFontInfo> fonts_;
+	qdObjectListContainer<qdFontInfo> _fonts;
 
 	//! Шрифт, используемый для отрисовки текстов, в формате который шрифт не задан.
-	int default_font_;
+	int _default_font;
 
-	qdGameObjectMouse *mouse_obj_;
-	qdGameObjectAnimated *mouse_click_obj_;
-	const qdGameObjectState *mouse_click_state_;
-	qdAnimation *mouse_animation_;
-	Vect2f mouse_cursor_pos_;
+	qdGameObjectMouse *_mouse_obj;
+	qdGameObjectAnimated *_mouse_click_obj;
+	const qdGameObjectState *_mouse_click_state;
+	qdAnimation *_mouse_animation;
+	Vect2f _mouse_cursor_pos;
 
 	typedef std::vector<qdGameObjectState *> dialog_states_container_t;
-	dialog_states_container_t dialog_states_;
-	dialog_states_container_t dialog_states_last_;
+	dialog_states_container_t _dialog_states;
+	dialog_states_container_t _dialog_states_last;
 
-	qdScreenTextDispatcher screen_texts;
+	qdScreenTextDispatcher _screen_texts;
 
-	std::string startup_scene_;
+	std::string _startup_scene;
 
 	//! Файл с субтитрами.
-	std::string texts_database_;
+	std::string _texts_database;
 
 	//! Название игры.
-	std::string game_title_;
+	std::string _game_title;
 
-	std::string cd_key_;
+	std::string _cd_key;
 
-	void *scene_loading_progress_data_;
+	void *_scene_loading_progress_data;
 	qdLoadingProgressFnc scene_loading_progress_fnc_;
 
-	qdGameScene *next_scene_;
+	qdGameScene *_next_scene;
 
-	bool interface_music_mode_;
-	const qdMusicTrack *cur_music_track_;
-	const qdMusicTrack *cur_interface_music_track_;
+	bool _interface_music_mode;
+	const qdMusicTrack *_cur_music_track;
+	const qdMusicTrack *_cur_interface_music_track;
 
 	float fade_timer_;
-	float fade_duration_;
+	float _fade_duration;
 
-	qdCameraMode default_camera_mode_;
+	qdCameraMode _default_camera_mode;
 
-	static qdGameDispatcher *dispatcher_;
+	static qdGameDispatcher *_dispatcher;
 
 	bool init_inventories();
 
 	qdInventoryCellTypeVector::iterator find_inventory_cell_type(int type) {
-		return std::find(inventory_cell_types_.begin(),
-		                 inventory_cell_types_.end(), type);
+		return std::find(_inventory_cell_types.begin(),
+		                 _inventory_cell_types.end(), type);
 	}
 
 	qdInventoryCellTypeVector::const_iterator find_inventory_cell_type(int type) const {
-		return std::find(inventory_cell_types_.begin(), inventory_cell_types_.end(), type);
+		return std::find(_inventory_cell_types.begin(), _inventory_cell_types.end(), type);
 	}
 
 	void redraw(const grScreenRegion &reg);
