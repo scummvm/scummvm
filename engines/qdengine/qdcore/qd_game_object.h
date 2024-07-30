@@ -59,11 +59,11 @@ public:
 	qdGameObject &operator = (const qdGameObject &obj);
 
 	void set_parallax_offset(int offs_x, int offs_y) {
-		parallax_offset_.x = offs_x;
-		parallax_offset_.y = offs_y;
+		_parallax_offset.x = offs_x;
+		_parallax_offset.y = offs_y;
 	}
 	const Vect2i &get_parallax_offset() const {
-		return parallax_offset_;
+		return _parallax_offset;
 	}
 
 	virtual void redraw(int offs_x = 0, int offs_y = 0) const = 0;
@@ -90,13 +90,13 @@ public:
 	const Vect2i &screen_pos();
 #endif
 	const Vect2i &screen_pos() const {
-		return screen_r_;
+		return _screen_r;
 	}
 	virtual bool update_screen_pos();
 	virtual Vect2s screen_size() const = 0;
 
 	float screen_depth() const {
-		return screen_depth_;
+		return _screen_depth;
 	}
 
 	virtual bool is_visible() const {
@@ -104,10 +104,10 @@ public:
 	}
 
 	const Vect3f &R() const {
-		return r_;
+		return _r;
 	}
 	void set_pos(const Vect3f &rr) {
-		r_ = rr;
+		_r = rr;
 	}
 
 	virtual bool load_script(const xml::tag *p) = 0;
@@ -153,7 +153,7 @@ public:
 	bool save_data(Common::WriteStream &fh) const;
 
 	const Vect2i &get_screen_R() const {
-		return screen_r_;
+		return _screen_r;
 	}
 
 protected:
@@ -162,16 +162,16 @@ protected:
 	virtual bool save_script_body(Common::WriteStream &fh, int indent = 0) const;
 
 	void set_screen_R(const Vect2i &v) {
-		screen_r_ = v;
+		_screen_r = v;
 	}
 
 private:
 
-	Vect3f r_;
-	Vect2i parallax_offset_;
+	Vect3f _r;
+	Vect2i _parallax_offset;
 
-	Vect2i screen_r_;
-	float screen_depth_;
+	Vect2i _screen_r;
+	float _screen_depth;
 };
 
 #ifdef __QD_DEBUG_ENABLE__
