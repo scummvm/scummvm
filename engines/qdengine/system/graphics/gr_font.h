@@ -37,26 +37,26 @@ public:
 	bool load_alpha(Common::SeekableReadStream *fh);
 
 	int size_x() const {
-		return size_x_;
+		return _size_x;
 	}
 	int size_y() const {
-		return size_y_;
+		return _size_y;
 	}
 
 	int alpha_buffer_size_x() const {
-		return alpha_buffer_sx_;
+		return _alpha_buffer_sx;
 	}
 	int alpha_buffer_size_y() const {
-		return alpha_buffer_sy_;
+		return _alpha_buffer_sy;
 	}
 
 	const unsigned char *alpha_buffer() const {
-		return alpha_buffer_;
+		return _alpha_buffer;
 	}
 
 	const grScreenRegion &find_char(int code) const {
-		grFontCharVector::const_iterator it = std::find(chars_.begin(), chars_.end(), code);
-		if (it != chars_.end()) return it->region_;
+		grFontCharVector::const_iterator it = std::find(_chars.begin(), _chars.end(), code);
+		if (it != _chars.end()) return it->_region;
 
 		return grScreenRegion::EMPTY;
 	}
@@ -67,26 +67,26 @@ public:
 
 private:
 
-	int size_x_;
-	int size_y_;
+	int _size_x;
+	int _size_y;
 
-	int alpha_buffer_sx_;
-	int alpha_buffer_sy_;
-	unsigned char *alpha_buffer_;
+	int _alpha_buffer_sx;
+	int _alpha_buffer_sy;
+	unsigned char *_alpha_buffer;
 
 	struct grFontChar {
-		grFontChar() : code_(-1) { }
+		grFontChar() : _code(-1) { }
 
-		int code_;
-		grScreenRegion region_;
+		int _code;
+		grScreenRegion _region;
 
 		bool operator == (int code) const {
-			return (code_ == code);
+			return (_code == code);
 		}
 	};
 
 	typedef std::vector<grFontChar> grFontCharVector;
-	grFontCharVector chars_;
+	grFontCharVector _chars;
 };
 
 } // namespace QDEngine
