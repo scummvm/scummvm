@@ -30,16 +30,16 @@
 
 namespace QDEngine {
 
-qdResource::qdResource() : is_loaded_(false) {
+qdResource::qdResource() : _is_loaded(false) {
 }
 
-qdResource::qdResource(const qdResource &res) : is_loaded_(res.is_loaded_) {
+qdResource::qdResource(const qdResource &res) : _is_loaded(res._is_loaded) {
 }
 
 qdResource &qdResource::operator = (const qdResource &res) {
 	if (this == &res) return *this;
 
-	is_loaded_ = res.is_loaded_;
+	_is_loaded = res._is_loaded;
 
 	return *this;
 }
