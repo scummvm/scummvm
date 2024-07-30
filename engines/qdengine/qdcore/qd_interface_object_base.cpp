@@ -25,11 +25,11 @@
 
 namespace QDEngine {
 
-qdInterfaceObjectBase::qdInterfaceObjectBase() : owner_(NULL) {
+qdInterfaceObjectBase::qdInterfaceObjectBase() : _owner(NULL) {
 }
 
 qdInterfaceObjectBase::qdInterfaceObjectBase(const qdInterfaceObjectBase &obj) : qdNamedObjectBase(obj),
-	owner_(obj.owner_) {
+	_owner(obj._owner) {
 }
 
 qdInterfaceObjectBase::~qdInterfaceObjectBase() {
@@ -40,7 +40,7 @@ qdInterfaceObjectBase &qdInterfaceObjectBase::operator = (const qdInterfaceObjec
 
 	*static_cast<qdNamedObjectBase *>(this) = obj;
 
-	owner_ = obj.owner_;
+	_owner = obj._owner;
 
 	return *this;
 }
