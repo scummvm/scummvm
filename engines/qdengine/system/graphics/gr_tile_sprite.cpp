@@ -30,7 +30,7 @@
 namespace QDEngine {
 
 
-unsigned grTileSprite::comprasionTolerance_ = 2;
+unsigned grTileSprite::_comprasionTolerance = 2;
 
 namespace tile_compress {
 
@@ -143,18 +143,18 @@ void grDispatcher::PutTileSpr(int x, int y, const grTileSprite &sprite, bool has
 	}
 }
 
-grTileSprite::grTileSprite(const unsigned *data_ptr) : data_(data_ptr) {
+grTileSprite::grTileSprite(const unsigned *data_ptr) : _data(data_ptr) {
 }
 
 bool grTileSprite::operator == (const grTileSprite &sprite) const {
 	if (isEmpty() || sprite.isEmpty())
 		return (isEmpty() && sprite.isEmpty());
 
-	const unsigned char *ptr0 = (const unsigned char *)data_;
-	const unsigned char *ptr1 = (const unsigned char *)sprite.data_;
+	const unsigned char *ptr0 = (const unsigned char *)_data;
+	const unsigned char *ptr1 = (const unsigned char *)sprite._data;
 
 	for (int i = 0; i < GR_TILE_SPRITE_SIZE_BYTES; i++, ptr0++, ptr1++) {
-		if (abs(*ptr0 - *ptr1) > comprasionTolerance_)
+		if (abs(*ptr0 - *ptr1) > _comprasionTolerance)
 			return false;
 	}
 
