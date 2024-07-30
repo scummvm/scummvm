@@ -196,10 +196,10 @@ public:
 	qdInventoryCellSet &operator = (const qdInventoryCellSet &set);
 
 	const Vect2s screen_pos() const {
-		return screen_pos_ + qdInventoryCell::screen_offset();
+		return _screen_pos + qdInventoryCell::screen_offset();
 	}
 	void set_screen_pos(const Vect2s &pos) {
-		screen_pos_ = pos;
+		_screen_pos = pos;
 	}
 
 #ifdef _QUEST_EDITOR
@@ -209,27 +209,27 @@ public:
 
 	grScreenRegion screen_region() const;
 	const grScreenRegion &last_screen_region() const {
-		return last_screen_region_;
+		return _last_screen_region;
 	}
 
 	int cell_index(const qdGameObjectAnimated *obj) const;
 	Vect2s cell_position(int cell_idx) const;
 
 	const Vect2s &size() const {
-		return size_;
+		return _size;
 	}
 	void set_size(const Vect2s &sz) {
 		assert(sz.x && sz.y);
 		qdInventoryCell __t;
-		if (size_.x != 0)//предполагаю, что либо оба равны либо оба неравны 0
-			__t = cells_.front();
-		size_ = sz;
-		cells_.resize((sz.x + additional_cells_.x) * (sz.y + additional_cells_.y));
-		std::fill(cells_.begin(), cells_.end(), __t);
+		if (_size.x != 0)//предполагаю, что либо оба равны либо оба неравны 0
+			__t = _cells.front();
+		_size = sz;
+		_cells.resize((sz.x + _additional_cells.x) * (sz.y + _additional_cells.y));
+		std::fill(_cells.begin(), _cells.end(), __t);
 	}
 
 	void set_cell_type(const qdInventoryCellType &tp) {
-		std::fill(cells_.begin(), cells_.end(), tp);
+		std::fill(_cells.begin(), _cells.end(), tp);
 	}
 
 	bool hit(const Vect2s &pos) const;
@@ -256,10 +256,10 @@ public:
 	bool init(const qdInventoryCellTypeVector &tp);
 
 	const qdInventoryCellVector &cells() const {
-		return cells_;
+		return _cells;
 	}
 	int num_cells() const {
-		return cells_.size();
+		return _cells.size();
 	}
 
 	bool load_resources();
@@ -268,10 +268,10 @@ public:
 	void objects_quant(float dt);
 
 	Vect2s additional_cells() const {
-		return additional_cells_;
+		return _additional_cells;
 	}
 	void set_additional_cells(Vect2s val) {
-		additional_cells_ = val;
+		_additional_cells = val;
 		// Изменили кол-во доп. ячеек - изменяем и всех кол-во массива ячеек
 		set_size(size());
 	}
@@ -290,19 +290,19 @@ private:
 
 	//! Размер группы.
 	/**
-	В группе size_.x * size_.y ячеек.
+	В группе _size.x * _size.y ячеек.
 	*/
-	Vect2s size_;
+	Vect2s _size;
 	//! Дополнительне ячейки по x и y
-	Vect2s additional_cells_;
-	//! Смещение по x и y (с него выводятся ячекйки в количестве size_)
-	Vect2s cells_shift_;
+	Vect2s _additional_cells;
+	//! Смещение по x и y (с него выводятся ячекйки в количестве _size)
+	Vect2s _cells_shift;
 	//! Ячейки.
-	qdInventoryCellVector cells_;
+	qdInventoryCellVector _cells;
 	//! Экранные координаты центра первой ячейки группы.
-	Vect2s screen_pos_;
+	Vect2s _screen_pos;
 
-	grScreenRegion last_screen_region_;
+	grScreenRegion _last_screen_region;
 };
 
 typedef std::vector<qdInventoryCellSet> qdInventoryCellSetVector;
