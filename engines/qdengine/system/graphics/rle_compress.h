@@ -40,16 +40,16 @@ public:
 
 	inline bool decode_line(int y, int buffer_id = 0) const {
 		if (buffer_id)
-			return decode_line(y, &*buffer1_.begin());
+			return decode_line(y, &*_buffer1.begin());
 		else
-			return decode_line(y, &*buffer0_.begin());
+			return decode_line(y, &*_buffer0.begin());
 	}
 
 	bool decode_pixel(int x, int y, unsigned &pixel);
 
 	static inline const unsigned char *get_buffer(int buffer_id) {
-		if (buffer_id) return &*buffer1_.begin();
-		else return &*buffer0_.begin();
+		if (buffer_id) return &*_buffer1.begin();
+		else return &*_buffer0.begin();
 	}
 
 	void resize_buffers();
@@ -59,17 +59,17 @@ public:
 	int line_header_length(int line_num) const;
 
 	unsigned header_size() const {
-		return header_.size();
+		return _header.size();
 	}
 	unsigned data_size() const {
-		return data_.size();
+		return _data.size();
 	}
 
 	const char *header_ptr(int y = 0) const {
-		return &*(header_.begin() + header_offset_[y]);
+		return &*(_header.begin() + _header_offset[y]);
 	}
 	const unsigned *data_ptr(int y = 0) const {
-		return &*(data_.begin() + data_offset_[y]);
+		return &*(_data.begin() + _data_offset[y]);
 	}
 
 	bool load(Common::SeekableReadStream *fh);
@@ -77,16 +77,16 @@ public:
 	bool convert_data(int bits_per_pixel = 16);
 
 private:
-	std::vector<unsigned> header_offset_;
-	std::vector<unsigned> data_offset_;
+	std::vector<unsigned> _header_offset;
+	std::vector<unsigned> _data_offset;
 
-	std::vector<char> header_;
-	std::vector<unsigned> data_;
+	std::vector<char> _header;
+	std::vector<unsigned> _data;
 
-	int bits_per_pixel_;
+	int _bits_per_pixel;
 
-	static std::vector<unsigned char> buffer0_;
-	static std::vector<unsigned char> buffer1_;
+	static std::vector<unsigned char> _buffer0;
+	static std::vector<unsigned char> _buffer1;
 
 	friend bool operator == (const rleBuffer &buf1, const rleBuffer &buf2);
 };
