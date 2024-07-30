@@ -67,7 +67,7 @@ public:
 	typedef std::list<qdInterfaceScreen *> screen_list_t;
 	//! Возвращает список экранов.
 	const screen_list_t &screen_list() const {
-		return screens_.get_list();
+		return _screens.get_list();
 	}
 
 	//! Установка активного экрана.
@@ -85,12 +85,12 @@ public:
 	void update_personage_buttons();
 
 	qdInterfaceScreen *selected_screen() const {
-		return cur_screen_;
+		return _cur_screen;
 	}
 
 	//! Возвращает true, если экран p в данный момент активен.
 	bool is_screen_active(const qdInterfaceScreen *p) const {
-		return (cur_screen_ == p);
+		return (_cur_screen == p);
 	}
 
 	//! Добавляет ресурс file_name с владельцем owner.
@@ -99,7 +99,7 @@ public:
 	bool remove_resource(const char *file_name, const qdInterfaceElementState *owner);
 	//! Возвращает указатель на ресурс file_name.
 	qdResource *get_resource(const char *file_name) const {
-		return resources_.get_resource(file_name);
+		return _resources.get_resource(file_name);
 	}
 
 	//! Обработчик событий мыши.
@@ -117,125 +117,125 @@ public:
 	void set_main_menu_screen(const char *name);
 	//! Возвращает имя экрана с главным меню игры.
 	const char *main_menu_screen_name() const {
-		return main_menu_screen_name_.c_str();
+		return _main_menu_screen_name.c_str();
 	}
 	//! Возвращает true, если установлено имя экрана с главным меню игры.
 	bool has_main_menu() const {
-		return !main_menu_screen_name_.empty();
+		return !_main_menu_screen_name.empty();
 	}
 
 	//! Установка имени внутриигрового экрана.
 	void set_ingame_screen(const char *name, bool inventory_state = false);
 	//! Возвращает имя внутриигрового экрана.
 	const char *ingame_screen_name(bool inventory_state = false) const {
-		return ingame_screen_names_[inventory_state].c_str();
+		return _ingame_screen_names[inventory_state].c_str();
 	}
 	//! Возвращает true, если установлено имя внутриигрового экрана.
 	bool has_ingame_screen(bool inventory_state = false) const {
-		return !ingame_screen_names_[inventory_state].empty();
+		return !_ingame_screen_names[inventory_state].empty();
 	}
 
 	//! Имя модального экрана подсказки: перезаписывать сэйв или нет.
 	const char *save_prompt_screen_name() const {
-		return save_prompt_screen_name_.c_str();
+		return _save_prompt_screen_name.c_str();
 	}
 	void set_save_prompt_screen_name(const char *str) {
-		if (str) save_prompt_screen_name_ = str;
-		else save_prompt_screen_name_ = "";
+		if (str) _save_prompt_screen_name = str;
+		else _save_prompt_screen_name = "";
 	}
 	bool has_save_prompt_screen() const {
-		return !save_prompt_screen_name_.empty();
+		return !_save_prompt_screen_name.empty();
 	}
 
 	const char *save_title_screen_name() const {
-		return save_title_screen_name_.c_str();
+		return _save_title_screen_name.c_str();
 	}
 	void set_save_title_screen_name(const char *name) {
-		save_title_screen_name_ = name;
+		_save_title_screen_name = name;
 	}
 	bool has_save_title_screen() const {
-		return !save_title_screen_name_.empty();
+		return !_save_title_screen_name.empty();
 	}
 
 	//! Нужно ли выводить скриншот к сохраненке
 	bool need_save_screenshot() const {
-		return need_save_screenshot_;
+		return _need_save_screenshot;
 	}
 	void toggle_save_screenshot(bool state) {
-		need_save_screenshot_ = state;
+		_need_save_screenshot = state;
 	}
 	//! Нужно ли выводить дату и время при отображении сэйва
 	bool need_show_save_time() const {
-		return need_show_save_time_;
+		return _need_show_save_time;
 	}
 	void toggle_show_save_time(bool state) {
-		need_show_save_time_ = state;
+		_need_show_save_time = state;
 	}
 	bool need_show_save_title() const {
-		return need_show_save_title_;
+		return _need_show_save_title;
 	}
 	void toggle_show_save_title(bool state) {
-		need_show_save_title_ = state;
+		_need_show_save_title = state;
 	}
 	//! Тип шрифт, которым выводится текст сэйва (в частности дата и время)
 	int save_font_type() const {
-		return save_font_type_;
+		return _save_font_type;
 	}
 	void set_save_font_type(int type) {
-		save_font_type_ = type;
+		_save_font_type = type;
 	}
 	//! Цвет, которым выводится текст сэйва (в частности дата и время)
 	int save_font_color() const {
-		return save_font_color_;
+		return _save_font_color;
 	}
 	void set_save_font_color(int clr) {
-		save_font_color_ = clr;
+		_save_font_color = clr;
 	}
 
 	//! Возвращает true, если интерфейс отрисовывается поверх сцены.
 	bool need_scene_redraw() const {
-		return need_scene_redraw_;
+		return _need_scene_redraw;
 	}
 	//! Устанавливает, надо ли если интерфейсу отрисовываться поверх сцены.
 	void set_scene_redraw(bool state) {
-		need_scene_redraw_ = state;
+		_need_scene_redraw = state;
 	}
 
 	static void set_dispatcher(qdInterfaceDispatcher *p) {
-		dispatcher_ = p;
+		_dispatcher = p;
 	}
 	static qdInterfaceDispatcher *get_dispatcher() {
-		return dispatcher_;
+		return _dispatcher;
 	}
 
 	void activate() {
-		is_active_ = true;
+		_is_active = true;
 	}
 	void deactivate() {
-		is_active_ = false;
+		_is_active = false;
 	}
 	bool is_active() const {
-		return is_active_;
+		return _is_active;
 	}
 
 	bool is_mouse_hover() const {
-		return is_mouse_hover_;
+		return _is_mouse_hover;
 	}
 	void toggle_mouse_hover() {
-		is_mouse_hover_ = true;
+		_is_mouse_hover = true;
 	}
 	bool is_autohide_enabled() const {
-		return !autohide_disable_;
+		return !_autohide_disable;
 	}
 	void disable_autohide() {
-		autohide_disable_ = true;
+		_autohide_disable = true;
 	}
 
 	ModalScreenMode modalScreenMode() const {
-		return modalScreenMode_;
+		return _modalScreenMode;
 	}
 	void setModalScreenMode(ModalScreenMode mode) {
-		modalScreenMode_ = mode;
+		_modalScreenMode = mode;
 	}
 
 	bool set_save_title(const char *title);
@@ -251,13 +251,13 @@ public:
 	bool get_file_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const;
 
 	void toggle_end_game_mode(bool state) {
-		end_game_mode_ = state;
+		_end_game_mode = state;
 	}
 
 #ifndef _QUEST_EDITOR
 	//! Устанавливает следующий экран.
 	void set_next_screen(const char *screen_name) {
-		next_screen_ = screen_name;
+		_next_screen = screen_name;
 	}
 #endif
 
@@ -271,74 +271,74 @@ public:
 private:
 
 	//! Активный интерфейсный экран.
-	qdInterfaceScreen *cur_screen_;
+	qdInterfaceScreen *_cur_screen;
 
 	/// Фоновый экран, рисуется под активным
-	qdInterfaceScreen *background_screen_;
+	qdInterfaceScreen *_background_screen;
 	/// true если ресурсы фонового экрана не надо выгружать
-	bool background_screen_lock_;
+	bool _background_screen_lock;
 
-	ModalScreenMode modalScreenMode_;
+	ModalScreenMode _modalScreenMode;
 
 	//! Имя экрана с главным меню игры
-	std::string main_menu_screen_name_;
+	std::string _main_menu_screen_name;
 
 	//! Имена экраноы с внутриигровым интерфейсом.
 	/**
 	Первый экран показывается когда инвентори спрятано, вотрой - когда оно активно.
 	*/
-	std::string ingame_screen_names_[2];
+	std::string _ingame_screen_names[2];
 
 	/// Экран ввода имени сэйва
-	std::string save_title_screen_name_;
-	std::string save_title_;
+	std::string _save_title_screen_name;
+	std::string _save_title;
 
 	//! Экран, вызывающийся при подтверждении перезаписи файла сэйва
-	std::string save_prompt_screen_name_;
+	std::string _save_prompt_screen_name;
 
 	//! Нужно ли выводить скриншот к сохраненке
-	bool need_save_screenshot_;
+	bool _need_save_screenshot;
 	//! Нужно ли выводить дату и время при отображении сэйва
-	bool need_show_save_time_;
+	bool _need_show_save_time;
 	//! Нужно ли выводить имя при отображении сэйва
-	bool need_show_save_title_;
+	bool _need_show_save_title;
 	//! Тип шрифта, которым выводится текст сэйва (в частности дата и время)
-	int save_font_type_;
+	int _save_font_type;
 	//! Цвет, которым выводится текст сэйва (в частности дата и время)
-	int save_font_color_;
+	int _save_font_color;
 
 	//! Интерфейсные экраны.
-	qdObjectListContainer<qdInterfaceScreen> screens_;
+	qdObjectListContainer<qdInterfaceScreen> _screens;
 
 	typedef qdResourceContainer<qdInterfaceElementState> resource_container_t;
 	//! Интерфейсные ресурсы.
-	resource_container_t resources_;
+	resource_container_t _resources;
 
 	//! Равно true, если интерфейс активен.
-	bool is_active_;
+	bool _is_active;
 
 	//! Равно true, если курсор мыши попадает в интерфейс.
-	bool is_mouse_hover_;
+	bool _is_mouse_hover;
 	/// true если надо показывать
-	bool autohide_disable_;
+	bool _autohide_disable;
 
 	//! Равно true, если требуется полная отрисовка интерфейса, после отрисовки скидывается.
-	bool need_full_redraw_;
+	bool _need_full_redraw;
 
 	//! Равно true, если отрисовка сцены под интерфейсом.
-	bool need_scene_redraw_;
+	bool _need_scene_redraw;
 
 	//! Режим окончания игры - после любого клика возврат с текущего экрана в главное меню.
 	//! После загрузки меню скидывается в false.
-	bool end_game_mode_;
+	bool _end_game_mode;
 
 #ifndef _QUEST_EDITOR
 	//! Имя экрана, на который надо перейти.
-	const char *next_screen_;
+	const char *_next_screen;
 #endif
 
 	//! Текущий диспетчер интерфейса.
-	static qdInterfaceDispatcher *dispatcher_;
+	static qdInterfaceDispatcher *_dispatcher;
 };
 
 } // namespace QDEngine
