@@ -35,8 +35,8 @@ namespace QDEngine {
 //! Шрифт
 class qdFontInfo : public qdNamedObject {
 public:
-	qdFontInfo() : type_(0), font_(NULL) {}
-	explicit qdFontInfo(int tp) : type_(tp), font_(NULL) {}
+	qdFontInfo() : _type(0), _font(NULL) {}
+	explicit qdFontInfo(int tp) : _type(tp), _font(NULL) {}
 	// Копирующий конструктор
 	qdFontInfo(const qdFontInfo &fi);
 	~qdFontInfo();
@@ -46,29 +46,29 @@ public:
 	}
 
 	bool operator == (const qdFontInfo &fi) const {
-		return (fi.type() == type_) && (fi.font_file_name_ == font_file_name_);
+		return (fi.type() == _type) && (fi._font_file_name == _font_file_name);
 	}
 	bool operator == (int t) const {
-		return (t == type_);
+		return (t == _type);
 	}
 	qdFontInfo &operator = (const qdFontInfo &fi);
 
 	int type() const {
-		return type_;
+		return _type;
 	}
 	void set_type(int tp) {
-		type_ = tp;
+		_type = tp;
 	}
 
 	void set_font_file_name(const char *fname) {
-		font_file_name_ = fname;
+		_font_file_name = fname;
 	}
 	const char *font_file_name() const {
-		return font_file_name_.c_str();
+		return _font_file_name.c_str();
 	}
 
 	const grFont *font() const {
-		return font_;
+		return _font;
 	}
 
 	bool load_script(const xml::tag *p);
@@ -81,11 +81,11 @@ public:
 private:
 
 	//! Тип шрифта.
-	int type_;
+	int _type;
 	//! Файл шрифта (*.tga).
-	std::string font_file_name_;
+	std::string _font_file_name;
 	//! Сам шрифт
-	grFont *font_;
+	grFont *_font;
 };
 
 typedef std::list<qdFontInfo *> qdFontInfoList;

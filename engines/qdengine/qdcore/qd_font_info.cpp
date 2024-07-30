@@ -29,17 +29,17 @@
 namespace QDEngine {
 
 qdFontInfo::qdFontInfo(const qdFontInfo &fi) : qdNamedObject(fi),
-	type_(fi.type()), font_file_name_(fi.font_file_name()) {
+	_type(fi.type()), _font_file_name(fi.font_file_name()) {
 	if (NULL != fi.font()) {
-		font_ = new grFont;
-		*font_ = *fi.font();
+		_font = new grFont;
+		*_font = *fi.font();
 	} else
-		font_ = NULL;
+		_font = NULL;
 }
 
 
 qdFontInfo::~qdFontInfo() {
-	delete font_;
+	delete _font;
 }
 
 qdFontInfo &qdFontInfo::operator = (const qdFontInfo &fi) {
@@ -47,16 +47,16 @@ qdFontInfo &qdFontInfo::operator = (const qdFontInfo &fi) {
 
 	*static_cast<qdNamedObject *>(this) = fi;
 
-	type_ = fi.type();
-	font_file_name_ = fi.font_file_name();
+	_type = fi.type();
+	_font_file_name = fi.font_file_name();
 
-	delete font_;
+	delete _font;
 
 	if (NULL != fi.font()) {
-		font_ = new grFont;
-		*font_ = *fi.font();
+		_font = new grFont;
+		*_font = *fi.font();
 	} else
-		font_ = NULL;
+		_font = NULL;
 
 	return *this;
 }
@@ -84,10 +84,10 @@ bool qdFontInfo::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<font_info type=\"%d\"", type_));
+	fh.writeString(Common::String::format("<_fontinfo type=\"%d\"", _type));
 
-	if (!font_file_name_.empty()) {
-		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(font_file_name_.c_str())));
+	if (!_font_file_name.empty()) {
+		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(_font_file_name.c_str())));
 	}
 
 	if (name()) {
@@ -129,7 +129,7 @@ bool qdFontInfo::load_font() {
 		return false;
 	}
 
-	font_ = buf_font;
+	_font = buf_font;
 	return true;
 }
 } // namespace QDEngine
