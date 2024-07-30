@@ -51,7 +51,7 @@ public:
 
 	void take_object(qdGameObjectAnimated *p);
 	qdGameObjectAnimated *object() {
-		return object_;
+		return _object;
 	}
 
 	//! Идентификаторы для курсоров по-умолчанию.
@@ -77,11 +77,11 @@ public:
 	Номер состояния отсчитывается с нуля.
 	*/
 	void set_default_cursor(cursor_ID_t id, int state_index) {
-		default_cursors_[id] = state_index;
+		_default_cursors[id] = state_index;
 	}
 	//! Возвращает курсор по-умолчанию.
 	int default_cursor(cursor_ID_t id) const {
-		return default_cursors_[id];
+		return _default_cursors[id];
 	}
 
 	void set_cursor(cursor_ID_t id);
@@ -98,7 +98,7 @@ public:
 	bool update_screen_pos();
 
 	const Vect2f &screen_pos_offset() const {
-		return screen_pos_offset_;
+		return _screen_pos_offset;
 	}
 
 protected:
@@ -109,15 +109,15 @@ protected:
 private:
 
 	//! Объект, который прицеплен к курсору.
-	qdGameObjectAnimated *object_;
+	qdGameObjectAnimated *_object;
 
 	//! Номера состояний, соответствующие курсорам по-умолчанию.
-	int default_cursors_[MAX_CURSOR_ID];
+	int _default_cursors[MAX_CURSOR_ID];
 
-	grScreenRegion object_screen_region_;
+	grScreenRegion _object_screen_region;
 
-	Vect2f screen_pos_offset_;
-	Vect2f screen_pos_offset_delta_;
+	Vect2f _screen_pos_offset;
+	Vect2f _screen_pos_offset_delta;
 
 	void update_object_position() const;
 };

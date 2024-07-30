@@ -33,25 +33,25 @@
 
 namespace QDEngine {
 
-qdGameObjectMouse::qdGameObjectMouse() : object_(NULL),
-	object_screen_region_(grScreenRegion::EMPTY) {
+qdGameObjectMouse::qdGameObjectMouse() : _object(NULL),
+	_object_screen_region(grScreenRegion::EMPTY) {
 	set_flag(QD_OBJ_SCREEN_COORDS_FLAG);
 	set_name("Мышь");
 
-	screen_pos_offset_ = screen_pos_offset_delta_ = Vect2f(0, 0);
+	_screen_pos_offset = _screen_pos_offset_delta = Vect2f(0, 0);
 
 	for (int i = 0; i < MAX_CURSOR_ID; i++)
-		default_cursors_[i] = 0;
+		_default_cursors[i] = 0;
 }
 
 qdGameObjectMouse::qdGameObjectMouse(const qdGameObjectMouse &obj) : qdGameObjectAnimated(obj),
-	object_(NULL),
-	object_screen_region_(grScreenRegion::EMPTY) {
+	_object(NULL),
+	_object_screen_region(grScreenRegion::EMPTY) {
 	set_flag(QD_OBJ_SCREEN_COORDS_FLAG);
 	set_name("Мышь");
 
 	for (int i = 0; i < MAX_CURSOR_ID; i++)
-		default_cursors_[i] = 0;
+		_default_cursors[i] = 0;
 }
 
 qdGameObjectMouse::~qdGameObjectMouse() {
@@ -63,7 +63,7 @@ qdGameObjectMouse &qdGameObjectMouse::operator = (const qdGameObjectMouse &obj) 
 	*static_cast<qdGameObjectAnimated *>(this) = obj;
 
 	for (int i = 0; i < MAX_CURSOR_ID; i++)
-		default_cursors_[i] = obj.default_cursors_[i];
+		_default_cursors[i] = obj._default_cursors[i];
 
 	return *this;
 }
@@ -75,7 +75,7 @@ bool qdGameObjectMouse::load_script_body(const xml::tag *p) {
 		switch (it->ID()) {
 		case QDSCR_MOUSE_DEFAULT_CURSORS: {
 			xml::tag_buffer buf(*it);
-			for (int i = 0; i < MAX_CURSOR_ID; i ++) buf > default_cursors_[i];
+			for (int i = 0; i < MAX_CURSOR_ID; i ++) buf > _default_cursors[i];
 		}
 		break;
 		}
@@ -107,7 +107,7 @@ bool qdGameObjectMouse::save_script(Common::WriteStream &fh, int indent) const {
 	fh.writeString(" default_cursors=\"");
 	for (int i = 0; i < MAX_CURSOR_ID; i++) {
 		if (i) fh.writeString(" ");
-		fh.writeString(Common::String::format("%d", default_cursors_[i]));
+		fh.writeString(Common::String::format("%d", _default_cursors[i]));
 	}
 
 	fh.writeString("\">\r\n");
@@ -136,9 +136,9 @@ bool qdGameObjectMouse::load_data(Common::SeekableReadStream &fh, int save_versi
 			return false;
 
 		if (qdGameDispatcher * p = qdGameDispatcher::get_dispatcher())
-			object_ = static_cast<qdGameObjectAnimated * >(p->get_named_object(&ref));
+			_object = static_cast<qdGameObjectAnimated * >(p->get_named_object(&ref));
 
-		if (!object_) return false;
+		if (!_object) return false;
 	}
 
 	debugC(3, kDebugSave, "  qdGameObjectMouse::load_data after: %ld", fh.pos());
@@ -151,9 +151,9 @@ bool qdGameObjectMouse::save_data(Common::WriteStream &fh) const {
 	if (!qdGameObjectAnimated::save_data(fh))
 		return false;
 
-	if (object_) {
+	if (_object) {
 		fh.writeUint32LE(1);
-		qdNamedObjectReference ref(object_);
+		qdNamedObjectReference ref(_object);
 		if (!ref.save_data(fh)) {
 			return false;
 		}
@@ -166,12 +166,12 @@ bool qdGameObjectMouse::save_data(Common::WriteStream &fh) const {
 }
 
 void qdGameObjectMouse::redraw(int offs_x, int offs_y) const {
-	if (object_ && !qdInterfaceDispatcher::get_dispatcher()->is_active()) {
+	if (_object && !qdInterfaceDispatcher::get_dispatcher()->is_active()) {
 		update_object_position();
-		const qdGameObjectState *p = object_-> get_cur_state();
+		const qdGameObjectState *p = _object-> get_cur_state();
 
 		if (p->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_STAY_IN_INVENTORY) || !p->has_mouse_cursor_ID())
-			object_->redraw(offs_x, offs_y);
+			_object->redraw(offs_x, offs_y);
 
 		if (p->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_STAY_IN_INVENTORY) || p->has_mouse_cursor_ID())
 			qdGameObjectAnimated::redraw(offs_x, offs_y);
@@ -182,48 +182,48 @@ void qdGameObjectMouse::redraw(int offs_x, int offs_y) const {
 
 void qdGameObjectMouse::set_cursor(cursor_ID_t id) {
 	debugC(2, kDebugGraphics, "qdGameObjectMouse::set_cursor(%d)", id);
-	if (cur_state() != default_cursors_[id])
-		set_state(default_cursors_[id]);
+	if (cur_state() != _default_cursors[id])
+		set_state(_default_cursors[id]);
 }
 
 void qdGameObjectMouse::take_object(qdGameObjectAnimated *p) {
-	if (object_) {
-		if (object_->get_cur_state() && object_->get_cur_state()->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_STATE)) {
-			if (qdGameObjectState * sp = object_->get_inventory_state())
-				object_->set_state(sp);
+	if (_object) {
+		if (_object->get_cur_state() && _object->get_cur_state()->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_STATE)) {
+			if (qdGameObjectState * sp = _object->get_inventory_state())
+				_object->set_state(sp);
 		}
 
 //		object_->drop_flag(QD_OBJ_IS_IN_INVENTORY_FLAG);
 	}
 
-	object_ = p;
+	_object = p;
 
-	if (object_) {
-		object_->set_flag(QD_OBJ_IS_IN_INVENTORY_FLAG);
-		if (qdGameObjectState * sp = object_->get_mouse_state()) {
-			if (object_->get_cur_state() != sp) {
-				qdGameObjectState *cur_st = object_->get_cur_state();
+	if (_object) {
+		_object->set_flag(QD_OBJ_IS_IN_INVENTORY_FLAG);
+		if (qdGameObjectState * sp = _object->get_mouse_state()) {
+			if (_object->get_cur_state() != sp) {
+				qdGameObjectState *cur_st = _object->get_cur_state();
 				if (cur_st && cur_st->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_HOVER_STATE))
 					cur_st = cur_st->prev_state();
 
 				sp->set_prev_state(cur_st);
-				object_->set_state(sp);
+				_object->set_state(sp);
 			}
 		}
 	}
 }
 
 void qdGameObjectMouse::update_object_position() const {
-	if (object_) {
-		if (object_-> get_cur_state()->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_STAY_IN_INVENTORY)) {
+	if (_object) {
+		if (_object-> get_cur_state()->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_STAY_IN_INVENTORY)) {
 			if (const qdGameDispatcher * dp = static_cast<const qdGameDispatcher * >(owner())) {
-				Vect2s pos = dp->cur_inventory()->cell_position(object_->inventory_cell_index());
-				object_->set_pos(Vect3f(pos.x, pos.y, 0));
+				Vect2s pos = dp->cur_inventory()->cell_position(_object->inventory_cell_index());
+				_object->set_pos(Vect3f(pos.x, pos.y, 0));
 			}
 		} else
-			object_->set_pos(R());
+			_object->set_pos(R());
 
-		object_->update_screen_pos();
+		_object->update_screen_pos();
 	}
 }
 
@@ -234,13 +234,13 @@ void qdGameObjectMouse::pre_redraw() {
 	update_object_position();
 
 	if (!dp->need_full_redraw()) {
-		if (object_ && !qdInterfaceDispatcher::get_dispatcher()->is_active()) {
-			if (object_->need_redraw()) {
-				dp->add_redraw_region(object_->last_screen_region());
-				dp->add_redraw_region(object_->screen_region());
+		if (_object && !qdInterfaceDispatcher::get_dispatcher()->is_active()) {
+			if (_object->need_redraw()) {
+				dp->add_redraw_region(_object->last_screen_region());
+				dp->add_redraw_region(_object->screen_region());
 			}
 		} else
-			dp->add_redraw_region(object_screen_region_);
+			dp->add_redraw_region(_object_screen_region);
 
 		dp->add_redraw_region(last_screen_region());
 		dp->add_redraw_region(screen_region());
@@ -248,11 +248,11 @@ void qdGameObjectMouse::pre_redraw() {
 }
 
 void qdGameObjectMouse::post_redraw() {
-	if (object_ && !qdInterfaceDispatcher::get_dispatcher()->is_active()) {
-		object_->post_redraw();
-		object_screen_region_ = object_->last_screen_region();
+	if (_object && !qdInterfaceDispatcher::get_dispatcher()->is_active()) {
+		_object->post_redraw();
+		_object_screen_region = _object->last_screen_region();
 	} else
-		object_screen_region_ = grScreenRegion::EMPTY;
+		_object_screen_region = grScreenRegion::EMPTY;
 
 	qdGameObjectAnimated::post_redraw();
 }
@@ -260,24 +260,24 @@ void qdGameObjectMouse::post_redraw() {
 void qdGameObjectMouse::quant(float dt) {
 	qdGameObjectAnimated::quant(dt);
 
-	if (object_)
-		object_->quant(dt);
+	if (_object)
+		_object->quant(dt);
 
 #ifndef _QUEST_EDITOR
 	if (const qdGameObjectState * p = get_cur_state()) {
 		if (p->rnd_move_radius() > FLT_EPS) {
-			if (screen_pos_offset_.norm2() >= sqr(p->rnd_move_radius()) || (screen_pos_offset_delta_.x <= FLT_EPS && screen_pos_offset_delta_.y <= FLT_EPS)) {
+			if (_screen_pos_offset.norm2() >= sqr(p->rnd_move_radius()) || (_screen_pos_offset_delta.x <= FLT_EPS && _screen_pos_offset_delta.y <= FLT_EPS)) {
 				float angle = qd_fabs_rnd(M_PI * 2.0f);
 
 				Vect2f r(p->rnd_move_radius() * cos(angle), p->rnd_move_radius() * sin(angle));
-				screen_pos_offset_delta_ = r - screen_pos_offset_;
-				screen_pos_offset_delta_.normalize(p->rnd_move_speed());
+				_screen_pos_offset_delta = r - _screen_pos_offset;
+				_screen_pos_offset_delta.normalize(p->rnd_move_speed());
 			}
 
-			screen_pos_offset_.x += screen_pos_offset_delta_.x * dt;
-			screen_pos_offset_.y += screen_pos_offset_delta_.y * dt;
+			_screen_pos_offset.x += _screen_pos_offset_delta.x * dt;
+			_screen_pos_offset.y += _screen_pos_offset_delta.y * dt;
 		} else
-			screen_pos_offset_ = screen_pos_offset_delta_ = Vect2f(0, 0);
+			_screen_pos_offset = _screen_pos_offset_delta = Vect2f(0, 0);
 	}
 #endif
 }
@@ -285,7 +285,7 @@ void qdGameObjectMouse::quant(float dt) {
 bool qdGameObjectMouse::update_screen_pos() {
 	if (qdGameObjectAnimated::update_screen_pos()) {
 #ifndef _QUEST_EDITOR
-		set_screen_R(get_screen_R() + screen_pos_offset_);
+		set_screen_R(get_screen_R() + _screen_pos_offset);
 #endif
 		return true;
 	}
