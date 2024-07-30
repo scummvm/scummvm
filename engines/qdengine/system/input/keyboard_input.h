@@ -40,20 +40,20 @@ public:
 	//! Возвращает true, если кнопка с кодом vkey в данный момент нажата.
 	bool is_pressed(int vkey) const {
 		assert(vkey >= 0 && vkey < 256);
-		return key_states_[vkey];
+		return _key_states[vkey];
 	}
 
 	//! Устанавливает обработчик нажатий/отжатий кнопок.
 	event_handler_t set_handler(event_handler_t h) {
-		event_handler_t old_h = handler_;
-		handler_ = h;
+		event_handler_t old_h = _handler;
+		_handler = h;
 		return old_h;
 	}
 
 	//! Обрабатывает нажатие (event == true) или отжатие (event == false) кнопки с кодом vkey.
 	bool handle_event(int vkey, bool event) {
-		key_states_[vkey] = event;
-		if (handler_) return (*handler_)(vkey, event);
+		_key_states[vkey] = event;
+		if (_handler) return (*_handler)(vkey, event);
 		return false;
 	}
 
@@ -63,10 +63,10 @@ public:
 private:
 
 	//! Обработчик нажатий/отжатий кнопок.
-	event_handler_t handler_;
+	event_handler_t _handler;
 
-	//! Состояния кнопок - key_states_[vkey] == true если кнопка с кодом vkey нажата.
-	bool key_states_[256];
+	//! Состояния кнопок - _key_states[vkey] == true если кнопка с кодом vkey нажата.
+	bool _key_states[256];
 };
 
 } // namespace QDEngine
