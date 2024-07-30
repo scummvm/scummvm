@@ -50,7 +50,7 @@ const int GR_IGNORE_ALPHA   = 0x20;
 const int GR_FILLED     = 0x00;
 const int  GR_OUTLINED      = 0x01;
 
-// grDispatcher::flags
+// grDispatcher::_flags
 const int GR_INITED     = 0x01;
 const int GR_PALETTE        = 0x02;
 const int GR_REINIT     = 0x04;
@@ -97,28 +97,28 @@ public:
 	bool init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, bool fullscreen = false);
 
 	void toggle_reinit() {
-		flags |= GR_REINIT;
+		_flags |= GR_REINIT;
 	}
 	bool is_in_reinit_mode() const {
-		return flags & GR_REINIT;
+		return _flags & GR_REINIT;
 	}
 
 	bool create_window(int sx, int sy);
 	bool resize_window(int sx, int sy);
 	bool resize_window() {
-		return resize_window(SizeX, SizeY);
+		return resize_window(_SizeX, _SizeY);
 	}
 
 	bool destroy_window();
 
 	void set_flag(int fl) {
-		flags |= fl;
+		_flags |= fl;
 	}
 	void drop_flag(int fl) {
-		flags &= ~fl;
+		_flags &= ~fl;
 	}
 	bool check_flag(int fl) {
-		if (flags & fl) return true;
+		if (_flags & fl) return true;
 		return false;
 	}
 
@@ -127,62 +127,62 @@ public:
 	virtual bool Finit();
 
 	void *Get_hWnd() const {
-		return hWnd;
+		return _hWnd;
 	}
 	int Get_SizeX() const {
-		return SizeX;
+		return _SizeX;
 	}
 	int Get_SizeY() const {
-		return SizeY;
+		return _SizeY;
 	}
 
 	void SetClipMode(int m) {
-		clipMode = m;
+		_clipMode = m;
 	}
 	int GetClipMode() const {
-		return clipMode;
+		return _clipMode;
 	}
 
 	void SetClip() {
-		SetClip(0, 0, SizeX, SizeY);
+		SetClip(0, 0, _SizeX, _SizeY);
 	}
 
 	void GetClip(int &l, int &t, int &r, int &b) const {
-		l = clipCoords[GR_LEFT];
-		t = clipCoords[GR_TOP];
-		r = clipCoords[GR_RIGHT];
-		b = clipCoords[GR_BOTTOM];
+		l = _clipCoords[GR_LEFT];
+		t = _clipCoords[GR_TOP];
+		r = _clipCoords[GR_RIGHT];
+		b = _clipCoords[GR_BOTTOM];
 	}
 
 	void SetClip(int l, int t, int r, int b) {
 		if (l < 0) l = 0;
-		if (r > SizeX) r = SizeX;
+		if (r > _SizeX) r = _SizeX;
 
 		if (t < 0) t = 0;
-		if (b > SizeY) b = SizeY;
+		if (b > _SizeY) b = _SizeY;
 
-		clipCoords[GR_LEFT] = l;
-		clipCoords[GR_TOP] = t;
-		clipCoords[GR_RIGHT] = r;
-		clipCoords[GR_BOTTOM] = b;
+		_clipCoords[GR_LEFT] = l;
+		_clipCoords[GR_TOP] = t;
+		_clipCoords[GR_RIGHT] = r;
+		_clipCoords[GR_BOTTOM] = b;
 	}
 
 	void LimitClip(int l, int t, int r, int b) {
-		if (clipCoords[GR_LEFT] < l) clipCoords[GR_LEFT] = l;
-		if (clipCoords[GR_TOP] < t) clipCoords[GR_TOP] = t;
-		if (clipCoords[GR_RIGHT] > r) clipCoords[GR_RIGHT] = r;
-		if (clipCoords[GR_BOTTOM] > b) clipCoords[GR_BOTTOM] = b;
+		if (_clipCoords[GR_LEFT] < l) _clipCoords[GR_LEFT] = l;
+		if (_clipCoords[GR_TOP] < t) _clipCoords[GR_TOP] = t;
+		if (_clipCoords[GR_RIGHT] > r) _clipCoords[GR_RIGHT] = r;
+		if (_clipCoords[GR_BOTTOM] > b) _clipCoords[GR_BOTTOM] = b;
 	}
 
 	int ClipCheck(int x, int y) {
-		if (x >= clipCoords[GR_LEFT] && x < clipCoords[GR_RIGHT] && y >= clipCoords[GR_TOP] && y < clipCoords[GR_BOTTOM])
+		if (x >= _clipCoords[GR_LEFT] && x < _clipCoords[GR_RIGHT] && y >= _clipCoords[GR_TOP] && y < _clipCoords[GR_BOTTOM])
 			return 1;
 
 		return 0;
 	}
 
 	int ClipCheck(int x, int y, int sx, int sy) {
-		if (x - sx >= clipCoords[GR_LEFT] && x + sx < clipCoords[GR_RIGHT] && y - sy >= clipCoords[GR_TOP] && y + sy < clipCoords[GR_BOTTOM])
+		if (x - sx >= _clipCoords[GR_LEFT] && x + sx < _clipCoords[GR_RIGHT] && y - sy >= _clipCoords[GR_TOP] && y + sy < _clipCoords[GR_BOTTOM])
 			return 1;
 
 		return 0;
@@ -268,14 +268,14 @@ public:
 	void RectangleAlpha(int x, int y, int sx, int sy, unsigned color, int alpha);
 
 	int PalettedMode() const {
-		return (flags & GR_PALETTE);
+		return (_flags & GR_PALETTE);
 	}
 
 	grPixelFormat pixel_format() const {
-		return pixel_format_;
+		return _pixel_format;
 	}
 	void set_pixel_format(grPixelFormat mode) {
-		pixel_format_ = GR_RGB565;
+		_pixel_format = GR_RGB565;
 	}
 
 	inline int bytes_per_pixel() const {
@@ -293,7 +293,7 @@ public:
 	};
 
 	inline unsigned make_rgb(unsigned color) const {
-		switch (pixel_format_) {
+		switch (_pixel_format) {
 		case GR_RGB565:
 			return make_rgb565u((color >> 0) & 0xFF, (color >> 8) & 0xFF, (color >> 16) & 0xFF);
 		case GR_ARGB1555:
@@ -307,7 +307,7 @@ public:
 	}
 
 	inline unsigned make_rgb(unsigned r, unsigned g, unsigned b) const {
-		switch (pixel_format_) {
+		switch (_pixel_format) {
 		case GR_RGB565:
 			return make_rgb565u(r, g, b);
 		case GR_ARGB1555:
@@ -324,13 +324,13 @@ public:
 	/// Обработчик ввода символа
 	typedef bool (*char_input_hanler_t)(int input);
 	static char_input_hanler_t set_input_handler(char_input_hanler_t h) {
-		char_input_hanler_t old_h = input_handler_;
-		input_handler_ = h;
+		char_input_hanler_t old_h = _input_handler;
+		_input_handler = h;
 		return old_h;
 	}
 
 	static bool handle_char_input(int input) {
-		if (input_handler_) return (*input_handler_)(input);
+		if (_input_handler) return (*_input_handler)(input);
 		return false;
 	}
 
@@ -394,25 +394,25 @@ public:
 	}
 
 	const void *mouse_cursor() const {
-		return mouse_cursor_;
+		return _mouse_cursor;
 	}
 	void set_default_mouse_cursor() {
-		mouse_cursor_ = default_mouse_cursor_;
+		_mouse_cursor = _default_mouse_cursor;
 	}
 	void set_null_mouse_cursor() {
-		mouse_cursor_ = NULL;
+		_mouse_cursor = NULL;
 	}
 
 	static grDispatcher *instance(void *hwnd);
 
 	bool is_mouse_hidden() const {
-		return hide_mouse_;
+		return _hide_mouse;
 	}
 	void HideMouse() {
-		hide_mouse_ = true;
+		_hide_mouse = true;
 	}
 	void ShowMouse() {
-		hide_mouse_ = false;
+		_hide_mouse = false;
 	}
 
 	bool clip_line(int &x0, int &y0, int &x1, int &y1) const;
@@ -420,7 +420,7 @@ public:
 	bool clip_rectangle(int &x, int &y, int &pic_x, int &pic_y, int &pic_sx, int &pic_sy) const;
 
 	bool is_rectangle_visible(int x, int y, int sx, int sy) const {
-		if (x + sx < 0 || x >= SizeX || y + sy < 0 || y >= SizeY) return false;
+		if (x + sx < 0 || x >= _SizeX || y + sy < 0 || y >= _SizeY) return false;
 		return true;
 	}
 
@@ -428,11 +428,11 @@ public:
 		int x1 = x + sx;
 		int y1 = y + sy;
 
-		if (x < clipCoords[0]) x = clipCoords[0];
-		if (x1 >= clipCoords[2]) x1 = clipCoords[2] - 1;
+		if (x < _clipCoords[0]) x = _clipCoords[0];
+		if (x1 >= _clipCoords[2]) x1 = _clipCoords[2] - 1;
 
-		if (y < clipCoords[1]) y = clipCoords[1];
-		if (y1 >= clipCoords[3]) y1 = clipCoords[3] - 1;
+		if (y < _clipCoords[1]) y = _clipCoords[1];
+		if (y1 >= _clipCoords[3]) y1 = _clipCoords[3] - 1;
 
 		sx = x1 - x;
 		sy = y1 - y;
@@ -449,50 +449,50 @@ public:
 	typedef regions_container_t::const_iterator region_iterator;
 
 	const regions_container_t &changed_regions() const {
-		return changed_regions_;
+		return _changed_regions;
 	}
 	void build_changed_regions();
 	bool invalidate_region(const grScreenRegion &reg);
 
 	static inline grDispatcher *instance() {
-		return dispatcher_ptr_;
+		return _dispatcher_ptr;
 	}
 	static inline grDispatcher *set_instance(grDispatcher *p) {
-		grDispatcher *old_p = dispatcher_ptr_;
-		dispatcher_ptr_ = p;
+		grDispatcher *old_p = _dispatcher_ptr;
+		_dispatcher_ptr = p;
 		return old_p;
 	}
 
 	static inline const char *wnd_class_name() {
-		return wnd_class_name_;
+		return _wnd_class_name;
 	}
 
 	typedef void (*restore_handler_t)();
 	static restore_handler_t set_restore_handler(restore_handler_t h) {
-		restore_handler_t old_h = restore_handler_;
-		restore_handler_ = h;
+		restore_handler_t old_h = _restore_handler;
+		_restore_handler = h;
 		return old_h;
 	}
 
 	static bool is_active() {
-		return is_active_;
+		return _is_active;
 	}
 	static void activate(bool state) {
-		if (state && !is_active_) {
-			if (restore_handler_)
-				(*restore_handler_)();
+		if (state && !_is_active) {
+			if (_restore_handler)
+				(*_restore_handler)();
 		}
-		is_active_ = state;
+		_is_active = state;
 	}
 
 	typedef void (*maximize_handler_t)();
 	maximize_handler_t set_maximize_handler(maximize_handler_t p) {
-		maximize_handler_t old_handler = maximize_handler_;
-		maximize_handler_ = p;
+		maximize_handler_t old_handler = _maximize_handler;
+		_maximize_handler = p;
 		return old_handler;
 	}
 	maximize_handler_t maximize_handler() const {
-		return maximize_handler_;
+		return _maximize_handler;
 	}
 
 	char *temp_buffer(int size);
@@ -501,44 +501,43 @@ public:
 
 	static grFont *load_font(const char *file_name);
 	static void set_default_font(grFont *p) {
-		default_font_ = p;
+		_default_font = p;
 	}
 	static grFont *get_default_font() {
-		return default_font_;
+		return _default_font;
 	}
 protected:
 
-	int flags;
+	int _flags;
 
-	int wndPosX;
-	int wndPosY;
-	int wndSizeX;
-	int wndSizeY;
+	int _wndPosX;
+	int _wndPosY;
+	int _wndSizeX;
+	int _wndSizeY;
 
-	int SizeX;
-	int SizeY;
+	int _SizeX;
+	int _SizeY;
 
-	grPixelFormat pixel_format_;
-	void *hWnd;
+	grPixelFormat _pixel_format;
+	void *_hWnd;
 
-	char *screenBuf;
 	Graphics::ManagedSurface *_screenBuf = nullptr;
 
-	int *yTable;
+	int *_yTable;
 
-	char *temp_buffer_;
-	int temp_buffer_size_;
+	char *_temp_buffer;
+	int _temp_buffer_size;
 
 private:
 
 	bool _isFullScreen;
 
-	int clipMode;
-	int clipCoords[4];
+	int _clipMode;
+	int _clipCoords[4];
 
-	bool hide_mouse_;
-	void *mouse_cursor_;
-	static void *default_mouse_cursor_;
+	bool _hide_mouse;
+	void *_mouse_cursor;
+	static void *_default_mouse_cursor;
 
 	enum {
 		clLEFT   = 1,
@@ -549,13 +548,13 @@ private:
 
 	inline int clip_out_code(int x, int y) const {
 		int code = 0;
-		if (y >= clipCoords[3])
+		if (y >= _clipCoords[3])
 			code |= clTOP;
-		else if (y < clipCoords[1])
+		else if (y < _clipCoords[1])
 			code |= clBOTTOM;
-		if (x >= clipCoords[2])
+		if (x >= _clipCoords[2])
 			code |= clRIGHT;
-		else if (x < clipCoords[0])
+		else if (x < _clipCoords[0])
 			code |= clLEFT;
 
 		return code;
@@ -569,10 +568,10 @@ private:
 	bool clear_zbuffer();
 
 	zbuf_t get_z(int x, int y) {
-		return zbuffer_[x + y * SizeX];
+		return zbuffer_[x + y * _SizeX];
 	}
 	void put_z(int x, int y, int z) {
-		zbuffer_[x + y * SizeX] = z;
+		zbuffer_[x + y * _SizeX] = z;
 	}
 #endif
 
@@ -583,24 +582,24 @@ private:
 		changes_mask_tile_shift_ = 4
 	};
 
-	int changes_mask_size_x_;
-	int changes_mask_size_y_;
+	int _changes_mask_size_x;
+	int _changes_mask_size_y;
 
-	changes_mask_t changes_mask_;
+	changes_mask_t _changes_mask;
 
-	regions_container_t changed_regions_;
+	regions_container_t _changed_regions;
 
-	maximize_handler_t maximize_handler_;
+	maximize_handler_t _maximize_handler;
 
-	static char_input_hanler_t input_handler_;
+	static char_input_hanler_t _input_handler;
 
-	static grFont *default_font_;
+	static grFont *_default_font;
 
-	static bool is_active_;
-	static restore_handler_t restore_handler_;
+	static bool _is_active;
+	static restore_handler_t _restore_handler;
 
-	static grDispatcher *dispatcher_ptr_;
-	static char *wnd_class_name_;
+	static grDispatcher *_dispatcher_ptr;
+	static char *_wnd_class_name;
 
 	void PutSpr_rot90(const Vect2i &pos, const Vect2i &size, const unsigned char *data, bool has_alpha, int mode, float angle);
 };

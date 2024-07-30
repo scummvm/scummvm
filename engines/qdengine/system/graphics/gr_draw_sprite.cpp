@@ -233,7 +233,7 @@ void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const unsig
 
 	if (has_alpha) {
 		for (int y = 0; y <= sy; y++) {
-					unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
+					unsigned short *screen_ptr = (unsigned short *)(_screenBuf + _yTable[y + y0] + x0 * 2);
 
 					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + ((size.x + 1 + dx) << (F_PREC - 1));
 					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + ((size.y + 1 + dy) << (F_PREC - 1));
@@ -267,7 +267,7 @@ void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const unsig
 				}
 	} else {
 		for (int y = 0; y <= sy; y++) {
-			unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
+			unsigned short *screen_ptr = (unsigned short *)(_screenBuf + _yTable[y + y0] + x0 * 2);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + ((size.x + 1 + dx) << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + ((size.y + 1 + dy) << (F_PREC - 1));
@@ -322,7 +322,7 @@ void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const unsig
 
 	if (has_alpha) {
 		for (int y = 0; y <= sy; y++) {
-					unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
+					unsigned short *screen_ptr = (unsigned short *)(_screenBuf + _yTable[y + y0] + x0 * 2);
 
 					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
 					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
@@ -356,7 +356,7 @@ void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const unsig
 				}
 	} else {
 		for (int y = 0; y <= sy; y++) {
-			unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
+			unsigned short *screen_ptr = (unsigned short *)(_screenBuf + _yTable[y + y0] + x0 * 2);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
@@ -410,7 +410,7 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const u
 		split_rgb565u(mask_color, mr, mg, mb);
 
 		for (int y = 0; y <= sy; y++) {
-			unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
+			unsigned short *screen_ptr = (unsigned short *)(_screenBuf + _yTable[y + y0] + x0 * 2);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + (size.x + 1) * (1 << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + (size.y + 1) * (1 << (F_PREC - 1));
@@ -459,7 +459,7 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const u
 		unsigned mcl = make_rgb565u(mr, mg, mb);
 
 		for (int y = 0; y <= sy; y++) {
-			unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
+			unsigned short *screen_ptr = (unsigned short *)(_screenBuf + _yTable[y + y0] + x0 * 2);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + (size.x + 1) * (1 << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + (size.y + 1) * (1 << (F_PREC - 1));
@@ -518,7 +518,7 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const u
 		split_rgb565u(mask_color, mr, mg, mb);
 
 		for (int y = 0; y <= sy; y++) {
-			unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
+			unsigned short *screen_ptr = (unsigned short *)(_screenBuf + _yTable[y + y0] + x0 * 2);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
@@ -564,7 +564,7 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const u
 		mb = (mb * (255 - mask_alpha)) >> 8;
 
 		for (int y = 0; y <= sy; y++) {
-			unsigned short *screen_ptr = (unsigned short *)(screenBuf + yTable[y + y0] + x0 * 2);
+			unsigned short *screen_ptr = (unsigned short *)(_screenBuf + _yTable[y + y0] + x0 * 2);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
