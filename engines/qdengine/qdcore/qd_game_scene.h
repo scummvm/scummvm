@@ -78,54 +78,54 @@ public:
 #endif
 
 	qdNamedObject *mouse_click_object() {
-		return mouse_click_object_;
+		return _mouse_click_object;
 	}
 	void set_mouse_click_object(qdNamedObject *p) {
-		mouse_click_object_ = p;
+		_mouse_click_object = p;
 	}
 
 	qdNamedObject *mouse_right_click_object() {
-		return mouse_right_click_object_;
+		return _mouse_right_click_object;
 	}
 	void set_mouse_right_click_object(qdNamedObject *p) {
-		mouse_right_click_object_ = p;
+		_mouse_right_click_object = p;
 	}
 
 	qdNamedObject *mouse_hover_object() {
-		return mouse_hover_object_;
+		return _mouse_hover_object;
 	}
 	void set_mouse_hover_object(qdNamedObject *p) {
-		mouse_hover_object_ = p;
+		_mouse_hover_object = p;
 	}
 
 	const Vect2f mouse_click_pos() const {
-		return mouse_click_pos_;
+		return _mouse_click_pos;
 	}
 
 	bool need_to_redraw_inventory(const char *inventory_name) const;
 
 	const char *minigame_name() const {
-		return minigame_name_.c_str();
+		return _minigame_name.c_str();
 	}
 	void set_minigame_name(const char *name) {
-		minigame_name_ = name;
+		_minigame_name = name;
 	}
 	bool has_minigame() const {
-		return !minigame_name_.empty();
+		return !_minigame_name.empty();
 	}
 
 #ifndef _QUEST_EDITOR
 	const qdMiniGame *minigame() const {
-		return minigame_;
+		return _minigame;
 	}
 	void start_minigame();
 #endif
 
 	bool restart_minigame_on_load() const {
-		return restart_minigame_on_load_;
+		return _restart_minigame_on_load;
 	}
 	void toggle_restart_minigame_on_load(bool state) {
-		restart_minigame_on_load_ = state;
+		_restart_minigame_on_load = state;
 	}
 
 	bool add_object(qdGameObject *p);
@@ -141,7 +141,7 @@ public:
 	void set_active_personage(qdGameObjectMoving *p);
 	void set_active_object(qdGameObjectAnimated *p);
 	qdGameObjectMoving *get_active_personage() {
-		return selected_object_;
+		return _selected_object;
 	}
 	bool change_active_personage(void);
 
@@ -201,20 +201,20 @@ public:
 	void free_resources();
 
 	qdCamera *get_camera() {
-		return &camera;
+		return &_camera;
 	}
 	const qdCamera *get_camera() const {
-		return &camera;
+		return &_camera;
 	}
 
 	const qdGameObjectList &object_list() const {
-		return objects.get_list();
+		return _objects.get_list();
 	}
 	const qdGridZoneList &grid_zone_list() const {
-		return grid_zones.get_list();
+		return _grid_zones.get_list();
 	}
 	const qdMusicTrackList &music_track_list() const {
-		return music_tracks.get_list();
+		return _music_tracks.get_list();
 	}
 
 	bool merge_global_objects(qdGameObject *obj = NULL);
@@ -223,33 +223,33 @@ public:
 	int get_resources_size();
 
 	void inc_zone_update_count() {
-		zone_update_count_ ++;
+		_zone_update_count ++;
 	}
 	unsigned int zone_update_count() const {
-		return zone_update_count_;
+		return _zone_update_count;
 	}
 
 	qdConditionalObject::trigger_start_mode trigger_start();
 
 	static fpsCounter &fps_counter() {
-		return fps_counter_;
+		return _fps_counter;
 	}
 
 	int autosave_slot() const {
-		return autosave_slot_;
+		return _autosave_slot;
 	}
 	void set_autosave_slot(int slot) {
-		autosave_slot_ = slot;
+		_autosave_slot = slot;
 	}
 
 	bool has_interface_screen() const {
-		return !interface_screen_name_.empty();
+		return !_interface_screen_name.empty();
 	}
 	const char *interface_screen_name() const {
-		return interface_screen_name_.c_str();
+		return _interface_screen_name.c_str();
 	}
 	void set_interface_screen_name(const char *name) {
-		interface_screen_name_ = name;
+		_interface_screen_name = name;
 	}
 
 	bool get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const;
@@ -268,54 +268,51 @@ protected:
 #endif // _QUEST_EDITOR
 private:
 
-	int autosave_slot_;
+	int _autosave_slot;
 
-	qdObjectMapContainer<qdGameObject> objects;
-	qdObjectListContainer<qdGridZone> grid_zones;
-	qdObjectListContainer<qdMusicTrack> music_tracks;
+	qdObjectMapContainer<qdGameObject> _objects;
+	qdObjectListContainer<qdGridZone> _grid_zones;
+	qdObjectListContainer<qdMusicTrack> _music_tracks;
 
-	qdCamera camera;
+	qdCamera _camera;
 
 	//! текущий персонаж
-	qdGameObjectMoving *selected_object_;
+	qdGameObjectMoving *_selected_object;
 
-#ifdef _QUEST_EDITOR
-	qdGameObject *active_object_;       // Активный объект
-#else
 	/// миниигра, управляющая сценой
-	qdMiniGame *minigame_;
-#endif
+	qdMiniGame *_minigame;
+
 	/// true если нужен перезапуск миниигры при загрузке из сэйва
-	bool restart_minigame_on_load_;
+	bool _restart_minigame_on_load;
 
 	typedef std::vector<qdGameObjectMoving *> personages_container_t;
 	//! список персонажей сцены
-	personages_container_t personages_;
+	personages_container_t _personages;
 
 	//! кликнутый мышью объект
-	qdNamedObject *mouse_click_object_;
+	qdNamedObject *_mouse_click_object;
 	//! кликнутый правой кнопкой мыши объект
-	qdNamedObject *mouse_right_click_object_;
+	qdNamedObject *_mouse_right_click_object;
 	//! объект, над кторым мышиный курсор
-	qdNamedObject *mouse_hover_object_;
+	qdNamedObject *_mouse_hover_object;
 
 	//! кликнутая мышью точка на плоскости сцены
-	Vect2f mouse_click_pos_;
+	Vect2f _mouse_click_pos;
 
 	/// имя миниигры, управляющей сценой
-	std::string minigame_name_;
+	std::string _minigame_name;
 
 	/// используемый для сцены интерфейсный экран
-	std::string interface_screen_name_;
+	std::string _interface_screen_name;
 
-	unsigned int zone_update_count_;
+	unsigned int _zone_update_count;
 
-	static std::vector<qdGameObject *> visible_objects_;
+	static std::vector<qdGameObject *> _visible_objects;
 
-	static fpsCounter fps_counter_;
-	static grScreenRegion fps_region_;
-	static grScreenRegion fps_region_last_;
-	static char fps_string_[255];
+	static fpsCounter _fps_counter;
+	static grScreenRegion _fps_region;
+	static grScreenRegion _fps_region_last;
+	static char _fps_string[255];
 
 	bool init_visible_objects_list();
 	void update_mouse_cursor();
