@@ -29,14 +29,14 @@
 
 namespace QDEngine {
 
-qdConditionObjectReference::qdConditionObjectReference() : object_(NULL) {
+qdConditionObjectReference::qdConditionObjectReference() : _object(NULL) {
 }
 
 qdConditionObjectReference::qdConditionObjectReference(const qdConditionObjectReference &ref) :
 #ifdef _QUEST_EDITOR
 	object_reference_(ref.object_reference_),
 #endif
-	object_(ref.object_) {
+	_object(ref._object) {
 }
 
 qdConditionObjectReference::~qdConditionObjectReference() {
@@ -49,13 +49,13 @@ qdConditionObjectReference &qdConditionObjectReference::operator = (const qdCond
 	object_reference_ = ref.object_reference_;
 #endif
 
-	object_ = ref.object_;
+	_object = ref._object;
 
 	return *this;
 }
 
 void qdConditionObjectReference::set_object(const qdNamedObject *p) {
-	object_ = p;
+	_object = p;
 }
 
 bool qdConditionObjectReference::find_object() {
@@ -64,9 +64,9 @@ bool qdConditionObjectReference::find_object() {
 		return false;
 
 	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-		object_ = dp->get_named_object(&object_reference_);
+		_object = dp->get_named_object(&object_reference_);
 
-		if (object_)
+		if (_object)
 			return true;
 	}
 #endif
@@ -78,7 +78,7 @@ bool qdConditionObjectReference::load_script(const xml::tag *p) {
 		switch (it->ID()) {
 		case QDSCR_NAMED_OBJECT: {
 #ifndef _QUEST_EDITOR
-			qdNamedObjectReference &ref = qdNamedObjectIndexer::instance().add_reference((qdNamedObject *&)object_);
+			qdNamedObjectReference &ref = qdNamedObjectIndexer::instance().add_reference((qdNamedObject *&)_object);
 			ref.load_script(&*it);
 #else
 			object_reference_.load_script(&*it);
@@ -97,8 +97,8 @@ bool qdConditionObjectReference::save_script(Common::WriteStream &fh, int indent
 	}
 
 	fh.writeString(Common::String::format("<condition_object ID=\"%d\">\r\n", id));
-	if (object_) {
-		qdNamedObjectReference ref(object_);
+	if (_object) {
+		qdNamedObjectReference ref(_object);
 		ref.save_script(fh, indent + 1);
 	}
 

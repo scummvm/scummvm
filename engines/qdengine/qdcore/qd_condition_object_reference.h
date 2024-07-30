@@ -43,11 +43,11 @@ public:
 	bool find_object();
 
 	const qdNamedObject *object() const {
-		return object_;
+		return _object;
 	}
 
 	bool is_empty() const {
-		if (object_) return true;
+		if (_object) return true;
 		else return false;
 	}
 
@@ -61,7 +61,7 @@ private:
 #ifdef _QUEST_EDITOR
 	qdNamedObjectReference object_reference_;
 #endif
-	const qdNamedObject *object_;
+	const qdNamedObject *_object;
 };
 
 } // namespace QDEngine
