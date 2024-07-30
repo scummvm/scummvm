@@ -49,18 +49,18 @@ public:
 	bool operator == (const grTileSprite &sprite) const;
 
 	bool isEmpty() const {
-		return !data_;
+		return !_data;
 	}
 
 	const unsigned *data() const {
-		return data_;
+		return _data;
 	}
 
 	static unsigned comprasionTolerance() {
-		return comprasionTolerance_;
+		return _comprasionTolerance;
 	}
 	static void setComprasionTolerance(unsigned value) {
-		comprasionTolerance_ = value;
+		_comprasionTolerance = value;
 	}
 
 	static unsigned compress(const unsigned *in_data, unsigned *out_data, grTileCompressionMethod compress_method);
@@ -68,10 +68,10 @@ public:
 
 private:
 
-	const unsigned *data_;
+	const unsigned *_data;
 
 	/// толерантность побайтового сравнения данных, [0, 255]
-	static unsigned comprasionTolerance_;
+	static unsigned _comprasionTolerance;
 };
 
 } // namespace QDEngine
