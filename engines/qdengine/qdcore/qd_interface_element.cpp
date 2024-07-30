@@ -38,23 +38,23 @@
 
 namespace QDEngine {
 
-Vect2i qdInterfaceElement::screen_offset_ = Vect2i(0, 0);
+Vect2i qdInterfaceElement::_screen_offset = Vect2i(0, 0);
 
-qdInterfaceElement::qdInterfaceElement() : r_(0, 0),
-	option_ID_(OPTION_NONE),
-	screen_depth_(0),
-	is_visible_(true),
-	is_locked_(false),
-	last_animation_frame_(NULL) {
+qdInterfaceElement::qdInterfaceElement() : _r(0, 0),
+	_option_ID(OPTION_NONE),
+	_screen_depth(0),
+	_is_visible(true),
+	_is_locked(false),
+	_last_animation_frame(NULL) {
 }
 
 qdInterfaceElement::qdInterfaceElement(const qdInterfaceElement &el) : qdInterfaceObjectBase(el),
-	r_(el.r_),
-	option_ID_(el.option_ID_),
-	option_data_(el.option_data_),
-	screen_depth_(el.screen_depth_),
-	is_visible_(el.is_visible_),
-	last_animation_frame_(NULL) {
+	_r(el._r),
+	_option_ID(el._option_ID),
+	_option_data(el._option_data),
+	_screen_depth(el._screen_depth),
+	_is_visible(el._is_visible),
+	_last_animation_frame(NULL) {
 }
 
 qdInterfaceElement::~qdInterfaceElement() {
@@ -65,31 +65,31 @@ qdInterfaceElement &qdInterfaceElement::operator = (const qdInterfaceElement &el
 
 	this->qdInterfaceObjectBase::operator = (el);
 
-	r_ = el.r_;
-	option_ID_ = el.option_ID_;
-	option_data_ = el.option_data_;
-	screen_depth_ = el.screen_depth_;
-	is_visible_ = el.is_visible_;
+	_r = el._r;
+	_option_ID = el._option_ID;
+	_option_data = el._option_data;
+	_screen_depth = el._screen_depth;
+	_is_visible = el._is_visible;
 
 	return *this;
 }
 
 bool qdInterfaceElement::set_animation(const qdAnimation *anm, int anm_flags) {
 	if (anm) {
-		anm->create_reference(&animation_);
+		anm->create_reference(&_animation);
 
 		if (anm_flags & QD_ANIMATION_FLAG_LOOP)
-			animation_.set_flag(QD_ANIMATION_FLAG_LOOP);
+			_animation.set_flag(QD_ANIMATION_FLAG_LOOP);
 
 		if (anm_flags & QD_ANIMATION_FLAG_FLIP_HORIZONTAL)
-			animation_.set_flag(QD_ANIMATION_FLAG_FLIP_HORIZONTAL);
+			_animation.set_flag(QD_ANIMATION_FLAG_FLIP_HORIZONTAL);
 
 		if (anm_flags & QD_ANIMATION_FLAG_FLIP_VERTICAL)
-			animation_.set_flag(QD_ANIMATION_FLAG_FLIP_VERTICAL);
+			_animation.set_flag(QD_ANIMATION_FLAG_FLIP_VERTICAL);
 
-		animation_.start();
+		_animation.start();
 	} else
-		animation_.clear();
+		_animation.clear();
 
 	return true;
 }
@@ -101,44 +101,44 @@ bool qdInterfaceElement::set_state(const qdInterfaceElementState *p) {
 
 	if (p->sound(mode)) {
 		if (sndDispatcher * dp = sndDispatcher::get_dispatcher())
-			dp->stop_sound(&sound_handle_);
+			dp->stop_sound(&_sound_handle);
 
-		p->sound(mode)->play(&sound_handle_);
+		p->sound(mode)->play(&_sound_handle);
 	}
 
 	return true;
 }
 
 bool qdInterfaceElement::redraw() const {
-	animation_.redraw(r().x, r().y, 0);
+	_animation.redraw(r().x, r().y, 0);
 	return true;
 }
 
 bool qdInterfaceElement::need_redraw() const {
-	if (last_animation_frame_ != animation_.get_cur_frame())
+	if (_last_animation_frame != _animation.get_cur_frame())
 		return true;
 
-	if (last_screen_region_ != screen_region())
+	if (_last_screen_region != screen_region())
 		return true;
 
 	return false;
 }
 
 bool qdInterfaceElement::post_redraw() {
-	last_screen_region_ = screen_region();
-	last_animation_frame_ = animation_.get_cur_frame();
+	_last_screen_region = screen_region();
+	_last_animation_frame = _animation.get_cur_frame();
 
 	return true;
 }
 
 bool qdInterfaceElement::quant(float dt) {
-	animation_.quant(dt);
+	_animation.quant(dt);
 	return true;
 }
 
 grScreenRegion qdInterfaceElement::screen_region() const {
-	if (!animation_.is_empty()) {
-		grScreenRegion reg = animation_.screen_region();
+	if (!_animation.is_empty()) {
+		grScreenRegion reg = _animation.screen_region();
 		reg.move(r().x, r().y);
 
 		return reg;
@@ -157,10 +157,10 @@ bool qdInterfaceElement::save_script(Common::WriteStream &fh, int indent) const 
 	if (name()) {
 		fh.writeString(Common::String::format(" name=\"%s\"", qdscr_XML_string(name())));
 	}
-	fh.writeString(Common::String::format(" pos=\"%d %d %d\"", r_.x, r_.y, screen_depth_));
+	fh.writeString(Common::String::format(" pos=\"%d %d %d\"", _r.x, _r.y, _screen_depth));
 
-	if (option_ID_ != OPTION_NONE) {
-		fh.writeString(Common::String::format(" option_id=\"%d\"", (int)option_ID_));
+	if (_option_ID != OPTION_NONE) {
+		fh.writeString(Common::String::format(" option_id=\"%d\"", (int)_option_ID));
 	}
 
 	fh.writeString(">\r\n");
@@ -185,10 +185,10 @@ bool qdInterfaceElement::load_script(const xml::tag *p) {
 			set_name(it->data());
 			break;
 		case QDSCR_INTERFACE_ELEMENT_POS:
-			xml::tag_buffer(*it) > r_.x > r_.y > screen_depth_;
+			xml::tag_buffer(*it) > _r.x > _r.y > _screen_depth;
 			break;
 		case QDSCR_INTERFACE_OPTION_ID:
-			option_ID_ = option_ID_t(xml::tag_buffer(*it).get_int());
+			_option_ID = option_ID_t(xml::tag_buffer(*it).get_int());
 			break;
 		}
 	}
@@ -235,11 +235,11 @@ void qdInterfaceElement::destroy_element(qdInterfaceElement *p) {
 
 
 bool qdInterfaceElement::hit_test(int x, int y) const {
-	if (!animation_.is_empty()) {
+	if (!_animation.is_empty()) {
 		x -= r().x;
 		y -= r().y;
 
-		return animation_.hit(x, y);
+		return _animation.hit(x, y);
 	}
 
 	return false;
@@ -249,18 +249,18 @@ qdInterfaceElement::state_status_t qdInterfaceElement::state_status(const qdInte
 	qdInterfaceElementState::state_mode_t mode = p->state_mode();
 
 	if (p->animation(mode)) {
-		if (p->animation(mode)->is_reference(&animation_)) {
-			if (!animation_.is_finished())
+		if (p->animation(mode)->is_reference(&_animation)) {
+			if (!_animation.is_finished())
 				return STATE_ACTIVE;
 		} else
 			return STATE_INACTIVE;
 	} else {
-		if (!animation_.is_empty())
+		if (!_animation.is_empty())
 			return STATE_INACTIVE;
 	}
 
 	if (p->sound(mode)) {
-		if (!p->sound(mode)->is_stopped(&sound_handle_))
+		if (!p->sound(mode)->is_stopped(&_sound_handle))
 			return STATE_ACTIVE;
 	}
 
