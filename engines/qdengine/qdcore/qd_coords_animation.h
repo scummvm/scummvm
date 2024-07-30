@@ -52,43 +52,43 @@ public:
 	}
 
 	float speed() const {
-		return speed_;
+		return _speed;
 	}
 	void set_speed(float sp) {
-		speed_ = sp;
+		_speed = sp;
 	}
 
 	const qdGameObject *start_object() const {
-		return start_object_;
+		return _start_object;
 	}
 	void set_start_object(const qdGameObject *p_obj);
 	const qdNamedObjectReference &start_object_ref() const {
-		return start_object_ref_;
+		return _start_object_ref;
 	}
 
 	bool is_playing() const {
-		return status_;
+		return _status;
 	}
 	bool is_finished() const {
-		return is_finished_;
+		return _is_finished;
 	}
 
 	qdCoordsAnimationType type() const {
-		return type_;
+		return _type;
 	}
 	void set_type(qdCoordsAnimationType tp) {
-		type_ = tp;
+		_type = tp;
 	}
 
 	float animation_phase() const {
 #ifdef _QUEST_EDITOR
-		return animation_phase_ + animation_scroll_phase_;
+		return _animation_phase + animation_scroll_phase_;
 #else
-		return animation_phase_;
+		return _animation_phase;
 #endif
 	}
 	void set_animation_phase(float p) {
-		animation_phase_ = p;
+		_animation_phase = p;
 	}
 
 	void start() const;
@@ -98,7 +98,7 @@ public:
 	bool reset_cur_point() const;
 	bool set_cur_point(int point_num) const;
 	int get_cur_point() const {
-		return cur_point_;
+		return _cur_point;
 	}
 
 	void set_time_rel(float tm);
@@ -110,21 +110,21 @@ public:
 	void clear();
 
 	qdCoordsAnimationPoint *get_point(int index = 0) {
-		return &points_[index];
+		return &_points[index];
 	};
 	const qdCoordsAnimationPoint *get_point(int index = 0) const {
-		return &points_[index];
+		return &_points[index];
 	};
 
 	int size() const {
-		return points_.size();
+		return _points.size();
 	}
 
 	void load_script(const xml::tag *p);
 	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 
 	bool is_empty() const {
-		if (points_.empty()) return true;
+		if (_points.empty()) return true;
 		return false;
 	}
 
@@ -143,25 +143,25 @@ public:
 
 private:
 
-	qdCoordsAnimationType type_;
-	qdCoordsAnimationPointVector points_;
-	float animation_phase_;
-	float speed_;
+	qdCoordsAnimationType _type;
+	qdCoordsAnimationPointVector _points;
+	float _animation_phase;
+	float _speed;
 
 	// Для относительного перемещения персонажа (QD_COORDS_ANM_RELATIVE_FLAG):
 	// объект, относительно коориднат которого будет работать траектория движения (если не задано, то работаем
 	// относительно координат объекта-владельца координатной анимации)
-	const qdGameObject *start_object_;
-	qdNamedObjectReference start_object_ref_;
+	const qdGameObject *_start_object;
+	qdNamedObjectReference _start_object_ref;
 
 #ifdef _QUEST_EDITOR
 	//исопользуется для прокрутки анимации
 	mutable float animation_scroll_phase_;
 #endif
-	mutable bool status_;
-	mutable bool is_finished_;
-	mutable qdCoordsAnimationPoint start_point_;
-	mutable int cur_point_;
+	mutable bool _status;
+	mutable bool _is_finished;
+	mutable qdCoordsAnimationPoint _start_point;
+	mutable int _cur_point;
 
 	Vect3f cur_pos() const;
 	class qdGameObjectAnimated *object() const;
@@ -169,7 +169,7 @@ private:
 	void calc_paths() const;
 
 	// Дельта (вектор) смещения координат анимации
-	mutable Vect3f del_;
+	mutable Vect3f _del;
 };
 
 //typedef std::list<qdCoordsAnimation*> qdCoordsAnimationList;
