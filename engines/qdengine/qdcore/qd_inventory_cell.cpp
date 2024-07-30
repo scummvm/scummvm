@@ -193,38 +193,38 @@ bool qdInventoryCell::save_data(Common::WriteStream &fh) const {
 
 // class qdInventoryCellSet
 
-qdInventoryCellSet::qdInventoryCellSet() : size_(0, 0),
-	screen_pos_(0, 0),
-	additional_cells_(0, 0),
-	cells_shift_(0, 0) {
+qdInventoryCellSet::qdInventoryCellSet() : _size(0, 0),
+	_screen_pos(0, 0),
+	_additional_cells(0, 0),
+	_cells_shift(0, 0) {
 }
 
-qdInventoryCellSet::qdInventoryCellSet(int x, int y, int sx, int sy, short addit_sx, short addit_sy, const qdInventoryCellType &tp) : size_(sx, sy),
-	screen_pos_(x, y),
-	additional_cells_(addit_sx, addit_sy),
-	cells_shift_(0, 0),
-	cells_((sx + addit_sx) * (sy + addit_sy), tp) {
+qdInventoryCellSet::qdInventoryCellSet(int x, int y, int sx, int sy, short addit_sx, short addit_sy, const qdInventoryCellType &tp) : _size(sx, sy),
+	_screen_pos(x, y),
+	_additional_cells(addit_sx, addit_sy),
+	_cells_shift(0, 0),
+	_cells((sx + addit_sx) * (sy + addit_sy), tp) {
 }
 
-qdInventoryCellSet::qdInventoryCellSet(const qdInventoryCellSet &set) : size_(set.size_),
-	cells_(set.cells_),
-	screen_pos_(set.screen_pos_),
-	additional_cells_(set.additional_cells_),
-	cells_shift_(set.cells_shift_) {
+qdInventoryCellSet::qdInventoryCellSet(const qdInventoryCellSet &set) : _size(set._size),
+	_cells(set._cells),
+	_screen_pos(set._screen_pos),
+	_additional_cells(set._additional_cells),
+	_cells_shift(set._cells_shift) {
 }
 
 qdInventoryCellSet::~qdInventoryCellSet() {
-	cells_.clear();
+	_cells.clear();
 }
 
 qdInventoryCellSet &qdInventoryCellSet::operator = (const qdInventoryCellSet &set) {
 	if (this == &set) return *this;
 
-	size_ = set.size_;
-	cells_ = set.cells_;
-	screen_pos_ = set.screen_pos_;
-	additional_cells_ = set.additional_cells_;
-	cells_shift_ = set.cells_shift_;
+	_size = set._size;
+	_cells = set._cells;
+	_screen_pos = set._screen_pos;
+	_additional_cells = set._additional_cells;
+	_cells_shift = set._cells_shift;
 
 	return *this;
 }
@@ -233,21 +233,21 @@ void qdInventoryCellSet::redraw(int offs_x, int offs_y, bool inactive_mode) cons
 	Vect2s pos = screen_pos();
 
 	int idx;
-	for (int i = cells_shift_.y; i < size_.y + cells_shift_.y; i ++) {
-		idx = i * (size_.x + additional_cells_.x) + cells_shift_.x;
-		for (int j = cells_shift_.x; j < size_.x + cells_shift_.x; j ++) {
-			assert(idx >= 0 && idx < cells_.size());
-			cells_[idx].redraw(offs_x + pos.x, offs_y + pos.y, inactive_mode);
-			pos.x += cells_[idx].size_x();
+	for (int i = _cells_shift.y; i < _size.y + _cells_shift.y; i ++) {
+		idx = i * (_size.x + _additional_cells.x) + _cells_shift.x;
+		for (int j = _cells_shift.x; j < _size.x + _cells_shift.x; j ++) {
+			assert(idx >= 0 && idx < _cells.size());
+			_cells[idx].redraw(offs_x + pos.x, offs_y + pos.y, inactive_mode);
+			pos.x += _cells[idx].size_x();
 			idx++;
 		}
 		pos.x = screen_pos().x;
-		pos.y += cells_.front().size_y();
+		pos.y += _cells.front().size_y();
 	}
 }
 
 bool qdInventoryCellSet::put_object(qdGameObjectAnimated *p) {
-	for (auto &it : cells_) {
+	for (auto &it : _cells) {
 		if (it.is_empty() && it.type() == p->inventory_type()) {
 			it.set_object(p);
 			return true;
@@ -258,26 +258,26 @@ bool qdInventoryCellSet::put_object(qdGameObjectAnimated *p) {
 }
 
 bool qdInventoryCellSet::hit(const Vect2s &pos) const {
-	if (cells_.empty() || !cells_.front().size_x() || !cells_.front().size_y())
+	if (_cells.empty() || !_cells.front().size_x() || !_cells.front().size_y())
 		return false;
 
-	Vect2s v = pos - screen_pos() + cells_.front().size() / 2;
+	Vect2s v = pos - screen_pos() + _cells.front().size() / 2;
 
-	if (v.x >= 0 && v.x < size_.x * cells_.front().size_x() && v.y >= 0 && v.y < size_.y * cells_.front().size_y())
+	if (v.x >= 0 && v.x < _size.x * _cells.front().size_x() && v.y >= 0 && v.y < _size.y * _cells.front().size_y())
 		return true;
 
 	return false;
 }
 
 grScreenRegion qdInventoryCellSet::screen_region() const {
-	if (cells_.empty() || !cells_.front().size_x() || !cells_.front().size_y())
+	if (_cells.empty() || !_cells.front().size_x() || !_cells.front().size_y())
 		return grScreenRegion::EMPTY;
 
-	int sx = size_.x * cells_.front().size_x();
-	int sy = size_.y * cells_.front().size_y();
+	int sx = _size.x * _cells.front().size_x();
+	int sy = _size.y * _cells.front().size_y();
 
-	int x = screen_pos().x - cells_.front().size_x() / 2 + sx / 2;
-	int y = screen_pos().y - cells_.front().size_y() / 2 + sy / 2;
+	int x = screen_pos().x - _cells.front().size_x() / 2 + sx / 2;
+	int y = screen_pos().y - _cells.front().size_y() / 2 + sy / 2;
 
 	return grScreenRegion(x, y, sx, sy);
 }
@@ -285,13 +285,13 @@ grScreenRegion qdInventoryCellSet::screen_region() const {
 bool qdInventoryCellSet::put_object(qdGameObjectAnimated *p, const Vect2s &pos) {
 	if (!hit(pos)) return false;
 
-	Vect2s v = pos - screen_pos() + cells_.front().size() / 2;
-	int idx = v.x / cells_.front().size_x() + (v.y / cells_.front().size_y()) * size_.x;
+	Vect2s v = pos - screen_pos() + _cells.front().size() / 2;
+	int idx = v.x / _cells.front().size_x() + (v.y / _cells.front().size_y()) * _size.x;
 	// Двигаем индекс на текущее смещение ячеек
-	idx += cells_shift_.y * (size_.x + additional_cells_.x) + cells_shift_.x;
+	idx += _cells_shift.y * (_size.x + _additional_cells.x) + _cells_shift.x;
 
-	if (idx >= 0 && idx < cells_.size() && cells_[idx].is_empty() && cells_[idx].type() == p->inventory_type()) {
-		cells_[idx].set_object(p);
+	if (idx >= 0 && idx < _cells.size() && _cells[idx].is_empty() && _cells[idx].type() == p->inventory_type()) {
+		_cells[idx].set_object(p);
 		return true;
 	}
 
@@ -301,20 +301,20 @@ bool qdInventoryCellSet::put_object(qdGameObjectAnimated *p, const Vect2s &pos) 
 qdGameObjectAnimated *qdInventoryCellSet::get_object(const Vect2s &pos) const {
 	if (!hit(pos)) return NULL;
 
-	Vect2s v = pos - screen_pos() + cells_.front().size() / 2;
+	Vect2s v = pos - screen_pos() + _cells.front().size() / 2;
 
-	int idx = v.x / cells_.front().size_x() + (v.y / cells_.front().size_y()) * size_.x;
+	int idx = v.x / _cells.front().size_x() + (v.y / _cells.front().size_y()) * _size.x;
 	// Двигаем индекс на текущее смещение ячеек
-	idx += cells_shift_.y * (size_.x + additional_cells_.x) + cells_shift_.x;
+	idx += _cells_shift.y * (_size.x + _additional_cells.x) + _cells_shift.x;
 
-	if (idx >= 0 && idx < cells_.size())
-		return cells_[idx].object();
+	if (idx >= 0 && idx < _cells.size())
+		return _cells[idx].object();
 
 	return NULL;
 }
 
 bool qdInventoryCellSet::remove_object(qdGameObjectAnimated *p) {
-	for (auto &it : cells_) {
+	for (auto &it : _cells) {
 		if (it.object() == p) {
 			it.set_object(NULL);
 			return true;
@@ -325,7 +325,7 @@ bool qdInventoryCellSet::remove_object(qdGameObjectAnimated *p) {
 }
 
 bool qdInventoryCellSet::is_object_in_list(const qdGameObjectAnimated *p) const {
-	for (auto &it : cells_) {
+	for (auto &it : _cells) {
 		if (it.object() == p)
 			return true;
 	}
@@ -346,7 +346,7 @@ bool qdInventoryCellSet::load_script(const xml::tag *p) {
 			set_size(v);
 			break;
 		case QDSCR_INVENTORY_CELL_SET_ADDITIONAL_CELLS:
-			xml::tag_buffer(*it) > additional_cells_.x > additional_cells_.y;
+			xml::tag_buffer(*it) > _additional_cells.x > _additional_cells.y;
 			break;
 		}
 	}
@@ -359,8 +359,8 @@ bool qdInventoryCellSet::load_script(const xml::tag *p) {
 
 bool qdInventoryCellSet::save_script(Common::WriteStream &fh, int indent) const {
 	int tp = 0;
-	if (!cells_.empty()) {
-		tp = cells_.front().type();
+	if (!_cells.empty()) {
+		tp = _cells.front().type();
 	}
 
 	for (int i = 0; i < indent; i++) {
@@ -371,17 +371,17 @@ bool qdInventoryCellSet::save_script(Common::WriteStream &fh, int indent) const 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<inventory_cell_set_size>%d %d</inventory_cell_set_size>\r\n", size_.x, size_.y));
+	fh.writeString(Common::String::format("<inventory_cell_set_size>%d %d</inventory_cell_set_size>\r\n", _size.x, _size.y));
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<inventory_cell_set_pos>%d %d</inventory_cell_set_pos>\r\n", screen_pos_.x, screen_pos_.y));
+	fh.writeString(Common::String::format("<inventory_cell_set_pos>%d %d</inventory_cell_set_pos>\r\n", _screen_pos.x, _screen_pos.y));
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<inventory_cell_set_additional_cells>%d %d</inventory_cell_set_additional_cells>\r\n", additional_cells_.x, additional_cells_.y));
+	fh.writeString(Common::String::format("<inventory_cell_set_additional_cells>%d %d</inventory_cell_set_additional_cells>\r\n", _additional_cells.x, _additional_cells.y));
 
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
@@ -392,10 +392,10 @@ bool qdInventoryCellSet::save_script(Common::WriteStream &fh, int indent) const 
 }
 
 bool qdInventoryCellSet::init(const qdInventoryCellTypeVector &tp) {
-	if (cells_.empty()) return false;
+	if (_cells.empty()) return false;
 
 	for (auto &it : tp) {
-		if (it.type() == cells_.front().type()) {
+		if (it.type() == _cells.front().type()) {
 			set_cell_type(it);
 			return true;
 		}
@@ -406,26 +406,26 @@ bool qdInventoryCellSet::init(const qdInventoryCellTypeVector &tp) {
 
 #ifdef _QUEST_EDITOR
 const Vect2i qdInventoryCellSet::screen_size() const {
-	if (cells_.empty()) return Vect2i(0, 0);
-	const qdInventoryCell &cell = cells_.front();
-	return Vect2i(size_.x * cell.size_x(), size_.y * cell.size_y());
+	if (_cells.empty()) return Vect2i(0, 0);
+	const qdInventoryCell &cell = _cells.front();
+	return Vect2i(_size.x * cell.size_x(), _size.y * cell.size_y());
 }
 
 const Vect2i qdInventoryCellSet::cell_size() const {
-	if (cells_.empty()) return Vect2i(0, 0);
-	return cells_.front().size();
+	if (_cells.empty()) return Vect2i(0, 0);
+	return _cells.front().size();
 }
 #endif // _QUEST_EDITOR
 
 bool qdInventoryCellSet::load_resources() {
-	for (auto &it : cells_)
+	for (auto &it : _cells)
 		it.load_resources();
 
 	return true;
 }
 
 bool qdInventoryCellSet::free_resources() {
-	for (auto &it : cells_) {
+	for (auto &it : _cells) {
 		it.free_resources();
 	}
 
@@ -435,10 +435,10 @@ bool qdInventoryCellSet::free_resources() {
 bool qdInventoryCellSet::load_data(Common::SeekableReadStream &fh, int save_version) {
 	debugC(4, kDebugSave, "    qdInventoryCellSet::load_data before: %ld", fh.pos());
 	if (save_version >= 102) {
-		additional_cells_.x = fh.readSint32LE();
-		additional_cells_.y = fh.readSint32LE();
+		_additional_cells.x = fh.readSint32LE();
+		_additional_cells.y = fh.readSint32LE();
 	}
-	for (auto &it : cells_) {
+	for (auto &it : _cells) {
 		if (!it.load_data(fh, save_version))
 			return false;
 	}
@@ -449,10 +449,10 @@ bool qdInventoryCellSet::load_data(Common::SeekableReadStream &fh, int save_vers
 
 bool qdInventoryCellSet::save_data(Common::WriteStream &fh) const {
 	debugC(4, kDebugSave, "    qdInventoryCellSet::save_data before: %ld", fh.pos());
-	fh.writeSint32LE(additional_cells_.x);
-	fh.writeSint32LE(additional_cells_.y);
+	fh.writeSint32LE(_additional_cells.x);
+	fh.writeSint32LE(_additional_cells.y);
 
-	for (auto &it : cells_) {
+	for (auto &it : _cells) {
 		if (!it.save_data(fh))
 			return false;
 	}
@@ -462,9 +462,9 @@ bool qdInventoryCellSet::save_data(Common::WriteStream &fh) const {
 }
 
 int qdInventoryCellSet::cell_index(const qdGameObjectAnimated *obj) const {
-	for (auto it = cells_.begin(); it != cells_.end(); it++) {
+	for (auto it = _cells.begin(); it != _cells.end(); it++) {
 		if (it->object() == obj) {
-			return (it - cells_.begin());
+			return (it - _cells.begin());
 		}
 	}
 
@@ -472,12 +472,12 @@ int qdInventoryCellSet::cell_index(const qdGameObjectAnimated *obj) const {
 }
 
 Vect2s qdInventoryCellSet::cell_position(int cell_idx) const {
-	if (cell_idx >= 0 && cell_idx < cells_.size()) {
-		int x = (cell_idx % size_.x) * cells_.front().size_x() + screen_pos().x;
-		int y = (cell_idx / size_.x) * cells_.front().size_y() + screen_pos().y;
+	if (cell_idx >= 0 && cell_idx < _cells.size()) {
+		int x = (cell_idx % _size.x) * _cells.front().size_x() + screen_pos().x;
+		int y = (cell_idx / _size.x) * _cells.front().size_y() + screen_pos().y;
 		// Делаем поправку на смещение ячеек
-		x -= cells_.front().size_x() * cells_shift_.x;
-		y -= cells_.front().size_y() * cells_shift_.y;
+		x -= _cells.front().size_x() * _cells_shift.x;
+		y -= _cells.front().size_y() * _cells_shift.y;
 		return Vect2s(x, y);
 	}
 
@@ -485,7 +485,7 @@ Vect2s qdInventoryCellSet::cell_position(int cell_idx) const {
 }
 
 void qdInventoryCellSet::set_mouse_hover_object(qdGameObjectAnimated *obj) {
-	for (auto &it : cells_) {
+	for (auto &it : _cells) {
 		if (it.object() && it.object() != obj && it.object()->get_cur_state()) {
 			if (it.object()->get_cur_state()->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_HOVER_STATE)) {
 				if (qdGameObjectState *sp = it.object()->get_inventory_state())
@@ -504,7 +504,7 @@ void qdInventoryCellSet::set_mouse_hover_object(qdGameObjectAnimated *obj) {
 }
 
 void qdInventoryCellSet::objects_quant(float dt) {
-	for (auto &it : cells_) {
+	for (auto &it : _cells) {
 		if (!it.is_empty()) {
 			it.object()->quant(dt);
 		}
@@ -516,88 +516,88 @@ void qdInventoryCellSet::pre_redraw() const {
 	if (!dp) return;
 
 	int idx;
-	for (int i = cells_shift_.y; i < size().y + cells_shift_.y; i++) {
-		idx = i * (size_.x + additional_cells_.x) + cells_shift_.x;
-		for (int j = cells_shift_.x; j < size().x + cells_shift_.x; j++) {
-			assert(idx >= 0 && idx < cells_.size());
-			if (!cells_[idx].is_empty() && cells_[idx].object()->need_redraw()) {
-				dp->add_redraw_region(cells_[idx].object()->last_screen_region());
-				dp->add_redraw_region(cells_[idx].object()->screen_region());
+	for (int i = _cells_shift.y; i < size().y + _cells_shift.y; i++) {
+		idx = i * (_size.x + _additional_cells.x) + _cells_shift.x;
+		for (int j = _cells_shift.x; j < size().x + _cells_shift.x; j++) {
+			assert(idx >= 0 && idx < _cells.size());
+			if (!_cells[idx].is_empty() && _cells[idx].object()->need_redraw()) {
+				dp->add_redraw_region(_cells[idx].object()->last_screen_region());
+				dp->add_redraw_region(_cells[idx].object()->screen_region());
 			}
 			idx++;
 		}
 	}
 
 	grScreenRegion reg = screen_region();
-	if (reg != last_screen_region_) {
-		dp->add_redraw_region(last_screen_region_);
+	if (reg != _last_screen_region) {
+		dp->add_redraw_region(_last_screen_region);
 		dp->add_redraw_region(reg);
 	}
 }
 
 void qdInventoryCellSet::post_redraw() {
 	int idx;
-	for (int i = cells_shift_.y; i < size().y + cells_shift_.y; i++) {
-		idx = i * (size_.x + additional_cells_.x) + cells_shift_.x;
-		for (int j = cells_shift_.x; j < size().x + cells_shift_.x; j++) {
-			assert(idx >= 0 && idx < cells_.size());
-			if (!cells_[idx].is_empty())
-				cells_[idx].object()->post_redraw();
+	for (int i = _cells_shift.y; i < size().y + _cells_shift.y; i++) {
+		idx = i * (_size.x + _additional_cells.x) + _cells_shift.x;
+		for (int j = _cells_shift.x; j < size().x + _cells_shift.x; j++) {
+			assert(idx >= 0 && idx < _cells.size());
+			if (!_cells[idx].is_empty())
+				_cells[idx].object()->post_redraw();
 			idx++;
 		}
 	}
 
-	last_screen_region_ = screen_region();
+	_last_screen_region = screen_region();
 }
 
 bool qdInventoryCellSet::has_rect_objects(int left, int top, int right, int bottom) const {
 	int idx;
 	for (int i = top; i <= bottom; i++)
 		for (int j = left; j <= right; j++) {
-			idx = i * (size_.x + additional_cells_.x) + j;
-			assert(idx >= 0 && idx < cells_.size());
+			idx = i * (_size.x + _additional_cells.x) + j;
+			assert(idx >= 0 && idx < _cells.size());
 			// Нашли объект вне видимой области - значит скроллинг нужен
-			if (!cells_[idx].is_empty())
+			if (!_cells[idx].is_empty())
 				return true;
 		}
 	return false;
 }
 
 void qdInventoryCellSet::scroll_left() {
-	if (!has_rect_objects(0, 0, cells_shift_.x - 1, size_.y + additional_cells_.y - 1))
+	if (!has_rect_objects(0, 0, _cells_shift.x - 1, _size.y + _additional_cells.y - 1))
 		return;
-	cells_shift_.x--;
-	if (cells_shift_.x < 0) cells_shift_.x = additional_cells_.x;
+	_cells_shift.x--;
+	if (_cells_shift.x < 0) _cells_shift.x = _additional_cells.x;
 }
 
 void qdInventoryCellSet::scroll_right() {
-	if (!has_rect_objects(cells_shift_.x + size_.x, 0, size_.x + additional_cells_.x - 1, size_.y + additional_cells_.y - 1))
+	if (!has_rect_objects(_cells_shift.x + _size.x, 0, _size.x + _additional_cells.x - 1, _size.y + _additional_cells.y - 1))
 		return;
-	cells_shift_.x++;
-	if (cells_shift_.x > additional_cells_.x) cells_shift_.x = 0;
+	_cells_shift.x++;
+	if (_cells_shift.x > _additional_cells.x) _cells_shift.x = 0;
 }
 
 void qdInventoryCellSet::scroll_up() {
-	if (!has_rect_objects(0, 0, size_.x + additional_cells_.x - 1, cells_shift_.y - 1))
+	if (!has_rect_objects(0, 0, _size.x + _additional_cells.x - 1, _cells_shift.y - 1))
 		return;
-	cells_shift_.y--;
-	if (cells_shift_.y < 0) cells_shift_.y = additional_cells_.y;
+	_cells_shift.y--;
+	if (_cells_shift.y < 0) _cells_shift.y = _additional_cells.y;
 }
 
 void qdInventoryCellSet::scroll_down() {
-	if (!has_rect_objects(0, cells_shift_.y + size_.y, size_.x + additional_cells_.x - 1, size_.y + additional_cells_.y - 1))
+	if (!has_rect_objects(0, _cells_shift.y + _size.y, _size.x + _additional_cells.x - 1, _size.y + _additional_cells.y - 1))
 		return;
-	cells_shift_.y++;
-	if (cells_shift_.y > additional_cells_.y) cells_shift_.y = 0;
+	_cells_shift.y++;
+	if (_cells_shift.y > _additional_cells.y) _cells_shift.y = 0;
 }
 
 void qdInventoryCellSet::debug_log() const {
 #ifdef _DEBUG
-	for (int i = cells_shift_.y; i < size().y + cells_shift_.y; i++) {
-		int idx = i * (size_.x + additional_cells_.x) + cells_shift_.x;
-		for (int j = cells_shift_.x; j < size().x + cells_shift_.x; j++) {
-			if (!cells_[idx].is_empty()) {
-				debugC(3, kDebugLog, "Inventory cell: %d %d %s", i, j, transCyrillic(cells_[idx].object()->name()));
+	for (int i = _cells_shift.y; i < size().y + _cells_shift.y; i++) {
+		int idx = i * (_size.x + _additional_cells.x) + _cells_shift.x;
+		for (int j = _cells_shift.x; j < size().x + _cells_shift.x; j++) {
+			if (!_cells[idx].is_empty()) {
+				debugC(3, kDebugLog, "Inventory cell: %d %d %s", i, j, transCyrillic(_cells[idx].object()->name()));
 			}
 		}
 	}
