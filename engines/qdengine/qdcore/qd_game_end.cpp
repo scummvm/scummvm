@@ -31,7 +31,7 @@ qdGameEnd::qdGameEnd() {
 }
 
 qdGameEnd::qdGameEnd(const qdGameEnd &end) : qdConditionalObject(end),
-	interface_screen_(end.interface_screen_) {
+	_interface_screen(end._interface_screen) {
 }
 
 qdGameEnd::~qdGameEnd() {
@@ -42,7 +42,7 @@ qdGameEnd &qdGameEnd::operator = (const qdGameEnd &end) {
 
 	*static_cast<qdConditionalObject *>(this) = end;
 
-	interface_screen_ = end.interface_screen_;
+	_interface_screen = end._interface_screen;
 
 	return *this;
 }
@@ -91,8 +91,8 @@ bool qdGameEnd::save_script(Common::WriteStream &fh, int indent) const {
 		fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
 	}
 
-	if (!interface_screen_.empty()) {
-		fh.writeString(Common::String::format(" end_screen=\"%s\"", qdscr_XML_string(interface_screen_.c_str())));
+	if (!_interface_screen.empty()) {
+		fh.writeString(Common::String::format(" end_screen=\"%s\"", qdscr_XML_string(_interface_screen.c_str())));
 	}
 
 	if (has_conditions()) {

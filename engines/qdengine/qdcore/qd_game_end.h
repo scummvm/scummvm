@@ -38,14 +38,14 @@ public:
 	~qdGameEnd();
 
 	const char *interface_screen() const {
-		return interface_screen_.c_str();
+		return _interface_screen.c_str();
 	}
 	bool has_interface_screen() const {
-		return !interface_screen_.empty();
+		return !_interface_screen.empty();
 	}
 	void set_interface_screen(const char *name) {
-		if (name) interface_screen_ = name;
-		else interface_screen_.clear();
+		if (name) _interface_screen = name;
+		else _interface_screen.clear();
 	}
 
 	qdConditionalObject::trigger_start_mode trigger_start();
@@ -63,7 +63,7 @@ private:
 	/**
 	Если строка пустая - будет выход в main menu.
 	*/
-	std::string interface_screen_;
+	std::string _interface_screen;
 };
 
 } // namespace QDEngine
