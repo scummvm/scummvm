@@ -54,28 +54,28 @@ public:
 	typedef conditions_container_t::const_iterator conditions_iterator_t;
 
 	conditions_iterator_t conditions_begin() const {
-		return conditions_.begin();
+		return _conditions.begin();
 	}
 	conditions_iterator_t conditions_end() const {
-		return conditions_.end();
+		return _conditions.end();
 	}
 
 	int conditions_size() const {
-		return conditions_.size();
+		return _conditions.size();
 	}
 
 	conditions_mode_t conditions_mode() const {
-		return conditions_mode_;
+		return _conditions_mode;
 	}
 	void set_conditions_mode(conditions_mode_t mode) {
-		conditions_mode_ = mode;
+		_conditions_mode = mode;
 	}
 
 	bool add_condition(int condition_id);
 	bool remove_condition(int condition_id);
 #ifdef _QUEST_EDITOR
 	void remove_all() {
-		conditions_.clear();
+		_conditions.clear();
 	}
 #endif // _QUEST_EDITOR
 
@@ -84,8 +84,8 @@ public:
 
 private:
 
-	conditions_mode_t conditions_mode_;
-	conditions_container_t conditions_;
+	conditions_mode_t _conditions_mode;
+	conditions_container_t _conditions;
 };
 
 } // namespace QDEngine

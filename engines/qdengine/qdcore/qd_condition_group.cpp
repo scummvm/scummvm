@@ -27,10 +27,10 @@
 
 namespace QDEngine {
 
-qdConditionGroup::qdConditionGroup(conditions_mode_t md) : conditions_mode_(md) {
+qdConditionGroup::qdConditionGroup(conditions_mode_t md) : _conditions_mode(md) {
 }
 
-qdConditionGroup::qdConditionGroup(const qdConditionGroup &cg) : conditions_mode_(cg.conditions_mode_), conditions_(cg.conditions_) {
+qdConditionGroup::qdConditionGroup(const qdConditionGroup &cg) : _conditions_mode(cg._conditions_mode), _conditions(cg._conditions) {
 }
 
 qdConditionGroup::~qdConditionGroup() {
@@ -39,46 +39,46 @@ qdConditionGroup::~qdConditionGroup() {
 qdConditionGroup &qdConditionGroup::operator = (const qdConditionGroup &cg) {
 	if (this == &cg) return *this;
 
-	conditions_mode_ = cg.conditions_mode_;
-	conditions_ = cg.conditions_;
+	_conditions_mode = cg._conditions_mode;
+	_conditions = cg._conditions;
 
 	return *this;
 }
 
 bool qdConditionGroup::add_condition(int condition_id) {
-	conditions_container_t::iterator it = std::find(conditions_.begin(), conditions_.end(), condition_id);
-	if (it != conditions_.end())
+	conditions_container_t::iterator it = std::find(_conditions.begin(), _conditions.end(), condition_id);
+	if (it != _conditions.end())
 		return false;
 
-	conditions_.push_back(condition_id);
+	_conditions.push_back(condition_id);
 	return true;
 }
 
 bool qdConditionGroup::remove_condition(int condition_id) {
-	for (conditions_container_t::iterator it = conditions_.begin(); it != conditions_.end(); ++it) {
+	for (conditions_container_t::iterator it = _conditions.begin(); it != _conditions.end(); ++it) {
 		if (*it > condition_id)
 			(*it)--;
 	}
 
-	conditions_container_t::iterator it1 = std::find(conditions_.begin(), conditions_.end(), condition_id);
-	if (it1 != conditions_.end())
+	conditions_container_t::iterator it1 = std::find(_conditions.begin(), _conditions.end(), condition_id);
+	if (it1 != _conditions.end())
 		return false;
 
-	conditions_.erase(it1);
+	_conditions.erase(it1);
 	return true;
 }
 
 bool qdConditionGroup::load_script(const xml::tag *p) {
 #ifndef _QUEST_EDITOR
-	conditions_.reserve(p->data_size());
+	_conditions.reserve(p->data_size());
 #endif
 
 	if (const xml::tag * tp = p->search_subtag(QDSCR_TYPE))
-		conditions_mode_ = conditions_mode_t(xml::tag_buffer(*tp).get_int());
+		_conditions_mode = conditions_mode_t(xml::tag_buffer(*tp).get_int());
 
 	xml::tag_buffer buf(*p);
 	for (int i = 0; i < p->data_size(); i++)
-		conditions_.push_back(buf.get_int());
+		_conditions.push_back(buf.get_int());
 
 	return true;
 }
@@ -89,11 +89,11 @@ bool qdConditionGroup::save_script(Common::WriteStream &fh, int indent) const {
 	}
 
 	fh.writeString("<condition_group");
-	fh.writeString(Common::String::format(" type=\"%d\"", (int)conditions_mode_));
+	fh.writeString(Common::String::format(" type=\"%d\"", (int)_conditions_mode));
 	fh.writeString(">");
 
-	fh.writeString(Common::String::format("%lu", conditions_.size()));
-	for (auto &it : conditions_) {
+	fh.writeString(Common::String::format("%lu", _conditions.size()));
+	for (auto &it : _conditions) {
 		fh.writeString(Common::String::format(" %d", it));
 	}
 	fh.writeString("</condition_group>\r\n");
