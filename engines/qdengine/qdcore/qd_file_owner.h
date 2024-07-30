@@ -26,40 +26,40 @@ namespace QDEngine {
 
 class qdFileOwner {
 public:
-	qdFileOwner() : files_size_(0), cd_info_(0) { }
+	qdFileOwner() : _files_size(0), _cd_info(0) { }
 	virtual ~qdFileOwner() {}
 
 	unsigned files_size() const {
-		return files_size_;
+		return _files_size;
 	}
 	virtual bool get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const = 0;
 
 	void add_to_CD(int cd_number) {
-		cd_info_ |= 1 << cd_number;
+		_cd_info |= 1 << cd_number;
 	}
 	void remove_from_CD(int cd_number) {
-		cd_info_ &= ~(1 << cd_number);
+		_cd_info &= ~(1 << cd_number);
 	}
 	bool is_on_CD(int cd_number = 1) const {
-		int inf = (cd_info_) ? cd_info_ : 1;
+		int inf = (_cd_info) ? _cd_info : 1;
 		return (inf & (1 << cd_number));
 	}
 	void clear_cd_info() {
-		cd_info_ = 0;
+		_cd_info = 0;
 	}
 	void calc_files_size();
 
 	unsigned CD_info() const {
-		return cd_info_;
+		return _cd_info;
 	}
 	void set_CD_info(unsigned inf) {
-		cd_info_ = inf;
+		_cd_info = inf;
 	}
 
 private:
 
-	unsigned cd_info_;
-	unsigned files_size_;
+	unsigned _cd_info;
+	unsigned _files_size;
 };
 
 } // namespace QDEngine
