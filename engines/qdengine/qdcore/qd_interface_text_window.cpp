@@ -146,7 +146,7 @@ bool qdInterfaceTextWindow::mouse_handler(int x, int y, mouseDispatcher::mouseEv
 			}
 		} else if (ev == mouseDispatcher::EV_MOUSE_MOVE) {
 			_text_set->clear_hover_mode();
-			if (qdScreenText * p = _text_set->get_text(x, y))
+			if (qdScreenText *p = _text_set->get_text(x, y))
 				p->set_hover_mode(true);
 		}
 	}

@@ -436,7 +436,7 @@ bool qdTriggerElement::quant(float dt) {
 }
 
 void qdTriggerElement::start() {
-	if (qdConditionalObject * p = dynamic_cast<qdConditionalObject * >(_object)) {
+	if (qdConditionalObject * p = dynamic_cast<qdConditionalObject *>(_object)) {
 		switch (p->trigger_start()) {
 		case qdConditionalObject::TRIGGER_START_ACTIVATE:
 			set_status(TRIGGER_EL_WORKING);
