@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-07-28 19:03+0000\n"
+"POT-Creation-Date: 2024-07-30 23:50+0000\n"
 "PO-Revision-Date: 2023-09-07 17:04+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -59,6 +59,18 @@ msgstr ""
 #: gui/about.cpp:155
 msgid "Available engines:"
 msgstr "Tilgængelige motorer:"
+
+#. I18N: Close dialog button
+#: gui/about.cpp:523 gui/downloadpacksdialog.cpp:297
+#: gui/downloadpacksdialog.cpp:388 gui/integrity-dialog.cpp:276
+#: gui/gui-manager.cpp:170 gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
+#: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
+#: engines/saga/metaengine.cpp:374 engines/scumm/help.cpp:127
+#: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
+#: engines/scumm/help.cpp:195 engines/scumm/help.cpp:213
+#: engines/twp/metaengine.cpp:179
+msgid "Close"
+msgstr "Luk"
 
 #: gui/browser.cpp:74 backends/dialogs/macosx/macosx-dialogs.mm:90
 msgid "Show hidden files"
@@ -541,18 +553,6 @@ msgid "Download complete, downloaded %d packs, %s %S"
 msgstr ""
 "Download fuldført.\n"
 "Kunne ikke downloade %u filer."
-
-#. I18N: Close dialog button
-#: gui/downloadpacksdialog.cpp:297 gui/downloadpacksdialog.cpp:388
-#: gui/integrity-dialog.cpp:276 gui/gui-manager.cpp:170
-#: gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
-#: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
-#: engines/saga/metaengine.cpp:374 engines/scumm/help.cpp:127
-#: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
-#: engines/scumm/help.cpp:195 engines/scumm/help.cpp:213
-#: engines/twp/metaengine.cpp:179
-msgid "Close"
-msgstr "Luk"
 
 #: gui/downloadpacksdialog.cpp:395 gui/downloadpacksdialog.cpp:440
 msgid "ERROR: No icons path set"
