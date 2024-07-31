@@ -56,10 +56,6 @@ public:
 	//! Возвращает баунд объекта.
 	virtual const Vect3f &bound(bool perspective_correction = true) const;
 
-#ifdef _QUEST_EDITOR
-	//! Всегда возвращает баунд объекта(независимо от выбранного состояния)
-	virtual const Vect3f &obj_bound() const;
-#endif // _QUEST_EDITOR
 	//! Устанавливает баунд объекта по текущему состоянию.
 	bool auto_bound();
 	//! Возвращает радиус объекта.
@@ -294,11 +290,6 @@ public:
 		return !_inventory_name.empty();
 	}
 
-#ifdef _QUEST_EDITOR
-	//! Удаляет пустые края анимации.
-	bool remove_animation_edges(Vect2i &full_offset, Vect2i &anim_offset);
-#endif //_QUEST_EDITOR
-
 	const grScreenRegion &last_screen_region() const {
 		return _last_screen_region;
 	}
@@ -318,12 +309,6 @@ public:
 		_last_chg_time = time;
 	}
 	int idle_time() const;
-
-#ifdef _QUEST_EDITOR
-	static void toggle_fast_state_merge(bool state) {
-		fast_state_merge_ = state;
-	}
-#endif
 
 	int shadow_color() const;
 	int shadow_alpha() const;
@@ -397,11 +382,6 @@ private:
 	unsigned _shadow_color;
 	//! Прозрачность затенения, значения - [0, 255], если равно QD_NO_SHADOW_ALPHA, то персонаж не затеняется.
 	int _shadow_alpha;
-
-#ifdef _QUEST_EDITOR
-	/// если true, то глобальные состояния добавляются по-быстрому
-	static bool fast_state_merge_;
-#endif
 
 	void clear_states();
 };

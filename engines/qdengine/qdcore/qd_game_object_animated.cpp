@@ -37,10 +37,6 @@
 
 namespace QDEngine {
 
-#ifdef _QUEST_EDITOR
-bool qdGameObjectAnimated::fast_state_merge_ = false;
-#endif
-
 qdGameObjectAnimated::qdGameObjectAnimated() : _cur_state(-1),
 	_inventory_type(0),
 	_last_state(NULL),
@@ -257,19 +253,13 @@ void qdGameObjectAnimated::quant(float dt) {
 	if (_target_transform != _current_transform)
 		_current_transform.change(dt, _target_transform, _transform_speed);
 
-#ifndef _QUEST_EDITOR
 	for (qdGameObjectStateVector::iterator it = _states.begin(); it != _states.end(); ++it)
 		(*it)->quant(dt);
-#endif // _QUEST_EDITOR
 
 	if (_cur_state != -1) {
-#ifdef _QUEST_EDITOR
-		_states[_cur_state]->quant(dt);
-#endif // _QUEST_EDITOR
 		if (!_states[_cur_state]->coords_animation()->is_empty())
 			_states[_cur_state]->coords_animation()->quant(dt);
 
-#ifndef _QUEST_EDITOR
 		if (!_states[_cur_state]->is_in_triggers()) {
 			for (qdGameObjectStateVector::iterator it = _states.begin(); it != _states.end(); ++it) {
 				if (_states[_cur_state] != *it)
@@ -296,7 +286,6 @@ void qdGameObjectAnimated::quant(float dt) {
 			if (state_status(_states[_cur_state]) == STATE_DONE)
 				handle_state_end();
 		}
-#endif
 	}
 
 	if (queued_state())
@@ -424,13 +413,8 @@ qdGameObjectState *qdGameObjectAnimated::remove_state(int state_num) {
 
 	p->dec_reference_count();
 
-#ifdef _QUEST_EDITOR
-	if (_cur_state >= max_state())
-		set_state(--_cur_state);
-#else
 	if (_cur_state >= max_state())
 		--_cur_state;
-#endif
 
 	return p;
 }
@@ -556,7 +540,6 @@ void qdGameObjectAnimated::set_state(int st) {
 	if (max_state() && st >= 0 && st <= max_state()) {
 		qdGameObjectState *p = _states[st];
 
-#ifndef _QUEST_EDITOR
 		if (p->activation_delay() > 0.001f) {
 			debugC(3, kDebugGraphics, "[%d] state waits %s %s", g_system->getMillis(), transCyrillic(p->name()), transCyrillic(get_state(st)->name()));
 
@@ -580,7 +563,6 @@ void qdGameObjectAnimated::set_state(int st) {
 
 		if (p->has_camera_mode() && owner())
 			static_cast<qdGameScene * >(owner())->set_camera_mode(p->camera_mode(), this);
-#endif
 
 		if (_cur_state != -1 && _cur_state < max_state()) {
 			_states[_cur_state]->stop_sound();
@@ -596,18 +578,12 @@ void qdGameObjectAnimated::set_state(int st) {
 		qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher();
 		assert(dp);
 
-#ifdef _QUEST_EDITOR
-		//возвращаем начальное положение объекта,
-		//если оно вдруг было изменено предыдущим состоянием
-		set_pos(default_R());
-#else
 		if (_cur_state != -1 && _cur_state < max_state() && _states[_cur_state]->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY) && !p->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY)) {
 			dp->remove_from_inventory(this);
 
 			drop_flag(QD_OBJ_SCREEN_COORDS_FLAG);
 			set_pos(default_R());
 		}
-#endif
 
 		if (_cur_state != st) {
 			set_last_state(get_cur_state());
@@ -618,32 +594,16 @@ void qdGameObjectAnimated::set_state(int st) {
 		p->load_resources();
 		p->start();
 
-#ifdef _QUEST_EDITOR
-		dp->screen_texts_dispatcher().clear_texts();
-		if (p->has_full_text()) {
-			dp->screen_texts_dispatcher().add_text(
-			    qdGameDispatcher::TEXT_SET_DIALOGS,
-			    qdScreenText(p->full_text(), p->text_format(), Vect2i(0, 0), p));
-		} else if (p->has_short_text()) {
-			dp->screen_texts_dispatcher().add_text(
-			    qdGameDispatcher::TEXT_SET_DIALOGS,
-			    qdScreenText(p->short_text(), p->text_format(), Vect2i(0, 0), p));
-		}
-#else
 		dp->screen_texts_dispatcher().clear_texts(this);
 		if (p->has_text() && !p->has_text_delay() && !p->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_DIALOG_PHRASE))
 			dp->screen_texts_dispatcher().add_text(qdGameDispatcher::TEXT_SET_DIALOGS, qdScreenText(p->text(), p->text_format(), Vect2i(0, 0), p));
-#endif
 
-#ifndef _QUEST_EDITOR
 		p->drop_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOVE_TO_INVENTORY_FAILED);
 		drop_flag(QD_OBJ_HIDDEN_FLAG);
-#endif
 
 		p->drop_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_ACTIVATION_TIMER);
 		p->drop_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_ACTIVATION_TIMER_END);
 
-#ifndef _QUEST_EDITOR
 		if (p->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOVE_TO_ZONE)) {
 			dp->remove_from_inventory(this);
 			drop_flag(QD_OBJ_SCREEN_COORDS_FLAG);
@@ -679,7 +639,6 @@ void qdGameObjectAnimated::set_state(int st) {
 
 		if (p->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_FADE_OUT))
 			dp->set_fade(false, p->fade_time());
-#endif
 
 		restore_grid_zone();
 		init_grid_zone();
@@ -1009,22 +968,12 @@ void qdGameObjectAnimated::merge_states(qdGameObjectAnimated *p) {
 		for (int i = 0; i < p->max_state(); i++) {
 			insert_state(i, p->_states[i]);
 			p->_states[i]->set_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_GLOBAL_OWNER);
-#ifdef _QUEST_EDITOR
-			p->_states[i]->set_ref_owner(p);
-#endif
 		}
 	}
-
-#ifdef _QUEST_EDITOR
-	if (!fast_state_merge_)
-		set_default_state();
-#endif
 }
 
 void qdGameObjectAnimated::split_states(qdGameObjectAnimated *p) {
-#ifndef _QUEST_EDITOR
 	int st = _cur_state;
-#endif
 
 	if (!_states.empty() && !p->_states.empty() && _states[0] == p->_states[0]) {
 		for (int i = 0; i < p->max_state(); i++) {
@@ -1034,9 +983,7 @@ void qdGameObjectAnimated::split_states(qdGameObjectAnimated *p) {
 		}
 	}
 
-#ifndef _QUEST_EDITOR
 	_cur_state = st;
-#endif
 }
 
 bool qdGameObjectAnimated::init_grid_zone() {
@@ -1070,7 +1017,6 @@ bool qdGameObjectAnimated::restore_grid_zone() {
 }
 
 qdGameObjectState *qdGameObjectAnimated::get_inventory_state() {
-#ifndef _QUEST_EDITOR
 	if (_last_inventory_state) return _last_inventory_state;
 
 	if (_states.size()) {
@@ -1079,15 +1025,8 @@ qdGameObjectState *qdGameObjectAnimated::get_inventory_state() {
 				return it;
 		}
 	}
-#endif
 	return NULL;
 }
-
-#ifdef _QUEST_EDITOR
-const Vect3f &qdGameObjectAnimated::obj_bound() const {
-	return _bound;
-}
-#endif // _QUEST_EDITOR
 
 const Vect3f &qdGameObjectAnimated::bound(bool perspective_correction) const {
 	if (_cur_state != -1 && _states[_cur_state]->has_bound())
@@ -1271,12 +1210,6 @@ void qdGameObjectAnimated::set_default_state() {
 	if (qdGameObjectState * p = get_default_state())
 		set_state(p);
 	else {
-#ifdef _QUEST_EDITOR
-		if (!_states.empty()) {
-			set_state((int)0);
-			return;
-		}
-#endif
 		set_state(-1);
 	}
 }
@@ -1597,26 +1530,22 @@ void qdGameObjectAnimated::set_states_owner() {
 }
 
 qdGameObjectState *qdGameObjectAnimated::get_mouse_state() {
-#ifndef _QUEST_EDITOR
 	if (_states.size()) {
 		for (auto &it : _states) {
 			if (it->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_STATE))
 				return it;
 		}
 	}
-#endif
 	return NULL;
 }
 
 qdGameObjectState *qdGameObjectAnimated::get_mouse_hover_state() {
-#ifndef _QUEST_EDITOR
 	if (_states.size()) {
 		for (auto &it : _states) {
 			if (it->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOUSE_HOVER_STATE))
 				return it;
 		}
 	}
-#endif
 	return NULL;
 }
 
