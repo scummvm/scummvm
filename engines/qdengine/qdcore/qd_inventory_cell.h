@@ -220,12 +220,12 @@ public:
 	}
 	void set_size(const Vect2s &sz) {
 		assert(sz.x && sz.y);
-		qdInventoryCell __t;
+		qdInventoryCell t;
 		if (_size.x != 0)//предполагаю, что либо оба равны либо оба неравны 0
-			__t = _cells.front();
+			t = _cells.front();
 		_size = sz;
 		_cells.resize((sz.x + _additional_cells.x) * (sz.y + _additional_cells.y));
-		std::fill(_cells.begin(), _cells.end(), __t);
+		std::fill(_cells.begin(), _cells.end(), t);
 	}
 
 	void set_cell_type(const qdInventoryCellType &tp) {
