@@ -83,6 +83,10 @@ private:
 
 	// Set by opcode 11h
 	bool ExecuteScriptOnFinishLerp;
+
+	// TODO: Handle properly
+	uint8 animationIndex;
+
 		// TODO: Will need time handling
 	Macs2::AnimFrame *GetCurrentAnimationFrame();
 		Macs2::AnimFrame *GetCurrentPortrait();

@@ -622,6 +622,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	}
 
 	// Load the script and execute it
+	Scenes::instance().LastSceneIndex = Scenes::instance().CurrentSceneIndex;
 	Scenes::instance().CurrentSceneIndex = newSceneIndex;
 	Scenes::instance().CurrentSceneScript = Scenes::instance().ReadSceneScript(newSceneIndex, _fileStream);
 	Scenes::instance().CurrentSceneStrings = Scenes::instance().ReadSceneStrings(newSceneIndex, _fileStream);
