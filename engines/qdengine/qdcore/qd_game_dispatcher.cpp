@@ -3327,28 +3327,28 @@ bool qdGameDispatcher::update_ingame_interface() {
 
 const char *qdGameDispatcher::hall_of_fame_player_name(int place) const {
 	if (place >= 0 && place < _hall_of_fame_size)
-		return _hall_of_fame[place].player_name_.c_str();
+		return _hall_of_fame[place]._player_name.c_str();
 
 	return "";
 }
 
 void qdGameDispatcher::set_hall_of_fame_player_name(int place, const char *name) {
 	if (place >= 0 && place < _hall_of_fame_size) {
-		_hall_of_fame[place].player_name_ = name;
-		_hall_of_fame[place].updated_ = false;
+		_hall_of_fame[place]._player_name = name;
+		_hall_of_fame[place]._updated = false;
 	}
 }
 
 int qdGameDispatcher::hall_of_fame_player_score(int place) const {
 	if (place >= 0 && place < _hall_of_fame_size)
-		return _hall_of_fame[place].score_;
+		return _hall_of_fame[place]._score;
 
 	return 0;
 }
 
 bool qdGameDispatcher::is_hall_of_fame_updated(int place) const {
 	if (place >= 0 && place < _hall_of_fame_size)
-		return _hall_of_fame[place].updated_;
+		return _hall_of_fame[place]._updated;
 
 	return false;
 }
@@ -3365,9 +3365,9 @@ bool qdGameDispatcher::load_hall_of_fame() {
 		char buf[1024];
 		for (int i = 0; i < _hall_of_fame_size; i++) {
 			fh.readLine(buf, 1024);
-			_hall_of_fame[i].player_name_ = buf;
+			_hall_of_fame[i]._player_name = buf;
 			fh.readLine(buf, 1024);
-			_hall_of_fame[i].score_ = atoi(buf);
+			_hall_of_fame[i]._score = atoi(buf);
 		}
 
 		return true;
@@ -3383,8 +3383,8 @@ bool qdGameDispatcher::save_hall_of_fame() const {
 	Common::DumpFile fh;
 	if (fh.open(Common::Path("Resource/hof.dat"))) {
 		for (int i = 0; i < _hall_of_fame_size; i++) {
-			fh.writeString(Common::String::format("%s\r\n", _hall_of_fame[i].player_name_.c_str()));
-			fh.writeString(Common::String::format("%d\r\n", _hall_of_fame[i].score_));
+			fh.writeString(Common::String::format("%s\r\n", _hall_of_fame[i]._player_name.c_str()));
+			fh.writeString(Common::String::format("%d\r\n", _hall_of_fame[i]._score));
 		}
 		return true;
 	}
@@ -3397,12 +3397,12 @@ bool qdGameDispatcher::add_hall_of_fame_entry(int score) {
 		return false;
 
 	for (int i = 0; i < _hall_of_fame_size; i++) {
-		if (score > _hall_of_fame[i].score_) {
+		if (score > _hall_of_fame[i]._score) {
 			for (int j = _hall_of_fame_size - 1; j > i; j--)
 				_hall_of_fame[j] = _hall_of_fame[j - 1];
-			_hall_of_fame[i].score_ = score;
-			_hall_of_fame[i].player_name_ = "";
-			_hall_of_fame[i].updated_ = true;
+			_hall_of_fame[i]._score = score;
+			_hall_of_fame[i]._player_name = "";
+			_hall_of_fame[i]._updated = true;
 
 			return true;
 		}
