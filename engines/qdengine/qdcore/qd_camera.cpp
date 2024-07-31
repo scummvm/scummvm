@@ -333,9 +333,9 @@ const Vect2s qdCamera::plane2rscr(const Vect3f &plnPoint) const {
 	return Vect2s(sx0, sy0);
 }
 
-const sGridCell *qdCamera::get_cell(float _x, float _y) const {
-	int x = round(_x - _gridCenter.x);
-	int y = round(_y - _gridCenter.y);
+const sGridCell *qdCamera::get_cell(float X, float Y) const {
+	int x = round(X - _gridCenter.x);
+	int y = round(Y - _gridCenter.y);
 
 	const int XSP = _cellSX * _GSX;
 	const int YSP = _cellSY * _GSY;
@@ -350,9 +350,9 @@ const sGridCell *qdCamera::get_cell(float _x, float _y) const {
 	return &_Grid[y * _GSX + x];
 }
 
-const Vect2s qdCamera::get_cell_index(float _x, float _y, bool grid_crop) const {
-	int x = round(_x - _gridCenter.x);
-	int y = round(_y - _gridCenter.y);
+const Vect2s qdCamera::get_cell_index(float X, float Y, bool grid_crop) const {
+	int x = round(X - _gridCenter.x);
+	int y = round(Y - _gridCenter.y);
 
 	const int XSP = _cellSX * _GSX;
 	const int YSP = _cellSY * _GSY;
@@ -379,12 +379,12 @@ const Vect2s qdCamera::get_cell_index(const Vect3f &v, bool grid_crop) const {
 	return get_cell_index(v.x, v.y, grid_crop);
 }
 
-const Vect3f qdCamera::get_cell_coords(int _x_idx, int _y_idx) const {
-	//float xx = (_x_idx - (_GSX>>1)) * _cellSX + (_cellSX>>1) + _gridCenter.x;
-	//float yy = (_y_idx - (_GSY>>1)) * _cellSY + (_cellSY>>1) + _gridCenter.y;
+const Vect3f qdCamera::get_cell_coords(int x_idx, int y_idx) const {
+	//float xx = (x_idx - (_GSX>>1)) * _cellSX + (_cellSX>>1) + _gridCenter.x;
+	//float yy = (y_idx - (_GSY>>1)) * _cellSY + (_cellSY>>1) + _gridCenter.y;
 
-	float xx = (_x_idx - static_cast<float>(_GSX) / 2 + 0.5) * _cellSX + _gridCenter.x;
-	float yy = (_y_idx - static_cast<float>(_GSY) / 2 + 0.5) * _cellSY + _gridCenter.y;
+	float xx = (x_idx - static_cast<float>(_GSX) / 2 + 0.5) * _cellSX + _gridCenter.x;
+	float yy = (y_idx - static_cast<float>(_GSY) / 2 + 0.5) * _cellSY + _gridCenter.y;
 
 	return Vect3f(xx, yy, _gridCenter.z);
 }
