@@ -332,11 +332,11 @@ public:
 
 	// Для CONTROL_ATTACHMENT
 	const qdGameObjectMoving *attacher() const {
-		return attacher_;
+		return _attacher;
 	}
 	void set_attacher(const qdGameObjectMoving *mov_obj);
 	const qdNamedObjectReference &attacher_ref() const {
-		return attacher_ref_;
+		return _attacher_ref;
 	}
 	Vect2s attach_shift() const {
 		return _attach_shift;
@@ -390,8 +390,8 @@ private:
 	std::vector<const qdGameObjectMoving *> _circuit_objs;
 
 	//! Для CONTROL_HARD_ATTACHMENT
-	const qdGameObjectMoving *attacher_;   // Объект, который присоединяет к себе наш объект
-	qdNamedObjectReference attacher_ref_;
+	const qdGameObjectMoving *_attacher;   // Объект, который присоединяет к себе наш объект
+	qdNamedObjectReference _attacher_ref;
 	Vect2s _attach_shift;            // Позиция нашего объекта - смещение от центра attacher'а
 
 	//! Режимы управления персонажем - комбинация значений control_type_t.

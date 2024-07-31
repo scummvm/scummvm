@@ -55,7 +55,7 @@ qdGameObjectMoving::qdGameObjectMoving() :
 	_follow_min_radius(0.0f),
 	_follow_max_radius(0.0f),
 	_follow_condition(FOLLOW_DONE),
-	attacher_(NULL),
+	_attacher(NULL),
 	_attach_shift(Vect2s(0, 0)),
 	_disable_control(false),
 	_scale(1.0f),
@@ -90,8 +90,8 @@ qdGameObjectMoving::qdGameObjectMoving(const qdGameObjectMoving &obj) : qdGameOb
 	_follow_min_radius(obj.follow_min_radius()),
 	_follow_max_radius(obj.follow_min_radius()),
 	_follow_condition(obj.follow_condition()),
-	attacher_(obj.attacher()),
-	attacher_ref_(obj.attacher_ref()),
+	_attacher(obj.attacher()),
+	_attacher_ref(obj.attacher_ref()),
 	_attach_shift(obj.attach_shift()),
 	_disable_control(false),
 	_scale(obj._scale),
@@ -131,7 +131,7 @@ qdGameObjectMoving::qdGameObjectMoving(const qdGameObjectAnimated &obj)
 	    _follow_min_radius(0.0f),
 	    _follow_max_radius(0.0f),
 	    _follow_condition(FOLLOW_DONE),
-	    attacher_(NULL),
+	    _attacher(NULL),
 	    _attach_shift(0, 0),
 	    _disable_control(false),
 	    _scale(1.0f),
@@ -171,8 +171,8 @@ qdGameObjectMoving &qdGameObjectMoving::operator = (const qdGameObjectMoving &ob
 
 	_circuit_objs = obj.const_ref_circuit_objs();
 
-	attacher_ = obj.attacher();
-	attacher_ref_ = obj.attacher_ref();
+	_attacher = obj.attacher();
+	_attacher_ref = obj.attacher_ref();
 	_attach_shift = obj.attach_shift();
 
 	_scale = obj._scale;
@@ -234,7 +234,7 @@ bool qdGameObjectMoving::load_script_body(const xml::tag *p) {
 			xml::tag_buffer(*it) > _follow_max_radius;
 			break;
 		case QDSCR_NAMED_OBJECT:
-			attacher_ref_.load_script(&*it);
+			_attacher_ref.load_script(&*it);
 			break;
 		case QDSCR_ATTACH_SHIFT:
 			xml::tag_buffer(*it) > _attach_shift.x > _attach_shift.y;
@@ -299,8 +299,8 @@ bool qdGameObjectMoving::save_script_body(Common::WriteStream &fh, int indent) c
 		fh.writeString(Common::String::format("<follow_max_radius>%f</follow_max_radius>\r\n", _follow_max_radius));
 	}
 
-	if (NULL != attacher_) {
-		attacher_ref_.save_script(fh, indent + 1);
+	if (NULL != _attacher) {
+		_attacher_ref.save_script(fh, indent + 1);
 	}
 
 	if ((0 != _attach_shift.x) || (0 != _attach_shift.y)) {
@@ -1967,7 +1967,7 @@ bool qdGameObjectMoving::init() {
 	_direction_angle = _default_direction_angle;
 	_path_length = _cur_path_index = 0;
 
-	// Грузим attacher_ по attacher_ref_
+	// Грузим _attacher по _attacher_ref
 	qdNamedObject *nam_obj = qdGameDispatcher::get_dispatcher()->
 	                         get_named_object(&attacher_ref());
 	set_attacher(dynamic_cast<const qdGameObjectMoving *>(nam_obj));
@@ -2166,12 +2166,12 @@ float qdGameObjectMoving::speed() {
 }
 
 void qdGameObjectMoving::set_attacher(const qdGameObjectMoving *mov_obj) {
-	attacher_ = mov_obj;
+	_attacher = mov_obj;
 	if (NULL != mov_obj) {
 		qdNamedObjectReference ref(mov_obj);
-		attacher_ref_ = ref;
+		_attacher_ref = ref;
 	} else
-		attacher_ref_.clear();
+		_attacher_ref.clear();
 }
 
 
