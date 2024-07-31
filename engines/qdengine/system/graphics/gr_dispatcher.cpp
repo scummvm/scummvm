@@ -88,7 +88,7 @@ grDispatcher::grDispatcher() : _screenBuf(NULL),
 
 	_clipMode = 0;
 
-	_SizeX = _SizeY = 0;
+	_sizeX = _sizeY = 0;
 	_wndSizeX = _wndSizeY = 0;
 	_wndPosX = _wndPosY = 0;
 
@@ -119,7 +119,7 @@ bool grDispatcher::Finit() {
 #endif
 
 	_flags &= ~GR_INITED;
-	_SizeX = _SizeY = 0;
+	_sizeX = _sizeY = 0;
 	_wndPosX = _wndPosY = 0;
 	_screenBuf = NULL;
 	delete _screenBuf;
@@ -142,28 +142,28 @@ bool grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, 
 
 	if (!hwnd) {
 		resize_window(sx, sy);
-		_SizeX = sx;
-		_SizeY = sy;
+		_sizeX = sx;
+		_sizeY = sy;
 	} else {
 		set_window(hwnd);
 
 		if (sx && sy) {
-			_SizeX = sx;
-			_SizeY = sy;
+			_sizeX = sx;
+			_sizeY = sy;
 		}
 	}
 
-	_changes_mask_size_x = _SizeX >> changes_mask_tile_shift_;
-	if (_SizeX % changes_mask_tile_) _changes_mask_size_x++;
-	_changes_mask_size_y = _SizeY >> changes_mask_tile_shift_;
-	if (_SizeY % changes_mask_tile_) _changes_mask_size_y++;
+	_changes_mask_size_x = _sizeX >> changes_mask_tile_shift_;
+	if (_sizeX % changes_mask_tile_) _changes_mask_size_x++;
+	_changes_mask_size_y = _sizeY >> changes_mask_tile_shift_;
+	if (_sizeY % changes_mask_tile_) _changes_mask_size_y++;
 
 	_changes_mask.resize(_changes_mask_size_x * _changes_mask_size_y);
 
 	_flags &= ~GR_REINIT;
 
 #ifdef _GR_ENABLE_ZBUFFER
-	alloc_zbuffer(_SizeX, _SizeY);
+	alloc_zbuffer(_sizeX, _sizeY);
 #endif
 
 	return true;
@@ -182,11 +182,11 @@ bool grDispatcher::Flush(int x, int y, int sx, int sy) {
 	if (y < 0)
 		y = 0;
 
-	if (x1 > _SizeX)
-		x1 = _SizeX;
+	if (x1 > _sizeX)
+		x1 = _sizeX;
 
-	if (y1 > _SizeY)
-		y1 = _SizeY;
+	if (y1 > _sizeY)
+		y1 = _sizeY;
 
 	debugC(8, kDebugGraphics, "grDispatcher::Flush(%d, %d, %d, %d)", x, y, x1 - x, y1 - y);
 
@@ -196,7 +196,7 @@ bool grDispatcher::Flush(int x, int y, int sx, int sy) {
 }
 
 bool grDispatcher::Flush() {
-	return Flush(0, 0, _SizeX, _SizeY);
+	return Flush(0, 0, _sizeX, _sizeY);
 }
 
 void grDispatcher::Line(int x1, int y1, int x2, int y2, int col, int line_style, bool inverse_col) {
@@ -484,8 +484,8 @@ bool grDispatcher::clip_line(int &x0, int &y0, int &x1, int &y1) const {
 }
 
 bool grDispatcher::create_window(int sx, int sy) {
-	_SizeX = sx;
-	_SizeY = sy;
+	_sizeX = sx;
+	_sizeY = sy;
 	warning("STUB: grDispatcher::create_window()");
 #if 0
 	int px = GetSystemMetrics(SM_CXSCREEN);
@@ -556,8 +556,8 @@ bool grDispatcher::set_window(void *hwnd) {
 #if 0
 	RECT rc;
 	if (GetClientRect((HWND)hwnd, &rc)) {
-		_SizeX = rc.right - rc.left;
-		_SizeY = rc.bottom - rc.top;
+		_sizeX = rc.right - rc.left;
+		_sizeY = rc.bottom - rc.top;
 		_hWnd = hwnd;
 
 		return true;
@@ -742,8 +742,8 @@ bool grDispatcher::free_zbuffer() {
 
 bool grDispatcher::clear_zbuffer() {
 	zbuf_t *p = zbuffer_;
-	for (int i = 0; i < _SizeY; i++) {
-		for (int j = 0; j < _SizeX; j++) {
+	for (int i = 0; i < _sizeY; i++) {
+		for (int j = 0; j < _sizeX; j++) {
 			*p++ = GR_ZBUFFER_MAX_Z;
 		}
 	}
