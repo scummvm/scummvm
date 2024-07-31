@@ -44,20 +44,20 @@
 namespace QDEngine {
 
 qdTriggerLink::qdTriggerLink(qdTriggerElementPtr p, int tp)
-	: element_(p),
-	  element_ID_(qdTriggerElement::INVALID_ID),
-	  type_(tp),
-	  auto_restart_(false) {
-	if (element_)
-		element_ID_ = element_->ID();
+	: _element(p),
+	  _element_ID(qdTriggerElement::INVALID_ID),
+	  _type(tp),
+	  _auto_restart(false) {
+	if (_element)
+		_element_ID = _element->ID();
 
 	set_status(LINK_INACTIVE);
 }
 
-qdTriggerLink::qdTriggerLink() : element_(NULL),
-	element_ID_(qdTriggerElement::INVALID_ID),
-	type_(0),
-	auto_restart_(false) {
+qdTriggerLink::qdTriggerLink() : _element(NULL),
+	_element_ID(qdTriggerElement::INVALID_ID),
+	_type(0),
+	_auto_restart(false) {
 	set_status(LINK_INACTIVE);
 }
 
@@ -69,13 +69,13 @@ bool qdTriggerLink::load_script(const xml::tag *p) {
 			set_element_ID(buf.get_int());
 			break;
 		case QDSCR_TYPE:
-			type_ = buf.get_int();
+			_type = buf.get_int();
 			break;
 		case QDSCR_TRIGGER_ELEMENT_LINK_AUTO_RESTART:
 			if (buf.get_int())
-				auto_restart_ = true;
+				_auto_restart = true;
 			else
-				auto_restart_ = false;
+				_auto_restart = false;
 			break;
 		}
 	}
@@ -88,15 +88,15 @@ bool qdTriggerLink::save_script(Common::WriteStream &fh, int indent) const {
 	}
 	fh.writeString("<link");
 
-	if (element_) {
-		fh.writeString(Common::String::format(" ID=\"%d\"", element_->ID()));
+	if (_element) {
+		fh.writeString(Common::String::format(" ID=\"%d\"", _element->ID()));
 	}
 
-	if (type_) {
-		fh.writeString(Common::String::format(" type=\"%d\"", type_));
+	if (_type) {
+		fh.writeString(Common::String::format(" type=\"%d\"", _type));
 	}
 
-	if (auto_restart_) {
+	if (_auto_restart) {
 		fh.writeString(" auto_restart=\"1\"");
 	}
 
@@ -770,8 +770,8 @@ void qdTriggerLink::activate() {
 	set_status(LINK_ACTIVE);
 
 #ifndef _QUEST_EDITOR
-//	if(element_ && element_->status() != qdTriggerElement::TRIGGER_EL_INACTIVE)
-//		element_->set_status(qdTriggerElement::TRIGGER_EL_INACTIVE);
+//	if(_element && _element->status() != qdTriggerElement::TRIGGER_EL_INACTIVE)
+//		_element->set_status(qdTriggerElement::TRIGGER_EL_INACTIVE);
 #endif
 
 // debugC(3, kDebugLog, "%p", this);

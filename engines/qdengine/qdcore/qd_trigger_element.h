@@ -76,40 +76,40 @@ public:
 
 	//! Возвращает тип связи.
 	int type() const {
-		return type_;
+		return _type;
 	}
 	//! Устанавливает тип связи.
 	void set_type(int _t) {
-		type_ = _t;
+		_type = _t;
 	}
 
 	//! Возвращает элемент триггера, к которому идет связь.
 	qdTriggerElementPtr const &element() const {
-		return element_;
+		return _element;
 	}
 	//! Устанавливает элемент триггера, к которому идет связь.
 	void set_element(qdTriggerElementPtr const &el) {
-		element_ = el;
+		_element = el;
 	}
 
 	//! Возвращает идентификатор элемента, к которому идет связь.
 	int element_ID() const {
-		return element_ID_;
+		return _element_ID;
 	}
 	//! Устанавливает идентификатор элемента, к которому идет связь.
 	/**
 	Работает только если сам элемент нулевой.
 	*/
 	bool set_element_ID(int id) {
-		if (!element_) {
-			element_ID_ = id;
+		if (!_element) {
+			_element_ID = id;
 			return true;
 		}
 		return false;
 	}
 
 	bool operator == (qdTriggerElementConstPtr e) const {
-		return (element_ == e);
+		return (_element == e);
 	}
 
 	//! Активирует связь.
@@ -119,11 +119,11 @@ public:
 
 	//! Устанавливает, надо ли автоматом перезапускать линк.
 	void toggle_auto_restart(bool state) {
-		auto_restart_ = state;
+		_auto_restart = state;
 	}
 	//! Возвращает true, если надо автоматом перезапускать линк.
 	bool auto_restart() const {
-		return auto_restart_;
+		return _auto_restart;
 	}
 
 	bool load_script(const xml::tag *p);
@@ -133,17 +133,17 @@ public:
 
 private:
 	//! Тип связи.
-	int type_;
+	int _type;
 	//! Элемент, к которому направлена связь.
-	qdTriggerElementPtr element_;
+	qdTriggerElementPtr _element;
 	//! Идентификатор элемента, к которому направлена связь.
-	int element_ID_;
+	int _element_ID;
 
 	//! Состояние связи.
 	LinkStatus _status;
 
 	//! Если true, линк автоматом активируется после выключения.
-	bool auto_restart_;
+	bool _auto_restart;
 
 };
 
