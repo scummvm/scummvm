@@ -36,59 +36,21 @@ public:
 	qdTriggerChain();
 	~qdTriggerChain();
 
-#ifdef _QUEST_EDITOR
-	const RECT &bounding_rect() const {
-		return m_rcBound;
-	}
-	void set_bounding_rect(const RECT &r) const {
-		m_rcBound = r;
-	}
-	const SIZE &gen_layout() const {
-		return m_szGenLayout;
-	}
-	const RECT gen_layout_rect() const {
-		RECT r = bounding_rect();
-		OffsetRect(&r, m_szGenLayout.cx - r.left, m_szGenLayout.cy - r.top);
-		return r;
-	}
-
-	void set_gen_layout(SIZE sz) const {
-		m_szGenLayout = sz;
-	}
-	const RECT &work_area() const {
-		return m_rcWorkArea;
-	}
-	void set_work_area(const RECT &r) const {
-		m_rcWorkArea = r;
-	}
-#endif
 	int named_object_type() const {
 		return QD_NAMED_OBJECT_TRIGGER_CHAIN;
 	}
 
 	qdTriggerElementPtr root_element() {
-#ifdef _QUEST_EDITOR
-		return _root;
-#else
 		return &_root;
-#endif // _QUEST_EDITOR
 	}
 	qdTriggerElementConstPtr root_element() const {
-#ifdef _QUEST_EDITOR
-		return _root;
-#else
 		return &_root;
-#endif // _QUEST_EDITOR
 	}
 
 	qdTriggerElementPtr add_element(qdNamedObject *p);
 	bool remove_element(qdTriggerElementPtr p, bool free_mem = false, bool relink_elements = false);
 
 	bool can_add_element(const qdNamedObject *p) const;
-#ifdef _QUEST_EDITOR
-	//! используется для undo/redo
-	bool add_element(qdTriggerElementPtr p);
-#endif // _QUEST_EDITOR
 	bool init_elements();
 
 	//! Инициализация для отладочной проверки цепочки.
@@ -129,31 +91,12 @@ public:
 	bool deactivate_object_triggers(const qdNamedObject *p);
 
 	qdTriggerElementPtr search_element(int id);
-#ifdef _QUEST_EDITOR
-	qdTriggerElementPtr search_element(const qdNamedObject *pobj) const;
-#endif // _QUEST_EDITOR
 private:
 
-#ifdef _QUEST_EDITOR
-	qdTriggerElementPtr _root;
-#else
 	qdTriggerElement _root;
-#endif // _QUEST_EDITOR
 	qdTriggerElementList _elements;
 
 	bool reindex_elements();
-#ifdef _QUEST_EDITOR
-	//объединение прямоугольников
-	//всех элементов цепочки
-	mutable RECT m_rcBound;
-	//рабочая область цепочки в окне
-	//
-	mutable RECT m_rcWorkArea;
-
-	//определяет положение цепочки, когда выводится
-	//несколько цепочек одновременно
-	mutable SIZE m_szGenLayout;
-#endif
 };
 
 } // namespace QDEngine

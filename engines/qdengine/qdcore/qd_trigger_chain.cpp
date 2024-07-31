@@ -52,40 +52,19 @@ struct id_compare {
 };
 }
 
-qdTriggerChain::qdTriggerChain()
-#ifdef _QUEST_EDITOR
-	:
-	root_(new qdTriggerElement)
-#endif // _QUEST_EDITOR
-{
+qdTriggerChain::qdTriggerChain() {
 	root_element()->set_id(qdTriggerElement::ROOT_ID);
 	root_element()->set_status(qdTriggerElement::TRIGGER_EL_DONE);
 
 #ifdef __QD_TRIGGER_PROFILER__
 	root_element()->set_owner(this);
 #endif
-
-#ifdef _QUEST_EDITOR
-	memset(&m_rcBound, 0, sizeof(m_rcBound));
-	memset(&m_rcWorkArea, 0, sizeof(m_rcWorkArea));
-	root_element()->set_title("Старт");
-	m_szGenLayout.cx = m_szGenLayout.cy = -1;
-#endif
 }
 
 qdTriggerChain::~qdTriggerChain() {
-#ifndef _QUEST_EDITOR
 	for (auto &it : _elements) {
 		delete it;
 	}
-#else
-	qdTriggerElementList::iterator it;
-	FOR_EACH(_elements, it) {
-		(*it)->clear_children();
-		(*it)->clear_parents();
-
-	}
-#endif // _QUEST_EDITOR
 
 	_elements.clear();
 }
@@ -99,19 +78,6 @@ bool qdTriggerChain::reindex_elements() {
 	return true;
 }
 
-#ifdef _QUEST_EDITOR
-qdTriggerElementPtr qdTriggerChain::search_element(const qdNamedObject *pobj) const {
-	if (!pobj)
-		return NULL;
-	qdTriggerElementList::const_iterator i = _elements.begin(), e = _elements.end();
-	for (; i != e; ++i) {
-		if ((*i)->object() == pobj)
-			return *i;
-	}
-	return qdTriggerElementPtr(NULL);
-}
-#endif // _QUEST_EDITOR
-
 qdTriggerElementPtr qdTriggerChain::search_element(int id) {
 	if (id == qdTriggerElement::ROOT_ID) return root_element();
 
@@ -124,36 +90,11 @@ qdTriggerElementPtr qdTriggerChain::search_element(int id) {
 	return *res;
 }
 
-#ifdef _QUEST_EDITOR
-//! используется для undo/redo
-bool qdTriggerChain::add_element(qdTriggerElementPtr p) {
-	assert(p);
-	if (!can_add_element(p->object())) {
-		assert(0);
-		return 0;
-	}
-
-	p->object()->add_trigger_reference();
-	_elements.push_back(p);
-
-#ifdef __QD_TRIGGER_PROFILER__
-	p->set_owner(this);
-#endif
-
-	reindex_elements();
-
-	return true;
-}
-#endif // _QUEST_EDITOR
-
 qdTriggerElementPtr qdTriggerChain::add_element(qdNamedObject *p) {
 	if (!can_add_element(p)) return 0;
 
 	qdTriggerElementPtr el = new qdTriggerElement(p);
 	_elements.push_back(el);
-#ifdef _QUEST_EDITOR
-	p->add_trigger_reference();
-#endif // _QUEST_EDITOR
 #ifdef __QD_TRIGGER_PROFILER__
 	el->set_owner(this);
 #endif
@@ -182,12 +123,8 @@ bool qdTriggerChain::remove_element(qdTriggerElementPtr p, bool free_mem, bool r
 				}
 			}
 
-#ifndef _QUEST_EDITOR
 			if (free_mem)
 				delete *it;
-#else
-			(*it)->object()->remove_trigger_reference();
-#endif // _QUEST_EDITOR
 
 			_elements.erase(it);
 			reindex_elements();
@@ -285,62 +222,6 @@ bool qdTriggerChain::load_script(const xml::tag *p) {
 				add_link(el, el1, tp0, auto_restart);
 			}
 			break;
-#ifdef _QUEST_EDITOR
-		case QDSCR_TRIGGER_PARENT_LINK_CHILD_OFFSET:
-			xml::tag_buffer(*it) > id0 > id1 > tp0 > tp1;
-
-			el = search_element(id0);
-			el1 = search_element(id1);
-			if (el && el1)
-				el->set_parent_link_child_offset(el1, tp0, tp1);
-			break;
-		case QDSCR_TRIGGER_PARENT_LINK_OWNER_OFFSET:
-			xml::tag_buffer(*it) > id0 > id1 > tp0 > tp1;
-
-			el = search_element(id0);
-			el1 = search_element(id1);
-			if (el && el1)
-				el->set_parent_link_owner_offset(el1, tp0, tp1);
-			break;
-		case QDSCR_TRIGGER_CHILD_LINK_CHILD_OFFSET:
-			xml::tag_buffer(*it) > id0 > id1 > tp0 > tp1;
-
-			el = search_element(id0);
-			el1 = search_element(id1);
-			if (el && el1)
-				el->set_child_link_child_offset(el1, tp0, tp1);
-			break;
-		case QDSCR_TRIGGER_CHILD_LINK_OWNER_OFFSET:
-			xml::tag_buffer(*it) > id0 > id1 > tp0 > tp1;
-
-			el = search_element(id0);
-			el1 = search_element(id1);
-			if (el && el1)
-				el->set_child_link_owner_offset(el1, tp0, tp1);
-			break;
-		case QDSCR_TRIGGER_BOUND: {
-			xml::tag_buffer buf(*it);
-			m_rcBound.left = buf.get_int();
-			m_rcBound.top = buf.get_int();
-			m_rcBound.right = buf.get_int();
-			m_rcBound.bottom = buf.get_int();
-		}
-		break;
-		case QDSCR_TRIGGER_CHAIN_WORK_AREA: {
-			xml::tag_buffer buf(*it);
-			m_rcWorkArea.left = buf.get_int();
-			m_rcWorkArea.top = buf.get_int();
-			m_rcWorkArea.right = buf.get_int();
-			m_rcWorkArea.bottom = buf.get_int();
-		}
-		break;
-		case QDSCR_TRIGGER_CHAIN_LAYOUT: {
-			xml::tag_buffer buf(*it);
-			m_szGenLayout.cx = buf.get_int();
-			m_szGenLayout.cy = buf.get_int();
-		}
-		break;
-#endif
 		}
 	}
 
@@ -386,12 +267,10 @@ bool qdTriggerChain::save_script(Common::WriteStream &fh, int indent) const {
 }
 
 void qdTriggerChain::quant(float dt) {
-#ifndef _QUEST_EDITOR
 	root_element()->quant(dt);
 
 	for (auto &it : _elements)
 		it->quant(dt);
-#endif
 }
 
 bool qdTriggerChain::init_debug_check() {
