@@ -42,14 +42,14 @@ unsigned encodeRLE(const unsigned *in_data, unsigned *out_data) {
 	int count = 0;
 	while (count < GR_TILE_SPRITE_SIZE) {
 		int index = count;
-		unsigned pixel = in_data[index ++];
+		unsigned pixel = in_data[index++];
 
 		while (index < GR_TILE_SPRITE_SIZE && in_data[index] == pixel)
-			index ++;
+			index++;
 
 		if (index - count == 1) {
 			while (index < GR_TILE_SPRITE_SIZE && (in_data[index] != in_data[index - 1] || (index > 1 && in_data[index] != in_data[index - 2])))
-				index ++;
+				index++;
 
 			while (index < GR_TILE_SPRITE_SIZE && in_data[index] == in_data[index - 1])
 				index --;
@@ -58,7 +58,7 @@ unsigned encodeRLE(const unsigned *in_data, unsigned *out_data) {
 			out_data[size] |= RLE_SEQUENCE_MASK;
 			size++;
 
-			for (int i = count; i < index; i ++)
+			for (int i = count; i < index; i++)
 				out_data[size++] = in_data[i];
 		} else {
 			out_data[size++] = index - count;
@@ -123,11 +123,11 @@ void grDispatcher::PutTileSpr(int x, int y, const grTileSprite &sprite, bool has
 
 	const unsigned char *data_ptr = (const unsigned char *)(sprite.data() + px + py * GR_TILE_SPRITE_SIZE_X);
 
-	for (int i = 0; i < psy; i ++) {
+	for (int i = 0; i < psy; i++) {
 		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
 		const unsigned char *data_line = data_ptr;
 
-		for (int j = 0; j < psx; j ++) {
+		for (int j = 0; j < psx; j++) {
 			unsigned a = data_line[3];
 			if (a != 255) {
 				if (a)
@@ -191,4 +191,3 @@ bool grTileSprite::uncompress(const unsigned *in_data, unsigned in_data_length, 
 }
 
 } // namespace QDEngine
-

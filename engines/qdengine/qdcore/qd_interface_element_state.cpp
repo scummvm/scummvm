@@ -44,7 +44,7 @@ qdInterfaceElementState::qdInterfaceElementState(const qdInterfaceElementState &
 	_events(st._events),
 	_state_mode(st._state_mode),
 	_prev_state_mode(st._prev_state_mode) {
-	for (int i = 0; i < NUM_MODES; i ++)
+	for (int i = 0; i < NUM_MODES; i++)
 		_modes[i] = st._modes[i];
 
 	register_resources();
@@ -63,7 +63,7 @@ qdInterfaceElementState &qdInterfaceElementState::operator = (const qdInterfaceE
 
 	_events = st._events;
 
-	for (int i = 0; i < NUM_MODES; i ++)
+	for (int i = 0; i < NUM_MODES; i++)
 		_modes[i] = st._modes[i];
 
 	register_resources();
@@ -108,7 +108,7 @@ bool qdInterfaceElementState::save_script(Common::WriteStream &fh, int indent) c
 		fh.writeString("/>\r\n");
 	}
 
-	for (int i = 0; i < NUM_MODES; i ++) {
+	for (int i = 0; i < NUM_MODES; i++) {
 		if (has_state_mode(state_mode_t(i))) {
 			_modes[i].save_script(fh, i, indent + 1);
 		}
@@ -238,7 +238,7 @@ void qdInterfaceElementState::set_animation_file(const char *name, state_mode_t 
 bool qdInterfaceElementState::unregister_resources() {
 	bool res = true;
 
-	for (int i = 0; i < NUM_MODES; i ++) {
+	for (int i = 0; i < NUM_MODES; i++) {
 		if (has_animation(state_mode_t(i))) {
 			if (qdInterfaceElement * p = dynamic_cast<qdInterfaceElement * >(owner())) {
 				if (!p->remove_resource(animation_file(state_mode_t(i)), this))
@@ -264,7 +264,7 @@ bool qdInterfaceElementState::unregister_resources() {
 bool qdInterfaceElementState::register_resources() {
 	bool res = true;
 
-	for (int i = 0; i < NUM_MODES; i ++) {
+	for (int i = 0; i < NUM_MODES; i++) {
 		if (has_animation(state_mode_t(i))) {
 			if (qdInterfaceElement * p = dynamic_cast<qdInterfaceElement * >(owner()))
 				_modes[i].set_animation(dynamic_cast<const qdAnimation * >(p->add_resource(animation_file(state_mode_t(i)), this)));
@@ -332,7 +332,7 @@ bool qdInterfaceElementState::keyboard_handler(int vkey) {
 
 bool qdInterfaceElementState::handle_events(qdInterfaceEvent::activation_t activation_type, bool before_animation) {
 	if (qdInterfaceDispatcher * dp = qdInterfaceDispatcher::get_dispatcher()) {
-		for (int i = 0; i < _events.size(); i ++) {
+		for (int i = 0; i < _events.size(); i++) {
 			if (_events[i].activation() == activation_type && _events[i].is_before_animation() == before_animation) {
 				dp->handle_event(_events[i].event(), _events[i].event_data(), owner());
 			}
@@ -355,7 +355,7 @@ bool qdInterfaceElementState::set_contour(state_mode_t mode, const qdContour &cn
 }
 
 bool qdInterfaceElementState::need_active_game() const {
-	for (int i = 0; i < _events.size(); i ++) {
+	for (int i = 0; i < _events.size(); i++) {
 		if (_events[i].event() == qdInterfaceEvent::EVENT_SAVE_GAME)
 			return true;
 		if (_events[i].event() == qdInterfaceEvent::EVENT_CHANGE_PERSONAGE)

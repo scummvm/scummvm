@@ -193,8 +193,8 @@ bool qdGridZone::apply_zone() const {
 //	const unsigned char* mask_ptr = mask_data();
 
 	if (_state) {
-		for (int y = 0; y < mask_size().y; y ++) {
-			for (int x = 0; x < mask_size().x; x ++) {
+		for (int y = 0; y < mask_size().y; y++) {
+			for (int x = 0; x < mask_size().x; x++) {
 				if (is_inside(pos + Vect2s(x, y))) {
 //				if(*mask_ptr++){
 					if (sGridCell * p = camera->get_cell(pos + Vect2s(x, y))) {
@@ -205,8 +205,8 @@ bool qdGridZone::apply_zone() const {
 			}
 		}
 	} else {
-		for (int y = 0; y < mask_size().y; y ++) {
-			for (int x = 0; x < mask_size().x; x ++) {
+		for (int y = 0; y < mask_size().y; y++) {
+			for (int x = 0; x < mask_size().x; x++) {
 				if (is_inside(pos + Vect2s(x, y))) {
 //				if(*mask_ptr++){
 					if (sGridCell * p = camera->get_cell(pos + Vect2s(x, y))) {
@@ -249,8 +249,8 @@ bool qdGridZone::select(qdCamera *camera, bool bSelect) const {
 //	const unsigned char* mask_ptr = mask_data();
 
 	if (bSelect) {
-		for (int y = 0; y < mask_size().y; y ++) {
-			for (int x = 0; x < mask_size().x; x ++) {
+		for (int y = 0; y < mask_size().y; y++) {
+			for (int x = 0; x < mask_size().x; x++) {
 				if (is_inside(pos + Vect2s(x, y))) {
 //				if(*mask_ptr++){
 					if (sGridCell * p = camera->get_cell(pos + Vect2s(x, y)))
@@ -259,8 +259,8 @@ bool qdGridZone::select(qdCamera *camera, bool bSelect) const {
 			}
 		}
 	} else {
-		for (int y = 0; y < mask_size().y; y ++) {
-			for (int x = 0; x < mask_size().x; x ++) {
+		for (int y = 0; y < mask_size().y; y++) {
+			for (int x = 0; x < mask_size().x; x++) {
 				if (is_inside(pos + Vect2s(x, y))) {
 //				if(*mask_ptr++){
 					if (sGridCell * p = camera->get_cell(pos + Vect2s(x, y)))

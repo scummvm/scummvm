@@ -75,7 +75,7 @@ bool qdGameObjectMouse::load_script_body(const xml::tag *p) {
 		switch (it->ID()) {
 		case QDSCR_MOUSE_DEFAULT_CURSORS: {
 			xml::tag_buffer buf(*it);
-			for (int i = 0; i < MAX_CURSOR_ID; i ++) buf > _default_cursors[i];
+			for (int i = 0; i < MAX_CURSOR_ID; i++) buf > _default_cursors[i];
 		}
 		break;
 		}

@@ -42,7 +42,7 @@ qdAnimationSet::qdAnimationSet(const qdAnimationSet &set) : qdNamedObject(set),
 	_turn_animation(set._turn_animation) {
 	_turn_animation.set_owner(this);
 
-	for (int i = 0; i < size(); i ++) {
+	for (int i = 0; i < size(); i++) {
 		_animations[i].set_owner(this);
 		_static_animations[i].set_owner(this);
 		_static_animations[i].set_owner(this);
@@ -73,7 +73,7 @@ qdAnimationSet &qdAnimationSet::operator = (const qdAnimationSet &set) {
 	_turn_animation = set._turn_animation;
 	_turn_animation.set_owner(this);
 
-	for (int i = 0; i < size(); i ++) {
+	for (int i = 0; i < size(); i++) {
 		_animations[i].set_owner(this);
 		_static_animations[i].set_owner(this);
 		_start_animations[i].set_owner(this);
@@ -90,7 +90,7 @@ void qdAnimationSet::resize(int sz) {
 	_stop_animations.resize(sz);
 	_walk_sound_frequency.resize(sz, 1);
 
-	for (int i = 0; i < size(); i ++) {
+	for (int i = 0; i < size(); i++) {
 		_animations[i].set_owner(this);
 		_static_animations[i].set_owner(this);
 	}
@@ -198,7 +198,7 @@ void qdAnimationSet::load_script(const xml::tag *p) {
 			else
 				_stop_animations[index - size() * 3].load_script(&*it);
 
-			index ++;
+			index++;
 			break;
 		case QDSCR_ANIMATION_SET_TURN:
 			_turn_animation.set_animation_name(it->data());

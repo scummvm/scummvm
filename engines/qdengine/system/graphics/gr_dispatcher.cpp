@@ -375,10 +375,10 @@ void grDispatcher::RectangleAlpha(int x, int y, int sx, int sy, unsigned color, 
 	unsigned mcl = make_rgb565u(mr, mg, mb);
 
 	warning("STUB: grDispatcher::RectangleAlpha");
-	for (int i = 0; i < psy; i ++) {
+	for (int i = 0; i < psy; i++) {
 		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
 
-		for (int j = 0; j < psx; j ++) {
+		for (int j = 0; j < psx; j++) {
 			*scr_buf = alpha_blend_565(mcl, *scr_buf, alpha);
 			scr_buf += dx;
 		}
@@ -742,9 +742,9 @@ bool grDispatcher::free_zbuffer() {
 
 bool grDispatcher::clear_zbuffer() {
 	zbuf_t *p = zbuffer_;
-	for (int i = 0; i < _SizeY; i ++) {
-		for (int j = 0; j < _SizeX; j ++) {
-			*p ++ = GR_ZBUFFER_MAX_Z;
+	for (int i = 0; i < _SizeY; i++) {
+		for (int j = 0; j < _SizeX; j++) {
+			*p++ = GR_ZBUFFER_MAX_Z;
 		}
 	}
 	return true;
@@ -851,7 +851,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 	case GR_ARGB1555:
 		if (src_fmt == GR_RGB565) {
 			unsigned short *p = reinterpret_cast<unsigned short *>(data);
-			for (int i = 0; i < sx * sy; i ++) {
+			for (int i = 0; i < sx * sy; i++) {
 				byte r, g, b;
 				split_rgb565u(*p, r, g, b);
 				*p++ = make_rgb555u(r, g, b);
@@ -860,7 +860,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 		} else if (src_fmt == GR_RGB888) {
 			unsigned char *dp = data;
 			unsigned short *p = reinterpret_cast<unsigned short *>(data);
-			for (int i = 0; i < sx * sy; i ++) {
+			for (int i = 0; i < sx * sy; i++) {
 				*p++ = make_rgb555u(dp[2], dp[1], dp[0]);
 				dp += 3;
 			}
@@ -868,7 +868,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 		} else if (src_fmt == GR_ARGB8888) {
 			unsigned char *dp = data;
 			unsigned short *p = reinterpret_cast<unsigned short *>(data);
-			for (int i = 0; i < sx * sy; i ++) {
+			for (int i = 0; i < sx * sy; i++) {
 				*p++ = make_rgb555u(dp[2], dp[1], dp[0]);
 				*p++ >>= 8;
 				dp += 4;
@@ -879,7 +879,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 	case GR_RGB565:
 		if (src_fmt == GR_ARGB1555) {
 			unsigned short *p = reinterpret_cast<unsigned short *>(data);
-			for (int i = 0; i < sx * sy; i ++) {
+			for (int i = 0; i < sx * sy; i++) {
 				byte r, g, b;
 				split_rgb555u(*p, r, g, b);
 				*p++ = make_rgb565u(r, g, b);
@@ -889,7 +889,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 		} else if (src_fmt == GR_RGB888) {
 			unsigned char *dp = data;
 			unsigned short *p = reinterpret_cast<unsigned short *>(data);
-			for (int i = 0; i < sx * sy; i ++) {
+			for (int i = 0; i < sx * sy; i++) {
 				*p++ = make_rgb565u(dp[2], dp[1], dp[0]);
 				dp += 3;
 			}
@@ -897,7 +897,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 		} else if (src_fmt == GR_ARGB8888) {
 			unsigned char *dp = data;
 			unsigned short *p = reinterpret_cast<unsigned short *>(data);
-			for (int i = 0; i < sx * sy; i ++) {
+			for (int i = 0; i < sx * sy; i++) {
 				*p++ = make_rgb565u(dp[2], dp[1], dp[0]);
 				*p++ >>= 8;
 				dp += 4;
@@ -928,14 +928,14 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 	case GR_ARGB8888:
 		if (src_fmt == GR_ARGB1555 || src_fmt == GR_RGB565) {
 			unsigned short *p = reinterpret_cast<unsigned short *>(data);
-			for (int i = 0; i < sx * sy; i ++) {
+			for (int i = 0; i < sx * sy; i++) {
 				p++;
 				*p++ <<= 8;
 			}
 
 			p = reinterpret_cast<unsigned short *>(data);
 			unsigned char *dp = data;
-			for (int i = 0; i < sx * sy; i ++) {
+			for (int i = 0; i < sx * sy; i++) {
 				byte r, g, b;
 
 				if (src_fmt == GR_ARGB1555)
@@ -994,7 +994,7 @@ bool grDispatcher::DrawText(int x, int y, unsigned color, const char *str, int h
 	int x0 = x;
 	int sz = strlen(str);
 
-	for (int i = 0; i < sz; i ++) {
+	for (int i = 0; i < sz; i++) {
 		if (str_buf[i] != '\n') {
 			const grScreenRegion &rg = font->find_char(str_buf[i]);
 			int dx = rg.size_x();
@@ -1041,7 +1041,7 @@ bool grDispatcher::DrawAlignedText(int x, int y, int sx, int sy, unsigned color,
 		break;
 	}
 
-	for (int i = 0; i < sz; i ++) {
+	for (int i = 0; i < sz; i++) {
 		if (str_buf[i] != '\n') {
 			const grScreenRegion &rg = font->find_char(str_buf[i]);
 			int dx = rg.size_x();
@@ -1136,7 +1136,7 @@ int grDispatcher::TextWidth(const char *str, int hspace, const grFont *font, boo
 
 	int sx = 0, sx_max = 0;
 	int sz = strlen(str);
-	for (int i = 0; i < sz; i ++) {
+	for (int i = 0; i < sz; i++) {
 		if (str_buf[i] != '\n') {
 			const grScreenRegion &rg = font->find_char(str_buf[i]);
 			int dx = rg.size_x();
@@ -1168,7 +1168,7 @@ int grDispatcher::TextHeight(const char *str, int vspace, const grFont *font) co
 
 	int sy = font->size_y() + vspace;
 
-	for (int i = 0; i < strlen(str); i ++) {
+	for (int i = 0; i < strlen(str); i++) {
 		if (str[i] == '\n')
 			sy += font->size_y() + vspace;
 	}

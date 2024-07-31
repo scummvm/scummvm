@@ -213,7 +213,7 @@ int engineMain() {
 //	qdFileManager::instance().check_drive('E');
 	qdFileManager::instance().set_request_CD_handler(request_CD_handler);
 #if 0
-	for (int i = 1; i < __argc; i ++) {
+	for (int i = 1; i < __argc; i++) {
 		debugCN(3, kDebugLog, "'\' %s '\'", __argv[i]);
 	}
 	debugC(3, kDebugLog, "");

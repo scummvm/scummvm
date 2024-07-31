@@ -233,9 +233,9 @@ void qdInventoryCellSet::redraw(int offs_x, int offs_y, bool inactive_mode) cons
 	Vect2s pos = screen_pos();
 
 	int idx;
-	for (int i = _cells_shift.y; i < _size.y + _cells_shift.y; i ++) {
+	for (int i = _cells_shift.y; i < _size.y + _cells_shift.y; i++) {
 		idx = i * (_size.x + _additional_cells.x) + _cells_shift.x;
-		for (int j = _cells_shift.x; j < _size.x + _cells_shift.x; j ++) {
+		for (int j = _cells_shift.x; j < _size.x + _cells_shift.x; j++) {
 			assert(idx >= 0 && idx < _cells.size());
 			_cells[idx].redraw(offs_x + pos.x, offs_y + pos.y, inactive_mode);
 			pos.x += _cells[idx].size_x();

@@ -268,12 +268,12 @@ void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const unsigne
 
 		const unsigned char *data_ptr = p + py * sx3;
 
-		for (int i = 0; i < psy; i ++) {
+		for (int i = 0; i < psy; i++) {
 			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x4);
 			zbuf_t *zbuf = zbuffer_ + y * SizeX + x;
 			const unsigned char *data_line = data_ptr + px3;
 
-			for (int j = 0; j < psx; j ++) {
+			for (int j = 0; j < psx; j++) {
 				unsigned a = data_line[3];
 				if (a != 255) {
 					if (a) {
@@ -323,12 +323,12 @@ void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const unsigne
 
 		const unsigned char *data_ptr = p + py * sx3;
 
-		for (int i = 0; i < psy; i ++) {
+		for (int i = 0; i < psy; i++) {
 			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x3);
 			zbuf_t *zbuf = zbuffer_ + y * SizeX + x;
 			const unsigned char *data_line = data_ptr + px3;
 
-			for (int j = 0; j < psx; j ++) {
+			for (int j = 0; j < psx; j++) {
 				unsigned a = data_line[3];
 				if (a != 255) {
 					if (a) {
@@ -374,12 +374,12 @@ void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const unsigne
 		const unsigned short *data_ptr = reinterpret_cast<const unsigned short *>(p) + py * sx;
 
 		if (pixel_format_ == GR_RGB565) {
-			for (int i = 0; i < psy; i ++) {
+			for (int i = 0; i < psy; i++) {
 				unsigned short *scr_buf = reinterpret_cast<unsigned short *>(screenBuf + yTable[y] + x);
 				zbuf_t *zbuf = zbuffer_ + y * SizeX + (x >> 1);
 				const unsigned short *data_line = data_ptr + px;
 
-				for (int j = 0; j < psx; j ++) {
+				for (int j = 0; j < psx; j++) {
 					unsigned a = data_line[1];
 					*scr_buf = alpha_blend_565(*data_line, *scr_buf, a);
 					if (a != 255) *zbuf = z;
@@ -391,12 +391,12 @@ void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const unsigne
 				y += dy;
 			}
 		} else {
-			for (int i = 0; i < psy; i ++) {
+			for (int i = 0; i < psy; i++) {
 				unsigned short *scr_buf = reinterpret_cast<unsigned short *>(screenBuf + yTable[y] + x);
 				zbuf_t *zbuf = zbuffer_ + y * SizeX + (x >> 1);
 				const unsigned short *data_line = data_ptr + px;
 
-				for (int j = 0; j < psx; j ++) {
+				for (int j = 0; j < psx; j++) {
 					unsigned a = data_line[1];
 					*scr_buf = alpha_blend_555(*data_line, *scr_buf, a);
 					if (a != 255) *zbuf = z;
@@ -448,12 +448,12 @@ void grDispatcher::PutSpr_z(int x, int y, int z, int sx, int sy, const unsigned 
 
 		const unsigned char *data_ptr = p + py * sx3;
 
-		for (int i = 0; i < psy; i ++) {
+		for (int i = 0; i < psy; i++) {
 			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x4);
 			zbuf_t *zbuf = zbuffer_ + y * SizeX + x;
 			const unsigned char *data_line = data_ptr + px3;
 
-			for (int j = 0; j < psx; j ++) {
+			for (int j = 0; j < psx; j++) {
 				if (data_line[0] || data_line[1] || data_line[2]) {
 					scr_buf[0] = data_line[0];
 					scr_buf[1] = data_line[1];
@@ -497,12 +497,12 @@ void grDispatcher::PutSpr_z(int x, int y, int z, int sx, int sy, const unsigned 
 
 		const unsigned char *data_ptr = p + py * sx3;
 
-		for (int i = 0; i < psy; i ++) {
+		for (int i = 0; i < psy; i++) {
 			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x3);
 			zbuf_t *zbuf = zbuffer_ + y * SizeX + x;
 			const unsigned char *data_line = data_ptr + px3;
 
-			for (int j = 0; j < psx; j ++) {
+			for (int j = 0; j < psx; j++) {
 				if (data_line[0] || data_line[1] || data_line[2]) {
 					scr_buf[0] = data_line[0];
 					scr_buf[1] = data_line[1];
@@ -539,12 +539,12 @@ void grDispatcher::PutSpr_z(int x, int y, int z, int sx, int sy, const unsigned 
 
 		const unsigned short *data_ptr = reinterpret_cast<const unsigned short *>(p) + py * sx;
 
-		for (int i = 0; i < psy; i ++) {
+		for (int i = 0; i < psy; i++) {
 			unsigned short *scr_buf = reinterpret_cast<unsigned short *>(screenBuf + yTable[y] + x);
 			zbuf_t *zbuf = zbuffer_ + y * SizeX + x;
 			const unsigned short *data_line = data_ptr + px;
 
-			for (int j = 0; j < psx; j ++) {
+			for (int j = 0; j < psx; j++) {
 				if (*data_line) {
 					*scr_buf = *data_line;
 					*zbuf = z;

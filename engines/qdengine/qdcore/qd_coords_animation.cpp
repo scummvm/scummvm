@@ -94,7 +94,7 @@ void qdCoordsAnimation::set_start_object(const qdGameObject *p_obj) {
 }
 
 void qdCoordsAnimation::calc_paths() const {
-	for (size_t i = 1; i < _points.size(); i ++)
+	for (size_t i = 1; i < _points.size(); i++)
 		_points[i].calc_path(_points[i - 1]);
 }
 
@@ -353,7 +353,7 @@ bool qdCoordsAnimation::set_cur_point(int point_num) const {
 		p->move(_points[_cur_point].dest_pos());
 		p->skip_movement();
 
-		for (int i = 0; i < point_num; i ++) {
+		for (int i = 0; i < point_num; i++) {
 			if (++_cur_point >= _points.size()) {
 				if (!check_flag(QD_COORDS_ANM_LOOP_FLAG)) {
 					stop();
@@ -379,7 +379,7 @@ bool qdCoordsAnimation::set_cur_point(int point_num) const {
 		p->get_animation()->set_time_rel(animation_phase());
 		p->set_pos(cur_pos());
 
-		for (int i = 0; i < point_num; i ++) {
+		for (int i = 0; i < point_num; i++) {
 			if (++_cur_point >= _points.size()) {
 				if (!check_flag(QD_COORDS_ANM_LOOP_FLAG)) {
 					stop();

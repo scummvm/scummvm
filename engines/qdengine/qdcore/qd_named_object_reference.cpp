@@ -42,7 +42,7 @@ qdNamedObjectReference::qdNamedObjectReference(int levels, const int *types, con
 	_object_types.reserve(levels);
 	_object_names.reserve(levels);
 
-	for (int i = 0; i < num_levels(); i ++) {
+	for (int i = 0; i < num_levels(); i++) {
 		_object_names.push_back(names[i]);
 		_object_types.push_back(types[i]);
 	}
@@ -91,9 +91,9 @@ bool qdNamedObjectReference::init(const qdNamedObject *p) {
 	_object_types.reserve(num_levels);
 	_object_names.reserve(num_levels);
 
-	for (int i = 0; i < num_levels; i ++) {
+	for (int i = 0; i < num_levels; i++) {
 		obj = p;
-		for (int j = 0; j < num_levels - i - 1; j ++) {
+		for (int j = 0; j < num_levels - i - 1; j++) {
 #ifdef _QUEST_EDITOR
 			obj = obj->ref_owner();
 #else
@@ -146,7 +146,7 @@ bool qdNamedObjectReference::save_script(Common::WriteStream &fh, int indent) co
 	fh.writeString("\"");
 	fh.writeString(">\r\n");
 
-	for (int j = 0; j < num_levels(); j ++) {
+	for (int j = 0; j < num_levels(); j++) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
@@ -170,7 +170,7 @@ bool qdNamedObjectReference::load_data(Common::SeekableReadStream &fh, int versi
 
 	Common::String str;
 
-	for (int i = 0; i < nlevels; i ++) {
+	for (int i = 0; i < nlevels; i++) {
 		int32 type = fh.readSint32LE();
 		int32 nameLen = fh.readUint32LE();
 		str = fh.readString('\0', nameLen);
@@ -186,7 +186,7 @@ bool qdNamedObjectReference::save_data(Common::WriteStream &fh) const {
 	debugC(5, kDebugSave, "      qdNamedObjectReference::save_data before: %ld", fh.pos());
 	fh.writeSint32LE(num_levels());
 
-	for (int i = 0; i < num_levels(); i ++) {
+	for (int i = 0; i < num_levels(); i++) {
 		fh.writeSint32LE(_object_types[i]);
 		fh.writeUint32LE(_object_names[i].size());
 		fh.writeString(_object_names[i].c_str());

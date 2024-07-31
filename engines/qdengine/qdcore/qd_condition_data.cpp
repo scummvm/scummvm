@@ -74,13 +74,13 @@ bool qdConditionData::load_script(const xml::tag *p) {
 	switch (_type) {
 	case DATA_INT: {
 		xml::tag_buffer buf(*p);
-		for (int i = 0; i < p->data_size(); i ++)
+		for (int i = 0; i < p->data_size(); i++)
 			put_int(buf.get_int(), i);
 	}
 	break;
 	case DATA_FLOAT: {
 		xml::tag_buffer buf(*p);
-		for (int i = 0; i < p->data_size(); i ++)
+		for (int i = 0; i < p->data_size(); i++)
 			put_float(buf.get_float(), i);
 	}
 	break;

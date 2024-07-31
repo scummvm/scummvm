@@ -234,7 +234,7 @@ void qdGameDispatcher::quant(float dt) {
 	_mouse_obj->quant(dt);
 
 	mouseDispatcher::instance()->toggle_event(mouseDispatcher::EV_MOUSE_MOVE);
-	for (int i = mouseDispatcher::first_event_ID(); i <= mouseDispatcher::last_event_ID(); i ++) {
+	for (int i = mouseDispatcher::first_event_ID(); i <= mouseDispatcher::last_event_ID(); i++) {
 		mouseDispatcher::mouseEvent ev = static_cast<mouseDispatcher::mouseEvent>(i);
 		if (mouseDispatcher::instance()->check_event(ev)) {
 			if (mouse_handler(_mouse_cursor_pos.x, _mouse_cursor_pos.y, ev))
@@ -916,7 +916,7 @@ int qdGameDispatcher::get_resources_size() {
 qdNamedObject *qdGameDispatcher::get_named_object(const qdNamedObjectReference *ref) {
 	qdNamedObject *p = nullptr;
 
-	for (int i = 0; i < ref->num_levels(); i ++) {
+	for (int i = 0; i < ref->num_levels(); i++) {
 		debugC(9, kDebugLoad, "%i of %d: type: %s (%d)  p so far: %p", i, ref->num_levels() - 1, objectType2str(ref->object_type(i)), ref->object_type(i), (void *)p);
 
 		switch (ref->object_type(i)) {

@@ -60,7 +60,7 @@ bool qdScreenTextSet::arrange_texts() {
 
 	Vect2i text_pos(0, 0);
 
-	for (int i = 1; i < _texts.size(); i ++) {
+	for (int i = 1; i < _texts.size(); i++) {
 		if (_texts[i].arrangement() == qdScreenTextFormat::ARRANGE_HORIZONTAL) {
 			if (row_sy < _texts[i].size_y())
 				row_sy = _texts[i].size_y();
@@ -79,7 +79,7 @@ bool qdScreenTextSet::arrange_texts() {
 	int row_start = 0;
 	int row_size = 1;
 
-	for (int i = 0; i < _texts.size(); i ++) {
+	for (int i = 0; i < _texts.size(); i++) {
 		if (_texts[i].arrangement() == qdScreenTextFormat::ARRANGE_VERTICAL || i == _texts.size() - 1) {
 			int sx = 0;
 			for (int j = 0; j < row_size; j++)
@@ -112,7 +112,7 @@ bool qdScreenTextSet::arrange_texts() {
 	int sx = 0;
 	int sy = 0;
 
-	for (int i = 0; i < _texts.size(); i ++) {
+	for (int i = 0; i < _texts.size(); i++) {
 		if (_texts[i].screen_pos().x + _texts[i].size_x() > sx)
 			sx = _texts[i].screen_pos().x + _texts[i].size_x();
 		if (_texts[i].screen_pos().y + _texts[i].size_y() > sy)
@@ -120,7 +120,7 @@ bool qdScreenTextSet::arrange_texts() {
 	}
 
 	_size = Vect2i(sx, sy);
-	for (int i = 0; i < _texts.size(); i ++) {
+	for (int i = 0; i < _texts.size(); i++) {
 		Vect2i pos = _texts[i].screen_pos();
 		pos -= _size / 2;
 		_texts[i].set_screen_pos(pos);

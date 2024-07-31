@@ -1006,7 +1006,7 @@ float qdGameObjectStateWalk::adjust_direction_angle(float angle) const {
 		float dist0 = fabs(getDeltaAngle(0.0f, angle));
 		float angle0 = 0.0f;
 
-		for (int i = 1; i < 4; i ++) {
+		for (int i = 1; i < 4; i++) {
 			float angle1 = float(i) * M_PI / 2.0f;
 			float dist1 = fabs(getDeltaAngle(angle1, angle));
 			if (dist1 < dist0) {
@@ -1022,7 +1022,7 @@ float qdGameObjectStateWalk::adjust_direction_angle(float angle) const {
 		float dist0 = fabs(getDeltaAngle(0.0f, angle));
 		float angle0 = 0.0f;
 
-		for (int i = 1; i < 8; i ++) {
+		for (int i = 1; i < 8; i++) {
 			float angle1 = float(i) * M_PI / 4.0f;
 			float dist1 = fabs(getDeltaAngle(angle1, angle));
 			if (dist1 < dist0) {
@@ -1548,8 +1548,8 @@ bool qdGameObjectStateMask::draw_mask(unsigned color) const {
 	pos.x -= mask_size().x / 2;
 	pos.y -= mask_size().y / 2;
 
-	for (int y = 0; y < mask_size().y; y ++) {
-		for (int x = 0; x < mask_size().x; x ++) {
+	for (int y = 0; y < mask_size().y; y++) {
+		for (int x = 0; x < mask_size().x; x++) {
 			if (hit(pos.x + x, pos.y + y)) {
 				grDispatcher::instance()->SetPixel(pos.x + x, pos.y + y, color);
 			}
