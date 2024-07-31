@@ -322,10 +322,10 @@ public:
 		_gridCenter = v;
 	}
 
-	const sGridCell *get_cell(float _x, float _y) const;
-	const Vect2s get_cell_index(float _x, float _y, bool grid_crop = true) const;
+	const sGridCell *get_cell(float X, float Y) const;
+	const Vect2s get_cell_index(float X, float Y, bool grid_crop = true) const;
 	const Vect2s get_cell_index(const Vect3f &v, bool grid_crop = true) const;
-	const Vect3f get_cell_coords(int _x_idx, int _y_idx) const;
+	const Vect3f get_cell_coords(int x_idx, int y_idx) const;
 	const Vect3f get_cell_coords(const Vect2s &idxs) const;
 
 	void reset_all_select();
