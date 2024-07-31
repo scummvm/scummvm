@@ -145,8 +145,8 @@ void grTileAnimation::addFrame(const unsigned *frame_data) {
 		(*_progressHandler)(percent_done, _progressHandlerContext);
 	}
 
-	for (int i = 0; i < _frameTileSize.y; i ++) {
-		for (int j = 0; j < _frameTileSize.x; j ++) {
+	for (int i = 0; i < _frameTileSize.y; i++) {
+		for (int j = 0; j < _frameTileSize.x; j++) {
 			std::fill(tile_vector.begin(), tile_vector.end(), 0);
 
 			const unsigned *data_ptr = frame_data + j * GR_TILE_SPRITE_SIZE_X
@@ -282,4 +282,3 @@ void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float a
 }
 
 } // namespace QDEngine
-

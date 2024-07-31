@@ -223,7 +223,7 @@ public:
 	int get_resources_size();
 
 	void inc_zone_update_count() {
-		_zone_update_count ++;
+		_zone_update_count++;
 	}
 	unsigned int zone_update_count() const {
 		return _zone_update_count;

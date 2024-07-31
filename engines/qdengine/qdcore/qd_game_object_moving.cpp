@@ -605,7 +605,7 @@ bool qdGameObjectMoving::skip_movement() {
 		adjust_z();
 
 		if (_path_length) {
-			move2position(_path[_cur_path_index ++]);
+			move2position(_path[_cur_path_index++]);
 			if (_cur_path_index >= _path_length)
 				_path_length = 0;
 			flag = true;
@@ -890,7 +890,7 @@ void qdGameObjectMoving::quant(float dt) {
 				_speed_delta = 0.0f;
 
 				if (_path_length) {
-					move2position(_path[_cur_path_index ++]);
+					move2position(_path[_cur_path_index++]);
 					if (_cur_path_index >= _path_length)
 						_path_length = 0;
 				} else {
@@ -1008,7 +1008,7 @@ void qdGameObjectMoving::set_path_attributes(int attr) const {
 
 		v0 = v1;
 
-		for (int i = _cur_path_index; i < _path_length; i ++) {
+		for (int i = _cur_path_index; i < _path_length; i++) {
 			v1 = cp->get_cell_index(_path[i].x, _path[i].y);
 			cp->set_grid_line_attributes(v0, v1, grid_size(), attr);
 			v0 = v1;
@@ -1028,7 +1028,7 @@ void qdGameObjectMoving::clear_path_attributes(int attr) const {
 
 		v0 = v1;
 
-		for (int i = _cur_path_index; i < _path_length; i ++) {
+		for (int i = _cur_path_index; i < _path_length; i++) {
 			v1 = cp->get_cell_index(_path[i].x, _path[i].y);
 			cp->drop_grid_line_attributes(v0, v1, grid_size(), attr);
 			v0 = v1;
@@ -1133,7 +1133,7 @@ void qdGameObjectMoving::debug_redraw() const {
 		grDispatcher::instance()->Line(v0.x, v0.y, v1.x, v1.y, cl, 2);
 		v0 = v1;
 
-		for (int i = _cur_path_index; i < _path_length; i ++) {
+		for (int i = _cur_path_index; i < _path_length; i++) {
 			v1 = qdCamera::current_camera()->global2scr(_path[i]);
 			grDispatcher::instance()->Line(v0.x, v0.y, v1.x, v1.y, cl, 2);
 			v0 = v1;
@@ -1572,7 +1572,7 @@ void qdGameObjectMoving::set_state(int st) {
 }
 
 void qdGameObjectMoving::set_state(qdGameObjectState *p) {
-	for (int i = 0; i < max_state(); i ++) {
+	for (int i = 0; i < max_state(); i++) {
 		if (get_state(i) == p) {
 			set_state(i);
 			return;
@@ -1728,15 +1728,15 @@ qdGameObjectState *qdGameObjectMoving::get_default_state() {
 	if (_last_walk_state) return _last_walk_state;
 #endif
 
-	for (int i = 0; i < max_state(); i ++) {
+	for (int i = 0; i < max_state(); i++) {
 		if (get_state(i)->state_type() == qdGameObjectState::STATE_WALK && !get_state(i)->is_in_triggers() && get_state(i)->coords_animation()->is_empty())
 			return get_state(i);
 	}
-	for (int i = 0; i < max_state(); i ++) {
+	for (int i = 0; i < max_state(); i++) {
 		if (get_state(i)->state_type() == qdGameObjectState::STATE_WALK && !get_state(i)->is_in_triggers())
 			return get_state(i);
 	}
-	for (int i = 0; i < max_state(); i ++) {
+	for (int i = 0; i < max_state(); i++) {
 		if (!get_state(i)->is_in_triggers() && !get_state(i)->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY | qdGameObjectState::QD_OBJ_STATE_FLAG_GLOBAL_OWNER))
 			return get_state(i);
 	}
@@ -1749,15 +1749,15 @@ const qdGameObjectState *qdGameObjectMoving::get_default_state() const {
 	if (_last_walk_state) return _last_walk_state;
 #endif
 
-	for (int i = 0; i < max_state(); i ++) {
+	for (int i = 0; i < max_state(); i++) {
 		if (get_state(i)->state_type() == qdGameObjectState::STATE_WALK && !get_state(i)->is_in_triggers() && get_state(i)->coords_animation()->is_empty())
 			return get_state(i);
 	}
-	for (int i = 0; i < max_state(); i ++) {
+	for (int i = 0; i < max_state(); i++) {
 		if (get_state(i)->state_type() == qdGameObjectState::STATE_WALK && !get_state(i)->is_in_triggers())
 			return get_state(i);
 	}
-	for (int i = 0; i < max_state(); i ++) {
+	for (int i = 0; i < max_state(); i++) {
 		if (!get_state(i)->is_in_triggers() && !get_state(i)->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY | qdGameObjectState::QD_OBJ_STATE_FLAG_GLOBAL_OWNER))
 			return get_state(i);
 	}
@@ -1821,7 +1821,7 @@ void qdGameObjectMoving::merge(qdGameObjectMoving *p) {
 void qdGameObjectMoving::split(qdGameObjectMoving *p) {
 #ifndef _QUEST_EDITOR
 	if (_last_walk_state) {
-		for (int i = 0; i < p->max_state(); i ++) {
+		for (int i = 0; i < p->max_state(); i++) {
 			if (_last_walk_state == p->get_state(i)) {
 				p->_last_walk_state = _last_walk_state;
 				break;
@@ -2760,7 +2760,7 @@ bool qdGameObjectMoving::move_from_personage_path() {
 	float dist = radius() / 2.0f;
 
 	const int num_distances = 3;
-	for (int i = 0; i < num_distances; i ++) {
+	for (int i = 0; i < num_distances; i++) {
 		const int num_angles = 8;
 		for (int j = 0; j < num_angles; j++) {
 			float dir = 2.0f * M_PI / float(num_angles) * float(j);

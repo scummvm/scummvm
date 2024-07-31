@@ -73,7 +73,7 @@ bool operator == (const qdSprite &sp1, const qdSprite &sp2) {
 					break;
 				}
 
-				for (int i = 0; i < sz; i ++)
+				for (int i = 0; i < sz; i++)
 					if (*d1++ != *d2++) return false;
 
 				return true;
@@ -336,7 +336,7 @@ bool qdSprite::load(const char *fname) {
 		str0 = _data;
 		str1 = _data + ssx * (sy - 1);
 
-		for (y = 0; y < sy / 2; y ++) {
+		for (y = 0; y < sy / 2; y++) {
 			memcpy(str_buf, str0, ssx);
 			memcpy(str0, str1, ssx);
 			memcpy(str1, str_buf, ssx);
@@ -352,7 +352,7 @@ bool qdSprite::load(const char *fname) {
 
 	if (_format == GR_ARGB8888) {
 		set_flag(ALPHA_FLAG);
-		for (int i = 0; i < _picture_size.x * _picture_size.y; i ++) {
+		for (int i = 0; i < _picture_size.x * _picture_size.y; i++) {
 			unsigned short r, g, b, a;
 			const unsigned min_color = 8;
 
@@ -371,7 +371,7 @@ bool qdSprite::load(const char *fname) {
 			_data[i * 4 + 3] = 255 - a;
 		}
 	} else {
-		for (int i = 0; i < _picture_size.x * _picture_size.y; i ++) {
+		for (int i = 0; i < _picture_size.x * _picture_size.y; i++) {
 			const unsigned min_color = 8;
 
 			unsigned b = _data[i * 3 + 0];
@@ -416,7 +416,7 @@ void qdSprite::save(const char *fname) {
 		unsigned char *p = buf;
 		unsigned char *dp = _data;
 
-		for (int i = 0; i < _picture_size.x * _picture_size.y; i ++) {
+		for (int i = 0; i < _picture_size.x * _picture_size.y; i++) {
 			unsigned short r, g, b, a;
 
 			r = dp[0];
@@ -458,7 +458,7 @@ bool qdSprite::compress() {
 				unsigned char *p = new unsigned char[_picture_size.x * _picture_size.y * 4];
 				unsigned short *dp = reinterpret_cast<unsigned short *>(p);
 				unsigned short *sp = reinterpret_cast<unsigned short *>(_data);
-				for (int i = 0; i < _picture_size.x * _picture_size.y; i ++) {
+				for (int i = 0; i < _picture_size.x * _picture_size.y; i++) {
 					*dp++ = *sp++;
 					*dp++ = 0;
 				}
@@ -478,7 +478,7 @@ bool qdSprite::compress() {
 			unsigned char *p = new unsigned char[_picture_size.x * _picture_size.y * 4];
 			unsigned char *ptr = p;
 			unsigned char *data_ptr = _data;
-			for (int i = 0; i < _picture_size.x * _picture_size.y; i ++) {
+			for (int i = 0; i < _picture_size.x * _picture_size.y; i++) {
 				ptr[0] = data_ptr[0];
 				ptr[1] = data_ptr[1];
 				ptr[2] = data_ptr[2];
@@ -522,18 +522,18 @@ bool qdSprite::uncompress() {
 		if (check_flag(ALPHA_FLAG)) {
 			_data = new unsigned char[_picture_size.x * _picture_size.y * 4];
 			unsigned char *p = _data;
-			for (int i = 0; i < _picture_size.y; i ++) {
+			for (int i = 0; i < _picture_size.y; i++) {
 				_rle_data->decode_line(i, p);
 				p += _picture_size.x * sizeof(unsigned);
 			}
 		} else {
 			_data = new unsigned char[_picture_size.x * _picture_size.y * 2];
 			unsigned short *p = reinterpret_cast<unsigned short *>(_data);
-			for (int i = 0; i < _picture_size.y; i ++) {
+			for (int i = 0; i < _picture_size.y; i++) {
 				const unsigned short *rle_p = reinterpret_cast<const unsigned short *>(rleBuffer::get_buffer(0));
 				_rle_data->decode_line(i);
 
-				for (int j = 0; j < _picture_size.x; j ++) {
+				for (int j = 0; j < _picture_size.x; j++) {
 					*p++ = *rle_p++;
 					rle_p++;
 				}
@@ -544,11 +544,11 @@ bool qdSprite::uncompress() {
 		if (!check_flag(ALPHA_FLAG)) {
 			_data = new unsigned char[_picture_size.x * _picture_size.y * 3];
 			unsigned char *p = _data;
-			for (int i = 0; i < _picture_size.y; i ++) {
+			for (int i = 0; i < _picture_size.y; i++) {
 				const unsigned char *rle_p = reinterpret_cast<const unsigned char *>(rleBuffer::get_buffer(0));
 				_rle_data->decode_line(i);
 
-				for (int j = 0; j < _picture_size.x; j ++) {
+				for (int j = 0; j < _picture_size.x; j++) {
 					p[0] = rle_p[0];
 					p[1] = rle_p[1];
 					p[2] = rle_p[2];
@@ -560,7 +560,7 @@ bool qdSprite::uncompress() {
 			_data = new unsigned char[_picture_size.x * _picture_size.y * 4];
 			unsigned char *p = _data;
 
-			for (int i = 0; i < _picture_size.y; i ++) {
+			for (int i = 0; i < _picture_size.y; i++) {
 				_rle_data->decode_line(i, p);
 				p += _picture_size.x * 4;
 			}
@@ -572,11 +572,11 @@ bool qdSprite::uncompress() {
 		if (!check_flag(ALPHA_FLAG)) {
 			_data = new unsigned char[_picture_size.x * _picture_size.y * 3];
 			unsigned char *p = _data;
-			for (int i = 0; i < _picture_size.y; i ++) {
+			for (int i = 0; i < _picture_size.y; i++) {
 				const unsigned char *rle_p = reinterpret_cast<const unsigned char *>(rleBuffer::get_buffer(0));
 				_rle_data->decode_line(i);
 
-				for (int j = 0; j < _picture_size.x; j ++) {
+				for (int j = 0; j < _picture_size.x; j++) {
 					p[0] = rle_p[0];
 					p[1] = rle_p[1];
 					p[2] = rle_p[2];
@@ -589,7 +589,7 @@ bool qdSprite::uncompress() {
 			_data = new unsigned char[_picture_size.x * _picture_size.y * 4];
 			unsigned char *p = _data;
 
-			for (int i = 0; i < _picture_size.y; i ++) {
+			for (int i = 0; i < _picture_size.y; i++) {
 				_rle_data->decode_line(i, p);
 				p += _picture_size.x * 4;
 			}
@@ -1045,7 +1045,7 @@ void qdSprite::qda_load(Common::SeekableReadStream *fh, int version) {
 					unsigned char *sp = _data + _picture_size.x * _picture_size.y * 2 - 2;
 					unsigned char *ap = alpha_data + _picture_size.x * _picture_size.y - 1;
 
-					for (int i = 0; i < _picture_size.x * _picture_size.y; i ++) {
+					for (int i = 0; i < _picture_size.x * _picture_size.y; i++) {
 						dp[0] = sp[0];
 						dp[1] = sp[1];
 						dp[2] = 0;
@@ -1061,7 +1061,7 @@ void qdSprite::qda_load(Common::SeekableReadStream *fh, int version) {
 					unsigned char *sp = _data + _picture_size.x * _picture_size.y * 3 - 3;
 					unsigned char *ap = alpha_data + _picture_size.x * _picture_size.y - 1;
 
-					for (int i = 0; i < _picture_size.x * _picture_size.y; i ++) {
+					for (int i = 0; i < _picture_size.x * _picture_size.y; i++) {
 						dp[0] = sp[0];
 						dp[1] = sp[1];
 						dp[2] = sp[2];
@@ -1137,7 +1137,7 @@ bool qdSprite::crop(int left, int top, int right, int bottom, bool store_offsets
 	int idx = left * psz + top * _picture_size.x * psz;
 
 	unsigned char *data_new = new unsigned char[sx * sy * psz];
-	for (int y = 0; y < sy; y ++) {
+	for (int y = 0; y < sy; y++) {
 		memcpy(data_new + idx1, _data + idx, sx * psz);
 		idx += _picture_size.x * psz;
 		idx1 += sx * psz;
@@ -1179,7 +1179,7 @@ bool qdSprite::undo_crop() {
 
 	if (check_flag(ALPHA_FLAG)) {
 		unsigned char *p = (_format == GR_ARGB8888) ? new_data + 3 : new_data + 2;
-		for (int i = 0; i < _size.x * _size.y; i ++) {
+		for (int i = 0; i < _size.x * _size.y; i++) {
 			*p = 255;
 			p += 4;
 		}
@@ -1188,7 +1188,7 @@ bool qdSprite::undo_crop() {
 	unsigned char *dp = _data;
 	unsigned char *p = new_data + (_picture_offset.x + _picture_offset.y * _size.x) * psx;
 
-	for (int i = 0; i < _picture_size.y; i ++) {
+	for (int i = 0; i < _picture_size.y; i++) {
 		memcpy(p, dp, _picture_size.x * psx);
 
 		p += _size.x * psx;
@@ -1217,105 +1217,105 @@ bool qdSprite::get_edges_width(int &left, int &top, int &right, int &bottom) {
 		if (check_flag(ALPHA_FLAG)) {
 			int idx = 0;
 			unsigned short *data_ptr = reinterpret_cast<unsigned short *>(_data);
-			for (int y = 0; y < _picture_size.y; y ++) {
+			for (int y = 0; y < _picture_size.y; y++) {
 				int x = 0;
-				while (x < _picture_size.x && data_ptr[(idx + x) * 2 + 1] == 255) x ++;
+				while (x < _picture_size.x && data_ptr[(idx + x) * 2 + 1] == 255) x++;
 				if (x < left) left = x;
 				idx += _picture_size.x - 1;
 
 				x = 0;
-				while (x < _picture_size.x && data_ptr[(idx - x) * 2 + 1] == 255) x ++;
+				while (x < _picture_size.x && data_ptr[(idx - x) * 2 + 1] == 255) x++;
 				if (x < right) right = x;
-				idx ++;
+				idx++;
 			}
 
 			idx = 0;
-			for (int x = 0; x < _picture_size.x; x ++) {
+			for (int x = 0; x < _picture_size.x; x++) {
 				int y = 0;
-				while (y < _picture_size.y && data_ptr[(idx + y * _picture_size.x) * 2 + 1] == 255) y ++;
+				while (y < _picture_size.y && data_ptr[(idx + y * _picture_size.x) * 2 + 1] == 255) y++;
 				if (y < top) top = y;
 
 				y = 0;
-				while (y < _picture_size.y && data_ptr[(idx - y * _picture_size.x + (_picture_size.y - 1) * _picture_size.x) * 2 + 1] == 255) y ++;
+				while (y < _picture_size.y && data_ptr[(idx - y * _picture_size.x + (_picture_size.y - 1) * _picture_size.x) * 2 + 1] == 255) y++;
 				if (y < bottom) bottom = y;
-				idx ++;
+				idx++;
 			}
 		} else {
 			int idx = 0;
 			unsigned short *data_ptr = reinterpret_cast<unsigned short *>(_data);
-			for (int y = 0; y < _picture_size.y; y ++) {
+			for (int y = 0; y < _picture_size.y; y++) {
 				int x = 0;
-				while (x < _picture_size.x && !data_ptr[idx + x]) x ++;
+				while (x < _picture_size.x && !data_ptr[idx + x]) x++;
 				if (x < left) left = x;
 				idx += _picture_size.x - 1;
 
 				x = 0;
-				while (x < _picture_size.x && !data_ptr[idx - x]) x ++;
+				while (x < _picture_size.x && !data_ptr[idx - x]) x++;
 				if (x < right) right = x;
-				idx ++;
+				idx++;
 			}
 
 			idx = 0;
-			for (int x = 0; x < _picture_size.x; x ++) {
+			for (int x = 0; x < _picture_size.x; x++) {
 				int y = 0;
-				while (y < _picture_size.y && !data_ptr[idx + y * _picture_size.x]) y ++;
+				while (y < _picture_size.y && !data_ptr[idx + y * _picture_size.x]) y++;
 				if (y < top) top = y;
 
 				y = 0;
-				while (y < _picture_size.y && !data_ptr[idx - y * _picture_size.x + (_picture_size.y - 1) * _picture_size.x]) y ++;
+				while (y < _picture_size.y && !data_ptr[idx - y * _picture_size.x + (_picture_size.y - 1) * _picture_size.x]) y++;
 				if (y < bottom) bottom = y;
-				idx ++;
+				idx++;
 			}
 		}
 	}
 	if (_format == GR_RGB888) {
 		int idx = 0;
-		for (int y = 0; y < _picture_size.y; y ++) {
+		for (int y = 0; y < _picture_size.y; y++) {
 			int x = 0;
-			while (x < _picture_size.x && !(_data[idx + x * 3 + 0] + _data[idx + x * 3 + 1] + _data[idx + x * 3 + 2])) x ++;
+			while (x < _picture_size.x && !(_data[idx + x * 3 + 0] + _data[idx + x * 3 + 1] + _data[idx + x * 3 + 2])) x++;
 			if (x < left) left = x;
 			idx += (_picture_size.x - 1) * 3;
 
 			x = 0;
-			while (x < _picture_size.x && !(_data[idx - x * 3 + 0] + _data[idx - x * 3 + 1] + _data[idx - x * 3 + 2])) x ++;
+			while (x < _picture_size.x && !(_data[idx - x * 3 + 0] + _data[idx - x * 3 + 1] + _data[idx - x * 3 + 2])) x++;
 			if (x < right) right = x;
 			idx += 3;
 		}
 
 		idx = 0;
-		for (int x = 0; x < _picture_size.x; x ++) {
+		for (int x = 0; x < _picture_size.x; x++) {
 			int y = 0;
-			while (y < _picture_size.y && !(_data[idx + y * _picture_size.x * 3 + 0] + _data[idx + y * _picture_size.x * 3 + 1] + _data[idx + y * _picture_size.x * 3 + 2])) y ++;
+			while (y < _picture_size.y && !(_data[idx + y * _picture_size.x * 3 + 0] + _data[idx + y * _picture_size.x * 3 + 1] + _data[idx + y * _picture_size.x * 3 + 2])) y++;
 			if (y < top) top = y;
 
 			y = 0;
-			while (y < _picture_size.y && !(_data[idx - y * _picture_size.x * 3 + (_picture_size.y - 1) * _picture_size.x * 3 + 0] + _data[idx - y * _picture_size.x * 3 + (_picture_size.y - 1) * _picture_size.x * 3 + 1] + _data[idx - y * _picture_size.x * 3 + (_picture_size.y - 1) * _picture_size.x * 3 + 2])) y ++;
+			while (y < _picture_size.y && !(_data[idx - y * _picture_size.x * 3 + (_picture_size.y - 1) * _picture_size.x * 3 + 0] + _data[idx - y * _picture_size.x * 3 + (_picture_size.y - 1) * _picture_size.x * 3 + 1] + _data[idx - y * _picture_size.x * 3 + (_picture_size.y - 1) * _picture_size.x * 3 + 2])) y++;
 			if (y < bottom) bottom = y;
 			idx += 3;
 		}
 	}
 	if (_format == GR_ARGB8888) {
 		int idx = 0;
-		for (int y = 0; y < _picture_size.y; y ++) {
+		for (int y = 0; y < _picture_size.y; y++) {
 			int x = 0;
-			while (x < _picture_size.x && _data[idx + x * 4 + 3] == 255) x ++;
+			while (x < _picture_size.x && _data[idx + x * 4 + 3] == 255) x++;
 			if (x < left) left = x;
 			idx += (_picture_size.x - 1) * 4;
 
 			x = 0;
-			while (x < _picture_size.x && _data[idx - x * 4 + 3] == 255) x ++;
+			while (x < _picture_size.x && _data[idx - x * 4 + 3] == 255) x++;
 			if (x < right) right = x;
 			idx += 4;
 		}
 
 		idx = 0;
-		for (int x = 0; x < _picture_size.x; x ++) {
+		for (int x = 0; x < _picture_size.x; x++) {
 			int y = 0;
-			while (y < _picture_size.y && _data[idx + y * _picture_size.x * 4 + 3] == 255) y ++;
+			while (y < _picture_size.y && _data[idx + y * _picture_size.x * 4 + 3] == 255) y++;
 			if (y < top) top = y;
 
 			y = 0;
-			while (y < _picture_size.y && _data[idx - y * _picture_size.x * 4 + (_picture_size.y - 1) * _picture_size.x * 4 + 3] == 255) y ++;
+			while (y < _picture_size.y && _data[idx - y * _picture_size.x * 4 + (_picture_size.y - 1) * _picture_size.x * 4 + 3] == 255) y++;
 			if (y < bottom) bottom = y;
 			idx += 4;
 		}
@@ -1383,7 +1383,7 @@ bool qdSprite::scale(float coeff_x, float coeff_y) {
 		unsigned char *p = src_data;
 		unsigned char *dp = _data;
 
-		for (int i = 0; i < _picture_size.x * _picture_size.y; i ++) {
+		for (int i = 0; i < _picture_size.x * _picture_size.y; i++) {
 			p[0] = dp[0];
 			p[1] = dp[1];
 			p[2] = dp[2];
@@ -1406,7 +1406,7 @@ bool qdSprite::scale(float coeff_x, float coeff_y) {
 		unsigned char *p = dest_data;
 		unsigned char *dp = _data;
 
-		for (int i = 0; i < sx * sy; i ++) {
+		for (int i = 0; i < sx * sy; i++) {
 			dp[0] = p[0];
 			dp[1] = p[1];
 			dp[2] = p[2];

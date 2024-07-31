@@ -572,13 +572,13 @@ bool qdAnimation::qda_load(const char *fname) {
 
 		set_flag(fl & (QD_ANIMATION_FLAG_CROP | QD_ANIMATION_FLAG_COMPRESS));
 
-		for (int i = 0; i < num_fr; i ++) {
+		for (int i = 0; i < num_fr; i++) {
 			qdAnimationFrame *p = new qdAnimationFrame;
 			p->qda_load(fh, version);
 			add_frame(p);
 		}
 
-		for (int i = 0; i < num_fr * num_scales; i ++) {
+		for (int i = 0; i < num_fr * num_scales; i++) {
 			qdAnimationFrame *p = new qdAnimationFrame;
 			p->qda_load(fh, version);
 			_scaled_frames.push_back(p);
@@ -589,7 +589,7 @@ bool qdAnimation::qda_load(const char *fname) {
 		_sx = fh->readSint32LE();
 		_sy = fh->readSint32LE();
 
-		for (int i = 0; i < num_fr; i ++) {
+		for (int i = 0; i < num_fr; i++) {
 			float start_time, length;
 			start_time = fh->readFloatLE();
 			length = fh->readFloatLE();
@@ -696,7 +696,7 @@ int qdAnimation::get_cur_frame_number() const {
 		if ((*iaf)->end_time() >= cur_time()) {
 			return num;
 		}
-		num ++;
+		num++;
 	}
 
 	return -1;
@@ -705,7 +705,7 @@ int qdAnimation::get_cur_frame_number() const {
 void qdAnimation::set_cur_frame(int number) {
 	int num = 0;
 	for (qdAnimationFrameList::const_iterator iaf = _frames_ptr->begin(); iaf != _frames_ptr->end(); ++iaf) {
-		if (num ++ == number) {
+		if (num++ == number) {
 			set_time((*iaf)->start_time() + (*iaf)->length() / 2.0f);
 			return;
 		}
@@ -715,7 +715,7 @@ void qdAnimation::set_cur_frame(int number) {
 bool qdAnimation::remove_frame(int number) {
 	int num = 0;
 	for (qdAnimationFrameList::iterator iaf = _frames.begin(); iaf != _frames.end(); ++iaf) {
-		if (num ++ == number) {
+		if (num++ == number) {
 			delete *iaf;
 			_frames.erase(iaf);
 			init_size();
@@ -738,7 +738,7 @@ bool qdAnimation::remove_frame_range(int number0, int number1) {
 			iaf1 = iaf;
 			break;
 		}
-		num ++;
+		num++;
 	}
 
 	if (iaf0 != _frames.end() && iaf1 != _frames.end()) {
@@ -766,7 +766,7 @@ bool qdAnimation::reverse_frame_range(int number0, int number1) {
 			iaf1 = iaf;
 			break;
 		}
-		num ++;
+		num++;
 	}
 
 	if (iaf0 != _frames.end() && iaf1 != _frames.end()) {
@@ -786,7 +786,7 @@ qdAnimationFrame *qdAnimation::get_frame(int number) {
 		if (num == number)
 			return *iaf;
 
-		num ++;
+		num++;
 	}
 
 	return 0;

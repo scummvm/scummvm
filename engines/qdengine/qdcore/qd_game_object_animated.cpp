@@ -726,7 +726,7 @@ void qdGameObjectAnimated::set_state(int st) {
 }
 
 void qdGameObjectAnimated::set_state(qdGameObjectState *p) {
-	for (int i = 0; i < max_state(); i ++) {
+	for (int i = 0; i < max_state(); i++) {
 		if (_states[i] == p) {
 			set_state(i);
 			return;
@@ -1006,7 +1006,7 @@ void qdGameObjectAnimated::restore_state() {
 
 void qdGameObjectAnimated::merge_states(qdGameObjectAnimated *p) {
 	if (_states.empty() || (!p->_states.empty() && _states[0] != p->_states[0])) {
-		for (int i = 0; i < p->max_state(); i ++) {
+		for (int i = 0; i < p->max_state(); i++) {
 			insert_state(i, p->_states[i]);
 			p->_states[i]->set_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_GLOBAL_OWNER);
 #ifdef _QUEST_EDITOR
@@ -1027,7 +1027,7 @@ void qdGameObjectAnimated::split_states(qdGameObjectAnimated *p) {
 #endif
 
 	if (!_states.empty() && !p->_states.empty() && _states[0] == p->_states[0]) {
-		for (int i = 0; i < p->max_state(); i ++) {
+		for (int i = 0; i < p->max_state(); i++) {
 			remove_state(0);
 			p->_states[i]->drop_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_GLOBAL_OWNER);
 			p->_states[i]->set_owner(p);
@@ -1282,7 +1282,7 @@ void qdGameObjectAnimated::set_default_state() {
 }
 
 qdGameObjectState *qdGameObjectAnimated::get_default_state() {
-	for (int i = 0; i < _states.size(); i ++) {
+	for (int i = 0; i < _states.size(); i++) {
 		if (!_states[i]->is_in_triggers() && !_states[i]->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY))
 			return _states[i];
 	}
@@ -1291,7 +1291,7 @@ qdGameObjectState *qdGameObjectAnimated::get_default_state() {
 }
 
 const qdGameObjectState *qdGameObjectAnimated::get_default_state() const {
-	for (int i = 0; i < _states.size(); i ++) {
+	for (int i = 0; i < _states.size(); i++) {
 		if (!_states[i]->is_in_triggers() && !_states[i]->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY))
 			return _states[i];
 	}
@@ -1300,7 +1300,7 @@ const qdGameObjectState *qdGameObjectAnimated::get_default_state() const {
 }
 
 int qdGameObjectAnimated::get_state_index(const qdGameObjectState *p) const {
-	for (int i = 0; i < _states.size(); i ++) {
+	for (int i = 0; i < _states.size(); i++) {
 		if (_states[i] == p)
 			return i;
 	}

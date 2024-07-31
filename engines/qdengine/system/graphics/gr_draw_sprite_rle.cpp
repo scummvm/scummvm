@@ -59,7 +59,7 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 	} else
 		dy = 1;
 
-	for (int i = 0; i < psy; i ++) {
+	for (int i = 0; i < psy; i++) {
 		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
 
 		const char *rle_header = p->header_ptr(py + i);
@@ -267,7 +267,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 		dy = 1;
 
 	warning("STUB: grDispatcher::PutSprMask_rle");
-	for (int i = 0; i < psy; i ++) {
+	for (int i = 0; i < psy; i++) {
 		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
 
 		const char *rle_header = p->header_ptr(py + i);
@@ -627,7 +627,7 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const class rleB
 	psx <<= 1;
 
 	warning("STUB: grDispatcher::DrawSprContour");
-	for (int i = 0; i < psy; i ++) {
+	for (int i = 0; i < psy; i++) {
 		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
 		unsigned short *scr_buf_prev = (i) ? reinterpret_cast<unsigned short *>(_screenBuf + _yTable[y - dy] + x) : scr_buf;
 		p->decode_line(py + i, i & 1);

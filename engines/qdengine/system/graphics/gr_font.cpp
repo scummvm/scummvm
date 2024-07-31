@@ -74,7 +74,7 @@ bool grFont::load_index(Common::SeekableReadStream *fh) {
 	num_ch = strtol(pos, &pos, 0);
 
 	grFontChar chr;
-	for (int i = 0; i < num_ch; i ++) {
+	for (int i = 0; i < num_ch; i++) {
 		int x, y;
 
 		chr._code = strtol(pos, &pos, 0);
@@ -118,7 +118,7 @@ bool grFont::load_alpha(Common::SeekableReadStream *fh) {
 
 	if (!(flags & 0x20)) {
 		int idx = (sy - 1) * ssx;
-		for (int i = 0; i < sy; i ++) {
+		for (int i = 0; i < sy; i++) {
 			fh->read(_alpha_buffer + idx, ssx);
 			idx -= ssx;
 		}

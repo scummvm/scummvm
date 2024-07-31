@@ -62,7 +62,7 @@ void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 		} else
 			dy = 1;
 
-		for (int i = 0; i < psy; i ++) {
+		for (int i = 0; i < psy; i++) {
 			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x3);
 			zbuf_t *z_buf = zbuffer_ + SizeX * y + x;
 
@@ -193,7 +193,7 @@ void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 		} else
 			dy = 1;
 
-		for (int i = 0; i < psy; i ++) {
+		for (int i = 0; i < psy; i++) {
 			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x3);
 			zbuf_t *z_buf = zbuffer_ + SizeX * y + x;
 
@@ -323,7 +323,7 @@ void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 		} else
 			dy = 1;
 
-		for (int i = 0; i < psy; i ++) {
+		for (int i = 0; i < psy; i++) {
 			unsigned short *scr_buf = reinterpret_cast<unsigned short *>(screenBuf + yTable[y] + x * 2);
 			zbuf_t *z_buf = zbuffer_ + y * SizeX + x;
 

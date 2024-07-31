@@ -84,7 +84,7 @@ bool rleBuffer::encode(int sx, int sy, const unsigned char *buf) {
 
 	const unsigned *buffer = reinterpret_cast<const unsigned *>(buf);
 
-	for (int y = 0; y < sy; y ++) {
+	for (int y = 0; y < sy; y++) {
 		int count = 0;
 
 		_header_offset[y] = _header.size();
@@ -92,20 +92,20 @@ bool rleBuffer::encode(int sx, int sy, const unsigned char *buf) {
 
 		while (count < sx) {
 			int index = count;
-			unsigned pixel = buffer[index ++];
+			unsigned pixel = buffer[index++];
 
 			while (index < sx && index - count < 127 && buffer[index] == pixel)
-				index ++;
+				index++;
 
 			if (index - count == 1) {
 				while (index < sx && index - count < 127 && (buffer[index] != buffer[index - 1] || (index > 1 && buffer[index] != buffer[index - 2])))
-					index ++;
+					index++;
 
 				while (index < sx && buffer[index] == buffer[index - 1])
 					index --;
 
 				_header.push_back(static_cast<char>(count - index));
-				for (int i = count; i < index; i ++)
+				for (int i = count; i < index; i++)
 					_data.push_back(buffer[i]);
 			} else {
 				_header.push_back(static_cast<char>(index - count));
@@ -131,12 +131,12 @@ bool rleBuffer::decode_line(int y, unsigned char *out_buf) const {
 
 	int size = line_header_length(y);
 
-	for (int i = 0; i < size; i ++) {
+	for (int i = 0; i < size; i++) {
 		char count = *header_ptr++;
 		if (count > 0) {
-			for (int j = 0; j < count; j ++)
+			for (int j = 0; j < count; j++)
 				*out_ptr++ = *data_ptr;
-			data_ptr ++;
+			data_ptr++;
 		} else {
 			count = -count;
 			memcpy(out_ptr, data_ptr, count * sizeof(unsigned));
@@ -158,7 +158,7 @@ bool rleBuffer::decode_pixel(int x, int y, unsigned &pixel) {
 
 	while (xx + abs(count) < x) {
 		if (count > 0) {
-			data_ptr ++;
+			data_ptr++;
 		} else {
 			count = -count;
 			data_ptr += count;
@@ -193,7 +193,7 @@ bool rleBuffer::convert_data(int bits_per_pixel) {
 		if (bits_per_pixel == 24 || bits_per_pixel == 32) {
 			unsigned short *short_ptr = reinterpret_cast<unsigned short *>(&*_data.begin());
 
-			for (int i = 0; i < sz; i ++) {
+			for (int i = 0; i < sz; i++) {
 				short_ptr++;
 				*short_ptr++ <<= 8;
 			}
@@ -201,7 +201,7 @@ bool rleBuffer::convert_data(int bits_per_pixel) {
 			short_ptr = reinterpret_cast<unsigned short *>(&*_data.begin());
 			unsigned char *char_ptr = reinterpret_cast<unsigned char *>(&*_data.begin());
 
-			for (int i = 0; i < sz; i ++) {
+			for (int i = 0; i < sz; i++) {
 				byte r, g, b;
 
 				if (_bits_per_pixel == 15)
@@ -220,7 +220,7 @@ bool rleBuffer::convert_data(int bits_per_pixel) {
 		} else {
 			unsigned short *short_ptr = reinterpret_cast<unsigned short *>(&*_data.begin());
 
-			for (int i = 0; i < sz; i ++) {
+			for (int i = 0; i < sz; i++) {
 				byte r, g, b;
 
 				if (_bits_per_pixel == 15) {
@@ -241,7 +241,7 @@ bool rleBuffer::convert_data(int bits_per_pixel) {
 			unsigned char *src_ptr = reinterpret_cast<unsigned char *>(&*_data.begin());
 			unsigned short *dest_ptr = reinterpret_cast<unsigned short *>(&*_data.begin());
 
-			for (int i = 0; i < sz; i ++) {
+			for (int i = 0; i < sz; i++) {
 				*dest_ptr++ = (bits_per_pixel == 15) ? grDispatcher::make_rgb555u(src_ptr[2], src_ptr[1], src_ptr[0]) : grDispatcher::make_rgb565u(src_ptr[2], src_ptr[1], src_ptr[0]);
 				*dest_ptr++ >>= 8;
 				src_ptr += 4;
@@ -270,7 +270,7 @@ int rleBuffer::line_length() {
 	int sz = (_header_offset.size() > 1) ? _header_offset[1] : _header.size();
 
 	int len = 0;
-	for (int i = 0; i < sz; i ++) {
+	for (int i = 0; i < sz; i++) {
 		len += abs(_header[i]);
 	}
 

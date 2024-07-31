@@ -72,7 +72,7 @@ static int unknown_encoding_handler(void *encodingHandlerData, const XML_Char *n
 		info->convert = NULL;
 		info->release = NULL;
 
-		for (int i = 0; i < 256; i ++) {
+		for (int i = 0; i < 256; i++) {
 			char c = i;
 			wchar_t cc = 0;
 			MultiByteToWideChar(1251, 0, &c, 1, &cc, 1);
@@ -152,7 +152,7 @@ void parser::start_element_handler(const char *tag_name, const char **tag_attrib
 
 		_data_buffer.clear();
 	} else
-		_cur_level ++;
+		_cur_level++;
 }
 
 void parser::end_element_handler(const char *tag_name) {
@@ -257,27 +257,27 @@ bool parser::read_tag_data(tag &tg, const char *data_ptr, int data_length) {
 		switch (tg.data_format()) {
 		case tag::TAG_DATA_SHORT: {
 			short *p = reinterpret_cast<short *>(&*(_data_pool.begin() + _data_pool_position));
-			for (int j = 0; j < tg.data_size(); j ++) buf >= p[j];
+			for (int j = 0; j < tg.data_size(); j++) buf >= p[j];
 		}
 		break;
 		case tag::TAG_DATA_UNSIGNED_SHORT: {
 			unsigned short *p = reinterpret_cast<unsigned short *>(&*(_data_pool.begin() + _data_pool_position));
-			for (int j = 0; j < tg.data_size(); j ++) buf >= p[j];
+			for (int j = 0; j < tg.data_size(); j++) buf >= p[j];
 		}
 		break;
 		case tag::TAG_DATA_INT: {
 			int *p = reinterpret_cast<int *>(&*(_data_pool.begin() + _data_pool_position));
-			for (int j = 0; j < tg.data_size(); j ++) buf >= p[j];
+			for (int j = 0; j < tg.data_size(); j++) buf >= p[j];
 		}
 		break;
 		case tag::TAG_DATA_UNSIGNED_INT: {
 			unsigned int *p = reinterpret_cast<unsigned int *>(&*(_data_pool.begin() + _data_pool_position));
-			for (int j = 0; j < tg.data_size(); j ++) buf >= p[j];
+			for (int j = 0; j < tg.data_size(); j++) buf >= p[j];
 		}
 		break;
 		case tag::TAG_DATA_FLOAT: {
 			float *p = reinterpret_cast<float *>(&*(_data_pool.begin() + _data_pool_position));
-			for (int j = 0; j < tg.data_size(); j ++) buf >= p[j];
+			for (int j = 0; j < tg.data_size(); j++) buf >= p[j];
 		}
 		break;
 		}

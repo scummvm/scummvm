@@ -169,11 +169,11 @@ void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const unsigned char *p
 	px <<= 2;
 
 	const unsigned char *data_ptr = p + py * sx;
-	for (int i = 0; i < psy; i ++) {
+	for (int i = 0; i < psy; i++) {
 		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
 		const unsigned char *data_line = data_ptr + px;
 
-		for (int j = 0; j < psx; j ++) {
+		for (int j = 0; j < psx; j++) {
 			unsigned a = data_line[3];
 			if (a != 255) {
 				if (a)
@@ -627,7 +627,7 @@ void grDispatcher::PutSpr(int x, int y, int sx, int sy, const unsigned char *p, 
 			uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
 			const byte *data_line = data_ptr + px;
 
-			for (int j = 0; j < psx; j ++) {
+			for (int j = 0; j < psx; j++) {
 				if (*data_line)
 					*scr_buf = make_rgb565u(data_line[2], data_line[1], data_line[0]);
 				scr_buf += dx;
@@ -642,7 +642,7 @@ void grDispatcher::PutSpr(int x, int y, int sx, int sy, const unsigned char *p, 
 			uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
 			const byte *data_line = data_ptr + px;
 
-			for (int j = 0; j < psx; j ++) {
+			for (int j = 0; j < psx; j++) {
 				if (*data_line)
 					*scr_buf = *(const uint16 *)data_line;
 				scr_buf += dx;
@@ -681,10 +681,10 @@ void grDispatcher::DrawSprContour_a(int x, int y, int sx, int sy, const unsigned
 	dpy <<= 1;
 
 	const unsigned short *pic_buf = reinterpret_cast<const unsigned short *>(p) + py * sx;
-	for (int i = 0; i < psy; i ++) {
+	for (int i = 0; i < psy; i++) {
 		int jj = px;
 		int empty_pixel = 1;
-		for (int j = 0; j < psx; j ++) {
+		for (int j = 0; j < psx; j++) {
 			if (pic_buf[jj * 2 + 1] < 200) {
 				if (empty_pixel)
 					SetPixelFast(x + j, y + i, contour_color);
@@ -701,10 +701,10 @@ void grDispatcher::DrawSprContour_a(int x, int y, int sx, int sy, const unsigned
 		pic_buf += dpy;
 	}
 	int jj = px;
-	for (int j = 0; j < psx; j ++) {
+	for (int j = 0; j < psx; j++) {
 		int empty_pixel = 1;
 		pic_buf = reinterpret_cast<const unsigned short *>(p) + py * sx;
-		for (int i = 0; i < psy; i ++) {
+		for (int i = 0; i < psy; i++) {
 			if (pic_buf[jj * 2 + 1] < 200) {
 				if (empty_pixel)
 					SetPixelFast(x + j, y + i, contour_color);
@@ -746,10 +746,10 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const unsigned c
 		dpy = sx;
 
 	const unsigned short *pic_buf = reinterpret_cast<const unsigned short *>(p) + py * sx;
-	for (int i = 0; i < psy; i ++) {
+	for (int i = 0; i < psy; i++) {
 		int jj = px;
 		int empty_pixel = 1;
-		for (int j = 0; j < psx; j ++) {
+		for (int j = 0; j < psx; j++) {
 			unsigned cl = pic_buf[jj];
 			if (cl) {
 				if (empty_pixel)
@@ -767,10 +767,10 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const unsigned c
 		pic_buf += dpy;
 	}
 	int jj = px;
-	for (int j = 0; j < psx; j ++) {
+	for (int j = 0; j < psx; j++) {
 		int empty_pixel = 1;
 		pic_buf = reinterpret_cast<const unsigned short *>(p) + py * sx;
-		for (int i = 0; i < psy; i ++) {
+		for (int i = 0; i < psy; i++) {
 			unsigned cl = pic_buf[jj];
 			if (cl) {
 				if (empty_pixel)
@@ -1032,11 +1032,11 @@ void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const unsigned char 
 	unsigned mcl = make_rgb565u(mr, mg, mb);
 
 	warning("STUB: grDispatcher::PutSprMask");
-	for (int i = 0; i < psy; i ++) {
+	for (int i = 0; i < psy; i++) {
 		unsigned short *scr_buf = (unsigned short *)(_screenBuf->getBasePtr(x, y));
 		const unsigned char *data_line = data_ptr;
 
-		for (int j = 0; j < psx; j ++) {
+		for (int j = 0; j < psx; j++) {
 			if (data_line[0] || data_line[1] || data_line[2])
 				*scr_buf = alpha_blend_565(mcl, *scr_buf, mask_alpha);
 			scr_buf += dx;
@@ -1141,11 +1141,11 @@ void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const unsigned cha
 	split_rgb565u(mask_color, mr, mg, mb);
 
 	warning("STUB: grDispatcher::PutSprMask_a");
-	for (int i = 0; i < psy; i ++) {
+	for (int i = 0; i < psy; i++) {
 		unsigned short *scr_buf = (unsigned short *)(_screenBuf->getBasePtr(x, y));
 		const unsigned char *data_line = data_ptr;
 
-		for (int j = 0; j < psx; j ++) {
+		for (int j = 0; j < psx; j++) {
 			unsigned a = data_line[3];
 
 			if (a != 255) {
