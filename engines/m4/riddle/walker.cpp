@@ -169,6 +169,20 @@ void Walker::unloadSprites() {
 	}
 }
 
+bool Walker::ripley_said(const char *list[][2]) {
+	if (!list)
+		return false;
+
+	for (int index = 0; list[index][0]; ++index) {
+		if (player_said(list[index][0])) {
+			digi_play(list[index][1], 1);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void enable_player() {
 	player_set_commands_allowed(true);
 	ws_unhide_walker(_G(my_walker));

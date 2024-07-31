@@ -127,6 +127,10 @@ void conv_play(Conv *c) {
 	conv_go(c);
 }
 
+void conv_play() {
+	conv_play(conv_get_handle());
+}
+
 int32 conv_current_node() {
 	if (conv_get_handle())
 		return conv_get_handle()->node_hash;

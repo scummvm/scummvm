@@ -56,6 +56,8 @@ public:
 
 	void reset_walker_sprites();
 	static void unloadSprites();
+
+	bool ripley_said(const char *list[][2]);
 };
 
 void enable_player();

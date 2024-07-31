@@ -43,6 +43,7 @@ void midi_play(const char *name, int volume, int loop, int trigger, int roomNum)
 void midi_loop();
 void midi_stop();
 void midi_set_overall_volume(int vol);
+void midi_fade_volume(int val1, int val2);
 
 } // namespace M4
 

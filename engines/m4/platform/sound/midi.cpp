@@ -63,4 +63,8 @@ void midi_set_overall_volume(int vol) {
 	_G(midi).set_overall_volume(vol);
 }
 
+void midi_fade_volume(int val1, int val2) {
+	warning("TODO: midi_fade_volume");
+}
+
 } // namespace M4

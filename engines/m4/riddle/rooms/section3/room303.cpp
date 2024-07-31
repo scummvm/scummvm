@@ -31,6 +31,15 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+static const char *SAID[][2] = {
+	{ "IRON MAIDEN",     "303R29" },
+	{ "MUMMY WITH HAIR", "303R30" },
+	{ "MAN WITH HAMMER", "303R33" },
+	{ "TICKET WINDOW",   "303R34" },
+	{ "PICTURE",         "303R35" },
+	{ nullptr, nullptr }
+};
+
 void Room303::preload() {
 	LoadWSAssets("OTHER SCRIPT");
 
@@ -638,8 +647,270 @@ void Room303::parser() {
 				break;
 			}
 		}
+	} else if (lookFlag && player_said("giant matchstick")) {
+		if (_G(flags)[V000] == 1) {
+			digi_play("303r36", 1);
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+			case 666:
+				player_set_commands_allowed(false);
+				_chinTalk4 = series_load("rip suit talker pos4");
+				setGlobals4(_chinTalk4, 1, 1, 5);
+				sendWSMessage_C0000(1);
+				break;
 
-		// TODO
+			case 2:
+				sendWSMessage_D0000();
+				digi_play("303r25", 1, 255, 3);
+				break;
+
+			case 3:
+				digi_play("303F12", 1, 255, 4);
+				_val15 = 2;
+				sendWSMessage_B0000(0);
+				break;
+
+			case 4:
+				_val15 = 1;
+				series_unload(_chinTalk4);
+				break;
+
+			default:
+				break;
+			}
+		}
+	} else if (player_said("open")) {
+		if (player_been_here(301)) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				ws_walk(409, 266, nullptr, 1, 1);
+				break;
+
+			case 1:
+				player_set_commands_allowed(false);
+				_med1 = series_load("RIP TREK MED REACH HAND POS1");
+				setGlobals1(_med1, 1, 10, 10, 10, 1);
+				sendWSMessage_110000(2);
+				break;
+
+			case 2:
+				sendWSMessage_140000(4);
+				terminateMachineAndNull(_door);
+				series_plain_play("DOOR", 1, 0, 100, 0xf05, 7, 3);
+				digi_play("303_s01", 1);
+				break;
+
+			case 3:
+				series_show_sprite("DOOR", 7, 0xf05);
+				break;
+
+			case 4:
+				ws_walk(417, 232, nullptr, -1, 2);
+				break;
+
+			case 5:
+				_G(game).setRoom(304);
+				break;
+
+			default:
+				break;
+			}
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				player_update_info();
+				ws_hide_walker();
+				_ripsh1 = series_place_sprite("ripsh1", 0,
+					_G(player_info).x, _G(player_info).y, _G(player_info).scale,
+					_G(player_info).depth + 1);
+				_med1 = series_load("SUIT DOOR OPENER POS1");
+
+				series_play_xy("SUIT DOOR OPENER POS1", 1, 0, 405, 266,
+					_G(player_info).scale, _G(player_info).depth, 7, 1);
+				break;
+
+			case 2:
+				series_show_sprite("DOOR", 7, 0xf05);
+				break;
+
+			case 3:
+				ws_unhide_walker();
+				terminateMachineAndNull(_ripsh1);
+				kernel_timing_trigger(10, 4);
+				break;
+
+			case 4:
+				ws_walk(417, 232, nullptr, -1, 2);
+				disable_player_commands_and_fade_init(6);
+				break;
+
+			case 6:
+				digi_stop(3);
+				_G(game).setRoom(304);
+				break;
+
+			default:
+				break;
+			}
+		}
+	} else if (lookFlag && player_said("cobra case")) {
+		digi_play(player_been_here(201) ? "203r38" : "303r32", 1);
+	} else if ((lookFlag || player_said("peer into")) &&
+			player_said("copper tank viewer")) {
+		if (player_been_here(301)) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				_ripBends = series_load("rip trek bends to viewer");
+				setGlobals1(_ripBends, 1, 17, 17, 17, 1);
+				sendWSMessage_110000(-1);
+				disable_player_commands_and_fade_init(1);
+				break;
+
+			case 1:
+				_G(game).setRoom(309);
+				interface_hide();
+				break;
+
+			default:
+				break;
+			}
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				_ripBends = series_load("RIP BENDS TO SEE CREATURE");
+				setGlobals1(_ripBends, 1, 26, 26, 26);
+				sendWSMessage_110000(1);
+				break;
+
+			case 1:
+				disable_player_commands_and_fade_init(2);
+				break;
+
+			case 2:
+				_G(game).setRoom(309);
+				interface_hide();
+				break;
+			default:
+				break;
+			}
+		}
+	} else if (player_said("TALK MEI CHEN")) {
+		player_set_commands_allowed(false);
+		_suit1 = series_load("SUIT CHIN IN HAND POS2");
+		_suit2 = series_load("RIP SUIT RT HAND GEST TALK POS2");
+		_meiLips = series_load("MEI PUTS FINGER TO LIPS");
+		_ripGesture = series_load("RIP HNDS HIPS GEST TALK");
+		player_update_info();
+		ws_hide_walker();
+
+		_ripsh2 = series_show("ripsh2", 0xf00, 128, -1, 0,
+			_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+		_machine3 = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale + 1,
+			0x500, 1, triggerMachineByHashCallbackNegative, "rip");
+
+		_G(kernel).trigger_mode = KT_DAEMON;
+		sendWSMessage_10000(1, _machine3, 1, 1, 1, 300, 1, 1, 1, 0);
+
+		_val17 = _val16 = 0;
+		_G(kernel).trigger_mode = KT_PARSE;
+
+		conv_load("conv303b", 10, 10, 747);
+		conv_play(conv_get_handle());
+		_val11 = 4;
+		_val16 = 0;
+
+	} else if (_G(kernel).trigger == 747) {
+		midi_fade_volume(0, 120);
+		kernel_timing_trigger(120, 749);
+		_lonelyFlag = false;
+		_val7 = 1;
+		_val11 = 0;
+		_val16 = 5;
+
+	} else if (_G(kernel).trigger == 749) {
+		midi_stop();
+
+	} else if (player_said("TALK FL")) {
+		_suit1 = series_load("SUIT CHIN IN HAND POS2");
+		_suit2 = series_load("RIP SUIT RT HAND GEST TALK POS2");
+		_ripGesture = series_load("RIP HNDS HIPS GEST TALK");
+		player_update_info();
+		ws_hide_walker();
+
+		if (_val13) {
+			_ripsh2 = series_show("ripsh2", 0xf00, 0, -1, -1, 0,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+			_machine3 = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+				_G(player_info).x, _G(player_info).y, _G(player_info).scale + 1,
+				0x500, 0, triggerMachineByHashCallbackNegative, "rip");
+
+		} else {
+			_ripsh2 = series_show("ripsh2", 0xf00, 128, -1, -1, 0,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+			_machine3 = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+				_G(player_info).x, _G(player_info).y, _G(player_info).scale + 1,
+				0x500, 1, triggerMachineByHashCallbackNegative, "rip");
+		}
+
+		_G(kernel).trigger_mode = KT_DAEMON;
+		sendWSMessage_10000(1, _machine3, 1, 1, 1, 300, 1, 1, 1, 0);
+		_val16 = _val17 = 0;
+
+		_G(kernel).trigger_mode = KT_PARSE;
+		player_set_commands_allowed(false);
+		conv_load("conv303a", 10, 10, 748);
+
+		conv_export_value(conv_get_handle(), _G(flags)[V086], 0);
+		conv_play();
+		_val15 = 1;
+		_val16 = 0;
+
+	} else if (_G(kernel).trigger == 748) {
+		_G(flags)[V082] = 1;
+		_G(flags)[V083] = 1;
+		midi_fade_volume(0, 120);
+		kernel_timing_trigger(120, 749);
+		_lonelyFlag = false;
+		_val15 = 4;
+		_val16 = 5;
+
+	} else if (player_said("exit left")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(1);
+			break;
+
+		case 1:
+			digi_stop(3);
+			_G(game).setRoom(305);
+			break;
+
+		default:
+			break;
+		}
+	} else if (lookFlag && _G(walker).ripley_said(SAID)) {
+		// Already handled
+	} else if (player_said("exit right")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(1);
+			break;
+
+		case 1:
+			digi_stop(3);
+			_G(game).setRoom(301);
+			break;
+
+		default:
+			break;
+		}
 	} else {
 		return;
 	}

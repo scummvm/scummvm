@@ -107,6 +107,7 @@ void conv_reset(char *filename);
 
 void conv_reset_all();
 void conv_play(Conv *c);
+void conv_play();
 
 void set_conv_name(const char *s);
 const char *get_conv_name();

@@ -46,6 +46,7 @@ private:
 	int _val14 = 0;
 	int _val15 = 0;
 	int _val16 = 0;
+	int _val17 = 0;
 	KernelTriggerType _triggerMode1 = KT_DAEMON;
 	KernelTriggerType _triggerMode2 = KT_DAEMON;
 	machine *_door = nullptr;
@@ -61,10 +62,18 @@ private:
 	machine *_shadow5 = nullptr;
 	machine *_machine1 = nullptr;
 	machine *_machine2 = nullptr;
+	machine *_machine3 = nullptr;
 	machine *_ripPonders = nullptr;
 	int _gestTalk4 = 0;
 	int _ripBends = 0;
 	int _chinTalk4 = 0;
+	int _med1 = 0;
+	machine *_ripsh1 = nullptr;
+	machine *_ripsh2 = nullptr;
+	int _suit1 = 0;
+	int _suit2 = 0;
+	int _meiLips = 0;
+	int _ripGesture = 0;
 
 	static void escapePressed(void *, void *);
 
