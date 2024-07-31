@@ -84,7 +84,7 @@ bool qdFontInfo::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<_fontinfo type=\"%d\"", _type));
+	fh.writeString(Common::String::format("<fontinfo type=\"%d\"", _type));
 
 	if (!_font_file_name.empty()) {
 		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(_font_file_name.c_str())));
