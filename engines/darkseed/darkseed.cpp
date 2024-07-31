@@ -172,15 +172,19 @@ void DarkseedEngine::gameloop() {
 				_isLeftMouseClicked = false;
 				delete _fullscreenPic;
 				_fullscreenPic = nullptr;
-				_room->updatePalette();
+				_room->restorePalette();
 			}
 		}
 		counter_2c85_888b = (counter_2c85_888b + 1) & 0xff;
 		if (systemTimerCounter == 5) {
 			handleInput();
+			if (_room->_roomNumber == 30 && _objectVar[1] == 0 && (otherNspAnimationType_maybe != 40 || !isPlayingAnimation_maybe || _currentTimeInSeconds > 79199)) {
+				gotosleepinjail();
+			}
 			updateDisplay();
 			_isRightMouseClicked = false;
 			_isLeftMouseClicked = false;
+			updateHeadache();
 		}
 		_room->update();
 		_frame.draw();
@@ -1225,7 +1229,7 @@ void DarkseedEngine::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 		break;
 	case 3:
 		// TODO
-//		if ((_SoundDevice != '\x01') && ((char)_day == '\x03')) {
+//		if ((_SoundDevice != '\x01') && ((char)_currentDay == '\x03')) {
 //			LoadModeSong(7);
 //			PlaySound(0,6,-1);
 //		}
@@ -1338,6 +1342,22 @@ void DarkseedEngine::updateAnimation() {
 //			StopVOC(); TODO
 		}
 		break;
+	case 3:
+		advanceAnimationFrame(0);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]];
+		} else {
+			if (_room->isGiger()) {
+				stuffPlayer();
+			} else {
+				if (_room->isOutside() && _currentTimeInSeconds > 61200) {
+					_room->restorePalette();
+				}
+				gotonextmorning();
+				playDayChangeCutscene();
+			}
+		}
+		break;
 	case 5: // goto sleep animation
 		_player->_position.x = 135;
 		_player->_position.y = 91;
@@ -1346,16 +1366,10 @@ void DarkseedEngine::updateAnimation() {
 			_player->_frameIdx = _player->_animations.getAnimAt(1).frameNo[_player->_animations.getAnimAt(1).frameNo[animIndexTbl[1]]];
 		}
 		else {
-			// advanceToNextMorning();
+			gotonextmorning(); // TODO there might be some extra logic required from original function
 			_player->_position.x = 242;
 			_player->_position.y = 187;
-			if (_currentDay == 4) {
-				playCutscene("Y");
-			} else if (_currentDay == 2) {
-				playCutscene("B");
-			} else if (_currentDay == 3) {
-				playCutscene("C");
-			}
+			playDayChangeCutscene();
 		}
 		_player->_position.x = 242;
 		_player->_position.y = 187;
@@ -2797,6 +2811,50 @@ void DarkseedEngine::putobjunderpillow(int objNum) {
 
 void DarkseedEngine::genericresponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx) {
 	// TODO
+}
+
+void DarkseedEngine::updateHeadache() {
+	headAcheMessageCounter++;
+	headAcheMessageCounter &= 63;
+	if (headAcheMessageCounter == 0) {
+		headacheMessageIdx++;
+		if (headacheMessageIdx > 4) {
+			headacheMessageIdx = 0;
+		}
+		if (_objectVar[112] == 0) {
+			_console->printTosText(headacheMessageIdx + 9);
+		}
+	}
+}
+
+void DarkseedEngine::gotosleepinjail() {
+	gotonextmorning();
+	playDayChangeCutscene();
+}
+
+void DarkseedEngine::gotonextmorning() {
+	_currentDay++;
+	_objectVar[47] = 0;
+	_objectVar[62] = 0;
+	_objectVar[112] = 0;
+	_objectVar[52] = 1;
+	_currentTimeInSeconds = 32400;
+//	ClearSpeech(4192,unaff_BP + 1); TODO
+	if (_currentDay == 2) {
+		_objectVar.setMoveObjectRoom(7, 253);
+	} else if (_currentDay == 3) {
+		_objectVar.setMoveObjectRoom(7, 255);
+	}
+}
+
+void DarkseedEngine::playDayChangeCutscene() {
+	if (_currentDay == 4) {
+		playCutscene("Y");
+	} else if (_currentDay == 2) {
+		playCutscene("B");
+	} else if (_currentDay == 3) {
+		playCutscene("C");
+	}
 }
 
 } // End of namespace Darkseed

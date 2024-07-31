@@ -92,6 +92,7 @@ public:
 	bool isPlayingAnimation_maybe = false;
 	uint16 otherNspAnimationType_maybe = 0;
 	uint16 headAcheMessageCounter = 0;
+	uint8 headacheMessageIdx = 0;
 
 	int sprite_y_scaling_threshold_maybe = 0xf0;
 	int scaledWalkSpeed_maybe = 0;
@@ -218,6 +219,11 @@ private:
 	void sargoanim();
 	void gancanim();
 	void putobjunderpillow(int objNum);
+	void gotosleepinjail();
+	void gotonextmorning();
+
+	void updateHeadache();
+	void playDayChangeCutscene();
 };
 
 extern DarkseedEngine *g_engine;
