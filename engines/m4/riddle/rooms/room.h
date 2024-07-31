@@ -79,6 +79,8 @@ protected:
 	void sendWSMessage_E0000(machine *walker);
 	void sendWSMessage_E0000();
 	void sendWSMessage_110000(machine *walker, int trigger);
+	void sendWSMessage_120000(int trigger);
+	void sendWSMessage_120000(machine *walker, int trigger);
 	void sendWSMessage_110000(int trigger);
 	void sendWSMessage_140000(machine *walker, int trigger);
 	void sendWSMessage_140000(int trigger);

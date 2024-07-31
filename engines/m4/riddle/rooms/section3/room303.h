@@ -41,7 +41,7 @@ private:
 	int _val9 = 0;
 	int _val10 = 0;
 	int _val11 = 0;
-	int _val12 = 0;
+	KernelTriggerType _val12 = KT_DAEMON;
 	bool _val13 = false;
 	int _val14 = 0;
 	int _val15 = 0;
@@ -74,6 +74,7 @@ private:
 	int _suit2 = 0;
 	int _meiLips = 0;
 	int _ripGesture = 0;
+	machine *_priestTalk = nullptr;
 
 	static void escapePressed(void *, void *);
 
@@ -86,6 +87,8 @@ private:
 	void playSeries(bool cow = true);
 	void conv303a();
 	void conv303b();
+	static void priestTalkCallback(frac16 myMessage, machine *sender);
+	void priestTalk(bool flag, int trigger);
 
 public:
 	Room303() : Room() {}

@@ -26,6 +26,7 @@
 #include "m4/gui/gui_vmng.h"
 #include "m4/gui/gui_sys.h"
 #include "m4/platform/keys.h"
+#include "m4/riddle/riddle.h"
 
 namespace M4 {
 namespace Riddle {
@@ -160,7 +161,7 @@ void Room303::init() {
 
 			_G(camera_reacts_to_player) = true;
 			MoveScreenDelta(game_buff_ptr, -110, 0);
-			_val12 = 2;
+			_val12 = KT_DAEMON;
 
 			player_set_commands_allowed(false);
 			playSeries(false);
@@ -301,7 +302,7 @@ void Room303::init() {
 		break;
 
 	default:
-		_val12 = 1;
+		_val12 = KT_PARSE;
 		kernel_load_variant("303lock1");
 		setFengActive(true);
 		ws_demand_location(145, 289, 3);
@@ -326,6 +327,29 @@ void Room303::init() {
 }
 
 void Room303::daemon() {
+	switch (_G(kernel).trigger) {
+	case 3:
+		sendWSMessage_120000(4);
+		break;
+
+	case 4:
+		sendWSMessage_150000(61);
+		break;
+
+	case 5:
+	case 61:
+		ws_demand_location(230, 258);
+		player_set_commands_allowed(true);
+		break;
+
+	case 6:
+		ws_walk(128, 267, nullptr, 75, 3);
+		break;
+
+	// TODO
+	default:
+		break;
+	}
 }
 
 void Room303::pre_parser() {
@@ -1168,6 +1192,38 @@ void Room303::conv303b() {
 	}
 
 	conv_resume();
+}
+
+void Room303::priestTalkCallback(frac16 myMessage, machine *sender) {
+	Room303 *room = (Room303 *)g_engine->_activeRoom;
+	auto oldMode = _G(kernel).trigger_mode;
+	int trigger = myMessage >> 16;
+
+	if (trigger > 0) {
+		_G(kernel).trigger_mode = room->_val12;
+		kernel_timing_trigger(1, trigger);
+		_G(kernel).trigger_mode = oldMode;
+	}
+}
+
+void Room303::priestTalk(bool flag, int trigger) {
+	ws_hide_walker(_machine1);
+	_G(globals)[GLB_TEMP_1] = _clasped1 << 24;
+	_G(globals)[GLB_TEMP_2] = 0xD << 24;
+	_G(globals)[GLB_TEMP_3] = _clasped3 << 24;
+	_G(globals)[GLB_TEMP_4] = 0xD << 24;
+	_G(globals)[GLB_TEMP_9] = _clasped4 << 24;
+	_G(globals)[GLB_TEMP_10] = 0xD << 24;
+	_G(globals)[GLB_TEMP_5] = (flag ? 480 : 705) << 16;
+	_G(globals)[GLB_TEMP_6] = 1 << 24;
+	_G(globals)[V007] = _G(globals)[V006] *
+		((1 << 24) - _G(globals)[V002]) + _G(globals)[V004];
+	_G(globals)[GLB_TEMP_8] = (flag ? 1 : 0) << 16;
+	_G(globals)[V008] = trigger << 16;
+	_G(globals)[GLB_TEMP_12] = 0xdc28;
+
+	_priestTalk = TriggerMachineByHash(32, nullptr, 0, -1,
+		priestTalkCallback, false, "fl priest/talk");
 }
 
 } // namespace Rooms
