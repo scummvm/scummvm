@@ -875,8 +875,8 @@ void CharsetRendererV3::setColor(byte color, bool shadowModeSpecialFlag) {
 		mode = (_color & 0x40) ? (shadowModeSpecialFlag ? kNoShadowType : kOutlineShadowType) : ((_color & 0x80) ? kNormalShadowType : kNoShadowType);
 		_color &= 0x0f;
 	} else if (_vm->_game.version >= 2 && (_vm->_game.features & GF_16COLOR)) {
-		if ((_color & 0xF0) != 0)
-			mode = kNormalShadowType;
+		mode = (_color & 0x80) ? kNormalShadowType : kNoShadowType;
+		_color &= 0x0f;
 	}
 
 	setShadowMode(mode);
