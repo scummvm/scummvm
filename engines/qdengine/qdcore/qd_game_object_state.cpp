@@ -55,7 +55,7 @@ bool qdScreenTransform::change(float dt, const qdScreenTransform &target_trans, 
 	qdScreenTransform delta(getDeltaAngle(target_trans.angle(), angle()),
 	                        target_trans.scale() - scale());
 
-	qdScreenTransform delta_max = speed *dt;
+	qdScreenTransform delta_max = speed * dt;
 	delta.angle_ = CLIP(delta.angle_, -delta_max.angle_, delta_max.angle_);
 	delta.scale_.x = CLIP(delta.scale_.x, -delta_max.scale_.x, delta_max.scale_.x);
 	delta.scale_.y = CLIP(delta.scale_.y, -delta_max.scale_.y, delta_max.scale_.y);
