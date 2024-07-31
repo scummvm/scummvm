@@ -1310,6 +1310,6 @@ void Darkseed::Room::loadRoom61AWalkableLocations() {
 	}
 }
 
-void Darkseed::Room::updatePalette() {
+void Darkseed::Room::restorePalette() {
 	_pal.installPalette();
 }
