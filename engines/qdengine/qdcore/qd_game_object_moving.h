@@ -36,9 +36,6 @@ class qdGameObjectMoving : public qdGameObjectAnimated {
 public:
 	qdGameObjectMoving();
 	qdGameObjectMoving(const qdGameObjectMoving &obj);
-#ifdef _QUEST_EDITOR
-	qdGameObjectMoving(const qdGameObjectAnimated &obj);
-#endif // _QUEST_EDITOR
 	~qdGameObjectMoving();
 
 	qdGameObjectMoving &operator = (const qdGameObjectMoving &obj);
@@ -157,14 +154,12 @@ public:
 	void set_state(int st);
 	void set_state(qdGameObjectState *p);
 
-#ifndef _QUEST_EDITOR
 	void set_last_walk_state(qdGameObjectState *p) {
 		_last_walk_state = p;
 	}
 	qdGameObjectState *last_walk_state() {
 		return _last_walk_state;
 	}
-#endif // _QUEST_EDITOR
 
 	qdGameObjectState *get_default_state();
 	const qdGameObjectState *get_default_state() const;
@@ -269,21 +264,13 @@ public:
 
 	bool set_movement_impulse(float dir_angle);
 
-#ifdef _QUEST_EDITOR
-	float collision_radius() const {
-		return _collision_radius;
-	}
-	void set_movement_mode(movement_mode_t mode) {
-		movement_mode_ = mode;
-	}
-#else
 	float collision_radius() const {
 		if (_collision_radius > FLT_EPS)
 			return _collision_radius;
 		else
 			return radius();
 	}
-#endif
+
 	void set_collision_radius(float r) {
 		_collision_radius = r;
 	}
@@ -425,10 +412,8 @@ private:
 	float _target_angle;
 	Vect3f _path[QD_MOVING_OBJ_PATH_LENGTH];
 
-#ifndef _QUEST_EDITOR
 	Vect2s _walk_grid_size;
 	qdGameObjectState *_last_walk_state;
-#endif
 
 	bool _ignore_personages;
 	bool _is_selected;
