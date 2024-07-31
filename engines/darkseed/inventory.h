@@ -40,6 +40,7 @@ public:
 	void removeItem(uint8 item);
 	void draw();
 	void handleClick();
+	void endOfDayOutsideLogic();
 
 	Common::Error sync(Common::Serializer &s);
 
