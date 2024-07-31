@@ -63,16 +63,10 @@ std::vector<qdGameObject *> qdGameScene::_visible_objects;
 qdGameScene::qdGameScene() : _mouse_click_object(NULL),
 	_mouse_right_click_object(NULL),
 	_mouse_hover_object(NULL),
-#ifdef _QUEST_EDITOR
-	active_object_(NULL),
-#endif
 	_selected_object(NULL),
 	_mouse_click_pos(0, 0),
-	_zone_update_count(0)
-#ifndef _QUEST_EDITOR
-	, _minigame(NULL)
-#endif // USE_NEW_PROJ
-{
+	_zone_update_count(0),
+	_minigame(NULL) {
 	set_loading_progress_callback(NULL);
 
 	_restart_minigame_on_load = false;
@@ -85,7 +79,6 @@ qdGameScene::~qdGameScene() {
 }
 
 void qdGameScene::init_objects_grid() {
-#ifndef _QUEST_EDITOR
 	_camera.drop_grid_attributes(sGridCell::CELL_OCCUPIED | sGridCell::CELL_PERSONAGE_OCCUPIED | sGridCell::CELL_SELECTED);
 
 	for (qdGameObjectList::const_iterator io = object_list().begin(); io != object_list().end(); ++io)
@@ -95,7 +88,6 @@ void qdGameScene::init_objects_grid() {
 		if ((*io)->is_visible() && !(*io)->check_flag(QD_OBJ_SCREEN_COORDS_FLAG))
 			(*io)->toggle_grid_zone();
 	}
-#endif
 }
 
 void qdGameScene::quant(float dt) {
@@ -178,13 +170,6 @@ void qdGameScene::quant(float dt) {
 
 void qdGameScene::redraw() {
 	if (!object_list().empty()) {
-#ifdef _QUEST_EDITOR
-		personages_quant();
-		init_visible_objects_list();
-		for (std::vector<qdGameObject * >::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it) {
-			(*it)->redraw();
-		}
-#else
 		if (check_flag(CYCLE_X) || check_flag(CYCLE_Y)) {
 			const int sx = _camera.get_scr_sx();
 			const int sy = _camera.get_scr_sy();
@@ -240,28 +225,11 @@ void qdGameScene::redraw() {
 			for (std::vector<qdGameObject * >::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it)
 				(*it)->redraw();
 		}
-#endif
 	}
-
-#ifdef _QUEST_EDITOR
-	if (active_object_ && active_object_->named_object_type() != QD_NAMED_OBJECT_STATIC_OBJ) {
-		qdGameObjectAnimated *pobj =
-		    static_cast<qdGameObjectAnimated *>(active_object_);
-		if (pobj->named_object_type() == QD_NAMED_OBJECT_MOUSE_OBJ)
-			pobj->redraw();
-		if (pobj->has_bound())
-			pobj->draw_bound();
-	}
-	_camera.draw_grid();
-#endif
 }
 
 bool qdGameScene::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
 	bool result = false;
-
-#ifdef _QUEST_EDITOR
-	init_visible_objects_list();
-#endif
 
 	_camera.cycle_coords(x, y);
 	_mouse_click_pos = _camera.scr2plane(Vect2s(x, y));
@@ -325,10 +293,8 @@ void qdGameScene::load_script(const xml::tag *p) {
 	qdGridZone *grz;
 	qdMusicTrack *trk;
 
-//#ifndef _QUEST_EDITOR
 	_personages.clear();
 	int personages_count = 0;
-//#endif
 
 	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		switch (it->ID()) {
@@ -388,10 +354,7 @@ void qdGameScene::load_script(const xml::tag *p) {
 		}
 	}
 
-#ifndef _QUEST_EDITOR
 	_visible_objects.reserve(object_list().size());
-#endif
-
 	_personages.reserve(personages_count);
 
 	for (qdGameObjectList::const_iterator it = object_list().begin(); it != object_list().end(); ++it) {
@@ -565,7 +528,6 @@ bool qdGameScene::activate() {
 	// При активации сцены все объекты следования переводим в нормальное состояние
 	follow_pers_init(qdGameObjectMoving::FOLLOW_DONE);
 
-#ifndef _QUEST_EDITOR
 	for (qdGameObjectList::const_iterator it = object_list().begin(); it != object_list().end(); ++it) {
 		(*it)->init_grid_zone();
 		if (qdGameObjectAnimated * p = dynamic_cast<qdGameObjectAnimated * >(*it))
@@ -578,10 +540,6 @@ bool qdGameScene::activate() {
 		if (qdGameObjectState * p = dp->get_walk_state((*it)->name()))
 			(*it)->set_last_walk_state(p);
 	}
-#else
-	split_global_objects();
-	merge_global_objects();
-#endif
 
 	if (!get_active_personage()) {
 		for (qdGameObjectList::const_iterator io = object_list().begin(); io != object_list().end(); ++io) {
@@ -601,10 +559,8 @@ bool qdGameScene::activate() {
 }
 
 bool qdGameScene::deactivate() {
-#ifndef _QUEST_EDITOR
 	if (_minigame)
 		_minigame->end();
-#endif
 
 	return true;
 }
@@ -686,9 +642,6 @@ bool qdGameScene::init_visible_objects_list() {
 bool qdGameScene::add_object(qdGameObject *p) {
 	if (_objects.add_object(p)) {
 		p->set_owner(this);
-#ifdef _QUEST_EDITOR
-		reload_personage_list();
-#endif
 		return true;
 	}
 	return false;
@@ -701,9 +654,6 @@ bool qdGameScene::rename_object(qdGameObject *p, const char *name) {
 bool qdGameScene::remove_object(const char *name) {
 
 	if (_objects.remove_object(name)) {
-#ifdef _QUEST_EDITOR
-		reload_personage_list();
-#endif
 		return true;
 	}
 	return false;
@@ -711,9 +661,6 @@ bool qdGameScene::remove_object(const char *name) {
 
 bool qdGameScene::remove_object(qdGameObject *p) {
 	if (_objects.remove_object(p)) {
-#ifdef _QUEST_EDITOR
-		reload_personage_list();
-#endif
 		return true;
 	}
 	return false;
@@ -763,16 +710,6 @@ bool qdGameScene::is_grid_zone_in_list(const char *name) {
 bool qdGameScene::is_grid_zone_in_list(qdGridZone *p) {
 	return _grid_zones.is_in_list(p);
 }
-
-#ifdef _QUEST_EDITOR
-bool qdGameScene::insert_grid_zone(qdGridZone *p, const qdGridZone *before) {
-	if (_grid_zones.insert_object(p, before)) {
-		p->set_owner(this);
-		return true;
-	}
-	return false;
-}
-#endif // _QUEST_EDITOR
 
 bool qdGameScene::add_music_track(qdMusicTrack *p) {
 	if (_music_tracks.add_object(p)) {
@@ -945,8 +882,6 @@ void qdGameScene::set_active_personage(qdGameObjectMoving *p) {
 
 	_camera.set_default_object(p);
 
-#ifndef _QUEST_EDITOR
-
 	if (p && p->has_camera_mode()) {
 		_camera.set_mode(p->camera_mode(), p);
 		_camera.set_default_mode(p->camera_mode());
@@ -965,7 +900,6 @@ void qdGameScene::set_active_personage(qdGameObjectMoving *p) {
 			}
 		}
 	}
-#endif
 }
 
 bool qdGameScene::init() {
@@ -985,7 +919,6 @@ bool qdGameScene::init() {
 	std::for_each(music_track_list().begin(), music_track_list().end(),
 	              std::mem_fun(&qdMusicTrack::init));
 
-#ifndef _QUEST_EDITOR
 	if (has_minigame() && !_minigame) {
 		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher())
 			_minigame = dp->get_minigame(minigame_name());
@@ -993,13 +926,11 @@ bool qdGameScene::init() {
 		if (_minigame)
 			create_minigame_objects();
 	}
-#endif
 
 	return true;
 }
 
 bool qdGameScene::change_active_personage(void) {
-#ifndef _QUEST_EDITOR
 	if (_selected_object) {
 		personages_container_t::iterator it = std::find(_personages.begin(), _personages.end(), _selected_object);
 		if (it == _personages.end()) return false;
@@ -1023,13 +954,11 @@ bool qdGameScene::change_active_personage(void) {
 			}
 		}
 	}
-#endif
 
 	return false;
 }
 
 void qdGameScene::pre_redraw() {
-#ifndef _QUEST_EDITOR
 	qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher();
 	if (!dp) return;
 
@@ -1079,7 +1008,6 @@ void qdGameScene::pre_redraw() {
 		_fps_region.clear();
 
 	_fps_counter.quant();
-#endif
 }
 
 void qdGameScene::post_redraw() {
@@ -1556,7 +1484,6 @@ void qdGameScene::follow_quant(float dt) {
 }
 
 void qdGameScene::collision_quant() {
-#ifndef _QUEST_EDITOR
 	for (personages_container_t::iterator it = _personages.begin(); it != _personages.end(); ++it) {
 		// Жесткая привязка с учетом направления привязывающего и без
 		if (((*it)->has_control_type(qdGameObjectMoving::CONTROL_ATTACHMENT_WITH_DIR_REL) ||
@@ -1630,7 +1557,6 @@ void qdGameScene::collision_quant() {
 		        (*it)->can_move()) {
 			(*it)->set_movement_impulse(_selected_object->direction_angle());
 		};
-#endif
 }
 
 void qdGameScene::add_redraw_region(const grScreenRegion &reg) const {
@@ -1676,25 +1602,22 @@ void qdGameScene::add_redraw_region(const grScreenRegion &reg) const {
 }
 
 bool qdGameScene::is_any_personage_in_zone(const qdGridZone *p) const {
-#ifndef _QUEST_EDITOR
 	for (personages_container_t::const_iterator it = _personages.begin(); it != _personages.end(); ++it) {
 		if (p->is_object_in_zone(*it))
 			return true;
 	}
-#endif
 	return false;
 }
 
 bool qdGameScene::set_personage_button(qdInterfaceButton *p) {
 	bool ret = false;
-#ifndef _QUEST_EDITOR
 	for (personages_container_t::const_iterator it = _personages.begin(); it != _personages.end(); ++it) {
 		if (p->has_event(qdInterfaceEvent::EVENT_ACTIVATE_PERSONAGE, (*it)->name())) {
 			(*it)->set_button(p);
 			ret = true;
 		}
 	}
-#endif
+
 	return ret;
 }
 
@@ -1721,7 +1644,6 @@ bool qdGameScene::get_files_list(qdFileNameList &files_to_copy, qdFileNameList &
 
 
 void qdGameScene::personages_quant() {
-#ifndef _QUEST_EDITOR
 	for (personages_container_t::const_iterator it = _personages.begin(); it != _personages.end(); ++it) {
 		if ((*it)->button()) {
 			if ((*it)->is_visible()) {
@@ -1768,7 +1690,6 @@ void qdGameScene::personages_quant() {
 			}
 		}
 	}
-#endif
 
 	for (personages_container_t::iterator itp = _personages.begin(); itp != _personages.end(); ++itp)
 		(*itp)->clear_shadow();
@@ -1784,28 +1705,13 @@ void qdGameScene::personages_quant() {
 }
 
 bool qdGameScene::need_to_redraw_inventory(const char *inventory_name) const {
-#ifndef _QUEST_EDITOR
 	for (personages_container_t::const_iterator it = _personages.begin(); it != _personages.end(); ++it) {
 		if (!strcmp((*it)->inventory_name(), inventory_name))
 			return true;
 	}
-#endif
 	return false;
 }
-#ifdef _QUEST_EDITOR
-void qdGameScene::reload_personage_list() {
-	_personages.clear();
-	_personages.reserve(16);
 
-	for (qdGameObjectList::const_iterator it = object_list().begin();
-	        it != object_list().end(); ++it) {
-		if ((*it)->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ)
-			_personages.push_back(static_cast<qdGameObjectMoving * >(*it));
-	}
-}
-#endif // _QUEST_EDITOR
-
-#ifndef _QUEST_EDITOR
 void qdGameScene::create_minigame_objects() {
 	Common::String name_buf;
 	for (qdMiniGame::config_container_t::const_iterator it = _minigame->config().begin(); it != _minigame->config().end(); ++it) {
@@ -1833,7 +1739,6 @@ void qdGameScene::create_minigame_objects() {
 		}
 	}
 }
-#endif // _QUEST_EDITOR
 
 bool qdGameScene::set_camera_mode(const qdCameraMode &mode, qdGameObjectAnimated *object) {
 	if (!_camera.can_change_mode())
@@ -1862,10 +1767,9 @@ bool qdGameScene::get_resources_info(qdResourceInfoContainer &infos) const {
 }
 #endif
 
-#ifndef _QUEST_EDITOR
 void qdGameScene::start_minigame() {
 	if (_minigame)
 		_minigame->start();
 }
-#endif
+
 } // namespace QDEngine

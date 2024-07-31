@@ -68,15 +68,6 @@ public:
 		DISABLE_MAIN_MENU = 0x10
 	};
 
-#ifdef _QUEST_EDITOR
-	void activate_object(qdGameObject *p) {
-		active_object_ = p;
-	}
-	qdGameObject *get_active_object() const {
-		return active_object_;
-	}
-#endif
-
 	qdNamedObject *mouse_click_object() {
 		return _mouse_click_object;
 	}
@@ -114,12 +105,10 @@ public:
 		return !_minigame_name.empty();
 	}
 
-#ifndef _QUEST_EDITOR
 	const qdMiniGame *minigame() const {
 		return _minigame;
 	}
 	void start_minigame();
-#endif
 
 	bool restart_minigame_on_load() const {
 		return _restart_minigame_on_load;
@@ -154,10 +143,6 @@ public:
 	qdGridZone *get_grid_zone(const char *name);
 	bool is_grid_zone_in_list(const char *name);
 	bool is_grid_zone_in_list(qdGridZone *p);
-
-#ifdef _QUEST_EDITOR
-	bool insert_grid_zone(qdGridZone *p, const qdGridZone *before);
-#endif // _QUEST_EDITOR
 
 	bool is_any_personage_in_zone(const qdGridZone *p) const;
 
@@ -262,10 +247,6 @@ public:
 	bool get_resources_info(qdResourceInfoContainer &infos) const;
 #endif
 
-protected:
-#ifdef _QUEST_EDITOR
-	void reload_personage_list();
-#endif // _QUEST_EDITOR
 private:
 
 	int _autosave_slot;
@@ -338,9 +319,7 @@ private:
 
 	void collision_quant();
 
-#ifndef _QUEST_EDITOR
 	void create_minigame_objects();
-#endif // _QUEST_EDITOR
 };
 
 } // namespace QDEngine
