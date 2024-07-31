@@ -106,7 +106,7 @@ public:
 	bool create_window(int sx, int sy);
 	bool resize_window(int sx, int sy);
 	bool resize_window() {
-		return resize_window(_SizeX, _SizeY);
+		return resize_window(_sizeX, _sizeY);
 	}
 
 	bool destroy_window();
@@ -130,10 +130,10 @@ public:
 		return _hWnd;
 	}
 	int Get_SizeX() const {
-		return _SizeX;
+		return _sizeX;
 	}
 	int Get_SizeY() const {
-		return _SizeY;
+		return _sizeY;
 	}
 
 	void SetClipMode(int m) {
@@ -144,7 +144,7 @@ public:
 	}
 
 	void SetClip() {
-		SetClip(0, 0, _SizeX, _SizeY);
+		SetClip(0, 0, _sizeX, _sizeY);
 	}
 
 	void GetClip(int &l, int &t, int &r, int &b) const {
@@ -156,10 +156,10 @@ public:
 
 	void SetClip(int l, int t, int r, int b) {
 		if (l < 0) l = 0;
-		if (r > _SizeX) r = _SizeX;
+		if (r > _sizeX) r = _sizeX;
 
 		if (t < 0) t = 0;
-		if (b > _SizeY) b = _SizeY;
+		if (b > _sizeY) b = _sizeY;
 
 		_clipCoords[GR_LEFT] = l;
 		_clipCoords[GR_TOP] = t;
@@ -420,7 +420,7 @@ public:
 	bool clip_rectangle(int &x, int &y, int &pic_x, int &pic_y, int &pic_sx, int &pic_sy) const;
 
 	bool is_rectangle_visible(int x, int y, int sx, int sy) const {
-		if (x + sx < 0 || x >= _SizeX || y + sy < 0 || y >= _SizeY) return false;
+		if (x + sx < 0 || x >= _sizeX || y + sy < 0 || y >= _sizeY) return false;
 		return true;
 	}
 
@@ -515,8 +515,8 @@ protected:
 	int _wndSizeX;
 	int _wndSizeY;
 
-	int _SizeX;
-	int _SizeY;
+	int _sizeX;
+	int _sizeY;
 
 	grPixelFormat _pixel_format;
 	void *_hWnd;
@@ -568,10 +568,10 @@ private:
 	bool clear_zbuffer();
 
 	zbuf_t get_z(int x, int y) {
-		return zbuffer_[x + y * _SizeX];
+		return zbuffer_[x + y * _sizeX];
 	}
 	void put_z(int x, int y, int z) {
-		zbuffer_[x + y * _SizeX] = z;
+		zbuffer_[x + y * _sizeX] = z;
 	}
 #endif
 
