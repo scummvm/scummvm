@@ -163,3 +163,12 @@ Common::Error Darkseed::Inventory::sync(Common::Serializer &s) {
 	update();
 	return Common::kNoError;
 }
+
+void Darkseed::Inventory::endOfDayOutsideLogic() {
+	for (int i = 0; i < _inventoryLength; i++) {
+		g_engine->_objectVar.setMoveObjectRoom(_inventory[i], _inventory[i] == 28 ? 255 : 252);
+	}
+	_inventoryLength = 0;
+	_viewOffset = 0;
+	g_engine->_objectVar[53] = 2;
+}

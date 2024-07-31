@@ -85,6 +85,7 @@ public:
 
 	uint8 _currentDay = 1;
 	int _currentTimeInSeconds = 0x7e8e;
+	int _fttime = 0;
 
 	uint8 _previousRoomNumber = 0;
 	uint16 targetRoomNumber = 0;

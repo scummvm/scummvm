@@ -178,10 +178,56 @@ void DarkseedEngine::gameloop() {
 		counter_2c85_888b = (counter_2c85_888b + 1) & 0xff;
 		if (systemTimerCounter == 5) {
 			handleInput();
+			// TODO lots of logic
+			if (_room->_roomNumber == 52 && _objectVar[79] == 0) {
+				_objectVar.setObjectRunningCode(79, 1);
+			}
+			if (_room->_roomNumber == 55) {
+				_objectVar.setObjectRunningCode(58, 1);
+			}
+			int prevTime = _currentTimeInSeconds;
+			if (_currentTimeInSeconds * 2 != _fttime) {
+				_fttime = _currentTimeInSeconds * 2;
+			}
+			if (!_room->isGiger()) {
+				_fttime += 4;
+			} else {
+				_fttime += 9;
+			}
+			_currentTimeInSeconds = _fttime / 2;
+			if ((_currentTimeInSeconds == 46800 || _currentTimeInSeconds == 46801) && _currentDay == 2 && _room->_roomNumber != 34) {
+				_objectVar[62] = 0;
+			}
+			// TODO lots of logic
+			if (_currentTimeInSeconds > 79199 && !_player->_isAutoWalkingToBed) {
+				if (_room->isOutside() && _room->_roomNumber != 30) {
+					_inventory.endOfDayOutsideLogic();
+				}
+				if (!isPlayingAnimation_maybe) {
+					if (_room->_roomNumber == 30) {
+						gotosleepinjail();
+					} else {
+						if (_room->_roomNumber != 10) {
+							// TODO release memory.
+						}
+//						makeroomname(); TODO
+//						GetLocationSprites((int)&_file_name);
+						if (!_room->isGiger()) {
+							if (_currentDay == 3) {
+								_console->printTosText(749);
+							}
+							_player->loadAnimations("cliedown.nsp");
+						} else {
+							_player->loadAnimations("gliedown.nsp");
+						}
+						setupOtherNspAnimation(0, 3);
+					}
+				}
+			}
 			if (_room->_roomNumber == 30 && _objectVar[1] == 0 && (otherNspAnimationType_maybe != 40 || !isPlayingAnimation_maybe || _currentTimeInSeconds > 79199)) {
 				gotosleepinjail();
 			}
-			updateDisplay();
+			updateDisplay(); // Aka serviceRoom()
 			_isRightMouseClicked = false;
 			_isLeftMouseClicked = false;
 			updateHeadache();
