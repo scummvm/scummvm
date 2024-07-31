@@ -35,6 +35,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("marker", WRAP_METHOD(Console, Cmd_marker));
 	registerCmd("addItem", WRAP_METHOD(Console, Cmd_addItem));
 	registerCmd("removeItem", WRAP_METHOD(Console, Cmd_removeItem));
+	registerCmd("setOrientation", WRAP_METHOD(Console, Cmd_setOrientation));
 }
 
 Console::~Console() {
@@ -100,6 +101,13 @@ bool Console::Cmd_removeItem(int argc, const char **argv) {
 			obj->SceneIndex = 0x0;
 		}
 	}
+	return true;
+}
+
+bool Console::Cmd_setOrientation(int argc, const char **argv) {
+	int orientation = std::stoi(argv[1], nullptr, 16);
+	GameObjects::instance().GetProtagonistObject()->Orientation = orientation;
+	
 	return true;
 }
 

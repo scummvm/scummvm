@@ -32,6 +32,10 @@ namespace Macs2 {
 		// Global [077Ch]
 		int CurrentSceneIndex;
 
+		// Global [077Eh]
+		// TODO: Check what the initial value of this is
+		int LastSceneIndex;
+
 		// TODO: Handle properly as a field of the scene 
 		class Common::MemoryReadStream* CurrentSceneScript;
 
@@ -45,13 +49,22 @@ class AnimationReader {
 
 
 	private:
-		Common::MemoryReadStreamEndian* readStream;
+		
 
 	public:
+
+		Common::MemoryReadStreamEndian *readStream;
+
 		// TODO: Can the init list also go into the cpp file?
 		AnimationReader(const Common::Array<uint8> &blob);
 
 		uint16 readNumAnimations();
+
+		void SeekToAnimation(uint16 index);
+
+		// Expects us to be pointed at the header of an animation frame,
+		// will seek to the start of the next header
+		void SkipCurrentAnimationFrame();
 
 };
 
