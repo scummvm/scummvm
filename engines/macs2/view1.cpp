@@ -614,6 +614,11 @@ bool View1::tick() {
 		// TODO: Piggybacking the guy on this
 		_guyFrameIndex++;
 		_guyFrameIndex = _guyFrameIndex % 6;
+
+		// And the animations overall
+		for (Character *currentCharacter : characters) {
+			currentCharacter->animationIndex++;
+		}
 		redraw();
 	}
 
@@ -881,7 +886,18 @@ void Character::SetPosition(const Common::Point &newPosition) {
 
 Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	// We choose looking towards the screen first
-	int blobIndex = GameObject->Orientation;
+	int blobIndex = 0;
+	if (IsLerping) {
+		// We are walking
+		blobIndex = GameObject->Orientation + 1;
+	} else {
+		// We are standing
+		blobIndex = GameObject->Orientation + 9;
+	}
+	// TODO: The game saves the orientation already adjusted for animation state
+	if (blobIndex > 8 + 9) {
+		blobIndex = 9;
+	}
 	// If we don't have this direction, try others until we find one that we have
 	// TODO: Log this properly or even assert
 	if (GameObject->Blobs[blobIndex].size() == 0) {
@@ -922,9 +938,17 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	stream.seek(offset, SEEK_CUR);
 
 	AnimFrame* result = new AnimFrame();
+
+	// TODO: Handle properly
+	// Skip ahead to the right frame in the animation
+	// TODO: No hardcoded number of animations
+	// TODO: Check for one-off errors
+	// testReader.SeekToAnimation((animationIndex - 1) % numAnimations);
+	testReader.SeekToAnimation(0);
+	// Skip ahead to the width and height
+	testReader.readStream->seek(6, SEEK_CUR);
 	
-	// TODO: Need to check how the offset really is calculated by the game code
-	result->ReadFromStream(&stream);
+	result->ReadFromStream(testReader.readStream);
 	return result;
 	// TODO: Think about proper memory management
 }
@@ -961,8 +985,17 @@ void Character::StartLerpTo(const Common::Point &target, uint32 duration, bool i
 
 
 	Math::Angle angle = directionVector.getAngle();
-	float degrees = angle.getDegrees() + 180.0f;
-	uint8 segment = degrees / (360.0f / 8.0f);
+	// Rotate so that we start at the top and add half of 45 degrees so that we have
+	// the right offset for the angles
+	float degrees = angle.getDegrees() + 90.0f;
+	if (degrees < 0.0f) {
+		degrees += 360.0f;
+	}
+	float degreesAdjusted = degrees + 25.0f;
+	if (degreesAdjusted > 360.0f) {
+		degreesAdjusted -= 360.0f;
+	}
+	uint8 segment = degreesAdjusted / (360.0f / 8.0f);
 	// TODO: Try out first which values we get
 	Common::String message = Common::String::format("Degrees: %f Segment: %u", degrees, segment);
 	debug(message.c_str());

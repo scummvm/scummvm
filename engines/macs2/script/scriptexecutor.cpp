@@ -859,8 +859,7 @@ l0037_A2CF:
 	jmp	0A32Ch
 */
 	else if (value == 0x2F) {
-		// TODO: Should look up current scene ID, hardcoded for now
-		out1 = 0x6;
+		out1 = Scenes::instance().LastSceneIndex;
 		out2 = 0;
 		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
 		return;
@@ -1044,6 +1043,7 @@ void ScriptExecutor::BeginBuffering() {
 }
 
 void ScriptExecutor::EndBuffering(bool shouldMark) {
+	lastOpcodeTriggeredSkip = false;
 	for (const Common::String &currentString : debugBuffer) {
 		const Common::String prefix = shouldMark ? "** " : "";
 		debug("%s%s", prefix.c_str(), currentString.c_str());
