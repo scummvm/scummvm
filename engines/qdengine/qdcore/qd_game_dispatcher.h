@@ -578,14 +578,14 @@ private:
 	/// таблица рекордов, если нету - размер нулевой
 	int _hall_of_fame_size;
 	struct HallOfFameEntry {
-		std::string player_name_;
-		int score_;
+		std::string _player_name;
+		int _score;
 
-		bool updated_;
+		bool _updated;
 
 		HallOfFameEntry() {
-			score_ = 0;
-			updated_ = false;
+			_score = 0;
+			_updated = false;
 		}
 	};
 
