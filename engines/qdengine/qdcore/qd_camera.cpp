@@ -110,7 +110,7 @@ const float qdCamera::_FAR_PLANE = 10000;
 //qdCameraMode qdCamera::_default_mode;
 
 qdCamera::qdCamera() : _m_fR(300.0f), _xAngle(45), _yAngle(0), _zAngle(0),
-	_GSX(0), _GSY(0), _Grid(NULL),
+	_GSX(0), _GSY(0), _grid(NULL),
 	_cellSX(32), _cellSY(32), _focus(1000.0f),
 	_gridCenter(0, 0, 0),
 	_redraw_mode(QDCAM_GRID_ZBUFFER),
@@ -133,7 +133,7 @@ qdCamera::qdCamera() : _m_fR(300.0f), _xAngle(45), _yAngle(0), _zAngle(0),
 
 qdCamera::~qdCamera() {
 	if (_GSX) {
-		delete [] _Grid;
+		delete [] _grid;
 	}
 }
 
@@ -141,9 +141,9 @@ void qdCamera::set_grid_size(int xs, int ys) {
 	if (_GSX == xs && _GSY == ys) return;
 
 	if (_GSX)
-		delete [] _Grid;
+		delete [] _grid;
 
-	_Grid = new sGridCell[xs * ys];
+	_grid = new sGridCell[xs * ys];
 
 	_GSX = xs;
 	_GSY = ys;
@@ -153,7 +153,7 @@ void qdCamera::clear_grid() {
 	int cnt = 0;
 	for (int i = 0; i < _GSY; i++) {
 		for (int j = 0; j < _GSX; j++) {
-			_Grid[cnt++].clear();
+			_grid[cnt++].clear();
 		}
 	}
 }
@@ -347,7 +347,7 @@ const sGridCell *qdCamera::get_cell(float X, float Y) const {
 	if (x < 0 || x >= XSP || y < 0 || y >= YSP) return 0;
 	x = x / _cellSX;
 	y = y / _cellSY;
-	return &_Grid[y * _GSX + x];
+	return &_grid[y * _GSX + x];
 }
 
 const Vect2s qdCamera::get_cell_index(float X, float Y, bool grid_crop) const {
@@ -397,7 +397,7 @@ void qdCamera::reset_all_select() {
 	int cnt = 0;
 	for (int i = 0; i < _GSY; i++) {
 		for (int j = 0; j < _GSX; j++) {
-			_Grid[cnt++].deselect();
+			_grid[cnt++].deselect();
 		}
 	}
 }
@@ -414,7 +414,7 @@ bool qdCamera::select_cell(int x, int y) {
 	if (x < 0 || x >= XSP || y < 0 || y >= YSP) return false;
 	x = x / _cellSX;
 	y = y / _cellSY;
-	_Grid[y * _GSX + x].select();
+	_grid[y * _GSX + x].select();
 	return true;
 }
 
@@ -430,7 +430,7 @@ bool qdCamera::deselect_cell(int x, int y) {
 	if (x < 0 || x >= XSP || y < 0 || y >= YSP) return false;
 	x = x / _cellSX;
 	y = y / _cellSY;
-	_Grid[y * _GSX + x].deselect();
+	_grid[y * _GSX + x].deselect();
 	return true;
 }
 
@@ -630,10 +630,10 @@ bool qdCamera::draw_grid() const {
 
 	for (int i = 0; i < _GSY; ++i) {
 		for (int j = 0; j < _GSX; ++j) {
-			if (!_Grid[cnt].is_walkable())
+			if (!_grid[cnt].is_walkable())
 				draw_cell(j, i, 0, 1, IMPASSIBLE_CELL_CLR);
 
-			if (_Grid[cnt].is_selected() || _Grid[cnt].check_attribute(sGridCell::CELL_OCCUPIED | sGridCell::CELL_PERSONAGE_OCCUPIED))
+			if (_grid[cnt].is_selected() || _grid[cnt].check_attribute(sGridCell::CELL_OCCUPIED | sGridCell::CELL_PERSONAGE_OCCUPIED))
 				draw_cell(j, i, 0, 1, SELECTED_CELL_CLR);
 			++cnt;
 		}
@@ -707,8 +707,8 @@ bool qdCamera::draw_grid() const {
 	cnt = 0;
 	for (int i = 0; i < _GSY; i++) {
 		for (int j = 0; j < _GSX; j++, cnt++) {
-			if (_Grid[cnt].height()) {
-				draw_cell(j, i, _Grid[cnt].height(), 1, 0x00FFFFFF);
+			if (_grid[cnt].height()) {
+				draw_cell(j, i, _grid[cnt].height(), 1, 0x00FFFFFF);
 			}
 		}
 	}
@@ -816,7 +816,7 @@ void qdCamera::scale_grid(int sx, int sy, int csx, int csy) {
 			int dy = _GSY / sy;
 
 			sGridCell *new_p = new_grid;
-			sGridCell *old_p = _Grid;
+			sGridCell *old_p = _grid;
 
 			for (int i = 0; i < sy; i ++) {
 				for (int j = 0; j < sx; j ++) {
@@ -846,7 +846,7 @@ void qdCamera::scale_grid(int sx, int sy, int csx, int csy) {
 			int dy = sy / _GSY;
 
 			sGridCell *new_p = new_grid;
-			sGridCell *old_p = _Grid;
+			sGridCell *old_p = _grid;
 
 			for (int i = 0; i < _GSY; i ++) {
 				for (int j = 0; j < _GSX; j ++) {
@@ -860,10 +860,10 @@ void qdCamera::scale_grid(int sx, int sy, int csx, int csy) {
 			}
 		}
 
-		delete [] _Grid;
+		delete [] _grid;
 	}
 
-	_Grid = new_grid;
+	_grid = new_grid;
 
 	_GSX = sx;
 	_GSY = sy;
@@ -884,31 +884,31 @@ void qdCamera::resize_grid(int sx, int sy) {
 		for (int y = 0; y < _GSY; y ++) {
 			for (int x = 0; x < _GSX; x ++) {
 				if (x + x0 >= 0 && x + x0 < sx && y + y0 >= 0 && y + y0 < sy)
-					new_grid[x + x0 + (y + y0) * sx] = _Grid[x + y * _GSX];
+					new_grid[x + x0 + (y + y0) * sx] = _grid[x + y * _GSX];
 			}
 		}
 
-		delete [] _Grid;
+		delete [] _grid;
 	}
 
-	_Grid = new_grid;
+	_grid = new_grid;
 
 	_GSX = sx;
 	_GSY = sy;
 }
 
 sGridCell *qdCamera::backup(sGridCell *ptrBuff) {
-	memcpy(ptrBuff, _Grid, sizeof(sGridCell)*_GSX * _GSY);
+	memcpy(ptrBuff, _grid, sizeof(sGridCell)*_GSX * _GSY);
 	return ptrBuff;
 }
 
 bool qdCamera::restore(sGridCell *grid, int sx, int sy, int csx, int csy) {
-	if (_Grid)
-		delete [] _Grid;
-	_Grid  = new sGridCell[sx * sy];
-	if (!_Grid)
+	if (_grid)
+		delete [] _grid;
+	_grid  = new sGridCell[sx * sy];
+	if (!_grid)
 		return false;
-	memcpy(_Grid, grid, sizeof(sGridCell)*sx * sy);
+	memcpy(_grid, grid, sizeof(sGridCell)*sx * sy);
 
 	_GSX = sx;
 	_GSY = sy;
@@ -920,7 +920,7 @@ bool qdCamera::restore(sGridCell *grid, int sx, int sy, int csx, int csy) {
 
 bool qdCamera::set_grid_cell(const Vect2s &cell_pos, const sGridCell &cell) {
 	if (cell_pos.x >= 0 && cell_pos.x < _GSX && cell_pos.y >= 0 && cell_pos.y < _GSY) {
-		_Grid[cell_pos.x + cell_pos.y * _GSX] = cell;
+		_grid[cell_pos.x + cell_pos.y * _GSX] = cell;
 		return true;
 	}
 
@@ -929,7 +929,7 @@ bool qdCamera::set_grid_cell(const Vect2s &cell_pos, const sGridCell &cell) {
 
 bool qdCamera::set_grid_cell_attributes(const Vect2s &cell_pos, int attr) {
 	if (cell_pos.x >= 0 && cell_pos.x < _GSX && cell_pos.y >= 0 && cell_pos.y < _GSY) {
-		_Grid[cell_pos.x + cell_pos.y * _GSX].set_attributes(attr);
+		_grid[cell_pos.x + cell_pos.y * _GSX].set_attributes(attr);
 		return true;
 	}
 
@@ -940,7 +940,7 @@ bool qdCamera::restore_grid_cell(const Vect2s cell_pos) {
 	if (cell_pos.x >= 0 && cell_pos.x < _GSX && cell_pos.y >= 0 && cell_pos.y < _GSY) {
 		sGridCell cl;
 		cl.make_impassable();
-		_Grid[cell_pos.x + cell_pos.y * _GSX] = cl;
+		_grid[cell_pos.x + cell_pos.y * _GSX] = cl;
 		return true;
 	}
 
@@ -949,14 +949,14 @@ bool qdCamera::restore_grid_cell(const Vect2s cell_pos) {
 
 sGridCell *qdCamera::get_cell(const Vect2s &cell_pos) {
 	if (cell_pos.x >= 0 && cell_pos.x < _GSX && cell_pos.y >= 0 && cell_pos.y < _GSY) {
-		return &_Grid[cell_pos.x + cell_pos.y * _GSX];
+		return &_grid[cell_pos.x + cell_pos.y * _GSX];
 	}
 	return NULL;
 }
 
 const sGridCell *qdCamera::get_cell(const Vect2s &cell_pos) const {
 	if (cell_pos.x >= 0 && cell_pos.x < _GSX && cell_pos.y >= 0 && cell_pos.y < _GSY) {
-		return &_Grid[cell_pos.x + cell_pos.y * _GSX];
+		return &_grid[cell_pos.x + cell_pos.y * _GSX];
 	}
 	return NULL;
 }
@@ -1217,7 +1217,7 @@ bool qdCamera::set_grid_attributes(const Vect2s &center_pos, const Vect2s &size,
 	if (y0 < 0) y0 = 0;
 	if (y1 > _GSY - 1) y1 = _GSY - 1;
 
-	sGridCell *cells = _Grid + x0 + y0 * _GSX;
+	sGridCell *cells = _grid + x0 + y0 * _GSX;
 
 	for (int y = y0; y < y1; y ++) {
 		sGridCell *p = cells;
@@ -1242,7 +1242,7 @@ bool qdCamera::drop_grid_attributes(const Vect2s &center_pos, const Vect2s &size
 	if (y0 < 0) y0 = 0;
 	if (y1 > _GSY - 1) y1 = _GSY - 1;
 
-	sGridCell *cells = _Grid + x0 + y0 * _GSX;
+	sGridCell *cells = _grid + x0 + y0 * _GSX;
 
 	for (int y = y0; y < y1; y ++) {
 		sGridCell *p = cells;
@@ -1256,7 +1256,7 @@ bool qdCamera::drop_grid_attributes(const Vect2s &center_pos, const Vect2s &size
 }
 
 bool qdCamera::set_grid_attributes(int attr) {
-	sGridCell *p = _Grid;
+	sGridCell *p = _grid;
 	for (int i = 0; i < _GSX * _GSY; i++, p++)
 		p->set_attribute(attr);
 
@@ -1264,7 +1264,7 @@ bool qdCamera::set_grid_attributes(int attr) {
 }
 
 bool qdCamera::drop_grid_attributes(int attr) {
-	sGridCell *p = _Grid;
+	sGridCell *p = _grid;
 	for (int i = 0; i < _GSX * _GSY; i++, p++)
 		p->drop_attribute(attr);
 
@@ -1283,7 +1283,7 @@ bool qdCamera::check_grid_attributes(const Vect2s &center_pos, const Vect2s &siz
 	if (y0 < 0) y0 = 0;
 	if (y1 > _GSY - 1) y1 = _GSY - 1;
 
-	const sGridCell *cells = _Grid + x0 + y0 * _GSX;
+	const sGridCell *cells = _grid + x0 + y0 * _GSX;
 
 	for (int y = y0; y < y1; y ++) {
 		const sGridCell *p = cells;
@@ -1310,7 +1310,7 @@ int qdCamera::cells_num_with_exact_attributes(const Vect2s &center_pos, const Ve
 	if (y0 < 0) y0 = 0;
 	if (y1 > _GSY - 1) y1 = _GSY - 1;
 
-	const sGridCell *cells = _Grid + x0 + y0 * _GSX;
+	const sGridCell *cells = _grid + x0 + y0 * _GSX;
 
 	int ret = 0;
 	for (int y = y0; y < y1; y ++) {
@@ -1338,7 +1338,7 @@ bool qdCamera::is_walkable(const Vect2s &center_pos, const Vect2s &size, bool ig
 	if (y0 < 0) y0 = 0;
 	if (y1 > _GSY - 1) y1 = _GSY - 1;
 
-	const sGridCell *cells = _Grid + x0 + y0 * _GSX;
+	const sGridCell *cells = _grid + x0 + y0 * _GSX;
 	int attr = sGridCell::CELL_IMPASSABLE | sGridCell::CELL_OCCUPIED;
 	if (!ignore_personages)
 		attr |= sGridCell::CELL_PERSONAGE_OCCUPIED;
@@ -1580,9 +1580,9 @@ void qdCamera::dump_grid(const char *file_name) const {
 
 	for (int i = 0; i < _GSY; i++) {
 		for (int j = 0; j < _GSX; j++) {
-			if (_Grid[j + i * _GSX].attributes() < 10)
+			if (_grid[j + i * _GSX].attributes() < 10)
 				fh.writeString(" ");
-			fh.writeString(Common::String::format("%u ", _Grid[j + i * _GSX].attributes()));
+			fh.writeString(Common::String::format("%u ", _grid[j + i * _GSX].attributes()));
 		}
 		fh.writeString("\r\n");
 	}

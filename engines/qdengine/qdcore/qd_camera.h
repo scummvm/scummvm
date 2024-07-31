@@ -181,7 +181,7 @@ public:
 	}
 
 	const sGridCell *get_grid() const {
-		return _Grid;
+		return _grid;
 	}
 
 	int get_cell_sx() const {
@@ -426,7 +426,7 @@ private:
 	float _xAngle, _yAngle, _zAngle;
 
 	int _GSX, _GSY;
-	sGridCell *_Grid;
+	sGridCell *_grid;
 
 	bool _cycle_x;
 	bool _cycle_y;
