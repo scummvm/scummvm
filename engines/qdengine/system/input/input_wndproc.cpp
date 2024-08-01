@@ -35,10 +35,10 @@ namespace input {
 bool keyboard_wndproc(const Common::Event &event, keyboardDispatcher *dsp) {
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
-		dsp->handle_event((int)event.kbd.ascii, true);
+		dsp->handle_event(event.kbd.keycode, true);
 		return true;
 	case Common::EVENT_KEYUP:
-		dsp->handle_event((int)event.kbd.ascii, false);
+		dsp->handle_event(event.kbd.keycode, false);
 		return true;
 	default:
 		break;

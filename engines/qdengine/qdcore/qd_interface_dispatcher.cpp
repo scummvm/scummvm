@@ -261,9 +261,9 @@ bool qdInterfaceDispatcher::mouse_handler(int x, int y, mouseDispatcher::mouseEv
 	return false;
 }
 
-bool qdInterfaceDispatcher::keyboard_handler(int vkey) {
+bool qdInterfaceDispatcher::keyboard_handler(Common::KeyCode vkey) {
 	if (_cur_screen) {
-		if (vkey == VK_ESCAPE && has_main_menu()) {
+		if (vkey == Common::KEYCODE_ESCAPE && has_main_menu()) {
 			if (_cur_screen->name() && !strcmp(_cur_screen->name(), main_menu_screen_name()))
 				handle_event(qdInterfaceEvent::EVENT_RESUME_GAME, NULL);
 			else {

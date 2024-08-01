@@ -74,7 +74,7 @@ bool qdInterfaceBackground::mouse_handler(int x, int y, mouseDispatcher::mouseEv
 	return true;
 }
 
-bool qdInterfaceBackground::keyboard_handler(int vkey) {
+bool qdInterfaceBackground::keyboard_handler(Common::KeyCode vkey) {
 	return false;
 }
 

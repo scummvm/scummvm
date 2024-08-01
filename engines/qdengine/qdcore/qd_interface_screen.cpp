@@ -246,7 +246,7 @@ bool qdInterfaceScreen::mouse_handler(int x, int y, mouseDispatcher::mouseEvent 
 	return false;
 }
 
-bool qdInterfaceScreen::keyboard_handler(int vkey) {
+bool qdInterfaceScreen::keyboard_handler(Common::KeyCode vkey) {
 	for (element_list_t::const_iterator it = element_list().begin(); it != element_list().end(); ++it) {
 		if (!(*it)->is_locked() && (*it)->keyboard_handler(vkey))
 			return true;

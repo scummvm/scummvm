@@ -22,6 +22,7 @@
 #ifndef QDENGINE_SYSTEM_INPUT_KEYBOARD_INPUT_H
 #define QDENGINE_SYSTEM_INPUT_KEYBOARD_INPUT_H
 
+#include "common/keyboard.h"
 
 namespace QDEngine {
 
@@ -32,7 +33,7 @@ public:
 	/**
 	Возвращает true при успешной обработке события.
 	*/
-	typedef bool (*event_handler_t)(int key_vcode, bool event);
+	typedef bool (*event_handler_t)(Common::KeyCode key_vcode, bool event);
 
 	keyboardDispatcher();
 	~keyboardDispatcher();
@@ -51,7 +52,7 @@ public:
 	}
 
 	//! Обрабатывает нажатие (event == true) или отжатие (event == false) кнопки с кодом vkey.
-	bool handle_event(int vkey, bool event) {
+	bool handle_event(Common::KeyCode vkey, bool event) {
 		_key_states[vkey] = event;
 		if (_handler) return (*_handler)(vkey, event);
 		return false;
@@ -66,7 +67,7 @@ private:
 	event_handler_t _handler;
 
 	//! Состояния кнопок - _key_states[vkey] == true если кнопка с кодом vkey нажата.
-	bool _key_states[256];
+	bool _key_states[Common::KEYCODE_LAST];
 };
 
 } // namespace QDEngine

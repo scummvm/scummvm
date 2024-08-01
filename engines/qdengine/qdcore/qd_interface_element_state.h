@@ -274,7 +274,7 @@ public:
 	//! Обработчик событий мыши.
 	bool mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev);
 	//! Обработчик ввода с клавиатуры.
-	bool keyboard_handler(int vkey);
+	bool keyboard_handler(Common::KeyCode vkey);
 
 	typedef std::vector<qdInterfaceEvent> events_container_t;
 	//! Список событий.

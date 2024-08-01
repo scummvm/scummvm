@@ -131,7 +131,7 @@ bool qdInterfaceCounter::mouse_handler(int x, int y, mouseDispatcher::mouseEvent
 	return true;
 }
 
-bool qdInterfaceCounter::keyboard_handler(int vkey) {
+bool qdInterfaceCounter::keyboard_handler(Common::KeyCode vkey) {
 	return false;
 }
 

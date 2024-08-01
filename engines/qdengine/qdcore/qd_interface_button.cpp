@@ -167,7 +167,7 @@ bool qdInterfaceButton::mouse_handler(int x, int y, mouseDispatcher::mouseEvent 
 	return get_state(_cur_state)->mouse_handler(x, y, ev);
 }
 
-bool qdInterfaceButton::keyboard_handler(int vkey) {
+bool qdInterfaceButton::keyboard_handler(Common::KeyCode vkey) {
 	return false;
 }
 
