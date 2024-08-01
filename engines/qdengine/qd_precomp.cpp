@@ -94,11 +94,6 @@ bool SetCurrentDirectory(const char *lpPathName) {
 	return false;
 }
 
-DWORD GetCurrentDirectory(DWORD nBufferLength, char *lpBuffer) {
-	warning("STUB: GetCurrentDirectory");
-	return 0;
-}
-
 bool CreateDirectory(const char *lpPathName, void *lpSecurityAttributes) {
 	warning("STUB: CreateDirectory");
 	return false;

@@ -37,7 +37,6 @@ MODULE_OBJS = \
 	qdcore/util/WinVideo.o \
 	qdcore/qd_animation_frame.o \
 	qdcore/qd_animation_info.o \
-	qdcore/qd_animation_maker.o \
 	qdcore/qd_animation_set_info.o \
 	qdcore/qd_animation_set_preview.o \
 	qdcore/qd_animation_set.o \
