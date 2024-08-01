@@ -32,72 +32,72 @@ class SyncroTimer {
 public:
 	// Main property
 	time_type operator()() const {
-		return round(time);
+		return round(_time);
 	}
 	// Last delta
 	time_type delta() const {
-		return time - time_prev;
+		return _time - _time_prev;
 	}
 
 	SyncroTimer() {
 		set(1, 15, 100);
-		time_prev = time = 1;
-		time_offset = 0;
-		time_speed = 1;
+		_time_prev = _time = 1;
+		_time_offset = 0;
+		_time_speed = 1;
 	}
 
-	void set(int syncro_by_clock_, time_type time_per_frame_, time_type max_time_interval_) {
-		syncro_by_clock = syncro_by_clock_;
-		time_per_frame = time_per_frame_;
-		max_time_interval = max_time_interval_;
+	void set(int syncro_by_clock, time_type time_per_frame, time_type max_time_interval) {
+		_syncro_by_clock = syncro_by_clock;
+		_time_per_frame = time_per_frame;
+		_max_time_interval = max_time_interval;
 	}
 
 	SyncroTimer &adjust() {
-		time_prev = time;
+		_time_prev = _time;
 
-		if (syncro_by_clock) {
+		if (_syncro_by_clock) {
 			float t = float(g_system->getMillis());
-			float dt = (t - time - time_offset) * time_speed;
-			if (dt > max_time_interval)
-				dt = max_time_interval;
-			time += dt;
-			time_offset = t - time;
+			float dt = (t - _time - _time_offset) * _time_speed;
+			if (dt > _max_time_interval)
+				dt = _max_time_interval;
+			_time += dt;
+			_time_offset = t - _time;
 		}
 		return *this;
 	}
 
 	void next_frame() {
-		if (syncro_by_clock)
+		if (_syncro_by_clock)
 			adjust();
 		else {
-			time_prev = time;
-			time += time_per_frame * time_speed;
-//			time += round(time_per_frame*time_speed);
+			_time_prev = _time;
+			_time += _time_per_frame * _time_speed;
+//			_time += round(_time_per_frame*_time_speed);
 		}
 	}
 
 	void skip() {
-		if (syncro_by_clock)
-			time_offset = g_system->getMillis() - time;
+		if (_syncro_by_clock)
+			_time_offset = g_system->getMillis() - _time;
 	}
 
 	void setTime(time_type t) {
-		time_prev = time = t;
-		time_offset = syncro_by_clock ? g_system->getMillis() - time : 0;
+		_time_prev = _time = t;
+		_time_offset = _syncro_by_clock ? g_system->getMillis() - _time : 0;
 	}
 
 	void setSpeed(float speed) {
-		time_speed = speed;
+		_time_speed = speed;
 	}
 
 private:
-	float time;
-	float time_prev;
-	float time_offset;
-	time_type max_time_interval;
-	time_type time_per_frame;
-	int syncro_by_clock;
-	float time_speed;
+	float _time;
+	float _time_prev;
+	float _time_offset;
+	time_type _max_time_interval;
+	time_type _time_per_frame;
+	int _syncro_by_clock;
+	float _time_speed;
 };
 
 } // namespace QDEngine
