@@ -2995,33 +2995,6 @@ bool qdGameDispatcher::is_counter_in_list(qdCounter *p) {
 	return _counters.is_in_list(p);
 }
 
-void qdGameDispatcher::scan_files(qdLoadingProgressFnc progress_fnc, void *context_ptr) {
-	int size = video_list().size() + scene_list().size() + 1;
-	int progress = 0;
-
-	calc_files_size();
-
-	progress++;
-	int percents = progress * 100 / size;
-	(*progress_fnc)(percents, context_ptr);
-
-	for (qdVideoList::const_iterator it = video_list().begin(); it != video_list().end(); ++it) {
-		(*it)->calc_files_size();
-
-		progress++;
-		percents = progress * 100 / size;
-		(*progress_fnc)(percents, context_ptr);
-	}
-
-	for (qdGameSceneList::const_iterator it = scene_list().begin(); it != scene_list().end(); ++it) {
-		(*it)->calc_files_size();
-
-		progress++;
-		percents = progress * 100 / size;
-		(*progress_fnc)(percents, context_ptr);
-	}
-}
-
 bool qdGameDispatcher::get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const {
 	files_to_pack.push_back("Resource/Cursors/default.tga");
 	files_to_pack.push_back("Resource/Fonts/font00.idx");

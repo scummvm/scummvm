@@ -26,12 +26,9 @@ namespace QDEngine {
 
 class qdFileOwner {
 public:
-	qdFileOwner() : _files_size(0), _cd_info(0) { }
+	qdFileOwner() : _cd_info(0) { }
 	virtual ~qdFileOwner() {}
 
-	uint32 files_size() const {
-		return _files_size;
-	}
 	virtual bool get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const = 0;
 
 	void add_to_CD(int cd_number) {
@@ -47,8 +44,6 @@ public:
 	void clear_cd_info() {
 		_cd_info = 0;
 	}
-	void calc_files_size();
-
 	uint32 CD_info() const {
 		return _cd_info;
 	}
@@ -59,7 +54,6 @@ public:
 private:
 
 	uint32 _cd_info;
-	uint32 _files_size;
 };
 
 } // namespace QDEngine
