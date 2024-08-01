@@ -71,12 +71,12 @@ public:
 	bool toggle_fullscreen(bool fullscr = true);
 
 private:
-	struct IGraphBuilder   *graph_builder_;
-	struct IMediaControl   *media_control_;
-	struct IVideoWindow    *video_window_;
-	struct IMediaEvent *media_event_;
-	struct IBasicAudio *basic_audio_;
-	struct IBasicVideo *basic_video_;
+	struct IGraphBuilder   *_graph_builder;
+	struct IMediaControl   *_media_control;
+	struct IVideoWindow    *_video_window;
+	struct IMediaEvent *_media_event;
+	struct IBasicAudio *_basic_audio;
+	struct IBasicVideo *_basic_video;
 
 
 	// Coordinates of the top left corner of the video
@@ -92,13 +92,13 @@ private:
 	Video::MPEGPSDecoder *_decoder;
 	Common::SeekableReadStream *_videostream;
 
-	void *hwnd_;
+	void *_hwnd;
 
 #ifdef __WINVIDEO_LOG__
 	static void *log_file_handle_;
 #endif
 
-	static bool is_initialized;
+	static bool _is_initialized;
 };
 
 } // namespace QDEngine
