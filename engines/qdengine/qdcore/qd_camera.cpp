@@ -224,8 +224,8 @@ const Vect3f qdCamera::rscr2camera_coord(const Vect2s &rScrPoint, float z) const
 };
 
 const Vect2s qdCamera::camera_coord2rscr(const Vect3f &coord) const {
-	short sx = round(coord.x * _focus / (coord.z + _focus));
-	short sy = round(coord.y * _focus / (coord.z + _focus));
+	int16 sx = round(coord.x * _focus / (coord.z + _focus));
+	int16 sy = round(coord.y * _focus / (coord.z + _focus));
 	return Vect2s(sx, sy);
 };
 

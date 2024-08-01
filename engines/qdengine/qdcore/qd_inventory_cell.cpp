@@ -199,7 +199,7 @@ qdInventoryCellSet::qdInventoryCellSet() : _size(0, 0),
 	_cells_shift(0, 0) {
 }
 
-qdInventoryCellSet::qdInventoryCellSet(int x, int y, int sx, int sy, short addit_sx, short addit_sy, const qdInventoryCellType &tp) : _size(sx, sy),
+qdInventoryCellSet::qdInventoryCellSet(int x, int y, int sx, int sy, int16 addit_sx, int16 addit_sy, const qdInventoryCellType &tp) : _size(sx, sy),
 	_screen_pos(x, y),
 	_additional_cells(addit_sx, addit_sy),
 	_cells_shift(0, 0),

@@ -189,7 +189,7 @@ typedef std::vector<qdInventoryCell> qdInventoryCellVector;
 class qdInventoryCellSet {
 public:
 	qdInventoryCellSet();
-	qdInventoryCellSet(int x, int y, int sx, int sy, short addit_sx, short addit_sy, const qdInventoryCellType &tp);
+	qdInventoryCellSet(int x, int y, int sx, int sy, int16 addit_sx, int16 addit_sy, const qdInventoryCellType &tp);
 	qdInventoryCellSet(const qdInventoryCellSet &set);
 	~qdInventoryCellSet();
 

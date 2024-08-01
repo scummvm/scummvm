@@ -56,7 +56,7 @@ const int GR_PALETTE        = 0x02;
 const int GR_REINIT     = 0x04;
 
 #ifdef _GR_ENABLE_ZBUFFER
-typedef short zbuf_t;
+typedef int16 zbuf_t;
 const GR_ZBUFFFER_MASK  = 0xFFFF;
 const GR_ZBUFFER_MAX_Z = 30000;
 #endif

@@ -1165,8 +1165,8 @@ bool qdGameScene::follow_path_seek(qdGameObjectMoving* pObj, bool lock_target)
         Vect2s min;
         double min_dist = 1e100;
         Vect2s center;
-        center.x = static_cast<short>(dest_pnt.x);
-        center.y = static_cast<short>(dest_pnt.y);
+        center.x = static_cast<int16>(dest_pnt.x);
+        center.y = static_cast<int16>(dest_pnt.y);
         std::vector<Vect2s> pts_vec;
         for (int i = -1; i <= 1; i++)
             for (int j = -1; j <= 1; j++)

@@ -468,7 +468,7 @@ public:
 
 class Vect2s {
 public:
-	short x, y;
+	int16 x, y;
 
 	xm_inline Vect2s()                                      { }
 	xm_inline Vect2s(int x_, int y_)                         {
@@ -493,10 +493,10 @@ public:
 		return Vect2s(-x, -y);
 	}
 
-	xm_inline const short &operator[](int i) const          {
+	xm_inline const int16 &operator[](int i) const          {
 		return *(&x + i);
 	}
-	xm_inline short &operator[](int i)                      {
+	xm_inline int16 &operator[](int i)                      {
 		return *(&x + i);
 	}
 

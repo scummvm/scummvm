@@ -67,7 +67,7 @@ tag_buffer &tag_buffer::operator = (const tag_buffer &tb) {
 tag_buffer::~tag_buffer() {
 }
 
-tag_buffer &tag_buffer::operator >= (short &var) {
+tag_buffer &tag_buffer::operator >= (int16 &var) {
 	char *p;
 	var = (short)strtol(_data + _data_offset, &p, 0);
 	_data_offset += p - (_data + _data_offset);
