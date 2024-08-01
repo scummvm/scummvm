@@ -346,10 +346,10 @@ bool qdGameObjectMoving::enough_far_target(const Vect3f &dest) const {
 template<class V>
 void dump_vect(const V &vect) {
 	debugC(3, kDebugLog, "------------");
-	debugC(3, kDebugLog, "%d", vect.size());
+	debugC(3, kDebugLog, "%zu", vect.size());
 
 	for (int i = 0; i < vect.size(); i++) {
-		debugC(3, kDebugLog, "%d %d", vect[i].x, vect[i].y);
+		debugC(3, kDebugLog, "%d %d", (int)vect[i].x, (int)vect[i].y);
 	}
 
 	debugC(3, kDebugLog, "------------");
