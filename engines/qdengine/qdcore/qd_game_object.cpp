@@ -114,13 +114,6 @@ bool qdGameObject::save_script_body(Common::WriteStream &fh, int indent) const {
 	return true;
 }
 
-#ifdef _QUEST_EDITOR
-const Vect2i &qdGameObject::screen_pos() {
-	update_screen_pos();
-	return _screen_r;
-}
-#endif
-
 void qdGameObject::quant(float dt) {
 }
 
@@ -201,4 +194,5 @@ bool qdGameObject::init() {
 	drop_flag(QD_OBJ_HIDDEN_FLAG);
 	return true;
 }
+
 } // namespace QDEngine

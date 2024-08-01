@@ -86,9 +86,6 @@ public:
 	virtual bool mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) = 0;
 	virtual bool hit(int x, int y) const = 0;
 
-#ifdef _QUEST_EDITOR
-	const Vect2i &screen_pos();
-#endif
 	const Vect2i &screen_pos() const {
 		return _screen_r;
 	}
