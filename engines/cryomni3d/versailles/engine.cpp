@@ -153,7 +153,7 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 
 	_fixedImage = new ZonFixedImage(*this, _inventory, _sprites, &kFixedImageConfiguration);
 
-	// Documentation is needed by noone at init time, let's do it last
+	// Documentation is needed by no one at init time, let's do it last
 	initDocPeopleRecord();
 	_docManager.init(&_sprites, &_fontManager, &_messages, this,
 	                 getFilePath(kFileTypeText, _localizedFilenames[LocalizedFilenames::kAllDocs]),
@@ -1605,7 +1605,7 @@ void CryOmni3DEngine_Versailles::animateWarpTransition(const Transition *transit
 			deltaAlpha += 2.*M_PI;
 		}
 
-		// We devide by 5 to slow down movement for modern CPUs
+		// We divide by 5 to slow down movement for modern CPUs
 		int deltaAlphaI;
 		if (deltaAlpha < M_PI) {
 			deltaAlphaI = int(-(deltaAlpha * 512. / 5.));
