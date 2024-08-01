@@ -143,10 +143,6 @@ qdGameDispatcher::qdGameDispatcher() : _is_paused(false),
 		set_dispatcher(this);
 	}
 
-#ifdef _QUEST_EDITOR
-	set_flag(FULLSCREEN_REDRAW_FLAG);
-
-#endif
 }
 
 qdGameDispatcher::~qdGameDispatcher() {
@@ -223,9 +219,7 @@ void qdGameDispatcher::quant(float dt) {
 		snd->quant();
 	}
 
-#ifndef _QUEST_EDITOR
 	_mouse_obj->set_pos(Vect3f(mouseDispatcher::instance()->mouse_x(), mouseDispatcher::instance()->mouse_y(), 0));
-#endif
 
 	_mouse_cursor_pos.x = mouseDispatcher::instance()->mouse_x() + _mouse_obj->screen_pos_offset().x;
 	_mouse_cursor_pos.y = mouseDispatcher::instance()->mouse_y() + _mouse_obj->screen_pos_offset().y;
@@ -466,7 +460,6 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 
 	merge_global_objects();
 
-#ifndef _QUEST_EDITOR
 	if (_enable_file_packages) {
 		qdFileManager::instance().init(CD_count());
 	}
@@ -475,7 +468,6 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 
 	qdNamedObjectIndexer::instance().resolve_references();
 	qdNamedObjectIndexer::instance().clear();
-#endif
 
 	if (!_texts_database.empty()) {
 		Common::SeekableReadStream *fh;
@@ -735,10 +727,8 @@ void qdGameDispatcher::post_redraw() {
 //#define _GD_REDRAW_REGIONS_CHECK_
 
 void qdGameDispatcher::redraw() {
-#ifndef _QUEST_EDITOR
 	_mouse_obj->set_pos(Vect3f(mouseDispatcher::instance()->mouse_x(), mouseDispatcher::instance()->mouse_y(), 0));
 	_mouse_obj->update_screen_pos();
-#endif
 
 	if (!check_flag(SKIP_REDRAW_FLAG)) {
 		if (!is_video_playing()) {
@@ -759,10 +749,8 @@ void qdGameDispatcher::redraw() {
 			grDispatcher::instance()->Flush();
 #endif
 		}
-#ifndef _QUEST_EDITOR
 		if (!qdGameConfig::get_config().force_full_redraw())
 			drop_flag(FULLSCREEN_REDRAW_FLAG);
-#endif
 		post_redraw();
 	}
 }
@@ -804,7 +792,6 @@ void qdGameDispatcher::redraw_scene(bool draw_interface) {
 		}
 
 		_screen_texts.redraw();
-#ifndef _QUEST_EDITOR
 		_cur_scene->debug_redraw();
 
 		if (check_flag(FADE_IN_FLAG | FADE_OUT_FLAG)) {
@@ -819,7 +806,6 @@ void qdGameDispatcher::redraw_scene(bool draw_interface) {
 			        qdGameConfig::get_config().screen_sy(),
 			        0, round(phase * 255.f));
 		}
-#endif
 	}
 }
 
@@ -1987,9 +1973,7 @@ bool qdGameDispatcher::close_video() {
 	if (!_interface_dispatcher.is_active())
 		resume();
 
-#ifndef _QUEST_EDITOR
 	set_flag(SKIP_REDRAW_FLAG);
-#endif
 
 	return true;
 }
@@ -2005,26 +1989,13 @@ void qdGameDispatcher::continueVideo() {
 }
 
 bool qdGameDispatcher::merge_global_objects(qdGameObject *obj) {
-#ifndef _QUEST_EDITOR
 	for (auto &is : scene_list()) {
 		is->merge_global_objects(obj);
 	}
-#else
-	qdGameScene *const activeScene = get_active_scene();
-	qdGameSceneList::const_iterator is = scene_list().begin(),
-	                en = scene_list().end();
-	for (; is != en; ++is) {
-		if (*is != activeScene)
-			(*is)->merge_global_objects(obj);
-	}
-	if (activeScene)
-		activeScene->merge_global_objects(obj);
-#endif // _QUEST_EDITOR
 
 	return true;
 }
 
-#ifndef _QUEST_EDITOR
 bool qdGameDispatcher::update_walk_state(const char *object_name, qdGameObjectState *p) {
 	if (qdGameObject * obj = get_global_object(object_name)) {
 		if (obj->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ)
@@ -2042,7 +2013,6 @@ qdGameObjectState *qdGameDispatcher::get_walk_state(const char *object_name) {
 
 	return NULL;
 }
-#endif // _QUEST_EDITOR
 
 bool qdGameDispatcher::split_global_objects(qdGameObject *obj) {
 	for (auto &is : scene_list()) {
@@ -2063,7 +2033,6 @@ bool qdGameDispatcher::init_inventories() {
 }
 
 bool qdGameDispatcher::toggle_inventory(bool state) {
-#ifndef _QUEST_EDITOR
 	toggle_full_redraw();
 
 	drop_mouse_object();
@@ -2081,7 +2050,6 @@ bool qdGameDispatcher::toggle_inventory(bool state) {
 
 	_cur_inventory = NULL;
 	update_ingame_interface();
-#endif
 	return true;
 }
 
@@ -2171,14 +2139,6 @@ bool qdGameDispatcher::rename_inventory(qdInventory *p, const char *name) {
 }
 
 bool qdGameDispatcher::add_video(qdVideo *p, qdVideo const *before) {
-#ifdef _QUEST_EDITOR
-	if (before) {
-		if (_videos.insert_object(p, before)) {
-			p->set_owner(this);
-			return true;
-		}
-	} else //!!!!!!!!
-#endif // _QUEST_EDITOR
 		if (_videos.add_object(p)) {
 			p->set_owner(this);
 			return true;
@@ -2818,10 +2778,6 @@ bool qdGameDispatcher::add_redraw_region(const grScreenRegion &reg) {
 }
 
 bool qdGameDispatcher::init() {
-#ifdef _QUEST_EDITOR
-	load_resources();
-#endif
-
 	if (sndDispatcher * sdp = sndDispatcher::get_dispatcher())
 		sdp->stop_sounds();
 
@@ -3195,7 +3151,6 @@ bool qdGameDispatcher::deactivate_scene_triggers(const qdGameScene *p) {
 }
 
 bool qdGameDispatcher::set_fade(bool fade_in, float duration) {
-#ifndef _QUEST_EDITOR
 	if (duration < 1.f / 40.f)
 		duration = 1.f / 40.f;
 
@@ -3209,7 +3164,6 @@ bool qdGameDispatcher::set_fade(bool fade_in, float duration) {
 	fade_timer_ = 0.f;
 	_fade_duration = duration;
 
-#endif
 	return true;
 }
 
