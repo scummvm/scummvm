@@ -37,10 +37,10 @@ public:
 	//! Регистрация ресурса.
 	bool register_resource(qdResource *res, const T *res_owner) {
 		qdResourceHandle<T> hres(res, res_owner);
-		typename handle_container_t::iterator it = std::find(handles_.begin(), handles_.end(), hres);
+		typename handle_container_t::iterator it = std::find(_handles.begin(), _handles.end(), hres);
 
-		if (it != handles_.end()) return false;
-		handles_.push_back(hres);
+		if (it != _handles.end()) return false;
+		_handles.push_back(hres);
 
 		return true;
 	}
@@ -48,10 +48,10 @@ public:
 	//! Отмена регистрации ресурса.
 	bool unregister_resource(qdResource *res, const T *res_owner) {
 		qdResourceHandle<T> hres(res, res_owner);
-		typename handle_container_t::iterator it = std::find(handles_.begin(), handles_.end(), hres);
+		typename handle_container_t::iterator it = std::find(_handles.begin(), _handles.end(), hres);
 
-		if (it != handles_.end()) {
-			handles_.erase(it);
+		if (it != _handles.end()) {
+			_handles.erase(it);
 			return true;
 		}
 
@@ -62,29 +62,29 @@ public:
 	bool is_registered(const qdResource *res, const T *res_owner = NULL) const {
 		if (res_owner) {
 			qdResourceHandle<T> hres(const_cast<qdResource *>(res), res_owner);
-			typename handle_container_t::const_iterator it = std::find(handles_.begin(), handles_.end(), hres);
-			return (it != handles_.end());
+			typename handle_container_t::const_iterator it = std::find(_handles.begin(), _handles.end(), hres);
+			return (it != _handles.end());
 		} else {
-			typename handle_container_t::const_iterator it = std::find(handles_.begin(), handles_.end(), *res);
-			return (it != handles_.end());
+			typename handle_container_t::const_iterator it = std::find(_handles.begin(), _handles.end(), *res);
+			return (it != _handles.end());
 		}
 	}
 
 	const T *find_owner(const qdResource *res) const {
-		typename handle_container_t::const_iterator it = std::find(handles_.begin(), handles_.end(), *res);
-		if (handles_.end() == it) return NULL;
+		typename handle_container_t::const_iterator it = std::find(_handles.begin(), _handles.end(), *res);
+		if (_handles.end() == it) return NULL;
 		return (*it).resource_owner();
 	}
 
 	//! Загружает в память данные для ресурсов.
 	void load_resources(const T *owner = NULL) const {
 		if (owner) {
-			for (typename handle_container_t::const_iterator it = handles_.begin(); it != handles_.end(); ++it) {
+			for (typename handle_container_t::const_iterator it = _handles.begin(); it != _handles.end(); ++it) {
 				if (it->resource_owner() == owner)
 					it->load_resource();
 			}
 		} else {
-			for (typename handle_container_t::const_iterator it = handles_.begin(); it != handles_.end(); ++it)
+			for (typename handle_container_t::const_iterator it = _handles.begin(); it != _handles.end(); ++it)
 				it->load_resource();
 		}
 	}
@@ -92,18 +92,18 @@ public:
 	//! Выгружает из памяти данные ресурсов.
 	void release_resources(const T *owner = NULL, const T *hold_owner = NULL) const {
 		if (owner) {
-			for (typename handle_container_t::const_iterator it = handles_.begin(); it != handles_.end(); ++it) {
+			for (typename handle_container_t::const_iterator it = _handles.begin(); it != _handles.end(); ++it) {
 				if (it->resource_owner() == owner && (!hold_owner || !is_registered(it->resource(), hold_owner)))
 					it->release_resource();
 			}
 		} else {
 			if (hold_owner) {
-				for (typename handle_container_t::const_iterator it = handles_.begin(); it != handles_.end(); ++it) {
+				for (typename handle_container_t::const_iterator it = _handles.begin(); it != _handles.end(); ++it) {
 					if (it->resource_owner() != hold_owner)
 						it->release_resource();
 				}
 			} else {
-				for (typename handle_container_t::const_iterator it = handles_.begin(); it != handles_.end(); ++it)
+				for (typename handle_container_t::const_iterator it = _handles.begin(); it != _handles.end(); ++it)
 					it->release_resource();
 			}
 		}
@@ -133,58 +133,58 @@ protected:
 	template<class U>
 	class qdResourceHandle {
 	public:
-		qdResourceHandle(qdResource *res, const U *res_owner) : resource_(res), resource_owner_(res_owner) {}
-		qdResourceHandle(const qdResourceHandle<U> &h) : resource_(h.resource_), resource_owner_(h.resource_owner_) {}
+		qdResourceHandle(qdResource *res, const U *res_owner) : _resource(res), _resource_owner(res_owner) {}
+		qdResourceHandle(const qdResourceHandle<U> &h) : _resource(h._resource), _resource_owner(h._resource_owner) {}
 		~qdResourceHandle() {}
 
 		qdResourceHandle<U> &operator = (const qdResourceHandle<U> &h) {
 			if (this == &h) return *this;
-			resource_ = h.resource_;
-			resource_owner_ = h.resource_owner_;
+			_resource = h._resource;
+			_resource_owner = h._resource_owner;
 			return *this;
 		}
 
 		bool operator == (const qdResource &res) const {
-			return (resource_ == &res);
+			return (_resource == &res);
 		}
 		bool operator == (const qdResourceHandle<U> &h) const {
-			return (resource_ == h.resource_ && resource_owner_ == h.resource_owner_);
+			return (_resource == h._resource && _resource_owner == h._resource_owner);
 		}
 
 		//! Возвращает указатель на ресурс.
 		qdResource *resource() const {
-			return resource_;
+			return _resource;
 		}
 		//! Возвращает указатель на владельца ресурса.
 		const U *resource_owner() const {
-			return resource_owner_;
+			return _resource_owner;
 		}
 
 		//! Загружает ресурс в память.
 		bool load_resource() const {
-			if (!resource_->is_resource_loaded())
-				return resource_->load_resource();
+			if (!_resource->is_resource_loaded())
+				return _resource->load_resource();
 			return true;
 		}
 		//! Выгружает ресурс из памяти.
 		bool release_resource() const {
-			if (resource_->is_resource_loaded())
-				return resource_->free_resource();
+			if (_resource->is_resource_loaded())
+				return _resource->free_resource();
 			return true;
 		}
 
 	private:
 
 		//! Указатель на ресурс.
-		mutable qdResource *resource_;
+		mutable qdResource *_resource;
 		//! Указатель на владельца ресурса.
-		const T *resource_owner_;
+		const T *_resource_owner;
 	};
 
 	typedef std::list< qdResourceHandle<T> > handle_container_t;
 
 	//! Хэндлы ресурсов.
-	handle_container_t handles_;
+	handle_container_t _handles;
 };
 
 } // namespace QDEngine
