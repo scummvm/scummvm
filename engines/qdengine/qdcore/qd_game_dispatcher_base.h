@@ -37,8 +37,8 @@ namespace QDEngine {
 typedef void (*qdLoadingProgressFnc)(int percents_loaded, void *data);
 
 class qdLoadingProgressInfo {
-	unsigned _total_size;
-	unsigned _loaded_size;
+	uint32 _total_size;
+	uint32 _loaded_size;
 	void *_data;
 	qdLoadingProgressFnc _progress_fnc;
 
@@ -63,7 +63,7 @@ public:
 	void show_progress(int sz) {
 		if (!_total_size || !_progress_fnc) return;
 		_loaded_size += sz;
-		unsigned percents = round(float(_loaded_size) / float(_total_size) * 100.0f);
+		uint32 percents = round(float(_loaded_size) / float(_total_size) * 100.0f);
 		(*_progress_fnc)(percents, _data);
 	}
 

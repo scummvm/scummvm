@@ -66,7 +66,7 @@ public:
 		qd_rnd_init(seed);
 	}
 	/// Возвращает случайное значение в интервале [0, m-1].
-	unsigned rnd(unsigned m) const {
+	uint32 rnd(uint32 m) const {
 		return qd_rnd(m);
 	}
 	/// Возвращает случайное значение в интервале [-x, x].

@@ -86,10 +86,10 @@ public:
 		_border_background.set_animation_file(file_name);
 	}
 
-	unsigned background_color() const {
+	uint32 background_color() const {
 		return _background_color;
 	}
-	void set_background_color(unsigned color) {
+	void set_background_color(uint32 color) {
 		_background_color = color;
 	}
 
@@ -217,7 +217,7 @@ private:
 	int _text_set_position;
 
 	qdInterfaceElementState _border_background;
-	unsigned _background_color;
+	uint32 _background_color;
 	bool _has_background_color;
 	int _background_alpha;
 

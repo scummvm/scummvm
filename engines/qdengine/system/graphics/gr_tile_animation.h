@@ -64,7 +64,7 @@ public:
 
 	grTileSprite getTile(int tile_index) const;
 
-	void addFrame(const unsigned *frame_data);
+	void addFrame(const uint32 *frame_data);
 
 	bool load(Common::SeekableReadStream *fh);
 

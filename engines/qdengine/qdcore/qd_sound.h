@@ -57,7 +57,7 @@ public:
 		return file_name();
 	}
 #ifdef __QD_DEBUG_ENABLE__
-	unsigned resource_data_size() const {
+	uint32 resource_data_size() const {
 		return _sound.data_length();
 	}
 #endif

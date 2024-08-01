@@ -567,7 +567,7 @@ void qdInterfaceTextWindow::set_scrolling(int y_delta) {
 void qdInterfaceTextWindow::text_redraw() const {
 	Vect2i ar = r() - _text_size / 2;
 
-	unsigned col = _textFormat.color();
+	uint32 col = _textFormat.color();
 
 	const grFont *font = qdGameDispatcher::get_dispatcher()->
 	                     find_font(_textFormat.font_type());

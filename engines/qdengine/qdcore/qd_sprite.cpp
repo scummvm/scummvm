@@ -354,7 +354,7 @@ bool qdSprite::load(const char *fname) {
 		set_flag(ALPHA_FLAG);
 		for (int i = 0; i < _picture_size.x * _picture_size.y; i++) {
 			uint16 r, g, b, a;
-			const unsigned min_color = 8;
+			const uint32 min_color = 8;
 
 			b = _data[i * 4 + 0];
 			g = _data[i * 4 + 1];
@@ -372,11 +372,11 @@ bool qdSprite::load(const char *fname) {
 		}
 	} else {
 		for (int i = 0; i < _picture_size.x * _picture_size.y; i++) {
-			const unsigned min_color = 8;
+			const uint32 min_color = 8;
 
-			unsigned b = _data[i * 3 + 0];
-			unsigned g = _data[i * 3 + 1];
-			unsigned r = _data[i * 3 + 2];
+			uint32 b = _data[i * 3 + 0];
+			uint32 g = _data[i * 3 + 1];
+			uint32 r = _data[i * 3 + 2];
 
 			if ((r || g || b) && (r < min_color && g < min_color && b < min_color))
 				_data[i * 3 + 0] = _data[i * 3 + 1] = _data[i * 3 + 2] = min_color;
@@ -524,7 +524,7 @@ bool qdSprite::uncompress() {
 			byte *p = _data;
 			for (int i = 0; i < _picture_size.y; i++) {
 				_rle_data->decode_line(i, p);
-				p += _picture_size.x * sizeof(unsigned);
+				p += _picture_size.x * sizeof(uint32);
 			}
 		} else {
 			_data = new byte[_picture_size.x * _picture_size.y * 2];
@@ -733,7 +733,7 @@ void qdSprite::redraw(int x, int y, int z, float scale, int mode) const {
 #endif
 }
 
-void qdSprite::draw_mask(int x, int y, int z, unsigned mask_color, int mask_alpha, int mode) const {
+void qdSprite::draw_mask(int x, int y, int z, uint32 mask_color, int mask_alpha, int mode) const {
 	int xx = x - size_x() / 2;
 	int yy = y - size_y() / 2;
 
@@ -757,7 +757,7 @@ void qdSprite::draw_mask(int x, int y, int z, unsigned mask_color, int mask_alph
 		grDispatcher::instance()->PutSprMask_rle(xx, yy, _picture_size.x, _picture_size.y, _rle_data, mask_color, mask_alpha, mode, check_flag(ALPHA_FLAG));
 }
 
-void qdSprite::draw_mask(int x, int y, int z, unsigned mask_color, int mask_alpha, float scale, int mode) const {
+void qdSprite::draw_mask(int x, int y, int z, uint32 mask_color, int mask_alpha, float scale, int mode) const {
 	int xx = x - round(float(size_x()) * scale) / 2;
 	int yy = y - round(float(size_y()) * scale) / 2;
 
@@ -781,7 +781,7 @@ void qdSprite::draw_mask(int x, int y, int z, unsigned mask_color, int mask_alph
 		grDispatcher::instance()->PutSprMask_rle(xx, yy, _picture_size.x, _picture_size.y, _rle_data, mask_color, mask_alpha, mode, scale, check_flag(ALPHA_FLAG));
 }
 
-void qdSprite::draw_mask_rot(int x, int y, int z, float angle, unsigned mask_color, int mask_alpha, int mode) const {
+void qdSprite::draw_mask_rot(int x, int y, int z, float angle, uint32 mask_color, int mask_alpha, int mode) const {
 	int xx = x;
 	int yy = y;
 
@@ -807,7 +807,7 @@ void qdSprite::draw_mask_rot(int x, int y, int z, float angle, unsigned mask_col
 		grDispatcher::instance()->PutSprMask_rle_rot(Vect2i(xx, yy), _picture_size, _rle_data, check_flag(ALPHA_FLAG), mask_color, mask_alpha, mode, angle);
 }
 
-void qdSprite::draw_mask_rot(int x, int y, int z, float angle, unsigned mask_color, int mask_alpha, const Vect2f &scale, int mode) const {
+void qdSprite::draw_mask_rot(int x, int y, int z, float angle, uint32 mask_color, int mask_alpha, const Vect2f &scale, int mode) const {
 	int xx = x;
 	int yy = y;
 
@@ -836,7 +836,7 @@ void qdSprite::draw_mask_rot(int x, int y, int z, float angle, unsigned mask_col
 		grDispatcher::instance()->PutSprMask_rle_rot(Vect2i(xx, yy), _picture_size, _rle_data, check_flag(ALPHA_FLAG), mask_color, mask_alpha, mode, angle, scale);
 }
 
-void qdSprite::draw_contour(int x, int y, unsigned color, int mode) const {
+void qdSprite::draw_contour(int x, int y, uint32 color, int mode) const {
 	int xx = x - size_x() / 2;
 	int yy = y - size_y() / 2;
 
@@ -861,7 +861,7 @@ void qdSprite::draw_contour(int x, int y, unsigned color, int mode) const {
 	}
 }
 
-void qdSprite::draw_contour(int x, int y, unsigned color, float scale, int mode) const {
+void qdSprite::draw_contour(int x, int y, uint32 color, float scale, int mode) const {
 	int xx = x - round(float(size_x()) * scale) / 2;
 	int yy = y - round(float(size_y()) * scale) / 2;
 
@@ -914,7 +914,7 @@ bool qdSprite::hit(int x, int y) const {
 				break;
 			}
 		} else {
-			unsigned pixel;
+			uint32 pixel;
 			_rle_data->decode_pixel(x, y, pixel);
 			if (check_flag(ALPHA_FLAG)) {
 				switch (_format) {
@@ -1333,9 +1333,9 @@ bool qdSprite::get_edges_width(int &left, int &top, int &right, int &bottom) {
 	return true;
 }
 
-unsigned qdSprite::data_size() const {
+uint32 qdSprite::data_size() const {
 	if (!is_compressed()) {
-		unsigned sz = _picture_size.x * _picture_size.y;
+		uint32 sz = _picture_size.x * _picture_size.y;
 
 		switch (_format) {
 		case GR_RGB565:

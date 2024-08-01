@@ -68,8 +68,8 @@ public:
 
 	virtual void redraw(int offs_x = 0, int offs_y = 0) const = 0;
 	virtual void debug_redraw() const = 0;
-	virtual void draw_contour(unsigned color) const = 0;
-	virtual void draw_shadow(int offs_x, int offs_y, unsigned color, int alpha) const = 0;
+	virtual void draw_contour(uint32 color) const = 0;
+	virtual void draw_shadow(int offs_x, int offs_y, uint32 color, int alpha) const = 0;
 
 	virtual bool need_redraw() const {
 		return false;

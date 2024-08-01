@@ -142,7 +142,7 @@ void qdScreenText::redraw(const Vect2i &owner_pos) const {
 	int x = owner_pos.x + _pos.x;
 	int y = owner_pos.y + _pos.y;
 
-	unsigned col = _hover_mode ? _text_format.hover_color() : _text_format.color();
+	uint32 col = _hover_mode ? _text_format.hover_color() : _text_format.color();
 
 	const grFont *font = qdGameDispatcher::get_dispatcher()->
 	                     find_font(_text_format.font_type());

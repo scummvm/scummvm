@@ -203,7 +203,7 @@ void qdAnimation::redraw_rot(int x, int y, int z, float angle, const Vect2f &sca
 		p->redraw_rot(x, y, z, angle, scale, mode);
 }
 
-void qdAnimation::draw_mask(int x, int y, int z, unsigned mask_color, int mask_alpha, int mode) const {
+void qdAnimation::draw_mask(int x, int y, int z, uint32 mask_color, int mask_alpha, int mode) const {
 	if (check_flag(QD_ANIMATION_FLAG_FLIP_HORIZONTAL))
 		mode |= GR_FLIP_HORIZONTAL;
 
@@ -217,7 +217,7 @@ void qdAnimation::draw_mask(int x, int y, int z, unsigned mask_color, int mask_a
 		p->draw_mask(x, y, z, mask_color, mask_alpha, mode);
 }
 
-void qdAnimation::draw_mask(int x, int y, int z, unsigned mask_color, int mask_alpha, float scale, int mode) const {
+void qdAnimation::draw_mask(int x, int y, int z, uint32 mask_color, int mask_alpha, float scale, int mode) const {
 	if (fabs(scale - 1.0f) < 0.01f) {
 		draw_mask(x, y, z, mask_color, mask_alpha, mode);
 		return;
@@ -236,7 +236,7 @@ void qdAnimation::draw_mask(int x, int y, int z, unsigned mask_color, int mask_a
 		p->draw_mask(x, y, z, mask_color, mask_alpha, scale, mode);
 }
 
-void qdAnimation::draw_mask_rot(int x, int y, int z, float angle, unsigned mask_color, int mask_alpha, int mode) const {
+void qdAnimation::draw_mask_rot(int x, int y, int z, float angle, uint32 mask_color, int mask_alpha, int mode) const {
 	if (check_flag(QD_ANIMATION_FLAG_FLIP_HORIZONTAL))
 		mode |= GR_FLIP_HORIZONTAL;
 
@@ -249,7 +249,7 @@ void qdAnimation::draw_mask_rot(int x, int y, int z, float angle, unsigned mask_
 		p->draw_mask_rot(x, y, z, angle, mask_color, mask_alpha, mode);
 }
 
-void qdAnimation::draw_mask_rot(int x, int y, int z, float angle, unsigned mask_color, int mask_alpha, const Vect2f &scale, int mode) const {
+void qdAnimation::draw_mask_rot(int x, int y, int z, float angle, uint32 mask_color, int mask_alpha, const Vect2f &scale, int mode) const {
 	if (fabs(scale.x - 1.0f) < 0.01f && fabs(scale.y - 1.0f) < 0.01f) {
 		draw_mask_rot(x, y, z, angle, mask_color, mask_alpha, mode);
 		return;
@@ -265,7 +265,7 @@ void qdAnimation::draw_mask_rot(int x, int y, int z, float angle, unsigned mask_
 		p->draw_mask_rot(x, y, z, angle, mask_color, mask_alpha, scale, mode);
 }
 
-void qdAnimation::draw_contour(int x, int y, unsigned color) const {
+void qdAnimation::draw_contour(int x, int y, uint32 color) const {
 	int mode = 0;
 
 	if (check_flag(QD_ANIMATION_FLAG_FLIP_HORIZONTAL))
@@ -281,7 +281,7 @@ void qdAnimation::draw_contour(int x, int y, unsigned color) const {
 	if (p) p->draw_contour(x, y, color, mode);
 }
 
-void qdAnimation::draw_contour(int x, int y, unsigned color, float scale) const {
+void qdAnimation::draw_contour(int x, int y, uint32 color, float scale) const {
 	int mode = 0;
 
 	if (check_flag(QD_ANIMATION_FLAG_FLIP_HORIZONTAL))
@@ -662,7 +662,7 @@ bool qdAnimation::tileCompress(grTileCompressionMethod method, int tolerance) {
 	_tileAnimation->init(_num_frames, Vect2i(_sx, _sy), _frames.front()->check_flag(qdSprite::ALPHA_FLAG));
 
 	for (int i = 0; i < _num_frames; i++)
-		_tileAnimation->addFrame((const unsigned *)get_frame(i)->data());
+		_tileAnimation->addFrame((const uint32 *)get_frame(i)->data());
 
 	if (method != TILE_UNCOMPRESSED)
 		_tileAnimation->compress(method);
@@ -1075,8 +1075,8 @@ const qdAnimationFrame *qdAnimation::get_scaled_frame(int number, int scale_inde
 }
 
 #ifdef __QD_DEBUG_ENABLE__
-unsigned qdAnimation::resource_data_size() const {
-	unsigned size = 0;
+uint32 qdAnimation::resource_data_size() const {
+	uint32 size = 0;
 
 	for (qdAnimationFrameList::const_iterator it = _frames.begin(); it != _frames.end(); ++it)
 		size += (*it)->resource_data_size();

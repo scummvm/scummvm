@@ -56,7 +56,7 @@ public:
 private:
 
 
-	std::vector<unsigned> temp_buffer_;
+	std::vector<uint32> temp_buffer_;
 
 	std::vector<double> weights_buffer_;
 	std::vector<ContributionType> contribution_buffer_;
@@ -190,10 +190,10 @@ void C2PassScale<FilterClass>::ScaleRow(COLORREF *pSrc, uint32 uSrcWidth, COLORR
 			da += Contrib->ContribRow[x].Weights[i - iLeft] * (double)(make_a(pSrcRow[i]));
 		}
 
-		unsigned r = round(dr);
-		unsigned g = round(dg);
-		unsigned b = round(db);
-		unsigned a = round(da);
+		uint32 r = round(dr);
+		uint32 g = round(dg);
+		uint32 b = round(db);
+		uint32 a = round(da);
 
 		pDstRow[x] = make_rgba(r, g, b, a); // Place result in destination pixel
 	}
@@ -234,10 +234,10 @@ void C2PassScale<FilterClass>::ScaleCol(COLORREF *pSrc, uint32 uSrcWidth, COLORR
 			da += Contrib->ContribRow[y].Weights[i - iLeft] * (double)(make_a(pCurSrc));
 		}
 
-		unsigned r = round(dr);
-		unsigned g = round(dg);
-		unsigned b = round(db);
-		unsigned a = round(da);
+		uint32 r = round(dr);
+		uint32 g = round(dg);
+		uint32 b = round(db);
+		uint32 a = round(da);
 
 		pRes[y * uResWidth + uCol] = make_rgba(r, g, b, a); // Place result in destination pixel
 	}

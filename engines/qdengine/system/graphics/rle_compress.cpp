@@ -82,7 +82,7 @@ bool rleBuffer::encode(int sx, int sy, const byte *buf) {
 
 	_data.reserve(sx * sy);
 
-	const unsigned *buffer = reinterpret_cast<const unsigned *>(buf);
+	const uint32 *buffer = reinterpret_cast<const uint32 *>(buf);
 
 	for (int y = 0; y < sy; y++) {
 		int count = 0;
@@ -92,7 +92,7 @@ bool rleBuffer::encode(int sx, int sy, const byte *buf) {
 
 		while (count < sx) {
 			int index = count;
-			unsigned pixel = buffer[index++];
+			uint32 pixel = buffer[index++];
 
 			while (index < sx && index - count < 127 && buffer[index] == pixel)
 				index++;
@@ -116,7 +116,7 @@ bool rleBuffer::encode(int sx, int sy, const byte *buf) {
 		}
 		buffer += sx;
 	}
-	std::vector<unsigned>(_data).swap(_data);
+	std::vector<uint32>(_data).swap(_data);
 
 	resize_buffers();
 
@@ -125,9 +125,9 @@ bool rleBuffer::encode(int sx, int sy, const byte *buf) {
 
 bool rleBuffer::decode_line(int y, byte *out_buf) const {
 	const char *header_ptr = &*(_header.begin() + _header_offset[y]);
-	const unsigned *data_ptr = &*(_data.begin() + _data_offset[y]);
+	const uint32 *data_ptr = &*(_data.begin() + _data_offset[y]);
 
-	unsigned *out_ptr = reinterpret_cast<unsigned *>(out_buf);
+	uint32 *out_ptr = reinterpret_cast<uint32 *>(out_buf);
 
 	int size = line_header_length(y);
 
@@ -139,7 +139,7 @@ bool rleBuffer::decode_line(int y, byte *out_buf) const {
 			data_ptr++;
 		} else {
 			count = -count;
-			memcpy(out_ptr, data_ptr, count * sizeof(unsigned));
+			memcpy(out_ptr, data_ptr, count * sizeof(uint32));
 
 			out_ptr += count;
 			data_ptr += count;
@@ -149,9 +149,9 @@ bool rleBuffer::decode_line(int y, byte *out_buf) const {
 	return true;
 }
 
-bool rleBuffer::decode_pixel(int x, int y, unsigned &pixel) {
+bool rleBuffer::decode_pixel(int x, int y, uint32 &pixel) {
 	const char *header_ptr = &*(_header.begin() + _header_offset[y]);
-	const unsigned *data_ptr = &*(_data.begin() + _data_offset[y]);
+	const uint32 *data_ptr = &*(_data.begin() + _data_offset[y]);
 
 	int xx = 0;
 	char count = *header_ptr++;
@@ -177,8 +177,8 @@ bool rleBuffer::decode_pixel(int x, int y, unsigned &pixel) {
 	return true;
 }
 
-unsigned rleBuffer::size() {
-	return _data.size() * sizeof(unsigned) + _data_offset.size() + _header_offset.size() * sizeof(unsigned) + _header.size();
+uint32 rleBuffer::size() {
+	return _data.size() * sizeof(uint32) + _data_offset.size() + _header_offset.size() * sizeof(uint32) + _header.size();
 }
 
 bool rleBuffer::convert_data(int bits_per_pixel) {
@@ -256,7 +256,7 @@ bool rleBuffer::convert_data(int bits_per_pixel) {
 }
 
 void rleBuffer::resize_buffers() {
-	unsigned len = line_length() * sizeof(unsigned);
+	uint32 len = line_length() * sizeof(uint32);
 
 	if (_buffer0.size() < len)
 		_buffer0.resize(len);

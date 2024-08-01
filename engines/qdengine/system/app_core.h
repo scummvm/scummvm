@@ -32,7 +32,7 @@ namespace QDEngine {
 void *appGetHandle();
 void appSetHandle(void *hwnd);
 
-unsigned app_memory_usage();
+uint32 app_memory_usage();
 
 typedef void (*SetFunc)(const char *);
 typedef const char *(*GetFunc)(void);
@@ -44,7 +44,7 @@ bool is_directory_exist(const char *dir_name);
 
 Common::String change_ext(const char *file_name, const char *new_ext);
 
-unsigned file_size(const char *file_name);
+uint32 file_size(const char *file_name);
 
 std::string path_to_file_name(const std::string &str);
 

@@ -133,10 +133,10 @@ public:
 	qdGameObjectAnimated *get_object(const Vect2s &pos) const;
 	bool is_object_in_list(const qdGameObjectAnimated *p) const;
 
-	unsigned shadow_color() const {
+	uint32 shadow_color() const {
 		return _shadow_color;
 	}
-	void set_shadow_color(unsigned color) {
+	void set_shadow_color(uint32 color) {
 		_shadow_color = color;
 	}
 
@@ -185,7 +185,7 @@ private:
 
 	bool _need_redraw;
 
-	unsigned _shadow_color;
+	uint32 _shadow_color;
 	int _shadow_alpha;
 
 	//! Дополнительные ячейки для всех наборов инвентори

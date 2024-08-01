@@ -233,7 +233,7 @@ void qdGameObjectAnimated::redraw(int offs_x, int offs_y) const {
 }
 
 bool qdGameObjectAnimated::need_redraw() const {
-	unsigned color = (_cur_state == -1) ? 0 : _states[_cur_state]->shadow_color();
+	uint32 color = (_cur_state == -1) ? 0 : _states[_cur_state]->shadow_color();
 	int alpha = (_cur_state == -1) ? QD_NO_SHADOW_ALPHA : _states[_cur_state]->shadow_alpha();
 
 	return (_animation.get_cur_frame() != _last_frame) ||
@@ -942,7 +942,7 @@ qdGameObjectAnimated::StateStatus qdGameObjectAnimated::state_status(const qdGam
 	return STATE_INACTIVE;
 }
 
-void qdGameObjectAnimated::draw_contour(unsigned color) const {
+void qdGameObjectAnimated::draw_contour(uint32 color) const {
 	if (!get_animation()->is_empty()) {
 		Vect2s scrCoord = screen_pos();
 		get_animation()->draw_contour(scrCoord.x, scrCoord.y, color);
@@ -1549,7 +1549,7 @@ qdGameObjectState *qdGameObjectAnimated::get_mouse_hover_state() {
 	return NULL;
 }
 
-void qdGameObjectAnimated::draw_shadow(int offs_x, int offs_y, unsigned color, int alpha) const {
+void qdGameObjectAnimated::draw_shadow(int offs_x, int offs_y, uint32 color, int alpha) const {
 	if (alpha == QD_NO_SHADOW_ALPHA || get_animation()->is_empty())
 		return;
 

@@ -30,19 +30,19 @@
 namespace QDEngine {
 
 
-unsigned grTileSprite::_comprasionTolerance = 2;
+uint32 grTileSprite::_comprasionTolerance = 2;
 
 namespace tile_compress {
 
-const unsigned RLE_SEQUENCE_MASK = 1 << (GR_TILE_SPRITE_SIZE_SHIFT * 2 + 1);
+const uint32 RLE_SEQUENCE_MASK = 1 << (GR_TILE_SPRITE_SIZE_SHIFT * 2 + 1);
 
-unsigned encodeRLE(const unsigned *in_data, unsigned *out_data) {
-	unsigned size = 0;
+uint32 encodeRLE(const uint32 *in_data, uint32 *out_data) {
+	uint32 size = 0;
 
 	int count = 0;
 	while (count < GR_TILE_SPRITE_SIZE) {
 		int index = count;
-		unsigned pixel = in_data[index++];
+		uint32 pixel = in_data[index++];
 
 		while (index < GR_TILE_SPRITE_SIZE && in_data[index] == pixel)
 			index++;
@@ -72,19 +72,19 @@ unsigned encodeRLE(const unsigned *in_data, unsigned *out_data) {
 	return size;
 }
 
-bool decodeRLE(const unsigned *in_data, unsigned *out_data) {
-	const unsigned *in_buf = in_data;
-	unsigned *out_buf = out_data;
+bool decodeRLE(const uint32 *in_data, uint32 *out_data) {
+	const uint32 *in_buf = in_data;
+	uint32 *out_buf = out_data;
 
 	int out_size = 0;
 	while (out_size < GR_TILE_SPRITE_SIZE) {
-		unsigned count = *in_buf++;
+		uint32 count = *in_buf++;
 		if (count & RLE_SEQUENCE_MASK) {
 			count ^= RLE_SEQUENCE_MASK;
 			for (int i = 0; i < count; i++)
 				*out_buf++ = *in_buf++;
 		} else {
-			unsigned color = *in_buf++;
+			uint32 color = *in_buf++;
 			for (int i = 0; i < count; i++)
 				*out_buf++ = color;
 		}
@@ -128,7 +128,7 @@ void grDispatcher::PutTileSpr(int x, int y, const grTileSprite &sprite, bool has
 		const byte *data_line = data_ptr;
 
 		for (int j = 0; j < psx; j++) {
-			unsigned a = data_line[3];
+			uint32 a = data_line[3];
 			if (a != 255) {
 				if (a)
 					*scr_buf = alpha_blend_565(make_rgb565u(data_line[2], data_line[1], data_line[0]), *scr_buf, a);
@@ -143,7 +143,7 @@ void grDispatcher::PutTileSpr(int x, int y, const grTileSprite &sprite, bool has
 	}
 }
 
-grTileSprite::grTileSprite(const unsigned *data_ptr) : _data(data_ptr) {
+grTileSprite::grTileSprite(const uint32 *data_ptr) : _data(data_ptr) {
 }
 
 bool grTileSprite::operator == (const grTileSprite &sprite) const {
@@ -161,7 +161,7 @@ bool grTileSprite::operator == (const grTileSprite &sprite) const {
 	return true;
 }
 
-unsigned grTileSprite::compress(const unsigned *in_data, unsigned *out_data, grTileCompressionMethod compress_method) {
+uint32 grTileSprite::compress(const uint32 *in_data, uint32 *out_data, grTileCompressionMethod compress_method) {
 	if (compress_method == TILE_COMPRESS_RLE) {
 		return tile_compress::encodeRLE(in_data, out_data);
 	} else if (compress_method == TILE_COMPRESS_LZ77) {
@@ -176,7 +176,7 @@ unsigned grTileSprite::compress(const unsigned *in_data, unsigned *out_data, grT
 	return 0;
 }
 
-bool grTileSprite::uncompress(const unsigned *in_data, unsigned in_data_length, unsigned *out_data, grTileCompressionMethod compress_method) {
+bool grTileSprite::uncompress(const uint32 *in_data, uint32 in_data_length, uint32 *out_data, grTileCompressionMethod compress_method) {
 	if (compress_method == TILE_COMPRESS_RLE) {
 		return tile_compress::decodeRLE(in_data, out_data);
 	} else if (compress_method == TILE_COMPRESS_LZ77) {

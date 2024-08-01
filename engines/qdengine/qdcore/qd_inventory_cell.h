@@ -152,7 +152,7 @@ public:
 	//! Запись данных в сэйв.
 	bool save_data(Common::WriteStream &fh) const;
 
-	static void set_shadow(unsigned color, int alpha) {
+	static void set_shadow(uint32 color, int alpha) {
 		shadow_color_ = color;
 		shadow_alpha_ = alpha;
 	}
@@ -179,7 +179,7 @@ private:
 	mutable qdGameObjectAnimated *object_;
 
 	static Vect2i screen_offset_;
-	static unsigned shadow_color_;
+	static uint32 shadow_color_;
 	static int shadow_alpha_;
 };
 

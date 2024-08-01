@@ -41,8 +41,8 @@ void appSetHandle(void *hwnd) {
 	app_hWnd = hwnd;
 }
 
-unsigned app_memory_usage() {
-	unsigned size = 0;
+uint32 app_memory_usage() {
+	uint32 size = 0;
 
 	warning("STUB: app_memory_usage()");
 #if 0
@@ -91,7 +91,7 @@ Common::String change_ext(const char *file_name, const char *new_ext) {
 	return fpath;
 }
 
-unsigned file_size(const char *file_name) {
+uint32 file_size(const char *file_name) {
 	Common::File fh;
 	if (fh.open(file_name))
 		return fh.size();

@@ -86,7 +86,7 @@ public:
 		return set_state(!_state);
 	}
 
-	unsigned height() const {
+	uint32 height() const {
 		return _height;
 	}
 	bool set_height(int _h);
@@ -115,10 +115,10 @@ public:
 		_shadow_alpha = alpha;
 	}
 
-	unsigned shadow_color() const {
+	uint32 shadow_color() const {
 		return _shadow_color;
 	}
-	void set_shadow_color(unsigned color) {
+	void set_shadow_color(uint32 color) {
 		_shadow_color = color;
 	}
 	bool has_shadow() const {
@@ -133,7 +133,7 @@ private:
 	bool _initial_state;
 
 	//! Цвет затенения персонажа, когда он находится в зоне, RGB().
-	unsigned _shadow_color;
+	uint32 _shadow_color;
 	//! Прозрачность затенения персонажа, когда он находится в зоне.
 	/**
 	Значения - [0, 255].

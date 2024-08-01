@@ -203,21 +203,21 @@ public:
 	void PutSpr_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, int mode, float angle);
 	void PutSpr_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, int mode, float angle, const Vect2f &scale);
 
-	void PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, unsigned mask_color, int mask_alpha, int mode, float angle);
-	void PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, unsigned mask_color, int mask_alpha, int mode, float angle, const Vect2f &scale);
-	void PutSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, unsigned mask_color, int mask_alpha, int mode, float angle);
-	void PutSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, unsigned mask_color, int mask_alpha, int mode, float angle, const Vect2f &scale);
+	void PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle);
+	void PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle, const Vect2f &scale);
+	void PutSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle);
+	void PutSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle, const Vect2f &scale);
 
-	void PutSprMask(int x, int y, int sx, int sy, const byte *p, unsigned mask_color, int mask_alpha, int mode);
-	void PutSprMask(int x, int y, int sx, int sy, const byte *p, unsigned mask_color, int mask_alpha, int mode, float scale);
-	void PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer *p, unsigned mask_color, int mask_alpha, int mode, bool alpha_flag);
-	void PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer *p, unsigned mask_color, int mask_alpha, int mode, float scale, bool alpha_flag);
-	void PutSprMask_a(int x, int y, int sx, int sy, const byte *p, unsigned mask_color, int mask_alpha, int mode);
-	void PutSprMask_a(int x, int y, int sx, int sy, const byte *p, unsigned mask_color, int mask_alpha, int mode, float scale);
+	void PutSprMask(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode);
+	void PutSprMask(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode, float scale);
+	void PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer *p, uint32 mask_color, int mask_alpha, int mode, bool alpha_flag);
+	void PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer *p, uint32 mask_color, int mask_alpha, int mode, float scale, bool alpha_flag);
+	void PutSprMask_a(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode);
+	void PutSprMask_a(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode, float scale);
 
 	void PutTileSpr(int x, int y, const grTileSprite &sprite, bool has_alpha, int mode);
 
-	void PutChar(int x, int y, unsigned color, int font_sx, int font_sy, const byte *font_alpha, const grScreenRegion &char_region);
+	void PutChar(int x, int y, uint32 color, int font_sx, int font_sy, const byte *font_alpha, const grScreenRegion &char_region);
 
 	void DrawSprContour_a(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode);
 	void DrawSprContour_a(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode, float scale);
@@ -226,9 +226,9 @@ public:
 	void DrawSprContour(int x, int y, int sx, int sy, const rleBuffer *p, int contour_color, int mode, bool alpha_flag);
 	void DrawSprContour(int x, int y, int sx, int sy, const rleBuffer *p, int contour_color, int mode, float scale, bool alpha_flag);
 
-	bool DrawText(int x, int y, unsigned color, const char *str, int hspace = 0, int vspace = 0, const grFont *font = NULL);
-	bool DrawAlignedText(int x, int y, int sx, int sy, unsigned color, const char *str, grTextAlign align = GR_ALIGN_LEFT, int hspace = 0, int vspace = 0, const grFont *font = NULL);
-	bool DrawParsedText(int x, int y, int sx, int sy, unsigned color, const UI_TextParser *parser, grTextAlign align = GR_ALIGN_LEFT, const grFont *font = NULL);
+	bool DrawText(int x, int y, uint32 color, const char *str, int hspace = 0, int vspace = 0, const grFont *font = NULL);
+	bool DrawAlignedText(int x, int y, int sx, int sy, uint32 color, const char *str, grTextAlign align = GR_ALIGN_LEFT, int hspace = 0, int vspace = 0, const grFont *font = NULL);
+	bool DrawParsedText(int x, int y, int sx, int sy, uint32 color, const UI_TextParser *parser, grTextAlign align = GR_ALIGN_LEFT, const grFont *font = NULL);
 	int TextWidth(const char *str, int hspace = 0, const grFont *font = NULL, bool first_string_only = false) const;
 	int TextHeight(const char *str, int vspace = 0, const grFont *font = NULL) const;
 
@@ -261,7 +261,7 @@ public:
 
 	void LineTo(int x, int y, int len, int dir, int col, int line_style = 0);
 	void Rectangle(int x, int y, int sx, int sy, int outcol, int incol, int mode, int line_style = 0);
-	void RectangleAlpha(int x, int y, int sx, int sy, unsigned color, int alpha);
+	void RectangleAlpha(int x, int y, int sx, int sy, uint32 color, int alpha);
 
 	int PalettedMode() const {
 		return (_flags & GR_PALETTE);
@@ -288,7 +288,7 @@ public:
 		mask_555_b = 0xFFFF & (0x001F << 0)
 	};
 
-	inline unsigned make_rgb(unsigned color) const {
+	inline uint32 make_rgb(uint32 color) const {
 		switch (_pixel_format) {
 		case GR_RGB565:
 			return make_rgb565u((color >> 0) & 0xFF, (color >> 8) & 0xFF, (color >> 16) & 0xFF);
@@ -302,7 +302,7 @@ public:
 		return 0;
 	}
 
-	inline unsigned make_rgb(unsigned r, unsigned g, unsigned b) const {
+	inline uint32 make_rgb(uint32 r, uint32 g, uint32 b) const {
 		switch (_pixel_format) {
 		case GR_RGB565:
 			return make_rgb565u(r, g, b);
@@ -330,42 +330,42 @@ public:
 		return false;
 	}
 
-	static inline unsigned make_rgb888(unsigned r, unsigned g, unsigned b) {
+	static inline uint32 make_rgb888(uint32 r, uint32 g, uint32 b) {
 		return ((b << 16) | (g << 8) | r);
 	}
 
-	static inline uint16 make_rgb565u(unsigned r, unsigned g, unsigned b) {
+	static inline uint16 make_rgb565u(uint32 r, uint32 g, uint32 b) {
 		return (((r >> 3) << 11) | ((g >> 2) << 5) | ((b >> 3) << 0));
 	}
-	static inline uint16 make_rgb555u(unsigned r, unsigned g, unsigned b) {
+	static inline uint16 make_rgb555u(uint32 r, uint32 g, uint32 b) {
 		return (((r >> 3) << 10) | ((g >> 3) << 5) | ((b >> 3) << 0));
 	}
 
-	static inline void split_rgb565u(unsigned col, byte &r, byte &g, byte &b) {
+	static inline void split_rgb565u(uint32 col, byte &r, byte &g, byte &b) {
 		r = ((col & mask_565_r) >> 11) << 3;
 		g = ((col & mask_565_g) >> 5) << 2;
 		b = ((col & mask_565_b) >> 0) << 3;
 	}
-	static inline void split_rgb555u(unsigned col, byte &r, byte &g, byte &b) {
+	static inline void split_rgb555u(uint32 col, byte &r, byte &g, byte &b) {
 		r = ((col & mask_555_r) >> 10) << 3;
 		g = ((col & mask_555_g) >> 5) << 3;
 		b = ((col & mask_555_b) >> 0) << 3;
 	}
 
-	static inline void split_rgb888(unsigned col, unsigned &r, unsigned &g, unsigned &b) {
+	static inline void split_rgb888(uint32 col, uint32 &r, uint32 &g, uint32 &b) {
 		r = (col >>  0) & 0xFF;
 		g = (col >>  8) & 0xFF;
 		b = (col >> 16) & 0xFF;
 	}
 
-	static inline uint16 make_rgb565(unsigned r, unsigned g, unsigned b) {
+	static inline uint16 make_rgb565(uint32 r, uint32 g, uint32 b) {
 		return ((r << 11) | (g << 5) | (b << 0));
 	}
-	static inline uint16 make_rgb555(unsigned r, unsigned g, unsigned b) {
+	static inline uint16 make_rgb555(uint32 r, uint32 g, uint32 b) {
 		return ((r << 10) | (g << 5) | (b << 0));
 	}
 
-	static inline uint16 alpha_blend_565(uint16 pic_col, uint16 scr_col, unsigned a) {
+	static inline uint16 alpha_blend_565(uint16 pic_col, uint16 scr_col, uint32 a) {
 		if (a != 255) {
 			if (a)
 				return pic_col + (((((scr_col & mask_565_r) * a) >> 8) & mask_565_r) |
@@ -377,7 +377,7 @@ public:
 			return scr_col;
 	}
 
-	static inline uint16 alpha_blend_555(uint16 pic_col, uint16 scr_col, unsigned a) {
+	static inline uint16 alpha_blend_555(uint16 pic_col, uint16 scr_col, uint32 a) {
 		if (a != 255) {
 			if (a)
 				return pic_col + (((((scr_col & mask_555_r) * a) >> 8) & mask_555_r) |
