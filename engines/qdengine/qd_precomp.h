@@ -63,9 +63,6 @@
 
 namespace QDEngine {
 
-// STUB: XZipStream
-#define _NO_ZIP_
-
 #define VK_ESCAPE     0x1B
 #define VK_RETURN     0x0D
 #define VK_SPACE      0x20
