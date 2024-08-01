@@ -262,7 +262,7 @@ void UI_TextParser::getColor(int defColor) {
 	int color = defColor;
 
 	if (*_pstr != '>') {
-		DWORD s = 0;
+		int s = 0;
 		int i = 0;
 		for (; i < 6; ++i, ++_pstr)
 			if (char k = *_pstr) {

@@ -980,7 +980,7 @@ bool qdSprite::put_pixel(int x, int y, byte r, byte g, byte b) {
 void qdSprite::qda_load(Common::SeekableReadStream *fh, int version) {
 	free();
 
-	static char str[MAX_PATH];
+	static char str[256];
 
 	_size.x = fh->readSint32LE();
 	_size.y = fh->readSint32LE();

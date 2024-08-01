@@ -74,8 +74,6 @@ void putIniKey(const char *fname, const char *section, const char *key, int val)
 }
 
 void putIniKey(const char *fname, const char *section, const char *key, const char *val) {
-	static char path[_MAX_PATH];
-
 	warning("STUB: putIniKey");
 }
 

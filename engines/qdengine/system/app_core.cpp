@@ -74,16 +74,6 @@ bool is_file_exist(Common::String file_name) {
 	return res;
 }
 
-bool is_directory_exist(const char *dir_name) {
-	warning("STUB: is_directory_exist()");
-#if 0
-	 DWORD attr = GetFileAttributes(dir_name);
-	if (attr != -1 && attr & FILE_ATTRIBUTE_DIRECTORY)
-		return true;
-#endif
-	return false;
-}
-
 Common::String change_ext(const char *file_name, const char *new_ext) {
 	warning("app_io::change_ext(%s)", file_name);
 	Common::String fpath(file_name);

@@ -48,7 +48,7 @@ qdResource::~qdResource() {
 }
 
 qdResource::file_format_t qdResource::file_format(const char *file_name) {
-	char ext[_MAX_EXT];
+	char ext[10];
 	uint len = strlen(file_name);
 
 	if (len < 4)
@@ -56,7 +56,7 @@ qdResource::file_format_t qdResource::file_format(const char *file_name) {
 
 	if (!strncmp(file_name, "save:", 5)) return RES_SPRITE;
 
-	Common::strlcpy(ext, &file_name[len - 4], _MAX_EXT);
+	Common::strlcpy(ext, &file_name[len - 4], 10);
 
 	if (!scumm_stricmp(ext, ".qda")) return RES_ANIMATION;
 	if (!scumm_stricmp(ext, ".tga")) return RES_SPRITE;

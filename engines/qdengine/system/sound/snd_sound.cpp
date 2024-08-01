@@ -111,27 +111,13 @@ bool sndSound::set_volume(int vol) {
 bool sndSound::change_frequency(float coeff) {
 	if (coeff != 1.0)
 		warning("STUB: sndSound::change_frequency(%f) '%s'", coeff, transCyrillic(sound()->_fname.c_str()));
-#if 0
-	DWORD freq;
-	if (_sound_buffer->GetFrequency(&freq) != DS_OK)
-		return false;
-
-	freq = round(float(freq) * coeff);
-	if (freq > DSBFREQUENCY_MAX)
-		freq = DSBFREQUENCY_MAX;
-	else if (freq < DSBFREQUENCY_MIN)
-		freq = DSBFREQUENCY_MIN;
-
-	if (_sound_buffer->SetFrequency(freq) != DS_OK)
-		return false;
-#endif
 	return true;
 }
 
 float sndSound::position() const {
 	warning("STUB: sndSound::position()");
 #if 0
-	DWORD pos = 0;
+	int32 pos = 0;
 	if (_sound_buffer->GetCurrentPosition(&pos, NULL) == DS_OK) {
 		float norm_pos = float(pos) / float(sound()->data_length());
 
@@ -148,7 +134,7 @@ bool sndSound::set_position(float pos) {
 	if (pos != 0.0)
 		warning("STUB: sndSound::set_position(%f) '%s'", pos, transCyrillic(sound()->_fname.c_str()));
 #if 0
-	DWORD npos = DWORD(float(sound()->data_length() * pos));
+	int32 npos = int32(float(sound()->data_length() * pos));
 
 	if (_sound_buffer->SetCurrentPosition(npos) == DS_OK)
 		return true;
