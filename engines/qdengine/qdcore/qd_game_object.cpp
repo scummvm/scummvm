@@ -120,7 +120,6 @@ void qdGameObject::quant(float dt) {
 bool qdGameObject::update_screen_pos() {
 	if (!check_flag(QD_OBJ_SCREEN_COORDS_FLAG)) {
 		if (const qdCamera * cp = qdCamera::current_camera()) {
-#ifndef _QUEST_EDITOR
 			Vect3f v = cp->global2camera_coord(R());
 
 			if (check_flag(QD_OBJ_FIXED_SCREEN_COORDS_FLAG)) {
@@ -141,14 +140,6 @@ bool qdGameObject::update_screen_pos() {
 				_screen_r.x += round(float(_parallax_offset.x) * cp->scrolling_phase_x());
 				_screen_r.y += round(float(_parallax_offset.y) * cp->scrolling_phase_y());
 			}
-#else
-			Vect3f v = cp->global2camera_coord(R());
-			_screen_r = cp->camera_coord2scr(v);
-
-			v = R();
-			v.z = cp->get_grid_center().z;
-			_screen_depth = cp->global2camera_coord(v).z;
-#endif
 		} else
 			return false;
 	} else {
