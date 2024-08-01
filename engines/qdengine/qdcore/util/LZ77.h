@@ -27,16 +27,16 @@ namespace QDEngine {
 
 class CLZ77 {
 private:
-	long LZComp(const byte *s1, const byte *s2, long maxlen);
-	const byte *FindLZ(const byte *source, const byte *s, long slen, long border, long mlen, int32 &len);
+	int32 LZComp(const byte *s1, const byte *s2, int32 maxlen);
+	const byte *FindLZ(const byte *source, const byte *s, int32 slen, int32 border, int32 mlen, int32 &len);
 public:
 	CLZ77();
 	virtual ~CLZ77();
 
-	void Encode(byte *target, long &tlen, const byte *source, long slen);
-	long Decode(byte *target, long &tlen, const byte *source, long slen);
-	long GetMaxEncoded(long len);
-	long GetMaxDecoded(byte *source);
+	void Encode(byte *target, int32 &tlen, const byte *source, int32 slen);
+	int32 Decode(byte *target, int32 &tlen, const byte *source, int32 slen);
+	int32 GetMaxEncoded(int32 len);
+	int32 GetMaxDecoded(byte *source);
 
 //	virtual void OnStep() = 0;
 };
