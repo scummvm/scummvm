@@ -292,7 +292,6 @@ bool SetErrorMode(uint32 uMode);
 int MultiByteToWideChar(uint32 CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr, int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar);
 int WideCharToMultiByte(uint32 CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr, int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCSTR lpDefaultChar, LPBOOL lpUsedDefaultChar);
 bool SetCurrentDirectory(const char *lpPathName);
-DWORD GetCurrentDirectory(DWORD nBufferLength, char *lpBuffer);
 bool CreateDirectory(const char *lpPathName, void *lpSecurityAttributes);
 char *_fullpath(char *absPath, const char *relPath, size_t maxLength);
 long SetWindowLong(HWND hWnd, int nIndex, long dwNewLong);
