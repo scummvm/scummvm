@@ -405,7 +405,7 @@ bool ADSInterpreter::handleLogicOp(uint16 code, Common::SeekableReadStream *scr)
 			seq = findTTMSeq(enviro, seqnum);
 			env = findTTMEnviro(enviro);
 			if (!seq) {
-				warning("ADS if op referenced non-existant env %d seq %d", enviro, seqnum);
+				warning("ADS if op referenced non-existent env %d seq %d", enviro, seqnum);
 				return false;
 			}
 		} else {
