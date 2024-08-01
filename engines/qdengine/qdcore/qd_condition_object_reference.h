@@ -58,9 +58,6 @@ public:
 
 private:
 
-#ifdef _QUEST_EDITOR
-	qdNamedObjectReference object_reference_;
-#endif
 	const qdNamedObject *_object;
 };
 
