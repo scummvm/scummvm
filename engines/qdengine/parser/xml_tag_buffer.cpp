@@ -75,9 +75,9 @@ tag_buffer &tag_buffer::operator >= (short &var) {
 	return *this;
 }
 
-tag_buffer &tag_buffer::operator >= (unsigned short &var) {
+tag_buffer &tag_buffer::operator >= (uint16 &var) {
 	char *p;
-	var = (unsigned short)strtoul(_data + _data_offset, &p, 0);
+	var = (uint16)strtoul(_data + _data_offset, &p, 0);
 	_data_offset += p - (_data + _data_offset);
 
 	return *this;

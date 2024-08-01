@@ -60,11 +60,11 @@ void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p
 	}
 
 	if (bytes_per_pixel() == 2) {
-		const unsigned short *src = reinterpret_cast<const unsigned short *>(p);
+		const uint16 *src = reinterpret_cast<const uint16 *>(p);
 		sx <<= 1;
 		if (pixel_format_ == GR_ARGB1555) {
 			for (i = y0; i != y1; i += iy) {
-				const unsigned short *line_src = src + ((fy >> 16) * sx);
+				const uint16 *line_src = src + ((fy >> 16) * sx);
 
 				fy += dy;
 				fx = (1 << 15);
@@ -82,7 +82,7 @@ void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p
 			}
 		} else {
 			for (i = y0; i != y1; i += iy) {
-				const unsigned short *line_src = src + ((fy >> 16) * sx);
+				const uint16 *line_src = src + ((fy >> 16) * sx);
 
 				fy += dy;
 				fx = (1 << 15);
@@ -164,10 +164,10 @@ void grDispatcher::PutSpr_z(int x, int y, int z, int sx, int sy, const byte *p, 
 	}
 
 	if (bytes_per_pixel() == 2) {
-		const unsigned short *src = reinterpret_cast<const unsigned short *>(p);
+		const uint16 *src = reinterpret_cast<const uint16 *>(p);
 
 		for (int i = y0; i != y1; i += iy) {
-			const unsigned short *line_src = src + ((fy >> 16) * sx);
+			const uint16 *line_src = src + ((fy >> 16) * sx);
 
 			fy += dy;
 			fx = (1 << 15);
@@ -371,13 +371,13 @@ void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p
 		sx <<= 1;
 		px <<= 1;
 
-		const unsigned short *data_ptr = reinterpret_cast<const unsigned short *>(p) + py * sx;
+		const uint16 *data_ptr = reinterpret_cast<const uint16 *>(p) + py * sx;
 
 		if (pixel_format_ == GR_RGB565) {
 			for (int i = 0; i < psy; i++) {
-				unsigned short *scr_buf = reinterpret_cast<unsigned short *>(screenBuf + yTable[y] + x);
+				uint16 *scr_buf = reinterpret_cast<uint16 *>(screenBuf + yTable[y] + x);
 				zbuf_t *zbuf = zbuffer_ + y * SizeX + (x >> 1);
-				const unsigned short *data_line = data_ptr + px;
+				const uint16 *data_line = data_ptr + px;
 
 				for (int j = 0; j < psx; j++) {
 					unsigned a = data_line[1];
@@ -392,9 +392,9 @@ void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p
 			}
 		} else {
 			for (int i = 0; i < psy; i++) {
-				unsigned short *scr_buf = reinterpret_cast<unsigned short *>(screenBuf + yTable[y] + x);
+				uint16 *scr_buf = reinterpret_cast<uint16 *>(screenBuf + yTable[y] + x);
 				zbuf_t *zbuf = zbuffer_ + y * SizeX + (x >> 1);
-				const unsigned short *data_line = data_ptr + px;
+				const uint16 *data_line = data_ptr + px;
 
 				for (int j = 0; j < psx; j++) {
 					unsigned a = data_line[1];
@@ -537,12 +537,12 @@ void grDispatcher::PutSpr_z(int x, int y, int z, int sx, int sy, const byte *p, 
 
 		x <<= 1;
 
-		const unsigned short *data_ptr = reinterpret_cast<const unsigned short *>(p) + py * sx;
+		const uint16 *data_ptr = reinterpret_cast<const uint16 *>(p) + py * sx;
 
 		for (int i = 0; i < psy; i++) {
-			unsigned short *scr_buf = reinterpret_cast<unsigned short *>(screenBuf + yTable[y] + x);
+			uint16 *scr_buf = reinterpret_cast<uint16 *>(screenBuf + yTable[y] + x);
 			zbuf_t *zbuf = zbuffer_ + y * SizeX + x;
-			const unsigned short *data_line = data_ptr + px;
+			const uint16 *data_line = data_ptr + px;
 
 			for (int j = 0; j < psx; j++) {
 				if (*data_line) {

@@ -353,7 +353,7 @@ bool qdSprite::load(const char *fname) {
 	if (_format == GR_ARGB8888) {
 		set_flag(ALPHA_FLAG);
 		for (int i = 0; i < _picture_size.x * _picture_size.y; i++) {
-			unsigned short r, g, b, a;
+			uint16 r, g, b, a;
 			const unsigned min_color = 8;
 
 			b = _data[i * 4 + 0];
@@ -417,7 +417,7 @@ void qdSprite::save(const char *fname) {
 		byte *dp = _data;
 
 		for (int i = 0; i < _picture_size.x * _picture_size.y; i++) {
-			unsigned short r, g, b, a;
+			uint16 r, g, b, a;
 
 			r = dp[0];
 			g = dp[1];
@@ -456,8 +456,8 @@ bool qdSprite::compress() {
 
 			if (!check_flag(ALPHA_FLAG)) {
 				byte *p = new unsigned char[_picture_size.x * _picture_size.y * 4];
-				unsigned short *dp = reinterpret_cast<unsigned short *>(p);
-				unsigned short *sp = reinterpret_cast<unsigned short *>(_data);
+				uint16 *dp = reinterpret_cast<uint16 *>(p);
+				uint16 *sp = reinterpret_cast<uint16 *>(_data);
 				for (int i = 0; i < _picture_size.x * _picture_size.y; i++) {
 					*dp++ = *sp++;
 					*dp++ = 0;
@@ -528,9 +528,9 @@ bool qdSprite::uncompress() {
 			}
 		} else {
 			_data = new byte[_picture_size.x * _picture_size.y * 2];
-			unsigned short *p = reinterpret_cast<unsigned short *>(_data);
+			uint16 *p = reinterpret_cast<uint16 *>(_data);
 			for (int i = 0; i < _picture_size.y; i++) {
-				const unsigned short *rle_p = reinterpret_cast<const unsigned short *>(rleBuffer::get_buffer(0));
+				const uint16 *rle_p = reinterpret_cast<const uint16 *>(rleBuffer::get_buffer(0));
 				_rle_data->decode_line(i);
 
 				for (int j = 0; j < _picture_size.x; j++) {
@@ -901,9 +901,9 @@ bool qdSprite::hit(int x, int y) const {
 			case GR_RGB565:
 			case GR_ARGB1555:
 				if (check_flag(ALPHA_FLAG)) {
-					if (reinterpret_cast<unsigned short * >(_data)[(x + y * _picture_size.x) * 2 + 1] < 240) return true;
+					if (reinterpret_cast<uint16 * >(_data)[(x + y * _picture_size.x) * 2 + 1] < 240) return true;
 				} else {
-					if (reinterpret_cast<unsigned short * >(_data)[x + y * _picture_size.x]) return true;
+					if (reinterpret_cast<uint16 * >(_data)[x + y * _picture_size.x]) return true;
 				}
 				break;
 			case GR_RGB888:
@@ -920,7 +920,7 @@ bool qdSprite::hit(int x, int y) const {
 				switch (_format) {
 				case GR_RGB565:
 				case GR_ARGB1555:
-					if (reinterpret_cast<unsigned short * >(&pixel)[1] < 240) return true;
+					if (reinterpret_cast<uint16 * >(&pixel)[1] < 240) return true;
 					return false;
 				case GR_RGB888:
 				case GR_ARGB8888:
@@ -954,7 +954,7 @@ bool qdSprite::put_pixel(int x, int y, byte r, unsigned char g, unsigned char b)
 		return false;
 
 	int bytes_per_pix;
-	unsigned short word;
+	uint16 word;
 
 	switch (_format) {
 	case GR_RGB565:
@@ -1216,7 +1216,7 @@ bool qdSprite::get_edges_width(int &left, int &top, int &right, int &bottom) {
 	if (_format == GR_ARGB1555 || _format == GR_RGB565) {
 		if (check_flag(ALPHA_FLAG)) {
 			int idx = 0;
-			unsigned short *data_ptr = reinterpret_cast<unsigned short *>(_data);
+			uint16 *data_ptr = reinterpret_cast<uint16 *>(_data);
 			for (int y = 0; y < _picture_size.y; y++) {
 				int x = 0;
 				while (x < _picture_size.x && data_ptr[(idx + x) * 2 + 1] == 255) x++;
@@ -1242,7 +1242,7 @@ bool qdSprite::get_edges_width(int &left, int &top, int &right, int &bottom) {
 			}
 		} else {
 			int idx = 0;
-			unsigned short *data_ptr = reinterpret_cast<unsigned short *>(_data);
+			uint16 *data_ptr = reinterpret_cast<uint16 *>(_data);
 			for (int y = 0; y < _picture_size.y; y++) {
 				int x = 0;
 				while (x < _picture_size.x && !data_ptr[idx + x]) x++;

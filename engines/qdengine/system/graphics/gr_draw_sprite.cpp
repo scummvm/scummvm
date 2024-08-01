@@ -122,10 +122,10 @@ void grDispatcher::PutSpr(int x, int y, int sx, int sy, const byte *p, int mode,
 		x1 = 0;
 		ix = -1;
 	}
-	const unsigned short *src = reinterpret_cast<const unsigned short *>(p);
+	const uint16 *src = reinterpret_cast<const uint16 *>(p);
 
 	for (int i = y0; i != y1; i += iy) {
-		const unsigned short *line_src = src + ((fy >> 16) * sx);
+		const uint16 *line_src = src + ((fy >> 16) * sx);
 
 		fy += dy;
 		fx = (1 << 15);
@@ -170,7 +170,7 @@ void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const byte *p, int mod
 
 	const byte *data_ptr = p + py * sx;
 	for (int i = 0; i < psy; i++) {
-		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
+		uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
 		const byte *data_line = data_ptr + px;
 
 		for (int j = 0; j < psx; j++) {
@@ -233,7 +233,7 @@ void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 
 	if (has_alpha) {
 		for (int y = 0; y <= sy; y++) {
-					unsigned short *screen_ptr = (unsigned short *)(_screenBuf + _yTable[y + y0] + x0 * 2);
+					uint16 *screen_ptr = (uint16 *)(_screenBuf + _yTable[y + y0] + x0 * 2);
 
 					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + ((size.x + 1 + dx) << (F_PREC - 1));
 					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + ((size.y + 1 + dy) << (F_PREC - 1));
@@ -267,7 +267,7 @@ void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 				}
 	} else {
 		for (int y = 0; y <= sy; y++) {
-			unsigned short *screen_ptr = (unsigned short *)(_screenBuf + _yTable[y + y0] + x0 * 2);
+			uint16 *screen_ptr = (uint16 *)(_screenBuf + _yTable[y + y0] + x0 * 2);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + ((size.x + 1 + dx) << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + ((size.y + 1 + dy) << (F_PREC - 1));
@@ -322,7 +322,7 @@ void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 
 	if (has_alpha) {
 		for (int y = 0; y <= sy; y++) {
-					unsigned short *screen_ptr = (unsigned short *)(_screenBuf + _yTable[y + y0] + x0 * 2);
+					uint16 *screen_ptr = (uint16 *)(_screenBuf + _yTable[y + y0] + x0 * 2);
 
 					int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
 					int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
@@ -356,7 +356,7 @@ void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 				}
 	} else {
 		for (int y = 0; y <= sy; y++) {
-			unsigned short *screen_ptr = (unsigned short *)(_screenBuf + _yTable[y + y0] + x0 * 2);
+			uint16 *screen_ptr = (uint16 *)(_screenBuf + _yTable[y + y0] + x0 * 2);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
@@ -410,7 +410,7 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 		split_rgb565u(mask_color, mr, mg, mb);
 
 		for (int y = 0; y <= sy; y++) {
-			unsigned short *screen_ptr = (unsigned short *)(_screenBuf + _yTable[y + y0] + x0 * 2);
+			uint16 *screen_ptr = (uint16 *)(_screenBuf + _yTable[y + y0] + x0 * 2);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + (size.x + 1) * (1 << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + (size.y + 1) * (1 << (F_PREC - 1));
@@ -459,7 +459,7 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 		unsigned mcl = make_rgb565u(mr, mg, mb);
 
 		for (int y = 0; y <= sy; y++) {
-			unsigned short *screen_ptr = (unsigned short *)(_screenBuf + _yTable[y + y0] + x0 * 2);
+			uint16 *screen_ptr = (uint16 *)(_screenBuf + _yTable[y + y0] + x0 * 2);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + (size.x + 1) * (1 << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + (size.y + 1) * (1 << (F_PREC - 1));
@@ -518,7 +518,7 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 		split_rgb565u(mask_color, mr, mg, mb);
 
 		for (int y = 0; y <= sy; y++) {
-			unsigned short *screen_ptr = (unsigned short *)(_screenBuf + _yTable[y + y0] + x0 * 2);
+			uint16 *screen_ptr = (uint16 *)(_screenBuf + _yTable[y + y0] + x0 * 2);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
@@ -564,7 +564,7 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 		mb = (mb * (255 - mask_alpha)) >> 8;
 
 		for (int y = 0; y <= sy; y++) {
-			unsigned short *screen_ptr = (unsigned short *)(_screenBuf + _yTable[y + y0] + x0 * 2);
+			uint16 *screen_ptr = (uint16 *)(_screenBuf + _yTable[y + y0] + x0 * 2);
 
 			int xx = (x0 - xc) * cos_a + (y + y0 - yc) * sin_a + scaled_size.x / 2 + (1 << (F_PREC - 1));
 			int yy = (y + y0 - yc) * cos_a - (x0 - xc) * sin_a + scaled_size.y / 2 + (1 << (F_PREC - 1));
@@ -680,7 +680,7 @@ void grDispatcher::DrawSprContour_a(int x, int y, int sx, int sy, const byte *p,
 	sx <<= 1;
 	dpy <<= 1;
 
-	const unsigned short *pic_buf = reinterpret_cast<const unsigned short *>(p) + py * sx;
+	const uint16 *pic_buf = reinterpret_cast<const uint16 *>(p) + py * sx;
 	for (int i = 0; i < psy; i++) {
 		int jj = px;
 		int empty_pixel = 1;
@@ -703,7 +703,7 @@ void grDispatcher::DrawSprContour_a(int x, int y, int sx, int sy, const byte *p,
 	int jj = px;
 	for (int j = 0; j < psx; j++) {
 		int empty_pixel = 1;
-		pic_buf = reinterpret_cast<const unsigned short *>(p) + py * sx;
+		pic_buf = reinterpret_cast<const uint16 *>(p) + py * sx;
 		for (int i = 0; i < psy; i++) {
 			if (pic_buf[jj * 2 + 1] < 200) {
 				if (empty_pixel)
@@ -745,7 +745,7 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const byte *p, i
 	} else
 		dpy = sx;
 
-	const unsigned short *pic_buf = reinterpret_cast<const unsigned short *>(p) + py * sx;
+	const uint16 *pic_buf = reinterpret_cast<const uint16 *>(p) + py * sx;
 	for (int i = 0; i < psy; i++) {
 		int jj = px;
 		int empty_pixel = 1;
@@ -769,7 +769,7 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const byte *p, i
 	int jj = px;
 	for (int j = 0; j < psx; j++) {
 		int empty_pixel = 1;
-		pic_buf = reinterpret_cast<const unsigned short *>(p) + py * sx;
+		pic_buf = reinterpret_cast<const uint16 *>(p) + py * sx;
 		for (int i = 0; i < psy; i++) {
 			unsigned cl = pic_buf[jj];
 			if (cl) {
@@ -820,9 +820,9 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const byte *p, i
 		x1 = 0;
 		ix = -1;
 	}
-	const unsigned short *src = reinterpret_cast<const unsigned short *>(p);
+	const uint16 *src = reinterpret_cast<const uint16 *>(p);
 	for (int i = y0; i != y1; i += iy) {
-		const unsigned short *line_src = src + ((fy >> 16) * sx);
+		const uint16 *line_src = src + ((fy >> 16) * sx);
 
 		fy += dy;
 		fx = (1 << 15);
@@ -850,7 +850,7 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const byte *p, i
 		int empty_pixel = 1;
 
 		for (int i = y0; i != y1; i += iy) {
-			const unsigned short *line_src = src + ((fy >> 16) * sx);
+			const uint16 *line_src = src + ((fy >> 16) * sx);
 
 			if (line_src[fx >> 16]) {
 				if (empty_pixel)
@@ -902,10 +902,10 @@ void grDispatcher::DrawSprContour_a(int x, int y, int sx, int sy, const byte *p,
 		ix = -1;
 	}
 	sx <<= 1;
-	const unsigned short *src = reinterpret_cast<const unsigned short *>(p);
+	const uint16 *src = reinterpret_cast<const uint16 *>(p);
 
 	for (int i = y0; i != y1; i += iy) {
-		const unsigned short *line_src = src + ((fy >> 16) * sx);
+		const uint16 *line_src = src + ((fy >> 16) * sx);
 
 		fy += dy;
 		fx = (1 << 15);
@@ -934,7 +934,7 @@ void grDispatcher::DrawSprContour_a(int x, int y, int sx, int sy, const byte *p,
 		int empty_pixel = 1;
 
 		for (int i = y0; i != y1; i += iy) {
-			const unsigned short *line_src = src + ((fy >> 16) * sx);
+			const uint16 *line_src = src + ((fy >> 16) * sx);
 
 			if (line_src[((fx >> 16) << 1) + 1] < 200) {
 				if (empty_pixel)
@@ -970,7 +970,7 @@ void grDispatcher::PutChar(int x, int y, unsigned color, int font_sx, int font_s
 	color = make_rgb(color);
 
 	for (int i = 0; i < psy; i++, y++) {
-		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
+		uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
 		for (int j = 0; j < psx; j++) {
 			unsigned a = alpha_buf[j];
 			unsigned a1 = 255 - a;
@@ -1033,7 +1033,7 @@ void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const byte *p, unsig
 
 	warning("STUB: grDispatcher::PutSprMask");
 	for (int i = 0; i < psy; i++) {
-		unsigned short *scr_buf = (unsigned short *)(_screenBuf->getBasePtr(x, y));
+		uint16 *scr_buf = (uint16 *)(_screenBuf->getBasePtr(x, y));
 		const byte *data_line = data_ptr;
 
 		for (int j = 0; j < psx; j++) {
@@ -1142,7 +1142,7 @@ void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const byte *p, uns
 
 	warning("STUB: grDispatcher::PutSprMask_a");
 	for (int i = 0; i < psy; i++) {
-		unsigned short *scr_buf = (unsigned short *)(_screenBuf->getBasePtr(x, y));
+		uint16 *scr_buf = (uint16 *)(_screenBuf->getBasePtr(x, y));
 		const byte *data_line = data_ptr;
 
 		for (int j = 0; j < psx; j++) {

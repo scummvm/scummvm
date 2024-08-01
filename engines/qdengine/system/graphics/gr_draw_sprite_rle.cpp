@@ -60,7 +60,7 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 		dy = 1;
 
 	for (int i = 0; i < psy; i++) {
-		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
+		uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
 
 		const char *rle_header = p->header_ptr(py + i);
 		const unsigned *rle_data = p->data_ptr(py + i);
@@ -268,7 +268,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 
 	warning("STUB: grDispatcher::PutSprMask_rle");
 	for (int i = 0; i < psy; i++) {
-		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
+		uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
 
 		const char *rle_header = p->header_ptr(py + i);
 		const unsigned *rle_data = p->data_ptr(py + i);
@@ -591,7 +591,7 @@ void grDispatcher::PutSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, con
 inline bool rle_alpha_b(unsigned pixel) {
 	return (reinterpret_cast<byte *>(&pixel)[3] < 200);
 }
-inline bool rle_alpha_b16(unsigned short pixel) {
+inline bool rle_alpha_b16(uint16 pixel) {
 	return pixel < 200;
 }
 
@@ -620,20 +620,20 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const class rleB
 	} else
 		dy = 1;
 
-	const unsigned short *data0 = reinterpret_cast<const unsigned short *>(rleBuffer::get_buffer(0));
-	const unsigned short *data1 = reinterpret_cast<const unsigned short *>(rleBuffer::get_buffer(1));
+	const uint16 *data0 = reinterpret_cast<const uint16 *>(rleBuffer::get_buffer(0));
+	const uint16 *data1 = reinterpret_cast<const uint16 *>(rleBuffer::get_buffer(1));
 
 	px <<= 1;
 	psx <<= 1;
 
 	warning("STUB: grDispatcher::DrawSprContour");
 	for (int i = 0; i < psy; i++) {
-		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
-		unsigned short *scr_buf_prev = (i) ? reinterpret_cast<unsigned short *>(_screenBuf + _yTable[y - dy] + x) : scr_buf;
+		uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
+		uint16 *scr_buf_prev = (i) ? reinterpret_cast<uint16 *>(_screenBuf + _yTable[y - dy] + x) : scr_buf;
 		p->decode_line(py + i, i & 1);
 
-		const unsigned short *data_ptr = (i & 1) ? data1 + px : data0 + px;
-		const unsigned short *data_ptr_prev = (i & 1) ? data0 + px : data1 + px;
+		const uint16 *data_ptr = (i & 1) ? data1 + px : data0 + px;
+		const uint16 *data_ptr_prev = (i & 1) ? data0 + px : data1 + px;
 
 		if (!alpha_flag) {
 			unsigned pixel = 0;
@@ -685,8 +685,8 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const class rleB
 
 		y += dy;
 	}
-	unsigned short *scr_buf_prev = reinterpret_cast<unsigned short *>(_screenBuf + _yTable[y - dy] + x);
-	const unsigned short *data_ptr_prev = (psy & 1) ? data0 + px : data1 + px;
+	uint16 *scr_buf_prev = reinterpret_cast<uint16 *>(_screenBuf + _yTable[y - dy] + x);
+	const uint16 *data_ptr_prev = (psy & 1) ? data0 + px : data1 + px;
 	if (!alpha_flag) {
 		for (int j = 0; j < psx; j += 2) {
 			if (data_ptr_prev[j])
@@ -735,13 +735,13 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const class rleB
 	}
 
 	if (!alpha_flag) {
-		const unsigned short *line0 = reinterpret_cast<const unsigned short *>(rleBuffer::get_buffer(0));
-		const unsigned short *line1 = reinterpret_cast<const unsigned short *>(rleBuffer::get_buffer(1));
+		const uint16 *line0 = reinterpret_cast<const uint16 *>(rleBuffer::get_buffer(0));
+		const uint16 *line1 = reinterpret_cast<const uint16 *>(rleBuffer::get_buffer(1));
 
 		for (int i = y0; i != y1; i += iy) {
 			p->decode_line(fy >> 16, i & 1);
-			const unsigned short *line_src = (i & 1) ? line1 : line0;
-			const unsigned short *line_src_prev = (i & 1) ? line0 : line1;
+			const uint16 *line_src = (i & 1) ? line1 : line0;
+			const uint16 *line_src_prev = (i & 1) ? line0 : line1;
 
 			fy += dy;
 			fx = (1 << 15);
@@ -769,19 +769,19 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const class rleB
 		}
 		fx = (1 << 15);
 		for (int j = x0; j != x1; j += ix) {
-			const unsigned short *line_src_prev = (y1 & 1) ? line0 : line1;
+			const uint16 *line_src_prev = (y1 & 1) ? line0 : line1;
 			if (line_src_prev[(fx >> 16) << 1])
 				SetPixel(x + j, y + y1 - iy, contour_color);
 			fx += dx;
 		}
 	} else {
-		const unsigned short *line0 = reinterpret_cast<const unsigned short *>(rleBuffer::get_buffer(0));
-		const unsigned short *line1 = reinterpret_cast<const unsigned short *>(rleBuffer::get_buffer(1));
+		const uint16 *line0 = reinterpret_cast<const uint16 *>(rleBuffer::get_buffer(0));
+		const uint16 *line1 = reinterpret_cast<const uint16 *>(rleBuffer::get_buffer(1));
 
 		for (int i = y0; i != y1; i += iy) {
 			p->decode_line(fy >> 16, i & 1);
-			const unsigned short *line_src = (i & 1) ? line1 : line0;
-			const unsigned short *line_src_prev = (i & 1) ? line0 : line1;
+			const uint16 *line_src = (i & 1) ? line1 : line0;
+			const uint16 *line_src_prev = (i & 1) ? line0 : line1;
 
 			fy += dy;
 			fx = (1 << 15);
@@ -809,7 +809,7 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const class rleB
 		}
 		fx = (1 << 15);
 		for (int j = x0; j != x1; j += ix) {
-			const unsigned short *line_src_prev = (y1 & 1) ? line0 : line1;
+			const uint16 *line_src_prev = (y1 & 1) ? line0 : line1;
 			if (rle_alpha_b16(line_src_prev[((fx >> 16) << 1) + 1]))
 				SetPixel(x + j, y + y1 - iy, contour_color);
 			fx += dx;

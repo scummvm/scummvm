@@ -334,10 +334,10 @@ public:
 		return ((b << 16) | (g << 8) | r);
 	}
 
-	static inline unsigned short make_rgb565u(unsigned r, unsigned g, unsigned b) {
+	static inline uint16 make_rgb565u(unsigned r, unsigned g, unsigned b) {
 		return (((r >> 3) << 11) | ((g >> 2) << 5) | ((b >> 3) << 0));
 	}
-	static inline unsigned short make_rgb555u(unsigned r, unsigned g, unsigned b) {
+	static inline uint16 make_rgb555u(unsigned r, unsigned g, unsigned b) {
 		return (((r >> 3) << 10) | ((g >> 3) << 5) | ((b >> 3) << 0));
 	}
 
@@ -358,14 +358,14 @@ public:
 		b = (col >> 16) & 0xFF;
 	}
 
-	static inline unsigned short make_rgb565(unsigned r, unsigned g, unsigned b) {
+	static inline uint16 make_rgb565(unsigned r, unsigned g, unsigned b) {
 		return ((r << 11) | (g << 5) | (b << 0));
 	}
-	static inline unsigned short make_rgb555(unsigned r, unsigned g, unsigned b) {
+	static inline uint16 make_rgb555(unsigned r, unsigned g, unsigned b) {
 		return ((r << 10) | (g << 5) | (b << 0));
 	}
 
-	static inline unsigned short alpha_blend_565(unsigned short pic_col, unsigned short scr_col, unsigned a) {
+	static inline uint16 alpha_blend_565(uint16 pic_col, uint16 scr_col, unsigned a) {
 		if (a != 255) {
 			if (a)
 				return pic_col + (((((scr_col & mask_565_r) * a) >> 8) & mask_565_r) |
@@ -377,7 +377,7 @@ public:
 			return scr_col;
 	}
 
-	static inline unsigned short alpha_blend_555(unsigned short pic_col, unsigned short scr_col, unsigned a) {
+	static inline uint16 alpha_blend_555(uint16 pic_col, uint16 scr_col, unsigned a) {
 		if (a != 255) {
 			if (a)
 				return pic_col + (((((scr_col & mask_555_r) * a) >> 8) & mask_555_r) |

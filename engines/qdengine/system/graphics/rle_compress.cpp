@@ -191,14 +191,14 @@ bool rleBuffer::convert_data(int bits_per_pixel) {
 	case 15:
 	case 16:
 		if (bits_per_pixel == 24 || bits_per_pixel == 32) {
-			unsigned short *short_ptr = reinterpret_cast<unsigned short *>(&*_data.begin());
+			uint16 *short_ptr = reinterpret_cast<uint16 *>(&*_data.begin());
 
 			for (int i = 0; i < sz; i++) {
 				short_ptr++;
 				*short_ptr++ <<= 8;
 			}
 
-			short_ptr = reinterpret_cast<unsigned short *>(&*_data.begin());
+			short_ptr = reinterpret_cast<uint16 *>(&*_data.begin());
 			byte *char_ptr = reinterpret_cast<unsigned char *>(&*_data.begin());
 
 			for (int i = 0; i < sz; i++) {
@@ -218,7 +218,7 @@ bool rleBuffer::convert_data(int bits_per_pixel) {
 				char_ptr += 4;
 			}
 		} else {
-			unsigned short *short_ptr = reinterpret_cast<unsigned short *>(&*_data.begin());
+			uint16 *short_ptr = reinterpret_cast<uint16 *>(&*_data.begin());
 
 			for (int i = 0; i < sz; i++) {
 				byte r, g, b;
@@ -239,7 +239,7 @@ bool rleBuffer::convert_data(int bits_per_pixel) {
 	case 32:
 		if (bits_per_pixel == 15 || bits_per_pixel == 16) {
 			byte *src_ptr = reinterpret_cast<unsigned char *>(&*_data.begin());
-			unsigned short *dest_ptr = reinterpret_cast<unsigned short *>(&*_data.begin());
+			uint16 *dest_ptr = reinterpret_cast<uint16 *>(&*_data.begin());
 
 			for (int i = 0; i < sz; i++) {
 				*dest_ptr++ = (bits_per_pixel == 15) ? grDispatcher::make_rgb555u(src_ptr[2], src_ptr[1], src_ptr[0]) : grDispatcher::make_rgb565u(src_ptr[2], src_ptr[1], src_ptr[0]);
