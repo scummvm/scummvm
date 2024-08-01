@@ -40,7 +40,7 @@ namespace QDEngine {
 
 class qdScreenTransform {
 public:
-	qdScreenTransform(float angle = 0.f, const Vect2f &scale = Vect2f(1.f, 1.f)) : angle_(angle), scale_(scale) { }
+	qdScreenTransform(float angle = 0.f, const Vect2f &scale = Vect2f(1.f, 1.f)) : _angle(angle), _scale(scale) { }
 
 	bool operator == (const qdScreenTransform &trans) const;
 	bool operator != (const qdScreenTransform &trans) const {
@@ -51,12 +51,12 @@ public:
 	}
 
 	qdScreenTransform operator *(float value) const {
-		return qdScreenTransform(angle_ *value, scale_ *value);
+		return qdScreenTransform(_angle *value, _scale *value);
 	}
 
 	qdScreenTransform &operator += (const qdScreenTransform &trans) {
-		angle_ += trans.angle_;
-		scale_ += trans.scale_;
+		_angle += trans._angle;
+		_scale += trans._scale;
 
 		return *this;
 	}
@@ -64,20 +64,20 @@ public:
 	bool change(float dt, const qdScreenTransform &target_trans, const qdScreenTransform &speed);
 
 	float angle() const {
-		return angle_;
+		return _angle;
 	}
 	void set_angle(float angle) {
-		angle_ = angle;
+		_angle = angle;
 	}
 
 	const Vect2f &scale() const {
-		return scale_;
+		return _scale;
 	}
 	void set_scale(const Vect2f &scale) {
-		scale_ = scale;
+		_scale = scale;
 	}
 	bool has_scale() const {
-		return fabs(scale_.x - 1.f) > FLT_EPS || fabs(scale_.y - 1.f) > FLT_EPS;
+		return fabs(_scale.x - 1.f) > FLT_EPS || fabs(_scale.y - 1.f) > FLT_EPS;
 	}
 
 	/// единичная трансформация
@@ -85,8 +85,8 @@ public:
 
 private:
 
-	float angle_;
-	Vect2f scale_;
+	float _angle;
+	Vect2f _scale;
 
 };
 
@@ -199,11 +199,11 @@ public:
 
 	//! Возвращает указатель на траекторию движения объекта для состояния.
 	qdCoordsAnimation *coords_animation() {
-		return &coords_animation_;
+		return &_coords_animation;
 	}
 	//! Возвращает указатель на траекторию движения объекта для состояния.
 	const qdCoordsAnimation *coords_animation() const {
-		return &coords_animation_;
+		return &_coords_animation;
 	}
 
 	//! Загрузка данных из скрипта.
@@ -233,11 +233,11 @@ public:
 
 	//! Возвращет смещение центра объекта для состояния (в экранных координатах).
 	const Vect2s &center_offset() const {
-		return center_offset_;
+		return _center_offset;
 	}
 	//! Устанавливает смещение центра объекта для состояния (в экранных координатах).
 	void set_center_offset(const Vect2s offs) {
-		center_offset_ = offs;
+		_center_offset = offs;
 	}
 
 	//! Логический квант состояния.
@@ -245,21 +245,21 @@ public:
 
 	//! Возвращает указатель на предыдущее состояние.
 	qdGameObjectState *prev_state() {
-		return prev_state_;
+		return _prev_state;
 	}
 	//! Устанавливает предыдущее состояние.
 	void set_prev_state(qdGameObjectState *p) {
-		prev_state_ = p;
+		_prev_state = p;
 	}
 
 	//! Возвращает тип состояния.
 	StateType state_type() const {
-		return state_type_;
+		return _state_type;
 	}
 
 	//! Возвращает идентификатор мышиного курсора для состояния.
 	int mouse_cursor_ID() const {
-		return mouse_cursor_id_;
+		return _mouse_cursor_id;
 	}
 	//! Устанавливает идентификатор мышиного курсора для состояния.
 	/**
@@ -267,20 +267,20 @@ public:
 	параметр должен быть равен CURSOR_UNASSIGNED.
 	*/
 	void set_mouse_cursor_ID(int id) {
-		mouse_cursor_id_ = id;
+		_mouse_cursor_id = id;
 	}
 	//! Возвращает true, если состоянию назначен особый мышиный курсор.
 	bool has_mouse_cursor_ID() const {
-		return mouse_cursor_id_ != CURSOR_UNASSIGNED;
+		return _mouse_cursor_id != CURSOR_UNASSIGNED;
 	}
 
 	//! Устанавливает имя звукового эффекта, привязанного к состоянию.
 	const char *sound_name() const {
-		return sound_info_.name();
+		return _sound_info.name();
 	}
 	//! Возвращает имя звукового эффекта, привязанного к состоянию.
 	void set_sound_name(const char *p) {
-		sound_info_.set_name(p);
+		_sound_info.set_name(p);
 	}
 	//! Возвращает указатель на звуковой эффект, привязанный к состоянию.
 	qdSound *sound() const;
@@ -291,7 +291,7 @@ public:
 	}
 	//! Возвращает хэндл звука.
 	const qdSoundHandle *sound_handle() const {
-		return &sound_handle_;
+		return &_sound_handle;
 	}
 	//! Запускает звук, position - стартовяя позиция, от 0.0 до 1.0.
 	bool play_sound(float position = 0.0f);
@@ -304,15 +304,15 @@ public:
 
 	//! Устанавливает флаг для звука.
 	void set_sound_flag(int fl) {
-		sound_info_.set_flag(fl);
+		_sound_info.set_flag(fl);
 	}
 	//! Скидывает флаг для звука.
 	void drop_sound_flag(int fl) {
-		sound_info_.drop_flag(fl);
+		_sound_info.drop_flag(fl);
 	}
 	//! Возвращает true, если установлен флаг для звука.
 	bool check_sound_flag(int fl) const {
-		return sound_info_.check_flag(fl);
+		return _sound_info.check_flag(fl);
 	}
 
 	//! Возвращает true, если состояние пустое.
@@ -325,38 +325,38 @@ public:
 
 	//! Возвращает задержку (в секундах) перед активацией состояния.
 	float activation_delay() const {
-		return activation_delay_;
+		return _activation_delay;
 	}
 	//! Устанавливает задержку (в секундах) перед активацией состояния.
 	void set_activation_delay(float tm) {
-		activation_delay_ = tm;
+		_activation_delay = tm;
 	}
 	//! Устанавливает таймер перед активацией состояния.
 	void set_activation_timer() {
-		activation_timer_ = activation_delay_;
+		_activation_timer = _activation_delay;
 	}
 
 	//! Вызывается при активации состояния.
 	void start() {
-		cur_time_ = 0.0f;
-		is_sound_started_ = false;
+		_cur_time = 0.0f;
+		_is_sound_started = false;
 	}
 
 	//! Возвращает время в секундах, прошедшее с момента активации состояния.
 	float cur_time() const {
-		return cur_time_;
+		return _cur_time;
 	}
 	//! Возвращает длительность состояния в секундах.
 	float work_time() const;
 	//! Устанавливает длительность состояния в секундах.
 	void set_work_time(float tm) {
-		work_time_ = tm;
+		_work_time = tm;
 	}
 
 	//! Возвращает true, если персонажу требуется подойти к точке включения состояния.
 	bool need_to_walk() const {
-		if (!coords_animation_.is_empty()
-		        && coords_animation_.check_flag(QD_COORDS_ANM_OBJECT_START_FLAG))
+		if (!_coords_animation.is_empty()
+		        && _coords_animation.check_flag(QD_COORDS_ANM_OBJECT_START_FLAG))
 			return true;
 		else
 			return false;
@@ -370,35 +370,35 @@ public:
 
 	//! Возвращает координаты точки, в которой должно активироваться состояние.
 	const Vect3f &start_pos() const {
-		if (!coords_animation_.is_empty()) {
-			return coords_animation_.get_point(0)->dest_pos();
+		if (!_coords_animation.is_empty()) {
+			return _coords_animation.get_point(0)->dest_pos();
 		} else
 			return Vect3f::ZERO;
 	}
 	//! Возвращает направление объекта в точке, в которой должно активироваться состояние.
 	float start_direction_angle() const {
-		if (!coords_animation_.is_empty()) {
-			return coords_animation_.get_point(0)->direction_angle();
+		if (!_coords_animation.is_empty()) {
+			return _coords_animation.get_point(0)->direction_angle();
 		} else
 			return -1.0f;
 	}
 
 	//! Возвращает количество ссылок на состояние.
 	int reference_count() const {
-		return reference_count_;
+		return _reference_count;
 	}
 	//! Инкремент количества ссылок на состояние.
 	void inc_reference_count() {
-		reference_count_++;
+		_reference_count++;
 	}
 	//! Декремент количества ссылок на состояние.
 	void dec_reference_count() {
-		if (reference_count_) reference_count_--;
+		if (_reference_count) _reference_count--;
 	}
 
 	//! Возвращает true, если у состояния задан текст субтитров.
 	bool has_text() const {
-		return (!text_ID_.empty() || !short_text_ID_.empty());
+		return (!_text_ID.empty() || !_short_text_ID.empty());
 	}
 	//! Возвращает текст субтитров.
 	const char *text() const {
@@ -412,35 +412,35 @@ public:
 
 	//! Возвращает true, если у состояния задан текст субтитров.
 	bool has_full_text() const {
-		return !text_ID_.empty();
+		return !_text_ID.empty();
 	}
 	//! Возвращает true, если у состояния задан сокращенный текст субтитров.
 	bool has_short_text() const {
-		return !short_text_ID_.empty();
+		return !_short_text_ID.empty();
 	}
 	//! Возвращает полный текст субтитров.
 	const char *full_text_ID() const {
-		return text_ID_.c_str();
+		return _text_ID.c_str();
 	}
 	//! Устанавливает полный текст субтитров.
 	/**
 	Если параметр нулевой, то текст очищается.
 	*/
 	void set_full_text_ID(const char *p) {
-		if (p) text_ID_ = p;
-		else text_ID_.clear();
+		if (p) _text_ID = p;
+		else _text_ID.clear();
 	}
 	//! Возвращает сокращенный текст субтитров.
 	const char *short_text_ID() const {
-		return short_text_ID_.c_str();
+		return _short_text_ID.c_str();
 	}
 	//! Устанавливает сокращенный текст субтитров.
 	/**
 	Если параметр нулевой, то текст очищается.
 	*/
 	void set_short_text_ID(const char *p) {
-		if (p) short_text_ID_ = p;
-		else short_text_ID_.clear();
+		if (p) _short_text_ID = p;
+		else _short_text_ID.clear();
 	}
 
 	//! Возвращает true, если у состояния задан баунд.
@@ -449,11 +449,11 @@ public:
 	}
 	//! Возвращает баунд состояния.
 	const Vect3f &bound() const {
-		return bound_;
+		return _bound;
 	}
 	//! Возвращает радиус состояния.
 	float radius() const {
-		return radius_;
+		return _radius;
 	}
 	//! Устанавливает баунд состояния.
 	void set_bound(const Vect3f &b);
@@ -464,29 +464,29 @@ public:
 
 	//! Устанавливает режим работы камеры, включается при активации состояния.
 	void set_camera_mode(const qdCameraMode &mode) {
-		camera_mode_ = mode;
+		_camera_mode = mode;
 	}
 	//! Режим работы камеры, включается при активации состояния.
 	const qdCameraMode &camera_mode() const {
-		return camera_mode_;
+		return _camera_mode;
 	}
 	//! Возвращает true, если у состояния задан режим работы камеры.
 	bool has_camera_mode() const {
-		return camera_mode_.camera_mode() != qdCameraMode::MODE_UNASSIGNED;
+		return _camera_mode.camera_mode() != qdCameraMode::MODE_UNASSIGNED;
 	}
 
 	float rnd_move_radius() const {
-		return rnd_move_radius_;
+		return _rnd_move_radius;
 	}
 	void set_rnd_move_radius(float radius) {
-		rnd_move_radius_ = radius;
+		_rnd_move_radius = radius;
 	}
 
 	float rnd_move_speed() const {
-		return rnd_move_speed_;
+		return _rnd_move_speed;
 	}
 	void set_rnd_move_speed(float speed) {
-		rnd_move_speed_ = speed;
+		_rnd_move_speed = speed;
 	}
 
 	qdConditionalObject::trigger_start_mode trigger_start();
@@ -497,77 +497,77 @@ public:
 	}
 
 	float text_delay() const {
-		return text_delay_;
+		return _text_delay;
 	}
 	bool has_text_delay() const {
-		return text_delay_ > FLT_EPS;
+		return _text_delay > FLT_EPS;
 	}
 	void set_text_delay(float delay) {
-		text_delay_ = delay;
+		_text_delay = delay;
 	}
 
 	float sound_delay() const {
-		return sound_delay_;
+		return _sound_delay;
 	}
 	bool has_sound_delay() const {
-		return sound_delay_ > FLT_EPS;
+		return _sound_delay > FLT_EPS;
 	}
 	void set_sound_delay(float delay) {
-		sound_delay_ = delay;
+		_sound_delay = delay;
 	}
 
 	int autosave_slot() const {
-		return autosave_slot_;
+		return _autosave_slot;
 	}
 	void set_autosave_slot(int slot) {
-		autosave_slot_ = slot;
+		_autosave_slot = slot;
 	}
 
 	float fade_time() const {
-		return fade_time_;
+		return _fade_time;
 	}
 	void set_fade_time(float time) {
-		fade_time_ = time;
+		_fade_time = time;
 	}
 
 	uint32 shadow_color() const {
-		return shadow_color_;
+		return _shadow_color;
 	}
 	int shadow_alpha() const {
-		return shadow_alpha_;
+		return _shadow_alpha;
 	}
 
 	void set_shadow(uint32 color, int alpha) {
-		shadow_color_ = color;
-		shadow_alpha_ = alpha;
+		_shadow_color = color;
+		_shadow_alpha = alpha;
 	}
 
 	const qdScreenTextFormat &text_format(bool topic_mode = false) const {
-		if (text_format_.is_global_depend()) {
+		if (_text_format.is_global_depend()) {
 			return (topic_mode && check_flag(QD_OBJ_STATE_FLAG_DIALOG_PHRASE)) ?
 			       qdScreenTextFormat::global_topic_format() : qdScreenTextFormat::global_text_format();
 		}
-		return text_format_;
+		return _text_format;
 	}
 	void set_text_format(const qdScreenTextFormat &text_format) {
-		text_format_ = text_format;
+		_text_format = text_format;
 	}
 
 	bool has_transform() const {
-		return transform_() || transform_speed_();
+		return _transform() || _transform_speed();
 	}
 
 	const qdScreenTransform &transform() const {
-		return transform_;
+		return _transform;
 	}
 	void set_transform(const qdScreenTransform &tr) {
-		transform_ = tr;
+		_transform = tr;
 	}
 	const qdScreenTransform &transform_speed() const {
-		return transform_speed_;
+		return _transform_speed;
 	}
 	void set_transform_speed(const qdScreenTransform &tr_speed) {
-		transform_speed_ = tr_speed;
+		_transform_speed = tr_speed;
 	}
 
 protected:
@@ -583,87 +583,87 @@ protected:
 private:
 
 	//! Тип состояния.
-	StateType state_type_;
+	StateType _state_type;
 
 	//! Смещение центра анимации относительно центра объекта в экранных координатах.
-	Vect2s center_offset_;
+	Vect2s _center_offset;
 	//! Баунд.
-	Vect3f bound_;
+	Vect3f _bound;
 	//! Радиус сферы, описывающей баунд.
-	float radius_;
+	float _radius;
 
 	//! Траектория движения объекта.
-	qdCoordsAnimation coords_animation_;
+	qdCoordsAnimation _coords_animation;
 
 	//! Задержка перед активацией состояния (в секундах)
-	float activation_delay_;
+	float _activation_delay;
 	//! Время в секундах, оставшееся до активации состояния.
-	float activation_timer_;
+	float _activation_timer;
 
 	//! Длительность состояния в секундах.
 	/**
 	Если нулевая, то состояние работает до конца анимации
 	или до конца траектории движения.
 	*/
-	float work_time_;
+	float _work_time;
 	//! Время в секундах, прошедшее с момента активации состояния.
-	float cur_time_;
+	float _cur_time;
 
 	//! Информация о звуке, привязанном к состоянию.
-	qdSoundInfo sound_info_;
+	qdSoundInfo _sound_info;
 	//! Хэндл для управления звуком, привязанным к состоянию.
-	qdSoundHandle sound_handle_;
+	qdSoundHandle _sound_handle;
 	//! Задержка запуска звука от старта состояния (в секундах)
-	float sound_delay_;
+	float _sound_delay;
 	//! true, если звук состояния запущен
-	bool is_sound_started_;
+	bool _is_sound_started;
 
 	//! Задержка перед появлением текста от старта состояния (в секундах)
-	float text_delay_;
+	float _text_delay;
 	//! true, если текст состояния появился
-	bool is_text_shown_;
+	bool _is_text_shown;
 
 	//! Номер мышиного курсора, который включается, если мышь над объектом в этом состоянии.
-	int mouse_cursor_id_;
+	int _mouse_cursor_id;
 
 	//! Текст, выводимый на экран при работе состояния (для диалогов и т.д.)
-	std::string text_ID_;
+	std::string _text_ID;
 	//! Короткий вариант текста, выводимого на экран при работе состояния (для диалогов и т.д.)
-	std::string short_text_ID_;
+	std::string _short_text_ID;
 
 	//! Режим работы камеры, включается при активации состояния.
-	qdCameraMode camera_mode_;
+	qdCameraMode _camera_mode;
 
-	float rnd_move_radius_;
-	float rnd_move_speed_;
+	float _rnd_move_radius;
+	float _rnd_move_speed;
 
 	/// Номер слота автосэйва
-	int autosave_slot_;
+	int _autosave_slot;
 
 	/// Время фэйда экрана при включении состояния
-	float fade_time_;
+	float _fade_time;
 
 	//! Цвет затенения.
-	uint32 shadow_color_;
+	uint32 _shadow_color;
 	//! Прозрачность затенения, значения - [0, 255], если равно QD_NO_SHADOW_ALPHA, то объект не затеняется.
-	int shadow_alpha_;
+	int _shadow_alpha;
 
 	/// Преобразование картинки объекта, включается при активации состояния
-	qdScreenTransform transform_;
-	qdScreenTransform transform_speed_;
+	qdScreenTransform _transform;
+	qdScreenTransform _transform_speed;
 
 	//! Формат текста.
-	qdScreenTextFormat text_format_;
+	qdScreenTextFormat _text_format;
 
 	//! Количество ссылок на состояние.
 	/**
 	Если объект, которому принадлежит состояние - глобальный (т.е. принадлежит
 	игровому диспетрчеру, а не сцене), то состояние может одновременно находиться в более чем одном списке.
 	*/
-	int reference_count_;
+	int _reference_count;
 
 	//! Предыдущее состояние.
-	qdGameObjectState *prev_state_;
+	qdGameObjectState *_prev_state;
 
 };
 
@@ -680,13 +680,13 @@ public:
 	qdGameObjectStateStatic &operator = (const qdGameObjectStateStatic &st);
 
 	qdAnimation *animation() {
-		return animation_info_.animation();
+		return _animation_info.animation();
 	}
 	const qdAnimation *animation() const {
-		return animation_info_.animation();
+		return _animation_info.animation();
 	}
 	qdAnimationInfo *animation_info() {
-		return &animation_info_;
+		return &_animation_info;
 	}
 
 	bool load_script(const xml::tag *p);
@@ -709,7 +709,7 @@ public:
 	bool auto_bound();
 
 private:
-	qdAnimationInfo animation_info_;
+	qdAnimationInfo _animation_info;
 };
 
 //! Состояние динамического объекта - походка.
@@ -780,16 +780,16 @@ public:
 	bool update_sound_frequency(float direction_angle) const;
 
 	qdAnimationSetInfo *animation_set_info() {
-		return &animation_set_info_;
+		return &_animation_set_info;
 	}
 
 	float adjust_direction_angle(float angle) const;
 
 	float direction_angle() const {
-		return direction_angle_;
+		return _direction_angle;
 	}
 	void set_direction_angle(float ang) {
-		direction_angle_ = ang;
+		_direction_angle = ang;
 	}
 
 	bool load_script(const xml::tag *p);
@@ -812,24 +812,24 @@ public:
 	bool auto_bound();
 
 	float acceleration() const {
-		return acceleration_;
+		return _acceleration;
 	}
 	void set_acceleration(float acc) {
-		acceleration_ = acc;
+		_acceleration = acc;
 	}
 
 	float max_speed() const {
-		return max_speed_;
+		return _max_speed;
 	}
 	void set_max_speed(float max_sp) {
-		max_speed_ = max_sp;
+		_max_speed = max_sp;
 	}
 
 	void set_movement_type(movement_type_t type) {
-		movement_type_ = type;
+		_movement_type = type;
 	}
 	movement_type_t movement_type() const {
-		return movement_type_;
+		return _movement_type;
 	}
 
 protected:
@@ -839,31 +839,31 @@ protected:
 
 private:
 
-	float direction_angle_;
-	qdAnimationSetInfo animation_set_info_;
+	float _direction_angle;
+	qdAnimationSetInfo _animation_set_info;
 
 	//! Ускорение - насколько увеличивается скорость передвижения за секунду.
-	float acceleration_;
+	float _acceleration;
 	//! Максимальная для походки скорость передвижения.
 	/**
 	Если нулевая - ограничения нет.
 	*/
-	float max_speed_;
+	float _max_speed;
 
 	//! Режим передвижения персонажа.
-	movement_type_t movement_type_;
+	movement_type_t _movement_type;
 
 	//! Смещения центров анимаций походок.
-	std::vector<Vect2i> center_offsets_;
+	std::vector<Vect2i> _center_offsets;
 	//! Смещения центров статических анимаций.
-	std::vector<Vect2i> static_center_offsets_;
+	std::vector<Vect2i> _static_center_offsets;
 	//! Смещения центров анимаций стартов.
-	std::vector<Vect2i> start_center_offsets_;
+	std::vector<Vect2i> _start_center_offsets;
 	//! Смещения центров анимаций стопов.
-	std::vector<Vect2i> stop_center_offsets_;
+	std::vector<Vect2i> _stop_center_offsets;
 
 	//! Коэффициенты для частоты звука походки.
-	std::vector<float> walk_sound_frequency_;
+	std::vector<float> _walk_sound_frequency;
 };
 
 //! Состояние динамического объекта - маска на статическом объекте.
@@ -877,11 +877,11 @@ public:
 	qdGameObjectStateMask &operator = (const qdGameObjectStateMask &st);
 
 	const char *parent_name() const {
-		return parent_name_.c_str();
+		return _parent_name.c_str();
 	}
 	void set_parent_name(const char *p) {
-		parent_name_ = p;
-		parent_ = 0;
+		_parent_name = p;
+		_parent = 0;
 	}
 
 	qdGameObject *parent();
@@ -908,10 +908,10 @@ public:
 private:
 
 	//! Имя объекта, к которому привязана маска.
-	std::string parent_name_;
+	std::string _parent_name;
 
 	//! Указатель на объект, к которому привязана маска.
-	qdGameObject *parent_;
+	qdGameObject *_parent;
 };
 
 #ifdef __QD_DEBUG_ENABLE__
