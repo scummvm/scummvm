@@ -23,37 +23,8 @@
 
 #ifndef QDENGINE_QD_PRECOMP_H
 #define QDENGINE_QD_PRECOMP_H
-#ifndef _QUEST_EDITOR
-#else
-/*  #define   _STLP_NO_NEW_IOSTREAMS 1
 
-    #ifdef _STLP_NO_NEW_IOSTREAMS
-        #define   _STLP_NO_OWN_NAMESPACE 1
-    #else
-        #define _STLP_USE_OWN_NAMESPACE 1
-        #define _STLP_REDEFINE_STD 1
-    #endif*/
-#endif // _QUEST_EDITOR
-
-#ifndef _FINAL_VERSION
-#ifndef __QD_SYSLIB__
 #define __QD_DEBUG_ENABLE__
-#endif
-#endif
-
-#ifdef __QD_DEBUG_ENABLE_
-#define __QDBG(a) a
-#else
-#define __QDBG(a)
-#endif
-
-#ifdef _DEBUG
-#define DBGCHECK _ASSERTE(_CrtCheckMemory())
-#else
-#define DBGCHECK
-#endif
-
-//#define _GR_ENABLE_ZBUFFER
 
 #include "qdengine/xmath.h"
 

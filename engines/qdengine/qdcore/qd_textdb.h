@@ -72,9 +72,7 @@ private:
 
 		std::string _text;
 		std::string _sound;
-#ifndef _FINAL_VERSION_
 		std::string _comment;
-#endif
 	};
 
 	typedef std::unordered_map<std::string, qdText> qdTextMap;
