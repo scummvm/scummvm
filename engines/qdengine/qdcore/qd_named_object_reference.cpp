@@ -80,11 +80,7 @@ bool qdNamedObjectReference::init(const qdNamedObject *p) {
 
 	const qdNamedObject *obj = p;
 	while (obj && obj->named_object_type() != QD_NAMED_OBJECT_DISPATCHER) {
-#ifdef _QUEST_EDITOR
-		obj = obj->ref_owner();
-#else
 		obj = obj->owner();
-#endif
 		num_levels ++;
 	}
 
@@ -94,11 +90,7 @@ bool qdNamedObjectReference::init(const qdNamedObject *p) {
 	for (int i = 0; i < num_levels; i++) {
 		obj = p;
 		for (int j = 0; j < num_levels - i - 1; j++) {
-#ifdef _QUEST_EDITOR
-			obj = obj->ref_owner();
-#else
 			obj = obj->owner();
-#endif
 		}
 		if (obj->name()) {
 			_object_names.push_back(obj->name());

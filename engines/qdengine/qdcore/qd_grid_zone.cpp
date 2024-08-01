@@ -335,10 +335,6 @@ bool qdGridZone::save_data(Common::WriteStream &fh) const {
 
 
 bool qdGridZone::init() {
-#ifdef _QUEST_EDITOR
-	_state_on.init();
-	_state_off.init();
-#endif//_QUEST_EDITOR
 	return set_state(_initial_state);
 }
 
