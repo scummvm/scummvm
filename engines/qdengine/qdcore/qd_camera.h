@@ -48,10 +48,10 @@ public:
 	};
 
 	sGridCell() {
-		attributes_ = CELL_IMPASSABLE;
+		_attributes = CELL_IMPASSABLE;
 	}
 	sGridCell(uint16 atr, int16 h) {
-		attributes_ = atr;
+		_attributes = atr;
 	}
 	~sGridCell() { }
 
@@ -84,33 +84,33 @@ public:
 	void set_height(int16 h) { }
 
 	void set_attribute(uint32 attr) {
-		attributes_ |= attr;
+		_attributes |= attr;
 	}
 	void toggle_attribute(uint32 attr) {
-		attributes_ ^= attr;
+		_attributes ^= attr;
 	}
 	void drop_attribute(uint32 attr) {
-		attributes_ &= ~attr;
+		_attributes &= ~attr;
 	}
 	bool check_attribute(uint32 attr) const {
-		if (attributes_ & attr) return true;
+		if (_attributes & attr) return true;
 		else return false;
 	}
 
 	uint32 attributes() const {
-		return attributes_;
+		return _attributes;
 	}
 	void set_attributes(uint32 attr) {
-		attributes_ = attr;
+		_attributes = attr;
 	}
 
 	bool clear() {
-		attributes_ = 0;
+		_attributes = 0;
 		return true;
 	}
 
 private:
-	byte attributes_;
+	byte _attributes;
 };
 
 enum qdCameraRedrawMode {
