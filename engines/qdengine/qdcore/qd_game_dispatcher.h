@@ -98,15 +98,15 @@ public:
 	void startup_check() const;
 
 	qdLoadingProgressFnc set_scene_loading_progress_callback(qdLoadingProgressFnc p, void *dp = 0) {
-		qdLoadingProgressFnc old_fnc = scene_loading_progress_fnc_;
-		scene_loading_progress_fnc_ = p;
+		qdLoadingProgressFnc old_fnc = _scene_loading_progress_fnc;
+		_scene_loading_progress_fnc = p;
 		_scene_loading_progress_data = dp;
 
 		return old_fnc;
 	}
 
 	qdLoadingProgressFnc get_scene_loading_progress_callback() {
-		return scene_loading_progress_fnc_;
+		return _scene_loading_progress_fnc;
 	}
 
 	void *get_scene_loading_progress_data() {
@@ -637,7 +637,7 @@ private:
 	std::string _cd_key;
 
 	void *_scene_loading_progress_data;
-	qdLoadingProgressFnc scene_loading_progress_fnc_;
+	qdLoadingProgressFnc _scene_loading_progress_fnc;
 
 	qdGameScene *_next_scene;
 
@@ -645,7 +645,7 @@ private:
 	const qdMusicTrack *_cur_music_track;
 	const qdMusicTrack *_cur_interface_music_track;
 
-	float fade_timer_;
+	float _fade_timer;
 	float _fade_duration;
 
 	qdCameraMode _default_camera_mode;
