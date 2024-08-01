@@ -43,8 +43,8 @@ const Vect3f qdGameObjectState::DEFAULT_BOUND(3.f, 3.f, 3.f);
 qdScreenTransform qdScreenTransform::ID;
 
 bool qdScreenTransform::operator == (const qdScreenTransform &trans) const {
-	return fabs(angle_ - trans.angle_) < FLT_EPS &&
-	       fabs(scale_.x - trans.scale_.x) < FLT_EPS && fabs(scale_.y - trans.scale_.y) < FLT_EPS;
+	return fabs(_angle - trans._angle) < FLT_EPS &&
+	       fabs(_scale.x - trans._scale.x) < FLT_EPS && fabs(_scale.y - trans._scale.y) < FLT_EPS;
 }
 
 bool qdScreenTransform::change(float dt, const qdScreenTransform &target_trans, const qdScreenTransform &speed) {
@@ -52,79 +52,79 @@ bool qdScreenTransform::change(float dt, const qdScreenTransform &target_trans, 
 	                        target_trans.scale() - scale());
 
 	qdScreenTransform delta_max = speed * dt;
-	delta.angle_ = CLIP(delta.angle_, -delta_max.angle_, delta_max.angle_);
-	delta.scale_.x = CLIP(delta.scale_.x, -delta_max.scale_.x, delta_max.scale_.x);
-	delta.scale_.y = CLIP(delta.scale_.y, -delta_max.scale_.y, delta_max.scale_.y);
+	delta._angle = CLIP(delta._angle, -delta_max._angle, delta_max._angle);
+	delta._scale.x = CLIP(delta._scale.x, -delta_max._scale.x, delta_max._scale.x);
+	delta._scale.y = CLIP(delta._scale.y, -delta_max._scale.y, delta_max._scale.y);
 
 	*this += delta;
 
 	return (*this == target_trans);
 }
 
-qdGameObjectState::qdGameObjectState(qdGameObjectState::StateType tp) : center_offset_(0, 0),
-	state_type_(tp),
-	prev_state_(0),
-	mouse_cursor_id_(CURSOR_UNASSIGNED),
-	work_time_(0.0f),
-	cur_time_(0.0f),
-	reference_count_(0),
-	bound_(DEFAULT_BOUND),
-	activation_delay_(0.0f),
-	activation_timer_(0.0f),
-	is_sound_started_(false),
-	is_text_shown_(false),
-	radius_(0.0f),
-	sound_delay_(0.f),
-	text_delay_(0.f),
-	rnd_move_radius_(0.0f),
-	rnd_move_speed_(0.0f),
-	autosave_slot_(0),
-	fade_time_(0.1f),
-	shadow_color_(0),
-	shadow_alpha_(QD_NO_SHADOW_ALPHA) {
-	coords_animation_.set_owner(this);
-	sound_handle_.set_owner(this);
+qdGameObjectState::qdGameObjectState(qdGameObjectState::StateType tp) : _center_offset(0, 0),
+	_state_type(tp),
+	_prev_state(0),
+	_mouse_cursor_id(CURSOR_UNASSIGNED),
+	_work_time(0.0f),
+	_cur_time(0.0f),
+	_reference_count(0),
+	_bound(DEFAULT_BOUND),
+	_activation_delay(0.0f),
+	_activation_timer(0.0f),
+	_is_sound_started(false),
+	_is_text_shown(false),
+	_radius(0.0f),
+	_sound_delay(0.f),
+	_text_delay(0.f),
+	_rnd_move_radius(0.0f),
+	_rnd_move_speed(0.0f),
+	_autosave_slot(0),
+	_fade_time(0.1f),
+	_shadow_color(0),
+	_shadow_alpha(QD_NO_SHADOW_ALPHA) {
+	_coords_animation.set_owner(this);
+	_sound_handle.set_owner(this);
 }
 
 qdGameObjectState::qdGameObjectState(const qdGameObjectState &st) : qdConditionalObject(st),
-	center_offset_(st.center_offset_),
-	state_type_(st.state_type_),
-	mouse_cursor_id_(st.mouse_cursor_id_),
-	work_time_(st.work_time_),
-	cur_time_(st.cur_time_),
-	sound_info_(st.sound_info_),
-	coords_animation_(st.coords_animation_),
-	prev_state_(0),
-	text_ID_(st.text_ID_),
-	short_text_ID_(st.short_text_ID_),
-	reference_count_(st.reference_count_),
-	bound_(st.bound_),
-	activation_delay_(st.activation_delay_),
-	activation_timer_(st.activation_timer_),
-	radius_(st.radius_),
-	camera_mode_(st.camera_mode_),
-	is_sound_started_(st.is_sound_started_),
-	is_text_shown_(false),
-	text_delay_(st.text_delay_),
-	sound_delay_(st.sound_delay_),
-	rnd_move_radius_(st.rnd_move_radius_),
-	rnd_move_speed_(st.rnd_move_speed_),
-	autosave_slot_(st.autosave_slot_),
-	text_format_(st.text_format_),
-	transform_(st.transform_),
-	transform_speed_(st.transform_speed_),
-	fade_time_(st.fade_time_),
-	shadow_color_(st.shadow_color_),
-	shadow_alpha_(st.shadow_alpha_) {
-	coords_animation_.set_owner(this);
-	sound_handle_.set_owner(this);
+	_center_offset(st._center_offset),
+	_state_type(st._state_type),
+	_mouse_cursor_id(st._mouse_cursor_id),
+	_work_time(st._work_time),
+	_cur_time(st._cur_time),
+	_sound_info(st._sound_info),
+	_coords_animation(st._coords_animation),
+	_prev_state(0),
+	_text_ID(st._text_ID),
+	_short_text_ID(st._short_text_ID),
+	_reference_count(st._reference_count),
+	_bound(st._bound),
+	_activation_delay(st._activation_delay),
+	_activation_timer(st._activation_timer),
+	_radius(st._radius),
+	_camera_mode(st._camera_mode),
+	_is_sound_started(st._is_sound_started),
+	_is_text_shown(false),
+	_text_delay(st._text_delay),
+	_sound_delay(st._sound_delay),
+	_rnd_move_radius(st._rnd_move_radius),
+	_rnd_move_speed(st._rnd_move_speed),
+	_autosave_slot(st._autosave_slot),
+	_text_format(st._text_format),
+	_transform(st._transform),
+	_transform_speed(st._transform_speed),
+	_fade_time(st._fade_time),
+	_shadow_color(st._shadow_color),
+	_shadow_alpha(st._shadow_alpha) {
+	_coords_animation.set_owner(this);
+	_sound_handle.set_owner(this);
 }
 
 qdGameObjectState::~qdGameObjectState() {
 }
 
 bool qdGameObjectState::is_state_empty() const {
-	return (!sound_info_.name() || !strlen(sound_info_.name()));
+	return (!_sound_info.name() || !strlen(_sound_info.name()));
 }
 
 qdGameObjectState &qdGameObjectState::operator = (const qdGameObjectState &st) {
@@ -132,51 +132,51 @@ qdGameObjectState &qdGameObjectState::operator = (const qdGameObjectState &st) {
 
 	*static_cast<qdConditionalObject *>(this) = st;
 
-	center_offset_ = st.center_offset_;
-	state_type_ = st.state_type_;
-	mouse_cursor_id_ = st.mouse_cursor_id_;
-	sound_info_ = st.sound_info_;
-	text_delay_ = st.text_delay_;
-	sound_delay_ = st.sound_delay_;
+	_center_offset = st._center_offset;
+	_state_type = st._state_type;
+	_mouse_cursor_id = st._mouse_cursor_id;
+	_sound_info = st._sound_info;
+	_text_delay = st._text_delay;
+	_sound_delay = st._sound_delay;
 
-	prev_state_ = 0;
+	_prev_state = 0;
 
-	coords_animation_ = st.coords_animation_;
+	_coords_animation = st._coords_animation;
 
-	coords_animation_.set_owner(this);
-	sound_handle_.set_owner(this);
+	_coords_animation.set_owner(this);
+	_sound_handle.set_owner(this);
 
-	text_ID_ = st.text_ID_;
-	short_text_ID_ = st.short_text_ID_;
+	_text_ID = st._text_ID;
+	_short_text_ID = st._short_text_ID;
 
-	work_time_ = st.work_time_;
-	cur_time_ = st.cur_time_;
+	_work_time = st._work_time;
+	_cur_time = st._cur_time;
 
-	reference_count_ = st.reference_count_;
+	_reference_count = st._reference_count;
 
-	activation_delay_ = st.activation_delay_;
-	activation_timer_ = st.activation_timer_;
+	_activation_delay = st._activation_delay;
+	_activation_timer = st._activation_timer;
 
-	bound_ = st.bound_;
-	radius_ = st.radius_;
-	camera_mode_ = st.camera_mode_;
+	_bound = st._bound;
+	_radius = st._radius;
+	_camera_mode = st._camera_mode;
 
-	rnd_move_radius_ = st.rnd_move_radius_;
-	rnd_move_speed_ = st.rnd_move_speed_;
+	_rnd_move_radius = st._rnd_move_radius;
+	_rnd_move_speed = st._rnd_move_speed;
 
-	autosave_slot_ = st.autosave_slot_;
-	fade_time_ = st.fade_time_;
+	_autosave_slot = st._autosave_slot;
+	_fade_time = st._fade_time;
 
-	shadow_color_ = st.shadow_color_;
-	shadow_alpha_ = st.shadow_alpha_;
+	_shadow_color = st._shadow_color;
+	_shadow_alpha = st._shadow_alpha;
 
-	transform_ = st.transform_;
-	transform_speed_ = st.transform_speed_;
+	_transform = st._transform;
+	_transform_speed = st._transform_speed;
 
-	text_format_ = st.text_format_;
+	_text_format = st._text_format;
 
-	is_sound_started_ = st.is_sound_started_;
-	is_text_shown_ = st.is_text_shown_;
+	_is_sound_started = st._is_sound_started;
+	_is_text_shown = st._is_text_shown;
 
 	return *this;
 }
@@ -281,7 +281,7 @@ bool qdGameObjectState::load_script_body(const xml::tag *p) {
 			set_mouse_cursor_ID(xml::tag_buffer(*it).get_int());
 			break;
 		case QDSCR_CAMERA_MODE:
-			camera_mode_.load_script(&*it);
+			_camera_mode.load_script(&*it);
 			break;
 		case QDSCR_LENGTH:
 			set_work_time(xml::tag_buffer(*it).get_float());
@@ -290,12 +290,12 @@ bool qdGameObjectState::load_script_body(const xml::tag *p) {
 			set_name(it->data());
 			break;
 		case QDSCR_COORDS_ANIMATION:
-			coords_animation_.load_script(&*it);
+			_coords_animation.load_script(&*it);
 			break;
 		case QDSCR_SOUND:
 			set_sound_name(it->data());
 			if (const xml::tag *tg = it->search_subtag(QDSCR_FLAG))
-				sound_info_.set_flag(xml::tag_buffer(*tg).get_int());
+				_sound_info.set_flag(xml::tag_buffer(*tg).get_int());
 			break;
 		case QDSCR_OBJECT_STATE_CENTER_OFFSET:
 			xml::tag_buffer(*it) > vs.x > vs.y;
@@ -316,49 +316,49 @@ bool qdGameObjectState::load_script_body(const xml::tag *p) {
 			set_full_text_ID(it->data());
 			break;
 		case QDSCR_OBJECT_STATE_SOUND_DELAY:
-			xml::tag_buffer(*it) > sound_delay_;
+			xml::tag_buffer(*it) > _sound_delay;
 			break;
 		case QDSCR_OBJECT_STATE_TEXT_DELAY:
-			xml::tag_buffer(*it) > text_delay_;
+			xml::tag_buffer(*it) > _text_delay;
 			break;
 		case QDSCR_OBJECT_STATE_RND_MOVE:
-			xml::tag_buffer(*it) > rnd_move_radius_ > rnd_move_speed_;
+			xml::tag_buffer(*it) > _rnd_move_radius > _rnd_move_speed;
 			break;
 		case QDSCR_TEXT_COLOR:
-			text_format_.set_color(xml::tag_buffer(*it).get_int());
+			_text_format.set_color(xml::tag_buffer(*it).get_int());
 			break;
 		case QDSCR_TEXT_HOVER_COLOR:
-			text_format_.set_hover_color(xml::tag_buffer(*it).get_int());
+			_text_format.set_hover_color(xml::tag_buffer(*it).get_int());
 			break;
 		case QDSCR_TEXT_ALIGN:
-			text_format_.set_arrangement(qdScreenTextFormat::arrangement_t(xml::tag_buffer(*it).get_int()));
+			_text_format.set_arrangement(qdScreenTextFormat::arrangement_t(xml::tag_buffer(*it).get_int()));
 			break;
 		case QDSCR_SCREEN_TEXT_FORMAT:
-			text_format_.load_script(&*it);
+			_text_format.load_script(&*it);
 			break;
 		case QDSCR_SCENE_SAVE_SLOT:
-			xml::tag_buffer(*it) > autosave_slot_;
+			xml::tag_buffer(*it) > _autosave_slot;
 			break;
 		case QDSCR_FADE_TIME:
-			xml::tag_buffer(*it) > fade_time_;
+			xml::tag_buffer(*it) > _fade_time;
 			break;
 		case QDSCR_SCREEN_TRANSFORM: {
 			float angle, angle_sp;
 			Vect2f scale, scale_sp;
 			xml::tag_buffer(*it) > angle > angle_sp > scale.x > scale.y > scale_sp.x > scale_sp.y;
 
-			transform_.set_angle(G2R(angle));
-			transform_.set_scale(scale);
+			_transform.set_angle(G2R(angle));
+			_transform.set_scale(scale);
 
-			transform_speed_.set_angle(G2R(angle_sp));
-			transform_speed_.set_scale(scale_sp);
+			_transform_speed.set_angle(G2R(angle_sp));
+			_transform_speed.set_scale(scale_sp);
 		}
 		break;
 		case QDSCR_GRID_ZONE_SHADOW_COLOR:
-			xml::tag_buffer(*it) > shadow_color_;
+			xml::tag_buffer(*it) > _shadow_color;
 			break;
 		case QDSCR_GRID_ZONE_SHADOW_ALPHA:
-			xml::tag_buffer(*it) > shadow_alpha_;
+			xml::tag_buffer(*it) > _shadow_alpha;
 			break;
 		}
 	}
@@ -371,72 +371,72 @@ bool qdGameObjectState::save_script_body(Common::WriteStream &fh, int indent) co
 		fh.writeString(Common::String::format(" name=\"%s\"", qdscr_XML_string(name())));
 	}
 
-	if (mouse_cursor_id_ != CURSOR_UNASSIGNED) {
-		fh.writeString(Common::String::format(" cursor_id=\"%d\"", mouse_cursor_id_));
+	if (_mouse_cursor_id != CURSOR_UNASSIGNED) {
+		fh.writeString(Common::String::format(" cursor_id=\"%d\"", _mouse_cursor_id));
 	}
 
-	fh.writeString(Common::String::format(" save_slot=\"%d\"", autosave_slot_));
+	fh.writeString(Common::String::format(" save_slot=\"%d\"", _autosave_slot));
 
 	if (flags()) {
 		fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
 	}
 
-	if (work_time_ > 0.001f) {
-		fh.writeString(Common::String::format(" length=\"%f\"", work_time_));
+	if (_work_time > 0.001f) {
+		fh.writeString(Common::String::format(" length=\"%f\"", _work_time));
 	}
 
-	if (activation_delay_ > 0.001f) {
-		fh.writeString(Common::String::format(" state_activation_delay=\"%f\"", activation_delay_));
+	if (_activation_delay > 0.001f) {
+		fh.writeString(Common::String::format(" state_activation_delay=\"%f\"", _activation_delay));
 	}
 
-	if (!short_text_ID_.empty()) {
-		fh.writeString(Common::String::format(" short_text=\"%s\"", qdscr_XML_string(short_text_ID_.c_str())));
+	if (!_short_text_ID.empty()) {
+		fh.writeString(Common::String::format(" short_text=\"%s\"", qdscr_XML_string(_short_text_ID.c_str())));
 	}
 
-	if (!text_ID_.empty()) {
-		fh.writeString(Common::String::format(" text=\"%s\"", qdscr_XML_string(text_ID_.c_str())));
+	if (!_text_ID.empty()) {
+		fh.writeString(Common::String::format(" text=\"%s\"", qdscr_XML_string(_text_ID.c_str())));
 	}
 
-	if (center_offset_.x || center_offset_.y) {
-		fh.writeString(Common::String::format(" center_offset=\"%d %d\"", center_offset_.x, center_offset_.y));
+	if (_center_offset.x || _center_offset.y) {
+		fh.writeString(Common::String::format(" center_offset=\"%d %d\"", _center_offset.x, _center_offset.y));
 	}
 
 	if (has_bound()) {
-		fh.writeString(Common::String::format(" bound=\"%f %f %f\"", bound_.x, bound_.y, bound_.z));
+		fh.writeString(Common::String::format(" bound=\"%f %f %f\"", _bound.x, _bound.y, _bound.z));
 	}
 
 	if (has_sound_delay()) {
-		fh.writeString(Common::String::format(" sound_delay=\"%f\"", sound_delay_));
+		fh.writeString(Common::String::format(" sound_delay=\"%f\"", _sound_delay));
 	}
 
 	if (has_text_delay()) {
-		fh.writeString(Common::String::format(" text_delay=\"%f\"", text_delay_));
+		fh.writeString(Common::String::format(" text_delay=\"%f\"", _text_delay));
 	}
 
-	if (rnd_move_radius_ > FLT_EPS && rnd_move_speed_ > FLT_EPS) {
-		fh.writeString(Common::String::format(" rnd_move=\"%f %f\"", rnd_move_radius_, rnd_move_speed_));
+	if (_rnd_move_radius > FLT_EPS && _rnd_move_speed > FLT_EPS) {
+		fh.writeString(Common::String::format(" rnd_move=\"%f %f\"", _rnd_move_radius, _rnd_move_speed));
 	}
 
-	if (fabs(fade_time_ - 0.1f) > FLT_EPS) {
-		fh.writeString(Common::String::format(" fade_time=\"%f\"", fade_time_));
+	if (fabs(_fade_time - 0.1f) > FLT_EPS) {
+		fh.writeString(Common::String::format(" fade_time=\"%f\"", _fade_time));
 	}
 
-	if (shadow_color_) {
-		fh.writeString(Common::String::format(" shadow_color=\"%u\"", shadow_color_));
+	if (_shadow_color) {
+		fh.writeString(Common::String::format(" shadow_color=\"%u\"", _shadow_color));
 	}
 
-	if (shadow_alpha_ != QD_NO_SHADOW_ALPHA) {
-		fh.writeString(Common::String::format(" shadow_alpha=\"%d\"", shadow_alpha_));
+	if (_shadow_alpha != QD_NO_SHADOW_ALPHA) {
+		fh.writeString(Common::String::format(" shadow_alpha=\"%d\"", _shadow_alpha));
 	}
 
 	fh.writeString(">\r\n");
 
-	if (!coords_animation_.is_empty()) {
-		coords_animation_.save_script(fh, indent + 1);
+	if (!_coords_animation.is_empty()) {
+		_coords_animation.save_script(fh, indent + 1);
 	}
 
 	if (has_camera_mode()) {
-		camera_mode_.save_script(fh, indent + 1);
+		_camera_mode.save_script(fh, indent + 1);
 	}
 
 	if (has_sound()) {
@@ -445,11 +445,11 @@ bool qdGameObjectState::save_script_body(Common::WriteStream &fh, int indent) co
 		}
 		fh.writeString("<sound");
 
-		if (sound_info_.flags()) {
-			fh.writeString(Common::String::format(" flags=\"%d\"", sound_info_.flags()));
+		if (_sound_info.flags()) {
+			fh.writeString(Common::String::format(" flags=\"%d\"", _sound_info.flags()));
 		}
 
-		fh.writeString(Common::String::format(">%s</sound>\r\n", qdscr_XML_string(sound_info_.name())));
+		fh.writeString(Common::String::format(">%s</sound>\r\n", qdscr_XML_string(_sound_info.name())));
 	}
 
 	if (has_transform()) {
@@ -457,13 +457,13 @@ bool qdGameObjectState::save_script_body(Common::WriteStream &fh, int indent) co
 			fh.writeString("\t");
 		}
 		fh.writeString("<screen_transform>");
-		fh.writeString(Common::String::format(" %f %f", R2G(transform_.angle()), R2G(transform_speed_.angle())));
-		fh.writeString(Common::String::format(" %f %f", transform_.scale().x, transform_.scale().y));
-		fh.writeString(Common::String::format(" %f %f", transform_speed_.scale().x, transform_speed_.scale().y));
+		fh.writeString(Common::String::format(" %f %f", R2G(_transform.angle()), R2G(_transform_speed.angle())));
+		fh.writeString(Common::String::format(" %f %f", _transform.scale().x, _transform.scale().y));
+		fh.writeString(Common::String::format(" %f %f", _transform_speed.scale().x, _transform_speed.scale().y));
 		fh.writeString("</screen_transform>\r\n");
 	}
 
-	text_format_.save_script(fh, indent + 1);
+	_text_format.save_script(fh, indent + 1);
 
 	save_conditions_script(fh, indent);
 
@@ -474,8 +474,8 @@ bool qdGameObjectState::init() {
 	if (!qdConditionalObject::init()) return false;
 	// Ищем по ссылке и инициализируем найденным стартовый объект координатной анимации
 	qdNamedObject *nam_obj = qdGameDispatcher::get_dispatcher()->
-	                         get_named_object(&coords_animation_.start_object_ref());
-	coords_animation_.set_start_object(dynamic_cast<const qdGameObject *>(nam_obj));
+	                         get_named_object(&_coords_animation.start_object_ref());
+	_coords_animation.set_start_object(dynamic_cast<const qdGameObject *>(nam_obj));
 
 
 //	drop_flag(QD_OBJ_STATE_FLAG_GLOBAL_OWNER);
@@ -498,21 +498,21 @@ bool qdGameObjectState::check_conditions() {
 float qdGameObjectState::work_time() const {
 	if (check_flag(QD_OBJ_STATE_FLAG_SOUND_SYNC)) {
 		if (qdSound *p = sound())
-			return p->length() + sound_delay_;
+			return p->length() + _sound_delay;
 
 		return 0.0f;
 	}
 
-	return work_time_;
+	return _work_time;
 }
 
 void qdGameObjectState::quant(float dt) {
 	if (is_active()) {
-		cur_time_ += dt;
+		_cur_time += dt;
 
 		if (has_sound() && (state_type() != STATE_WALK || static_cast<qdGameObject *>(owner())->check_flag(QD_OBJ_MOVING_FLAG))) {
-			if (!is_sound_started_) {
-				if (!has_sound_delay() || cur_time_ >= sound_delay_) {
+			if (!_is_sound_started) {
+				if (!has_sound_delay() || _cur_time >= _sound_delay) {
 					play_sound();
 				}
 			} else {
@@ -521,10 +521,10 @@ void qdGameObjectState::quant(float dt) {
 			}
 		}
 
-		if (!is_text_shown_ && has_text() && has_text_delay()) {
-			if (cur_time_ >= text_delay_) {
+		if (!_is_text_shown && has_text() && has_text_delay()) {
+			if (_cur_time >= _text_delay) {
 				qdGameDispatcher::get_dispatcher()->screen_texts_dispatcher().add_text(qdGameDispatcher::TEXT_SET_DIALOGS, qdScreenText(text(), text_format(), Vect2i(0, 0), this));
-				is_text_shown_ = true;
+				_is_text_shown = true;
 			}
 		}
 	}
@@ -532,23 +532,23 @@ void qdGameObjectState::quant(float dt) {
 	conditions_quant(dt);
 
 	if (check_flag(QD_OBJ_STATE_FLAG_ACTIVATION_TIMER) && !check_flag(QD_OBJ_STATE_FLAG_ACTIVATION_TIMER_END)) {
-		activation_timer_ -= dt;
-		if (activation_timer_ <= 0.0f) {
-			activation_timer_ = 0.0f;
+		_activation_timer -= dt;
+		if (_activation_timer <= 0.0f) {
+			_activation_timer = 0.0f;
 			set_flag(QD_OBJ_STATE_FLAG_ACTIVATION_TIMER_END);
 		}
 	}
 }
 
 qdSound *qdGameObjectState::sound() const {
-	if (sound_info_.name()) {
+	if (_sound_info.name()) {
 		if (qdGameScene *p = static_cast<qdGameScene *>(owner(QD_NAMED_OBJECT_SCENE))) {
-			if (qdSound *snd = p->get_sound(sound_info_.name()))
+			if (qdSound *snd = p->get_sound(_sound_info.name()))
 				return snd;
 		}
 
 		if (qdGameDispatcher *p = qd_get_game_dispatcher())
-			return p->get_sound(sound_info_.name());
+			return p->get_sound(_sound_info.name());
 	}
 
 	return NULL;
@@ -557,7 +557,7 @@ qdSound *qdGameObjectState::sound() const {
 bool qdGameObjectState::play_sound(float position) {
 	if (qdSound *p = sound()) {
 		p->stop(sound_handle());
-		is_sound_started_ = true;
+		_is_sound_started = true;
 		return p->play(sound_handle(), check_sound_flag(qdSoundInfo::LOOP_SOUND_FLAG), position);
 	}
 
@@ -572,7 +572,7 @@ bool qdGameObjectState::set_sound_frequency(float frequency_coeff) const {
 }
 
 bool qdGameObjectState::is_sound_finished() const {
-	if (sound_delay_ > 0.01f && cur_time_ <= sound_delay_) return false;
+	if (_sound_delay > 0.01f && _cur_time <= _sound_delay) return false;
 
 	if (qdSound *p = sound())
 		return p->is_stopped(sound_handle());
@@ -596,23 +596,23 @@ bool qdGameObjectState::stop_sound() const {
 }
 
 void qdGameObjectState::set_bound(const Vect3f &b) {
-	bound_ = b;
+	_bound = b;
 	Vect3f b2 = b / 2.0f;
-	radius_ = b2.norm();
+	_radius = b2.norm();
 }
 
 bool qdGameObjectState::load_data(Common::SeekableReadStream &fh, int save_version) {
 	debugC(3, kDebugSave, "  qdGameObjectState::load_data before: %ld", fh.pos());
 	if (!qdConditionalObject::load_data(fh, save_version)) return false;
 
-	cur_time_ = fh.readFloatLE();
+	_cur_time = fh.readFloatLE();
 
 	int idx = fh.readSint32LE();
 
 	if (idx != -1)
-		prev_state_ = static_cast<qdGameObjectAnimated *>(owner())->get_state(idx);
+		_prev_state = static_cast<qdGameObjectAnimated *>(owner())->get_state(idx);
 	else
-		prev_state_ = NULL;
+		_prev_state = NULL;
 
 	char cidx = fh.readByte();
 	if (cidx) {
@@ -627,14 +627,14 @@ bool qdGameObjectState::load_data(Common::SeekableReadStream &fh, int save_versi
 				}
 			}
 
-			is_sound_started_ = true;
+			_is_sound_started = true;
 		}
 
 		cidx = fh.readByte();
-		is_sound_started_ = (cidx) ? true : false;
+		_is_sound_started = (cidx) ? true : false;
 
-		if (!coords_animation_.is_empty()) {
-			if (!coords_animation_.load_data(fh, save_version))
+		if (!_coords_animation.is_empty()) {
+			if (!_coords_animation.load_data(fh, save_version))
 				return false;
 		}
 	}
@@ -647,19 +647,19 @@ bool qdGameObjectState::save_data(Common::WriteStream &fh) const {
 	debugC(3, kDebugSave, "  qdGameObjectState::save_data before: %ld", fh.pos());
 	if (!qdConditionalObject::save_data(fh)) return false;
 
-	fh.writeFloatLE(cur_time_);
+	fh.writeFloatLE(_cur_time);
 
 	int idx = -1;
-	if (prev_state_ && owner())
-		idx = static_cast<qdGameObjectAnimated *>(owner())->get_state_index(prev_state_);
+	if (_prev_state && owner())
+		idx = static_cast<qdGameObjectAnimated *>(owner())->get_state_index(_prev_state);
 	fh.writeSint32LE(idx);
 
 	if (is_active()) {
 		fh.writeByte(1);
 
 		if (const qdSound *snd = sound()) {
-			if (!snd->is_stopped(&sound_handle_)) {
-				float pos = snd->position(&sound_handle_);
+			if (!snd->is_stopped(&_sound_handle)) {
+				float pos = snd->position(&_sound_handle);
 				fh.writeByte(1);
 				fh.writeFloatLE(pos);
 			} else
@@ -667,10 +667,10 @@ bool qdGameObjectState::save_data(Common::WriteStream &fh) const {
 		} else
 			fh.writeByte(0);
 
-		fh.writeByte(is_sound_started_);
+		fh.writeByte(_is_sound_started);
 
-		if (!coords_animation_.is_empty()) {
-			if (!coords_animation_.save_data(fh))
+		if (!_coords_animation.is_empty()) {
+			if (!_coords_animation.save_data(fh))
 				return false;
 		}
 	} else
@@ -682,7 +682,7 @@ bool qdGameObjectState::save_data(Common::WriteStream &fh) const {
 
 bool qdGameObjectState::need_sound_restart() const {
 	if (sndDispatcher *p = sndDispatcher::get_dispatcher()) {
-		if (p->sound_status(&sound_handle_) != sndSound::SOUND_PLAYING)
+		if (p->sound_status(&_sound_handle) != sndSound::SOUND_PLAYING)
 			return true;
 	}
 
@@ -690,22 +690,22 @@ bool qdGameObjectState::need_sound_restart() const {
 }
 
 const char *qdGameObjectState::full_text() const {
-	return qdTextDB::instance().getText(text_ID_.c_str());
+	return qdTextDB::instance().getText(_text_ID.c_str());
 }
 
 const char *qdGameObjectState::short_text() const {
-	return qdTextDB::instance().getText(short_text_ID_.c_str());
+	return qdTextDB::instance().getText(_short_text_ID.c_str());
 }
 
 /* ------------------------ qdGameObjectStateStatic ------------------------- */
 
 qdGameObjectStateStatic::qdGameObjectStateStatic() : qdGameObjectState(qdGameObjectState::STATE_STATIC) {
-	animation_info_.set_owner(this);
+	_animation_info.set_owner(this);
 }
 
 qdGameObjectStateStatic::qdGameObjectStateStatic(const qdGameObjectStateStatic &st) : qdGameObjectState(st),
-	animation_info_(st.animation_info_) {
-	animation_info_.set_owner(this);
+	_animation_info(st._animation_info) {
+	_animation_info.set_owner(this);
 }
 
 qdGameObjectStateStatic::~qdGameObjectStateStatic() {
@@ -715,8 +715,8 @@ qdGameObjectStateStatic &qdGameObjectStateStatic::operator = (const qdGameObject
 	if (this == &st) return *this;
 	qdGameObjectState::operator = (st);
 
-	animation_info_ = st.animation_info_;
-	animation_info_.set_owner(this);
+	_animation_info = st._animation_info;
+	_animation_info.set_owner(this);
 
 	return *this;
 }
@@ -731,15 +731,15 @@ qdGameObjectState &qdGameObjectStateStatic::operator = (const qdGameObjectState 
 	const qdGameObjectStateStatic *ss =
 	    static_cast<const qdGameObjectStateStatic *>(&st);
 
-	animation_info_ = ss->animation_info_;
-	animation_info_.set_owner(this);
+	_animation_info = ss->_animation_info;
+	_animation_info.set_owner(this);
 
 	return *this;
 }
 
 bool qdGameObjectStateStatic::is_state_empty() const {
 	if (qdGameObjectState::is_state_empty()) {
-		return (!animation_info_.animation_name() || strlen(animation_info_.animation_name()));
+		return (!_animation_info.animation_name() || strlen(_animation_info.animation_name()));
 	}
 	return false;
 }
@@ -750,7 +750,7 @@ bool qdGameObjectStateStatic::load_script(const xml::tag *p) {
 	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		switch (it->ID()) {
 		case QDSCR_ANIMATION_INFO:
-			animation_info_.load_script(&*it);
+			_animation_info.load_script(&*it);
 			break;
 		}
 	}
@@ -766,8 +766,8 @@ bool qdGameObjectStateStatic::save_script(Common::WriteStream &fh, int indent) c
 
 	save_script_body(fh, indent);
 
-	if (animation_info_.animation_name()) {
-		animation_info_.save_script(fh, indent + 1);
+	if (_animation_info.animation_name()) {
+		_animation_info.save_script(fh, indent + 1);
 	}
 
 	for (int i = 0; i < indent; i++) {
@@ -847,24 +847,24 @@ bool qdGameObjectStateStatic::auto_bound() {
 /* -------------------------- qdGameObjectStateWalk ------------------------- */
 
 qdGameObjectStateWalk::qdGameObjectStateWalk() : qdGameObjectState(qdGameObjectState::STATE_WALK),
-	direction_angle_(-1.0f),
-	acceleration_(0.0f),
-	max_speed_(0.0f),
-	movement_type_(MOVEMENT_EIGHT_DIRS) {
-	animation_set_info_.set_owner(this);
+	_direction_angle(-1.0f),
+	_acceleration(0.0f),
+	_max_speed(0.0f),
+	_movement_type(MOVEMENT_EIGHT_DIRS) {
+	_animation_set_info.set_owner(this);
 	coords_animation()->set_type(qdCoordsAnimation::CA_WALK);
 }
 
 qdGameObjectStateWalk::qdGameObjectStateWalk(const qdGameObjectStateWalk &st) : qdGameObjectState(st),
-	animation_set_info_(st.animation_set_info_),
-	direction_angle_(st.direction_angle_),
-	acceleration_(st.acceleration_),
-	max_speed_(st.max_speed_),
-	movement_type_(st.movement_type_),
-	center_offsets_(st.center_offsets_),
-	static_center_offsets_(st.static_center_offsets_),
-	start_center_offsets_(st.start_center_offsets_),
-	stop_center_offsets_(st.stop_center_offsets_) {
+	_animation_set_info(st._animation_set_info),
+	_direction_angle(st._direction_angle),
+	_acceleration(st._acceleration),
+	_max_speed(st._max_speed),
+	_movement_type(st._movement_type),
+	_center_offsets(st._center_offsets),
+	_static_center_offsets(st._static_center_offsets),
+	_start_center_offsets(st._start_center_offsets),
+	_stop_center_offsets(st._stop_center_offsets) {
 }
 
 qdGameObjectStateWalk::~qdGameObjectStateWalk() {
@@ -874,18 +874,18 @@ qdGameObjectStateWalk &qdGameObjectStateWalk::operator = (const qdGameObjectStat
 	if (this == &st) return *this;
 	qdGameObjectState::operator = (st);
 
-	animation_set_info_ = st.animation_set_info_;
-	direction_angle_ = st.direction_angle_;
+	_animation_set_info = st._animation_set_info;
+	_direction_angle = st._direction_angle;
 
-	center_offsets_ = st.center_offsets_;
-	static_center_offsets_ = st.static_center_offsets_;
-	start_center_offsets_ = st.start_center_offsets_;
-	stop_center_offsets_ = st.stop_center_offsets_;
+	_center_offsets = st._center_offsets;
+	_static_center_offsets = st._static_center_offsets;
+	_start_center_offsets = st._start_center_offsets;
+	_stop_center_offsets = st._stop_center_offsets;
 
-	acceleration_ = st.acceleration_;
-	max_speed_ = st.max_speed_;
+	_acceleration = st._acceleration;
+	_max_speed = st._max_speed;
 
-	movement_type_ = st.movement_type_;
+	_movement_type = st._movement_type;
 
 	return *this;
 }
@@ -898,17 +898,17 @@ qdGameObjectState &qdGameObjectStateWalk::operator = (const qdGameObjectState &s
 
 	const qdGameObjectStateWalk *sw = static_cast<const qdGameObjectStateWalk *>(&st);
 
-	animation_set_info_ = sw->animation_set_info_;
-	direction_angle_ = sw->direction_angle_;
+	_animation_set_info = sw->_animation_set_info;
+	_direction_angle = sw->_direction_angle;
 
-	center_offsets_ = sw->center_offsets_;
-	static_center_offsets_ = sw->static_center_offsets_;
-	start_center_offsets_ = sw->start_center_offsets_;
-	stop_center_offsets_ = sw->stop_center_offsets_;
+	_center_offsets = sw->_center_offsets;
+	_static_center_offsets = sw->_static_center_offsets;
+	_start_center_offsets = sw->_start_center_offsets;
+	_stop_center_offsets = sw->_stop_center_offsets;
 
-	acceleration_ = sw->acceleration_;
-	max_speed_ = sw->max_speed_;
-	movement_type_ = sw->movement_type_;
+	_acceleration = sw->_acceleration;
+	_max_speed = sw->_max_speed;
+	_movement_type = sw->_movement_type;
 
 	return *this;
 }
@@ -916,7 +916,7 @@ qdGameObjectState &qdGameObjectStateWalk::operator = (const qdGameObjectState &s
 float qdGameObjectStateWalk::adjust_direction_angle(float angle) const {
 	angle = cycleAngle(angle);
 
-	switch (movement_type_) {
+	switch (_movement_type) {
 	case MOVEMENT_LEFT:
 		angle = M_PI;
 		break;
@@ -990,7 +990,7 @@ float qdGameObjectStateWalk::adjust_direction_angle(float angle) const {
 
 bool qdGameObjectStateWalk::is_state_empty() const {
 	if (qdGameObjectState::is_state_empty())
-		return (!animation_set_info_.name() || strlen(animation_set_info_.name()));
+		return (!_animation_set_info.name() || strlen(_animation_set_info.name()));
 
 	return false;
 }
@@ -1004,14 +1004,14 @@ bool qdGameObjectStateWalk::update_sound_frequency(float direction_angle) const 
 }
 
 qdAnimationSet *qdGameObjectStateWalk::animation_set() const {
-	if (animation_set_info_.name()) {
+	if (_animation_set_info.name()) {
 		if (qdGameScene * p = static_cast<qdGameScene * >(owner(QD_NAMED_OBJECT_SCENE))) {
-			if (qdAnimationSet * set = p->get_animation_set(animation_set_info_.name()))
+			if (qdAnimationSet * set = p->get_animation_set(_animation_set_info.name()))
 				return set;
 		}
 
 		if (qdGameDispatcher * p = qd_get_game_dispatcher())
-			return p->get_animation_set(animation_set_info_.name());
+			return p->get_animation_set(_animation_set_info.name());
 	}
 
 	return 0;
@@ -1046,20 +1046,20 @@ qdAnimationInfo *qdGameObjectStateWalk::static_animation_info(float direction_an
 }
 
 const Vect2i &qdGameObjectStateWalk::center_offset(int direction_index, OffsetType offset_type) const {
-	const std::vector<Vect2i> *vect = &center_offsets_;
+	const std::vector<Vect2i> *vect = &_center_offsets;
 
 	switch (offset_type) {
 	case OFFSET_STATIC:
-		vect = &static_center_offsets_;
+		vect = &_static_center_offsets;
 		break;
 	case OFFSET_WALK:
-		vect = &center_offsets_;
+		vect = &_center_offsets;
 		break;
 	case OFFSET_START:
-		vect = &start_center_offsets_;
+		vect = &_start_center_offsets;
 		break;
 	case OFFSET_END:
-		vect = &stop_center_offsets_;
+		vect = &_stop_center_offsets;
 		break;
 	}
 
@@ -1081,20 +1081,20 @@ const Vect2i &qdGameObjectStateWalk::center_offset(float direction_angle, Offset
 void qdGameObjectStateWalk::set_center_offset(int direction_index, const Vect2i &offs, OffsetType offset_type) {
 	assert(direction_index >= 0);
 
-	std::vector<Vect2i> *vect = &center_offsets_;
+	std::vector<Vect2i> *vect = &_center_offsets;
 
 	switch (offset_type) {
 	case OFFSET_STATIC:
-		vect = &static_center_offsets_;
+		vect = &_static_center_offsets;
 		break;
 	case OFFSET_WALK:
-		vect = &center_offsets_;
+		vect = &_center_offsets;
 		break;
 	case OFFSET_START:
-		vect = &start_center_offsets_;
+		vect = &_start_center_offsets;
 		break;
 	case OFFSET_END:
-		vect = &stop_center_offsets_;
+		vect = &_stop_center_offsets;
 		break;
 	}
 
@@ -1105,10 +1105,10 @@ void qdGameObjectStateWalk::set_center_offset(int direction_index, const Vect2i 
 }
 
 float qdGameObjectStateWalk::walk_sound_frequency(int direction_index) const {
-	if (direction_index < 0 || direction_index >= walk_sound_frequency_.size())
+	if (direction_index < 0 || direction_index >= _walk_sound_frequency.size())
 		return 1;
 	else
-		return walk_sound_frequency_[direction_index];
+		return _walk_sound_frequency[direction_index];
 }
 
 float qdGameObjectStateWalk::walk_sound_frequency(float direction_angle) const {
@@ -1122,10 +1122,10 @@ float qdGameObjectStateWalk::walk_sound_frequency(float direction_angle) const {
 void qdGameObjectStateWalk::set_walk_sound_frequency(int direction_index, float freq) {
 	assert(direction_index >= 0);
 
-	if (direction_index >= walk_sound_frequency_.size())
-		walk_sound_frequency_.resize(direction_index + 1, 1);
+	if (direction_index >= _walk_sound_frequency.size())
+		_walk_sound_frequency.resize(direction_index + 1, 1);
 
-	walk_sound_frequency_[direction_index] = freq;
+	_walk_sound_frequency[direction_index] = freq;
 }
 
 bool qdGameObjectStateWalk::load_script(const xml::tag *p) {
@@ -1134,51 +1134,51 @@ bool qdGameObjectStateWalk::load_script(const xml::tag *p) {
 	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		switch (it->ID()) {
 		case QDSCR_ANIMATION_SET:
-			animation_set_info_.set_name(it->data());
+			_animation_set_info.set_name(it->data());
 			break;
 		case QDSCR_OBJECT_DIRECTION:
-			xml::tag_buffer(*it) > direction_angle_;
+			xml::tag_buffer(*it) > _direction_angle;
 			break;
 		case QDSCR_STATE_CENTER_OFFSETS: {
 			xml::tag_buffer buf(*it);
-			center_offsets_.resize(it->data_size() / 2);
+			_center_offsets.resize(it->data_size() / 2);
 			for (int i = 0; i < it->data_size() / 2; i++)
-				buf > center_offsets_[i].x > center_offsets_[i].y;
+				buf > _center_offsets[i].x > _center_offsets[i].y;
 		}
 		break;
 		case QDSCR_STATE_STATIC_CENTER_OFFSETS: {
 			xml::tag_buffer buf(*it);
-			static_center_offsets_.resize(it->data_size() / 2);
+			_static_center_offsets.resize(it->data_size() / 2);
 			for (int i = 0; i < it->data_size() / 2; i++)
-				buf > static_center_offsets_[i].x > static_center_offsets_[i].y;
+				buf > _static_center_offsets[i].x > _static_center_offsets[i].y;
 		}
 		break;
 		case QDSCR_STATE_START_CENTER_OFFSETS: {
 			xml::tag_buffer buf(*it);
-			start_center_offsets_.resize(it->data_size() / 2);
+			_start_center_offsets.resize(it->data_size() / 2);
 			for (int i = 0; i < it->data_size() / 2; i++)
-				buf > start_center_offsets_[i].x > start_center_offsets_[i].y;
+				buf > _start_center_offsets[i].x > _start_center_offsets[i].y;
 		}
 		break;
 		case QDSCR_STATE_STOP_CENTER_OFFSETS: {
 			xml::tag_buffer buf(*it);
-			stop_center_offsets_.resize(it->data_size() / 2);
+			_stop_center_offsets.resize(it->data_size() / 2);
 			for (int i = 0; i < it->data_size() / 2; i++)
-				buf > stop_center_offsets_[i].x > stop_center_offsets_[i].y;
+				buf > _stop_center_offsets[i].x > _stop_center_offsets[i].y;
 		}
 		break;
 		case QDSCR_OBJECT_STATE_WALK_SOUND_FREQUENCY: {
 			xml::tag_buffer buf(*it);
-			walk_sound_frequency_.resize(it->data_size());
+			_walk_sound_frequency.resize(it->data_size());
 			for (int i = 0; i < it->data_size(); i++)
-				buf > walk_sound_frequency_[i];
+				buf > _walk_sound_frequency[i];
 		}
 		break;
 		case QDSCR_OBJECT_STATE_ACCELERATION:
-			xml::tag_buffer(*it) > acceleration_ > max_speed_;
+			xml::tag_buffer(*it) > _acceleration > _max_speed;
 			break;
 		case QDSCR_PERSONAGE_MOVEMENT_TYPE:
-			movement_type_ = movement_type_t(xml::tag_buffer(*it).get_int());
+			_movement_type = movement_type_t(xml::tag_buffer(*it).get_int());
 			break;
 		}
 	}
@@ -1190,82 +1190,82 @@ bool qdGameObjectStateWalk::save_script(Common::WriteStream &fh, int indent) con
 		fh.writeString("\t");
 	}
 	fh.writeString("<object_state_walk");
-	fh.writeString(Common::String::format(" movement=\"%d\"", movement_type_));
+	fh.writeString(Common::String::format(" movement=\"%d\"", _movement_type));
 
 	save_script_body(fh, indent);
 
-	if (animation_set_info_.name()) {
+	if (_animation_set_info.name()) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<animation_set>%s</animation_set>\r\n", qdscr_XML_string(animation_set_info_.name())));
+		fh.writeString(Common::String::format("<animation_set>%s</animation_set>\r\n", qdscr_XML_string(_animation_set_info.name())));
 	}
 
-	if (direction_angle_ > 0.0f) {
+	if (_direction_angle > 0.0f) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<object_direction>%f</object_direction>\r\n", direction_angle_));
+		fh.writeString(Common::String::format("<object_direction>%f</object_direction>\r\n", _direction_angle));
 	}
 
-	if (acceleration_ > FLT_EPS || max_speed_ > FLT_EPS) {
+	if (_acceleration > FLT_EPS || _max_speed > FLT_EPS) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<acceleration>%f %f</acceleration>\r\n", acceleration_, max_speed_));
+		fh.writeString(Common::String::format("<acceleration>%f %f</acceleration>\r\n", _acceleration, _max_speed));
 	}
 
-	if (center_offsets_.size()) {
+	if (_center_offsets.size()) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<center_offsets>%lu", center_offsets_.size() * 2));
-		for (int i = 0; i < center_offsets_.size(); i++) {
-			fh.writeString(Common::String::format(" %d %d", center_offsets_[i].x, center_offsets_[i].y));
+		fh.writeString(Common::String::format("<center_offsets>%lu", _center_offsets.size() * 2));
+		for (int i = 0; i < _center_offsets.size(); i++) {
+			fh.writeString(Common::String::format(" %d %d", _center_offsets[i].x, _center_offsets[i].y));
 		}
 		fh.writeString("</center_offsets>\r\n");
 	}
 
-	if (static_center_offsets_.size()) {
+	if (_static_center_offsets.size()) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<static_center_offsets>%lu", static_center_offsets_.size() * 2));
-		for (int i = 0; i < static_center_offsets_.size(); i++) {
-			fh.writeString(Common::String::format(" %d %d", static_center_offsets_[i].x, static_center_offsets_[i].y));
+		fh.writeString(Common::String::format("<static_center_offsets>%lu", _static_center_offsets.size() * 2));
+		for (int i = 0; i < _static_center_offsets.size(); i++) {
+			fh.writeString(Common::String::format(" %d %d", _static_center_offsets[i].x, _static_center_offsets[i].y));
 		}
 		fh.writeString("</static_center_offsets>\r\n");
 	}
 
-	if (start_center_offsets_.size()) {
+	if (_start_center_offsets.size()) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<start_center_offsets>%lu", start_center_offsets_.size() * 2));
-		for (int i = 0; i < start_center_offsets_.size(); i++){
-			fh.writeString(Common::String::format(" %d %d", start_center_offsets_[i].x, start_center_offsets_[i].y));
+		fh.writeString(Common::String::format("<start_center_offsets>%lu", _start_center_offsets.size() * 2));
+		for (int i = 0; i < _start_center_offsets.size(); i++){
+			fh.writeString(Common::String::format(" %d %d", _start_center_offsets[i].x, _start_center_offsets[i].y));
 		}
 		fh.writeString("</start_center_offsets>\r\n");
 	}
 
-	if (stop_center_offsets_.size()) {
+	if (_stop_center_offsets.size()) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<stop_center_offsets>%lu", stop_center_offsets_.size() * 2));
-		for (int i = 0; i < stop_center_offsets_.size(); i++) {
-			fh.writeString(Common::String::format(" %d %d", stop_center_offsets_[i].x, stop_center_offsets_[i].y));
+		fh.writeString(Common::String::format("<stop_center_offsets>%lu", _stop_center_offsets.size() * 2));
+		for (int i = 0; i < _stop_center_offsets.size(); i++) {
+			fh.writeString(Common::String::format(" %d %d", _stop_center_offsets[i].x, _stop_center_offsets[i].y));
 		}
 		fh.writeString("</stop_center_offsets>\r\n");
 	}
 
-	if (walk_sound_frequency_.size()) {
+	if (_walk_sound_frequency.size()) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<walk_sound_frequency>%lu", walk_sound_frequency_.size()));
-		for (int i = 0; i < walk_sound_frequency_.size(); i++) {
-			fh.writeString(Common::String::format(" %f", walk_sound_frequency_[i]));
+		fh.writeString(Common::String::format("<walk_sound_frequency>%lu", _walk_sound_frequency.size()));
+		for (int i = 0; i < _walk_sound_frequency.size(); i++) {
+			fh.writeString(Common::String::format(" %f", _walk_sound_frequency[i]));
 		}
 		fh.writeString("</walk_sound_frequency>\r\n");
 	}
@@ -1346,13 +1346,13 @@ bool qdGameObjectStateWalk::need_sound_restart() const {
 /* -------------------------- qdGameObjectStateMask ------------------------- */
 
 qdGameObjectStateMask::qdGameObjectStateMask() : qdGameObjectState(qdGameObjectState::STATE_MASK), qdContour(qdContour::CONTOUR_POLYGON),
-	parent_(NULL) {
+	_parent(NULL) {
 
 }
 
 qdGameObjectStateMask::qdGameObjectStateMask(const qdGameObjectStateMask &st) : qdGameObjectState(st), qdContour(st),
-	parent_(st.parent_),
-	parent_name_(st.parent_name_) {
+	_parent(st._parent),
+	_parent_name(st._parent_name) {
 }
 
 qdGameObjectStateMask::~qdGameObjectStateMask() {
@@ -1363,8 +1363,8 @@ qdGameObjectStateMask &qdGameObjectStateMask::operator = (const qdGameObjectStat
 	qdGameObjectState::operator = (*static_cast<const qdGameObjectState *>(&st));
 	qdContour::operator = (*static_cast<const qdContour *>(&st));
 
-	parent_name_ = st.parent_name_;
-	parent_ = st.parent_;
+	_parent_name = st._parent_name;
+	_parent = st._parent;
 	return *this;
 }
 
@@ -1379,15 +1379,15 @@ qdGameObjectState &qdGameObjectStateMask::operator = (const qdGameObjectState &s
 	const qdGameObjectStateMask *sm =
 	    static_cast<const qdGameObjectStateMask *>(&st);
 
-	parent_name_ = sm->parent_name_;
-	parent_ = sm->parent_;
+	_parent_name = sm->_parent_name;
+	_parent = sm->_parent;
 
 	return *this;
 }
 
 bool qdGameObjectStateMask::is_state_empty() const {
 	if (qdGameObjectState::is_state_empty()) {
-		return parent_name_.empty();
+		return _parent_name.empty();
 	}
 	return false;
 }
@@ -1428,11 +1428,11 @@ bool qdGameObjectStateMask::save_script(Common::WriteStream &fh, int indent) con
 
 	save_script_body(fh, indent);
 
-	if (!parent_name_.empty()) {
+	if (!_parent_name.empty()) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<state_mask_parent>%s</state_mask_parent>\r\n", qdscr_XML_string(parent_name_.c_str())));
+		fh.writeString(Common::String::format("<state_mask_parent>%s</state_mask_parent>\r\n", qdscr_XML_string(_parent_name.c_str())));
 	}
 
 	if (contour_size()) {
@@ -1459,26 +1459,26 @@ bool qdGameObjectStateMask::hit(int x, int y) const {
 }
 
 qdGameObject *qdGameObjectStateMask::parent() {
-	if (parent_) return parent_;
+	if (_parent) return _parent;
 
-	if (parent_name_.empty() || !owner()) return 0;
+	if (_parent_name.empty() || !owner()) return 0;
 
 	qdNamedObject *p = owner()->owner();
 	if (!p || p->named_object_type() != QD_NAMED_OBJECT_SCENE) return 0;
 
-	parent_ = static_cast<qdGameScene *>(p)->get_object(parent_name_.c_str());
-	return parent_;
+	_parent = static_cast<qdGameScene *>(p)->get_object(_parent_name.c_str());
+	return _parent;
 }
 
 const qdGameObject *qdGameObjectStateMask::parent() const {
-	if (parent_) return parent_;
+	if (_parent) return _parent;
 
-	if (parent_name_.empty() || !owner()) return 0;
+	if (_parent_name.empty() || !owner()) return 0;
 
 	qdNamedObject *p = owner()->owner();
 	if (!p || p->named_object_type() != QD_NAMED_OBJECT_SCENE) return 0;
 
-	return static_cast<qdGameScene *>(p)->get_object(parent_name_.c_str());
+	return static_cast<qdGameScene *>(p)->get_object(_parent_name.c_str());
 }
 
 bool qdGameObjectStateMask::draw_mask(uint32 color) const {
