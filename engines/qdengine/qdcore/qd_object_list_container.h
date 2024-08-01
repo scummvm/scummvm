@@ -58,9 +58,6 @@ public:
 	}
 	bool clear();
 
-#ifdef _QUEST_EDITOR
-	bool insert_object(T *p, const T *before);
-#endif
 private:
 
 	object_list_t object_list_;
@@ -73,17 +70,6 @@ bool qdObjectListContainer<T>::add_object(T *p) {
 
 	return true;
 }
-
-
-#ifdef _QUEST_EDITOR
-template<class T>
-bool qdObjectListContainer<T>::insert_object(T *p, const T *before) {
-	if (get_object(p->name())) return false;
-	object_list_t::iterator i =
-	    std::find(object_list_.begin(), object_list_.end(), before);
-	return (object_list_.insert(i, p) != object_list_.end());
-}
-#endif // _QUEST_EDITOR
 
 template <class T>
 const T *qdObjectListContainer<T>::get_object(const char *name) const {
