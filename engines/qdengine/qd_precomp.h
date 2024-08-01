@@ -66,23 +66,6 @@ namespace QDEngine {
 // STUB: XZipStream
 #define _NO_ZIP_
 
-#define BOOL          bool
-#define HWND          void *
-#define DWORD         int
-#define COLORREF      uint32
-
-#define MAX_PATH      260
-
-#define _MAX_PATH     256
-#define _MAX_EXT      256
-
-#define IDYES         6
-#define IDOK          1
-#define IDNO          7
-#define IDRETRY       4
-#define IDIGNORE      5
-#define IDCANCEL      2
-
 #define VK_ESCAPE     0x1B
 #define VK_RETURN     0x0D
 #define VK_SPACE      0x20
@@ -101,8 +84,6 @@ namespace QDEngine {
 #define VK_PAUSE      0x13
 #define VK_NEXT       0x22
 #define VK_PRIOR      0x21
-#define PM_REMOVE     0x0001
-#define SC_MAXIMIZE   0xF030
 
 int engineMain();
 

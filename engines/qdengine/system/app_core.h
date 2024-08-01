@@ -40,7 +40,6 @@ typedef const char *(*GetFunc)(void);
 namespace app_io {
 
 bool is_file_exist(Common::String file_name);
-bool is_directory_exist(const char *dir_name);
 
 Common::String change_ext(const char *file_name, const char *new_ext);
 
