@@ -39,11 +39,7 @@ qdCoordsAnimation::qdCoordsAnimation() : _status(false),
 	_animation_phase(0.0f),
 	_speed(100.0f),
 	_start_object(NULL),
-	_cur_point(0)
-#ifdef _QUEST_EDITOR
-	, animation_scroll_phase_(0.f)
-#endif
-{
+	_cur_point(0) {
 }
 
 qdCoordsAnimation::qdCoordsAnimation(const qdCoordsAnimation &anm) : qdNamedObject(anm),
@@ -55,11 +51,7 @@ qdCoordsAnimation::qdCoordsAnimation(const qdCoordsAnimation &anm) : qdNamedObje
 	_start_object(anm._start_object),
 	_start_object_ref(anm.start_object_ref()),
 	_points(anm._points),
-	_cur_point(0)
-#ifdef _QUEST_EDITOR
-	, animation_scroll_phase_(anm.animation_scroll_phase_)
-#endif
-{
+	_cur_point(0) {
 }
 
 qdCoordsAnimation &qdCoordsAnimation::operator = (const qdCoordsAnimation &anm) {
@@ -75,9 +67,6 @@ qdCoordsAnimation &qdCoordsAnimation::operator = (const qdCoordsAnimation &anm) 
 	_points = anm._points;
 	_cur_point = 0;
 
-#ifdef _QUEST_EDITOR
-	animation_scroll_phase_ = anm.animation_scroll_phase_;
-#endif
 	return *this;
 }
 
@@ -153,10 +142,6 @@ void qdCoordsAnimation::start() const {
 			_del.z = 0;
 		};
 
-#ifdef _QUEST_EDITOR
-		_start_point.set_dest_pos(_points[0].dest_pos());
-		p->set_pos(_points[0].dest_pos());
-#else
 		if (check_flag(QD_COORDS_ANM_OBJECT_START_FLAG))
 			_start_point.set_dest_pos(p->R());
 		else {
@@ -168,7 +153,6 @@ void qdCoordsAnimation::start() const {
 			        (qdCoordsAnimationPoint::NO_DIRECTION != _points[0].direction_angle()))
 				mov_obj->set_direction(_points[0].direction_angle());
 		}
-#endif //_QUEST_EDITOR
 
 		_points[0].calc_path(_start_point, _del);
 
@@ -384,9 +368,6 @@ bool qdCoordsAnimation::set_cur_point(int point_num) const {
 			if (++_cur_point >= _points.size()) {
 				if (!check_flag(QD_COORDS_ANM_LOOP_FLAG)) {
 					stop();
-#ifdef _QUEST_EDITOR
-					_cur_point = (_points.size()) ? _points.size() - 1 : 0;
-#endif // _QUEST_EDITOR
 					if (p->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ)
 						static_cast<qdGameObjectMoving * >(p)->adjust_z();
 
@@ -426,34 +407,6 @@ bool qdCoordsAnimation::set_cur_point(int point_num) const {
 bool qdCoordsAnimation::reset_cur_point() const {
 	return set_cur_point(_cur_point);
 }
-
-#ifdef _QUEST_EDITOR
-bool qdCoordsAnimation::change_animation_frame(bool direction) const {
-	qdGameObjectAnimated *p = object();
-	if (p && !p->get_animation()->is_empty()) {
-		int frame_idx = p->get_animation()->get_cur_frame_number();
-		frame_idx += (direction) ? 1 : -1;
-
-		if (frame_idx < 0) frame_idx = p->get_animation()->num_frames() - 1;
-		if (frame_idx >= p->get_animation()->num_frames()) frame_idx = p->get_animation()->num_frames() - 1;
-
-		float phase = p->get_animation()->cur_time_rel();
-		p->get_animation()->set_cur_frame(frame_idx);
-
-
-		animation_scroll_phase_ += p->get_animation()->cur_time_rel() - phase;
-		if (animation_scroll_phase_ > 1.f)
-			animation_scroll_phase_ = fmodf(animation_scroll_phase_, 1.f);
-		else if (animation_scroll_phase_ < 0.f)
-			animation_scroll_phase_ = 1.f + fmodf(animation_scroll_phase_, 1.f);
-
-
-		return true;
-	}
-
-	return false;
-}
-#endif
 
 void qdCoordsAnimation::set_time_rel(float tm) {
 	assert(tm >= 0.0f && tm <= 1.0f);
