@@ -29,8 +29,8 @@
 
 namespace QDEngine {
 
-std::vector<unsigned char> rleBuffer::_buffer0(4096);
-std::vector<unsigned char> rleBuffer::_buffer1(4096);
+std::vector<byte> rleBuffer::_buffer0(4096);
+std::vector<byte> rleBuffer::_buffer1(4096);
 
 bool operator == (const rleBuffer &buf1, const rleBuffer &buf2) {
 	if (!(buf1._header_offset == buf2._header_offset)) return false;
@@ -73,7 +73,7 @@ rleBuffer &rleBuffer::operator = (const rleBuffer &buf) {
 	return *this;
 }
 
-bool rleBuffer::encode(int sx, int sy, const unsigned char *buf) {
+bool rleBuffer::encode(int sx, int sy, const byte *buf) {
 	_header_offset.resize(sy);
 	_data_offset.resize(sy);
 
@@ -123,7 +123,7 @@ bool rleBuffer::encode(int sx, int sy, const unsigned char *buf) {
 	return true;
 }
 
-bool rleBuffer::decode_line(int y, unsigned char *out_buf) const {
+bool rleBuffer::decode_line(int y, byte *out_buf) const {
 	const char *header_ptr = &*(_header.begin() + _header_offset[y]);
 	const unsigned *data_ptr = &*(_data.begin() + _data_offset[y]);
 
@@ -199,7 +199,7 @@ bool rleBuffer::convert_data(int bits_per_pixel) {
 			}
 
 			short_ptr = reinterpret_cast<unsigned short *>(&*_data.begin());
-			unsigned char *char_ptr = reinterpret_cast<unsigned char *>(&*_data.begin());
+			byte *char_ptr = reinterpret_cast<unsigned char *>(&*_data.begin());
 
 			for (int i = 0; i < sz; i++) {
 				byte r, g, b;
@@ -238,7 +238,7 @@ bool rleBuffer::convert_data(int bits_per_pixel) {
 	case 24:
 	case 32:
 		if (bits_per_pixel == 15 || bits_per_pixel == 16) {
-			unsigned char *src_ptr = reinterpret_cast<unsigned char *>(&*_data.begin());
+			byte *src_ptr = reinterpret_cast<unsigned char *>(&*_data.begin());
 			unsigned short *dest_ptr = reinterpret_cast<unsigned short *>(&*_data.begin());
 
 			for (int i = 0; i < sz; i++) {

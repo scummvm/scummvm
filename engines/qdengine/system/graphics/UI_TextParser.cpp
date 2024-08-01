@@ -132,7 +132,7 @@ void UI_TextParser::parseString(const char *text, int color, int fitIn) {
 	_lineBegin = text;
 	_lastSpace = _lineBegin;
 
-	while (unsigned char cc = *_pstr) {
+	while (byte cc = *_pstr) {
 		if (cc == '\n') {
 			putText();
 			++_pstr;
@@ -182,7 +182,7 @@ void UI_TextParser::parseString(const char *text, int color, int fitIn) {
 			}
 		}
 
-		addChar((BYTE)cc);
+		addChar((byte)cc);
 	}
 
 	putText();

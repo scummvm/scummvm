@@ -84,7 +84,7 @@ public:
 	int format() const {
 		return _format;
 	}
-	const unsigned char *data() const {
+	const byte *data() const {
 		return _data;
 	}
 	unsigned data_size() const;
@@ -123,7 +123,7 @@ public:
 	bool hit(int x, int y) const;
 	bool hit(int x, int y, float scale) const;
 
-	bool put_pixel(int x, int y, unsigned char r, unsigned char g, unsigned char b);
+	bool put_pixel(int x, int y, byte r, unsigned char g, unsigned char b);
 
 	bool crop();
 	bool crop(int left, int top, int right, int bottom, bool store_offsets = true);
@@ -205,7 +205,7 @@ private:
 	Vect2i _picture_size;
 	Vect2i _picture_offset;
 
-	unsigned char *_data;
+	byte *_data;
 	class rleBuffer *_rle_data;
 
 	std::string _file;

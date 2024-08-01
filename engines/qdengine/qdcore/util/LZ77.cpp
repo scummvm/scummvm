@@ -69,10 +69,10 @@ const byte *CLZ77::FindLZ(const byte *source, const byte *s, long slen, long bor
 long CLZ77::GetMaxEncoded(long len) {
 	return len + sizeof(unsigned long);
 }
-long CLZ77::GetMaxDecoded(unsigned char *source) {
+long CLZ77::GetMaxDecoded(byte *source) {
 	return ((unsigned long *)source)[0];
 }
-void CLZ77::Encode(unsigned char *target, long &tlen, const unsigned char *source, long slen) {
+void CLZ77::Encode(byte *target, long &tlen, const unsigned char *source, long slen) {
 	int32 len, block;
 	int32 shift, border;
 	const byte *s, *p;
@@ -127,7 +127,7 @@ void CLZ77::Encode(unsigned char *target, long &tlen, const unsigned char *sourc
 //		OnStep();
 	}
 }
-long CLZ77::Decode(unsigned char *target, long &tlen, const unsigned char *source, long slen) {
+long CLZ77::Decode(byte *target, long &tlen, const unsigned char *source, long slen) {
 	uint32 i;
 	uint32 block, len;
 	uint32 shift, border;

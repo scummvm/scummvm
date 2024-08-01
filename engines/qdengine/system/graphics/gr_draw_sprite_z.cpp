@@ -26,7 +26,7 @@
 namespace QDEngine {
 
 #ifdef _GR_ENABLE_ZBUFFER
-void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const unsigned char *p, int mode, float scale) {
+void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p, int mode, float scale) {
 	int i, j, sx_dest, sy_dest;
 
 	sx_dest = round(float(sx) * scale);
@@ -105,7 +105,7 @@ void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const unsigne
 		int sx3 = sx * 4;
 
 		for (i = y0; i != y1; i += iy) {
-			const unsigned char *line_src = p + ((fy >> 16) * sx3);
+			const byte *line_src = p + ((fy >> 16) * sx3);
 
 			fy += dy;
 			fx = (1 << 15);
@@ -132,7 +132,7 @@ void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const unsigne
 	}
 }
 
-void grDispatcher::PutSpr_z(int x, int y, int z, int sx, int sy, const unsigned char *p, int mode, float scale) {
+void grDispatcher::PutSpr_z(int x, int y, int z, int sx, int sy, const byte *p, int mode, float scale) {
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
 
@@ -187,7 +187,7 @@ void grDispatcher::PutSpr_z(int x, int y, int z, int sx, int sy, const unsigned 
 	if (bytes_per_pixel() == 3) {
 		int sx3 = sx * 3;
 		for (int i = y0; i != y1; i += iy) {
-			const unsigned char *line_src = p + ((fy >> 16) * sx3);
+			const byte *line_src = p + ((fy >> 16) * sx3);
 
 			fy += dy;
 			fx = (1 << 15);
@@ -232,7 +232,7 @@ void grDispatcher::PutSpr_z(int x, int y, int z, int sx, int sy, const unsigned 
 	}
 }
 
-void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const unsigned char *p, int mode) {
+void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p, int mode) {
 	int px = 0;
 	int py = 0;
 
@@ -266,12 +266,12 @@ void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const unsigne
 		int px3 = px * 4;
 		int sx3 = sx * 4;
 
-		const unsigned char *data_ptr = p + py * sx3;
+		const byte *data_ptr = p + py * sx3;
 
 		for (int i = 0; i < psy; i++) {
-			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x4);
+			byte *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x4);
 			zbuf_t *zbuf = zbuffer_ + y * SizeX + x;
-			const unsigned char *data_line = data_ptr + px3;
+			const byte *data_line = data_ptr + px3;
 
 			for (int j = 0; j < psx; j++) {
 				unsigned a = data_line[3];
@@ -321,12 +321,12 @@ void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const unsigne
 		int px3 = px * 4;
 		int sx3 = sx * 4;
 
-		const unsigned char *data_ptr = p + py * sx3;
+		const byte *data_ptr = p + py * sx3;
 
 		for (int i = 0; i < psy; i++) {
-			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x3);
+			byte *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x3);
 			zbuf_t *zbuf = zbuffer_ + y * SizeX + x;
-			const unsigned char *data_line = data_ptr + px3;
+			const byte *data_line = data_ptr + px3;
 
 			for (int j = 0; j < psx; j++) {
 				unsigned a = data_line[3];
@@ -412,7 +412,7 @@ void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const unsigne
 	}
 }
 
-void grDispatcher::PutSpr_z(int x, int y, int z, int sx, int sy, const unsigned char *p, int mode) {
+void grDispatcher::PutSpr_z(int x, int y, int z, int sx, int sy, const byte *p, int mode) {
 	int px = 0;
 	int py = 0;
 
@@ -446,12 +446,12 @@ void grDispatcher::PutSpr_z(int x, int y, int z, int sx, int sy, const unsigned 
 		int px3 = px * 3;
 		int sx3 = sx * 3;
 
-		const unsigned char *data_ptr = p + py * sx3;
+		const byte *data_ptr = p + py * sx3;
 
 		for (int i = 0; i < psy; i++) {
-			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x4);
+			byte *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x4);
 			zbuf_t *zbuf = zbuffer_ + y * SizeX + x;
-			const unsigned char *data_line = data_ptr + px3;
+			const byte *data_line = data_ptr + px3;
 
 			for (int j = 0; j < psx; j++) {
 				if (data_line[0] || data_line[1] || data_line[2]) {
@@ -495,12 +495,12 @@ void grDispatcher::PutSpr_z(int x, int y, int z, int sx, int sy, const unsigned 
 		int px3 = px * 3;
 		int sx3 = sx * 3;
 
-		const unsigned char *data_ptr = p + py * sx3;
+		const byte *data_ptr = p + py * sx3;
 
 		for (int i = 0; i < psy; i++) {
-			unsigned char *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x3);
+			byte *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x3);
 			zbuf_t *zbuf = zbuffer_ + y * SizeX + x;
-			const unsigned char *data_line = data_ptr + px3;
+			const byte *data_line = data_ptr + px3;
 
 			for (int j = 0; j < psx; j++) {
 				if (data_line[0] || data_line[1] || data_line[2]) {

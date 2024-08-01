@@ -96,7 +96,7 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 				if (count > 0) {
 					while (count && j < psx) {
 						if (*rle_data) {
-							const unsigned char *rle_buf = (const unsigned char *)rle_data;
+							const byte *rle_buf = (const unsigned char *)rle_data;
 							unsigned cl = make_rgb565u(rle_buf[2], rle_buf[1], rle_buf[0]);
 							*scr_buf = cl;
 						}
@@ -110,7 +110,7 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 						count = -count;
 						while (count && j < psx) {
 							if (*rle_data) {
-								const unsigned char *rle_buf = (const unsigned char *)rle_data;
+								const byte *rle_buf = (const unsigned char *)rle_data;
 								unsigned cl = make_rgb565u(rle_buf[2], rle_buf[1], rle_buf[0]);
 								*scr_buf = cl;
 							}
@@ -127,7 +127,7 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 			while (j < psx) {
 				if (count > 0) {
 					while (count && j < psx) {
-						const unsigned char *rle_buf = (const unsigned char *)rle_data;
+						const byte *rle_buf = (const unsigned char *)rle_data;
 						unsigned a = rle_buf[3];
 						*scr_buf = alpha_blend_565(make_rgb565u(rle_buf[2], rle_buf[1], rle_buf[0]), *scr_buf, a);
 						scr_buf += dx;
@@ -139,7 +139,7 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 					if (count < 0) {
 						count = -count;
 						while (count && j < psx) {
-							const unsigned char *rle_buf = (const unsigned char *)rle_data;
+							const byte *rle_buf = (const unsigned char *)rle_data;
 							unsigned a = rle_buf[3];
 							*scr_buf = alpha_blend_565(make_rgb565u(rle_buf[2], rle_buf[1], rle_buf[0]), *scr_buf, a);
 							scr_buf += dx;
@@ -189,7 +189,7 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 		ix = -1;
 	}
 	if (!alpha_flag) {
-		const unsigned char *line_src = rleBuffer::get_buffer(0);
+		const byte *line_src = rleBuffer::get_buffer(0);
 		for (int i = y0; i != y1; i += iy) {
 			p->decode_line(fy >> 16);
 
@@ -198,7 +198,7 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 
 			for (int j = x0; j != x1; j += ix) {
 				if (ClipCheck(x + j, y + i)) {
-					const unsigned char *src_data = line_src + (fx >> 16) * 3;
+					const byte *src_data = line_src + (fx >> 16) * 3;
 					if (src_data[0] || src_data[1] || src_data[2])
 						SetPixelFast(x + j, y + i, make_rgb565u(src_data[2], src_data[1], src_data[0]));
 				}
@@ -206,7 +206,7 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 			}
 		}
 	} else {
-		const unsigned char *line_src = rleBuffer::get_buffer(0);
+		const byte *line_src = rleBuffer::get_buffer(0);
 		for (int i = y0; i != y1; i += iy) {
 			p->decode_line(fy >> 16);
 
@@ -215,7 +215,7 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 
 			for (int j = x0; j != x1; j += ix) {
 				if (ClipCheck(x + j, y + i)) {
-					const unsigned char *src_data = line_src + ((fx >> 16) << 2);
+					const byte *src_data = line_src + ((fx >> 16) << 2);
 
 					unsigned a = src_data[3];
 					if (a != 255) {
@@ -339,7 +339,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 			while (j < psx) {
 				if (count > 0) {
 					while (count && j < psx) {
-						const unsigned char *rle_buf = (const unsigned char *)rle_data;
+						const byte *rle_buf = (const unsigned char *)rle_data;
 						unsigned a = rle_buf[3];
 
 						if (a != 255) {
@@ -362,7 +362,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 					if (count < 0) {
 						count = -count;
 						while (count && j < psx) {
-							const unsigned char *rle_buf = (const unsigned char *)rle_data;
+							const byte *rle_buf = (const unsigned char *)rle_data;
 							unsigned a = rle_buf[3];
 
 							if (a != 255) {
@@ -432,7 +432,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 
 		unsigned mcl = (_pixel_format == GR_RGB565) ? make_rgb565u(mr, mg, mb) : make_rgb555u(mr, mg, mb);
 
-		const unsigned char *line_src = rleBuffer::get_buffer(0);
+		const byte *line_src = rleBuffer::get_buffer(0);
 
 		for (int i = y0; i != y1; i += iy) {
 			p->decode_line(fy >> 16);
@@ -442,7 +442,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 
 			for (int j = x0; j != x1; j += ix) {
 				if (ClipCheck(x + j, y + i)) {
-					const unsigned char *src_buf = line_src + ((fx >> 16) << 2);
+					const byte *src_buf = line_src + ((fx >> 16) << 2);
 					if (src_buf[0] || src_buf[1] || src_buf[2]) {
 						uint16 scl;
 						GetPixel(x + j, y + i, scl);
@@ -453,7 +453,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 			}
 		}
 	} else {
-		const unsigned char *line_src = rleBuffer::get_buffer(0);
+		const byte *line_src = rleBuffer::get_buffer(0);
 		byte mr, mg, mb;
 		split_rgb565u(mask_color, mr, mg, mb);
 
@@ -465,7 +465,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 
 			for (int j = x0; j != x1; j += ix) {
 				if (ClipCheck(x + j, y + i)) {
-					const unsigned char *src_buf = line_src + ((fx >> 16) << 2);
+					const byte *src_buf = line_src + ((fx >> 16) << 2);
 					unsigned a = src_buf[3];
 					if (a != 255) {
 						uint16 scl;
@@ -489,9 +489,9 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 }
 
 void grDispatcher::PutSpr_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, int mode, float angle) {
-	unsigned char *buf = (unsigned char *)temp_buffer(size.x * size.y * 4);
+	byte *buf = (unsigned char *)temp_buffer(size.x * size.y * 4);
 
-	unsigned char *buf_ptr = buf;
+	byte *buf_ptr = buf;
 	for (int i = 0; i < size.y; i++) {
 		data->decode_line(i, buf_ptr);
 		buf_ptr += size.x * 4;
@@ -514,9 +514,9 @@ void grDispatcher::PutSpr_rle_rot(const Vect2i &pos, const Vect2i &size, const r
 }
 
 void grDispatcher::PutSpr_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, int mode, float angle, const Vect2f &scale) {
-	unsigned char *buf = (unsigned char *)temp_buffer(size.x * size.y * 4);
+	byte *buf = (unsigned char *)temp_buffer(size.x * size.y * 4);
 
-	unsigned char *buf_ptr = buf;
+	byte *buf_ptr = buf;
 	for (int i = 0; i < size.y; i++) {
 		data->decode_line(i, buf_ptr);
 		buf_ptr += size.x * 4;
@@ -539,9 +539,9 @@ void grDispatcher::PutSpr_rle_rot(const Vect2i &pos, const Vect2i &size, const r
 }
 
 void grDispatcher::PutSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, unsigned mask_color, int mask_alpha, int mode, float angle) {
-	unsigned char *buf = (unsigned char *)temp_buffer(size.x * size.y * 4);
+	byte *buf = (unsigned char *)temp_buffer(size.x * size.y * 4);
 
-	unsigned char *buf_ptr = buf;
+	byte *buf_ptr = buf;
 	for (int i = 0; i < size.y; i++) {
 		data->decode_line(i, buf_ptr);
 		buf_ptr += size.x * 4;
@@ -564,9 +564,9 @@ void grDispatcher::PutSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, con
 }
 
 void grDispatcher::PutSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, unsigned mask_color, int mask_alpha, int mode, float angle, const Vect2f &scale) {
-	unsigned char *buf = (unsigned char *)temp_buffer(size.x * size.y * 4);
+	byte *buf = (unsigned char *)temp_buffer(size.x * size.y * 4);
 
-	unsigned char *buf_ptr = buf;
+	byte *buf_ptr = buf;
 	for (int i = 0; i < size.y; i++) {
 		data->decode_line(i, buf_ptr);
 		buf_ptr += size.x * 4;
@@ -589,7 +589,7 @@ void grDispatcher::PutSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, con
 }
 
 inline bool rle_alpha_b(unsigned pixel) {
-	return (reinterpret_cast<unsigned char *>(&pixel)[3] < 200);
+	return (reinterpret_cast<byte *>(&pixel)[3] < 200);
 }
 inline bool rle_alpha_b16(unsigned short pixel) {
 	return pixel < 200;

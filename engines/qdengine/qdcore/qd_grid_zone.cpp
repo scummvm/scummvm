@@ -190,7 +190,7 @@ bool qdGridZone::apply_zone() const {
 	pos.x -= mask_size().x / 2;
 	pos.y -= mask_size().y / 2;
 
-//	const unsigned char* mask_ptr = mask_data();
+//	const byte* mask_ptr = mask_data();
 
 	if (_state) {
 		for (int y = 0; y < mask_size().y; y++) {
@@ -246,7 +246,7 @@ bool qdGridZone::select(qdCamera *camera, bool bSelect) const {
 	pos.x -= mask_size().x / 2;
 	pos.y -= mask_size().y / 2;
 
-//	const unsigned char* mask_ptr = mask_data();
+//	const byte* mask_ptr = mask_data();
 
 	if (bSelect) {
 		for (int y = 0; y < mask_size().y; y++) {

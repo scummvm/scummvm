@@ -42,7 +42,7 @@ typedef struct {
 	     LineLength;           // Length of line (no. or rows / cols)
 } LineContribType;                    // Contribution information for an entire line (row or column)
 
-typedef BOOL (*ProgressAnbAbortCallBack)(BYTE bPercentComplete);
+typedef BOOL (*ProgressAnbAbortCallBack)(byte bPercentComplete);
 
 template <class FilterClass>
 class C2PassScale {
@@ -69,20 +69,20 @@ private:
 	void ScaleCol(COLORREF *pSrc, UINT uSrcWidth, COLORREF *pRes, UINT uResWidth, UINT uResHeight, UINT uCol, LineContribType *Contrib);
 	void VertScale(COLORREF *pSrc, UINT uSrcWidth, UINT uSrcHeight, COLORREF *pDst, UINT uResWidth, UINT uResHeight);
 
-	static inline BYTE make_r(COLORREF col) {
-		return reinterpret_cast<BYTE *>(&col)[2];
+	static inline byte make_r(COLORREF col) {
+		return reinterpret_cast<byte *>(&col)[2];
 	}
-	static inline BYTE make_g(COLORREF col) {
-		return reinterpret_cast<BYTE *>(&col)[1];
+	static inline byte make_g(COLORREF col) {
+		return reinterpret_cast<byte *>(&col)[1];
 	}
-	static inline BYTE make_b(COLORREF col) {
-		return reinterpret_cast<BYTE *>(&col)[0];
+	static inline byte make_b(COLORREF col) {
+		return reinterpret_cast<byte *>(&col)[0];
 	}
-	static inline BYTE make_a(COLORREF col) {
-		return reinterpret_cast<BYTE *>(&col)[3];
+	static inline byte make_a(COLORREF col) {
+		return reinterpret_cast<byte *>(&col)[3];
 	}
 
-	static inline COLORREF make_rgba(BYTE r, BYTE g, BYTE b, BYTE a) {
+	static inline COLORREF make_rgba(byte r, byte g, byte b, byte a) {
 		return (r << 16) | (g << 8) | (b << 0) | (a << 24);
 	}
 };
@@ -277,4 +277,3 @@ COLORREF *C2PassScale<FilterClass>::Scale(COLORREF *pOrigImage, UINT uOrigWidth,
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_UTIL_2_PASS_SCALE_H
-

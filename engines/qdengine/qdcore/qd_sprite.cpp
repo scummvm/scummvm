@@ -52,8 +52,8 @@ bool operator == (const qdSprite &sp1, const qdSprite &sp2) {
 				return false;
 		} else {
 			if (sp1._data && sp2._data) {
-				const unsigned char *d1 = sp1._data;
-				const unsigned char *d2 = sp2._data;
+				const byte *d1 = sp1._data;
+				const byte *d2 = sp2._data;
 				int sz = sp1._picture_size.x * sp1._picture_size.y;
 
 				if (sp1.check_flag(qdSprite::ALPHA_FLAG) && !sp2.check_flag(qdSprite::ALPHA_FLAG)) return false;
@@ -121,7 +121,7 @@ qdSprite::qdSprite(int wid, int hei, int format):
 		break;
 	};
 
-	_data = new unsigned char[wid * hei * bytes_per_pix];
+	_data = new byte[wid * hei * bytes_per_pix];
 }
 
 qdSprite::qdSprite(const qdSprite &spr) : _data(0),
@@ -162,7 +162,7 @@ qdSprite &qdSprite::operator = (const qdSprite &spr) {
 			break;
 		}
 
-		_data = new unsigned char[_picture_size.x * _picture_size.y * ssx];
+		_data = new byte[_picture_size.x * _picture_size.y * ssx];
 		memcpy(_data, spr._data, _picture_size.x * _picture_size.y * ssx);
 	} else
 		_data = NULL;
@@ -201,7 +201,7 @@ bool qdSprite::load(const char *fname) {
 		set_file(fname);
 
 	int sx, sy, flags, ssx, colors;
-	unsigned char header[18];
+	byte header[18];
 
 	Common::SeekableReadStream *fh;
 	Common::Path fpath(_file.c_str(), '\\');
@@ -216,7 +216,7 @@ bool qdSprite::load(const char *fname) {
 
 			_format = GR_RGB565;
 
-			_data = new unsigned char[_size.x * _size.y * 2];
+			_data = new byte[_size.x * _size.y * 2];
 
 			// Scale image down
 			float rx = static_cast<float>(qdGameConfig::get_config().screen_sx()) / g_engine->_thumbSizeX;
@@ -286,15 +286,15 @@ bool qdSprite::load(const char *fname) {
 	}
 	}
 
-	_data = new unsigned char[ssx * sy];
+	_data = new byte[ssx * sy];
 
 	// RLE
 	if (10 == header[2]) {
 		int cur = 0; // В какую ячейку считываем сейчас
 		int i, j;    // Для циклов далее (теор. ускорение)
-		unsigned char info, fl, len;
-		unsigned char pixel[4];
-		unsigned char col_bytes = colors / 8;
+		byte info, fl, len;
+		byte pixel[4];
+		byte col_bytes = colors / 8;
 		while (cur < ssx * sy) {
 			info = fh->readByte();
 			fl = (info >> 7) & 0x01;
@@ -330,8 +330,8 @@ bool qdSprite::load(const char *fname) {
 	if (!(flags & 0x20)) {
 		int y;
 
-		unsigned char *str_buf = new unsigned char[ssx];
-		unsigned char *str0, *str1;
+		byte *str_buf = new unsigned char[ssx];
+		byte *str0, *str1;
 
 		str0 = _data;
 		str1 = _data + ssx * (sy - 1);
@@ -391,7 +391,7 @@ void qdSprite::save(const char *fname) {
 
 	const char *out_file = (fname) ? fname : _file.c_str();
 
-	static unsigned char header[18];
+	static byte header[18];
 
 	Common::DumpFile fh;
 
@@ -412,9 +412,9 @@ void qdSprite::save(const char *fname) {
 	fh.write(header, 18);
 
 	if (_format == GR_ARGB8888) {
-		unsigned char *buf = new unsigned char[_picture_size.x * _picture_size.y * 4];
-		unsigned char *p = buf;
-		unsigned char *dp = _data;
+		byte *buf = new unsigned char[_picture_size.x * _picture_size.y * 4];
+		byte *p = buf;
+		byte *dp = _data;
 
 		for (int i = 0; i < _picture_size.x * _picture_size.y; i++) {
 			unsigned short r, g, b, a;
@@ -455,7 +455,7 @@ bool qdSprite::compress() {
 			_rle_data = new rleBuffer;
 
 			if (!check_flag(ALPHA_FLAG)) {
-				unsigned char *p = new unsigned char[_picture_size.x * _picture_size.y * 4];
+				byte *p = new unsigned char[_picture_size.x * _picture_size.y * 4];
 				unsigned short *dp = reinterpret_cast<unsigned short *>(p);
 				unsigned short *sp = reinterpret_cast<unsigned short *>(_data);
 				for (int i = 0; i < _picture_size.x * _picture_size.y; i++) {
@@ -475,9 +475,9 @@ bool qdSprite::compress() {
 		return false;
 	case GR_RGB888:
 		if (_data) {
-			unsigned char *p = new unsigned char[_picture_size.x * _picture_size.y * 4];
-			unsigned char *ptr = p;
-			unsigned char *data_ptr = _data;
+			byte *p = new unsigned char[_picture_size.x * _picture_size.y * 4];
+			byte *ptr = p;
+			byte *data_ptr = _data;
 			for (int i = 0; i < _picture_size.x * _picture_size.y; i++) {
 				ptr[0] = data_ptr[0];
 				ptr[1] = data_ptr[1];
@@ -520,14 +520,14 @@ bool qdSprite::uncompress() {
 	case GR_RGB565:
 	case GR_ARGB1555:
 		if (check_flag(ALPHA_FLAG)) {
-			_data = new unsigned char[_picture_size.x * _picture_size.y * 4];
-			unsigned char *p = _data;
+			_data = new byte[_picture_size.x * _picture_size.y * 4];
+			byte *p = _data;
 			for (int i = 0; i < _picture_size.y; i++) {
 				_rle_data->decode_line(i, p);
 				p += _picture_size.x * sizeof(unsigned);
 			}
 		} else {
-			_data = new unsigned char[_picture_size.x * _picture_size.y * 2];
+			_data = new byte[_picture_size.x * _picture_size.y * 2];
 			unsigned short *p = reinterpret_cast<unsigned short *>(_data);
 			for (int i = 0; i < _picture_size.y; i++) {
 				const unsigned short *rle_p = reinterpret_cast<const unsigned short *>(rleBuffer::get_buffer(0));
@@ -542,10 +542,10 @@ bool qdSprite::uncompress() {
 		break;
 	case GR_RGB888:
 		if (!check_flag(ALPHA_FLAG)) {
-			_data = new unsigned char[_picture_size.x * _picture_size.y * 3];
-			unsigned char *p = _data;
+			_data = new byte[_picture_size.x * _picture_size.y * 3];
+			byte *p = _data;
 			for (int i = 0; i < _picture_size.y; i++) {
-				const unsigned char *rle_p = reinterpret_cast<const unsigned char *>(rleBuffer::get_buffer(0));
+				const byte *rle_p = reinterpret_cast<const unsigned char *>(rleBuffer::get_buffer(0));
 				_rle_data->decode_line(i);
 
 				for (int j = 0; j < _picture_size.x; j++) {
@@ -557,8 +557,8 @@ bool qdSprite::uncompress() {
 				}
 			}
 		} else {
-			_data = new unsigned char[_picture_size.x * _picture_size.y * 4];
-			unsigned char *p = _data;
+			_data = new byte[_picture_size.x * _picture_size.y * 4];
+			byte *p = _data;
 
 			for (int i = 0; i < _picture_size.y; i++) {
 				_rle_data->decode_line(i, p);
@@ -570,10 +570,10 @@ bool qdSprite::uncompress() {
 		break;
 	case GR_ARGB8888:
 		if (!check_flag(ALPHA_FLAG)) {
-			_data = new unsigned char[_picture_size.x * _picture_size.y * 3];
-			unsigned char *p = _data;
+			_data = new byte[_picture_size.x * _picture_size.y * 3];
+			byte *p = _data;
 			for (int i = 0; i < _picture_size.y; i++) {
-				const unsigned char *rle_p = reinterpret_cast<const unsigned char *>(rleBuffer::get_buffer(0));
+				const byte *rle_p = reinterpret_cast<const unsigned char *>(rleBuffer::get_buffer(0));
 				_rle_data->decode_line(i);
 
 				for (int j = 0; j < _picture_size.x; j++) {
@@ -586,8 +586,8 @@ bool qdSprite::uncompress() {
 			}
 			_format = GR_RGB888;
 		} else {
-			_data = new unsigned char[_picture_size.x * _picture_size.y * 4];
-			unsigned char *p = _data;
+			_data = new byte[_picture_size.x * _picture_size.y * 4];
+			byte *p = _data;
 
 			for (int i = 0; i < _picture_size.y; i++) {
 				_rle_data->decode_line(i, p);
@@ -924,7 +924,7 @@ bool qdSprite::hit(int x, int y) const {
 					return false;
 				case GR_RGB888:
 				case GR_ARGB8888:
-					if (reinterpret_cast<unsigned char * >(&pixel)[3] < 240) return true;
+					if (reinterpret_cast<byte * >(&pixel)[3] < 240) return true;
 					return false;
 				}
 			} else {
@@ -946,7 +946,7 @@ bool qdSprite::hit(int x, int y, float scale) const {
 	return hit(x, y);
 }
 
-bool qdSprite::put_pixel(int x, int y, unsigned char r, unsigned char g, unsigned char b) {
+bool qdSprite::put_pixel(int x, int y, byte r, unsigned char g, unsigned char b) {
 	x -= _picture_offset.x;
 	y -= _picture_offset.y;
 
@@ -960,8 +960,8 @@ bool qdSprite::put_pixel(int x, int y, unsigned char r, unsigned char g, unsigne
 	case GR_RGB565:
 		bytes_per_pix = 2;
 		word = grDispatcher::make_rgb565u(r, g, b);
-		_data[bytes_per_pix * (y * _size.x + x) + 0] = static_cast<unsigned char>(word & 0x00FF);
-		_data[bytes_per_pix * (y * _size.x + x) + 1] = static_cast<unsigned char>(word >> 8 & 0x00FF);
+		_data[bytes_per_pix * (y * _size.x + x) + 0] = static_cast<byte>(word & 0x00FF);
+		_data[bytes_per_pix * (y * _size.x + x) + 1] = static_cast<byte>(word >> 8 & 0x00FF);
 		break;
 	case GR_RGB888:
 		bytes_per_pix = 3;
@@ -1013,37 +1013,37 @@ void qdSprite::qda_load(Common::SeekableReadStream *fh, int version) {
 			case GR_RGB565:
 			case GR_ARGB1555:
 				if (!al_flag)
-					_data = new unsigned char[_picture_size.x * _picture_size.y * 2];
+					_data = new byte[_picture_size.x * _picture_size.y * 2];
 				else
 					warning("qdSprite::qda_load(): al_flag is set, check the sprite picture"); // TODO)
-					_data = new unsigned char[_picture_size.x * _picture_size.y * 4];
+					_data = new byte[_picture_size.x * _picture_size.y * 4];
 
 				fh->read(_data, _picture_size.x * _picture_size.y * 2);
 				break;
 			case GR_RGB888:
 				if (!al_flag)
-					_data = new unsigned char[_picture_size.x * _picture_size.y * 3];
+					_data = new byte[_picture_size.x * _picture_size.y * 3];
 				else
 					warning("qdSprite::qda_load(): al_flag is set, check the sprite picture"); // TODO
-					_data = new unsigned char[_picture_size.x * _picture_size.y * 4];
+					_data = new byte[_picture_size.x * _picture_size.y * 4];
 
 				fh->read(_data, _picture_size.x * _picture_size.y * 3);
 				break;
 			case GR_ARGB8888:
-				_data = new unsigned char[_picture_size.x * _picture_size.y * 4];
+				_data = new byte[_picture_size.x * _picture_size.y * 4];
 				fh->read(_data, _picture_size.x * _picture_size.y * 4);
 				break;
 			}
 			if (al_flag) {
-				unsigned char *alpha_data = new unsigned char[_picture_size.x * _picture_size.y];
+				byte *alpha_data = new unsigned char[_picture_size.x * _picture_size.y];
 				fh->read(alpha_data, _picture_size.x * _picture_size.y);
 
 				switch (_format) {
 				case GR_RGB565:
 				case GR_ARGB1555: {
-					unsigned char *dp = _data + _picture_size.x * _picture_size.y * 4 - 4;
-					unsigned char *sp = _data + _picture_size.x * _picture_size.y * 2 - 2;
-					unsigned char *ap = alpha_data + _picture_size.x * _picture_size.y - 1;
+					byte *dp = _data + _picture_size.x * _picture_size.y * 4 - 4;
+					byte *sp = _data + _picture_size.x * _picture_size.y * 2 - 2;
+					byte *ap = alpha_data + _picture_size.x * _picture_size.y - 1;
 
 					for (int i = 0; i < _picture_size.x * _picture_size.y; i++) {
 						dp[0] = sp[0];
@@ -1057,9 +1057,9 @@ void qdSprite::qda_load(Common::SeekableReadStream *fh, int version) {
 				}
 				break;
 				case GR_RGB888: {
-					unsigned char *dp = _data + _picture_size.x * _picture_size.y * 4 - 4;
-					unsigned char *sp = _data + _picture_size.x * _picture_size.y * 3 - 3;
-					unsigned char *ap = alpha_data + _picture_size.x * _picture_size.y - 1;
+					byte *dp = _data + _picture_size.x * _picture_size.y * 4 - 4;
+					byte *sp = _data + _picture_size.x * _picture_size.y * 3 - 3;
+					byte *ap = alpha_data + _picture_size.x * _picture_size.y - 1;
 
 					for (int i = 0; i < _picture_size.x * _picture_size.y; i++) {
 						dp[0] = sp[0];
@@ -1084,19 +1084,19 @@ void qdSprite::qda_load(Common::SeekableReadStream *fh, int version) {
 			case GR_RGB565:
 			case GR_ARGB1555:
 				if (check_flag(ALPHA_FLAG)) {
-					_data = new unsigned char[_picture_size.x * _picture_size.y * 4];
+					_data = new byte[_picture_size.x * _picture_size.y * 4];
 					fh->read(_data, _picture_size.x * _picture_size.y * 4);
 				} else {
-					_data = new unsigned char[_picture_size.x * _picture_size.y * 2];
+					_data = new byte[_picture_size.x * _picture_size.y * 2];
 					fh->read(_data, _picture_size.x * _picture_size.y * 2);
 				}
 				break;
 			case GR_RGB888:
-				_data = new unsigned char[_picture_size.x * _picture_size.y * 3];
+				_data = new byte[_picture_size.x * _picture_size.y * 3];
 				fh->read(_data, _picture_size.x * _picture_size.y * 3);
 				break;
 			case GR_ARGB8888:
-				_data = new unsigned char[_picture_size.x * _picture_size.y * 4];
+				_data = new byte[_picture_size.x * _picture_size.y * 4];
 				fh->read(_data, _picture_size.x * _picture_size.y * 4);
 				break;
 			}
@@ -1136,7 +1136,7 @@ bool qdSprite::crop(int left, int top, int right, int bottom, bool store_offsets
 	int idx1 = 0;
 	int idx = left * psz + top * _picture_size.x * psz;
 
-	unsigned char *data_new = new unsigned char[sx * sy * psz];
+	byte *data_new = new unsigned char[sx * sy * psz];
 	for (int y = 0; y < sy; y++) {
 		memcpy(data_new + idx1, _data + idx, sx * psz);
 		idx += _picture_size.x * psz;
@@ -1174,19 +1174,19 @@ bool qdSprite::undo_crop() {
 	if (_format == GR_ARGB8888)
 		psx = 4;
 
-	unsigned char *new_data = new unsigned char[_size.x * _size.y * psx];
+	byte *new_data = new unsigned char[_size.x * _size.y * psx];
 	memset(new_data, 0, _size.x * _size.y * psx);
 
 	if (check_flag(ALPHA_FLAG)) {
-		unsigned char *p = (_format == GR_ARGB8888) ? new_data + 3 : new_data + 2;
+		byte *p = (_format == GR_ARGB8888) ? new_data + 3 : new_data + 2;
 		for (int i = 0; i < _size.x * _size.y; i++) {
 			*p = 255;
 			p += 4;
 		}
 	}
 
-	unsigned char *dp = _data;
-	unsigned char *p = new_data + (_picture_offset.x + _picture_offset.y * _size.x) * psx;
+	byte *dp = _data;
+	byte *p = new_data + (_picture_offset.x + _picture_offset.y * _size.x) * psx;
 
 	for (int i = 0; i < _picture_size.y; i++) {
 		memcpy(p, dp, _picture_size.x * psx);
@@ -1357,7 +1357,7 @@ unsigned qdSprite::data_size() const {
 
 bool qdSprite::scale(float coeff_x, float coeff_y) {
 	static scl::C2PassScale<scl::CBilinearFilter> scale_engine;
-	static std::vector<unsigned char> temp_buffer(300 * 400 * 4, 0);
+	static std::vector<byte> temp_buffer(300 * 400 * 4, 0);
 
 	bool compress_flag = false;
 
@@ -1371,7 +1371,7 @@ bool qdSprite::scale(float coeff_x, float coeff_y) {
 	int sx = round(float(_picture_size.x) * coeff_x);
 	int sy = round(float(_picture_size.y) * coeff_y);
 
-	unsigned char *src_data = _data;
+	byte *src_data = _data;
 
 	if (_format == GR_RGB888) {
 		if (temp_buffer.size() < _picture_size.x * _picture_size.y * 4)
@@ -1380,8 +1380,8 @@ bool qdSprite::scale(float coeff_x, float coeff_y) {
 		src_data = &*temp_buffer.begin();
 		memset(src_data, 0, _picture_size.x * _picture_size.y * 4);
 
-		unsigned char *p = src_data;
-		unsigned char *dp = _data;
+		byte *p = src_data;
+		byte *dp = _data;
 
 		for (int i = 0; i < _picture_size.x * _picture_size.y; i++) {
 			p[0] = dp[0];
@@ -1394,17 +1394,17 @@ bool qdSprite::scale(float coeff_x, float coeff_y) {
 		}
 	}
 
-	unsigned char *dest_data = new unsigned char[sx * sy * 4];
+	byte *dest_data = new unsigned char[sx * sy * 4];
 
 	scale_engine.Scale(reinterpret_cast<unsigned int *>(src_data), _picture_size.x, _picture_size.y, reinterpret_cast<unsigned int *>(dest_data), sx, sy);
 
 	delete [] _data;
 
 	if (_format == GR_RGB888) {
-		_data = new unsigned char[sx * sy * 3];
+		_data = new byte[sx * sy * 3];
 
-		unsigned char *p = dest_data;
-		unsigned char *dp = _data;
+		byte *p = dest_data;
+		byte *dp = _data;
 
 		for (int i = 0; i < sx * sy; i++) {
 			dp[0] = p[0];

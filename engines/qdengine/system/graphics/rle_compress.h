@@ -34,9 +34,9 @@ public:
 
 	rleBuffer &operator = (const rleBuffer &buf);
 
-	bool encode(int sx, int sy, const unsigned char *buf);
+	bool encode(int sx, int sy, const byte *buf);
 
-	bool decode_line(int y, unsigned char *out_buf) const;
+	bool decode_line(int y, byte *out_buf) const;
 
 	inline bool decode_line(int y, int buffer_id = 0) const {
 		if (buffer_id)
@@ -47,7 +47,7 @@ public:
 
 	bool decode_pixel(int x, int y, unsigned &pixel);
 
-	static inline const unsigned char *get_buffer(int buffer_id) {
+	static inline const byte *get_buffer(int buffer_id) {
 		if (buffer_id) return &*_buffer1.begin();
 		else return &*_buffer0.begin();
 	}
@@ -85,8 +85,8 @@ private:
 
 	int _bits_per_pixel;
 
-	static std::vector<unsigned char> _buffer0;
-	static std::vector<unsigned char> _buffer1;
+	static std::vector<byte> _buffer0;
+	static std::vector<byte> _buffer1;
 
 	friend bool operator == (const rleBuffer &buf1, const rleBuffer &buf2);
 };
