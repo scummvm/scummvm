@@ -144,7 +144,7 @@ bool qdInterfaceSave::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev
 	return false;
 }
 
-bool qdInterfaceSave::keyboard_handler(int vkey) {
+bool qdInterfaceSave::keyboard_handler(Common::KeyCode vkey) {
 	return false;
 }
 

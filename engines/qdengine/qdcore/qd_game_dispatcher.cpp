@@ -74,8 +74,8 @@ void qd_set_game_dispatcher(qdGameDispatcher *p) {
 	qdGameDispatcher::set_dispatcher(p);
 }
 
-bool qd_keyboard_handler(int vkey, bool event) {
-	if (qdGameDispatcher * p = qd_get_game_dispatcher())
+bool qd_keyboard_handler(Common::KeyCode vkey, bool event) {
+	if (qdGameDispatcher *p = qd_get_game_dispatcher())
 		return p->keyboard_handler(vkey, event);
 
 	return false;
@@ -2400,17 +2400,19 @@ bool qdGameDispatcher::is_minigame_in_list(qdMiniGame *p) {
 	return _minigames.is_in_list(p);
 }
 
-bool qdGameDispatcher::keyboard_handler(int vkey, bool event) {
+bool qdGameDispatcher::keyboard_handler(Common::KeyCode vkey, bool event) {
 	if (is_paused()) {
 #ifdef __QD_DEBUG_ENABLE__
 		if (event) {
 			switch (vkey) {
-			case VK_PAUSE:
+			case Common::KEYCODE_PAUSE:
 				resume();
 				return true;
-			case VK_SPACE:
+			case Common::KEYCODE_SPACE:
 				set_flag(NEXT_FRAME_FLAG);
 				return true;
+			default:
+				break;
 			}
 		}
 #endif
@@ -2433,11 +2435,11 @@ bool qdGameDispatcher::keyboard_handler(int vkey, bool event) {
 			return true;
 
 		switch (vkey) {
-		case VK_ESCAPE:
+		case Common::KEYCODE_ESCAPE:
 			if (is_main_menu_exit_enabled())
 				return toggle_main_menu(true);
 			break;
-		case VK_SPACE:
+		case Common::KEYCODE_SPACE:
 			if (qdGameScene * sp = get_active_scene()) {
 				if (!sp->check_flag(qdGameScene::DISABLE_KEYBOARD_PERSONAGE_SWITCH))
 					sp->change_active_personage();
@@ -2445,7 +2447,7 @@ bool qdGameDispatcher::keyboard_handler(int vkey, bool event) {
 			}
 			break;
 #ifdef __QD_DEBUG_ENABLE__
-		case VK_F9:
+		case Common::KEYCODE_F9:
 			qdGameConfig::get_config().toggle_debug_draw();
 			if (qdGameConfig::get_config().debug_draw()) {
 				if (!qdGameConfig::get_config().force_full_redraw())
@@ -2456,21 +2458,23 @@ bool qdGameDispatcher::keyboard_handler(int vkey, bool event) {
 			}
 			toggle_full_redraw();
 			return true;
-		case VK_F10:
+		case Common::KEYCODE_F10:
 			write_resource_stats("memory_usage.html");
 			return true;
-		case VK_F5:
+		case Common::KEYCODE_F5:
 			pause();
 			g_engine->saveGameState(_autosave_slot, "Autosave", true);
 			resume();
 			return true;
-		case VK_F6:
+		case Common::KEYCODE_F6:
 			g_engine->loadGameState(_autosave_slot);
 			return true;
-		case VK_PAUSE:
+		case Common::KEYCODE_PAUSE:
 			pause();
 			return true;
 #endif
+		default:
+			break;
 		}
 	}
 

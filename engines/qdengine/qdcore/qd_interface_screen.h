@@ -23,6 +23,8 @@
 #ifndef QDENGINE_QDCORE_QD_INTERFACE_SCREEN_H
 #define QDENGINE_QDCORE_QD_INTERFACE_SCREEN_H
 
+#include "common/keyboard.h"
+
 #include "qdengine/parser/xml_fwd.h"
 #include "qdengine/qdcore/qd_interface_object_base.h"
 #include "qdengine/qdcore/qd_object_list_container.h"
@@ -77,7 +79,7 @@ public:
 	//! Обработчик событий мыши.
 	bool mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev);
 	//! Обработчик ввода с клавиатуры.
-	bool keyboard_handler(int vkey);
+	bool keyboard_handler(Common::KeyCode vkey);
 	bool char_input_handler(int vkey);
 
 	//! Добавляет ресурс file_name с владельцем owner.

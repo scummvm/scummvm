@@ -326,7 +326,7 @@ bool qdInterfaceElementState::mouse_handler(int x, int y, mouseDispatcher::mouse
 	return false;
 }
 
-bool qdInterfaceElementState::keyboard_handler(int vkey) {
+bool qdInterfaceElementState::keyboard_handler(Common::KeyCode vkey) {
 	return false;
 }
 

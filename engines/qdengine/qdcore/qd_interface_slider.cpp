@@ -112,7 +112,7 @@ bool qdInterfaceSlider::mouse_handler(int x, int y, mouseDispatcher::mouseEvent 
 	return false;
 }
 
-bool qdInterfaceSlider::keyboard_handler(int vkey) {
+bool qdInterfaceSlider::keyboard_handler(Common::KeyCode vkey) {
 	return false;
 }
 

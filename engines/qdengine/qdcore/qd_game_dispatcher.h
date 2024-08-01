@@ -131,7 +131,7 @@ public:
 	void update_time();
 
 	bool mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev);
-	bool keyboard_handler(int vkey, bool event);
+	bool keyboard_handler(Common::KeyCode vkey, bool event);
 
 	bool add_game_end(qdGameEnd *p);
 	bool rename_game_end(qdGameEnd *p, const char *name);

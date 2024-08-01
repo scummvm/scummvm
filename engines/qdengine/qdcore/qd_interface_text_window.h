@@ -66,7 +66,7 @@ public:
 	//! Обработчик событий мыши.
 	bool mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev);
 	//! Обработчик ввода с клавиатуры.
-	bool keyboard_handler(int vkey);
+	bool keyboard_handler(Common::KeyCode vkey);
 	bool char_input_handler(int input);
 
 	void hover_clear();
@@ -243,7 +243,7 @@ private:
 	void set_scrolling(int y_delta);
 
 	void text_redraw() const;
-	bool edit_input(int vkey);
+	bool edit_input(Common::KeyCode vkey);
 };
 
 } // namespace QDEngine

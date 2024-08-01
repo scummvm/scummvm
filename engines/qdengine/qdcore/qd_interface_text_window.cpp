@@ -154,7 +154,7 @@ bool qdInterfaceTextWindow::mouse_handler(int x, int y, mouseDispatcher::mouseEv
 	return false;
 }
 
-bool qdInterfaceTextWindow::keyboard_handler(int vkey) {
+bool qdInterfaceTextWindow::keyboard_handler(Common::KeyCode vkey) {
 	if (_windowType == WINDOW_EDIT && _isEditing)
 		return edit_input(vkey);
 
@@ -607,43 +607,43 @@ void qdInterfaceTextWindow::text_redraw() const {
 	}
 }
 
-bool qdInterfaceTextWindow::edit_input(int vkey) {
+bool qdInterfaceTextWindow::edit_input(Common::KeyCode vkey) {
 	if (_isEditing) {
 		switch (vkey) {
-		case VK_ESCAPE:
+		case Common::KEYCODE_ESCAPE:
 			if (!edit_done(true))
 				return false;
 			return true;
 
-		case VK_RETURN:
+		case Common::KEYCODE_RETURN:
 			if (!edit_done(false))
 				return false;
 			return true;
 
-		case VK_LEFT:
+		case Common::KEYCODE_LEFT:
 			if (_caretPose > 0)
 				--_caretPose;
 			return true;
 
-		case VK_HOME:
+		case Common::KEYCODE_HOME:
 			_caretPose = 0;
 			return true;
 
-		case VK_END:
+		case Common::KEYCODE_END:
 			_caretPose = _inputString.size();
 			return true;
 
-		case VK_RIGHT:
+		case Common::KEYCODE_RIGHT:
 			if (_caretPose < _inputString.size())
 				++_caretPose;
 			return true;
 
-		case VK_BACK:
+		case Common::KEYCODE_BACKSPACE:
 			if (_caretPose > 0 && _caretPose <= _inputString.size())
 				_inputString.erase(--_caretPose, 1);
 			return true;
 
-		case VK_DELETE:
+		case Common::KEYCODE_DELETE:
 			if (_caretPose >= 0 && _caretPose < _inputString.size())
 				_inputString.erase(_caretPose, 1);
 
