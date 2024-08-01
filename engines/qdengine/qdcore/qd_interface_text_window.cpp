@@ -409,19 +409,6 @@ bool qdInterfaceTextWindow::redraw() const {
 		text_redraw();
 	}
 
-#ifdef _QUEST_EDITOR
-	Vect2i leftTop = r();
-	Vect2i rightBottom = r();
-	Vect2i const half(text_size().x >> 1, text_size().y >> 1);
-
-	leftTop -= half;
-	rightBottom += half;
-	grDispatcher *const gd = grDispatcher::instance();
-	gd->Line(leftTop.x, leftTop.y, leftTop.x, rightBottom.y, 0, 4, true);
-	gd->Line(leftTop.x, leftTop.y, rightBottom.x, leftTop.y,  0, 4, true);
-	gd->Line(rightBottom.x, rightBottom.y, leftTop.x, rightBottom.y, 0, 4, true);
-	gd->Line(rightBottom.x, rightBottom.y, rightBottom.x, leftTop.y,  0, 4, true);
-#endif // _QUEST_EDITOR
 	return true;
 }
 
