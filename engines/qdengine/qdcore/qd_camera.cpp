@@ -176,25 +176,15 @@ float qdCamera::get_scale(const Vect3f &glCoord) const {
 
 const Vect2s qdCamera::scr2rscr(const Vect2s &v) const {
 	Vect2s res;
-#ifdef _QUEST_EDITOR
-	res.x = v.x - _scrCenter.x ;
-	res.y = _scrCenter.y  - v.y;
-#else
 	res.x = v.x - (_scrCenter.x - _scrOffset.x);
 	res.y = (_scrCenter.y - _scrOffset.y) - v.y;
-#endif
 	return res;
 }
 
 const Vect2s qdCamera::rscr2scr(const Vect2s &v) const {
 	Vect2s res;
-#ifdef _QUEST_EDITOR
-	res.x = _scrCenter.x + v.x;
-	res.y = _scrCenter.y - v.y;
-#else
 	res.x = _scrCenter.x + v.x - _scrOffset.x;
 	res.y = _scrCenter.y - v.y - _scrOffset.y;
-#endif
 	return res;
 }
 
@@ -364,15 +354,7 @@ const Vect2s qdCamera::get_cell_index(float X, float Y, bool grid_crop) const {
 	if (grid_crop && (x < 0 || x >= XSP || y < 0 || y >= YSP))
 		return Vect2s(-1, -1);
 
-	return Vect2s(x / _cellSX
-#ifdef _QUEST_EDITOR
-	              - static_cast<int>(x < 0)
-#endif // _QUEST_EDITOR
-	              , y / _cellSY
-#ifdef _QUEST_EDITOR
-	              - static_cast<int>(y < 0)
-#endif // _QUEST_EDITOR
-	             );
+	return Vect2s(x / _cellSX, y / _cellSY);
 }
 
 const Vect2s qdCamera::get_cell_index(const Vect3f &v, bool grid_crop) const {
@@ -599,9 +581,7 @@ void qdCamera::move_scr_center(int dxc, int dyc) {
 	_scrCenter.x += dxc;
 	_scrCenter.y += dyc;
 
-#ifndef _QUEST_EDITOR
 	clip_center_coords(_scrCenter.x, _scrCenter.y);
-#endif
 }
 
 float qdCamera::scrolling_phase_x() const {
@@ -1046,7 +1026,6 @@ bool qdCamera::set_mode(const qdCameraMode &mode, qdGameObjectAnimated *object) 
 bool qdCamera::quant(float dt) {
 	Vect2i last_pos = _scrCenter;
 
-#ifndef _QUEST_EDITOR
 	qdGameObjectAnimated *p = _current_object;
 	if (!p) p = _default_object;
 
@@ -1196,8 +1175,6 @@ bool qdCamera::quant(float dt) {
 
 	if (_current_mode.has_work_time() && _current_mode_work_time > _current_mode.work_time())
 		set_mode(_default_mode, _default_object);
-
-#endif
 
 	if (last_pos.x != _scrCenter.x || last_pos.y != _scrCenter.y)
 		return true;
