@@ -1908,7 +1908,14 @@ bool qdGameObjectMoving::keyboard_move() {
 		bool keypress = false;
 		warning("STUB: qdGameObjectMoving::keyboard_move()");
 
-		static int vkeys[6] = { VK_DOWN, VK_RIGHT, VK_UP, VK_LEFT, VK_DOWN, VK_RIGHT };
+		static const Common::KeyCode vkeys[6] = {
+			Common::KEYCODE_DOWN,
+			Common::KEYCODE_RIGHT,
+			Common::KEYCODE_UP,
+			Common::KEYCODE_LEFT,
+			Common::KEYCODE_DOWN,
+			Common::KEYCODE_RIGHT
+		};
 
 		bool key_state[6];
 
