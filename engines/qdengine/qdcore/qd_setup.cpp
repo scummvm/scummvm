@@ -176,7 +176,6 @@ int qdGameConfig::pixel_format() const {
 
 void qdGameConfig::load() {
 	char *p = 0;
-#ifndef _QUEST_EDITOR
 	p = getIniKey(_ini_name, "graphics", "color_depth");
 	if (strlen(p)) _bits_per_pixel = atoi(p);
 
@@ -226,14 +225,12 @@ void qdGameConfig::load() {
 
 	p = getIniKey(_ini_name, "sound", "music_volume");
 	if (strlen(p)) _music_volume = atoi(p);
-#endif
 
 	p = getIniKey(_ini_name, "minigame", "read_only_ini");
 	if (strlen(p)) _minigame_read_only_ini = (atoi(p) > 0);
 }
 
 void qdGameConfig::save() {
-#ifndef _QUEST_EDITOR
 	putIniKey(_ini_name, "graphics", "color_depth", _bits_per_pixel);
 	putIniKey(_ini_name, "graphics", "fullscreen", _fullscreen);
 	putIniKey(_ini_name, "graphics", "driver", _driver_id);
@@ -242,7 +239,6 @@ void qdGameConfig::save() {
 	putIniKey(_ini_name, "sound", "sound_volume", _sound_volume);
 	putIniKey(_ini_name, "sound", "enable_music", _enable_music);
 	putIniKey(_ini_name, "sound", "music_volume", _music_volume);
-#endif
 }
 
 bool qdGameConfig::update_sound_settings() const {
