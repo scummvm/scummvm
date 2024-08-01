@@ -81,11 +81,7 @@ public:
 	}
 
 	float animation_phase() const {
-#ifdef _QUEST_EDITOR
-		return _animation_phase + animation_scroll_phase_;
-#else
 		return _animation_phase;
-#endif
 	}
 	void set_animation_phase(float p) {
 		_animation_phase = p;
@@ -128,14 +124,6 @@ public:
 		return false;
 	}
 
-#ifdef _QUEST_EDITOR
-	// direction: true = next frame, false = prev frame
-	bool change_animation_frame(bool direction = true) const;
-	void reset_scroll() const {
-		animation_scroll_phase_ = 0.f;
-	}
-#endif
-
 	//! Загрузка данных из сэйва.
 	bool load_data(Common::SeekableReadStream &fh, int save_version);
 	//! Запись данных в сэйв.
@@ -154,10 +142,6 @@ private:
 	const qdGameObject *_start_object;
 	qdNamedObjectReference _start_object_ref;
 
-#ifdef _QUEST_EDITOR
-	//исопользуется для прокрутки анимации
-	mutable float animation_scroll_phase_;
-#endif
 	mutable bool _status;
 	mutable bool _is_finished;
 	mutable qdCoordsAnimationPoint _start_point;
