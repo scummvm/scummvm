@@ -33,43 +33,43 @@
 
 namespace QDEngine {
 
-qdCounterElement::qdCounterElement() : state_(NULL),
-	last_state_status_(false),
-	increment_value_(true) {
+qdCounterElement::qdCounterElement() : _state(NULL),
+	_last_state_status(false),
+	_increment_value(true) {
 }
 
 qdCounterElement::~qdCounterElement() {
 }
 
-qdCounterElement::qdCounterElement(const qdGameObjectState *p, bool inc_value) : state_(p),
-	state_reference_(p),
-	last_state_status_(false),
-	increment_value_(inc_value) {
+qdCounterElement::qdCounterElement(const qdGameObjectState *p, bool inc_value) : _state(p),
+	_state_reference(p),
+	_last_state_status(false),
+	_increment_value(inc_value) {
 }
 
 bool qdCounterElement::init() {
-//	if(!state_){
-	state_ = dynamic_cast<const qdGameObjectState *>(state_reference_.object());
-	if (!state_) {
+//	if(!_state){
+	_state = dynamic_cast<const qdGameObjectState *>(_state_reference.object());
+	if (!_state) {
 		debugC(3, kDebugLog, "qdCounterElement::init() failed");
 		return false;
 	}
 //	}
 
-	last_state_status_ = false;
+	_last_state_status = false;
 
 	return true;
 }
 
 bool qdCounterElement::quant() {
-	if (state_) {
+	if (_state) {
 		bool result = false;
 
-		bool status = state_->is_active();
-		if (status && !last_state_status_)
+		bool status = _state->is_active();
+		if (status && !_last_state_status)
 			result = true;
 
-		last_state_status_ = status;
+		_last_state_status = status;
 
 		return result;
 	}
@@ -82,10 +82,10 @@ bool qdCounterElement::load_script(const xml::tag *p) {
 		xml::tag_buffer buf(*it);
 		switch (it->ID()) {
 		case QDSCR_NAMED_OBJECT:
-			state_reference_.load_script(&*it);
+			_state_reference.load_script(&*it);
 			break;
 		case QDSCR_COUNTER_INC_VALUE:
-			increment_value_ = (xml::tag_buffer(*it).get_int()) ? true : false;
+			_increment_value = (xml::tag_buffer(*it).get_int()) ? true : false;
 			break;
 		}
 	}
@@ -100,13 +100,13 @@ bool qdCounterElement::save_script(Common::WriteStream &fh, int indent) const {
 
 	fh.writeString("<counter_element");
 
-	if (!increment_value_) {
+	if (!_increment_value) {
 		fh.writeString(" inc_value=\"0\"");
 	}
 	fh.writeString(">\r\n");
 
-	if (state_) {
-		qdNamedObjectReference ref(state_);
+	if (_state) {
+		qdNamedObjectReference ref(_state);
 		ref.save_script(fh, indent + 1);
 	}
 
@@ -121,12 +121,12 @@ bool qdCounterElement::save_script(Common::WriteStream &fh, int indent) const {
 bool qdCounterElement::load_data(Common::SeekableReadStream &fh, int save_version) {
 	char v;
 	v = fh.readByte();
-	last_state_status_ = v;
+	_last_state_status = v;
 	return true;
 }
 
 bool qdCounterElement::save_data(Common::WriteStream &fh) const {
-	fh.writeByte(last_state_status_);
+	fh.writeByte(_last_state_status);
 	return true;
 }
 
