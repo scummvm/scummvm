@@ -44,11 +44,7 @@ bool SplashScreen::create(int bitmapResID) {
 	Common::WinResourceID resid(bitmapResID);
 	Image::BitmapDecoder decoder;
 
-	Common::ArchiveMemberList files;
-	SearchMan.listMatchingMembers(files, "*.exe");
-	Common::ArchiveMemberPtr p = files.front(); // FIXME HACK
-
-	if (r.loadFromEXE(p->getFileName().c_str())) {
+	if (r.loadFromEXE(g_engine->getExeName())) {
 		Common::SeekableReadStream *stream = r.getResource(Common::kWinBitmap, resid);
 		if (stream && decoder.loadStream(*stream)) {
 			_splash = new Graphics::Surface();
@@ -58,6 +54,8 @@ bool SplashScreen::create(int bitmapResID) {
 
 			memcpy(_palette, decoder.getPalette(), _paletteCount * 3);
 		}
+	} else {
+		warning("SplashScreen::create(): Cannot load splash screen from file %s", g_engine->getExeName());
 	}
 
 	return true;
