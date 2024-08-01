@@ -1993,7 +1993,7 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			Func9F4D_Placeholder();
 			// Used as a bool which will be written to a field of the object
 			Func9F4D_Placeholder();
-		else if (opcode1 == 0x33) {
+		} else if (opcode1 == 0x33) {
 				// TODO: Unknown opcode, looks very similar to 0x32
 				// Likely an object ID
 				Func9F4D_Placeholder();
