@@ -233,10 +233,8 @@ qdMinigameSceneInterfaceImpl::qdMinigameSceneInterfaceImpl(qdGameScene *scene) :
 }
 
 const char *qdMinigameSceneInterfaceImpl::minigame_parameter(const char *parameter_name) const {
-#ifndef _QUEST_EDITOR
 	if (const qdMiniGame * p = scene_->minigame())
 		return p->config_parameter_value(parameter_name);
-#endif
 	return NULL;
 }
 
