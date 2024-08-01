@@ -274,18 +274,6 @@ bool qdMiniGame::load_interface() {
 }
 
 bool qdMiniGame::release_interface() {
-	if (_dll_handle) {
-		if (_interface) {
-			qdMiniGameInterface::interface_close_proc ip = (qdMiniGameInterface::interface_close_proc)(GetProcAddress(static_cast<HMODULE>(_dll_handle), "close_game_interface"));
-			if (ip)(*ip)(_interface);
-
-			_interface = NULL;
-		}
-
-		FreeLibrary(static_cast<HMODULE>(_dll_handle));
-		return true;
-	}
-
-	return false;
+	return true;
 }
 } // namespace QDEngine

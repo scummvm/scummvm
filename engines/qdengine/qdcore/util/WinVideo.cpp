@@ -59,7 +59,6 @@ bool winVideo::init() {
 bool winVideo::done() {
 	if (!is_initialized) return false;
 
-	CoUninitialize();
 	is_initialized = false;
 
 	return true;
