@@ -113,27 +113,11 @@ xml::parser &qdscr_XML_Parser() {
 		parser->register_tag_format("link", xml::tag(QDSCR_TRIGGER_ELEMENT_LINK, xml::tag::TAG_DATA_VOID, 1));
 		parser->register_tag_format("auto_restart", xml::tag(QDSCR_TRIGGER_ELEMENT_LINK_AUTO_RESTART, xml::tag::TAG_DATA_INT, 1));
 
-#ifdef _QUEST_EDITOR
-		parser->register_tag_format("offsets", xml::tag(QDSCR_TRIGGER_ELEMENT_LINK_OFFSETS, xml::tag::TAG_DATA_INT, 4));
-		parser->register_tag_format("trigger_element_title", xml::tag(QDSCR_TRIGGER_ELEMENT_TITLE, xml::tag::TAG_DATA_STRING, -1));
-		parser->register_tag_format("trigger_element_cell_number", xml::tag(QDSCR_TRIGGER_ELEMENT_CELL_NUMBER, xml::tag::TAG_DATA_INT, 2));
-		parser->register_tag_format("parent_link_owner_offset", xml::tag(QDSCR_TRIGGER_PARENT_LINK_OWNER_OFFSET, xml::tag::TAG_DATA_INT, 4));
-		parser->register_tag_format("parent_link_child_offset", xml::tag(QDSCR_TRIGGER_PARENT_LINK_CHILD_OFFSET, xml::tag::TAG_DATA_INT, 4));
-		parser->register_tag_format("child_link_owner_offset", xml::tag(QDSCR_TRIGGER_CHILD_LINK_OWNER_OFFSET, xml::tag::TAG_DATA_INT, 4));
-		parser->register_tag_format("child_link_child_offset", xml::tag(QDSCR_TRIGGER_CHILD_LINK_CHILD_OFFSET, xml::tag::TAG_DATA_INT, 4));
-#endif
 		parser->register_tag_format("start_element", xml::tag(QDSCR_TRIGGER_START_ELEMENT, xml::tag::TAG_DATA_INT, 1));
 
 		parser->register_tag_format("trigger_chain", xml::tag(QDSCR_TRIGGER_CHAIN, xml::tag::TAG_DATA_STRING, -1));
 		parser->register_tag_format("trigger_chain_root", xml::tag(QDSCR_TRIGGER_CHAIN_ROOT, xml::tag::TAG_DATA_VOID, 1));
 
-#ifdef _QUEST_EDITOR
-		parser->register_tag_format("trigger_chain_work_area", xml::tag(QDSCR_TRIGGER_CHAIN_WORK_AREA, xml::tag::TAG_DATA_INT, 4));
-		parser->register_tag_format("work_area", xml::tag(QDSCR_TRIGGER_CHAIN_WORK_AREA, xml::tag::TAG_DATA_INT, 4));
-		parser->register_tag_format("trigger_chain_layout", xml::tag(QDSCR_TRIGGER_CHAIN_LAYOUT, xml::tag::TAG_DATA_INT, 2));
-		parser->register_tag_format("layout", xml::tag(QDSCR_TRIGGER_CHAIN_LAYOUT, xml::tag::TAG_DATA_INT, 2));
-		parser->register_tag_format("trigger_bound", xml::tag(QDSCR_TRIGGER_BOUND, xml::tag::TAG_DATA_INT, 4));
-#endif
 		parser->register_tag_format("sound", xml::tag(QDSCR_SOUND, xml::tag::TAG_DATA_STRING, -1));
 		parser->register_tag_format("volume", xml::tag(QDSCR_SOUND_VOLUME, xml::tag::TAG_DATA_INT, 1));
 
