@@ -108,9 +108,6 @@ public:
 
 	bool remove_element(const qdGameObjectState *p);
 	bool remove_element(int idx);
-#ifdef _QUEST_EDITOR
-	void remove_all_elements();
-#endif // _QUEST_EDITOR
 
 	void quant();
 
