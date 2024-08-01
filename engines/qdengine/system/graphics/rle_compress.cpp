@@ -19,7 +19,6 @@
  *
  */
 
-#define _NO_ZIP_
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/file.h"
 #include "qdengine/qd_precomp.h"
