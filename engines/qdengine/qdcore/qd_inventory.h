@@ -62,25 +62,25 @@ public:
 	}
 
 	void add_cell_set(const qdInventoryCellSet &set) {
-		cell_sets_.push_back(set);
+		_cell_sets.push_back(set);
 	}
 	void remove_cell_set(int idx);
 
 	const qdInventoryCellSet &get_cell_set(int id = 0) const {
-		return cell_sets_[id];
+		return _cell_sets[id];
 	}
 
 	void set_cells_pos(int set_id, const Vect2s &pos) {
-		if (set_id >= 0 && set_id < cell_sets_.size())
-			cell_sets_[set_id].set_screen_pos(pos);
+		if (set_id >= 0 && set_id < _cell_sets.size())
+			_cell_sets[set_id].set_screen_pos(pos);
 	}
 	void set_cells_type(int set_id, const qdInventoryCellType &tp) {
-		if (set_id >= 0 && set_id < cell_sets_.size())
-			cell_sets_[set_id].set_cell_type(tp);
+		if (set_id >= 0 && set_id < _cell_sets.size())
+			_cell_sets[set_id].set_cell_type(tp);
 	}
 	void set_cells_size(int set_id, const Vect2s &sz) {
-		if (set_id >= 0 && set_id < cell_sets_.size())
-			cell_sets_[set_id].set_size(sz);
+		if (set_id >= 0 && set_id < _cell_sets.size())
+			_cell_sets[set_id].set_size(sz);
 	}
 
 	int cell_index(const qdGameObjectAnimated *obj) const;
@@ -147,7 +147,7 @@ public:
 
 private:
 
-	qdInventoryCellSetVector cell_sets_;
+	qdInventoryCellSetVector _cell_sets;
 
 	bool _need_redraw;
 
