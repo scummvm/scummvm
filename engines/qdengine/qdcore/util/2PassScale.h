@@ -38,7 +38,7 @@ typedef struct {
 
 typedef struct {
 	ContributionType *ContribRow; // Row (or column) of contribution weights
-	UINT WindowSize,              // Filter window size (of affecting source pixels)
+	uint32 WindowSize,              // Filter window size (of affecting source pixels)
 	     LineLength;           // Length of line (no. or rows / cols)
 } LineContribType;                    // Contribution information for an entire line (row or column)
 
@@ -51,7 +51,7 @@ public:
 	C2PassScale() : temp_buffer_(65536, 0), weights_buffer_(16384, 0.0), contribution_buffer_(500) { }
 	virtual ~C2PassScale() { }
 
-	COLORREF *Scale(COLORREF *pOrigImage, UINT uOrigWidth, UINT uOrigHeight, COLORREF *pDstImage, UINT uNewWidth, UINT uNewHeight);
+	COLORREF *Scale(COLORREF *pOrigImage, uint32 uOrigWidth, uint32 uOrigHeight, COLORREF *pDstImage, uint32 uNewWidth, uint32 uNewHeight);
 
 private:
 
@@ -61,13 +61,13 @@ private:
 	std::vector<double> weights_buffer_;
 	std::vector<ContributionType> contribution_buffer_;
 
-	LineContribType *AllocContributions(UINT uLineLength, UINT uWindowSize);
-	LineContribType *CalcContributions(UINT uLineSize, UINT uSrcSize, double dScale);
+	LineContribType *AllocContributions(uint32 uLineLength, uint32 uWindowSize);
+	LineContribType *CalcContributions(uint32 uLineSize, uint32 uSrcSize, double dScale);
 
-	void ScaleRow(COLORREF *pSrc, UINT uSrcWidth, COLORREF *pRes, UINT uResWidth, UINT uRow, LineContribType *Contrib);
-	void HorizScale(COLORREF *pSrc, UINT uSrcWidth, UINT uSrcHeight, COLORREF *pDst, UINT uResWidth, UINT uResHeight);
-	void ScaleCol(COLORREF *pSrc, UINT uSrcWidth, COLORREF *pRes, UINT uResWidth, UINT uResHeight, UINT uCol, LineContribType *Contrib);
-	void VertScale(COLORREF *pSrc, UINT uSrcWidth, UINT uSrcHeight, COLORREF *pDst, UINT uResWidth, UINT uResHeight);
+	void ScaleRow(COLORREF *pSrc, uint32 uSrcWidth, COLORREF *pRes, uint32 uResWidth, uint32 uRow, LineContribType *Contrib);
+	void HorizScale(COLORREF *pSrc, uint32 uSrcWidth, uint32 uSrcHeight, COLORREF *pDst, uint32 uResWidth, uint32 uResHeight);
+	void ScaleCol(COLORREF *pSrc, uint32 uSrcWidth, COLORREF *pRes, uint32 uResWidth, uint32 uResHeight, uint32 uCol, LineContribType *Contrib);
+	void VertScale(COLORREF *pSrc, uint32 uSrcWidth, uint32 uSrcHeight, COLORREF *pDst, uint32 uResWidth, uint32 uResHeight);
 
 	static inline byte make_r(COLORREF col) {
 		return reinterpret_cast<byte *>(&col)[2];
@@ -88,7 +88,7 @@ private:
 };
 
 template<class FilterClass>
-LineContribType *C2PassScale<FilterClass>::AllocContributions(UINT uLineLength, UINT uWindowSize) {
+LineContribType *C2PassScale<FilterClass>::AllocContributions(uint32 uLineLength, uint32 uWindowSize) {
 	static LineContribType line_ct;
 
 	line_ct.WindowSize = uWindowSize;
@@ -104,7 +104,7 @@ LineContribType *C2PassScale<FilterClass>::AllocContributions(UINT uLineLength, 
 
 	double *p = &*weights_buffer_.begin();
 
-	for (UINT u = 0; u < uLineLength; u++) {
+	for (uint32 u = 0; u < uLineLength; u++) {
 		line_ct.ContribRow[u].Weights = p;
 		p += uWindowSize;
 	}
@@ -112,7 +112,7 @@ LineContribType *C2PassScale<FilterClass>::AllocContributions(UINT uLineLength, 
 }
 
 template <class FilterClass>
-LineContribType *C2PassScale<FilterClass>::CalcContributions(UINT uLineSize, UINT uSrcSize, double dScale) {
+LineContribType *C2PassScale<FilterClass>::CalcContributions(uint32 uLineSize, uint32 uSrcSize, double dScale) {
 	FilterClass CurFilter;
 
 	double dWidth;
@@ -132,7 +132,7 @@ LineContribType *C2PassScale<FilterClass>::CalcContributions(UINT uLineSize, UIN
 	// Allocate a new line contributions strucutre
 	LineContribType *res = AllocContributions(uLineSize, iWindowSize);
 
-	for (UINT u = 0; u < uLineSize; u++) {
+	for (uint32 u = 0; u < uLineSize; u++) {
 		// Scan through line of contributions
 		double dCenter = (double)u / dScale;   // Reverse mapping
 		// Find the significant edge points that affect the pixel
@@ -169,10 +169,10 @@ LineContribType *C2PassScale<FilterClass>::CalcContributions(UINT uLineSize, UIN
 }
 
 template <class FilterClass>
-void C2PassScale<FilterClass>::ScaleRow(COLORREF *pSrc, UINT uSrcWidth, COLORREF *pRes, UINT uResWidth, UINT uRow, LineContribType *Contrib) {
+void C2PassScale<FilterClass>::ScaleRow(COLORREF *pSrc, uint32 uSrcWidth, COLORREF *pRes, uint32 uResWidth, uint32 uRow, LineContribType *Contrib) {
 	COLORREF *pSrcRow = &(pSrc[uRow * uSrcWidth]);
 	COLORREF *pDstRow = &(pRes[uRow * uResWidth]);
-	for (UINT x = 0; x < uResWidth; x++) {
+	for (uint32 x = 0; x < uResWidth; x++) {
 		// Loop through row
 		double dr = 0.0;
 		double dg = 0.0;
@@ -200,7 +200,7 @@ void C2PassScale<FilterClass>::ScaleRow(COLORREF *pSrc, UINT uSrcWidth, COLORREF
 }
 
 template <class FilterClass>
-void C2PassScale<FilterClass>::HorizScale(COLORREF *pSrc, UINT uSrcWidth, UINT uSrcHeight, COLORREF *pDst, UINT uResWidth, UINT uResHeight) {
+void C2PassScale<FilterClass>::HorizScale(COLORREF *pSrc, uint32 uSrcWidth, uint32 uSrcHeight, COLORREF *pDst, uint32 uResWidth, uint32 uResHeight) {
 	TRACE("Performing horizontal scaling...\n");
 	if (uResWidth == uSrcWidth) {
 		// No scaling required, just copy
@@ -209,13 +209,13 @@ void C2PassScale<FilterClass>::HorizScale(COLORREF *pSrc, UINT uSrcWidth, UINT u
 	}
 	// Allocate and calculate the contributions
 	LineContribType *Contrib = CalcContributions(uResWidth, uSrcWidth, double(uResWidth) / double(uSrcWidth));
-	for (UINT u = 0; u < uResHeight; u++)
+	for (uint32 u = 0; u < uResHeight; u++)
 		ScaleRow(pSrc, uSrcWidth, pDst, uResWidth, u, Contrib); // Scale each row
 }
 
 template <class FilterClass>
-void C2PassScale<FilterClass>::ScaleCol(COLORREF *pSrc, UINT uSrcWidth, COLORREF *pRes, UINT uResWidth, UINT uResHeight, UINT uCol, LineContribType *Contrib) {
-	for (UINT y = 0; y < uResHeight; y++) {
+void C2PassScale<FilterClass>::ScaleCol(COLORREF *pSrc, uint32 uSrcWidth, COLORREF *pRes, uint32 uResWidth, uint32 uResHeight, uint32 uCol, LineContribType *Contrib) {
+	for (uint32 y = 0; y < uResHeight; y++) {
 		// Loop through column
 		double dr = 0.0;
 		double dg = 0.0;
@@ -244,7 +244,7 @@ void C2PassScale<FilterClass>::ScaleCol(COLORREF *pSrc, UINT uSrcWidth, COLORREF
 }
 
 template <class FilterClass>
-void C2PassScale<FilterClass>::VertScale(COLORREF *pSrc, UINT uSrcWidth, UINT uSrcHeight, COLORREF *pDst, UINT uResWidth, UINT uResHeight) {
+void C2PassScale<FilterClass>::VertScale(COLORREF *pSrc, uint32 uSrcWidth, uint32 uSrcHeight, COLORREF *pDst, uint32 uResWidth, uint32 uResHeight) {
 	TRACE("Performing vertical scaling...");
 
 	if (uSrcHeight == uResHeight) {
@@ -254,12 +254,12 @@ void C2PassScale<FilterClass>::VertScale(COLORREF *pSrc, UINT uSrcWidth, UINT uS
 	}
 	// Allocate and calculate the contributions
 	LineContribType *Contrib = CalcContributions(uResHeight, uSrcHeight, double(uResHeight) / double(uSrcHeight));
-	for (UINT u = 0; u < uResWidth; u++)
+	for (uint32 u = 0; u < uResWidth; u++)
 		ScaleCol(pSrc, uSrcWidth, pDst, uResWidth, uResHeight, u, Contrib); // Scale each column
 }
 
 template <class FilterClass>
-COLORREF *C2PassScale<FilterClass>::Scale(COLORREF *pOrigImage, UINT uOrigWidth, UINT uOrigHeight, COLORREF *pDstImage, UINT uNewWidth, UINT uNewHeight) {
+COLORREF *C2PassScale<FilterClass>::Scale(COLORREF *pOrigImage, uint32 uOrigWidth, uint32 uOrigHeight, COLORREF *pDstImage, uint32 uNewWidth, uint32 uNewHeight) {
 	if (temp_buffer_.size() < uNewWidth * uOrigHeight)
 		temp_buffer_.resize(uNewWidth * uOrigHeight);
 

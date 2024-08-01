@@ -34,7 +34,7 @@ void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext
 	return;
 }
 
-int MessageBox(HWND hWnd, const char *lpText, const char *lpCaption, UINT uType) {
+int MessageBox(HWND hWnd, const char *lpText, const char *lpCaption, uint32 uType) {
 	warning("STUB: MessageBox");
 	return 0;
 }
@@ -74,17 +74,17 @@ bool UpdateWindow(HWND hWnd) {
 	return false;
 }
 
-bool SetErrorMode(UINT uMode) {
+bool SetErrorMode(uint32 uMode) {
 	warning("STUB: SetErrorMode");
 	return false;
 }
 
-int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr, int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar) {
+int MultiByteToWideChar(uint32 CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr, int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar) {
 	warning("STUB: MultiByteToWideChar");
 	return 0;
 }
 
-int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr, int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCSTR lpDefaultChar, LPBOOL lpUsedDefaultChar) {
+int WideCharToMultiByte(uint32 CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr, int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCSTR lpDefaultChar, LPBOOL lpUsedDefaultChar) {
 	warning("STUB: WideCharToMultiByte");
 	return 0;
 }

@@ -93,7 +93,6 @@ namespace QDEngine {
 #define LRESULT       long
 #define LPVOID        void *
 #define MMCKINFO      int
-#define UINT          unsigned int
 #define WPARAM        int
 #define DWORD         int
 #define WORD          short
@@ -281,7 +280,7 @@ const int CP_ACP = 0;
 const int CP_UTF8 = 65001;
 
 void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext);
-int MessageBox(HWND hWnd, const char *lpText, const char *lpCaption, UINT uType);
+int MessageBox(HWND hWnd, const char *lpText, const char *lpCaption, uint32 uType);
 FARPROC GetProcAddress(HMODULE hModule, LPCSTR lpProcName);
 bool FreeLibrary(void *hModule);
 HMODULE LoadLibrary(const char *lpLibFileName);
@@ -289,9 +288,9 @@ bool ShowWindow(HWND hWnd, int nCmdShow);
 bool CloseWindow(HWND hWnd);
 bool DestroyWindow(HWND hWnd);
 bool UpdateWindow(HWND hWnd);
-bool SetErrorMode(UINT uMode);
-int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr, int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar);
-int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr, int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCSTR lpDefaultChar, LPBOOL lpUsedDefaultChar);
+bool SetErrorMode(uint32 uMode);
+int MultiByteToWideChar(uint32 CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr, int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar);
+int WideCharToMultiByte(uint32 CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr, int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCSTR lpDefaultChar, LPBOOL lpUsedDefaultChar);
 bool SetCurrentDirectory(const char *lpPathName);
 DWORD GetCurrentDirectory(DWORD nBufferLength, char *lpBuffer);
 bool CreateDirectory(const char *lpPathName, void *lpSecurityAttributes);
