@@ -33,18 +33,12 @@ qdContour::qdContour(qdContourType tp) : contour_type_(tp),
 
 qdContour::qdContour(const qdContour &ct) : contour_type_(ct.contour_type_),
 	size_(ct.size_),
-#ifdef _QUEST_EDITOR
-	contour_updated_(ct.contour_updated_),
-#endif
 	contour_(ct.contour_) {
 	mask_pos_ = ct.mask_pos_;
 }
 
 qdContour::~qdContour() {
 	contour_.clear();
-#ifdef _QUEST_EDITOR
-	contour_updated_.clear();
-#endif
 }
 
 qdContour &qdContour::operator = (const qdContour &ct) {
@@ -56,19 +50,8 @@ qdContour &qdContour::operator = (const qdContour &ct) {
 
 	contour_ = ct.contour_;
 
-#ifdef _QUEST_EDITOR
-	contour_updated_ = ct.contour_updated_;
-#endif
-
 	return *this;
 }
-
-#ifdef _QUEST_EDITOR
-void qdContour::set_contour(std::vector<Vect2s> const &contour) {
-	clear_contour();
-	contour_ = contour;
-}
-#endif // _QUEST_EDITOR
 
 void qdContour::add_contour_point(const Vect2s &pt) {
 	contour_.push_back(pt);
@@ -101,10 +84,6 @@ bool qdContour::update_contour_point(const Vect2s &pt, int pos) {
 
 bool qdContour::update_contour() {
 	if (contour_type_ != CONTOUR_POLYGON) return false;
-
-#ifdef _QUEST_EDITOR
-	contour_updated_ = contour_;
-#endif
 
 	if (contour_.empty())
 		return false;
@@ -143,15 +122,9 @@ bool qdContour::is_inside(const Vect2s &pos) const {
 		int intersections_gt0 = 0;
 		int intersections_lt1 = 0;
 		int intersections_gt1 = 0;
-#ifdef _QUEST_EDITOR
-		for (int i = 0; i < contour_updated_.size(); i ++) {
-			Vect2s p0 = contour_updated_[i];
-			Vect2s p1 = (i < contour_updated_.size() - 1) ? contour_updated_[i + 1] : contour_updated_[0];
-#else
 		for (int i = 0; i < contour_.size(); i ++) {
 			Vect2s p0 = contour_[i];
 			Vect2s p1 = (i < contour_.size() - 1) ? contour_[i + 1] : contour_[0];
-#endif
 			if (p0.y != p1.y) {
 				if ((p0.y < p.y && p1.y >= p.y) || (p0.y >= p.y && p1.y < p.y)) {
 					if (p0.x < p.x && p1.x < p.x)

@@ -97,9 +97,6 @@ public:
 	//! Удаляет все точки из контура.
 	void clear_contour() {
 		contour_.clear();
-#ifdef _QUEST_EDITOR
-		contour_updated_.clear();
-#endif
 	}
 
 	//! Делит координаты контура на 2 в степени shift.
@@ -132,9 +129,7 @@ public:
 	const std::vector<Vect2s> &get_contour() const {
 		return contour_;
 	}
-#ifdef _QUEST_EDITOR
-	void set_contour(std::vector<Vect2s> const &contour);
-#endif // _QUEST_EDITOR
+
 	bool is_mask_empty() const {
 		return contour_.empty();
 	}
@@ -163,9 +158,6 @@ private:
 	Произвольный замкнутый контур. Задается для CONTOUR_POLYGON.
 	*/
 	std::vector<Vect2s> contour_;
-#ifdef _QUEST_EDITOR
-	std::vector<Vect2s> contour_updated_;
-#endif
 };
 
 } // namespace QDEngine
