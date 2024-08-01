@@ -46,7 +46,7 @@ template <class FilterClass>
 class C2PassScale {
 public:
 
-	C2PassScale() : temp_buffer_(65536, 0), weights_buffer_(16384, 0.0), contribution_buffer_(500) { }
+	C2PassScale() : _temp_buffer(65536, 0), _weights_buffer(16384, 0.0), _contribution_buffer(500) { }
 	virtual ~C2PassScale() { }
 
 	uint32 *Scale(uint32 *pOrigImage, uint32 uOrigWidth, uint32 uOrigHeight, uint32 *pDstImage, uint32 uNewWidth, uint32 uNewHeight);
@@ -54,10 +54,10 @@ public:
 private:
 
 
-	std::vector<uint32> temp_buffer_;
+	std::vector<uint32> _temp_buffer;
 
-	std::vector<double> weights_buffer_;
-	std::vector<ContributionType> contribution_buffer_;
+	std::vector<double> _weights_buffer;
+	std::vector<ContributionType> _contribution_buffer;
 
 	LineContribType *AllocContributions(uint32 uLineLength, uint32 uWindowSize);
 	LineContribType *CalcContributions(uint32 uLineSize, uint32 uSrcSize, double dScale);
@@ -92,15 +92,15 @@ LineContribType *C2PassScale<FilterClass>::AllocContributions(uint32 uLineLength
 	line_ct.WindowSize = uWindowSize;
 	line_ct.LineLength = uLineLength;
 
-	if (contribution_buffer_.size() < uLineLength)
-		contribution_buffer_.resize(uLineLength);
+	if (_contribution_buffer.size() < uLineLength)
+		_contribution_buffer.resize(uLineLength);
 
-	line_ct.ContribRow = &*contribution_buffer_.begin();
+	line_ct.ContribRow = &*_contribution_buffer.begin();
 
-	if (weights_buffer_.size() < uLineLength * uWindowSize)
-		weights_buffer_.resize(uLineLength * uWindowSize);
+	if (_weights_buffer.size() < uLineLength * uWindowSize)
+		_weights_buffer.resize(uLineLength * uWindowSize);
 
-	double *p = &*weights_buffer_.begin();
+	double *p = &*_weights_buffer.begin();
 
 	for (uint32 u = 0; u < uLineLength; u++) {
 		line_ct.ContribRow[u].Weights = p;
@@ -258,10 +258,10 @@ void C2PassScale<FilterClass>::VertScale(uint32 *pSrc, uint32 uSrcWidth, uint32 
 
 template <class FilterClass>
 uint32 *C2PassScale<FilterClass>::Scale(uint32 *pOrigImage, uint32 uOrigWidth, uint32 uOrigHeight, uint32 *pDstImage, uint32 uNewWidth, uint32 uNewHeight) {
-	if (temp_buffer_.size() < uNewWidth * uOrigHeight)
-		temp_buffer_.resize(uNewWidth * uOrigHeight);
+	if (_temp_buffer.size() < uNewWidth * uOrigHeight)
+		_temp_buffer.resize(uNewWidth * uOrigHeight);
 
-	uint32 *pTemp = reinterpret_cast<uint32 *>(&*temp_buffer_.begin());
+	uint32 *pTemp = reinterpret_cast<uint32 *>(&*_temp_buffer.begin());
 	HorizScale(pOrigImage, uOrigWidth, uOrigHeight, pTemp, uNewWidth, uOrigHeight);
 
 	// Scale temporary image vertically into result image
