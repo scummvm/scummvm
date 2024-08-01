@@ -55,20 +55,20 @@ public:
 
 	//! Возвращает тип контура.
 	qdContourType contour_type() const {
-		return contour_type_;
+		return _contour_type;
 	}
 	//! Устанавливает тип контура.
 	void set_contour_type(qdContourType tp) {
-		contour_type_ = tp;
+		_contour_type = tp;
 	}
 
 	//! Возвращает горизонтальный размер контура.
 	int size_x() const {
-		return size_.x;
+		return _size.x;
 	}
 	//! Возвращает вертикальный размер контура.
 	int size_y() const {
-		return size_.y;
+		return _size.y;
 	}
 
 	//! Возвращает true, если точка с координатами pos лежит внутри контура.
@@ -96,7 +96,7 @@ public:
 
 	//! Удаляет все точки из контура.
 	void clear_contour() {
-		contour_.clear();
+		_contour.clear();
 	}
 
 	//! Делит координаты контура на 2 в степени shift.
@@ -108,30 +108,30 @@ public:
 
 	//! Возвращает координаты точки контура номер pos.
 	const Vect2s &get_point(int pos) const {
-		return contour_[pos];
+		return _contour[pos];
 	}
 
 	//! Возвращает размеры маски.
 	const Vect2s &mask_size() const {
-		return size_;
+		return _size;
 	}
 
 	//! Возвращает координаты центра маски.
 	const Vect2s &mask_pos() const {
-		return mask_pos_;
+		return _mask_pos;
 	}
 
 	//! Возвращает количество точек в контуре.
 	int contour_size() const {
-		return contour_.size();
+		return _contour.size();
 	}
 	//! Возвращает массив точек контура.
 	const std::vector<Vect2s> &get_contour() const {
-		return contour_;
+		return _contour;
 	}
 
 	bool is_mask_empty() const {
-		return contour_.empty();
+		return _contour.empty();
 	}
 
 	bool update_contour();
@@ -146,18 +146,18 @@ public:
 
 private:
 	//! Тип контура.
-	qdContourType contour_type_;
+	qdContourType _contour_type;
 
 	//! Размеры контура.
-	Vect2s size_;
+	Vect2s _size;
 
-	Vect2s mask_pos_;
+	Vect2s _mask_pos;
 
 	//! Контур.
 	/**
 	Произвольный замкнутый контур. Задается для CONTOUR_POLYGON.
 	*/
-	std::vector<Vect2s> contour_;
+	std::vector<Vect2s> _contour;
 };
 
 } // namespace QDEngine
