@@ -60,11 +60,9 @@ const char *qdTextDB::getSound(const char *text_id) const {
 }
 
 const char *qdTextDB::getComment(const char *text_id) const {
-#ifndef _FINAL_VERSION_
 	qdTextMap::const_iterator it = _texts.find(text_id);
 	if (it != _texts.end())
 		return it->second._comment.c_str();
-#endif
 
 	static const char *const str = "";
 	return str;

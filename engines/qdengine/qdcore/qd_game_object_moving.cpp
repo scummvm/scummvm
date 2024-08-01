@@ -463,12 +463,12 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 	}
 
 	debugC(3, kDebugLog, "The path is found");
-	__QDBG(dump_vect(path_vect));
+	dump_vect(path_vect);
 
 	optimize_path(path_vect);
 
 	debugC(3, kDebugLog, "Optimised Path");
-	__QDBG(dump_vect(path_vect));
+	dump_vect(path_vect);
 
 	if (path_vect.size() >= 2 && (movement_type() == qdGameObjectStateWalk::MOVEMENT_FOUR_DIRS || movement_type() == qdGameObjectStateWalk::MOVEMENT_EIGHT_DIRS)) {
 		std::vector<Vect3f> final_path;
@@ -480,7 +480,7 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 		idx = final_path.size();
 
 		debugC(3, kDebugLog, "Final Path");
-		__QDBG(dump_vect(final_path));
+		dump_vect(final_path);
 	} else {
 		idx = 0;
 		for (std::vector<Vect2i>::const_iterator it = path_vect.begin(); it != path_vect.end(); ++it) {
