@@ -49,9 +49,7 @@ namespace QDEngine {
 qdInterfaceDispatcher *qdInterfaceDispatcher::_dispatcher = NULL;
 
 qdInterfaceDispatcher::qdInterfaceDispatcher() : _cur_screen(NULL),
-#ifndef _QUEST_EDITOR
 	_next_screen(NULL),
-#endif
 	_is_active(false),
 	_is_mouse_hover(false),
 	_autohide_disable(false),
@@ -419,7 +417,6 @@ void qdInterfaceDispatcher::set_ingame_screen(const char *name, bool inventory_s
 }
 
 bool qdInterfaceDispatcher::handle_event(int event_code, const char *event_data, qdInterfaceObjectBase *sender) {
-#ifndef _QUEST_EDITOR
 	switch (event_code) {
 	case qdInterfaceEvent::EVENT_EXIT:
 		if (qdGameDispatcher * p = qd_get_game_dispatcher()) {
@@ -639,7 +636,6 @@ bool qdInterfaceDispatcher::handle_event(int event_code, const char *event_data,
 		}
 		break;
 	}
-#endif // _QUEST_EDITOR
 	return false;
 }
 
@@ -655,7 +651,6 @@ bool qdInterfaceDispatcher::get_file_list(qdFileNameList &files_to_copy, qdFileN
 }
 
 int qdInterfaceDispatcher::option_value(int option_id, const char *option_data) {
-#ifndef _QUEST_EDITOR
 	switch (option_id) {
 	case qdInterfaceElement::OPTION_SOUND:
 		return (int)qdGameConfig::get_config().is_sound_enabled();
@@ -673,12 +668,10 @@ int qdInterfaceDispatcher::option_value(int option_id, const char *option_data) 
 		}
 		return 0;
 	}
-#endif // _QUEST_EDITOR
 	return -1;
 }
 
 bool qdInterfaceDispatcher::set_option_value(int option_id, int value, const char *option_data) {
-#ifndef _QUEST_EDITOR
 	switch (option_id) {
 	case qdInterfaceElement::OPTION_SOUND:
 		qdGameConfig::get_config().toggle_sound(value > 0);
@@ -711,7 +704,6 @@ bool qdInterfaceDispatcher::set_option_value(int option_id, int value, const cha
 		}
 		return false;
 	}
-#endif // _QUEST_EDITOR
 	return false;
 }
 
