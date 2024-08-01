@@ -113,43 +113,43 @@ public:
 		EVENT_ACTIVATION_HOVER
 	};
 
-	qdInterfaceEvent(event_t id, const char *data, bool anm_flag, activation_t activation = EVENT_ACTIVATION_CLICK) : event_(id), event_data_(data), is_before_animation_(anm_flag), activation_(activation) { }
+	qdInterfaceEvent(event_t id, const char *data, bool anm_flag, activation_t activation = EVENT_ACTIVATION_CLICK) : _event(id), _event_data(data), _is_before_animation(anm_flag), _activation(activation) { }
 	~qdInterfaceEvent() {}
 
 	bool operator == (event_t id) const {
-		return (event_ == id);
+		return (_event == id);
 	}
 
 	//! Код события.
 	event_t event() const {
-		return event_;
+		return _event;
 	}
 	//! Возвращает true, если у события есть данные.
 	bool has_data() const {
-		return !event_data_.empty();
+		return !_event_data.empty();
 	}
 	//! Возвращает данные для события.
 	const char *event_data() const {
-		return event_data_.c_str();
+		return _event_data.c_str();
 	}
 	//! Возвращает true, если событие должно происходить до включения анимации.
 	bool is_before_animation() const {
-		return is_before_animation_;
+		return _is_before_animation;
 	}
 	activation_t activation() const {
-		return activation_;
+		return _activation;
 	}
 
 private:
 
 	//! Код события.
-	event_t event_;
+	event_t _event;
 	//! Данные для события.
-	std::string event_data_;
+	std::string _event_data;
 	//! Равно true, если событие должно происходить до включения анимации.
-	bool is_before_animation_;
+	bool _is_before_animation;
 	//! Как событие активируется
-	activation_t activation_;
+	activation_t _activation;
 };
 
 //! Состояние элемента интерфейса.
