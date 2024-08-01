@@ -36,10 +36,6 @@
 #include "qdengine/qdcore/qd_resource_dispatcher.h"
 #include "qdengine/qdcore/qd_game_dispatcher.h"
 
-#ifdef _QUEST_EDITOR
-#include "qd_game_object_mouse.h"
-#endif // _QUEST_EDITOR
-
 namespace QDEngine {
 
 const Vect3f qdGameObjectState::DEFAULT_BOUND(3.f, 3.f, 3.f);
@@ -119,11 +115,7 @@ qdGameObjectState::qdGameObjectState(const qdGameObjectState &st) : qdConditiona
 	transform_speed_(st.transform_speed_),
 	fade_time_(st.fade_time_),
 	shadow_color_(st.shadow_color_),
-	shadow_alpha_(st.shadow_alpha_)
-#ifdef _QUEST_EDITOR
-	, cursor_name_(st.cursor_name_)
-#endif // _QUEST_EDITOR
-{
+	shadow_alpha_(st.shadow_alpha_) {
 	coords_animation_.set_owner(this);
 	sound_handle_.set_owner(this);
 }
@@ -185,10 +177,6 @@ qdGameObjectState &qdGameObjectState::operator = (const qdGameObjectState &st) {
 
 	is_sound_started_ = st.is_sound_started_;
 	is_text_shown_ = st.is_text_shown_;
-
-#ifdef _QUEST_EDITOR
-	cursor_name_ = st.cursor_name_;
-#endif // _QUEST_EDITOR
 
 	return *this;
 }
@@ -375,14 +363,6 @@ bool qdGameObjectState::load_script_body(const xml::tag *p) {
 		}
 	}
 
-#ifdef _QUEST_EDITOR
-	if (mouse_cursor_ID() != CURSOR_UNASSIGNED) {
-		qdGameObjectMouse const &mouseObject = *qd_get_game_dispatcher()->mouse_object();
-		if (mouse_cursor_ID() < mouseObject.state_vector().size())
-			set_cursor_name(mouseObject.state_vector()[mouse_cursor_ID()]->name());
-	}
-#endif // _QUEST_EDITOR
-
 	drop_flag(QD_OBJ_STATE_FLAG_GLOBAL_OWNER);
 	return true;
 }
@@ -498,9 +478,7 @@ bool qdGameObjectState::init() {
 	coords_animation_.set_start_object(dynamic_cast<const qdGameObject *>(nam_obj));
 
 
-#ifndef _QUEST_EDITOR
 //	drop_flag(QD_OBJ_STATE_FLAG_GLOBAL_OWNER);
-#endif
 
 	drop_flag(QD_OBJ_STATE_FLAG_ACTIVATION_TIMER);
 	drop_flag(QD_OBJ_STATE_FLAG_ACTIVATION_TIMER_END);
@@ -543,14 +521,12 @@ void qdGameObjectState::quant(float dt) {
 			}
 		}
 
-#ifndef _QUEST_EDITOR
 		if (!is_text_shown_ && has_text() && has_text_delay()) {
 			if (cur_time_ >= text_delay_) {
 				qdGameDispatcher::get_dispatcher()->screen_texts_dispatcher().add_text(qdGameDispatcher::TEXT_SET_DIALOGS, qdScreenText(text(), text_format(), Vect2i(0, 0), this));
 				is_text_shown_ = true;
 			}
 		}
-#endif
 	}
 
 	conditions_quant(dt);
@@ -720,37 +696,6 @@ const char *qdGameObjectState::full_text() const {
 const char *qdGameObjectState::short_text() const {
 	return qdTextDB::instance().getText(short_text_ID_.c_str());
 }
-
-#ifdef _QUEST_EDITOR
-//! Выдает имя курсора. Пустая строка, если установлен курсор по умолчанию
-std::string const &qdGameObjectState::cursor_name() const {
-	return cursor_name_;
-}
-//! Установка имени курсора
-void qdGameObjectState::set_cursor_name(std::string const &cursor_name) {
-	cursor_name_ = cursor_name;
-}
-//! По имени курсора определяет его номер
-void qdGameObjectState::update_cursor_id(qdGameDispatcher const &gameDispatcher) {
-	debugC(5, kDebugGraphics, "qdGameObjectState::update_cursor_id()");
-	if (cursor_name_.empty()
-	        || mouse_cursor_ID() == CURSOR_UNASSIGNED)
-		return;
-
-	qdGameObjectMouse const &mouseObject = *gameDispatcher.mouse_object();
-	qdGameObjectStateVector const &v = mouseObject.state_vector();
-	qdGameObjectStateVector::const_iterator i = v.begin(), e = v.end();
-	for (; i != e; ++i) {
-		qdGameObjectState const &state = **i;
-		if (cursor_name_ == state.name()) {
-			set_mouse_cursor_ID(std::distance(v.begin(), i));
-			return;
-		}
-	}
-	cursor_name_.clear();
-	set_mouse_cursor_ID(CURSOR_UNASSIGNED);
-}
-#endif // _QUEST_EDITOR
 
 /* ------------------------ qdGameObjectStateStatic ------------------------- */
 
@@ -1521,12 +1466,8 @@ qdGameObject *qdGameObjectStateMask::parent() {
 	qdNamedObject *p = owner()->owner();
 	if (!p || p->named_object_type() != QD_NAMED_OBJECT_SCENE) return 0;
 
-#ifndef _QUEST_EDITOR
 	parent_ = static_cast<qdGameScene *>(p)->get_object(parent_name_.c_str());
 	return parent_;
-#else
-	return static_cast<qdGameScene *>(p)->get_object(parent_name_.c_str());
-#endif
 }
 
 const qdGameObject *qdGameObjectStateMask::parent() const {
@@ -1558,13 +1499,6 @@ bool qdGameObjectStateMask::draw_mask(uint32 color) const {
 
 	return true;
 }
-
-#ifdef _QUEST_EDITOR
-void qdGameObjectStateMask::copy_contour(qdGameObjectStateMask const *source) {
-	set_contour(source->get_contour());
-}
-#endif // _QUEST_EDITOR
-
 
 bool qdGameObjectStateMask::load_resources() {
 	qdGameObjectState::load_resources();

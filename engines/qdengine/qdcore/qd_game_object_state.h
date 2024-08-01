@@ -368,7 +368,6 @@ public:
 		return angle;
 	}
 
-#ifndef _QUEST_EDITOR
 	//! Возвращает координаты точки, в которой должно активироваться состояние.
 	const Vect3f &start_pos() const {
 		if (!coords_animation_.is_empty()) {
@@ -383,7 +382,6 @@ public:
 		} else
 			return -1.0f;
 	}
-#endif
 
 	//! Возвращает количество ссылок на состояние.
 	int reference_count() const {
@@ -545,26 +543,15 @@ public:
 	}
 
 	const qdScreenTextFormat &text_format(bool topic_mode = false) const {
-#ifndef _QUEST_EDITOR
 		if (text_format_.is_global_depend()) {
 			return (topic_mode && check_flag(QD_OBJ_STATE_FLAG_DIALOG_PHRASE)) ?
 			       qdScreenTextFormat::global_topic_format() : qdScreenTextFormat::global_text_format();
 		}
-#endif
 		return text_format_;
 	}
 	void set_text_format(const qdScreenTextFormat &text_format) {
 		text_format_ = text_format;
 	}
-
-#ifdef _QUEST_EDITOR
-	//! Выдает имя курсора. Пустая строка, если установлен курсор по умолчанию
-	std::string const &cursor_name() const;
-	//! Установка имени курсора
-	void set_cursor_name(std::string const &cursor_name);
-	//! По имени курсора определяет его номер
-	void update_cursor_id(qdGameDispatcher const &gameDispatcher);
-#endif // _QUEST_EDITOR
 
 	bool has_transform() const {
 		return transform_() || transform_speed_();
@@ -678,9 +665,6 @@ private:
 	//! Предыдущее состояние.
 	qdGameObjectState *prev_state_;
 
-#ifdef _QUEST_EDITOR
-	std::string cursor_name_;
-#endif // _QUEST_EDITOR
 };
 
 typedef std::vector<qdGameObjectState *> qdGameObjectStateVector;
@@ -704,11 +688,6 @@ public:
 	qdAnimationInfo *animation_info() {
 		return &animation_info_;
 	}
-#ifdef _QUEST_EDITOR
-	qdAnimationInfo const *animation_info() const {
-		return &animation_info_;
-	}
-#endif // _QUEST_EDITOR
 
 	bool load_script(const xml::tag *p);
 	bool save_script(Common::WriteStream &fh, int indent = 0) const;
@@ -925,10 +904,6 @@ public:
 	qdGameObjectState *clone() const {
 		return new qdGameObjectStateMask(*this);
 	}
-
-#ifdef _QUEST_EDITOR
-	void copy_contour(qdGameObjectStateMask const *source);
-#endif // _QUEST_EDITOR
 
 private:
 
