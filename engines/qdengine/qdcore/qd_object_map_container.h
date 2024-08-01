@@ -38,7 +38,7 @@ public:
 	~qdObjectMapContainer();
 
 	const object_list_t &get_list() const {
-		return object_list_;
+		return _object_list;
 	}
 
 	T *get_object(const char *name);
@@ -60,18 +60,18 @@ private:
 
 	typedef Common::HashMap<Common::String, T *> object_map_t;
 
-	object_list_t object_list_;
-	object_map_t object_map_;
+	object_list_t _object_list;
+	object_map_t _object_map;
 };
 
 template <class T>
 bool qdObjectMapContainer<T>::add_object(T *p) {
-	typename object_map_t::iterator it = object_map_.find(p->name());
-	if (it != object_map_.end())
+	typename object_map_t::iterator it = _object_map.find(p->name());
+	if (it != _object_map.end())
 		return false;
 
-	object_map_[p->name()] = p;
-	object_list_.push_back(p);
+	_object_map[p->name()] = p;
+	_object_list.push_back(p);
 
 	return true;
 }
@@ -79,8 +79,8 @@ bool qdObjectMapContainer<T>::add_object(T *p) {
 template <class T>
 const T *qdObjectMapContainer<T>::get_object(const char *name) const {
 
-	typename object_map_t::const_iterator it = object_map_.find(name);
-	if (it != object_map_.end())
+	typename object_map_t::const_iterator it = _object_map.find(name);
+	if (it != _object_map.end())
 		return it->_value;
 
 	return NULL;
@@ -88,8 +88,8 @@ const T *qdObjectMapContainer<T>::get_object(const char *name) const {
 
 template <class T>
 T *qdObjectMapContainer<T>::get_object(const char *name) {
-	typename object_map_t::iterator it = object_map_.find(name);
-	if (it != object_map_.end())
+	typename object_map_t::iterator it = _object_map.find(name);
+	if (it != _object_map.end())
 		return it->_value;
 
 	return NULL;
@@ -98,12 +98,12 @@ T *qdObjectMapContainer<T>::get_object(const char *name) {
 template <class T>
 bool qdObjectMapContainer<T>::remove_object(T *p) {
 	typename object_list_t::iterator it;
-	for (it = object_list_.begin(); it != object_list_.end(); it++) {
+	for (it = _object_list.begin(); it != _object_list.end(); it++) {
 		if (*it == p) {
-			object_list_.erase(it);
-			typename object_map_t::iterator im = object_map_.find(p->name());
-			if (im != object_map_.end())
-				object_map_.erase(im);
+			_object_list.erase(it);
+			typename object_map_t::iterator im = _object_map.find(p->name());
+			if (im != _object_map.end())
+				_object_map.erase(im);
 
 			return true;
 		}
@@ -122,11 +122,11 @@ bool qdObjectMapContainer<T>::remove_object(const char *name) {
 
 template <class T>
 bool qdObjectMapContainer<T>::rename_object(T *p, const char *name) {
-	typename object_map_t::iterator im = object_map_.find(p->name());
-	if (im != object_map_.end()) {
-		object_map_.erase(im);
+	typename object_map_t::iterator im = _object_map.find(p->name());
+	if (im != _object_map.end()) {
+		_object_map.erase(im);
 		p->set_name(name);
-		object_map_[p->name()] = p;
+		_object_map[p->name()] = p;
 
 		return true;
 	}
@@ -144,12 +144,12 @@ qdObjectMapContainer<T>::~qdObjectMapContainer() {
 
 template <class T>
 bool qdObjectMapContainer<T>::clear() {
-	object_map_.clear();
+	_object_map.clear();
 
-	for (typename object_list_t::iterator it = object_list_.begin(); it != object_list_.end(); ++it)
+	for (typename object_list_t::iterator it = _object_list.begin(); it != _object_list.end(); ++it)
 		delete *it;
 
-	object_list_.clear();
+	_object_list.clear();
 
 	return true;
 }

@@ -40,7 +40,7 @@ public:
 	~qdObjectListContainer();
 
 	const object_list_t &get_list() const {
-		return object_list_;
+		return _object_list;
 	}
 
 	T *get_object(const char *name);
@@ -60,13 +60,13 @@ public:
 
 private:
 
-	object_list_t object_list_;
+	object_list_t _object_list;
 };
 
 template <class T>
 bool qdObjectListContainer<T>::add_object(T *p) {
 	if (get_object(p->name())) return false;
-	object_list_.push_back(p);
+	_object_list.push_back(p);
 
 	return true;
 }
@@ -75,7 +75,7 @@ template <class T>
 const T *qdObjectListContainer<T>::get_object(const char *name) const {
 	if (!name) return NULL;
 
-	for (typename object_list_t::const_iterator it = object_list_.begin(); it != object_list_.end(); ++it) {
+	for (typename object_list_t::const_iterator it = _object_list.begin(); it != _object_list.end(); ++it) {
 		if (!scumm_stricmp(name, (*it)->name()))
 			return *it;
 	}
@@ -87,7 +87,7 @@ template <class T>
 T *qdObjectListContainer<T>::get_object(const char *name) {
 	if (!name) return NULL;
 
-	for (typename object_list_t::const_iterator it = object_list_.begin(); it != object_list_.end(); ++it) {
+	for (typename object_list_t::const_iterator it = _object_list.begin(); it != _object_list.end(); ++it) {
 		if (!scumm_stricmp(name, (*it)->name()))
 			return *it;
 	}
@@ -97,9 +97,9 @@ T *qdObjectListContainer<T>::get_object(const char *name) {
 
 template <class T>
 bool qdObjectListContainer<T>::remove_object(T *p) {
-	for (typename object_list_t::iterator it = object_list_.begin(); it != object_list_.end(); ++it) {
+	for (typename object_list_t::iterator it = _object_list.begin(); it != _object_list.end(); ++it) {
 		if (*it == p) {
-			object_list_.erase(it);
+			_object_list.erase(it);
 			return true;
 		}
 	}
@@ -132,10 +132,10 @@ qdObjectListContainer<T>::~qdObjectListContainer() {
 
 template <class T>
 bool qdObjectListContainer<T>::clear() {
-	for (typename object_list_t::iterator it = object_list_.begin(); it != object_list_.end(); ++it)
+	for (typename object_list_t::iterator it = _object_list.begin(); it != _object_list.end(); ++it)
 		delete *it;
 
-	object_list_.clear();
+	_object_list.clear();
 
 	return true;
 }
