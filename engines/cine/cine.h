@@ -65,8 +65,8 @@
  * all known game variants. Based on Yaz0r's engine.
  *
  * Cinematique evo.2 status:
- * This generation supports Operation Stealth, originally developed by Yaz0r for
- * French variant of the game which heared to be completable.
+ * This generation supports Operation Stealth, originally developed by Yaz0r,
+ * for a french variant of the game which was said to be completable.
  * Later the work was renewed as part of GSoC'08, by Kari Salminen, but it has not
  * yet been finished. The game is not completable.
  *
