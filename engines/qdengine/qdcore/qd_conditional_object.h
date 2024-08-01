@@ -63,13 +63,6 @@ public:
 	//! Удаляет условие.
 	bool remove_conditon(int idx);
 
-#ifdef _QUEST_EDITOR
-	//! Удаляет все условия
-	void remove_all_conditions();
-	//! Удаляет все группы
-	void remove_all_groups();
-#endif //_QUEST_EDITOR
-
 	//! Возвращает указатель на условие.
 	const qdCondition *get_condition(int idx = 0) const {
 		return &*(conditions_.begin() + idx);
@@ -115,11 +108,6 @@ public:
 	//! Обсчет логики условий, dt - время в секундах.
 	void conditions_quant(float dt);
 
-#ifdef _QUEST_EDITOR
-	bool backup_object();
-	bool restore_object();
-#endif
-
 	//! Инициализация объекта, вызывается при старте и перезепуске игры.
 	virtual bool init();
 
@@ -127,16 +115,6 @@ public:
 	bool load_data(Common::SeekableReadStream &fh, int save_version);
 	//! Запись данных в сэйв.
 	bool save_data(Common::WriteStream &fh) const;
-
-#ifdef _QUEST_EDITOR
-	bool init_objects();
-	static void toggle_global_list(bool state) {
-		enable_objects_list_ = state;
-		if (!state)
-			objects_list_.clear();
-	}
-	static void global_init();
-#endif
 
 	bool is_condition_in_group(int condition_idx) const;
 
@@ -176,16 +154,6 @@ private:
 
 	//! Группы условий.
 	condition_groups_container_t condition_groups_;
-
-#ifdef _QUEST_EDITOR
-	static conditions_container_t backup_;
-	static condition_groups_container_t groups_backup_;
-	static ConditionsMode backup_mode_;
-
-	//! Список всех объектов (для инициализации в редакторе).
-	static std::list<qdConditionalObject *> objects_list_;
-	static bool enable_objects_list_;
-#endif
 
 	bool check_group_conditions(const qdConditionGroup &gr);
 };
