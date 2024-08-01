@@ -153,14 +153,14 @@ public:
 	void redraw_rot(int x, int y, int z, float angle, int mode = 0) const;
 	void redraw_rot(int x, int y, int z, float angle, const Vect2f &scale, int mode = 0) const;
 
-	void draw_mask(int x, int y, int z, unsigned mask_color, int mask_alpha, int mode = 0) const;
-	void draw_mask(int x, int y, int z, unsigned mask_color, int mask_alpha, float scale, int mode = 0) const;
+	void draw_mask(int x, int y, int z, uint32 mask_color, int mask_alpha, int mode = 0) const;
+	void draw_mask(int x, int y, int z, uint32 mask_color, int mask_alpha, float scale, int mode = 0) const;
 
-	void draw_mask_rot(int x, int y, int z, float angle, unsigned mask_color, int mask_alpha, int mode = 0) const;
-	void draw_mask_rot(int x, int y, int z, float angle, unsigned mask_color, int mask_alpha, const Vect2f &scale, int mode = 0) const;
+	void draw_mask_rot(int x, int y, int z, float angle, uint32 mask_color, int mask_alpha, int mode = 0) const;
+	void draw_mask_rot(int x, int y, int z, float angle, uint32 mask_color, int mask_alpha, const Vect2f &scale, int mode = 0) const;
 
-	void draw_contour(int x, int y, unsigned color) const;
-	void draw_contour(int x, int y, unsigned color, float scale) const;
+	void draw_contour(int x, int y, uint32 color) const;
+	void draw_contour(int x, int y, uint32 color, float scale) const;
 
 	bool hit(int x, int y) const;
 	bool hit(int x, int y, float scale) const;
@@ -248,7 +248,7 @@ public:
 			return qda_file();
 	}
 #ifdef __QD_DEBUG_ENABLE__
-	unsigned resource_data_size() const;
+	uint32 resource_data_size() const;
 #endif
 
 	//! Загрузка данных из сэйва.

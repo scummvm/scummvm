@@ -716,7 +716,7 @@ bool qdCamera::draw_grid() const {
 	return true;
 }
 
-bool qdCamera::draw_cell(int x, int y, int z, int penWidth, unsigned color) const {
+bool qdCamera::draw_cell(int x, int y, int z, int penWidth, uint32 color) const {
 	const int XSP = get_cell_sx() * get_grid_sx();
 	const int YSP = get_cell_sy() * get_grid_sy();
 	const float XSP05 = XSP * 0.5f;

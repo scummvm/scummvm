@@ -99,7 +99,7 @@ bool qdGameObjectStatic::hit(int x, int y) const {
 	return false;
 }
 
-void qdGameObjectStatic::draw_contour(unsigned color) const {
+void qdGameObjectStatic::draw_contour(uint32 color) const {
 	Vect2s pos = screen_pos();
 	_sprite.draw_contour(pos.x, pos.y, color);
 }

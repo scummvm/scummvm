@@ -87,7 +87,7 @@ public:
 	const byte *data() const {
 		return _data;
 	}
-	unsigned data_size() const;
+	uint32 data_size() const;
 
 	void set_file(const char *fname) {
 		if (fname) _file = fname;
@@ -111,14 +111,14 @@ public:
 	void redraw_rot(int x, int y, int z, float angle, const Vect2f &scale, int mode = 0) const;
 
 	void redraw(int x, int y, int z, float scale, int mode = 0) const;
-	void draw_mask(int x, int y, int z, unsigned mask_color, int mask_alpha, int mode = 0) const;
-	void draw_mask(int x, int y, int z, unsigned mask_color, int mask_alpha, float scale, int mode = 0) const;
+	void draw_mask(int x, int y, int z, uint32 mask_color, int mask_alpha, int mode = 0) const;
+	void draw_mask(int x, int y, int z, uint32 mask_color, int mask_alpha, float scale, int mode = 0) const;
 
-	void draw_mask_rot(int x, int y, int z, float angle, unsigned mask_color, int mask_alpha, int mode = 0) const;
-	void draw_mask_rot(int x, int y, int z, float angle, unsigned mask_color, int mask_alpha, const Vect2f &scale, int mode = 0) const;
+	void draw_mask_rot(int x, int y, int z, float angle, uint32 mask_color, int mask_alpha, int mode = 0) const;
+	void draw_mask_rot(int x, int y, int z, float angle, uint32 mask_color, int mask_alpha, const Vect2f &scale, int mode = 0) const;
 
-	void draw_contour(int x, int y, unsigned color, int mode = 0) const;
-	void draw_contour(int x, int y, unsigned color, float scale, int mode = 0) const;
+	void draw_contour(int x, int y, uint32 color, int mode = 0) const;
+	void draw_contour(int x, int y, uint32 color, float scale, int mode = 0) const;
 
 	bool hit(int x, int y) const;
 	bool hit(int x, int y, float scale) const;
@@ -183,7 +183,7 @@ public:
 		return NULL;
 	}
 #ifdef __QD_DEBUG_ENABLE__
-	unsigned resource_data_size() const {
+	uint32 resource_data_size() const {
 		return data_size();
 	}
 #endif

@@ -45,7 +45,7 @@ public:
 			return decode_line(y, &*_buffer0.begin());
 	}
 
-	bool decode_pixel(int x, int y, unsigned &pixel);
+	bool decode_pixel(int x, int y, uint32 &pixel);
 
 	static inline const byte *get_buffer(int buffer_id) {
 		if (buffer_id) return &*_buffer1.begin();
@@ -54,21 +54,21 @@ public:
 
 	void resize_buffers();
 
-	unsigned size();
+	uint32 size();
 	int line_length();
 	int line_header_length(int line_num) const;
 
-	unsigned header_size() const {
+	uint32 header_size() const {
 		return _header.size();
 	}
-	unsigned data_size() const {
+	uint32 data_size() const {
 		return _data.size();
 	}
 
 	const char *header_ptr(int y = 0) const {
 		return &*(_header.begin() + _header_offset[y]);
 	}
-	const unsigned *data_ptr(int y = 0) const {
+	const uint32 *data_ptr(int y = 0) const {
 		return &*(_data.begin() + _data_offset[y]);
 	}
 
@@ -77,11 +77,11 @@ public:
 	bool convert_data(int bits_per_pixel = 16);
 
 private:
-	std::vector<unsigned> _header_offset;
-	std::vector<unsigned> _data_offset;
+	std::vector<uint32> _header_offset;
+	std::vector<uint32> _data_offset;
 
 	std::vector<char> _header;
-	std::vector<unsigned> _data;
+	std::vector<uint32> _data;
 
 	int _bits_per_pixel;
 

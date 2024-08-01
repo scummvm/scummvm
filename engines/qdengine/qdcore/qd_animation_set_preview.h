@@ -54,17 +54,17 @@ public:
 
 	void set_screen(Vect2s offs, Vect2s size);
 
-	unsigned back_color() const {
+	uint32 back_color() const {
 		return _back_color;
 	}
-	void set_back_color(unsigned col) {
+	void set_back_color(uint32 col) {
 		_back_color = col;
 	}
 
-	unsigned grid_color() const {
+	uint32 grid_color() const {
 		return _grid_color;
 	}
-	void set_grid_color(unsigned col) {
+	void set_grid_color(uint32 col) {
 		_grid_color = col;
 	}
 
@@ -131,8 +131,8 @@ private:
 
 	grDispatcher *_graph_d;
 
-	unsigned _back_color;
-	unsigned _grid_color;
+	uint32 _back_color;
+	uint32 _grid_color;
 
 	int _cell_size;
 	float _cell_offset;

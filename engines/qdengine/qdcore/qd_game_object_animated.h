@@ -236,12 +236,12 @@ public:
 	bool need_redraw() const;
 
 	void post_redraw();
-	void draw_shadow(int offs_x, int offs_y, unsigned color, int alpha) const;
+	void draw_shadow(int offs_x, int offs_y, uint32 color, int alpha) const;
 
 	bool get_debug_info(Common::String &buf) const;
 
 	void debug_redraw() const;
-	void draw_contour(unsigned color) const;
+	void draw_contour(uint32 color) const;
 	void draw_grid_zone(const Vect2s sz) const;
 
 	int mouse_cursor_ID() const;
@@ -312,7 +312,7 @@ public:
 
 	int shadow_color() const;
 	int shadow_alpha() const;
-	void set_shadow(unsigned color, int alpha) {
+	void set_shadow(uint32 color, int alpha) {
 		_shadow_color = color;
 		_shadow_alpha = alpha;
 	}
@@ -372,14 +372,14 @@ private:
 	grScreenRegion _last_screen_region;
 	float _last_screen_depth;
 
-	unsigned _lastShadowColor;
+	uint32 _lastShadowColor;
 	int _lastShadowAlpha;
 
 	//! Последнее время изменения объекта
 	int _last_chg_time;
 
 	//! Цвет затенения.
-	unsigned _shadow_color;
+	uint32 _shadow_color;
 	//! Прозрачность затенения, значения - [0, 255], если равно QD_NO_SHADOW_ALPHA, то персонаж не затеняется.
 	int _shadow_alpha;
 

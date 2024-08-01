@@ -1540,7 +1540,7 @@ const qdGameObject *qdGameObjectStateMask::parent() const {
 	return static_cast<qdGameScene *>(p)->get_object(parent_name_.c_str());
 }
 
-bool qdGameObjectStateMask::draw_mask(unsigned color) const {
+bool qdGameObjectStateMask::draw_mask(uint32 color) const {
 	const qdGameObject *p = parent();
 	if (!p) return false;
 

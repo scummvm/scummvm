@@ -97,10 +97,10 @@ public:
 		else return false;
 	}
 
-	unsigned attributes() const {
+	uint32 attributes() const {
 		return attributes_;
 	}
-	void set_attributes(unsigned attr) {
+	void set_attributes(uint32 attr) {
 		attributes_ = attr;
 	}
 
@@ -347,7 +347,7 @@ public:
 	bool init();
 
 	bool draw_grid() const;
-	bool draw_cell(int x, int y, int z, int penWidth, unsigned color) const;
+	bool draw_cell(int x, int y, int z, int penWidth, uint32 color) const;
 
 	sGridCell *backup(sGridCell *ptrBuff);
 	bool restore(sGridCell *grid, int sx, int sy, int csx, int csy);

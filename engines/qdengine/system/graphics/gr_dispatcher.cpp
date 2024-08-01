@@ -353,7 +353,7 @@ void grDispatcher::Rectangle(int x, int y, int sx, int sy, int outcol, int incol
 	}
 }
 
-void grDispatcher::RectangleAlpha(int x, int y, int sx, int sy, unsigned color, int alpha) {
+void grDispatcher::RectangleAlpha(int x, int y, int sx, int sy, uint32 color, int alpha) {
 	int px = 0;
 	int py = 0;
 
@@ -371,7 +371,7 @@ void grDispatcher::RectangleAlpha(int x, int y, int sx, int sy, unsigned color, 
 	mg = (mg * (255 - alpha)) >> 8;
 	mb = (mb * (255 - alpha)) >> 8;
 
-	unsigned mcl = make_rgb565u(mr, mg, mb);
+	uint32 mcl = make_rgb565u(mr, mg, mb);
 
 	warning("STUB: grDispatcher::RectangleAlpha");
 	for (int i = 0; i < psy; i++) {
@@ -946,7 +946,7 @@ char *grDispatcher::temp_buffer(int size) {
 	return _temp_buffer;
 }
 
-bool grDispatcher::DrawText(int x, int y, unsigned color, const char *str, int hspace, int vspace, const grFont *font) {
+bool grDispatcher::DrawText(int x, int y, uint32 color, const char *str, int hspace, int vspace, const grFont *font) {
 	if (!font)
 		font = _default_font;
 
@@ -978,7 +978,7 @@ bool grDispatcher::DrawText(int x, int y, unsigned color, const char *str, int h
 	return true;
 }
 
-bool grDispatcher::DrawAlignedText(int x, int y, int sx, int sy, unsigned color, const char *str, grTextAlign align, int hspace, int vspace, const grFont *font) {
+bool grDispatcher::DrawAlignedText(int x, int y, int sx, int sy, uint32 color, const char *str, grTextAlign align, int hspace, int vspace, const grFont *font) {
 	if (!font)
 		font = _default_font;
 
@@ -1036,7 +1036,7 @@ bool grDispatcher::DrawAlignedText(int x, int y, int sx, int sy, unsigned color,
 	return true;
 }
 
-bool grDispatcher::DrawParsedText(int x, int y, int sx, int sy, unsigned color, const UI_TextParser *parser, grTextAlign align, const grFont *font) {
+bool grDispatcher::DrawParsedText(int x, int y, int sx, int sy, uint32 color, const UI_TextParser *parser, grTextAlign align, const grFont *font) {
 	if (!font)
 		font = _default_font;
 

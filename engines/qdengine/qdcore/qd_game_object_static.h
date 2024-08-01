@@ -46,8 +46,8 @@ public:
 
 	void redraw(int offs_x = 0, int offs_y = 0) const;
 	void debug_redraw() const { }
-	void draw_contour(unsigned color) const;
-	void draw_shadow(int offs_x, int offs_y, unsigned color, int alpha) const { }
+	void draw_contour(uint32 color) const;
+	void draw_shadow(int offs_x, int offs_y, uint32 color, int alpha) const { }
 
 	bool load_script(const xml::tag *p);
 	bool save_script(Common::WriteStream &fh, int indent = 0) const;

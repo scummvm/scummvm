@@ -71,7 +71,7 @@ public:
 	static file_format_t file_format(const char *file_name);
 
 #ifdef __QD_DEBUG_ENABLE__
-	virtual unsigned resource_data_size() const = 0;
+	virtual uint32 resource_data_size() const = 0;
 #endif
 
 protected:
@@ -108,14 +108,14 @@ public:
 		return _data_size < inf._data_size;
 	}
 
-	unsigned data_size() const {
+	uint32 data_size() const {
 		return _data_size;
 	}
 
 	qdResource::file_format_t file_format() const;
 
 private:
-	unsigned _data_size;
+	uint32 _data_size;
 	const qdResource *_resource;
 	const qdNamedObject *_resource_owner;
 };

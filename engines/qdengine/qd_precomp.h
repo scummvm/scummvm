@@ -69,7 +69,7 @@ namespace QDEngine {
 #define BOOL          bool
 #define HWND          void *
 #define DWORD         int
-#define COLORREF      unsigned
+#define COLORREF      uint32
 
 #define MAX_PATH      260
 

@@ -44,7 +44,7 @@ enum grTileCompressionMethod {
 /// Данные внешние.
 class grTileSprite {
 public:
-	grTileSprite(const unsigned *data_ptr = 0);
+	grTileSprite(const uint32 *data_ptr = 0);
 
 	bool operator == (const grTileSprite &sprite) const;
 
@@ -52,26 +52,26 @@ public:
 		return !_data;
 	}
 
-	const unsigned *data() const {
+	const uint32 *data() const {
 		return _data;
 	}
 
-	static unsigned comprasionTolerance() {
+	static uint32 comprasionTolerance() {
 		return _comprasionTolerance;
 	}
-	static void setComprasionTolerance(unsigned value) {
+	static void setComprasionTolerance(uint32 value) {
 		_comprasionTolerance = value;
 	}
 
-	static unsigned compress(const unsigned *in_data, unsigned *out_data, grTileCompressionMethod compress_method);
-	static bool uncompress(const unsigned *in_data, unsigned in_data_length, unsigned *out_data, grTileCompressionMethod compress_method);
+	static uint32 compress(const uint32 *in_data, uint32 *out_data, grTileCompressionMethod compress_method);
+	static bool uncompress(const uint32 *in_data, uint32 in_data_length, uint32 *out_data, grTileCompressionMethod compress_method);
 
 private:
 
-	const unsigned *_data;
+	const uint32 *_data;
 
 	/// толерантность побайтового сравнения данных, [0, 255]
-	static unsigned _comprasionTolerance;
+	static uint32 _comprasionTolerance;
 };
 
 } // namespace QDEngine

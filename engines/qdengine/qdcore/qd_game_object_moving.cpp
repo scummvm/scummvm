@@ -1609,7 +1609,7 @@ Vect2s qdGameObjectMoving::get_nearest_walkable_point(const Vect2s &target) cons
 }
 
 
-void qdGameObjectMoving::draw_contour(unsigned color) const {
+void qdGameObjectMoving::draw_contour(uint32 color) const {
 	Vect2s scrCoord = screen_pos();
 
 	if (!check_flag(QD_OBJ_NO_SCALE_FLAG)) {
@@ -2680,7 +2680,7 @@ bool qdGameObjectMoving::move_from_personage_path() {
 	return false;
 }
 
-void qdGameObjectMoving::draw_shadow(int offs_x, int offs_y, unsigned color, int alpha) const {
+void qdGameObjectMoving::draw_shadow(int offs_x, int offs_y, uint32 color, int alpha) const {
 	if (alpha == QD_NO_SHADOW_ALPHA || get_animation()->is_empty())
 		return;
 

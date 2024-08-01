@@ -393,7 +393,7 @@ public:
 	/// Инициализация rnd
 	virtual void rnd_init(int seed) const = 0;
 	/// Возвращает случайное значение в интервале [0, m-1].
-	virtual unsigned rnd(unsigned m) const = 0;
+	virtual uint32 rnd(uint32 m) const = 0;
 	/// Возвращает случайное значение в интервале [-x, x].
 	virtual float frnd(float x) const = 0;
 	/// Возвращает случайное значение в интервале [0, x].

@@ -532,14 +532,14 @@ public:
 		fade_time_ = time;
 	}
 
-	unsigned shadow_color() const {
+	uint32 shadow_color() const {
 		return shadow_color_;
 	}
 	int shadow_alpha() const {
 		return shadow_alpha_;
 	}
 
-	void set_shadow(unsigned color, int alpha) {
+	void set_shadow(uint32 color, int alpha) {
 		shadow_color_ = color;
 		shadow_alpha_ = alpha;
 	}
@@ -657,7 +657,7 @@ private:
 	float fade_time_;
 
 	//! Цвет затенения.
-	unsigned shadow_color_;
+	uint32 shadow_color_;
 	//! Прозрачность затенения, значения - [0, 255], если равно QD_NO_SHADOW_ALPHA, то объект не затеняется.
 	int shadow_alpha_;
 
@@ -909,7 +909,7 @@ public:
 	const qdGameObject *parent() const;
 
 	bool hit(int x, int y) const;
-	bool draw_mask(unsigned color) const;
+	bool draw_mask(uint32 color) const;
 
 	bool can_be_closed() const {
 		return (contour_size() > 2);

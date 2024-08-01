@@ -219,10 +219,10 @@ public:
 	//! Отрисовка текста.
 	void redraw(const Vect2i &owner_pos) const;
 
-	unsigned color() const {
+	uint32 color() const {
 		return _text_format.color();
 	}
-	void set_color(unsigned col) {
+	void set_color(uint32 col) {
 		_text_format.set_color(col);
 	}
 
