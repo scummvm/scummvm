@@ -886,18 +886,18 @@ void Character::SetPosition(const Common::Point &newPosition) {
 
 Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	// We choose looking towards the screen first
-	int blobIndex = 0;
-	if (IsLerping) {
+	int blobIndex = GameObject->Orientation - 1;
+	/* if (IsLerping) {
 		// We are walking
 		blobIndex = GameObject->Orientation + 1;
 	} else {
 		// We are standing
 		blobIndex = GameObject->Orientation + 9;
-	}
+	} */
 	// TODO: The game saves the orientation already adjusted for animation state
-	if (blobIndex > 8 + 9) {
+	/* if (blobIndex > 8 + 9) {
 		blobIndex = 9;
-	}
+	} */
 	// If we don't have this direction, try others until we find one that we have
 	// TODO: Log this properly or even assert
 	if (GameObject->Blobs[blobIndex].size() == 0) {
@@ -943,8 +943,8 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	// Skip ahead to the right frame in the animation
 	// TODO: No hardcoded number of animations
 	// TODO: Check for one-off errors
-	// testReader.SeekToAnimation((animationIndex - 1) % numAnimations);
-	testReader.SeekToAnimation(0);
+	testReader.SeekToAnimation((animationIndex - 1) % numAnimations);
+	// testReader.SeekToAnimation(0);
 	// Skip ahead to the width and height
 	testReader.readStream->seek(6, SEEK_CUR);
 	
@@ -999,7 +999,9 @@ void Character::StartLerpTo(const Common::Point &target, uint32 duration, bool i
 	// TODO: Try out first which values we get
 	Common::String message = Common::String::format("Degrees: %f Segment: %u", degrees, segment);
 	debug(message.c_str());
-	GameObject->Orientation = segment;
+	// Need to offset by one as the game handles the first one (straight away from
+	// the camera) as index 1, not 0
+	GameObject->Orientation = segment + 1;
 }
 
 void Character::StartPickup(Character *object) {
@@ -1033,6 +1035,8 @@ void Character::Update() {
 	
 	if (isDone) {
 		IsLerping = false;
+		// Go to the same orientation but standing
+		GameObject->Orientation += 8;
 
 		// Check if we need to pick something up
 		if (objectToPickUp != nullptr) {
@@ -1074,6 +1078,8 @@ void Character::Update() {
 	SetPosition(StartPosition + (EndPosition - StartPosition) * progress);
 	if (!LerpIgnoresObstacles && HandleWalkability(this)) {
 		IsLerping = false;
+		// Go the the same orientation but standing
+		GameObject->Orientation += 8;
 		// TODO: Copy & paste code
 		if (!g_engine->_scriptExecutor->IsExecuting()) {
 			g_engine->_scriptExecutor->Rewind();

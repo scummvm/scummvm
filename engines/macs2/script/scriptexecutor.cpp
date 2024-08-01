@@ -1986,6 +1986,13 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 		} else if (opcode1 == 0x31) {
 			// TODO: Unknown opcode, reads a value, caps it to 64h and does something with it
 			Func9F4D_Placeholder();
+		} else if (opcode1 == 0x32) {
+			// TODO: Unknown opcode, my first hunch is something about adjusting click
+			// checking for the mouse clicks
+			// Likely an object ID
+			Func9F4D_Placeholder();
+			// Used as a bool which will be written to a field of the object
+			Func9F4D_Placeholder();
 		} else if (opcode1 == 0x34) {
 			// TODO: Unknown opcode so far
 			// TODO: What do 8XXh objects signify? Both return values are those

@@ -85,7 +85,7 @@ private:
 	bool ExecuteScriptOnFinishLerp;
 
 	// TODO: Handle properly
-	uint8 animationIndex;
+	uint8 animationIndex = 1;
 
 		// TODO: Will need time handling
 	Macs2::AnimFrame *GetCurrentAnimationFrame();
