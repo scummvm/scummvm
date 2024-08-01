@@ -61,45 +61,45 @@ public:
 
 	//! Время события (в миллисекундах от старта приложения).
 	uint32 time() const {
-		return time_;
+		return _time;
 	}
 	//! Идентификатор события.
 	event_t event() const {
-		return event_;
+		return _event;
 	}
 	//! Идентификатор триггера (номер триггера в списке гейм-диспетчера).
 	int trigger_id() const {
-		return trigger_id_;
+		return _trigger_id;
 	}
 	//! Идентификатор элемента триггера.
 	int element_id() const {
-		return element_id_;
+		return _element_id;
 	}
 	//! Идентификатор линка триггера.
 	int link_id() const {
-		return link_id_;
+		return _link_id;
 	}
 	//! Новое состояние элемента/линка.
 	int status() const {
-		return status_;
+		return _status;
 	}
 
 private:
 
 	//! Время события (в миллисекундах от старта приложения).
-	uint32 time_;
+	uint32 _time;
 
 	//! Идентификатор события.
-	event_t event_;
+	event_t _event;
 
 	//! Идентификатор триггера (номер триггера в списке гейм-диспетчера).
-	int trigger_id_;
+	int _trigger_id;
 	//! Идентификатор элемента триггера.
-	int element_id_;
+	int _element_id;
 	//! Идентификатор линка триггера.
-	int link_id_;
+	int _link_id;
 	//! Новое состояние элемента/линка.
-	int status_;
+	int _status;
 };
 
 //! Профайлер триггеров.
