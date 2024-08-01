@@ -3791,60 +3791,56 @@ void Scene3500::process(Event &event) {
 	if (!_directionChangesEnabled)
 		return;
 
-	if (event.eventType == EVENT_KEYPRESS) {
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_KP7:
+	if (event.eventType == EVENT_CUSTOM_ACTIONSTART) {
+		switch (event.customType) {
+		case kActionMaximumSpeed:
 			R2_GLOBALS._sound2.play(338);
 			doMovement(16);
 			event.handled = true;
 			break;
-		case Common::KEYCODE_UP:
-		case Common::KEYCODE_KP8:
+		case kActionMoveUpCrawlNorth:
 			R2_GLOBALS._sound2.play(14, NULL, 63);
 			doMovement(88);
 			event.handled = true;
 			break;
-		case Common::KEYCODE_KP9:
+		case kActionIncreaseSpeed:
 			if (_speed < 16)
 				R2_GLOBALS._sound2.play(338);
 			doMovement(1);
 			event.handled = true;
 			break;
-		case Common::KEYCODE_KP4:
-		case Common::KEYCODE_LEFT:
+		case kActionMoveLeftCrawlWest:
 			R2_GLOBALS._sound2.play(14, NULL, 63);
 			doMovement(112);
 			event.handled = true;
 			break;
-		case Common::KEYCODE_KP6:
-		case Common::KEYCODE_RIGHT:
+		case kActionMoveRightCrawlEast:
 			R2_GLOBALS._sound2.play(14, NULL, 63);
 			doMovement(96);
 			event.handled = true;
 			break;
-		case Common::KEYCODE_KP1:
+		case kActionMinimumSpeed:
 			R2_GLOBALS._sound2.play(338);
 			doMovement(0);
 			event.handled = true;
 			break;
-		case Common::KEYCODE_KP2:
-		case Common::KEYCODE_DOWN:
+		case kActionMoveDownCrawlSouth:
 			R2_GLOBALS._sound2.play(14, NULL, 63);
 			doMovement(104);
 			event.handled = true;
 			break;
-		case Common::KEYCODE_KP3:
+		case kActionDecreaseSpeed:
 			if (_speed != 0)
 				R2_GLOBALS._sound2.play(338);
 			doMovement(-1);
 			event.handled = true;
 			break;
-		case Common::KEYCODE_KP0:
+		case kActionMediumSpeed:
 			R2_GLOBALS._sound2.play(338);
 			doMovement(8);
 			event.handled = true;
 			break;
-		case Common::KEYCODE_KP_PERIOD:
+		case kActionLowSpeed:
 			R2_GLOBALS._sound2.play(338);
 			doMovement(4);
 			event.handled = true;

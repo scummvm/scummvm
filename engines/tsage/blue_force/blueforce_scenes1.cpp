@@ -2666,7 +2666,8 @@ void Scene160::Action2::signal() {
 }
 
 void Scene160::Action2::process(Event &event) {
-	if ((event.handled) || ((event.eventType != EVENT_BUTTON_DOWN) && (event.eventType != EVENT_KEYPRESS)))
+	if ((event.handled) || ((event.eventType != EVENT_BUTTON_DOWN)
+			&& (event.eventType != EVENT_KEYPRESS || event.eventType != EVENT_CUSTOM_ACTIONSTART)))
 		return;
 
 	if (_actionIndex == 25) {

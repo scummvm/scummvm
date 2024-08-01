@@ -447,8 +447,8 @@ void InventoryDialog::execute() {
 				hiliteObj = *i;
 		}
 
-		if (!event.handled && event.eventType == EVENT_KEYPRESS) {
-			if ((event.kbd.keycode == Common::KEYCODE_RETURN) || (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+		if (!event.handled && (event.eventType == EVENT_CUSTOM_ACTIONSTART)) {
+			if ((event.customType == kActionReturn) || (event.customType == kActionEscape)) {
 				// Exit the dialog
 				//hiliteObj = &_btnOk;
 				break;

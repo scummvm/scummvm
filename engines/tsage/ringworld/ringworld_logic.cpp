@@ -563,9 +563,9 @@ void RingworldGame::endGame(int resNum, int lineNum) {
 }
 
 void RingworldGame::processEvent(Event &event) {
-	if (event.eventType == EVENT_KEYPRESS) {
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_F1:
+	if (event.eventType == EVENT_CUSTOM_ACTIONSTART) {
+		switch (event.customType) {
+		case kActionHelp:
 			// F1 - Help
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				MessageDialog::show(ESP_HELP_MSG, ESP_OK_BTN_STRING);
@@ -576,30 +576,30 @@ void RingworldGame::processEvent(Event &event) {
 			}
 			break;
 
-		case Common::KEYCODE_F2:
+		case kActionSoundOptions:
 			// F2 - Sound Options
 			SoundDialog::execute();
 			break;
 
-		case Common::KEYCODE_F3:
+		case kActionQuitGame:
 			// F3 - Quit
 			quitGame();
 			event.handled = false;
 			break;
 
-		case Common::KEYCODE_F4:
+		case kActionRestartGame:
 			// F4 - Restart
 			restartGame();
 			g_globals->_events.setCursorFromFlag();
 			break;
 
-		case Common::KEYCODE_F7:
+		case kActionRestoreGame:
 			// F7 - Restore
 			restoreGame();
 			g_globals->_events.setCursorFromFlag();
 			break;
 
-		case Common::KEYCODE_F10:
+		case kActionPauseGame:
 			// F10 - Pause
 			GfxDialog::setPalette();
 			if (g_vm->getLanguage() == Common::ES_ESP) {

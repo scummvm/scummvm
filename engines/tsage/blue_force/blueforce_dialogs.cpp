@@ -299,9 +299,14 @@ bool AmmoBeltDialog::process(Event &event) {
 
 		return true;
 
-	case EVENT_KEYPRESS:
-		if ((event.kbd.keycode == Common::KEYCODE_ESCAPE) || (event.kbd.keycode == Common::KEYCODE_RETURN)) {
+	case EVENT_CUSTOM_ACTIONSTART:
+		if (event.customType == kActionEscape) {
 			// Escape pressed, so flag to close dialog
+			_closeFlag = true;
+			return true;
+		}
+		if (event.customType == kActionReturn) {
+			// Return pressed, so flag to close dialog
 			_closeFlag = true;
 			return true;
 		}
