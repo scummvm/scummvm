@@ -115,20 +115,7 @@ namespace QDEngine {
 #define MB_ICONEXCLAMATION  0x00000030L
 #define MB_ABORTRETRYIGNORE 0x00000002L
 
-#define SW_HIDE         0
-
-struct RECT {
-	int left;
-	int top;
-	int right;
-	int bottom;
-};
-
 int MessageBox(HWND hWnd, const char *lpText, const char *lpCaption, uint32 uType);
-bool ShowWindow(HWND hWnd, int nCmdShow);
-bool CloseWindow(HWND hWnd);
-bool DestroyWindow(HWND hWnd);
-bool UpdateWindow(HWND hWnd);
 char *_fullpath(char *absPath, const char *relPath, size_t maxLength);
 
 int engineMain();

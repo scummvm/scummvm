@@ -62,8 +62,6 @@ bool request_CD_handler(int cd_id);
 
 grDispatcher *grD = NULL;
 
-HWND hmainWnd;
-
 qdGameDispatcher *qd_gameD = NULL;
 
 }; // namespace qdrt
@@ -339,10 +337,6 @@ int engineMain() {
 	grDispatcher::instance()->Finit();
 
 	qdFileManager::instance().Finit();
-
-	ShowWindow(hmainWnd, SW_HIDE);
-	CloseWindow(hmainWnd);
-	DestroyWindow(hmainWnd);
 
 	delete sndD;
 	delete grD;
