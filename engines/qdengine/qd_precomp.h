@@ -104,19 +104,6 @@ namespace QDEngine {
 #define PM_REMOVE     0x0001
 #define SC_MAXIMIZE   0xF030
 
-#define MB_OK               0x00000000L
-#define MB_YESNO            0x00000004L
-#define MB_TASKMODAL        0x00002000L
-#define MB_OKCANCEL         0x00000001L
-#define MB_ICONERROR        0x00000010L
-#define MK_LBUTTON          0x0001
-#define MK_RBUTTON          0x0002
-#define MK_MBUTTON          0x0010
-#define MB_ICONEXCLAMATION  0x00000030L
-#define MB_ABORTRETRYIGNORE 0x00000002L
-
-int MessageBox(HWND hWnd, const char *lpText, const char *lpCaption, uint32 uType);
-
 int engineMain();
 
 } // namespace QDEngine

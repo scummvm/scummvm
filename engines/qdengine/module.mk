@@ -4,7 +4,6 @@ MODULE_OBJS = \
 	qdengine.o \
 	console.o \
 	metaengine.o \
-	qd_precomp.o \
 	qd_runtime.o \
 	xmath.o \
 	parser/qdscr_parser.o \
