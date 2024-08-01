@@ -77,10 +77,6 @@ void putIniKey(const char *fname, const char *section, const char *key, const ch
 	static char path[_MAX_PATH];
 
 	warning("STUB: putIniKey");
-#if 0
-	if (_fullpath(path, fname, _MAX_PATH) == NULL) return;
-	WritePrivateProfileString(section, key, val, path);
-#endif
 }
 
 qdGameConfig::qdGameConfig() {

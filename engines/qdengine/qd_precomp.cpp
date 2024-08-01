@@ -33,9 +33,4 @@ int MessageBox(HWND hWnd, const char *lpText, const char *lpCaption, uint32 uTyp
 	return 0;
 }
 
-char *_fullpath(char *absPath, const char *relPath, size_t maxLength) {
-	warning("STUB: _fullpath");
-	return 0;
-}
-
 } // namespace QDEngine

@@ -93,11 +93,6 @@ public:
 		_resource_compression = compression;
 	}
 
-	//! Просит вставить диск с игрой.
-	void request_CD(const qdFileOwner &file_owner) const;
-	//! Просит вставить диск номер cd_id (считая от нуля).
-	void request_CD(int cd_id) const;
-
 	void request_file_package(const qdFileOwner &file_owner) const;
 	Common::String find_file(const char *file_name, const qdFileOwner &file_owner) const;
 	void startup_check() const;
@@ -673,8 +668,6 @@ private:
 
 	void redraw(const grScreenRegion &reg);
 	void redraw_scene(bool draw_interface = true);
-
-	Common::String cd_request_string(int cd_id) const;
 
 	/// включает нужный экран внутриигрового интерфейса
 	bool update_ingame_interface();

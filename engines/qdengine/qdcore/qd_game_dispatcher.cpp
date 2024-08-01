@@ -469,7 +469,6 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 #ifndef _QUEST_EDITOR
 	if (_enable_file_packages) {
 		qdFileManager::instance().init(CD_count());
-		startup_check();
 	}
 
 	load_hall_of_fame();
@@ -3079,95 +3078,19 @@ int qdGameDispatcher::CD_count() const {
 	return cnt;
 }
 
-void qdGameDispatcher::request_CD(const qdFileOwner &file_owner) const {
-	int cd_id = -1;
-	for (int i = 0; i < CD_count(); i++) {
-		if (file_owner.is_on_CD(i)) {
-			if (qdFileManager::instance().is_CD_available(i))
-				return;
-
-			if (cd_id == -1)
-				cd_id = i;
-		}
-	}
-
-	if (cd_id == -1)
-		return;
-
-	mpegPlayer::instance().stop();
-
-	while (1) {
-		switch (MessageBox(NULL, cd_request_string(cd_id).c_str(), game_title(), MB_OKCANCEL | MB_ICONEXCLAMATION)) {
-		case IDOK:
-			if (qdFileManager::instance().scan_drives(&file_owner)) {
-				qdFileManager::instance().set_last_CD_id(cd_id);
-				qdFileManager::instance().update_packages();
-				return;
-			}
-			break;
-		case IDCANCEL:
-			exit(1);
-		}
-	}
-}
-
-void qdGameDispatcher::request_CD(int cd_id) const {
-	if (qdFileManager::instance().scan_drives(cd_id))
-		return;
-
-	mpegPlayer::instance().stop();
-
-	while (1) {
-		switch (MessageBox(NULL, cd_request_string(cd_id).c_str(), game_title(), MB_OKCANCEL | MB_ICONEXCLAMATION)) {
-		case IDOK:
-			if (qdFileManager::instance().scan_drives(cd_id)) {
-				qdFileManager::instance().update_packages();
-				return;
-			}
-			break;
-		case IDCANCEL:
-			exit(1);
-		}
-	}
-}
-
-Common::String qdGameDispatcher::cd_request_string(int cd_id) const {
-	Common::String str;
-	str += "Вставьте CD";
-
-	if (CD_count() > 1)
-		str += Common::String(" %d", cd_id + 1);
-
-	warning("STUB: cd_request_string %s", str.c_str());
-	return str;
-}
-
 void qdGameDispatcher::request_file_package(const qdFileOwner &file_owner) const {
 	if (!_enable_file_packages) return;
 
 	if (qdFileManager::instance().is_package_available(file_owner))
 		return;
 
-	request_CD(file_owner);
-}
-
-void qdGameDispatcher::startup_check() const {
-	if (!_enable_file_packages) return;
-
-	request_file_package(*this);
-
-	const char *p = (_cd_key.empty()) ? NULL : _cd_key.c_str();
-
-	while (!qdFileManager::instance().check_drives(p))
-		request_CD(*this);
+	error("Requested file package is not avaliable");
 }
 
 Common::String qdGameDispatcher::find_file(const char *file_name, const qdFileOwner &file_owner) const {
 	debugC(4, kDebugLoad, "qdGameDispatcher::find_file(%s)", file_name);
 
 	if (_enable_file_packages && !app_io::is_file_exist(Common::String(file_name))) {
-		request_CD(file_owner);
-
 		Common::String fname;
 		fname += qdFileManager::instance().CD_path(file_owner);
 		fname += file_name;
