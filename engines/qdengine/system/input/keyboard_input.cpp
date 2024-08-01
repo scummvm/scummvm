@@ -19,7 +19,6 @@
  *
  */
 
-#include "qdengine/qd_precomp.h"
 #include "qdengine/system/input/keyboard_input.h"
 
 namespace QDEngine {

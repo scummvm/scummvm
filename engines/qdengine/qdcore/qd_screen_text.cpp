@@ -21,7 +21,9 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/stream.h"
-#include "qdengine/qd_precomp.h"
+
+#include "qdengine/qd_fwd.h"
+#include "qdengine/xmath.h"
 #include "qdengine/qdcore/qd_setup.h"
 #include "qdengine/qdcore/qd_screen_text.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"

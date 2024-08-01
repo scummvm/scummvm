@@ -19,7 +19,7 @@
  *
  */
 
-#include "qdengine/qd_precomp.h"
+#include "qdengine/qd_fwd.h"
 #include "qdengine/parser/xml_fwd.h"
 #include "qdengine/qdcore/qd_minigame.h"
 #include "qdengine/qdcore/qd_counter.h"

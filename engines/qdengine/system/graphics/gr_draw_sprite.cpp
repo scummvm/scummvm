@@ -26,7 +26,6 @@
 #include "graphics/managed_surface.h"
 
 #include "qdengine/qdengine.h"
-#include "qdengine/qd_precomp.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 
 namespace QDEngine {

@@ -23,10 +23,11 @@
 #ifndef QDENGINE_QDCORE_QD_CAMERA_MODE_H
 #define QDENGINE_QDCORE_QD_CAMERA_MODE_H
 
+#include "qdengine/xmath.h"
 #include "qdengine/parser/xml_fwd.h"
-#include "qdengine/qd_precomp.h"
 
 namespace Common {
+class SeekableReadStream;
 class WriteStream;
 }
 

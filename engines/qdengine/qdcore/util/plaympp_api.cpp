@@ -24,7 +24,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/vorbis.h"
 
-#include "qdengine/qd_precomp.h"
+#include "qdengine/qd_fwd.h"
 #include "qdengine/qdcore/qd_file_manager.h"
 #include "qdengine/qdcore/util/plaympp_api.h"
 

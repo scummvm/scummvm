@@ -19,7 +19,6 @@
  *
  */
 
-#include "qdengine/qd_precomp.h"
 #include "qdengine/system/graphics/gr_screen_region.h"
 
 

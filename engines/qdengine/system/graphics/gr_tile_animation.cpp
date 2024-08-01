@@ -24,7 +24,6 @@
 #include "common/file.h"
 
 #include "qdengine/qdengine.h"
-#include "qdengine/qd_precomp.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 #include "qdengine/system/graphics/gr_tile_animation.h"
 

@@ -25,7 +25,8 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
-#include "qdengine/qd_precomp.h"
+
+#include "qdengine/qd_fwd.h"
 #include "qdengine/system/app_core.h"
 #include "qdengine/qdengine.h"
 

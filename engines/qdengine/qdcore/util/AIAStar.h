@@ -23,7 +23,6 @@
 #pragma once
 
 #include "common/multimap.h"
-#include "qdengine/qd_precomp.h"
 
 
 ///////////////////////////AIAStar/////////////////////

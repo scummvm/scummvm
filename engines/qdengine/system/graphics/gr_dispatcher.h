@@ -22,6 +22,8 @@
 #ifndef QDENGINE_SYSTEM_GRAPHICS_GR_DISPATCHER_H
 #define QDENGINE_SYSTEM_GRAPHICS_GR_DISPATCHER_H
 
+#include <vector>
+#include "qdengine/xmath.h"
 #include "qdengine/system/graphics/gr_screen_region.h"
 
 namespace Graphics {

@@ -19,7 +19,6 @@
  *
  */
 
-
 #ifndef QDENGINE_H
 #define QDENGINE_H
 
@@ -109,6 +108,8 @@ public:
 
 extern QDEngineEngine *g_engine;
 #define SHOULD_QUIT ::QDEngine::g_engine->shouldQuit()
+
+int engineMain();
 
 } // namespace QDEngine
 

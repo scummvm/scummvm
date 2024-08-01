@@ -24,6 +24,10 @@
 
 #include "qdengine/system/graphics/gr_screen_region.h"
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace QDEngine {
 
 class grFont {

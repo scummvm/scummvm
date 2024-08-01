@@ -23,7 +23,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/stream.h"
 #include "qdengine/qdengine.h"
-#include "qdengine/qd_precomp.h"
+#include "qdengine/qd_fwd.h"
 #include "qdengine/qdcore/qd_named_object.h"
 
 

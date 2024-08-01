@@ -26,6 +26,7 @@
 #include "common/keyboard.h"
 
 #include "qdengine/parser/xml_fwd.h"
+#include "qdengine/xmath.h"
 #include "qdengine/qdcore/qd_interface_object_base.h"
 #include "qdengine/qdcore/qd_object_list_container.h"
 #include "qdengine/qdcore/qd_resource_dispatcher.h"

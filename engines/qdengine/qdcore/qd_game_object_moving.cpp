@@ -23,7 +23,7 @@
 
 #include "common/debug.h"
 
-#include "qdengine/qd_precomp.h"
+#include "qdengine/qd_fwd.h"
 #include "qdengine/qdengine.h"
 #include "qdengine/qdcore/qd_rnd.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"

@@ -1,7 +1,7 @@
 #ifndef QDENGINE_MINIGAMES_QD_EMPTY_INTERFACE_H
 #define QDENGINE_MINIGAMES_QD_EMPTY_INTERFACE_H
 
-#include "qdengine/qd_precomp.h"
+#include "qdengine/qd_fwd.h"
 #include "qdengine/qdcore/qd_minigame_interface.h"
 
 namespace QDEngine {

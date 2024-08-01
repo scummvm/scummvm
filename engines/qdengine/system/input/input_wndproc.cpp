@@ -22,7 +22,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/events.h"
 #include "common/textconsole.h"
-#include "qdengine/qd_precomp.h"
+
 #include "qdengine/system/input/input_wndproc.h"
 #include "qdengine/system/input/keyboard_input.h"
 #include "qdengine/system/input/mouse_input.h"

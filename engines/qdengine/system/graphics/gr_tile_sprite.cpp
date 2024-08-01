@@ -21,7 +21,7 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "graphics/managed_surface.h"
-#include "qdengine/qd_precomp.h"
+
 #include "qdengine/system/graphics/gr_dispatcher.h"
 #include "qdengine/system/graphics/gr_tile_sprite.h"
 #include "qdengine/qdcore/util/LZ77.h"

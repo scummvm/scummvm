@@ -23,6 +23,7 @@
 #ifndef QDENGINE_SYSTEM_GRAPHICS_GR_TILE_ANIMATION_H
 #define QDENGINE_SYSTEM_GRAPHICS_GR_TILE_ANIMATION_H
 
+#include "qdengine/xmath.h"
 #include "qdengine/system/graphics/gr_tile_sprite.h"
 
 namespace Common {

@@ -24,7 +24,7 @@
 #include "common/textconsole.h"
 
 #include "qdengine/qdengine.h"
-#include "qdengine/qd_precomp.h"
+#include "qdengine/qd_fwd.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 #include "qdengine/parser/qdscr_parser.h"
 #include "qdengine/parser/xml_tag_buffer.h"
