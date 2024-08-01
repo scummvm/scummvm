@@ -39,18 +39,10 @@ namespace QDEngine {
 bool qdCondition::_successful_click = false;
 bool qdCondition::_successful_object_click = false;
 
-qdCondition::qdCondition() : _type(CONDITION_FALSE), _is_inversed(false)
-#ifndef _QUEST_EDITOR
-	, _is_in_group(false)
-#endif // _QUEST_EDITOR
-{
+qdCondition::qdCondition() : _type(CONDITION_FALSE), _is_inversed(false), _is_in_group(false) {
 }
 
-qdCondition::qdCondition(qdCondition::ConditionType tp) : _is_inversed(false)
-#ifndef _QUEST_EDITOR
-	, _is_in_group(false)
-#endif // _QUEST_EDITOR
-{
+qdCondition::qdCondition(qdCondition::ConditionType tp) : _is_inversed(false), _is_in_group(false) {
 	set_type(tp);
 }
 
@@ -58,11 +50,8 @@ qdCondition::qdCondition(const qdCondition &cnd) : _type(cnd._type),
 	_owner(cnd._owner),
 	_data(cnd._data),
 	_objects(cnd._objects),
-	_is_inversed(cnd._is_inversed)
-#ifndef _QUEST_EDITOR
-	, _is_in_group(false)
-#endif // _QUEST_EDITOR
-{
+	_is_inversed(cnd._is_inversed),
+	_is_in_group(false) {
 }
 
 qdCondition &qdCondition::operator = (const qdCondition &cnd) {
