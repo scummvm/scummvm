@@ -183,12 +183,6 @@ bool qdCounter::remove_element(int idx) {
 	return true;
 }
 
-#ifdef _QUEST_EDITOR
-void qdCounter::remove_all_elements() {
-	_elements.clear();
-}
-#endif // _QUEST_EDITOR
-
 void qdCounter::quant() {
 	int value_change = 0;
 	for (element_container_t::iterator it = _elements.begin(); it != _elements.end(); ++it) {
