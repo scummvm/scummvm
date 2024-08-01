@@ -107,12 +107,10 @@ public:
 		_has_background_color = state;
 	}
 
-#ifndef _QUEST_EDITOR
 	//! Возвращает экранные координаты центра окна.
 	virtual const Vect2i r() const {
 		return qdInterfaceElement::r() - qdInterfaceElement::screen_offset();
 	}
-#endif
 
 	//! Отрисовка окна.
 	bool redraw() const;
