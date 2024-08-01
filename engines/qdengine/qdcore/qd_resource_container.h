@@ -60,7 +60,7 @@ public:
 	typedef std::list<qdResource *> resource_list_t;
 	//! Возвращает список ресурсов.
 	const resource_list_t &resource_list() const {
-		return resource_list_;
+		return _resource_list;
 	}
 	//! Возвращает всех владельцев ресурсов
 	void get_owners(std::list<T *> &owners);
@@ -78,13 +78,13 @@ private:
 
 	typedef std::unordered_map<const char *, qdResource *, std::hash<const char *>, eqstr> resource_map_t;
 	//! Хэш-мап с указателями на ресурсы, принадлежащие диспетчеру.
-	resource_map_t resource_map_;
+	resource_map_t _resource_map;
 
 	//! Список ресурсов в контейнере.
-	resource_list_t resource_list_;
+	resource_list_t _resource_list;
 
 	//! Диспетчер для отслеживания ссылок на ресурсы.
-	qdResourceDispatcher<T> resource_dispatcher_;
+	qdResourceDispatcher<T> _resource_dispatcher;
 };
 
 template<class T>
@@ -92,15 +92,15 @@ qdResourceContainer<T>::qdResourceContainer() {}
 
 template<class T>
 qdResourceContainer<T>::~qdResourceContainer() {
-	for (resource_list_t::iterator it = resource_list_.begin(); it != resource_list_.end(); ++it)
+	for (resource_list_t::iterator it = _resource_list.begin(); it != _resource_list.end(); ++it)
 		delete *it;
 }
 
 template<class T>
 qdResource *qdResourceContainer<T>::add_resource(const char *file_name, const T *owner) {
-	typename resource_map_t::iterator it = resource_map_.find(file_name);
-	if (it != resource_map_.end()) {
-		resource_dispatcher_.register_resource(it->second, owner);
+	typename resource_map_t::iterator it = _resource_map.find(file_name);
+	if (it != _resource_map.end()) {
+		_resource_dispatcher.register_resource(it->second, owner);
 		return it->second;
 	}
 
@@ -128,29 +128,29 @@ qdResource *qdResourceContainer<T>::add_resource(const char *file_name, const T 
 
 	if (!p) return NULL;
 
-	resource_map_.insert(typename resource_map_t::value_type(file_name, p));
-	resource_list_.push_back(p);
+	_resource_map.insert(typename resource_map_t::value_type(file_name, p));
+	_resource_list.push_back(p);
 
-	resource_dispatcher_.register_resource(p, owner);
+	_resource_dispatcher.register_resource(p, owner);
 
 	return p;
 }
 
 template<class T>
 bool qdResourceContainer<T>::remove_resource(const char *file_name, const T *owner) {
-	typename resource_map_t::iterator it = resource_map_.find(file_name);
+	typename resource_map_t::iterator it = _resource_map.find(file_name);
 
-	if (it == resource_map_.end()) return false;
+	if (it == _resource_map.end()) return false;
 
 	qdResource *p = it->second;
-	resource_dispatcher_.unregister_resource(p, owner);
+	_resource_dispatcher.unregister_resource(p, owner);
 
-	if (!resource_dispatcher_.is_registered(p)) {
-		resource_map_.erase(it);
-		resource_list_t::iterator it2 = std::find(resource_list_.begin(), resource_list_.end(), p);
-		if (it2 != resource_list_.end()) {
+	if (!_resource_dispatcher.is_registered(p)) {
+		_resource_map.erase(it);
+		resource_list_t::iterator it2 = std::find(_resource_list.begin(), _resource_list.end(), p);
+		if (it2 != _resource_list.end()) {
 			delete p;
-			resource_list_.erase(it2);
+			_resource_list.erase(it2);
 			return true;
 		}
 
@@ -164,17 +164,17 @@ template<class T>
 qdResource *qdResourceContainer<T>::get_resource(const char *file_name) const {
 	if (!file_name) return NULL;
 
-	typename resource_map_t::const_iterator it = resource_map_.find(file_name);
-	if (it != resource_map_.end()) return it->second;
+	typename resource_map_t::const_iterator it = _resource_map.find(file_name);
+	if (it != _resource_map.end()) return it->second;
 
 	return NULL;
 }
 
 template<class T>
 void qdResourceContainer<T>::get_owners(std::list<T *> &owners) {
-	for (resource_list_t::iterator it = resource_list_.begin(); it != resource_list_.end(); ++it) {
+	for (resource_list_t::iterator it = _resource_list.begin(); it != _resource_list.end(); ++it) {
 		if ((*it)->resource_file()) {
-			T *ptr = const_cast<T *>(resource_dispatcher_.find_owner(*it));
+			T *ptr = const_cast<T *>(_resource_dispatcher.find_owner(*it));
 			owners.push_back(ptr);
 		}
 	}
@@ -182,7 +182,7 @@ void qdResourceContainer<T>::get_owners(std::list<T *> &owners) {
 
 template<class T>
 bool qdResourceContainer<T>::get_file_list(qdFileNameList &list) const {
-	for (resource_list_t::const_iterator it = resource_list_.begin(); it != resource_list_.end(); ++it) {
+	for (resource_list_t::const_iterator it = _resource_list.begin(); it != _resource_list.end(); ++it) {
 		if ((*it)->resource_file())
 			list.push_back((*it)->resource_file());
 	}
