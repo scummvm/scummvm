@@ -37,11 +37,11 @@ namespace QDEngine {
 // class qdInventoryCellType
 
 bool qdInventoryCellType::load_resources() const {
-	return sprite_.load();
+	return _sprite.load();
 }
 
 void qdInventoryCellType::free_resources() const {
-	sprite_.free();
+	_sprite.free();
 }
 
 bool qdInventoryCellType::load_script(const xml::tag *p) {
@@ -51,7 +51,7 @@ bool qdInventoryCellType::load_script(const xml::tag *p) {
 			set_type(xml::tag_buffer(*it).get_int());
 			break;
 		case QDSCR_FILE:
-			sprite_.set_file(Common::Path(it->data(), '\\').toString().c_str());
+			_sprite.set_file(Common::Path(it->data(), '\\').toString().c_str());
 			break;
 		}
 	}
@@ -64,9 +64,9 @@ bool qdInventoryCellType::save_script(Common::WriteStream &fh, int indent) const
 		fh.writeString("\t");
 	}
 
-	fh.writeString(Common::String::format("<inventory_cell_type type=\"%d\"", type_));
-	if (strlen(sprite_.file())) {
-		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(sprite_.file())));
+	fh.writeString(Common::String::format("<inventory_cell_type type=\"%d\"", _type));
+	if (strlen(_sprite.file())) {
+		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(_sprite.file())));
 	}
 	fh.writeString("/>\r\n");
 
@@ -75,31 +75,31 @@ bool qdInventoryCellType::save_script(Common::WriteStream &fh, int indent) const
 
 // class qdInventoryCell
 
-Vect2i qdInventoryCell::screen_offset_ = Vect2i(0, 0);
-uint32 qdInventoryCell::shadow_color_ = 0;
-int qdInventoryCell::shadow_alpha_ = -1;
+Vect2i qdInventoryCell::_screen_offset = Vect2i(0, 0);
+uint32 qdInventoryCell::_shadow_color = 0;
+int qdInventoryCell::_shadow_alpha = -1;
 
-qdInventoryCell::qdInventoryCell() : type_(0),
-	sprite_(NULL),
-	object_(NULL) {
+qdInventoryCell::qdInventoryCell() : _type(0),
+	_sprite(NULL),
+	_object(NULL) {
 }
 
-qdInventoryCell::qdInventoryCell(const qdInventoryCellType &tp) : type_(tp.type()),
-	sprite_(tp.sprite()),
-	object_(NULL) {
+qdInventoryCell::qdInventoryCell(const qdInventoryCellType &tp) : _type(tp.type()),
+	_sprite(tp.sprite()),
+	_object(NULL) {
 }
 
-qdInventoryCell::qdInventoryCell(const qdInventoryCell &cl) : type_(cl.type_),
-	sprite_(cl.sprite_),
-	object_(cl.object_) {
+qdInventoryCell::qdInventoryCell(const qdInventoryCell &cl) : _type(cl._type),
+	_sprite(cl._sprite),
+	_object(cl._object) {
 }
 
 qdInventoryCell &qdInventoryCell::operator = (const qdInventoryCell &cl) {
 	if (this == &cl) return *this;
 
-	type_ = cl.type_;
-	sprite_ = cl.sprite_;
-	object_ = cl.object_;
+	_type = cl._type;
+	_sprite = cl._sprite;
+	_object = cl._object;
 
 	return *this;
 }
@@ -108,30 +108,30 @@ void qdInventoryCell::redraw(int x, int y, bool inactive_mode) const {
 	if (sprite())
 		sprite()->redraw(x, y, 0);
 
-	if (object_) {
-		object_->set_pos(Vect3f(x, y, 0));
-		object_->set_flag(QD_OBJ_SCREEN_COORDS_FLAG);
-		object_->update_screen_pos();
-		object_->redraw();
+	if (_object) {
+		_object->set_pos(Vect3f(x, y, 0));
+		_object->set_flag(QD_OBJ_SCREEN_COORDS_FLAG);
+		_object->update_screen_pos();
+		_object->redraw();
 
 		if (inactive_mode)
-			object_->draw_shadow(0, 0, shadow_color_, shadow_alpha_);
+			_object->draw_shadow(0, 0, _shadow_color, _shadow_alpha);
 	}
 }
 
 void qdInventoryCell::set_object(qdGameObjectAnimated *obj) {
-	object_ = obj;
-	if (object_) object_->set_flag(QD_OBJ_SCREEN_COORDS_FLAG);
+	_object = obj;
+	if (_object) _object->set_flag(QD_OBJ_SCREEN_COORDS_FLAG);
 }
 
 bool qdInventoryCell::load_resources() {
-	if (object_)
-		return object_->load_resources();
+	if (_object)
+		return _object->load_resources();
 	return true;
 }
 
 bool qdInventoryCell::free_resources() {
-	if (object_) object_->free_resources();
+	if (_object) _object->free_resources();
 	return true;
 }
 
@@ -146,10 +146,10 @@ bool qdInventoryCell::load_data(Common::SeekableReadStream &fh, int saveVersion)
 		}
 
 		if (qdGameDispatcher * p = qdGameDispatcher::get_dispatcher()) {
-			object_ = static_cast<qdGameObjectAnimated *>(p->get_named_object(&ref));
+			_object = static_cast<qdGameObjectAnimated *>(p->get_named_object(&ref));
 		}
 	} else
-		object_ = NULL;
+		_object = NULL;
 
 	debugC(5, kDebugSave, "      qdInventoryCell::load_data after: %ld", fh.pos());
 	return true;
@@ -157,10 +157,10 @@ bool qdInventoryCell::load_data(Common::SeekableReadStream &fh, int saveVersion)
 
 bool qdInventoryCell::save_data(Common::WriteStream &fh) const {
 	debugC(5, kDebugSave, "      qdInventoryCell::save_data before: %ld", fh.pos());
-	if (object_) {
+	if (_object) {
 		fh.writeByte(1);
 
-		qdNamedObjectReference ref(object_);
+		qdNamedObjectReference ref(_object);
 		if (!ref.save_data(fh)) {
 			return false;
 		}

@@ -36,28 +36,28 @@ class qdGameObjectAnimated;
 //! Описание ячейки инвентори.
 class qdInventoryCellType {
 public:
-	qdInventoryCellType() : type_(0) { }
-	explicit qdInventoryCellType(int tp) : type_(tp) { }
+	qdInventoryCellType() : _type(0) { }
+	explicit qdInventoryCellType(int tp) : _type(tp) { }
 	~qdInventoryCellType() {
-		sprite_.free();
+		_sprite.free();
 	}
 
 	int type() const {
-		return type_;
+		return _type;
 	}
 	void set_type(int tp) {
-		type_ = tp;
+		_type = tp;
 	}
 
 	void set_sprite_file(const char *fname) {
-		sprite_.set_file(fname);
+		_sprite.set_file(fname);
 	}
 	const char *sprite_file() const {
-		return sprite_.file();
+		return _sprite.file();
 	}
 
 	const qdSprite *sprite() const {
-		return &sprite_;
+		return &_sprite;
 	}
 
 	bool load_resources() const;
@@ -67,14 +67,14 @@ public:
 	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 
 	const Vect2i &size() const {
-		return sprite_.size();
+		return _sprite.size();
 	}
 
 private:
 	//! Тип ячейки.
-	int type_;
+	int _type;
 	//! Внешний вид ячейки.
-	mutable qdSprite sprite_;
+	mutable qdSprite _sprite;
 };
 
 inline bool operator == (const qdInventoryCellType &f, const qdInventoryCellType &s) {
@@ -98,26 +98,26 @@ public:
 	qdInventoryCell &operator = (const qdInventoryCell &cl);
 
 	int type() const {
-		return type_;
+		return _type;
 	}
 	void set_type(int tp) {
-		type_ = tp;
+		_type = tp;
 	}
 
 	const qdSprite *sprite() const {
-		return sprite_;
+		return _sprite;
 	}
 	void set_sprite(const qdSprite *spr) {
-		sprite_ = spr;
+		_sprite = spr;
 	}
 
 	qdGameObjectAnimated *object() const {
-		return object_;
+		return _object;
 	}
 	void set_object(qdGameObjectAnimated *obj);
 
 	bool is_empty() const {
-		if (!object_) return true;
+		if (!_object) return true;
 		else return false;
 	}
 
@@ -149,32 +149,32 @@ public:
 	bool save_data(Common::WriteStream &fh) const;
 
 	static void set_shadow(uint32 color, int alpha) {
-		shadow_color_ = color;
-		shadow_alpha_ = alpha;
+		_shadow_color = color;
+		_shadow_alpha = alpha;
 	}
 	static const Vect2i &screen_offset() {
-		return screen_offset_;
+		return _screen_offset;
 	}
 	static void set_screen_offset(const Vect2i &offset) {
-		screen_offset_ = offset;
+		_screen_offset = offset;
 	}
 
 private:
 	//! Тип ячейки.
-	int type_;
+	int _type;
 
 	//! Внешний вид ячейки.
 	/**
-	Указывает на sprite_ из qdInventoryCellType соответствующего типа.
+	Указывает на _sprite из qdInventoryCellType соответствующего типа.
 	*/
-	const qdSprite *sprite_;
+	const qdSprite *_sprite;
 
 	//! Объект, который лежит в ячейке.
-	mutable qdGameObjectAnimated *object_;
+	mutable qdGameObjectAnimated *_object;
 
-	static Vect2i screen_offset_;
-	static uint32 shadow_color_;
-	static int shadow_alpha_;
+	static Vect2i _screen_offset;
+	static uint32 _shadow_color;
+	static int _shadow_alpha;
 };
 
 typedef std::vector<qdInventoryCell> qdInventoryCellVector;
