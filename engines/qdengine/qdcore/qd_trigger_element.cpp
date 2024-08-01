@@ -124,9 +124,7 @@ qdTriggerElement::qdTriggerElement(qdNamedObject *p) : _object(p),
 }
 
 qdTriggerElement::~qdTriggerElement() {
-#ifndef _QUEST_EDITOR
 	if (_object) _object->remove_trigger_reference();
-#endif // _QUEST_EDITOR
 
 	_parents.clear();
 	_children.clear();
@@ -368,10 +366,9 @@ bool qdTriggerElement::retrieve_object(const qdNamedObjectReference &ref) {
 		_object = dsp->get_named_object(&ref);
 
 		if (!_object) {
-#ifndef _QUEST_EDITOR
 			qdNamedObjectReference &r = qdNamedObjectIndexer::instance().add_reference((qdNamedObject *&)_object);
 			r = ref;
-#endif
+
 #ifdef __QD_DEBUG_ENABLE__
 			debugC(3, kDebugLog, "qdTriggerElement::retrieve_object() failed");
 			debugC(3, kDebugLog, "%s", ref.toString().c_str());
@@ -465,12 +462,10 @@ bool qdTriggerElement::conditions_quant(int link_type) {
 	case TRIGGER_EL_DONE:
 	case TRIGGER_EL_INACTIVE:
 		if (check_external_conditions(link_type) && check_internal_conditions() && _object) {
-#ifndef _QUEST_EDITOR
 			if (qdCondition::successful_click())
 				qdGameDispatcher::get_dispatcher()->drop_flag(qdGameDispatcher::CLICK_FAILED_FLAG);
 			if (qdCondition::successful_object_click())
 				qdGameDispatcher::get_dispatcher()->drop_flag(qdGameDispatcher::OBJECT_CLICK_FAILED_FLAG);
-#endif
 			start();
 		} else {
 			if (_object && _object->named_object_type() == QD_NAMED_OBJECT_OBJ_STATE) {
@@ -769,10 +764,8 @@ bool qdTriggerElement::save_data(Common::WriteStream &fh) const {
 void qdTriggerLink::activate() {
 	set_status(LINK_ACTIVE);
 
-#ifndef _QUEST_EDITOR
 //	if(_element && _element->status() != qdTriggerElement::TRIGGER_EL_INACTIVE)
 //		_element->set_status(qdTriggerElement::TRIGGER_EL_INACTIVE);
-#endif
 
 // debugC(3, kDebugLog, "%p", this);
 }
