@@ -96,7 +96,7 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 				if (count > 0) {
 					while (count && j < psx) {
 						if (*rle_data) {
-							const byte *rle_buf = (const unsigned char *)rle_data;
+							const byte *rle_buf = (const byte *)rle_data;
 							unsigned cl = make_rgb565u(rle_buf[2], rle_buf[1], rle_buf[0]);
 							*scr_buf = cl;
 						}
@@ -110,7 +110,7 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 						count = -count;
 						while (count && j < psx) {
 							if (*rle_data) {
-								const byte *rle_buf = (const unsigned char *)rle_data;
+								const byte *rle_buf = (const byte *)rle_data;
 								unsigned cl = make_rgb565u(rle_buf[2], rle_buf[1], rle_buf[0]);
 								*scr_buf = cl;
 							}
@@ -127,7 +127,7 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 			while (j < psx) {
 				if (count > 0) {
 					while (count && j < psx) {
-						const byte *rle_buf = (const unsigned char *)rle_data;
+						const byte *rle_buf = (const byte *)rle_data;
 						unsigned a = rle_buf[3];
 						*scr_buf = alpha_blend_565(make_rgb565u(rle_buf[2], rle_buf[1], rle_buf[0]), *scr_buf, a);
 						scr_buf += dx;
@@ -139,7 +139,7 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 					if (count < 0) {
 						count = -count;
 						while (count && j < psx) {
-							const byte *rle_buf = (const unsigned char *)rle_data;
+							const byte *rle_buf = (const byte *)rle_data;
 							unsigned a = rle_buf[3];
 							*scr_buf = alpha_blend_565(make_rgb565u(rle_buf[2], rle_buf[1], rle_buf[0]), *scr_buf, a);
 							scr_buf += dx;
@@ -339,7 +339,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 			while (j < psx) {
 				if (count > 0) {
 					while (count && j < psx) {
-						const byte *rle_buf = (const unsigned char *)rle_data;
+						const byte *rle_buf = (const byte *)rle_data;
 						unsigned a = rle_buf[3];
 
 						if (a != 255) {
@@ -362,7 +362,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 					if (count < 0) {
 						count = -count;
 						while (count && j < psx) {
-							const byte *rle_buf = (const unsigned char *)rle_data;
+							const byte *rle_buf = (const byte *)rle_data;
 							unsigned a = rle_buf[3];
 
 							if (a != 255) {
@@ -489,7 +489,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 }
 
 void grDispatcher::PutSpr_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, int mode, float angle) {
-	byte *buf = (unsigned char *)temp_buffer(size.x * size.y * 4);
+	byte *buf = (byte *)temp_buffer(size.x * size.y * 4);
 
 	byte *buf_ptr = buf;
 	for (int i = 0; i < size.y; i++) {
@@ -514,7 +514,7 @@ void grDispatcher::PutSpr_rle_rot(const Vect2i &pos, const Vect2i &size, const r
 }
 
 void grDispatcher::PutSpr_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, int mode, float angle, const Vect2f &scale) {
-	byte *buf = (unsigned char *)temp_buffer(size.x * size.y * 4);
+	byte *buf = (byte *)temp_buffer(size.x * size.y * 4);
 
 	byte *buf_ptr = buf;
 	for (int i = 0; i < size.y; i++) {
@@ -539,7 +539,7 @@ void grDispatcher::PutSpr_rle_rot(const Vect2i &pos, const Vect2i &size, const r
 }
 
 void grDispatcher::PutSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, unsigned mask_color, int mask_alpha, int mode, float angle) {
-	byte *buf = (unsigned char *)temp_buffer(size.x * size.y * 4);
+	byte *buf = (byte *)temp_buffer(size.x * size.y * 4);
 
 	byte *buf_ptr = buf;
 	for (int i = 0; i < size.y; i++) {
@@ -564,7 +564,7 @@ void grDispatcher::PutSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, con
 }
 
 void grDispatcher::PutSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, unsigned mask_color, int mask_alpha, int mode, float angle, const Vect2f &scale) {
-	byte *buf = (unsigned char *)temp_buffer(size.x * size.y * 4);
+	byte *buf = (byte *)temp_buffer(size.x * size.y * 4);
 
 	byte *buf_ptr = buf;
 	for (int i = 0; i < size.y; i++) {

@@ -122,10 +122,10 @@ public:
 	void toggle_sound(bool state) {
 		_enable_sound = state;
 	}
-	unsigned int sound_volume() const {
+	uint32 sound_volume() const {
 		return _sound_volume;
 	}
-	void set_sound_volume(unsigned int vol) {
+	void set_sound_volume(uint32 vol) {
 		_sound_volume = vol;
 	}
 	bool update_sound_settings() const;
@@ -136,10 +136,10 @@ public:
 	void toggle_music(bool state) {
 		_enable_music = state;
 	}
-	unsigned int music_volume() const {
+	uint32 music_volume() const {
 		return _music_volume;
 	}
-	void set_music_volume(unsigned int vol) {
+	void set_music_volume(uint32 vol) {
 		_music_volume = vol;
 	}
 	bool update_music_settings() const;
@@ -193,10 +193,10 @@ private:
 	int _screen_sy;
 
 	bool _enable_sound;
-	unsigned int _sound_volume;
+	uint32 _sound_volume;
 
 	bool _enable_music;
-	unsigned int _music_volume;
+	uint32 _music_volume;
 
 	bool _debug_draw;
 	bool _debug_show_grid;

@@ -123,7 +123,7 @@ public:
 	bool hit(int x, int y) const;
 	bool hit(int x, int y, float scale) const;
 
-	bool put_pixel(int x, int y, byte r, unsigned char g, unsigned char b);
+	bool put_pixel(int x, int y, byte r, byte g, byte b);
 
 	bool crop();
 	bool crop(int left, int top, int right, int bottom, bool store_offsets = true);

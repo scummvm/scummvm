@@ -100,7 +100,7 @@ mpegPlayer::mpeg_status_t mpegPlayer::status() const {
 		return MPEG_STOPPED;
 }
 
-void mpegPlayer::set_volume(unsigned int vol) {
+void mpegPlayer::set_volume(uint32 vol) {
 	_volume = vol;
 
 	g_system->getMixer()->setChannelVolume(_soundHandle, _volume * _cur_track_volume / 256);

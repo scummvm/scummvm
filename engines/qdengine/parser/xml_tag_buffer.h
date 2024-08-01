@@ -47,7 +47,7 @@ public:
 	tag_buffer &operator >= (int16 &var);
 	tag_buffer &operator >= (uint16 &var);
 	tag_buffer &operator >= (int &var);
-	tag_buffer &operator >= (unsigned int &var);
+	tag_buffer &operator >= (uint32 &var);
 	tag_buffer &operator >= (float &var);
 
 	tag_buffer &operator > (int16 &var) {
@@ -71,7 +71,7 @@ public:
 
 		return *this;
 	}
-	tag_buffer &operator > (unsigned int &var) {
+	tag_buffer &operator > (uint32 &var) {
 		XML_ASSERT(data_format_ == tag::TAG_DATA_VOID || data_format_ == tag::TAG_DATA_UNSIGNED_INT);
 		var = READ_LE_UINT32(_data + _data_offset);
 		_data_offset += sizeof(uint32);
@@ -104,9 +104,9 @@ public:
 		*this > v;
 		return v;
 	}
-	unsigned int get_uint() {
+	uint32 get_uint() {
 		XML_ASSERT(data_format_ == tag::TAG_DATA_VOID || data_format_ == tag::TAG_DATA_UNSIGNED_INT);
-		unsigned int v;
+		uint32 v;
 		*this > v;
 		return v;
 	}

@@ -54,7 +54,7 @@ public:
 
 	void clear();
 
-	void resize_data_pool(unsigned int pool_sz) {
+	void resize_data_pool(uint32 pool_sz) {
 		_data_pool.resize(pool_sz);
 	}
 

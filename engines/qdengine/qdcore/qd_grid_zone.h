@@ -97,7 +97,7 @@ public:
 	bool is_object_in_zone(const qdGameObject *obj) const;
 	bool is_point_in_zone(const Vect2f &vPoint) const;
 
-	unsigned int update_timer() const {
+	uint32 update_timer() const {
 		return _update_timer;
 	}
 
@@ -142,10 +142,10 @@ private:
 	int _shadow_alpha;
 
 	//! Высота зоны.
-	unsigned int _height;
+	uint32 _height;
 
 	//! Время изменения состояния.
-	unsigned int _update_timer;
+	uint32 _update_timer;
 
 	//! Состояние включающее зону.
 	qdGridZoneState _state_on;

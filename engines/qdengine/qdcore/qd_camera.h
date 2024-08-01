@@ -83,16 +83,16 @@ public:
 	}
 	void set_height(int16 h) { }
 
-	void set_attribute(unsigned int attr) {
+	void set_attribute(uint32 attr) {
 		attributes_ |= attr;
 	}
-	void toggle_attribute(unsigned int attr) {
+	void toggle_attribute(uint32 attr) {
 		attributes_ ^= attr;
 	}
-	void drop_attribute(unsigned int attr) {
+	void drop_attribute(uint32 attr) {
 		attributes_ &= ~attr;
 	}
-	bool check_attribute(unsigned int attr) const {
+	bool check_attribute(uint32 attr) const {
 		if (attributes_ & attr) return true;
 		else return false;
 	}

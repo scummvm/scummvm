@@ -91,9 +91,9 @@ tag_buffer &tag_buffer::operator >= (int &var) {
 	return *this;
 }
 
-tag_buffer &tag_buffer::operator >= (unsigned int &var) {
+tag_buffer &tag_buffer::operator >= (uint32 &var) {
 	char *p;
-	var = (unsigned int)strtoul(_data + _data_offset, &p, 0);
+	var = (uint32)strtoul(_data + _data_offset, &p, 0);
 	_data_offset += p - (_data + _data_offset);
 
 	return *this;

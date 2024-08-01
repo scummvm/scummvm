@@ -50,9 +50,9 @@ public:
 	bool set_sound_frequency(const sndHandle *snd, float coeff);
 
 	//! Изменение громкости, диапазон значений - [0, 255].
-	void set_volume(unsigned int vol);
+	void set_volume(uint32 vol);
 
-	unsigned int volume() const {
+	uint32 volume() const {
 		return _volume;
 	}
 
@@ -136,7 +136,7 @@ private:
 	0 - звук полностью давится
 	255 - звук играется в полную громкость
 	*/
-	unsigned int _volume;
+	uint32 _volume;
 
 	//! Громкость в децибелах, диапазон значений - [-10000, 0].
 	/**

@@ -953,7 +953,7 @@ bool grDispatcher::DrawText(int x, int y, unsigned color, const char *str, int h
 	if (!font || !font->alpha_buffer())
 		return false;
 
-	const byte *str_buf = reinterpret_cast<const unsigned char *>(str);
+	const byte *str_buf = reinterpret_cast<const byte *>(str);
 
 	int x0 = x;
 	int sz = strlen(str);
@@ -985,7 +985,7 @@ bool grDispatcher::DrawAlignedText(int x, int y, int sx, int sy, unsigned color,
 	if (!font || !font->alpha_buffer())
 		return false;
 
-	const byte *str_buf = reinterpret_cast<const unsigned char *>(str);
+	const byte *str_buf = reinterpret_cast<const byte *>(str);
 
 	if (!sx)
 		sx = TextWidth(str, hspace, font);
@@ -1096,7 +1096,7 @@ int grDispatcher::TextWidth(const char *str, int hspace, const grFont *font, boo
 	if (!font)
 		return false;
 
-	const byte *str_buf = (const unsigned char *)str;
+	const byte *str_buf = (const byte *)str;
 
 	int sx = 0, sx_max = 0;
 	int sz = strlen(str);

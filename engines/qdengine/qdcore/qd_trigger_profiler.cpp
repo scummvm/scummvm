@@ -45,7 +45,7 @@ qdTriggerProfilerRecord::qdTriggerProfilerRecord() : time_(0),
 	status_(0) {
 }
 
-qdTriggerProfilerRecord::qdTriggerProfilerRecord(unsigned int tm, event_t ev, const qdTriggerChain *trigger, int el_id, int lnk_id, int st) : time_(tm),
+qdTriggerProfilerRecord::qdTriggerProfilerRecord(uint32 tm, event_t ev, const qdTriggerChain *trigger, int el_id, int lnk_id, int st) : time_(tm),
 	event_(ev),
 	trigger_id_(0),
 	element_id_(el_id),

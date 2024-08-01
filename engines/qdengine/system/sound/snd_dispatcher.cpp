@@ -54,7 +54,7 @@ sndDispatcher::~sndDispatcher() {
 		_dispatcher_ptr = NULL;
 }
 
-void sndDispatcher::set_volume(unsigned int vol) {
+void sndDispatcher::set_volume(uint32 vol) {
 	_volume = vol & 0xFF;
 
 	_volume_dB = convert_volume_to_dB(_volume);

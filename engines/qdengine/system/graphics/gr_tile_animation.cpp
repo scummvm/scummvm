@@ -261,14 +261,14 @@ void grTileAnimation::drawFrame(const Vect2i &position, int32 frame_index, int32
 }
 
 void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float angle, int mode) const {
-	byte *buf = (unsigned char *)grDispatcher::instance()->temp_buffer(_frameSize.x * _frameSize.y * 4);
+	byte *buf = (byte *)grDispatcher::instance()->temp_buffer(_frameSize.x * _frameSize.y * 4);
 
 	const unsigned *index_ptr = &_frameIndex[0] + _frameTileSize.x * _frameTileSize.y * frame_index;
 
 	for (int i = 0; i < _frameTileSize.y; i++) {
 		for (int j = 0; j < _frameTileSize.x; j++) {
 			byte *buf_ptr = buf + (i * _frameSize.x + j) * 4;
-			const byte *data_ptr = (const unsigned char *)getTile(*index_ptr++).data();
+			const byte *data_ptr = (const byte *)getTile(*index_ptr++).data();
 			int dx = MIN(_frameSize.x - j * GR_TILE_SPRITE_SIZE_X, GR_TILE_SPRITE_SIZE_X) * 4;
 			for (int k = 0; k < GR_TILE_SPRITE_SIZE_Y; k++) {
 				memcpy(buf_ptr, data_ptr, dx);
