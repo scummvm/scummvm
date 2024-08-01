@@ -36,11 +36,6 @@ qdScreenTextDispatcher::~qdScreenTextDispatcher() {
 
 
 void qdScreenTextDispatcher::redraw() const {
-#ifdef _QUEST_EDITOR
-	std::vector<qdScreenTextSet>::const_iterator is;
-	FOR_EACH(_text_sets, is)
-	is->redraw();
-#endif
 }
 
 static bool operator == (const qdScreenTextSet &set, int id) {
@@ -88,15 +83,9 @@ qdScreenTextSet *qdScreenTextDispatcher::get_text_set(int id) {
 }
 
 void qdScreenTextDispatcher::pre_redraw() const {
-#ifdef _QUEST_EDITOR
-	std::for_each(_text_sets.begin(), _text_sets.end(), std::mem_fun_ref(qdScreenTextSet::pre_redraw));
-#endif
 }
 
 void qdScreenTextDispatcher::post_redraw() {
-#ifdef _QUEST_EDITOR
-	std::for_each(_text_sets.begin(), _text_sets.end(), std::mem_fun_ref(qdScreenTextSet::post_redraw));
-#endif
 }
 
 bool qdScreenTextDispatcher::save_script(Common::WriteStream &fh, int indent) const {
