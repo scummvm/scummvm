@@ -355,7 +355,7 @@ bool GfxSurface::displayText(const Common::String &msg, const Common::Point &pt)
 
 	// Wait for a mouse or keypress
 	Event event;
-	while (!g_globals->_events.getEvent(event, EVENT_BUTTON_DOWN | EVENT_KEYPRESS) && !g_vm->shouldQuit())
+	while (!g_globals->_events.getEvent(event, EVENT_BUTTON_DOWN | EVENT_CUSTOM_ACTIONSTART | EVENT_KEYPRESS) && !g_vm->shouldQuit())
 		;
 
 	// Restore the display area
@@ -1069,7 +1069,7 @@ GfxButton *GfxDialog::execute(GfxButton *defaultButton) {
 				breakFlag = true;
 				break;
 			} else if (!event.handled) {
-				if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+				if ((event.eventType == EVENT_CUSTOM_ACTIONSTART) && (event.customType == kActionEscape)) {
 					selectedButton = NULL;
 					breakFlag = true;
 					break;

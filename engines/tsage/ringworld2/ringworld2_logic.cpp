@@ -1199,50 +1199,50 @@ void Ringworld2Game::endGame(int resNum, int lineNum) {
 }
 
 void Ringworld2Game::processEvent(Event &event) {
-	if (event.eventType == EVENT_KEYPRESS) {
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_F1:
+	if (event.eventType == EVENT_CUSTOM_ACTIONSTART) {
+		switch (event.customType) {
+		case kActionHelp:
 			// F1 - Help
 			HelpDialog::show();
 			break;
 
-		case Common::KEYCODE_F2:
+		case kActionSoundOptions:
 			// F2 - Sound Options
 			SoundDialog::execute();
 			break;
 
-		case Common::KEYCODE_F3:
+		case kActionQuitGame:
 			// F3 - Quit
 			quitGame();
 			event.handled = false;
 			break;
 
-		case Common::KEYCODE_F4:
+		case kActionRestartGame:
 			// F4 - Restart
 			restartGame();
 			R2_GLOBALS._events.setCursorFromFlag();
 			break;
 
-		case Common::KEYCODE_F5:
+		case kActionSaveGame:
 			// F5 - Save
 			saveGame();
 			R2_GLOBALS._events.setCursorFromFlag();
 			event.handled = true;
 			break;
 
-		case Common::KEYCODE_F7:
+		case kActionRestoreGame:
 			// F7 - Restore
 			restoreGame();
 			R2_GLOBALS._events.setCursorFromFlag();
 			break;
 
-		case Common::KEYCODE_F8:
+		case kActionCredits:
 			// F8 - Credits
 			if (R2_GLOBALS._sceneManager._sceneNumber != 205)
 				R2_GLOBALS._sceneManager.changeScene(205);
 			break;
 
-		case Common::KEYCODE_F10:
+		case kActionPauseGame:
 			// F10 - Pause
 			GfxDialog::setPalette();
 			MessageDialog::show(GAME_PAUSED_MSG, OK_BTN_STRING);
@@ -1840,7 +1840,7 @@ void AnimationPlayer::remove() {
 }
 
 void AnimationPlayer::process(Event &event) {
-	if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_ESCAPE) && _canSkip) {
+	if ((event.eventType == EVENT_CUSTOM_ACTIONSTART) && (event.customType == kActionEscape) && _canSkip) {
 		// Move the current position to the end
 		_position = _subData._duration;
 	}
