@@ -86,15 +86,7 @@ public:
 
 	static bool sys_init();
 
-	bool is_in_fullscreen_mode() const {
-		return _isFullScreen;
-	}
-
-	grPixelFormat adjust_mode(grPixelFormat pixel_format) const {
-		return GR_RGB565;
-	}
-
-	bool init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, bool fullscreen = false);
+	bool init(int sx, int sy, grPixelFormat pixel_format);
 
 	void toggle_reinit() {
 		_flags |= GR_REINIT;
@@ -102,10 +94,6 @@ public:
 	bool is_in_reinit_mode() const {
 		return _flags & GR_REINIT;
 	}
-
-	bool create_window(int sx, int sy);
-
-	bool destroy_window();
 
 	void set_flag(int fl) {
 		_flags |= fl;
@@ -117,8 +105,6 @@ public:
 		if (_flags & fl) return true;
 		return false;
 	}
-
-	bool set_window(void *hwnd);
 
 	virtual bool Finit();
 
@@ -481,16 +467,6 @@ public:
 		_is_active = state;
 	}
 
-	typedef void (*maximize_handler_t)();
-	maximize_handler_t set_maximize_handler(maximize_handler_t p) {
-		maximize_handler_t old_handler = _maximize_handler;
-		_maximize_handler = p;
-		return old_handler;
-	}
-	maximize_handler_t maximize_handler() const {
-		return _maximize_handler;
-	}
-
 	char *temp_buffer(int size);
 
 	static bool convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt, int sx, int sy, byte *data, bool &has_alpha);
@@ -525,8 +501,6 @@ protected:
 	int _temp_buffer_size;
 
 private:
-
-	bool _isFullScreen;
 
 	int _clipMode;
 	int _clipCoords[4];
@@ -584,8 +558,6 @@ private:
 	changes_mask_t _changes_mask;
 
 	regions_container_t _changed_regions;
-
-	maximize_handler_t _maximize_handler;
 
 	static char_input_hanler_t _input_handler;
 
