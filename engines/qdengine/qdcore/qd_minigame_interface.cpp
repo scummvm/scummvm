@@ -46,8 +46,8 @@ namespace qdmg {
 
 class qdMinigameObjectInterfaceImplBase : public qdMinigameObjectInterface {
 public:
-	qdMinigameObjectInterfaceImplBase(qdGameObjectAnimated *object) : object_(object) {
-		assert(object_);
+	qdMinigameObjectInterfaceImplBase(qdGameObjectAnimated *object) : _object(object) {
+		assert(_object);
 	}
 
 	/// Имя объекта.
@@ -116,7 +116,7 @@ public:
 
 private:
 
-	qdGameObjectAnimated *object_;
+	qdGameObjectAnimated *_object;
 };
 
 class qdMinigameObjectInterfaceImpl : public qdMinigameObjectInterfaceImplBase {
@@ -157,7 +157,7 @@ public:
 
 private:
 
-	qdGameObjectMoving *personage_object_;
+	qdGameObjectMoving *_personage_object;
 };
 
 //! Интерфейс к сцене.
@@ -199,7 +199,7 @@ public:
 
 private:
 
-	qdGameScene *scene_;
+	qdGameScene *_scene;
 };
 
 /// Интерфейс к счётчику.
@@ -228,12 +228,12 @@ private:
 
 namespace qdmg {
 
-qdMinigameSceneInterfaceImpl::qdMinigameSceneInterfaceImpl(qdGameScene *scene) : scene_(scene) {
-	assert(scene_);
+qdMinigameSceneInterfaceImpl::qdMinigameSceneInterfaceImpl(qdGameScene *scene) : _scene(scene) {
+	assert(_scene);
 }
 
 const char *qdMinigameSceneInterfaceImpl::minigame_parameter(const char *parameter_name) const {
-	if (const qdMiniGame * p = scene_->minigame())
+	if (const qdMiniGame * p = _scene->minigame())
 		return p->config_parameter_value(parameter_name);
 	return NULL;
 }
@@ -248,7 +248,7 @@ qdMinigameObjectInterface *qdMinigameSceneInterfaceImpl::mouse_object_interface(
 }
 
 qdMinigameObjectInterface *qdMinigameSceneInterfaceImpl::mouse_click_object_interface() const {
-	if (qdNamedObject * p = scene_->mouse_click_object()) {
+	if (qdNamedObject * p = _scene->mouse_click_object()) {
 		if (qdGameObjectAnimated * obj = dynamic_cast<qdGameObjectAnimated * >(p))
 			return new qdMinigameObjectInterfaceImpl(obj);
 	}
@@ -256,7 +256,7 @@ qdMinigameObjectInterface *qdMinigameSceneInterfaceImpl::mouse_click_object_inte
 }
 
 qdMinigameObjectInterface *qdMinigameSceneInterfaceImpl::mouse_right_click_object_interface() const {
-	if (qdNamedObject * p = scene_->mouse_right_click_object()) {
+	if (qdNamedObject * p = _scene->mouse_right_click_object()) {
 		if (qdGameObjectAnimated * obj = dynamic_cast<qdGameObjectAnimated * >(p))
 			return new qdMinigameObjectInterfaceImpl(obj);
 	}
@@ -264,7 +264,7 @@ qdMinigameObjectInterface *qdMinigameSceneInterfaceImpl::mouse_right_click_objec
 }
 
 qdMinigameObjectInterface *qdMinigameSceneInterfaceImpl::mouse_hover_object_interface() const {
-	if (qdNamedObject * p = scene_->mouse_hover_object()) {
+	if (qdNamedObject * p = _scene->mouse_hover_object()) {
 		if (qdGameObjectAnimated * obj = dynamic_cast<qdGameObjectAnimated * >(p))
 			return new qdMinigameObjectInterfaceImpl(obj);
 	}
@@ -272,14 +272,14 @@ qdMinigameObjectInterface *qdMinigameSceneInterfaceImpl::mouse_hover_object_inte
 }
 
 mgVect3f qdMinigameSceneInterfaceImpl::screen2world_coords(const mgVect2i &screen_pos, float screen_depth) const {
-	const qdCamera *cp = scene_->get_camera();
+	const qdCamera *cp = _scene->get_camera();
 	Vect3f pos = cp->rscr2global(cp->scr2rscr(Vect2s(screen_pos.x, screen_pos.y)), screen_depth);
 
 	return mgVect3f(pos.x, pos.y, pos.z);
 }
 
 mgVect2i qdMinigameSceneInterfaceImpl::world2screen_coords(const mgVect3f &world_pos) const {
-	const qdCamera *cp = scene_->get_camera();
+	const qdCamera *cp = _scene->get_camera();
 	Vect3f v = cp->global2camera_coord(Vect3f(world_pos.x, world_pos.y, world_pos.z));
 	Vect2i screen_pos = cp->camera_coord2scr(v);
 
@@ -287,14 +287,14 @@ mgVect2i qdMinigameSceneInterfaceImpl::world2screen_coords(const mgVect3f &world
 }
 
 float qdMinigameSceneInterfaceImpl::screen_depth(const mgVect3f &pos) const {
-	const qdCamera *cp = scene_->get_camera();
+	const qdCamera *cp = _scene->get_camera();
 	Vect3f v = cp->global2camera_coord(Vect3f(pos.x, pos.y, pos.z));
 
 	return v.z;
 }
 
 mgVect3f qdMinigameSceneInterfaceImpl::screen2grid_coords(const mgVect2i &screen_pos) const {
-	const qdCamera *cp = scene_->get_camera();
+	const qdCamera *cp = _scene->get_camera();
 	Vect3f pos = cp->scr2plane(Vect2s(screen_pos.x, screen_pos.y));
 
 	return mgVect3f(pos.x, pos.y, pos.z);
@@ -305,62 +305,62 @@ void qdMinigameSceneInterfaceImpl::release_object_interface(qdMinigameObjectInte
 }
 
 const char *qdMinigameSceneInterfaceImpl::name() const {
-	return scene_->name();
+	return _scene->name();
 }
 
 qdMinigameObjectInterface *qdMinigameSceneInterfaceImpl::object_interface(const char *object_name) {
-	if (qdGameObjectAnimated * p = dynamic_cast<qdGameObjectAnimated * >(scene_->get_object(object_name)))
+	if (qdGameObjectAnimated * p = dynamic_cast<qdGameObjectAnimated * >(_scene->get_object(object_name)))
 		return new qdMinigameObjectInterfaceImpl(p);
 
 	return NULL;
 }
 
 qdMinigameObjectInterface *qdMinigameSceneInterfaceImpl::personage_interface(const char *personage_name) {
-	if (qdGameObjectMoving * p = dynamic_cast<qdGameObjectMoving * >(scene_->get_object(personage_name)))
+	if (qdGameObjectMoving * p = dynamic_cast<qdGameObjectMoving * >(_scene->get_object(personage_name)))
 		return new qdMinigamePersonageInterfaceImpl(p);
 
 	return NULL;
 }
 
 bool qdMinigameSceneInterfaceImpl::activate_personage(const char *personage_name) {
-	if (qdGameObjectMoving * p = dynamic_cast<qdGameObjectMoving * >(scene_->get_object(personage_name))) {
-		scene_->set_active_personage(p);
+	if (qdGameObjectMoving * p = dynamic_cast<qdGameObjectMoving * >(_scene->get_object(personage_name))) {
+		_scene->set_active_personage(p);
 		return true;
 	}
 
 	return false;
 }
 
-qdMinigamePersonageInterfaceImpl::qdMinigamePersonageInterfaceImpl(qdGameObjectMoving *object) : qdMinigameObjectInterfaceImplBase(object), personage_object_(object) {
-	assert(personage_object_);
+qdMinigamePersonageInterfaceImpl::qdMinigamePersonageInterfaceImpl(qdGameObjectMoving *object) : qdMinigameObjectInterfaceImplBase(object), _personage_object(object) {
+	assert(_personage_object);
 }
 
 bool qdMinigamePersonageInterfaceImpl::move(const mgVect3f &target_position, bool disable_target_change) {
-	if (personage_object_) {
+	if (_personage_object) {
 		Vect3f target(target_position.x, target_position.y, target_position.z);
-		return personage_object_->move(target, disable_target_change);
+		return _personage_object->move(target, disable_target_change);
 	}
 
 	return false;
 }
 
 float qdMinigamePersonageInterfaceImpl::direction_angle() const {
-	if (personage_object_)
-		return personage_object_->direction_angle();
+	if (_personage_object)
+		return _personage_object->direction_angle();
 
 	return 0.f;
 }
 
 bool qdMinigamePersonageInterfaceImpl::set_direction_angle(float direction) {
-	if (personage_object_)
-		return personage_object_->set_direction(direction);
+	if (_personage_object)
+		return _personage_object->set_direction(direction);
 
 	return false;
 }
 
 mgVect3f qdMinigameObjectInterfaceImplBase::bound() const {
-	if (object_) {
-		Vect3f b = object_->bound();
+	if (_object) {
+		Vect3f b = _object->bound();
 		return mgVect3f(b.x, b.y, b.z);
 	}
 
@@ -368,22 +368,22 @@ mgVect3f qdMinigameObjectInterfaceImplBase::bound() const {
 }
 
 const char *qdMinigameObjectInterfaceImplBase::name() const {
-	if (object_)
-		return object_->name();
+	if (_object)
+		return _object->name();
 
 	return 0;
 }
 
 bool qdMinigameObjectInterfaceImplBase::has_state(const char *state_name) const {
-	if (object_ && object_->get_state(state_name))
+	if (_object && _object->get_state(state_name))
 		return true;
 
 	return false;
 }
 
 const char *qdMinigameObjectInterfaceImplBase::current_state_name() const {
-	if (object_) {
-		if (const qdGameObjectState * p = object_->get_cur_state())
+	if (_object) {
+		if (const qdGameObjectState * p = _object->get_cur_state())
 			return p->name();
 	}
 
@@ -391,21 +391,21 @@ const char *qdMinigameObjectInterfaceImplBase::current_state_name() const {
 }
 
 bool qdMinigameObjectInterfaceImplBase::is_state_active(const char *state_name) const {
-	return object_->is_state_active(state_name);
+	return _object->is_state_active(state_name);
 }
 
 bool qdMinigameObjectInterfaceImplBase::is_state_waiting_activation(const char *state_name) const {
-	return object_->is_state_waiting(state_name);
+	return _object->is_state_waiting(state_name);
 }
 
 int qdMinigameObjectInterfaceImplBase::current_state_index() const {
-	return object_->cur_state();
+	return _object->cur_state();
 }
 
 bool qdMinigameObjectInterfaceImplBase::set_state(const char *state_name) {
 	int idx = state_index(state_name);
 	if (idx != -1) {
-		object_->set_state(idx);
+		_object->set_state(idx);
 		return true;
 	}
 
@@ -413,76 +413,76 @@ bool qdMinigameObjectInterfaceImplBase::set_state(const char *state_name) {
 }
 
 bool qdMinigameObjectInterfaceImplBase::set_state(int state_index) {
-	object_->set_state(state_index);
+	_object->set_state(state_index);
 	return true;
 }
 
 int qdMinigameObjectInterfaceImplBase::state_index(const char *state_name) const {
-	if (const qdGameObjectState * p = object_->get_state(state_name))
-		return object_->get_state_index(p);
+	if (const qdGameObjectState * p = _object->get_state(state_name))
+		return _object->get_state_index(p);
 
 	return -1;
 }
 
 mgVect3f qdMinigameObjectInterfaceImplBase::R() const {
-	Vect3f r = object_->R();
+	Vect3f r = _object->R();
 	return mgVect3f(r.x, r.y, r.z);
 }
 
 void qdMinigameObjectInterfaceImplBase::set_R(const mgVect3f &r) {
 	Vect3f rr(r.x, r.y, r.z);
-	object_->set_pos(rr);
+	_object->set_pos(rr);
 }
 
 bool qdMinigameObjectInterfaceImplBase::hit_test(const mgVect2i &pos) const {
-	return object_->hit(pos.x, pos.y);
+	return _object->hit(pos.x, pos.y);
 }
 
 mgVect2i qdMinigameObjectInterfaceImplBase::screen_R() const {
-	return mgVect2i(object_->screen_pos().x, object_->screen_pos().y);
+	return mgVect2i(_object->screen_pos().x, _object->screen_pos().y);
 }
 
 bool qdMinigameObjectInterfaceImplBase::update_screen_R() {
-	object_->update_screen_pos();
+	_object->update_screen_pos();
 	return true;
 }
 
 mgVect2i qdMinigameObjectInterfaceImplBase::screen_size() const {
-	Vect2s sz = object_->screen_size();
+	Vect2s sz = _object->screen_size();
 	return mgVect2i(sz.x, sz.y);
 }
 
 void qdMinigameObjectInterfaceImplBase::set_screen_rotation(float angle, float speed) {
-	object_->set_screen_rotation(angle, speed);
+	_object->set_screen_rotation(angle, speed);
 }
 
 float qdMinigameObjectInterfaceImplBase::screen_rotation() const {
-	return object_->screen_rotation();
+	return _object->screen_rotation();
 }
 
 void qdMinigameObjectInterfaceImplBase::set_screen_scale(const mgVect2f &scale, const mgVect2f &speed) {
-	object_->set_screen_scale(Vect2f(scale.x, scale.y), Vect2f(speed.x, speed.y));
+	_object->set_screen_scale(Vect2f(scale.x, scale.y), Vect2f(speed.x, speed.y));
 }
 
 mgVect2f qdMinigameObjectInterfaceImplBase::screen_scale() const {
-	return mgVect2f(object_->screen_scale().x, object_->screen_scale().y);
+	return mgVect2f(_object->screen_scale().x, _object->screen_scale().y);
 }
 
 int qdMinigameObjectInterfaceImplBase::shadow_color() const {
-	return object_->shadow_color();
+	return _object->shadow_color();
 }
 
 int qdMinigameObjectInterfaceImplBase::shadow_alpha() const {
-	return object_->shadow_alpha();
+	return _object->shadow_alpha();
 }
 
 bool qdMinigameObjectInterfaceImplBase::set_shadow(int shadow_color, int shadow_alpha) {
-	object_->set_shadow(shadow_color, shadow_alpha);
+	_object->set_shadow(shadow_color, shadow_alpha);
 	return true;
 }
 
 bool qdMinigameObjectInterfaceImplBase::is_visible() const {
-	return object_->is_visible();
+	return _object->is_visible();
 }
 
 const qdEngineInterfaceImpl &qdEngineInterfaceImpl::instance() {
