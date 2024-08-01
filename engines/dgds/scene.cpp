@@ -2000,7 +2000,7 @@ Common::Error SDSScene::syncState(Common::Serializer &s) {
 	// at this point we are already loaded.
 	assert(_num);
 
-	// The dialogs and triggers are stateful, everthing else is stateless.
+	// The dialogs and triggers are stateful, everything else is stateless.
 	uint16 ndlgs = _dialogs.size();
 	s.syncAsUint16LE(ndlgs);
 	if (_dialogs.size() && ndlgs != _dialogs.size()) {
