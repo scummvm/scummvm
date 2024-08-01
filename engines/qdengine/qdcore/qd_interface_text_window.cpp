@@ -203,7 +203,6 @@ bool qdInterfaceTextWindow::init(bool is_game_active) {
 			update_text_position();
 		}
 	} else {
-#ifndef _QUEST_EDITOR
 		qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher();
 
 		switch (_infoType) {
@@ -223,7 +222,6 @@ bool qdInterfaceTextWindow::init(bool is_game_active) {
 		default:
 			break;
 		}
-#endif
 		if (_windowType == WINDOW_TEXT)
 			set_input_string(input_string());
 	}
@@ -443,7 +441,6 @@ bool qdInterfaceTextWindow::quant(float dt) {
 		if (is_visible() && _text_set && _text_set->was_changed())
 			update_text_position();
 
-#ifndef _QUEST_EDITOR
 		if (_text_set) {
 			if (fabs(_scrolling_position) > FLT_EPS) {
 				float delta = _scrolling_speed * dt;
@@ -493,7 +490,6 @@ bool qdInterfaceTextWindow::quant(float dt) {
 				}
 			}
 		}
-#endif // _QUEST_EDITOR
 	}
 
 	return true;
