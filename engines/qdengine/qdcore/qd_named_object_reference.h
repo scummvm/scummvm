@@ -22,6 +22,7 @@
 #ifndef QDENGINE_QDCORE_QD_NAMED_OBJECT_REFERENCE_H
 #define QDENGINE_QDCORE_QD_NAMED_OBJECT_REFERENCE_H
 
+#include "qdengine/qd_fwd.h"
 #include "qdengine/parser/xml_fwd.h"
 #include "qdengine/qdcore/qd_named_object.h"
 
