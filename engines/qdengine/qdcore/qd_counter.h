@@ -40,14 +40,14 @@ public:
 	explicit qdCounterElement(const qdGameObjectState *p, bool inc_value = true);
 
 	bool operator == (const qdGameObjectState *p) const {
-		return state_ == p;
+		return _state == p;
 	}
 
 	const qdGameObjectState *state() const {
-		return state_;
+		return _state;
 	}
 	bool increment_value() const {
-		return increment_value_;
+		return _increment_value;
 	}
 
 	bool init();
@@ -63,10 +63,10 @@ public:
 
 private:
 
-	qdNamedObjectReference state_reference_;
-	const qdGameObjectState *state_;
-	bool last_state_status_;
-	bool increment_value_;
+	qdNamedObjectReference _state_reference;
+	const qdGameObjectState *_state;
+	bool _last_state_status;
+	bool _increment_value;
 };
 
 //! Счетчик состояний.
