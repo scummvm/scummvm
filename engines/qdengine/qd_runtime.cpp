@@ -50,13 +50,7 @@ namespace qdrt {
 
 void init_graphics();
 bool init_graphics_dispatcher();
-bool is_graphics_reinit_needed();
 void restore_graphics();
-
-void toggle_fullscreen(bool force_fullscreen = false);
-void maximize_window() {
-	toggle_fullscreen(true);
-}
 
 void qd_show_load_progress(int percents_loaded, void *p);
 
@@ -148,8 +142,6 @@ int engineMain() {
 	if (ConfMan.getBool("trigger_profiler"))
 		qdTriggerProfiler::instance().enable();
 #endif
-
-	grD->set_maximize_handler(maximize_window);
 
 	grD->HideMouse();
 
@@ -384,26 +376,9 @@ void init_graphics() {
 }
 
 bool init_graphics_dispatcher() {
-	if (grDispatcher::instance()->init(qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy(), (grPixelFormat)qdGameConfig::get_config().pixel_format(), hmainWnd, qdGameConfig::get_config().fullscreen()))
-		return true;
+	grDispatcher::instance()->init(qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy(), (grPixelFormat)qdGameConfig::get_config().pixel_format());
 
-	for (int i = 0; i <= GR_ARGB8888; i++) {
-		if (grDispatcher::instance()->init(qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy(), (grPixelFormat)i, hmainWnd, qdGameConfig::get_config().fullscreen()))
-			return true;
-	}
-
-	qdGameConfig::get_config().toggle_fullscreen();
-
-	for (int i = 0; i <= GR_ARGB8888; i++) {
-		if (grDispatcher::instance()->init(qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy(), (grPixelFormat)i, hmainWnd, qdGameConfig::get_config().fullscreen()))
-			return true;
-	}
-
-	grDispatcher::set_instance(grD);
-	if (grDispatcher::instance()->init(qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy(), (grPixelFormat)qdGameConfig::get_config().pixel_format(), hmainWnd, qdGameConfig::get_config().fullscreen()))
-		return true;
-
-	return false;
+	return true;
 }
 
 void qd_show_load_progress(int percents_loaded, void *p) {
@@ -422,13 +397,6 @@ void qd_show_load_progress(int percents_loaded, void *p) {
 	grDispatcher::instance()->Flush(x, y, rect_sx, rect_sy);
 }
 
-bool is_graphics_reinit_needed() {
-	if (qdGameConfig::get_config().pixel_format() != (int)grDispatcher::instance()->pixel_format() || qdGameConfig::get_config().fullscreen() != grDispatcher::instance()->is_in_fullscreen_mode())
-		return true;
-
-	return false;
-}
-
 void restore_graphics() {
 	if (sndDispatcher * dp = sndDispatcher::get_dispatcher())
 		dp->set_volume(dp->volume());
@@ -438,24 +406,6 @@ void restore_graphics() {
 }
 
 void restore() {
-}
-
-void toggle_fullscreen(bool force_fullscreen) {
-	if (force_fullscreen && qdGameConfig::get_config().fullscreen()) return;
-
-	qdGameConfig::get_config().toggle_fullscreen();
-	qdGameConfig::get_config().set_driver_ID(1);
-
-	grDispatcher::instance()->toggle_reinit();
-	grDispatcher::instance()->Finit();
-	grDispatcher::instance()->destroy_window();
-
-	hmainWnd = NULL;
-
-	init_graphics();
-
-	qdGameDispatcher::get_dispatcher()->toggle_full_redraw();
-//	qdGameDispatcher::get_dispatcher()->convert_graphics();
 }
 
 bool request_CD_handler(int cd_id) {

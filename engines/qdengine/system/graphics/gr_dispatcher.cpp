@@ -80,8 +80,7 @@ grDispatcher::grDispatcher() : _screenBuf(NULL),
 #endif
 	_hWnd(NULL),
 	_yTable(NULL),
-	_temp_buffer(0),
-	_maximize_handler(0) {
+	_temp_buffer(0) {
 	_flags = 0;
 
 	_temp_buffer_size = 0;
@@ -130,7 +129,7 @@ bool grDispatcher::Finit() {
 	return true;
 }
 
-bool grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, bool fullscreen) {
+bool grDispatcher::init(int sx, int sy, grPixelFormat pixel_format) {
 	Finit();
 
 	_pixel_format = pixel_format;
@@ -138,19 +137,8 @@ bool grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, 
 	initGraphics(sx, sy, &g_engine->_pixelformat);
 	_screenBuf = new Graphics::ManagedSurface(sx, sy, g_engine->_pixelformat);
 
-	_isFullScreen = fullscreen;
-
-	if (!hwnd) {
-		_sizeX = sx;
-		_sizeY = sy;
-	} else {
-		set_window(hwnd);
-
-		if (sx && sy) {
-			_sizeX = sx;
-			_sizeY = sy;
-		}
-	}
+	_sizeX = sx;
+	_sizeY = sy;
 
 	_changes_mask_size_x = _sizeX >> changes_mask_tile_shift_;
 	if (_sizeX % changes_mask_tile_) _changes_mask_size_x++;
@@ -480,55 +468,6 @@ bool grDispatcher::clip_line(int &x0, int &y0, int &x1, int &y1) const {
 	} while (!done);
 
 	return accept;
-}
-
-bool grDispatcher::create_window(int sx, int sy) {
-	_sizeX = sx;
-	_sizeY = sy;
-	warning("STUB: grDispatcher::create_window()");
-#if 0
-	int px = GetSystemMetrics(SM_CXSCREEN);
-	int py = GetSystemMetrics(SM_CYSCREEN);
-
-	int wx = sx + GetSystemMetrics(SM_CXFIXEDFRAME) * 2;
-	int wy = sy + GetSystemMetrics(SM_CYFIXEDFRAME) * 2 + GetSystemMetrics(SM_CYCAPTION);
-
-	_hWnd = CreateWindow(wnd_class_name(), "", WS_POPUP | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_CLIPCHILDREN, (px - wx) / 2, (py - wy) / 2, wx, wy, NULL, NULL, GetModuleHandle(NULL), NULL);
-
-	if (_hWnd) {
-		ShowWindow((HWND)_hWnd, SW_SHOWNORMAL);
-		UpdateWindow((HWND)_hWnd);
-		return true;
-	}
-
-#endif
-	return false;
-}
-
-bool grDispatcher::destroy_window() {
-	if (_hWnd) {
-		ShowWindow((HWND)_hWnd, SW_HIDE);
-		DestroyWindow((HWND)_hWnd);
-		_hWnd = NULL;
-		return true;
-	}
-	return false;
-}
-
-bool grDispatcher::set_window(void *hwnd) {
-	warning("STUB: grDispatcher::set_window()");
-#if 0
-	RECT rc;
-	if (GetClientRect((HWND)hwnd, &rc)) {
-		_sizeX = rc.right - rc.left;
-		_sizeY = rc.bottom - rc.top;
-		_hWnd = hwnd;
-
-		return true;
-	}
-#endif
-
-	return false;
 }
 
 bool grDispatcher::clip_line(int &x0, int &y0, int &z0, int &x1, int &y1, int &z1) const {
