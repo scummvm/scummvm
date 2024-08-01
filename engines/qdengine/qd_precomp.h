@@ -116,7 +116,6 @@ namespace QDEngine {
 #define MB_ABORTRETRYIGNORE 0x00000002L
 
 int MessageBox(HWND hWnd, const char *lpText, const char *lpCaption, uint32 uType);
-char *_fullpath(char *absPath, const char *relPath, size_t maxLength);
 
 int engineMain();
 

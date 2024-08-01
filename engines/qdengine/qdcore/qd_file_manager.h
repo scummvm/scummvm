@@ -105,9 +105,6 @@ public:
 
 	static qdFileManager &instance();
 
-	typedef bool (*request_CD_handler_t)(int cd_id);
-	void set_request_CD_handler(request_CD_handler_t new_handler) {}
-
 private:
 
 	qdFileManager();

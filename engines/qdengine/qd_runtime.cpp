@@ -56,10 +56,6 @@ void qd_show_load_progress(int percents_loaded, void *p);
 
 void restore();
 
-bool request_CD_handler(int cd_id);
-
-/* --------------------------- DEFINITION SECTION --------------------------- */
-
 grDispatcher *grD = NULL;
 
 qdGameDispatcher *qd_gameD = NULL;
@@ -198,8 +194,6 @@ int engineMain() {
 		generateTagMap(20070503);
 	}
 
-//	qdFileManager::instance().check_drive('E');
-	qdFileManager::instance().set_request_CD_handler(request_CD_handler);
 #if 0
 	for (int i = 1; i < __argc; i++) {
 		debugCN(3, kDebugLog, "'\' %s '\'", __argv[i]);
@@ -400,13 +394,6 @@ void restore_graphics() {
 }
 
 void restore() {
-}
-
-bool request_CD_handler(int cd_id) {
-	if (qdGameDispatcher * p = qdGameDispatcher::get_dispatcher())
-		p->request_CD(cd_id);
-
-	return true;
 }
 
 }; // namespace main
