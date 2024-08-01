@@ -231,7 +231,9 @@ bool kernel_load_variant(const char *variant) {
 		Buffer *scr_orig_data_buffer = scr_orig_data->get_buffer();
 		RestoreEdgeList(scr_orig_data_buffer);
 		scr_orig_data->release();
-	}	
+	}
+
+	return true;
 }
 
 GrBuff *load_codes(SysFile *code_file) {
