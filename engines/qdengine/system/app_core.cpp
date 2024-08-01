@@ -81,14 +81,6 @@ Common::String change_ext(const char *file_name, const char *new_ext) {
 	return fpath;
 }
 
-uint32 file_size(const char *file_name) {
-	Common::File fh;
-	if (fh.open(file_name))
-		return fh.size();
-
-	return 0;
-}
-
 std::string path_to_file_name(const std::string &str) {
 	std::string conv_str = str;
 	for (int i = 0; i < conv_str.length(); i++)

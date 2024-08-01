@@ -43,8 +43,6 @@ bool is_file_exist(Common::String file_name);
 
 Common::String change_ext(const char *file_name, const char *new_ext);
 
-uint32 file_size(const char *file_name);
-
 std::string path_to_file_name(const std::string &str);
 
 bool relat_path(const char *path);

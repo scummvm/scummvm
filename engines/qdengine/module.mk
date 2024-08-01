@@ -53,7 +53,6 @@ MODULE_OBJS = \
 	qdcore/qd_counter.o \
 	qdcore/qd_d3dutils.o \
 	qdcore/qd_file_manager.o \
-	qdcore/qd_file_owner.o \
 	qdcore/qd_font_info.o \
 	qdcore/qd_game_dispatcher.o \
 	qdcore/qd_game_dispatcher_base.o \

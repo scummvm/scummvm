@@ -480,7 +480,6 @@ public:
 
 	bool game_screenshot(Graphics::Surface &thumb) const;
 
-	void scan_files(qdLoadingProgressFnc progress_fnc, void *context_ptr);
 	/**
 	    Собирает все файлы находящиеся НЕ внутри рабочей дирректории в collect_dir,
 	    исправляя пути файлов в соответствующих им объектах
