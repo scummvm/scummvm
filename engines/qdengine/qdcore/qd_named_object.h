@@ -82,22 +82,10 @@ public:
 	//! Возвращает владельца объекта, тип которого tp.
 	qdNamedObject *owner(qdNamedObjectType tp) const;
 
-#ifndef _QUEST_EDITOR
 	//! Устанавливает владельца объекта.
 	void set_owner(qdNamedObject *p) {
 		_owner = p;
 	}
-#else
-	qdNamedObject *ref_owner() const {
-		return ref__owner;
-	}
-	void set_ref_owner(qdNamedObject *p) {
-		ref__owner = p;
-	}
-	void set_owner(qdNamedObject *p) {
-		_owner = ref__owner = p;
-	}
-#endif
 
 	//! Устанавливает флаг.
 	void set_flag(int fl) {
