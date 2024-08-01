@@ -33,40 +33,17 @@
 
 namespace QDEngine {
 
-#ifdef _QUEST_EDITOR
-qdConditionalObject::ConditionsMode qdConditionalObject::backup_mode_ = qdConditionalObject::CONDITIONS_OR;
-qdConditionalObject::condition_groups_container_t qdConditionalObject::groups_backup_;
-qdConditionalObject::conditions_container_t qdConditionalObject::backup_;
-
-std::list<qdConditionalObject *> qdConditionalObject::objects_list_;
-bool qdConditionalObject::enable_objects_list_ = false;
-#endif
 
 qdConditionalObject::qdConditionalObject() : conditions_mode_(CONDITIONS_OR) {
-#ifdef _QUEST_EDITOR
-	if (enable_objects_list_)
-		objects_list_.push_back(this);
-#endif
 }
 
 qdConditionalObject::qdConditionalObject(const qdConditionalObject &obj) : qdNamedObject(obj),
 	conditions_mode_(obj.conditions_mode_),
 	conditions_(obj.conditions_),
 	condition_groups_(obj.condition_groups_) {
-#ifdef _QUEST_EDITOR
-	if (enable_objects_list_)
-		objects_list_.push_back(this);
-#endif
 }
 
 qdConditionalObject::~qdConditionalObject() {
-#ifdef _QUEST_EDITOR
-	if (enable_objects_list_) {
-		std::list<qdConditionalObject *>::iterator it = std::find(objects_list_.begin(), objects_list_.end(), this);
-		if (it != objects_list_.end())
-			objects_list_.erase(it);
-	}
-#endif
 }
 
 qdConditionalObject &qdConditionalObject::operator = (const qdConditionalObject &obj) {
@@ -99,7 +76,6 @@ bool qdConditionalObject::update_condition(int num, const qdCondition &p) {
 }
 
 bool qdConditionalObject::check_conditions() {
-#ifndef _QUEST_EDITOR
 	qdCondition::clear_successful_clicks();
 
 	if (!conditions_.empty()) {
@@ -130,7 +106,6 @@ bool qdConditionalObject::check_conditions() {
 			return false;
 		}
 	}
-#endif // _QUEST_EDITOR
 
 	return true;
 }
@@ -145,15 +120,6 @@ bool qdConditionalObject::remove_conditon(int idx) {
 
 	return true;
 }
-
-#ifdef _QUEST_EDITOR
-void qdConditionalObject::remove_all_conditions() {
-	conditions_.clear();
-}
-void qdConditionalObject::remove_all_groups() {
-	condition_groups_.clear();
-}
-#endif
 
 bool qdConditionalObject::load_conditions_script(const xml::tag *p) {
 	int count = 0;
@@ -199,12 +165,10 @@ bool qdConditionalObject::load_conditions_script(const xml::tag *p) {
 		}
 	}
 
-#ifndef _QUEST_EDITOR
 	for (int i = 0; i < conditions_.size(); i++) {
 		if (is_condition_in_group(i))
 			conditions_[i].add_group_reference();
 	}
-#endif
 
 	return true;
 }
@@ -234,22 +198,6 @@ void qdConditionalObject::conditions_quant(float dt) {
 		it.quant(dt);
 	}
 }
-
-#ifdef _QUEST_EDITOR
-bool qdConditionalObject::backup_object() {
-	backup_ = conditions_;
-	groups_backup_ = condition_groups_;
-	backup_mode_ = conditions_mode_;
-	return true;
-}
-
-bool qdConditionalObject::restore_object() {
-	conditions_ = backup_;
-	condition_groups_ = groups_backup_;
-	conditions_mode_ = backup_mode_;
-	return true;
-}
-#endif
 
 bool qdConditionalObject::load_data(Common::SeekableReadStream &fh, int save_version) {
 	debugC(4, kDebugSave, "    qdConditionalObject::load_data(): before %ld", fh.pos());
@@ -315,14 +263,12 @@ bool qdConditionalObject::update_condition_group(int num, const qdConditionGroup
 	qdConditionGroup &gr = condition_groups_[num];
 	gr = p;
 
-#ifndef _QUEST_EDITOR
 	for (int i = 0; i < conditions_.size(); i++) {
 		if (is_condition_in_group(i))
 			conditions_[i].add_group_reference();
 		else
 			conditions_[i].remove_group_reference();
 	}
-#endif
 
 	return true;
 }
@@ -332,35 +278,16 @@ bool qdConditionalObject::remove_conditon_group(int idx) {
 
 	condition_groups_.erase(condition_groups_.begin() + idx);
 
-#ifndef _QUEST_EDITOR
 	for (int i = 0; i < conditions_.size(); i++) {
 		if (is_condition_in_group(i))
 			conditions_[i].add_group_reference();
 		else
 			conditions_[i].remove_group_reference();
 	}
-#endif
 
 	return true;
 }
 
-#ifdef _QUEST_EDITOR
-bool qdConditionalObject::init_objects() {
-	bool result = true;
-
-	for (int i = 0; i < conditions_.size(); i++) {
-		if (!conditions_[i].init_objects())
-			result = false;
-	}
-
-	return result;
-}
-
-void qdConditionalObject::global_init() {
-	for (std::list<qdConditionalObject * >::const_iterator it = objects_list_.begin(); it != objects_list_.end(); ++it)
-		(*it)->init_objects();
-}
-#endif /* _QUEST_EDITOR */
 
 bool qdConditionalObject::init() {
 	bool result = true;
