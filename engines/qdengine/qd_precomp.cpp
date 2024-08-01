@@ -33,26 +33,6 @@ int MessageBox(HWND hWnd, const char *lpText, const char *lpCaption, uint32 uTyp
 	return 0;
 }
 
-bool ShowWindow(HWND hWnd, int nCmdShow) {
-	warning("STUB: ShowWindow");
-	return false;
-}
-
-bool CloseWindow(HWND hWnd) {
-	warning("STUB: CloseWindow");
-	return false;
-}
-
-bool DestroyWindow(HWND hWnd) {
-	warning("STUB: DestroyWindow");
-	return false;
-}
-
-bool UpdateWindow(HWND hWnd) {
-	warning("STUB: UpdateWindow");
-	return false;
-}
-
 char *_fullpath(char *absPath, const char *relPath, size_t maxLength) {
 	warning("STUB: _fullpath");
 	return 0;
