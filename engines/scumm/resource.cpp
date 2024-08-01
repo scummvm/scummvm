@@ -1770,19 +1770,31 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 
 	if (_game.id == GID_MONKEY && type == rtRoom && idx == 25 && enhancementEnabled(kEnhRestoredContent)) {
 		tryPatchMI1CannibalScript(getResourceAddress(type, idx), size);
-	} else
+	} else if (_game.id == GID_MANIAC && _game.version == 2 && _game.platform == Common::kPlatformDOS &&
+			   type == rtScript && idx == 44 && size == 199 && enhancementEnabled(kEnhMinorBugFixes)) {
+		// WORKAROUND: There is a cracked version of Maniac Mansion v2 that
+		// attempts to remove the security door copy protection. With it, any
+		// code is accepted as long as you get the last digit wrong.
+		// Unfortunately, it changes a script that is used by all keypads in the
+		// game, which means some puzzles are completely nerfed.
+		//
+		// Even worse, this is the version that GOG and Steam are selling. No,
+		// seriously! I've reported this as a bug, but it remains unclear
+		// whether or not they will fix it.
+		//
+		// Please note, this fix was posthumously made optional using the kEnhMinorBugFixes
+		// enhancement class, since this is still (somehow...) an official release, and this
+		// represents an external bug fix on the data files. As of why this was made optional:
+		// there was an interest within the speedrunning community (see #14815).
+		//
+		// Quoting from the ticket:
+		// "The speedruns for the PC version of Maniac Mansion are separated into two categories:
+		// one that makes use of the broken lab door and one that does not. All of the runs, that
+		// make use of it are from within the first two years after the digital release of the game.
+		// I'm pretty sure, no one understood what was going on, they just recognized the door being
+		// broken from runs of the NES game (this is me guessing). You could say the category is
+		// "grandfathered in". Still, it is the most popular and shortest category for Maniac Mansion."
 
-	// WORKAROUND: There is a cracked version of Maniac Mansion v2 that
-	// attempts to remove the security door copy protection. With it, any
-	// code is accepted as long as you get the last digit wrong.
-	// Unfortunately, it changes a script that is used by all keypads in the
-	// game, which means some puzzles are completely nerfed.
-	//
-	// Even worse, this is the version that GOG and Steam are selling. No,
-	// seriously! I've reported this as a bug, but it remains unclear
-	// whether or not they will fix it.
-
-	if (_game.id == GID_MANIAC && _game.version == 2 && _game.platform == Common::kPlatformDOS && type == rtScript && idx == 44 && size == 199) {
 		byte *data = getResourceAddress(type, idx);
 
 		if (data[184] == 0) {
