@@ -34,13 +34,13 @@
 namespace QDEngine {
 
 
-qdConditionalObject::qdConditionalObject() : conditions_mode_(CONDITIONS_OR) {
+qdConditionalObject::qdConditionalObject() : _conditions_mode(CONDITIONS_OR) {
 }
 
 qdConditionalObject::qdConditionalObject(const qdConditionalObject &obj) : qdNamedObject(obj),
-	conditions_mode_(obj.conditions_mode_),
-	conditions_(obj.conditions_),
-	condition_groups_(obj.condition_groups_) {
+	_conditions_mode(obj._conditions_mode),
+	_conditions(obj._conditions),
+	_condition_groups(obj._condition_groups) {
 }
 
 qdConditionalObject::~qdConditionalObject() {
@@ -51,24 +51,24 @@ qdConditionalObject &qdConditionalObject::operator = (const qdConditionalObject 
 
 	*static_cast<qdNamedObject *>(this) = obj;
 
-	conditions_mode_ = obj.conditions_mode_;
-	conditions_ = obj.conditions_;
-	condition_groups_ = obj.condition_groups_;
+	_conditions_mode = obj._conditions_mode;
+	_conditions = obj._conditions;
+	_condition_groups = obj._condition_groups;
 
 	return *this;
 }
 
 int qdConditionalObject::add_condition(const qdCondition *p) {
-	conditions_.push_back(*p);
-	conditions_.back().set_owner(this);
+	_conditions.push_back(*p);
+	_conditions.back().set_owner(this);
 
-	return conditions_.size() - 1;
+	return _conditions.size() - 1;
 }
 
 bool qdConditionalObject::update_condition(int num, const qdCondition &p) {
-	assert(num >= 0 && num < conditions_.size());
+	assert(num >= 0 && num < _conditions.size());
 
-	qdCondition &cond = conditions_[num];
+	qdCondition &cond = _conditions[num];
 	cond = p;
 	cond.set_owner(this);
 
@@ -78,28 +78,28 @@ bool qdConditionalObject::update_condition(int num, const qdCondition &p) {
 bool qdConditionalObject::check_conditions() {
 	qdCondition::clear_successful_clicks();
 
-	if (!conditions_.empty()) {
+	if (!_conditions.empty()) {
 		switch (conditions_mode()) {
 		case CONDITIONS_AND:
-			for (conditions_container_t::iterator it = conditions_.begin(); it != conditions_.end(); ++it) {
+			for (conditions_container_t::iterator it = _conditions.begin(); it != _conditions.end(); ++it) {
 				if (!it->is_in_group()) {
 					if (!it->check())
 						return false;
 				}
 			}
-			for (condition_groups_container_t::iterator it = condition_groups_.begin(); it != condition_groups_.end(); ++it) {
+			for (condition_groups_container_t::iterator it = _condition_groups.begin(); it != _condition_groups.end(); ++it) {
 				if (!check_group_conditions(*it))
 					return false;
 			}
 			return true;
 		case CONDITIONS_OR:
-			for (conditions_container_t::iterator it = conditions_.begin(); it != conditions_.end(); ++it) {
+			for (conditions_container_t::iterator it = _conditions.begin(); it != _conditions.end(); ++it) {
 				if (!it->is_in_group()) {
 					if (it->check())
 						return true;
 				}
 			}
-			for (condition_groups_container_t::iterator it = condition_groups_.begin(); it != condition_groups_.end(); ++it) {
+			for (condition_groups_container_t::iterator it = _condition_groups.begin(); it != _condition_groups.end(); ++it) {
 				if (check_group_conditions(*it))
 					return true;
 			}
@@ -111,11 +111,11 @@ bool qdConditionalObject::check_conditions() {
 }
 
 bool qdConditionalObject::remove_conditon(int idx) {
-	assert(idx >= 0 && idx < conditions_.size());
+	assert(idx >= 0 && idx < _conditions.size());
 
-	conditions_.erase(conditions_.begin() + idx);
+	_conditions.erase(_conditions.begin() + idx);
 
-	for (condition_groups_container_t::iterator it = condition_groups_.begin(); it != condition_groups_.end(); ++it)
+	for (condition_groups_container_t::iterator it = _condition_groups.begin(); it != _condition_groups.end(); ++it)
 		it->remove_condition(idx);
 
 	return true;
@@ -136,11 +136,11 @@ bool qdConditionalObject::load_conditions_script(const xml::tag *p) {
 		}
 	}
 
-	if (count) conditions_.resize(count);
-	conditions_container_t::iterator ict = conditions_.begin();
+	if (count) _conditions.resize(count);
+	conditions_container_t::iterator ict = _conditions.begin();
 
-	if (gr_count) condition_groups_.resize(gr_count);
-	condition_groups_container_t::iterator igt = condition_groups_.begin();
+	if (gr_count) _condition_groups.resize(gr_count);
+	condition_groups_container_t::iterator igt = _condition_groups.begin();
 
 	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		switch (it->ID()) {
@@ -165,17 +165,17 @@ bool qdConditionalObject::load_conditions_script(const xml::tag *p) {
 		}
 	}
 
-	for (int i = 0; i < conditions_.size(); i++) {
+	for (int i = 0; i < _conditions.size(); i++) {
 		if (is_condition_in_group(i))
-			conditions_[i].add_group_reference();
+			_conditions[i].add_group_reference();
 	}
 
 	return true;
 }
 
 bool qdConditionalObject::save_conditions_script(Common::WriteStream &fh, int indent) const {
-	if (conditions_.size()) {
-		for (auto &it : conditions_) {
+	if (_conditions.size()) {
+		for (auto &it : _conditions) {
 			it.save_script(fh, indent + 1);
 		}
 
@@ -183,10 +183,10 @@ bool qdConditionalObject::save_conditions_script(Common::WriteStream &fh, int in
 			fh.writeString("\t");
 		}
 
-		fh.writeString(Common::String::format("<conditions_mode>%d</conditions_mode>\r\n", conditions_mode_));
+		fh.writeString(Common::String::format("<conditions_mode>%d</conditions_mode>\r\n", _conditions_mode));
 	}
 
-	for (auto  &it : condition_groups_) {
+	for (auto  &it : _condition_groups) {
 		it.save_script(fh, indent);
 	}
 
@@ -194,7 +194,7 @@ bool qdConditionalObject::save_conditions_script(Common::WriteStream &fh, int in
 }
 
 void qdConditionalObject::conditions_quant(float dt) {
-	for (auto &it : conditions_) {
+	for (auto &it : _conditions) {
 		it.quant(dt);
 	}
 }
@@ -204,7 +204,7 @@ bool qdConditionalObject::load_data(Common::SeekableReadStream &fh, int save_ver
 	if (!qdNamedObject::load_data(fh, save_version))
 		return false;
 
-	for (auto &it : conditions_)
+	for (auto &it : _conditions)
 		it.load_data(fh, save_version);
 
 	debugC(4, kDebugSave, "    qdConditionalObject::load_data(): after %ld", fh.pos());
@@ -217,7 +217,7 @@ bool qdConditionalObject::save_data(Common::WriteStream &fh) const {
 		return false;
 	}
 
-	for (auto &it : conditions_)
+	for (auto &it : _conditions)
 		it.save_data(fh);
 
 	debugC(4, kDebugSave, "    qdConditionalObject::save_data(): after %ld", fh.pos());
@@ -228,13 +228,13 @@ bool qdConditionalObject::check_group_conditions(const qdConditionGroup &gr) {
 	switch (gr.conditions_mode()) {
 	case qdConditionGroup::CONDITIONS_AND:
 		for (qdConditionGroup::conditions_iterator_t it = gr.conditions_begin(); it != gr.conditions_end(); ++it) {
-			if (!conditions_[*it].check())
+			if (!_conditions[*it].check())
 				return false;
 		}
 		return true;
 	case qdConditionGroup::CONDITIONS_OR:
 		for (qdConditionGroup::conditions_iterator_t it = gr.conditions_begin(); it != gr.conditions_end(); ++it) {
-			if (conditions_[*it].check())
+			if (_conditions[*it].check())
 				return true;
 		}
 		return false;
@@ -244,7 +244,7 @@ bool qdConditionalObject::check_group_conditions(const qdConditionGroup &gr) {
 }
 
 bool qdConditionalObject::is_condition_in_group(int condition_idx) const {
-	for (condition_groups_container_t::const_iterator it = condition_groups_.begin(); it != condition_groups_.end(); ++it) {
+	for (condition_groups_container_t::const_iterator it = _condition_groups.begin(); it != _condition_groups.end(); ++it) {
 		if (std::find(it->conditions_begin(), it->conditions_end(), condition_idx) != it->conditions_end())
 			return true;
 	}
@@ -253,36 +253,36 @@ bool qdConditionalObject::is_condition_in_group(int condition_idx) const {
 }
 
 int qdConditionalObject::add_condition_group(const qdConditionGroup *p) {
-	condition_groups_.push_back(*p);
-	return condition_groups_.size() - 1;
+	_condition_groups.push_back(*p);
+	return _condition_groups.size() - 1;
 }
 
 bool qdConditionalObject::update_condition_group(int num, const qdConditionGroup &p) {
-	assert(num >= 0 && num < condition_groups_.size());
+	assert(num >= 0 && num < _condition_groups.size());
 
-	qdConditionGroup &gr = condition_groups_[num];
+	qdConditionGroup &gr = _condition_groups[num];
 	gr = p;
 
-	for (int i = 0; i < conditions_.size(); i++) {
+	for (int i = 0; i < _conditions.size(); i++) {
 		if (is_condition_in_group(i))
-			conditions_[i].add_group_reference();
+			_conditions[i].add_group_reference();
 		else
-			conditions_[i].remove_group_reference();
+			_conditions[i].remove_group_reference();
 	}
 
 	return true;
 }
 
 bool qdConditionalObject::remove_conditon_group(int idx) {
-	assert(idx >= 0 && idx < condition_groups_.size());
+	assert(idx >= 0 && idx < _condition_groups.size());
 
-	condition_groups_.erase(condition_groups_.begin() + idx);
+	_condition_groups.erase(_condition_groups.begin() + idx);
 
-	for (int i = 0; i < conditions_.size(); i++) {
+	for (int i = 0; i < _conditions.size(); i++) {
 		if (is_condition_in_group(i))
-			conditions_[i].add_group_reference();
+			_conditions[i].add_group_reference();
 		else
-			conditions_[i].remove_group_reference();
+			_conditions[i].remove_group_reference();
 	}
 
 	return true;
@@ -292,8 +292,8 @@ bool qdConditionalObject::remove_conditon_group(int idx) {
 bool qdConditionalObject::init() {
 	bool result = true;
 
-	for (int i = 0; i < conditions_.size(); i++) {
-		if (!conditions_[i].init())
+	for (int i = 0; i < _conditions.size(); i++) {
+		if (!_conditions[i].init())
 			result = false;
 	}
 

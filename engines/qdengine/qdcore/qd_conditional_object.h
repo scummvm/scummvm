@@ -65,12 +65,12 @@ public:
 
 	//! Возвращает указатель на условие.
 	const qdCondition *get_condition(int idx = 0) const {
-		return &*(conditions_.begin() + idx);
+		return &*(_conditions.begin() + idx);
 	}
 
 	//! Возвращает количество условий.
 	int conditions_count() const {
-		return conditions_.size();
+		return _conditions.size();
 	}
 
 	//! Добавляет группу условий. Возвращает поярдковый номер,-1 в случае ошибки.
@@ -83,26 +83,26 @@ public:
 
 	//! Возвращает указатель на группу условий.
 	const qdConditionGroup *get_condition_group(int idx = 0) const {
-		return &*(condition_groups_.begin() + idx);
+		return &*(_condition_groups.begin() + idx);
 	}
 
 	//! Возвращает количество групп условий.
 	int condition_groups_count() const {
-		return condition_groups_.size();
+		return _condition_groups.size();
 	}
 
 	//! Возвращает режим проверки условий.
 	ConditionsMode conditions_mode() const {
-		return conditions_mode_;
+		return _conditions_mode;
 	}
 	//! Устанавливает режим проверки условий.
 	void set_conditions_mode(ConditionsMode m) {
-		conditions_mode_ = m;
+		_conditions_mode = m;
 	}
 
 	//! Возвращает true, если список условий не пустой.
 	bool has_conditions() const {
-		return !conditions_.empty();
+		return !_conditions.empty();
 	}
 
 	//! Обсчет логики условий, dt - время в секундах.
@@ -147,13 +147,13 @@ protected:
 private:
 
 	//! Логика проверки условий - И/ИЛИ.
-	ConditionsMode conditions_mode_;
+	ConditionsMode _conditions_mode;
 
 	//! Условия.
-	conditions_container_t conditions_;
+	conditions_container_t _conditions;
 
 	//! Группы условий.
-	condition_groups_container_t condition_groups_;
+	condition_groups_container_t _condition_groups;
 
 	bool check_group_conditions(const qdConditionGroup &gr);
 };
