@@ -104,16 +104,12 @@ public:
 		type_ = tp;
 	}
 
-#ifndef _QUEST_EDITOR
 	const qdSprite *sprite() const {
 		return sprite_;
 	}
 	void set_sprite(const qdSprite *spr) {
 		sprite_ = spr;
 	}
-#else
-	const qdSprite *sprite() const;
-#endif
 
 	qdGameObjectAnimated *object() const {
 		return object_;
@@ -167,13 +163,11 @@ private:
 	//! Тип ячейки.
 	int type_;
 
-#ifndef _QUEST_EDITOR
 	//! Внешний вид ячейки.
 	/**
 	Указывает на sprite_ из qdInventoryCellType соответствующего типа.
 	*/
 	const qdSprite *sprite_;
-#endif
 
 	//! Объект, который лежит в ячейке.
 	mutable qdGameObjectAnimated *object_;
@@ -201,11 +195,6 @@ public:
 	void set_screen_pos(const Vect2s &pos) {
 		_screen_pos = pos;
 	}
-
-#ifdef _QUEST_EDITOR
-	const Vect2i screen_size() const;
-	const Vect2i cell_size() const;
-#endif // _QUEST_EDITOR
 
 	grScreenRegion screen_region() const;
 	const grScreenRegion &last_screen_region() const {
