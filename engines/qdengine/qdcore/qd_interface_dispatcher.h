@@ -256,12 +256,10 @@ public:
 		_end_game_mode = state;
 	}
 
-#ifndef _QUEST_EDITOR
 	//! Устанавливает следующий экран.
 	void set_next_screen(const char *screen_name) {
 		_next_screen = screen_name;
 	}
-#endif
 
 	static int option_value(int option_id, const char *option_data = NULL);
 	static bool set_option_value(int option_id, int value, const char *oprtion_data = NULL);
@@ -334,10 +332,8 @@ private:
 	//! После загрузки меню скидывается в false.
 	bool _end_game_mode;
 
-#ifndef _QUEST_EDITOR
 	//! Имя экрана, на который надо перейти.
 	const char *_next_screen;
-#endif
 
 	//! Текущий диспетчер интерфейса.
 	static qdInterfaceDispatcher *_dispatcher;
