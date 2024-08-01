@@ -62,7 +62,7 @@ public:
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "QD Engine (C) 2003-7 K-D LAB";
+		return "QD Engine (C) 2003-8 K-D LAB";
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {
@@ -73,4 +73,3 @@ public:
 
 
 REGISTER_PLUGIN_STATIC(QDENGINE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, QDEngineMetaEngineDetection);
-

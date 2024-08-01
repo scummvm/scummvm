@@ -1,3 +1,4 @@
 begin_section("QDEngine");
-	add_person("Name 1", "Handle 1", "");
+	add_person("Eugene Sandulenko", "sev", "");
+	add_person("Kunal Tiwari", "kunxl.gg", "");
 end_section();
