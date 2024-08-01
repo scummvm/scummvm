@@ -299,10 +299,8 @@ public:
 
 	bool merge_global_objects(qdGameObject *obj = NULL);
 	bool split_global_objects(qdGameObject *obj = NULL);
-#ifndef _QUEST_EDITOR
 	bool update_walk_state(const char *object_name, qdGameObjectState *p);
 	qdGameObjectState *get_walk_state(const char *object_name);
-#endif // _QUEST_EDITOR
 
 	// Управление видеовставками
 	bool play_video(const char *vid_name);
