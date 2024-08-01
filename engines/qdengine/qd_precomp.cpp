@@ -27,30 +27,9 @@
 namespace QDEngine {
 
 int dummy = 1;
-void *INVALID_HANDLE_VALUE = reinterpret_cast<void *>(-1);
-
-void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext) {
-	warning("STUB: _splitpath");
-	return;
-}
 
 int MessageBox(HWND hWnd, const char *lpText, const char *lpCaption, uint32 uType) {
 	warning("STUB: MessageBox");
-	return 0;
-}
-
-FARPROC GetProcAddress(HMODULE hModule, LPCSTR lpProcName) {
-	warning("STUB: GetProcAddress");
-	return 0;
-}
-
-bool FreeLibrary(void *hModule) {
-	warning("STUB: FreeLibrary");
-	return false;
-}
-
-HMODULE LoadLibrary(const char *lpLibFileName) {
-	warning("STUB: LoadLibrary");
 	return 0;
 }
 
@@ -74,80 +53,9 @@ bool UpdateWindow(HWND hWnd) {
 	return false;
 }
 
-bool SetErrorMode(uint32 uMode) {
-	warning("STUB: SetErrorMode");
-	return false;
-}
-
-int MultiByteToWideChar(uint32 CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr, int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar) {
-	warning("STUB: MultiByteToWideChar");
-	return 0;
-}
-
-int WideCharToMultiByte(uint32 CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr, int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCSTR lpDefaultChar, LPBOOL lpUsedDefaultChar) {
-	warning("STUB: WideCharToMultiByte");
-	return 0;
-}
-
 char *_fullpath(char *absPath, const char *relPath, size_t maxLength) {
 	warning("STUB: _fullpath");
 	return 0;
-}
-
-HANDLE CreateFile( LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode,void *lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile
-) {
-	warning("STUB: CreateFile()");
-	return 0;
-}
-
-bool ReadFile(HANDLE hFile, void *lpBuffer, DWORD nNumberOfBytesToRead, unsigned long *lpNumberOfBytesRead, void *lpOverlapped) {
-	warning("STUB: ReadFile()");
-	return false;
-}
-
-bool WriteFile(HANDLE hFile, const void *lpBuffer, DWORD nNumberOfBytesToWrite, unsigned long *lpNumberOfBytesWritten, void *lpOverlapped) {
-	warning("STUB: WriteFile()");
-	return false;
-}
-
-DWORD GetFileSize(HANDLE hFile, void *lpFileSizeHigh) {
-	warning("STUB: GetFileSize()");
-	return 0;
-}
-
-bool FlushFileBuffers(HANDLE hFile) {
-	warning("STUB: FlushFileBuffers()");
-	return false;
-}
-
-HRESULT CoInitialize(void *pvReserved) {
-	warning("STUB: CoInitialize()");
-	return 0;
-}
-
-void CoUninitialize() {
-	warning("STUB: CoUninitialize()");
-}
-
-HRESULT CoCreateInstance(REFCLSID rclsid, void *pUnkOuter, DWORD dwClsContext, REFIID riid, void **ppv) {
-	warning("STUB: CoCreateInstance()");
-	return 0;
-}
-
-DWORD WaitForSingleObject(HANDLE hHandle, DWORD dwMilliseconds) {
-	warning("STUB: WaitForSingleObject()");
-	return 0;
-}
-
-
-bool SetEvent(HANDLE hEvent) {
-	warning("STUB: SetEvent()");
-	return false;
-}
-
-bool SetThreadPriority(HANDLE hThread, int nPriority) {
-	warning("STUB: SetThreadPriority()");
-	return false;
 }
 
 } // namespace QDEngine

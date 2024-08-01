@@ -208,8 +208,6 @@ int engineMain() {
 		generateTagMap(20070503);
 	}
 
-	SetErrorMode(SEM_FAILCRITICALERRORS);
-
 //	qdFileManager::instance().check_drive('E');
 	qdFileManager::instance().set_request_CD_handler(request_CD_handler);
 #if 0
