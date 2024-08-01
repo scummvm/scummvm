@@ -41,7 +41,7 @@ public:
 		TAG_DATA_VOID,
 		//! данные типа short int
 		TAG_DATA_SHORT,
-		//! данные типа unsigned short int
+		//! данные типа uint16 int
 		TAG_DATA_UNSIGNED_SHORT,
 		//! данные типа int
 		TAG_DATA_INT,

@@ -375,7 +375,7 @@ void grDispatcher::RectangleAlpha(int x, int y, int sx, int sy, unsigned color, 
 
 	warning("STUB: grDispatcher::RectangleAlpha");
 	for (int i = 0; i < psy; i++) {
-		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
+		uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
 
 		for (int j = 0; j < psx; j++) {
 			*scr_buf = alpha_blend_565(mcl, *scr_buf, alpha);
@@ -814,7 +814,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 	switch (dest_fmt) {
 	case GR_ARGB1555:
 		if (src_fmt == GR_RGB565) {
-			unsigned short *p = reinterpret_cast<unsigned short *>(data);
+			uint16 *p = reinterpret_cast<uint16 *>(data);
 			for (int i = 0; i < sx * sy; i++) {
 				byte r, g, b;
 				split_rgb565u(*p, r, g, b);
@@ -823,7 +823,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 			}
 		} else if (src_fmt == GR_RGB888) {
 			byte *dp = data;
-			unsigned short *p = reinterpret_cast<unsigned short *>(data);
+			uint16 *p = reinterpret_cast<uint16 *>(data);
 			for (int i = 0; i < sx * sy; i++) {
 				*p++ = make_rgb555u(dp[2], dp[1], dp[0]);
 				dp += 3;
@@ -831,7 +831,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 			has_alpha = false;
 		} else if (src_fmt == GR_ARGB8888) {
 			byte *dp = data;
-			unsigned short *p = reinterpret_cast<unsigned short *>(data);
+			uint16 *p = reinterpret_cast<uint16 *>(data);
 			for (int i = 0; i < sx * sy; i++) {
 				*p++ = make_rgb555u(dp[2], dp[1], dp[0]);
 				*p++ >>= 8;
@@ -842,7 +842,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 		return true;
 	case GR_RGB565:
 		if (src_fmt == GR_ARGB1555) {
-			unsigned short *p = reinterpret_cast<unsigned short *>(data);
+			uint16 *p = reinterpret_cast<uint16 *>(data);
 			for (int i = 0; i < sx * sy; i++) {
 				byte r, g, b;
 				split_rgb555u(*p, r, g, b);
@@ -852,7 +852,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 			}
 		} else if (src_fmt == GR_RGB888) {
 			byte *dp = data;
-			unsigned short *p = reinterpret_cast<unsigned short *>(data);
+			uint16 *p = reinterpret_cast<uint16 *>(data);
 			for (int i = 0; i < sx * sy; i++) {
 				*p++ = make_rgb565u(dp[2], dp[1], dp[0]);
 				dp += 3;
@@ -860,7 +860,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 			has_alpha = false;
 		} else if (src_fmt == GR_ARGB8888) {
 			byte *dp = data;
-			unsigned short *p = reinterpret_cast<unsigned short *>(data);
+			uint16 *p = reinterpret_cast<uint16 *>(data);
 			for (int i = 0; i < sx * sy; i++) {
 				*p++ = make_rgb565u(dp[2], dp[1], dp[0]);
 				*p++ >>= 8;
@@ -871,7 +871,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 		return true;
 	case GR_RGB888:
 		if (src_fmt == GR_ARGB1555 || src_fmt == GR_RGB565) {
-			unsigned short *p = reinterpret_cast<unsigned short *>(data) + sx * sy - 1;
+			uint16 *p = reinterpret_cast<uint16 *>(data) + sx * sy - 1;
 			byte *dp = data + sx * sy * 3 - 1;
 
 			for (int i = 0; i < sx * sy; i++) {
@@ -891,13 +891,13 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 		break;
 	case GR_ARGB8888:
 		if (src_fmt == GR_ARGB1555 || src_fmt == GR_RGB565) {
-			unsigned short *p = reinterpret_cast<unsigned short *>(data);
+			uint16 *p = reinterpret_cast<uint16 *>(data);
 			for (int i = 0; i < sx * sy; i++) {
 				p++;
 				*p++ <<= 8;
 			}
 
-			p = reinterpret_cast<unsigned short *>(data);
+			p = reinterpret_cast<uint16 *>(data);
 			byte *dp = data;
 			for (int i = 0; i < sx * sy; i++) {
 				byte r, g, b;

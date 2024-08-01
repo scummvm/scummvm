@@ -45,7 +45,7 @@ public:
 	tag_buffer &operator = (const tag_buffer &tb);
 
 	tag_buffer &operator >= (short &var);
-	tag_buffer &operator >= (unsigned short &var);
+	tag_buffer &operator >= (uint16 &var);
 	tag_buffer &operator >= (int &var);
 	tag_buffer &operator >= (unsigned int &var);
 	tag_buffer &operator >= (float &var);
@@ -57,7 +57,7 @@ public:
 
 		return *this;
 	}
-	tag_buffer &operator > (unsigned short &var) {
+	tag_buffer &operator > (uint16 &var) {
 		XML_ASSERT(data_format_ == tag::TAG_DATA_VOID || data_format_ == tag::TAG_DATA_UNSIGNED_SHORT);
 		var = READ_LE_UINT16(_data + _data_offset);
 		_data_offset += sizeof(uint16);
@@ -92,9 +92,9 @@ public:
 		*this > v;
 		return v;
 	}
-	unsigned short get_ushort() {
+	uint16 get_ushort() {
 		XML_ASSERT(data_format_ == tag::TAG_DATA_VOID || data_format_ == tag::TAG_DATA_UNSIGNED_SHORT);
-		unsigned short v;
+		uint16 v;
 		*this > v;
 		return v;
 	}

@@ -324,7 +324,7 @@ void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 			dy = 1;
 
 		for (int i = 0; i < psy; i++) {
-			unsigned short *scr_buf = reinterpret_cast<unsigned short *>(screenBuf + yTable[y] + x * 2);
+			uint16 *scr_buf = reinterpret_cast<uint16 *>(screenBuf + yTable[y] + x * 2);
 			zbuf_t *z_buf = zbuffer_ + y * SizeX + x;
 
 			const char *rle_header = p->header_ptr(py + i);
@@ -361,7 +361,7 @@ void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 					if (count > 0) {
 						while (count && j < psx) {
 							if (*rle_data) {
-								*scr_buf = reinterpret_cast<const unsigned short *>(rle_data)[0];
+								*scr_buf = reinterpret_cast<const uint16 *>(rle_data)[0];
 								*z_buf = z;
 							}
 							scr_buf += dx;
@@ -375,7 +375,7 @@ void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 							count = -count;
 							while (count && j < psx) {
 								if (*rle_data) {
-									*scr_buf = reinterpret_cast<const unsigned short *>(rle_data)[0];
+									*scr_buf = reinterpret_cast<const uint16 *>(rle_data)[0];
 									*z_buf = z;
 								}
 								scr_buf += dx;
@@ -396,10 +396,10 @@ void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 				while (j < psx) {
 					if (count > 0) {
 						while (count && j < psx) {
-							unsigned a = reinterpret_cast<const unsigned short *>(rle_data)[1];
+							unsigned a = reinterpret_cast<const uint16 *>(rle_data)[1];
 							if (a != 255) {
 								unsigned sc = *scr_buf;
-								*scr_buf = reinterpret_cast<const unsigned short *>(rle_data)[0] +
+								*scr_buf = reinterpret_cast<const uint16 *>(rle_data)[0] +
 								           (((((sc & mask_r) * a) >> 8) & mask_r) |
 								            ((((sc & mask_g) * a) >> 8) & mask_g) |
 								            ((((sc & mask_b) * a) >> 8) & mask_b));
@@ -415,10 +415,10 @@ void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 						if (count < 0) {
 							count = -count;
 							while (count && j < psx) {
-								unsigned a = reinterpret_cast<const unsigned short *>(rle_data)[1];
+								unsigned a = reinterpret_cast<const uint16 *>(rle_data)[1];
 								if (a != 255) {
 									unsigned sc = *scr_buf;
-									*scr_buf = reinterpret_cast<const unsigned short *>(rle_data)[0] +
+									*scr_buf = reinterpret_cast<const uint16 *>(rle_data)[0] +
 									           (((((sc & mask_r) * a) >> 8) & mask_r) |
 									            ((((sc & mask_g) * a) >> 8) & mask_g) |
 									            ((((sc & mask_b) * a) >> 8) & mask_b));
@@ -474,7 +474,7 @@ void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 
 	if (bytes_per_pixel() == 2) {
 		if (!alpha_flag) {
-			const unsigned short *line_src = reinterpret_cast<const unsigned short *>(rleBuffer::get_buffer(0));
+			const uint16 *line_src = reinterpret_cast<const uint16 *>(rleBuffer::get_buffer(0));
 
 			for (int i = y0; i != y1; i += iy) {
 				p->decode_line(fy >> 16);
@@ -494,7 +494,7 @@ void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 				}
 			}
 		} else {
-			const unsigned short *line_src = reinterpret_cast<const unsigned short *>(rleBuffer::get_buffer(0));
+			const uint16 *line_src = reinterpret_cast<const uint16 *>(rleBuffer::get_buffer(0));
 
 			const unsigned mask_r = (pixel_format_ == GR_RGB565) ? mask_565_r : mask_555_r;
 			const unsigned mask_g = (pixel_format_ == GR_RGB565) ? mask_565_g : mask_555_g;

@@ -124,7 +124,7 @@ void grDispatcher::PutTileSpr(int x, int y, const grTileSprite &sprite, bool has
 	const byte *data_ptr = (const unsigned char *)(sprite.data() + px + py * GR_TILE_SPRITE_SIZE_X);
 
 	for (int i = 0; i < psy; i++) {
-		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
+		uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
 		const byte *data_line = data_ptr;
 
 		for (int j = 0; j < psx; j++) {

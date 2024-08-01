@@ -50,7 +50,7 @@ public:
 	sGridCell() {
 		attributes_ = CELL_IMPASSABLE;
 	}
-	sGridCell(unsigned short atr, short h) {
+	sGridCell(uint16 atr, short h) {
 		attributes_ = atr;
 	}
 	~sGridCell() { }
