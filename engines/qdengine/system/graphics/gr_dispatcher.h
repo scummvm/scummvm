@@ -550,8 +550,8 @@ private:
 	typedef std::vector<char> changes_mask_t;
 
 	enum {
-		changes_mask_tile_ = 16,
-		changes_mask_tile_shift_ = 4
+		kChangesMaskTile = 16,
+		kChangesMaskTileShift = 4
 	};
 
 	int _changes_mask_size_x;

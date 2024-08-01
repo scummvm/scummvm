@@ -140,10 +140,10 @@ bool grDispatcher::init(int sx, int sy, grPixelFormat pixel_format) {
 	_sizeX = sx;
 	_sizeY = sy;
 
-	_changes_mask_size_x = _sizeX >> changes_mask_tile_shift_;
-	if (_sizeX % changes_mask_tile_) _changes_mask_size_x++;
-	_changes_mask_size_y = _sizeY >> changes_mask_tile_shift_;
-	if (_sizeY % changes_mask_tile_) _changes_mask_size_y++;
+	_changes_mask_size_x = _sizeX >> kChangesMaskTileShift;
+	if (_sizeX % kChangesMaskTile) _changes_mask_size_x++;
+	_changes_mask_size_y = _sizeY >> kChangesMaskTileShift;
+	if (_sizeY % kChangesMaskTile) _changes_mask_size_y++;
 
 	_changes_mask.resize(_changes_mask_size_x * _changes_mask_size_y);
 
@@ -689,11 +689,11 @@ void grDispatcher::build_changed_regions() {
 				}
 			}
 
-			x <<= changes_mask_tile_shift_;
-			y <<= changes_mask_tile_shift_;
+			x <<= kChangesMaskTileShift;
+			y <<= kChangesMaskTileShift;
 
-			sx <<= changes_mask_tile_shift_;
-			sy <<= changes_mask_tile_shift_;
+			sx <<= kChangesMaskTileShift;
+			sy <<= kChangesMaskTileShift;
 
 			_changed_regions.push_back(grScreenRegion(x + sx / 2, y + sy / 2, sx, sy));
 
@@ -710,11 +710,11 @@ bool grDispatcher::invalidate_region(const grScreenRegion &reg) {
 	int sy = reg.size_y();
 
 	if (clip_rectangle(x, y, sx, sy)) {
-		sx = ((x + sx) >> changes_mask_tile_shift_) - (x >> changes_mask_tile_shift_) + 1;
-		sy = ((y + sy) >> changes_mask_tile_shift_) - (y >> changes_mask_tile_shift_) + 1;
+		sx = ((x + sx) >> kChangesMaskTileShift) - (x >> kChangesMaskTileShift) + 1;
+		sy = ((y + sy) >> kChangesMaskTileShift) - (y >> kChangesMaskTileShift) + 1;
 
-		x >>= changes_mask_tile_shift_;
-		y >>= changes_mask_tile_shift_;
+		x >>= kChangesMaskTileShift;
+		y >>= kChangesMaskTileShift;
 
 		if (x + sx > _changes_mask_size_x) sx = _changes_mask_size_x - x;
 		if (y + sy > _changes_mask_size_y) sy = _changes_mask_size_y - y;
