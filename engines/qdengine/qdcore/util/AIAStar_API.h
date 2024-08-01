@@ -39,24 +39,24 @@ public:
 	int GetH(int x, int y);
 	int GetG(int x1, int y1, int x2, int y2);
 	bool IsEndPoint(int x, int y) {
-		return (x == target_.x && y == target_.y);
+		return (x == _target.x && y == _target.y);
 	}
 
 	void init(const Vect3f trg);
 	void set_camera(const qdCamera *cam) {
-		camera_ptr_ = cam;
+		_camera_ptr = cam;
 	}
 	void set_object(const qdGameObjectMoving *obj) {
-		object_ptr_ = obj;
+		_object_ptr = obj;
 	}
 
 private:
 
-	Vect2i target_;
-	Vect3f target_f_;
+	Vect2i _target;
+	Vect3f _target_f;
 
-	const qdCamera *camera_ptr_;
-	const qdGameObjectMoving *object_ptr_;
+	const qdCamera *_camera_ptr;
+	const qdGameObjectMoving *_object_ptr;
 };
 
 typedef AIAStar<qdHeuristic, int> qdAStar;
