@@ -183,6 +183,12 @@ void Room::setGlobals1(int val1, int val2, int val3, int val4, int val5,
 	_G(globals)[V028] = val21 << 16;
 }
 
+void Room::setGlobals3(int series, int val1, int val2) {
+	_G(globals)[GLB_TEMP_1] = series << 24;
+	_G(globals)[GLB_TEMP_2] = val1 << 16;
+	_G(globals)[GLB_TEMP_3] = val2 << 16;
+}
+
 void Room::setGlobals4(int val1, int val2, int val3, int val4) {
 	_G(globals)[GLB_TEMP_1] = val1;
 	_G(globals)[GLB_TEMP_2] = val2;
@@ -239,15 +245,15 @@ machine *Room::triggerMachineByHash_3000(int val1, int val2, const int16 * norma
 #endif
 }
 
-void Room::sendWSMessage_60000(machine *walker) {
-	sendWSMessage(0x60000, 0, walker, 0, nullptr, 1);
+void Room::sendWSMessage_60000(machine *mach) {
+	sendWSMessage(0x60000, 0, mach, 0, nullptr, 1);
 }
 
-void Room::sendWSMessage_80000(machine *walker) {
-	sendWSMessage(0x80000, 0, walker, 0, nullptr, 1);
+void Room::sendWSMessage_80000(machine *mach) {
+	sendWSMessage(0x80000, 0, mach, 0, nullptr, 1);
 }
 
-void Room::sendWSMessage_B0000(machine *walker, int trigger) {
+void Room::sendWSMessage_B0000(machine *mach, int trigger) {
 
 }
 
@@ -255,73 +261,81 @@ void Room::sendWSMessage_B0000(int trigger) {
 	sendWSMessage_B0000(_G(my_walker), trigger);
 }
 
-void Room::sendWSMessage_C0000(machine *walker, int trigger) {
+void Room::sendWSMessage_C0000(machine *mach, int trigger) {
 	if (!trigger)
 		trigger = -1;
 
 	_G(globals)[GLB_TEMP_5] = kernel_trigger_create(trigger);
-	sendWSMessage(0xC0000, 0, walker, 0, nullptr, 1);
+	sendWSMessage(0xC0000, 0, mach, 0, nullptr, 1);
 }
 
 void Room::sendWSMessage_C0000(int trigger) {
 	sendWSMessage_C0000(_G(my_walker), trigger);
 }
 
-void Room::sendWSMessage_D0000(machine *walker) {
-	sendWSMessage(0xd0000, 0, walker, 0, nullptr, 1);
+void Room::sendWSMessage_D0000(machine *mach) {
+	sendWSMessage(0xd0000, 0, mach, 0, nullptr, 1);
 }
 
 void Room::sendWSMessage_D0000() {
 	sendWSMessage_D0000(_G(my_walker));
 }
 
-void Room::sendWSMessage_E0000(machine *walker) {
-	sendWSMessage(0xe0000, 0, walker, 0, nullptr, 1);
+void Room::sendWSMessage_E0000(machine *mach) {
+	sendWSMessage(0xe0000, 0, mach, 0, nullptr, 1);
 }
 
 void Room::sendWSMessage_E0000() {
 	sendWSMessage_E0000(_G(my_walker));
 }
 
-void Room::sendWSMessage_110000(machine *walker, int trigger) {
+void Room::sendWSMessage_F0000(machine *mach, int trigger) {
+	if (!trigger)
+		trigger = -1;
+
+	_G(globals)[GLB_TEMP_4] = kernel_trigger_create(trigger);
+	sendWSMessage(0xf0000, 0, mach, 0, nullptr, 1);
+}
+
+void Room::sendWSMessage_110000(machine *mach, int trigger) {
 	if (!trigger)
 		trigger = -1;
 
 	_G(globals)[V023] = kernel_trigger_create(trigger);
-	sendWSMessage(0x110000, 0, walker, 0, nullptr, 1);
+	sendWSMessage(0x110000, 0, mach, 0, nullptr, 1);
 }
 
 void Room::sendWSMessage_110000(int trigger) {
 	sendWSMessage_110000(_G(my_walker), trigger);
 }
 
-void Room::sendWSMessage_120000(machine *walker, int trigger) {
+void Room::sendWSMessage_120000(machine *mach, int trigger) {
 	if (!trigger)
 		trigger = -1;
 
 	_G(globals)[V023] = kernel_trigger_create(trigger);
-	sendWSMessage(0x120000, 0, walker, 0, nullptr, 1);
+	sendWSMessage(0x120000, 0, mach, 0, nullptr, 1);
 }
 
 void Room::sendWSMessage_120000(int trigger) {
 	sendWSMessage_120000(_G(my_walker), trigger);
 }
 
-void Room::sendWSMessage_140000(machine *walker, int trigger) {
+void Room::sendWSMessage_140000(machine *mach, int trigger) {
 	if (!trigger)
 		trigger = -1;
 
 	_G(globals)[V023] = kernel_trigger_create(trigger);
-	sendWSMessage(0x140000, 0, walker, 0, nullptr, 1);
+	sendWSMessage(0x140000, 0, mach, 0, nullptr, 1);
 }
 
 void Room::sendWSMessage_140000(int trigger) {
 	sendWSMessage_140000(_G(my_walker), trigger);
 }
 
-void Room::sendWSMessage_150000(machine *walker, int trigger) {
+void Room::sendWSMessage_150000(machine *mach, int trigger) {
 	_G(globals)[V023] = kernel_trigger_create(trigger);
-	sendWSMessage(0x150000, 0, walker, 0, nullptr, 1);
+	sendWSMessage(0x150000, 0, mach, 0, nullptr, 1);
 }
 
 void Room::sendWSMessage_150000(int trigger) {

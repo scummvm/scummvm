@@ -64,7 +64,6 @@ private:
 
 	int32 play(const Common::String &name, uint channel, int32 vol, int32 trigger,
 		int32 room_num, bool loop);
-	Common::String expand_name_2_RAW(const Common::String &name, int32 room_num);
 
 public:
 	Digi(Audio::Mixer *mixer) : _mixer(mixer) {}

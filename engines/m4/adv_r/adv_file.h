@@ -54,6 +54,7 @@ bool kernel_load_code_variant(SceneDef *rdef, char *variant, GrBuff **codeData);
 void kernel_current_background_name(char *result);
 void kernel_current_codes_name(char *result);
 void screen_capture(RGB8 *masterPalette);
+Common::String expand_name_2_RAW(const Common::String &name, int32 room_num);
 
 } // End of namespace M4
 

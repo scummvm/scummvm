@@ -32,7 +32,7 @@ class Room303 : public Room {
 private:
 	int _val1 = 0;
 	bool _lonelyFlag = 0;
-	int _val3 = 0;
+	const char *_digiName1 = nullptr;
 	int _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;
@@ -47,6 +47,7 @@ private:
 	int _val15 = 0;
 	int _val16 = 0;
 	int _val17 = 0;
+	int _val18 = 0;
 	KernelTriggerType _triggerMode1 = KT_DAEMON;
 	KernelTriggerType _triggerMode2 = KT_DAEMON;
 	machine *_door = nullptr;
@@ -75,6 +76,10 @@ private:
 	int _meiLips = 0;
 	int _ripGesture = 0;
 	machine *_priestTalk = nullptr;
+	int _suitTalk1 = 0;
+
+	int _ctr1 = 0;
+	bool _btnFlag = false;
 
 	static void escapePressed(void *, void *);
 
@@ -89,6 +94,8 @@ private:
 	void conv303b();
 	static void priestTalkCallback(frac16 myMessage, machine *sender);
 	void priestTalk(bool flag, int trigger);
+	int getSize(const Common::String &assetName, int roomNum = -1);
+	void playSound(const Common::String &assetName, int trigger, int val1);
 
 public:
 	Room303() : Room() {}

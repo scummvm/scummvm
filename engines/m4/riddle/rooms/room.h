@@ -58,6 +58,7 @@ protected:
 		int val11 = 0, int val12 = 0, int val13 = 0, int val14 = 0, int val15 = 0,
 		int val16 = 0, int val17 = 0, int val18 = 0, int val19 = 0, int val20 = 0,
 		int val21 = 0);
+	void setGlobals3(int series, int val1, int val2);
 	void setGlobals4(int val1, int val2, int val3, int val4);
 
 	void sendWSMessage_10000(int val1, machine *recv, int val2, int val3,
@@ -68,23 +69,24 @@ protected:
 	machine *triggerMachineByHash_3000(int val1, int val2, const int16 *normalDirs,
 		const int16 *shadowDirs, int val3, int val4, int val5,
 		MessageCB intrMsg, const char *machName);
-	void sendWSMessage_60000(machine *walker);
-	void sendWSMessage_80000(machine *walker);
-	void sendWSMessage_B0000(machine *walker, int trigger);
+	void sendWSMessage_60000(machine *mach);
+	void sendWSMessage_80000(machine *mach);
+	void sendWSMessage_B0000(machine *mach, int trigger);
 	void sendWSMessage_B0000(int trigger);
-	void sendWSMessage_C0000(machine *walker, int trigger);
+	void sendWSMessage_C0000(machine *mach, int trigger);
 	void sendWSMessage_C0000(int trigger);
-	void sendWSMessage_D0000(machine *walker);
+	void sendWSMessage_D0000(machine *mach);
 	void sendWSMessage_D0000();
-	void sendWSMessage_E0000(machine *walker);
+	void sendWSMessage_E0000(machine *mach);
 	void sendWSMessage_E0000();
-	void sendWSMessage_110000(machine *walker, int trigger);
+	void sendWSMessage_F0000(machine *mach, int trigger);
+	void sendWSMessage_110000(machine *mach, int trigger);
 	void sendWSMessage_120000(int trigger);
-	void sendWSMessage_120000(machine *walker, int trigger);
+	void sendWSMessage_120000(machine *mach, int trigger);
 	void sendWSMessage_110000(int trigger);
-	void sendWSMessage_140000(machine *walker, int trigger);
+	void sendWSMessage_140000(machine *mach, int trigger);
 	void sendWSMessage_140000(int trigger);
-	void sendWSMessage_150000(machine *walker, int trigger);
+	void sendWSMessage_150000(machine *mach, int trigger);
 	void sendWSMessage_150000(int trigger);
 	void sendWSMessage_190000(machine *recv, int trigger);
 	void sendWSMessage_1a0000(machine *recv, int trigger);

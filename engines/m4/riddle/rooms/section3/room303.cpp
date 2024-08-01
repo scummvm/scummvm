@@ -23,6 +23,8 @@
 #include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
 #include "m4/adv_r/adv_file.h"
+#include "m4/fileio/extensions.h"
+#include "m4/fileio/info.h"
 #include "m4/gui/gui_vmng.h"
 #include "m4/gui/gui_sys.h"
 #include "m4/platform/keys.h"
@@ -94,7 +96,7 @@ void Room303::init() {
 	_val1 = _lonelyFlag = 0;
 
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
-		_val3 = 0;
+		_digiName1 = nullptr;
 		_val4 = -1;
 		_triggerMode1 = _triggerMode2 = KT_DAEMON;
 		_val5 = 0;
@@ -346,9 +348,548 @@ void Room303::daemon() {
 		ws_walk(128, 267, nullptr, 75, 3);
 		break;
 
-	// TODO
+	case 7:
+		priestTalk(true, -1);
+		setShadow5(true);
+		break;
+
+	case 8:
+		ws_walk(145, 289, nullptr, -1, 2);
+		kernel_timing_trigger(200, 38);
+		break;
+
+	case 9:
+		ws_demand_location(1350, 276, 9);
+		ws_walk(1208, 276, nullptr, 75, 9);
+		break;
+
+	case 10:
+		ws_demand_location(425, 227, 7);
+		ws_walk(399, 260, nullptr, 50, 7);
+		break;
+
+	case 18:
+		digi_play("303r02", 1);
+		series_stream_break_on_frame(_machine2, 20, 19);
+		break;
+
+	case 19:
+		digi_play("303m02", 1);
+		series_stream_break_on_frame(_machine2, 55, 20);
+		break;
+
+	case 20:
+		digi_play("303f01", 1);
+		series_stream_break_on_frame(_machine2, 77, 24);
+		break;
+
+	case 21:
+		series_plain_play("303 final frame", -1, 0, 100,
+			0x100, 3000);
+		disable_player_commands_and_fade_init(22);
+		break;
+
+	case 22:
+		digi_stop(1);
+		digi_stop(3);
+		adv_kill_digi_between_rooms(false);
+		_G(game).setRoom(354);
+		break;
+
+	case 24:
+		break;
+
+	case 38:
+		sendWSMessage_10000(_machine1, 146, 270, 9, 39, 0);
+		break;
+
+	case 39:
+		sendWSMessage_10000(_machine1, 480, 256, 7, 40, 1);
+		break;
+
+	case 40:
+		sendWSMessage_60000(_machine1);
+		_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
+			triggerMachineByHashCallbackNegative, "fl");
+		sendWSMessage_10000(1, _machine1, _clasped1, 1, 16, 400,
+			_clasped4, 1, 6, 0);
+		_val14 = _val15 = 1;
+		setShadow5(true);
+		player_set_commands_allowed(true);
+		break;
+
+	case 50:
+		terminateMachineAndNull(_door);
+		digi_preload("950_s44");
+		series_plain_play("DOOR", 1, 2, 100, 0xf05, 10, 51);
+		break;
+
+	case 51:
+		digi_play("950_s44", 2, 200, 52);
+		_door = series_show_sprite("DOOR", 0, 0xf05);
+		player_set_commands_allowed(true);
+		break;
+
+	case 52:
+		digi_unload("950_s44");
+		break;
+
+	case 60:
+		sendWSMessage_150000(61);
+		break;
+
+	case 70:
+		kernel_timing_trigger(imath_ranged_rand(300, 600), 71);
+		break;
+
+	case 71:
+		series_plain_play("CREATURE FEATURE LONG VIEW", 1, 0,
+			100, 0xf05, 7, 70);
+		break;
+
+	case 75:
+		player_set_commands_allowed(true);
+		break;
+
+	case 100:
+		digi_play("950_s01", 3);
+		kernel_timing_trigger(1020, 100);
+		break;
+
+	case 103:
+		sendWSMessage_10000(_machine1, 414, 228, 9, 104, 0);
+		break;
+
+	case 104:
+		sendWSMessage_10000(_machine1, 399, 256, 7, 105, 0);
+		break;
+
+	case 105:
+		terminateMachineAndNull(_door);
+		digi_preload("950_s44");
+		series_plain_play("DOOR", 1, 2, 100, 0xf05, 8, 156);
+		sendWSMessage_10000(_machine1, 480, 256, 7, 106, 1);
+		break;
+
+	case 106:
+		sendWSMessage_60000(_machine1);
+		priestTalk(true, -1);
+		setShadow5(true);
+		break;
+
+	case 107:
+		ws_walk(700, 305, 0, -1, 3);
+		sendWSMessage_10000(_hands4, 393, 260, 9, 109, 0);
+		break;
+
+	case 109:
+		sendWSMessage_10000(_hands4, 393, 260, 5, 110, 1);
+		break;
+
+	case 110:
+		setGlobals3(_gestTalk4, 1, 21);
+		sendWSMessage_F0000(_hands4, 157);
+		digi_play("303m03", 1, 255, 143);
+		break;
+
+	case 111:
+		_chinTalk4 = series_load("suit hands out to side pos1");
+		_suitTalk1 = series_load("suit talk pos1");
+		setGlobals1(_chinTalk4, 1, 8, 8, 8);
+		sendWSMessage_110000(154);
+		digi_play("303r03", 1, 255, 116);
+		break;
+
+	case 116:
+		_gestTalk4 = series_load("mc ny hand out talk pos4");
+		sendWSMessage_10000(_hands4, 357, 255, 4, 117, 1);
+		kernel_timing_trigger(60, 103);
+		series_unload(_suitTalk1);
+		series_unload(_chinTalk4);
+		ws_walk(700, 305, nullptr, -1, 3);
+		break;
+
+	case 117:
+		setGlobals1(_gestTalk4, 1, 9, 9, 9);
+		sendWSMessage_110000(_hands4, 120);
+		kernel_timing_trigger(70, 118);
+		digi_play("303m04", 1, 255);
+		break;
+
+	case 118:
+		ws_walk(444, 295, nullptr, 119, 10);
+		break;
+
+	case 119:
+		_chinTalk4 = series_load("rip suit rt hand gest talk pos2");
+		setGlobals1(_chinTalk4, 1, 8, 8, 8);
+
+		_ctr1 = 0;
+		sendWSMessage_110000(121);
+		digi_play("303r04", 1, 255, 121);
+		break;
+
+	case 120:
+		sendWSMessage_140000(_hands4, 159);
+		break;
+
+	case 121:
+		if (++_ctr1 == 2)
+			sendWSMessage_140000(122);
+		break;
+
+	case 122:
+		series_unload(_chinTalk4);
+		player_update_info();
+		ws_walk(_G(player_info).x + 1, _G(player_info).y - 1,
+			nullptr, 123, 1);
+		break;
+
+	case 123:
+		_chinTalk4 = series_load("suit talk pos1");
+		digi_play(_G(flags)[V084] == 2 ? "303r05" : "303r06",
+			1, 255, 138);
+		setGlobals1(_chinTalk4, 1, 5, 5, 5);
+		sendWSMessage_110000(144);
+		kernel_timing_trigger(200, 124);
+		break;
+
+	case 124:
+		_G(globals)[GLB_TEMP_1] = 0;
+		_G(globals)[GLB_TEMP_2] = 0xFFFF0000;
+		sendWSMessage(0x200000, 0, _priestTalk, 0, nullptr, 1);
+		break;
+
+	case 125:
+		_chinTalk4 = series_load("rip suit lft hand gest talk");
+		setGlobals4(_chinTalk4, 6, 6, 13);
+		sendWSMessage_C0000(126);
+		break;
+
+	case 126:
+		digi_play("303r07", 1, 255, 150);
+		sendWSMessage_D0000();
+		break;
+
+	case 127:
+		ws_walk(_G(player_info).x + 50, _G(player_info).y + 10,
+			nullptr, -1, 10);
+		break;
+
+	case 129:
+		series_unload(_chinTalk4);
+		_chinTalk4 = series_load("rip suit rt hand gest talk pos2");
+		setGlobals1(_chinTalk4, 1, 5, 5, 5);
+		digi_play("303r08", 1, 255, 131);
+		break;
+
+	case 130:
+		sendWSMessage_140000(158);
+		break;
+
+	case 131:
+		_val12 = KT_DAEMON;
+		playSound("303f03", -1, 132);
+		break;
+
+	case 132:
+		ws_walk(565, 306, nullptr, 170, 10);
+		kernel_timing_trigger(1, 133);
+		break;
+
+	case 133:
+		playSound("303f04", 134, -1);
+		break;
+
+	case 134:
+		if (_val1)
+			kernel_timing_trigger(1, 172);
+		else
+			kernel_timing_trigger(60, 134);
+		break;
+
+	case 136:
+		sendWSMessage_140000(137);
+		break;
+
+	case 137:
+		sendWSMessage_60000(_hands4);
+		loadHands();
+		setShadow4(true);
+		_val11 = 7;
+		kernel_timing_trigger(1, 160);
+		break;
+
+	case 138:
+		series_unload(_chinTalk4);
+		ws_walk(500, 300, nullptr, 125, 3);
+		break;
+
+	case 143:
+		player_update_info();
+		sendWSMessage_10000(_G(my_walker),
+			_G(player_info).x - 1, _G(player_info).y - 1,
+			10, 198, 0);
+		break;
+
+	case 144:
+	case 154:
+		sendWSMessage_140000(-1);
+		break;
+
+	case 147:
+		sendWSMessage_120000(148);
+		break;
+
+	case 148:
+		sendWSMessage_110000(-1);
+		break;
+
+	case 150:
+		sendWSMessage_B0000(127);
+		playSound("303f02", -1, 129);
+		break;
+
+	case 156:
+		digi_play("950_s44", 1, 200, 52);
+		_door = series_show_sprite("DOOR", 0, 0xf05);
+		break;
+
+	case 157:
+	case 159:
+		series_unload(_gestTalk4);
+		break;
+
+	case 158:
+		series_unload(_chinTalk4);
+		break;
+
+	case 160:
+		series_unload(_chinTalk4);
+		series_unload(220);
+		series_unload(221);
+		series_unload(222);
+		series_plain_play("303cow1", -1, 0, 100, 0, 9);
+
+		_G(player).disable_hyperwalk = false;
+		_G(camera_reacts_to_player) = true;
+		_val12 = KT_PARSE;
+		_G(flags)[V001] = 0;
+
+		terminateMachineAndNull(_priestTalk);
+		_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, true,
+			triggerMachineByHashCallbackNegative, "fl");
+		sendWSMessage_10000(1, _machine1, _clasped4, 1, 1, 400,
+			_clasped4, 1, 6, 0);
+		_val14 = _val15 = 1;
+
+		player_set_commands_allowed(true);
+		break;
+
+	case 170:
+		_val1 = 1;
+		break;
+
+	case 172:
+		_chinTalk4 = series_load("RIP HNDS HIPS GEST TALK");
+		setGlobals1(_chinTalk4, 1, 15, 15, 15, 0, 16, 25, 25, 25);
+		sendWSMessage_110000(-1);
+		kernel_timing_trigger(200, 147);
+		digi_play("303r09", 1, 255, 136);
+		break;
+
+	case 198:
+		ws_walk(444, 295, nullptr, 111, 11);
+		break;
+
+	case 200:
+		if (_val10 == 0 && _val11 == 0 && _val4 != -1) {
+			kernel_trigger_dispatchx(_val4);
+			_val4 = -1;
+
+			if (_val5) {
+				ws_unhide_walker();
+				_val5 = 0;
+			}
+		}
+
+		kernel_trigger_dispatchx(kernel_trigger_create(201));
+		break;
+
+	case 201:
+		// TODO: Complete trigger 201
+		switch (_val10) {
+		case 0:
+			switch (_val11) {
+			case 0:
+				if (_val7) {
+					series_unload(_meiLips);
+					_val7 = 0;
+				}
+
+				if (_digiName1) {
+					digi_play(_digiName1, 1, 255, _val18);
+					_digiName1 = nullptr;
+					_triggerMode2 = KT_DAEMON;
+					_G(kernel).trigger_mode = KT_DAEMON;
+				}
+
+			}
+		}
+		break;
+
+	case 300:
+		if (_val17 == 0 && _val16 == 0 && _val4 != -1) {
+			kernel_trigger_dispatchx(_val4);
+			_val4 = -1;
+
+			if (_val5) {
+				ws_unhide_walker();
+				_val5 = 0;
+			}
+		}
+
+		kernel_trigger_dispatchx(kernel_trigger_create(301));
+		break;
+
+	case 301:
+		switch (_val17) {
+		case 0:
+			switch (_val16) {
+			case 0:
+				if (_digiName1) {
+					digi_play(_digiName1, 1, 255, _val18);
+					_digiName1 = nullptr;
+					_triggerMode2 = KT_DAEMON;
+					_G(kernel).trigger_mode = KT_DAEMON;
+				}
+
+				sendWSMessage_10000(1, _machine3, 1, 1, 1, 300, 1, 1, 1, 0);
+				break;
+
+			case 1:
+				sendWSMessage_10000(1, _machine3, _suit2, 1, 10, 300, _suit2, 10, 10, 0);
+				_val17 = 1;
+				break;
+
+			case 2:
+				sendWSMessage_10000(1, _machine3, _suit1, 1, 17, 300,
+					_suit1, 17, 17, 0);
+				_val17 = 2;
+				break;
+
+			case 3:
+			case 4:
+				sendWSMessage_10000(1, _machine3, _ripGesture, 1, 14, 300,
+					_ripGesture, 1, 14, 0);
+				break;
+
+			case 5:
+				terminateMachineAndNull(_machine3);
+				terminateMachineAndNull(_ripsh2);
+				ws_unhide_walker();
+				series_unload(_suit1);
+				series_unload(_suit2);
+				series_unload(_ripGesture);
+				player_set_commands_allowed(true);
+				return;
+
+			default:
+				break;
+			}
+			break;
+
+		case 1:
+			if (_val16 == 1) {
+				sendWSMessage_10000(1, _machine3, _suit2, 10, 10, 300,
+					_suit2, 10, 10, 0);
+			} else {
+				sendWSMessage_10000(1, _machine3, _suit2, 11, 18, 300, 1, 1, 1, 0);
+				_val17 = 0;
+			}
+			break;
+
+		case 2:
+			if (_val16 == 2) {
+				sendWSMessage_10000(1, _machine3, _suit1, 17, 17, 300,
+					_suit1, 17, 17, 0);
+			} else {
+				sendWSMessage_10000(1, _machine3, _suit1, 17, 1, 300, 1, 1, 1, 0);
+				_val17 = 0;
+			}
+			break;
+
+		case 3:
+			switch (_val16) {
+			case 3:
+				sendWSMessage_10000(1, _machine3, _ripGesture, 14, 14, 300,
+					_ripGesture, 14, 14, 0);
+				break;
+			case 4:
+				sendWSMessage_10000(1, _machine3, _ripGesture, 15, 25, 300,
+					_ripGesture, 25, 25, 0);
+				break;
+			default:
+				sendWSMessage_10000(1, _machine3, _ripGesture, 14,
+					1, 300, 1, 1, 1, 0);
+				_val17 = 0;
+				break;
+			}
+			break;
+
+		case 4:
+			if (_val16 == 4) {
+				sendWSMessage_10000(1, _machine3, _ripGesture, 25, 25, 300,
+					_ripGesture, 25, 25, 0);
+			} else {
+				sendWSMessage_10000(1, _machine3, _ripGesture, 25, 15, 300,
+					_ripGesture, 14, 14, 0);
+				_val17 = 3;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 400:
+		if (_val14 == 0 && _val15 == 0 && _val4 != -1) {
+			kernel_trigger_dispatchx(_val4);
+			_val4 = -1;
+
+			if (_val5) {
+				ws_unhide_walker();
+				_val5 = 0;
+			}
+		}
+
+		kernel_trigger_dispatchx(kernel_trigger_create(401));
+		break;
+
 	default:
 		break;
+	}
+
+	if (_G(game).previous_room == 352) {
+		switch (_G(kernel).trigger) {
+		case 55:
+			_G(game).setRoom(304);
+			break;
+		case 56:
+			_G(game).setRoom(494);
+			break;
+		default:
+			break;
+		}
+
+		if (_G(MouseState).ButtonState) {
+			_btnFlag = true;
+		} else if (_btnFlag) {
+			_btnFlag = false;
+
+			disable_player_commands_and_fade_init(55);
+		}
 	}
 }
 
@@ -1224,6 +1765,25 @@ void Room303::priestTalk(bool flag, int trigger) {
 
 	_priestTalk = TriggerMachineByHash(32, nullptr, 0, -1,
 		priestTalkCallback, false, "fl priest/talk");
+}
+
+int Room303::getSize(const Common::String &assetName, int roomNum) {
+	Common::String name = expand_name_2_RAW(assetName, roomNum);
+	size_t fileSize = f_info_get_file_size(Common::Path(name));
+
+	return static_cast<int>((double)fileSize * 0.000090702946);
+}
+
+void Room303::playSound(const Common::String &assetName, int trigger, int val1) {
+	if (!val1)
+		_val1 = -1;
+
+	int size = MAX(getSize(assetName), 0);
+	_G(globals)[GLB_TEMP_1] = size << 16;
+	_G(globals)[GLB_TEMP_2] = val1 << 16;
+	sendWSMessage(0x200000, 0, _priestTalk, 0, nullptr, 1);
+
+	digi_play(assetName.c_str(), 1, 255, trigger);
 }
 
 } // namespace Rooms

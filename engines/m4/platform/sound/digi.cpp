@@ -152,20 +152,6 @@ void Digi::playFootsteps() {
 	}
 }
 
-Common::String Digi::expand_name_2_RAW(const Common::String &name, int32 room_num) {
-	Common::String tempName = f_extension_new(name, "RAW");
-
-	if (!_G(kernel).hag_mode) {
-		if (room_num == -1)
-			room_num = extract_room_num(name);
-
-		return Common::String::format("%d\\%s", room_num, tempName.c_str());
-
-	} else {
-		return tempName;
-	}
-}
-
 void Digi::stop(uint channel, bool calledFromUnload) {
 	assert(channel < 4);
 

@@ -401,4 +401,18 @@ static void troll_for_colors(RGB8 *newPal, uint8 minPalEntry, uint8 maxPalEntry)
 	}
 }
 
+Common::String expand_name_2_RAW(const Common::String &name, int32 room_num) {
+	Common::String tempName = f_extension_new(name, "RAW");
+
+	if (!_G(kernel).hag_mode) {
+		if (room_num == -1)
+			room_num = extract_room_num(name);
+
+		return Common::String::format("%d\\%s", room_num, tempName.c_str());
+
+	} else {
+		return tempName;
+	}
+}
+
 } // End of namespace M4
