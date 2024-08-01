@@ -46,23 +46,23 @@ qdInventory::qdInventory() : _need_redraw(false),
 }
 
 qdInventory::~qdInventory() {
-	cell_sets_.clear();
+	_cell_sets.clear();
 }
 
 void qdInventory::redraw(int offs_x, int offs_y, bool inactive_mode) const {
 	qdInventoryCell::set_shadow(_shadow_color, _shadow_alpha);
 
-	for (qdInventoryCellSetVector::const_iterator it = cell_sets_.begin(); it != cell_sets_.end(); ++it)
+	for (qdInventoryCellSetVector::const_iterator it = _cell_sets.begin(); it != _cell_sets.end(); ++it)
 		it->redraw(offs_x, offs_y, inactive_mode);
 }
 
 void qdInventory::pre_redraw() const {
-	for (qdInventoryCellSetVector::const_iterator it = cell_sets_.begin(); it != cell_sets_.end(); ++it)
+	for (qdInventoryCellSetVector::const_iterator it = _cell_sets.begin(); it != _cell_sets.end(); ++it)
 		it->pre_redraw();
 
 	if (_need_redraw) {
 		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
-			for (qdInventoryCellSetVector::const_iterator it = cell_sets_.begin(); it != cell_sets_.end(); ++it) {
+			for (qdInventoryCellSetVector::const_iterator it = _cell_sets.begin(); it != _cell_sets.end(); ++it) {
 				dp->add_redraw_region(it->screen_region());
 				dp->add_redraw_region(it->last_screen_region());
 			}
@@ -73,7 +73,7 @@ void qdInventory::pre_redraw() const {
 void qdInventory::post_redraw() {
 	toggle_redraw(false);
 
-	for (qdInventoryCellSetVector::iterator it = cell_sets_.begin(); it != cell_sets_.end(); ++it)
+	for (qdInventoryCellSetVector::iterator it = _cell_sets.begin(); it != _cell_sets.end(); ++it)
 		it->post_redraw();
 }
 
@@ -83,7 +83,7 @@ bool qdInventory::put_object(qdGameObjectAnimated *p) {
 			return true;
 	}
 
-	for (auto  &it : cell_sets_) {
+	for (auto  &it : _cell_sets) {
 		if (it.put_object(p)) {
 			p->set_inventory_cell_index(cell_index(p));
 			p->set_flag(QD_OBJ_IS_IN_INVENTORY_FLAG);
@@ -96,7 +96,7 @@ bool qdInventory::put_object(qdGameObjectAnimated *p) {
 }
 
 bool qdInventory::put_object(qdGameObjectAnimated *p, const Vect2s &pos) {
-	for (auto &it : cell_sets_) {
+	for (auto &it : _cell_sets) {
 		if (it.put_object(p, pos)) {
 			p->set_inventory_cell_index(cell_index(p));
 			p->set_flag(QD_OBJ_IS_IN_INVENTORY_FLAG);
@@ -109,7 +109,7 @@ bool qdInventory::put_object(qdGameObjectAnimated *p, const Vect2s &pos) {
 }
 
 qdGameObjectAnimated *qdInventory::get_object(const Vect2s &pos) const {
-	for (auto &it : cell_sets_) {
+	for (auto &it : _cell_sets) {
 		if (it.hit(pos)) {
 			qdGameObjectAnimated *p = it.get_object(pos);
 			if (p) return p;
@@ -120,7 +120,7 @@ qdGameObjectAnimated *qdInventory::get_object(const Vect2s &pos) const {
 }
 
 bool qdInventory::remove_object(qdGameObjectAnimated *p) {
-	for (auto &it : cell_sets_) {
+	for (auto &it : _cell_sets) {
 		if (it.remove_object(p)) {
 			p->drop_flag(QD_OBJ_IS_IN_INVENTORY_FLAG);
 			_need_redraw = true;
@@ -132,7 +132,7 @@ bool qdInventory::remove_object(qdGameObjectAnimated *p) {
 }
 
 bool qdInventory::is_object_in_list(const qdGameObjectAnimated *p) const {
-	for (auto &it : cell_sets_) {
+	for (auto &it : _cell_sets) {
 		if (it.is_object_in_list(p))
 			return true;
 	}
@@ -201,7 +201,7 @@ bool qdInventory::save_script(Common::WriteStream &fh, int indent) const {
 	}
 	fh.writeString(Common::String::format("<inventory_cell_set_additional_cells>%d %d</inventory_cell_set_additional_cells>\r\n", _additional_cells.x, _additional_cells.y));
 
-	for (auto &it : cell_sets_) {
+	for (auto &it : _cell_sets) {
 		it.save_script(fh, indent + 1);
 	}
 
@@ -214,7 +214,7 @@ bool qdInventory::save_script(Common::WriteStream &fh, int indent) const {
 
 bool qdInventory::init(const qdInventoryCellTypeVector &tp) {
 	bool result = true;
-	for (auto &it : cell_sets_) {
+	for (auto &it : _cell_sets) {
 		if (!it.init(tp)) {
 			result = false;
 		}
@@ -292,7 +292,7 @@ bool qdInventory::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
 			}
 		}
 
-		for (auto &it : cell_sets_) {
+		for (auto &it : _cell_sets) {
 			it.set_mouse_hover_object(obj);
 		}
 	}
@@ -301,22 +301,22 @@ bool qdInventory::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
 }
 
 void qdInventory::remove_cell_set(int idx) {
-	assert(-1 < idx && idx < static_cast<int>(cell_sets_.size()));
+	assert(-1 < idx && idx < static_cast<int>(_cell_sets.size()));
 
-	cell_sets_.erase(cell_sets_.begin() + idx);
+	_cell_sets.erase(_cell_sets.begin() + idx);
 }
 
 bool qdInventory::load_resources() {
-	debugC(4, kDebugLoad, "qdInventory::load_resources(), %lu cells", cell_sets_.size());
+	debugC(4, kDebugLoad, "qdInventory::load_resources(), %lu cells", _cell_sets.size());
 
-	for (auto &it : cell_sets_)
+	for (auto &it : _cell_sets)
 		it.load_resources();
 
 	return true;
 }
 
 bool qdInventory::free_resources() {
-	for (auto &it : cell_sets_) {
+	for (auto &it : _cell_sets) {
 		it.free_resources();
 	}
 
@@ -325,7 +325,7 @@ bool qdInventory::free_resources() {
 
 bool qdInventory::load_data(Common::SeekableReadStream &fh, int save_version) {
 	debugC(3, kDebugSave, "  qdInventory::load_data before: %ld", fh.pos());
-	for (auto &it : cell_sets_) {
+	for (auto &it : _cell_sets) {
 		if (!it.load_data(fh, save_version))
 			return false;
 	}
@@ -338,7 +338,7 @@ bool qdInventory::load_data(Common::SeekableReadStream &fh, int save_version) {
 
 bool qdInventory::save_data(Common::WriteStream &fh) const {
 	debugC(3, kDebugSave, "  qdInventory::save_data before: %ld", fh.pos());
-	for (auto &it : cell_sets_) {
+	for (auto &it : _cell_sets) {
 		if (!it.save_data(fh)) {
 			return false;
 		}
@@ -350,7 +350,7 @@ bool qdInventory::save_data(Common::WriteStream &fh) const {
 
 int qdInventory::cell_index(const qdGameObjectAnimated *obj) const {
 	int index = 0;
-	for (auto &it : cell_sets_) {
+	for (auto &it : _cell_sets) {
 		int idx = it.cell_index(obj);
 		if (idx != -1) {
 			return index + idx;
@@ -364,7 +364,7 @@ int qdInventory::cell_index(const qdGameObjectAnimated *obj) const {
 }
 
 Vect2s qdInventory::cell_position(int cell_idx) const {
-	for (auto &it : cell_sets_) {
+	for (auto &it : _cell_sets) {
 		if (cell_idx < it.num_cells())
 			return it.cell_position(cell_idx);
 
@@ -375,34 +375,34 @@ Vect2s qdInventory::cell_position(int cell_idx) const {
 }
 
 void qdInventory::objects_quant(float dt) {
-	for (auto &it : cell_sets_) {
+	for (auto &it : _cell_sets) {
 		it.objects_quant(dt);
 	}
 }
 
 void qdInventory::scroll_left() {
-	for (auto &it : cell_sets_) {
+	for (auto &it : _cell_sets) {
 		it.scroll_left();
 	}
 	toggle_redraw(true);
 }
 
 void qdInventory::scroll_right() {
-	for (auto &it : cell_sets_) {
+	for (auto &it : _cell_sets) {
 		it.scroll_right();
 	}
 	toggle_redraw(true);
 }
 
 void qdInventory::scroll_up() {
-	for (auto &it : cell_sets_) {
+	for (auto &it : _cell_sets) {
 		it.scroll_up();
 	}
 	toggle_redraw(true);
 }
 
 void qdInventory::scroll_down() {
-	for (auto &it : cell_sets_) {
+	for (auto &it : _cell_sets) {
 		it.scroll_down();
 	}
 	toggle_redraw(true);
@@ -417,7 +417,7 @@ void qdInventory::debug_log() const {
 	debugC(3, kDebugLog, "--------------");
 
 	qdInventoryCellSetVector::const_iterator it;
-	FOR_EACH(cell_sets_, it)
+	FOR_EACH(_cell_sets, it)
 	it->debug_log();
 
 	debugC(3, kDebugLog, "--------------");
