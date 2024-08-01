@@ -21,11 +21,8 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/file.h"
-#include "qdengine/qd_precomp.h"
-#ifndef __QD_SYSLIB__
-//#include "qdengine/parser/qdscr_parser.h"
-#endif
 
+#include "qdengine/qd_fwd.h"
 #include "qdengine/qdcore/qd_animation_frame.h"
 
 

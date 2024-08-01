@@ -23,6 +23,7 @@
 #define QDENGINE_QDCORE_QD_CONTOUR_H
 
 #include "qdengine/parser/xml_fwd.h"
+#include "qdengine/xmath.h"
 
 namespace Common {
 class WriteStream;

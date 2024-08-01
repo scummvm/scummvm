@@ -22,7 +22,8 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/file.h"
 #include "common/textconsole.h"
-#include "qdengine/qd_precomp.h"
+
+#include "qdengine/qd_fwd.h"
 #include "qdengine/parser/xml_parser.h"
 
 namespace QDEngine {

@@ -22,7 +22,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/path.h"
 
-#include "qdengine/qd_precomp.h"
+#include "qdengine/qd_fwd.h"
 #include "qdengine/qdcore/qd_font_info.h"
 #include "qdengine/qdcore/qd_file_manager.h"
 

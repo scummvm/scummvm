@@ -20,7 +20,7 @@
  */
 
 
-#include "qdengine/qd_precomp.h"
+#include "qdengine/qd_fwd.h"
 #include "qdengine/qdcore/qd_sound_info.h"
 #include "qdengine/qdcore/qd_game_scene.h"
 #include "qdengine/qdcore/qd_game_dispatcher.h"

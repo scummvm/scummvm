@@ -19,7 +19,9 @@
  *
  */
 
-#include "qdengine/qd_precomp.h"
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "qdengine/qd_fwd.h"
+#include "qdengine/xmath.h"
 
 #ifndef __QD_SYSLIB__
 #include "qdengine/parser/xml_tag_buffer.h"

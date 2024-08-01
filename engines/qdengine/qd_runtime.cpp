@@ -42,8 +42,6 @@
 #include "qdengine/system/input/mouse_input.h"
 #include "qdengine/system/input/keyboard_input.h"
 
-#include "qdengine/qd_precomp.h"
-
 namespace QDEngine {
 
 namespace qdrt {

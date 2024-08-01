@@ -22,6 +22,8 @@
 #ifndef QDENGINE_QD_FWD_H
 #define QDENGINE_QD_FWD_H
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include <list>
 #include <string>
 

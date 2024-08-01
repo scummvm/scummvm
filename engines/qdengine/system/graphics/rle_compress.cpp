@@ -20,8 +20,10 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include <vector>
+
 #include "common/file.h"
-#include "qdengine/qd_precomp.h"
+
 #include "qdengine/system/graphics/rle_compress.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 

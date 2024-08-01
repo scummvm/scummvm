@@ -25,7 +25,7 @@
 #include "common/stream.h"
 #include "common/textconsole.h"
 
-#include "qdengine/qd_precomp.h"
+#include "qdengine/qd_fwd.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 #include "qdengine/system/graphics/gr_font.h"
 #include "qdengine/qdcore/qd_file_manager.h"

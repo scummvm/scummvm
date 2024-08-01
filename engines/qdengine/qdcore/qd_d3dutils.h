@@ -19,8 +19,10 @@
  *
  */
 
-#ifndef D3DUTILS_H
-#define D3DUTILS_H
+#ifndef QDENGINE_QDCORE_QD_ENGINE_D3DUTILS_H
+#define QDENGINE_QDCORE_QD_ENGINE_D3DUTILS_H
+
+#include "qdengine/xmath.h"
 
 namespace QDEngine {
 
@@ -103,4 +105,4 @@ Vect3f TransformNormal(const Vect3f &v, const MATRIX3D &m);
 
 } // namespace QDEngine
 
-#endif // D3DUTILS_H
+#endif // QDENGINE_QDCORE_QD_ENGINE_D3DUTILS_H

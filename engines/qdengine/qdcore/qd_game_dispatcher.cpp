@@ -29,7 +29,7 @@
 #include "video/mpegps_decoder.h"
 
 #include "qdengine/qdengine.h"
-#include "qdengine/qd_precomp.h"
+#include "qdengine/qd_fwd.h"
 #include "qdengine/parser/qdscr_parser.h"
 #include "qdengine/parser/xml_parser.h"
 

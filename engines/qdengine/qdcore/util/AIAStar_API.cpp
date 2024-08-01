@@ -21,7 +21,8 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "qdengine/qd_precomp.h"
+#include "qdengine/qd_fwd.h"
+#include "qdengine/xmath.h"
 #include "qdengine/qdcore/qd_camera.h"
 #include "qdengine/qdcore/qd_game_object_moving.h"
 #include "qdengine/qdcore/util/AIAStar_API.h"

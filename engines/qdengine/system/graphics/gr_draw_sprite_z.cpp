@@ -19,8 +19,8 @@
  *
  */
 
-#include "qdengine/qd_precomp.h"
-#include "gr_dispatcher.h"
+#include "qdengine/qd_fwd.h"
+#include "qdengine/system/graphics/gr_dispatcher.h"
 
 
 namespace QDEngine {

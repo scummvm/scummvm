@@ -23,7 +23,6 @@
 #include "audio/audiostream.h"
 
 #include "qdengine/qdengine.h"
-#include "qdengine/qd_precomp.h"
 #include "qdengine/system/sound/snd_sound.h"
 #include "qdengine/system/sound/wav_sound.h"
 

@@ -24,7 +24,7 @@
 #include "common/debug.h"
 #include "common/stream.h"
 
-#include "qdengine/qd_precomp.h"
+#include "qdengine/qd_fwd.h"
 #include "qdengine/qdengine.h"
 
 #include "qdengine/parser/xml_tag_buffer.h"

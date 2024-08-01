@@ -25,6 +25,7 @@
 #include "common/compression/unzip.h"
 
 #include "qdengine/qdengine.h"
+#include "qdengine/qd_fwd.h"
 #include "qdengine/qdcore/qd_file_manager.h"
 
 namespace QDEngine {

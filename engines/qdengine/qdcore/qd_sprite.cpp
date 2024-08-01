@@ -28,7 +28,7 @@
 #include "graphics/surface.h"
 
 #include "qdengine/qdengine.h"
-#include "qdengine/qd_precomp.h"
+#include "qdengine/qd_fwd.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 #include "qdengine/system/graphics/rle_compress.h"
 #include "qdengine/qdcore/qd_setup.h"

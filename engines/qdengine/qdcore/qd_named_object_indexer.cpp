@@ -23,7 +23,7 @@
 #include "common/debug.h"
 
 #include "qdengine/qdengine.h"
-#include "qdengine/qd_precomp.h"
+#include "qdengine/qd_fwd.h"
 #include "qdengine/qdcore/qd_named_object_indexer.h"
 #include "qdengine/qdcore/qd_game_dispatcher.h"
 

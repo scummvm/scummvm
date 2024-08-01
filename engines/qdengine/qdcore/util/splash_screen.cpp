@@ -31,7 +31,6 @@
 
 #include "image/bmp.h"
 
-#include "qdengine/qd_precomp.h"
 #include "qdengine/qdcore/util/splash_screen.h"
 #include "qdengine/qdengine.h"
 

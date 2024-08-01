@@ -29,7 +29,7 @@
 #include "graphics/managed_surface.h"
 
 #include "qdengine/qdengine.h"
-#include "qdengine/qd_precomp.h"
+#include "qdengine/qd_fwd.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 #include "qdengine/system/graphics/gr_font.h"
 #include "qdengine/system/graphics/UI_TextParser.h"

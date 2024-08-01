@@ -23,7 +23,6 @@
 #ifndef QDENGINE_QDCORE_QD_FILE_MANAGER_H
 #define QDENGINE_QDCORE_QD_FILE_MANAGER_H
 
-#include "qdengine/qd_precomp.h"
 #include "qdengine/qdcore/qd_file_owner.h"
 
 namespace Common {

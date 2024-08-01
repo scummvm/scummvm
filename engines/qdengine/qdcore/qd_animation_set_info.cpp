@@ -19,12 +19,11 @@
  *
  */
 
-
-#include "qdengine/qd_precomp.h"
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "qdengine/qd_fwd.h"
 #include "qdengine/qdcore/qd_animation_set_info.h"
 #include "qdengine/qdcore/qd_game_dispatcher.h"
 #include "qdengine/qdcore/qd_game_scene.h"
-
 
 namespace QDEngine {
 

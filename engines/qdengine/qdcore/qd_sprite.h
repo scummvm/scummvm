@@ -28,6 +28,7 @@ class SeekableReadStream;
 
 #include "qdengine/system/graphics/gr_screen_region.h"
 #include "qdengine/qdcore/qd_resource.h"
+#include "qdengine/xmath.h"
 
 
 namespace QDEngine {

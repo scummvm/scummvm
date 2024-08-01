@@ -25,7 +25,7 @@
 #include "common/system.h"
 
 #include "qdengine/qdengine.h"
-#include "qdengine/qd_precomp.h"
+#include "qdengine/qd_fwd.h"
 #include "qdengine/system/sound/wav_sound.h"
 #include "qdengine/qdcore/qd_file_manager.h"
 

@@ -26,6 +26,7 @@
 #include "qdengine/qdcore/qd_object_map_container.h"
 #include "qdengine/qdcore/qd_scale_info.h"
 
+#include "qdengine/qd_fwd.h"
 #include "qdengine/parser/xml_fwd.h"
 
 #ifdef __QD_DEBUG_ENABLE__

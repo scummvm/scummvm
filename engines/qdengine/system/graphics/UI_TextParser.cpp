@@ -22,7 +22,6 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/util.h"
 
-#include "qdengine/qd_precomp.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 #include "qdengine/system/graphics/UI_TextParser.h"
 

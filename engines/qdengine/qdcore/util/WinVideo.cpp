@@ -20,9 +20,10 @@
  */
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/file.h"
-#include "video/mpegps_decoder.h"
 #include "graphics/managed_surface.h"
-#include "qdengine/qd_precomp.h"
+
+#include "video/mpegps_decoder.h"
+
 #include "qdengine/qdengine.h"
 #include "qdengine/qdcore/util/WinVideo.h"
 
