@@ -37,24 +37,24 @@ const char *const qdTriggerProfiler::_activation_comline = "trigger_profiler";
 
 int qdTriggerProfiler::_record_text_format = PROFILER_TEXT_TIME | PROFILER_TEXT_TRIGGER_NAME | PROFILER_TEXT_SCENE_NAME;
 
-qdTriggerProfilerRecord::qdTriggerProfilerRecord() : time_(0),
-	event_(ELEMENT_STATUS_UPDATE),
-	trigger_id_(0),
-	element_id_(0),
-	link_id_(0),
-	status_(0) {
+qdTriggerProfilerRecord::qdTriggerProfilerRecord() : _time(0),
+	_event(ELEMENT_STATUS_UPDATE),
+	_trigger_id(0),
+	_element_id(0),
+	_link_id(0),
+	_status(0) {
 }
 
-qdTriggerProfilerRecord::qdTriggerProfilerRecord(uint32 tm, event_t ev, const qdTriggerChain *trigger, int el_id, int lnk_id, int st) : time_(tm),
-	event_(ev),
-	trigger_id_(0),
-	element_id_(el_id),
-	link_id_(lnk_id),
-	status_(st) {
+qdTriggerProfilerRecord::qdTriggerProfilerRecord(uint32 tm, event_t ev, const qdTriggerChain *trigger, int el_id, int lnk_id, int st) : _time(tm),
+	_event(ev),
+	_trigger_id(0),
+	_element_id(el_id),
+	_link_id(lnk_id),
+	_status(st) {
 	if (qdGameDispatcher * p = qdGameDispatcher::get_dispatcher()) {
 		for (qdTriggerChainList::const_iterator it = p->trigger_chain_list().begin(); it != p->trigger_chain_list().end(); ++it) {
 			if (*it == trigger) break;
-			trigger_id_++;
+			_trigger_id++;
 		}
 	}
 }
@@ -69,14 +69,14 @@ qdTriggerProfilerRecord::~qdTriggerProfilerRecord() {
 qdTriggerProfilerRecord &qdTriggerProfilerRecord::operator = (const qdTriggerProfilerRecord &rec) {
 	if (this == &rec) return *this;
 
-	time_ = rec.time_;
+	_time = rec._time;
 
-	event_ = rec.event_;
+	_event = rec._event;
 
-	trigger_id_ = rec.trigger_id_;
-	element_id_ = rec.element_id_;
-	link_id_ = rec.link_id_;
-	status_ = rec.status_;
+	_trigger_id = rec._trigger_id;
+	_element_id = rec._element_id;
+	_link_id = rec._link_id;
+	_status = rec._status;
 
 	return *this;
 }
@@ -84,12 +84,12 @@ qdTriggerProfilerRecord &qdTriggerProfilerRecord::operator = (const qdTriggerPro
 bool qdTriggerProfilerRecord::save(Common::WriteStream &fh) const {
 	warning("STUB: Test qdTriggerProfilerRecord::save(Common::WriteStream &fh)");
 
-	fh.writeUint32LE(time_);
-	fh.writeSint32LE((int)event_);
-	fh.writeSint32LE(trigger_id_);
-	fh.writeSint32LE(element_id_);
-	fh.writeSint32LE(link_id_);
-	fh.writeSint32LE(status_);
+	fh.writeUint32LE(_time);
+	fh.writeSint32LE((int)_event);
+	fh.writeSint32LE(_trigger_id);
+	fh.writeSint32LE(_element_id);
+	fh.writeSint32LE(_link_id);
+	fh.writeSint32LE(_status);
 
 	return true;
 }
@@ -98,14 +98,14 @@ bool qdTriggerProfilerRecord::load(Common::SeekableReadStream &fh) {
 	warning("STUB: Test qdTriggerProfilerRecord::load(Common::SeekableReadStream &fh)");
 	int ev;
 
-	time_ = fh.readUint32LE();
+	_time = fh.readUint32LE();
 	ev = fh.readSint32LE();
-	trigger_id_ = fh.readSint32LE();
-	element_id_ = fh.readSint32LE();
-	link_id_ = fh.readSint32LE();
-	status_ = fh.readSint32LE();
+	_trigger_id = fh.readSint32LE();
+	_element_id = fh.readSint32LE();
+	_link_id = fh.readSint32LE();
+	_status = fh.readSint32LE();
 
-	event_ = event_t(ev);
+	_event = event_t(ev);
 	return true;
 }
 
