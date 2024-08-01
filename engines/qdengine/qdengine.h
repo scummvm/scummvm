@@ -74,6 +74,8 @@ public:
 	 */
 	Common::String getGameId() const;
 
+	const char *getExeName() const;
+
 	/**
 	 * Gets a random number
 	 */

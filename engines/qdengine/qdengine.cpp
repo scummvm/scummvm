@@ -61,6 +61,10 @@ Common::String QDEngineEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+const char *QDEngineEngine::getExeName() const {
+	return _gameDescription->filesDescriptions[1].fileName;
+}
+
 Common::Error QDEngineEngine::run() {
 	initGraphics(640, 480);
 	_screen = new Graphics::Screen();
