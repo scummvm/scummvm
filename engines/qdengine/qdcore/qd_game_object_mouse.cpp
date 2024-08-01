@@ -264,7 +264,6 @@ void qdGameObjectMouse::quant(float dt) {
 	if (_object)
 		_object->quant(dt);
 
-#ifndef _QUEST_EDITOR
 	if (const qdGameObjectState * p = get_cur_state()) {
 		if (p->rnd_move_radius() > FLT_EPS) {
 			if (_screen_pos_offset.norm2() >= sqr(p->rnd_move_radius()) || (_screen_pos_offset_delta.x <= FLT_EPS && _screen_pos_offset_delta.y <= FLT_EPS)) {
@@ -280,14 +279,11 @@ void qdGameObjectMouse::quant(float dt) {
 		} else
 			_screen_pos_offset = _screen_pos_offset_delta = Vect2f(0, 0);
 	}
-#endif
 }
 
 bool qdGameObjectMouse::update_screen_pos() {
 	if (qdGameObjectAnimated::update_screen_pos()) {
-#ifndef _QUEST_EDITOR
 		set_screen_R(get_screen_R() + _screen_pos_offset);
-#endif
 		return true;
 	}
 
