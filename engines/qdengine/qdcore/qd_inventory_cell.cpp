@@ -80,23 +80,17 @@ uint32 qdInventoryCell::shadow_color_ = 0;
 int qdInventoryCell::shadow_alpha_ = -1;
 
 qdInventoryCell::qdInventoryCell() : type_(0),
-#ifndef _QUEST_EDITOR
 	sprite_(NULL),
-#endif
 	object_(NULL) {
 }
 
 qdInventoryCell::qdInventoryCell(const qdInventoryCellType &tp) : type_(tp.type()),
-#ifndef _QUEST_EDITOR
 	sprite_(tp.sprite()),
-#endif // _QUEST_EDITOR
 	object_(NULL) {
 }
 
 qdInventoryCell::qdInventoryCell(const qdInventoryCell &cl) : type_(cl.type_),
-#ifndef _QUEST_EDITOR
 	sprite_(cl.sprite_),
-#endif // _QUEST_EDITOR
 	object_(cl.object_) {
 }
 
@@ -104,25 +98,11 @@ qdInventoryCell &qdInventoryCell::operator = (const qdInventoryCell &cl) {
 	if (this == &cl) return *this;
 
 	type_ = cl.type_;
-#ifndef _QUEST_EDITOR
 	sprite_ = cl.sprite_;
-#endif // _QUEST_EDITOR
 	object_ = cl.object_;
 
 	return *this;
 }
-
-#ifdef _QUEST_EDITOR
-const qdSprite *qdInventoryCell::sprite() const {
-	qdGameDispatcher *p = qd_get_game_dispatcher();
-	if (p) {
-		const qdInventoryCellType *ct = p->get_inventory_cell_type(type_);
-		if (ct) return ct->sprite();
-	}
-
-	return NULL;
-}
-#endif
 
 void qdInventoryCell::redraw(int x, int y, bool inactive_mode) const {
 	if (sprite())
@@ -404,19 +384,6 @@ bool qdInventoryCellSet::init(const qdInventoryCellTypeVector &tp) {
 	return false;
 }
 
-#ifdef _QUEST_EDITOR
-const Vect2i qdInventoryCellSet::screen_size() const {
-	if (_cells.empty()) return Vect2i(0, 0);
-	const qdInventoryCell &cell = _cells.front();
-	return Vect2i(_size.x * cell.size_x(), _size.y * cell.size_y());
-}
-
-const Vect2i qdInventoryCellSet::cell_size() const {
-	if (_cells.empty()) return Vect2i(0, 0);
-	return _cells.front().size();
-}
-#endif // _QUEST_EDITOR
-
 bool qdInventoryCellSet::load_resources() {
 	for (auto &it : _cells)
 		it.load_resources();
@@ -603,4 +570,5 @@ void qdInventoryCellSet::debug_log() const {
 	}
 #endif
 }
+
 } // namespace QDEngine
