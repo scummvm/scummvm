@@ -59,10 +59,6 @@ bool winVideo::init() {
 bool winVideo::done() {
 	if (!is_initialized) return false;
 
-#ifdef __WINVIDEO_LOG__
-	CloseHandle((HANDLE)log_file_handle_);
-#endif
-
 	CoUninitialize();
 	is_initialized = false;
 

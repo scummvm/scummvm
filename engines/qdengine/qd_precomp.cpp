@@ -89,34 +89,9 @@ int WideCharToMultiByte(uint32 CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr, i
 	return 0;
 }
 
-bool SetCurrentDirectory(const char *lpPathName) {
-	warning("STUB: SetCurrentDirectory");
-	return false;
-}
-
-bool CreateDirectory(const char *lpPathName, void *lpSecurityAttributes) {
-	warning("STUB: CreateDirectory");
-	return false;
-}
-
 char *_fullpath(char *absPath, const char *relPath, size_t maxLength) {
 	warning("STUB: _fullpath");
 	return 0;
-}
-
-long SetWindowLong(HWND hWnd, int nIndex, long dwNewLong) {
-	warning("STUB: SetWindowLong");
-	return 0;
-}
-
-DWORD SetFilePointer(HANDLE hfile, long lDistanceToMove, long * lpDistanceToMoveHigh, DWORD  dwMoveMethod) {
-	warning("STUB: SetFilePointer");
-	return 0;
-}
-
-bool CloseHandle(HANDLE hObject) {
-	warning("STUB: CloseHandle");
-	return false;
 }
 
 HANDLE CreateFile( LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode,void *lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile

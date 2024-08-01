@@ -141,7 +141,6 @@ bool grDispatcher::init(int sx, int sy, grPixelFormat pixel_format, void *hwnd, 
 	_isFullScreen = fullscreen;
 
 	if (!hwnd) {
-		resize_window(sx, sy);
 		_sizeX = sx;
 		_sizeY = sy;
 	} else {
@@ -514,41 +513,6 @@ bool grDispatcher::destroy_window() {
 		return true;
 	}
 	return false;
-}
-
-bool grDispatcher::resize_window(int sx, int sy) {
-	if (!_hWnd) return false;
-
-	warning("STUB: grDispatcher::resize_window()");
-#if 0
-	int px = GetSystemMetrics(SM_CXSCREEN);
-	int py = GetSystemMetrics(SM_CYSCREEN);
-
-	if (!is_in_fullscreen_mode()) {
-		LONG styles = GetWindowLong((HWND)_hWnd, GWL_STYLE);
-		LONG styles_new = styles | (WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX);
-
-		if (styles != styles_new)
-			SetWindowLong((HWND)_hWnd, GWL_STYLE, styles_new);
-
-		int wx = sx + GetSystemMetrics(SM_CXFIXEDFRAME) * 2;
-		int wy = sy + GetSystemMetrics(SM_CYFIXEDFRAME) * 2 + GetSystemMetrics(SM_CYCAPTION);
-
-		if (wy <= py)
-			SetWindowPos((HWND)_hWnd, NULL, (px - wx) / 2, (py - wy) / 2, wx, wy, SWP_NOZORDER | SWP_NOCOPYBITS);
-		else
-			SetWindowPos((HWND)_hWnd, NULL, (px - wx) / 2, -GetSystemMetrics(SM_CYCAPTION) - GetSystemMetrics(SM_CYFIXEDFRAME), wx, wy, SWP_NOZORDER | SWP_NOCOPYBITS);
-	} else {
-		LONG styles = GetWindowLong((HWND)_hWnd, GWL_STYLE);
-		LONG styles_new = styles & ~(WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX);
-
-		if (styles != styles_new)
-			SetWindowLong((HWND)_hWnd, GWL_STYLE, styles_new);
-
-		SetWindowPos((HWND)_hWnd, NULL, 0, 0, sx, sy, SWP_NOZORDER | SWP_NOCOPYBITS);
-	}
-#endif
-	return true;
 }
 
 bool grDispatcher::set_window(void *hwnd) {

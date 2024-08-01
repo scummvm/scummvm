@@ -104,10 +104,6 @@ public:
 	}
 
 	bool create_window(int sx, int sy);
-	bool resize_window(int sx, int sy);
-	bool resize_window() {
-		return resize_window(_sizeX, _sizeY);
-	}
 
 	bool destroy_window();
 
