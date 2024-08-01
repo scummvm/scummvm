@@ -115,10 +115,6 @@ int qdAnimationSet::get_angle_index(float direction_angle, int dir_count) {
 }
 
 float qdAnimationSet::get_index_angle(int index, int dir_count) {
-#ifdef _QUEST_EDITOR
-	if (!dir_count)
-		return 0.f;
-#endif
 	return index * 2.f * M_PI / dir_count;
 }
 
