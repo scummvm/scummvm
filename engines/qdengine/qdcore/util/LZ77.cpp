@@ -40,16 +40,16 @@ CLZ77::CLZ77() {
 CLZ77::~CLZ77() {
 }
 
-long CLZ77::LZComp(const byte *s1, const byte *s2, long maxlen) {
-	long i;
+int32 CLZ77::LZComp(const byte *s1, const byte *s2, int32 maxlen) {
+	int32 i;
 	for (i = 0; i < maxlen; i++)
 		if (s1[i] != s2[i])
 			return i;
 	return maxlen;
 }
-const byte *CLZ77::FindLZ(const byte *source, const byte *s, long slen, long border, long mlen, int32 &len) {
-	long maxlen = 0;
-	long limit = slen - (s - source);
+const byte *CLZ77::FindLZ(const byte *source, const byte *s, int32 slen, int32 border, int32 mlen, int32 &len) {
+	int32 maxlen = 0;
+	int32 limit = slen - (s - source);
 	const byte *maxp = s - 1;
 	const byte *p;
 	len = 0;
@@ -66,13 +66,13 @@ const byte *CLZ77::FindLZ(const byte *source, const byte *s, long slen, long bor
 	return maxp;
 }
 
-long CLZ77::GetMaxEncoded(long len) {
+int32 CLZ77::GetMaxEncoded(int32 len) {
 	return len + sizeof(uint32);
 }
-long CLZ77::GetMaxDecoded(byte *source) {
+int32 CLZ77::GetMaxDecoded(byte *source) {
 	return ((uint32 *)source)[0];
 }
-void CLZ77::Encode(byte *target, long &tlen, const byte *source, long slen) {
+void CLZ77::Encode(byte *target, int32 &tlen, const byte *source, int32 slen) {
 	int32 len, block;
 	int32 shift, border;
 	const byte *s, *p;
@@ -127,7 +127,7 @@ void CLZ77::Encode(byte *target, long &tlen, const byte *source, long slen) {
 //		OnStep();
 	}
 }
-long CLZ77::Decode(byte *target, long &tlen, const byte *source, long slen) {
+int32 CLZ77::Decode(byte *target, int32 &tlen, const byte *source, int32 slen) {
 	uint32 i;
 	uint32 block, len;
 	uint32 shift, border;
