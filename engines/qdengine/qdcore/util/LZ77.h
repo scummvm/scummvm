@@ -33,10 +33,10 @@ public:
 	CLZ77();
 	virtual ~CLZ77();
 
-	void Encode(unsigned char *target, long &tlen, const unsigned char *source, long slen);
-	long Decode(unsigned char *target, long &tlen, const unsigned char *source, long slen);
+	void Encode(byte *target, long &tlen, const unsigned char *source, long slen);
+	long Decode(byte *target, long &tlen, const unsigned char *source, long slen);
 	long GetMaxEncoded(long len);
-	long GetMaxDecoded(unsigned char *source);
+	long GetMaxDecoded(byte *source);
 
 //	virtual void OnStep() = 0;
 };

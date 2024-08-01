@@ -121,11 +121,11 @@ void grDispatcher::PutTileSpr(int x, int y, const grTileSprite &sprite, bool has
 		dy = 1;
 
 
-	const unsigned char *data_ptr = (const unsigned char *)(sprite.data() + px + py * GR_TILE_SPRITE_SIZE_X);
+	const byte *data_ptr = (const unsigned char *)(sprite.data() + px + py * GR_TILE_SPRITE_SIZE_X);
 
 	for (int i = 0; i < psy; i++) {
 		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
-		const unsigned char *data_line = data_ptr;
+		const byte *data_line = data_ptr;
 
 		for (int j = 0; j < psx; j++) {
 			unsigned a = data_line[3];
@@ -150,8 +150,8 @@ bool grTileSprite::operator == (const grTileSprite &sprite) const {
 	if (isEmpty() || sprite.isEmpty())
 		return (isEmpty() && sprite.isEmpty());
 
-	const unsigned char *ptr0 = (const unsigned char *)_data;
-	const unsigned char *ptr1 = (const unsigned char *)sprite._data;
+	const byte *ptr0 = (const unsigned char *)_data;
+	const byte *ptr1 = (const unsigned char *)sprite._data;
 
 	for (int i = 0; i < GR_TILE_SPRITE_SIZE_BYTES; i++, ptr0++, ptr1++) {
 		if (abs(*ptr0 - *ptr1) > _comprasionTolerance)
@@ -167,7 +167,7 @@ unsigned grTileSprite::compress(const unsigned *in_data, unsigned *out_data, grT
 	} else if (compress_method == TILE_COMPRESS_LZ77) {
 		CLZ77 encoder;
 		long len = 0;
-		encoder.Encode((unsigned char *)(out_data + 1), len, (const unsigned char *)in_data, GR_TILE_SPRITE_SIZE_BYTES);
+		encoder.Encode((byte *)(out_data + 1), len, (const unsigned char *)in_data, GR_TILE_SPRITE_SIZE_BYTES);
 		assert(len);
 		out_data[0] = len;
 		return len / 4 + 2;
@@ -183,7 +183,7 @@ bool grTileSprite::uncompress(const unsigned *in_data, unsigned in_data_length, 
 		CLZ77 decoder;
 		long len = 0;
 		in_data_length = in_data[0];
-		decoder.Decode((unsigned char *)out_data, len, (const unsigned char *)(in_data + 1), in_data_length);
+		decoder.Decode((byte *)out_data, len, (const unsigned char *)(in_data + 1), in_data_length);
 		return true;
 	}
 

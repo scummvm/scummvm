@@ -50,7 +50,7 @@ public:
 		return _alpha_buffer_sy;
 	}
 
-	const unsigned char *alpha_buffer() const {
+	const byte *alpha_buffer() const {
 		return _alpha_buffer;
 	}
 
@@ -72,7 +72,7 @@ private:
 
 	int _alpha_buffer_sx;
 	int _alpha_buffer_sy;
-	unsigned char *_alpha_buffer;
+	byte *_alpha_buffer;
 
 	struct grFontChar {
 		grFontChar() : _code(-1) { }

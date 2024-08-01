@@ -98,7 +98,6 @@ namespace QDEngine {
 #define DWORD         int
 #define WORD          short
 #define COLORREF      unsigned
-#define BYTE          unsigned char
 #define REFCLSID	  const void *
 #define REFIID        const void *
 #define XML_Char      char

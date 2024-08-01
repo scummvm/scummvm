@@ -94,7 +94,7 @@ bool grFont::load_index(Common::SeekableReadStream *fh) {
 }
 
 bool grFont::load_alpha(Common::SeekableReadStream *fh) {
-	unsigned char header[18];
+	byte header[18];
 	fh->read(header, 18);
 
 	if (header[0])
@@ -114,7 +114,7 @@ bool grFont::load_alpha(Common::SeekableReadStream *fh) {
 
 	int ssx = sx * colors / 8;
 
-	_alpha_buffer = new unsigned char[ssx * sy];
+	_alpha_buffer = new byte[ssx * sy];
 
 	if (!(flags & 0x20)) {
 		int idx = (sy - 1) * ssx;

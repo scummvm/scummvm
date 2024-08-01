@@ -110,7 +110,7 @@ public:
 	}
 
 private:
-	unsigned char attributes_;
+	byte attributes_;
 };
 
 enum qdCameraRedrawMode {

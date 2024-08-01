@@ -838,7 +838,7 @@ bool grDispatcher::FlushChanges() {
 }
 
 // TODO
-bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt, int sx, int sy, unsigned char *data, bool &has_alpha) {
+bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt, int sx, int sy, byte *data, bool &has_alpha) {
 	if (dest_fmt == GR_RGB888 && (src_fmt == GR_ARGB1555 || src_fmt == GR_RGB565)) {
 		if (has_alpha)
 			dest_fmt = GR_ARGB8888;
@@ -858,7 +858,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 				if (has_alpha) p++;
 			}
 		} else if (src_fmt == GR_RGB888) {
-			unsigned char *dp = data;
+			byte *dp = data;
 			unsigned short *p = reinterpret_cast<unsigned short *>(data);
 			for (int i = 0; i < sx * sy; i++) {
 				*p++ = make_rgb555u(dp[2], dp[1], dp[0]);
@@ -866,7 +866,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 			}
 			has_alpha = false;
 		} else if (src_fmt == GR_ARGB8888) {
-			unsigned char *dp = data;
+			byte *dp = data;
 			unsigned short *p = reinterpret_cast<unsigned short *>(data);
 			for (int i = 0; i < sx * sy; i++) {
 				*p++ = make_rgb555u(dp[2], dp[1], dp[0]);
@@ -887,7 +887,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 				if (has_alpha) p++;
 			}
 		} else if (src_fmt == GR_RGB888) {
-			unsigned char *dp = data;
+			byte *dp = data;
 			unsigned short *p = reinterpret_cast<unsigned short *>(data);
 			for (int i = 0; i < sx * sy; i++) {
 				*p++ = make_rgb565u(dp[2], dp[1], dp[0]);
@@ -895,7 +895,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 			}
 			has_alpha = false;
 		} else if (src_fmt == GR_ARGB8888) {
-			unsigned char *dp = data;
+			byte *dp = data;
 			unsigned short *p = reinterpret_cast<unsigned short *>(data);
 			for (int i = 0; i < sx * sy; i++) {
 				*p++ = make_rgb565u(dp[2], dp[1], dp[0]);
@@ -908,7 +908,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 	case GR_RGB888:
 		if (src_fmt == GR_ARGB1555 || src_fmt == GR_RGB565) {
 			unsigned short *p = reinterpret_cast<unsigned short *>(data) + sx * sy - 1;
-			unsigned char *dp = data + sx * sy * 3 - 1;
+			byte *dp = data + sx * sy * 3 - 1;
 
 			for (int i = 0; i < sx * sy; i++) {
 				byte r, g, b;
@@ -934,7 +934,7 @@ bool grDispatcher::convert_sprite(grPixelFormat src_fmt, grPixelFormat &dest_fmt
 			}
 
 			p = reinterpret_cast<unsigned short *>(data);
-			unsigned char *dp = data;
+			byte *dp = data;
 			for (int i = 0; i < sx * sy; i++) {
 				byte r, g, b;
 
@@ -989,7 +989,7 @@ bool grDispatcher::DrawText(int x, int y, unsigned color, const char *str, int h
 	if (!font || !font->alpha_buffer())
 		return false;
 
-	const unsigned char *str_buf = reinterpret_cast<const unsigned char *>(str);
+	const byte *str_buf = reinterpret_cast<const unsigned char *>(str);
 
 	int x0 = x;
 	int sz = strlen(str);
@@ -1021,7 +1021,7 @@ bool grDispatcher::DrawAlignedText(int x, int y, int sx, int sy, unsigned color,
 	if (!font || !font->alpha_buffer())
 		return false;
 
-	const unsigned char *str_buf = reinterpret_cast<const unsigned char *>(str);
+	const byte *str_buf = reinterpret_cast<const unsigned char *>(str);
 
 	if (!sx)
 		sx = TextWidth(str, hspace, font);
@@ -1132,7 +1132,7 @@ int grDispatcher::TextWidth(const char *str, int hspace, const grFont *font, boo
 	if (!font)
 		return false;
 
-	const unsigned char *str_buf = (const unsigned char *)str;
+	const byte *str_buf = (const unsigned char *)str;
 
 	int sx = 0, sx_max = 0;
 	int sz = strlen(str);

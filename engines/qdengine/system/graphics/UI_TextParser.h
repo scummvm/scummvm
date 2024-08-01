@@ -92,7 +92,7 @@ private:
 		return -1;
 	}
 
-	inline void addChar(BYTE cc) {
+	inline void addChar(byte cc) {
 		int width = _font->char_width(cc);
 		if (testWidth(width) || cc != ' ')
 			_tagWidth += width;

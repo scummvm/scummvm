@@ -31,7 +31,7 @@
 
 namespace QDEngine {
 
-void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const unsigned char *p, int mode, float scale) {
+void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const byte *p, int mode, float scale) {
 	debugC(2, kDebugGraphics, "grDispatcher::PutSpr_a(%d, %d, %d, %d, scale=%f)", x, y, sx, sy, scale);
 
 	int i, j, sx_dest, sy_dest;
@@ -68,13 +68,13 @@ void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const unsigned char *p
 
 	sx *= 4;
 	for (i = y0; i != y1; i += iy) {
-		const unsigned char *line_src = p + ((fy >> 16) * sx);
+		const byte *line_src = p + ((fy >> 16) * sx);
 
 		fy += dy;
 		fx = (1 << 15);
 
 		for (j = x0; j != x1; j += ix) {
-			const unsigned char *src_data = line_src + (fx >> 16) * 4;
+			const byte *src_data = line_src + (fx >> 16) * 4;
 			unsigned a = src_data[3];
 
 			if (a != 255 && ClipCheck(x + j, y + i)) {
@@ -90,7 +90,7 @@ void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const unsigned char *p
 	}
 }
 
-void grDispatcher::PutSpr(int x, int y, int sx, int sy, const unsigned char *p, int mode, float scale) {
+void grDispatcher::PutSpr(int x, int y, int sx, int sy, const byte *p, int mode, float scale) {
 	debugC(2, kDebugGraphics, "grDispatcher::PutSpr(%d, %d, %d, %d, scale=%f)", x, y, sx, sy, scale);
 
 	int sx_dest = round(float(sx) * scale);
@@ -140,7 +140,7 @@ void grDispatcher::PutSpr(int x, int y, int sx, int sy, const unsigned char *p, 
 	return;
 }
 
-void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const unsigned char *p, int mode) {
+void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const byte *p, int mode) {
 	debugC(2, kDebugGraphics, "grDispatcher::PutSpr_a(%d, %d, %d, %d)", x, y, sx, sy);
 
 	int px = 0;
@@ -168,10 +168,10 @@ void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const unsigned char *p
 	sx <<= 2;
 	px <<= 2;
 
-	const unsigned char *data_ptr = p + py * sx;
+	const byte *data_ptr = p + py * sx;
 	for (int i = 0; i < psy; i++) {
 		unsigned short *scr_buf = reinterpret_cast<unsigned short *>(_screenBuf->getBasePtr(x, y));
-		const unsigned char *data_line = data_ptr + px;
+		const byte *data_line = data_ptr + px;
 
 		for (int j = 0; j < psx; j++) {
 			unsigned a = data_line[3];
@@ -191,7 +191,7 @@ void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const unsigned char *p
 	return;
 }
 
-void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const unsigned char *data, bool has_alpha, int mode, float angle) {
+void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, int mode, float angle) {
 	const int F_PREC = 16;
 
 	int xc = pos.x + size.x / 2;
@@ -248,7 +248,7 @@ void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const unsig
 							if (mode & GR_FLIP_VERTICAL)
 								yb = size.y - yb - 1;
 
-							const unsigned char *data_ptr = data + size.x * 4 * yb + xb * 4;
+							const byte *data_ptr = data + size.x * 4 * yb + xb * 4;
 
 							unsigned a = data_ptr[3];
 							if (a != 255) {
@@ -282,7 +282,7 @@ void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const unsig
 					if (mode & GR_FLIP_VERTICAL)
 						yb = size.y - yb - 1;
 
-					const unsigned char *data_ptr = data + size.x * 3 * yb + xb * 3;
+					const byte *data_ptr = data + size.x * 3 * yb + xb * 3;
 					if (data_ptr[0] || data_ptr[1] || data_ptr[2])
 						*screen_ptr = make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]);
 				}
@@ -296,7 +296,7 @@ void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const unsig
 	}
 }
 
-void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const unsigned char *data, bool has_alpha, int mode, float angle, const Vect2f &scale) {
+void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, int mode, float angle, const Vect2f &scale) {
 	const int F_PREC = 16;
 
 	int xc = pos.x + round(float(size.x) * scale.x / 2.f);
@@ -337,7 +337,7 @@ void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const unsig
 							if (mode & GR_FLIP_VERTICAL)
 								yb = size.y - yb - 1;
 
-							const unsigned char *data_ptr = data + size.x * 4 * yb + xb * 4;
+							const byte *data_ptr = data + size.x * 4 * yb + xb * 4;
 
 							unsigned a = data_ptr[3];
 							if (a != 255) {
@@ -371,7 +371,7 @@ void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const unsig
 					if (mode & GR_FLIP_VERTICAL)
 						yb = size.y - yb - 1;
 
-					const unsigned char *data_ptr = data + size.x * 3 * yb + xb * 3;
+					const byte *data_ptr = data + size.x * 3 * yb + xb * 3;
 					*screen_ptr = make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]);
 				}
 
@@ -384,7 +384,7 @@ void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const unsig
 	}
 }
 
-void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const unsigned char *data, bool has_alpha, unsigned mask_color, int mask_alpha, int mode, float angle) {
+void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, unsigned mask_color, int mask_alpha, int mode, float angle) {
 	const int F_PREC = 16;
 
 	int xc = pos.x + size.x / 2;
@@ -425,7 +425,7 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const u
 					if (mode & GR_FLIP_VERTICAL)
 						yb = size.y - yb - 1;
 
-					const unsigned char *data_ptr = data + size.x * 4 * yb + xb * 4;
+					const byte *data_ptr = data + size.x * 4 * yb + xb * 4;
 
 					unsigned a = data_ptr[3];
 					if (a != 255) {
@@ -474,7 +474,7 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const u
 					if (mode & GR_FLIP_VERTICAL)
 						yb = size.y - yb - 1;
 
-					const unsigned char *data_ptr = data + size.x * 3 * yb + xb * 3;
+					const byte *data_ptr = data + size.x * 3 * yb + xb * 3;
 					if (data_ptr[0] || data_ptr[1] || data_ptr[2]) {
 						*screen_ptr = alpha_blend_565(mcl, *screen_ptr, mask_alpha);
 					}
@@ -489,7 +489,7 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const u
 	}
 }
 
-void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const unsigned char *data, bool has_alpha, unsigned mask_color, int mask_alpha, int mode, float angle, const Vect2f &scale) {
+void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, unsigned mask_color, int mask_alpha, int mode, float angle, const Vect2f &scale) {
 	const int F_PREC = 16;
 
 	int xc = pos.x + round(float(size.x) * scale.x / 2.f);
@@ -533,7 +533,7 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const u
 					if (mode & GR_FLIP_VERTICAL)
 						yb = size.y - yb - 1;
 
-					const unsigned char *data_ptr = data + size.x * 4 * yb + xb * 4;
+					const byte *data_ptr = data + size.x * 4 * yb + xb * 4;
 
 					unsigned a = data_ptr[3];
 					if (a != 255) {
@@ -579,7 +579,7 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const u
 					if (mode & GR_FLIP_VERTICAL)
 						yb = size.y - yb - 1;
 
-					const unsigned char *data_ptr = data + size.x * 3 * yb + xb * 3;
+					const byte *data_ptr = data + size.x * 3 * yb + xb * 3;
 					*screen_ptr = make_rgb565u(data_ptr[2], data_ptr[1], data_ptr[0]);
 				}
 
@@ -592,7 +592,7 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const u
 	}
 }
 
-void grDispatcher::PutSpr(int x, int y, int sx, int sy, const unsigned char *p, int mode) {
+void grDispatcher::PutSpr(int x, int y, int sx, int sy, const byte *p, int mode) {
 	debugC(2, kDebugGraphics, "grDispatcher::PutSpr(%d, %d, %d, %d)", x, y, sx, sy);
 
 	int px = 0;
@@ -656,7 +656,7 @@ void grDispatcher::PutSpr(int x, int y, int sx, int sy, const unsigned char *p, 
 
 }
 
-void grDispatcher::DrawSprContour_a(int x, int y, int sx, int sy, const unsigned char *p, int contour_color, int mode) {
+void grDispatcher::DrawSprContour_a(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode) {
 	int px = 0;
 	int py = 0;
 
@@ -723,7 +723,7 @@ void grDispatcher::DrawSprContour_a(int x, int y, int sx, int sy, const unsigned
 	return;
 }
 
-void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const unsigned char *p, int contour_color, int mode) {
+void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode) {
 	int px = 0;
 	int py = 0;
 
@@ -790,7 +790,7 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const unsigned c
 	return;
 }
 
-void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const unsigned char *p, int contour_color, int mode, float scale) {
+void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode, float scale) {
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
 
@@ -871,7 +871,7 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const unsigned c
 	return;
 }
 
-void grDispatcher::DrawSprContour_a(int x, int y, int sx, int sy, const unsigned char *p, int contour_color, int mode, float scale) {
+void grDispatcher::DrawSprContour_a(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode, float scale) {
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
 
@@ -956,7 +956,7 @@ void grDispatcher::DrawSprContour_a(int x, int y, int sx, int sy, const unsigned
 	return;
 }
 
-void grDispatcher::PutChar(int x, int y, unsigned color, int font_sx, int font_sy, const unsigned char *font_alpha, const grScreenRegion &chr_region) {
+void grDispatcher::PutChar(int x, int y, unsigned color, int font_sx, int font_sy, const byte *font_alpha, const grScreenRegion &chr_region) {
 	int px = chr_region.x();
 	int py = chr_region.y();
 
@@ -965,7 +965,7 @@ void grDispatcher::PutChar(int x, int y, unsigned color, int font_sx, int font_s
 
 	if (!clip_rectangle(x, y, px, py, psx, psy)) return;
 
-	const unsigned char *alpha_buf = font_alpha + px + py * font_sx;
+	const byte *alpha_buf = font_alpha + px + py * font_sx;
 
 	color = make_rgb(color);
 
@@ -992,7 +992,7 @@ void grDispatcher::PutChar(int x, int y, unsigned color, int font_sx, int font_s
 	return;
 }
 
-void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const unsigned char *p, unsigned mask_color, int mask_alpha, int mode) {
+void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const byte *p, unsigned mask_color, int mask_alpha, int mode) {
 	int px = 0;
 	int py = 0;
 
@@ -1020,7 +1020,7 @@ void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const unsigned char 
 	px *= 3;
 	sx *= 3;
 
-	const unsigned char *data_ptr = p + py * sx + px;
+	const byte *data_ptr = p + py * sx + px;
 
 	byte mr, mg, mb;
 	split_rgb565u(mask_color, mr, mg, mb);
@@ -1034,7 +1034,7 @@ void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const unsigned char 
 	warning("STUB: grDispatcher::PutSprMask");
 	for (int i = 0; i < psy; i++) {
 		unsigned short *scr_buf = (unsigned short *)(_screenBuf->getBasePtr(x, y));
-		const unsigned char *data_line = data_ptr;
+		const byte *data_line = data_ptr;
 
 		for (int j = 0; j < psx; j++) {
 			if (data_line[0] || data_line[1] || data_line[2])
@@ -1048,7 +1048,7 @@ void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const unsigned char 
 	}
 }
 
-void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const unsigned char *p, unsigned mask_color, int mask_alpha, int mode, float scale) {
+void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const byte *p, unsigned mask_color, int mask_alpha, int mode, float scale) {
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
 
@@ -1091,13 +1091,13 @@ void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const unsigned char 
 	sx *= 3;
 
 	for (int i = y0; i != y1; i += iy) {
-		const unsigned char *line_src = p + ((fy >> 16) * sx);
+		const byte *line_src = p + ((fy >> 16) * sx);
 
 		fy += dy;
 		fx = (1 << 15);
 
 		for (int j = x0; j != x1; j += ix) {
-			const unsigned char *src_data = line_src + (fx >> 16) * 3;
+			const byte *src_data = line_src + (fx >> 16) * 3;
 			if (src_data[0] || src_data[1] || src_data[2]) {
 				uint16 scl;
 				GetPixel(x + j, y + i, scl);
@@ -1108,7 +1108,7 @@ void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const unsigned char 
 	}
 }
 
-void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const unsigned char *p, unsigned mask_color, int mask_alpha, int mode) {
+void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const byte *p, unsigned mask_color, int mask_alpha, int mode) {
 	int px = 0;
 	int py = 0;
 
@@ -1135,7 +1135,7 @@ void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const unsigned cha
 	sx <<= 2;
 	px <<= 2;
 
-	const unsigned char *data_ptr = p + py * sx + px;
+	const byte *data_ptr = p + py * sx + px;
 
 	byte mr, mg, mb;
 	split_rgb565u(mask_color, mr, mg, mb);
@@ -1143,7 +1143,7 @@ void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const unsigned cha
 	warning("STUB: grDispatcher::PutSprMask_a");
 	for (int i = 0; i < psy; i++) {
 		unsigned short *scr_buf = (unsigned short *)(_screenBuf->getBasePtr(x, y));
-		const unsigned char *data_line = data_ptr;
+		const byte *data_line = data_ptr;
 
 		for (int j = 0; j < psx; j++) {
 			unsigned a = data_line[3];
@@ -1167,7 +1167,7 @@ void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const unsigned cha
 	}
 }
 
-void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const unsigned char *p, unsigned mask_color, int mask_alpha, int mode, float scale) {
+void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const byte *p, unsigned mask_color, int mask_alpha, int mode, float scale) {
 	int i, j, sx_dest, sy_dest;
 
 	sx_dest = round(float(sx) * scale);
@@ -1205,13 +1205,13 @@ void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const unsigned cha
 	split_rgb565u(mask_color, mr, mg, mb);
 
 	for (i = y0; i != y1; i += iy) {
-		const unsigned char *line_src = p + ((fy >> 16) * sx);
+		const byte *line_src = p + ((fy >> 16) * sx);
 
 		fy += dy;
 		fx = (1 << 15);
 
 		for (j = x0; j != x1; j += ix) {
-			const unsigned char *src_data = line_src + (fx >> 16) * 4;
+			const byte *src_data = line_src + (fx >> 16) * 4;
 			unsigned a = src_data[3];
 
 			if (a != 255 && ClipCheck(x + j, y + i)) {
