@@ -27,59 +27,59 @@
 
 namespace QDEngine {
 
-fpsCounter::fpsCounter(int period) : start_time_(0.0f),
-	prev_time_(0.0f),
-	period_(period),
-	frame_count_(0),
-	value_(-1.0f),
-	value_min_(0.0f),
-	value_max_(0.0f),
-	min_frame_time_(1000.0f),
-	max_frame_time_(0.0f) {
+fpsCounter::fpsCounter(int period) : _start_time(0.0f),
+	_prev_time(0.0f),
+	_period(period),
+	_frame_count(0),
+	_value(-1.0f),
+	_value_min(0.0f),
+	_value_max(0.0f),
+	_min_frame_time(1000.0f),
+	_max_frame_time(0.0f) {
 }
 
 bool fpsCounter::quant() {
 	float time = float(g_system->getMillis());
 
-	if (min_frame_time_ > time - prev_time_)
-		min_frame_time_ = time - prev_time_;
+	if (_min_frame_time > time - _prev_time)
+		_min_frame_time = time - _prev_time;
 
-	if (max_frame_time_ < time - prev_time_)
-		max_frame_time_ = time - prev_time_;
+	if (_max_frame_time < time - _prev_time)
+		_max_frame_time = time - _prev_time;
 
-	frame_count_++;
-	prev_time_ = time;
+	_frame_count++;
+	_prev_time = time;
 
-	if (period_) {
-		if (prev_time_ - start_time_ >= period_) {
-			value_ = float(frame_count_) / (prev_time_ - start_time_) * 1000.0f;
+	if (_period) {
+		if (_prev_time - _start_time >= _period) {
+			_value = float(_frame_count) / (_prev_time - _start_time) * 1000.0f;
 
-			value_min_ = 1000.0f / max_frame_time_;
-			value_max_ = 1000.0f / min_frame_time_;
+			_value_min = 1000.0f / _max_frame_time;
+			_value_max = 1000.0f / _min_frame_time;
 
-			frame_count_ = 0;
-			start_time_ = prev_time_;
+			_frame_count = 0;
+			_start_time = _prev_time;
 
-			min_frame_time_ = 10000.0f;
-			max_frame_time_ = 0.0f;
+			_min_frame_time = 10000.0f;
+			_max_frame_time = 0.0f;
 
 			return true;
 		}
 		return false;
 	} else {
-		value_ = float(frame_count_) / (float(g_system->getMillis()) - start_time_) * 1000.0f;
+		_value = float(_frame_count) / (float(g_system->getMillis()) - _start_time) * 1000.0f;
 		return true;
 	}
 }
 
 void fpsCounter::reset() {
-	prev_time_ = start_time_ = float(g_system->getMillis());
-	frame_count_ = 0;
-	value_ = -1.0f;
-	value_min_ = value_max_ = 0.0f;
+	_prev_time = _start_time = float(g_system->getMillis());
+	_frame_count = 0;
+	_value = -1.0f;
+	_value_min = _value_max = 0.0f;
 
-	min_frame_time_ = 10000.0f;
-	max_frame_time_ = 0.0f;
+	_min_frame_time = 10000.0f;
+	_max_frame_time = 0.0f;
 }
 
 } // namespace QDEngine

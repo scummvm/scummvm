@@ -32,39 +32,39 @@ public:
 	bool quant();
 
 	float fps_value() const {
-		return value_;
+		return _value;
 	}
 	float fps_value_min() const {
-		return value_min_;
+		return _value_min;
 	}
 	float fps_value_max() const {
-		return value_max_;
+		return _value_max;
 	}
 
 	void reset();
 
 	int period() const {
-		return period_;
+		return _period;
 	}
 	void set_period(int p) {
-		period_ = p;
+		_period = p;
 	}
 
 private:
 
-	float start_time_;
-	float prev_time_;
+	float _start_time;
+	float _prev_time;
 
-	int frame_count_;
+	int _frame_count;
 
-	int period_;
+	int _period;
 
-	float value_;
-	float value_min_;
-	float value_max_;
+	float _value;
+	float _value_min;
+	float _value_max;
 
-	float min_frame_time_;
-	float max_frame_time_;
+	float _min_frame_time;
+	float _max_frame_time;
 };
 
 
