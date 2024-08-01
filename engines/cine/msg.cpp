@@ -56,7 +56,7 @@ int16 loadMsg(char *pMsgName) {
 
 		// Store the read message.
 		// This code works around input data that has empty strings residing outside the input
-		// buffer (e.g. message indexes 58-254 in BATEAU.MSG in PROCS08 in Operation Stealth).
+		// buffer (e.g. message indices 58-254 in BATEAU.MSG in PROCS08 in Operation Stealth).
 		if (messageDataPos < sourceSize) {
 			g_cine->_messageTable.push_back((const char *)(dataPtr + messageDataPos));
 		} else {
