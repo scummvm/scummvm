@@ -43,9 +43,6 @@ qdInventory::qdInventory() : _need_redraw(false),
 	_shadow_color(INV_DEFAULT_SHADOW_COLOR),
 	_shadow_alpha(INV_DEFAULT_SHADOW_ALPHA),
 	_additional_cells(0, 0) {
-#ifdef _QUEST_EDITOR
-	m_iActiveCellset = -1;
-#endif // _QUEST_EDITOR
 }
 
 qdInventory::~qdInventory() {
@@ -303,26 +300,10 @@ bool qdInventory::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
 	return false;
 }
 
-#ifdef _QUEST_EDITOR
-int qdInventory::hit(int x, int y) {
-	Vect2s pt(x, y);
-	typedef qdInventoryCellSetVector::iterator i_t;
-	i_t i = cell_sets_.begin(), e = cell_sets_.end();
-	for (; i != e; ++i) {
-		if (i->hit(pt))
-			return std::distance(cell_sets_.begin(), i);
-	}
-	return -1;
-}
-#endif // _QUEST_EDITOR
-
 void qdInventory::remove_cell_set(int idx) {
 	assert(-1 < idx && idx < static_cast<int>(cell_sets_.size()));
 
 	cell_sets_.erase(cell_sets_.begin() + idx);
-#ifdef _QUEST_EDITOR
-	if (idx == m_iActiveCellset) m_iActiveCellset = -1;
-#endif // _QUEST_EDITOR
 }
 
 bool qdInventory::load_resources() {

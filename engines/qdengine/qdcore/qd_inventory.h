@@ -66,40 +66,6 @@ public:
 	}
 	void remove_cell_set(int idx);
 
-#ifdef _QUEST_EDITOR
-	qdInventoryCellSet *add_cell_set(const Vect2s &scr_pos, const Vect2s &sz, const qdInventoryCellType &t) {
-		typedef qdInventoryCellSetVector::iterator i_t;
-		i_t res = cell_sets_.insert(cell_sets_.end(), qdInventoryCellSet());
-		if (res == cell_sets_.end())
-			return NULL;
-
-		res->set_size(sz);
-		res->set_cell_type(t);
-		res->set_screen_pos(scr_pos);
-
-		return &*res;
-	}
-	const qdInventoryCellSetVector &cell_sets() const {
-		return cell_sets_;
-	}
-
-	//возвращает номер сельсета, если попали иначе -1
-	int hit(int x, int y);
-
-	int selected_cellset_num() const {
-		return m_iActiveCellset;
-	}
-	void select_cellset(int inum) const {
-		assert(-1 <= inum && inum < (int)cell_sets_.size());
-		m_iActiveCellset = inum;
-	}
-	const qdInventoryCellSet *selected_cellset() const {
-		if (m_iActiveCellset == -1)
-			return NULL;
-		return &get_cell_set(m_iActiveCellset);
-	}
-#endif // _QUEST_EDITOR
-
 	const qdInventoryCellSet &get_cell_set(int id = 0) const {
 		return cell_sets_[id];
 	}
@@ -190,10 +156,6 @@ private:
 
 	//! Дополнительные ячейки для всех наборов инвентори
 	Vect2s _additional_cells;
-
-#ifdef _QUEST_EDITOR
-	mutable int m_iActiveCellset;
-#endif
 };
 
 } // namespace QDEngine
