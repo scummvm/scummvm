@@ -32,8 +32,6 @@ namespace QDEngine {
 
 namespace xml {
 
-#define _XML_ONLY_BINARY_SCRIPT_
-
 class parser {
 public:
 	typedef Common::HashMap<Common::String, tag> tag_format_t;
@@ -55,12 +53,6 @@ public:
 	}
 
 	void clear();
-
-#ifndef _XML_ONLY_BINARY_SCRIPT_
-	virtual void start_element_handler(const char *tag_name, const char **tag_attributes);
-	virtual void end_element_handler(const char *tag_name);
-	virtual void character_data_handler(const char *data, int data_length);
-#endif
 
 	void resize_data_pool(unsigned int pool_sz) {
 		_data_pool.resize(pool_sz);
@@ -100,10 +92,6 @@ private:
 	tag_format_t _tag_format;
 	int _cur_level;
 	bool _skip_mode;
-
-#ifndef _XML_ONLY_BINARY_SCRIPT_
-	bool read_tag_data(tag &tg, const char *data_ptr, int data_length);
-#endif
 };
 
 }; /* namespace xml */
