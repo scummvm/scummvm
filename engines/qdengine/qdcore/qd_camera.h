@@ -50,7 +50,7 @@ public:
 	sGridCell() {
 		attributes_ = CELL_IMPASSABLE;
 	}
-	sGridCell(uint16 atr, short h) {
+	sGridCell(uint16 atr, int16 h) {
 		attributes_ = atr;
 	}
 	~sGridCell() { }
@@ -78,10 +78,10 @@ public:
 		return check_attribute(CELL_SELECTED);
 	}
 
-	short height() const {
+	int16 height() const {
 		return 0;
 	}
-	void set_height(short h) { }
+	void set_height(int16 h) { }
 
 	void set_attribute(unsigned int attr) {
 		attributes_ |= attr;

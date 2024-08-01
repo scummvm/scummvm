@@ -39,7 +39,7 @@ public:
 	enum tag_data_format {
 		//! данные отсутствуют
 		TAG_DATA_VOID,
-		//! данные типа short int
+		//! данные типа int16 int
 		TAG_DATA_SHORT,
 		//! данные типа uint16 int
 		TAG_DATA_UNSIGNED_SHORT,
