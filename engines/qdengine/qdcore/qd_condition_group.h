@@ -46,11 +46,7 @@ public:
 
 	~qdConditionGroup();
 
-#ifdef _QUEST_EDITOR
-	typedef std::list<int> conditions_container_t;
-#else
 	typedef std::vector<int> conditions_container_t;
-#endif
 	typedef conditions_container_t::const_iterator conditions_iterator_t;
 
 	conditions_iterator_t conditions_begin() const {
@@ -73,11 +69,6 @@ public:
 
 	bool add_condition(int condition_id);
 	bool remove_condition(int condition_id);
-#ifdef _QUEST_EDITOR
-	void remove_all() {
-		_conditions.clear();
-	}
-#endif // _QUEST_EDITOR
 
 	bool load_script(const xml::tag *p);
 	bool save_script(Common::WriteStream &fh, int indent = 0) const;
