@@ -50,7 +50,7 @@ public:
 	};
 
 	qdTriggerProfilerRecord();
-	qdTriggerProfilerRecord(unsigned int tm, event_t ev, const qdTriggerChain *trigger, int el_id, int lnk_id, int st);
+	qdTriggerProfilerRecord(uint32 tm, event_t ev, const qdTriggerChain *trigger, int el_id, int lnk_id, int st);
 	qdTriggerProfilerRecord(const qdTriggerProfilerRecord &rec);
 	~qdTriggerProfilerRecord();
 
@@ -60,7 +60,7 @@ public:
 	bool load(Common::SeekableReadStream &fh);
 
 	//! Время события (в миллисекундах от старта приложения).
-	unsigned int time() const {
+	uint32 time() const {
 		return time_;
 	}
 	//! Идентификатор события.
@@ -87,7 +87,7 @@ public:
 private:
 
 	//! Время события (в миллисекундах от старта приложения).
-	unsigned int time_;
+	uint32 time_;
 
 	//! Идентификатор события.
 	event_t event_;

@@ -199,7 +199,7 @@ bool rleBuffer::convert_data(int bits_per_pixel) {
 			}
 
 			short_ptr = reinterpret_cast<uint16 *>(&*_data.begin());
-			byte *char_ptr = reinterpret_cast<unsigned char *>(&*_data.begin());
+			byte *char_ptr = reinterpret_cast<byte *>(&*_data.begin());
 
 			for (int i = 0; i < sz; i++) {
 				byte r, g, b;
@@ -238,7 +238,7 @@ bool rleBuffer::convert_data(int bits_per_pixel) {
 	case 24:
 	case 32:
 		if (bits_per_pixel == 15 || bits_per_pixel == 16) {
-			byte *src_ptr = reinterpret_cast<unsigned char *>(&*_data.begin());
+			byte *src_ptr = reinterpret_cast<byte *>(&*_data.begin());
 			uint16 *dest_ptr = reinterpret_cast<uint16 *>(&*_data.begin());
 
 			for (int i = 0; i < sz; i++) {

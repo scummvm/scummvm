@@ -269,7 +269,7 @@ void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p
 		const byte *data_ptr = p + py * sx3;
 
 		for (int i = 0; i < psy; i++) {
-			byte *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x4);
+			byte *scr_buf = reinterpret_cast<byte *>(screenBuf + yTable[y] + x4);
 			zbuf_t *zbuf = zbuffer_ + y * SizeX + x;
 			const byte *data_line = data_ptr + px3;
 
@@ -324,7 +324,7 @@ void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p
 		const byte *data_ptr = p + py * sx3;
 
 		for (int i = 0; i < psy; i++) {
-			byte *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x3);
+			byte *scr_buf = reinterpret_cast<byte *>(screenBuf + yTable[y] + x3);
 			zbuf_t *zbuf = zbuffer_ + y * SizeX + x;
 			const byte *data_line = data_ptr + px3;
 
@@ -449,7 +449,7 @@ void grDispatcher::PutSpr_z(int x, int y, int z, int sx, int sy, const byte *p, 
 		const byte *data_ptr = p + py * sx3;
 
 		for (int i = 0; i < psy; i++) {
-			byte *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x4);
+			byte *scr_buf = reinterpret_cast<byte *>(screenBuf + yTable[y] + x4);
 			zbuf_t *zbuf = zbuffer_ + y * SizeX + x;
 			const byte *data_line = data_ptr + px3;
 
@@ -498,7 +498,7 @@ void grDispatcher::PutSpr_z(int x, int y, int z, int sx, int sy, const byte *p, 
 		const byte *data_ptr = p + py * sx3;
 
 		for (int i = 0; i < psy; i++) {
-			byte *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x3);
+			byte *scr_buf = reinterpret_cast<byte *>(screenBuf + yTable[y] + x3);
 			zbuf_t *zbuf = zbuffer_ + y * SizeX + x;
 			const byte *data_line = data_ptr + px3;
 

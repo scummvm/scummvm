@@ -177,7 +177,7 @@ bool qdScreenText::format_text(int max_width) {
 	// пробела в конце всегда включится попытка форматирования конца).
 	// Пробел не отразиться на выводе, т.к. он в конце.
 
-	byte *dp = (unsigned char *)_data.c_str();
+	byte *dp = (byte *)_data.c_str();
 
 	for (int i = 0; i < _data.length(); i++) {
 		if (dp[i] == '\n') {

@@ -68,10 +68,10 @@ public:
 		return (status() == MPEG_PLAYING);
 	}
 
-	unsigned int volume() const {
+	uint32 volume() const {
 		return _volume;
 	}
-	void set_volume(unsigned int vol);
+	void set_volume(uint32 vol);
 
 	static bool init_library(void *dsound_device);
 	static void deinit_library();
@@ -87,8 +87,8 @@ private:
 	bool _paused;
 
 	//! Music volume, [0, 255].
-	unsigned int _volume;
-	unsigned int _cur_track_volume;
+	uint32 _volume;
+	uint32 _cur_track_volume;
 
 	Audio::SoundHandle _soundHandle;
 

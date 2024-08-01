@@ -24,7 +24,7 @@
 
 #include "common/system.h"
 
-typedef unsigned int time_type;
+typedef uint32 time_type;
 
 namespace QDEngine {
 

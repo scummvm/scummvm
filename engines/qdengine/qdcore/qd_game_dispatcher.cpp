@@ -613,9 +613,9 @@ bool qdGameDispatcher::save_script(const char *fname) const {
 void qdGameDispatcher::load_script(const char *fname) {
 	xml::parser &pr = qdscr_XML_Parser();
 
-	unsigned int start_clock = g_system->getMillis();
+	uint32 start_clock = g_system->getMillis();
 	pr.parse_file(fname);
-	unsigned int end_clock =  g_system->getMillis();
+	uint32 end_clock =  g_system->getMillis();
 	warning("Script parsing: %d ms", end_clock - start_clock);
 
 	if (pr.is_script_binary()) {

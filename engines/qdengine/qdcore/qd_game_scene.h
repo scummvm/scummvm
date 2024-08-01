@@ -210,7 +210,7 @@ public:
 	void inc_zone_update_count() {
 		_zone_update_count++;
 	}
-	unsigned int zone_update_count() const {
+	uint32 zone_update_count() const {
 		return _zone_update_count;
 	}
 
@@ -286,7 +286,7 @@ private:
 	/// используемый для сцены интерфейсный экран
 	std::string _interface_screen_name;
 
-	unsigned int _zone_update_count;
+	uint32 _zone_update_count;
 
 	static std::vector<qdGameObject *> _visible_objects;
 

@@ -72,7 +72,7 @@ long CLZ77::GetMaxEncoded(long len) {
 long CLZ77::GetMaxDecoded(byte *source) {
 	return ((unsigned long *)source)[0];
 }
-void CLZ77::Encode(byte *target, long &tlen, const unsigned char *source, long slen) {
+void CLZ77::Encode(byte *target, long &tlen, const byte *source, long slen) {
 	int32 len, block;
 	int32 shift, border;
 	const byte *s, *p;
@@ -127,7 +127,7 @@ void CLZ77::Encode(byte *target, long &tlen, const unsigned char *source, long s
 //		OnStep();
 	}
 }
-long CLZ77::Decode(byte *target, long &tlen, const unsigned char *source, long slen) {
+long CLZ77::Decode(byte *target, long &tlen, const byte *source, long slen) {
 	uint32 i;
 	uint32 block, len;
 	uint32 shift, border;

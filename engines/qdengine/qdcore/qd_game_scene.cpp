@@ -986,7 +986,7 @@ void qdGameScene::pre_redraw() {
 
 	if (qdGameConfig::get_config().show_fps()) {
 #ifdef __QD_DEBUG_ENABLE__
-		static unsigned int memory_usage = 0;
+		static uint32 memory_usage = 0;
 		static int mem_update_counter = 20;
 		if (++mem_update_counter >= 20)
 			memory_usage = app_memory_usage();

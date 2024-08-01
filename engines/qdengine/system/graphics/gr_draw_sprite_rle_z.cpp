@@ -63,7 +63,7 @@ void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 			dy = 1;
 
 		for (int i = 0; i < psy; i++) {
-			byte *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x3);
+			byte *scr_buf = reinterpret_cast<byte *>(screenBuf + yTable[y] + x3);
 			zbuf_t *z_buf = zbuffer_ + SizeX * y + x;
 
 			const char *rle_header = p->header_ptr(py + i);
@@ -194,7 +194,7 @@ void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 			dy = 1;
 
 		for (int i = 0; i < psy; i++) {
-			byte *scr_buf = reinterpret_cast<unsigned char *>(screenBuf + yTable[y] + x3);
+			byte *scr_buf = reinterpret_cast<byte *>(screenBuf + yTable[y] + x3);
 			zbuf_t *z_buf = zbuffer_ + SizeX * y + x;
 
 			const char *rle_header = p->header_ptr(py + i);

@@ -45,7 +45,7 @@ public:
 		TAG_DATA_UNSIGNED_SHORT,
 		//! данные типа int
 		TAG_DATA_INT,
-		//! данные типа unsigned int
+		//! данные типа uint32
 		TAG_DATA_UNSIGNED_INT,
 		//! данные типа float
 		TAG_DATA_FLOAT,
