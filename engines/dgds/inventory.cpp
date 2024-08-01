@@ -43,7 +43,7 @@ Inventory::Inventory() : _isOpen(false), _prevPageBtn(nullptr), _nextPageBtn(nul
 }
 
 void Inventory::open() {
-	// Allow double-open becuase that's how the inventory shows item
+	// Allow double-open because that's how the inventory shows item
 	// descriptions.
 	_isOpen = true;
 	DgdsEngine *engine = DgdsEngine::getInstance();

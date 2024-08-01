@@ -284,7 +284,7 @@ void Sound::loadMacMusic(const Common::String &filename) {
 		} else if (chunk.isSection(ID_TAG) || chunk.isSection(ID_FNM)) {
 			_readStrings(stream);
 		} else if (chunk.isSection(ID_DAT)) {
-			// TODO: Should we record the indexes?
+			// TODO: Should we record the indices?
 			/*uint16 idx = */ stream->readUint16LE();
 			/*uint16 type = */ stream->readUint16LE();
 			uint32 sz;

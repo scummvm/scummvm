@@ -165,7 +165,7 @@ bool DgdsEngine::changeScene(int sceneNum) {
 
 	const Common::String sceneFile = Common::String::format("S%d.SDS", sceneNum);
 	if (!_resource->hasResource(sceneFile)) {
-		warning("Tried to switch to non-existant scene %d", sceneNum);
+		warning("Tried to switch to non-existent scene %d", sceneNum);
 		return false;
 	}
 
@@ -725,7 +725,7 @@ Common::Error DgdsEngine::syncGame(Common::Serializer &s) {
 		// load and prepare scene data before syncing the rest of the state
 		const Common::String sceneFile = Common::String::format("S%d.SDS", sceneNum);
 		if (!_resource->hasResource(sceneFile))
-			error("Game references non-existant scene %d", sceneNum);
+			error("Game references non-existent scene %d", sceneNum);
 
 		_soundPlayer->unloadMusic();
 		_soundPlayer->stopAllSfx();
