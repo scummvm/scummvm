@@ -29,10 +29,6 @@
 
 namespace QDEngine {
 
-#ifdef _QUEST_EDITOR
-#define _QD_INTERFACE_BUTTON_PTR_CONTAINER
-#endif
-
 //! Интерфейсный элемент - кнопка.
 class qdInterfaceButton : public qdInterfaceElement {
 public:
