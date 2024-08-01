@@ -91,7 +91,7 @@ bool qd_char_input_handler(int input) {
 qdGameDispatcher::qdGameDispatcher() : _is_paused(false),
 	_cur_scene(NULL),
 	_scene_loading_progress_data(NULL),
-	scene_loading_progress_fnc_(NULL),
+	_scene_loading_progress_fnc(NULL),
 	_cur_inventory(NULL),
 	_cur_video(NULL),
 	_next_scene(NULL),
@@ -108,7 +108,7 @@ qdGameDispatcher::qdGameDispatcher() : _is_paused(false),
 
 	_resource_compression = 0;
 
-	fade_timer_ = 0.f;
+	_fade_timer = 0.f;
 	_fade_duration = 0.1f;
 
 	_autosave_slot = 0;
@@ -280,9 +280,9 @@ void qdGameDispatcher::quant(float dt) {
 		}
 
 		if (check_flag(FADE_IN_FLAG | FADE_OUT_FLAG)) {
-			fade_timer_ += dt;
-			if (fade_timer_ >= _fade_duration && !check_flag(FADE_OUT_FLAG)) {
-				fade_timer_ = _fade_duration;
+			_fade_timer += dt;
+			if (_fade_timer >= _fade_duration && !check_flag(FADE_OUT_FLAG)) {
+				_fade_timer = _fade_duration;
 				drop_flag(FADE_IN_FLAG | FADE_OUT_FLAG);
 			}
 
@@ -795,7 +795,7 @@ void qdGameDispatcher::redraw_scene(bool draw_interface) {
 		_cur_scene->debug_redraw();
 
 		if (check_flag(FADE_IN_FLAG | FADE_OUT_FLAG)) {
-			float phase = fade_timer_ / _fade_duration;
+			float phase = _fade_timer / _fade_duration;
 			if (phase > 1.f) phase = 1.f;
 
 			if (check_flag(FADE_OUT_FLAG))
@@ -3161,7 +3161,7 @@ bool qdGameDispatcher::set_fade(bool fade_in, float duration) {
 	else
 		set_flag(FADE_OUT_FLAG);
 
-	fade_timer_ = 0.f;
+	_fade_timer = 0.f;
 	_fade_duration = duration;
 
 	return true;
