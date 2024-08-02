@@ -2257,7 +2257,7 @@ yypcontext_expected_tokens (const yypcontext_t *yyctx,
   int yyn = yypact[+*yyctx->yyssp];
   if (!yypact_value_is_default (yyn))
     {
-      /* Start YYX at -YYN if negative to avoid negative indexes in
+      /* Start YYX at -YYN if negative to avoid negative indices in
          YYCHECK.  In other words, skip the first -YYN actions for
          this state because they are default actions.  */
       int yyxbegin = yyn < 0 ? -yyn : 0;
