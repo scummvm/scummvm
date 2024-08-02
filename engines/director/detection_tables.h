@@ -1742,7 +1742,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "pingutime",			"Time for Pingu" },
 	{ "rockettmilkss",		"Rockett's got milk? Screen Saver" },
 	{ "ss007",				"The James Bond Screensaver" },
-	{ "ss102dalmations",	"102 Dalmations Screen Saver" },
+	{ "ss102dalmations",	"102 Dalmatians Screen Saver" },
 	{ "ssbeastie",			"Beastie Boys ScreenSaver" },
 	{ "ssbudfranklouie",	"Budweiser: Frank & Louie Screen Saver" },
 	{ "sscocacola",			"Coca-Cola Screen Saver" },
@@ -7316,7 +7316,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 //
 //////////////////////////////////////////////////
 
-	// Disney's 101 Dalmations
+	// Disney's 101 Dalmatians
 	WINGAME1("101pet", "", "101pet.exe", "d62438566e44826960fc16c5c23dbe43", 1862441, 650),
 
 	MACGAME1("10plus2", "", "10plus2 PPC", "22e2e91bed55f087b739983679e4a0ff", 114739, 600),
