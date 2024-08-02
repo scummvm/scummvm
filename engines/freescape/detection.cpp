@@ -689,7 +689,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"castlemaster",
 		"",
-		AD_ENTRY1s("castlemaster.zx.data", "54cea8dbb89d944aa77efdcde73870c3", 36864),
+		AD_ENTRY1s("castlemaster.zx.data", "3e6f6b283fa00a3073edce2392950601", 36309),
 		Common::ES_ESP,
 		Common::kPlatformZX,
 		ADGF_UNSTABLE,

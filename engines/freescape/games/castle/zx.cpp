@@ -87,25 +87,25 @@ void CastleEngine::loadAssetsZXFullGame() {
 	if (!file.isOpen())
 		error("Failed to open castlemaster.zx.data");
 
+	loadMessagesVariableSize(&file, 0x4bd, 71);
 	switch (_language) {
 		case Common::ES_ESP:
 			loadRiddles(&file, 0xcf0 - 1 - 1 - 1, 8);
 			loadMessagesVariableSize(&file, 0xf3d, 71);
-			load8bitBinary(&file, 0x632b - 2, 16);
+			load8bitBinary(&file, 0x6aab - 2, 16);
+			loadSpeakerFxZX(&file, 0xca0, 0xcdc);
+			loadFonts(&file, 0x1218 + 16, _font);
 			break;
 		case Common::EN_ANY:
 			loadRiddles(&file, 0x1460 - 1 - 3, 8);
-			loadMessagesVariableSize(&file, 0x4bd, 71);
 			load8bitBinary(&file, 0x6a3b, 16);
+			loadSpeakerFxZX(&file, 0xc91, 0xccd);
+			loadFonts(&file, 0x1219, _font);
 			break;
 		default:
 			error("Language not supported");
 			break;
 	}
-
-	//loadMessagesFixedSize(&file, 0x4bc + 1, 16, 27);
-	loadFonts(&file, 0x1219, _font);
-	loadSpeakerFxZX(&file, 0xc91, 0xccd);
 
 	loadColorPalette();
 	_gfx->readFromPalette(2, r, g, b);
@@ -121,7 +121,7 @@ void CastleEngine::loadAssetsZXFullGame() {
 	background->create(backgroundWidth * 8, backgroundHeight, _gfx->_texturePixelFormat);
 	background->fillRect(Common::Rect(0, 0, backgroundWidth * 8, backgroundHeight), 0);
 
-	file.seek(0xfc4);
+	file.seek(_language == Common::ES_ESP ? 0xfd3 : 0xfc4);
 	_background = loadFrames(&file, background, backgroundWidth, backgroundHeight, front);
 
 	for (auto &it : _areaMap) {
