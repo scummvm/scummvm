@@ -434,6 +434,10 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 	if (msg.ascii == (uint16)'c') {
 		g_engine->changeScene(0x6);
 	}
+	if (msg.ascii == (uint16)'d') {
+		_backgroundSurface = g_engine->_depthMap;
+		redraw();
+	}
 	if (msg.ascii == (uint16)'m') {
 		// _backgroundSurface = g_engine->_map;
 		_backgroundSurface = g_engine->_pathfindingMap;
@@ -660,7 +664,7 @@ GameObject *View1::getClickedInventoryItem(const Common::Point &p) {
 	return nullptr;
 }
 
-void View1::DrawSprite(int16 x, int16 y, uint16 width, uint16 height, byte* data, Graphics::ManagedSurface& s)
+void View1::DrawSprite(int16 x, int16 y, uint16 width, uint16 height, byte* data, Graphics::ManagedSurface& s, uint8 depth)
 {
 	for (int currentX = 0; currentX < width; currentX++) {
 		for (int currentY = 0; currentY < height; currentY++) {
@@ -669,15 +673,20 @@ void View1::DrawSprite(int16 x, int16 y, uint16 width, uint16 height, byte* data
 				int finalX = x + currentX;
 				int finalY = y + currentY;
 				if (finalX >= 0 && finalX < s.w && finalY >= 0 && finalY < s.h) {
-					s.setPixel(x + currentX, y + currentY, val);
+					// Check for depth
+					uint8 bgDepth = g_engine->_depthMap.getPixel(finalX, finalY);
+					// TODO: Check which relation has to hold
+					if (bgDepth > depth) {
+						s.setPixel(x + currentX, y + currentY, val);
+					}
 				}
 			}
 		}
 	}
 }
 
-void View1::DrawSprite(const Common::Point &pos, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s) {
-	DrawSprite(pos.x, pos.y, width, height, data, s);
+void View1::DrawSprite(const Common::Point &pos, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, uint8 depth) {
+	DrawSprite(pos.x, pos.y, width, height, data, s, depth);
 }
 
 void View1::DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s) {
@@ -756,7 +765,8 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		
 		
 		// AnimFrame *frame = current->GetCurrentPortrait();
-		DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s);
+		uint8 depth = g_engine->_depthMap.getPixel(current->GetPosition().x, current->GetPosition().y);
+		DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s, depth);
 		Common::Rect screenRect(0, 0, 320, 200);
 		if (screenRect.contains(current->GetPosition())) {
 			s.setPixel(current->GetPosition().x, current->GetPosition().y, 0xFF);
@@ -957,7 +967,7 @@ Macs2::AnimFrame *Character::GetCurrentPortrait() {
 	AnimFrame *result = new AnimFrame();
 	Common::MemoryReadStream stream(this->GameObject->Blobs[17].data(), this->GameObject->Blobs[17].size());
 	// TODO: Need to check how the offset really is calculated by the game code, this will not hold
-	if (is_in_list<uint16, 2, 4, 6, 0xd, 0xf, 0x12, 0x16>(GameObject->Index)) {
+	if (is_in_list<uint16, 2, 4, 6, 0xd, 0xf, 0x12, 0x16, 0x4D>(GameObject->Index)) {
 		// GameObject->Index == 2 || GameObject->Index == 4 || GameObject->Index == 6 || GameObject->Index == 0xd || GameObject ->Index == 0xf) {
 		stream.seek(35, SEEK_SET);
 	} else {

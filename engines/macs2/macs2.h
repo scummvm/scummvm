@@ -121,6 +121,9 @@ public:
 	// Note: This is used both for pathfinding as well as for area IDs
 	Graphics::ManagedSurface _pathfindingMap;
 
+	// This is the depth map
+	Graphics::ManagedSurface _depthMap;
+
 	byte _pal[256 * 3] = { 0 };
 	byte _palVanilla[256 * 3] = { 0 };
 
