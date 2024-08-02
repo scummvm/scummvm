@@ -43,6 +43,33 @@ static const char *SAID[][2] = {
 	{ nullptr, nullptr }
 };
 
+static const int16 NORMAL_DIRS[] = { 200, 201, 202, -1 };
+static const char *NORMAL_NAMES[] = {
+	"Feng Li walk pos3",
+	"Feng Li walk pos4",
+	"Feng Li walk pos5"
+};
+static const int16 SHADOW_DIRS[] = { 210, 211, 212, -1 };
+static const char *SHADOW_NAMES[] = {
+	"candleman shadow3",
+	"candleman shadow4",
+	"candleman shadow5"
+};
+
+static const int16 NORMAL_DIRS2[] = { 220, 221, 222, -1 };
+static const char *NORMAL_NAMES2[] = {
+	"mei chen ny walker pos3",
+	"mei chen ny walker pos4",
+	"mei chen ny walker pos5"
+};
+static const int16 SHADOW_DIRS2[] = { 230, 231, 232, -1 };
+static const char *SHADOW_NAMES2[] = {
+	"candleman shadow3",
+	"candleman shadow4",
+	"candleman shadow5"
+};
+
+
 void Room303::preload() {
 	LoadWSAssets("OTHER SCRIPT");
 
@@ -67,32 +94,6 @@ void Room303::preload() {
 }
 
 void Room303::init() {
-	static const int16 NORMAL_DIRS[] = { 200, 201, 202, -1 };
-	static const char *NORMAL_NAMES[] = {
-		"Feng Li walk pos3",
-		"Feng Li walk pos4",
-		"Feng Li walk pos5"
-	};
-	static const int16 SHADOW_DIRS[] = { 210, 211, 212, -1 };
-	static const char *SHADOW_NAMES[] = {
-		"candleman shadow3",
-		"candleman shadow4",
-		"candleman shadow5"
-	};
-
-	static const int16 NORMAL_DIRS2[] = { 220, 221, 222, -1 };
-	static const char *NORMAL_NAMES2[] = {
-		"mei chen ny walker pos3",
-		"mei chen ny walker pos4",
-		"mei chen ny walker pos5"
-	};
-	static const int16 SHADOW_DIRS2[] = { 230, 231, 232, -1 };
-	static const char *SHADOW_NAMES2[] = {
-		"candleman shadow3",
-		"candleman shadow4",
-		"candleman shadow5"
-	};
-
 	_val1 = _lonelyFlag = 0;
 
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
@@ -329,6 +330,8 @@ void Room303::init() {
 }
 
 void Room303::daemon() {
+	int frame;
+
 	switch (_G(kernel).trigger) {
 	case 3:
 		sendWSMessage_120000(4);
@@ -717,7 +720,6 @@ void Room303::daemon() {
 		break;
 
 	case 201:
-		// TODO: Complete trigger 201
 		switch (_val10) {
 		case 0:
 			switch (_val11) {
@@ -734,7 +736,171 @@ void Room303::daemon() {
 					_G(kernel).trigger_mode = KT_DAEMON;
 				}
 
+				++_val8;
+				if (imath_ranged_rand(7, 12) < _val8) {
+					_val8 = 0;
+
+					switch (imath_ranged_rand(1, 3)) {
+					case 1:
+						sendWSMessage_10000(1, _hands4, _hands2, 1, 14, 200,
+							_hands2, 14, 14, 0);
+						_val10 = _val11 = 1;
+						break;
+
+					case 2:
+						sendWSMessage_10000(1, _hands4, _hands1, 2, 9, 200,
+							_hands1, 9, 9, 0);
+						_val10 = _val11 = 1;
+						break;
+
+					case 3:
+						kernel_timing_trigger(60, 201);
+						break;
+
+					default:
+						break;
+					}
+				} else {
+					kernel_timing_trigger(60, 201);
+				}
+				break;
+
+			case 3:
+				sendWSMessage_10000(1, _hands4, _hands3, 1, 12, 200,
+					_hands3, 12, 12, 0);
+				_val10 = 3;
+				break;
+
+			case 4:
+			case 5:
+				sendWSMessage_10000(1, _hands4, _hands3, 17, 17, 200,
+					_hands3, 17, 17, 0);
+				_val10 = 4;
+				break;
+
+			case 6:
+				sendWSMessage_10000(1, _hands4, _meiLips, 1, 13, 200,
+					_meiLips, 13, 13, 0);
+				_val10 = 6;
+				break;
+
+			case 7:
+				sendWSMessage_10000(1, _hands4, _hands2, 1, 14, 200,
+					_hands2, 14, 14, 0);
+				_val10 = _val11 = 1;
+				break;
+
+			default:
+				break;
 			}
+			break;
+
+		case 1:
+			if (_val11 == 1) {
+				++_val8;
+				if (imath_ranged_rand(7, 12) < _val8) {
+					_val8 = 0;
+
+					switch (imath_ranged_rand(1, 2)) {
+					case 1:
+						sendWSMessage_10000(1, _hands4, _hands2, 14, 1, 200,
+							_hands1, 1, 1, 0);
+						_val10 = _val11 = 0;
+						break;
+
+					case 2:
+						kernel_timing_trigger(60, 201);
+						break;
+
+					default:
+						break;
+					}
+				} else {
+					kernel_timing_trigger(60, 201);
+				}
+			} else {
+				sendWSMessage_10000(1, _hands4, _hands2, 14, 1, 200,
+					_hands1, 1, 1, 0);
+				_val10 = 0;
+			}
+			break;
+
+		case 2:
+			if (_val11 == 2) {
+				++_val8;
+				if (imath_ranged_rand(7, 12) < _val8) {
+					_val8 = 0;
+
+					switch (imath_ranged_rand(1, 2)) {
+					case 1:
+						sendWSMessage_10000(1, _hands4, _hands1, 9, 2, 200,
+							_hands1, 1, 1, 0);
+						break;
+
+					case 2:
+						kernel_timing_trigger(60, 201);
+						break;
+
+					default:
+						break;
+					}
+				} else {
+					kernel_timing_trigger(60, 201);
+				}
+				break;
+			} else {
+				sendWSMessage_10000(1, _hands4, _hands1, 9, 2, 200,
+					_hands1, 1, 1, 0);
+				_val10 = 0;
+			}
+			break;
+
+		case 3:
+			if (_val11 == 3) {
+				sendWSMessage_10000(1, _hands4, _hands3, 13, 13, 200,
+					_hands3, 13, 16, 0);
+			} else {
+				sendWSMessage_10000(1, _hands4, _hands3, 12, 1, 200,
+					_hands1, 1, 1, 0);
+				_val10 = 0;
+			}
+			break;
+
+		case 4:
+			switch (_val11) {
+			case 4:
+				sendWSMessage_10000(1, _hands4, _hands3, 17, 17, 200,
+					_hands3, 17, 17, 0);
+				break;
+
+			case 5:
+				frame = imath_ranged_rand(17, 20);
+				sendWSMessage_10000(1, _hands4, _hands3, frame, frame, 200,
+					_hands3, frame, frame, 0);
+				break;
+
+			default:
+				sendWSMessage_10000(1, _hands4, _hands1, 1, 1, 200,
+					_hands1, 1, 1, 0);
+				_val10 = 0;
+				break;
+			}
+			break;
+
+		case 6:
+			if (_val11 == 6) {
+				frame = imath_ranged_rand(14, 16);
+				sendWSMessage_10000(1, _hands4, _meiLips, frame, frame, 200,
+					_meiLips, frame, frame, 0);
+			} else {
+				sendWSMessage_10000(1, _hands4, _meiLips, 17, 24, 200,
+					_hands1, 1, 1, 0);
+				_val10 = 0;
+			}
+			break;
+
+		default:
+			break;
 		}
 		break;
 
@@ -865,6 +1031,114 @@ void Room303::daemon() {
 		}
 
 		kernel_trigger_dispatchx(kernel_trigger_create(401));
+		break;
+
+	case 401:
+		switch (_val14) {
+		case 0:
+			switch (_val15) {
+			case 0:
+				sendWSMessage_10000(1, _machine1, _clasped1, 1, 1, 400,
+					_clasped1, 1, 1, 0);
+				break;
+
+			case 1:
+			case 2:
+			case 4:
+				sendWSMessage_10000(1, _machine1, _clasped1, 1, 18, 400,
+					_clasped4, 1, 6, 1);
+				_val14 = 1;
+				break;
+
+			case 3:
+				sendWSMessage_10000(1, _machine1, _clasped2, 1, 13, 400,
+					_clasped2, 14, 19, 1);
+				_val14 = 3;
+				break;
+
+			case 5:
+				terminateMachineAndNull(_machine1);
+
+				if (_val13)
+					_machine1 = triggerMachineByHash_3000(8, 2, NORMAL_DIRS, SHADOW_DIRS,
+						480, 256, 7, triggerMachineByHashCallback3000, "fl walker");
+				else
+					_machine1 = triggerMachineByHash_3000(8, 2, NORMAL_DIRS, SHADOW_DIRS,
+						706, 256, 5, triggerMachineByHashCallback3000, "fl walker");
+
+				_G(kernel).trigger_mode = KT_PARSE;
+				kernel_timing_trigger(1, 1);
+				return;
+
+			default:
+				break;
+			}
+			break;
+
+		case 1:
+			switch (_val15) {
+			case 0:
+				sendWSMessage_10000(1, _machine1, _clasped1, 16, 1, 400,
+					_clasped1, 1, 1, 0);
+				_val14 = 0;
+				break;
+
+			case 1:
+				frame = imath_ranged_rand(1, 6);
+				sendWSMessage_10000(1, _machine1, _clasped4, frame, frame, 400,
+					_clasped4, frame, frame, 0);
+				break;
+
+			case 3:
+			case 5:
+				sendWSMessage_10000(1, _machine1, _clasped1, 16, 1, 400,
+					_clasped2, 1, 1, 0);
+				_val14 = 0;
+				break;
+
+			case 4:
+				frame = imath_ranged_rand(1, 6);
+				sendWSMessage_10000(1, _machine1, _clasped4, frame, frame, 400,
+					_clasped4, frame, frame, 0);
+				player_set_commands_allowed(true);
+				_val15 = 1;
+				break;
+
+			default:
+				sendWSMessage_10000(1, _machine1, _clasped3, 1, 18, 400,
+					_clasped3, 19, 21, 1);
+				_val14 = 2;
+				break;
+			}
+			break;
+
+		case 2:
+			if (_val15 == 2) {
+				frame = imath_ranged_rand(19, 21);
+				sendWSMessage_10000(1, _machine1, _clasped3, frame, frame, 400,
+					_clasped3, frame, frame, 0);
+			} else {
+				sendWSMessage_10000(1, _machine1, _clasped3, 18, 1, 400,
+					_clasped4, 1, 6, 0);
+				_val14 = 1;
+			}
+			break;
+
+		case 3:
+			if (_val15 == 3) {
+				frame = imath_ranged_rand(14, 19);
+				sendWSMessage_10000(1, _machine1, _clasped2, frame, frame, 400,
+					_clasped2, frame, frame, 0);
+			} else {
+				sendWSMessage_10000(1, _machine1, _clasped2, 20, 31, 400,
+					_clasped2, 1, 1, 0);
+				_val14 = 0;
+			}
+			break;
+
+		default:
+			break;
+		}
 		break;
 
 	default:
