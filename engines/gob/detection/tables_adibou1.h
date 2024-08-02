@@ -26,6 +26,7 @@
  */
 
 /* Detection tables for Adibou 1 / A.J.'s World of Discovery / ADI Jnr. */
+/* This Game is part of the Adibou series for more Information see here: https://wiki.scummvm.org/index.php?title=Adibou_Games */
 
 #ifndef GOB_DETECTION_TABLES_ADIBOU1_H
 #define GOB_DETECTION_TABLES_ADIBOU1_H

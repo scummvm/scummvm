@@ -27,6 +27,7 @@
 
 /* Detection tables for Adibou / Addy Junior series. */
 /* This Game uses the DEV6 Engine, more Information can be found here: https://wiki.scummvm.org/index.php?title=DEV6_Information */
+/* This Game is part of the Adibou series for more Information see here: https://wiki.scummvm.org/index.php?title=Adibou_Games */
 
 #ifndef GOB_DETECTION_TABLES_ADIBOU2_H
 #define GOB_DETECTION_TABLES_ADIBOU2_H
