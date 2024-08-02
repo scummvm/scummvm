@@ -718,7 +718,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "secretwriters",		"Secret Writer's Society" },
 
 	// Shareware and freeware
-	{ "101pet",				"Dalmation Adoption" },
+	{ "101pet",				"Dalmatian Adoption" },
 	{ "50ftchicken",		"Attack of the 50-foot Chicken" },
 	{ "alanna",				"The Lost Island of Alanna" },
 	{ "antfarm",			"Ant Farm" },
@@ -7054,7 +7054,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("shramerica", "Print Activities", "PRINTPAK.EXE", "t:bb0fd2312d141d8cc05f77eb01c54885", 917721, 501),
 	// From SHR Exploration Station, Win version is misspelled on disc
 	MACDEMO1("shramerica", "Demo", "America Rock Demo", "d7c07df0d9f0176877a3c7c095ee0143", 705417, 500),
-	WINDEMO1("shramerica", "Demo", "amercia.exe", "t:c4906b1e01232db6ae2f1e8e365d92a4", 917695, 501),
+	WINDEMO1("shramerica", "Demo", "america.exe", "t:c4906b1e01232db6ae2f1e8e365d92a4", 917695, 501),
 	// From SHR Math Rock
 	MACDEMO1("shramerica", "Demo", "America Rock Demo", "d7c07df0d9f0176877a3c7c095ee0143", 703153, 500),
 
