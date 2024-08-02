@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-02 16:53+0000\n"
-"PO-Revision-Date: 2024-07-10 04:43+0000\n"
+"PO-Revision-Date: 2024-08-03 04:43+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -1318,7 +1318,7 @@ msgstr "Seleccioneu un criteri per agrupar les entrades"
 
 #: gui/launcher.cpp:263
 msgid "Click here to see Help"
-msgstr ""
+msgstr "Feu clic aquí per veure l'ajuda"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
 #: gui/launcher.cpp:267 engines/dialogs.cpp:91
@@ -1453,6 +1453,8 @@ msgid ""
 "Did you add this directory to the SAF? Press the help button [?] on the top "
 "for detailed instructions"
 msgstr ""
+"Heu afegit aquest directori al SAF? Premeu el botó d'ajuda [?] a la part "
+"superior per a obtenir instruccions detallades"
 
 #: gui/launcher.cpp:686
 msgid "ScummVM could not find any game in the specified directory!"
@@ -1622,13 +1624,13 @@ msgstr "175% - Molt gran"
 #: gui/options.cpp:159
 #, c-format
 msgid "150% - Larger"
-msgstr ""
+msgstr "150% - Més gran"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:161
 #, c-format
 msgid "125% - Large"
-msgstr ""
+msgstr "125% - Gran"
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:163
@@ -2159,7 +2161,7 @@ msgstr "Escala de la interfície:"
 #: gui/options.cpp:2577
 #, c-format
 msgid "%d%% - Custom"
-msgstr ""
+msgstr "%d%% - Personalitzat"
 
 #: gui/options.cpp:2581
 msgid "GUI renderer:"
@@ -2946,6 +2948,8 @@ msgstr "No s'han pogut localitzar les dades del motor %s"
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
+"Dades del motor no actualitzades. S'esperava %d.%d, però s'ha obtingut la "
+"versió %d.%d"
 
 #: common/error.cpp:37
 msgid "No error"
@@ -3040,7 +3044,7 @@ msgstr "Macintosh b/n"
 
 #: common/rendermode.cpp:56
 msgid "VGA Grey Scale"
-msgstr ""
+msgstr "Escala de grisos VGA"
 
 #: common/rendermode.cpp:90
 msgctxt "lowres"
@@ -3254,6 +3258,8 @@ msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
 msgstr ""
+"Sense jocs (encara)\n"
+"Obriu ScummVM i afegiu els vostres jocs aquí."
 
 #: dists/android.strings.xml.cpp:59
 msgid "Game icon"
@@ -3265,7 +3271,7 @@ msgstr "Etiqueta de la drecera"
 
 #: dists/android.strings.xml.cpp:61
 msgid "Shortcut icon"
-msgstr ""
+msgstr "Icona de drecera"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:32
@@ -3416,6 +3422,7 @@ msgstr ""
 #: engines/dialogs.cpp:202
 msgid "This game cannot be saved at this time. Please try again later"
 msgstr ""
+"Aquesta partida no es pot desar en aquest moment. Torneu-ho a provar més tard"
 
 #: engines/dialogs.cpp:221 engines/pegasus/pegasus.cpp:418
 #, c-format
@@ -3435,6 +3442,7 @@ msgstr ""
 #: engines/dialogs.cpp:243
 msgid "This game cannot be loaded at this time. Please try again later"
 msgstr ""
+"Aquest joc no es pot carregar en aquest moment. Torneu-ho a provar més tard"
 
 #: engines/dialogs.cpp:392
 msgid "~O~K"
@@ -5898,14 +5906,10 @@ msgstr ""
 #: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
 #: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:103
 #: engines/trecision/metaengine.cpp:121
-#, fuzzy
-#| msgid "Game keymapping"
 msgid "Game keymappings"
 msgstr "Assignació de tecles del joc"
 
 #: engines/agos/metaengine.cpp:229
-#, fuzzy
-#| msgid "Yes/No Keymapping"
 msgid "Yes/No keymapping"
 msgstr "Assignació de tecles Sí/No"
 
@@ -5913,8 +5917,6 @@ msgstr "Assignació de tecles Sí/No"
 #: engines/groovie/metaengine.cpp:205 engines/lure/metaengine.cpp:177
 #: engines/made/metaengine.cpp:107 engines/saga/metaengine.cpp:278
 #: engines/trecision/metaengine.cpp:125
-#, fuzzy
-#| msgid "Left Click"
 msgid "Left click"
 msgstr "Clic esquerre"
 
@@ -5942,14 +5944,10 @@ msgid "Toggle music on/off"
 msgstr "Activa/desactiva la música"
 
 #: engines/agos/metaengine.cpp:273
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Toggle sound effect on/off"
-msgstr "Activa/desactiva els efectes de so"
+msgstr "Activa/desactiva l'efecte de so"
 
 #: engines/agos/metaengine.cpp:278
-#, fuzzy
-#| msgid "Toggle Fast mode on/off"
 msgid "Toggle fast mode on/off"
 msgstr "Activa/desactiva el mode ràpid"
 
@@ -5997,8 +5995,6 @@ msgid "Show objects to interact"
 msgstr "Mostra els objectes a interactuar"
 
 #: engines/agos/metaengine.cpp:338
-#, fuzzy
-#| msgid "Toggle background sounds On/Off"
 msgid "Toggle background sounds on/off"
 msgstr "Activa/desactiva els sons de fons"
 
@@ -6769,56 +6765,40 @@ msgstr "El desament automàtic és buit"
 
 #: engines/cine/metaengine.cpp:258 engines/lure/metaengine.cpp:168
 #: engines/made/metaengine.cpp:102 engines/trecision/metaengine.cpp:120
-#, fuzzy
-#| msgid "Default game keymap"
 msgid "Default keymappings"
 msgstr "Assignació de tecles per defecte"
 
 #: engines/cine/metaengine.cpp:260
-#, fuzzy
-#| msgid "Game keymapping"
 msgid "Key to mouse keymappings"
-msgstr "Assignació de tecles del joc"
+msgstr "Assignació de tecles a ratolí"
 
 #: engines/cine/metaengine.cpp:261
-#, fuzzy
-#| msgid "Quit panel keymapping"
 msgid "Exit screen keymappings"
-msgstr "Assignació de tecles del panell de sortida"
+msgstr "Assignació de tecles de la pantalla de sortida"
 
 #: engines/cine/metaengine.cpp:277
 msgid "Exit Sony intro screen"
 msgstr ""
 
 #: engines/cine/metaengine.cpp:283
-#, fuzzy
-#| msgid "Select to end of line"
 msgid "Select option / Click in game"
-msgstr "Selecciona fins al final de la línia"
+msgstr "Seleccioneu l'opció / Feu clic a la partida"
 
 #: engines/cine/metaengine.cpp:290
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open action menu / Close menu"
-msgstr "Obre el menú principal"
+msgstr "Obre el menú d'acció / Tanca el menú"
 
 #: engines/cine/metaengine.cpp:295
-#, fuzzy
-#| msgid "Default game keymap"
 msgid "Default game speed"
-msgstr "Assignació de tecles per defecte"
+msgstr "Velocitat predeterminada del joc"
 
 #: engines/cine/metaengine.cpp:300
-#, fuzzy
-#| msgid "Show game credits"
 msgid "Slower game speed"
-msgstr "Mostra els crèdits del joc"
+msgstr "Velocitat de joc més lenta"
 
 #: engines/cine/metaengine.cpp:307
-#, fuzzy
-#| msgid "Fast movie speed"
 msgid "Faster game speed"
-msgstr "Velocitat ràpida de les pel·lícules"
+msgstr "Velocitat de joc més ràpida"
 
 #: engines/cine/metaengine.cpp:315 engines/grim/grim.cpp:498
 #: engines/hpl1/metaengine.cpp:90 engines/scumm/help.cpp:243
@@ -6855,60 +6835,45 @@ msgid "Use"
 msgstr "Utilitza"
 
 #: engines/cine/metaengine.cpp:335
-#, fuzzy
-#| msgid "Active"
 msgid "Activate"
-msgstr "Actiu"
+msgstr "Activa"
 
 #: engines/cine/metaengine.cpp:340
 msgid "Speak"
 msgstr ""
 
 #: engines/cine/metaengine.cpp:345
-#, fuzzy
-#| msgid "Action"
 msgid "Action menu"
-msgstr "Acció"
+msgstr "Menú d'accions"
 
 #: engines/cine/metaengine.cpp:351
-#, fuzzy
 msgid "System menu"
-msgstr "Menú del joc"
+msgstr "Menú del sistema"
 
 #. I18N: Opens collision map of where the actor can freely move
 #: engines/cine/metaengine.cpp:358
-#, fuzzy
-#| msgid "Show Options"
 msgid "Show collisions"
-msgstr "Mostra les opcions"
+msgstr "Mostra les col·lisions"
 
 #. I18N: Move Actor to top-left direction
 #: engines/cine/metaengine.cpp:393
-#, fuzzy
-#| msgid "Move left"
 msgid "Move up-left"
-msgstr "Mou a l'esquerra"
+msgstr "Mou cap amunt a l'esquerra"
 
 #. I18N: Move Actor to top-right direction
 #: engines/cine/metaengine.cpp:399
-#, fuzzy
-#| msgid "Move right"
 msgid "Move up-right"
-msgstr "Mou a la dreta"
+msgstr "Mou cap amunt a la dreta"
 
 #. I18N: Move Actor to bottom-left direction
 #: engines/cine/metaengine.cpp:405
-#, fuzzy
-#| msgid "Move down"
 msgid "Move down-left"
-msgstr "Mou avall"
+msgstr "Mou cap avall a l'esquerra"
 
 #. I18N: Move Actor to bottom-right direction
 #: engines/cine/metaengine.cpp:411
-#, fuzzy
-#| msgid "Move right"
 msgid "Move down-right"
-msgstr "Mou a la dreta"
+msgstr "Mou cap avall a la dreta"
 
 #: engines/cine/metaengine.cpp:416
 msgid "Menu option up"
@@ -7139,10 +7104,8 @@ msgid "Keep graphics as close as possible to the original"
 msgstr ""
 
 #: engines/freescape/metaengine.cpp:128
-#, fuzzy
-#| msgid "Enable storage"
 msgid "Enable rock travel"
-msgstr "Habilita l'emmagatzematge"
+msgstr "Habilita el viatge amb roca"
 
 #: engines/freescape/metaengine.cpp:129
 msgid "Enable traveling using a rock shoot at start"
@@ -7497,10 +7460,8 @@ msgid "GroovieV2 support is not compiled in"
 msgstr "No s'ha compilat el suport per a GroovieV2"
 
 #: engines/groovie/metaengine.cpp:201
-#, fuzzy
-#| msgid "Available engines:"
 msgid "Groovie engine"
-msgstr "Motors disponibles:"
+msgstr "Motor Groovie"
 
 #: engines/groovie/metaengine.cpp:217
 msgid "Skip or fast forward scene"
@@ -8028,16 +7989,12 @@ msgid "Save game"
 msgstr "Desa la partida"
 
 #: engines/lure/metaengine.cpp:197
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restore game"
-msgstr "Recupera la partida:"
+msgstr "Recupera la partida"
 
 #: engines/lure/metaengine.cpp:203
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restart game"
-msgstr "Recupera la partida:"
+msgstr "Reinicia la partida"
 
 #. I18N: ESC key
 #: engines/lure/metaengine.cpp:209 engines/mm/mm1/metaengine.cpp:41
@@ -8117,28 +8074,20 @@ msgid ""
 msgstr ""
 
 #: engines/made/metaengine.cpp:128
-#, fuzzy
-#| msgid "Cursor Up"
 msgid "Cursor up"
-msgstr "Cursor Amunt"
+msgstr "Cursor amunt"
 
 #: engines/made/metaengine.cpp:135
-#, fuzzy
-#| msgid "Cursor Down"
 msgid "Cursor down"
-msgstr "Cursor Avall"
+msgstr "Cursor avall"
 
 #: engines/made/metaengine.cpp:142
-#, fuzzy
-#| msgid "Cursor Left"
 msgid "Cursor left"
-msgstr "Cursor Esquerra"
+msgstr "Cursor esquerra"
 
 #: engines/made/metaengine.cpp:149
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Cursor right"
-msgstr "Cursor Dreta"
+msgstr "Cursor dreta"
 
 #: engines/made/metaengine.cpp:168 engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:431
@@ -8149,8 +8098,6 @@ msgid "Load game"
 msgstr "Carrega la partida"
 
 #: engines/made/metaengine.cpp:174
-#, fuzzy
-#| msgid "Repeat Last Message"
 msgid "Repeat last message"
 msgstr "Repeteix l'últim missatge"
 
@@ -9005,8 +8952,6 @@ msgid "Converse panel keymapping"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:284
-#, fuzzy
-#| msgid "Middle Click"
 msgid "Middle click"
 msgstr "Clic central"
 
@@ -9018,14 +8963,10 @@ msgid "Boss key"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:303
-#, fuzzy
-#| msgid "Show Options"
 msgid "Show options"
 msgstr "Mostra les opcions"
 
 #: engines/saga/metaengine.cpp:311
-#, fuzzy
-#| msgid "Exit Conversation"
 msgid "Exit conversation"
 msgstr "Surt de la conversa"
 
@@ -9043,14 +8984,10 @@ msgid "Pause game"
 msgstr "Pausa la partida"
 
 #: engines/saga/metaengine.cpp:339
-#, fuzzy
-#| msgid "Abort Speech"
 msgid "Abort speech"
 msgstr "Interromp la veu"
 
 #: engines/saga/metaengine.cpp:344
-#, fuzzy
-#| msgid "Show Dialogue"
 msgid "Show dialogue"
 msgstr "Mostra el diàleg"
 
@@ -9103,32 +9040,22 @@ msgid "Swallow"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:406
-#, fuzzy
-#| msgid "Reading Speed"
 msgid "Reading speed"
 msgstr "Velocitat de lectura"
 
 #: engines/saga/metaengine.cpp:411
-#, fuzzy
-#| msgid "Change Music"
 msgid "Change music"
 msgstr "Canvia la música"
 
 #: engines/saga/metaengine.cpp:416
-#, fuzzy
-#| msgid "Change Sound"
 msgid "Change sound"
 msgstr "Canvia el so"
 
 #: engines/saga/metaengine.cpp:421
-#, fuzzy
-#| msgid "Change Voices"
 msgid "Change voices"
 msgstr "Canvia les veus"
 
 #: engines/saga/metaengine.cpp:426
-#, fuzzy
-#| msgid "Continue Game"
 msgid "Continue game"
 msgstr "Continua la partida"
 
@@ -9138,8 +9065,6 @@ msgid "Quit game"
 msgstr "Surt del joc"
 
 #: engines/saga/metaengine.cpp:453
-#, fuzzy
-#| msgid "Cancel Quit"
 msgid "Cancel quit"
 msgstr "Cancel·la la sortida"
 
@@ -9148,14 +9073,10 @@ msgid "Okay"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:463
-#, fuzzy
-#| msgid "Cancel Load"
 msgid "Cancel load"
 msgstr "Cancel·la la càrrega"
 
 #: engines/saga/metaengine.cpp:473
-#, fuzzy
-#| msgid "Cancel Save"
 msgid "Cancel save"
 msgstr "Cancel·la el desament"
 
