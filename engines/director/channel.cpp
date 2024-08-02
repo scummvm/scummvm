@@ -520,7 +520,7 @@ void Channel::setEditable(bool editable) {
 }
 
 // we may optimize this by only update those attributes when we are changing them
-// but not to pass them to widgets everytime
+// but not to pass them to widgets every time
 void Channel::updateGlobalAttr() {
 	if (!_sprite->_cast)
 		return;
