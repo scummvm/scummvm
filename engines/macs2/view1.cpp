@@ -765,8 +765,10 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		
 		
 		// AnimFrame *frame = current->GetCurrentPortrait();
-		uint8 depth = g_engine->_depthMap.getPixel(current->GetPosition().x, current->GetPosition().y);
+		uint8 depth = current->GetPosition().y;
 		DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s, depth);
+		// Draw the white dot
+		// TODO: Why does it not work for the others apart from the player?
 		Common::Rect screenRect(0, 0, 320, 200);
 		if (screenRect.contains(current->GetPosition())) {
 			s.setPixel(current->GetPosition().x, current->GetPosition().y, 0xFF);
