@@ -256,7 +256,7 @@ public:
 	/**
 	* Upon encountering an event type for which the grab parameter is not null, the function
 	* will return with the event type, passes the event to the grab desitination and returns without
-	* processing the rest of the events into commands accoring to the current keyboard and mouse input.
+	* processing the rest of the events into commands according to the current keyboard and mouse input.
 	* If there are no more events, it returns with Common::EVENT_INVALID.
 	*/
 	Common::EventType processInput(Common::Event *grabKey = nullptr, Common::Event *grabMouseClick = nullptr);
