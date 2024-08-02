@@ -35,6 +35,20 @@
 
 // -- French: Adiboud'chou series --
 
+{
+	{
+		"adiboudchoumer",
+		_s("Missing game code"), // Adiboud'chou a la mer 1.01 (Engine: DEV7 version unknown)
+		AD_ENTRY1s("adbc_envir_obc.stk", "57f0eda5d4029abdb2f6b6201e02905e", 3204281),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	"adbc_envir_obc.stk", "adbc_init.obc", 0
+},
+
 // -- German: Addy Buschu series --
 
 {
