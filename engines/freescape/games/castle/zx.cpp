@@ -87,12 +87,24 @@ void CastleEngine::loadAssetsZXFullGame() {
 	if (!file.isOpen())
 		error("Failed to open castlemaster.zx.data");
 
-	loadRiddles(&file, 0x1460 - 1 - 3, 8);
+	switch (_language) {
+		case Common::ES_ESP:
+			loadRiddles(&file, 0xcf0 - 1 - 1 - 1, 8);
+			loadMessagesVariableSize(&file, 0xf3d, 71);
+			load8bitBinary(&file, 0x632b - 2, 16);
+			break;
+		case Common::EN_ANY:
+			loadRiddles(&file, 0x1460 - 1 - 3, 8);
+			loadMessagesVariableSize(&file, 0x4bd, 71);
+			load8bitBinary(&file, 0x6a3b, 16);
+			break;
+		default:
+			error("Language not supported");
+			break;
+	}
+
 	//loadMessagesFixedSize(&file, 0x4bc + 1, 16, 27);
 	loadFonts(&file, 0x1219, _font);
-	loadMessagesVariableSize(&file, 0x4bd, 71);
-
-    load8bitBinary(&file, 0x6a3b, 16);
 	loadSpeakerFxZX(&file, 0xc91, 0xccd);
 
 	loadColorPalette();
