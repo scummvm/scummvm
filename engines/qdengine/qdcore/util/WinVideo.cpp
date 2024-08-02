@@ -34,17 +34,7 @@ namespace QDEngine {
 
 bool winVideo::_is_initialized = false;
 
-#ifdef __WINVIDEO_LOG__
-void *winVideo::log_file_handle_ = NULL;
-#endif
-
-winVideo::winVideo() : _graph_builder(NULL),
-	_media_control(NULL),
-	_video_window(NULL),
-	_media_event(NULL),
-	_basic_video(NULL),
-	_basic_audio(NULL),
-	_hwnd(NULL) {
+winVideo::winVideo() {
 	_decoder = new Video::MPEGPSDecoder();
 }
 
@@ -58,22 +48,12 @@ bool winVideo::init() {
 }
 
 bool winVideo::done() {
-	if (!_is_initialized) return false;
+	if (!_is_initialized)
+		return false;
 
 	_is_initialized = false;
 
 	return true;
-}
-
-bool winVideo::set_volume(int volume_db) {
-	warning("STUB: winVideo::set_volume");
-#if 0
-	if (_basic_audio) {
-		_basic_audio->put_Volume(volume_db);
-		return true;
-	}
-#endif
-	return false;
 }
 
 void winVideo::set_window(int x, int y, int xsize, int ysize) {
@@ -117,7 +97,6 @@ bool winVideo::play() {
 	}
 
 	_decoder->start();
-
 	return true;
 }
 
@@ -157,62 +136,8 @@ bool winVideo::stop() {
 	return true;
 }
 
-winVideo::PlaybackStatus winVideo::playback_status() {
-	if (_graph_builder && _video_window && _media_control && _hwnd) {
-		warning("STUB: winVideo::playback_status");
-#if 0
-		OAFilterState pfs;
-
-		if (_media_control->GetState(INFINITE, &pfs) != S_OK)
-			return VID_STOPPED;
-		if (pfs == State_Running) return VID_RUNNING;
-		if (pfs == State_Stopped) return VID_STOPPED;
-		if (pfs == State_Paused) return VID_PAUSED;
-#endif
-	}
-
-	return VID_STOPPED;
-}
-
-bool winVideo::wait_end() {
-	warning("STUB: winVideo::wait_end()");
-
-	if (_media_event) {
-#if 0
-		long evCode;
-		_media_event->WaitForCompletion(INFINITE, &evCode);
-#endif
-		return true;
-	}
-	return false;
-}
-
 bool winVideo::is_playback_finished() {
 	return _decoder->endOfVideo();
-}
-
-bool winVideo::toggle_fullscreen(bool fullscr) {
-	warning("STUB: winVideo::toggle_fullscreen()");
-
-	if (_video_window) {
-#if 0
-		_video_window->put_FullScreenMode(fullscr);
-#endif
-		return true;
-	}
-
-	return false;
-}
-
-bool winVideo::toggle_cursor(bool visible) {
-	warning("STUB: winVideo::toggle_cursor()");
-
-	if (!_video_window)
-		return false;
-#if 0
-	_video_window->HideCursor(visible);
-#endif
-	return true;
 }
 
 bool winVideo::get_movie_size(int &sx, int &sy) {
@@ -222,17 +147,6 @@ bool winVideo::get_movie_size(int &sx, int &sy) {
 	sx = _decoder->getWidth();
 	sy = _decoder->getHeight();
 
-	return true;
-}
-
-bool winVideo::set_window_size(int sx, int sy) {
-	warning("STUB: winVideo::set_window_size()");
-
-	if (!_video_window) return false;
-#if 0
-	_video_window->put_Width(sx);
-	_video_window->put_Height(sy);
-#endif
 	return true;
 }
 

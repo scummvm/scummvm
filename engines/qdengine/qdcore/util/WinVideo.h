@@ -48,37 +48,19 @@ public:
 	static bool init(); // initialize DirectShow Lib
 	static bool done(); // uninitialize DirectShow Lib
 
-	//! Установка громкости звука, параметр - в децибелах [-10000, 0].
-	bool set_volume(int volume_db);
-
-	void set_window(int x = 0, int y = 0, int xsize = 0, int ysize = 0);
 	bool open_file(const char *fname);
 	void close_file();
 
 	bool play();
-	bool quant();
 	bool stop();
-	bool wait_end();
-
-	PlaybackStatus playback_status();
+	bool quant();
 	bool is_playback_finished();
 
-	bool toggle_cursor(bool visible = false);
-
+	void set_window(int x = 0, int y = 0, int xsize = 0, int ysize = 0);
 	bool get_movie_size(int &sx, int &sy);
-
 	bool set_window_size(int sx, int sy);
-	bool toggle_fullscreen(bool fullscr = true);
 
 private:
-	struct IGraphBuilder   *_graph_builder;
-	struct IMediaControl   *_media_control;
-	struct IVideoWindow    *_video_window;
-	struct IMediaEvent *_media_event;
-	struct IBasicAudio *_basic_audio;
-	struct IBasicVideo *_basic_video;
-
-
 	// Coordinates of the top left corner of the video
 	int _x;
 	int _y;
@@ -91,12 +73,6 @@ private:
 	// Video decoder
 	Video::MPEGPSDecoder *_decoder;
 	Common::SeekableReadStream *_videostream;
-
-	void *_hwnd;
-
-#ifdef __WINVIDEO_LOG__
-	static void *log_file_handle_;
-#endif
 
 	static bool _is_initialized;
 };
