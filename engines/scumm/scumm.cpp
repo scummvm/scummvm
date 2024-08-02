@@ -317,7 +317,9 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	case Common::kRenderAmiga:
 		// Allow v2 games to be rendered in forced Amiga mode; this works, and
 		// doing this to avoid the "sunburn effect" in MM/Zak is popular.
-		if (_game.platform != Common::kPlatformAmiga && _game.version != 2)
+		// Also allow this for Indy3 EGA.
+		if (_game.platform != Common::kPlatformAmiga && _game.version != 2 &&
+(_game.version != 3 || _game.id != GID_INDY3 || _game.platform == Common::kPlatformMacintosh))
 			_renderMode = Common::kRenderDefault;
 		break;
 
