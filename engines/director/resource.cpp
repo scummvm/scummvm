@@ -662,7 +662,7 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 	tag = stream->readUint32BE();
 	found = false;
 
-	// This loop has neglible performance impact due to the stream being buffered.
+	// This loop has negligible performance impact due to the stream being buffered.
 	// Furthermore, comparing 4 bytes at a time should be pretty fast on modern systems.
 	while (!stream->eos()) {
 		if (tag == MKTAG('D', 'i', 'c', 't') || tag == MKTAG('t', 'c', 'i', 'D')) {
