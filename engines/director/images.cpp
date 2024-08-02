@@ -112,7 +112,7 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 		}
 	}
 
-	// For some reason, DIB cast members have the palette indexes reversed
+	// For some reason, DIB cast members have the palette indices reversed
 	if (_bitsPerPixel == 8) {
 		for (int y = 0; y < _surface->h; y++) {
 			for (int x = 0; x < _surface->w; x++) {

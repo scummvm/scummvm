@@ -718,7 +718,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "secretwriters",		"Secret Writer's Society" },
 
 	// Shareware and freeware
-	{ "101pet",				"Dalmation Adoption" },
+	{ "101pet",				"Dalmatian Adoption" },
 	{ "50ftchicken",		"Attack of the 50-foot Chicken" },
 	{ "alanna",				"The Lost Island of Alanna" },
 	{ "antfarm",			"Ant Farm" },

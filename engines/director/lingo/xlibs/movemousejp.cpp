@@ -35,7 +35,7 @@
  **************************************************/
 
 /*
--- MoveMouse . Implimented by @Sakai Youichi
+-- MoveMouse . Implemented by @Sakai Youichi
 --MoveMouse
 I      mNew                --Creates a new instance of the XObject
 X      mDispose            --Disposes of XObject instance

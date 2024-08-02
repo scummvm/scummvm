@@ -46,7 +46,7 @@
  * --      to build the menu list for a PopUp menu.
  * --
  * --      - a menulist can be a continuous string
- * --          with items seperated by semicolons.
+ * --          with items separated by semicolons.
  * --          example: "item1;item2;item3"
  * --
  * --      - a menulist can be a set of strings, each
