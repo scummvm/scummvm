@@ -249,6 +249,19 @@
 	kFeatures640x480,
 	0, 0, 0
 },
+{
+	{
+		"adibou2",
+		"ADIBOO 2.13 Environment",
+		AD_ENTRY1s("intro.stk", "ff63637e3cb7f0a457edf79457b1c6b3", 9333874),
+		EN_GRB,
+		kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
 
 // -- Demos --
 
