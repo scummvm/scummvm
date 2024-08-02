@@ -374,7 +374,7 @@ void Macs2Engine::readResourceFile() {
 	// Next on is the actual map
 	_map = readRLEImage(0x0024B0DF, _fileStream);
 	// TODO: This is the depth map - TBC that it's actually it
-	// _map = readRLEImage(0x00248FCE, _fileStream);
+	_depthMap = readRLEImage(0x00248FCE, _fileStream);
 
 	// This is the walkability map - TBC if that's really it and how it works
 	_pathfindingMap = readRLEImage(0x00249CC1, _fileStream);
@@ -572,6 +572,8 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 
 	// Offset 1013h
 	Graphics::ManagedSurface unknownRLE1 = readRLEImage(_fileStream->pos(), _fileStream);
+	// TODO: Try if this is it
+	_depthMap.blitFrom(unknownRLE1);
 
 	// Offset 2017h
 	Graphics::ManagedSurface unknownRLE2 = readRLEImage(_fileStream->pos(), _fileStream);
