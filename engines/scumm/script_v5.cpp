@@ -1525,7 +1525,7 @@ void ScummEngine_v5::o5_isEqual() {
 	// pirate hat to the antique dealer on Booty Island, making Guybrush
 	// silent when he asks about these two particular objects.
 	//
-	// Not using `_enableEnhancements`, since this small oversight only
+	// Not using enhancementEnabled, since this small oversight only
 	// exists in this fan-made edition which was made for enhancements.
 	if (_game.id == GID_MONKEY2 && (_game.features & GF_ULTIMATE_TALKIE) && _roomResource == 48 && _currentScript != 0xFF && vm.slot [_currentScript].number == 215 && a == vm.localvar[_currentScript][0]) {
 		if (a == 550 && b == 530)
@@ -1545,7 +1545,7 @@ void ScummEngine_v5::o5_isEqual() {
 	// Try to detect and skip them, which as much care as possible for any
 	// future update or fan translation which would change this.
 	//
-	// Intentionally not using `_enableEnhancements` for this version.
+	// Intentionally not using enhancementEnabled for this version.
 	if (_game.id == GID_MONKEY2 && (_game.features & GF_ULTIMATE_TALKIE) &&
 		_roomResource == 47 && vm.slot[_currentScript].number == 218 &&
 		var == 0x4000 + 1 && a == vm.localvar[_currentScript][1] &&
@@ -1601,7 +1601,7 @@ void ScummEngine_v5::o5_isLessEqual() {
 	// comparison, possibly with the intent of checking for a gamepad.
 	//
 	// Since the biplane is unplayable without this, we don't check for
-	// `_enableEnhancements`, and always enable this fix.
+	// enhancementEnabled, and always enable this fix.
 	if (_game.id == GID_INDY3 && (_game.platform == Common::kPlatformFMTowns) &&
 	    (vm.slot[_currentScript].number == 200 || vm.slot[_currentScript].number == 203) &&
 	    _currentRoom == 70 && b == -256) {
@@ -3090,7 +3090,7 @@ void ScummEngine_v5::o5_walkActorTo() {
 	// This is because the box matrix is initialized too late in the entry
 	// script for that room, so we have to do it a bit earlier.
 	//
-	// Intentionally not using `_enableEnhancements`, since you can get
+	// Intentionally not using enhancementEnabled, since you can get
 	// completely stuck.
 	if (_game.id == GID_INDY4 && _currentScript != 0xFF && vm.slot[_currentScript].number == 10002 &&
 		_currentRoom == (_game.platform == Common::kPlatformAmiga ? 58 : 60) &&

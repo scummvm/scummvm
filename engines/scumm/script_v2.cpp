@@ -405,7 +405,7 @@ void ScummEngine_v2::decodeParseString() {
 	// So we add some extra spaces at the end of the string if it's too short; this
 	// unblocks the cutscene and also lets Sandy react as intended.
 	//
-	// (Not using `_enableEnhancements` because some users could be really confused
+	// (Not using enhancementEnabled because some users could be really confused
 	// by the game hanging and they may not know about the Esc key.)
 	if (_game.id == GID_MANIAC && _game.platform != Common::kPlatformNES && _language == Common::FR_FRA && _currentScript != 0xFF && vm.slot [_currentScript].number == 155 && _roomResource == 31 && _actorToPrintStrFor == 9) {
 		while (ptr - buffer < 100) {
