@@ -639,6 +639,8 @@ void Adlib::Init() {
 	Func2839();
 
 	// TODO: More hardcoded:
+	// TODO: I think this was not actual code from the game but from the example I found!
+	// Probably this https://bespin.org/~qz/pc-gpe/adlib.txt
 	Func2792r(0x92, 0x20);
 	Func2792r(0x01, 0x23);
 	Func2792r(0x52, 0x40);
