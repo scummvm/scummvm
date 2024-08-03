@@ -436,7 +436,7 @@ void AnimationManager::deleteAnimation(Animation *anim) {
 		}
 	}
 
-	// Iterate the second time to decrease indices greater than the deleted animation index
+	// Iterate the second time to decrease indexes greater than the deleted animation index
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
 		if ((*it)->getIndex() > index && (*it)->getIndex() != kIgnoreIndex) {
 			(*it)->setIndex((*it)->getIndex() - 1);
