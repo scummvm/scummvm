@@ -1706,7 +1706,7 @@ static bool _isInRect(const Common::Point &pt, const DgdsRect rect) {
 			&& rect.y <= pt.y && (rect.y + rect.height) > pt.y;
 }
 
-static const ObjectInteraction * _findInteraction(const Common::Array<ObjectInteraction> &interList, int16 droppedNum, int16 targetNum) {
+static const ObjectInteraction * _findInteraction(const Common::Array<ObjectInteraction> &interList, int16 droppedNum, uint16 targetNum) {
 	for (const auto &i : interList) {
 		if (i.matches(droppedNum, targetNum)) {
 			return &i;
