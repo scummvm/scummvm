@@ -123,9 +123,9 @@ void DocumentsBrowser::loadZoomed() {
 }
 
 void DocumentsBrowser::loadXMLFile(const Common::Path &path) {
-	Common::FSNode node = g_engine->getCore()->findFile(path);
+	Common::Path xmlPath = g_engine->getCore()->findFileNew(path);
 	Common::File xmlfile;
-	xmlfile.open(node);
+	xmlfile.open(xmlPath);
 	int64 fileLen = xmlfile.size();
 	char *buf = new char[fileLen + 1];
 	buf[fileLen] = '\0';
