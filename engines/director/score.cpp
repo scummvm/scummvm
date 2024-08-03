@@ -1677,13 +1677,13 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 }
 
 bool Score::loadFrame(int frameNum, bool loadCast) {
-	debugC(7, kDebugLoading, "****** Frame request %d, current pos: %ld, current frame number: %d", frameNum, _framesStream->pos(), _curFrameNumber);
+	debugC(7, kDebugLoading, "****** Frame request %d, current pos: %lld, current frame number: %d", frameNum, _framesStream->pos(), _curFrameNumber);
 
 	int sourceFrame = _curFrameNumber;
 	int targetFrame = frameNum;
 
 	if (frameNum <= (int)_curFrameNumber) {
-		debugC(7, kDebugLoading, "****** Resetting frame %d to start %ld", sourceFrame, _framesStream->pos());
+		debugC(7, kDebugLoading, "****** Resetting frame %d to start %lld", sourceFrame, _framesStream->pos());
 		// If we are going back, we need to rebuild frames from start
 		_currentFrame->reset();
 		sourceFrame = 0;
@@ -1696,7 +1696,7 @@ bool Score::loadFrame(int frameNum, bool loadCast) {
 			it->reset();
 	}
 
-	debugC(7, kDebugLoading, "****** Source frame %d to Destination frame %d, current offset %ld", sourceFrame, targetFrame, _framesStream->pos());
+	debugC(7, kDebugLoading, "****** Source frame %d to Destination frame %d, current offset %lld", sourceFrame, targetFrame, _framesStream->pos());
 
 	while (sourceFrame < targetFrame - 1 && readOneFrame()) {
 		sourceFrame++;
