@@ -146,7 +146,7 @@ public:
 	const Common::Path& getSpeechDirName() { return _speechDirName; }
 
 private:
-	// Keyboard buffer. _bufferIn and _bufferOut are indexes
+	// Keyboard buffer. _bufferIn and _bufferOut are indices
 	// into this, making it a ring buffer
 	uint8 _keyBuffer[16];
 	uint16 _bufferIn;
