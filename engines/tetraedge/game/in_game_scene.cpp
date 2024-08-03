@@ -1025,7 +1025,7 @@ bool InGameScene::loadObjectMaterials(const Common::String &name) {
 			continue;
 
 		Common::Path mpath = _loadedPath.join(name).join(obj._name + ".png");
-		if (img.load(core->findFile(mpath))) {
+		if (img.load(core->findFileNew(mpath))) {
 			Te3DTexture *tex = Te3DTexture::makeInstance();
 			tex->load(img);
 			obj._model->meshes()[0]->defaultMaterial(tex);
