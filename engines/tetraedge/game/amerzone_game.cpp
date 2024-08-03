@@ -123,8 +123,7 @@ bool AmerzoneGame::changeWarp(const Common::String &rawZone, const Common::Strin
 	_yAngleMax = _orientationY + 55.0f;
 
 	dotpos = sceneXml.rfind('.');
-	Common::String sceneLua = sceneXml.substr(0, dotpos);
-	sceneLua += ".lua";
+	Common::String sceneLua = sceneXml.substr(0, dotpos) + ".lua";
 	_luaScript.load(core->findFile(zone.getParent().appendComponent(sceneLua)));
 	_luaScript.execute();
 	_luaScript.execute("OnWarpEnter");
