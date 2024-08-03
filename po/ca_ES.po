@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-02 16:53+0000\n"
-"PO-Revision-Date: 2024-08-03 04:43+0000\n"
+"PO-Revision-Date: 2024-08-03 21:43+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -7965,20 +7965,14 @@ msgid "TTS Narrator"
 msgstr ""
 
 #: engines/lure/metaengine.cpp:170
-#, fuzzy
-#| msgid "Quit panel keymapping"
 msgid "Fight sequence keymappings"
-msgstr "Assignació de tecles del panell de sortida"
+msgstr "Assignació de tecles de seqüència de lluita"
 
 #: engines/lure/metaengine.cpp:171
-#, fuzzy
-#| msgid "Game keymapping"
 msgid "Index keymappings"
-msgstr "Assignació de tecles del joc"
+msgstr "Assignació de tecles de l'índex"
 
 #: engines/lure/metaengine.cpp:172
-#, fuzzy
-#| msgid "Yes/No Keymapping"
 msgid "Yes/No keymappings"
 msgstr "Assignació de tecles Sí/No"
 
@@ -8005,10 +7999,8 @@ msgstr "Tecla Escapa"
 
 #. I18N: Shift Cursor during fight to top left
 #: engines/lure/metaengine.cpp:233
-#, fuzzy
-#| msgid "Cursor Left"
 msgid "Shift Cursor - Top left"
-msgstr "Cursor Esquerra"
+msgstr "Mou el cursor - A dalt a l'esquerra"
 
 #. I18N: Shift Cursor during fight to middle left
 #: engines/lure/metaengine.cpp:239
@@ -8022,42 +8014,30 @@ msgstr ""
 
 #. I18N: Shift Cursor during fight to top right
 #: engines/lure/metaengine.cpp:251
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Shift Cursor - Top right"
-msgstr "Cursor Dreta"
+msgstr "Mou el cursor - A dalt a la dreta"
 
 #. I18N: Shift Cursor during fight to middle right
 #: engines/lure/metaengine.cpp:257
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Shift Cursor - Middle right"
-msgstr "Cursor Dreta"
+msgstr "Mou el cursor - Al centre a la dreta"
 
 #. I18N: Shift Cursor during fight to bottom right
 #: engines/lure/metaengine.cpp:263
-#, fuzzy
-#| msgid "Cursor Right"
 msgid "Shift Cursor - Bottom right"
-msgstr "Cursor Dreta"
+msgstr "Mou el cursor - A baix a la dreta"
 
 #: engines/lure/metaengine.cpp:270
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Go to next index"
-msgstr "Ves al següent objecte"
+msgstr "Ves al següent índex"
 
 #: engines/lure/metaengine.cpp:277
-#, fuzzy
-#| msgid "Go to previous object"
 msgid "Go to previous index"
-msgstr "Ves a l'objecte anterior"
+msgstr "Ves a l'índex anterior"
 
 #: engines/lure/metaengine.cpp:284
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select index"
-msgstr "Seleccioneu un shader"
+msgstr "Seleccioneu un índex"
 
 #: engines/made/detection_tables.h:445 engines/made/detection_tables.h:462
 msgid "The game is using unsupported engine"
@@ -10836,22 +10816,17 @@ msgid "Unable to locate the '%s' data file."
 msgstr "No s'ha pogut localitzar el fitxer de dades '%s'."
 
 #: engines/trecision/metaengine.cpp:137
-#, fuzzy
-#| msgid "Skip line"
 msgid "Skip video"
-msgstr "Salta la línia"
+msgstr "Omet el vídeo"
 
 #. I18N: Toggles walking speed of actor
 #: engines/trecision/metaengine.cpp:144
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fast walk"
-msgstr "Commuta el mode ràpid"
+msgstr "Commuta el caminar ràpid"
 
 #: engines/trecision/metaengine.cpp:163
-#, fuzzy
 msgid "Open system menu"
-msgstr "Menú del joc"
+msgstr "Obre el menú del sistema"
 
 #: engines/twine/detection.cpp:175
 msgid "This version requires Giflib which was not compiled into ScummVM"
@@ -11483,22 +11458,26 @@ msgstr "Mostra el comptador d'FPS"
 #: engines/wintermute/metaengine.cpp:43
 msgid "Show the current number of frames per second in the upper left corner"
 msgstr ""
+"Mostra el nombre actual de fotogrames per segon a la cantonada superior "
+"esquerra"
 
 #: engines/wintermute/metaengine.cpp:54
 msgid "Sprite bilinear filtering (SLOW)"
-msgstr ""
+msgstr "Filtratge bilineal de l'sprite (LENT)"
 
 #: engines/wintermute/metaengine.cpp:55
 msgid "Apply bilinear filtering to individual sprites"
-msgstr ""
+msgstr "Aplica el filtratge bilineal a personatges individuals"
 
 #: engines/wintermute/metaengine.cpp:67
 msgid "Force to use 2D renderer (2D games only)"
-msgstr ""
+msgstr "Força l'ús del renderitzador 2D (només jocs 2D)"
 
 #: engines/wintermute/metaengine.cpp:68
 msgid "This setting forces ScummVM to use 2D renderer while running 2D games"
 msgstr ""
+"Aquest paràmetre força a ScummVM a usar el renderitzador 2D mentre "
+"s'executen jocs 2D"
 
 #: engines/wintermute/metaengine.cpp:110
 msgid "FoxTail support is not compiled in"
@@ -11519,16 +11498,20 @@ msgstr "Aquest joc requereix suport per a PNG, JPEG i Vorbis."
 #: engines/wintermute/wintermute.cpp:159
 msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgstr ""
+"Aquest joc requereix el submotor FoxTail, que no està dins la compilació."
 
 #: engines/wintermute/wintermute.cpp:170
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr ""
+"Aquest joc requereix el submotor HeroCraft, que no està dins la compilció."
 
 #: engines/wintermute/wintermute.cpp:181
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
 msgstr ""
+"Aquest joc requereix capacitats 3D, que no està dins la compilació. Per "
+"tant, és probable que no es pugui jugar totalment o parcialment."
 
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
@@ -12103,6 +12086,9 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+"Aquest joc desat utilitza la versió %u, però aquest motor només admet fins a "
+"la versió %d. Necessitaràs una versió actualitzada del motor per utilitzar "
+"aquest joc desat."
 
 #: engines/zvision/metaengine.cpp:58
 msgid "Double FPS"
