@@ -64,7 +64,7 @@ private:
 	int _ctr1 = 0;
 
 	static void intrMsg(frac16 myMessage, struct machine *sender);
-	void parserSwitch();
+	void handlingStick();
 
 public:
 	Room304() : Room() {}

@@ -208,7 +208,8 @@ void Room304::parser() {
 		}
 	} else if (_G(kernel).trigger == 749) {
 		midi_stop();
-	} else if (_G(flags)[V001] && _val4) {
+	} else if (_G(flags)[V001] && _val4
+		&& _G(kernel).trigger >= 49 && _G(kernel).trigger <= 54) {
 		switch (_G(kernel).trigger) {
 		case 49:
 			ws_hide_walker();
@@ -243,10 +244,40 @@ void Room304::parser() {
 		default:
 			break;
 		}
-	} else if (0) {
-		parserSwitch();
+	} else if (_G(flags)[V001] && (takeFlag || useFlag) && player_said("samurai sword")) {
+		if (_G(flags)[V001]) {
+			switch (_G(kernel).trigger) {
+			case 11:
+				terminateMachineAndNull(_sword);
+				series_ranged_play("CUT SNAKE", 1, 0, 11, 22, 100, 0x200, 4, 12);
+				digi_play("304_s10", 1);
+				break;
+			case 12:
+				series_ranged_play("CUT SNAKE", 1, 0, 23, 55, 100, 0x200, 4, 13);
+				break;
+			case 13:
+				series_ranged_play("CUT SNAKE", 1, 0, 56, 69, 100, 0x200, 4, 14);
+				digi_play("304_s09", 2);
+				break;
+			case 14:
+				midi_fade_volume(0, 120);
+				kernel_timing_trigger(120, 749);
+				Common::strcpy_s(_G(player).noun, "HANDLING STICK");
+				series_ranged_play("CUT SNAKE", 1, 0, 70, 89, 100, 0x200, 4, 17);
+				digi_play("com125", 1);
+				break;
+			default:
+				break;
+			}
+		} else {
+			digi_play("304r64", 1);
+		}
+	} else if (_G(flags)[V001] && (takeFlag || useFlag) && player_said("handling stick")) {
+		// This is such an enormous switch in the original that
+		// it's been refactored to it's own method
+		handlingStick();
 	
-	} else if (lookFlag && player_said_any("native mask", "shield")) {
+	} if (lookFlag && player_said_any("native mask", "shield")) {
 		digi_play("304r05", 1);
 	} else if (lookFlag && player_said("mailbag")) {
 		digi_play("304r15", 1);
@@ -418,7 +449,7 @@ void Room304::intrMsg(frac16 myMessage, struct machine *sender) {
 	}
 }
 
-void Room304::parserSwitch() {
+void Room304::handlingStick() {
 	switch (_G(kernel).trigger) {
 	case 13:
 		series_stream_break_on_frame(_field64, 29, 14);
