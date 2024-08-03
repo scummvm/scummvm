@@ -42,24 +42,19 @@ bool TeFont2::load(const Common::Path &path) {
 		return true; // already open
 
 	TeCore *core = g_engine->getCore();
-	Common::FSNode node = core->findFile(path);
-	return load(node);
-}
-
-bool TeFont2::load(const Common::FSNode &node) {
-	const Common::Path path = node.getPath();
+	Common::Path fontPath = core->findFileNew(path);
 
 	unload();
 	setAccessName(path);
 	_loadedPath = path;
 
-	if (!node.isReadable()) {
+	if (!Common::File::exists(fontPath)) {
 		warning("TeFont2::load: Can't read from %s", path.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
 	Common::File file;
-	file.open(node);
+	file.open(fontPath);
 
 	if (!Te3DObject2::loadAndCheckFourCC(file, "TESF")) {
 		warning("TeFont2::load: Invalid magic in %s", path.toString(Common::Path::kNativeSeparator).c_str());

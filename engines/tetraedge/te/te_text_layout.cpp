@@ -119,14 +119,12 @@ void TeTextLayout::setText(const Common::String &val) {
 		_baseFontSize = parser.fontSize();
 
 	if (!parser.fontFile().empty()) {
-		Common::Path fontPath(parser.fontFile());
-		Common::FSNode fontNode = g_engine->getCore()->findFile(fontPath);
+		Common::Path fontPath(g_engine->getCore()->findFileNew(Common::Path(parser.fontFile())));
 		TeIntrusivePtr<TeIFont> font;
 		if (parser.fontFile().hasSuffixIgnoreCase(".ttf"))
-			font = g_engine->getResourceManager()->getResource<TeFont3>(fontNode).get();
+			font = g_engine->getResourceManager()->getResource<TeFont3>(fontPath).get();
 		else
-			font = g_engine->getResourceManager()->getResource<TeFont2>(fontNode).get();
-		//font->load(fontPath); // lazy load this later.
+			font = g_engine->getResourceManager()->getResource<TeFont2>(fontPath).get();
 		_base.setFont(0, font);
 	}
 	if (parser.style().size())
