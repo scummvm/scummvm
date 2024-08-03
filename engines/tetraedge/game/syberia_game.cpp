@@ -465,19 +465,13 @@ bool SyberiaGame::initWarp(const Common::String &zone, const Common::String &sce
 	const Common::Path intLuaPath = core->findFileNew(scenePath.join(Common::String::format("Int%s.lua", scene.c_str())));
 	const Common::Path logicLuaPath = core->findFileNew(scenePath.join(Common::String::format("Logic%s.lua", scene.c_str())));
 	const Common::Path setLuaPath = core->findFileNew(scenePath.join(Common::String::format("Set%s.lua", scene.c_str())));
-	Common::Path forLuaPath = core->findFileNew(scenePath.join(Common::String::format("For%s.lua", scene.c_str())));
+	const Common::Path forLuaPath = core->findFileNew(scenePath.join(Common::String::format("For%s.lua", scene.c_str())));
 	const Common::Path markerLuaPath = core->findFileNew(scenePath.join(Common::String::format("Marker%s.lua", scene.c_str())));
 
 	bool intLuaExists = Common::File::exists(intLuaPath);
 	bool logicLuaExists = Common::File::exists(logicLuaPath);
 	bool setLuaExists = Common::File::exists(setLuaPath);
 	bool forLuaExists = Common::File::exists(forLuaPath);
-	if (!forLuaExists) {
-		// slight hack.. try an alternate For lua path.
-		forLuaPath = core->findFileNew(scenePath.join("Android-MacOSX").join(Common::String::format("For%s.lua", scene.c_str())));
-		forLuaExists = Common::File::exists(forLuaPath);
-		debug("searched for %s", forLuaPath.getLastComponent().toString().c_str());
-	}
 	bool markerLuaExists = Common::File::exists(markerLuaPath);
 
 	if (!intLuaExists && !logicLuaExists && !setLuaExists && !forLuaExists && !markerLuaExists) {
