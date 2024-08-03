@@ -1207,7 +1207,8 @@ template <typename T> void scale2x(byte *dst, const byte *src, int pitch, int w,
 }
 
 UpscaledGfxDriver::UpscaledGfxDriver(uint16 screenWidth, uint16 screenHeight, uint16 textAlignX, bool scaleCursor, bool rgbRendering) :
-	GfxDefaultDriver(screenWidth << 1, screenHeight << 1, rgbRendering), _textAlignX(textAlignX), _scaleCursor(scaleCursor), _scaledBitmap(nullptr), _renderScaled(nullptr), _renderGlyph(nullptr) {
+	GfxDefaultDriver(screenWidth << 1, screenHeight << 1, rgbRendering), _textAlignX(textAlignX), _scaleCursor(scaleCursor),
+	_scaledBitmap(nullptr), _renderScaled(nullptr), _renderGlyph(nullptr), _fixedTextColor(-1) {
 	_virtualW = screenWidth;
 	_virtualH = screenHeight;
 }
@@ -1216,7 +1217,7 @@ UpscaledGfxDriver::~UpscaledGfxDriver() {
 	delete[] _scaledBitmap;
 }
 
-void renderGlyph(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h, int transpCol) {
+void renderGlyph(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h, int transpCol, int) {
 	dstPitch -= w;
 	srcPitch -= w;
 
@@ -1295,7 +1296,7 @@ void UpscaledGfxDriver::drawTextFontGlyph(const byte *src, int pitch, int hiresD
 	GFXDRV_ASSERT_READY;
 	hiresDestX &= ~(_textAlignX - 1);
 	byte *scb = _scaledBitmap + hiresDestY * _screenW * _srcPixelSize + hiresDestX * _srcPixelSize;
-	_renderGlyph(scb, _screenW, src, pitch, hiresW, hiresH, transpColor);
+	_renderGlyph(scb, _screenW, src, pitch, hiresW, hiresH, transpColor, _fixedTextColor);
 	updateScreen(hiresDestX, hiresDestY, hiresW, hiresH, palMods, palModMapping);
 }
 
@@ -1315,7 +1316,8 @@ void UpscaledGfxDriver::updateScreen(int destX, int destY, int w, int h, const P
 	g_system->copyRectToScreen(buff, pitch, destX, destY, w, h);
 }
 
-PC98Gfx16ColorsDriver::PC98Gfx16ColorsDriver(int textAlignX, bool scaleCursor, bool specialFontStyle, bool rgbRendering) : UpscaledGfxDriver(320, 200, textAlignX, scaleCursor, rgbRendering), _sci1FontStyle(specialFontStyle), _convPalette(nullptr) {
+PC98Gfx16ColorsDriver::PC98Gfx16ColorsDriver(int textAlignX, bool cursorScaleWidth, bool cursorScaleHeight, SjisFontStyle sjisFontStyle, int sjisTextModeColor, bool rgbRendering, bool needsUnditheringPalette) :
+	UpscaledGfxDriver(320, 200, textAlignX, cursorScaleWidth && cursorScaleHeight, rgbRendering), _fontStyle(sjisFontStyle), _cursorScaleHeightOnly(!cursorScaleWidth && cursorScaleHeight), _convPalette(nullptr) {
 	// Palette taken from driver file (identical for all versions of the
 	// driver I have seen so far, also same for SCI0 and SCI1)
 	static const byte pc98colorsV16[] = {
@@ -1336,13 +1338,39 @@ PC98Gfx16ColorsDriver::PC98Gfx16ColorsDriver(int textAlignX, bool scaleCursor, b
 		s+=3;
 	}
 
-	// For the undithered mode, we generate the missing colors using the same formula as for EGA...
-	byte *d = &col[48];
-	for (int i = 16; i < 256; i++) {
-		const byte *s1 = &col[(i & 0x0f) * 3];
-		const byte *s2 = &col[(i >> 4) * 3];
-		for (int ii = 0; ii < 3; ++ii)
-			*d++ = (byte)(0.5 + (pow(0.5 * ((pow(*s1++ / 255.0, 2.2 / 1.0) * 255.0) + (pow(*s2++ / 255.0, 2.2 / 1.0) * 255.0)) / 255.0, 1.0 / 2.2) * 255.0));
+	if (sjisTextModeColor != -1) {
+		byte *d = &col[48];
+		for (uint8 i = 0; i < 8; ++i) {
+			*d++ = (i & 4) ? 0xff : 0;
+			*d++ = (i & 2) ? 0xff : 0;
+			*d++ = (i & 1) ? 0xff : 0;
+		}
+		_fixedTextColor = sjisTextModeColor + 0x10;
+	}
+
+	if (needsUnditheringPalette) {		
+		if (sjisTextModeColor != -1) {
+			// If we need the rest of the CLUT8 for the undithering, we can't use that space for the
+			// text mode colors, but this really only matters for the blue text color in PQ2. We try
+			// to relocate that color which should work for the blue color that PQ2 uses...
+			for (int i = 0; i < 16; ++i) {
+				if (col[i * 3] != col[_fixedTextColor * 3] || col[i * 3 + 1] != col[_fixedTextColor * 3 + 1] || col[i * 3 + 2] != col[_fixedTextColor * 3 + 2])
+					continue;
+				_fixedTextColor = i;
+				break;
+			}
+			if (_fixedTextColor >= 16)
+				_fixedTextColor = -1;
+		}
+
+		// For the undithered mode, we generate the missing colors using the same formula as for EGA.
+		byte *d = &col[48];
+		for (int i = 16; i < 256; i++) {
+			const byte *s1 = &col[(i & 0x0f) * 3];
+			const byte *s2 = &col[(i >> 4) * 3];
+			for (int ii = 0; ii < 3; ++ii)
+				*d++ = (byte)(0.5 + (pow(0.5 * ((pow(*s1++ / 255.0, 2.2 / 1.0) * 255.0) + (pow(*s2++ / 255.0, 2.2 / 1.0) * 255.0)) / 255.0, 1.0 / 2.2) * 255.0));
+		}
 	}
 
 	_convPalette = col;
@@ -1352,7 +1380,30 @@ PC98Gfx16ColorsDriver::~PC98Gfx16ColorsDriver() {
 	delete[] _convPalette;
 }
 
-void renderPC98GlyphSpecial(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h, int transpCol) {
+void renderPC98GlyphFat(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h, int transpCol, int fixedCol) {
+	dstPitch -= w;
+	srcPitch -= w;
+
+	while (h--) {
+		for (int i = 0; i < w - 1; ++i) {
+			uint8 a = *src++;
+			uint8 b = *src;
+			if (a != transpCol)
+				*dst = (fixedCol == -1) ? a : fixedCol;
+			else if (b != transpCol)
+				*dst = (fixedCol == -1) ? b : fixedCol;
+			++dst;
+		}
+		byte l = *src++;
+		if (l != transpCol)
+			*dst = l;
+		++dst;
+		src += srcPitch;
+		dst += dstPitch;
+	}
+}
+
+void renderPC98GlyphSpecial(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h, int transpCol, int) {
 	assert(h == 16); // This is really not suitable for anything but the special SCI1 PC98 glyph drawing
 	dstPitch -= w;
 	srcPitch -= w;
@@ -1388,10 +1439,16 @@ void renderPC98GlyphSpecial(byte *dst, int dstPitch, const byte *src, int srcPit
 void PC98Gfx16ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
 	UpscaledGfxDriver::initScreen(format);
 
+	if (!_compositeBuffer && _cursorScaleHeightOnly) // We need at least a small buffer for the scaled cursor
+		_compositeBuffer = new byte[40 * 40 * _srcPixelSize]();
+
 	assert(_convPalette);
 	GfxDefaultDriver::setPalette(_convPalette, 0, 256, true, nullptr, nullptr);
 
-	if (!_sci1FontStyle)
+	if (_fontStyle == kFontStyleFat)
+		_renderGlyph = &renderPC98GlyphFat;
+
+	if (_fontStyle != kFontStyleSpecialSCI1)
 		return;
 
 	_renderGlyph = &renderPC98GlyphSpecial;
@@ -1403,7 +1460,30 @@ void PC98Gfx16ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
 	}
 }
 
-SCI0_PC98Gfx8ColorsDriver::SCI0_PC98Gfx8ColorsDriver(bool rgbRendering) : UpscaledGfxDriver(320, 200, 8, false, rgbRendering), _convPalette(nullptr) {
+void PC98Gfx16ColorsDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
+	GFXDRV_ASSERT_READY;
+	if (!_cursorScaleHeightOnly) {
+		UpscaledGfxDriver::replaceCursor(cursor, w, h, hotspotX, hotspotY, keycolor);
+		return;
+	}
+
+	// Special case for PQ2 which scales the cursor height (but not the width)
+	const byte *s = reinterpret_cast<const byte*>(cursor);
+	byte *d = _compositeBuffer;
+
+	for (uint i = 0; i < h; ++i) {
+		memcpy(d, s, w);
+		d += w;
+		memcpy(d, s, w);
+		d += w;
+		s += w;
+	}
+
+	CursorMan.replaceCursor(_compositeBuffer, w, h << 1, hotspotX, hotspotY << 1, keycolor);
+}
+
+SCI0_PC98Gfx8ColorsDriver::SCI0_PC98Gfx8ColorsDriver(bool cursorScaleHeight, SjisFontStyle sjisFontStyle, int sjisTextModeColor, bool rgbRendering) :
+	UpscaledGfxDriver(320, 200, 8, false, rgbRendering), _cursorScaleHeightOnly(cursorScaleHeight), _fontStyle(sjisFontStyle), _convPalette(nullptr) {
 	byte *col = new byte[8 * 3]();
 	_convPalette = col;
 
@@ -1412,6 +1492,8 @@ SCI0_PC98Gfx8ColorsDriver::SCI0_PC98Gfx8ColorsDriver(bool rgbRendering) : Upscal
 		*col++ = (i & 2) ? 0xff : 0;
 		*col++ = (i & 1) ? 0xff : 0;
 	}
+
+	_fixedTextColor = sjisTextModeColor;
 }
 
 SCI0_PC98Gfx8ColorsDriver::~SCI0_PC98Gfx8ColorsDriver() {
@@ -1441,7 +1523,11 @@ void pc98SimpleDither(byte *dst, const byte *src, int pitch, int w, int h) {
 
 void SCI0_PC98Gfx8ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
 	UpscaledGfxDriver::initScreen(format);
+	if (!_compositeBuffer) // We need at least a small buffer for the cursor
+		_compositeBuffer = new byte[40 * 40 * _srcPixelSize]();
 	_renderScaled = &pc98SimpleDither;
+	if (_fontStyle == kFontStyleFat)
+		_renderGlyph = &renderPC98GlyphFat;
 	assert(_convPalette);
 	GfxDefaultDriver::setPalette(_convPalette, 0, 8, true, nullptr, nullptr);
 }
@@ -1449,20 +1535,36 @@ void SCI0_PC98Gfx8ColorsDriver::initScreen(const Graphics::PixelFormat *format) 
 void SCI0_PC98Gfx8ColorsDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
 	GFXDRV_ASSERT_READY;
 	const byte *s = reinterpret_cast<const byte*>(cursor);
-	byte *d1 = _compositeBuffer;
+	byte *d = _compositeBuffer;
 	uint32 newKeyColor = 0xFF;
 
 	for (uint i = 0; i < h; ++i) {
 		for (uint ii = 0; ii < w; ++ii) {
 			byte col = *s++;
-			*d1++ = (col == keycolor) ? newKeyColor : (col & 7);
+			*d++ = (col == keycolor) ? newKeyColor : (col & 7);
 		}
+	}
+
+	// Special case for PQ2 which 2x scales the cursor height
+	if (_cursorScaleHeightOnly) {
+		s = _compositeBuffer + h * w - w;
+		d = _compositeBuffer + h * w * 2 - w;
+
+		for (uint i = 0; i < h; ++i) {
+			memcpy(d, s, w);
+			d -= w;
+			memcpy(d, s, w);
+			d -= w;
+			s -= w;
+		}
+		h <<= 1;
+		hotspotX <<= 1;
 	}
 
 	CursorMan.replaceCursor(_compositeBuffer, w, h, hotspotX, hotspotY, newKeyColor);
 }
 
-const char *SCI0_PC98Gfx8ColorsDriver::_driverFile = "9801V8M.DRV";
+const char *SCI0_PC98Gfx8ColorsDriver::_driverFiles[2] = { "9801V8M.DRV", "9801VID.DRV" };
 
 SCI1_PC98Gfx8ColorsDriver::SCI1_PC98Gfx8ColorsDriver(bool rgbRendering) : UpscaledGfxDriver(320, 200, 0, true, rgbRendering), _ditheringTable(nullptr), _convPalette(nullptr) {
 	Common::File drv;
@@ -1573,31 +1675,11 @@ void renderPlanarMatrix(byte *dst, const byte *src, int pitch, int w, int h, con
 	}
 }
 
-void renderPC98GlyphFat(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h, int transpCol) {
-	dstPitch -= w;
-	srcPitch -= w;
-
-	while (h--) {
-		for (int i = 0; i < w - 1; ++i) {
-			uint8 a = *src++;
-			uint8 b = *src;
-			if (a != transpCol)
-				*dst = a;
-			else if (b != transpCol)
-				*dst = b;
-			++dst;
-		}
-		byte l = *src++;
-		if (l != transpCol)
-			*dst = l;
-		++dst;
-		src += srcPitch;
-		dst += dstPitch;
-	}
-}
-
 void SCI1_PC98Gfx8ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
 	UpscaledGfxDriver::initScreen(format);
+
+	if (!_compositeBuffer) // We need at least a small buffer for the cursor
+		_compositeBuffer = new byte[40 * 40 * _srcPixelSize]();
 
 	// Only needed for SCI1 and for RGB rendering. For 16 colors games the base class driver will usually not create this.
 	if (_currentBitmap == nullptr) {

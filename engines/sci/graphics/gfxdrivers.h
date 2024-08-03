@@ -247,11 +247,12 @@ public:
 	bool driverBasedTextRendering() const override { return true; }
 protected:
 	void updateScreen(int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping);
-	typedef void (*GlyphRenderProc)(byte*, int, const byte*, int, int, int, int);
+	typedef void (*GlyphRenderProc)(byte*, int, const byte*, int, int, int, int, int);
 	GlyphRenderProc _renderGlyph;
 	typedef void (*ScaledRenderProc)(byte*, const byte*, int, int, int);
 	ScaledRenderProc _renderScaled;
 	uint16 _textAlignX;
+	int16 _fixedTextColor;
 	byte *_scaledBitmap;
 private:
 	const bool _scaleCursor;
@@ -259,26 +260,40 @@ private:
 
 class PC98Gfx16ColorsDriver final : public UpscaledGfxDriver {
 public:
-	PC98Gfx16ColorsDriver(int textAlignX, bool scaleCursor, bool specialFontStyle, bool rgbRendering);
+	enum SjisFontStyle {
+		kFontStyleNone,
+		kFontStyleFat,
+		kFontStyleSpecialSCI1
+	};
+
+	PC98Gfx16ColorsDriver(int textAlignX, bool cursorScaleWidth, bool cursorScaleHeight, SjisFontStyle sjisFontStyle, int sjisTextModeColor, bool rgbRendering, bool needsUnditheringPalette);
 	~PC98Gfx16ColorsDriver() override;
 	void initScreen(const Graphics::PixelFormat *format) override;
 	void setPalette(const byte*, uint, uint, bool, const PaletteMod*, const byte*) override {}
+	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 private:
 	const byte *_convPalette;
-	const bool _sci1FontStyle;
+	const bool _cursorScaleHeightOnly;
+	SjisFontStyle _fontStyle;
 };
 
 class SCI0_PC98Gfx8ColorsDriver final : public UpscaledGfxDriver {
 public:
-	SCI0_PC98Gfx8ColorsDriver(bool rgbRendering);
+	enum SjisFontStyle {
+		kFontStyleNone,
+		kFontStyleFat
+	};
+	SCI0_PC98Gfx8ColorsDriver(bool cursorScaleHeight, SjisFontStyle sjisFontStyle, int sjisTextModeColor, bool rgbRendering);
 	~SCI0_PC98Gfx8ColorsDriver() override;
 	void initScreen(const Graphics::PixelFormat *format) override;
 	void setPalette(const byte*, uint, uint, bool, const PaletteMod*, const byte*) override {}
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
-	static bool validateMode(Common::Platform p) { return (p == Common::kPlatformPC98) && checkDriver(&_driverFile, 1); }
+	static bool validateMode(Common::Platform p) { return (p == Common::kPlatformPC98) && checkDriver(_driverFiles, 2); }
 private:
 	const byte *_convPalette;
-	static const char *_driverFile;
+	const bool _cursorScaleHeightOnly;
+	SjisFontStyle _fontStyle;
+	static const char *_driverFiles[2];
 };
 
 class SCI1_PC98Gfx8ColorsDriver final : public UpscaledGfxDriver {

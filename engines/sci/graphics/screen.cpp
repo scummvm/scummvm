@@ -189,8 +189,12 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 		_gfxDrv = new SCI1_VGAGreyScaleDriver(requestRGB);
 		break;
 	case Common::kRenderPC98_8c:
-		if (getSciVersion() <= SCI_VERSION_01)
-			_gfxDrv = new SCI0_PC98Gfx8ColorsDriver(requestRGB);
+		if (g_sci->getGameId() == GID_PQ2)
+			// PQ2 is a bit special, probably the oldest of the PC-98 ports. Unlike all the others, it uses text mode print
+			// and it doesn't even have a 16 colors drivers. See comment below...
+			_gfxDrv = new SCI0_PC98Gfx8ColorsDriver(true, SCI0_PC98Gfx8ColorsDriver::kFontStyleFat, 1, requestRGB);
+		else if (getSciVersion() <= SCI_VERSION_01)
+			_gfxDrv = new SCI0_PC98Gfx8ColorsDriver(false, SCI0_PC98Gfx8ColorsDriver::kFontStyleNone, -1, requestRGB);
 		else
 			_gfxDrv = new SCI1_PC98Gfx8ColorsDriver(requestRGB);
 		_hiresGlyphBuffer = new byte[16 * 16]();
@@ -208,10 +212,18 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 				_gfxDrv = new SCI1_MacGfxDriver(_displayWidth, _displayHeight + extraHeight, requestRGB);
 			break;*/
 		case Common::kPlatformPC98:
-			if (getSciVersion() <= SCI_VERSION_01)
-				_gfxDrv = new PC98Gfx16ColorsDriver(8, false, false, requestRGB);
+			if (g_sci->getGameId() == GID_PQ2)
+				// PQ2 is a bit special, probably the oldest of the PC-98 ports. Unlike all the others, it uses text mode print,
+				// so the text color is a system color outside the normal 16 colors palette. The original does not even have a
+				// 16 colors mode driver. Only the 8 colors mode, where the colors are identical for text and graphics mode.
+				// But we do want to provide the 16 colors mode, since it is not a big deal (i.e., it does not require data
+				// from a driver file and the fat print is also already there for the SCI1 8 colors mode). So we just make the
+				// necessary adjustments.
+				_gfxDrv = new PC98Gfx16ColorsDriver(8, false, true, PC98Gfx16ColorsDriver::kFontStyleFat, 1, requestRGB, ConfMan.getBool("disable_dithering"));
+			else if (getSciVersion() <= SCI_VERSION_01)
+				_gfxDrv = new PC98Gfx16ColorsDriver(8, false, false, PC98Gfx16ColorsDriver::kFontStyleNone, -1, requestRGB, true);
 			else
-				_gfxDrv = new PC98Gfx16ColorsDriver(1, true, true, requestRGB);
+				_gfxDrv = new PC98Gfx16ColorsDriver(1, true, true, PC98Gfx16ColorsDriver::kFontStyleSpecialSCI1, -1, requestRGB, true);
 			_hiresGlyphBuffer = new byte[16 * 16]();
 			break;
 		default:
