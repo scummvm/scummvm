@@ -492,9 +492,9 @@ bool SyberiaGame::initWarp(const Common::String &zone, const Common::String &sce
 	if (logicLuaExists) {
 		_luaContext.addBindings(LuaBinds::LuaOpenBinds);
 		_luaScript.attachToContext(&_luaContext);
-		_luaScript.load(core->findFile("menus/help/help.lua"));
+		_luaScript.load(core->findFileNew("menus/help/help.lua"));
 		_luaScript.execute();
-		_luaScript.load(core->convertPathToFSNode(logicLuaPath));
+		_luaScript.load(logicLuaPath);
 	}
 
 	if (_forGui.loaded())
@@ -514,7 +514,7 @@ bool SyberiaGame::initWarp(const Common::String &zone, const Common::String &sce
 		// Syberia 2, load from xml
 		_scene.loadXml(zone, scene);
 	}
-	_scene.loadBackground(core->convertPathToFSNode(setLuaPath));
+	_scene.loadBackground(setLuaPath);
 
 	Application *app = g_engine->getApplication();
 	if (forLuaExists) {
@@ -531,7 +531,7 @@ bool SyberiaGame::initWarp(const Common::String &zone, const Common::String &sce
 	}
 
 	if (intLuaExists) {
-		_scene.loadInteractions(core->convertPathToFSNode(intLuaPath));
+		_scene.loadInteractions(intLuaPath);
 		TeLuaGUI::StringMap<TeButtonLayout *> &blayouts = _scene.hitObjectGui().buttonLayouts();
 		for (auto &entry : blayouts) {
 			HitObject *hobj = new HitObject();
@@ -803,7 +803,7 @@ bool SyberiaGame::loadPlayerCharacter(const Common::String &name) {
 
 bool SyberiaGame::loadScene(const Common::String &name) {
 	TeCore *core = g_engine->getCore();
-	_gameEnterScript.load(core->findFile("scenes/OnGameEnter.lua"));
+	_gameEnterScript.load(core->findFileNew("scenes/OnGameEnter.lua"));
 	_gameEnterScript.execute();
 	Character *character = _scene._character;
 	if (character && character->_model->visible()) {
