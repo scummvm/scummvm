@@ -54,12 +54,6 @@ public:
 	// We just have a separate function.
 	void loadXml(const Common::Path &path);
 
-	// Unused in Syberia 1.
-	//void loadBin(const Common::Path &path);
-	//void loadBin(const Common::ReadStream &stream);
-
-	//void lookAt(const TeVector3f32 &point) {} // empty and unused?
-
 	void orthogonalParams(float f1, float f2, float f3, float f4);
 	TeMatrix4x4 projectionMatrix();
 
@@ -106,7 +100,6 @@ private:
 	uint _viewportH;
 
 	int _transformA;
-	//int _transformB; // never used?
 
 	float _orthogonalParamL;
 	float _orthogonalParamR;
