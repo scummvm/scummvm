@@ -920,7 +920,7 @@ Common::Error Ultima8Engine::loadGameState(int slot) {
 	if (result.getCode() == Common::kNoError)
 		ConfMan.setInt("lastSave", slot);
 	else
-		ConfMan.set("lastSave", "");
+		ConfMan.setInt("lastSave", -1);
 
 	ConfMan.flushToDisk();
 
@@ -934,7 +934,7 @@ Common::Error Ultima8Engine::saveGameState(int slot, const Common::String &desc,
 		if (result.getCode() == Common::kNoError)
 			ConfMan.setInt("lastSave", slot);
 		else
-			ConfMan.set("lastSave", "");
+			ConfMan.setInt("lastSave", -1);
 	}
 
 	ConfMan.flushToDisk();
@@ -1136,7 +1136,7 @@ bool Ultima8Engine::newGame(int saveSlot) {
 	_game->startInitialUsecode(saveSlot);
 
 	if (saveSlot == -1)
-		ConfMan.set("lastSave", "");
+		ConfMan.setInt("lastSave", -1);
 
 	return true;
 }
