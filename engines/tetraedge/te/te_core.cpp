@@ -131,34 +131,18 @@ bool TeCore::onActivityTrackingAlarm() {
 	error("TODO: Implement TeCore::onActivityTrackingAlarm");
 }
 
-static Common::FSNode _findSubPath(const Common::FSNode &parent, const Common::Path &childPath) {
-	if (childPath.empty())
-		return parent;
-	Common::FSNode childNode = parent;
-	const Common::StringArray comps = childPath.splitComponents();
-	unsigned int i;
-	for (i = 0; i < comps.size(); i++) {
-		childNode = childNode.getChild(comps[i]);
-		if (!childNode.exists())
-			break;
-	}
-	if (i == comps.size())
-		return childNode;
-	return Common::FSNode();
+Common::FSNode TeCore::convertPathToFSNode(const Common::Path &path) const {
+	const Common::FSNode gameRoot(ConfMan.getPath("path"));
+	return Common::FSNode(gameRoot.getChild("Resources").getPath().joinInPlace(path));
 }
 
 Common::FSNode TeCore::findFile(const Common::Path &path) const {
-	Common::FSNode node(path);
-	if (node.exists())
-		return node;
+	return convertPathToFSNode(findFileNew(path));
+}
 
-	const Common::FSNode gameRoot(ConfMan.getPath("path"));
-	if (!gameRoot.isDirectory())
-		error("Game directory should be a directory");
-	const Common::FSNode resNode = (g_engine->getGamePlatform() == Common::kPlatformMacintosh
-			? gameRoot.getChild("Resources") : gameRoot);
-	if (!resNode.isDirectory())
-		error("Resources directory should exist in game");
+Common::Path TeCore::findFileNew(const Common::Path &path) const {
+	if (Common::File::exists(path))
+		return path;
 
 	Common::String fname = path.baseName();
 
@@ -172,6 +156,7 @@ Common::FSNode TeCore::findFile(const Common::Path &path) const {
 		"PC-MacOSX",
 		"PC-PS3-Android-MacOSX",
 		"PC-MacOSX-Android-iPhone-iPad",
+		"PC-MacOSX-Android-iPhone-iPad/HD",
 		"PC-Android-MacOSX-iPhone-iPad",
 		"PC-MacOSX-Xbox360-PS3",
 		"PC-MacOSX-PS3-Xbox360",
@@ -242,23 +227,21 @@ Common::FSNode TeCore::findFile(const Common::Path &path) const {
 			if (!lang.empty())
 				testPath.joinInPlace(lang);
 			testPath.joinInPlace(fname);
-			node = _findSubPath(resNode, testPath);
-			if (node.exists())
-				return node;
+			if (Common::File::exists(testPath))
+				return testPath;
 
 			// also try the other way around
 			if (!lang.empty() && suffix) {
 				testPath = dir.join(lang).joinInPlace(suffix).join(fname);
-				node = _findSubPath(resNode, testPath);
-				if (node.exists())
-					return node;
+				if (Common::File::exists(testPath))
+					return testPath;
 			}
 		}
 	}
 
 	// Didn't find it at all..
 	debug("TeCore::findFile Searched but didn't find %s", path.toString(Common::Path::kNativeSeparator).c_str());
-	return Common::FSNode(path);
+	return path;
 }
 
 } // end namespace Tetraedge
