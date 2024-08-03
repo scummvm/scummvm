@@ -27,6 +27,11 @@ namespace Darkseed {
 
 #define DARKSEED_NUM_PAL_ENTRIES 16
 #define DARKSEED_PAL_SIZE DARKSEED_NUM_PAL_ENTRIES * 3
+
+Pal::Pal(const Pal &pal) {
+	memcpy(palData, pal.palData, DARKSEED_PAL_SIZE);
+}
+
 bool Pal::load(const Common::Path &filename) {
 	Common::File file;
 	if(!file.open(filename)) {

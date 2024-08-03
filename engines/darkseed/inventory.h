@@ -41,6 +41,8 @@ public:
 	void draw();
 	void handleClick();
 	void endOfDayOutsideLogic();
+	void gotoJailLogic();
+	bool hasObject(uint8 objNum);
 
 	Common::Error sync(Common::Serializer &s);
 

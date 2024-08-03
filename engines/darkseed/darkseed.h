@@ -63,6 +63,7 @@ private:
 	Common::RandomSource _randomSource;
 	Pic _frame;
 	Pic *_fullscreenPic = nullptr;
+	bool _timeAdvanceEventSelected = false;
 
 protected:
 	// Engine APIs
@@ -225,6 +226,8 @@ private:
 
 	void updateHeadache();
 	void playDayChangeCutscene();
+	void closeShops();
+	void initDelbertAtSide();
 };
 
 extern DarkseedEngine *g_engine;
