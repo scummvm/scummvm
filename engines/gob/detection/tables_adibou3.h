@@ -229,5 +229,19 @@
 	kFeatures800x600,
 	"b3_common.stk", "b3_storyboard.obc", 0
 },
+{
+	{
+
+		"adibou3",
+		_s("Missing game code"), // Adiboo 3 3.10 Du pareil au même (Engine: DEV7 version 1.30b)
+		AD_ENTRY1s("b3_common.stk", "c0a485db0c58462693fe3da3c8eaa084", 559844),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED | ADGF_DEMO,
+		GUIO0()
+	},
+	kFeatures800x600,
+	"b3_common.stk", "b3_storyboard.obc", 0
+},
 
 #endif // GOB_DETECTION_TABLES_ADIBOU3_H
