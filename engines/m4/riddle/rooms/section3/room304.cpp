@@ -662,7 +662,158 @@ void Room304::parserSwitch() {
 			1, 0, 0, 17, 29, 295, 100, 0x100, 9);
 		digi_play("304m06", 1, 255, 55);
 		break;
-		// TODO
+
+	case 53:
+		inv_give_to_player("POST MARKED ENVELOPE");
+		break;
+
+	case 54:
+		digi_play("304r52", 1, 255, 51);
+		break;
+
+	case 55:
+		if (_val1) {
+			kernel_timing_trigger(1, 56);
+		} else {
+			kernel_timing_trigger(60, 55);
+		}
+		break;
+
+	case 56:
+		_suit1 = series_load("rip suit stander talk pos4");
+		setGlobals1(_suit1, 1, 1, 1, 5, 1);
+		sendWSMessage_110000(58);
+		digi_play("304r53", 1, 255, 58);
+		break;
+
+	case 58:
+		if (_ctr1 >= 1) {
+			_ctr1 = 0;
+			sendWSMessage_140000(59);
+		} else {
+			++_ctr1;
+		}
+		break;
+
+	case 59:
+		series_unload(_suit1);
+		terminateMachineAndNull(_field60);
+		series_unload(_suit3);
+
+		_suit3 = series_load("mc hand to chin nod pos3");
+		series_ranged_play_xy("mc hand to chin nod pos3", 2, 1,
+			0, 7, 29, 295, 100, 0xa00, 7, 63);
+		digi_play("304m07", 1, 255, 60);
+		break;
+
+	case 60:
+		_suit1 = series_load("RIP LFT GEST RT PNT");
+		setGlobals3(_suit1, 1, 45);
+		sendWSMessage_F0000(75);
+		digi_play("304r54", 1, 255, 61);
+		break;
+
+	case 61:
+		_suit3 = series_load("mc hands out talk pos3");
+		kernel_timing_trigger(40, 65);
+		break;
+
+	case 63:
+		series_unload(_suit3);
+		_suit3 = series_load("mc hand to chin pos3");
+		_field60 = series_ranged_play_xy("mc hand to chin pos3",
+			1, 2, 0, 17, 29, 295, 100, 0x100, 7, 64);
+		break;
+
+	case 64:
+		ws_unhide_walker(_machine1);
+		series_unload(_suit3);
+		break;
+
+	case 65:
+		setGlobals1(_suit3, 1, 10, 11, 16, 1, 17, 24, 1, 1, 1);
+		sendWSMessage_110000(_machine1, -1);
+		digi_play("304m08", 1, 255, 66);
+		kernel_timing_trigger(60, 69);
+		break;
+
+	case 66:
+		sendWSMessage_120000(_machine1, -1);
+		_G(game).setRoom(303);
+		break;
+
+	case 67:
+		digi_play("304r50", 1);
+		break;
+
+	case 69:
+		ws_walk(458, 263, 0, -1, 2);
+		kernel_timing_trigger(30, 678);
+		break;
+
+	case 71:
+		if (_ctr1 >= 1) {
+			_ctr1 = 0;
+			sendWSMessage_140000(72);
+		} else {
+			++_ctr1;
+		}
+		break;
+
+	case 72:
+		series_unload(_suit3);
+		_suit1 = series_load("rip suit rt hand gest talk pos3");
+		setGlobals1(_suit1, 1, 11, 12, 15, 1);
+		sendWSMessage_110000(73);
+		digi_play(_val3 ? "304r24" : "304r23", 1, 255, 73);
+		sendWSMessage_10000(_machine1, 242, 274, 3, 18, 0);
+		break;
+
+	case 73:
+		if (_ctr1 >= 1) {
+			_ctr1 = 0;
+			sendWSMessage_140000(-1);
+		} else {
+			++_ctr1;
+		}
+		break;
+
+	case 74:
+		_ctr1 = 0;
+		_suit3 = series_load("mei ny hands out talk pos4");
+		setGlobals1(_suit3, 1, 9, 10, 15, 1);
+		sendWSMessage_110000(71);
+		digi_play(_val3 ? "304m03" : "304m02", 1, 255, 71);
+		break;
+
+	case 75:
+		series_unload(_suit1);
+		break;
+
+	case 78:
+		digi_unload("304r51a");
+		kernel_timing_trigger(60, 47);
+		break;
+
+	case 79:
+		digi_unload("304r51");
+		digi_preload("304r51a");
+		digi_play("304r51a", 1, 255, 78);
+		break;
+
+	case 80:
+		_val1 = 1;
+		break;
+
+	case 222:
+		digi_play("304_s13", 2);
+		series_ranged_play("MC UNTIES LF", 1, 0, 22, 82, 100, 0xa05, 5, 22);
+		break;
+
+	case 678:
+		disable_player_commands_and_fade_init(-1);
+		break;
+
 	default:
 		break;
 	}

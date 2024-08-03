@@ -80,6 +80,7 @@ protected:
 	void sendWSMessage_E0000(machine *mach);
 	void sendWSMessage_E0000();
 	void sendWSMessage_F0000(machine *mach, int trigger);
+	void sendWSMessage_F0000(int trigger);
 	void sendWSMessage_110000(machine *mach, int trigger);
 	void sendWSMessage_120000(int trigger);
 	void sendWSMessage_120000(machine *mach, int trigger);

@@ -297,6 +297,10 @@ void Room::sendWSMessage_F0000(machine *mach, int trigger) {
 	sendWSMessage(0xf0000, 0, mach, 0, nullptr, 1);
 }
 
+void Room::sendWSMessage_F0000(int trigger) {
+	sendWSMessage_F0000(_G(my_walker), trigger);
+}
+
 void Room::sendWSMessage_110000(machine *mach, int trigger) {
 	if (!trigger)
 		trigger = -1;
