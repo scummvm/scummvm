@@ -904,7 +904,7 @@ bool Script::init() {
 
 	if (run_script(init_str.c_str()) == false) {
 		Std::string errorStr = "Loading ";
-		errorStr.append(path.toString());
+		errorStr.append(path.toString('/'));
 		ConsoleAddError(errorStr);
 		return false;
 	}
@@ -1399,12 +1399,12 @@ bool Script::run_lua_file(const char *filename) {
 	dir = path;
 	build_path(dir, filename, path);
 
-	if (luaL_loadfile(L, path.toString(Common::Path::kNativeSeparator).c_str()) != 0) {
-		DEBUG(0, LEVEL_ERROR, "loading script file %s", path.toString(Common::Path::kNativeSeparator).c_str());
+	if (luaL_loadfile(L, path.toString('/').c_str()) != 0) {
+		DEBUG(0, LEVEL_ERROR, "loading script file %s", path.toString('/').c_str());
 		return false;
 	}
 
-	return call_function(path.toString(Common::Path::kNativeSeparator).c_str(), 0, 0);
+	return call_function(path.toString('/').c_str(), 0, 0);
 }
 
 bool Script::call_moonstone_set_loc(uint8 phase, MapCoord location) {
@@ -2365,7 +2365,7 @@ static int nscript_load(lua_State *L) {
 	dir = path;
 	build_path(dir, file, path);
 
-	if (luaL_loadfile(L, path.toString(Common::Path::kNativeSeparator).c_str()) == LUA_ERRFILE) {
+	if (luaL_loadfile(L, path.toString('/').c_str()) == LUA_ERRFILE) {
 		lua_pop(L, 1);
 		return 0;
 	}
