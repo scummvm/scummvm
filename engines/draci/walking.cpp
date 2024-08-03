@@ -106,7 +106,7 @@ Common::Point WalkingMap::findNearestWalkable(int startX, int startY) const {
 			// The place where, eventually, the result coordinates will be stored
 			Common::Point finalPos;
 
-			// Auxilliary array of multiplicative coefficients for reflecting points.
+			// Auxiliary array of multiplicative coefficients for reflecting points.
 			static const int kSigns[] = { 1, -1 };
 
 			// Check all 8 reflections of the basic point.
