@@ -205,9 +205,9 @@ Billboard *InGameScene::billboard(const Common::String &name) {
 }
 
 bool InGameScene::changeBackground(const Common::Path &name) {
-	Common::FSNode node = g_engine->getCore()->findFile(name);
-	if (node.isReadable()) {
-		_bgGui.spriteLayoutChecked("root")->load(node);
+	Common::Path path = g_engine->getCore()->findFileNew(name);
+	if (Common::File::exists(path)) {
+		_bgGui.spriteLayoutChecked("root")->load(path);
 		if (g_engine->gameType() == TetraedgeEngine::kSyberia2)
 			_bgGui.spriteLayoutChecked("root")->play();
 		return true;
@@ -678,11 +678,10 @@ bool InGameScene::load(const Common::FSNode &sceneNode) {
 	}
 	_shadowLightNo = -1;
 
-	const Common::Path lightspath = getLightsFileName();
 	TeCore *core = g_engine->getCore();
-	const Common::FSNode lightsNode(core->findFile(lightspath));
-	if (lightsNode.isReadable())
-		loadLights(lightsNode);
+	const Common::Path lightsPath = core->findFileNew(getLightsFileName());
+	if (Common::File::exists(lightsPath))
+		loadLights(lightsPath);
 
 	if (!sceneNode.isReadable())
 		return false;
@@ -806,7 +805,7 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 
 	Common::Path xmlpath = _sceneFileNameBase(zone, scene).joinInPlace("Scene")
 												.appendInPlace(scene).appendInPlace(".xml");
-	Common::FSNode node = g_engine->getCore()->findFile(xmlpath);
+	Common::Path path = g_engine->getCore()->findFileNew(xmlpath);
 	InGameSceneXmlParser parser(this);
 	parser.setAllowText();
 
@@ -818,8 +817,8 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 		// Patch the contents of the file before loading.
 		//
 		Common::File xmlFile;
-		if (!xmlFile.open(node))
-			error("InGameScene::loadXml: Can't open %s", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
+		if (!xmlFile.open(path))
+			error("InGameScene::loadXml: Can't open %s", path.toString(Common::Path::kNativeSeparator).c_str());
 		const int64 bufsize = xmlFile.size();
 		char *buf = new char[bufsize+1];
 		buf[bufsize] = '\0';
@@ -838,12 +837,12 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 		parser.loadBuffer((const byte *)fixedbuf.c_str(), bufsize);
 	} else {
 		// Regular loading.
-		if (!parser.loadFile(node))
-			error("InGameScene::loadXml: Can't load %s", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
+		if (!parser.loadFile(path))
+			error("InGameScene::loadXml: Can't load %s", path.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	if (!parser.parse())
-		error("InGameScene::loadXml: Can't parse %s", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
+		error("InGameScene::loadXml: Can't parse %s", path.toString(Common::Path::kNativeSeparator).c_str());
 
 	// loadFlamme and loadSnowCustom are handled by the above.
 
@@ -855,11 +854,10 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 	_lights.clear();
 	_shadowLightNo = -1;
 
-	const Common::Path lightspath = getLightsFileName();
 	TeCore *core = g_engine->getCore();
-	const Common::FSNode lightsNode(core->findFile(lightspath));
-	if (lightsNode.isReadable())
-		loadLights(lightsNode);
+	const Common::Path lightsPath = core->findFileNew(getLightsFileName());
+	if (Common::File::exists(lightsPath))
+		loadLights(lightsPath);
 
 	Common::Path pxmlpath = _sceneFileNameBase(zone, scene).joinInPlace("particles.xml");
 	Common::FSNode pnode = g_engine->getCore()->findFile(pxmlpath);
@@ -947,13 +945,13 @@ bool InGameScene::loadFreeMoveZone(const Common::String &name, TeVector2f32 &gri
 	return true;
 }
 
-bool InGameScene::loadLights(const Common::FSNode &node) {
+bool InGameScene::loadLights(const Common::Path &path) {
 	SceneLightsXmlParser parser(&_lights);
 
-	if (!parser.loadFile(node))
-		error("InGameScene::loadLights: Can't load %s", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
+	if (!parser.loadFile(path))
+		error("InGameScene::loadLights: Can't load %s", path.toString(Common::Path::kNativeSeparator).c_str());
 	if (!parser.parse())
-		error("InGameScene::loadLights: Can't parse %s", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
+		error("InGameScene::loadLights: Can't parse %s", path.toString(Common::Path::kNativeSeparator).c_str());
 
 	_shadowColor = parser.getShadowColor();
 	_shadowLightNo = parser.getShadowLightNo();
@@ -991,8 +989,8 @@ bool InGameScene::loadLights(const Common::FSNode &node) {
 	return true;
 }
 
-void InGameScene::loadMarkers(const Common::FSNode &node) {
-	_markerGui.load(node);
+void InGameScene::loadMarkers(const Common::Path &path) {
+	_markerGui.load(path);
 	TeLayout *bg = _bgGui.layoutChecked("background");
 	TeSpriteLayout *root = Game::findSpriteLayoutByName(bg, "root");
 	bg->setRatioMode(TeILayout::RATIO_MODE_NONE);
@@ -1098,7 +1096,7 @@ bool InGameScene::loadDynamicLightBloc(const Common::String &name, const Common:
 	const Common::Path pdat = _sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin");
 	const Common::Path ptex = _sceneFileNameBase(zone, scene).joinInPlace(texture);
 	Common::FSNode datnode = g_engine->getCore()->findFile(pdat);
-	Common::FSNode texnode = g_engine->getCore()->findFile(ptex);
+	Common::Path texPath = g_engine->getCore()->findFileNew(ptex);
 	if (!datnode.isReadable()) {
 		warning("[InGameScene::loadDynamicLightBloc] Can't open file : %s.", pdat.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
@@ -1140,9 +1138,9 @@ bool InGameScene::loadDynamicLightBloc(const Common::String &name, const Common:
 
 	file.close();
 
-	if (texnode.isReadable()) {
+	if (Common::File::exists(texPath)) {
 		TeIntrusivePtr<Te3DTexture> tex = Te3DTexture::makeInstance();
-		tex->load2(texnode, false);
+		tex->load2(g_engine->getCore()->convertPathToFSNode(texPath), false);
 		mesh->defaultMaterial(tex);
 	} else if (texture.size()) {
 		warning("loadDynamicLightBloc: Failed to load texture %s", texture.c_str());
@@ -1177,11 +1175,11 @@ bool InGameScene::loadLight(const Common::String &name, const Common::String &zo
 
 bool InGameScene::loadMask(const Common::String &name, const Common::String &texture, const Common::String &zone, const Common::String &scene) {
 	TeCore *core = g_engine->getCore();
-	Common::Path datpath = _sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin");
-	Common::Path texpath = _sceneFileNameBase(zone, scene).joinInPlace(texture);
-	Common::FSNode datnode = core->findFile(datpath);
+	Common::Path datPath = _sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin");
+	Common::Path texPath = _sceneFileNameBase(zone, scene).joinInPlace(texture);
+	Common::FSNode datnode = core->findFile(datPath);
 	if (!datnode.isReadable()) {
-		warning("[InGameScene::loadMask] Can't open file : %s.", datpath.toString(Common::Path::kNativeSeparator).c_str());
+		warning("[InGameScene::loadMask] Can't open file : %s.", datPath.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 	TeModel *model = new TeModel();
@@ -1227,7 +1225,7 @@ bool InGameScene::loadMask(const Common::String &name, const Common::String &tex
 	}
 
 	file.close();
-	Common::FSNode texnode = core->findFile(texpath);
+	Common::FSNode texnode = core->findFile(texPath);
 	TeIntrusivePtr<Te3DTexture> tex = Te3DTexture::load2(texnode, !_maskAlpha);
 
 	if (tex) {
@@ -1405,9 +1403,9 @@ void InGameScene::loadBlockers() {
 	}
 }
 
-void InGameScene::loadBackground(const Common::FSNode &node) {
+void InGameScene::loadBackground(const Common::Path &path) {
 	_youkiManager.reset();
-	_bgGui.load(node);
+	_bgGui.load(path);
 	TeLayout *bg = _bgGui.layout("background");
 	TeLayout *root = _bgGui.layout("root");
 	bg->setRatioMode(TeILayout::RATIO_MODE_NONE);
@@ -1441,8 +1439,8 @@ bool InGameScene::loadBillboard(const Common::String &name) {
 	}
 }
 
-void InGameScene::loadInteractions(const Common::FSNode &node) {
-	_hitObjectGui.load(node);
+void InGameScene::loadInteractions(const Common::Path &path) {
+	_hitObjectGui.load(path);
 	TeLayout *bgbackground = _bgGui.layoutChecked("background");
 	Game *game = g_engine->getGame();
 	TeSpriteLayout *root = game->findSpriteLayoutByName(bgbackground, "root");
