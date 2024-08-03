@@ -164,6 +164,7 @@ Common::Path TeCore::findFileNew(const Common::Path &path) const {
 		"PC-MacOSX-MacOSXAppStore-Android-iPhone-iPad",
 		"PC-MacOSX-MacOSXAppStore-Xbox360-Android-iPad-iPhone",
 		"Android-iPhone-iPad-PC-MacOSX",
+		"Android-MacOSX",
 		"Full",
 		"Part1-Full",
 		"Part2-Full-Part1",
