@@ -168,10 +168,10 @@ void Application::create() {
 
 	// Try alternate langs..
 	int i = 0;
-	Common::FSNode textFileNode;
+	Common::Path textFilePath;
 	while (i < ARRAYSIZE(allLangs)) {
-		textFileNode = core->findFile(textsPath.join(core->language() + ".xml"));
-		if (textFileNode.isReadable())
+		textFilePath = core->findFileNew(textsPath.join(core->language() + ".xml"));
+		if (Common::File::exists(textFilePath))
 			break;
 		core->language(allLangs[i]);
 		i++;
@@ -180,7 +180,7 @@ void Application::create() {
 		error("Couldn't find texts/[lang].xml for any language.");
 	}
 
-	_loc.load(textFileNode);
+	_loc.load(textFilePath);
 	core->addLoc(&_loc);
 
 	if (!g_engine->gameIsAmerzone()) {

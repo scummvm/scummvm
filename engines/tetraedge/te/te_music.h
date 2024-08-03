@@ -74,7 +74,7 @@ public:
 
 private:
 	Common::Path _rawPath; // Plain name of file requested
-	Common::FSNode _fileNode; // file after finding it
+	Common::Path _filePath; // file after finding it
 	Common::String _channelName;
 
 	bool _repeat;
