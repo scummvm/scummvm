@@ -100,7 +100,7 @@ struct GameSetup {
 
 	// User's overrides and hacks
 	int   override_script_os; // pretend engine is running on this eScriptSystemOSID
-	char  override_multitasking; // -1 for none, 0 or 1 to lock in the on/off mode
+	signed char  override_multitasking; // -1 for none, 0 or 1 to lock in the on/off mode
 	bool  override_upscale; // whether upscale old games that supported that
 	// assume game data version when restoring legacy save format
 	GameDataVersion legacysave_assume_dataver = kGameVersion_Undefined;
