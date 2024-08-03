@@ -4589,7 +4589,7 @@ void ScummEngine::scrollEffect(int dir) {
 
 	// Keep in mind: this effect is only present in v5 and v6, so VAR_FADE_DELAY is
 	// never uninitialized. The following check is here for good measure only.
-	int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) : kPictureDelay;
+	int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) : (int)kPictureDelay;
 
 	// Amiga handles timing a whole frame at a time
 	// instead of using quarter frames; the following
