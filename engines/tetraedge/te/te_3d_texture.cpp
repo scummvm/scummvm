@@ -69,7 +69,7 @@ TeIntrusivePtr<Te3DTexture> Te3DTexture::load2(const Common::Path &path, bool al
 
 bool Te3DTexture::load(const Common::Path &path) {
 	TeResourceManager *resmgr = g_engine->getResourceManager();
-	TeIntrusivePtr<TeImage> img = resmgr->getResource<TeImage>(g_engine->getCore()->convertPathToFSNode(path));
+	TeIntrusivePtr<TeImage> img = resmgr->getResource<TeImage>(path);
 	bool result = load(*img);
 	setAccessName(path.append(".3dtex"));
 	return result;
