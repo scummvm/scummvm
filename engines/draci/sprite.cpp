@@ -146,7 +146,7 @@ void Sprite::drawReScaled(Surface *surface, bool markDirty, const Displacement &
 	const int rows = clippedDestRect.height();
 	const int columns = clippedDestRect.width();
 
-	// Precalculate column indexes
+	// Precalculate column indices
 	int *columnIndices = new int[columns];
 	if (!_mirror) {
 		for (int j = 0; j < columns; ++j) {
