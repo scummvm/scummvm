@@ -311,6 +311,18 @@ machine *series_ranged_play(const char *seriesName, int32 loopCount, uint32 flag
 		loopCount, s, 0, 0, firstFrame, lastFrame);
 }
 
+machine *series_ranged_play_xy(const char *seriesName, int loopCount, int flags,
+		int firstFrame, int lastFrame, int x, int y, int s, int layer,
+		int frameRate, int trigger, bool stick_when_done) {
+	if (loopCount == 1)
+		loopCount = 0;
+	if (stick_when_done)
+		flags |= 0x10;
+
+	return series_play(seriesName, layer, flags, trigger, frameRate,
+		loopCount, s, x, y, firstFrame, lastFrame);
+}
+
 machine *series_plain_play(const char *seriesName, int32 loopCount, uint32 flags,
 		int32 s, int32 layer, int32 frameRate, int32 trigger, bool stickWhenDone) {
 	if (stickWhenDone)

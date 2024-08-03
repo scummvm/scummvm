@@ -23,6 +23,7 @@
 #include "m4/core/cstring.h"
 #include "m4/core/errors.h"
 #include "m4/core/term.h"
+#include "m4/gui/gui_vmng.h"
 #include "m4/mem/mem.h"
 #include "m4/mem/memman.h"
 #include "m4/vars.h"
@@ -165,6 +166,30 @@ HotSpotRec *hotspot_add(HotSpotRec *head, HotSpotRec *h, bool new_head) {
 	}
 
 	return head;
+}
+
+HotSpotRec *hotspot_add_dynamic(const char *verb, const char *noun,
+		int32 x1, int32 y1, int32 x2, int32 y2, int32 cursor,
+		bool new_head, int32 walkto_x, int32 walkto_y, int32 facing) {
+	int32 status;
+	ScreenContext *sc = vmng_screen_find(_G(gameDrawBuff), &status);
+	y2 = MIN(y2, sc->y2);
+
+	HotSpotRec *hotspot = hotspot_new(x1, y1, x2, y2);
+	if (!hotspot)
+		error("hotspot_new failed");
+
+	hotspot_newVocab(hotspot, noun);
+	hotspot_newVocab(hotspot, verb);
+	hotspot->feet_x = walkto_x;
+	hotspot->feet_y = walkto_y;
+	hotspot->cursor_number = cursor;
+	hotspot->facing = facing;
+
+	_G(currentSceneDef).hotspots = hotspot_add(_G(currentSceneDef).hotspots,
+		hotspot, new_head);
+
+	return hotspot;
 }
 
 void kill_hotspot_node(HotSpotRec *h) {

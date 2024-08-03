@@ -30,6 +30,7 @@ namespace Rooms {
 
 class Room304 : public Room {
 private:
+	bool _flag1 = false;
 	int _val1 = 0;
 	int _val2 = 0;
 	int _val3 = 0;
@@ -42,13 +43,28 @@ private:
 	machine *_machine1 = nullptr;
 	machine *_machine2 = nullptr;
 	machine *_machine3 = nullptr;
+	machine *_pu = nullptr;
+	machine *_cobraKills = nullptr;
+	machine *_field64 = nullptr;
+	machine *_field60 = nullptr;
 	int _cutSnake = -1;
 	int _mei1 = -1;
 	int _mei2 = -1;
 	int _mei3 = -1;
 	int _cobra = -1;
+	int _headUp1 = -1;
+	machine *_headUp2 = nullptr;
+	int _suit1 = 0;
+	int _suit2 = 0;
+	int _suit3 = 0;
+	int _safe1 = 0;
+	int _safe2 = 0;
+	machine *_safe3 = nullptr;
+
+	int _ctr1 = 0;
 
 	static void intrMsg(frac16 myMessage, struct machine *sender);
+	void parserSwitch();
 
 public:
 	Room304() : Room() {}

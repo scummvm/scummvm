@@ -109,6 +109,9 @@ machine *series_show(const char *seriesName, frac16 layer, uint32 flags = 0,
 machine *series_ranged_play(const char *seriesName, int32 loopCount, uint32 flags,
 	int32 firstFrame, int32 lastFrame, int32 s, uint32 layer,
 	int32 frameRate, int32 trigger = -1, bool stick_when_done = false);
+machine *series_ranged_play_xy(const char *seriesName, int loopCount, int flags,
+	int firstFrame, int lastFrame, int x, int y, int s, int layer,
+	int frameRate, int trigger = -1, bool stick_when_done = false);
 machine *series_plain_play(const char *seriesName, int32 loopCount, uint32 flags,
 	int32 s, int32 layer, int32 frameRate, int32 trigger = -1, bool stickWhenDone = false);
 machine *series_play_xy(const char *seriesName, int loopCount, int flags,

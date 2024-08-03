@@ -43,32 +43,6 @@ static const char *SAID[][2] = {
 	{ nullptr, nullptr }
 };
 
-static const int16 NORMAL_DIRS[] = { 200, 201, 202, -1 };
-static const char *NORMAL_NAMES[] = {
-	"Feng Li walk pos3",
-	"Feng Li walk pos4",
-	"Feng Li walk pos5"
-};
-static const int16 SHADOW_DIRS[] = { 210, 211, 212, -1 };
-static const char *SHADOW_NAMES[] = {
-	"candleman shadow3",
-	"candleman shadow4",
-	"candleman shadow5"
-};
-
-static const int16 NORMAL_DIRS2[] = { 220, 221, 222, -1 };
-static const char *NORMAL_NAMES2[] = {
-	"mei chen ny walker pos3",
-	"mei chen ny walker pos4",
-	"mei chen ny walker pos5"
-};
-static const int16 SHADOW_DIRS2[] = { 230, 231, 232, -1 };
-static const char *SHADOW_NAMES2[] = {
-	"candleman shadow3",
-	"candleman shadow4",
-	"candleman shadow5"
-};
-
 
 void Room303::preload() {
 	LoadWSAssets("OTHER SCRIPT");
@@ -128,8 +102,8 @@ void Room303::init() {
 			loadHands();
 			setShadow4(true);
 
-			ws_walk_load_walker_series(NORMAL_DIRS, NORMAL_NAMES);
-			ws_walk_load_shadow_series(SHADOW_DIRS, SHADOW_NAMES);
+			ws_walk_load_walker_series(S3_NORMAL_DIRS, S3_NORMAL_NAMES);
+			ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
 			loadClasped();
 
 			if (_val13) {
@@ -172,9 +146,9 @@ void Room303::init() {
 			_door = series_show_sprite("DOOR", 7, 0xf05);
 			ws_demand_location(393, 260, 5);
 
-			ws_walk_load_walker_series(NORMAL_DIRS, NORMAL_NAMES);
-			ws_walk_load_shadow_series(SHADOW_DIRS, SHADOW_NAMES);
-			_machine1 = triggerMachineByHash_3000(8, 2, NORMAL_DIRS, SHADOW_DIRS,
+			ws_walk_load_walker_series(S3_NORMAL_DIRS, S3_NORMAL_NAMES);
+			ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
+			_machine1 = triggerMachineByHash_3000(8, 2, S3_NORMAL_DIRS, S3_SHADOW_DIRS,
 				470, 226, 9, triggerMachineByHashCallback3000, "fl");
 			_val13 = 1;
 
@@ -182,10 +156,10 @@ void Room303::init() {
 			setFengActive(true);
 			loadClasped();
 
-			ws_walk_load_walker_series(NORMAL_DIRS2, NORMAL_NAMES2);
-			ws_walk_load_shadow_series(SHADOW_DIRS2, SHADOW_NAMES2);
+			ws_walk_load_walker_series(S3_NORMAL_DIRS2, S3_NORMAL_NAMES2);
+			ws_walk_load_shadow_series(S3_SHADOW_DIRS2, S3_SHADOW_NAMES2);
 
-			_hands4 = triggerMachineByHash_3000(8, 3, NORMAL_DIRS2, SHADOW_DIRS2,
+			_hands4 = triggerMachineByHash_3000(8, 3, S3_NORMAL_DIRS2, S3_SHADOW_DIRS2,
 				445, 215, 7, triggerMachineByHashCallback3000, "mc");
 			_gestTalk4 = series_load("mei ny lft hand gest talk pos4");
 			kernel_timing_trigger(1, 107);
@@ -201,8 +175,8 @@ void Room303::init() {
 				loadHands();
 				setShadow4(true);
 
-				ws_walk_load_walker_series(NORMAL_DIRS, NORMAL_NAMES);
-				ws_walk_load_shadow_series(SHADOW_DIRS, SHADOW_NAMES);
+				ws_walk_load_walker_series(S3_NORMAL_DIRS, S3_NORMAL_NAMES);
+				ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
 				loadClasped();
 
 				_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
@@ -228,8 +202,8 @@ void Room303::init() {
 			loadHands();
 			setShadow4(true);
 
-			ws_walk_load_walker_series(NORMAL_DIRS, NORMAL_NAMES);
-			ws_walk_load_shadow_series(SHADOW_DIRS, SHADOW_NAMES);
+			ws_walk_load_walker_series(S3_NORMAL_DIRS, S3_NORMAL_NAMES);
+			ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
 			loadClasped();
 
 			_machine1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, 1,
@@ -255,8 +229,8 @@ void Room303::init() {
 		if (!player_been_here(301)) {
 			loadHands();
 			setShadow4(true);
-			ws_walk_load_walker_series(NORMAL_DIRS, NORMAL_NAMES);
-			ws_walk_load_shadow_series(SHADOW_DIRS, SHADOW_NAMES);
+			ws_walk_load_walker_series(S3_NORMAL_DIRS, S3_NORMAL_NAMES);
+			ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
 			_val13 = 1;
 			loadClasped();
 
@@ -312,8 +286,8 @@ void Room303::init() {
 		loadHands();
 		setShadow4(true);
 
-		ws_walk_load_walker_series(NORMAL_DIRS, NORMAL_NAMES);
-		ws_walk_load_shadow_series(SHADOW_DIRS, SHADOW_NAMES);
+		ws_walk_load_walker_series(S3_NORMAL_DIRS, S3_NORMAL_NAMES);
+		ws_walk_load_shadow_series(S3_SHADOW_DIRS, S3_SHADOW_NAMES);
 
 		_val13 = 1;
 		loadClasped();
@@ -1060,10 +1034,10 @@ void Room303::daemon() {
 				terminateMachineAndNull(_machine1);
 
 				if (_val13)
-					_machine1 = triggerMachineByHash_3000(8, 2, NORMAL_DIRS, SHADOW_DIRS,
+					_machine1 = triggerMachineByHash_3000(8, 2, S3_NORMAL_DIRS, S3_SHADOW_DIRS,
 						480, 256, 7, triggerMachineByHashCallback3000, "fl walker");
 				else
-					_machine1 = triggerMachineByHash_3000(8, 2, NORMAL_DIRS, SHADOW_DIRS,
+					_machine1 = triggerMachineByHash_3000(8, 2, S3_NORMAL_DIRS, S3_SHADOW_DIRS,
 						706, 256, 5, triggerMachineByHashCallback3000, "fl walker");
 
 				_G(kernel).trigger_mode = KT_PARSE;

@@ -88,10 +88,10 @@ protected:
 	void sendWSMessage_140000(int trigger);
 	void sendWSMessage_150000(machine *mach, int trigger);
 	void sendWSMessage_150000(int trigger);
+	void sendWSMessage_160000(machine *mach, int val1, int trigger);
+	void sendWSMessage_160000(int val1, int trigger);
 	void sendWSMessage_190000(machine *recv, int trigger);
 	void sendWSMessage_1a0000(machine *recv, int trigger);
-
-	int _roomVal1 = 0;		// TODO: deprecate
 
 public:
 	Room() : M4::Room() {}
