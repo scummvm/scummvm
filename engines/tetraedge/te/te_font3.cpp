@@ -55,31 +55,23 @@ Graphics::Font *TeFont3::getAtSize(uint size) {
 }
 
 bool TeFont3::load(const Common::Path &path) {
-	if (_loadedPath == path && _fontFile.isOpen())
-		return true; // already open
-
 	TeCore *core = g_engine->getCore();
-	Common::FSNode node = core->findFile(path);
-	return load(node);
-}
-
-bool TeFont3::load(const Common::FSNode &node) {
-	const Common::Path path = node.getPath();
-	if (_loadedPath == path && _fontFile.isOpen())
+	const Common::Path fontPath = core->findFileNew(path);
+	if (_loadedPath == fontPath && _fontFile.isOpen())
 		return true; // already open
 
-	setAccessName(path);
-	_loadedPath = path;
+	setAccessName(fontPath);
+	_loadedPath = fontPath;
 
-	if (!node.isReadable()) {
-		warning("TeFont3::load: Can't read from %s", path.toString(Common::Path::kNativeSeparator).c_str());
+	if (!Common::File::exists(fontPath)) {
+		warning("TeFont3::load: Can't find %s", path.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
 	if (_fontFile.isOpen())
 		_fontFile.close();
 
-	if (!_fontFile.open(node)) {
+	if (!_fontFile.open(fontPath)) {
 		warning("TeFont3::load: can't open %s", path.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}

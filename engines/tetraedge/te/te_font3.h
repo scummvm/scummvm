@@ -52,7 +52,6 @@ public:
 	virtual ~TeFont3();
 
 	bool load(const Common::Path &path);
-	bool load(const Common::FSNode &node);
 	void unload();
 
 private:

@@ -1140,7 +1140,7 @@ bool InGameScene::loadDynamicLightBloc(const Common::String &name, const Common:
 
 	if (Common::File::exists(texPath)) {
 		TeIntrusivePtr<Te3DTexture> tex = Te3DTexture::makeInstance();
-		tex->load2(g_engine->getCore()->convertPathToFSNode(texPath), false);
+		tex->load2(texPath, false);
 		mesh->defaultMaterial(tex);
 	} else if (texture.size()) {
 		warning("loadDynamicLightBloc: Failed to load texture %s", texture.c_str());
@@ -1225,7 +1225,7 @@ bool InGameScene::loadMask(const Common::String &name, const Common::String &tex
 	}
 
 	file.close();
-	Common::FSNode texnode = core->findFile(texPath);
+	Common::Path texnode = core->findFileNew(texPath);
 	TeIntrusivePtr<Te3DTexture> tex = Te3DTexture::load2(texnode, !_maskAlpha);
 
 	if (tex) {
