@@ -339,7 +339,7 @@ Common::Error SciEngine::run() {
 			(renderMode == Common::kRenderPC98_16c && undither))
 				renderMode = Common::kRenderDefault;
 
-		// Disable undithering for CGA and Hercules modes
+		// Disable undithering for CGA, Hercules and other unsuitable video modes
 		if (renderMode != Common::kRenderDefault)
 			undither = false;
 
