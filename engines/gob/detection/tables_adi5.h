@@ -109,6 +109,9 @@
 	kFeatures800x600,
 	"adi5.stk", "adi5.obc", 0
 },
+
+// -- Demos --
+
 {
 	{ // Supplied by BJNFNE
 
