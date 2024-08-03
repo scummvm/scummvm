@@ -22,6 +22,8 @@
 #ifndef DIRECTOR_LINGO_XTRAS_QTVRXTRA_H
 #define DIRECTOR_LINGO_XTRAS_QTVRXTRA_H
 
+#include "video/qt_decoder.h"
+
 namespace Director {
 
 class QtvrxtraXtraObject : public Object<QtvrxtraXtraObject> {
@@ -30,6 +32,28 @@ public:
 
 	bool hasProp(const Common::String &propName) override;
 	Datum getProp(const Common::String &propName) override;
+
+	bool processEvent(Common::Event &event);
+
+	Video::QuickTimeDecoder *_video;
+
+	Common::Rect _rect;
+	bool _visible;
+	float _quality;
+
+	Video::QuickTimeDecoder::NodeData _currentNode;
+
+	Common::String _transitionMode;
+	float _transitionSpeed;
+
+	Common::String _updateMode;
+
+	bool _capEventsMouseOver;
+	bool _capEventsMouseDown;
+
+	bool _passMouseDown;
+
+	Common::String _mouseDownHandler;
 };
 
 namespace QtvrxtraXtra {

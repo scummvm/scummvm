@@ -20,12 +20,14 @@
  */
 
 #include "common/system.h"
+#include "common/tokenizer.h"
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
 #include "director/lingo/xtras/qtvrxtra.h"
+#include "video/qt_decoder.h"
 
 /**************************************************
  *
@@ -162,8 +164,9 @@ const XlibFileDesc QtvrxtraXtra::fileNames[] = {
 static MethodProto xlibMethods[] = {
 	{ "new",				QtvrxtraXtra::m_new,		 0, 0,	500 },
 	{ "forget",				QtvrxtraXtra::m_forget,		 0, 0,	500 },
-	{ "QTVREnter",			QtvrxtraXtra::m_QTVREnter,	 1, 1,	500 },
-	{ "QTVROpen",				QtvrxtraXtra::m_QTVROpen,		 3, 0,	500 },
+	{ "QTVREnter",			QtvrxtraXtra::m_QTVREnter,	 0, 0,	500 },
+	{ "QTVRExit",			QtvrxtraXtra::m_QTVRExit,	 0, 0,	500 },
+	{ "QTVROpen",				QtvrxtraXtra::m_QTVROpen,		 3, 3,	500 },
 	{ "QTVRClose",				QtvrxtraXtra::m_QTVRClose,		 0, 0,	500 },
 	{ "QTVRUpdate",				QtvrxtraXtra::m_QTVRUpdate,		 0, 0,	500 },
 	{ "QTVRGetQTVRType",				QtvrxtraXtra::m_QTVRGetQTVRType,		 0, 0,	500 },
@@ -171,11 +174,11 @@ static MethodProto xlibMethods[] = {
 	{ "QTVRMouseDown",				QtvrxtraXtra::m_QTVRMouseDown,		 0, 0,	500 },
 	{ "QTVRMouseOver",				QtvrxtraXtra::m_QTVRMouseOver,		 0, 0,	500 },
 	{ "QTVRGetPanAngle",				QtvrxtraXtra::m_QTVRGetPanAngle,		 0, 0,	500 },
-	{ "QTVRSetPanAngle",				QtvrxtraXtra::m_QTVRSetPanAngle,		 1, 0,	500 },
+	{ "QTVRSetPanAngle",				QtvrxtraXtra::m_QTVRSetPanAngle,		 1, 1,	500 },
 	{ "QTVRGetTiltAngle",				QtvrxtraXtra::m_QTVRGetTiltAngle,		 0, 0,	500 },
-	{ "QTVRSetTiltAngle",				QtvrxtraXtra::m_QTVRSetTiltAngle,		 1, 0,	500 },
+	{ "QTVRSetTiltAngle",				QtvrxtraXtra::m_QTVRSetTiltAngle,		 1, 1,	500 },
 	{ "QTVRGetFOV",				QtvrxtraXtra::m_QTVRGetFOV,		 0, 0,	500 },
-	{ "QTVRSetFOV",				QtvrxtraXtra::m_QTVRSetFOV,		 1, 0,	500 },
+	{ "QTVRSetFOV",				QtvrxtraXtra::m_QTVRSetFOV,		 1, 1,	500 },
 	{ "QTVRGetClickLoc",				QtvrxtraXtra::m_QTVRGetClickLoc,		 0, 0,	500 },
 	{ "QTVRSetClickLoc",				QtvrxtraXtra::m_QTVRSetClickLoc,		 1, 0,	500 },
 	{ "QTVRGetClickPanAngles",				QtvrxtraXtra::m_QTVRGetClickPanAngles,		 0, 0,	500 },
@@ -188,27 +191,27 @@ static MethodProto xlibMethods[] = {
 	{ "QTVRGetObjectViewAngles",				QtvrxtraXtra::m_QTVRGetObjectViewAngles,		 0, 0,	500 },
 	{ "QTVRGetObjectZoomRect",				QtvrxtraXtra::m_QTVRGetObjectZoomRect,		 0, 0,	500 },
 	{ "QTVRGetNodeID",				QtvrxtraXtra::m_QTVRGetNodeID,		 0, 0,	500 },
-	{ "QTVRSetNodeID",				QtvrxtraXtra::m_QTVRSetNodeID,		 1, 0,	500 },
+	{ "QTVRSetNodeID",				QtvrxtraXtra::m_QTVRSetNodeID,		 1, 1,	500 },
 	{ "QTVRGetNodeName",				QtvrxtraXtra::m_QTVRGetNodeName,		 0, 0,	500 },
 	{ "QTVRGetQuality",				QtvrxtraXtra::m_QTVRGetQuality,		 0, 0,	500 },
-	{ "QTVRSetQuality",				QtvrxtraXtra::m_QTVRSetQuality,		 1, 0,	500 },
+	{ "QTVRSetQuality",				QtvrxtraXtra::m_QTVRSetQuality,		 1, 1,	500 },
 	{ "QTVRGetTransitionMode",				QtvrxtraXtra::m_QTVRGetTransitionMode,		 0, 0,	500 },
-	{ "QTVRSetTransitionMode",				QtvrxtraXtra::m_QTVRSetTransitionMode,		 1, 0,	500 },
+	{ "QTVRSetTransitionMode",				QtvrxtraXtra::m_QTVRSetTransitionMode,		 1, 1,	500 },
 	{ "QTVRGetTransitionSpeed",				QtvrxtraXtra::m_QTVRGetTransitionSpeed,		 0, 0,	500 },
-	{ "QTVRSetTransitionSpeed",				QtvrxtraXtra::m_QTVRSetTransitionSpeed,		 1, 0,	500 },
+	{ "QTVRSetTransitionSpeed",				QtvrxtraXtra::m_QTVRSetTransitionSpeed,		 1, 1,	500 },
 	{ "QTVRGetUpdateMode",				QtvrxtraXtra::m_QTVRGetUpdateMode,		 0, 0,	500 },
-	{ "QTVRSetUpdateMode",				QtvrxtraXtra::m_QTVRSetUpdateMode,		 1, 0,	500 },
+	{ "QTVRSetUpdateMode",				QtvrxtraXtra::m_QTVRSetUpdateMode,		 1, 1,	500 },
 	{ "QTVRGetVisible",				QtvrxtraXtra::m_QTVRGetVisible,		 0, 0,	500 },
-	{ "QTVRSetVisible",				QtvrxtraXtra::m_QTVRSetVisible,		 1, 0,	500 },
+	{ "QTVRSetVisible",				QtvrxtraXtra::m_QTVRSetVisible,		 1, 1,	500 },
 	{ "QTVRGetWarpMode",				QtvrxtraXtra::m_QTVRGetWarpMode,		 0, 0,	500 },
 	{ "QTVRSetWarpMode",				QtvrxtraXtra::m_QTVRSetWarpMode,		 1, 0,	500 },
 	{ "QTVRCollapseToHotSpotRgn",				QtvrxtraXtra::m_QTVRCollapseToHotSpotRgn,		 0, 0,	500 },
 	{ "QTVRZoomOutEffect",				QtvrxtraXtra::m_QTVRZoomOutEffect,		 3, 0,	500 },
 	{ "QTVRGetColumn",				QtvrxtraXtra::m_QTVRGetColumn,		 0, 0,	500 },
-	{ "QTVRSetColumn",				QtvrxtraXtra::m_QTVRSetColumn,		 1, 0,	500 },
+	{ "QTVRSetColumn",				QtvrxtraXtra::m_QTVRSetColumn,		 1, 1,	500 },
 	{ "QTVRGetRow",				QtvrxtraXtra::m_QTVRGetRow,		 0, 0,	500 },
-	{ "QTVRSetRow",				QtvrxtraXtra::m_QTVRSetRow,		 1, 0,	500 },
-	{ "QTVRNudge",				QtvrxtraXtra::m_QTVRNudge,		 1, 0,	500 },
+	{ "QTVRSetRow",				QtvrxtraXtra::m_QTVRSetRow,		 1, 1,	500 },
+	{ "QTVRNudge",				QtvrxtraXtra::m_QTVRNudge,		 1, 1,	500 },
 	{ "QTVRGetMouseDownHandler",				QtvrxtraXtra::m_QTVRGetMouseDownHandler,		 0, 0,	500 },
 	{ "QTVRSetMouseDownHandler",				QtvrxtraXtra::m_QTVRSetMouseDownHandler,		 1, 0,	500 },
 	{ "QTVRGetMouseOverHandler",				QtvrxtraXtra::m_QTVRGetMouseOverHandler,		 0, 0,	500 },
@@ -234,6 +237,16 @@ static BuiltinProto xlibBuiltins[] = {
 
 QtvrxtraXtraObject::QtvrxtraXtraObject(ObjectType ObjectType) :Object<QtvrxtraXtraObject>("Qtvrxtra") {
 	_objType = ObjectType;
+
+	_video = nullptr;
+
+	_visible = false;
+	_quality = 0.0f;
+
+	_transitionMode = "normal";
+	_transitionSpeed = 1.0f;
+
+	_updateMode = "normal";
 }
 
 bool QtvrxtraXtraObject::hasProp(const Common::String &propName) {
@@ -262,27 +275,260 @@ void QtvrxtraXtra::close(ObjectType type) {
 }
 
 void QtvrxtraXtra::m_new(int nargs) {
-	g_lingo->printSTUBWithArglist("QtvrxtraXtra::m_new", nargs);
-	g_lingo->dropStack(nargs);
+	g_lingo->printArgs("QtvrxtraXtra::m_new", nargs);
+	ARGNUMCHECK(0);
+
 	g_lingo->push(g_lingo->_state->me);
 }
 
-XOBJSTUB(QtvrxtraXtra::m_forget, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVREnter, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRExit, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVROpen, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRClose, 0)
+void QtvrxtraXtra::m_forget(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_forget", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	if (me->_video) {
+		me->_video->close();
+		delete me->_video;
+	}
+}
+
+void QtvrxtraXtra::m_QTVREnter(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVREnter", nargs);
+	ARGNUMCHECK(0);
+	g_lingo->push(0);
+}
+
+void QtvrxtraXtra::m_QTVRExit(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRExit", nargs);
+	ARGNUMCHECK(0);
+}
+
+static Common::Rect stringToRect(const Common::String &rectStr) {
+	Common::StringTokenizer tokenizer(rectStr, Common::String(','));
+	Common::StringArray tokens(tokenizer.split());
+
+	if (tokens.size() != 4) {
+		error("stringToRect(): The string should contain exactly 4 numbers separated by commas!");
+		return {};
+	}
+
+	Common::Rect rect;
+	rect.left = atoi(tokens[0].c_str());
+	rect.top = atoi(tokens[1].c_str());
+	rect.right = atoi(tokens[2].c_str());
+	rect.bottom = atoi(tokens[3].c_str());
+
+	return rect;
+}
+
+void QtvrxtraXtra::m_QTVROpen(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVROpen", nargs);
+	ARGNUMCHECK(3);
+
+	Common::String visiblityStr = g_lingo->pop().asString();
+	Common::String rectStr = g_lingo->pop().asString();
+	Common::String pathStr = g_lingo->pop().asString();
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	if (visiblityStr.equalsIgnoreCase("visible")) {
+		me->_visible = true;
+	} else if (visiblityStr.equalsIgnoreCase("invisible")) {
+		me->_visible = false;
+	} else {
+		Common::String error = Common::String::format("Error: Invalid visibility string: ('%s')!", visiblityStr.c_str());
+		g_lingo->push(error);
+		return;
+	}
+
+	me->_rect = stringToRect(rectStr);
+
+	Common::Path path = findMoviePath(pathStr);
+	if (path.empty()) {
+		Common::String error = Common::String::format("Error: Movie file ('%s') not found!", pathStr.c_str());
+		g_lingo->push(error);
+		return;
+	}
+
+	me->_video = new Video::QuickTimeDecoder();
+	debugC(5, kDebugXObj, "QtvrxtraXtra::m_QTVROpen(): Loading QT file ('%s')", path.toString().c_str());
+	if (!me->_video->loadFile(path)) {
+		Common::String error = Common::String::format("Error: Failed to load movie file ('%s')!", path.toString().c_str());
+		g_lingo->push(error);
+		return;
+	}
+
+	g_lingo->push(Common::String());
+}
+
+void QtvrxtraXtra::m_QTVRClose(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRClose", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	if (me->_video) {
+		me->_video->close();
+		delete me->_video;
+		me->_video = nullptr;
+	}
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRUpdate, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetQTVRType, 0)
+
+void QtvrxtraXtra::m_QTVRGetQTVRType(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetQTVRType", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	switch (me->_video->getQTVRType()) {
+	case Common::QuickTimeParser::QTVRType::PANORAMA:
+		g_lingo->push(Common::String("QTVRPanorama"));
+		break;
+	case Common::QuickTimeParser::QTVRType::OBJECT:
+		g_lingo->push(Common::String("QTVRObject"));
+		break;
+	case Common::QuickTimeParser::QTVRType::OTHER:
+	default:
+		g_lingo->push(Common::String("NotAQTVRType"));
+		break;
+	}
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRIdle, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRMouseDown, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRMouseOver, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetPanAngle, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetPanAngle, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetTiltAngle, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetTiltAngle, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetFOV, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetFOV, 0)
+
+bool QtvrxtraXtraObject::processEvent(Common::Event &event) {
+	// FIXME: This class needs to inherit from MacWidget and override this function
+
+	if (!(_capEventsMouseOver && _capEventsMouseDown))
+		return false;
+
+	switch (event.type) {
+	case Common::EVENT_LBUTTONDOWN:
+		if (_mouseDownHandler.empty()) {
+			_video->handleMouseButton(true, event.mouse.x, event.mouse.y);
+		} else {
+			_passMouseDown = false;
+
+			g_lingo->executeHandler(_mouseDownHandler);
+
+			if (_passMouseDown) {
+				_video->handleMouseButton(true, event.mouse.x, event.mouse.y);
+				_passMouseDown = false;
+			}
+		}
+		return true;
+	case Common::EVENT_LBUTTONUP:
+		_video->handleMouseButton(false);
+		if (_capEventsMouseDown)
+			_capEventsMouseDown = false;
+		return true;
+	case Common::EVENT_MOUSEMOVE:
+		_video->handleMouseMove(event.mouse.x, event.mouse.y);
+		if (!_rect.contains(event.mouse))
+			_capEventsMouseOver = false;
+		return true;
+	case Common::EVENT_KEYDOWN:
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_LEFT:
+			_video->nudge("left");
+			break;
+		case Common::KEYCODE_RIGHT:
+			_video->nudge("right");
+			break;
+		case Common::KEYCODE_UP:
+			_video->nudge("top");
+			break;
+		case Common::KEYCODE_DOWN:
+			_video->nudge("bottom");
+			break;
+		default:
+			break;
+		}
+		return true;
+	default:
+		return false;
+	}
+}
+
+void QtvrxtraXtra::m_QTVRMouseDown(int nargs) {
+	g_lingo->printSTUBWithArglist("QtvrxtraXtra::m_QTVRMouseDown", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_capEventsMouseDown = true;
+
+	g_lingo->push(Datum(0));
+}
+
+void QtvrxtraXtra::m_QTVRMouseOver(int nargs) {
+	g_lingo->printSTUBWithArglist("QtvrxtraXtra::m_QTVRMouseOver", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_capEventsMouseOver = true;
+
+	g_lingo->push(Datum(0));
+}
+
+void QtvrxtraXtra::m_QTVRGetPanAngle(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetPanAngle", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(Common::String::format("%f", me->_video->getPanAngle()));
+}
+
+void QtvrxtraXtra::m_QTVRSetPanAngle(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetPanAngle", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setPanAngle(atof(g_lingo->pop().asString().c_str()));
+}
+
+void QtvrxtraXtra::m_QTVRGetTiltAngle(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetTiltAngle", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(Common::String::format("%f", me->_video->getTiltAngle()));
+}
+
+void QtvrxtraXtra::m_QTVRSetTiltAngle(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetTiltAngle", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setTiltAngle(atof(g_lingo->pop().asString().c_str()));
+}
+
+void QtvrxtraXtra::m_QTVRGetFOV(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetFOV", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(Common::String::format("%f", me->_video->getFOV()));
+}
+
+void QtvrxtraXtra::m_QTVRSetFOV(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetFOV", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setFOV(atof(g_lingo->pop().asString().c_str()));
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetClickLoc, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetClickLoc, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetClickPanAngles, 0)
@@ -294,30 +540,223 @@ XOBJSTUB(QtvrxtraXtra::m_QTVRGetHotSpotType, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetHotSpotViewAngles, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetObjectViewAngles, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetObjectZoomRect, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetNodeID, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetNodeID, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetNodeName, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetQuality, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetQuality, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetTransitionMode, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetTransitionMode, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetTransitionSpeed, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetTransitionSpeed, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetUpdateMode, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetUpdateMode, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetVisible, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetVisible, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetWarpMode, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetWarpMode, 0)
+
+void QtvrxtraXtra::m_QTVRGetNodeID(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetNodeID", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push((int)me->_currentNode.nodeID);
+}
+
+void QtvrxtraXtra::m_QTVRSetNodeID(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetNodeID", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	Video::QuickTimeDecoder::NodeData newNode = me->_video->getNodeData(g_lingo->pop().asInt());
+
+	if (newNode.nodeID)
+		me->_currentNode = newNode;
+
+	me->_video->setPanAngle(me->_currentNode.defHPan);
+	me->_video->setTiltAngle(me->_currentNode.defVPan);
+	me->_video->setFOV(me->_currentNode.defZoom);
+}
+
+void QtvrxtraXtra::m_QTVRGetNodeName(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetNodeName", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_currentNode.name);
+}
+
+void QtvrxtraXtra::m_QTVRGetQuality(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetQuality", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(Common::String::format("%f", me->_quality));
+}
+
+void QtvrxtraXtra::m_QTVRSetQuality(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetQuality", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_quality = atof(g_lingo->pop().asString().c_str());
+}
+
+void QtvrxtraXtra::m_QTVRGetTransitionMode(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetTransitionMode", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_transitionMode = g_lingo->pop().asString();
+}
+
+void QtvrxtraXtra::m_QTVRSetTransitionMode(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetTransitionMode", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_transitionMode);
+}
+
+void QtvrxtraXtra::m_QTVRGetTransitionSpeed(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetTransitionSpeed", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(Common::String::format("%f", me->_transitionSpeed));
+}
+
+void QtvrxtraXtra::m_QTVRSetTransitionSpeed(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetTransitionSpeed", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_transitionSpeed = atof(g_lingo->pop().asString().c_str());
+}
+
+void QtvrxtraXtra::m_QTVRGetUpdateMode(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetUpdateMode", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_updateMode);
+}
+
+void QtvrxtraXtra::m_QTVRSetUpdateMode(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetUpdateMode", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_updateMode = g_lingo->pop().asString();
+}
+
+void QtvrxtraXtra::m_QTVRGetVisible(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetVisible", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push((int)me->_visible);
+}
+
+void QtvrxtraXtra::m_QTVRSetVisible(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetVisible", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_visible = (bool)g_lingo->pop().asInt();
+}
+
+void QtvrxtraXtra::m_QTVRGetWarpMode(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetWarpMode", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_video->getWarpMode());
+}
+
+void QtvrxtraXtra::m_QTVRSetWarpMode(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetWarpMode", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setWarpMode(g_lingo->pop().asInt());
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRCollapseToHotSpotRgn, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRZoomOutEffect, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetColumn, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetColumn, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetRow, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetRow, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRNudge, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRGetMouseDownHandler, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRSetMouseDownHandler, 0)
+
+void QtvrxtraXtra::m_QTVRGetColumn(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetColumn", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(Common::String::format("%d", me->_video->getCurrentColumn()));
+}
+
+void QtvrxtraXtra::m_QTVRSetColumn(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetColumn", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setCurrentColumn(atoi(g_lingo->pop().asString().c_str()));
+}
+
+void QtvrxtraXtra::m_QTVRGetRow(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetRow", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(Common::String::format("%d", me->_video->getCurrentRow()));
+}
+
+void QtvrxtraXtra::m_QTVRSetRow(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetRow", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_video->setCurrentRow(atoi(g_lingo->pop().asString().c_str()));
+}
+
+void QtvrxtraXtra::m_QTVRNudge(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRNudge", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	Common::String direction = g_lingo->pop().asString();
+
+	if (!(direction.equalsIgnoreCase("left") || direction.equalsIgnoreCase("right") ||
+		  direction.equalsIgnoreCase("top") || direction.equalsIgnoreCase("bottom"))) {
+		error("QtvrxtraXtra::m_QTVRNudge(): Invald direction: ('%s')!", direction.c_str());
+		return;
+	}
+
+	me->_video->nudge(direction);
+}
+
+void QtvrxtraXtra::m_QTVRGetMouseDownHandler(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRGetMouseDownHandler", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push(me->_mouseDownHandler);
+}
+
+void QtvrxtraXtra::m_QTVRSetMouseDownHandler(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRSetMouseDownHandler", nargs);
+	ARGNUMCHECK(1);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_mouseDownHandler = g_lingo->pop().asString();
+}
+
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetMouseOverHandler, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetMouseOverHandler, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetMouseStillDownHandler, 0)
@@ -328,8 +767,32 @@ XOBJSTUB(QtvrxtraXtra::m_QTVRGetPanZoomStartHandler, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetPanZoomStartHandler, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRGetRolloverHotSpotHandler, 0)
 XOBJSTUB(QtvrxtraXtra::m_QTVRSetRolloverHotSpotHandler, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRExitMouseOver, 0)
-XOBJSTUB(QtvrxtraXtra::m_QTVRPassMouseDown, 0)
-XOBJSTUB(QtvrxtraXtra::m_IsQTVRMovie, 0)
+
+void QtvrxtraXtra::m_QTVRExitMouseOver(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRExitMouseOver", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_capEventsMouseOver = false;
+}
+
+void QtvrxtraXtra::m_QTVRPassMouseDown(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_QTVRPassMouseDown", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	me->_passMouseDown = true;
+}
+
+void QtvrxtraXtra::m_IsQTVRMovie(int nargs) {
+	g_lingo->printArgs("QtvrxtraXtra::m_IsQTVRMovie", nargs);
+	ARGNUMCHECK(0);
+
+	QtvrxtraXtraObject *me = (QtvrxtraXtraObject *)g_lingo->_state->me.u.obj;
+
+	g_lingo->push((int)(me->_video && me->_video->isVideoLoaded()));
+}
 
 }

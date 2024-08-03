@@ -99,6 +99,12 @@ public:
 	/** Find out if this parser has an open file handle */
 	bool isOpen() const { return _fd != nullptr; }
 
+	enum class QTVRType {
+		OTHER,
+		OBJECT,
+		PANORAMA
+	};
+
 protected:
 	// This is the file handle from which data is read from. It can be the actual file handle or a decompressed stream.
 	SeekableReadStream *_fd;
@@ -340,12 +346,6 @@ protected:
 		float initialVPan;
 	};
 
-	enum class QTVRType {
-		OTHER,
-		OBJECT,
-		PANORAMA
-	};
-
 	virtual SampleDesc *readSampleDesc(Track *track, uint32 format, uint32 descSize) = 0;
 
 	uint32 _timeScale;      // movie time
@@ -357,6 +357,8 @@ protected:
 	QTVRType _qtvrType;
 	uint16 _winX;
 	uint16 _winY;
+
+	Track *_panoTrack;
 
 	void init();
 
@@ -377,8 +379,6 @@ private:
 	uint32 _beginOffset;
 	MacResManager *_resFork;
 	bool _foundMOOV;
-
-	Track *_panoTrack;
 
 	void initParseTable();
 
