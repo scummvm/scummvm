@@ -664,7 +664,7 @@ GameObject *View1::getClickedInventoryItem(const Common::Point &p) {
 	return nullptr;
 }
 
-void View1::DrawSprite(int16 x, int16 y, uint16 width, uint16 height, byte* data, Graphics::ManagedSurface& s, uint8 depth)
+void View1::DrawSprite(int16 x, int16 y, uint16 width, uint16 height, byte* data, Graphics::ManagedSurface& s, bool useDepth, uint8 depth)
 {
 	for (int currentX = 0; currentX < width; currentX++) {
 		for (int currentY = 0; currentY < height; currentY++) {
@@ -676,7 +676,7 @@ void View1::DrawSprite(int16 x, int16 y, uint16 width, uint16 height, byte* data
 					// Check for depth
 					uint8 bgDepth = g_engine->_depthMap.getPixel(finalX, finalY);
 					// TODO: Check which relation has to hold
-					if (bgDepth > depth) {
+					if (!useDepth || bgDepth < depth) {
 						s.setPixel(x + currentX, y + currentY, val);
 					}
 				}
@@ -685,8 +685,8 @@ void View1::DrawSprite(int16 x, int16 y, uint16 width, uint16 height, byte* data
 	}
 }
 
-void View1::DrawSprite(const Common::Point &pos, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, uint8 depth) {
-	DrawSprite(pos.x, pos.y, width, height, data, s, depth);
+void View1::DrawSprite(const Common::Point &pos, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool useDepth, uint8 depth) {
+	DrawSprite(pos.x, pos.y, width, height, data, s, useDepth, depth);
 }
 
 void View1::DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s) {
@@ -766,7 +766,7 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 		
 		// AnimFrame *frame = current->GetCurrentPortrait();
 		uint8 depth = current->GetPosition().y;
-		DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s, depth);
+		DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s, true, depth);
 		// Draw the white dot
 		// TODO: Why does it not work for the others apart from the player?
 		Common::Rect screenRect(0, 0, 320, 200);
