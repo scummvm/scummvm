@@ -60,11 +60,11 @@ void TeMusic::pause() {
 bool TeMusic::play() {
 	if (isPlaying())
 		return true;
-	if (!_fileNode.exists())
+	if (!Common::File::exists(_filePath))
 		return false;
 
 	Common::File *streamfile = new Common::File();
-	if (!streamfile->open(_fileNode)) {
+	if (!streamfile->open(_filePath)) {
 		delete streamfile;
 		return false;
 	}
@@ -191,7 +191,7 @@ void TeMusic::setFilePath(const Common::Path &name) {
 	_rawPath = name;
 	TeCore *core = g_engine->getCore();
 	// Note: original search logic here abstracted away in our version..
-	_fileNode = core->findFile(name);
+	_filePath = core->findFileNew(name);
 }
 
 void TeMusic::update() {

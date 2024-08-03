@@ -43,11 +43,11 @@ void TeSoundManager::playFreeSound(const Common::Path &path) {
 
 void TeSoundManager::playFreeSound(const Common::Path &path, float vol, const Common::String &channel) {
 	TeCore *core = g_engine->getCore();
-	Common::FSNode sndNode = core->findFile(path);
+	Common::Path sndPath = core->findFileNew(path);
 
 	Common::File *streamfile = new Common::File();
-	if (!sndNode.isReadable() || !streamfile->open(sndNode)) {
-		warning("TeSoundManager::playFreeSound: couldn't open %s", sndNode.getPath().toString(Common::Path::kNativeSeparator).c_str());
+	if (!streamfile->open(sndPath)) {
+		warning("TeSoundManager::playFreeSound: couldn't open %s", sndPath.toString(Common::Path::kNativeSeparator).c_str());
 		delete streamfile;
 		return;
 	}

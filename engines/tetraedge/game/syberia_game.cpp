@@ -462,23 +462,23 @@ bool SyberiaGame::initWarp(const Common::String &zone, const Common::String &sce
 
 	TeCore *core = g_engine->getCore();
 
-	const Common::FSNode intLuaNode = core->findFile(scenePath.join(Common::String::format("Int%s.lua", scene.c_str())));
-	const Common::FSNode logicLuaNode = core->findFile(scenePath.join(Common::String::format("Logic%s.lua", scene.c_str())));
-	const Common::FSNode setLuaNode = core->findFile(scenePath.join(Common::String::format("Set%s.lua", scene.c_str())));
-	Common::FSNode forLuaNode = core->findFile(scenePath.join(Common::String::format("For%s.lua", scene.c_str())));
-	const Common::FSNode markerLuaNode = core->findFile(scenePath.join(Common::String::format("Marker%s.lua", scene.c_str())));
+	const Common::Path intLuaPath = core->findFileNew(scenePath.join(Common::String::format("Int%s.lua", scene.c_str())));
+	const Common::Path logicLuaPath = core->findFileNew(scenePath.join(Common::String::format("Logic%s.lua", scene.c_str())));
+	const Common::Path setLuaPath = core->findFileNew(scenePath.join(Common::String::format("Set%s.lua", scene.c_str())));
+	Common::Path forLuaPath = core->findFileNew(scenePath.join(Common::String::format("For%s.lua", scene.c_str())));
+	const Common::Path markerLuaPath = core->findFileNew(scenePath.join(Common::String::format("Marker%s.lua", scene.c_str())));
 
-	bool intLuaExists = intLuaNode.exists();
-	bool logicLuaExists = logicLuaNode.exists();
-	bool setLuaExists = setLuaNode.exists();
-	bool forLuaExists = forLuaNode.exists();
+	bool intLuaExists = Common::File::exists(intLuaPath);
+	bool logicLuaExists = Common::File::exists(logicLuaPath);
+	bool setLuaExists = Common::File::exists(setLuaPath);
+	bool forLuaExists = Common::File::exists(forLuaPath);
 	if (!forLuaExists) {
 		// slight hack.. try an alternate For lua path.
-		forLuaNode = core->findFile(scenePath.join("Android-MacOSX").join(Common::String::format("For%s.lua", scene.c_str())));
-		forLuaExists = forLuaNode.exists();
-		debug("searched for %s", forLuaNode.getName().c_str());
+		forLuaPath = core->findFileNew(scenePath.join("Android-MacOSX").join(Common::String::format("For%s.lua", scene.c_str())));
+		forLuaExists = Common::File::exists(forLuaPath);
+		debug("searched for %s", forLuaPath.getLastComponent().toString().c_str());
 	}
-	bool markerLuaExists = markerLuaNode.exists();
+	bool markerLuaExists = Common::File::exists(markerLuaPath);
 
 	if (!intLuaExists && !logicLuaExists && !setLuaExists && !forLuaExists && !markerLuaExists) {
 		debug("No lua scripts for scene %s zone %s", scene.c_str(), zone.c_str());
@@ -494,7 +494,7 @@ bool SyberiaGame::initWarp(const Common::String &zone, const Common::String &sce
 		_luaScript.attachToContext(&_luaContext);
 		_luaScript.load(core->findFile("menus/help/help.lua"));
 		_luaScript.execute();
-		_luaScript.load(logicLuaNode);
+		_luaScript.load(core->convertPathToFSNode(logicLuaPath));
 	}
 
 	if (_forGui.loaded())
@@ -514,11 +514,11 @@ bool SyberiaGame::initWarp(const Common::String &zone, const Common::String &sce
 		// Syberia 2, load from xml
 		_scene.loadXml(zone, scene);
 	}
-	_scene.loadBackground(setLuaNode);
+	_scene.loadBackground(core->convertPathToFSNode(setLuaPath));
 
 	Application *app = g_engine->getApplication();
 	if (forLuaExists) {
-		_forGui.load(forLuaNode);
+		_forGui.load(forLuaPath);
 		TeLayout *bg = _forGui.layoutChecked("background");
 		bg->setRatioMode(TeILayout::RATIO_MODE_NONE);
 		app->frontLayout().addChild(bg);
@@ -531,7 +531,7 @@ bool SyberiaGame::initWarp(const Common::String &zone, const Common::String &sce
 	}
 
 	if (intLuaExists) {
-		_scene.loadInteractions(intLuaNode);
+		_scene.loadInteractions(core->convertPathToFSNode(intLuaPath));
 		TeLuaGUI::StringMap<TeButtonLayout *> &blayouts = _scene.hitObjectGui().buttonLayouts();
 		for (auto &entry : blayouts) {
 			HitObject *hobj = new HitObject();
