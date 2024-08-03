@@ -103,6 +103,7 @@ public:
 	void runAnim47();
 	void loadRoom61AWalkableLocations();
 	void restorePalette();
+	void darkenSky();
 private:
 	bool load();
 	static Common::String stripSpaces(Common::String source);

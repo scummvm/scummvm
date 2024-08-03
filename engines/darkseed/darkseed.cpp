@@ -178,7 +178,41 @@ void DarkseedEngine::gameloop() {
 		counter_2c85_888b = (counter_2c85_888b + 1) & 0xff;
 		if (systemTimerCounter == 5) {
 			handleInput();
-			// TODO lots of logic
+			if (_objectVar[1] != 0) {
+				if (_room->_roomNumber == 30) {
+					if (!_inventory.hasObject(18)) {
+						_objectVar[1]--;
+					}
+				} else {
+					_objectVar[1]--;
+				}
+			}
+			closeShops();
+			if (_room->_roomNumber == 57 && _objectVar.getMoveObjectRoom(28) == 255 && _previousRoomNumber == 54) {
+				if (_objectVar.getMoveObjectRoom(28) == 255) {
+					if (_objectVar[56] == 4) {
+						playSound(21,5,-1);
+					}
+					if (_objectVar[56] == 6) {
+//						LoadModeSong(7);
+						playSound(0,6,-1);
+						stuffPlayer();
+					}
+				} else {
+//					dcopanim(); TODO annoyingly this animation runs inside this function.
+					changeToRoom(59); // TODO implement don't place hero flag.
+					_player->_position = {320, 200};
+					_player->updateSprite();
+					_inventory.gotoJailLogic();
+
+					playSound(0,6,-1);
+				}
+			}
+			if (_currentTimeInSeconds > 35999 && _currentTimeInSeconds < 36005 &&
+				((_currentDay == 1 || (_currentDay == 2 && _objectVar[6] != 0)) ||
+				  (_currentDay == 3 && _objectVar[29] != 0))) {
+				_objectVar.setObjectRunningCode(140, 1);
+			}
 			if (_room->_roomNumber == 52 && _objectVar[79] == 0) {
 				_objectVar.setObjectRunningCode(79, 1);
 			}
@@ -198,6 +232,40 @@ void DarkseedEngine::gameloop() {
 			if ((_currentTimeInSeconds == 46800 || _currentTimeInSeconds == 46801) && _currentDay == 2 && _room->_roomNumber != 34) {
 				_objectVar[62] = 0;
 			}
+			if (_currentDay == 2 && _currentTimeInSeconds > 64799 && prevTime < 64800 && _objectVar[141] == 4) {
+				initDelbertAtSide();
+			}
+			if (_currentDay == 1 && _currentTimeInSeconds == 64800 && _room->_roomNumber != 16) {
+				_objectVar.setMoveObjectRoom(7, 253); // remove scotch from shop.
+			}
+			if (_timeAdvanceEventSelected && _currentTimeInSeconds < 79200 && !isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed) { // TODO && !heroWaiting
+				_timeAdvanceEventSelected = false;
+				if (((_room->_roomNumber == 30) || ((0 < _objectVar[141] && (_objectVar[141] < 4)))) ||
+					(((_room->_roomNumber == 31 || (_room->_roomNumber == 32)) &&
+					  (((((_objectVar[141] == 9 || (_objectVar[141] == 6)) || (_objectVar[141] ==  8))
+						 || ((_objectVar[141] == 7 || (_objectVar[141] == 12)))) ||
+						((_objectVar[141] == 10 || (_objectVar[141] == 5)))))))) {
+					if (_room->_roomNumber == 30) {
+						_console->printTosText(943);
+					}
+				} else {
+					_currentTimeInSeconds += 3600;
+					_currentTimeInSeconds -= (_currentTimeInSeconds % 3600);
+					_console->printTosText(942);
+					if (_currentDay == 2 && _currentTimeInSeconds == 64800 && _objectVar[141] == 4) {
+						initDelbertAtSide();
+					}
+				}
+			}
+			if ((_room->_roomNumber < 10 || _room->_roomNumber == 61 || _room->_roomNumber == 62) && _currentTimeInSeconds % 3600 == 0) {
+				if (_room->_roomNumber == 7) {
+					playSound(45,5,-1);
+				}
+				else {
+					playSound(46,5,-1);
+				}
+			}
+			_room->darkenSky();
 			// TODO lots of logic
 			if (_currentTimeInSeconds > 79199 && !_player->_isAutoWalkingToBed) {
 				if (_room->isOutside() && _room->_roomNumber != 30) {
@@ -261,6 +329,11 @@ void DarkseedEngine::updateEvents() {
 //		case Common::EVENT_RBUTTONUP: _isRightMouseClicked = false; break;
 		case Common::EVENT_LBUTTONDOWN: _isLeftMouseClicked = true; break;
 //		case Common::EVENT_LBUTTONUP: _isLeftMouseClicked = false; break;
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == Common::KEYCODE_t) {
+				_timeAdvanceEventSelected = true;
+			}
+			break;
 		default: break;
 		}
 	}
@@ -898,9 +971,19 @@ void DarkseedEngine::handlePointerAction() {
 }
 
 void DarkseedEngine::changeToRoom(int newRoomNumber) {
+	_objectVar[99] = 0;
+	_objectVar[66] = 0;
+	_objectVar[67] = 0;
+	_objectVar[68] = 0;
+
+	if (_objectVar[53] == 3) {
+		_objectVar[53] = 0;
+	}
+
 	delete _room;
 	_room = new Room(newRoomNumber);
-	// TODO more logic here.
+
+	_room->darkenSky();
 	if (_room->_roomNumber == 54) {
 		_objectVar[21] = 0;
 	}
@@ -961,9 +1044,7 @@ void DarkseedEngine::changeToRoom(int newRoomNumber) {
 				_player->_walkTarget = _player->_position;
 			}
 		}
-	}
-	// TODO a bunch of other room codes here.
-	else if (newRoomNumber != 0x22 && (newRoomNumber < 0x13 || newRoomNumber > 0x17)) {
+	} else if (newRoomNumber != 0x22 && (newRoomNumber < 0x13 || newRoomNumber > 0x17)) {
 		for (int i = 0; i < _room->room1.size(); i++) {
 			const RoomExit &roomExit = _room->room1[i];
 			if (roomExit.roomNumber == _previousRoomNumber) {
@@ -2900,6 +2981,36 @@ void DarkseedEngine::playDayChangeCutscene() {
 		playCutscene("B");
 	} else if (_currentDay == 3) {
 		playCutscene("C");
+	}
+}
+
+void DarkseedEngine::closeShops() {
+	if (_currentTimeInSeconds > 68400) {
+		if (_room->_roomNumber == 15) {
+			_previousRoomNumber = 15;
+			_console->printTosText(79);
+			changeToRoom(11);
+		}
+		if (_room->_roomNumber == 16) {
+			_previousRoomNumber = 16;
+			_console->printTosText(80);
+			changeToRoom(11);
+		}
+		if (_room->_roomNumber == 28 || (_room->_roomNumber > 16 && _room->_roomNumber < 24)) {
+			_previousRoomNumber = 17;
+			_console->printTosText(98);
+			changeToRoom(12);
+		}
+	}
+}
+
+void DarkseedEngine::initDelbertAtSide() {
+	_objectVar[141] = 12;
+	_objectVar.setMoveObjectX(141, 563);
+	if (!isPlayingAnimation_maybe || otherNspAnimationType_maybe != 26) {
+		_player->_heroMoving = false;
+		_player->_walkTarget = _player->_position;
+		//*(undefined *)&_ActionToPerform = 0; TODO
 	}
 }
 

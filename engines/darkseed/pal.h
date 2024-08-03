@@ -34,6 +34,8 @@ public:
 	byte palData[DARKSEED_PAL_SIZE];
 
 public:
+	Pal() {};
+	Pal(const Pal &pal);
 	bool load(const Common::Path &filename);
 	void installPalette();
 };

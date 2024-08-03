@@ -59,8 +59,8 @@ void Darkseed::Inventory::removeItem(uint8 item) {
 
 void Darkseed::Inventory::update() {
 	if (_viewOffset != 0) {
-		if (_inventoryLength <= _viewOffset + MAX_ICONS) {
-			_viewOffset = _inventoryLength - MAX_ICONS;
+		if (_inventoryLength <= _viewOffset + (MAX_ICONS - 1)) {
+			_viewOffset = _inventoryLength - (MAX_ICONS - 1);
 		}
 		if (_viewOffset > 50) {
 			_viewOffset = 0;
@@ -171,4 +171,23 @@ void Darkseed::Inventory::endOfDayOutsideLogic() {
 	_inventoryLength = 0;
 	_viewOffset = 0;
 	g_engine->_objectVar[53] = 2;
+}
+
+void Darkseed::Inventory::gotoJailLogic() {
+	for (int i = 0; i < _inventoryLength; i++) {
+		g_engine->_objectVar.setMoveObjectRoom(_inventory[i], 100);
+	}
+	g_engine->_objectVar.setMoveObjectRoom(28, 255);
+	_inventoryLength = 0;
+	_viewOffset = 0;
+	update();
+}
+
+bool Darkseed::Inventory::hasObject(uint8 objNum) {
+	for (int i = 0; i < _inventoryLength; i++) {
+		if (_inventory[i] == objNum) {
+			return true;
+		}
+	}
+	return false;
 }

@@ -1313,3 +1313,21 @@ void Darkseed::Room::loadRoom61AWalkableLocations() {
 void Darkseed::Room::restorePalette() {
 	_pal.installPalette();
 }
+
+void Darkseed::Room::darkenSky() {
+	if (isOutside() && g_engine->_currentTimeInSeconds / 3600 > 16) {
+		Pal workPal(_pal);
+		int timeOffset = g_engine->_currentTimeInSeconds - 61200;
+		if (timeOffset == 0) {
+			timeOffset = 1;
+		}
+		for (int i = 0; i < DARKSEED_PAL_SIZE; i++) {
+			uint8 p = workPal.palData[i];
+			if (p == 0) {
+				p = 1;
+			}
+			workPal.palData[i] = p - (p / (26 - timeOffset / 750));
+		}
+		workPal.installPalette();
+	}
+}
