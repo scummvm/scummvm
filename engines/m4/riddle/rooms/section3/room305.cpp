@@ -289,7 +289,19 @@ void Room305::pre_parser() {
 }
 
 void Room305::parser() {
+	bool lookFlag = player_said_any("look", "look at");
+	bool takeFlag = player_said("take");
+	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
+	if (player_said("conv305a")) {
+		conv305a();
+	}
+	// TODO
+	else {
+		return;
+	}
+
+	_G(player).command_ready = false;
 }
 
 void Room305::setupSign() {
@@ -316,6 +328,50 @@ void Room305::setShadow5(bool active) {
 		_shadow5 = series_place_sprite("candleman shadow5", 0, 494, 278, -84, 0xe06);
 	else
 		terminateMachineAndNull(_shadow5);
+}
+
+void Room305::conv305a() {
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+	const char *sound = conv_sound_to_play();
+
+	if (_G(kernel).trigger == 1) {
+		if (who <= 0) {
+			_val7 = 1;
+		} else if (_G(kernel).trigger == 1) {
+			if (node != 1 || (entry != 0 && entry != 3 && entry != 5
+				&& entry != 6 && entry != 7))
+				_conv1 = 0;
+		}
+
+		conv_resume();
+
+	} else if (!sound) {
+		conv_resume();
+
+	} else {
+		if (who <= 0) {
+			_val7 = 2;
+		} else if (who == 1) {
+			if ((node == 1 && entry == 0) || (node == 1 && entry == 6) ||
+					(node == 1 && entry == 7)) {
+				_conv1 = 5;
+			} else if (node == 1 && (entry == 3 || entry == 5)) {
+				_conv1 = 3;
+			} else if ((node == 7 && entry == 0) || (node == 8 && entry == 0) ||
+					(node == 9 && entry == 0) || (node == 10 && entry == 0) ||
+					(node == 12 && entry == 0)) {
+				_conv1 = 0;
+			} else if (node == 1 && entry == 1) {
+				_G(flags)[V089] = 2;
+			} else {
+				_conv1 = 1;
+			}
+		}
+
+		digi_play(sound, 1, 255, 1);
+	}
 }
 
 } // namespace Rooms

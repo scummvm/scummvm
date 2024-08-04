@@ -87,6 +87,7 @@ private:
 	int _suit1 = 0;
 	int _suit2 = 0;
 	int _suit3 = 0;
+	int _conv1 = 0;
 	machine *_stander = nullptr;
 	machine *_shadow5 = nullptr;
 	machine *_rip5 = nullptr;
@@ -98,6 +99,7 @@ private:
 
 	void setupSign();
 	void setShadow5(bool active);
+	void conv305a();
 
 public:
 	Room305() : Room() {}
