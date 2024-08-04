@@ -26,6 +26,7 @@
 
 #include <list>
 #include <string>
+#include "common/str.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -94,7 +95,7 @@ class qdInterfaceButton;
 
 class qdGameDispatcher;
 
-typedef std::list<std::string> qdFileNameList;
+typedef std::list<Common::String> qdFileNameList;
 
 class qdFontInfo;
 typedef std::list<qdFontInfo *> qdFontInfoList;

@@ -93,7 +93,7 @@ public:
 private:
 
 	Vect2s _position;
-	std::string _file_name;
+	Common::String _file_name;
 
 	qdSprite _background;
 };
