@@ -56,7 +56,6 @@
 #include "qdengine/qdcore/qd_interface_screen.h"
 #include "qdengine/qdcore/qd_interface_element.h"
 #include "qdengine/qdcore/qd_file_manager.h"
-#include "qdengine/system/app_core.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 #include "qdengine/system/graphics/gr_font.h"
 #include "qdengine/system/sound/snd_dispatcher.h"
@@ -2955,6 +2954,12 @@ bool qdGameDispatcher::is_counter_in_list(qdCounter *p) {
 	return _counters.is_in_list(p);
 }
 
+static Common::String change_ext(const char *file_name, const char *new_ext) {
+	Common::String fpath(file_name);
+	Common::replace(fpath, ".tga", new_ext);
+	return fpath;
+}
+
 bool qdGameDispatcher::get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const {
 	files_to_pack.push_back("Resource/Cursors/default.tga");
 	files_to_pack.push_back("Resource/Fonts/font00.idx");
@@ -2979,7 +2984,7 @@ bool qdGameDispatcher::get_files_list(qdFileNameList &files_to_copy, qdFileNameL
 
 	for (auto &it : fonts_list()) {
 		files_to_pack.push_back(it->font_file_name()); // tga
-		files_to_pack.push_back(app_io::change_ext(it->font_file_name(), ".idx").c_str());
+		files_to_pack.push_back(change_ext(it->font_file_name(), ".idx").c_str());
 	}
 
 	if (_hall_of_fame_size)
@@ -3023,7 +3028,7 @@ void qdGameDispatcher::request_file_package(const qdFileOwner &file_owner) const
 Common::String qdGameDispatcher::find_file(const char *file_name, const qdFileOwner &file_owner) const {
 	debugC(4, kDebugLoad, "qdGameDispatcher::find_file(%s)", file_name);
 
-	if (_enable_file_packages && !app_io::is_file_exist(Common::String(file_name))) {
+	if (_enable_file_packages && !SearchMan.hasFile(Common::Path(file_name))) {
 		Common::String fname;
 		fname += qdFileManager::instance().CD_path(file_owner);
 		fname += file_name;

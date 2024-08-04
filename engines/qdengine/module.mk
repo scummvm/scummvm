@@ -9,7 +9,6 @@ MODULE_OBJS = \
 	parser/qdscr_parser.o \
 	parser/xml_parser.o \
 	parser/xml_tag_buffer.o \
-	system/app_core.o \
 	system/sound/snd_dispatcher.o \
 	system/sound/snd_sound.o \
 	system/sound/wav_sound.o \

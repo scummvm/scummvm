@@ -35,7 +35,6 @@
 #include "qdengine/qdcore/qd_interface_save.h"
 #include "qdengine/qdcore/qd_interface_screen.h"
 #include "qdengine/qdcore/qd_interface_dispatcher.h"
-#include "qdengine/system/app_core.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 
 

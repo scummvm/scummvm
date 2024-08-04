@@ -44,8 +44,6 @@
 #include "qdengine/qdcore/qd_interface_screen.h"
 #include "qdengine/qdcore/qd_game_dispatcher.h"
 
-#include "qdengine/system/app_core.h"
-
 namespace QDEngine {
 
 struct qdGridZoneOrdering {

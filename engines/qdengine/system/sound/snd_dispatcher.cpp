@@ -21,7 +21,6 @@
 
 #include "qdengine/qd_fwd.h"
 #include "qdengine/xmath.h"
-#include "qdengine/system/app_core.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 #include "qdengine/system/sound/snd_dispatcher.h"
 #include "qdengine/qdcore/util/plaympp_api.h"
