@@ -82,9 +82,8 @@ private:
 
 	tag _root_tag;
 
-	int _data_pool_position;
 	std::vector<char> _data_pool;
-	std::string _data_buffer;
+	Common::String _data_buffer;
 
 	bool _binary_script;
 

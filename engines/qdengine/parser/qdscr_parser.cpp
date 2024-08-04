@@ -333,49 +333,49 @@ xml::parser &qdscr_XML_Parser() {
 }
 
 const char *qdscr_XML_string(const char *p) {
-	static std::string conv_str(1024, 0);
+	static Common::String conv_str;
 
 	conv_str = p;
 
-	int pos = std::string::npos;
+	int pos = Common::String::npos;
 	do {
 		pos = conv_str.find("&", pos + 1);
-		if (pos != std::string::npos)
+		if (pos != Common::String::npos)
 			conv_str.replace(pos, 1, "&amp;");
 
-	} while (pos != std::string::npos);
+	} while (pos != Common::String::npos);
 
-	pos = std::string::npos;
+	pos = Common::String::npos;
 	do {
 		pos = conv_str.find("<", pos + 1);
-		if (pos != std::string::npos)
+		if (pos != Common::String::npos)
 			conv_str.replace(pos, 1, "&lt;");
 
-	} while (pos != std::string::npos);
+	} while (pos != Common::String::npos);
 
-	pos = std::string::npos;
+	pos = Common::String::npos;
 	do {
 		pos = conv_str.find(">", pos + 1);
-		if (pos != std::string::npos)
+		if (pos != Common::String::npos)
 			conv_str.replace(pos, 1, "&gt;");
 
-	} while (pos != std::string::npos);
+	} while (pos != Common::String::npos);
 
-	pos = std::string::npos;
+	pos = Common::String::npos;
 	do {
 		pos = conv_str.find("\"", pos + 1);
-		if (pos != std::string::npos)
+		if (pos != Common::String::npos)
 			conv_str.replace(pos, 1, "&quot;");
 
-	} while (pos != std::string::npos);
+	} while (pos != Common::String::npos);
 
-	pos = std::string::npos;
+	pos = Common::String::npos;
 	do {
 		pos = conv_str.find("'", pos + 1);
-		if (pos != std::string::npos)
+		if (pos != Common::String::npos)
 			conv_str.replace(pos, 1, "&#039;");
 
-	} while (pos != std::string::npos);
+	} while (pos != Common::String::npos);
 
 	return (const char *)transCyrillic(conv_str.c_str());
 }
