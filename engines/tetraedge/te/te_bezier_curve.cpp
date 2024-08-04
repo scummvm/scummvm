@@ -208,10 +208,10 @@ void TeBezierCurve::deserialize(Common::ReadStream &stream, TeBezierCurve &curve
 	}
 }
 
-void TeBezierCurve::loadBin(Common::FSNode &node) {
+void TeBezierCurve::loadBin(const Common::Path &path) {
 	Common::File file;
-	file.open(node);
-	Common::String fname = node.getName();
+	file.open(path);
+	Common::String fname = path.baseName();
 	if (fname.size() < 4)
 		error("TeBezierCurve::loadBin fname %s is too short", fname.c_str());
 	setName(fname.substr(0, fname.size() - 4));

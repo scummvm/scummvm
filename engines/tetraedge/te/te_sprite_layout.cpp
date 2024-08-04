@@ -83,8 +83,9 @@ bool TeSpriteLayout::load(const Common::Path &path) {
 
 	TeCore *core = g_engine->getCore();
 	Common::Path spritePath = core->findFileNew(path);
-	Common::FSNode spriteNode = core->findFile(path);
+	Common::FSNode spriteNode = core->convertPathToFSNode(spritePath);
 
+	// The path can point to a single file, or a folder with files
 	if (!Common::File::exists(spritePath) && !spriteNode.exists()) {
 		_tiledSurfacePtr->unload();
 		return false;
