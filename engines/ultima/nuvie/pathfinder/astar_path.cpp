@@ -149,13 +149,13 @@ sint32 AStarPath::step_cost(const MapCoord &c1, const MapCoord &c2) {
 /* Return an item in the list of closed nodes whose location matches `ncmp'.
  */
 astar_node *AStarPath::find_closed_node(astar_node *ncmp) {
-	for (astar_node *n : open_nodes)
+	for (astar_node *n : closed_nodes)
 		if (n->loc == ncmp->loc)
 			return n;
 	return nullptr;
 }
 
-/* Return an item in the list of closed nodes whose location matches `ncmp'.
+/* Return an item in the list of open nodes whose location matches `ncmp'.
  */
 astar_node *AStarPath::find_open_node(astar_node *ncmp) {
 	for (astar_node *n : open_nodes)
