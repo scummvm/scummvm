@@ -187,7 +187,7 @@ private:
 	bool _is_logging_enabled;
 	bool _is_read_only;
 
-	std::string _work_file;
+	Common::String _work_file;
 
 	static int _record_text_format;
 
