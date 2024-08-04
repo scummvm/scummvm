@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-02 16:53+0000\n"
+"POT-Creation-Date: 2024-08-04 09:50+0000\n"
 "PO-Revision-Date: 2024-05-16 08:20+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -3562,7 +3562,7 @@ msgstr "Επισ~τ~ρ. σε Πλοηγητή"
 #: engines/groovie/script.cpp:2247 engines/groovie/script.cpp:2274
 #: engines/groovie/script.cpp:2315 engines/hugo/file.cpp:297
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:731
-#: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
+#: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:358
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
 #: engines/neverhood/menumodule.cpp:923 engines/pegasus/pegasus.cpp:407
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:746
@@ -3583,7 +3583,7 @@ msgstr "Αποθήκευση παιχνιδιού:"
 #: engines/groovie/script.cpp:2274 engines/groovie/script.cpp:2315
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
 #: engines/kingdom/kingdom.cpp:731 engines/lab/savegame.cpp:237
-#: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
+#: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:358
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
 #: engines/neverhood/menumodule.cpp:923 engines/parallaction/metaengine.cpp:131
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:407
@@ -6368,7 +6368,7 @@ msgstr "Αυτό το παιχνίδι δεν υποστηρίζει απόθή�
 #: engines/groovie/script.cpp:2261 engines/groovie/script.cpp:2331
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
 #: engines/kingdom/kingdom.cpp:741 engines/lab/savegame.cpp:257
-#: engines/mads/nebular/dialogs_nebular.cpp:376
+#: engines/mads/nebular/dialogs_nebular.cpp:385
 #: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:936
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:749
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1262
@@ -6388,7 +6388,7 @@ msgstr "Επαναφορά παιχνιδιού:"
 #: engines/groovie/script.cpp:2331 engines/hugo/file.cpp:399
 #: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:741
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:257
-#: engines/mads/nebular/dialogs_nebular.cpp:376
+#: engines/mads/nebular/dialogs_nebular.cpp:385
 #: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:936
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:750
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1262
@@ -6443,7 +6443,7 @@ msgid "Cutscene file '%s' not found!"
 msgstr "Δεν βρέθηκε το αρχείο ενδιάμεσης σκηνής (cutscene) '%s' !"
 
 #: engines/agos/metaengine.cpp:44 engines/dreamweb/metaengine.cpp:36
-#: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:47
+#: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:51
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:746
 #, fuzzy
@@ -6452,7 +6452,7 @@ msgid "Enable copy protection"
 msgstr "Ενεργοποίηση διασύνδεσης με DIscord"
 
 #: engines/agos/metaengine.cpp:45 engines/dreamweb/metaengine.cpp:37
-#: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:48
+#: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:52
 #: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:747
 msgid "Enable any copy protection that would otherwise be bypassed by default."
@@ -6517,7 +6517,7 @@ msgstr ""
 
 #: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
 #: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:103
-#: engines/trecision/metaengine.cpp:121
+#: engines/mads/metaengine.cpp:275 engines/trecision/metaengine.cpp:121
 #, fuzzy
 #| msgid "Game Keymappings"
 msgid "Game keymappings"
@@ -6531,8 +6531,8 @@ msgstr "Αντιστοίχιση Πλήκτρων"
 
 #: engines/agos/metaengine.cpp:232 engines/cine/metaengine.cpp:265
 #: engines/groovie/metaengine.cpp:205 engines/lure/metaengine.cpp:177
-#: engines/made/metaengine.cpp:107 engines/saga/metaengine.cpp:278
-#: engines/trecision/metaengine.cpp:125
+#: engines/made/metaengine.cpp:107 engines/mads/metaengine.cpp:280
+#: engines/saga/metaengine.cpp:278 engines/trecision/metaengine.cpp:125
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left click"
@@ -6540,8 +6540,8 @@ msgstr "Αριστερό Click"
 
 #: engines/agos/metaengine.cpp:238 engines/cine/metaengine.cpp:271
 #: engines/groovie/metaengine.cpp:211 engines/lure/metaengine.cpp:183
-#: engines/made/metaengine.cpp:114 engines/saga/metaengine.cpp:289
-#: engines/trecision/metaengine.cpp:131
+#: engines/made/metaengine.cpp:114 engines/mads/metaengine.cpp:286
+#: engines/saga/metaengine.cpp:289 engines/trecision/metaengine.cpp:131
 msgid "Right click"
 msgstr "Δεξί click"
 
@@ -7403,7 +7403,7 @@ msgstr "Αφήγηση κειμένου για Αντικείμενα και Ε�
 
 #: engines/cge2/metaengine.cpp:60 engines/dreamweb/metaengine.cpp:74
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:54
-#: engines/mads/metaengine.cpp:121 engines/sci/detection_options.h:224
+#: engines/mads/metaengine.cpp:125 engines/sci/detection_options.h:224
 #: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:50
 #: engines/twine/metaengine.cpp:157
 msgid "Use TTS to read the descriptions (if TTS is available)"
@@ -7451,7 +7451,8 @@ msgid "Empty autosave"
 msgstr "Κενή αυτόματη αποθήκευση"
 
 #: engines/cine/metaengine.cpp:258 engines/lure/metaengine.cpp:168
-#: engines/made/metaengine.cpp:102 engines/trecision/metaengine.cpp:120
+#: engines/made/metaengine.cpp:102 engines/mads/metaengine.cpp:274
+#: engines/trecision/metaengine.cpp:120
 #, fuzzy
 #| msgid "Default game keymap"
 msgid "Default keymappings"
@@ -8807,7 +8808,7 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr ""
 "Αυτός ο γρίφος δεν είναι διαθέσιμος στη δοκιμαστική έκδοση του παιχνιδιού"
 
-#: engines/lure/metaengine.cpp:53 engines/mads/metaengine.cpp:120
+#: engines/lure/metaengine.cpp:53 engines/mads/metaengine.cpp:124
 #: engines/sherlock/metaengine.cpp:112 engines/twine/metaengine.cpp:156
 msgid "TTS Narrator"
 msgstr "Αφηγητής Κειμένου"
@@ -8831,12 +8832,13 @@ msgid "Yes/No keymappings"
 msgstr "Αντιστοίχιση Πλήκτρων"
 
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:162
-#: engines/saga/metaengine.cpp:441 engines/trecision/metaengine.cpp:169
-#: engines/vcruise/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:920
+#: engines/mads/metaengine.cpp:305 engines/saga/metaengine.cpp:441
+#: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:151
+#: engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Αποθήκευση παιχνιδιού"
 
-#: engines/lure/metaengine.cpp:197
+#: engines/lure/metaengine.cpp:197 engines/mads/metaengine.cpp:311
 #, fuzzy
 #| msgid "Restore game:"
 msgid "Restore game"
@@ -8849,9 +8851,10 @@ msgid "Restart game"
 msgstr "Επαναφορά παιχνιδιού:"
 
 #. I18N: ESC key
-#: engines/lure/metaengine.cpp:209 engines/mm/mm1/metaengine.cpp:41
-#: engines/mm/mm1/metaengine.cpp:47 engines/saga/metaengine.cpp:328
-#: engines/twine/metaengine.cpp:436 engines/wintermute/keymapper_tables.h:60
+#: engines/lure/metaengine.cpp:209 engines/mads/metaengine.cpp:292
+#: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
+#: engines/saga/metaengine.cpp:328 engines/twine/metaengine.cpp:436
+#: engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
 msgstr "Πλήκτρο Escape"
 
@@ -8965,26 +8968,90 @@ msgstr "Φόρτωση παιχνιδιού"
 msgid "Repeat last message"
 msgstr "Φόρτωση τελευταίου αποθηκευμένου παιχνιδιού"
 
-#: engines/mads/metaengine.cpp:59
+#: engines/mads/metaengine.cpp:63
 msgid "Easy mouse interface"
 msgstr "Εύκολη διεπαφή ποντικιού"
 
-#: engines/mads/metaengine.cpp:60
+#: engines/mads/metaengine.cpp:64
 msgid "Shows object names when hovering the mouse over them"
 msgstr ""
 "Εμφανίζει τα ονόματα των αντικειμένων όταν αιωρείται το ποντίκι πάνω τους"
 
-#: engines/mads/metaengine.cpp:71 engines/mads/metaengine.cpp:72
+#: engines/mads/metaengine.cpp:75 engines/mads/metaengine.cpp:76
 msgid "Animated inventory items"
 msgstr "Κινούμενα αντικείμενα στα υπάρχοντα"
 
-#: engines/mads/metaengine.cpp:83 engines/mads/metaengine.cpp:84
+#: engines/mads/metaengine.cpp:87 engines/mads/metaengine.cpp:88
 msgid "Animated game interface"
 msgstr "Κινούμενη διεπαφή παιχνιδιού"
 
-#: engines/mads/metaengine.cpp:95 engines/mads/metaengine.cpp:96
+#: engines/mads/metaengine.cpp:99 engines/mads/metaengine.cpp:100
 msgid "Naughty game mode"
 msgstr "Λειτουργία παιχνιδιού για άτακτους"
+
+#: engines/mads/metaengine.cpp:276
+#, fuzzy
+#| msgid "Game Keymappings"
+msgid "Start menu keymappings"
+msgstr "Αντιστοίχιση Πλήκτρων"
+
+#: engines/mads/metaengine.cpp:299
+#, fuzzy
+#| msgid "Open main menu"
+msgid "Open game menu"
+msgstr "Άνοιγμα κεντρικού μενού"
+
+#: engines/mads/metaengine.cpp:317
+#, fuzzy
+#| msgid "Scroll up"
+msgid "Scroll bar up"
+msgstr "Κύλιση πάνω"
+
+#: engines/mads/metaengine.cpp:323
+#, fuzzy
+#| msgid "Scroll down"
+msgid "Scroll bar down"
+msgstr "Κύλιση κάτω"
+
+#: engines/mads/metaengine.cpp:331
+#, fuzzy
+#| msgid "Restore game:"
+msgid "Start game"
+msgstr "Επαναφορά παιχνιδιού:"
+
+#: engines/mads/metaengine.cpp:337
+#, fuzzy
+#| msgid "Restore game:"
+msgid "Resume game"
+msgstr "Επαναφορά παιχνιδιού:"
+
+#: engines/mads/metaengine.cpp:343
+#, fuzzy
+#| msgid "Show hints"
+msgid "Show intro"
+msgstr "Προβολή υποδείξεων"
+
+#: engines/mads/metaengine.cpp:349
+msgid "Show credits"
+msgstr "Προβολή συντελεστών"
+
+#: engines/mads/metaengine.cpp:355
+#, fuzzy
+#| msgid "Speech Options"
+msgid "Show quotes"
+msgstr "Επιλογές Ομιλίας"
+
+#: engines/mads/metaengine.cpp:361
+#, fuzzy
+#| msgid "Quit game"
+msgid "Exit game"
+msgstr "Έξοδος από το παιχνίδι"
+
+#: engines/mads/metaengine.cpp:368
+#, fuzzy
+#| msgid "Faster animations"
+msgid "Restart animation"
+msgstr "Γρηγορότερες κινήσεις"
 
 #: engines/mm/metaengine.cpp:57
 msgid "Show item costs in standard inventory mode"
@@ -14022,9 +14089,6 @@ msgstr ""
 
 #~ msgid "Go to save/load menu"
 #~ msgstr "Άνοιγμα μενού απόθήκευσης/φόρτωσης"
-
-#~ msgid "Show credits"
-#~ msgstr "Προβολή συντελεστών"
 
 #~ msgid "Go to map screen"
 #~ msgstr "Άνοιγμα οθόνης χάρτη"

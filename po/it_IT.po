@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-02 16:53+0000\n"
+"POT-Creation-Date: 2024-08-04 09:50+0000\n"
 "PO-Revision-Date: 2024-07-29 09:17+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -3484,7 +3484,7 @@ msgstr "~V~ai a elenco giochi"
 #: engines/groovie/script.cpp:2247 engines/groovie/script.cpp:2274
 #: engines/groovie/script.cpp:2315 engines/hugo/file.cpp:297
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:731
-#: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
+#: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:358
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
 #: engines/neverhood/menumodule.cpp:923 engines/pegasus/pegasus.cpp:407
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:746
@@ -3505,7 +3505,7 @@ msgstr "Salva gioco:"
 #: engines/groovie/script.cpp:2274 engines/groovie/script.cpp:2315
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
 #: engines/kingdom/kingdom.cpp:731 engines/lab/savegame.cpp:237
-#: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
+#: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:358
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
 #: engines/neverhood/menumodule.cpp:923 engines/parallaction/metaengine.cpp:131
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:407
@@ -6225,7 +6225,7 @@ msgstr "Questo gioco non supporta la creazione dei salvataggi"
 #: engines/groovie/script.cpp:2261 engines/groovie/script.cpp:2331
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
 #: engines/kingdom/kingdom.cpp:741 engines/lab/savegame.cpp:257
-#: engines/mads/nebular/dialogs_nebular.cpp:376
+#: engines/mads/nebular/dialogs_nebular.cpp:385
 #: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:936
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:749
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1262
@@ -6245,7 +6245,7 @@ msgstr "Carica partita:"
 #: engines/groovie/script.cpp:2331 engines/hugo/file.cpp:399
 #: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:741
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:257
-#: engines/mads/nebular/dialogs_nebular.cpp:376
+#: engines/mads/nebular/dialogs_nebular.cpp:385
 #: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:936
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:750
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1262
@@ -6299,14 +6299,14 @@ msgid "Cutscene file '%s' not found!"
 msgstr "File della sequenza di intermezzo '%s' non trovato!"
 
 #: engines/agos/metaengine.cpp:44 engines/dreamweb/metaengine.cpp:36
-#: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:47
+#: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:51
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:746
 msgid "Enable copy protection"
 msgstr "Abilita protezione anticopia"
 
 #: engines/agos/metaengine.cpp:45 engines/dreamweb/metaengine.cpp:37
-#: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:48
+#: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:52
 #: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:747
 msgid "Enable any copy protection that would otherwise be bypassed by default."
@@ -6372,7 +6372,7 @@ msgstr "AGOS - Principali"
 
 #: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
 #: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:103
-#: engines/trecision/metaengine.cpp:121
+#: engines/mads/metaengine.cpp:275 engines/trecision/metaengine.cpp:121
 msgid "Game keymappings"
 msgstr "Mappature tasti gioco"
 
@@ -6382,15 +6382,15 @@ msgstr "Mappatura Si/No"
 
 #: engines/agos/metaengine.cpp:232 engines/cine/metaengine.cpp:265
 #: engines/groovie/metaengine.cpp:205 engines/lure/metaengine.cpp:177
-#: engines/made/metaengine.cpp:107 engines/saga/metaengine.cpp:278
-#: engines/trecision/metaengine.cpp:125
+#: engines/made/metaengine.cpp:107 engines/mads/metaengine.cpp:280
+#: engines/saga/metaengine.cpp:278 engines/trecision/metaengine.cpp:125
 msgid "Left click"
 msgstr "Clic sinistro"
 
 #: engines/agos/metaengine.cpp:238 engines/cine/metaengine.cpp:271
 #: engines/groovie/metaengine.cpp:211 engines/lure/metaengine.cpp:183
-#: engines/made/metaengine.cpp:114 engines/saga/metaengine.cpp:289
-#: engines/trecision/metaengine.cpp:131
+#: engines/made/metaengine.cpp:114 engines/mads/metaengine.cpp:286
+#: engines/saga/metaengine.cpp:289 engines/trecision/metaengine.cpp:131
 msgid "Right click"
 msgstr "Clic destro"
 
@@ -7211,7 +7211,7 @@ msgstr "Abilita Sintesi Vocale per gli oggetti e le opzioni"
 
 #: engines/cge2/metaengine.cpp:60 engines/dreamweb/metaengine.cpp:74
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:54
-#: engines/mads/metaengine.cpp:121 engines/sci/detection_options.h:224
+#: engines/mads/metaengine.cpp:125 engines/sci/detection_options.h:224
 #: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:50
 #: engines/twine/metaengine.cpp:157
 msgid "Use TTS to read the descriptions (if TTS is available)"
@@ -7255,7 +7255,8 @@ msgid "Empty autosave"
 msgstr "Autosalvataggio vuoto"
 
 #: engines/cine/metaengine.cpp:258 engines/lure/metaengine.cpp:168
-#: engines/made/metaengine.cpp:102 engines/trecision/metaengine.cpp:120
+#: engines/made/metaengine.cpp:102 engines/mads/metaengine.cpp:274
+#: engines/trecision/metaengine.cpp:120
 msgid "Default keymappings"
 msgstr "Mappe tasti predefinite"
 
@@ -8560,7 +8561,7 @@ msgstr ""
 msgid "This puzzle is not available in the trial version of the game"
 msgstr "Questo puzzle non è disponibile nella versione dimostrativa del gioco"
 
-#: engines/lure/metaengine.cpp:53 engines/mads/metaengine.cpp:120
+#: engines/lure/metaengine.cpp:53 engines/mads/metaengine.cpp:124
 #: engines/sherlock/metaengine.cpp:112 engines/twine/metaengine.cpp:156
 msgid "TTS Narrator"
 msgstr "Sintesi vocale"
@@ -8578,12 +8579,13 @@ msgid "Yes/No keymappings"
 msgstr "Mappatura Si/No"
 
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:162
-#: engines/saga/metaengine.cpp:441 engines/trecision/metaengine.cpp:169
-#: engines/vcruise/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:920
+#: engines/mads/metaengine.cpp:305 engines/saga/metaengine.cpp:441
+#: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:151
+#: engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Salva gioco"
 
-#: engines/lure/metaengine.cpp:197
+#: engines/lure/metaengine.cpp:197 engines/mads/metaengine.cpp:311
 msgid "Restore game"
 msgstr "Ripristina gioco"
 
@@ -8592,9 +8594,10 @@ msgid "Restart game"
 msgstr "Ricomincia gioco"
 
 #. I18N: ESC key
-#: engines/lure/metaengine.cpp:209 engines/mm/mm1/metaengine.cpp:41
-#: engines/mm/mm1/metaengine.cpp:47 engines/saga/metaengine.cpp:328
-#: engines/twine/metaengine.cpp:436 engines/wintermute/keymapper_tables.h:60
+#: engines/lure/metaengine.cpp:209 engines/mads/metaengine.cpp:292
+#: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
+#: engines/saga/metaengine.cpp:328 engines/twine/metaengine.cpp:436
+#: engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
 msgstr "Escape"
 
@@ -8684,25 +8687,89 @@ msgstr "Carica partita"
 msgid "Repeat last message"
 msgstr "Ripeti ultimo messaggio"
 
-#: engines/mads/metaengine.cpp:59
+#: engines/mads/metaengine.cpp:63
 msgid "Easy mouse interface"
 msgstr "Interfaccia mouse facilitata"
 
-#: engines/mads/metaengine.cpp:60
+#: engines/mads/metaengine.cpp:64
 msgid "Shows object names when hovering the mouse over them"
 msgstr "Mostra i nomi degli oggetti al passaggio del mouse"
 
-#: engines/mads/metaengine.cpp:71 engines/mads/metaengine.cpp:72
+#: engines/mads/metaengine.cpp:75 engines/mads/metaengine.cpp:76
 msgid "Animated inventory items"
 msgstr "Animazioni oggetti inventario"
 
-#: engines/mads/metaengine.cpp:83 engines/mads/metaengine.cpp:84
+#: engines/mads/metaengine.cpp:87 engines/mads/metaengine.cpp:88
 msgid "Animated game interface"
 msgstr "Animazioni interfaccia di gioco"
 
-#: engines/mads/metaengine.cpp:95 engines/mads/metaengine.cpp:96
+#: engines/mads/metaengine.cpp:99 engines/mads/metaengine.cpp:100
 msgid "Naughty game mode"
 msgstr "Modalità osé"
+
+#: engines/mads/metaengine.cpp:276
+#, fuzzy
+#| msgid "Game keymappings"
+msgid "Start menu keymappings"
+msgstr "Mappature tasti gioco"
+
+#: engines/mads/metaengine.cpp:299
+#, fuzzy
+#| msgid "Open main menu"
+msgid "Open game menu"
+msgstr "Apri menù principale"
+
+#: engines/mads/metaengine.cpp:317
+#, fuzzy
+#| msgid "Scroll up"
+msgid "Scroll bar up"
+msgstr "Scorri verso l'alto"
+
+#: engines/mads/metaengine.cpp:323
+#, fuzzy
+#| msgid "Scroll down"
+msgid "Scroll bar down"
+msgstr "Scorri verso il basso"
+
+#: engines/mads/metaengine.cpp:331
+#, fuzzy
+#| msgid "Restart game"
+msgid "Start game"
+msgstr "Ricomincia gioco"
+
+#: engines/mads/metaengine.cpp:337
+#, fuzzy
+#| msgid "Restore game"
+msgid "Resume game"
+msgstr "Ripristina gioco"
+
+#: engines/mads/metaengine.cpp:343
+#, fuzzy
+#| msgid "Show hints"
+msgid "Show intro"
+msgstr "Mostra suggerimenti"
+
+#: engines/mads/metaengine.cpp:349
+msgid "Show credits"
+msgstr "Mostra riconoscimenti"
+
+#: engines/mads/metaengine.cpp:355
+#, fuzzy
+#| msgid "Show options"
+msgid "Show quotes"
+msgstr "Mostra opzioni"
+
+#: engines/mads/metaengine.cpp:361
+#, fuzzy
+#| msgid "Quit game"
+msgid "Exit game"
+msgstr "Esci dal gioco"
+
+#: engines/mads/metaengine.cpp:368
+#, fuzzy
+#| msgid "Faster animations"
+msgid "Restart animation"
+msgstr "Animazioni accelerate"
 
 #: engines/mm/metaengine.cpp:57
 msgid "Show item costs in standard inventory mode"
@@ -13441,9 +13508,6 @@ msgstr ""
 
 #~ msgid "Go to save/load menu"
 #~ msgstr "Vai al menù di salvataggio/caricamento"
-
-#~ msgid "Show credits"
-#~ msgstr "Mostra riconoscimenti"
 
 #~ msgid "Go to map screen"
 #~ msgstr "Vai allo schermo mappa"

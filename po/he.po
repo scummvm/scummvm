@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-02 16:53+0000\n"
+"POT-Creation-Date: 2024-08-04 09:50+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -3353,7 +3353,7 @@ msgstr "~ח~זרה אל מסך הרצת המשחקים"
 #: engines/groovie/script.cpp:2247 engines/groovie/script.cpp:2274
 #: engines/groovie/script.cpp:2315 engines/hugo/file.cpp:297
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:731
-#: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
+#: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:358
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
 #: engines/neverhood/menumodule.cpp:923 engines/pegasus/pegasus.cpp:407
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:746
@@ -3374,7 +3374,7 @@ msgstr "שמירת משחק:"
 #: engines/groovie/script.cpp:2274 engines/groovie/script.cpp:2315
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
 #: engines/kingdom/kingdom.cpp:731 engines/lab/savegame.cpp:237
-#: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
+#: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:358
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
 #: engines/neverhood/menumodule.cpp:923 engines/parallaction/metaengine.cpp:131
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:407
@@ -5790,7 +5790,7 @@ msgstr "מזהה המשחק אינו נתמך."
 #: engines/groovie/script.cpp:2261 engines/groovie/script.cpp:2331
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
 #: engines/kingdom/kingdom.cpp:741 engines/lab/savegame.cpp:257
-#: engines/mads/nebular/dialogs_nebular.cpp:376
+#: engines/mads/nebular/dialogs_nebular.cpp:385
 #: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:936
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:749
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1262
@@ -5810,7 +5810,7 @@ msgstr "שחזור משחק:"
 #: engines/groovie/script.cpp:2331 engines/hugo/file.cpp:399
 #: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:741
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:257
-#: engines/mads/nebular/dialogs_nebular.cpp:376
+#: engines/mads/nebular/dialogs_nebular.cpp:385
 #: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:936
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:750
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1262
@@ -5863,7 +5863,7 @@ msgid "Cutscene file '%s' not found!"
 msgstr "קובץ סרטון מעבר '%s' לא נמצא!"
 
 #: engines/agos/metaengine.cpp:44 engines/dreamweb/metaengine.cpp:36
-#: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:47
+#: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:51
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:746
 #, fuzzy
@@ -5872,7 +5872,7 @@ msgid "Enable copy protection"
 msgstr "הפעלת שילוב עם Discord"
 
 #: engines/agos/metaengine.cpp:45 engines/dreamweb/metaengine.cpp:37
-#: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:48
+#: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:52
 #: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:747
 msgid "Enable any copy protection that would otherwise be bypassed by default."
@@ -5932,7 +5932,7 @@ msgstr ""
 
 #: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
 #: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:103
-#: engines/trecision/metaengine.cpp:121
+#: engines/mads/metaengine.cpp:275 engines/trecision/metaengine.cpp:121
 #, fuzzy
 #| msgid "Game Options"
 msgid "Game keymappings"
@@ -5946,8 +5946,8 @@ msgstr "א~פ~שרויות משחק"
 
 #: engines/agos/metaengine.cpp:232 engines/cine/metaengine.cpp:265
 #: engines/groovie/metaengine.cpp:205 engines/lure/metaengine.cpp:177
-#: engines/made/metaengine.cpp:107 engines/saga/metaengine.cpp:278
-#: engines/trecision/metaengine.cpp:125
+#: engines/made/metaengine.cpp:107 engines/mads/metaengine.cpp:280
+#: engines/saga/metaengine.cpp:278 engines/trecision/metaengine.cpp:125
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left click"
@@ -5955,8 +5955,8 @@ msgstr "לחיצה שמאלית"
 
 #: engines/agos/metaengine.cpp:238 engines/cine/metaengine.cpp:271
 #: engines/groovie/metaengine.cpp:211 engines/lure/metaengine.cpp:183
-#: engines/made/metaengine.cpp:114 engines/saga/metaengine.cpp:289
-#: engines/trecision/metaengine.cpp:131
+#: engines/made/metaengine.cpp:114 engines/mads/metaengine.cpp:286
+#: engines/saga/metaengine.cpp:289 engines/trecision/metaengine.cpp:131
 msgid "Right click"
 msgstr "מקש ימני"
 
@@ -6799,7 +6799,7 @@ msgstr "הפעלת המרת טקסט לדיבור עבור עצמים ואפשר
 
 #: engines/cge2/metaengine.cpp:60 engines/dreamweb/metaengine.cpp:74
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:54
-#: engines/mads/metaengine.cpp:121 engines/sci/detection_options.h:224
+#: engines/mads/metaengine.cpp:125 engines/sci/detection_options.h:224
 #: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:50
 #: engines/twine/metaengine.cpp:157
 msgid "Use TTS to read the descriptions (if TTS is available)"
@@ -6844,7 +6844,8 @@ msgid "Empty autosave"
 msgstr "שמירה אוטומטית ריקה"
 
 #: engines/cine/metaengine.cpp:258 engines/lure/metaengine.cpp:168
-#: engines/made/metaengine.cpp:102 engines/trecision/metaengine.cpp:120
+#: engines/made/metaengine.cpp:102 engines/mads/metaengine.cpp:274
+#: engines/trecision/metaengine.cpp:120
 #, fuzzy
 #| msgid "Default game keymap"
 msgid "Default keymappings"
@@ -8199,7 +8200,7 @@ msgstr ""
 msgid "This puzzle is not available in the trial version of the game"
 msgstr "חידה זו אינה זמינה בגרסת הניסיון של המשחק"
 
-#: engines/lure/metaengine.cpp:53 engines/mads/metaengine.cpp:120
+#: engines/lure/metaengine.cpp:53 engines/mads/metaengine.cpp:124
 #: engines/sherlock/metaengine.cpp:112 engines/twine/metaengine.cpp:156
 msgid "TTS Narrator"
 msgstr "קריין המרת טקסט לדיבור"
@@ -8223,12 +8224,13 @@ msgid "Yes/No keymappings"
 msgstr "א~פ~שרויות משחק"
 
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:162
-#: engines/saga/metaengine.cpp:441 engines/trecision/metaengine.cpp:169
-#: engines/vcruise/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:920
+#: engines/mads/metaengine.cpp:305 engines/saga/metaengine.cpp:441
+#: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:151
+#: engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "שמירת משחק"
 
-#: engines/lure/metaengine.cpp:197
+#: engines/lure/metaengine.cpp:197 engines/mads/metaengine.cpp:311
 #, fuzzy
 #| msgid "Restore game:"
 msgid "Restore game"
@@ -8241,9 +8243,10 @@ msgid "Restart game"
 msgstr "שחזור משחק:"
 
 #. I18N: ESC key
-#: engines/lure/metaengine.cpp:209 engines/mm/mm1/metaengine.cpp:41
-#: engines/mm/mm1/metaengine.cpp:47 engines/saga/metaengine.cpp:328
-#: engines/twine/metaengine.cpp:436 engines/wintermute/keymapper_tables.h:60
+#: engines/lure/metaengine.cpp:209 engines/mads/metaengine.cpp:292
+#: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
+#: engines/saga/metaengine.cpp:328 engines/twine/metaengine.cpp:436
+#: engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
 msgstr "בריחה"
 
@@ -8357,25 +8360,89 @@ msgstr "טוען משחק"
 msgid "Repeat last message"
 msgstr "טעינת השמירה האחרונה מחדש"
 
-#: engines/mads/metaengine.cpp:59
+#: engines/mads/metaengine.cpp:63
 msgid "Easy mouse interface"
 msgstr "ממשק עכבר קל"
 
-#: engines/mads/metaengine.cpp:60
+#: engines/mads/metaengine.cpp:64
 msgid "Shows object names when hovering the mouse over them"
 msgstr "מציג שמות של אובייקטים כשמרחפים עליהם העכבר עליהם"
 
-#: engines/mads/metaengine.cpp:71 engines/mads/metaengine.cpp:72
+#: engines/mads/metaengine.cpp:75 engines/mads/metaengine.cpp:76
 msgid "Animated inventory items"
 msgstr "פריטי מלאי מונפשים"
 
-#: engines/mads/metaengine.cpp:83 engines/mads/metaengine.cpp:84
+#: engines/mads/metaengine.cpp:87 engines/mads/metaengine.cpp:88
 msgid "Animated game interface"
 msgstr "ממשק משחק אנימציה"
 
-#: engines/mads/metaengine.cpp:95 engines/mads/metaengine.cpp:96
+#: engines/mads/metaengine.cpp:99 engines/mads/metaengine.cpp:100
 msgid "Naughty game mode"
 msgstr "מצב משחק שובב"
+
+#: engines/mads/metaengine.cpp:276
+#, fuzzy
+#| msgid "Game Options"
+msgid "Start menu keymappings"
+msgstr "א~פ~שרויות משחק"
+
+#: engines/mads/metaengine.cpp:299
+#, fuzzy
+#| msgid "Open main menu"
+msgid "Open game menu"
+msgstr "פתיחת תפריט ראשי"
+
+#: engines/mads/metaengine.cpp:317
+#, fuzzy
+#| msgid "Scroll up"
+msgid "Scroll bar up"
+msgstr "גלילה מעלה"
+
+#: engines/mads/metaengine.cpp:323
+#, fuzzy
+#| msgid "Scroll down"
+msgid "Scroll bar down"
+msgstr "גלילה מטה"
+
+#: engines/mads/metaengine.cpp:331
+#, fuzzy
+#| msgid "Restore game:"
+msgid "Start game"
+msgstr "שחזור משחק:"
+
+#: engines/mads/metaengine.cpp:337
+#, fuzzy
+#| msgid "Restore game:"
+msgid "Resume game"
+msgstr "שחזור משחק:"
+
+#: engines/mads/metaengine.cpp:343
+#, fuzzy
+#| msgid "Show hints"
+msgid "Show intro"
+msgstr "הצגת רמזים"
+
+#: engines/mads/metaengine.cpp:349
+msgid "Show credits"
+msgstr "הצגת כתוביות סיום"
+
+#: engines/mads/metaengine.cpp:355
+#, fuzzy
+#| msgid "Speech Options"
+msgid "Show quotes"
+msgstr "אפשרויות דיבור"
+
+#: engines/mads/metaengine.cpp:361
+#, fuzzy
+#| msgid "Quit Game"
+msgid "Exit game"
+msgstr "יציאה מהמשחק"
+
+#: engines/mads/metaengine.cpp:368
+#, fuzzy
+#| msgid "Faster animations"
+msgid "Restart animation"
+msgstr "הנפשות מהירות"
 
 #: engines/mm/metaengine.cpp:57
 msgid "Show item costs in standard inventory mode"
@@ -12922,9 +12989,6 @@ msgstr ""
 
 #~ msgid "Go to save/load menu"
 #~ msgstr "מעבר אל תפריט שמירה/טעינה"
-
-#~ msgid "Show credits"
-#~ msgstr "הצגת כתוביות סיום"
 
 #~ msgid "Go to map screen"
 #~ msgstr "מעבר למסך מפה"

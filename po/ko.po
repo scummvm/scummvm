@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-02 16:53+0000\n"
+"POT-Creation-Date: 2024-08-04 09:50+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -3407,7 +3407,7 @@ msgstr "런처로 돌아가기(~R~)"
 #: engines/groovie/script.cpp:2247 engines/groovie/script.cpp:2274
 #: engines/groovie/script.cpp:2315 engines/hugo/file.cpp:297
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:731
-#: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
+#: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:358
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
 #: engines/neverhood/menumodule.cpp:923 engines/pegasus/pegasus.cpp:407
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:746
@@ -3428,7 +3428,7 @@ msgstr "게임 저장:"
 #: engines/groovie/script.cpp:2274 engines/groovie/script.cpp:2315
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
 #: engines/kingdom/kingdom.cpp:731 engines/lab/savegame.cpp:237
-#: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
+#: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:358
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
 #: engines/neverhood/menumodule.cpp:923 engines/parallaction/metaengine.cpp:131
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:407
@@ -5854,7 +5854,7 @@ msgstr "이 게임은 지원되지 않습니다."
 #: engines/groovie/script.cpp:2261 engines/groovie/script.cpp:2331
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
 #: engines/kingdom/kingdom.cpp:741 engines/lab/savegame.cpp:257
-#: engines/mads/nebular/dialogs_nebular.cpp:376
+#: engines/mads/nebular/dialogs_nebular.cpp:385
 #: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:936
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:749
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1262
@@ -5874,7 +5874,7 @@ msgstr "게임 불러오기:"
 #: engines/groovie/script.cpp:2331 engines/hugo/file.cpp:399
 #: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:741
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:257
-#: engines/mads/nebular/dialogs_nebular.cpp:376
+#: engines/mads/nebular/dialogs_nebular.cpp:385
 #: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:936
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:750
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1262
@@ -5927,7 +5927,7 @@ msgid "Cutscene file '%s' not found!"
 msgstr "컷씬 파일 '%s' 을 찾을 수 없습니다!"
 
 #: engines/agos/metaengine.cpp:44 engines/dreamweb/metaengine.cpp:36
-#: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:47
+#: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:51
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:746
 #, fuzzy
@@ -5936,7 +5936,7 @@ msgid "Enable copy protection"
 msgstr "Discord 통합 사용"
 
 #: engines/agos/metaengine.cpp:45 engines/dreamweb/metaengine.cpp:37
-#: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:48
+#: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:52
 #: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
 #: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:747
 msgid "Enable any copy protection that would otherwise be bypassed by default."
@@ -5993,7 +5993,7 @@ msgstr ""
 
 #: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
 #: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:103
-#: engines/trecision/metaengine.cpp:121
+#: engines/mads/metaengine.cpp:275 engines/trecision/metaengine.cpp:121
 #, fuzzy
 #| msgid "Game Options"
 msgid "Game keymappings"
@@ -6007,8 +6007,8 @@ msgstr "게임 옵션"
 
 #: engines/agos/metaengine.cpp:232 engines/cine/metaengine.cpp:265
 #: engines/groovie/metaengine.cpp:205 engines/lure/metaengine.cpp:177
-#: engines/made/metaengine.cpp:107 engines/saga/metaengine.cpp:278
-#: engines/trecision/metaengine.cpp:125
+#: engines/made/metaengine.cpp:107 engines/mads/metaengine.cpp:280
+#: engines/saga/metaengine.cpp:278 engines/trecision/metaengine.cpp:125
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left click"
@@ -6016,8 +6016,8 @@ msgstr "왼쪽 클릭"
 
 #: engines/agos/metaengine.cpp:238 engines/cine/metaengine.cpp:271
 #: engines/groovie/metaengine.cpp:211 engines/lure/metaengine.cpp:183
-#: engines/made/metaengine.cpp:114 engines/saga/metaengine.cpp:289
-#: engines/trecision/metaengine.cpp:131
+#: engines/made/metaengine.cpp:114 engines/mads/metaengine.cpp:286
+#: engines/saga/metaengine.cpp:289 engines/trecision/metaengine.cpp:131
 #, fuzzy
 #| msgid "Right Click"
 msgid "Right click"
@@ -6872,7 +6872,7 @@ msgstr "물체, 옵션 및 성경 인용문에 대해 TTS를 활성화"
 
 #: engines/cge2/metaengine.cpp:60 engines/dreamweb/metaengine.cpp:74
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:54
-#: engines/mads/metaengine.cpp:121 engines/sci/detection_options.h:224
+#: engines/mads/metaengine.cpp:125 engines/sci/detection_options.h:224
 #: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:50
 #: engines/twine/metaengine.cpp:157
 msgid "Use TTS to read the descriptions (if TTS is available)"
@@ -6918,7 +6918,8 @@ msgid "Empty autosave"
 msgstr "비어있는 자동 저장"
 
 #: engines/cine/metaengine.cpp:258 engines/lure/metaengine.cpp:168
-#: engines/made/metaengine.cpp:102 engines/trecision/metaengine.cpp:120
+#: engines/made/metaengine.cpp:102 engines/mads/metaengine.cpp:274
+#: engines/trecision/metaengine.cpp:120
 #, fuzzy
 #| msgid "Default game keymap"
 msgid "Default keymappings"
@@ -8291,7 +8292,7 @@ msgstr ""
 msgid "This puzzle is not available in the trial version of the game"
 msgstr "게임 평가판에서는 현재 퍼즐을 이용할 수 없습니다"
 
-#: engines/lure/metaengine.cpp:53 engines/mads/metaengine.cpp:120
+#: engines/lure/metaengine.cpp:53 engines/mads/metaengine.cpp:124
 #: engines/sherlock/metaengine.cpp:112 engines/twine/metaengine.cpp:156
 msgid "TTS Narrator"
 msgstr "TTS 나레이터"
@@ -8315,12 +8316,13 @@ msgid "Yes/No keymappings"
 msgstr "게임 옵션"
 
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:162
-#: engines/saga/metaengine.cpp:441 engines/trecision/metaengine.cpp:169
-#: engines/vcruise/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:920
+#: engines/mads/metaengine.cpp:305 engines/saga/metaengine.cpp:441
+#: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:151
+#: engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "게임 저장"
 
-#: engines/lure/metaengine.cpp:197
+#: engines/lure/metaengine.cpp:197 engines/mads/metaengine.cpp:311
 #, fuzzy
 #| msgid "Restore game:"
 msgid "Restore game"
@@ -8333,9 +8335,10 @@ msgid "Restart game"
 msgstr "게임 불러오기:"
 
 #. I18N: ESC key
-#: engines/lure/metaengine.cpp:209 engines/mm/mm1/metaengine.cpp:41
-#: engines/mm/mm1/metaengine.cpp:47 engines/saga/metaengine.cpp:328
-#: engines/twine/metaengine.cpp:436 engines/wintermute/keymapper_tables.h:60
+#: engines/lure/metaengine.cpp:209 engines/mads/metaengine.cpp:292
+#: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
+#: engines/saga/metaengine.cpp:328 engines/twine/metaengine.cpp:436
+#: engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
 msgstr "탈출"
 
@@ -8448,25 +8451,89 @@ msgstr "게임 불러오기"
 msgid "Repeat last message"
 msgstr "마지막 저장을 다시 불러오기"
 
-#: engines/mads/metaengine.cpp:59
+#: engines/mads/metaengine.cpp:63
 msgid "Easy mouse interface"
 msgstr "쉬운 마우스 인터페이스"
 
-#: engines/mads/metaengine.cpp:60
+#: engines/mads/metaengine.cpp:64
 msgid "Shows object names when hovering the mouse over them"
 msgstr "마우스 커서를 올리면 대상의 이름을 표시"
 
-#: engines/mads/metaengine.cpp:71 engines/mads/metaengine.cpp:72
+#: engines/mads/metaengine.cpp:75 engines/mads/metaengine.cpp:76
 msgid "Animated inventory items"
 msgstr "움직이는 인벤토리 아이템"
 
-#: engines/mads/metaengine.cpp:83 engines/mads/metaengine.cpp:84
+#: engines/mads/metaengine.cpp:87 engines/mads/metaengine.cpp:88
 msgid "Animated game interface"
 msgstr "움직이는 게임 인터페이스"
 
-#: engines/mads/metaengine.cpp:95 engines/mads/metaengine.cpp:96
+#: engines/mads/metaengine.cpp:99 engines/mads/metaengine.cpp:100
 msgid "Naughty game mode"
 msgstr "꾸러기 게임 모드"
+
+#: engines/mads/metaengine.cpp:276
+#, fuzzy
+#| msgid "Game Options"
+msgid "Start menu keymappings"
+msgstr "게임 옵션"
+
+#: engines/mads/metaengine.cpp:299
+#, fuzzy
+#| msgid "Open main menu"
+msgid "Open game menu"
+msgstr "메인 메뉴 열기"
+
+#: engines/mads/metaengine.cpp:317
+#, fuzzy
+#| msgid "Scroll up"
+msgid "Scroll bar up"
+msgstr "위로 스크롤"
+
+#: engines/mads/metaengine.cpp:323
+#, fuzzy
+#| msgid "Scroll down"
+msgid "Scroll bar down"
+msgstr "아래로 스크롤"
+
+#: engines/mads/metaengine.cpp:331
+#, fuzzy
+#| msgid "Restore game:"
+msgid "Start game"
+msgstr "게임 불러오기:"
+
+#: engines/mads/metaengine.cpp:337
+#, fuzzy
+#| msgid "Restore game:"
+msgid "Resume game"
+msgstr "게임 불러오기:"
+
+#: engines/mads/metaengine.cpp:343
+#, fuzzy
+#| msgid "Show hints"
+msgid "Show intro"
+msgstr "힌트 표시"
+
+#: engines/mads/metaengine.cpp:349
+msgid "Show credits"
+msgstr "크레딧 표시"
+
+#: engines/mads/metaengine.cpp:355
+#, fuzzy
+#| msgid "Speech Options"
+msgid "Show quotes"
+msgstr "음성 옵션"
+
+#: engines/mads/metaengine.cpp:361
+#, fuzzy
+#| msgid "Quit Game"
+msgid "Exit game"
+msgstr "게임 종료"
+
+#: engines/mads/metaengine.cpp:368
+#, fuzzy
+#| msgid "Transitions:"
+msgid "Restart animation"
+msgstr "전환효과:"
 
 #: engines/mm/metaengine.cpp:57
 msgid "Show item costs in standard inventory mode"
@@ -13040,9 +13107,6 @@ msgstr ""
 
 #~ msgid "Go to save/load menu"
 #~ msgstr "저장/불러오기 메뉴로 이동"
-
-#~ msgid "Show credits"
-#~ msgstr "크레딧 표시"
 
 #~ msgid "Go to map screen"
 #~ msgstr "지도 화면으로 이동"
