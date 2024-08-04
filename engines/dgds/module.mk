@@ -8,6 +8,9 @@ MODULE_OBJS := \
 	dgds.o \
 	dgds_rect.o \
 	dialog.o \
+	dragon_arcade.o \
+	dragon_arcade_ttm.o \
+	drawing.o \
 	font.o \
 	game_palettes.o \
 	globals.o \

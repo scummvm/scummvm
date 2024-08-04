@@ -35,6 +35,7 @@
 #include "dgds/scripts.h"
 #include "dgds/scene.h"
 #include "dgds/font.h"
+#include "dgds/drawing.h"
 
 namespace Dgds {
 
@@ -74,13 +75,6 @@ void Dialog::draw(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 	case kDlgFrameRounded: 	return drawType4(dst, stage);
 	default: error("unexpected frame type %d for dialog %d", _frameType, _num);
 	}
-}
-
-static void _drawPixel(int x, int y, int color, void *data) {
-	Graphics::ManagedSurface *surface = (Graphics::ManagedSurface *)data;
-
-	if (x >= 0 && x < surface->w && y >= 0 && y < surface->h)
-		*((byte *)surface->getBasePtr(x, y)) = (byte)color;
 }
 
 
@@ -223,11 +217,6 @@ void Dialog::drawType2(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 	}
 }
 
-static void _filledCircle(int x, int y, int xr, int yr, Graphics::ManagedSurface *dst, byte fgcol, byte bgcol) {
-	Graphics::drawEllipse(x - xr, y - yr, x + xr, y + yr, bgcol, true, _drawPixel, dst);
-	Graphics::drawEllipse(x - xr, y - yr, x + xr, y + yr, fgcol, false, _drawPixel, dst);
-}
-
 // Find the last line that will be printed - we don't use empty lines
 static uint _countPrintedLines(const Common::Array<Common::String> &lines) {
 	uint nprinted = 0;
@@ -281,32 +270,32 @@ void Dialog::drawType3(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 		}
 
 		for (int i = 1; i < circlesDown; i++) {
-			_filledCircle(x, y, xradius, yradius, dst, fgcol, bgcol);
+			Drawing::filledCircle(x, y, xradius, yradius, dst, fgcol, bgcol);
 			y += yradius;
 		}
 		for (int i = 1; i < circlesAcross; i++) {
-			_filledCircle(x, y, xradius, yradius, dst, fgcol, bgcol);
+			Drawing::filledCircle(x, y, xradius, yradius, dst, fgcol, bgcol);
 			x += xradius;
 		}
 		for (int i = 1; i < circlesDown; i++) {
-			_filledCircle(x, y, xradius, yradius, dst, fgcol, bgcol);
+			Drawing::filledCircle(x, y, xradius, yradius, dst, fgcol, bgcol);
 			y -= yradius;
 		}
 		for (int i = 1; i < circlesAcross; i++) {
-			_filledCircle(x, y, xradius, yradius, dst, fgcol, bgcol);
+			Drawing::filledCircle(x, y, xradius, yradius, dst, fgcol, bgcol);
 			x -= xradius;
 		}
 
 		uint16 smallCircleX;
 		if (isbig) {
-			_filledCircle((x - xradius) - 5, y + circlesDown * yradius + 5, 10, 8, dst, fgcol, bgcol);
+			Drawing::filledCircle((x - xradius) - 5, y + circlesDown * yradius + 5, 10, 8, dst, fgcol, bgcol);
 			smallCircleX = (x - xradius) - 20;
 		} else {
-			_filledCircle(x + circlesAcross * xradius + 5, y + circlesDown * yradius + 5, 10, 8, dst, fgcol, bgcol);
+			Drawing::filledCircle(x + circlesAcross * xradius + 5, y + circlesDown * yradius + 5, 10, 8, dst, fgcol, bgcol);
 			smallCircleX = x + circlesAcross * xradius + 20;
 		}
 
-		_filledCircle(smallCircleX, y + circlesDown * yradius + 25, 5, 4, dst, fgcol, bgcol);
+		Drawing::filledCircle(smallCircleX, y + circlesDown * yradius + 25, 5, 4, dst, fgcol, bgcol);
 
 		int16 yoff = (yradius * 27) / 32;
 		dst->fillRect(Common::Rect(x, y - yoff,
@@ -357,8 +346,8 @@ void Dialog::drawType4(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
 		// This is not exactly the same as the original - might need some work to get pixel-perfect
 		if (DgdsEngine::getInstance()->getGameId() != GID_HOC) {
 			Common::Rect drawRect(x, y, x + w, y + h);
-			Graphics::drawRoundRect(drawRect, midy, fillbgcolor, true, _drawPixel, dst);
-			Graphics::drawRoundRect(drawRect, midy, fillcolor, false, _drawPixel, dst);
+			Graphics::drawRoundRect(drawRect, midy, fillbgcolor, true, Drawing::drawPixel, dst);
+			Graphics::drawRoundRect(drawRect, midy, fillcolor, false, Drawing::drawPixel, dst);
 		}
 	} else if (stage == kDlgDrawFindSelectionPointXY) {
 		drawFindSelectionXY();
