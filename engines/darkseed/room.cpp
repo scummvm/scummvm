@@ -856,7 +856,7 @@ void Darkseed::Room::runRoomObjects() {
 			}
 
 			if (_roomNumber == 16 && g_engine->isPlayingAnimation_maybe && g_engine->otherNspAnimationType_maybe == 35) {
-				const Sprite &sprite = g_engine->_player->getSprite(spriteNum);
+				const Sprite &sprite = g_engine->_player->_animations.getSpriteAt(spriteNum);
 				g_engine->_sprites.addSpriteToDrawList(
 					xPos,
 					yPos,
