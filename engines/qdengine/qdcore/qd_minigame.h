@@ -116,11 +116,11 @@ public:
 private:
 
 	//! Имя подгружаемой для игры dll.
-	std::string _dll_name;
+	Common::String _dll_name;
 	//! .ini файл с настройками игры.
-	std::string _config_file_name;
+	Common::String _config_file_name;
 	//! Имя игры, по которому она ищется в dll.
-	std::string _game_name;
+	Common::String _game_name;
 	//! Хэндл подгруженной dll.
 	void *_dll_handle;
 	//! Интерфейс к игре из dll.

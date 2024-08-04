@@ -22,6 +22,8 @@
 #ifndef QDENGINE_QDCORE_QD_SPRITE_H
 #define QDENGINE_QDCORE_QD_SPRITE_H
 
+#include "common/str.h"
+
 namespace Common {
 class SeekableReadStream;
 }
@@ -209,7 +211,7 @@ private:
 	byte *_data;
 	class rleBuffer *_rle_data;
 
-	std::string _file;
+	Common::String _file;
 
 	friend bool operator == (const qdSprite &sp1, const qdSprite &sp2);
 };

@@ -22,7 +22,7 @@
 #ifndef QDENGINE_QDCORE_QD_NAMED_OBJECT_BASE_H
 #define QDENGINE_QDCORE_QD_NAMED_OBJECT_BASE_H
 
-#include "qdengine/qd_fwd.h"
+#include "common/str.h"
 
 namespace QDEngine {
 
@@ -50,7 +50,7 @@ public:
 private:
 
 	//! Имя объекта.
-	std::string _name;
+	Common::String _name;
 };
 
 } // namespace QDEngine

@@ -181,7 +181,7 @@ bool qdScreenText::format_text(int max_width) {
 
 	byte *dp = (byte *)_data.c_str();
 
-	for (int i = 0; i < _data.length(); i++) {
+	for (int i = 0; i < _data.size(); i++) {
 		if (dp[i] == '\n') {
 			if (cur_wid > max_width) {
 				// безопасный пробел есть - безопасно режем (т.е. все влезает в max_width)
@@ -229,7 +229,7 @@ bool qdScreenText::format_text(int max_width) {
 		}
 	}
 
-	_data.erase(_data.length() - 1, 1); // Удаляем последний символ (пробел добавленный нами)
+	_data.erase(_data.size() - 1, 1); // Удаляем последний символ (пробел добавленный нами)
 
 	set_data(_data.c_str()); // Устанавливаем данные (для пересчета размера текста)
 

@@ -260,7 +260,7 @@ private:
 	Vect2i _size;
 
 	//! Текст (данные).
-	std::string _data;
+	Common::String _data;
 
 	//! true, если над текстом курсор мыши
 	bool _hover_mode;
