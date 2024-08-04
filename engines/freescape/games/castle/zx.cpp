@@ -140,6 +140,14 @@ void CastleEngine::loadAssetsZXFullGame() {
 	addGhosts();
 	_areaMap[1]->addFloor();
 	_areaMap[2]->addFloor();
+
+	// Discard the first three global conditions
+	// It is unclear why they hide/unhide objects that formed the spirits
+	for (int i = 0; i < 3; i++) {
+		_conditions.remove_at(i);
+		_conditionSources.remove_at(i);
+	}
+
 }
 
 void CastleEngine::drawZXUI(Graphics::Surface *surface) {

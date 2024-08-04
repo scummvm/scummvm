@@ -354,7 +354,7 @@ public:
 	void executeSetVariable(FCLInstruction &instruction);
 	void executeGoto(FCLInstruction &instruction);
 	void executeIfThenElse(FCLInstruction &instruction);
-	void executeMakeInvisible(FCLInstruction &instruction);
+	virtual void executeMakeInvisible(FCLInstruction &instruction);
 	void executeMakeVisible(FCLInstruction &instruction);
 	void executeToggleVisibility(FCLInstruction &instruction);
 	void executeDestroy(FCLInstruction &instruction);

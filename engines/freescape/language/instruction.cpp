@@ -157,7 +157,6 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 
 		switch (instruction.getType()) {
 		default:
-			//if (!isCastle())
 			error("Instruction %x at ip: %d not implemented!", instruction.getType(), ip);
 			break;
 		case Token::NOP:
@@ -223,6 +222,7 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			break;
 		case Token::EXECUTE:
 			executeExecute(instruction);
+			ip = codeSize;
 			break;
 		case Token::DELAY:
 			executeDelay(instruction);
@@ -293,9 +293,19 @@ void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {
 }
 
 void FreescapeEngine::executeExecute(FCLInstruction &instruction) {
-	// TODO
 	uint16 objId = instruction._source;
 	debugC(1, kFreescapeDebugCode, "Executing instructions from object %d", objId);
+	Object *obj = _currentArea->objectWithID(objId);
+	if (!obj) {
+		obj = _areaMap[255]->objectWithID(objId);
+		if (!obj) {
+			obj = _areaMap[255]->entranceWithID(objId);
+			assert(obj);
+			executeEntranceConditions((Entrance *)obj);
+		}
+	} else
+		executeObjectConditions((GeometricObject *)obj, true, false, false);
+
 }
 
 void FreescapeEngine::executeSound(FCLInstruction &instruction) {
@@ -512,6 +522,9 @@ void FreescapeEngine::executeDestroy(FCLInstruction &instruction) {
 }
 
 void FreescapeEngine::executeMakeInvisible(FCLInstruction &instruction) {
+	// Castle uses their own implementation which is hard to
+	// integrate with this code without duplicating most of it
+	assert(!isCastle());
 	uint16 objectID = 0;
 	uint16 areaID = _currentArea->getAreaID();
 
@@ -525,12 +538,10 @@ void FreescapeEngine::executeMakeInvisible(FCLInstruction &instruction) {
 	debugC(1, kFreescapeDebugCode, "Making obj %d invisible in area %d!", objectID, areaID);
 	if (_areaMap.contains(areaID)) {
 		Object *obj = _areaMap[areaID]->objectWithID(objectID);
-		if (!obj && isCastle())
-			return; // No side effects
 		assert(obj); // We assume the object was there
 		obj->makeInvisible();
 	} else {
-		assert(isDOS() && isDemo()); // Should only happen in the DOS demo
+		assert(isDriller() && isDOS() && isDemo());
 	}
 
 }

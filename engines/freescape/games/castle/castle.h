@@ -50,6 +50,7 @@ public:
 	void updateTimeVariables() override;
 
 	void executePrint(FCLInstruction &instruction) override;
+	void executeMakeInvisible(FCLInstruction &instruction) override;
 	void gotoArea(uint16 areaID, int entranceID) override;
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
@@ -67,6 +68,8 @@ public:
 	Graphics::Surface *_keysFrame;
 	int _numberKeys;
 	bool _useRockTravel;
+	int _spiritsDestroyed;
+	int _spiritsMeter;
 
 private:
 	Common::SeekableReadStream *decryptFile(const Common::Path &filename);

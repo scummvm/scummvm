@@ -58,6 +58,8 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_menu = nullptr;
 
 	_numberKeys = 0;
+	_spiritsDestroyed = 0;
+	_spiritsMeter = 32;
 }
 
 CastleEngine::~CastleEngine() {
@@ -129,6 +131,8 @@ void CastleEngine::initGameState() {
 	_gameStateVars[k8bitVariableEnergy] = 1;
 	_countdown = INT_MAX;
 	_numberKeys = 0;
+	_spiritsDestroyed = 0;
+	_spiritsMeter = 32;
 
 	if (_useRockTravel) // Enable cheat
 		setGameBit(k8bitGameBitTravelRock);
@@ -273,6 +277,35 @@ void CastleEngine::drawInfoMenu() {
 	pauseToken.clear();
 	g_system->lockMouse(true);
 	g_system->showMouse(false);
+}
+
+void CastleEngine::executeMakeInvisible(FCLInstruction &instruction) {
+	uint16 objectID = 0;
+	uint16 areaID = _currentArea->getAreaID();
+
+	if (instruction._destination > 0) {
+		objectID = instruction._destination;
+		areaID = instruction._source;
+	} else {
+		objectID = instruction._source;
+	}
+
+	debugC(1, kFreescapeDebugCode, "Making obj %d invisible in area %d!", objectID, areaID);
+	if (_areaMap.contains(areaID)) {
+		Object *obj = _areaMap[areaID]->objectWithID(objectID);
+		if (!obj && isCastle())
+			return; // No side effects
+		assert(obj); // We assume the object was there
+
+		if (!obj->isInvisible() && obj->getType() == kSensorType && isCastle()) {
+			_spiritsDestroyed++;
+		}
+
+		obj->makeInvisible();
+	} else {
+		assert(isDOS() && isDemo()); // Should only happen in the DOS demo
+	}
+
 }
 
 void CastleEngine::executePrint(FCLInstruction &instruction) {
