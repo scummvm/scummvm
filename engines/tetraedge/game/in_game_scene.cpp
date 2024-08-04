@@ -665,7 +665,7 @@ TeVector2f32 InGameScene::layerSize() {
 	return TeVector2f32(sz.x(), sz.y());
 }
 
-bool InGameScene::load(const Common::FSNode &sceneNode) {
+bool InGameScene::load(const Common::Path &scenePath) {
 	// Syberia 1 has loadActZones function contents inline.
 	loadActZones();
 
@@ -683,13 +683,13 @@ bool InGameScene::load(const Common::FSNode &sceneNode) {
 	if (Common::File::exists(lightsPath))
 		loadLights(lightsPath);
 
-	if (!sceneNode.isReadable())
+	if (!Common::File::exists(scenePath))
 		return false;
 
 	close();
-	_loadedPath = sceneNode.getParent().getPath();
+	_loadedPath = scenePath.getParent();
 	Common::File scenefile;
-	if (!scenefile.open(sceneNode))
+	if (!scenefile.open(scenePath))
 		return false;
 
 	uint32 ncameras = scenefile.readUint32LE();

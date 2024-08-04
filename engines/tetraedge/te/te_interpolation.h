@@ -33,7 +33,7 @@ public:
 	TeInterpolation();
 
 	void load(Common::ReadStream &stream);
-	void load(Common::FSNode &node);
+	void load(Common::Path &path);
 
 	// Note: this function is not in the original but simplifies
 	// the code for TeCurveAnim2 a lot.

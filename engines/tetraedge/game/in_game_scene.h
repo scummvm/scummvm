@@ -181,7 +181,7 @@ public:
 	bool isObjectBlocking(const Common::String &name);
 	TeVector2f32 layerSize();
 
-	virtual bool load(const Common::FSNode &node) override;
+	virtual bool load(const Common::Path &path) override;
 	void loadBackground(const Common::Path &node);
 	bool loadBillboard(const Common::String &name);
 	void loadBlockers();

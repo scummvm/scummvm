@@ -503,7 +503,7 @@ bool SyberiaGame::initWarp(const Common::String &zone, const Common::String &sce
 	geomPath = core->findFile(geomPath);
 	if (Common::File::exists(geomPath)) {
 		// Syberia 1, load geom bin
-		_scene.load(core->convertPathToFSNode(geomPath));
+		_scene.load(geomPath);
 	} else {
 		// Syberia 2, load from xml
 		_scene.loadXml(zone, scene);
