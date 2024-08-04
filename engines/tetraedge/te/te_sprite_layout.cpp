@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "common/file.h"
 
 #include "tetraedge/tetraedge.h"
@@ -83,8 +82,7 @@ bool TeSpriteLayout::load(const Common::Path &path) {
 	}
 
 	TeCore *core = g_engine->getCore();
-	const Common::FSNode gameRoot(ConfMan.getPath("path"));
-	Common::FSNode spriteNode(gameRoot.getChild("Resources").getPath().joinInPlace(path));
+	Common::FSNode spriteNode = core->getFSNode(path);
 	Common::Path spritePath(path);
 
 	// The path can point to a single file, or a folder with files

@@ -38,7 +38,7 @@
 
 namespace Tetraedge {
 
-TeCore::TeCore() : _loc(nullptr), _coreNotReady(true) {
+TeCore::TeCore() : _loc(nullptr), _coreNotReady(true), _resourcesRoot("") {
 	create();
 }
 
@@ -61,6 +61,21 @@ void TeCore::create() {
 	_coreNotReady = false;
 	_activityTrackingTimer.alarmSignal().add(this, &TeCore::onActivityTrackingAlarm);
 	warning("TODO: TeCore::create: Finish implementing me.");
+
+	const Common::FSNode gameRoot(ConfMan.getPath("path"));
+	if (!gameRoot.isDirectory())
+		error("Game directory should be a directory");
+	const Common::FSNode resNode = (g_engine->getGamePlatform() == Common::kPlatformMacintosh
+										? gameRoot.getChild("Resources")
+										: gameRoot);
+	if (!resNode.isDirectory())
+		error("Resources directory should exist in game");
+
+	_resourcesRoot = Common::FSDirectory(resNode, 5, false, false, true);
+}
+
+Common::FSNode TeCore::getFSNode(const Common::Path &path) const {
+	return Common::FSNode(Common::Path(_resourcesRoot.getFSNode().getPath()).join(path));
 }
 
 TeICodec *TeCore::createVideoCodec(const Common::String &extn) {

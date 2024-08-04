@@ -59,6 +59,7 @@ public:
 	// adds things like "PC-MacOSX" to the path, and there is not clear logic
 	// to them, so here we are.
 	Common::Path findFile(const Common::Path &path) const;
+	Common::FSNode getFSNode(const Common::Path &path) const;
 
 	bool _coreNotReady;
 
@@ -66,6 +67,7 @@ private:
 	TeILoc *_loc;
 
 	Common::HashMap<Common::String, Common::String, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> _fileSystemFlags;
+	Common::FSDirectory _resourcesRoot;
 
 	TeTimer _activityTrackingTimer;
 };
