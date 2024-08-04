@@ -1207,8 +1207,8 @@ template <typename T> void scale2x(byte *dst, const byte *src, int pitch, int w,
 }
 
 UpscaledGfxDriver::UpscaledGfxDriver(uint16 screenWidth, uint16 screenHeight, uint16 textAlignX, bool scaleCursor, bool rgbRendering) :
-	GfxDefaultDriver(screenWidth << 1, screenHeight << 1, rgbRendering), _textAlignX(textAlignX), _scaleCursor(scaleCursor),
-	_scaledBitmap(nullptr), _renderScaled(nullptr), _renderGlyph(nullptr), _fixedTextColor(-1) {
+	GfxDefaultDriver(screenWidth << 1, screenHeight << 1, rgbRendering), _textAlignX(textAlignX), _scaleCursor(scaleCursor), _needCursorBuffer(false),
+	_scaledBitmap(nullptr), _renderScaled(nullptr), _renderGlyph(nullptr), _fixedTextColor(-1), _cursorWidth(0), _cursorHeight(0) {
 	_virtualW = screenWidth;
 	_virtualH = screenHeight;
 }
@@ -1245,9 +1245,6 @@ void UpscaledGfxDriver::initScreen(const Graphics::PixelFormat *format) {
 	assert((_srcPixelSize >> 1) < ARRAYSIZE(scaledRenderProcs));
 	_renderScaled = scaledRenderProcs[_srcPixelSize >> 1];
 	_renderGlyph = &renderGlyph;
-
-	if (!_compositeBuffer && _scaleCursor) // We need at least a small buffer for the scaled cursor
-		_compositeBuffer = new byte[40 * 40 * _srcPixelSize]();
 }
 
 void UpscaledGfxDriver::setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod *palMods, const byte *palModMapping) {
@@ -1273,6 +1270,7 @@ void UpscaledGfxDriver::copyRectToScreen(const byte *src, int srcX, int srcY, in
 void UpscaledGfxDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
 	GFXDRV_ASSERT_READY;
 	if (_scaleCursor) {
+		adjustCursorBuffer(w << 1, h << 1);
 		scale2x<byte>(_compositeBuffer, reinterpret_cast<const byte*>(cursor), w, w, h);
 		CursorMan.replaceCursor(_compositeBuffer, w << 1, h << 1, hotspotX << 1, hotspotY << 1, keycolor);
 	} else {
@@ -1314,6 +1312,21 @@ void UpscaledGfxDriver::updateScreen(int destX, int destY, int w, int h, const P
 	}
 
 	g_system->copyRectToScreen(buff, pitch, destX, destY, w, h);
+}
+
+void UpscaledGfxDriver::adjustCursorBuffer(uint16 newWidth, uint16 newHeight) {
+	// For configs which need/have the composite buffer for other purposes, we can skip this.
+	if (!_compositeBuffer)
+		_needCursorBuffer = true;
+	else if (!_needCursorBuffer)
+		return;
+
+	if (_cursorWidth * _cursorHeight < newWidth * newHeight) {
+		delete[] _compositeBuffer;
+		_compositeBuffer = new byte[newWidth * newHeight * _srcPixelSize]();
+		_cursorWidth = newWidth;
+		_cursorHeight = newHeight;
+	}
 }
 
 PC98Gfx16ColorsDriver::PC98Gfx16ColorsDriver(int textAlignX, bool cursorScaleWidth, bool cursorScaleHeight, SjisFontStyle sjisFontStyle, int sjisTextModeColor, bool rgbRendering, bool needsUnditheringPalette) :
@@ -1439,9 +1452,6 @@ void renderPC98GlyphSpecial(byte *dst, int dstPitch, const byte *src, int srcPit
 void PC98Gfx16ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
 	UpscaledGfxDriver::initScreen(format);
 
-	if (!_compositeBuffer && _cursorScaleHeightOnly) // We need at least a small buffer for the scaled cursor
-		_compositeBuffer = new byte[40 * 40 * _srcPixelSize]();
-
 	assert(_convPalette);
 	GfxDefaultDriver::setPalette(_convPalette, 0, 256, true, nullptr, nullptr);
 
@@ -1468,6 +1478,7 @@ void PC98Gfx16ColorsDriver::replaceCursor(const void *cursor, uint w, uint h, in
 	}
 
 	// Special case for PQ2 which scales the cursor height (but not the width)
+	adjustCursorBuffer(w, h << 1);
 	const byte *s = reinterpret_cast<const byte*>(cursor);
 	byte *d = _compositeBuffer;
 
@@ -1523,8 +1534,6 @@ void pc98SimpleDither(byte *dst, const byte *src, int pitch, int w, int h) {
 
 void SCI0_PC98Gfx8ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
 	UpscaledGfxDriver::initScreen(format);
-	if (!_compositeBuffer) // We need at least a small buffer for the cursor
-		_compositeBuffer = new byte[40 * 40 * _srcPixelSize]();
 	_renderScaled = &pc98SimpleDither;
 	if (_fontStyle == kFontStyleFat)
 		_renderGlyph = &renderPC98GlyphFat;
@@ -1534,6 +1543,7 @@ void SCI0_PC98Gfx8ColorsDriver::initScreen(const Graphics::PixelFormat *format) 
 
 void SCI0_PC98Gfx8ColorsDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
 	GFXDRV_ASSERT_READY;
+	adjustCursorBuffer(w, _cursorScaleHeightOnly ? h << 1 : h);
 	const byte *s = reinterpret_cast<const byte*>(cursor);
 	byte *d = _compositeBuffer;
 	uint32 newKeyColor = 0xFF;
@@ -1566,7 +1576,7 @@ void SCI0_PC98Gfx8ColorsDriver::replaceCursor(const void *cursor, uint w, uint h
 
 const char *SCI0_PC98Gfx8ColorsDriver::_driverFiles[2] = { "9801V8M.DRV", "9801VID.DRV" };
 
-SCI1_PC98Gfx8ColorsDriver::SCI1_PC98Gfx8ColorsDriver(bool rgbRendering) : UpscaledGfxDriver(320, 200, 0, true, rgbRendering), _ditheringTable(nullptr), _convPalette(nullptr) {
+SCI1_PC98Gfx8ColorsDriver::SCI1_PC98Gfx8ColorsDriver(bool rgbRendering) : UpscaledGfxDriver(320, 200, 1, true, rgbRendering), _ditheringTable(nullptr), _convPalette(nullptr) {
 	Common::File drv;
 	if (!drv.open(_driverFile))
 		error("SCI1_PC98Gfx8ColorsDriver: Failed to open '%s'", _driverFile);
@@ -1678,9 +1688,6 @@ void renderPlanarMatrix(byte *dst, const byte *src, int pitch, int w, int h, con
 void SCI1_PC98Gfx8ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
 	UpscaledGfxDriver::initScreen(format);
 
-	if (!_compositeBuffer) // We need at least a small buffer for the cursor
-		_compositeBuffer = new byte[40 * 40 * _srcPixelSize]();
-
 	// Only needed for SCI1 and for RGB rendering. For 16 colors games the base class driver will usually not create this.
 	if (_currentBitmap == nullptr) {
 		_currentBitmap = new byte[_virtualW * _virtualH]();
@@ -1712,6 +1719,7 @@ void SCI1_PC98Gfx8ColorsDriver::copyRectToScreen(const byte *src, int srcX, int 
 
 void SCI1_PC98Gfx8ColorsDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
 	GFXDRV_ASSERT_READY;
+	adjustCursorBuffer(w << 1, h << 1);
 	const byte *s = reinterpret_cast<const byte*>(cursor);
 	byte *d1 = _compositeBuffer;
 	uint32 newKeyColor = 0xFF;

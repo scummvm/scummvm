@@ -247,6 +247,7 @@ public:
 	bool driverBasedTextRendering() const override { return true; }
 protected:
 	void updateScreen(int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping);
+	void adjustCursorBuffer(uint16 newWidth, uint16 newHeight);
 	typedef void (*GlyphRenderProc)(byte*, int, const byte*, int, int, int, int, int);
 	GlyphRenderProc _renderGlyph;
 	typedef void (*ScaledRenderProc)(byte*, const byte*, int, int, int);
@@ -256,6 +257,9 @@ protected:
 	byte *_scaledBitmap;
 private:
 	const bool _scaleCursor;
+	uint16 _cursorWidth;
+	uint16 _cursorHeight;
+	bool _needCursorBuffer;
 };
 
 class PC98Gfx16ColorsDriver final : public UpscaledGfxDriver {
