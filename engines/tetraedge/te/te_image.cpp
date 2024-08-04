@@ -104,7 +104,7 @@ bool TeImage::isExtensionSupported(const Common::Path &path) {
 bool TeImage::load(const Common::Path &path) {
 	TeCore *core = g_engine->getCore();
 	TeICodec *codec = core->createVideoCodec(path);
-	if (!Common::File::exists(path) || !codec->load(core->convertPathToFSNode(path))) {
+	if (!Common::File::exists(path) || !codec->load(path)) {
 		warning("TeImage::load: Failed to load %s.", path.toString(Common::Path::kNativeSeparator).c_str());
 		delete codec;
 		return false;

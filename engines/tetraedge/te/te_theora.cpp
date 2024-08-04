@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/file.h"
+
 #include "video/theora_decoder.h"
 
 #include "tetraedge/te/te_theora.h"
@@ -38,9 +40,11 @@ bool TeTheora::matchExtension(const Common::String &extn) {
 	return extn == "ogv";
 }
 
-bool TeTheora::load(const Common::FSNode &node) {
-	_loadedNode = node;
-	if (!_decoder->loadStream(node.createReadStream()))
+bool TeTheora::load(const Common::Path &path) {
+	Common::File *theoraFile = new Common::File();
+	theoraFile->open(path);
+	_loadedPath = path;
+	if (!_decoder->loadStream(theoraFile))
 		return false;
 	_decoder->setOutputPixelFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 	return true;
@@ -104,10 +108,10 @@ bool TeTheora::update(uint i, TeImage &imgout) {
 	if (!_decoder->isPlaying())
 		_decoder->start();
 
-	if (_decoder->getCurFrame() > (int)i && _loadedNode.isReadable()) {
+	if (_decoder->getCurFrame() > (int)i && Common::File::exists(_loadedPath)) {
 		// rewind.. no good way to do that, but it should
 		// only happen on loop.
-		load(_loadedNode);
+		load(_loadedPath);
 		_decoder->start();
 	}
 
@@ -121,9 +125,9 @@ bool TeTheora::update(uint i, TeImage &imgout) {
 		//debug("TeTheora: %s %ld", _path.toString().c_str(), i);
 		imgout.copyFrom(*frame);
 		return true;
-	} else if (_hitEnd && _loadedNode.isReadable()) {
+	} else if (_hitEnd && Common::File::exists(_loadedPath)) {
 		// Loop to the start.
-		load(_loadedNode);
+		load(_loadedPath);
 		frame = _decoder->decodeNextFrame();
 		if (frame) {
 			imgout.copyFrom(*frame);

@@ -37,7 +37,7 @@ public:
 	TeImagesSequence();
 	virtual ~TeImagesSequence();
 
-	virtual bool load(const Common::FSNode &node) override;
+	virtual bool load(const Common::Path &path) override;
 	virtual uint width() override { return _width; }
 	virtual uint height() override { return _height; }
 	virtual int nbFrames() override { return _files.size(); }

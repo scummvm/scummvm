@@ -82,7 +82,7 @@ bool TeTiledSurface::load(const Common::Path &path) {
 
 		texture = new TeTiledTexture();
 
-		if (_codec->load(core->convertPathToFSNode(path))) {
+		if (_codec->load(path)) {
 			texture->setAccessName(ttPath);
 			resmgr->addResource(texture.get());
 			_imgFormat = _codec->imageFormat();
