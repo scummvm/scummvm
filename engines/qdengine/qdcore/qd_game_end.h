@@ -63,7 +63,7 @@ private:
 	/**
 	Если строка пустая - будет выход в main menu.
 	*/
-	std::string _interface_screen;
+	Common::String _interface_screen;
 };
 
 } // namespace QDEngine

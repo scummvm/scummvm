@@ -117,7 +117,7 @@ int engineMain() {
 	SearchMan.listMatchingMembers(files, "*.qml");
 	Common::ArchiveMemberPtr p = files.front();
 	Common::String firstFileName;
-	std::string script_name;
+	Common::String script_name;
 
 	if (p) {
 		firstFileName = p->getFileName();

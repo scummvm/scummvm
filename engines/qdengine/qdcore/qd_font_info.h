@@ -83,7 +83,7 @@ private:
 	//! Тип шрифта.
 	int _type;
 	//! Файл шрифта (*.tga).
-	std::string _font_file_name;
+	Common::String _font_file_name;
 	//! Сам шрифт
 	grFont *_font;
 };

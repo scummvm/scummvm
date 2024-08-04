@@ -1008,8 +1008,7 @@ bool grDispatcher::DrawParsedText(int x, int y, int sx, int sy, uint32 color, co
 			if (skipToNextLine)
 				break;
 
-			std::string str;
-			str.assign(it->nl.begin, it->nl.end - it->nl.begin);
+			Common::String str(it->nl.begin, it->nl.end - it->nl.begin);
 			DrawText(cur_x, y, color, str.c_str(), 0, 0, font);
 
 			//int ssx = TextWidth(str.c_str(), 0, font);
