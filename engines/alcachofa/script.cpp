@@ -414,7 +414,7 @@ private:
 		switch (task) {
 		// sound/video
 		case ScriptKernelTask::PlayVideo:
-			warning("STUB KERNEL CALL: PlayVideo");
+			g_engine->playVideo(getNumberArg(0));
 			return TaskReturn::finish(0);
 		case ScriptKernelTask::PlaySound:
 			warning("STUB KERNEL CALL: PlaySound");
