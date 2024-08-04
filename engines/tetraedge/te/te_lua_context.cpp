@@ -142,7 +142,7 @@ enum TeLuaSaveVarType {
 	String = 4
 };
 
-#define TETRAEDGE_LUA_DEBUG_SAVELOAD
+//#define TETRAEDGE_LUA_DEBUG_SAVELOAD
 
 Common::Error TeLuaContext::syncState(Common::Serializer &s) {
 	// Save/Load globals.  The format of saving is:
