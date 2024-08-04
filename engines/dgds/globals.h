@@ -135,10 +135,13 @@ class DragonGlobals : public Globals {
 public:
 	DragonGlobals(Clock &clock);
 
+	int16 getArcadeState() const { return _arcadeState; }
+	void setArcadeState(int16 state) { _arcadeState = state; }
+
 private:
 	// Dragon-specific globals
 	int16 _sceneOpcode100Var;
-	int16 _arcadeModeState;
+	int16 _arcadeState;
 	int16 _opcode106EndMinutes;
 	DragonDataTable _table;
 
