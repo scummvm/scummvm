@@ -123,7 +123,7 @@ void DocumentsBrowser::loadZoomed() {
 }
 
 void DocumentsBrowser::loadXMLFile(const Common::Path &path) {
-	Common::Path xmlPath = g_engine->getCore()->findFileNew(path);
+	Common::Path xmlPath = g_engine->getCore()->findFile(path);
 	Common::File xmlfile;
 	xmlfile.open(xmlPath);
 	int64 fileLen = xmlfile.size();
@@ -306,9 +306,9 @@ void DocumentsBrowser::showDocument(const Common::String &docName, int startPage
 	TeCore *core = g_engine->getCore();
 	const char *pathPattern = g_engine->gameIsAmerzone() ? "DocumentsBrowser/Documents/%s_zoomed_%d" : "DocumentsBrowser/Documents/Documents/%s_zoomed_%d";
 	const Common::Path docPathBase(Common::String::format(pathPattern, docName.c_str(), (int)startPage));
-	Common::Path docPath = core->findFileNew(docPathBase.append(".png"));
+	Common::Path docPath = core->findFile(docPathBase.append(".png"));
 	if (!Common::File::exists(docPath)) {
-		docPath = core->findFileNew(docPathBase.append(".jpg"));
+		docPath = core->findFile(docPathBase.append(".jpg"));
 		if (!Common::File::exists(docPath)) {
 			// Probably the end of the doc
 			if (startPage == 0)
@@ -323,7 +323,7 @@ void DocumentsBrowser::showDocument(const Common::String &docName, int startPage
 	sprite->load(docPath);
 	TeVector2s32 spriteSize = sprite->_tiledSurfacePtr->tiledTexture()->totalSize();
 
-	Common::Path luaPath = core->findFileNew(docPathBase.append(".lua"));
+	Common::Path luaPath = core->findFile(docPathBase.append(".lua"));
 	if (Common::File::exists(luaPath)) {
 		_zoomedDocGui.load(luaPath);
 		sprite->addChild(_zoomedDocGui.layoutChecked("root"));

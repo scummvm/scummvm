@@ -124,7 +124,7 @@ bool AmerzoneGame::changeWarp(const Common::String &rawZone, const Common::Strin
 
 	dotpos = sceneXml.rfind('.');
 	Common::String sceneLua = sceneXml.substr(0, dotpos) + ".lua";
-	_luaScript.load(core->findFileNew(zone.getParent().appendComponent(sceneLua)));
+	_luaScript.load(core->findFile(zone.getParent().appendComponent(sceneLua)));
 	_luaScript.execute();
 	_luaScript.execute("OnWarpEnter");
 	if (fadeFlag) {

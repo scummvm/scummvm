@@ -182,7 +182,7 @@ void TeFreeMoveZone::buildAStar() {
 }
 
 bool TeFreeMoveZone::loadAStar(const Common::Path &path, const TeVector2s32 &size) {
-	Common::Path aStarPath = g_engine->getCore()->findFileNew(path);
+	Common::Path aStarPath = g_engine->getCore()->findFile(path);
 	Common::File file;
 	if (!file.open(aStarPath)) {
 		warning("[TeFreeMoveZone::loadAStar] Can't open file : %s.", path.toString(Common::Path::kNativeSeparator).c_str());
@@ -608,7 +608,7 @@ TeActZone *TeFreeMoveZone::isInZone(const TeVector3f32 &pt) {
 bool TeFreeMoveZone::loadBin(const Common::Path &path, const Common::Array<TeBlocker> *blockers,
 		const Common::Array<TeRectBlocker> *rectblockers, const Common::Array<TeActZone> *actzones,
 		const TeVector2f32 &gridSize) {
-	Common::Path binPath = g_engine->getCore()->findFileNew(path);
+	Common::Path binPath = g_engine->getCore()->findFile(path);
 	if (!Common::File::exists(binPath)) {
 		warning("[TeFreeMoveZone::loadBin] Can't open file : %s.", binPath.baseName().c_str());
 		return false;

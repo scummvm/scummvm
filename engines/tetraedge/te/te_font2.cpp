@@ -42,7 +42,7 @@ bool TeFont2::load(const Common::Path &path) {
 		return true; // already open
 
 	TeCore *core = g_engine->getCore();
-	Common::Path fontPath = core->findFileNew(path);
+	Common::Path fontPath = core->findFile(path);
 
 	unload();
 	setAccessName(path);

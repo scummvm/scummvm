@@ -181,7 +181,7 @@ bool TeLuaGUI::load(const Common::Path &subPath) {
 	TeCore *core = g_engine->getCore();
 
 	unload();
-	_scriptPath = core->findFileNew(subPath);
+	_scriptPath = core->findFile(subPath);
 	// Not the same as original, we abstract the search logic a bit.
 	_luaContext.setGlobal("Pixel", 0);
 	_luaContext.setGlobal("Percent", 1);

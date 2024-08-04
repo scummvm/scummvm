@@ -40,7 +40,7 @@ void SplashScreens::enter()	{
 		_entered = true;
 		_splashNo = 0;
 		const char *scriptStr = g_engine->gameIsAmerzone() ? "GUI/PC-MacOSX/Splash0.lua" : "menus/splashes/splash0.lua";
-		Common::Path path = g_engine->getCore()->findFileNew(scriptStr);
+		Common::Path path = g_engine->getCore()->findFile(scriptStr);
 		if (Common::File::exists(path)) {
 			load(path);
 			Application *app = g_engine->getApplication();
@@ -72,7 +72,7 @@ bool SplashScreens::onAlarm() {
 		return true;
 	}
 
-	Common::Path path = g_engine->getCore()->findFileNew(scriptName);
+	Common::Path path = g_engine->getCore()->findFile(scriptName);
 	if (!Common::File::exists(path)) {
 		onQuitSplash();
 	} else {

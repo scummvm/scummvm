@@ -224,7 +224,7 @@ bool SyberiaGame::changeWarp2(const Common::String &zone, const Common::String &
 	luapath.appendInPlace(scene);
 	luapath.appendInPlace(".lua");
 
-	if (Common::File::exists(g_engine->getCore()->findFileNew(luapath))) {
+	if (Common::File::exists(g_engine->getCore()->findFile(luapath))) {
 		_luaScript.execute("OnLeave");
 		_luaContext.removeGlobal("On");
 		_luaContext.removeGlobal("OnEnter");
@@ -462,11 +462,11 @@ bool SyberiaGame::initWarp(const Common::String &zone, const Common::String &sce
 
 	TeCore *core = g_engine->getCore();
 
-	const Common::Path intLuaPath = core->findFileNew(scenePath.join(Common::String::format("Int%s.lua", scene.c_str())));
-	const Common::Path logicLuaPath = core->findFileNew(scenePath.join(Common::String::format("Logic%s.lua", scene.c_str())));
-	const Common::Path setLuaPath = core->findFileNew(scenePath.join(Common::String::format("Set%s.lua", scene.c_str())));
-	const Common::Path forLuaPath = core->findFileNew(scenePath.join(Common::String::format("For%s.lua", scene.c_str())));
-	const Common::Path markerLuaPath = core->findFileNew(scenePath.join(Common::String::format("Marker%s.lua", scene.c_str())));
+	const Common::Path intLuaPath = core->findFile(scenePath.join(Common::String::format("Int%s.lua", scene.c_str())));
+	const Common::Path logicLuaPath = core->findFile(scenePath.join(Common::String::format("Logic%s.lua", scene.c_str())));
+	const Common::Path setLuaPath = core->findFile(scenePath.join(Common::String::format("Set%s.lua", scene.c_str())));
+	const Common::Path forLuaPath = core->findFile(scenePath.join(Common::String::format("For%s.lua", scene.c_str())));
+	const Common::Path markerLuaPath = core->findFile(scenePath.join(Common::String::format("Marker%s.lua", scene.c_str())));
 
 	bool intLuaExists = Common::File::exists(intLuaPath);
 	bool logicLuaExists = Common::File::exists(logicLuaPath);
@@ -486,7 +486,7 @@ bool SyberiaGame::initWarp(const Common::String &zone, const Common::String &sce
 	if (logicLuaExists) {
 		_luaContext.addBindings(LuaBinds::LuaOpenBinds);
 		_luaScript.attachToContext(&_luaContext);
-		_luaScript.load(core->findFileNew("menus/help/help.lua"));
+		_luaScript.load(core->findFile("menus/help/help.lua"));
 		_luaScript.execute();
 		_luaScript.load(logicLuaPath);
 	}
@@ -500,7 +500,7 @@ bool SyberiaGame::initWarp(const Common::String &zone, const Common::String &sce
 	_scene.hitObjectGui().unload();
 	Common::Path geomPath(Common::String::format("scenes/%s/Geometry%s.bin",
 												 zone.c_str(), zone.c_str()));
-	geomPath = core->findFileNew(geomPath);
+	geomPath = core->findFile(geomPath);
 	if (Common::File::exists(geomPath)) {
 		// Syberia 1, load geom bin
 		_scene.load(core->convertPathToFSNode(geomPath));
@@ -797,7 +797,7 @@ bool SyberiaGame::loadPlayerCharacter(const Common::String &name) {
 
 bool SyberiaGame::loadScene(const Common::String &name) {
 	TeCore *core = g_engine->getCore();
-	_gameEnterScript.load(core->findFileNew("scenes/OnGameEnter.lua"));
+	_gameEnterScript.load(core->findFile("scenes/OnGameEnter.lua"));
 	_gameEnterScript.execute();
 	Character *character = _scene._character;
 	if (character && character->_model->visible()) {
