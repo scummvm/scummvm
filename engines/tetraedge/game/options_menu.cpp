@@ -44,8 +44,15 @@ void OptionsMenu::enter() {
 		app->appSpriteLayout().load("menus/menu.ogv");
 		app->appSpriteLayout().play();
 	}
-	load("menus/options/optionsMenu.lua");
-	_gui2.load("menus/options/tuto.lua");
+
+	if (!g_engine->gameIsAmerzone()) {
+		load("menus/options/optionsMenu.lua");
+		_gui2.load("menus/options/tuto.lua");
+	} else {
+		load("GUI/OptionsMenu.lua");
+		_gui2.load("menus/options/tuto.lua");	// TODO: This is wrong
+	}
+
 	app->frontLayout().addChild(layoutChecked("menu2"));
 	app->frontLayout().addChild(_gui2.buttonLayoutChecked("tuto"));
 	_gui2.buttonLayoutChecked("tuto")->setVisible(false);

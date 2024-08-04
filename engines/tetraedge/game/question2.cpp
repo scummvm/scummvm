@@ -74,7 +74,10 @@ void Question2::load() {
 	setSizeType(RELATIVE_TO_PARENT);
 	const TeVector3f32 usersz = userSize();
 	setSize(TeVector3f32(1.0, 1.0, usersz.z()));
-	_gui.load("menus/answer.lua");
+	if (!g_engine->gameIsAmerzone())
+		_gui.load("menus/answer.lua");
+	else
+		_gui.load("GUI/answer.lua");
 
 	TeButtonLayout *backgroundButton = _gui.buttonLayout("background");
 	if (backgroundButton) {

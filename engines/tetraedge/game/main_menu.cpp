@@ -295,7 +295,10 @@ bool MainMenu::onNewGameButtonValidated() {
 bool MainMenu::onNewGameConfirmed() {
 	// Note: Original game deletes saves here.  Don't do that..
 	_confirmingTuto = true;
-	_tutoConfirm.enter("menus/confirm/confirmTuto.lua", "");
+	if (!g_engine->gameIsAmerzone())
+		_tutoConfirm.enter("menus/confirm/confirmTuto.lua", "");
+	else
+		_tutoConfirm.enter("GUI/ConfirmNewGame.lua", "");
 	onContinueGameButtonValidated();
 	return false;
 }
