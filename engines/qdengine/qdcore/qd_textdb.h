@@ -58,24 +58,20 @@ public:
 	*/
 	bool load(Common::SeekableReadStream *fh, const char *comments_file_name = NULL, bool clear_old_texts = true);
 
-	typedef std::list<std::string> IdList;
-	void getIdList(const char *mask, IdList &idList) const;
-	bool getIdList(IdList &idList) const;
-	bool getRootIdList(IdList &idList) const;
-
 	static qdTextDB &instance();
 
 private:
 
 	struct qdText {
 		qdText(const char *text, const char *snd) : _text(text), _sound(snd) { }
+		qdText() {}
 
 		Common::String _text;
 		Common::String _sound;
 		Common::String _comment;
 	};
 
-	typedef std::unordered_map<std::string, qdText> qdTextMap;
+	typedef Common::HashMap<Common::String, qdText> qdTextMap;
 	qdTextMap _texts;
 };
 

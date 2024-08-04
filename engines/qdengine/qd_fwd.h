@@ -25,7 +25,6 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include <list>
-#include <string>
 #include "common/str.h"
 
 namespace Common {
