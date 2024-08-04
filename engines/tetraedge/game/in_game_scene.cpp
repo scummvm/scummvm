@@ -859,15 +859,14 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 	if (Common::File::exists(lightsPath))
 		loadLights(lightsPath);
 
-	Common::Path pxmlpath = _sceneFileNameBase(zone, scene).joinInPlace("particles.xml");
-	Common::FSNode pnode = g_engine->getCore()->findFile(pxmlpath);
-	if (pnode.isReadable()) {
+	Common::Path pxmlpath = core->findFileNew(_sceneFileNameBase(zone, scene).joinInPlace("particles.xml"));
+	if (Common::File::exists(pxmlpath)) {
 		ParticleXmlParser pparser;
 		pparser._scene = this;
-		if (!pparser.loadFile(pnode))
-			error("InGameScene::loadXml: Can't load %s", pnode.getPath().toString(Common::Path::kNativeSeparator).c_str());
+		if (!pparser.loadFile(pxmlpath))
+			error("InGameScene::loadXml: Can't load %s", pxmlpath.toString(Common::Path::kNativeSeparator).c_str());
 		if (!pparser.parse())
-			error("InGameScene::loadXml: Can't parse %s", pnode.getPath().toString(Common::Path::kNativeSeparator).c_str());
+			error("InGameScene::loadXml: Can't parse %s", pxmlpath.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	TeMatrix4x4 camMatrix = currentCamera() ?
@@ -1079,15 +1078,14 @@ bool InGameScene::loadPlayerCharacter(const Common::String &name) {
 }
 
 bool InGameScene::loadCurve(const Common::String &name) {
-	const Common::Path path = _sceneFileNameBase().joinInPlace(name).appendInPlace(".bin");
 	TeCore *core = g_engine->getCore();
-	Common::FSNode node = core->findFile(path);
-	if (!node.isReadable()) {
+	const Common::Path path = core->findFileNew(_sceneFileNameBase().joinInPlace(name).appendInPlace(".bin"));
+	if (!Common::File::exists(path)) {
 		warning("[InGameScene::loadCurve] Can't open file : %s.", path.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 	TeIntrusivePtr<TeBezierCurve> curve = new TeBezierCurve();
-	curve->loadBin(node);
+	curve->loadBin(path);
 	_bezierCurves.push_back(curve);
 	return true;
 }
@@ -1095,19 +1093,19 @@ bool InGameScene::loadCurve(const Common::String &name) {
 bool InGameScene::loadDynamicLightBloc(const Common::String &name, const Common::String &texture, const Common::String &zone, const Common::String &scene) {
 	const Common::Path pdat = _sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin");
 	const Common::Path ptex = _sceneFileNameBase(zone, scene).joinInPlace(texture);
-	Common::FSNode datnode = g_engine->getCore()->findFile(pdat);
+	Common::Path datPath = g_engine->getCore()->findFileNew(pdat);
 	Common::Path texPath = g_engine->getCore()->findFileNew(ptex);
-	if (!datnode.isReadable()) {
+	if (!Common::File::exists(datPath)) {
 		warning("[InGameScene::loadDynamicLightBloc] Can't open file : %s.", pdat.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
 	Common::File file;
-	file.open(datnode);
+	file.open(datPath);
 
 	TeModel *model = new TeModel();
 	model->setMeshCount(1);
-	model->setName(datnode.getName());
+	model->setName(datPath.baseName());
 
 	// Read position/rotation/scale.
 	model->deserialize(file, *model);
@@ -1153,15 +1151,14 @@ bool InGameScene::loadDynamicLightBloc(const Common::String &name, const Common:
 }
 
 bool InGameScene::loadLight(const Common::String &name, const Common::String &zone, const Common::String &scene) {
-	Common::Path datpath = _sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin");
-	Common::FSNode datnode = g_engine->getCore()->findFile(datpath);
-	if (!datnode.isReadable()) {
-		warning("[InGameScene::loadLight] Can't open file : %s.", datpath.toString(Common::Path::kNativeSeparator).c_str());
+	Common::Path datPath = g_engine->getCore()->findFileNew(_sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin"));
+	if (!Common::File::exists(datPath)) {
+		warning("[InGameScene::loadLight] Can't open file : %s.", datPath.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
 	Common::File file;
-	file.open(datnode);
+	file.open(datPath);
 	SceneLight light;
 	light._name = name;
 	TeVector3f32::deserialize(file, light._v1);
@@ -1175,10 +1172,9 @@ bool InGameScene::loadLight(const Common::String &name, const Common::String &zo
 
 bool InGameScene::loadMask(const Common::String &name, const Common::String &texture, const Common::String &zone, const Common::String &scene) {
 	TeCore *core = g_engine->getCore();
-	Common::Path datPath = _sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin");
-	Common::Path texPath = _sceneFileNameBase(zone, scene).joinInPlace(texture);
-	Common::FSNode datnode = core->findFile(datPath);
-	if (!datnode.isReadable()) {
+	Common::Path datPath = core->findFileNew(_sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin"));
+	Common::Path texPath = core->findFileNew(_sceneFileNameBase(zone, scene).joinInPlace(texture));
+	if (!Common::File::exists(datPath)) {
 		warning("[InGameScene::loadMask] Can't open file : %s.", datPath.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
@@ -1187,7 +1183,7 @@ bool InGameScene::loadMask(const Common::String &name, const Common::String &tex
 	model->setName(name);
 
 	Common::File file;
-	file.open(datnode);
+	file.open(datPath);
 
 	// Load position, rotation, size.
 	Te3DObject2::deserialize(file, *model, false);
@@ -1263,10 +1259,9 @@ bool InGameScene::loadShadowMask(const Common::String &name, const Common::Strin
 }
 
 bool InGameScene::loadShadowReceivingObject(const Common::String &name, const Common::String &zone, const Common::String &scene) {
-	Common::Path datpath = _sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin");
-	Common::FSNode datnode = g_engine->getCore()->findFile(datpath);
-	if (!datnode.isReadable()) {
-		warning("[InGameScene::loadShadowReceivingObject] Can't open file : %s.", datpath.toString(Common::Path::kNativeSeparator).c_str());
+	Common::Path datPath = g_engine->getCore()->findFileNew(_sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin"));
+	if (!Common::File::exists(datPath)) {
+		warning("[InGameScene::loadShadowReceivingObject] Can't open file : %s.", datPath.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 	TeModel *model = new TeModel();
@@ -1274,7 +1269,7 @@ bool InGameScene::loadShadowReceivingObject(const Common::String &name, const Co
 	model->setName(name);
 
 	Common::File file;
-	file.open(datnode);
+	file.open(datPath);
 
 	// Load position, rotation, size.
 	Te3DObject2::deserialize(file, *model, false);
@@ -1308,10 +1303,9 @@ bool InGameScene::loadShadowReceivingObject(const Common::String &name, const Co
 }
 
 bool InGameScene::loadZBufferObject(const Common::String &name, const Common::String &zone, const Common::String &scene) {
-	Common::Path datpath = _sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin");
-	Common::FSNode datnode = g_engine->getCore()->findFile(datpath);
-	if (!datnode.isReadable()) {
-		warning("[InGameScene::loadZBufferObject] Can't open file : %s.", datpath.toString(Common::Path::kNativeSeparator).c_str());
+	Common::Path datPath = g_engine->getCore()->findFileNew(_sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin"));
+	if (!Common::File::exists(datPath)) {
+		warning("[InGameScene::loadZBufferObject] Can't open file : %s.", datPath.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 	TeModel *model = new TeModel();
@@ -1319,7 +1313,7 @@ bool InGameScene::loadZBufferObject(const Common::String &name, const Common::St
 	model->setName(name);
 
 	Common::File file;
-	file.open(datnode);
+	file.open(datPath);
 
 	// Load position, rotation, size.
 	Te3DObject2::deserialize(file, *model, false);

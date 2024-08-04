@@ -224,7 +224,7 @@ bool SyberiaGame::changeWarp2(const Common::String &zone, const Common::String &
 	luapath.appendInPlace(scene);
 	luapath.appendInPlace(".lua");
 
-	if (g_engine->getCore()->findFile(luapath).exists()) {
+	if (Common::File::exists(g_engine->getCore()->findFileNew(luapath))) {
 		_luaScript.execute("OnLeave");
 		_luaContext.removeGlobal("On");
 		_luaContext.removeGlobal("OnEnter");
@@ -500,10 +500,10 @@ bool SyberiaGame::initWarp(const Common::String &zone, const Common::String &sce
 	_scene.hitObjectGui().unload();
 	Common::Path geomPath(Common::String::format("scenes/%s/Geometry%s.bin",
 												 zone.c_str(), zone.c_str()));
-	Common::FSNode geomFile = core->findFile(geomPath);
-	if (geomFile.isReadable()) {
+	geomPath = core->findFileNew(geomPath);
+	if (Common::File::exists(geomPath)) {
 		// Syberia 1, load geom bin
-		_scene.load(geomFile);
+		_scene.load(core->convertPathToFSNode(geomPath));
 	} else {
 		// Syberia 2, load from xml
 		_scene.loadXml(zone, scene);

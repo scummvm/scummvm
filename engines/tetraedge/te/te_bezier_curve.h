@@ -50,7 +50,7 @@ public:
 
 	static void serialize(Common::WriteStream &stream, const TeBezierCurve &curve);
 	static void deserialize(Common::ReadStream &stream, TeBezierCurve &curve);
-	void loadBin(Common::FSNode &node);
+	void loadBin(const Common::Path &path);
 
 	const Common::Array<TeVector3f32> &controlPoints() { return _controlPoints; }
 	uint numIterations() const { return _numIterations; }

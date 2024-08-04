@@ -243,14 +243,14 @@ void TeWarp::load(const Common::Path &path, bool flag) {
 		error("Empty TeWarp path!");
 
 	TeCore *core = g_engine->getCore();
-	Common::FSNode node = core->findFile(_warpPath);
-	if (!node.isReadable()) {
+	Common::Path warpPath = core->findFileNew(_warpPath);
+	if (!Common::File::exists(warpPath)) {
 		error("Couldn't find TeWarp path data '%s'", _warpPath.toString(Common::Path::kNativeSeparator).c_str());
 	}
 
 	if (_preloaded)
 		error("TODO: Support preloading in TeWarp::load");
-	_file.open(node);
+	_file.open(warpPath);
 	char header[7];
 	header[6] = '\0';
 	_file.read(header, 6);
