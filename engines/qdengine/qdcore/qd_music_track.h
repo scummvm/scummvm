@@ -89,7 +89,7 @@ public:
 private:
 
 	//! Имя mp+ файла.
-	std::string _file_name;
+	Common::String _file_name;
 
 	//! Громкость, [0, 256].
 	int _volume;

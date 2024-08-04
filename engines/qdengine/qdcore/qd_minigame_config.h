@@ -122,7 +122,7 @@ public:
 private:
 
 	/// Имя параметра, данные из миниигры запрашиваются по нему.
-	std::string _name;
+	Common::String _name;
 
 	/// Тип данных.
 	data_type_t _data_type;
@@ -143,10 +143,10 @@ private:
 	Для числовых данных - числа в текстовом виде через пробел, для
 	остальных типов - просто строка.
 	*/
-	std::string _data_string;
+	Common::String _data_string;
 
 	/// Комментарий.
-	std::string _comment;
+	Common::String _comment;
 
 	/// false если строка данных не того формата.
 	bool _is_data_valid;

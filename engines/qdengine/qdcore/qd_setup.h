@@ -213,9 +213,9 @@ private:
 	int _splash_time;
 
 	bool _enable_profiler;
-	std::string _profiler_file;
+	Common::String _profiler_file;
 
-	std::string _locale;
+	Common::String _locale;
 
 	bool _minigame_read_only_ini;
 
