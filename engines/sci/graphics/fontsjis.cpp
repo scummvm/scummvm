@@ -21,6 +21,7 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
+#include "sci/graphics/gfxdrivers.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/scifont.h"
 #include "sci/graphics/fontsjis.h"
@@ -31,7 +32,7 @@ GfxFontSjis::GfxFontSjis(GfxScreen *screen, GuiResourceId resourceId)
 	: _resourceId(resourceId), _screen(screen) {
 	assert(resourceId != -1);
 
-	if (!_screen->getUpscaledHires())
+	if (!_screen->getUpscaledHires() && !_screen->gfxDriver()->driverBasedTextRendering())
 		error("I don't want to initialize, when not being in upscaled hires mode");
 
 	_commonFont = Graphics::FontSJIS::createFont(Common::kPlatformPC98);
