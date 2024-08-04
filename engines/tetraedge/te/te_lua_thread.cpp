@@ -257,7 +257,7 @@ void TeLuaThread::applyScriptWorkarounds(char *buf, const Common::String &fileNa
 void TeLuaThread::executeFile(const Common::Path &node) {
 	Common::File scriptFile;
 	if (!scriptFile.open(node)) {
-		warning("TeLuaThread::executeFile: File %s can't be opened", node.getLastComponent().toString().c_str());
+		warning("TeLuaThread::executeFile: File %s can't be opened", node.baseName().c_str());
 		return;
 	}
 
@@ -271,7 +271,7 @@ void TeLuaThread::executeFile(const Common::Path &node) {
 	buf[fileLen] = 0;
 	scriptFile.close();
 
-	applyScriptWorkarounds(buf, node.getLastComponent().toString());
+	applyScriptWorkarounds(buf, node.baseName());
 
 	_lastResumeResult = luaL_loadbuffer(_luaThread, buf, fileLen, node.toString(Common::Path::kNativeSeparator).c_str());
 	if (_lastResumeResult) {

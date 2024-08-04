@@ -36,7 +36,7 @@ void LocFile::load(const Common::Path &path) {
 	const Common::String xmlHeader("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 	Common::File locFile;
 	if (!locFile.open(path))
-		error("LocFile::load: failed to open %s.", path.getLastComponent().toString().c_str());
+		error("LocFile::load: failed to open %s.", path.baseName().c_str());
 
 	int64 fileLen = locFile.size();
 	char *buf = new char[fileLen + 1];
@@ -46,10 +46,10 @@ void LocFile::load(const Common::Path &path) {
 	delete [] buf;
 	locFile.close();
 	if (!parser.loadBuffer((const byte *)xmlContents.c_str(), xmlContents.size()))
-		error("LocFile::load: failed to load %s.", path.getLastComponent().toString().c_str());
+		error("LocFile::load: failed to load %s.", path.baseName().c_str());
 
 	if (!parser.parse())
-		error("LocFile::load: failed to parse %s.", path.getLastComponent().toString().c_str());
+		error("LocFile::load: failed to parse %s.", path.baseName().c_str());
 
 	_map = parser.getMap();
 }
