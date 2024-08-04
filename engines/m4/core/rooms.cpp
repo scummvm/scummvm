@@ -444,6 +444,15 @@ void Sections::pal_game_task() {
 		update_mouse_pos_dialog();
 }
 
+void Sections::camera_shift_xy(int32 x, int32 y) {
+	int32 status;
+	ScreenContext *sc = vmng_screen_find(_G(gameDrawBuff), &status);
+	assert(sc);
+
+	_cameraShiftAmount = -sc->x1 - x + _G(kernel).letter_box_x;
+	_cameraShift_vert_Amount = -sc->y1 - y + _G(kernel).letter_box_y;
+}
+
 /*------------------------------------------------------------------------*/
 
 Room *Section::operator[](uint roomNum) {

@@ -21,6 +21,7 @@
 
 #include "m4/riddle/rooms/section3/room305.h"
 #include "m4/graphics/gr_series.h"
+#include "m4/riddle/riddle.h"
 #include "m4/riddle/vars.h"
 #include "m4/gui/gui_vmng.h"
 
@@ -135,6 +136,7 @@ void Room305::init() {
 	ITEM(_stamp2, "POSTAGE STAMP", "DISPLAY CASE CHEAPEST STAMP");
 	ITEM(_map2, "STICK AND SHELL MAP", "DISPLAY CASE QUARRY STICK MAP");
 	ITEM(_emerald2, "ROMANOV EMERALD", "DISPLAY CASE EMERALD");
+	#undef ITEM
 
 	series_play(_G(flags)[V000] == 1 ? "395 jelly beans" : "jelly beans",
 		0, 0, 3, 7, 0, 100, 0, 0, 49, 61);
@@ -259,7 +261,7 @@ void Room305::pre_parser() {
 		_G(player).waiting_for_walk = false;
 	}
 
-#define SAID(NAME) (player_said(NAME) && inv_player_has(NAME))
+	#define SAID(NAME) (player_said(NAME) && inv_player_has(NAME))
 	if (SAID("SHRUNKEN HEAD") || SAID("INCENSE BURNER") ||
 			SAID("CRYSTAL SKULL") || SAID("CRYSTAL SKULL)") ||
 			SAID("WHALE BONE HORN") || SAID("WHEELED TOY") ||
@@ -273,6 +275,7 @@ void Room305::pre_parser() {
 			_G(player).waiting_for_walk = false;
 		}
 	}
+	#undef SAID
 
 	if (lookFlag && player_said("cartoon"))
 		_G(camera_reacts_to_player) = false;
@@ -295,6 +298,49 @@ void Room305::parser() {
 
 	if (player_said("conv305a")) {
 		conv305a();
+	} else if (player_said("TALK FL")) {
+		g_engine->camera_shift_xy(160, 0);
+		player_update_info();
+		ws_hide_walker();
+
+		_rip6 = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale + 1,
+			0x500, 0, triggerMachineByHashCallbackNegative, "rip");
+		_G(kernel).trigger_mode = KT_DAEMON;
+		sendWSMessage_10000(1, _rip6, 1, 1, 1,
+			_G(flags)[V000] == 1 ? 200 : 300,
+			1, 1, 1, 0);
+
+		_val8 = 0;
+		_conv1 = 0;
+		_G(kernel).trigger_mode = KT_PARSE;
+		player_set_commands_allowed(false);
+
+		_rip5 = series_show("safari shadow 2", 0xf00, 0, -1, -1, 0,
+			_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+		conv_load("conv305a", 10, 10, 747);
+		conv_export_value_curr(_G(flags)[V088], 0);
+		conv_export_value_curr(_G(flags)[V089], 1);
+		conv_export_value_curr(
+			getNumKeyItemsPlaced() != 0 || inv_object_is_here("ROMANOV EMERALD") ? 1 : 0,
+			2);
+		conv_export_value_curr(inv_object_in_scene("TURTLE", 305) ? 1 : 0, 3);
+
+		if (_G(flags)[V090] == 0 || inv_player_has("ROMANOV EMERALD") ||
+			inv_object_is_here("ROMANOV EMERALD")) {
+			conv_export_value_curr(0, 7);
+		} else if (_G(flags)[V090] == 1) {
+			conv_export_value_curr(1, 7);
+		} else if (_G(flags)[V090] == 2) {
+			conv_export_value_curr(2, 7);
+		} else if (_G(flags)[V090] == 3) {
+			conv_export_value_curr(2, 7);
+		}
+
+		conv_export_value_curr(_G(flags)[V141], 8);
+		conv_play();
+		_val7 = 1;
+		_conv1 = 0;
 	}
 	// TODO
 	else {

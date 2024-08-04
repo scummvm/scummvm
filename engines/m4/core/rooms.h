@@ -158,6 +158,7 @@ public:
 	void m4EndScene();
 
 	void pal_game_task();
+	void camera_shift_xy(int32 x, int32 y);
 
 	virtual void global_daemon() = 0;
 	virtual void global_pre_parser() = 0;

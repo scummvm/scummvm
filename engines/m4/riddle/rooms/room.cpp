@@ -369,6 +369,23 @@ void Room::sendWSMessage_1a0000(machine *recv, int trigger) {
 	sendWSMessage(0x1a0000, 0, recv, 0, nullptr, 1);
 }
 
+int Room::getNumKeyItemsPlaced() const {
+	static const char *const ITEMS[11] = {
+		"SHRUNKEN HEAD", "INCENSE BURNER", "CRYSTAL SKULL",
+		"WHALE BONE HORN", "WHEELED TOY", "SILVER BUTTERFLY",
+		"REBUS AMULET", "CHISEL", "GERMAN BANKNOTE",
+		"POSTAGE STAMP", "STICK AND SHELL MAP"
+	};
+
+	int total = 0;
+	for (int i = 0; i < 11; ++i) {
+		if (inv_object_in_scene(ITEMS[i], 305))
+			++total;
+	}
+
+	return total;
+}
+
 } // namespace Rooms
 } // namespace Riddle
 } // namespace M4

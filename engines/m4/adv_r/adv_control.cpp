@@ -28,6 +28,7 @@
 #include "m4/mem/memman.h"
 #include "m4/wscript/ws_machine.h"
 #include "m4/vars.h"
+#include "m4/m4.h"
 
 namespace M4 {
 

@@ -94,6 +94,11 @@ protected:
 	void sendWSMessage_190000(machine *recv, int trigger);
 	void sendWSMessage_1a0000(machine *recv, int trigger);
 
+	/**
+	 * Get the number of key items placed in room 305 (display room)
+	 */
+	int getNumKeyItemsPlaced() const;
+
 public:
 	Room() : M4::Room() {}
 	~Room() override {}

@@ -37,6 +37,7 @@ private:
 	int _val5 = 0;
 	int _val6 = 0;
 	int _val7 = 0;
+	int _val8 = 0;
 	KernelTriggerType _triggerMode1 = KT_DAEMON;
 	KernelTriggerType _triggerMode2 = KT_DAEMON;
 	int _ripMedHigh = 0;

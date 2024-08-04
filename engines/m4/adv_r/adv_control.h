@@ -28,13 +28,13 @@
 
 namespace M4 {
 
-bool kernel_section_startup();
-void player_set_commands_allowed(bool t_or_f);
-void game_pause(bool flag);
-bool this_is_a_walkcode(int32 x, int32 y);
-int32 get_screen_depth(int32 x, int32 y);
-int32 get_screen_color(int32 x, int32 y);
-void update_mouse_pos_dialog();
+extern bool kernel_section_startup();
+extern void player_set_commands_allowed(bool t_or_f);
+extern void game_pause(bool flag);
+extern bool this_is_a_walkcode(int32 x, int32 y);
+extern int32 get_screen_depth(int32 x, int32 y);
+extern int32 get_screen_color(int32 x, int32 y);
+extern void update_mouse_pos_dialog();
 
 } // End of namespace M4
 
