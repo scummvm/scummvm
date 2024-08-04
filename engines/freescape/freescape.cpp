@@ -850,7 +850,7 @@ bool FreescapeEngine::checkIfGameEnded() {
 			insertTemporaryMessage(_forceEndGameMessage, _countdown - 4);
 		_gameStateControl = kFreescapeGameStateEnd;
 	}
-	return false; // TODO
+	return false;
 }
 
 void FreescapeEngine::setGameBit(int index) {

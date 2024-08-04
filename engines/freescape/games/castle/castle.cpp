@@ -60,6 +60,7 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_numberKeys = 0;
 	_spiritsDestroyed = 0;
 	_spiritsMeter = 32;
+	_spiritsToKill = 26;
 }
 
 CastleEngine::~CastleEngine() {
@@ -133,9 +134,14 @@ void CastleEngine::initGameState() {
 	_numberKeys = 0;
 	_spiritsDestroyed = 0;
 	_spiritsMeter = 32;
+	_spiritsMeterMax = 64;
 
 	if (_useRockTravel) // Enable cheat
 		setGameBit(k8bitGameBitTravelRock);
+}
+
+bool CastleEngine::checkIfGameEnded() {
+	return FreescapeEngine::checkIfGameEnded();
 }
 
 void CastleEngine::endGame() {
@@ -661,6 +667,16 @@ void CastleEngine::updateTimeVariables() {
 		_gameStateVars[32] = 0;
 		_numberKeys++;
 	}
+
+	int seconds, minutes, hours;
+	getTimeFromCountdown(seconds, minutes, hours);
+	if (_lastMinute != minutes / 2) {
+		_lastMinute = minutes / 2;
+		_spiritsMeter++;
+		_spiritsMeterPosition = _spiritsMeter * (_spiritsToKill - _spiritsDestroyed) / _spiritsToKill;
+		if (_spiritsMeterPosition >= _spiritsMeterMax)
+			_countdown = -1;
+	}
 }
 
 void CastleEngine::borderScreen() {
@@ -759,11 +775,15 @@ void CastleEngine::selectCharacterScreen() {
 
 Common::Error CastleEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
 	stream->writeUint32LE(_numberKeys);
+	stream->writeUint32LE(_spiritsMeter);
+	stream->writeUint32LE(_spiritsDestroyed);
 	return Common::kNoError;
 }
 
 Common::Error CastleEngine::loadGameStreamExtended(Common::SeekableReadStream *stream) {
 	_numberKeys = stream->readUint32LE();
+	_spiritsMeter = stream->readUint32LE();
+	_spiritsDestroyed = stream->readUint32LE();
 
 	if (_useRockTravel) // Enable cheat
 		setGameBit(k8bitGameBitTravelRock);

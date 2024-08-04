@@ -49,6 +49,8 @@ public:
 	void checkSensors() override;
 	void updateTimeVariables() override;
 
+	bool checkIfGameEnded() override;
+
 	void executePrint(FCLInstruction &instruction) override;
 	void executeMakeInvisible(FCLInstruction &instruction) override;
 	void gotoArea(uint16 areaID, int entranceID) override;
@@ -70,6 +72,9 @@ public:
 	bool _useRockTravel;
 	int _spiritsDestroyed;
 	int _spiritsMeter;
+	int _spiritsMeterPosition;
+	int _spiritsMeterMax;
+	int _spiritsToKill;
 
 private:
 	Common::SeekableReadStream *decryptFile(const Common::Path &filename);

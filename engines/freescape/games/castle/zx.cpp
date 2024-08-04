@@ -148,6 +148,11 @@ void CastleEngine::loadAssetsZXFullGame() {
 		_conditionSources.remove_at(i);
 	}
 
+	_timeoutMessage = _messagesList[1];
+	// Shield is unused in Castle Master
+	_noEnergyMessage = _messagesList[1];
+	_fallenMessage = _messagesList[4];
+	_crushedMessage = _messagesList[3];
 }
 
 void CastleEngine::drawZXUI(Graphics::Surface *surface) {
