@@ -72,6 +72,8 @@ public:
 	inline Scheduler &scheduler() { return _scheduler; }
 	inline Console &console() { return *_console; }	
 
+	void playVideo(int32 videoId);
+
 	uint32 getFeatures() const;
 
 	/**

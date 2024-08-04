@@ -80,7 +80,7 @@ public:
 			GL_CALL(glDeleteTextures(1, &_handle));
 	}
 
-	virtual void update(const ManagedSurface &surface) {
+	virtual void update(const Surface &surface) {
 		OpenGLFormat format = getOpenGLFormatOf(surface.format);
 		assert(surface.w == size().x && surface.h == size().y);
 		assert(format.isValid());

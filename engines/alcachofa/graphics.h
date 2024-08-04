@@ -62,7 +62,8 @@ public:
 	ITexture(Common::Point size);
 	virtual ~ITexture() = default;
 
-	virtual void update(const Graphics::ManagedSurface &surface) = 0;
+	virtual void update(const Graphics::Surface &surface) = 0;
+	inline void update(const Graphics::ManagedSurface &surface) { update(surface.rawSurface()); }
 
 	inline const Common::Point &size() const { return _size; }
 

@@ -31,6 +31,7 @@
 #include "engines/util.h"
 #include "graphics/paletteman.h"
 #include "graphics/framelimiter.h"
+#include "video/mpegps_decoder.h"
 
 #include "rooms.h"
 #include "script.h"
@@ -97,6 +98,42 @@ Common::Error AlcachofaEngine::run() {
 	}
 
 	return Common::kNoError;
+}
+
+void AlcachofaEngine::playVideo(int32 videoId) {	
+	Video::MPEGPSDecoder decoder;
+	if (!decoder.loadFile(Common::Path(Common::String::format("Data/DATA%02d.BIN", videoId + 1))))
+		error("Could not find video %d", videoId);
+	auto texture = _renderer->createTexture(decoder.getWidth(), decoder.getHeight(), false);
+	decoder.start();
+
+	Common::Event e;
+	while (!decoder.endOfVideo() && !shouldQuit()) {
+		if (decoder.needsUpdate())
+		{
+			auto surface = decoder.decodeNextFrame();
+			if (surface)
+				texture->update(*surface);
+			_renderer->begin();
+			_renderer->setBlendMode(BlendMode::Alpha);
+			_renderer->setLodBias(0.0f);
+			_renderer->setTexture(texture.get());
+			_renderer->quad({}, { (float)g_system->getWidth(), (float)g_system->getHeight() });
+			_renderer->end();
+		}
+
+		_input.nextFrame();
+		while (g_system->getEventManager()->pollEvent(e)) {
+			if (_input.handleEvent(e))
+				continue;
+		}
+		if (_input.wasAnyMouseReleased())
+			break;
+
+		g_system->updateScreen();
+		g_system->delayMillis(decoder.getTimeToNextFrame() / 2);
+	}
+	decoder.stop();
 }
 
 Common::Error AlcachofaEngine::syncGame(Common::Serializer &s) {
