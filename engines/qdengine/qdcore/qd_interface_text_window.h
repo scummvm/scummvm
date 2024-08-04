@@ -222,11 +222,11 @@ private:
 	int _text_set_id;
 	qdScreenTextSet *_text_set;
 
-	std::string _slider_name;
+	Common::String _slider_name;
 	qdInterfaceSlider *_slider;
 
-	std::string _inputString;
-	std::string _inputStringBackup;
+	Common::String _inputString;
+	Common::String _inputStringBackup;
 	qdScreenTextFormat _textFormat;
 	int _inputStringLimit;
 	bool _isEditing;

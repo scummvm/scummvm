@@ -203,7 +203,7 @@ private:
 	//! Превью сэйва.
 	qdInterfaceElementState _thumbnail;
 
-	std::string _save_title;
+	Common::String _save_title;
 
 	//! Опциональная рамка вокруг картинки-превью сэйва.
 	qdInterfaceElementState _frame;

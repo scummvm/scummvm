@@ -281,10 +281,10 @@ private:
 	Vect2f _mouse_click_pos;
 
 	/// имя миниигры, управляющей сценой
-	std::string _minigame_name;
+	Common::String _minigame_name;
 
 	/// используемый для сцены интерфейсный экран
-	std::string _interface_screen_name;
+	Common::String _interface_screen_name;
 
 	uint32 _zone_update_count;
 

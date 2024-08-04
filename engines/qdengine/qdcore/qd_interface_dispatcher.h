@@ -281,20 +281,20 @@ private:
 	ModalScreenMode _modalScreenMode;
 
 	//! Имя экрана с главным меню игры
-	std::string _main_menu_screen_name;
+	Common::String _main_menu_screen_name;
 
 	//! Имена экраноы с внутриигровым интерфейсом.
 	/**
 	Первый экран показывается когда инвентори спрятано, вотрой - когда оно активно.
 	*/
-	std::string _ingame_screen_names[2];
+	Common::String _ingame_screen_names[2];
 
 	/// Экран ввода имени сэйва
-	std::string _save_title_screen_name;
-	std::string _save_title;
+	Common::String _save_title_screen_name;
+	Common::String _save_title;
 
 	//! Экран, вызывающийся при подтверждении перезаписи файла сэйва
-	std::string _save_prompt_screen_name;
+	Common::String _save_prompt_screen_name;
 
 	//! Нужно ли выводить скриншот к сохраненке
 	bool _need_save_screenshot;
