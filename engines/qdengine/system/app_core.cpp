@@ -82,29 +82,6 @@ Common::String change_ext(const char *file_name, const char *new_ext) {
 	return fpath;
 }
 
-std::string path_to_file_name(const std::string &str) {
-	std::string conv_str = str;
-	for (int i = 0; i < conv_str.length(); i++)
-		if ('\\' == conv_str[i])
-			conv_str[i] = '_';
-	return conv_str;
-}
-
-bool relat_path(const char *path) {
-	int len = strlen(path);
-	if (len < 2) return true;
-
-	if (('.' == path[0]) && ('.' == path[1])) return false;
-	if (':' == path[1]) return false;
-
-	return true;
-}
-
-void adjust_dir_end_slash(std::string &str) {
-	if ((str.size() > 0) && ('\\' != str[str.size() - 1]))
-		str = str + '\\';
-}
-
 }; /* namespace app_io */
 
 } // namespace QDEngine
