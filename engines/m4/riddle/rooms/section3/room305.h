@@ -93,6 +93,9 @@ private:
 	machine *_rip6 = nullptr;
 	machine *_openDrawer = nullptr;
 	machine *_openDrawerTreats = nullptr;
+	machine *_machine1 = nullptr;
+	machine *_machine2 = nullptr;
+
 	void setupSign();
 	void setShadow5(bool active);
 
@@ -103,6 +106,8 @@ public:
 	void preload() override;
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms

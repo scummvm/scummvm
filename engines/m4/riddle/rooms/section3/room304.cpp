@@ -392,6 +392,8 @@ void Room304::parser() {
 	} else {
 		return;
 	}
+
+	_G(player).command_ready = false;
 }
 
 void Room304::intrMsg(frac16 myMessage, struct machine *sender) {

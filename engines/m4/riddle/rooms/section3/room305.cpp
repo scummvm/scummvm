@@ -245,6 +245,53 @@ void Room305::init() {
 void Room305::daemon() {
 }
 
+void Room305::pre_parser() {
+	bool lookFlag = player_said_any("look", "look at");
+	bool takeFlag = player_said("take");
+
+	if (_val4 && !(takeFlag && player_said("turtle treats"))
+			&& !(lookFlag && player_said("turtle treats"))) {
+		player_set_commands_allowed(false);
+		Common::strcpy_s(_G(player).verb, "close");
+		Common::strcpy_s(_G(player).noun, "drawer");
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+	}
+
+#define SAID(NAME) (player_said(NAME) && inv_player_has(NAME))
+	if (SAID("SHRUNKEN HEAD") || SAID("INCENSE BURNER") ||
+			SAID("CRYSTAL SKULL") || SAID("CRYSTAL SKULL)") ||
+			SAID("WHALE BONE HORN") || SAID("WHEELED TOY") ||
+			SAID("CHISEL") || SAID("ROMANOV EMERALD") ||
+			SAID("GERMAN BANKNOTE") || SAID("REBUS AMULET") ||
+			SAID("SILVER BUTTERFLY") || SAID("POSTAGE STAMP") ||
+			SAID("STICK AND SHELL MAP")) {
+		if (player_said("DISPLAY CASE")) {
+			_G(player).need_to_walk = false;
+			_G(player).ready_to_walk = true;
+			_G(player).waiting_for_walk = false;
+		}
+	}
+
+	if (lookFlag && player_said("cartoon"))
+		_G(camera_reacts_to_player) = false;
+
+	if (_val5) {
+		_G(camera_reacts_to_player) = true;
+		terminateMachineAndNull(_machine1);
+		terminateMachineAndNull(_machine2);
+		intr_cancel_sentence();
+		_val5 = 0;
+		hotspot_restore_all();
+		interface_show();
+	}
+}
+
+void Room305::parser() {
+
+}
+
 void Room305::setupSign() {
 	if (!inv_object_is_here("SHRUNKEN HEAD")
 			&& !inv_object_is_here("INCENSE BURNER")
