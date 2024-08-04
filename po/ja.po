@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-04 09:50+0000\n"
-"PO-Revision-Date: 2024-07-22 20:43+0000\n"
+"PO-Revision-Date: 2024-08-05 00:43+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -9567,16 +9567,12 @@ msgid "Okay"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:463
-#, fuzzy
-#| msgid "Cancel download"
 msgid "Cancel load"
-msgstr "ダウンロードをキャンセル"
+msgstr "ロード中止"
 
 #: engines/saga/metaengine.cpp:473
-#, fuzzy
-#| msgid "Cancel autosave"
 msgid "Cancel save"
-msgstr "オートセーブをキャンセル"
+msgstr "セーブ中止"
 
 #: engines/saga/music.cpp:98
 #, c-format
@@ -9730,10 +9726,8 @@ msgid "Casio CT-460 / CSM-1"
 msgstr "Casio CT-460 / CSM-1"
 
 #: engines/sci/detection_tables.h:1419 engines/sci/detection_tables.h:1430
-#, fuzzy
-#| msgid "Failed to initialize resources"
 msgid "Game does not contain menu resources"
-msgstr "リソースの初期化に失敗しました"
+msgstr "ゲームにメニューリソースがありません"
 
 #: engines/sci/detection_tables.h:4594
 msgid "This demo uses an unimplemented version of Robot videos"
@@ -10081,12 +10075,12 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1391
 msgid "Music Quality:"
-msgstr ""
+msgstr "音質："
 
 #: engines/scumm/dialogs.cpp:1395
 msgid ""
 "Select music quality. The original lets you choose this from the Game menu."
-msgstr ""
+msgstr "音楽の質を選択。オリジナル版ではゲームメニューから選択します。"
 
 #: engines/scumm/dialogs.cpp:1396
 msgid ""
@@ -10094,33 +10088,32 @@ msgid ""
 "detection and speed tests, but also allows changes through the Game menu to "
 "some degree."
 msgstr ""
+"音楽の質を選択。オリジナル版ではハードの検出とスピードテストにより基本的なセットアップがなされますが、ゲームメニューからもある程度変更できます。"
 
 #: engines/scumm/dialogs.cpp:1483 engines/scumm/dialogs.cpp:1484
 msgid "auto"
-msgstr ""
+msgstr "オート"
 
 #: engines/scumm/dialogs.cpp:1483
 msgid "Low"
-msgstr ""
+msgstr "低"
 
 #: engines/scumm/dialogs.cpp:1483
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:75
-#, fuzzy
-#| msgid "100% - Medium"
 msgid "Medium"
-msgstr "100% - 中"
+msgstr "中"
 
 #: engines/scumm/dialogs.cpp:1483
 msgid "High"
-msgstr ""
+msgstr "高"
 
 #: engines/scumm/dialogs.cpp:1484
 msgid "Good"
-msgstr ""
+msgstr "良"
 
 #: engines/scumm/dialogs.cpp:1484
 msgid "Better"
-msgstr ""
+msgstr "可"
 
 #: engines/scumm/dialogs.cpp:1485
 #, c-format
@@ -10226,11 +10219,11 @@ msgstr "セッションをローカルネットワーク上で発見できるよ
 
 #: engines/scumm/dialogs.cpp:1721
 msgid "Generate random maps"
-msgstr ""
+msgstr "マップをランダム生成"
 
 #: engines/scumm/dialogs.cpp:1721
 msgid "Allow random map generation (Based from Moonbase Console)."
-msgstr ""
+msgstr "ランダムなマップ生成を許可(Moonbase Consoleに基づく)。"
 
 #: engines/scumm/dialogs.cpp:1723
 msgid ""
@@ -10776,27 +10769,21 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:663
 msgid "Run in original 640 x 480 resolution"
-msgstr ""
+msgstr "オリジナル版同様に640×480で実行"
 
 #: engines/scumm/metaengine.cpp:664
 msgid ""
 "This allows more accurate pause/restart banners, but might impact "
 "performance or shader/scaler usage."
-msgstr ""
+msgstr "より正確な一時停止/再起動バナーが可能になりますが、パフォーマンスやシェーダー/スケーラーの使用量に影響する可能性があります。"
 
 #: engines/scumm/metaengine.cpp:671
 msgid "Play simplified music"
 msgstr "簡易再生"
 
 #: engines/scumm/metaengine.cpp:672
-#, fuzzy
-#| msgid ""
-#| "This music was presumably intended for low-end Macs, and uses only one "
-#| "channel."
 msgid "This music was intended for low-end Macs, and uses only one channel."
-msgstr ""
-"この音楽はローエンドなMacでの再生を想定したと思われ、1チャンネルしか使いませ"
-"ん。"
+msgstr "この音楽はローエンドなMacで再生するため、1チャンネルのみ使います。"
 
 #: engines/scumm/metaengine.cpp:680
 msgid "Enable smooth scrolling"
@@ -10959,25 +10946,23 @@ msgstr "セッションを開催、または参加しますか?"
 
 #. I18N: Random map generator for Moonbase Commander
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:55
-#, fuzzy
-#| msgid "Game Options"
 msgid "Random Map Options"
-msgstr "ゲーム設定"
+msgstr "ランダムマップ設定"
 
 #. I18N: Map generator algorthims
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:59
 msgid "Algorithm"
-msgstr ""
+msgstr "アルゴリズム"
 
 #. I18N: Spiff algorthim
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:63
 msgid "Spiff"
-msgstr ""
+msgstr "Spiff"
 
 #. I18N: Katton algorthim
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:65
 msgid "Katton"
-msgstr ""
+msgstr "Katton"
 
 #. I18N: Random algorthim
 #. I18N: Random map size
@@ -10991,10 +10976,8 @@ msgstr ""
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:112
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:124
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:136
-#, fuzzy
-#| msgid "Random seed:"
 msgid "Random"
-msgstr "シード値："
+msgstr "ランダム"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:67
 msgid "Picks the map algorithm randomly."
@@ -12067,14 +12050,12 @@ msgid "Uses 16-color graphics."
 msgstr "16色モードを使用。"
 
 #: engines/vcruise/metaengine.cpp:97
-#, fuzzy
-#| msgid "Prerecorded sounds"
 msgid "Preload sounds"
-msgstr "録音済みサウンド"
+msgstr "サウンドを先行読込"
 
 #: engines/vcruise/metaengine.cpp:98
 msgid "Preload sounds. May improve performance on slow hard drives."
-msgstr ""
+msgstr "サウンドを先行読込。低速なドライブで有効な可能性があります。"
 
 #: engines/vcruise/metaengine.cpp:146
 msgid "Display help screen"
