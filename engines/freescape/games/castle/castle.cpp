@@ -55,6 +55,7 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_option = nullptr;
 	_optionTexture = nullptr;
 	_keysFrame = nullptr;
+	_spiritsMeterIndicatorFrame = nullptr;
 	_menu = nullptr;
 
 	_numberKeys = 0;

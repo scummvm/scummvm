@@ -68,6 +68,7 @@ public:
 	Graphics::Surface *loadFrames(Common::SeekableReadStream *file, Graphics::Surface *surface, int width, int height, uint32 back);
 
 	Graphics::Surface *_keysFrame;
+	Graphics::Surface *_spiritsMeterIndicatorFrame;
 	int _numberKeys;
 	bool _useRockTravel;
 	int _spiritsDestroyed;
