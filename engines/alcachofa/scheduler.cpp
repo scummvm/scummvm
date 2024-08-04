@@ -126,12 +126,12 @@ void Process::debugPrint() {
 
 static void killProcessesForIn(MainCharacterKind characterKind, Array<Process *> &processes, uint firstIndex) {
 	assert(firstIndex <= processes.size());
-	uint count = processes.size() - firstIndex;
-	for (uint i = 0; i < count; i++) {
+	for (uint i = 0; i < processes.size() - firstIndex; i++) {
 		Process **process = &processes[processes.size() - 1 - i];
 		if ((*process)->character() == characterKind || characterKind == MainCharacterKind::None) {
 			delete *process;
 			processes.erase(process);
+			i--; // underflow is fine here
 		}
 	}
 }
