@@ -134,13 +134,13 @@ public:
 private:
 
 	//! Имя файла звука.
-	std::string _sound_file;
+	Common::String _sound_file;
 
 	//! Звук, включаемый событием.
 	const qdSound *_sound;
 
 	//! Имя файла для анимации
-	std::string _animation_file;
+	Common::String _animation_file;
 	//! Флаги для анимации.
 	int _animation_flags;
 

@@ -168,9 +168,9 @@ bool qdInterfaceTextWindow::char_input_handler(int input) {
 	bool ret = __super::char_input_handler(input);
 #endif
 	if (_windowType == WINDOW_EDIT && _isEditing) {
-		if (!_inputStringLimit || _inputString.length() < _inputStringLimit) {
+		if (!_inputStringLimit || _inputString.size() < _inputStringLimit) {
 			if (isprint(input) || input == '_' || input == '-' || input == ' ') {
-				_inputString.insert(_caretPose++, 1, input);
+				_inputString.insertChar(input, _caretPose++);
 				return true;
 			}
 		}
@@ -570,7 +570,7 @@ void qdInterfaceTextWindow::text_redraw() const {
 			break;
 		}
 
-		std::string str = _inputString.substr(0, _caretPose);
+		Common::String str = _inputString.substr(0, _caretPose);
 		if (!str.empty()) {
 			grDispatcher::instance()->DrawAlignedText(x0, ar.y, _text_size.x, _text_size.y, col, str.c_str(), GR_ALIGN_LEFT, 0, 0, font);
 			x0 += grDispatcher::instance()->TextWidth(str.c_str(), 0, font);
@@ -579,7 +579,7 @@ void qdInterfaceTextWindow::text_redraw() const {
 			grDispatcher::instance()->DrawAlignedText(x0, ar.y, _text_size.x, _text_size.y, col, "|", GR_ALIGN_LEFT, 0, 0, font);
 		x0 += grDispatcher::instance()->TextWidth("|", 0, font);
 
-		str = _inputString.substr(_caretPose, std::string::npos);
+		str = _inputString.substr(_caretPose, Common::String::npos);
 		if (!str.empty())
 			grDispatcher::instance()->DrawAlignedText(x0, ar.y, _text_size.x, _text_size.y, col, str.c_str(), GR_ALIGN_LEFT, 0, 0, font);
 	} else {

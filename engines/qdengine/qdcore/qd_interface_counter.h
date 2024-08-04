@@ -104,7 +104,7 @@ private:
 
 	int _digits;
 
-	std::string _counterName;
+	Common::String _counterName;
 	const qdCounter *_counter;
 
 	int _lastValue;

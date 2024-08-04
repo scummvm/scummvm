@@ -145,7 +145,7 @@ private:
 	//! Код события.
 	event_t _event;
 	//! Данные для события.
-	std::string _event_data;
+	Common::String _event_data;
 	//! Равно true, если событие должно происходить до включения анимации.
 	bool _is_before_animation;
 	//! Как событие активируется

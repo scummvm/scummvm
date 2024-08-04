@@ -203,7 +203,7 @@ bool qdInterfaceSave::redraw() const {
 			if (const qdAnimation *p = _thumbnail.animation())
 				p->redraw(r().x, r().y, 0);
 
-		std::string text;
+		Common::String text;
 
 		if (pid->need_show_save_title()) {
 			text = title();

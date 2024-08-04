@@ -516,9 +516,9 @@ bool qdInterfaceDispatcher::handle_event(int event_code, const char *event_data,
 		break;
 	case qdInterfaceEvent::EVENT_BUTTON_STATE:
 		if (_cur_screen && event_data) {
-			std::string str = event_data;
+			Common::String str = event_data;
 			int pos = str.find("::");
-			if (pos != std::string::npos) {
+			if (pos != Common::String::npos) {
 				if (qdInterfaceButton * p = dynamic_cast<qdInterfaceButton * >(_cur_screen->get_element(str.substr(0, pos).c_str()))) {
 					return p->activate_state(str.substr(pos + 2).c_str());
 				}

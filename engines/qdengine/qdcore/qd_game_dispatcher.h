@@ -626,7 +626,7 @@ private:
 
 	qdScreenTextDispatcher _screen_texts;
 
-	std::string _startup_scene;
+	Common::String _startup_scene;
 
 	//! Файл с субтитрами.
 	Common::String _texts_database;
