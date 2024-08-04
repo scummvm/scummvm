@@ -4,6 +4,40 @@
 #include "common/noncopyable.h"
 #include "common/str.h"
 
+
+struct ArrayTestMovable {
+	ArrayTestMovable() : _value(0), _wasMoveConstructed(false), _wasMovedFrom(false) {}
+
+	explicit ArrayTestMovable(int value) : _value(value), _wasMoveConstructed(false), _wasMovedFrom(false) {}
+
+	ArrayTestMovable(const ArrayTestMovable &other)
+		: _value(other._value), _wasMoveConstructed(false), _wasMovedFrom(false) {
+	}
+
+	ArrayTestMovable(ArrayTestMovable &&other) noexcept
+		: _value(other._value), _wasMoveConstructed(true), _wasMovedFrom(false) {
+		other._wasMovedFrom = true;
+	}
+
+	int _value;
+	bool _wasMoveConstructed;
+	bool _wasMovedFrom;
+};
+
+// Hopefully temporary until Common::Pair can be updated to have move constructor/assign operator
+struct ArrayTestMovablePair {
+	ArrayTestMovablePair(ArrayTestMovable &&pFirst, ArrayTestMovable &&pSecond)
+	: first(Common::move(pFirst)), second(Common::move(pSecond)) {
+	}
+
+	ArrayTestMovablePair(const ArrayTestMovable &&pFirst, const ArrayTestMovable &&pSecond)
+		: first(pFirst), second(pSecond) {
+	}
+
+	ArrayTestMovable first;
+	ArrayTestMovable second;
+};
+
 class ArrayTestSuite : public CxxTest::TestSuite
 {
 	public:
@@ -559,5 +593,25 @@ public:
 			delete *iter;
 		}
 	}
+	
+	void test_emplace() {
+		Common::Array<ArrayTestMovablePair> movablePairArray;
+		movablePairArray.emplace_back(ArrayTestMovable(1), ArrayTestMovable(2));
 
+		TS_ASSERT(movablePairArray[0].first._wasMoveConstructed);
+		TS_ASSERT_EQUALS(movablePairArray[0].first._value, 1);
+		TS_ASSERT(movablePairArray[0].second._wasMoveConstructed);
+		TS_ASSERT_EQUALS(movablePairArray[0].second._value, 2);
+	}
+	
+	void test_push_back_move() {
+		ArrayTestMovable movable(3);
+
+		Common::Array<ArrayTestMovable> movableArray;
+		movableArray.push_back(Common::move(movable));
+
+		TS_ASSERT(movable._wasMovedFrom);
+		TS_ASSERT_EQUALS(movableArray[0]._value, 3);
+		TS_ASSERT(movableArray[0]._wasMoveConstructed);
+	}
 };
