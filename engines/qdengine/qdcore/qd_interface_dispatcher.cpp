@@ -28,7 +28,6 @@
 #include "qdengine/parser/xml_tag_buffer.h"
 #include "qdengine/parser/qdscr_parser.h"
 
-#include "qdengine/system/app_core.h"
 #include "qdengine/system/input/mouse_input.h"
 
 #include "qdengine/qdcore/qd_interface_dispatcher.h"
