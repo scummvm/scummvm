@@ -20,11 +20,12 @@
  */
 
 #include "common/file.h"
-#include "common/config-manager.h"
 #include "image/png.h"
 #include "graphics/surface.h"
 #include "graphics/managed_surface.h"
 
+#include "tetraedge/tetraedge.h"
+#include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_images_sequence.h"
 
 namespace Tetraedge {
@@ -49,8 +50,7 @@ static bool compareNodes(const Common::FSNode &left, const Common::FSNode &right
 }
 
 bool TeImagesSequence::load(const Common::Path &directory) {
-	const Common::FSNode gameRoot(ConfMan.getPath("path"));
-	Common::FSNode dir(gameRoot.getChild("Resources").getPath().joinInPlace(directory));
+	Common::FSNode dir = g_engine->getCore()->getFSNode(directory);
 
 	const Common::String path = directory.toString('/');
 	if (!dir.isDirectory()) {
