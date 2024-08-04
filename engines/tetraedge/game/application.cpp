@@ -122,20 +122,20 @@ void Application::create() {
 	TeCore *core = g_engine->getCore();
 	// Cache some fonts
 	if (g_engine->gameIsAmerzone()) {
-		resmgr->getResource<TeFont2>(core->findFileNew("Common/Fonts/Arial_r_10.tef"));
-		resmgr->getResource<TeFont2>(core->findFileNew("Common/Fonts/Arial_r_12.tef"));
-		resmgr->getResource<TeFont2>(core->findFileNew("Common/Fonts/Arial_r_16.tef"));
-		resmgr->getResource<TeFont2>(core->findFileNew("Common/Fonts/Colaborate-Regular_r_16.tef"));
-		resmgr->getResource<TeFont2>(core->findFileNew("Common/Fonts/Colaborate-Regular_r_24.tef"));
-		resmgr->getResource<TeFont2>(core->findFileNew("Common/Fonts/Credits.tef"));
-		resmgr->getResource<TeFont2>(core->findFileNew("Common/Fonts/FontLoadingMenu.tef"));
+		resmgr->getResource<TeFont2>(core->findFile("Common/Fonts/Arial_r_10.tef"));
+		resmgr->getResource<TeFont2>(core->findFile("Common/Fonts/Arial_r_12.tef"));
+		resmgr->getResource<TeFont2>(core->findFile("Common/Fonts/Arial_r_16.tef"));
+		resmgr->getResource<TeFont2>(core->findFile("Common/Fonts/Colaborate-Regular_r_16.tef"));
+		resmgr->getResource<TeFont2>(core->findFile("Common/Fonts/Colaborate-Regular_r_24.tef"));
+		resmgr->getResource<TeFont2>(core->findFile("Common/Fonts/Credits.tef"));
+		resmgr->getResource<TeFont2>(core->findFile("Common/Fonts/FontLoadingMenu.tef"));
 	} else {
-		_fontComic = resmgr->getResource<TeFont3>(core->findFileNew("Common/Fonts/ComicRelief.ttf"));
-		_fontArgh = resmgr->getResource<TeFont3>(core->findFileNew("Common/Fonts/Argh.ttf"));
-		_fontArial = resmgr->getResource<TeFont3>(core->findFileNew("Common/Fonts/arial.ttf"));
-		_fontChaucer = resmgr->getResource<TeFont3>(core->findFileNew("Common/Fonts/CHAUCER.TTF"));
-		_fontColaborate = resmgr->getResource<TeFont3>(core->findFileNew("Common/Fonts/Colaborate-Regular.otf"));
-		_fontProDisplay = resmgr->getResource<TeFont3>(core->findFileNew("Common/Fonts/ProDisplay.ttf"));
+		_fontComic = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/ComicRelief.ttf"));
+		_fontArgh = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/Argh.ttf"));
+		_fontArial = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/arial.ttf"));
+		_fontChaucer = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/CHAUCER.TTF"));
+		_fontColaborate = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/Colaborate-Regular.otf"));
+		_fontProDisplay = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/ProDisplay.ttf"));
 	}
 
 	// The app prebuilds some fonts.. cover letters, numbers, a few accented chars, and punctuation.
@@ -170,7 +170,7 @@ void Application::create() {
 	int i = 0;
 	Common::Path textFilePath;
 	while (i < ARRAYSIZE(allLangs)) {
-		textFilePath = core->findFileNew(textsPath.join(core->language() + ".xml"));
+		textFilePath = core->findFile(textsPath.join(core->language() + ".xml"));
 		if (Common::File::exists(textFilePath))
 			break;
 		core->language(allLangs[i]);

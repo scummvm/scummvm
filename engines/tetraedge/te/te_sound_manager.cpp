@@ -43,7 +43,7 @@ void TeSoundManager::playFreeSound(const Common::Path &path) {
 
 void TeSoundManager::playFreeSound(const Common::Path &path, float vol, const Common::String &channel) {
 	TeCore *core = g_engine->getCore();
-	Common::Path sndPath = core->findFileNew(path);
+	Common::Path sndPath = core->findFile(path);
 
 	Common::File *streamfile = new Common::File();
 	if (!streamfile->open(sndPath)) {

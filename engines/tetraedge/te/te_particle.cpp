@@ -52,7 +52,7 @@ bool TeParticle::loadTexture(const Common::String &filename) {
 	// Path for these textures includes '/' so convert to Path object first.
 	const Common::Path path(filename);
 	_texture = Te3DTexture::makeInstance();
-	return _texture->load(g_engine->getCore()->findFileNew(path));
+	return _texture->load(g_engine->getCore()->findFile(path));
 }
 
 void TeParticle::setOrientation(const TeVector3f32 &orientation) {

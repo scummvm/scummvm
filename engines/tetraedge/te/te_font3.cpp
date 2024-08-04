@@ -56,7 +56,7 @@ Graphics::Font *TeFont3::getAtSize(uint size) {
 
 bool TeFont3::load(const Common::Path &path) {
 	TeCore *core = g_engine->getCore();
-	const Common::Path fontPath = core->findFileNew(path);
+	const Common::Path fontPath = core->findFile(path);
 	if (_loadedPath == fontPath && _fontFile.isOpen())
 		return true; // already open
 

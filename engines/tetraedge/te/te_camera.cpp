@@ -169,7 +169,7 @@ void TeCamera::loadXml(const Common::Path &path) {
 	setName(path.baseName());
 	_projectionMatrixType = 3;
 	TeCore *core = g_engine->getCore();
-	Common::Path cameraPath = core->findFileNew(path);
+	Common::Path cameraPath = core->findFile(path);
 	if (!Common::File::exists(cameraPath)) {
 		//
 		// WORKAROUND: scenes/A3_Village/34015 has Camera34010, not 34015
@@ -179,7 +179,7 @@ void TeCamera::loadXml(const Common::Path &path) {
 		if (pos != Common::String::npos) {
 			spath.replace(pos + 4, 1, "0");
 		}
-		cameraPath = core->findFileNew(Common::Path(spath, '/'));
+		cameraPath = core->findFile(Common::Path(spath, '/'));
 	}
 	if (!Common::File::exists(cameraPath)) {
 		warning("Can't open camera data %s", path.toString(Common::Path::kNativeSeparator).c_str());

@@ -136,7 +136,7 @@ Common::FSNode TeCore::convertPathToFSNode(const Common::Path &path) const {
 	return Common::FSNode(gameRoot.getChild("Resources").getPath().joinInPlace(path));
 }
 
-Common::Path TeCore::findFileNew(const Common::Path &path) const {
+Common::Path TeCore::findFile(const Common::Path &path) const {
 	if (Common::File::exists(path))
 		return path;
 

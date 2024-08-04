@@ -420,7 +420,7 @@ bool Character::loadModel(const Common::String &mname, bool unused) {
 		// Only Syberia 1 has the simple shadow.
 		TeIntrusivePtr<Te3DTexture> shadow = Te3DTexture::makeInstance();
 		TeCore *core = g_engine->getCore();
-		shadow->load(core->findFileNew("models/Textures/simple_shadow_alpha.tga"));
+		shadow->load(core->findFile("models/Textures/simple_shadow_alpha.tga"));
 
 		for (int i = 0; i < 2; i++) {
 			TeModel *pmodel = new TeModel();
@@ -1122,7 +1122,7 @@ Character::Water::Water() {
 	quad[3] = camMatrix.mult3x3(TeVector3f32( 0.1f, 0.0f, -0.1f));
 	const TeQuaternion noRot = TeQuaternion::fromEuler(TeVector3f32(0, 0, 0));
 	TeIntrusivePtr<Te3DTexture> tex = Te3DTexture::makeInstance();
-	tex->load(g_engine->getCore()->findFileNew("texturesIngame/EauOndine1.tga"));
+	tex->load(g_engine->getCore()->findFile("texturesIngame/EauOndine1.tga"));
 	_model->setQuad(tex, quad, TeColor(255, 0, 0, 0));
 	_model->setRotation(noRot);
 	_model->setScale(TeVector3f32(0.5, 0.5, 0.5));

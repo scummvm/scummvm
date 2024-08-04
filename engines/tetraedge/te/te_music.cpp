@@ -191,7 +191,7 @@ void TeMusic::setFilePath(const Common::Path &name) {
 	_rawPath = name;
 	TeCore *core = g_engine->getCore();
 	// Note: original search logic here abstracted away in our version..
-	_filePath = core->findFileNew(name);
+	_filePath = core->findFile(name);
 }
 
 void TeMusic::update() {

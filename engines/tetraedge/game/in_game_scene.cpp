@@ -205,7 +205,7 @@ Billboard *InGameScene::billboard(const Common::String &name) {
 }
 
 bool InGameScene::changeBackground(const Common::Path &name) {
-	Common::Path path = g_engine->getCore()->findFileNew(name);
+	Common::Path path = g_engine->getCore()->findFile(name);
 	if (Common::File::exists(path)) {
 		_bgGui.spriteLayoutChecked("root")->load(path);
 		if (g_engine->gameType() == TetraedgeEngine::kSyberia2)
@@ -679,7 +679,7 @@ bool InGameScene::load(const Common::FSNode &sceneNode) {
 	_shadowLightNo = -1;
 
 	TeCore *core = g_engine->getCore();
-	const Common::Path lightsPath = core->findFileNew(getLightsFileName());
+	const Common::Path lightsPath = core->findFile(getLightsFileName());
 	if (Common::File::exists(lightsPath))
 		loadLights(lightsPath);
 
@@ -805,7 +805,7 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 
 	Common::Path xmlpath = _sceneFileNameBase(zone, scene).joinInPlace("Scene")
 												.appendInPlace(scene).appendInPlace(".xml");
-	Common::Path path = g_engine->getCore()->findFileNew(xmlpath);
+	Common::Path path = g_engine->getCore()->findFile(xmlpath);
 	InGameSceneXmlParser parser(this);
 	parser.setAllowText();
 
@@ -855,11 +855,11 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 	_shadowLightNo = -1;
 
 	TeCore *core = g_engine->getCore();
-	const Common::Path lightsPath = core->findFileNew(getLightsFileName());
+	const Common::Path lightsPath = core->findFile(getLightsFileName());
 	if (Common::File::exists(lightsPath))
 		loadLights(lightsPath);
 
-	Common::Path pxmlpath = core->findFileNew(_sceneFileNameBase(zone, scene).joinInPlace("particles.xml"));
+	Common::Path pxmlpath = core->findFile(_sceneFileNameBase(zone, scene).joinInPlace("particles.xml"));
 	if (Common::File::exists(pxmlpath)) {
 		ParticleXmlParser pparser;
 		pparser._scene = this;
@@ -1024,7 +1024,7 @@ bool InGameScene::loadObjectMaterials(const Common::String &name) {
 			continue;
 
 		Common::Path mpath = _loadedPath.join(name).join(obj._name + ".png");
-		if (img.load(core->findFileNew(mpath))) {
+		if (img.load(core->findFile(mpath))) {
 			Te3DTexture *tex = Te3DTexture::makeInstance();
 			tex->load(img);
 			obj._model->meshes()[0]->defaultMaterial(tex);
@@ -1079,7 +1079,7 @@ bool InGameScene::loadPlayerCharacter(const Common::String &name) {
 
 bool InGameScene::loadCurve(const Common::String &name) {
 	TeCore *core = g_engine->getCore();
-	const Common::Path path = core->findFileNew(_sceneFileNameBase().joinInPlace(name).appendInPlace(".bin"));
+	const Common::Path path = core->findFile(_sceneFileNameBase().joinInPlace(name).appendInPlace(".bin"));
 	if (!Common::File::exists(path)) {
 		warning("[InGameScene::loadCurve] Can't open file : %s.", path.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
@@ -1093,8 +1093,8 @@ bool InGameScene::loadCurve(const Common::String &name) {
 bool InGameScene::loadDynamicLightBloc(const Common::String &name, const Common::String &texture, const Common::String &zone, const Common::String &scene) {
 	const Common::Path pdat = _sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin");
 	const Common::Path ptex = _sceneFileNameBase(zone, scene).joinInPlace(texture);
-	Common::Path datPath = g_engine->getCore()->findFileNew(pdat);
-	Common::Path texPath = g_engine->getCore()->findFileNew(ptex);
+	Common::Path datPath = g_engine->getCore()->findFile(pdat);
+	Common::Path texPath = g_engine->getCore()->findFile(ptex);
 	if (!Common::File::exists(datPath)) {
 		warning("[InGameScene::loadDynamicLightBloc] Can't open file : %s.", pdat.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
@@ -1151,7 +1151,7 @@ bool InGameScene::loadDynamicLightBloc(const Common::String &name, const Common:
 }
 
 bool InGameScene::loadLight(const Common::String &name, const Common::String &zone, const Common::String &scene) {
-	Common::Path datPath = g_engine->getCore()->findFileNew(_sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin"));
+	Common::Path datPath = g_engine->getCore()->findFile(_sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin"));
 	if (!Common::File::exists(datPath)) {
 		warning("[InGameScene::loadLight] Can't open file : %s.", datPath.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
@@ -1172,8 +1172,8 @@ bool InGameScene::loadLight(const Common::String &name, const Common::String &zo
 
 bool InGameScene::loadMask(const Common::String &name, const Common::String &texture, const Common::String &zone, const Common::String &scene) {
 	TeCore *core = g_engine->getCore();
-	Common::Path datPath = core->findFileNew(_sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin"));
-	Common::Path texPath = core->findFileNew(_sceneFileNameBase(zone, scene).joinInPlace(texture));
+	Common::Path datPath = core->findFile(_sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin"));
+	Common::Path texPath = core->findFile(_sceneFileNameBase(zone, scene).joinInPlace(texture));
 	if (!Common::File::exists(datPath)) {
 		warning("[InGameScene::loadMask] Can't open file : %s.", datPath.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
@@ -1221,7 +1221,7 @@ bool InGameScene::loadMask(const Common::String &name, const Common::String &tex
 	}
 
 	file.close();
-	Common::Path texnode = core->findFileNew(texPath);
+	Common::Path texnode = core->findFile(texPath);
 	TeIntrusivePtr<Te3DTexture> tex = Te3DTexture::load2(texnode, !_maskAlpha);
 
 	if (tex) {
@@ -1259,7 +1259,7 @@ bool InGameScene::loadShadowMask(const Common::String &name, const Common::Strin
 }
 
 bool InGameScene::loadShadowReceivingObject(const Common::String &name, const Common::String &zone, const Common::String &scene) {
-	Common::Path datPath = g_engine->getCore()->findFileNew(_sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin"));
+	Common::Path datPath = g_engine->getCore()->findFile(_sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin"));
 	if (!Common::File::exists(datPath)) {
 		warning("[InGameScene::loadShadowReceivingObject] Can't open file : %s.", datPath.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
@@ -1303,7 +1303,7 @@ bool InGameScene::loadShadowReceivingObject(const Common::String &name, const Co
 }
 
 bool InGameScene::loadZBufferObject(const Common::String &name, const Common::String &zone, const Common::String &scene) {
-	Common::Path datPath = g_engine->getCore()->findFileNew(_sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin"));
+	Common::Path datPath = g_engine->getCore()->findFile(_sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin"));
 	if (!Common::File::exists(datPath)) {
 		warning("[InGameScene::loadZBufferObject] Can't open file : %s.", datPath.toString(Common::Path::kNativeSeparator).c_str());
 		return false;

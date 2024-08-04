@@ -243,7 +243,7 @@ void TeWarp::load(const Common::Path &path, bool flag) {
 		error("Empty TeWarp path!");
 
 	TeCore *core = g_engine->getCore();
-	Common::Path warpPath = core->findFileNew(_warpPath);
+	Common::Path warpPath = core->findFile(_warpPath);
 	if (!Common::File::exists(warpPath)) {
 		error("Couldn't find TeWarp path data '%s'", _warpPath.toString(Common::Path::kNativeSeparator).c_str());
 	}

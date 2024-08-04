@@ -82,7 +82,7 @@ bool TeSpriteLayout::load(const Common::Path &path) {
 	}
 
 	TeCore *core = g_engine->getCore();
-	Common::Path spritePath = core->findFileNew(path);
+	Common::Path spritePath = core->findFile(path);
 	Common::FSNode spriteNode = core->convertPathToFSNode(spritePath);
 
 	// The path can point to a single file, or a folder with files

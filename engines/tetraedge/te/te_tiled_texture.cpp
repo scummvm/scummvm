@@ -50,7 +50,7 @@ bool TeTiledTexture::load(const Common::Path &path) {
 	} else {
 		img = new TeImage();
 		TeCore *core = g_engine->getCore();
-		if (!img->load(core->findFileNew(path)))
+		if (!img->load(core->findFile(path)))
 			return false;
 	}
 	load(*img);

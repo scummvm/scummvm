@@ -77,7 +77,7 @@ bool TeSceneWarp::load(const Common::Path &name, TeWarp *warp, bool flag) {
 
 	TeSceneWarpXmlParser parser(this, flag);
 	TeCore *core = g_engine->getCore();
-	Common::Path path = core->findFileNew(name);
+	Common::Path path = core->findFile(name);
 	if (!parser.loadFile(path))
 		error("TeSceneWarp::load: failed to load data from %s", name.toString(Common::Path::kNativeSeparator).c_str());
 	if (!parser.parse())
