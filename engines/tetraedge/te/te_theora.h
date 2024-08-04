@@ -36,7 +36,7 @@ public:
 	TeTheora();
 	virtual ~TeTheora();
 
-	virtual bool load(const Common::FSNode &node) override;
+	virtual bool load(const Common::Path &path) override;
 	virtual uint width() override;
 	virtual uint height() override;
 	virtual int nbFrames() override;
@@ -61,7 +61,7 @@ public:
 private:
 	Video::TheoraDecoder *_decoder;
 
-	Common::FSNode _loadedNode;
+	Common::Path _loadedPath;
 	bool _hitEnd;
 
 };

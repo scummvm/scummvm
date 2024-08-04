@@ -20,6 +20,7 @@
  */
 
 #include "common/file.h"
+#include "common/config-manager.h"
 #include "image/png.h"
 #include "graphics/surface.h"
 #include "graphics/managed_surface.h"
@@ -47,16 +48,19 @@ static bool compareNodes(const Common::FSNode &left, const Common::FSNode &right
 	return left.getPath().toString('/') < right.getPath().toString('/');
 }
 
-bool TeImagesSequence::load(const Common::FSNode &directory) {
-	const Common::String path = directory.getPath().toString('/');
-	if (!directory.isDirectory()) {
-		warning("TeImagesSequence::load:: not a directory %s", directory.getPath().toString(Common::Path::kNativeSeparator).c_str());
+bool TeImagesSequence::load(const Common::Path &directory) {
+	const Common::FSNode gameRoot(ConfMan.getPath("path"));
+	Common::FSNode dir(gameRoot.getChild("Resources").getPath().joinInPlace(directory));
+
+	const Common::String path = directory.toString('/');
+	if (!dir.isDirectory()) {
+		warning("TeImagesSequence::load:: not a directory %s", directory.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
 	Common::FSList children;
-	if (!directory.getChildren(children, Common::FSNode::kListFilesOnly) || children.empty()) {
-		warning("TeImagesSequence::load:: couldn't get children of %s", directory.getPath().toString(Common::Path::kNativeSeparator).c_str());
+	if (!dir.getChildren(children, Common::FSNode::kListFilesOnly) || children.empty()) {
+		warning("TeImagesSequence::load:: couldn't get children of %s", directory.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 

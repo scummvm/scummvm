@@ -131,11 +131,6 @@ bool TeCore::onActivityTrackingAlarm() {
 	error("TODO: Implement TeCore::onActivityTrackingAlarm");
 }
 
-Common::FSNode TeCore::convertPathToFSNode(const Common::Path &path) const {
-	const Common::FSNode gameRoot(ConfMan.getPath("path"));
-	return Common::FSNode(gameRoot.getChild("Resources").getPath().joinInPlace(path));
-}
-
 Common::Path TeCore::findFile(const Common::Path &path) const {
 	if (Common::File::exists(path))
 		return path;
