@@ -125,7 +125,7 @@ int PCSpeaker::readBuffer(int16 *buffer, const int numSamples) {
 			_oscLength = (uint32)(_rate / command.frequency);
 			_oscSamples = 0;
 			// Length is in microseconds.
-			_remainingSamples = (_rate * command.length) / 1000000;
+			_remainingSamples = ((uint64)_rate * (uint64)command.length) / 1000000;
 			_playForever = false;
 			_commandActive = true;
 		}
