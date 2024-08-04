@@ -355,7 +355,7 @@ private:
 	Vect3f _grid_r;
 	Vect2s _grid_size;
 
-	std::string _inventory_name;
+	Common::String _inventory_name;
 
 	qdScreenTransform _current_transform;
 	qdScreenTransform _target_transform;

@@ -294,7 +294,7 @@ private:
 	int _status;
 	bool _is_finished;
 
-	std::string _qda_file;
+	Common::String _qda_file;
 
 	const qdAnimation *_parent;
 
