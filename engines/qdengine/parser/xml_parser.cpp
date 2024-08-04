@@ -30,7 +30,7 @@ namespace QDEngine {
 
 namespace xml {
 
-parser::parser() : _data_pool_position(0), _data_buffer(1024, 0), _cur_level(0), _skip_mode(false), _binary_script(false) {
+parser::parser() : _cur_level(0), _skip_mode(false), _binary_script(false) {
 	_root_tag.set_data(&_data_pool);
 }
 
