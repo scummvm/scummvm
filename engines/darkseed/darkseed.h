@@ -192,12 +192,13 @@ public:
 	void debugTeleportToRoom(int newRoomNumber, int entranceNumber);
 	void showFullscreenPic(const Common::Path &filename);
 	void lookCode(int objNum);
-	void handleObjCollision(int objNum);
+	void handleObjCollision(int targetObjNum);
 	void playCutscene(const Common::String cutsceneId);
 	void playSound(int16 unk, uint8 unk1, int16 unk2);
 	void nextFrame(int nspAminIdx);
 	void stuffPlayer();
 	void genericresponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx);
+	void throwmikeinjail();
 private:
 	void updateAnimation();
 	void advanceAnimationFrame(int nspAminIdx);
@@ -212,10 +213,11 @@ private:
 	void useCode(int objNum);
 	void useCodeGloves(int16 targetObjNum);
 	void useCodeMoney(int16 targetObjNum);
+	void useCodeJournal(int16 actionObjNum, int16 targetObjNum);
+	void useCodeShopItems(int16 actionObjNum, int16 targetObjNum);
 	void useCrowBar(int16 targetObjNum);
 	void getPackageObj(int packageType);
 	void wongame();
-	void getPackage(int state);
 	void printTime();
 	void keeperanim();
 	void sargoanim();

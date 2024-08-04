@@ -1153,7 +1153,7 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 				}
 //				iVar9 = *(int *)((int)otherNspWidthTbl + _player->_frameIdx * 2);
 //				iVar8 = *(int *)((int)&otherNspHeightTbl + _player->_frameIdx * 2);
-				if (otherNspAnimationType_maybe == 0x12) {
+				if (otherNspAnimationType_maybe == 18) {
 					if (_objectVar[22] == 0) {
 						sprite_y_scaling_threshold_maybe = 0xcb;
 					} else if (_objectVar[22] == 1) {
@@ -1170,29 +1170,14 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 					_player->_animations.getSpriteAt(_player->_frameIdx).height,
 					nsp_sprite_scaling_y_position != 0 ? nsp_sprite_scaling_y_position : _player->_position.y);
 
-				if (otherNspAnimationType_maybe == 3) {
-//					uVar1 = _curPlayerSpriteWidth & 0xff;
-//					uVar2 = _curPlayerSpriteHeight_maybe & 0xff;
-//					calculateScaledPlayerSpriteDimensions
-//						(*(undefined2 *)((int)otherNspWidthTbl + (_player->_frameIdx + 1) * 2),
-//						 *(undefined2 *)((int)&otherNspHeightTbl + (_player->_frameIdx + 1) * 2),playerSpriteY_maybe);
-//					if (otherNspAnimationType_maybe == 3) {
-//						uVar3 = ((_curPlayerSpriteWidth & 0xff) + uVar1) / 2;
-//						iVar5 = playerSpriteX_maybe - uVar3;
-//					}
-//					else {
-//						uVar11 = 0;
-//						uVar10 = 1000;
-//						uVar7 = scaledWalkSpeed_maybe._2_2_;
-//						uVar4 = LXMUL@(CONCAT22((undefined2)scaledWalkSpeed_maybe,scaledWalkSpeed_maybe._2_2_),0x2d0000);
-//						uVar3 = LUMOD@(uVar4,uVar7,uVar10,uVar11);
-//						iVar5 = playerSpriteX_maybe - uVar3;
-//					}
-//					addSpriteToDraw(iVar5,playerSpriteY_maybe - uVar2,iVar9,iVar8,
-//									*(undefined2 *)((int)otherNspSpritePtr + _player->_frameIdx * 4),
-//									*(undefined2 *)((int)&otherNspSpritePtr[0].Offset + _player->_frameIdx * 4),
-//									240 - playerSpriteY_maybe,uVar1,uVar2,uVar3 & 0xff00);
-//					bVar6 = extraout_AH_01;
+				if (otherNspAnimationType_maybe == 3) { // fall unconscious outside.
+					int curScaledWidth = g_engine->scaledSpriteWidth;
+					int curScaledHeight = g_engine->scaledSpriteHeight;
+					_room->calculateScaledSpriteDimensions(
+						_player->_animations.getSpriteAt(_player->_frameIdx+1).width,
+						_player->_animations.getSpriteAt(_player->_frameIdx+1).height, _player->_position.y);
+					const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
+					_sprites.addSpriteToDrawList(_player->_position.x - (curScaledWidth + g_engine->scaledSpriteWidth) / 2, _player->_position.y - curScaledHeight, &animSprite, 240 - _player->_position.y, curScaledWidth, curScaledHeight, false);
 				} else if (!_scaleSequence) {
 					if (otherNspAnimationType_maybe == 17) { // open trunk
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
@@ -1725,7 +1710,7 @@ void DarkseedEngine::updateAnimation() {
 					changeToRoom(newRoomNumber);
 				} else {
 					_objectVar.setObjectRunningCode(140, 0);
-					getPackage(_currentDay);
+					getPackageObj(_currentDay);
 				}
 			}
 			if (otherNspAnimationType_maybe == 25) {
@@ -1791,6 +1776,19 @@ void DarkseedEngine::updateAnimation() {
 		}
 		break;
 	}
+	case 35: // pay shopkeeper
+		advanceAnimationFrame(6);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(6).frameNo[animIndexTbl[6]];
+		} else {
+			_objectVar[8]++;
+			if (_objectVar[8] > 2) {
+				_inventory.removeItem(8);
+			}
+			_objectVar[138]++;
+			_console->printTosText(927);
+		}
+		break;
 	case 41:
 		advanceAnimationFrame(0);
 		if (!isAnimFinished_maybe) {
@@ -1969,32 +1967,44 @@ Common::Path DarkseedEngine::getPictureFilePath(const Common::Path &filename) {
 	return filename;
 }
 
-void DarkseedEngine::handleObjCollision(int objNum) {
-	if (objNum == 35 && _objectVar[22] < 2 && _cursor.getY() > 40) {
-		objNum = 22;
+void DarkseedEngine::handleObjCollision(int targetObjNum) {
+	if (targetObjNum == 35 && _objectVar[22] < 2 && _cursor.getY() > 40) {
+		targetObjNum = 22;
 	}
-	if (_actionMode == LookAction || _actionMode == HandAction || objNum != 115) {
+	if (_actionMode == LookAction || _actionMode == HandAction || targetObjNum != 115) {
 		if (_cursor.getY() < 10 && _actionMode > LookAction) {
 			// TODO handle inventory
 			// 171d:53c3
 		} else {
 			switch (_actionMode) {
 			case HandAction:
-				useCode(objNum);
+				useCode(targetObjNum);
 				break;
 			case LookAction:
-				lookCode(objNum);
+				lookCode(targetObjNum);
 				break;
 			case 5:
-				useCrowBar(objNum);
+				useCrowBar(targetObjNum);
 				break;
-				// TODO lots of extra switch cases here for inventory usages.
+			case 6:
+			case 12:
+			case 29:
+				useCodeJournal(_actionMode, targetObjNum);
+				break;
+			case 7:
+			case 36:
+			case 37:
+			case 38:
+			case 39:
+			case 40:
+				useCodeShopItems(_actionMode, targetObjNum);
+				break;
 			case 8:
-				useCodeMoney(objNum);
+				useCodeMoney(targetObjNum);
 				break;
 				// TODO lots of extra switch cases here for inventory usages.
 			case 14:
-				useCodeGloves(objNum);
+				useCodeGloves(targetObjNum);
 				break;
 			// TODO lots of extra switch cases here for inventory usages.
 			default:
@@ -2583,6 +2593,280 @@ void DarkseedEngine::useCodeMoney(int16 targetObjNum) {
 	}
 }
 
+void DarkseedEngine::useCodeJournal(int16 actionObjNum, int16 targetObjNum) {
+	if (targetObjNum == 113) {
+		putobjunderpillow(actionObjNum);
+	} else if ((actionObjNum == 6) && (targetObjNum == 47)) {
+		_console->printTosText(46);
+	} else if ((actionObjNum == 6) && (targetObjNum == 100)) {
+		_console->printTosText(145);
+	} else if ((actionObjNum == 6) && (targetObjNum == 136)) {
+		_console->printTosText(999);
+	} else {
+		int16 tosIdx = _objectVar.getUseJournalTosIdx(targetObjNum);
+		if (tosIdx != 0) {
+			if (tosIdx < 979) {
+				_console->printTosText(tosIdx);
+			}
+			else {
+				genericresponse(6,targetObjNum, tosIdx);
+			}
+		}
+	}
+}
+
+void DarkseedEngine::useCodeShopItems(int16 actionObjNum, int16 targetObjNum) {
+	if (actionObjNum == 7) {
+		if (targetObjNum == 44) {
+			_player->loadAnimations("opendoor.nsp");
+			setupOtherNspAnimation(0, 24);
+			_objectVar[44] = 3600;
+			playSound(32, 5, -1);
+			_inventory.removeItem(7);
+			_console->printTosText(730);
+		} else if ((targetObjNum == 141) && (_objectVar[141] == 7)) {
+			_objectVar[141] = 8;
+		} else if (targetObjNum == 47) {
+			_console->printTosText(54);
+		} else if (targetObjNum == 127) {
+			_console->printTosText(106);
+		} else if (targetObjNum == 123) {
+			_console->printTosText(129);
+		} else if (targetObjNum == 100) {
+			_console->printTosText(153);
+		} else if (targetObjNum == 143) {
+			_console->printTosText(189);
+		} else if (targetObjNum == 52) {
+			_console->printTosText(202);
+		} else if (targetObjNum == 145) {
+			_console->printTosText(226);
+		} else if (targetObjNum == 137) {
+			_console->printTosText(300);
+		} else if (targetObjNum == 126) {
+			_console->printTosText(312);
+		} else if (targetObjNum == 103 || targetObjNum == 151) {
+			_console->printTosText(362);
+		} else if (targetObjNum == 109) {
+			_console->printTosText(965);
+		} else if (targetObjNum == 61) {
+			_console->printTosText(460);
+		} else if (targetObjNum == 53) {
+			_console->printTosText(489);
+			throwmikeinjail();
+		} else if (targetObjNum == 46) {
+			_console->printTosText(542);
+		} else if (targetObjNum < 87 || 98 < targetObjNum) {
+			if (targetObjNum < 163 || 168 < targetObjNum) {
+				if (targetObjNum == 171) {
+					_console->printTosText(679);
+				} else if (targetObjNum == 129) {
+					genericresponse(7, 129, 998);
+				} else if (targetObjNum == 108) {
+					_console->printTosText(386);
+				} else if (targetObjNum == 110) {
+					_console->printTosText(392);
+				} else if (targetObjNum == 85) {
+					_console->printTosText(434);
+				} else if (targetObjNum == 194) {
+					genericresponse(7, 194, 989);
+				} else if (targetObjNum == 156) {
+					_console->printTosText(550);
+				} else if (targetObjNum == 172) {
+					genericresponse(7, 172, 988);
+				} else if (targetObjNum == 71) {
+					genericresponse(7, 71, 987);
+				} else if (targetObjNum == 101) {
+					genericresponse(7, 101, 986);
+				} else if (targetObjNum == 120) {
+					_console->printTosText(804);
+				} else if (targetObjNum == 184) {
+					genericresponse(7, 184, 980);
+				} else if (targetObjNum == 185) {
+					genericresponse(7, 185, 982);
+				} else if (targetObjNum == 121) {
+					genericresponse(7, 121, 990);
+				} else {
+					genericresponse(7, targetObjNum, 999);
+				}
+			} else {
+				_console->printTosText(632);
+			}
+		} else {
+			_console->printTosText(585);
+		}
+		return;
+	}
+	if (actionObjNum == 38 && targetObjNum == 78) {
+		_console->printTosText(42);
+		return;
+	}
+	if (actionObjNum == 38 && targetObjNum == 47) {
+		_console->printTosText(60);
+		return;
+	}
+	if (actionObjNum == 36 && targetObjNum == 125) {
+		_console->printTosText(77);
+		return;
+	}
+	if (actionObjNum == 38 && targetObjNum == 125) {
+		_console->printTosText(78);
+		return;
+	}
+	if (actionObjNum == 38 &&
+		(((((targetObjNum == 126 || targetObjNum == 126) || targetObjNum == 197) ||
+		   ((targetObjNum == 131 || (targetObjNum == 89)))) ||
+		  targetObjNum == 171))) {
+		_console->printTosText(89);
+		return;
+	}
+	if (actionObjNum == 37 && targetObjNum == 124) {
+		_console->printTosText(28);
+	} else if (actionObjNum == 38 && targetObjNum == 127) {
+		_console->printTosText(116);
+	} else if ((actionObjNum == 36 || actionObjNum == 37) && targetObjNum == 123) {
+		_console->printTosText(135);
+	} else if (actionObjNum == 38 && (targetObjNum == 123 || targetObjNum == 318)) {
+		_console->printTosText(320);
+	} else if (targetObjNum == 129) {
+		genericresponse(actionObjNum, 129, 998);
+	} else if ((actionObjNum == 37) &&
+			   ((((((targetObjNum == 142 || (targetObjNum == 124)) ||
+					((targetObjNum == 137 || (((targetObjNum == 148 || (targetObjNum == 109)) || (targetObjNum == 59)))))) ||
+				   ((targetObjNum == 66 || (targetObjNum == 67)))) ||
+				  (targetObjNum == 68)) ||
+				 ((((targetObjNum == 133 || (targetObjNum == 194)) ||
+					((targetObjNum == 46 ||
+					  (((((targetObjNum == 156 || (targetObjNum == 158)) || (targetObjNum == 159)) ||
+						 ((targetObjNum == 161 || (targetObjNum == 162)))) ||
+						(targetObjNum == 22)))))) ||
+				   (((targetObjNum == 42 || (targetObjNum == 35)) ||
+					 ((targetObjNum == 196 ||
+					   ((((targetObjNum == 170 || (targetObjNum == 172)) || (targetObjNum == 25)) ||
+						 (((targetObjNum == 71 || (targetObjNum == 101)) || (targetObjNum == 179)))))))))))))) {
+		_console->printTosText(180);
+	} else if ((actionObjNum == 37) && (targetObjNum == 52)) {
+		_console->printTosText(211);
+	} else if ((actionObjNum == 37) && (targetObjNum == 144)) {
+		_console->printTosText(218);
+	} else if ((actionObjNum == 37) && (targetObjNum == 145)) {
+		_console->printTosText(229);
+	} else if ((actionObjNum == 38) && (targetObjNum == 145)) {
+		_console->printTosText(230);
+	} else if (targetObjNum == 112) {
+		genericresponse(actionObjNum, 112, 996);
+	} else if ((actionObjNum == 38) && (targetObjNum == 49)) {
+		_console->printTosText(251);
+	} else if ((targetObjNum == 147) && (actionObjNum != 7)) {
+		_console->printTosText(319);
+	} else if (targetObjNum == 197) {
+		genericresponse(actionObjNum, 197, 993);
+	} else if ((actionObjNum == 38) && (targetObjNum == 150)) {
+		_console->printTosText(354);
+	} else if (targetObjNum == 109) {
+		if (actionObjNum == 38) {
+			_console->printTosText(375);
+		} else {
+			_console->printTosText(374);
+		}
+	} else if (targetObjNum == 130) {
+		genericresponse(actionObjNum, 130, 991);
+	} else if (targetObjNum == 108) {
+		_console->printTosText(386);
+	} else if (targetObjNum == 110) {
+		_console->printTosText(392);
+	} else if ((targetObjNum == 131) && (actionObjNum != 7)) {
+		_console->printTosText(405);
+	} else if (targetObjNum == 85) {
+		_console->printTosText(434);
+	} else if (targetObjNum == 121) {
+		if (actionObjNum == 38) {
+			_console->printTosText(445);
+		} else if (actionObjNum == 40) {
+			_console->printTosText(446);
+		} else {
+			genericresponse(actionObjNum, 121, 990);
+		}
+	} else if ((actionObjNum == 37) && (targetObjNum == 122)) {
+		_console->printTosText(451);
+	} else if ((actionObjNum == 38) || (targetObjNum != 61)) {
+		if ((actionObjNum == 36) && (targetObjNum == 133)) {
+			_console->printTosText(476);
+		} else if (((actionObjNum == 36) || (actionObjNum == 40)) && (targetObjNum == 53)) {
+			_console->printTosText(491);
+		} else if ((actionObjNum == 37) && (targetObjNum == 53)) {
+			_console->printTosText(492);
+		} else if (targetObjNum == 194) {
+			genericresponse(actionObjNum, 194, 989);
+		} else if (targetObjNum == 153) {
+			_console->printTosText(405);
+		} else if ((actionObjNum == 37) && (targetObjNum == 154)) {
+			_console->printTosText(535);
+		} else if ((actionObjNum == 36) && (targetObjNum == 46)) {
+			_console->printTosText(405);
+		} else if ((actionObjNum == 38) && (targetObjNum == 46)) {
+			_console->printTosText(545);
+		} else if ((actionObjNum == 40) && (targetObjNum == 46)) {
+			_console->printTosText(405);
+		} else if (targetObjNum == 156) {
+			_console->printTosText(550);
+		} else if (targetObjNum == 159) {
+			_console->printTosText(577);
+		} else if ((targetObjNum < 87) || (98 < targetObjNum)) {
+			if ((actionObjNum == 37) && ((162 < targetObjNum && (targetObjNum < 169)))) {
+				_console->printTosText(634);
+			} else if ((actionObjNum == 38) && ((162 < targetObjNum && (targetObjNum < 169)))) {
+				_console->printTosText(635);
+			} else if (targetObjNum == 172) {
+				genericresponse(actionObjNum, 172, 988);
+			} else if ((actionObjNum == 37) && (targetObjNum == 174)) {
+				_console->printTosText(690);
+			} else if ((actionObjNum == 38) && (targetObjNum == 25)) {
+				_console->printTosText(696);
+			} else if ((actionObjNum == 40) && (targetObjNum == 26)) {
+				_console->printTosText(700);
+			} else if (targetObjNum == 71) {
+				genericresponse(actionObjNum, 71, 987);
+			} else if ((actionObjNum == 39) && (targetObjNum == 44)) {
+				_console->printTosText(731);
+			} else if (targetObjNum == 101) {
+				genericresponse(actionObjNum, 101, 986);
+			} else if (targetObjNum == 113) {
+				_console->printTosText(753);
+			} else if (targetObjNum == 41) {
+				_console->printTosText(757);
+			} else if ((actionObjNum == 36) && (targetObjNum == 179)) {
+				_console->printTosText(764);
+			} else if ((actionObjNum == 38) && (targetObjNum == 179)) {
+				_console->printTosText(762);
+			} else if ((actionObjNum == 38) && (targetObjNum == 180)) {
+				_console->printTosText(769);
+			} else if (targetObjNum == 120) {
+				_console->printTosText(804);
+			} else if ((actionObjNum == 38) && (targetObjNum == 119)) {
+				_console->printTosText(808);
+			} else if ((actionObjNum == 38) && (targetObjNum == 114)) {
+				genericresponse(38, 114, 984);
+			} else if (targetObjNum == 184) {
+				genericresponse(actionObjNum, 184, 980);
+			} else if (targetObjNum == 185) {
+				genericresponse(actionObjNum, 185, 982);
+			} else if ((actionObjNum == 38) && (targetObjNum == 79)) {
+				_console->printTosText(833);
+			} else if ((targetObjNum == 79) && (actionObjNum != 7)) {
+				_console->printTosText(836);
+			} else if ((actionObjNum == 38) && (targetObjNum == 58)) {
+				_console->printTosText(849);
+			} else {
+				genericresponse(actionObjNum, targetObjNum, 999);
+			}
+		} else {
+			_console->printTosText(587);
+		}
+	} else {
+		_console->printTosText(462);
+	}
+}
+
 void DarkseedEngine::useCrowBar(int16 targetObjNum) {
 	int16 tosIdx = _objectVar.getUseCrowbarTosIdx(targetObjNum);
 	if (tosIdx != 0) {
@@ -2852,11 +3136,6 @@ void DarkseedEngine::wongame() {
 	// TODO
 }
 
-void DarkseedEngine::getPackage(int state) {
-	_console->printTosText(424);
-	// TODO handle different getPackage states.
-}
-
 void DarkseedEngine::printTime() {
 	_console->printTosText(958);
 	int hour = g_engine->_currentTimeInSeconds / 60 / 60 + 1;
@@ -3012,6 +3291,22 @@ void DarkseedEngine::initDelbertAtSide() {
 		_player->_walkTarget = _player->_position;
 		//*(undefined *)&_ActionToPerform = 0; TODO
 	}
+}
+
+void DarkseedEngine::throwmikeinjail() {
+	_console->printTosText(912);
+	if (_room->_roomNumber == 15) {
+		playSound(0,6,-1);
+	}
+	_player->_position = {250, 200};
+	isPlayingAnimation_maybe = false;
+	_player->_frameIdx = 26;
+	changeToRoom(30);
+	_objectVar.setMoveObjectRoom(28, 255);
+	_inventory.removeItem(28);
+	_objectVar[1] = 500;
+	_objectVar[88] = 0;
+	_objectVar.setObjectRunningCode(72, 0);
 }
 
 } // End of namespace Darkseed
