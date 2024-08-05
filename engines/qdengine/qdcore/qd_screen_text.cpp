@@ -151,7 +151,7 @@ void qdScreenText::redraw(const Vect2i &owner_pos) const {
 
 	grDispatcher::instance()->DrawAlignedText(x, y, _size.x, _size.y, col, data(), grTextAlign(_text_format.alignment()), 0, 0, font);
 	if (qdGameConfig::get_config().debug_draw())
-		grDispatcher::instance()->Rectangle(x, y, _size.x, _size.y, col, 0, GR_OUTLINED);
+		grDispatcher::instance()->rectangle(x, y, _size.x, _size.y, col, 0, GR_OUTLINED);
 }
 
 void qdScreenText::set_data(const char *p) {

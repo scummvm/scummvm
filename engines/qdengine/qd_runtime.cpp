@@ -377,8 +377,8 @@ void qd_show_load_progress(int percents_loaded, void *p) {
 	int x = 10;
 	int y = grDispatcher::instance()->get_SizeY() - rect_sy - 10;
 
-	grDispatcher::instance()->Rectangle(x, y, rect_sx, rect_sy, 0xFFFFFF, 0, GR_OUTLINED);
-	grDispatcher::instance()->Rectangle(x, y, sx, rect_sy, 0xFFFFFF, 0xFFFFFF, GR_FILLED);
+	grDispatcher::instance()->rectangle(x, y, rect_sx, rect_sy, 0xFFFFFF, 0, GR_OUTLINED);
+	grDispatcher::instance()->rectangle(x, y, sx, rect_sy, 0xFFFFFF, 0xFFFFFF, GR_FILLED);
 	grDispatcher::instance()->flush(x, y, rect_sx, rect_sy);
 }
 

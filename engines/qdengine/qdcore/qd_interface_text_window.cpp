@@ -383,9 +383,9 @@ bool qdInterfaceTextWindow::redraw() const {
 				Vect2i text_sz = _text_set->screen_size();
 
 				if (!_background_alpha)
-					grDispatcher::instance()->Rectangle(ar.x - _text_size.x / 2, text_r.y - text_sz.y / 2, _text_size.x, text_sz.y, _background_color, _background_color, GR_FILLED);
+					grDispatcher::instance()->rectangle(ar.x - _text_size.x / 2, text_r.y - text_sz.y / 2, _text_size.x, text_sz.y, _background_color, _background_color, GR_FILLED);
 				else
-					grDispatcher::instance()->RectangleAlpha(ar.x - _text_size.x / 2, text_r.y - text_sz.y / 2, _text_size.x, text_sz.y, _background_color, _background_alpha);
+					grDispatcher::instance()->rectangleAlpha(ar.x - _text_size.x / 2, text_r.y - text_sz.y / 2, _text_size.x, text_sz.y, _background_color, _background_alpha);
 			}
 
 			_text_set->redraw();
@@ -393,15 +393,15 @@ bool qdInterfaceTextWindow::redraw() const {
 			grDispatcher::instance()->setClip(l_clip, t_clip, r_clip, b_clip);
 
 			if (qdGameConfig::get_config().debug_draw())
-				grDispatcher::instance()->Rectangle(ar.x - _text_size.x / 2, ar.y - _text_size.y / 2, _text_size.x, _text_size.y, 0xFFFFFF, 0, GR_OUTLINED, 3);
+				grDispatcher::instance()->rectangle(ar.x - _text_size.x / 2, ar.y - _text_size.y / 2, _text_size.x, _text_size.y, 0xFFFFFF, 0, GR_OUTLINED, 3);
 		}
 	} else if (_windowType == WINDOW_EDIT || _windowType == WINDOW_TEXT) {
 		if (_has_background_color) {
 			Vect2i ar = r();
 			if (!_background_alpha)
-				grDispatcher::instance()->Rectangle(ar.x - _text_size.x / 2, ar.y - _text_size.y / 2, _text_size.x, _text_size.y, _background_color, _background_color, GR_FILLED);
+				grDispatcher::instance()->rectangle(ar.x - _text_size.x / 2, ar.y - _text_size.y / 2, _text_size.x, _text_size.y, _background_color, _background_color, GR_FILLED);
 			else
-				grDispatcher::instance()->RectangleAlpha(ar.x - _text_size.x / 2, ar.y - _text_size.y / 2, _text_size.x, _text_size.y, _background_color, _background_alpha);
+				grDispatcher::instance()->rectangleAlpha(ar.x - _text_size.x / 2, ar.y - _text_size.y / 2, _text_size.x, _text_size.y, _background_color, _background_alpha);
 		}
 
 		text_redraw();

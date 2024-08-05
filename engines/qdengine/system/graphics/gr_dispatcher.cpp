@@ -327,7 +327,7 @@ void grDispatcher::lineTo(int x, int y, int len, int dir, int col, int line_styl
 	}
 }
 
-void grDispatcher::Rectangle(int x, int y, int sx, int sy, int outcol, int incol, int mode, int line_style) {
+void grDispatcher::rectangle(int x, int y, int sx, int sy, int outcol, int incol, int mode, int line_style) {
 	if (!sx || !sy) return;
 
 	lineTo(x, y, sx, GR_RIGHT, outcol, line_style);
@@ -341,7 +341,7 @@ void grDispatcher::Rectangle(int x, int y, int sx, int sy, int outcol, int incol
 	}
 }
 
-void grDispatcher::RectangleAlpha(int x, int y, int sx, int sy, uint32 color, int alpha) {
+void grDispatcher::rectangleAlpha(int x, int y, int sx, int sy, uint32 color, int alpha) {
 	int px = 0;
 	int py = 0;
 
@@ -361,7 +361,7 @@ void grDispatcher::RectangleAlpha(int x, int y, int sx, int sy, uint32 color, in
 
 	uint32 mcl = make_rgb565u(mr, mg, mb);
 
-	warning("STUB: grDispatcher::RectangleAlpha");
+	warning("STUB: grDispatcher::rectangleAlpha");
 	for (int i = 0; i < psy; i++) {
 		uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
 

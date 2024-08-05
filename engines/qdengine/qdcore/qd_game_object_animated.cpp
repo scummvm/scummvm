@@ -732,14 +732,14 @@ void qdGameObjectAnimated::debug_redraw() const {
 	pos.z = qdCamera::current_camera()->get_grid_center().z;
 	Vect2s proj_pos = qdCamera::current_camera()->global2scr(pos);
 	//прорисовываем проекцию на сетку
-	grDispatcher::instance()->Rectangle(
+	grDispatcher::instance()->rectangle(
 	    proj_pos.x - (NET_PROJ_SIZE >> 1),
 	    proj_pos.y - (NET_PROJ_SIZE >> 1),
 	    NET_PROJ_SIZE, NET_PROJ_SIZE,
 	    0x00FF0000, 0x000000FF, GR_FILLED);
 
 	//прорисовываем центр объекта
-	grDispatcher::instance()->Rectangle(
+	grDispatcher::instance()->rectangle(
 	    scr_pos.x - (OBJ_CENTER_SIZE >> 1),
 	    scr_pos.y - (OBJ_CENTER_SIZE >> 1),
 	    OBJ_CENTER_SIZE, OBJ_CENTER_SIZE,
@@ -749,7 +749,7 @@ void qdGameObjectAnimated::debug_redraw() const {
 	Vect2s ssz = screen_size();
 
 	if (!_current_transform()) {
-		grDispatcher::instance()->Rectangle(
+		grDispatcher::instance()->rectangle(
 		    scr_pos.x - ssz.x / 2,
 		    scr_pos.y - ssz.y / 2,
 		    ssz.x, ssz.y,
@@ -810,7 +810,7 @@ void qdGameObjectAnimated::debug_redraw() const {
 		grDispatcher::instance()->line(p0.x, p0.y, p1.x, p1.y, 0x000000FF);
 	}
 
-	grDispatcher::instance()->Rectangle(
+	grDispatcher::instance()->rectangle(
 	    screen_pos().x - 2,
 	    screen_pos().y - 2,
 	    4, 4,
