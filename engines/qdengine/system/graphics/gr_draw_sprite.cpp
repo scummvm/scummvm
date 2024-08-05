@@ -30,8 +30,8 @@
 
 namespace QDEngine {
 
-void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const byte *p, int mode, float scale) {
-	debugC(2, kDebugGraphics, "grDispatcher::PutSpr_a(%d, %d, %d, %d, scale=%f)", x, y, sx, sy, scale);
+void grDispatcher::putSpr_a(int x, int y, int sx, int sy, const byte *p, int mode, float scale) {
+	debugC(2, kDebugGraphics, "grDispatcher::putSpr_a(%d, %d, %d, %d, scale=%f)", x, y, sx, sy, scale);
 
 	int i, j, sx_dest, sy_dest;
 
@@ -89,8 +89,8 @@ void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const byte *p, int mod
 	}
 }
 
-void grDispatcher::PutSpr(int x, int y, int sx, int sy, const byte *p, int mode, float scale) {
-	debugC(2, kDebugGraphics, "grDispatcher::PutSpr(%d, %d, %d, %d, scale=%f)", x, y, sx, sy, scale);
+void grDispatcher::putSpr(int x, int y, int sx, int sy, const byte *p, int mode, float scale) {
+	debugC(2, kDebugGraphics, "grDispatcher::putSpr(%d, %d, %d, %d, scale=%f)", x, y, sx, sy, scale);
 
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
@@ -139,8 +139,8 @@ void grDispatcher::PutSpr(int x, int y, int sx, int sy, const byte *p, int mode,
 	return;
 }
 
-void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const byte *p, int mode) {
-	debugC(2, kDebugGraphics, "grDispatcher::PutSpr_a(%d, %d, %d, %d)", x, y, sx, sy);
+void grDispatcher::putSpr_a(int x, int y, int sx, int sy, const byte *p, int mode) {
+	debugC(2, kDebugGraphics, "grDispatcher::putSpr_a(%d, %d, %d, %d)", x, y, sx, sy);
 
 	int px = 0;
 	int py = 0;
@@ -190,7 +190,7 @@ void grDispatcher::PutSpr_a(int x, int y, int sx, int sy, const byte *p, int mod
 	return;
 }
 
-void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, int mode, float angle) {
+void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, int mode, float angle) {
 	const int F_PREC = 16;
 
 	int xc = pos.x + size.x / 2;
@@ -295,7 +295,7 @@ void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 	}
 }
 
-void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, int mode, float angle, const Vect2f &scale) {
+void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, int mode, float angle, const Vect2f &scale) {
 	const int F_PREC = 16;
 
 	int xc = pos.x + round(float(size.x) * scale.x / 2.f);
@@ -383,7 +383,7 @@ void grDispatcher::PutSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 	}
 }
 
-void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle) {
+void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle) {
 	const int F_PREC = 16;
 
 	int xc = pos.x + size.x / 2;
@@ -488,7 +488,7 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 	}
 }
 
-void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle, const Vect2f &scale) {
+void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle, const Vect2f &scale) {
 	const int F_PREC = 16;
 
 	int xc = pos.x + round(float(size.x) * scale.x / 2.f);
@@ -591,8 +591,8 @@ void grDispatcher::PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 	}
 }
 
-void grDispatcher::PutSpr(int x, int y, int sx, int sy, const byte *p, int mode) {
-	debugC(2, kDebugGraphics, "grDispatcher::PutSpr(%d, %d, %d, %d)", x, y, sx, sy);
+void grDispatcher::putSpr(int x, int y, int sx, int sy, const byte *p, int mode) {
+	debugC(2, kDebugGraphics, "grDispatcher::putSpr(%d, %d, %d, %d)", x, y, sx, sy);
 
 	int px = 0;
 	int py = 0;
@@ -991,7 +991,7 @@ void grDispatcher::PutChar(int x, int y, uint32 color, int font_sx, int font_sy,
 	return;
 }
 
-void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode) {
+void grDispatcher::putSprMask(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode) {
 	int px = 0;
 	int py = 0;
 
@@ -1030,7 +1030,7 @@ void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const byte *p, uint3
 
 	uint32 mcl = make_rgb565u(mr, mg, mb);
 
-	warning("STUB: grDispatcher::PutSprMask");
+	warning("STUB: grDispatcher::putSprMask");
 	for (int i = 0; i < psy; i++) {
 		uint16 *scr_buf = (uint16 *)(_screenBuf->getBasePtr(x, y));
 		const byte *data_line = data_ptr;
@@ -1047,7 +1047,7 @@ void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const byte *p, uint3
 	}
 }
 
-void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode, float scale) {
+void grDispatcher::putSprMask(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode, float scale) {
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
 
@@ -1107,7 +1107,7 @@ void grDispatcher::PutSprMask(int x, int y, int sx, int sy, const byte *p, uint3
 	}
 }
 
-void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode) {
+void grDispatcher::putSprMask_a(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode) {
 	int px = 0;
 	int py = 0;
 
@@ -1139,7 +1139,7 @@ void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const byte *p, uin
 	byte mr, mg, mb;
 	split_rgb565u(mask_color, mr, mg, mb);
 
-	warning("STUB: grDispatcher::PutSprMask_a");
+	warning("STUB: grDispatcher::putSprMask_a");
 	for (int i = 0; i < psy; i++) {
 		uint16 *scr_buf = (uint16 *)(_screenBuf->getBasePtr(x, y));
 		const byte *data_line = data_ptr;
@@ -1166,7 +1166,7 @@ void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const byte *p, uin
 	}
 }
 
-void grDispatcher::PutSprMask_a(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode, float scale) {
+void grDispatcher::putSprMask_a(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode, float scale) {
 	int i, j, sx_dest, sy_dest;
 
 	sx_dest = round(float(sx) * scale);

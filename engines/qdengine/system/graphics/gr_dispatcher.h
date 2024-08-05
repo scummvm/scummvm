@@ -40,7 +40,7 @@ enum GR_LINEDIR {
 	GR_BOTTOM
 };
 
-// Modes for PutSpr()
+// Modes for putSpr()
 const int GR_BLACK_FON      = 0x01;
 const int GR_CLIPPED        = 0x02;
 const int GR_NOCLIP     = 0x04;
@@ -179,29 +179,29 @@ public:
 
 	void fill(int val);
 
-	void PutSpr(int x, int y, int sx, int sy, const byte *p, int mode);
-	void PutSpr(int x, int y, int sx, int sy, const byte *p, int mode, float scale);
-	void PutSpr_rle(int x, int y, int sx, int sy, const rleBuffer *p, int mode, bool alpha_flag);
-	void PutSpr_rle(int x, int y, int sx, int sy, const rleBuffer *p, int mode, float scale, bool alpha_flag);
-	void PutSpr_a(int x, int y, int sx, int sy, const byte *p, int mode);
-	void PutSpr_a(int x, int y, int sx, int sy, const byte *p, int mode, float scale);
+	void putSpr(int x, int y, int sx, int sy, const byte *p, int mode);
+	void putSpr(int x, int y, int sx, int sy, const byte *p, int mode, float scale);
+	void putSpr_rle(int x, int y, int sx, int sy, const rleBuffer *p, int mode, bool alpha_flag);
+	void putSpr_rle(int x, int y, int sx, int sy, const rleBuffer *p, int mode, float scale, bool alpha_flag);
+	void putSpr_a(int x, int y, int sx, int sy, const byte *p, int mode);
+	void putSpr_a(int x, int y, int sx, int sy, const byte *p, int mode, float scale);
 
-	void PutSpr_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, int mode, float angle);
-	void PutSpr_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, int mode, float angle, const Vect2f &scale);
-	void PutSpr_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, int mode, float angle);
-	void PutSpr_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, int mode, float angle, const Vect2f &scale);
+	void putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, int mode, float angle);
+	void putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, int mode, float angle, const Vect2f &scale);
+	void putSpr_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, int mode, float angle);
+	void putSpr_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, int mode, float angle, const Vect2f &scale);
 
-	void PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle);
-	void PutSprMask_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle, const Vect2f &scale);
-	void PutSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle);
-	void PutSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle, const Vect2f &scale);
+	void putSprMask_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle);
+	void putSprMask_rot(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle, const Vect2f &scale);
+	void putSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle);
+	void putSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle, const Vect2f &scale);
 
-	void PutSprMask(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode);
-	void PutSprMask(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode, float scale);
-	void PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer *p, uint32 mask_color, int mask_alpha, int mode, bool alpha_flag);
-	void PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer *p, uint32 mask_color, int mask_alpha, int mode, float scale, bool alpha_flag);
-	void PutSprMask_a(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode);
-	void PutSprMask_a(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode, float scale);
+	void putSprMask(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode);
+	void putSprMask(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode, float scale);
+	void putSprMask_rle(int x, int y, int sx, int sy, const rleBuffer *p, uint32 mask_color, int mask_alpha, int mode, bool alpha_flag);
+	void putSprMask_rle(int x, int y, int sx, int sy, const rleBuffer *p, uint32 mask_color, int mask_alpha, int mode, float scale, bool alpha_flag);
+	void putSprMask_a(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode);
+	void putSprMask_a(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode, float scale);
 
 	void PutTileSpr(int x, int y, const grTileSprite &sprite, bool has_alpha, int mode);
 
@@ -221,12 +221,12 @@ public:
 	int TextHeight(const char *str, int vspace = 0, const grFont *font = NULL) const;
 
 #ifdef _GR_ENABLE_ZBUFFER
-	void PutSpr_z(int x, int y, int z, int sx, int sy, const byte *p, int mode);
-	void PutSpr_z(int x, int y, int z, int sx, int sy, const byte *p, int mode, float scale);
-	void PutSpr_rle_z(int x, int y, int z, int sx, int sy, const rleBuffer *p, int mode, bool alpha_flag);
-	void PutSpr_rle_z(int x, int y, int z, int sx, int sy, const rleBuffer *p, int mode, float scale, bool alpha_flag);
-	void PutSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p, int mode);
-	void PutSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p, int mode, float scale);
+	void putSpr_z(int x, int y, int z, int sx, int sy, const byte *p, int mode);
+	void putSpr_z(int x, int y, int z, int sx, int sy, const byte *p, int mode, float scale);
+	void putSpr_rle_z(int x, int y, int z, int sx, int sy, const rleBuffer *p, int mode, bool alpha_flag);
+	void putSpr_rle_z(int x, int y, int z, int sx, int sy, const rleBuffer *p, int mode, float scale, bool alpha_flag);
+	void putSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p, int mode);
+	void putSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p, int mode, float scale);
 #endif
 
 	void Erase(int x, int y, int sx, int sy, int col);
@@ -571,7 +571,7 @@ private:
 	static grDispatcher *_dispatcher_ptr;
 	static char *_wnd_class_name;
 
-	void PutSpr_rot90(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, int mode, float angle);
+	void putSpr_rot90(const Vect2i &pos, const Vect2i &size, const byte *data, bool has_alpha, int mode, float angle);
 };
 
 } // namespace QDEngine

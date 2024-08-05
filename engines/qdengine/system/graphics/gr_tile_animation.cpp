@@ -276,7 +276,7 @@ void grTileAnimation::drawFrame(const Vect2i &position, int frame_index, float a
 		}
 	}
 
-	grDispatcher::instance()->PutSpr_rot(position, _frameSize, buf, _hasAlpha, mode, angle);
+	grDispatcher::instance()->putSpr_rot(position, _frameSize, buf, _hasAlpha, mode, angle);
 }
 
 } // namespace QDEngine

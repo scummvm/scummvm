@@ -32,8 +32,8 @@
 
 namespace QDEngine {
 
-void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffer *p, int mode, bool alpha_flag) {
-	debugC(2, kDebugGraphics, "grDispatcher::PutSpr_rle(%d, %d, %d, %d)", x, y, sx, sy);
+void grDispatcher::putSpr_rle(int x, int y, int sx, int sy, const class rleBuffer *p, int mode, bool alpha_flag) {
+	debugC(2, kDebugGraphics, "grDispatcher::putSpr_rle(%d, %d, %d, %d)", x, y, sx, sy);
 
 	int px = 0;
 	int py = 0;
@@ -156,8 +156,8 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 	}
 }
 
-void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffer *p, int mode, float scale, bool alpha_flag) {
-	debugC(2, kDebugGraphics, "grDispatcher::PutSpr_rle(%d, %d, %d, %d, scale=%f)", x, y, sx, sy, scale);
+void grDispatcher::putSpr_rle(int x, int y, int sx, int sy, const class rleBuffer *p, int mode, float scale, bool alpha_flag) {
+	debugC(2, kDebugGraphics, "grDispatcher::putSpr_rle(%d, %d, %d, %d, scale=%f)", x, y, sx, sy, scale);
 
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
@@ -236,8 +236,8 @@ void grDispatcher::PutSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 	}
 }
 
-void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer *p, uint32 mask_color, int mask_alpha, int mode, bool alpha_flag) {
-	debugC(2, kDebugGraphics, "grDispatcher::PutSprMask_rle(%d, %d, %d, %d)", x, y, sx, sy);
+void grDispatcher::putSprMask_rle(int x, int y, int sx, int sy, const rleBuffer *p, uint32 mask_color, int mask_alpha, int mode, bool alpha_flag) {
+	debugC(2, kDebugGraphics, "grDispatcher::putSprMask_rle(%d, %d, %d, %d)", x, y, sx, sy);
 
 	int px = 0;
 	int py = 0;
@@ -266,7 +266,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 	} else
 		dy = 1;
 
-	warning("STUB: grDispatcher::PutSprMask_rle");
+	warning("STUB: grDispatcher::putSprMask_rle");
 	for (int i = 0; i < psy; i++) {
 		uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
 
@@ -390,8 +390,8 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 	}
 }
 
-void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer *p, uint32 mask_color, int mask_alpha, int mode, float scale, bool alpha_flag) {
-	debugC(2, kDebugGraphics, "grDispatcher::PutSprMask_rle(%d, %d, %d, %d, scale=%f)", x, y, sx, sy, scale);
+void grDispatcher::putSprMask_rle(int x, int y, int sx, int sy, const rleBuffer *p, uint32 mask_color, int mask_alpha, int mode, float scale, bool alpha_flag) {
+	debugC(2, kDebugGraphics, "grDispatcher::putSprMask_rle(%d, %d, %d, %d, scale=%f)", x, y, sx, sy, scale);
 
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
@@ -488,7 +488,7 @@ void grDispatcher::PutSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 		}
 }
 
-void grDispatcher::PutSpr_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, int mode, float angle) {
+void grDispatcher::putSpr_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, int mode, float angle) {
 	byte *buf = (byte *)temp_buffer(size.x * size.y * 4);
 
 	byte *buf_ptr = buf;
@@ -510,10 +510,10 @@ void grDispatcher::PutSpr_rle_rot(const Vect2i &pos, const Vect2i &size, const r
 		}
 	}
 
-	PutSpr_rot(pos, size, buf, true, mode, angle);
+	putSpr_rot(pos, size, buf, true, mode, angle);
 }
 
-void grDispatcher::PutSpr_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, int mode, float angle, const Vect2f &scale) {
+void grDispatcher::putSpr_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, int mode, float angle, const Vect2f &scale) {
 	byte *buf = (byte *)temp_buffer(size.x * size.y * 4);
 
 	byte *buf_ptr = buf;
@@ -535,10 +535,10 @@ void grDispatcher::PutSpr_rle_rot(const Vect2i &pos, const Vect2i &size, const r
 		}
 	}
 
-	PutSpr_rot(pos, size, buf, true, mode, angle, scale);
+	putSpr_rot(pos, size, buf, true, mode, angle, scale);
 }
 
-void grDispatcher::PutSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle) {
+void grDispatcher::putSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle) {
 	byte *buf = (byte *)temp_buffer(size.x * size.y * 4);
 
 	byte *buf_ptr = buf;
@@ -560,10 +560,10 @@ void grDispatcher::PutSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, con
 		}
 	}
 
-	PutSprMask_rot(pos, size, buf, true, mask_color, mask_alpha, mode, angle);
+	putSprMask_rot(pos, size, buf, true, mask_color, mask_alpha, mode, angle);
 }
 
-void grDispatcher::PutSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle, const Vect2f &scale) {
+void grDispatcher::putSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, const rleBuffer *data, bool has_alpha, uint32 mask_color, int mask_alpha, int mode, float angle, const Vect2f &scale) {
 	byte *buf = (byte *)temp_buffer(size.x * size.y * 4);
 
 	byte *buf_ptr = buf;
@@ -585,7 +585,7 @@ void grDispatcher::PutSprMask_rle_rot(const Vect2i &pos, const Vect2i &size, con
 		}
 	}
 
-	PutSprMask_rot(pos, size, buf, true, mask_color, mask_alpha, mode, angle, scale);
+	putSprMask_rot(pos, size, buf, true, mask_color, mask_alpha, mode, angle, scale);
 }
 
 inline bool rle_alpha_b(uint32 pixel) {
