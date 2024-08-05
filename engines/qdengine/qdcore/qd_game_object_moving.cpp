@@ -1095,7 +1095,7 @@ void qdGameObjectMoving::debug_redraw() const {
 	}
 
 	Common::String str = Common::String::format("movement_mode: %d", _movement_mode);
-	grDispatcher::instance()->DrawText(10, 110, grDispatcher::instance()->make_rgb888(255, 255, 255), str.c_str());
+	grDispatcher::instance()->drawText(10, 110, grDispatcher::instance()->make_rgb888(255, 255, 255), str.c_str());
 
 //	draw_bound();
 

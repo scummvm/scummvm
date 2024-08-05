@@ -156,7 +156,7 @@ bool qdInterfaceCounter::redraw() const {
 
 		Vect2i sz = Vect2i(size_x(), size_y());
 		Vect2i pos = r() - sz / 2;
-		grDispatcher::instance()->DrawAlignedText(pos.x, pos.y, sz.x, sz.y,
+		grDispatcher::instance()->drawAlignedText(pos.x, pos.y, sz.x, sz.y,
 		        _textFormat.color(), data().c_str(), GR_ALIGN_LEFT, 0, 0, font);
 	}
 

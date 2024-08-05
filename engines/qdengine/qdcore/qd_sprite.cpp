@@ -851,13 +851,13 @@ void qdSprite::draw_contour(int x, int y, uint32 color, int mode) const {
 		yy += _picture_offset.y;
 
 	if (is_compressed()) {
-		grDispatcher::instance()->DrawSprContour(xx, yy, _picture_size.x, _picture_size.y, _rle_data, color, mode, check_flag(ALPHA_FLAG));
+		grDispatcher::instance()->drawSprContour(xx, yy, _picture_size.x, _picture_size.y, _rle_data, color, mode, check_flag(ALPHA_FLAG));
 	} else {
 		if (!_data) return;
 		if (check_flag(ALPHA_FLAG))
-			grDispatcher::instance()->DrawSprContour_a(xx, yy, _picture_size.x, _picture_size.y, _data, color, mode);
+			grDispatcher::instance()->drawSprContour_a(xx, yy, _picture_size.x, _picture_size.y, _data, color, mode);
 		else
-			grDispatcher::instance()->DrawSprContour(xx, yy, _picture_size.x, _picture_size.y, _data, color, mode);
+			grDispatcher::instance()->drawSprContour(xx, yy, _picture_size.x, _picture_size.y, _data, color, mode);
 	}
 }
 
@@ -877,11 +877,11 @@ void qdSprite::draw_contour(int x, int y, uint32 color, float scale, int mode) c
 
 	if (!is_compressed()) {
 		if (check_flag(ALPHA_FLAG))
-			grDispatcher::instance()->DrawSprContour_a(xx, yy, _picture_size.x, _picture_size.y, _data, color, mode, scale);
+			grDispatcher::instance()->drawSprContour_a(xx, yy, _picture_size.x, _picture_size.y, _data, color, mode, scale);
 		else
-			grDispatcher::instance()->DrawSprContour(xx, yy, _picture_size.x, _picture_size.y, _data, color, mode, scale);
+			grDispatcher::instance()->drawSprContour(xx, yy, _picture_size.x, _picture_size.y, _data, color, mode, scale);
 	} else
-		grDispatcher::instance()->DrawSprContour(xx, yy, _picture_size.x, _picture_size.y, _rle_data, color, mode, scale, check_flag(ALPHA_FLAG));
+		grDispatcher::instance()->drawSprContour(xx, yy, _picture_size.x, _picture_size.y, _rle_data, color, mode, scale, check_flag(ALPHA_FLAG));
 }
 
 bool qdSprite::hit(int x, int y) const {

@@ -466,32 +466,32 @@ void qdGameScene::free_resources() {
 
 void qdGameScene::debug_redraw() {
 	if (qdGameConfig::get_config().show_fps())
-		grDispatcher::instance()->DrawText(10, 10, grDispatcher::instance()->make_rgb888(255, 255, 255), _fps_string);
+		grDispatcher::instance()->drawText(10, 10, grDispatcher::instance()->make_rgb888(255, 255, 255), _fps_string);
 
 #ifdef __QD_DEBUG_ENABLE__
 	if (qdGameConfig::get_config().debug_draw()) {
 		if (_selected_object) {
 			static char buffer[256];
 			snprintf(buffer, 256, "%.1f %.1f %.1f, %.1f", _selected_object->R().x, _selected_object->R().y, _selected_object->R().z, R2G(_selected_object->direction_angle()));
-			grDispatcher::instance()->DrawText(10, 30, grDispatcher::instance()->make_rgb888(255, 255, 255), buffer);
+			grDispatcher::instance()->drawText(10, 30, grDispatcher::instance()->make_rgb888(255, 255, 255), buffer);
 			float z = _camera.global2camera_coord(_selected_object->R()).z;
 			snprintf(buffer, 256, "D: %.2f", z);
-			grDispatcher::instance()->DrawText(10, 50, grDispatcher::instance()->make_rgb888(255, 255, 255), buffer);
+			grDispatcher::instance()->drawText(10, 50, grDispatcher::instance()->make_rgb888(255, 255, 255), buffer);
 
 			if (_selected_object->get_cur_state() && _selected_object->get_cur_state()->name())
-				grDispatcher::instance()->DrawText(10, 70, grDispatcher::instance()->make_rgb888(255, 255, 255), _selected_object->get_cur_state()->name());
+				grDispatcher::instance()->drawText(10, 70, grDispatcher::instance()->make_rgb888(255, 255, 255), _selected_object->get_cur_state()->name());
 
 			snprintf(buffer, 256, "%d %d", _camera.get_scr_center_x(), _camera.get_scr_center_y());
-			grDispatcher::instance()->DrawText(10, 90, grDispatcher::instance()->make_rgb888(255, 255, 255), buffer);
+			grDispatcher::instance()->drawText(10, 90, grDispatcher::instance()->make_rgb888(255, 255, 255), buffer);
 			/*
 			            sprintf(buffer,"%d %d",mouseDispatcher::instance()->mouse_x(),mouseDispatcher::instance()->mouse_y());
-			            grDispatcher::instance()->DrawText(10,130,grDispatcher::instance()->make_rgb888(255,255,255),buffer);
+			            grDispatcher::instance()->drawText(10,130,grDispatcher::instance()->make_rgb888(255,255,255),buffer);
 			*/
 		}
 
 		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
 			if (dp->current_music()) {
-				grDispatcher::instance()->DrawText(10, 130, grDispatcher::instance()->make_rgb888(255, 255, 255), dp->current_music()->file_name());
+				grDispatcher::instance()->drawText(10, 130, grDispatcher::instance()->make_rgb888(255, 255, 255), dp->current_music()->file_name());
 			}
 		}
 		/*

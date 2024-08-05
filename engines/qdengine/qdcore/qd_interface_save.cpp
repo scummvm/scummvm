@@ -222,7 +222,7 @@ bool qdInterfaceSave::redraw() const {
 			int tx = r().x - size_x() / 2 + text_dx();
 			int ty = r().y - size_y() / 2 + text_dy();
 
-			gr_disp->DrawText(tx, ty, pid->save_font_color(), text.c_str(), 0, 0, font);
+			gr_disp->drawText(tx, ty, pid->save_font_color(), text.c_str(), 0, 0, font);
 		}
 	}
 

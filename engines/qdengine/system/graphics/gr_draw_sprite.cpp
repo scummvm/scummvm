@@ -655,7 +655,7 @@ void grDispatcher::putSpr(int x, int y, int sx, int sy, const byte *p, int mode)
 
 }
 
-void grDispatcher::DrawSprContour_a(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode) {
+void grDispatcher::drawSprContour_a(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode) {
 	int px = 0;
 	int py = 0;
 
@@ -722,7 +722,7 @@ void grDispatcher::DrawSprContour_a(int x, int y, int sx, int sy, const byte *p,
 	return;
 }
 
-void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode) {
+void grDispatcher::drawSprContour(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode) {
 	int px = 0;
 	int py = 0;
 
@@ -789,7 +789,7 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const byte *p, i
 	return;
 }
 
-void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode, float scale) {
+void grDispatcher::drawSprContour(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode, float scale) {
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
 
@@ -870,7 +870,7 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const byte *p, i
 	return;
 }
 
-void grDispatcher::DrawSprContour_a(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode, float scale) {
+void grDispatcher::drawSprContour_a(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode, float scale) {
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
 
