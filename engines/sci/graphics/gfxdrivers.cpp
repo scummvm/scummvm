@@ -41,6 +41,10 @@ Common::Point GfxDriver::getMousePos() const {
 	return g_system->getEventManager()->getMousePos();
 }
 
+void GfxDriver::setMousePos(const Common::Point &pos) const {
+	g_system->warpMouse(pos.x, pos.y);
+}
+
 void GfxDriver::clearRect(const Common::Rect &r) const {
 	GFXDRV_ASSERT_READY;
 	g_system->fillScreen(r, 0);
@@ -680,6 +684,10 @@ Common::Point SCI0_CGABWDriver::getMousePos() const {
 	return res;
 }
 
+void SCI0_CGABWDriver::setMousePos(const Common::Point &pos) const {
+	g_system->warpMouse(pos.x << 1, pos.y << 1);
+}
+
 void SCI0_CGABWDriver::clearRect(const Common::Rect &r) const {
 	Common::Rect r2(r.left << 1, r.top << 1, r.right << 1, r.bottom << 1);
 	GfxDriver::clearRect(r2);
@@ -837,8 +845,12 @@ Common::Point SCI0_HerculesDriver::getMousePos() const {
 	return res;
 }
 
+void SCI0_HerculesDriver::setMousePos(const Common::Point &pos) const {
+	g_system->warpMouse((pos.x << 1) + _centerX, (pos.y & ~1) * 3 / 2 + (pos.y & 1) + _centerY);
+}
+
 void SCI0_HerculesDriver::clearRect(const Common::Rect &r) const {
-	Common::Rect r2((r.left << 1) + _centerX, (r.top & ~1) * 3 / 2 + (r.top & 1) + _centerY, (r.right << 1) + 40, (r.bottom & ~1) * 3 / 2 + (r.bottom & 1) + 25);
+	Common::Rect r2((r.left << 1) + _centerX, (r.top & ~1) * 3 / 2 + (r.top & 1) + _centerY, (r.right << 1) + 40, (r.bottom & ~1) * 3 / 2 + (r.bottom & 1) + _centerY);
 	GfxDriver::clearRect(r2);
 }
 
@@ -1130,6 +1142,10 @@ Common::Point SCI1_EGADriver::getMousePos() const {
 	return res;
 }
 
+void SCI1_EGADriver::setMousePos(const Common::Point &pos) const {
+	g_system->warpMouse(pos.x << 1, pos.y << 1);
+}
+
 void SCI1_EGADriver::clearRect(const Common::Rect &r) const {
 	Common::Rect r2(r.left << 1, r.top << 1, r.right << 1, r.bottom << 1);
 	GfxDriver::clearRect(r2);
@@ -1234,6 +1250,10 @@ Common::Point UpscaledGfxDriver::getMousePos() const {
 	res.x >>= 1;
 	res.y >>= 1;
 	return res;
+}
+
+void UpscaledGfxDriver::setMousePos(const Common::Point &pos) const {
+	g_system->warpMouse(pos.x << 1, pos.y << 1);
 }
 
 void UpscaledGfxDriver::clearRect(const Common::Rect &r) const {

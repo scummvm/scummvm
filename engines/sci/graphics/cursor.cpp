@@ -278,12 +278,12 @@ void GfxCursor::setPosition(Common::Point pos) {
 		return;
 
 	if (!_upscaledHires) {
-		g_system->warpMouse(pos.x, pos.y);
+		_screen->gfxDriver()->setMousePos(pos);
 	} else {
 		_screen->adjustToUpscaledCoordinates(pos.y, pos.x);
 		g_system->warpMouse(pos.x, pos.y);
 	}
-
+	
 	// WORKAROUNDS for games with windows that are hidden when the mouse cursor
 	// is moved outside them - also check setPositionWorkarounds above.
 	//
