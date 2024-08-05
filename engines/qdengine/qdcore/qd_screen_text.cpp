@@ -159,8 +159,8 @@ void qdScreenText::set_data(const char *p) {
 
 	const grFont *font = qdGameDispatcher::get_dispatcher()->
 	                     find_font(_text_format.font_type());
-	_size.x = grDispatcher::instance()->TextWidth(data(), 0, font);
-	_size.y = grDispatcher::instance()->TextHeight(data(), 0, font);
+	_size.x = grDispatcher::instance()->textWidth(data(), 0, font);
+	_size.y = grDispatcher::instance()->textHeight(data(), 0, font);
 }
 
 bool qdScreenText::is_owned_by(const qdNamedObject *p) const {

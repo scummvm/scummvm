@@ -556,8 +556,8 @@ void qdInterfaceTextWindow::text_redraw() const {
 	                     find_font(_textFormat.font_type());
 
 	if (_windowType == WINDOW_EDIT && _isEditing) {
-		int sz0 = grDispatcher::instance()->TextWidth("|", 0, font);
-		int sz1 = grDispatcher::instance()->TextWidth(_inputString.c_str(), 0, font);
+		int sz0 = grDispatcher::instance()->textWidth("|", 0, font);
+		int sz1 = grDispatcher::instance()->textWidth(_inputString.c_str(), 0, font);
 		int x0 = ar.x;
 		switch (_textFormat.alignment()) {
 		case qdScreenTextFormat::ALIGN_LEFT:
@@ -573,11 +573,11 @@ void qdInterfaceTextWindow::text_redraw() const {
 		Common::String str = _inputString.substr(0, _caretPose);
 		if (!str.empty()) {
 			grDispatcher::instance()->drawAlignedText(x0, ar.y, _text_size.x, _text_size.y, col, str.c_str(), GR_ALIGN_LEFT, 0, 0, font);
-			x0 += grDispatcher::instance()->TextWidth(str.c_str(), 0, font);
+			x0 += grDispatcher::instance()->textWidth(str.c_str(), 0, font);
 		}
 		if (_caretVisible)
 			grDispatcher::instance()->drawAlignedText(x0, ar.y, _text_size.x, _text_size.y, col, "|", GR_ALIGN_LEFT, 0, 0, font);
-		x0 += grDispatcher::instance()->TextWidth("|", 0, font);
+		x0 += grDispatcher::instance()->textWidth("|", 0, font);
 
 		str = _inputString.substr(_caretPose, Common::String::npos);
 		if (!str.empty())

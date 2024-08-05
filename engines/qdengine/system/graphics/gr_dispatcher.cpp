@@ -927,7 +927,7 @@ bool grDispatcher::drawAlignedText(int x, int y, int sx, int sy, uint32 color, c
 	const byte *str_buf = reinterpret_cast<const byte *>(str);
 
 	if (!sx)
-		sx = TextWidth(str, hspace, font);
+		sx = textWidth(str, hspace, font);
 
 	int x0 = x;
 	int delta_x = 0;
@@ -935,10 +935,10 @@ bool grDispatcher::drawAlignedText(int x, int y, int sx, int sy, uint32 color, c
 
 	switch (align) {
 	case GR_ALIGN_CENTER:
-		delta_x = (sx - TextWidth(str, hspace, font, true)) / 2;
+		delta_x = (sx - textWidth(str, hspace, font, true)) / 2;
 		break;
 	case GR_ALIGN_RIGHT:
-		delta_x = sx - TextWidth(str, hspace, font, true);
+		delta_x = sx - textWidth(str, hspace, font, true);
 		break;
 	default:
 		break;
@@ -961,10 +961,10 @@ bool grDispatcher::drawAlignedText(int x, int y, int sx, int sy, uint32 color, c
 
 			switch (align) {
 			case GR_ALIGN_CENTER:
-				delta_x = (sx - TextWidth(str + i + 1, hspace, font, true)) / 2;
+				delta_x = (sx - textWidth(str + i + 1, hspace, font, true)) / 2;
 				break;
 			case GR_ALIGN_RIGHT:
-				delta_x = sx - TextWidth(str + i + 1, hspace, font, true);
+				delta_x = sx - textWidth(str + i + 1, hspace, font, true);
 				break;
 			default:
 				break;
@@ -1011,7 +1011,7 @@ bool grDispatcher::drawParsedText(int x, int y, int sx, int sy, uint32 color, co
 			Common::String str(it->nl.begin, it->nl.end - it->nl.begin);
 			drawText(cur_x, y, color, str.c_str(), 0, 0, font);
 
-			//int ssx = TextWidth(str.c_str(), 0, font);
+			//int ssx = textWidth(str.c_str(), 0, font);
 			//int ssx1 = it->width;
 			cur_x += it->width;
 		}
@@ -1027,7 +1027,7 @@ bool grDispatcher::drawParsedText(int x, int y, int sx, int sy, uint32 color, co
 	return true;
 }
 
-int grDispatcher::TextWidth(const char *str, int hspace, const grFont *font, bool first_string_only) const {
+int grDispatcher::textWidth(const char *str, int hspace, const grFont *font, bool first_string_only) const {
 	if (!font)
 		font = _default_font;
 
@@ -1061,7 +1061,7 @@ int grDispatcher::TextWidth(const char *str, int hspace, const grFont *font, boo
 	return sx_max;
 }
 
-int grDispatcher::TextHeight(const char *str, int vspace, const grFont *font) const {
+int grDispatcher::textHeight(const char *str, int vspace, const grFont *font) const {
 	if (!font)
 		font = _default_font;
 

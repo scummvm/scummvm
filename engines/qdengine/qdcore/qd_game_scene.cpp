@@ -1002,8 +1002,8 @@ void qdGameScene::pre_redraw() {
 		else
 			snprintf(_fps_string, 255, "--");
 
-		int sx = grDispatcher::instance()->TextWidth(_fps_string);
-		int sy = grDispatcher::instance()->TextHeight(_fps_string);
+		int sx = grDispatcher::instance()->textWidth(_fps_string);
+		int sy = grDispatcher::instance()->textHeight(_fps_string);
 		_fps_region = grScreenRegion(10 + sx / 2, 10 + sy / 2, sx, sy);
 	} else
 		_fps_region.clear();
