@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-04 09:50+0000\n"
-"PO-Revision-Date: 2024-07-29 09:17+0000\n"
+"PO-Revision-Date: 2024-08-05 08:49+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -8708,10 +8708,8 @@ msgid "Naughty game mode"
 msgstr "Modalità osé"
 
 #: engines/mads/metaengine.cpp:276
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Start menu keymappings"
-msgstr "Mappature tasti gioco"
+msgstr "Mappature menù principale"
 
 #: engines/mads/metaengine.cpp:299
 #, fuzzy
