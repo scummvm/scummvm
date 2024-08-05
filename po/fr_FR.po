@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-05 10:00+0000\n"
-"PO-Revision-Date: 2024-07-29 04:40+0000\n"
+"PO-Revision-Date: 2024-08-05 16:16+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -8757,68 +8757,48 @@ msgid "Naughty game mode"
 msgstr "Mode coquin"
 
 #: engines/mads/metaengine.cpp:276
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Start menu keymappings"
-msgstr "Conf. des touches du jeu"
+msgstr "Conf. des touches Menu Démarrage"
 
 #: engines/mads/metaengine.cpp:299
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open game menu"
-msgstr "Ouvrir le menu principal"
+msgstr "Ouvrir le menu du jeu"
 
 #: engines/mads/metaengine.cpp:317
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Scroll bar up"
-msgstr "Défiler vers le haut"
+msgstr "Barre de défilement haut"
 
 #: engines/mads/metaengine.cpp:323
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Scroll bar down"
-msgstr "Défiler vers le bas"
+msgstr "Barre de défilement bas"
 
 #: engines/mads/metaengine.cpp:331
-#, fuzzy
-#| msgid "Restart game"
 msgid "Start game"
-msgstr "Redémarrer"
+msgstr "Démarrer une partie"
 
 #: engines/mads/metaengine.cpp:337
-#, fuzzy
-#| msgid "Restore game"
 msgid "Resume game"
-msgstr "Restaurer"
+msgstr "Reprendre la partie"
 
 #: engines/mads/metaengine.cpp:343
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show intro"
-msgstr "Afficher les indices"
+msgstr "Afficher l'introduction"
 
 #: engines/mads/metaengine.cpp:349
 msgid "Show credits"
 msgstr "Afficher les crédits"
 
 #: engines/mads/metaengine.cpp:355
-#, fuzzy
-#| msgid "Show options"
 msgid "Show quotes"
-msgstr "Afficher les options"
+msgstr "Afficher les citations"
 
 #: engines/mads/metaengine.cpp:361
-#, fuzzy
-#| msgid "Quit game"
 msgid "Exit game"
-msgstr "Quitter le jeu"
+msgstr "Sortir du jeu"
 
 #: engines/mads/metaengine.cpp:368
-#, fuzzy
-#| msgid "Faster animations"
 msgid "Restart animation"
-msgstr "Animations plus rapides"
+msgstr "Redémarrer l'animation"
 
 #: engines/mm/metaengine.cpp:57
 msgid "Show item costs in standard inventory mode"
