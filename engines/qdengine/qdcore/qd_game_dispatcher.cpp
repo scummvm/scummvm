@@ -756,10 +756,10 @@ void qdGameDispatcher::redraw() {
 
 void qdGameDispatcher::redraw(const grScreenRegion &reg) {
 //	grDispatcher::instance()->setClip(reg.min_x() - 1,reg.min_y() - 1,reg.max_x() + 1,reg.max_y() + 1);
-//	grDispatcher::instance()->Erase(reg.min_x() - 1,reg.min_y() - 1,reg.size_x() + 2,reg.size_y() + 2,0);
+//	grDispatcher::instance()->erase(reg.min_x() - 1,reg.min_y() - 1,reg.size_x() + 2,reg.size_y() + 2,0);
 
 	grDispatcher::instance()->setClip(reg.min_x(), reg.min_y(), reg.max_x(), reg.max_y());
-	grDispatcher::instance()->Erase(reg.min_x(), reg.min_y(), reg.size_x(), reg.size_y(), 0);
+	grDispatcher::instance()->erase(reg.min_x(), reg.min_y(), reg.size_x(), reg.size_y(), 0);
 
 	if (!_interface_dispatcher.is_active()) {
 		redraw_scene(true);

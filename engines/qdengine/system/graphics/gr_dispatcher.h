@@ -229,8 +229,8 @@ public:
 	void putSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p, int mode, float scale);
 #endif
 
-	void Erase(int x, int y, int sx, int sy, int col);
-	void Erase(int x, int y, int sx, int sy, int r, int g, int b);
+	void erase(int x, int y, int sx, int sy, int col);
+	void erase(int x, int y, int sx, int sy, int r, int g, int b);
 
 	void setPixel(int x, int y, int col);
 	void setPixelFast(int x, int y, int col);
