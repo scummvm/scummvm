@@ -1259,7 +1259,7 @@ MiniscriptInstructionOutcome BuiltinFunc::executeStr2Num(MiniscriptThread *threa
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 		if (Debugger *debugger = thread->getRuntime()->debugGetDebugger())
-			debugger->notify(kDebugSeverityError, Common::String::format("Failed to parse '%s' as a number", str.c_str()));
+			debugger->notify(kDebugSeverityWarning, Common::String::format("Failed to parse '%s' as a number", str.c_str()));
 #endif
 
 		result = 0.0;
