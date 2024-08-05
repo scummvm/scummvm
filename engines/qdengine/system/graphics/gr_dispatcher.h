@@ -177,7 +177,7 @@ public:
 	bool Flush();
 	bool FlushChanges();
 
-	void Fill(int val);
+	void fill(int val);
 
 	void PutSpr(int x, int y, int sx, int sy, const byte *p, int mode);
 	void PutSpr(int x, int y, int sx, int sy, const byte *p, int mode, float scale);

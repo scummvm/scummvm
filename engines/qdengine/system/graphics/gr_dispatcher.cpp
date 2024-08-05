@@ -156,7 +156,7 @@ bool grDispatcher::init(int sx, int sy, grPixelFormat pixel_format) {
 	return true;
 }
 
-void grDispatcher::Fill(int val) {
+void grDispatcher::fill(int val) {
 	_screenBuf->clear(val);
 }
 
