@@ -191,7 +191,7 @@ words *verblist;
 
 uchar do_disambig;
 rbool beforecmd;
-rbool supress_debug;
+rbool suppress_debug;
 rbool was_metaverb;
 integer oldloc;
 integer subcall_arg;

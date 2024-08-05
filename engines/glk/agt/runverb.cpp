@@ -1149,13 +1149,13 @@ rbool metacommand_cycle(int save_vb, int *p_redir_flag) {
 	if (DEBUG_AGT_CMD)
 		debugout("*** Scanning: ANY metacommands ****\n");
 	/* ANY metacommands: */
-	supress_debug = !debug_any;
+	suppress_debug = !debug_any;
 	clear_stack();
 	if ((PURE_METAVERB || !was_metaverb)
 	        && 2 == scan_metacommand(0, 0, 0, 0, 0, nullptr))
 		return 1;
 
-	supress_debug = 0;
+	suppress_debug = 0;
 
 	vb = save_vb;
 	actor_in_scope |= visible(actor); /* Set up for ActorWasPresent */
@@ -1497,12 +1497,12 @@ void exec_verb(void) {
 		if (DEBUG_AGT_CMD)
 			debugout("*** Scanning: AFTER metacommands ****\n");
 		/* AFTER metacommands: */
-		supress_debug = !debug_any;
+		suppress_debug = !debug_any;
 		clear_stack();
 		if ((PURE_METAVERB || !was_metaverb) &&
 		        2 == scan_metacommand(0, 57, 0, 0, 0, nullptr))
 			turndone = 1;
-		supress_debug = 0;
+		suppress_debug = 0;
 	}
 
 	/* If the player really typed 'q' and we generated an "EndGame"
@@ -1547,7 +1547,7 @@ int objcheck_cycle(rbool *success, parse_rec *act, int verbid,
 
 	clear_stack();
 	*success = 1;
-	supress_debug = !debug_disambig;
+	suppress_debug = !debug_disambig;
 	if (actor != 0 && aver < AGX00) {
 		result = scan_metacommand(2, verbid, dobj, prep_, iobj, nullptr);
 		if (result == 2) {
@@ -1561,7 +1561,7 @@ int objcheck_cycle(rbool *success, parse_rec *act, int verbid,
 	}
 	clear_stack();
 	result = scan_metacommand(actor, verbid, dobj, prep_, iobj, nullptr);
-	supress_debug = 0;
+	suppress_debug = 0;
 	switch (result) {
 	case -2:
 		free_all_parserec();
