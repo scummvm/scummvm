@@ -193,7 +193,7 @@ void grDispatcher::Line(int x1, int y1, int x2, int y2, int col, int line_style,
 
 	if (!inverse_col) {
 		if (x1 == x2 && y1 == y2) {
-			SetPixelFast(x1, y1, col);
+			setPixelFast(x1, y1, col);
 			return;
 		}
 
@@ -212,7 +212,7 @@ void grDispatcher::Line(int x1, int y1, int x2, int y2, int col, int line_style,
 			}
 			do {
 				if (++v > line_style) {
-					SetPixelFast(x, y >> F_PREC, col);
+					setPixelFast(x, y >> F_PREC, col);
 					if (v >= line_style * 2)
 						v = 0;
 				}
@@ -234,7 +234,7 @@ void grDispatcher::Line(int x1, int y1, int x2, int y2, int col, int line_style,
 			}
 			do {
 				if (++v > line_style) {
-					SetPixelFast(x >> F_PREC, y, col);
+					setPixelFast(x >> F_PREC, y, col);
 					if (v >= line_style * 2)
 						v = 0;
 				}
@@ -244,7 +244,7 @@ void grDispatcher::Line(int x1, int y1, int x2, int y2, int col, int line_style,
 		}
 	} else {
 		if (x1 == x2 && y1 == y2) {
-			SetPixelFast(x1, y1, col);
+			setPixelFast(x1, y1, col);
 			return;
 		}
 
@@ -263,11 +263,11 @@ void grDispatcher::Line(int x1, int y1, int x2, int y2, int col, int line_style,
 			}
 			do {
 				if (++v > line_style) {
-					SetPixelFast(x, y >> F_PREC, col);
+					setPixelFast(x, y >> F_PREC, col);
 					if (v >= line_style * 2)
 						v = 0;
 				} else
-					SetPixelFast(x, y >> F_PREC, ~col);
+					setPixelFast(x, y >> F_PREC, ~col);
 
 				x += incr;
 				y += k;
@@ -287,11 +287,11 @@ void grDispatcher::Line(int x1, int y1, int x2, int y2, int col, int line_style,
 			}
 			do {
 				if (++v > line_style) {
-					SetPixelFast(x >> F_PREC, y, col);
+					setPixelFast(x >> F_PREC, y, col);
 					if (v >= line_style * 2)
 						v = 0;
 				} else
-					SetPixelFast(x >> F_PREC, y, ~col);
+					setPixelFast(x >> F_PREC, y, ~col);
 
 				y += incr;
 				x += k;
@@ -383,35 +383,35 @@ void grDispatcher::Erase(int x, int y, int sx, int sy, int col) {
 	return;
 }
 
-void grDispatcher::SetPixel(int x, int y, int col) {
+void grDispatcher::setPixel(int x, int y, int col) {
 	if (_clipMode && !clipCheck(x, y)) return;
 
 	uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x, y));
 	*p = col;
 }
 
-void grDispatcher::SetPixelFast(int x, int y, int col) {
+void grDispatcher::setPixelFast(int x, int y, int col) {
 	uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x, y));
 	*p = col;
 }
 
-void grDispatcher::SetPixelFast(int x, int y, int r, int g, int b) {
+void grDispatcher::setPixelFast(int x, int y, int r, int g, int b) {
 	uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x, y));
 	*p = (((r >> 3) << 11) + ((g >> 2) << 5) + ((b >> 3) << 0));
 }
 
-void grDispatcher::SetPixel(int x, int y, int r, int g, int b) {
+void grDispatcher::setPixel(int x, int y, int r, int g, int b) {
 	if (_clipMode && !clipCheck(x, y)) return;
 
 	uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x * 2, y));
 	*p = (((r >> 3) << 11) + ((g >> 2) << 5) + ((b >> 3) << 0));
 }
 
-void grDispatcher::GetPixel(int x, int y, uint16 &col) {
+void grDispatcher::getPixel(int x, int y, uint16 &col) {
 	col = *(uint16 *)(_screenBuf->getBasePtr(x, y));
 }
 
-void grDispatcher::GetPixel(int x, int y, byte &r, byte &g, byte &b) {
+void grDispatcher::getPixel(int x, int y, byte &r, byte &g, byte &b) {
 	uint16 col = *(uint16 *)(_screenBuf->getBasePtr(x, y));
 	split_rgb565u(col, r, g, b);
 }
@@ -539,7 +539,7 @@ void grDispatcher::Line_z(int x1, int y1, int z1, int x2, int y2, int z2, int co
 	if (x1 == x2 && y1 == y2) {
 		int z = (z1 < z2) ? z1 : z2;
 		if (get_z(x1, y1) > z)
-			SetPixelFast(x1, y1, col);
+			setPixelFast(x1, y1, col);
 		return;
 	}
 
@@ -564,7 +564,7 @@ void grDispatcher::Line_z(int x1, int y1, int z1, int x2, int y2, int z2, int co
 		do {
 			if (++v > line_style) {
 				if (get_z(x, y >> F_PREC) >= (z >> F_PREC))
-					SetPixelFast(x, y >> F_PREC, col);
+					setPixelFast(x, y >> F_PREC, col);
 				v = 0;
 			}
 			x += incr;
@@ -591,7 +591,7 @@ void grDispatcher::Line_z(int x1, int y1, int z1, int x2, int y2, int z2, int co
 		do {
 			if (++v > line_style) {
 				if (get_z(x >> F_PREC, y) >= (z >> F_PREC))
-					SetPixelFast(x >> F_PREC, y, col);
+					setPixelFast(x >> F_PREC, y, col);
 				v = 0;
 			}
 			y += incr;

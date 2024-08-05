@@ -79,10 +79,10 @@ void grDispatcher::putSpr_a(int x, int y, int sx, int sy, const byte *p, int mod
 			if (a != 255 && clipCheck(x + j, y + i)) {
 				if (a) {
 					uint16 sc;
-					GetPixel(x + j, y + i, sc);
-					SetPixel(x + j, y + i, alpha_blend_565(make_rgb565u(src_data[2], src_data[1], src_data[0]), sc, a));
+					getPixel(x + j, y + i, sc);
+					setPixel(x + j, y + i, alpha_blend_565(make_rgb565u(src_data[2], src_data[1], src_data[0]), sc, a));
 				} else
-					SetPixel(x + j, y + i, make_rgb565u(src_data[2], src_data[1], src_data[0]));
+					setPixel(x + j, y + i, make_rgb565u(src_data[2], src_data[1], src_data[0]));
 			}
 			fx += dx;
 		}
@@ -132,7 +132,7 @@ void grDispatcher::putSpr(int x, int y, int sx, int sy, const byte *p, int mode,
 		for (int j = x0; j != x1; j += ix) {
 			uint32 cl = line_src[fx >> 16];
 			if (cl)
-				SetPixel(x + j, y + i, cl);
+				setPixel(x + j, y + i, cl);
 			fx += dx;
 		}
 	}
@@ -686,17 +686,17 @@ void grDispatcher::DrawSprContour_a(int x, int y, int sx, int sy, const byte *p,
 		for (int j = 0; j < psx; j++) {
 			if (pic_buf[jj * 2 + 1] < 200) {
 				if (empty_pixel)
-					SetPixelFast(x + j, y + i, contour_color);
+					setPixelFast(x + j, y + i, contour_color);
 				empty_pixel = 0;
 			} else {
 				if (!empty_pixel)
-					SetPixelFast(x + j - 1, y + i, contour_color);
+					setPixelFast(x + j - 1, y + i, contour_color);
 				empty_pixel = 1;
 			}
 			jj += dpx;
 		}
 		if (!empty_pixel)
-			SetPixelFast(x + psx - 1, y + i, contour_color);
+			setPixelFast(x + psx - 1, y + i, contour_color);
 		pic_buf += dpy;
 	}
 	int jj = px;
@@ -706,17 +706,17 @@ void grDispatcher::DrawSprContour_a(int x, int y, int sx, int sy, const byte *p,
 		for (int i = 0; i < psy; i++) {
 			if (pic_buf[jj * 2 + 1] < 200) {
 				if (empty_pixel)
-					SetPixelFast(x + j, y + i, contour_color);
+					setPixelFast(x + j, y + i, contour_color);
 				empty_pixel = 0;
 			} else {
 				if (!empty_pixel)
-					SetPixelFast(x + j, y + i - 1, contour_color);
+					setPixelFast(x + j, y + i - 1, contour_color);
 				empty_pixel = 1;
 			}
 			pic_buf += dpy;
 		}
 		if (!empty_pixel)
-			SetPixelFast(x + j, y + psy - 1, contour_color);
+			setPixelFast(x + j, y + psy - 1, contour_color);
 		jj += dpx;
 	}
 	return;
@@ -752,17 +752,17 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const byte *p, i
 			uint32 cl = pic_buf[jj];
 			if (cl) {
 				if (empty_pixel)
-					SetPixelFast(x + j, y + i, contour_color);
+					setPixelFast(x + j, y + i, contour_color);
 				empty_pixel = 0;
 			} else {
 				if (!empty_pixel)
-					SetPixelFast(x + j - 1, y + i, contour_color);
+					setPixelFast(x + j - 1, y + i, contour_color);
 				empty_pixel = 1;
 			}
 			jj += dpx;
 		}
 		if (!empty_pixel)
-			SetPixelFast(x + psx - 1, y + i, contour_color);
+			setPixelFast(x + psx - 1, y + i, contour_color);
 		pic_buf += dpy;
 	}
 	int jj = px;
@@ -773,17 +773,17 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const byte *p, i
 			uint32 cl = pic_buf[jj];
 			if (cl) {
 				if (empty_pixel)
-					SetPixelFast(x + j, y + i, contour_color);
+					setPixelFast(x + j, y + i, contour_color);
 				empty_pixel = 0;
 			} else {
 				if (!empty_pixel)
-					SetPixelFast(x + j, y + i - 1, contour_color);
+					setPixelFast(x + j, y + i - 1, contour_color);
 				empty_pixel = 1;
 			}
 			pic_buf += dpy;
 		}
 		if (!empty_pixel)
-			SetPixelFast(x + j, y + psy - 1, contour_color);
+			setPixelFast(x + j, y + psy - 1, contour_color);
 		jj += dpx;
 	}
 	return;
@@ -831,17 +831,17 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const byte *p, i
 		for (int j = x0; j != x1; j += ix) {
 			if (line_src[fx >> 16]) {
 				if (empty_pixel)
-					SetPixel(x + j, y + i, contour_color);
+					setPixel(x + j, y + i, contour_color);
 				empty_pixel = 0;
 			} else {
 				if (!empty_pixel)
-					SetPixel(x + j - 1, y + i, contour_color);
+					setPixel(x + j - 1, y + i, contour_color);
 				empty_pixel = 1;
 			}
 			fx += dx;
 		}
 		if (!empty_pixel)
-			SetPixel(x + x1 - 1, y + i, contour_color);
+			setPixel(x + x1 - 1, y + i, contour_color);
 	}
 	fx = (1 << 15);
 	for (int j = x0; j != x1; j += ix) {
@@ -853,17 +853,17 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const byte *p, i
 
 			if (line_src[fx >> 16]) {
 				if (empty_pixel)
-					SetPixel(x + j, y + i, contour_color);
+					setPixel(x + j, y + i, contour_color);
 				empty_pixel = 0;
 			} else {
 				if (!empty_pixel)
-					SetPixel(x + j, y + i - 1, contour_color);
+					setPixel(x + j, y + i - 1, contour_color);
 				empty_pixel = 1;
 			}
 			fy += dy;
 		}
 		if (!empty_pixel)
-			SetPixel(x + j, y + y1 - 1, contour_color);
+			setPixel(x + j, y + y1 - 1, contour_color);
 
 		fx += dx;
 	}
@@ -914,17 +914,17 @@ void grDispatcher::DrawSprContour_a(int x, int y, int sx, int sy, const byte *p,
 		for (int j = x0; j != x1; j += ix) {
 			if (line_src[((fx >> 16) << 1) + 1] < 200) {
 				if (empty_pixel)
-					SetPixel(x + j, y + i, contour_color);
+					setPixel(x + j, y + i, contour_color);
 				empty_pixel = 0;
 			} else {
 				if (!empty_pixel)
-					SetPixel(x + j - 1, y + i, contour_color);
+					setPixel(x + j - 1, y + i, contour_color);
 				empty_pixel = 1;
 			}
 			fx += dx;
 		}
 		if (!empty_pixel)
-			SetPixel(x + x1 - 1, y + i, contour_color);
+			setPixel(x + x1 - 1, y + i, contour_color);
 	}
 
 	fx = (1 << 15);
@@ -937,17 +937,17 @@ void grDispatcher::DrawSprContour_a(int x, int y, int sx, int sy, const byte *p,
 
 			if (line_src[((fx >> 16) << 1) + 1] < 200) {
 				if (empty_pixel)
-					SetPixel(x + j, y + i, contour_color);
+					setPixel(x + j, y + i, contour_color);
 				empty_pixel = 0;
 			} else {
 				if (!empty_pixel)
-					SetPixel(x + j, y + i - 1, contour_color);
+					setPixel(x + j, y + i - 1, contour_color);
 				empty_pixel = 1;
 			}
 			fy += dy;
 		}
 		if (!empty_pixel)
-			SetPixel(x + j, y + y1 - 1, contour_color);
+			setPixel(x + j, y + y1 - 1, contour_color);
 
 		fx += dx;
 	}
@@ -1099,8 +1099,8 @@ void grDispatcher::putSprMask(int x, int y, int sx, int sy, const byte *p, uint3
 			const byte *src_data = line_src + (fx >> 16) * 3;
 			if (src_data[0] || src_data[1] || src_data[2]) {
 				uint16 scl;
-				GetPixel(x + j, y + i, scl);
-				SetPixel(x + j, y + i, alpha_blend_565(mcl, scl, mask_alpha));
+				getPixel(x + j, y + i, scl);
+				setPixel(x + j, y + i, alpha_blend_565(mcl, scl, mask_alpha));
 			}
 			fx += dx;
 		}
@@ -1215,7 +1215,7 @@ void grDispatcher::putSprMask_a(int x, int y, int sx, int sy, const byte *p, uin
 
 			if (a != 255 && clipCheck(x + j, y + i)) {
 				uint16 sc;
-				GetPixel(x + j, y + i, sc);
+				getPixel(x + j, y + i, sc);
 
 				a = mask_alpha + ((a * (255 - mask_alpha)) >> 8);
 
@@ -1225,7 +1225,7 @@ void grDispatcher::putSprMask_a(int x, int y, int sx, int sy, const byte *p, uin
 
 				uint32 cl = make_rgb565u(r, g, b);
 
-				SetPixel(x + j, y + i, alpha_blend_565(cl, sc, a));
+				setPixel(x + j, y + i, alpha_blend_565(cl, sc, a));
 			}
 			fx += dx;
 		}

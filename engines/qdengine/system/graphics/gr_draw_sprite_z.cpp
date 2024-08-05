@@ -73,8 +73,8 @@ void grDispatcher::putSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p
 					uint32 a = line_src[((fx >> 16) << 1) + 1];
 					if (a != 255 && ClipCheck(x + j, y + i)) {
 						uint32 sc;
-						GetPixel(x + j, y + i, sc);
-						SetPixel(x + j, y + i, alpha_blend_555(line_src[(fx >> 16) << 1], sc, a));
+						getPixel(x + j, y + i, sc);
+						setPixel(x + j, y + i, alpha_blend_555(line_src[(fx >> 16) << 1], sc, a));
 						put_z(x + j, y + i, z);
 					}
 					fx += dx;
@@ -91,8 +91,8 @@ void grDispatcher::putSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p
 					uint32 a = line_src[((fx >> 16) << 1) + 1];
 					if (a != 255 && ClipCheck(x + j, y + i)) {
 						uint32 sc;
-						GetPixel(x + j, y + i, sc);
-						SetPixel(x + j, y + i, alpha_blend_565(line_src[(fx >> 16) << 1], sc, a));
+						getPixel(x + j, y + i, sc);
+						setPixel(x + j, y + i, alpha_blend_565(line_src[(fx >> 16) << 1], sc, a));
 						put_z(x + j, y + i, z);
 					}
 					fx += dx;
@@ -115,13 +115,13 @@ void grDispatcher::putSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p
 				uint32 a = line_src[idx + 3];
 				if (a != 255 && ClipCheck(x + j, y + i)) {
 					uint32 sr, sg, sb;
-					GetPixel(x + j, y + i, sr, sg, sb);
+					getPixel(x + j, y + i, sr, sg, sb);
 
 					uint32 r = line_src[idx + 2] + ((a * sr) >> 8);
 					uint32 g = line_src[idx + 1] + ((a * sg) >> 8);
 					uint32 b = line_src[idx + 0] + ((a * sb) >> 8);
 
-					SetPixel(x + j, y + i, r, g, b);
+					setPixel(x + j, y + i, r, g, b);
 					put_z(x + j, y + i, z);
 				}
 
@@ -175,7 +175,7 @@ void grDispatcher::putSpr_z(int x, int y, int z, int sx, int sy, const byte *p, 
 			for (int j = x0; j != x1; j += ix) {
 				uint32 cl = line_src[fx >> 16];
 				if (cl) {
-					SetPixel(x + j, y + i, cl);
+					setPixel(x + j, y + i, cl);
 					put_z(x + j, y + i, z);
 				}
 				fx += dx;
@@ -200,7 +200,7 @@ void grDispatcher::putSpr_z(int x, int y, int z, int sx, int sy, const byte *p, 
 				uint32 b = line_src[idx + 0];
 
 				if (r || g || b) {
-					SetPixel(x + j, y + i, r, g, b);
+					setPixel(x + j, y + i, r, g, b);
 					put_z(x + j, y + i, z);
 				}
 
@@ -222,7 +222,7 @@ void grDispatcher::putSpr_z(int x, int y, int z, int sx, int sy, const byte *p, 
 			for (int j = x0; j != x1; j += ix) {
 				uint32 cl = line_src[fx >> 16];
 				if (cl) {
-					SetPixel(x + j, y + i, cl);
+					setPixel(x + j, y + i, cl);
 					put_z(x + j, y + i, z);
 				}
 				fx += dx;

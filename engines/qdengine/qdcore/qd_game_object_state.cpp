@@ -1492,7 +1492,7 @@ bool qdGameObjectStateMask::draw_mask(uint32 color) const {
 	for (int y = 0; y < mask_size().y; y++) {
 		for (int x = 0; x < mask_size().x; x++) {
 			if (hit(pos.x + x, pos.y + y)) {
-				grDispatcher::instance()->SetPixel(pos.x + x, pos.y + y, color);
+				grDispatcher::instance()->setPixel(pos.x + x, pos.y + y, color);
 			}
 		}
 	}

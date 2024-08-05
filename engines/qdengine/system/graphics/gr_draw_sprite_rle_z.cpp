@@ -486,7 +486,7 @@ void grDispatcher::putSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 					if (ClipCheck(x + j, y + i)) {
 						uint32 cl = line_src[(fx >> 16) << 1];
 						if (cl) {
-							SetPixelFast(x + j, y + i, cl);
+							setPixelFast(x + j, y + i, cl);
 							put_z(x + j, y + i, z);
 						}
 					}
@@ -513,14 +513,14 @@ void grDispatcher::putSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 							uint32 cl = line_src[(fx >> 16) << 1];
 
 							uint32 scl;
-							GetPixel(x + j, y + i, scl);
+							getPixel(x + j, y + i, scl);
 
 							scl = cl +
 							      (((((scl & mask_r) * a) >> 8) & mask_r) |
 							       ((((scl & mask_g) * a) >> 8) & mask_g) |
 							       ((((scl & mask_b) * a) >> 8) & mask_b));
 
-							SetPixelFast(x + j, y + i, scl);
+							setPixelFast(x + j, y + i, scl);
 							put_z(x + j, y + i, z);
 						}
 					}
@@ -551,7 +551,7 @@ void grDispatcher::putSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 						uint32 b = line_src[idx + 0];
 
 						if (r || g || b) {
-							SetPixelFast(x + j, y + i, r, g, b);
+							setPixelFast(x + j, y + i, r, g, b);
 							put_z(x + j, y + i, z);
 						}
 					}
@@ -572,13 +572,13 @@ void grDispatcher::putSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 						uint32 a = line_src[idx + 3];
 						if (a != 255) {
 							uint32 sr, sg, sb;
-							GetPixel(x + j, y + i, sr, sg, sb);
+							getPixel(x + j, y + i, sr, sg, sb);
 
 							uint32 r = line_src[idx + 2] + ((a * sr) >> 8);
 							uint32 g = line_src[idx + 1] + ((a * sg) >> 8);
 							uint32 b = line_src[idx + 0] + ((a * sb) >> 8);
 
-							SetPixelFast(x + j, y + i, r, g, b);
+							setPixelFast(x + j, y + i, r, g, b);
 							put_z(x + j, y + i, z);
 						}
 					}
