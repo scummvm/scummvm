@@ -232,14 +232,14 @@ public:
 	void Erase(int x, int y, int sx, int sy, int col);
 	void Erase(int x, int y, int sx, int sy, int r, int g, int b);
 
-	void SetPixel(int x, int y, int col);
-	void SetPixelFast(int x, int y, int col);
-	void SetPixelFast(int x, int y, int r, int g, int b);
+	void setPixel(int x, int y, int col);
+	void setPixelFast(int x, int y, int col);
+	void setPixelFast(int x, int y, int r, int g, int b);
 
-	void SetPixel(int x, int y, int r, int g, int b);
+	void setPixel(int x, int y, int r, int g, int b);
 
-	void GetPixel(int x, int y, uint16 &col);
-	void GetPixel(int x, int y, byte &r, byte &g, byte &b);
+	void getPixel(int x, int y, uint16 &col);
+	void getPixel(int x, int y, byte &r, byte &g, byte &b);
 
 	void Line(int x1, int y1, int x2, int y2, int col, int line_style = 0, bool inverse_col = false);
 

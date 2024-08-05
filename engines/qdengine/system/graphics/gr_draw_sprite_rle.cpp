@@ -200,7 +200,7 @@ void grDispatcher::putSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 				if (clipCheck(x + j, y + i)) {
 					const byte *src_data = line_src + (fx >> 16) * 3;
 					if (src_data[0] || src_data[1] || src_data[2])
-						SetPixelFast(x + j, y + i, make_rgb565u(src_data[2], src_data[1], src_data[0]));
+						setPixelFast(x + j, y + i, make_rgb565u(src_data[2], src_data[1], src_data[0]));
 				}
 				fx += dx;
 			}
@@ -223,11 +223,11 @@ void grDispatcher::putSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 
 						if (a) {
 							uint16 scl;
-							GetPixel(x + j, y + i, scl);
+							getPixel(x + j, y + i, scl);
 
-							SetPixelFast(x + j, y + i, alpha_blend_565(cl, scl, a));
+							setPixelFast(x + j, y + i, alpha_blend_565(cl, scl, a));
 						} else
-							SetPixelFast(x + j, y + i, cl);
+							setPixelFast(x + j, y + i, cl);
 					}
 				}
 				fx += dx;
@@ -445,8 +445,8 @@ void grDispatcher::putSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 					const byte *src_buf = line_src + ((fx >> 16) << 2);
 					if (src_buf[0] || src_buf[1] || src_buf[2]) {
 						uint16 scl;
-						GetPixel(x + j, y + i, scl);
-						SetPixelFast(x + j, y + i, alpha_blend_565(mcl, scl, mask_alpha));
+						getPixel(x + j, y + i, scl);
+						setPixelFast(x + j, y + i, alpha_blend_565(mcl, scl, mask_alpha));
 					}
 				}
 				fx += dx;
@@ -469,7 +469,7 @@ void grDispatcher::putSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 					uint32 a = src_buf[3];
 					if (a != 255) {
 						uint16 scl;
-						GetPixel(x + j, y + i, scl);
+						getPixel(x + j, y + i, scl);
 
 						a = mask_alpha + ((a * (255 - mask_alpha)) >> 8);
 
@@ -479,7 +479,7 @@ void grDispatcher::putSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 
 						uint32 cl = make_rgb565u(r, g, b);
 
-						SetPixelFast(x + j, y + i, alpha_blend_565(cl, scl, a));
+						setPixelFast(x + j, y + i, alpha_blend_565(cl, scl, a));
 					}
 				}
 				fx += dx;
@@ -751,27 +751,27 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const class rleB
 				if (clipCheck(x + j, y + i)) {
 					cl = line_src[(fx >> 16) << 1];
 					if (!cl && j != x0 && line_src[((fx - dx) >> 16) << 1])
-						SetPixel(x + j - ix, y + i, contour_color);
+						setPixel(x + j - ix, y + i, contour_color);
 
 					if (cl && (j == x0 || !line_src[((fx - dx) >> 16) << 1])) {
-						SetPixelFast(x + j, y + i, contour_color);
+						setPixelFast(x + j, y + i, contour_color);
 					} else {
 						if (cl && (i == y0 || !line_src_prev[(fx >> 16) << 1]))
-							SetPixelFast(x + j, y + i, contour_color);
+							setPixelFast(x + j, y + i, contour_color);
 					}
 
 					if (!cl && i != y0 && line_src_prev[(fx >> 16) << 1])
-						SetPixel(x + j, y + i - iy, contour_color);
+						setPixel(x + j, y + i - iy, contour_color);
 				}
 				fx += dx;
 			}
-			if (cl) SetPixel(x + x1 - ix, y + i, contour_color);
+			if (cl) setPixel(x + x1 - ix, y + i, contour_color);
 		}
 		fx = (1 << 15);
 		for (int j = x0; j != x1; j += ix) {
 			const uint16 *line_src_prev = (y1 & 1) ? line0 : line1;
 			if (line_src_prev[(fx >> 16) << 1])
-				SetPixel(x + j, y + y1 - iy, contour_color);
+				setPixel(x + j, y + y1 - iy, contour_color);
 			fx += dx;
 		}
 	} else {
@@ -791,27 +791,27 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const class rleB
 				if (clipCheck(x + j, y + i)) {
 					cl = rle_alpha_b16(line_src[((fx >> 16) << 1) + 1]);
 					if (!cl && j != x0 && rle_alpha_b16(line_src[(((fx - dx) >> 16) << 1) + 1]))
-						SetPixel(x + j - ix, y + i, contour_color);
+						setPixel(x + j - ix, y + i, contour_color);
 
 					if (cl && (j == x0 || !rle_alpha_b16(line_src[(((fx - dx) >> 16) << 1) + 1]))) {
-						SetPixelFast(x + j, y + i, contour_color);
+						setPixelFast(x + j, y + i, contour_color);
 					} else {
 						if (cl && (i == y0 || !rle_alpha_b16(line_src_prev[((fx >> 16) << 1) + 1])))
-							SetPixelFast(x + j, y + i, contour_color);
+							setPixelFast(x + j, y + i, contour_color);
 					}
 
 					if (!cl && i != y0 && rle_alpha_b16(line_src_prev[((fx >> 16) << 1) + 1]))
-						SetPixel(x + j, y + i - iy, contour_color);
+						setPixel(x + j, y + i - iy, contour_color);
 				}
 				fx += dx;
 			}
-			if (cl) SetPixel(x + x1 - ix, y + i, contour_color);
+			if (cl) setPixel(x + x1 - ix, y + i, contour_color);
 		}
 		fx = (1 << 15);
 		for (int j = x0; j != x1; j += ix) {
 			const uint16 *line_src_prev = (y1 & 1) ? line0 : line1;
 			if (rle_alpha_b16(line_src_prev[((fx >> 16) << 1) + 1]))
-				SetPixel(x + j, y + y1 - iy, contour_color);
+				setPixel(x + j, y + y1 - iy, contour_color);
 			fx += dx;
 		}
 	}

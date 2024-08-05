@@ -2836,7 +2836,7 @@ bool qdGameDispatcher::game_screenshot(Graphics::Surface &thumb) const {
 		for (int i = 0; i < h; i++) {
 			uint16 *dst = (uint16 *)thumb.getBasePtr(0, i);
 			for (int j = 0; j < w; j++) {
-				grDispatcher::instance()->GetPixel(j, i, col);
+				grDispatcher::instance()->getPixel(j, i, col);
 				*dst = col;
 				dst++;
 			}
