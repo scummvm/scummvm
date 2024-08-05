@@ -10088,7 +10088,8 @@ msgid ""
 "detection and speed tests, but also allows changes through the Game menu to "
 "some degree."
 msgstr ""
-"音楽の質を選択。オリジナル版ではハードの検出とスピードテストにより基本的なセットアップがなされますが、ゲームメニューからもある程度変更できます。"
+"音楽の質を選択。オリジナル版ではハードの検出とスピードテストにより基本的な"
+"セットアップがなされますが、ゲームメニューからもある程度変更できます。"
 
 #: engines/scumm/dialogs.cpp:1483 engines/scumm/dialogs.cpp:1484
 msgid "auto"
@@ -10775,7 +10776,9 @@ msgstr "オリジナル版同様に640×480で実行"
 msgid ""
 "This allows more accurate pause/restart banners, but might impact "
 "performance or shader/scaler usage."
-msgstr "より正確な一時停止/再起動バナーが可能になりますが、パフォーマンスやシェーダー/スケーラーの使用量に影響する可能性があります。"
+msgstr ""
+"より正確な一時停止/再起動バナーが可能になりますが、パフォーマンスやシェー"
+"ダー/スケーラーの使用量に影響する可能性があります。"
 
 #: engines/scumm/metaengine.cpp:671
 msgid "Play simplified music"
