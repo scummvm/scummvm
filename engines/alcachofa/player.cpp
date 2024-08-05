@@ -44,6 +44,11 @@ void Player::postUpdate() {
 		_pressedObject = nullptr;
 }
 
+void Player::drawScreenStates() {
+	if (_isPermanentFaded && !_isOptionsMenuOpen)
+		g_engine->drawQueue().add<FadeDrawRequest>(FadeType::ToBlack, 1.0f, -9);
+}
+
 void Player::updateCursor() {
 	if (_isOptionsMenuOpen || !_isGameLoaded)
 		_cursorFrameI = 0;
@@ -93,6 +98,8 @@ void Player::drawCursor(bool forceDefaultCursor) {
 }
 
 void Player::changeRoom(const Common::String &targetRoomName, bool resetCamera) {
+	debug("Change room to %s", targetRoomName.c_str());
+
 	// original would be to always free all resources from globalRoom, inventory, GlobalUI
 	if (targetRoomName.equalsIgnoreCase("SALIR")) {
 		_currentRoom = nullptr;
@@ -241,6 +248,10 @@ void Player::triggerDoor(const Door *door) {
 	
 	FakeLock lock(_activeCharacter->semaphore());
 	g_engine->scheduler().createProcess<DoorTask>(activeCharacterKind(), door, move(lock));
+}
+
+void Player::setPermanentFade(bool isFaded) {
+	_isPermanentFaded = isFaded;
 }
 
 }

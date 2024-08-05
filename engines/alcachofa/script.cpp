@@ -695,16 +695,20 @@ private:
 				getNumberArg(2), (EasingType)getNumberArg(4), getNumberArg(3)));
 		case ScriptKernelTask::FadeIn:
 			return TaskReturn::waitFor(fade(process(), FadeType::ToBlack,
-				1.0f, 0.0f, getNumberArg(0), EasingType::Out, -5));
+				1.0f, 0.0f, getNumberArg(0), EasingType::Out, -5,
+				PermanentFadeAction::UnsetFaded));
 		case ScriptKernelTask::FadeOut:
 			return TaskReturn::waitFor(fade(process(), FadeType::ToBlack,
-				0.0f, 1.0f, getNumberArg(0), EasingType::Out, -5));
+				0.0f, 1.0f, getNumberArg(0), EasingType::Out, -5,
+				PermanentFadeAction::SetFaded));
 		case ScriptKernelTask::FadeIn2:
 			return TaskReturn::waitFor(fade(process(), FadeType::ToBlack,
-				0.0f, 1.0f, getNumberArg(0), (EasingType)getNumberArg(1), -5));
+				0.0f, 1.0f, getNumberArg(0), (EasingType)getNumberArg(1), -5,
+				PermanentFadeAction::UnsetFaded));
 		case ScriptKernelTask::FadeOut2:
 			return TaskReturn::waitFor(fade(process(), FadeType::ToBlack,
-				1.0f, 0.0f, getNumberArg(0), (EasingType)getNumberArg(1), -5));
+				1.0f, 0.0f, getNumberArg(0), (EasingType)getNumberArg(1), -5,
+				PermanentFadeAction::SetFaded));
 
 		// Unused and useless
 		case ScriptKernelTask::SetActiveTextureSet:
