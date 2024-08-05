@@ -1016,7 +1016,7 @@ static void gagt_standout_string(const char *message);
  *       This should turn off blinking, bold, color, etc. and restore
  *       the text mode to its default appearance.
  *    8=Turn on blinking.
- *    9= *Just* White (not neccessarily "normal" and no need to turn off
+ *    9= *Just* White (not necessarily "normal" and no need to turn off
  *        blinking)
  *   10=Turn on fixed pitch font.
  *   11=Turn off fixed pitch font
