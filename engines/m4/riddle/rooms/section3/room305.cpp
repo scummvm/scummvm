@@ -295,6 +295,9 @@ void Room305::parser() {
 	bool lookFlag = player_said_any("look", "look at");
 	bool takeFlag = player_said("take");
 	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
+	bool itemFlag = false;
+	bool chiselFlag = false;
+	bool caseFlag = false;
 
 	if (player_said("conv305a")) {
 		conv305a();
@@ -341,12 +344,333 @@ void Room305::parser() {
 		conv_play();
 		_val7 = 1;
 		_conv1 = 0;
+	} else if (_G(kernel).trigger == 747) {
+		_val7 = 4;
+		_conv1 = 7;
+	} else if (player_said("close", "drawer")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			if (inv_object_is_here("TURTLE TREATS"))
+				terminateMachineAndNull(_openDrawerTreats);
+
+			terminateMachineAndNull(_openDrawer);
+			hotspot_restore_all();
+
+			if (_G(flags)[V000]) {
+				sendWSMessage_120000(1);
+			} else {
+				sendWSMessage_10000(1, _rip6, _rip4, 5, 1, 1, _rip4, 1, 1, 0);
+			}
+			break;
+
+		case 1:
+			if (_G(flags)[V000]) {
+				sendWSMessage_150000(-1);
+			} else {
+				terminateMachineAndNull(_rip6);
+				terminateMachineAndNull(_rip5);
+				ws_unhide_walker();
+			}
+			kernel_timing_trigger(1, 2);
+			break;
+
+		case 2:
+			series_unload(_rip4);
+			player_set_commands_allowed(true);
+			_val4 = 0;
+			break;
+
+
+
+		}
+	} else if (useFlag && player_said("drawer")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			player_update_info();
+
+			if (_G(flags)[V000]) {
+				_rip4 = series_load("RIP TREK MED REACH HAND POS1");
+				setGlobals1(1, 5, 5, 5, 0, 5, 1, 1, 1);
+				sendWSMessage_110000(1);
+			} else {
+				ws_hide_walker();
+				_rip4 = series_load("SUIT RIP REACHES FOR DRAWER");
+				_rip5 = series_show("ripsh1", 0xf00, 128, -1, -1, 0,
+					_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+				_rip6 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, false,
+					triggerMachineByHashCallbackNegative, "rip reach");
+
+				sendWSMessage_10000(1, _rip6, _rip4, 1, 5, 1, _rip4, 5, 5, 0);
+			}
+			break;
+
+		case 1:
+			hotspot_hide_all();
+			intr_cancel_sentence();
+			mouse_set_sprite(0);
+			hotspot_add_dynamic("LOOK AT", " ", 0, 0, 1500, 374, 0);
+
+			if (inv_object_is_here("TURTLE TREATS")) {
+				hotspot_add_dynamic("LOOK AT", "TURTLE TREATS", 1105, 208, 1175, 266, 6);
+				hotspot_add_dynamic("LOOK AT", "TURTLE TREATS", 1052, 230, 1147, 296, 6);
+			}
+
+			_val4 = 1;
+			_openDrawer = series_show_sprite("open drawer", 0, 0);
+
+			if (inv_object_is_here("TURTLE TREATS")) {
+				_openDrawerTreats = series_show_sprite("open drawer with treats", 0, 0);
+			}
+
+			player_set_commands_allowed(true);
+			digi_play("305_s02", 2);
+			break;
+
+		default:
+			break;
+		}
+	} else if (takeFlag && player_said("turtle treats") && _G(kernel).trigger == -1
+			&& inv_object_is_here("TURTLE TREATS")) {
+		terminateMachineAndNull(_openDrawerTreats);
+		terminateMachineAndNull(_openDrawer);
+		hotspot_restore_all();
+
+		if (_G(flags)[V000])
+			sendWSMessage_120000(1);
+		else
+			sendWSMessage_10000(1, _rip6, _rip4, 5, 1, 1, _rip4, 1, 1, 0);
+
+		digi_play("305r20", 1);
+
+	} else if (takeFlag && player_said("turtle treats") && _G(kernel).trigger == 1) {
+		inv_give_to_player("TURTLE TREATS");
+		terminateMachineAndNull(_rip6);
+		terminateMachineAndNull(_rip5);
+		ws_unhide_walker();
+		kernel_timing_trigger(1, 2);
+
+	} else if (takeFlag && player_said("turtle treats") && _G(kernel).trigger == 2) {
+		series_unload(_rip4);
+		player_set_commands_allowed(true);
+		_val4 = 0;
+
+	} else if (takeFlag && player_said("turtle")) {
+		if (_G(flags)[GLB_TEMP_12]) {
+			digi_play("305r55", 1);
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				if (inv_object_is_here("TURTLE")) {
+					player_set_commands_allowed(false);
+					g_engine->camera_shift_xy(640, 0);
+					setGlobals1(_ripLooksDown, 1, 9, 9, 9);
+					sendWSMessage_110000(1);
+				} else {
+					goto next1;
+				}
+				break;
+
+			case 1:
+				kernel_examine_inventory_object("ping turtle",
+					_G(master_palette), 5, 1, 407, 25, 2,
+					"305R19", -1);
+				terminateMachineAndNull(_turtle);
+				break;
+
+			case 2:
+				inv_give_to_player("TURTLE");
+				sendWSMessage_140000(3);
+				break;
+
+			case 3:
+				hotspot_set_active("turtle", false);
+				player_set_commands_allowed(true);
+				break;
+			default:
+				goto next1;
+				break;
+			}
+		}
+	} else {
+		goto next1;
 	}
-	// TODO
-	else {
-		return;
+	goto exit;
+
+next1:
+	if (player_said_any("SHRUNKEN HEAD", "INCENSE BURNER",
+			"CRYSTAL SKULL", "ROMANOV EMERALD", "WHALE BONE HORN",
+			"WHEELED TOY")) {
+		if (player_said("DISPLAY CASE"))
+			itemFlag = true;
 	}
 
+	if (itemFlag || (takeFlag && player_said_any("SHRUNKEN HEAD",
+			"INCENSE BURNER", "CRYSTAL SKULL", "ROMANOV EMERALD",
+			"WHALE BONE HORN"))) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			if ((itemFlag && inv_player_has(_G(player).verb)) || takeFlag) {
+				if (itemFlag) {
+					if (!walkToObject())
+						goto next2;
+				} else {
+					kernel_timing_trigger(1, 1);
+				}
+			}
+			break;
+
+		default:
+			break;
+		}
+	} else {
+		goto next2;
+	}
+	goto exit;
+
+next2:
+	chiselFlag = player_said("CHISEL") && player_said("DISPLAY CASE");
+	if (chiselFlag || (takeFlag && player_said("CHISEL"))) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			if ((chiselFlag && inv_player_has(_G(player).verb)) ||
+				(takeFlag && inv_object_is_here(_G(player).noun))) {
+				if (chiselFlag) {
+					if (player_said("CHISEL")) {
+						ws_walk(186, 279, 0, 1, 10);
+					}
+				} else {
+					kernel_timing_trigger(1, 1);
+				}
+			}
+			break;
+
+		case 1:
+			player_set_commands_allowed(false);
+			setGlobals1(_ripMedHigh, 1, 12, 12, 12);
+			sendWSMessage_110000(3);
+			break;
+
+		case 3:
+			if (chiselFlag) {
+				hotspot_set_active(_G(player).verb, false);
+
+				if (player_said("CHISEL")) {
+					_knife2 = series_show_sprite("DISPLAY CASE YETI HANDLED KNIFE", 0, 0xf00);
+					inv_move_object("CHISEL", 305);
+				}
+			} else {
+				hotspot_set_active(_G(player).noun, false);
+
+				if (player_said("CHISEL")) {
+					terminateMachineAndNull(_knife2);
+					inv_give_to_player("CHISEL");
+				}
+			}
+
+			sendWSMessage_140000(5);
+			break;
+
+		case 5:
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			goto next3;
+			break;
+		}
+	} else {
+		goto next3;
+	}
+	goto exit;
+
+next3:
+	caseFlag = player_said_any("GERMAN BANKNOTE", "REBUS AMULET", "SILVER BUTTERFLY",
+		"POSTAGE STAMP", "STICK AND SHELL MAP") && player_said("DISPLAY CASE");
+	// The second or parameter looks redundant, but I'm keeping it in as a reminder,
+	// just in case there's something actually different in the original disassembly
+	if (caseFlag || (takeFlag && caseFlag)) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			if ((caseFlag && inv_player_has(_G(player).verb)) ||
+					(takeFlag && inv_object_is_here(_G(player).noun))) {
+				if (caseFlag) {
+					if (player_said("GERMAN BANKNOTE"))
+						ws_walk(88, 305, nullptr, 1, 10);
+					else if (player_said("REBUS AMULET"))
+						ws_walk(66, 319, nullptr, 1, 10);
+					else if (player_said("SILVER BUTTERFLY"))
+						ws_walk(124, 302, nullptr, 1, 10);
+					else if (player_said("POSTAGE STAMP"))
+						ws_walk(164, 288, nullptr, 1, 10);
+					else if (player_said("STICK AND SHELL MAP"))
+						ws_walk(120, 299, nullptr, 1, 10);
+				} else {
+					kernel_timing_trigger(1, 1);
+				}
+			}
+			break;
+
+		case 1:
+			player_set_commands_allowed(false);
+			_rip4 = series_load("RIP HIGH REACHER POS2");
+
+			if (player_said_any("REBUS AMULET", "SILVER BUTTERFLY"))
+				setGlobals1(_rip4, 1, 7, 7, 7);
+			else
+				setGlobals1(_rip4, 1, 14, 14, 14);
+
+			sendWSMessage_110000(3);
+			break;
+
+		case 3:
+			if (useFlag) {
+				hotspot_set_active(_G(player).verb, true);
+
+#define DROP(FIELD, NAME, CASE) if (player_said(NAME)) { \
+	FIELD = series_show_sprite(CASE, 0, 0xf00); \
+		inv_move_object(NAME, 305); }
+				DROP(_amulet2, "REBUS AMULET", "DISPLAY CASE AMULET")
+				DROP(_butterfly2, "SILVER BUTTERFLY", "DISPLAY CASE BUTTERFLY")
+				DROP(_banknote2, "GERMAN BANKNOTE", "DISPLAY CASE GERMAN BANKNOTE")
+				DROP(_stamp2, "POSTAGE STAMP", "DISPLAY CASE CHEAPEST STAMP")
+				DROP(_map2, "STICK AND SHELL MAP", "DISPLAY CASE QUARRY STICK MAP")
+#undef ITEM
+				sendWSMessage_140000(3);
+
+			} else {
+				hotspot_set_active(_G(player).noun, false);
+
+#define TAKE(FIELD, NAME) if (player_said(NAME)) { \
+	terminateMachineAndNull(FIELD); inv_give_to_player(NAME); }
+				TAKE(_amulet2, "REBUS AMULET")
+				TAKE(_butterfly2, "SILVER BUTTERFLY")
+				TAKE(_banknote2, "GERMAN BANKNOTE")
+				TAKE(_stamp2, "POSTAGE STAMP")
+				TAKE(_map2, "STICK AND SHELL MAP")
+#undef TAKE
+
+				sendWSMessage_140000(5);
+			}
+			break;
+
+		case 5:
+			series_unload(_rip4);
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			goto next4;
+			break;
+		}
+	} else {
+		goto next4;
+	}
+	goto exit;
+
+next4:
+	// TODO
+exit:
 	_G(player).command_ready = false;
 }
 
@@ -418,6 +742,35 @@ void Room305::conv305a() {
 
 		digi_play(sound, 1, 255, 1);
 	}
+}
+
+bool Room305::walkToObject() {
+	if (player_said("SHRUNKEN HEAD")) {
+		ws_walk(98, 313, 0, 1, 10, 1);
+		return true;
+	} else if (player_said("INCENSE BURNER")) {
+		ws_walk(171, 285, 0, 1, 10, 1);
+		return true;
+	} else if (player_said("CRYSTAL SKULL")) {
+		ws_walk(70, 320, 0, 1, 10, 1);
+		return true;
+	} else if (player_said("WHALE BONE HORN")) {
+		ws_walk(116, 304, 0, 1, 10, 1);
+		return true;
+	} else if (player_said("WHEELED TOY")) {
+		ws_walk(151, 296, 0, 1, 10, 1);
+		return true;
+	} else if (player_said("ROMANOV EMERALD")) {
+		if (_G(flags)[V090] == 3) {
+			digi_play("305f08", 1, 255, 6);
+			_val7 = 2;
+		} else {
+			ws_walk(183, 288, 0, 1, 10, 1);
+		}
+		return true;
+	}
+
+	return false;
 }
 
 } // namespace Rooms

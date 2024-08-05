@@ -101,6 +101,7 @@ private:
 	void setupSign();
 	void setShadow5(bool active);
 	void conv305a();
+	bool walkToObject();
 
 public:
 	Room305() : Room() {}
