@@ -2735,7 +2735,7 @@ bool ReturnModifier::respondsToEvent(const Event &evt) const {
 }
 
 VThreadState ReturnModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	runtime->addSceneStateTransition(HighLevelSceneTransition(nullptr, HighLevelSceneTransition::kTypeReturn, false, false));
+	runtime->addSceneReturn();
 	return kVThreadReturn;
 }
 

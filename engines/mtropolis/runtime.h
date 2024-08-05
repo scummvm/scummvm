@@ -1363,7 +1363,6 @@ struct ObjectParentChange {
 
 struct HighLevelSceneTransition {
 	enum Type {
-		kTypeReturn,
 		kTypeChangeToScene,
 		kTypeChangeSharedScene,
 		kTypeForceLoadScene,
@@ -1609,6 +1608,7 @@ public:
 	void addVolume(int volumeID, const char *name, bool isMounted);
 	bool getVolumeState(const Common::String &name, int &outVolumeID, bool &outIsMounted) const;
 
+	void addSceneReturn();
 	void addSceneStateTransition(const HighLevelSceneTransition &transition);
 
 	void setSceneTransitionEffect(bool isInDestinationScene, SceneTransitionEffect *effect);
@@ -1850,6 +1850,7 @@ private:
 	static Common::SharedPtr<Structural> findDefaultSharedSceneForScene(Structural *scene);
 	void executeTeardown(const Teardown &teardown);
 	void executeLowLevelSceneStateTransition(const LowLevelSceneStateTransitionAction &transitionAction);
+	void executeHighLevelSceneReturn();
 	void executeHighLevelSceneTransition(const HighLevelSceneTransition &transition);
 	void executeCompleteTransitionToScene(const Common::SharedPtr<Structural> &scene);
 	void executeSharedScenePostSceneChangeActions();
@@ -1904,6 +1905,7 @@ private:
 	Common::Array<Common::WeakPtr<Structural> > _pendingPostCloneShowChecks;
 	Common::Array<Common::WeakPtr<Structural> > _pendingShowClonedObject;
 	Common::Array<ObjectParentChange> _pendingParentChanges;
+	uint _pendingSceneReturnCount;
 	Common::Array<HighLevelSceneTransition> _pendingSceneTransitions;
 	Common::Array<SceneStackEntry> _sceneStack;
 	Common::SharedPtr<Structural> _activeMainScene;

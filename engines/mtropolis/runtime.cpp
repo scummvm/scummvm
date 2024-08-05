@@ -4667,8 +4667,8 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 	  _cachedMousePosition(Common::Point(0, 0)), _realMousePosition(Common::Point(0, 0)), _trackedMouseOutside(false),
 	  _forceCursorRefreshOnce(true), _autoResetCursor(false), _haveModifierOverrideCursor(false), _haveCursorElement(false), _sceneGraphChanged(false), _isQuitting(false),
 	  _collisionCheckTime(0), /*_elementCursorUpdateTime(0), */_defaultVolumeState(true), _activeSceneTransitionEffect(nullptr), _sceneTransitionStartTime(0), _sceneTransitionEndTime(0),
-	  _sharedSceneWasSetExplicitly(false), _modifierOverrideCursorID(0), _subtitleRenderer(subRenderer), _multiClickStartTime(0), _multiClickInterval(500), _multiClickCount(0), _numMouseBlockers(0)
-{
+	  _sharedSceneWasSetExplicitly(false), _modifierOverrideCursorID(0), _subtitleRenderer(subRenderer), _multiClickStartTime(0), _multiClickInterval(500), _multiClickCount(0), _numMouseBlockers(0),
+	  _pendingSceneReturnCount(0) {
 	_random.reset(new Common::RandomSource("mtropolis"));
 
 	_vthread.reset(new VThread());
@@ -4954,6 +4954,20 @@ bool Runtime::runFrame() {
 			_messageQueue.remove_at(0);
 
 			sendMessageOnVThread(msg);
+			continue;
+		}
+
+		// Scene returns are processed before transitions even if the transition was
+		// executed first.  SPQR requires this behavior to properly return from the
+		// menu, since it sets a scene change via WorldManager to the restored scene
+		// and then triggers a Return modifier which would return to the last scene
+		// that added to the return list, which in this case is the scene that was
+		// active before opening the menu.
+		if (_pendingSceneReturnCount > 0) {
+			_pendingSceneReturnCount--;
+
+			executeHighLevelSceneReturn();
+			_sceneGraphChanged = true;
 			continue;
 		}
 
@@ -5584,6 +5598,47 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 	executeSharedScenePostSceneChangeActions();
 }
 
+void Runtime::executeHighLevelSceneReturn() {
+	if (_sceneStack.size() == 0)
+		_sceneStack.resize(1); // Reserve shared scene slot
+
+	if (_sceneReturnList.size() == 0) {
+		warning("A scene return was requested, but no scenes are in the scene return list");
+		return;
+	}
+
+	const SceneReturnListEntry &sceneReturn = _sceneReturnList.back();
+
+	if (sceneReturn.scene == _activeSharedScene)
+		error("Transitioned into the active shared scene as the main scene, this is not supported");
+
+	if (sceneReturn.scene != _activeMainScene) {
+		assert(_activeMainScene.get() != nullptr); // There should always be an active main scene after the first transition
+
+		if (sceneReturn.isAddToDestinationSceneTransition) {
+			// In this case we unload the active main scene and reactivate the old main
+			queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneEnded, 0), _activeMainScene.get(), true, true);
+			queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kParentDisabled, 0), _activeMainScene.get(), true, true);
+			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeMainScene, LowLevelSceneStateTransitionAction::kUnload));
+
+			queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneReactivated, 0), sceneReturn.scene.get(), true, true);
+
+			for (uint i = 1; i < _sceneStack.size(); i++) {
+				if (_sceneStack[i].scene == _activeMainScene) {
+					_sceneStack.remove_at(i);
+					break;
+				}
+			}
+
+			_activeMainScene = sceneReturn.scene;
+
+			executeSharedScenePostSceneChangeActions();
+		} else {
+			executeCompleteTransitionToScene(sceneReturn.scene);
+		}
+	}
+}
+
 void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &transition) {
 	if (_sceneStack.size() == 0)
 		_sceneStack.resize(1); // Reserve shared scene slot
@@ -5593,43 +5648,6 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 	// shared scene, calling return/scene transitions during scene deactivation, or other
 	// edge cases that hopefully no games actually do!
 	switch (transition.type) {
-	case HighLevelSceneTransition::kTypeReturn: {
-			if (_sceneReturnList.size() == 0) {
-				warning("A scene return was requested, but no scenes are in the scene return list");
-				return;
-			}
-
-			const SceneReturnListEntry &sceneReturn = _sceneReturnList.back();
-
-			if (sceneReturn.scene == _activeSharedScene)
-				error("Transitioned into the active shared scene as the main scene, this is not supported");
-
-			if (sceneReturn.scene != _activeMainScene) {
-				assert(_activeMainScene.get() != nullptr); // There should always be an active main scene after the first transition
-
-				if (sceneReturn.isAddToDestinationSceneTransition) {
-					// In this case we unload the active main scene and reactivate the old main
-					queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneEnded, 0), _activeMainScene.get(), true, true);
-					queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kParentDisabled, 0), _activeMainScene.get(), true, true);
-					_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeMainScene, LowLevelSceneStateTransitionAction::kUnload));
-
-					queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneReactivated, 0), sceneReturn.scene.get(), true, true);
-
-					for (uint i = 1; i < _sceneStack.size(); i++) {
-						if (_sceneStack[i].scene == _activeMainScene) {
-							_sceneStack.remove_at(i);
-							break;
-						}
-					}
-
-					_activeMainScene = sceneReturn.scene;
-
-					executeSharedScenePostSceneChangeActions();
-				} else {
-					executeCompleteTransitionToScene(sceneReturn.scene);
-				}
-			}
-		} break;
 	case HighLevelSceneTransition::kTypeChangeToScene: {
 			const Common::SharedPtr<Structural> targetScene = transition.scene;
 
@@ -7166,6 +7184,9 @@ bool Runtime::isIdle() const {
 	if (_messageQueue.size() > 0)
 		return false;
 
+	if (_pendingSceneReturnCount > 0)
+		return false;
+
 	if (_pendingSceneTransitions.size() > 0)
 		return false;
 
@@ -7291,6 +7312,10 @@ bool Runtime::getVolumeState(const Common::String &name, int &outVolumeID, bool 
 
 void Runtime::addSceneStateTransition(const HighLevelSceneTransition &transition) {
 	_pendingSceneTransitions.push_back(transition);
+}
+
+void Runtime::addSceneReturn() {
+	_pendingSceneReturnCount++;
 }
 
 void Runtime::setSceneTransitionEffect(bool isInDestinationScene, SceneTransitionEffect *effect) {
