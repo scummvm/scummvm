@@ -1068,8 +1068,8 @@ int scan_metacommand(integer m_actor, int vcode,
 				}
 
 				/* REDIRECT :If we do a redirect from a broader grammar to a
-				   narrower grammer, it will be noted so that certain types
-				   of grammer checking can be disabled. */
+				   narrower grammar, it will be noted so that certain types
+				   of grammar checking can be disabled. */
 				if (redir_flag != nullptr) {
 					if (*redir_flag < 2
 					        && redir_narrows_grammar(&command[oldi], &command[i]))
