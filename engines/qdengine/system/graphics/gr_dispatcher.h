@@ -217,8 +217,8 @@ public:
 	bool drawText(int x, int y, uint32 color, const char *str, int hspace = 0, int vspace = 0, const grFont *font = NULL);
 	bool drawAlignedText(int x, int y, int sx, int sy, uint32 color, const char *str, grTextAlign align = GR_ALIGN_LEFT, int hspace = 0, int vspace = 0, const grFont *font = NULL);
 	bool drawParsedText(int x, int y, int sx, int sy, uint32 color, const UI_TextParser *parser, grTextAlign align = GR_ALIGN_LEFT, const grFont *font = NULL);
-	int TextWidth(const char *str, int hspace = 0, const grFont *font = NULL, bool first_string_only = false) const;
-	int TextHeight(const char *str, int vspace = 0, const grFont *font = NULL) const;
+	int textWidth(const char *str, int hspace = 0, const grFont *font = NULL, bool first_string_only = false) const;
+	int textHeight(const char *str, int vspace = 0, const grFont *font = NULL) const;
 
 #ifdef _GR_ENABLE_ZBUFFER
 	void putSpr_z(int x, int y, int z, int sx, int sy, const byte *p, int mode);
