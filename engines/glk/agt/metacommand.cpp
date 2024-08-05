@@ -340,14 +340,14 @@ static rbool decode_args(int ip_, op_rec *oprec) {
 			writeln(oprec->errmsg);
 		return 0;
 	}
-	if (DEBUG_AGT_CMD && !supress_debug) {
+	if (DEBUG_AGT_CMD && !suppress_debug) {
 		if (oprec->negate) { /* Output NOT */
 			debug_cmd_out(ip_, 108, 0, 0, 0);
 			ip_++;
 		}
 	}
 
-	if (DEBUG_AGT_CMD && !supress_debug)
+	if (DEBUG_AGT_CMD && !suppress_debug)
 		debug_cmd_out(ip_, oprec->op, oprec->arg1, oprec->arg2, oprec->optype);
 
 	/* This checks and translates the arguments */
@@ -358,7 +358,7 @@ static rbool decode_args(int ip_, op_rec *oprec) {
 		if (grammer_arg && oprec->op <= MAX_COND)
 			return 0;
 		if (!PURE_ERROR) {
-			if (DEBUG_AGT_CMD && !supress_debug) debugout("\n");
+			if (DEBUG_AGT_CMD && !suppress_debug) debugout("\n");
 			writeln("GAME ERROR: Invalid argument to metacommand token.");
 		}
 		return 0;
@@ -520,7 +520,7 @@ static int run_metacommand(int cnum, int *redir_offset)
 	if (restart)  /* finish up Return from subroutine */
 		pop_subcall(&cnum, &ip_, &fail_addr);
 
-	if (DEBUG_AGT_CMD && !supress_debug) {
+	if (DEBUG_AGT_CMD && !suppress_debug) {
 		debug_head(cnum);
 		if (restart) debugout("   (Resuming after subroutine)\n");
 	}
@@ -587,7 +587,7 @@ static int run_metacommand(int cnum, int *redir_offset)
 
 		/* -------- Commands that need to be handled specially -------------- */
 		if (currop.op == 109) { /* OR */
-			if (DEBUG_AGT_CMD && !supress_debug) debug_newline(op, 0);
+			if (DEBUG_AGT_CMD && !suppress_debug) debug_newline(op, 0);
 			continue; /* OR: skip further processing */
 		}
 
@@ -597,25 +597,25 @@ static int run_metacommand(int cnum, int *redir_offset)
 				return 2;
 			}
 			subcall_arg = currop.arg1;
-			if (DEBUG_AGT_CMD && !supress_debug) debugout("--> Call\n");
+			if (DEBUG_AGT_CMD && !suppress_debug) debugout("--> Call\n");
 			return 4;
 		}
 
 		if (currop.op == 1038) { /* Return */
 			restart = 1;
-			if (DEBUG_AGT_CMD && !supress_debug) debugout("--> Return\n");
+			if (DEBUG_AGT_CMD && !suppress_debug) debugout("--> Return\n");
 			return 5;
 		}
 
 		if (currop.op == 1149) { /* Goto */
 			ip_ = currop.arg1;
-			if (DEBUG_AGT_CMD && !supress_debug) debugout("\n");
+			if (DEBUG_AGT_CMD && !suppress_debug) debugout("\n");
 			continue;
 		}
 
 		if (currop.op == 1150) { /* OnFailGoto */
 			fail_addr = currop.arg1;
-			if (DEBUG_AGT_CMD && !supress_debug) debugout("\n");
+			if (DEBUG_AGT_CMD && !suppress_debug) debugout("\n");
 			continue;
 		}
 
@@ -624,24 +624,24 @@ static int run_metacommand(int cnum, int *redir_offset)
 
 		/* ---------- Disambiguation Success -------------- */
 		if (do_disambig && currop.disambig) {
-			if (DEBUG_AGT_CMD && !supress_debug) debugout("==> ACTION\n");
+			if (DEBUG_AGT_CMD && !suppress_debug) debugout("==> ACTION\n");
 			return -2;
 		}
 
 		/* ---------- Run normal metacommands -------------- */
 		switch (r = exec_instr(&currop)) {
 		case 0:  /* Normal action token or successful conditional token */
-			if (DEBUG_AGT_CMD && !supress_debug) debug_newline(op, 0);
+			if (DEBUG_AGT_CMD && !suppress_debug) debug_newline(op, 0);
 			continue;
 		case 1: /* Conditional token: fail */
-			if (DEBUG_AGT_CMD && !supress_debug) {
+			if (DEBUG_AGT_CMD && !suppress_debug) {
 				if (orflag) debugout("  (-->FAIL)\n");
 				else debugout("--->FAIL\n");
 			}
 			fail = 1;
 			continue;
 		default: /* Return explicit value */
-			if (DEBUG_AGT_CMD && !supress_debug) {
+			if (DEBUG_AGT_CMD && !suppress_debug) {
 				if (r == 103) debugout("-->Redirect\n");
 				else debugout("==> END\n");
 			}
@@ -1018,7 +1018,7 @@ int scan_metacommand(integer m_actor, int vcode,
 	if (m_actor == -ext_code[weverybody]) m_actor = 2;
 
 
-	if (DEBUG_AGT_CMD && DEBUG_SCAN && !supress_debug) scan_dbg(vcode);
+	if (DEBUG_AGT_CMD && DEBUG_SCAN && !suppress_debug) scan_dbg(vcode);
 
 	m_verb = syntbl[auxsyn[vcode]];
 	if (m_actor == 0) {
@@ -1062,7 +1062,7 @@ int scan_metacommand(integer m_actor, int vcode,
 					rfree(substack);
 					return 2;
 				}
-				if (DEBUG_AGT_CMD && !supress_debug) {
+				if (DEBUG_AGT_CMD && !suppress_debug) {
 					debugout("   ==>");
 					debug_head(i);
 				}
