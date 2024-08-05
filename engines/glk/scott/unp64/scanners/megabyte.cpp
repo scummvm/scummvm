@@ -49,7 +49,7 @@ void scnMegabyte(UnpStr *unp) {
 				unp->_endAdr = READ_LE_UINT16(&mem[p + 0x55]); // mem[p + 0x55] | mem[p + 0x56] << 8;
 				unp->_endAdr++;
 				unp->_strMem = 0x801;
-				unp->_retAdr = 0x801; /* ususally it just runs */
+				unp->_retAdr = 0x801; /* usually it just runs */
 				unp->_idFlag = 1;
 				return;
 			}
