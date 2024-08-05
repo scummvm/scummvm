@@ -248,8 +248,8 @@ public:
 #endif
 
 	void lineTo(int x, int y, int len, int dir, int col, int line_style = 0);
-	void Rectangle(int x, int y, int sx, int sy, int outcol, int incol, int mode, int line_style = 0);
-	void RectangleAlpha(int x, int y, int sx, int sy, uint32 color, int alpha);
+	void rectangle(int x, int y, int sx, int sy, int outcol, int incol, int mode, int line_style = 0);
+	void rectangleAlpha(int x, int y, int sx, int sy, uint32 color, int alpha);
 
 	int PalettedMode() const {
 		return (_flags & GR_PALETTE);

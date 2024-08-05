@@ -640,7 +640,7 @@ void qdSprite::redraw(int x, int y, int z, int mode) const {
 #endif
 
 	if (debugChannelSet(1, kDebugGraphics))
-		grDispatcher::instance()->Rectangle(xx, yy, _picture_size.x, _picture_size.y, 0, 0, GR_OUTLINED);
+		grDispatcher::instance()->rectangle(xx, yy, _picture_size.x, _picture_size.y, 0, 0, GR_OUTLINED);
 }
 
 void qdSprite::redraw_rot(int x, int y, int z, float angle, int mode) const {

@@ -743,7 +743,7 @@ void qdGameDispatcher::redraw() {
 			redraw(grScreenRegion(grDispatcher::instance()->get_SizeX() / 2, grDispatcher::instance()->get_SizeY() / 2, grDispatcher::instance()->get_SizeX(), grDispatcher::instance()->get_SizeY()));
 
 			for (grDispatcher::region_iterator it = grDispatcher::instance()->changed_regions().begin(); it != grDispatcher::instance()->changed_regions().end(); ++it)
-				grDispatcher::instance()->Rectangle(it->min_x(), it->min_y(), it->size_x(), it->size_y(), 0xFFFFFF, 0, GR_OUTLINED);
+				grDispatcher::instance()->rectangle(it->min_x(), it->min_y(), it->size_x(), it->size_y(), 0xFFFFFF, 0, GR_OUTLINED);
 
 			grDispatcher::instance()->flush();
 #endif
@@ -800,7 +800,7 @@ void qdGameDispatcher::redraw_scene(bool draw_interface) {
 			if (check_flag(FADE_OUT_FLAG))
 				phase = 1.f - phase;
 
-			grDispatcher::instance()->RectangleAlpha(0, 0,
+			grDispatcher::instance()->rectangleAlpha(0, 0,
 			        qdGameConfig::get_config().screen_sx(),
 			        qdGameConfig::get_config().screen_sy(),
 			        0, round(phase * 255.f));

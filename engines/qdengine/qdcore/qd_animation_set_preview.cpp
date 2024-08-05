@@ -104,13 +104,13 @@ void qdAnimationSetPreview::redraw() {
 	Vect2s v1 = _camera->global2scr(Vect3f(0.0f, 0.0f, 0.0f));
 
 	const int rect_sz = 4;
-	grDispatcher::instance()->Rectangle(v.x - rect_sz / 2, v.y - rect_sz / 2, rect_sz, rect_sz, _grid_color, _grid_color, GR_FILLED);
+	grDispatcher::instance()->rectangle(v.x - rect_sz / 2, v.y - rect_sz / 2, rect_sz, rect_sz, _grid_color, _grid_color, GR_FILLED);
 
 	const int line_sz = 10;
 	grDispatcher::instance()->line(v0.x - line_sz, v0.y, v0.x + line_sz, v0.y, _grid_color);
 	grDispatcher::instance()->line(v1.x - line_sz, v1.y, v1.x + line_sz, v1.y, _grid_color);
 	grDispatcher::instance()->line(v0.x, v0.y, v1.x, v1.y, _grid_color);
-	grDispatcher::instance()->Rectangle(_screen_offset.x, _screen_offset.y, _screen_size.x, _screen_size.y, _grid_color, 0, GR_OUTLINED);
+	grDispatcher::instance()->rectangle(_screen_offset.x, _screen_offset.y, _screen_size.x, _screen_size.y, _grid_color, 0, GR_OUTLINED);
 	grDispatcher::instance()->flush();
 
 	grDispatcher::set_instance(gp);
