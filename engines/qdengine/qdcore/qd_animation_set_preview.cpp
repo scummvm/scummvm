@@ -167,7 +167,7 @@ void qdAnimationSetPreview::set_screen(Vect2s offs, Vect2s size) {
 	_camera->set_scr_size(size.x, size.y);
 	_camera->set_scr_center(offs.x + size.x / 2, offs.y + size.y * 3 / 4);
 
-	_graph_d->SetClip(offs.x, offs.y, offs.x + size.x, offs.y + size.y);
+	_graph_d->setClip(offs.x, offs.y, offs.x + size.x, offs.y + size.y);
 }
 
 void qdAnimationSetPreview::redraw_grid() {

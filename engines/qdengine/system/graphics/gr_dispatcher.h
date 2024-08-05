@@ -120,25 +120,25 @@ public:
 		return _sizeY;
 	}
 
-	void SetClipMode(int m) {
+	void setClipMode(int m) {
 		_clipMode = m;
 	}
-	int GetClipMode() const {
+	int getClipMode() const {
 		return _clipMode;
 	}
 
-	void SetClip() {
-		SetClip(0, 0, _sizeX, _sizeY);
+	void setClip() {
+		setClip(0, 0, _sizeX, _sizeY);
 	}
 
-	void GetClip(int &l, int &t, int &r, int &b) const {
+	void getClip(int &l, int &t, int &r, int &b) const {
 		l = _clipCoords[GR_LEFT];
 		t = _clipCoords[GR_TOP];
 		r = _clipCoords[GR_RIGHT];
 		b = _clipCoords[GR_BOTTOM];
 	}
 
-	void SetClip(int l, int t, int r, int b) {
+	void setClip(int l, int t, int r, int b) {
 		if (l < 0) l = 0;
 		if (r > _sizeX) r = _sizeX;
 
@@ -151,21 +151,21 @@ public:
 		_clipCoords[GR_BOTTOM] = b;
 	}
 
-	void LimitClip(int l, int t, int r, int b) {
+	void limitClip(int l, int t, int r, int b) {
 		if (_clipCoords[GR_LEFT] < l) _clipCoords[GR_LEFT] = l;
 		if (_clipCoords[GR_TOP] < t) _clipCoords[GR_TOP] = t;
 		if (_clipCoords[GR_RIGHT] > r) _clipCoords[GR_RIGHT] = r;
 		if (_clipCoords[GR_BOTTOM] > b) _clipCoords[GR_BOTTOM] = b;
 	}
 
-	int ClipCheck(int x, int y) {
+	int clipCheck(int x, int y) {
 		if (x >= _clipCoords[GR_LEFT] && x < _clipCoords[GR_RIGHT] && y >= _clipCoords[GR_TOP] && y < _clipCoords[GR_BOTTOM])
 			return 1;
 
 		return 0;
 	}
 
-	int ClipCheck(int x, int y, int sx, int sy) {
+	int clipCheck(int x, int y, int sx, int sy) {
 		if (x - sx >= _clipCoords[GR_LEFT] && x + sx < _clipCoords[GR_RIGHT] && y - sy >= _clipCoords[GR_TOP] && y + sy < _clipCoords[GR_BOTTOM])
 			return 1;
 

@@ -197,7 +197,7 @@ void grDispatcher::putSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 			fx = (1 << 15);
 
 			for (int j = x0; j != x1; j += ix) {
-				if (ClipCheck(x + j, y + i)) {
+				if (clipCheck(x + j, y + i)) {
 					const byte *src_data = line_src + (fx >> 16) * 3;
 					if (src_data[0] || src_data[1] || src_data[2])
 						SetPixelFast(x + j, y + i, make_rgb565u(src_data[2], src_data[1], src_data[0]));
@@ -214,7 +214,7 @@ void grDispatcher::putSpr_rle(int x, int y, int sx, int sy, const class rleBuffe
 			fx = (1 << 15);
 
 			for (int j = x0; j != x1; j += ix) {
-				if (ClipCheck(x + j, y + i)) {
+				if (clipCheck(x + j, y + i)) {
 					const byte *src_data = line_src + ((fx >> 16) << 2);
 
 					uint32 a = src_data[3];
@@ -441,7 +441,7 @@ void grDispatcher::putSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 			fx = (1 << 15);
 
 			for (int j = x0; j != x1; j += ix) {
-				if (ClipCheck(x + j, y + i)) {
+				if (clipCheck(x + j, y + i)) {
 					const byte *src_buf = line_src + ((fx >> 16) << 2);
 					if (src_buf[0] || src_buf[1] || src_buf[2]) {
 						uint16 scl;
@@ -464,7 +464,7 @@ void grDispatcher::putSprMask_rle(int x, int y, int sx, int sy, const rleBuffer 
 			fx = (1 << 15);
 
 			for (int j = x0; j != x1; j += ix) {
-				if (ClipCheck(x + j, y + i)) {
+				if (clipCheck(x + j, y + i)) {
 					const byte *src_buf = line_src + ((fx >> 16) << 2);
 					uint32 a = src_buf[3];
 					if (a != 255) {
@@ -748,7 +748,7 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const class rleB
 
 			uint32 cl = 0;
 			for (int j = x0; j != x1; j += ix) {
-				if (ClipCheck(x + j, y + i)) {
+				if (clipCheck(x + j, y + i)) {
 					cl = line_src[(fx >> 16) << 1];
 					if (!cl && j != x0 && line_src[((fx - dx) >> 16) << 1])
 						SetPixel(x + j - ix, y + i, contour_color);
@@ -788,7 +788,7 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const class rleB
 
 			bool cl = false;
 			for (int j = x0; j != x1; j += ix) {
-				if (ClipCheck(x + j, y + i)) {
+				if (clipCheck(x + j, y + i)) {
 					cl = rle_alpha_b16(line_src[((fx >> 16) << 1) + 1]);
 					if (!cl && j != x0 && rle_alpha_b16(line_src[(((fx - dx) >> 16) << 1) + 1]))
 						SetPixel(x + j - ix, y + i, contour_color);

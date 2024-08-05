@@ -76,7 +76,7 @@ void grDispatcher::putSpr_a(int x, int y, int sx, int sy, const byte *p, int mod
 			const byte *src_data = line_src + (fx >> 16) * 4;
 			uint32 a = src_data[3];
 
-			if (a != 255 && ClipCheck(x + j, y + i)) {
+			if (a != 255 && clipCheck(x + j, y + i)) {
 				if (a) {
 					uint16 sc;
 					GetPixel(x + j, y + i, sc);
@@ -1213,7 +1213,7 @@ void grDispatcher::putSprMask_a(int x, int y, int sx, int sy, const byte *p, uin
 			const byte *src_data = line_src + (fx >> 16) * 4;
 			uint32 a = src_data[3];
 
-			if (a != 255 && ClipCheck(x + j, y + i)) {
+			if (a != 255 && clipCheck(x + j, y + i)) {
 				uint16 sc;
 				GetPixel(x + j, y + i, sc);
 
