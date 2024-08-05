@@ -384,7 +384,7 @@ void grDispatcher::Erase(int x, int y, int sx, int sy, int col) {
 }
 
 void grDispatcher::SetPixel(int x, int y, int col) {
-	if (_clipMode && !ClipCheck(x, y)) return;
+	if (_clipMode && !clipCheck(x, y)) return;
 
 	uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x, y));
 	*p = col;
@@ -401,7 +401,7 @@ void grDispatcher::SetPixelFast(int x, int y, int r, int g, int b) {
 }
 
 void grDispatcher::SetPixel(int x, int y, int r, int g, int b) {
-	if (_clipMode && !ClipCheck(x, y)) return;
+	if (_clipMode && !clipCheck(x, y)) return;
 
 	uint16 *p = (uint16 *)(_screenBuf->getBasePtr(x * 2, y));
 	*p = (((r >> 3) << 11) + ((g >> 2) << 5) + ((b >> 3) << 0));

@@ -373,10 +373,10 @@ bool qdInterfaceTextWindow::redraw() const {
 	if (_windowType == WINDOW_DIALOGS) {
 		if (_text_set) {
 			int l_clip, t_clip, r_clip, b_clip;
-			grDispatcher::instance()->GetClip(l_clip, t_clip, r_clip, b_clip);
+			grDispatcher::instance()->getClip(l_clip, t_clip, r_clip, b_clip);
 
 			Vect2i ar = r();
-			grDispatcher::instance()->LimitClip(ar.x - _text_size.x / 2, ar.y - _text_size.y / 2, ar.x + _text_size.x / 2, ar.y + _text_size.y / 2);
+			grDispatcher::instance()->limitClip(ar.x - _text_size.x / 2, ar.y - _text_size.y / 2, ar.x + _text_size.x / 2, ar.y + _text_size.y / 2);
 
 			if (_has_background_color) {
 				Vect2i text_r = _text_set->screen_pos();
@@ -390,7 +390,7 @@ bool qdInterfaceTextWindow::redraw() const {
 
 			_text_set->redraw();
 
-			grDispatcher::instance()->SetClip(l_clip, t_clip, r_clip, b_clip);
+			grDispatcher::instance()->setClip(l_clip, t_clip, r_clip, b_clip);
 
 			if (qdGameConfig::get_config().debug_draw())
 				grDispatcher::instance()->Rectangle(ar.x - _text_size.x / 2, ar.y - _text_size.y / 2, _text_size.x, _text_size.y, 0xFFFFFF, 0, GR_OUTLINED, 3);
