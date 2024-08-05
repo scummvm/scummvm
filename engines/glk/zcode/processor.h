@@ -1010,7 +1010,7 @@ protected:
 	void z_or();
 
 	/**
-	 * 16 bit substraction.
+	 * 16 bit subtraction.
 	 *
 	 *	zargs[0] = first value
 	 *	zargs[1] = second value

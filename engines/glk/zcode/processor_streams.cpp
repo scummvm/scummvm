@@ -560,7 +560,7 @@ void Processor::z_save() {
 	bool success = false;
 
 	if (zargc != 0) {
-		// Open auxilary file
+		// Open auxiliary file
 		frefid_t ref = glk_fileref_create_by_prompt(fileusage_Data | fileusage_BinaryMode,
 			filemode_Write, 0);
 		if (ref != nullptr) {

@@ -205,7 +205,7 @@ void glk_main() {
 	//promptwin = g_vm->glk_window_open(mainwin, winmethod_Below | winmethod_Fixed,
 	//    3, wintype_TextBuffer, 0);
 
-	/* SET THIS TO DETERMINE THE SYTEM OF INPUT TO USE */
+	/* SET THIS TO DETERMINE THE SYSTEM OF INPUT TO USE */
 	//inputwin = promptwin;
 	inputwin = mainwin;
 

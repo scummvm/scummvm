@@ -1013,7 +1013,7 @@ static void v_yell(void) {
 
 
 /* ------------------------------------------------------------------- */
-/*  VERB EXECUTION AND GRAMMER CHECKING */
+/*  VERB EXECUTION AND GRAMMAR CHECKING */
 
 
 static int checkgram(int vb_, int dobj_, word prep_, int iobj_, rbool redir_flag) {
@@ -1025,7 +1025,7 @@ static int checkgram(int vb_, int dobj_, word prep_, int iobj_, rbool redir_flag
 	if (redir_flag < 2) redir_flag = 0;
 	if (PURE_GRAMMAR) redir_flag = 1;
 
-	/* First of all, no constraints on dummy_verb grammer */
+	/* First of all, no constraints on dummy_verb grammar */
 	if (vb_ >= BASE_VERB && vb_ < TOTAL_VERB) return 0;
 
 	if (!(verbflag[vb_]&VERB_TAKEOBJ)
@@ -1226,7 +1226,7 @@ void exec_verb(void) {
 		/* LOOK: Doesn't matter if turn is done. */
 		v_look();
 	else if (!turndone) {
-		/* Execute normal verbs: check grammer and then call */
+		/* Execute normal verbs: check grammar and then call */
 		if (!objswap) {
 			if (checkgram(vb, dobj, prep, iobj, redir_flag) == -1) return;
 		} else if (checkgram(vb, 0, prep, iobj, redir_flag) == -1) return;

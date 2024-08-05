@@ -502,7 +502,7 @@ L9BOOL bitmap_pc1_decode(char *file, int x, int y) {
 	high byte of theBitStreamBuffer.
 
 	Set a counter (theBufferBitCounter) to 8 which you will use to keep track
-	of when it is necesary to refill the buffer.
+	of when it is necessary to refill the buffer.
 
 	Set a L9BYTE variable (theNewPixel) to byte 40 (seedByte) of the header.
 	We need to do this because as part of identifying the pixel being
@@ -549,7 +549,7 @@ L9BOOL bitmap_pc1_decode(char *file, int x, int y) {
 	In this case, instead of the above routine we begin by removing
 	the low eight bits from the theBitStreamBuffer. We use the same
 	ono-by-one bit shift right process described above to do this,
-	again checking after each shift if it is necesary to refill the
+	again checking after each shift if it is necessary to refill the
 	buffer's high byte.
 
 	When the eight bits have been removed we set theNewPixelIndex to

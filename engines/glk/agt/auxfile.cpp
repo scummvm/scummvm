@@ -411,7 +411,7 @@ void add_verbrec(const char *verb_line, rbool addnew) {
 	if (verbStr.empty() || verbStr.hasPrefix("!"))
 		return;		/* Comment or empty line */
 
-	/* The following guarentees automatic initialization of the verbrec structures */
+	/* The following guarantees automatic initialization of the verbrec structures */
 	if (!addnew)
 		while (newindex < 3 && strcasecmp(verbStr.c_str() + 2, newvoc[newindex] + 2) > 0)
 			add_verbrec(newvoc[newindex++], 1);
@@ -515,7 +515,7 @@ rbool open_ins_file(fc_type fc, rbool report_error) {
 		if (ins_descr != nullptr) return 1;
 
 		/* Note that if the AGX file doesn't contain an INS block, we
-		   don't immediatly give up but try opening <fname>.INS */
+		   don't immediately give up but try opening <fname>.INS */
 	}
 
 	insfile = openfile(fc, fINS,

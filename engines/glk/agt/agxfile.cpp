@@ -53,7 +53,7 @@ namespace AGT {
 
 GUIDLINES FOR NEW FILE FORMAT VERSIONS
 
-  File format version are labled by a series of four bytes near the
+  File format version are labeled by a series of four bytes near the
 beginning of the file. (They are actually the fifth, sixth, seventh,
 and eight bytes-- the first four bytes are the file format signature
 that indicate the file is an AGX file and not, say, a PCX file)

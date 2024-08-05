@@ -499,7 +499,7 @@ static void read_da4(fc_type fc) {
 
 
 static int translate_vnum(int vnum)
-/* actor is a numerical index occuring at the beginning of each command.
+/* actor is a numerical index occurring at the beginning of each command.
  In general, it contains the verb number of the verb associated with
    this command; because of AGiliTy's dictionary organization, we don't
    really need this (the verb itself will be converted to a number anyhow),
@@ -598,7 +598,7 @@ static void read_da5(fc_type fc) {
 	/* Now to read in DA6 for versions that have it */
 	if (aver >= AGT15F) read_da6(fc);
 	check_cmd_version();  /* This uses the opcodes to check gamefile
-			   version information and change it if neccesary. */
+			   version information and change it if necessary. */
 	build_cmd_table();   /* Create the command translation table for
 			 this version of AGT. */
 
@@ -648,7 +648,7 @@ static void read_da6(fc_type fc)
 
 	cbuf_size = (cfile_size < CBUF_SIZE) ? cfile_size : CBUF_SIZE;
 	cbuf = (uchar *)rmalloc(2 * cbuf_size);
-	frame = cfile_size + 1; /* Guarentee frame will be wrong */
+	frame = cfile_size + 1; /* Guarantee frame will be wrong */
 
 	for (i = 0; i < last_cmd; i++)
 		if (cmd_ptr[i] >= 2) {

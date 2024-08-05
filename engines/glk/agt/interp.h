@@ -268,7 +268,7 @@ global short ap, vp, np, pp, op; /* Points to first word in actor, verb, noun,
 
 
 
-/* The following needs to be kept consistant with ext_voc[] in
+/* The following needs to be kept consistent with ext_voc[] in
    agil.c */
 typedef enum {wthe, wmy, wa, wan, wthen, wp, wsc, wand, wc, wits, wall, wundo, wlook, wg,
 			  wpick, wgo, wexits, wtalk, wtake, wdoor, wagain, wbut, wexcept,
@@ -472,7 +472,7 @@ extern void agt_endbox(void);
 extern genfile agt_globalfile(int fid); /* When fid=0, return global config file */
 extern rbool agt_option(int optnum, char *optstr[], rbool setflag);
 
-/* These have stubs defined in interface.c that would ened to be
+/* These have stubs defined in interface.c that would need to be
 	commented out if you actually wanted to support these */
 extern void fontcmd(int cmd, int font); /* fontlist[font] */
 extern void pictcmd(int cmd, int pict); /* pictlist[pict] or pixlist[pict] */
