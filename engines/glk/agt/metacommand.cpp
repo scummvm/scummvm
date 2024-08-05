@@ -193,13 +193,13 @@ static rbool argfix(int argtype, int *arg, int optype, rbool *special) {
 /* These are handled in the order ARG2 then ARG1 so that
    top-of-stack references will pop the stack in that order
    (so that the push-order will corrospond to the argument order) */
-/* <grammer_arg> is true if "bad" argument is NOUN/OBJECT/etc. and
+/* <grammar_arg> is true if "bad" argument is NOUN/OBJECT/etc. and
    is 0. */
 static int argok(const opdef *opdata, int *arg1, int *arg2, int optype,
-				 rbool *grammer_arg) {
-	if ((opdata->argnum) > 1 && !argfix(opdata->arg2, arg2, optype % 4, grammer_arg))
+				 rbool *grammar_arg) {
+	if ((opdata->argnum) > 1 && !argfix(opdata->arg2, arg2, optype % 4, grammar_arg))
 		return 0;
-	if ((opdata->argnum) > 0 && !argfix(opdata->arg1, arg1, optype / 4, grammer_arg))
+	if ((opdata->argnum) > 0 && !argfix(opdata->arg1, arg1, optype / 4, grammar_arg))
 		return 0;
 	return 1;
 }
@@ -333,7 +333,7 @@ static int decode_instr(op_rec *oprec, const integer *data, int maxleng) {
 /* decode_args checks and decodes the arguments to metacommand tokens */
 /* Returns false on an error */
 static rbool decode_args(int ip_, op_rec *oprec) {
-	rbool grammer_arg; /* Have NOUN/OBJECT that is 0 and so failed argok tests */
+	rbool grammar_arg; /* Have NOUN/OBJECT that is 0 and so failed argok tests */
 
 	if (oprec->errmsg != nullptr) {
 		if (!PURE_ERROR)
@@ -352,10 +352,10 @@ static rbool decode_args(int ip_, op_rec *oprec) {
 
 	/* This checks and translates the arguments */
 	if (!argok(oprec->opdata, &(oprec->arg1), &(oprec->arg2),
-	           oprec->optype, &grammer_arg)) {
+	           oprec->optype, &grammar_arg)) {
 		/* Don't report errors for null NOUN/OBJECT/ACTOR arguments
 		   used in conditional tokens */
-		if (grammer_arg && oprec->op <= MAX_COND)
+		if (grammar_arg && oprec->op <= MAX_COND)
 			return 0;
 		if (!PURE_ERROR) {
 			if (DEBUG_AGT_CMD && !supress_debug) debugout("\n");
