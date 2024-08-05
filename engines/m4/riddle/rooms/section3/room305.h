@@ -95,13 +95,21 @@ private:
 	machine *_rip6 = nullptr;
 	machine *_openDrawer = nullptr;
 	machine *_openDrawerTreats = nullptr;
-	machine *_machine1 = nullptr;
-	machine *_machine2 = nullptr;
+	machine *_cartoonMach = nullptr;
+	int _cartoon = 0;
+	int _lookUp = 0;
 
 	void setupSign();
 	void setShadow5(bool active);
 	void conv305a();
 	bool walkToObject();
+	int getXAreaNum() const;
+	const char *getXAreaCartoon() const;
+	const char *getXAreaSeries() const;
+	Common::String getXAreaDigi() const;
+	Common::String getXAreaDigi2() const;
+	int getItemX(int seriesHash) const;
+	int getItemY(int seriesHash) const;
 
 public:
 	Room305() : Room() {}

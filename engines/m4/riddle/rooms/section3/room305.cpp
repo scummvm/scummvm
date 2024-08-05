@@ -282,8 +282,8 @@ void Room305::pre_parser() {
 
 	if (_val5) {
 		_G(camera_reacts_to_player) = true;
-		terminateMachineAndNull(_machine1);
-		terminateMachineAndNull(_machine2);
+		terminateMachineAndNull(_cartoonMach);
+		series_unload(_cartoon);
 		intr_cancel_sentence();
 		_val5 = 0;
 		hotspot_restore_all();
@@ -669,6 +669,218 @@ next3:
 	goto exit;
 
 next4:
+	if (player_said("TURTLE", "FENG LI")) {
+		digi_play("305r40", 1);
+	} else if (inv_player_has(_G(player).verb) && player_said("FENG LI")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			digi_play("305f08a", 1, 255, 1);
+			break;
+
+		case 1:
+			player_set_commands_allowed(true);
+			_val7 = 1;
+			break;
+
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("cartoon") && _G(kernel).trigger >= -1
+			&& _G(kernel).trigger <= 5) {
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 1: {
+			player_set_commands_allowed(true);
+			int area = getXAreaNum();
+			const int32 flags[8] = {
+				_G(flags)[kEasterIslandCartoon], _G(flags)[kChinshiCartoon],
+				_G(flags)[kTabletsCartoon], _G(flags)[kEpitaphCartoon],
+				_G(flags)[kGraveyardCartoon], _G(flags)[kCastleCartoon],
+				_G(flags)[kMocaMocheCartoon], _G(flags)[kTempleCartoon]
+			};
+			bool flag = flags[area - 1] != 0;
+			if (flag && (area == 3 || area == 9))
+				player_set_commands_allowed(true);
+
+			interface_hide();
+			hotspot_hide_all();
+			mouse_set_sprite(0);
+			hotspot_add_dynamic("LOOK AT", " ", 0, 0, 1500, 480, 0);
+
+			Common::String digiName;
+			if (flag) {
+				_G(flags)[V089] = 2;
+				_cartoon = series_load(getXAreaCartoon(), -1, _G(master_palette));
+				_cartoonMach = series_place_sprite(getXAreaCartoon(),
+					0, getItemX(_cartoon), getItemY(_cartoon),
+					100, 0x100);
+				digiName = getXAreaDigi();
+
+			} else {
+				_cartoon = series_load(getXAreaSeries(), -1, _G(master_palette));
+				_cartoonMach = series_place_sprite(getXAreaSeries(), 0,
+					getItemX(_cartoon), getItemY(_cartoon), 100, 0x100);
+				digiName = getXAreaDigi2();
+			}
+
+			if (getXAreaNum() == 3 && caseFlag) {
+				digi_play("305r23", 1, 255, 2);
+			} else if (getXAreaNum() == 9 && caseFlag) {
+				digi_play("305r29", 1, 255, 3);
+			} else {
+				digi_play(digiName.c_str(), 1);
+			}
+
+			_val5 = 1;
+			break;
+		}
+
+		case 2:
+			digi_play("305r23a", 1);
+			player_set_commands_allowed(true);
+			break;
+
+		case 3:
+			if (_G(flags)[V141]) {
+				digi_play("305r29a", 1, 255, 4);
+			} else {
+				digi_play("305r29a", 1);
+			}
+			break;
+
+		case 4:
+			digi_play("305r29a", 1);
+			break;
+
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("mona lisa")) {
+		if (_G(flags)[V086] == 2) {
+			_G(flags)[V086] = 3;
+		} else if (_G(flags)[V086] == 1) {
+			_G(flags)[V086] = 0;
+		}
+
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			player_set_commands_allowed(false);
+			if (_G(flags)[V000] == 1)
+				setGlobals4(_rip2, 16, 16, 16);
+			else
+				setGlobals4(_suit1, 17, 17, 17);
+
+			sendWSMessage_C0000(0);
+
+			if (_G(flags)[V087]) {
+				digi_play("305r31", 1, 255, 2);
+			} else if (_G(flags)[V083]) {
+				digi_play("305r11", 1, 255, 2);
+			} else {
+				digi_play("305r10", 1, 255, 2);
+			}
+
+			_G(flags)[V087] = 1;
+			break;
+
+		case 2:
+			sendWSMessage_B0000(3);
+			break;
+
+		case 3:
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("hourglass")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			player_set_commands_allowed(false);
+
+			if (_G(flags)[V000] == 1) {
+				_lookUp = series_load("rip looks up pos3");
+				setGlobals4(_lookUp, 6, 6, 6);
+			} else {
+				_lookUp = series_load("rpsd103");
+				setGlobals4(_lookUp, 7, 7, 7);
+			}
+
+			sendWSMessage_C0000(0);
+			digi_play("305r13", 1, 255, 2);
+			break;
+
+		case 2:
+			sendWSMessage_B0000(3);
+			break;
+
+		case 3:
+			series_unload(_lookUp);
+			break;
+
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("display case")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			if (_G(flags)[V000]) {
+				if (getNumKeyItemsPlaced() != 0 || inv_object_is_here("ROMANOV EMERALD")) {
+					digi_play("305r32", 1);
+				} else if (player_been_here(201)) {
+					digi_play("305f03", 1, 255, 1);
+					_val7 = 2;
+					player_set_commands_allowed(false);
+				} else {
+					digi_play("305r15", 1);
+				}
+			} else {
+				digi_play("305r15", 1);
+			}
+			break;
+
+		case 1:
+			player_set_commands_allowed(true);
+			_val7 = 1;
+			break;
+
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("terrarium")) {
+		if (inv_player_has("TURTLE")) {
+			digi_play("305r16a", 1);
+		} else if (_G(flags)[GLB_TEMP_12]) {
+			digi_play("305r16b", 1);
+		} else if (inv_object_is_here("TURTLE")) {
+			digi_play("305r16c", 1);
+		} else if (_G(flags)[V085]) {
+			digi_play("305r16b", 1);
+		} else {
+			_G(flags)[V085] = 1;
+			digi_play("305r16", 1);
+		}
+	} else if (lookFlag && player_said("turtle") &&
+			inv_object_is_here("turtle")) {
+		if (_G(flags)[V085]) {
+			digi_play("305r16b", 1);
+		} else {
+			_G(flags)[V085] = 1;
+			digi_play("305r16", 1);
+		}
+	} else if (lookFlag && player_said("turtle treats") &&
+			inv_object_is_here("TURTLE TREATS")) {
+		digi_play("305r18", 1);
+	} else if (lookFlag && player_said("drawer")) {
+		digi_play("305r17", 1);
+	} else if (lookFlag && player_said("button display case")) {
+		// TODO
+	}
+
 	// TODO
 exit:
 	_G(player).command_ready = false;
@@ -771,6 +983,86 @@ bool Room305::walkToObject() {
 	}
 
 	return false;
+}
+
+int Room305::getXAreaNum() const {
+	int x = _G(player).click_x;
+
+	if (x < 300)
+		return 1;
+	if (x < 380)
+		return 2;
+	if (x < 580)
+		return 3;
+	if (x < 670)
+		return 4;
+	if (x < 760)
+		return 5;
+	if (x < 860)
+		return 6;
+	if (x < 1040)
+		return 7;
+	if (x < 1140)
+		return 8;
+	return 9;
+}
+
+const char *Room305::getXAreaCartoon() const {
+	static const char *CARTOONS[9] = {
+		"395 easter island cartoon",
+		"395 chin shih huang ti cartoon",
+		"395 tablets of history cartoon",
+		"395 epitaph a cartoon",
+		"395 epitaph b cartoon",
+		"395 castle cartoon",
+		"395 moca moche cartoon",
+		"395 temple cartoon",
+		"395 romanov emerald cartoon"
+	};
+	return CARTOONS[getXAreaNum() - 1];
+}
+
+const char *Room305::getXAreaSeries() const {
+	if (_G(flags)[V000]) {
+		static const char *NAMES[9] = {
+			"395car01", "395car08", "395car03", "395car06",
+			"395car05", "395car04", "395car07", "395car02",
+			"395car09"
+		};
+		return NAMES[getXAreaNum() - 1];
+
+	} else {
+		static const char *NAMES[9] = {
+			"jack dempsey", "parrot", "kerosene",
+			"chimney tree", "prof bingo", "blind men",
+			"lemon", "hollow log", "restaurant"
+		};
+		return NAMES[getXAreaNum() - 1];
+	}
+}
+
+Common::String Room305::getXAreaDigi() const {
+	return Common::String::format("305r%d", getXAreaNum() + 20);
+}
+
+Common::String Room305::getXAreaDigi2() const {
+	static const int NUMS[9] = { 5, 1, 4, 3, 8, 7, 2, 9, 6 };
+	return Common::String::format("305r0%d", NUMS[getXAreaNum() - 1]);
+}
+
+int Room305::getItemX(int seriesHash) const {
+	int w = ws_get_sprite_width(seriesHash, 0);
+	int result = (640 - w) / 2;
+
+	int sx1 = _G(game_buff_ptr)->x1;
+	result += imath_abs(sx1);
+
+	return result;
+}
+
+int Room305::getItemY(int seriesHash) const {
+	int h = ws_get_sprite_height(seriesHash, 0);
+	return (374 - h) / 2;
 }
 
 } // namespace Rooms
