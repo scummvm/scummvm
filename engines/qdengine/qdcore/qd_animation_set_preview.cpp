@@ -107,9 +107,9 @@ void qdAnimationSetPreview::redraw() {
 	grDispatcher::instance()->Rectangle(v.x - rect_sz / 2, v.y - rect_sz / 2, rect_sz, rect_sz, _grid_color, _grid_color, GR_FILLED);
 
 	const int line_sz = 10;
-	grDispatcher::instance()->Line(v0.x - line_sz, v0.y, v0.x + line_sz, v0.y, _grid_color);
-	grDispatcher::instance()->Line(v1.x - line_sz, v1.y, v1.x + line_sz, v1.y, _grid_color);
-	grDispatcher::instance()->Line(v0.x, v0.y, v1.x, v1.y, _grid_color);
+	grDispatcher::instance()->line(v0.x - line_sz, v0.y, v0.x + line_sz, v0.y, _grid_color);
+	grDispatcher::instance()->line(v1.x - line_sz, v1.y, v1.x + line_sz, v1.y, _grid_color);
+	grDispatcher::instance()->line(v0.x, v0.y, v1.x, v1.y, _grid_color);
 	grDispatcher::instance()->Rectangle(_screen_offset.x, _screen_offset.y, _screen_size.x, _screen_size.y, _grid_color, 0, GR_OUTLINED);
 	grDispatcher::instance()->flush();
 
@@ -195,7 +195,7 @@ void qdAnimationSetPreview::redraw_grid() {
 		if (_camera->line_cutting(v00, v10)) {
 			Vect2s v0 = _camera->camera_coord2scr(v00);
 			Vect2s v1 = _camera->camera_coord2scr(v10);
-			grDispatcher::instance()->Line(v0.x, v0.y, v1.x, v1.y, _grid_color, 0);
+			grDispatcher::instance()->line(v0.x, v0.y, v1.x, v1.y, _grid_color, 0);
 		}
 
 		v00 = _camera->global2camera_coord(Vect3f(-sz + dx, i, 0));
@@ -203,12 +203,12 @@ void qdAnimationSetPreview::redraw_grid() {
 		if (_camera->line_cutting(v00, v10)) {
 			Vect2s v0 = _camera->camera_coord2scr(v00);
 			Vect2s v1 = _camera->camera_coord2scr(v10);
-			grDispatcher::instance()->Line(v0.x, v0.y, v1.x, v1.y, _grid_color, 0);
+			grDispatcher::instance()->line(v0.x, v0.y, v1.x, v1.y, _grid_color, 0);
 		}
 		/*
 		        v0 = _camera->global2scr(Vect3f(-sz + dx,i,0));
 		        v1 = _camera->global2scr(Vect3f(sz + dx,i,0));
-		        grDispatcher::instance()->Line(v0.x,v0.y,v1.x,v1.y,_grid_color,0);
+		        grDispatcher::instance()->line(v0.x,v0.y,v1.x,v1.y,_grid_color,0);
 		*/
 	}
 }

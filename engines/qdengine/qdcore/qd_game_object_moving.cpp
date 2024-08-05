@@ -1084,12 +1084,12 @@ void qdGameObjectMoving::debug_redraw() const {
 		r.z = 0;
 		Vect2s v0 = qdCamera::current_camera()->global2scr(r);
 		Vect2s v1 = qdCamera::current_camera()->global2scr(_target_r);
-		grDispatcher::instance()->Line(v0.x, v0.y, v1.x, v1.y, cl, 2);
+		grDispatcher::instance()->line(v0.x, v0.y, v1.x, v1.y, cl, 2);
 		v0 = v1;
 
 		for (int i = _cur_path_index; i < _path_length; i++) {
 			v1 = qdCamera::current_camera()->global2scr(_path[i]);
-			grDispatcher::instance()->Line(v0.x, v0.y, v1.x, v1.y, cl, 2);
+			grDispatcher::instance()->line(v0.x, v0.y, v1.x, v1.y, cl, 2);
 			v0 = v1;
 		}
 	}
@@ -1120,7 +1120,7 @@ void qdGameObjectMoving::debug_redraw() const {
 	    scr_pos.y - (OBJ_CENTER_SIZE >> 1),
 	    OBJ_CENTER_SIZE, OBJ_CENTER_SIZE,
 	    0x00FF0000, 0x00FF0000, GR_FILLED);
-	grDispatcher::instance()->Line(proj_pos.x, proj_pos.y, scr_pos.x, scr_pos.y, 0x00FF0000);
+	grDispatcher::instance()->line(proj_pos.x, proj_pos.y, scr_pos.x, scr_pos.y, 0x00FF0000);
 
 	draw_grid_zone(walk_grid_size());
 	/*
@@ -1129,14 +1129,14 @@ void qdGameObjectMoving::debug_redraw() const {
 	        Vect2s v = screen_pos();
 	        Vect2s sz = screen_size();
 
-	        grDispatcher::instance()->Line(v.x - sz.x/2,v.y - sz.y/2,v.x + sz.x/2,v.y - sz.y/2,cl);
-	        grDispatcher::instance()->Line(v.x - sz.x/2,v.y + sz.y/2,v.x + sz.x/2,v.y + sz.y/2,cl);
+	        grDispatcher::instance()->line(v.x - sz.x/2,v.y - sz.y/2,v.x + sz.x/2,v.y - sz.y/2,cl);
+	        grDispatcher::instance()->line(v.x - sz.x/2,v.y + sz.y/2,v.x + sz.x/2,v.y + sz.y/2,cl);
 
-	        grDispatcher::instance()->Line(v.x - sz.x/2,v.y - sz.y/2,v.x - sz.x/2,v.y + sz.y/2,cl);
-	        grDispatcher::instance()->Line(v.x + sz.x/2,v.y - sz.y/2,v.x + sz.x/2,v.y + sz.y/2,cl);
+	        grDispatcher::instance()->line(v.x - sz.x/2,v.y - sz.y/2,v.x - sz.x/2,v.y + sz.y/2,cl);
+	        grDispatcher::instance()->line(v.x + sz.x/2,v.y - sz.y/2,v.x + sz.x/2,v.y + sz.y/2,cl);
 
-	        grDispatcher::instance()->Line(v.x - sz.x/2,v.y - sz.y/2,v.x + sz.x/2,v.y + sz.y/2,cl);
-	        grDispatcher::instance()->Line(v.x + sz.x/2,v.y - sz.y/2,v.x - sz.x/2,v.y + sz.y/2,cl);
+	        grDispatcher::instance()->line(v.x - sz.x/2,v.y - sz.y/2,v.x + sz.x/2,v.y + sz.y/2,cl);
+	        grDispatcher::instance()->line(v.x + sz.x/2,v.y - sz.y/2,v.x - sz.x/2,v.y + sz.y/2,cl);
 	    }
 	*/
 

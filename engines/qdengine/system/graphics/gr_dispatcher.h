@@ -241,13 +241,13 @@ public:
 	void getPixel(int x, int y, uint16 &col);
 	void getPixel(int x, int y, byte &r, byte &g, byte &b);
 
-	void Line(int x1, int y1, int x2, int y2, int col, int line_style = 0, bool inverse_col = false);
+	void line(int x1, int y1, int x2, int y2, int col, int line_style = 0, bool inverse_col = false);
 
 #ifdef _GR_ENABLE_ZBUFFER
-	void Line_z(int x1, int y1, int z1, int x2, int y2, int z2, int col, int line_style = 0);
+	void line_z(int x1, int y1, int z1, int x2, int y2, int z2, int col, int line_style = 0);
 #endif
 
-	void LineTo(int x, int y, int len, int dir, int col, int line_style = 0);
+	void lineTo(int x, int y, int len, int dir, int col, int line_style = 0);
 	void Rectangle(int x, int y, int sx, int sy, int outcol, int incol, int mode, int line_style = 0);
 	void RectangleAlpha(int x, int y, int sx, int sy, uint32 color, int alpha);
 

@@ -500,11 +500,11 @@ void qdGameScene::debug_redraw() {
 		        Vect2s v0,v1;
 		        v0 = qdCamera::current_camera()->global2scr(Vect3f(-300,-300,0));
 		        v1 = qdCamera::current_camera()->global2scr(Vect3f(300,300,0));
-		        grDispatcher::instance()->Line(v0.x,v0.y,v1.x,v1.y,cl,2);
+		        grDispatcher::instance()->line(v0.x,v0.y,v1.x,v1.y,cl,2);
 
 		        v0 = qdCamera::current_camera()->global2scr(Vect3f(-300,300,0));
 		        v1 = qdCamera::current_camera()->global2scr(Vect3f(300,-300,0));
-		        grDispatcher::instance()->Line(v0.x,v0.y,v1.x,v1.y,cl,2);
+		        grDispatcher::instance()->line(v0.x,v0.y,v1.x,v1.y,cl,2);
 		*/
 		if (qdGameConfig::get_config().debug_show_grid())
 			_camera.draw_grid();

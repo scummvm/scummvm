@@ -744,7 +744,7 @@ void qdGameObjectAnimated::debug_redraw() const {
 	    scr_pos.y - (OBJ_CENTER_SIZE >> 1),
 	    OBJ_CENTER_SIZE, OBJ_CENTER_SIZE,
 	    0x00FF0000, 0x00FF0000, GR_FILLED);
-	grDispatcher::instance()->Line(proj_pos.x, proj_pos.y, scr_pos.x, scr_pos.y, 0x00FF0000);
+	grDispatcher::instance()->line(proj_pos.x, proj_pos.y, scr_pos.x, scr_pos.y, 0x00FF0000);
 
 	Vect2s ssz = screen_size();
 
@@ -774,7 +774,7 @@ void qdGameObjectAnimated::debug_redraw() const {
 		p1.x = screen_pos().x + round(float(v1.x) * cs + float(v1.y) * sn);
 		p1.y = screen_pos().y + round(float(-v1.x) * sn + float(v1.y) * cs);
 
-		grDispatcher::instance()->Line(p0.x, p0.y, p1.x, p1.y, 0x000000FF);
+		grDispatcher::instance()->line(p0.x, p0.y, p1.x, p1.y, 0x000000FF);
 
 		v0 = Vect2i(-ssz.x / 2, +ssz.y / 2);
 		v1 = Vect2i(+ssz.x / 2, +ssz.y / 2);
@@ -785,7 +785,7 @@ void qdGameObjectAnimated::debug_redraw() const {
 		p1.x = screen_pos().x + round(float(v1.x) * cs + float(v1.y) * sn);
 		p1.y = screen_pos().y + round(float(-v1.x) * sn + float(v1.y) * cs);
 
-		grDispatcher::instance()->Line(p0.x, p0.y, p1.x, p1.y, 0x000000FF);
+		grDispatcher::instance()->line(p0.x, p0.y, p1.x, p1.y, 0x000000FF);
 
 		v0 = Vect2i(+ssz.x / 2, +ssz.y / 2);
 		v1 = Vect2i(+ssz.x / 2, -ssz.y / 2);
@@ -796,7 +796,7 @@ void qdGameObjectAnimated::debug_redraw() const {
 		p1.x = screen_pos().x + round(float(v1.x) * cs + float(v1.y) * sn);
 		p1.y = screen_pos().y + round(float(-v1.x) * sn + float(v1.y) * cs);
 
-		grDispatcher::instance()->Line(p0.x, p0.y, p1.x, p1.y, 0x000000FF);
+		grDispatcher::instance()->line(p0.x, p0.y, p1.x, p1.y, 0x000000FF);
 
 		v0 = Vect2i(+ssz.x / 2, -ssz.y / 2);
 		v1 = Vect2i(-ssz.x / 2, -ssz.y / 2);
@@ -807,7 +807,7 @@ void qdGameObjectAnimated::debug_redraw() const {
 		p1.x = screen_pos().x + round(float(v1.x) * cs + float(v1.y) * sn);
 		p1.y = screen_pos().y + round(float(-v1.x) * sn + float(v1.y) * cs);
 
-		grDispatcher::instance()->Line(p0.x, p0.y, p1.x, p1.y, 0x000000FF);
+		grDispatcher::instance()->line(p0.x, p0.y, p1.x, p1.y, 0x000000FF);
 	}
 
 	grDispatcher::instance()->Rectangle(
@@ -1062,20 +1062,20 @@ void qdGameObjectAnimated::draw_bound(Vect3f r,
 		Vect2s _v2 = cp->global2scr(Vect3f(r.x + bx, r.y + by, r.z + bz));
 		Vect2s _v3 = cp->global2scr(Vect3f(r.x + bx, r.y - by, r.z + bz));
 
-		grDispatcher::instance()->Line(v0.x, v0.y, v1.x, v1.y, color, 4, true);
-		grDispatcher::instance()->Line(v1.x, v1.y, v2.x, v2.y, color, 4, true);
-		grDispatcher::instance()->Line(v2.x, v2.y, v3.x, v3.y, color, 4, true);
-		grDispatcher::instance()->Line(v3.x, v3.y, v0.x, v0.y, color, 4, true);
+		grDispatcher::instance()->line(v0.x, v0.y, v1.x, v1.y, color, 4, true);
+		grDispatcher::instance()->line(v1.x, v1.y, v2.x, v2.y, color, 4, true);
+		grDispatcher::instance()->line(v2.x, v2.y, v3.x, v3.y, color, 4, true);
+		grDispatcher::instance()->line(v3.x, v3.y, v0.x, v0.y, color, 4, true);
 
-		grDispatcher::instance()->Line(_v0.x, _v0.y, _v1.x, _v1.y, color, 4, true);
-		grDispatcher::instance()->Line(_v1.x, _v1.y, _v2.x, _v2.y, color, 4, true);
-		grDispatcher::instance()->Line(_v2.x, _v2.y, _v3.x, _v3.y, color, 4, true);
-		grDispatcher::instance()->Line(_v3.x, _v3.y, _v0.x, _v0.y, color, 4, true);
+		grDispatcher::instance()->line(_v0.x, _v0.y, _v1.x, _v1.y, color, 4, true);
+		grDispatcher::instance()->line(_v1.x, _v1.y, _v2.x, _v2.y, color, 4, true);
+		grDispatcher::instance()->line(_v2.x, _v2.y, _v3.x, _v3.y, color, 4, true);
+		grDispatcher::instance()->line(_v3.x, _v3.y, _v0.x, _v0.y, color, 4, true);
 
-		grDispatcher::instance()->Line(v0.x, v0.y, _v0.x, _v0.y, color, 4, true);
-		grDispatcher::instance()->Line(v1.x, v1.y, _v1.x, _v1.y, color, 4, true);
-		grDispatcher::instance()->Line(v2.x, v2.y, _v2.x, _v2.y, color, 4, true);
-		grDispatcher::instance()->Line(v3.x, v3.y, _v3.x, _v3.y, color, 4, true);
+		grDispatcher::instance()->line(v0.x, v0.y, _v0.x, _v0.y, color, 4, true);
+		grDispatcher::instance()->line(v1.x, v1.y, _v1.x, _v1.y, color, 4, true);
+		grDispatcher::instance()->line(v2.x, v2.y, _v2.x, _v2.y, color, 4, true);
+		grDispatcher::instance()->line(v3.x, v3.y, _v3.x, _v3.y, color, 4, true);
 	}
 }
 
