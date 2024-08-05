@@ -392,10 +392,10 @@ public:
 	bool is_mouse_hidden() const {
 		return _hide_mouse;
 	}
-	void HideMouse() {
+	void hideMouse() {
 		_hide_mouse = true;
 	}
-	void ShowMouse() {
+	void showMouse() {
 		_hide_mouse = false;
 	}
 

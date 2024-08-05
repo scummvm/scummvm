@@ -134,9 +134,9 @@ int engineMain() {
 		qdTriggerProfiler::instance().enable();
 #endif
 
-	grD->HideMouse();
+	grD->hideMouse();
 
-	grD->ShowMouse(); // FIXME HACK
+	grD->showMouse(); // FIXME HACK
 
 	qdGameConfig::get_config().load();
 
