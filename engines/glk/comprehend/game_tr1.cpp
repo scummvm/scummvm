@@ -239,7 +239,7 @@ void TransylvaniaGame1::handleSpecialOpcode() {
 		break;
 
 	case 9:
-		// Show the Zin screen in reponse to doing
+		// Show the Zin screen in response to doing
 		// 'sing some enchanted evening' in his cabin.
 		g_comprehend->showGraphics();
 		g_comprehend->drawLocationPicture(41);
