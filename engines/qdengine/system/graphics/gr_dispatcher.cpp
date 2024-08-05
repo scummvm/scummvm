@@ -160,7 +160,7 @@ void grDispatcher::fill(int val) {
 	_screenBuf->clear(val);
 }
 
-bool grDispatcher::Flush(int x, int y, int sx, int sy) {
+bool grDispatcher::flush(int x, int y, int sx, int sy) {
 	int x1 = x + sx;
 	int y1 = y + sy;
 
@@ -175,15 +175,15 @@ bool grDispatcher::Flush(int x, int y, int sx, int sy) {
 	if (y1 > _sizeY)
 		y1 = _sizeY;
 
-	debugC(8, kDebugGraphics, "grDispatcher::Flush(%d, %d, %d, %d)", x, y, x1 - x, y1 - y);
+	debugC(8, kDebugGraphics, "grDispatcher::flush(%d, %d, %d, %d)", x, y, x1 - x, y1 - y);
 
 	g_system->copyRectToScreen(_screenBuf->getBasePtr(x, y), _screenBuf->pitch, x, y, x1 - x, y1 - y);
 
 	return true;
 }
 
-bool grDispatcher::Flush() {
-	return Flush(0, 0, _sizeX, _sizeY);
+bool grDispatcher::flush() {
+	return flush(0, 0, _sizeX, _sizeY);
 }
 
 void grDispatcher::Line(int x1, int y1, int x2, int y2, int col, int line_style, bool inverse_col) {
@@ -733,9 +733,9 @@ bool grDispatcher::invalidate_region(const grScreenRegion &reg) {
 	return true;
 }
 
-bool grDispatcher::FlushChanges() {
+bool grDispatcher::flushChanges() {
 	for (regions_container_t::const_iterator it = _changed_regions.begin(); it != _changed_regions.end(); ++it)
-		Flush(it->min_x() - 1, it->min_y() - 1, it->size_x() + 2, it->size_y() + 2);
+		flush(it->min_x() - 1, it->min_y() - 1, it->size_x() + 2, it->size_y() + 2);
 
 	return true;
 }

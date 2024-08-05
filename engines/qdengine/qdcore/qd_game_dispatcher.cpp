@@ -738,14 +738,14 @@ void qdGameDispatcher::redraw() {
 					redraw(*it);
 			}
 
-			grDispatcher::instance()->FlushChanges();
+			grDispatcher::instance()->flushChanges();
 #else
 			redraw(grScreenRegion(grDispatcher::instance()->Get_SizeX() / 2, grDispatcher::instance()->Get_SizeY() / 2, grDispatcher::instance()->Get_SizeX(), grDispatcher::instance()->Get_SizeY()));
 
 			for (grDispatcher::region_iterator it = grDispatcher::instance()->changed_regions().begin(); it != grDispatcher::instance()->changed_regions().end(); ++it)
 				grDispatcher::instance()->Rectangle(it->min_x(), it->min_y(), it->size_x(), it->size_y(), 0xFFFFFF, 0, GR_OUTLINED);
 
-			grDispatcher::instance()->Flush();
+			grDispatcher::instance()->flush();
 #endif
 		}
 		if (!qdGameConfig::get_config().force_full_redraw())
