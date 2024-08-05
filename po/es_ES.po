@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-04 09:50+0000\n"
+"POT-Creation-Date: 2024-08-05 10:00+0000\n"
 "PO-Revision-Date: 2024-08-05 08:49+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -6809,29 +6809,34 @@ msgstr "El fantraductor desea que su traducción no sea incorporada en ScummVM."
 
 #: engines/bladerunner/detection_tables.h:123 engines/cge/detection.cpp:54
 #: engines/cge/detection.cpp:60 engines/cge/detection.cpp:66
-#: engines/gob/detection/tables_adi5.h:42
-#: engines/gob/detection/tables_adi5.h:56
-#: engines/gob/detection/tables_adi5.h:73
-#: engines/gob/detection/tables_adi5.h:87
-#: engines/gob/detection/tables_adi5.h:101
-#: engines/gob/detection/tables_adi5.h:115
-#: engines/gob/detection/tables_adibou3.h:41
+#: engines/gob/detection/tables_adi5.h:43
+#: engines/gob/detection/tables_adi5.h:57
+#: engines/gob/detection/tables_adi5.h:74
+#: engines/gob/detection/tables_adi5.h:88
+#: engines/gob/detection/tables_adi5.h:102
+#: engines/gob/detection/tables_adi5.h:119
+#: engines/gob/detection/tables_adibou3.h:42
 #: engines/gob/detection/tables_adibou3.h:55
-#: engines/gob/detection/tables_adibou3.h:72
-#: engines/gob/detection/tables_adibou3.h:87
-#: engines/gob/detection/tables_adibou3.h:102
-#: engines/gob/detection/tables_adibou3.h:117
-#: engines/gob/detection/tables_adibou3.h:131
-#: engines/gob/detection/tables_adibou3.h:145
-#: engines/gob/detection/tables_adibou3.h:162
-#: engines/gob/detection/tables_adibou3.h:179
+#: engines/gob/detection/tables_adibou3.h:68
+#: engines/gob/detection/tables_adibou3.h:85
+#: engines/gob/detection/tables_adibou3.h:100
+#: engines/gob/detection/tables_adibou3.h:115
+#: engines/gob/detection/tables_adibou3.h:129
+#: engines/gob/detection/tables_adibou3.h:143
+#: engines/gob/detection/tables_adibou3.h:160
+#: engines/gob/detection/tables_adibou3.h:174
+#: engines/gob/detection/tables_adibou3.h:191
+#: engines/gob/detection/tables_adibou3.h:208
+#: engines/gob/detection/tables_adibou3.h:222
+#: engines/gob/detection/tables_adibou3.h:236
 #: engines/gob/detection/tables_adiboupresente.h:41
 #: engines/gob/detection/tables_adiboupresente.h:57
 #: engines/gob/detection/tables_adiboupresente.h:73
-#: engines/gob/detection/tables_adiboudchou.h:43
-#: engines/gob/detection/tables_adiboudchou.h:57
-#: engines/gob/detection/tables_adiboudchou.h:70
-#: engines/gob/detection/tables_adiboudchou.h:83
+#: engines/gob/detection/tables_adiboudchou.h:42
+#: engines/gob/detection/tables_adiboudchou.h:58
+#: engines/gob/detection/tables_adiboudchou.h:72
+#: engines/gob/detection/tables_adiboudchou.h:85
+#: engines/gob/detection/tables_adiboudchou.h:98
 #: engines/gob/detection/tables_pierresmagiques.h:42
 #: engines/groovie/detection.cpp:100 engines/lure/detection.cpp:229
 #: engines/mohawk/detection_tables.h:768 engines/mohawk/detection_tables.h:783
