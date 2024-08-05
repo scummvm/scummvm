@@ -1,6 +1,5 @@
 # This file is used by Makefile and declares common build rules,
 # a list of common object files etc.
-#
 
 ######################################################################
 # The default build target: just build the scummvm executable
