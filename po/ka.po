@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-04 09:50+0000\n"
-"PO-Revision-Date: 2024-07-29 15:43+0000\n"
+"PO-Revision-Date: 2024-08-05 07:43+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -7807,70 +7807,48 @@ msgid "Naughty game mode"
 msgstr "გარყვნილი თამაშის რეჟიმი"
 
 #: engines/mads/metaengine.cpp:276
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Start menu keymappings"
-msgstr "თამაშის კლავიატურის მალსახმობები"
+msgstr "Start მენიუს კლავიატურის მალსახმობები"
 
 #: engines/mads/metaengine.cpp:299
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open game menu"
-msgstr "მთავარი მენიუს გახსნა"
+msgstr "თამაშის მენიუს გახსნა"
 
 #: engines/mads/metaengine.cpp:317
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Scroll bar up"
-msgstr "მაღლა აწევა"
+msgstr "ჩოჩიის მაღლა აწევა"
 
 #: engines/mads/metaengine.cpp:323
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Scroll bar down"
-msgstr "დაბლა ჩამოწევა"
+msgstr "ჩოჩიის დაბლა ჩამოწევა"
 
 #: engines/mads/metaengine.cpp:331
-#, fuzzy
-#| msgid "Restart game"
 msgid "Start game"
-msgstr "თამაშის თავიდან დაწყება"
+msgstr "თამაშის დაწყება"
 
 #: engines/mads/metaengine.cpp:337
-#, fuzzy
-#| msgid "Restore game"
 msgid "Resume game"
-msgstr "თამაშის აღდგენა"
+msgstr "თამაშის გაგრძელება"
 
 #: engines/mads/metaengine.cpp:343
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show intro"
-msgstr "მინიშნებების ჩვენება"
+msgstr "შესავლის ჩვენება"
 
 #: engines/mads/metaengine.cpp:349
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show credits"
-msgstr "მინიშნებების ჩვენება"
+msgstr "კრედიტების ჩვენება"
 
 #: engines/mads/metaengine.cpp:355
-#, fuzzy
-#| msgid "Show options"
 msgid "Show quotes"
-msgstr "პარამეტრების ჩვენება"
+msgstr "ციტატების ჩვენება"
 
 #: engines/mads/metaengine.cpp:361
-#, fuzzy
-#| msgid "Quit game"
 msgid "Exit game"
 msgstr "თამაშიდან გასვლა"
 
 #: engines/mads/metaengine.cpp:368
-#, fuzzy
-#| msgid "Faster animations"
 msgid "Restart animation"
-msgstr "უფრო სწრაფი ანიმაციები"
+msgstr "ანიმაციის თავიდადნ დაწყება"
 
 #: engines/mm/metaengine.cpp:57
 msgid "Show item costs in standard inventory mode"
