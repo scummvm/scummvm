@@ -48,12 +48,14 @@ public:
 
 	void preUpdate();
 	void postUpdate();
+	void drawScreenStates(); // black borders and/or permanent fade
 	void updateCursor();
 	void drawCursor(bool forceDefaultCursor = false);
 	void changeRoom(const Common::String &targetRoomName, bool resetCamera);
 	void changeRoomToBeforeInventory();
 	void triggerObject(ObjectBase *object, const char *action);
 	void triggerDoor(const Door *door);
+	void setPermanentFade(bool isFaded);
 
 private:
 	Common::ScopedPtr<Animation> _cursorAnimation;
@@ -68,7 +70,8 @@ private:
 	bool
 		_isOptionsMenuOpen = false,
 		_isGameLoaded = true,
-		_didLoadGlobalRooms = false;
+		_didLoadGlobalRooms = false,
+		_isPermanentFaded = false;
 };
 
 }
