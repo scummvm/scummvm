@@ -66,8 +66,8 @@ bool GfxDriver::checkDriver(const char *const *driverNames, int listSize) {
 	return false;
 }
 
-GfxDefaultDriver::GfxDefaultDriver(uint16 screenWidth, uint16 screenHeight, bool rgbRendering) : GfxDriver(screenWidth, screenHeight, 0), _cursorUsesScreenPalette(true),  _colorConv(nullptr), _colorConvMod(nullptr),
-	_srcPixelSize(1), _requestRGBMode(rgbRendering), _compositeBuffer(nullptr), _currentBitmap(nullptr), _internalPalette(nullptr), _currentPalette(nullptr), _virtualW(screenWidth), _virtualH(screenHeight) {
+GfxDefaultDriver::GfxDefaultDriver(uint16 screenWidth, uint16 screenHeight, bool isSCI0, bool rgbRendering) : GfxDriver(screenWidth, screenHeight, 0), _cursorUsesScreenPalette(true),  _colorConv(nullptr), _colorConvMod(nullptr),
+	_srcPixelSize(1), _requestRGBMode(rgbRendering), _compositeBuffer(nullptr), _currentBitmap(nullptr), _internalPalette(nullptr), _currentPalette(nullptr), _virtualW(screenWidth), _virtualH(screenHeight), _alwaysCreateBmpBuffer(!isSCI0) {
 	switch (g_sci->getResMan()->getViewType()) {
 	case kViewEga:
 		_numColors = 16;	// QFG PC-98 with 8 colors also reports 16 here
@@ -160,10 +160,16 @@ void GfxDefaultDriver::initScreen(const Graphics::PixelFormat *srcRGBFormat) {
 		assert(_compositeBuffer);
 	}
 
-	if (_numColors > 16 || _pixelSize > 1) {
-		// Not needed for SCI0, except for rgb rendering
+	// Not needed for SCI0, except for rgb rendering. Unfortunately, SCI_VERSION_01
+	// does need it and we can't tell the version from the number of colors there.
+	// That's why we have the _alwaysCreateBmpBuffer flag...
+	if (_alwaysCreateBmpBuffer || _numColors > 16 || _pixelSize > 1) {
 		_currentBitmap = new byte[_virtualW * _virtualH * _srcPixelSize]();
 		assert(_currentBitmap);
+	}
+
+	if (_numColors > 16 || _pixelSize > 1) {
+		// Not needed for SCI0, except for rgb rendering
 		_currentPalette = new byte[256 * 3]();
 		assert(_currentPalette);
 		if (_pixelSize != _srcPixelSize) {
@@ -256,7 +262,7 @@ void GfxDefaultDriver::copyCurrentBitmap(byte *dest, uint32 size) const {
 
 	// SCI 0 should not make calls to this method (except when using palette mods), but we have to know if it does...
 	if (!_currentBitmap)
-		error("GfxDefaultDriver::copyDataFromCurrentBitmap(): unexpected call");
+		error("GfxDefaultDriver::copyCurrentBitmap(): unexpected call");
 
 	// I have changed the implementation a bit from what the engine did before. For non-rgb rendering
 	// it would call OSystem::lockScreen() and then memcpy the data from there (which avoided the need
@@ -869,7 +875,7 @@ void SCI0_HerculesDriver::setupRenderProc() {
 const char *SCI0_HerculesDriver::_driverFile = "HERCMONO.DRV";
 
 
-SCI1_VGAGreyScaleDriver::SCI1_VGAGreyScaleDriver(bool rgbRendering) : GfxDefaultDriver(320, 200, rgbRendering), _greyScalePalette(nullptr) {
+SCI1_VGAGreyScaleDriver::SCI1_VGAGreyScaleDriver(bool rgbRendering) : GfxDefaultDriver(320, 200, false, rgbRendering), _greyScalePalette(nullptr) {
 	_greyScalePalette = new byte[_numColors * 3]();
 }
 
@@ -1131,7 +1137,7 @@ void SCI1_EGADriver::clearRect(const Common::Rect &r) const {
 
 const char *SCI1_EGADriver::_driverFile = "EGA640.DRV";
 
-/*SCI0_MacGfxDriver::SCI0_MacGfxDriver(uint16 screenWidth, uint16 screenHeight, bool rgbRendering) : GfxDefaultDriver(screenWidth, screenHeight, rgbRendering) {
+SCI0_MacGfxDriver::SCI0_MacGfxDriver(uint16 screenWidth, uint16 screenHeight, bool rgbRendering) : GfxDefaultDriver(screenWidth, screenHeight, true, rgbRendering) {
 	if (!_compositeBuffer)
 		_compositeBuffer = new byte[64 * 64 * _pixelSize]();
 	_cursorUsesScreenPalette = false;
@@ -1145,7 +1151,7 @@ void SCI0_MacGfxDriver::replaceMacCursor(const Graphics::Cursor*) {
 	error("SCI0_DOSPreVGADriver::replaceMacCursor(Graphics::Cursor*): Not implemented");
 }
 
-SCI1_MacGfxDriver::SCI1_MacGfxDriver(uint16 screenWidth, uint16 screenHeight, bool rgbRendering) : GfxDefaultDriver(screenWidth, screenHeight, rgbRendering) {
+SCI1_MacGfxDriver::SCI1_MacGfxDriver(uint16 screenWidth, uint16 screenHeight, bool rgbRendering) : GfxDefaultDriver(screenWidth, screenHeight, false, rgbRendering) {
 	_cursorUsesScreenPalette = false;
 }
 
@@ -1207,7 +1213,7 @@ template <typename T> void scale2x(byte *dst, const byte *src, int pitch, int w,
 }
 
 UpscaledGfxDriver::UpscaledGfxDriver(uint16 screenWidth, uint16 screenHeight, uint16 textAlignX, bool scaleCursor, bool rgbRendering) :
-	GfxDefaultDriver(screenWidth << 1, screenHeight << 1, rgbRendering), _textAlignX(textAlignX), _scaleCursor(scaleCursor), _needCursorBuffer(false),
+	GfxDefaultDriver(screenWidth << 1, screenHeight << 1, false, rgbRendering), _textAlignX(textAlignX), _scaleCursor(scaleCursor), _needCursorBuffer(false),
 	_scaledBitmap(nullptr), _renderScaled(nullptr), _renderGlyph(nullptr), _fixedTextColor(-1), _cursorWidth(0), _cursorHeight(0) {
 	_virtualW = screenWidth;
 	_virtualH = screenHeight;
@@ -1462,12 +1468,6 @@ void PC98Gfx16ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
 		return;
 
 	_renderGlyph = &renderPC98GlyphSpecial;
-
-	// Only needed for SCI1 and for RGB rendering. For 16 colors games the base class driver will usually not create this.
-	if (_currentBitmap == nullptr) {
-		_currentBitmap = new byte[_virtualW * _virtualH]();
-		assert(_currentBitmap);
-	}
 }
 
 void PC98Gfx16ColorsDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {
@@ -1687,12 +1687,6 @@ void renderPlanarMatrix(byte *dst, const byte *src, int pitch, int w, int h, con
 
 void SCI1_PC98Gfx8ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
 	UpscaledGfxDriver::initScreen(format);
-
-	// Only needed for SCI1 and for RGB rendering. For 16 colors games the base class driver will usually not create this.
-	if (_currentBitmap == nullptr) {
-		_currentBitmap = new byte[_virtualW * _virtualH]();
-		assert(_currentBitmap);
-	}
 
 	_renderGlyph = &renderPC98GlyphFat;
 
