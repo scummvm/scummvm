@@ -389,7 +389,7 @@ static rbool decode_args(int ip_, op_rec *oprec) {
 	run_metacommand hits Return. It sets restart_state and
 	  returns 5 to its parent.
 	scan_metacommand then runs pop_subcall_grammar and restores
-	  the original scanning grammer. It subtracts one from cnum
+	  the original scanning grammar. It subtracts one from cnum
 	  so the original cnum will be rerun.
 	run_metacommand sees that restart_state is set and pops the
 	  rest of the information (cnum and ip) off of the stack.
