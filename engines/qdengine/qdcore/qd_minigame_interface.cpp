@@ -503,7 +503,7 @@ qdMinigameSceneInterface *qdEngineInterfaceImpl::scene_interface(qdGameScene *sc
 
 mgVect2i qdEngineInterfaceImpl::screen_size() const {
 	if (grDispatcher * dp = grDispatcher::instance())
-		return mgVect2i(dp->Get_SizeX(), dp->Get_SizeY());
+		return mgVect2i(dp->get_SizeX(), dp->get_SizeY());
 
 	return mgVect2i(0, 0);
 }

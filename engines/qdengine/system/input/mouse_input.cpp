@@ -42,10 +42,10 @@ mouseDispatcher *mouseDispatcher::instance() {
 }
 
 bool mouseDispatcher::handle_event(mouseEvent ev, int x, int y, int flags) {
-	if (x >= grDispatcher::instance()->Get_SizeX())
-		x = grDispatcher::instance()->Get_SizeX() - 1;
-	if (y >= grDispatcher::instance()->Get_SizeY())
-		y = grDispatcher::instance()->Get_SizeY() - 1;
+	if (x >= grDispatcher::instance()->get_SizeX())
+		x = grDispatcher::instance()->get_SizeX() - 1;
+	if (y >= grDispatcher::instance()->get_SizeY())
+		y = grDispatcher::instance()->get_SizeY() - 1;
 
 	if (_event_handlers[ev])
 		(*_event_handlers[ev])(x, y, flags);

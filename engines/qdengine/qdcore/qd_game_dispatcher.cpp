@@ -699,7 +699,7 @@ void qdGameDispatcher::pre_redraw() {
 			}
 		}
 	} else
-		add_redraw_region(grScreenRegion(grDispatcher::instance()->Get_SizeX() / 2, grDispatcher::instance()->Get_SizeY() / 2, grDispatcher::instance()->Get_SizeX(), grDispatcher::instance()->Get_SizeY()));
+		add_redraw_region(grScreenRegion(grDispatcher::instance()->get_SizeX() / 2, grDispatcher::instance()->get_SizeY() / 2, grDispatcher::instance()->get_SizeX(), grDispatcher::instance()->get_SizeY()));
 
 	grDispatcher::instance()->build_changed_regions();
 }
@@ -740,7 +740,7 @@ void qdGameDispatcher::redraw() {
 
 			grDispatcher::instance()->flushChanges();
 #else
-			redraw(grScreenRegion(grDispatcher::instance()->Get_SizeX() / 2, grDispatcher::instance()->Get_SizeY() / 2, grDispatcher::instance()->Get_SizeX(), grDispatcher::instance()->Get_SizeY()));
+			redraw(grScreenRegion(grDispatcher::instance()->get_SizeX() / 2, grDispatcher::instance()->get_SizeY() / 2, grDispatcher::instance()->get_SizeX(), grDispatcher::instance()->get_SizeY()));
 
 			for (grDispatcher::region_iterator it = grDispatcher::instance()->changed_regions().begin(); it != grDispatcher::instance()->changed_regions().end(); ++it)
 				grDispatcher::instance()->Rectangle(it->min_x(), it->min_y(), it->size_x(), it->size_y(), 0xFFFFFF, 0, GR_OUTLINED);

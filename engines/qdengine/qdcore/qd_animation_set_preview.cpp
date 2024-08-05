@@ -62,7 +62,7 @@ qdAnimationSetPreview::~qdAnimationSetPreview() {
 
 void qdAnimationSetPreview::set_graph_dispatcher(grDispatcher *p) {
 	_graph_d = p;
-	set_screen(Vect2s(0, 0), Vect2s(p->Get_SizeX(), p->Get_SizeY()));
+	set_screen(Vect2s(0, 0), Vect2s(p->get_SizeX(), p->get_SizeY()));
 }
 
 void qdAnimationSetPreview::start() {
