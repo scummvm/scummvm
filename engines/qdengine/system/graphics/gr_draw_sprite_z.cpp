@@ -26,7 +26,7 @@
 namespace QDEngine {
 
 #ifdef _GR_ENABLE_ZBUFFER
-void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p, int mode, float scale) {
+void grDispatcher::putSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p, int mode, float scale) {
 	int i, j, sx_dest, sy_dest;
 
 	sx_dest = round(float(sx) * scale);
@@ -132,7 +132,7 @@ void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p
 	}
 }
 
-void grDispatcher::PutSpr_z(int x, int y, int z, int sx, int sy, const byte *p, int mode, float scale) {
+void grDispatcher::putSpr_z(int x, int y, int z, int sx, int sy, const byte *p, int mode, float scale) {
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
 
@@ -232,7 +232,7 @@ void grDispatcher::PutSpr_z(int x, int y, int z, int sx, int sy, const byte *p, 
 	}
 }
 
-void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p, int mode) {
+void grDispatcher::putSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p, int mode) {
 	int px = 0;
 	int py = 0;
 
@@ -412,7 +412,7 @@ void grDispatcher::PutSpr_a_z(int x, int y, int z, int sx, int sy, const byte *p
 	}
 }
 
-void grDispatcher::PutSpr_z(int x, int y, int z, int sx, int sy, const byte *p, int mode) {
+void grDispatcher::putSpr_z(int x, int y, int z, int sx, int sy, const byte *p, int mode) {
 	int px = 0;
 	int py = 0;
 

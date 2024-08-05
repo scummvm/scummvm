@@ -27,8 +27,8 @@
 namespace QDEngine {
 
 #ifdef _GR_ENABLE_ZBUFFER
-void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class rleBuffer *p, int mode, bool alpha_flag) {
-	debugC(2, kDebugGraphics, "grDispatcher::PutSpr_rle_z(%d, %d, %d, %d, %d)", x, y, z, sx, sy);
+void grDispatcher::putSpr_rle_z(int x, int y, int z, int sx, int sy, const class rleBuffer *p, int mode, bool alpha_flag) {
+	debugC(2, kDebugGraphics, "grDispatcher::putSpr_rle_z(%d, %d, %d, %d, %d)", x, y, z, sx, sy);
 
 	int px = 0;
 	int py = 0;
@@ -441,7 +441,7 @@ void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 	}
 }
 
-void grDispatcher::PutSpr_rle_z(int x, int y, int z, int sx, int sy, const class rleBuffer *p, int mode, float scale, bool alpha_flag) {
+void grDispatcher::putSpr_rle_z(int x, int y, int z, int sx, int sy, const class rleBuffer *p, int mode, float scale, bool alpha_flag) {
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
 
