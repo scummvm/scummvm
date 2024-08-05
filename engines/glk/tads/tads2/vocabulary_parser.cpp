@@ -2553,7 +2553,7 @@ static int vocg1o(voccxdef *ctx, char *cmd[], int typelist[],
 		VOC_RETVAL(ctx, save_sp, outcnt);
 	}
 
-	/* check for ALL/ANY/BOTH/EITHER [OF] <plural> contruction */
+	/* check for ALL/ANY/BOTH/EITHER [OF] <plural> construction */
 	if ((vocspec(cmd[cur], VOCW_ALL)
 		 || vocspec(cmd[cur], VOCW_BOTH)
 		 || vocspec(cmd[cur], VOCW_ANY)) &&
@@ -3019,7 +3019,7 @@ retry_exclude_first:
 			if (chkact) { VOC_RETVAL(ctx, save_sp, 0); }
 
 			/*
-			 *   tell the player about it unless supressing complaints,
+			 *   tell the player about it unless suppressing complaints,
 			 *   and return an error
 			 */
 			if (complain)
@@ -6092,7 +6092,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 			/*
 			 *   Check for redundant objects in the list.  If the same
 			 *   object appears multiple times in the list, remove the
-			 *   extra occurrences.  Sometimes, a game can inadvertantly
+			 *   extra occurrences.  Sometimes, a game can inadvertently
 			 *   define the same vocabulary word several times for the
 			 *   same object, because of the parser's leniency with
 			 *   matching leading substrings of 6 characters or longer.
