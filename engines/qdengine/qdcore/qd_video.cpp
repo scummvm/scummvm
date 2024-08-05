@@ -145,7 +145,7 @@ bool qdVideo::draw_background() {
 	if (_background.has_file()) {
 		_background.load();
 
-		grDispatcher::instance()->Fill(0);
+		grDispatcher::instance()->fill(0);
 		int x = qdGameConfig::get_config().screen_sx() >> 1;
 		int y = qdGameConfig::get_config().screen_sy() >> 1;
 		_background.redraw(x, y, 0);
@@ -156,7 +156,7 @@ bool qdVideo::draw_background() {
 		return true;
 	}
 
-	grDispatcher::instance()->Fill(0);
+	grDispatcher::instance()->fill(0);
 	grDispatcher::instance()->Flush();
 
 	return false;

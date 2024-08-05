@@ -92,7 +92,7 @@ void qdAnimationSetPreview::quant(float tm) {
 void qdAnimationSetPreview::redraw() {
 	grDispatcher *gp = grDispatcher::set_instance(_graph_d);
 
-	grDispatcher::instance()->Fill(_back_color);
+	grDispatcher::instance()->fill(_back_color);
 
 	redraw_grid();
 

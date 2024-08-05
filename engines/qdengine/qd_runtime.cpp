@@ -353,7 +353,7 @@ void init_graphics() {
 	grDispatcher::instance()->SetClip();
 	grDispatcher::instance()->SetClipMode(1);
 
-	grDispatcher::instance()->Fill(0);
+	grDispatcher::instance()->fill(0);
 
 	g_system->updateScreen();
 
