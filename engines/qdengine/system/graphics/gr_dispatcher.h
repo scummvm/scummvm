@@ -113,10 +113,10 @@ public:
 	void *Get_hWnd() const {
 		return _hWnd;
 	}
-	int Get_SizeX() const {
+	int get_SizeX() const {
 		return _sizeX;
 	}
-	int Get_SizeY() const {
+	int get_SizeY() const {
 		return _sizeY;
 	}
 
