@@ -226,8 +226,8 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 		default:
 			if (g_sci->getLanguage() == Common::KO_KOR)
 				_gfxDrv = new UpscaledGfxDriver(_displayWidth, _displayHeight + extraHeight, 1, true, requestRGB);
-			else
-				_gfxDrv = new GfxDefaultDriver(_displayWidth, _displayHeight + extraHeight, requestRGB);
+			else // The driver has to be told if is SCI_VERSION_01, since that cannot be determined from the number of colors.
+				_gfxDrv = new GfxDefaultDriver(_displayWidth, _displayHeight + extraHeight, getSciVersion() < SCI_VERSION_01, requestRGB);
 			break;
 		}
 	}

@@ -63,7 +63,7 @@ protected:
 
 class GfxDefaultDriver : public GfxDriver {
 public:
-	GfxDefaultDriver(uint16 screenWidth, uint16 screenHeight, bool rgbRendering);
+	GfxDefaultDriver(uint16 screenWidth, uint16 screenHeight, bool isSCI0, bool rgbRendering);
 	~GfxDefaultDriver() override;
 	void initScreen(const Graphics::PixelFormat *srcRGBFormat) override; // srcRGBFormat: expect incoming data to have the specified rgb pixel format (used for Mac hicolor videos)
 	void setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod *palMods, const byte *palModMapping) override;
@@ -86,6 +86,7 @@ protected:
 	Graphics::PixelFormat _format;
 	byte _srcPixelSize;
 	bool _cursorUsesScreenPalette;
+	const bool _alwaysCreateBmpBuffer;
 	const bool _requestRGBMode;
 	typedef void (*ColorConvProc)(byte*, const byte*, int, int, int, const byte*);
 	ColorConvProc _colorConv;
