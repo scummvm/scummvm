@@ -430,7 +430,7 @@ void call_functions(const char *base_name) {
 			/* THIS LOCATION-SPECIFIC FUNCTION DOES NOT
 			 * EXIST OR HAS ISSUED A 'break false' COMMAND.
 			 * EXECUTE THE FUNCTION '+func'
-			 * WITH THE POSSIBLILITY OF
+			 * WITH THE POSSIBILITY OF
 			 * EXECUTING THE FUNCTION 'func_override_here'
 			 * IF AN 'override' COMMAND IS FOUND IN '+func'
 			 * IF THIS OVERRIDE FUNCTION ISN'T FOUND
@@ -456,7 +456,7 @@ void call_functions(const char *base_name) {
 			/* THIS OBJECT-SPECIFIC FUNCTION DOES NOT
 			 * EXIST OR HAS ISSUED A 'break false' COMMAND.
 			 * EXECUTE THE FUNCTION '+func'
-			 * WITH THE POSSIBLILITY OF
+			 * WITH THE POSSIBILITY OF
 			 * EXECUTING THE FUNCTION 'func_override_noun1'
 			 * IF AN 'override' COMMAND IS FOUND IN '+func'
 			 * IF THIS OVERRIDE FUNCTION ISN'T FOUND
@@ -486,7 +486,7 @@ void call_functions(const char *base_name) {
 			/* THIS OBJECTS-SPECIFIC FUNCTION DOES NOT
 			 * EXIST OR HAS ISSUED A 'break false' COMMAND.
 			 * EXECUTE THE FUNCTION '+func'
-			 * WITH THE POSSIBLILITY OF
+			 * WITH THE POSSIBILITY OF
 			 * EXECUTING THE FUNCTION 'func_override_noun2_noun1'
 			 * IF AN 'override' COMMAND IS FOUND IN '+func'
 			 * IF THIS OVERRIDE FUNCTION ISN'T FOUND
@@ -1392,7 +1392,7 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 		if (!matches) {
 			/* IF THERE ARE NO REMAINING MATCHES DON'T MOVE ON TO THE NEXT
 			 * WORD IN THE PLAYER'S INPUT. */
-			//printf("--- %s isnt a name match for any object\n", word[wp]);
+			//printf("--- %s isn't a name match for any object\n", word[wp]);
 
 			/* THIS WORD IS A LIKELY BE INCORRECT AS IT DIDN'T MATCH
 			 * ANY OBJECTS */
@@ -1846,7 +1846,7 @@ int find_parent(int index) {
 				//printf("--- %s is a location, so dont recuse\n", object[parent]->label);
 				return (FALSE);
 			} else {
-				//printf("--- %s isnt a location, so recuse\n", object[parent]->label);
+				//printf("--- %s isn't a location, so recuse\n", object[parent]->label);
 				return (find_parent(parent));
 			}
 		}
