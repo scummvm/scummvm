@@ -216,24 +216,6 @@ private:
 	static const char *_driverFile;
 };
 
-/*class SCI0_MacGfxDriver final : public GfxDefaultDriver {
-public:
-	SCI0_MacGfxDriver(uint16 screenWidth, uint16 screenHeight, bool rgbRendering);
-	~SCI0_MacGfxDriver() override;
-	void replaceMacCursor(const Graphics::Cursor *cursor) override;
-private:
-};
-
-class SCI1_MacGfxDriver final : public GfxDefaultDriver {
-public:
-	SCI1_MacGfxDriver(uint16 screenWidth, uint16 screenHeight, bool rgbRendering);
-	~SCI1_MacGfxDriver() override;
-	void initScreen(const Graphics::PixelFormat *format) override;
-	void replaceCursor(const void*, uint, uint, int, int, uint32) override;
-	void replaceMacCursor(const Graphics::Cursor *cursor) override;
-private:
-};*/
-
 class UpscaledGfxDriver : public GfxDefaultDriver {
 public:
 	UpscaledGfxDriver(uint16 screenWidth, uint16 screenHeight, uint16 textAlignX, bool scaleCursor, bool rgbRendering);

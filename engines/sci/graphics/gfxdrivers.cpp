@@ -1137,61 +1137,6 @@ void SCI1_EGADriver::clearRect(const Common::Rect &r) const {
 
 const char *SCI1_EGADriver::_driverFile = "EGA640.DRV";
 
-SCI0_MacGfxDriver::SCI0_MacGfxDriver(uint16 screenWidth, uint16 screenHeight, bool rgbRendering) : GfxDefaultDriver(screenWidth, screenHeight, true, rgbRendering) {
-	if (!_compositeBuffer)
-		_compositeBuffer = new byte[64 * 64 * _pixelSize]();
-	_cursorUsesScreenPalette = false;
-}
-
-SCI0_MacGfxDriver::~SCI0_MacGfxDriver() {
-}
-
-void SCI0_MacGfxDriver::replaceMacCursor(const Graphics::Cursor*) {
-	// This is not needed for SCI0 (and not for any PC version of games at all)
-	error("SCI0_DOSPreVGADriver::replaceMacCursor(Graphics::Cursor*): Not implemented");
-}
-
-SCI1_MacGfxDriver::SCI1_MacGfxDriver(uint16 screenWidth, uint16 screenHeight, bool rgbRendering) : GfxDefaultDriver(screenWidth, screenHeight, false, rgbRendering) {
-	_cursorUsesScreenPalette = false;
-}
-
-SCI1_MacGfxDriver::~SCI1_MacGfxDriver() {
-}
-
-void SCI1_MacGfxDriver::initScreen(const Graphics::PixelFormat *format) {
-	GfxDefaultDriver::initScreen(format);
-	if (!_compositeBuffer)
-		_compositeBuffer = new byte[_screenW * _screenH * _pixelSize]();
-}
-
-void SCI1_MacGfxDriver::replaceCursor(const void*, uint, uint, int, int, uint32) {
-	// This is not needed for SCI1 Mac versions of games.
-	error("SCI1_MacUpscaledGfxDriver::replaceCursor(const void*, uint, uint, int, int, uint32): Not implemented");
-}
-
-void SCI1_MacGfxDriver::replaceMacCursor(const Graphics::Cursor *c) {
-	GFXDRV_ASSERT_READY;
-
-	if (!c || !c->getSurface())
-		error("SCI1_MacUpscaledGfxDriver::replaceMacCursor(): Invalid cursor");
-
-	uint16 w = c->getWidth();
-	uint16 h = c->getHeight();
-	uint16 hotX = c->getHotspotX();
-	uint16 hotY = c->getHotspotY();
-
-	scale2x<byte>(_compositeBuffer, c->getSurface(
-	h <<= 1;), w, w, h);
-	w <<= 1;
-	hotX <<= 1;
-	hotY <<= 1;
-
-	CursorMan.replaceCursor(_compositeBuffer, w, h, hotX, hotY, c->getKeyColor(), false, nullptr, c->getMask());
-	if (c->getPalette())
-		CursorMan.replaceCursorPalette(c->getPalette(), c->getPaletteStartIndex(), c->getPaletteCount());
-}
-*/
-
 template <typename T> void scale2x(byte *dst, const byte *src, int pitch, int w, int h) {
 	const T *s = reinterpret_cast<const T*>(src);
 	int dstPitch = pitch << 1;

@@ -203,12 +203,6 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 
 	if (_gfxDrv == nullptr) {
 		switch (g_sci->getPlatform()) {
-		/*case Common::kPlatformMacintosh:
-			if (getSciVersion() <= SCI_VERSION_0_LATE || getSciVersion() == SCI_VERSION_1_EGA_ONLY)
-				_gfxDrv = new SCI0_MacGfxDriver(_displayWidth, _displayHeight + extraHeight, requestRGB);
-			else
-				_gfxDrv = new SCI1_MacGfxDriver(_displayWidth, _displayHeight + extraHeight, requestRGB);
-			break;*/
 		case Common::kPlatformPC98:
 			if (g_sci->getGameId() == GID_PQ2)
 				// PQ2 is a bit special, probably the oldest of the PC-98 ports. Unlike all the others, it uses text mode print,
