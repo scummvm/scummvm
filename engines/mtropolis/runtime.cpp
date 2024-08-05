@@ -3070,8 +3070,13 @@ MiniscriptInstructionOutcome WorldManagerInterface::setCurrentScene(MiniscriptTh
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
+	// Note that this does NOT prevent transitioning to the same scene, which is intentional.
+	// Transitioning to the current scene is allowed (and will fire Scene Ended+Scene Started events)
 	bool addToReturnList = (_opInt & 0x02) != 0;
 	bool addToDest = (_opInt & 0x01) != 0;
+
+	_opInt = 0;	// Possibly inaccurate
+
 	thread->getRuntime()->addSceneStateTransition(HighLevelSceneTransition(scene->getSelfReference().lock().staticCast<Structural>(), HighLevelSceneTransition::kTypeChangeToScene, addToDest, addToReturnList));
 
 	return kMiniscriptInstructionOutcomeContinue;
@@ -5628,7 +5633,10 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 	case HighLevelSceneTransition::kTypeChangeToScene: {
 			const Common::SharedPtr<Structural> targetScene = transition.scene;
 
-			if (transition.addToDestinationScene || transition.addToReturnList) {
+			// This check may not be accurate, but we need to avoid adding the existing scene to the return list.
+			// SPQR depends on this behavior: Hitting Esc while in the menu will fire off another transition to
+			// the menu scene with addToReturnList set.  We want to avoid returning back to 
+			if ((transition.addToDestinationScene || transition.addToReturnList) && targetScene != _activeMainScene) {
 				SceneReturnListEntry returnListEntry;
 				returnListEntry.isAddToDestinationSceneTransition = transition.addToDestinationScene;
 				returnListEntry.scene = _activeMainScene;
