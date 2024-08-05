@@ -26,7 +26,7 @@
  */
 
 /* Detection tables for the ADI 1 series. */
-/* This Game is part of the Adi series for more Information see here: https://wiki.scummvm.org/index.php?title=Adi_Games */
+/* These games are part of the Adi series. For more information, refer to our wiki: https://wiki.scummvm.org/index.php?title=Adi_Games */
 
 #ifndef GOB_DETECTION_TABLES_ADI1_H
 #define GOB_DETECTION_TABLES_ADI1_H
