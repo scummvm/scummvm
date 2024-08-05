@@ -381,6 +381,12 @@ enum class FadeType {
 	// TODO: Add CrossFade fade type
 };
 
+enum class PermanentFadeAction {
+	Nothing,
+	SetFaded,
+	UnsetFaded
+};
+
 class FadeDrawRequest : public IDrawRequest {
 public:
 	FadeDrawRequest(FadeType type, float value, int8 order);
@@ -395,7 +401,8 @@ private:
 Task *fade(Process &process, FadeType fadeType,
 	float from, float to,
 	int32 duration, EasingType easingType,
-	int8 order);
+	int8 order,
+	PermanentFadeAction permanentFadeAction = PermanentFadeAction::Nothing);
 
 class BumpAllocator {
 public:

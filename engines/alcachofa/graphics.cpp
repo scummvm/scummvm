@@ -755,23 +755,29 @@ struct FadeTask : public Task {
 	FadeTask(Process &process, FadeType fadeType,
 		float from, float to,
 		uint32 duration, EasingType easingType,
-		int8 order)
+		int8 order,
+		PermanentFadeAction permanentFadeAction)
 		: Task(process)
 		, _fadeType(fadeType)
 		, _from(from)
 		, _to(to)
 		, _duration(duration)
 		, _easingType(easingType)
-		, _order(order) {}
+		, _order(order)
+		, _permanentFadeAction(permanentFadeAction){}
 
 	virtual TaskReturn run() override {
 		TASK_BEGIN;
+		if (_permanentFadeAction == PermanentFadeAction::UnsetFaded)
+			g_engine->player().setPermanentFade(false);
 		_startTime = g_system->getMillis();
 		while (g_system->getMillis() - _startTime < _duration) {
 			draw((g_system->getMillis() - _startTime) / (float)_duration);
 			TASK_YIELD;
 		}
 		draw(1.0f); // so that during a loading lag the screen is completly black/white
+		if (_permanentFadeAction == PermanentFadeAction::SetFaded)
+			g_engine->player().setPermanentFade(true);
 		TASK_END;
 	}
 
@@ -792,17 +798,19 @@ private:
 	uint32 _startTime = 0, _duration;
 	EasingType _easingType;
 	int8 _order;
+	PermanentFadeAction _permanentFadeAction;
 };
 
 Task *fade(Process &process, FadeType fadeType,
 	float from, float to,
 	int32 duration, EasingType easingType,
-	int8 order) {
+	int8 order,
+	PermanentFadeAction permanentFadeAction) {
 	if (duration <= 0)
 		return new DelayTask(process, 0);
 	if (!process.isActiveForPlayer())
 		return new DelayTask(process, (uint32)duration);
-	return new FadeTask(process, fadeType, from, to, duration, easingType, order);
+	return new FadeTask(process, fadeType, from, to, duration, easingType, order, permanentFadeAction);
 }
 
 DrawQueue::DrawQueue(IRenderer *renderer)
