@@ -27,6 +27,7 @@
 
 /* Detection tables for Adiboud'chou / Addy Buschu series. */
 /* This Game uses the DEV7 Engine, more Information can be found here: https://wiki.scummvm.org/index.php?title=DEV7_Information */
+/* These games are part of the Adibou series. For more information, refer to our wiki: https://wiki.scummvm.org/index.php?title=Adibou_Games */
 
 #ifndef GOB_DETECTION_TABLES_ADIBOUDCHOU_H
 #define GOB_DETECTION_TABLES_ADIBOUDCHOU_H
@@ -34,6 +35,20 @@
 //#include "common/translation.h"  // Make release checker happy
 
 // -- French: Adiboud'chou series --
+
+{
+	{
+		"adiboudchoumer",
+		_s("Missing game code"), // Adiboud'chou a la mer 1.01 (Engine: DEV7 version unknown)
+		AD_ENTRY1s("adbc_envir_obc.stk", "57f0eda5d4029abdb2f6b6201e02905e", 3204281),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	"adbc_envir_obc.stk", "adbc_init.obc", 0
+},
 
 // -- German: Addy Buschu series --
 

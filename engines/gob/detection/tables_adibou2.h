@@ -27,6 +27,7 @@
 
 /* Detection tables for Adibou / Addy Junior series. */
 /* This Game uses the DEV6 Engine, more Information can be found here: https://wiki.scummvm.org/index.php?title=DEV6_Information */
+/* These games are part of the Adibou series. For more information, refer to our wiki: https://wiki.scummvm.org/index.php?title=Adibou_Games */
 
 #ifndef GOB_DETECTION_TABLES_ADIBOU2_H
 #define GOB_DETECTION_TABLES_ADIBOU2_H
@@ -244,6 +245,19 @@
 		EN_GRB,
 		kPlatformWindows,
 		GF_ENABLE_ADIBOU2_FLOWERS_INFINITE_LOOP_WORKAROUND,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+{
+	{
+		"adibou2",
+		"ADIBOO 2.13 Environment",
+		AD_ENTRY1s("intro.stk", "ff63637e3cb7f0a457edf79457b1c6b3", 9333874),
+		EN_GRB,
+		kPlatformWindows,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 	kFeatures640x480,

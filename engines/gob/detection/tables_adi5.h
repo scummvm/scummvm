@@ -27,6 +27,7 @@
 
 /* Detection tables for Adi 5 / Addy 5 series. */
 /* This Game uses the DEV7 Engine, more Information can be found here: https://wiki.scummvm.org/index.php?title=DEV7_Information */
+/* These games are part of the Adi series. For more information, refer to our wiki: https://wiki.scummvm.org/index.php?title=Adi_Games */
 
 #ifndef GOB_DETECTION_TABLES_ADI5_H
 #define GOB_DETECTION_TABLES_ADI5_H
@@ -108,6 +109,9 @@
 	kFeatures800x600,
 	"adi5.stk", "adi5.obc", 0
 },
+
+// -- Demos --
+
 {
 	{ // Supplied by BJNFNE
 

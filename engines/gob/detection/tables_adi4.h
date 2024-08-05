@@ -27,6 +27,7 @@
 
 /* Detection tables for the ADI / Addy 4 series. */
 /* This Game uses the DEV6 Engine, more Information can be found here: https://wiki.scummvm.org/index.php?title=DEV6_Information */
+/* These games are part of the Adi series. For more information, refer to our wiki: https://wiki.scummvm.org/index.php?title=Adi_Games */
 
 #ifndef GOB_DETECTION_TABLES_ADI4_H
 #define GOB_DETECTION_TABLES_ADI4_H
