@@ -337,7 +337,7 @@ void grDispatcher::rectangle(int x, int y, int sx, int sy, int outcol, int incol
 
 	if (mode == GR_FILLED) {
 		if (sx < 3) return;
-		Erase(x + 1, y + 1, sx - 2, sy - 2, incol);
+		erase(x + 1, y + 1, sx - 2, sy - 2, incol);
 	}
 }
 
@@ -374,7 +374,7 @@ void grDispatcher::rectangleAlpha(int x, int y, int sx, int sy, uint32 color, in
 	}
 }
 
-void grDispatcher::Erase(int x, int y, int sx, int sy, int col) {
+void grDispatcher::erase(int x, int y, int sx, int sy, int col) {
 	if (_clipMode)
 		if (!clip_rectangle(x, y, sx, sy))
 			return;
