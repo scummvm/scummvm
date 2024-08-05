@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-05 10:00+0000\n"
-"PO-Revision-Date: 2024-08-05 08:49+0000\n"
+"PO-Revision-Date: 2024-08-05 14:58+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -8774,10 +8774,8 @@ msgid "Show credits"
 msgstr "Mostrar créditos"
 
 #: engines/mads/metaengine.cpp:355
-#, fuzzy
-#| msgid "Show options"
 msgid "Show quotes"
-msgstr "Mostrar opciones"
+msgstr "Mostrar citas"
 
 #: engines/mads/metaengine.cpp:361
 msgid "Exit game"
