@@ -595,7 +595,7 @@ inline bool rle_alpha_b16(uint16 pixel) {
 	return pixel < 200;
 }
 
-void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const class rleBuffer *p, int contour_color, int mode, bool alpha_flag) {
+void grDispatcher::drawSprContour(int x, int y, int sx, int sy, const class rleBuffer *p, int contour_color, int mode, bool alpha_flag) {
 	int px = 0;
 	int py = 0;
 
@@ -626,7 +626,7 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const class rleB
 	px <<= 1;
 	psx <<= 1;
 
-	warning("STUB: grDispatcher::DrawSprContour");
+	warning("STUB: grDispatcher::drawSprContour");
 	for (int i = 0; i < psy; i++) {
 		uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
 		uint16 *scr_buf_prev = (i) ? reinterpret_cast<uint16 *>(_screenBuf + _yTable[y - dy] + x) : scr_buf;
@@ -703,7 +703,7 @@ void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const class rleB
 
 }
 
-void grDispatcher::DrawSprContour(int x, int y, int sx, int sy, const class rleBuffer *p, int contour_color, int mode, float scale, bool alpha_flag) {
+void grDispatcher::drawSprContour(int x, int y, int sx, int sy, const class rleBuffer *p, int contour_color, int mode, float scale, bool alpha_flag) {
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
 

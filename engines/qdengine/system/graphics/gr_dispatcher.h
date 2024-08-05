@@ -207,16 +207,16 @@ public:
 
 	void PutChar(int x, int y, uint32 color, int font_sx, int font_sy, const byte *font_alpha, const grScreenRegion &char_region);
 
-	void DrawSprContour_a(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode);
-	void DrawSprContour_a(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode, float scale);
-	void DrawSprContour(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode);
-	void DrawSprContour(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode, float scale);
-	void DrawSprContour(int x, int y, int sx, int sy, const rleBuffer *p, int contour_color, int mode, bool alpha_flag);
-	void DrawSprContour(int x, int y, int sx, int sy, const rleBuffer *p, int contour_color, int mode, float scale, bool alpha_flag);
+	void drawSprContour_a(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode);
+	void drawSprContour_a(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode, float scale);
+	void drawSprContour(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode);
+	void drawSprContour(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode, float scale);
+	void drawSprContour(int x, int y, int sx, int sy, const rleBuffer *p, int contour_color, int mode, bool alpha_flag);
+	void drawSprContour(int x, int y, int sx, int sy, const rleBuffer *p, int contour_color, int mode, float scale, bool alpha_flag);
 
-	bool DrawText(int x, int y, uint32 color, const char *str, int hspace = 0, int vspace = 0, const grFont *font = NULL);
-	bool DrawAlignedText(int x, int y, int sx, int sy, uint32 color, const char *str, grTextAlign align = GR_ALIGN_LEFT, int hspace = 0, int vspace = 0, const grFont *font = NULL);
-	bool DrawParsedText(int x, int y, int sx, int sy, uint32 color, const UI_TextParser *parser, grTextAlign align = GR_ALIGN_LEFT, const grFont *font = NULL);
+	bool drawText(int x, int y, uint32 color, const char *str, int hspace = 0, int vspace = 0, const grFont *font = NULL);
+	bool drawAlignedText(int x, int y, int sx, int sy, uint32 color, const char *str, grTextAlign align = GR_ALIGN_LEFT, int hspace = 0, int vspace = 0, const grFont *font = NULL);
+	bool drawParsedText(int x, int y, int sx, int sy, uint32 color, const UI_TextParser *parser, grTextAlign align = GR_ALIGN_LEFT, const grFont *font = NULL);
 	int TextWidth(const char *str, int hspace = 0, const grFont *font = NULL, bool first_string_only = false) const;
 	int TextHeight(const char *str, int vspace = 0, const grFont *font = NULL) const;
 

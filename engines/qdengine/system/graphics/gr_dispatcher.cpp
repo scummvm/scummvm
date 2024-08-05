@@ -885,7 +885,7 @@ char *grDispatcher::temp_buffer(int size) {
 	return _temp_buffer;
 }
 
-bool grDispatcher::DrawText(int x, int y, uint32 color, const char *str, int hspace, int vspace, const grFont *font) {
+bool grDispatcher::drawText(int x, int y, uint32 color, const char *str, int hspace, int vspace, const grFont *font) {
 	if (!font)
 		font = _default_font;
 
@@ -917,7 +917,7 @@ bool grDispatcher::DrawText(int x, int y, uint32 color, const char *str, int hsp
 	return true;
 }
 
-bool grDispatcher::DrawAlignedText(int x, int y, int sx, int sy, uint32 color, const char *str, grTextAlign align, int hspace, int vspace, const grFont *font) {
+bool grDispatcher::drawAlignedText(int x, int y, int sx, int sy, uint32 color, const char *str, grTextAlign align, int hspace, int vspace, const grFont *font) {
 	if (!font)
 		font = _default_font;
 
@@ -975,7 +975,7 @@ bool grDispatcher::DrawAlignedText(int x, int y, int sx, int sy, uint32 color, c
 	return true;
 }
 
-bool grDispatcher::DrawParsedText(int x, int y, int sx, int sy, uint32 color, const UI_TextParser *parser, grTextAlign align, const grFont *font) {
+bool grDispatcher::drawParsedText(int x, int y, int sx, int sy, uint32 color, const UI_TextParser *parser, grTextAlign align, const grFont *font) {
 	if (!font)
 		font = _default_font;
 
@@ -1009,7 +1009,7 @@ bool grDispatcher::DrawParsedText(int x, int y, int sx, int sy, uint32 color, co
 				break;
 
 			Common::String str(it->nl.begin, it->nl.end - it->nl.begin);
-			DrawText(cur_x, y, color, str.c_str(), 0, 0, font);
+			drawText(cur_x, y, color, str.c_str(), 0, 0, font);
 
 			//int ssx = TextWidth(str.c_str(), 0, font);
 			//int ssx1 = it->width;

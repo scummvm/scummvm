@@ -818,7 +818,7 @@ void qdGameObjectAnimated::debug_redraw() const {
 
 	static Common::String buf;
 	if (get_debug_info(buf))
-		grDispatcher::instance()->DrawText(scr_pos.x, scr_pos.y - 20, grDispatcher::instance()->make_rgb888(255, 255, 255), buf.c_str());
+		grDispatcher::instance()->drawText(scr_pos.x, scr_pos.y - 20, grDispatcher::instance()->make_rgb888(255, 255, 255), buf.c_str());
 }
 
 bool qdGameObjectAnimated::hit(int x, int y) const {
