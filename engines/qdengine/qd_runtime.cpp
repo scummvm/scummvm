@@ -357,7 +357,7 @@ void init_graphics() {
 
 	g_system->updateScreen();
 
-	grDispatcher::instance()->Flush();
+	grDispatcher::instance()->flush();
 }
 
 bool init_graphics_dispatcher() {
@@ -379,7 +379,7 @@ void qd_show_load_progress(int percents_loaded, void *p) {
 
 	grDispatcher::instance()->Rectangle(x, y, rect_sx, rect_sy, 0xFFFFFF, 0, GR_OUTLINED);
 	grDispatcher::instance()->Rectangle(x, y, sx, rect_sy, 0xFFFFFF, 0xFFFFFF, GR_FILLED);
-	grDispatcher::instance()->Flush(x, y, rect_sx, rect_sy);
+	grDispatcher::instance()->flush(x, y, rect_sx, rect_sy);
 }
 
 void restore_graphics() {

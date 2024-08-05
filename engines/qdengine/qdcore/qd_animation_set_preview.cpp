@@ -111,7 +111,7 @@ void qdAnimationSetPreview::redraw() {
 	grDispatcher::instance()->Line(v1.x - line_sz, v1.y, v1.x + line_sz, v1.y, _grid_color);
 	grDispatcher::instance()->Line(v0.x, v0.y, v1.x, v1.y, _grid_color);
 	grDispatcher::instance()->Rectangle(_screen_offset.x, _screen_offset.y, _screen_size.x, _screen_size.y, _grid_color, 0, GR_OUTLINED);
-	grDispatcher::instance()->Flush();
+	grDispatcher::instance()->flush();
 
 	grDispatcher::set_instance(gp);
 }

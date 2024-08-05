@@ -173,9 +173,9 @@ public:
 	}
 
 
-	bool Flush(int x, int y, int sx, int sy);
-	bool Flush();
-	bool FlushChanges();
+	bool flush(int x, int y, int sx, int sy);
+	bool flush();
+	bool flushChanges();
 
 	void fill(int val);
 
