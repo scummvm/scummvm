@@ -108,7 +108,7 @@ public:
 		return false;
 	}
 
-	virtual bool Finit();
+	virtual bool finit();
 
 	void *Get_hWnd() const {
 		return _hWnd;

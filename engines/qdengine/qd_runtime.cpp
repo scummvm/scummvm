@@ -325,7 +325,7 @@ int engineMain() {
 
 	delete qd_gameD;
 
-	grDispatcher::instance()->Finit();
+	grDispatcher::instance()->finit();
 
 	qdFileManager::instance().Finit();
 
@@ -341,7 +341,7 @@ namespace qdrt {
 
 void init_graphics() {
 	grDispatcher::set_restore_handler(restore_graphics);
-	grDispatcher::instance()->Finit();
+	grDispatcher::instance()->finit();
 
 	grDispatcher::set_instance(grD);
 

@@ -107,12 +107,12 @@ grDispatcher::grDispatcher() : _screenBuf(NULL),
 }
 
 grDispatcher::~grDispatcher() {
-	Finit();
+	finit();
 
 	if (_dispatcher_ptr == this) _dispatcher_ptr = 0;
 }
 
-bool grDispatcher::Finit() {
+bool grDispatcher::finit() {
 #ifdef _GR_ENABLE_ZBUFFER
 	free_zbuffer();
 #endif
@@ -130,7 +130,7 @@ bool grDispatcher::Finit() {
 }
 
 bool grDispatcher::init(int sx, int sy, grPixelFormat pixel_format) {
-	Finit();
+	finit();
 
 	_pixel_format = pixel_format;
 
