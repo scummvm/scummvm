@@ -186,7 +186,7 @@ bool grDispatcher::flush() {
 	return flush(0, 0, _sizeX, _sizeY);
 }
 
-void grDispatcher::Line(int x1, int y1, int x2, int y2, int col, int line_style, bool inverse_col) {
+void grDispatcher::line(int x1, int y1, int x2, int y2, int col, int line_style, bool inverse_col) {
 	const int F_PREC = 16;
 
 	if (!clip_line(x1, y1, x2, y2)) return;
@@ -300,7 +300,7 @@ void grDispatcher::Line(int x1, int y1, int x2, int y2, int col, int line_style,
 	}
 }
 
-void grDispatcher::LineTo(int x, int y, int len, int dir, int col, int line_style) {
+void grDispatcher::lineTo(int x, int y, int len, int dir, int col, int line_style) {
 	int v;
 
 	switch (dir) {
@@ -330,10 +330,10 @@ void grDispatcher::LineTo(int x, int y, int len, int dir, int col, int line_styl
 void grDispatcher::Rectangle(int x, int y, int sx, int sy, int outcol, int incol, int mode, int line_style) {
 	if (!sx || !sy) return;
 
-	LineTo(x, y, sx, GR_RIGHT, outcol, line_style);
-	LineTo(x, y, sy, GR_BOTTOM, outcol, line_style);
-	LineTo(x + sx - 1, y, sy, GR_BOTTOM, outcol, line_style);
-	LineTo(x, y + sy - 1, sx, GR_RIGHT, outcol, line_style);
+	lineTo(x, y, sx, GR_RIGHT, outcol, line_style);
+	lineTo(x, y, sy, GR_BOTTOM, outcol, line_style);
+	lineTo(x + sx - 1, y, sy, GR_BOTTOM, outcol, line_style);
+	lineTo(x, y + sy - 1, sx, GR_RIGHT, outcol, line_style);
 
 	if (mode == GR_FILLED) {
 		if (sx < 3) return;

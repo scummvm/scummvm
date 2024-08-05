@@ -633,7 +633,7 @@ bool qdCamera::draw_grid() const {
 #ifdef _GR_ENABLE_ZBUFFER
 					grDispatcher::instance()->Line_z(b.x, b.y, begPoint.z, e.x, e.y, endPoint.z, NORMAL_CELL_CLR, DASH_LEN);
 #else
-					grDispatcher::instance()->Line(b.x, b.y, e.x, e.y, NORMAL_CELL_CLR, DASH_LEN);
+					grDispatcher::instance()->line(b.x, b.y, e.x, e.y, NORMAL_CELL_CLR, DASH_LEN);
 #endif
 				}
 			}
@@ -649,9 +649,9 @@ bool qdCamera::draw_grid() const {
 					Vect2s e = camera_coord2scr(endPoint);
 
 #ifdef _GR_ENABLE_ZBUFFER
-					grDispatcher::instance()->Line_z(b.x, b.y, begPoint.z, e.x, e.y, endPoint.z, NORMAL_CELL_CLR, DASH_LEN);
+					grDispatcher::instance()->line_z(b.x, b.y, begPoint.z, e.x, e.y, endPoint.z, NORMAL_CELL_CLR, DASH_LEN);
 #else
-					grDispatcher::instance()->Line(b.x, b.y, e.x, e.y, NORMAL_CELL_CLR, DASH_LEN);
+					grDispatcher::instance()->line(b.x, b.y, e.x, e.y, NORMAL_CELL_CLR, DASH_LEN);
 #endif
 				}
 			}
@@ -666,7 +666,7 @@ bool qdCamera::draw_grid() const {
 				Vect2s b = camera_coord2scr(begPoint);
 				Vect2s e = camera_coord2scr(endPoint);
 
-				grDispatcher::instance()->Line(b.x, b.y, e.x, e.y, NORMAL_CELL_CLR, DASH_LEN);
+				grDispatcher::instance()->line(b.x, b.y, e.x, e.y, NORMAL_CELL_CLR, DASH_LEN);
 			}
 		}
 
@@ -679,7 +679,7 @@ bool qdCamera::draw_grid() const {
 				Vect2s b = camera_coord2scr(begPoint);
 				Vect2s e = camera_coord2scr(endPoint);
 
-				grDispatcher::instance()->Line(b.x, b.y, e.x, e.y, NORMAL_CELL_CLR, DASH_LEN);
+				grDispatcher::instance()->line(b.x, b.y, e.x, e.y, NORMAL_CELL_CLR, DASH_LEN);
 			}
 		}
 	}
@@ -721,7 +721,7 @@ bool qdCamera::draw_cell(int x, int y, int z, int penWidth, uint32 color) const 
 #ifdef _GR_ENABLE_ZBUFFER
 			grDispatcher::instance()->Line_z(p0.x, p0.y, point0.z, p1.x, p1.y, point1.z, color/*, DASH_LEN*/);
 #else
-			grDispatcher::instance()->Line(p0.x, p0.y, p1.x, p1.y, color/*, DASH_LEN*/);
+			grDispatcher::instance()->line(p0.x, p0.y, p1.x, p1.y, color/*, DASH_LEN*/);
 #endif
 		}
 
@@ -732,7 +732,7 @@ bool qdCamera::draw_cell(int x, int y, int z, int penWidth, uint32 color) const 
 #ifdef _GR_ENABLE_ZBUFFER
 			grDispatcher::instance()->Line_z(p0.x, p0.y, point1.z, p1.x, p1.y, point2.z, color/*, DASH_LEN*/);
 #else
-			grDispatcher::instance()->Line(p0.x, p0.y, p1.x, p1.y, color/*, DASH_LEN*/);
+			grDispatcher::instance()->line(p0.x, p0.y, p1.x, p1.y, color/*, DASH_LEN*/);
 #endif
 		}
 
@@ -743,7 +743,7 @@ bool qdCamera::draw_cell(int x, int y, int z, int penWidth, uint32 color) const 
 #ifdef _GR_ENABLE_ZBUFFER
 			grDispatcher::instance()->Line_z(p0.x, p0.y, point2.z, p1.x, p1.y, point3.z, color/*, DASH_LEN*/);
 #else
-			grDispatcher::instance()->Line(p0.x, p0.y, p1.x, p1.y, color/*, DASH_LEN*/);
+			grDispatcher::instance()->line(p0.x, p0.y, p1.x, p1.y, color/*, DASH_LEN*/);
 #endif
 		}
 
@@ -754,32 +754,32 @@ bool qdCamera::draw_cell(int x, int y, int z, int penWidth, uint32 color) const 
 #ifdef _GR_ENABLE_ZBUFFER
 			grDispatcher::instance()->Line_z(p0.x, p0.y, point3.z, p1.x, p1.y, point0.z, color/*, DASH_LEN*/);
 #else
-			grDispatcher::instance()->Line(p0.x, p0.y, p1.x, p1.y, color/*, DASH_LEN*/);
+			grDispatcher::instance()->line(p0.x, p0.y, p1.x, p1.y, color/*, DASH_LEN*/);
 #endif
 		}
 	} else {
 		if (line_cutting(point0, point1)) {
 			Vect2s p0 = camera_coord2scr(point0);
 			Vect2s p1 = camera_coord2scr(point1);
-			grDispatcher::instance()->Line(p0.x, p0.y, p1.x, p1.y, color/*, DASH_LEN*/);
+			grDispatcher::instance()->line(p0.x, p0.y, p1.x, p1.y, color/*, DASH_LEN*/);
 		}
 
 		if (line_cutting(point1, point2)) {
 			Vect2s p0 = camera_coord2scr(point1);
 			Vect2s p1 = camera_coord2scr(point2);
-			grDispatcher::instance()->Line(p0.x, p0.y, p1.x, p1.y, color/*, DASH_LEN*/);
+			grDispatcher::instance()->line(p0.x, p0.y, p1.x, p1.y, color/*, DASH_LEN*/);
 		}
 
 		if (line_cutting(point2, point3)) {
 			Vect2s p0 = camera_coord2scr(point2);
 			Vect2s p1 = camera_coord2scr(point3);
-			grDispatcher::instance()->Line(p0.x, p0.y, p1.x, p1.y, color/*, DASH_LEN*/);
+			grDispatcher::instance()->line(p0.x, p0.y, p1.x, p1.y, color/*, DASH_LEN*/);
 		}
 
 		if (line_cutting(point3, point0)) {
 			Vect2s p0 = camera_coord2scr(point3);
 			Vect2s p1 = camera_coord2scr(point0);
-			grDispatcher::instance()->Line(p0.x, p0.y, p1.x, p1.y, color/*, DASH_LEN*/);
+			grDispatcher::instance()->line(p0.x, p0.y, p1.x, p1.y, color/*, DASH_LEN*/);
 		}
 	}
 	return true;
