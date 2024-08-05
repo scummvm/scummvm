@@ -685,7 +685,7 @@ bool os_rmdir(const char *dir);
 /* apply a default extension to a filename, if it doesn't already have one */
 void os_defext(char *fname, const char *ext);
 
-/* unconditionally add an extention to a filename */
+/* unconditionally add an extension to a filename */
 void os_addext(char *fname, const char *ext);
 
 /* remove the extension from a filename */
