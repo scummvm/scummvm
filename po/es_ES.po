@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-04 09:50+0000\n"
-"PO-Revision-Date: 2024-07-28 22:28+0000\n"
+"PO-Revision-Date: 2024-08-05 08:49+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -8737,46 +8737,32 @@ msgid "Naughty game mode"
 msgstr "Modo de juego picante"
 
 #: engines/mads/metaengine.cpp:276
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Start menu keymappings"
-msgstr "Asignaciones del juego"
+msgstr "Asignaciones del menú de inicio"
 
 #: engines/mads/metaengine.cpp:299
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open game menu"
-msgstr "Abrir menú principal"
+msgstr "Abrir menú del juego"
 
 #: engines/mads/metaengine.cpp:317
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Scroll bar up"
-msgstr "Subir"
+msgstr "Subir barra de desplazamiento"
 
 #: engines/mads/metaengine.cpp:323
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Scroll bar down"
-msgstr "Bajar"
+msgstr "Bajar barra de desplazamiento"
 
 #: engines/mads/metaengine.cpp:331
-#, fuzzy
-#| msgid "Restart game"
 msgid "Start game"
-msgstr "Reiniciar partida"
+msgstr "Iniciar partida"
 
 #: engines/mads/metaengine.cpp:337
-#, fuzzy
-#| msgid "Restore game"
 msgid "Resume game"
 msgstr "Cargar partida"
 
 #: engines/mads/metaengine.cpp:343
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show intro"
-msgstr "Mostrar pistas"
+msgstr "Mostrar introducción"
 
 #: engines/mads/metaengine.cpp:349
 msgid "Show credits"
@@ -8789,16 +8775,12 @@ msgid "Show quotes"
 msgstr "Mostrar opciones"
 
 #: engines/mads/metaengine.cpp:361
-#, fuzzy
-#| msgid "Quit game"
 msgid "Exit game"
 msgstr "Salir del juego"
 
 #: engines/mads/metaengine.cpp:368
-#, fuzzy
-#| msgid "Faster animations"
 msgid "Restart animation"
-msgstr "Acelerar animaciones"
+msgstr "Reiniciar animación"
 
 #: engines/mm/metaengine.cpp:57
 msgid "Show item costs in standard inventory mode"
