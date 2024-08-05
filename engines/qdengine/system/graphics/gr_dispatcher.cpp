@@ -905,7 +905,7 @@ bool grDispatcher::drawText(int x, int y, uint32 color, const char *str, int hsp
 			if (str_buf[i] == ' ')
 				x += font->size_x() / 2 + hspace;
 			else if (dx) {
-				PutChar(x, y, color, font->alpha_buffer_size_x(), font->alpha_buffer_size_y(), font->alpha_buffer(), rg);
+				putChar(x, y, color, font->alpha_buffer_size_x(), font->alpha_buffer_size_y(), font->alpha_buffer(), rg);
 				x += dx + hspace;
 			}
 		} else {
@@ -952,7 +952,7 @@ bool grDispatcher::drawAlignedText(int x, int y, int sx, int sy, uint32 color, c
 			if (str_buf[i] == ' ') {
 				x += font->size_x() / 2 + hspace;
 			} else if (dx) {
-				PutChar(x + delta_x, y, color, font->alpha_buffer_size_x(), font->alpha_buffer_size_y(), font->alpha_buffer(), rg);
+				putChar(x + delta_x, y, color, font->alpha_buffer_size_x(), font->alpha_buffer_size_y(), font->alpha_buffer(), rg);
 				x += dx + hspace;
 			}
 		} else {

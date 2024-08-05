@@ -955,7 +955,7 @@ void grDispatcher::drawSprContour_a(int x, int y, int sx, int sy, const byte *p,
 	return;
 }
 
-void grDispatcher::PutChar(int x, int y, uint32 color, int font_sx, int font_sy, const byte *font_alpha, const grScreenRegion &chr_region) {
+void grDispatcher::putChar(int x, int y, uint32 color, int font_sx, int font_sy, const byte *font_alpha, const grScreenRegion &chr_region) {
 	int px = chr_region.x();
 	int py = chr_region.y();
 

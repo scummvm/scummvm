@@ -203,9 +203,9 @@ public:
 	void putSprMask_a(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode);
 	void putSprMask_a(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode, float scale);
 
-	void PutTileSpr(int x, int y, const grTileSprite &sprite, bool has_alpha, int mode);
+	void putTileSpr(int x, int y, const grTileSprite &sprite, bool has_alpha, int mode);
 
-	void PutChar(int x, int y, uint32 color, int font_sx, int font_sy, const byte *font_alpha, const grScreenRegion &char_region);
+	void putChar(int x, int y, uint32 color, int font_sx, int font_sy, const byte *font_alpha, const grScreenRegion &char_region);
 
 	void drawSprContour_a(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode);
 	void drawSprContour_a(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode, float scale);
