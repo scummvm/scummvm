@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-05 10:00+0000\n"
+"POT-Creation-Date: 2024-08-06 05:47+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -3075,21 +3075,27 @@ msgstr "PC-9821 (256 колераў)"
 msgid "PC-9801 (16 Colors)"
 msgstr "PC-9801 (16 колераў)"
 
+#: common/rendermode.cpp:48
+#, fuzzy
+#| msgid "PC-9801 (16 Colors)"
+msgid "PC-9801 (8 Colors)"
+msgstr "PC-9801 (16 колераў)"
+
 #. I18N: Macintosh black-and-white
-#: common/rendermode.cpp:52
+#: common/rendermode.cpp:53
 msgid "Macintosh b/w"
 msgstr "Ч/б Macintosh"
 
-#: common/rendermode.cpp:56
+#: common/rendermode.cpp:57
 msgid "VGA Grey Scale"
 msgstr ""
 
-#: common/rendermode.cpp:90
+#: common/rendermode.cpp:92
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr "Зялёны Hercules"
 
-#: common/rendermode.cpp:91
+#: common/rendermode.cpp:93
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Бурштынавы Hercules"
@@ -9864,7 +9870,7 @@ msgstr ""
 "могуць працаваць няправільна. Калі ласка, праглядзіце кансоль для "
 "падрабязнасьцей, а таксама праверце, што вашыя файлы гульні вартыя."
 
-#: engines/sci/sci.cpp:420
+#: engines/sci/sci.cpp:424
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -9877,7 +9883,7 @@ msgstr ""
 "заўжды правільна выглядаюць ці перадаюць пэўны сэнс, бо былі выдалены з "
 "арыґінальнай гульні. Гэта хіба ня ScummVM, а рэсурсаў гульні."
 
-#: engines/sci/sci.cpp:444
+#: engines/sci/sci.cpp:448
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI Utility"
@@ -9897,11 +9903,11 @@ msgstr ""
 "пераназваць улучаны файл *.PAT на 4.PAT й памясьціць у тэчцы гульні. Без "
 "гэатй латкі, музыка MIDI будзе даволі крывой."
 
-#: engines/sci/sci.cpp:536
+#: engines/sci/sci.cpp:540
 msgid "Download patch"
 msgstr "Заладаваць латку"
 
-#: engines/sci/sci.cpp:537
+#: engines/sci/sci.cpp:541
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
@@ -9909,7 +9915,7 @@ msgstr ""
 "(або націсьніце „Заладаваць латку“. Але заўважце — яна проста заладуецца, "
 "далей вы самі)\n"
 
-#: engines/sci/sci.cpp:544
+#: engines/sci/sci.cpp:548
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -9923,7 +9929,7 @@ msgstr ""
 "Каб усталяваць, заладуйце:\n"
 "http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip\n"
 
-#: engines/sci/sci.cpp:977
+#: engines/sci/sci.cpp:981
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "

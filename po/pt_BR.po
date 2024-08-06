@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-05 10:00+0000\n"
+"POT-Creation-Date: 2024-08-06 05:47+0000\n"
 "PO-Revision-Date: 2024-07-19 07:43+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -3155,21 +3155,27 @@ msgstr "PC-9821 (256 Cores)"
 msgid "PC-9801 (16 Colors)"
 msgstr "PC-9801 (16 Cores)"
 
+#: common/rendermode.cpp:48
+#, fuzzy
+#| msgid "PC-9801 (16 Colors)"
+msgid "PC-9801 (8 Colors)"
+msgstr "PC-9801 (16 Cores)"
+
 #. I18N: Macintosh black-and-white
-#: common/rendermode.cpp:52
+#: common/rendermode.cpp:53
 msgid "Macintosh b/w"
 msgstr "Macintosh p/b"
 
-#: common/rendermode.cpp:56
+#: common/rendermode.cpp:57
 msgid "VGA Grey Scale"
 msgstr "VGA em Escala de Cinza"
 
-#: common/rendermode.cpp:90
+#: common/rendermode.cpp:92
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr "Hercules Verde"
 
-#: common/rendermode.cpp:91
+#: common/rendermode.cpp:93
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules Âmbar"
@@ -10066,7 +10072,7 @@ msgstr ""
 "do jogo podem não funcionar corretamente. Por favor verifique o console para "
 "mais informação, e verifique se seus arquivos de jogos são válidos."
 
-#: engines/sci/sci.cpp:420
+#: engines/sci/sci.cpp:424
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -10080,7 +10086,7 @@ msgstr ""
 "elas nem sempre renderizam corretamente ou refletem a fala atual no jogo. "
 "Isto não é um bug do ScummVM -- é um problema com os ativos do jogo."
 
-#: engines/sci/sci.cpp:444
+#: engines/sci/sci.cpp:448
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI Utility"
@@ -10103,11 +10109,11 @@ msgstr ""
 "correção, a música por MIDI Geral para este jogo irá soar gravemente "
 "distorcida."
 
-#: engines/sci/sci.cpp:536
+#: engines/sci/sci.cpp:540
 msgid "Download patch"
 msgstr "Baixar correção"
 
-#: engines/sci/sci.cpp:537
+#: engines/sci/sci.cpp:541
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
@@ -10115,7 +10121,7 @@ msgstr ""
 "(ou clique no botão 'Baixar correção'. Mas observe - somente baixa, você tem "
 "que dar continuidade a partir daí)\n"
 
-#: engines/sci/sci.cpp:544
+#: engines/sci/sci.cpp:548
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -10131,7 +10137,7 @@ msgstr ""
 "- baixe http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles."
 "zip\n"
 
-#: engines/sci/sci.cpp:977
+#: engines/sci/sci.cpp:981
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
