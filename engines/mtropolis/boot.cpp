@@ -1882,12 +1882,12 @@ const Game games[] = {
 	},
 	// How to Draw the Marvel Way - Windows - English
 	{
-		MTBOOT_MARVEL_WIN_EN,
+		MTBOOT_DRAWMARVELWAY_WIN_EN,
 	 	&BootScriptContext::bootGeneric
 	},
 	// FairyTale: A True Story - Activity Center - Windows - English
 	{
-		MTBOOT_FAIRY_WIN_EN,
+		MTBOOT_FTTS_WIN_EN,
 	 	&BootScriptContext::bootGeneric
 	},
 	// Purple Moon Sampler - Demo - Windows - English
@@ -1930,7 +1930,7 @@ const Game games[] = {
 		MTBOOT_BABE_WIN_EN,
 		&BootScriptContext::bootGeneric
 	},
-	// Biologia Cellulare Evoluzione E Varietà Della Vita - Windows - Italian
+	// Biologia Cellulare Evoluzione E Varietï¿½ Della Vita - Windows - Italian
 	{
 		MTBOOT_BIOCELLEVO_WIN_IT,
 		&BootScriptContext::bootGeneric
@@ -1950,7 +1950,7 @@ const Game games[] = {
 		MTBOOT_GREVEHOLM2_WIN_SE,
 		&BootScriptContext::bootGeneric
 	},
-	// Itacante: La Cité des Robots - Windows - French
+	// Itacante: La Citï¿½ des Robots - Windows - French
 	{
 		MTBOOT_ITACANTE_WIN_FR,
 		&BootScriptContext::bootGeneric
@@ -2022,12 +2022,12 @@ const Game games[] = {
 	},
 	// Pinnacle Systems miroVideo Studio DC10 Plus - Windows - English
 	{
-		MTBOOT_PINNACLE_WIN_EN,
+		MTBOOT_MIRODC10_WIN_EN,
 		&BootScriptContext::bootGeneric
 	},
 	// Pinnacle Systems miroVideo Studio DC10 Plus - Windows - German
 	{
-		MTBOOT_PINNACLE_WIN_DE,
+		MTBOOT_MIRODC10_WIN_DE,
 		&BootScriptContext::bootGeneric
 	},
 	// Poser 3 Content Sampler - Windows - English

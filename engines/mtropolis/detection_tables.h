@@ -1294,7 +1294,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	{ // How to Draw the Marvel Way (English, Windows)
 	  // Published by Marvel Studios, 1996
 		{
-			"marvel",
+			"drawmarvelway",
 			_s("Missing game code"),
 			{
 				{"MDRAW.C9A", 0, "601539f3e9f9e169aa6b2fac5a4e82c7", 369901410},
@@ -1305,15 +1305,15 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			ADGF_UNSUPPORTED,
 			GUIO0()
 		},
-		GID_MARVEL,
+		GID_DRAWMARVELWAY,
 		0,
-		MTBOOT_MARVEL_WIN_EN,
+		MTBOOT_DRAWMARVELWAY_WIN_EN,
 	},
 
 	{ // FairyTale: A True Story - Activity Center (English, Windows)
 	  // Published by Knowledge Adventure, 1999
 		{
-			"fairy",
+			"ftts",
 			_s("Missing game code"),
 			{
 				{ "FAIRIES.EXE", 0, "b37ecc3aa2b1f24ddfbf27841f15442e", 758272 },
@@ -1326,9 +1326,9 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			ADGF_UNSUPPORTED,
 			GUIO0()
 		},
-		GID_FAIRY,
+		GID_FTTS,
 		0,
-		MTBOOT_FAIRY_WIN_EN,
+		MTBOOT_FTTS_WIN_EN,
 	},
 
 	{ // Purple Moon Sampler (English, Windows)
@@ -2008,7 +2008,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 
 	{ // Pinnacle Systems miroVideo Studio DC10 Plus (German, Windows)
 		{
-			"pinnacle",
+			"mirodc10",
 			_s("Missing game code"),
 			{
 				{ "MTPLAY32.EXE", 0, "c23dccd2b7a525a9f7bb8505f7c7f2d4", 1085952 },
@@ -2020,14 +2020,14 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			ADGF_UNSUPPORTED,
 			GUIO0()
 		},
-		GID_PINNACLE,
+		GID_MIRODC10,
 		0,
-		MTBOOT_PINNACLE_WIN_DE,
+		MTBOOT_MIRODC10_WIN_DE,
 	},
 
 	{ // Pinnacle Systems miroVideo Studio DC10 Plus (English, Windows)
 		{
-			"pinnacle",
+			"mirodc10",
 			_s("Missing game code"),
 			{
 				{ "MTPLAY32.EXE", 0, "c23dccd2b7a525a9f7bb8505f7c7f2d4", 1085952 },
@@ -2039,9 +2039,9 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			ADGF_UNSUPPORTED,
 			GUIO0()
 		},
-		GID_PINNACLE,
+		GID_MIRODC10,
 		0,
-		MTBOOT_PINNACLE_WIN_EN,
+		MTBOOT_MIRODC10_WIN_EN,
 	},
 
 	{ // Poser 3 content sampler on the sampler disc "Stuff for Poser" (English, Windows)
