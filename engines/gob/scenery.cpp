@@ -1023,7 +1023,7 @@ void Scenery::updateAnimObjectVideo(int16 layer, int16 frame, int16 animation, i
 // flags & 1 - do capture all area animation is occupying
 // flags & 4 == 0 - calculate animation final size
 // flags & 2 != 0 - don't check with "toRedraw"'s
-// flags & 4 != 0 - checkk view toRedraw
+// flags & 4 != 0 - check view toRedraw
 void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 	    int16 drawDeltaX, int16 drawDeltaY, char doDraw) {
 	AnimLayer *layerPtr;
