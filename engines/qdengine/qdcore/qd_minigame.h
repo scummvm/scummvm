@@ -97,7 +97,7 @@ public:
 	//! Добавляет в передаваемые списки имена файлов, необходимых для миниигры.
 	bool get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const;
 
-	typedef std::vector<qdMinigameConfigParameter> config_container_t;
+	typedef Std::vector<qdMinigameConfigParameter> config_container_t;
 
 	const config_container_t &config() const {
 		return _config;

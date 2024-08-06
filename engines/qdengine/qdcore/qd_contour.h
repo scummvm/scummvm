@@ -126,7 +126,7 @@ public:
 		return _contour.size();
 	}
 	//! Возвращает массив точек контура.
-	const std::vector<Vect2s> &get_contour() const {
+	const Std::vector<Vect2s> &get_contour() const {
 		return _contour;
 	}
 
@@ -157,7 +157,7 @@ private:
 	/**
 	Произвольный замкнутый контур. Задается для CONTOUR_POLYGON.
 	*/
-	std::vector<Vect2s> _contour;
+	Std::vector<Vect2s> _contour;
 };
 
 } // namespace QDEngine

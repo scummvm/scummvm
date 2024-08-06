@@ -120,7 +120,7 @@ private:
 	const qdNamedObject *_resource_owner;
 };
 
-typedef std::vector<qdResourceInfo> qdResourceInfoContainer;
+typedef Std::vector<qdResourceInfo> qdResourceInfoContainer;
 
 #endif
 

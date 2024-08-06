@@ -145,7 +145,7 @@ void grTileAnimation::addFrame(const uint32 *frame_data) {
 
 	for (int i = 0; i < _frameTileSize.y; i++) {
 		for (int j = 0; j < _frameTileSize.x; j++) {
-			std::fill(tile_vector.begin(), tile_vector.end(), 0);
+			Common::fill(tile_vector.begin(), tile_vector.end(), 0);
 
 			const uint32 *data_ptr = frame_data + j * GR_TILE_SPRITE_SIZE_X
 			                           + i * GR_TILE_SPRITE_SIZE_Y * _frameSize.x;

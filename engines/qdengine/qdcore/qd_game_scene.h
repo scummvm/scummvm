@@ -266,7 +266,7 @@ private:
 	/// true если нужен перезапуск миниигры при загрузке из сэйва
 	bool _restart_minigame_on_load;
 
-	typedef std::vector<qdGameObjectMoving *> personages_container_t;
+	typedef Std::vector<qdGameObjectMoving *> personages_container_t;
 	//! список персонажей сцены
 	personages_container_t _personages;
 
@@ -288,7 +288,7 @@ private:
 
 	uint32 _zone_update_count;
 
-	static std::vector<qdGameObject *> _visible_objects;
+	static Std::vector<qdGameObject *> _visible_objects;
 
 	static fpsCounter _fps_counter;
 	static grScreenRegion _fps_region;

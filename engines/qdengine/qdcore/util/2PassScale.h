@@ -54,10 +54,10 @@ public:
 private:
 
 
-	std::vector<uint32> _temp_buffer;
+	Std::vector<uint32> _temp_buffer;
 
-	std::vector<double> _weights_buffer;
-	std::vector<ContributionType> _contribution_buffer;
+	Std::vector<double> _weights_buffer;
+	Std::vector<ContributionType> _contribution_buffer;
 
 	LineContribType *AllocContributions(uint32 uLineLength, uint32 uWindowSize);
 	LineContribType *CalcContributions(uint32 uLineSize, uint32 uSrcSize, double dScale);

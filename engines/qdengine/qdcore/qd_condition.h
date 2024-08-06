@@ -567,10 +567,10 @@ private:
 	ConditionType _type;
 	const qdNamedObject *_owner;
 
-	typedef std::vector<qdConditionData> data_container_t;
+	typedef Std::vector<qdConditionData> data_container_t;
 	data_container_t _data;
 
-	typedef std::vector<qdConditionObjectReference> objects_container_t;
+	typedef Std::vector<qdConditionObjectReference> objects_container_t;
 	objects_container_t _objects;
 
 	bool _is_inversed;

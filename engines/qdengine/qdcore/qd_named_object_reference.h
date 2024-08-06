@@ -76,8 +76,8 @@ public:
 
 private:
 
-	std::vector<int> _object_types;
-	std::vector<Common::String> _object_names;
+	Std::vector<int> _object_types;
+	Std::vector<Common::String> _object_names;
 	static int _objects_counter;
 };
 

@@ -22,6 +22,8 @@
 #ifndef QDENGINE_QDCORE_QD_CONDITION_DATA_H
 #define QDENGINE_QDCORE_QD_CONDITION_DATA_H
 
+#include "common/std/vector.h"
+
 #include "qdengine/parser/xml_fwd.h"
 
 namespace QDEngine {
@@ -97,7 +99,7 @@ public:
 private:
 
 	data_t _type;
-	std::vector<char> _data;
+	Std::vector<char> _data;
 };
 
 } // namespace QDEngine

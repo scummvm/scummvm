@@ -85,7 +85,7 @@ inline bool operator == (const qdInventoryCellType &f, int type) {
 	return f.type() == type;
 }
 
-typedef std::vector<qdInventoryCellType> qdInventoryCellTypeVector;
+typedef Std::vector<qdInventoryCellType> qdInventoryCellTypeVector;
 
 //! Ячейка инвентори.
 class qdInventoryCell {
@@ -177,7 +177,7 @@ private:
 	static int _shadow_alpha;
 };
 
-typedef std::vector<qdInventoryCell> qdInventoryCellVector;
+typedef Std::vector<qdInventoryCell> qdInventoryCellVector;
 
 //! Группа ячеек инвентори.
 class qdInventoryCellSet {
@@ -294,7 +294,7 @@ private:
 	grScreenRegion _last_screen_region;
 };
 
-typedef std::vector<qdInventoryCellSet> qdInventoryCellSetVector;
+typedef Std::vector<qdInventoryCellSet> qdInventoryCellSetVector;
 
 } // namespace QDEngine
 

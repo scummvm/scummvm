@@ -172,7 +172,7 @@ private:
 	//! Ресурсы, на которые ссылается экран.
 	qdResourceDispatcher<qdInterfaceElementState> _resources;
 
-	typedef std::vector<qdInterfaceElement *> sorted_element_list_t;
+	typedef Std::vector<qdInterfaceElement *> sorted_element_list_t;
 	//! Отсортированный по глубине список элементов экрана.
 	sorted_element_list_t _sorted_elements;
 

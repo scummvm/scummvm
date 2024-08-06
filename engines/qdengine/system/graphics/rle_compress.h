@@ -77,16 +77,16 @@ public:
 	bool convert_data(int bits_per_pixel = 16);
 
 private:
-	std::vector<uint32> _header_offset;
-	std::vector<uint32> _data_offset;
+	Std::vector<uint32> _header_offset;
+	Std::vector<uint32> _data_offset;
 
-	std::vector<char> _header;
-	std::vector<uint32> _data;
+	Std::vector<char> _header;
+	Std::vector<uint32> _data;
 
 	int _bits_per_pixel;
 
-	static std::vector<byte> _buffer0;
-	static std::vector<byte> _buffer1;
+	static Std::vector<byte> _buffer0;
+	static Std::vector<byte> _buffer1;
 
 	friend bool operator == (const rleBuffer &buf1, const rleBuffer &buf2);
 };

@@ -229,7 +229,7 @@ bool qdContour::load_script(const xml::tag *p) {
 }
 
 void qdContour::divide_contour(int shift) {
-	std::vector<Vect2s>::iterator _itr = _contour.begin(), _end = _contour.end();
+	Std::vector<Vect2s>::iterator _itr = _contour.begin(), _end = _contour.end();
 	for (; _itr != _end; ++_itr) {
 		Vect2s &v = *_itr;
 		v.x >>= shift;
@@ -238,7 +238,7 @@ void qdContour::divide_contour(int shift) {
 }
 
 void qdContour::mult_contour(int shift) {
-	std::vector<Vect2s>::iterator _itr = _contour.begin(), _end = _contour.end();
+	Std::vector<Vect2s>::iterator _itr = _contour.begin(), _end = _contour.end();
 	for (; _itr != _end; ++_itr) {
 		Vect2s &v = *_itr;
 		v.x <<= shift;
@@ -247,7 +247,7 @@ void qdContour::mult_contour(int shift) {
 }
 
 void qdContour::shift_contour(int dx, int dy) {
-	std::vector<Vect2s>::iterator _itr = _contour.begin(), _end = _contour.end();
+	Std::vector<Vect2s>::iterator _itr = _contour.begin(), _end = _contour.end();
 	for (; _itr != _end; ++_itr) {
 		Vect2s &v = *_itr;
 		v.x += dx;

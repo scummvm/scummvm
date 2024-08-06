@@ -60,7 +60,7 @@ public:
 
 private:
 
-	typedef std::vector<qdScreenTextSet> text_sets_container_t;
+	typedef Std::vector<qdScreenTextSet> text_sets_container_t;
 	//! Наборы текстов.
 	text_sets_container_t _text_sets;
 };

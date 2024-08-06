@@ -581,7 +581,7 @@ private:
 		}
 	};
 
-	typedef std::vector<HallOfFameEntry> HallOfFame;
+	typedef Std::vector<HallOfFameEntry> HallOfFame;
 	HallOfFame _hall_of_fame;
 
 	qdInterfaceDispatcher _interface_dispatcher;
@@ -620,7 +620,7 @@ private:
 	qdAnimation *_mouse_animation;
 	Vect2f _mouse_cursor_pos;
 
-	typedef std::vector<qdGameObjectState *> dialog_states_container_t;
+	typedef Std::vector<qdGameObjectState *> dialog_states_container_t;
 	dialog_states_container_t _dialog_states;
 	dialog_states_container_t _dialog_states_last;
 

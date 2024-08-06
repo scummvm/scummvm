@@ -412,12 +412,12 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 
 	int dirs_count = (allowed_directions_count() > 4) ? 8 : 4;
 
-	std::vector<Vect2i> path_vect;
+	Std::vector<Vect2i> path_vect;
 	pfobj.FindPath(cell_idx, &phobj, path_vect, dirs_count);
 
 	int idx = 0;
 	bool correct = true;
-	for (std::vector<Vect2i>::const_iterator it = path_vect.begin(); it != path_vect.end(); ++it) {
+	for (Std::vector<Vect2i>::const_iterator it = path_vect.begin(); it != path_vect.end(); ++it) {
 		if (!is_walkable(Vect2s(it->x, it->y))) {
 			correct = false;
 			break;
@@ -445,7 +445,7 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 		// Проверяем путь на проходимость
 		correct = true;
 		idx = 0;
-		for (std::vector<Vect2i>::const_iterator it = path_vect.begin(); it != path_vect.end(); ++it) {
+		for (Std::vector<Vect2i>::const_iterator it = path_vect.begin(); it != path_vect.end(); ++it) {
 			if (!is_walkable(Vect2s(it->x, it->y))) {
 				drop_grid_zone_attributes(sGridCell::CELL_SELECTED);
 				correct = false;
@@ -471,7 +471,7 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 	dump_vect(path_vect);
 
 	if (path_vect.size() >= 2 && (movement_type() == qdGameObjectStateWalk::MOVEMENT_FOUR_DIRS || movement_type() == qdGameObjectStateWalk::MOVEMENT_EIGHT_DIRS)) {
-		std::vector<Vect3f> final_path;
+		Std::vector<Vect3f> final_path;
 		finalize_path(R(), trg, path_vect, final_path);
 
 		for (int i = 0; i < final_path.size(); i++)
@@ -483,7 +483,7 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 		dump_vect(final_path);
 	} else {
 		idx = 0;
-		for (std::vector<Vect2i>::const_iterator it = path_vect.begin(); it != path_vect.end(); ++it) {
+		for (Std::vector<Vect2i>::const_iterator it = path_vect.begin(); it != path_vect.end(); ++it) {
 			_path[idx] = qdCamera::current_camera()->get_cell_coords(it->x, it->y);
 			idx ++;
 		}
@@ -2127,7 +2127,7 @@ bool qdGameObjectMoving::avoid_collision(const qdGameObjectMoving *p) {
 	return false;
 }
 
-void qdGameObjectMoving::optimize_path(std::vector<Vect2i> &path) const {
+void qdGameObjectMoving::optimize_path(Std::vector<Vect2i> &path) const {
 	std::list<Vect2i> opt_path;
 	opt_path.insert(opt_path.end(), path.begin(), path.end());
 	opt_path.unique();
@@ -2168,7 +2168,9 @@ void qdGameObjectMoving::optimize_path(std::vector<Vect2i> &path) const {
 	}
 
 	path.clear();
-	path.insert(path.end(), opt_path.begin(), opt_path.end());
+
+	for (auto &it1 : opt_path)
+		path.push_back(it1);
 }
 
 void qdGameObjectMoving::optimize_path_four_dirs(std::list<Vect2i> &path) const {
@@ -2381,7 +2383,7 @@ void qdGameObjectMoving::optimize_path_smooth(std::list<Vect2i> &path) const {
 	}
 }
 
-void qdGameObjectMoving::finalize_path(const Vect3f &from, const Vect3f &to, const std::vector<Vect2i> &path, std::vector<Vect3f> &out_path) const {
+void qdGameObjectMoving::finalize_path(const Vect3f &from, const Vect3f &to, const Std::vector<Vect2i> &path, Std::vector<Vect3f> &out_path) const {
 	if (movement_type() != qdGameObjectStateWalk::MOVEMENT_FOUR_DIRS && movement_type() != qdGameObjectStateWalk::MOVEMENT_EIGHT_DIRS)
 		return;
 
@@ -2394,25 +2396,25 @@ void qdGameObjectMoving::finalize_path(const Vect3f &from, const Vect3f &to, con
 	Vect2f d = to - out_path.back();
 	out_path[path.size() - 1] = to;
 
-	std::vector<Vect2i>::const_reverse_iterator it = path.rbegin();
-	std::vector<Vect3f>::reverse_iterator itp = out_path.rbegin();
-	itp++;
+	Std::vector<Vect2i>::const_reverse_iterator it = path.rbegin();
+	Std::vector<Vect3f>::reverse_iterator itp = out_path.rbegin();
+	++itp;
 	do {
-		std::vector<Vect2i>::const_reverse_iterator it1 = it;
-		it1++;
+		Std::vector<Vect2i>::const_reverse_iterator it1 = it;
+		++it1;
 		if (it1 == path.rend())
 			break;
 
 		Vect2i delta = *it - *it1;
 
 		if (delta.y) {
-			itp->x += d.x;
+			(*itp).x = (*itp).x + d.x;
 			if (!delta.x)
 				d.y = 0;
 		}
 
 		if (delta.x) {
-			itp->y += d.y;
+			(*itp).y = (*itp).y + d.y;
 			if (!delta.y)
 				d.x = 0;
 		}
@@ -2420,8 +2422,8 @@ void qdGameObjectMoving::finalize_path(const Vect3f &from, const Vect3f &to, con
 		if (fabs(d.x) <= FLT_EPS && fabs(d.y) <= FLT_EPS)
 			break;
 
-		it++;
-		itp++;
+		++it;
+		++itp;
 	} while (it != path.rend());
 }
 

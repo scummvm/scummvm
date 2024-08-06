@@ -88,7 +88,7 @@ public:
 	~AIAStar();
 
 	void Init(int dx, int dy);
-	bool FindPath(Vect2i from, Heuristic *h, std::vector<Vect2i> &path, int directions_count = 8);
+	bool FindPath(Vect2i from, Heuristic *h, Std::vector<Vect2i> &path, int directions_count = 8);
 	void GetStatistic(int *num_point_examine, int *num_find_erase);
 
 	//Debug
@@ -143,7 +143,7 @@ AIAStar<Heuristic, TypeH>::~AIAStar() {
 }
 
 template<class Heuristic, class TypeH>
-bool AIAStar<Heuristic, TypeH>::FindPath(Vect2i from, Heuristic *hr, std::vector<Vect2i> &path, int directions_count) {
+bool AIAStar<Heuristic, TypeH>::FindPath(Vect2i from, Heuristic *hr, Std::vector<Vect2i> &path, int directions_count) {
 	num_point_examine = 0;
 	num_find_erase = 0;
 
@@ -327,7 +327,7 @@ public:
 		}
 	};
 protected:
-	std::vector<OnePoint> chart;
+	Std::vector<OnePoint> chart;
 	type_point_map open_map;
 
 	int is_used_num;//Если is_used_num==used, то ячейка используется
@@ -341,9 +341,9 @@ public:
 
 	//Общее количество узлов. Константа, которая не должна меняться,
 	//пока существует класс, указывающий на неё.
-	void Init(std::vector<Node> &all_node);
+	void Init(Std::vector<Node> &all_node);
 
-	bool FindPath(Node *from, Heuristic *h, std::vector<Node *> &path);
+	bool FindPath(Node *from, Heuristic *h, Std::vector<Node *> &path);
 	void GetStatistic(int *num_point_examine, int *num_find_erase);
 
 	//Debug
@@ -366,7 +366,7 @@ AIAStarGraph<Heuristic, Node, TypeH>::AIAStarGraph() {
 }
 
 template<class Heuristic, class Node, class TypeH>
-void AIAStarGraph<Heuristic, Node, TypeH>::Init(std::vector<Node> &all_node) {
+void AIAStarGraph<Heuristic, Node, TypeH>::Init(Std::vector<Node> &all_node) {
 	int size = all_node.size();
 	chart.resize(size);
 
@@ -391,7 +391,7 @@ AIAStarGraph<Heuristic, Node, TypeH>::~AIAStarGraph() {
 }
 
 template<class Heuristic, class Node, class TypeH>
-bool AIAStarGraph<Heuristic, Node, TypeH>::FindPath(Node *from, Heuristic *hr, std::vector<Node *> &path) {
+bool AIAStarGraph<Heuristic, Node, TypeH>::FindPath(Node *from, Heuristic *hr, Std::vector<Node *> &path) {
 	num_point_examine = 0;
 	num_find_erase = 0;
 

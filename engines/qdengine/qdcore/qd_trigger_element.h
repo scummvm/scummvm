@@ -147,7 +147,7 @@ private:
 
 };
 
-typedef std::vector<qdTriggerLink> qdTriggerLinkList;
+typedef Std::vector<qdTriggerLink> qdTriggerLinkList;
 
 //! Элемент триггера.
 class qdTriggerElement {
@@ -307,7 +307,7 @@ private:
 	void start();
 };
 
-typedef std::vector<qdTriggerElementPtr> qdTriggerElementList;
+typedef Std::vector<qdTriggerElementPtr> qdTriggerElementList;
 
 } // namespace QDEngine
 

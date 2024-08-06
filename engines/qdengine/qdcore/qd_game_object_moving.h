@@ -310,10 +310,10 @@ public:
 		_follow_condition = cond;
 	};
 
-	const std::vector<const qdGameObjectMoving *> &const_ref_circuit_objs() const {
+	const Std::vector<const qdGameObjectMoving *> &const_ref_circuit_objs() const {
 		return _circuit_objs;
 	};
-	std::vector<const qdGameObjectMoving *> &ref_circuit_objs() {
+	Std::vector<const qdGameObjectMoving *> &ref_circuit_objs() {
 		return _circuit_objs;
 	};
 
@@ -374,7 +374,7 @@ private:
 	//! Состояние следования
 	int _follow_condition;
 	//! Объекты, который текущий объект пытается обойти
-	std::vector<const qdGameObjectMoving *> _circuit_objs;
+	Std::vector<const qdGameObjectMoving *> _circuit_objs;
 
 	//! Для CONTROL_HARD_ATTACHMENT
 	const qdGameObjectMoving *_attacher;   // Объект, который присоединяет к себе наш объект
@@ -436,7 +436,7 @@ private:
 
 	bool find_path(const Vect3f target, bool lock_target = false);
 
-	void optimize_path(std::vector<Vect2i> &path) const;
+	void optimize_path(Std::vector<Vect2i> &path) const;
 
 	void optimize_path_four_dirs(std::list<Vect2i> &path) const;
 	// Спрямление четырех точек для пути с восемью направлениями
@@ -446,7 +446,7 @@ private:
 	bool del_coll_pts(std::list<Vect2i> &path) const;
 	void optimize_path_eight_dirs(std::list<Vect2i> &path) const;
 	void optimize_path_smooth(std::list<Vect2i> &path) const;
-	void finalize_path(const Vect3f &from, const Vect3f &to, const std::vector<Vect2i> &path, std::vector<Vect3f> &out_path) const;
+	void finalize_path(const Vect3f &from, const Vect3f &to, const Std::vector<Vect2i> &path, Std::vector<Vect3f> &out_path) const;
 
 	bool adjust_position(Vect3f &pos) const;
 	bool adjust_direction_angle(float &angle);

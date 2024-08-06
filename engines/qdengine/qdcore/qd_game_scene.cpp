@@ -56,7 +56,7 @@ fpsCounter qdGameScene::_fps_counter = fpsCounter(1000);
 grScreenRegion qdGameScene::_fps_region = grScreenRegion::EMPTY;
 grScreenRegion qdGameScene::_fps_region_last = grScreenRegion::EMPTY;
 char qdGameScene::_fps_string[255];
-std::vector<qdGameObject *> qdGameScene::_visible_objects;
+Std::vector<qdGameObject *> qdGameScene::_visible_objects;
 
 qdGameScene::qdGameScene() : _mouse_click_object(NULL),
 	_mouse_right_click_object(NULL),
@@ -177,7 +177,7 @@ void qdGameScene::redraw() {
 
 			switch (flags() & (CYCLE_X | CYCLE_Y)) {
 			case CYCLE_X:
-				for (std::vector<qdGameObject * >::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it) {
+				for (Std::vector<qdGameObject * >::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it) {
 					for (int i = 0; i < 8; i += 4) {
 						Vect2i pos = (*it)->screen_pos() + Vect2i(offs_x[i], offs_y[i]);
 						Vect2i sz = (*it)->screen_size();
@@ -191,7 +191,7 @@ void qdGameScene::redraw() {
 				}
 				break;
 			case CYCLE_Y:
-				for (std::vector<qdGameObject * >::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it) {
+				for (Std::vector<qdGameObject * >::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it) {
 					for (int i = 2; i < 8; i += 4) {
 						Vect2i pos = (*it)->screen_pos() + Vect2i(offs_x[i], offs_y[i]);
 						Vect2i sz = (*it)->screen_size();
@@ -205,7 +205,7 @@ void qdGameScene::redraw() {
 				}
 				break;
 			case CYCLE_X | CYCLE_Y:
-				for (std::vector<qdGameObject * >::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it) {
+				for (Std::vector<qdGameObject * >::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it) {
 					for (int i = 0; i < 8; i++) {
 						Vect2i pos = (*it)->screen_pos() + Vect2i(offs_x[i], offs_y[i]);
 						Vect2i sz = (*it)->screen_size();
@@ -220,7 +220,7 @@ void qdGameScene::redraw() {
 				break;
 			}
 		} else {
-			for (std::vector<qdGameObject * >::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it)
+			for (Std::vector<qdGameObject * >::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it)
 				(*it)->redraw();
 		}
 	}
@@ -240,7 +240,7 @@ bool qdGameScene::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
 				break;
 			}
 		}
-		for (std::vector<qdGameObject * >::iterator io = _visible_objects.begin(); io != _visible_objects.end(); ++io) {
+		for (Std::vector<qdGameObject * >::iterator io = _visible_objects.begin(); io != _visible_objects.end(); ++io) {
 			if (!(*io)->check_flag(QD_OBJ_DISABLE_MOUSE_FLAG) && (*io)->named_object_type() != QD_NAMED_OBJECT_STATIC_OBJ) {
 				if ((*io)->hit(x, y)) {
 					_mouse_hover_object = *io;
@@ -275,7 +275,7 @@ bool qdGameScene::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
 }
 
 qdGameObject *qdGameScene::get_hitted_obj(int x, int y) {
-	for (std::vector<qdGameObject * >::iterator io = _visible_objects.begin(); io != _visible_objects.end(); ++io) {
+	for (Std::vector<qdGameObject * >::iterator io = _visible_objects.begin(); io != _visible_objects.end(); ++io) {
 		if (!(*io)->check_flag(QD_OBJ_DISABLE_MOUSE_FLAG) && (*io)->named_object_type() != QD_NAMED_OBJECT_STATIC_OBJ)
 			if ((*io)->hit(x, y))
 				return (*io);
@@ -509,7 +509,7 @@ void qdGameScene::debug_redraw() {
 		if (qdGameConfig::get_config().debug_show_grid())
 			_camera.draw_grid();
 
-		for (std::vector<qdGameObject * >::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it)
+		for (Std::vector<qdGameObject * >::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it)
 			(*it)->debug_redraw();
 	}
 #endif
@@ -765,14 +765,17 @@ bool qdGameScene::load_data(Common::SeekableReadStream &fh, int save_version) {
 				return false;
 		}
 
-		std::vector<qdGridZone *> zone_order;
+		Std::vector<qdGridZone *> zone_order;
 		zone_order.reserve(sz);
-		zone_order.insert(zone_order.end(), grid_zone_list().begin(), grid_zone_list().end());
+
+		for (auto &it1 : grid_zone_list())
+			zone_order.push_back(it1);
+
 		std::sort(zone_order.begin(), zone_order.end(), qdGridZoneOrdering());
 
 		_zone_update_count = 0;
 
-		for (std::vector<qdGridZone * >::iterator it = zone_order.begin(); it != zone_order.end(); ++it)
+		for (Std::vector<qdGridZone * >::iterator it = zone_order.begin(); it != zone_order.end(); ++it)
 			(*it)->set_state((*it)->state());
 	}
 
@@ -1165,7 +1168,7 @@ bool qdGameScene::follow_path_seek(qdGameObjectMoving* pObj, bool lock_target)
         Vect2s center;
         center.x = static_cast<int16>(dest_pnt.x);
         center.y = static_cast<int16>(dest_pnt.y);
-        std::vector<Vect2s> pts_vec;
+        Std::vector<Vect2s> pts_vec;
         for (int i = -1; i <= 1; i++)
             for (int j = -1; j <= 1; j++)
             {
@@ -1198,7 +1201,7 @@ bool qdGameScene::follow_path_seek(qdGameObjectMoving* pObj, bool lock_target)
                     Vect3f buf = qdCamera::current_camera()->get_cell_coords(test_pnt);
                     Vect3f ins_pnt_dist = buf - pObj->R();
                     bool is_ins = false;
-                    for (std::vector<Vect2s>::iterator ins_it = pts_vec.begin();
+                    for (Std::vector<Vect2s>::iterator ins_it = pts_vec.begin();
                          ins_it != pts_vec.end();
                          ++ins_it)
                     {
@@ -1226,7 +1229,7 @@ bool qdGameScene::follow_path_seek(qdGameObjectMoving* pObj, bool lock_target)
             pts_vec.insert(pts_vec.begin(), test_pnt);
         }
         // Пытаемся подойти ко всем точкам. При первой удачной выходим
-        for (std::vector<Vect2s>::const_iterator it = pts_vec.begin();
+        for (Std::vector<Vect2s>::const_iterator it = pts_vec.begin();
              it != pts_vec.end();
              ++it)
         {
@@ -1408,7 +1411,7 @@ void qdGameScene::follow_circuit(float dt) {
 			if (!inters2s(it1_next_pos, it1_next_grid, it2_next_pos, it2_next_grid)) {
 				// Если it2 с которым НЕ пересекся текущий, которого обходим
 				// то удаляем его из списка обходимых текущим
-				for (std::vector<const qdGameObjectMoving * >::iterator cir_it = (*it1)->ref_circuit_objs().begin();
+				for (Std::vector<const qdGameObjectMoving * >::iterator cir_it = (*it1)->ref_circuit_objs().begin();
 				        cir_it != (*it1)->ref_circuit_objs().end(); ++cir_it)
 					if ((*cir_it) == (*it2)) {
 						(*it1)->ref_circuit_objs().erase(cir_it);
@@ -1427,7 +1430,7 @@ void qdGameScene::follow_circuit(float dt) {
 
 			// Если it1 пытается обойти it2, то не учитываем их пересечение
 			bool it2_is_circuit = false;
-			for (std::vector<const qdGameObjectMoving * >::iterator cir_it = (*it1)->ref_circuit_objs().begin();
+			for (Std::vector<const qdGameObjectMoving * >::iterator cir_it = (*it1)->ref_circuit_objs().begin();
 			        cir_it != (*it1)->ref_circuit_objs().end(); ++cir_it)
 				if ((*cir_it) == (*it2)) {
 					it2_is_circuit = true;

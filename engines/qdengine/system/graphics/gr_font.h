@@ -59,7 +59,7 @@ public:
 	}
 
 	const grScreenRegion &find_char(int code) const {
-		grFontCharVector::const_iterator it = std::find(_chars.begin(), _chars.end(), code);
+		grFontCharVector::const_iterator it = Common::find(_chars.begin(), _chars.end(), code);
 		if (it != _chars.end()) return it->_region;
 
 		return grScreenRegion::EMPTY;
@@ -89,7 +89,7 @@ private:
 		}
 	};
 
-	typedef std::vector<grFontChar> grFontCharVector;
+	typedef Std::vector<grFontChar> grFontCharVector;
 	grFontCharVector _chars;
 };
 
