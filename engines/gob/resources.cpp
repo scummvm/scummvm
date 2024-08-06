@@ -739,7 +739,7 @@ byte *Resources::getEXTData(EXTResourceItem &extItem, uint32 &size) const {
 		return nullptr;
 	}
 
-	// If that Workaround is active, limit the resource size instead of throwing an error
+	// If that workaround is active, limit the resource size instead of throwing an error
 	if (_vm->hasResourceSizeWorkaround())
 		size = MIN<int>(size, stream->size() - extItem.offset);
 
@@ -764,7 +764,7 @@ byte *Resources::getEXData(EXTResourceItem &extItem, uint32 &size) const {
 		return nullptr;
 	}
 
-	// If that Workaround is active, limit the resource size instead of throwing an error
+	// If that workaround is active, limit the resource size instead of throwing an error
 	if (_vm->hasResourceSizeWorkaround())
 		size = MIN<int>(size, stream->size() - extItem.offset);
 

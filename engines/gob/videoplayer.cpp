@@ -149,7 +149,7 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 		}
 
 		// WORKAROUND: In Woodruff, Coh Cott vanished in one video on her party.
-		// This is a bug in video, so we Workaround it.
+		// This is a bug in video, so we work around it.
 		_woodruffCohCottWorkaround = false;
 		if (primary && (_vm->getGameType() == kGameTypeWoodruff)) {
 			if (!file.compareToIgnoreCase("SQ32-03"))
