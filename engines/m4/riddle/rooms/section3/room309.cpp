@@ -27,6 +27,12 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+void Room309::preload() {
+	_G(player).walker_type = 0;
+	_G(player).shadow_type = 0;
+	_G(player).walker_in_this_scene = false;
+}
+
 void Room309::init() {
 	digi_preload("303_s02");
 	player_set_commands_allowed(false);
