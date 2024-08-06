@@ -179,8 +179,8 @@ public:
 
 	void fill(int val);
 
-	void putSpr(int x, int y, int sx, int sy, const byte *p, int mode);
-	void putSpr(int x, int y, int sx, int sy, const byte *p, int mode, float scale);
+	void putSpr(int x, int y, int sx, int sy, const byte *p, int mode, int spriteFormat);
+	void putSpr(int x, int y, int sx, int sy, const byte *p, int mode, int spriteFormat, float scale);
 	void putSpr_rle(int x, int y, int sx, int sy, const rleBuffer *p, int mode, bool alpha_flag);
 	void putSpr_rle(int x, int y, int sx, int sy, const rleBuffer *p, int mode, float scale, bool alpha_flag);
 	void putSpr_a(int x, int y, int sx, int sy, const byte *p, int mode);
