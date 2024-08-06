@@ -935,7 +935,7 @@ Common::InSaveFile *SaveReader::openSave() {
 }
 
 bool SaveReader::getInfo(Common::SeekableReadStream &stream, SavePartInfo &info) {
-	// Remeber the stream's starting position to seek back to
+	// Remember the stream's starting position to seek back to
 	uint32 startPos = stream.pos();
 
 	// Get parts' basic information
