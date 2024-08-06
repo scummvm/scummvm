@@ -633,7 +633,7 @@ void qdSprite::redraw(int x, int y, int z, int mode) const {
 		if (check_flag(ALPHA_FLAG))
 			grDispatcher::instance()->putSpr_a(xx, yy, _picture_size.x, _picture_size.y, _data, mode);
 		else
-			grDispatcher::instance()->putSpr(xx, yy, _picture_size.x, _picture_size.y, _data, mode);
+			grDispatcher::instance()->putSpr(xx, yy, _picture_size.x, _picture_size.y, _data, mode, _format);
 	} else
 		grDispatcher::instance()->putSpr_rle(xx, yy, _picture_size.x, _picture_size.y, _rle_data, mode, check_flag(ALPHA_FLAG));
 #endif

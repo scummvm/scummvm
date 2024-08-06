@@ -87,7 +87,7 @@ void grDispatcher::putSpr_a(int x, int y, int sx, int sy, const byte *p, int mod
 	}
 }
 
-void grDispatcher::putSpr(int x, int y, int sx, int sy, const byte *p, int mode, float scale) {
+void grDispatcher::putSpr(int x, int y, int sx, int sy, const byte *p, int mode, int spriteFormat, float scale) {
 	debugC(2, kDebugGraphics, "grDispatcher::putSpr(%d, %d, %d, %d, scale=%f)", x, y, sx, sy, scale);
 
 	int sx_dest = round(float(sx) * scale);
@@ -589,8 +589,8 @@ void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 	}
 }
 
-void grDispatcher::putSpr(int x, int y, int sx, int sy, const byte *p, int mode) {
-	debugC(2, kDebugGraphics, "grDispatcher::putSpr(%d, %d, %d, %d)", x, y, sx, sy);
+void grDispatcher::putSpr(int x, int y, int sx, int sy, const byte *p, int mode, int spriteFormat) {
+	debugC(2, kDebugGraphics, "grDispatcher::putSpr(%d, %d, %d, %d, %d)", x, y, sx, sy, spriteFormat);
 
 	int px = 0;
 	int py = 0;
@@ -614,12 +614,12 @@ void grDispatcher::putSpr(int x, int y, int sx, int sy, const byte *p, int mode)
 	} else
 		dy = 1;
 
-	sx *= bytes_per_pixel();
-	px *= bytes_per_pixel();
+	if (spriteFormat == GR_RGB888) {
+		sx *= 3;
+		px *= 3;
 
-	const byte *data_ptr = p + py * sx;
+		const byte *data_ptr = p + py * sx;
 
-	if (bytes_per_pixel() == 3) {
 		for (int i = 0; i < psy; i++) {
 			uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
 			const byte *data_line = data_ptr + px;
@@ -634,7 +634,12 @@ void grDispatcher::putSpr(int x, int y, int sx, int sy, const byte *p, int mode)
 			data_ptr += sx;
 			y += dy;
 		}
-	} else if (bytes_per_pixel() == 2) {
+	} else if (spriteFormat == GR_RGB565) {
+		sx *= 2;
+		px *= 2;
+
+		const byte *data_ptr = p + py * sx;
+
 		for (int i = 0; i < psy; i++) {
 			uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
 			const byte *data_line = data_ptr + px;
