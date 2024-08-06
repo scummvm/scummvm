@@ -44,6 +44,8 @@
 #include "tinsel/token.h"
 #include "tinsel/noir/notebook.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Tinsel {
 
 //----------------- EXTERNAL FUNCTIONS ---------------------
