@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-06 05:47+0000\n"
-"PO-Revision-Date: 2024-08-05 16:16+0000\n"
+"PO-Revision-Date: 2024-08-06 10:27+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -3183,10 +3183,8 @@ msgid "PC-9801 (16 Colors)"
 msgstr "PC-9801 (16 couleurs)"
 
 #: common/rendermode.cpp:48
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "PC-9801 (8 Colors)"
-msgstr "PC-9801 (16 couleurs)"
+msgstr "PC-9801 (8 couleurs)"
 
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:53
