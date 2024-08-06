@@ -2130,20 +2130,22 @@ bool qdGameObjectMoving::avoid_collision(const qdGameObjectMoving *p) {
 void qdGameObjectMoving::optimize_path(Std::vector<Vect2i> &path) const {
 	Std::list<Vect2i> opt_path;
 
+	// Replacing the following code:
+	//
 	// opt_path.insert(opt_path.end(), path.begin(), path.end());
 	// opt_path.unique();
 
-	auto it1 = path.begin();
-	auto val = *it1;
-	it1++;
+	auto itp = path.begin();
+	auto val = *itp;
+	itp++;
 
-	while (it1 != path.end()) {
-		if (*it1 != val) {
-			opt_path.push_back(*it1);
-			val = *it1;
+	while (itp != path.end()) {
+		if (*itp != val) {
+			opt_path.push_back(*itp);
+			val = *itp;
 		}
 
-		++it1;
+		++itp;
 	}
 
 	Std::list<Vect2i>::iterator it = opt_path.begin();
