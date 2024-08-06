@@ -40,22 +40,12 @@ class Heuristic
 };
 */
 
-#define FAST_ERASE 0
-//FAST_ERASE==0 Меньше данных - больше действий
-//FAST_ERASE!=0 Больше данных - меньше действий
-//Но реально разницы почти нет
-
 namespace QDEngine {
 
 template<class Heuristic, class TypeH = float>
 class AIAStar {
 public:
-#if FAST_ERASE
-	struct OnePoint;
-	typedef std::multimap<TypeH, OnePoint *> type_point_map;
-#else
 	typedef Common::MultiMap<TypeH, Vect2i> type_point_map;
-#endif
 
 	struct OnePoint {
 		TypeH g;//Затраты на продвижение до этой точки
@@ -63,11 +53,6 @@ public:
 		int used;
 		OnePoint *parent;
 		bool is_open;
-
-#if FAST_ERASE
-		Vect2i pt;
-		typename type_point_map::iterator self_it;
-#endif
 
 		inline TypeH f() {
 			return g + h;
@@ -101,15 +86,11 @@ public:
 protected:
 	void clear();
 	inline Vect2i PosBy(OnePoint *p) {
-#if FAST_ERASE
-		return p->pt;
-#else
 		int offset = p - chart;
 		Vect2i pos;
 		pos.x = offset % dx;
 		pos.y = offset / dx;
 		return pos;
-#endif
 	}
 };
 
@@ -162,12 +143,8 @@ bool AIAStar<Heuristic, TypeH>::FindPath(Vect2i from, Heuristic *hr, Std::vector
 	p->is_open = true;
 	p->parent = NULL;
 
-#if FAST_ERASE
-	p->pt = from;
-	p->self_it = open_map.insert(type_point_map::value_type(p->f(), p));
-#else
 	open_map.insert(typename type_point_map::value_type(p->f(), from));
-#endif
+
 	const int sx[8] = { 0, -1, 0, +1, -1, +1, +1, -1,};
 	const int sy[8] = {-1, 0, +1, 0, -1, -1, +1, +1 };
 
@@ -178,13 +155,8 @@ bool AIAStar<Heuristic, TypeH>::FindPath(Vect2i from, Heuristic *hr, Std::vector
 
 	while (!open_map.empty()) {
 		typename type_point_map::iterator low = open_map.begin();
-#if FAST_ERASE
-		OnePoint *parent = low->second;
-		Vect2i pt = parent->pt;
-#else
 		Vect2i pt = (*low).second;
 		OnePoint *parent = chart + pt.y * dx + pt.x;
-#endif
 
 		parent->is_open = false;
 		open_map.erase(low);
@@ -227,9 +199,6 @@ bool AIAStar<Heuristic, TypeH>::FindPath(Vect2i from, Heuristic *hr, Std::vector
 				if (!p->is_open)continue;
 				if (p->g <= newg)continue;
 
-#if FAST_ERASE
-				open_map.erase(p->self_it);
-#else
 				//Удаляем элемент из open_map
 				TypeH f = p->f();
 				typename type_point_map::iterator cur = open_map.find(p->f());
@@ -246,8 +215,8 @@ bool AIAStar<Heuristic, TypeH>::FindPath(Vect2i from, Heuristic *hr, Std::vector
 				}
 				num_find_erase++;
 				//assert(erase);
-				if (!erase)continue;
-#endif
+				if (!erase)
+					continue;
 			}
 
 			p->parent = parent;
@@ -262,12 +231,8 @@ bool AIAStar<Heuristic, TypeH>::FindPath(Vect2i from, Heuristic *hr, Std::vector
 			p->g = newg;
 			p->h = heuristic->GetH(child.x, child.y);
 
-#if FAST_ERASE
-			p->pt = child;
-			p->self_it = open_map.insert(type_point_map::value_type(p->f(), p));
-#else
 			open_map.insert(typename type_point_map::value_type(p->f(), child));
-#endif
+
 			p->is_open = true;
 			p->used = is_used_num;
 		}
