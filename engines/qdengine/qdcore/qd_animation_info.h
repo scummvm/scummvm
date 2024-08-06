@@ -78,7 +78,7 @@ private:
 	float _animation_speed;
 };
 
-typedef std::vector<qdAnimationInfo> qdAnimationInfoVector;
+typedef Std::vector<qdAnimationInfo> qdAnimationInfoVector;
 
 } // namespace QDEngine
 

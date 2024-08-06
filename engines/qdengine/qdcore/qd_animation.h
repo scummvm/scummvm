@@ -259,7 +259,7 @@ public:
 	bool add_scale(float value);
 	bool create_scaled_frames();
 
-	const std::vector<float> &scales() const {
+	const Std::vector<float> &scales() const {
 		if (check_flag(QD_ANIMATION_FLAG_REFERENCE) && _parent) return _parent->_scales;
 		else return _scales;
 	}
@@ -287,7 +287,7 @@ private:
 
 	const qdAnimationFrameList *_scaled_frames_ptr;
 	qdAnimationFrameList _scaled_frames;
-	std::vector<float> _scales;
+	Std::vector<float> _scales;
 
 	grTileAnimation *_tileAnimation;
 

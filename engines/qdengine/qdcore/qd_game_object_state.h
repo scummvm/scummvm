@@ -667,7 +667,7 @@ private:
 
 };
 
-typedef std::vector<qdGameObjectState *> qdGameObjectStateVector;
+typedef Std::vector<qdGameObjectState *> qdGameObjectStateVector;
 
 //! Состояние динамического объекта - статическая анимация.
 class qdGameObjectStateStatic : public qdGameObjectState {
@@ -854,16 +854,16 @@ private:
 	movement_type_t _movement_type;
 
 	//! Смещения центров анимаций походок.
-	std::vector<Vect2i> _center_offsets;
+	Std::vector<Vect2i> _center_offsets;
 	//! Смещения центров статических анимаций.
-	std::vector<Vect2i> _static_center_offsets;
+	Std::vector<Vect2i> _static_center_offsets;
 	//! Смещения центров анимаций стартов.
-	std::vector<Vect2i> _start_center_offsets;
+	Std::vector<Vect2i> _start_center_offsets;
 	//! Смещения центров анимаций стопов.
-	std::vector<Vect2i> _stop_center_offsets;
+	Std::vector<Vect2i> _stop_center_offsets;
 
 	//! Коэффициенты для частоты звука походки.
-	std::vector<float> _walk_sound_frequency;
+	Std::vector<float> _walk_sound_frequency;
 };
 
 //! Состояние динамического объекта - маска на статическом объекте.

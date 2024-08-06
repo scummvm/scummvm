@@ -145,7 +145,7 @@ public:
 		return _is_read_only;
 	}
 
-	typedef std::vector<qdTriggerProfilerRecord> record_container_t;
+	typedef Std::vector<qdTriggerProfilerRecord> record_container_t;
 	typedef record_container_t::const_iterator record_iterator_t;
 
 	record_iterator_t records_begin() const {

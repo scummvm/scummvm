@@ -1046,7 +1046,7 @@ qdAnimationInfo *qdGameObjectStateWalk::static_animation_info(float direction_an
 }
 
 const Vect2i &qdGameObjectStateWalk::center_offset(int direction_index, OffsetType offset_type) const {
-	const std::vector<Vect2i> *vect = &_center_offsets;
+	const Std::vector<Vect2i> *vect = &_center_offsets;
 
 	switch (offset_type) {
 	case OFFSET_STATIC:
@@ -1081,7 +1081,7 @@ const Vect2i &qdGameObjectStateWalk::center_offset(float direction_angle, Offset
 void qdGameObjectStateWalk::set_center_offset(int direction_index, const Vect2i &offs, OffsetType offset_type) {
 	assert(direction_index >= 0);
 
-	std::vector<Vect2i> *vect = &_center_offsets;
+	Std::vector<Vect2i> *vect = &_center_offsets;
 
 	switch (offset_type) {
 	case OFFSET_STATIC:

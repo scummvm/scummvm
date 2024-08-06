@@ -50,8 +50,8 @@ public:
 		CONDITIONS_OR
 	};
 
-	typedef std::vector<qdCondition> conditions_container_t;
-	typedef std::vector<qdConditionGroup> condition_groups_container_t;
+	typedef Std::vector<qdCondition> conditions_container_t;
+	typedef Std::vector<qdConditionGroup> condition_groups_container_t;
 
 	//! Возвращает true, если условия выполняются.
 	virtual bool check_conditions();

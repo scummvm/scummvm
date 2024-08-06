@@ -43,7 +43,7 @@ static bool operator == (const qdScreenTextSet &set, int id) {
 }
 
 qdScreenText *qdScreenTextDispatcher::add_text(int set_ID, const qdScreenText &txt) {
-	std::vector<qdScreenTextSet>::iterator it = std::find(_text_sets.begin(), _text_sets.end(), set_ID);
+	Std::vector<qdScreenTextSet>::iterator it = std::find(_text_sets.begin(), _text_sets.end(), set_ID);
 
 	if (it != _text_sets.end())
 		return it->add_text(txt);
@@ -64,7 +64,7 @@ void qdScreenTextDispatcher::clear_texts(qdNamedObject *p) {
 }
 
 const qdScreenTextSet *qdScreenTextDispatcher::get_text_set(int id) const {
-	std::vector<qdScreenTextSet>::const_iterator it = std::find(_text_sets.begin(), _text_sets.end(), id);
+	Std::vector<qdScreenTextSet>::const_iterator it = std::find(_text_sets.begin(), _text_sets.end(), id);
 
 	if (it != _text_sets.end())
 		return &*it;
@@ -73,7 +73,7 @@ const qdScreenTextSet *qdScreenTextDispatcher::get_text_set(int id) const {
 }
 
 qdScreenTextSet *qdScreenTextDispatcher::get_text_set(int id) {
-	std::vector<qdScreenTextSet>::iterator it =
+	Std::vector<qdScreenTextSet>::iterator it =
 	    std::find(_text_sets.begin(), _text_sets.end(), id);
 
 	if (it != _text_sets.end())

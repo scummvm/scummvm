@@ -1357,7 +1357,7 @@ uint32 qdSprite::data_size() const {
 
 bool qdSprite::scale(float coeff_x, float coeff_y) {
 	static scl::C2PassScale<scl::CBilinearFilter> scale_engine;
-	static std::vector<byte> temp_buffer(300 * 400 * 4, 0);
+	static Std::vector<byte> temp_buffer(300 * 400 * 4, 0);
 
 	bool compress_flag = false;
 

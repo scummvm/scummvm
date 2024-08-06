@@ -20,7 +20,7 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
-#include <vector>
+#include "common/std/vector.h"
 
 #include "common/file.h"
 
@@ -30,8 +30,8 @@
 
 namespace QDEngine {
 
-std::vector<byte> rleBuffer::_buffer0(4096);
-std::vector<byte> rleBuffer::_buffer1(4096);
+Std::vector<byte> rleBuffer::_buffer0(4096);
+Std::vector<byte> rleBuffer::_buffer1(4096);
 
 bool operator == (const rleBuffer &buf1, const rleBuffer &buf2) {
 	if (!(buf1._header_offset == buf2._header_offset)) return false;
@@ -117,7 +117,7 @@ bool rleBuffer::encode(int sx, int sy, const byte *buf) {
 		}
 		buffer += sx;
 	}
-	std::vector<uint32>(_data).swap(_data);
+	Std::vector<uint32>(_data).swap(_data);
 
 	resize_buffers();
 

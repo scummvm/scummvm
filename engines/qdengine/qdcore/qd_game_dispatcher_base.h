@@ -155,7 +155,7 @@ private:
 	qdObjectMapContainer<qdAnimationSet> _animation_sets;
 	qdObjectMapContainer<qdSound> _sounds;
 
-	typedef std::vector<qdScaleInfo> scale_info_container_t;
+	typedef Std::vector<qdScaleInfo> scale_info_container_t;
 	scale_info_container_t _scale_infos;
 
 	qdLoadingProgressInfo _loading_progress;

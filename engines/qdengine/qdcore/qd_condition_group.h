@@ -46,7 +46,7 @@ public:
 
 	~qdConditionGroup();
 
-	typedef std::vector<int> conditions_container_t;
+	typedef Std::vector<int> conditions_container_t;
 	typedef conditions_container_t::const_iterator conditions_iterator_t;
 
 	conditions_iterator_t conditions_begin() const {

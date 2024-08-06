@@ -94,15 +94,15 @@ private:
 	/// количество кадров
 	int _frameCount;
 
-	typedef std::vector<uint32> FrameIndex;
+	typedef Std::vector<uint32> FrameIndex;
 	/// индекс кадров - номера тайлов, из которых состоят кадры
 	/// _frameTileSize.x * _frameTileSize.y на кадр
 	FrameIndex _frameIndex;
 
-	typedef std::vector<uint32> TileOffsets;
+	typedef Std::vector<uint32> TileOffsets;
 	/// смещения до данных каждого тайла
 	TileOffsets _tileOffsets;
-	typedef std::vector<uint32> TileData;
+	typedef Std::vector<uint32> TileData;
 	/// данные тайлов
 	TileData _tileData;
 

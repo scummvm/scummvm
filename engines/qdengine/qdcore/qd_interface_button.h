@@ -145,9 +145,9 @@ protected:
 private:
 
 #ifdef _QD_INTERFACE_BUTTON_PTR_CONTAINER
-	typedef std::vector<qdInterfaceElementState *> state_container_t;
+	typedef Std::vector<qdInterfaceElementState *> state_container_t;
 #else
-	typedef std::vector<qdInterfaceElementState> state_container_t;
+	typedef Std::vector<qdInterfaceElementState> state_container_t;
 #endif
 
 	//! Состояния кнопки.

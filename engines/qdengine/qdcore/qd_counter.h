@@ -98,7 +98,7 @@ public:
 		_value_limit = limit;
 	}
 
-	typedef std::vector<qdCounterElement> element_container_t;
+	typedef Std::vector<qdCounterElement> element_container_t;
 	const element_container_t &elements() const {
 		return _elements;
 	}

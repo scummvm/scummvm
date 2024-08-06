@@ -26,6 +26,7 @@
 
 #include <list>
 #include "common/str.h"
+#include "common/std/vector.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -82,7 +83,7 @@ class qdGameObjectState;
 class qdGameObjectStateStatic;
 class qdGameObjectStateWalk;
 class qdGameObjectStateMask;
-typedef std::vector<qdGameObjectState *> qdGameObjectStateVector;
+typedef Std::vector<qdGameObjectState *> qdGameObjectStateVector;
 
 class qdGameObjectMouse;
 class qdGameObjectMoving;

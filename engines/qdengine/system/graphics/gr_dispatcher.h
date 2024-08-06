@@ -22,7 +22,7 @@
 #ifndef QDENGINE_SYSTEM_GRAPHICS_GR_DISPATCHER_H
 #define QDENGINE_SYSTEM_GRAPHICS_GR_DISPATCHER_H
 
-#include <vector>
+#include "common/std/vector.h"
 #include "qdengine/xmath.h"
 #include "qdengine/system/graphics/gr_screen_region.h"
 
@@ -429,7 +429,7 @@ public:
 
 	void clear_changes_mask();
 
-	typedef std::vector<grScreenRegion> regions_container_t;
+	typedef Std::vector<grScreenRegion> regions_container_t;
 	typedef regions_container_t::const_iterator region_iterator;
 
 	const regions_container_t &changed_regions() const {
@@ -547,7 +547,7 @@ private:
 	}
 #endif
 
-	typedef std::vector<char> changes_mask_t;
+	typedef Std::vector<char> changes_mask_t;
 
 	enum {
 		kChangesMaskTile = 16,

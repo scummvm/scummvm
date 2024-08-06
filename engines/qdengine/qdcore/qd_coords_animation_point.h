@@ -84,7 +84,7 @@ private:
 	mutable float _passed_path_length;
 };
 
-typedef std::vector<qdCoordsAnimationPoint> qdCoordsAnimationPointVector;
+typedef Std::vector<qdCoordsAnimationPoint> qdCoordsAnimationPointVector;
 
 } // namespace QDEngine
 

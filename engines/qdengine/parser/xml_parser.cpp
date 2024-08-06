@@ -45,7 +45,7 @@ void parser::clear() {
 	_skip_mode = false;
 
 	_data_pool.clear();
-	std::vector<char>(_data_pool).swap(_data_pool);
+	Std::vector<char>(_data_pool).swap(_data_pool);
 }
 
 bool parser::parse_file(const char *fname) {

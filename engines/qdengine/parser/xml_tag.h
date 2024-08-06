@@ -133,7 +133,7 @@ public:
 	}
 
 	//! Устанавливает указатель на общие данные.
-	void set_data(const std::vector<char> *p) {
+	void set_data(const Std::vector<char> *p) {
 		_data = p;
 
 		for (subtags_t::iterator it = _subtags.begin(); it != _subtags.end(); ++it)
@@ -187,7 +187,7 @@ private:
 	//! Смещение до данных тега в общих данных.
 	int _data_offset;
 	//! Указатель на данные.
-	const std::vector<char> *_data;
+	const Std::vector<char> *_data;
 
 	//! Список вложенных тегов.
 	subtags_t _subtags;

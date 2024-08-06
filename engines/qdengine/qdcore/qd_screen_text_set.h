@@ -130,7 +130,7 @@ private:
 	//! Расстояние между соседними текстами в пикселах.
 	int _space;
 
-	typedef std::vector<qdScreenText> texts_container_t;
+	typedef Std::vector<qdScreenText> texts_container_t;
 	//! Тексты.
 	texts_container_t _texts;
 

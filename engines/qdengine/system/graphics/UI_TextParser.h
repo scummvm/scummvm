@@ -50,7 +50,7 @@ struct OutNode {
 	OutNode(int clr) : type(COLOR), width(0), color(clr) {}
 };
 
-typedef std::vector<OutNode> OutNodes;
+typedef Std::vector<OutNode> OutNodes;
 
 class UI_TextParser {
 public:

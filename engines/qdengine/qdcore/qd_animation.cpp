@@ -1019,7 +1019,7 @@ void qdAnimation::clear_frames() {
 bool qdAnimation::add_scale(float value) {
 	if (fabs(value - 1.0f) <= 0.01f || value <= 0.01f) return false;
 
-	std::vector<float>::const_iterator it = std::find(_scales.begin(), _scales.end(), value);
+	Std::vector<float>::const_iterator it = std::find(_scales.begin(), _scales.end(), value);
 	if (it != _scales.end()) return false;
 
 	_scales.push_back(value);
@@ -1048,7 +1048,7 @@ int qdAnimation::get_scale_index(float &scale_value) const {
 	int index = -1;
 	float scl = 1.0f;
 
-	const std::vector<float> &scales_vect = (check_flag(QD_ANIMATION_FLAG_REFERENCE) && _parent) ? _parent->_scales : _scales;
+	const Std::vector<float> &scales_vect = (check_flag(QD_ANIMATION_FLAG_REFERENCE) && _parent) ? _parent->_scales : _scales;
 
 	for (int i = 0; i < scales_vect.size(); i++) {
 		if (fabs(scale_value - scl) > fabs(scale_value - scales_vect[i])) {

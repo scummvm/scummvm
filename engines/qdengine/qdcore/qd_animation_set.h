@@ -117,7 +117,7 @@ private:
 	qdAnimationInfo _turn_animation;
 
 	//! Коэффициенты для частоты звука походки.
-	std::vector<float> _walk_sound_frequency;
+	Std::vector<float> _walk_sound_frequency;
 
 	static int get_angle_index(float direction_angle, int dir_count);
 	static float get_index_angle(int index, int dir_count);
