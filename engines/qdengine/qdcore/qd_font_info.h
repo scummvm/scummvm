@@ -88,7 +88,7 @@ private:
 	grFont *_font;
 };
 
-typedef std::list<qdFontInfo *> qdFontInfoList;
+typedef Std::list<qdFontInfo *> qdFontInfoList;
 
 
 } // namespace QDEngine

@@ -138,7 +138,7 @@ bool qdMiniGame::load_script(const xml::tag *p) {
 			if (!qdGameConfig::get_config().minigame_read_only_ini()) {
 				qdMinigameConfigParameter prm;
 				prm.load_script(&*it);
-				config_container_t::iterator cfg_it = std::find(_config.begin(), _config.end(), prm);
+				config_container_t::iterator cfg_it = Common::find(_config.begin(), _config.end(), prm);
 				if (cfg_it != _config.end()) {
 					cfg_it->set_data_string(prm.data_string());
 					cfg_it->set_data_count(prm.data_count());
@@ -257,7 +257,7 @@ bool qdMiniGame::get_files_list(qdFileNameList &files_to_copy, qdFileNameList &f
 }
 
 const char *qdMiniGame::config_parameter_value(const char *cfg_param_name) const {
-	config_container_t::const_iterator it = std::find(_config.begin(), _config.end(), cfg_param_name);
+	config_container_t::const_iterator it = Common::find(_config.begin(), _config.end(), cfg_param_name);
 	if (it != _config.end())
 		return it->data_string();
 	return NULL;

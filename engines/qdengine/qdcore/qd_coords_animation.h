@@ -156,7 +156,7 @@ private:
 	mutable Vect3f _del;
 };
 
-//typedef std::list<qdCoordsAnimation*> qdCoordsAnimationList;
+//typedef Std::list<qdCoordsAnimation*> qdCoordsAnimationList;
 
 } // namespace QDEngine
 

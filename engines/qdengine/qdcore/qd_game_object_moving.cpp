@@ -2128,18 +2128,32 @@ bool qdGameObjectMoving::avoid_collision(const qdGameObjectMoving *p) {
 }
 
 void qdGameObjectMoving::optimize_path(Std::vector<Vect2i> &path) const {
-	std::list<Vect2i> opt_path;
-	opt_path.insert(opt_path.end(), path.begin(), path.end());
-	opt_path.unique();
+	Std::list<Vect2i> opt_path;
 
-	std::list<Vect2i>::iterator it = opt_path.begin();
+	// opt_path.insert(opt_path.end(), path.begin(), path.end());
+	// opt_path.unique();
+
+	auto it1 = path.begin();
+	auto val = *it1;
+	it1++;
+
+	while (it1 != path.end()) {
+		if (*it1 != val) {
+			opt_path.push_back(*it1);
+			val = *it1;
+		}
+
+		++it1;
+	}
+
+	Std::list<Vect2i>::iterator it = opt_path.begin();
 
 	while (it != opt_path.end()) {
-		std::list<Vect2i>::iterator it1 = it;
+		Std::list<Vect2i>::iterator it1 = it;
 		++it1;
 
 		if (it1 != opt_path.end()) {
-			std::list<Vect2i>::iterator it2 = it1;
+			Std::list<Vect2i>::iterator it2 = it1;
 			++it2;
 
 			if (it2 != opt_path.end()) {
@@ -2173,19 +2187,19 @@ void qdGameObjectMoving::optimize_path(Std::vector<Vect2i> &path) const {
 		path.push_back(it1);
 }
 
-void qdGameObjectMoving::optimize_path_four_dirs(std::list<Vect2i> &path) const {
-	std::list<Vect2i>::iterator it = path.begin();
+void qdGameObjectMoving::optimize_path_four_dirs(Std::list<Vect2i> &path) const {
+	Std::list<Vect2i>::iterator it = path.begin();
 
 	while (it != path.end()) {
-		std::list<Vect2i>::iterator it1 = it;
+		Std::list<Vect2i>::iterator it1 = it;
 		++it1;
 
 		if (it1 != path.end()) {
-			std::list<Vect2i>::iterator it2 = it1;
+			Std::list<Vect2i>::iterator it2 = it1;
 			++it2;
 
 			if (it2 != path.end()) {
-				std::list<Vect2i>::iterator it3 = it2;
+				Std::list<Vect2i>::iterator it3 = it2;
 				++it3;
 
 				if (it3 != path.end()) {
@@ -2233,12 +2247,12 @@ bool coll(const Vect2i v1, const Vect2i v2) {
 	else return false;
 }
 
-bool qdGameObjectMoving::del_coll_pts(std::list<Vect2i> &path) const {
+bool qdGameObjectMoving::del_coll_pts(Std::list<Vect2i> &path) const {
 	bool is_del = false;
 
 	// Пытаемся выделить три точки пути (если этого сделать нельзя, то выход)
-	std::list<Vect2i>::iterator cur = path.begin();
-	std::list<Vect2i>::iterator pre, pre_pre;
+	Std::list<Vect2i>::iterator cur = path.begin();
+	Std::list<Vect2i>::iterator pre, pre_pre;
 	if (cur != path.end()) {
 		pre_pre = cur;
 		++cur;
@@ -2266,12 +2280,12 @@ bool qdGameObjectMoving::del_coll_pts(std::list<Vect2i> &path) const {
 
 // Вспомогательная функция - пытается спрямить отрезок пути из четырех точек, начиная с cur
 /*
-bool qdGameObjectMoving::four_pts_eight_dir_straight(std::list<Vect2i> path,
-                                                     const std::list<Vect2i>::iterator cur) const
+bool qdGameObjectMoving::four_pts_eight_dir_straight(Std::list<Vect2i> path,
+                                                     const Std::list<Vect2i>::iterator cur) const
 {
     // Извлекаем четыре точки
     Vect2i pts[4];
-    std::list<Vect2i>::iterator buf = cur;
+    Std::list<Vect2i>::iterator buf = cur;
     for (int i = 0; i < 4; i++)
     {
         if (path.end() == buf) return false;
@@ -2311,10 +2325,10 @@ bool qdGameObjectMoving::four_pts_eight_dir_straight(std::list<Vect2i> path,
 }
 */
 
-bool qdGameObjectMoving::four_pts_eight_dir_straight(std::list<Vect2i> &path, std::list<Vect2i>::reverse_iterator cur) const {
+bool qdGameObjectMoving::four_pts_eight_dir_straight(Std::list<Vect2i> &path, Std::list<Vect2i>::reverse_iterator cur) const {
 	// Извлекаем четыре точки
 	Vect2i pts[4], opt_pts[4];
-	std::list<Vect2i>::reverse_iterator buf = cur;
+	Std::list<Vect2i>::reverse_iterator buf = cur;
 	for (int i = 0; i < 4; i++) {
 		if (path.rend() == buf) return false;
 		pts[i] = (*buf);
@@ -2349,26 +2363,26 @@ bool qdGameObjectMoving::four_pts_eight_dir_straight(std::list<Vect2i> &path, st
 	return true;
 }
 
-void qdGameObjectMoving::optimize_path_eight_dirs(std::list<Vect2i> &path) const {
+void qdGameObjectMoving::optimize_path_eight_dirs(Std::list<Vect2i> &path) const {
 	// Спрямляем, пока спрямляется, но не более чем EIGHT_DIRS_OPT_ITER_MAX раз
 
 	for (int i = 0; i < EIGHT_DIRS_OPT_ITER_MAX; i++) {
-		for (std::list<Vect2i>::reverse_iterator it = path.rbegin(); it != path.rend(); ++it)
+		for (Std::list<Vect2i>::reverse_iterator it = path.rbegin(); it != path.rend(); ++it)
 			four_pts_eight_dir_straight(path, it);
 
 		if (!del_coll_pts(path)) break;
 	}
 }
 
-void qdGameObjectMoving::optimize_path_smooth(std::list<Vect2i> &path) const {
-	std::list<Vect2i>::iterator it = path.begin();
+void qdGameObjectMoving::optimize_path_smooth(Std::list<Vect2i> &path) const {
+	Std::list<Vect2i>::iterator it = path.begin();
 
 	while (it != path.end()) {
-		std::list<Vect2i>::iterator it1 = it;
+		Std::list<Vect2i>::iterator it1 = it;
 		++it1;
 
 		if (it1 != path.end()) {
-			std::list<Vect2i>::iterator it2 = it1;
+			Std::list<Vect2i>::iterator it2 = it1;
 			++it2;
 
 			if (it2 != path.end()) {

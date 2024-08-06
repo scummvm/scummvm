@@ -66,7 +66,7 @@ public:
 	//! Возвращает true, если экран есть в списке.
 	bool is_screen_in_list(const qdInterfaceScreen *scr);
 
-	typedef std::list<qdInterfaceScreen *> screen_list_t;
+	typedef Std::list<qdInterfaceScreen *> screen_list_t;
 	//! Возвращает список экранов.
 	const screen_list_t &screen_list() const {
 		return _screens.get_list();

@@ -71,7 +71,7 @@ public:
 	//! Возвращает true, если элемент есть в списке.
 	bool is_element_in_list(const qdInterfaceElement *el) const;
 
-	typedef std::list<qdInterfaceElement *> element_list_t;
+	typedef Std::list<qdInterfaceElement *> element_list_t;
 	//! Возвращает список элементов экрана.
 	const element_list_t &element_list() const {
 		return _elements.get_list();

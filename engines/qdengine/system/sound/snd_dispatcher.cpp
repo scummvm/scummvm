@@ -77,7 +77,12 @@ int sndDispatcher::convert_volume_to_dB(int vol) {
 }
 
 void sndDispatcher::quant() {
-	_sounds.remove_if(std::mem_fn(&sndSound::is_stopped));
+	for (auto it = _sounds.begin(); it != _sounds.end(); ) {
+			if (it->is_stopped())
+				it = _sounds.erase(it);
+			else
+				++it;
+	}
 }
 
 bool sndDispatcher::play_sound(const sndSound *snd, bool loop, float start_position, int vol) {
@@ -105,7 +110,7 @@ bool sndDispatcher::play_sound(const sndSound *snd, bool loop, float start_posit
 }
 
 bool sndDispatcher::stop_sound(const sndSound *snd) {
-	sound_list_t::iterator it = std::find(_sounds.begin(), _sounds.end(), *snd);
+	sound_list_t::iterator it = Common::find(_sounds.begin(), _sounds.end(), *snd);
 
 	if (it != _sounds.end()) {
 		it->stop();
@@ -118,7 +123,7 @@ bool sndDispatcher::stop_sound(const sndSound *snd) {
 }
 
 bool sndDispatcher::stop_sound(const sndHandle *handle) {
-	sound_list_t::iterator it = std::find(_sounds.begin(), _sounds.end(), *handle);
+	sound_list_t::iterator it = Common::find(_sounds.begin(), _sounds.end(), *handle);
 
 	if (it != _sounds.end()) {
 		it->stop();
@@ -131,7 +136,7 @@ bool sndDispatcher::stop_sound(const sndHandle *handle) {
 }
 
 sndSound::status_t sndDispatcher::sound_status(const sndHandle *handle) const {
-	sound_list_t::const_iterator it = std::find(_sounds.begin(), _sounds.end(), *handle);
+	sound_list_t::const_iterator it = Common::find(_sounds.begin(), _sounds.end(), *handle);
 
 	if (it != _sounds.end()) {
 		if (is_paused())
@@ -144,7 +149,7 @@ sndSound::status_t sndDispatcher::sound_status(const sndHandle *handle) const {
 }
 
 sndSound::status_t sndDispatcher::sound_status(const sndSound *snd) const {
-	sound_list_t::const_iterator it = std::find(_sounds.begin(), _sounds.end(), *snd);
+	sound_list_t::const_iterator it = Common::find(_sounds.begin(), _sounds.end(), *snd);
 
 	if (it != _sounds.end())
 		return it->status();
@@ -174,7 +179,7 @@ void sndDispatcher::stop_sounds() {
 }
 
 bool sndDispatcher::set_sound_frequency(const sndHandle *snd, float coeff) {
-	sound_list_t::iterator it = std::find(_sounds.begin(), _sounds.end(), *snd);
+	sound_list_t::iterator it = Common::find(_sounds.begin(), _sounds.end(), *snd);
 
 	if (it != _sounds.end()) {
 		it->change_frequency(frequency_coeff() * coeff);
@@ -185,7 +190,7 @@ bool sndDispatcher::set_sound_frequency(const sndHandle *snd, float coeff) {
 }
 
 float sndDispatcher::sound_position(const sndHandle *snd) const {
-	sound_list_t::const_iterator it = std::find(_sounds.begin(), _sounds.end(), *snd);
+	sound_list_t::const_iterator it = Common::find(_sounds.begin(), _sounds.end(), *snd);
 
 	if (it != _sounds.end())
 		return it->position();

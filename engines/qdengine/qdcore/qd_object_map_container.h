@@ -32,7 +32,7 @@ namespace QDEngine {
 template <class T>
 class qdObjectMapContainer {
 public:
-	typedef std::list<T *> object_list_t;
+	typedef Std::list<T *> object_list_t;
 
 	qdObjectMapContainer();
 	~qdObjectMapContainer();

@@ -158,7 +158,7 @@ void qdCounter::add_value(int value_delta) {
 }
 
 bool qdCounter::add_element(const qdGameObjectState *p, bool inc_value) {
-	element_container_t::const_iterator it = std::find(_elements.begin(), _elements.end(), p);
+	element_container_t::const_iterator it = Common::find(_elements.begin(), _elements.end(), p);
 	if (it != _elements.end())
 		return false;
 
@@ -167,7 +167,7 @@ bool qdCounter::add_element(const qdGameObjectState *p, bool inc_value) {
 }
 
 bool qdCounter::remove_element(const qdGameObjectState *p) {
-	element_container_t::iterator it = std::find(_elements.begin(), _elements.end(), p);
+	element_container_t::iterator it = Common::find(_elements.begin(), _elements.end(), p);
 	if (it != _elements.end()) {
 		_elements.erase(it);
 		return true;

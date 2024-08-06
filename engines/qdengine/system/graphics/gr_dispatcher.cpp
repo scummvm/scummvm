@@ -655,7 +655,7 @@ bool grDispatcher::clear_zbuffer() {
 #endif
 
 void grDispatcher::clear_changes_mask() {
-	std::fill(_changes_mask.begin(), _changes_mask.end(), 0);
+	Common::fill(_changes_mask.begin(), _changes_mask.end(), 0);
 }
 
 void grDispatcher::build_changed_regions() {
@@ -666,20 +666,20 @@ void grDispatcher::build_changed_regions() {
 	while (flag) {
 		flag = false;
 
-		changes_mask_t::iterator it = std::find(_changes_mask.begin(), _changes_mask.end(), 1);
+		changes_mask_t::iterator it = Common::find(_changes_mask.begin(), _changes_mask.end(), 1);
 		if (it != _changes_mask.end()) {
 			int x = (it - _changes_mask.begin()) % _changes_mask_size_x;
 			int y = (it - _changes_mask.begin()) / _changes_mask_size_x;
 
-			changes_mask_t::iterator it1 = std::find(it, it + (_changes_mask_size_x - x), 0);
+			changes_mask_t::iterator it1 = Common::find(it, it + (_changes_mask_size_x - x), 0);
 
 			int sx = it1 - it;
 			int sy = 0;
 
 			for (int i = 0; i < _changes_mask_size_y - y; i++, sy++) {
-				changes_mask_t::iterator it2 = std::find(it, it1, 0);
+				changes_mask_t::iterator it2 = Common::find(it, it1, 0);
 				if (it2 == it1)
-					std::fill(it, it1, 0);
+					Common::fill(it, it1, 0);
 				else
 					break;
 
@@ -724,7 +724,11 @@ bool grDispatcher::invalidate_region(const grScreenRegion &reg) {
 		changes_mask_t::iterator it = _changes_mask.begin() + (x + y * _changes_mask_size_x);
 
 		for (int i = 0; i < sy; i++) {
-			std::fill_n(it, sx, true);
+			auto it1 = it;
+			for (int j = 0; j < sx; j++) {
+				*it1 = true;
+				++it1;
+			}
 			if (i < sy - 1)
 				it += _changes_mask_size_x;
 		}

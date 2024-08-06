@@ -58,7 +58,7 @@ private:
 		qdNamedObject *&_object;
 	};
 
-	typedef std::list<qdNamedObjectReferenceLink> link_container_t;
+	typedef Std::list<qdNamedObjectReferenceLink> link_container_t;
 	link_container_t _links;
 };
 

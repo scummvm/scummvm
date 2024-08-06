@@ -46,7 +46,7 @@ qdConditionGroup &qdConditionGroup::operator = (const qdConditionGroup &cg) {
 }
 
 bool qdConditionGroup::add_condition(int condition_id) {
-	conditions_container_t::iterator it = std::find(_conditions.begin(), _conditions.end(), condition_id);
+	conditions_container_t::iterator it = Common::find(_conditions.begin(), _conditions.end(), condition_id);
 	if (it != _conditions.end())
 		return false;
 
@@ -60,7 +60,7 @@ bool qdConditionGroup::remove_condition(int condition_id) {
 			(*it)--;
 	}
 
-	conditions_container_t::iterator it1 = std::find(_conditions.begin(), _conditions.end(), condition_id);
+	conditions_container_t::iterator it1 = Common::find(_conditions.begin(), _conditions.end(), condition_id);
 	if (it1 != _conditions.end())
 		return false;
 

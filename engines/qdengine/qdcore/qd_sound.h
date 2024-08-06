@@ -117,7 +117,7 @@ private:
 	wavSound _sound;
 };
 
-typedef std::list<qdSound *> qdSoundList;
+typedef Std::list<qdSound *> qdSoundList;
 
 } // namespace QDEngine
 

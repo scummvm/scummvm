@@ -772,7 +772,7 @@ bool qdAnimation::reverse_frame_range(int number0, int number1) {
 	if (iaf0 != _frames.end() && iaf1 != _frames.end()) {
 		iaf1++;
 
-		std::reverse(iaf0, iaf1);
+		Common::reverse(iaf0, iaf1);
 		init_size();
 		return true;
 	}
@@ -1019,7 +1019,7 @@ void qdAnimation::clear_frames() {
 bool qdAnimation::add_scale(float value) {
 	if (fabs(value - 1.0f) <= 0.01f || value <= 0.01f) return false;
 
-	Std::vector<float>::const_iterator it = std::find(_scales.begin(), _scales.end(), value);
+	Std::vector<float>::const_iterator it = Common::find(_scales.begin(), _scales.end(), value);
 	if (it != _scales.end()) return false;
 
 	_scales.push_back(value);

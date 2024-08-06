@@ -24,9 +24,8 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <list>
-
 #include "common/str.h"
+#include "common/std/list.h"
 
 
 namespace QDEngine {
@@ -34,7 +33,7 @@ namespace QDEngine {
 template <class T>
 class qdObjectListContainer {
 public:
-	typedef std::list<T *> object_list_t;
+	typedef Std::list<T *> object_list_t;
 
 	qdObjectListContainer();
 	~qdObjectListContainer();

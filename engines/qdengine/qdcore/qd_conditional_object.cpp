@@ -245,7 +245,7 @@ bool qdConditionalObject::check_group_conditions(const qdConditionGroup &gr) {
 
 bool qdConditionalObject::is_condition_in_group(int condition_idx) const {
 	for (condition_groups_container_t::const_iterator it = _condition_groups.begin(); it != _condition_groups.end(); ++it) {
-		if (std::find(it->conditions_begin(), it->conditions_end(), condition_idx) != it->conditions_end())
+		if (Common::find(it->conditions_begin(), it->conditions_end(), condition_idx) != it->conditions_end())
 			return true;
 	}
 

@@ -150,7 +150,7 @@ private:
 	//! Пауза.
 	bool _is_paused;
 
-	typedef std::list<sndSound> sound_list_t;
+	typedef Std::list<sndSound> sound_list_t;
 	//! Список активных звуков.
 	sound_list_t _sounds;
 

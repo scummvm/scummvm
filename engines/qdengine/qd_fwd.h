@@ -24,8 +24,8 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <list>
 #include "common/str.h"
+#include "common/std/list.h"
 #include "common/std/vector.h"
 
 namespace Common {
@@ -35,49 +35,49 @@ class SeekableReadStream;
 namespace QDEngine {
 
 class qdGameScene;
-typedef std::list<qdGameScene *> qdGameSceneList;
+typedef Std::list<qdGameScene *> qdGameSceneList;
 
 class qdGameEnd;
-typedef std::list<qdGameEnd *> qdGameEndList;
+typedef Std::list<qdGameEnd *> qdGameEndList;
 
 class qdVideo;
-typedef std::list<qdVideo *> qdVideoList;
+typedef Std::list<qdVideo *> qdVideoList;
 
 class qdTriggerChain;
-typedef std::list<qdTriggerChain *> qdTriggerChainList;
+typedef Std::list<qdTriggerChain *> qdTriggerChainList;
 
 class qdGameObject;
-typedef std::list<qdGameObject *> qdGameObjectList;
+typedef Std::list<qdGameObject *> qdGameObjectList;
 
 class qdMiniGame;
-typedef std::list<qdMiniGame *> qdMiniGameList;
+typedef Std::list<qdMiniGame *> qdMiniGameList;
 
 class qdCounter;
-typedef std::list<qdCounter *> qdCounterList;
+typedef Std::list<qdCounter *> qdCounterList;
 
 class qdGridZone;
-typedef std::list<qdGridZone *> qdGridZoneList;
+typedef Std::list<qdGridZone *> qdGridZoneList;
 
 class qdMusicTrack;
-typedef std::list<qdMusicTrack *> qdMusicTrackList;
+typedef Std::list<qdMusicTrack *> qdMusicTrackList;
 
 class qdCondition;
-typedef std::list<qdCondition *> qdConditionList;
+typedef Std::list<qdCondition *> qdConditionList;
 
 class qdSound;
-typedef std::list<qdSound *> qdSoundList;
+typedef Std::list<qdSound *> qdSoundList;
 
 class qdAnimation;
-typedef std::list<qdAnimation *> qdAnimationList;
+typedef Std::list<qdAnimation *> qdAnimationList;
 
 class qdAnimationSet;
-typedef std::list<qdAnimationSet *> qdAnimationSetList;
+typedef Std::list<qdAnimationSet *> qdAnimationSetList;
 
 class qdInventory;
-typedef std::list<qdInventory *> qdInventoryList;
+typedef Std::list<qdInventory *> qdInventoryList;
 
 class qdTriggerChain;
-typedef std::list<qdTriggerChain *> qdTriggerChainList;
+typedef Std::list<qdTriggerChain *> qdTriggerChainList;
 
 class qdGameObjectState;
 class qdGameObjectStateStatic;
@@ -95,10 +95,10 @@ class qdInterfaceButton;
 
 class qdGameDispatcher;
 
-typedef std::list<Common::String> qdFileNameList;
+typedef Std::list<Common::String> qdFileNameList;
 
 class qdFontInfo;
-typedef std::list<qdFontInfo *> qdFontInfoList;
+typedef Std::list<qdFontInfo *> qdFontInfoList;
 
 } // namespace QDEngine
 

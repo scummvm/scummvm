@@ -32,7 +32,7 @@ namespace xml {
 //! XML тег.
 class tag {
 public:
-	typedef std::list<tag> subtags_t;
+	typedef Std::list<tag> subtags_t;
 	typedef subtags_t::const_iterator subtag_iterator;
 
 	//! Формат данных тега.

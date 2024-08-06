@@ -214,11 +214,11 @@ public:
 			t = _cells.front();
 		_size = sz;
 		_cells.resize((sz.x + _additional_cells.x) * (sz.y + _additional_cells.y));
-		std::fill(_cells.begin(), _cells.end(), t);
+		Common::fill(_cells.begin(), _cells.end(), t);
 	}
 
 	void set_cell_type(const qdInventoryCellType &tp) {
-		std::fill(_cells.begin(), _cells.end(), tp);
+		Common::fill(_cells.begin(), _cells.end(), tp);
 	}
 
 	bool hit(const Vect2s &pos) const;

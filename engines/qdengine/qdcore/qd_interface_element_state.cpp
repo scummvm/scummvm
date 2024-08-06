@@ -372,7 +372,7 @@ bool qdInterfaceElementState::need_active_game() const {
 }
 
 const qdInterfaceEvent *qdInterfaceElementState::find_event(qdInterfaceEvent::event_t type) const {
-	events_container_t::const_iterator it = std::find(_events.begin(), _events.end(), type);
+	events_container_t::const_iterator it = Common::find(_events.begin(), _events.end(), type);
 	if (it != _events.end())
 		return &*it;
 

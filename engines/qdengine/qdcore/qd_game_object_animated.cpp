@@ -420,7 +420,7 @@ qdGameObjectState *qdGameObjectAnimated::remove_state(int state_num) {
 }
 
 bool qdGameObjectAnimated::remove_state(qdGameObjectState *p) {
-	qdGameObjectStateVector::iterator it = std::find(_states.begin(), _states.end(), p);
+	qdGameObjectStateVector::iterator it = Common::find(_states.begin(), _states.end(), p);
 	if (it != _states.end()) {
 		_states.erase(it);
 		p->dec_reference_count();
