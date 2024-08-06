@@ -87,6 +87,4 @@ private:
 	Texture *_optionTexture;
 };
 
-extern byte kFreescapeCastleFont[];
-
 }
