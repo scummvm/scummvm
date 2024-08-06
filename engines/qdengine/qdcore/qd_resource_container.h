@@ -71,14 +71,7 @@ public:
 
 private:
 
-	struct eqstr {
-		bool operator()(const char *s1, const char *s2) const {
-			if (!s1 || !s2) return false;
-			return strcmp(s1, s2) == 0;
-		}
-	};
-
-	typedef std::unordered_map<const char *, qdResource *, std::hash<const char *>, eqstr> resource_map_t;
+	typedef Common::HashMap<Common::String, qdResource *> resource_map_t;
 	//! Хэш-мап с указателями на ресурсы, принадлежащие диспетчеру.
 	resource_map_t _resource_map;
 
@@ -102,8 +95,8 @@ template<class T>
 qdResource *qdResourceContainer<T>::add_resource(const char *file_name, const T *owner) {
 	typename resource_map_t::iterator it = _resource_map.find(file_name);
 	if (it != _resource_map.end()) {
-		_resource_dispatcher.register_resource(it->second, owner);
-		return it->second;
+		_resource_dispatcher.register_resource(it->_value, owner);
+		return it->_value;
 	}
 
 	qdResource *p = NULL;
@@ -128,9 +121,10 @@ qdResource *qdResourceContainer<T>::add_resource(const char *file_name, const T 
 		break;
 	}
 
-	if (!p) return NULL;
+	if (!p)
+		return NULL;
 
-	_resource_map.insert(typename resource_map_t::value_type(file_name, p));
+	_resource_map[file_name] = p;
 	_resource_list.push_back(p);
 
 	_resource_dispatcher.register_resource(p, owner);
@@ -144,7 +138,7 @@ bool qdResourceContainer<T>::remove_resource(const char *file_name, const T *own
 
 	if (it == _resource_map.end()) return false;
 
-	qdResource *p = it->second;
+	qdResource *p = it->_value;
 	_resource_dispatcher.unregister_resource(p, owner);
 
 	if (!_resource_dispatcher.is_registered(p)) {
@@ -167,7 +161,8 @@ qdResource *qdResourceContainer<T>::get_resource(const char *file_name) const {
 	if (!file_name) return NULL;
 
 	typename resource_map_t::const_iterator it = _resource_map.find(file_name);
-	if (it != _resource_map.end()) return it->second;
+	if (it != _resource_map.end())
+		return it->_value;
 
 	return NULL;
 }
