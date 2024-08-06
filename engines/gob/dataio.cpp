@@ -245,7 +245,7 @@ bool DataIO::openArchive(Common::String name, bool base) {
 	return true;
 }
 
-// A copy of replaceChar utlity function from util.cpp
+// A copy of replaceChar utility function from util.cpp
 static void replaceChar(char *str, char c1, char c2) {
 	while ((str = strchr(str, c1)))
 		*str = c2;
