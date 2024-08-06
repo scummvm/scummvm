@@ -35,23 +35,6 @@
 
 namespace QDEngine {
 
-namespace {
-class id_equality {
-	int id_;
-public:
-	id_equality(int id): id_(id) {}
-	bool operator()(qdTriggerElementPtr const &element) const {
-		return (element->ID() == id_);
-	}
-};
-struct id_compare {
-	bool operator()(qdTriggerElementPtr const &lhs,
-	                int rhs) const {
-		return (lhs->ID() < rhs);
-	}
-};
-}
-
 qdTriggerChain::qdTriggerChain() {
 	root_element()->set_id(qdTriggerElement::ROOT_ID);
 	root_element()->set_status(qdTriggerElement::TRIGGER_EL_DONE);
@@ -79,15 +62,14 @@ bool qdTriggerChain::reindex_elements() {
 }
 
 qdTriggerElementPtr qdTriggerChain::search_element(int id) {
-	if (id == qdTriggerElement::ROOT_ID) return root_element();
+	if (id == qdTriggerElement::ROOT_ID)
+		return root_element();
 
-	qdTriggerElementList::iterator res =
-	    std::lower_bound(_elements.begin(), _elements.end(), id, id_compare());
-	//      Common::find_if(_elements.begin(), _elements.end(), id_equality(id));
+	for (auto it : _elements)
+		if (it->ID() == id)
+			return it;
 
-	if (res == _elements.end() || (*res)->ID() != id)
-		return 0;
-	return *res;
+	return 0;
 }
 
 qdTriggerElementPtr qdTriggerChain::add_element(qdNamedObject *p) {
