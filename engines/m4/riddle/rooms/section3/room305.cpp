@@ -878,10 +878,103 @@ next4:
 	} else if (lookFlag && player_said("drawer")) {
 		digi_play("305r17", 1);
 	} else if (lookFlag && player_said("button display case")) {
-		// TODO
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			player_set_commands_allowed(false);
+
+			if (_G(flags)[V000] == 1)
+				setGlobals4(_rip1, 12, 12, 12);
+			else
+				setGlobals4(_suit1, 17, 17, 17);
+
+			sendWSMessage_C0000(0);
+			digi_play("305r14", 1, 255, 2);
+			break;
+
+		case 2:
+			sendWSMessage_B0000(3);
+			break;
+
+		case 3:
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("hammerhead shark")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+		case 666:
+			player_set_commands_allowed(false);
+
+			if (_G(flags)[V000] == 1) {
+				_lookUp = series_load("rip looks up pos3");
+				setGlobals4(_lookUp, 6, 6, 6);
+			} else {
+				_lookUp = series_load("rpsd103");
+				setGlobals4(_lookUp, 7, 7, 7);
+			}
+
+			sendWSMessage_C0000(0);
+			digi_play("305r12", 1, 255, 2);
+			break;
+
+		case 2:
+			sendWSMessage_B0000(3);
+			break;
+
+		case 3:
+			series_unload(_lookUp);
+			break;
+
+		default:
+			break;
+		}
+	}
+#define LOOK(ITEM) lookFlag && player_said(ITEM) && inv_object_is_here(ITEM)
+	else if (LOOK("SHRUNKEN HEAD")) {
+		digi_play("305r41", 1);
+	} else if (LOOK("INCENSE BURNER")) {
+		digi_play("305r50", 1);
+	} else if (LOOK("CRYSTAL SKULL")) {
+		digi_play("3055r51", 1);
+	} else if (LOOK("ROMANOV EMERALD")) {
+		digi_play("305r29a", 1);
+	} else if (LOOK("WHALE BONE HORN")) {
+		digi_play(_G(flags)[V042] ? "305r47" : "305r47a", 1);
+	} else if (LOOK("WHEELED TOY")) {
+		digi_play("305r42", 1);
+	} else if (LOOK("SILVER BUTTERFLY")) {
+		digi_play("305r46", 1);
+	} else if (LOOK("REBUS AMULET")) {
+		digi_play("305r39", 1);
+	} else if (LOOK("CHISEL")) {
+		digi_play("305r49", 1);
+	} else if (LOOK("GERMAN BANKNOTE")) {
+		digi_play("305r53", 1);
+	} else if (LOOK("POSTAGE STAMP")) {
+		digi_play("305r52", 1);
+	} else if (LOOK("STICK AND SHELL MAP")) {
+		digi_play("305r48", 1);
+	} else if (player_said("exit")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(1);
+			break;
+
+		case 1:
+			_G(game).setRoom(303);
+
+		default:
+			break;
+		}
+	} else {
+		return;
 	}
 
-	// TODO
 exit:
 	_G(player).command_ready = false;
 }
