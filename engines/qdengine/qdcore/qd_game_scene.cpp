@@ -632,7 +632,7 @@ bool qdGameScene::init_visible_objects_list() {
 		}
 	}
 
-	std::sort(_visible_objects.begin(), _visible_objects.end(), qdObjectOrdering());
+	Common::sort(_visible_objects.begin(), _visible_objects.end(), qdObjectOrdering());
 
 	return true;
 }
@@ -771,7 +771,7 @@ bool qdGameScene::load_data(Common::SeekableReadStream &fh, int save_version) {
 		for (auto &it1 : grid_zone_list())
 			zone_order.push_back(it1);
 
-		std::sort(zone_order.begin(), zone_order.end(), qdGridZoneOrdering());
+		Common::sort(zone_order.begin(), zone_order.end(), qdGridZoneOrdering());
 
 		_zone_update_count = 0;
 
@@ -911,13 +911,13 @@ bool qdGameScene::init() {
 
 	_selected_object = NULL;
 
-	std::for_each(object_list().begin(), object_list().end(),
+	Common::for_each(object_list().begin(), object_list().end(),
 	              std::mem_fun(&qdGameObject::init));
 
-	std::for_each(grid_zone_list().begin(), grid_zone_list().end(),
+	Common::for_each(grid_zone_list().begin(), grid_zone_list().end(),
 	              std::mem_fun(&qdGridZone::init));
 
-	std::for_each(music_track_list().begin(), music_track_list().end(),
+	Common::for_each(music_track_list().begin(), music_track_list().end(),
 	              std::mem_fun(&qdMusicTrack::init));
 
 	if (has_minigame() && !_minigame) {

@@ -339,7 +339,7 @@ bool qdInterfaceScreen::show_element(qdInterfaceElement *p) {
 }
 
 bool qdInterfaceScreen::sort_elements() {
-	std::sort(_sorted_elements.begin(), _sorted_elements.end(), qdInterfaceElementsOrdering());
+	Common::sort(_sorted_elements.begin(), _sorted_elements.end(), qdInterfaceElementsOrdering());
 	return true;
 }
 
