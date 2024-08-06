@@ -1023,7 +1023,7 @@ bool qdAnimation::add_scale(float value) {
 	if (it != _scales.end()) return false;
 
 	_scales.push_back(value);
-	std::sort(_scales.begin(), _scales.end());
+	Common::sort(_scales.begin(), _scales.end());
 	return true;
 }
 

@@ -5224,8 +5224,8 @@ inline istream &operator>>(istream &is, Vect4f &v) {
 
 //  Mat3d I/O  ////////////////////////
 inline ostream &operator<<(ostream &os, const Mat3d &m) {
-	os << m.xx << " \t" << m.xy << " \t" << m.xz << std::endl;
-	os << m.yx << " \t" << m.yy << " \t" << m.yz << std::endl;
+	os << m.xx << " \t" << m.xy << " \t" << m.xz << "\n";
+	os << m.yx << " \t" << m.yy << " \t" << m.yz << "\n";
 	os << m.zx << " \t" << m.zy << " \t" << m.zz;
 	return os;
 }
@@ -5239,8 +5239,8 @@ inline istream &operator>>(istream &is, Mat3d &m) {
 
 //  Mat3f I/O  ////////////////////////
 inline ostream &operator<<(ostream &os, const Mat3f &m) {
-	os << m.xx << " \t" << m.xy << " \t" << m.xz << std::endl;
-	os << m.yx << " \t" << m.yy << " \t" << m.yz << std::endl;
+	os << m.xx << " \t" << m.xy << " \t" << m.xz << "\n";
+	os << m.yx << " \t" << m.yy << " \t" << m.yz << "\n";
 	os << m.zx << " \t" << m.zy << " \t" << m.zz;
 	return os;
 }
