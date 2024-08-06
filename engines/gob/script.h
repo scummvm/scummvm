@@ -124,7 +124,7 @@ public:
 	/** Push the current script position and branch to the specified offset. */
 	void call(uint32 offset);
 
-	/** Override a byte into the loaded script data (used for some script bugs workarounds) */
+	/** Override a byte into the loaded script data (used for some script bugs Workarounds) */
 	void writeByte(int32 offset, byte v);
 
 	// Fixed properties
