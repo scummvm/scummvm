@@ -213,7 +213,7 @@ bool qdInterfaceScreen::rename_element(qdInterfaceElement *p, const char *name) 
 }
 
 bool qdInterfaceScreen::remove_element(qdInterfaceElement *p) {
-	sorted_element_list_t::iterator it = std::find(_sorted_elements.begin(), _sorted_elements.end(), p);
+	sorted_element_list_t::iterator it = Common::find(_sorted_elements.begin(), _sorted_elements.end(), p);
 	if (it != _sorted_elements.end())
 		_sorted_elements.erase(it);
 	return _elements.remove_object(p);
@@ -312,7 +312,7 @@ bool qdInterfaceScreen::hide_element(qdInterfaceElement *p, bool temporary_hide)
 	if (!temporary_hide)
 		p->hide();
 
-	sorted_element_list_t::iterator it = std::find(_sorted_elements.begin(), _sorted_elements.end(), p);
+	sorted_element_list_t::iterator it = Common::find(_sorted_elements.begin(), _sorted_elements.end(), p);
 	if (it != _sorted_elements.end())
 		_sorted_elements.erase(it);
 
@@ -329,7 +329,7 @@ bool qdInterfaceScreen::show_element(const char *element_name) {
 bool qdInterfaceScreen::show_element(qdInterfaceElement *p) {
 	p->show();
 
-	sorted_element_list_t::iterator it = std::find(_sorted_elements.begin(), _sorted_elements.end(), p);
+	sorted_element_list_t::iterator it = Common::find(_sorted_elements.begin(), _sorted_elements.end(), p);
 	if (it == _sorted_elements.end()) {
 		_sorted_elements.push_back(p);
 		sort_elements();

@@ -655,12 +655,12 @@ private:
 	bool init_inventories();
 
 	qdInventoryCellTypeVector::iterator find_inventory_cell_type(int type) {
-		return std::find(_inventory_cell_types.begin(),
+		return Common::find(_inventory_cell_types.begin(),
 		                 _inventory_cell_types.end(), type);
 	}
 
 	qdInventoryCellTypeVector::const_iterator find_inventory_cell_type(int type) const {
-		return std::find(_inventory_cell_types.begin(), _inventory_cell_types.end(), type);
+		return Common::find(_inventory_cell_types.begin(), _inventory_cell_types.end(), type);
 	}
 
 	void redraw(const grScreenRegion &reg);

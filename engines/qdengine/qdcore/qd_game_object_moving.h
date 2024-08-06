@@ -438,14 +438,14 @@ private:
 
 	void optimize_path(Std::vector<Vect2i> &path) const;
 
-	void optimize_path_four_dirs(std::list<Vect2i> &path) const;
+	void optimize_path_four_dirs(Std::list<Vect2i> &path) const;
 	// Спрямление четырех точек для пути с восемью направлениями
-	bool four_pts_eight_dir_straight(std::list<Vect2i> &path,
-	                                 std::list<Vect2i>::reverse_iterator cur) const;
+	bool four_pts_eight_dir_straight(Std::list<Vect2i> &path,
+	                                 Std::list<Vect2i>::reverse_iterator cur) const;
 	// Удаляем точки, лежащие внутри прямых отрезков пути
-	bool del_coll_pts(std::list<Vect2i> &path) const;
-	void optimize_path_eight_dirs(std::list<Vect2i> &path) const;
-	void optimize_path_smooth(std::list<Vect2i> &path) const;
+	bool del_coll_pts(Std::list<Vect2i> &path) const;
+	void optimize_path_eight_dirs(Std::list<Vect2i> &path) const;
+	void optimize_path_smooth(Std::list<Vect2i> &path) const;
 	void finalize_path(const Vect3f &from, const Vect3f &to, const Std::vector<Vect2i> &path, Std::vector<Vect3f> &out_path) const;
 
 	bool adjust_position(Vect3f &pos) const;

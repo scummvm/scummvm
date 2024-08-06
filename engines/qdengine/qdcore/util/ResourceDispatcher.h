@@ -136,7 +136,7 @@ public:
 
 private:
 
-	typedef std::list<PtrHandle<ResourceUser> > UserList;
+	typedef Std::list<PtrHandle<ResourceUser> > UserList;
 	UserList users;
 
 	SyncroTimer syncro_timer;

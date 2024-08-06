@@ -65,7 +65,7 @@ private:
 	float _length;
 };
 
-typedef std::list<qdAnimationFrame *> qdAnimationFrameList;
+typedef Std::list<qdAnimationFrame *> qdAnimationFrameList;
 
 } // namespace QDEngine
 

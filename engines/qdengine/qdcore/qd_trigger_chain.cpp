@@ -83,7 +83,7 @@ qdTriggerElementPtr qdTriggerChain::search_element(int id) {
 
 	qdTriggerElementList::iterator res =
 	    std::lower_bound(_elements.begin(), _elements.end(), id, id_compare());
-	//      std::find_if(_elements.begin(), _elements.end(), id_equality(id));
+	//      Common::find_if(_elements.begin(), _elements.end(), id_equality(id));
 
 	if (res == _elements.end() || (*res)->ID() != id)
 		return 0;

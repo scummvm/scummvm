@@ -933,7 +933,7 @@ bool qdGameScene::init() {
 
 bool qdGameScene::change_active_personage(void) {
 	if (_selected_object) {
-		personages_container_t::iterator it = std::find(_personages.begin(), _personages.end(), _selected_object);
+		personages_container_t::iterator it = Common::find(_personages.begin(), _personages.end(), _selected_object);
 		if (it == _personages.end()) return false;
 
 		do {

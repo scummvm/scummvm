@@ -156,7 +156,7 @@ bool qdTriggerElement::check_internal_conditions() {
 }
 
 qdTriggerLink *qdTriggerElement::find_child_link(qdTriggerElementConstPtr ptrChild) {
-	qdTriggerLinkList::iterator itr = std::find(_children.begin(), _children.end(), ptrChild);
+	qdTriggerLinkList::iterator itr = Common::find(_children.begin(), _children.end(), ptrChild);
 
 	if (itr != _children.end())
 		return &*itr;
@@ -173,7 +173,7 @@ qdTriggerLink *qdTriggerElement::find_child_link(int child_id) {
 }
 
 qdTriggerLink *qdTriggerElement::find_parent_link(qdTriggerElementConstPtr ptrParent) {
-	qdTriggerLinkList::iterator itr = std::find(_parents.begin(), _parents.end(), ptrParent);
+	qdTriggerLinkList::iterator itr = Common::find(_parents.begin(), _parents.end(), ptrParent);
 
 	if (itr != _parents.end())
 		return &*itr;

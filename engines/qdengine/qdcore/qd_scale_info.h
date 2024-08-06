@@ -53,7 +53,7 @@ private:
 	float _scale;
 };
 
-typedef std::list<qdScaleInfo *> qdScaleInfoList;
+typedef Std::list<qdScaleInfo *> qdScaleInfoList;
 
 } // namespace QDEngine
 

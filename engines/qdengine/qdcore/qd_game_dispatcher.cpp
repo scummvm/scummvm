@@ -1949,7 +1949,7 @@ bool qdGameDispatcher::close_video() {
 	_video_player.close_file();
 
 	if (check_flag(INTRO_MODE_FLAG)) {
-		qdVideoList::const_iterator it = std::find(video_list().begin(), video_list().end(), _cur_video);
+		qdVideoList::const_iterator it = Common::find(video_list().begin(), video_list().end(), _cur_video);
 		if (it != video_list().end()) ++it;
 		for (; it != video_list().end(); ++it) {
 			if ((*it)->is_intro_movie()) {
@@ -2809,7 +2809,7 @@ bool qdGameDispatcher::init() {
 		(*it)->init();
 
 	//! Грузим шрифты, заданные в qdGameDispatcher::qdFontInfoList
-	for (std::list<qdFontInfo * >::const_iterator it = _fonts.get_list().begin();
+	for (Std::list<qdFontInfo * >::const_iterator it = _fonts.get_list().begin();
 	        it != _fonts.get_list().end(); ++it)
 		(*it)->load_font();
 
@@ -3068,7 +3068,7 @@ void qdGameDispatcher::free_font(grFont *fnt) {
 }
 
 bool qdGameDispatcher::add_dialog_state(qdGameObjectState *p) {
-	dialog_states_container_t::const_iterator it = std::find(_dialog_states.begin(), _dialog_states.end(), p);
+	dialog_states_container_t::const_iterator it = Common::find(_dialog_states.begin(), _dialog_states.end(), p);
 	if (it != _dialog_states.end()) return false;
 
 	_dialog_states.push_back(p);

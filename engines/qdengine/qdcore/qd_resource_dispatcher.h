@@ -37,7 +37,7 @@ public:
 	//! Регистрация ресурса.
 	bool register_resource(qdResource *res, const T *res_owner) {
 		qdResourceHandle<T> hres(res, res_owner);
-		typename handle_container_t::iterator it = std::find(_handles.begin(), _handles.end(), hres);
+		typename handle_container_t::iterator it = Common::find(_handles.begin(), _handles.end(), hres);
 
 		if (it != _handles.end()) return false;
 		_handles.push_back(hres);
@@ -48,7 +48,7 @@ public:
 	//! Отмена регистрации ресурса.
 	bool unregister_resource(qdResource *res, const T *res_owner) {
 		qdResourceHandle<T> hres(res, res_owner);
-		typename handle_container_t::iterator it = std::find(_handles.begin(), _handles.end(), hres);
+		typename handle_container_t::iterator it = Common::find(_handles.begin(), _handles.end(), hres);
 
 		if (it != _handles.end()) {
 			_handles.erase(it);
@@ -62,16 +62,16 @@ public:
 	bool is_registered(const qdResource *res, const T *res_owner = NULL) const {
 		if (res_owner) {
 			qdResourceHandle<T> hres(const_cast<qdResource *>(res), res_owner);
-			typename handle_container_t::const_iterator it = std::find(_handles.begin(), _handles.end(), hres);
+			typename handle_container_t::const_iterator it = Common::find(_handles.begin(), _handles.end(), hres);
 			return (it != _handles.end());
 		} else {
-			typename handle_container_t::const_iterator it = std::find(_handles.begin(), _handles.end(), *res);
+			typename handle_container_t::const_iterator it = Common::find(_handles.begin(), _handles.end(), *res);
 			return (it != _handles.end());
 		}
 	}
 
 	const T *find_owner(const qdResource *res) const {
-		typename handle_container_t::const_iterator it = std::find(_handles.begin(), _handles.end(), *res);
+		typename handle_container_t::const_iterator it = Common::find(_handles.begin(), _handles.end(), *res);
 		if (_handles.end() == it) return NULL;
 		return (*it).resource_owner();
 	}
@@ -181,7 +181,7 @@ protected:
 		const T *_resource_owner;
 	};
 
-	typedef std::list< qdResourceHandle<T> > handle_container_t;
+	typedef Std::list< qdResourceHandle<T> > handle_container_t;
 
 	//! Хэндлы ресурсов.
 	handle_container_t _handles;

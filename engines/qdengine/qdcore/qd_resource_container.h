@@ -23,6 +23,8 @@
 #ifndef QDENGINE_QDCORE_QD_RESOURCE_CONTAINER_H
 #define QDENGINE_QDCORE_QD_RESOURCE_CONTAINER_H
 
+#include <list>
+
 #include "qdengine/qdcore/qd_animation.h"
 #include "qdengine/qdcore/qd_resource_dispatcher.h"
 #include "qdengine/qdcore/qd_sound.h"
@@ -57,13 +59,13 @@ public:
 	*/
 	qdResource *get_resource(const char *file_name) const;
 
-	typedef std::list<qdResource *> resource_list_t;
+	typedef Std::list<qdResource *> resource_list_t;
 	//! Возвращает список ресурсов.
 	const resource_list_t &resource_list() const {
 		return _resource_list;
 	}
 	//! Возвращает всех владельцев ресурсов
-	void get_owners(std::list<T *> &owners);
+	void get_owners(Std::list<T *> &owners);
 	//! Пишет список всех файлов в list.
 	bool get_file_list(qdFileNameList &list) const;
 
@@ -147,7 +149,7 @@ bool qdResourceContainer<T>::remove_resource(const char *file_name, const T *own
 
 	if (!_resource_dispatcher.is_registered(p)) {
 		_resource_map.erase(it);
-		resource_list_t::iterator it2 = std::find(_resource_list.begin(), _resource_list.end(), p);
+		resource_list_t::iterator it2 = Common::find(_resource_list.begin(), _resource_list.end(), p);
 		if (it2 != _resource_list.end()) {
 			delete p;
 			_resource_list.erase(it2);
@@ -171,7 +173,7 @@ qdResource *qdResourceContainer<T>::get_resource(const char *file_name) const {
 }
 
 template<class T>
-void qdResourceContainer<T>::get_owners(std::list<T *> &owners) {
+void qdResourceContainer<T>::get_owners(Std::list<T *> &owners) {
 	for (resource_list_t::iterator it = _resource_list.begin(); it != _resource_list.end(); ++it) {
 		if ((*it)->resource_file()) {
 			T *ptr = const_cast<T *>(_resource_dispatcher.find_owner(*it));

@@ -206,7 +206,7 @@ bool AIAStar<Heuristic, TypeH>::FindPath(Vect2i from, Heuristic *hr, Std::vector
 				parent = parent->parent;
 			}
 			assert(vp.x == from.x && vp.y == from.y);
-			std::reverse(path.begin(), path.end());
+			Common::reverse(path.begin(), path.end());
 			return true;
 		}
 
