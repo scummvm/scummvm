@@ -911,14 +911,14 @@ bool qdGameScene::init() {
 
 	_selected_object = NULL;
 
-	Common::for_each(object_list().begin(), object_list().end(),
-	              std::mem_fun(&qdGameObject::init));
+	for (auto it : object_list())
+		it->init();
 
-	Common::for_each(grid_zone_list().begin(), grid_zone_list().end(),
-	              std::mem_fun(&qdGridZone::init));
+	for (auto it : grid_zone_list())
+		it->init();
 
-	Common::for_each(music_track_list().begin(), music_track_list().end(),
-	              std::mem_fun(&qdMusicTrack::init));
+	for (auto it : music_track_list())
+		it->init();
 
 	if (has_minigame() && !_minigame) {
 		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher())
