@@ -94,7 +94,7 @@ protected:
 	 * Handles basic stuff per frame, like copying the latest frame to
 	 * _externalBuffer, and updating the frame-counters.
 	 *
-	 * @return false if a frame wasnt drawn to _externalBuffer, true otherwise.
+	 * @return false if a frame wasn't drawn to _externalBuffer, true otherwise.
 	 * @see handleFrame
 	 */
 	virtual bool prepareFrame();
