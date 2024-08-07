@@ -64,11 +64,13 @@ private:
 	Pic _frame;
 	Pic *_fullscreenPic = nullptr;
 	bool _timeAdvanceEventSelected = false;
+	uint8 _delbertspeech = 0;
 
 protected:
 	// Engine APIs
 	Common::Error run() override;
 public:
+	bool _ct_voice_status = false;
 	bool _isRightMouseClicked = false;
 	bool _isLeftMouseClicked = false;
 

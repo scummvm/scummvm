@@ -1375,6 +1375,9 @@ void DarkseedEngine::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 		_player->_position.x = 324;
 		_player->_position.y = 50;
 		break;
+	case 20:
+		spriteAnimCountdownTimer[3] = 3;
+		break;
 	case 26 :
 		_player->_position.x = 324;
 		_player->_position.y = 135;
@@ -1666,6 +1669,14 @@ void DarkseedEngine::updateAnimation() {
 			if (_objectVar[22] == 3) {
 				_room->loadRoom61AWalkableLocations();
 			}
+		}
+		break;
+	case 20: // receive card from delbert
+		advanceAnimationFrame(3);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(3).frameNo[animIndexTbl[3]];
+		} else {
+			_inventory.addItem(18);
 		}
 		break;
 	case 10:
@@ -3074,7 +3085,7 @@ void DarkseedEngine::lookCode(int objNum) {
 		return;
 	}
 	if (objNum == 18 && _cursor.getY() < 40) {
-		showFullscreenPic(_room->isGiger() ? "gbcard.pic" : "cbcard.pic");
+		showFullscreenPic(_room->isGiger() ? "gbcard01.pic" : "cbcard01.pic");
 		return;
 	}
 	if (objNum == 6 && _cursor.getY() < 40) {
@@ -3362,6 +3373,37 @@ void DarkseedEngine::runObjects() {
 		}
 		if (_player->_position.x == 290 && _player->_position.y == 209 && !_player->_playerIsChangingDirection && _player->_direction != 3) {
 			_player->changeDirection(_player->_direction, 3);
+		}
+		isAnimFinished_maybe = false;
+		if (!_ct_voice_status && (_objectVar[141] != 2 || _delbertspeech > 64)) {
+			nextFrame(_objectVar[141] - 1);
+		}
+		if (isAnimFinished_maybe) {
+			_objectVar[141]++;
+			if (_objectVar[141] == 2) {
+				_delbertspeech = 63;
+				_console->printTosText(907);
+//				if (_gGameSound == 0) { TODO
+//					waitxticks(240);
+//				}
+			} else if (_objectVar[141] == 4) {
+				_player->_herowaiting = false;
+			}
+			isAnimFinished_maybe = false;
+		}
+		if (_ct_voice_status == 0 && _objectVar[141] == 2) {
+			if (_delbertspeech < 65) {
+				_delbertspeech++;
+			}
+			if (_delbertspeech == 64) {
+				_console->printTosText(908);
+//				WaitForSpeech(); TODO
+			}
+			else if (*(char *)&_delbertspeech == 65) {
+				setupOtherNspAnimation(3, 20);
+				spriteAnimCountdownTimer[1] = 3;
+				_delbertspeech = 72;
+			}
 		}
 		// TODO more logic here
 	}
