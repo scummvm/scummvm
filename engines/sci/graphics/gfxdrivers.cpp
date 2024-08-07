@@ -1628,22 +1628,19 @@ void renderPlanarMatrix(byte *dst, const byte *src, int pitch, int w, int h, con
 	byte *d2 = d1 + dstPitch;
 	pitch -= w;
 	dstPitch += (pitch << 1);
-	byte c[6];
 
 	while (h--) {
-		for (int i = 0; i < (w >> 2); ++i) {
-			const byte *t1 = &tbl[(src[0] << 4 | src[1]) * 6];
-			const byte *t2 = &tbl[(src[2] << 4 | src[3]) * 6];
-
-			for (int ii = 0; ii < 6; ++ii)
-				c[ii] = (t1[ii] & 0xF0) | (t2[ii] & 0x0F);
-
-			for (int ii = 0; ii < 8; ++ii) {
+		byte sh = 0;
+		for (int i = 0; i < (w >> 1); ++i) {
+			const byte *c = &tbl[(src[0] << 4 | src[1]) * 6];
+			for (int ii = sh; ii < sh + 4; ++ii) {
 				*d1++ = (((c[0] >> (7 - ii)) & 1) << 2) | (((c[1] >> (7 - ii)) & 1) << 1) | ((c[2] >> (7 - ii)) & 1);
 				*d2++ = (((c[3] >> (7 - ii)) & 1) << 2) | (((c[4] >> (7 - ii)) & 1) << 1) | ((c[5] >> (7 - ii)) & 1);
 			}
-			src += 4;
+			src += 2;
+			sh ^= 4;
 		}
+
 		src += pitch;
 		d1 += dstPitch;
 		d2 += dstPitch;
