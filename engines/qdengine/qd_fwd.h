@@ -22,8 +22,6 @@
 #ifndef QDENGINE_QD_FWD_H
 #define QDENGINE_QD_FWD_H
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "common/str.h"
 #include "common/std/list.h"
 #include "common/std/vector.h"

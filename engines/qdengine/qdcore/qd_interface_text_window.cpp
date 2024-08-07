@@ -169,7 +169,7 @@ bool qdInterfaceTextWindow::char_input_handler(int input) {
 #endif
 	if (_windowType == WINDOW_EDIT && _isEditing) {
 		if (!_inputStringLimit || _inputString.size() < _inputStringLimit) {
-			if (isprint(input) || input == '_' || input == '-' || input == ' ') {
+			if (Common::isPrint(input) || input == '_' || input == '-' || input == ' ') {
 				_inputString.insertChar(input, _caretPose++);
 				return true;
 			}
