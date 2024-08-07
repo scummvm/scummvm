@@ -100,9 +100,148 @@ void Room401::parser() {
 
 	if (player_said("conv401a")) {
 		conv401a();
-	}
-	// TODO
-	else {
+	} else if (_G(kernel).trigger == 747) {
+		if (_val4) {
+			switch (_val4) {
+			case 1:
+				_G(flags)[V129] = 1;
+				break;
+			case 2:
+				_G(flags)[V129] = 0;
+				break;
+			case 3:
+				_G(flags)[V129] = 4;
+				break;
+			case 4:
+				_G(flags)[V129] = 3;
+				break;
+			default:
+				break;
+			}
+
+			disable_player_commands_and_fade_init(748);
+		}
+
+		_val6 = 0;
+		_val3 = 3;
+	} else if (_G(kernel).trigger == 748) {
+		_G(flags)[V322] = 0;
+		_G(game).setRoom(495);
+	} else if (player_said("talk to", "agent")) {
+		ws_hide_walker();
+		_G(kernel).trigger_mode = KT_DAEMON;
+		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			triggerMachineByHashCallbackNegative, "rip");
+		sendWSMessage_10000(1, _ripMach, _401rp01, 1, 11, 200, _401rp01, 11, 11, 0);
+
+		_val7 = 0;
+		_val3 = 0;
+		_G(kernel).trigger_mode = KT_PARSE;
+
+		conv_load("conv401a", 10, 10, 747);
+		conv_export_value_curr(_G(flags)[V088] < 3 ? 0 : 1, 1);
+		conv_export_pointer_curr(&_val4, 2);
+		conv_export_value_curr(inv_player_has("POMERANIAN MARKS") ? 1 : 0, 3);
+		conv_export_value_curr(_G(flags)[V110], 4);
+		conv_export_value_curr(getItemCount() ? 1 : 0, 5);
+
+		#define EXPORT(INDEX, NAME) conv_export_value_curr(inv_player_has(NAME) ? 1 : 0, INDEX)
+		EXPORT(6, "CRYSTAL SKULL");
+		EXPORT(7, "STICK AND SHELL MAP");
+		EXPORT(8, "WHEELED TOY");
+		EXPORT(9, "REBUS AMULET");
+		EXPORT(10, "SHRUNKEN HEAD");
+		EXPORT(11, "SILVER BUTTERFLY");
+		EXPORT(12, "POSTAGE STAMP");
+		EXPORT(13, "GERMAN BANKNOTE");
+		EXPORT(14, "WHALE BONE HORN");
+		EXPORT(15, "CHISEL");
+		EXPORT(16, "INCENSE BURNER");
+		EXPORT(17, "ROMANOV EMERALD");
+
+		conv_play();
+		_G(kernel).trigger_mode = KT_DAEMON;
+		_val6 = 4;
+	} else if (lookFlag && player_said(" ")) {
+		digi_play("COM001", 1, 255, -1, 997);
+	} else if (takeFlag && player_said("BEER STEIN")) {
+		digi_play("203r58", 1);
+	} else if (lookFlag && player_said("BEER STEIN")) {
+		if (_G(flags)[GLB_TEMP_9]) {
+			digi_play("401R07", 1);
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				digi_play("401R05", 1, 255, 3);
+				kernel_timing_trigger(1, 230);
+				break;
+			case 1:
+				player_update_info();
+				ws_walk(_G(player_info).x + 1, _G(player_info).y,
+					nullptr, 2, 3);
+				_val6 = 4;
+				break;
+			case 2:
+				setGlobals1(_rip1, 1, 7, 8, 9, 1);
+				sendWSMessage_110000(-1);
+				break;
+			case 3:
+				sendWSMessage_140000(-1);
+				_val6 = 5;
+				digi_play("401x06", 1, 255, 4);
+				break;
+			case 4:
+				setGlobals1(_rip1, 1, 7, 8, 9, 1);
+				sendWSMessage_110000(-1);
+				_val6 = 4;
+
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_timing_trigger(1, 100);
+				_G(kernel).trigger_mode = KT_PARSE;
+				digi_play("401r06", 1, 255, 5);
+				break;
+			case 5:
+				sendWSMessage_140000(-1);
+				_val6 = 5;
+				digi_play("401x07", 1, 255, 6);
+				break;
+			case 6:
+				_val6 = 0;
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_timing_trigger(1, 100);
+				_G(kernel).trigger_mode = KT_PARSE;
+				_G(flags)[GLB_TEMP_9] = 1;
+				player_set_commands_allowed(true);
+				break;
+			default:
+				break;
+			}
+		}
+	} else if (lookFlag && player_said("POSTCARD RACK")) {
+		// No implementation
+	} else if (useFlag && player_said_any("SOFA", "CHAIR")) {
+		digi_play("COM025", 1, 255, -1, 997);
+	} else if (useFlag && player_said("TELEPHONE")) {
+		digi_play("COM026", 1, 255, -1, 997);
+	} else if ((useFlag || takeFlag) && player_said("COAT")) {
+		digi_play("203R58", 1);
+	} else if (takeFlag && player_said("POSTCARD RACK")) {
+		digi_play("COM004", 1, 255, -1, 997);
+	} else if (takeFlag && player_said("MAGAZINE")) {
+		digi_play("COM005", 1, 255, -1, 997);
+	} else if (player_said("exit")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			disable_player_commands_and_fade_init(3);
+			break;
+		case 3:
+			_G(game).setRoom(410);
+			break;
+		default:
+			break;
+		}
+	} else {
 		return;
 	}
 
@@ -184,6 +323,22 @@ void Room401::conv401a() {
 
 		digi_play(sound, 1, 255, 1);
 	}
+}
+
+int Room401::getItemCount() const {
+	int count = 0;
+	static const char *NAMES[12] = {
+		"SHRUNKEN HEAD", "INCENSE BURNER", "CRYSTAL SKULL",
+		"WHALE BONE HORN", "WHEELED TOY", "SILVER BUTTERFLY",
+		"REBUS AMULET", "CHISEL", "GERMAN BANKNOTE",
+		"POSTAGE STAMP", "STICK AND SHELL MAP", "ROMANOV EMERALD"
+	};
+	for (int i = 0; i < 12; ++i) {
+		if (inv_player_has(NAMES[i]))
+			++count;
+	}
+
+	return count;
 }
 
 } // namespace Rooms

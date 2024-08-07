@@ -33,9 +33,10 @@ private:
 	int _val1 = 0;
 	int _val2 = 0;
 	int _val3 = 0;
-	int _val4 = 0;
+	int32 _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;
+	int _val7 = 0;
 	int _401a01 = 0;
 	int _401a02 = 0;
 	int _401a03 = 0;
@@ -48,9 +49,11 @@ private:
 	int _rip3 = 0;
 	int _rip4 = 0;
 	machine *_agent = nullptr;
+	machine *_ripMach = nullptr;
 	const char *_digiName = nullptr;
 
 	void conv401a();
+	int getItemCount() const;
 
 public:
 	Room401() : Room() {}
