@@ -99,13 +99,24 @@ enum MTGameFlag {
 };
 
 struct MTropolisGameDescription {
-	AD_GAME_DESCRIPTION_HELPERS(desc);
-
 	ADGameDescription desc;
 
 	int gameID;
 	int gameType;
 	MTropolisGameBootID bootID;
+	const char *mainFileWindows;
+
+	uint32 sizeBuffer() const {
+		uint32 ret = desc.sizeBuffer();
+		ret += ADDynamicDescription::strSizeBuffer(mainFileWindows);
+		return ret;
+	}
+
+	void *toBuffer(void* buffer) {
+		buffer = desc.toBuffer(buffer);
+		buffer = ADDynamicDescription::strToBuffer(buffer, mainFileWindows);
+		return buffer;
+	}
 };
 
 #define GAMEOPTION_WIDESCREEN_MOD				GUIO_GAMEOPTIONS1
@@ -114,6 +125,8 @@ struct MTropolisGameDescription {
 #define GAMEOPTION_SOUND_EFFECT_SUBTITLES		GUIO_GAMEOPTIONS4
 #define GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS		GUIO_GAMEOPTIONS5
 #define GAMEOPTION_ENABLE_SHORT_TRANSITIONS		GUIO_GAMEOPTIONS6
+
+#define MT_DEFAULT_MAINFILE ""
 
 } // End of namespace MTropolis
 
