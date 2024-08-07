@@ -106,6 +106,8 @@
 	 0, 0, 0
 },
 
+// -- English: A.J.'s World of Discovery / ADI Jnr.
+
 // -- DOS VGA Floppy --
 
 {
@@ -152,5 +154,7 @@
 	kFeaturesNone,
 	0, 0, 0
 },
+
+// Italian: Adibù
 
 #endif // GOB_DETECTION_TABLES_ADIBOU1_H
