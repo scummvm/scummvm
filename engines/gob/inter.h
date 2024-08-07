@@ -670,6 +670,8 @@ protected:
 	void setupOpcodesGob() override;
 
 	void oPlaytoons_printText(OpFuncParams &params);
+	void oPlaytoons_drawLine(OpFuncParams &params);
+	void oPlaytoons_invalidate(OpFuncParams &params);
 	void oPlaytoons_F_1B(OpFuncParams &params);
 	void oPlaytoons_putPixel(OpFuncParams &params);
 	void oPlaytoons_freeSprite(OpFuncParams &params);
