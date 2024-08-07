@@ -63,7 +63,7 @@ void *luaM_realloc(void *block, int32 size) {
 	int32 realsize = sizeof(int32) + size + sizeof(char);
 	if (realsize != (size_t)realsize)
 		lua_error("Allocation Error: Block too big");
-	if (size == 0) {  // ANSI dosen't need this, but some machines...
+	if (size == 0) {  // ANSI doesn't need this, but some machines...
 		if (block) {
 			memset(block, -1, *((int32 *)block - 1));  // erase block
 			block = checkblock(block);

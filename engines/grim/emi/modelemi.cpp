@@ -97,7 +97,7 @@ void EMIModel::setTex(uint32 index) {
 }
 
 void EMIModel::loadMesh(Common::SeekableReadStream *data) {
-	//int strLength = 0; // Usefull for PS2-strings
+	//int strLength = 0; // Useful for PS2-strings
 
 	Common::String nameString = readLAString(data);
 
