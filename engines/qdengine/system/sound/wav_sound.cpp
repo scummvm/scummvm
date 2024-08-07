@@ -19,7 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "audio/decoders/wave.h"
 #include "common/debug.h"
 #include "common/system.h"

@@ -19,7 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/stream.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/vorbis.h"

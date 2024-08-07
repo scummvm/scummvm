@@ -18,7 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/file.h"
 #include "graphics/managed_surface.h"
 

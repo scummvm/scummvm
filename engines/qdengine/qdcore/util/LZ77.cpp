@@ -24,7 +24,6 @@
 //
 // Implemented by Arkadi Kagan.
 //
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/endian.h"
 #include "common/util.h"
 

@@ -19,7 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/events.h"
 #include "common/fs.h"
 #include "common/formats/winexe.h"

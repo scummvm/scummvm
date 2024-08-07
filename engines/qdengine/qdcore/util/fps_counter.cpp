@@ -19,7 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/system.h"
 
 #include "qdengine/qdcore/util/fps_counter.h"

@@ -19,7 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/textconsole.h"
 
 #include "qdengine/system/input/mouse_input.h"
