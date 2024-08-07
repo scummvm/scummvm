@@ -23,8 +23,6 @@
 #ifndef QDENGINE_QDCORE_QD_RESOURCE_CONTAINER_H
 #define QDENGINE_QDCORE_QD_RESOURCE_CONTAINER_H
 
-#include <list>
-
 #include "qdengine/qdcore/qd_animation.h"
 #include "qdengine/qdcore/qd_resource_dispatcher.h"
 #include "qdengine/qdcore/qd_sound.h"
