@@ -19,7 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/archive.h"
 #include "common/formats/ini-file.h"
 

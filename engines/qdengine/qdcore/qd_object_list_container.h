@@ -22,8 +22,6 @@
 #ifndef QDENGINE_QDCORE_QD_OBJECT_LIST_CONTAINER_H
 #define QDENGINE_QDCORE_QD_OBJECT_LIST_CONTAINER_H
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "common/str.h"
 #include "common/std/list.h"
 

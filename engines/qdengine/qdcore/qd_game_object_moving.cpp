@@ -19,8 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "common/debug.h"
 
 #include "qdengine/qd_fwd.h"

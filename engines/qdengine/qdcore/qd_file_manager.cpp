@@ -19,7 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/compression/unzip.h"

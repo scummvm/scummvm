@@ -19,8 +19,6 @@
  *
  */
 
-/* ---------------------------- INCLUDE SECTION ----------------------------- */
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/file.h"
 #include "qdengine/qd_fwd.h"
 #include "qdengine/qdcore/qd_trigger_profiler.h"
