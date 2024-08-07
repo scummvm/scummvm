@@ -19,8 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "qdengine/qd_fwd.h"
 #include "qdengine/xmath.h"
 #include "qdengine/qdcore/qd_camera.h"

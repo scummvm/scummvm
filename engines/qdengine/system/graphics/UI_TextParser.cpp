@@ -19,7 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/util.h"
 
 #include "qdengine/system/graphics/gr_dispatcher.h"

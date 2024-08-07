@@ -19,7 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "graphics/managed_surface.h"
 
 #include "qdengine/system/graphics/gr_dispatcher.h"

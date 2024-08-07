@@ -19,7 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/stream.h"

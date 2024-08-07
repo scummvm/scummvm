@@ -19,7 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "audio/audiostream.h"
 
 #include "qdengine/qdengine.h"
