@@ -1088,6 +1088,7 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 	int currentRoomNumber = _room->_roomNumber;
 	_sprites.clearSpriteDrawList();
 	_room->runRoomObjects();
+	runObjects();
 //	FUN_2022_413a();
 	if (isPlayingAnimation_maybe == 0 ||
 		(otherNspAnimationType_maybe != 6 && otherNspAnimationType_maybe != 7) || currentRoomNumber != 5) {
@@ -3307,6 +3308,64 @@ void DarkseedEngine::throwmikeinjail() {
 	_objectVar[1] = 500;
 	_objectVar[88] = 0;
 	_objectVar.setObjectRunningCode(72, 0);
+}
+
+void DarkseedEngine::runObjects() {
+	if (((g_engine->_objectVar[44] != 0) && (g_engine->_objectVar[71] == 2))) {
+		g_engine->_objectVar[44] -= 2;
+		if (g_engine->_objectVar[44] == 0) {
+			g_engine->_objectVar[71] = 2;
+		}
+	}
+
+	if (g_engine->_objectVar[35] != 0) {
+		g_engine->_objectVar[35]--;
+	}
+	if (((_room->_roomNumber == 46) || (_room->_roomNumber == 60)) &&
+		(((_SoundTimer & 15) == 0 && (g_engine->_objectVar[57] == 1)))) {
+		playSound(9,5,-1);
+	}
+	if ((_room->_roomNumber == 12) && (_SoundTimer > 5)) {
+		_SoundTimer = 0;
+	}
+	if (((_room->_roomNumber == 8) && (_SoundTimer > 5)) && (g_engine->_objectVar[110] != 0)) {
+		_SoundTimer = 0;
+	}
+	if ((_room->_roomNumber == 38) && ((_SoundTimer & 31) == 0)) {
+		playSound(23,5,-1);
+	}
+	if ((_room->_roomNumber == 45) && ((_SoundTimer & 63) == 0)) {
+		playSound(10,5,-1);
+	}
+
+	if (_objectVar[141] == 8 && _room->_roomNumber == 31) {
+
+	}
+	if (_objectVar[141] == 9) {
+
+	}
+	if (_objectVar[141] == 10 && _room->_roomNumber == 31) {
+
+	}
+	if (_objectVar[141] == 7 && _room->_roomNumber == 31) {
+
+	}
+	if ((_objectVar[141] == 7 || _objectVar[141] == 8) && _room->_roomNumber == 31) {
+
+	}
+	if (_objectVar[141] > 0 && _objectVar[141] < 4) {
+		_player->_herowaiting = true;
+		if (_player->_walkToSequence == false && _player->_position.x != 290 && _player->_position.y != 209) {
+			_player->_walkTarget = {290, 209};
+			// TODO reset walk path here
+			_player->playerFaceWalkTarget();
+		}
+		if (_player->_position.x == 290 && _player->_position.y == 209 && !_player->_playerIsChangingDirection && _player->_direction != 3) {
+			_player->changeDirection(_player->_direction, 3);
+		}
+		// TODO more logic here
+	}
+	// TODO more logic here.
 }
 
 } // End of namespace Darkseed

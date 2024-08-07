@@ -124,6 +124,8 @@ public:
 
 	bool _debugShowWalkPath = false;
 	int _phoneStatus = 0;
+
+	int16 _SoundTimer = 0;
 public:
 	DarkseedEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~DarkseedEngine() override;
@@ -199,6 +201,7 @@ public:
 	void stuffPlayer();
 	void genericresponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx);
 	void throwmikeinjail();
+	void runObjects();
 private:
 	void updateAnimation();
 	void advanceAnimationFrame(int nspAminIdx);
