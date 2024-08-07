@@ -386,6 +386,55 @@ int Room::getNumKeyItemsPlaced() const {
 	return total;
 }
 
+bool Room::setItemsPlacedFlags() {
+	int count = getNumKeyItemsPlaced();
+
+	switch (_G(flags)[V005]) {
+	case 0:
+		if (_G(flags)[V006] >= 2 && getNumKeyItemsPlaced() == 0) {
+			_G(flags)[V005] += 1;
+			return true;
+		}
+		break;
+
+	case 1:
+	case 2:
+	case 3:
+		if ((_G(flags)[V006] >= 15 && count < 9) ||
+				(_G(flags)[V006] >= 10 && count < 6) ||
+				(_G(flags)[V006] >= 5 && count < 3)) {
+			_G(flags)[V005] += 1;
+			return true;
+		}
+		break;
+
+	case 4:
+	case 5:
+		if ((_G(flags)[V006] >= 15 && count < 9) ||
+				(_G(flags)[V006] >= 10 && count < 6) ||
+				(_G(flags)[V006] >= 5 && count < 3)) {
+			if (_G(flags)[V005] == 4)
+				_G(flags)[V005]++;
+			return true;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	_G(flags)[GLB_TEMP_1] = 0;
+	return false;
+}
+
+const char *Room::getItemsPlacedDigi() const {
+	static const char *NAMES[5] = {
+		"301r18", "301r19", "301r20", "301r21", "301r38"
+	};
+	int val = _G(flags)[V005];
+	return (val >= 1 && val <= 5) ? NAMES[val - 1] : nullptr;
+}
+
 } // namespace Rooms
 } // namespace Riddle
 } // namespace M4

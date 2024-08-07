@@ -99,6 +99,9 @@ protected:
 	 */
 	int getNumKeyItemsPlaced() const;
 
+	bool setItemsPlacedFlags();
+	const char *getItemsPlacedDigi() const;
+
 public:
 	Room() : M4::Room() {}
 	~Room() override {}
