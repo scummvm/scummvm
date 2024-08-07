@@ -116,7 +116,7 @@ public:
 	void set_time(int tm) {
 		_timer = tm;
 	}
-	int time() const {
+	int get_time() const {
 		return _timer;
 	}
 

@@ -58,7 +58,7 @@ qdGameObjectAnimated::qdGameObjectAnimated() : _cur_state(-1),
 	_lastShadowAlpha = QD_NO_SHADOW_ALPHA;
 
 	if (NULL != qdGameDispatcher::get_dispatcher())
-		_last_chg_time = qdGameDispatcher::get_dispatcher()->time();
+		_last_chg_time = qdGameDispatcher::get_dispatcher()->get_time();
 	else
 		_last_chg_time = 0;
 }
@@ -296,7 +296,7 @@ void qdGameObjectAnimated::quant(float dt) {
 	// Если текущ. позиция не соответствует той, что была в начале кванта, то
 	// объект изменился
 	if (R().x != beg_r.x || R().y != beg_r.y || R().z != beg_r.z)
-		_last_chg_time = qdGameDispatcher::get_dispatcher()->time();
+		_last_chg_time = qdGameDispatcher::get_dispatcher()->get_time();
 
 // debugC(3, kDebugLog, "%s %d %d %d %d", name(), _animation.cur_time(), R().x, R().y, R().z);
 }
@@ -351,7 +351,7 @@ bool qdGameObjectAnimated::load_script_body(const xml::tag *p) {
 }
 
 int qdGameObjectAnimated::idle_time() const {
-	return qdGameDispatcher::get_dispatcher()->time() - _last_chg_time;
+	return qdGameDispatcher::get_dispatcher()->get_time() - _last_chg_time;
 }
 
 int qdGameObjectAnimated::shadow_color() const {
@@ -535,7 +535,7 @@ void qdGameObjectAnimated::free_resources() {
 void qdGameObjectAnimated::set_state(int st) {
 	debugC(3, kDebugGraphics, "qdGameObjectAnimated::set_state(%d)", st);
 	// Указание на смену состояния => объект меняется (устанавливаем время изм.)
-	_last_chg_time = qdGameDispatcher::get_dispatcher()->time();
+	_last_chg_time = qdGameDispatcher::get_dispatcher()->get_time();
 
 	if (max_state() && st >= 0 && st <= max_state()) {
 		qdGameObjectState *p = _states[st];

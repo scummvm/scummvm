@@ -19,7 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "qdengine/metaengine.h"
 #include "qdengine/qdengine.h"
 #include "qdengine/qdcore/qd_game_dispatcher.h"

@@ -420,7 +420,7 @@ bool qdTriggerElement::quant(float dt) {
 					it.set_status(qdTriggerLink::LINK_DONE);
 #ifdef __QD_TRIGGER_PROFILER__
 				if (!qdTriggerProfiler::instance().is_read_only()) {
-					qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, _owner, _ID, it.element()->ID(), it.status());
+					qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->get_time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, _owner, _ID, it.element()->ID(), it.status());
 					qdTriggerProfiler::instance().add_record(rec);
 				}
 #endif
@@ -536,7 +536,7 @@ bool qdTriggerElement::conditions_quant(int link_type) {
 				it.activate();
 #ifdef __QD_TRIGGER_PROFILER__
 				if (!qdTriggerProfiler::instance().is_read_only()) {
-					qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, _owner, _ID, it.element()->ID(), it.status());
+					qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->get_time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, _owner, _ID, it.element()->ID(), it.status());
 					qdTriggerProfiler::instance().add_record(rec);
 				}
 #endif
@@ -571,7 +571,7 @@ bool qdTriggerElement::activate_links(qdTriggerElementPtr child) {
 				it.activate();
 #ifdef __QD_TRIGGER_PROFILER__
 				if (!qdTriggerProfiler::instance().is_read_only()) {
-					qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, _owner, _ID, it.element()->ID(), it.status());
+					qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->get_time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, _owner, _ID, it.element()->ID(), it.status());
 					qdTriggerProfiler::instance().add_record(rec);
 				}
 #endif
@@ -599,7 +599,7 @@ bool qdTriggerElement::deactivate_links(qdTriggerElementPtr child) {
 //			it->element()->set_status(qdTriggerElement::TRIGGER_EL_INACTIVE);
 #ifdef __QD_TRIGGER_PROFILER__
 			if (!qdTriggerProfiler::instance().is_read_only()) {
-				qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, _owner, _ID, it.element()->ID(), it.status());
+				qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->get_time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, _owner, _ID, it.element()->ID(), it.status());
 				qdTriggerProfiler::instance().add_record(rec);
 			}
 #endif
@@ -615,7 +615,7 @@ bool qdTriggerElement::deactivate_link(qdTriggerElementPtr child) {
 			it.deactivate();
 #ifdef __QD_TRIGGER_PROFILER__
 			if (!qdTriggerProfiler::instance().is_read_only()) {
-				qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, _owner, _ID, it.element()->ID(), it.status());
+				qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->get_time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, _owner, _ID, it.element()->ID(), it.status());
 				qdTriggerProfiler::instance().add_record(rec);
 			}
 #endif
@@ -681,7 +681,7 @@ bool qdTriggerElement::set_child_link_status(qdTriggerElementConstPtr child, qdT
 			p->set_status(st);
 #ifdef __QD_TRIGGER_PROFILER__
 			if (!qdTriggerProfiler::instance().is_read_only()) {
-				qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, _owner, _ID, p->element()->ID(), p->status());
+				qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->get_time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, _owner, _ID, p->element()->ID(), p->status());
 				qdTriggerProfiler::instance().add_record(rec);
 			}
 #endif
@@ -829,7 +829,7 @@ void qdTriggerElement::set_status(ElementStatus st) {
 
 #ifdef __QD_TRIGGER_PROFILER__
 	if (!qdTriggerProfiler::instance().is_read_only()) {
-		qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->time(), qdTriggerProfilerRecord::ELEMENT_STATUS_UPDATE, _owner, _ID, 0, st);
+		qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->get_time(), qdTriggerProfilerRecord::ELEMENT_STATUS_UPDATE, _owner, _ID, 0, st);
 		qdTriggerProfiler::instance().add_record(rec);
 	}
 #endif
