@@ -333,10 +333,23 @@ void SceneScriptHC01::dialogueWithIzo() {
 		} else {
 			Actor_Says(kActorIzo, 250, 13);
 			Actor_Modify_Friendliness_To_Other(kActorIzo, kActorMcCoy, -1);
-			if (Actor_Query_Friendliness_To_Other(kActorIzo, kActorMcCoy) < 47
-			 && Query_Difficulty_Level() == kGameDifficultyEasy
-			) {
-				takePhotoAndRunAway();
+			if (!_vm->_cutContent) {
+				// Original untriggered code (Easy Mode shortcut)
+				if (Actor_Query_Friendliness_To_Other(kActorIzo, kActorMcCoy) < 47
+				 && Query_Difficulty_Level() == kGameDifficultyEasy) {
+					// NOTE This code is unreachable in the original.
+					//      When we end up in the else clause, Izo friendliness has to be >= 50.
+					//      Essentially it's 50, which is the starting value.
+					//      Then we deduct 1 from it, so it will be 49.
+					//      And then we check if it's < 47, which is impossible regardless of the game difficulty setting.
+					//      Also, subsequently, this else clause is never re-entered, since Izo friendliness is now 49, thus < 50.
+					takePhotoAndRunAway();
+				}
+			} else {
+				// Enabled triggering of the Easy Mode shortcut
+				if (Query_Difficulty_Level() == kGameDifficultyEasy) {
+					takePhotoAndRunAway();
+				}
 			}
 		}
 		return;
