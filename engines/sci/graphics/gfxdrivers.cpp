@@ -237,6 +237,7 @@ void updateBitmapBuffer(byte *dst, int dstPitch, const byte *src, int srcPitch, 
 
 void GfxDefaultDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) {
 	GFXDRV_ASSERT_READY;
+	assert (h >= 0 && w >= 0);
 
 	src += (srcY * pitch + srcX * _srcPixelSize);
 	if (src != _currentBitmap)
@@ -517,7 +518,7 @@ void SCI0_CGADriver::copyRectToScreen(const byte *src, int srcX, int srcY, int p
 	int ty = destY;
 
 	for (int i = 0; i < h; ++i) {
-		_renderLine(dst, src, w, destX & 3, ++ty, _cgaPatterns, _internalPalette);
+		_renderLine(dst, src, w, srcX & 3, ++ty, _cgaPatterns, _internalPalette);
 		src += pitch;
 	}
 
@@ -651,7 +652,7 @@ void SCI0_CGABWDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int
 	src += (srcY * pitch + srcX);
 
 	for (int i = 0; i < h; ++i) {
-		_renderLine(dst, src, w, destX & 3, ty, _monochromePatterns, _internalPalette);
+		_renderLine(dst, src, w, srcX & 3, ty, _monochromePatterns, _internalPalette);
 		ty = (ty + 1) & 7;
 		src += pitch;
 	}
@@ -802,7 +803,7 @@ void SCI0_HerculesDriver::copyRectToScreen(const byte *src, int srcX, int srcY, 
 
 	for (int i = 0; i < h; ++i) {
 		const byte *src2 = src;
-		_renderLine(dst, src2, w, destX & 3, ty, _monochromePatterns, _internalPalette);
+		_renderLine(dst, src2, w, srcX & 3, ty, _monochromePatterns, _internalPalette);
 		ty = (ty + 1) & 7;
 		++rh;
 
@@ -1088,6 +1089,7 @@ void SCI1_EGADriver::setPalette(const byte *colors, uint start, uint num, bool u
 
 void SCI1_EGADriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod*, const byte*) {
 	GFXDRV_ASSERT_READY;
+	assert (h >= 0 && w >= 0);
 
 	src += (srcY * pitch + srcX);
 
@@ -1240,6 +1242,8 @@ void UpscaledGfxDriver::setPalette(const byte *colors, uint start, uint num, boo
 
 void UpscaledGfxDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) {
 	GFXDRV_ASSERT_READY;
+	assert (h >= 0 && w >= 0);
+
 	src += (srcY * pitch + srcX * _srcPixelSize);
 	if (src != _currentBitmap)
 		updateBitmapBuffer(_currentBitmap, _virtualW * _srcPixelSize, src, pitch, destX * _srcPixelSize, destY, w * _srcPixelSize, h);
@@ -1729,6 +1733,7 @@ void SCI1_PC98Gfx8ColorsDriver::initScreen(const Graphics::PixelFormat *format) 
 
 void SCI1_PC98Gfx8ColorsDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) {
 	GFXDRV_ASSERT_READY;
+	assert (h >= 0 && w >= 0);
 
 	byte diff = srcX & 7;
 	srcX &= ~7;
