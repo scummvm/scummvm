@@ -209,7 +209,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan, Common::RenderMode renderMode) : _
 				// so the text color is a system color outside the normal 16 colors palette. The original does not even have a
 				// 16 colors mode driver. Only the 8 colors mode, where the colors are identical for text and graphics mode.
 				// But we do want to provide the 16 colors mode, since it is not a big deal (i.e., it does not require data
-				// from a driver file and the fat print is also already there for the SCI1 8 colors mode). So we just make the
+				// from a driver file and the fat print is also already there for the 8 colors mode). So we just make the
 				// necessary adjustments.
 				_gfxDrv = new PC98Gfx16ColorsDriver(8, false, true, PC98Gfx16ColorsDriver::kFontStyleFat, 1, requestRGB, ConfMan.getBool("disable_dithering"));
 			else if (getSciVersion() <= SCI_VERSION_01)
@@ -575,7 +575,7 @@ void GfxScreen::putKanjiChar(Graphics::FontSJIS *commonFont, int16 x, int16 y, u
 	// the right position in the vmem planes. It does not do any bit shifting to fix the x-coordinate. So the text will
 	// be aligned on byte boundaries in vmem which equals 4 pixel boundaries in lowres. We make that bounds adjustment
 	// in the driver, since the layout relies on it. PQ2 on the other hand uses the PC-98 text mode for text print
-	// instead of rendering it in graphics mode (many PC-98 games do that). In an emulator you can see easily recognize
+	// instead of rendering it in graphics mode (many PC-98 games do that). In an emulator you can easily recognize
 	// it, since the mouse cursor will move underneath the text. The use of the text mode has a similiar effect to
 	// x-coordinates as what happens with QFG: In text mode, the coordinates can only be set as text columns and lines,
 	// so the coordinates have to be divided and loose some precision ('& ~3' for x, and '& ~7' for y).
