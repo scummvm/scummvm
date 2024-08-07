@@ -898,7 +898,7 @@ void qdGameObjectMoving::quant(float dt) {
 	// Если текущ. позиция не соответствует той, что была в начале кванта, то
 	// объект изменился
 	if (R().x != beg_r.x || R().y != beg_r.y || R().z != beg_r.z )
-		set_last_chg_time(qdGameDispatcher::get_dispatcher()->time());
+		set_last_chg_time(qdGameDispatcher::get_dispatcher()->get_time());
 }
 
 bool qdGameObjectMoving::load_resources() {
@@ -1305,7 +1305,7 @@ bool qdGameObjectMoving::hit(int x, int y) const {
 
 void qdGameObjectMoving::set_state(int st) {
 	// Указание на смену состояния => объект меняется (устанавливаем время изм.)
-	set_last_chg_time(qdGameDispatcher::get_dispatcher()->time());
+	set_last_chg_time(qdGameDispatcher::get_dispatcher()->get_time());
 
 	if (max_state() && st >= 0 && st <= max_state()) {
 		qdGameObjectState *p = get_state(st);

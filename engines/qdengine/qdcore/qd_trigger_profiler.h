@@ -60,7 +60,7 @@ public:
 	bool load(Common::SeekableReadStream &fh);
 
 	//! Время события (в миллисекундах от старта приложения).
-	uint32 time() const {
+	uint32 get_time() const {
 		return _time;
 	}
 	//! Идентификатор события.

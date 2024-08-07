@@ -19,8 +19,6 @@
  *
  */
 
-
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"

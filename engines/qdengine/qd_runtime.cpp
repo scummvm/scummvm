@@ -19,7 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/events.h"

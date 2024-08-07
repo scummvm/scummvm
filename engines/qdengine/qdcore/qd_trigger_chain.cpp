@@ -273,7 +273,7 @@ bool qdTriggerChain::init_debug_check() {
 			itl->activate();
 #ifdef __QD_TRIGGER_PROFILER__
 			if (!qdTriggerProfiler::instance().is_read_only()) {
-				qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, this, root_element()->ID(), itl->element()->ID(), itl->status());
+				qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->get_time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, this, root_element()->ID(), itl->element()->ID(), itl->status());
 				qdTriggerProfiler::instance().add_record(rec);
 			}
 #endif
