@@ -46,9 +46,10 @@ public:
 	int16 playerNewFacingDirection_maybe = 0;
 	uint16 playerWalkFrameIdx = 0;
 	bool isPlayerWalking_maybe = false; // player is pathfinding to some destination?
-	bool _playerIsChangingDirection = false;
+	bool _playerIsChangingDirection = false; // AKA _Rotating
 	bool _isAutoWalkingToBed = false;
 	bool _heroMoving = false; // maybe set to true while player is walking around the room.
+	bool _herowaiting = false;
 	int walkPathIndex = -1;
 	uint16 numConnectorsInWalkPath = 0;
 	Common::Array<Common::Point> _connectorList;
