@@ -2826,6 +2826,18 @@ void BladeRunnerEngine::newGame(int difficulty) {
 		_suspectsDatabase->get(i)->reset();
 	}
 
+#if !BLADERUNNER_ORIGINAL_BUGS
+	// Fix for Designers Cut setting in a New Game
+	// The original game would always clear the setting for Designers Cut when starting a New Game,
+	// even if it was set beforehand from the KIA Menu. It would, however, maintain the KIA setting for McCoy's Mood.
+	// By not maintaining the value for Designers Cut when starting a New Game, it was impossible to skip a line
+	// of dialogue for McCoy which plays at the end of the intro of the game, before the player gains control,
+	// and which is actually marked for skipping in Designers Cut mode (see SceneScriptRC01::SceneLoaded())
+	//
+	// Part 1 of fix for Designers Cut setting
+	// Before clearing the _gameFlags check if kFlagDirectorsCut was already set
+	bool isDirectorsCut = _gameFlags->query(kFlagDirectorsCut);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	_gameFlags->clear();
 
 	for (uint i = 0; i < _gameInfo->getGlobalVarCount(); ++i) {
@@ -2844,6 +2856,16 @@ void BladeRunnerEngine::newGame(int difficulty) {
 
 	InitScript initScript(this);
 	initScript.SCRIPT_Initialize_Game();
+
+#if !BLADERUNNER_ORIGINAL_BUGS
+	// Part 2 of fix for Designers Cut setting
+	// Maintain the flag (if it was set) for the New Game
+	// Note: This is done here, since SCRIPT_Initialize_Game() also clears the game flags
+	if (isDirectorsCut) {
+		_gameFlags->set(kFlagDirectorsCut);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	_actorUpdateCounter = 0;
 	_actorUpdateTimeLast = 0;
 	initChapterAndScene();
