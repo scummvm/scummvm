@@ -51,7 +51,8 @@ private:
 	machine *_agent = nullptr;
 	machine *_ripMach = nullptr;
 	const char *_digiName = nullptr;
-
+	int _ctr1 = 0;
+		
 	void conv401a();
 	int getItemCount() const;
 

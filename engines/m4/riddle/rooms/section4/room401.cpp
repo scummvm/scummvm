@@ -90,7 +90,221 @@ void Room401::init() {
 }
 
 void Room401::daemon() {
+	int val;
 
+	switch (_G(kernel).trigger) {
+	case 1:
+		player_set_commands_allowed(true);
+		break;
+
+	case 7:
+		setGlobals1(_rip1, 1, 7, 7, 7, 1);
+		sendWSMessage_110000(9);
+		digi_play("401r01", 1, 255, 11);
+		break;
+
+	case 8:
+		sendWSMessage_140000(-1);
+		break;
+
+	case 11:
+		_val6 = 5;
+		digi_play(_G(player).been_here_before ? "401x08" : "401x01",
+			1, 255, 13);
+		break;
+
+	case 13:
+		kernel_timing_trigger(1, 100);
+		_val6 = 0;
+		kernel_timing_trigger(2, 999);
+		break;
+
+	case 100:
+		kernel_trigger_dispatchx(kernel_trigger_create(101));
+		break;
+
+	case 101:
+		switch (_val5) {
+		case 1:
+			switch (_val6) {
+			case 0:
+				val = imath_ranged_rand(1, 2);
+				++_ctr1;
+
+				if (imath_ranged_rand(20, 80) > _ctr1)
+					val = 1;
+				else
+					_ctr1 = 0;
+
+				if (val == 1) {
+					sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
+				} else {
+					sendWSMessage_10000(1, _agent, _401a01, 1, 3, 100, _401a01, 3, 3, 0);
+					_val5 = 4;
+				}
+				break;
+
+			case 7:
+				sendWSMessage_10000(1, _agent, _401a02, 1, 57, 100, _401a01, 1, 1, 0);
+				_val6 = 4;
+				_ctr1 = 0;
+				break;
+
+			case 8:
+				terminateMachineAndNull(_ripMach);
+				sendWSMessage_10000(1, _agent, _401a04, 1, 62, 108, _401a01, 1, 1, 0);
+				break;
+
+			case 9:
+				terminateMachineAndNull(_ripMach);
+				sendWSMessage_10000(1, _agent, _401a05, 1, 53, 105, _401a01, 53, 53, 0);
+				break;
+
+			case 10:
+				terminateMachineAndNull(_ripMach);
+				sendWSMessage_10000(1, _agent, _401a03, 1, 47, 103, _401a03, 1, 1, 0);
+				break;
+
+			default:
+				sendWSMessage_10000(1, _agent, _401a01, 1, 3, 100, _401a01, 3, 3, 0);
+				_val5 = 4;
+				_ctr1 = 0;
+				break;
+			}
+			break;
+
+		case 4:
+			switch (_val6) {
+			case 0:
+				val = imath_ranged_rand(1, 3);
+				++_ctr1;
+
+				if (imath_ranged_rand(20, 80) > _ctr1)
+					val = 1;
+				else
+					_ctr1 = 0;
+
+				switch (val) {
+				case 1:
+					sendWSMessage_10000(1, _agent, _401a01, 3, 3, 100, _401a01, 3, 3, 0);
+					break;
+
+				case 2:
+					sendWSMessage_10000(1, _agent, _401a01, 11, 28, 100, _401a01, 28, 28, 0);
+					_val5 = 11;
+					_ctr1 = 0;
+					break;
+
+				case 3:
+					sendWSMessage_10000(1, _agent, _401a01, 3, 1, 100, _401a01, 1, 1, 0);
+					_val5 = 1;
+					_ctr1 = 0;
+					break;
+
+				default:
+					break;
+				}
+				break;
+
+			case 4:
+				sendWSMessage_10000(1, _agent, _401a01, 3, 3, 100, _401a01, 3, 3, 0);
+				break;
+
+			case 5:
+				sendWSMessage_10000(1, _agent, _401a01, 4, 4, -1, _401a01, 4, 10, 4);
+				sendWSMessage_1a0000(_agent, 13);
+				break;
+
+			case 6:
+				sendWSMessage_10000(1, _agent, _401a01, 29, 43, 100, _401a01, 3, 3, 0);
+				sendWSMessage_190000(_agent, 13);
+				_val6 = 4;
+				break;
+
+			case 11:
+				sendWSMessage_10000(1, _agent, _401a01, 11, 28, 100, _401a01, 28, 28, 0);
+				_val5 = 11;
+				break;
+
+			default:
+				sendWSMessage_10000(1, _agent, _401a01, 3, 1, 100, _401a01, 1, 1, 0);
+				_val5 = 1;
+				_ctr1 = 0;
+				break;
+			}
+			break;
+
+		case 11:
+			switch (_val6) {
+			case 0:
+				val = imath_ranged_rand(1, 2);
+				++_ctr1;
+				if (imath_ranged_rand(20, 80) < _ctr1)
+					val = 1;
+				else
+					_ctr1 = 0;
+
+				if (val == 1) {
+					sendWSMessage_10000(1, _agent, _401a01, 28, 28, 100, _401a01, 28, 28, 0);
+				} else {
+					sendWSMessage_10000(1, _agent, _401a01, 28, 11, 100, _401a01, 3, 3, 0);
+					_val5 = 4;
+					_ctr1 = 0;
+				}
+				break;
+
+			case 11:
+				sendWSMessage_10000(1, _agent, _401a01, 28, 28, 100, _401a01, 28, 28, 0);
+				break;
+
+			default:
+				sendWSMessage_10000(1, _agent, _401a01, 28, 11, 100, _401a01, 3, 3, 0);
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 102:
+		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			triggerMachineByHashCallbackNegative, "rip");
+		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 11, 200, _401rp01, 11, 11, 0);
+		_val7 = _val3 = 0;
+
+		sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
+		_val6 = 4;
+		_ctr1 = 0;
+
+		_G(kernel).trigger_mode = KT_PARSE;
+		digi_play(conv_sound_to_play(), 255, 1);
+		_G(kernel).trigger_mode = KT_DAEMON;
+		break;
+
+	case 103:
+		sendWSMessage_10000(1, _agent, _401a03, 48, 67, 102, _401a01, 1, 1, 0);
+		digi_play(imath_ranged_rand(1, 2) == 1 ? "950_s09" : "950_s10", 2);
+		break;
+
+	case 104:
+		series_show("401a06", 0);
+		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			triggerMachineByHashCallbackNegative, "rip");
+		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 11, 200, _401rp01, 11, 11, 0);
+		_val7 = _val3 = 0;
+
+		sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
+		_val6 = 4;
+		_ctr1 = 0;
+
+		conv_resume();
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Room401::parser() {
@@ -158,6 +372,7 @@ void Room401::parser() {
 		EXPORT(15, "CHISEL");
 		EXPORT(16, "INCENSE BURNER");
 		EXPORT(17, "ROMANOV EMERALD");
+		#undef EXPORT
 
 		conv_play();
 		_G(kernel).trigger_mode = KT_DAEMON;
