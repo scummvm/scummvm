@@ -32,6 +32,10 @@ enum {
 // Set the size of the stack.
 u32 __stacksize__ = 64 * 1024;
 
+// Set the size of the linear heap to allow a larger application heap.
+u32 __ctru_heap_size        = 0;
+u32 __ctru_linear_heap_size = 10 * 1024 * 1024;
+
 int main(int argc, char *argv[]) {
 	// Initialize basic libctru stuff
 	cfguInit();

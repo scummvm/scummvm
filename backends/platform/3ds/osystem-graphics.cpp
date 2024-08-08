@@ -30,30 +30,34 @@
 
 // Used to transfer the final rendered display to the framebuffer
 #define DISPLAY_TRANSFER_FLAGS                                                    \
-		(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) |                    \
-		 GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) | \
-		 GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) |                           \
+		(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) |                   \
+		 GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGB8) | \
+		 GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) |                          \
 		 GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
-#define TEXTURE_TRANSFER_FLAGS(fmt)                             \
+#define TEXTURE_TRANSFER_FLAGS(in, out)                             \
 		(GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) |  \
-		 GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(fmt) | \
-		 GX_TRANSFER_OUT_FORMAT(fmt) | GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
+		 GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(in) | \
+		 GX_TRANSFER_OUT_FORMAT(out) | GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
 #define DEFAULT_MODE _modeRGBA8
 
 namespace N3DS {
 /* Group the various enums, values, etc. needed for
  * each graphics mode into instaces of GfxMode3DS */
 static const GfxMode3DS _modeRGBA8 = { Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
-									   GPU_RGBA8, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGBA8) };
+									   GPU_RGBA8, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGBA8, GX_TRANSFER_FMT_RGBA8) };
+static const GfxMode3DS _modeRGBX8 = { Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
+									   GPU_RGB8, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGBA8, GX_TRANSFER_FMT_RGB8) };
 static const GfxMode3DS _modeRGB565 = { Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
-										GPU_RGB565, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB565) };
+										GPU_RGB565, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB565, GX_TRANSFER_FMT_RGB565) };
 static const GfxMode3DS _modeRGB555 = { Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),
-										GPU_RGBA5551, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB5A1) };
+										GPU_RGBA5551, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB5A1, GX_TRANSFER_FMT_RGB5A1) };
 static const GfxMode3DS _modeRGB5A1 = { Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),
-										GPU_RGBA5551, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB5A1) };
-static const GfxMode3DS _modeCLUT8 = _modeRGBA8;
+										GPU_RGBA5551, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB5A1, GX_TRANSFER_FMT_RGB5A1) };
+static const GfxMode3DS _modeRGBA4 = { Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),
+										GPU_RGBA4, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGBA4, GX_TRANSFER_FMT_RGBA4) };
+static const GfxMode3DS _modeCLUT8 = _modeRGBX8;
 
-static const GfxMode3DS *gfxModes[] = { &_modeRGBA8, &_modeRGB565, &_modeRGB555, &_modeRGB5A1, &_modeCLUT8 };
+static const GfxMode3DS *gfxModes[] = { &_modeRGBX8, &_modeRGB565, &_modeRGB555, &_modeRGB5A1, &_modeRGBA4, &_modeCLUT8 };
 
 
 void OSystem_3DS::init3DSGraphics() {
@@ -68,13 +72,13 @@ void OSystem_3DS::init3DSGraphics() {
 	int topScreenWidth = gfxIsWide() ? 800 : 400;
 
 	_renderTargetTop =
-	    C3D_RenderTargetCreate(240, topScreenWidth, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+	    C3D_RenderTargetCreate(240, topScreenWidth, GPU_RB_RGB8, -1);
 	C3D_RenderTargetClear(_renderTargetTop, C3D_CLEAR_ALL, 0x0000000, 0);
 	C3D_RenderTargetSetOutput(_renderTargetTop, GFX_TOP, GFX_LEFT,
 	                          DISPLAY_TRANSFER_FLAGS);
 
 	_renderTargetBottom =
-	    C3D_RenderTargetCreate(240, 320, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
+	    C3D_RenderTargetCreate(240, 320, GPU_RB_RGB8, -1);
 	C3D_RenderTargetClear(_renderTargetBottom, C3D_CLEAR_ALL, 0x00000000, 0);
 	C3D_RenderTargetSetOutput(_renderTargetBottom, GFX_BOTTOM, GFX_LEFT,
 	                          DISPLAY_TRANSFER_FLAGS);
@@ -103,6 +107,8 @@ void OSystem_3DS::init3DSGraphics() {
 
 	C3D_DepthTest(false, GPU_GEQUAL, GPU_WRITE_ALL);
 	C3D_CullFace(GPU_CULL_NONE);
+
+	_overlay.create(320, 240, &DEFAULT_MODE, true);
 }
 
 void OSystem_3DS::destroy3DSGraphics() {
@@ -161,7 +167,9 @@ GraphicsModeID OSystem_3DS::chooseMode(Graphics::PixelFormat *format) {
 	if (format->bytesPerPixel > 2) {
 		return RGBA8;
 	} else if (format->bytesPerPixel > 1) {
-		if (format->gBits() > 5) {
+		if (format->aBits() > 1) {
+			return RGBA4;
+		} else if (format->gBits() > 5) {
 			return RGB565;
 		} else if (format->aBits() == 0) {
 			return RGB555;
@@ -178,6 +186,7 @@ bool OSystem_3DS::setGraphicsMode(GraphicsModeID modeID) {
 	case RGB565:
 	case RGB555:
 	case RGB5A1:
+	case RGBA4:
 	case CLUT8:
 		_gfxState.gfxMode = gfxModes[modeID];
 		return true;
@@ -214,8 +223,7 @@ void OSystem_3DS::initSize(uint width, uint height,
 		_transactionDetails.formatChanged = true;
 	}
 
-	_gameTopTexture.create(width, height, _gfxState.gfxMode);
-	_overlay.create(400, 320, &DEFAULT_MODE);
+	_gameTopTexture.create(width, height, _gfxState.gfxMode, true);
 	_gameScreen.create(width, height, _pfGame);
 
 	_focusDirty = true;
@@ -274,6 +282,7 @@ Common::List<Graphics::PixelFormat> OSystem_3DS::getSupportedFormats() const {
 	list.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)); // GPU_RGBA8
 	list.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)); // GPU_RGB565
 	list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0)); // GPU_RGBA5551
+	list.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0)); // GPU_RGBA4
 
 	// The following formats require software conversion
 	list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)); // RGB555 (needed for FMTOWNS?)
