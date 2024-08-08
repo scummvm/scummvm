@@ -86,7 +86,7 @@ View1::View1() : UIElement("View1") {
 	AnimFrame *View1::GetInventoryIcon(GameObject *gameObject) {
 		AnimFrame *result = new AnimFrame();
 		int index = 5 - 1;
-		if (is_in_list<uint16, 0x10, 0x11, 0x17, 0x18, 0x1B, 0x22, 0x23, 0x19, 0x1A, 0x14, 0x1C, 0x1D>(gameObject->Index)) {
+		if (is_in_list<uint16, 0x10, 0x11, 0x17, 0x18, 0x1B, 0x22, 0x23, 0x19, 0x1A, 0x14, 0x1C, 0x1D, 0x3C>(gameObject->Index)) {
 			// gameObject->Index == 0x23 || gameObject->Index == 0x22) {
 			// TODO Figure out these - the mug has a different blob
 			index = 0x13;
@@ -191,10 +191,11 @@ View1::View1() : UIElement("View1") {
 	}
 
 	void View1::drawBackgroundAnimations(Graphics::ManagedSurface &s) {
-		return;
 		for (int i = 0; i < g_engine->_numBackgroundAnimations; i++) {
 			BackgroundAnimation& current = g_engine->_backgroundAnimations[i];
-			AnimFrame &currentFrame = current.Frames[current.FrameIndex];
+			BackgroundAnimationBlob &currentBlob = g_engine->_backgroundAnimationsBlobs[i];
+			// AnimFrame &currentFrame = current.Frames[current.FrameIndex];
+			AnimFrame currentFrame = currentBlob.GetFrame(currentBlob.FrameIndex);
 			DrawSprite(current.X, current.Y, currentFrame.Width, currentFrame.Height, currentFrame.Data, s);
 		}
 	}
@@ -664,20 +665,21 @@ GameObject *View1::getClickedInventoryItem(const Common::Point &p) {
 	return nullptr;
 }
 
-void View1::DrawSprite(int16 x, int16 y, uint16 width, uint16 height, byte* data, Graphics::ManagedSurface& s, bool useDepth, uint8 depth)
+void View1::DrawSprite(int16 x, int16 y, uint16 width, uint16 height, byte* data, Graphics::ManagedSurface& s, bool mirrored, bool useDepth, uint8 depth)
 {
 	for (int currentX = 0; currentX < width; currentX++) {
+		int actualX = mirrored ? width - currentX : currentX;
 		for (int currentY = 0; currentY < height; currentY++) {
-			uint8 val = data[currentY * width + currentX];
+			uint8 val = data[currentY * width + actualX];
 			if (val != 0) {
-				int finalX = x + currentX;
+				int finalX = x + actualX;
 				int finalY = y + currentY;
 				if (finalX >= 0 && finalX < s.w && finalY >= 0 && finalY < s.h) {
 					// Check for depth
 					uint8 bgDepth = g_engine->_depthMap.getPixel(finalX, finalY);
 					// TODO: Check which relation has to hold
 					if (!useDepth || bgDepth < depth) {
-						s.setPixel(x + currentX, y + currentY, val);
+						s.setPixel(x + actualX, y + currentY, val);
 					}
 				}
 			}
@@ -685,8 +687,8 @@ void View1::DrawSprite(int16 x, int16 y, uint16 width, uint16 height, byte* data
 	}
 }
 
-void View1::DrawSprite(const Common::Point &pos, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool useDepth, uint8 depth) {
-	DrawSprite(pos.x, pos.y, width, height, data, s, useDepth, depth);
+void View1::DrawSprite(const Common::Point &pos, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth, uint8 depth) {
+	DrawSprite(pos.x, pos.y, width, height, data, s, mirrored, useDepth, depth);
 }
 
 void View1::DrawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s) {
