@@ -1860,8 +1860,10 @@ void ScummEngine_v5::drawFlashlight() {
 	_flashlight.x = x - _flashlight.w / 2 - _screenStartStrip * 8;
 	_flashlight.y = y - _flashlight.h / 2;
 
-	if (_game.id == GID_LOOM && _game.version == 3 && _game.platform == Common::kPlatformFMTowns)
+	if (_game.id == GID_LOOM && _game.version == 3 && _game.platform != Common::kPlatformFMTowns) {
+		_flashlight.x += 4;
 		_flashlight.y -= 12;
+	}
 
 	// Clip the flashlight at the borders
 	if (_flashlight.x < 0)
