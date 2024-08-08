@@ -42,10 +42,8 @@ MSVCProvider::MSVCProvider(StringList &global_warnings, std::map<std::string, St
 	amd64_disabled_features.push_back("nasm");
 	_arch_disabled_features[ARCH_AMD64] = amd64_disabled_features;
 	// NASM not supported for WoA target
-	// No OpenGL on Windows on ARM
 	StringList arm64_disabled_features;
 	arm64_disabled_features.push_back("nasm");
-	arm64_disabled_features.push_back("opengl");
 	_arch_disabled_features[ARCH_ARM64] = arm64_disabled_features;
 }
 
@@ -80,7 +78,7 @@ std::string MSVCProvider::getLibraryFromFeature(const char *feature, const Build
 		// Feature flags with library dependencies
 		{   "updates", "winsparkle.lib",            nullptr,         nullptr                                           },
 		{       "tts", nullptr,                     nullptr,         "sapi.lib"                                        },
-		{    "opengl", nullptr,                     nullptr,         "opengl32.lib"                                    },
+		{    "opengl", nullptr,                     nullptr,         nullptr                                           },
 		{      "enet", nullptr,                     nullptr,         "winmm.lib ws2_32.lib"                            }
 	};
 
