@@ -90,7 +90,7 @@ bool qdConditionGroup::save_script(Common::WriteStream &fh, int indent) const {
 	fh.writeString(Common::String::format(" type=\"%d\"", (int)_conditions_mode));
 	fh.writeString(">");
 
-	fh.writeString(Common::String::format("%lu", _conditions.size()));
+	fh.writeString(Common::String::format("%u", _conditions.size()));
 	for (auto &it : _conditions) {
 		fh.writeString(Common::String::format(" %d", it));
 	}

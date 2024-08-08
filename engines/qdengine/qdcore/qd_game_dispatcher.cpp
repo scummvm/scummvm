@@ -2495,13 +2495,13 @@ bool qdGameDispatcher::load_save(Common::SeekableReadStream *fh) {
 	size = fh->readUint32LE();
 	if (size != scene_list().size()) return false;
 
-	debugC(3, kDebugLog, "Scene list size: %zu pos: %ld", scene_list().size(), fh->pos());
+	debugC(3, kDebugLog, "Scene list size: %u pos: %ld", scene_list().size(), fh->pos());
 	for (auto &it : scene_list()) {
 		if (!it->load_data(*fh, save_version))
 			return false;
 	}
 
-	debugC(3, kDebugLog, "Global object list size: %zu pos: %ld", global_object_list().size(), fh->pos());
+	debugC(3, kDebugLog, "Global object list size: %u pos: %ld", global_object_list().size(), fh->pos());
 
 	debugC(2, kDebugSave, "qdGameDispatcher::load_save(): object_list 2 %ld", fh->pos());
 	size = fh->readSint32LE();
@@ -2605,13 +2605,13 @@ bool qdGameDispatcher::save_save(Common::WriteStream *fh) const {
 
 	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): scene_list %ld", fh->pos());
 	fh->writeUint32LE(scene_list().size());
-	debugC(3, kDebugLog, "Scene list size: %zu pos: %ld", scene_list().size(), fh->pos());
+	debugC(3, kDebugLog, "Scene list size: %u pos: %ld", scene_list().size(), fh->pos());
 	for (auto &it : scene_list()) {
 		if (!it->save_data(*fh))
 			return false;
 	}
 
-	debugC(3, kDebugLog, "Global object list size: %zu pos: %ld", global_object_list().size(), fh->pos());
+	debugC(3, kDebugLog, "Global object list size: %u pos: %ld", global_object_list().size(), fh->pos());
 
 	debugC(2, kDebugSave, "qdGameDispatcher::save_save(): object_list 2 %ld", fh->pos());
 	fh->writeUint32LE(global_object_list().size());

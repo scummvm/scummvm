@@ -252,7 +252,7 @@ bool qdAnimationSet::save_script(Common::WriteStream &fh, int indent) const {
 			fh.writeString("\t");
 		}
 
-		fh.writeString(Common::String::format("<walk_sound_frequency>%lu", _walk_sound_frequency.size()));
+		fh.writeString(Common::String::format("<walk_sound_frequency>%u", _walk_sound_frequency.size()));
 		for (int i = 0; i < _walk_sound_frequency.size(); i++) {
 			fh.writeString(Common::String::format(" %f", _walk_sound_frequency[i]));
 		}

@@ -750,7 +750,7 @@ bool qdGameScene::load_data(Common::SeekableReadStream &fh, int save_version) {
 	if (!_camera.load_data(fh, save_version))
 		return false;
 
-	debugC(3, kDebugSave, "  qdGameScene::load_data(%zu): Loading _objects %ld", object_list().size(), fh.pos());
+	debugC(3, kDebugSave, "  qdGameScene::load_data(%u): Loading _objects %ld", object_list().size(), fh.pos());
 	for (auto &it : object_list()) {
 		if (!it->load_data(fh, save_version)) {
 			return false;
@@ -825,7 +825,7 @@ bool qdGameScene::save_data(Common::WriteStream &fh) const {
 		return false;
 	}
 
-	debugC(3, kDebugSave, "  qdGameSceen::save_data(%zu): Saving _objects %ld", object_list().size(), fh.pos());
+	debugC(3, kDebugSave, "  qdGameSceen::save_data(%u): Saving _objects %ld", object_list().size(), fh.pos());
 	for (auto &it : object_list()) {
 		if (!it->save_data(fh)) {
 			return false;
