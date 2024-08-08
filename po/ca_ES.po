@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-06 05:47+0000\n"
-"PO-Revision-Date: 2024-08-03 21:43+0000\n"
+"PO-Revision-Date: 2024-08-09 05:43+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -3038,10 +3038,8 @@ msgid "PC-9801 (16 Colors)"
 msgstr "PC-9801 (16 colors)"
 
 #: common/rendermode.cpp:48
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "PC-9801 (8 Colors)"
-msgstr "PC-9801 (16 colors)"
+msgstr "PC-9801 (8 colors)"
 
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:53
@@ -8116,68 +8114,48 @@ msgid "Naughty game mode"
 msgstr ""
 
 #: engines/mads/metaengine.cpp:276
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Start menu keymappings"
-msgstr "Assignació de tecles del joc"
+msgstr "Assignació de tecles del menú d'inici"
 
 #: engines/mads/metaengine.cpp:299
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open game menu"
-msgstr "Obre el menú principal"
+msgstr "Obre el menú del joc"
 
 #: engines/mads/metaengine.cpp:317
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Scroll bar up"
-msgstr "Desplaçament amunt"
+msgstr "Desplaça la barra cap amunt"
 
 #: engines/mads/metaengine.cpp:323
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Scroll bar down"
-msgstr "Desplaçament avall"
+msgstr "Desplaça la barra cap avall"
 
 #: engines/mads/metaengine.cpp:331
-#, fuzzy
-#| msgid "Restart game"
 msgid "Start game"
-msgstr "Reinicia la partida"
+msgstr "Inicia la partida"
 
 #: engines/mads/metaengine.cpp:337
-#, fuzzy
-#| msgid "Restore game"
 msgid "Resume game"
-msgstr "Recupera la partida"
+msgstr "Reprèn la partida"
 
 #: engines/mads/metaengine.cpp:343
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show intro"
-msgstr "Mostra suggeriments"
+msgstr "Mostra la introducció"
 
 #: engines/mads/metaengine.cpp:349
 msgid "Show credits"
 msgstr "Mostra els crèdits"
 
 #: engines/mads/metaengine.cpp:355
-#, fuzzy
-#| msgid "Show options"
 msgid "Show quotes"
-msgstr "Mostra les opcions"
+msgstr "Mostra les cites"
 
 #: engines/mads/metaengine.cpp:361
-#, fuzzy
-#| msgid "Quit game"
 msgid "Exit game"
 msgstr "Surt del joc"
 
 #: engines/mads/metaengine.cpp:368
-#, fuzzy
-#| msgid "Faster animations"
 msgid "Restart animation"
-msgstr "Animacions més ràpides"
+msgstr "Reprèn animació"
 
 #: engines/mm/metaengine.cpp:57
 msgid "Show item costs in standard inventory mode"
@@ -11329,11 +11307,11 @@ msgstr ""
 
 #: engines/ultima/metaengine.cpp:107
 msgid "Play foot step sounds"
-msgstr ""
+msgstr "Reprodueix sons de passos de peus"
 
 #: engines/ultima/metaengine.cpp:108
 msgid "Plays sound when the player moves."
-msgstr ""
+msgstr "Reprodueix so quan el jugador es mou."
 
 #: engines/ultima/metaengine.cpp:118
 msgid "Enable jump to mouse position"
@@ -11343,6 +11321,8 @@ msgstr "Activa el salt a la posició del ratolí"
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr ""
+"Saltar sense moure's apunta al cursor del ratolí enlloc de només a la "
+"direcció."
 
 #: engines/ultima/metaengine.cpp:129
 msgid "Enable font replacement"
@@ -11350,34 +11330,36 @@ msgstr "Activa la substitució del tipus de lletra"
 
 #: engines/ultima/metaengine.cpp:130
 msgid "Replaces game fonts with rendered fonts"
-msgstr ""
+msgstr "Substitueix els tipus de lletra del joc per fonts renderitzades"
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
 #: engines/ultima/metaengine.cpp:152
 msgid "Camera moves with Silencer"
-msgstr ""
+msgstr "La càmera es mou amb Silencer"
 
 #: engines/ultima/metaengine.cpp:153
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr ""
+"La càmera fa un seguiment del moviment del jugador en lloc de fixar-se a "
+"posicions definides."
 
 #: engines/ultima/metaengine.cpp:163
 msgid "Always enable Christmas easter-egg"
-msgstr ""
+msgstr "Habiliteu sempre l'ou de Pasqua de Nadal"
 
 #: engines/ultima/metaengine.cpp:164
 msgid "Enable the Christmas music at any time of year."
-msgstr ""
+msgstr "Habilita la música de Nadal a qualsevol dia de l'any."
 
 #: engines/ultima/shared/early/ultima_early.cpp:70
 msgid "Could not find correct ultima.dat datafile"
-msgstr ""
+msgstr "No s'ha pogut trobar el fitxer de dades ultima.dat correcte"
 
 #: engines/ultima/nuvie/nuvie.cpp:375
 #, c-format
 msgid "loading quick save %d"
-msgstr ""
+msgstr "carregant desament ràpid %d"
 
 #: engines/ultima/nuvie/nuvie.cpp:380
 #, c-format
@@ -11386,19 +11368,19 @@ msgstr "s'està desant el desament ràpid %d"
 
 #: engines/ultima/nuvie/metaengine.cpp:41
 msgid "Original Save"
-msgstr ""
+msgstr "Partida desada original"
 
 #: engines/ultima/nuvie/metaengine.cpp:206
 msgid "Ultima VI"
-msgstr ""
+msgstr "Ultima VI"
 
 #: engines/ultima/nuvie/metaengine.cpp:208
 msgid "Martian Dreams"
-msgstr ""
+msgstr "Martian Dreams"
 
 #: engines/ultima/nuvie/metaengine.cpp:210
 msgid "The Savage Empire"
-msgstr ""
+msgstr "The Savage Empire"
 
 #: engines/ultima/nuvie/save/save_game.cpp:207
 msgid "Transfer Character"
@@ -11406,19 +11388,19 @@ msgstr "Transfereix el personatge"
 
 #: engines/ultima/ultima8/metaengine.cpp:138
 msgid "Ultima VIII"
-msgstr ""
+msgstr "Ultima VIII"
 
 #: engines/ultima/ultima8/metaengine.cpp:138
 msgid "Crusader"
-msgstr ""
+msgstr "Crusader"
 
 #: engines/ultima/ultima8/metaengine.cpp:181
 msgid "Ultima VIII Cheats"
-msgstr ""
+msgstr "Trucs d'Ultima VIII"
 
 #: engines/ultima/ultima8/metaengine.cpp:196
 msgid "Ultima VIII Debug"
-msgstr ""
+msgstr "Depura Ultima VIII"
 
 #: engines/ultima/ultima8/games/cru_game.cpp:164
 msgid ""
@@ -11429,7 +11411,7 @@ msgstr ""
 
 #: engines/vcruise/metaengine.cpp:42
 msgid "Improved click sensitivity"
-msgstr ""
+msgstr "Sensibilitat de clic millorat"
 
 #: engines/vcruise/metaengine.cpp:43
 msgid ""
@@ -11453,6 +11435,7 @@ msgstr "Omet el menú principal"
 #: engines/vcruise/metaengine.cpp:76
 msgid "Starts a new game upon launching instead of going to the main menu."
 msgstr ""
+"Comença una partida nova en llançar en comptes d'anar al menú principal."
 
 #: engines/vcruise/metaengine.cpp:86
 msgid "Use 16-color graphics"
@@ -11469,6 +11452,7 @@ msgstr "Precarrega els sons"
 #: engines/vcruise/metaengine.cpp:98
 msgid "Preload sounds. May improve performance on slow hard drives."
 msgstr ""
+"Precarrega els sons. Pot millorar el rendiment en unitats de disc dur lentes."
 
 #: engines/vcruise/metaengine.cpp:146
 msgid "Display help screen"
@@ -11496,7 +11480,7 @@ msgstr "Omet l'animació actual"
 
 #: engines/vcruise/metaengine.cpp:211
 msgid "Cycle item in scene (debug cheat)"
-msgstr ""
+msgstr "Següent element de l'escena (truc de depuració)"
 
 #: engines/vcruise/vcruise.cpp:92
 msgid "This game requires JPEG support, which was not compiled in."
