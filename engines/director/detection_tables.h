@@ -659,6 +659,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "princetonsat98",		"The Princeton Review: Inside the SAT '98" },
 	{ "renaissance",		"The Renaissance: Winds of Change" },
 	{ "revwar",				"Revolutionary War Picture CD" },
+	{ "robroylotm",			"Rob Roy: Legend of the Mist" },
 	{ "rodneyab",			"Rodney's Art Brain" },
 	{ "saguaro",            "Saguaro & the City: Investigate the Sonoran Desert with an Interactive CD ROM" },
 	{ "saillusion",			"Scientific American Library: Illusion" },
@@ -2622,7 +2623,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("hodolores", "", "Dolores Claiborne Interactive", "r:7f443f2e63fd497a9ad85b10dc880a91", 1475680, 313),
 	WINGAME1("hodolores", "", "DOLRES.EXE", "65d06b5fef155a2473434571aff5bc29", 1671516, 313),
 
-	WINGAME1("horobroy", "", "ROBROY.EXE",	"d:65d06b5fef155a2473434571aff5bc29", 2047746, 310),
+	MACGAME1("horobroy", "", "Rob Roy Interactive Kit",	"rt:3adfc08d711bcfa8701afa7f545ef971", 1801032, 313),
+	WINGAME1("horobroy", "", "ROBROY.EXE",				"t:78cecfc070a663eedb6118a2a19c0034",  2047746, 313),
 
 	MACGAME1("hostargate", "", "Stargate Interactive", "r:7f443f2e63fd497a9ad85b10dc880a91", 1394098, 313),
 
@@ -4400,9 +4402,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("hkbigfun", "", "KITTY.EXE", "42e600e8a917de593f4048428ec8d8b8", 703689,
 							 "KINTRO",	  "b3fc8f8073f442573a371729d242c6c6", 971508, 404),
 
-	MACGAME1("horobroy", "", "Rob Roy",		"r:01be45e7241194dad07938e7059b88e3", 483126, 404),
-	WINGAME1("horobroy", "", "ROBROY.EXE",	"d:6b339ff6cb7a40e4dd794049ef93600d", 29786023, 404),
-
 	MACGAME1("horrortour1", "",	  "ZEDDAS(7M)",		"r:da0da5d543b237051975ad70bec129f4", 483187, 404),
 	WINGAME1("horrortour1", "",	  "ZEDDAS.EXE",		"d:d3ce91f305dd0f4d2f5e9ff6d4e41a3b", 741818, 404),
 	MACGAME2_l("horrortour1", "", "HorrorTour(7M)", "r:b7e69c37b7355022d400c14aa97c5d54", 483187,
@@ -5435,6 +5434,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Original filename is ラインの黄金CD
 	MACDEMO1_l("rheingold", "Demo", "Das Rheingold CD", "b7e69c37b7355022d400c14aa97c5d54", 484351, Common::JA_JPN, 404),
+
+	// Developed by ACES Entertainment, published by MGM Interactive
+	MACGAME1("robroylotm", "", "Rob Roy",		"rt:0a660f711127b1248af44a6f4119b78e",  483126, 404),
+	WINGAME1("robroylotm", "", "ROBROY.EXE",	"t:6bf95a48f366bdf8af3a198c7b723c77", 29786023, 404),
 
 	MACGAME1("rooked", "v1.1P", "ROOKED v1.1P", "58b4e23f8260c100f84232e7b62b74f8", 504455, 404),
 
