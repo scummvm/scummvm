@@ -412,7 +412,9 @@ Common::KeyState ScummEngine::printMessageAndPause(const char *msg, int color, i
 	if (waitTime) {
 		ScummEngine::drawDirtyScreenParts();
 		waitForBannerInput(waitTime, ks, leftBtnPressed, rightBtnPressed);
-		stopTalk();
+
+		if (!drawOnSentenceLine)
+			stopTalk();
 	}
 
 	if (drawOnSentenceLine) {
