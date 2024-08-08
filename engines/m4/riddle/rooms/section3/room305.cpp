@@ -333,6 +333,7 @@ void Room305::daemon() {
 			default:
 				break;
 			}
+			break;
 
 		case 1:
 			if (_conv1 == 1) {
