@@ -1292,11 +1292,13 @@ void ScummEngine::restoreCharsetBg() {
 				blit(screenBuf, vs->pitch, backBuf, vs->pitch, vs->w, vs->h, vs->format.bytesPerPixel);
 			}
 		} else {
-			// Clear area
-			if (_game.platform == Common::kPlatformNES)
-				memset(screenBuf, 0x1d, vs->h * vs->pitch);
-			else
-				memset(screenBuf, 0, vs->h * vs->pitch);
+			if (!(_game.version < 4 && _messageBannerActive && (getCurrentLights() & LIGHTMODE_flashlight_on))) {
+				// Clear area
+				if (_game.platform == Common::kPlatformNES)
+					memset(screenBuf, 0x1d, vs->h * vs->pitch);
+				else
+					memset(screenBuf, 0, vs->h * vs->pitch);
+			}
 		}
 
 		if (vs->hasTwoBuffers || _macScreen) {
