@@ -47,10 +47,7 @@ namespace Macs2 {
 
 class AnimationReader {
 
-
 	private:
-		
-
 	public:
 
 		Common::MemoryReadStreamEndian *readStream;

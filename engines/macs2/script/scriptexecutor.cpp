@@ -257,12 +257,6 @@ void ScriptExecutor::Func9F4D(uint16 &out1, uint16 &out2) {
 		} else {
 			out1 = out2 = 0x0000;
 		}
-	} else if (value == 0x2) {
-		// TODO: We should actually look up the cursor mode and the interacted object
-		// Hardcoding for now
-		out1 = out2 = 0x0000;
-		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
-		return;
 	} else if (value == 0x3) {
 		if (_mouseMode == MouseMode::Talk) {
 			out1 = _interactedObjectID;
@@ -378,7 +372,14 @@ l0037_A021:
 l0037_A029:
 	;; End handling of cursor mode 14h
 	jmp	0A32Ch
-
+*/
+	else if (value == 0x2) {
+		out1 = _mouseMode == MouseMode::Look ? _interactedObjectID : 0;
+		out2 = 0;
+		SIS_Debug("- 9F4D results: %.4x %.4x", out1, out2);
+		return;
+		} 
+/*
 l0037_A02C:
 	cmp	ax,3h
 	jnz	0A050h
@@ -1000,9 +1001,16 @@ void ScriptExecutor::FuncB6BE() {
 	// Can do it hardcoded for now, but will need to figure out the relationship
 	// further down the road
 
-	uint16 id = id1 - 0x1000;
-	// TODO: Figure out the animations and the frame indices
-	_engine->_backgroundAnimations[id].FrameIndex = (animFrame + 1) % _engine->_backgroundAnimations[id].numFrames;
+	// Subtracting an additional 1 since mine are indexed from 0 and not 1 like the game does
+	uint16 id = id1 - 0x1000 - 1;
+	// TODO: This is not accurate, but in practice we should be able to get by with just ping-
+	// ponging between animations. In actual practice, we need to read the data correctly
+	// and apply the logic from the 1480 function to it
+	_engine->_backgroundAnimations[id].FrameIndex++;
+	// TODO: Implement proper wrap around based on 1480
+	_engine->_backgroundAnimationsBlobs[id].FrameIndex++;
+	_engine->_backgroundAnimations[id].FrameIndex = _engine->_backgroundAnimations[id].FrameIndex++ % _engine->_backgroundAnimations[id].numFrames;
+	
 
 }
 

@@ -441,19 +441,30 @@ void Macs2Engine::readResourceFile() {
 
 void Macs2Engine::ReadBackgroundAnimations(Common::MemoryReadStream *stream) {
 	// Offset 50F5 in scene data
+	// TODO: Remove the non-blob implementation
 	_numBackgroundAnimations = stream->readUint16LE();
 
 	_backgroundAnimations = new BackgroundAnimation[_numBackgroundAnimations];
+	_backgroundAnimationsBlobs.resize(_numBackgroundAnimations);
 
 	for (int i = 0; i < _numBackgroundAnimations; i++) {
+		BackgroundAnimationBlob &currentBlob = _backgroundAnimationsBlobs[i];
+		
 		BackgroundAnimation &current = _backgroundAnimations[i];
 		// Local offset +0h
 		current.X = stream->readUint16LE();
+		currentBlob.X = current.X;
 		// Local offset +2n
 		current.Y = stream->readUint16LE();
+		currentBlob.Y = current.Y;
 
 		// current.numFrames = previewNumFrames(file.pos(), file);
 		uint32 numBytes = stream->readUint32LE();
+
+		currentBlob.Blob.resize(numBytes);
+		int64 pos = stream->pos();
+		stream->read(currentBlob.Blob.data(), numBytes);
+		stream->seek(pos, SEEK_SET);
 
 		// Skip to the intermediary data
 		// Game loading code puts this at a pointer stored in local offset +8h
@@ -1249,6 +1260,24 @@ bool AnimFrame::PixelHit(const Common::Point& point) const {
 
 Common::Point AnimFrame::GetBottomMiddleOffset() const {
 	return Common::Point(Width / 2, Height);
+}
+
+AnimFrame BackgroundAnimationBlob::GetFrame(uint32 index) {
+	AnimationReader animReader(Blob);
+	uint16 numAnimations = animReader.readNumAnimations();
+	debug("Number of animation frames for background object: %.4", numAnimations);
+
+	// TODO: Check consistency between 0 and 1 based indexing
+	animReader.SeekToAnimation((index - 1) % numAnimations);
+	// testReader.SeekToAnimation(0);
+	// Skip ahead to the width and height
+	animReader.readStream->seek(6, SEEK_CUR);
+
+	AnimFrame result;
+
+	result.ReadFromStream(animReader.readStream);
+	return result;
+	// TODO: Think about proper memory management
 }
 
 } // End of namespace Macs2
