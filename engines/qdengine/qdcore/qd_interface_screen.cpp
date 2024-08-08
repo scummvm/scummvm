@@ -227,7 +227,7 @@ bool qdInterfaceScreen::is_element_in_list(const qdInterfaceElement *el) const {
 }
 
 bool qdInterfaceScreen::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
-	debugC(9, kDebugInput, "qdInterfaceScreen::mouse_handler(%d, %d, %lu)", x, y, _sorted_elements.size());
+	debugC(9, kDebugInput, "qdInterfaceScreen::mouse_handler(%d, %d, %u)", x, y, _sorted_elements.size());
 	if (qdInterfaceDispatcher *dp = dynamic_cast<qdInterfaceDispatcher* >(owner())) {
 		for (auto &it : _sorted_elements) {
 			if (it->hit_test(x, y)) {

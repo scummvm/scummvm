@@ -1218,7 +1218,7 @@ bool qdGameObjectStateWalk::save_script(Common::WriteStream &fh, int indent) con
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<center_offsets>%lu", _center_offsets.size() * 2));
+		fh.writeString(Common::String::format("<center_offsets>%u", _center_offsets.size() * 2));
 		for (int i = 0; i < _center_offsets.size(); i++) {
 			fh.writeString(Common::String::format(" %d %d", _center_offsets[i].x, _center_offsets[i].y));
 		}
@@ -1229,7 +1229,7 @@ bool qdGameObjectStateWalk::save_script(Common::WriteStream &fh, int indent) con
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<static_center_offsets>%lu", _static_center_offsets.size() * 2));
+		fh.writeString(Common::String::format("<static_center_offsets>%u", _static_center_offsets.size() * 2));
 		for (int i = 0; i < _static_center_offsets.size(); i++) {
 			fh.writeString(Common::String::format(" %d %d", _static_center_offsets[i].x, _static_center_offsets[i].y));
 		}
@@ -1240,7 +1240,7 @@ bool qdGameObjectStateWalk::save_script(Common::WriteStream &fh, int indent) con
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<start_center_offsets>%lu", _start_center_offsets.size() * 2));
+		fh.writeString(Common::String::format("<start_center_offsets>%u", _start_center_offsets.size() * 2));
 		for (int i = 0; i < _start_center_offsets.size(); i++){
 			fh.writeString(Common::String::format(" %d %d", _start_center_offsets[i].x, _start_center_offsets[i].y));
 		}
@@ -1251,7 +1251,7 @@ bool qdGameObjectStateWalk::save_script(Common::WriteStream &fh, int indent) con
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<stop_center_offsets>%lu", _stop_center_offsets.size() * 2));
+		fh.writeString(Common::String::format("<stop_center_offsets>%u", _stop_center_offsets.size() * 2));
 		for (int i = 0; i < _stop_center_offsets.size(); i++) {
 			fh.writeString(Common::String::format(" %d %d", _stop_center_offsets[i].x, _stop_center_offsets[i].y));
 		}
@@ -1262,7 +1262,7 @@ bool qdGameObjectStateWalk::save_script(Common::WriteStream &fh, int indent) con
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<walk_sound_frequency>%lu", _walk_sound_frequency.size()));
+		fh.writeString(Common::String::format("<walk_sound_frequency>%u", _walk_sound_frequency.size()));
 		for (int i = 0; i < _walk_sound_frequency.size(); i++) {
 			fh.writeString(Common::String::format(" %f", _walk_sound_frequency[i]));
 		}

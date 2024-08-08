@@ -78,7 +78,7 @@ void grTileAnimation::init(int frame_count, const Vect2i &frame_size, bool alpha
 void grTileAnimation::compact() {
 	TileOffsets(_tileOffsets).swap(_tileOffsets);
 	TileData(_tileData).swap(_tileData);
-	debugC(3, kDebugLog, "Tile animation: %lu Kbytes", (_frameIndex.size() + _tileData.size() + _tileOffsets.size()) * 4 / 1024);
+	debugC(3, kDebugLog, "Tile animation: %u Kbytes", (_frameIndex.size() + _tileData.size() + _tileOffsets.size()) * 4 / 1024);
 }
 
 bool grTileAnimation::compress(grTileCompressionMethod method) {
