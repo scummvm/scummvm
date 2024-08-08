@@ -54,7 +54,7 @@ void StringManager::loadStrFile(const Common::Path &fileName) {
 
 	uint lineNumber = 0;
 	while (!file.eos()) {
-		_lines[lineNumber] = readWideLine(file);
+		_lines[lineNumber] = readWideLine(file).encode();
 
 		lineNumber++;
 		assert(lineNumber <= NUM_TEXT_LINES);

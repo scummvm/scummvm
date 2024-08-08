@@ -98,7 +98,7 @@ void TitlerControl::readStringsFile(const Common::Path &fileName) {
 
 	while (!file.eos()) {
 
-		Common::String line = readWideLine(file);
+		Common::String line = readWideLine(file).encode();
 		_strings.push_back(line);
 	}
 	file.close();

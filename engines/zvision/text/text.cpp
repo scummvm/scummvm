@@ -504,8 +504,8 @@ void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics
 	}
 }
 
-Common::String readWideLine(Common::SeekableReadStream &stream) {
-	Common::String asciiString;
+Common::U32String readWideLine(Common::SeekableReadStream &stream) {
+	Common::U32String asciiString;
 
 	while (true) {
 		uint32 value = stream.readUint16LE();
@@ -519,58 +519,9 @@ Common::String readWideLine(Common::SeekableReadStream &stream) {
 			break;
 		}
 
-		// Crush each octet pair to a UTF-8 sequence
-		if (value < 0x80) {
-			asciiString += (char)(value & 0x7F);
-		} else if (value >= 0x80 && value < 0x800) {
-			asciiString += (char)(0xC0 | ((value >> 6) & 0x1F));
-			asciiString += (char)(0x80 | (value & 0x3F));
-		} else if (value >= 0x800 && value < 0x10000 && value != 0xCCCC) {
-			asciiString += (char)(0xE0 | ((value >> 12) & 0xF));
-			asciiString += (char)(0x80 | ((value >> 6) & 0x3F));
-			asciiString += (char)(0x80 | (value & 0x3F));
-		} else if (value == 0xCCCC) {
-			// Ignore, this character is used as newline sometimes
-		} else if (value >= 0x10000 && value < 0x200000) {
-			asciiString += (char)(0xF0);
-			asciiString += (char)(0x80 | ((value >> 12) & 0x3F));
-			asciiString += (char)(0x80 | ((value >> 6) & 0x3F));
-			asciiString += (char)(0x80 | (value & 0x3F));
-		}
+		asciiString += value;
 	}
-
 	return asciiString;
-}
-
-int8 getUtf8CharSize(char chr) {
-	if ((chr & 0x80) == 0)
-		return 1;
-	else if ((chr & 0xE0) == 0xC0)
-		return 2;
-	else if ((chr & 0xF0) == 0xE0)
-		return 3;
-	else if ((chr & 0xF8) == 0xF0)
-		return 4;
-	else if ((chr & 0xFC) == 0xF8)
-		return 5;
-	else if ((chr & 0xFE) == 0xFC)
-		return 6;
-
-	return 1;
-}
-
-uint16 readUtf8Char(const char *chr) {
-	uint16 result = 0;
-	if ((chr[0] & 0x80) == 0)
-		result = chr[0];
-	else if ((chr[0] & 0xE0) == 0xC0)
-		result = ((chr[0] & 0x1F) << 6) | (chr[1] & 0x3F);
-	else if ((chr[0] & 0xF0) == 0xE0)
-		result = ((chr[0] & 0x0F) << 12) | ((chr[1] & 0x3F) << 6) | (chr[2] & 0x3F);
-	else
-		result = chr[0];
-
-	return result;
 }
 
 } // End of namespace ZVision
