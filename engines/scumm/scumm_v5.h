@@ -35,7 +35,7 @@ protected:
 		int x, y, w, h;
 		byte *buffer;
 		uint16 xStrips, yStrips;
-		bool isDrawn;
+		bool eraseFlag;
 	} _flashlight;
 
 	char _saveLoadVarsFilename[256];
