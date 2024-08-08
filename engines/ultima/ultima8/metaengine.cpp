@@ -210,18 +210,6 @@ Common::KeymapArray MetaEngine::initKeymaps(const Common::String &gameId) {
 	return keymapArray;
 }
 
-void MetaEngine::pressAction(KeybindingAction keyAction) {
-	Common::String methodName = getMethod(keyAction, true);
-	if (!methodName.empty())
-		g_debugger->executeCommand(methodName);
-}
-
-void MetaEngine::releaseAction(KeybindingAction keyAction) {
-	Common::String methodName = getMethod(keyAction, false);
-	if (!methodName.empty())
-		g_debugger->executeCommand(methodName);
-}
-
 Common::String MetaEngine::getMethod(KeybindingAction keyAction, bool isPress) {
 #ifdef RELEASE_BUILD
 	const KeybindingRecord *KEY_ARRAYS[] = { COMMON_KEYS, U8_KEYS, CRUSADER_KEYS, CHEAT_KEYS, nullptr };

@@ -57,12 +57,6 @@ enum KeybindingAction {
 };
 
 class MetaEngine {
-private:
-	/**
-	 * Get the method to execute
-	 */
-	static Common::String getMethod(KeybindingAction keyAction, bool isPress);
-
 public:
 	/**
 	 * Initialize keymaps
@@ -70,14 +64,9 @@ public:
 	static Common::KeymapArray initKeymaps(const Common::String &gameId);
 
 	/**
-	 * Execute an engine keymap press action
+	 * Get the method to execute
 	 */
-	static void pressAction(KeybindingAction keyAction);
-
-	/**
-	 * Execute an engine keymap release action
-	 */
-	static void releaseAction(KeybindingAction keyAction);
+	static Common::String getMethod(KeybindingAction keyAction, bool isPress);
 
 	/**
 	 * Return meta information from the specified save state for saves that do not have ExtendedSavegameHeader
