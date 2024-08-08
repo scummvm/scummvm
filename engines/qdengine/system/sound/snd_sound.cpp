@@ -36,20 +36,12 @@ bool sndSound::create_sound_buffer() {
 	if (!sound())
 		return false;
 
-	warning("STUB: sndSound::create_sound_buffer()");
-
 	return true;
 }
 
 bool sndSound::release_sound_buffer() {
 	if (!is_stopped())
 		stop();
-
-		warning("STUB: sndSound::release_sound_buffer()");
-#if 0
-		_sound_buffer->Release();
-		_sound_buffer = NULL;
-#endif
 
 	return true;
 }
