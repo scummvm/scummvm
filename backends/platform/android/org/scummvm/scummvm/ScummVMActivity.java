@@ -778,23 +778,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		@Override
-		protected Bitmap getBitmapResource(int resource) {
-			int id;
-			switch(resource) {
-				case 0: // TOUCH_ARROWS_BITMAP
-					id = R.drawable.touch_arrows;
-					break;
-				default:
-					return null;
-			}
-
-			BitmapFactory.Options opts = new BitmapFactory.Options();
-			opts.inScaled = false;
-
-			return BitmapFactory.decodeResource(getResources(), id, opts);
-		}
-
-		@Override
 		protected void setTouchMode(final int touchMode) {
 			if (_events.getTouchMode() == touchMode) {
 				return;

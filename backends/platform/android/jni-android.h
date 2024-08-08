@@ -46,10 +46,6 @@ private:
 	virtual ~JNI();
 
 public:
-	enum struct BitmapResources {
-		TOUCH_ARROWS_BITMAP = 0
-	};
-
 	static bool pause;
 	static sem_t pause_sem;
 
@@ -92,7 +88,6 @@ public:
 	static bool isConnectionLimited();
 	static void showVirtualKeyboard(bool enable);
 	static void showOnScreenControls(int enableMask);
-	static Graphics::Surface *getBitmapResource(BitmapResources resource);
 	static void setTouchMode(int touchMode);
 	static int getTouchMode();
 	static void setOrientation(int touchMode);
@@ -155,7 +150,6 @@ private:
 	static jmethodID _MID_setWindowCaption;
 	static jmethodID _MID_showVirtualKeyboard;
 	static jmethodID _MID_showOnScreenControls;
-	static jmethodID _MID_getBitmapResource;
 	static jmethodID _MID_setTouchMode;
 	static jmethodID _MID_getTouchMode;
 	static jmethodID _MID_setOrientation;

@@ -41,6 +41,7 @@
 
 #include "common/tokenizer.h"
 #include "graphics/blit.h"
+#include "graphics/managed_surface.h"
 #include "graphics/opengl/shader.h"
 #include "graphics/opengl/context.h"
 
@@ -53,26 +54,6 @@
 // These helper macros do the opposite to get back what the game expected
 #define CONTEXT_RESET_ENABLE(gl_param) if (!(saved ## gl_param)) { GLCALL(glDisable(gl_param)); }
 #define CONTEXT_RESET_DISABLE(gl_param) if (saved ## gl_param) { GLCALL(glEnable(gl_param)); }
-
-static GLES8888Texture *loadBuiltinTexture(JNI::BitmapResources resource) {
-	const Graphics::Surface *src = JNI::getBitmapResource(JNI::BitmapResources::TOUCH_ARROWS_BITMAP);
-	if (!src) {
-		error("Failed to fetch touch arrows bitmap");
-	}
-
-	GLES8888Texture *ret = new GLES8888Texture();
-	ret->allocBuffer(src->w, src->h);
-	Graphics::Surface *dst = ret->surface();
-
-	Graphics::crossBlit(
-			(byte *)dst->getPixels(), (const byte *)src->getPixels(),
-			dst->pitch, src->pitch,
-			src->w, src->h,
-			src->format, dst->format);
-
-	delete src;
-	return ret;
-}
 
 AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	_screenChangeID(0),
@@ -94,7 +75,7 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	_mouse_hotspot(),
 	_mouse_dont_scale(false),
 	_show_mouse(false),
-	_touchcontrols_texture(nullptr),
+	_touchcontrols_texture(new GLES8888Texture()),
 	_old_touch_mode(OSystem_Android::TOUCH_MODE_TOUCHPAD) {
 
 	if (JNI::egl_bits_per_pixel == 16) {
@@ -111,8 +92,6 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 		_mouse_texture_palette = new GLESFakePalette8888Texture();
 	}
 	_mouse_texture = _mouse_texture_palette;
-
-	_touchcontrols_texture = loadBuiltinTexture(JNI::BitmapResources::TOUCH_ARROWS_BITMAP);
 
 	initSurface();
 
@@ -218,7 +197,7 @@ void AndroidGraphics3dManager::initSurface() {
 	if (_touchcontrols_texture) {
 		_touchcontrols_texture->reinit();
 	}
-	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
+	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().setDrawer(
 	    this, JNI::egl_surface_width, JNI::egl_surface_height);
 
 	updateScreenRect();
@@ -256,7 +235,7 @@ void AndroidGraphics3dManager::deinitSurface() {
 		_mouse_texture_palette->release();
 	}
 
-	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
+	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().setDrawer(
 	    nullptr, 0, 0);
 	if (_touchcontrols_texture) {
 		_touchcontrols_texture->release();
@@ -286,7 +265,7 @@ void AndroidGraphics3dManager::resizeSurface() {
 		initOverlay();
 	}
 
-	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
+	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().setDrawer(
 	    this, JNI::egl_surface_width, JNI::egl_surface_height);
 
 	updateScreenRect();
@@ -1101,6 +1080,21 @@ bool AndroidGraphics3dManager::setState(const AndroidCommonGraphics::State &stat
 	setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
 
 	return true;
+}
+
+void AndroidGraphics3dManager::touchControlInitSurface(const Graphics::ManagedSurface &surf) {
+	if (_touchcontrols_texture->width() == surf.w && _touchcontrols_texture->height() == surf.h) {
+		return;
+	}
+
+	_touchcontrols_texture->allocBuffer(surf.w, surf.h);
+	Graphics::Surface *dst = _touchcontrols_texture->surface();
+
+	Graphics::crossBlit(
+			(byte *)dst->getPixels(), (const byte *)surf.getPixels(),
+			dst->pitch, surf.pitch,
+			surf.w, surf.h,
+			surf.format, dst->format);
 }
 
 void AndroidGraphics3dManager::touchControlNotifyChanged() {
