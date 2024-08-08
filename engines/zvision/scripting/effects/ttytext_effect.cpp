@@ -46,7 +46,7 @@ ttyTextNode::ttyTextNode(ZVision *engine, uint32 key, const Common::Path &file, 
 	Common::File *infile = _engine->getSearchManager()->openFile(file);
 	if (infile) {
 		while (!infile->eos()) {
-			Common::String asciiLine = readWideLine(*infile);
+			Common::U32String asciiLine = readWideLine(*infile);
 			if (asciiLine.empty()) {
 				continue;
 			}
@@ -57,7 +57,7 @@ ttyTextNode::ttyTextNode(ZVision *engine, uint32 key, const Common::Path &file, 
 	}
 	_img.create(_r.width(), _r.height(), _engine->_resourcePixelFormat);
 	_state._sharp = true;
-	_state.readAllStyles(_txtbuf);
+	_state.readAllStyles(_txtbuf.encode());
 	_state.updateFontWithTextState(_fnt);
 	_engine->getScriptManager()->setStateValue(_key, 1);
 }
@@ -81,7 +81,8 @@ bool ttyTextNode::process(uint32 deltaTimeInMillis) {
 				end = _txtpos;
 				if (start != -1) {
 					if ((end - start - 1) > 0) {
-						ret = _state.parseStyle(_txtbuf.c_str() + start + 1, end - start - 1);
+						Common::String buf = _txtbuf.substr(start + 1, end - start - 1);
+						ret = _state.parseStyle(buf, buf.size());
 					}
 				}
 
@@ -101,22 +102,19 @@ bool ttyTextNode::process(uint32 deltaTimeInMillis) {
 
 				_txtpos++;
 			} else {
-				int8 charsz = getUtf8CharSize(_txtbuf[_txtpos]);
-
-				uint16 chr = readUtf8Char(_txtbuf.c_str() + _txtpos);
+				uint16 chr = _txtbuf[_txtpos];
 
 				if (chr == ' ') {
-					uint32 i = _txtpos + charsz;
+					uint32 i = _txtpos + 1;
 					uint16 width = _fnt.getCharWidth(chr);
 
 					while (i < _txtbuf.size() && _txtbuf[i] != ' ' && _txtbuf[i] != '<') {
 
-						int8 chsz   = getUtf8CharSize(_txtbuf[i]);
-						uint16 uchr = readUtf8Char(_txtbuf.c_str() + _txtpos);
+						uint16 uchr = _txtbuf[i];
 
 						width += _fnt.getCharWidth(uchr);
 
-						i += chsz;
+						i++;
 					}
 
 					if (_dx + width > _r.width())
@@ -126,7 +124,7 @@ bool ttyTextNode::process(uint32 deltaTimeInMillis) {
 				} else
 					outchar(chr);
 
-				_txtpos += charsz;
+				_txtpos++;
 			}
 			_nexttime = _delay;
 			_engine->getRenderManager()->blitSurfaceToBkg(_img, _r.left, _r.top);

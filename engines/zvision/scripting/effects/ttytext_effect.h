@@ -52,7 +52,7 @@ private:
 
 	TextStyleState _state;
 	StyledTTFont _fnt;
-	Common::String _txtbuf;
+	Common::U32String _txtbuf;
 	uint32 _txtpos;
 
 	int32 _delay;
