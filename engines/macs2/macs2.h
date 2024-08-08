@@ -78,6 +78,14 @@ struct BackgroundAnimation {
 	uint32 FrameIndex;
 };
 
+struct BackgroundAnimationBlob {
+	uint16 X;
+	uint16 Y;
+	Common::Array<uint8> Blob;
+	uint32 FrameIndex;
+	AnimFrame GetFrame(uint32 index);
+};
+
 enum DebugFlag {
 	DEBUG_RLE = 1 << 10,
 	DEBUG_SV = 1 << 11
@@ -178,6 +186,7 @@ public:
 
 	uint16 _numBackgroundAnimations;
 	BackgroundAnimation *_backgroundAnimations;
+	Common::Array<BackgroundAnimationBlob> _backgroundAnimationsBlobs;
 
 	byte* mapData;
 
