@@ -97,6 +97,8 @@ void Window::testFontScaling() {
 				for (y = y1; y < y1 + 6; y++)
 					if (_wm->_pixelformat.bytesPerPixel == 1)
 						*((byte *)surface.getBasePtr(x, y)) = _vm->transformColor(i * 16 + j);
+					else if (_wm->_pixelformat.bytesPerPixel == 2)
+						*((uint16 *)surface.getBasePtr(x, y)) = _vm->transformColor(i * 16 + j);
 					else
 						*((uint32 *)surface.getBasePtr(x, y)) = _vm->transformColor(i * 16 + j);
 		}
