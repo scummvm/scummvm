@@ -46,33 +46,6 @@ grDispatcher::restore_handler_t grDispatcher::_restore_handler = 0;
 grDispatcher *grDispatcher::_dispatcher_ptr;
 grFont *grDispatcher::_default_font;
 
-static const int CURSOR_W = 12;
-static const int CURSOR_H = 20;
-static const byte ARROW_CURSOR[CURSOR_W * CURSOR_H] = {
-	1,1,0,0,0,0,0,0,0,0,0,0,
-	1,2,1,0,0,0,0,0,0,0,0,0,
-	1,2,2,1,0,0,0,0,0,0,0,0,
-	1,2,2,2,1,0,0,0,0,0,0,0,
-	1,2,2,2,2,1,0,0,0,0,0,0,
-	1,2,2,2,2,2,1,0,0,0,0,0,
-	1,2,2,2,2,2,2,1,0,0,0,0,
-	1,2,2,2,2,2,2,2,1,0,0,0,
-	1,2,2,2,2,2,2,2,2,1,0,0,
-	1,2,2,2,2,2,2,2,2,2,1,0,
-	1,2,2,2,2,2,2,1,1,1,1,1,
-	1,2,2,2,1,2,2,1,0,0,0,0,
-	1,2,2,1,1,2,2,1,0,0,0,0,
-	1,2,1,0,0,1,2,2,1,0,0,0,
-	1,1,0,0,0,1,2,2,1,0,0,0,
-	1,0,0,0,0,0,1,2,2,1,0,0,
-	0,0,0,0,0,0,1,2,2,1,0,0,
-	0,0,0,0,0,0,0,1,2,2,1,0,
-	0,0,0,0,0,0,0,1,2,2,1,0,
-	0,0,0,0,0,0,0,0,1,1,0,0,
-};
-static const byte CURSOR_PALETTE[] = { 0x80, 0x80, 0x80, 0, 0, 0, 0xff, 0xff, 0xff };
-
-
 grDispatcher::grDispatcher() : _screenBuf(NULL),
 #ifdef _GR_ENABLE_ZBUFFER
 	zbuffer_(NULL),
@@ -96,11 +69,6 @@ grDispatcher::grDispatcher() : _screenBuf(NULL),
 	_mouse_cursor = NULL;
 
 	_pixel_format = GR_RGB565;
-
-	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-	CursorMan.replaceCursorPalette(CURSOR_PALETTE, 0, ARRAYSIZE(CURSOR_PALETTE) / 3);
-	CursorMan.replaceCursor(ARROW_CURSOR, CURSOR_W, CURSOR_H, 0, 0, 0, true, &format);
-	CursorMan.showMouse(true);
 
 	if (!_dispatcher_ptr) _dispatcher_ptr = this;
 }
