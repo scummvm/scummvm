@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-06 05:47+0000\n"
-"PO-Revision-Date: 2024-07-21 23:43+0000\n"
-"Last-Translator: Linus Väinämö Virtanen <linus.virtanen@protonmail.com>\n"
+"PO-Revision-Date: 2024-08-09 21:43+0000\n"
+"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -3129,10 +3129,8 @@ msgid "PC-9801 (16 Colors)"
 msgstr "PC-9801 (16 Väriä)"
 
 #: common/rendermode.cpp:48
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "PC-9801 (8 Colors)"
-msgstr "PC-9801 (16 Väriä)"
+msgstr "PC-9801 (8 Väriä)"
 
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:53
@@ -7538,14 +7536,12 @@ msgid "Keep graphics as close as possible to the original"
 msgstr "Pitää grafiikat mahdollisimman lähellä alkuperäistä"
 
 #: engines/freescape/metaengine.cpp:128
-#, fuzzy
-#| msgid "Enable storage"
 msgid "Enable rock travel"
-msgstr "Aktivoi tallennustila"
+msgstr "Aktivoi kivimatkustaminen"
 
 #: engines/freescape/metaengine.cpp:129
 msgid "Enable traveling using a rock shoot at start"
-msgstr ""
+msgstr "Aktivoi matkustaminen kiveä heittämällä alusta asti"
 
 #: engines/freescape/movement.cpp:47 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
@@ -8198,13 +8194,15 @@ msgstr "Vasen painike hyökkää, oikea painike poimii esineitä"
 
 #: engines/kyra/metaengine.cpp:159
 msgid "Faithful AD&D rules"
-msgstr ""
+msgstr "Uskolliset AD&D-säännöt"
 
 #: engines/kyra/metaengine.cpp:160
 msgid ""
 "Make implementation of AD&D rules more compliant with the AD&D 2nd edition "
 "handbook"
 msgstr ""
+"Tee AD&D-säännöstön toteutuksesta enemmän AD&D 2nd edition-käsikirjan "
+"kaltainen"
 
 #: engines/kyra/metaengine.cpp:251
 msgid "Lands of Lore support is not compiled in"
@@ -8471,20 +8469,14 @@ msgid "TTS Narrator"
 msgstr "TTS-kertoja"
 
 #: engines/lure/metaengine.cpp:170
-#, fuzzy
-#| msgid "Exit screen keymappings"
 msgid "Fight sequence keymappings"
-msgstr "Lopetusnäkymän näppäinkartta"
+msgstr "Tappeluiden näppäinkartta"
 
 #: engines/lure/metaengine.cpp:171
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Index keymappings"
-msgstr "Pelin näppäinkartoitukset"
+msgstr "Indeksin näppäinkartoitukset"
 
 #: engines/lure/metaengine.cpp:172
-#, fuzzy
-#| msgid "Yes/No keymapping"
 msgid "Yes/No keymappings"
 msgstr "Näppäinkartoitukset päällä/pois"
 
@@ -8496,16 +8488,12 @@ msgid "Save game"
 msgstr "Luo pelitallennus"
 
 #: engines/lure/metaengine.cpp:197 engines/mads/metaengine.cpp:311
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restore game"
-msgstr "Lataa pelitallenne:"
+msgstr "Lataa pelitallenne"
 
 #: engines/lure/metaengine.cpp:203
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restart game"
-msgstr "Lataa pelitallenne:"
+msgstr "Uudelleenkäynnistä peli"
 
 #. I18N: ESC key
 #: engines/lure/metaengine.cpp:209 engines/mads/metaengine.cpp:292
@@ -8517,59 +8505,45 @@ msgstr "Esc"
 
 #. I18N: Shift Cursor during fight to top left
 #: engines/lure/metaengine.cpp:233
-#, fuzzy
-#| msgid "Cursor left"
 msgid "Shift Cursor - Top left"
-msgstr "Osoitin vasen"
+msgstr "Siirrä osoitin - Vasen yläkulma"
 
 #. I18N: Shift Cursor during fight to middle left
 #: engines/lure/metaengine.cpp:239
 msgid "Shift Cursor -  Middle left"
-msgstr ""
+msgstr "Siirrä osoitin - Keskivasen"
 
 #. I18N: Shift Cursor during fight to bottom left
 #: engines/lure/metaengine.cpp:245
 msgid "Shift Cursor - Bottom left"
-msgstr ""
+msgstr "Siirrä osoitin - Vasen alakulma"
 
 #. I18N: Shift Cursor during fight to top right
 #: engines/lure/metaengine.cpp:251
-#, fuzzy
-#| msgid "Cursor right"
 msgid "Shift Cursor - Top right"
-msgstr "Osoitin oikea"
+msgstr "Siirrä osoitin - Oikea yläkulma"
 
 #. I18N: Shift Cursor during fight to middle right
 #: engines/lure/metaengine.cpp:257
-#, fuzzy
-#| msgid "Cursor right"
 msgid "Shift Cursor - Middle right"
-msgstr "Osoitin oikea"
+msgstr "Siirrä osoitin - Keskioikea"
 
 #. I18N: Shift Cursor during fight to bottom right
 #: engines/lure/metaengine.cpp:263
-#, fuzzy
-#| msgid "Cursor right"
 msgid "Shift Cursor - Bottom right"
-msgstr "Osoitin oikea"
+msgstr "Siirrä osoitin - Oikea alakulma"
 
 #: engines/lure/metaengine.cpp:270
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Go to next index"
-msgstr "Mene seuraavaan objektiin"
+msgstr "Siirry seuraavaan indeksiin"
 
 #: engines/lure/metaengine.cpp:277
-#, fuzzy
-#| msgid "Go to previous object"
 msgid "Go to previous index"
-msgstr "Mene edelliseen objektiin"
+msgstr "Siirry edelliseen indeksiin"
 
 #: engines/lure/metaengine.cpp:284
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select index"
-msgstr "Valitse sävytin"
+msgstr "Valitse indeksi"
 
 #: engines/made/detection_tables.h:445 engines/made/detection_tables.h:462
 msgid "The game is using unsupported engine"
@@ -8636,68 +8610,48 @@ msgid "Naughty game mode"
 msgstr "Tuhma pelitila"
 
 #: engines/mads/metaengine.cpp:276
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Start menu keymappings"
-msgstr "Pelin näppäinkartoitukset"
+msgstr "Käynnistysvalikon näppäinkartoitukset"
 
 #: engines/mads/metaengine.cpp:299
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open game menu"
-msgstr "Avaa päävalikko"
+msgstr "Avaa pelin valikko"
 
 #: engines/mads/metaengine.cpp:317
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Scroll bar up"
 msgstr "Vieritä ylös"
 
 #: engines/mads/metaengine.cpp:323
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Scroll bar down"
 msgstr "Vieritä alas"
 
 #: engines/mads/metaengine.cpp:331
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Start game"
-msgstr "Lataa pelitallenne:"
+msgstr "Käynnistä peli"
 
 #: engines/mads/metaengine.cpp:337
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Resume game"
-msgstr "Lataa pelitallenne:"
+msgstr "Jatka peliä"
 
 #: engines/mads/metaengine.cpp:343
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show intro"
-msgstr "Näytä vinkit"
+msgstr "Näytä intro"
 
 #: engines/mads/metaengine.cpp:349
 msgid "Show credits"
 msgstr "Näytä lopputekstit"
 
 #: engines/mads/metaengine.cpp:355
-#, fuzzy
-#| msgid "Show options"
 msgid "Show quotes"
-msgstr "Näytä asetukset"
+msgstr "Näytä lainaukset"
 
 #: engines/mads/metaengine.cpp:361
-#, fuzzy
-#| msgid "Quit game"
 msgid "Exit game"
 msgstr "Lopeta peli"
 
 #: engines/mads/metaengine.cpp:368
-#, fuzzy
-#| msgid "Faster animations"
 msgid "Restart animation"
-msgstr "Nopeammat animaatiot"
+msgstr "Uudelleenkäynnistä animaatio"
 
 #: engines/mm/metaengine.cpp:57
 msgid "Show item costs in standard inventory mode"
@@ -11623,23 +11577,17 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Datatiedostoa \"%s\" ei löydetty."
 
 #: engines/trecision/metaengine.cpp:137
-#, fuzzy
-#| msgid "Skip line"
 msgid "Skip video"
-msgstr "Ohita rivi"
+msgstr "Ohita video"
 
 #. I18N: Toggles walking speed of actor
 #: engines/trecision/metaengine.cpp:144
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fast walk"
-msgstr "Nopea tila päälle / pois"
+msgstr "Nopea kävely päälle / pois"
 
 #: engines/trecision/metaengine.cpp:163
-#, fuzzy
-#| msgid "System menu"
 msgid "Open system menu"
-msgstr "Järjestelmävalikko"
+msgstr "Avaa järjestelmävalikko"
 
 #: engines/twine/detection.cpp:175
 msgid "This version requires Giflib which was not compiled into ScummVM"
