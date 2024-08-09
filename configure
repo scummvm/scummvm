@@ -6005,7 +6005,7 @@ echo "$_fluidlite"
 #
 # Check for Sonivox
 #
-echocheck "Sonivox"
+echocheck "Sonivox >= 3.6.12"
 
 append_var SONIVOX_LIBS "-lsonivox"
 if test "$_sonivox" = auto; then
