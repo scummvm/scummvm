@@ -472,7 +472,7 @@ void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int
 		}
 
 	}
-	debugC(1, kFreescapeDebugParser, "End of riddles at %llx", file->pos());
+	debugC(1, kFreescapeDebugParser, "End of riddles at %" PRIx64, file->pos());
 }
 
 void CastleEngine::drawFullscreenRiddleAndWait(uint16 riddle) {
