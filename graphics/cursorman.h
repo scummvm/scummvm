@@ -242,6 +242,17 @@ public:
 	 * and returns false.
 	 */
 	void lock(bool locked);
+
+	/**
+	 * Sets default arrow cursor
+	 *
+	 * This is supposed to be used as a sane fallback for system cursor for
+	 * games that rely on the system cursor
+	 *
+	 * @param push		Specified if cursor should be pushed on replaced (defailt)
+	 */
+	void setDefaultArrowCursor(bool push = false);
+
 private:
 	/**
 	* Generic class for implementing the singleton design pattern.
