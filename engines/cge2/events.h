@@ -45,17 +45,16 @@ enum EventMask {
 	kMouseRightUp = 1 << 4,
 	kEventAttn = 1 << 5,
 	kMouseMask = (kMouseRoll | kMouseLeftDown | kMouseLeftUp |	kMouseRightDown | kMouseRightUp),
-	kEventKeyb = 1 << 7
+	kEventEsc = 1 << 7
 };
 
 class Keyboard {
 private:
-	bool getKey(Common::Event &event);
 	CGE2Engine *_vm;
 public:
 	Sprite *_client;
 
-	void newKeyboard(Common::Event &event);
+	void handleAction(Common::Event &event);
 	Sprite *setClient(Sprite *spr);
 
 	Keyboard(CGE2Engine *vm);
@@ -68,7 +67,6 @@ struct CGE2Event {
 	uint16 _mask;
 	uint16 _x;
 	uint16 _y;
-	Common::KeyCode _keyCode;
 	Sprite *_spritePtr;
 };
 

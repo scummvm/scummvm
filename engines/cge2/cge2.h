@@ -111,6 +111,15 @@ struct SavegameHeader;
 
 #define kColorNum           6
 
+enum CGEAction {
+	kActionNone,
+	kActionInfo,
+	kActionEscape,
+	kActionSave,
+	kActionLoad,
+	kActionQuit
+};
+
 struct SavegameHeader {
 	uint8 version;
 	Common::String saveName;
