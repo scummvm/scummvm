@@ -479,57 +479,33 @@
 
 
 //
-// Typedef our system types unless they have already been defined by config.h,
-// or SCUMMVM_DONT_DEFINE_TYPES is set.
+// Typedef our system types unless SCUMMVM_DONT_DEFINE_TYPES is set.
+// This is usually due to conflicts with the system headers.
 //
-#if !defined(HAVE_CONFIG_H) && !defined(SCUMMVM_DONT_DEFINE_TYPES)
+#ifndef SCUMMVM_DONT_DEFINE_TYPES
 	typedef unsigned char byte;
-	typedef unsigned char uint8;
-	typedef signed char int8;
-	typedef unsigned short uint16;
-	typedef signed short int16;
-	// HACK: Some ports, such as NDS and AmigaOS, are not frequently
-	// tested during development, but cause frequent buildbot failures
-	// because they need to use 'long' for int32. Windows 32-bit
-	// binaries have this nice property of being easy to build, having
-	// a 32-bit 'long' too, *and* being frequently tested (incl. Github
-	// Actions). We want to catch this case as early and frequently
-	// as possible, so Win32 is probably the best candidate for this...
-	#if defined(WIN32) && !defined(_WIN64)
+	typedef unsigned int uint;
+
+	typedef uint8_t uint8;
+	typedef int8_t int8;
+	typedef uint16_t uint16;
+	typedef int16_t int16;
+#if defined(__MORPHOS__) || defined(__amigaos4__)
+	/**
+	 * The system headers define uint32 and int32 as long, so we have to do the same here.
+	 * Without this, we get a conflicting declaration error when this file is included
+	 * along the AmigaOS files.
+	 */
 	typedef unsigned long uint32;
 	typedef signed long int32;
-	#else
-	typedef unsigned int uint32;
-	typedef signed int int32;
-	#endif
-	typedef unsigned int uint;
-	typedef signed long long int64;
-	typedef unsigned long long uint64;
-#endif
-
-//
-// Determine 64 bitness
-// Reference: https://web.archive.org/web/20190413073704/http://nadeausoftware.com/articles/2012/02/c_c_tip_how_detect_processor_type_using_compiler_predefined_macros
-//
-#if !defined(HAVE_CONFIG_H)
-
-#if defined(__x86_64__) || \
-		  defined(_M_X64) || \
-		  defined(__ppc64__) || \
-		  defined(__powerpc64__) || \
-		  defined(__LP64__) || \
-		  defined(_M_ARM64)
-
-typedef int64 intptr;
-typedef uint64 uintptr;
-
 #else
-
-typedef int32 intptr;
-typedef uint32 uintptr;
-
+	typedef uint32_t uint32;
+	typedef int32_t int32;
 #endif
-
+	typedef uint64_t uint64;
+	typedef int64_t int64;
+	typedef uintptr_t uintptr;
+	typedef intptr_t intptr;
 #endif
 
 //
