@@ -38,6 +38,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{ QDEngine::kDebugInput, "input", "Enable user input tracing"},
 	{ QDEngine::kDebugLoad, "load", "Enable load tracing" },
 	{ QDEngine::kDebugLog, "log", "See log messages"},
+	{ QDEngine::kDebugMovement, "movement", "Enable movement tracing"},
 	{ QDEngine::kDebugSave, "save", "Enable save tracing"},
 	{ QDEngine::kDebugSound, "sound", "Sound debug level"},
 	{ QDEngine::kDebugTemp, "temp", "Enable temporary tracing" },

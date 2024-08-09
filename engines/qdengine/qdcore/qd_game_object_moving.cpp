@@ -300,9 +300,13 @@ bool qdGameObjectMoving::save_script(Common::WriteStream &fh, int indent) const 
 }
 
 bool qdGameObjectMoving::move(const Vect3f &target, bool lock_target) {
+	debugC(3, kDebugMovement, "qdGameObjectMoving::move([%f, %f, %f], %d)", target.x, target.y, target.z, lock_target);
+
 	set_last_move_order(target);
 	if (false == enough_far_target(target))
 		return true;
+
+	debugC(3, kDebugMovement, "qdGameObjectMoving::move(): _is_selected %d %d", _is_selected, has_control_type(CONTROL_CLEAR_PATH));
 	if (_is_selected && has_control_type(CONTROL_CLEAR_PATH)) {
 		if (!find_path(target, true)) {
 			toggle_ignore_personages(true);
@@ -315,6 +319,8 @@ bool qdGameObjectMoving::move(const Vect3f &target, bool lock_target) {
 				return false;
 		}
 	}
+
+	debugC(3, kDebugMovement, "qdGameObjectMoving::move(): _movement_mode %d", _movement_mode);
 	switch (_movement_mode) {
 	case MOVEMENT_MODE_STOP:
 	case MOVEMENT_MODE_END:
@@ -323,6 +329,7 @@ bool qdGameObjectMoving::move(const Vect3f &target, bool lock_target) {
 	default:
 		break;
 	}
+
 	return find_path(target, lock_target);
 }
 
@@ -354,6 +361,7 @@ void dump_vect(const V &vect) {
 }
 
 bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
+	debugC(3, kDebugMovement, "qdGameObjectMoving::find_path([%f, %f, %f], %d", target.x, target.y, target.z, lock_target);
 	Vect3f trg = target;
 
 	if (!adjust_position(trg))
@@ -362,6 +370,8 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 	set_grid_zone_attributes(sGridCell::CELL_SELECTED);
 
 	_target_angle = -1.0f;
+
+	debugC(3, kDebugMovement, "qdGameObjectMoving::find_path() _is_walkable: %d", is_walkable(trg));
 
 	if (!is_walkable(trg)) {
 		if (lock_target || check_grid_zone_attributes(sGridCell::CELL_IMPASSABLE)) return false;
@@ -821,14 +831,17 @@ bool qdGameObjectMoving::is_movement_finished() const {
 
 void qdGameObjectMoving::quant(float dt) {
 	Vect3f beg_r = R();
+	debugC(9, kDebugMovement, "qdGameObject::quant() %s %f %f %f", transCyrillic(name()), beg_r.x, beg_r.y, beg_r.z);
 
-	if (can_change_state())
+	if (can_change_state()) {
 		enable_control();
+	}
 
 	if (_impulse_start_timer > FLT_EPS) {
 		_impulse_start_timer -= dt;
-		if (_impulse_start_timer <= 0.0f)
+		if (_impulse_start_timer <= 0.0f) {
 			movement_impulse();
+		}
 	}
 
 	if (has_control_type(CONTROL_AUTO_MOVE))
@@ -854,17 +867,6 @@ void qdGameObjectMoving::quant(float dt) {
 						_direction_angle = _target_angle;
 
 					stop_movement();
-					/*
-					                    drop_flag(QD_OBJ_MOVING_FLAG);
-
-					                    set_direction(_direction_angle);
-
-					                    if(get_cur_state())
-					                        get_cur_state()->stop_sound();
-
-					                    if(is_movement_finished())
-					                        _movement_mode = MOVEMENT_MODE_STOP;
-					*/
 				}
 			}
 		} else
@@ -934,8 +936,9 @@ bool qdGameObjectMoving::is_walkable(const Vect3f &pos) const {
 }
 
 bool qdGameObjectMoving::is_walkable(const Vect2s &pos) const {
-	Vect2s size = walk_grid_size(pos);
+	debugC(4, kDebugMovement, "qdGameObjectMoving::is_walkable([%d %d])", pos.x, pos.y);
 
+	Vect2s size = walk_grid_size(pos);
 	return qdCamera::current_camera()->is_walkable(pos, size, _ignore_personages);
 }
 
@@ -1902,6 +1905,8 @@ void qdGameObjectMoving::redraw(int offs_x, int offs_y) const {
 }
 
 bool qdGameObjectMoving::keyboard_move() {
+	debugC(9, kDebugMovement, "qdGameObjectMoving::keyboard_move()");
+
 	if (!is_control_disabled() && has_control_type(CONTROL_KEYBOARD)) {
 		bool keypress = false;
 		warning("STUB: qdGameObjectMoving::keyboard_move()");
@@ -1950,6 +1955,7 @@ bool qdGameObjectMoving::keyboard_move() {
 }
 
 bool qdGameObjectMoving::set_walk_animation() {
+	debugC(5, kDebugMovement, "qdGameObjectMoving::set_walk_animation()");
 	float tm = 0.0f;
 
 	if (check_flag(QD_OBJ_MOVING_FLAG))
@@ -2021,6 +2027,7 @@ bool qdGameObjectMoving::set_walk_animation() {
 }
 
 bool qdGameObjectMoving::set_movement_impulse(float dir_angle) {
+	debugC(5, kDebugMovement, "qdGameObjectMoving::set_movement_impulse(%f)", dir_angle);
 	if (_impulse_direction >= 0.0f) return false;
 
 	adjust_direction_angle(dir_angle);
@@ -2035,6 +2042,8 @@ bool qdGameObjectMoving::set_movement_impulse(float dir_angle) {
 }
 
 bool qdGameObjectMoving::movement_impulse() {
+	debugC(5, kDebugMovement, "qdGameObjectMoving::movement_impulse()");
+
 	if (_impulse_direction < 0.0f || !is_direction_allowed(_impulse_direction) || !can_move() || (is_moving() && !_impulse_movement_mode) || check_grid_zone_attributes(sGridCell::CELL_IMPASSABLE)) {
 		_impulse_direction = -1.0f;
 		return false;
@@ -2061,6 +2070,7 @@ bool qdGameObjectMoving::movement_impulse() {
 }
 
 float qdGameObjectMoving::speed() {
+	debugC(5, kDebugMovement, "qdGameObjectMoving::speed()");
 	if (qdGameObjectState * st = get_cur_state()) {
 		if (st->state_type() == qdGameObjectState::STATE_WALK) {
 			if (qdAnimationInfo * inf = static_cast<qdGameObjectStateWalk * >(st)->animation_info(_direction_angle))
@@ -2097,31 +2107,6 @@ bool qdGameObjectMoving::avoid_collision(const qdGameObjectMoving *p) {
 
 	if (move(r, true)) return true;
 
-//	r = R();
-//	r.x += dist * cos(angle);
-//	r.y += dist * sin(angle);
-
-//	if(init_movement(r,true)) return true;
-	/*
-	    const num_angles = 4;
-	    for(int i = 0; i < num_angles; i++){
-	        float dir = direction + M_PI / 2.0f / float(num_angles) * float(i) + p->direction_angle() + qdCamera::current_camera()->get_z_angle() * M_PI / 180.0f;
-
-	        Vect3f r(R());
-	        r.x += dist * cos(dir);
-	        r.y += dist * sin(dir);
-
-	        if(init_movement(r,true)) return true;
-
-	        dir = direction - M_PI / 2.0f / float(num_angles) * float(i) + p->direction_angle() + qdCamera::current_camera()->get_z_angle() * M_PI / 180.0f;
-
-	        r = R();
-	        r.x += dist * cos(dir);
-	        r.y += dist * sin(dir);
-
-	        if(init_movement(r,true)) return true;
-	    }
-	*/
 	return false;
 }
 
@@ -2672,6 +2657,8 @@ bool qdGameObjectMoving::can_change_state(const qdGameObjectState *state) const 
 }
 
 bool qdGameObjectMoving::toggle_grid_zone(bool make_walkable) {
+	debugC(3, kDebugMovement, "qdGameObject::toggle_grid_zone(%d)", make_walkable);
+
 	if (make_walkable)
 		return drop_grid_zone_attributes(sGridCell::CELL_PERSONAGE_OCCUPIED);
 	else
