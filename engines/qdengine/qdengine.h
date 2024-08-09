@@ -50,6 +50,7 @@ enum QDEngineDebugChannels {
 	kDebugTemp,
 	kDebugQuant,
 	kDebugMinigames,
+	kDebugMovement
 };
 
 class QDEngineEngine : public Engine {

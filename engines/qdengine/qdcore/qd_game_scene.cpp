@@ -115,8 +115,10 @@ void qdGameScene::quant(float dt) {
 	qdGameDispatcherBase::quant(dt);
 
 	if (mouseDispatcher::instance()->check_event(mouseDispatcher::EV_LEFT_DOWN) && _selected_object && _selected_object->has_control_type(qdGameObjectMoving::CONTROL_MOUSE)) {
+		debugC(5, kDebugMovement, "qdGameScene::quant(%f) mouse movement", dt);
 		qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher();
 		if (dp && !dp->check_flag(qdGameDispatcher::OBJECT_CLICK_FLAG | qdGameDispatcher::DIALOG_CLICK_FLAG) && _selected_object->can_move()) {
+			debugC(5, kDebugMovement, "qdGameScene::quant(%f) can move: %d", dt, _selected_object->can_move());
 			Vect3f pos = _camera.get_cell_coords(_camera.get_cell_index(_mouse_click_pos.x, _mouse_click_pos.y, false));
 
 			_selected_object->set_queued_state(NULL);

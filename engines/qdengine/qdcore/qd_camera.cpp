@@ -149,6 +149,7 @@ void qdCamera::set_grid_size(int xs, int ys) {
 }
 
 void qdCamera::clear_grid() {
+	debugC(3, kDebugMovement, "qdCamera::clear_grid()");
 	int cnt = 0;
 	for (int i = 0; i < _GSY; i++) {
 		for (int j = 0; j < _GSX; j++) {
@@ -1195,6 +1196,7 @@ bool qdCamera::set_grid_attributes(const Vect2s &center_pos, const Vect2s &size,
 
 	sGridCell *cells = _grid + x0 + y0 * _GSX;
 
+	debugC(3, kDebugMovement, "qdCamera::set_grid_attributes() attr: %d at [x: %d, y: %d]", attr, x0, y0);
 	for (int y = y0; y < y1; y++) {
 		sGridCell *p = cells;
 		for (int x = x0; x < x1; x++, p++)
@@ -1315,17 +1317,22 @@ bool qdCamera::is_walkable(const Vect2s &center_pos, const Vect2s &size, bool ig
 	if (y1 > _GSY - 1) y1 = _GSY - 1;
 
 	const sGridCell *cells = _grid + x0 + y0 * _GSX;
+	debugC(3, kDebugMovement, "qdCamera::is_walkable(): attr = %d, x0 = %d, y0 = %d, sizeX = %d, sizeY = %d, ignore_personages = %d", cells->attributes(), x0, y0, size.x, size.y, ignore_personages);
+
 	int attr = sGridCell::CELL_IMPASSABLE | sGridCell::CELL_OCCUPIED;
-	if (!ignore_personages)
+	if (!ignore_personages) {
 		attr |= sGridCell::CELL_PERSONAGE_OCCUPIED;
+	 }
 
 	for (int y = y0; y < y1; y++) {
 		const sGridCell *p = cells;
-		for (int x = x0; x < x1; x++, p++) {
-			if (p->check_attribute(attr) && !p->check_attribute(sGridCell::CELL_SELECTED))
-				return false;
-		}
 
+		for (int x = x0; x < x1; x++, p++) {
+			debugC(5, kDebugMovement, "qdCamera::is_walkable(): attr at [%d, %d]: %d", x, y, p->attributes());
+			if (p->check_attribute(attr) && !p->check_attribute(sGridCell::CELL_SELECTED)) {
+				return false;
+			}
+		}
 		cells += _GSX;
 	}
 
