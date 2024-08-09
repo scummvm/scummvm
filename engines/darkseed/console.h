@@ -24,6 +24,7 @@
 #define DARKSEED_CONSOLE_H
 
 #include "gamefont.h"
+#include "darkseed/sound.h"
 #include "nsp.h"
 #include "tostext.h"
 
@@ -33,12 +34,13 @@ class Console  {
 private:
 	TosText *_tosText;
 	GameFont _font;
+	Sound *_sound;
 
 	Common::Array<Common::String> _text;
 	int _startIdx = 0;
 
 public:
-	Console(TosText *tostext);
+	Console(TosText *tostext, Sound *sound);
 
 	void printTosText(int tosIndex);
 	void addTextLine(const Common::String &text);

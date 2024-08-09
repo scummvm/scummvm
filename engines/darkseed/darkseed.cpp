@@ -49,6 +49,7 @@ DarkseedEngine::DarkseedEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 DarkseedEngine::~DarkseedEngine() {
 	delete _screen;
+	delete _sound;
 }
 
 uint32 DarkseedEngine::getFeatures() const {
@@ -61,10 +62,11 @@ Common::String DarkseedEngine::getGameId() const {
 
 Common::Error DarkseedEngine::run() {
 	initGraphics(640, 350);
+	_sound = new Sound(_mixer);
 	_screen = new Graphics::Screen();
 	_tosText = new TosText();
 	_tosText->load();
-	_console = new Console(_tosText);
+	_console = new Console(_tosText, _sound);
 	_player = new Player();
 
 	Img left00Img;
@@ -150,6 +152,9 @@ Common::Error DarkseedEngine::syncGame(Common::Serializer &s) {
 	s.syncAsSint16LE(_player->_position.x);
 	s.syncAsSint16LE(_player->_position.y);
 
+	if (_sound->sync(s).getCode() != Common::kNoError) {
+		error("Failed to sync sound");
+	}
 	return Common::kNoError;
 }
 void DarkseedEngine::fadeOut() {
@@ -3209,9 +3214,11 @@ void DarkseedEngine::playSound(int16 unk, uint8 unk1, int16 unk2) {
 void DarkseedEngine::nextFrame(int nspAminIdx) {
 	isAnimFinished_maybe = false;
 	spriteAnimCountdownTimer[nspAminIdx]--;
+	_FrameAdvanced = false;
 	if (spriteAnimCountdownTimer[nspAminIdx] < 1) {
 		const Obt &anim = _player->_animations.getAnimAt(nspAminIdx);
 		animIndexTbl[nspAminIdx]++;
+		_FrameAdvanced = true;
 		if (animIndexTbl[nspAminIdx] == anim.numFrames) {
 			animIndexTbl[nspAminIdx] = 0;
 			isAnimFinished_maybe = true;
@@ -3239,7 +3246,7 @@ void DarkseedEngine::updateHeadache() {
 		if (headacheMessageIdx > 4) {
 			headacheMessageIdx = 0;
 		}
-		if (_objectVar[112] == 0) {
+		if (_objectVar[112] == 0 && !_sound->isPlayingSpeech()) {
 			_console->printTosText(headacheMessageIdx + 9);
 		}
 	}
@@ -3257,7 +3264,7 @@ void DarkseedEngine::gotonextmorning() {
 	_objectVar[112] = 0;
 	_objectVar[52] = 1;
 	_currentTimeInSeconds = 32400;
-//	ClearSpeech(4192,unaff_BP + 1); TODO
+	_sound->resetSpeech();
 	if (_currentDay == 2) {
 		_objectVar.setMoveObjectRoom(7, 253);
 	} else if (_currentDay == 3) {
@@ -3375,7 +3382,7 @@ void DarkseedEngine::runObjects() {
 			_player->changeDirection(_player->_direction, 3);
 		}
 		isAnimFinished_maybe = false;
-		if (!_ct_voice_status && (_objectVar[141] != 2 || _delbertspeech > 64)) {
+		if (!_sound->isPlayingSpeech() && (_objectVar[141] != 2 || _delbertspeech > 64)) {
 			nextFrame(_objectVar[141] - 1);
 		}
 		if (isAnimFinished_maybe) {
@@ -3391,13 +3398,13 @@ void DarkseedEngine::runObjects() {
 			}
 			isAnimFinished_maybe = false;
 		}
-		if (_ct_voice_status == 0 && _objectVar[141] == 2) {
+		if (!_sound->isPlayingSpeech() && _objectVar[141] == 2) {
 			if (_delbertspeech < 65) {
 				_delbertspeech++;
 			}
 			if (_delbertspeech == 64) {
 				_console->printTosText(908);
-//				WaitForSpeech(); TODO
+				_sound->waitForSpeech();
 			}
 			else if (*(char *)&_delbertspeech == 65) {
 				setupOtherNspAnimation(3, 20);
@@ -3405,7 +3412,26 @@ void DarkseedEngine::runObjects() {
 				_delbertspeech = 72;
 			}
 		}
-		// TODO more logic here
+		const Sprite &sprite = _player->_animations.getSpriteAt(_player->_animations.getAnimAt(_objectVar[141] - 1).frameNo[animIndexTbl[_objectVar[141] - 1]]);
+		Common::Point delbertPosition = _objectVar.getMoveObjectPosition(141);
+		if (_FrameAdvanced) {
+			if (_objectVar[141] == 1) {
+				delbertPosition.x += 15;
+				delbertPosition.y -= 1;
+			} else if (_objectVar[141] == 3) {
+				delbertPosition.x -= 15;
+				delbertPosition.y += 1;
+			}
+			_objectVar.setMoveObjectPosition(141, delbertPosition);
+		}
+		int spriteX = delbertPosition.x;
+		if (_objectVar[141] == 2) {
+			spriteX += 23;
+		}
+		int spriteY = delbertPosition.y - sprite.height;
+		if (_objectVar[141] < 4) {
+			g_engine->_sprites.addSpriteToDrawList(spriteX, spriteY, &sprite, 240 - delbertPosition.y, sprite.width, sprite.height, _objectVar[141] == 3 ? true : false);
+		}
 	}
 	// TODO more logic here.
 }

@@ -42,6 +42,7 @@
 #include "objects.h"
 #include "player.h"
 #include "room.h"
+#include "sound.h"
 #include "sprites.h"
 #include "tostext.h"
 
@@ -65,6 +66,7 @@ private:
 	Pic *_fullscreenPic = nullptr;
 	bool _timeAdvanceEventSelected = false;
 	uint8 _delbertspeech = 0;
+	bool _FrameAdvanced = false;
 
 protected:
 	// Engine APIs
@@ -74,6 +76,7 @@ public:
 	bool _isRightMouseClicked = false;
 	bool _isLeftMouseClicked = false;
 
+	Sound *_sound = nullptr;
 	Nsp _baseSprites;
 	Cursor _cursor;
 	Graphics::Screen *_screen = nullptr;

@@ -24,7 +24,7 @@
 
 namespace Darkseed {
 
-Console::Console(TosText *tosText) : _tosText(tosText) {
+Console::Console(TosText *tosText, Sound *sound) : _tosText(tosText), _sound(sound) {
 	if(!_font.load()) {
 		error("Error loading tosfont.nsp");
 	}
@@ -36,6 +36,7 @@ void Console::printTosText(int tosIndex) {
 	debug(text.c_str());
 	addLine(" ");
 	addTextLine(text);
+	_sound->playTosSpeech(tosIndex);
 }
 
 void Console::addTextLine(const Common::String &text) {
