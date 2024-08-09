@@ -91,6 +91,7 @@ View1::View1() : UIElement("View1") {
 			// TODO Figure out these - the mug has a different blob
 			index = 0x13;
 		}
+		index = 15;
 		Common::MemoryReadStream stream(gameObject->Blobs[index].data(), gameObject->Blobs[index].size());
 		// TODO: Need to check how the offset really is calculated by the game code, this will not hold
 		stream.seek(23, SEEK_SET);
@@ -196,7 +197,7 @@ View1::View1() : UIElement("View1") {
 			BackgroundAnimationBlob &currentBlob = g_engine->_backgroundAnimationsBlobs[i];
 			// AnimFrame &currentFrame = current.Frames[current.FrameIndex];
 			AnimFrame currentFrame = currentBlob.GetFrame(currentBlob.FrameIndex);
-			DrawSprite(current.X, current.Y, currentFrame.Width, currentFrame.Height, currentFrame.Data, s);
+			DrawSprite(current.X, current.Y, currentFrame.Width, currentFrame.Height, currentFrame.Data, s, false);
 		}
 	}
 
@@ -215,7 +216,7 @@ View1::View1() : UIElement("View1") {
 			GlyphData data;
 			bool found = g_engine->FindGlyph(*iter, data);
 			if (found) {
-				DrawSprite(currentX, currentY, data.Width, data.Height, data.Data, surf);
+				DrawSprite(currentX, currentY, data.Width, data.Height, data.Data, surf, false);
 				currentX += data.Width + 1;
 				// TODO: Add reference to where this is defined
 			} else {
@@ -252,7 +253,7 @@ View1::View1() : UIElement("View1") {
 				currentY += currentData.Height;
 				currentX = x;
 			}
-			DrawSprite(currentX, currentY, currentData.Width, currentData.Height, currentData.Data, s);
+			DrawSprite(currentX, currentY, currentData.Width, currentData.Height, currentData.Data, s, false);
 			currentX += currentData.Width;
 		}
 	}
@@ -544,7 +545,7 @@ void View1::draw() {
 			// TODO: Improve addressing of the memory
 			AnimFrame *frame = speakingCharacter->GetCurrentPortrait();
 
-			DrawSprite(Common::Point(0xa, 0xa), frame->Width, frame->Height, frame->Data, s);
+			DrawSprite(Common::Point(0xa, 0xa), frame->Width, frame->Height, frame->Data, s, false);
 		}
 	}
 
@@ -563,7 +564,7 @@ void View1::draw() {
 
 	if (activeInventoryItem != nullptr) {
 		AnimFrame *icon = GetInventoryIcon(activeInventoryItem);
-		DrawSprite(0x00, 0x00, icon->Width, icon->Height, icon->Data, s);
+		DrawSprite(0x00, 0x00, icon->Width, icon->Height, icon->Data, s, false);
 	}
 
 	// drawPathfindingPoints(s);
@@ -645,7 +646,7 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 	int y = 0;
 	for (GameObject *currentItem : inventoryItems) {
 		AnimFrame *icon = GetInventoryIcon(currentItem);
-		DrawSprite(0x36 + x, 0x2c + y, icon->Width, icon->Height, icon->Data, s);
+		DrawSprite(0x36 + x, 0x2c + y, icon->Width, icon->Height, icon->Data, s, false);
 		x += icon->Width;
 	}
 }
@@ -670,7 +671,7 @@ void View1::DrawSprite(int16 x, int16 y, uint16 width, uint16 height, byte* data
 	for (int currentX = 0; currentX < width; currentX++) {
 		int actualX = mirrored ? width - currentX : currentX;
 		for (int currentY = 0; currentY < height; currentY++) {
-			uint8 val = data[currentY * width + actualX];
+			uint8 val = data[currentY * width + currentX];
 			if (val != 0) {
 				int finalX = x + actualX;
 				int finalY = y + currentY;
@@ -764,11 +765,11 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 			continue;
 		}
 		AnimFrame* frame = current->GetCurrentAnimationFrame();
-		
+		bool mirror = current->isAnimationMirrored();
 		
 		// AnimFrame *frame = current->GetCurrentPortrait();
 		uint8 depth = current->GetPosition().y;
-		DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s, true, depth);
+		DrawSprite(current->GetPosition() - frame->GetBottomMiddleOffset(), frame->Width, frame->Height, frame->Data, s, mirror, true, depth);
 		// Draw the white dot
 		// TODO: Why does it not work for the others apart from the player?
 		Common::Rect screenRect(0, 0, 320, 200);
@@ -898,9 +899,37 @@ void Character::SetPosition(const Common::Point &newPosition) {
 	GameObject->Position = newPosition;
 }
 
+bool Character::isAnimationMirrored() const {
+	
+	return is_in_list<uint16, 6, 7, 8, 14, 15, 16>(GameObject->Orientation);
+}
+
+uint8 Character::getMirroredAnimation(uint8 original) const {
+	switch (original) {
+	case 6:
+		return 4;
+	case 7:
+		return 3;
+	case 8:
+		return 2;
+	case 14:
+		return 12;
+	case 15:
+		return 11;
+	case 16:
+		return 10;
+	}
+}
+
+
+
 Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	// We choose looking towards the screen first
 	int blobIndex = GameObject->Orientation - 1;
+	if (isAnimationMirrored()) {
+		blobIndex = getMirroredAnimation(GameObject->Orientation) - 1;
+		// blobIndex = GameObject->Orientation - 1 -
+	}
 	/* if (IsLerping) {
 		// We are walking
 		blobIndex = GameObject->Orientation + 1;
