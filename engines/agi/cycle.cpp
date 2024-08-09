@@ -39,6 +39,14 @@ namespace Agi {
  * @param n room number
  */
 void AgiEngine::newRoom(int16 newRoomNr) {
+	// The Software Farm re-release of Gold Rush doesn't show the copy
+	// protection screen. In fact, it doesn't even include the "California
+	// Gold" book. But the copy protection is still present in the game
+	// data files, so allow it to be enabled.
+	if (getGameID() == GID_GOLDRUSH && _game.curLogicNr == 129 && newRoomNr == 73 && ConfMan.getBool("copy_protection")) {
+		newRoomNr = 125;
+	}
+
 	ScreenObjEntry *screenObjEgo = &_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY];
 
 	// Loading trigger
