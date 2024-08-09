@@ -72,7 +72,7 @@ void CastleEngine::loadDOSFonts(Common::SeekableReadStream *file, int pos) {
 		}
 		//debugN("\n");
 	}
-	debug("%llx", file->pos());
+	debug("%" PRIx64, file->pos());
 	_fontPlane1.set_size(64 * 59);
 	_fontPlane1.set_bits(bufferPlane1);
 

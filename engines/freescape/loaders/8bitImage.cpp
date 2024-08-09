@@ -105,7 +105,7 @@ Graphics::ManagedSurface *FreescapeEngine::load8bitBinImage(Common::SeekableRead
 		load8bitBinImageRow(file, surface, row);
 
 	assert(startImage + imageSize == file->pos());
-	debugC(1, kFreescapeDebugParser, "Last position: %llx", file->pos());
+	debugC(1, kFreescapeDebugParser, "Last position: %" PRIx64, file->pos());
 	return surface;
 }
 
