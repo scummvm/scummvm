@@ -3769,10 +3769,10 @@ void ScummEngine::runBootscript() {
 
 	args[0] = _bootParam;
 
-	if (_game.id == GID_MANIAC && (_game.features & GF_DEMO) && (_game.platform != Common::kPlatformC64))
-		runScript(9, 0, 0, args);
+	if ((_game.id == GID_MANIAC && (_game.features & GF_DEMO) && (_game.platform != Common::kPlatformC64)) || ConfMan.getBool("enable_demo_mode"))
+    	runScript(9, 0, 0, args);
 	else
-		runScript(1, 0, 0, args);
+    	runScript(1, 0, 0, args);
 }
 
 #ifdef ENABLE_HE
