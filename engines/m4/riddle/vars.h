@@ -54,6 +54,7 @@ public:
 	Riddle::Hotkeys _hotkeys;
 	Riddle::GUI::Interface _interface;
 	int _global301 = 0;
+	int _flag1 = 0;
 
 public:
 	Vars();

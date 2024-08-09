@@ -302,6 +302,465 @@ void Room401::daemon() {
 		conv_resume();
 		break;
 
+	case 105:
+		sendWSMessage_10000(1, _agent, _401a05, 53, 1, 106, _401a01, 1, 1, 0);
+		break;
+
+	case 106:
+		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			triggerMachineByHashCallbackNegative, "rip");
+		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 11, 200, _401rp01, 11, 11, 0);
+		_val7 = _val3 = 0;
+
+		sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
+		_val6 = 0;
+		_ctr1 = 0;
+
+		inv_give_to_player("POMERANIAN MARKS");
+		conv_resume();
+		break;
+
+	case 108:
+		sendWSMessage_10000(1, _agent, _401a04, 63, 90, 104, _401a01, 1, 1, 0);
+		digi_play("950_s35", 2);
+		break;
+
+	case 200:
+		kernel_timing_trigger(1, 201);
+		break;
+
+	case 201:
+		if (!_val7) {
+			switch (_val3) {
+			case 0:
+				sendWSMessage_10000(1, _ripMach, _401rp01, 11, 11, 200, _401rp01, 11, 11, 0);
+				break;
+			case 1:
+				sendWSMessage_10000(1, _ripMach, _401rp01, 12, 12, -1, _401rp01, 12, 19, 4);
+				sendWSMessage_1a0000(_ripMach, 13);
+				break;
+			case 2:
+				sendWSMessage_10000(1, _ripMach, _401rp01, 20, 36, 200, _401rp01, 11, 11, 0);
+				sendWSMessage_190000(_ripMach, 13);
+				_val3 = 0;
+				break;
+			case 3:
+				sendWSMessage_10000(1, _ripMach, _401rp01, 11, 1, 202, _401rp01, 1, 1, 0);
+				break;
+			default:
+				break;
+			}
+		}
+		break;
+
+	case 202:
+		terminateMachineAndNull(_ripMach);
+		ws_unhide_walker();
+		player_set_commands_allowed(true);
+		break;
+
+	case 300:
+		ws_hide_walker();
+		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			triggerMachineByHashCallbackNegative, "rip");
+		sendWSMessage_10000(1, _ripMach, _401rp01, 1, 11, 305, _401rp01, 11, 11, 0);
+		_val6 = 5;
+
+		digi_play((_val1 == 1) ? "401x02" : "401x03", 1);
+		break;
+
+	case 305:
+		terminateMachineAndNull(_agent);
+		sendWSMessage_10000(1, _ripMach, _401a02, 1, 47, 306, _401a02, 47, 47, 0);
+		break;
+
+	case 306:
+		kernel_timing_trigger(1, 990);
+		inv_give_to_player("MESSAGE LOG");
+		break;
+
+	case 320:
+		sendWSMessage_10000(1, _ripMach, _401a02, 48, 57, 322, _401a02, 57, 57, 0);
+		break;
+
+	case 322:
+		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 1, 324, _401rp01, 1, 1, 0);
+		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, 0,
+			triggerMachineByHashCallbackNegative, "agent");
+		sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
+		break;
+
+	case 324:
+	case 520:
+	case 620:
+	case 720:
+	case 826:
+		terminateMachineAndNull(_ripMach);
+		ws_unhide_walker();
+		kernel_timing_trigger(1, 1000);
+		break;
+
+	case 400:
+		_G(flag1) = 0;
+		setGlobals1(_rip4, 1, 1, 1, 5, 1);
+		sendWSMessage_110000(405);
+		_val6 = 4;
+		digi_play("401r02", 1, 255, 405);
+		break;
+
+	case 405:
+		if (_G(flag1) >= 1) {
+			_G(flag1) = 0;
+			sendWSMessage_140000(-1);
+			_val6 = 5;
+			digi_play("401x04", 1, 255, 407);
+		} else {
+			++_G(flag1);
+		}
+		break;
+
+	case 407:
+		_val6 = 4;
+		kernel_timing_trigger(1, 100);
+
+		setGlobals1(_rip4, 1, 1, 1, 5, 1);
+		sendWSMessage_110000(410);
+		digi_play("401r03", 1, 255, 410);
+		break;
+
+	case 410:
+		if (_G(flag1) >= 1) {
+			_G(flag1) = 0;
+			sendWSMessage_140000(-1);
+			_val6 = 5;
+			digi_play("401x05", 1, 255, 412);
+		} else {
+			++_G(flag1);
+		}
+		break;
+
+	case 412:
+		_val6 = 0;
+		kernel_timing_trigger(1, 100);
+		_G(flags)[GLB_TEMP_14] = 1;
+		kernel_timing_trigger(1, 1000);
+		break;
+
+	case 500:
+		setGlobals1(_rip2, 1, 15, 15, 15, 0, 1, 2, 3, 5, 1, 2, 1, 1, 1);
+		_val6 = 4;
+		sendWSMessage_110000(503);
+		digi_play("401r29", 1, 255, 505);
+		break;
+
+	case 503:
+	case 603:
+		sendWSMessage_29a0000(_rip3);
+		sendWSMessage_120000(-1);
+		break;
+
+	case 505:
+		sendWSMessage_130000(-1);
+		digi_play("401x09", 1, 255, 507);
+		break;
+
+	case 507:
+		_val6 = 4;
+		kernel_timing_trigger(1, 100);
+		sendWSMessage_120000(-1);
+		digi_play("401r30", 1, 255, 510);
+		break;
+
+	case 510:
+		sendWSMessage_110000(511);
+		_val6 = 5;
+		digi_play("401x10", 1, 255, 512);
+
+	case 511:
+		sendWSMessage_29a0000(_rip2);
+		sendWSMessage_140000(514);
+		break;
+
+	case 512:
+		sendWSMessage_10000(1, _agent, _401a01, 3, 3, 100, _401a01, 3, 3, 0);
+		break;
+
+	case 514:
+		kernel_timing_trigger(60, 515);
+		break;
+
+	case 515:
+		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			triggerMachineByHashCallbackNegative, "rip");
+		sendWSMessage_10000(1, _ripMach, _401rp01, 1, 11, 516, _401rp01, 11, 11, 0);
+		break;
+
+	case 516:
+		terminateMachineAndNull(_ripMach);
+		sendWSMessage_10000(1, _agent, _401a04, 1, 63, 517, _401a04, 63, 63, 0);
+		break;
+
+	case 517:
+		sendWSMessage_10000(1, _agent, _401a04, 64, 90, 518, _401a01, 1, 1, 0);
+		digi_play("950_s35", 2);
+		break;
+
+	case 518:
+		series_show("401a06", 0x600, 16);
+		sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
+		_G(flags)[GLB_TEMP_10] = 1;
+		_G(flags)[V366] = 1;
+
+		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			triggerMachineByHashCallbackNegative, "rip");
+		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 1, 520, _401rp01, 1, 1, 0);
+		_val6 = 0;
+		_ctr1 = 0;
+		break;
+
+	case 600:
+		setGlobals1(_rip2, 1, 15, 15, 15, 0, 1, 2, 3, 5, 1, 2, 1, 1, 1);
+		_val6 = 4;
+		sendWSMessage_110000(603);
+		digi_play("401r32", 1, 255, 605);
+		break;
+
+	case 605:
+		sendWSMessage_110000(612);
+		break;
+
+	case 612:
+		sendWSMessage_29a0000(_rip2);
+		sendWSMessage_140000(613);
+		break;
+
+	case 613:
+		ws_hide_walker();
+		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			triggerMachineByHashCallbackNegative, "rip");
+		sendWSMessage_10000(1, _agent, _401rp01, 1, 11, 616, _401rp01, 11, 11, 0);
+		break;
+
+	case 616:
+		terminateMachineAndNull(_agent);
+		sendWSMessage_10000(1, _ripMach, _401a04, 1, 63, 617, _401a04, 63, 63, 0);
+		break;
+
+	case 617:
+		sendWSMessage_10000(1, _ripMach, _401a04, 1, 90, 618, _401a01, 1, 1, 0);
+		digi_play("950_s35", 2);
+		break;
+
+	case 618:
+		series_show("401a06", 0x600, 16);
+		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, 0,
+			triggerMachineByHashCallbackNegative, "agent");
+		sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
+		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 1, 620, _401rp01, 1, 1, 0);
+		_G(flags)[GLB_TEMP_13] = 1;
+		_val6 = 0;
+		_ctr1 = 0;
+		break;
+
+	case 700:
+		setGlobals1(_rip4, 1, 1, 1, 5, 1);
+		sendWSMessage_110000(705);
+		_val6 = 4;
+		digi_play(_G(flags)[GLB_TEMP_13] ? "401r33" : "401r34", 1, 255, 705);
+		break;
+
+	case 705:
+		if (_G(flag1) >= 1) {
+			_G(flag1) = 0;
+			sendWSMessage_140000(-1);
+			_val6 = 5;
+			digi_play("401x12", 1, 255, 707);
+		} else {
+			++_G(flag1);
+		}
+		break;
+
+	case 707:
+		_val6 = 4;
+		kernel_timing_trigger(1, 100);
+		setGlobals1(_rip4, 1, 1, 1, 5, 1);
+		sendWSMessage_110000(710);
+		digi_play("401r35", 1, 255, 710);
+		_G(flags)[V373] = 1;
+		break;
+
+	case 710:
+		if (_G(flag1) >= 1) {
+			_G(flag1) = 0;
+			sendWSMessage_140000(-1);
+			_val6 = 5;
+			digi_play("401x13", 1, 255, 712);
+		} else {
+			++_G(flag1);
+		}
+		break;
+
+	case 711:
+		sendWSMessage_10000(1, _agent, _401a01, 3, 3, -1, _401a01, 3, 3, 0);
+		kernel_timing_trigger(1, 715);
+		break;
+
+	case 715:
+		ws_hide_walker();
+		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			triggerMachineByHashCallbackNegative, "rip");
+		sendWSMessage_10000(1, _ripMach, _401a04, 1, 11, 716, _401rp01, 11, 11, 0);
+		break;
+
+	case 716:
+		terminateMachineAndNull(_ripMach);
+		sendWSMessage_10000(1, _agent, _401a03, 1, 67, 718, _401a01, 1, 1, 0);
+		break;
+
+	case 718:
+		sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
+		inv_move_object("TURTLE", 305);
+		inv_move_object("TURTLE TREATS", 305);
+
+		_ripMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x400, 0,
+			triggerMachineByHashCallbackNegative, "rip");
+		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 1, 720, _401rp01, 1, 1, 0);
+		_ctr1 = 0;
+		break;
+
+	case 800:
+		sendWSMessage_10000(1, _ripMach, _401a02, 48, 57, 822, _401a02, 57, 57, 0);
+		break;
+
+	case 822:
+		sendWSMessage_10000(1, _ripMach, _401a03, 67, 1, 824, _401rp01, 11, 11, 0);
+		break;
+
+	case 824:
+		sendWSMessage_10000(1, _ripMach, _401rp01, 11, 1, 826, _401rp01, 1, 1, 0);
+		inv_give_to_player("ROMANOV EMERALD");
+		_agent = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, 0,
+			triggerMachineByHashCallbackNegative, "agent");
+		sendWSMessage_10000(1, _agent, _401a01, 1, 1, 100, _401a01, 1, 1, 0);
+		_val6 = 0;
+		_ctr1 = 0;
+		break;
+
+	case 990:
+		_digiName1 = nullptr;
+		_digiName2 = nullptr;
+		_digiName3 = nullptr;
+		_digiName4 = nullptr;
+
+		if (_val1 <= 0) {
+			kernel_timing_trigger(1, 320);
+		} else if (_digiName) {
+			_digiName1 = _digiName;
+			_digiName = nullptr;
+			kernel_timing_trigger(1, 991);
+		} else if (_G(flags)[V364] == 1) {
+			_digiName1 = "201R26";
+			_G(flags)[V364] = 0;
+			kernel_timing_trigger(1, 991);
+		} else if (_G(flags)[V365] == 1) {
+			_digiName1 = "201R61";
+			_G(flags)[V365] = 0;
+			kernel_timing_trigger(1, 991);
+		} else if (_G(flags)[V366] == 1) {
+			_digiName1 = "401R31";
+			_G(flags)[V366] = 0;
+			kernel_timing_trigger(1, 991);
+		} else if (_G(flags)[V371] == 1) {
+			_digiName = "501R03C";
+			_G(flags)[V371] = 0;
+			kernel_timing_trigger(1, 991);
+		} else if (_G(flags)[V372] == 1) {
+			_digiName1 = "701R39";
+			_digiName2 = "701R39A";
+			_G(flags)[V372] = 0;
+			kernel_timing_trigger(1, 991);
+		} else if (_G(flags)[V367] == 1) {
+			_digiName1 = "401R37";
+			_G(flags)[V367] = 0;
+			_val2 = 1;
+			kernel_timing_trigger(1, 991);
+		} else if (_G(flags)[V368] == 1) {
+			_digiName1 = "401R38";
+			_G(flags)[V368] = 0;
+			_val2 = 1;
+			kernel_timing_trigger(1, 991);
+		} else if (_G(flags)[V369] == 1) {
+			_digiName1 = "401R39";
+			_G(flags)[V369] = 0;
+			_val2 = 1;
+			kernel_timing_trigger(1, 991);
+		}
+		break;
+
+	case 991:
+		if (_digiName1) {
+			digi_play(_digiName1, 1, 255, 993);
+		} else {
+			kernel_timing_trigger(1, 993);
+		}
+		break;
+
+	case 993:
+		if (_digiName2) {
+			digi_play(_digiName2, 1, 255, 994);
+		} else {
+			kernel_timing_trigger(1, 994);
+		}
+		break;
+
+	case 994:
+		if (_digiName3) {
+			digi_play(_digiName3, 1, 255, 995);
+		} else {
+			kernel_timing_trigger(1, 995);
+		}
+		break;
+
+	case 995:
+		if (_digiName4) {
+			digi_play(_digiName4, 1, 255, 996);
+		} else {
+			kernel_timing_trigger(1, 996);
+		}
+		break;
+
+	case 996:
+		if (_val2) {
+			_val2 = 0;
+			kernel_timing_trigger(1, 800);
+		} else {
+			if (--_val1 == 0) {
+				kernel_timing_trigger(1, 320);
+			} else {
+				kernel_timing_trigger(1, 800);
+			}
+		}
+		break;
+
+	case 999:
+		kernel_timing_trigger(1, _val1 ? 300 : 1000);
+		break;
+
+	case 1000:
+		if (_G(flags)[GLB_TEMP_14]) {
+			kernel_timing_trigger(30, 400);
+		} else if (_G(flags)[V110] && !_G(flags)[GLB_TEMP_10]) {
+			kernel_timing_trigger(30, 500);
+		} else if (_G(flags)[GLB_TEMP_11] && player_been_here(407) &&
+				!_G(flags)[GLB_TEMP_13]) {
+			kernel_timing_trigger(30, 600);
+		} else if (_G(flags)[GLB_TEMP_12] && !_G(flags)[V091]) {
+			kernel_timing_trigger(30, 700);
+		} else {
+			player_set_commands_allowed(true);
+		}
+		break;
+
 	default:
 		break;
 	}

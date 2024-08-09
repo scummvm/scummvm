@@ -325,6 +325,18 @@ void Room::sendWSMessage_120000(int trigger) {
 	sendWSMessage_120000(_G(my_walker), trigger);
 }
 
+void Room::sendWSMessage_130000(machine *recv, int val1) {
+	if (val1 == 0)
+		val1 = -1;
+
+	_G(globals)[V023] = kernel_trigger_create(val1);
+	sendWSMessage(0x130000, 0, recv, 0, 0, 1);
+}
+
+void Room::sendWSMessage_130000(int val1) {
+	sendWSMessage_130000(_G(my_walker), val1);
+}
+
 void Room::sendWSMessage_140000(machine *mach, int trigger) {
 	if (!trigger)
 		trigger = -1;
@@ -368,6 +380,16 @@ void Room::sendWSMessage_1a0000(machine *recv, int trigger) {
 	_G(globals)[V024] = trigger << 16;
 	sendWSMessage(0x1a0000, 0, recv, 0, nullptr, 1);
 }
+
+void Room::sendWSMessage_29a0000(machine *recv, int val1) {
+	_G(globals)[GLB_TEMP_1] = val1 << 24;
+	sendWSMessage(0x29a0000, 0, recv, 0, 0, 1);
+}
+
+void Room::sendWSMessage_29a0000(int val1) {
+	sendWSMessage_29a0000(_G(my_walker), val1);
+}
+
 
 int Room::getNumKeyItemsPlaced() const {
 	static const char *const ITEMS[11] = {

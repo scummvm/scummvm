@@ -82,9 +82,11 @@ protected:
 	void sendWSMessage_F0000(machine *mach, int trigger);
 	void sendWSMessage_F0000(int trigger);
 	void sendWSMessage_110000(machine *mach, int trigger);
+	void sendWSMessage_110000(int trigger);
 	void sendWSMessage_120000(int trigger);
 	void sendWSMessage_120000(machine *mach, int trigger);
-	void sendWSMessage_110000(int trigger);
+	void sendWSMessage_130000(machine *recv, int val1);
+	void sendWSMessage_130000(int val1);
 	void sendWSMessage_140000(machine *mach, int trigger);
 	void sendWSMessage_140000(int trigger);
 	void sendWSMessage_150000(machine *mach, int trigger);
@@ -93,6 +95,8 @@ protected:
 	void sendWSMessage_160000(int val1, int trigger);
 	void sendWSMessage_190000(machine *recv, int trigger);
 	void sendWSMessage_1a0000(machine *recv, int trigger);
+	void sendWSMessage_29a0000(machine *recv, int val1);
+	void sendWSMessage_29a0000(int val1);
 
 	/**
 	 * Get the number of key items placed in room 305 (display room)
