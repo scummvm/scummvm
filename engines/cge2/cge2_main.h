@@ -40,7 +40,7 @@ public:
 
 	System(CGE2Engine *vm);
 
-	void touch(uint16 mask, V2D pos, Common::KeyCode keyCode) override;
+	void touch(uint16 mask, V2D pos) override;
 	void tick() override;
 private:
 	CGE2Engine *_vm;
