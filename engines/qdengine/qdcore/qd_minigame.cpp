@@ -214,8 +214,7 @@ qdMiniGame &qdMiniGame::operator = (const qdMiniGame &mg) {
 
 bool qdMiniGame::init() {
 	if (load_interface()) {
-		// make a call to interface_->new_game(&qdmg::qdEngineInterfaceImpl::instance());
-		warning("STUB: qdMiniGame::init(). Trying to start a new mini game");
+		_interface->new_game(&qdmg::qdEngineInterfaceImpl::instance());
 		release_interface();
 		return true;
 	}
