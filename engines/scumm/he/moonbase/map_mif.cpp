@@ -102,7 +102,7 @@ void MIF::defineStartLocations(MapFile *map) {
 
 	for (y = 0; y < _dimension; ++y) {
 		for (x = 0; x < _dimension; ++x) {
-			char ch = _centerMap[x][y];
+			int8 ch = _centerMap[x][y];
 
 			if (ch < 0) {
 				int i;
@@ -303,7 +303,7 @@ void MIF::makeCraters(MapFile *map) {
 
 uint16 MIF::findTileFor(int x, int y) {
 	int index;
-	char ch;
+	int8 ch;
 
 	byte aLowBlanks[] = {0x93, 0x94, 0x00, 0x96};
 	byte aMedBlanks[] = {0x97, 0x99, 0x0D, 0x9A};
