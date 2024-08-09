@@ -502,9 +502,10 @@ SCI0_CGADriver::~SCI0_CGADriver() {
 void SCI0_CGADriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod*, const byte*) {
 	GFXDRV_ASSERT_READY;
 
+	byte diff = srcX & 1;
 	srcX &= ~1;
 	destX &= ~1;
-	w = (w + 1) & ~1;
+	w = (w + diff + 1) & ~1;
 
 	src += (srcY * pitch + srcX);
 
@@ -637,9 +638,10 @@ void SCI0_CGABWDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int
 
 	if (_earlyVersion) {
 		++ty;
+		byte diff = srcX & 1;
 		srcX &= ~1;
 		destX &= ~1;
-		w = (w + 1) & ~1;
+		w = (w + diff + 1) & ~1;
 	}
 
 	src += (srcY * pitch + srcX);
@@ -1707,9 +1709,10 @@ void SCI1_PC98Gfx8ColorsDriver::initScreen(const Graphics::PixelFormat *format) 
 void SCI1_PC98Gfx8ColorsDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) {
 	GFXDRV_ASSERT_READY;
 
+	byte diff = srcX & 7;
 	srcX &= ~7;
 	destX &= ~7;
-	w = (w + 7) & ~7;
+	w = (w + diff + 7) & ~7;
 
 	src += (srcY * pitch + srcX * _srcPixelSize);
 	if (src != _currentBitmap)
