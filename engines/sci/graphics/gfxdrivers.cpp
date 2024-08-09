@@ -1356,6 +1356,7 @@ PC98Gfx16ColorsDriver::PC98Gfx16ColorsDriver(int textAlignX, bool cursorScaleWid
 
 PC98Gfx16ColorsDriver::~PC98Gfx16ColorsDriver() {
 	delete[] _convPalette;
+	delete[] _textModePalette;
 }
 
 void renderPC98GlyphFat(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h, int transpCol) {
