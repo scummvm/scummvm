@@ -18,7 +18,8 @@ MODULE_OBJS = \
 	player.o \
 	sprites.o \
 	objects.o \
-	inventory.o
+	inventory.o \
+	sound.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_DARKSEED), DYNAMIC_PLUGIN)
