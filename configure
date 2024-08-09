@@ -6018,6 +6018,8 @@ EAS_DATA_HANDLE mEASDataHandle = NULL;
 
 int main(void) {
 	EAS_Init(&mEASDataHandle);
+	EAS_LoadDLSCollection(mEASDataHandle, NULL, NULL);
+
 	return 0;
 }
 EOF
