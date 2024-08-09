@@ -31,7 +31,7 @@
 #ifndef COMMON_STD_QUEUE_H
 #define COMMON_STD_QUEUE_H
 
-#include "common/std/algorithm.h"
+#include "common/std/functional.h"
 #include "common/std/vector.h"
 #include "common/queue.h"
 
@@ -40,36 +40,8 @@ namespace Std {
 template<class T>
 using queue = Common::Queue<T>;
 
-/**
- * FIXME: The current implementation requires the reverse
- * greater/lesser comparitor than the original does.
- * If this is fixed, also change the router finder's use
- */
-template<class T, class Container = vector<T>, class Comparitor = typename Common::Less<T> >
-class priority_queue {
-private:
-	Container _container;
-	Comparitor _comparitor;
-public:
-	priority_queue() {}
-
-	bool empty() const {
-		return _container.empty();
-	}
-
-	const T &top() const {
-		return _container.front();
-	}
-
-	void push(const T &item) {
-		_container.push_back(item);
-		Common::sort(_container.begin(), _container.end(), _comparitor);
-	}
-
-	void pop() {
-		_container.remove_at(0);
-	}
-};
+template<class T, class Container = vector<T>, class Comparitor = less<T> >
+using priority_queue = Common::PriorityQueue<T>;
 
 template<class T>
 class deque {

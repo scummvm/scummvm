@@ -96,7 +96,7 @@ protected:
 	int32 _actorXd, _actorYd, _actorZd;
 
 	Common::Array<PathfindingState> _visited;
-	Std::priority_queue<PathNode *, Std::vector<PathNode *>, PathNodeCmp> _nodes;
+	Common::PriorityQueue<PathNode *, Std::vector<PathNode *>, PathNodeCmp> _nodes;
 
 	/** List of nodes for garbage collection later and order is not important */
 	Std::vector<PathNode *> _cleanupNodes;

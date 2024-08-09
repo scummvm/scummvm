@@ -123,7 +123,7 @@ private:
 	std::vector<NodeInfo> mapNodes;
 	tFrameId frameId;
 
-	std::priority_queue<Entry, std::vector<Entry>, Common::Less<Entry> > pq;
+	std::priority_queue<Entry, std::vector<Entry>, std::greater<Entry> > pq;
 
 	// temporary buffers:
 	mutable std::vector<int> fpath;
