@@ -87,6 +87,9 @@ private:
 	// TODO: Handle properly
 	uint8 animationIndex = 1;
 
+	bool isAnimationMirrored() const;
+	uint8 getMirroredAnimation(uint8 original) const;
+
 		// TODO: Will need time handling
 	Macs2::AnimFrame *GetCurrentAnimationFrame();
 		Macs2::AnimFrame *GetCurrentPortrait();
