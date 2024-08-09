@@ -2432,9 +2432,11 @@ void GlobalOptionsDialog::build() {
 	_rendererPopUp->setSelectedTag(mode);
 
 #ifdef USE_SDL_NET
+#ifdef USE_CLOUD
 	Common::Path rootPath(ConfMan.getPath("rootpath", "cloud"));
 	_rootPath->setLabel(rootPath);
-#endif
+#endif // USE_CLOUD
+#endif // USE_SDL_NET
 }
 
 void GlobalOptionsDialog::clean() {
