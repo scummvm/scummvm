@@ -67,6 +67,15 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_lastThirtySeconds = 0;
 	_lastSecond = -1;
 	_resting = false;
+
+	// These sounds can be overriden by the class of each platform
+	_soundIndexShoot = 8;
+	_soundIndexCollide = 3;
+	_soundIndexFall = -1;
+	_soundIndexClimb = -1;
+	_soundIndexMenu = -1;
+	_soundIndexStart = -1;
+	_soundIndexAreaChange = -1;
 }
 
 void EclipseEngine::initGameState() {

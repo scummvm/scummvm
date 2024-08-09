@@ -203,6 +203,15 @@ void DarkEngine::loadAssets() {
 	_noEnergyMessage = _messagesList[16];
 	_fallenMessage = _messagesList[17];
 	_crushedMessage = _messagesList[10];
+
+	// These sounds can be overriden by the class of each platform
+	_soundIndexShoot = 8;
+	_soundIndexCollide = -1;
+	_soundIndexFall = -1;
+	_soundIndexClimb = -1;
+	_soundIndexMenu = -1;
+	_soundIndexStart = -1;
+	_soundIndexAreaChange = -1;
 }
 
 bool DarkEngine::tryDestroyECDFullGame(int index) {

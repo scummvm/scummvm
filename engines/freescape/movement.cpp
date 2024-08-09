@@ -176,18 +176,7 @@ void FreescapeEngine::shoot() {
 	if (_shootingFrames > 0) // No more than one shot at a time
 		return;
 
-	if (isDriller())
-		playSound(1, false);
-	else if (isSpectrum()) {
-		if (isDark())
-			playSound(15, false);
-		else if (isEclipse())
-			playSound(5, false);
-		else
-			playSound(8, false);
-	} else
-		playSound(8, false);
-
+	playSound(_soundIndexShoot, false);
 	g_system->delayMillis(2);
 	_shootingFrames = 10;
 
@@ -398,9 +387,9 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 		if (!executed)
 			setGameBit(31);
 		if (isSpectrum())
-			playSound(10, false);
+			playSound(_soundIndexCollide, false);
 		else
-			playSound(2, false);
+			playSound(_soundIndexCollide, false);
 	}
 
 	lastPosition = newPosition;
@@ -411,12 +400,12 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 	if (fallen > _maxFallingDistance) {
 		_hasFallen = !_disableFalling;
 		_avoidRenderingFrames = 60 * 3;
-		if (isEclipse())
+		if (isEclipse()) // No need for an variable index, since these are special types of sound
 			playSoundFx(0, true);
 	}
 
 	if (!_hasFallen && fallen > 0) {
-		playSound(3, false);
+		playSound(_soundIndexFall, false);
 
 		// Position in Y was changed, let's re-run effects
 		runCollisionConditions(lastPosition, newPosition);

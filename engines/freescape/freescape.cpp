@@ -79,7 +79,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 		error("Failed to parse bool from disable_falling option");
 
 	if (!Common::parseBool(ConfMan.get("invert_y"), _invertY))
-		error("Failed to parse bool from disable_falling option");
+		error("Failed to parse bool from invert_y option");
 
 	_gameStateControl = kFreescapeGameStateStart;
 	_startArea = 0;
@@ -148,6 +148,16 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_playerDepth = 0;
 	_stepUpDistance = 0;
 	_colorNumber = 0;
+
+	_soundIndexShoot = 1;
+	_soundIndexCollide = -1;
+	_soundIndexFall = -1;
+	_soundIndexClimb = -1;
+	_soundIndexMenu = -1;
+	_soundIndexStart = -1;
+	_soundIndexAreaChange = -1;
+	//_soundIndexEndGame = -1;
+	//_soundIndexSensor = -1;
 
 	_fullscreenViewArea = Common::Rect(0, 0, _screenW, _screenH);
 	_viewArea = _fullscreenViewArea;

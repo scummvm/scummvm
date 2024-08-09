@@ -31,6 +31,14 @@ void CastleEngine::initZX() {
 	_viewArea = Common::Rect(64, 36, 256, 148);
 	_yminValue = -1;
 	_ymaxValue = 1;
+
+	_soundIndexShoot = 5;
+	_soundIndexCollide = -1;
+	_soundIndexFall = -1;
+	_soundIndexClimb = -1;
+	_soundIndexMenu = -1;
+	_soundIndexStart = 6;
+	_soundIndexAreaChange = 5;
 }
 
 Graphics::Surface *CastleEngine::loadFramesWithHeader(Common::SeekableReadStream *file, int pos, int numFrames, uint32 back) {

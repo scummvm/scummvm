@@ -402,7 +402,13 @@ public:
 
 	void playSoundZX(Common::Array<soundUnitZX> *data);
 	Common::HashMap<uint16, Common::Array<soundUnitZX>*> _soundsSpeakerFxZX;
-	int _nextSoundToPlay = 1;
+	int _soundIndexShoot;
+	int _soundIndexCollide;
+	int _soundIndexFall;
+	int _soundIndexClimb;
+	int _soundIndexMenu;
+	int _soundIndexStart;
+	int _soundIndexAreaChange;
 
 	// Rendering
 	int _screenW, _screenH;

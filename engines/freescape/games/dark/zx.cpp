@@ -31,6 +31,14 @@ void DarkEngine::initZX() {
 	_viewArea = Common::Rect(56, 28, 265, 132);
 	_maxEnergy = 63;
 	_maxShield = 63;
+
+	_soundIndexShoot = 5;
+	_soundIndexCollide = 2;
+	_soundIndexFall = 3;
+	_soundIndexClimb = -1;
+	_soundIndexMenu = -1;
+	_soundIndexStart = -1;
+	_soundIndexAreaChange = -1;
 }
 
 void DarkEngine::loadAssetsZXFullGame() {

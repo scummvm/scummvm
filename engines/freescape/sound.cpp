@@ -293,6 +293,11 @@ void FreescapeEngine::loadSpeakerFxDOS(Common::SeekableReadStream *file, int off
 }
 
 void FreescapeEngine::playSound(int index, bool sync) {
+	if (index < 0) {
+		debugC(1, kFreescapeDebugMedia, "Sound not specified");
+		return;
+	}
+
 	debugC(1, kFreescapeDebugMedia, "Playing sound %d with sync: %d", index, sync);
 	if (isAmiga() || isAtariST()) {
 		playSoundFx(index, sync);
@@ -407,7 +412,7 @@ void FreescapeEngine::playSoundFx(int index, bool sync) {
 		return;
 	}
 
-	if (index >= int(_soundsFx.size())) {
+	if (index < 0 || index >= int(_soundsFx.size())) {
 		debugC(1, kFreescapeDebugMedia, "WARNING: Sound %d not available", index);
 		return;
 	}

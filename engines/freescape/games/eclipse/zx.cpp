@@ -31,6 +31,14 @@ void EclipseEngine::initZX() {
 	_viewArea = Common::Rect(56, 36, 265, 139);
 	_maxEnergy = 63;
 	_maxShield = 63;
+
+	_soundIndexShoot = 5;
+	_soundIndexCollide = -1;
+	_soundIndexFall = 3;
+	_soundIndexClimb = -1;
+	_soundIndexMenu = -1;
+	_soundIndexStart = -1;
+	_soundIndexAreaChange = -1;
 }
 
 void EclipseEngine::loadAssetsZXFullGame() {

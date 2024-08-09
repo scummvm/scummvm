@@ -62,6 +62,10 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_spiritsDestroyed = 0;
 	_spiritsMeter = 32;
 	_spiritsToKill = 26;
+
+	_soundIndexStart = 9;
+	_soundIndexAreaChange = 5;
+
 }
 
 CastleEngine::~CastleEngine() {
@@ -94,9 +98,9 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (areaID == _startArea && entranceID == _startEntrance) {
 		_yaw = 310;
 		_pitch = 0;
-		playSound(9, false);
+		playSound(_soundIndexStart, false);
 	} else {
-		playSound(5, false);
+		playSound(_soundIndexAreaChange, false);
 	}
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
