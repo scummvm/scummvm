@@ -347,7 +347,9 @@ void GfxControls16::kernelDrawButton(Common::Rect rect, reg_t obj, const char *t
 		}
 	} else {
 		// SCI0early used xor to invert button rectangles resulting in pink/white buttons
-		if (getSciVersion() == SCI_VERSION_0_EARLY)
+		// All PC-98 targets (both SCI_VERSION_01 and SCI_VERSION_1_LATE) also use the
+		// xor method, resulting in a grey color.
+		if (getSciVersion() == SCI_VERSION_0_EARLY || g_sci->getPlatform() == Common::kPlatformPC98)
 			_paint16->invertRectViaXOR(rect);
 		else
 			_paint16->invertRect(rect);
@@ -391,7 +393,13 @@ void GfxControls16::kernelDrawText(Common::Rect rect, reg_t obj, const char *tex
 		if (allowScreenUpdate && !getPicNotValid())
 			_paint16->bitsShow(rect);
 	} else {
-		_paint16->invertRect(rect);
+		// SCI0early used xor to invert button rectangles resulting in pink/white buttons
+		// All PC-98 targets (both SCI_VERSION_01 and SCI_VERSION_1_LATE) also use the
+		// xor method, resulting in a grey color.
+		if (getSciVersion() == SCI_VERSION_0_EARLY || g_sci->getPlatform() == Common::kPlatformPC98)
+			_paint16->invertRectViaXOR(rect);
+		else
+			_paint16->invertRect(rect);
 		_paint16->bitsShow(rect);
 	}
 }
@@ -426,7 +434,13 @@ void GfxControls16::kernelDrawIcon(Common::Rect rect, reg_t obj, GuiResourceId v
 		if (!getPicNotValid())
 			_paint16->bitsShow(rect);
 	} else {
-		_paint16->invertRect(rect);
+		// SCI0early used xor to invert button rectangles resulting in pink/white buttons
+		// All PC-98 targets (both SCI_VERSION_01 and SCI_VERSION_1_LATE) also use the
+		// xor method, resulting in a grey color.
+		if (getSciVersion() == SCI_VERSION_0_EARLY || g_sci->getPlatform() == Common::kPlatformPC98)
+			_paint16->invertRectViaXOR(rect);
+		else
+			_paint16->invertRect(rect);
 		_paint16->bitsShow(rect);
 	}
 }
