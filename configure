@@ -2634,89 +2634,6 @@ case $_endian in
 esac
 
 #
-# Determine a data type with the given length
-#
-find_type_with_size() {
-	for datatype in int short char long "long long" __int64 "long long int" unknown; do
-		cat > tmp_find_type_with_size.cpp << EOF
-typedef $datatype ac__type_sizeof_;
-int main() {
-	static int test_array [1 - 2 * !(((long int) (sizeof (ac__type_sizeof_))) == $1)];
-	test_array [0] = 0;
-	return 0;
-}
-EOF
-		if $CXX $CXXFLAGS -c -o $TMPO.o tmp_find_type_with_size.cpp >> "$TMPLOG" 2>&1 ; then
-			break
-		else
-			if test "$datatype" = "unknown"; then
-				echo "couldn't find data type with $1 bytes"
-				exit 1
-			fi
-			continue
-		fi
-	done
-	cc_check_clean tmp_find_type_with_size.cpp
-	echo $datatype
-}
-
-#
-# Check whether the system is 32-bit
-#
-pointer_is_32bit() {
-	cat > tmp_pointer_is_32bit.cpp << EOF
-int main() {
-	static int test_array[1 - 2 * !(sizeof(void *) == 4)];
-	test_array[0] = 0;
-	return 0;
-}
-EOF
-	$CXX $CXXFLAGS -c -o $TMPO.o tmp_pointer_is_32bit.cpp >> "$TMPLOG" 2>&1
-	status=$?
-	cc_check_clean tmp_pointer_is_32bit.cpp
-	return $status
-}
-
-echo_n "Checking 64-bitness... "
-pointer_is_32bit
-if test $? -eq 0; then
-	signed_type_ptr=int32
-	unsigned_type_ptr=uint32
-	echo "no"
-else
-	signed_type_ptr=int64
-	unsigned_type_ptr=uint64
-	echo "yes"
-fi
-
-#
-# Determine data type sizes
-#
-echo_n "Type with 1 byte... "
-type_1_byte=`find_type_with_size 1`
-TMPR="$?"
-echo "$type_1_byte"
-test $TMPR -eq 0 || exit 1	# check exit code of subshell
-
-echo_n "Type with 2 bytes... "
-type_2_byte=`find_type_with_size 2`
-TMPR="$?"
-echo "$type_2_byte"
-test $TMPR -eq 0 || exit 1	# check exit code of subshell
-
-echo_n "Type with 4 bytes... "
-type_4_byte=`find_type_with_size 4`
-TMPR="$?"
-echo "$type_4_byte"
-test $TMPR -eq 0 || exit 1	# check exit code of subshell
-
-echo_n "Type with 8 bytes... "
-type_8_byte=`find_type_with_size 8`
-TMPR="$?"
-echo "$type_8_byte"
-test $TMPR -eq 0 || exit 1	# check exit code of subshell
-
-#
 # Check whether memory alignment is required
 #
 # For some CPU types, unaligned memory access is either not supported at
@@ -2890,7 +2807,6 @@ case $_host_os in
 		# already typedefs (u)int32 as (unsigned) long and suppress
 		# those noisy format warnings caused by the 'long' 4 byte
 		append_var CXXFLAGS "-Wno-format"
-		type_4_byte='long'
 		;;
 	android)
 		case $_host in
@@ -3330,9 +3246,6 @@ EOF
 		append_var LDFLAGS "-Wl,--export-dynamic"
 		append_var LDFLAGS "-L/usr/local/lib"
 		append_var CXXFLAGS "-D__MORPHOS_SHAREDLIBS"
-		# We have to use 'long' for our 4 byte typedef because MorphOS already typedefs (u)int32
-		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
-		type_4_byte='long'
 		# Suppress format warnings as the long 4 byte causes noisy warnings.
 		append_var CXXFLAGS "-Wno-format"
 		add_line_to_config_mk 'MORPHOS = 1'
@@ -5607,14 +5520,7 @@ echocheck "libmpeg2 >= 0.4.0"
 if test "$_mpeg2" = auto ; then
 	_mpeg2=no
 	cat > $TMPC << EOF
-typedef signed $type_1_byte int8_t;
-typedef signed $type_2_byte int16_t;
-typedef signed $type_4_byte int32_t;
-
-typedef unsigned $type_1_byte uint8_t;
-typedef unsigned $type_2_byte uint16_t;
-typedef unsigned $type_4_byte uint32_t;
-
+#include <inttypes.h>
 extern "C" {
 #include <mpeg2dec/mpeg2.h>
 }
@@ -5653,14 +5559,7 @@ echocheck "liba52"
 if test "$_a52" = auto ; then
 	_a52=no
 	cat > $TMPC << EOF
-typedef signed $type_1_byte int8_t;
-typedef signed $type_2_byte int16_t;
-typedef signed $type_4_byte int32_t;
-
-typedef unsigned $type_1_byte uint8_t;
-typedef unsigned $type_2_byte uint16_t;
-typedef unsigned $type_4_byte uint32_t;
-
+#include <inttypes.h>
 extern "C" {
 #include <a52dec/a52.h>
 }
@@ -7454,23 +7353,7 @@ cat > config.h.new << EOF
 $_config_h_data
 $(cat config.h.engines)
 
-/* Data types */
-#ifndef SCUMMVM_DONT_DEFINE_TYPES
-typedef unsigned $type_1_byte byte;
-typedef unsigned int uint;
-typedef unsigned $type_1_byte uint8;
-typedef unsigned $type_2_byte uint16;
-typedef unsigned $type_4_byte uint32;
-typedef unsigned $type_8_byte uint64;
-typedef signed $type_1_byte int8;
-typedef signed $type_2_byte int16;
-typedef signed $type_4_byte int32;
-typedef signed $type_8_byte int64;
-#endif
-
-typedef $signed_type_ptr intptr;
-typedef $unsigned_type_ptr uintptr;
-
+/* TODO: What does this do? */
 #if defined(__APPLE__) && !defined(__ppc__)
 #ifndef _UINT64
 #define _UINT64
