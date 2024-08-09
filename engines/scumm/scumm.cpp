@@ -2666,19 +2666,20 @@ void ScummEngine::scummLoop(int delta) {
 	if (_game.version <= 3)
 		displayDialog();
 
-	processInput();
+	// In v7 we have to run processInput() at the end of the loop,
+	// to allow one frame time to pass between checkExecVerbs() and runAllScripts().
+	// Several time-based effects (e.g. shaking) depend on this...
+	if (_game.version != 7) {
+		processInput();
 
-	if (_game.version == 8) {
-		// In v7-8 this function is executed at the end of processInput().
-		// Currently there are no known cases for v7 in which not calling this here,
-		// causes issues. Because of the way things are positioned in our implementation
-		// of the SCUMM loop, as of now enabling this for v7 breaks the screen shake
-		// effect. For v8 we really need to call this here, so let's do that...
-		checkExecVerbs();
+		// Additionally, v8 runs checkExecVerbs() at the end of processInput()...
+		if (_game.version == 8) {
+			checkExecVerbs();
 
-		// Saving is performed here in v8; this is important when saving the thumbnail,
-		// which would otherwise miss blastObjects/Texts on the bitmap.
-		scummLoop_handleSaveLoad();
+			// Also, saving is performed here in v8; this is important when saving
+			// the thumbnail, which would otherwise miss blastObjects/Texts on the bitmap.
+			scummLoop_handleSaveLoad();
+		}
 	}
 
 	// BlastObjects/Texts are completely removed in this moment of the codepath, in v7.
@@ -2736,15 +2737,29 @@ load_game:
 		((SoundHE *)_sound)->handleSoundFrame();
 	}
 
-	if (_game.version < 8) {
+	if (_game.version < 7) {
 		runAllScripts();
+		checkExecVerbs();
 	}
 
-	// SCUMM v7-8 executes checkExecVerbs inside the function
-	// which processes keyboard inputs, so we handle it above
-	// in that case. Again, we make an exception for v7, for now.
-	if (_game.version < 8)
-		checkExecVerbs();
+	// It's verified from FT and DIG disasms that this is where
+	// runAllScripts() should be called; this will delay the
+	// scripts executions between checkExecVerbs() and runAllScripts()
+	// by exactly one frame, and this is what allows sequences of:
+	// - Set screen shake on
+	// - breakHere() for a certain number of times
+	// - Set screen shake off
+	//
+	// to work and to be timed correctly.
+	// 
+	// Again, from the disasms, we call runAllScripts() on a loop,
+	// while the _saveLoadFlag is active.
+	if (_game.version == 7) {
+		do {
+			runAllScripts();
+			scummLoop_handleSaveLoad();
+		} while (_saveLoadFlag != 0);
+	}
 
 	checkAndRunSentenceScript();
 
@@ -2804,6 +2819,15 @@ load_game:
 		// scummLoop_handleActors (but watch out for regressions!)
 		if (_game.version <= 5)
 			playActorSounds();
+	}
+
+	// It's verified from FT and DIG disasms that this is where
+	// these two functions should be called; this will delay the
+	// scripts executions between checkExecVerbs() and runAllScripts()
+	// by exactly one frame.
+	if (_game.version == 7) {
+		processInput();
+		checkExecVerbs();
 	}
 
 	scummLoop_handleSound();
