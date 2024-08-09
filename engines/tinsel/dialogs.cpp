@@ -62,6 +62,8 @@
 
 #include "common/textconsole.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Tinsel {
 
 //----------------- LOCAL DEFINES --------------------
@@ -1411,18 +1413,18 @@ bool Dialogs::updateString(const Common::KeyState &kbd) {
 /**
  * Keystrokes get sent here when load/save screen is up.
  */
-static bool InvKeyIn(const Common::KeyState &kbd) {
-	if (kbd.keycode == Common::KEYCODE_PAGEUP ||
-	    kbd.keycode == Common::KEYCODE_PAGEDOWN ||
-	    kbd.keycode == Common::KEYCODE_HOME ||
-	    kbd.keycode == Common::KEYCODE_END)
+static bool InvKeyIn(const Common::KeyState &kbd, const Common::CustomEventType &customType) {
+	if (customType == kActionPageUp ||
+		customType == kActionPageDown ||
+		customType == kActionHome ||
+		customType == kActionEnd)
 		return true; // Key needs processing
 
 	if (kbd.keycode == 0 && kbd.ascii == 0) {
 		;
 	} else if (kbd.keycode == Common::KEYCODE_RETURN) {
 		return true; // Key needs processing
-	} else if (kbd.keycode == Common::KEYCODE_ESCAPE) {
+	} else if (customType == kActionEscape) {
 		return true; // Key needs processing
 	} else {
 #ifndef JAPAN
@@ -3659,6 +3661,11 @@ void Dialogs::openMenu(CONFTYPE menuType) {
 	_invD[INV_CONF].resizable = false;
 	_invD[INV_CONF].bMoveable = false;
 
+	Common::Keymapper *keymapper = _vm->getEventManager()->getKeymapper();
+	if (menuType == SAVE_MENU || menuType == LOAD_MENU) {
+		keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+		keymapper->getKeymap("saveload-shortcuts")->setEnabled(true);
+	}
 	switch (menuType) {
 	case MAIN_MENU:
 		setMenuGlobals(&ciOption);
@@ -5494,6 +5501,13 @@ bool Dialogs::isConvWindow() {
 }
 
 void Dialogs::callFunction(BFUNC boxFunc) {
+
+	Common::Keymapper *keymapper = _vm->getEventManager()->getKeymapper();
+	if (boxFunc == CLOSEWIN || boxFunc == SAVEGAME || boxFunc == LOADGAME) {
+		keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+		keymapper->getKeymap("saveload-shortcuts")->setEnabled(false);
+	}
+
 	switch (boxFunc) {
 	case SAVEGAME:
 		killInventory();

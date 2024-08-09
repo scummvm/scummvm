@@ -170,50 +170,76 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 					ProcessButEvent(PLR_DRAG2_END);
 			}
 			continue;
-
-		case Common::KEYCODE_LCTRL:
-		case Common::KEYCODE_RCTRL:
-			if (evt.type == Common::EVENT_KEYDOWN) {
-				ProcessKeyEvent(PLR_LOOK);
-			} else {
-				// Control key release
-			}
-			continue;
-
 		default:
 			break;
 		}
 
 		// At this point only key down events need processing
-		if (evt.type == Common::EVENT_KEYUP)
+		if (evt.type == Common::EVENT_KEYUP || evt.customType == Common::EVENT_CUSTOM_ENGINE_ACTION_END)
 			continue;
 
 		if (_vm->_keyHandler != NULL)
 			// Keyboard is hooked, so pass it on to that handler first
-			if (!_vm->_keyHandler(evt.kbd))
+			if (!_vm->_keyHandler(evt.kbd, evt.customType))
 				continue;
 
-		switch (evt.kbd.keycode) {
+		switch (evt.customType) {
 		/*** SPACE = WALKTO ***/
-		case Common::KEYCODE_SPACE:
+		case kActionWalkTo:
 			ProcessKeyEvent(PLR_WALKTO);
 			continue;
 
 		/*** RETURN = ACTION ***/
-		case Common::KEYCODE_RETURN:
-		case Common::KEYCODE_KP_ENTER:
+		case kActionAction:
 			ProcessKeyEvent(PLR_ACTION);
 			continue;
 
 		/*** l = LOOK ***/
-		case Common::KEYCODE_l:		// LOOK
+		case kActionLook:		// LOOK
 			ProcessKeyEvent(PLR_LOOK);
 			continue;
 
-		case Common::KEYCODE_ESCAPE:
+		case kActionEscape:
 			ProcessKeyEvent(PLR_ESCAPE);
 			continue;
+		case kActionOptionsDialog:
+			// Options dialog
+			ProcessKeyEvent(PLR_MENU);
+			continue;
+		case kActionInventory:
+			ProcessKeyEvent(PLR_INVENTORY);
+			continue;
+		case kActionNotebook:
+			ProcessKeyEvent(PLR_NOTEBOOK);
+			continue;
+		case kActionSave:
+			// Save game
+			ProcessKeyEvent(PLR_SAVE);
+			continue;
+		case kActionLoad:
+			// Load game
+			ProcessKeyEvent(PLR_LOAD);
+			continue;
+		case kActionQuit:
+			ProcessKeyEvent(PLR_QUIT);
+			continue;
+		case kActionPageUp:
+			ProcessKeyEvent(PLR_PGUP);
+			continue;
+		case kActionPageDown:
+			ProcessKeyEvent(PLR_PGDN);
+			continue;
+		case kActionHome:
+			ProcessKeyEvent(PLR_HOME);
+			continue;
+		case kActionEnd:
+			ProcessKeyEvent(PLR_END);
+			continue;
+		default:
+			break;
+		}
 
+		switch (evt.kbd.keycode) {
 #ifdef SLOW_RINCE_DOWN
 		case '>':
 			AddInterlude(1);
@@ -222,55 +248,13 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 			AddInterlude(-1);
 			continue;
 #endif
-
-		case Common::KEYCODE_1:
-		case Common::KEYCODE_F1:
-			// Options dialog
-			ProcessKeyEvent(PLR_MENU);
-			continue;
-		case Common::KEYCODE_F2:
-			ProcessKeyEvent(PLR_INVENTORY);
-			continue;
-		case Common::KEYCODE_F3:
-			ProcessKeyEvent(PLR_NOTEBOOK);
-			continue;
-		case Common::KEYCODE_5:
-		case Common::KEYCODE_F5:
-			// Save game
-			ProcessKeyEvent(PLR_SAVE);
-			continue;
-		case Common::KEYCODE_7:
-		case Common::KEYCODE_F7:
-			// Load game
-			ProcessKeyEvent(PLR_LOAD);
-			continue;
 		case Common::KEYCODE_m:
 			// Debug facility - scene hopper
 			if (TinselVersion >= 2) {
-			 if (evt.kbd.hasFlags(Common::KBD_ALT))
-				ProcessKeyEvent(PLR_JUMP);
+				if (evt.kbd.hasFlags(Common::KBD_ALT))
+					ProcessKeyEvent(PLR_JUMP);
 			}
 			break;
-		case Common::KEYCODE_q:
-			if ((evt.kbd.hasFlags(Common::KBD_CTRL)) || (evt.kbd.hasFlags(Common::KBD_ALT)))
-				ProcessKeyEvent(PLR_QUIT);
-			continue;
-		case Common::KEYCODE_PAGEUP:
-		case Common::KEYCODE_KP9:
-			ProcessKeyEvent(PLR_PGUP);
-			continue;
-		case Common::KEYCODE_PAGEDOWN:
-		case Common::KEYCODE_KP3:
-			ProcessKeyEvent(PLR_PGDN);
-			continue;
-		case Common::KEYCODE_HOME:
-		case Common::KEYCODE_KP7:
-			ProcessKeyEvent(PLR_HOME);
-			continue;
-		case Common::KEYCODE_END:
-		case Common::KEYCODE_KP1:
-			ProcessKeyEvent(PLR_END);
-			continue;
 		default:
 			ProcessKeyEvent(PLR_NOEVENT);
 			break;
@@ -1213,9 +1197,9 @@ bool TinselEngine::pollEvent() {
 
 	case Common::EVENT_KEYDOWN:
 	case Common::EVENT_KEYUP:
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		ProcessKeyEvent(event);
 		break;
-
 	default:
 		break;
 	}
@@ -1324,28 +1308,24 @@ void TinselEngine::ChopDrivers() {
 void TinselEngine::ProcessKeyEvent(const Common::Event &event) {
 	// Check for movement keys
 	int idx = 0;
-	switch (event.kbd.keycode) {
-	case Common::KEYCODE_UP:
-	case Common::KEYCODE_KP8:
+	switch (event.customType) {
+	case kActionMoveUp:
 		idx = MSK_UP;
 		break;
-	case Common::KEYCODE_DOWN:
-	case Common::KEYCODE_KP2:
+	case kActionMoveDown:
 		idx = MSK_DOWN;
 		break;
-	case Common::KEYCODE_LEFT:
-	case Common::KEYCODE_KP4:
+	case kActionMoveLeft:
 		idx = MSK_LEFT;
 		break;
-	case Common::KEYCODE_RIGHT:
-	case Common::KEYCODE_KP6:
+	case kActionMoveRight:
 		idx = MSK_RIGHT;
 		break;
 	default:
 		break;
 	}
 	if (idx != 0) {
-		if (event.type == Common::EVENT_KEYDOWN)
+		if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START)
 			_dosPlayerDir |= idx;
 		else
 			_dosPlayerDir &= ~idx;
