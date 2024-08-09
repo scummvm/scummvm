@@ -115,10 +115,6 @@ const char *const directoryGlobs[] = {
 	"audio",
 	"print",
 	"vids",							// Alcohol 101
-	"dir_data",						// Garage
-	"cd extra",
-	"catalog",						// Sarah McLachlan ECD (NettMedia)
-	"hd",							// Grammar Playtime
 	"scr",
 	"scr_mov",						// Cardcaptor Sakura screen savers
 	"dicfiles",						// Time Blazers series
@@ -126,10 +122,7 @@ const char *const directoryGlobs[] = {
 	"lingo expo",					// D4 sample movies
 	"main",							// Meet MediaBand
 	"toinstall",					// Jönssonligan series
-	"pingucd",
-	"instdata",						// Pingu
 	"bellinin bikinit",				// Bellini 3 (Finnish)
-	"put me on your desktop",		// Betty Page
 	"abc",							// Alphabet Train
 	"123",							// Ktar Alarkam
 	"vlaams",
@@ -162,7 +155,6 @@ const char *const directoryGlobs[] = {
 	"_setup",
 	"bin",
 	"adam resources",				// ADAM Software Products
-	"material",						// NY Yankees Yearbook
 	"NAV",
 	"InsMilo",						// Milo and the Magical Stones
 	"dir",
