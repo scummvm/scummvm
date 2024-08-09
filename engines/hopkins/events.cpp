@@ -30,6 +30,8 @@
 #include "common/textconsole.h"
 #include "graphics/cursorman.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Hopkins {
 
 EventsManager::EventsManager(HopkinsEngine *vm) {
@@ -251,9 +253,11 @@ void EventsManager::pollEvents() {
 		case Common::EVENT_RETURN_TO_LAUNCHER:
 			return;
 
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			handleKey(event);
+			return;
 		case Common::EVENT_KEYDOWN:
 			_keyState[(byte)toupper(event.kbd.ascii)] = true;
-			handleKey(event);
 			return;
 		case Common::EVENT_KEYUP:
 			_keyState[(byte)toupper(event.kbd.ascii)] = false;
@@ -281,15 +285,15 @@ void EventsManager::pollEvents() {
 }
 
 void EventsManager::handleKey(const Common::Event &event) {
-	_escKeyFl = (event.kbd.keycode == Common::KEYCODE_ESCAPE);
+	_escKeyFl = (event.customType == kActionEscape);
 
-	if (event.kbd.keycode == Common::KEYCODE_i || event.kbd.keycode == Common::KEYCODE_TAB)
+	if (event.customType == kActionInventory)
 		_gameKey = KEY_INVENTORY;
-	else if (event.kbd.keycode == Common::KEYCODE_F5)
+	else if (event.customType == kActionSave)
 		_gameKey = KEY_SAVE;
-	else if (event.kbd.keycode == Common::KEYCODE_F7)
+	else if (event.customType == kActionLoad)
 		_gameKey = KEY_LOAD;
-	else if (event.kbd.keycode == Common::KEYCODE_F1 || event.kbd.keycode == Common::KEYCODE_o)
+	else if (event.customType == kActionOptions)
 		_gameKey = KEY_OPTIONS;
 }
 
@@ -298,6 +302,10 @@ void EventsManager::handleKey(const Common::Event &event) {
  * @return		Keypress, or -1 if game quit was requested
  */
 int EventsManager::waitKeyPress() {
+
+	Common::Keymapper *keymapper = _vm->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+
 	char foundChar = '\0';
 
 	while (!foundChar) {
@@ -337,6 +345,8 @@ int EventsManager::waitKeyPress() {
 		refreshScreenAndEvents();
 		g_system->delayMillis(10);
 	}
+
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 
 	// Return character
 	return foundChar;

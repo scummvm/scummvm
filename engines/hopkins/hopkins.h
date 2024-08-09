@@ -61,6 +61,15 @@ namespace Hopkins {
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
+enum HOPKINSAction {
+	kActionNone,
+	kActionEscape,
+	kActionInventory,
+	kActionSave,
+	kActionLoad,
+	kActionOptions
+};
+
 enum HopkinsDebugChannels {
 	kDebugPath     = 1 << 0,
 	kDebugGraphics = 1 << 1
