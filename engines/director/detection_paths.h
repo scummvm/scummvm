@@ -46,7 +46,6 @@ const char *const directoryGlobs[] = {
 	"xtras",
 	"files",						// Babar
 	"swanlake",						// Barbie Swan Lake
-	"assets",						// Barbie Nail Designer
 	"fjpc",							// Forestia Jr
 	"movies",						// Mulle Meck (Gary Gadget) series
 	"winroot",
@@ -117,7 +116,6 @@ const char *const directoryGlobs[] = {
 	"vids",							// Alcohol 101
 	"scr",
 	"scr_mov",						// Cardcaptor Sakura screen savers
-	"dicfiles",						// Time Blazers series
 	"docs",							// Enhanced CDs
 	"lingo expo",					// D4 sample movies
 	"main",							// Meet MediaBand
@@ -132,8 +130,6 @@ const char *const directoryGlobs[] = {
 	"cipdemo",
 	"cipher",						// Jewels of the Oracle
 	"gems",							// Gems of Darkness / Jewels II
-	"corel cd home",
-	"the cassandra galleries",		// Cassandra Galleries
 	"knights",						// Nikolai's Knights
 	"nemcina",						// Německá gramatika
 	"hdfiles",
@@ -161,17 +157,6 @@ const char *const directoryGlobs[] = {
 	"CHRISTMAS PRESENT",			// Christmas Present
 	"Subotnick Hummingbirds",		// All My Hummingbirds Have Alibis
 	"Silly Noisy House Folder",		// A Silly Noisy House
-	"Treasures of the AMNH",		// Treasures of the American Museum of Natural History (Mac)
-	"TAMNH",						// Treasures of the American Museum of Natural History (Win)
-	"xn--Sacred and Secular -ere",	// Sacred and Secular (Mac) ("Sacred and Secular ƒ")
-	"SACRED",						// Sacred and Secular (Win)
-	"Dracula - Truth and Terror",	// Dracula: Truth and Terror (Mac)
-	"DRACULA",						// Dracula: Truth and Terror (Win)
-	"The Louvre for Kids",			// The Louvre Museum (Mac)
-	"LOUVRE",						// The Louvre Museum (Win)
-	"Trinity",						// The Day After Trinity
-	"Puppet Motel Folder",			// Puppet Motel (Mac)
-	"PUPPET",						// Puppet Motel (Win)
 	"Daedalus Max",					// The Daedalus Encounter
 	0
 };

@@ -337,6 +337,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "murdermagic",		"The Magic Death" },
 	{ "murdersam",			"Who Killed Sam Rupert?" },
 	{ "murdertaylor",		"Who Killed Taylor French? The Case of the Undressed Reporter" },
+	{ "museumskidslouvre",	"Museums of the World for Kids: The Louvre Museum" },
 	{ "myfavmonster",		"My Favourite Monster" },
 	{ "myfirstwords",		"My First Reading & Spelling Words" },
 	{ "mylk",				"Mylk" },
@@ -582,8 +583,10 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "cts",				"Cooking to Seduce: The Art of Romantic Dining" },
 	{ "dsteps",				"Dance Steps: American Social Style - Beginner Intermedia v1" },
 	{ "dailymail100",		"Daily Mail Centenary: 100 Amazing Years" },
+	{ "dayaftertrinity",	"The Day After Trinity: J. Robert Oppenheimer and the Atomic Bomb" },
 	{ "delphi4tutor",		"Borland Delphi 4 Tutor" },
 	{ "dinos",				"Multimedia Dinosaurs" },
+	{ "draculaterror",		"Dracula: Truth and Terror" },
 	{ "dynamichuman",		"The Dynamic Human: The 3D Guide to Anatomy and Physiology" },
 	{ "easybass",			"Easy Bass" },
 	{ "easyitalian",		"Easy Cooking Italian" },
@@ -661,6 +664,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "revwar",				"Revolutionary War Picture CD" },
 	{ "robroylotm",			"Rob Roy: Legend of the Mist" },
 	{ "rodneyab",			"Rodney's Art Brain" },
+	{ "sacredsecular",		"Sacred and Secular: The Aerial Photography of Marilyn Bridges" },
 	{ "saguaro",            "Saguaro & the City: Investigate the Sonoran Desert with an Interactive CD ROM" },
 	{ "saillusion",			"Scientific American Library: Illusion" },
 	{ "sagasoftworks",		"The Saga Softworks" },
@@ -683,6 +687,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "texas",				"A Virtual Reality CD-ROM Guide to Texas" },
 	{ "theatreimag",		"Theatre of the Imagination" },
 	{ "toyota95",			"1995 Toyota Interactive" },
+	{ "treasuresamnh",		"Treasures of the American Museum of Natural History" },
 	{ "trekchair",			"Star Trek: Captain's Chair"},
 	{ "trekguideds9",		"Star Trek: Deep Space Nine Episode Guide" },
 	{ "trekguidetng",		"Star Trek: The Next Generation Episode Guide" },
@@ -3876,6 +3881,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("davidsonpp", "1995", "DPP.EXE", "36c28cd89054df395c17c024a6ad6197", 112839901, 404),
 
+	MACGAME1("dayaftertrinity", "", "TRINITY/The Day After Trinity", "rt:0f1519b9ba4dc07b7a539995eafa8d95", 290880, 404),
+	WINGAME1("dayaftertrinity", "", "TRINITY/TRINITY.EXE", "t:9fc4983c608466a060c67c828200c0af", 752807, 404),
+
 	// Original Pippin filename is ダズロイド
 	MACGAME1("dazzeloids", "", "Dazzeloids", "c9c25d0d249d529680302a81c30852d0", 367064, 404),
 	WINGAME1t("dazzeloids", "", "DAZZ.EXE", "4c968958368bed9ad4f5ec0e05d04b9f", 1034266, 404),
@@ -5451,6 +5459,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("sabotenman", "",          "SABOTEN.EXE",  "30721602cb11d8764c5f0d9999ebe04d", 753725, Common::JA_JPN, 404),
 	WINGAME1_l("sabotenman", "Auto Mode", "AUTOMODE.EXE", "67388a4076d1ba021dc7aa551798754e", 754423, Common::JA_JPN, 404),
 
+	// Original Mac folder: "Sacred and Secular ƒ"
+	MACGAME1("sacredsecular", "", "xn--Sacred and Secular -ere/Sacred and Secular", "rt:84ef79ea9192590e1c8a6d331bb7e1ea", 288518, 404),
+	WINGAME1("sacredsecular", "", "SACRED/SACRED.EXE", "t:2ae0654d19de7b366e9d6e9ac4588c50", 700157, 404),
+
 	WINGAME1t("sagasoftworks", "", "__ENTER.EXE", "87718e74da6c30b5dc22e5564b4524d5", 696703, 404),
 
 	MACGAME1_l("sailormoonart", "", "SAILORMOON", "b06606b4d174b85d41b265bd366959d6", 290450, Common::JA_JPN, 402),
@@ -6199,8 +6211,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("casinoslots", "",		"shware32.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1410427,
 									"Quarters.Dxr",	"4b91f3fa860cd4de3b0aa167f3afdff3", 527618, 501),
 
-	MACGAME1("cassandra", "", "The Cassandra Galleries", "231d3041df162be4a0ddd36a74eb03b6", 718353, 501),
-	WINGAME1("cassandra", "", "GOWIN32.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 2083273, 501),
+	MACGAME1("cassandra", "", "Corel CD Home/The Cassandra Galleries/The Cassandra Galleries", "rt:faf85f9055a48852e35c016defe1b9f0", 718097, 501),
+	WINGAME1("cassandra", "", "INSTALL/GOWIN32.EXE", "t:ac8ff97766214fbd240e80b66cabb4f6", 2083273, 501),
 
 	MACGAME1("cell1", "", "The Cell 1.0", "r:b37fd54b4f06bdc911ed57b8c074010d", 703153, 500),
 	WINGAME1("cell1", "", "CELL_195.EXE", "t:04767ed2096ccf8cba1b1c1511814d8a", 4144045, 501),
@@ -6336,6 +6348,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Other versions are D4
 	MACGAME1_l("draculassecret", "", "Dracula.PPC", "65f0701cced8f5c64813e1e0353f0510", 108119, Common::FR_FRA, 501),
+
+	MACGAME1("draculaterror", "", "Dracula - Truth and Terror/Dracula", "r:3649908b8c870285a83db91caced6cc0", 718945, 501),
+	WINGAME1("draculaterror", "", "DRACULA/DRACULA.EXE", "t:945023e80a3835a72c4d550701c12d5a", 917645, 500),
 
 	// Demo is D7
 	WINGAME1_l("dtovenaargeheim", "", "DWAZ9598.EXE", "t:a9463471c761c65fe7bf095c6f4d5185", 1446615, Common::NL_NLD, 500),
@@ -6741,6 +6756,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("murderbrett", "", "Brad, le surfeur", "227fcce08de8028e2201f5f4eb3b3cc3", 720160, Common::FR_FRA, 500),
 	WINGAME1_l("murderbrett", "", "BRAD.EXE", "e1c3cb4df694b887f3708f9ebb72302f", 934342, Common::FR_FRA, 500),
 
+	MACGAME1("museumskidslouvre", "", "The Louvre for Kids/Louvre for Kids", "r:bdf1fdd37324547ca49eb6fa6c3060d9", 718945, 501),
+	WINGAME1("museumskidslouvre", "", "LOUVRE/LOUVRE.EXE", "t:26460f8301b6b32ee2fc1c2a1c9a5881", 4993075, 501),
+
 	// Bilingual Japanese/English
 	MACGAME1("musicforliving",  "", "ASL", "4f2c70510b4cbedf758cf9958d218e6e", 705445,  505),
 	WINGAME1t("musicforliving", "", "ASL.EXE",	   "b7853a82d4edff6be38b545143e95940", 1411198, 501),
@@ -6915,8 +6933,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("princetonsat98", "", "sat98_32.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1446775, 501),
 
 	// 1998 PC/Mac re-release
-	MACGAME1("puppetmotel", "", "Puppet Motel", "4ab012350c6e1c39eda772e33df30cea", 812398, 501),
-	WINGAME1t("puppetmotel", "", "PUPPET.EXE", "c43660296f937be289ffaa593b47b4a1", 1434927, 501),
+	MACGAME1("puppetmotel", "", "Puppet Motel Folder/Puppet Motel", "rt:04e7ccf432f8f968e6dd2282bf46c3a9", 812398, 501),
+	WINGAME1("puppetmotel", "", "PUPPET/PUPPET.EXE", "t:c43660296f937be289ffaa593b47b4a1", 1434927, 501),
 
 	MACGAME1_l("putlestory", "", "PutlestorY", "552992fb31c736ca67ffd403096596d6", 720654, Common::JA_JPN, 501),
 	WINGAME1t_l("putlestory", "", "PUTLE32.EXE", "74c72ab0fcdb4c69114047c74cef486e", 1403206, Common::JA_JPN, 501),
@@ -6992,7 +7010,22 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t_l("ronron", "", "xn--.EXE-9u4ca5bb", "a7f01320844d04408e1519e398a5e0d0", 1451774, Common::JA_JPN, 501),
 
 	// Requires installation, sc32inst.exe, Vise installer
-	WINGAME1("safecracker", "", "sc_eng.exe", "t:01871e94a5d9b0fad2b063b486cda3f1", 1415977, 501),
+	MACGAME2("safecracker", "",	  "xn--SafeCracker PPC (ENG)-ob4m",	"rt:4596cfa67cecddc475ec09748ec54000", 397827,
+								  "SC_DATA/MAIN_ENG.Dxr",			"d:b147e3ad3dc53f2426a36f7898724b6a", 6387730, 501),
+	MACGAME2_l("safecracker", "", "xn--SafeCracker PPC (FRA)-ob4m", "rt:4596cfa67cecddc475ec09748ec54000", 397827,
+								  "SC_DATA/MAIN_FRA.Dxr",			"d:47ce0b97c8a0f3bd1d08d3c945962abd", 6393782, Common::FR_FRA, 501),
+	MACGAME2_l("safecracker", "", "xn--SafeCracker PPC (GER)-ob4m", "rt:4596cfa67cecddc475ec09748ec54000", 397827,
+								  "SC_DATA/MAIN_GER.Dxr",			"d:bb18695ea27f44cfd7db09196a4601bf", 6400422, Common::DE_DEU, 501),
+	MACGAME2_l("safecracker", "", "xn--SafeCracker PPC (ITA)-ob4m", "rt:4596cfa67cecddc475ec09748ec54000", 397827,
+								  "SC_DATA/MAIN_ITA.Dxr",			"d:d29754c640d1f073d5038ca668a643e1", 6409628, Common::IT_ITA, 501),
+	MACGAME2_l("safecracker", "", "xn--SafeCracker PPC (NL)-zh7l",  "rt:4596cfa67cecddc475ec09748ec54000", 397827,
+								  "SC_DATA/MAIN_NL.Dxr",			"d:d474acc8bc27c670c3796ff9fba312a7", 6399310, Common::NL_NLD, 501),
+	MACGAME2_l("safecracker", "", "xn--SafeCracker PPC (SPA)-ob4m", "rt:4596cfa67cecddc475ec09748ec54000", 397827,
+								  "SC_DATA/MAIN_SPA.Dxr",			"d:76183fa661413d200ce0154c968a3627", 6409022, Common::ES_ESP, 501),
+	MACGAME2_l("safecracker", "", "xn--SafeCracker PPC (SWE)-ob4m", "rt:4596cfa67cecddc475ec09748ec54000", 397827,
+								  "SC_DATA/MAIN_SWE.Dxr",			"d:e4976c37b4cfbb8111f0919595b0dea2", 6383684, Common::SE_SWE, 501),
+	WINGAME2("safecracker", "",	  "sc_eng.exe",						"t:01871e94a5d9b0fad2b063b486cda3f1", 1415977,
+								  "SC_DATA/Main_eng.dxr",			"d:ecc8f8b40956ad36041b5492ec5a4577", 6491010, 501),
 
 	// Published by the University of Arizona and the Environmental Education Exchange
 	MACGAME1("saguaro", "", "Settings/SCInstall", "ec6fba1c2d0fd9dbe987f4336cb08e2b", 719005, 501),
@@ -7223,6 +7256,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME2("tkkg1", "", "TKKG start", "6e7e31d05709e1d38d63f4df6a59eec0", 719005,
 						  "SCORE.DXR",  "9ffb87ff9d3110435da99a052279fb4c", 10434, 501),
 	WINGAME1t("tkkg1", "", "TKKG1_95.EX_", "a6284109fe843164812af767fb9f41c8", 1411299, 501),
+
+	MACGAME1("treasuresamnh", "", "Treasures of the AMNH/Treasures", "r:d17d1380e3d87863c406e012bd5d8078", 718945, 501),
+	WINGAME1("treasuresamnh", "", "TAMNH/TAMNH.EXE", "t:b8417ced47c60179e0ca1cf59bfc209b", 1641329, 501),
 
 	MACGAME1("trekchair", "", "xn--Star Trek Captain's Chair-tl1p/Captain's Chair Player", "d8bad538d97edf5990c451699e429db3", 764476, 501),
 	WINGAME1t("trekchair", "", "CAP_WIN.EXE", "6c3c66dd2a5a91257fd2691e3888d47d", 1399089, 500),
