@@ -606,7 +606,7 @@ void cPlayerHands::UpdatePrevPositions() {
 		mlstRotations.pop_front();
 
 	///////////////////////////////////////
-	// Get the current camera postion and rotation
+	// Get the current camera position and rotation
 	cVector3f vRotation(0, 0, 0);
 	cVector3f vPosition(0, 0, 0);
 	float fRotNum = 0;

@@ -213,38 +213,50 @@ Common::KeymapArray CGE2MetaEngine::initKeymaps(const char *target) const {
 
 	Common::Action *act;
 
-	act = new Common::Action("Game Info", _("Game Info"));
-	act->setKeyEvent(KEYCODE_F1);
-	act->addDefaultInputMapping("F1");
+	act = new Common::Action(kStandardActionLeftClick, _("Left click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
 	keymap->addAction(act);
 
-	act = new Common::Action("Save Game", _("Save Game"));
-	act->setKeyEvent(KEYCODE_F5);
+	act = new Common::Action(kStandardActionRightClick, _("Right click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	keymap->addAction(act);
+
+	// I18N: This closes the Dialogue/text box.
+	act = new Common::Action("CLOSEBOX", _("Close the Dialogue box"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_X");
+	keymap->addAction(act);
+
+	act = new Common::Action(kStandardActionSave, _("Save game"));
+	act->setCustomEngineActionEvent(kActionSave);
 	act->addDefaultInputMapping("F5");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	keymap->addAction(act);
 
-	act = new Common::Action("Load Game", _("Load Game"));
-	act->setKeyEvent(KEYCODE_F7);
+	act = new Common::Action(kStandardActionLoad, _("Load game"));
+	act->setCustomEngineActionEvent(kActionLoad);
 	act->addDefaultInputMapping("F7");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	keymap->addAction(act);
+
+	// I18N: 3-4 dialogs of game version info, (translation) credits, etc.
+	act = new Common::Action("INFO", _("Game Info"));
+	act->setCustomEngineActionEvent(kActionInfo);
+	act->addDefaultInputMapping("F1");
+	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
 	keymap->addAction(act);
 
 	// I18N: This opens a Quit Prompt where you have to choose
 	// [Confirm] or [Continue Playing] lines with Left Click.
-	act = new Common::Action("Quit Prompt", _("Quit Prompt"));
-	act->setKeyEvent(KeyState(KEYCODE_x, 0, KBD_ALT));
+	act = new Common::Action("QUIT", _("Quit Prompt"));
+	act->setCustomEngineActionEvent(kActionQuit);
 	act->addDefaultInputMapping("A+x");
-	keymap->addAction(act);
-
-	// I18N: This directly quits the game.
-	act = new Common::Action("Quit", _("Quit"));
-	act->setKeyEvent(KEYCODE_F10);
-	act->addDefaultInputMapping("F10");
-	keymap->addAction(act);
-
-	// I18N: This closes the Dialogue/text box.
-	act = new Common::Action("Close the box", _("Close the Dialogue box"));
-	act->setKeyEvent(KEYCODE_ESCAPE);
-	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
 	keymap->addAction(act);
 
 	return Keymap::arrayOf(keymap);

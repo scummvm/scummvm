@@ -1336,8 +1336,11 @@ void ScummEngine_v2::o2_findObject() {
 	int y = getVarOrDirectByte(PARAM_2) * V12_Y_MULTIPLIER;
 	obj = findObject(x, y);
 	if (obj == 0 && (_game.platform == Common::kPlatformNES) && (_userState & USERSTATE_IFACE_INVENTORY)) {
-		if (_mouseOverBoxV2 >= 0 && _mouseOverBoxV2 < 4)
-			obj = findInventory(VAR(VAR_EGO), _mouseOverBoxV2 + _inventoryOffset + 1);
+		if (_mouseOverBoxV2 >= 0 && _mouseOverBoxV2 < 4) {
+			// Simulate inverse order
+			int invCount = getInventoryCount(VAR(VAR_EGO));
+			obj = findInventory(VAR(VAR_EGO), invCount - _inventoryOffset - _mouseOverBoxV2);
+		}
 	}
 	setResult(obj);
 }
