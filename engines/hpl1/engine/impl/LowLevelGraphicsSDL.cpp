@@ -1665,7 +1665,7 @@ GLenum cLowLevelGraphicsSDL::GetGLTextureFuncEnum(eTextureFunc type) {
 		return GL_REPLACE;
 	case eTextureFunc_Add:
 		return GL_ADD;
-	case eTextureFunc_Substract:
+	case eTextureFunc_Subtract:
 		return GL_SUBTRACT;
 	case eTextureFunc_AddSigned:
 		return GL_ADD_SIGNED;
