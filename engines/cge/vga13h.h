@@ -146,7 +146,7 @@ public:
 	void step(int nr = -1);
 	Seq *setSeq(Seq *seq);
 	CommandHandler::Command *snList(SnList type);
-	virtual void touch(uint16 mask, int x, int y, Common::KeyCode keyCode);
+	virtual void touch(uint16 mask, int x, int y);
 	virtual void tick();
 	void sync(Common::Serializer &s);
 private:
