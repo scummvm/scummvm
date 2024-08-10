@@ -563,7 +563,7 @@ void cGameEnemy_Worm_MeshCallback::AfterAnimationUpdate(cMeshEntity *apMeshEntit
 
 		////////////////////////////////////////
 		// Set world matrix of bone
-		mtxTrans.SetTranslation(pSegment->mvPostion);
+		mtxTrans.SetTranslation(pSegment->mvPosition);
 		pSegment->mpBone->SetWorldMatrix(mtxTrans);
 	}
 }
@@ -744,12 +744,12 @@ void cGameEnemy_Worm::OnUpdate(float afTimeStep) {
 		if ((int)pSegment->mlstPositions.size() > mlMaxSegmentPositions) {
 			pSegment->mlstPositions.pop_front();
 		}
-		pSegment->mvPostion = 0;
+		pSegment->mvPosition = 0;
 		Common::List<cVector3f>::iterator posIt2 = pSegment->mlstPositions.begin();
 		for (; posIt2 != pSegment->mlstPositions.end(); ++posIt2) {
-			pSegment->mvPostion += *posIt2;
+			pSegment->mvPosition += *posIt2;
 		}
-		pSegment->mvPostion = pSegment->mvPostion / (float)pSegment->mlstPositions.size();
+		pSegment->mvPosition = pSegment->mvPosition / (float)pSegment->mlstPositions.size();
 
 		/////////////////////////////////////////////
 		// Get the movement vector
@@ -757,7 +757,7 @@ void cGameEnemy_Worm::OnUpdate(float afTimeStep) {
 
 		/////////////////////////////////////////////
 		// Update body position
-		pSegment->mpBody->SetPosition(pSegment->mvPostion);
+		pSegment->mpBody->SetPosition(pSegment->mvPosition);
 
 		//////////////////////////////////////////////
 		// Get the direction vector of the segment
@@ -796,7 +796,7 @@ void cGameEnemy_Worm::OnUpdate(float afTimeStep) {
 		////////////////////////////////////////
 		// Set the New back pos
 		if (i < mvTailSegments.size() - 1) {
-			vSegBackPos = pSegment->mvPostion +
+			vSegBackPos = pSegment->mvPosition +
 						  pSegment->mvForward * -mvTailSegments[i + 1]->mfDistToFront;
 		}
 	}
@@ -822,7 +822,7 @@ void cGameEnemy_Worm::ExtraPostSceneDraw() {
 	for (size_t i = 0; i < mvTailSegments.size(); ++i) {
 		cWormTailSegment *pSegment = mvTailSegments[i];
 
-		pLowLevelGfx->DrawSphere(pSegment->mvPostion, 0.3f, cColor(1, 1));
+		pLowLevelGfx->DrawSphere(pSegment->mvPosition, 0.3f, cColor(1, 1));
 
 		pLowLevelGfx->DrawLine(pSegment->mvPosition,
 							   pSegment->mvPosition + pSegment->mvForward * 0.5f,
@@ -922,7 +922,7 @@ void cGameEnemy_Worm::SetupTail() {
 		pSegment->mpBone->SetActive(false);
 
 		// Start Position,forward and rotation
-		pSegment->mvPostion = pSegment->mpBone->GetWorldPosition();
+		pSegment->mvPosition = pSegment->mpBone->GetWorldPosition();
 
 		pSegment->mvForward = mpMover->GetCharBody()->GetForward();
 		pSegment->mvUp = mpMover->GetCharBody()->GetUp();
@@ -938,7 +938,7 @@ void cGameEnemy_Worm::SetupTail() {
 		iCollideShape *pShape = pPhysicsWorld->CreateSphereShape(pCharBody->GetSize().x / 2.0f, NULL);
 		pSegment->mpBody = pPhysicsWorld->CreateBody("Tail0" + cString::ToString(i + 1), pShape);
 		pSegment->mpBody->SetMass(0);
-		pSegment->mpBody->SetPosition(pSegment->mvPostion);
+		pSegment->mpBody->SetPosition(pSegment->mvPosition);
 		pSegment->mpBody->SetIsCharacter(true);
 		pSegment->mpBody->SetActive(IsActive());
 
