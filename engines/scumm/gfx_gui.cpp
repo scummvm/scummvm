@@ -342,7 +342,7 @@ Common::KeyState ScummEngine::printMessageAndPause(const char *msg, int color, i
 		if (_game.platform == Common::kPlatformNES) {
 			_string[2].xpos = 16;
 			_string[2].color = 0;
-		} else if (_game.platform == Common::kPlatformC64) {
+		} else if (_game.platform == Common::kPlatformC64 || _game.platform == Common::kPlatformApple2GS) {
 			_string[2].color = 16;
 		} else {
 			_string[2].color = 13;

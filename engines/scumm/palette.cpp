@@ -478,7 +478,7 @@ void ScummEngine::setV1ColorTable(int renderMode) {
 		{	0x00, 0x0F, 0x08, 0x05, 0x0A, 0x05, 0x01, 0x0D, 0x0A, 0x02, 0x0A, 0x0C, 0x0F, 0x0A, 0x05, 0x0C }
 	};
 
-	int tbl = (_game.platform == Common::kPlatformC64) ? 0 : (_game.id == GID_ZAK ? 1 : 3);
+	int tbl = (_game.platform == Common::kPlatformC64 || _game.platform == Common::kPlatformApple2GS) ? 0 : (_game.id == GID_ZAK ? 1 : 3);
 	if (renderMode == Common::kRenderHercA || renderMode == Common::kRenderHercG || renderMode == Common::kRenderCGA || renderMode == Common::kRenderCGA_BW)
 		++tbl;
 

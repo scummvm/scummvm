@@ -782,7 +782,7 @@ void ScummEngine_v2::setBuiltinCursor(int idx) {
 
 	memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
 
-	if (_game.platform == Common::kPlatformC64)
+	if (_game.platform == Common::kPlatformC64 || _game.platform == Common::kPlatformApple2GS)
 		color = default_v0_cursor_colors[idx];
 	else if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp)
 		color = (idx & 1) * 3;

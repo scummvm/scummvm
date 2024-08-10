@@ -1894,8 +1894,8 @@ void ScummEngine_v5::drawFlashlight() {
 
 	blit(_flashlight.buffer, vs->pitch, bgbak, vs->pitch, _flashlight.w, _flashlight.h, vs->format.bytesPerPixel);
 
-	// C64 & NES does not round the flashlight
-	if (_game.platform != Common::kPlatformC64 && _game.platform != Common::kPlatformNES) {
+	// Apple IIGS, C64 & NES does not round the flashlight
+	if (_game.platform != Common::kPlatformApple2GS && _game.platform != Common::kPlatformC64 && _game.platform != Common::kPlatformNES) {
 		// Round the corners. Different versions have different rounding parameters.
 		if (vs->format.bytesPerPixel == 1) {
 			int width, height, heightLoc;

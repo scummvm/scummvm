@@ -202,7 +202,7 @@ void ScummEngine_v2::initV2MouseOver() {
 	else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG || _renderMode == Common::kRenderCGA_BW)
 		_hiLiteColorVerbArrow = _hiLiteColorInvSentence = 15;
 
-	if (_game.platform == Common::kPlatformC64) {
+	if (_game.platform == Common::kPlatformC64 || _game.platform == Common::kPlatformApple2GS) {
 		color = 16;
 		_hiLiteColorVerbArrow = _hiLiteColorInvSentence = 7;
 		arrow_color = 6;
