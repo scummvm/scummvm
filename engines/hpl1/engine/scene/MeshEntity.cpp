@@ -353,7 +353,7 @@ cMeshEntity::cMeshEntity(const tString asName, cMesh *apMesh, cMaterialManager *
 cMeshEntity::~cMeshEntity() {
 	for (tEntity3DListIt it = mlstAttachedEntities.begin(); it != mlstAttachedEntities.end(); ++it) {
 		// iEntity3D *pEntity = *it;
-		//  TODO: if(mpWorld) mpWorld->DestroyUnkownEntity(pEntity);
+		//  TODO: if(mpWorld) mpWorld->DestroyUnknownEntity(pEntity);
 	}
 
 	for (int i = 0; i < (int)mvSubMeshes.size(); i++) {
