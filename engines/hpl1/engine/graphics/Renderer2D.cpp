@@ -111,7 +111,7 @@ bool cRenderObject2DCompare::operator()(const cRenderObject2D &aObjectA, const c
 	aObjectB.GetMaterial()->GetType(eMaterialRenderType_Light);
 	}*/
 	/*else if(Some other thing to sort by)*/
-	/*Sort by Z type aswell!*/
+	/*Sort by Z type as well!*/
 
 	return false;
 }
