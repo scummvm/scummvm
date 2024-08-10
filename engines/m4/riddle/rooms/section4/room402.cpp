@@ -277,7 +277,68 @@ void Room402::daemon() {
 }
 
 void Room402::pre_parser() {
+	bool talkFlag = player_said_any("talk", "talk to");
+	bool takeFlag = player_said("take");
+	bool lookFlag = player_said_any("look", "look at");
 
+	if (lookFlag && player_said(" ")) {
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+	}
+
+	if (player_said("journal") && !takeFlag && !lookFlag && _G(kernel).trigger == -1) {
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+	}
+
+	if (player_said("DANZIG") && !player_said("ENTER", "DANZIG")) {
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+	}
+
+	if (!_G(flags)[V112] && !player_said("WALK TO") &&
+		(!talkFlag || !player_said("WOLF")) &&
+		!player_said("POMERANIAN MARKS", "WOLF"))
+		_G(flags)[V112] = 1;
+
+	_val6 = 0;
+
+	if (player_said("POMERANIAN MARKS", "WOLF") && inv_player_has("POMERANIAN MARKS")) {
+		player_set_commands_allowed(false);
+		intr_cancel_sentence();
+		_G(flags)[V114] = 1;
+		_val12 = 2000;
+		_val13 = 2240;
+
+		_G(kernel).trigger_mode = KT_DAEMON;
+		_G(flags)[V111]++;
+		kernel_timing_trigger(1, 110);
+	} else if (_G(flags)[V116] || !player_said("WOLF") || (
+		(!player_said("US DOLLARS") || !inv_player_has("US DOLLARS")) &&
+		(!player_said("CHINESE YUAN") || !inv_player_has("CHINESE YUAN")) &&
+		(!player_said("PERUVIAN INTI") || !inv_player_has("PERUVIAN INTI")) &&
+		(!player_said("SIKKIMESE RUPEE") || !inv_player_has("SIKKIMESE RUPEE"))
+	)) {
+		if (talkFlag && player_said("WOLF"))
+			intr_cancel_sentence();
+
+		player_set_commands_allowed(false);
+		_val12 = 2000;
+		_val13 = 2250;
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(1, 110);
+	} else {
+		player_set_commands_allowed(false);
+		_G(flags)[V116] = 1;
+		intr_cancel_sentence();
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(1, 230);
+	}
+
+	_G(kernel).trigger_mode = KT_PREPARSE;
 }
 
 void Room402::parser() {
