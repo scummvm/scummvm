@@ -32,13 +32,13 @@ class Room402 : public Room {
 private:
 	int _val1 = 0;
 	int _val2 = 0;
-	int _val3 = 0;
+	char *_soundPtr1 = nullptr;
 	int _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;
-	int _val7 = 0;
+	char *_soundPtr2 = nullptr;
 	int _val8 = 0;
-	int _val9 = 0;
+	int _currentNode = 0;
 	int _val10 = 0;
 	int _val11 = 0;
 	int _val12 = 0;
@@ -61,6 +61,8 @@ private:
 	int _turtlePopup = 0;
 	int _ripLeanWall = 0;
 	machine *_wolfWalker = nullptr;
+
+	void conv402a();
 
 public:
 	Room402() : Room() {}
