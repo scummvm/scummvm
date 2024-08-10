@@ -84,6 +84,16 @@ void CastleEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *inf
 	FreescapeEngine::initKeymaps(engineKeyMap, infoScreenKeyMap, target);
 	Common::Action *act;
 
+	act = new Common::Action("SELECTPRINCE", _("Select Prince"));
+	act->setCustomEngineActionEvent(kActionSelectPrince);
+	act->addDefaultInputMapping("1");
+	infoScreenKeyMap->addAction(act);
+
+	act = new Common::Action("SELECTPRINCESS", _("Select Princess"));
+	act->setCustomEngineActionEvent(kActionSelectPrincess);
+	act->addDefaultInputMapping("2");
+	infoScreenKeyMap->addAction(act);
+
 	act = new Common::Action("SAVE", _("Save Game"));
 	act->setCustomEngineActionEvent(kActionSave);
 	act->addDefaultInputMapping("s");
@@ -851,22 +861,20 @@ void CastleEngine::selectCharacterScreen() {
 				_gfx->computeScreenViewport();
 				_gfx->clear(0, 0, 0, true);
 				break;
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_1:
+			default:
+				break;
+			}
+			switch (event.customType) {
+				case kActionSelectPrince:
 					selected = true;
 					// Nothing, since game bit should be already zero
 					break;
-				case Common::KEYCODE_2:
+				case kActionSelectPrincess:
 					selected = true;
 					setGameBit(32);
 					break;
 				default:
 					break;
-				}
-			break;
-			default:
-				break;
 			}
 		}
 		_gfx->clear(0, 0, 0, true);

@@ -69,7 +69,6 @@ enum FREESCAPEAction {
 	kActionMoveRight,
 	kActionShoot,
 	kActionRunMode,
-	kActionRest,
 	kActionChangeAngle,
 	kActionChangeStepSize,
 	kActionToggleRiseLower,
@@ -87,8 +86,14 @@ enum FREESCAPEAction {
 	kActionDecreaseStepSize,
 	kActionToggleFlyMode,
 	kActionToggleClipMode,
+	// Driller
 	kActionDeployDrillingRig,
-	kActionCollectDrillingRig
+	kActionCollectDrillingRig,
+	// Total Eclipse
+	kActionRest,
+	// Castle
+	kActionSelectPrince,
+	kActionSelectPrincess,
 };
 
 typedef Common::HashMap<uint16, Area *> AreaMap;
