@@ -22,6 +22,8 @@
 #ifndef QDENGINE_MINIGAMES_BOOK_ALL_H
 #define QDENGINE_MINIGAMES_BOOK_ALL_H
 
+#include "common/debug.h"
+
 #include "qdengine/qd_fwd.h"
 #include "qdengine/qdcore/qd_minigame_interface.h"
 
@@ -34,6 +36,8 @@ public:
 
 	//! Инициализация игры.
 	bool init(const qdEngineInterface *engine_interface) {
+		debugC(1, kDebugMinigames, "BookAll::init()");
+
 		_engine = engine_interface;
 		_scene = engine_interface->current_scene_interface();
 		if (!_scene)
@@ -233,8 +237,12 @@ public:
 
 	//! Обсчёт логики игры, параметр - время, которое должно пройти в игре (в секундах).
 	bool quant(float dt) {
+		debugC(3, kDebugMinigames, "BookAll::quant(%f). _playbackOn: %d _playbackOn: %d _currentPageArt: %d _totalPageArts: %d _time: %f",
+				dt, _playbackOn, _playbackOn, _currentPageArt, _totalPageArts, _time);
+
 		if (!_playbackOn) {
 			if (_startReading->is_state_active("page1")) {
+				debugC(1, kDebugMinigames, "BookAll::quant(). Resetting to PAGE1");
 				_pageNum = 1;
 				_startReading->set_state("reading_page1");
 				_currentPageArt = 1;
@@ -242,7 +250,7 @@ public:
 				_playbackOn = true;
 				_totalPageArts = 93;
 			} else if (_startReading->is_state_active("page2")) {
-				warning("PAGE2");
+				debugC(1, kDebugMinigames, "BookAll::quant(). Resetting to PAGE2");
 				_pageNum = 2;
 				_startReading->set_state("reading_page2");
 				_currentPageArt = 1;
@@ -253,6 +261,7 @@ public:
 		}
 
 		if (_playbackOn && _recordPlayer->is_state_active("\xf1\xf2\xe0\xf2\xe8\xea")) { // "статик"
+			debugC(1, kDebugMinigames, "BookAll::quant(). Stopping playback externally");
 			_playbackOn = false;
 			_startReading->set_state("no");
 		}
@@ -260,13 +269,17 @@ public:
 		if (_playbackOn) {
 			if (_currentPageArt > _totalPageArts) {
 				_time = _time + dt;
-				if (_pageDurations[_pageNum] < (double)_time)
+				if (_pageDurations[_pageNum] < (double)_time) {
+					debugC(1, kDebugMinigames, "BookAll::quant(). Stopping playback by time");
 					_startReading->set_state("stopping");
+				}
 			} else {
 				_time = _time + dt;
 				if (_artTimeStamps[95 * _pageNum + _currentPageArt] <= (double)_time) {
 					_artObject->set_state(Common::String::format("page%i_art_%02i", _pageNum, _currentPageArt).c_str());
 					++_currentPageArt;
+
+					debugC(1, kDebugMinigames, "BookAll::quant(). Switching pageArt to %d", _currentPageArt);
 				}
 			}
 		}
@@ -276,6 +289,8 @@ public:
 
 	//! Деинициализация игры.
 	bool finit() {
+		debugC(1, kDebugMinigames, "BookAll::finit()");
+
 		if (_scene)  {
 			_engine->release_scene_interface(_scene);
 			_scene = 0;
