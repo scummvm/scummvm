@@ -349,7 +349,7 @@ public:
 
 	/**
 	 * Spherical Linear Interpolation between quaternions A and B
-	 * \param afT The amount in between the quaternions. 0.0 is A and 1 is B.
+	 * \param afT The amount in-between the quaternions. 0.0 is A and 1 is B.
 	 * \param abShortestPath Move the the shortest path.
 	 * \return
 	 */
@@ -364,7 +364,7 @@ public:
 
 	/**
 	 * Spherical Linear Interpolation between matrix A and B
-	 * \param afT The amount in between the quaternions. 0.0 is A and 1 is B.
+	 * \param afT The amount in-between the quaternions. 0.0 is A and 1 is B.
 	 * \param abShortestPath Move the the shortest path.
 	 * \return
 	 */
