@@ -29,12 +29,48 @@ namespace Riddle {
 namespace Rooms {
 
 class Room402 : public Room {
+private:
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+	int _val5 = 0;
+	int _val6 = 0;
+	int _val7 = 0;
+	int _val8 = 0;
+	int _val9 = 0;
+	int _val10 = 0;
+	int _val11 = 0;
+	int _val12 = 0;
+	int _val13 = 0;
+	machine *_wolfie = nullptr;
+	machine *_wolfieMach = nullptr;
+	int _shadow3 = 0;
+	int _ripPaysWolfie = 0;
+	int _ripTalkWolf = 0;
+	int _ripTalker = 0;
+	int _wolfClipping = 0;
+	int _wolfClippersDown = 0;
+	int _wolfShakesHead = 0;
+	int _wolfWantsMoney = 0;
+	int _ripHeadTurn = 0;
+	int _ripDownStairs = 0;
+	machine *_ripLeaving = nullptr;
+	machine *_branch = nullptr;
+	int _wolfTurnsClipping = 0;
+	int _turtlePopup = 0;
+	int _ripLeanWall = 0;
+	machine *_wolfWalker = nullptr;
+
 public:
 	Room402() : Room() {}
 	~Room402() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms
