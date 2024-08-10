@@ -225,9 +225,17 @@ public:
 		_artTimeStamps[270] = 38.638;
 		_artTimeStamps[271] = 38.995998;
 
-		_pageDurations[1] = 0.0;
-		_pageDurations[1] = 51.84;
-		_pageDurations[2] = 39.832001;
+		_pageDurations[0] = 0.0;
+		_pageDurations[1] = 51.84;		// 59.72
+		_pageDurations[2] = 39.832001;  // 42.24
+
+		for (int i = 0; i < 95; i++)
+			_artTimeStamps[95 + i] *= 59.72 / 51.84;
+		_pageDurations[1] *= 59.72 / 51.84;
+
+		for (int i = 0; i < 95; i++)
+			_artTimeStamps[95 + 95 + i] *= 42.24 / 39.832;
+		_pageDurations[2] *= 42.24 / 39.832;
 
 		_pageNum = 0;
 		_playbackOn = 0;
