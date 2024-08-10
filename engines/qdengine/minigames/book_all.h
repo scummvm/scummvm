@@ -29,6 +29,30 @@
 
 namespace QDEngine {
 
+const float bookGusenica[95 * 2] = {
+	 0.000,  0.036,  0.514,  1.154,  1.787,  2.370,  2.862,  4.242,  4.921,  5.979,
+	 6.434,  6.820,  7.228,  8.297,  8.963,  9.170,  9.825, 10.698, 11.401, 12.169,
+	12.868, 13.416, 14.107, 15.232, 16.679, 17.048, 17.618, 18.119, 19.437, 19.882,
+	20.492, 21.583, 22.646, 23.566, 25.343, 25.521, 25.758, 26.371, 26.561, 27.310,
+	27.692, 28.216, 28.685, 29.035, 29.596, 30.499, 31.886, 32.309, 32.441, 33.276,
+	33.689, 34.260, 34.769, 35.776, 36.569, 37.678, 38.885, 39.007, 39.608, 40.160,
+	41.874, 42.118, 42.637, 42.775, 43.555, 43.949, 44.187, 44.761, 45.475, 45.861,
+	47.240, 47.428, 47.639, 48.227, 48.746, 49.456, 49.690, 50.298, 50.961, 51.173,
+	51.770, 52.395, 52.937,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,
+	 0.000,  0.000,  0.000,  0.000,  0.000,
+
+	 0.000,  0.665,  1.136,  1.633,  2.600,  2.973,  3.558,  3.996,  4.657,  6.140,
+	 7.132,  8.223,  9.114,  9.288, 10.437, 10.624, 11.307, 11.479, 11.913, 12.505,
+	13.162, 13.287, 14.580, 15.192, 16.004, 16.552, 17.128, 17.805, 19.214, 19.860,
+	20.571, 22.766, 23.256, 24.098, 24.888, 26.421, 26.786, 26.893, 27.351, 27.804,
+	28.530, 29.882, 30.415, 31.506, 31.614, 32.150, 33.647, 34.333, 34.811, 35.659,
+	35.809, 36.192, 36.612, 37.062, 37.756, 39.359, 40.266, 41.407, 41.828, 41.901,
+	42.447, 43.290, 43.980, 45.047, 46.263, 46.407, 47.836, 48.311, 49.430, 49.752,
+	 0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,
+	 0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,
+	 0.000,  0.000,  0.000,  0.000,  0.000,
+};
+
 const float bookLes[95 * 2] = {
 	 0.000,  0.046,  0.577,  0.809,  1.623,  1.985,  2.635,  3.536,  3.642,  4.560,
 	 5.071,  6.558,  7.007,  7.876,  8.998,  9.548, 10.387, 10.471, 11.054, 12.062,
@@ -79,7 +103,7 @@ const float bookLesCZ[95 * 2] = {
 
 class qdBookAllMiniGameInterface : public qdMiniGameInterface {
 public:
-	qdBookAllMiniGameInterface(Common::Language language) : _language(language) {}
+	qdBookAllMiniGameInterface(Common::String dll, Common::Language language) : _dll(dll), _language(language) {}
 	~qdBookAllMiniGameInterface() { };
 
 	//! Инициализация игры.
@@ -98,35 +122,55 @@ public:
 		_pageDurations[0] = 0.0;
 		_totalPageArts[0] = 0;
 
-		if (_language == Common::CS_CZE) {
-			_artTimeStamps = bookLesCZ;
-			_pageDurations[1] = 51.84;
-			_pageDurations[2] = 39.832;
+		if (_dll == "DLL\\Book_les.dll") {
+			if (_language == Common::CS_CZE) {
+				_artTimeStamps = bookLesCZ;
+				_pageDurations[1] = 51.84;
+				_pageDurations[2] = 39.832;
 
-			_totalPageArts[1] = 93;
-			_totalPageArts[2] = 81;
-		} else {
-			_artTimeStamps = bookLes;
-			_pageDurations[1] = 59.809;
-			_pageDurations[2] = 42.30;
+				_totalPageArts[1] = 93;
+				_totalPageArts[2] = 81;
+			} else {
+				_artTimeStamps = bookLes;
+				_pageDurations[1] = 59.809;
+				_pageDurations[2] = 42.30;
 
-			_totalPageArts[1] = 94;
-			_totalPageArts[2] = 85;
+				_totalPageArts[1] = 94;
+				_totalPageArts[2] = 85;
+			}
+		} else if (_dll == "DLL\\Book_gusenica.dll") {
+			if (_language == Common::CS_CZE) {
+				_artTimeStamps = bookLesCZ;
+				_pageDurations[1] = 0;
+				_pageDurations[2] = 0;
+
+				_totalPageArts[1] = 0;
+				_totalPageArts[2] = 0;
+			} else {
+				_artTimeStamps = bookGusenica;
+				_pageDurations[1] = 54.300;
+				_pageDurations[2] = 50.400;
+
+				_totalPageArts[1] = 82;
+				_totalPageArts[2] = 69;
+			}
 		}
 
 #if 0
-		float artTimeStamps[95 * 3];
+		const int pageSize = 83;
+		float artTimeStamps[pageSize * 3];
+		memset(artTimeStamps, 0, sizeof(artTimeStamps));
 
-		for (int i = 0; i < 95; i++) {
-			debugN("%2.3f, ", artTimeStamps[95 + i]);
+		for (int i = 0; i < pageSize; i++) {
+			debugN("%2.3f, ", artTimeStamps[pageSize + i]);
 
 			if ((i + 1) % 10 == 0)
 				debug("");
 		}
 		debug("");
 
-		for (int i = 0; i < 95; i++) {
-			debugN("%2.3f, ", artTimeStamps[95 * 2 + i]);
+		for (int i = 0; i < pageSize; i++) {
+			debugN("%2.3f, ", artTimeStamps[pageSize * 2 + i]);
 
 			if ((i + 1) % 10 == 0)
 				debug("");
@@ -238,6 +282,7 @@ private:
 	int _totalPageArts[3];
 	float _time = 0.0;
 
+	Common::String _dll;
 	Common::Language _language;
 };
 
