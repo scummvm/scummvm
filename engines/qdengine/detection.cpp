@@ -42,6 +42,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{ QDEngine::kDebugSound, "sound", "Sound debug level"},
 	{ QDEngine::kDebugTemp, "temp", "Enable temporary tracing" },
 	{ QDEngine::kDebugQuant, "quant", "Enable quant tracing"},
+	{ QDEngine::kDebugMinigames, "minigames", "Enable minigames tracing"},
 	DEBUG_CHANNEL_END
 };
 
