@@ -80,7 +80,7 @@ public:
 
 	VMenu(CGE2Engine *vm, Common::Array<Choice *> list, V2D pos, ColorBank col);
 	~VMenu() override;
-	void touch(uint16 mask, V2D pos, Common::KeyCode keyCode) override;
+	void touch(uint16 mask, V2D pos) override;
 	char *vmGather(Common::Array<Choice *> list);
 };
 
