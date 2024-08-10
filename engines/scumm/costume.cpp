@@ -519,7 +519,18 @@ void ClassicCostumeRenderer::proc3(ByleRLEData &compData) {
 					maskbit = revBitMask(compData.x & 7);
 					compData.destPtr += compData.scaleXStep;
 				}
-				_scaleIndexX += compData.scaleXStep;
+
+				// From MONKEY1 EGA disasm: we only increment by 1.
+				// This accurately produces the original wonky scaling
+				// for the floppy editions of Monkey Island 1.
+				// Also valid for all other v4 games (this code is
+				// also in the executable for LOOM CD).
+				if (_vm->_game.version == 4) {
+					_scaleIndexX++;
+				} else {
+					_scaleIndexX += compData.scaleXStep;
+				}
+
 				dst = compData.destPtr;
 				mask = compData.maskPtr + compData.x / 8;
 			}
