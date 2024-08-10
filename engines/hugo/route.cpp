@@ -109,7 +109,7 @@ void Route::setWalk(const uint16 direction) {
 		return;
 
 	if (!obj->_vx && !obj->_vy)
-		_oldWalkDirection = 0;                      // Fix for consistant restarts
+		_oldWalkDirection = 0;                      // Fix for consistent restarts
 
 	if (direction != _oldWalkDirection) {
 		// Direction has changed
