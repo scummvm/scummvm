@@ -348,7 +348,7 @@ bool cGameEnemyState_Worm_Hunt::OnHearNoise(const cVector3f &avPosition, float a
 			// Check if a node is found near the sound.
 			cAINode *pNode = mpMover->GetAINodeAtPosInRange(avPosition, 0.0f, 5.0f, true, 0.1f);
 			if (pNode) {
-				// Update last player postion.
+				// Update last player position.
 				mbLostPlayer = false;
 				mfUpdatePathCount = 0;
 				mpEnemy->SetLastPlayerPos(pNode->GetPosition());
@@ -736,9 +736,9 @@ void cGameEnemy_Worm::OnUpdate(float afTimeStep) {
 		cWormTailSegment *pSegment = mvTailSegments[i];
 
 		//////////////////////////////////
-		// Change postion of segment
+		// Change position of segment
 
-		// Get add newer pos and smooth all the previuos
+		// Get add newer pos and smooth all the previous
 		cVector3f vPrevPos = pSegment->mvPostion;
 		pSegment->mlstPositions.push_back(vSegBackPos);
 		if ((int)pSegment->mlstPositions.size() > mlMaxSegmentPostions) {
