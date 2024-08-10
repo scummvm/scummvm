@@ -117,9 +117,9 @@ void Room402::init() {
 			digi_preload("950_s22");
 			_ripDownStairs = series_load("RIP DOWN STAIRS");
 			ws_hide_walker();
-			_ripLeaving = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, 0,
+			_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, 0,
 				triggerMachineByHashCallbackNegative, "rip leaving castle");
-			sendWSMessage_10000(1, _ripLeaving, _ripDownStairs, 1, 27, 55,
+			sendWSMessage_10000(1, _ripEnterLeave, _ripDownStairs, 1, 27, 55,
 				_ripDownStairs, 27, 27, 0);
 #endif
 
@@ -142,9 +142,9 @@ void Room402::init() {
 				digi_preload("950_s22");
 				_ripDownStairs = series_load("RIP DOWN STAIRS");
 				ws_hide_walker();
-				_ripLeaving = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, 0,
+				_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, 0,
 					triggerMachineByHashCallbackNegative, "rip leaving castle");
-				sendWSMessage_10000(1, _ripLeaving, _ripDownStairs, 1, 27, 55,
+				sendWSMessage_10000(1, _ripEnterLeave, _ripDownStairs, 1, 27, 55,
 					_ripDownStairs, 27, 27, 0);
 				break;
 
@@ -201,9 +201,9 @@ void Room402::init() {
 				_ripDownStairs = series_load("RIP DOWN STAIRS");
 				ws_hide_walker();
 
-				_ripLeaving = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, 0,
+				_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, 0,
 					triggerMachineByHashCallbackNegative, "rip leaving castle");
-				sendWSMessage_10000(1, _ripLeaving, _ripDownStairs, 1, 27, 55,
+				sendWSMessage_10000(1, _ripEnterLeave, _ripDownStairs, 1, 27, 55,
 					_ripDownStairs, 27, 27, 0);
 				break;
 
@@ -349,8 +349,97 @@ void Room402::parser() {
 	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (player_said("conv402a")) {
-		// TODO
-		conv402a();
+		if (_G(kernel).trigger) {
+			conv402a777();
+		} else {
+			conv402a();
+		}
+	} else if (talkFlag && player_said("WOLF")) {
+		player_set_commands_allowed(false);
+		_val5 = -1;
+		_val10 = 1000;
+		_val11 = 1100;
+
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(1, 102);
+		_G(kernel).trigger_mode = KT_PARSE;
+	} else if (lookFlag && player_said("WOLF")) {
+		digi_play(_G(flags)[V111] ? "402r13" : "402r12", 1);
+	} else if (lookFlag && player_said("CASTLE")) {
+		// No implementation
+	} else if (lookFlag && player_said_any("TOPIARY", "TOPIARY ")) {
+		digi_play("408r02", 1);
+	} else if (takeFlag && player_said("WHEELBARROW")) {
+		digi_play("402r17", 1);
+	} else if (takeFlag && player_said_any("TOPIARY", "TOPIARY ")) {
+		digi_play("402r18", 1);
+	} else if (useFlag && player_said("TOPIARY")) {
+		digi_play("402r16", 1);
+	} else if (useFlag && player_said("TOPIARY ")) {
+		useTopiary();
+	} else if (player_said("POMERANIAN MARKS", "WOLF") && inv_player_has("POMERANIAN MARKS")) {
+		if (_G(flags)[V115] && !_G(flags)[V114]) {
+			_G(flags)[V114] = 1;
+			_G(flags)[V111]++;
+			player_set_commands_allowed(false);
+			_val5 = 210;
+		} else {
+			player_set_commands_allowed(false);
+			_val5 = 200;
+		}
+	}
+#define MONEY(ITEM) player_said("WOLF") && player_said(ITEM) && inv_player_has(ITEM)
+	else if (MONEY("US DOLLARS") || MONEY("CHINESE YUAN") ||
+			MONEY("PERUVIAN INTI") || MONEY("SIKKIMESE RUPEE")) {
+		if (!_G(flags)[V116]) {
+			_G(flags)[V116] = 1;
+			player_set_commands_allowed(false);
+			_val5 = 221;
+		}
+	}
+#undef MONEY
+	else if (enterFlag && player_said("GATE")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			ws_walk(517, 239, nullptr, 2, 11);
+			break;
+		case 2:
+			disable_player_commands_and_fade_init(3);
+			break;
+		default:
+			break;
+		}
+	} else if (enterFlag && player_said("DANZIG")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(2);
+			break;
+		case 2:
+			_G(flags)[V112] = 1;
+			_G(game).setRoom(401);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("DANZIG")) {
+		// No implementation
+	} else if (enterFlag && player_said("CASTLE DOOR")) {
+		enterCastle();
+	} else if (player_said("journal") && !talkFlag && !lookFlag &&
+			!inv_player_has(_G(player).noun)) {
+		if (_G(flags)[kCastleCartoon])
+			digi_play("com016", 1);
+		else if (_G(kernel).trigger == -1)
+			ws_walk(190, 333, nullptr, 8, 2);
+		else {
+			if (_G(kernel).trigger == 6) {
+				_G(flags)[kCastleCartoon] = 1;
+				_G(flags)[V089] = 1;
+			}
+			//sub("com015");
+		}
 	}
 	// TODO
 	else {
@@ -577,6 +666,121 @@ void Room402::conv402a() {
 			digi_play(sound, 1, 255, 777);
 			break;
 		}
+	}
+}
+
+void Room402::conv402a777() {
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+
+	if (who <= 0) {
+		if (node == 26 && entry == 0) {
+			_val10 = 1000;
+			_val11 = 1123;
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_timing_trigger(1, 102);
+			_G(kernel).trigger_mode = KT_PARSE;
+		} else {
+			_val13 = (_val12 == 2002) ? 2143 : 2104;
+			conv_resume();
+		}
+	} else if (who == 1) {
+		_val11 = (_val10 == 1001) ? 1115 : 1103;
+		conv_resume();
+	}
+}
+
+void Room402::useTopiary() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_ripMessesBush = series_load("RIP MESSES UP THE BUSH");
+		player_update_info();
+		_safariShadow = series_place_sprite("SAFARI SHADOW 3", 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
+		_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x200, 0,
+			triggerMachineByHashCallbackNegative, "rip entering castle");
+		sendWSMessage_10000(1, _ripEnterLeave, _ripMessesBush, 1, 10, 1,
+			_ripMessesBush, 10, 10, 0);
+		break;
+
+	case 1:
+		sendWSMessage_10000(1, _ripEnterLeave, _ripMessesBush, 10, 34, 2,
+			_ripMessesBush, 34, 34, 0);
+		digi_play("402_s02", 1, 255, 2);
+		break;
+
+	case 2:
+		if (inv_player_has("TURTLE") && !_G(flags)[V117]) {
+			_G(flags)[V117] = 1;
+			_G(flags)[V118]++;
+		}
+
+		_branch = series_place_sprite("sprite of the pulled out branch", 0, 0, -53, 100, 0x300);
+		series_unload(_ripMessesBush);
+		terminateMachineAndNull(_safariShadow);
+		ws_unhide_walker();
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+
+}
+
+void Room402::enterCastle() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_ripClimbKnock = series_load("RIP CLIMBS AND KNOCKS");
+		_doorOpens = series_load("DOOR OPENS");
+		ws_hide_walker();
+
+		_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, 0,
+			triggerMachineByHashCallbackNegative, "rip entering castle");
+		sendWSMessage_10000(1, _ripEnterLeave, _ripClimbKnock, 1,
+			69, 1, _ripClimbKnock, 69, 69, 0);
+		break;
+
+	case 1:
+		digi_play("402_s01", 1, 255, 2);
+		sendWSMessage_10000(1, _ripEnterLeave, _ripClimbKnock, 69, 58, -1,
+			_ripClimbKnock, 58, 58, 0);
+		break;
+
+	case 2:
+		kernel_timing_trigger(15, 3);
+		break;
+
+	case 3:
+		_castleDoor = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+			triggerMachineByHashCallbackNegative, "castle door");
+		sendWSMessage_10000(1, _castleDoor, _doorOpens, 1, 2, -1,
+			_doorOpens, 2, 2, 0);
+		digi_play("402_S05", 1, 255, 4);
+		break;
+
+	case 4:
+		if (player_been_here(404)) {
+			kernel_timing_trigger(1, 5);
+		} else {
+			digi_play("402r28", 1, 255, 5);
+		}
+		break;
+
+	case 5:
+		disable_player_commands_and_fade_init(6);
+		break;
+
+	case 6:
+		_G(flags)[V112] = 1;
+		_G(game).setRoom(404);
+		break;
+
+	default:
+		break;
 	}
 }
 

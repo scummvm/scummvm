@@ -55,14 +55,22 @@ private:
 	int _wolfWantsMoney = 0;
 	int _ripHeadTurn = 0;
 	int _ripDownStairs = 0;
-	machine *_ripLeaving = nullptr;
+	machine *_ripEnterLeave = nullptr;
 	machine *_branch = nullptr;
 	int _wolfTurnsClipping = 0;
 	int _turtlePopup = 0;
 	int _ripLeanWall = 0;
 	machine *_wolfWalker = nullptr;
+	machine *_safariShadow = nullptr;
+	int _ripMessesBush = 0;
+	int _ripClimbKnock = 0;
+	int _doorOpens = 0;
+	machine *_castleDoor = nullptr;
 
 	void conv402a();
+	void conv402a777();
+	void useTopiary();
+	void enterCastle();
 
 public:
 	Room402() : Room() {}
