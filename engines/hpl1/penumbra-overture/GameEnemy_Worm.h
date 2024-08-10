@@ -259,7 +259,7 @@ private:
 
 	cVector3f mvLastForward;
 
-	int mlMaxSegmentPostions;
+	int mlMaxSegmentPositions;
 	float mfTurnSpeed;
 
 	bool mbFirstUpdate;
