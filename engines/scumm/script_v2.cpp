@@ -428,10 +428,11 @@ void ScummEngine_v2::decodeParseString() {
 		buffer[29] = 'y';
 	}
 
+	int pixelXOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
 	int textSlot = 0;
-	_string[textSlot].xpos = 0;
+	_string[textSlot].xpos = 0 + pixelXOffset;
 	_string[textSlot].ypos = 0;
-	_string[textSlot].right = _screenWidth - 1;
+	_string[textSlot].right = _screenWidth - 1 + pixelXOffset;
 	_string[textSlot].center = false;
 	_string[textSlot].overhead = false;
 

@@ -393,10 +393,11 @@ void ScummEngine_v0::decodeParseString() {
 	}
 	*ptr = 0;
 
+	int pixelXOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
 	int textSlot = 0;
-	_string[textSlot].xpos = 0;
+	_string[textSlot].xpos = 0 + pixelXOffset;
 	_string[textSlot].ypos = 0;
-	_string[textSlot].right = _screenWidth - 1;
+	_string[textSlot].right = _screenWidth - 1 + pixelXOffset;
 	_string[textSlot].center = false;
 	_string[textSlot].overhead = false;
 
@@ -408,10 +409,13 @@ void ScummEngine_v0::decodeParseString() {
 
 void ScummEngine_v0::clearSentenceLine() {
 	Common::Rect sentenceline;
-	sentenceline.top = _virtscr[kVerbVirtScreen].topline;
-	sentenceline.bottom = _virtscr[kVerbVirtScreen].topline + 8;
-	sentenceline.left = 0;
-	sentenceline.right = _virtscr[kVerbVirtScreen].w - 1;
+	int pixelYOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
+	int pixelXOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
+
+	sentenceline.top = _virtscr[kVerbVirtScreen].topline + pixelYOffset;
+	sentenceline.bottom = _virtscr[kVerbVirtScreen].topline + 8 + pixelYOffset;
+	sentenceline.left = 0 + pixelXOffset;
+	sentenceline.right = _virtscr[kVerbVirtScreen].w - 1 + pixelXOffset;
 	restoreBackground(sentenceline);
 }
 
@@ -419,6 +423,8 @@ void ScummEngine_v0::flushSentenceLine() {
 	byte string[80];
 	const char *ptr = _sentenceBuf.c_str();
 	int i = 0, len = 0;
+	int pixelYOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
+	int pixelXOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
 
 	// Maximum length of printable characters
 	int maxChars = 40;
@@ -435,9 +441,9 @@ void ScummEngine_v0::flushSentenceLine() {
 	string[i] = 0;
 
 	_string[2].charset = 1;
-	_string[2].ypos = _virtscr[kVerbVirtScreen].topline;
-	_string[2].xpos = 0;
-	_string[2].right = _virtscr[kVerbVirtScreen].w - 1;
+	_string[2].ypos = _virtscr[kVerbVirtScreen].topline + pixelYOffset;
+	_string[2].xpos = 0 + pixelXOffset;
+	_string[2].right = _virtscr[kVerbVirtScreen].w - 1 + pixelXOffset;
 	_string[2].color = 16;
 	drawString(2, (byte *)string);
 }

@@ -1731,12 +1731,16 @@ void ScummEngine::resetScumm() {
 		_macGui->reset();
 	}
 
-	if (_game.version == 0) {
+	if ((_game.id == GID_MANIAC) && (_game.platform == Common::kPlatformC64)) {
+		initScreens(9, 145); // The main virtual screen is offset lower by one pixel
+	} else if (_game.version == 0) {
 		initScreens(8, 144);
 	} else if ((_game.id == GID_MANIAC) && (_game.version <= 1) && !(_game.platform == Common::kPlatformNES)) {
 		initScreens(16, 152);
 	} else if (_game.version >= 7 || _game.heversion >= 71) {
 		initScreens(0, _screenHeight);
+	} else if ((_game.id == GID_ZAK) && (_game.platform == Common::kPlatformC64)) {
+		initScreens(17, 145); // The main virtual screen is offset lower by one pixel
 	} else {
 		initScreens(16, 144);
 	}

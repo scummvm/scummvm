@@ -136,10 +136,12 @@ void ScummEngine_v0::verbDrawDemoString(int VerbDemoNumber) {
 
 	}
 	string[i] = 0;
+	int pixelYOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
+	int pixelXOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
 
 	_string[2].charset = 1;
-	_string[2].ypos = _virtscr[kVerbVirtScreen].topline + (8 * VerbDemoNumber);
-	_string[2].xpos = 0;
+	_string[2].ypos = _virtscr[kVerbVirtScreen].topline + (8 * VerbDemoNumber) + pixelYOffset;
+	_string[2].xpos = 0 + pixelXOffset;
 	_string[2].right = _virtscr[kVerbVirtScreen].w - 1;
 	_string[2].color = v0DemoStr[VerbDemoNumber].color;
 	drawString(2, (byte *)string);
@@ -213,19 +215,22 @@ void ScummEngine_v2::initV2MouseOver() {
 
 	_mouseOverBoxV2 = -1;
 
+	int pixelYOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
+	int pixelXOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
+
 	// Inventory items
 
 	for (i = 0; i < 2; i++) {
-		_mouseOverBoxesV2[2 * i].rect.left = 0;
-		_mouseOverBoxesV2[2 * i].rect.right = 144;
-		_mouseOverBoxesV2[2 * i].rect.top = 32 + 8 * i;
+		_mouseOverBoxesV2[2 * i].rect.left = 0 + pixelXOffset;
+		_mouseOverBoxesV2[2 * i].rect.right = 144 + pixelXOffset;
+		_mouseOverBoxesV2[2 * i].rect.top = 32 + 8 * i + pixelYOffset;
 		_mouseOverBoxesV2[2 * i].rect.bottom = _mouseOverBoxesV2[2 * i].rect.top + 8;
 
 		_mouseOverBoxesV2[2 * i].color = color;
 		_mouseOverBoxesV2[2 * i].hicolor = _hiLiteColorInvSentence;
 
-		_mouseOverBoxesV2[2 * i + 1].rect.left = 176;
-		_mouseOverBoxesV2[2 * i + 1].rect.right = 320;
+		_mouseOverBoxesV2[2 * i + 1].rect.left = 176 + pixelXOffset;
+		_mouseOverBoxesV2[2 * i + 1].rect.right = 320 + pixelXOffset;
 		_mouseOverBoxesV2[2 * i + 1].rect.top = _mouseOverBoxesV2[2 * i].rect.top;
 		_mouseOverBoxesV2[2 * i + 1].rect.bottom = _mouseOverBoxesV2[2 * i].rect.bottom;
 
@@ -235,28 +240,28 @@ void ScummEngine_v2::initV2MouseOver() {
 
 	// Inventory arrows
 
-	_mouseOverBoxesV2[kInventoryUpArrow].rect.left = 144;
-	_mouseOverBoxesV2[kInventoryUpArrow].rect.right = 176;
-	_mouseOverBoxesV2[kInventoryUpArrow].rect.top = 32;
-	_mouseOverBoxesV2[kInventoryUpArrow].rect.bottom = 40;
+	_mouseOverBoxesV2[kInventoryUpArrow].rect.left = 144 + pixelXOffset;
+	_mouseOverBoxesV2[kInventoryUpArrow].rect.right = 176 + pixelXOffset;
+	_mouseOverBoxesV2[kInventoryUpArrow].rect.top = 32 + pixelYOffset;
+	_mouseOverBoxesV2[kInventoryUpArrow].rect.bottom = 40 + pixelYOffset;
 
 	_mouseOverBoxesV2[kInventoryUpArrow].color = arrow_color;
 	_mouseOverBoxesV2[kInventoryUpArrow].hicolor = _hiLiteColorVerbArrow;
 
-	_mouseOverBoxesV2[kInventoryDownArrow].rect.left = 144;
-	_mouseOverBoxesV2[kInventoryDownArrow].rect.right = 176;
-	_mouseOverBoxesV2[kInventoryDownArrow].rect.top = 40;
-	_mouseOverBoxesV2[kInventoryDownArrow].rect.bottom = 48;
+	_mouseOverBoxesV2[kInventoryDownArrow].rect.left = 144 + pixelXOffset;
+	_mouseOverBoxesV2[kInventoryDownArrow].rect.right = 176 + pixelXOffset;
+	_mouseOverBoxesV2[kInventoryDownArrow].rect.top = 40 + pixelYOffset;
+	_mouseOverBoxesV2[kInventoryDownArrow].rect.bottom = 48 + pixelYOffset;
 
 	_mouseOverBoxesV2[kInventoryDownArrow].color = arrow_color;
 	_mouseOverBoxesV2[kInventoryDownArrow].hicolor = _hiLiteColorVerbArrow;
 
 	// Sentence line
 
-	_mouseOverBoxesV2[kSentenceLine].rect.left = 0;
-	_mouseOverBoxesV2[kSentenceLine].rect.right = 320;
-	_mouseOverBoxesV2[kSentenceLine].rect.top = 0;
-	_mouseOverBoxesV2[kSentenceLine].rect.bottom = 8;
+	_mouseOverBoxesV2[kSentenceLine].rect.left = 0 + pixelXOffset;
+	_mouseOverBoxesV2[kSentenceLine].rect.right = 320 + pixelXOffset;
+	_mouseOverBoxesV2[kSentenceLine].rect.top = 0 + pixelYOffset;
+	_mouseOverBoxesV2[kSentenceLine].rect.bottom = 8 + pixelYOffset;
 
 	_mouseOverBoxesV2[kSentenceLine].color = color;
 	_mouseOverBoxesV2[kSentenceLine].hicolor = _hiLiteColorInvSentence;
@@ -422,6 +427,8 @@ void ScummEngine_v2::redrawV2Inventory() {
 	bool isNES = (_game.platform == Common::kPlatformNES);
 	int inventoryArea = isNES ? 48 : 32;
 	int maxChars = isNES ? 13 : 18;
+	int pixelYOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
+	int pixelXOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
 
 	_mouseOverBoxV2 = -1;
 
@@ -429,10 +436,10 @@ void ScummEngine_v2::redrawV2Inventory() {
 		return;
 
 	// Clear on all invocations
-	inventoryBox.top = vs->topline + inventoryArea;
-	inventoryBox.bottom = vs->topline + vs->h;
-	inventoryBox.left = 0;
-	inventoryBox.right = vs->w;
+	inventoryBox.top = vs->topline + inventoryArea + pixelYOffset;
+	inventoryBox.bottom = vs->topline + vs->h + pixelYOffset;
+	inventoryBox.left = 0 + pixelXOffset;
+	inventoryBox.right = vs->w + pixelXOffset;
 	restoreBackground(inventoryBox);
 
 	_string[1].charset = 1;
@@ -1094,6 +1101,8 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 void ScummEngine::drawVerb(int verb, int mode) {
 	VerbSlot *vs;
 	bool tmp;
+	int pixelYOffset = (_game.platform == Common::kPlatformC64) ? (_game.id == GID_ZAK ? 2 : 1) : 0;
+	int pixelXOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
 
 	if (_macGui && _game.id == GID_INDY3)
 		return;
@@ -1113,8 +1122,8 @@ void ScummEngine::drawVerb(int verb, int mode) {
 
 		const bool isRtl = _language == Common::HE_ISR && !vs->center;
 		_string[4].charset = vs->charset_nr;
-		_string[4].xpos = isRtl ? vs->origLeft : vs->curRect.left;
-		_string[4].ypos = vs->curRect.top;
+		_string[4].xpos = isRtl ? vs->origLeft : vs->curRect.left + pixelXOffset;
+		_string[4].ypos = vs->curRect.top + pixelYOffset;
 		_string[4].right = _screenWidth - 1;
 		_string[4].center = vs->center;
 
@@ -1141,8 +1150,8 @@ void ScummEngine::drawVerb(int verb, int mode) {
 
 		if (isRtl)
 			vs->curRect.left = _charset->_str.left;
-		vs->curRect.right = (_game.version <= 2) ? MIN<int>(vs->curRect.left + (getResourceSize(rtVerb, verb) - 1) * 8, _screenWidth) : _charset->_str.right;
-		vs->curRect.bottom = _charset->_str.bottom;
+		vs->curRect.right = pixelXOffset + (_game.version <= 2) ? MIN<int>(vs->curRect.left + (getResourceSize(rtVerb, verb) - 1) * 8, _screenWidth) : _charset->_str.right;
+		vs->curRect.bottom = _charset->_str.bottom + pixelYOffset;
 		vs->oldRect = _charset->_str;
 		_charset->_str.left = _charset->_str.right;
 	} else if (_game.id != GID_FT) {

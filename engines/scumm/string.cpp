@@ -848,6 +848,8 @@ void ScummEngine_v2::drawSentence() {
 	Common::Rect sentenceline;
 	const byte *temp;
 	int slot = getVerbSlot(VAR(VAR_SENTENCE_VERB), 0);
+	int pixelYOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
+	int pixelXOffset = (_game.platform == Common::kPlatformC64) ? 1 : 0;
 
 	if (!((_userState & USERSTATE_IFACE_SENTENCE) ||
 		  (_game.platform == Common::kPlatformNES && (_userState & USERSTATE_IFACE_ALL))))
@@ -890,9 +892,9 @@ void ScummEngine_v2::drawSentence() {
 	}
 
 	_string[2].charset = 1;
-	_string[2].ypos = _virtscr[kVerbVirtScreen].topline;
-	_string[2].xpos = 0;
-	_string[2].right = _virtscr[kVerbVirtScreen].w - 1;
+	_string[2].ypos = _virtscr[kVerbVirtScreen].topline + pixelYOffset;
+	_string[2].xpos = 0 + pixelXOffset;
+	_string[2].right = _virtscr[kVerbVirtScreen].w - 1 + pixelXOffset;
 	if (_game.platform == Common::kPlatformNES) {
 		_string[2].xpos = 16;
 		_string[2].color = 0;
@@ -930,10 +932,10 @@ void ScummEngine_v2::drawSentence() {
 		sentenceline.left = 16;
 		sentenceline.right = _virtscr[kVerbVirtScreen].w - 1;
 	} else {
-		sentenceline.top = _virtscr[kVerbVirtScreen].topline;
-		sentenceline.bottom = _virtscr[kVerbVirtScreen].topline + 8;
-		sentenceline.left = 0;
-		sentenceline.right = _virtscr[kVerbVirtScreen].w - 1;
+		sentenceline.top = _virtscr[kVerbVirtScreen].topline + pixelYOffset;
+		sentenceline.bottom = _virtscr[kVerbVirtScreen].topline + 8 + pixelYOffset;
+		sentenceline.left = 0 + pixelXOffset;
+		sentenceline.right = _virtscr[kVerbVirtScreen].w - 1 + pixelXOffset;
 	}
 	restoreBackground(sentenceline);
 
@@ -1167,6 +1169,8 @@ void ScummEngine::displayDialog() {
 			}
 		}
 		if (_game.version <= 3) {
+			if (c == '%')
+				debug("hey");
 			_charset->printChar(c, false);
 			_msgCount += 1;
 		} else {
