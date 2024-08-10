@@ -96,15 +96,22 @@ public:
 		_recordPlayer = _scene->object_interface("\xe3\xf0\xe0\xec\xee\xf4\xee\xed"); // "грамофон"
 
 		_pageDurations[0] = 0.0;
+		_totalPageArts[0] = 0;
 
 		if (_language == Common::CS_CZE) {
 			_artTimeStamps = bookLesCZ;
 			_pageDurations[1] = 51.84;
 			_pageDurations[2] = 39.832;
+
+			_totalPageArts[1] = 93;
+			_totalPageArts[2] = 81;
 		} else {
 			_artTimeStamps = bookLes;
 			_pageDurations[1] = 59.809;
 			_pageDurations[2] = 42.30;
+
+			_totalPageArts[1] = 94;
+			_totalPageArts[2] = 85;
 		}
 
 #if 0
@@ -136,7 +143,7 @@ public:
 	//! Обсчёт логики игры, параметр - время, которое должно пройти в игре (в секундах).
 	bool quant(float dt) {
 		debugC(3, kDebugMinigames, "BookAll::quant(%f). _playbackOn: %d _playbackOn: %d _currentPageArt: %d _totalPageArts: %d _time: %f",
-				dt, _playbackOn, _playbackOn, _currentPageArt, _totalPageArts, _time);
+				dt, _playbackOn, _playbackOn, _currentPageArt, _totalPageArts[_pageNum], _time);
 
 		if (!_playbackOn) {
 			if (_startReading->is_state_active("page1")) {
@@ -146,11 +153,6 @@ public:
 				_currentPageArt = 1;
 				_time = 0.0;
 				_playbackOn = true;
-
-				if (_language == Common::CS_CZE)
-					_totalPageArts = 93;
-				else
-					_totalPageArts = 94;
 			} else if (_startReading->is_state_active("page2")) {
 				debugC(1, kDebugMinigames, "BookAll::quant(). Resetting to PAGE2");
 				_pageNum = 2;
@@ -158,11 +160,6 @@ public:
 				_currentPageArt = 1;
 				_time = 0.0;
 				_playbackOn = true;
-
-				if (_language == Common::CS_CZE)
-					_totalPageArts = 81;
-				else
-					_totalPageArts = 85;
 			}
 		}
 
@@ -173,7 +170,7 @@ public:
 		}
 
 		if (_playbackOn) {
-			if (_currentPageArt > _totalPageArts) {
+			if (_currentPageArt > _totalPageArts[_pageNum]) {
 				_time = _time + dt;
 				if (_pageDurations[_pageNum] < (double)_time) {
 					debugC(1, kDebugMinigames, "BookAll::quant(). Stopping playback by time");
@@ -238,7 +235,7 @@ private:
 	int _pageNum = 0;
 	bool _playbackOn = false;
 	int _currentPageArt = 1;
-	int _totalPageArts = 0;
+	int _totalPageArts[3];
 	float _time = 0.0;
 
 	Common::Language _language;
