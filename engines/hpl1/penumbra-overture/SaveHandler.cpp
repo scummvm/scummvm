@@ -185,7 +185,7 @@ void cSavedGame::ResetGlobalData() {
 cSavedWorld *cSavedGame::GetSavedWorld(const tString &asName) {
 	tString sLowName = cString::ToLowerCase(asName);
 
-	// See if world allready exists
+	// See if world already exists
 	cContainerListIterator<cSavedWorld *> it = mlstWorlds.GetIterator();
 	while (it.HasNext()) {
 		cSavedWorld *pWorld = it.Next();
