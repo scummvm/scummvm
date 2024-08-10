@@ -20,6 +20,7 @@
  */
 
 #include "audio/audiostream.h"
+#include "common/debug.h"
 
 #include "qdengine/qdengine.h"
 #include "qdengine/system/sound/snd_sound.h"
@@ -47,6 +48,8 @@ bool sndSound::release_sound_buffer() {
 }
 
 bool sndSound::play() {
+	debugC(5, kDebugSound, "sndSound::play(). this: %p",  (void *)this);
+
 	_flags &= ~SOUND_FLAG_PAUSED;
 
 	if (_flags & SOUND_FLAG_LOOPING) {
@@ -60,16 +63,22 @@ bool sndSound::play() {
 }
 
 bool sndSound::stop() {
+	debugC(5, kDebugSound, "sndSound::stop(). this: %p",  (void *)this);
 	g_system->getMixer()->stopHandle(_audHandle);
+	_sound->_audioStream->seek(0);
 	return true;
 }
 
 void sndSound::pause() {
+	debugC(5, kDebugSound, "sndSound::pause(). this: %p",  (void *)this);
+
 	_flags |= SOUND_FLAG_PAUSED;
 	g_system->getMixer()->pauseHandle(_audHandle, true);
 }
 
 void sndSound::resume() {
+	debugC(5, kDebugSound, "sndSound::resume(). this: %p",  (void *)this);
+
 	g_system->getMixer()->pauseHandle(_audHandle, false);
 }
 
