@@ -84,65 +84,61 @@ void CastleEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *inf
 	FreescapeEngine::initKeymaps(engineKeyMap, infoScreenKeyMap, target);
 	Common::Action *act;
 
-	{
-		act = new Common::Action("SAVE", _("Save Game"));
-		act->setCustomEngineActionEvent(kActionSave);
-		act->addDefaultInputMapping("s");
-		infoScreenKeyMap->addAction(act);
+	act = new Common::Action("SAVE", _("Save Game"));
+	act->setCustomEngineActionEvent(kActionSave);
+	act->addDefaultInputMapping("s");
+	infoScreenKeyMap->addAction(act);
 
-		act = new Common::Action("LOAD", _("Load Game"));
-		act->setCustomEngineActionEvent(kActionLoad);
-		act->addDefaultInputMapping("l");
-		infoScreenKeyMap->addAction(act);
+	act = new Common::Action("LOAD", _("Load Game"));
+	act->setCustomEngineActionEvent(kActionLoad);
+	act->addDefaultInputMapping("l");
+	infoScreenKeyMap->addAction(act);
 
-		act = new Common::Action("QUIT", _("Quit Game"));
-		act->setCustomEngineActionEvent(kActionEscape);
-		if (isDOS() || isCPC())
-			act->addDefaultInputMapping("ESCAPE");
-		else if (isSpectrum())
-			act->addDefaultInputMapping("1");
+	act = new Common::Action("QUIT", _("Quit Game"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	if (isDOS() || isCPC())
+		act->addDefaultInputMapping("ESCAPE");
+	else if (isSpectrum())
+		act->addDefaultInputMapping("1");
 
-		infoScreenKeyMap->addAction(act);
+	infoScreenKeyMap->addAction(act);
 
-		act = new Common::Action("TOGGLESOUND", _("Toggle Sound"));
-		act->setCustomEngineActionEvent(kActionToggleSound);
-		act->addDefaultInputMapping("t");
-		infoScreenKeyMap->addAction(act);
-	}
+	act = new Common::Action("TOGGLESOUND", _("Toggle Sound"));
+	act->setCustomEngineActionEvent(kActionToggleSound);
+	act->addDefaultInputMapping("t");
+	infoScreenKeyMap->addAction(act);
 
-	{
-		act = new Common::Action("ROTL", _("Rotate Left"));
-		act->setCustomEngineActionEvent(kActionRotateLeft);
-		act->addDefaultInputMapping("z");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("ROTL", _("Rotate Left"));
+	act->setCustomEngineActionEvent(kActionRotateLeft);
+	act->addDefaultInputMapping("z");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("ROTR", _("Rotate Right"));
-		act->setCustomEngineActionEvent(kActionRotateRight);
-		act->addDefaultInputMapping("x");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("ROTR", _("Rotate Right"));
+	act->setCustomEngineActionEvent(kActionRotateRight);
+	act->addDefaultInputMapping("x");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("RUNMODE", _("Run"));
-		act->setCustomEngineActionEvent(kActionRunMode);
-		act->addDefaultInputMapping("r");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("RUNMODE", _("Run"));
+	act->setCustomEngineActionEvent(kActionRunMode);
+	act->addDefaultInputMapping("r");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("WALK", _("Walk"));
-		act->setCustomEngineActionEvent(kActionRiseOrFlyUp);
-		act->addDefaultInputMapping("JOY_B");
-		act->addDefaultInputMapping("w");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("WALK", _("Walk"));
+	act->setCustomEngineActionEvent(kActionRiseOrFlyUp);
+	act->addDefaultInputMapping("JOY_B");
+	act->addDefaultInputMapping("w");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("CRAWL", _("Crawl"));
-		act->setCustomEngineActionEvent(kActionLowerOrFlyDown);
-		act->addDefaultInputMapping("JOY_Y");
-		act->addDefaultInputMapping("c");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("CRAWL", _("Crawl"));
+	act->setCustomEngineActionEvent(kActionLowerOrFlyDown);
+	act->addDefaultInputMapping("JOY_Y");
+	act->addDefaultInputMapping("c");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("FACEFRWARD", _("Face Forward"));
-		act->setCustomEngineActionEvent(kActionFaceForward);
-		act->addDefaultInputMapping("f");
-		engineKeyMap->addAction(act);
-	}
+	act = new Common::Action("FACEFRWARD", _("Face Forward"));
+	act->setCustomEngineActionEvent(kActionFaceForward);
+	act->addDefaultInputMapping("f");
+	engineKeyMap->addAction(act);
 }
 
 void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
@@ -322,6 +318,7 @@ void CastleEngine::drawInfoMenu() {
 					cont = false;
 				} else
 					cont = false;
+				break;
 			case Common::EVENT_KEYDOWN:
 					cont = false;
 				break;
@@ -795,10 +792,15 @@ void CastleEngine::selectCharacterScreen() {
 	}
 
 	Graphics::Surface *surface = drawStringsInSurface(lines);
+	_system->lockMouse(false);
+	_system->showMouse(true);
+	Common::Rect princeSelector(82, 100, 163, 109);
+	Common::Rect princessSelector(82, 110, 181, 120);
 
 	bool selected = false;
 	while (!selected) {
 		Common::Event event;
+		Common::Point mouse;
 		while (_eventManager->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
@@ -806,6 +808,21 @@ void CastleEngine::selectCharacterScreen() {
 				quitGame();
 				return;
 
+			// Left mouse click
+			case Common::EVENT_LBUTTONDOWN:
+				// fallthrough
+			case Common::EVENT_RBUTTONDOWN:
+				mouse.x = _screenW * event.mouse.x / g_system->getWidth();
+				mouse.y = _screenH * event.mouse.y / g_system->getHeight();
+
+				if (princeSelector.contains(mouse)) {
+					selected = true;
+					// Nothing, since game bit should be already zero
+				} else if (princessSelector.contains(mouse)) {
+					selected = true;
+					setGameBit(32);
+				}
+				break;
 			case Common::EVENT_SCREEN_CHANGED:
 				_gfx->computeScreenViewport();
 				_gfx->clear(0, 0, 0, true);
@@ -824,11 +841,6 @@ void CastleEngine::selectCharacterScreen() {
 					break;
 				}
 			break;
-			case Common::EVENT_RBUTTONDOWN:
-				// fallthrough
-			case Common::EVENT_LBUTTONDOWN:
-				// TODO: allow to select character with mouse
-				break;
 			default:
 				break;
 			}
@@ -843,6 +855,8 @@ void CastleEngine::selectCharacterScreen() {
 		g_system->updateScreen();
 		g_system->delayMillis(15); // try to target ~60 FPS
 	}
+	_system->lockMouse(true);
+	_system->showMouse(false);
 	_gfx->clear(0, 0, 0, true);
 
 }
