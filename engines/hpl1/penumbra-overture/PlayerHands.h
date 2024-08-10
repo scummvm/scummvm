@@ -178,7 +178,7 @@ public:
 	iHudModel *GetCurrentModel(int alNum) { return mvCurrentHudModels[alNum]; }
 
 private:
-	void UpdatePrevPostions();
+	void UpdatePrevPositions();
 
 	cInit *mpInit;
 	cMeshManager *mpMeshManager;
