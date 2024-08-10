@@ -738,7 +738,7 @@ void cGameEnemy_Worm::OnUpdate(float afTimeStep) {
 		//////////////////////////////////
 		// Change postion of segment
 
-		// Get add newer pos and smooth all the previuos
+		// Get add newer pos and smooth all the previous
 		cVector3f vPrevPos = pSegment->mvPosition;
 		pSegment->mlstPositions.push_back(vSegBackPos);
 		if ((int)pSegment->mlstPositions.size() > mlMaxSegmentPositions) {
