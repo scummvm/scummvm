@@ -30,7 +30,9 @@
 #include "qdengine/qdcore/qd_setup.h"
 #include "qdengine/qdcore/qd_minigame_interface.h"
 #include "qdengine/qdcore/qd_engine_interface.h"
+
 #include "qdengine/minigames/qd_empty_minigame_interface.h"
+#include "qdengine/minigames/book_all.h"
 
 
 namespace QDEngine {
@@ -264,10 +266,15 @@ const char *qdMiniGame::config_parameter_value(const char *cfg_param_name) const
 
 bool qdMiniGame::load_interface() {
 	if (!_dll_name.empty()) {
-		warning("STUB: Trying to load dll: %s", _dll_name.c_str());
-		// call here dll->open_game_interface(game_name())
-		_interface = new qdEmptyMiniGameInterface;
-		return true;
+		if (_dll_name == "DLL\\Book_les.dll") {
+			_interface = new qdBookAllMiniGameInterface;
+			return true;
+		} else {
+			warning("STUB: Trying to load dll: %s", _dll_name.c_str());
+			// call here dll->open_game_interface(game_name())
+			_interface = new qdEmptyMiniGameInterface;
+			return true;
+		}
 	}
 	return false;
 }
