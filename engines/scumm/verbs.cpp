@@ -382,7 +382,8 @@ void ScummEngine_v2::checkV2MouseOver(Common::Point pos) {
 }
 
 int ScummEngine_v2::checkV2Inventory(int x, int y) {
-	int inventoryArea = (_game.platform == Common::kPlatformNES) ? 48: 32;
+	bool isNES = (_game.platform == Common::kPlatformNES);
+	int inventoryArea = isNES ? 48 : 32;
 	int object = 0;
 
 	y -= _virtscr[kVerbVirtScreen].topline;
@@ -396,7 +397,7 @@ int ScummEngine_v2::checkV2Inventory(int x, int y) {
 			redrawV2Inventory();
 		}
 	} else if (_mouseOverBoxesV2[kInventoryDownArrow].rect.contains(x, y)) {
-		if (_inventoryOffset + 4 < getInventoryCount(_scummVars[VAR_EGO])) {
+		if (_inventoryOffset + (isNES ? 2 : 4) < getInventoryCount(_scummVars[VAR_EGO])) {
 			_inventoryOffset += 2;
 			redrawV2Inventory();
 		}
@@ -416,11 +417,11 @@ int ScummEngine_v2::checkV2Inventory(int x, int y) {
 
 void ScummEngine_v2::redrawV2Inventory() {
 	VirtScreen *vs = &_virtscr[kVerbVirtScreen];
-	int i;
-	int max_inv;
+	int maxVisibleInv, invCount, obj;
 	Common::Rect inventoryBox;
-	int inventoryArea = (_game.platform == Common::kPlatformNES) ? 48: 32;
-	int maxChars = (_game.platform == Common::kPlatformNES) ? 13: 18;
+	bool isNES = (_game.platform == Common::kPlatformNES);
+	int inventoryArea = isNES ? 48 : 32;
+	int maxChars = isNES ? 13 : 18;
 
 	_mouseOverBoxV2 = -1;
 
@@ -436,11 +437,18 @@ void ScummEngine_v2::redrawV2Inventory() {
 
 	_string[1].charset = 1;
 
-	max_inv = getInventoryCount(_scummVars[VAR_EGO]) - _inventoryOffset;
-	if (max_inv > 4)
-		max_inv = 4;
-	for (i = 0; i < max_inv; i++) {
-		int obj = findInventory(_scummVars[VAR_EGO], i + 1 + _inventoryOffset);
+	invCount = getInventoryCount(_scummVars[VAR_EGO]);
+	maxVisibleInv = invCount - _inventoryOffset;
+	if (maxVisibleInv > 4)
+		maxVisibleInv = 4;
+
+	for (int i = 0; i < maxVisibleInv; i++) {
+		if (isNES) {
+			obj = findInventory(_scummVars[VAR_EGO], invCount - _inventoryOffset - i);
+		} else {
+			obj = findInventory(_scummVars[VAR_EGO], i + 1 + _inventoryOffset);
+		}
+
 		if (obj == 0)
 			break;
 
@@ -468,19 +476,19 @@ void ScummEngine_v2::redrawV2Inventory() {
 		_string[1].ypos = _mouseOverBoxesV2[kInventoryUpArrow].rect.top + vs->topline;
 		_string[1].right = _mouseOverBoxesV2[kInventoryUpArrow].rect.right - 1;
 		_string[1].color = _mouseOverBoxesV2[kInventoryUpArrow].color;
-		if (_game.platform == Common::kPlatformNES)
+		if (isNES)
 			drawString(1, (const byte *)"\x7E");
 		else
 			drawString(1, (const byte *)" \1\2");
 	}
 
 	// If necessary, draw "down" arrow
-	if (_inventoryOffset + 4 < getInventoryCount(_scummVars[VAR_EGO])) {
+	if (_inventoryOffset + (isNES ? 2 : 4) < getInventoryCount(_scummVars[VAR_EGO])) {
 		_string[1].xpos = _mouseOverBoxesV2[kInventoryDownArrow].rect.left;
 		_string[1].ypos = _mouseOverBoxesV2[kInventoryDownArrow].rect.top + vs->topline;
 		_string[1].right = _mouseOverBoxesV2[kInventoryDownArrow].rect.right - 1;
 		_string[1].color = _mouseOverBoxesV2[kInventoryDownArrow].color;
-		if (_game.platform == Common::kPlatformNES)
+		if (isNES)
 			drawString(1, (const byte *)"\x7F");
 		else
 			drawString(1, (const byte *)" \3\4");
