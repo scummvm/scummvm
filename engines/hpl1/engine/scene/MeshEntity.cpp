@@ -1349,7 +1349,7 @@ void cMeshEntity::UpdateBVFromSubs() {
 	else {
 		// Use this to make sure the the nodes are in the same positions as when
 		// exported. This is to give a working Bounding Volume.
-		// This feels kind of slow...but might be theonly way.
+		// This feels kind of slow...but might be the only way.
 
 		cMatrixf mtxTemp2;
 		if (mpRootNode) {
