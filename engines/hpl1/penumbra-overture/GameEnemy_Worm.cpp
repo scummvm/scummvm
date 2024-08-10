@@ -472,7 +472,7 @@ cGameEnemy_Worm::cGameEnemy_Worm(cInit *apInit, const tString &asName, TiXmlElem
 	// Internal variables
 	mvLastForward = cVector3f(0, 0, 1);
 
-	mlMaxSegmentPostions = 20;
+	mlMaxSegmentPositions = 20;
 	mfTurnSpeed = cMath::ToRad(160.0f);
 }
 
@@ -675,7 +675,7 @@ void cGameEnemy_Worm::OnUpdate(float afTimeStep) {
 	} else
 		mlstRootPositions.push_back(pCharBody->GetPosition());
 
-	if ((int)mlstRootPositions.size() > mlMaxSegmentPostions)
+	if ((int)mlstRootPositions.size() > mlMaxSegmentPositions)
 		mlstRootPositions.pop_front();
 
 	// Get smooth position
@@ -739,9 +739,9 @@ void cGameEnemy_Worm::OnUpdate(float afTimeStep) {
 		// Change postion of segment
 
 		// Get add newer pos and smooth all the previuos
-		cVector3f vPrevPos = pSegment->mvPostion;
+		cVector3f vPrevPos = pSegment->mvPosition;
 		pSegment->mlstPositions.push_back(vSegBackPos);
-		if ((int)pSegment->mlstPositions.size() > mlMaxSegmentPostions) {
+		if ((int)pSegment->mlstPositions.size() > mlMaxSegmentPositions) {
 			pSegment->mlstPositions.pop_front();
 		}
 		pSegment->mvPostion = 0;
@@ -753,7 +753,7 @@ void cGameEnemy_Worm::OnUpdate(float afTimeStep) {
 
 		/////////////////////////////////////////////
 		// Get the movement vector
-		cVector3f vSegMovement = pSegment->mvPostion - vPrevPos;
+		cVector3f vSegMovement = pSegment->mvPosition - vPrevPos;
 
 		/////////////////////////////////////////////
 		// Update body position
@@ -824,8 +824,8 @@ void cGameEnemy_Worm::ExtraPostSceneDraw() {
 
 		pLowLevelGfx->DrawSphere(pSegment->mvPostion, 0.3f, cColor(1, 1));
 
-		pLowLevelGfx->DrawLine(pSegment->mvPostion,
-							   pSegment->mvPostion + pSegment->mvForward * 0.5f,
+		pLowLevelGfx->DrawLine(pSegment->mvPosition,
+							   pSegment->mvPosition + pSegment->mvForward * 0.5f,
 							   cColor(1, 0, 1, 1));
 
 		cVector3f vForward = cMath::MatrixMul(cMatrixf::Identity, pSegment->mvForward);
