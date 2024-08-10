@@ -1488,7 +1488,7 @@ bool cMath::CreateEdges(tTriEdgeVec &avEdges,
 		// If vertex already exist just add the index
 		if (it != mapVtxIndices.end()) {
 			if (bLog)
-				Log("Allready added, appending.!\n");
+				Log("Already added, appending.!\n");
 			it->second.mlstIndices.push_back(idx);
 		}
 		// if vertex is not added create new vertex and add.
