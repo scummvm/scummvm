@@ -98,7 +98,7 @@ FontData *cFontManager::CreateFontData(const tString &asName, int alSize, unsign
 				return NULL;
 			}
 		} else {
-			Error("Font '%s' has an unkown extension!\n", asName.c_str());
+			Error("Font '%s' has an unknown extension!\n", asName.c_str());
 			hplDelete(pFont);
 			EndLoad();
 			return NULL;
