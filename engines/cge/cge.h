@@ -79,6 +79,29 @@ class Talk;
 
 #define kSayTheEnd  41
 
+enum CGEAction {
+	kActionNone,
+	kActionInfo,
+	kActionEscape,
+	kActionSave,
+	kActionLoad,
+	kActionQuit,
+	kActionInv1,
+	kActionInv2,
+	kActionInv3,
+	kActionInv4,
+	kActionInv5,
+	kActionInv6,
+	kActionInv7,
+	kActionInv8,
+	kActionAltDice,
+	kActionLevel0,
+	kActionLevel1,
+	kActionLevel2,
+	kActionLevel3,
+	kActionLevel4
+};
+
 // our engine debug channels
 enum {
 	kCGEDebugBitmap = 1 << 0,
