@@ -188,7 +188,7 @@ void Screen::displayRect(const int16 x, const int16 y, const int16 dx, const int
 
 /**
  * Change a color by remapping supplied palette index with new index in main palette.
- * Alse save the new color in the current palette.
+ * Also save the new color in the current palette.
  */
 void Screen::remapPal(const uint16 oldIndex, const uint16 newIndex) {
 	debugC(1, kDebugDisplay, "RemapPal(%d, %d)", oldIndex, newIndex);
