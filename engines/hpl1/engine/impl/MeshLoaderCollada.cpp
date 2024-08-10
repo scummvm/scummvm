@@ -214,7 +214,7 @@ static cColladaNode *GetNodeFromController(const tString &asGeomId,
 				asGeomId.c_str(), sControlId.c_str());
 
 	if (sControlId == "") {
-		Warning("No controller refered to the geometry!\n");
+		Warning("No controller referred to the geometry!\n");
 		return NULL;
 	}
 

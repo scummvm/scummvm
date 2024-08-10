@@ -251,7 +251,7 @@ void cPlayerHands::OnStart() {
 //-----------------------------------------------------------------------
 
 void cPlayerHands::Update(float afTimeStep) {
-	UpdatePrevPostions();
+	UpdatePrevPositions();
 
 	///////////////////////////////////
 	// Get the camera properties
@@ -589,7 +589,7 @@ void cPlayerHands::OnWorldLoad() {
 //////////////////////////////////////////////////////////////////////////
 
 //-----------------------------------------------------------------------
-void cPlayerHands::UpdatePrevPostions() {
+void cPlayerHands::UpdatePrevPositions() {
 	///////////////////////////////////
 	// Get current position
 	cCamera3D *pCam = mpInit->mpPlayer->GetCamera();

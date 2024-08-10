@@ -490,7 +490,7 @@ void cHudModel_WeaponMelee::Attack() {
 	cWorld3D *pWorld = mpInit->mpGame->GetScene()->GetWorld3D();
 	iPhysicsWorld *pPhysicsWorld = pWorld->GetPhysicsWorld();
 
-	tVector3fList lstPostions;
+	tVector3fList lstPositions;
 
 	////////////////////////////////
 	// Iterate Enemies
@@ -512,7 +512,7 @@ void cHudModel_WeaponMelee::Attack() {
 			}*/
 			if (pEnemy->GetMeshEntity()->CheckColliderShapeCollision(pPhysicsWorld,
 																	 mvAttacks[mlCurrentAttack].mpCollider,
-																	 mtxDamage, &lstPostions, NULL) == false) {
+																	 mtxDamage, &lstPositions, NULL) == false) {
 				continue;
 			}
 
@@ -549,7 +549,7 @@ void cHudModel_WeaponMelee::Attack() {
 			// Get closest position
 			float fClosestDist = 9999.0f;
 			cVector3f vClosestPostion = vCenter;
-			for (tVector3fListIt it = lstPostions.begin(); it != lstPostions.end(); ++it) {
+			for (tVector3fListIt it = lstPositions.begin(); it != lstPositions.end(); ++it) {
 				cVector3f &vPos = *it;
 
 				float fDist = cMath::Vector3DistSqr(pCamera->GetPosition(), vPos);
@@ -565,7 +565,7 @@ void cHudModel_WeaponMelee::Attack() {
 											 cMath::MatrixTranslate(vClosestPostion));
 			}
 
-			lstPostions.clear();
+			lstPositions.clear();
 
 			bHit = true;
 		}
