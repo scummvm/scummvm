@@ -2437,7 +2437,7 @@ Common::Error ScummEngine::go() {
 		// expected. The timer resolution is lower than the frame-time
 		// derived from it, i.e., one tick represents three frames. We need
 		// to round up VAR_TIMER_NEXT to the nearest multiple of three.
-		if (_game.id == GID_MANIAC && _game.version == 1) {
+		if (_game.id == GID_MANIAC && _game.version == 1 && _game.platform != Common::kPlatformNES) {
 			delta = ceil(delta / 3.0) * 3;
 		}
 
