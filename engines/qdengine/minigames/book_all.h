@@ -252,7 +252,7 @@ public:
 			}
 		}
 
-		if (_playbackOn && _recordPlayer->is_state_active("\xf1\xf2\xe0\xf2\xeb\xea")) { // "статик"
+		if (_playbackOn && _recordPlayer->is_state_active("\xf1\xf2\xe0\xf2\xe8\xea")) { // "статик"
 			_playbackOn = false;
 			_startReading->set_state("no");
 		}
