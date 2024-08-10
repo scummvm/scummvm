@@ -131,7 +131,7 @@ enum eGameDifficulty {
 //---------------------------------
 
 enum eGameEntityType {
-	eGameEntityType_Unkown,
+	eGameEntityType_Unknown,
 	eGameEntityType_Object,
 	eGameEntityType_Door,
 	eGameEntityType_DoorPanel,
