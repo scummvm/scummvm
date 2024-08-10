@@ -77,7 +77,6 @@ const float bookGusenicaCZ[95 * 2] = {
 	 0.000,  0.000,  0.000,  0.000,  0.000,
 };
 
-
 const float bookLes[95 * 2] = {
 	 0.000,  0.046,  0.577,  0.809,  1.623,  1.985,  2.635,  3.536,  3.642,  4.560,
 	 5.071,  6.558,  7.007,  7.876,  8.998,  9.548, 10.387, 10.471, 11.054, 12.062,
@@ -126,6 +125,30 @@ const float bookLesCZ[95 * 2] = {
 	 0.000,  0.000,  0.000,  0.000,  0.000,
 };
 
+const float bookBuhta[95 * 2] = {
+	 0.000,  0.284,  0.750,  1.287,  1.965,  2.410,  2.975,  3.819,  4.682,  6.184,
+	 6.735,  7.182,  7.918,  8.786, 10.161, 11.182, 11.970, 12.297, 13.910, 14.518,
+	15.989, 16.419, 17.332, 18.960, 19.471, 20.762, 21.473, 22.749, 23.452, 24.547,
+	26.140, 26.339, 26.598, 27.266, 28.012, 28.609, 29.459, 29.746, 30.216, 31.683,
+	32.613, 34.180, 34.987, 35.505, 36.508, 37.457, 39.046, 39.387, 40.471, 40.896,
+	41.958, 42.591, 42.847, 43.120,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,
+	 0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,
+	 0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,
+	 0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,
+	 0.000,  0.000,  0.000,  0.000,  0.000,
+
+	 0.000,  0.811,  1.190,  1.754,  2.475,  3.367,  5.026,  5.580,  6.202,  6.455,
+	 7.050,  8.709,  9.114,  9.551, 10.241, 11.304, 11.936, 13.122, 13.897, 15.227,
+	16.105, 16.782, 17.773, 19.608, 20.655, 21.015, 21.520, 22.579, 24.167, 24.942,
+	25.727, 27.149, 28.267, 28.736, 29.372, 30.030, 30.841, 31.751, 32.170, 32.743,
+	33.234, 34.740, 35.880, 36.294, 37.218, 38.147, 38.543, 39.309, 40.896, 41.469,
+	42.046, 42.461, 42.944, 43.079, 44.093, 45.324, 46.062, 47.153, 47.798, 48.970,
+	49.612, 50.230, 51.343, 51.780, 52.083, 52.326, 52.728, 53.143, 54.139, 55.112,
+	 0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,
+	 0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,
+	 0.000,  0.000,  0.000,  0.000,  0.000,
+};
+
 class qdBookAllMiniGameInterface : public qdMiniGameInterface {
 public:
 	qdBookAllMiniGameInterface(Common::String dll, Common::Language language) : _dll(dll), _language(language) {}
@@ -147,23 +170,7 @@ public:
 		_pageDurations[0] = 0.0;
 		_totalPageArts[0] = 0;
 
-		if (_dll == "DLL\\Book_les.dll") {
-			if (_language == Common::CS_CZE) {
-				_artTimeStamps = bookLesCZ;
-				_pageDurations[1] = 51.84;
-				_pageDurations[2] = 39.832;
-
-				_totalPageArts[1] = 93;
-				_totalPageArts[2] = 81;
-			} else {
-				_artTimeStamps = bookLes;
-				_pageDurations[1] = 59.809;
-				_pageDurations[2] = 42.30;
-
-				_totalPageArts[1] = 94;
-				_totalPageArts[2] = 85;
-			}
-		} else if (_dll == "DLL\\Book_gusenica.dll") {
+		if (_dll == "DLL\\Book_gusenica.dll") {
 			if (_language == Common::CS_CZE) {
 				_artTimeStamps = bookGusenicaCZ;
 				_pageDurations[1] = 40.607;
@@ -179,10 +186,42 @@ public:
 				_totalPageArts[1] = 82;
 				_totalPageArts[2] = 69;
 			}
+		} else if (_dll == "DLL\\Book_les.dll") {
+			if (_language == Common::CS_CZE) {
+				_artTimeStamps = bookLesCZ;
+				_pageDurations[1] = 51.84;
+				_pageDurations[2] = 39.832;
+
+				_totalPageArts[1] = 93;
+				_totalPageArts[2] = 81;
+			} else {
+				_artTimeStamps = bookLes;
+				_pageDurations[1] = 59.809;
+				_pageDurations[2] = 42.30;
+
+				_totalPageArts[1] = 94;
+				_totalPageArts[2] = 85;
+			}
+		} else if (_dll == "DLL\\Book_buhta.dll") {
+			if (_language == Common::CS_CZE) {
+				_artTimeStamps = bookLesCZ;
+				_pageDurations[1] = 0.0;
+				_pageDurations[2] = 0.0;
+
+				_totalPageArts[1] = 0;
+				_totalPageArts[2] = 0;
+			} else {
+				_artTimeStamps = bookBuhta;
+				_pageDurations[1] = 43.913;
+				_pageDurations[2] = 55.698;
+
+				_totalPageArts[1] = 53;
+				_totalPageArts[2] = 69;
+			}
 		}
 
 #if 0
-		const int pageSize = 83;
+		const int pageSize = 70;
 		float artTimeStamps[pageSize * 3];
 		memset(artTimeStamps, 0, sizeof(artTimeStamps));
 
