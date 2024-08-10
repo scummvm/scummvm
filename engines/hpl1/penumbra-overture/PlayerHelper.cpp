@@ -2208,7 +2208,7 @@ void cPlayerHidden::UpdateEnemyTooClose(float afTimeStep) {
 				if (fAngle > pCam->GetFOV() * 0.5f)
 					continue;
 
-				// Check if ther is a line of sight
+				// Check if there is a line of sight
 				mbIntersected = false;
 				pPhysicsWorld->CastRay(this, pCam->GetPosition(), pCharBody->GetPosition(),
 									   false, false, false, false);

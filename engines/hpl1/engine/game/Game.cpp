@@ -352,7 +352,7 @@ void cGame::Run() {
 
 		// If not making a single rendering is better to use gpu and
 		// cpu at the same time and make query checks etc after logic update.
-		// If any delete has occured in the update this might crash. so skip it for now.
+		// If any delete has occurred in the update this might crash. so skip it for now.
 		/*if(mbRenderOnce==false)	{
 			mpGraphics->GetRenderer3D()->FetchOcclusionQueries();
 			mpUpdater->OnPostBufferSwap();

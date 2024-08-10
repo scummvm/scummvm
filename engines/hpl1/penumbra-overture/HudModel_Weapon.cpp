@@ -633,7 +633,7 @@ void cHudModel_WeaponMelee::Attack() {
 	}
 
 	////////////////////////////////////////////
-	// Check with ray and see a closer material can be found.
+	// Check with ray and see if a closer material can be found.
 	{
 		float fAttackRange = mvAttacks[mlCurrentAttack].mfAttackRange;
 
@@ -645,7 +645,7 @@ void cHudModel_WeaponMelee::Attack() {
 
 		if (mRayCallback.mpClosestBody) {
 			// Use ray cast to check hit as well
-			// Check first if body has not allready been hit.
+			// Check first if body has not already been hit.
 			if (m_setHitBodies.find(mRayCallback.mpClosestBody) == m_setHitBodies.end()) {
 				HitBody(mRayCallback.mpClosestBody);
 			}
