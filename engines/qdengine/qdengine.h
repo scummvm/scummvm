@@ -68,6 +68,7 @@ public:
 	~QDEngineEngine() override;
 
 	uint32 getFeatures() const;
+	Common::Language getLanguage() const;
 
 	/**
 	 * Returns the game Id

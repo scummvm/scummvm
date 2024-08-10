@@ -54,6 +54,10 @@ uint32 QDEngineEngine::getFeatures() const {
 	return _gameDescription->flags;
 }
 
+Common::Language QDEngineEngine::getLanguage() const {
+	return _gameDescription->language;
+}
+
 Common::String QDEngineEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
