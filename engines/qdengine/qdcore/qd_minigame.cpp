@@ -266,8 +266,8 @@ const char *qdMiniGame::config_parameter_value(const char *cfg_param_name) const
 
 bool qdMiniGame::load_interface() {
 	if (!_dll_name.empty()) {
-		if (_dll_name == "DLL\\Book_les.dll") {
-			_interface = new qdBookAllMiniGameInterface(g_engine->getLanguage());
+		if (_dll_name == "DLL\\Book_les.dll" || _dll_name == "DLL\\Book_gusenica.dll") {
+			_interface = new qdBookAllMiniGameInterface(_dll_name, g_engine->getLanguage());
 			return true;
 		} else {
 			warning("STUB: Trying to load dll: %s", _dll_name.c_str());
