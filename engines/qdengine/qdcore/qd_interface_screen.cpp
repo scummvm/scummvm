@@ -97,7 +97,7 @@ bool qdInterfaceScreen::post_redraw() {
 }
 
 bool qdInterfaceScreen::quant(float dt) {
-	debugC(9, "qdInterfaceScreen::quant(%f)", dt);
+	debugC(9, kDebugQuant, "qdInterfaceScreen::quant(%f)", dt);
 	if (_autohide_time > FLT_EPS) {
 		float delta = dt / _autohide_time;
 
