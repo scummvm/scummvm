@@ -773,22 +773,46 @@ extern Common::String centerAndPadString(const Common::String &x, int y);
 
 void CastleEngine::selectCharacterScreen() {
 	Common::Array<Common::String> lines;
-	if (isDOS()) {
-		lines.push_back("Select your character");
-		lines.push_back("");
-		lines.push_back("");
-		lines.push_back("            1. Prince");
-		lines.push_back("            2. Princess");
-	} else if (isSpectrum()) {
-		lines.push_back(centerAndPadString("*******************", 21));
-		lines.push_back(centerAndPadString("Select your character", 21));
-		lines.push_back(centerAndPadString("you wish to play", 21));
-		lines.push_back(centerAndPadString("and press enter", 21));
-		lines.push_back("");
-		lines.push_back(centerAndPadString("1. Prince  ", 21));
-		lines.push_back(centerAndPadString("2. Princess", 21));
-		lines.push_back("");
-		lines.push_back(centerAndPadString("*******************", 21));
+	switch (_language) {
+		case Common::ES_ESP:
+			// No accent in "príncipe" since it is not supported by the font
+			if (isDOS()) {
+				lines.push_back("Elija su personaje");
+				lines.push_back("");
+				lines.push_back("");
+				lines.push_back("            1. Principe");
+				lines.push_back("            2. Princesa");
+			} else if (isSpectrum()) {
+				lines.push_back(centerAndPadString("*******************", 21));
+				lines.push_back(centerAndPadString("Seleccion el ", 21));
+				lines.push_back(centerAndPadString("personaje que quiera", 21));
+				lines.push_back(centerAndPadString("ser y precione enter", 21));
+				lines.push_back("");
+				lines.push_back(centerAndPadString("1. Principe", 21));
+				lines.push_back(centerAndPadString("2. Princesa", 21));
+				lines.push_back("");
+				lines.push_back(centerAndPadString("*******************", 21));
+			}
+			break;
+		default: //case Common::EN_ANY:
+			if (isDOS()) {
+				lines.push_back("Select your character");
+				lines.push_back("");
+				lines.push_back("");
+				lines.push_back("            1. Prince");
+				lines.push_back("            2. Princess");
+			} else if (isSpectrum()) {
+				lines.push_back(centerAndPadString("*******************", 21));
+				lines.push_back(centerAndPadString("Select your character", 21));
+				lines.push_back(centerAndPadString("you wish to play", 21));
+				lines.push_back(centerAndPadString("and press enter", 21));
+				lines.push_back("");
+				lines.push_back(centerAndPadString("1. Prince  ", 21));
+				lines.push_back(centerAndPadString("2. Princess", 21));
+				lines.push_back("");
+				lines.push_back(centerAndPadString("*******************", 21));
+			}
+			break;
 	}
 
 	Graphics::Surface *surface = drawStringsInSurface(lines);

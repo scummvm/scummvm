@@ -103,8 +103,8 @@ Graphics::Surface *FreescapeEngine::drawStringsInSurface(const Common::Array<Com
 
 	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
-	int x = _viewArea.left;
-	int y = _viewArea.top;
+	int x = _viewArea.left + 3;
+	int y = _viewArea.top + 3;
 
 	for (int i = 0; i < int(lines.size()); i++) {
 		drawStringInSurface(lines[i], x, y, front, back, surface);
@@ -112,6 +112,8 @@ Graphics::Surface *FreescapeEngine::drawStringsInSurface(const Common::Array<Com
 	}
 	return surface;
 }
+
+extern Common::String centerAndPadString(const Common::String &x, int y);
 
 void FreescapeEngine::borderScreen() {
 	if (!_border)
@@ -135,23 +137,23 @@ void FreescapeEngine::borderScreen() {
 	if (isDOS() || isSpectrum()) {
 		Common::Array<Common::String> lines;
 		if (isDOS())
-			lines.push_back("    CONFIGURATION MENU  ");
+			lines.push_back(centerAndPadString("Configuration Menu", 25));
 		else
-			lines.push_back("    CONTROL  OPTIONS  ");
+			lines.push_back(centerAndPadString("Control Options", 21));
 		lines.push_back("");
-		lines.push_back("   1: KEYBOARD ONLY   ");
-		lines.push_back("   2: IBM JOYSTICK    ");
-		lines.push_back("   3: AMSTRAD JOYSTICK");
+		lines.push_back("1: KEYBOARD ONLY");
+		lines.push_back("2: IBM JOYSTICK");
+		lines.push_back("3: AMSTRAD JOYSTICK");
 		lines.push_back("");
 		if (isDOS())
 			lines.push_back(" SPACEBAR:  BEGIN MISSION");
 		else
-			lines.push_back("   ENTER: BEGIN MISSION");
+			lines.push_back(centerAndPadString("Enter: Begin Mission", 21));
 		lines.push_back("");
 		if (isDOS())
 			lines.push_back(" COPYRIGHT 1988 INCENTIVE");
 		else
-			lines.push_back("   (C) 1988 INCENTIVE");
+			lines.push_back(centerAndPadString("(c) 1988 Incentive", 22));
 
 		lines.push_back("");
 		Graphics::Surface *surface = drawStringsInSurface(lines);
