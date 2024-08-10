@@ -49,7 +49,7 @@ void main()
 	vHalfVec.xy = position.xy - EyePos.xy;
 	vHalfVec.z = -EyePos.y;
 
-	///rotate halfvec aswell NOTE: Not sure you need this...
+	///rotate halfvec as well NOTE: Not sure you need this...
 	vec2 TempHalfVec = vHalfVec.xy;
 	vHalfVec.x = normal.x*TempHalfVec.x + normal.y*TempHalfVec.y;
 	vHalfVec.y = normal.x*TempHalfVec.y - normal.y*TempHalfVec.x;
