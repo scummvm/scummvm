@@ -2363,6 +2363,14 @@ if test "$have_gcc" = yes ; then
 	openbsd*)
 		pedantic=no
 		;;
+	riscos)
+		# -Wformat complains about '%z' and so on. Don't know if it's related to
+		# the older compiler not being completely C+11-aware, or something else.
+		if test "$have_gcc" = yes && test $_cxx_major -eq 4 && test $_cxx_minor -le 7; then
+			std_variant=gnu++
+			pedantic=no
+		fi
+		;;
 	*)
 		;;
 	esac
