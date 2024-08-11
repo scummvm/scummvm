@@ -3030,11 +3030,15 @@ case $_host_os in
 
 		# If _xcodetoolspath is not set yet use xcode-select to get the path
 		if test -z "$_xcodetoolspath"; then
-			_xcodetoolspath=`xcode-select -print-path`/Tools
-			if test -d "$_xcodetoolspath"; then
-				echo "Set xcodetools-path to ${_xcodetoolspath}"
-			else
-				_xcodetoolspath=
+			_xcodetoolspath=
+			if command -v xcode-select >/dev/null 2>&1; then
+				_xcodetoolspath=`xcode-select -print-path`/Tools
+				if test -d "$_xcodetoolspath"; then
+					echo "Set xcodetools-path to ${_xcodetoolspath}"
+				fi
+			fi
+
+			if test -z "$_xcodetoolspath"; then
 				echo "Could not determine path for Xcode Tools"
 			fi
 		fi
