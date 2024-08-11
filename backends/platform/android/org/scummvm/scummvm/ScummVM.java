@@ -22,7 +22,8 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
 
-public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
+public abstract class ScummVM implements SurfaceHolder.Callback,
+	   CompatHelpers.SystemInsets.SystemInsetsListener, Runnable {
 	public static final int SHOW_ON_SCREEN_MENU = 1;
 	public static final int SHOW_ON_SCREEN_INPUT_MODE = 2;
 
@@ -67,6 +68,10 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	final public native void syncVirtkeyboardState(boolean newState);
 
 	final public native String getNativeVersionInfo();
+
+	// CompatHelpers.WindowInsets.SystemInsetsListener interface
+	@Override
+	final public native void systemInsetsUpdated(int insets[]);
 
 	// Callbacks from C++ peer instance
 	abstract protected void getDPI(float[] values);

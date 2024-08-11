@@ -1003,6 +1003,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		                                                        }
 		                                                    });
 
+		// We need to register on root as something is eating the events between the surface and the root
+		CompatHelpers.SystemInsets.registerSystemInsetsListener(_main_surface.getRootView(), _scummvm);
+
 		float[] dpiValues = new float[] { 0.0f, 0.0f, 0.0f };
 		_scummvm.getDPI(dpiValues);
 		Log.d(ScummVM.LOG_TAG, "Current xdpi: " + dpiValues[0] + ", ydpi: " + dpiValues[1] + " and density: " + dpiValues[2]);
