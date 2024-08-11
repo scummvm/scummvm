@@ -33,6 +33,7 @@
 
 #include "qdengine/minigames/qd_empty_minigame_interface.h"
 #include "qdengine/minigames/book_all.h"
+#include "qdengine/minigames/puzzle_all.h"
 
 
 namespace QDEngine {
@@ -269,6 +270,9 @@ bool qdMiniGame::load_interface() {
 		if (_dll_name == "DLL\\Book_gusenica.dll" || _dll_name == "DLL\\Book_les.dll"
 				|| _dll_name == "DLL\\Book_buhta.dll") {
 			_interface = new qdBookAllMiniGameInterface(_dll_name, g_engine->getLanguage());
+			return true;
+		} else if (_dll_name == "DLL\\Puzzle_ep08.dll") {
+			_interface = new qdPuzzleAllMiniGameInterface(_dll_name, g_engine->getLanguage());
 			return true;
 		} else {
 			warning("STUB: Trying to load dll: %s", _dll_name.c_str());
