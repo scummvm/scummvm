@@ -1726,7 +1726,7 @@ bool Score::readOneFrame() {
 		return false;
 
 	uint16 frameSize = _framesStream->readUint16();
-	debugC(4, kDebugLoading, "pos: %ld frameSize: %d (0x%x) streamSize: %d", _framesStream->pos() - 2, frameSize, frameSize, _framesStreamSize);
+	debugC(4, kDebugLoading, "pos: %" PRId64 " frameSize: %d (0x%x) streamSize: %d", _framesStream->pos() - 2, frameSize, frameSize, _framesStreamSize);
 	assert(frameSize < _framesStreamSize);
 
 	debugC(3, kDebugLoading, "++++++++++ score load frame %d (frameSize %d) saveOffset", _curFrameNumber, frameSize);
