@@ -27,6 +27,7 @@ MODULE_OBJS := \
 	musicplugin.o \
 	null.o \
 	rate.o \
+	sid.o \
 	timestamp.o \
 	decoders/3do.o \
 	decoders/aac.o \
