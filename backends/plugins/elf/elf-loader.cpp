@@ -209,7 +209,7 @@ Elf32_Shdr * DLObject::loadSectionHeaders(Elf32_Ehdr *ehdr) {
 
 	// Allocate memory for section headers
 	if (!(shdr = (Elf32_Shdr *)malloc(ehdr->e_shnum * sizeof(*shdr)))) {
-		warning("elfloader: Could not allocate %ld bytes for the section headers", ehdr->e_shnum * sizeof(*shdr));
+		warning("elfloader: Could not allocate %zu bytes for the section headers", ehdr->e_shnum * sizeof(*shdr));
 		return 0;
 	}
 
