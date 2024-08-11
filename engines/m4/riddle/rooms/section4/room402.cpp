@@ -274,6 +274,8 @@ void Room402::init() {
 }
 
 void Room402::daemon() {
+	int frame;
+
 	switch (_G(kernel).trigger) {
 	case 19:
 		ws_walk(449, 317, nullptr, 20, 3);
@@ -462,18 +464,57 @@ void Room402::daemon() {
 		switch (_val12) {
 		case 2000:
 			switch (_val13) {
+			case 2101:
+				frame = imath_ranged_rand(8, 10);
+				sendWSMessage_10000(1, _wolfieMach, _wolfClipping, frame, frame, 110,
+					_wolfClipping, frame, frame, 0);
+				break;
+
+			case 2104:
+				sendWSMessage_10000(1, _wolfieMach, _wolfClipping, 8, 8, 110,
+					_wolfClipping, 8, 8, 0);
+				break;
+
+			case 2105:
+				sendWSMessage_10000(1, _wolfieMach, _wolfClipping, 8, 10, -1,
+					_wolfClipping, 10, 10, 0);
+				break;
 			case 2106:
 				sendWSMessage_10000(1, _wolfieMach, _wolfClipping, 1, 10, 110,
 					_wolfClipping, 10, 10, 0);
 				break;
+
 			case 2108:
-				// TODO
+				sendWSMessage_10000(1, _machine1, _machine1Series, 44, 16, 111,
+					_machine1Series, 16, 16, 0);
+				_val13 = 2110;
+				break;
+
+			case 2109:
+				kernel_timing_trigger(4, 111);
+				_val13 = 2108;
+				break;
+
+			case 2110:
+				terminateMachineAndNull(_machine1);
+				_val13 = 2101;
+				kernel_timing_trigger(1, 110);
+
+				if (_soundPtr2) {
+					_G(kernel).trigger_mode = KT_PARSE;
+					digi_play(_soundPtr2, 1, 255, 777);
+					_G(kernel).trigger_mode = KT_DAEMON;
+					_soundPtr2 = nullptr;
+				}
+				break;
+
 			case 2230:
 				player_set_commands_allowed(false);
 				sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 1, 8, 111,
 					_wolfClippersDown, 8, 8, 0);
 				_val13 = 2231;
 				break;
+
 			case 2231:
 				_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x100, 0,
 					triggerMachineByHashCallbackNegative, "rip talks wolf");
@@ -491,6 +532,218 @@ void Room402::daemon() {
 				_val13 = 2242;
 				break;
 
+			case 2250:
+				sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 16, 1, 111,
+					_wolfWantsMoney, 1, 1, 0);
+				_val13 = 2252;
+				break;
+
+			case 2252:
+				sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 43, 1, 111,
+					_wolfClipping, 1, 1, 0);
+				_val13 = 2253;
+				break;
+
+			case 2253:
+				_val12 = 2001;
+				_val13 = 2300;
+				kernel_timing_trigger(1, 110);
+
+				if (!player_said("enter", "CASTLE DOOR") && !_G(flags)[V052]) {
+					player_set_commands_allowed(true);
+				}
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 2001:
+			if (_val13 == 2300) {
+				sendWSMessage_10000(1, _wolfieMach, _wolfClipping, 1, 10, 110,
+					_wolfClipping, 10, 10, 0);
+				kernel_timing_trigger(35, 10000);
+			}
+			break;
+
+		case 2002:
+			switch (_val13) {
+			case 2141:
+				sendWSMessage_10000(1, _wolfieMach, _wolfShakesHead, 1, 1, 110,
+					_wolfShakesHead, 1, 1, 0);
+				_val13 = 2143;
+				break;
+
+			case 2142:
+				frame = imath_ranged_rand(1, 5);
+				sendWSMessage_10000(1, _wolfieMach, _wolfShakesHead, frame, frame, 110,
+					_wolfShakesHead, frame, frame, 0);
+				break;
+
+			case 2143:
+				sendWSMessage_10000(1, _wolfieMach, _wolfShakesHead, 1, 1, 110,
+					_wolfShakesHead, 1, 1, 0);
+				break;
+
+			case 2150:
+				_val13 = 2152;
+				sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 1, 16, 111,
+					_wolfWantsMoney, 16, 16, 0);
+
+				if (_soundPtr2) {
+					digi_play(_soundPtr2, 1);
+					_soundPtr2 = nullptr;
+				}
+				break;
+
+			case 2152:
+				_val13 = 2153;
+
+				if (_G(flags)[V111] > 0) {
+					_machine1 = series_stream("Rip popup", 7, 0, 111);
+				} else {
+					kernel_timing_trigger(1, 111);
+				}
+				break;
+
+			case 2153:
+				player_set_commands_allowed(true);
+				break;
+
+			case 2160:
+				sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 43, 1, 111,
+					_wolfClipping, 1, 1, 0);
+				_val13 = 2162;
+				break;
+
+			case 2162:
+				_val12 = 2000;
+				_val13 = 2104;
+				kernel_timing_trigger(1, 110);
+				conv_resume();
+				break;
+
+			case 2170:
+				_val13 = 2272;
+				sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 1, 16, -1,
+					_wolfWantsMoney, 16, 16, 0);
+
+				if (_soundPtr2) {
+					digi_play(_soundPtr2, 1, 255, 111);
+					_soundPtr2 = nullptr;
+				}
+				break;
+
+			case 2180:
+				_val13 = 2181;
+				digi_play(_soundPtr2, 1, 255, 111);
+				break;
+
+			case 2181:
+				_val13 = 2182;
+				sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 16, 1, 111,
+					_wolfWantsMoney, 1, 1, 0);
+				break;
+
+			case 2182:
+				_val12 = 2002;
+				_val13 = 2143;
+				kernel_timing_trigger(1, 110);
+				conv_resume();
+				break;
+
+			case 2190:
+				if (_soundPtr2) {
+					digi_play(_soundPtr2, 1);
+					_soundPtr2 = nullptr;
+				}
+
+				sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 16, 1, 111,
+					_wolfWantsMoney, 1, 1, 0);
+				_val13 = 2192;
+				break;
+
+			case 2192:
+				sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 43, 1, 111,
+					_wolfClipping, 1, 1, 0);
+				_val13 = 2193;
+				break;
+
+			case 2193:
+				_val12 = 2001;
+				_val13 = 2300;
+				kernel_timing_trigger(1, 110);
+				player_set_commands_allowed(true);
+				break;
+
+			case 2260:
+				sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 1, 8, 111,
+					_wolfClippersDown, 8, 8, 0);
+				_val13 = 2261;
+				break;
+
+			case 2261:
+				digi_play("402_s04", 2);
+				sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 8, 43, 111,
+					_wolfClippersDown, 43, 43, 0);
+				_val13 = 2262;
+				break;
+
+			case 2262:
+				if (_G(flags)[V111] > 0 || _currentNode == 16 ||
+						_currentNode == 14 || _currentNode == 26) {
+					sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 1, 16, -1,
+						_wolfWantsMoney, 16, 16, 0);
+
+					if (_soundPtr2) {
+						_G(kernel).trigger_mode = KT_PARSE;
+						digi_play(_soundPtr2, 1, 255, 777);
+						_G(kernel).trigger_mode = KT_DAEMON;
+						_soundPtr2 = nullptr;
+					}
+				} else {
+					_val13 = 2263;
+
+					if (_soundPtr2) {
+						digi_play(_soundPtr2, 1, 255, 111);
+					} else {
+						kernel_timing_trigger(1, 111);
+					}
+				}
+
+				if (inv_player_has("POMERANIAN MARKS")) {
+					player_set_commands_allowed(true);
+				}
+				break;
+
+			case 2263:
+				sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 1, 16, 110,
+					_wolfWantsMoney, 16, 16, 0);
+				_val13 = 2264;
+				break;
+
+			case 2264:
+				_machine1 = series_stream("Rip popup", 7, 0, 111);
+				_val13 = 2265;
+				break;
+
+			case 2265:
+				if (_soundPtr2) {
+					_soundPtr2 = nullptr;
+					_G(kernel).trigger_mode = KT_PARSE;
+					kernel_timing_trigger(1, 777);
+					_G(kernel).trigger_mode = KT_PARSE;
+
+				} else {
+					player_set_commands_allowed(true);
+				}
+				break;
+
+			case 2272:
+				conv_resume();
+				break;
+
 			default:
 				break;
 			}
@@ -499,6 +752,51 @@ void Room402::daemon() {
 		default:
 			break;
 		}
+		break;
+
+	case 200:
+		_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x100, 0,
+			triggerMachineByHashCallbackNegative, "rip talks wolf");
+
+		player_update_info();
+		_safariShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x200, 0,
+			triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+		sendWSMessage_10000(1, _ripEnterLeave, _ripTalkWolf, 1, 7, -1,
+			_ripTalkWolf, 7, 7, 0);
+		sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 1, 8, 201,
+			_wolfClippersDown, 8, 8, 0);
+		break;
+
+	case 201:
+		digi_play("402_s04", 2);
+		sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 8, 43, 202,
+			_wolfClippersDown, 43, 43, 0);
+		break;
+
+	case 202:
+		sendWSMessage_10000(1, _wolfieMach, _ripPaysWolfie, 1, 24, 203,
+			_ripPaysWolfie, 24, 24, 0);
+		break;
+
+	case 203:
+		sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 1, 16, 204,
+			_wolfWantsMoney, 16, 16, 0);
+
+		if (!_G(flags)[V115])
+			digi_play("402w07", 1);
+		break;
+
+	case 204:
+		digi_play("950_s23", 2);
+		kernel_timing_trigger(30, 205);
+		break;
+
+	// TODO
+
+	case 223:
+		sendWSMessage_10000(1, _wolfieMach, _ripPaysWolfie, 1, 24, 224,
+			_ripPaysWolfie, 24, 24, 0);
 		break;
 
 	default:

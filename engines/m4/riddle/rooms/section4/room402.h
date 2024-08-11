@@ -66,6 +66,8 @@ private:
 	int _ripClimbKnock = 0;
 	int _doorOpens = 0;
 	machine *_castleDoor = nullptr;
+	machine *_machine1 = nullptr;
+	int _machine1Series = 0;
 
 	void conv402a();
 	void conv402a777();
