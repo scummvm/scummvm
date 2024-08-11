@@ -2292,6 +2292,15 @@ if test "$have_gcc" = yes; then
 		else
 			append_var CXXFLAGS "-Wno-missing-field-initializers"
 		fi
+
+		# Many false positives before GCC 4.8, e.g. with templates
+		if test $_cxx_major -eq 4 && test $_cxx_minor -le 7; then
+			append_var CXXFLAGS "-Wno-type-limits"
+			append_var CXXFLAGS "-Wno-uninitialized"
+			append_var CXXFLAGS "-Wno-maybe-uninitialized"
+			append_var CXXFLAGS "-Wno-array-bounds"
+		fi
+
 	fi
 elif test "$have_icc" = yes; then
 	cxx_version="`( $CXX -dumpversion ) 2>/dev/null`"
@@ -4741,10 +4750,17 @@ fi
 # Check whether to enable optimizations
 #
 if test "$_optimizations" = yes ; then
-	# Enable optimizations. This also
-	# makes it possible to use -Wuninitialized, so let's do that.
+	# Enable optimizations
 	append_var CXXFLAGS "$_optimization_level"
-	append_var CXXFLAGS "-Wuninitialized"
+
+	# Optimizations make it possible to use -Wuninitialized, so let's do that
+	# (but only when the compiler has a reliable -Wuninitialized, see the
+	# other _cxx_major/_cxx_minor checks above)
+	if test "$have_gcc" = yes && test $_cxx_major -eq 4 && test $_cxx_minor -le 7; then
+		: nothing
+	else
+		append_var CXXFLAGS "-Wuninitialized"
+	fi
 fi
 
 #
