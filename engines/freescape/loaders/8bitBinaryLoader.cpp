@@ -989,7 +989,7 @@ void FreescapeEngine::loadMessagesVariableSize(Common::SeekableReadStream *file,
 		_messagesList.push_back(message);
 		debugC(1, kFreescapeDebugParser, "'%s'", _messagesList[i].c_str());
 	}
-	debugC(1, kFreescapeDebugParser, "End of messages at %lx", file->pos());
+	debugC(1, kFreescapeDebugParser, "End of messages at %" PRIx64, file->pos());
 }
 
 void FreescapeEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offset, int size) {
