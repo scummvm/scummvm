@@ -388,7 +388,7 @@ void Room402::parser() {
 			_val5 = 200;
 		}
 	}
-#define MONEY(ITEM) player_said("WOLF") && player_said(ITEM) && inv_player_has(ITEM)
+#define MONEY(ITEM) (player_said("WOLF") && player_said(ITEM) && inv_player_has(ITEM))
 	else if (MONEY("US DOLLARS") || MONEY("CHINESE YUAN") ||
 			MONEY("PERUVIAN INTI") || MONEY("SIKKIMESE RUPEE")) {
 		if (!_G(flags)[V116]) {
@@ -406,6 +406,12 @@ void Room402::parser() {
 			break;
 		case 2:
 			disable_player_commands_and_fade_init(3);
+			break;
+		case 3:
+			_G(flags)[V112] = 1;
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s22", 3);
+			_G(game).setRoom(408);
 			break;
 		default:
 			break;
@@ -438,11 +444,11 @@ void Room402::parser() {
 				_G(flags)[kCastleCartoon] = 1;
 				_G(flags)[V089] = 1;
 			}
-			//sub("com015");
+			sendWSMessage_multi("com015");
 		}
-	}
-	// TODO
-	else {
+	} else if (lookFlag && player_said(" ")) {
+		digi_play("402r08", 1);
+	} else {
 		return;
 	}
 

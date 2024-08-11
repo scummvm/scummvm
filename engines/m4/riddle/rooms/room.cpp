@@ -27,6 +27,8 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+int Room::_ripSketching;
+
 void Room::restoreAutosave() {
 	if (g_engine->autosaveExists()) {
 		_G(kernel).restore_slot = 0;
@@ -376,7 +378,7 @@ void Room::sendWSMessage_190000(machine *recv, int trigger) {
 	sendWSMessage(0x190000, 0, recv, 0, nullptr, 1);
 }
 
-void Room::sendWSMessage_190000(machine *recv, int trigger) {
+void Room::sendWSMessage_190000(int trigger) {
 	sendWSMessage_190000(_G(my_walker), trigger);
 }
 
