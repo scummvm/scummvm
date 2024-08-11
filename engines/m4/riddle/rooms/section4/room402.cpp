@@ -274,6 +274,236 @@ void Room402::init() {
 }
 
 void Room402::daemon() {
+	switch (_G(kernel).trigger) {
+	case 19:
+		ws_walk(449, 317, nullptr, 20, 3);
+		midi_fade_volume(0, 120);
+		break;
+
+	case 20:
+		midi_stop();
+		setGlobals1(_ripTalker, 1, 5, 1, 5, 1, 1, 1, 1, 1);
+		sendWSMessage_110000(-1);
+		digi_play("402r01", 1, 255, 21);
+		break;
+
+	case 21:
+		sendWSMessage_120000(-1);
+		digi_play("402w01", 1, 255, 22);
+		break;
+
+	case 22:
+		sendWSMessage_150000(23);
+		break;
+
+	case 23:
+		setGlobals1(_ripHeadTurn, 1, 5, 5, 5, 0, 5, 1, 1, 1, 0, 1, 1, 1, 1, 1);
+		sendWSMessage_110000(24);
+		digi_play("402r02", 1, 255, 25);
+		break;
+
+	case 24:
+		sendWSMessage_120000(-1);
+		break;
+
+	case 25:
+		sendWSMessage_130000(-1);
+		digi_play("402w02", 1, 255, 26);
+		break;
+
+	case 26:
+		sendWSMessage_150000(27);
+		break;
+
+	case 27:
+		ws_hide_walker();
+		_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x100, 0,
+			triggerMachineByHashCallbackNegative, "RIP talks to Wolife");
+		sendWSMessage_10000(1, _ripEnterLeave, _ripTalkWolf, 1, 13, 28,
+			_ripTalkWolf, 13, 13, 0);
+		digi_play("402r03", 1);
+		break;
+
+	case 28:
+		sendWSMessage_10000(1, _ripEnterLeave, _ripTalkWolf, 13, 1, 29,
+			_ripTalkWolf, 1, 1, 0);
+		break;
+
+	case 29:
+		terminateMachineAndNull(_ripEnterLeave);
+		series_unload(_ripHeadTurn);
+		ws_unhide_walker();
+		player_set_commands_allowed(true);
+		break;
+
+	case 30:
+		setGlobals1(_ripTalker, 0, 0, 1, 1, 0, 1, 5, 1, 5, 1);
+		sendWSMessage_110000(32);
+		break;
+
+	case 31:
+		digi_play("402r29", 1, 255, 33);
+		sendWSMessage_120000(-1);
+		break;
+
+	case 32:
+		sendWSMessage_110000(-1);
+		digi_play("402w09", 1, 255, 34);
+		break;
+
+	case 33:
+		sendWSMessage_150000(35);
+		break;
+
+	case 35:
+	case 43:
+		player_set_commands_allowed(true);
+		break;
+
+	case 40:
+		ws_walk(510, 260, nullptr, -1, 8);
+		break;
+
+	case 42:
+		sendWSMessage_10000(_wolfWalker, 517, 239, 9, 43, 0);
+		break;
+
+	case 50:
+		midi_stop();
+		player_set_commands_allowed(true);
+		break;
+
+	case 55:
+		terminateMachineAndNull(_ripEnterLeave);
+		series_unload(_ripDownStairs);
+		ws_demand_location(345, 275, 3);
+		ws_walk(375, 279, nullptr,
+			(_G(flags)[V131] == 402) ? 56 : 50,
+			1);
+		break;
+
+	case 56:
+		ws_walk(449, 317, nullptr, 30, 3);
+		break;
+
+	case 100:
+		kernel_timing_trigger(1, 102);
+		break;
+
+	case 101:
+		switch (_val10) {
+		case 1000:
+			_val11 = 1105;
+			break;
+		case 1001:
+			_val5 = (_G(flags)[V132]) ? 300 : 1112;
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 102:
+		if (_val2 == -1) {
+			kernel_timing_trigger(1, 103);
+		} else {
+			kernel_timing_trigger(1, _val2);
+			_val2 = -1;
+		}
+		break;
+
+	case 103:
+		switch (_val10) {
+		case 1000:
+			// TODO
+		default:
+			break;
+		}
+		break;
+
+	case 110:
+		switch (_val12) {
+		case 2000:
+			if (_val5 == -1) {
+				kernel_timing_trigger(1, 111);
+			} else {
+				kernel_timing_trigger(1, _val5);
+				_val5 = -1;
+			}
+			break;
+
+		case 2001:
+			if (_val13 == 2300) {
+				if (_val5 == -1) {
+					kernel_timing_trigger(1, 111);
+				} else {
+					kernel_timing_trigger(1, _val5);
+					_val5 = -1;
+				}
+			}
+			break;
+
+		case 2002:
+			if (_val5 == -1) {
+				kernel_timing_trigger(1, 111);
+			} else {
+				kernel_timing_trigger(1, _val5);
+				_val5 = -1;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 111:
+		switch (_val12) {
+		case 2000:
+			switch (_val13) {
+			case 2106:
+				sendWSMessage_10000(1, _wolfieMach, _wolfClipping, 1, 10, 110,
+					_wolfClipping, 10, 10, 0);
+				break;
+			case 2108:
+				// TODO
+			case 2230:
+				player_set_commands_allowed(false);
+				sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 1, 8, 111,
+					_wolfClippersDown, 8, 8, 0);
+				_val13 = 2231;
+				break;
+			case 2231:
+				_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x100, 0,
+					triggerMachineByHashCallbackNegative, "rip talks wolf");
+				player_update_info();
+
+				_safariShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+					_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x200, 0,
+					triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+				sendWSMessage_10000(1, _safariShadow, _shadow3, 1, 1, -1,
+					_shadow3, 1, 1, 0);
+				ws_hide_walker();
+
+				sendWSMessage_10000(1, _ripEnterLeave, _ripTalkWolf, 1, 7, 111,
+					_ripTalkWolf, 7, 7, 0);
+				_val13 = 2242;
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Room402::pre_parser() {
