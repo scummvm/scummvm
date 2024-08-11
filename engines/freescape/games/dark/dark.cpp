@@ -33,6 +33,15 @@
 namespace Freescape {
 
 DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
+	// These sounds can be overriden by the class of each platform
+	_soundIndexShoot = 8;
+	_soundIndexCollide = -1;
+	_soundIndexFall = 3;
+	_soundIndexClimb = 4;
+	_soundIndexMenu = -1;
+	_soundIndexStart = 9;
+	_soundIndexAreaChange = 5;
+
 	if (isDOS())
 		initDOS();
 	else if (isSpectrum())
@@ -264,15 +273,6 @@ void DarkEngine::loadAssets() {
 	_noEnergyMessage = _messagesList[16];
 	_fallenMessage = _messagesList[17];
 	_crushedMessage = _messagesList[10];
-
-	// These sounds can be overriden by the class of each platform
-	_soundIndexShoot = 8;
-	_soundIndexCollide = -1;
-	_soundIndexFall = -1;
-	_soundIndexClimb = -1;
-	_soundIndexMenu = -1;
-	_soundIndexStart = -1;
-	_soundIndexAreaChange = -1;
 }
 
 bool DarkEngine::tryDestroyECDFullGame(int index) {
@@ -611,17 +611,11 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (areaID == _startArea && entranceID == _startEntrance) {
 		_yaw = 90;
 		_pitch = 0;
-		if (isSpectrum())
-			playSound(11, true);
-		else
-			playSound(9, true);
+		playSound(_soundIndexStart, true);
 	} else if (areaID == _endArea && entranceID == _endEntrance) {
 		_pitch = 10;
 	} else {
-		if (isSpectrum())
-			playSound(0x1c, false);
-		else
-			playSound(5, false);
+		playSound(_soundIndexAreaChange, false);
 	}
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());

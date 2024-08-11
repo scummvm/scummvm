@@ -35,7 +35,7 @@ void EclipseEngine::initZX() {
 	_soundIndexShoot = 5;
 	_soundIndexCollide = -1;
 	_soundIndexFall = 3;
-	_soundIndexClimb = -1;
+	_soundIndexClimb = 4;
 	_soundIndexMenu = -1;
 	_soundIndexStart = -1;
 	_soundIndexAreaChange = -1;

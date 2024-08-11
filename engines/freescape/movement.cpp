@@ -366,7 +366,7 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 		if ((lastPosition - newPosition).length() < 1) { // Something is blocking the player
 			if (!executed)
 				setGameBit(31);
-			playSound(4, false);
+			playSound(_soundIndexClimb, false);
 		}
 		_position = newPosition;
 		return;
@@ -381,15 +381,15 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 		lastPosition.y() = lastPosition.y() + _stepUpDistance;
 
 		newPosition = _currentArea->resolveCollisions(lastPosition, newPosition, _playerHeight);
+		if (_lastPosition.y() < newPosition.y())
+			playSound(_soundIndexClimb, false);
 	}
 
 	if ((lastPosition - newPosition).length() < 1) { // Something is blocking the player
 		if (!executed)
 			setGameBit(31);
-		if (isSpectrum())
-			playSound(_soundIndexCollide, false);
-		else
-			playSound(_soundIndexCollide, false);
+
+		playSound(_soundIndexCollide, false);
 	}
 
 	lastPosition = newPosition;
