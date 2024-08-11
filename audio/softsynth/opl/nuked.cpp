@@ -1642,10 +1642,6 @@ void OPL::dualWrite(uint8 index, uint8 reg, uint8 val) {
 	OPL3_WriteRegBuffered(&chip, (uint16_t)fullReg, (uint8_t)val);
 }
 
-byte OPL::read(int port) {
-	return 0;
-}
-
 void OPL::generateSamples(int16*buffer, int length) {
 	OPL3_GenerateStream(&chip, (int16_t*)buffer, (uint16_t)length / 2);
 }
