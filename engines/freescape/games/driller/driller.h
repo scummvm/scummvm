@@ -21,7 +21,6 @@
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
-#include "audio/softsynth/sid.h"
 
 #include "engines/freescape/games/driller/c64.music.h"
 

@@ -19,14 +19,12 @@
  *
  */
 
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
-#include "audio/softsynth/sid.h"
+#include "audio/sid.h"
 #include "common/debug.h"
 
 namespace Freescape {
 
-class DrillerSIDPlayer : public Audio::AudioStream {
+class DrillerSIDPlayer {
 
 	// --- Voice State Structure ---
 	struct VoiceState {
@@ -199,12 +197,7 @@ class DrillerSIDPlayer : public Audio::AudioStream {
 	};
 
 	// --- Member Variables ---
-	Resid::SID *_sid;
-	Audio::Mixer *_mixer;
-	Audio::SoundHandle _soundHandle; // Changed from pointer
-	int _sampleRate;
-	float _cyclesPerSample;
-	double _cycleCounter;
+	SID::SID *_sid;
 
 	// Player State
 	enum PlayState { STOPPED,
@@ -226,21 +219,15 @@ class DrillerSIDPlayer : public Audio::AudioStream {
 	// uint8_t _tempControl1; // Temp storage from instrument data (0xD11)
 
 public:
-	DrillerSIDPlayer(Audio::Mixer *mixer);
+	DrillerSIDPlayer();
 	~DrillerSIDPlayer();
 	void startMusic(int tuneIndex = 1);
 	void stopMusic();
 
-	int readBuffer(int16 *buffer, const int numSamples) override;
-
-	bool isStereo() const override { return false; }
-	bool endOfData() const override { return false; }
-	int getRate() const override { return _sampleRate; }
-
 private:
 	void SID_Write(int reg, uint8_t data);
 	void initSID();
-	void playFrame();
+	void onTimer();
 	void handleChangeTune(int tuneIndex);
 	void handleResetVoices();
 	void playVoice(int voiceIndex);

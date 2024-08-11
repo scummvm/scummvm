@@ -27,7 +27,7 @@
 #ifndef AUDIO_SOFTSYNTH_SID_H
 #define AUDIO_SOFTSYNTH_SID_H
 
-#include "common/scummsys.h"
+#include "audio/sid.h"
 
 // Inlining on/off.
 #define RESID_INLINE inline
@@ -302,9 +302,9 @@ protected:
 };
 
 
-class SID {
+class SID final : public ::SID::SID, public Audio::EmulatedChip {
 public:
-	SID();
+	SID(::SID::Config::SidType videoSystem);
 	~SID();
 
 	void enable_filter(bool enable);
@@ -315,16 +315,22 @@ public:
 
 	void updateClock(cycle_count delta_t);
 	int updateClock(cycle_count& delta_t, short* buf, int n, int interleave = 1);
-	void reset();
+
+	bool init() override;
+	void reset() override;
 
 	// Read/write registers.
 	reg8 read(reg8 offset);
-	void write(reg8 offset, reg8 value);
+	void writeReg(int offset, int value) override;
 
 	// 16-bit output (AUDIO OUT).
 	int output();
 
+	bool isStereo() const override { return false; }
+
 protected:
+	void generateSamples(int16 *buffer, int numSamples) override;
+
 	Voice voice[3];
 	Filter filter;
 	ExternalFilter extfilt;
@@ -342,6 +348,9 @@ protected:
 	cycle_count cycles_per_sample;
 	cycle_count sample_offset;
 	short sample_prev;
+
+	::SID::Config::SidType _videoSystem;
+	cycle_count _cpuCyclesLeft;
 };
 
 }
