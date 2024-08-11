@@ -39,6 +39,7 @@ void DarkEngine::initZX() {
 	_soundIndexMenu = 25;
 	_soundIndexStart = 11;
 	_soundIndexAreaChange = 0x1c;
+	_soundIndexRestoreECD = 30;
 }
 
 void DarkEngine::loadAssetsZXFullGame() {

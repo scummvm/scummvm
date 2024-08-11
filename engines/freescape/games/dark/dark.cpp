@@ -41,6 +41,7 @@ DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 	_soundIndexMenu = -1;
 	_soundIndexStart = 9;
 	_soundIndexAreaChange = 5;
+	_soundIndexRestoreECD = 19;
 
 	if (isDOS())
 		initDOS();
@@ -463,8 +464,6 @@ bool DarkEngine::checkIfGameEnded() {
 	if (_gameStateVars[kVariableDarkECD] > 0) {
 		int index = _gameStateVars[kVariableDarkECD] - 1;
 		bool destroyed = tryDestroyECD(index);
-		if (isSpectrum())
-			playSound(7, false);
 
 		if (destroyed) {
 			_gameStateVars[kVariableActiveECDs] -= 4;
@@ -473,10 +472,8 @@ bool DarkEngine::checkIfGameEnded() {
 		} else {
 			restoreECD(*_currentArea, index);
 			insertTemporaryMessage(_messagesList[1], _countdown - 2);
-			if (isSpectrum())
-				playSound(30, false);
-			else
-				playSound(19, true);
+			stopAllSounds();
+			playSound(_soundIndexRestoreECD, false);
 		}
 		_gameStateVars[kVariableDarkECD] = 0;
 

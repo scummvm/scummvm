@@ -96,6 +96,8 @@ public:
 	Common::BitArray _fontMedium;
 	Common::BitArray _fontSmall;
 
+	int _soundIndexRestoreECD;
+
 	void drawString(const DarkFontSize size, const Common::String &str, int x, int y, uint32 primaryColor, uint32 secondaryColor, uint32 backColor, Graphics::Surface *surface);
 	void drawInfoMenu() override;
 
