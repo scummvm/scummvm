@@ -487,7 +487,7 @@ int ImmortalEngine::loadUniv(char mazeNum) {
 		debug("Error, couldn't load maze %d.CNM", mazeNum);
 		return -1;
 	}
-	debug("Size of maze CNM: %ld", mazeCNM->size());
+	debug("Size of maze CNM: %" PRId64, mazeCNM->size());
 
 	// The logical CNM contains the contents of mazeN.CNM, with every entry being bitshifted left once
 	_logicalCNM = (uint16 *)malloc(mazeCNM->size());
@@ -507,7 +507,7 @@ int ImmortalEngine::loadUniv(char mazeNum) {
 		debug("Error, couldn't load maze %d.UNV", mazeNum);
 		return -1;
 	}
-	debug("Size of maze UNV: %ld", mazeUNV->size());
+	debug("Size of maze UNV: %" PRId64, mazeUNV->size());
 
 	// This is also where the pointer to CNM is defined, because it is 26 bytes after the pointer to Univ. However for our purposes these are separate
 
@@ -547,7 +547,7 @@ int ImmortalEngine::loadUniv(char mazeNum) {
 	// We then uncompress all of that data
 	mazeUNV->seek(lStuff);
 	_dataBuffer = unCompress((Common::File *)mazeUNV, lData);
-	debug("size of uncompressed CNM/CBM data %ld", _dataBuffer->size());
+	debug("size of uncompressed CNM/CBM data %" PRId64, _dataBuffer->size());
 
 	// Check every entry in the CNM (while we add them). The highest number is the total number of tiles in the file
 	_CNM = (uint16 *)malloc(_univ->_num2Cells);
