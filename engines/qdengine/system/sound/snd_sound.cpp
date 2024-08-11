@@ -65,7 +65,10 @@ bool sndSound::play() {
 bool sndSound::stop() {
 	debugC(5, kDebugSound, "sndSound::stop(). this: %p",  (void *)this);
 	g_system->getMixer()->stopHandle(_audHandle);
-	_sound->_audioStream->seek(0);
+
+	if (_sound)
+		_sound->_audioStream->seek(0);
+
 	return true;
 }
 
