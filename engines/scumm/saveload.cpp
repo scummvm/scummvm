@@ -1950,7 +1950,7 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 
 	s.syncArray(_roomVars, _numRoomVariables, Common::Serializer::Sint32LE, VER(38));
 
-	int currentSoundCard = VAR(VAR_SOUNDCARD);
+	int currentSoundCard = VAR_SOUNDCARD != 0xFF ? VAR(VAR_SOUNDCARD) : -1;
 
 	// The variables grew from 16 to 32 bit.
 	if (s.getVersion() < VER(15))
