@@ -8,6 +8,7 @@ import android.content.pm.ShortcutManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Insets;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
@@ -76,6 +77,95 @@ class CompatHelpers {
 				WindowInsetsController insetsController = window.getInsetsController();
 				insetsController.hide(WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
 				insetsController.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+			}
+		}
+	}
+
+	static class SystemInsets {
+		public interface SystemInsetsListener {
+			void systemInsetsUpdated(int insets[]);
+		}
+
+		public static void registerSystemInsetsListener(View v, SystemInsetsListener l) {
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+				v.setOnApplyWindowInsetsListener(new OnApplyWindowInsetsListenerR(l));
+			} else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+				v.setOnApplyWindowInsetsListener(new OnApplyWindowInsetsListenerQ(l));
+			} else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT_WATCH) {
+				v.setOnApplyWindowInsetsListener(new OnApplyWindowInsetsListenerKitKatW(l));
+			} else {
+				// Not available
+				int[] insets = new int[] { 0, 0, 0, 0 };
+				l.systemInsetsUpdated(insets);
+			}
+		}
+
+		@RequiresApi(android.os.Build.VERSION_CODES.KITKAT_WATCH)
+		@SuppressWarnings("deprecation")
+		private static class OnApplyWindowInsetsListenerKitKatW implements View.OnApplyWindowInsetsListener {
+			private SystemInsetsListener l;
+
+			public OnApplyWindowInsetsListenerKitKatW(SystemInsetsListener l) {
+				this.l = l;
+			}
+
+			@Override
+			public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+				// No system gestures inset before Android Q
+				int[] insetsArray = new int[] {
+					insets.getStableInsetLeft(),
+					insets.getStableInsetTop(),
+					insets.getStableInsetRight(),
+					insets.getStableInsetBottom()
+				};
+				l.systemInsetsUpdated(insetsArray);
+				return v.onApplyWindowInsets(insets);
+			}
+		}
+
+		@RequiresApi(android.os.Build.VERSION_CODES.Q)
+		@SuppressWarnings("deprecation")
+		private static class OnApplyWindowInsetsListenerQ implements View.OnApplyWindowInsetsListener {
+			private SystemInsetsListener l;
+
+			public OnApplyWindowInsetsListenerQ(SystemInsetsListener l) {
+				this.l = l;
+			}
+
+			@Override
+			public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+				Insets insetsStruct = insets.getStableInsets();
+				int[] insetsArray = new int[] {
+					insetsStruct.left,
+					insetsStruct.top,
+					insetsStruct.right,
+					insetsStruct.bottom,
+				};
+				l.systemInsetsUpdated(insetsArray);
+				return v.onApplyWindowInsets(insets);
+			}
+		}
+
+		@RequiresApi(android.os.Build.VERSION_CODES.R)
+		@SuppressWarnings("deprecation")
+		private static class OnApplyWindowInsetsListenerR implements View.OnApplyWindowInsetsListener {
+			private SystemInsetsListener l;
+
+			public OnApplyWindowInsetsListenerR(SystemInsetsListener l) {
+				this.l = l;
+			}
+
+			@Override
+			public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+				Insets insetsStruct = insets.getInsetsIgnoringVisibility(WindowInsets.Type.systemGestures());
+				int[] insetsArray = new int[] {
+					insetsStruct.left,
+					insetsStruct.top,
+					insetsStruct.right,
+					insetsStruct.bottom,
+				};
+				l.systemInsetsUpdated(insetsArray);
+				return v.onApplyWindowInsets(insets);
 			}
 		}
 	}
