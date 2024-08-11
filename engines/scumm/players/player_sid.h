@@ -25,9 +25,7 @@
 #include "common/mutex.h"
 #include "common/scummsys.h"
 #include "scumm/music.h"
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
-#include "audio/softsynth/sid.h"
+#include "audio/sid.h"
 
 namespace Scumm {
 
@@ -43,16 +41,11 @@ enum sid_reg_t {
 	PULSE_VOICE3
 };
 
-enum VideoStandard {
-	PAL,
-	NTSC
-};
-
 class ScummEngine;
 
-class Player_SID : public Audio::AudioStream, public MusicEngine {
+class Player_SID : public MusicEngine {
 public:
-	Player_SID(ScummEngine *scumm, Audio::Mixer *mixer);
+	Player_SID(ScummEngine *scumm);
 	~Player_SID() override;
 
 	void setMusicVolume(int vol) override { _maxvol = vol; }
@@ -62,29 +55,15 @@ public:
 	int  getSoundStatus(int sound) const override;
 	int  getMusicTimer() override;
 
-	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples) override;
-	bool isStereo() const override { return false; }
-	bool endOfData() const override { return false; }
-	int getRate() const override { return _sampleRate; }
-
 private:
-	Resid::SID *_sid;
+	SID::SID *_sid;
 	void SID_Write(int reg, uint8 data);
 	void initSID();
 	uint8 *getResource(int resID);
 
-	// number of cpu cycles until next frame update
-	Resid::cycle_count _cpuCyclesLeft;
-
 	ScummEngine *_vm;
-	Audio::Mixer *_mixer;
-	Audio::SoundHandle _soundHandle;
-	int _sampleRate;
 	int _maxvol;
 	Common::Mutex _mutex;
-
-	VideoStandard _videoSystem;
 
 	int _music_timer;
 	uint8* _music;
@@ -96,7 +75,7 @@ private:
 	void stopMusic_intern(); // $4CAA
 
 	void resetSID(); // $48D8
-	void update(); // $481B
+	void onTimer(); // $481B
 	void handleMusicBuffer();
 	int setupSongFileData(); // $36cb
 	void func_3674(int channel); // $3674
