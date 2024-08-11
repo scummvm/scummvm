@@ -173,67 +173,63 @@ void EclipseEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *in
 	FreescapeEngine::initKeymaps(engineKeyMap, infoScreenKeyMap, target);
 	Common::Action *act;
 
-	{
-		act = new Common::Action("SAVE", _("Save Game"));
-		act->setCustomEngineActionEvent(kActionSave);
-		act->addDefaultInputMapping("s");
-		infoScreenKeyMap->addAction(act);
+	act = new Common::Action("SAVE", _("Save Game"));
+	act->setCustomEngineActionEvent(kActionSave);
+	act->addDefaultInputMapping("s");
+	infoScreenKeyMap->addAction(act);
 
-		act = new Common::Action("LOAD", _("Load Game"));
-		act->setCustomEngineActionEvent(kActionLoad);
-		act->addDefaultInputMapping("l");
-		infoScreenKeyMap->addAction(act);
+	act = new Common::Action("LOAD", _("Load Game"));
+	act->setCustomEngineActionEvent(kActionLoad);
+	act->addDefaultInputMapping("l");
+	infoScreenKeyMap->addAction(act);
 
-		act = new Common::Action("QUIT", _("Quit Game"));
-		act->setCustomEngineActionEvent(kActionEscape);
-		if (isSpectrum())
-			act->addDefaultInputMapping("1");
-		else
-			act->addDefaultInputMapping("ESCAPE");
-		infoScreenKeyMap->addAction(act);
+	act = new Common::Action("QUIT", _("Quit Game"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	if (isSpectrum())
+		act->addDefaultInputMapping("1");
+	else
+		act->addDefaultInputMapping("ESCAPE");
+	infoScreenKeyMap->addAction(act);
 
-		act = new Common::Action("TOGGLESOUND", _("Toggle Sound"));
-		act->setCustomEngineActionEvent(kActionToggleSound);
-		act->addDefaultInputMapping("t");
-		infoScreenKeyMap->addAction(act);
-	}
+	act = new Common::Action("TOGGLESOUND", _("Toggle Sound"));
+	act->setCustomEngineActionEvent(kActionToggleSound);
+	act->addDefaultInputMapping("t");
+	infoScreenKeyMap->addAction(act);
 
-	{
-		act = new Common::Action("ROTL", _("Rotate Left"));
-		act->setCustomEngineActionEvent(kActionRotateLeft);
-		act->addDefaultInputMapping("q");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("ROTL", _("Rotate Left"));
+	act->setCustomEngineActionEvent(kActionRotateLeft);
+	act->addDefaultInputMapping("q");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("ROTR", _("Rotate Right"));
-		act->setCustomEngineActionEvent(kActionRotateRight);
-		act->addDefaultInputMapping("w");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("ROTR", _("Rotate Right"));
+	act->setCustomEngineActionEvent(kActionRotateRight);
+	act->addDefaultInputMapping("w");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("CHNGANGLE", _("Change Angle"));
-		act->setCustomEngineActionEvent(kActionChangeAngle);
-		act->addDefaultInputMapping("a");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("CHNGANGLE", _("Change Angle"));
+	act->setCustomEngineActionEvent(kActionChangeAngle);
+	act->addDefaultInputMapping("a");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("CHNGSTEPSIZE", _("Change Step Size"));
-		act->setCustomEngineActionEvent(kActionChangeStepSize);
-		act->addDefaultInputMapping("s");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("CHNGSTEPSIZE", _("Change Step Size"));
+	act->setCustomEngineActionEvent(kActionChangeStepSize);
+	act->addDefaultInputMapping("s");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("TGGLHEIGHT", _("Toggle Height"));
-		act->setCustomEngineActionEvent(kActionToggleRiseLower);
-		act->addDefaultInputMapping("h");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("TGGLHEIGHT", _("Toggle Height"));
+	act->setCustomEngineActionEvent(kActionToggleRiseLower);
+	act->addDefaultInputMapping("h");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("REST", _("Rest"));
-		act->setCustomEngineActionEvent(kActionRest);
-		act->addDefaultInputMapping("r");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("REST", _("Rest"));
+	act->setCustomEngineActionEvent(kActionRest);
+	act->addDefaultInputMapping("r");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("FACEFRWARD", _("Face Forward"));
-		act->setCustomEngineActionEvent(kActionFaceForward);
-		act->addDefaultInputMapping("f");
-		engineKeyMap->addAction(act);
-	}
+	act = new Common::Action("FACEFRWARD", _("Face Forward"));
+	act->setCustomEngineActionEvent(kActionFaceForward);
+	act->addDefaultInputMapping("f");
+	engineKeyMap->addAction(act);
 }
 
 void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {

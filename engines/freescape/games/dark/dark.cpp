@@ -171,73 +171,70 @@ void DarkEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoS
 	FreescapeEngine::initKeymaps(engineKeyMap, infoScreenKeyMap, target);
 	Common::Action *act;
 
-	{
-		act = new Common::Action("SAVE", _("Save Game"));
-		act->setCustomEngineActionEvent(kActionSave);
-		act->addDefaultInputMapping("s");
-		infoScreenKeyMap->addAction(act);
+	act = new Common::Action("SAVE", _("Save Game"));
+	act->setCustomEngineActionEvent(kActionSave);
+	act->addDefaultInputMapping("s");
+	infoScreenKeyMap->addAction(act);
 
-		act = new Common::Action("LOAD", _("Load Game"));
-		act->setCustomEngineActionEvent(kActionLoad);
-		act->addDefaultInputMapping("l");
-		infoScreenKeyMap->addAction(act);
+	act = new Common::Action("LOAD", _("Load Game"));
+	act->setCustomEngineActionEvent(kActionLoad);
+	act->addDefaultInputMapping("l");
+	infoScreenKeyMap->addAction(act);
 
-		act = new Common::Action("QUIT", _("Quit Game"));
-		act->setCustomEngineActionEvent(kActionEscape);
-		if (isSpectrum())
-			act->addDefaultInputMapping("1");
-		else
-			act->addDefaultInputMapping("ESCAPE");
-		infoScreenKeyMap->addAction(act);
+	act = new Common::Action("QUIT", _("Quit Game"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	if (isSpectrum())
+		act->addDefaultInputMapping("1");
+	else
+		act->addDefaultInputMapping("ESCAPE");
 
-		if (!(isAmiga() || isAtariST())) {
-			act = new Common::Action("TOGGLESOUND", _("Toggle Sound"));
-			act->setCustomEngineActionEvent(kActionToggleSound);
-			act->addDefaultInputMapping("t");
-			infoScreenKeyMap->addAction(act);
-		}
+	infoScreenKeyMap->addAction(act);
+
+	if (!(isAmiga() || isAtariST())) {
+		act = new Common::Action("TOGGLESOUND", _("Toggle Sound"));
+		act->setCustomEngineActionEvent(kActionToggleSound);
+		act->addDefaultInputMapping("t");
+		infoScreenKeyMap->addAction(act);
 	}
 
-	{
-		act = new Common::Action("ROTL", _("Rotate Left"));
-		act->setCustomEngineActionEvent(kActionRotateLeft);
-		act->addDefaultInputMapping("q");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("ROTL", _("Rotate Left"));
+	act->setCustomEngineActionEvent(kActionRotateLeft);
+	act->addDefaultInputMapping("q");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("ROTR", _("Rotate Right"));
-		act->setCustomEngineActionEvent(kActionRotateRight);
-		act->addDefaultInputMapping("w");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("ROTR", _("Rotate Right"));
+	act->setCustomEngineActionEvent(kActionRotateRight);
+	act->addDefaultInputMapping("w");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("INCSTEPSIZE", _("Increase Step Size"));
-		act->setCustomEngineActionEvent(kActionIncreaseStepSize);
-		act->addDefaultInputMapping("s");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("INCSTEPSIZE", _("Increase Step Size"));
+	act->setCustomEngineActionEvent(kActionIncreaseStepSize);
+	act->addDefaultInputMapping("s");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("DECSTEPSIZE", _("Decrease Step Size"));
-		act->setCustomEngineActionEvent(kActionDecreaseStepSize);
-		act->addDefaultInputMapping("x");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("DECSTEPSIZE", _("Decrease Step Size"));
+	act->setCustomEngineActionEvent(kActionDecreaseStepSize);
+	act->addDefaultInputMapping("x");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("RISE", _("Rise/Fly up"));
-		act->setCustomEngineActionEvent(kActionRiseOrFlyUp);
-		act->addDefaultInputMapping("JOY_B");
-		act->addDefaultInputMapping("r");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("RISE", _("Rise/Fly up"));
+	act->setCustomEngineActionEvent(kActionRiseOrFlyUp);
+	act->addDefaultInputMapping("JOY_B");
+	act->addDefaultInputMapping("r");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("LOWER", _("Lower/Fly down"));
-		act->setCustomEngineActionEvent(kActionLowerOrFlyDown);
-		act->addDefaultInputMapping("JOY_Y");
-		act->addDefaultInputMapping("f");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("LOWER", _("Lower/Fly down"));
+	act->setCustomEngineActionEvent(kActionLowerOrFlyDown);
+	act->addDefaultInputMapping("JOY_Y");
+	act->addDefaultInputMapping("f");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("JETPACK", _("Enable/Disable Jetpack"));
-		act->setCustomEngineActionEvent(kActionToggleFlyMode);
-		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
-		act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
-		act->addDefaultInputMapping("j");
-		engineKeyMap->addAction(act);
-	}
+	act = new Common::Action("JETPACK", _("Enable/Disable Jetpack"));
+	act->setCustomEngineActionEvent(kActionToggleFlyMode);
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	act->addDefaultInputMapping("j");
+	engineKeyMap->addAction(act);
 }
 
 void DarkEngine::initGameState() {

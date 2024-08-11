@@ -135,51 +135,49 @@ void DrillerEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *in
 		infoScreenKeyMap->addAction(act);
 	}
 
-	{
-		act = new Common::Action("ROTL", _("Rotate Left"));
-		act->setCustomEngineActionEvent(kActionRotateLeft);
-		act->addDefaultInputMapping("q");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("ROTL", _("Rotate Left"));
+	act->setCustomEngineActionEvent(kActionRotateLeft);
+	act->addDefaultInputMapping("q");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("ROTR", _("Rotate Right"));
-		act->setCustomEngineActionEvent(kActionRotateRight);
-		act->addDefaultInputMapping("w");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("ROTR", _("Rotate Right"));
+	act->setCustomEngineActionEvent(kActionRotateRight);
+	act->addDefaultInputMapping("w");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("INCSTEPSIZE", _("Increase Step Size"));
-		act->setCustomEngineActionEvent(kActionIncreaseStepSize);
-		act->addDefaultInputMapping("s");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("INCSTEPSIZE", _("Increase Step Size"));
+	act->setCustomEngineActionEvent(kActionIncreaseStepSize);
+	act->addDefaultInputMapping("s");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("DECSTEPSIZE", _("Decrease Step Size"));
-		act->setCustomEngineActionEvent(kActionDecreaseStepSize);
-		act->addDefaultInputMapping("x");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("DECSTEPSIZE", _("Decrease Step Size"));
+	act->setCustomEngineActionEvent(kActionDecreaseStepSize);
+	act->addDefaultInputMapping("x");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("RISE", _("Rise/Fly up"));
-		act->setCustomEngineActionEvent(kActionRiseOrFlyUp);
-		act->addDefaultInputMapping("JOY_B");
-		act->addDefaultInputMapping("r");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("RISE", _("Rise/Fly up"));
+	act->setCustomEngineActionEvent(kActionRiseOrFlyUp);
+	act->addDefaultInputMapping("JOY_B");
+	act->addDefaultInputMapping("r");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("LOWER", _("Lower/Fly down"));
-		act->setCustomEngineActionEvent(kActionLowerOrFlyDown);
-		act->addDefaultInputMapping("JOY_Y");
-		act->addDefaultInputMapping("f");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("LOWER", _("Lower/Fly down"));
+	act->setCustomEngineActionEvent(kActionLowerOrFlyDown);
+	act->addDefaultInputMapping("JOY_Y");
+	act->addDefaultInputMapping("f");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("DEPLOY", _("Deploy drilling rig"));
-		act->setCustomEngineActionEvent(kActionDeployDrillingRig);
-		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
-		act->addDefaultInputMapping("d");
-		engineKeyMap->addAction(act);
+	act = new Common::Action("DEPLOY", _("Deploy drilling rig"));
+	act->setCustomEngineActionEvent(kActionDeployDrillingRig);
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	act->addDefaultInputMapping("d");
+	engineKeyMap->addAction(act);
 
-		act = new Common::Action("COLLECT", _("Collect drilling rig"));
-		act->setCustomEngineActionEvent(kActionCollectDrillingRig);
-		act->addDefaultInputMapping("c");
-		act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
-		engineKeyMap->addAction(act);
-	}
+	act = new Common::Action("COLLECT", _("Collect drilling rig"));
+	act->setCustomEngineActionEvent(kActionCollectDrillingRig);
+	act->addDefaultInputMapping("c");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	engineKeyMap->addAction(act);
 }
 
 void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
