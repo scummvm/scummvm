@@ -142,7 +142,7 @@ void ScummEngine_v0::verbDrawDemoString(int VerbDemoNumber) {
 	_string[2].charset = 1;
 	_string[2].ypos = _virtscr[kVerbVirtScreen].topline + (8 * VerbDemoNumber) + pixelYOffset;
 	_string[2].xpos = 0 + pixelXOffset;
-	_string[2].right = _virtscr[kVerbVirtScreen].w - 1;
+	_string[2].right = _virtscr[kVerbVirtScreen].w - 1 + pixelXOffset;
 	_string[2].color = v0DemoStr[VerbDemoNumber].color;
 	drawString(2, (byte *)string);
 }
@@ -1124,7 +1124,7 @@ void ScummEngine::drawVerb(int verb, int mode) {
 		_string[4].charset = vs->charset_nr;
 		_string[4].xpos = isRtl ? vs->origLeft : vs->curRect.left + pixelXOffset;
 		_string[4].ypos = vs->curRect.top + pixelYOffset;
-		_string[4].right = _screenWidth - 1;
+		_string[4].right = _screenWidth - 1 + pixelXOffset;
 		_string[4].center = vs->center;
 
 		if (vs->curmode == 2)

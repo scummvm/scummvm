@@ -1169,8 +1169,6 @@ void ScummEngine::displayDialog() {
 			}
 		}
 		if (_game.version <= 3) {
-			if (c == '%')
-				debug("hey");
 			_charset->printChar(c, false);
 			_msgCount += 1;
 		} else {
