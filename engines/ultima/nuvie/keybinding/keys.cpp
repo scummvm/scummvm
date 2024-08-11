@@ -358,7 +358,7 @@ KeyBinder::KeyBinder(const Configuration *config) : enable_joystick(false) {
 void KeyBinder::AddIosBindings()
 {
     unsigned long i;
-    for (i=0; i< sizeof(iosKeycodes)/sizeof(KeycodeToAction); i++)
+    for (i=0; i < sizeof(iosKeycodes) / sizeof(KeycodeToAction); i++)
     {
         KeycodeToAction ka = iosKeycodes[i];
         if (!_bindings.contains(ka.keyCode))
