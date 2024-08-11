@@ -94,7 +94,7 @@ SVQ1Decoder::~SVQ1Decoder() {
 	}
 }
 
-#define ALIGN(x, a) (((x)+(a)-1)&~((a)-1))
+#define SVQ1_ALIGN(x, a) (((x)+(a)-1)&~((a)-1))
 
 const Graphics::Surface *SVQ1Decoder::decodeFrame(Common::SeekableReadStream &stream) {
 	debug(1, "SVQ1Decoder::decodeImage()");
@@ -185,10 +185,10 @@ const Graphics::Surface *SVQ1Decoder::decodeFrame(Common::SeekableReadStream &st
 			frameData.skip(8);
 	}
 
-	uint yWidth = ALIGN(_frameWidth, 16);
-	uint yHeight = ALIGN(_frameHeight, 16);
-	uint uvWidth = ALIGN(yWidth / 4, 16);
-	uint uvHeight = ALIGN(yHeight / 4, 16);
+	uint yWidth = SVQ1_ALIGN(_frameWidth, 16);
+	uint yHeight = SVQ1_ALIGN(_frameHeight, 16);
+	uint uvWidth = SVQ1_ALIGN(yWidth / 4, 16);
+	uint uvHeight = SVQ1_ALIGN(yHeight / 4, 16);
 	uint uvPitch = uvWidth + 4; // we need at least one extra column and pitch must be divisible by 4
 
 	byte *current[3];
