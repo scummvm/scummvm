@@ -2,6 +2,7 @@ MODULE := engines/sci
 
 MODULE_OBJS := \
 	console.o \
+	detection_internal.o \
 	dialogs.o \
 	event.o \
 	metaengine.o \
@@ -122,3 +123,10 @@ include $(srcdir)/rules.mk
 
 # Detection objects
 DETECT_OBJS += $(MODULE)/detection.o
+
+# Skip building the following objects if a static
+# module is enabled, because it already has the contents.
+ifneq ($(ENABLE_SCI), STATIC_PLUGIN)
+# External dependencies for detection.
+DETECT_OBJS += $(MODULE)/detection_internal.o
+endif
