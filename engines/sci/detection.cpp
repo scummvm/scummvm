@@ -226,7 +226,7 @@ DetectedGames SciMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 	DetectedGames games = AdvancedMetaEngineDetection::detectGames(fslist, skipADFlags, skipIncomplete);
 
 	for (DetectedGame &game : games) {
-		const GameIdStrToEnum *g = s_gameIdStrToEnum;
+		const GameIdStrToEnum *g = gameIdStrToEnum;
 		for (; g->gameidStr; ++g) {
 			if (game.gameId.equals(g->gameidStr))
 				break;
