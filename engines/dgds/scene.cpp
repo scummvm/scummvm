@@ -930,7 +930,7 @@ bool Scene::checkConditions(const Common::Array<SceneConditions> &conds) const {
 }
 
 
-bool SDSScene::_dlgWithFlagLo8IsClosing = false;;
+bool SDSScene::_dlgWithFlagLo8IsClosing = false;
 DialogFlags SDSScene::_sceneDialogFlags = kDlgFlagNone;
 
 SDSScene::SDSScene() : _num(-1), _dragItem(nullptr), _shouldClearDlg(false), _ignoreMouseUp(false), _field6_0x14(0), _rbuttonDown(false) {
