@@ -2670,10 +2670,12 @@ void ScummEngine::scummLoop(int delta) {
 	if (_game.version <= 3)
 		displayDialog();
 
+	bool isFTDOSDemo = (_game.id == GID_FT) && (_game.features & GF_DEMO) && (_game.platform == Common::kPlatformDOS);
+
 	// In v7 we have to run processInput() at the end of the loop,
 	// to allow one frame time to pass between checkExecVerbs() and runAllScripts().
 	// Several time-based effects (e.g. shaking) depend on this...
-	if (_game.version != 7) {
+	if (_game.version != 7 || isFTDOSDemo) {
 		processInput();
 
 		// Additionally, v8 runs checkExecVerbs() at the end of processInput()...
@@ -2741,7 +2743,7 @@ load_game:
 		((SoundHE *)_sound)->handleSoundFrame();
 	}
 
-	if (_game.version < 7) {
+	if (_game.version < 7 || isFTDOSDemo) {
 		runAllScripts();
 		checkExecVerbs();
 	}
@@ -2758,7 +2760,7 @@ load_game:
 	// 
 	// Again, from the disasms, we call runAllScripts() on a loop,
 	// while the _saveLoadFlag is active.
-	if (_game.version == 7) {
+	if (_game.version == 7 && !isFTDOSDemo) {
 		do {
 			runAllScripts();
 			scummLoop_handleSaveLoad();
@@ -2829,7 +2831,7 @@ load_game:
 	// these two functions should be called; this will delay the
 	// scripts executions between checkExecVerbs() and runAllScripts()
 	// by exactly one frame.
-	if (_game.version == 7) {
+	if (_game.version == 7 && !isFTDOSDemo) {
 		processInput();
 		checkExecVerbs();
 	}
