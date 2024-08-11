@@ -103,13 +103,6 @@ public:
 	vector(size_t newSize, const T &elem) : Common::Array<T>(newSize, elem) {}
 	vector(std::initializer_list<T> list) : Common::Array<T>(list) {}
 
-
-	template<class... Args>
-	void emplace_back(Args... args) {
-		T tmp(args...);
-		this->push_back(tmp);
-	}
-
 	using Common::Array<T>::insert;
 
 	void insert(const T &element) {
