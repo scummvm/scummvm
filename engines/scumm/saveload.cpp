@@ -219,6 +219,9 @@ bool ScummEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return (VAR_MAINMENU_KEY == 0xFF || (VAR(VAR_MAINMENU_KEY) != 0 && _currentRoom != 0)) && !isOriginalMenuActive;
 }
 
+bool ScummEngine::canSaveAutosaveCurrently() {
+	return !isUsingOriginalGUI();
+}
 
 void ScummEngine::requestSave(int slot, const Common::String &name) {
 	_saveLoadSlot = slot;
