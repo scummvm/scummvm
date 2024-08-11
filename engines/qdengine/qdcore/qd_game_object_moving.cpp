@@ -306,7 +306,7 @@ bool qdGameObjectMoving::move(const Vect3f &target, bool lock_target) {
 	if (false == enough_far_target(target))
 		return true;
 
-	debugC(3, kDebugMovement, "qdGameObjectMoving::move(): _is_selected %d %d", _is_selected, has_control_type(CONTROL_CLEAR_PATH));
+	debugC(3, kDebugMovement, "qdGameObjectMoving::move(): _is_selected: %d clar:path: %d", _is_selected, has_control_type(CONTROL_CLEAR_PATH));
 	if (_is_selected && has_control_type(CONTROL_CLEAR_PATH)) {
 		if (!find_path(target, true)) {
 			toggle_ignore_personages(true);
@@ -320,7 +320,7 @@ bool qdGameObjectMoving::move(const Vect3f &target, bool lock_target) {
 		}
 	}
 
-	debugC(3, kDebugMovement, "qdGameObjectMoving::move(): _movement_mode %d", _movement_mode);
+	debugC(3, kDebugMovement, "qdGameObjectMoving::move(): _movement_mode: %d", _movement_mode);
 	switch (_movement_mode) {
 	case MOVEMENT_MODE_STOP:
 	case MOVEMENT_MODE_END:
@@ -361,7 +361,7 @@ void dump_vect(const V &vect) {
 }
 
 bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
-	debugC(3, kDebugMovement, "qdGameObjectMoving::find_path([%f, %f, %f], %d", target.x, target.y, target.z, lock_target);
+	debugC(3, kDebugMovement, "qdGameObjectMoving::find_path([%f, %f, %f], %d)", target.x, target.y, target.z, lock_target);
 	Vect3f trg = target;
 
 	if (!adjust_position(trg))
