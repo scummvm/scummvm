@@ -872,12 +872,24 @@ void Ultima8Engine::handleDelayedEvents() {
 }
 
 void Ultima8Engine::handleActionDown(KeybindingAction action) {
+	if (!isAvatarInStasis()) {
+		if (_avatarMoverProcess && _avatarMoverProcess->onActionDown(action)) {
+			moveKeyEvent();
+			return;
+		}
+	}
+
 	Common::String methodName = MetaEngine::getMethod(action, true);
 	if (!methodName.empty())
 		g_debugger->executeCommand(methodName);
 }
 
 void Ultima8Engine::handleActionUp(KeybindingAction action) {
+	if (_avatarMoverProcess && _avatarMoverProcess->onActionUp(action)) {
+		moveKeyEvent();
+		return;
+	}
+
 	Common::String methodName = MetaEngine::getMethod(action, false);
 	if (!methodName.empty())
 		g_debugger->executeCommand(methodName);

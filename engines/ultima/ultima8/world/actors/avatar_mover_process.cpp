@@ -222,6 +222,144 @@ void AvatarMoverProcess::onMouseUp(int button) {
 	_mouseButton[bid].clearState(MBS_DOWN);
 }
 
+bool AvatarMoverProcess::onActionDown(KeybindingAction action) {
+	bool handled = true;
+	switch (action) {
+	case ACTION_JUMP:
+		setMovementFlag(MOVE_JUMP);
+		break;
+	case ACTION_SHORT_JUMP:
+		setMovementFlag(MOVE_SHORT_JUMP);
+		break;
+	case ACTION_TURN_LEFT:
+		setMovementFlag(MOVE_TURN_LEFT);
+		break;
+	case ACTION_TURN_RIGHT:
+		setMovementFlag(MOVE_TURN_RIGHT);
+		break;
+	case ACTION_MOVE_FORWARD:
+		setMovementFlag(MOVE_FORWARD);
+		break;
+	case ACTION_MOVE_BACK:
+		setMovementFlag(MOVE_BACK);
+		break;
+	case ACTION_MOVE_UP:
+		setMovementFlag(MOVE_UP);
+		break;
+	case ACTION_MOVE_DOWN:
+		setMovementFlag(MOVE_DOWN);
+		break;
+	case ACTION_MOVE_LEFT:
+		setMovementFlag(MOVE_LEFT);
+		break;
+	case ACTION_MOVE_RIGHT:
+		setMovementFlag(MOVE_RIGHT);
+		break;
+	case ACTION_MOVE_RUN:
+		setMovementFlag(MOVE_RUN);
+		break;
+	case ACTION_MOVE_STEP:
+		setMovementFlag(MOVE_STEP);
+		break;
+	case ACTION_ATTACK:
+		setMovementFlag(MOVE_ATTACKING);
+		break;
+	case ACTION_STEP_LEFT:
+		setMovementFlag(MOVE_STEP_LEFT);
+		break;
+	case ACTION_STEP_RIGHT:
+		setMovementFlag(MOVE_STEP_RIGHT);
+		break;
+	case ACTION_STEP_FORWARD:
+		setMovementFlag(MOVE_STEP_FORWARD);
+		break;
+	case ACTION_STEP_BACK:
+		setMovementFlag(MOVE_STEP_BACK);
+		break;
+	case ACTION_ROLL_LEFT:
+		setMovementFlag(MOVE_ROLL_LEFT);
+		break;
+	case ACTION_ROLL_RIGHT:
+		setMovementFlag(MOVE_ROLL_RIGHT);
+		break;
+	case ACTION_TOGGLE_CROUCH:
+		setMovementFlag(MOVE_TOGGLE_CROUCH);
+		break;
+	default:
+		handled = false;
+	}
+	return handled;
+}
+
+bool AvatarMoverProcess::onActionUp(KeybindingAction action) {
+	bool handled = true;
+	switch (action) {
+	case ACTION_JUMP:
+		clearMovementFlag(MOVE_JUMP);
+		break;
+	case ACTION_SHORT_JUMP:
+		// Cleared when handled
+		break;
+	case ACTION_TURN_LEFT:
+		clearMovementFlag(MOVE_TURN_LEFT);
+		break;
+	case ACTION_TURN_RIGHT:
+		clearMovementFlag(MOVE_TURN_RIGHT);
+		break;
+	case ACTION_MOVE_FORWARD:
+		clearMovementFlag(MOVE_FORWARD);
+		break;
+	case ACTION_MOVE_BACK:
+		// Clear both back and forward as avatar turns then moves forward when not in combat
+		clearMovementFlag(MOVE_BACK | MOVE_FORWARD);
+		break;
+	case ACTION_MOVE_UP:
+		clearMovementFlag(MOVE_UP);
+		break;
+	case ACTION_MOVE_DOWN:
+		clearMovementFlag(MOVE_DOWN);
+		break;
+	case ACTION_MOVE_LEFT:
+		clearMovementFlag(MOVE_LEFT);
+		break;
+	case ACTION_MOVE_RIGHT:
+		clearMovementFlag(MOVE_RIGHT);
+		break;
+	case ACTION_MOVE_RUN:
+		clearMovementFlag(MOVE_RUN);
+		break;
+	case ACTION_MOVE_STEP:
+		clearMovementFlag(MOVE_STEP);
+		break;
+	case ACTION_ATTACK:
+		clearMovementFlag(MOVE_ATTACKING);
+		break;
+	case ACTION_STEP_LEFT:
+		// Cleared when handled
+		break;
+	case ACTION_STEP_RIGHT:
+		// Cleared when handled
+		break;
+	case ACTION_STEP_FORWARD:
+		// Cleared when handled
+		break;
+	case ACTION_STEP_BACK:
+		// Cleared when handled
+		break;
+	case ACTION_ROLL_LEFT:
+		// Cleared when handled
+		break;
+	case ACTION_ROLL_RIGHT:
+		// Cleared when handled
+		break;
+	case ACTION_TOGGLE_CROUCH:
+		// Cleared when handled
+		break;
+	default:
+		handled = false;
+	}
+	return handled;
+}
 
 void AvatarMoverProcess::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);
