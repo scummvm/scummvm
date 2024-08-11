@@ -80,6 +80,7 @@ int JNI::egl_surface_height = 0;
 int JNI::egl_bits_per_pixel = 0;
 bool JNI::_ready_for_events = 0;
 bool JNI::virt_keyboard_state = false;
+int32 JNI::gestures_insets[4] = { 0, 0, 0, 0 };
 
 jmethodID JNI::_MID_getDPI = 0;
 jmethodID JNI::_MID_displayMessageOnOSD = 0;
@@ -140,6 +141,8 @@ const JNINativeMethod JNI::_natives[] = {
 		(void *)JNI::syncVirtkeyboardState },
 	{ "setPause", "(Z)V",
 		(void *)JNI::setPause },
+	{ "systemInsetsUpdated", "([I)V",
+		(void *)JNI::systemInsetsUpdated },
 	{ "getNativeVersionInfo", "()Ljava/lang/String;",
 		(void *)JNI::getNativeVersionInfo }
 };
@@ -1032,6 +1035,12 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 				sem_post(&pause_sem);
 		}
 	}
+}
+
+void JNI::systemInsetsUpdated(JNIEnv *env, jobject self, jintArray insets) {
+	assert(env->GetArrayLength(insets) == ARRAYSIZE(gestures_insets));
+
+	env->GetIntArrayRegion(insets, 0, ARRAYSIZE(gestures_insets), gestures_insets);
 }
 
 jstring JNI::getNativeVersionInfo(JNIEnv *env, jobject self) {

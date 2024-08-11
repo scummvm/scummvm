@@ -60,6 +60,8 @@ public:
 
 	static bool virt_keyboard_state;
 
+	static int32 gestures_insets[4];
+
 	static jint onLoad(JavaVM *vm);
 
 	static inline JNIEnv *getEnv() {
@@ -201,6 +203,8 @@ private:
 	static void setupTouchMode(JNIEnv *env, jobject self, jint oldValue, jint newValue);
 	static void syncVirtkeyboardState(JNIEnv *env, jobject self, jboolean newState);
 	static void setPause(JNIEnv *env, jobject self, jboolean value);
+
+	static void systemInsetsUpdated(JNIEnv *env, jobject self, jintArray insets);
 
 	static jstring getNativeVersionInfo(JNIEnv *env, jobject self);
 	static jstring convertToJString(JNIEnv *env, const Common::U32String &str);
