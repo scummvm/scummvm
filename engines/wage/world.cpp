@@ -336,7 +336,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 			res->skip(8); // Skip 8 more bytes
 
-			debug(3, "Loading 29 patterns for Enhanced Scepters at %ld", res->pos());
+			debug(3, "Loading 29 patterns for Enhanced Scepters at %" PRId64, res->pos());
 
 			for (int i = 0; i < 29; i++) {
 				byte *pattern = (byte *)malloc(8);
