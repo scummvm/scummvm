@@ -271,7 +271,7 @@ bool qdMiniGame::load_interface() {
 				|| _dll_name == "DLL\\Book_buhta.dll") {
 			_interface = new qdBookAllMiniGameInterface(_dll_name, g_engine->getLanguage());
 			return true;
-		} else if (_dll_name == "DLL\\Puzzle_ep08.dll") {
+		} else if (_dll_name == "DLL\\Puzzle_ep07.dll" || _dll_name == "DLL\\Puzzle_ep08.dll") {
 			_interface = new qdPuzzleAllMiniGameInterface(_dll_name, g_engine->getLanguage());
 			return true;
 		} else {

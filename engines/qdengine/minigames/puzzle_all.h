@@ -29,6 +29,14 @@
 
 namespace QDEngine {
 
+const int puzzle_ep07[] = {
+	199, 188, 276, 185, 362, 177, 444, 172, 531, 185,
+	601, 183, 202, 263, 282, 258, 362, 245, 440, 248,
+	524, 254, 598, 265, 200, 342, 282, 341, 357, 342,
+	439, 341, 519, 344, 595, 340, 203, 423, 276, 420,
+	359, 425, 441, 421, 525, 419, 602, 414
+};
+
 const int puzzle_ep08[] = {
 	217, 188, 337, 181, 462, 188, 575, 181, 224, 302,
 	338, 301, 462, 301, 582, 301, 217, 415, 337, 422,
@@ -49,7 +57,10 @@ public:
 		if (!_scene)
 			return 0;
 
-		if (_dll == "DLL\\Puzzle_ep08.dll") {
+		if (_dll == "DLL\\Puzzle_ep07.dll") {
+			_numPieces = 24;
+			_pieceCoords = puzzle_ep07;
+		} else if (_dll == "DLL\\Puzzle_ep08.dll") {
 			_numPieces = 12;
 			_pieceCoords = puzzle_ep08;
 		}
