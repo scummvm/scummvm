@@ -454,6 +454,8 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			_nextTop -= _charset->getFontHeight() - oldy;
 			break;
 		default:
+			// We should never get here! Any invalid control code by this point
+			// has already been converted by a normal character to be displayed.
 			error("handleNextCharsetCode: invalid code %d", c);
 		}
 	}
@@ -1496,7 +1498,8 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 					}
 					break;
 				default:
-					error("convertMessageToString(): string escape sequence %d unknown", chr);
+					// Invalid control code. Just print the character...
+					*dst++ = chr;
 				}
 				num += (_game.version == 8) ? 4 : 2;
 			}
