@@ -494,18 +494,19 @@ void qdGameScene::debug_redraw() {
 				grDispatcher::instance()->drawText(10, 130, grDispatcher::instance()->make_rgb888(255, 255, 255), dp->current_music()->file_name());
 			}
 		}
-		/*
-		        const cl = 0x202020;
 
-		        Vect2s v0,v1;
-		        v0 = qdCamera::current_camera()->global2scr(Vect3f(-300,-300,0));
-		        v1 = qdCamera::current_camera()->global2scr(Vect3f(300,300,0));
-		        grDispatcher::instance()->line(v0.x,v0.y,v1.x,v1.y,cl,2);
+		// Draw criss-cross
+		const uint32 cl = 0x202020;
 
-		        v0 = qdCamera::current_camera()->global2scr(Vect3f(-300,300,0));
-		        v1 = qdCamera::current_camera()->global2scr(Vect3f(300,-300,0));
-		        grDispatcher::instance()->line(v0.x,v0.y,v1.x,v1.y,cl,2);
-		*/
+		Vect2s v0,v1;
+		v0 = qdCamera::current_camera()->global2scr(Vect3f(-300,-300,0));
+		v1 = qdCamera::current_camera()->global2scr(Vect3f(300,300,0));
+		grDispatcher::instance()->line(v0.x,v0.y,v1.x,v1.y,cl,2);
+
+		v0 = qdCamera::current_camera()->global2scr(Vect3f(-300,300,0));
+		v1 = qdCamera::current_camera()->global2scr(Vect3f(300,-300,0));
+		grDispatcher::instance()->line(v0.x,v0.y,v1.x,v1.y,cl,2);
+
 		if (qdGameConfig::get_config().debug_show_grid())
 			_camera.draw_grid();
 
@@ -624,7 +625,6 @@ bool qdGameScene::init_visible_objects_list() {
 	_visible_objects.clear();
 
 	for (auto &it : object_list()) {
-		qdGameObject *p = it;
 		it->update_screen_pos();
 		if (it->is_visible() && !it->check_flag(QD_OBJ_SCREEN_COORDS_FLAG)) {
 			_visible_objects.push_back(it);
