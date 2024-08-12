@@ -345,7 +345,7 @@ Common::KeyState ScummEngine::printMessageAndPause(const char *msg, int color, i
 			_string[2].xpos = 16;
 			_string[2].color = 0;
 		} else if (_game.platform == Common::kPlatformC64 || _game.platform == Common::kPlatformApple2GS) {
-			_string[2].color = 16;
+			_string[2].color = (_game.platform == Common::kPlatformApple2GS && !enhancementEnabled(kEnhVisualChanges)) ? 1 : 16;
 		} else {
 			_string[2].color = 13;
 		}

@@ -402,7 +402,7 @@ void ScummEngine_v0::decodeParseString() {
 	_string[textSlot].overhead = false;
 
 	if (_actorToPrintStrFor == 0xFF)
-		_string[textSlot].color = 14;
+		_string[textSlot].color = (_game.platform == Common::kPlatformApple2GS && !enhancementEnabled(kEnhVisualChanges)) ? 1 : 14;
 
 	actorTalk(buffer);
 }
@@ -444,7 +444,7 @@ void ScummEngine_v0::flushSentenceLine() {
 	_string[2].ypos = _virtscr[kVerbVirtScreen].topline + pixelYOffset;
 	_string[2].xpos = 0 + pixelXOffset;
 	_string[2].right = _virtscr[kVerbVirtScreen].w - 1 + pixelXOffset;
-	_string[2].color = 16;
+	_string[2].color = (_game.platform == Common::kPlatformApple2GS && !enhancementEnabled(kEnhVisualChanges)) ? 1 : 16;
 	drawString(2, (byte *)string);
 }
 

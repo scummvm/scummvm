@@ -167,9 +167,9 @@ void ScummEngine_v0::resetVerbs() {
 	for (i = 1; i < 16; i++) {
 		vs = &_verbs[i];
 		vs->verbid = vtable[i - 1].id;
-		vs->color = 5;
-		vs->hicolor = 7;
-		vs->dimcolor = 11;
+		vs->color = (_game.platform == Common::kPlatformApple2GS && !enhancementEnabled(kEnhVisualChanges)) ? 1 : 5;
+		vs->hicolor = (_game.platform == Common::kPlatformApple2GS && !enhancementEnabled(kEnhVisualChanges)) ? 1 : 7;
+		vs->dimcolor = (_game.platform == Common::kPlatformApple2GS && !enhancementEnabled(kEnhVisualChanges)) ? 1 : 11;
 		vs->type = kTextVerbType;
 		vs->charset_nr = _string[0]._default.charset;
 		vs->curmode = 1;
@@ -205,9 +205,9 @@ void ScummEngine_v2::initV2MouseOver() {
 		_hiLiteColorVerbArrow = _hiLiteColorInvSentence = 15;
 
 	if (_game.platform == Common::kPlatformC64 || _game.platform == Common::kPlatformApple2GS) {
-		color = 16;
-		_hiLiteColorVerbArrow = _hiLiteColorInvSentence = 7;
-		arrow_color = 6;
+		color = (_game.platform == Common::kPlatformApple2GS && !enhancementEnabled(kEnhVisualChanges)) ? 1 : 16;
+		_hiLiteColorVerbArrow = _hiLiteColorInvSentence = (_game.platform == Common::kPlatformApple2GS && !enhancementEnabled(kEnhVisualChanges)) ? 1 : 7;
+		arrow_color = (_game.platform == Common::kPlatformApple2GS && !enhancementEnabled(kEnhVisualChanges)) ? 1 : 6;
 	} else {
 		color = 13;
 		arrow_color = 1;

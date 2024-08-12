@@ -3510,7 +3510,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 		_charsetColor = _NES_talkColor;
 	} else {
 		a = derefActor(getTalkingActor(), "actorTalk(2)");
-		_charsetColor = a->_talkColor;
+		_charsetColor = (_game.platform == Common::kPlatformApple2GS && !enhancementEnabled(kEnhVisualChanges)) ? 1 : a->_talkColor;
 	}
 	_charsetBufPos = 0;
 	_talkDelay = 0;
