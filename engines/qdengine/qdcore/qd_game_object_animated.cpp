@@ -229,6 +229,9 @@ void qdGameObjectAnimated::redraw(int offs_x, int offs_y) const {
 
 	if (shadow_alpha() != QD_NO_SHADOW_ALPHA)
 		draw_shadow(offs_x, offs_y, shadow_color(), shadow_alpha());
+
+	if (g_engine->_debugDraw)
+		debug_redraw();
 }
 
 bool qdGameObjectAnimated::need_redraw() const {
@@ -818,6 +821,10 @@ void qdGameObjectAnimated::debug_redraw() const {
 	static Common::String buf;
 	if (get_debug_info(buf))
 		grDispatcher::instance()->drawText(scr_pos.x, scr_pos.y - 20, grDispatcher::instance()->make_rgb888(255, 255, 255), buf.c_str());
+
+	if (const qdGameObjectStateMask* st = dynamic_cast<const qdGameObjectStateMask*>(get_cur_state()))
+		st->draw_mask(grDispatcher::instance()->make_rgb(255,255,255));
+
 }
 
 bool qdGameObjectAnimated::hit(int x, int y) const {
