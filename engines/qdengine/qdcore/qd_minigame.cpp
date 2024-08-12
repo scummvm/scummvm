@@ -273,7 +273,8 @@ bool qdMiniGame::load_interface() {
 			return true;
 		} else if (_dll_name == "DLL\\Puzzle_ep01.dll" || _dll_name == "DLL\\Puzzle_ep02.dll"
 				|| _dll_name == "DLL\\Puzzle_ep04.dll" || _dll_name == "DLL\\Puzzle_ep05.dll"
-				|| _dll_name == "DLL\\Puzzle_ep07.dll" || _dll_name == "DLL\\Puzzle_ep08.dll") {
+				|| _dll_name == "DLL\\Puzzle_ep07.dll" || _dll_name == "DLL\\Puzzle_ep08.dll"
+				|| _dll_name == "DLL\\Puzzle_ep13.dll") {
 			_interface = new qdPuzzleAllMiniGameInterface(_dll_name, g_engine->getLanguage());
 			return true;
 		} else {
