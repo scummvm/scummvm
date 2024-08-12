@@ -653,9 +653,7 @@ void GrimEngine::playAspyrLogo() {
 		uint32 startTime = g_system->getMillis();
 
 		updateDisplayScene();
-		if (_doFlip) {
-			doFlip();
-		}
+		doFlip();
 		// Process events to allow the user to skip the logo.
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -957,7 +955,11 @@ void GrimEngine::drawNormalMode() {
 
 void GrimEngine::doFlip() {
 	_frameCounter++;
-	if (!_doFlip) {
+	// When possible, flip the buffer
+	// This makes sure the screen is refreshed on a regular basis
+	// The image is properly resized if needed and backend overlays are displayed
+	if (!_doFlip || (_mode == PauseMode)) {
+		g_driver->flipBuffer(true);
 		return;
 	}
 
@@ -1131,9 +1133,7 @@ void GrimEngine::mainLoop() {
 			updateDisplayScene();
 		}
 
-		if (_mode != PauseMode) {
-			doFlip();
-		}
+		doFlip();
 
 		// We do not want the scripts to update while a movie is playing in the PS2-version.
 		if (!(getGamePlatform() == Common::kPlatformPS2 && _mode == SmushMode)) {
