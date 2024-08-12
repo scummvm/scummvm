@@ -109,8 +109,10 @@ public:
 
 	/**
 	 *  Swap the buffers, making the drawn screen visible
+	 *
+	 *  @param opportunistic True when the flip can be avoided to spare CPU
 	 */
-	virtual void flipBuffer() = 0;
+	virtual void flipBuffer(bool opportunistic = false) = 0;
 
 	/**
 	 * FIXME: The implementations of these functions (for Grim and EMI, respectively)

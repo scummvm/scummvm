@@ -52,7 +52,7 @@ public:
 
 	void clearScreen() override;
 	void clearDepthBuffer() override;
-	void flipBuffer() override;
+	void flipBuffer(bool opportunistic = false) override;
 
 	bool isHardwareAccelerated() override;
 	bool supportsShaders() override;
