@@ -2404,18 +2404,11 @@ bool qdGameDispatcher::keyboard_handler(Common::KeyCode vkey, bool event) {
 				return true;
 			}
 			break;
-#ifdef __QD_DEBUG_ENABLE__
 		case Common::KEYCODE_F9:
-			qdGameConfig::get_config().toggle_debug_draw();
-			if (qdGameConfig::get_config().debug_draw()) {
-				if (!qdGameConfig::get_config().force_full_redraw())
-					qdGameConfig::get_config().toggle_full_redraw();
-			} else {
-				if (qdGameConfig::get_config().force_full_redraw())
-					qdGameConfig::get_config().toggle_full_redraw();
-			}
+			g_engine->_debugDraw = !g_engine->_debugDraw;
 			toggle_full_redraw();
 			return true;
+#ifdef __QD_DEBUG_ENABLE__
 		case Common::KEYCODE_F10:
 			write_resource_stats("memory_usage.html");
 			return true;
