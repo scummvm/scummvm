@@ -29,6 +29,12 @@
 
 namespace QDEngine {
 
+const int puzzle_ep08[] = {
+	217, 188, 337, 181, 462, 188, 575, 181, 224, 302,
+	338, 301, 462, 301, 582, 301, 217, 415, 337, 422,
+	462, 414, 575, 421
+};
+
 class qdPuzzleAllMiniGameInterface : public qdMiniGameInterface {
 public:
 	qdPuzzleAllMiniGameInterface(Common::String dll, Common::Language language) : _dll(dll), _language(language) {}
@@ -44,33 +50,11 @@ public:
 			return 0;
 
 		if (_dll == "DLL\\Puzzle_ep08.dll") {
-			_pieceCoords[0].y = 188;
-			_pieceCoords[1].y = 181;
-			_pieceCoords[2].x = 462;
-			_pieceCoords[2].y = 188;
-			_pieceCoords[3].y = 181;
-			_pieceCoords[6].x = 462;
-			_pieceCoords[10].x = 462;
-			_pieceCoords[0].x = 217;
-			_pieceCoords[1].x = 337;
-			_pieceCoords[3].x = 575;
-			_pieceCoords[4].x = 224;
-			_pieceCoords[4].y = 302;
-			_pieceCoords[5].x = 338;
-			_pieceCoords[5].y = 301;
-			_pieceCoords[6].y = 301;
-			_pieceCoords[7].x = 582;
-			_pieceCoords[7].y = 301;
-			_pieceCoords[8].x = 217;
-			_pieceCoords[8].y = 415;
-			_pieceCoords[9].x = 337;
-			_pieceCoords[9].y = 422;
-			_pieceCoords[10].y = 414;
-			_pieceCoords[11].x = 575;
-			_pieceCoords[11].y = 421;
+			_numPieces = 12;
+			_pieceCoords = puzzle_ep08;
 		}
 
-		for (int i = 0; i < 12; i++)
+		for (int i = 0; i < _numPieces; i++)
 			_pieces[i] = _scene->object_interface(Common::String::format("\xee\xe1\xfa\xe5\xea\xf2_%i", i + 1).c_str());	// "объект_%i"
 
 		_objFinal = _scene->object_interface("$\xf4\xe8\xed\xe0\xeb"); // "$финал"
@@ -113,7 +97,7 @@ public:
 			qdMinigameObjectInterface *mouseObj = _scene->mouse_object_interface();
 
 			if (_pieceIsPut) {
-				for (int i = 0; i < 12; i++) {
+				for (int i = 0; i < _numPieces; i++) {
 					if (_pieces[i]->is_state_active("to_inv_flag_0")
 							|| _pieces[i]->is_state_active("to_inv_flag_90")
 							|| _pieces[i]->is_state_active("to_inv_flag_180")
@@ -191,17 +175,17 @@ public:
 		if (_scene->mouse_object_interface())
 			return false;
 
-		for (int i = 0; i < 12; i++)
+		for (int i = 0; i < _numPieces; i++)
 			if (!_pieces[0]->is_state_active("0"))
 				return false;
 
 		mgVect2i piecePos;
 
-		for (int i = 0; i < 12; i++) {
+		for (int i = 0; i < _numPieces; i++) {
 			piecePos = _pieces[i]->screen_R();
 
-			if (ABS(_pieceCoords[i].x - piecePos.x) > 10 ||
-				ABS(_pieceCoords[i].y - piecePos.y) > 10)
+			if (ABS(_pieceCoords[i * 2 + 0] - piecePos.x) > 10 ||
+				ABS(_pieceCoords[i * 2 + 1] - piecePos.y) > 10)
 				return false;
 		}
 
@@ -220,19 +204,18 @@ public:
 		mgVect2i piecePos;
 		mgVect3f newPiecePos;
 
-		for (int i = 0; i < 12; i++) {
+		for (int i = 0; i < _numPieces; i++) {
 			piecePos = _pieces[i]->screen_R();
 			float depth = _scene->screen_depth(_pieces[i]->R());
 
 			if (_pieces[i]->is_state_active("0")) {
-				if (ABS(_pieceCoords[i].x - piecePos.x) <= 10) {
-					if (ABS(_pieceCoords[i].y - piecePos.y) <= 10) {
-						piecePos.x = _pieceCoords[i].x;
-						piecePos.y = _pieceCoords[i].y;
+				if (ABS(_pieceCoords[i * 2 + 0] - piecePos.x) <= 10 &&
+						ABS(_pieceCoords[i * 2 + 1] - piecePos.y) <= 10) {
+					piecePos.x = _pieceCoords[i * 2 + 0];
+					piecePos.y = _pieceCoords[i * 2 + 1];
 
-						newPiecePos = _scene->screen2world_coords(piecePos, depth);
-						_pieces[i]->set_R(newPiecePos);
-					}
+					newPiecePos = _scene->screen2world_coords(piecePos, depth);
+					_pieces[i]->set_R(newPiecePos);
 				}
 			}
 		}
@@ -273,7 +256,7 @@ private:
 	float findMinDepthPiece() {
 		float min = 100000.0;
 
-		for (int i = 0; i < 12; i++) {
+		for (int i = 0; i < _numPieces; i++) {
 			float depth = _scene->screen_depth(_pieces[i]->R());
 
 			if (min > depth)
@@ -287,8 +270,8 @@ private:
 	const qdEngineInterface *_engine = nullptr;
 	qdMinigameSceneInterface *_scene = nullptr;
 
-	qdMinigameObjectInterface *_pieces[12];
-	Vect2i _pieceCoords[12];
+	qdMinigameObjectInterface *_pieces[24];
+	const int *_pieceCoords;
 
 	qdMinigameObjectInterface *_objFinal = nullptr;
 	qdMinigameObjectInterface *_objRan = nullptr;
@@ -300,6 +283,8 @@ private:
 	int _rotatingPiece = -1;
 	bool _pieceIsPut = true;
 	int _currentPieceState = 0;
+
+	int _numPieces = 12;
 
 	Common::String _dll;
 	Common::Language _language;
