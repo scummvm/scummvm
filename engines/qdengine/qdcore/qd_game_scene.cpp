@@ -124,11 +124,11 @@ void qdGameScene::quant(float dt) {
 			_selected_object->set_queued_state(NULL);
 			_selected_object->move(pos, false);
 
-			// Для всех "следующих" нужно считать путь следования
+			// For all the followers, we need to calculate the follow path
 			follow_pers_init(qdGameObjectMoving::FOLLOW_UPDATE_PATH);
 
 			if (false == _selected_object->is_moving()) {
-				// Если активный не смог идти, но теоретически может, то он переходит в режим ожидания
+				// If the active one was not able to walk, but potentialy could, it goes inot a waiting mode
 				if (_selected_object->can_move())
 					_selected_object->set_follow_condition(qdGameObjectMoving::FOLLOW_WAIT);
 				else
@@ -326,9 +326,7 @@ void qdGameScene::load_script(const xml::tag *p) {
 			obj = new qdGameObjectMoving;
 			obj->load_script(&*it);
 			add_object(obj);
-//#ifndef _QUEST_EDITOR
 			personages_count++;
-//#endif
 			break;
 		case QDSCR_CAMERA:
 			_camera.load_script(&*it);
@@ -523,7 +521,7 @@ bool qdGameScene::activate() {
 	debugC(3, kDebugLog, "Activation of the scene, %s", transCyrillic(name()));
 	_camera.quant(0.0f);
 
-	// При активации сцены все объекты следования переводим в нормальное состояние
+	// During scene activation all the followers are moved to the normal state
 	follow_pers_init(qdGameObjectMoving::FOLLOW_DONE);
 
 	for (qdGameObjectList::const_iterator it = object_list().begin(); it != object_list().end(); ++it) {
@@ -891,7 +889,7 @@ void qdGameScene::set_active_personage(qdGameObjectMoving *p) {
 		dp->toggle_inventory(true);
 	}
 
-	follow_pers_init(qdGameObjectMoving::FOLLOW_DONE); // При смене активного останавливаем следование
+	follow_pers_init(qdGameObjectMoving::FOLLOW_DONE); // When the active actor is changed, we stop the followers
 	for (personages_container_t::iterator it = _personages.begin(); it != _personages.end(); ++it) {
 		if ((*it) != p && !(*it)->check_flag(QD_OBJ_NON_PLAYER_PERSONAGE_FLAG)) {
 			if ((*it)->check_flag(QD_OBJ_MOVING_FLAG)) {
@@ -1088,7 +1086,7 @@ void qdGameScene::update_mouse_cursor() {
 	}
 }
 
-// Пересечение прямоугольников с центрами в c* и с размерами gr*
+// Intersection of rectanfles with centers in c* and c and with sizes gr*
 bool inters3f(const Vect3f &c1, const Vect3f &sz1, const Vect3f &c2, const Vect3f &sz2) {
 	Vect3f a1, b1, a2, b2;
 	a1 = c1 - sz1 / 2;
@@ -1750,22 +1748,6 @@ bool qdGameScene::set_camera_mode(const qdCameraMode &mode, qdGameObjectAnimated
 	_camera.set_mode(mode, object);
 	return true;
 }
-
-#ifdef __QD_DEBUG_ENABLE__
-bool qdGameScene::get_resources_info(qdResourceInfoContainer &infos) const {
-	qdGameDispatcherBase::get_resources_info(infos);
-
-	for (qdGameObjectList::const_iterator io = object_list().begin(); io != object_list().end(); ++io) {
-		if ((*io)->named_object_type() == QD_NAMED_OBJECT_STATIC_OBJ) {
-			const qdSprite *sp = static_cast<const qdGameObjectStatic *>(*io)->get_sprite();
-			if (sp->resource_data_size())
-				infos.push_back(qdResourceInfo(sp, *io));
-		}
-	}
-
-	return true;
-}
-#endif
 
 void qdGameScene::start_minigame() {
 	if (_minigame)
