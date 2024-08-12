@@ -2657,7 +2657,7 @@ bool qdGameObjectMoving::can_change_state(const qdGameObjectState *state) const 
 }
 
 bool qdGameObjectMoving::toggle_grid_zone(bool make_walkable) {
-	debugC(3, kDebugMovement, "qdGameObject::toggle_grid_zone(%d)", make_walkable);
+	debugC(4, kDebugMovement, "qdGameObjectMoving::toggle_grid_zone(%d)", make_walkable);
 
 	if (make_walkable)
 		return drop_grid_zone_attributes(sGridCell::CELL_PERSONAGE_OCCUPIED);
