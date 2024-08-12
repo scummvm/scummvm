@@ -35,6 +35,12 @@ const int puzzle_ep01[] = {
 	464, 418, 577, 426
 };
 
+const int puzzle_ep02[] = {
+	218, 197, 335, 194, 465, 178, 579, 181, 220, 305,
+	347, 304, 473, 300, 582, 298, 222, 410, 342, 416,
+	469, 426, 579, 427
+};
+
 const int puzzle_ep07[] = {
 	199, 188, 276, 185, 362, 177, 444, 172, 531, 185,
 	601, 183, 202, 263, 282, 258, 362, 245, 440, 248,
@@ -56,20 +62,23 @@ public:
 
 	//! Инициализация игры.
 	bool init(const qdEngineInterface *engine_interface) {
-		debugC(1, kDebugMinigames, "PuzzleAll::init(), lang: %d", _language);
+		debugC(1, kDebugMinigames, "PuzzleAll::init(), dll: %s lang: %d", _dll.c_str(), _language);
 
 		_engine = engine_interface;
 		_scene = _engine->current_scene_interface();
 		if (!_scene)
 			return 0;
 
-		if (_dll == "DLL\\Puzzle_ep01.dll") {
+		if (_dll == "DLL\\Puzzle_ep01.dll") { // worm
 			_numPieces = 12;
 			_pieceCoords = puzzle_ep01;
-		} else if (_dll == "DLL\\Puzzle_ep07.dll") {
+		} else if (_dll == "DLL\\Puzzle_ep02.dll") { // mushrooms
+			_numPieces = 12;
+			_pieceCoords = puzzle_ep02;
+		} else if (_dll == "DLL\\Puzzle_ep07.dll") { // bears
 			_numPieces = 24;
 			_pieceCoords = puzzle_ep07;
-		} else if (_dll == "DLL\\Puzzle_ep08.dll") {
+		} else if (_dll == "DLL\\Puzzle_ep08.dll") { // house
 			_numPieces = 12;
 			_pieceCoords = puzzle_ep08;
 		}
