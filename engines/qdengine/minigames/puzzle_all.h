@@ -47,6 +47,12 @@ const int puzzle_ep04[] = {
 	218, 400, 313, 408, 418, 386, 504, 387, 588, 384
 };
 
+const int puzzle_ep05[] = {
+	205, 223, 297, 223, 404, 194, 503, 189, 601, 203,
+	217, 316, 305, 306, 415, 287, 503, 262, 586, 284,
+	217, 397, 312, 405, 417, 384, 503, 384, 587, 382
+};
+
 const int puzzle_ep07[] = {
 	199, 188, 276, 185, 362, 177, 444, 172, 531, 185,
 	601, 183, 202, 263, 282, 258, 362, 245, 440, 248,
@@ -84,6 +90,9 @@ public:
 		} else if (_dll == "DLL\\Puzzle_ep04.dll") { // bird
 			_numPieces = 15;
 			_pieceCoords = puzzle_ep04;
+		} else if (_dll == "DLL\\Puzzle_ep05.dll") { // forest
+			_numPieces = 15;
+			_pieceCoords = puzzle_ep05;
 		} else if (_dll == "DLL\\Puzzle_ep07.dll") { // bears
 			_numPieces = 24;
 			_pieceCoords = puzzle_ep07;
