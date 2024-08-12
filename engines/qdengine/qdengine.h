@@ -107,6 +107,7 @@ public:
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
 	int _thumbSizeX = 0, _thumbSizeY = 0;
+	bool _debugDraw = false;
 };
 
 extern QDEngineEngine *g_engine;
