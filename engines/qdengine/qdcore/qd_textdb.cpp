@@ -24,19 +24,27 @@
 #include "qdengine/qd_fwd.h"
 #include "qdengine/qdcore/qd_textdb.h"
 
-
 namespace QDEngine {
+
+qdTextDB *g_textDB = nullptr;
 
 qdTextDB::qdTextDB() {
 }
 
 qdTextDB::~qdTextDB() {
 	clear();
+
+	if (g_textDB)
+		delete g_textDB;
+
+	g_textDB = nullptr;
 }
 
 qdTextDB &qdTextDB::instance() {
-	static qdTextDB db;
-	return db;
+	if (!g_textDB)
+		g_textDB = new qdTextDB;
+
+	return *g_textDB;
 }
 
 const char *qdTextDB::getText(const char *text_id) const {
