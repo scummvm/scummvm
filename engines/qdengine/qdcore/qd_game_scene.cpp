@@ -106,7 +106,7 @@ void qdGameScene::quant(float dt) {
 	collision_quant();
 
 	if (_camera.quant(dt)) {
-		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
+		if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher()) {
 			debugC(3, kDebugQuant, "qdGameScene::quant(%f) _camera", dt);
 			dp->toggle_full_redraw();
 		}
@@ -178,7 +178,7 @@ void qdGameScene::redraw() {
 
 			switch (flags() & (CYCLE_X | CYCLE_Y)) {
 			case CYCLE_X:
-				for (Std::vector<qdGameObject * >::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it) {
+				for (Std::vector<qdGameObject *>::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it) {
 					for (int i = 0; i < 8; i += 4) {
 						Vect2i pos = (*it)->screen_pos() + Vect2i(offs_x[i], offs_y[i]);
 						Vect2i sz = (*it)->screen_size();
@@ -192,7 +192,7 @@ void qdGameScene::redraw() {
 				}
 				break;
 			case CYCLE_Y:
-				for (Std::vector<qdGameObject * >::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it) {
+				for (Std::vector<qdGameObject *>::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it) {
 					for (int i = 2; i < 8; i += 4) {
 						Vect2i pos = (*it)->screen_pos() + Vect2i(offs_x[i], offs_y[i]);
 						Vect2i sz = (*it)->screen_size();
@@ -206,7 +206,7 @@ void qdGameScene::redraw() {
 				}
 				break;
 			case CYCLE_X | CYCLE_Y:
-				for (Std::vector<qdGameObject * >::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it) {
+				for (Std::vector<qdGameObject *>::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it) {
 					for (int i = 0; i < 8; i++) {
 						Vect2i pos = (*it)->screen_pos() + Vect2i(offs_x[i], offs_y[i]);
 						Vect2i sz = (*it)->screen_size();
@@ -221,7 +221,7 @@ void qdGameScene::redraw() {
 				break;
 			}
 		} else {
-			for (Std::vector<qdGameObject * >::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it)
+			for (Std::vector<qdGameObject *>::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it)
 				(*it)->redraw();
 		}
 	}
@@ -235,13 +235,13 @@ bool qdGameScene::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
 
 	switch (ev) {
 	case mouseDispatcher::EV_MOUSE_MOVE:
-		if (qdInterfaceDispatcher * dp = qdInterfaceDispatcher::get_dispatcher()) {
+		if (qdInterfaceDispatcher *dp = qdInterfaceDispatcher::get_dispatcher()) {
 			if (dp->is_mouse_hover()) {
 				result = false;
 				break;
 			}
 		}
-		for (Std::vector<qdGameObject * >::iterator io = _visible_objects.begin(); io != _visible_objects.end(); ++io) {
+		for (Std::vector<qdGameObject *>::iterator io = _visible_objects.begin(); io != _visible_objects.end(); ++io) {
 			if (!(*io)->check_flag(QD_OBJ_DISABLE_MOUSE_FLAG) && (*io)->named_object_type() != QD_NAMED_OBJECT_STATIC_OBJ) {
 				if ((*io)->hit(x, y)) {
 					_mouse_hover_object = *io;
@@ -252,7 +252,7 @@ bool qdGameScene::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
 		break;
 	case mouseDispatcher::EV_LEFT_DOWN:
 	case mouseDispatcher::EV_RIGHT_DOWN: {
-		if (qdInterfaceDispatcher * dp = qdInterfaceDispatcher::get_dispatcher()) {
+		if (qdInterfaceDispatcher *dp = qdInterfaceDispatcher::get_dispatcher()) {
 			if (dp->is_mouse_hover()) {
 				result = false;
 				break;
@@ -276,7 +276,7 @@ bool qdGameScene::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) {
 }
 
 qdGameObject *qdGameScene::get_hitted_obj(int x, int y) {
-	for (Std::vector<qdGameObject * >::iterator io = _visible_objects.begin(); io != _visible_objects.end(); ++io) {
+	for (Std::vector<qdGameObject *>::iterator io = _visible_objects.begin(); io != _visible_objects.end(); ++io) {
 		if (!(*io)->check_flag(QD_OBJ_DISABLE_MOUSE_FLAG) && (*io)->named_object_type() != QD_NAMED_OBJECT_STATIC_OBJ)
 			if ((*io)->hit(x, y))
 				return (*io);
@@ -345,7 +345,7 @@ void qdGameScene::load_script(const xml::tag *p) {
 			xml::tag_buffer(*it) > _autosave_slot;
 			break;
 		case QDSCR_INTERFACE_SCREEN:
-			if (const xml::tag * name_tag = it->search_subtag(QDSCR_NAME))
+			if (const xml::tag *name_tag = it->search_subtag(QDSCR_NAME))
 				set_interface_screen_name(name_tag->data());
 			break;
 		}
@@ -356,7 +356,7 @@ void qdGameScene::load_script(const xml::tag *p) {
 
 	for (qdGameObjectList::const_iterator it = object_list().begin(); it != object_list().end(); ++it) {
 		if ((*it)->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ)
-			_personages.push_back(static_cast<qdGameObjectMoving * >(*it));
+			_personages.push_back(static_cast<qdGameObjectMoving *>(*it));
 	}
 
 	_camera.set_cycle(check_flag(CYCLE_X), check_flag(CYCLE_Y));
@@ -451,7 +451,7 @@ int qdGameScene::load_resources() {
 }
 
 void qdGameScene::free_resources() {
-	if (qdGameDispatcher * dp = qd_get_game_dispatcher()) {
+	if (qdGameDispatcher *dp = qd_get_game_dispatcher()) {
 		if (dp->current_music() && !dp->current_music()->check_flag(QD_MUSIC_TRACK_DISABLE_SWITCH_OFF))
 			dp->stop_music();
 	}
@@ -487,7 +487,7 @@ void qdGameScene::debug_redraw() {
 			*/
 		}
 
-		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
+		if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher()) {
 			if (dp->current_music()) {
 				grDispatcher::instance()->drawText(10, 130, grDispatcher::instance()->make_rgb888(255, 255, 255), dp->current_music()->file_name());
 			}
@@ -508,7 +508,7 @@ void qdGameScene::debug_redraw() {
 		if (qdGameConfig::get_config().debug_show_grid())
 			_camera.draw_grid();
 
-		for (Std::vector<qdGameObject * >::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it)
+		for (Std::vector<qdGameObject *>::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it)
 			(*it)->debug_redraw();
 	}
 }
@@ -526,14 +526,14 @@ bool qdGameScene::activate() {
 
 	for (qdGameObjectList::const_iterator it = object_list().begin(); it != object_list().end(); ++it) {
 		(*it)->init_grid_zone();
-		if (qdGameObjectAnimated * p = dynamic_cast<qdGameObjectAnimated * >(*it))
+		if (qdGameObjectAnimated * p = dynamic_cast<qdGameObjectAnimated *>(*it))
 			p->set_states_owner();
 	}
 
 	qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher();
 
 	for (personages_container_t::iterator it = _personages.begin(); it != _personages.end(); ++it) {
-		if (qdGameObjectState * p = dp->get_walk_state((*it)->name()))
+		if (qdGameObjectState *p = dp->get_walk_state((*it)->name()))
 			(*it)->set_last_walk_state(p);
 	}
 
@@ -772,7 +772,7 @@ bool qdGameScene::load_data(Common::SeekableReadStream &fh, int save_version) {
 
 		_zone_update_count = 0;
 
-		for (Std::vector<qdGridZone * >::iterator it = zone_order.begin(); it != zone_order.end(); ++it)
+		for (Std::vector<qdGridZone *>::iterator it = zone_order.begin(); it != zone_order.end(); ++it)
 			(*it)->set_state((*it)->state());
 	}
 
@@ -782,14 +782,14 @@ bool qdGameScene::load_data(Common::SeekableReadStream &fh, int save_version) {
 		if (!ref.load_data(fh, save_version))
 			return false;
 
-		if (qdGameDispatcher * p = qd_get_game_dispatcher())
-			_selected_object = static_cast<qdGameObjectMoving * >(p->get_named_object(&ref));
+		if (qdGameDispatcher *p = qd_get_game_dispatcher())
+			_selected_object = static_cast<qdGameObjectMoving *>(p->get_named_object(&ref));
 
 		if (!_selected_object) return false;
 
 		_selected_object->toggle_selection(true);
 
-		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher())
+		if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher())
 			dp->toggle_inventory(true);
 	} else
 		_selected_object = NULL;
@@ -864,7 +864,7 @@ bool qdGameScene::save_data(Common::WriteStream &fh) const {
 
 void qdGameScene::set_active_object(qdGameObjectAnimated *p) {
 	if (p->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ)
-		set_active_personage(static_cast<qdGameObjectMoving * >(p));
+		set_active_personage(static_cast<qdGameObjectMoving *>(p));
 }
 
 void qdGameScene::set_active_personage(qdGameObjectMoving *p) {
@@ -885,7 +885,7 @@ void qdGameScene::set_active_personage(qdGameObjectMoving *p) {
 		_camera.set_default_mode(p->camera_mode());
 	}
 
-	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
+	if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher()) {
 		dp->toggle_inventory(true);
 	}
 
@@ -918,7 +918,7 @@ bool qdGameScene::init() {
 		it->init();
 
 	if (has_minigame() && !_minigame) {
-		if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher())
+		if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher())
 			_minigame = dp->get_minigame(minigame_name());
 
 		if (_minigame)
@@ -1016,7 +1016,7 @@ void qdGameScene::post_redraw() {
 }
 
 qdConditionalObject::trigger_start_mode qdGameScene::trigger_start() {
-	if (qdGameDispatcher * dp = qd_get_game_dispatcher()) {
+	if (qdGameDispatcher *dp = qd_get_game_dispatcher()) {
 		dp->set_next_scene(this);
 
 		if (check_flag(RESET_TRIGGERS_ON_LOAD))
@@ -1031,7 +1031,7 @@ qdConditionalObject::trigger_start_mode qdGameScene::trigger_start() {
 }
 
 bool qdGameScene::is_active() const {
-	if (qdGameDispatcher * dp = qd_get_game_dispatcher())
+	if (qdGameDispatcher *dp = qd_get_game_dispatcher())
 		return (dp->get_active_scene() == this);
 
 	return false;
@@ -1042,7 +1042,7 @@ void qdGameScene::update_mouse_cursor() {
 	if (!dp) return;
 
 	if (dp->mouse_object()->object()) {
-		if (const qdGameObjectState * p = dp->mouse_object()->object()->get_cur_state()) {
+		if (const qdGameObjectState *p = dp->mouse_object()->object()->get_cur_state()) {
 			if (p->has_mouse_cursor_ID()) {
 				dp->mouse_object()->set_cursor_state(p->mouse_cursor_ID());
 				return;
@@ -1054,7 +1054,7 @@ void qdGameScene::update_mouse_cursor() {
 		int cursor = qdGameObjectState::CURSOR_UNASSIGNED;
 		qdGameObjectMouse::cursor_ID_t obj_cursor = qdGameObjectMouse::OBJECT_CURSOR;
 
-		if (const qdGameObjectAnimated * obj = dynamic_cast<const qdGameObjectAnimated * >(_mouse_hover_object)) {
+		if (const qdGameObjectAnimated *obj = dynamic_cast<const qdGameObjectAnimated *>(_mouse_hover_object)) {
 			if (!obj->get_cur_state()->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY))
 				cursor = obj->mouse_cursor_ID();
 			else
@@ -1070,7 +1070,7 @@ void qdGameScene::update_mouse_cursor() {
 
 		qdInterfaceDispatcher *ip = qdInterfaceDispatcher::get_dispatcher();
 		if (ip && ip->is_mouse_hover()) {
-			if (qdGameDispatcher * dsp = qdGameDispatcher::get_dispatcher())
+			if (qdGameDispatcher *dsp = qdGameDispatcher::get_dispatcher())
 				mouse_cursor = qdGameObjectMouse::INGAME_INTERFACE_CURSOR;
 		} else {
 			Vect2f r = _camera.scr2plane(Vect2s(dp->mouse_cursor_pos().x, dp->mouse_cursor_pos().y));
@@ -1408,7 +1408,7 @@ void qdGameScene::follow_circuit(float dt) {
 			if (!inters2s(it1_next_pos, it1_next_grid, it2_next_pos, it2_next_grid)) {
 				// Если it2 с которым НЕ пересекся текущий, которого обходим
 				// то удаляем его из списка обходимых текущим
-				for (Std::vector<const qdGameObjectMoving * >::iterator cir_it = (*it1)->ref_circuit_objs().begin();
+				for (Std::vector<const qdGameObjectMoving *>::iterator cir_it = (*it1)->ref_circuit_objs().begin();
 				        cir_it != (*it1)->ref_circuit_objs().end(); ++cir_it)
 					if ((*cir_it) == (*it2)) {
 						(*it1)->ref_circuit_objs().erase(cir_it);
@@ -1427,7 +1427,7 @@ void qdGameScene::follow_circuit(float dt) {
 
 			// Если it1 пытается обойти it2, то не учитываем их пересечение
 			bool it2_is_circuit = false;
-			for (Std::vector<const qdGameObjectMoving * >::iterator cir_it = (*it1)->ref_circuit_objs().begin();
+			for (Std::vector<const qdGameObjectMoving *>::iterator cir_it = (*it1)->ref_circuit_objs().begin();
 			        cir_it != (*it1)->ref_circuit_objs().end(); ++cir_it)
 				if ((*cir_it) == (*it2)) {
 					it2_is_circuit = true;
@@ -1647,7 +1647,7 @@ void qdGameScene::personages_quant() {
 			if ((*it)->is_visible()) {
 				if (!(*it)->button()->is_visible()) {
 					(*it)->button()->show();
-					if (qdInterfaceScreen * sp = dynamic_cast<qdInterfaceScreen * >((*it)->button()->owner()))
+					if (qdInterfaceScreen *sp = dynamic_cast<qdInterfaceScreen *>((*it)->button()->owner()))
 						sp->build_visible_elements_list();
 				}
 
@@ -1714,7 +1714,7 @@ void qdGameScene::create_minigame_objects() {
 	Common::String name_buf;
 	for (qdMiniGame::config_container_t::const_iterator it = _minigame->config().begin(); it != _minigame->config().end(); ++it) {
 		if (it->data_type() == qdMinigameConfigParameter::PRM_DATA_OBJECT) {
-			if (const qdGameObject * obj = get_object(it->data_string())) {
+			if (const qdGameObject *obj = get_object(it->data_string())) {
 				for (int i = 0; i < it->data_count(); i++) {
 					name_buf = Common::String::format("%s%03d", obj->name(), i);
 
