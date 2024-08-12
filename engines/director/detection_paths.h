@@ -30,7 +30,6 @@ const char *const directoryGlobs[] = {
 	"data",
 	"gadget",						// Gadget
 	"program",						// Arc Media products
-	"demodata",						// Edmark demos
 	"media",						// Gundam
 	"mvm",							// Master of the Elements
 	"module_1",
@@ -43,9 +42,6 @@ const char *const directoryGlobs[] = {
 	"data_1",
 	"data_2",						// JumpStart World
 	"numbers",						// JumpStart Learning Games
-	"xtras",
-	"files",						// Babar
-	"swanlake",						// Barbie Swan Lake
 	"fjpc",							// Forestia Jr
 	"movies",						// Mulle Meck (Gary Gadget) series
 	"winroot",
@@ -92,10 +88,6 @@ const char *const directoryGlobs[] = {
 	"95instal",						// Fisher-Price Little People
 	"freading",
 	"fsetup",						// My First Reading Words (Eureka)
-	"english",
-	"deutsch",
-	"francais",						// Rename from Français
-	"italiano",						// Virtual Tourism Paris
 	"popup",						// Pop Up Computer
 	"alpha",						// Interactive Alphabet
 	"technik",						// Glasklar Technology Interactive
@@ -107,22 +99,14 @@ const char *const directoryGlobs[] = {
 	"file",
 	"mfile",
 	"movie",						// Teichiku demos
-	"install_mac",
-	"install_win",
-	"copyto_hd",					// Incarnatia
-	"alcohol 101",
-	"audio",
-	"print",
-	"vids",							// Alcohol 101
 	"scr",
 	"scr_mov",						// Cardcaptor Sakura screen savers
 	"docs",							// Enhanced CDs
 	"lingo expo",					// D4 sample movies
 	"main",							// Meet MediaBand
-	"toinstall",					// Jönssonligan series
 	"bellinin bikinit",				// Bellini 3 (Finnish)
-	"abc",							// Alphabet Train
-	"123",							// Ktar Alarkam
+//	"abc",							// Alphabet Train
+//	"123",							// Ktar Alarkam
 	"vlaams",
 	"ned",							// I Spy School Days (Dutch)
 	"fl1",
@@ -130,17 +114,8 @@ const char *const directoryGlobs[] = {
 	"cipdemo",
 	"cipher",						// Jewels of the Oracle
 	"gems",							// Gems of Darkness / Jewels II
-	"knights",						// Nikolai's Knights
-	"nemcina",						// Německá gramatika
 	"hdfiles",
 	"creator",						// Get a Head series
-	"32bit",
-	"sd",
-	"mac install",
-	"slam dunk typing",
-	"typing",						// Slam Dunk Typing
-	"ceremony",
-	"copytohd",						// Ceremony of Innocence
 	"xn--t8jo8k",					// Perfect Blue screen savers
 	"maccurio",
 	"wincurio",						// Curio City
@@ -152,11 +127,6 @@ const char *const directoryGlobs[] = {
 	"bin",
 	"adam resources",				// ADAM Software Products
 	"NAV",
-	"InsMilo",						// Milo and the Magical Stones
-	"dir",
-	"CHRISTMAS PRESENT",			// Christmas Present
-	"Subotnick Hummingbirds",		// All My Hummingbirds Have Alibis
-	"Silly Noisy House Folder",		// A Silly Noisy House
 	"Daedalus Max",					// The Daedalus Encounter
 	0
 };

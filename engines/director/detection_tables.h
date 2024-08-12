@@ -2336,7 +2336,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("amandastories", "B/W Sampler", "AmandaStories Sampler b", "f7e64a59fd292a32defb4c501c77aa0e", 822656, 311),
 
 	// Uses audio tracks
-	MACGAME1("amhha", "", "All My Hummingbirds Have Alibis", "9c97c1cbf6f01697685d3aac1d882526", 1356802, 300),
+	MACGAME1("amhha", "", "Subotnick Hummingbirds/All My Hummingbirds Have Alibis", "r:9c97c1cbf6f01697685d3aac1d882526", 1356802, 300),
 
 	// From Macintosh Demo Software Zenshuu CD-ROM '94 Disc 3
 	// Original filename is アニマルタウンデモ版
@@ -3121,10 +3121,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// German version (Das Bi-Ba-Butze-Haus) published by Systhema, Munich (1995) and later by Rowohlt-Systhema (1999)
 	// 1999 version is D4
 	// Sampler from Apple CD-ROM Titles Sampler
-	MACGAME1("snh", "", "A Silly Noisy House", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 353764, 300),
-	MACGAME1("snh", "Hybrid release", "A Silly Noisy House", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 356886, 300),
-	WINGAME1t("snh", "Hybrid release", "SNH.EXE", "6b1c74a8dbe1f083ee942859016d3345", 378901, 310),
-	MACDEMO1("snh", "Sampler", "Silly Noisy House Sampler", "2064fd9b1871f02d216d20e92019a7ac", 1592078, 311),
+	MACGAME1("snh", "",				   "Silly Noisy House Folder/A Silly Noisy House", "r:9f0bb7ec7720e4f680ee3aa3d22c1c9d", 353764, 300),
+	MACGAME1("snh", "Hybrid release",  "Silly Noisy House Folder/A Silly Noisy House", "r:9f0bb7ec7720e4f680ee3aa3d22c1c9d", 356886, 300),
+	WINGAME1("snh", "Hybrid release",  "SNH.EXE",									   "t:6b1c74a8dbe1f083ee942859016d3345", 378901, 310),
+	MACDEMO1("snh", "Sampler",		   "Silly Noisy House Sampler",					   "r:2064fd9b1871f02d216d20e92019a7ac", 1592078, 311),
 
 	// Game is HyperCard based. Movies will play with --start-movie from console.
 	MACGAME1("spelunx", "v2.01 Color", "Spelunx", "8c4ac0488e92704a257698ee45affea5", 1208328, 313),
@@ -5104,10 +5104,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Published by Corel CD Home. Later released as Nikolai's Knights.
 	// Original Mac filename is In the Time of the Knights™
-	MACGAME2("nikolaiknights", "Corel", "xn--In the Time of the Knights-jf8p", "da0da5d543b237051975ad70bec129f4", 488222,
-										"1_TIME.DXR", "75d8d359ae371ba60967177e8f3ce48b", 1720524, 404),
-	WINGAME2("nikolaiknights", "Corel", "KNIGHTS.EXE", "5ab667a256a0c334e9adca78564dbc5d", 740436,
-										"1_TIME.DXR", "75d8d359ae371ba60967177e8f3ce48b", 1720524, 404),
+	MACGAME2("nikolaiknights", "Corel", "KNIGHTS/xn--In the Time of the Knights-jf8p", "rt:5476497f10d40d59cd94df7197ffddc2", 488222,
+										"KNIGHTS/1_TIME.DXR",						   "d:75d8d359ae371ba60967177e8f3ce48b", 1720524, 404),
+	WINGAME2("nikolaiknights", "Corel", "KNIGHTS/KNIGHTS.EXE", "t:eb47d26b5a95ac2263763937e5a7e253",  740436,
+										"KNIGHTS/1_TIME.DXR",  "d:75d8d359ae371ba60967177e8f3ce48b", 1720524, 404),
 
 	// Later released as Nikolai's Toys
 	// Original Mac filename is NN’nN Toy Makers™
@@ -5236,10 +5236,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1_l("paris", "Demo", "DPARISPC.EXE", "875af2a4007c6ec11939ca0cc1f380d5", 719579, Common::FR_FRA, 404),
 
 	// All four languages found on Apple Europe Edition CD
-	MACGAME1("parisvt",	  "", "Virtual Tourism PARIS (E)", "a8e65a2268226bd59f12ebdc58a221f3", 483746, 404),
-	MACGAME1_l("parisvt", "", "Virtual Tourism PARIS (D)", "a8e65a2268226bd59f12ebdc58a221f3", 483746, Common::DE_DEU, 404),
-	MACGAME1_l("parisvt", "", "Virtual Tourism PARIS (F)", "a8e65a2268226bd59f12ebdc58a221f3", 483746, Common::FR_FRA, 404),
-	MACGAME1_l("parisvt", "", "Virtual Tourism PARIS (I)", "a8e65a2268226bd59f12ebdc58a221f3", 483746, Common::IT_ITA, 404),
+	MACGAME1("parisvt",	  "", "English/Virtual Tourism PARIS (E)/Virtual Tourism PARIS (E)",		 "rt:0076b2296ff30d26ca43e20183c6eed8", 483490, 404),
+	MACGAME1_l("parisvt", "", "Deutsch/Virtual Tourism PARIS (D)/Virtual Tourism PARIS (D)",		 "rt:0a3796c0d841786c5ce1a2daded1bdec", 483490, Common::DE_DEU, 404),
+	MACGAME1_l("parisvt", "", "xn--Franais-xxa/Virtual Tourism PARIS (F)/Virtual Tourism PARIS (F)", "rt:cd04f850dfa1b7433248fee5cff60d7b", 483490, Common::FR_FRA, 404),
+	MACGAME1_l("parisvt", "", "Italiano/Virtual Tourism PARIS (I)/Virtual Tourism PARIS (I)",		 "rt:1b58f433d7db9a3d1e9d02fa533aac22", 483490, Common::IT_ITA, 404),
 
 	// Original filename is 'ぱそすけPPC'
 	MACGAME1_l("pasosuke", "", "xn--PPC-873bpbxa3l", "6822defa470ade9836e0d90f365a035c", 58401, Common::JA_JPN, 404),
@@ -5954,8 +5954,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("xaxa", "", "XAXA MACHINE", "ff0b7a4b925c7345785c372d618d0967", 342977, Common::JA_JPN, 400),
 
-	MACGAME1_l("xmaspresent", "", "Christmas Present", "8b138db44d4421cc7294a9dc792ccf1b", 308920, Common::JA_JPN, 402),
-	MACGAME1_l("xmaspresent", "Music", "xn-- MUSIC -", "75e98233db68c83153cb1d6cfd601286", 310000, Common::JA_JPN, 402),
+	MACGAME1_l("xmaspresent", "", "CHRISTMAS PRESENT/Christmas Present", "rt:9576fc48f465de7add09d3e5dffe0287", 308920, Common::JA_JPN, 402),
+	MACGAME1_l("xmaspresent", "Music", "xn-- MUSIC -", "r:75e98233db68c83153cb1d6cfd601286", 310000, Common::JA_JPN, 402),
 
 	// Pippin version is D5
 	// Published by Oxford Multimedia (1995)
@@ -6053,9 +6053,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("activamulti4", "", "ACTIVA95.EXE",		 "t:65d1666993d75ef90be3148adad3f65f", 1393845, Common::PT_PRT, 500),
 
 	// Installers for both platforms also use Director
-	MACGAME1("alcohol101", "", "Let's Party", "2d2ac01320f4c2dce8e156cda5c73fe8", 719289, 501),
-	WINGAME2("alcohol101", "", "START95.EXE",  "1a7acbba10a7246ba58c1d53fc7203f5", 1411661,
-							   "INTRO.DXR",	   "de5b5bbc9cc4659b3a6464efffd22fb9", 903418, 501),
+	MACGAME1("alcohol101", "", "Alcohol 101/Let's Party", "rt:d2a2a971c984e8bc33f8a2a2f73d22cb", 719033, 501),
+	WINGAME2("alcohol101", "", "INSTALL/START95.EXE",	  "t:e2324b703c318aca206f32c349b4ff69", 1411661,
+							   "INSTALL/INTRO.DXR",		  "d:de5b5bbc9cc4659b3a6464efffd22fb9",  903418, 501),
 
 	WINDEMO1_l("almabril98", "Demo", "DEMO AA98 START.EXE", "3460ad87d2ba57104e2810a77b53c220", 4180353, Common::PT_BRA, 500),
 
@@ -6373,9 +6373,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("easybass", "", "WIN95.EXE",	"1a7acbba10a7246ba58c1d53fc7203f5", 1411387,
 							 "322MAIN.DXR", "5f66f50a682be582b7b88444945b45df", 1007992, 501),
 
-	MACGAME1("edmark", "", "Edmark Demo", "d0f3aedb1f7c46853243b6a560440dd7", 705613, 500),
-	WINGAME2("edmark", "", "DEMO.EXE",	  "2e62abdad839e42068afdcd0644d7dcf", 917547,
-						   "MAININT",	  "1e995592236894b843c3853906bbee1d", 2935876, 500),
+	MACGAME1("edmark", "", "Edmark Demo",	   "r:d0f3aedb1f7c46853243b6a560440dd7",  705357, 500),
+	WINGAME2("edmark", "", "DEMO.EXE",		   "t:dcca460545798a5758900e160a8a7f58",  917547,
+						   "DEMODATA/MAININT", "d:1e995592236894b843c3853906bbee1d", 2935876, 500),
 
 	WINGAME1("egjewel", "", "wcsup.dll", "t:b05f9720561eea331dc5f9916698e688", 1912675, 500),
 	WINGAME1("egpeggy", "", "wcsup.dll", "t:c49572b3e8ca3a565e2ccbb32110a4a0", 1850711, 500),
@@ -6566,8 +6566,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("ichsehewas", "", "ichsehewas.exe", "t:f5127fbc00272caecc04eccd6bb69eca", 1436195, Common::DE_DEU, 501),
 
 	// Installers for both platforms also use Director
-	MACGAME1_l("incarnatia", "", "incarnatia_PowerMac", "2e7d373f75c014be20cfb04c5cd65dae", 108480, Common::JA_JPN, 501),
-	WINGAME1_l("incarnatia", "", "incarnatia_Win.exe", "38b75ecdedf662326fe4931a68ae60cd", 1414152, Common::JA_JPN, 501),
+	MACGAME1_l("incarnatia", "", "Install_Mac/CopyTo_HD/incarnatia_PowerMac", "r:2e7d373f75c014be20cfb04c5cd65dae",  108480, Common::JA_JPN, 501),
+	WINGAME1_l("incarnatia", "", "Install_Win/CopyTo_HD/incarnatia_Win.exe",  "t:7c640323fff4890486c5fbabb177ce29", 1414152, Common::JA_JPN, 501),
 
 	// Australian Broadcasting Corporation (ABC) has made this available for free download
 	// https://www.abc.net.au/science/ingenious/patch.htm
@@ -6814,15 +6814,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("nekojiruudonss", "Taikyoku sample", "TAIKYOKU", "82def1f3b9980018ed9b662893884546", 717613, 501),
 
 	// Found on PC World (Czechia) Sept 2003
-	WINGAME2_l("nemcina", "", "START_32.EXE", "3460ad87d2ba57104e2810a77b53c220", 1710313,
-							  "CVIC.DXR",     "8f12d20e12dddc2fc3207e1f4e571d17", 23223862, Common::CS_CZE, 500),
+	WINGAME2_l("nemcina", "", "START_32.EXE",	  "t:8f4c8e7a2872fd933018a2727c70cbb8",  1710313,
+							  "NEMCINA/CVIC.DXR", "d:8f12d20e12dddc2fc3207e1f4e571d17", 23223862, Common::CS_CZE, 500),
 
 	MACGAME1("nickmemory", "", "Memory Challenge", "cb5fe0ca2ddb43abe9996ef569918a53", 703153, 500),
 
 	// All original Mac filenames end with ™
 	// Nikolai in Outer Space did not get a Mac release
-	MACGAME1("nikolaiknights", "v2.0", "Nikolai's Knights",   "c43bfadda9be111e461dc0b735430ad3", 720690, 501),
-	WINGAME1("nikolaiknights", "v2.0", "KNIGHT95.EXE",         "1a7acbba10a7246ba58c1d53fc7203f5", 1410541, 501),
+	MACGAME1("nikolaiknights", "v2.0", "KNIGHTS/xn--Nikolai's Knights-306j", "rt:f59bf846b603e48260eec31d74dfebcf", 720434, 501),
+	WINGAME1("nikolaiknights", "v2.0", "KNIGHTS/KNIGHT95.EXE",				 "t:77ea4188243300aba4ae8578e47227a2", 1410541, 501),
 
 	MACGAME1("nikolaimystery", "",     "Nikolai's Mysteries", "c43bfadda9be111e461dc0b735430ad3", 719241, 501),
 
@@ -7133,11 +7133,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Developed by Mary Boies Software, published by Creative Wonders
 	// Windows version also found in Middle School Advantage 2001 bundle
-	MACGAME1("slamdunktyping", "",     "Mac Install/Slam Dunk Typing/Slam Dunk Typing", "5683c6b3956a3bca7fb5fc5bbb237984", 718945, 501),
-	WINGAME1("slamdunktyping", "",     "INSTALL/SD/32BIT/SDT95.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1840781, 501),
+	MACGAME1("slamdunktyping", "",     "Mac Install/Slam Dunk Typing/Slam Dunk Typing", "r:5683c6b3956a3bca7fb5fc5bbb237984", 718945, 501),
+	WINGAME1("slamdunktyping", "",     "INSTALL/SD/32BIT/SDT95.EXE", "t:0fd10f0b384c52b8a3407d9b51e3785e", 1840781, 501),
 	WINDEMO1("slamdunktyping", "Demo", "SDTDEMO.EXE",				 "t:8a289cf740ad38ffdaf6c72636869da5", 932727, 501),
-	WINDEMO1("slamdunktyping", "Demo", "SLAMDUNK.EXE",				 "1a7acbba10a7246ba58c1d53fc7203f5", 3143069, 501),
-	MACDEMO1("slamdunktyping", "Demo", "Mac Slam Dunk",				 "231d3041df162be4a0ddd36a74eb03b6", 719261, 501),
+	WINDEMO1("slamdunktyping", "Demo", "SLAMDUNK.EXE",				 "t:d016bd8e21ac8ede2b530ce1105d4b26", 3143069, 501),
+	MACDEMO1("slamdunktyping", "Demo", "Mac Slam Dunk",				 "rt:87c7ea762b174b3671752ef934a6ba23", 719005, 501),
 	// From Elmo's Art Workshop CD
 	MACDEMO1("slamdunktyping", "Demo", "SLAM DUNK TYPING DEMO", "231d3041df162be4a0ddd36a74eb03b6", 719005, 501),
 
@@ -7487,14 +7487,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Developed by Real World Multimedia, Wiltshire, England (1997)
 	// Distributed in Germany by Funware, Hamburg
-	MACGAME2("ceremony", "",   "Ceremony PPC",	"d001d6e8615e35edc03465683f56e84d", 115675,
-							   "00startCD.dir", "f40c38467c0ad3fca7d3626b134c13b3", 15503, 600),
-	WINGAME2("ceremony", "",   "ceremony.exe",  "a593079aecf5bd938ce75264cac24b2d", 1700809,
-							   "00startCD.dir", "f40c38467c0ad3fca7d3626b134c13b3", 15503, 600),
-	MACGAME2_l("ceremony", "", "Ceremony PPC",  "d001d6e8615e35edc03465683f56e84d", 115675,
-							   "00startCD.dir", "39d2e56f6a29bdf0f38888489f99d60c", 15507, Common::DE_DEU, 600),
-	WINGAME2_l("ceremony", "", "ceremony.exe",  "a593079aecf5bd938ce75264cac24b2d", 1700809,
-							   "00startCD.dir", "39d2e56f6a29bdf0f38888489f99d60c", 15507, Common::DE_DEU, 600),
+	MACGAME2("ceremony", "",   "INSTALL/copytohd/Ceremony PPC",			  "r:d001d6e8615e35edc03465683f56e84d",  115419,
+							   "INSTALL/copytohd/00startCD.dir",		  "d:f40c38467c0ad3fca7d3626b134c13b3",   15503, 600),
+	WINGAME2("ceremony", "",   "INSTALL/copytohd/CEREMONY/ceremony.exe",  "t:ed46ad036782efe47e2b7c754492de2a", 1700809,
+							   "INSTALL/copytohd/CEREMONY/00startCD.dir", "d:f40c38467c0ad3fca7d3626b134c13b3",	  15503, 600),
+	MACGAME2_l("ceremony", "", "INSTALL/copytohd/Ceremony PPC",			  "r:d001d6e8615e35edc03465683f56e84d",  115419,
+							   "INSTALL/copytohd/00startCD.dir",		  "d:39d2e56f6a29bdf0f38888489f99d60c",   15507, Common::DE_DEU, 600),
+	WINGAME2_l("ceremony", "", "INSTALL/copytohd/CEREMONY/ceremony.exe",  "t:ed46ad036782efe47e2b7c754492de2a", 1700809,
+							   "INSTALL/copytohd/CEREMONY/00startCD.dir", "d:39d2e56f6a29bdf0f38888489f99d60c",   15507, Common::DE_DEU, 600),
 
 	// General preview for ClueFinders series. Does not correspond to a specific game.
 	WINGAME1t("cfdemo", "", "CFdemo.exe", "30ed83ee5d4c757df42517befc0fd129", 11941853, 650),
@@ -8466,9 +8466,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// All of the installers also use Director
 	// Mac filename is Starta Jönssonligan
-	MACGAME1_l("jonssonligan1", "", "Starta Jonssonligan", "0944b962ebb00f4b5d5149d220f8449b", 113750, Common::SE_SWE, 702),
-	WINGAME1_l("jonssonligan1", "", "xn--Jnssonligan.exe-8sb", "7c18c9a6af2694156bf09ed195c1ab09", 2432602, Common::SE_SWE, 702),
-	WINGAME1_l("jonssonligan2", "", "xn--Jnssonligan gr p djupet.exe-glcd70c", "6213518ca81bb9e7397b408a8f38703d", 3374107, Common::SE_SWE, 702),
+	MACGAME1_l("jonssonligan1", "", "toInstall/xn--Starta Jnssonligan-k3b", "rt:02dd75fb8d3e7fd133d372c5e5039675",  113494, Common::SE_SWE, 702),
+	WINGAME1_l("jonssonligan1", "", "toInstall/xn--Jnssonligan.exe-8sb",	 "t:f9299bd39817cbfadad4affa1187777d", 2432602, Common::SE_SWE, 702),
+
+	WINGAME1_l("jonssonligan2", "", "toInstall/xn--Jnssonligan gr p djupet.exe-glcd70c", "t:d03373091170b4c569311293aa238c5e", 3374107, Common::SE_SWE, 702),
 
 	// Plays QuickTime movie then opens webpage (still works in 2021)
 	WINGAME2("jsa", "Demo", "Projector.exe", "7c18c9a6af2694156bf09ed195c1ab09", 2289485,
@@ -8511,10 +8512,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("mickeyt", "D7 Demo", "MickeyT.exe", "7c18c9a6af2694156bf09ed195c1ab09", 1880445, 702),
 
 	// Mac version requires installation, Install Milo, uses Vise
-	MACGAME2("milomagical",  "", "MILO",	  "dec72b4b6f8e97f1ea24361794bf0bdf", 115801,
-								 "first.dxr", "59cf3048c42c969967fde265d5992006", 12622, 702),
-	WINGAME2t("milomagical", "", "Milo.exe",  "a45b0c0bd15e2af164343954ef3ffbff", 1818248,
-								 "first.dxr", "2bd33031549c9a0c7ac79c50b5e70499", 12622, 700),
+	MACGAME2("milomagical", "", "MILO",				   "rt:0ea457021ebc12d4c99397551459872e", 115801,
+								"dir/first.dxr",	   "d:59cf3048c42c969967fde265d5992006",   12622, 702),
+	WINGAME2("milomagical", "", "Media/Milo.exe",	   "t:a45b0c0bd15e2af164343954ef3ffbff", 1818248,
+								"Media/dir/first.dxr", "d:59cf3048c42c969967fde265d5992006",   12622, 700),
 
 	// Launcher for third party products included in MSA bundle from Softkey
 	// Also includes single page ads with links to defunct sales pages for other Advantage bundles
@@ -9375,9 +9376,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINDEMO1("barbpauper", "Demo", "PPDemo.exe", "dde8ac96c47b16cb802a38feb1f1df19", 2519617, 900),
 
-	WINGAME1_l("barbswanlake", "", "SwanLake.exe", "310659620631c126edb6943af1f83e38", 4096651, Common::FR_FRA, 900),
-	WINDEMO1("barbswanlake", "Demo", "SwanLake.exe", "c612aa43e7ef55aa4fd2e1085fb1ef7a", 2385166, 900),
-
+	WINGAME1("barbswanlake", "",   "SwanLake/SwanLake.exe", "d:be6587a9f4b3598f057680efe71d2d09", 4096651, 900),
+	WINGAME1_l("barbswanlake", "", "SwanLake/SwanLake.exe", "d:310659620631c126edb6943af1f83e38", 4096651, Common::FR_FRA, 900),
+	WINDEMO1("barbswanlake", "Demo", "SwanLake.exe", "t:e658f3c6cbf08ee92cc37fcbf9b0dbcb", 2385166, 900),
 
 	WINGAME1_l("bpapao", "", "bpapao.exe", "c612aa43e7ef55aa4fd2e1085fb1ef7a", 4829907, Common::PT_BRA, 900),
 
@@ -9532,9 +9533,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// External movies in the 'ME' folder are aliased to ':Cassic OS:ME' (sic)
 	MACGAME1("artmarcopatrito", "OS X", "The Art.osx", "r:2dbd6c69e359896c0291101c93b0dc03", 303895, 1000),
 
-	MACGAME1("babarcoins", "", "Mac.osx",		"a171b7a952d1ac68ae3cd419d6dfc674", 309249, 1010),
-	WINGAME2("babarcoins", "", "Start.exe",		"b198e9bf56c679747e4fd0972d5ba7b7", 2659300,
-							   "ba-01_A01.dxr", "cb38821091082aeb097e88551b791e05", 9946435, 1010),
+	// Both versions need extraction
+	MACGAME2("babarcoins", "OS X",	  "Mac.osx",			 "rt:bb82fa1ec470b5370600509ee7749ef6", 308993,
+									  "Files/ba-01_A01.dxr", "d:cb38821091082aeb097e88551b791e05", 9946435, 1010),
+	MACGAME2("babarcoins", "Classic", "Mac.classic",		 "rt:bb82fa1ec470b5370600509ee7749ef6", 259167,
+									  "Files/ba-01_A01.dxr", "d:cb38821091082aeb097e88551b791e05", 9946435, 1010),
+	WINGAME2("babarcoins", "",		  "Start.exe",			 "t:0c40cc1af54fd3c0d06bf5e79bc7075a", 2659300,
+									  "FILES/ba-01_A01.dxr", "d:cb38821091082aeb097e88551b791e05", 9946435, 1010),
 
 	//Another rerelease
 	WINGAME1_l("bioscopia", "", "Biolab.exe", "t:ec275332cc5b0b2b7d82938b440e1df1", 2672901, Common::DE_DEU, 1010),
