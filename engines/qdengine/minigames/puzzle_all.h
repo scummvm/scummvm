@@ -67,6 +67,14 @@ const int puzzle_ep08[] = {
 	462, 414, 575, 421
 };
 
+const int puzzle_ep13[] = {
+	196, 194, 273, 194, 362, 169, 445, 164, 538, 188,
+	606, 188, 197, 266, 283, 255, 365, 231, 438, 235,
+	533, 246, 593, 271, 197, 345, 283, 341, 354, 344,
+	437, 341, 516, 348, 592, 340, 197, 425, 270, 424,
+	357, 430, 440, 427, 526, 416, 601, 412
+};
+
 class qdPuzzleAllMiniGameInterface : public qdMiniGameInterface {
 public:
 	qdPuzzleAllMiniGameInterface(Common::String dll, Common::Language language) : _dll(dll), _language(language) {}
@@ -99,6 +107,9 @@ public:
 		} else if (_dll == "DLL\\Puzzle_ep08.dll") { // house
 			_numPieces = 12;
 			_pieceCoords = puzzle_ep08;
+		} else if (_dll == "DLL\\Puzzle_ep13.dll") { // harbor
+			_numPieces = 24;
+			_pieceCoords = puzzle_ep13;
 		}
 
 		for (int i = 0; i < _numPieces; i++)
