@@ -529,7 +529,8 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 			endLoop = endText = true;
 			break;
 		default:
-			error("handleNextCharsetCode: invalid code %d", c);
+			// Ignore the control code, reset the buffer position...
+			buffer--;
 		}
 	}
 	_charsetBufPos = buffer - _charsetBuffer;
