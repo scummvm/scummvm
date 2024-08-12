@@ -231,7 +231,7 @@ void Renderer::setColorMap(ColorMap *colorMap_) {
 	}
 
 	if (_isAccelerated && _authenticGraphics) {
-		for (int i = 1; i < 14; i++) {
+		for (int i = 1; i <= 14; i++) {
 			scaleStipplePattern(_stipples[i], _stipples[15]);
 			memcpy(_stipples[i], _stipples[15], 128);
 			scaleStipplePattern(_stipples[i], _stipples[15]);
