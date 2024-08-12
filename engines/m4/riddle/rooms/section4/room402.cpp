@@ -792,11 +792,337 @@ void Room402::daemon() {
 		kernel_timing_trigger(30, 205);
 		break;
 
-	// TODO
+	case 205:
+		sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 16, 1, 208,
+			_wolfWantsMoney, 1, 1, 0);
+		sendWSMessage_10000(1, _ripEnterLeave, _ripPaysWolfie, 24, 1, 206,
+			_ripPaysWolfie, 1, 1, 0);
+		break;
+
+	case 206:
+		sendWSMessage_10000(1, _ripEnterLeave, _ripTalkWolf, 7, 1, 207,
+			_ripTalkWolf, 1, 1, 0);
+		break;
+
+	case 207:
+	case 236:
+		terminateMachineAndNull(_ripEnterLeave);
+		terminateMachineAndNull(_safariShadow);
+		ws_unhide_walker();
+		break;
+
+	case 208:
+		sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 43, 1, 209,
+			_wolfClipping, 1, 1, 0);
+		break;
+
+	case 209:
+		kernel_timing_trigger(1, 110);
+		player_set_commands_allowed(true);
+		break;
+
+	case 210:
+		_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x100, 0,
+			triggerMachineByHashCallbackNegative, "rip talks wolf");
+		player_update_info();
+		_safariShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x200, 0,
+			triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+
+		sendWSMessage_10000(1, _safariShadow, _shadow3, 1, 1, -1,
+			_shadow3, 1, 1, 0);
+		ws_hide_walker();
+		sendWSMessage_10000(1, _ripEnterLeave, _ripTalkWolf, 1, 7, 211,
+			_ripTalkWolf, 7, 7, 0);
+		sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 1, 8, 213,
+			_wolfClippersDown, 8, 8, 0);
+		break;
+
+	case 211:
+		sendWSMessage_10000(1, _ripEnterLeave, _ripPaysWolfie, 1, 16, -1,
+			_ripPaysWolfie, 16, 16, 0);
+		break;
+
+	case 212:
+		sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 1, 16, 214,
+			_wolfWantsMoney, 16, 16, 0);
+		_flags111 = _G(flags)[V111];
+		break;
+
+	case 213:
+		digi_play("402_s04", 2);
+		sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 8, 43, 212,
+			_wolfClippersDown, 43, 43, 0);
+		break;
+
+	case 214:
+		sendWSMessage_10000(1, _ripEnterLeave, _ripPaysWolfie, 17, 24, 215,
+			_ripPaysWolfie, 24, 24, 0);
+		break;
+
+	case 215:
+		digi_play("950_s23", 2);
+		kernel_timing_trigger(30, 216);
+		break;
+
+	case 216:
+		if (_G(flags)[V111] > 1) {
+			_flags111--;
+			sendWSMessage_10000(1, _ripEnterLeave, _ripPaysWolfie, 24, 17, 214,
+				_ripPaysWolfie, 17, 17, 0);
+		} else {
+			sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 16, 1, -1,
+				_wolfWantsMoney, 1, 1, 0);
+			sendWSMessage_10000(1, _ripEnterLeave, _ripPaysWolfie, 24, 1, 217,
+				_ripPaysWolfie, 1, 1, 0);
+		}
+		break;
+
+	case 217:
+		sendWSMessage_10000(1, _ripEnterLeave, _ripTalkWolf, 7, 1, 218,
+			_ripTalkWolf, 1, 1, 0);
+		break;
+
+	case 218:
+		terminateMachineAndNull(_ripEnterLeave);
+		terminateMachineAndNull(_safariShadow);
+		ws_unhide_walker();
+		_val5 = -1;
+		_val10 = 1001;
+		_val11 = 1110;
+		kernel_timing_trigger(1, 102);
+		break;
+
+	case 221:
+		_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x100, 0,
+			triggerMachineByHashCallbackNegative, "rip talks wolf");
+		player_update_info();
+		_safariShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x200, 0,
+			triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+
+		sendWSMessage_10000(1, _safariShadow, _shadow3, 1, 1, -1,
+			_shadow3, 1, 1, 0);
+		ws_hide_walker();
+		sendWSMessage_10000(1, _ripEnterLeave, _ripTalkWolf, 1, 7, -1,
+			_ripTalkWolf, 7, 7, 0);
+		sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 1, 8, 222,
+			_wolfClippersDown, 8, 8, 0);
+		break;
+
+	case 222:
+		digi_play("402_s04", 2);
+		sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 8, 43, 223,
+			_wolfClippersDown, 43, 43, 0);
+		break;
 
 	case 223:
 		sendWSMessage_10000(1, _wolfieMach, _ripPaysWolfie, 1, 24, 224,
 			_ripPaysWolfie, 24, 24, 0);
+		break;
+
+	case 224:
+		sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 43, 1, 227,
+			_wolfClipping, 1, 1, 0);
+		digi_play("402w08", 1);
+		kernel_timing_trigger(60, 225);
+		break;
+
+	case 225:
+		sendWSMessage_10000(1, _ripEnterLeave, _ripPaysWolfie, 24, 1, 226,
+			_ripPaysWolfie, 1, 1, 0);
+		break;
+
+	case 226:
+		sendWSMessage_10000(1, _ripEnterLeave, _ripTalkWolf, 7, 1, -1,
+			_ripTalkWolf, 1, 1, 0);
+		break;
+
+	case 227:
+		terminateMachineAndNull(_ripEnterLeave);
+		terminateMachineAndNull(_safariShadow);
+		ws_unhide_walker();
+		kernel_timing_trigger(1, 110);
+		player_set_commands_allowed(true);
+		break;
+
+	case 230:
+		_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x100, 0,
+			triggerMachineByHashCallbackNegative, "trip talks wolf");
+		player_update_info();
+		_safariShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x200, 0,
+			triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+
+		sendWSMessage_10000(1, _safariShadow, _shadow3, 1, 1, -1,
+			_shadow3, 1, 1, 0);
+		ws_unhide_walker();
+		sendWSMessage_10000(1, _ripEnterLeave, _ripTalkWolf, 1, 7, 232,
+			_ripTalkWolf, 7, 7, 0);
+		break;
+
+	case 232:
+		sendWSMessage_10000(1, _ripEnterLeave, _ripPaysWolfie, 1, 24, 233,
+			_ripPaysWolfie, 24, 24, 0);
+		break;
+
+	case 233:
+		sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 16, 1, 234,
+			_wolfWantsMoney, 1, 1, 0);
+		break;
+
+	case 234:
+		sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 43, 1, 237,
+			_wolfClipping, 1, 1, 0);
+		sendWSMessage_10000(1, _ripEnterLeave, _ripPaysWolfie, 24, 1, 235,
+			_ripPaysWolfie, 1, 1, 0);
+		break;
+
+	case 235:
+		sendWSMessage_10000(1, _ripEnterLeave, _ripTalkWolf, 7, 1, 236,
+			_ripTalkWolf, 1, 1, 0);
+		break;
+
+	case 237:
+		_val12 = 2001;
+		_val13 = 2300;
+		player_set_commands_allowed(true);
+		kernel_timing_trigger(1, 110);
+		break;
+
+	case 300:
+		sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 43, 18, 302,
+			_wolfClippersDown, 18, 18, 0);
+		midi_play("DANZIG1", 1, 255, -1, 949);
+		break;
+
+	case 302:
+		terminateMachineAndNull(_wolfieMach);
+		_wolfWalker = triggerMachineByHash_3000(8, 8, S4_NORMAL_DIRS, S4_SHADOW_DIRS,
+			484, 315, 11, triggerMachineByHashCallback3000, "wolf_walker");
+		sendWSMessage_10000(_wolfWalker, 517, 239, 9, -1, 0);
+
+		digi_play(_soundPtr2, 1);
+		kernel_timing_trigger(80, 303);
+		break;
+
+	case 303:
+		terminateMachineAndNull(_ripEnterLeave);
+		terminateMachineAndNull(_safariShadow);
+		ws_unhide_walker();
+		_G(flags)[V114] = 0;
+		ws_walk(517, 239, nullptr, -1, 9);
+		kernel_timing_trigger(60, 304);
+		break;
+
+	case 304:
+		disable_player_commands_and_fade_init(305);
+		break;
+
+	case 305:
+		_G(flags)[V112] = 1;
+		_G(game).setRoom(408);
+		break;
+
+	case 350:
+		ws_hide_walker();
+		_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x100, 0,
+			triggerMachineByHashCallbackNegative, "rip leans against wall");
+		sendWSMessage_10000(1, _ripEnterLeave, _ripLeanWall, 1, 23, 351,
+			_ripLeanWall, 23, 23, 0);
+
+		_turtlePopupMach = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, 0,
+			triggerMachineByHashCallbackNegative, "TURTLE POPUP");
+		_val14 = 0;
+		digi_preload("950_s27", 950);
+		break;
+
+	case 351:
+		if (_val14 == 1) {
+			digi_play("950_s27", 3, 255, 353, 950);
+			_val5 = 354;
+		} else {
+			digi_play("950_s27", 3, 255, 352, 950);
+			++_val14;
+		}
+		break;
+
+	case 352:
+		kernel_timing_trigger(5, 351);
+		break;
+
+	case 353:
+		sendWSMessage_10000(1, _turtlePopupMach, _turtlePopup, 15, 41, 353,
+			_turtlePopup, 41, 41, 0);
+		digi_play("950_s27", 2, 255, -1, 950);
+		break;
+
+	case 354:
+		sendWSMessage_10000(1, _wolfieMach, _wolfTurnsClipping, 1, 38, 355,
+			_wolfTurnsClipping, 38, 38, 0);
+		break;
+
+	case 355:
+		digi_play("402w10", 1, 255, 356);
+		break;
+
+	case 356:
+		digi_play("402r32", 1, 255, 357);
+		break;
+
+	case 357:
+		digi_play("402w11", 1);
+		terminateMachineAndNull(_wolfieMach);
+		_wolfWalker = triggerMachineByHash_3000(8, 8, S4_NORMAL_DIRS, S4_SHADOW_DIRS,
+			484, 315, 11, triggerMachineByHashCallback3000, "wolf_walker");
+		sendWSMessage_10000(_wolfWalker, 517, 239, 9, -1, 0);
+		kernel_timing_trigger(150, 358);
+		break;
+
+	case 358:
+		disable_player_commands_and_fade_init(359);
+		break;
+
+	case 359:
+		midi_stop();
+		_G(game).setRoom(409);
+		break;
+
+	case 370:
+		digi_play("402w06", 1, 255, 372);
+		break;
+
+	case 372:
+		digi_play("402r07", 1);
+		ws_walk(517, 239, nullptr, -1, 9);
+		kernel_timing_trigger(90, 373);
+		break;
+
+	case 373:
+		disable_player_commands_and_fade_init(374);
+		break;
+
+	case 374:
+		if (_G(flags)[V139] == 1 || _G(flags)[V139] == 3)
+			_G(game).setRoom(408);
+		else
+			_G(game).setRoom(403);
+		break;
+
+	case 10000:
+		switch (imath_ranged_rand(1, 3)) {
+		case 1:
+			digi_play("950_s19", 2);
+			break;
+		case 2:
+			digi_play("950_s20", 2);
+			break;
+		case 3:
+			digi_play("950_s21", 2);
+			break;
+		default:
+			break;
+		}
 		break;
 
 	default:

@@ -43,6 +43,7 @@ private:
 	int _val11 = 0;
 	int _val12 = 0;
 	int _val13 = 0;
+	int _val14 = 0;
 	machine *_wolfie = nullptr;
 	machine *_wolfieMach = nullptr;
 	int _shadow3 = 0;
@@ -68,6 +69,8 @@ private:
 	machine *_castleDoor = nullptr;
 	machine *_machine1 = nullptr;
 	int _machine1Series = 0;
+	int _flags111 = 0;
+	machine *_turtlePopupMach = nullptr;
 
 	void conv402a();
 	void conv402a777();
