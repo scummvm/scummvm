@@ -708,6 +708,11 @@ void Room402::daemon() {
 					_wolfClipping, 10, 10, 0);
 				break;
 
+			case 2107:
+				_machine1 = series_stream("402 WOLF TAKE", 7, 0, 111);
+				_val13 = 2110;
+				break;
+
 			case 2108:
 				sendWSMessage_10000(1, _machine1, _machine1Series, 44, 16, 111,
 					_machine1Series, 16, 16, 0);
