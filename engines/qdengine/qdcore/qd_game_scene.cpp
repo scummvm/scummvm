@@ -469,8 +469,7 @@ void qdGameScene::debug_redraw() {
 	if (qdGameConfig::get_config().show_fps())
 		grDispatcher::instance()->drawText(10, 10, grDispatcher::instance()->make_rgb888(255, 255, 255), _fps_string);
 
-#ifdef __QD_DEBUG_ENABLE__
-	if (qdGameConfig::get_config().debug_draw()) {
+	if (debugChannelSet(9, kDebugMovement)) {
 		if (_selected_object) {
 			static char buffer[256];
 			snprintf(buffer, 256, "%.1f %.1f %.1f, %.1f", _selected_object->R().x, _selected_object->R().y, _selected_object->R().z, R2G(_selected_object->direction_angle()));
@@ -513,7 +512,6 @@ void qdGameScene::debug_redraw() {
 		for (Std::vector<qdGameObject * >::reverse_iterator it = _visible_objects.rbegin(); it != _visible_objects.rend(); ++it)
 			(*it)->debug_redraw();
 	}
-#endif
 }
 
 int qdGameScene::get_resources_size() {
