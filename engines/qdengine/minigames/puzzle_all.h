@@ -97,7 +97,145 @@ public:
 	bool quant(float dt) {
 		debugC(3, kDebugMinigames, "PuzzleAll::quant(%f)", dt);
 
+		if (!_wasInited && _objRan->is_state_active("\xed\xe5\xf2")) {	// "нет"
+			_rotatingPiece = -1;
+			_currentPieceState = -1;
+			_pieceIsPut = false;
+			_isFinal = false;
+			_wasInited = 1;
+			_objRan->set_state("\xe4\xe0");	// "да"
+		}
+
+		if (_isFinal)
+			return true;
+
+		if (!checkSolution() || _scene->mouse_object_interface()) {
+			qdMinigameObjectInterface *mouseObj = _scene->mouse_object_interface();
+
+			if (_pieceIsPut) {
+				for (int i = 0; i < 12; i++) {
+					if (_pieces[i]->is_state_active("to_inv_flag_0")
+							|| _pieces[i]->is_state_active("to_inv_flag_90")
+							|| _pieces[i]->is_state_active("to_inv_flag_180")
+							|| _pieces[i]->is_state_active("to_inv_flag_270")) {
+
+						if (_pieces[i]->is_state_active("to_inv_flag_0"))
+							_currentPieceState = _pieces[i]->state_index("inv_0");
+						else if (_pieces[i]->is_state_active("to_inv_flag_90"))
+							_currentPieceState = _pieces[i]->state_index("inv_90");
+						else if (_pieces[i]->is_state_active("to_inv_flag_180"))
+							_currentPieceState = _pieces[i]->state_index("inv_180");
+						else if (_pieces[i]->is_state_active("to_inv_flag_270"))
+							_currentPieceState = _pieces[i]->state_index("inv_270");
+
+						_rotatingPiece = i;
+						_pieces[i]->set_state("to_inv");
+						_pieceIsPut = false;
+					}
+				}
+			}
+
+			if (mouseObj) {
+				if (_rotatingPiece != -1) {
+					_pieces[_rotatingPiece]->set_state(_currentPieceState);
+					_currentPieceState = -1;
+					_rotatingPiece = -1;
+				}
+			}
+
+			if (_engine->is_mouse_event_active(qdmg::qdEngineInterfaceImpl::MOUSE_EV_LEFT_DOWN)) {
+				mgVect2i mousePos = _engine->mouse_cursor_position();
+				qdMinigameObjectInterface *obj = _scene->mouse_object_interface();
+
+				if (obj) {
+					if (obj->is_state_active("inv_0"))
+						obj->set_state("0");
+					else if (obj->is_state_active("inv_90"))
+						obj->set_state("90");
+					else if (obj->is_state_active("inv_180"))
+						obj->set_state("180");
+					else if (obj->is_state_active("inv_270"))
+						obj->set_state("270");
+
+					_minDepthPiece -= 250.0;
+
+					mgVect3f coords = _scene->screen2world_coords(mousePos, _minDepthPiece);
+					obj->set_R(coords);
+
+					snapPieces();
+				} else {
+					_pieceIsPut = true;
+				}
+			}
+		}
+
+		if (_engine->is_mouse_event_active(qdmg::qdEngineInterfaceImpl::MOUSE_EV_RIGHT_DOWN)) {
+			qdMinigameObjectInterface *obj = _scene->mouse_object_interface();
+
+			if (obj) {
+				if (obj->is_state_active("inv_0"))
+					obj->set_state("inv_270");
+				else if (obj->is_state_active("inv_90"))
+					obj->set_state("inv_0");
+				else if (obj->is_state_active("inv_180"))
+					obj->set_state("inv_90");
+				else if (obj->is_state_active("inv_270"))
+					obj->set_state("inv_180");
+			}
+		}
+
 		return true;
+	}
+
+	bool checkSolution() {
+		if (_scene->mouse_object_interface())
+			return false;
+
+		for (int i = 0; i < 12; i++)
+			if (!_pieces[0]->is_state_active("0"))
+				return false;
+
+		mgVect2i piecePos;
+
+		for (int i = 0; i < 12; i++) {
+			piecePos = _pieces[i]->screen_R();
+
+			if (ABS(_pieceCoords[i].x - piecePos.x) > 10 ||
+				ABS(_pieceCoords[i].y - piecePos.y) > 10)
+				return false;
+		}
+
+		_isFinal = true;
+		_objFinal->set_state("\xe4\xe0");	// "да"
+
+		_minDepthPiece -= 250.0;
+
+		mgVect3f coords = _scene->screen2world_coords(_objFinal->screen_R(), _minDepthPiece);
+		_objFinal->set_R(coords);
+
+		return true;
+	}
+
+	void snapPieces() {
+		mgVect2i piecePos;
+		mgVect3f newPiecePos;
+
+		for (int i = 0; i < 12; i++) {
+			piecePos = _pieces[i]->screen_R();
+			float depth = _scene->screen_depth(_pieces[i]->R());
+
+			if (_pieces[i]->is_state_active("0")) {
+				if (ABS(_pieceCoords[i].x - piecePos.x) <= 10) {
+					if (ABS(_pieceCoords[i].y - piecePos.y) <= 10) {
+						piecePos.x = _pieceCoords[i].x;
+						piecePos.y = _pieceCoords[i].y;
+
+						newPiecePos = _scene->screen2world_coords(piecePos, depth);
+						_pieces[i]->set_R(newPiecePos);
+					}
+				}
+			}
+		}
 	}
 
 	//! Деинициализация игры.
@@ -159,6 +297,9 @@ private:
 	bool _isFinal = false;
 
 	float _minDepthPiece = 0.0;
+	int _rotatingPiece = -1;
+	bool _pieceIsPut = true;
+	int _currentPieceState = 0;
 
 	Common::String _dll;
 	Common::Language _language;
