@@ -1082,7 +1082,7 @@ Common::Error ScummEngine::init() {
 			// files. The rescumm utility used to be used to extract those files.
 			// While that is still possible, we now support reading those files
 			// directly. The first step is to check whether one of them is present
-			// (we do that here); the rest is handled by the  ScummFile class and
+			// (we do that here); the rest is handled by the ScummFile class and
 			// code in openResourceFile() (and in the Sound class, for MONSTER.SOU
 			// handling).
 			assert(_game.version >= 5 && _game.heversion == 0);
@@ -1229,18 +1229,18 @@ Common::Error ScummEngine::init() {
 			// turn the space into an underscore.
 
 			static const char *monkeyIslandFileNames[] = {
-			        "Monkey Island",
-			        "Monkey_Island"
+				"Monkey Island",
+				"Monkey_Island"
 			};
 
-		       for (int i = 0; i < ARRAYSIZE(monkeyIslandFileNames); i++) {
-		                if (resource.exists(monkeyIslandFileNames[i])) {
-		                        macResourceFile = monkeyIslandFileNames[i];
-		                }
-		        }
+			for (int i = 0; i < ARRAYSIZE(monkeyIslandFileNames); i++) {
+				if (resource.exists(monkeyIslandFileNames[i])) {
+					macResourceFile = monkeyIslandFileNames[i];
+				}
+			}
 
 			if (macResourceFile.empty()) {
-			        GUI::MessageDialog dialog(_(
+				GUI::MessageDialog dialog(_(
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."), _("OK"));
 				dialog.runModal();
@@ -3800,9 +3800,9 @@ void ScummEngine::runBootscript() {
 	args[0] = _bootParam;
 
 	if ((_game.id == GID_MANIAC && (_game.features & GF_DEMO) && (_game.platform != Common::kPlatformC64)) || ConfMan.getBool("enable_demo_mode"))
-    	runScript(9, 0, 0, args);
+		runScript(9, 0, 0, args);
 	else
-    	runScript(1, 0, 0, args);
+		runScript(1, 0, 0, args);
 }
 
 #ifdef ENABLE_HE
