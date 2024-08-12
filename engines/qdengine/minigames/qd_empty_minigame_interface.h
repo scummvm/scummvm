@@ -71,7 +71,7 @@ public:
 		return 0;
 	}
 
-	/// Версия интерфейса игры, трогать не надо.
+	// Version 105 is b945e65
 	enum { INTERFACE_VERSION = 112 };
 	int version() const {
 		return INTERFACE_VERSION;
