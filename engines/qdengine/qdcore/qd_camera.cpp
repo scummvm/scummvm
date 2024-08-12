@@ -1196,7 +1196,7 @@ bool qdCamera::set_grid_attributes(const Vect2s &center_pos, const Vect2s &size,
 
 	sGridCell *cells = _grid + x0 + y0 * _GSX;
 
-	debugC(3, kDebugMovement, "qdCamera::set_grid_attributes() attr: %d at [%d, %d]", attr, x0, y0);
+	debugC(4, kDebugMovement, "qdCamera::set_grid_attributes() attr: %d at [%d, %d]", attr, x0, y0);
 	for (int y = y0; y < y1; y++) {
 		sGridCell *p = cells;
 		for (int x = x0; x < x1; x++, p++)
