@@ -418,7 +418,225 @@ void Room402::daemon() {
 	case 103:
 		switch (_val10) {
 		case 1000:
-			// TODO
+			switch (_val11) {
+			case 1100:
+				ws_hide_walker();
+				player_set_commands_allowed(false);
+				player_update_info();
+
+				_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+					_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x100, 0,
+					triggerMachineByHashCallbackNegative, "rip talks wolf");
+				_safariShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+					_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x100, 0,
+					triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+
+				sendWSMessage_10000(1, _ripEnterLeave, _ripTalker, 1, 1, -1,
+					_ripTalker, 1, 1, 0);
+				sendWSMessage_10000(1, _safariShadow, _shadow3, 1, 1, 102,
+					_shadow3, 1, 1, 0);
+				_val11 = 1101;
+				_val12 = 2000;
+				_val13 = 2100;
+				kernel_timing_trigger(1, 110);
+				break;
+
+			case 1101:
+				_val11 = 1103;
+				kernel_timing_trigger(1, 102);
+				conv_load("conv402a", 10, 10, 101);
+
+				conv_export_value_curr(inv_player_has("POMERANIAN MARKS") ? 1 : 0, 0);
+				conv_export_pointer_curr(&_G(flags)[V111], 1);
+				conv_export_value_curr(_G(flags)[V112], 2);
+				conv_export_value_curr(_G(flags)[V114], 4);
+				conv_export_pointer_curr(&_G(flags)[V115], 5);
+				conv_export_pointer_curr(&_G(flags)[V135], 7);
+				conv_export_pointer_curr(&_G(flags)[V337], 8);
+				conv_export_value_curr(_G(flags)[V110], 9);
+				conv_export_pointer_curr(&_G(flags)[V314], 10);
+				conv_play();
+				break;
+
+			case 1102:
+				frame = imath_ranged_rand(1, 5);
+				sendWSMessage_10000(1, _ripEnterLeave, _ripTalker, frame, frame, 102,
+					_ripTalker, frame, frame, 0);
+				break;
+
+			case 1103:
+				sendWSMessage_10000(1, _ripEnterLeave, _ripTalker, 1, 1, 102,
+					_ripTalker, 1, 1, 0);
+				break;
+
+			case 1104:
+				sendWSMessage_10000(1, _ripEnterLeave, _ripTalker, 1, 1, -1,
+					_ripTalker, 1, 1, 0);
+				break;
+
+			case 1105:
+				terminateMachineAndNull(_ripEnterLeave);
+				terminateMachineAndNull(_safariShadow);
+				ws_unhide_walker();
+
+				if (_soundPtr1) {
+					digi_play(_soundPtr1, 1);
+					_soundPtr1 = nullptr;
+				}
+
+				_G(flags)[V114] = 0;
+				_G(flags)[V112] = 0;
+
+				if (_G(flags)[V115] && !_val8) {
+					_val6 = 1;
+					_val12 = 2000;
+					_val13 = 2230;
+				} else {
+					_val8 = 0;
+					_val12 = 2001;
+					_val13 = 2300;
+				}
+
+				player_set_commands_allowed(true);
+				break;
+
+			case 1120:
+				terminateMachineAndNull(_ripEnterLeave);
+				_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x100, 0,
+					triggerMachineByHashCallbackNegative, "rip talks wolf");
+				_val11 = 1122;
+				_letter = series_load("RIP SHOWS WOLF THE LETTER");
+				sendWSMessage_10000(1, _ripEnterLeave, _letter, 1, 12, 103,
+					_letter, 12, 12, 0);
+				break;
+
+			case 1122:
+				if (_soundPtr1) {
+					_G(kernel).trigger_mode = KT_PARSE;
+					digi_play(_soundPtr1, 1, 255, 777);
+					_G(kernel).trigger_mode = KT_DAEMON;
+					_soundPtr1 = nullptr;
+				}
+				break;
+
+			case 1123:
+				_val11 = 1124;
+				sendWSMessage_10000(1, _ripEnterLeave, _letter, 12, 1, 103,
+					_ripTalker, 1, 1, 0);
+				break;
+
+			case 1124:
+				terminateMachineAndNull(_ripEnterLeave);
+				series_unload(_letter);
+				player_update_info();
+
+				_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+					_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x100, 0,
+					triggerMachineByHashCallbackNegative, "rip talks wolf");
+				_val10 = 1000;
+				_val11 = 1103;
+				sendWSMessage_10000(1, _ripEnterLeave, _ripTalker, 1, 1, 102,
+					_ripTalker, 1, 1, 0);
+				conv_resume();
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 1001:
+			switch (_val11) {
+			case 1110:
+				player_update_info();
+				_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+					_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x100, 0,
+					triggerMachineByHashCallbackNegative, "rip talks wolf");
+
+				player_update_info();
+				_safariShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+					_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x200, 0,
+					triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+				sendWSMessage_10000(1, _safariShadow, _shadow3, 1, 1, -1,
+					_shadow3, 1, 1, 0);
+				ws_hide_walker();
+
+				sendWSMessage_10000(1, _ripEnterLeave, _ripTalker, 1, 1, -1,
+					_ripTalker, 1, 1, 0);
+				player_set_commands_allowed(false);
+				_val12 = 2002;
+				_val13 = 2141;
+				kernel_timing_trigger(1, 110);
+
+				_val11 = 1111;
+				kernel_timing_trigger(1, 102);
+				break;
+
+			case 1111:
+				_val10 = 1001;
+				_val11 = 1115;
+				kernel_timing_trigger(1, 102);
+
+				conv_load("conv402a", 0, 10, 101);
+				conv_export_value_curr(inv_player_has("POMERANIAN MARKS") ? 1 : 0, 0);
+				conv_export_pointer_curr(&_G(flags)[V111], 1);
+				conv_export_value_curr(_G(flags)[V112], 2);
+				conv_export_value_curr(_G(flags)[V114], 4);
+				conv_export_pointer_curr(&_G(flags)[V115], 5);
+				conv_export_pointer_curr(&_G(flags)[V135], 7);
+				conv_export_pointer_curr(&_G(flags)[V337], 8);
+				conv_export_value_curr(_G(flags)[V110], 9);
+				conv_export_pointer_curr(&_G(flags)[V314], 10);
+				conv_play();
+				break;
+
+			case 1112:
+				terminateMachineAndNull(_ripEnterLeave);
+				terminateMachineAndNull(_safariShadow);
+				ws_unhide_walker();
+				_G(flags)[V114] = 0;
+				_G(flags)[V112] = 0;
+
+				if (_currentNode == 19 || _currentNode == 22 || _currentNode == 23) {
+					_val12 = 2002;
+					_val13 = 2190;
+					kernel_timing_trigger(1, 110);
+				} else if (!_G(flags)[V115]) {
+					_val12 = 2001;
+					_val13 = 2300;
+					player_set_commands_allowed(true);
+				} else {
+					_val6 = 1;
+
+					if (_soundPtr2) {
+						_val13 = 2142;
+						_val11 = 1113;
+						digi_play(_soundPtr2, 1, 255, 103);
+						_soundPtr2 = nullptr;
+					}
+				}
+				break;
+
+			case 1113:
+				_val13 = 2150;
+				break;
+
+			case 1114:
+				frame = imath_ranged_rand(1, 5);
+				sendWSMessage_10000(1, _ripEnterLeave, _ripTalker, frame, frame, 102,
+					_ripTalker, frame, frame, 0);
+				break;
+
+			case 1115:
+				sendWSMessage_10000(1, _ripEnterLeave, _ripTalker, 1, 1, 102,
+					_ripTalker, 1, 1, 0);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
 		default:
 			break;
 		}
@@ -464,6 +682,12 @@ void Room402::daemon() {
 		switch (_val12) {
 		case 2000:
 			switch (_val13) {
+			case 2100:
+				sendWSMessage_10000(1, _wolfieMach, _wolfClipping, 8, 8, 110,
+					_wolfClipping, 8, 8, 0);
+				_val13 = 2104;
+				break;
+
 			case 2101:
 				frame = imath_ranged_rand(8, 10);
 				sendWSMessage_10000(1, _wolfieMach, _wolfClipping, frame, frame, 110,
@@ -516,6 +740,37 @@ void Room402::daemon() {
 				break;
 
 			case 2231:
+				digi_play("402_s04", 2);
+				sendWSMessage_10000(1, _wolfieMach, _wolfClippersDown, 8, 43, 111,
+					_wolfClippersDown, 43, 43, 0);
+				_val13 = 2232;
+				break;
+
+			case 2232:
+				if (_soundPtr2) {
+					digi_play(_soundPtr2, 1);
+					_soundPtr2 = nullptr;
+				}
+
+				_val13 = 2233;
+				sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 1, 16, 111,
+					_wolfWantsMoney, 16, 16, 0);
+				break;
+
+			case 2233:
+				if (_G(flags)[V111] > 0) {
+					_val13 = 2234;
+					series_stream("Rip popup", 7, 0, 111);
+				} else {
+					player_set_commands_allowed(true);
+				}
+				break;
+
+			case 2234:
+				player_set_commands_allowed(true);
+				break;
+
+			case 2240:
 				_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x100, 0,
 					triggerMachineByHashCallbackNegative, "rip talks wolf");
 				player_update_info();
@@ -530,6 +785,12 @@ void Room402::daemon() {
 				sendWSMessage_10000(1, _ripEnterLeave, _ripTalkWolf, 1, 7, 111,
 					_ripTalkWolf, 7, 7, 0);
 				_val13 = 2242;
+				break;
+
+			case 2242:
+				sendWSMessage_10000(1, _ripEnterLeave, _ripPaysWolfie, 1, 16, 214,
+					_ripPaysWolfie, 16, 16, 0);
+				_flags111 = _G(flags)[V111];
 				break;
 
 			case 2250:

@@ -71,6 +71,7 @@ private:
 	int _machine1Series = 0;
 	int _flags111 = 0;
 	machine *_turtlePopupMach = nullptr;
+	int _letter = 0;
 
 	void conv402a();
 	void conv402a777();
