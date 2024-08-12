@@ -24,6 +24,7 @@
 #include "audio/decoders/raw.h"
 
 #include "freescape/freescape.h"
+#include "freescape/games/eclipse/eclipse.h"
 
 namespace Freescape {
 
@@ -32,6 +33,9 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 
 	if (isDark())
 		numberSounds = 34;
+
+	if (isEclipse() && (_variant & GF_ZX_DEMO_MICROHOBBY))
+		numberSounds = 21;
 
 	for (int i = 1; i < numberSounds; i++) {
 		debugC(1, kFreescapeDebugParser, "Reading sound table entry: %d ", i);

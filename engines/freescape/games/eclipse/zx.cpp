@@ -119,6 +119,7 @@ void EclipseEngine::loadAssetsZXDemo() {
 		error("Failed to open totaleclipse.zx.data");
 
 	if (_variant & GF_ZX_DEMO_MICROHOBBY) {
+		loadSpeakerFxZX(&file, 0x798, 0x7ec);
 		loadMessagesFixedSize(&file, 0x2ac, 16, 23);
 		loadMessagesFixedSize(&file, 0x56e6, 264, 1);
 		loadFonts(&file, 0x5f7b, _font);
