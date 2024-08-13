@@ -703,6 +703,7 @@ void Room402::daemon() {
 				sendWSMessage_10000(1, _wolfieMach, _wolfClipping, 8, 10, -1,
 					_wolfClipping, 10, 10, 0);
 				break;
+
 			case 2106:
 				sendWSMessage_10000(1, _wolfieMach, _wolfClipping, 1, 10, 110,
 					_wolfClipping, 10, 10, 0);

@@ -73,6 +73,7 @@ bool MoveScreenAbs(ScreenContext *myScreen, int32 parmX, int32 parmY);
  * Obvious shell to MoveScreen
  */
 bool MoveScreenDelta(ScreenContext *myScreen, int32 parmX, int32 parmY);
+bool MoveScreenDelta(int32 parmX, int32 parmY);
 
 /**
  * Resize the windows width and/or height
