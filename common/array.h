@@ -170,7 +170,7 @@ public:
 		_size++;
 	}
 
-	/** Construct an element into a position in the array. */
+	/** Construct an element to the end of the array. */
 	template<class... TArgs>
 	void emplace_back(TArgs &&...args) {
 		emplace(begin() + _size, Common::forward<TArgs>(args)...);
