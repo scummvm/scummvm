@@ -156,8 +156,8 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_soundIndexMenu = -1;
 	_soundIndexStart = -1;
 	_soundIndexAreaChange = -1;
+	_soundIndexHit = -1;
 	//_soundIndexEndGame = -1;
-	//_soundIndexSensor = -1;
 
 	_fullscreenViewArea = Common::Rect(0, 0, _screenW, _screenH);
 	_viewArea = _fullscreenViewArea;

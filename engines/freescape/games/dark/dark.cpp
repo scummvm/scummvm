@@ -41,6 +41,7 @@ DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 	_soundIndexMenu = -1;
 	_soundIndexStart = 9;
 	_soundIndexAreaChange = 5;
+	_soundIndexHit = 2;
 	_soundIndexRestoreECD = 19;
 
 	if (isDOS())
@@ -784,8 +785,7 @@ void DarkEngine::drawIndicator(Graphics::Surface *surface, int xPosition, int yP
 void DarkEngine::drawSensorShoot(Sensor *sensor) {
 	if (_gameStateControl == kFreescapeGameStatePlaying) {
 		// Avoid playing new sounds, so the endgame can progress
-		if (isSpectrum())
-			playSound(2, true);
+		playSound(_soundIndexHit, true);
 	}
 
 	Math::Vector3d target;

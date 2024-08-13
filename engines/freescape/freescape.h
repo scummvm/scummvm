@@ -449,6 +449,7 @@ public:
 	int _soundIndexMenu;
 	int _soundIndexStart;
 	int _soundIndexAreaChange;
+	int _soundIndexHit;
 
 	// Rendering
 	int _screenW, _screenH;
