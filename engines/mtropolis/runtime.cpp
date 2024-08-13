@@ -3578,7 +3578,7 @@ MiniscriptInstructionOutcome Structural::writeRefAttribute(MiniscriptThread *thr
 		DynamicValueWriteIntegerHelper<int32>::create(&_flushPriority, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "unload") {
-		DynamicValueWriteDiscardHelper::create(result);
+		DynamicValueWriteFuncHelper<Structural, &Structural::scriptSetUnload, false>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -4001,6 +4001,14 @@ MiniscriptInstructionOutcome Structural::scriptSetLoop(MiniscriptThread *thread,
 }
 
 MiniscriptInstructionOutcome Structural::scriptSetDebug(MiniscriptThread *thread, const DynamicValue &value) {
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome Structural::scriptSetUnload(MiniscriptThread *thread, const DynamicValue &value) {
+	// Doesn't matter what value this is set to, it always tries to unload.
+	if (_sceneLoadState != SceneLoadState::kNotAScene)
+		thread->getRuntime()->addSceneStateTransition(HighLevelSceneTransition(getSelfReference().lock().staticCast<Structural>(), HighLevelSceneTransition::kTypeRequestUnloadScene, false, false));
+
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
@@ -5810,6 +5818,18 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(transition.scene, LowLevelSceneStateTransitionAction::kLoad));
 			queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kParentEnabled, 0), transition.scene.get(), true, true);
 			queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneStarted, 0), transition.scene.get(), true, true);
+		} break;
+	case HighLevelSceneTransition::kTypeRequestUnloadScene: {
+			bool isActiveScene = false;
+			for (const SceneStackEntry &stackEntry : _sceneStack) {
+				if (stackEntry.scene == transition.scene) {
+					isActiveScene = true;
+					break;
+				}
+			}
+
+			if (!isActiveScene)
+				_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(transition.scene, LowLevelSceneStateTransitionAction::kUnload));
 		} break;
 	default:
 		error("Unknown high-level scene transition type");

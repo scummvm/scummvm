@@ -1366,6 +1366,7 @@ struct HighLevelSceneTransition {
 		kTypeChangeToScene,
 		kTypeChangeSharedScene,
 		kTypeForceLoadScene,
+		kTypeRequestUnloadScene,
 	};
 
 	HighLevelSceneTransition(const Common::SharedPtr<Structural> &hlst_scene, Type hlst_type, bool hlst_addToDestinationScene, bool hlst_addToReturnList);
@@ -2268,6 +2269,7 @@ protected:
 	MiniscriptInstructionOutcome scriptSetPaused(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetLoop(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetDebug(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetUnload(MiniscriptThread *thread, const DynamicValue &value);
 
 	// If you override this, you must override visitInternalReferences too.
 	virtual void linkInternalReferences(ObjectLinkingScope *outerScope);
