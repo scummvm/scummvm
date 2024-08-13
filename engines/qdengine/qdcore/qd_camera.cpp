@@ -1328,7 +1328,7 @@ bool qdCamera::is_walkable(const Vect2s &center_pos, const Vect2s &size, bool ig
 		const sGridCell *p = cells;
 
 		for (int x = x0; x < x1; x++, p++) {
-			debugC(5, kDebugMovement, "qdCamera::is_walkable(): attr %d at [%d, %d]", p->attributes(), x, y);
+			debugC(3, kDebugMovement, "qdCamera::is_walkable(): attr %d at [%d, %d]", p->attributes(), x, y);
 			if (p->check_attribute(attr) && !p->check_attribute(sGridCell::CELL_SELECTED)) {
 				return false;
 			}
@@ -1557,9 +1557,10 @@ bool qdCamera::check_grid_line_attributes(const Vect2s &start_pos, const Vect2s 
 }
 
 void qdCamera::dump_grid(const char *file_name) const {
-#ifdef __QD_DEBUG_ENABLE__
 	Common::DumpFile fh;
 	fh.open(Common::Path(file_name));
+
+	fh.writeString(Common::String::format("%d x %d\n", _GSX, _GSY));
 
 	for (int i = 0; i < _GSY; i++) {
 		for (int j = 0; j < _GSX; j++) {
@@ -1567,11 +1568,10 @@ void qdCamera::dump_grid(const char *file_name) const {
 				fh.writeString(" ");
 			fh.writeString(Common::String::format("%u ", _grid[j + i * _GSX].attributes()));
 		}
-		fh.writeString("\r\n");
+		fh.writeString("\n");
 	}
 
 	fh.close();
-#endif
 }
 
 bool qdCamera::can_change_mode() const {

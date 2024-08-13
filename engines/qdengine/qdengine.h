@@ -108,6 +108,7 @@ public:
 
 	int _thumbSizeX = 0, _thumbSizeY = 0;
 	bool _debugDraw = false;
+	bool _debugDrawGrid = false;
 };
 
 extern QDEngineEngine *g_engine;
