@@ -44,7 +44,7 @@ class ConfigNode;
  * Configuration values are stored in one of two ways -either as a standalone
  * nuvie.cfg file, or otherwise from the ScummVM domain for the added game.
  *
- * WHen the nuvie.cfg file is present, it's contents are stored as an XML tree
+ * When the nuvie.cfg file is present, it's contents are stored as an XML tree
  * (or a forest, technically). All values are stored as strings, but access
  * functions for ints and bools are provided
  * You should only store values in leaf nodes. (This isn't enforced everywhere,
