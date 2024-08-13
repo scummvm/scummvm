@@ -1073,10 +1073,6 @@ void ActorManager::set_combat_movement(bool c) {
 }
 
 bool ActorManager::loadCustomTiles(nuvie_game_t game_type) {
-	if (obj_manager->use_custom_actor_tiles() == false) {
-		return false;
-	}
-
 	Common::Path datadir = "images";
 	Common::Path path;
 
@@ -1087,19 +1083,22 @@ bool ActorManager::loadCustomTiles(nuvie_game_t game_type) {
 
 	tile_manager->freeCustomTiles(); //FIXME this might need to change if we start using custom tiles outside of ActorManager. eg custom map/object tilesets
 
-	loadCustomBaseTiles(datadir);
-	loadAvatarTiles(datadir);
-	loadNPCTiles(datadir);
+	loadCustomBaseTiles();
+	if (obj_manager->use_custom_actor_tiles()) {
+		loadAvatarTiles(datadir);
+		loadNPCTiles(datadir);
+	}
 
 	return true;
 }
 
-void ActorManager::loadCustomBaseTiles(const Common::Path &datadir) {
+void ActorManager::loadCustomBaseTiles() {
+	Common::Path datadir = "mods";
 	Common::Path imagefile;
 	build_path(datadir, "custom_tiles.bmp", imagefile);
 
 	//attempt to load custom base tiles if the file exists.
-	tile_manager->loadCustomTiles(Game::get_game()->get_data_file_path(imagefile), true, true, 0);
+	tile_manager->loadCustomTiles(imagefile, true, true, 0);
 }
 
 void ActorManager::loadAvatarTiles(const Common::Path &datadir) {
