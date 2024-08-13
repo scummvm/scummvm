@@ -60,6 +60,7 @@ private:
 	int _ripLegUp = 0;
 	int _ripTurtle = 0;
 	int _noTreat = 0;
+	bool _flag1 = false;
 
 public:
 	Room403() : Room() {}

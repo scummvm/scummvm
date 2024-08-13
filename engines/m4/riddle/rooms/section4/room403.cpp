@@ -242,9 +242,187 @@ void Room403::daemon() {
 
 }
 
-void Room403::pre_parser() {
+#define TRIGGER _G(kernel).trigger_mode = KT_DAEMON; \
+	kernel_timing_trigger(1, 102); \
+	_G(kernel).trigger_mode = KT_PARSE
 
+void Room403::pre_parser() {
+	bool talkFlag = player_said_any("talk", "talk to");
+	bool lookFlag = player_said_any("look", "look at");
+	bool enterFlag = player_said("enter");
+	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
+
+	if (_val10 == 5) {
+		intr_cancel_sentence();
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+
+		if (player_said("TURTLE", "TURTLE TREAT")) {
+			_val6 = 1020;
+			_val7 = 1410;
+			inv_move_object("TURTLE", 403);
+		} else if (player_said("TURTLE TREATS", "TURTLE TREAT")) {
+			_val6 = 1020;
+			_val7 = 1400;
+		} else if (player_said("EDGER", "TURTLE TREAT")) {
+			if (_G(flags)[V125] != 2) {
+				_val6 = 1020;
+				_val7 = 1500;
+			}
+		} else {
+			_val6 = 1020;
+			_val7 = 1330;
+		}
+
+		TRIGGER;
+		return;
+	}
+
+	if (_val10 == 4) {
+		intr_cancel_sentence();
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+
+		if (lookFlag && player_said("GRATE")) {
+			_val6 = 1020;
+			_val7 = 1340;
+		} else if (player_said("TURTLE TREATS", "GRATE")) {
+			_val6 = 1020;
+			_val7 = 1400;
+		} else if (player_said("TURTLE", "GRATE")) {
+			_val6 = 1020;
+			_val7 = 1410;
+			inv_move_object("TURTLE", 403);
+		} else {
+			_val6 = 1020;
+			_val7 = 1330;
+		}
+
+		TRIGGER;
+		return;
+	}
+
+	if (_val10 == 3) {
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+
+		if (lookFlag && player_said("grate")) {
+			return;
+		}
+
+		intr_cancel_sentence();
+
+		if (useFlag && player_said("GRATE")) {
+			_val6 = 1020;
+			_val7 = 1320;
+		} else {
+			_val6 = 1020;
+			_val7 = 1310;
+		}
+
+		TRIGGER;
+		return;
+	}
+
+	if (_val10 == 2) {
+		intr_cancel_sentence();
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+
+		if (lookFlag && player_said("GRATE")) {
+			_val6 = 1010;
+			_val7 = 1240;
+		} else {
+			_val6 = 1010;
+			_val7 = 1230;
+		}
+
+		TRIGGER;
+	}
+
+	if (_val10 == 1) {
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+
+		if (!(lookFlag && player_said("GRATE"))) {
+			intr_cancel_sentence();
+
+			if (useFlag && player_said("GRATE")) {
+				_val6 = 1010;
+				_val7 = 1220;
+			} else {
+				_val6 = 1010;
+				_val7 = 1210;
+			}
+
+			TRIGGER;
+		}
+	}
+
+	if (player_said("PLANK", "URN") || player_said("EDGER", "URN")) {
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+
+		_G(kernel).trigger_mode = KT_PARSE;
+		kernel_timing_trigger(1, 69);
+		_G(kernel).trigger_mode = KT_PREPARSE;
+	}
+
+	if (!_flag1 && !player_said("WALK TO") &&
+			!player_said("POMERANIAN MARKS", "WOLF"))
+		_flag1 = true;
+
+	if (_val12) {
+		_val12 = 0;
+
+#define MONEY(ITEM) (player_said(ITEM, "WOLF") && inv_player_has(ITEM))
+		if (MONEY("POMERANIAN MARKS")) {
+			player_set_commands_allowed(false);
+			intr_cancel_sentence();
+			_G(flags)[V114] = 1;
+			_val8 = 2000;
+			_val9 = 2232;
+			_G(flags)[V111]++;
+
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_timing_trigger(1, 69);
+			_G(kernel).trigger_mode = KT_PREPARSE;
+		} else if (MONEY("US DOLLARS") || MONEY("CHINESE YUAN") ||
+				MONEY("PERUVIAN INTI") || MONEY("SIKKIMESE RUPEE")) {
+			_G(flags)[V116] = 1;
+			intr_cancel_sentence();
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_timing_trigger(1, 230);
+			_G(kernel).trigger_mode = KT_PREPARSE;
+		} else {
+			if (talkFlag && player_said("WOLF"))
+				intr_cancel_sentence();
+
+			player_set_commands_allowed(false);
+			_val8 = 2000;
+			_val9 = 2234;
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_timing_trigger(1, 110);
+			_G(kernel).trigger_mode = KT_PREPARSE;
+		}
+#undef MONEY
+	}
+
+	if ((lookFlag && player_said(" ")) ||
+			(enterFlag && player_said("GRAVEYARD")) ||
+			(enterFlag && player_said("CASTLE GROUNDS"))) {
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+	}
 }
+#undef TRIGGER
 
 void Room403::parser() {
 
