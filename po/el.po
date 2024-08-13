@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-06 05:47+0000\n"
-"PO-Revision-Date: 2024-05-16 08:20+0000\n"
+"PO-Revision-Date: 2024-08-13 10:19+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -862,10 +862,8 @@ msgid "Launch Email Client"
 msgstr ""
 
 #: gui/integrity-dialog.cpp:174
-#, fuzzy
-#| msgid "Scan complete!"
 msgid "Calculation complete"
-msgstr "Η σάρωση ολοκληρώθηκε!"
+msgstr "Ο υπολογισμός ολοκληρώθηκε"
 
 #: gui/integrity-dialog.cpp:263
 #, fuzzy, c-format
@@ -5685,58 +5683,46 @@ msgid "(check '? > Libretro playlist' for detailed info)"
 msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:48
-#, fuzzy
-#| msgid "Plugins Path:"
 msgid "Playlists Path"
-msgstr "Διαδρομή Πρόσθετων:"
+msgstr "Διαδρομή για Playlists"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:49
-#, fuzzy
-#| msgid "Specifies where your saved games are put"
 msgid "Specifies where your playlist will be saved."
-msgstr "Καθορίζει την τοποθεσία των αποθηκευμένων παιχνιδιών σας"
+msgstr ""
+"Καθορίζει την τοποθεσία όπου θα αποθηκευτεί η λίστα παιχνιδιών σας "
+"(playlist)."
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:52
-#, fuzzy
-#| msgid "Platform:"
 msgid "Playlist format:"
-msgstr "Πλατφόρμα:"
+msgstr "Μορφοποίηση Playlist:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:57
-#, fuzzy
-#| msgid "Goto location"
 msgid "Hooks location:"
-msgstr "Μετάβαση στην περιοχή"
+msgstr "Τοποθεσία για hooks:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:59
-#, fuzzy
-#| msgid "Add a new folder"
 msgid "All in save folder"
-msgstr "Προσθήκη νέου φακέλου"
+msgstr "Όλα στο φάκελο αποθήκευσης"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:60
 msgid "One in each game folder"
-msgstr ""
+msgstr "Ένα σε κάθε φάκελο παιχνιδιού"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:62
 msgid "Clear existing hooks"
-msgstr ""
+msgstr "Καθαρισμός υπαρχόντων hooks"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:64
 msgid "Generate playlist"
-msgstr ""
+msgstr "Δημιουργία playlist"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:66
-#, fuzzy
-#| msgid "Status:"
 msgid "Status: "
-msgstr "Κατάσταση:"
+msgstr "Κατάσταση: "
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:148
-#, fuzzy
-#| msgid "Failed to save game to file."
 msgid "Failed, can't access playlist file"
-msgstr "Η εγγραφή αποθηκευμένου παιχνιδιού σε αρχείο απέτυχε."
+msgstr "Αποτυχία λόγω αδυναμίας πρόσβασης στο αρχείο playlist"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:224
 #, fuzzy
@@ -5745,10 +5731,8 @@ msgid "cleaning failed"
 msgstr "Η ανάγνωση δεδομένων απέτυχε"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:226
-#, fuzzy
-#| msgid "Failed to read the file!"
 msgid "Failed, can't create hook files"
-msgstr "Η ανάγνωση του αρχείου απέτυχε!"
+msgstr "Αποτυχία λόγω αδυναμίας δημιουργίας αρχείων hook"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:236
 #, fuzzy
@@ -6642,10 +6626,8 @@ msgstr "Εναλλαγή ηχητικών εφέ με/χωρίς"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:347
-#, fuzzy
-#| msgid "Switching characters:"
 msgid "Switch characters"
-msgstr "Εναλλαγή χαρακτήρων:"
+msgstr "Αλλαγή χαρακτήρα"
 
 #: engines/agos/metaengine.cpp:353
 #, fuzzy
@@ -8260,10 +8242,8 @@ msgid "GroovieV2 support is not compiled in"
 msgstr "Η υποστήριξη της GroovieV2 δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
 #: engines/groovie/metaengine.cpp:201
-#, fuzzy
-#| msgid "Available engines:"
 msgid "Groovie engine"
-msgstr "Διαθέσιμες μηχανές:"
+msgstr "Μηχανή Groovie"
 
 #: engines/groovie/metaengine.cpp:217
 #, fuzzy
@@ -8850,16 +8830,12 @@ msgid "Save game"
 msgstr "Αποθήκευση παιχνιδιού"
 
 #: engines/lure/metaengine.cpp:197 engines/mads/metaengine.cpp:311
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restore game"
-msgstr "Επαναφορά παιχνιδιού:"
+msgstr "Επαναφορά παιχνιδιού"
 
 #: engines/lure/metaengine.cpp:203
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restart game"
-msgstr "Επαναφορά παιχνιδιού:"
+msgstr "Επανέναρξη παιχνιδιού"
 
 #. I18N: ESC key
 #: engines/lure/metaengine.cpp:209 engines/mads/metaengine.cpp:292
@@ -9025,16 +9001,12 @@ msgid "Scroll bar down"
 msgstr "Κύλιση κάτω"
 
 #: engines/mads/metaengine.cpp:331
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Start game"
-msgstr "Επαναφορά παιχνιδιού:"
+msgstr "Έναρξη παιχνιδιού"
 
 #: engines/mads/metaengine.cpp:337
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Resume game"
-msgstr "Επαναφορά παιχνιδιού:"
+msgstr "Συνέχιση παιχνιδιού"
 
 #: engines/mads/metaengine.cpp:343
 #, fuzzy
@@ -11654,10 +11626,8 @@ msgstr ""
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:112
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:124
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:136
-#, fuzzy
-#| msgid "Random seed:"
 msgid "Random"
-msgstr "Φύτρα τυχαίων αριθμών:"
+msgstr "Τυχαίο"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:67
 msgid "Picks the map algorithm randomly."
