@@ -4252,14 +4252,11 @@ VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
 			} break;
 		case PropagationStack::kStageSendToStructuralChildren: {
 				Structural *structural = stackTop.ptr.structural;
-				const Common::Array<Common::SharedPtr<Structural> > &children = structural->getChildren();
 
-				if (structural->getSceneLoadState() == Structural::SceneLoadState::kSceneNotLoaded) {
-#ifdef MTROPOLIS_DEBUG_ENABLE
-					if (Debugger *debugger = runtime->debugGetDebugger())
-						debugger->notify(kDebugSeverityError, "Hot-loading scenes is not yet implemented (continuePropagating)");
-#endif
-				}
+				if (structural->getSceneLoadState() == Structural::SceneLoadState::kSceneNotLoaded)
+					runtime->hotLoadScene(structural);
+
+				const Common::Array<Common::SharedPtr<Structural> > &children = structural->getChildren();
 
 				if (stackTop.index >= children.size()) {
 					_propagationStack.pop_back();
