@@ -2408,6 +2408,13 @@ bool qdGameDispatcher::keyboard_handler(Common::KeyCode vkey, bool event) {
 			g_engine->_debugDraw = !g_engine->_debugDraw;
 			toggle_full_redraw();
 			return true;
+		case Common::KEYCODE_F8:
+			g_engine->_debugDrawGrid = !g_engine->_debugDrawGrid;
+			toggle_full_redraw();
+
+			qdCamera::current_camera()->dump_grid("qd_grid.txt");
+			warning("Grid dumped");
+			return true;
 #ifdef __QD_DEBUG_ENABLE__
 		case Common::KEYCODE_F10:
 			write_resource_stats("memory_usage.html");
