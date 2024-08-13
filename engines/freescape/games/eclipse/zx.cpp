@@ -39,6 +39,14 @@ void EclipseEngine::initZX() {
 	_soundIndexMenu = -1;
 	_soundIndexStart = -1;
 	_soundIndexAreaChange = -1;
+
+	_soundIndexNoShield = 8;
+	_soundIndexNoEnergy = -1;
+	_soundIndexFallen = 8;
+	_soundIndexTimeout = 8;
+	_soundIndexForceEndGame = 8;
+	_soundIndexCrushed = 8;
+	_soundIndexMissionComplete = 16;
 }
 
 void EclipseEngine::loadAssetsZXFullGame() {

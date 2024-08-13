@@ -40,6 +40,14 @@ void DarkEngine::initZX() {
 	_soundIndexStart = 11;
 	_soundIndexAreaChange = 0x1c;
 	_soundIndexRestoreECD = 30;
+
+	_soundIndexNoShield = 14;
+	_soundIndexNoEnergy = 14;
+	_soundIndexFallen = 7;
+	_soundIndexTimeout = 14;
+	_soundIndexForceEndGame = 14;
+	_soundIndexCrushed = 25;
+	_soundIndexMissionComplete = 8;
 }
 
 void DarkEngine::loadAssetsZXFullGame() {

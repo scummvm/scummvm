@@ -451,6 +451,14 @@ public:
 	int _soundIndexAreaChange;
 	int _soundIndexHit;
 
+	int _soundIndexNoShield;
+	int _soundIndexNoEnergy;
+	int _soundIndexFallen;
+	int _soundIndexTimeout;
+	int _soundIndexForceEndGame;
+	int _soundIndexCrushed;
+	int _soundIndexMissionComplete;
+
 	// Rendering
 	int _screenW, _screenH;
 	Renderer *_gfx;
