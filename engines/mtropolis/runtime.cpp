@@ -5341,7 +5341,10 @@ void Runtime::executeLowLevelSceneStateTransition(const LowLevelSceneStateTransi
 		sendMessageOnVThread(action.getMessage());
 		break;
 	case LowLevelSceneStateTransitionAction::kLoad:
-		loadScene(action.getScene(), true);
+		loadScene(action.getScene());
+
+		// Refresh play time so anything time-based doesn't skip ahead
+		refreshPlayTime();
 		break;
 	case LowLevelSceneStateTransitionAction::kUnload: {
 			Teardown teardown;
@@ -5977,7 +5980,7 @@ void Runtime::queueEventAsLowLevelSceneStateTransitionAction(const Event &evt, S
 	_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(msg));
 }
 
-void Runtime::loadScene(const Common::SharedPtr<Structural> &scene, bool activateScene) {
+void Runtime::loadScene(const Common::SharedPtr<Structural> &scene) {
 	assert(scene->getSceneLoadState() != Structural::SceneLoadState::kNotAScene);
 
 	if (scene->getSceneLoadState() == Structural::SceneLoadState::kSceneNotLoaded) {
@@ -5999,19 +6002,15 @@ void Runtime::loadScene(const Common::SharedPtr<Structural> &scene, bool activat
 		}
 	}
 
-	if (activateScene) {
-		recursiveActivateStructural(scene.get());
-		debug(1, "Structural elements activated OK");
+	recursiveActivateStructural(scene.get());
+	debug(1, "Structural elements activated OK");
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
-		if (_debugger) {
-			_debugger->complainAboutUnfinished(scene.get());
-			_debugger->refreshSceneStatus();
-		}
-#endif
-
-		refreshPlayTime();
+	if (_debugger) {
+		_debugger->complainAboutUnfinished(scene.get());
+		_debugger->refreshSceneStatus();
 	}
+#endif
 }
 
 void Runtime::sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dispatch) {
@@ -7289,7 +7288,7 @@ void Runtime::queueChangeObjectParent(const Common::WeakPtr<RuntimeObject> &obj,
 
 void Runtime::hotLoadScene(Structural *structural) {
 	assert(structural->getSceneLoadState() != Structural::SceneLoadState::kNotAScene);
-	loadScene(structural->getSelfReference().lock().staticCast<Structural>(), false);
+	loadScene(structural->getSelfReference().lock().staticCast<Structural>());
 }
 
 void Runtime::ensureMainWindowExists() {
@@ -8684,7 +8683,7 @@ void Project::loadContextualObject(size_t streamIndex, ChildLoaderStack &stack, 
 					error("No element factory defined for structural object");
 				}
 
-				ElementLoaderContext elementLoaderContext(getRuntime(), streamIndex);
+				ElementLoaderContext elementLoaderContext(getRuntime(), this, streamIndex);
 				Common::SharedPtr<Element> element = elementFactory->createElement(elementLoaderContext, dataObject);
 
 				uint32 guid = element->getStaticGUID();
@@ -8869,6 +8868,9 @@ void Element::triggerAutoPlay(Runtime *runtime) {
 	_haveCheckedAutoPlay = true;
 
 	queueAutoPlayEvents(runtime, canAutoPlay());
+}
+
+void Element::tryAutoSetName(Runtime *runtime, Project *project) {
 }
 
 bool Element::resolveMediaMarkerLabel(const Label& label, int32 &outResolution) const {

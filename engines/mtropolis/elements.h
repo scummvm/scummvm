@@ -107,6 +107,7 @@ public:
 
 	void render(Window *window) override;
 	void playMedia(Runtime *runtime, Project *project) override;
+	void tryAutoSetName(Runtime *runtime, Project *project) override;
 
 	void setResizeFilter(const Common::SharedPtr<MovieResizeFilter> &filter);
 
@@ -201,6 +202,8 @@ public:
 	void activate() override;
 	void deactivate() override;
 
+	void tryAutoSetName(Runtime *runtime, Project *project) override;
+
 	void render(Window *window) override;
 
 	Common::SharedPtr<Structural> shallowClone() const override;
@@ -237,6 +240,8 @@ public:
 
 	void activate() override;
 	void deactivate() override;
+
+	void tryAutoSetName(Runtime *runtime, Project *project) override;
 
 	bool canAutoPlay() const override;
 
@@ -414,6 +419,7 @@ public:
 	bool canAutoPlay() const override;
 
 	void playMedia(Runtime *runtime, Project *project) override;
+	void tryAutoSetName(Runtime *runtime, Project *project) override;
 
 	bool resolveMediaMarkerLabel(const Label &label, int32 &outResolution) const override;
 

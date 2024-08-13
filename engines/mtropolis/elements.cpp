@@ -948,6 +948,10 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 	}
 }
 
+void MovieElement::tryAutoSetName(Runtime *runtime, Project *project) {
+	_name = project->getAssetNameByID(_assetID);
+}
+
 void MovieElement::setResizeFilter(const Common::SharedPtr<MovieResizeFilter> &filter) {
 	_resizeFilter = filter;
 }
@@ -1235,6 +1239,10 @@ void ImageElement::deactivate() {
 	_cachedImage.reset();
 }
 
+void ImageElement::tryAutoSetName(Runtime *runtime, Project *project) {
+	_name = project->getAssetNameByID(_assetID);
+}
+
 void ImageElement::render(Window *window) {
 	if (_cachedImage) {
 		VisualElementRenderProperties::InkMode inkMode = _renderProps.getInkMode();
@@ -1474,6 +1482,10 @@ void MToonElement::deactivate() {
 	}
 
 	_renderSurface.reset();
+}
+
+void MToonElement::tryAutoSetName(Runtime *runtime, Project *project) {
+	_name = project->getAssetNameByID(_assetID);
 }
 
 bool MToonElement::canAutoPlay() const {
@@ -2566,6 +2578,10 @@ void SoundElement::playMedia(Runtime *runtime, Project *project) {
 		// Goal state is stopped
 		stopPlayer();
 	}
+}
+
+void SoundElement::tryAutoSetName(Runtime *runtime, Project *project) {
+	_name = project->getAssetNameByID(_assetID);
 }
 
 bool SoundElement::resolveMediaMarkerLabel(const Label &label, int32 &outResolution) const {

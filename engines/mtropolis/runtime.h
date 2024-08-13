@@ -1871,7 +1871,7 @@ private:
 
 	void queueEventAsLowLevelSceneStateTransitionAction(const Event &evt, Structural *root, bool cascade, bool relay);
 
-	void loadScene(const Common::SharedPtr<Structural> &scene, bool activateScene);
+	void loadScene(const Common::SharedPtr<Structural> &scene);
 
 	void ensureMainWindowExists();
 
@@ -2695,6 +2695,7 @@ public:
 	void removeMediaCue(const MediaCueState *mediaCue);
 
 	void triggerAutoPlay(Runtime *runtime);
+	virtual void tryAutoSetName(Runtime *runtime, Project *project);
 
 	virtual bool resolveMediaMarkerLabel(const Label &label, int32 &outResolution) const;
 
