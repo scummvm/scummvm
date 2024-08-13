@@ -110,6 +110,7 @@ public:
 	static int32 lNEW_SAMPLE (TwinEEngine *engine, LifeScriptContext &ctx);
 	static int32 lPOS_OBJ_AROUND(TwinEEngine *engine, LifeScriptContext &ctx);
 	static int32 lPCX_MESS_OBJ(TwinEEngine *engine, LifeScriptContext &ctx);
+	static int32 lSET_FLAG_GAME(TwinEEngine *engine, LifeScriptContext &ctx);
 
 	ScriptLifeV2(TwinEEngine *engine);
 };

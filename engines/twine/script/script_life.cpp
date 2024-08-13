@@ -1069,18 +1069,6 @@ int32 ScriptLife::lEND_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx)
 }
 
 /**
- * Set a new value for the game flag (Paramter = Game Flag Index, Parameter = Value)
- * @note Opcode @c 0x24
- */
-int32 ScriptLife::lSET_FLAG_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const uint8 flagIdx = ctx.stream.readByte();
-	const uint8 flagValue = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_FLAG_GAME(%i, %i)", (int)flagIdx, (int)flagValue);
-	engine->_gameState->setGameFlag(flagIdx, flagValue);
-	return 0;
-}
-
-/**
  * Kill the actor passed as paramenter (Parameter = Actor Index)
  * @note Opcode @c 0x25
  */

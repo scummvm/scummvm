@@ -73,7 +73,7 @@ static const ScriptLifeFunction function_map[] = {
 	{"SET_COMPORTEMENT", ScriptLife::lSET_COMPORTEMENT},
 	{"SET_COMPORTEMENT_OBJ", ScriptLife::lSET_COMPORTEMENT_OBJ},
 	{"END_COMPORTEMENT", ScriptLife::lEND_COMPORTEMENT},
-	{"SET_FLAG_GAME", ScriptLife::lSET_FLAG_GAME},
+	{"SET_FLAG_GAME", ScriptLifeV2::lSET_FLAG_GAME},
 	{"KILL_OBJ", ScriptLife::lKILL_OBJ},
 	{"SUICIDE", ScriptLife::lSUICIDE},
 	{"USE_ONE_LITTLE_KEY", ScriptLife::lUSE_ONE_LITTLE_KEY},
@@ -738,12 +738,63 @@ int32 ScriptLifeV2::lBACKGROUND(TwinEEngine *engine, LifeScriptContext &ctx) {
 	return -1;
 }
 
+int32 ScriptLifeV2::lSET_FLAG_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
+	const uint8 num = ctx.stream.readByte();
+	const int16 val = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_FLAG_GAME(%i, %i)", (int)num, (int)val);
+	engine->_gameState->setGameFlag(num, val);
+
+	if (num == GAMEFLAG_MONEY) {
+		if (engine->_scene->_planet >= 2) {
+			engine->_gameState->setKashes(val);
+		} else {
+			engine->_gameState->setZlitos(val);
+		}
+	}
+
+	return 0;
+}
+
 int32 ScriptLifeV2::lADD_VAR_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	const uint8 num = ctx.stream.readByte();
+	const int16 val = ctx.stream.readSint16LE();
+	int16 currentVal = engine->_gameState->hasGameFlag(num);
+	if ((int)currentVal + (int)val < 32767) {
+		currentVal += val;
+	} else {
+		currentVal = 32767;
+	}
+
+	if (num == GAMEFLAG_MONEY) {
+		if (engine->_scene->_planet >= 2) {
+			engine->_gameState->setKashes(currentVal);
+		} else {
+			engine->_gameState->setZlitos(currentVal);
+		}
+	}
+	engine->_gameState->setGameFlag(num, currentVal);
+	return 0;
 }
 
 int32 ScriptLifeV2::lSUB_VAR_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	const uint8 num = ctx.stream.readByte();
+	const int16 val = ctx.stream.readSint16LE();
+	int16 currentVal = engine->_gameState->hasGameFlag(num);
+	if ((int)currentVal - (int)val > -32768) {
+		currentVal -= val;
+	} else {
+		currentVal = -32768;
+	}
+
+	if (num == GAMEFLAG_MONEY) {
+		if (engine->_scene->_planet >= 2) {
+			engine->_gameState->setKashes(currentVal);
+		} else {
+			engine->_gameState->setZlitos(currentVal);
+		}
+	}
+	engine->_gameState->setGameFlag(num, currentVal);
+	return 0;
 }
 
 int32 ScriptLifeV2::lADD_VAR_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {

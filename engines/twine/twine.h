@@ -316,9 +316,9 @@ public:
 
 	int32 _loopInventoryItem = 0;
 	int32 _stepFalling = 0;
-	uint32 _gameFlags;
+	uint32 _gameFlags = 0u;
 	Common::Platform _platform;
-	bool _flagRain;
+	bool _flagRain = false;
 
 	/** Disable screen recenter */
 	bool _disableScreenRecenter = false;
