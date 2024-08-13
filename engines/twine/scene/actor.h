@@ -76,12 +76,12 @@ struct StaticFlagsStruct {
 	uint32 bIsCarrierActor : 1;             // 0x004000 OBJ_CARRIER - can carry and move an obj
 	// take smaller value for bound, or if not set take average for bound
 	uint32 bUseMiniZv : 1;                  // 0x008000 MINI_ZV - square on smaller dimension (if 3D object)
-	uint32 bHasInvalidPosition : 1;         // 0x010000
-	uint32 bNoElectricShock : 1;            // 0x020000 NO_CHOC
-	uint32 bHasSpriteAnim3D : 1;            // 0x040000
-	uint32 bNoPreClipping : 1;              // 0x080000
-	uint32 bHasZBuffer : 1;                 // 0x100000
-	uint32 bHasZBufferInWater : 1;          // 0x200000
+	uint32 bHasInvalidPosition : 1;         // 0x010000 POS_INVALIDE - carrier considered as an invalid position
+	uint32 bNoElectricShock : 1;            // 0x020000 NO_CHOC - does not trigger electric shock animation
+	uint32 bHasSpriteAnim3D : 1;            // 0x040000 ANIM_3DS - 3DS animation (extension of 3D sprite)
+	uint32 bNoPreClipping : 1;              // 0x080000 NO_PRE_CLIP - does not pre-clip the object (for large objects)
+	uint32 bHasZBuffer : 1;                 // 0x100000 OBJ_ZBUFFER - displays object in ZBuffer (exterior only!)
+	uint32 bHasZBufferInWater : 1;          // 0x200000 OBJ_IN_WATER - displays object in ZBuffer in water (exterior only!)
 };
 
 /** Actors dynamic flags structure */
@@ -183,6 +183,14 @@ public:
 
 	int16 _actorIdx = 0; // own actor index
 	IVec3 _pos; // PosObjX, PosObjY, PosObjZ
+
+	// T_ANIM_3DS - Coord.A3DS
+	struct A3DSAnim {
+		int32 Num;
+		int32 Deb;
+		int32 Fin;
+	} A3DS;
+
 	int32 _strengthOfHit = 0;
 	int32 _hitBy = -1;
 	BonusParameter _bonusParameter;
@@ -315,6 +323,7 @@ public:
 	int16 _heroAnimIdx[4];
 
 	void initSprite(int32 spriteNum, int32 actorIdx);
+	void setFrame(int32 actorIdx, uint32 frame);
 
 	/** Restart hero variables while opening new scenes */
 	void restartHeroScene();

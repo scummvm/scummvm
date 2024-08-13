@@ -22,6 +22,7 @@
 #include "twine/script/script_life_v2.h"
 #include "twine/audio/sound.h"
 #include "twine/movies.h"
+#include "twine/parser/anim3ds.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
@@ -611,18 +612,17 @@ int32 ScriptLifeV2::lSET_SPRITE(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lSET_FRAME_3DS(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const int sprite = ctx.stream.readByte();
+	int sprite = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_FRAME_3DS(%i)", (int)sprite);
 	if (ctx.actor->_staticFlags.bHasSpriteAnim3D) {
-		// TODO:
-		// if (sprite > (ListAnim3DS[ptrobj->Coord.A3DS.Num].Fin - ListAnim3DS[ptrobj->Coord.A3DS.Num].Deb)) {
-		// 	sprite = ListAnim3DS[ptrobj->Coord.A3DS.Num].Fin - ListAnim3DS[ptrobj->Coord.A3DS.Num].Deb;
-		// }
-		// sprite += ListAnim3DS[ptrobj->Coord.A3DS.Num].Deb;
-
+		const T_ANIM_3DS *anim = engine->_resources->getAnim(ctx.actor->A3DS.Num);
+		if (sprite >= anim->Fin - anim->Deb) {
+			sprite = anim->Fin - anim->Deb;
+		}
+		sprite += anim->Deb;
 		engine->_actor->initSprite(sprite, ctx.actorIdx);
 	}
-	return -1;
+	return 0;
 }
 
 int32 ScriptLifeV2::lIMPACT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {

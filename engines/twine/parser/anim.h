@@ -71,8 +71,8 @@ protected:
 public:
 	bool loadFromStream(Common::SeekableReadStream &stream, bool lba1) override;
 
-	const KeyFrame* getKeyframe(uint index) const;
-	const Common::Array<KeyFrame>& getKeyframes() const;
+	const KeyFrame *getKeyframe(uint index) const;
+	const Common::Array<KeyFrame> &getKeyframes() const;
 	uint getNumKeyframes() const;
 	uint16 getLoopFrame() const;
 	uint16 getNumBoneframes() const;
