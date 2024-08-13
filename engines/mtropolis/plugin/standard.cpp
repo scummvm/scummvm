@@ -637,7 +637,7 @@ void ObjectReferenceVariableModifier::resolve(Runtime *runtime) {
 	if (storage->_objectPath[0] == '/')
 		resolveAbsolutePath(runtime);
 	else if (storage->_objectPath[0] == '.')
-		resolveRelativePath(this, storage->_objectPath, 0);
+		resolveRelativePath(runtime, this, storage->_objectPath, 0);
 	else
 		warning("Object reference variable had an unknown path format");
 
@@ -648,7 +648,7 @@ void ObjectReferenceVariableModifier::resolve(Runtime *runtime) {
 	}
 }
 
-void ObjectReferenceVariableModifier::resolveRelativePath(RuntimeObject *obj, const Common::String &path, size_t startPos) {
+void ObjectReferenceVariableModifier::resolveRelativePath(Runtime *runtime, RuntimeObject *obj, const Common::String &path, size_t startPos) {
 	ObjectReferenceVariableStorage *storage = static_cast<ObjectReferenceVariableStorage *>(_storage.get());
 
 	bool haveNextLevel = true;
@@ -681,6 +681,10 @@ void ObjectReferenceVariableModifier::resolveRelativePath(RuntimeObject *obj, co
 
 		if (obj->isStructural()) {
 			Structural *structural = static_cast<Structural *>(obj);
+
+			if (structural->getSceneLoadState() == Structural::SceneLoadState::kSceneNotLoaded)
+				runtime->hotLoadScene(structural);
+
 			modifierChildren = &structural->getModifiers();
 			structuralChildren = &structural->getChildren();
 		} else if (obj->isModifier()) {
@@ -769,7 +773,7 @@ void ObjectReferenceVariableModifier::resolveAbsolutePath(Runtime *runtime) {
 	if (storage->_objectPath[prefixEnd] != '/')
 		return;
 
-	return resolveRelativePath(project, storage->_objectPath, prefixEnd + 1);
+	return resolveRelativePath(runtime, project, storage->_objectPath, prefixEnd + 1);
 }
 
 bool ObjectReferenceVariableModifier::computeObjectPath(RuntimeObject *obj, Common::String &outPath) {

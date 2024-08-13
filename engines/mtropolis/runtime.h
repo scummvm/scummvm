@@ -1738,6 +1738,8 @@ public:
 	void queueKillObject(const Common::WeakPtr<RuntimeObject> &obj);
 	void queueChangeObjectParent(const Common::WeakPtr<RuntimeObject> &obj, const Common::WeakPtr<RuntimeObject> &newParent);
 
+	void hotLoadScene(Structural *structural);
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
 	void debugBreak();
@@ -1869,7 +1871,7 @@ private:
 
 	void queueEventAsLowLevelSceneStateTransitionAction(const Event &evt, Structural *root, bool cascade, bool relay);
 
-	void loadScene(const Common::SharedPtr<Structural> &scene);
+	void loadScene(const Common::SharedPtr<Structural> &scene, bool activateScene);
 
 	void ensureMainWindowExists();
 
@@ -2187,11 +2189,19 @@ public:
 
 class Structural : public RuntimeObject, public IModifierContainer, public IMessageConsumer, public Debuggable {
 public:
+	enum class SceneLoadState {
+		kNotAScene,
+		kSceneNotLoaded,
+		kSceneLoaded,
+	};
+
 	Structural();
 	explicit Structural(Runtime *runtime);
 	virtual ~Structural();
 
 	bool isStructural() const override;
+	SceneLoadState getSceneLoadState() const;
+	void setSceneLoadState(SceneLoadState sceneLoadState);
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	bool readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index) override;
@@ -2283,6 +2293,7 @@ protected:
 	bool _loop;
 
 	int32 _flushPriority;
+	SceneLoadState _sceneLoadState;
 
 	Common::SharedPtr<StructuralHooks> _hooks;
 

@@ -3301,12 +3301,19 @@ ProjectPresentationSettings::ProjectPresentationSettings() : width(640), height(
 Structural::Structural() : Structural(nullptr) {
 }
 
-Structural::Structural(Runtime *runtime) : _parent(nullptr), _paused(false), _loop(false), _flushPriority(0), _runtime(runtime) {
+Structural::Structural(Runtime *runtime)
+	: _parent(nullptr)
+	, _paused(false)
+	, _loop(false)
+	, _flushPriority(0)
+	, _runtime(runtime)
+	, _sceneLoadState(SceneLoadState::kNotAScene) {
 }
 
 Structural::Structural(const Structural &other)
 	: RuntimeObject(other), Debuggable(other), _parent(other._parent), _children(other._children), _modifiers(other._modifiers), _name(other._name), _assets(other._assets)
-	, _paused(other._paused), _loop(other._loop), _flushPriority(other._flushPriority)/*, _hooks(other._hooks)*/, _runtime(other._runtime) {
+	, _paused(other._paused), _loop(other._loop), _flushPriority(other._flushPriority)/*, _hooks(other._hooks)*/, _runtime(other._runtime)
+	, _sceneLoadState(SceneLoadState::kNotAScene) {
 }
 
 Structural::~Structural() {
@@ -3331,6 +3338,15 @@ void Structural::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
 bool Structural::isStructural() const {
 	return true;
 }
+
+Structural::SceneLoadState Structural::getSceneLoadState() const {
+	return _sceneLoadState;
+}
+
+void Structural::setSceneLoadState(SceneLoadState sceneLoadState) {
+	_sceneLoadState = sceneLoadState;
+}
+
 
 bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
 	if (attrib == "name") {
@@ -3488,6 +3504,16 @@ bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, c
 		return true;
 	}
 
+	if (RuntimeObject::readAttribute(thread, result, attrib))
+		return true;
+
+	if (_sceneLoadState == Structural::SceneLoadState::kSceneNotLoaded) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+		if (Debugger *debugger = thread->getRuntime()->debugGetDebugger())
+			debugger->notify(kDebugSeverityError, "Hot-loading scenes is not yet implemented (readAttribute)");
+#endif
+	}
+
 	// Traverse children (modifiers must be first)
 	for (const Common::SharedPtr<Modifier> &modifier : _modifiers) {
 		if (caseInsensitiveEqual(modifier->getName(), attrib)) {
@@ -3503,7 +3529,7 @@ bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, c
 		}
 	}
 
-	return RuntimeObject::readAttribute(thread, result, attrib);
+	return false;
 }
 
 MiniscriptInstructionOutcome Structural::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
@@ -3551,6 +3577,9 @@ MiniscriptInstructionOutcome Structural::writeRefAttribute(MiniscriptThread *thr
 	} else if (attrib == "flushpriority") {
 		DynamicValueWriteIntegerHelper<int32>::create(&_flushPriority, result);
 		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "unload") {
+		DynamicValueWriteDiscardHelper::create(result);
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
 	// Attempt to resolve as a child object
@@ -3574,6 +3603,13 @@ MiniscriptInstructionOutcome Structural::writeRefAttribute(MiniscriptThread *thr
 
 bool Structural::readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index) {
 	if (attrib == "nthelement") {
+		if (_sceneLoadState == Structural::SceneLoadState::kSceneNotLoaded) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+			if (Debugger *debugger = thread->getRuntime()->debugGetDebugger())
+				debugger->notify(kDebugSeverityError, "Hot-loading scenes is not yet implemented (readAttributeIndexed)");
+#endif
+		}
+
 		DynamicValue indexConverted;
 		if (!index.convertToType(DynamicValueTypes::kInteger, indexConverted)) {
 			thread->error("Invalid index for 'nthelement'");
@@ -4217,6 +4253,14 @@ VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
 		case PropagationStack::kStageSendToStructuralChildren: {
 				Structural *structural = stackTop.ptr.structural;
 				const Common::Array<Common::SharedPtr<Structural> > &children = structural->getChildren();
+
+				if (structural->getSceneLoadState() == Structural::SceneLoadState::kSceneNotLoaded) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+					if (Debugger *debugger = runtime->debugGetDebugger())
+						debugger->notify(kDebugSeverityError, "Hot-loading scenes is not yet implemented (continuePropagating)");
+#endif
+				}
+
 				if (stackTop.index >= children.size()) {
 					_propagationStack.pop_back();
 				} else {
@@ -4840,6 +4884,13 @@ bool Runtime::runFrame() {
 			debug(1, "Materializing project...");
 			_project->materializeSelfAndDescendents(this, &_rootLinkingScope);
 
+			for (const Common::SharedPtr<Structural> &section : _project->getChildren()) {
+				for (const Common::SharedPtr<Structural> &subsection : section->getChildren()) {
+					for (const Common::SharedPtr<Structural> &scene : subsection->getChildren())
+						scene->setSceneLoadState(Structural::SceneLoadState::kSceneNotLoaded);
+				}
+			}
+
 			debug(1, "Project is fully loaded!  Starting up...");
 
 			if (_project->getChildren().size() == 0) {
@@ -5249,6 +5300,9 @@ void Runtime::executeTeardown(const Teardown &teardown) {
 			structural->removeAllChildren();
 			structural->removeAllModifiers();
 			structural->removeAllAssets();
+
+			assert(structural->getSceneLoadState() == Structural::SceneLoadState::kSceneLoaded);
+			structural->setSceneLoadState(Structural::SceneLoadState::kSceneNotLoaded);
 		} else {
 			Structural *parent = structural->getParent();
 
@@ -5287,7 +5341,7 @@ void Runtime::executeLowLevelSceneStateTransition(const LowLevelSceneStateTransi
 		sendMessageOnVThread(action.getMessage());
 		break;
 	case LowLevelSceneStateTransitionAction::kLoad:
-		loadScene(action.getScene());
+		loadScene(action.getScene(), true);
 		break;
 	case LowLevelSceneStateTransitionAction::kUnload: {
 			Teardown teardown;
@@ -5923,33 +5977,41 @@ void Runtime::queueEventAsLowLevelSceneStateTransitionAction(const Event &evt, S
 	_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(msg));
 }
 
-void Runtime::loadScene(const Common::SharedPtr<Structural>& scene) {
-	debug(1, "Loading scene '%s'", scene->getName().c_str());
-	Element *element = static_cast<Element *>(scene.get());
-	uint32 streamID = element->getStreamLocator() & 0xffff; // Not actually sure how many bits are legal here
+void Runtime::loadScene(const Common::SharedPtr<Structural> &scene, bool activateScene) {
+	assert(scene->getSceneLoadState() != Structural::SceneLoadState::kNotAScene);
 
-	Subsection *subsection = static_cast<Subsection *>(scene->getParent());
+	if (scene->getSceneLoadState() == Structural::SceneLoadState::kSceneNotLoaded) {
+		scene->setSceneLoadState(Structural::SceneLoadState::kSceneLoaded);
 
-	if (streamID == 0) {
-		debug(1, "Scene is empty");
-	} else {
-		_project->loadSceneFromStream(scene, streamID, getHacks());
-		debug(1, "Scene loaded OK, materializing objects...");
-		scene->materializeDescendents(this, subsection->getSceneLoadMaterializeScope());
-		debug(1, "Scene materialized OK");
+		debug(1, "Loading scene '%s'", scene->getName().c_str());
+		Element *element = static_cast<Element *>(scene.get());
+		uint32 streamID = element->getStreamLocator() & 0xffff; // Not actually sure how many bits are legal here
+
+		Subsection *subsection = static_cast<Subsection *>(scene->getParent());
+
+		if (streamID == 0) {
+			debug(1, "Scene is empty");
+		} else {
+			_project->loadSceneFromStream(scene, streamID, getHacks());
+			debug(1, "Scene loaded OK, materializing objects...");
+			scene->materializeDescendents(this, subsection->getSceneLoadMaterializeScope());
+			debug(1, "Scene materialized OK");
+		}
 	}
 
-	recursiveActivateStructural(scene.get());
-	debug(1, "Structural elements activated OK");
+	if (activateScene) {
+		recursiveActivateStructural(scene.get());
+		debug(1, "Structural elements activated OK");
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
-	if (_debugger) {
-		_debugger->complainAboutUnfinished(scene.get());
-		_debugger->refreshSceneStatus();
-	}
+		if (_debugger) {
+			_debugger->complainAboutUnfinished(scene.get());
+			_debugger->refreshSceneStatus();
+		}
 #endif
 
-	refreshPlayTime();
+		refreshPlayTime();
+	}
 }
 
 void Runtime::sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dispatch) {
@@ -7223,6 +7285,11 @@ void Runtime::queueKillObject(const Common::WeakPtr<RuntimeObject> &obj) {
 
 void Runtime::queueChangeObjectParent(const Common::WeakPtr<RuntimeObject> &obj, const Common::WeakPtr<RuntimeObject> &newParent) {
 	_pendingParentChanges.push_back(ObjectParentChange(obj, newParent));
+}
+
+void Runtime::hotLoadScene(Structural *structural) {
+	assert(structural->getSceneLoadState() != Structural::SceneLoadState::kNotAScene);
+	loadScene(structural->getSelfReference().lock().staticCast<Structural>(), false);
 }
 
 void Runtime::ensureMainWindowExists() {
@@ -9248,12 +9315,6 @@ MiniscriptInstructionOutcome VisualElement::writeRefAttribute(MiniscriptThread *
 		// Not sure what this does, MTI uses it frequently
 		DynamicValueWriteDiscardHelper::create(writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
-	} else if (attrib == "unload") {
-		if (getRuntime()->getHacks().ignoreSceneUnloads) {
-			DynamicValueWriteDiscardHelper::create(writeProxy);
-			return kMiniscriptInstructionOutcomeContinue;
-		} else
-			return kMiniscriptInstructionOutcomeFailed;
 	}
 
 	return Element::writeRefAttribute(thread, writeProxy, attrib);
