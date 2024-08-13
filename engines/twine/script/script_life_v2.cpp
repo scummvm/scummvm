@@ -641,23 +641,47 @@ int32 ScriptLifeV2::lIMPACT_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 brickTrackId = ctx.stream.readByte();
 	const uint16 n = ctx.stream.readUint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lIMPACT_POINT(%i, %i)", (int)brickTrackId, (int)n);
-	// int16 x0 = ListBrickTrack[brickTrackId].x;
-	// int16 y0 = ListBrickTrack[brickTrackId].y;
-	// int16 z0 = ListBrickTrack[brickTrackId].z;
+	// const IVec3 &pos = engine->_scene->_sceneTracks[brickTrackId];
+	// int16 x0 = pos.x;
+	// int16 y0 = pos.y;
+	// int16 z0 = pos.z;
 	// TODO: DoImpact(n, x0, y0, z0, ctx.actorIdx);
 	return -1;
 }
 
+// ECHELLE
 int32 ScriptLifeV2::lLADDER(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	const uint8 num = ctx.stream.readByte();
+	const uint8 info = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lLADDER(%i, %i)", (int)num, (int)info);
+	int n = 0;
+	while (n < engine->_scene->_sceneNumZones) {
+		ZoneStruct &zone = engine->_scene->_sceneZones[n];
+		if (zone.type == ZoneType::kLadder && zone.num == num) {
+			zone.infoData.generic.info1 = (int32)info;
+		}
+		++n;
+	}
+	return 0;
 }
 
+// SET_ARMURE
 int32 ScriptLifeV2::lSET_ARMOR(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	const int8 armor = ctx.stream.readSByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_ARMOR(%i)", (int)armor);
+	ctx.actor->_armor = (int32)armor;
+	return 0;
 }
 
+// SET_ARMURE_OBJ
 int32 ScriptLifeV2::lSET_ARMOR_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	const uint8 num = ctx.stream.readByte();
+	const int8 armor = ctx.stream.readSByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_ARMOR_OBJ(%i, %i)", (int)num, (int)armor);
+	if (ActorStruct *actor = engine->_scene->getActor(num)) {
+		actor->_armor = (int32)armor;
+	}
+	return 0;
 }
 
 int32 ScriptLifeV2::lADD_LIFE_POINT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -665,6 +689,10 @@ int32 ScriptLifeV2::lADD_LIFE_POINT_OBJ(TwinEEngine *engine, LifeScriptContext &
 }
 
 int32 ScriptLifeV2::lSTATE_INVENTORY(TwinEEngine *engine, LifeScriptContext &ctx) {
+	const uint8 num = ctx.stream.readByte(); // num vargame
+	const uint8 idObj3D = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSTATE_INVENTORY(%i, %i)", (int)num, (int)idObj3D);
+	// TODO: TabInv[num].IdObj3D = idObj3D;
 	return -1;
 }
 

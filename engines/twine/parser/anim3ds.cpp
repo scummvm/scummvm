@@ -20,6 +20,7 @@
  */
 
 #include "twine/parser/anim3ds.h"
+#include "common/debug.h"
 
 namespace TwinE {
 
@@ -27,9 +28,10 @@ bool Anim3DSData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) 
 	assert(!lba1);
 
 	const int n = (int)stream.size() / 8;
+	debug("preload %i anim3ds entries", n);
 	for (int i = 0; i < n; ++i) {
 		T_ANIM_3DS anim;
-		stream.read(anim.Name, 4);
+		stream.read(anim.Name, sizeof(anim.Name));
 		anim.Deb = stream.readSint16LE();
 		anim.Fin = stream.readSint16LE();
 		_anims.push_back(anim);

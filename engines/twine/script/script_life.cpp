@@ -1644,6 +1644,9 @@ int32 ScriptLife::lCLR_HOLO_POS(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLife::lADD_FUEL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int16 value = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ADD_FUEL(%i)", (int)value);
+	if (engine->isLBA2()) {
+		return 0;
+	}
 	engine->_gameState->addGas(value);
 	return 0;
 }
@@ -1655,6 +1658,9 @@ int32 ScriptLife::lADD_FUEL(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLife::lSUB_FUEL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int16 value = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SUB_FUEL(%i)", (int)value);
+	if (engine->isLBA2()) {
+		return 0;
+	}
 	engine->_gameState->addGas(-value);
 	return 0;
 }
