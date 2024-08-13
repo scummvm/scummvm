@@ -1138,44 +1138,6 @@ void addMTIQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
 	hacks.addSceneTransitionHooks(Common::SharedPtr<SceneTransitionHooks>(new MTIMolassesSceneTransitionHooks(molassesHandler)));
 }
 
-class SPQRSoundPreloadHooks : public SceneTransitionHooks {
-public:
-	void onProjectStarted(Runtime *runtime) override;
-};
-
-void SPQRSoundPreloadHooks::onProjectStarted(Runtime *runtime) {
-	Project *project = runtime->getProject();
-
-	Structural *worldSection = nullptr;
-	Structural *soundSubsection = nullptr;
-
-	for (const Common::SharedPtr<Structural> &child : project->getChildren()) {
-		if (child->getName() == "World") {
-			worldSection = child.get();
-			break;
-		}
-	}
-
-	if (worldSection) {
-		for (const Common::SharedPtr<Structural> &child : worldSection->getChildren()) {
-			if (child->getName() == "Sound") {
-				soundSubsection = child.get();
-				break;
-			}
-		}
-	}
-
-	if (soundSubsection) {
-		for (const Common::SharedPtr<Structural> &child : soundSubsection->getChildren())
-			runtime->addSceneStateTransition(HighLevelSceneTransition(child, HighLevelSceneTransition::kTypeForceLoadScene, false, false));
-	}
-}
-
-void addSPQRQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
-	hacks.addSceneTransitionHooks(Common::SharedPtr<SceneTransitionHooks>(new SPQRSoundPreloadHooks()));
-	hacks.ignoreSceneUnloads = true;
-}
-
 } // End of namespace HackSuites
 
 } // End of namespace MTropolis

@@ -83,7 +83,6 @@ void addObsidianSaveMechanism(const MTropolisGameDescription &desc, Hacks &hacks
 void addObsidianImprovedWidescreen(const MTropolisGameDescription &desc, Hacks &hacks);
 
 void addMTIQuirks(const MTropolisGameDescription &desc, Hacks &hacks);
-void addSPQRQuirks(const MTropolisGameDescription &desc, Hacks &hacks);
 
 } // End of namespace HackSuites
 
