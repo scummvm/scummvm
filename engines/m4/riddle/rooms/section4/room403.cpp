@@ -56,7 +56,7 @@ void Room403::init() {
 		_val8 = 0;
 		_val9 = 0;
 		_val10 = 0;
-		_val11 = 0;
+		_sound1.clear();
 		_val12 = 0;
 
 		_G(flags)[V313] = player_been_here(403) && (
@@ -156,7 +156,7 @@ void Room403::init() {
 				_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
 					triggerMachineByHashCallbackNegative, "RIP on ladder/plank");
 
-				switch (_val11) {
+				switch (_val10) {
 				case 1:
 					_ripClimbsLadder = series_load("RIPLEY CLIMBS LADDER");
 					sendWSMessage_10000(1, _ripOnLadder, _ripClimbsLadder, 52, 52, -1,
@@ -425,7 +425,116 @@ void Room403::pre_parser() {
 #undef TRIGGER
 
 void Room403::parser() {
+	bool lookFlag = player_said_any("look", "look at");
+	bool talkFlag = player_said_any("talk", "talk to");
+	bool takeFlag = player_said("take");
+	bool enterFlag = player_said("enter");
+	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
+	if (player_said("conv403a")) {
+		if (_G(kernel).trigger == 1) {
+			conv403a1();
+		} else {
+			conv403a();
+		}
+	}
+	// TODO
+	else {
+		return;
+	}
+
+	_G(player).command_ready = false;
+}
+
+void Room403::conv403a() {
+	const char *sound = conv_sound_to_play();
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+
+	if (sound) {
+		if (who <= 0) {
+			switch (node) {
+			case 8:
+				_sound1 = sound;
+
+				if (inv_player_has("POMERANIAN MARKS")) {
+					conv_resume();
+				} else {
+					_val9 = 2260;
+				}
+				break;
+
+			case 10:
+				_sound1 = sound;
+				_val9 = 2270;
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_timing_trigger(1, 110);
+				_G(kernel).trigger_mode = KT_PARSE;
+				break;
+
+			case 11:
+				if (entry == 0) {
+					_sound1 = sound;
+					_val9 = 2253;
+					return;
+				} else {
+					_val9 = 2101;
+					digi_play(sound, 1, 255, 1);
+				}
+				break;
+
+			case 17:
+				if (entry == 1) {
+					_val5 = 1;
+					midi_play("DANZIG1", 255, 1, -1, 949);
+				}
+
+				_val9 = 2250;
+				digi_play(sound, 1, 255, 1);
+				break;
+
+			case 19:
+			case 20:
+			case 21:
+			case 22:
+			case 23:
+			case 24:
+			case 28:
+			case 29:
+			case 30:
+			case 31:
+			case 32:
+			case 33:
+				_flag2 = true;
+				_val9 = 2101;
+				digi_play(sound, 1, 255, 1);
+				break;
+
+			default:
+				_val9 = 2101;
+				digi_play(sound, 1, 255, 1);
+				break;
+			}
+		} else if (who == 1) {
+			_val7 = 1102;
+			digi_play(sound, 1, 255, 1);
+		}
+	} else {
+		conv_resume();
+	}
+}
+
+void Room403::conv403a1() {
+	int who = conv_whos_talking();
+
+	if (who <= 0) {
+		_val9 = (_val9 == 2250) ? 2252 : 2102;
+	} else if (who == 1) {
+		_val7 = 1103;
+	}
+
+	conv_resume();
 }
 
 } // namespace Rooms

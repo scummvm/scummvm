@@ -41,7 +41,7 @@ private:
 	int _val8 = 0;
 	int _val9 = 0;
 	int _val10 = 0;
-	int _val11 = 0;
+	Common::String _sound1;
 	int _val12 = 0;
 	int _plank = 0;
 	machine *_ventClosed = nullptr;
@@ -61,6 +61,10 @@ private:
 	int _ripTurtle = 0;
 	int _noTreat = 0;
 	bool _flag1 = false;
+	bool _flag2 = false;
+
+	void conv403a();
+	void conv403a1();
 
 public:
 	Room403() : Room() {}
