@@ -4253,9 +4253,6 @@ VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
 		case PropagationStack::kStageSendToStructuralChildren: {
 				Structural *structural = stackTop.ptr.structural;
 
-				if (structural->getSceneLoadState() == Structural::SceneLoadState::kSceneNotLoaded)
-					runtime->hotLoadScene(structural);
-
 				const Common::Array<Common::SharedPtr<Structural> > &children = structural->getChildren();
 
 				if (stackTop.index >= children.size()) {
@@ -4296,6 +4293,9 @@ VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
 			} break;
 		case PropagationStack::kStageSendToStructuralModifiers: {
 				Structural *structural = stackTop.ptr.structural;
+
+				if (structural->getSceneLoadState() == Structural::SceneLoadState::kSceneNotLoaded)
+					runtime->hotLoadScene(structural);
 
 				// Once done with modifiers, propagate to children if set to cascade
 				if (_cascade) {
@@ -5997,17 +5997,17 @@ void Runtime::loadScene(const Common::SharedPtr<Structural> &scene) {
 			scene->materializeDescendents(this, subsection->getSceneLoadMaterializeScope());
 			debug(1, "Scene materialized OK");
 		}
-	}
 
-	recursiveActivateStructural(scene.get());
-	debug(1, "Structural elements activated OK");
+		recursiveActivateStructural(scene.get());
+		debug(1, "Structural elements activated OK");
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
-	if (_debugger) {
-		_debugger->complainAboutUnfinished(scene.get());
-		_debugger->refreshSceneStatus();
-	}
+		if (_debugger) {
+			_debugger->complainAboutUnfinished(scene.get());
+			_debugger->refreshSceneStatus();
+		}
 #endif
+	}
 }
 
 void Runtime::sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dispatch) {
