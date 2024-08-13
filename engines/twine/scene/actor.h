@@ -314,7 +314,7 @@ public:
 	/** Hero anim for behaviour menu */
 	int16 _heroAnimIdx[4];
 
-	void initSpriteActor(int32 actorIdx);
+	void initSprite(int32 spriteNum, int32 actorIdx);
 
 	/** Restart hero variables while opening new scenes */
 	void restartHeroScene();

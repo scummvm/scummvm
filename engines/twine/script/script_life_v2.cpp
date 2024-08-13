@@ -605,8 +605,7 @@ int32 ScriptLifeV2::lSET_SPRITE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int16 num = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_SPRITE(%i)", (int)num);
 	if (ctx.actor->_staticFlags.bIsSpriteActor) {
-		ctx.actor->_sprite = num;
-		engine->_actor->initSpriteActor(ctx.actorIdx);
+		engine->_actor->initSprite(num, ctx.actorIdx);
 	}
 	return 0;
 }
@@ -621,8 +620,7 @@ int32 ScriptLifeV2::lSET_FRAME_3DS(TwinEEngine *engine, LifeScriptContext &ctx) 
 		// }
 		// sprite += ListAnim3DS[ptrobj->Coord.A3DS.Num].Deb;
 
-		ctx.actor->_sprite = sprite;
-		engine->_actor->initSpriteActor(ctx.actorIdx);
+		engine->_actor->initSprite(sprite, ctx.actorIdx);
 	}
 	return -1;
 }

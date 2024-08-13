@@ -133,13 +133,16 @@ void Actor::setBehaviour(HeroBehaviourType behaviour) {
 	_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, OWN_ACTOR_SCENE_INDEX);
 }
 
-// InitSprite
-void Actor::initSpriteActor(int32 actorIdx) {
+void Actor::initSprite(int32 spriteNum, int32 actorIdx) {
 	ActorStruct *localActor = _engine->_scene->getActor(actorIdx);
 
-	if (localActor->_staticFlags.bIsSpriteActor && localActor->_sprite != -1 && localActor->_body != localActor->_sprite) {
-		const BoundingBox *spritebbox = _engine->_resources->_spriteBoundingBox.bbox(localActor->_sprite);
-		localActor->_body = localActor->_sprite;
+	localActor->_sprite = spriteNum;
+	if (!localActor->_staticFlags.bIsSpriteActor) {
+		return;
+	}
+	if (spriteNum != -1 && localActor->_body != spriteNum) {
+		const BoundingBox *spritebbox = _engine->_resources->_spriteBoundingBox.bbox(spriteNum);
+		localActor->_body = spriteNum;
 		localActor->_boundingBox = *spritebbox;
 	}
 }
@@ -249,7 +252,7 @@ void Actor::startInitObj(int16 actorIdx) {
 
 		actor->_body = -1;
 
-		initSpriteActor(actorIdx);
+		initSprite(actor->_sprite, actorIdx);
 
 		_engine->_movements->initRealAngle(LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, &actor->realAngle);
 
