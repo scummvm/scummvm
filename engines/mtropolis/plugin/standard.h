@@ -368,6 +368,31 @@ private:
 	const char *getDefaultName() const override;
 };
 
+class PrintModifier : public Modifier {
+public:
+	PrintModifier();
+	~PrintModifier();
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
+
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) override;
+
+	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::PrintModifier &data);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Print Modifier"; }
+	void debugInspect(IDebugInspectionReport *report) const override;
+#endif
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+
+	Event _executeWhen;
+	Common::String _filePath;
+};
 
 class StandardPlugIn : public MTropolis::PlugIn {
 public:
@@ -388,6 +413,7 @@ private:
 	PlugInModifierFactory<SysInfoModifier, Data::Standard::SysInfoModifier> _sysInfoModifierFactory;
 	PlugInModifierFactory<PanningModifier, Data::Standard::PanningModifier> _panningModifierFactory;
 	PlugInModifierFactory<FadeModifier, Data::Standard::FadeModifier> _fadeModifierFactory;
+	PlugInModifierFactory<PrintModifier, Data::Standard::PrintModifier> _printModifierFactory;
 
 	StandardPlugInHacks _hacks;
 };

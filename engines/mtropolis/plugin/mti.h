@@ -94,32 +94,6 @@ private:
 	int8 _tileAtCoordinate[kBoardSizeX][kBoardSizeY][kBoardSizeZ];
 };
 
-class PrintModifier : public Modifier {
-public:
-	PrintModifier();
-	~PrintModifier();
-
-	bool respondsToEvent(const Event &evt) const override;
-	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
-	void disable(Runtime *runtime) override;
-
-	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) override;
-
-	bool load(const PlugInModifierLoaderContext &context, const Data::MTI::PrintModifier &data);
-
-#ifdef MTROPOLIS_DEBUG_ENABLE
-	const char *debugGetTypeName() const override { return "Print Modifier"; }
-	void debugInspect(IDebugInspectionReport *report) const override;
-#endif
-
-private:
-	Common::SharedPtr<Modifier> shallowClone() const override;
-	const char *getDefaultName() const override;
-
-	Event _executeWhen;
-	Common::String _filePath;
-};
-
 class MPEGVideoPlayer;
 
 class IMPEGVideoCompletionNotifier : IInterfaceBase {
@@ -170,7 +144,6 @@ public:
 
 private:
 	PlugInModifierFactory<ShanghaiModifier, Data::MTI::ShanghaiModifier> _shanghaiModifierFactory;
-	PlugInModifierFactory<PrintModifier, Data::MTI::PrintModifier> _printModifierFactory;
 	PlugInModifierFactory<SampleModifier, Data::MTI::SampleModifier> _sampleModifierFactory;
 };
 
