@@ -28,6 +28,16 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+static const char *const SAID[][2] = {
+	{ "CASTLE",      "402r09" },
+	{ "CASTLE DOOR", "402r09" },
+	{ "FLOWERBED",   "402r10" },
+	{ "WINDOW",      "402r11" },
+	{ "GATE",        "402r14" },
+	{ "WHEELBARROW", "402r15" },
+	{ nullptr, nullptr }
+};
+
 void Room402::preload() {
 	_G(player).walker_type = 1;
 	_G(player).shadow_type = 1;
@@ -1486,7 +1496,7 @@ void Room402::parser() {
 		_G(kernel).trigger_mode = KT_PARSE;
 	} else if (lookFlag && player_said("WOLF")) {
 		digi_play(_G(flags)[V111] ? "402r13" : "402r12", 1);
-	} else if (lookFlag && player_said("CASTLE")) {
+	} else if (lookFlag && _G(walker).ripley_said(SAID)) {
 		// No implementation
 	} else if (lookFlag && player_said_any("TOPIARY", "TOPIARY ")) {
 		digi_play("408r02", 1);

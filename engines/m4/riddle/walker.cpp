@@ -169,7 +169,7 @@ void Walker::unloadSprites() {
 	}
 }
 
-bool Walker::ripley_said(const char *list[][2]) {
+bool Walker::ripley_said(const char *const list[][2]) {
 	if (!list)
 		return false;
 

@@ -29,6 +29,27 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+static const char *const SAID[][2] = {
+	{ "BROKEN HEADSTONE",    "403r11" },
+	{ "POMMEE CROSS",        "403r12" },
+	{  "GRAVE PLAQUE",       "403r13" },
+	{ "GRAVE",               "403r18" },
+	{ "1ST MARBLE MONUMENT", "403r15" },
+	{ "2ND MARBLE MONUMENT", "403r26" },
+	{ "MARBLE COLUMN",       "403r16" },
+	{ "SMALL HEADSTONE",     "403r17" },
+	{ "MARBLE HEADSTONE",    "403r27" },
+	{ "TOMBSTONE",           "403r19" },
+	{ "BURIAL TABLET",       "403r20" },
+	{ "SMALL GRAVE MARKER",  "403r14" },
+	{ "TALL HEADSTONE",      "403r22" },
+	{ "GRANITE HEADSTONE",   "403r23" },
+	{ "BURIAL PLAQUE",       "403r24" },
+	{ "CELTIC CROSS",        "403r25" },
+	{ "URN",                 "403r08" },
+	{ nullptr, nullptr }
+};
+
 void Room403::preload() {
 	_G(player).walker_type = 1;
 	_G(player).shadow_type = 1;
@@ -422,7 +443,6 @@ void Room403::pre_parser() {
 		_G(player).waiting_for_walk = false;
 	}
 }
-#undef TRIGGER
 
 void Room403::parser() {
 	bool lookFlag = player_said_any("look", "look at");
@@ -437,6 +457,69 @@ void Room403::parser() {
 		} else {
 			conv403a();
 		}
+	} else if (talkFlag && player_said("WOLF")) {
+		player_set_commands_allowed(false);
+		_val4 = -1;
+		_val6 = 1000;
+		_val7 = 1100;
+		TRIGGER;
+	} else if (enterFlag && player_said("CASTLE")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(1);
+			break;
+		case 1:
+			midi_stop();
+			digi_stop(3);
+			_G(game).setRoom(408);
+			break;
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("grate")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+
+			if (_G(flags)[V123]) {
+				digi_play("403R06", 1, 255, 2);
+			} else {
+				digi_play("403R06", 1, 255, 1);
+				_G(flags)[V123] = 1;
+			}
+			break;
+		case 1:
+			digi_play("403R06A", 1, 255, 2);
+			break;
+		case 2:
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("WOLF")) {
+		digi_play(_G(flags)[V111] > 0 ? "402R13" : "402R12", 1);
+	} else if (lookFlag && player_said("wall")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			digi_play("403r09", 1, 255, 1);
+			break;
+		case 1:
+			player_set_commands_allowed(true);
+			digi_play("403r09a", 1);
+			break;
+
+		}
+	} else if (lookFlag && player_said_any("tomb", "door")) {
+		digi_play("403r05", 1);
+		_G(flags)[V121] = 1;
+	} else if (lookFlag && player_said("bell")) {
+		digi_play("403r07", 1);
+		_G(flags)[V122] = 1;
+	} else if (lookFlag && _G(walker).ripley_said(SAID)) {
+		// No implementation
 	}
 	// TODO
 	else {
@@ -445,6 +528,7 @@ void Room403::parser() {
 
 	_G(player).command_ready = false;
 }
+#undef TRIGGER
 
 void Room403::conv403a() {
 	const char *sound = conv_sound_to_play();
