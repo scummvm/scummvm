@@ -106,18 +106,12 @@ bool qdTriggerLink::save_script(Common::WriteStream &fh, int indent) const {
 qdTriggerElement::qdTriggerElement() : _object(NULL),
 	_ID(0),
 	_is_active(false),
-#ifdef __QD_TRIGGER_PROFILER__
-	_owner(NULL),
-#endif
 	_status(TRIGGER_EL_INACTIVE) {
 }
 
 qdTriggerElement::qdTriggerElement(qdNamedObject *p) : _object(p),
 	_ID(0),
 	_is_active(false),
-#ifdef __QD_TRIGGER_PROFILER__
-	_owner(NULL),
-#endif
 	_status(TRIGGER_EL_INACTIVE) {
 	p->add_trigger_reference();
 }
@@ -417,12 +411,6 @@ bool qdTriggerElement::quant(float dt) {
 			if (it.element()->conditions_quant(it.type())) {
 				if (!it.auto_restart())
 					it.set_status(qdTriggerLink::LINK_DONE);
-#ifdef __QD_TRIGGER_PROFILER__
-				if (!qdTriggerProfiler::instance().is_read_only()) {
-					qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->get_time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, _owner, _ID, it.element()->ID(), it.status());
-					qdTriggerProfiler::instance().add_record(rec);
-				}
-#endif
 				ret = true;
 			}
 		}
@@ -533,12 +521,6 @@ bool qdTriggerElement::conditions_quant(int link_type) {
 
 			for (auto &it : _children) {
 				it.activate();
-#ifdef __QD_TRIGGER_PROFILER__
-				if (!qdTriggerProfiler::instance().is_read_only()) {
-					qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->get_time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, _owner, _ID, it.element()->ID(), it.status());
-					qdTriggerProfiler::instance().add_record(rec);
-				}
-#endif
 			}
 
 			return true;
@@ -568,12 +550,6 @@ bool qdTriggerElement::activate_links(qdTriggerElementPtr child) {
 		if (it.type() == link_type) {
 			if (it.element() != child && it.status() == qdTriggerLink::LINK_INACTIVE) {
 				it.activate();
-#ifdef __QD_TRIGGER_PROFILER__
-				if (!qdTriggerProfiler::instance().is_read_only()) {
-					qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->get_time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, _owner, _ID, it.element()->ID(), it.status());
-					qdTriggerProfiler::instance().add_record(rec);
-				}
-#endif
 			}
 		}
 	}
@@ -596,12 +572,6 @@ bool qdTriggerElement::deactivate_links(qdTriggerElementPtr child) {
 		if (it.type() != link_type) {
 			it.deactivate();
 //			it->element()->set_status(qdTriggerElement::TRIGGER_EL_INACTIVE);
-#ifdef __QD_TRIGGER_PROFILER__
-			if (!qdTriggerProfiler::instance().is_read_only()) {
-				qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->get_time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, _owner, _ID, it.element()->ID(), it.status());
-				qdTriggerProfiler::instance().add_record(rec);
-			}
-#endif
 		}
 	}
 
@@ -612,12 +582,6 @@ bool qdTriggerElement::deactivate_link(qdTriggerElementPtr child) {
 	for (auto &it : _children) {
 		if (it.element() == child) {
 			it.deactivate();
-#ifdef __QD_TRIGGER_PROFILER__
-			if (!qdTriggerProfiler::instance().is_read_only()) {
-				qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->get_time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, _owner, _ID, it.element()->ID(), it.status());
-				qdTriggerProfiler::instance().add_record(rec);
-			}
-#endif
 			return true;
 		}
 	}
@@ -633,20 +597,10 @@ bool qdTriggerElement::debug_set_active() {
 			it->element()->debug_set_inactive();
 	}
 
-#ifdef __QD_TRIGGER_PROFILER__
-	if (qdTriggerProfiler::instance().is_logging_enabled())
-		qdTriggerProfiler::instance().set_read_only(false);
-#endif
-
 	for (qdTriggerLinkList::iterator it = _parents.begin(); it != _parents.end(); ++it) {
 		it->element()->set_child_link_status(this, qdTriggerLink::LINK_ACTIVE);
 		it->element()->set_status(TRIGGER_EL_DONE);
 	}
-
-#ifdef __QD_TRIGGER_PROFILER__
-	if (qdTriggerProfiler::instance().is_logging_enabled())
-		qdTriggerProfiler::instance().set_read_only(true);
-#endif
 
 	return true;
 }
@@ -678,12 +632,6 @@ bool qdTriggerElement::set_child_link_status(qdTriggerElementConstPtr child, qdT
 	if (qdTriggerLink * p = find_child_link(child)) {
 		if (!p->auto_restart() || st == qdTriggerLink::LINK_ACTIVE) {
 			p->set_status(st);
-#ifdef __QD_TRIGGER_PROFILER__
-			if (!qdTriggerProfiler::instance().is_read_only()) {
-				qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->get_time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, _owner, _ID, p->element()->ID(), p->status());
-				qdTriggerProfiler::instance().add_record(rec);
-			}
-#endif
 		}
 		return true;
 	}
@@ -825,13 +773,6 @@ Common::String qdNamedObjectReference::toString() const {
 
 void qdTriggerElement::set_status(ElementStatus st) {
 	_status = st;
-
-#ifdef __QD_TRIGGER_PROFILER__
-	if (!qdTriggerProfiler::instance().is_read_only()) {
-		qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->get_time(), qdTriggerProfilerRecord::ELEMENT_STATUS_UPDATE, _owner, _ID, 0, st);
-		qdTriggerProfiler::instance().add_record(rec);
-	}
-#endif
 }
 
 void qdTriggerElement::reset() {

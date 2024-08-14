@@ -26,21 +26,12 @@
 #include "qdengine/parser/xml_tag_buffer.h"
 #include "qdengine/parser/qdscr_parser.h"
 #include "qdengine/qdcore/qd_trigger_chain.h"
-#include "qdengine/qdcore/qd_trigger_profiler.h"
-
-#ifdef __QD_TRIGGER_PROFILER__
-#include "qdengine/qdcore/qd_game_dispatcher.h"
-#endif
 
 namespace QDEngine {
 
 qdTriggerChain::qdTriggerChain() {
 	root_element()->set_id(qdTriggerElement::ROOT_ID);
 	root_element()->set_status(qdTriggerElement::TRIGGER_EL_DONE);
-
-#ifdef __QD_TRIGGER_PROFILER__
-	root_element()->set_owner(this);
-#endif
 }
 
 qdTriggerChain::~qdTriggerChain() {
@@ -76,9 +67,6 @@ qdTriggerElementPtr qdTriggerChain::add_element(qdNamedObject *p) {
 
 	qdTriggerElementPtr el = new qdTriggerElement(p);
 	_elements.push_back(el);
-#ifdef __QD_TRIGGER_PROFILER__
-	el->set_owner(this);
-#endif
 
 	reindex_elements();
 
@@ -181,9 +169,6 @@ bool qdTriggerChain::load_script(const xml::tag *p) {
 		case QDSCR_TRIGGER_ELEMENT:
 			el = qdTriggerElementPtr(new qdTriggerElement);
 			el->load_script(&*it);
-#ifdef __QD_TRIGGER_PROFILER__
-			el->set_owner(this);
-#endif
 			_elements.push_back(el);
 			break;
 		case QDSCR_TRIGGER_ELEMENT_LINK:
@@ -259,29 +244,14 @@ bool qdTriggerChain::init_debug_check() {
 	for (qdTriggerElementList::iterator it = _elements.begin(); it != _elements.end(); ++it)
 		(*it)->debug_set_done();
 
-#ifdef __QD_TRIGGER_PROFILER__
-	if (qdTriggerProfiler::instance().is_logging_enabled())
-		qdTriggerProfiler::instance().set_read_only(false);
-#endif
-
 	if (root_element()->is_active()) {
 		root_element()->debug_set_active();
 		root_element()->set_status(qdTriggerElement::TRIGGER_EL_DONE);
 
 		for (qdTriggerLinkList::iterator itl = root_element()->children().begin(); itl != root_element()->children().end(); ++itl) {
 			itl->activate();
-#ifdef __QD_TRIGGER_PROFILER__
-			if (!qdTriggerProfiler::instance().is_read_only()) {
-				qdTriggerProfilerRecord rec(qdGameDispatcher::get_dispatcher()->get_time(), qdTriggerProfilerRecord::CHILD_LINK_STATUS_UPDATE, this, root_element()->ID(), itl->element()->ID(), itl->status());
-				qdTriggerProfiler::instance().add_record(rec);
-			}
-#endif
 		}
 
-#ifdef __QD_TRIGGER_PROFILER__
-		if (qdTriggerProfiler::instance().is_logging_enabled())
-			qdTriggerProfiler::instance().set_read_only(true);
-#endif
 	}
 
 	for (qdTriggerElementList::iterator it = _elements.begin(); it != _elements.end(); ++it) {
@@ -338,10 +308,6 @@ bool qdTriggerChain::save_data(Common::WriteStream &fh) const {
 }
 
 void qdTriggerChain::reset() {
-#ifdef __QD_TRIGGER_PROFILER__
-	qdTriggerProfiler::instance().set_read_only(true);
-#endif
-
 	root_element()->reset();
 
 	for (qdTriggerElementList::iterator it = _elements.begin(); it != _elements.end(); ++it)
@@ -351,10 +317,6 @@ void qdTriggerChain::reset() {
 
 	for (qdTriggerLinkList::iterator itl = root_element()->children().begin(); itl != root_element()->children().end(); ++itl)
 		itl->activate();
-
-#ifdef __QD_TRIGGER_PROFILER__
-	qdTriggerProfiler::instance().set_read_only(false);
-#endif
 }
 
 bool qdTriggerChain::activate_links(const qdNamedObject *from) {

@@ -46,7 +46,6 @@
 #include "qdengine/qdcore/qd_game_object_moving.h"
 #include "qdengine/qdcore/qd_setup.h"
 #include "qdengine/qdcore/qd_trigger_chain.h"
-#include "qdengine/qdcore/qd_trigger_profiler.h"
 #include "qdengine/qdcore/qd_named_object_reference.h"
 #include "qdengine/qdcore/qd_named_object_indexer.h"
 #include "qdengine/qdcore/qd_minigame.h"
@@ -1015,10 +1014,6 @@ bool qdGameDispatcher::init_triggers() {
 			it->init_debug_check();
 #endif
 	}
-
-#ifdef __QD_TRIGGER_PROFILER__
-	qdTriggerProfiler::instance().set_read_only(false);
-#endif
 
 	return result;
 }
