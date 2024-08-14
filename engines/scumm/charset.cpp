@@ -2161,8 +2161,8 @@ void CharsetRendererNES::printChar(int chr, bool ignoreCharsetMask) {
 	}
 
 	int drawTop = _top - vs->topline;
-
-	_vm->markRectAsDirty(vs->number, _left, _left + width, drawTop, drawTop + height);
+	int offset = vs->number == kTextVirtScreen ? 16 : 0;
+	_vm->markRectAsDirty(vs->number, _left + offset, _left + width + offset, drawTop, drawTop + height);
 
 	if (!ignoreCharsetMask) {
 		_hasMask = true;
@@ -2170,9 +2170,9 @@ void CharsetRendererNES::printChar(int chr, bool ignoreCharsetMask) {
 	}
 
 	if (ignoreCharsetMask || !vs->hasTwoBuffers)
-		drawBits1(*vs, _left + vs->xstart, drawTop, charPtr, drawTop, origWidth, origHeight);
+		drawBits1(*vs, _left + vs->xstart + offset, drawTop, charPtr, drawTop, origWidth, origHeight);
 	else
-		drawBits1(_vm->_textSurface, _left, _top, charPtr, drawTop, origWidth, origHeight);
+		drawBits1(_vm->_textSurface, _left + offset, _top, charPtr, drawTop, origWidth, origHeight);
 
 	if (_str.left > _left)
 		_str.left = _left;
