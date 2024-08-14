@@ -70,19 +70,17 @@ void winVideo::set_window(int x, int y, int xsize, int ysize) {
 }
 
 bool winVideo::open_file(const char *fname) {
-	Common::File *videoFile = new Common::File();
+	_videostream = new Common::File();
 
-	if (!videoFile->open(fname)) {
+	if (!_videostream->open(fname)) {
 		warning("WinVideo::open: Failed to open file %s", fname);
-		delete videoFile;
+		delete _videostream;
 		return false;
 	}
 
-	_videostream = videoFile;
-
 	if (!_decoder->loadStream(_videostream)) {
 		warning("WinVideo::play: Failed to Load Stream");
-		delete videoFile;
+		delete _videostream;
 		return false;
 	}
 
@@ -150,8 +148,7 @@ bool winVideo::get_movie_size(int &sx, int &sy) {
 }
 
 void winVideo::close_file() {
-	warning("STUB: winVideo::close_file()");
-	return;
+	_videostream->close();
 }
 
 } // namespace QDEngine

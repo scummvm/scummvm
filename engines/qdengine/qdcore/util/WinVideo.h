@@ -32,6 +32,10 @@ namespace Graphics {
 class ManagedSurface;
 }
 
+namespace Common {
+class File;
+}
+
 namespace QDEngine {
 
 class winVideo {
@@ -72,7 +76,7 @@ private:
 
 	// Video decoder
 	Video::MPEGPSDecoder *_decoder;
-	Common::SeekableReadStream *_videostream;
+	Common::File *_videostream;
 
 	static bool _is_initialized;
 };
@@ -80,4 +84,3 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_QDCORE_UTIL_WINVIDEO_H
-
