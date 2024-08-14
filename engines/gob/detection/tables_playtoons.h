@@ -27,6 +27,7 @@
 
 /* Detection tables for the Playtoons series. */
 /* This Game uses the DEV6 Engine, more Information can be found here: https://wiki.scummvm.org/index.php?title=DEV6_Information */
+/* These games are part of the Playtoons series. For more information, refer to our wiki: https://wiki.scummvm.org/index.php?title=Playtoons */
 
 #ifndef GOB_DETECTION_TABLES_PLAYTOONS_H
 #define GOB_DETECTION_TABLES_PLAYTOONS_H
