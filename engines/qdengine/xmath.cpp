@@ -286,37 +286,6 @@ MatXf &MatXf::premult(const MatXf &M) {
 }
 
 
-MatXf &MatXf::postmult(const MatXf &M) {
-	float oxy, oyz, ozx, oyx, ozy, oxz;
-	Vect3d v;
-
-	// d = R * M.d + d
-	d.x += R.xx * M.d.x + R.xy * M.d.y + R.xz * M.d.z;
-	d.y += R.yx * M.d.x + R.yy * M.d.y + R.yz * M.d.z;
-	d.z += R.zx * M.d.x + R.zy * M.d.y + R.zz * M.d.z;
-
-	// multiply rotation matrices
-	oxy = R.xy;
-	oyx = R.yx;
-	oyz = R.yz;
-	ozy = R.zy;
-	ozx = R.zx;
-	oxz = R.xz;
-	R.xy = R.xx * M.R.xy + oxy  * M.R.yy + oxz  * M.R.zy;
-	R.xz = R.xx * M.R.xz + oxy  * M.R.yz + oxz  * M.R.zz;
-	R.yx = oyx  * M.R.xx + R.yy * M.R.yx + oyz  * M.R.zx;
-	R.yz = oyx  * M.R.xz + R.yy * M.R.yz + oyz  * M.R.zz;
-	R.zx = ozx  * M.R.xx + ozy  * M.R.yx + R.zz * M.R.zx;
-	R.zy = ozx  * M.R.xy + ozy  * M.R.yy + R.zz * M.R.zy;
-
-	R.xx = R.xx * M.R.xx + oxy  * M.R.yx + oxz  * M.R.zx;
-	R.yy = oyx  * M.R.xy + R.yy * M.R.yy + oyz  * M.R.zy;
-	R.zz = ozx  * M.R.xz + ozy  * M.R.yz + R.zz * M.R.zz;
-
-	return *this;
-}
-
-
 MatXf &MatXf::invert(const MatXf &M) {
 	// invert the rotation part by transposing it
 	R.xx = M.R.xx;

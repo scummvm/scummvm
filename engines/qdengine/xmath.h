@@ -44,7 +44,6 @@ class Vect2f;
 class Vect2i;
 class Vect2s;
 class Vect3f;
-class Vect3d;
 class Mat3f;
 class MatXf;
 class QuatF;
@@ -608,7 +607,6 @@ public:
 		z = v[2];
 	}
 
-	xm_inline operator Vect3d() const;
 	xm_inline operator const Vect2f &() const {
 		return *reinterpret_cast<const Vect2f *>(this);
 	}
@@ -794,220 +792,6 @@ public:
 	static const Vect3f I_;    // unit vector along -x axis
 	static const Vect3f J_;    // unit vector along -y axis
 	static const Vect3f K_;    // unit vector along -z axis
-
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//			class Vect3d
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-class Vect3d {
-
-public:
-
-	double x, y, z;
-
-	// constructors //////////////////////////////////////////////////////////////
-
-	xm_inline Vect3d() {}
-	xm_inline Vect3d(double x_, double y_, double z_) {
-		x = x_;
-		y = y_;
-		z = z_;
-	}
-
-	typedef float double3[3];
-	xm_inline Vect3d(const double3 &v) {
-		x = v[0];
-		y = v[1];
-		z = v[2];
-	}
-
-	xm_inline operator Vect3f() const;
-
-	xm_inline operator const double *() const {
-		return &x;
-	}
-	xm_inline operator double *() {
-		return &x;
-	}
-
-	// setters / accessors / translators /////////////////////////////////////////
-
-	xm_inline Vect3d &set(double x_, double y_, double z_) {
-		x = x_;
-		y = y_;
-		z = z_;
-		return *this;
-	}
-	xm_inline Vect3d &set(const double v[3]) {
-		x = v[0];
-		y = v[1];
-		z = v[2];
-		return *this;
-	}
-
-	xm_inline Vect3d &setSpherical(double psi, double theta, double radius);
-
-	// index-based access:  0=x, 1=y, 2=z.
-	xm_inline const double &operator[](int i) const {
-		return *(&x + i);
-	}
-	xm_inline double &operator[](int i)       {
-		return *(&x + i);
-	}
-
-	// Convertion to int ///////
-	xm_inline int xi() const {
-		return round(x);
-	}
-	xm_inline int yi() const {
-		return round(y);
-	}
-	xm_inline int zi() const {
-		return round(z);
-	}
-
-	//  Negate  ////////////////////////////////////
-	xm_inline Vect3d operator- () const;
-	xm_inline Vect3d &negate(const Vect3d &v);
-	xm_inline Vect3d &negate();
-
-	//  Logical operations  ////////////////////////////////
-	xm_inline bool eq(const Vect3d &v, double delta = DBL_COMPARE_TOLERANCE) const;
-
-	//  Addition and substruction  ////////////////////
-	xm_inline Vect3d &add(const Vect3d &u, const Vect3d &v);
-	xm_inline Vect3d &add(const Vect3d &v);
-	xm_inline Vect3d &sub(const Vect3d &u, const Vect3d &v);
-	xm_inline Vect3d &sub(const Vect3d &v);
-	xm_inline Vect3d &operator+= (const Vect3d &v) {
-		return add(v);
-	}
-	xm_inline Vect3d &operator-= (const Vect3d &v) {
-		return sub(v);
-	}
-	xm_inline Vect3d operator+ (const Vect3d &v) const {
-		Vect3d u;
-		return u.add(*this, v);
-	}
-	xm_inline Vect3d operator- (const Vect3d &v) const {
-		Vect3d u;
-		return u.sub(*this, v);
-	}
-
-	// Component-wise multiplication and division  ////////////////
-	xm_inline Vect3d &mult(const Vect3d &u, const Vect3d &v);
-	xm_inline Vect3d &mult(const Vect3d &v);
-	xm_inline Vect3d &div(const Vect3d &u, const Vect3d &v);
-	xm_inline Vect3d &div(const Vect3d &v);
-	xm_inline Vect3d &operator*= (const Vect3d &v) {
-		return mult(v);
-	}
-	xm_inline Vect3d &operator/= (const Vect3d &v) {
-		return div(v);
-	}
-	xm_inline Vect3d operator* (const Vect3d &v) const {
-		Vect3d u;
-		return u.mult(*this, v);
-	}
-	xm_inline Vect3d operator/ (const Vect3d &v) const {
-		Vect3d u;
-		return u.div(*this, v);
-	}
-
-	//  Cross product  //////////////////////
-	xm_inline Vect3d &cross(const Vect3d &u, const Vect3d &v);// u x v  [!]
-	xm_inline Vect3d &precross(const Vect3d &v);      // v x this  [!]
-	xm_inline Vect3d &postcross(const Vect3d &v);     // this x v  [!]
-	xm_inline Vect3d &operator%= (const Vect3d &v) {
-		return postcross(v);    // this x v  [!]
-	}
-	xm_inline Vect3d operator% (const Vect3d &v) const {
-		Vect3d u;
-		return u.cross(*this, v);
-	}
-
-	//  Dot product  //////////////////////
-	xm_inline double dot(const Vect3d &other) const;
-	xm_inline friend double dot(const Vect3d &u, const Vect3d &v) {
-		return u.dot(v);
-	}
-
-	// Multiplication & division by scalar ///////////
-	xm_inline Vect3d &scale(const Vect3d &v, double s);
-	xm_inline Vect3d &scale(double s);
-	xm_inline Vect3d &operator*= (double s) {
-		return scale(s);
-	}
-	xm_inline Vect3d &operator/= (double s) {
-		return scale(1 / s);
-	}
-	xm_inline Vect3d operator* (double s) const {
-		Vect3d u;
-		return u.scale(*this, s);
-	}
-	xm_inline Vect3d operator/ (double s) const {
-		Vect3d u;
-		return u.scale(*this, 1 / s);
-	}
-	xm_inline friend Vect3d operator* (double s, const Vect3d &v) {
-		Vect3d u;
-		return u.scale(v, s);
-	}
-
-	//  Normalize  ///////////////////////////
-	xm_inline Vect3d &normalize(double r = 1.0);
-	xm_inline Vect3d &normalize(const Vect3d &v, double r = 1.0);
-
-	//  Operation returning scalar  ////////////
-	xm_inline double norm()  const;
-	xm_inline double norm2() const;  // norm^2
-	xm_inline double distance(const Vect3d &other) const;
-	xm_inline double distance2(const Vect3d &other) const;  // distance^2
-
-	xm_inline double psi() const;
-	xm_inline double theta() const;
-
-	xm_inline double min() const;
-	xm_inline double max() const;
-	xm_inline double minAbs() const;
-	xm_inline double maxAbs() const;
-	xm_inline double sumAbs() const;  // |x| + |y| + |z|
-
-
-	//  Composite functions  ////////////////////////////////
-	xm_inline Vect3d &crossAdd(const Vect3d &u, const Vect3d &v, const Vect3d &w); // u x v + w [!]  this must be distinct from u and v, but not necessarily from w.
-	xm_inline Vect3d &crossAdd(const Vect3d &u, const Vect3d &v); // u x v + this [!]
-	xm_inline Vect3d &scaleAdd(const Vect3d &v, const Vect3d &u, double lambda); // v + lambda * u
-	xm_inline Vect3d &scaleAdd(const Vect3d &u, double lambda);// this + lambda * u
-	xm_inline Vect3d &interpolate(const Vect3d &u, const Vect3d &v, double lambda); // (1-lambda)*u + lambda*v
-
-	//    I/O operations    //////////////////////////////////////
-#ifdef _XMATH_USE_IOSTREAM
-	friend ostream &operator<< (ostream &os, const Vect3d &v);
-	friend istream &operator>> (istream &is, Vect3d &v);
-#endif
-
-	//  Swap  /////////////////////////
-	xm_inline void swap(Vect3d &other);
-	xm_inline friend void swap(Vect3d &u, Vect3d &v) {
-		u.swap(v);
-	}
-
-
-	// Vect3d constants ///////////////////////////////////////////////////////////
-
-	static const Vect3d ZERO;
-	static const Vect3d ID;
-	static const Vect3d I;     // unit vector along +x axis
-	static const Vect3d J;     // unit vector along +y axis
-	static const Vect3d K;     // unit vector along +z axis
-	static const Vect3d I_;    // unit vector along -x axis
-	static const Vect3d J_;    // unit vector along -y axis
-	static const Vect3d K_;    // unit vector along -z axis
 
 };
 
@@ -1250,30 +1034,6 @@ public:
 
 	void makeRotationZ();
 
-	// Transforming Vect3d ///////////////////////////////////////////////////////
-	// return reference to converted vector
-	xm_inline Vect3d &xform(const Vect3d &v, Vect3d &xv) const; // (this)(v) => xv [!]
-	xm_inline Vect3d &xform(Vect3d &v) const;           // (this)(v) => v
-
-	// These are exactly like the above methods, except the inverse
-	// transform this^-1 (= this^T) is used.  This can be thought of as
-	// a row vector transformation, e.g.: (v^T)(this) => xv^T
-	xm_inline Vect3d &invXform(const Vect3d &v, Vect3d &xv) const;  // [!]
-	xm_inline Vect3d &invXform(Vect3d &v) const;
-
-	//  Transforming operators  ///////////////
-	xm_inline friend Vect3d &operator*= (Vect3d &v, const Mat3f &M) {
-		return M.xform(v);
-	}
-	xm_inline friend Vect3d operator* (const Vect3d &v, const Mat3f &M) {
-		Vect3d xv;
-		return M.xform(v, xv);
-	}
-	xm_inline friend Vect3d operator* (const Mat3f &M, const Vect3d &v) {
-		Vect3d xv;
-		return M.xform(v, xv);
-	}
-
 
 	// Transforming Vect3f ///////////////////////////////////////////////////////
 
@@ -1383,23 +1143,6 @@ public:
 	// Really inverts 3x3-matrix.
 	MatXf &Invert(const MatXf &M);              // M^-1      [!]
 	MatXf &Invert();                // this^-1
-
-	// Transforming Vect3d ///////////////////////////////////////////////////////
-
-	// MatXs can transform elements of R^3 either as vectors or as
-	// points.  The [!] indicates that the operands must be distinct.
-	xm_inline Vect3d &xformVect(const Vect3d &v, Vect3d &xv) const; // this*(v 0)=>xv  [!]
-	xm_inline Vect3d &xformVect(Vect3d &v) const;       // this*(v 0)=>v
-	xm_inline Vect3d &xformPoint(const Vect3d &p, Vect3d &xp) const;// this*(p 1)=>xp  [!]
-	xm_inline Vect3d &xformPoint(Vect3d &p) const;          // this*(p 1)=>p
-
-	// These are exactly like the above methods, except the inverse
-	// transform this^-1 is used.
-	xm_inline Vect3d &invXformVect(const Vect3d &v, Vect3d &xv) const;
-	xm_inline Vect3d &invXformVect(Vect3d &v) const;
-	xm_inline Vect3d &invXformPoint(const Vect3d &p, Vect3d &xp) const;
-	xm_inline Vect3d &invXformPoint(Vect3d &p) const;
-
 
 	// Transforming Vect3f ///////////////////////////////////////////////////////
 
@@ -1790,11 +1533,6 @@ xm_inline void decomposition(const Vect3f &axis, const Vect3f &v, Vect3f &v_norm
 	v_normal.scale(axis, dot(axis, v) / ((axis).norm2()));
 	v_tangent.sub(v, v_normal);
 }
-xm_inline void decomposition(const Vect3d &axis, const Vect3d &v, Vect3d &v_normal, Vect3d &v_tangent) {
-	// axis - axis of decomposition, v_normal - collinear to axis, v_tangent - perpendicular to axis
-	v_normal.scale(axis, dot(axis, v) / ((axis).norm2()));
-	v_tangent.sub(v, v_normal);
-}
 
 
 
@@ -1837,12 +1575,7 @@ Vect2f &Vect2f::interpolate(const Vect2f &u, const Vect2f &v, float lambda) {
 //		Vect3f xm_inline definitions
 //
 ///////////////////////////////////////////////////////////////////////////////
-Vect3d::operator Vect3f() const {
-	return Vect3f((float)x, (float)y, (float)z);
-}
-Vect3f::operator Vect3d() const {
-	return Vect3d(x, y, z);
-}
+
 //  Dot product  //////////////////////
 //xm_inline double dot(const Vect3d& u, const Vect3f& v) { return u.dot(v); }
 //xm_inline float dot(const Vect3f& u, const Vect3d& v) { return u.dot(v); }
@@ -2128,301 +1861,6 @@ Vect3f &Vect3f::scaleAdd(const Vect3f &u, float lambda) {
 
 Vect3f &Vect3f::interpolate(const Vect3f &u, const Vect3f &v, float lambda) {
 	float lambda2 = 1.0f - lambda;
-
-	x = lambda2 * u.x + lambda * v.x;
-	y = lambda2 * u.y + lambda * v.y;
-	z = lambda2 * u.z + lambda * v.z;
-	return *this;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-//
-//		Vect3d xm_inline definitions
-//
-///////////////////////////////////////////////////////////////////////////////
-
-bool Vect3d::eq(const Vect3d &other, double delta) const {
-	return fabs(x - other.x) < delta &&
-	       fabs(y - other.y) < delta &&
-	       fabs(z - other.z) < delta;
-}
-
-Vect3d Vect3d::operator- () const {
-	return Vect3d(-x, -y, -z);
-}
-
-//  Norm operations /////////
-double Vect3d::sumAbs() const {
-	return fabs(x) + fabs(y) + fabs(z);
-}
-
-
-//  Descart - spherical function  //////////////
-double Vect3d::psi() const {
-	return atan2(y, x);
-}
-double Vect3d::theta() const {
-	return acos(z / (norm() + DBL_EPS));
-}
-Vect3d &Vect3d::setSpherical(double psi, double theta, double radius) {
-	x = radius * sin(theta);
-	y = x * sin(psi);
-	x = x * cos(psi);
-	z = radius * cos(theta);
-	return *this;
-}
-
-double Vect3d::dot(const Vect3d &other) const {
-	return x * other.x + y * other.y + z * other.z;
-}
-
-
-double Vect3d::norm() const {
-	return sqrt(x * x + y * y + z * z);
-}
-
-
-double Vect3d::norm2() const {
-	return (x * x + y * y + z * z);
-}
-
-
-double Vect3d::distance(const Vect3d &other) const {
-	Vect3d w;
-
-	w.sub(other, *this);
-	return w.norm();
-}
-
-
-double Vect3d::distance2(const Vect3d &other) const {
-	Vect3d w;
-
-	w.sub(other, *this);
-	return w.norm2();
-}
-
-
-double Vect3d::min() const {
-	return (x <= y) ? ((x <= z) ? x : z) : ((y <= z) ? y : z);
-}
-
-
-double Vect3d::max() const {
-	return (x >= y) ? ((x >= z) ? x : z) : ((y >= z) ? y : z);
-}
-
-
-double Vect3d::minAbs() const {
-	double ax, ay, az;
-
-	ax = fabs(x);
-	ay = fabs(y);
-	az = fabs(z);
-	return (ax <= ay) ? ((ax <= az) ? ax : az) : ((ay <= az) ? ay : az);
-}
-
-
-double Vect3d::maxAbs() const {
-	double ax, ay, az;
-
-	ax = fabs(x);
-	ay = fabs(y);
-	az = fabs(z);
-	return (ax >= ay) ? ((ax >= az) ? ax : az) : ((ay >= az) ? ay : az);
-}
-
-
-void Vect3d::swap(Vect3d &other) {
-	Vect3d tmp;
-
-	tmp = *this;
-	*this = other;
-	other = tmp;
-}
-
-
-Vect3d &Vect3d::normalize(const Vect3d &v, double r) {
-	double s = r / (sqrt(v.x * v.x + v.y * v.y + v.z * v.z) + DBL_EPS);
-	x = s * v.x;
-	y = s * v.y;
-	z = s * v.z;
-	return *this;
-}
-
-
-Vect3d &Vect3d::normalize(double r) {
-	double s = r / (sqrt(x * x + y * y + z * z) + DBL_EPS);
-	x *= s;
-	y *= s;
-	z *= s;
-	return *this;
-}
-
-Vect3d &Vect3d::negate(const Vect3d &v) {
-	x = - v.x;
-	y = - v.y;
-	z = - v.z;
-	return *this;
-}
-
-
-Vect3d &Vect3d::negate() {
-	x = - x;
-	y = - y;
-	z = - z;
-	return *this;
-}
-
-
-Vect3d &Vect3d::add(const Vect3d &u, const Vect3d &v) {
-	x = u.x + v.x;
-	y = u.y + v.y;
-	z = u.z + v.z;
-	return *this;
-}
-
-
-Vect3d &Vect3d::add(const Vect3d &v) {
-	x += v.x;
-	y += v.y;
-	z += v.z;
-	return *this;
-}
-
-
-Vect3d &Vect3d::sub(const Vect3d &u, const Vect3d &v) {
-	x = u.x - v.x;
-	y = u.y - v.y;
-	z = u.z - v.z;
-	return *this;
-}
-
-
-Vect3d &Vect3d::sub(const Vect3d &v) {
-	x -= v.x;
-	y -= v.y;
-	z -= v.z;
-	return *this;
-}
-
-
-Vect3d &Vect3d::mult(const Vect3d &u, const Vect3d &v) {
-	x = u.x * v.x;
-	y = u.y * v.y;
-	z = u.z * v.z;
-	return *this;
-}
-
-
-Vect3d &Vect3d::mult(const Vect3d &v) {
-	x *= v.x;
-	y *= v.y;
-	z *= v.z;
-	return *this;
-}
-
-Vect3d &Vect3d::div(const Vect3d &u, const Vect3d &v) {
-	x = u.x / v.x;
-	y = u.y / v.y;
-	z = u.z / v.z;
-	return *this;
-}
-
-
-Vect3d &Vect3d::div(const Vect3d &v) {
-	x /= v.x;
-	y /= v.y;
-	z /= v.z;
-	return *this;
-}
-
-
-
-Vect3d &Vect3d::scale(const Vect3d &v, double s) {
-	x = s * v.x;
-	y = s * v.y;
-	z = s * v.z;
-	return *this;
-}
-
-
-Vect3d &Vect3d::scale(double s) {
-	x *= s;
-	y *= s;
-	z *= s;
-	return *this;
-}
-
-
-
-Vect3d &Vect3d::cross(const Vect3d &u, const Vect3d &v) {
-	x = u.y * v.z - u.z * v.y;
-	y = u.z * v.x - u.x * v.z;
-	z = u.x * v.y - u.y * v.x;
-	return *this;
-}
-
-
-Vect3d &Vect3d::precross(const Vect3d &v) {
-	double ox, oy;
-
-	ox = x;
-	oy = y;
-	x = v.y * z - v.z * oy;
-	y = v.z * ox - v.x * z;
-	z = v.x * oy - v.y * ox;
-	return *this;
-}
-
-
-Vect3d &Vect3d::postcross(const Vect3d &v) {
-	double ox, oy;
-
-	ox = x;
-	oy = y;
-	x = oy * v.z - z * v.y;
-	y = z * v.x - ox * v.z;
-	z = ox * v.y - oy * v.x;
-	return *this;
-}
-
-
-Vect3d &Vect3d::crossAdd(const Vect3d &u, const Vect3d &v, const Vect3d &w) {
-	x = u.y * v.z - u.z * v.y + w.x;
-	y = u.z * v.x - u.x * v.z + w.y;
-	z = u.x * v.y - u.y * v.x + w.z;
-	return *this;
-}
-
-
-Vect3d &Vect3d::crossAdd(const Vect3d &u, const Vect3d &v) {
-	x += u.y * v.z - u.z * v.y;
-	y += u.z * v.x - u.x * v.z;
-	z += u.x * v.y - u.y * v.x;
-	return *this;
-}
-
-
-Vect3d &Vect3d::scaleAdd(const Vect3d &v, const Vect3d &u, double lambda) {
-	x = v.x + lambda * u.x;
-	y = v.y + lambda * u.y;
-	z = v.z + lambda * u.z;
-	return *this;
-}
-
-
-Vect3d &Vect3d::scaleAdd(const Vect3d &u, double lambda) {
-	x += lambda * u.x;
-	y += lambda * u.y;
-	z += lambda * u.z;
-	return *this;
-}
-
-
-Vect3d &Vect3d::interpolate(const Vect3d &u, const Vect3d &v, double lambda) {
-	double lambda2 = 1.0 - lambda;
 
 	x = lambda2 * u.x + lambda * v.x;
 	y = lambda2 * u.y + lambda * v.y;
@@ -2830,47 +2268,6 @@ Mat3f &Mat3f::postScale(const Vect3f &v) {
 }
 
 
-
-//  Vect3d transforming  /////////////////////
-Vect3d &Mat3f::xform(const Vect3d &v, Vect3d &xv) const {
-	xv.x = xx * v.x + xy * v.y + xz * v.z;
-	xv.y = yx * v.x + yy * v.y + yz * v.z;
-	xv.z = zx * v.x + zy * v.y + zz * v.z;
-	return xv;
-}
-
-
-Vect3d &Mat3f::xform(Vect3d &v) const {
-	double ox, oy;
-
-	ox = v.x;
-	oy = v.y;
-	v.x = xx * ox + xy * oy + xz * v.z;
-	v.y = yx * ox + yy * oy + yz * v.z;
-	v.z = zx * ox + zy * oy + zz * v.z;
-	return v;
-}
-
-
-Vect3d &Mat3f::invXform(const Vect3d &v, Vect3d &xv) const {
-	xv.x = xx * v.x + yx * v.y + zx * v.z;
-	xv.y = xy * v.x + yy * v.y + zy * v.z;
-	xv.z = xz * v.x + yz * v.y + zz * v.z;
-	return xv;
-}
-
-
-Vect3d &Mat3f::invXform(Vect3d &v) const {
-	double ox, oy;
-
-	ox = v.x;
-	oy = v.y;
-	v.x = xx * ox + yx * oy + zx * v.z;
-	v.y = xy * ox + yy * oy + zy * v.z;
-	v.z = xz * ox + yz * oy + zz * v.z;
-	return v;
-}
-
 //  Vect3f transforming  /////////////////////
 Vect3f &Mat3f::xform(const Vect3f &v, Vect3f &xv) const {
 	xv.x = (float)(xx * v.x + xy * v.y + xz * v.z);
@@ -2931,55 +2328,6 @@ MatXf::MatXf(const float16 &T) {
 	d[1] = T[13];
 	d[2] = T[14];
 }
-
-//  Vect3d transforming  /////////////////////
-Vect3d &MatXf::xformVect(const Vect3d &v, Vect3d &xv) const {
-	return R.xform(v, xv);
-}
-
-
-Vect3d &MatXf::xformVect(Vect3d &v) const {
-	return R.xform(v);
-}
-
-
-Vect3d &MatXf::xformPoint(const Vect3d &p, Vect3d &xp) const {
-	R.xform(p, xp);
-	xp.add(d);
-	return xp;
-}
-
-
-Vect3d &MatXf::xformPoint(Vect3d &p) const {
-	R.xform(p);
-	p.add(d);
-	return p;
-}
-
-
-Vect3d &MatXf::invXformVect(const Vect3d &v, Vect3d &xv) const {
-	return R.invXform(v, xv);
-}
-
-
-Vect3d &MatXf::invXformVect(Vect3d &v) const {
-	return R.invXform(v);
-}
-
-
-Vect3d &MatXf::invXformPoint(const Vect3d &p, Vect3d &xp) const {
-	xp.sub(p, d);
-	R.invXform(xp);
-	return xp;
-}
-
-
-Vect3d &MatXf::invXformPoint(Vect3d &p) const {
-	p.sub(d);
-	R.invXform(p);
-	return p;
-}
-
 
 //  Vect3f transforming  /////////////////////
 Vect3f &MatXf::xformVect(const Vect3f &v, Vect3f &xv) const {
@@ -3338,18 +2686,6 @@ inline ostream &operator<<(ostream &os, const Vect2s &v) {
 
 inline istream &operator>>(istream &is, Vect2s &v) {
 	is >> v.x >> v.y;
-	return is;
-}
-
-
-//  Vect3d  I/O //////////////////////////
-inline ostream &operator<<(ostream &os, const Vect3d &v) {
-	os << v.x << "  " << v.y << "  " << v.z;
-	return os;
-}
-
-inline istream &operator>>(istream &is, Vect3d &v) {
-	is >> v.x >> v.y >> v.z;
 	return is;
 }
 
