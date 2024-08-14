@@ -93,6 +93,8 @@ private:
 	Audio::SoundHandle _soundHandle;
 
 	Common::SeekableReadStream *_stream = nullptr;
+
+	Common::String _file;
 };
 
 } // namespace QDEngine

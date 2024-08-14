@@ -19,10 +19,14 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/stream.h"
+
 #include "audio/audiostream.h"
 #include "audio/decoders/vorbis.h"
+#include "audio/decoders/mpc.h"
 
+#include "qdengine/qdengine.h"
 #include "qdengine/qd_fwd.h"
 #include "qdengine/qdcore/qd_file_manager.h"
 #include "qdengine/qdcore/util/plaympp_api.h"
@@ -41,25 +45,37 @@ mpegPlayer::~mpegPlayer() {
 bool mpegPlayer::play(const char *file, bool loop, int vol) {
 	bool isOGG = Common::String(file).hasSuffix(".ogg");
 
+	debugC(1, kDebugSound, "mpegPlayer::play(%s, %d, %d)", file, loop, vol);
+
+	_file = file;
+
 	stop();
 
 	if (qdFileManager::instance().open_file(&_stream, file, false)) {
+		Audio::SeekableAudioStream *audiostream;
+
 		if (isOGG) {
-			Audio::SeekableAudioStream *audiostream = Audio::makeVorbisStream(_stream, DisposeAfterUse::YES);
+#ifdef USE_VORBIS
+			audiostream = Audio::makeVorbisStream(_stream, DisposeAfterUse::YES);
+#else
+			warning("mpegPlayer::play(: Vorbis support not compiled", file, loop, vol);
+			return false;
+#endif
+		} else {
+#ifdef USE_MPCDEC
+			audiostream = Audio::makeMPCStream(_stream, DisposeAfterUse::YES);
+#else
+			warning("mpegPlayer::play(%s, %d, %d): MPC support not compiled", file, loop, vol);
+			return false;
+#endif
+		}
 
-			if (loop) {
-				Audio::LoopingAudioStream *looped = new Audio::LoopingAudioStream(audiostream, 0, DisposeAfterUse::YES);
-
-				g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, looped);
-
-				return true;
-			}
-
+		if (!loop) {
 			g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, audiostream);
 		} else {
-			warning("STUB: mpegPlayer::play(%s, %d, %d): MP+", file, loop, vol);
+			Audio::LoopingAudioStream *looped = new Audio::LoopingAudioStream(audiostream, 0, DisposeAfterUse::YES);
 
-			return false;
+			g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, looped);
 		}
 	}
 
@@ -67,17 +83,22 @@ bool mpegPlayer::play(const char *file, bool loop, int vol) {
 }
 
 bool mpegPlayer::stop() {
+	debugC(1, kDebugSound, "mpegPlayer::stop(%s)", _file.c_str());
 	g_system->getMixer()->stopHandle(_soundHandle);
 	return true;
 }
 
 bool mpegPlayer::pause() {
+	debugC(1, kDebugSound, "mpegPlayer::pause(%s)", _file.c_str());
+
 	g_system->getMixer()->pauseHandle(_soundHandle, true);
 	_paused = true;
 	return true;
 }
 
 bool mpegPlayer::resume() {
+	debugC(1, kDebugSound, "mpegPlayer::resume(%s)", _file.c_str());
+
 	g_system->getMixer()->pauseHandle(_soundHandle, false);
 	_paused = false;
 
