@@ -26,6 +26,9 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Fixed glitchy staircase in old Maniac Mansion Mania episodes, caused by
     imperfect pathfinding.
 
+ Crusie:
+  - Added support for Russian fan-translation.
+
  Freescape:
   - Added support for Atari/Amiga releases of Dark Side.
   - Improved handling of close colinear surfaces.
@@ -35,6 +38,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  MM:
    - Added MT32/LAPC-1 support for Xeen engine.
    - Fixed Xeen regression which caused some sound effects to stop abruptly.
+
+ SCI:
+   - Added support for Russian fan-translation of QFG3.
 
  SCUMM:
    - Added map generator from Moonbase Console for Moonbase Commander.
