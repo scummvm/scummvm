@@ -171,6 +171,7 @@ _readline=auto
 _freetype2=auto
 _libmikmod=auto
 _libopenmpt=auto
+_libmpcdec=auto
 _taskbar=auto
 _updates=no
 _libunity=auto
@@ -1028,6 +1029,9 @@ Optional Libraries:
   --with-openmpt-prefix=DIR    Prefix where libopenmpt is installed (optional)
   --enable-openmpt             enable openmpt module for playing various sound formats like impulsetracker [autodetect]
 
+  --with-mpcdec-prefix=DIR    Prefix where libmpcdec is installed (optional)
+  --enable-mpcdec             enable libmpcdec for playing musepack format audio [autodetect]
+
   --with-a52-prefix=DIR    Prefix where liba52 is installed (optional)
   --enable-a52             enable a52 codec for MPEG decoder [autodetect]
 
@@ -1225,6 +1229,8 @@ for ac_option in $@; do
 	--disable-mikmod)             _libmikmod=no          ;;
 	--enable-openmpt)             _libopenmpt=yes        ;;
 	--disable-openmpt)            _libopenmpt=no         ;;
+	--enable-mpcdec)              _libmpcdec=yes        ;;
+	--disable-mpcdec)             _libmpcdec=no         ;;
 	--enable-a52)                 _a52=yes               ;;
 	--disable-a52)                _a52=no                ;;
 	--disable-jpeg)               _jpeg=no               ;;
@@ -5874,6 +5880,43 @@ fi
 
 echo "$_libmikmod"
 define_in_config_if_yes "$_libmikmod" "USE_MIKMOD"
+
+#
+# Check for libmpcdec to be present
+#
+echocheck "libmpcdec"
+
+if test "$_libmpcdec" != "no"; then
+	if test "$_pkg_config" = "yes" && $_pkgconfig --exists libmpcdec; then
+		append_var LIBMPCDEC_LIBS "`$_pkgconfig --libs libmpcdec`"
+		append_var LIBMPCDEC_CFLAGS "`$_pkgconfig --cflags libmpcdec`"
+	else
+		append_var LIBMPCDEC_LIBS "-lmpcdec"
+	fi
+
+	if test "$_libmpcdec" = "auto"; then
+		_libmpcdec=no
+		cat > $TMPC << EOF
+		#include <mpc/mpcdec.h>
+		int main(void) {
+			mpc_streaminfo info;
+
+			mpc_decoder *decoder = mpc_decoder_init(&info);
+
+			return 0;
+		}
+EOF
+		cc_check $LIBMPCDEC_CFLAGS $LIBMPCDEC_LIBS && _libmpcdec=yes
+	fi
+
+	if test "$_libmpcdec" = "yes"; then
+		append_var LIBS "$LIBMPCDEC_LIBS"
+		append_var INCLUDES "$LIBMPCDEC_CFLAGS"
+	fi
+fi
+
+define_in_config_if_yes "$_libmpcdec" "USE_MPCDEC"
+echo "$_libmpcdec"
 
 #
 # Check whether to build cloud integration support
