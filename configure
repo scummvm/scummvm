@@ -257,7 +257,6 @@ _sdlpath="$PATH"
 _freetypepath="$PATH"
 _libcurlpath="$PATH"
 _libmikmodpath="$PATH"
-_libopenmptpath="$PATH"
 _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
@@ -1546,10 +1545,6 @@ for ac_option in $@; do
 	--with-mikmod-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		_libmikmodpath="$arg:$arg/bin"
-		;;
-	--with-openmpt-prefix=*)
-		arg=`echo $ac_option | cur -d '=' -f 2`
-		_libopenmptpath="$arg:$arg/bin"
 		;;
 	--with-nasm-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
