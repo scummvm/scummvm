@@ -74,20 +74,6 @@ struct sPlane4f {
 	inline Vect3f &GetNormal()                           {
 		return *(Vect3f *)&A;
 	}
-	inline void xform(MatXf &mat) {
-		Vect3f p;
-		mat.xformPoint(GetNormal()*D, p);
-		GetNormal() = mat.xformVect(GetNormal());
-		D = -A * p.x - B * p.y - C * p.z;
-	}
-	inline void GetReflectionMatrix(const MatXf &in, MatXf &out) {
-		// out - ReflectionMatrix
-		MatXf RefSurface(Mat3f(1 - 2 * A * A, -2 * A * B,     -2 * A * C,
-		                       -2 * B * A,     1 - 2 * B * B,    -2 * B * C,
-		                       -2 * C * A,     -2 * C * B,     1 - 2 * C * C),
-		                 Vect3f(-2 * D * A,      -2 * D * B,     -2 * D * C));
-		out = in * RefSurface;
-	}
 	inline void GetReflectionVector(const Vect3f &in, Vect3f &out) {
 		// out - поиск отражение вектора от плоскости
 		out = in - 2 * dot(GetNormal(), in) * GetNormal();
