@@ -5715,7 +5715,8 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 
 			// This check may not be accurate, but we need to avoid adding the existing scene to the return list.
 			// SPQR depends on this behavior: Hitting Esc while in the menu will fire off another transition to
-			// the menu scene with addToReturnList set.  We want to avoid returning back to 
+			// the menu scene with addToReturnList set.  We want to avoid adding the menu to the return list
+			// multiple times since it will prevent the exit button from working properly.
 			if ((transition.addToDestinationScene || transition.addToReturnList) && targetScene != _activeMainScene) {
 				SceneReturnListEntry returnListEntry;
 				returnListEntry.isAddToDestinationSceneTransition = transition.addToDestinationScene;
