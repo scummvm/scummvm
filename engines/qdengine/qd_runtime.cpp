@@ -110,7 +110,7 @@ void searchTagMap(int id, int targetVal) {
 	warning("searchTagMap(): No match");
 }
 
-int engineMain() {
+int QDEngineEngine::engineMain() {
 	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, "*.qml");
 	Common::ArchiveMemberPtr p = files.front();
