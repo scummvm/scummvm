@@ -66,7 +66,7 @@ private:
 	Pic *_fullscreenPic = nullptr;
 	bool _timeAdvanceEventSelected = false;
 	uint8 _delbertspeech = 0;
-
+	int16 _yvec = 0; //delbert throw stick related.
 
 protected:
 	// Engine APIs
@@ -241,6 +241,7 @@ private:
 	void initDelbertAtSide();
 	void moveplayertodelbert();
 	void rundrekethsequence();
+	void delthrowstick(int16 spriteNum);
 };
 
 extern DarkseedEngine *g_engine;

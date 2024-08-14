@@ -1331,3 +1331,7 @@ void Darkseed::Room::darkenSky() {
 		workPal.installPalette();
 	}
 }
+
+void Darkseed::Room::loadLocationSprites(const Common::Path &path) {
+	_locationSprites.load(path);
+}

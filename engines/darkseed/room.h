@@ -104,6 +104,7 @@ public:
 	void loadRoom61AWalkableLocations();
 	void restorePalette();
 	void darkenSky();
+	void loadLocationSprites(const Common::Path &path);
 private:
 	bool load();
 	static Common::String stripSpaces(Common::String source);
