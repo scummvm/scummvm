@@ -40,7 +40,6 @@
 
 #include "mtropolis/plugin/mti.h"
 #include "mtropolis/plugin/obsidian.h"
-#include "mtropolis/plugin/spqr.h"
 #include "mtropolis/plugin/standard.h"
 #include "mtropolis/plugins.h"
 
@@ -1076,7 +1075,6 @@ class BootScriptContext {
 public:
 	enum PlugIn {
 		kPlugInMTI,
-		kPlugInSPQR,
 		kPlugInStandard,
 		kPlugInObsidian,
 		kPlugInMIDI,
@@ -1380,7 +1378,6 @@ void BootScriptContext::bootMTIRetailWinRu() {
 }
 
 void BootScriptContext::bootSPQRMac() {
-	addPlugIn(kPlugInSPQR);
 	addPlugIn(kPlugInStandard);
 
 	addArchive(kArchiveTypeMacVISE, "installer", "fs:Install.vct");
@@ -1390,7 +1387,6 @@ void BootScriptContext::bootSPQRMac() {
 }
 
 void BootScriptContext::bootSPQRWin() {
-	addPlugIn(kPlugInSPQR);
 	addPlugIn(kPlugInStandard);
 }
 
@@ -1452,7 +1448,6 @@ void BootScriptContext::executeFunction(const Common::String &functionName, cons
 	const EnumBinding plugInEnum[] = {ENUM_BINDING(kPlugInMTI),
 									  ENUM_BINDING(kPlugInStandard),
 									  ENUM_BINDING(kPlugInObsidian),
-									  ENUM_BINDING(kPlugInSPQR),
 									  ENUM_BINDING(kPlugInMIDI)};
 
 	const EnumBinding bitDepthEnum[] = {ENUM_BINDING(kBitDepthAuto),
@@ -2071,11 +2066,6 @@ Common::SharedPtr<MTropolis::PlugIn> loadObsidianPlugIn(const MTropolisGameDescr
 Common::SharedPtr<MTropolis::PlugIn> loadMTIPlugIn(const MTropolisGameDescription &gameDesc) {
 	Common::SharedPtr<MTropolis::PlugIn> mtiPlugIn(PlugIns::createMTI());
 	return mtiPlugIn;
-}
-
-Common::SharedPtr<MTropolis::PlugIn> loadSPQRPlugIn(const MTropolisGameDescription &gameDesc) {
-	Common::SharedPtr<MTropolis::PlugIn> spqrPlugIn(PlugIns::createSPQR());
-	return spqrPlugIn;
 }
 
 enum PlayerType {
@@ -2794,9 +2784,6 @@ BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 			break;
 		case Boot::BootScriptContext::kPlugInMTI:
 			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
-			break;
-		case Boot::BootScriptContext::kPlugInSPQR:
-			plugIns.push_back(Boot::loadSPQRPlugIn(gameDesc));
 			break;
 		default:
 			error("Unknown plug-in ID");
