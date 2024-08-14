@@ -275,6 +275,10 @@ public:
 		return maxLocations;
 	}
 
+	inline int getMaxLife() const {
+		return isLBA1() ? 50 : 255;
+	}
+
 	bool unlockAchievement(const Common::String &id);
 
 	Actor *_actor;

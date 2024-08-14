@@ -135,9 +135,6 @@ struct BonusParameter {
 	uint16 unused : 7;
 };
 
-// TODO: this is 255 for lba2
-#define kActorMaxLife 50
-
 /**
  * Actors structure
  *
@@ -147,10 +144,12 @@ class ActorStruct { // T_OBJET
 private:
 	ShapeType _col = ShapeType::kNone; // collision
 	bool _brickCausesDamage = false;
+	int32 _maxLife;
 
 	EntityData _entityData;
 
 public:
+	ActorStruct(int maxLife = 0) : _lifePoint(maxLife), _maxLife(maxLife) {}
 	StaticFlagsStruct _staticFlags; // Flags
 	DynamicFlagsStruct _workFlags;  // WorkFlags
 
@@ -207,7 +206,7 @@ public:
 	int32 _bonusAmount = 0;
 	int32 _talkColor = COLOR_BLACK;
 	int32 _armor = 1;
-	int32 _lifePoint = kActorMaxLife;
+	int32 _lifePoint = 0;
 
 	/** Process actor coordinate Nxw, Nyw, Nzw */
 	IVec3 _processActor;
@@ -264,8 +263,8 @@ inline void ActorStruct::addLife(int32 val) {
 
 inline void ActorStruct::setLife(int32 val) {
 	_lifePoint = val;
-	if (_lifePoint > kActorMaxLife) {
-		_lifePoint = kActorMaxLife;
+	if (_lifePoint > _maxLife) {
+		_lifePoint = _maxLife;
 	}
 }
 

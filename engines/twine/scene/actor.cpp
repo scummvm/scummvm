@@ -358,7 +358,7 @@ void Actor::startInitObj(int16 actorIdx) {
 
 void Actor::initObject(int16 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	*actor = ActorStruct();
+	*actor = ActorStruct(_engine->getMaxLife());
 
 	actor->_actorIdx = actorIdx;
 	actor->_pos = IVec3(0, SIZE_BRICK_Y, 0);

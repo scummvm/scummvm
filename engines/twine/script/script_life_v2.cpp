@@ -743,10 +743,7 @@ int32 ScriptLifeV2::lADD_LIFE_POINT_OBJ(TwinEEngine *engine, LifeScriptContext &
 		engine->_actor->initBody(BodyType::btNormal, num);
 		engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeRepeat, AnimationTypes::kStanding, num);
 	}
-	actor->_lifePoint += life;
-	if (actor->_lifePoint > kActorMaxLife) {
-		actor->_lifePoint = kActorMaxLife;
-	}
+	actor->setLife(actor->_lifePoint + life);
 	return 0;
 }
 

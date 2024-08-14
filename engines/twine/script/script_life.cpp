@@ -1717,7 +1717,7 @@ int32 ScriptLife::lSAY_MESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) 
  */
 int32 ScriptLife::lFULL_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::FULL_POINT()");
-	engine->_scene->_sceneHero->setLife(kActorMaxLife);
+	engine->_scene->_sceneHero->setLife(engine->getMaxLife());
 	engine->_gameState->setMaxMagicPoints();
 	return 0;
 }
@@ -1959,8 +1959,9 @@ int32 ScriptLife::lTHE_END(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::THE_END()");
 	engine->_sceneLoopState = SceneLoopState::Finished;
 	engine->_gameState->setLeafs(0);
-	engine->_scene->_sceneHero->setLife(kActorMaxLife);
+	engine->_scene->_sceneHero->setLife(engine->getMaxLife());
 	engine->_gameState->setMagicPoints(80);
+	// TODO: lba2 has a different ending
 	engine->_scene->_currentSceneIdx = LBA1SceneId::Polar_Island_Final_Battle;
 	engine->_actor->_heroBehaviour = engine->_actor->_previousHeroBehaviour;
 	engine->_scene->_newHeroPos.x = -1;

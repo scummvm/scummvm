@@ -793,7 +793,7 @@ void TwinEEngine::processInventoryAction() {
 		debug("penguin angle: %i", penguin->_beta);
 
 		if (_collision->checkValidObjPos(_scene->_mecaPenguinIdx)) {
-			penguin->setLife(kActorMaxLife);
+			penguin->setLife(getMaxLife());
 			penguin->_genBody = BodyType::btNone;
 			_actor->initBody(BodyType::btNormal, _scene->_mecaPenguinIdx);
 			penguin->_workFlags.bIsDead = 0;
@@ -810,9 +810,9 @@ void TwinEEngine::processInventoryAction() {
 		break;
 	}
 	case kiCloverLeaf:
-		if (_scene->_sceneHero->_lifePoint < kActorMaxLife) {
+		if (_scene->_sceneHero->_lifePoint < getMaxLife()) {
 			if (_gameState->_inventoryNumLeafs > 0) {
-				_scene->_sceneHero->setLife(kActorMaxLife);
+				_scene->_sceneHero->setLife(getMaxLife());
 				_gameState->setMagicPoints(_gameState->_magicLevelIdx * 20);
 				_gameState->addLeafs(-1);
 				_redraw->addOverlay(OverlayType::koInventoryItem, InventoryItems::kiCloverLeaf, 0, 0, 0, OverlayPosType::koNormal, 3);
@@ -1108,7 +1108,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 						_scene->_heroPositionType = ScenePositionType::kReborn;
 
-						_scene->_sceneHero->setLife(kActorMaxLife);
+						_scene->_sceneHero->setLife(getMaxLife());
 						_redraw->_firstTime = true;
 						_screens->_fadePalette = true;
 						_gameState->addLeafs(-1);
@@ -1119,7 +1119,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 						_gameState->setMaxMagicPoints();
 						_actor->_heroBehaviour = _actor->_previousHeroBehaviour;
 						actor->_beta = _actor->_previousHeroAngle;
-						actor->setLife(kActorMaxLife);
+						actor->setLife(getMaxLife());
 
 						if (_scene->_previousSceneIdx != _scene->_currentSceneIdx) {
 							_scene->_newHeroPos.x = -1;
