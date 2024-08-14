@@ -21,7 +21,9 @@
 
 #include "twine/script/script_life_v2.h"
 #include "twine/audio/sound.h"
+#include "twine/audio/music.h"
 #include "twine/movies.h"
+#include "twine/menu/interface.h"
 #include "twine/parser/anim3ds.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/renderer.h"
@@ -215,8 +217,15 @@ int32 ScriptLifeV2::lFADE_TO_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 int32 ScriptLifeV2::lPLAY_MUSIC(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lPLAY_MUSIC()");
-	// TODO: game var 157 is checked here
-	return lPLAY_CD_TRACK(engine, ctx);
+	const int32 val = lPLAY_CD_TRACK(engine, ctx);
+	if (engine->isLBA2()) {
+		engine->_scene->_sceneMusic = 255;
+		engine->_music->_nextMusic = -1;
+		if (engine->_gameState->hasGameFlag(157) > 0) {
+			engine->_music->_stopLastMusic = false;
+		}
+	}
+	return val;
 }
 
 int32 ScriptLifeV2::lTRACK_TO_VAR_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -429,18 +438,32 @@ int32 ScriptLifeV2::lVAR_GAME_TO_TRACK(TwinEEngine *engine, LifeScriptContext &c
 }
 
 int32 ScriptLifeV2::lANIM_TEXTURE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	engine->_interface->_animateTexture = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lANIM_TEXTURE(%i)", (int)engine->_interface->_animateTexture);
+	return 0;
 }
 
 int32 ScriptLifeV2::lADD_MESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
+	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lADD_MESSAGE_OBJ(%i)", (int)textIdx);
+	// TODO: implement me
 	return -1;
 }
 
 int32 ScriptLifeV2::lADD_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
+	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lADD_MESSAGE(%i)", (int)textIdx);
+	// TODO: implement me
 	return -1;
 }
 
 int32 ScriptLifeV2::lCAMERA_CENTER(TwinEEngine *engine, LifeScriptContext &ctx) {
+	const int32 angle = ClampAngle(ToAngle(ctx.stream.readByte() * 1024));
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lCAMERA_CENTER(%i)", (int)angle);
+	// TODO: implement me - see centerOnActor in grid
+	// AddBetaCam = num ;
+	// CameraCenter( 2 ) ;
+	// FirstTime = AFF_ALL_FLIP ;
 	return -1;
 }
 
@@ -458,6 +481,9 @@ int32 ScriptLifeV2::lNO_CHOC(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lCINEMA_MODE(TwinEEngine *engine, LifeScriptContext &ctx) {
+	const uint8 val = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lCINEMA_MODE(%i)", (int)val);
+	// TODO: implement me
 	return -1;
 }
 
@@ -576,14 +602,37 @@ int32 ScriptLifeV2::lINIT_BUGGY(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lMEMO_ARDOISE(TwinEEngine *engine, LifeScriptContext &ctx) {
+	const uint8 num = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lMEMO_ARDOISE(%i)", (int)num);
+	if (engine->_gameState->hasGameFlag(GAMEFLAG_ARDOISE)) {
+		// TODO: implement me
+	}
 	return -1;
 }
 
 int32 ScriptLifeV2::lSET_CHANGE_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	const uint8 num = ctx.stream.readByte();
+	const uint8 info = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_CHANGE_CUBE(%i, %i)", (int)num, (int)info);
+	int n = 0;
+	while (n < engine->_scene->_sceneNumZones) {
+		ZoneStruct &zone = engine->_scene->_sceneZones[n];
+		if (zone.type == ZoneType::kCube && zone.num == num) {
+			if (info) {
+				zone.infoData.generic.info7 |= ZONE_ON;
+			} else {
+				zone.infoData.generic.info7 &= ~ZONE_ON;
+			}
+		}
+		++n;
+	}
+	return 0;
 }
 
 int32 ScriptLifeV2::lMESSAGE_ZOE(TwinEEngine *engine, LifeScriptContext &ctx) {
+	const int16 textIdx = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lMESSAGE_ZOE(%i)", (int)textIdx);
+	// TODO: implement me
 	return -1;
 }
 
@@ -871,13 +920,13 @@ int32 ScriptLifeV2::lINVERSE_BETA(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 		// to be clean
 		APtObj = ctx.actor;
+#endif
 
-		// SizeSHit contains the number of the brick under the wagon
+		// SizeSHit contains the number of the brick under the wagon hack
 		// test front axle position
 		engine->_wagon->AdjustEssieuWagonAvant(ctx.actor->SizeSHit);
 		// test rear axle position
 		engine->_wagon->AdjustEssieuWagonArriere(ctx.actor->SizeSHit);
-#endif
 	}
 
 	// To tell an object that it is no longer being carried by me

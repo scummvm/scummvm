@@ -245,6 +245,8 @@ public:
 	uint8 _brickSound = 0U; // CodeJeu
 	int32 SampleAlways = 0; // lba2
 	uint8 SampleVolume = 0; // lba2
+	// SizeSHit contains the number of the brick under the wagon - hack
+	int16 SizeSHit; // lba2 - always square
 
 	BoundingBox _boundingBox; // Xmin, YMin, Zmin, Xmax, Ymax, Zmax
 	ActorMoveStruct realAngle;

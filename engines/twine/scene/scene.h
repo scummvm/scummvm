@@ -146,8 +146,9 @@ private:
 
 	int16 _samplePlayed = 0;
 
-	int16 _sceneMusic = 0;
-
+public:
+	int16 _sceneMusic = 0;  // CubeJingle
+private:
 	IVec3 _sceneHeroPos;
 	IVec3 _zoneHeroPos;
 

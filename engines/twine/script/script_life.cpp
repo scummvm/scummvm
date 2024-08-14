@@ -924,8 +924,10 @@ int32 ScriptLife::lMESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	}
 
 	engine->_text->drawTextProgressive(textIdx);
-	if (engine->_scene->_currentSceneIdx == LBA1SceneId::Principal_Island_Library && engine->_scene->_talkingActor == 8 && textIdx == TextId::kStarWarsFanBoy) {
-		engine->unlockAchievement("LBA_ACH_008");
+	if (engine->isLBA1()) {
+		if (engine->_scene->_currentSceneIdx == LBA1SceneId::Principal_Island_Library && engine->_scene->_talkingActor == 8 && textIdx == TextId::kStarWarsFanBoy) {
+			engine->unlockAchievement("LBA_ACH_008");
+		}
 	}
 	engine->_redraw->redrawEngineActions(true);
 
