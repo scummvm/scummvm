@@ -136,7 +136,19 @@ bool SceneScriptHC01::ClickedOnActor(int actorId) {
 				dialogueWithIzo();
 			}
 		}
+#if BLADERUNNER_ORIGINAL_BUGS
 		AI_Movement_Track_Unpause(kActorIzo);
+#else
+		// NOTE If Izo has not finished his path, before McCoy asks him the final question
+		// which makes him take the photo, then he would play the animation of getting the camera (kGoalIzoPrepareCamera)
+		// but then would not take the photo, but instead walk to the end of his path (due to this Upause() call)
+		// and the game would soft lock (original game bug).
+		// See bug report ticket (trac): #15321
+		//
+		if (Actor_Query_Goal_Number(kActorIzo) != kGoalIzoTakePhoto) {
+			AI_Movement_Track_Unpause(kActorIzo);
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
