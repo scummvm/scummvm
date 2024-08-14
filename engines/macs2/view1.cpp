@@ -91,7 +91,7 @@ View1::View1() : UIElement("View1") {
 			// TODO Figure out these - the mug has a different blob
 			index = 0x13;
 		}
-		index = 15;
+		index = 0x13;
 		Common::MemoryReadStream stream(gameObject->Blobs[index].data(), gameObject->Blobs[index].size());
 		// TODO: Need to check how the offset really is calculated by the game code, this will not hold
 		stream.seek(23, SEEK_SET);
@@ -475,6 +475,13 @@ void View1::draw() {
 	Graphics::ManagedSurface s = getSurface();
 
 	s.blitFrom(_backgroundSurface);
+	for (int x = 0; x < s.w; x++) {
+		for (int y = 0; y < s.h; y++) {
+			if (g_engine->_map.getPixel(x, y) == 0x2) {
+				s.setPixel(x, y, 0xFF);
+			}
+		}
+	}
 
 	drawBackgroundAnimations(s);
 	DrawCharacters(s);
@@ -569,7 +576,7 @@ void View1::draw() {
 
 	// drawPathfindingPoints(s);
 	// drawPath(s);
-	// drawBackgroundAnimationNumbers(s);
+	drawBackgroundAnimationNumbers(s);
 	
 }
 
