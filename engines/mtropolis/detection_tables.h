@@ -1234,25 +1234,6 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_IDINO_RETAIL_EN,
 	},
 
-	{ // I Can Be a Dinosaur Finder - Demo (English, Windows)
-	  // Published by Macmillan, 1998
-		{
-			"idino",
-			"Demo",
-			{
-				{ "WBDFS.C9A", 0, "d28310a331ae07801e4e2fdc30a323b6", 172110125},
-			 	AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_UNSUPPORTED | ADGF_DEMO,
-			GUIO0()
-		},
-		GID_IDINO,
-		0,
-		MTBOOT_IDINO_DEMO_EN,
-	},
-
 	{ // I Can Be an Animal Doctor (English, Windows)
 	  // Published by Macmillan, 1998
 		{
@@ -1272,13 +1253,15 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_IDOCTOR_RETAIL_EN,
 	},
 
-	{ // I Can Be an Animal Doctor - Demo (English, Windows)
-	  // Published by Macmillan, 1998
+	{ // Cloud 9 CD Sampler Volume 2 - Demo (English, Windows)
+	  // Published by Cloud 9 Interactive, 1997
 		{
-			"idoctor",
+			"c9sampler",
 			"Demo",
 			{
-				{"VETS.C9A", 0, "836765ba5202c146c5228933309e90cd", 149747132},
+				{ "RUNSAMP.C9A", 0, "349d9318b181ac4f6e0326a4b8fe7238", 5954633 },
+				//{ "VETS.C9A", 0, "836765ba5202c146c5228933309e90cd", 149747132 },
+				//{ "WBDFS.C9A", 0, "d28310a331ae07801e4e2fdc30a323b6", 172110125 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -1286,9 +1269,9 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			ADGF_UNSUPPORTED | ADGF_DEMO,
 			GUIO0()
 		},
-		GID_IDINO,
+		GID_C9SAMPLER,
 		0,
-		MTBOOT_IDINO_DEMO_EN,
+		MTBOOT_C9SAMPLER_WIN_EN,
 	},
 
 	{ // How to Draw the Marvel Way (English, Windows)
