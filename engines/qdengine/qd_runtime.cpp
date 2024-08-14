@@ -29,7 +29,6 @@
 #include "qdengine/qdcore/qd_trigger_chain.h"
 #include "qdengine/qdcore/qd_setup.h"
 #include "qdengine/system/sound/snd_dispatcher.h"
-#include "qdengine/qdcore/qd_trigger_profiler.h"
 #include "qdengine/qdcore/qd_file_manager.h"
 #include "qdengine/qdcore/util/plaympp_api.h"
 #include "qdengine/qdcore/util/splash_screen.h"
@@ -164,23 +163,11 @@ int QDEngineEngine::engineMain() {
 
 	grD = new grDispatcher();
 
-#ifdef __QD_TRIGGER_PROFILER__
-	if (ConfMan.getBool("trigger_profiler"))
-		qdTriggerProfiler::instance().enable();
-#endif
-
 	grD->hideMouse();
 
 	grD->showMouse(); // FIXME HACK
 
 	qdGameConfig::get_config().load();
-
-#ifdef __QD_TRIGGER_PROFILER__
-	if (qdGameConfig::get_config().is_profiler_enabled())
-		qdTriggerProfiler::instance().enable();
-	if (0 != strlen(qdGameConfig::get_config().profiler_file()))
-		qdTriggerProfiler::instance().set_work_file(qdGameConfig::get_config().profiler_file());
-#endif
 
 	SplashScreen sp;
 	if (qdGameConfig::get_config().is_splash_enabled()) {

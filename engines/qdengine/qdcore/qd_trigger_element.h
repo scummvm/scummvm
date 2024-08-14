@@ -25,7 +25,6 @@
 #include "qdengine/parser/xml_fwd.h"
 #include "qdengine/qdcore/qd_named_object.h"
 #include "qdengine/qdcore/qd_named_object_reference.h"
-#include "qdengine/qdcore/qd_trigger_profiler.h"
 
 namespace Common {
 class WriteStream;
@@ -265,12 +264,6 @@ public:
 	void reset();
 	void deactivate(const qdNamedObject *ignore_object = NULL);
 
-#ifdef __QD_TRIGGER_PROFILER__
-	void set_owner(const qdTriggerChain *p) {
-		_owner = p;
-	}
-#endif
-
 private:
 
 	//! Специальные состояния - используются только в сэйве.
@@ -292,10 +285,6 @@ private:
 
 	qdTriggerLinkList _parents;
 	qdTriggerLinkList _children;
-
-#ifdef __QD_TRIGGER_PROFILER__
-	const qdTriggerChain *_owner;
-#endif
 
 	bool load_links_script(const xml::tag *p, bool load_parents);
 

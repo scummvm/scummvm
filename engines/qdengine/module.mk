@@ -99,7 +99,6 @@ MODULE_OBJS = \
 	qdcore/qd_textdb.o \
 	qdcore/qd_trigger_chain.o \
 	qdcore/qd_trigger_element.o \
-	qdcore/qd_trigger_profiler.o \
 	qdcore/qd_video.o
 
 # This module can be built as a plugin
