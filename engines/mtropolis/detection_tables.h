@@ -1372,7 +1372,27 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		},
 		GID_CHOMP,
 		0,
-		MTBOOT_CHOMP_WIN_EN,
+		MTBOOT_CHOMP_RETAIL_WIN_EN,
+	},
+
+	{ // Chomp! The Video Game Demo (English, Windows)
+	  // Published by Nabisco, 1996
+		{
+			"chomp",
+			"Demo",
+			{
+				{ "MTPLAY32.EXE", 0, "5bc345c80c615e7c8c633468ba9bd7b4", 681984 },
+				{ "JUMBLE.MPL", 0, "6f1c9e3e83e0eb87506b500b71a6e73c", 6473576 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED | ADGF_DEMO,
+			GUIO0()
+		},
+		GID_CHOMP,
+		0,
+		MTBOOT_CHOMP_DEMO_WIN_EN,
 	},
 
 	{ // 24 Hours in Cyberspace (English, Windows)
