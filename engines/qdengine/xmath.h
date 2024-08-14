@@ -46,7 +46,6 @@ class Vect2s;
 class Vect3f;
 class Mat3f;
 class MatXf;
-class QuatF;
 
 class Vect4f;
 
@@ -805,7 +804,6 @@ public:
 class Mat3f {
 
 	friend class MatXf;
-	friend class QuatF;
 
 public:
 
@@ -836,10 +834,6 @@ public:
 		set(axis, angle, normalizeAxis);
 	}
 
-	Mat3f(const QuatF &q) {
-		set(q);
-	}
-
 	Mat3f(const Vect3f &x_from, const Vect3f &y_from, const Vect3f &z_from,
 	      const Vect3f &x_to = Vect3f::I, const Vect3f &y_to = Vect3f::J, const Vect3f &z_to = Vect3f::K) {
 		set(x_from, y_from, z_from, x_to, y_to, z_to);
@@ -858,8 +852,6 @@ public:
 	// set Mat3f as a rotation of 'angle' radians about 'axis'
 	// axis is automatically normalized unless normalizeAxis = 0
 	Mat3f &set(const Vect3f &axis, float angle, int normalizeAxis = 1);
-
-	Mat3f &set(const QuatF &q);
 
 	// Convertion "from"-basis->"to"-basis
 	Mat3f &set(const Vect3f &x_from, const Vect3f &y_from, const Vect3f &z_from,
@@ -1178,196 +1170,6 @@ public:
 	// MatXf constants ////////////////////////////////////////////////////////////
 
 	static const MatXf ID;      // identity matrix
-
-};
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//			class QuatF
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-class QuatF {
-	friend class Mat3f;
-
-public:
-
-	float s_, x_, y_, z_;
-
-
-public:
-
-	// constructors //////////////////////////////////////////////////////////////
-
-	xm_inline QuatF() {}
-
-	xm_inline QuatF(float s, float x, float y, float z) {
-		set(s, x, y, z);
-	}
-
-	xm_inline QuatF(float angle, const Vect3f &axis, int normalizeAxis = 1) {
-		set(angle, axis, normalizeAxis);
-	}
-
-	xm_inline QuatF(const Mat3f &R) {
-		set(R);
-	}
-
-	// setters / accessors / translators /////////////////////////////////////////
-
-	xm_inline QuatF &set(float s, float x, float y, float z) {
-		s_ = s;
-		x_ = x;
-		y_ = y;
-		z_ = z;
-		return *this;
-	}
-
-	// set a quaternion to a rotation of 'angle' radians about 'axis'
-	// the axis passed is automatically normalized unless normalizeAxis = 0
-	QuatF &set(float angle, const Vect3f &axis, int normalizeAxis = 1);
-
-	QuatF &set(const Mat3f &R);
-
-	xm_inline operator const float *() const {
-		return &s_;
-	}
-	xm_inline operator float *() {
-		return &s_;
-	}
-
-	xm_inline const float &operator[](int i) const {
-		return *(&s_ + i);
-	}
-	xm_inline float &operator[](int i)       {
-		return *(&s_ + i);
-	}
-
-	float s() const {
-		return s_;
-	}
-	float x() const {
-		return x_;
-	}
-	float y() const {
-		return y_;
-	}
-	float z() const {
-		return z_;
-	}
-
-	float &s() {
-		return s_;
-	}
-	float &x() {
-		return x_;
-	}
-	float &y() {
-		return y_;
-	}
-	float &z() {
-		return z_;
-	}
-
-	xm_inline Vect3f axis() const;  // normalized axis of rotation
-	xm_inline float angle() const;  // angle of rotation in radians, in range [0, 2pi)
-
-
-	//  Logical operations  ///////////////
-	xm_inline bool eq(const QuatF &v, float delta = FLT_COMPARE_TOLERANCE) const;
-
-	//  Negate  ////////////////////////////////////
-	xm_inline QuatF operator- () const {
-		return QuatF(-s_, -x_, -y_, -z_);
-	}
-	xm_inline QuatF &negate(const QuatF &q) {
-		s_ = -q.s_;
-		x_ = -q.x_;
-		y_ = -q.y_;
-		z_ = -q.z_;
-		return *this;
-	}
-	xm_inline QuatF &negate() {
-		s_ = -s_;
-		x_ = -x_;
-		y_ = -y_;
-		z_ = -z_;
-		return *this;
-	}
-
-	//  Normalization  ///////////////////////
-	xm_inline QuatF &normalize(const QuatF &q);         // q/|q|
-	xm_inline QuatF &normalize();               // this/|this|
-	xm_inline float norm() const {
-		return sqrtf(x_ * x_ + y_ * y_ + z_ * z_ + s_ * s_);
-	}
-	xm_inline float norm2() const {
-		return x_ * x_ + y_ * y_ + z_ * z_ + s_ * s_;
-	}
-
-	//  Invertion  /////////////////////////
-	xm_inline QuatF &invert(const QuatF &q);            // q^-1
-	xm_inline QuatF &invert();                  // this^-1
-
-
-	//  QuatF - QuatF operations  ///////////////
-	xm_inline QuatF &operator+= (const QuatF &q);
-	xm_inline QuatF &operator-= (const QuatF &q);
-	xm_inline QuatF operator+ (const QuatF &q) const;
-	xm_inline QuatF operator- (const QuatF &q) const;
-
-	//   Cross product   /////////////////
-	QuatF &mult(const QuatF &p, const QuatF &q);        // p * q     [!]
-	QuatF &premult(const QuatF &q);                 // q * this  [!]
-	QuatF &postmult(const QuatF &q);            // this * q  [!]
-	xm_inline QuatF &operator%= (const QuatF &q) {
-		return postmult(q);
-	}
-	xm_inline QuatF operator% (const QuatF &q) const {
-		QuatF u;
-		return u.mult(*this, q);
-	}
-
-	//  Dot product  ////////////////////
-	xm_inline float dot(const QuatF &other) const;
-	xm_inline friend float dot(const QuatF &u, const QuatF &v) {
-		return u.dot(v);
-	}
-
-	//  Scalar multiplication & division  //////////
-	xm_inline QuatF &operator*= (float s);
-	xm_inline QuatF &operator/= (float s);
-	xm_inline QuatF operator* (float s) const;
-	xm_inline QuatF operator/ (float s) const;
-	xm_inline friend QuatF operator* (float s, const QuatF &q);
-
-
-	// Transforming Vect3f ///////////////////////////////////////////////////////
-
-	Vect3f &xform(const Vect3f &u, Vect3f &v) const;   // this (v 0) this^-1 => xv
-	Vect3f &xform(Vect3f &v) const;            // this (v 0) this^-1 => v
-
-	// These are exactly like the above methods, except the inverse
-	// transform is used (i.e. the factors this and this^-1 are swapped).
-	Vect3f &invXform(const Vect3f &v, Vect3f &xv) const;
-	Vect3f &invXform(Vect3f &v) const;
-
-
-	//    I/O operations    //////////////////////////////////////
-#ifdef _XMATH_USE_IOSTREAM
-	friend ostream &operator<< (ostream &os, const QuatF &q);
-	friend istream &operator>> (istream &is, QuatF &q);
-#endif
-
-	// miscellaneous /////////////////////////////////////////////////////////////
-	xm_inline void slerp(const QuatF &a, const QuatF &b, float t);
-
-	xm_inline void slerpExact(const QuatF &a, const QuatF &b, float t);
-
-	// QuatF constants ////////////////////////////////////////////////////////////
-
-	static const QuatF ID;   // identity quaternion
 
 };
 
@@ -2378,165 +2180,6 @@ Vect3f &MatXf::invXformPoint(Vect3f &p) const {
 }
 
 
-
-
-bool QuatF::eq(const QuatF &other, float delta) const {
-	return fabs(s_ - other.s_) < delta &&
-	       fabs(x_ - other.x_) < delta &&
-	       fabs(y_ - other.y_) < delta &&
-	       fabs(z_ - other.z_) < delta;
-}
-
-Vect3f QuatF::axis() const {
-	Vect3f v(x_, y_, z_);
-	if (v.norm() == 0.0) v = Vect3f::I;  // axis is arbitrary here
-	else v.normalize();
-	return v;
-}
-
-
-float QuatF::angle() const {
-	return 2 * acosf(s_);
-}
-
-
-QuatF &QuatF::normalize(const QuatF &q) {
-	float scale = 1.f * invSqrtFast(q.s_ * q.s_ + q.x_ * q.x_ + q.y_ * q.y_ + q.z_ * q.z_);
-	s_ = scale * q.s_;
-	x_ = scale * q.x_;
-	y_ = scale * q.y_;
-	z_ = scale * q.z_;
-	return *this;
-}
-
-QuatF &QuatF::normalize() {
-	float scale = 1.f * invSqrtFast(s_ * s_ + x_ * x_ + y_ * y_ + z_ * z_);
-	s_ *= scale;
-	x_ *= scale;
-	y_ *= scale;
-	z_ *= scale;
-	return *this;
-}
-
-
-QuatF &QuatF::invert(const QuatF &q) {
-	s_ = -q.s_;
-	x_ =  q.x_;
-	y_ =  q.y_;
-	z_ =  q.z_;
-	return *this;
-}
-
-
-QuatF &QuatF::invert() {
-	s_ = -s_;
-	return *this;
-}
-
-QuatF &QuatF::operator+= (const QuatF &q) {
-	s_ += q.s_;
-	x_ += q.x_;
-	y_ += q.y_;
-	z_ += q.z_;
-	return *this;
-}
-QuatF &QuatF::operator-= (const QuatF &q) {
-	s_ -= q.s_;
-	x_ -= q.x_;
-	y_ -= q.y_;
-	z_ -= q.z_;
-	return *this;
-}
-QuatF QuatF::operator+ (const QuatF &q) const {
-	return QuatF(s_ + q.s_, x_ + q.x_, y_ + q.y_, z_ + q.z_);
-}
-QuatF QuatF::operator- (const QuatF &q) const {
-	return QuatF(s_ - q.s_, x_ - q.x_, y_ - q.y_, z_ - q.z_);
-}
-
-float QuatF::dot(const QuatF &q) const {
-	return s_ * q.s_ + x_ * q.x_ + y_ * q.y_ + z_ * q.z_;
-}
-
-
-//  Scalar operations  /////////////////
-QuatF &QuatF::operator*= (float w) {
-	s_ *= w;
-	x_ *= w;
-	y_ *= w;
-	z_ *= w;
-	return *this;
-}
-QuatF &QuatF::operator/= (float w) {
-	w = 1 / w;
-	s_ *= w;
-	x_ *= w;
-	y_ *= w;
-	z_ *= w;
-	return *this;
-}
-QuatF QuatF::operator* (float w) const {
-	return QuatF(s_ * w, x_ * w, y_ * w, z_ * w);
-}
-QuatF QuatF::operator/ (float w) const {
-	w = 1 / w;
-	return QuatF(s_ * w, x_ * w, y_ * w, z_ * w);
-}
-QuatF operator* (float w, const QuatF &q) {
-	return QuatF(q.s_ * w, q.x_ * w, q.y_ * w, q.z_ * w);
-}
-
-xm_inline void QuatF::slerp(const QuatF &a, const QuatF &b, float t) {
-	// Slerp(q1,q2,t) = (sin((1-t)*A)/sin(A))*q1+(sin(t*A)/sin(A))*q2
-	// Но делаем линейную интерполяцию и нормализуем
-
-	float cosom = a.dot(b);
-	if (cosom < 0.0) {
-		cosom = -cosom;
-		negate(b);
-	} else
-		*this = b;
-
-	float scale0 = 1.0f - t;
-	float scale1 = t;
-
-	*this *= scale1;
-	*this += a * scale0;
-	normalize();
-}
-
-xm_inline void QuatF::slerpExact(const QuatF &a, const QuatF &b, float t) {
-	// Slerp(q1,q2,t) = (sin((1-t)*A)/sin(A))*q1+(sin(t*A)/sin(A))*q2
-	float scale0, scale1;
-
-	// calc cosine
-	float cosom = a.dot(b);
-
-	// adjust signs (if necessary)
-	if (cosom < 0.0) {
-		cosom = -cosom;
-		negate(b);
-	} else
-		*this = b;
-
-	// calculate coefficients
-	if ((1.0 - cosom) > 1e-5f) {
-		// standard case (slerp)
-		float omega = acosf(cosom);
-		float sinom = sinf(omega);
-		scale0 = sinf((1.0f - t) * omega) / sinom;
-		scale1 = sinf(t * omega) / sinom;
-	} else { // "from" and "to" quaternions are very close, so we can do a linear interpolation
-		scale0 = 1.0f - t;
-		scale1 = t;
-	}
-
-	// calculate final values
-	*this *= scale1;
-	*this += a * scale0;
-}
-
-
 ///////////////////////////////////////////////////////////////////////////////
 //
 //		Vect4f xm_inline definitions
@@ -2733,18 +2376,6 @@ inline istream &operator>>(istream &is, Mat3f &m) {
 inline ostream &operator<<(ostream &os, const MatXf &m) {
 	return os << m.R << "  " << m.d;
 }
-
-//  QuatF  I/O   ///////////////////
-inline istream &operator>>(istream &is, QuatF &q) {
-	is >> q.s_ >> q.x_ >> q.y_ >> q.z_;
-	return is;
-}
-
-inline ostream &operator<<(ostream &os, const QuatF &q) {
-	os << q.s_ << "  " << q.x_ << "  " << q.y_ << "  " << q.z_;
-	return os;
-}
-
 
 #endif  // _XMATH_NO_IOSTREAM
 
