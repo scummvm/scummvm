@@ -62,9 +62,26 @@ private:
 	int _noTreat = 0;
 	bool _flag1 = false;
 	bool _flag2 = false;
+	int _ripRingsBell = 0;
+	machine *_wolfWalker = nullptr;
+	int _wolfAdmonish = 0;
+	int _ripHeadTurn = 0;
+	int _ripMedReach = 0;
+	int _series1 = 0;
+	int _ripPutBoard = 0;
 
 	void conv403a();
 	void conv403a1();
+	void edgerBell();
+	bool edgerUrn();
+	bool stepLadderTomb();
+	bool takePlank();
+	bool takeEdger();
+	bool takeStepLadder();
+	void takeStepLadder_();
+	void useJournal();
+	void playNum1(int num);
+	void playNum2(int num);
 
 public:
 	Room403() : Room() {}

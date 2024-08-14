@@ -266,6 +266,7 @@ void Room403::daemon() {
 #define TRIGGER _G(kernel).trigger_mode = KT_DAEMON; \
 	kernel_timing_trigger(1, 102); \
 	_G(kernel).trigger_mode = KT_PARSE
+#define MONEY(ITEM) (player_said(ITEM, "WOLF") && inv_player_has(ITEM))
 
 void Room403::pre_parser() {
 	bool talkFlag = player_said_any("talk", "talk to");
@@ -402,7 +403,6 @@ void Room403::pre_parser() {
 	if (_val12) {
 		_val12 = 0;
 
-#define MONEY(ITEM) (player_said(ITEM, "WOLF") && inv_player_has(ITEM))
 		if (MONEY("POMERANIAN MARKS")) {
 			player_set_commands_allowed(false);
 			intr_cancel_sentence();
@@ -432,7 +432,6 @@ void Room403::pre_parser() {
 			kernel_timing_trigger(1, 110);
 			_G(kernel).trigger_mode = KT_PREPARSE;
 		}
-#undef MONEY
 	}
 
 	if ((lookFlag && player_said(" ")) ||
@@ -520,14 +519,104 @@ void Room403::parser() {
 		_G(flags)[V122] = 1;
 	} else if (lookFlag && _G(walker).ripley_said(SAID)) {
 		// No implementation
-	}
-	// TODO
-	else {
+	} else if (lookFlag && player_said("edger") && !inv_player_has("EDGER")) {
+		digi_play("403r53", 1);
+	} else if (lookFlag && player_said_any("STEP LADDER", "STEP LADDER ") &&
+			inv_object_is_here("STEP LADDER")) {
+		digi_play(_G(flags)[V131] == 403 ? "403R10" : "403R46", 1);
+	} else if (useFlag && player_said("PLANK") && inv_object_is_here("PLANK")) {
+		_val6 = 1020;
+		_val7 = 1300;
+		TRIGGER;
+	} else if (useFlag && player_said("STEP LADDER") && inv_object_is_here("STEP LADDER")) {
+		_val6 = 1010;
+		_val7 = 1200;
+		TRIGGER;
+	} else if (player_said("POMERANIAN MARKS", "WOLF") &&
+			inv_player_has("POMERANIAN MARKS")) {
+		if (!_G(flags)[V115] || _G(flags)[V114]) {
+			player_set_commands_allowed(false);
+			_val4 = 200;
+		} else {
+			_G(flags)[V114] = 1;
+			_G(flags)[V111]++;
+			player_set_commands_allowed(false);
+			_val4 = 210;
+		}
+	} else if (MONEY("US DOLLARS") || MONEY("CHINESE YUAN") ||
+			MONEY("PERUVIAN INTI") || MONEY("SIKKIMESE RUPEE")) {
+		if (!_G(flags)[V116]) {
+			_G(flags)[V116] = 1;
+			player_set_commands_allowed(false);
+			_val4 = 220;
+		}
+	} else if (player_said("EDGER", "BELL") && inv_player_has("EDGER")) {
+		edgerBell();
+	} else if (player_said("EDGER", "URN")) {
+		// No implementation
+	} else if ((player_said("STEP LADDER", "TOMB") ||
+			player_said("STEP LADDER", "STAIRS")) ||
+			stepLadderTomb()) {
+		// No implementation
+	} else if (player_said("STEP LADDER", "WALL")) {
+		digi_play("403R32", 1);
+	} else if (player_said("STEP LADDER", "BELL")) {
+		digi_play("403R31", 1);
+	} else if (takeFlag && player_said("URN")) {
+		digi_play("403R28", 1);
+	} else if (takeFlag && player_said("BELL")) {
+		digi_play("403R30", 1);
+	} else if (takeFlag && player_said("PLANK") &&
+			takePlank()) {
+		// No implementation
+	} else if (takeFlag && player_said("EDGER") && takeEdger()) {
+		// No implementation
+	} else if (takeFlag && player_said("STEP LADDER") && takeStepLadder()) {
+		// No implementation
+	} else if (takeFlag && player_said("STEP LADDER ")) {
+		takeStepLadder_();
+	} else if (takeFlag && player_said("EDGER") && inv_object_is_here("EDGER")) {
+		digi_play("403R30", 1);
+	} else if (takeFlag && (
+		player_said_any(
+			"broken headstone", "wall", "pommee cross",
+			"grave plaque", "1ST MARBLE MONUMENT", "2ND MARBLE MONUMENT",
+			"marble column", "small headstone") ||
+		player_said_any(
+			"marble headstone", "tombstone",
+			"burial tablet", "small grave marker", "tall headstone",
+			"granite headstone", "burial plaque", "celtic cross")
+	)) {
+		digi_play("403R33", 1);
+	} else if (lookFlag && player_said(" ")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			digi_play("403r04", 1, 255, 2);
+			break;
+		case 2:
+			player_set_commands_allowed(true);
+			break;
+
+		}
+	} else if (player_said("journal") && (
+		player_said_any(
+			"broken headstone", "pommee cross", "grave plaque",
+			"grave", "1ST MARBLE MONUMENT", "2ND MARBLE MONUMENT",
+			"marble column", "small headstone") ||
+		player_said_any(
+			"marble headstone", "tombstone", "burial tablet",
+			"small grave marker", "tall headstone", "granite headstone",
+			"burial plaque", "celtic cross")
+	)) {
+		useJournal();
+	} else {
 		return;
 	}
 
 	_G(player).command_ready = false;
 }
+#undef MONEY
 #undef TRIGGER
 
 void Room403::conv403a() {
@@ -619,6 +708,422 @@ void Room403::conv403a1() {
 	}
 
 	conv_resume();
+}
+
+void Room403::edgerBell() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		if (++_G(flags)[V119] < 8) {
+			_ripRingsBell = series_load("RIP RINGS BELL");
+			player_update_info();
+			ws_hide_walker();
+			_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+				triggerMachineByHashCallbackNegative, "RIP rings bell");
+
+			terminateMachineAndNull(_bell);
+			sendWSMessage_10000(1, _ripOnLadder, _ripRingsBell, 1, 19, 1,
+				_ripRingsBell, 19, 19, 0);
+		}
+		break;
+
+	case 1:
+		digi_play("403_s12", 2);
+		sendWSMessage_10000(1, _ripOnLadder, _ripRingsBell, 19, 19, 2,
+			_ripRingsBell, 19, 32, 0);
+		break;
+
+	case 2:
+		sendWSMessage_10000(1, _ripOnLadder, _ripRingsBell, 32, 1, 3,
+			_ripRingsBell, 1, 1, 0);
+		break;
+
+	case 3:
+		terminateMachineAndNull(_ripOnLadder);
+		ws_unhide_walker();
+		_bell = series_place_sprite("ONE FRAME BELL", 0, 0, 0, 100, 0xf00);
+		series_unload(_ripRingsBell);
+
+		if (_G(flags)[V119] >= 7) {
+			ws_walk_load_shadow_series(S4_SHADOW_DIRS, S4_SHADOW_NAMES);
+			ws_walk_load_walker_series(S4_NORMAL_DIRS, S4_NORMAL_NAMES);
+			_wolfWalker = triggerMachineByHash_3000(8, 8, S4_NORMAL_DIRS, S4_SHADOW_DIRS, 620, 323, 3,
+				triggerMachineByHashCallback3000, "wolf_walker");
+			_wolfAdmonish = series_load("WOLF ADMONISHES RIP");
+			kernel_timing_trigger(120, 4);
+		} else {
+			player_set_commands_allowed(true);
+		}
+		break;
+
+	case 4:
+		sendWSMessage_10000(_wolfWalker, 687, 323, 3, 5, 1);
+		break;
+
+	case 5:
+		sendWSMessage_60000(_wolfWalker);
+		_wolfie = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+			triggerMachineByHashCallbackNegative, "WOLFIE");
+		sendWSMessage_10000(1, _wolfie, _wolfAdmonish, 1, 18, 6,
+			_wolfAdmonish, 18, 18, 0);
+
+		_ripHeadTurn = series_load("RIP TREK HEAD TURN POS1");
+		setGlobals1(_ripHeadTurn, 4, 8, 8, 8, 0, 8, 4, 4, 4);
+		sendWSMessage_110000(-1);
+		break;
+
+	case 6:
+		sendWSMessage_10000(1, _wolfie, _wolfAdmonish, 19, 31, 7,
+			_wolfAdmonish, 31, 31, 0);
+		playNum1(_G(flags)[V119]);
+		break;
+
+	case 7:
+		sendWSMessage_10000(1, _wolfie, _wolfAdmonish, 31, 1, -1,
+			_wolfAdmonish, 1, 1, 0);
+		break;
+
+	case 8:
+		if (_G(flags)[V119] == 1) {
+			digi_play("403r47", 1, 255, 9);
+		} else {
+			kernel_timing_trigger(60, 9);
+		}
+		break;
+
+	case 9:
+		terminateMachineAndNull(_wolfie);
+		_wolfWalker = triggerMachineByHash_3000(8, 8,
+			S4_NORMAL_DIRS, S4_SHADOW_DIRS, 687, 323, 3,
+			triggerMachineByHashCallback3000, "wolf_walker");
+		sendWSMessage_10000(_wolfWalker, 620, 323, 3, 10, 0);
+		playNum2(_G(flags)[V119]);
+		break;
+
+	case 10:
+		sendWSMessage_60000(_wolfWalker);
+		sendWSMessage_120000(11);
+		break;
+
+	case 11:
+		series_unload(_wolfAdmonish);
+		series_unload(S4_NORMAL_DIRS[1]);
+		series_unload(S4_NORMAL_DIRS[0]);
+		series_unload(S4_SHADOW_DIRS[1]);
+		series_unload(S4_SHADOW_DIRS[0]);
+		series_unload(_ripHeadTurn);
+		sendWSMessage_150000(-1);
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+bool Room403::edgerUrn() {
+	switch (_G(kernel).trigger) {
+	case 1:
+		if (inv_player_has("EDGER")) {
+			player_set_commands_allowed(false);
+			_ripMedReach = series_load("RIP MED REACH 1HAND POS2");
+			setGlobals1(_ripMedReach, 1, 17, 17, 17, 0, 17, 1, 1, 1);
+			sendWSMessage_110000(2);
+			return true;
+		}
+		return false;
+
+	case 2:
+		_edger = series_place_sprite("ONE FRAME EDGER", 0, 0, 0, 100, 0xf00);
+		hotspot_set_active("EDGER", true);
+		inv_move_object("EDGER", 403);
+		sendWSMessage_120000(3);
+		return true;
+
+	case 3:
+		sendWSMessage_150000(4);
+		return true;
+
+	case 4:
+		series_unload(_ripMedReach);
+		player_set_commands_allowed(true);
+		return true;
+
+	case 69:
+		if (inv_player_has("EDGER")) {
+			player_set_commands_allowed(false);
+			ws_walk(1201, 321, 0, 1, 2);
+			return true;
+		}
+		return false;
+
+	default:
+		return true;
+	}
+}
+
+bool Room403::stepLadderTomb() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (inv_player_has("STEP LADDER")) {
+			player_set_commands_allowed(false);
+			_series1 = series_load("RIP TREK MED REACH HAND POS1");
+			setGlobals1(_series1, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+			sendWSMessage_110000(1);
+			return true;
+		}
+		return false;
+
+	case 1:
+		digi_play("403_s04", 2);
+		_ladder = series_place_sprite("1 sprite of ladder", 0, 0, 0, 100, 0xf00);
+		hotspot_set_active("STEP LADDER", true);
+		inv_move_object("STEP LADDER", 403);
+		_G(flags)[V313] = 2;
+		sendWSMessage_120000(3);
+		return true;
+
+	case 3:
+		sendWSMessage_150000(4);
+		return true;
+
+	case 4:
+		series_unload(_series1);
+		player_set_commands_allowed(true);
+		return true;
+
+	default:
+		break;
+	}
+
+	return false;
+}
+
+bool Room403::takePlank() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (inv_object_is_here("PLANK")) {
+			_ripPutBoard = series_load("RIPLEY PUTS BOARD ON POTS");
+			terminateMachineAndNull(_board);
+			ws_hide_walker();
+
+			_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x300, 0,
+				triggerMachineByHashCallbackNegative, "RIP plants plank");
+			sendWSMessage_10000(1, _ripOnLadder, _ripPutBoard, 57, 1, 2,
+				_ripPutBoard, 1, 1, 0);
+			return true;
+		}
+		return false;
+
+	case 2:
+		hotspot_set_active("PLANK", false);
+		inv_give_to_player("PLANK");
+		_plank = 0;
+		kernel_examine_inventory_object("PING PLANK", _G(master_palette),
+			5, 1, 396, 223, 3, nullptr, -1);
+		return true;
+
+	case 3:
+		terminateMachineAndNull(_ripOnLadder);
+		ws_unhide_walker();
+		series_unload(_ripPutBoard);
+		player_set_commands_allowed(true);
+		return true;
+
+	default:
+		break;
+	}
+
+	return false;
+}
+
+bool Room403::takeEdger() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (!inv_player_has("EDGER")) {
+			player_set_commands_allowed(false);
+			_ripMedReach = series_load("RIP MED REACH 1HAND POS2");
+			setGlobals1(_ripMedReach, 1, 17, 17, 17, 0, 17, 1, 1, 1);
+			sendWSMessage_110000(1);
+			return true;
+		}
+		return false;
+
+	case 1:
+		terminateMachineAndNull(_edger);
+		hotspot_set_active("EDGER", false);
+		inv_give_to_player("EDGER");
+		kernel_examine_inventory_object("PING EDGER", _G(master_palette),
+			5, 1, 500, 216, 2, 0, -1);
+		return true;
+
+	case 2:
+		sendWSMessage_120000(3);
+		return true;
+
+	case 3:
+		sendWSMessage_150000(4);
+		return true;
+
+	case 4:
+		series_unload(_ripMedReach);
+		player_set_commands_allowed(true);
+		return true;
+
+	case 5:
+		player_set_commands_allowed(true);
+		return true;
+
+	default:
+		break;
+	}
+
+	return false;
+}
+
+bool Room403::takeStepLadder() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (inv_object_is_here("STEP LADDER")) {
+			player_set_commands_allowed(false);
+			_series1 = series_load("RIP TREK MED REACH HAND POS1");
+			setGlobals1(_series1, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+			sendWSMessage_110000(1);
+			return true;
+		}
+		return false;
+
+	case 1:
+		if (_G(flags)[V131] == 403) {
+			digi_play("403w08", 1, 255, 3);
+			_val8 = 2000;
+			_val9 = 2100;
+			kernel_timing_trigger(15, 2);
+		} else {
+			digi_play("403_s03", 2);
+			terminateMachineAndNull(_ladder);
+			hotspot_set_active("STEP LADDER", false);
+			inv_give_to_player("STEP LADDER");
+			_G(flags)[V313] = 0;
+			kernel_examine_inventory_object("PING STEP LADDER", _G(master_palette),
+				5, 1, 429, 215, 2, nullptr, -1);
+
+		}
+		return true;
+
+	case 2:
+		sendWSMessage_120000(4);
+		return true;
+
+	case 3:
+		_val9 = 2105;
+		digi_play("403r47", 1);
+		return true;
+
+	case 4:
+		sendWSMessage_150000(5);
+		return true;
+
+	case 5:
+		series_unload(_series1);
+		player_set_commands_allowed(true);
+		return true;
+
+	default:
+		break;
+	}
+
+	return false;
+}
+
+void Room403::takeStepLadder_() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (inv_object_is_here("STEP LADDER")) {
+			player_set_commands_allowed(false);
+			_series1 = series_load("RIP TREK MED REACH HAND POS1");
+			setGlobals1(_series1, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+			sendWSMessage_110000(1);
+		}
+		break;
+
+	case 1:
+		if (_G(flags)[V131] == 403) {
+			digi_play("403w08", 1, 255, 3);
+			_val8 = 2000;
+			_val9 = 2100;
+			kernel_timing_trigger(15, 2);
+		} else {
+			digi_play("403_s03", 2);
+			hotspot_set_active("STEP LADDER ", false);
+			inv_give_to_player("STEP LADDER");
+			_G(flags)[V313] = 0;
+			kernel_examine_inventory_object("PING STEP LADDER",
+				_G(master_palette), 5, 1, 496, 226, 2, nullptr, -1);
+			terminateMachineAndNull(_ladder);
+		}
+		break;
+
+	case 2:
+		sendWSMessage_120000(4);
+		break;
+
+	case 3:
+		_val9 = 2105;
+		digi_play("403r47", 1);
+		break;
+
+	case 4:
+		sendWSMessage_150000(5);
+		break;
+
+	case 5:
+		series_unload(_series1);
+		player_set_commands_allowed(true);
+		break;
+
+	case 6:
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room403::useJournal() {
+	if (_G(flags)[kGraveyardCartoon]) {
+		digi_play("403r42", 1);
+	} else if (_G(flags)[kEpitaphCartoon]) {
+		if (_G(kernel).trigger == 6)
+			_G(flags)[kGraveyardCartoon] = 1;
+		sendWSMessage_multi(nullptr);
+	} else {
+		if (_G(kernel).trigger == 6)
+			_G(flags)[kGraveyardCartoon] = 1;
+		sendWSMessage_multi("403r41");
+	}
+}
+
+void Room403::playNum1(int num) {
+	static const char *const NAMES[] = {
+		"403w11", "403w13", "403w15", "40ew16",
+		"403w17", "403w18", "40w1", "40w1"
+	};
+	digi_play(NAMES[num - 1], 1, 255, 8);
+}
+
+void Room403::playNum2(int num) {
+	switch (num) {
+	case 1:
+		digi_play("403w12", 1);
+		break;
+	case 2:
+		digi_play("403w14", 1);
+		break;
+	default:
+		break;
+	}
 }
 
 } // namespace Rooms
