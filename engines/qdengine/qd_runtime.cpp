@@ -110,6 +110,42 @@ void searchTagMap(int id, int targetVal) {
 	warning("searchTagMap(): No match");
 }
 
+static int detectVersion(Common::String gameID) {
+	if (gameID == "karliknos") {
+		return 20030919;		// QDSCR_GAME_TITLE = 182
+	} else if (gameID == "nupogodi3") {
+		return 20031014;		// QDSCR_TEXT_DB = 184
+	} else if (gameID == "pilots3") {
+		return 20040519;		// QDSCR_GAME_TITLE = 203
+	} else if (gameID == "rybalka") {
+		return 20040601;		// QDSCR_GAME_TITLE = 206
+	} else if (gameID == "pilots3d") {
+		return 20040601;		// QDSCR_GAME_TITLE = 206
+	} else if (gameID == "pilots3d-2") {
+		return 20041201;		// QDSCR_GAME_TITLE = 207
+	} else if (gameID == "mng") {
+		return 20050101;		// QDSCR_GLOBAL_DEPEND = 214
+	} else if (gameID == "maski") {
+		return 20060129;		// QDSCR_GAME_TITLE = 214
+	} else if (gameID == "3mice1") {
+		return 20060715;		// QDSCR_SCREEN_TRANSFORM = 232
+	} else if (gameID == "shveik") {
+		return 20070503;		// QDSCR_GAME_TITLE = 231, QDSCR_RESOURCE_COMPRESSION = 243
+	} else if (gameID == "klepa") {
+		return 20070503;		// QDSCR_GAME_TITLE = 231, QDSCR_RESOURCE_COMPRESSION = 243
+	} else if (gameID == "3mice2") {
+		return 20070503;		// QDSCR_RESOURCE_COMPRESSION = 243
+	} else if (gameID == "dogncat") {
+		return 20070503;		// QDSCR_RESOURCE_COMPRESSION = 243
+	} else if (gameID == "dogncat2") {
+		return 20070503;		// QDSCR_RESOURCE_COMPRESSION = 243
+	} else {
+		warning("Unprocessed tagMap, switching to shveik");
+
+		return 20070503;
+	}
+}
+
 int QDEngineEngine::engineMain() {
 	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, "*.qml");
@@ -155,47 +191,10 @@ int QDEngineEngine::engineMain() {
 
 	//searchTagMap(QDSCR_GAME_TITLE, 207);
 
-	Common::String gameID = g_engine->getGameId();
-	if (gameID == "karliknos") {
-		generateTagMap(20030919);		// QDSCR_GAME_TITLE = 182
-	} else if (gameID == "nupogodi3") {
-		generateTagMap(20031014);		// QDSCR_TEXT_DB = 184
-	} else if (gameID == "pilots3") {
-		generateTagMap(20040519);		// QDSCR_GAME_TITLE = 203
-	} else if (gameID == "rybalka") {
-		generateTagMap(20040601);		// QDSCR_GAME_TITLE = 206
-	} else if (gameID == "pilots3d") {
-		generateTagMap(20040601);		// QDSCR_GAME_TITLE = 206
-	} else if (gameID == "pilots3d-2") {
-		generateTagMap(20041201);		// QDSCR_GAME_TITLE = 207
-	} else if (gameID == "mng") {
-		generateTagMap(20050101);		// QDSCR_GLOBAL_DEPEND = 214
-	} else if (gameID == "maski") {
-		generateTagMap(20060129);		// QDSCR_GAME_TITLE = 214
-	} else if (gameID == "3mice1") {
-		generateTagMap(20060715);		// QDSCR_SCREEN_TRANSFORM = 232
-	} else if (gameID == "shveik") {
-		generateTagMap(20070503);		// QDSCR_GAME_TITLE = 231, QDSCR_RESOURCE_COMPRESSION = 243
-	} else if (gameID == "klepa") {
-		generateTagMap(20070503);		// QDSCR_GAME_TITLE = 231, QDSCR_RESOURCE_COMPRESSION = 243
-	} else if (gameID == "3mice2") {
-		generateTagMap(20070503);		// QDSCR_RESOURCE_COMPRESSION = 243
-	} else if (gameID == "dogncat") {
-		generateTagMap(20070503);		// QDSCR_RESOURCE_COMPRESSION = 243
-	} else if (gameID == "dogncat2") {
-		generateTagMap(20070503);		// QDSCR_RESOURCE_COMPRESSION = 243
-	} else {
-		warning("Unprocessed tagMap, switching to shveik");
+	_gameVersion = detectVersion(g_engine->getGameId());
 
-		generateTagMap(20070503);
-	}
+	generateTagMap(_gameVersion);
 
-#if 0
-	for (int i = 1; i < __argc; i++) {
-		debugCN(3, kDebugLog, "'\' %s '\'", __argv[i]);
-	}
-	debugC(3, kDebugLog, "");
-#endif
 	grDispatcher::set_default_font(qdGameDispatcher::create_font(0));
 
 	qd_gameD = new qdGameDispatcher;
