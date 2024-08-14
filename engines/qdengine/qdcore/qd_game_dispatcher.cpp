@@ -2355,10 +2355,9 @@ bool qdGameDispatcher::is_minigame_in_list(qdMiniGame *p) {
 
 bool qdGameDispatcher::keyboard_handler(Common::KeyCode vkey, bool event) {
 	if (is_paused()) {
-#ifdef __QD_DEBUG_ENABLE__
 		if (event) {
 			switch (vkey) {
-			case Common::KEYCODE_PAUSE:
+			case Common::KEYCODE_p:
 				resume();
 				return true;
 			case Common::KEYCODE_SPACE:
@@ -2368,7 +2367,6 @@ bool qdGameDispatcher::keyboard_handler(Common::KeyCode vkey, bool event) {
 				break;
 			}
 		}
-#endif
 
 		if (is_video_playing() && event) {
 			if (!_cur_video->check_flag(qdVideo::VID_DISABLE_INTERRUPT_FLAG)) {
@@ -2410,6 +2408,9 @@ bool qdGameDispatcher::keyboard_handler(Common::KeyCode vkey, bool event) {
 			qdCamera::current_camera()->dump_grid("qd_grid.txt");
 			warning("Grid dumped");
 			return true;
+		case Common::KEYCODE_p:
+			pause();
+			return true;
 #ifdef __QD_DEBUG_ENABLE__
 		case Common::KEYCODE_F10:
 			write_resource_stats("memory_usage.html");
@@ -2421,9 +2422,6 @@ bool qdGameDispatcher::keyboard_handler(Common::KeyCode vkey, bool event) {
 			return true;
 		case Common::KEYCODE_F6:
 			g_engine->loadGameState(_autosave_slot);
-			return true;
-		case Common::KEYCODE_PAUSE:
-			pause();
 			return true;
 #endif
 		default:
