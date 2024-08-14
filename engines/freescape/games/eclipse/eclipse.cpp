@@ -342,11 +342,8 @@ void EclipseEngine::borderScreen() {
 				drawFullscreenMessageAndWait(_messagesList[23]);
 			} else if (_variant & GF_ZX_DEMO_CRASH) {
 				drawFullscreenMessageAndWait(_messagesList[9]);
-				playSound(3, true);
 				drawFullscreenMessageAndWait(_messagesList[10]);
-				playSound(3, true);
 				drawFullscreenMessageAndWait(_messagesList[11]);
-				playSound(3, true);
 			}
 		} else {
 			FreescapeEngine::borderScreen();
@@ -410,7 +407,7 @@ void EclipseEngine::drawInfoMenu() {
 					saveGameDialog();
 					_gfx->setViewport(_viewArea);
 				} else if (isDOS() && event.customType == kActionToggleSound) {
-					playSound(6, true);
+					playSound(_soundIndexMenu, true);
 				} else if ((isDOS() || isCPC() || isSpectrum()) && event.customType == kActionEscape) {
 					_forceEndGame = true;
 					cont = false;
