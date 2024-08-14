@@ -34,6 +34,7 @@ DebugConsole::DebugConsole(TosText *tosText) : GUI::Debugger(), tosText(tosText)
 	registerCmd("gotoRoom",   WRAP_METHOD(DebugConsole, Cmd_gotoRoom));
 	registerCmd("invAdd",   WRAP_METHOD(DebugConsole, Cmd_invAdd));
 	registerCmd("invRemove",   WRAP_METHOD(DebugConsole, Cmd_invRemove));
+	registerCmd("changeDay",   WRAP_METHOD(DebugConsole, Cmd_changeDay));
 }
 
 DebugConsole::~DebugConsole() {
@@ -159,6 +160,23 @@ bool DebugConsole::Cmd_invRemove(int argc, const char **argv) {
 	uint8 objNum = (uint8)atoi(argv[1]);
 
 	g_engine->_inventory.removeItem(objNum);
+	return true;
+}
+
+bool DebugConsole::Cmd_changeDay(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: changeDay <newDay>\n");
+		return true;
+	}
+
+	uint8 newDay = (uint8)atoi(argv[1]);
+	if (newDay < 1 || newDay > 3) {
+		debugPrintf("Error: Day must be in range of 1 .. 3\n");
+		return true;
+	}
+	g_engine->_currentDay = newDay;
+	debugPrintf("Current day changed.\n");
+	printDayAndTime();
 	return true;
 }
 
