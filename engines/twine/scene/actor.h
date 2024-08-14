@@ -135,6 +135,7 @@ struct BonusParameter {
 	uint16 unused : 7;
 };
 
+// TODO: this is 255 for lba2
 #define kActorMaxLife 50
 
 /**

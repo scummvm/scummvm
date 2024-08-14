@@ -24,6 +24,7 @@
 #include "twine/audio/music.h"
 #include "twine/movies.h"
 #include "twine/menu/interface.h"
+#include "twine/scene/animations.h"
 #include "twine/parser/anim3ds.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/renderer.h"
@@ -734,7 +735,19 @@ int32 ScriptLifeV2::lSET_ARMOR_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) 
 }
 
 int32 ScriptLifeV2::lADD_LIFE_POINT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	const uint8 num = ctx.stream.readByte();
+	const uint8 life = ctx.stream.readByte();
+	ActorStruct *actor = engine->_scene->getActor(num);
+	if (actor->_workFlags.bIsDead) {
+		actor->_workFlags.bIsDead = false;
+		engine->_actor->initBody(BodyType::btNormal, num);
+		engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeRepeat, AnimationTypes::kStanding, num);
+	}
+	actor->_lifePoint += life;
+	if (actor->_lifePoint > kActorMaxLife) {
+		actor->_lifePoint = kActorMaxLife;
+	}
+	return 0;
 }
 
 int32 ScriptLifeV2::lSTATE_INVENTORY(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -774,7 +787,16 @@ int32 ScriptLifeV2::lEND_SWITCH(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 int32 ScriptLifeV2::lSET_HIT_ZONE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	return -1;
+	const uint8 num = ctx.stream.readByte();
+	const uint8 info1 = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSET_HIT_ZONE(%i, %i)", (int)num, (int)info1);
+	for (int n = 0; n < engine->_scene->_sceneNumZones; n++) {
+		ZoneStruct &zone = engine->_scene->_sceneZones[n];
+		if (zone.type == ZoneType::kHit && zone.num == num) {
+			zone.infoData.generic.info1 = info1;
+		}
+	}
+	return 0;
 }
 
 int32 ScriptLifeV2::lSAVE_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx) {
@@ -790,22 +812,38 @@ int32 ScriptLifeV2::lRESTORE_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext
 }
 
 int32 ScriptLifeV2::lSAMPLE(TwinEEngine *engine, LifeScriptContext &ctx) {
+	const int16 sample = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSAMPLE(%i)", (int)sample);
+	// TODO: HQ_3D_MixSample(sample, 0x1000, 0, 1, ctx.actor->posObj());
 	return -1;
 }
 
 int32 ScriptLifeV2::lSAMPLE_RND(TwinEEngine *engine, LifeScriptContext &ctx) {
+	const int16 sample = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSAMPLE_RND(%i)", (int)sample);
+	// TODO: HQ_3D_MixSample(sample, 0x800, 0x1000, 1, ctx.actor->posObj());
 	return -1;
 }
 
 int32 ScriptLifeV2::lSAMPLE_ALWAYS(TwinEEngine *engine, LifeScriptContext &ctx) {
+	const int16 sample = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSAMPLE_ALWAYS(%i)", (int)sample);
+	// TODO:
 	return -1;
 }
 
 int32 ScriptLifeV2::lSAMPLE_STOP(TwinEEngine *engine, LifeScriptContext &ctx) {
+	const int16 sample = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lSAMPLE_STOP(%i)", (int)sample);
+	// TODO:
 	return -1;
 }
 
 int32 ScriptLifeV2::lREPEAT_SAMPLE(TwinEEngine *engine, LifeScriptContext &ctx) {
+	const int16 sample = ctx.stream.readSint16LE();
+	uint8 repeat = ctx.stream.readByte();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lREPEAT_SAMPLE(%i, %i)", (int)sample, (int)repeat);
+	// TODO: HQ_3D_MixSample(sample, 0x1000, 0, repeat, ctx.actor->posObj());
 	return -1;
 }
 
@@ -833,6 +871,7 @@ int32 ScriptLifeV2::lSET_FLAG_GAME(TwinEEngine *engine, LifeScriptContext &ctx) 
 int32 ScriptLifeV2::lADD_VAR_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 num = ctx.stream.readByte();
 	const int16 val = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lADD_VAR_GAME(%i, %i)", (int)num, (int)val);
 	int16 currentVal = engine->_gameState->hasGameFlag(num);
 	if ((int)currentVal + (int)val < 32767) {
 		currentVal += val;
@@ -854,6 +893,7 @@ int32 ScriptLifeV2::lADD_VAR_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLifeV2::lSUB_VAR_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const uint8 num = ctx.stream.readByte();
 	const int16 val = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::lADD_VAR_GAME(%i, %i)", (int)num, (int)val);
 	int16 currentVal = engine->_gameState->hasGameFlag(num);
 	if ((int)currentVal - (int)val > -32768) {
 		currentVal -= val;
@@ -915,7 +955,7 @@ int32 ScriptLifeV2::lINVERSE_BETA(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ctx.actor->_beta = ClampAngle(ctx.actor->_beta + LBAAngles::ANGLE_180);
 
 	if (ctx.actor->_controlMode == ControlMode::kWagon) {
-#if 0
+#if 0 // TODO:
 		ctx.actor->Info1 = 1; // reinit speed wagon
 
 		// to be clean
