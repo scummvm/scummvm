@@ -1410,7 +1410,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "daf64a91344a7934fe4374765267c2af", 5767},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_HOYLE5_SAVELOAD },
-		
+
 	// Hoyle 5 (Hoyle Classic Games for Laptops) - Windows
 	// File date: 1995.11.04
 	// This version is unsupported because it is missing the main menu resources and will crash.
@@ -2644,7 +2644,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"PATCHES/font.008", 0, "8abefd3b44827ff26e2ad298f9e76a2b", 3029},
 		AD_LISTEND},
 		Common::HE_ISR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER },
-		
+
 	// Laura Bow - Russian fan translation by https://github.com/deadman2000/RuSCI
 	// SCI interpreter version 0.000.631
 	{"laurabow", "", {
@@ -5074,6 +5074,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.msg", 0, "5a0a896ff3e4a628db38a75eb6c84114", 259018},
 		AD_LISTEND},
 		Common::IT_ITA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_SPEECH	},
+
+	// Quest for Glory 3 - Russian DOS fan-tanslation by old-games.ru
+	{"qfg3", "", {
+		{"resource.map", 0, "bee7ca7b4c3455452f5eb17ce5da6231", 5962},
+		{"resource.000", 0, "5186e4ac205132b06d9aaec8dff9d77e", 5990202},
+		{"resource.msg", 0, "f89eb3bc2b0e192e8708c1053e39b5df", 243214},
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_SPEECH	},
 
 	// Quest for Glory 4 - English DOS Non-Interactive Demo (from FRG)
 	// SCI interpreter version 1.001.069 (just a guess)
