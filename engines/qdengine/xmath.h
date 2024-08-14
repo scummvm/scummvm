@@ -45,7 +45,6 @@ class Vect2i;
 class Vect2s;
 class Vect3f;
 class Mat3f;
-class MatXf;
 
 ///////////////////////////////////////////////////////////////////////////////
 //		Axes
@@ -801,8 +800,6 @@ public:
 
 class Mat3f {
 
-	friend class MatXf;
-
 public:
 
 	// (stored in row-major order)
@@ -1062,112 +1059,6 @@ public:
 
 	static const Mat3f ZERO;    // zero matrix
 	static const Mat3f ID;      // identity matrix
-
-};
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//			class MatXf
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-class MatXf {
-public:
-
-	Mat3f R;
-	Vect3f d;
-
-public:
-
-	// constructors //////////////////////////////////////////////////////////////
-
-	xm_inline MatXf()             {}
-	xm_inline MatXf(const Mat3f &R_, const Vect3f &d_) {
-		set(R_, d_);
-	}
-
-	typedef float float16[16];
-	xm_inline MatXf(const float16 &T);
-
-	// setters / accessors / translators /////////////////////////////////////////
-
-	xm_inline MatXf &set(const Mat3f &R_, const Vect3f &d_) {
-		R = R_;
-		d = d_;
-		return *this;
-	}
-
-	xm_inline const Mat3f  &rot()   const {
-		return R;
-	}
-	xm_inline const Vect3f &trans() const {
-		return d;
-	}
-	xm_inline Mat3f  &rot()        {
-		return R;
-	}
-	xm_inline Vect3f &trans()      {
-		return d;
-	}
-
-
-	//  MatXf - MatXf multiplication  ////////////
-	MatXf &mult(const MatXf &M, const MatXf &N);    // M * N     [!]
-	MatXf &premult(const MatXf &M);             // M * this  [!]
-	MatXf &postmult(const MatXf &M);        // this * M  [!]
-	xm_inline MatXf &operator*= (const MatXf &M) {
-		return postmult(M);
-	}
-	xm_inline MatXf operator* (const MatXf &N) const {
-		MatXf M;
-		return M.mult(*this, N);
-	}
-
-
-	// Doesn't really invert the 3x3-matrix, but only transpose one.
-	// That is, works for non-scaled matrix !!!
-	MatXf &invert(const MatXf &M);              // M^-1      [!]
-	MatXf &invert();                // this^-1
-
-	// Really inverts 3x3-matrix.
-	MatXf &Invert(const MatXf &M);              // M^-1      [!]
-	MatXf &Invert();                // this^-1
-
-	// Transforming Vect3f ///////////////////////////////////////////////////////
-
-	// MatXs can transform elements of R^3 either as vectors or as
-	// points.  The [!] indicates that the operands must be distinct.
-
-	xm_inline Vect3f &xformVect(const Vect3f &v, Vect3f &xv) const; // this*(v 0)=>xv  [!]
-	xm_inline Vect3f &xformVect(Vect3f &v) const;       // this*(v 0)=>v
-	xm_inline Vect3f &xformPoint(const Vect3f &p, Vect3f &xp) const;// this*(p 1)=>xp  [!]
-	xm_inline Vect3f &xformPoint(Vect3f &p) const;          // this*(p 1)=>p
-
-	xm_inline Vect3f operator*(const Vect3f &p) const {
-		Vect3f xp;
-		xformPoint(p, xp);
-		return xp;
-	}
-
-	// These are exactly like the above methods, except the inverse
-	// transform this^-1 is used.
-	xm_inline Vect3f &invXformVect(const Vect3f &v, Vect3f &xv) const;
-	xm_inline Vect3f &invXformVect(Vect3f &v) const;
-	xm_inline Vect3f &invXformPoint(const Vect3f &p, Vect3f &xp) const;
-	xm_inline Vect3f &invXformPoint(Vect3f &p) const;
-
-
-
-	//    I/O operations    //////////////////////////////////////
-#ifdef _XMATH_USE_IOSTREAM
-	friend ostream &operator<<(ostream &os, const MatXf &M);
-	friend istream &operator>>(istream &is, MatXf &M);
-#endif
-
-	// MatXf constants ////////////////////////////////////////////////////////////
-
-	static const MatXf ID;      // identity matrix
 
 };
 
@@ -1959,75 +1850,6 @@ Vect3f &Mat3f::invXform(Vect3f &v) const {
 }
 
 
-///////////////////////////////////////////////////////////////////////////////
-//
-//		MatXf xm_inline definitions
-//
-///////////////////////////////////////////////////////////////////////////////
-MatXf::MatXf(const float16 &T) {
-	R[0][0] = T[0];
-	R[1][0] = T[1];
-	R[2][0] = T[2];
-	R[0][1] = T[4];
-	R[1][1] = T[5];
-	R[2][1] = T[6];
-	R[0][2] = T[8];
-	R[1][2] = T[9];
-	R[2][2] = T[10];
-	d[0] = T[12];
-	d[1] = T[13];
-	d[2] = T[14];
-}
-
-//  Vect3f transforming  /////////////////////
-Vect3f &MatXf::xformVect(const Vect3f &v, Vect3f &xv) const {
-	return R.xform(v, xv);
-}
-
-
-Vect3f &MatXf::xformVect(Vect3f &v) const {
-	return R.xform(v);
-}
-
-
-Vect3f &MatXf::xformPoint(const Vect3f &p, Vect3f &xp) const {
-	R.xform(p, xp);
-	xp.add(d);
-	return xp;
-}
-
-
-Vect3f &MatXf::xformPoint(Vect3f &p) const {
-	R.xform(p);
-	p.add(d);
-	return p;
-}
-
-
-Vect3f &MatXf::invXformVect(const Vect3f &v, Vect3f &xv) const {
-	return R.invXform(v, xv);
-}
-
-
-Vect3f &MatXf::invXformVect(Vect3f &v) const {
-	return R.invXform(v);
-}
-
-
-Vect3f &MatXf::invXformPoint(const Vect3f &p, Vect3f &xp) const {
-	xp.sub(p, d);
-	R.invXform(xp);
-	return xp;
-}
-
-
-Vect3f &MatXf::invXformPoint(Vect3f &p) const {
-	p.sub(d);
-	R.invXform(p);
-	return p;
-}
-
-
 //////////////////////////////////////////////////////////////////////////////////
 //
 //           Stream's I/O operations
@@ -2094,12 +1916,6 @@ inline istream &operator>>(istream &is, Mat3f &m) {
 	is >> m.yx >> m.yy >> m.yz;
 	is >> m.zx >> m.zy >> m.zz;
 	return is;
-}
-
-
-//  MatXf  I/O   ///////////////////
-inline ostream &operator<<(ostream &os, const MatXf &m) {
-	return os << m.R << "  " << m.d;
 }
 
 #endif  // _XMATH_NO_IOSTREAM
