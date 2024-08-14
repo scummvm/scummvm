@@ -15,6 +15,7 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Added optional dependency for libopenmpt for sound.
   - The "Aspect ratio correction" option within the Global Options section
     is now active by default.
+  - Added optional dependency for libmpcdec (musepack) for sound.
 
  AGI:
   - Fixed duration of timed text boxes. They were shown only half as long as
