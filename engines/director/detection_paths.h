@@ -28,7 +28,6 @@ const char *const directoryGlobs[] = {
 	"install",
 	"win_data",						// L-ZONE
 	"data",
-	"gadget",						// Gadget
 	"program",						// Arc Media products
 	"media",						// Gundam
 	"mvm",							// Master of the Elements
@@ -43,20 +42,8 @@ const char *const directoryGlobs[] = {
 	"data_2",						// JumpStart World
 	"numbers",						// JumpStart Learning Games
 	"fjpc",							// Forestia Jr
-	"movies",						// Mulle Meck (Gary Gadget) series
-	"winroot",
-	"setup",
-	"program files",
-	"tohd",
-	"terzio",
-	"flugzeuge bauen",
-	"willyhau",
-	"willyraumschiff",				// Willy Werkel (Mulle Meck) series
-	"demo",							// Tivola Demo - Frühjahr '97 sampler
-	"demos",						// Headbone samplers
 	"blender",						// Blender CD-ROM magazines
 	"bilder",
-	"elk1",							// Blinky Bill Kindergarten
 	"endsoung",
 	"gerhelp",
 	"gervideo",						// GGMD German
@@ -65,16 +52,8 @@ const char *const directoryGlobs[] = {
 	"duthelp",
 	"dutvideo",
 	"endsound",						// GGMD Dutch
-	"macos9",
-	"macosx",						// Sethi 3
-	"kripos",
-	"strisser",
-	"polis",
-	"poliisi",
 	"cd_data",						// Polis
-	"oslo",							// Oslo's Tools & Gadgets
-	"ojo2000",
-	"stuff",						// Abrapalabra
+	"ojo2000",						// Abrapalabra
 	"tooned",						// Stay Tooned
 	"p2data",
 	"p2media",
@@ -90,7 +69,6 @@ const char *const directoryGlobs[] = {
 	"fsetup",						// My First Reading Words (Eureka)
 	"popup",						// Pop Up Computer
 	"alpha",						// Interactive Alphabet
-	"technik",						// Glasklar Technology Interactive
 	"badday",
 	"copy to hdd",					// Rename from HDDにコピーしてください
 	"bdm",
@@ -98,7 +76,7 @@ const char *const directoryGlobs[] = {
 	"win_demo",
 	"file",
 	"mfile",
-	"movie",						// Teichiku demos
+	"movie",						// Teichiku demos (Tetsuman)
 	"scr",
 	"scr_mov",						// Cardcaptor Sakura screen savers
 	"docs",							// Enhanced CDs

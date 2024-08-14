@@ -683,7 +683,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "supersonic",			"Supersonic: A Multimedia Guide to Modern Military Aircraft" },
 	{ "survive",			"How Would You Survive?" },
 	{ "take5",				"Take Five: Relaxation at Your Finger Tips" },
-	{ "technik",			"Technology Interactive" },
+	{ "technik",			"Glasklar Interactive: Technology" },
 	{ "texas",				"A Virtual Reality CD-ROM Guide to Texas" },
 	{ "theatreimag",		"Theatre of the Imagination" },
 	{ "toyota95",			"1995 Toyota Interactive" },
@@ -1441,7 +1441,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "polis3",				"Polis 3: Vargspår" },
 	{ "requiem",			"Requiem: en mordgåta på 1600-talet" },
 	{ "rymdjakten",			"Rymdjakten" },
-	{ "singingbirdbook",		"Jan Lindblad presenterar den sjungande Fågelboken" },
+	{ "singingbirdbook",	"Jan Lindblad presenterar den sjungande Fågelboken" },
 	{ "sverigejakten",		"Sverigejakten"},
 	{ "speltajm",			"Trazan & Banarne presenterar Speltajm" },
 	{ "xtown1",				"CrossTown: Giftet" },
@@ -3382,8 +3382,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("abcpalsafety", "", "SAFETY SCAVENGER HUNT", "4577dd3eadc467a986ab172d90871b22", 325733, 404),
 	WINGAME1("abcpalsafety", "", "EWOLSFTY.EXE", "a998d49776a611940e872a97a5fe3d1d", 4586417, 404),
 
-	MACGAME1_l("abrapalabra", "", "ABRAPALABRA", "bcd3c718db258701496b3c5bcb827ef2", 483518, Common::ES_ESP, 404),
-	WINGAME1_l("abrapalabra", "", "PALABRA.EXE", "a24a52bdb12d61eae64b9088b25ea03b", 862425, Common::ES_ESP, 404),
+	MACGAME1_l("abrapalabra", "", "STUFF/ABRAPALABRA", "r:bcd3c718db258701496b3c5bcb827ef2", 483518, Common::ES_ESP, 404),
+	WINGAME1_l("abrapalabra", "", "STUFF/PALABRA.EXE", "t:87ecfa89c0a78bedd277930c267dd07d", 862425, Common::ES_ESP, 404),
 
 	// from Activision Spring '96 Demos and Preview CD
 	// Menu to demos of "Action Packs 1, 2 & 3", "Commodore 64 15 Pack", "Earthworm Jim", "MechWarrior 2",
@@ -4340,9 +4340,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 						   "HASE.LIB", "d:8d8f5a4bf0d27ec926022e90ac4aeefe", 4483876, Common::DE_DEU, 404),
 
 	// Sampler is found on AlphaBonk Farm and probably elsewhere
-	MACGAME1("headbone", "Sampler", "Headbone CD-ROM Sampler", "r:5bbb193a8785c70abe2a4d86b99e1536", 303870, 404),
-	WINGAME2("headbone", "Sampler", "SAMPLER.EXE",  "b083372f35bfaa97f68cfa7f9bb5222e", 2132572,
-									"DemoMain.dxr", "d16606eadccdb21f654f4b4264fc996a", 2711628, 404),
+	MACGAME1("headbone", "Sampler", "Headbone CD-ROM Sampler", "r:5bbb193a8785c70abe2a4d86b99e1536",  303870, 404),
+	WINGAME2("headbone", "Sampler", "SAMPLER.EXE",			   "t:e2f6f1a92e209b3440f278ae84b80c32", 2132572,
+									"DemoMain.dxr",			   "d:d16606eadccdb21f654f4b4264fc996a", 2711628, 404),
 
 	MACGAME1_l("henachoco04r", "", "RamenSpecial", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402),
 	MACGAME1_l("henachoco04r", "Itachoco Taizen 3 rerelease", "RamenSP", "588adb5d26bb829b4daaddf88233ec0d", 294997, Common::JA_JPN, 402),
@@ -5198,8 +5198,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO2_l("osaka1", "Demo", "DEMO",	  "5a012e69fec2369ad2e8d73c42d928f3", 1096269,
 								 "START.DIR", "8b82c58788768cfa88115217de4e8995", 825192, Common::JA_JPN, 404),
 
-	MACGAME1("oslotg", "", "OSLO's T&G", "ef59432e7b24df951cb7096cfd45d168", 307427, 400),
-	WINGAME1("oslotg", "", "OSLOTG.EXE", "c4be18eb4f16e3e21df22d0703866900", 995939, 400),
+	// Mac folder ends with a space
+	MACGAME1("oslotg", "", "xn--Oslo -/OSLO's T&G", "rt:0464b60b020ff21b265c9e91f8cf79ce", 307171, 400),
+	WINGAME1("oslotg", "", "OSLO/OSLOTG.EXE",		"t:b3db5392d4e93dedb55926c7b494a0b9",  995939, 404),
 
 	WINGAME1("painters", "", "PAINTERS.EXE", "3cba94b585493ef5f22d0d650b6eb7fd", 895727, 404),
 	MACGAME1("painters", "", "Painters Painting", "0a81aee4106eec4ffc0cc564a7c15a23", 288774, 404),
@@ -5372,11 +5373,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("popup", "", "POP UP COMPUTER", "c1c73a286e7fdb439c8d49c79a2d9997", 318305, Common::JA_JPN, 400),
 	WINGAME1_l("popup", "", "POPUP.EXE", "f47f7663a75120eca6c9e91025d51786", 65216494, Common::JA_JPN, 400),
-	MACDEMO1_l("popup", "Demo", "POP UP COMPUTER DEMO", "8272aef35bd90e06bac5d622707d9459", 304941, Common::JA_JPN, 400),
-	MACDEMO1_l("popup", "Auto Demo", "Pop up auto demo", "r:bcd3c718db258701496b3c5bcb827ef2", 484067, Common::JA_JPN, 404),
+	MACDEMO1_l("popup", "Demo",		 "POP UP COMPUTER DEMO", "r:8272aef35bd90e06bac5d622707d9459", 304941, Common::JA_JPN, 400),
+	MACDEMO1_l("popup", "Auto Demo", "Pop up auto demo",	 "r:bcd3c718db258701496b3c5bcb827ef2", 484067, Common::JA_JPN, 404),
 
 	// Main game is not Director, just the autodemo
-	MACDEMO1_l("popupmaker", "Auto Demo", "PopupMaker AUTODEMO", "c2cd18765b3d7d36a0f10ef0b1fe2472", 484283, Common::JA_JPN, 404),
+	MACDEMO1_l("popupmaker", "Auto Demo", "PopupMaker AUTODEMO", "r:c2cd18765b3d7d36a0f10ef0b1fe2472", 484283, Common::JA_JPN, 404),
 
 	// Laser Publishing of Berkeley, California (1995)
 	// Plays in English, Simplified Chinese, Tibetan
@@ -6528,9 +6529,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("harating", "", "EGOZ95.EXE", "t:5f4579c128fb5d75c696d0e2dd982aae", 1393991, Common::HE_ISR, 500),
 
 	// Sourced from Dimension Q disc
-	MACGAME1("headbone", "Sampler 2", "Sampler 2",	 "35dbf55e70f69e00ca016e3663379970", 705671, 500),
-	WINGAME2("headbone", "Sampler 2", "SAMPLER.EXE", "c3c38bd3907ca7e13220b74bd0317a6c", 1019877,
-									  "DEMOS.DXR",	 "d8c086a6879d092b409110f9bf5b93de", 3016920, 500),
+	MACGAME2("headbone", "Sampler 2", "Sampler 2",		 "rt:3ae81426eedd3d5e64667086483fbe86",  705415,
+									  "DEMOS/DEMOS.DXR", "d:bd5f0743860693c5a3c32caa180c1500",  3017048, 500),
+	WINGAME2("headbone", "Sampler 2", "SAMPLER.EXE",	 "t:807d144f66b8252f8e845176f25bb0ff",  1019877,
+									  "DEMOS/DEMOS.DXR", "d:d8c086a6879d092b409110f9bf5b93de",  3016920, 500),
 
 	// From MacFormat #42, original file name 'HeadHunter™'
 	MACGAME1("headhunter", "", "xn--HeadHunter-398e", "315c637cac0a4b735dc6e3f7cb1842f7", 721143, 500),
@@ -7652,17 +7654,22 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Miel Monteur - Miel Bouwt Auto's! localized by Transposia
 	// Dutch Mac demo is found in the Flipper & Lopaka compilation
-	WINGAME1_l("garygadget1", "",	  "Willy32.exe",	   "d62438566e44826960fc16c5c23dbe43", 1518423, Common::DE_DEU, 650),
+	MACGAME1_l("garygadget1", "",	  "Autos bauen mit Willy Werkel", "r:d251e21d690ba5ad35509e83d45dd0d0",  1032378, Common::DE_DEU, 602),
+	MACGAME2_l("garygadget1", "",	  "Program",					  "rt:02afd6d4d73e63517688ca8373df5d57", 1032442,
+									  "Movies/LBStart.dxr",			  "d:d3147a37ac1c86964755ab0e72d07d1d",  1075838, Common::NL_NLD, 602),
+	WINGAME1_l("garygadget1", "",	  "DATA/Willy32.exe",			  "t:c55bbee037d85462b515712bfa88e7f0",  1518423, Common::DE_DEU, 650),
 	WINDEMO1_l("garygadget1", "Demo", "miel.exe",          "518a98696fe1122e08410b0f157f21bf", 1512519, Common::NL_NLD, 602),
 	MACDEMO1_l("garygadget1", "Demo", "Miel Monteur demo", "329aab81c0d74c5d3f31ddad26bcc639", 1029165, Common::NL_NLD, 600),
 
 	// Dutch Windows version on same disc is D8
-	MACGAME1_l("garygadget2", "", "Schiffe bauen mit Willy", "1eb3e6dd864a8a9bf5fbd63ea2bc8ebc", 1032634, Common::DE_DEU, 602),
-	MACGAME2_l("garygadget2", "", "Game",                    "1d9149b9745e35ef93ed4cdf08ec3af7", 1030361,
-								  "StartCD.dxr",             "07c672f1c05c4c12ac6abbb371a0ee1f", 24053, Common::NL_NLD, 600),
-	WINGAME1_l("garygadget2", "", "Willy2.exe",				 "d62438566e44826960fc16c5c23dbe43", 1507905, Common::DE_DEU, 650),
+	MACGAME1_l("garygadget2", "", "Schiffe bauen mit Willy", "r:1eb3e6dd864a8a9bf5fbd63ea2bc8ebc", 1032378, Common::DE_DEU, 602),
+	MACGAME2_l("garygadget2", "", "Game",                    "r:1d9149b9745e35ef93ed4cdf08ec3af7", 1030105,
+								  "Movies/StartCD.dxr",      "d:53ec9ea456377ffbf9b7dbaa33dffc7e",   23925, Common::NL_NLD, 600),
+	WINGAME2_l("garygadget2", "", "Willy2.exe",				 "t:abd57254ba75efcf9ea4e61efb5f54d4", 1507905,
+								  "Movies/01.dxr",			 "d:096cba8d6b02e765977e16fcea867398", 1778244, Common::DE_DEU, 650),
 
-	WINGAME1t_l("garygadget2", "", "Mullebat.exe", "1bb8255461245bc03a78c6c5079efd6e", 1522688, Common::NB_NOR, 602),
+	MACGAME1_l("garygadget2", "", "xn--Bygg bter med Mulle Mekk-lcc", "rt:ccb569e29fadcc572cf60ae3a8cb6bfe", 1034678, Common::NB_NOR, 602),
+	WINGAME1_l("garygadget2", "", "Mullebat.exe",					  "t:1bb8255461245bc03a78c6c5079efd6e",  1522688, Common::NB_NOR, 602),
 
 	MACGAME1_l("gasbook3", "", "GASBOOK3", "5ae5e3068e6b1fb4e5677cfbaef51515", 1034203, Common::JA_JPN, 601),
 	WINGAME1t_l("gasbook3", "", "GASBOOK3.exe", "bb265ad1ae65aefd80f4a4a2e537864a", 1512553, Common::JA_JPN, 601),
@@ -8128,7 +8135,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINDEMO1_l("tchaik", "Demo", "TCHAIK.EXE", "a593079aecf5bd938ce75264cac24b2d", 15780729, Common::RU_RUS, 600),
 
-	WINGAME1("technik", "", "Techni00.exe", "1b8d78ddca650041b8997cac7af3184b", 1615559, 650),
+	WINGAME1("technik", "Exe 1", "Technik/Exe1/Techni00.exe", "t:5d018dbf7eb8157bb344aeebece996a1", 1615559, 650),
+	WINGAME1("technik", "Exe 2", "Technik/Exe2/Techni00.exe", "t:8f9433ba36b08f5333280c9dbea11a8e", 1617988, 650),
 
 	WINGAME2("thesims", "", "maxis.exe",	 "t:a6734b7a04d0c3d8a64796fb314ce576",  1915533,
 							"dir/sims1.dir", "d:8c6ccc894cce347ddec675ebe56505c0", 11132824, 650),
@@ -8328,11 +8336,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("blinkyps", "", "PS.exe",		"t:bb23c5be26a3ef8419211558a619a3d2", 173560,
 							   "ELPS/home.dxr", "d:b426880f39648ba021e710cfb1bb6ca3", 2490442, Common::NL_NLD, 702),
 
-	WINGAME2("blinkyk1", "", "K1.exe", "7c18c9a6af2694156bf09ed195c1ab09", 173598,
-							 "home.dxr", "a5bf0926474b9d6100d5eb0a02c59e7c", 2414060, 702),
-	// Blinky Bill Kleuter
-	WINGAME2_l("blinkyk1", "", "K1.exe", "7c18c9a6af2694156bf09ed195c1ab09", 173598,
-							   "home.dxr", "dd7f95732848801b0d5a7e784db68962", 2381576, Common::NL_NLD, 702),
+	// English: Blinky Bill: Kindy
+	// Dutch: Blinky Bill Kleuter
+	WINGAME2("blinkyk1", "",   "K1.exe",		"t:1cc366c6efa859760dd0b17498d46b7d",  173598,
+							   "ELK1/home.dxr", "d:a5bf0926474b9d6100d5eb0a02c59e7c", 2414060, 702),
+	WINGAME2_l("blinkyk1", "", "K1.exe",		"t:1cc366c6efa859760dd0b17498d46b7d",  173598,
+							   "ELK1/home.dxr", "d:dd7f95732848801b0d5a7e784db68962", 2381576, Common::NL_NLD, 702),
 
 	// Blinky Bill Lezertje
 	WINGAME2_l("blinkyy1", "", "Y1.exe",		"t:e4ede4ee8efbb1dc5956dfa5e7cb5b24", 173554,
@@ -8396,8 +8405,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 								   "data/03in.dxr", "d:cbb38ae4cf3d1d06703b8f6be465a54f", 4669072, Common::IT_ITA, 700),
 
 	// Miel Monteur - Miel Bouwt Auto's!
-	WINGAME2_l("garygadget1", "", "Start.exe", "c1a2e8b7e41fa204009324a9c7db1030", 2933829,
-								  "Monteur.cnt", "7038be89eb5c49b51927bf76d8fd0b8a", 2490, Common::NL_NLD, 700),
+	WINGAME2_l("garygadget1", "", "Start.exe",	 "t:6406cc4e3d59440e68717076ffe04f91", 2933829,
+								  "Monteur.cnt", "d:7038be89eb5c49b51927bf76d8fd0b8a",    2490, Common::NL_NLD, 700),
 
 	// Most of the disc is D6, but a few parts are D7
 	MACGAME1("gasbook6", "AGES5&UP", "flab", "91723348f6414e84d024183554385275", 110742, 701),
@@ -8889,23 +8898,35 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("garfieldmadcats", "", "Garfield Start.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 2695719, 800),
 
 	// Mac version on same disc is D6
-	WINGAME1_l("garygadget2", "", "okki.exe", "0c81c84ca4966313ad27d47daba44537", 2513593, Common::NL_NLD, 851),
+	WINGAME1_l("garygadget2", "", "okki.exe", "t:31626933df13ba5cb1a702b2f485a9f8", 2513593, Common::NL_NLD, 851),
 
-	// Flugzeuge bauen mit Willy Werkel localized by Terzio Verlag, Munich (2001)
-	WINGAME1_l("garygadget3", "", "WillyFlug.exe", "70a7b053c1a60617d3baace061fcba54", 9158814, Common::DE_DEU, 800),
-
-	WINGAME1t_l("garygadget3", "", "Start_Mulle.exe", "f0f897006aa8930c52a7aa329a7a2344", 5133106, Common::NB_NOR, 800),
+	// German: Flugzeuge bauen mit Willy Werkel localized by Terzio Verlag, Munich (2001)
+	// Norwegian: Bygg Fly Med Mulle Mekk
+	// NOR/SWE versions need installation
+	WINGAME1_l("garygadget3", "", "program files/terzio/Flugzeuge bauen/WillyFlug.exe",   "70a7b053c1a60617d3baace061fcba54", 9158814, Common::DE_DEU, 800),
+	WINGAME1_l("garygadget3", "", "program files/terzio/Flugzeuge bauen/WillyFlug.exe", "t:9bb0e7542f504b0b2d4f77260eaf8826", 9157600, Common::DE_DEU, 800),
+	WINGAME1_l("garygadget3", "", "Start_Mulle.exe", "t:f0f897006aa8930c52a7aa329a7a2344", 5133106, Common::NB_NOR, 800),
+	WINGAME1_l("garygadget3", "", "Start_Mulle.exe", "t:7cc7a9428ef6b73161cd2a82ee82c067", 6143474, Common::SE_SWE, 850),
+	// Plays a short advertisement video
+	WINGAME2_l("garygadget3", "Scan Ad", "Scan.exe",	  "t:b0354a2ad7560b84eea46ffb6a029976", 2334404,
+										 "ScanMovie.avi", "d:efad0f73c4c77513d220d604f0ab2eda", 19338750, Common::SE_SWE, 850),
 
 	// Mac installers also use Director
-	MACGAME2_l("garygadget4", "", "MulleHus",	  "a44511b8ff0e46b4f9c85dd1cb58d458", 157051,
-								  "01.dxr",		  "a443d3493ad279d26ce08814d8636d97", 44658, Common::FI_FIN, 851),
-	MACGAME2_l("garygadget4", "", "MulleHus",	  "a44511b8ff0e46b4f9c85dd1cb58d458", 157051,
-								  "01.dxr",		  "bc776ee31fa7e4426d128ef8bceb4cc1", 44846, Common::SE_SWE, 851),
-	WINGAME1_l("garygadget4", "", "MulleHus.exe", "0c81c84ca4966313ad27d47daba44537", 3760882, Common::SE_SWE, 851),
-	WINGAME1_l("garygadget4", "", "MulleHus.exe", "0c81c84ca4966313ad27d47daba44537", 3793560, Common::FI_FIN, 851),
+	// Win versions need installation
+	// Last 4 entries are unconfirmed
+	MACGAME2_l("garygadget4", "", "ToHD/MulleHus",	  "r:a44511b8ff0e46b4f9c85dd1cb58d458", 156795,
+								  "Movies/01.dxr",	  "d:d191871e77e3e0a18976457142d818c0", 44530, Common::FI_FIN, 851),
+	MACGAME2_l("garygadget4", "", "ToHD/MulleHus",	  "r:a44511b8ff0e46b4f9c85dd1cb58d458", 156795,
+								  "Movies/01.dxr",	  "d:300c4d6e5591dd6faa74d0d4280c96fe", 44718, Common::SE_SWE, 851),
+	MACGAME2_l("garygadget4", "", "ToHD/MulleHus",	  "r:a44511b8ff0e46b4f9c85dd1cb58d458", 156795,
+								  "Movies/01.dxr",	  "d:a443d3493ad279d26ce08814d8636d97", 44658, Common::FI_FIN, 851),
+	MACGAME2_l("garygadget4", "", "ToHD/MulleHus",	  "r:a44511b8ff0e46b4f9c85dd1cb58d458", 156795,
+								  "Movies/01.dxr",	  "d:bc776ee31fa7e4426d128ef8bceb4cc1", 44846, Common::SE_SWE, 851),
+	WINGAME1_l("garygadget4", "", "MulleHus.exe",	  "0c81c84ca4966313ad27d47daba44537", 3760882, Common::SE_SWE, 851),
+	WINGAME1_l("garygadget4", "", "MulleHus.exe",	  "0c81c84ca4966313ad27d47daba44537", 3793560, Common::FI_FIN, 851),
 
 	// Mac OS X and Windows versions are D9
-	MACGAME1_l("garygadget5", "Classic OS", "Miel5 OS9", "789536da81694518f494945bb161ace9", 234210, Common::NL_NLD, 851),
+	MACGAME1_l("garygadget5", "Classic OS", "ToHD/Miel5 OS9", "rt:1542056986f8b8513ab20c41bf9d26cd", 233954, Common::NL_NLD, 851),
 
 	// Original filename is 芸人街道膝栗毛。.exe
 	WINGAME1_l("geininkaido", "", "xn--.exe-pw3ct82pvdybmkgi26c2kck8w2sw", "d5069f2a24854aa78f8fbd01462ba37c", 4366672, Common::JA_JPN, 851),
@@ -9201,7 +9222,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Mac OS X executables are D9
 	MACGAME1_l("sethi2", "Classic OS", "Sethi Incas",     "41e7d3bf50e4085c35eba322aa63b238", 161027,  Common::FR_FRA, 851),
 	WINGAME1_l("sethi2", "",		   "Sethi_Incas.exe", "0c81c84ca4966313ad27d47daba44537", 2158774, Common::FR_FRA, 851),
-	MACGAME1_l("sethi3", "Classic OS", "Start Me OS9",    "789536da81694518f494945bb161ace9", 179887,  Common::DE_DEU, 851),
+
+	MACGAME2_l("sethi3", "Classic OS", "MacOS9/Start Me OS9", "rt:33773d5ef9b406bfa65115883bef45f4", 179631,
+									   "DATA/StartMe.dxr",	  "d:55248d9db7aa326eb740b2532ba83252",   15584, Common::DE_DEU, 851),
 
 	// Published by Virtual Views, Turin (2003) in English, French, Italian
 	// Players were posted online throughout the decade for compatibility with later OS versions
@@ -9407,14 +9430,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 						  "ESO_D1.DXR", "6d39a8ef9a8060e21616f23872c581b6", 2075636, Common::ES_ESP, 900),
 
 	// Häuser bauen mit Willy Werkel localized by Terzio Verlag, Munich (2003)
-	WINGAME1_l("garygadget4", "", "WILLYHAU.EXE", "e1cb27c285fc19a989f152b785b0f375", 137056, Common::DE_DEU, 900),
+	WINGAME1_l("garygadget4", "", "Setup/WinRoot/Terzio/WillyHaus/WillyHaus.exe", "t:17bde370d954353ff5fd1a374f62a7c0", 137056, Common::DE_DEU, 900),
 
 	// Mac Classic OS version is D8
 	// German Mac OS X version is D10. Classic OS is not supported.
 	// Raumschiffe bauen mit Willy Werkel published by Terzio, Munich (2005)
-	MACGAME1_l("garygadget5", "OS X", "Miel5 OSX",           "d483e955df901222145267d2ad729ea2", 284016, Common::NL_NLD, 900),
-	WINGAME1_l("garygadget5", "",     "WillyRaumschiff.exe", "6b9dc16e1d307150bfec28729b59a523", 2185322, Common::DE_DEU, 900),
-	WINGAME1_l("garygadget5", "",     "Miel5.exe",           "7202313e2b177197b62e84dcf24d1292", 4253422, Common::NL_NLD, 900),
+	MACGAME1_l("garygadget5", "OS X", "ToHD/Miel5 OSX", "rt:1542056986f8b8513ab20c41bf9d26cd", 283760, Common::NL_NLD, 900),
+	WINGAME1_l("garygadget5", "",     "ToHD/Miel5.exe", "t:3f7dd6fdf8cb96202c8841e2e72e7836", 4253422, Common::NL_NLD, 900),
+	WINGAME1_l("garygadget5", "",     "Setup/WinRoot/Terzio/WillyRaumschiff/WillyRaumschiff.exe", "t:1f914ca6b4bbf8b452df0e80b0fafee2", 2185322, Common::DE_DEU, 900),
 
 	MACGAME2("gp2006", "", "CLICK ME",		   "r:d483e955df901222145267d2ad729ea2", 233544,
 						   "SOURCE/Intro.cxt", "d:c7d1f703b3cfa4d134f601d17f8563a1", 673544, 900),
@@ -9463,9 +9486,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Classic Mac OS and Windows executables are D8
 	MACGAME1_l("sethi2", "OS X", "Sethi Incas",	 "d483e955df901222145267d2ad729ea2", 233556, Common::FR_FRA, 900),
-	MACGAME1_l("sethi3", "OS X", "Start Me OSX", "d483e955df901222145267d2ad729ea2", 229696, Common::DE_DEU, 900),
-	WINGAME2_l("sethi3", "", "StartMe.exe",		 "c612aa43e7ef55aa4fd2e1085fb1ef7a", 2186964,
-							 "StartMe.dxr",		 "55248d9db7aa326eb740b2532ba83252", 15584, Common::DE_DEU, 900),
+
+	MACGAME2_l("sethi3", "OS X", "MacOSX/Start Me OSX", "rt:9478845b881fd12cd92e34f3a628249e", 229440,
+								 "DATA/StartMe.dxr",	"d:55248d9db7aa326eb740b2532ba83252",   15584, Common::DE_DEU, 900),
+	WINGAME2_l("sethi3", "",	 "DATA/StartMe.exe",	"t:7d1653d001cc0cad344cfce47a5191b3", 2186964,
+								 "DATA/StartMe.dxr",	"d:55248d9db7aa326eb740b2532ba83252",   15584, Common::DE_DEU, 900),
 
 	WINGAME2("stalker", "Press Kit", "Stalker.exe",			"t:be0e433e11b5c540c233e96ee0ff0c79", 55314588,
 									 "Trailer/Stalker.avi", "d:e470bf4b3f6e59b5fb087b139043e581", 121628672, 900),
@@ -9556,7 +9581,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// German Win version is D9
 	// Installer & uninstaller also use Director
-	MACGAME1_l("garygadget5", "", "WillyRaumschiff OSX", "b7181d7af306a3d336e5cc70cc77c641", 318788, Common::DE_DEU, 1010),
+	MACGAME1_l("garygadget5", "", "ToHD/WillyRaumschiff OSX", "r:b7181d7af306a3d336e5cc70cc77c641", 318532, Common::DE_DEU, 1010),
 
 	MACGAME1_l("geograficus", "Classic", "Geograficus.classic", "r:dcd7467138d0aabbcef83d2337e1be62", 219361, Common::DE_DEU, 1010),
 	MACGAME1_l("geograficus", "OS X",	 "Geograficus.osx", 	"r:098b345655e60b22ba7ebe9c4a4093bb", 270277, Common::DE_DEU, 1010),
