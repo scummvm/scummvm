@@ -296,7 +296,6 @@ public:
 #endif
 
 	static const Vect2f ZERO;
-	static const Vect2f ID;
 };
 
 
@@ -1776,9 +1775,6 @@ public:
 	xm_inline MatXd(const Mat3d &R_, const Vect3d &d_) {
 		set(R_, d_);
 	}
-	xm_inline MatXd(const Se3d &T)            {
-		set(T);
-	}
 
 	typedef double double16[16];
 	xm_inline MatXd(const double16 &T);
@@ -1792,7 +1788,6 @@ public:
 		d = d_;
 		return *this;
 	}
-	xm_inline MatXd &set(const Se3d &T);
 
 	xm_inline const Mat3d  &rot()   const {
 		return R;
@@ -2075,194 +2070,6 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//			class QuatD
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-class QuatD {
-	friend class Mat3d;
-	friend class Se3d;
-
-private:
-
-	double s_, x_, y_, z_;
-
-
-public:
-
-	// constructors //////////////////////////////////////////////////////////////
-
-	QuatD() {}
-
-	QuatD(double s, double x, double y, double z) {
-		set(s, x, y, z);
-	}
-
-	QuatD(double angle, const Vect3d &axis, int normalizeAxis = 1) {
-		set(angle, axis, normalizeAxis);
-	}
-
-	QuatD(const Mat3d &R) {
-		set(R);
-	}
-
-	xm_inline operator QuatF() const;
-
-	// setters / accessors / translators /////////////////////////////////////////
-
-	QuatD &set(double s, double x, double y, double z) {
-		s_ = s;
-		x_ = x;
-		y_ = y;
-		z_ = z;
-		return *this;
-	}
-
-	// set a quaternion to a rotation of 'angle' radians about 'axis'
-	// the axis passed is automatically normalized unless normalizeAxis = 0
-	QuatD &set(double angle, const Vect3d &axis, int normalizeAxis = 1);
-
-	QuatD &set(const Mat3d &R);
-
-	xm_inline operator const double *() const {
-		return &s_;
-	}
-	xm_inline operator double *() {
-		return &s_;
-	}
-
-	xm_inline const double &operator[](int i) const {
-		return *(&s_ + i);
-	}
-	xm_inline double &operator[](int i)       {
-		return *(&s_ + i);
-	}
-
-	double s() const {
-		return s_;
-	}
-	double x() const {
-		return x_;
-	}
-	double y() const {
-		return y_;
-	}
-	double z() const {
-		return z_;
-	}
-
-	double &s() {
-		return s_;
-	}
-	double &x() {
-		return x_;
-	}
-	double &y() {
-		return y_;
-	}
-	double &z() {
-		return z_;
-	}
-
-	xm_inline Vect3d axis() const;  // normalized axis of rotation
-	xm_inline double angle() const;  // angle of rotation in radians, in range [0, 2pi)
-
-
-	//  Logical operations  ///////////////
-	xm_inline bool eq(const QuatD &other, double delta = DBL_COMPARE_TOLERANCE) const;
-
-	//  Negate  ////////////////////////////////////
-	xm_inline QuatD operator- () const {
-		return QuatD(-s_, -x_, -y_, -z_);
-	}
-	xm_inline QuatD &negate(const QuatD &q) {
-		s_ = -q.s_;
-		x_ = -q.x_;
-		y_ = -q.y_;
-		z_ = -q.z_;
-		return *this;
-	}
-	xm_inline QuatD &negate() {
-		s_ = -s_;
-		x_ = -x_;
-		y_ = -y_;
-		z_ = -z_;
-		return *this;
-	}
-
-	//  Normalization  ///////////////////////
-	xm_inline QuatD &normalize(const QuatD &q);         // q/|q|
-	xm_inline QuatD &normalize();               // this/|this|
-	xm_inline double norm() const {
-		return sqrt(x_ * x_ + y_ * y_ + z_ * z_ + s_ * s_);
-	}
-
-	//  Invertion  /////////////////////////
-	xm_inline QuatD &invert(const QuatD &q);            // q^-1
-	xm_inline QuatD &invert();                  // this^-1
-
-
-	//  QuatD - QuatD operations  ///////////////
-	xm_inline QuatD &operator+= (const QuatD &q);
-	xm_inline QuatD &operator-= (const QuatD &q);
-	xm_inline QuatD operator+ (const QuatD &q) const;
-	xm_inline QuatD operator- (const QuatD &q) const;
-
-	//   Cross product   /////////////////
-	QuatD &mult(const QuatD &p, const QuatD &q);        // p * q     [!]
-	QuatD &premult(const QuatD &q);                 // q * this  [!]
-	QuatD &postmult(const QuatD &q);            // this * q  [!]
-	xm_inline QuatD &operator%= (const QuatD &q) {
-		return postmult(q);
-	}
-	xm_inline QuatD operator% (const QuatD &q) const {
-		QuatD u;
-		return u.mult(*this, q);
-	}
-
-	//  Dot product  ////////////////////
-	xm_inline double dot(const QuatD &other) const;
-	friend double dot(const QuatD &u, const QuatD &v) {
-		return u.dot(v);
-	}
-
-	//  Scalar multiplication & division  //////////
-	xm_inline QuatD &operator*= (double s);
-	xm_inline QuatD &operator/= (double s);
-	xm_inline QuatD operator* (double s) const;
-	xm_inline QuatD operator/ (double s) const;
-	xm_inline friend QuatD operator* (double s, const QuatD &q);
-
-
-
-	// Transforming Vect3d ///////////////////////////////////////////////////////
-
-	Vect3d &xform(const Vect3d &u, Vect3d &v) const;   // this (v 0) this^-1 => xv
-	Vect3d &xform(Vect3d &v) const;            // this (v 0) this^-1 => v
-
-	// These are exactly like the above methods, except the inverse
-	// transform is used (i.e. the factors this and this^-1 are swapped).
-	Vect3d &invXform(const Vect3d &v, Vect3d &xv) const;
-	Vect3d &invXform(Vect3d &v) const;
-
-
-	//    I/O operations    //////////////////////////////////////
-#ifdef _XMATH_USE_IOSTREAM
-	friend ostream &operator<< (ostream &os, const QuatD &q);
-	friend istream &operator>> (istream &is, QuatD &q);
-#endif
-
-	// miscellaneous /////////////////////////////////////////////////////////////
-	xm_inline void slerp(const QuatD &a, const QuatD &b, double t);
-
-	// QuatD constants ////////////////////////////////////////////////////////////
-
-	static const QuatD ID;   // identity quaternion
-};
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
 //			class Se3f
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2317,17 +2124,11 @@ public:
 
 
 	//  Se3f - Se3f multiplication  ////////////
-	xm_inline Se3f &mult(const Se3f &T, const Se3f &U);    // T * U   [!]
 	xm_inline Se3f &premult(const Se3f &T);          // T * this  [!]
 	xm_inline Se3f &postmult(const Se3f &T);         // this * T  [!]
 	xm_inline Se3f &operator*= (const Se3f &T) {
 		return postmult(T);
 	}
-	xm_inline Se3f operator* (const Se3f &U) const {
-		Se3f T;
-		return T.mult(*this, U);
-	}
-
 	xm_inline void interpolate(const Se3f &u, const Se3f &v, float t) {
 		q.slerp(u.q, v.q, t);
 		d.interpolate(u.d, v.d, t);
@@ -2373,110 +2174,6 @@ public:
 
 	static const Se3f ID;     // identity Se3f
 };
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//			class Se3d
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-class Se3d {
-private:
-
-	QuatD q;     // rotation component
-	Vect3d d;    // translation component
-
-public:
-
-	// constructors //////////////////////////////////////////////////////////////
-
-
-	Se3d() {}
-	Se3d(const QuatD &q_, const Vect3d &d_) {
-		set(q_, d_);
-	}
-	Se3d(const MatXd &X) {
-		set(X);
-	}
-
-	xm_inline operator Se3f() const;
-
-	// setters / accessors / translators /////////////////////////////////////////
-
-	Se3d &set(const QuatD &q_, const Vect3d &d_) {
-		q = q_;
-		d = d_;
-		return *this;
-	}
-	Se3d &set(const MatXd &X) {
-		q.set(X.rot());
-		d = X.trans();
-		return *this;
-	}
-
-	const QuatD  &rot()   const {
-		return q;
-	}
-	const Vect3d &trans() const {
-		return d;
-	}
-	QuatD  &rot()        {
-		return q;
-	}
-	Vect3d &trans()      {
-		return d;
-	}
-
-
-	//  Se3d - Se3d multiplication  ////////////
-	xm_inline Se3d &mult(const Se3d &T, const Se3d &U);    // T * U   [!]
-	xm_inline Se3d &premult(const Se3d &T);          // T * this  [!]
-	xm_inline Se3d &postmult(const Se3d &T);         // this * T  [!]
-	Se3d &operator*= (const Se3d &T) {
-		return postmult(T);
-	}
-	Se3d operator* (const Se3d &U) const {
-		Se3d T;
-		return T.mult(*this, U);
-	}
-
-	//  Invertion  ///////////////////
-	xm_inline Se3d &invert(const Se3d &T);           // T^-1
-	xm_inline Se3d &invert();                // this^-1
-
-
-	// Transforming Vect3d ///////////////////////////////////////////////////////
-
-	// Se3s can transform elements of R^3 either as vectors or as
-	// points.  Multiple operands need not be distinct.
-
-	xm_inline Vect3d &xformVect(const Vect3d &v, Vect3d &xv) const;  // this * (v 0) => xv
-	xm_inline Vect3d &xformVect(Vect3d &v) const;        // this * (v 0) => v
-	xm_inline Vect3d &xformPoint(const Vect3d &p, Vect3d &xp) const; // this * (p 1) => xp
-	xm_inline Vect3d &xformPoint(Vect3d &p) const;           // this * (p 1) => p
-
-	// These are exactly like the above methods, except the inverse
-	// transform this^-1 is used.
-	xm_inline Vect3d &invXformVect(const Vect3d &v, Vect3d &xv) const;
-	xm_inline Vect3d &invXformVect(Vect3d &v) const;
-	xm_inline Vect3d &invXformPoint(const Vect3d &p, Vect3d &xp) const;
-	xm_inline Vect3d &invXformPoint(Vect3d &p) const;
-
-	xm_inline bool eq(const Se3d &other, double transDelta, double rotDelta) const;
-
-	//    I/O operations    //////////////////////////////////////
-
-#ifdef _XMATH_USE_IOSTREAM
-	friend ostream &operator<<(ostream &os, const Se3d &se3);
-	friend istream &operator>>(istream &is, Se3d &se3);
-#endif
-
-	// Se3d constants /////////////////////////////////////////////////////////////
-
-	static const Se3d ID;     // identity Se3d
-};
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4396,13 +4093,6 @@ MatXd::operator MatXf() const {
 	return MatXf(R, d);
 }
 
-MatXd &MatXd::set(const Se3d &T) {
-	R.set(T.rot());
-	d = T.trans();
-	return *this;
-}
-
-
 //  Vect3d transforming  /////////////////////
 Vect3d &MatXd::xformVect(const Vect3d &v, Vect3d &xv) const {
 	return R.xform(v, xv);
@@ -4503,14 +4193,6 @@ Vect3f &MatXd::invXformPoint(Vect3f &p) const {
 }
 
 
-
-
-///////////////////////////////////////////////////////////////////////////////
-//		QuatF xm_inline definitions
-///////////////////////////////////////////////////////////////////////////////
-QuatF::operator QuatD() const {
-	return QuatD((float)s_, (float)x_, (float)y_, (float)z_);
-}
 
 bool QuatF::eq(const QuatF &other, float delta) const {
 	return fabs(s_ - other.s_) < delta &&
@@ -4668,171 +4350,10 @@ xm_inline void QuatF::slerpExact(const QuatF &a, const QuatF &b, float t) {
 	*this += a * scale0;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//		QuatD xm_inline definitions
-///////////////////////////////////////////////////////////////////////////////
-QuatD::operator QuatF() const {
-	return QuatF((float)s_, (float)x_, (float)y_, (float)z_);
-}
-
-bool QuatD::eq(const QuatD &other, double delta) const {
-	return fabs(s_ - other.s_) < delta &&
-	       fabs(x_ - other.x_) < delta &&
-	       fabs(y_ - other.y_) < delta &&
-	       fabs(z_ - other.z_) < delta;
-}
-
-Vect3d QuatD::axis() const {
-	Vect3d v(x_, y_, z_);
-	if (v.norm() == 0.0) v = Vect3d::I;  // axis is arbitrary here
-	else v.normalize();
-	return v;
-}
-
-
-double QuatD::angle() const {
-	return 2 * acos(s_);
-}
-
-
-QuatD &QuatD::normalize(const QuatD &q) {
-	double scale;
-
-	scale = 1.0 / sqrt(q.s_ * q.s_ + q.x_ * q.x_ + q.y_ * q.y_ + q.z_ * q.z_);
-	s_ = scale * q.s_;
-	x_ = scale * q.x_;
-	y_ = scale * q.y_;
-	z_ = scale * q.z_;
-	return *this;
-}
-
-QuatD &QuatD::normalize() {
-	double scale;
-
-	scale = 1.0 / sqrt(s_ * s_ + x_ * x_ + y_ * y_ + z_ * z_);
-	s_ *= scale;
-	x_ *= scale;
-	y_ *= scale;
-	z_ *= scale;
-	return *this;
-}
-
-
-QuatD &QuatD::invert(const QuatD &q) {
-	s_ = -q.s_;
-	x_ =  q.x_;
-	y_ =  q.y_;
-	z_ =  q.z_;
-	return *this;
-}
-
-
-QuatD &QuatD::invert() {
-	s_ = -s_;
-	return *this;
-}
-
-QuatD &QuatD::operator+= (const QuatD &q) {
-	s_ += q.s_;
-	x_ += q.x_;
-	y_ += q.y_;
-	z_ += q.z_;
-	return *this;
-}
-QuatD &QuatD::operator-= (const QuatD &q) {
-	s_ -= q.s_;
-	x_ -= q.x_;
-	y_ -= q.y_;
-	z_ -= q.z_;
-	return *this;
-}
-QuatD QuatD::operator+ (const QuatD &q) const {
-	return QuatD(s_ + q.s_, x_ + q.x_, y_ + q.y_, z_ + q.z_);
-}
-QuatD QuatD::operator- (const QuatD &q) const {
-	return QuatD(s_ - q.s_, x_ - q.x_, y_ - q.y_, z_ - q.z_);
-}
-
-double QuatD::dot(const QuatD &q) const {
-	return s_ * q.s_ + x_ * q.x_ + y_ * q.y_ + z_ * q.z_;
-}
-
-
-//  Scalar operations  /////////////////
-QuatD &QuatD::operator*= (double w) {
-	s_ *= w;
-	x_ *= w;
-	y_ *= w;
-	z_ *= w;
-	return *this;
-}
-QuatD &QuatD::operator/= (double w) {
-	w = 1 / w;
-	s_ *= w;
-	x_ *= w;
-	y_ *= w;
-	z_ *= w;
-	return *this;
-}
-QuatD QuatD::operator* (double w) const {
-	return QuatD(s_ * w, x_ * w, y_ * w, z_ * w);
-}
-QuatD QuatD::operator/ (double w) const {
-	w = 1 / w;
-	return QuatD(s_ * w, x_ * w, y_ * w, z_ * w);
-}
-QuatD operator* (double w, const QuatD &q) {
-	return QuatD(q.s_ * w, q.x_ * w, q.y_ * w, q.z_ * w);
-}
-
-xm_inline void QuatD::slerp(const QuatD &a, const QuatD &b, double t) {
-	// Slerp(q1,q2,t) = (sin((1-t)*A)/sin(A))*q1+(sin(t*A)/sin(A))*q2
-	double scale0, scale1;
-
-	// calc cosine
-	double cosom = a.dot(b);
-
-	// adjust signs (if necessary)
-	if (cosom < 0.0) {
-		cosom = -cosom;
-		negate(b);
-	} else
-		*this = b;
-
-	// calculate coefficients
-	if ((1.0 - cosom) > 1e-5f) {
-		// standard case (slerp)
-		double omega = acos(cosom);
-		double sinom = sin(omega);
-		scale0 = sin((1.0 - t) * omega) / sinom;
-		scale1 = sin(t * omega) / sinom;
-	} else { // "from" and "to" quaternions are very close, so we can do a linear interpolation
-		scale0 = 1.0 - t;
-		scale1 = t;
-	}
-
-	// calculate final values
-	*this *= scale1;
-	*this += a * scale0;
-}
-
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //		Se3f xm_inline definitions
 ///////////////////////////////////////////////////////////////////////////////
-Se3f::operator Se3d() const {
-	return Se3d(q, d);
-}
-
-Se3f &Se3f::mult(const Se3f &T, const Se3f &U) {
-	q.mult(T.q, U.q);
-	T.q.xform(U.d, d);
-	d.add(d, T.d);
-	return *this;
-}
-
-
 Se3f &Se3f::premult(const Se3f &T) {
 	q.premult(T.q);
 	T.q.xform(d);
@@ -4924,115 +4445,6 @@ Vect3f &Se3f::invXformPoint(Vect3f &p) const {
 bool Se3f::eq(const Se3f &other, float transDelta, float rotDelta) const {
 	return trans().eq(other.trans(), transDelta) && rot().eq(other.rot(), rotDelta);
 }
-
-
-///////////////////////////////////////////////////////////////////////////////
-//		Se3d xm_inline definitions
-///////////////////////////////////////////////////////////////////////////////
-Se3d::operator Se3f() const {
-	return Se3f(q, d);
-}
-
-Se3d &Se3d::mult(const Se3d &T, const Se3d &U) {
-	q.mult(T.q, U.q);
-	T.q.xform(U.d, d);
-	d.add(d, T.d);
-	return *this;
-}
-
-
-Se3d &Se3d::premult(const Se3d &T) {
-	q.premult(T.q);
-	T.q.xform(d);
-	d.add(T.d);
-	return *this;
-}
-
-
-Se3d &Se3d::postmult(const Se3d &T) {
-	Vect3d v;
-
-	q.xform(T.d, v);
-	d.add(v);
-	q.postmult(T.q);
-	return *this;
-}
-
-
-Se3d &Se3d::invert(const Se3d &T) {
-	q.s_ = -T.q.s_;
-	q.x_ =  T.q.x_;
-	q.y_ =  T.q.y_;
-	q.z_ =  T.q.z_;
-	q.xform(T.d, d);
-	d.negate(d);
-	return *this;
-}
-
-
-Se3d &Se3d::invert() {
-	q.s_ = -q.s_;
-	q.xform(d);
-	d.negate();
-	return *this;
-}
-
-
-Vect3d &Se3d::xformVect(const Vect3d &v, Vect3d &xv) const {
-	q.xform(v, xv);
-	return xv;
-}
-
-
-Vect3d &Se3d::xformVect(Vect3d &v) const {
-	q.xform(v);
-	return v;
-}
-
-
-Vect3d &Se3d::xformPoint(const Vect3d &p, Vect3d &xp) const {
-	q.xform(p, xp);
-	xp.add(d);
-	return xp;
-}
-
-
-Vect3d &Se3d::xformPoint(Vect3d &p) const {
-	q.xform(p);
-	p.add(d);
-	return p;
-}
-
-
-Vect3d &Se3d::invXformVect(const Vect3d &v, Vect3d &xv) const {
-	q.invXform(v, xv);
-	return xv;
-}
-
-
-Vect3d &Se3d::invXformVect(Vect3d &v) const {
-	q.invXform(v);
-	return v;
-}
-
-
-Vect3d &Se3d::invXformPoint(const Vect3d &p, Vect3d &xp) const {
-	xp.sub(p, d);
-	q.invXform(xp);
-	return xp;
-}
-
-
-Vect3d &Se3d::invXformPoint(Vect3d &p) const {
-	p.sub(d);
-	q.invXform(p);
-	return p;
-}
-
-bool Se3d::eq(const Se3d &other, double transDelta, double rotDelta) const {
-	return trans().eq(other.trans(), transDelta) && rot().eq(other.rot(), rotDelta);
-}
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -5258,26 +4670,10 @@ inline ostream &operator<<(ostream &os, const MatXd &m) {
 	return os << m.R << "  " << m.d;
 }
 
-inline istream &operator>>(istream &is, MatXd &m) {
-	Se3d T;
-	is >> T;
-	m.set(T);
-	return is;
-}
-
-
 //  MatXf  I/O   ///////////////////
 inline ostream &operator<<(ostream &os, const MatXf &m) {
 	return os << m.R << "  " << m.d;
 }
-
-inline istream &operator>>(istream &is, MatXf &m) {
-	Se3d T;
-	is >> T;
-	m.set(T);
-	return is;
-}
-
 
 //  QuatD  I/O   ///////////////////
 inline istream &operator>>(istream &is, QuatD &q) {
@@ -5301,15 +4697,6 @@ inline ostream &operator<<(ostream &os, const QuatF &q) {
 	return os;
 }
 
-
-//  Se3d I/O  ///////////////////
-inline ostream &operator<<(ostream &os, const Se3d &se3) {
-	return os << se3.q << "  " << se3.d;
-}
-
-inline istream &operator>>(istream &is, Se3d &se3) {
-	return is >> se3.q >> se3.d;
-}
 
 //  Se3f I/O  ///////////////////
 inline ostream &operator<<(ostream &os, const Se3f &se3) {

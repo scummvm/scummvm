@@ -42,8 +42,7 @@ namespace QDEngine {
 ///////////////////////////////////////////////////////////////////////////////
 
 const Vect3f Vect3f::ZERO(0, 0, 0);
-const QuatF QuatF::ID(1, 0, 0, 0);
-const QuatD QuatD::ID(1, 0, 0, 0);
+//const QuatD QuatD::ID(1, 0, 0, 0);
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -70,32 +69,6 @@ float Vect3f::angle(const Vect3f &other) const {
 //  class Mat3d
 //
 ///////////////////////////////////////////////////////////////////////////////
-
-Mat3d &Mat3d::set(const Vect3d &axis, double angle, int normalizeAxis) {
-	QuatD q;
-
-	q.set(angle, axis, normalizeAxis);
-	set(q);
-	return *this;
-}
-
-Mat3d &Mat3d::set(const QuatD &q) {
-	xx = 2.0 * (q.s_ * q.s_ + q.x_ * q.x_ - 0.5);
-	yy = 2.0 * (q.s_ * q.s_ + q.y_ * q.y_ - 0.5);
-	zz = 2.0 * (q.s_ * q.s_ + q.z_ * q.z_ - 0.5);
-
-	xy = 2.0 * (q.y_ * q.x_ - q.z_ * q.s_);
-	yx = 2.0 * (q.x_ * q.y_ + q.z_ * q.s_);
-
-
-	yz = 2.0 * (q.z_ * q.y_ - q.x_ * q.s_);
-	zy = 2.0 * (q.y_ * q.z_ + q.x_ * q.s_);
-
-	zx = 2.0 * (q.x_ * q.z_ - q.y_ * q.s_);
-	xz = 2.0 * (q.z_ * q.x_ + q.y_ * q.s_);
-
-	return *this;
-}
 
 Mat3d &Mat3d::set(const Vect3d &x_from, const Vect3d &y_from, const Vect3d &z_from,
                   const Vect3d &x_to, const Vect3d &y_to, const Vect3d &z_to) {
@@ -719,212 +692,6 @@ MatXf &MatXf::Invert() {
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  class QuatD
-//
-///////////////////////////////////////////////////////////////////////////////
-
-
-QuatD &QuatD::set(double angle, const Vect3d &axis, int normalizeAxis) {
-	double theta = 0.5 * angle;
-	double sine = sin(theta);
-	s_ = cos(theta);
-
-	if (normalizeAxis) {
-		double n2;
-		if ((n2 = axis.norm2()) < DBL_EPS) {
-			*this = QuatD::ID;
-			return *this;
-		}
-		sine /= sqrt(n2);
-	}
-
-	x_ = axis.x * sine;
-	y_ = axis.y * sine;
-	z_ = axis.z * sine;
-
-	return *this;
-}
-
-
-QuatD &QuatD::set(const Mat3d &R) {
-	double qs2, qx2, qy2, qz2;  // squared magniudes of quaternion components
-	double tmp;
-	int i;
-
-	// first compute squared magnitudes of quaternion components - at least one
-	// will be greater than 0 since quaternion is unit magnitude
-
-	qs2 = 0.25 * (R.xx + R.yy + R.zz + 1);
-	qx2 = qs2 - 0.5 * (R.yy + R.zz);
-	qy2 = qs2 - 0.5 * (R.zz + R.xx);
-	qz2 = qs2 - 0.5 * (R.xx + R.yy);
-
-
-	// find maximum magnitude component
-	i = (qs2 > qx2) ?
-	    ((qs2 > qy2) ? ((qs2 > qz2) ? 0 : 3) : ((qy2 > qz2) ? 2 : 3)) :
-	    ((qx2 > qy2) ? ((qx2 > qz2) ? 1 : 3) : ((qy2 > qz2) ? 2 : 3));
-
-	// compute signed quaternion components using numerically stable method
-	switch (i) {
-	case 0:
-		s_ = sqrt(qs2);
-		tmp = 0.25 / s_;
-		x_ = (R.zy - R.yz) * tmp;
-		y_ = (R.xz - R.zx) * tmp;
-		z_ = (R.yx - R.xy) * tmp;
-		break;
-	case 1:
-		x_ = sqrt(qx2);
-		tmp = 0.25 / x_;
-		s_ = (R.zy - R.yz) * tmp;
-		y_ = (R.xy + R.yx) * tmp;
-		z_ = (R.xz + R.zx) * tmp;
-		break;
-	case 2:
-		y_ = sqrt(qy2);
-		tmp = 0.25 / y_;
-		s_ = (R.xz - R.zx) * tmp;
-		z_ = (R.yz + R.zy) * tmp;
-		x_ = (R.yx + R.xy) * tmp;
-		break;
-	case 3:
-		z_ = sqrt(qz2);
-		tmp = 0.25 / z_;
-		s_ = (R.yx - R.xy) * tmp;
-		x_ = (R.zx + R.xz) * tmp;
-		y_ = (R.zy + R.yz) * tmp;
-		break;
-	}
-	// for consistency, force positive scalar component [ (s; v) = (-s; -v) ]
-	if (s_ < 0) {
-		s_ = -s_;
-		x_ = -x_;
-		y_ = -y_;
-		z_ = -z_;
-	}
-	// normalize, just to be safe
-	tmp = 1.0 / sqrt(s_ * s_ + x_ * x_ + y_ * y_ + z_ * z_);
-	s_ *= tmp;
-	x_ *= tmp;
-	y_ *= tmp;
-	z_ *= tmp;
-
-	return *this;
-}
-
-
-QuatD &QuatD::mult(const QuatD &p, const QuatD &q) {
-	s_ = p.s_ * q.s_ - (p.x_ * q.x_ + p.y_ * q.y_ + p.z_ * q.z_);
-	x_ = p.s_ * q.x_ +  q.s_ * p.x_ + p.y_ * q.z_ - p.z_ * q.y_;
-	y_ = p.s_ * q.y_ +  q.s_ * p.y_ + p.z_ * q.x_ - p.x_ * q.z_;
-	z_ = p.s_ * q.z_ +  q.s_ * p.z_ + p.x_ * q.y_ - p.y_ * q.x_;
-
-	return *this;
-}
-
-
-QuatD &QuatD::premult(const QuatD &q) {
-	double ox, oy, oz;
-
-	ox = x_;
-	oy = y_;
-	oz = z_;
-
-	x_ = q.s_ * ox +  s_ * q.x_ + q.y_ * oz - q.z_ * oy;
-	y_ = q.s_ * oy +  s_ * q.y_ + q.z_ * ox - q.x_ * oz;
-	z_ = q.s_ * oz +  s_ * q.z_ + q.x_ * oy - q.y_ * ox;
-	s_ = q.s_ * s_ - (q.x_ * ox + q.y_ * oy + q.z_ * oz);
-
-	return *this;
-}
-
-
-QuatD &QuatD::postmult(const QuatD &q) {
-	double ox, oy, oz;
-
-	ox = x_;
-	oy = y_;
-	oz = z_;
-
-	x_ = s_ * q.x_ +  ox * q.s_ + oy * q.z_ - oz * q.y_;
-	y_ = s_ * q.y_ +  oy * q.s_ + oz * q.x_ - ox * q.z_;
-	z_ = s_ * q.z_ +  oz * q.s_ + ox * q.y_ - oy * q.x_;
-	s_ = s_ * q.s_ - (ox * q.x_ + oy * q.y_ + oz * q.z_);
-
-	return *this;
-}
-
-
-// The QuatD transformation routines use 19 multiplies and 12 adds
-// (counting the multiplications by 2.0).  See Eqn (20) of "A
-// Comparison of Transforms and Quaternions in Robotics," Funda and
-// Paul, Proceedings of International Conference on Robotics and
-// Automation, 1988, p. 886-991.
-
-Vect3d &QuatD::xform(const Vect3d &v, Vect3d &xv) const {
-	const Vect3d *u;
-	Vect3d uv, uuv;
-
-
-	u = (const Vect3d *) &x_;
-	uv.cross(*u, v);
-	uuv.cross(*u, uv);
-	uv.scale(2.0 * s_);
-	uuv.scale(2.0);
-	xv.add(v, uv);
-	xv.add(uuv);
-	return xv;
-}
-
-
-Vect3d &QuatD::xform(Vect3d &v) const {
-	const Vect3d *u;
-	Vect3d uv, uuv;
-
-	u = (const Vect3d *) &x_;
-	uv.cross(*u, v);
-	uuv.cross(*u, uv);
-	uv.scale(2.0 * s_);
-	uuv.scale(2.0);
-	v.add(uv);
-	v.add(uuv);
-	return v;
-}
-
-
-Vect3d &QuatD::invXform(const Vect3d &v, Vect3d &xv) const {
-	const Vect3d *u;
-	Vect3d uv, uuv;
-
-	u = (const Vect3d *) &x_;
-	uv.cross(*u, v);
-	uuv.cross(*u, uv);
-	uv.scale(2.0 * -s_);
-	uuv.scale(2.0);
-	xv.add(v, uv);
-	xv.add(uuv);
-	return xv;
-}
-
-
-Vect3d &QuatD::invXform(Vect3d &v) const {
-	const Vect3d *u;
-	Vect3d uv, uuv;
-
-	u = (const Vect3d *) &x_;
-	uv.cross(*u, v);
-	uuv.cross(*u, uv);
-	uv.scale(2.0 * -s_);
-	uuv.scale(2.0);
-	v.add(uv);
-	v.add(uuv);
-	return v;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-//
 //  class QuatF
 //
 ///////////////////////////////////////////////////////////////////////////////
@@ -938,7 +705,8 @@ QuatF &QuatF::set(float angle, const Vect3f &axis, int normalizeAxis) {
 	if (normalizeAxis) {
 		float n2;
 		if ((n2 = axis.norm2()) < FLT_EPS) {
-			*this = QuatD::ID;
+			x_ = y_ = z_ = 0;
+			s_ = 1;
 			return *this;
 		}
 		sine *= invSqrtFast(n2);
@@ -1120,18 +888,6 @@ Vect3f &QuatF::invXform(Vect3f &v) const {
 	v.add(uv);
 	v.add(uuv);
 	return v;
-}
-
-//////////////////////////////////////////////////////////////////////////////////
-//           QuatD definitions
-//////////////////////////////////////////////////////////////////////////////////
-QuatD Slerp(const QuatD &A, const QuatD &B, double t) {
-	double theta = acos(dot(A, B));
-	double sin_theta = sin(theta);
-	if (fabs(sin_theta) < DBL_EPS)
-		return A;
-	sin_theta = 1 / sin_theta;
-	return A * (sin(theta * (1 - t)) * sin_theta) + B * (sin(theta * t) * sin_theta);
 }
 
 void Mat3f::makeRotationZ() {
