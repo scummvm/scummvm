@@ -1268,12 +1268,12 @@ void Darkseed::Room::advanceLocAnimFrame(int roomObjIdx) {
 }
 
 bool Darkseed::Room::advanceFrame(int animIdx) {
-	bool frameAdvanced = false;
+	g_engine->_FrameAdvanced = false;
 	const Obt &anim = _locationSprites.getAnimAt(animIdx);
 	_ObjRestarted = false;
 	_locObjFrameTimer[animIdx]--;
 	if (_locObjFrameTimer[animIdx] < 1) {
-		frameAdvanced = true;
+		g_engine->_FrameAdvanced = true;
 		_locObjFrame[animIdx]++;
 		if (_locObjFrame[animIdx] == anim.numFrames) {
 			_locObjFrame[animIdx] = 0;
@@ -1281,7 +1281,7 @@ bool Darkseed::Room::advanceFrame(int animIdx) {
 		}
 		_locObjFrameTimer[animIdx] = anim.frameDuration[_locObjFrame[animIdx]];
 	}
-	return frameAdvanced;
+	return g_engine->_FrameAdvanced;
 }
 
 void Darkseed::Room::runAnim47() {
