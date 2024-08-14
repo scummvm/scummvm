@@ -27,8 +27,8 @@
 //	Define _XMATH_NO_IOSTREAM to disable iostream using
 //
 ///////////////////////////////////////////////////////////////////////////////
-#ifndef QDENGINE_UTIL_XMATH_H
-#define QDENGINE_UTIL_XMATH_H
+#ifndef QDENGINE_XMATH_H
+#define QDENGINE_XMATH_H
 
 #include "common/scummsys.h"
 
@@ -76,12 +76,6 @@ const float FLT_COMPARE_TOLERANCE = 1.e-5f;
 
 const int INT_INF = 0x7fffffff;
 
-#if _MSC_VER == 1100 /* if MSVisual C++ 5.0 */
-#define xm_inline inline
-#else
-#define xm_inline inline
-#endif //_MSC_VER
-
 inline float invSqrtFast(float x) {
 	x += 1e-7f; // Добавка, устраняющая деление на 0
 	float xhalf = 0.5f * x;
@@ -120,7 +114,7 @@ inline float cycleAngle(float a) {
 ///////////////////////////////////////////////////////////////////////////////
 
 template <class T>
-xm_inline T sqr(const T &x) {
+inline T sqr(const T &x) {
 	return x*x;
 }
 
@@ -137,70 +131,70 @@ class Vect2f {
 public:
 	float x, y;
 
-	xm_inline Vect2f()                              { }
-	xm_inline Vect2f(float x_, float y_)                 {
+	inline Vect2f()                              { }
+	inline Vect2f(float x_, float y_)                 {
 		x = x_;
 		y = y_;
 	}
 
 	typedef float float2[2];
-	xm_inline Vect2f(const float2 &v) {
+	inline Vect2f(const float2 &v) {
 		x = v[0];
 		y = v[1];
 	}
 
-	xm_inline Vect2f(const Vect2i &v);
-	xm_inline Vect2f(const Vect2s &v);
+	inline Vect2f(const Vect2i &v);
+	inline Vect2f(const Vect2s &v);
 
-	xm_inline Vect2f &set(float x_, float y_)           {
+	inline Vect2f &set(float x_, float y_)           {
 		x = x_;
 		y = y_;
 		return *this;
 	}
-	xm_inline Vect2f operator - () const                {
+	inline Vect2f operator - () const                {
 		return Vect2f(-x, -y);
 	}
 
-	xm_inline int xi() const {
+	inline int xi() const {
 		return round(x);
 	}
-	xm_inline int yi() const {
+	inline int yi() const {
 		return round(y);
 	}
 
-	xm_inline const float &operator[](int i) const          {
+	inline const float &operator[](int i) const          {
 		return *(&x + i);
 	}
-	xm_inline float &operator[](int i)                      {
+	inline float &operator[](int i)                      {
 		return *(&x + i);
 	}
 
-	xm_inline Vect2f &operator += (const Vect2f &v) {
+	inline Vect2f &operator += (const Vect2f &v) {
 		x += v.x;
 		y += v.y;
 		return *this;
 	}
-	xm_inline Vect2f &operator -= (const Vect2f &v) {
+	inline Vect2f &operator -= (const Vect2f &v) {
 		x -= v.x;
 		y -= v.y;
 		return *this;
 	}
-	xm_inline Vect2f &operator *= (const Vect2f &v) {
+	inline Vect2f &operator *= (const Vect2f &v) {
 		x *= v.x;
 		y *= v.y;
 		return *this;
 	}
-	xm_inline Vect2f &operator /= (const Vect2f &v) {
+	inline Vect2f &operator /= (const Vect2f &v) {
 		x /= v.x;
 		y /= v.y;
 		return *this;
 	}
-	xm_inline Vect2f &operator *= (float f)         {
+	inline Vect2f &operator *= (float f)         {
 		x *= f;
 		y *= f;
 		return *this;
 	}
-	xm_inline Vect2f &operator /= (float f)         {
+	inline Vect2f &operator /= (float f)         {
 		if (f != 0.f) f = 1 / f;
 		else f = 0.0001f;
 		x *= f;
@@ -208,71 +202,71 @@ public:
 		return *this;
 	}
 
-	xm_inline Vect2f operator + (const Vect2f &v) const     {
+	inline Vect2f operator + (const Vect2f &v) const     {
 		return Vect2f(*this) += v;
 	}
-	xm_inline Vect2f operator - (const Vect2f &v) const     {
+	inline Vect2f operator - (const Vect2f &v) const     {
 		return Vect2f(*this) -= v;
 	}
-	xm_inline Vect2f operator * (const Vect2f &v) const     {
+	inline Vect2f operator * (const Vect2f &v) const     {
 		return Vect2f(*this) *= v;
 	}
-	xm_inline Vect2f operator / (const Vect2f &v) const     {
+	inline Vect2f operator / (const Vect2f &v) const     {
 		return Vect2f(*this) /= v;
 	}
-	xm_inline Vect2f operator * (float f)   const       {
+	inline Vect2f operator * (float f)   const       {
 		return Vect2f(*this) *= f;
 	}
-	xm_inline Vect2f operator / (float f)   const       {
+	inline Vect2f operator / (float f)   const       {
 		return Vect2f(*this) /= f;
 	}
 
-	xm_inline bool eq(const Vect2f &v, float delta = FLT_COMPARE_TOLERANCE) const {
+	inline bool eq(const Vect2f &v, float delta = FLT_COMPARE_TOLERANCE) const {
 		return fabsf(v.x - x) < delta && fabsf(v.y - y) < delta;
 	}
 
-	xm_inline float dot(const Vect2f &v) const {
+	inline float dot(const Vect2f &v) const {
 		return x * v.x + y * v.y;
 	}
-	xm_inline friend float dot(const Vect2f &u, const Vect2f &v) {
+	inline friend float dot(const Vect2f &u, const Vect2f &v) {
 		return u.dot(v);
 	}
 
 	float angle(const Vect2f &other) const;
 
-	xm_inline float operator % (const Vect2f &v) const {
+	inline float operator % (const Vect2f &v) const {
 		return x * v.y - y * v.x;
 	}
 
-	xm_inline Vect2f &scaleAdd(const Vect2f &u, float lambda) {
+	inline Vect2f &scaleAdd(const Vect2f &u, float lambda) {
 		x += lambda * u.x;
 		y += lambda * u.y;
 		return *this;
 	}
 
-	xm_inline Vect2f &interpolate(const Vect2f &u, const Vect2f &v, float lambda); // (1-lambda)*u + lambda*v
+	inline Vect2f &interpolate(const Vect2f &u, const Vect2f &v, float lambda); // (1-lambda)*u + lambda*v
 
-	xm_inline float norm()  const                       {
+	inline float norm()  const                       {
 		return sqrtf(x * x + y * y);
 	}
-	xm_inline float norm2() const                       {
+	inline float norm2() const                       {
 		return x * x + y * y;
 	}
-	xm_inline Vect2f &normalize(float norma)                {
+	inline Vect2f &normalize(float norma)                {
 		float f = norma * invSqrtFast(x * x + y * y);
 		x *= f;
 		y *= f;
 		return *this;
 	}
-	xm_inline float distance(const Vect2f &v) const {
+	inline float distance(const Vect2f &v) const {
 		return sqrtf(distance2(v));
 	}
-	xm_inline float distance2(const Vect2f &v) const    {
+	inline float distance2(const Vect2f &v) const    {
 		float dx = x - v.x, dy = y - v.y;
 		return dx * dx + dy * dy;
 	}
 
-	xm_inline void swap(Vect2f &v)                  {
+	inline void swap(Vect2f &v)                  {
 		Vect2f tmp = v;
 		v = *this;
 		*this = tmp;
@@ -283,8 +277,6 @@ public:
 	friend ostream &operator<< (ostream &os, const Vect2f &v);
 	friend istream &operator>> (istream &is, Vect2f &v);
 #endif
-
-	static const Vect2f ZERO;
 };
 
 
@@ -298,140 +290,140 @@ class Vect2i {
 public:
 	int x, y;
 
-	xm_inline Vect2i()                              { }
-	xm_inline Vect2i(int x_, int y_)                        {
+	inline Vect2i()                              { }
+	inline Vect2i(int x_, int y_)                        {
 		x = x_;
 		y = y_;
 	}
-	xm_inline Vect2i(float x_, float y_)                    {
+	inline Vect2i(float x_, float y_)                    {
 		x = round(x_);
 		y = round(y_);
 	}
 
-	xm_inline Vect2i(const Vect2f &v)           {
+	inline Vect2i(const Vect2f &v)           {
 		x = round(v.x);
 		y = round(v.y);
 	}
-	xm_inline Vect2i(const Vect2s &v);
+	inline Vect2i(const Vect2s &v);
 
-	xm_inline void set(int x_, int y_)                  {
+	inline void set(int x_, int y_)                  {
 		x = x_;
 		y = y_;
 	}
-	xm_inline void set(float x_, float y_)              {
+	inline void set(float x_, float y_)              {
 		x = round(x_);
 		y = round(y_);
 	}
-	xm_inline Vect2i operator - () const                {
+	inline Vect2i operator - () const                {
 		return Vect2i(-x, -y);
 	}
 
-	xm_inline const int &operator[](int i) const            {
+	inline const int &operator[](int i) const            {
 		return *(&x + i);
 	}
-	xm_inline int &operator[](int i)                        {
+	inline int &operator[](int i)                        {
 		return *(&x + i);
 	}
 
-	xm_inline Vect2i &operator += (const Vect2i &v) {
+	inline Vect2i &operator += (const Vect2i &v) {
 		x += v.x;
 		y += v.y;
 		return *this;
 	}
-	xm_inline Vect2i &operator -= (const Vect2i &v) {
+	inline Vect2i &operator -= (const Vect2i &v) {
 		x -= v.x;
 		y -= v.y;
 		return *this;
 	}
-	xm_inline Vect2i &operator *= (const Vect2i &v) {
+	inline Vect2i &operator *= (const Vect2i &v) {
 		x *= v.x;
 		y *= v.y;
 		return *this;
 	}
-	xm_inline Vect2i &operator /= (const Vect2i &v) {
+	inline Vect2i &operator /= (const Vect2i &v) {
 		x /= v.x;
 		y /= v.y;
 		return *this;
 	}
 
-	xm_inline Vect2i operator + (const Vect2i &v) const     {
+	inline Vect2i operator + (const Vect2i &v) const     {
 		return Vect2i(*this) += v;
 	}
-	xm_inline Vect2i operator - (const Vect2i &v) const     {
+	inline Vect2i operator - (const Vect2i &v) const     {
 		return Vect2i(*this) -= v;
 	}
-	xm_inline Vect2i operator * (const Vect2i &v) const     {
+	inline Vect2i operator * (const Vect2i &v) const     {
 		return Vect2i(*this) *= v;
 	}
 
-	xm_inline Vect2i &operator *= (int f)               {
+	inline Vect2i &operator *= (int f)               {
 		x *= f;
 		y *= f;
 		return *this;
 	}
-	xm_inline Vect2i operator * (int f) const       {
+	inline Vect2i operator * (int f) const       {
 		return Vect2i(*this) *= f;
 	}
 
-	xm_inline Vect2i &operator >>= (int n)              {
+	inline Vect2i &operator >>= (int n)              {
 		x >>= n;
 		y >>= n;
 		return *this;
 	}
-	xm_inline Vect2i operator >> (int n) const      {
+	inline Vect2i operator >> (int n) const      {
 		return Vect2i(*this) >>= n;
 	}
 
-	xm_inline Vect2i &operator *= (float f)             {
+	inline Vect2i &operator *= (float f)             {
 		x = round(x * f);
 		y = round(y * f);
 		return *this;
 	}
-	xm_inline Vect2i &operator /= (float f)             {
+	inline Vect2i &operator /= (float f)             {
 		return *this *= 1.f / f;
 	}
-	xm_inline Vect2i operator * (float f) const         {
+	inline Vect2i operator * (float f) const         {
 		return Vect2i(*this) *= f;
 	}
-	xm_inline Vect2i operator / (float f) const         {
+	inline Vect2i operator / (float f) const         {
 		return Vect2i(*this) /= f;
 	}
 
-	xm_inline int dot(const Vect2i &v) const {
+	inline int dot(const Vect2i &v) const {
 		return x * v.x + y * v.y;
 	}
-	xm_inline friend int dot(const Vect2i &u, const Vect2i &v) {
+	inline friend int dot(const Vect2i &u, const Vect2i &v) {
 		return u.dot(v);
 	}
 
-	xm_inline int operator % (const Vect2i &v) const {
+	inline int operator % (const Vect2i &v) const {
 		return x * v.y - y * v.x;
 	}
 
-	xm_inline int norm() const                      {
+	inline int norm() const                      {
 		return round(sqrtf(float(x * x + y * y)));
 	}
-	xm_inline int norm2() const                     {
+	inline int norm2() const                     {
 		return x * x + y * y;
 	}
 
-	xm_inline void normalize(int norma)             {
+	inline void normalize(int norma)             {
 		float f = (float)norma * invSqrtFast((float)(x * x + y * y));
 		x = round(x * f);
 		y = round(y * f);
 	}
-	xm_inline int distance2(const Vect2i &v) const  {
+	inline int distance2(const Vect2i &v) const  {
 		return sqr(x - v.x) + sqr(y - v.y);
 	}
 
-	xm_inline int operator == (const Vect2i &v) const   {
+	inline int operator == (const Vect2i &v) const   {
 		return x == v.x && y == v.y;
 	}
-	xm_inline int operator != (const Vect2i &v) const   {
+	inline int operator != (const Vect2i &v) const   {
 		return x != v.x || y != v.y;
 	}
 
-	xm_inline void swap(Vect2i &v)                  {
+	inline void swap(Vect2i &v)                  {
 		Vect2i tmp = v;
 		v = *this;
 		*this = tmp;
@@ -442,9 +434,6 @@ public:
 	friend ostream &operator<< (ostream &os, const Vect2i &v);
 	friend istream &operator>> (istream &is, Vect2i &v);
 #endif
-
-	static const Vect2i ZERO;
-	static const Vect2i ID;
 };
 
 
@@ -458,104 +447,104 @@ class Vect2s {
 public:
 	int16 x, y;
 
-	xm_inline Vect2s()                                      { }
-	xm_inline Vect2s(int x_, int y_)                         {
+	inline Vect2s()                                      { }
+	inline Vect2s(int x_, int y_)                         {
 		x = x_;
 		y = y_;
 	}
 
-	xm_inline Vect2s(const Vect2f &v)           {
+	inline Vect2s(const Vect2f &v)           {
 		x = round(v.x);
 		y = round(v.y);
 	}
-	xm_inline Vect2s(const Vect2i &v)           {
+	inline Vect2s(const Vect2i &v)           {
 		x = v.x;
 		y = v.y;
 	}
 
-	xm_inline void set(int x_, int y_)                  {
+	inline void set(int x_, int y_)                  {
 		x = x_;
 		y = y_;
 	}
-	xm_inline Vect2s operator - () const                {
+	inline Vect2s operator - () const                {
 		return Vect2s(-x, -y);
 	}
 
-	xm_inline const int16 &operator[](int i) const          {
+	inline const int16 &operator[](int i) const          {
 		return *(&x + i);
 	}
-	xm_inline int16 &operator[](int i)                      {
+	inline int16 &operator[](int i)                      {
 		return *(&x + i);
 	}
 
-	xm_inline Vect2s &operator += (const Vect2s &v) {
+	inline Vect2s &operator += (const Vect2s &v) {
 		x += v.x;
 		y += v.y;
 		return *this;
 	}
-	xm_inline Vect2s &operator -= (const Vect2s &v) {
+	inline Vect2s &operator -= (const Vect2s &v) {
 		x -= v.x;
 		y -= v.y;
 		return *this;
 	}
-	xm_inline Vect2s &operator *= (const Vect2s &v) {
+	inline Vect2s &operator *= (const Vect2s &v) {
 		x *= v.x;
 		y *= v.y;
 		return *this;
 	}
-	xm_inline Vect2s &operator *= (float f)         {
+	inline Vect2s &operator *= (float f)         {
 		x = round(x * f);
 		y = round(y * f);
 		return *this;
 	}
-	xm_inline Vect2s &operator /= (float f)         {
+	inline Vect2s &operator /= (float f)         {
 		if (f != 0.f) f = 1 / f;
 		else f = 0.0001f;
 		x = round(x * f);
 		y = round(y * f);
 		return *this;
 	}
-	xm_inline Vect2s operator - (const Vect2s &v) const {
+	inline Vect2s operator - (const Vect2s &v) const {
 		return Vect2s(x - v.x, y - v.y);
 	}
-	xm_inline Vect2s operator + (const Vect2s &v) const {
+	inline Vect2s operator + (const Vect2s &v) const {
 		return Vect2s(x + v.x, y + v.y);
 	}
-	xm_inline Vect2s operator * (const Vect2s &v) const {
+	inline Vect2s operator * (const Vect2s &v) const {
 		return Vect2s(x * v.x, y * v.y);
 	}
-	xm_inline Vect2s operator * (float f) const             {
+	inline Vect2s operator * (float f) const             {
 		Vect2s tmp(round(x * f), round(y * f));
 		return tmp;
 	}
-	xm_inline Vect2s operator / (float f) const             {
+	inline Vect2s operator / (float f) const             {
 		if (f != 0.f) f = 1 / f;
 		else f = 0.0001f;
 		Vect2s tmp(round(x * f), round(y * f));
 		return tmp;
 	}
 
-	xm_inline int operator == (const Vect2s &v) const   {
+	inline int operator == (const Vect2s &v) const   {
 		return x == v.x && y == v.y;
 	}
 
-	xm_inline int norm() const                              {
+	inline int norm() const                              {
 		return round(sqrtf((float)(x * x + y * y)));
 	}
-	xm_inline int norm2() const                             {
+	inline int norm2() const                             {
 		return x * x + y * y;
 	}
-	xm_inline int distance(const Vect2s &v) const           {
+	inline int distance(const Vect2s &v) const           {
 		int dx = v.x - x, dy = v.y - y;
 		return round(sqrtf((float)(dx * dx + dy * dy)));
 	}
-	xm_inline void normalize(int norma)             {
+	inline void normalize(int norma)             {
 		float f = (float)norma * invSqrtFast((float)((int)x * x + (int)y * y));
 		x = round(x * f);
 		y = round(y * f);
 	}
 
-	xm_inline void swap(Vect2s &v)                  {
+	inline void swap(Vect2s &v)                  {
 		Vect2s tmp = v;
 		v = *this;
 		*this = tmp;
@@ -584,130 +573,130 @@ public:
 
 	// constructors //////////////////////////////////////////////////////////////
 
-	xm_inline Vect3f() {}
-	xm_inline Vect3f(float x_, float y_, float z_) {
+	inline Vect3f() {}
+	inline Vect3f(float x_, float y_, float z_) {
 		x = x_;
 		y = y_;
 		z = z_;
 	}
-	explicit xm_inline Vect3f(const Vect2f &v, float z_ = 0) {
+	explicit inline Vect3f(const Vect2f &v, float z_ = 0) {
 		x = v.x;
 		y = v.y;
 		z = z_;
 	}
 
-	xm_inline Vect3f(const float3 &v) {
+	inline Vect3f(const float3 &v) {
 		x = v[0];
 		y = v[1];
 		z = v[2];
 	}
 
-	xm_inline operator const Vect2f &() const {
+	inline operator const Vect2f &() const {
 		return *reinterpret_cast<const Vect2f *>(this);
 	}
 
 	// setters / accessors / translators /////////////////////////////////////////
 
-	xm_inline Vect3f &set(float x_, float y_, float z_) {
+	inline Vect3f &set(float x_, float y_, float z_) {
 		x = x_;
 		y = y_;
 		z = z_;
 		return *this;
 	}
-	//xm_inline Vect3f& set(const float3& v) {x = v[0]; y = v[1]; z = v[2]; return *this; }
+	//inline Vect3f& set(const float3& v) {x = v[0]; y = v[1]; z = v[2]; return *this; }
 
-	xm_inline Vect3f &setSpherical(float psi, float theta, float radius);
+	inline Vect3f &setSpherical(float psi, float theta, float radius);
 
 	// index-based access:  0=x, 1=y, 2=z.
-	xm_inline const float &operator[](int i) const {
+	inline const float &operator[](int i) const {
 		return *(&x + i);
 	}
-	xm_inline float &operator[](int i)       {
+	inline float &operator[](int i)       {
 		return *(&x + i);
 	}
 
 	// Fortran index-based access:  1=x, 2=y, 3=z.
-	xm_inline const float &operator()(int i) const {
+	inline const float &operator()(int i) const {
 		return *(&x + i - 1);
 	}
-	xm_inline float &operator()(int i)       {
+	inline float &operator()(int i)       {
 		return *(&x + i - 1);
 	}
 
 	// Convertion to int ///////
-	xm_inline int xi() const {
+	inline int xi() const {
 		return round(x);
 	}
-	xm_inline int yi() const {
+	inline int yi() const {
 		return round(y);
 	}
-	xm_inline int zi() const {
+	inline int zi() const {
 		return round(z);
 	}
 
 	//  Negate  ////////////////////////////////////
-	xm_inline Vect3f operator- () const;
-	xm_inline Vect3f &negate(const Vect3f &v);
-	xm_inline Vect3f &negate();
+	inline Vect3f operator- () const;
+	inline Vect3f &negate(const Vect3f &v);
+	inline Vect3f &negate();
 
 	//  Logical operations  ////////////////////////////////
-	xm_inline bool eq(const Vect3f &v, float delta = FLT_COMPARE_TOLERANCE) const;
+	inline bool eq(const Vect3f &v, float delta = FLT_COMPARE_TOLERANCE) const;
 
 	//  Addition and substruction  ////////////////////
-	xm_inline Vect3f &add(const Vect3f &u, const Vect3f &v);
-	xm_inline Vect3f &add(const Vect3f &v);
-	xm_inline Vect3f &sub(const Vect3f &u, const Vect3f &v);
-	xm_inline Vect3f &sub(const Vect3f &v);
-	xm_inline Vect3f &operator+= (const Vect3f &v) {
+	inline Vect3f &add(const Vect3f &u, const Vect3f &v);
+	inline Vect3f &add(const Vect3f &v);
+	inline Vect3f &sub(const Vect3f &u, const Vect3f &v);
+	inline Vect3f &sub(const Vect3f &v);
+	inline Vect3f &operator+= (const Vect3f &v) {
 		return add(v);
 	}
-	xm_inline Vect3f &operator-= (const Vect3f &v) {
+	inline Vect3f &operator-= (const Vect3f &v) {
 		return sub(v);
 	}
-	xm_inline Vect3f operator+ (const Vect3f &v) const {
+	inline Vect3f operator+ (const Vect3f &v) const {
 		Vect3f u;
 		return u.add(*this, v);
 	}
-	xm_inline Vect3f operator- (const Vect3f &v) const {
+	inline Vect3f operator- (const Vect3f &v) const {
 		Vect3f u;
 		return u.sub(*this, v);
 	}
 
 	// Component-wise multiplication and division  ////////////////
-	xm_inline Vect3f &mult(const Vect3f &u, const Vect3f &v);
-	xm_inline Vect3f &mult(const Vect3f &v);
-	xm_inline Vect3f &div(const Vect3f &u, const Vect3f &v);
-	xm_inline Vect3f &div(const Vect3f &v);
-	xm_inline Vect3f &operator*= (const Vect3f &v) {
+	inline Vect3f &mult(const Vect3f &u, const Vect3f &v);
+	inline Vect3f &mult(const Vect3f &v);
+	inline Vect3f &div(const Vect3f &u, const Vect3f &v);
+	inline Vect3f &div(const Vect3f &v);
+	inline Vect3f &operator*= (const Vect3f &v) {
 		return mult(v);
 	}
-	xm_inline Vect3f &operator/= (const Vect3f &v) {
+	inline Vect3f &operator/= (const Vect3f &v) {
 		return div(v);
 	}
-	xm_inline Vect3f operator* (const Vect3f &v) const {
+	inline Vect3f operator* (const Vect3f &v) const {
 		Vect3f u;
 		return u.mult(*this, v);
 	}
-	xm_inline Vect3f operator/ (const Vect3f &v) const {
+	inline Vect3f operator/ (const Vect3f &v) const {
 		Vect3f u;
 		return u.div(*this, v);
 	}
 
 	//  Cross product  //////////////////////
-	xm_inline Vect3f &cross(const Vect3f &u, const Vect3f &v);// u x v  [!]
-	xm_inline Vect3f &precross(const Vect3f &v);      // v x this  [!]
-	xm_inline Vect3f &postcross(const Vect3f &v);     // this x v  [!]
-	xm_inline Vect3f &operator%= (const Vect3f &v) {
+	inline Vect3f &cross(const Vect3f &u, const Vect3f &v);// u x v  [!]
+	inline Vect3f &precross(const Vect3f &v);      // v x this  [!]
+	inline Vect3f &postcross(const Vect3f &v);     // this x v  [!]
+	inline Vect3f &operator%= (const Vect3f &v) {
 		return postcross(v);    // this x v  [!]
 	}
-	xm_inline Vect3f operator% (const Vect3f &v) const {
+	inline Vect3f operator% (const Vect3f &v) const {
 		Vect3f u;
 		return u.cross(*this, v);
 	}
 
 	//  Dot product  //////////////////////
-	xm_inline float dot(const Vect3f &other) const;
-	xm_inline friend float dot(const Vect3f &u, const Vect3f &v) {
+	inline float dot(const Vect3f &other) const;
+	inline friend float dot(const Vect3f &u, const Vect3f &v) {
 		return u.dot(v);
 	}
 
@@ -715,54 +704,54 @@ public:
 	float angle(const Vect3f &other) const;
 
 	// Multiplication & division by scalar ///////////
-	xm_inline Vect3f &scale(const Vect3f &v, float s);
-	xm_inline Vect3f &scale(float s);
+	inline Vect3f &scale(const Vect3f &v, float s);
+	inline Vect3f &scale(float s);
 
-	xm_inline Vect3f &operator*= (float s) {
+	inline Vect3f &operator*= (float s) {
 		return scale(s);
 	}
-	xm_inline Vect3f &operator/= (float s) {
+	inline Vect3f &operator/= (float s) {
 		return scale(1 / s);
 	}
-	xm_inline Vect3f operator* (float s) const {
+	inline Vect3f operator* (float s) const {
 		Vect3f u;
 		return u.scale(*this, s);
 	}
-	xm_inline Vect3f operator/ (float s) const {
+	inline Vect3f operator/ (float s) const {
 		Vect3f u;
 		return u.scale(*this, 1 / s);
 	}
-	xm_inline friend Vect3f operator* (float s, const Vect3f &v) {
+	inline friend Vect3f operator* (float s, const Vect3f &v) {
 		Vect3f u;
 		return u.scale(v, s);
 	}
 
 	//  Normalize  ///////////////////////////
-	xm_inline Vect3f &normalize(float r = 1.0f);
-	xm_inline Vect3f &normalize(const Vect3f &v, float r = 1.0f);
+	inline Vect3f &normalize(float r = 1.0f);
+	inline Vect3f &normalize(const Vect3f &v, float r = 1.0f);
 
 	//  Operation returning scalar  ////////////
-	xm_inline float norm()  const;
-	xm_inline float norm2() const;  // norm^2
-	xm_inline float distance(const Vect3f &other) const;
-	xm_inline float distance2(const Vect3f &other) const;  // distance^2
+	inline float norm()  const;
+	inline float norm2() const;  // norm^2
+	inline float distance(const Vect3f &other) const;
+	inline float distance2(const Vect3f &other) const;  // distance^2
 
-	xm_inline float psi() const;
-	xm_inline float theta() const;
+	inline float psi() const;
+	inline float theta() const;
 
-	xm_inline float min() const;
-	xm_inline float max() const;
-	xm_inline float minAbs() const;
-	xm_inline float maxAbs() const;
-	xm_inline float sumAbs() const;  // |x| + |y| + |z|
+	inline float min() const;
+	inline float max() const;
+	inline float minAbs() const;
+	inline float maxAbs() const;
+	inline float sumAbs() const;  // |x| + |y| + |z|
 
 
 	//  Composite functions  ////////////////////////////////
-	xm_inline Vect3f &crossAdd(const Vect3f &u, const Vect3f &v, const Vect3f &w); // u x v + w [!]  this must be distinct from u and v, but not necessarily from w.
-	xm_inline Vect3f &crossAdd(const Vect3f &u, const Vect3f &v); // u x v + this [!]
-	xm_inline Vect3f &scaleAdd(const Vect3f &v, const Vect3f &u, float lambda); // v + lambda * u
-	xm_inline Vect3f &scaleAdd(const Vect3f &u, float lambda);// this + lambda * u
-	xm_inline Vect3f &interpolate(const Vect3f &u, const Vect3f &v, float lambda); // (1-lambda)*u + lambda*v
+	inline Vect3f &crossAdd(const Vect3f &u, const Vect3f &v, const Vect3f &w); // u x v + w [!]  this must be distinct from u and v, but not necessarily from w.
+	inline Vect3f &crossAdd(const Vect3f &u, const Vect3f &v); // u x v + this [!]
+	inline Vect3f &scaleAdd(const Vect3f &v, const Vect3f &u, float lambda); // v + lambda * u
+	inline Vect3f &scaleAdd(const Vect3f &u, float lambda);// this + lambda * u
+	inline Vect3f &interpolate(const Vect3f &u, const Vect3f &v, float lambda); // (1-lambda)*u + lambda*v
 
 	//    I/O operations    //////////////////////////////////////
 #ifdef _XMATH_USE_IOSTREAM
@@ -771,8 +760,8 @@ public:
 #endif
 
 	//  Swap  /////////////////////////
-	xm_inline void swap(Vect3f &other);
-	xm_inline friend void swap(Vect3f &u, Vect3f &v) {
+	inline void swap(Vect3f &other);
+	inline friend void swap(Vect3f &u, Vect3f &v) {
 		u.swap(v);
 	}
 
@@ -780,14 +769,6 @@ public:
 	// Vect3f constants ///////////////////////////////////////////////////////////
 
 	static const Vect3f ZERO;
-	static const Vect3f ID;
-	static const Vect3f I;     // unit vector along +x axis
-	static const Vect3f J;     // unit vector along +y axis
-	static const Vect3f K;     // unit vector along +z axis
-	static const Vect3f I_;    // unit vector along -x axis
-	static const Vect3f J_;    // unit vector along -y axis
-	static const Vect3f K_;    // unit vector along -z axis
-
 };
 
 
@@ -797,7 +778,7 @@ public:
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  Decomposition  ////////////////////////////////
-xm_inline void decomposition(const Vect3f &axis, const Vect3f &v, Vect3f &v_normal, Vect3f &v_tangent) {
+inline void decomposition(const Vect3f &axis, const Vect3f &v, Vect3f &v_normal, Vect3f &v_tangent) {
 	// axis - axis of decomposition, v_normal - collinear to axis, v_tangent - perpendicular to axis
 	v_normal.scale(axis, dot(axis, v) / ((axis).norm2()));
 	v_tangent.sub(v, v_normal);
@@ -818,15 +799,15 @@ xm_inline void decomposition(const Vect3f &axis, const Vect3f &v, Vect3f &v_norm
 //		Vect2 definitions
 //
 ///////////////////////////////////////////////////////////////////////////////
-xm_inline Vect2i::Vect2i(const Vect2s &v)   {
+inline Vect2i::Vect2i(const Vect2s &v)   {
 	x = v.x;
 	y = v.y;
 }
-xm_inline Vect2f::Vect2f(const Vect2i &v)   {
+inline Vect2f::Vect2f(const Vect2i &v)   {
 	x = float(v.x);
 	y = float(v.y);
 }
-xm_inline Vect2f::Vect2f(const Vect2s &v)   {
+inline Vect2f::Vect2f(const Vect2s &v)   {
 	x = v.x;
 	y = v.y;
 }
@@ -841,13 +822,13 @@ Vect2f &Vect2f::interpolate(const Vect2f &u, const Vect2f &v, float lambda) {
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-//		Vect3f xm_inline definitions
+//		Vect3f inline definitions
 //
 ///////////////////////////////////////////////////////////////////////////////
 
 //  Dot product  //////////////////////
-//xm_inline double dot(const Vect3d& u, const Vect3f& v) { return u.dot(v); }
-//xm_inline float dot(const Vect3f& u, const Vect3d& v) { return u.dot(v); }
+//inline double dot(const Vect3d& u, const Vect3f& v) { return u.dot(v); }
+//inline float dot(const Vect3f& u, const Vect3d& v) { return u.dot(v); }
 
 bool Vect3f::eq(const Vect3f &other, float delta) const {
 	return fabs(x - other.x) < delta &&
@@ -1193,12 +1174,6 @@ inline istream &operator>>(istream &is, Vect3f &v) {
 
 #endif  // _XMATH_NO_IOSTREAM
 
-//#ifdef _DEBUG
-//#pragma comment(lib,"XMathD.lib")
-//#else
-//#pragma comment(lib,"XMath.lib")
-//#endif
-
 } // namespace QDEngine
 
-#endif // QDENGINE_UTIL_XMATH_H
+#endif // QDENGINE_XMATH_H
