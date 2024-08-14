@@ -52,6 +52,7 @@ void Darkseed::Inventory::removeItem(uint8 item) {
 				_inventory[j] = _inventory[j+1];
 			}
 			_inventoryLength--;
+			update();
 			break;
 		}
 	}

@@ -53,7 +53,11 @@ bool Darkseed::Sprite::loadData(Common::SeekableReadStream &readStream) {
 }
 
 void Darkseed::Sprite::draw(int x, int y) const {
-	g_engine->_screen->copyRectToSurfaceWithKey(pixels.data(), pitch, x, y, width, height, 0xf);
+	uint16 clippedWidth = width;
+	if (x + width > g_engine->_screen->w) {
+		clippedWidth = g_engine->_screen->w - x;
+	}
+	g_engine->_screen->copyRectToSurfaceWithKey(pixels.data(), pitch, x, y, clippedWidth, height, 0xf);
 }
 
 void Darkseed::Sprite::drawScaled(int destX, int destY, int destWidth, int destHeight, bool flipX) const {

@@ -3356,20 +3356,146 @@ void DarkseedEngine::runObjects() {
 		playSound(10,5,-1);
 	}
 
+	int16 delbertSpriteIdx = 0;
 	if (_objectVar[141] == 8 && _room->_roomNumber == 31) {
-
+		// Fido brings back stick after player gives delbert the scotch.
+		_player->_herowaiting = true;
+		if (_objectVar[45] == 3) {
+			_room->loadLocationSprites("deldrink.nsp");
+			_objectVar[141] = 9;
+			_room->_locObjFrame[0] = 0;
+			_room->_locObjFrameTimer[0] = 2;
+			delbertSpriteIdx = _room->_locationSprites.getAnimAt(0).frameNo[_room->_locObjFrame[0]];
+		} else {
+			delbertSpriteIdx = _room->_locationSprites.getAnimAt(0).frameNo[_room->_locObjFrame[0]];
+			if (delbertSpriteIdx != 9) {
+				_room->advanceFrame(0);
+				delbertSpriteIdx = _room->_locationSprites.getAnimAt(0).frameNo[_room->_locObjFrame[0]];
+				delthrowstick(delbertSpriteIdx);
+			}
+			if (_objectVar[141] == 8) {
+				const Sprite &sprite = _room->_locationSprites.getSpriteAt(delbertSpriteIdx);
+				delthrowstick(delbertSpriteIdx);
+				g_engine->_sprites.addSpriteToDrawList(145, 140, &sprite, 240 - (sprite.height + 140), sprite.width, sprite.height, false);
+			}
+		}
 	}
 	if (_objectVar[141] == 9) {
-
+		// delbert drinks scotch
+		_room->advanceFrame(0);
+		delbertSpriteIdx = _room->_locationSprites.getAnimAt(0).frameNo[_room->_locObjFrame[0]];
+		if (_FrameAdvanced && delbertSpriteIdx == 5) {
+			playSound(32, 5, -1);
+		}
+		if (_room->_ObjRestarted) {
+			_objectVar[141] = 10;
+			_console->printTosText(910);
+			_inventory.removeItem(7);
+		}
+		Common::Point delbertPos = {125, 140};
+		_objectVar.setMoveObjectPosition(141, delbertPos);
+		if (_objectVar[141] == 9) {
+			const Sprite &sprite = _room->_locationSprites.getSpriteAt(delbertSpriteIdx);
+			g_engine->_sprites.addSpriteToDrawList(125, 140, &sprite, 240 - (sprite.height + 140), sprite.width, sprite.height, false);
+		}
 	}
 	if (_objectVar[141] == 10 && _room->_roomNumber == 31) {
-
+		// delbert walks off screen.
+		_room->advanceFrame(1);
+		delbertSpriteIdx = _room->_locationSprites.getAnimAt(1).frameNo[_room->_locObjFrame[1]];
+		Common::Point delbertPos = _objectVar.getMoveObjectPosition(141);
+		if (_FrameAdvanced) {
+			delbertPos.x += 10;
+			_objectVar.setMoveObjectPosition(141, delbertPos);
+		}
+		if (delbertPos.x < 560) {
+			const Sprite &sprite = _room->_locationSprites.getSpriteAt(delbertSpriteIdx);
+			g_engine->_sprites.addSpriteToDrawList(delbertPos.x, 140, &sprite, 240 - (sprite.height + 140), sprite.width, sprite.height, false);
+			_room->updateRoomObj(141,delbertPos.x,sprite.width,140,sprite.height);
+		} else {
+			_objectVar[141] = 11;
+			_room->removeObjectFromRoom(141);
+			_player->_herowaiting = false;
+		}
 	}
 	if (_objectVar[141] == 7 && _room->_roomNumber == 31) {
-
+		_room->advanceFrame(0);
+		delbertSpriteIdx = _room->_locationSprites.getAnimAt(0).frameNo[_room->_locObjFrame[0]];
+		const Sprite &sprite = _room->_locationSprites.getSpriteAt(delbertSpriteIdx);
+		delthrowstick(delbertSpriteIdx);
+		g_engine->_sprites.addSpriteToDrawList(145, 140, &sprite, 240 - (sprite.height + 140), sprite.width, sprite.height, false);
+		_room->updateRoomObj(141,145,sprite.width,140,sprite.height);
 	}
 	if ((_objectVar[141] == 7 || _objectVar[141] == 8) && _room->_roomNumber == 31) {
-
+		if (delbertSpriteIdx > 7 && _objectVar[45] == 0) {
+			Common::Point stickPosition = _objectVar.getMoveObjectPosition(19);
+			if (stickPosition.y < 205 && _yvec != 100) {
+				stickPosition.x += 12;
+				stickPosition.y += _yvec;
+				_objectVar.setMoveObjectPosition(19, stickPosition);
+				_yvec++;
+			}
+			if (stickPosition.y > 205) {
+				stickPosition = {495, 205};
+				_objectVar.setMoveObjectPosition(19, stickPosition);
+				_yvec = 100;
+			}
+		}
+		if (_objectVar[45] < 3 && _room->_roomNumber == 31 && _objectVar[141] > 6) {
+			_objectVar.setMoveObjectRoom(19, 100);
+			_room->advanceFrame(_objectVar[45] + 1);
+			Common::Point stickPosition = _objectVar.getMoveObjectPosition(19);
+			if (_room->_ObjRestarted && _objectVar[45] < 2) {
+				_objectVar[45] = (_objectVar[45] == 0) ? 1 : 0;
+				if (_objectVar[45] == 0) {
+					stickPosition = {230, 205};
+				} else {
+					stickPosition.x = 1000;
+				}
+				_objectVar.setMoveObjectPosition(19, stickPosition);
+			}
+			if (stickPosition.x < 1000) {
+				const Sprite &stickSprite = _baseSprites.getSpriteAt(19);
+				g_engine->_sprites.addSpriteToDrawList(stickPosition.x, stickPosition.y, &stickSprite, 255, stickSprite.width, stickSprite.height, false);
+			}
+			Common::Point fidoPosition = _objectVar.getMoveObjectPosition(45);
+			int16 fidoSpriteIdx = _room->_locationSprites.getAnimAt(_objectVar[45] + 1).frameNo[_room->_locObjFrame[_objectVar[45] + 1]];
+			if (_FrameAdvanced) {
+				if (_objectVar[45] == 2) {
+					fidoPosition.x += 30;
+					_objectVar.setMoveObjectPosition(45, fidoPosition);
+					if (fidoPosition.x > 564) {
+						_objectVar.setMoveObjectRoom(19, 31);
+						_objectVar[45]++;
+					}
+				} else if (_objectVar[45] == 0) {
+					if (fidoSpriteIdx > 11 && fidoSpriteIdx < 18) {
+						fidoPosition.x += 30;
+						_objectVar.setMoveObjectPosition(45, fidoPosition);
+					}
+				} else if (fidoSpriteIdx > 19 && fidoSpriteIdx < 26) {
+					fidoPosition.x -= 30;
+					_objectVar.setMoveObjectPosition(45, fidoPosition);
+				}
+			}
+			if (_objectVar[45] < 3) {
+				bool flipFidoSprite = false;
+				if ((_objectVar[45] == 0) && (_room->_locObjFrame[1] < 6)) {
+					flipFidoSprite = true;
+				}
+				if ((_objectVar[45]== 1) && (7 < _room->_locObjFrame[2])) {
+					flipFidoSprite = true;
+				}
+				if (((_objectVar[45] == 1) && (_room->_locObjFrame[2] == 9)) && (_objectVar[141] ==  8)
+				) {
+					stickPosition = {230, 205};
+					_objectVar.setMoveObjectPosition(19, stickPosition);
+					_objectVar[45] = 2;
+				}
+				const Sprite &fidoSprite = _room->_locationSprites.getSpriteAt(fidoSpriteIdx);
+				g_engine->_sprites.addSpriteToDrawList(fidoPosition.x, 173, &fidoSprite, 240 - (fidoSprite.height + 173), fidoSprite.width, fidoSprite.height, flipFidoSprite);
+			}
+		}
 	}
 	if (_objectVar[141] > 0 && _objectVar[141] < 4) {
 		_player->_herowaiting = true;
@@ -3434,6 +3560,7 @@ void DarkseedEngine::runObjects() {
 		}
 	}
 	if (_room->_roomNumber == 32 && _currentDay == 2 && _currentTimeInSeconds > 64799 && (_objectVar[141] == 5 || _objectVar[141] == 6)) {
+		// walk delbert off into garden.
 		_room->advanceFrame(_objectVar[141] - 4);
 		if (_room->_ObjRestarted) {
 			_objectVar[141]++;
@@ -3441,7 +3568,15 @@ void DarkseedEngine::runObjects() {
 				_player->_herowaiting = false;
 			}
 		}
-		// TODO more logic here.
+		Common::Point delbertPosition = _objectVar.getMoveObjectPosition(141);
+		const Sprite &sprite = _room->_locationSprites.getSpriteAt(_room->_locationSprites.getAnimAt(_objectVar[141] - 4).frameNo[_room->_locObjFrame[_objectVar[141] - 4]]);
+		if (_FrameAdvanced && _objectVar[141] > 5) {
+			delbertPosition.x += 8;
+			_objectVar.setMoveObjectX(141, delbertPosition.x);
+		}
+		if (_objectVar[141] != 7) {
+			g_engine->_sprites.addSpriteToDrawList(delbertPosition.x, 135, &sprite, 240 - (sprite.height + 132), sprite.width, sprite.height, false);
+		}
 	}
 	if (_room->_roomNumber == 32 && _currentDay == 2 && _currentTimeInSeconds > 64799 && _objectVar[141] == 4) {
 		_objectVar.setMoveObjectX(141, 395);
@@ -3522,12 +3657,39 @@ void DarkseedEngine::runObjects() {
 }
 
 void DarkseedEngine::moveplayertodelbert() {
-	//TODO
+	if (_room->_roomNumber == 32 && !isPlayingAnimation_maybe) {
+		_player->_herowaiting = true;
+		if (!_player->_heroMoving && _player->_position.x != 364 && _player->_position.y != 198) {
+			Common::Point oldCursor = g_engine->_cursor.getPosition();
+			Common::Point newTarget = {364,198};
+			g_engine->_cursor.setPosition(newTarget);
+			_player->calculateWalkTarget();
+			g_engine->_cursor.setPosition(oldCursor);
+			_player->playerFaceWalkTarget();
+		}
+		if (_player->_position.x == 364 && _player->_position.y == 198 && !_player->_playerIsChangingDirection && _player->_direction != 1) {
+			_player->changeDirection(_player->_direction, 1);
+			_player->_walkTarget = _player->_position;
+			_player->_heroMoving = false;
+		}
+	}
 }
 
 void DarkseedEngine::rundrekethsequence() {
 	// TODO
 	error("implement rundrekethsequence()");
+}
+
+void DarkseedEngine::delthrowstick(int16 spriteNum) {
+	if (_FrameAdvanced && spriteNum == 8) {
+		Common::Point stickPos = {265, 150};
+		_objectVar.setMoveObjectPosition(19, stickPos);
+		_yvec = -6;
+		playSound(3, 1, -1);
+	}
+	if (_room->_locObjFrame[0] == 2) {
+		_objectVar.setMoveObjectX(19, 1000);
+	}
 }
 
 } // End of namespace Darkseed
