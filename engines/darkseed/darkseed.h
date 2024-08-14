@@ -66,12 +66,13 @@ private:
 	Pic *_fullscreenPic = nullptr;
 	bool _timeAdvanceEventSelected = false;
 	uint8 _delbertspeech = 0;
-	bool _FrameAdvanced = false;
+
 
 protected:
 	// Engine APIs
 	Common::Error run() override;
 public:
+	bool _FrameAdvanced = false;
 	bool _ct_voice_status = false;
 	bool _isRightMouseClicked = false;
 	bool _isLeftMouseClicked = false;
@@ -161,11 +162,11 @@ public:
 	};
 
 	bool canLoadGameStateCurrently(Common::U32String *msg) override {
-		return !isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed;
+		return !isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_herowaiting;
 	}
 
 	bool canSaveGameStateCurrently(Common::U32String *msg) override {
-		return !isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed;
+		return !isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_herowaiting;
 	}
 
 	/**
@@ -238,6 +239,8 @@ private:
 	void playDayChangeCutscene();
 	void closeShops();
 	void initDelbertAtSide();
+	void moveplayertodelbert();
+	void rundrekethsequence();
 };
 
 extern DarkseedEngine *g_engine;

@@ -243,7 +243,7 @@ void DarkseedEngine::gameloop() {
 			if (_currentDay == 1 && _currentTimeInSeconds == 64800 && _room->_roomNumber != 16) {
 				_objectVar.setMoveObjectRoom(7, 253); // remove scotch from shop.
 			}
-			if (_timeAdvanceEventSelected && _currentTimeInSeconds < 79200 && !isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed) { // TODO && !heroWaiting
+			if (_timeAdvanceEventSelected && _currentTimeInSeconds < 79200 && !isPlayingAnimation_maybe && !_player->_isAutoWalkingToBed && !_player->_herowaiting) {
 				_timeAdvanceEventSelected = false;
 				if (((_room->_roomNumber == 30) || ((0 < _objectVar[141] && (_objectVar[141] < 4)))) ||
 					(((_room->_roomNumber == 31 || (_room->_roomNumber == 32)) &&
@@ -3433,7 +3433,101 @@ void DarkseedEngine::runObjects() {
 			g_engine->_sprites.addSpriteToDrawList(spriteX, spriteY, &sprite, 240 - delbertPosition.y, sprite.width, sprite.height, _objectVar[141] == 3 ? true : false);
 		}
 	}
+	if (_room->_roomNumber == 32 && _currentDay == 2 && _currentTimeInSeconds > 64799 && (_objectVar[141] == 5 || _objectVar[141] == 6)) {
+		_room->advanceFrame(_objectVar[141] - 4);
+		if (_room->_ObjRestarted) {
+			_objectVar[141]++;
+			if (_objectVar[141] == 7) {
+				_player->_herowaiting = false;
+			}
+		}
+		// TODO more logic here.
+	}
+	if (_room->_roomNumber == 32 && _currentDay == 2 && _currentTimeInSeconds > 64799 && _objectVar[141] == 4) {
+		_objectVar.setMoveObjectX(141, 395);
+		const Sprite &sprite = _room->_locationSprites.getSpriteAt(0);
+		g_engine->_sprites.addSpriteToDrawList(395, 132, &sprite, 240 - (sprite.height + 132), sprite.width, sprite.height, false);
+		moveplayertodelbert();
+		if (!_player->_playerIsChangingDirection && !_player->_heroMoving) {
+			_console->printTosText(909);
+			_objectVar[141]++;
+			_player->_herowaiting = true;
+		}
+	}
+	if (_room->_roomNumber == 32 && _currentDay == 2 && _objectVar[141] == 12) {
+		Common::Point delbertPosition = _objectVar.getMoveObjectPosition(141);
+		if(_room->advanceFrame(2)) {
+			delbertPosition.x -= 8;
+			_objectVar.setMoveObjectX(141, delbertPosition.x);
+		}
+		const Sprite &sprite = _room->_locationSprites.getSpriteAt(_room->_locationSprites.getAnimAt(2).frameNo[_room->_locObjFrame[2]]);
+		g_engine->_sprites.addSpriteToDrawList(delbertPosition.x, 135, &sprite, 240 - (sprite.height + 135), sprite.width, sprite.height, true);
+		if (delbertPosition.x < 396) {
+			_room->_locObjFrameTimer[2] = _room->_locationSprites.getAnimAt(2).frameDuration[_room->_locObjFrame[2]];
+			_room->_locObjFrame[2] = 0;
+			_objectVar[141] = 4;
+		}
+		moveplayertodelbert();
+	}
+	if (_objectVar.getObjectRunningCode(72) == 1 &&
+		(_room->_roomNumber < 10 || _room->_roomNumber == 60 || _room->_roomNumber == 61)) {
+		_objectVar.setObjectRunningCode(72, 2);
+		_console->printTosText(933);
+	}
+	// jail sargent
+	if (_room->_roomNumber == 30 && (_objectVar.getObjectRunningCode(53) == 1 || _objectVar.getObjectRunningCode(53) == 2)
+			  && (otherNspAnimationType_maybe != 40 || !isPlayingAnimation_maybe)) {
+		if (_objectVar.getObjectRunningCode(53) == 1) {
+			int oldFrame = animIndexTbl[0];
+			nextFrame(0);
+			if (isAnimFinished_maybe) {
+				_objectVar.setObjectRunningCode(53, 2);
+				animIndexTbl[0] = oldFrame;
+			}
+		}
+		_room->removeObjectFromRoom(189);
+		const Sprite &sprite = _player->_animations.getSpriteAt(_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]);
+		g_engine->_sprites.addSpriteToDrawList(463, 99, &sprite, 255, sprite.width, sprite.height, false);
+		_room->updateRoomObj(64,467,200,99,200);
+	}
+	if ((((!isPlayingAnimation_maybe || otherNspAnimationType_maybe != 39) && _room->_roomNumber == 10) &&
+		 _objectVar.getObjectRunningCode(72) != 0) &&
+		((_currentDay == 3 && _currentTimeInSeconds > 39600 && _objectVar[57] == 0) ||
+		  _objectVar[88] != 0)) {
+		if (_player->_position.x == 322 && _player->_position.y == 226) {
+			setupOtherNspAnimation(1, 39);
+		} else {
+			// TODO
+		}
+	}
+	if (_objectVar[79] == 0 && _room->_roomNumber == 53) { // evil fido
+		if (_player->_heroMoving && _player->_walkTarget.x > 279 && _player->_walkTarget.y < 220) {
+//			_player->_CurrentConnector = 255; TODO do we need this?
+			_player->_walkTarget = {323, 202};
+		}
+		if (_player->_position.x == 323 && _player->_position.y == 202) {
+			_objectVar[79] = 4;
+			playSound(20, 5, -1);
+		}
+	}
+	if (((_objectVar.getObjectRunningCode(58) != 0) && (_objectVar[21] == 0)) && (_room->_roomNumber == 55)) {
+		if (_player->_position.x == 369) {
+			rundrekethsequence();
+		}
+		if (_player->_heroMoving && _player->_walkTarget.x > 309) {
+			_player->_walkTarget = {369, 219};
+		}
+	}
 	// TODO more logic here.
+}
+
+void DarkseedEngine::moveplayertodelbert() {
+	//TODO
+}
+
+void DarkseedEngine::rundrekethsequence() {
+	// TODO
+	error("implement rundrekethsequence()");
 }
 
 } // End of namespace Darkseed
