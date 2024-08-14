@@ -106,6 +106,7 @@ const char *BladeRunnerEngine::kCommonKeymapId = "bladerunner-common";
 BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *desc)
 	: Engine(syst),
 	  _rnd("bladerunner") {
+	_newGameRandomSeed = _rnd.getSeed();
 
 	_windowIsActive     = true;
 	_gameIsRunning      = true;
@@ -2811,8 +2812,9 @@ void BladeRunnerEngine::newGame(int difficulty) {
 	// Set a (new) seed for randomness when starting a new game.
 	// This also makes sure that if there's a custom random seed set in ScummVM's configuration,
 	// that's the one that will be used.
-	_rnd.setSeed(Common::RandomSource::generateNewSeed());
-	//debug("Random seed for the New Game is: %u", _rnd.getSeed());
+	_newGameRandomSeed = Common::RandomSource::generateNewSeed();
+	_rnd.setSeed(_newGameRandomSeed );
+	//debug("Random seed for the New Game is: %u", _newGameRandomSeed );
 
 	_settings->reset();
 	_combat->reset();

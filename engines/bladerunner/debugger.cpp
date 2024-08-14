@@ -145,6 +145,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	registerCmd("outtake", WRAP_METHOD(Debugger, cmdOuttake));
 	registerCmd("playvqa", WRAP_METHOD(Debugger, cmdPlayVqa));
 	registerCmd("ammo", WRAP_METHOD(Debugger, cmdAmmo));
+	registerCmd("cheat", WRAP_METHOD(Debugger, cmdCheatReport));
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	registerCmd("effect", WRAP_METHOD(Debugger, cmdEffect));
@@ -3259,6 +3260,72 @@ bool Debugger::cmdAmmo(int argc, const char** argv) {
 		debugPrintf("Usage 2: %s <ammoType>\n", argv[0]);
 		debugPrintf("Usage 3: %s <ammo type> <ammo amount to add>\n", argv[0]);
 	}
+	return true;
+}
+
+bool Debugger::cmdCheatReport(int argc, const char** argv) {
+	bool invalidSyntax = false;
+	if (argc == 1) {
+		debugPrintf("---\nNote: Currently playing in %s mode.\n---\n", getDifficultyDescription(_vm->_settings->getDifficulty()).c_str());
+		debugPrintf("Izo is ");
+		if ( _vm->_gameFlags->query(kFlagIzoIsReplicant)) {
+			debugPrintf("a Replicant\n");
+		} else {
+			debugPrintf("Human\n");
+		}
+
+		debugPrintf("Gordo is ");
+		if ( _vm->_gameFlags->query(kFlagGordoIsReplicant)) {
+			debugPrintf("a Replicant\n");
+		} else {
+			debugPrintf("Human\n");
+		}
+
+		debugPrintf("Lucy is ");
+		if ( _vm->_gameFlags->query(kFlagLucyIsReplicant)) {
+			debugPrintf("a Replicant\n");
+		} else {
+			debugPrintf("Human\n");
+		}
+
+		debugPrintf("Dektora is ");
+		if ( _vm->_gameFlags->query(kFlagDektoraIsReplicant)) {
+			debugPrintf("a Replicant\n");
+		} else {
+			debugPrintf("Human\n");
+		}
+
+		debugPrintf("Sadik is ");
+		if ( _vm->_gameFlags->query(kFlagSadikIsReplicant)) {
+			debugPrintf("a Replicant\n");
+		} else {
+			debugPrintf("Human\n");
+		}
+
+		debugPrintf("Luther/Lance is ");
+		if ( _vm->_gameFlags->query(kFlagLutherLanceIsReplicant)) {
+			debugPrintf("Replicant\n");
+		} else {
+			debugPrintf("Human\n");
+		}
+		debugPrintf("---\n");
+		debugPrintf("Random seed is ");
+		debugPrintf("%u\n", _vm->_newGameRandomSeed);
+		debugPrintf("---\n");
+		return true;
+
+	} else {
+		invalidSyntax = true;
+	}
+
+	if (invalidSyntax) {
+		// invalid  syntax
+		debugPrintf("Show the random seed for the game and the nature (human or Replicant) for the potentially variable characters\n");
+		if (argv != nullptr && argv[0] != nullptr) {
+			debugPrintf("Usage: %s\n", argv[0]);
+		}
+	}
+
 	return true;
 }
 
