@@ -233,7 +233,7 @@
 	{
 
 		"adibou3",
-		_s("Game not implemented"), // Adiboo 3 3.10 Du pareil au même (Engine: DEV7 version 1.30b)
+		_s("Game not implemented"), // Adibou 3 3.10 Du pareil au même (Engine: DEV7 version 1.30b)
 		AD_ENTRY1s("b3_common.stk", "c0a485db0c58462693fe3da3c8eaa084", 559844),
 		FR_FRA,
 		kPlatformWindows,
