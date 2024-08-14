@@ -120,6 +120,7 @@ bool winVideo::quant() {
 			g_system->copyRectToScreen(surf->getPixels(), surf->pitch, _x, _y, _vidWidth, _vidHeight);
 		}
 
+		g_system->delayMillis(10);
 		g_system->updateScreen();
 	}
 
