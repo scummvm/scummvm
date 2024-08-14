@@ -1907,9 +1907,14 @@ const Game games[] = {
 		MTBOOT_PURPLEMOON_WIN_EN,
 	 	&BootScriptContext::bootGeneric
 	},
-	// Chomp! The Video Game - Windows - English
+	// Chomp! The Video Game - Retail - Windows - English
 	{
-		MTBOOT_CHOMP_WIN_EN,
+		MTBOOT_CHOMP_RETAIL_WIN_EN,
+	 	&BootScriptContext::bootGeneric
+	},
+	// Chomp! The Video Game - Demo - Windows - English
+	{
+		MTBOOT_CHOMP_DEMO_WIN_EN,
 	 	&BootScriptContext::bootGeneric
 	},
 	// 24 Hours in Cyberspace - Windows - English
