@@ -1860,19 +1860,9 @@ const Game games[] = {
 		MTBOOT_IDINO_RETAIL_EN,
 	 	&BootScriptContext::bootGeneric
 	},
-	// I Can Be a Dinosaur Finder - Demo - Windows - English
-	{
-		MTBOOT_IDINO_DEMO_EN,
-	 	&BootScriptContext::bootGeneric
-	},
 	// I Can Be an Animal Doctor - Retail - Windows - English
 	{
 		MTBOOT_IDOCTOR_RETAIL_EN,
-	 	&BootScriptContext::bootGeneric
-	},
-	// I Can Be an Animal Doctor - Demo - Windows - English
-	{
-		MTBOOT_IDOCTOR_DEMO_EN,
 	 	&BootScriptContext::bootGeneric
 	},
 	// How to Draw the Marvel Way - Windows - English
@@ -2043,6 +2033,11 @@ const Game games[] = {
 	// Whitetail Extreme - Windows - English
 	{
 		MTBOOT_WT_EXTREME_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
+	// Cloud 9 CD Sampler Volume 2 - Windows - English
+	{
+		MTBOOT_C9SAMPLER_WIN_EN,
 		&BootScriptContext::bootGeneric
 	},
 };
