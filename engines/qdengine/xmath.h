@@ -50,9 +50,6 @@ class Mat3d;
 class MatXf;
 class MatXd;
 class QuatF;
-class QuatD;
-class Se3f;
-class Se3d;
 
 class Vect4f;
 
@@ -1331,7 +1328,6 @@ public:
 
 class Mat3d {
 
-	friend class QuatD;
 	friend class MatXd;
 
 private:
@@ -1363,10 +1359,6 @@ public:
 		set(axis, angle, normalizeAxis);
 	}
 
-	Mat3d(const QuatD &q) {
-		set(q);
-	}
-
 	Mat3d(const Vect3d &x_from, const Vect3d &y_from, const Vect3d &z_from,
 	      const Vect3d &x_to = Vect3d::I, const Vect3d &y_to = Vect3d::J, const Vect3d &z_to = Vect3d::K) {
 		set(x_from, y_from, z_from, x_to, y_to, z_to);
@@ -1386,8 +1378,6 @@ public:
 	// set Mat3d as a rotation of 'angle' radians about 'axis'
 	// axis is automatically normalized unless normalizeAxis = 0
 	Mat3d &set(const Vect3d &axis, double angle, int normalizeAxis = 1);
-
-	Mat3d &set(const QuatD &q);
 
 	// Convertion "from"-basis->"to"-basis
 	Mat3d &set(const Vect3d &x_from, const Vect3d &y_from, const Vect3d &z_from,
@@ -1646,9 +1636,6 @@ public:
 	xm_inline MatXf(const Mat3f &R_, const Vect3f &d_) {
 		set(R_, d_);
 	}
-	explicit xm_inline MatXf(const Se3f &T)           {
-		set(T);
-	}
 
 	typedef float float16[16];
 	xm_inline MatXf(const float16 &T);
@@ -1662,7 +1649,6 @@ public:
 		d = d_;
 		return *this;
 	}
-	xm_inline MatXf &set(const Se3f &T);
 
 	xm_inline const Mat3f  &rot()   const {
 		return R;
@@ -1883,7 +1869,6 @@ public:
 
 class QuatF {
 	friend class Mat3f;
-	friend class Se3f;
 
 public:
 
@@ -1907,8 +1892,6 @@ public:
 	xm_inline QuatF(const Mat3f &R) {
 		set(R);
 	}
-
-	xm_inline operator QuatD() const;
 
 	// setters / accessors / translators /////////////////////////////////////////
 
@@ -2065,114 +2048,6 @@ public:
 
 	static const QuatF ID;   // identity quaternion
 
-};
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//			class Se3f
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-class Se3f {
-private:
-
-	QuatF q;     // rotation component
-	Vect3f d;    // translation component
-
-public:
-
-	// constructors //////////////////////////////////////////////////////////////
-
-
-	Se3f() {}
-	Se3f(const QuatF &q_, const Vect3f &d_) {
-		set(q_, d_);
-	}
-	explicit Se3f(const MatXf &X) {
-		set(X);
-	}
-
-	xm_inline operator Se3d() const;
-
-	// setters / accessors / translators /////////////////////////////////////////
-
-	Se3f &set(const QuatF &q_, const Vect3f &d_) {
-		q = q_;
-		d = d_;
-		return *this;
-	}
-	Se3f &set(const MatXf &X) {
-		q.set(X.rot());
-		d = X.trans();
-		return *this;
-	}
-
-	const QuatF  &rot()   const {
-		return q;
-	}
-	const Vect3f &trans() const {
-		return d;
-	}
-	QuatF  &rot()        {
-		return q;
-	}
-	Vect3f &trans()      {
-		return d;
-	}
-
-
-	//  Se3f - Se3f multiplication  ////////////
-	xm_inline Se3f &premult(const Se3f &T);          // T * this  [!]
-	xm_inline Se3f &postmult(const Se3f &T);         // this * T  [!]
-	xm_inline Se3f &operator*= (const Se3f &T) {
-		return postmult(T);
-	}
-	xm_inline void interpolate(const Se3f &u, const Se3f &v, float t) {
-		q.slerp(u.q, v.q, t);
-		d.interpolate(u.d, v.d, t);
-	}
-
-	xm_inline void interpolateExact(const Se3f &u, const Se3f &v, float t) {
-		q.slerpExact(u.q, v.q, t);
-		d.interpolate(u.d, v.d, t);
-	}
-
-	//  Invertion  ///////////////////
-	xm_inline Se3f &invert(const Se3f &T);           // T^-1
-	xm_inline Se3f &invert();                // this^-1
-
-
-	// Transforming Vect3d ///////////////////////////////////////////////////////
-
-	// Se3s can transform elements of R^3 either as vectors or as
-	// points.  Multiple operands need not be distinct.
-
-	xm_inline Vect3f &xformVect(const Vect3f &v, Vect3f &xv) const;  // this * (v 0) => xv
-	xm_inline Vect3f &xformVect(Vect3f &v) const;        // this * (v 0) => v
-	xm_inline Vect3f &xformPoint(const Vect3f &p, Vect3f &xp) const; // this * (p 1) => xp
-	xm_inline Vect3f &xformPoint(Vect3f &p) const;           // this * (p 1) => p
-
-	// These are exactly like the above methods, except the inverse
-	// transform this^-1 is used.
-	xm_inline Vect3f &invXformVect(const Vect3f &v, Vect3f &xv) const;
-	xm_inline Vect3f &invXformVect(Vect3f &v) const;
-	xm_inline Vect3f &invXformPoint(const Vect3f &p, Vect3f &xp) const;
-	xm_inline Vect3f &invXformPoint(Vect3f &p) const;
-
-	xm_inline bool eq(const Se3f &other, float transDelta, float rotDelta) const;
-
-	//    I/O operations    //////////////////////////////////////
-
-#ifdef _XMATH_USE_IOSTREAM
-	friend ostream &operator<<(ostream &os, const Se3f &se3);
-	friend istream &operator>>(istream &is, Se3f &se3);
-#endif
-
-	// Se3f constants /////////////////////////////////////////////////////////////
-
-	static const Se3f ID;     // identity Se3f
 };
 
 
@@ -3963,12 +3838,6 @@ MatXf::operator MatXd() const {
 	return MatXd(R, d);
 }
 
-MatXf &MatXf::set(const Se3f &T) {
-	R.set(T.rot());
-	d = T.trans();
-	return *this;
-}
-
 //  Vect3d transforming  /////////////////////
 Vect3d &MatXf::xformVect(const Vect3d &v, Vect3d &xv) const {
 	return R.xform(v, xv);
@@ -4352,101 +4221,6 @@ xm_inline void QuatF::slerpExact(const QuatF &a, const QuatF &b, float t) {
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//		Se3f xm_inline definitions
-///////////////////////////////////////////////////////////////////////////////
-Se3f &Se3f::premult(const Se3f &T) {
-	q.premult(T.q);
-	T.q.xform(d);
-	d.add(T.d);
-	return *this;
-}
-
-
-Se3f &Se3f::postmult(const Se3f &T) {
-	Vect3f v;
-
-	q.xform(T.d, v);
-	d.add(v);
-	q.postmult(T.q);
-	return *this;
-}
-
-
-Se3f &Se3f::invert(const Se3f &T) {
-	q.s_ = -T.q.s_;
-	q.x_ =  T.q.x_;
-	q.y_ =  T.q.y_;
-	q.z_ =  T.q.z_;
-	q.xform(T.d, d);
-	d.negate(d);
-	return *this;
-}
-
-
-Se3f &Se3f::invert() {
-	q.s_ = -q.s_;
-	q.xform(d);
-	d.negate();
-	return *this;
-}
-
-
-Vect3f &Se3f::xformVect(const Vect3f &v, Vect3f &xv) const {
-	q.xform(v, xv);
-	return xv;
-}
-
-
-Vect3f &Se3f::xformVect(Vect3f &v) const {
-	q.xform(v);
-	return v;
-}
-
-
-Vect3f &Se3f::xformPoint(const Vect3f &p, Vect3f &xp) const {
-	q.xform(p, xp);
-	xp.add(d);
-	return xp;
-}
-
-
-Vect3f &Se3f::xformPoint(Vect3f &p) const {
-	q.xform(p);
-	p.add(d);
-	return p;
-}
-
-
-Vect3f &Se3f::invXformVect(const Vect3f &v, Vect3f &xv) const {
-	q.invXform(v, xv);
-	return xv;
-}
-
-
-Vect3f &Se3f::invXformVect(Vect3f &v) const {
-	q.invXform(v);
-	return v;
-}
-
-
-Vect3f &Se3f::invXformPoint(const Vect3f &p, Vect3f &xp) const {
-	xp.sub(p, d);
-	q.invXform(xp);
-	return xp;
-}
-
-
-Vect3f &Se3f::invXformPoint(Vect3f &p) const {
-	p.sub(d);
-	q.invXform(p);
-	return p;
-}
-
-bool Se3f::eq(const Se3f &other, float transDelta, float rotDelta) const {
-	return trans().eq(other.trans(), transDelta) && rot().eq(other.rot(), rotDelta);
-}
-
-///////////////////////////////////////////////////////////////////////////////
 //
 //		Vect4f xm_inline definitions
 //
@@ -4675,17 +4449,6 @@ inline ostream &operator<<(ostream &os, const MatXf &m) {
 	return os << m.R << "  " << m.d;
 }
 
-//  QuatD  I/O   ///////////////////
-inline istream &operator>>(istream &is, QuatD &q) {
-	is >> q.s_ >> q.x_ >> q.y_ >> q.z_;
-	return is;
-}
-
-inline ostream &operator<<(ostream &os, const QuatD &q) {
-	os << q.s_ << "  " << q.x_ << "  " << q.y_ << "  " << q.z_;
-	return os;
-}
-
 //  QuatF  I/O   ///////////////////
 inline istream &operator>>(istream &is, QuatF &q) {
 	is >> q.s_ >> q.x_ >> q.y_ >> q.z_;
@@ -4695,16 +4458,6 @@ inline istream &operator>>(istream &is, QuatF &q) {
 inline ostream &operator<<(ostream &os, const QuatF &q) {
 	os << q.s_ << "  " << q.x_ << "  " << q.y_ << "  " << q.z_;
 	return os;
-}
-
-
-//  Se3f I/O  ///////////////////
-inline ostream &operator<<(ostream &os, const Se3f &se3) {
-	return os << se3.q << "  " << se3.d;
-}
-
-inline istream &operator>>(istream &is, Se3f &se3) {
-	return is >> se3.q >> se3.d;
 }
 
 
