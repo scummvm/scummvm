@@ -260,7 +260,487 @@ void Room403::init() {
 }
 
 void Room403::daemon() {
+	int frame;
 
+	switch (_G(kernel).trigger) {
+	case 10:
+		digi_play("graveyard_amb_2", 2, 50);
+		kernel_timing_trigger(1050, 10);
+		break;
+
+	case 100:
+		kernel_timing_trigger(1, 102);
+		break;
+
+	case 101:
+		_val6 = 1000;
+		_val7 = 1105;
+		break;
+
+	case 102:
+		if (_val2 != -1) {
+			kernel_timing_trigger(1, _val2);
+			_val2 = -1;
+		} else {
+			kernel_timing_trigger(1, 103);
+		}
+		break;
+
+	case 103:
+		switch (_val6) {
+		case 1000:
+			switch (_val7) {
+			case 1100:
+				_val8 = 2000;
+				_val9 = 2100;
+				kernel_timing_trigger(1, 110);
+				player_update_info();
+				ws_hide_walker();
+				player_set_commands_allowed(false);
+
+				_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+					triggerMachineByHashCallbackNegative, "rip takes wolf");
+				_ripTalksWolf = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+					_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00, 0,
+					triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+
+				sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 1, 10, 102,
+					_ripTalkPay, 10, 10, 0);
+				sendWSMessage_10000(1, _ripTalksWolf, _safariShadow, 1, 1, -1,
+					_safariShadow, 1, 1, 0);
+				_val7 = 1101;
+				break;
+
+			case 1101:
+				_val7 = 1003;
+				kernel_timing_trigger(1, 102);
+
+				conv_load("conv403a", 10, 10, 101);
+				conv_export_value_curr(_G(flags)[V111], 0);
+				conv_export_value_curr(_G(flags)[V121], 1);
+				conv_export_value_curr(_G(flags)[V122], 2);
+				conv_export_value_curr(_G(flags)[V120], 3);
+
+				conv_export_value_curr(inv_player_has("POMERANIAN MARKS") ? 1 : 0, 5);
+				conv_export_pointer_curr(&_G(flags)[V114], 5);
+				conv_export_pointer_curr(&_G(flags)[V115], 6);
+				conv_export_value_curr(_G(flags)[V337], 10);
+				conv_play();
+				break;
+
+			case 1102:
+				frame = imath_ranged_rand(11, 13);
+				sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, frame, frame, 102,
+					_ripTalkPay, frame, frame, 0);
+				sendWSMessage_190000(_ripOnLadder, 11);
+				sendWSMessage_1a0000(_ripOnLadder, 11);
+				break;
+
+			case 1103:
+				sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 10, 10, 102,
+					_ripTalkPay, 10, 10, 0);
+				break;
+
+			case 1104:
+				sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 10, 10, -1,
+					_ripTalkPay, 10, 10, 0);
+				break;
+
+			case 1105:
+				player_set_commands_allowed(false);
+
+				if (_val5) {
+					_val5 = 0;
+					sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 10, 1, 305,
+						_ripTalkPay, 1, 1, 0);
+					_val9 = 2251;
+					_G(flags)[V124] = 1;
+				} else {
+					sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 10, 1, 103,
+						_ripTalkPay, 1, 1, 0);
+					_val7 = 1106;
+
+					if (!_G(flags)[V115])
+						_val9 = 2103;
+				}
+				break;
+
+			case 1106:
+				terminateMachineAndNull(_ripOnLadder);
+				terminateMachineAndNull(_ripTalksWolf);
+				ws_unhide_walker();
+				_G(flags)[V114] = 0;
+
+				if (!_G(flags)[V115] || _flag2 ||
+						!inv_player_has("POMERANIAN MARKS")) {
+					_flag2 = false;
+					_val8 = 2001;
+					_val9 = 2300;
+					kernel_timing_trigger(1, 110);
+					player_set_commands_allowed(true);
+				} else {
+					player_set_commands_allowed(false);
+					_val12 = 1;
+					_val8 = 2000;
+					_val9 = 2230;
+					kernel_timing_trigger(1, 110);
+				}
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 1010:
+			switch (_val7) {
+			case 1200:
+				player_set_commands_allowed(false);
+				terminateMachineAndNull(_ventClosed);
+				_ripClimbsLadder = series_load("RIPLEY CLIMBS LADDER");
+				ws_hide_walker();
+
+				_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+					triggerMachineByHashCallbackNegative, "RIP climbs ladder");
+				sendWSMessage_10000(1, _ripOnLadder, _ripClimbsLadder, 1, 12, 103,
+					_ripClimbsLadder, 12, 12, 0);
+				_val7 = 1202;
+				break;
+
+			case 1202:
+				sendWSMessage_10000(1, _ripOnLadder, _ripClimbsLadder, 13, 23, 103,
+					_ripClimbsLadder, 23, 23, 0);
+				_val7 = 1203;
+				break;
+
+			case 1203:
+				sendWSMessage_10000(1, _ripOnLadder, _ripClimbsLadder, 24, 33, 103,
+					_ripClimbsLadder, 33, 33, 0);
+				_val7 = 1204;
+				break;
+
+			case 1204:
+				sendWSMessage_10000(1, _ripOnLadder, _ripClimbsLadder, 34, 40, 103,
+					_ripClimbsLadder, 40, 40, 0);
+				_val7 = 1205;
+				break;
+
+			case 1205:
+				sendWSMessage_10000(1, _ripOnLadder, _ripClimbsLadder, 41, 52, 103,
+					_ripClimbsLadder, 52, 52, 0);
+				_val7 = 1209;
+				break;
+
+			case 1209:
+				_val10 = 1;
+				player_set_commands_allowed(true);
+				break;
+
+			case 1210:
+				player_set_commands_allowed(false);
+				sendWSMessage_10000(1, _ripOnLadder, _ripClimbsLadder, 52, 36, 103,
+					_ripClimbsLadder, 36, 36, 0);
+				_val7 = 1212;
+				break;
+
+			case 1212:
+				sendWSMessage_10000(1, _ripOnLadder, _ripClimbsLadder, 35, 26, 103,
+					_ripClimbsLadder, 26, 26, 0);
+				_val7 = 1213;
+				break;
+
+			case 1213:
+				sendWSMessage_10000(1, _ripOnLadder, _ripClimbsLadder, 25, 14, 103,
+					_ripClimbsLadder, 14, 14, 0);
+				_val7 = 1214;
+				break;
+
+			case 1214:
+				sendWSMessage_10000(1, _ripOnLadder, _ripClimbsLadder, 13, 4, 103,
+					_ripClimbsLadder, 4, 4, 0);
+				_val7 = 1215;
+				break;
+
+			case 1215:
+				sendWSMessage_10000(1, _ripOnLadder, _ripClimbsLadder, 3, 1, 103,
+					_ripClimbsLadder, 1, 1, 0);
+				_val7 = 1219;
+				break;
+
+			case 1219:
+				terminateMachineAndNull(_ripOnLadder);
+				ws_unhide_walker();
+				_ventClosed = series_show("SPRITE OF VENT CLOSED", 0x600, 16);
+				series_unload(_ripClimbsLadder);
+				_val10 = 0;
+				player_set_commands_allowed(true);
+				break;
+
+			case 1220:
+				player_set_commands_allowed(false);
+				sendWSMessage_10000(1, _ripOnLadder, _ripClimbsLadder, 53, 59, 103,
+					_ripClimbsLadder, 59, 59, 0);
+				break;
+
+			case 1222:
+				digi_play("403_s06", 2);
+				sendWSMessage_10000(1, _ripOnLadder, _ripClimbsLadder, 60, 74, 103,
+					_ripClimbsLadder, 74, 74, 0);
+				_val7 = 1223;
+				break;
+
+			case 1230:
+				player_set_commands_allowed(false);
+				sendWSMessage_10000(1, _ripOnLadder, _ripClimbsLadder, 74, 69, 103,
+					_ripClimbsLadder, 69, 69, 0);
+				_val7 = 1232;
+				break;
+
+			case 1232:
+				digi_play("403_s06", 2);
+				sendWSMessage_10000(1, _ripOnLadder, _ripClimbsLadder, 68, 53, 103,
+					_ripClimbsLadder, 53, 53, 0);
+				_val7 = 1210;
+				break;
+
+			case 1240:
+				player_set_commands_allowed(false);
+				digi_preload("403R29");
+				series_stream("VENT POPUP LADDER", 10, 0, 103);
+				kernel_timing_trigger(390, 350);
+				_val7 = 1230;
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 1020:
+			switch (_val7) {
+			case 1300:
+				player_set_commands_allowed(false);
+				_ripLegUp = series_load("RIP GETS A LEG UP");
+				ws_hide_walker();
+
+				_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+					triggerMachineByHashCallbackNegative, "RIP climbs plank");
+				sendWSMessage_10000(1, _ripOnLadder, _ripLegUp, 1, 10, 103,
+					_ripLegUp, 10, 10, 0);
+				_val7 = 1302;
+				break;
+
+			case 1302:
+				digi_play("403_s08", 2);
+				sendWSMessage_10000(1, _ripOnLadder, _ripLegUp, 11, 44, 103,
+					_ripLegUp, 44, 44, 0);
+				_val7 = 1303;
+				break;
+
+			case 1303:
+				_val10 = 3;
+				player_set_commands_allowed(true);
+				break;
+
+			case 1310:
+				player_set_commands_allowed(false);
+				sendWSMessage_10000(1, _ripOnLadder, _ripLegUp, 44, 1, 103,
+					_ripLegUp, 1, 1, 0);
+				digi_play("403_s08", 2);
+				_val7 = 1312;
+				break;
+
+			case 1312:
+				terminateMachineAndNull(_ripOnLadder);
+				ws_unhide_walker();
+				series_unload(_ripLegUp);
+				_val10 = 0;
+
+				if (_G(flags)[V125] == 3)
+					kernel_timing_trigger(1, 442);
+				break;
+
+			case 1320:
+				player_set_commands_allowed(false);
+				_ripTurtle = series_load("RIP TURTLE SERIES");
+				_noTreat = series_load("403RP06 NO TREAT");
+				terminateMachineAndNull(_ventClosed);
+
+				if (_G(flags)[V125] == 1)
+					sendWSMessage_10000(1, _ripOnLadder, _ripTurtle, 1, 12, 103,
+						_ripTurtle, 12, 12, 0);
+				else
+					sendWSMessage_10000(1, _ripOnLadder, _noTreat, 1, 12, 103,
+						_noTreat, 12, 12, 0);
+
+				_val7 = 1322;
+				break;
+
+			case 1322:
+				digi_play("403_s06", 2);
+
+				if (_G(flags)[V125] == 1)
+					sendWSMessage_10000(1, _ripOnLadder, _ripTurtle, 13, 28, 103,
+						_ripTurtle, 28, 28, 0);
+				else
+					sendWSMessage_10000(1, _ripOnLadder, _noTreat, 13, 28, 103,
+						_noTreat, 28, 28, 0);
+
+				_val7 = 1323;
+				break;
+
+			case 1323:
+				if (_G(flags)[V125]) {
+					hotspot_set_active("GRATE", false);
+					hotspot_set_active("TURTLE TREAT", true);
+					_val10 = 5;
+				} else {
+					_val10 = 4;
+				}
+
+				player_set_commands_allowed(true);
+				break;
+
+			case 1330:
+				player_set_commands_allowed(false);
+
+				if (_G(flags)[V125] == 1)
+					sendWSMessage_10000(1, _ripOnLadder, _ripTurtle, 28, 21, 103,
+						_ripTurtle, 21, 21, 0);
+				else
+					sendWSMessage_10000(1, _ripOnLadder, _noTreat, 28, 21, 103,
+						_noTreat, 21, 21, 0);
+
+				_val7 = 1332;
+				break;
+
+			case 1332:
+				digi_play("403_s10", 2);
+
+				if (_G(flags)[V125] == 1)
+					sendWSMessage_10000(1, _ripOnLadder, _ripTurtle, 20, 1, 103,
+						_ripTurtle, 44, 44, 0);
+				else
+					sendWSMessage_10000(1, _ripOnLadder, _noTreat, 20, 1, 103,
+						_noTreat, 44, 44, 0);
+
+				_val7 = 1333;
+				break;
+
+			case 1333:
+				series_unload(_noTreat);
+				series_unload(_ripTurtle);
+				_ventClosed = series_show("SPRITE OF VENT CLOSED", 0x600, 16);
+
+				hotspot_set_active("GRATE", 1);
+				hotspot_set_active("TURTLE TREAT", false);
+				_val7 = 1310;
+				kernel_timing_trigger(1, 103);
+				break;
+
+			case 1340:
+				player_set_commands_allowed(false);
+				digi_preload("403R29");
+				series_stream("VENT POPUP PLANK", 10, 0, 103);
+				kernel_timing_trigger(390, 350);
+				_val7 = 1330;
+				break;
+
+			case 1400:
+				player_set_commands_allowed(false);
+
+				if (_G(flags)[V125]) {
+					digi_play("403r49", 1, 255, 103);
+				} else {
+					sendWSMessage_10000(1, _ripOnLadder, _ripTurtle, 29, 52, 103,
+						_ripTurtle, 52, 52, 0);
+					_G(flags)[V125] = 1;
+					_val10 = 5;
+
+					hotspot_set_active("GRATE", false);
+					hotspot_set_active("TURTLE TREATS", true);
+					_val7 = 1402;
+				}
+				break;
+
+			case 1402:
+				player_set_commands_allowed(true);
+				break;
+
+			case 1410:
+				player_set_commands_allowed(false);
+
+				if (_G(flags)[V125] == 1)
+					sendWSMessage_10000(1, _ripOnLadder, _ripTurtle, 53, 81, 103,
+						_ripTurtle, 81, 81, 0);
+				else
+					sendWSMessage_10000(1, _ripOnLadder, _noTreat, 53, 81, 103,
+						_noTreat, 81, 81, 0);
+
+				_val7 = 1412;
+				break;
+
+			case 1412:
+				if (_val10 != 5) {
+					digi_play("403r50", 1, 255, 103);
+				} else if (_G(flags)[V125] == 1) {
+					digi_play("403r51", 1, 255, 103);
+					_G(flags)[V125] = 0;
+				} else {
+					kernel_timing_trigger(1, 440);
+				}
+
+				_val7 = 1413;
+				break;
+
+			case 1413:
+				sendWSMessage_10000(1, _ripOnLadder, _noTreat, 81, 53, 103,
+					_noTreat, 28, 28, 0);
+				_val7 = 1414;
+				break;
+
+			case 1414:
+				inv_give_to_player("TURTLE");
+				_val10 = 4;
+				hotspot_set_active("GRATE", true);
+				hotspot_set_active("TURTLE TREAT", false);
+				player_set_commands_allowed(true);
+				break;
+
+			case 1500:
+				player_set_commands_allowed(false);
+				_ripPlankEdger = series_load("RIPLEY ON PLANK USES EDGER");
+				sendWSMessage_10000(1, _ripOnLadder, _ripPlankEdger, 1, 20, 103,
+					_ripPlankEdger, 20, 20, 0);
+				_val7 = 1502;
+				break;
+
+			case 1502:
+				digi_play("403_s10", 2);
+				sendWSMessage_10000(1, _ripOnLadder, _ripPlankEdger, 20, 63, 103,
+					_noTreat, 52, 52, 0);
+				_val7 = 1503;
+				break;
+
+			case 1504:
+				_G(flags)[V125] = 2;
+				series_unload(_ripPlankEdger);
+				player_set_commands_allowed(true);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	default:
+		break;
+	}
 }
 
 #define TRIGGER _G(kernel).trigger_mode = KT_DAEMON; \

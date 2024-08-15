@@ -69,6 +69,8 @@ private:
 	int _ripMedReach = 0;
 	int _series1 = 0;
 	int _ripPutBoard = 0;
+	machine *_ripTalksWolf = nullptr;
+	int _ripPlankEdger = 0;
 
 	void conv403a();
 	void conv403a1();
