@@ -39,7 +39,7 @@ public:
 
 	qdConditionObjectReference &operator = (const qdConditionObjectReference &ref);
 
-	void set_object(const qdNamedObject *p);
+	void set_object(qdNamedObject *p);
 	bool find_object();
 
 	const qdNamedObject *object() const {
@@ -58,7 +58,7 @@ public:
 
 private:
 
-	const qdNamedObject *_object;
+	qdNamedObject *_object;
 };
 
 } // namespace QDEngine

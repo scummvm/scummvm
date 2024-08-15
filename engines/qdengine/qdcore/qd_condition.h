@@ -510,7 +510,7 @@ public:
 	bool get_value(int idx, int &val, int val_index = 0) const;
 	bool get_value(int idx, float &val, int val_index = 0) const;
 
-	bool put_object(int idx, const qdNamedObject *obj);
+	bool put_object(int idx, qdNamedObject *obj);
 	const qdNamedObject *get_object(int idx) ;
 
 	const qdNamedObject *owner() const {
