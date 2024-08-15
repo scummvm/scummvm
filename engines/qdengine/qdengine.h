@@ -28,7 +28,9 @@
 #include "engines/engine.h"
 #include "graphics/pixelformat.h"
 
+#include "qdengine/qd_fwd.h"
 #include "qdengine/parser/qdscr_parser.h"
+#include "qdengine/qdcore/qd_screen_text.h"
 
 struct ADGameDescription;
 
@@ -112,6 +114,13 @@ public:
 	bool _debugDraw = false;
 	bool _debugDrawGrid = false;
 	int _gameVersion = 0;
+
+	// Default text format
+	qdScreenTextFormat _default_format;
+	// Global format
+	qdScreenTextFormat _global_text_format;
+	// Global format for dialog topics
+	qdScreenTextFormat _global_topic_format;
 };
 
 extern QDEngineEngine *g_engine;

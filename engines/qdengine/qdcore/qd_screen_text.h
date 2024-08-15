@@ -23,10 +23,11 @@
 #define QDENGINE_QDCORE_QD_SCREEN_TEXT_H
 
 #include "common/stream.h"
+
 #include "qdengine/parser/xml_fwd.h"
+#include "qdengine/xmath.h"
 #include "qdengine/system/graphics/gr_screen_region.h"
 #include "qdengine/system/graphics/gr_font.h"
-
 
 namespace QDEngine {
 
@@ -99,26 +100,11 @@ public:
 		return _hover_color;
 	}
 
-	//! Возвращает формат текста по умолчанию.
-	static const qdScreenTextFormat &default_format() {
-		return _default_format;
-	}
-
-	/// Глобальные настройки формата текста.
-	static const qdScreenTextFormat &global_text_format() {
-		return _global_text_format;
-	}
-	static void set_global_text_format(const qdScreenTextFormat &frmt) {
-		_global_text_format = frmt;
-	}
-
-	/// Глобальные настройки формата текста для тем диалогов.
-	static const qdScreenTextFormat &global_topic_format() {
-		return _global_topic_format;
-	}
-	static void set_global_topic_format(const qdScreenTextFormat &frmt) {
-		_global_topic_format = frmt;
-	}
+	static const qdScreenTextFormat &default_format();
+	static const qdScreenTextFormat &global_text_format();
+	static void set_global_text_format(const qdScreenTextFormat &frmt);
+	static const qdScreenTextFormat &global_topic_format();
+	static void set_global_topic_format(const qdScreenTextFormat &frmt);
 
 	void set_font_type(int tp) {
 		_font_type = tp;
@@ -147,14 +133,6 @@ private:
 	int _color;
 	//! Цвет текста при наведении на него мыши, RGB().
 	int _hover_color;
-
-	//! Формат текста по умолчанию.
-	static qdScreenTextFormat _default_format;
-
-	/// Глобальный формат.
-	static qdScreenTextFormat _global_text_format;
-	/// Глобальный формат тем диалогов.
-	static qdScreenTextFormat _global_topic_format;
 
 	//! Тип шрифта
 	int _font_type;
