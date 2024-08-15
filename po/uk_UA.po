@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-06 05:47+0000\n"
-"PO-Revision-Date: 2024-06-05 08:44+0000\n"
+"PO-Revision-Date: 2024-08-15 19:23+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -854,16 +854,13 @@ msgid "Launch Email Client"
 msgstr ""
 
 #: gui/integrity-dialog.cpp:174
-#, fuzzy
-#| msgid "Scan complete!"
 msgid "Calculation complete"
-msgstr "Пошук закінчено!"
+msgstr "Обчислювання закінчено"
 
 #: gui/integrity-dialog.cpp:263
-#, fuzzy, c-format
-#| msgid "Downloaded %s %S / %s %S"
+#, c-format
 msgid "Calculated %s %S / %s %S"
-msgstr "Завантажено %s %S з %s %S"
+msgstr "Обчислено %s %S з %s %S"
 
 #: gui/integrity-dialog.cpp:513
 msgid ""
@@ -3133,10 +3130,8 @@ msgid "PC-9801 (16 Colors)"
 msgstr "PC-9801 (16 кольорів)"
 
 #: common/rendermode.cpp:48
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "PC-9801 (8 Colors)"
-msgstr "PC-9801 (16 кольорів)"
+msgstr "PC-9801 (8 кольорів)"
 
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:53
@@ -6236,10 +6231,8 @@ msgstr "Файл ролику '%s' не знайдено!"
 #: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:51
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
 #: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:746
-#, fuzzy
-#| msgid "Enable Discord integration"
 msgid "Enable copy protection"
-msgstr "Ввімкнути інтеграцію з Discord"
+msgstr "Ввімкнути захист від копіювання"
 
 #: engines/agos/metaengine.cpp:45 engines/dreamweb/metaengine.cpp:37
 #: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:52
@@ -6304,23 +6297,17 @@ msgstr ""
 #: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
 #: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:103
 #: engines/mads/metaengine.cpp:275 engines/trecision/metaengine.cpp:121
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game keymappings"
 msgstr "Мапа клавіш гри"
 
 #: engines/agos/metaengine.cpp:229
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Yes/No keymapping"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш Так/Ні"
 
 #: engines/agos/metaengine.cpp:232 engines/cine/metaengine.cpp:265
 #: engines/groovie/metaengine.cpp:205 engines/lure/metaengine.cpp:177
 #: engines/made/metaengine.cpp:107 engines/mads/metaengine.cpp:280
 #: engines/saga/metaengine.cpp:278 engines/trecision/metaengine.cpp:125
-#, fuzzy
-#| msgid "Left Click"
 msgid "Left click"
 msgstr "Лівий клік"
 
@@ -6332,10 +6319,8 @@ msgid "Right click"
 msgstr "Правий клік"
 
 #: engines/agos/metaengine.cpp:244
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Exit cutscene"
-msgstr "Пропустити ролік"
+msgstr "Вийти з роліку"
 
 #: engines/agos/metaengine.cpp:257 engines/vcruise/metaengine.cpp:187
 msgid "Music volume down"
