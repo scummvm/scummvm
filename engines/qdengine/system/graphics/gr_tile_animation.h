@@ -69,7 +69,7 @@ public:
 
 	bool load(Common::SeekableReadStream *fh);
 
-	void drawFrame(const Vect2i &position, int frame_index, int mode = 0) const;
+	void drawFrame(const Vect2i &position, int32 frame_index, int32 mode = 0) const;
 	void drawFrame(const Vect2i &position, int frame_index, float angle, int mode = 0) const;
 
 	static void setProgressHandler(CompressionProgressHandler handler, void *context) {
