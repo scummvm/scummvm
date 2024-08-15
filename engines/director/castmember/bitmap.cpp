@@ -369,7 +369,7 @@ Graphics::Surface *BitmapCastMember::getDitherImg() {
 		if (targetBpp == 1 && !movie->_remapPalettesWhenNeeded && !_external)
 			break;
 		// If we're in 32-bit mode, and not in puppet palette mode, then "redither" as well.
-		if (targetBpp == 4 && score->_puppetPalette && !_external)
+		if (targetBpp != 1 && score->_puppetPalette && !_external)
 			break;
 		if (_external || (castPaletteId != currentPaletteId && !isColorCycling)) {
 			const auto pals = g_director->getLoadedPalettes();
