@@ -5363,7 +5363,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// scratch, which classifies Shivers 2 as "not SCI"
 	// Shivers2 - English Windows Demo
 	// Executable scanning reports "3.000.000"
-	{"shivers2", _s("Game not implemented"), {
+	{"shivers2", MetaEngineDetection::GAME_NOT_IMPLEMENTED, {
 		{"resmap.000", 0, "d8659188b84beaef076bd869837cd530", 634},
 		{"ressci.000", 0, "7fbac0807a044c9543e8ac376d200e59", 4925003},
 		AD_LISTEND},
@@ -5371,7 +5371,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Shivers 2 - English Windows (from abevi)
 	// VERSION.TXT Version 1.0 (3/25/97)
-	{"shivers2", _s("Game not implemented"), {
+	{"shivers2", MetaEngineDetection::GAME_NOT_IMPLEMENTED, {
 		{"ressci.001", 0, "a79d03d6eb75be0a79324f14e3d2ace4", 95346793},
 		{"resmap.001", 0, "a4804d436d90c4ec2e46b537f5e954db", 6268},
 		AD_LISTEND},

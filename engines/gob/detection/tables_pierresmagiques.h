@@ -39,7 +39,7 @@
 	{
 
 		"pierresmagiques",
-		_s("Game not implemented"), // Le pays des Pierres Magiques (Engine: DEV7 version 1.2.0.0)
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Le pays des Pierres Magiques (Engine: DEV7 version 1.2.0.0)
 		AD_ENTRY2s("ed4.stk", "98721a7cfdc5a358d7ac56b7c6d3ba3d", 541882,
 				   "ed4cd.itk", "0627a91d9a6f4772c33747ce752024c2", 606993908),
 		FR_FRA,
