@@ -190,20 +190,18 @@ bool qdScreenText::format_text(int max_width) {
 	bool correct = true;
 	int safe_space = -1;
 	int cur_wid = 0;
-	_data += ' '; // Добавляем пробел для упрощения алгоритма (из-за последнего
-	// пробела в конце всегда включится попытка форматирования конца).
-	// Пробел не отразиться на выводе, т.к. он в конце.
+	_data += ' ';	// Adding space for simplifying the algorightm (because of the trailing
+					// space we will trigger attempt to format the string ending)
+					// The space will not affect the output because it is at the end.
 
 	for (int i = 0; i < _data.size(); i++) {
 		if (_data[i] == '\n') {
 			if (cur_wid > max_width) {
-				// безопасный пробел есть - безопасно режем (т.е. все влезает в max_width)
+				// Safe space is present, so it is safe to split it (e.g. everything fits max_width)
 				if (safe_space >= 0) {
 					_data.setChar(safe_space, '\n');
-					i = safe_space; // в for(...) перейдем к safe_space + 1
-				}
-				// не влезли (нет безопасного пробела). Но режем все равно - хоть так...
-				else {
+					i = safe_space; // in for(...) we will move to safe_space + 1
+				} else { // it didn't fit (no safe space). But we split it anyway, it is at least something...
 					_data.setChar(i, '\n');
 					correct = false;
 				}
@@ -211,40 +209,32 @@ bool qdScreenText::format_text(int max_width) {
 
 			safe_space = -1;
 			cur_wid = 0;
-		}
-		// Не пробел - копим длину
-		else if (' ' != _data[i])
+		} else if (' ' != _data[i]) { // Not a space -- we accumulate width
 			cur_wid += font->find_char(_data[i]).size_x();
-		// Пробел - здесь можно резать (запомним эту позицию или разрежем здесь)
-		else {
+		} else { // // Space - it is safe to split here (we remember this position or split here)
 			cur_wid += font->size_x() / 2;
 
-			// Длина не превышена - запомним текущий _безопасный_ пробел и двинемся дальше
+			// Width is not exceeded -- remember the current _safe_ space and move on
 			if (cur_wid < max_width) {
 				safe_space = i;
 				continue;
-			}
-			// Превысили длину, да еще и пробел встретили - нужно резать
-			else {
-				// безопасный пробел есть - безопасно режем (т.е. все влезает в max_width)
+			} else { // The width is exceeded, and we saw a safe space -- have to split. (Everything fits max_width)
 				if (safe_space >= 0) {
 					_data.setChar(safe_space, '\n');
-					i = safe_space; // в for(...) перейдем к safe_space + 1
-				}
-				// не влезли (нет безопасного пробела). Но режем все равно - хоть так...
-				else {
+					i = safe_space; // in for(...) we will move to safe_space + 1
+				} else { // it didn't fit (no safe space). But we split it anyway, it is at least something...
 					_data.setChar(i, '\n');
 					correct = false;
 				}
-				safe_space = -1; // Разрезали - безопасного пробела нет
-				cur_wid = 0;     // Новый кусок пока нулевой длины
+				safe_space = -1; // We have split -- no more safe space
+				cur_wid = 0;     // New part has zero width for now
 			}
 		}
 	}
 
-	_data.erase(_data.size() - 1, 1); // Удаляем последний символ (пробел добавленный нами)
+	_data.erase(_data.size() - 1, 1); // We remove the last symbol (the space that we added initially)
 
-	set_data(_data.c_str()); // Устанавливаем данные (для пересчета размера текста)
+	set_data(_data.c_str()); // Set the data (for text dimensions recalc)
 
 	return correct;
 }
