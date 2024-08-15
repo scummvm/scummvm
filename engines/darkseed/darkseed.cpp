@@ -975,6 +975,43 @@ void DarkseedEngine::handlePointerAction() {
 	}
 }
 
+void DarkseedEngine::loadRoom(int roomNumber) {
+//	*(undefined *)&_erasemenu = 1;
+//	*(undefined2 *)&_gShipOff = 0;
+	_sound->waitForSpeech();
+	if (roomNumber == 33 && _objectVar[62] == 101) {
+		_objectVar[62] = 0;
+	}
+	_printedcomeheredawson = false;
+	_objectVar.setObjectRunningCode(53, 0);
+	_objectVar[56] = 0;
+	_objectVar.setObjectRunningCode(72, 0);
+	for (int i = 31; i < 34; i++) {
+		if (_objectVar.getMoveObjectRoom(i) == 99) {
+			_objectVar.setMoveObjectRoom(i, 10);
+		}
+	}
+	if (_objectVar[28] == 1) {
+		_objectVar[28] = 2;
+	}
+	if (_objectVar[29] == 1) {
+		_objectVar[29] = 2;
+	}
+	if (_objectVar[141] == 10) {
+		_objectVar[141] = 11;
+	}
+
+	delete _room;
+	_room = new Room(roomNumber); // getroomstuff
+
+	if (roomNumber == 46 && _previousRoomNumber == 60 && _objectVar[57] == 1) {
+		return;
+	}
+	if (roomNumber == 15 && _objectVar.getMoveObjectRoom(28) != 255) {
+		setupOtherNspAnimation(1, 39);
+	}
+}
+
 void DarkseedEngine::changeToRoom(int newRoomNumber) {
 	_objectVar[99] = 0;
 	_objectVar[66] = 0;
@@ -985,8 +1022,7 @@ void DarkseedEngine::changeToRoom(int newRoomNumber) {
 		_objectVar[53] = 0;
 	}
 
-	delete _room;
-	_room = new Room(newRoomNumber);
+	loadRoom(newRoomNumber);
 
 	_room->darkenSky();
 	if (_room->_roomNumber == 54) {
@@ -1094,13 +1130,12 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 	_sprites.clearSpriteDrawList();
 	_room->runRoomObjects();
 	runObjects();
-//	FUN_2022_413a();
 	if (isPlayingAnimation_maybe == 0 ||
 		(otherNspAnimationType_maybe != 6 && otherNspAnimationType_maybe != 7) || currentRoomNumber != 5) {
-		_frameBottom = 0xf0;
+		_frameBottom = 240;
 	}
 	else {
-		_frameBottom = 0xd0;
+		_frameBottom = 208;
 	}
 
 	if (currentRoomNumber != 0x22 && currentRoomNumber != 0x13 &&
@@ -3632,7 +3667,34 @@ void DarkseedEngine::runObjects() {
 		if (_player->_position.x == 322 && _player->_position.y == 226) {
 			setupOtherNspAnimation(1, 39);
 		} else {
-			// TODO
+			const Sprite &sprite = _room->_locationSprites.getSpriteAt(4);
+			_room->calculateScaledSpriteDimensions(sprite.width, sprite.height, 224);
+			g_engine->_sprites.addSpriteToDrawList(348 - scaledSpriteWidth, 224 - scaledSpriteHeight, &sprite, 224, scaledSpriteWidth, scaledSpriteHeight, false);
+			if (_player->_heroMoving && _player->_playerIsChangingDirection == 0 && _player->_direction != 1 &&
+				(_player->_position.x < 368 || _player->_position.y < 200) &&
+				   (!isPlayingAnimation_maybe || otherNspAnimationType_maybe == 53) && _player->_walkTarget.x != 322 &&
+				  _player->_walkTarget.y != 226) {
+				_player->_heroMoving = false;
+			}
+			if (_player->_position.x < 369 && !_player->_heroMoving &&
+				 (!isPlayingAnimation_maybe || otherNspAnimationType_maybe == 53) &&
+				(_player->_position.x != 322 || _player->_position.y != 226)) {
+				if (isPlayingAnimation_maybe && otherNspAnimationType_maybe == 53) {
+					isPlayingAnimation_maybe = false;
+				}
+				if (!_player->_heroMoving) {
+					Common::Point oldCursor = g_engine->_cursor.getPosition();
+					Common::Point newTarget = {322,226};
+					g_engine->_cursor.setPosition(newTarget);
+					_player->calculateWalkTarget();
+					g_engine->_cursor.setPosition(oldCursor);
+					_player->playerFaceWalkTarget();
+					if (!_printedcomeheredawson) {
+						_console->printTosText(934);
+						_printedcomeheredawson = true;
+					}
+				}
+			}
 		}
 	}
 	if (_objectVar[79] == 0 && _room->_roomNumber == 53) { // evil fido

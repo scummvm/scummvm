@@ -132,6 +132,7 @@ public:
 	int _phoneStatus = 0;
 
 	int16 _SoundTimer = 0;
+	bool _printedcomeheredawson = false;
 public:
 	DarkseedEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~DarkseedEngine() override;
@@ -217,6 +218,7 @@ private:
 	void handleInput();
 	void wait();
 	void handlePointerAction();
+	void loadRoom(int roomNumber);
 	void changeToRoom(int newRoomNumber);
 
 	void useCode(int objNum);
