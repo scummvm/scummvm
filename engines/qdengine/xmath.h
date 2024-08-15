@@ -19,14 +19,6 @@
  *
  */
 
-///////////////////////////////////////////////////////////////////////////////
-//
-//	All 3D-functionality
-//
-//	Configuration:
-//	Define _XMATH_NO_IOSTREAM to disable iostream using
-//
-///////////////////////////////////////////////////////////////////////////////
 #ifndef QDENGINE_XMATH_H
 #define QDENGINE_XMATH_H
 
@@ -36,18 +28,11 @@ namespace QDEngine {
 
 class Archive;
 
-///////////////////////////////////////////////////////////////////////////////
-//	Structures predefenition
-///////////////////////////////////////////////////////////////////////////////
-
 class Vect2f;
 class Vect2i;
 class Vect2s;
 class Vect3f;
 
-///////////////////////////////////////////////////////////////////////////////
-//		Axes
-///////////////////////////////////////////////////////////////////////////////
 enum eAxis {
 	X_AXIS = 0,
 	Y_AXIS = 1,
@@ -271,12 +256,6 @@ public:
 		v = *this;
 		*this = tmp;
 	}
-
-	//  I/O operations    //////////////////////////////////////
-#ifdef _XMATH_USE_IOSTREAM
-	friend ostream &operator<< (ostream &os, const Vect2f &v);
-	friend istream &operator>> (istream &is, Vect2f &v);
-#endif
 };
 
 
@@ -428,12 +407,6 @@ public:
 		v = *this;
 		*this = tmp;
 	}
-
-	//  I/O operations    //////////////////////////////////////
-#ifdef _XMATH_USE_IOSTREAM
-	friend ostream &operator<< (ostream &os, const Vect2i &v);
-	friend istream &operator>> (istream &is, Vect2i &v);
-#endif
 };
 
 
@@ -549,13 +522,6 @@ public:
 		v = *this;
 		*this = tmp;
 	}
-
-	//  I/O operations    //////////////////////////////////////
-#ifdef _XMATH_USE_IOSTREAM
-	friend ostream &operator<< (ostream &os, const Vect2s &v);
-	friend istream &operator>> (istream &is, Vect2s &v);
-#endif
-
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -603,7 +569,6 @@ public:
 		z = z_;
 		return *this;
 	}
-	//inline Vect3f& set(const float3& v) {x = v[0]; y = v[1]; z = v[2]; return *this; }
 
 	inline Vect3f &setSpherical(float psi, float theta, float radius);
 
@@ -752,12 +717,6 @@ public:
 	inline Vect3f &scaleAdd(const Vect3f &v, const Vect3f &u, float lambda); // v + lambda * u
 	inline Vect3f &scaleAdd(const Vect3f &u, float lambda);// this + lambda * u
 	inline Vect3f &interpolate(const Vect3f &u, const Vect3f &v, float lambda); // (1-lambda)*u + lambda*v
-
-	//    I/O operations    //////////////////////////////////////
-#ifdef _XMATH_USE_IOSTREAM
-	friend ostream &operator<< (ostream &os, const Vect3f &v);
-	friend istream &operator>> (istream &is, Vect3f &v);
-#endif
 
 	//  Swap  /////////////////////////
 	inline void swap(Vect3f &other);
@@ -1117,62 +1076,6 @@ Vect3f &Vect3f::interpolate(const Vect3f &u, const Vect3f &v, float lambda) {
 	z = lambda2 * u.z + lambda * v.z;
 	return *this;
 }
-
-
-//////////////////////////////////////////////////////////////////////////////////
-//
-//           Stream's I/O operations
-//
-//////////////////////////////////////////////////////////////////////////////////
-#ifdef _XMATH_USE_IOSTREAM
-
-//  Vect2s  I/O //////////////////////////
-inline ostream &operator<<(ostream &os, const Vect2i &v) {
-	os << v.x << "  " << v.y;
-	return os;
-}
-
-inline istream &operator>>(istream &is, Vect2i &v) {
-	is >> v.x >> v.y;
-	return is;
-}
-
-//  Vect2s  I/O //////////////////////////
-inline ostream &operator<<(ostream &os, const Vect2f &v) {
-	os << v.x << "  " << v.y;
-	return os;
-}
-
-inline istream &operator>>(istream &is, Vect2f &v) {
-	is >> v.x >> v.y;
-	return is;
-}
-
-
-//  Vect2s  I/O //////////////////////////
-inline ostream &operator<<(ostream &os, const Vect2s &v) {
-	os << v.x << "  " << v.y;
-	return os;
-}
-
-inline istream &operator>>(istream &is, Vect2s &v) {
-	is >> v.x >> v.y;
-	return is;
-}
-
-
-//  Vect3f  I/O //////////////////////////
-inline ostream &operator<<(ostream &os, const Vect3f &v) {
-	os << v.x << "  " << v.y << "  " << v.z;
-	return os;
-}
-
-inline istream &operator>>(istream &is, Vect3f &v) {
-	is >> v.x >> v.y >> v.z;
-	return is;
-}
-
-#endif  // _XMATH_NO_IOSTREAM
 
 } // namespace QDEngine
 
