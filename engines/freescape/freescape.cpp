@@ -1029,6 +1029,7 @@ Common::Error FreescapeEngine::saveGameStream(Common::WriteStream *stream, bool 
 	if (isAutosave)
 		return Common::kNoError;
 
+	assert(_currentArea);
 	stream->writeUint16LE(_currentArea->getAreaID());
 
 	for (int i = 0; i < 3; i++)

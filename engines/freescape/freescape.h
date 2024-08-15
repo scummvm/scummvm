@@ -532,7 +532,7 @@ public:
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return true; }
 	bool canSaveAutosaveCurrently() override { return false; }
-	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return true; }
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return _gameStateControl == kFreescapeGameStatePlaying && _currentArea; }
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	virtual Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false);
