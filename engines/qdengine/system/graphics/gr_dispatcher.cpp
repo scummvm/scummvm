@@ -384,7 +384,7 @@ void grDispatcher::getPixel(int x, int y, byte &r, byte &g, byte &b) {
 }
 
 bool grDispatcher::clip_line(int &x0, int &y0, int &x1, int &y1) const {
-	int x, y;
+	int x = 0, y = 0;
 	bool accept = false, done = false;
 
 	int outcodeOut;
@@ -438,7 +438,7 @@ bool grDispatcher::clip_line(int &x0, int &y0, int &x1, int &y1) const {
 }
 
 bool grDispatcher::clip_line(int &x0, int &y0, int &z0, int &x1, int &y1, int &z1) const {
-	int x, y, z;
+	int x = 0, y = 0, z = 0;
 	bool accept = false, done = false;
 
 	int outcodeOut;
