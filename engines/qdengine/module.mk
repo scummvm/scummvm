@@ -5,7 +5,6 @@ MODULE_OBJS = \
 	console.o \
 	metaengine.o \
 	qd_runtime.o \
-	xmath.o \
 	parser/qdscr_parser.o \
 	parser/xml_parser.o \
 	parser/xml_tag_buffer.o \

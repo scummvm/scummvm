@@ -217,8 +217,6 @@ public:
 		return u.dot(v);
 	}
 
-	float angle(const Vect2f &other) const;
-
 	inline float operator % (const Vect2f &v) const {
 		return x * v.y - y * v.x;
 	}
@@ -664,9 +662,6 @@ public:
 	inline friend float dot(const Vect3f &u, const Vect3f &v) {
 		return u.dot(v);
 	}
-
-	// Angle between two vectors //////////
-	float angle(const Vect3f &other) const;
 
 	// Multiplication & division by scalar ///////////
 	inline Vect3f &scale(const Vect3f &v, float s);
