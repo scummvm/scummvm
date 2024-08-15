@@ -984,19 +984,8 @@ void qdGameScene::pre_redraw() {
 	}
 
 	if (qdGameConfig::get_config().show_fps()) {
-#ifdef __QD_DEBUG_ENABLE__
-		static uint32 memory_usage = 0;
-		static int mem_update_counter = 20;
-		if (++mem_update_counter >= 20)
-			memory_usage = app_memory_usage();
-#endif
-
 		if (_fps_counter.fps_value() > 0.0f)
-#ifdef __QD_DEBUG_ENABLE__
-			snprintf(_fps_string, 255, "%.1f fps\nmemory: %.2f MB", _fps_counter.fps_value(), float(memory_usage) / 1024.0f / 1024.0f);
-#else
 			snprintf(_fps_string, 255, "%.1f fps", _fps_counter.fps_value());
-#endif
 		else
 			snprintf(_fps_string, 255, "--");
 
