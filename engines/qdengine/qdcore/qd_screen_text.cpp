@@ -35,10 +35,6 @@
 
 namespace QDEngine {
 
-qdScreenTextFormat qdScreenTextFormat::_default_format;
-qdScreenTextFormat qdScreenTextFormat::_global_text_format;
-qdScreenTextFormat qdScreenTextFormat::_global_topic_format;
-
 qdScreenTextFormat::qdScreenTextFormat() : _arrangement(ARRANGE_VERTICAL),
 	_alignment(ALIGN_LEFT),
 	_color(0xFFFFFF),
@@ -46,6 +42,26 @@ qdScreenTextFormat::qdScreenTextFormat() : _arrangement(ARRANGE_VERTICAL),
 	_font_type(QD_FONT_TYPE_NONE),
 	_global_depend(true) {
 }
+
+const qdScreenTextFormat &qdScreenTextFormat::default_format() {
+	return g_engine->_default_format;
+}
+
+const qdScreenTextFormat &qdScreenTextFormat::global_text_format() {
+	return g_engine->_global_text_format;
+}
+void qdScreenTextFormat::set_global_text_format(const qdScreenTextFormat &frmt) {
+	g_engine->_global_text_format = frmt;
+}
+
+const qdScreenTextFormat &qdScreenTextFormat::global_topic_format() {
+	return g_engine->_global_topic_format;
+}
+void qdScreenTextFormat::set_global_topic_format(const qdScreenTextFormat &frmt) {
+	g_engine->_global_topic_format = frmt;
+}
+
+
 
 bool qdScreenTextFormat::load_script(const xml::tag *p) {
 	bool load_global_depend = false;
