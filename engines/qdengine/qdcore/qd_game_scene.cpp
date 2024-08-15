@@ -51,7 +51,7 @@ struct qdGridZoneOrdering {
 	}
 };
 
-fpsCounter qdGameScene::_fps_counter = fpsCounter(1000);
+fpsCounter *g_fpsCounter = nullptr;
 grScreenRegion qdGameScene::_fps_region = grScreenRegion::EMPTY;
 grScreenRegion qdGameScene::_fps_region_last = grScreenRegion::EMPTY;
 char qdGameScene::_fps_string[255];
@@ -73,6 +73,13 @@ qdGameScene::qdGameScene() : _mouse_click_object(NULL),
 
 qdGameScene::~qdGameScene() {
 	_grid_zones.clear();
+}
+
+fpsCounter *qdGameScene::fps_counter() {
+	if (!g_fpsCounter)
+		g_fpsCounter = new fpsCounter(1000);
+
+	return g_fpsCounter;
 }
 
 void qdGameScene::init_objects_grid() {
@@ -443,7 +450,8 @@ int qdGameScene::load_resources() {
 	}
 
 	set_resources_size(0);
-	_fps_counter.reset();
+
+	fps_counter()->reset();
 
 	debugC(3, kDebugLoad, "qdGameScene::load_resources(): Loaded %d resources", size);
 
@@ -984,8 +992,8 @@ void qdGameScene::pre_redraw() {
 	}
 
 	if (qdGameConfig::get_config().show_fps()) {
-		if (_fps_counter.fps_value() > 0.0f)
-			snprintf(_fps_string, 255, "%.1f fps", _fps_counter.fps_value());
+		if (fps_counter()->fps_value() > 0.0f)
+			snprintf(_fps_string, 255, "%.1f fps", fps_counter()->fps_value());
 		else
 			snprintf(_fps_string, 255, "--");
 
@@ -995,7 +1003,7 @@ void qdGameScene::pre_redraw() {
 	} else
 		_fps_region.clear();
 
-	_fps_counter.quant();
+	fps_counter()->quant();
 }
 
 void qdGameScene::post_redraw() {

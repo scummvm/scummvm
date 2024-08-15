@@ -198,7 +198,7 @@ void qdGameConfig::load() {
 
 #ifndef __QD_SYSLIB__
 	p = getIniKey(_ini_name, "game", "fps_period");
-	if (strlen(p)) qdGameScene::fps_counter().set_period(atoi(p));
+	if (strlen(p)) qdGameScene::fps_counter()->set_period(atoi(p));
 #endif
 
 	if (atoi(getIniKey(_ini_name, "debug", "full_redraw")))
