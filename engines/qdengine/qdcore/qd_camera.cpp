@@ -1326,7 +1326,7 @@ bool qdCamera::is_walkable(const Vect2s &center_pos, const Vect2s &size, bool ig
 }
 
 bool qdCamera::clip_grid_line(Vect2s &v0, Vect2s &v1) const {
-	int x, y;
+	int x = 0, y = 0;
 	bool accept = false, done = false;
 
 	int outcodeOut;

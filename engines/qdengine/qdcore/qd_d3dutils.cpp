@@ -480,7 +480,7 @@ static void
 ludcmp(MATRIX3D &a, int *indx, float *d) {
 	float   vv[4];               /* implicit scale for each row */
 	float   big, dum, sum, tmp;
-	int     i, imax, j, k;
+	int     i, imax = 0, j, k;
 
 	*d = 1.0f;
 	for (i = 0; i < 4; i++) {
