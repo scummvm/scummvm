@@ -47,7 +47,7 @@ qdConditionObjectReference &qdConditionObjectReference::operator = (const qdCond
 	return *this;
 }
 
-void qdConditionObjectReference::set_object(const qdNamedObject *p) {
+void qdConditionObjectReference::set_object(qdNamedObject *p) {
 	_object = p;
 }
 

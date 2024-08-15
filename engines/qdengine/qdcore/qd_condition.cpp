@@ -456,7 +456,7 @@ bool qdCondition::check() {
 	return result;
 }
 
-bool qdCondition::put_object(int idx, const qdNamedObject *obj) {
+bool qdCondition::put_object(int idx, qdNamedObject *obj) {
 	assert(idx >= 0 && idx < _objects.size());
 	_objects[idx].set_object(obj);
 	return true;
