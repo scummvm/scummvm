@@ -17,7 +17,6 @@ MODULE_OBJS = \
 	system/graphics/gr_draw_sprite_z.o \
 	system/graphics/gr_draw_sprite.o \
 	system/graphics/gr_font.o \
-	system/graphics/gr_screen_region.o \
 	system/graphics/gr_tile_animation.o \
 	system/graphics/gr_tile_sprite.o \
 	system/graphics/rle_compress.o \

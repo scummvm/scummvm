@@ -143,7 +143,7 @@ grScreenRegion qdInterfaceElement::screen_region() const {
 
 		return reg;
 	} else
-		return grScreenRegion::EMPTY;
+		return grScreenRegion_EMPTY;
 }
 
 bool qdInterfaceElement::save_script(Common::WriteStream &fh, int indent) const {

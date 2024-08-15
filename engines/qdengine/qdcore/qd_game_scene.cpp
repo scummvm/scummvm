@@ -52,8 +52,8 @@ struct qdGridZoneOrdering {
 };
 
 fpsCounter *g_fpsCounter = nullptr;
-grScreenRegion qdGameScene::_fps_region = grScreenRegion::EMPTY;
-grScreenRegion qdGameScene::_fps_region_last = grScreenRegion::EMPTY;
+grScreenRegion qdGameScene::_fps_region = grScreenRegion_EMPTY;
+grScreenRegion qdGameScene::_fps_region_last = grScreenRegion_EMPTY;
 char qdGameScene::_fps_string[255];
 Std::vector<qdGameObject *> qdGameScene::_visible_objects;
 

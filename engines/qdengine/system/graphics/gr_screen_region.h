@@ -25,6 +25,8 @@
 
 namespace QDEngine {
 
+#define grScreenRegion_EMPTY grScreenRegion(0, 0, 0, 0)
+
 //! Прямоугольная область на экране.
 class grScreenRegion {
 public:

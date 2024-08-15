@@ -979,7 +979,7 @@ grScreenRegion qdAnimation::screen_region(int mode, float scale) const {
 
 		return p->screen_region(mode, scale);
 	} else
-		return grScreenRegion::EMPTY;
+		return grScreenRegion_EMPTY;
 }
 
 bool qdAnimation::copy_frames(const qdAnimation &anm) {
