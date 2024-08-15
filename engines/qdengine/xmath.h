@@ -723,11 +723,6 @@ public:
 	inline friend void swap(Vect3f &u, Vect3f &v) {
 		u.swap(v);
 	}
-
-
-	// Vect3f constants ///////////////////////////////////////////////////////////
-
-	static const Vect3f ZERO;
 };
 
 

@@ -369,11 +369,11 @@ public:
 	}
 
 	//! Возвращает координаты точки, в которой должно активироваться состояние.
-	const Vect3f &start_pos() const {
+	const Vect3f start_pos() const {
 		if (!_coords_animation.is_empty()) {
 			return _coords_animation.get_point(0)->dest_pos();
 		} else
-			return Vect3f::ZERO;
+			return Vect3f(0, 0, 0);
 	}
 	//! Возвращает направление объекта в точке, в которой должно активироваться состояние.
 	float start_direction_angle() const {
