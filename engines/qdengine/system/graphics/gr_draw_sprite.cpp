@@ -507,7 +507,7 @@ void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 	int sin_a = round(sinf(angle) * float(1 << F_PREC));
 	int cos_a = round(cosf(angle) * float(1 << F_PREC));
 
-	Vect2i iscale = Vect2i(round(scale.x * float(1 << F_PREC)), round(scale.y * float(1 << F_PREC)));
+	Vect2i iscale = Vect2i((float)round(scale.x * float(1 << F_PREC)), (float)round(scale.y * float(1 << F_PREC)));
 	Vect2i scaled_size = Vect2i(iscale.x * size.x, iscale.y * size.y);
 
 	if (has_alpha) {
