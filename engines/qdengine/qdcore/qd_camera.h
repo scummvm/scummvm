@@ -472,9 +472,6 @@ private:
 
 	static qdCamera *_current_camera;
 
-	static const Vect3f _world_UP;
-	//точка, на которую мы смотрим
-	static const Vect3f _atPoint;
 	static const float _NEAR_PLANE; //ближная плоскость отсечения
 	static const float _FAR_PLANE;  //дальняя
 

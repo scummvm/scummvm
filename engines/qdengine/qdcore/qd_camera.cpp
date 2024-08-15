@@ -87,8 +87,8 @@ const int32 NORMAL_CELL_CLR         = 0x00FFFFFF;
 const int DASH_LEN = 2;
 
 qdCamera *qdCamera::_current_camera = NULL;
-const Vect3f qdCamera::_world_UP = Vect3f(0, 1, 0);
-const Vect3f qdCamera::_atPoint = Vect3f(0, 0, 0);
+#define CAMERA_WORLD_UP Vect3f(0, 1, 0)
+#define CAMERA_AT_POINT Vect3f(0, 0, 0)  // Point we're looking at
 const float qdCamera::_NEAR_PLANE = 1;
 const float qdCamera::_FAR_PLANE = 10000;
 
@@ -254,9 +254,9 @@ void qdCamera::rotate_and_scale(float XA, float YA, float ZA, float kX, float kY
 	Vect3f pos = TransformVector(camPos, rot);
 
 	//вычисляем, как измениться нормальный вектор камеры после поворота
-	Vect3f new_up = TransformVector(_world_UP, rot);
+	Vect3f new_up = TransformVector(CAMERA_WORLD_UP, rot);
 
-	_m_cam = ViewMatrix(pos, _atPoint, _world_UP, new_up);
+	_m_cam = ViewMatrix(pos, CAMERA_AT_POINT, CAMERA_WORLD_UP, new_up);
 }
 
 const Vect3f qdCamera::rscr2plane_camera_coord(const Vect2s &scrPoint) const {
