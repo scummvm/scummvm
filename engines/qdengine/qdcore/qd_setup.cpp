@@ -52,7 +52,7 @@ bool enumerateIniSections(const char *fname, Common::INIFile::SectionList &secti
 	return true;
 }
 
-char *getIniKey(const char *fname, const char *section, const char *key) {
+const char *getIniKey(const char *fname, const char *section, const char *key) {
 	Common::INIFile ini;
 	Common::String buf;
 
@@ -63,7 +63,7 @@ char *getIniKey(const char *fname, const char *section, const char *key) {
 		return "";
 	}
 
-	return (char *)buf.c_str();
+	return buf.c_str();
 }
 
 void putIniKey(const char *fname, const char *section, const char *key, int val) {
@@ -174,7 +174,7 @@ int qdGameConfig::pixel_format() const {
 }
 
 void qdGameConfig::load() {
-	char *p = 0;
+	const char *p = 0;
 	p = getIniKey(_ini_name, "graphics", "color_depth");
 	if (strlen(p)) _bits_per_pixel = atoi(p);
 
