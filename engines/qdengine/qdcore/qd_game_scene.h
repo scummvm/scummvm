@@ -216,9 +216,7 @@ public:
 
 	qdConditionalObject::trigger_start_mode trigger_start();
 
-	static fpsCounter &fps_counter() {
-		return _fps_counter;
-	}
+	static fpsCounter *fps_counter();
 
 	int autosave_slot() const {
 		return _autosave_slot;
@@ -290,7 +288,6 @@ private:
 
 	static Std::vector<qdGameObject *> _visible_objects;
 
-	static fpsCounter _fps_counter;
 	static grScreenRegion _fps_region;
 	static grScreenRegion _fps_region_last;
 	static char _fps_string[255];
