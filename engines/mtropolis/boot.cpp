@@ -1120,6 +1120,7 @@ public:
 	const Common::Array<PlugIn> &getPlugIns() const;
 	const VirtualFileSystemLayout &getVFSLayout() const;
 	const ManifestSubtitlesDef &getSubtitlesDef() const;
+	const Common::String &getMainSegmentFileOverride() const;
 
 	BitDepth getBitDepth() const;
 	BitDepth getEnhancedBitDepth() const;
@@ -1148,6 +1149,7 @@ private:
 	void setBitDepth(BitDepth bitDepth);
 	void setEnhancedBitDepth(BitDepth bitDepth);
 	void setRuntimeVersion(RuntimeVersion version);
+	void setMainSegmentFile(const Common::String &mainSegmentFilePath);
 
 	void executeFunction(const Common::String &functionName, const Common::Array<Common::String> &paramTokens);
 
@@ -1167,6 +1169,7 @@ private:
 	ManifestSubtitlesDef _subtitlesDef;
 
 	Common::Array<Common::SharedPtr<Common::Archive> > _persistentArchives;
+	Common::String _mainSegmentFileOverride;
 	bool _isMac;
 	Common::Point _preferredResolution;
 	BitDepth _bitDepth;
@@ -1287,6 +1290,11 @@ void BootScriptContext::setEnhancedBitDepth(BitDepth bitDepth) {
 void BootScriptContext::setRuntimeVersion(RuntimeVersion version) {
 	_runtimeVersion = version;
 }
+
+void BootScriptContext::setMainSegmentFile(const Common::String &mainSegmentFilePath) {
+	_mainSegmentFileOverride = mainSegmentFilePath;
+}
+
 
 void BootScriptContext::bootObsidianRetailMacEn() {
 	addPlugIn(kPlugInObsidian);
@@ -1524,6 +1532,11 @@ void BootScriptContext::executeFunction(const Common::String &functionName, cons
 		parseEnum(functionName, paramTokens, 0, runtimeVersionEnum, ui1);
 
 		setRuntimeVersion(static_cast<RuntimeVersion>(ui1));
+	} else if (functionName == "setMainSegmentFile") {
+		checkParams(functionName, paramTokens, 1);
+
+		parseString(functionName, paramTokens, 0, str1);
+		setMainSegmentFile(str1);
 	} else {
 		error("Unknown function '%s'", functionName.c_str());
 	}
@@ -1596,6 +1609,10 @@ const VirtualFileSystemLayout &BootScriptContext::getVFSLayout() const {
 
 const ManifestSubtitlesDef &BootScriptContext::getSubtitlesDef() const {
 	return _subtitlesDef;
+}
+
+const Common::String &BootScriptContext::getMainSegmentFileOverride() const {
+	return _mainSegmentFileOverride;
 }
 
 BootScriptContext::BitDepth BootScriptContext::getBitDepth() const {
@@ -1878,7 +1895,7 @@ const Game games[] = {
 	// How to Draw the Marvel Way - Windows - English
 	{
 		MTBOOT_DRAWMARVELWAY_WIN_EN,
-	 	&BootScriptContext::bootGeneric
+		&BootScriptContext::bootGeneric,
 	},
 	// FairyTale: A True Story - Activity Center - Windows - English
 	{
@@ -2271,21 +2288,50 @@ void findMacPlayer(Common::Archive &fs, Common::Path &resolvedPath, PlayerType &
 	resolvedPlayerType = bestPlayerType;
 }
 
-void findWindowsMainSegment(Common::Archive &fs, Common::Path &resolvedPath, bool &resolvedIsV2) {
+void findWindowsMainSegment(Common::Archive &fs, const BootScriptContext &bootScriptContext, Common::Path &resolvedPath, bool &resolvedIsV2) {
 	Common::ArchiveMemberList allFiles;
 	Common::ArchiveMemberList filteredFiles;
 
-	fs.listMembers(allFiles);
+	const char *mainSegmentSuffixes[] = {".mpl", ".mfw", ".mfx"};
 
-	for (const Common::ArchiveMemberPtr &archiveMember : allFiles) {
-		Common::String fileName = archiveMember->getFileName();
-		if (fileName.hasSuffixIgnoreCase(".mpl") || fileName.hasSuffixIgnoreCase(".mfw") || fileName.hasSuffixIgnoreCase(".mfx")) {
-			filteredFiles.push_back(archiveMember);
-			debug(4, "Identified possible main segment file %s", fileName.c_str());
+	if (bootScriptContext.getMainSegmentFileOverride().empty()) {
+		fs.listMembers(allFiles);
+
+		for (const Common::ArchiveMemberPtr &archiveMember : allFiles) {
+			Common::String fileName = archiveMember->getFileName();
+
+			for (const char *suffix : mainSegmentSuffixes) {
+				if (fileName.hasSuffixIgnoreCase(suffix)) {
+					filteredFiles.push_back(archiveMember);
+					debug(4, "Identified possible main segment file %s", fileName.c_str());
+					break;
+				}
+			}
 		}
-	}
 
-	allFiles.clear();
+		allFiles.clear();
+	} else {
+		const Common::String &pathStr = bootScriptContext.getMainSegmentFileOverride();
+
+		Common::ArchiveMemberPtr mainSegmentFile = fs.getMember(Common::Path(pathStr, fs.getPathSeparator()));
+
+		if (!mainSegmentFile)
+			error("Couldn't find main segment '%s' in VFS", pathStr.c_str());
+
+		filteredFiles.push_back(mainSegmentFile);
+
+		bool hasRecognizedSuffix = false;
+		
+		for (const char *suffix : mainSegmentSuffixes) {
+			if (pathStr.hasSuffixIgnoreCase(suffix)) {
+				hasRecognizedSuffix = true;
+				break;
+			}
+		}
+
+		if (!hasRecognizedSuffix && bootScriptContext.getRuntimeVersion() == BootScriptContext::kRuntimeVersionAuto)
+			error("Main segment has an unknown suffix, you must set a runtime version with setRuntimeVersion");
+	}
 
 	if (filteredFiles.size() == 0)
 		error("Couldn't find any main segment files");
@@ -2312,6 +2358,7 @@ enum SegmentSignatureType {
 
 	kSegmentSignatureMacV1,
 	kSegmentSignatureWinV1,
+	kSegmentSignatureCrossV1,
 	kSegmentSignatureMacV2,
 	kSegmentSignatureWinV2,
 	kSegmentSignatureCrossV2,
@@ -2322,13 +2369,14 @@ const uint kSignatureHeaderSize = 10;
 SegmentSignatureType identifyStreamBySignature(byte (&header)[kSignatureHeaderSize]) {
 	const byte macV1Signature[kSignatureHeaderSize] = {0, 0, 0xaa, 0x55, 0xa5, 0xa5, 0, 0, 0, 0};
 	const byte winV1Signature[kSignatureHeaderSize] = {1, 0, 0xa5, 0xa5, 0x55, 0xaa, 0, 0, 0, 0};
+	const byte crossV1Signature[kSignatureHeaderSize] = {8, 0, 0xa5, 0xa5, 0x55, 0xaa, 0, 0, 0, 0};
 	const byte macV2Signature[kSignatureHeaderSize] = {0, 0, 0xaa, 0x55, 0xa5, 0xa5, 2, 0, 0, 0};
 	const byte winV2Signature[kSignatureHeaderSize] = {1, 0, 0xa5, 0xa5, 0x55, 0xaa, 0, 0, 0, 2};
 	const byte crossV2Signature[kSignatureHeaderSize] = {8, 0, 0xa5, 0xa5, 0x55, 0xaa, 0, 0, 0, 2};
 
-	const byte *signatures[5] = {macV1Signature, winV1Signature, macV2Signature, winV2Signature, crossV2Signature};
+	const byte *signatures[6] = {macV1Signature, winV1Signature, crossV1Signature, macV2Signature, winV2Signature, crossV2Signature};
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < ARRAYSIZE(signatures); i++) {
 		const byte *signature = signatures[i];
 
 		if (!memcmp(signature, header, kSignatureHeaderSize))
@@ -2688,8 +2736,11 @@ BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 		Boot::findMacMainSegment(*vfs, mainSegmentLocation, isV2Project);
 	} else if (gameDesc.desc.platform == Common::kPlatformWindows) {
 		Boot::findWindowsPlayer(*vfs, playerLocation, playerType);
-		Boot::findWindowsMainSegment(*vfs, mainSegmentLocation, isV2Project);
+		Boot::findWindowsMainSegment(*vfs, bootScriptContext,  mainSegmentLocation, isV2Project);
 	}
+
+	if (bootScriptContext.getRuntimeVersion() != Boot::BootScriptContext::kRuntimeVersionAuto)
+		isV2Project = (bootScriptContext.getRuntimeVersion() >= Boot::BootScriptContext::kRuntimeVersion200);
 
 	{
 		Common::StringArray pathComponents = playerLocation.splitComponents();
