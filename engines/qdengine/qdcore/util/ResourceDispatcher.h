@@ -105,8 +105,9 @@ public:
 	}
 
 	void attach(ResourceUser *user) {
-		PtrHandle<ResourceUser> p(user);
+		PtrHandle<ResourceUser> p(0);
 		users.push_back(p);
+		users.back() = user;
 		user->init_time(syncro_timer());
 	}
 	void attach(void (*func)(), time_type dtime) {
