@@ -254,6 +254,11 @@ FreescapeEngine::~FreescapeEngine() {
 			free(it._value);
 		}
 	}
+
+	if (_savedScreen) {
+		_savedScreen->free();
+		delete _savedScreen;
+	}
 }
 
 void FreescapeEngine::drawBorder() {
@@ -546,6 +551,7 @@ void FreescapeEngine::processInput() {
 				_gfx->computeScreenViewport();
 				_savedScreen->free();
 				delete _savedScreen;
+				_savedScreen = nullptr;
 				break;
 			case kActionChangeModeOrSkip:
 				_shootMode = !_shootMode;
@@ -1152,6 +1158,13 @@ void FreescapeEngine::removeTimers() {
 }
 
 void FreescapeEngine::pauseEngineIntern(bool pause) {
+	drawFrame();
+	if (_savedScreen) {
+		_savedScreen->free();
+		delete _savedScreen;
+	}
+	_savedScreen = _gfx->getScreenshot();
+
 	Engine::pauseEngineIntern(pause);
 
 	// TODO: Handle the viewport here
@@ -1162,6 +1175,8 @@ void FreescapeEngine::pauseEngineIntern(bool pause) {
 	if (!_shootMode) {
 		_system->lockMouse(!pause);
 	}
+
+	// We don't know when savedScreen will be used, so we do not deallocate it here
 }
 
 } // namespace Freescape
