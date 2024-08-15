@@ -135,7 +135,7 @@ private:
 	const char *_data;
 };
 
-}; /* namespace xml */
+} /* namespace xml */
 
 } // namespace QDEngine
 
