@@ -194,19 +194,17 @@ bool qdScreenText::format_text(int max_width) {
 	// пробела в конце всегда включится попытка форматирования конца).
 	// Пробел не отразиться на выводе, т.к. он в конце.
 
-	byte *dp = (byte *)_data.c_str();
-
 	for (int i = 0; i < _data.size(); i++) {
-		if (dp[i] == '\n') {
+		if (_data[i] == '\n') {
 			if (cur_wid > max_width) {
 				// безопасный пробел есть - безопасно режем (т.е. все влезает в max_width)
 				if (safe_space >= 0) {
-					dp[safe_space] = '\n';
+					_data.setChar(safe_space, '\n');
 					i = safe_space; // в for(...) перейдем к safe_space + 1
 				}
 				// не влезли (нет безопасного пробела). Но режем все равно - хоть так...
 				else {
-					dp[i] = '\n';
+					_data.setChar(i, '\n');
 					correct = false;
 				}
 			}
@@ -215,8 +213,8 @@ bool qdScreenText::format_text(int max_width) {
 			cur_wid = 0;
 		}
 		// Не пробел - копим длину
-		else if (' ' != dp[i])
-			cur_wid += font->find_char(dp[i]).size_x();
+		else if (' ' != _data[i])
+			cur_wid += font->find_char(_data[i]).size_x();
 		// Пробел - здесь можно резать (запомним эту позицию или разрежем здесь)
 		else {
 			cur_wid += font->size_x() / 2;
@@ -230,12 +228,12 @@ bool qdScreenText::format_text(int max_width) {
 			else {
 				// безопасный пробел есть - безопасно режем (т.е. все влезает в max_width)
 				if (safe_space >= 0) {
-					dp[safe_space] = '\n';
+					_data.setChar(safe_space, '\n');
 					i = safe_space; // в for(...) перейдем к safe_space + 1
 				}
 				// не влезли (нет безопасного пробела). Но режем все равно - хоть так...
 				else {
-					dp[i] = '\n';
+					_data.setChar(i, '\n');
 					correct = false;
 				}
 				safe_space = -1; // Разрезали - безопасного пробела нет
