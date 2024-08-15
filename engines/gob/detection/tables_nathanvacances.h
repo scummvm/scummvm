@@ -38,7 +38,7 @@
 {
 	{
 		"nathanvacances",
-		_s("Game not implemented"), // CM1/CE2 1.00 (DEV7 version 1.20a)
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // CM1/CE2 1.00 (DEV7 version 1.20a)
 		AD_ENTRY1s("common.stk", "344185d17c593122a548122df63b70cf", 1851672),
 		FR_FRA,
 		kPlatformWindows,
