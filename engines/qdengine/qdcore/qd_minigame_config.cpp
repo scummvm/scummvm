@@ -94,7 +94,7 @@ bool qdMinigameConfigParameter::validate_data() {
 
 bool qdMinigameConfigParameter::load_ini(const char *ini_file, const char *ini_section) {
 	set_name(ini_section);
-	char *str = getIniKey(ini_file, ini_section, "type");
+	const char *str = getIniKey(ini_file, ini_section, "type");
 	if (strlen(str)) {
 		if (!scumm_stricmp(str, "string"))
 			set_data_type(PRM_DATA_STRING);
