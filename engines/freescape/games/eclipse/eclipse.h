@@ -55,6 +55,9 @@ public:
 	uint32 _initialEnergy;
 	uint32 _initialShield;
 
+	int _soundIndexStartFalling;
+	int _soundIndexEndFalling;
+
 	bool _resting;
 	int _lastThirtySeconds;
 	int _lastSecond;

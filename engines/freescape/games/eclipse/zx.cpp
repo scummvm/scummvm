@@ -37,8 +37,11 @@ void EclipseEngine::initZX() {
 	_soundIndexFall = 3;
 	_soundIndexClimb = 4;
 	_soundIndexMenu = -1;
-	_soundIndexStart = -1;
-	_soundIndexAreaChange = -1;
+	_soundIndexStart = 7;
+	_soundIndexAreaChange = 7;
+
+	_soundIndexStartFalling = 6;
+	_soundIndexEndFalling = 5;
 
 	_soundIndexNoShield = 8;
 	_soundIndexNoEnergy = -1;

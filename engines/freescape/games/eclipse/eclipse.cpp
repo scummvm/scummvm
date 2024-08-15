@@ -39,8 +39,11 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_soundIndexFall = 3;
 	_soundIndexClimb = 4;
 	_soundIndexMenu = -1;
-	_soundIndexStart = -1;
-	_soundIndexAreaChange = -1;
+	_soundIndexStart = 9;
+	_soundIndexAreaChange = 5;
+
+	_soundIndexStartFalling = -1;
+	_soundIndexEndFalling = -1;
 
 	_soundIndexNoShield = -1;
 	_soundIndexNoEnergy = -1;
@@ -128,7 +131,10 @@ bool EclipseEngine::checkIfGameEnded() {
 	if (_gameStateControl == kFreescapeGameStatePlaying) {
 		if (_hasFallen && _avoidRenderingFrames == 0) {
 			_hasFallen = false;
-			playSoundFx(4, false);
+			if (isDOS())
+				playSoundFx(4, false);
+			else
+				playSound(_soundIndexStartFalling, false);
 
 			// If shield is less than 11 after a fall, the game ends
 			if (_gameStateVars[k8bitVariableShield] > 15 + 11) {
@@ -263,11 +269,7 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 		_yaw = 180;
 		_pitch = 0;
 
-		if (isSpectrum())
-			playSound(7, true);
-		else
-			playSound(9, true);
-
+		playSound(_soundIndexStart, true);
 		if (isEclipse2()) {
 			_yaw = 120;
 			_gameStateControl = kFreescapeGameStateStart;
@@ -280,10 +282,7 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 		else
 			_pitch = 10;
 	} else {
-		if (isSpectrum())
-			playSound(7, false);
-		else
-			playSound(5, false);
+		playSound(_soundIndexAreaChange, false);
 	}
 
 	_gfx->_keyColor = 0;
