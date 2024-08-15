@@ -414,9 +414,9 @@ void qdInventory::debug_log() const {
 
 	debugC(3, kDebugLog, "--------------");
 
-	qdInventoryCellSetVector::const_iterator it;
-	FOR_EACH(_cell_sets, it)
-	it->debug_log();
+	for (auto &it : _cell_sets) {
+		it.debug_log();
+	}
 
 	debugC(3, kDebugLog, "--------------");
 #endif
