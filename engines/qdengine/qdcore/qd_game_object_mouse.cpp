@@ -34,7 +34,7 @@
 namespace QDEngine {
 
 qdGameObjectMouse::qdGameObjectMouse() : _object(NULL),
-	_object_screen_region(grScreenRegion::EMPTY) {
+	_object_screen_region(grScreenRegion_EMPTY) {
 	set_flag(QD_OBJ_SCREEN_COORDS_FLAG);
 	set_name("Мышь");
 
@@ -46,7 +46,7 @@ qdGameObjectMouse::qdGameObjectMouse() : _object(NULL),
 
 qdGameObjectMouse::qdGameObjectMouse(const qdGameObjectMouse &obj) : qdGameObjectAnimated(obj),
 	_object(NULL),
-	_object_screen_region(grScreenRegion::EMPTY) {
+	_object_screen_region(grScreenRegion_EMPTY) {
 	set_flag(QD_OBJ_SCREEN_COORDS_FLAG);
 	set_name("Мышь");
 
@@ -252,7 +252,7 @@ void qdGameObjectMouse::post_redraw() {
 		_object->post_redraw();
 		_object_screen_region = _object->last_screen_region();
 	} else
-		_object_screen_region = grScreenRegion::EMPTY;
+		_object_screen_region = grScreenRegion_EMPTY;
 
 	qdGameObjectAnimated::post_redraw();
 }

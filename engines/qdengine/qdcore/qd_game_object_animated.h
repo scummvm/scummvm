@@ -290,7 +290,7 @@ public:
 		return !_inventory_name.empty();
 	}
 
-	const grScreenRegion &last_screen_region() const {
+	const grScreenRegion last_screen_region() const {
 		return _last_screen_region;
 	}
 	virtual grScreenRegion screen_region() const;

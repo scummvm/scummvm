@@ -236,7 +236,7 @@ protected:
 	virtual bool load_script_body(const xml::tag *p) = 0;
 
 	void clear_screen_region() {
-		_last_screen_region = grScreenRegion::EMPTY;
+		_last_screen_region = grScreenRegion_EMPTY;
 	}
 
 private:

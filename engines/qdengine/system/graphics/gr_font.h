@@ -58,11 +58,11 @@ public:
 		return _alpha_buffer;
 	}
 
-	const grScreenRegion &find_char(int code) const {
+	const grScreenRegion find_char(int code) const {
 		grFontCharVector::const_iterator it = Common::find(_chars.begin(), _chars.end(), code);
 		if (it != _chars.end()) return it->_region;
 
-		return grScreenRegion::EMPTY;
+		return grScreenRegion_EMPTY;
 	}
 
 	int char_width(int code) const {

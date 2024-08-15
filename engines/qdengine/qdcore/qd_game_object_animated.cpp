@@ -121,7 +121,7 @@ qdGameObjectAnimated &qdGameObjectAnimated::operator = (const qdGameObjectAnimat
 	_inventory_cell_index = -1;
 
 	_last_frame = NULL;
-	_last_screen_region = grScreenRegion::EMPTY;
+	_last_screen_region = grScreenRegion_EMPTY;
 	_last_screen_depth = 0;
 
 	_lastShadowColor = 0;
@@ -1480,7 +1480,7 @@ bool qdGameObjectAnimated::init() {
 
 grScreenRegion qdGameObjectAnimated::screen_region() const {
 	if (is_visible()) {
-		grScreenRegion reg = grScreenRegion::EMPTY;
+		grScreenRegion reg = grScreenRegion_EMPTY;
 		if (_current_transform()) {
 			Vect2i r = screen_pos();
 			/*
@@ -1519,7 +1519,7 @@ grScreenRegion qdGameObjectAnimated::screen_region() const {
 
 		return reg;
 	} else
-		return grScreenRegion::EMPTY;
+		return grScreenRegion_EMPTY;
 }
 
 void qdGameObjectAnimated::post_redraw() {

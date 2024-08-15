@@ -1886,7 +1886,7 @@ grScreenRegion qdGameObjectMoving::screen_region() const {
 
 		return reg;
 	} else
-		return grScreenRegion::EMPTY;
+		return grScreenRegion_EMPTY;
 }
 
 void qdGameObjectMoving::redraw(int offs_x, int offs_y) const {

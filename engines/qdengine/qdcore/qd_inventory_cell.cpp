@@ -250,7 +250,7 @@ bool qdInventoryCellSet::hit(const Vect2s &pos) const {
 
 grScreenRegion qdInventoryCellSet::screen_region() const {
 	if (_cells.empty() || !_cells.front().size_x() || !_cells.front().size_y())
-		return grScreenRegion::EMPTY;
+		return grScreenRegion_EMPTY;
 
 	int sx = _size.x * _cells.front().size_x();
 	int sy = _size.y * _cells.front().size_y();

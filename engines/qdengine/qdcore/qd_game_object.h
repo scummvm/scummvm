@@ -76,11 +76,11 @@ public:
 	}
 	virtual void post_redraw() { }
 
-	virtual const grScreenRegion &last_screen_region() const {
-		return grScreenRegion::EMPTY;
+	virtual const grScreenRegion last_screen_region() const {
+		return grScreenRegion_EMPTY;
 	}
 	virtual grScreenRegion screen_region() const {
-		return grScreenRegion(grScreenRegion::EMPTY);
+		return grScreenRegion(grScreenRegion_EMPTY);
 	}
 
 	virtual bool mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev) = 0;
