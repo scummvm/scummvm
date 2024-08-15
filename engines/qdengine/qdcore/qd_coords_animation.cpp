@@ -437,7 +437,7 @@ bool qdCoordsAnimation::load_data(Common::SeekableReadStream &fh, int save_versi
 		_del.y = fh.readFloatLE();
 		_del.z = fh.readFloatLE();
 	} else {
-		_del = Vect3f::ZERO;
+		_del = Vect3f(0, 0, 0);
 	}
 
 	for (auto &it : _points)

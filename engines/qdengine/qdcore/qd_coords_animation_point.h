@@ -61,7 +61,7 @@ public:
 		return false;
 	}
 
-	void calc_path(const qdCoordsAnimationPoint &p, const Vect3f &shift = Vect3f::ZERO) const;
+	void calc_path(const qdCoordsAnimationPoint &p, const Vect3f &shift = Vect3f(0, 0, 0)) const;
 	float passed_path() const;
 	float path_length() const {
 		return _path_length;
