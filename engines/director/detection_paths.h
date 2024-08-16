@@ -33,28 +33,14 @@ const char *const directoryGlobs[] = {
 	"mvm",							// Master of the Elements
 	"module_1",
 	"module_2",						// Takeru
-	"simpdata",
-	"simpsons",						// Simpsons Cartoon Studio
 	"datas",						// O!KAY! subscription from Domino Verlag
-	"daten",						// Bibi Blocksberg games (German)
 	"data_k",
 	"data_1",
 	"data_2",						// JumpStart World
 	"numbers",						// JumpStart Learning Games
-	"fjpc",							// Forestia Jr
 	"blender",						// Blender CD-ROM magazines
-	"bilder",
-	"endsoung",
-	"gerhelp",
-	"gervideo",						// GGMD German
-	"music",
-	"solos",
-	"duthelp",
-	"dutvideo",
-	"endsound",						// GGMD Dutch
 	"cd_data",						// Polis
 	"ojo2000",						// Abrapalabra
-	"tooned",						// Stay Tooned
 	"p2data",
 	"p2media",
 	"p3media",
@@ -62,24 +48,13 @@ const char *const directoryGlobs[] = {
 	"bb",							// Blinky Bill
 	"fctdata",
 	"fct",					   		// Felix the Cat
-	"dayfiles",
-	"xmasfun",						// Fisher-Price Xmas Fun
 	"95instal",						// Fisher-Price Little People
-	"freading",
-	"fsetup",						// My First Reading Words (Eureka)
 	"popup",						// Pop Up Computer
-	"alpha",						// Interactive Alphabet
-	"badday",
-	"copy to hdd",					// Rename from HDDにコピーしてください
-	"bdm",
-	"dkyasp",						// Bad Day on the Midway Japanese
 	"win_demo",
 	"file",
 	"mfile",
-	"movie",						// Teichiku demos (Tetsuman)
 	"scr",
 	"scr_mov",						// Cardcaptor Sakura screen savers
-	"docs",							// Enhanced CDs
 	"lingo expo",					// D4 sample movies
 	"main",							// Meet MediaBand
 	"bellinin bikinit",				// Bellini 3 (Finnish)
