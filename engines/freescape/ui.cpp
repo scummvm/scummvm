@@ -44,7 +44,7 @@ void FreescapeEngine::titleScreen() {
 			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				switch (event.customType) {
 				case kActionChangeModeOrSkip:
-					i = maxWait;
+					maxWait = -1;
 					break;
 				default:
 					break;
@@ -54,7 +54,7 @@ void FreescapeEngine::titleScreen() {
 				// fallthrough
 			case Common::EVENT_LBUTTONDOWN:
 				if (g_system->hasFeature(OSystem::kFeatureTouchscreen))
-					i = maxWait;
+					maxWait = -1;
 				break;
 			default:
 				break;
@@ -225,7 +225,7 @@ void FreescapeEngine::drawBorderScreenAndWait(Graphics::Surface *surface, int ma
 				// fallthrough
 			case Common::EVENT_LBUTTONDOWN:
 				if (g_system->hasFeature(OSystem::kFeatureTouchscreen))
-					i = maxWait;
+					maxWait = -1;
 				break;
 			default:
 				break;
