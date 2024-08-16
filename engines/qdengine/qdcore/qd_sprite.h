@@ -209,7 +209,7 @@ private:
 	Vect2i _picture_offset;
 
 	byte *_data;
-	class rleBuffer *_rle_data;
+	class RLEBuffer *_rle_data;
 
 	Common::String _file;
 

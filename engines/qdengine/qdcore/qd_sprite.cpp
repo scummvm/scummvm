@@ -168,7 +168,7 @@ qdSprite &qdSprite::operator = (const qdSprite &spr) {
 
 	delete _rle_data;
 	if (spr._rle_data)
-		_rle_data = new rleBuffer(*spr._rle_data);
+		_rle_data = new RLEBuffer(*spr._rle_data);
 	else
 		_rle_data = NULL;
 
@@ -451,7 +451,7 @@ bool qdSprite::compress() {
 	case GR_RGB565:
 	case GR_ARGB1555:
 		if (_data) {
-			_rle_data = new rleBuffer;
+			_rle_data = new RLEBuffer;
 
 			if (!check_flag(ALPHA_FLAG)) {
 				byte *p = new byte[_picture_size.x * _picture_size.y * 4];
@@ -487,7 +487,7 @@ bool qdSprite::compress() {
 				data_ptr += 3;
 			}
 
-			_rle_data = new rleBuffer;
+			_rle_data = new RLEBuffer;
 			_rle_data->encode(_picture_size.x, _picture_size.y, p);
 
 			delete [] p;
@@ -499,7 +499,7 @@ bool qdSprite::compress() {
 		return false;
 	case GR_ARGB8888:
 		if (_data) {
-			_rle_data = new rleBuffer;
+			_rle_data = new RLEBuffer;
 			_rle_data->encode(_picture_size.x, _picture_size.y, _data);
 			set_flag(ALPHA_FLAG);
 
@@ -529,7 +529,7 @@ bool qdSprite::uncompress() {
 			_data = new byte[_picture_size.x * _picture_size.y * 2];
 			uint16 *p = reinterpret_cast<uint16 *>(_data);
 			for (int i = 0; i < _picture_size.y; i++) {
-				const uint16 *rle_p = reinterpret_cast<const uint16 *>(rleBuffer::get_buffer(0));
+				const uint16 *rle_p = reinterpret_cast<const uint16 *>(RLEBuffer::get_buffer(0));
 				_rle_data->decode_line(i);
 
 				for (int j = 0; j < _picture_size.x; j++) {
@@ -544,7 +544,7 @@ bool qdSprite::uncompress() {
 			_data = new byte[_picture_size.x * _picture_size.y * 3];
 			byte *p = _data;
 			for (int i = 0; i < _picture_size.y; i++) {
-				const byte *rle_p = reinterpret_cast<const byte *>(rleBuffer::get_buffer(0));
+				const byte *rle_p = reinterpret_cast<const byte *>(RLEBuffer::get_buffer(0));
 				_rle_data->decode_line(i);
 
 				for (int j = 0; j < _picture_size.x; j++) {
@@ -572,7 +572,7 @@ bool qdSprite::uncompress() {
 			_data = new byte[_picture_size.x * _picture_size.y * 3];
 			byte *p = _data;
 			for (int i = 0; i < _picture_size.y; i++) {
-				const byte *rle_p = reinterpret_cast<const byte *>(rleBuffer::get_buffer(0));
+				const byte *rle_p = reinterpret_cast<const byte *>(RLEBuffer::get_buffer(0));
 				_rle_data->decode_line(i);
 
 				for (int j = 0; j < _picture_size.x; j++) {
@@ -1101,7 +1101,7 @@ void qdSprite::qda_load(Common::SeekableReadStream *fh, int version) {
 			}
 		}
 	} else {
-		_rle_data = new rleBuffer;
+		_rle_data = new RLEBuffer;
 		_rle_data->load(fh);
 	}
 }

@@ -27,7 +27,7 @@
 namespace QDEngine {
 
 #ifdef _GR_ENABLE_ZBUFFER
-void grDispatcher::putSpr_rle_z(int x, int y, int z, int sx, int sy, const class rleBuffer *p, int mode, bool alpha_flag) {
+void grDispatcher::putSpr_rle_z(int x, int y, int z, int sx, int sy, const class RLEBuffer *p, int mode, bool alpha_flag) {
 	debugC(2, kDebugGraphics, "grDispatcher::putSpr_rle_z(%d, %d, %d, %d, %d)", x, y, z, sx, sy);
 
 	int px = 0;
@@ -441,7 +441,7 @@ void grDispatcher::putSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 	}
 }
 
-void grDispatcher::putSpr_rle_z(int x, int y, int z, int sx, int sy, const class rleBuffer *p, int mode, float scale, bool alpha_flag) {
+void grDispatcher::putSpr_rle_z(int x, int y, int z, int sx, int sy, const class RLEBuffer *p, int mode, float scale, bool alpha_flag) {
 	int sx_dest = round(float(sx) * scale);
 	int sy_dest = round(float(sy) * scale);
 
@@ -474,7 +474,7 @@ void grDispatcher::putSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 
 	if (bytes_per_pixel() == 2) {
 		if (!alpha_flag) {
-			const uint16 *line_src = reinterpret_cast<const uint16 *>(rleBuffer::get_buffer(0));
+			const uint16 *line_src = reinterpret_cast<const uint16 *>(RLEBuffer::get_buffer(0));
 
 			for (int i = y0; i != y1; i += iy) {
 				p->decode_line(fy >> 16);
@@ -494,7 +494,7 @@ void grDispatcher::putSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 				}
 			}
 		} else {
-			const uint16 *line_src = reinterpret_cast<const uint16 *>(rleBuffer::get_buffer(0));
+			const uint16 *line_src = reinterpret_cast<const uint16 *>(RLEBuffer::get_buffer(0));
 
 			const uint32 mask_r = (pixel_format_ == GR_RGB565) ? mask_565_r : mask_555_r;
 			const uint32 mask_g = (pixel_format_ == GR_RGB565) ? mask_565_g : mask_555_g;
@@ -533,7 +533,7 @@ void grDispatcher::putSpr_rle_z(int x, int y, int z, int sx, int sy, const class
 
 	if (bytes_per_pixel() == 3 || bytes_per_pixel() == 4) {
 		int sx3 = sx * 3;
-		const byte *line_src = rleBuffer::get_buffer(0);
+		const byte *line_src = RLEBuffer::get_buffer(0);
 
 		if (!alpha_flag) {
 			for (int i = y0; i != y1; i += iy) {

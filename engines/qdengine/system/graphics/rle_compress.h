@@ -26,13 +26,13 @@
 namespace QDEngine {
 
 //! Массив, сжатый методом RLE.
-class rleBuffer {
+class RLEBuffer {
 public:
-	rleBuffer();
-	rleBuffer(const rleBuffer &buf);
-	~rleBuffer();
+	RLEBuffer();
+	RLEBuffer(const RLEBuffer &buf);
+	~RLEBuffer();
 
-	rleBuffer &operator = (const rleBuffer &buf);
+	RLEBuffer &operator = (const RLEBuffer &buf);
 
 	bool encode(int sx, int sy, const byte *buf);
 
@@ -88,7 +88,7 @@ private:
 	static Std::vector<byte> _buffer0;
 	static Std::vector<byte> _buffer1;
 
-	friend bool operator == (const rleBuffer &buf1, const rleBuffer &buf2);
+	friend bool operator == (const RLEBuffer &buf1, const RLEBuffer &buf2);
 };
 
 } // namespace QDEngine
