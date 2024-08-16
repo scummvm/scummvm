@@ -42,6 +42,7 @@ namespace Macs2 {
 		class Common::MemoryReadStream *CurrentSceneStrings;
 
 		class Common::MemoryReadStream *ReadSceneScript(uint16 sceneIndex, Common::MemoryReadStream *fileStream);
+		Common::Array<uint32> ReadSpecialAnimsOffsets(uint16 sceneIndex, Common::MemoryReadStream *fileStream);
 		class Common::MemoryReadStream *ReadSceneStrings(uint16 sceneIndex, Common::MemoryReadStream *fileStream);
 	};
 
