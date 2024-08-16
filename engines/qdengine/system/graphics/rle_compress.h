@@ -38,19 +38,11 @@ public:
 
 	bool decode_line(int y, byte *out_buf) const;
 
-	inline bool decode_line(int y, int buffer_id = 0) const {
-		if (buffer_id)
-			return decode_line(y, &*_buffer1.begin());
-		else
-			return decode_line(y, &*_buffer0.begin());
-	}
+	bool decode_line(int y, int buffer_id = 0) const;
 
 	bool decode_pixel(int x, int y, uint32 &pixel);
 
-	static inline const byte *get_buffer(int buffer_id) {
-		if (buffer_id) return &*_buffer1.begin();
-		else return &*_buffer0.begin();
-	}
+	static const byte *get_buffer(int buffer_id);
 
 	void resize_buffers();
 
@@ -76,6 +68,8 @@ public:
 
 	bool convert_data(int bits_per_pixel = 16);
 
+	static void releaseBuffers();
+
 private:
 	Std::vector<uint32> _header_offset;
 	Std::vector<uint32> _data_offset;
@@ -84,9 +78,6 @@ private:
 	Std::vector<uint32> _data;
 
 	int _bits_per_pixel;
-
-	static Std::vector<byte> _buffer0;
-	static Std::vector<byte> _buffer1;
 
 	friend bool operator == (const RLEBuffer &buf1, const RLEBuffer &buf2);
 };

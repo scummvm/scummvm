@@ -29,8 +29,18 @@
 
 namespace QDEngine {
 
-Std::vector<byte> RLEBuffer::_buffer0(4096);
-Std::vector<byte> RLEBuffer::_buffer1(4096);
+byte *g_buffer0 = nullptr;
+byte *g_buffer1 = nullptr;
+int g_buffersLen = 0;
+
+static void ensureBuffers() {
+	if (g_buffer0 == nullptr) {
+		g_buffer0 = (byte *)calloc(4096, 1);
+		g_buffer1 = (byte *)calloc(4096, 1);
+
+		g_buffersLen = 4096;
+	}
+}
 
 bool operator == (const RLEBuffer &buf1, const RLEBuffer &buf2) {
 	if (!(buf1._header_offset == buf2._header_offset)) return false;
@@ -49,6 +59,8 @@ RLEBuffer::RLEBuffer(const RLEBuffer &buf) : _header_offset(buf._header_offset),
 	_header(buf._header),
 	_data(buf._data),
 	_bits_per_pixel(buf._bits_per_pixel) {
+
+	ensureBuffers();
 }
 
 RLEBuffer::~RLEBuffer() {
@@ -57,6 +69,31 @@ RLEBuffer::~RLEBuffer() {
 	_header.clear();
 
 	_data.clear();
+}
+
+bool RLEBuffer::decode_line(int y, int buffer_id) const {
+	ensureBuffers();
+
+	if (buffer_id)
+		return decode_line(y, g_buffer1);
+	else
+		return decode_line(y, g_buffer0);
+}
+
+ const byte *RLEBuffer::get_buffer(int buffer_id) {
+	ensureBuffers();
+
+	if (buffer_id)
+		return g_buffer1;
+	else
+		return g_buffer0;
+}
+
+void RLEBuffer::releaseBuffers() {
+	free(g_buffer0);
+	g_buffer0 = nullptr;
+	free(g_buffer1);
+	g_buffer1 = nullptr;
 }
 
 RLEBuffer &RLEBuffer::operator = (const RLEBuffer &buf) {
@@ -258,10 +295,12 @@ bool RLEBuffer::convert_data(int bits_per_pixel) {
 void RLEBuffer::resize_buffers() {
 	uint32 len = line_length() * sizeof(uint32);
 
-	if (_buffer0.size() < len)
-		_buffer0.resize(len);
-	if (_buffer1.size() < len)
-		_buffer1.resize(len);
+	if (g_buffersLen < len) {
+		if (!realloc(g_buffer0, len) || !realloc(g_buffer1, len))
+			error("RLEBuffer::resize_buffers(): Cannot realloc buffers");
+
+		g_buffersLen = len;
+	}
 }
 
 int RLEBuffer::line_length() {
