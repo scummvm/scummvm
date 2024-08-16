@@ -37,8 +37,6 @@
 
 namespace QDEngine {
 
-const Vect3f qdGameObjectState::DEFAULT_BOUND(3.f, 3.f, 3.f);
-
 qdScreenTransform qdScreenTransform::ID;
 
 bool qdScreenTransform::operator == (const qdScreenTransform &trans) const {
@@ -67,7 +65,7 @@ qdGameObjectState::qdGameObjectState(qdGameObjectState::StateType tp) : _center_
 	_work_time(0.0f),
 	_cur_time(0.0f),
 	_reference_count(0),
-	_bound(DEFAULT_BOUND),
+	_bound(Vect3f(3.f, 3.f, 3.f)),
 	_activation_delay(0.0f),
 	_activation_timer(0.0f),
 	_is_sound_started(false),
