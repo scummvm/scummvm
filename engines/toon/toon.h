@@ -72,6 +72,19 @@ struct ADGameDescription;
  */
 namespace Toon {
 
+enum TOONAction {
+	kActionNone,
+	kActionEscape,
+	kActionStopCurrentVoice,
+	kActionSaveGame,
+	kActionLoadGame,
+	kActionSubtitles,
+	kActionMuteMusic,
+	kActionSpeechMute,
+	kActionSFXMute,
+	kActionShowOptions
+};
+
 enum ToonGameType {
 	GType_TOON = 1
 };
