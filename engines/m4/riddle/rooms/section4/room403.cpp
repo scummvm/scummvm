@@ -260,7 +260,7 @@ void Room403::init() {
 }
 
 void Room403::daemon() {
-	int frame, val;
+	int frame;
 
 	switch (_G(kernel).trigger) {
 	case 10:
@@ -981,6 +981,208 @@ void Room403::daemon() {
 		}
 		break;
 
+	case 200:
+		player_set_commands_allowed(false);
+		_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+			triggerMachineByHashCallbackNegative, "rip talks wolf");
+
+		player_update_info();
+		_ripTalksWolf = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00, 0,
+			triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+		sendWSMessage_10000(1, _ripTalksWolf, _safariShadow, 1, 1, -1,
+			_safariShadow, 1, 1, 0);
+
+		ws_hide_walker();
+		sendWSMessage_10000(1, _wolfie, _wolfTurnHand, 11, 45, 202,
+			_wolfTurnHand, 45, 45, 0);
+		break;
+
+	case 202:
+		sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 40, 63, 203,
+			_ripTalkPay, 63, 63, 0);
+		break;
+
+	case 203:
+		digi_play("950_s23", 2, 255, -1, 950);
+		kernel_timing_trigger(30, 205);
+		digi_play("402w07", 1);
+		break;
+
+	case 205:
+		sendWSMessage_10000(1, _wolfie, _wolfTurnHand, 45, 1, 209,
+			_wolfTurnHand, 1, 1, 0);
+		sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 63, 40, 206,
+			_ripTalkPay, 40, 40, 0);
+		break;
+
+	case 206:
+		sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 10, 1, 207,
+			_ripTalkPay, 1, 1, 0);
+		break;
+
+	case 207:
+	case 226:
+	case 236:
+		terminateMachineAndNull(_ripOnLadder);
+		terminateMachineAndNull(_ripTalksWolf);
+		ws_unhide_walker();
+		break;
+
+	case 209:
+	case 227:
+		kernel_timing_trigger(1, 110);
+		player_set_commands_allowed(true);
+		break;
+
+	case 210:
+		player_set_commands_allowed(false);
+		_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+			triggerMachineByHashCallbackNegative, "rip talks wolf");
+
+		player_update_info();
+		_ripTalksWolf = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00, 0,
+			triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+
+		sendWSMessage_10000(1, _ripTalksWolf, _safariShadow, 1, 1, -1,
+			_safariShadow, 1, 1, 0);
+		sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 1, 10, 211,
+			_ripTalkPay, 10, 110, 0);
+		sendWSMessage_10000(1, _wolfie, _wolfTurnHand, 11, 45, 213,
+			_wolfTurnHand, 45, 45, 0);
+		_val13 = _G(flags)[V111];
+		break;
+
+	case 211:
+		sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 40, 56, -1,
+			_ripTalkPay, 56, 56, 0);
+		break;
+
+	case 213:
+		sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 57, 63, 214,
+			_ripTalkPay, 63, 63, 0);
+		break;
+
+	case 214:
+		digi_play("950_s23", 2, 255, -1, 950);
+		kernel_timing_trigger(30, 215);
+		break;
+
+	case 215:
+		if (_val13 > 1) {
+			--_val13;
+			sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 63, 57, 213,
+				_ripTalkPay, 57, 57, 0);
+		} else {
+			sendWSMessage_10000(1, _wolfie, _wolfTalkLeave, 1, 18, 217,
+				_wolfTalkLeave, 18, 18, 0);
+			sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 56, 40, 216,
+				_ripTalkPay, 40, 40, 0);
+			_flag3 = false;
+		}
+		break;
+
+	case 216:
+	case 217:
+		if (!_flag3) {
+			_flag3 = true;
+		} else {
+			kernel_timing_trigger(1, 218);
+		}
+		break;
+
+	case 218:
+		_val4 = -1;
+		_val8 = 2000;
+		_val9 = 2252;
+		kernel_timing_trigger(1, 110);
+		_val6 = 1000;
+		_val7 = 1103;
+		kernel_timing_trigger(1, 102);
+
+		conv_load("conv403a", 0, 10, 101);
+		conv_export_value_curr(_G(flags)[V111], 0);
+		conv_export_value_curr(_G(flags)[V121], 1);
+		conv_export_value_curr(_G(flags)[V122], 2);
+		conv_export_value_curr(_G(flags)[V120], 3);
+
+		conv_export_value_curr(inv_player_has("POMERANIAN MARKS") ? 1 : 0, 5);
+		conv_export_pointer_curr(&_G(flags)[V114], 5);
+		conv_export_pointer_curr(&_G(flags)[V115], 6);
+		conv_export_value_curr(_G(flags)[V337], 10);
+		conv_play();
+		break;
+
+	case 220:
+		player_set_commands_allowed(false);
+		_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+			triggerMachineByHashCallbackNegative, "rip talks wolf");
+
+		player_update_info();
+		_ripTalksWolf = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00, 0,
+			triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+
+		sendWSMessage_10000(1, _ripTalksWolf, _safariShadow, 1, 1, -1,
+			_safariShadow, 1, 1, 0);
+		ws_hide_walker();
+		sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 1, 10, -1,
+			_ripTalkPay, 10, 10, 0);
+		sendWSMessage_10000(1, _wolfie, _wolfTurnHand, 11, 45, 222,
+			_wolfTurnHand, 45, 45, 0);
+		break;
+
+	case 222:
+		sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 40, 63, 223,
+			_ripTalkPay, 63, 63, 0);
+		break;
+
+	case 223:
+		sendWSMessage_10000(1, _wolfie, _wolfTurnHand, 45, 11, 227,
+			_wolfTurnHand, 11, 11, 0);
+		digi_play("402w08", 1);
+		kernel_timing_trigger(60, 224);
+		break;
+
+	case 224:
+		sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 63, 40, 225,
+			_ripTalkPay, 40, 40, 0);
+		break;
+
+	case 225:
+		sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 10, 1, 226,
+			_ripTalkPay, 1, 1, 0);
+		break;
+
+	case 230:
+		player_set_commands_allowed(false);
+		_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+			triggerMachineByHashCallbackNegative, "rip talks wolf");
+
+		player_update_info();
+		_ripTalksWolf = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00, 0,
+			triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+
+		sendWSMessage_10000(1, _ripTalksWolf, _safariShadow, 1, 1, -1,
+			_safariShadow, 1, 1, 0);
+		ws_hide_walker();
+		sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 1, 10, 232,
+			_ripTalkPay, 10, 10, 0);
+		break;
+
+	case 232:
+		sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 40, 63, 233,
+			_ripTalkPay, 63, 63, 0);
+		break;
+
+	case 235:
+		sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 10, 1, 236,
+			_ripTalkPay, 1, 1, 0);
+		break;
+
+	// TODO
 	default:
 		break;
 	}

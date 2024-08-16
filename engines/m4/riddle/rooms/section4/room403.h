@@ -63,6 +63,7 @@ private:
 	int _noTreat = 0;
 	bool _flag1 = false;
 	bool _flag2 = false;
+	bool _flag3 = 0;
 	int _ripRingsBell = 0;
 	machine *_wolfWalker = nullptr;
 	int _wolfAdmonish = 0;
