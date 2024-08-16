@@ -267,6 +267,18 @@ const char *qdMiniGame::config_parameter_value(const char *cfg_param_name) const
 
 bool qdMiniGame::load_interface() {
 	if (!_dll_name.empty()) {
+
+		// maski
+		// Arkada_avtomat.dll
+		// MaskyOrder.dll
+		// kartiny.dll
+		// maski_21.dll
+		// maski_21_random.dll
+		// orchestra.dll
+		// scroll.dll
+		// tetris.dll
+
+		// 3mice1
 		if (_dll_name == "DLL\\Book_gusenica.dll" || _dll_name == "DLL\\Book_les.dll"
 				|| _dll_name == "DLL\\Book_buhta.dll") {
 			_interface = new qdBookAllMiniGameInterface(_dll_name, g_engine->getLanguage());
@@ -277,6 +289,36 @@ bool qdMiniGame::load_interface() {
 				|| _dll_name == "DLL\\Puzzle_ep13.dll") {
 			_interface = new qdPuzzleAllMiniGameInterface(_dll_name, g_engine->getLanguage());
 			return true;
+
+		// shveik
+		// ShveikPortret.dll
+		// ShveikShkatulka.dll
+		// inv_popup.dll
+
+		// klepa
+		// Karaoke.dll
+		// puzzle.dll
+
+		// 3mice2
+		// 3Mice2_babochka.dll
+		// 3Mice2_kovrik.dll
+		// 3Mice2_plate.dll
+		// 3Mice2_raskr1.dll
+		// 3Mice2_raskr2.dll
+		// 3Mice2_raskr3.dll
+		// 3Mice2_raskr4.dll
+		// 3Mice2_sbor_karty.dll
+		// 3Mice2_states.dll
+		// 3Mice2_sudoku.dll
+		// 3Mice2_testo.dll
+
+		// dogncat
+		// scores.dll
+		// triangles.dll
+
+		// dogncat2
+		// scores.dll
+		// swap.dll
 		} else {
 			warning("STUB: Trying to load dll: %s", _dll_name.c_str());
 			// call here dll->open_game_interface(game_name())
