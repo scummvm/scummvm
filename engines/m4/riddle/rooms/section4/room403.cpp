@@ -260,7 +260,7 @@ void Room403::init() {
 }
 
 void Room403::daemon() {
-	int frame;
+	int frame, val;
 
 	switch (_G(kernel).trigger) {
 	case 10:
@@ -730,6 +730,249 @@ void Room403::daemon() {
 
 			default:
 				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 110:
+		switch (_val8) {
+		case 2000:
+		case 2001:
+			if (_val4 != -1) {
+				kernel_timing_trigger(1, _val4);
+				_val4 = -1;
+			} else {
+				kernel_timing_trigger(1, 111);
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 111:
+		switch (_val8) {
+		case 2000:
+			switch (_val9) {
+			case 2100:
+				sendWSMessage_10000(1, _wolfie, _wolfTurnTalk, 1, 7, 110,
+					_wolfTurnTalk, 7, 7, 0);
+				_val9 = 2102;
+				break;
+
+			case 2101:
+				frame = imath_ranged_rand(8, 13);
+				sendWSMessage_10000(1, _wolfie, _wolfTurnTalk, frame, frame, 110,
+					_wolfTurnTalk, frame, frame, 0);
+				sendWSMessage_190000(_wolfie, 11);
+				sendWSMessage_1a0000(_wolfie, 11);
+				break;
+
+			case 2102:
+				sendWSMessage_10000(1, _wolfie, _wolfTurnTalk, 7, 7, 110,
+					_wolfTurnTalk, 7, 7, 0);
+				break;
+
+			case 2103:
+				sendWSMessage_10000(1, _wolfie, _wolfTurnTalk, 6, 6, -1,
+					_wolfEdger, 6, 6, 0);
+				break;
+
+			case 2104:
+				sendWSMessage_10000(1, _wolfie, _wolfEdger, 1, 6, 110,
+					_wolfEdger, 6, 6, 0);
+				break;
+
+			case 2105:
+				sendWSMessage_10000(1, _wolfie, _wolfTurnTalk, 7, 1, 110,
+					_wolfEdger, 1, 1, 0);
+				_val8 = 2001;
+				_val9 = 2300;
+				break;
+
+			case 2230:
+				terminateMachineAndNull(_wolfie);
+				_wolfie = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x300, 0,
+					triggerMachineByHashCallbackNegative, "WOLFIE");
+				sendWSMessage_10000(1, _wolfie, _wolfTurnHand, 11, 45, 111,
+					_wolfTurnHand, 45, 45, 0);
+				_val9 = 2231;
+
+				if (!_sound1.empty()) {
+					digi_play(_sound1.c_str(), 1);
+					_sound1.clear();
+				}
+				break;
+
+			case 2231:
+				player_set_commands_allowed(true);
+				break;
+
+			case 2232:
+				_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+					triggerMachineByHashCallbackNegative, "rip talks wolf");
+				player_update_info();
+
+				_ripTalksWolf = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+					_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00, 0,
+					triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+				sendWSMessage_10000(1, _ripTalksWolf, _safariShadow, 1, 1, -1,
+					_safariShadow, 1, 1, 0);
+
+				ws_hide_walker();
+				sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 1, 10, 111,
+					_ripTalkPay, 10, 10, 0);
+				_val9 = 2233;
+				break;
+
+			case 2233:
+				sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 40, 56, 213,
+					_ripTalkPay, 56, 56, 0);
+				_val13 = _G(flags)[V111];
+				break;
+
+			case 2234:
+				player_set_commands_allowed(false);
+				sendWSMessage_10000(1, _wolfie, _wolfTurnHand, 45, 11, 111,
+					_wolfTurnHand, 11, 11, 0);
+				_val9 = 2235;
+				break;
+
+			case 2235:
+				_val8 = 2001;
+				_val9 = 2300;
+				kernel_timing_trigger(1, 110);
+
+				if (!_G(flags)[V052])
+					player_set_commands_allowed(true);
+				break;
+
+			case 2250:
+				frame = imath_ranged_rand(19, 24);
+				sendWSMessage_10000(1, _wolfie, _wolfTalkLeave, frame, frame, 110,
+					_wolfTalkLeave, frame, frame, 0);
+				sendWSMessage_190000(_wolfie, 11);
+				sendWSMessage_1a0000(_wolfie, 11);
+				break;
+
+			case 2251:
+				sendWSMessage_10000(1, _wolfie, _wolfTalkLeave, 19, 19, -1,
+					_wolfTalkLeave, 19, 19, 0);
+				break;
+
+			case 2252:
+				sendWSMessage_10000(1, _wolfie, _wolfTalkLeave, 19, 19, 110,
+					_wolfTalkLeave, 19, 19, 0);
+				break;
+
+			case 2253:
+				sendWSMessage_10000(1, _wolfie, _wolfTurnHand, 15, 34, 111,
+					_wolfTurnHand, 34, 34, 0);
+				_val9 = 2254;
+				break;
+
+			case 2254:
+				sendWSMessage_10000(1, _wolfie, _wolfTalkLeave, 40, 60, 111,
+					_wolfTalkLeave, 60, 60, 0);
+				_val9 = 2255;
+
+				if (!_sound1.empty()) {
+					digi_play(_sound1.c_str(), 1);
+					_sound1.clear();
+				}
+				break;
+
+			case 2255:
+				sendWSMessage_10000(1, _wolfie, _wolfTalkLeave, 60, 40, 111,
+					_wolfTalkLeave, 40, 40, 0);
+				_val9 = 2256;
+				break;
+
+			case 2256:
+				sendWSMessage_10000(1, _wolfie, _wolfTurnHand, 34, 15, 111,
+					_wolfTurnHand, 15, 15, 0);
+				_val9 = 2257;
+				break;
+
+			case 2257:
+				_val9 = 2102;
+				kernel_timing_trigger(1, 110);
+				conv_resume();
+				break;
+
+			case 2258:
+				sendWSMessage_10000(1, _wolfie, _wolfTalkLeave, 1, 18, 111,
+					_wolfTalkLeave, 18, 18, 0);
+				_val9 = 2250;
+				break;
+
+			case 2260:
+				sendWSMessage_10000(1, _wolfie, _wolfTurnHand, 11, 45, -1,
+					_wolfTurnHand, 45, 45, 0);
+
+				if (!_sound1.empty()) {
+					digi_play(_sound1.c_str(), 1, 255, 111);
+					_val9 = 2262;
+					_sound1.clear();
+				}
+				break;
+
+			case 2262:
+				conv_resume();
+				break;
+
+			case 2270:
+				sendWSMessage_10000(1, _wolfie, _wolfTurnHand, 45, 11, 111,
+					_wolfTurnHand, 11, 11, 0);
+
+				if (!_sound1.empty()) {
+					digi_play(_sound1.c_str(), 1);
+					_sound1.clear();
+				}
+				break;
+
+			case 2272:
+				_val8 = 2001;
+				_val9 = 2300;
+				kernel_timing_trigger(1, 110);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 2001:
+			if (_val9 == 2300) {
+				if (imath_ranged_rand(1, 3) == 1) {
+					frame = imath_ranged_rand(1, 6);
+					sendWSMessage_10000(1, _wolfie, _wolfEdger,
+						imath_ranged_rand(1, 6), imath_ranged_rand(1, 6), 100,
+						_wolfEdger, frame, frame, 0);
+					sendWSMessage_190000(_wolfie, 8);
+					sendWSMessage_1a0000(_wolfie, 6);
+
+					switch (imath_ranged_rand(1, 6)) {
+					case 1:
+						digi_play("403_s02", 2);
+						break;
+					case 2:
+						digi_play("403_s02a", 2);
+						break;
+					case 3:
+						digi_play("403_s02b", 2);
+						break;
+					default:
+						break;
+					}
+				} else {
+					kernel_timing_trigger(15, 110);
+				}
 			}
 			break;
 

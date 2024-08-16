@@ -43,6 +43,7 @@ private:
 	int _val10 = 0;
 	Common::String _sound1;
 	int _val12 = 0;
+	int _val13 = 0;
 	int _plank = 0;
 	machine *_ventClosed = nullptr;
 	machine *_edger = nullptr;
@@ -71,6 +72,7 @@ private:
 	int _ripPutBoard = 0;
 	machine *_ripTalksWolf = nullptr;
 	int _ripPlankEdger = 0;
+	machine *_wolfJustSo = nullptr;
 
 	void conv403a();
 	void conv403a1();
