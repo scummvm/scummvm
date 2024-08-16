@@ -35,6 +35,7 @@
 #include "qdengine/qdcore/util/ResourceDispatcher.h"
 #include "qdengine/qdcore/util/WinVideo.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
+#include "qdengine/system/graphics/rle_compress.h"
 #include "qdengine/system/input/input_wndproc.h"
 #include "qdengine/system/input/mouse_input.h"
 #include "qdengine/system/input/keyboard_input.h"
@@ -318,6 +319,8 @@ int QDEngineEngine::engineMain() {
 	delete grD;
 
 	winVideo::done();
+
+	RLEBuffer::releaseBuffers();
 
 	return 0;
 }
