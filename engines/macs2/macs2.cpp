@@ -613,6 +613,8 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 
 	// TODO: Remove the now superfluous one
 	ReadBackgroundAnimations(_fileStream);
+
+
 	
 
 
