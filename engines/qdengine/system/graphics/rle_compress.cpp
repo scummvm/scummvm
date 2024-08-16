@@ -29,10 +29,10 @@
 
 namespace QDEngine {
 
-Std::vector<byte> rleBuffer::_buffer0(4096);
-Std::vector<byte> rleBuffer::_buffer1(4096);
+Std::vector<byte> RLEBuffer::_buffer0(4096);
+Std::vector<byte> RLEBuffer::_buffer1(4096);
 
-bool operator == (const rleBuffer &buf1, const rleBuffer &buf2) {
+bool operator == (const RLEBuffer &buf1, const RLEBuffer &buf2) {
 	if (!(buf1._header_offset == buf2._header_offset)) return false;
 	if (!(buf1._data_offset == buf2._data_offset)) return false;
 	if (!(buf1._header == buf2._header)) return false;
@@ -41,17 +41,17 @@ bool operator == (const rleBuffer &buf1, const rleBuffer &buf2) {
 	return true;
 }
 
-rleBuffer::rleBuffer() : _bits_per_pixel(32) {
+RLEBuffer::RLEBuffer() : _bits_per_pixel(32) {
 }
 
-rleBuffer::rleBuffer(const rleBuffer &buf) : _header_offset(buf._header_offset),
+RLEBuffer::RLEBuffer(const RLEBuffer &buf) : _header_offset(buf._header_offset),
 	_data_offset(buf._data_offset),
 	_header(buf._header),
 	_data(buf._data),
 	_bits_per_pixel(buf._bits_per_pixel) {
 }
 
-rleBuffer::~rleBuffer() {
+RLEBuffer::~RLEBuffer() {
 	_header_offset.clear();
 	_data_offset.clear();
 	_header.clear();
@@ -59,7 +59,7 @@ rleBuffer::~rleBuffer() {
 	_data.clear();
 }
 
-rleBuffer &rleBuffer::operator = (const rleBuffer &buf) {
+RLEBuffer &RLEBuffer::operator = (const RLEBuffer &buf) {
 	if (this == &buf) return *this;
 
 	_header_offset = buf._header_offset;
@@ -73,7 +73,7 @@ rleBuffer &rleBuffer::operator = (const rleBuffer &buf) {
 	return *this;
 }
 
-bool rleBuffer::encode(int sx, int sy, const byte *buf) {
+bool RLEBuffer::encode(int sx, int sy, const byte *buf) {
 	_header_offset.resize(sy);
 	_data_offset.resize(sy);
 
@@ -123,7 +123,7 @@ bool rleBuffer::encode(int sx, int sy, const byte *buf) {
 	return true;
 }
 
-bool rleBuffer::decode_line(int y, byte *out_buf) const {
+bool RLEBuffer::decode_line(int y, byte *out_buf) const {
 	const char *header_ptr = &*(_header.begin() + _header_offset[y]);
 	const uint32 *data_ptr = &*(_data.begin() + _data_offset[y]);
 
@@ -149,7 +149,7 @@ bool rleBuffer::decode_line(int y, byte *out_buf) const {
 	return true;
 }
 
-bool rleBuffer::decode_pixel(int x, int y, uint32 &pixel) {
+bool RLEBuffer::decode_pixel(int x, int y, uint32 &pixel) {
 	const char *header_ptr = &*(_header.begin() + _header_offset[y]);
 	const uint32 *data_ptr = &*(_data.begin() + _data_offset[y]);
 
@@ -177,11 +177,11 @@ bool rleBuffer::decode_pixel(int x, int y, uint32 &pixel) {
 	return true;
 }
 
-uint32 rleBuffer::size() {
+uint32 RLEBuffer::size() {
 	return _data.size() * sizeof(uint32) + _data_offset.size() + _header_offset.size() * sizeof(uint32) + _header.size();
 }
 
-bool rleBuffer::convert_data(int bits_per_pixel) {
+bool RLEBuffer::convert_data(int bits_per_pixel) {
 	if (_bits_per_pixel == bits_per_pixel)
 		return true;
 
@@ -255,7 +255,7 @@ bool rleBuffer::convert_data(int bits_per_pixel) {
 	return true;
 }
 
-void rleBuffer::resize_buffers() {
+void RLEBuffer::resize_buffers() {
 	uint32 len = line_length() * sizeof(uint32);
 
 	if (_buffer0.size() < len)
@@ -264,7 +264,7 @@ void rleBuffer::resize_buffers() {
 		_buffer1.resize(len);
 }
 
-int rleBuffer::line_length() {
+int RLEBuffer::line_length() {
 	if (_header_offset.empty()) return 0;
 
 	int sz = (_header_offset.size() > 1) ? _header_offset[1] : _header.size();
@@ -277,7 +277,7 @@ int rleBuffer::line_length() {
 	return len;
 }
 
-int rleBuffer::line_header_length(int line_num) const {
+int RLEBuffer::line_header_length(int line_num) const {
 	if (line_num < _header_offset.size() - 1)
 		return _header_offset[line_num + 1] - _header_offset[line_num];
 	else
@@ -285,7 +285,7 @@ int rleBuffer::line_header_length(int line_num) const {
 }
 
 
-bool rleBuffer::load(Common::SeekableReadStream *fh) {
+bool RLEBuffer::load(Common::SeekableReadStream *fh) {
 	int32 sz = fh->readUint32LE();
 	_header_offset.resize(sz);
 
