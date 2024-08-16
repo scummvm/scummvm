@@ -93,8 +93,6 @@ private:
 //! Состояние динамического объекта - базовый класс.
 class qdGameObjectState : public qdConditionalObject {
 public:
-	static const Vect3f DEFAULT_BOUND;
-
 	//! Флаги состояния.
 	enum {
 		//! Объект спрятан.
