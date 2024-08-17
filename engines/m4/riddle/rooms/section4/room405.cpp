@@ -27,10 +27,24 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+void Room405::preload() {
+	_G(player).walker_type = 1;
+	_G(player).shadow_type = 1;
+	LoadWSAssets("OTHER SCRIPT");
+}
+
 void Room405::init() {
 }
 
 void Room405::daemon() {
+}
+
+void Room405::pre_parser() {
+
+}
+
+void Room405::parser() {
+
 }
 
 } // namespace Rooms

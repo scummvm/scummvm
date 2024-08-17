@@ -119,19 +119,18 @@ void Room402::init() {
 			_val13 = 2300;
 			ws_demand_facing(11);
 
-			// The original uses a getenv("KITTY") call
-#ifdef KITTY_SCREAMING
-			ws_demand_location(425, 285);
-			player_set_commands_allowed(true);
-#else
-			digi_preload("950_s22");
-			_ripDownStairs = series_load("RIP DOWN STAIRS");
-			ws_hide_walker();
-			_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, 0,
-				triggerMachineByHashCallbackNegative, "rip leaving castle");
-			sendWSMessage_10000(1, _ripEnterLeave, _ripDownStairs, 1, 27, 55,
-				_ripDownStairs, 27, 27, 0);
-#endif
+			if (_G(kittyScreaming)) {
+				ws_demand_location(425, 285);
+				player_set_commands_allowed(true);
+			} else {
+				digi_preload("950_s22");
+				_ripDownStairs = series_load("RIP DOWN STAIRS");
+				ws_hide_walker();
+				_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x600, 0,
+					triggerMachineByHashCallbackNegative, "rip leaving castle");
+				sendWSMessage_10000(1, _ripEnterLeave, _ripDownStairs, 1, 27, 55,
+					_ripDownStairs, 27, 27, 0);
+			}
 
 		} else if (_G(flags)[V131] != 402) {
 			hotspot_set_active("TOPIARY ", true);

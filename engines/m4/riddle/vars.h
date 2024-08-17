@@ -55,6 +55,7 @@ public:
 	Riddle::GUI::Interface _interface;
 	int _global301 = 0;
 	int _flag1 = 0;
+	bool _kittyScreaming = false;
 
 public:
 	Vars();
