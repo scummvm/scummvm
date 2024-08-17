@@ -492,6 +492,7 @@ void Room401::daemon() {
 		sendWSMessage_110000(511);
 		_val6 = 5;
 		digi_play("401x10", 1, 255, 512);
+		break;
 
 	case 511:
 		sendWSMessage_29a0000(_rip2);
