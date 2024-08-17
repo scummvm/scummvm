@@ -45,6 +45,12 @@ private:
 	machine *_candles = nullptr;
 	machine *_bankNote = nullptr;
 	machine *_baron = nullptr;
+	int _currentNode = 0;
+	Common::String _sound1;
+	Common::String _sound2;
+
+	void conv405a();
+	void conv405a1();
 
 public:
 	Room405() : Room() {}

@@ -102,12 +102,144 @@ void Room405::daemon() {
 }
 
 void Room405::pre_parser() {
+	bool takeFlag = player_said("take");
+	bool lookFlag = player_said_any("look", "look at");
+	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
+	if (player_said("DOOR") && (lookFlag || useFlag || takeFlag)) {
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+	}
+
+	if (player_said("journal") && !takeFlag && !lookFlag && _G(kernel).trigger == -1) {
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+	}
 }
 
 void Room405::parser() {
+	bool lookFlag = player_said_any("look", "look at");
+	bool talkFlag = player_said_any("talk", "talk to");
+	bool takeFlag = player_said("take");
+	bool enterFlag = player_said("enter");
+	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
+	if (player_said("conv405a")) {
+		if (_G(kernel).trigger == 1)
+			conv405a1();
+		else
+			conv405a();
+	}
+	// TODO
+	else {
+		return;
+	}
+
+	_G(player).command_ready = false;
 }
+
+void Room405::conv405a() {
+	int who = conv_whos_talking();
+	_currentNode = conv_current_node();
+	int entry = conv_current_entry();
+	const char *sound = conv_sound_to_play();
+
+	if (sound) {
+		if (who <= 0) {
+			switch (_currentNode) {
+			case 2:
+				if (entry == 0) {
+					_val8 = 2110;
+					_sound1 = sound;
+				} else {
+					_val8 = 2101;
+					digi_play(sound, 1, 255, 1);
+				}
+				break;
+
+			case 4:
+				if (entry == 1) {
+					_val8 = 2140;
+					_sound1 = sound;
+				} else if (entry == 2) {
+					_val8 = 2120;
+					_sound1 = sound;
+				} else {
+					_val8 = 2101;
+					digi_play(sound, 1, 255, 1);
+				}
+				break;
+
+			case 14:
+				if (entry == 4) {
+					_val8 = 2140;
+					_sound1 = sound;
+				} else {
+					_val8 = 2101;
+					digi_play(sound, 1, 255, 1);
+				}
+				break;
+
+			default:
+				_val8 = 2101;
+				digi_play(sound, 1, 255, 1);
+				break;
+			}
+		} else if (who == 1) {
+			switch (_currentNode) {
+			case 1:
+				if (entry == 3) {
+					_val6 = 2110;
+					_sound2 = sound;
+				} else {
+					_val6 = 1102;
+					digi_play(sound, 1, 255, 1);
+				}
+				break;
+
+			case 8:
+				if (entry == 2) {
+					_val6 = 1220;
+					_sound2 = sound;
+				} else {
+					_val6 = 1102;
+					digi_play(sound, 1, 255, 1);
+				}
+				break;
+
+			case 14:
+				if (entry == 1) {
+					_val6 = 1230;
+					_sound2 = sound;
+				} else if (entry == 5) {
+					_val8 = 2171;
+					_val6 = 1102;
+					digi_play(sound, 1, 255, 1);
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+	} else {
+		conv_resume();
+	}
+}
+
+void Room405::conv405a1() {
+	int who = conv_whos_talking();
+
+	if (who <= 0)
+		_val8 = 2102;
+	else if (who == 1)
+		_val6 = 1103;
+
+	conv_resume();
+}
+
 
 } // namespace Rooms
 } // namespace Riddle
