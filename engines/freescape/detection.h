@@ -36,7 +36,7 @@
 
 // Castle Master options
 
-#define GAMEOPTION_TRAVEL_ROCK   GUIO_GAMEOPTIONS8
+#define GAMEOPTION_TRAVEL_ROCK   GUIO_GAMEOPTIONS9
 
 
 #endif
