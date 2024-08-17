@@ -203,7 +203,61 @@ void Room406::daemon() {
 }
 
 void Room406::pre_parser() {
+	bool lookFlag = player_said_any("look", "look at");
+	bool takeFlag = player_said("take");
+	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
+	if (useFlag && player_said_any("BILLIARD TABLE", "BILLIARD TABLE ")) {
+		_G(player).resetWalk();
+		_G(kernel).trigger_mode = KT_PARSE;
+		kernel_timing_trigger(1, 69);
+		_G(kernel).trigger_mode = KT_PREPARSE;
+	}
+
+	if (player_said("BILLIARD BALL", "BILLIARD TABLE") &&
+			_G(kernel).trigger == -1) {
+		_G(player).resetWalk();
+		_G(kernel).trigger_mode = KT_PARSE;
+		kernel_timing_trigger(1, 69);
+		_G(kernel).trigger_mode = KT_PREPARSE;
+	}
+
+	if (_val1 == 1000) {
+		_G(player).resetWalk();
+
+		if (!player_said(" ") &&
+			!(lookFlag && player_said("MESSAGE LOG")) &&
+			!player_said("journal")) {
+			if (!useFlag || !player_said("CABINET DRAWER OPEN"))
+				return;
+		}
+
+		intr_cancel_sentence();
+		_val1 = 1001;
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(1, 10);
+		_G(kernel).trigger_mode = KT_PARSE;
+
+	} else if (_val2 == 1000) {
+		_G(player).resetWalk();
+
+		if (!player_said(" ") &&
+			!(lookFlag && player_said("MESSAGE LOG")) &&
+			!player_said("journal")) {
+			if (!useFlag || !player_said("DESK DRAWER OPEN"))
+				return;
+		}
+
+		intr_cancel_sentence();
+		_val1 = 1001;
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(1, 20);
+		_G(kernel).trigger_mode = KT_PARSE;
+
+	} else if (player_said("journal") && !takeFlag && !lookFlag &&
+			_G(kernel).trigger == -1) {
+		_G(player).resetWalk();
+	}
 }
 
 void Room406::parser() {
