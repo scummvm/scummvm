@@ -44,7 +44,6 @@ public:
 private:
 	static const uint8 MIDI_NOTE_MAP[24];
 private:
-	MidiChannel *_midiChannels[CHANNEL_COUNT];
 	Common::Queue<MidiValue> _queue;
 	Common::Mutex _driverMutex;
 	const byte *_musInstrumentPtrs[16];
