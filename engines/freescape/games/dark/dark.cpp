@@ -299,9 +299,9 @@ bool DarkEngine::tryDestroyECDFullGame(int index) {
 		case 8:
 			assert(index <= 1);
 			if (index == 0)
-				return true;
-			else if (index == 1)
 				return !(checkECD(18, 0) && checkECD(10, 0)); // Check both
+			else if (index == 1)
+				return true;
 			break;
 
 		case 10:
@@ -407,7 +407,7 @@ bool DarkEngine::tryDestroyECDFullGame(int index) {
 
 bool DarkEngine::tryDestroyECD(int index) {
 	if (isDemo()) {
-		if (index == 1) {
+		if (index == 0) {
 			return false;
 		}
 		return true;
