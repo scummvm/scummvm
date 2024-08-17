@@ -79,6 +79,7 @@ void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *
 	act->addDefaultInputMapping("l");
 	engineKeyMap->addAction(act);
 
+	// I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
 	act = new Common::Action("SWITCH", _("Change mode/Skip"));
 	act->setCustomEngineActionEvent(kActionChangeModeOrSkip);
 	act->addDefaultInputMapping("SPACE");

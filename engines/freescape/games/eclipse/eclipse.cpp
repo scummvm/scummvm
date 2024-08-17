@@ -220,11 +220,13 @@ void EclipseEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *in
 	act->addDefaultInputMapping("w");
 	engineKeyMap->addAction(act);
 
+	// I18N: Illustrates the angle at which you turn left or right. 
 	act = new Common::Action("CHNGANGLE", _("Change Angle"));
 	act->setCustomEngineActionEvent(kActionChangeAngle);
 	act->addDefaultInputMapping("a");
 	engineKeyMap->addAction(act);
 
+	// I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 	act = new Common::Action("CHNGSTEPSIZE", _("Change Step Size"));
 	act->setCustomEngineActionEvent(kActionChangeStepSize);
 	act->addDefaultInputMapping("s");
