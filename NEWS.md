@@ -34,6 +34,8 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Improved handling of close colinear surfaces.
   - Added "authentic graphics" mode.
   - Fixed several glitches in the different render modes.
+  - Refactored sound handling for different games.
+  - Improved keymapper support coverage.
 
  MM:
    - Added MT32/LAPC-1 support for Xeen engine.
