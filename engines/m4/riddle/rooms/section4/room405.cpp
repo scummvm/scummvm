@@ -39,6 +39,19 @@ static const char *SHADOW_NAMES[] = {
 	"baron walker shadow pos7"
 };
 
+static const char *const SAID[][2] = {
+	{ "FIREPLACE",  "405r05" },
+	{ "WINDOW",     "405r06" },
+	{ "ZEBRA SKIN", "405r07" },
+	{ "DEER HEAD",  "405r08" },
+	{ "BATTLE AXE", "405r09" },
+	{ "SHIELD",     "405r09" },
+	{ "CHANDELIER", "405r10" },
+	{ "BOOKSHELF",  "405r11" },
+	{ "RUG",        "405r16" },
+	{ "CHAIR",      "405r13" },
+	{ nullptr, nullptr }
+};
 
 void Room405::preload() {
 	_G(player).walker_type = 1;
@@ -131,9 +144,84 @@ void Room405::parser() {
 			conv405a1();
 		else
 			conv405a();
-	}
-	// TODO
-	else {
+	} else if (talkFlag && player_said("baron")) {
+		player_set_commands_allowed(false);
+		_val4 = -1;
+		_val5 = 1000;
+		_val6 = 1100;
+		_G(kernel).trigger_mode = KT_DAEMON;
+		kernel_timing_trigger(1, 102);
+		_G(kernel).trigger_mode = KT_PARSE;
+	} else if (enterFlag) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(1);
+			break;
+		case 1:
+			midi_stop();
+			digi_stop(3);
+			_G(game).setRoom(404);
+			break;
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("DOOR") && lookDoor()) {
+		// No implementation
+	} else if (useFlag && player_said("DOOR") && useDoor()) {
+		// No implementation
+	} else if (takeFlag && player_said("DOOR") && takeDoor()) {
+		// No implementation
+	} else if (lookFlag && _G(walker).ripley_said(SAID)) {
+		// No implementation
+	} else if ((lookFlag && player_said("LIBRARY TABLE")) ||
+			(lookFlag && player_said("JOURNAL "))) {
+		if (_val9) {
+			doAction("405r14");
+		} else {
+			switch (_G(kernel).trigger) {
+			case -1:
+				digi_play("405r14", 1, 255, 1);
+				break;
+			case 1:
+				digi_play("405r14a", 1);
+				_val9 = 1;
+				break;
+			default:
+				break;
+			}
+		}
+	} else if (lookFlag && player_said("GERMAN BAKNOTE") && inv_object_is_here("GERMAN BAKNOTE")) {
+		doAction("405r17");
+	} else if (lookFlag && player_said(" ")) {
+		doAction("405r04");
+	} else if (takeFlag && player_said("ZEBRA SKIN")) {
+		doAction("405r18");
+	} else if (takeFlag && player_said("DEER HEAD")) {
+		doAction("405r19");
+	} else if (takeFlag && player_said("BATTLE AXE")) {
+		doAction("405r20");
+	} else if (takeFlag && player_said("SHIELD")) {
+		doAction("405r20");
+	} else if (takeFlag && player_said("BOOKSHELF")) {
+		doAction("405r21");
+	} else if (takeFlag && player_said("SOFA")) {
+		doAction("405r22");
+	} else if (takeFlag && player_said("CHAIR")) {
+		doAction("405r22");
+	} else if (takeFlag && player_said("JOURNAL ")) {
+		doAction("405r23");
+	} else if (takeFlag && player_said("GERMAN BANKNOTE") && takeBanknote()) {
+		// No implementation
+	} else if (player_said("journal") && !takeFlag && !lookFlag && !inv_player_has(_G(player).noun)) {
+		if (_G(flags)[kCastleCartoon]) {
+			digi_play("com016", 1);
+		} else {
+			if (_G(kernel).trigger == 6)
+				_G(flags)[kCastleCartoon] = 1;
+			sendWSMessage_multi("com015");
+		}
+	} else {
 		return;
 	}
 
@@ -240,6 +328,100 @@ void Room405::conv405a1() {
 	conv_resume();
 }
 
+bool Room405::lookDoor() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		ws_walk(245, 367, nullptr, 2, 9);
+		return true;
+	case 2:
+		digi_play("405r30", 1);
+		return true;
+		
+	default:
+		break;
+	}
+
+	return false;
+}
+
+bool Room405::useDoor() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		ws_walk(245, 367, nullptr, 2, 9);
+		return true;
+	case 2:
+		digi_play("405r31", 1);
+		return true;
+
+	default:
+		break;
+	}
+
+	return false;
+}
+
+bool Room405::takeDoor() {
+	if (_G(kernel).trigger == 1) {
+		ws_walk(245, 367, nullptr, 2, 9);
+		return true;
+	}
+
+	return false;
+}
+
+bool Room405::takeBanknote() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (inv_object_is_here("GERMAN BANKNOTE")) {
+			player_set_commands_allowed(false);
+			_lowReacher = series_load("RIP TREK LOW REACHER POS1");
+			setGlobals1(_lowReacher, 1, 16, 16, 16, 0, 16, 1, 1, 1);
+			sendWSMessage_110000(1);
+			return true;
+		}
+		break;
+
+	case 1:
+		kernel_examine_inventory_object("PING GERMAN BANKNOTE", _G(master_palette),
+			5, 1, 265, 270, 2, "405r24", -1);
+		return true;
+
+	case 2:
+		terminateMachineAndNull(_bankNote);
+		inv_give_to_player("GERMAN BANKNOTE");
+		sendWSMessage_120000(3);
+		return true;
+
+	case 3:
+		hotspot_set_active("GERMAN BANKNOTE", false);
+		sendWSMessage_150000(4);
+		return true;
+
+	case 4:
+		series_unload(_lowReacher);
+		player_set_commands_allowed(true);
+		return true;
+
+	default:
+		break;
+	}
+
+	return false;
+}
+
+void Room405::doAction(const char *name) {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		digi_play(name, 1, 255, 1);
+		break;
+	case 1:
+		player_set_commands_allowed(true);
+		break;
+	default:
+		break;
+	}
+}
 
 } // namespace Rooms
 } // namespace Riddle

@@ -41,6 +41,7 @@ private:
 	int _val9 = 0;
 	int _candlesBurning = 0;
 	int _safariShadow = 0;
+	int _lowReacher = 0;
 	machine *_door = nullptr;
 	machine *_candles = nullptr;
 	machine *_bankNote = nullptr;
@@ -51,6 +52,11 @@ private:
 
 	void conv405a();
 	void conv405a1();
+	bool lookDoor();
+	bool useDoor();
+	bool takeDoor();
+	bool takeBanknote();
+	void doAction(const char *name);
 
 public:
 	Room405() : Room() {}
