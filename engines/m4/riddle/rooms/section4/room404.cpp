@@ -114,7 +114,7 @@ void Room404::init() {
 #ifdef KITTY_SCREAMING
 		const char *KITTY = "SCREAMING";
 #else
-		const char *KITTY = nullptr;
+		const char *KITTY = "";
 #endif
 		_machine1 = triggerMachineByHash_3000(8, 10, NORMAL_DIRS, SHADOW_DIRS,
 			380, 421, 1, triggerMachineByHashCallback3000, "BUTLER_walker");
@@ -129,7 +129,273 @@ void Room404::init() {
 }
 
 void Room404::daemon() {
-	// TODO
+	int frame;
+
+	switch (_G(kernel).trigger) {
+	case 20:
+		ws_walk(370, 347, nullptr, -1, 1);
+		break;
+
+	case 21:
+		sendWSMessage_60000(_machine1);
+		_butlerTalks = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x900, 0,
+			triggerMachineByHashCallbackNegative, "BUTLER talks rip");
+		sendWSMessage_10000(1, _butlerTalks, _butlerTurns7, 1, 10, 23,
+			_butlerTalkLoop, 1, 1, 0);
+		break;
+
+	case 23:
+		if (!_G(flags)[V337]) {
+			digi_play("404r03", 1, 255, 24);
+			_G(flags)[V337] = 1;
+			_val7 = 2000;
+			_val8 = 2102;
+			kernel_timing_trigger(1, 110);
+		} else {
+			digi_play("404r02", 1, 255, 30);
+		}
+		break;
+
+	case 24:
+		_val8 = 2102;
+		digi_play("404u01", 1, 255, 25);
+		break;
+
+	case 25:
+		_val8 = 2102;
+		digi_play("404r04", 1, 255, 26);
+		break;
+
+	case 26:
+		_val8 = 2101;
+		digi_play("404u02", 1, 255, 27);
+		break;
+
+	case 27:
+		_val8 = 2102;
+		digi_play("404r05", 1, 255, 28);
+		break;
+
+	case 28:
+		_val8 = 2101;
+		digi_play("404u03", 1, 255, 29);
+		break;
+
+	case 29:
+		_val8 = 2103;
+		digi_play("404r06", 1, 255, 30);
+		break;
+
+	case 30:
+		digi_play("404u04", 1);
+		sendWSMessage_10000(1, _butlerTalks, _butlerTurns9, 1, 43, 32,
+			_butlerTurns9, 43, 43, 0);
+		break;
+
+	case 32:
+		terminateMachineAndNull(_butlerTalks);
+		_machine1 = triggerMachineByHash_3000(8, 10, NORMAL_DIRS, SHADOW_DIRS,
+			390, 332, 9, triggerMachineByHashCallback3000, "BUTLER_walker");
+		kernel_timing_trigger(270, 33);
+		break;
+
+	case 33:
+		ws_walk(58, 347, nullptr, -1, 9);
+		kernel_timing_trigger(90, 34);
+		break;
+
+	case 34:
+		disable_player_commands_and_fade_init(35);
+		break;
+
+	case 35:
+		midi_stop();
+		digi_stop(3);
+		_G(game).setRoom(405);
+		break;
+
+	case 40:
+		ws_walk(370, 347, nullptr, -1, 1);
+		break;
+
+	case 42:
+		sendWSMessage_60000(_machine1);
+		_butlerTalks = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x900, 0,
+			triggerMachineByHashCallbackNegative, "BUTLER talks rip");
+		sendWSMessage_10000(1, _butlerTalks, _butlerTurns7, 1, 10, 43,
+			_butlerTalkLoop, 1, 1, 0);
+		break;
+
+	case 43:
+		if (!_G(flags)[GLB_TEMP_12] || _G(flags)[V334]) {
+			player_set_commands_allowed(true);
+		} else {
+			_G(flags)[V334] = 1;
+			kernel_timing_trigger(1, 44);
+		}
+		break;
+
+	case 44:
+		digi_play("404r20", 1, 255, 45);
+		_val7 = 2000;
+		_val8 = 2102;
+		kernel_timing_trigger(1, 110);
+		break;
+
+	case 45:
+		_val8 = 2101;
+		digi_play("404u10", 1, 255, 46);
+		break;
+
+	case 46:
+		_val8 = 2102;
+		digi_play("404r21", 1, 255, 47);
+		break;
+
+	case 47:
+		_val8 = 2101;
+		digi_play("404u11", 1, 255, 48);
+		break;
+
+	case 48:
+		_val8 = 2102;
+		digi_play("404r22", 1, 255, 49);
+		ws_walk(368, 349, nullptr, -1, 8);
+		break;
+
+	case 49:
+	case 50:
+	case 60:
+		player_set_commands_allowed(true);
+		break;
+
+	case 70:
+		if (++_G(flags)[V128] == 1)
+			digi_play("404u12", 1, 255, 72);
+		else
+			digi_play("404u13", 1, 255, 72);
+
+		_val8 = 2101;
+		break;
+
+	case 72:
+		_val8 = 2102;
+		ws_walk(174, 268, nullptr, 73, 9);
+
+		if (_G(flags)[V128] == 1)
+			digi_play("404r23", 1);
+		break;
+
+	case 73:
+		disable_player_commands_and_fade_init(74);
+		break;
+
+	case 74:
+		midi_stop();
+		digi_stop(3);
+		_G(game).setRoom(406);
+		break;
+
+	case 100:
+		kernel_timing_trigger(1, 102);
+		break;
+
+	case 101:
+		_val5 = 1000;
+		_val6 = 1105;
+		break;
+
+	case 102:
+		if (_val2 != -1) {
+			kernel_timing_trigger(1, _val2);
+			_val2 = -1;
+		} else {
+			kernel_timing_trigger(1, 103);
+		}
+		break;
+
+	case 103:
+		if (_val5 == 1000) {
+			switch (_val6) {
+			case 1100:
+				player_set_commands_allowed(false);
+				_val7 = 2000;
+				_val8 = 2100;
+				kernel_timing_trigger(1, 110);
+				_val6 = 1103;
+				kernel_timing_trigger(1, 102);
+
+				conv_load("conv404a", 10, 10, 101);
+				conv_export_pointer_curr(&_G(flags)[V135], 0);
+				conv_export_value_curr(player_been_here(407) ? 1 : 0, 1);
+				conv_play();
+				break;
+
+			case 1102:
+			case 1103:
+				kernel_timing_trigger(10, 102);
+				break;
+
+			case 1105:
+				_val8 = 2103;
+				player_set_commands_allowed(true);
+				break;
+
+			default:
+				break;
+			}
+		}
+		break;
+
+	case 110:
+		if (_val7 == 2000) {
+			switch (_val8) {
+			case 2100:
+			case 2101:
+			case 2102:
+			case 2103:
+				if (_val4 != -1) {
+					kernel_timing_trigger(1, _val4);
+					_val4 = -1;
+				} else {
+					kernel_timing_trigger(1, 111);
+				}
+				break;
+			default:
+				break;
+			}
+		}
+		break;
+
+	case 111:
+		if (_val7 == 2000) {
+			switch (_val8) {
+			case 2100:
+			case 2102:
+				sendWSMessage_10000(1, _butlerTalks, _butlerTalkLoop, 1, 1, 110,
+					_butlerTalkLoop, 1, 1, 0);
+				break;
+
+			case 2101:
+				frame = imath_ranged_rand(12, 21);
+				sendWSMessage_10000(1, _butlerTalks, _butlerTalkLoop, frame, frame, 110,
+					_butlerTalkLoop, frame, frame, 0);
+				break;
+
+			case 2103:
+				sendWSMessage_10000(1, _butlerTalks, _butlerTalkLoop, 1, 1, -1,
+					_butlerTalkLoop, 1, 1, 0);
+				break;
+
+			default:
+				break;
+			}
+		}
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Room404::pre_parser() {
