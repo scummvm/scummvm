@@ -1871,13 +1871,11 @@ Common::String MortevielleEngine::getString(int num) {
 	} else {
 		int hint = _dialogHintArray[num]._hintId;
 		byte point = _dialogHintArray[num]._point;
-		int length = 0;
 		bool endFl = false;
 		char let;
 		do {
 			endFl = decryptNextChar(let, hint, point);
 			wrkStr += let;
-			++length;
 		} while (!endFl);
 	}
 
