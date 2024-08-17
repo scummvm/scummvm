@@ -74,6 +74,8 @@ private:
 	machine *_ripTalksWolf = nullptr;
 	int _ripPlankEdger = 0;
 	machine *_wolfJustSo = nullptr;
+	int _wolfIndicatesTomb = 0;
+	int _turtlePopup = 0;
 
 	void conv403a();
 	void conv403a1();

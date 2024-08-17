@@ -1177,12 +1177,254 @@ void Room403::daemon() {
 			_ripTalkPay, 63, 63, 0);
 		break;
 
+	case 233:
+		sendWSMessage_10000(1, _wolfie, _wolfTurnHand, 45, 11, 237,
+			_wolfTurnHand, 11, 11, 0);
+		digi_play("402w08", 1);
+		sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 63, 40, 235,
+			_ripTalkPay, 40, 40, 0);
+		break;
+
 	case 235:
 		sendWSMessage_10000(1, _ripOnLadder, _ripTalkPay, 10, 1, 236,
 			_ripTalkPay, 1, 1, 0);
 		break;
 
-	// TODO
+	case 237:
+		_val8 = 2001;
+		_val9 = 2300;
+		kernel_timing_trigger(1, 110);
+		player_set_commands_allowed(true);
+		break;
+
+	case 300:
+		player_set_commands_allowed(true);
+		break;
+
+	case 305:
+		_edger = series_place_sprite("ONE FRAME EDGER", 0, 0, 0, 100, 0xf00);
+		hotspot_set_active("WOLF", false);
+		hotspot_set_active("EDGER", true);
+
+		_G(flags)[V133] = 1;
+		_G(flags)[V131] = 402;
+		terminateMachineAndNull(_ripOnLadder);
+		terminateMachineAndNull(_ripTalksWolf);
+		ws_unhide_walker();
+		terminateMachineAndNull(_wolfie);
+
+		series_unload(_wolfEdger);
+		series_unload(_wolfTurnTalk);
+		series_unload(_wolfTurnHand);
+		series_unload(_wolfTalkLeave);
+		series_unload(_ripTalkPay);
+
+		series_stream("403W08", 6, 0, 307);
+		break;
+
+	case 307:
+		midi_fade_volume(0, 120);
+		kernel_timing_trigger(120, 308);
+		break;
+
+	case 308:
+		midi_stop();
+		player_set_commands_allowed(true);
+		break;
+
+	case 310:
+		_wolfWalker = triggerMachineByHash_3000(8, 8, S4_NORMAL_DIRS, S4_SHADOW_DIRS,
+			620, 313, 3, triggerMachineByHashCallbackNegative, "wolf_walker");
+		DisposePath(_wolfWalker->walkPath);
+		_wolfWalker->walkPath = CreateCustomPath(1067, 313, -1);
+		ws_custom_walk(_wolfWalker, 3, 312);
+		kernel_timing_trigger(480, 311);
+		break;
+
+	case 311:
+		ws_walk(1120, 328, nullptr, 314, 1);
+		break;
+
+	case 312:
+		midi_fade_volume(0, 120);
+		kernel_timing_trigger(120, 313);
+		break;
+
+	case 313:
+	case 325:
+		midi_stop();
+		break;
+
+	case 314:
+		_ripHeadTurn = series_load("RIP TREK HEAD TURN POS1");
+		setGlobals1(_ripHeadTurn, 1, 3, 3, 3, 0, 3, 1, 1, 1);
+		sendWSMessage_110000(315);
+		break;
+
+	case 315:
+		sendWSMessage_60000(_wolfWalker);
+		_wolfIndicatesTomb = series_load("WOLF INDICATES TOMB");
+		_wolfie = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x900, 0,
+			triggerMachineByHashCallbackNegative, "WOLFIE");
+		sendWSMessage_10000(1, _wolfie, _wolfIndicatesTomb, 1, 93, -1,
+			_wolfIndicatesTomb, 93, 93, 0);
+		digi_play("403w01", 1, 255, 316);
+		break;
+
+	case 316:
+		sendWSMessage_120000(-1);
+		digi_play("403r01", 1, 255, 317);
+		break;
+
+	case 317:
+		sendWSMessage_10000(1, _wolfie, _wolfIndicatesTomb, 94, 96, -1,
+			_wolfIndicatesTomb, 94, 96, 1);
+		digi_play("403w02", 1, 255, 318);
+		break;
+
+	case 318:
+		digi_play("403r02", 1, 255, 319);
+		break;
+
+	case 319:
+		sendWSMessage_10000(1, _wolfie, _wolfIndicatesTomb, 94, 96, -1,
+			_wolfIndicatesTomb, 94, 96, 1);
+		digi_play("403w03", 1, 255, 320);
+		break;
+
+	case 320:
+		sendWSMessage_10000(1, _wolfie, _wolfIndicatesTomb, 93, 93, -1,
+			_wolfIndicatesTomb, 93, 93, 1);
+		digi_play("403r03", 1, 255, 321);
+		break;
+
+	case 321:
+		digi_preload("403w04");
+		_wolfJustSo = series_stream("403 WOLF JUST SO", 5, 0, 322);
+		series_stream_break_on_frame(_wolfJustSo, 8, 323);
+		break;
+
+	case 322:
+		midi_play("DANZIG1", 255, 1, -1, 949);
+		sendWSMessage_120000(-1);
+		terminateMachineAndNull(_wolfie);
+
+		_wolfWalker = triggerMachineByHash_3000(8, 8, S4_NORMAL_DIRS, S4_SHADOW_DIRS,
+			1067, 313, 3, triggerMachineByHashCallback3000, "wolf_walker");
+		sendWSMessage_10000(_wolfWalker, 620, 313, 3, 324, 0);
+		break;
+
+	case 323:
+		digi_play("403w04", 1);
+		break;
+
+	case 324:
+		midi_fade_volume(0, 120);
+		kernel_timing_trigger(120, 325);
+		sendWSMessage_60000(_wolfWalker);
+		sendWSMessage_150000(-1);
+		_G(camera_reacts_to_player) = 1;
+		player_set_commands_allowed(true);
+		break;
+
+	case 350:
+		digi_play("403r29", 1, 255, 2400);
+		break;
+
+	case 400:
+		_series1 = series_load("RIP TREK MED REACH HAND POS1");
+		setGlobals1(_series1, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+		sendWSMessage_110000(402);
+		break;
+
+	case 402:
+		_ladder = series_place_sprite("LADDER LEANS AGAINST WALL", 0, 0, 0, 100, 0xf00);
+		inv_move_object("STEP LADDER", 403);
+		hotspot_set_active("STEP LADDER ", true);
+		sendWSMessage_120000(403);
+		break;
+
+	case 403:
+		sendWSMessage_150000(404);
+		break;
+
+	case 404:
+		series_unload(_series1);
+		player_set_commands_allowed(true);
+		break;
+
+	case 420:
+		_ripMedReach = series_load("RIP MED REACH 1HAND POS2");
+		setGlobals1(_ripMedReach, 1, 17, 17, 17, 0, 17, 1, 1, 1);
+		sendWSMessage_110000(422);
+		break;
+
+	case 422:
+		_edger = series_place_sprite("ONE FRAME EDGER", 0, 0, 0, 100, 0xf00);
+		hotspot_set_active("EDGER", true);
+		inv_move_object("EDGER", 403);
+		sendWSMessage_120000(423);
+		break;
+
+	case 423:
+		sendWSMessage_150000(424);
+		break;
+
+	case 424:
+		series_unload(_ripMedReach);
+		player_set_commands_allowed(true);
+		break;
+
+	case 440:
+		player_set_commands_allowed(false);
+		_G(flags)[V125] = 3;
+		_turtlePopup = series_load("403 turtle popup");
+		_wolfJustSo = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x100, 0,
+			triggerMachineByHashCallbackNegative, "Turtle POPUP");
+		sendWSMessage_10000(1, _wolfJustSo, _turtlePopup, 1, 46, -1,
+			_turtlePopup, 46, 46, 0);
+		midi_play("turtle", 255, 1, -1, 949);
+		_val6 = 1020;
+		_val7 = 1330;
+		kernel_timing_trigger(1, 102);
+		break;
+
+	case 442:
+		_ripPutBoard = series_load("RIPLEY PUTS BOARD ON POTS");
+		terminateMachineAndNull(_board);
+		ws_hide_walker();
+
+		_ripOnLadder = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x300, 0,
+			triggerMachineByHashCallbackNegative, "RIP plants plank");
+		sendWSMessage_10000(1, _ripOnLadder, _ripPutBoard, 57, 1, 443,
+			_ripPutBoard, 1, 1, 0);
+		break;
+
+	case 443:
+		hotspot_set_active("PLANK", false);
+		inv_give_to_player("PLANK");
+		terminateMachineAndNull(_ripOnLadder);
+		ws_unhide_walker();
+		series_unload(_ripPutBoard);
+
+		ws_walk(620, 326, nullptr, 1);
+		kernel_timing_trigger(60, 444);
+		break;
+
+	case 444:
+		disable_player_commands_and_fade_init(445);
+		break;
+
+	case 445:
+		digi_stop(3);
+		_G(game).setRoom(408);
+		break;
+
+	case 2400:
+		digi_stop(1);
+		digi_unload("403R29");
+		break;
+
 	default:
 		break;
 	}
