@@ -6531,7 +6531,7 @@ linesDone:
 	uint32 pitch = surface_manager->Get_pitch(working_buffer_id);
 
 	// Draw the credit lines all nicely formatted
-	for (uint32 count = 0; TRUE8; count++) {
+	while (TRUE8) {
 		// Is this the end of the file
 		if (m_cursor >= (uint32)m_numberOfBytes) {
 			if (m_logoAttached) {
