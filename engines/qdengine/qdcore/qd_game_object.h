@@ -153,6 +153,9 @@ public:
 		return _screen_r;
 	}
 
+	void setTempPosInList(uint pos) { _tempPosInList = pos; }
+	uint tempPosInList() const { return _tempPosInList; }
+
 protected:
 
 	virtual bool load_script_body(const xml::tag *p);
@@ -169,6 +172,7 @@ private:
 
 	Vect2i _screen_r;
 	float _screen_depth;
+	uint _tempPosInList;
 };
 
 #ifdef __QD_DEBUG_ENABLE__
