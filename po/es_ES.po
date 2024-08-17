@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-17 14:51+0000\n"
-"PO-Revision-Date: 2024-08-17 09:52+0000\n"
+"PO-Revision-Date: 2024-08-17 20:23+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -7674,17 +7674,13 @@ msgstr "Rotar a la derecha"
 
 #: engines/freescape/games/dark/dark.cpp:219
 #: engines/freescape/games/driller/driller.cpp:148
-#, fuzzy
-#| msgid "Increase the scale factor"
 msgid "Increase Step Size"
-msgstr "Aumentar factor de escalado"
+msgstr "Aumentar longitud de pasos"
 
 #: engines/freescape/games/dark/dark.cpp:224
 #: engines/freescape/games/driller/driller.cpp:153
-#, fuzzy
-#| msgid "Decrease the scale factor"
 msgid "Decrease Step Size"
-msgstr "Disminuir factor de escalado"
+msgstr "Reducir longitud de pasos"
 
 #: engines/freescape/games/dark/dark.cpp:229
 #: engines/freescape/games/driller/driller.cpp:158
