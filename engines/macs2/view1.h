@@ -170,6 +170,7 @@ class View1 : public UIElement {
 	int currentFadeValue = -1;
 	int fadeDelta = 4;
 
+
 public:
 	bool started = false;
 
@@ -206,6 +207,7 @@ public:
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgMouseDown(const MouseDownMessage& msg) override;
+	bool msgMouseMove(const MouseMoveMessage &msg) override;
 	void draw() override;
 	bool tick() override;
 

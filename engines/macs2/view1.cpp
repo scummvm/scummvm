@@ -419,6 +419,10 @@ View1::View1() : UIElement("View1") {
 		}
 	}
 
+	bool View1::msgMouseMove(const MouseMoveMessage &msg) {
+		// TODO: Check what we are hovering over and save this info
+	}
+
 bool View1::msgKeypress(const KeypressMessage &msg) {
 	// Any keypress to close the view
 	// close();
@@ -475,6 +479,8 @@ void View1::draw() {
 	Graphics::ManagedSurface s = getSurface();
 
 	s.blitFrom(_backgroundSurface);
+	// Handle highlighting
+
 	for (int x = 0; x < s.w; x++) {
 		for (int y = 0; y < s.h; y++) {
 			if (g_engine->_map.getPixel(x, y) == 0x2) {
