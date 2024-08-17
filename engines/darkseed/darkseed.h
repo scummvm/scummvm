@@ -212,7 +212,7 @@ public:
 	void throwmikeinjail();
 	void runObjects();
 	void getPackageObj(int packageType);
-	void libanim(bool mode);
+	void libanim(bool pickingUpReservedBook);
 
 private:
 	void updateAnimation();
@@ -242,6 +242,8 @@ private:
 	void rundrekethsequence();
 	void delthrowstick(int16 spriteNum);
 	void leavepackage();
+
+	void removeFullscreenPic();
 };
 
 extern DarkseedEngine *g_engine;
