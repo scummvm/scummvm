@@ -40,10 +40,11 @@ private:
 	int _val8 = 0;
 	int _val9 = 0;
 	int _candlesBurning = 0;
-	machine *_safariShadow = nullptr;
+	int _safariShadow = 0;
 	machine *_door = nullptr;
 	machine *_candles = nullptr;
 	machine *_bankNote = nullptr;
+	machine *_baron = nullptr;
 
 public:
 	Room405() : Room() {}
