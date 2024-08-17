@@ -50,17 +50,17 @@ void Room402::init() {
 	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
 		_val1 = 0;
 		_val2 = -1;
-		_soundPtr1 = 0;
 		_val4 = 0;
 		_val5 = -1;
 		_val6 = 0;
-		_soundPtr2 = 0;
 		_val8 = 0;
 		_currentNode = -1;
 		_val10 = 0;
 		_val11 = 0;
 		_val12 = 0;
 		_val13 = 0;
+		_sound1.clear();
+		_sound2.clear();
 	}
 
 	hotspot_set_active("WOLF", false);
@@ -488,9 +488,9 @@ void Room402::daemon() {
 				terminateMachineAndNull(_safariShadow);
 				ws_unhide_walker();
 
-				if (_soundPtr1) {
-					digi_play(_soundPtr1, 1);
-					_soundPtr1 = nullptr;
+				if (!_sound1.empty()) {
+					digi_play(_sound1.c_str(), 1);
+					_sound1.clear();
 				}
 
 				_G(flags)[V114] = 0;
@@ -520,11 +520,11 @@ void Room402::daemon() {
 				break;
 
 			case 1122:
-				if (_soundPtr1) {
+				if (!_sound1.empty()) {
 					_G(kernel).trigger_mode = KT_PARSE;
-					digi_play(_soundPtr1, 1, 255, 777);
+					digi_play(_sound1.c_str(), 1, 255, 777);
 					_G(kernel).trigger_mode = KT_DAEMON;
-					_soundPtr1 = nullptr;
+					_sound1.clear();
 				}
 				break;
 
@@ -617,11 +617,11 @@ void Room402::daemon() {
 				} else {
 					_val6 = 1;
 
-					if (_soundPtr2) {
+					if (!_sound2.empty()) {
 						_val13 = 2142;
 						_val11 = 1113;
-						digi_play(_soundPtr2, 1, 255, 103);
-						_soundPtr2 = nullptr;
+						digi_play(_sound2.c_str(), 1, 255, 103);
+						_sound2.clear();
 					}
 				}
 				break;
@@ -739,11 +739,11 @@ void Room402::daemon() {
 				_val13 = 2101;
 				kernel_timing_trigger(1, 110);
 
-				if (_soundPtr2) {
+				if (!_sound2.empty()) {
 					_G(kernel).trigger_mode = KT_PARSE;
-					digi_play(_soundPtr2, 1, 255, 777);
+					digi_play(_sound2.c_str(), 1, 255, 777);
 					_G(kernel).trigger_mode = KT_DAEMON;
-					_soundPtr2 = nullptr;
+					_sound2.clear();
 				}
 				break;
 
@@ -762,9 +762,9 @@ void Room402::daemon() {
 				break;
 
 			case 2232:
-				if (_soundPtr2) {
-					digi_play(_soundPtr2, 1);
-					_soundPtr2 = nullptr;
+				if (!_sound2.empty()) {
+					digi_play(_sound2.c_str(), 1);
+					_sound2.clear();
 				}
 
 				_val13 = 2233;
@@ -867,9 +867,9 @@ void Room402::daemon() {
 				sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 1, 16, 111,
 					_wolfWantsMoney, 16, 16, 0);
 
-				if (_soundPtr2) {
-					digi_play(_soundPtr2, 1);
-					_soundPtr2 = nullptr;
+				if (!_sound2.empty()) {
+					digi_play(_sound2.c_str(), 1);
+					_sound2.clear();
 				}
 				break;
 
@@ -905,15 +905,15 @@ void Room402::daemon() {
 				sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 1, 16, -1,
 					_wolfWantsMoney, 16, 16, 0);
 
-				if (_soundPtr2) {
-					digi_play(_soundPtr2, 1, 255, 111);
-					_soundPtr2 = nullptr;
+				if (!_sound2.empty()) {
+					digi_play(_sound2.c_str(), 1, 255, 111);
+					_sound2.clear();
 				}
 				break;
 
 			case 2180:
 				_val13 = 2181;
-				digi_play(_soundPtr2, 1, 255, 111);
+				digi_play(_sound2.c_str(), 1, 255, 111);
 				break;
 
 			case 2181:
@@ -930,9 +930,9 @@ void Room402::daemon() {
 				break;
 
 			case 2190:
-				if (_soundPtr2) {
-					digi_play(_soundPtr2, 1);
-					_soundPtr2 = nullptr;
+				if (!_sound2.empty()) {
+					digi_play(_sound2.c_str(), 1);
+					_sound2.clear();
 				}
 
 				sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 16, 1, 111,
@@ -972,17 +972,17 @@ void Room402::daemon() {
 					sendWSMessage_10000(1, _wolfieMach, _wolfWantsMoney, 1, 16, -1,
 						_wolfWantsMoney, 16, 16, 0);
 
-					if (_soundPtr2) {
+					if (!_sound2.empty()) {
 						_G(kernel).trigger_mode = KT_PARSE;
-						digi_play(_soundPtr2, 1, 255, 777);
+						digi_play(_sound2.c_str(), 1, 255, 777);
 						_G(kernel).trigger_mode = KT_DAEMON;
-						_soundPtr2 = nullptr;
+						_sound2.clear();
 					}
 				} else {
 					_val13 = 2263;
 
-					if (_soundPtr2) {
-						digi_play(_soundPtr2, 1, 255, 111);
+					if (!_sound2.empty()) {
+						digi_play(_sound2.c_str(), 1, 255, 111);
 					} else {
 						kernel_timing_trigger(1, 111);
 					}
@@ -1005,8 +1005,8 @@ void Room402::daemon() {
 				break;
 
 			case 2265:
-				if (_soundPtr2) {
-					_soundPtr2 = nullptr;
+				if (!_sound2.empty()) {
+					_sound2.clear();
 					_G(kernel).trigger_mode = KT_PARSE;
 					kernel_timing_trigger(1, 777);
 					_G(kernel).trigger_mode = KT_PARSE;
@@ -1278,7 +1278,7 @@ void Room402::daemon() {
 			484, 315, 11, triggerMachineByHashCallback3000, "wolf_walker");
 		sendWSMessage_10000(_wolfWalker, 517, 239, 9, -1, 0);
 
-		digi_play(_soundPtr2, 1);
+		digi_play(_sound2.c_str(), 1);
 		kernel_timing_trigger(80, 303);
 		break;
 
@@ -1598,14 +1598,14 @@ void Room402::conv402a() {
 		switch (node) {
 		case 4:
 		case 9:
-			Common::strcpy_s(_soundPtr2, 255, sound);
+			_sound2 = sound;
 			_val12 = 2000;
 			_val13 = 2107;
 			break;
 
 		case 5:
 		case 10:
-			Common::strcpy_s(_soundPtr2, 255, sound);
+			_sound2 = sound;
 
 			if (inv_player_has("POMERANIAN MARKS")) {
 				conv_resume();
@@ -1634,12 +1634,12 @@ void Room402::conv402a() {
 		case 14:
 			switch (entry) {
 			case 0:
-				Common::strcpy_s(_soundPtr2, 255, sound);
+				_sound2 = sound;
 				_val12 = 2002;
 				_val13 = 2260;
 				break;
 			case 1:
-				Common::strcpy_s(_soundPtr2, 255, sound);
+				_sound2 = sound;
 
 				if (inv_player_has("POMERANIAN MARKS")) {
 					_val12 = 2002;
@@ -1658,12 +1658,12 @@ void Room402::conv402a() {
 		case 16:
 			switch (entry) {
 			case 0:
-				Common::strcpy_s(_soundPtr2, 255, sound);
+				_sound2 = sound;
 				_val12 = 2002;
 				_val13 = 2260;
 				break;
 			case 1:
-				Common::strcpy_s(_soundPtr2, 255, sound);
+				_sound2 = sound;
 				_val12 = 2002;
 				_val13 = 2143;
 				break;
@@ -1675,13 +1675,13 @@ void Room402::conv402a() {
 		case 17:
 		case 18:
 			_G(flags)[V132] = 1;
-			Common::strcpy_s(_soundPtr2, 255, sound);
+			_sound2 = sound;
 			conv_resume();
 			break;
 
 		case 21:
 			if (entry == 1) {
-				Common::strcpy_s(_soundPtr2, 255, sound);
+				_sound2 = sound;
 				_val12 = 2002;
 				_val13 = 2260;
 			} else {
@@ -1694,7 +1694,7 @@ void Room402::conv402a() {
 		case 22:
 		case 23:
 			_val10 = 1001;
-			Common::strcpy_s(_soundPtr2, 255, sound);
+			_sound2 = sound;
 			conv_resume();
 			break;
 
@@ -1706,13 +1706,13 @@ void Room402::conv402a() {
 				break;
 
 			case 1:
-				Common::strcpy_s(_soundPtr2, 255, sound);
+				_sound2 = sound;
 				_val12 = 2002;
 				_val13 = 2260;
 				break;
 
 			case 2:
-				Common::strcpy_s(_soundPtr2, 255, sound);
+				_sound2 = sound;
 				_val12 = 2002;
 				_val13 = 2143;
 				conv_resume();
@@ -1755,7 +1755,7 @@ void Room402::conv402a() {
 		switch (node) {
 		case 1:
 			if (entry == 3) {
-				Common::strcpy_s(_soundPtr1, 255, sound);
+				_sound1 = sound;
 				_val10 = 1000;
 				_val11 = 1120;
 			} else if (_val10 == 1001) {
@@ -1771,7 +1771,7 @@ void Room402::conv402a() {
 		case 11:
 			_val10 = 1000;
 			if (entry == 1) {
-				Common::strcpy_s(_soundPtr1, 255, sound);
+				_sound1 = sound;
 				conv_resume();
 			} else {
 				_val11 = 1102;
@@ -1784,7 +1784,7 @@ void Room402::conv402a() {
 			if (entry == 1) {
 				_val10 = 1001;
 				_val11 = 1115;
-				Common::strcpy_s(_soundPtr2, 255, sound);
+				_sound2 = sound;
 				_val12 = 2002;
 				_val13 = 2180;
 

@@ -32,11 +32,9 @@ class Room402 : public Room {
 private:
 	int _val1 = 0;
 	int _val2 = 0;
-	char *_soundPtr1 = nullptr;
 	int _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;
-	char *_soundPtr2 = nullptr;
 	int _val8 = 0;
 	int _currentNode = 0;
 	int _val10 = 0;
@@ -72,6 +70,8 @@ private:
 	int _flags111 = 0;
 	machine *_turtlePopupMach = nullptr;
 	int _letter = 0;
+	Common::String _sound1;
+	Common::String _sound2;
 
 	void conv402a();
 	void conv402a777();
