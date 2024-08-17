@@ -46,9 +46,20 @@ private:
 	machine *_candles = nullptr;
 	machine *_bankNote = nullptr;
 	machine *_baron = nullptr;
+	machine *_baronWalker = nullptr;
+	machine *_ripTalksBaron = nullptr;
+	machine *_response = nullptr;
 	int _currentNode = 0;
 	Common::String _sound1;
 	Common::String _sound2;
+	int _baronShakeSit = 0;
+	int _baronTalkLoop = 0;
+	int _baronLeanForward = 0;
+	int _baronTurnWalk = 0;
+	int _ripHandLetter = 0;
+	int _ripTalkGesture = 0;
+	int _ripLeanForward = 0;
+	int _ripHeadTurn = 0;
 
 	void conv405a();
 	void conv405a1();
