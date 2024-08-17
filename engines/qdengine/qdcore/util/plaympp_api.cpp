@@ -132,7 +132,7 @@ mpegPlayer::mpeg_status_t mpegPlayer::status() const {
 	else
 		res = MPEG_STOPPED;
 
-	debugC(1, kDebugSound, "mpegPlayer::status(%s), status: %d", _file.c_str(), res);
+	debugC(5, kDebugSound, "mpegPlayer::status(%s), status: %d", _file.c_str(), res);
 
 	return res;
 }
