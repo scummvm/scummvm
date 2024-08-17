@@ -216,7 +216,7 @@ void DarkseedEngine::gameloop() {
 			if (_currentTimeInSeconds > 35999 && _currentTimeInSeconds < 36005 &&
 				((_currentDay == 1 || (_currentDay == 2 && _objectVar[6] != 0)) ||
 				  (_currentDay == 3 && _objectVar[29] != 0))) {
-				_objectVar.setObjectRunningCode(140, 1);
+				_objectVar.setObjectRunningCode(140, 1); // package delivered.
 			}
 			if (_room->_roomNumber == 52 && _objectVar[79] == 0) {
 				_objectVar.setObjectRunningCode(79, 1);
@@ -3714,6 +3714,7 @@ void DarkseedEngine::runObjects() {
 			_player->_walkTarget = {369, 219};
 		}
 	}
+	// phone ringing logic
 	if (_objectVar._objectRunningCode[47] != 0 && (_currentDay == 1 || _currentDay == 3)) {
 		_objectVar._objectRunningCode[47] += 2;
 		switch (_objectVar._objectRunningCode[47]) {
@@ -3739,7 +3740,36 @@ void DarkseedEngine::runObjects() {
 			break;
 		}
 	}
-	// TODO more logic here.
+	// handle package logic.
+	if (_objectVar._objectRunningCode[140] != 0) {
+		switch(_currentTimeInSeconds - 36000) {
+		case 120:
+		case 121:
+		case 420:
+		case 421:
+		case 720:
+		case 721:
+			if (((_room->_roomNumber < 10) || (_room->_roomNumber == 61)) || (_room->_roomNumber == 62)) {
+				if (_room->_roomNumber == 6) {
+//					FUN_1208_0dac_sound_related(93,5); TODO floppy sound
+					playSound(27, 5, -1);
+				}
+				else {
+					playSound(29, 5, -1);
+//					FUN_1208_0dac_sound_related(95,5); TODO floppy sound
+				}
+				_console->addTextLine("The doorbell is ringing.");
+			}
+			break;
+		case 900:
+		case 901:
+			leavepackage();
+			break;
+		}
+		if (_currentTimeInSeconds - 36000 > 901 && _objectVar._objectRunningCode[140] != 0) {
+			leavepackage();
+		}
+	}
 }
 
 void DarkseedEngine::moveplayertodelbert() {
@@ -3776,6 +3806,20 @@ void DarkseedEngine::delthrowstick(int16 spriteNum) {
 	if (_room->_locObjFrame[0] == 2) {
 		_objectVar.setMoveObjectX(19, 1000);
 	}
+}
+
+void DarkseedEngine::leavepackage() {
+	int packageObjNum = _currentDay + 30;
+	int16 xPos = _currentDay * 10 + 299;
+	Common::Point packagePos = {xPos, 191};
+	_objectVar.setMoveObjectPosition(packageObjNum, packagePos);
+	if (_room->_roomNumber == 10) {
+		_objectVar.setMoveObjectRoom(packageObjNum, 99);
+	} else {
+		_objectVar.setMoveObjectRoom(packageObjNum, 10);
+	}
+//	_MoveObjectDepth[packageObjNum] = 0; TODO do we need this? It doesn't appear to be used.
+	_objectVar._objectRunningCode[140] = 0;
 }
 
 } // End of namespace Darkseed

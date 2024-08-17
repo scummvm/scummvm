@@ -244,6 +244,7 @@ private:
 	void moveplayertodelbert();
 	void rundrekethsequence();
 	void delthrowstick(int16 spriteNum);
+	void leavepackage();
 };
 
 extern DarkseedEngine *g_engine;
