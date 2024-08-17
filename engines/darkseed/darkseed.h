@@ -45,6 +45,7 @@
 #include "sound.h"
 #include "sprites.h"
 #include "tostext.h"
+#include "usecode.h"
 
 namespace Darkseed {
 
@@ -89,6 +90,7 @@ public:
 	Sprites _sprites;
 	Objects _objectVar;
 	Inventory _inventory;
+	UseCode *_useCode = nullptr;
 
 	uint8 _currentDay = 1;
 	int _currentTimeInSeconds = 0x7e8e;
@@ -206,9 +208,10 @@ public:
 	void playSound(int16 unk, uint8 unk1, int16 unk2);
 	void nextFrame(int nspAminIdx);
 	void stuffPlayer();
-	void genericresponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx);
+
 	void throwmikeinjail();
 	void runObjects();
+	void getPackageObj(int packageType);
 private:
 	void updateAnimation();
 	void advanceAnimationFrame(int nspAminIdx);
@@ -221,19 +224,11 @@ private:
 	void loadRoom(int roomNumber);
 	void changeToRoom(int newRoomNumber);
 
-	void useCode(int objNum);
-	void useCodeGloves(int16 targetObjNum);
-	void useCodeMoney(int16 targetObjNum);
-	void useCodeJournal(int16 actionObjNum, int16 targetObjNum);
-	void useCodeShopItems(int16 actionObjNum, int16 targetObjNum);
-	void useCrowBar(int16 targetObjNum);
-	void getPackageObj(int packageType);
 	void wongame();
 	void printTime();
 	void keeperanim();
 	void sargoanim();
-	void gancanim();
-	void putobjunderpillow(int objNum);
+
 	void gotosleepinjail();
 	void gotonextmorning();
 
