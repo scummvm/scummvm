@@ -328,7 +328,6 @@ void grDispatcher::rectangleAlpha(int x, int y, int sx, int sy, uint32 color, in
 
 	uint32 mcl = make_rgb565u(mr, mg, mb);
 
-	warning("STUB: grDispatcher::rectangleAlpha");
 	for (int i = 0; i < psy; i++) {
 		uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
 
