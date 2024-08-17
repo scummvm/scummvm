@@ -84,6 +84,10 @@ struct BackgroundAnimationBlob {
 	Common::Array<uint8> Blob;
 	uint32 FrameIndex;
 	AnimFrame GetFrame(uint32 index);
+	bool GetIsAutoUpdated() const;
+
+	// Placing reference implementation here for now
+	static void Func1480(bool writeResult, Common::MemoryReadStream *stream);
 };
 
 enum DebugFlag {

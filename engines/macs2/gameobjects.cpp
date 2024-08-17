@@ -31,6 +31,31 @@ Common::MemoryReadStream *Macs2::Scenes::ReadSceneScript(uint16 sceneIndex, Comm
 	return new Common::MemoryReadStream(scriptData, scriptSize);
 }
 
+Common::Array<uint32> Macs2::Scenes::ReadSpecialAnimsOffsets(uint16 sceneIndex, Common::MemoryReadStream *fileStream) {
+	Common::Array<uint32> result;
+	result.resize(0x80 / 4);
+
+
+	// Calculate the offset of the script data offset
+	// This addressing can be found in the l0037_2856 code block
+	// TODO: This part is copy-pasted and could be refactored into one proper loading function
+
+
+	uint16 sceneDataOffset = sceneIndex * 0xC;
+	// Offset of the data in [0752h] global
+	constexpr uint16 globalDataOffset = 0xC + 0x4;
+	sceneDataOffset += globalDataOffset;
+	fileStream->seek(sceneDataOffset - 0x8);
+	uint32 sceneDataOffset2 = fileStream->readUint32LE();
+	fileStream->seek(sceneDataOffset2, SEEK_SET);
+
+	// Read the script from there
+	// We read 80h bytes for the special animations offsets
+	fileStream->read(result.data(), 0x80);
+	
+	return result;
+}
+
 Common::MemoryReadStream *Macs2::Scenes::ReadSceneStrings(uint16 sceneIndex, Common::MemoryReadStream *fileStream) {
 	// Calculate the offset of the script data offset
 	// This addressing can be found in the l0037_2856 code block
