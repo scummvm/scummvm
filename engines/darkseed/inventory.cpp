@@ -101,7 +101,6 @@ void Darkseed::Inventory::draw() {
 		if (g_engine->_actionMode == _iconList[i] && g_engine->_actionMode > 4) {
 			const Sprite &selectedSprite = g_engine->_baseSprites.getSpriteAt(95);
 			g_engine->_sprites.addSpriteToDrawList(139 + i * 37, 20 - selectedSprite.height / 2, &selectedSprite, 255, selectedSprite.width, selectedSprite.height, false);
-
 		}
 		const Sprite &iconSprite = g_engine->_baseSprites.getSpriteAt(icon);
 		g_engine->_sprites.addSpriteToDrawList(140 + i * 37, 20 - iconSprite.height / 2, &iconSprite, 255, iconSprite.width, iconSprite.height, false);

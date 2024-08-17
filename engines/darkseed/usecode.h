@@ -46,8 +46,17 @@ public:
 	void useCodeJournal(int16 actionObjNum, int16 targetObjNum);
 	void useCodeShopItems(int16 actionObjNum, int16 targetObjNum);
 	void useCrowBar(int16 targetObjNum);
+	void useCodeNewspaper(int16 targetObjNum);
+	void useCodeLibraryCard(int16 targetObjNum);
 
 private:
+	int getHandDescriptionTosIdx(uint16 objNum);
+	int16 getUseGlovesTosIdx(uint16 objNum);
+	int16 getUseMoneyTosIdx(uint16 objNum);
+	int16 getUseCrowbarTosIdx(uint16 objNum);
+	int16 getUseJournalTosIdx(uint16 objNum);
+	int16 getUseLibraryCardTosIdx(uint16 objNum);
+
 	void gancanim();
 	void putobjunderpillow(int objNum);
 	void genericresponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx);

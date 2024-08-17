@@ -212,6 +212,8 @@ public:
 	void throwmikeinjail();
 	void runObjects();
 	void getPackageObj(int packageType);
+	void libanim(bool mode);
+
 private:
 	void updateAnimation();
 	void advanceAnimationFrame(int nspAminIdx);

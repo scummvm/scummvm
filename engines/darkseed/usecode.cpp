@@ -21,12 +21,55 @@
 
 #include "darkseed/darkseed.h"
 #include "darkseed/usecode.h"
+#include "darkseed/usecode_tos_tables.h"
 #include "common/debug.h"
 
 namespace Darkseed {
 
 UseCode::UseCode(Console *console, Player *player, Objects &objectVar, Inventory &inventory) : _console(console), _player(player), _objectVar(objectVar), _inventory(inventory) {}
 
+
+int Darkseed::UseCode::getHandDescriptionTosIdx(uint16 objNum) {
+	if (objNum >= Objects::MAX_OBJECTS) {
+		error("getHandDescriptionTosIdx: Object Index out of range! %d", objNum);
+	}
+	return handDescriptionsTbl[objNum];
+}
+
+int16 Darkseed::UseCode::getUseGlovesTosIdx(uint16 objNum) {
+	if (objNum >= Objects::MAX_OBJECTS) {
+		error("getUseGlovesTosIdx: Object Index out of range! %d", objNum);
+	}
+	return glovesTextTbl[objNum];
+}
+
+int16 Darkseed::UseCode::getUseMoneyTosIdx(uint16 objNum) {
+	if (objNum >= Objects::MAX_OBJECTS) {
+		error("getUseMoneyTosIdx: Object Index out of range! %d", objNum);
+	}
+	return moneyTextTbl[objNum];
+}
+
+int16 Darkseed::UseCode::getUseCrowbarTosIdx(uint16 objNum) {
+	if (objNum >= Objects::MAX_OBJECTS) {
+		error("getUseCrowbarTosIdx: Object Index out of range! %d", objNum);
+	}
+	return crowBarTextTbl[objNum];
+}
+
+int16 Darkseed::UseCode::getUseJournalTosIdx(uint16 objNum) {
+	if (objNum >= Objects::MAX_OBJECTS) {
+		error("getUseJournalTosIdx: Object Index out of range! %d", objNum);
+	}
+	return journalTextTbl[objNum];
+}
+
+int16 Darkseed::UseCode::getUseLibraryCardTosIdx(uint16 objNum) {
+	if (objNum >= Objects::MAX_OBJECTS) {
+		error("getUseLibraryCardTosIdx: Object Index out of range! %d", objNum);
+	}
+	return libraryCardTextTbl[objNum];
+}
 
 void Darkseed::UseCode::useCode(int objNum) {
 	debug("useCode: objNum = %d", objNum);
@@ -179,7 +222,7 @@ void Darkseed::UseCode::useCode(int objNum) {
 		return;
 	}
 	if (objNum != 7 && objNum != 36 && objNum != 37 && objNum != 38 && objNum != 39 && objNum != 40) {
-		int handTosIdx = _objectVar.getHandDescriptionTosIdx(objNum);
+		int handTosIdx = getHandDescriptionTosIdx(objNum);
 		if (handTosIdx != 0 && handTosIdx < 979) {
 			_console->printTosText(handTosIdx);
 		} else if (handTosIdx > 978) {
@@ -563,7 +606,7 @@ void Darkseed::UseCode::useCodeGloves(int16 targetObjNum) {
 		return;
 	}
 
-	int16 tosIdx = _objectVar.getUseGlovesTosIdx(targetObjNum);
+	int16 tosIdx = getUseGlovesTosIdx(targetObjNum);
 	if (tosIdx != 0) {
 		if (tosIdx < 979) {
 			_console->printTosText(tosIdx);
@@ -582,7 +625,7 @@ void Darkseed::UseCode::useCodeGloves(int16 targetObjNum) {
 
 void Darkseed::UseCode::useCodeMoney(int16 targetObjNum) {
 	if ((targetObjNum != 138) && (targetObjNum != 152)) {
-		int16 tosIdx = _objectVar.getUseMoneyTosIdx(targetObjNum);
+		int16 tosIdx = getUseMoneyTosIdx(targetObjNum);
 		if (tosIdx == 0) {
 			if (targetObjNum == 7) {
 				_console->printTosText(961);
@@ -614,7 +657,7 @@ void Darkseed::UseCode::useCodeJournal(int16 actionObjNum, int16 targetObjNum) {
 	} else if ((actionObjNum == 6) && (targetObjNum == 136)) {
 		_console->printTosText(999);
 	} else {
-		int16 tosIdx = _objectVar.getUseJournalTosIdx(targetObjNum);
+		int16 tosIdx = getUseJournalTosIdx(targetObjNum);
 		if (tosIdx != 0) {
 			if (tosIdx < 979) {
 				_console->printTosText(tosIdx);
@@ -879,7 +922,7 @@ void Darkseed::UseCode::useCodeShopItems(int16 actionObjNum, int16 targetObjNum)
 }
 
 void Darkseed::UseCode::useCrowBar(int16 targetObjNum) {
-	int16 tosIdx = _objectVar.getUseCrowbarTosIdx(targetObjNum);
+	int16 tosIdx = getUseCrowbarTosIdx(targetObjNum);
 	if (tosIdx != 0) {
 		if (tosIdx < 979) {
 			_console->printTosText(tosIdx);
@@ -894,6 +937,100 @@ void Darkseed::UseCode::useCrowBar(int16 targetObjNum) {
 		} else {
 			_console->printTosText(962);
 		}
+	}
+}
+
+// All this code is unused as you cannot add the newspaper to your inventory. :( I wonder why they didn't add it. It is also missing the inventory icon image.
+void UseCode::useCodeNewspaper(int16 targetObjNum) {
+	if (targetObjNum == 124) {
+		_console->printTosText(26);
+	} else if (targetObjNum == 126) {
+		_console->printTosText(82);
+	} else if (targetObjNum == 127) {
+		_console->printTosText(112);
+	} else if (targetObjNum == 123) {
+		_console->printTosText(133);
+	} else if (targetObjNum == 100) {
+		_console->printTosText(157);
+	} else if (targetObjNum == 52) {
+		_console->printTosText(207);
+	} else if (targetObjNum == 145) {
+		_console->printTosText(222);
+	} else if (targetObjNum == 124) { // Bug in the original engine. This code is never reachable
+		_console->printTosText(268); // this is a duplicate of tosId: 26
+	} else if (targetObjNum == 137) {
+		_console->printTosText(299);
+	} else if (targetObjNum == 147) {
+		_console->printTosText(309);
+	} else if (targetObjNum == 197) {
+		_console->printTosText(993);
+	} else if (targetObjNum == 150) {
+		_console->printTosText(352);
+	} else if ((targetObjNum == 103) || (targetObjNum == 151)) {
+		_console->printTosText(367);
+	} else if (targetObjNum == 108) {
+		_console->printTosText(386);
+	} else if (targetObjNum == 110) {
+		_console->printTosText(392);
+	} else if (targetObjNum == 61) {
+		_console->printTosText(455);
+	} else if (targetObjNum == 53) {
+		_console->printTosText(490);
+	} else if (targetObjNum == 156) {
+		_console->printTosText(550);
+	} else if (targetObjNum == 159) {
+		_console->printTosText(577);
+	} else if (targetObjNum == 113) {
+		_console->printTosText(753);
+	} else if (targetObjNum == 120) {
+		_console->printTosText(804);
+	} else if (targetObjNum == 116) {
+		_console->printTosText(832);
+	} else if (targetObjNum == 79) {
+		_console->printTosText(834);
+	} else if (targetObjNum == 185) {
+		genericresponse(9, 185, 982);
+	} else if (targetObjNum == 184) {
+		genericresponse(9, 184, 980);
+	} else if (targetObjNum == 71) {
+		genericresponse(9, 71, 987);
+	} else if (targetObjNum == 101) {
+		genericresponse(9, 101, 986);
+	} else if (targetObjNum == 172) {
+		genericresponse(9, 172, 988);
+	} else if (targetObjNum == 194) {
+		genericresponse(9, 194, 989);
+	} else if (targetObjNum == 121) {
+		genericresponse(9, 121, 990);
+	} else if (targetObjNum == 109) {
+		genericresponse(9, 109, 992);
+	} else if (targetObjNum == 130) {
+		genericresponse(9, 130, 991);
+	} else if (targetObjNum == 129) {
+		genericresponse(9, 129, 998);
+	} else if (targetObjNum == 112) {
+		genericresponse(9, 112, 996);
+	} else {
+		genericresponse(9, targetObjNum, 999);
+	}
+}
+
+void UseCode::useCodeLibraryCard(int16 targetObjNum) {
+	int16 tosIdx = getUseLibraryCardTosIdx(targetObjNum);
+	if (tosIdx != 0) {
+		if (tosIdx < 979) {
+			_console->printTosText(tosIdx);
+		} else {
+			genericresponse(10, targetObjNum, tosIdx);
+		}
+	}
+	if (targetObjNum == 46) {
+		g_engine->_cursor.setCursorType(Pointer);
+		_inventory.removeItem(10);
+		g_engine->libanim(false);
+		_objectVar[10] = 1;
+	} else if (targetObjNum == 113) {
+		putobjunderpillow(10);
 	}
 }
 

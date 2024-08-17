@@ -2055,6 +2055,12 @@ void DarkseedEngine::handleObjCollision(int targetObjNum) {
 			case 8:
 				_useCode->useCodeMoney(targetObjNum);
 				break;
+			case 9:
+				_useCode->useCodeNewspaper(targetObjNum);
+				break;
+			case 10:
+				_useCode->useCodeLibraryCard(targetObjNum);
+				break;
 				// TODO lots of extra switch cases here for inventory usages.
 			case 14:
 				_useCode->useCodeGloves(targetObjNum);
@@ -2944,6 +2950,10 @@ void DarkseedEngine::leavepackage() {
 	}
 //	_MoveObjectDepth[packageObjNum] = 0; TODO do we need this? It doesn't appear to be used.
 	_objectVar._objectRunningCode[140] = 0;
+}
+
+void DarkseedEngine::libanim(bool mode) {
+	// TODO
 }
 
 } // End of namespace Darkseed
