@@ -176,9 +176,7 @@ void DarkseedEngine::gameloop() {
 			if (_isLeftMouseClicked || _isRightMouseClicked) {
 				_isRightMouseClicked = false;
 				_isLeftMouseClicked = false;
-				delete _fullscreenPic;
-				_fullscreenPic = nullptr;
-				_room->restorePalette();
+				removeFullscreenPic();
 			}
 		}
 		counter_2c85_888b = (counter_2c85_888b + 1) & 0xff;
@@ -2348,7 +2346,7 @@ void DarkseedEngine::showFullscreenPic(const Common::Path &filename) {
 	debug("Loaded %s", filePathStr.c_str());
 	Common::Path palFilename = Common::Path(filePathStr.substr(0, filePathStr.size() - 4) + ".pal");
 	Pal pal;
-	pal.load(palFilename);
+	pal.load(g_engine->getPictureFilePath(palFilename));
 }
 
 void DarkseedEngine::keeperanim() {
@@ -2952,8 +2950,88 @@ void DarkseedEngine::leavepackage() {
 	_objectVar._objectRunningCode[140] = 0;
 }
 
-void DarkseedEngine::libanim(bool mode) {
-	// TODO
+static constexpr uint8 libList[100] = {
+	5, 6, 7, 8,
+	9, 10, 9, 8,
+	7, 6, 5, 6,
+	7, 6, 7, 8,
+	7, 6, 5, 6,
+	5, 6, 7, 8,
+	9, 10, 9, 8,
+	7, 6, 5, 6,
+	7, 6, 7, 8,
+	7, 6, 5, 6,
+	5, 6, 7, 8,
+	9, 10, 9, 8,
+	7, 6, 5, 6,
+	5, 6, 7, 6,
+	7, 8, 7, 6,
+	5, 6, 7, 6,
+	7, 8, 7, 6,
+	5, 6, 5, 6,
+	5, 6, 7, 6,
+	7, 8, 7, 6,
+	5, 6, 7, 8,
+	9, 10, 9, 8,
+	7, 6, 5, 6,
+	7, 8, 9, 10,
+	9, 8, 7, 6
+};
+
+void DarkseedEngine::libanim(bool pickingUpReservedBook) {
+	_player->loadAnimations("libparts.nsp");
+	showFullscreenPic("libinlib.pic");
+
+	_console->printTosText(pickingUpReservedBook ? 928 : 924);
+
+	spriteAnimCountdownTimer[0] = _player->_animations.getAnimAt(0).frameDuration[0];
+	uint8 lipsIdx = 0;
+	while (_sound->isPlayingSpeech()) {
+		_sprites.clearSpriteDrawList();
+		_frame.draw();
+		if (_fullscreenPic) {
+			_fullscreenPic->draw(0x45, 0x28);
+		}
+		_console->draw();
+
+		advanceAnimationFrame(0);
+		const Sprite &eyesSprite = _player->_animations.getSpriteAt( _player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]);
+		g_engine->_sprites.addSpriteToDrawList(255, 114, &eyesSprite, 255, eyesSprite.width, eyesSprite.height, false);
+		advanceAnimationFrame(1);
+
+		const Sprite &mouthSprite = _player->_animations.getSpriteAt(libList[lipsIdx]);
+		g_engine->_sprites.addSpriteToDrawList(255, 154, &mouthSprite, 255, mouthSprite.width, mouthSprite.height, false);
+
+		_sprites.drawSprites();
+
+		_screen->makeAllDirty();
+		_screen->update();
+
+		lipsIdx++;
+		if (lipsIdx == 100) {
+			lipsIdx = 0;
+		}
+
+		for (int i = 0; i < 6; i++) {
+			wait();
+		}
+	}
+
+	removeFullscreenPic();
+
+	if (pickingUpReservedBook) {
+		_objectVar[49] = 1;
+		_objectVar[62] = 0;
+		playCutscene("G");
+	}
+}
+
+void DarkseedEngine::removeFullscreenPic() {
+	if (_fullscreenPic) {
+		delete _fullscreenPic;
+		_fullscreenPic = nullptr;
+		_room->restorePalette();
+	}
 }
 
 } // End of namespace Darkseed
