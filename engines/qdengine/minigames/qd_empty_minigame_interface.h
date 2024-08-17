@@ -22,6 +22,8 @@
 #ifndef QDENGINE_MINIGAMES_QD_EMPTY_INTERFACE_H
 #define QDENGINE_MINIGAMES_QD_EMPTY_INTERFACE_H
 
+#include "common/debug.h"
+
 #include "qdengine/qd_fwd.h"
 #include "qdengine/qdcore/qd_minigame_interface.h"
 
@@ -39,35 +41,35 @@ public:
 
 	//! Инициализация игры.
 	bool init(const qdEngineInterface *engine_interface) {
-		warning("STUB: qdEmptyMinigameInterface: This is a placeholder class");
+		debugC(1, kDebugMinigames, "qdEmptyMinigameInterface: This is a placeholder class");
 		return true;
 	}
 
 	//! Обсчёт логики игры, параметр - время, которое должно пройти в игре (в секундах).
 	bool quant(float dt) {
-		warning("STUB: qdEmptyMiniGameInterface::quant()");
+		debugC(3, kDebugMinigames, "qdEmptyMiniGameInterface::quant()");
 		return true;
 	}
 
 	//! Деинициализация игры.
 	bool finit() {
-		warning("STUB: qdEmptyMiniGameInterface::finit()");
+		debugC(1, kDebugMinigames, "qdEmptyMiniGameInterface::finit()");
 		return true;
 	}
 
 	/// Инициализация миниигры, вызывается при старте и перезапуске игры.
 	bool new_game(const qdEngineInterface *engine_interface) {
-		warning("STUB: qdEmptyMiniGameInterface::new_game()");
+		debugC(1, kDebugMinigames, "qdEmptyMiniGameInterface::new_game()");
 		return true;
 	}
 	/// Сохранение данных, вызывается при сохранении сцены, на которую повешена миниигра.
 	int save_game(const qdEngineInterface *engine_interface, const qdMinigameSceneInterface *scene_interface, char *buffer, int buffer_size) {
-		warning("STUB: qdEmptyMiniGameInterface::save_game()");
+		debugC(1, kDebugMinigames, "qdEmptyMiniGameInterface::save_game()");
 		return 0;
 	}
 	/// Загрузка данных, вызывается при загрузке сцены, на которую повешена миниигра.
 	int load_game(const qdEngineInterface *engine_interface, const qdMinigameSceneInterface *scene_interface, const char *buffer, int buffer_size) {
-		warning("STUB: qdEmptyMiniGameInterface::load_game()");
+		debugC(1, kDebugMinigames, "qdEmptyMiniGameInterface::load_game()");
 		return 0;
 	}
 
