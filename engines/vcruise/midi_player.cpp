@@ -27,7 +27,7 @@
 namespace VCruise {
 
 MidiPlayer::MidiPlayer(MidiDriver *midiDrv, Common::Array<byte> &&musicData, int volume)
-	: _midiDrv(midiDrv), _data(Common::move(musicData)), _volume(-1) {
+	: _midiDrv(midiDrv), _data(Common::move(musicData)) {
 	_parser.reset(MidiParser::createParser_SMF());
 
 	if (_data.size() > 0u && _parser->loadMusic(&_data[0], _data.size())) {
