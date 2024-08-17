@@ -45,6 +45,9 @@ private:
 	machine *_door = nullptr;
 	machine *_butlerTalks = nullptr;
 	machine *_machine1 = nullptr;
+	int _currentNode = 0;
+
+	void conv404a();
 
 public:
 	Room404() : Room() {}
