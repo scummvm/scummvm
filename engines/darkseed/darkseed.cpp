@@ -976,7 +976,7 @@ void DarkseedEngine::handlePointerAction() {
 }
 
 void DarkseedEngine::loadRoom(int roomNumber) {
-//	*(undefined *)&_erasemenu = 1;
+//	*(undefined *)&_erasemenu = 1; TODO do we need these?
 //	*(undefined2 *)&_gShipOff = 0;
 	_sound->waitForSpeech();
 	if (roomNumber == 33 && _objectVar[62] == 101) {
@@ -1609,8 +1609,7 @@ void DarkseedEngine::updateAnimation() {
 					_objectVar[47] = 1;
 					_console->printTosText(922);
 				}
-				// TODO
-//				WaitForSpeech();
+				_sound->waitForSpeech();
 				setupOtherNspAnimation(1, 9);
 			}
 		}
@@ -3713,6 +3712,31 @@ void DarkseedEngine::runObjects() {
 		}
 		if (_player->_heroMoving && _player->_walkTarget.x > 309) {
 			_player->_walkTarget = {369, 219};
+		}
+	}
+	if (_objectVar._objectRunningCode[47] != 0 && (_currentDay == 1 || _currentDay == 3)) {
+		_objectVar._objectRunningCode[47] += 2;
+		switch (_objectVar._objectRunningCode[47]) {
+		case 120:
+		case 300:
+		case 480:
+		case 660:
+		case 900:
+			if (_room->_roomNumber < 10 || _room->_roomNumber == 61 || _room->_roomNumber == 62) {
+				if (_room->_roomNumber == 0) {
+					playSound(24, 5, -1);
+				} else {
+					playSound(25, 5, -1);
+				}
+				_console->addTextLine("The phone is ringing.");
+			}
+			break;
+		case 1080:
+			_objectVar._objectRunningCode[47] = 0;
+			_objectVar[47] = 1;
+			break;
+		default:
+			break;
 		}
 	}
 	// TODO more logic here.
