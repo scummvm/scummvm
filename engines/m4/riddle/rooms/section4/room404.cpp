@@ -123,7 +123,24 @@ void Room404::daemon() {
 }
 
 void Room404::pre_parser() {
-	// TODO
+	bool takeFlag = player_said("take");
+	bool lookFlag = player_said_any("look", "look at");
+	bool useFlag = player_said_any("push", "pull", "gear",
+		"open", "close");
+
+	if ((player_said("SITTING ROOM") && (lookFlag || useFlag || takeFlag)) ||
+			(lookFlag && player_said(" "))) {
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+	}
+
+	if (player_said("journal") && !takeFlag && !lookFlag &&
+			_G(kernel).trigger == -1) {
+		_G(player).need_to_walk = false;
+		_G(player).ready_to_walk = true;
+		_G(player).waiting_for_walk = false;
+	}
 }
 
 void Room404::parser() {
