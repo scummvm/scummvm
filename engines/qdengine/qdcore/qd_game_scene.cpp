@@ -624,6 +624,8 @@ bool qdGameScene::split_global_objects(qdGameObject *obj) {
 
 struct qdObjectOrdering {
 	bool operator()(const qdGameObject *p0, const qdGameObject *p1) {
+		if (p0->screen_depth() == p1->screen_depth())
+			return p0->tempPosInList() < p1->tempPosInList();
 		return p0->screen_depth() < p1->screen_depth();
 	}
 };
@@ -634,10 +636,12 @@ bool qdGameScene::init_visible_objects_list() {
 	for (auto &it : object_list()) {
 		it->update_screen_pos();
 		if (it->is_visible() && !it->check_flag(QD_OBJ_SCREEN_COORDS_FLAG)) {
+			// The original depended on stable sort, so we imitate it here
+			// since Common::sort() is unstable
+			it->setTempPosInList(_visible_objects.size());
 			_visible_objects.push_back(it);
 		}
 	}
-
 	Common::sort(_visible_objects.begin(), _visible_objects.end(), qdObjectOrdering());
 
 	return true;
