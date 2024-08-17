@@ -93,9 +93,11 @@ void DragonArcade::initIfNeeded() {
 	_scrollImg->loadBitmap(scrollBmpName);
 
 	_arcadeTTM.clearDataPtrs();
+
+	int16 envNum;
 	_arcadeTTM._currentTTMNum = 0;
-	_arcadeTTM.load(ttmName);
-	_arcadeTTM.finishTTMParse();
+	envNum = _arcadeTTM.load(ttmName);
+	_arcadeTTM.finishTTMParse(envNum);
 	_arcadeTTM._doingInit = true;
 	for (int i = 0; i < 8; i++) {
 		_arcadeTTM.runNextPage(i + 1);
@@ -108,8 +110,8 @@ void DragonArcade::initIfNeeded() {
 
 	const char *bladeTTM = _haveBigGun ? "BIGUNBLA.TTM" : "BLADE.TTM";
 
-	_arcadeTTM.load(bladeTTM);
-	_arcadeTTM.finishTTMParse();
+	envNum = _arcadeTTM.load(bladeTTM);
+	_arcadeTTM.finishTTMParse(envNum);
 	_arcadeTTM.runNextPage(0);
 
 	_bulletImg.reset(new Image(engine->getResourceManager(), engine->getDecompressor()));
@@ -277,14 +279,14 @@ void DragonArcade::loadTTMScriptsForStage(uint16 stage) {
 		_arcadeTTM.freeShapes();
 		_arcadeTTM.freePages(2);
 		_currentArcadeTT3Num = 1;
-		_arcadeTTM.load(ttm1);
-		_arcadeTTM.finishTTMParse();
+		int16 envNum = _arcadeTTM.load(ttm1);
+		_arcadeTTM.finishTTMParse(envNum);
 		_arcadeTTM.runNextPage(0);
 		_currentArcadeTT3Num = 2;
 		//g_TT3ScriptDataPtrs[2][0] = nullptr;
 		//g_TT3ScriptDataPtrs[2][1] = nullptr;
-		_arcadeTTM.load(ttm2);
-		_arcadeTTM.finishTTMParse();
+		envNum = _arcadeTTM.load(ttm2);
+		_arcadeTTM.finishTTMParse(envNum);
 		_arcadeTTM.runNextPage(0);
 	}
 	//INT_39e5_0b54 = _startYOffset;

@@ -23,6 +23,10 @@
 #define DGDS_DRAGON_ARCADE_TTM_H
 
 #include "common/types.h"
+#include "common/ptr.h"
+
+#include "dgds/image.h"
+#include "dgds/ttm.h"
 
 namespace Dgds {
 
@@ -32,14 +36,24 @@ class DragonArcadeTTM {
 public:
 	DragonArcadeTTM();
 	void clearDataPtrs();
-	void load(const char *filename);
-	void finishTTMParse();
-	void runNextPage(uint16 num);
+	int16 load(const char *filename);
+	void finishTTMParse(int16 envNum);
+	int16 runNextPage(int16 pageNum);
+	int16 runScriptPage(int16 pageNum);
 	void freePages(uint16 num);
 	void freeShapes();
 
 	uint16 _currentTTMNum;
 	bool _doingInit;
+	
+	Common::SharedPtr<Image> _shapes3[6];
+	Common::SharedPtr<Image> _shapes2[6];
+	Common::SharedPtr<Image> _shapes[6];
+	Common::SharedPtr<Image> _allShapes[30];
+	
+	// Note: only a subset of the enviro members get used, but
+	// use the same structure for simplicity.
+	TTMEnviro _ttmEnvs[5];
 };
 
 } // end namespace Dgds
