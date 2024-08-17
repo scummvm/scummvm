@@ -320,7 +320,7 @@ bool qdMiniGame::load_interface() {
 		// scores.dll
 		// swap.dll
 		} else {
-			warning("STUB: Trying to load dll: %s", _dll_name.c_str());
+			warning("qdMiniGame::load_interface(): trying to load dll: %s", _dll_name.c_str());
 			// call here dll->open_game_interface(game_name())
 			_interface = new qdEmptyMiniGameInterface;
 			return true;
