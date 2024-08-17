@@ -79,8 +79,11 @@ static char dimFragSrc[] =
 
 GfxOpenGL::GfxOpenGL() : _smushNumTex(0),
 		_smushTexIds(nullptr), _smushWidth(0), _smushHeight(0),
-		_useDepthShader(false), _fragmentProgram(0), _useDimShader(0),
-		_dimFragProgram(0), _maxLights(0), _storedDisplay(nullptr),
+		_useDepthShader(false), _useDimShader(0),
+		_maxLights(0), _storedDisplay(nullptr),
+#ifdef GL_ARB_fragment_program
+		_fragmentProgram(0), _dimFragProgram(0),
+#endif
 		_emergFont(0), _alpha(1.f) {
 	type = Graphics::RendererType::kRendererTypeOpenGL;
 	// GL_LEQUAL as glDepthFunc ensures that subsequent drawing attempts for
