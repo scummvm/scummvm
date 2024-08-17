@@ -1839,8 +1839,6 @@ void ToonEngine::fixPaletteEntries(uint8 *palette, int num) {
 
 // adapted from KyraEngine
 void ToonEngine::updateAnimationSceneScripts(int32 timeElapsed) {
-	static int32 numReentrant = 0;
-	++numReentrant;
 	const int startScript = _lastProcessedSceneScript;
 
 	_updatingSceneScriptRunFlag = true;
@@ -1878,7 +1876,6 @@ void ToonEngine::updateAnimationSceneScripts(int32 timeElapsed) {
 	} while (_lastProcessedSceneScript != startScript && !_shouldQuit);
 
 	_updatingSceneScriptRunFlag = false;
-	--numReentrant;
 }
 
 void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
