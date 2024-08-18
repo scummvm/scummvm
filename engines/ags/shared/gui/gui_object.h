@@ -140,6 +140,7 @@ protected:
 	bool     _hasChanged;
 
 	// TODO: explicit event names & handlers for every event
+    // FIXME: these must be static!! per type
 	int32_t  _scEventCount;                    // number of supported script events
 	String   _scEventNames[MAX_GUIOBJ_EVENTS]; // script event names
 	String   _scEventArgs[MAX_GUIOBJ_EVENTS];  // script handler params

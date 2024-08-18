@@ -420,21 +420,20 @@ void RunObjectInteraction(int aa, int mood) {
 		cdata = _G(playerchar)->activeinv;
 		_GP(play).usedinv = cdata;
 	}
-	_G(evblockbasename) = "object%d";
-	_G(evblocknum) = aa;
 
+	const auto obj_evt = ObjectEvent("object%d", aa);
 	if (_GP(thisroom).Objects[aa].EventHandlers != nullptr) {
 		if (passon >= 0) {
-			if (run_interaction_script(_GP(thisroom).Objects[aa].EventHandlers.get(), passon, 4))
+			if (run_interaction_script(obj_evt, _GP(thisroom).Objects[aa].EventHandlers.get(), passon, 4))
 				return;
 		}
-		run_interaction_script(_GP(thisroom).Objects[aa].EventHandlers.get(), 4);  // any click on obj
+		run_interaction_script(obj_evt, _GP(thisroom).Objects[aa].EventHandlers.get(), 4);  // any click on obj
 	} else {
 		if (passon >= 0) {
-			if (run_interaction_event(&_G(croom)->intrObject[aa], passon, 4, (passon == 3)))
+			if (run_interaction_event(obj_evt, &_G(croom)->intrObject[aa], passon, 4, (passon == 3)))
 				return;
 		}
-		run_interaction_event(&_G(croom)->intrObject[aa], 4);  // any click on obj
+		run_interaction_event(obj_evt, &_G(croom)->intrObject[aa], 4);  // any click on obj
 	}
 }
 
