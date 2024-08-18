@@ -113,11 +113,6 @@ enum AgiGameFeatures {
 	GF_EXTCHAR     = (1 << 6)  // use WORDS.TOK.EXTENDED
 };
 
-enum BooterDisks {
-	BooterDisk1 = 0,
-	BooterDisk2 = 1
-};
-
 enum AgiGameID {
 	GID_AGIDEMO,
 	GID_BC,
@@ -144,6 +139,7 @@ enum AgiGameID {
 
 enum AGIErrors {
 	errOK = 0,
+	errFilesNotFound,
 	errBadFileOpen,
 	errNotEnoughMemory,
 	errBadResource,
@@ -533,6 +529,14 @@ struct AgiGame {
 	}
 };
 
+struct AgiDiskVolume {
+	uint32 disk;
+	uint32 offset;
+
+	AgiDiskVolume() : disk(_EMPTY), offset(0) {}
+	AgiDiskVolume(uint32 d, uint32 o) : disk(d), offset(o) {}
+};
+
 class AgiLoader {
 public:
 	AgiLoader(AgiEngine *vm) : _vm(vm) {}
@@ -570,13 +574,6 @@ protected:
 };
 
 class AgiLoader_v1 : public AgiLoader {
-private:
-	Common::Path _filenameDisk0;
-	Common::Path _filenameDisk1;
-
-	int loadDir_DDP(AgiDir *agid, int offset, int max);
-	int loadDir_BC(AgiDir *agid, int offset, int max);
-
 public:
 	AgiLoader_v1(AgiEngine *vm) : AgiLoader(vm) {}
 
@@ -585,6 +582,23 @@ public:
 	uint8 *loadVolumeResource(AgiDir *agid) override;
 	int loadObjects() override;
 	int loadWords() override;
+
+private:
+	Common::Array<Common::String> _imageFiles;
+	Common::Array<AgiDiskVolume> _volumes;
+	AgiDir _logDir;
+	AgiDir _picDir;
+	AgiDir _viewDir;
+	AgiDir _soundDir;
+	AgiDir _objects;
+	AgiDir _words;
+
+	bool readDiskOneV1(Common::SeekableReadStream &stream);
+	bool readDiskOneV2001(Common::SeekableReadStream &stream, int &vol0Offset);
+	static bool readInitDirV1(Common::SeekableReadStream &stream, byte index, AgiDir &agid);
+	static bool readInitDirV2001(Common::SeekableReadStream &stream, byte index, AgiDir &agid);
+
+	bool loadDir(AgiDir *dir, Common::File &disk, uint32 dirOffset, uint32 dirLength);
 };
 
 class AgiLoader_v2 : public AgiLoader {
@@ -879,13 +893,12 @@ public:
 	// Objects
 public:
 	int loadObjects(const char *fname);
-	int loadObjects(Common::File &fp);
+	int loadObjects(Common::File &fp, int flen);
 	const char *objectName(uint16 objectNr);
 	int objectGetLocation(uint16 objectNr);
 	void objectSetLocation(uint16 objectNr, int location);
 private:
 	int decodeObjects(uint8 *mem, uint32 flen);
-	int readObjects(Common::File &fp, int flen);
 
 	// Logic
 public:
