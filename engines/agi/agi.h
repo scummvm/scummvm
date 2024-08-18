@@ -144,16 +144,9 @@ enum AgiGameID {
 
 enum AGIErrors {
 	errOK = 0,
-	errDoNothing,
-	errBadCLISwitch,
-	errInvalidAGIFile,
 	errBadFileOpen,
 	errNotEnoughMemory,
 	errBadResource,
-	errUnknownAGIVersion,
-	errNoLoopsInView,
-	errViewDataError,
-	errNoGameList,
 	errIOError,
 
 	errUnk = 127
@@ -381,7 +374,6 @@ struct AgiGame {
 	int adjMouseX;  /**< last given adj.ego.move.to.x.y-command's 1st parameter */
 	int adjMouseY;  /**< last given adj.ego.move.to.x.y-command's 2nd parameter */
 
-	char name[8];   /**< lead in id (e.g. `GR' for goldrush) */
 	char id[8];     /**< game id */
 	uint32 crc;     /**< game CRC */
 
@@ -473,7 +465,6 @@ struct AgiGame {
 		adjMouseX = 0;
 		adjMouseY = 0;
 
-		memset(name, 0, sizeof(name));
 		memset(id, 0, sizeof(id));
 		crc = 0;
 		memset(flags, 0, sizeof(flags));
@@ -548,34 +539,29 @@ public:
 	virtual ~AgiLoader() {}
 
 	/**
-	 * Detects if the game directory appears to contain AGI files.
-	 * This must be called before init(), as the V3 loader stores
-	 * the game name prefix. Returns true if game files are found.
-	 * Implementations do not currently open files, and the return
-	 * value currently has no effect on the engine beyond logging.
-	 * The engine will call init() even if this fails.
+	 * Performs one-time initializations, such as locating files
+	 * with dynamic names.
 	 */
-	virtual bool detectGame() = 0;
+	virtual void init() {}
 
 	/**
-	 * Reads all AGI directory entries from disk and and populates
-	 * the AgiDir arrays in AgiGame (AgiBase::_game) with them.
-	 * Must be called after detectGame().
+	 * Loads all AGI directory entries from disk and and populates
+	 * the AgiDir arrays in AgiGame with them.
 	 */
-	virtual int init() = 0;
+	virtual int loadDirs() = 0;
 
 	/**
-	 * Loads a volume resource from disk
+	 * Loads a volume resource from disk.
 	 */
 	virtual uint8 *loadVolumeResource(AgiDir *agid) = 0;
 
 	/**
-	 * Loads AgiEngine::_objects from disk
+	 * Loads AgiEngine::_objects from disk.
 	 */
 	virtual int loadObjects() = 0;
 
 	/**
-	 * Loads AgiBase::_words from disk
+	 * Loads AgiBase::_words from disk.
 	 */
 	virtual int loadWords() = 0;
 
@@ -594,8 +580,8 @@ private:
 public:
 	AgiLoader_v1(AgiEngine *vm) : AgiLoader(vm) {}
 
-	bool detectGame() override;
-	int init() override;
+	void init() override;
+	int loadDirs() override;
 	uint8 *loadVolumeResource(AgiDir *agid) override;
 	int loadObjects() override;
 	int loadWords() override;
@@ -611,8 +597,7 @@ private:
 public:
 	AgiLoader_v2(AgiEngine *vm) : _hasV3VolumeFormat(false), AgiLoader(vm) {}
 
-	bool detectGame() override;
-	int init() override;
+	int loadDirs() override;
 	uint8 *loadVolumeResource(AgiDir *agid) override;
 	int loadObjects() override;
 	int loadWords() override;
@@ -620,13 +605,15 @@ public:
 
 class AgiLoader_v3 : public AgiLoader {
 private:
+	Common::String _name; /**< prefix in directory and/or volume file names (`GR' for goldrush) */
+
 	int loadDir(AgiDir *agid, Common::File *fp, uint32 offs, uint32 len);
 
 public:
 	AgiLoader_v3(AgiEngine *vm) : AgiLoader(vm) {}
 
-	bool detectGame() override;
-	int init() override;
+	void init() override;
+	int loadDirs() override;
 	uint8 *loadVolumeResource(AgiDir *agid) override;
 	int loadObjects() override;
 	int loadWords() override;

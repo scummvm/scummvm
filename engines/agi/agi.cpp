@@ -145,12 +145,12 @@ int AgiEngine::agiInit() {
 	if (getFeatures() & GF_AGDS)
 		debug(1, "AGDS mode enabled.");
 
-	int ec = _loader->init();   // load vol files, etc
+	int ec = _loader->loadDirs();
 
 	if (ec == errOK)
 		ec = _loader->loadObjects();
 
-	// note: demogs has no words.tok
+	// note: demos has no words.tok
 	if (ec == errOK)
 		ec = _loader->loadWords();
 
@@ -529,8 +529,6 @@ void AgiEngine::initialize() {
 
 	_text->charAttrib_Set(15, 0);
 
-	_game.name[0] = '\0';
-
 	if (getVersion() <= 0x2001) {
 		_loader = new AgiLoader_v1(this);
 	} else if (getVersion() <= 0x2999) {
@@ -538,13 +536,8 @@ void AgiEngine::initialize() {
 	} else {
 		_loader = new AgiLoader_v3(this);
 	}
-
-	debugC(2, kDebugLevelMain, "Detecting game");
-	if (_loader->detectGame()) {
-		debugC(2, kDebugLevelMain, "Detected game");
-	} else {
-		warning("Could not detect AGI game");
-	}
+	_loader->init();
+	
 	// finally set up actual VM opcodes, because we should now have figured out the right AGI version
 	setupOpCodes(getVersion());
 }

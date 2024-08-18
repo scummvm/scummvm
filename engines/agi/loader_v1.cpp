@@ -50,12 +50,10 @@
 
 namespace Agi {
 
-bool AgiLoader_v1::detectGame() {
+void AgiLoader_v1::init() {
 	// Find filenames for the disk images
 	_filenameDisk0 = _vm->getDiskName(BooterDisk1);
 	_filenameDisk1 = _vm->getDiskName(BooterDisk2);
-
-	return true;
 }
 
 int AgiLoader_v1::loadDir_DDP(AgiDir *agid, int offset, int max) {
@@ -123,7 +121,7 @@ int AgiLoader_v1::loadDir_BC(AgiDir *agid, int offset, int max) {
 	return errOK;
 }
 
-int AgiLoader_v1::init() {
+int AgiLoader_v1::loadDirs() {
 	int ec = errOK;
 
 	switch (_vm->getGameID()) {

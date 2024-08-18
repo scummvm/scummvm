@@ -29,30 +29,27 @@
 
 namespace Agi {
 
-bool AgiLoader_v3::detectGame() {
+void AgiLoader_v3::init() {
+	// Find the game's name by locating a file that ends in "dir".
+	// Amiga games don't use the game's name as a prefix.
+	_name.clear();
 	Common::FSList fslist;
 	Common::FSNode dir(ConfMan.getPath("path"));
 
 	if (!dir.getChildren(fslist, Common::FSNode::kListFilesOnly)) {
 		warning("AgiLoader_v3: invalid game path '%s'", dir.getPath().toString(Common::Path::kNativeSeparator).c_str());
-		return false;
+		return;
 	}
 
-	bool found = false;
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		Common::String f = file->getName();
-		f.toLowercase();
-
-		if (f.hasSuffix("dir")) {
-			memset(_vm->_game.name, 0, 8);
-			strncpy(_vm->_game.name, f.c_str(), MIN((uint)6, f.size() > 3 ? f.size() - 3 : f.size()));
-			debugC(3, kDebugLevelMain, "game.name = %s", _vm->_game.name);
-			found = true;
+		Common::String fileName = file->getName();
+		if (fileName.size() > 3 && fileName.hasSuffixIgnoreCase("dir")) {
+			_name = fileName.substr(0, fileName.size() - 3);
+			_name.toLowercase();
+			debugC(3, kDebugLevelResources, "game name: %s", _name.c_str());
 			break;
 		}
 	}
-
-	return found;
 }
 
 int AgiLoader_v3::loadDir(AgiDir *agid, Common::File *fp, uint32 offs, uint32 len) {
@@ -81,17 +78,21 @@ int AgiLoader_v3::loadDir(AgiDir *agid, Common::File *fp, uint32 offs, uint32 le
 	return errOK;
 }
 
-int AgiLoader_v3::init() {
+int AgiLoader_v3::loadDirs() {
 	int ec = errOK;
 	uint8 fileHeader[8];
 	Common::File fp;
 	Common::Path path;
 
 	if (_vm->getPlatform() == Common::kPlatformAmiga) {
+		// Amiga directory file is always named "dirs"
 		path = Common::Path("dirs");
-		_vm->_game.name[0] = 0; // Empty prefix
 	} else {
-		path = Common::Path(Common::String(_vm->_game.name) + DIR_);
+		if (_name.empty()) {
+			warning("AgiLoader_v3: directory file not found");
+			return errBadResource;
+		}
+		path = Common::Path(_name + DIR_);
 	}
 
 	if (!fp.open(path)) {
@@ -146,7 +147,7 @@ uint8 *AgiLoader_v3::loadVolumeResource(AgiDir *agid) {
 	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 		path = Common::String::format("vol.%i", agid->volume);
 	} else {
-		path = Common::String::format("%svol.%i", _vm->_game.name, agid->volume);
+		path = Common::String::format("%svol.%i", _name.c_str(), agid->volume);
 	}
 
 	if (agid->offset != _EMPTY && fp.open(path)) {

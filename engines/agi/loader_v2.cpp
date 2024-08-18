@@ -27,14 +27,6 @@
 
 namespace Agi {
 
-bool AgiLoader_v2::detectGame() {
-	return
-		Common::File::exists(LOGDIR) &&
-		Common::File::exists(PICDIR) &&
-		Common::File::exists(SNDDIR) &&
-		Common::File::exists(VIEWDIR);
-}
-
 int AgiLoader_v2::loadDir(AgiDir *agid, const char *fname) {
 	debug(0, "Loading directory: %s", fname);
 
@@ -122,7 +114,7 @@ bool AgiLoader_v2::detectV3VolumeFormat() {
 	return true;
 }
 
-int AgiLoader_v2::init() {
+int AgiLoader_v2::loadDirs() {
 	int ec = errOK;
 
 	// load directory files
