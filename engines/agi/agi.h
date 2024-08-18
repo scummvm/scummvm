@@ -993,8 +993,8 @@ public:
 	int decodeView(byte *resourceData, uint16 resourceSize, int16 viewNr);
 
 private:
-	void unpackViewCelData(AgiViewCel *celData, byte *compressedData, uint16 compressedSize);
-	void unpackViewCelDataAGI256(AgiViewCel *celData, byte *compressedData, uint16 compressedSize);
+	void unpackViewCelData(AgiViewCel *celData, byte *compressedData, uint16 compressedSize, int16 viewNr);
+	void unpackViewCelDataAGI256(AgiViewCel *celData, byte *compressedData, uint16 compressedSize, int16 viewNr);
 
 public:
 	bool isEgoView(const ScreenObjEntry *screenObj);
