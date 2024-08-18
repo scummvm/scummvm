@@ -44,7 +44,7 @@ void grDispatcher::putSpr_rle(int x, int y, int sx, int sy, const class RLEBuffe
 	int dy = -1;
 
 	if (mode & GR_FLIP_HORIZONTAL) {
-		x += (psx - 1) * 2;
+		x += (psx - 1);
 		px = sx - px - psx;
 	} else
 		dx = 1;
