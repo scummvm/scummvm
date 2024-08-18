@@ -106,7 +106,6 @@ int run_claimable_event(const char *tsname, bool includeRoom, int numParams, con
 // runs the global script on_event fnuction
 void run_on_event(int evtype, RuntimeScriptValue &wparam);
 void run_room_event(int id);
-void run_event_block_inv(int invNum, int event);
 // event list functions
 void setevent(int evtyp, int ev1 = 0, int ev2 = -1000, int ev3 = -1000);
 void force_event(int evtyp, int ev1 = 0, int ev2 = -1000, int ev3 = -1000);
