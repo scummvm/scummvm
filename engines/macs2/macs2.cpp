@@ -1287,6 +1287,7 @@ AnimFrame BackgroundAnimationBlob::GetFrame(uint32 index) {
 }
 
 bool BackgroundAnimationBlob::GetIsAutoUpdated() const {
+	Common::MemoryReadStreamEndian stream(Blob.data(), Blob.size(), false);
 	// We need to do the following (akin to how 1480 does it)
 	// Use the arguments of the 1480 call during the auto-update
 	// Check if we do a frame skip or if we don't
@@ -1300,6 +1301,22 @@ bool BackgroundAnimationBlob::GetIsAutoUpdated() const {
 	*/
 
 	// Since we know that bp+8 is 0, we can skip to l00B7_14EF:
+	// bp-22h
+	stream.readUint16();
+	// bp-6h
+	uint16 bp6 = stream.readUint16();
+	// bp-8h
+	stream.readUint16();
+	// bp-0Ah
+	stream.readUint16();
+	// bp-10h
+	stream.readUint16();
+	// bp-0Eh
+	uint16 bp0E = stream.readUint16() + 1;
+	
+	
+		mov	ax,[bp-6h]
+	cmp	ax,[bp-0Eh]
 
 	return false;
 }
