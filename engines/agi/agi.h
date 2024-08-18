@@ -324,8 +324,8 @@ struct AgiDir {
 	uint8 flags;
 
 	void reset() {
-		volume = 0;
-		offset = 0;
+		volume = 0xff;
+		offset = _EMPTY;
 		len = 0;
 		clen = 0;
 		flags = 0;

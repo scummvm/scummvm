@@ -62,12 +62,6 @@ int AgiLoader_v1::loadDir_DDP(AgiDir *agid, int offset, int max) {
 	if (!fp.open(_filenameDisk0))
 		return errBadFileOpen;
 
-	// initialize directory entries to empty
-	for (int i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
-		agid[i].volume = 0xFF;
-		agid[i].offset = _EMPTY;
-	}
-
 	fp.seek(offset, SEEK_SET);
 	for (int i = 0; i <= max; i++) {
 		int b0 = fp.readByte();
@@ -93,12 +87,6 @@ int AgiLoader_v1::loadDir_BC(AgiDir *agid, int offset, int max) {
 
 	if (!fp.open(_filenameDisk0))
 		return errBadFileOpen;
-
-	// initialize directory entries to empty
-	for (int i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
-		agid[i].volume = 0xFF;
-		agid[i].offset = _EMPTY;
-	}
 
 	fp.seek(offset, SEEK_SET);
 	for (int i = 0; i <= max; i++) {

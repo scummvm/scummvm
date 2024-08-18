@@ -46,12 +46,6 @@ int AgiLoader_v2::loadDir(AgiDir *agid, const char *fname) {
 
 	fp.read(mem, flen);
 
-	// initialize directory entries to empty
-	for (int i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
-		agid[i].volume = 0xff;
-		agid[i].offset = _EMPTY;
-	}
-
 	// read directory entries
 	for (uint32 i = 0; i + 2 < flen; i += 3) {
 		agid[i / 3].volume = *(mem + i) >> 4;
