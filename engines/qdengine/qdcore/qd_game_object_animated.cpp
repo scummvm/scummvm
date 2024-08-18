@@ -384,7 +384,7 @@ bool qdGameObjectAnimated::insert_state(int iBefore, qdGameObjectState *p) {
 
 	if (!p->name()) {
 		Common::String nameStr;
-		nameStr += Common::String::format("Состояние %d", max_state());
+		nameStr += Common::String::format("\xd1\xee\xf1\xf2\xee\xff\xed\xe8\xe5 %d", max_state()); //  "Состояние %d" -- "State %d"
 		p->set_name(nameStr.c_str());
 	}
 	return true;
@@ -398,7 +398,7 @@ bool qdGameObjectAnimated::add_state(qdGameObjectState *p) {
 
 	if (!p->name()) {
 		Common::String nameStr;
-		nameStr += Common::String::format("Состояние %d", max_state());
+		nameStr += Common::String::format("\xd1\xee\xf1\xf2\xee\xff\xed\xe8\xe5 %d", max_state()); //  "Состояние %d" -- "State %d"
 		p->set_name(nameStr.c_str());
 	}
 
