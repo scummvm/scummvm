@@ -30,6 +30,31 @@ namespace Data {
 
 namespace AXLogic {
 
+// Known AXLogic custom modifiers:
+//
+// * Quicktime Kit:
+// - AXImagePlayer
+// - AXQTVRMessenger
+// - AXQTVRNavigator
+// - PenguinPatch (???)
+//
+// * AlienLogic Kit: New scripting system as an alternative to Miniscript
+// - AXList
+// - AlienMathLib
+// - AlienMiscLib
+// - AlienObject
+// - AlienStringLib
+// - AlienWriter
+// - CodeExecuterACod
+// - CodeExecuterBase
+// - RuntimeExecute
+// - XCodeLibraryStnd
+//
+//   For mTropolis 1.1, the implementation of AlienLogic
+//   may be spread across multiple plugins
+//   But with the same modifiers
+
+
 struct AlienWriterModifier : public PlugInModifierData {
 protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
