@@ -31,8 +31,6 @@
 #ifndef GOB_DETECTION_TABLES_ADIBOUPRESENTE_H
 #define GOB_DETECTION_TABLES_ADIBOUPRESENTE_H
 
-//#include "common/translation.h"  // Make release checker happy
-
 // -- French: Adibou présente Dessin --
 
 {

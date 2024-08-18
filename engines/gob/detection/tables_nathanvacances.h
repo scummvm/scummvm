@@ -31,8 +31,6 @@
 #ifndef GOB_DETECTION_TABLES_NATHANVACANCES_H
 #define GOB_DETECTION_TABLES_NATHANVACANCES_H
 
-//#include "common/translation.h"  // Make release checker happy
-
 // -- French: Nathan Vacances --
 
 {
