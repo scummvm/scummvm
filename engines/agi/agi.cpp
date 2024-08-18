@@ -174,12 +174,12 @@ int AgiEngine::agiInit() {
 void AgiEngine::agiUnloadResources() {
 	// Make sure logic 0 is always loaded
 	for (int i = 1; i < MAX_DIRECTORY_ENTRIES; i++) {
-		_loader->unloadResource(RESOURCETYPE_LOGIC, i);
+		agiUnloadResource(RESOURCETYPE_LOGIC, i);
 	}
 	for (int i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
-		_loader->unloadResource(RESOURCETYPE_VIEW, i);
-		_loader->unloadResource(RESOURCETYPE_PICTURE, i);
-		_loader->unloadResource(RESOURCETYPE_SOUND, i);
+		agiUnloadResource(RESOURCETYPE_VIEW, i);
+		agiUnloadResource(RESOURCETYPE_PICTURE, i);
+		agiUnloadResource(RESOURCETYPE_SOUND, i);
 	}
 }
 
@@ -189,7 +189,7 @@ void AgiEngine::agiDeinit() {
 
 	_words->clearEgoWords(); // remove all words from memory
 	agiUnloadResources();    // unload resources in memory
-	_loader->unloadResource(RESOURCETYPE_LOGIC, 0);
+	agiUnloadResource(RESOURCETYPE_LOGIC, 0);
 	_objects.clear();
 	_words->unloadDictionary();
 
@@ -219,7 +219,22 @@ int AgiEngine::agiLoadResource(int16 resourceType, int16 resourceNr) {
 }
 
 void AgiEngine::agiUnloadResource(int16 resourceType, int16 resourceNr) {
-	_loader->unloadResource(resourceType, resourceNr);
+	switch (resourceType) {
+	case RESOURCETYPE_LOGIC:
+		unloadLogic(resourceNr);
+		break;
+	case RESOURCETYPE_PICTURE:
+		_picture->unloadPicture(resourceNr);
+		break;
+	case RESOURCETYPE_VIEW:
+		unloadView(resourceNr);
+		break;
+	case RESOURCETYPE_SOUND:
+		_sound->unloadSound(resourceNr);
+		break;
+	default:
+		break;
+	}
 }
 
 struct GameSettings {

@@ -562,7 +562,6 @@ public:
 	virtual int init() = 0;
 	virtual int detectGame() = 0;
 	virtual int loadResource(int16 resourceType, int16 resourceNr) = 0;
-	virtual void unloadResource(int16 resourceType, int16 resourceNr) = 0;
 	virtual int loadObjects(const char *fname) = 0;
 	virtual int loadWords(const char *fname) = 0;
 };
@@ -583,7 +582,6 @@ public:
 	int init() override;
 	int detectGame() override;
 	int loadResource(int16 resourceType, int16 resourceNr) override;
-	void unloadResource(int16 resourceType, int16 resourceNr) override;
 	int loadObjects(const char *fname) override;
 	int loadWords(const char *fname) override;
 };
@@ -607,7 +605,6 @@ public:
 	int init() override;
 	int detectGame() override;
 	int loadResource(int16 resourceType, int16 resourceNr) override;
-	void unloadResource(int16 resourceType, int16 resourceNr) override;
 	int loadObjects(const char *fname) override;
 	int loadWords(const char *fname) override;
 };
@@ -628,7 +625,6 @@ public:
 	int init() override;
 	int detectGame() override;
 	int loadResource(int16 resourceType, int16 resourceNr) override;
-	void unloadResource(int16 resourceType, int16 resourceNr) override;
 	int loadObjects(const char *fname) override;
 	int loadWords(const char *fname) override;
 };

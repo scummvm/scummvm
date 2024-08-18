@@ -138,25 +138,6 @@ int AgiLoader_v3::init() {
 	return ec;
 }
 
-void AgiLoader_v3::unloadResource(int16 resourceType, int16 resourceNr) {
-	switch (resourceType) {
-	case RESOURCETYPE_LOGIC:
-		_vm->unloadLogic(resourceNr);
-		break;
-	case RESOURCETYPE_PICTURE:
-		_vm->_picture->unloadPicture(resourceNr);
-		break;
-	case RESOURCETYPE_VIEW:
-		_vm->unloadView(resourceNr);
-		break;
-	case RESOURCETYPE_SOUND:
-		_vm->_sound->unloadSound(resourceNr);
-		break;
-	default:
-		break;
-	}
-}
-
 /**
  * This function loads a raw resource into memory.
  * If further decoding is required, it must be done by another
@@ -234,7 +215,7 @@ int AgiLoader_v3::loadResource(int16 resourceType, int16 resourceNr) {
 		// and build the message list (if logic is in memory)
 		if (~_vm->_game.dirLogic[resourceNr].flags & RES_LOADED) {
 			// if logic is already in memory, unload it
-			unloadResource(RESOURCETYPE_LOGIC, resourceNr);
+			_vm->agiUnloadResource(RESOURCETYPE_LOGIC, resourceNr);
 
 			// load raw resource into data
 			data = loadVolRes(&_vm->_game.dirLogic[resourceNr]);
@@ -258,7 +239,7 @@ int AgiLoader_v3::loadResource(int16 resourceType, int16 resourceNr) {
 		// if picture is currently NOT loaded *OR* cacheing is off,
 		// unload the resource (caching==off) and reload it
 		if (~_vm->_game.dirPic[resourceNr].flags & RES_LOADED) {
-			unloadResource(RESOURCETYPE_PICTURE, resourceNr);
+			_vm->agiUnloadResource(RESOURCETYPE_PICTURE, resourceNr);
 			data = loadVolRes(&_vm->_game.dirPic[resourceNr]);
 			if (data != nullptr) {
 				_vm->_game.pictures[resourceNr].rdata = data;
@@ -292,7 +273,7 @@ int AgiLoader_v3::loadResource(int16 resourceType, int16 resourceNr) {
 		if (_vm->_game.dirView[resourceNr].flags & RES_LOADED)
 			break;
 
-		unloadResource(RESOURCETYPE_VIEW, resourceNr);
+		_vm->agiUnloadResource(RESOURCETYPE_VIEW, resourceNr);
 		data = loadVolRes(&_vm->_game.dirView[resourceNr]);
 		if (data != nullptr) {
 			_vm->_game.dirView[resourceNr].flags |= RES_LOADED;

@@ -141,25 +141,6 @@ int AgiLoader_v2::init() {
 	return ec;
 }
 
-void AgiLoader_v2::unloadResource(int16 resourceType, int16 resourceNr) {
-	switch (resourceType) {
-	case RESOURCETYPE_LOGIC:
-		_vm->unloadLogic(resourceNr);
-		break;
-	case RESOURCETYPE_PICTURE:
-		_vm->_picture->unloadPicture(resourceNr);
-		break;
-	case RESOURCETYPE_VIEW:
-		_vm->unloadView(resourceNr);
-		break;
-	case RESOURCETYPE_SOUND:
-		_vm->_sound->unloadSound(resourceNr);
-		break;
-	default:
-		break;
-	}
-}
-
 /**
  * This function loads a raw resource into memory,
  * if further decoding is required, it must be done by another
@@ -232,7 +213,7 @@ int AgiLoader_v2::loadResource(int16 resourceType, int16 resourceNr) {
 	case RESOURCETYPE_LOGIC:
 		if (~_vm->_game.dirLogic[resourceNr].flags & RES_LOADED) {
 			debugC(3, kDebugLevelResources, "loading logic resource %d", resourceNr);
-			unloadResource(RESOURCETYPE_LOGIC, resourceNr);
+			_vm->agiUnloadResource(RESOURCETYPE_LOGIC, resourceNr);
 
 			// load raw resource into data
 			data = loadVolRes(&_vm->_game.dirLogic[resourceNr]);
@@ -244,7 +225,7 @@ int AgiLoader_v2::loadResource(int16 resourceType, int16 resourceNr) {
 		}
 
 		// if logic was cached, we get here
-		// reset code pointers incase it was cached
+		// reset code pointers in case it was cached
 
 		_vm->_game.logics[resourceNr].cIP = _vm->_game.logics[resourceNr].sIP;
 		break;
@@ -258,7 +239,7 @@ int AgiLoader_v2::loadResource(int16 resourceType, int16 resourceNr) {
 
 		// if loaded but not cached, unload it
 		// if cached but not loaded, etc
-		unloadResource(RESOURCETYPE_PICTURE, resourceNr);
+		_vm->agiUnloadResource(RESOURCETYPE_PICTURE, resourceNr);
 		data = loadVolRes(&_vm->_game.dirPic[resourceNr]);
 
 		if (data != nullptr) {
@@ -293,7 +274,7 @@ int AgiLoader_v2::loadResource(int16 resourceType, int16 resourceNr) {
 			break;
 
 		debugC(3, kDebugLevelResources, "loading view resource %d", resourceNr);
-		unloadResource(RESOURCETYPE_VIEW, resourceNr);
+		_vm->agiUnloadResource(RESOURCETYPE_VIEW, resourceNr);
 		data = loadVolRes(&_vm->_game.dirView[resourceNr]);
 		if (data) {
 			_vm->_game.dirView[resourceNr].flags |= RES_LOADED;
