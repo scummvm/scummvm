@@ -197,8 +197,7 @@ class GameObject;
 			// Implements opcode 0e - changing scene animations
 			void FuncB6BE();
 
-			// Implements a lookup in the "areas" map
-			uint16 Func101D(uint16 x, uint16 y);
+			
 
 			// 01E7:A903
 			void ScriptPrintString();
@@ -215,6 +214,9 @@ class GameObject;
 			
 
 			public:
+
+				// Implements a lookup in the "areas" map
+				uint16 Func101D(uint16 x, uint16 y);
 
 			// Determines if we actually look something up when looking up 9F4D FF 27
 			// in the obstacles/pathfinding map

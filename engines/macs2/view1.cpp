@@ -421,6 +421,9 @@ View1::View1() : UIElement("View1") {
 
 	bool View1::msgMouseMove(const MouseMoveMessage &msg) {
 		// TODO: Check what we are hovering over and save this info
+		uint16 areaID = g_engine->_scriptExecutor->Func101D(msg._pos.x, msg._pos.y);
+		g_system->setWindowCaption(Common::String::format("Area ID: %.4x", areaID));
+		return true;
 	}
 
 bool View1::msgKeypress(const KeypressMessage &msg) {
