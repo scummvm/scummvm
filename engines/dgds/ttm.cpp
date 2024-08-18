@@ -1083,6 +1083,21 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	}
 }
 
+Common::String TTMInterpreter::readTTMStringVal(Common::SeekableReadStream *scr) {
+	Common::String sval;
+	byte ch[2];
+
+	do {
+		ch[0] = scr->readByte();
+		ch[1] = scr->readByte();
+		if (ch[0])
+			sval += ch[0];
+		if (ch[1])
+			sval += ch[1];
+	} while (ch[0] != 0 && ch[1] != 0);
+	return sval;
+}
+
 bool TTMInterpreter::run(TTMEnviro &env, TTMSeq &seq) {
 	Common::SeekableReadStream *scr = env.scr;
 	if (!scr || scr->pos() >= scr->size())
@@ -1120,16 +1135,7 @@ bool TTMInterpreter::run(TTMEnviro &env, TTMSeq &seq) {
 					debugN(10, "(%d,%d)", pts[i].x, pts[i].y);
 				debugN(10, "]");
 			} else {
-				byte ch[2];
-
-				do {
-					ch[0] = scr->readByte();
-					ch[1] = scr->readByte();
-					if (ch[0])
-						sval += ch[0];
-					if (ch[1])
-						sval += ch[1];
-				} while (ch[0] != 0 && ch[1] != 0);
+				sval = readTTMStringVal(scr);
 				debugN(10, "\"%s\"", sval.c_str());
 			}
 
@@ -1201,11 +1207,7 @@ void TTMInterpreter::findAndAddSequences(TTMEnviro &env, Common::Array<TTMSeq> &
 					int16 nbytes = env.scr->readUint16LE() * 4;
 					env.scr->skip(nbytes);
 				} else {
-					byte ch[2];
-					do {
-						ch[0] = env.scr->readByte();
-						ch[1] = env.scr->readByte();
-					} while (ch[0] != 0 && ch[1] != 0);
+					readTTMStringVal(env.scr);
 				}
 				break;
 			}

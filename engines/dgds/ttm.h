@@ -123,6 +123,8 @@ public:
 	bool run(TTMEnviro &env, TTMSeq &seq);
 	void findAndAddSequences(TTMEnviro &scriptData, Common::Array<TTMSeq> &seqArray);
 
+	static Common::String readTTMStringVal(Common::SeekableReadStream *scr);
+
 protected:
 	void handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byte count, const int16 *ivals, const Common::String &sval, const Common::Array<Common::Point> &pts);
 	int32 findGOTOTarget(TTMEnviro &env, TTMSeq &seq, int16 frame);

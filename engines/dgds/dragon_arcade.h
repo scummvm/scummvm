@@ -46,7 +46,7 @@ struct ArcadeNPCState {
     int16 val1;
     int16 val2;
     int16 x;
-    int16 val4;
+    int16 y;
     int16 x_11;
     int16 y_11;
     int16 x_12;
@@ -83,7 +83,7 @@ public:
 	DragonArcade();
 
 	void arcadeTick();
-	
+
 private:
 	void initIfNeeded();
 	void drawBackgroundAndWeapons();
@@ -121,11 +121,7 @@ private:
 	int16 _bladeState1;
 	int16 _bladeStateOffset;
 	uint16 _mouseButtonWentDown;
-	int16 _drawXOffset;
-	int16 _drawYOffset;
-	int16 _startYOffset;
 	int16 _scrollXOffset;
-	int16 _currentNPCRunningTTM;
 	int16 _nTickUpdates;
 	int16 _startDifficultyMaybe;
 	bool _haveBigGun;

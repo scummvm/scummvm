@@ -30,30 +30,54 @@
 
 namespace Dgds {
 
+struct ArcadeLevelData {
+	int16 x;
+	int16 y;
+	byte data;
+	bool flag;
+};
+
+struct ArcadeNPCState;
+
 /** A TTM interpreter which is simpler than the main one and
    specialized to the arcade sequences. */
 class DragonArcadeTTM {
 public:
-	DragonArcadeTTM();
+	DragonArcadeTTM(ArcadeNPCState *npcState);
 	void clearDataPtrs();
 	int16 load(const char *filename);
 	void finishTTMParse(int16 envNum);
 	int16 runNextPage(int16 pageNum);
-	int16 runScriptPage(int16 pageNum);
 	void freePages(uint16 num);
 	void freeShapes();
 
 	uint16 _currentTTMNum;
+	int16 _currentNPCRunningTTM;
+	int16 _drawXOffset;
+	int16 _drawYOffset;
+	int16 _startYOffset;
 	bool _doingInit;
-	
-	Common::SharedPtr<Image> _shapes3[6];
+
+private:
+	int16 runScriptPage(int16 pageNum);
+	int16 handleOperation(TTMEnviro &env, int16 page, uint16 op, byte count, const int16 *ivals, const Common::String &sval);
+
+	int16 _shapes3[6];
 	Common::SharedPtr<Image> _shapes2[6];
 	Common::SharedPtr<Image> _shapes[6];
 	Common::SharedPtr<Image> _allShapes[30];
-	
+	int16 _brushes[6];
+
+	byte _drawColFG;
+	byte _drawColBG;
+	ArcadeNPCState *_npcState;
+	// int16 _numA1x4OpsInInit; // implicit by count of items in _levelData
+	Common::Array<ArcadeLevelData> _levelData;
+
 	// Note: only a subset of the enviro members get used, but
 	// use the same structure for simplicity.
 	TTMEnviro _ttmEnvs[5];
+
 };
 
 } // end namespace Dgds
