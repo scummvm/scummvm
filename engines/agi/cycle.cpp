@@ -343,7 +343,7 @@ int AgiEngine::playGame() {
 	_game.gfxMode = true;
 	_text->promptRow_Set(22);
 
-	debug(0, "Running AGI script.\n");
+	debug(0, "Running AGI script");
 
 	setFlag(VM_FLAG_ENTERED_CLI, false);
 	setFlag(VM_FLAG_SAID_ACCEPTED_INPUT, false);

@@ -123,7 +123,7 @@ int AgiEngine::readObjects(Common::File &fp, int flen) {
 
 void AgiEngine::objectSetLocation(uint16 objectNr, int location) {
 	if (objectNr >= _game.numObjects) {
-		warning("AgiEngine::objectSetLocation: Can't access object %d.\n", objectNr);
+		warning("AgiEngine::objectSetLocation: Can't access object %d", objectNr);
 		return;
 	}
 	_objects[objectNr].location = location;
@@ -131,7 +131,7 @@ void AgiEngine::objectSetLocation(uint16 objectNr, int location) {
 
 int AgiEngine::objectGetLocation(uint16 objectNr) {
 	if (objectNr >= _game.numObjects) {
-		warning("AgiEngine::objectGetLocation: Can't access object %d.\n", objectNr);
+		warning("AgiEngine::objectGetLocation: Can't access object %d", objectNr);
 		return 0;
 	}
 	return _objects[objectNr].location;
@@ -139,7 +139,7 @@ int AgiEngine::objectGetLocation(uint16 objectNr) {
 
 const char *AgiEngine::objectName(uint16 objectNr) {
 	if (objectNr >= _game.numObjects) {
-		warning("AgiEngine::objectName: Can't access object %d.\n", objectNr);
+		warning("AgiEngine::objectName: Can't access object %d", objectNr);
 		return "";
 	}
 	return _objects[objectNr].name.c_str();

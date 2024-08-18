@@ -618,7 +618,7 @@ void PictureMgr::drawPictureAGI256() {
 	}
 
 	if (_dataSize < maxFlen) {
-		warning("Undersized AGI256 picture resource %d, using it anyway. Filling rest with white.", _resourceNr);
+		warning("Undersized AGI256 picture resource %d, using it anyway. Filling rest with white", _resourceNr);
 		while (_dataSize < maxFlen) {
 			x++;
 			if (x >= _width) {

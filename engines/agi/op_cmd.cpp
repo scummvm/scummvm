@@ -2422,7 +2422,7 @@ int AgiEngine::runLogic(int16 logicNr) {
 //					state->_curLogic = &state->logics[n];
 //					state->lognum = n;
 //					ip = 2;
-//					warning("running logic %d\n", n);
+//					warning("running logic %d", n);
 //					break;
 //				}
 //				_v[13]=0;
@@ -2452,7 +2452,7 @@ int AgiEngine::runLogic(int16 logicNr) {
 //			state->_curLogic = &state->logics[n];
 //			state->lognum = n;
 //			state->_curLogic_cIP = 2;
-//			warning("running logic %d\n", n);
+//			warning("running logic %d", n);
 //		}
 
 		if (_game.exitAllLogics)
