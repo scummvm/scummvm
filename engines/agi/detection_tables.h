@@ -62,22 +62,6 @@ namespace Agi {
 		ver \
 	}
 
-#define GAME_LVFPN_PIRATED(id,extra,fname,md5,size,lang,ver,features,gid,platform,interp,guioptions) { \
-		{ \
-			id, \
-			extra, \
-			AD_ENTRY1s(fname,md5,size), \
-			lang, \
-			platform, \
-			ADGF_PIRATED, \
-			guioptions \
-		}, \
-		gid, \
-		interp, \
-		features, \
-		ver \
-	}
-
 #define GAME_LVFPNF(id,name,fname,md5,size,lang,ver,features,gid,platform,interp,guioptions) { \
 		{ \
 			id, \
@@ -94,14 +78,14 @@ namespace Agi {
 		ver \
 	}
 
-#define GAME_LVFPNU(id,msg,fname,md5,size,lang,ver,features,gid,platform,interp,guioptions) { \
+#define GAME_LVFPN_FLAGS(id,msg,fname,md5,size,lang,ver,features,gid,platform,interp,guioptions,flags) { \
 		{ \
 			id, \
 			msg, \
 			AD_ENTRY1s(fname,md5,size), \
 			lang, \
 			platform, \
-			ADGF_UNSUPPORTED, \
+			flags, \
 			guioptions \
 		}, \
 		gid, \
@@ -110,14 +94,14 @@ namespace Agi {
 		ver \
 	}
 
-#define GAME_LVFPN2U(id,msg,fname_1,md5_1,size_1,fname_2,md5_2,size_2,lang,ver,features,gid,platform,interp,guioptions) { \
+#define GAME_LVFPN2_FLAGS(id,msg,fname_1,md5_1,size_1,fname_2,md5_2,size_2,lang,ver,features,gid,platform,interp,guioptions,flags) { \
 		{ \
 			id, \
 			msg, \
 			AD_ENTRY2s(fname_1,md5_1,size_1,fname_2,md5_2,size_2), \
 			lang, \
 			platform, \
-			ADGF_UNSUPPORTED, \
+			flags, \
 			guioptions \
 		}, \
 		gid, \
@@ -126,11 +110,12 @@ namespace Agi {
 		ver \
 	}
 
-#define BOOTER1_U(id,msg,fname,md5,size,ver,gid) GAME_LVFPNU(id,msg,fname,md5,size,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V1,GAMEOPTIONS_DEFAULT)
-#define BOOTER2(id,extra,fname,md5,size,ver,gid) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V2,GAMEOPTIONS_DEFAULT)
+#define BOOTER(id,extra,md5,ver,gid) GAME_LVFPN(id,extra,"*",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V1,GAMEOPTIONS_DEFAULT)
+#define BOOTER_UNSTABLE(id,extra,md5,ver,gid) GAME_LVFPN_FLAGS(id,extra,"*",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V1,GAMEOPTIONS_DEFAULT,ADGF_UNSTABLE)
+#define BOOTER_UNSUPPORTED(id,msg,fname,md5,size,ver,gid) GAME_LVFPN_FLAGS(id,msg,fname,md5,size,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V1,GAMEOPTIONS_DEFAULT,ADGF_UNSUPPORTED)
 #define GAME(id,extra,md5,ver,gid) GAME_LVFPN(id,extra,"logdir",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V2,GAMEOPTIONS_DEFAULT)
 #define GAME3(id,extra,fname,md5,ver,gid) GAME_LVFPN(id,extra,fname,md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V3,GAMEOPTIONS_DEFAULT)
-#define GAME3_PIRATED(id,extra,fname,md5,ver,gid) GAME_LVFPN_PIRATED(id,extra,fname,md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V3,GAMEOPTIONS_DEFAULT)
+#define GAME3_PIRATED(id,extra,fname,md5,ver,gid) GAME_LVFPN_FLAGS(id,extra,fname,md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V3,GAMEOPTIONS_DEFAULT,ADGF_PIRATED)
 
 #define GAME_P(id,extra,md5,ver,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,platform,GType_V2,GAMEOPTIONS_DEFAULT)
 #define GAME_PO(id,extra,md5,ver,gid,platform,guioptions) GAME_LVFPN(id,extra,"logdir",md5,AD_NO_SIZE,Common::EN_ANY,ver,0,gid,platform,GType_V2,guioptions)
@@ -151,10 +136,10 @@ namespace Agi {
 #define GAME3_PO(id,extra,fname,md5,ver,flags,gid,platform,guioptions) GAME_LVFPN(id,extra,fname,md5,AD_NO_SIZE,Common::EN_ANY,ver,flags,gid,platform,GType_V3,guioptions)
 
 #define GAMEpre_P(id,extra,fname_1,md5_1,size_1,fname_2,md5_2,size_2,ver,gid,platform) GAME_LVFPN2(id,extra,fname_1,md5_1,size_1,fname_2,md5_2,size_2,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,GAMEOPTIONS_DEFAULT)
-#define GAMEpre_PU(id,msg,fname_1,md5_1,size_1,fname_2,md5_2,size_2,ver,gid,platform) GAME_LVFPN2U(id,msg,fname_1,md5_1,size_1,fname_2,md5_2,size_2,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,GAMEOPTIONS_DEFAULT)
+#define GAMEpre_PU(id,msg,fname_1,md5_1,size_1,fname_2,md5_2,size_2,ver,gid,platform) GAME_LVFPN2_FLAGS(id,msg,fname_1,md5_1,size_1,fname_2,md5_2,size_2,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,GAMEOPTIONS_DEFAULT,ADGF_UNSUPPORTED)
 #define GAMEpre_PO(id,extra,fname_1,md5_1,size_1,fname_2,md5_2,size_2,ver,gid,platform,guioptions) GAME_LVFPN2(id,extra,fname_1,md5_1,size_1,fname_2,md5_2,size_2,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,guioptions)
 #define GAMEpre_PS(id,extra,fname,md5,size,ver,gid,platform) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,GAMEOPTIONS_DEFAULT)
-#define GAMEpre_PSU(id,msg,fname,md5,size,ver,gid,platform) GAME_LVFPNU(id,msg,fname,md5,size,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,GAMEOPTIONS_DEFAULT)
+#define GAMEpre_PSU(id,msg,fname,md5,size,ver,gid,platform) GAME_LVFPN_FLAGS(id,msg,fname,md5,size,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI,GAMEOPTIONS_DEFAULT,ADGF_UNSUPPORTED)
 
 #define GAME3_PS(id,extra,fname,md5,size,ver,flags,gid,platform) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,flags,gid,platform,GType_V3,GAMEOPTIONS_DEFAULT)
 #define GAME3_PSO(id,extra,fname,md5,size,ver,flags,gid,platform,guioptions) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,flags,gid,platform,GType_V3,guioptions)
@@ -207,68 +192,16 @@ static const AGIGameDescription gameDescriptions[] = {
 	// AGI Demo for Kings Quest III and Space Quest I
 	GAME("agidemo", "Demo Kings Quest III and Space Quest I", "502e6bf96827b6c4d3e67c9cdccd1033", 0x2272, GID_AGIDEMO),
 
-	{
-		// Black Cauldron (PC 3.5" booter) 1.1J [AGI 1.12]
-		{
-			"bc",
-			"Booter 1.1J",
-			{
-				{ "bc-d1.img", BooterDisk1, "1d29a82b41c9c7491e2b68d16864bd11", 368640},
-				{ "bc-d2.img", BooterDisk2, "5568f7a52e787305656246f95e2aa375", 368640},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GAMEOPTIONS_DEFAULT
-		},
-		GID_BC,
-		GType_V1,
-		0,
-		0x1120
-	},
+	// Black Cauldron (PC 5.25" booter) 1.1J [AGI 1.12]
+	BOOTER_UNSTABLE("bc", "1.1J 5.25\" Booter", "0f69951170868481acebf831dd743b21", 0x1120, GID_BC),
 
-	{
-		// Black Cauldron (PC 3.5" booter) 1.1K [AGI 1.12]
-		{
-			"bc",
-			"Booter 1.1K",
-			{
-				{ "bc-d1.img", BooterDisk1, "98a51d3a372baa9df288b6c0f0232567", 368640},
-				{ "bc-d2.img", BooterDisk2, "5568f7a52e787305656246f95e2aa375", 368640},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GAMEOPTIONS_DEFAULT
-		},
-		GID_BC,
-		GType_V1,
-		0,
-		0x1120
-	},
+	// Black Cauldron (PC 5.25" booter) 1.1K [AGI 1.12]
+	// This also matches against Tandy version 01.00.00. The game resources are identical
+	// except for the copyright/version text on the title screen and three pics.
+	BOOTER_UNSTABLE("bc", "1.1K 3.5\" Booter", "297a586027a5eba60219b339ebe53443", 0x1120, GID_BC),
 
-	{
-		// Black Cauldron (PC 3.5" booter) 1.1M [AGI 1.12]
-		{
-			"bc",
-			"Booter 1.1M",
-			{
-				{ "bc-d1.img", BooterDisk1, "edc0e5befbe5e44bb109cdf9137ee12d", 368640},
-				{ "bc-d2.img", BooterDisk2, "5568f7a52e787305656246f95e2aa375", 368640},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GAMEOPTIONS_DEFAULT
-		},
-		GID_BC,
-		GType_V1,
-		0,
-		0x1120
-	},
+	// Black Cauldron (PC 5.25" booter) 1.1M [AGI 1.12]
+	BOOTER_UNSTABLE("bc", "1.1M 3.5\" Booter", "29bc82f2acfd0c7deeb7941cafd745d2", 0x1120, GID_BC),
 
 	// Black Cauldron (Amiga) 2.00 6/14/87
 	GAME_PO("bc", "2.00 1987-06-14", "7b01694af21213b4727bb94476f64eb5", 0x2440, GID_BC, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
@@ -297,8 +230,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Unofficial port by Guillaume Major
 	GAME_PS("bc", "updated", "c4e1937f74e8100cd0152b904434d8b4", 357, 0x2440, GID_BC, Common::kPlatformCoCo3),
 
-	// Donald Duck's Playground (PC Booter) 1.0Q
-	BOOTER2("ddp", "Booter 1.0Q", "ddp.img", "f323f10abf8140ffb2668b09af2e7b87", 368640, 0x2001, GID_DDP),
+	// Donald Duck's Playground (PC 5.25" Booter) 1.0Q 06/09/1986
+	BOOTER("ddp", "1.0Q 1986-06-09 5.25\" Booter", "f0f35d60e3e3303480a6bd109d54248d", 0x2001, GID_DDP),
 
 	// Donald Duck's Playground (Amiga) 1.0C
 	GAME_PO("ddp", "1.0C 1987-04-27", "550971d196f65190a5c760d2479406ef", 0x2272, GID_DDP, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
@@ -393,11 +326,11 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_P("kq1", "2.0C 1987-03-26", "d4c4739d4ac63f7dbd29255425077d48", 0x2440, GID_KQ1, Common::kPlatformMacintosh),
 
 	// King's Quest 1 (IBM PCjr) 1.00 1502265 5/10/84
-	BOOTER1_U("kq1", "Early King\'s Quest releases are not currently supported.",
+	BOOTER_UNSUPPORTED("kq1", "Early King\'s Quest releases are not currently supported.",
 		"kq1.img", "127675735f9d2c148738c1e96ea9d2cf", 368640, 0x1120, GID_KQ1),
 
 	// King's Quest 1 (Tandy 1000) 01.01.00 5/24/84
-	BOOTER1_U("kq1", "Early King\'s Quest releases are not currently supported.",
+	BOOTER_UNSUPPORTED("kq1", "Early King\'s Quest releases are not currently supported.",
 		"kq1.img", "0a22131d0eaf66d955afecfdc83ef9d6", 368640, 0x1120, GID_KQ1),
 
 	// King's Quest 1 (PC 5.25"/3.5") 2.0F [AGI 2.917]
@@ -427,47 +360,14 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 2 (Mac) 2.0R 3/23/88
 	GAME_P("kq2", "2.0R 1988-03-23", "cbdb0083317c8e7cfb7ac35da4bc7fdc", 0x2440, GID_KQ2, Common::kPlatformMacintosh),
 
-	{
-		// King's Quest 2 (PC booter) 1.0W
-		{
-			"kq2",
-			"Early King\'s Quest releases are not currently supported.",
-			{
-				{ "kq2-d1.img", BooterDisk1, "68302776c012f5036ceb66e36920d353", 368640},
-				{ "kq2-d2.img", BooterDisk2, "5fa6d8222608aee556627c67cb5fb4d4", 368640},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_UNSUPPORTED,
-			GAMEOPTIONS_DEFAULT
-		},
-		GID_KQ2,
-		GType_V1,
-		0,
-		0x1120
-	},
+	// King's Quest 2 (Tandy 5.25" booter) 01.00.00 [AGI 1.12]
+	BOOTER_UNSTABLE("kq2", "01.00.00 5.25\" Booter", "59119ff7a21965c0fb5f001f0d049765", 0x1120, GID_KQ2),
 
-	{
-		// King's Quest 2 (PC booter) 1.1H
-		{
-			"kq2",
-			"Early King\'s Quest releases are not currently supported.",
-			{
-				{ "kq2-d1.img", BooterDisk1, "c7216589aca72348bc063950cb80b266", 368640},
-				{ "kq2-d2.img", BooterDisk2, "9d29b6d41740945dce569cb59b2a6c5f", 368640},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_UNSUPPORTED,
-			GAMEOPTIONS_DEFAULT
-		},
-		GID_KQ2,
-		GType_V1,
-		0,
-		0x1120
-	},
+	// King's Quest 2 (PC 5.25" booter) 1.0W [AGI 1.12]
+	BOOTER_UNSTABLE("kq2", "1.0W 5.25\" Booter", "0b4172d13b0fb7e5b83244a964e52ece", 0x1120, GID_KQ2),
+
+	// King's Quest 2 (PC 5.25" booter) 1.1H [AGI 1.12]
+	BOOTER_UNSTABLE("kq2", "1.1H 5.25\" Booter", "4924e12c90f883b81db426e11e091beb", 0x1120, GID_KQ2),
 
 	// King's Quest 2 (PC) 2.1 [AGI 2.411]; entry from DAGII, but missing from Sarien?
 	// XXX: any major differences from 2.411 to 2.440?

@@ -23,12 +23,14 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/debug.h"
+#include "common/md5.h"
 
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
 #include "engines/metaengine.h"
 
 #include "agi/detection.h"
+#include "agi/disk_image.h"
 #include "agi/wagparser.h" // for fallback detection
 #include "agi/agi.h"
 
@@ -80,7 +82,7 @@ static const PlainGameDescriptor agiGames[] = {
 
 #include "agi/detection_tables.h"
 
-using namespace Agi;
+namespace Agi {
 
 class AgiMetaEngineDetection : public AdvancedMetaEngineDetection<AGIGameDescription> {
 	mutable Common::String _gameid;
@@ -112,6 +114,17 @@ public:
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override;
+
+	ADDetectedGames detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra, uint32 skipADFlags, bool skipIncomplete) override;
+
+private:
+	static void getPotentialDiskImages(const FileMap &allFiles, const char * const *imageExtensions, size_t extensionCount, Common::Array<Common::Path> &imageFiles);
+
+	static ADDetectedGame detectPcDiskImageGame(const FileMap &allFiles, uint32 skipADFlags);
+	static Common::String getLogDirHashFromPcDiskImageV1(Common::SeekableReadStream &stream);
+	static Common::String getLogDirHashFromPcDiskImageV2001(Common::SeekableReadStream &stream);
+
+	static Common::String getLogDirHashFromDiskImage(Common::SeekableReadStream &stream, uint32 position);
 };
 
 ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
@@ -282,4 +295,184 @@ ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX
 	return ADDetectedGame();
 }
 
-REGISTER_PLUGIN_STATIC(AGI_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, AgiMetaEngineDetection);
+/**
+ * Detection override for handling disk images after file-based detection.
+ */
+ADDetectedGames AgiMetaEngineDetection::detectGame(
+	const Common::FSNode &parent,
+	const FileMap &allFiles,
+	Common::Language language,
+	Common::Platform platform,
+	const Common::String &extra,
+	uint32 skipADFlags,
+	bool skipIncomplete) {
+
+	// Run the file-based detection first, if it finds a match then do not search for disk images.
+	ADDetectedGames matched = AdvancedMetaEngineDetection::detectGame(parent, allFiles, language, platform, extra, skipADFlags, skipIncomplete);
+
+	// Detect games within PC disk images. This detection will find one game at most.
+	if (matched.empty() &&
+		(language == Common::UNK_LANG || language == Common::EN_ANY) &&
+		(platform == Common::kPlatformUnknown || platform == Common::kPlatformDOS)) {
+		ADDetectedGame game = detectPcDiskImageGame(allFiles, skipADFlags);
+		if (game.desc != nullptr) {
+			matched.push_back(game);
+		}
+	}
+
+	return matched;
+}
+
+void AgiMetaEngineDetection::getPotentialDiskImages(
+	const FileMap &allFiles,
+	const char * const *imageExtensions,
+	size_t imageExtensionCount,
+	Common::Array<Common::Path> &imageFiles) {
+
+	// build an array of files with disk image extensions
+	for (FileMap::const_iterator f = allFiles.begin(); f != allFiles.end(); ++f) {
+		for (size_t i = 0; i < imageExtensionCount; i++) {
+			if (f->_key.baseName().hasSuffixIgnoreCase(imageExtensions[i])) {
+				debug(3, "potential disk image: %s", f->_key.baseName().c_str());
+				imageFiles.push_back(f->_key);
+			}
+		}
+	}
+
+	// sort potential image files by name
+	Common::sort(imageFiles.begin(), imageFiles.end());
+}
+
+/**
+ * Detects a PC Booter game by searching for 360k floppy images, reading LOGDIR,
+ * hashing LOGDIR, and comparing to DOS GType_V1 entries in the detection table.
+ * See AgiLoader_v1 in loader_v1.cpp for more details.
+ */
+ADDetectedGame AgiMetaEngineDetection::detectPcDiskImageGame(const FileMap &allFiles, uint32 skipADFlags) {
+	// build array of files with pc disk image extensions
+	Common::Array<Common::Path> imageFiles;
+	getPotentialDiskImages(allFiles, pcDiskImageExtensions, ARRAYSIZE(pcDiskImageExtensions), imageFiles);
+
+	// find disk one by reading potential images until a match is found
+	for (const Common::Path &imageFile : imageFiles) {
+		Common::SeekableReadStream *stream = allFiles[imageFile].createReadStream();
+		if (stream == nullptr) {
+			warning("unable to open disk image: %s", imageFile.baseName().c_str());
+			continue;
+		}
+
+		// image file size must be 360k
+		int64 fileSize = stream->size();
+		if (fileSize != PC_DISK_SIZE) {
+			delete stream;
+			continue;
+		}
+
+		// attempt to locate and hash logdir using both possible inidir disk locations
+		Common::String logdirHash1 = getLogDirHashFromPcDiskImageV1(*stream);
+		Common::String logdirHash2 = getLogDirHashFromPcDiskImageV2001(*stream);
+		delete stream;
+
+		if (!logdirHash1.empty()) {
+			debug(3, "pc disk logdir hash: %s, %s", logdirHash1.c_str(), imageFile.baseName().c_str());
+		}
+		if (!logdirHash2.empty()) {
+			debug(3, "pc disk logdir hash: %s, %s", logdirHash2.c_str(), imageFile.baseName().c_str());
+		}
+
+		// if logdir hash found then compare against hashes of DOS GType_V1 entries
+		if (!logdirHash1.empty() || !logdirHash2.empty()) {
+			for (const AGIGameDescription *game = gameDescriptions; game->desc.gameId != nullptr; game++) {
+				if (game->desc.platform == Common::kPlatformDOS && game->gameType == GType_V1 && !(game->desc.flags & skipADFlags)) {
+					const ADGameFileDescription *file;
+					for (file = game->desc.filesDescriptions; file->fileName != nullptr; file++) {
+						// select the logdir hash to use by the game's interpreter version
+						Common::String &logdirHash = (game->version < 0x2001) ? logdirHash1 : logdirHash2;
+						if (file->md5 != nullptr && !logdirHash.empty() && file->md5 == logdirHash) {
+							debug(3, "disk image match: %s, %s, %s", game->desc.gameId, game->desc.extra, imageFile.baseName().c_str());
+
+							// logdir hash match found
+							ADDetectedGame detectedGame(&game->desc);
+							FileProperties fileProps;
+							fileProps.md5 = file->md5;
+							fileProps.md5prop = kMD5Archive;
+							fileProps.size = fileSize;
+							detectedGame.matchedFiles[imageFile] = fileProps;
+							return detectedGame;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return ADDetectedGame();
+}
+
+Common::String AgiMetaEngineDetection::getLogDirHashFromPcDiskImageV1(Common::SeekableReadStream &stream) {
+	// read magic number from initdir resource header
+	stream.seek(PC_INITDIR_POSITION_V1);
+	uint16 magic = stream.readUint16BE();
+	if (magic != 0x1234) {
+		return "";
+	}
+
+	// seek to initdir entry for logdir (and skip remaining 3 bytes of header)
+	stream.skip(3 + (PC_INITDIR_LOGDIR_INDEX_V1 * PC_INITDIR_ENTRY_SIZE_V1));
+
+	// read logdir location
+	byte volume = stream.readByte();
+	byte head = stream.readByte();
+	uint16 track = stream.readUint16LE();
+	uint16 sector = stream.readUint16LE();
+	uint16 offset = stream.readUint16LE();
+
+	// logdir volume must be one
+	if (volume != 1) {
+		return "";
+	}
+
+	// read logdir
+	uint32 logDirPosition = PC_DISK_POSITION(head, track, sector, offset);
+	return getLogDirHashFromDiskImage(stream, logDirPosition);
+}
+
+Common::String AgiMetaEngineDetection::getLogDirHashFromPcDiskImageV2001(Common::SeekableReadStream &stream) {
+	// seek to initdir entry for logdir
+	stream.seek(PC_INITDIR_POSITION_V2001 + (PC_INITDIR_LOGDIR_INDEX_V2001 * PC_INITDIR_ENTRY_SIZE_V2001));
+
+	// read logdir location
+	// volume      4 bits
+	// position   12 bits  (in half-sectors)
+	byte b0 = stream.readByte();
+	byte b1 = stream.readByte();
+	byte volume = b0 >> 4;
+	uint32 position = (((b0 & 0x0f) << 8) + b1) * 256;
+
+	// logdir volume must be one
+	if (volume != 1) {
+		return "";
+	}
+
+	// read logdir
+	return getLogDirHashFromDiskImage(stream, position);
+}
+
+Common::String AgiMetaEngineDetection::getLogDirHashFromDiskImage(Common::SeekableReadStream &stream, uint32 position) {
+	stream.seek(position);
+	uint16 magic = stream.readUint16BE();
+	if (magic != 0x1234) {
+		return "";
+	}
+	stream.skip(1); // volume
+	uint16 logDirSize = stream.readUint16LE();
+	if (!(stream.pos() + logDirSize <= stream.size())) {
+		return "";
+	}
+
+	return Common::computeStreamMD5AsString(stream, logDirSize);
+}
+
+} // end of namespace Agi
+
+REGISTER_PLUGIN_STATIC(AGI_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Agi::AgiMetaEngineDetection);
