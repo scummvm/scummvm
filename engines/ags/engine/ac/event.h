@@ -96,6 +96,10 @@ struct EventHappened {
 	int type = 0;
 	int data1 = 0, data2 = 0, data3 = 0;
 	int player = -1;
+
+	EventHappened() = default;
+	EventHappened(int type_, int data1_, int data2_, int data3_, int player_)
+		: type(type_), data1(data1_), data2(data2_), data3(data3_), player(player_) {}
 };
 
 int run_claimable_event(const char *tsname, bool includeRoom, int numParams, const RuntimeScriptValue *params, bool *eventWasClaimed);
