@@ -234,6 +234,7 @@ Common::Error AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, cons
 	case Agi::GType_V1:
 	case Agi::GType_V2:
 	case Agi::GType_V3:
+	case Agi::GType_A2:
 		*engine = new Agi::AgiEngine(syst, gd);
 		break;
 	default:

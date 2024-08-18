@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	graphics.o \
 	inv.o \
 	keyboard.o \
+	loader_a2.o \
 	loader_v1.o \
 	loader_v2.o \
 	loader_v3.o \
