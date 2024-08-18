@@ -383,7 +383,6 @@ bool InventoryScreen::Run() {
 		if (my < buttonyp) {
 			int clickedon = isonitem;
 			if (clickedon < 0) return true; // continue inventory screen loop
-			_G(evblocknum) = dii[clickedon].num;
 			_GP(play).used_inv_on = dii[clickedon].num;
 
 			if (cmode == MODE_LOOK) {

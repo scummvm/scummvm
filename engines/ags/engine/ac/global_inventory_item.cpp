@@ -95,7 +95,6 @@ void RunInventoryInteraction(int iit, int modd) {
 	if ((iit < 0) || (iit >= _GP(game).numinvitems))
 		quit("!RunInventoryInteraction: invalid inventory number");
 
-	_G(evblocknum) = iit;
 	if (modd == MODE_LOOK)
 		run_event_block_inv(iit, 0);
 	else if (modd == MODE_HAND)
