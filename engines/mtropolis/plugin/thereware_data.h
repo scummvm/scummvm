@@ -30,6 +30,59 @@ namespace Data {
 
 namespace Thereware {
 
+// Known Thereware custom modifiers:
+// * Alpha Kit:
+// - Alpha: Alpha channel support for graphics and mToons
+// - AlphaMatic: Automatically creates alpha information on graphics
+//
+// * HotText Kit:
+// - HotText: Hypertext and scrolling text
+// - KeyScroll: Keyboard scrolling for HotText
+//
+// * Spinner Kit:
+// - Spinner: Effect for spinning an element with depth/two-sidedness
+// - TurnOver: Like spinner, but specifically for 180 degree spins
+// - Flipper: reflect graphics elements around horizontal or vertical axis
+// - Squish: Squishing and elasticity for images
+//
+// * Rotator Kit:
+// - Rotator: Rotation of graphics and mToons
+// - Tracker: Track mouse or elements as a rotation angle source
+//
+// * WrapAround Kit:
+// - WrapAround: wraparound effect for graphics and mToons
+// - EasyScroller: various detail controls for scrolling behavior
+//
+// * Quick Kit:
+// - Flasher: Lets objects blinko on the screen
+// - Snapper: Creates an invisible grid that elements can snap onto when dragged
+// - Conductor: Forward messages to all the children of an element
+// - Randomizer: Use random numbers without Miniscript
+//
+// * Mercury Kit:
+// - DoubleClick: Messages on doubleclick. Can also do the same as the Counter messenger.
+// - MouseTrap: Blocks/filters messages for a certain time period.
+// - RandomTimer: Allows Miniscript altercations to the Timer messenger
+//   Same as FlexiTimer in FixIt Kit
+// - Repeater: Timer messenger that adds a certain delay before looping 
+// - Counter: Sends a message after a certain number of incoming messages
+// - TimeLoop: Sends message a certain number of times
+//
+// * System Kit:
+// - Platform: Indicates computer type and OS
+//
+// * FixIt Kit:
+// - GoThere: Moves an element to an arbitrary point on the screen. 
+//   Superceded by the Point Motion modifier in mTropolis 2.0.
+// - FlexiTimer: Allows Miniscript altercations to the Timer messenger
+//	 Same as RandomTimer in Mercury Kit
+//
+//
+// While those Kits were available individually, for mTropolis 2.0
+// they were also available as a complete bundle in a single plugin,
+// the Thereware Pro Kit.
+
+
 struct ConductorModifier : public PlugInModifierData {
 	PlugInTypeTaggedValue unknown1Null;
 	PlugInTypeTaggedValue unknown2Null;

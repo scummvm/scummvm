@@ -30,6 +30,13 @@ namespace Data {
 
 namespace KW {
 
+//
+// Known KnowWonder custom modifiers:
+// - IdxIter
+// - StrUtil
+// - TicTacToe
+
+
 struct StrUtilModifier : public PlugInModifierData {
 protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;

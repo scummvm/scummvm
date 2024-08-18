@@ -30,6 +30,14 @@ namespace Data {
 
 namespace MLine {
 
+// Known mLine custom modifiers:
+// * Launchme
+// - URLLaunch: Launch/Open external files and applications
+//
+// * Database
+// - Database (???)
+
+
 struct MLineLauncherModifier : public PlugInModifierData {
 	PlugInTypeTaggedValue unknown1String;
 	PlugInTypeTaggedValue unknown2String;

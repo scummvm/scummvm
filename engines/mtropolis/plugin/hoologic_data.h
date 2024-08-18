@@ -30,6 +30,26 @@ namespace Data {
 
 namespace Hoologic {
 
+// Known Hoologic custom modifiers:
+// * Bitmap Suite
+// - hlBitmapVariable: variable storing a bitmap
+// - hlCaptureBitmap: captures a screen image into a bitmap
+// - hlPrintBitmap: print a bitmap
+// - hlSaveBitmap: saves a bitmap as a PICT/BMP file
+// - hlImportBitamp: load a bitmap from a PICT/BMP file
+// - hlDisplayBitmap: display a bitmap
+// - hlScaleBitmap: scale a bitmap
+//
+// * Painter Plugin
+// - hlPainter: Creates painting effects and interaction by blending several pictures together
+//
+// * KeyState Plugin
+// - hlKeyState: State of keyboard keys, and if modifier keys (CTRL, SHIFT, ...) are used?
+//
+// * AppleScript Suite
+// - ???
+
+
 struct BitmapVariableModifier : public PlugInModifierData {
 protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
