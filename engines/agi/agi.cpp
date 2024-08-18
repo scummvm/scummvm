@@ -148,11 +148,11 @@ int AgiEngine::agiInit() {
 	int ec = _loader->init();   // load vol files, etc
 
 	if (ec == errOK)
-		ec = _loader->loadObjects(OBJECTS);
+		ec = _loader->loadObjects();
 
 	// note: demogs has no words.tok
 	if (ec == errOK)
-		ec = _loader->loadWords(WORDS);
+		ec = _loader->loadWords();
 
 	// Load logic 0 into memory
 	if (ec == errOK)
@@ -459,12 +459,11 @@ void AgiEngine::initialize() {
 		_loader = new AgiLoader_v3(this);
 	}
 
-	debugC(2, kDebugLevelMain, "Detect game");
-	int ec = _loader->detectGame();
-	if (ec == errOK) {
-		debugC(2, kDebugLevelMain, "game loaded");
+	debugC(2, kDebugLevelMain, "Detecting game");
+	if (_loader->detectGame()) {
+		debugC(2, kDebugLevelMain, "Detected game");
 	} else {
-		warning("Could not open AGI game");
+		warning("Could not detect AGI game");
 	}
 	// finally set up actual VM opcodes, because we should now have figured out the right AGI version
 	setupOpCodes(getVersion());

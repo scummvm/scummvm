@@ -27,14 +27,12 @@
 
 namespace Agi {
 
-int AgiLoader_v2::detectGame() {
-	if (!Common::File::exists(LOGDIR) ||
-	    !Common::File::exists(PICDIR) ||
-	    !Common::File::exists(SNDDIR) ||
-	    !Common::File::exists(VIEWDIR))
-		return errInvalidAGIFile;
-
-	return errOK;
+bool AgiLoader_v2::detectGame() {
+	return
+		Common::File::exists(LOGDIR) &&
+		Common::File::exists(PICDIR) &&
+		Common::File::exists(SNDDIR) &&
+		Common::File::exists(VIEWDIR);
 }
 
 int AgiLoader_v2::loadDir(AgiDir *agid, const char *fname) {
@@ -292,15 +290,15 @@ int AgiLoader_v2::loadResource(int16 resourceType, int16 resourceNr) {
 	return ec;
 }
 
-int AgiLoader_v2::loadObjects(const char *fname) {
-	return _vm->loadObjects(fname);
+int AgiLoader_v2::loadObjects() {
+	return _vm->loadObjects(OBJECTS);
 }
 
-int AgiLoader_v2::loadWords(const char *fname) {
+int AgiLoader_v2::loadWords() {
 	if (_vm->getFeatures() & GF_EXTCHAR) {
-		return _vm->_words->loadExtendedDictionary(fname);
+		return _vm->_words->loadExtendedDictionary(WORDS);
 	} else {
-		return _vm->_words->loadDictionary(fname);
+		return _vm->_words->loadDictionary(WORDS);
 	}
 }
 

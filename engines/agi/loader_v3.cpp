@@ -29,19 +29,17 @@
 
 namespace Agi {
 
-int AgiLoader_v3::detectGame() {
-	int ec = errUnk;
-	bool found = false;
-
+bool AgiLoader_v3::detectGame() {
 	Common::FSList fslist;
 	Common::FSNode dir(ConfMan.getPath("path"));
 
 	if (!dir.getChildren(fslist, Common::FSNode::kListFilesOnly)) {
 		warning("AgiLoader_v3: invalid game path '%s'", dir.getPath().toString(Common::Path::kNativeSeparator).c_str());
-		return errInvalidAGIFile;
+		return false;
 	}
 
-	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end() && !found; ++file) {
+	bool found = false;
+	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		Common::String f = file->getName();
 		f.toLowercase();
 
@@ -49,19 +47,12 @@ int AgiLoader_v3::detectGame() {
 			memset(_vm->_game.name, 0, 8);
 			strncpy(_vm->_game.name, f.c_str(), MIN((uint)6, f.size() > 3 ? f.size() - 3 : f.size()));
 			debugC(3, kDebugLevelMain, "game.name = %s", _vm->_game.name);
-
-			ec = errOK;
-
 			found = true;
+			break;
 		}
 	}
 
-	if (!found) {
-		debugC(3, kDebugLevelMain, "directory file not found");
-		ec = errInvalidAGIFile;
-	}
-
-	return ec;
+	return found;
 }
 
 int AgiLoader_v3::loadDir(AgiDir *agid, Common::File *fp, uint32 offs, uint32 len) {
@@ -291,12 +282,12 @@ int AgiLoader_v3::loadResource(int16 resourceType, int16 resourceNr) {
 	return ec;
 }
 
-int AgiLoader_v3::loadObjects(const char *fname) {
-	return _vm->loadObjects(fname);
+int AgiLoader_v3::loadObjects() {
+	return _vm->loadObjects(OBJECTS);
 }
 
-int AgiLoader_v3::loadWords(const char *fname) {
-	return _vm->_words->loadDictionary(fname);
+int AgiLoader_v3::loadWords() {
+	return _vm->_words->loadDictionary(WORDS);
 }
 
 } // End of namespace Agi

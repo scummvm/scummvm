@@ -62,12 +62,6 @@ class RandomSource;
  */
 namespace Agi {
 
-typedef signed int Err;
-
-//
-// Version and other definitions
-//
-
 #define TITLE       "AGI engine"
 
 #define DIR_        "dir"
@@ -102,11 +96,6 @@ typedef signed int Err;
 #define ADD_VIEW 2
 
 #define CMD_BSIZE 12
-
-enum {
-	NO_GAMEDIR = 0,
-	GAMEDIR
-};
 
 enum AgiGameType {
 	GType_PreAGI = 0,
@@ -555,20 +544,49 @@ struct AgiGame {
 
 class AgiLoader {
 public:
-
-	AgiLoader() {}
+	AgiLoader(AgiEngine *vm) : _vm(vm) {}
 	virtual ~AgiLoader() {}
 
+	/**
+	 * Detects if the game directory appears to contain AGI files.
+	 * This must be called before init(), as the V3 loader stores
+	 * the game name prefix. Returns true if game files are found.
+	 * Implementations do not currently open files, and the return
+	 * value currently has no effect on the engine beyond logging.
+	 * The engine will call init() even if this fails.
+	 */
+	virtual bool detectGame() = 0;
+
+	/**
+	 * Reads all AGI directory entries from disk and and populates
+	 * the AgiDir arrays in AgiGame (AgiBase::_game) with them.
+	 * Must be called after detectGame().
+	 */
 	virtual int init() = 0;
-	virtual int detectGame() = 0;
+
+	/**
+	 * Loads a resource if it is not already loaded.
+	 * The resource is loaded and decoded into its resource array
+	 * in AgiGame, and the RES_LOADED flag is set on its AgiDir entry.
+	 */
 	virtual int loadResource(int16 resourceType, int16 resourceNr) = 0;
-	virtual int loadObjects(const char *fname) = 0;
-	virtual int loadWords(const char *fname) = 0;
+
+	/**
+	 * Loads AgiEngine::_objects from disk
+	 */
+	virtual int loadObjects() = 0;
+
+	/**
+	 * Loads AgiBase::_words from disk
+	 */
+	virtual int loadWords() = 0;
+
+protected:
+	AgiEngine *_vm;
 };
 
 class AgiLoader_v1 : public AgiLoader {
 private:
-	AgiEngine *_vm;
 	Common::Path _filenameDisk0;
 	Common::Path _filenameDisk1;
 
@@ -577,18 +595,17 @@ private:
 	uint8 *loadVolRes(AgiDir *agid);
 
 public:
-	AgiLoader_v1(AgiEngine *vm);
+	AgiLoader_v1(AgiEngine *vm) : AgiLoader(vm) {}
 
+	bool detectGame() override;
 	int init() override;
-	int detectGame() override;
 	int loadResource(int16 resourceType, int16 resourceNr) override;
-	int loadObjects(const char *fname) override;
-	int loadWords(const char *fname) override;
+	int loadObjects() override;
+	int loadWords() override;
 };
 
 class AgiLoader_v2 : public AgiLoader {
 private:
-	AgiEngine *_vm;
 	bool _hasV3VolumeFormat;
 
 	int loadDir(AgiDir *agid, const char *fname);
@@ -596,37 +613,28 @@ private:
 	bool detectV3VolumeFormat();
 
 public:
+	AgiLoader_v2(AgiEngine *vm) : _hasV3VolumeFormat(false), AgiLoader(vm) {}
 
-	AgiLoader_v2(AgiEngine *vm) {
-		_vm = vm;
-		_hasV3VolumeFormat = false;
-	}
-
+	bool detectGame() override;
 	int init() override;
-	int detectGame() override;
 	int loadResource(int16 resourceType, int16 resourceNr) override;
-	int loadObjects(const char *fname) override;
-	int loadWords(const char *fname) override;
+	int loadObjects() override;
+	int loadWords() override;
 };
 
 class AgiLoader_v3 : public AgiLoader {
 private:
-	AgiEngine *_vm;
-
 	int loadDir(AgiDir *agid, Common::File *fp, uint32 offs, uint32 len);
 	uint8 *loadVolRes(AgiDir *agid);
 
 public:
+	AgiLoader_v3(AgiEngine *vm) : AgiLoader(vm) {}
 
-	AgiLoader_v3(AgiEngine *vm) {
-		_vm = vm;
-	}
-
+	bool detectGame() override;
 	int init() override;
-	int detectGame() override;
 	int loadResource(int16 resourceType, int16 resourceNr) override;
-	int loadObjects(const char *fname) override;
-	int loadWords(const char *fname) override;
+	int loadObjects() override;
+	int loadWords() override;
 };
 
 class GfxFont;

@@ -50,17 +50,12 @@
 
 namespace Agi {
 
-
-AgiLoader_v1::AgiLoader_v1(AgiEngine *vm) {
-	_vm = vm;
-}
-
-int AgiLoader_v1::detectGame() {
+bool AgiLoader_v1::detectGame() {
 	// Find filenames for the disk images
 	_filenameDisk0 = _vm->getDiskName(BooterDisk1);
 	_filenameDisk1 = _vm->getDiskName(BooterDisk2);
 
-	return errOK;
+	return true;
 }
 
 int AgiLoader_v1::loadDir_DDP(AgiDir *agid, int offset, int max) {
@@ -285,7 +280,7 @@ int AgiLoader_v1::loadResource(int16 resourceType, int16 resourceNr) {
 	return ec;
 }
 
-int AgiLoader_v1::loadObjects(const char *fname) {
+int AgiLoader_v1::loadObjects() {
 	if (_vm->getGameID() == GID_BC) {
 		Common::File f;
 		f.open(_filenameDisk0);
@@ -295,7 +290,7 @@ int AgiLoader_v1::loadObjects(const char *fname) {
 	return errOK;
 }
 
-int AgiLoader_v1::loadWords(const char *fname) {
+int AgiLoader_v1::loadWords() {
 	if (_vm->getGameID() == GID_BC) {
 		Common::File f;
 		f.open(_filenameDisk0);
