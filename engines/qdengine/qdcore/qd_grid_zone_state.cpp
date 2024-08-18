@@ -25,8 +25,8 @@
 
 namespace QDEngine {
 
-const char *const qdGridZoneState::ZONE_STATE_ON_NAME = "Вкл";
-const char *const qdGridZoneState::ZONE_STATE_OFF_NAME = "Выкл";
+const char *const qdGridZoneState::ZONE_STATE_ON_NAME = "\xc2\xea\xeb"; // "Вкл"
+const char *const qdGridZoneState::ZONE_STATE_OFF_NAME = "\xc2\xfb\xea\xeb"; // "Выкл"
 
 qdGridZoneState::qdGridZoneState(bool st) : _state(st) {
 	if (st)
