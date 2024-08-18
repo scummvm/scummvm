@@ -1174,23 +1174,22 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 				}
 				if (otherNspAnimationType_maybe == 39 || otherNspAnimationType_maybe == 59 ||
 					 otherNspAnimationType_maybe == 60 || otherNspAnimationType_maybe == 61) {
-					error("anim: 39 || 59..61"); // TODO
-//					uVar1 = (uint)BYTE_ARRAY_2c85_41e7[1];
-//					uVar7 = *(undefined2 *)((int)CPlayerSpriteWidthTbl + uVar1 * 2);
-//					uVar4 = *(undefined2 *)((int)CPlayerSpriteHeightTbl + uVar1 * 2);
-//					calculateScaledPlayerSpriteDimensions(uVar7,uVar4,playerSpriteY_maybe);
-//					addSpriteToDraw(playerSpriteX_maybe - (_curPlayerSpriteWidth & 0xff) / 2,
-//									playerSpriteY_maybe - (_curPlayerSpriteHeight_maybe & 0xff),uVar7,uVar4,
-//									*(undefined2 *)((int)CPlayerSpritePtrTbl + uVar1 * 4),
-//									*(undefined2 *)((int)&CPlayerSpritePtrTbl[0].Offset + uVar1 * 4),240 - playerSpriteY_maybe ,
-//									_curPlayerSpriteWidth,_curPlayerSpriteHeight_maybe,_player_sprite_related_2c85_82f3);
-//					if ((otherNspAnimationType_maybe == 0x3c) || (otherNspAnimationType_maybe == 0x3d)) {
-//						sprite_y_scaling_threshold_maybe = 0xf0;
-//						drawInventory();
-//						updateScreen();
-//						DAT_2c85_985d = cursorYPosition;
-//						return;
-//					}
+					const Sprite &playerSprite = _player->getSprite(26);
+					_room->calculateScaledSpriteDimensions(playerSprite.width, playerSprite.height, _player->_position.y);
+					_sprites.addSpriteToDrawList(
+						_player->_position.x,
+						_player->_position.y - scaledSpriteHeight,
+						&playerSprite,
+						240 - _player->_position.y,
+						scaledSpriteWidth,
+						scaledSpriteHeight, player_sprite_related_2c85_82f3);
+					if (otherNspAnimationType_maybe == 60 || otherNspAnimationType_maybe == 61) {
+						sprite_y_scaling_threshold_maybe = 240;
+//						DrawObjectsMenu(); TODO do we need this logic?
+//						UpdateAllVideo();
+//						*(undefined2 *)&_LastTickCursorY = *(undefined2 *)&_CursorY;
+						return;
+					}
 				}
 //				iVar9 = *(int *)((int)otherNspWidthTbl + _player->_frameIdx * 2);
 //				iVar8 = *(int *)((int)&otherNspHeightTbl + _player->_frameIdx * 2);
@@ -1963,6 +1962,18 @@ void DarkseedEngine::updateAnimation() {
 			_player->_direction = 2;
 		}
 		break;
+	case 59: // use shard on mirror
+		advanceAnimationFrame(0);
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]];
+		} else {
+			_player->_direction = 1;
+			_player->updateSprite();
+		}
+		if (animFrameChanged && _player->_frameIdx == 3) {
+			playSound(26, 5, -1);
+		}
+		break;
 	case 65:
 		advanceAnimationFrame(0);
 		if (!isAnimFinished_maybe) {
@@ -2059,9 +2070,24 @@ void DarkseedEngine::handleObjCollision(int targetObjNum) {
 			case 10:
 				_useCode->useCodeLibraryCard(targetObjNum);
 				break;
-				// TODO lots of extra switch cases here for inventory usages.
+			case 11:
+				_useCode->useCodeBobbyPin(targetObjNum);
+				break;
+			case 13:
+			case 26:
+				_useCode->useCodeKeys(_actionMode, targetObjNum);
+				break;
 			case 14:
 				_useCode->useCodeGloves(targetObjNum);
+				break;
+			case 15:
+				_useCode->useCodeMirrorShard(targetObjNum);
+				break;
+			case 16:
+				_useCode->useCodeBinoculars(targetObjNum);
+				break;
+			case 17:
+				_useCode->useCodeShovel(targetObjNum);
 				break;
 			// TODO lots of extra switch cases here for inventory usages.
 			default:
