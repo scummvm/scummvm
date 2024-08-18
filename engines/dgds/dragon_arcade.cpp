@@ -33,7 +33,7 @@
 
 namespace Dgds {
 
-DragonArcade::DragonArcade() {
+DragonArcade::DragonArcade() : _arcadeTTM(_npcState) {
 }
 
 void DragonArcade::finish() {
@@ -66,7 +66,7 @@ bool DragonArcade::doTickUpdate() {
 	_nextRandomVal = DgdsEngine::getInstance()->getRandom().getRandomNumber(65535);
 
 	error("DragonArcade::doTickUpdate: finish me");
-	
+
 	return false;
 }
 
@@ -242,7 +242,7 @@ void DragonArcade::loadTTMScriptsForStage(uint16 stage) {
 		ttm2 = "FLAMDEAD.TTM";
 		_npcState[0].x = 160;
 		_npcState[0].val1 = 160;
-		_startYOffset = 0;
+		_arcadeTTM._startYOffset = 0;
 		break;
 	case 3:
 		ttm1 = "DRAGON.TTM";
@@ -254,10 +254,10 @@ void DragonArcade::loadTTMScriptsForStage(uint16 stage) {
 		ttm2 = "AARC.TTM";
 		_npcState[0].x = 140;
 		_npcState[0].val1 = 140;
-		_startYOffset = -43;
+		_arcadeTTM._startYOffset = -43;
 		break;
     case 6:
-		_currentNPCRunningTTM = 0;
+		_arcadeTTM._currentNPCRunningTTM = 0;
 		_arcadeTTM.runNextPage(276);
 		ttm1 = "SNAKERUN.TTM";
 		if (_haveBigGun)
@@ -312,7 +312,7 @@ void DragonArcade::drawBackgroundAndWeapons() {
 	DgdsEngine *engine = DgdsEngine::getInstance();
 	Image bg(engine->getResourceManager(), engine->getDecompressor());
 	bg.drawScreen("BGND.SCR", engine->getBackgroundBuffer());
-	
+
 	Image weapons(engine->getResourceManager(), engine->getDecompressor());
 	weapons.loadBitmap("W.BMP");
 	if (weapons.loadedFrameCount() < 3)
@@ -379,7 +379,7 @@ void DragonArcade::createBullet(int16 x, int16 y, ImageFlipMode flipMode, uint16
 			_bullets[i]._var1 = var1;
 			if (var1 == 3)
 				_bullets[i]._speed = _nextRandomVal & 3;
-			
+
 			break;
 		}
 	}
@@ -467,9 +467,9 @@ void DragonArcade::runThenDrawBulletsInFlight() {
 	_npcState[0].y_12 = 0;
 	_npcState[0].y_21 = 0;
 	_npcState[0].y_22 = 0;
-	_drawXOffset = _npcState[0].x - 152;
-	_drawYOffset = _startYOffset;
-	_currentNPCRunningTTM = 0;
+	_arcadeTTM._drawXOffset = _npcState[0].x - 152;
+	_arcadeTTM._drawYOffset = _arcadeTTM._startYOffset;
+	_arcadeTTM._currentNPCRunningTTM = 0;
 	if (-1 < _npcState[0].byte12) {
 		_arcadeTTM.runNextPage(_npcState[0].npcState);
 	}

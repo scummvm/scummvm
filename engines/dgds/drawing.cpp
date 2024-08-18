@@ -39,6 +39,10 @@ void filledCircle(int x, int y, int xr, int yr, Graphics::ManagedSurface *dst, b
 	Graphics::drawEllipse(x - xr, y - yr, x + xr, y + yr, fgcol, false, drawPixel, dst);
 }
 
+void emptyCircle(int x, int y, int xr, int yr, Graphics::ManagedSurface *dst, byte fgcol) {
+	Graphics::drawEllipse(x - xr, y - yr, x + xr, y + yr, fgcol, false, drawPixel, dst);
+}
+
 }
 
 } // end namespace Dgds
