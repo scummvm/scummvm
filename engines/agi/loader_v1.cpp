@@ -155,7 +155,7 @@ int AgiLoader_v1::init() {
 	return ec;
 }
 
-uint8 *AgiLoader_v1::loadVolRes(struct AgiDir *agid) {
+uint8 *AgiLoader_v1::loadVolumeResource(AgiDir *agid) {
 	Common::File fp;
 	int offset = agid->offset;
 
@@ -189,95 +189,6 @@ uint8 *AgiLoader_v1::loadVolRes(struct AgiDir *agid) {
 	fp.read(data, agid->len);
 
 	return data;
-}
-
-int AgiLoader_v1::loadResource(int16 resourceType, int16 resourceNr) {
-	int ec = errOK;
-	uint8 *data = nullptr;
-
-	debugC(3, kDebugLevelResources, "(t = %d, n = %d)", resourceType, resourceNr);
-	if (resourceNr >= MAX_DIRECTORY_ENTRIES)
-		return errBadResource;
-
-	switch (resourceType) {
-	case RESOURCETYPE_LOGIC:
-		if (~_vm->_game.dirLogic[resourceNr].flags & RES_LOADED) {
-			debugC(3, kDebugLevelResources, "loading logic resource %d", resourceNr);
-			_vm->unloadResource(RESOURCETYPE_LOGIC, resourceNr);
-
-			// load raw resource into data
-			data = loadVolRes(&_vm->_game.dirLogic[resourceNr]);
-
-			_vm->_game.logics[resourceNr].data = data;
-			ec = data ? _vm->decodeLogic(resourceNr) : errBadResource;
-
-			_vm->_game.logics[resourceNr].sIP = 2;
-		}
-
-		// reset code pointer in case logic was cached
-		_vm->_game.logics[resourceNr].cIP = _vm->_game.logics[resourceNr].sIP;
-		break;
-	case RESOURCETYPE_PICTURE:
-		// if picture is currently NOT loaded *OR* cacheing is off,
-		// unload the resource (caching == off) and reload it
-
-		debugC(3, kDebugLevelResources, "loading picture resource %d", resourceNr);
-		if (_vm->_game.dirPic[resourceNr].flags & RES_LOADED)
-			break;
-
-		// if loaded but not cached, unload it
-		// if cached but not loaded, etc
-		_vm->unloadResource(RESOURCETYPE_PICTURE, resourceNr);
-		data = loadVolRes(&_vm->_game.dirPic[resourceNr]);
-
-		if (data != nullptr) {
-			_vm->_game.pictures[resourceNr].rdata = data;
-			_vm->_game.dirPic[resourceNr].flags |= RES_LOADED;
-		} else {
-			ec = errBadResource;
-		}
-		break;
-	case RESOURCETYPE_SOUND:
-		debugC(3, kDebugLevelResources, "loading sound resource %d", resourceNr);
-		if (_vm->_game.dirSound[resourceNr].flags & RES_LOADED)
-			break;
-
-		data = loadVolRes(&_vm->_game.dirSound[resourceNr]);
-
-		// "data" is freed by objects created by createFromRawResource on success
-		_vm->_game.sounds[resourceNr] = AgiSound::createFromRawResource(data, _vm->_game.dirSound[resourceNr].len, resourceNr, _vm->_soundemu);
-		if (_vm->_game.sounds[resourceNr] != nullptr) {
-			_vm->_game.dirSound[resourceNr].flags |= RES_LOADED;
-		} else {
-			free(data);
-			ec = errBadResource;
-		}
-		break;
-	case RESOURCETYPE_VIEW:
-		// Load a VIEW resource into memory...
-		// Since VIEWS alter the view table ALL the time
-		// can we cache the view? or must we reload it all
-		// the time?
-		if (_vm->_game.dirView[resourceNr].flags & RES_LOADED)
-			break;
-
-		debugC(3, kDebugLevelResources, "loading view resource %d", resourceNr);
-		_vm->unloadResource(RESOURCETYPE_VIEW, resourceNr);
-		data = loadVolRes(&_vm->_game.dirView[resourceNr]);
-		if (data) {
-			_vm->_game.dirView[resourceNr].flags |= RES_LOADED;
-			ec = _vm->decodeView(data, _vm->_game.dirView[resourceNr].len, resourceNr);
-			free(data);
-		} else {
-			ec = errBadResource;
-		}
-		break;
-	default:
-		ec = errBadResource;
-		break;
-	}
-
-	return ec;
 }
 
 int AgiLoader_v1::loadObjects() {

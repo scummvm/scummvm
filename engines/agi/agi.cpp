@@ -156,7 +156,7 @@ int AgiEngine::agiInit() {
 
 	// Load logic 0 into memory
 	if (ec == errOK)
-		ec = _loader->loadResource(RESOURCETYPE_LOGIC, 0);
+		ec = loadResource(RESOURCETYPE_LOGIC, 0);
 
 	_keyHoldMode = false;
 	_keyHoldModeLastKey = Common::KEYCODE_INVALID;
@@ -197,7 +197,87 @@ void AgiEngine::agiDeinit() {
 }
 
 int AgiEngine::loadResource(int16 resourceType, int16 resourceNr) {
-	int ec = _loader->loadResource(resourceType, resourceNr);
+	if (resourceNr >= MAX_DIRECTORY_ENTRIES)
+		return errBadResource;
+
+	int ec = errOK;
+	uint8 *data = nullptr;
+	switch (resourceType) {
+	case RESOURCETYPE_LOGIC:
+		if (~_game.dirLogic[resourceNr].flags & RES_LOADED) {
+			unloadResource(RESOURCETYPE_LOGIC, resourceNr);
+
+			// load raw resource into data
+			data = _loader->loadVolumeResource(&_game.dirLogic[resourceNr]);
+			_game.logics[resourceNr].data = data;
+
+			// uncompressed logic files need to be decrypted
+			if (data != nullptr) {
+				// RES_LOADED flag gets set by decode logic
+				ec = decodeLogic(resourceNr);
+				_game.logics[resourceNr].sIP = 2;
+			} else {
+				ec = errBadResource;
+			}
+		}
+
+		// reset code pointer in case logic was cached
+		_game.logics[resourceNr].cIP = _game.logics[resourceNr].sIP;
+		break;
+
+	case RESOURCETYPE_PICTURE:
+		if (~_game.dirPic[resourceNr].flags & RES_LOADED) {
+			// if loaded but not cached, unload it
+			// if cached but not loaded, etc
+			unloadResource(RESOURCETYPE_PICTURE, resourceNr);
+			data = _loader->loadVolumeResource(&_game.dirPic[resourceNr]);
+
+			if (data != nullptr) {
+				_game.pictures[resourceNr].rdata = data;
+				_game.dirPic[resourceNr].flags |= RES_LOADED;
+			} else {
+				ec = errBadResource;
+			}
+		}
+		break;
+
+	case RESOURCETYPE_SOUND:
+		if (~_game.dirSound[resourceNr].flags & RES_LOADED) {
+			data = _loader->loadVolumeResource(&_game.dirSound[resourceNr]);
+
+			// "data" is freed by objects created by createFromRawResource on success
+			_game.sounds[resourceNr] = AgiSound::createFromRawResource(data, _game.dirSound[resourceNr].len, resourceNr, _soundemu);
+			if (_game.sounds[resourceNr] != nullptr) {
+				_game.dirSound[resourceNr].flags |= RES_LOADED;
+			} else {
+				free(data);
+				ec = errBadResource;
+			}
+		}
+		break;
+
+	case RESOURCETYPE_VIEW:
+		// Load a VIEW resource into memory...
+		// Since VIEWS alter the view table ALL the time
+		// can we cache the view? or must we reload it all
+		// the time?
+		if (~_game.dirView[resourceNr].flags & RES_LOADED) {
+			unloadResource(RESOURCETYPE_VIEW, resourceNr);
+			data = _loader->loadVolumeResource(&_game.dirView[resourceNr]);
+			if (data) {
+				_game.dirView[resourceNr].flags |= RES_LOADED;
+				ec = decodeView(data, _game.dirView[resourceNr].len, resourceNr);
+				free(data);
+			} else {
+				ec = errBadResource;
+			}
+		}
+		break;
+
+	default:
+		ec = errBadResource;
+		break;
+	}
 
 	// WORKAROUND: Patches broken picture 147 in a corrupted Amiga version of Gold Rush! (v2.05 1989-03-09).
 	// The picture can be seen in room 147 after dropping through the outhouse's hole in room 146.

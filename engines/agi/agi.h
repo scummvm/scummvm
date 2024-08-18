@@ -565,11 +565,9 @@ public:
 	virtual int init() = 0;
 
 	/**
-	 * Loads a resource if it is not already loaded.
-	 * The resource is loaded and decoded into its resource array
-	 * in AgiGame, and the RES_LOADED flag is set on its AgiDir entry.
+	 * Loads a volume resource from disk
 	 */
-	virtual int loadResource(int16 resourceType, int16 resourceNr) = 0;
+	virtual uint8 *loadVolumeResource(AgiDir *agid) = 0;
 
 	/**
 	 * Loads AgiEngine::_objects from disk
@@ -592,14 +590,13 @@ private:
 
 	int loadDir_DDP(AgiDir *agid, int offset, int max);
 	int loadDir_BC(AgiDir *agid, int offset, int max);
-	uint8 *loadVolRes(AgiDir *agid);
 
 public:
 	AgiLoader_v1(AgiEngine *vm) : AgiLoader(vm) {}
 
 	bool detectGame() override;
 	int init() override;
-	int loadResource(int16 resourceType, int16 resourceNr) override;
+	uint8 *loadVolumeResource(AgiDir *agid) override;
 	int loadObjects() override;
 	int loadWords() override;
 };
@@ -609,7 +606,6 @@ private:
 	bool _hasV3VolumeFormat;
 
 	int loadDir(AgiDir *agid, const char *fname);
-	uint8 *loadVolRes(AgiDir *agid);
 	bool detectV3VolumeFormat();
 
 public:
@@ -617,7 +613,7 @@ public:
 
 	bool detectGame() override;
 	int init() override;
-	int loadResource(int16 resourceType, int16 resourceNr) override;
+	uint8 *loadVolumeResource(AgiDir *agid) override;
 	int loadObjects() override;
 	int loadWords() override;
 };
@@ -625,14 +621,13 @@ public:
 class AgiLoader_v3 : public AgiLoader {
 private:
 	int loadDir(AgiDir *agid, Common::File *fp, uint32 offs, uint32 len);
-	uint8 *loadVolRes(AgiDir *agid);
 
 public:
 	AgiLoader_v3(AgiEngine *vm) : AgiLoader(vm) {}
 
 	bool detectGame() override;
 	int init() override;
-	int loadResource(int16 resourceType, int16 resourceNr) override;
+	uint8 *loadVolumeResource(AgiDir *agid) override;
 	int loadObjects() override;
 	int loadWords() override;
 };
