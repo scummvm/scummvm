@@ -46,9 +46,13 @@ private:
 	int _val2 = 0;
 	int _ripReachHand = 0;
 	int _ripHiHand = 0;
+	int _pickupBall = 0;
+	machine *_ripPickupBall = nullptr;
 
 	void disableHotspots();
 	void setHotspots();
+	bool takeKeys();
+	bool takeBilliardBall();
 
 public:
 	Room406() : Room() {}

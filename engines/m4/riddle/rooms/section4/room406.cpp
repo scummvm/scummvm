@@ -261,7 +261,27 @@ void Room406::pre_parser() {
 }
 
 void Room406::parser() {
+	bool lookFlag = player_said_any("look", "look at");
+	bool takeFlag = player_said("take");
+	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
+	if (takeFlag && player_said("ENVELOPE")) {
+		// No implementation
+	} else if (takeFlag && player_said("KEYS") && takeKeys()) {
+		// No implementation
+	} else if (takeFlag && player_said("DESK DRAWER OPEN")) {
+		digi_play("406r17", 1);
+	} else if (takeFlag && player_said("CABINET DRAWER OPEN")) {
+		digi_play("406r24", 1);
+	} else if (takeFlag && player_said("BILLIARD BALL") && takeBilliardBall()) {
+		// No implementation
+	}
+	// TODO
+	else {
+		return;
+	}
+
+	_G(player).command_ready = false;
 }
 
 void Room406::disableHotspots() {
@@ -326,6 +346,51 @@ void Room406::setHotspots() {
 
 	hotspot_set_active(_G(flags)[kPaintingOpen] ? "PAINTING" : "SMOKING HUTCH", false);
 	hotspot_set_active(_G(flags)[V316] ? "MIRROR" : "BROKEN MIRROR", false);
+}
+
+bool Room406::takeKeys() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (inv_object_is_here("KEYS")) {
+			inv_give_to_player("KEYS");
+			hotspot_set_active("KEYS", false);
+			terminateMachineAndNull(_keys);
+			kernel_examine_inventory_object("PING KEYS", _G(master_palette),
+				5, 1, 460, 265, 2, "406_s01", -1);
+			return true;
+		}
+		break;
+
+	case 2:
+		player_set_commands_allowed(true);
+		return true;
+
+	default:
+		break;
+	}
+
+	return false;
+}
+
+bool Room406::takeBilliardBall() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (inv_object_is_here("BILLIARD BALL")) {
+			player_set_commands_allowed(false);
+			_pickupBall = series_load("406 RIP PICKUP BALL");
+			ws_hide_walker();
+
+			_ripPickupBall = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
+				triggerMachineByHashCallbackAlways, "RIP picks up ball");
+			// TODO
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	return false;
 }
 
 } // namespace Rooms
