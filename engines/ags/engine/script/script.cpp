@@ -104,20 +104,7 @@ void run_function_on_non_blocking_thread(NonBlockingScriptFunction *funcToRun) {
 	funcToRun->roomHasFunction = DoRunScriptFuncCantBlock(_G(roominstFork), funcToRun, funcToRun->roomHasFunction);
 }
 
-//-----------------------------------------------------------
-// [IKM] 2012-06-22
-//
-// run_interaction_event() and run_interaction_script()
-// are *almost* identical, except for the first parameter
-// type.
-// May these types be made children of the same base?
-//-----------------------------------------------------------
-
-
-// Returns 0 normally, or -1 to indicate that the NewInteraction has
-// become invalid and don't run another interaction on it
-// (eg. a room change occurred)
-int run_interaction_event(const ObjectEvent &obj_evt, Interaction *nint, int evnt, int chkAny, int isInv) {
+int run_interaction_event(const ObjectEvent &obj_evt, Interaction *nint, int evnt, int chkAny, bool isInv) {
 
 	if (evnt < 0 || (size_t)evnt >= nint->Events.size() ||
 	        (nint->Events[evnt].Response.get() == nullptr) || (nint->Events[evnt].Response->Cmds.size() == 0)) {

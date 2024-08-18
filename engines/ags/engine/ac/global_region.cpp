@@ -143,8 +143,10 @@ void RunRegionInteraction(int regnum, int mood) {
 	if ((mood < 0) || (mood > 2))
 		quit("!RunRegionInteraction: invalid event specified");
 
+	// NOTE: for Regions the mode has specific meanings (NOT verbs):
+	// 0 - stands on region, 1 - walks onto region, 2 - walks off region
 	const auto obj_evt = ObjectEvent("region%d", regnum);
-	if (_GP(thisroom).Regions[regnum].EventHandlers != nullptr) {
+	if (_G(loaded_game_file_version) > kGameVersion_272) {
 		run_interaction_script(obj_evt, _GP(thisroom).Regions[regnum].EventHandlers.get(), mood);
 	} else {
 		run_interaction_event(obj_evt, &_G(croom)->intrRegion[regnum], mood);
