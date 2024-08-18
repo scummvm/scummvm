@@ -19,40 +19,32 @@
  *
  */
 
-#ifndef MTROPOLIS_PLUGINS_H
-#define MTROPOLIS_PLUGINS_H
-
-#include "common/ptr.h"
-
-class MidiDriver;
+#include "mtropolis/plugin/mline_data.h"
 
 namespace MTropolis {
 
-namespace Obsidian {
+namespace Data {
 
-class WordGameData;
+namespace MLine {
 
-} // End of namespace Obsidian
+DataReadErrorCode MLineLauncherModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 0)
+		return kDataReadErrorUnsupportedRevision;
 
-class PlugIn;
+	if (!unknown1String.load(reader) || !unknown2String.load(reader) || !unknown3String.load(reader) || !unknown4Int.load(reader) || !unknown5Int.load(reader))
+		return kDataReadErrorReadFailed;
 
-namespace PlugIns {
+	if (!unknown6Bool.load(reader) || !unknown7Event.load(reader) || !unknown8Bool.load(reader) || !unknown9Bool.load(reader) || !unknown10Bool.load(reader))
+		return kDataReadErrorReadFailed;
 
-Common::SharedPtr<PlugIn> createMIDI();
-Common::SharedPtr<PlugIn> createStandard();
-Common::SharedPtr<PlugIn> createObsidian(const Common::SharedPtr<Obsidian::WordGameData> &wgData);
-Common::SharedPtr<PlugIn> createMTI();
-Common::SharedPtr<PlugIn> createFTTS();
+	if (!unknown11Bool.load(reader) || !unknown12Bool.load(reader))
+		return kDataReadErrorReadFailed;
 
-Common::SharedPtr<PlugIn> createKnowWonder();
+	return kDataReadErrorNone;
+}
 
-Common::SharedPtr<PlugIn> createAXLogic();
-Common::SharedPtr<PlugIn> createHoologic();
-Common::SharedPtr<PlugIn> createMLine();
-Common::SharedPtr<PlugIn> createThereware();
+} // End of namespace MLine
 
-} // End of namespace PlugIns
+} // End of namespace Data
 
 } // End of namespace MTropolis
-
-#endif

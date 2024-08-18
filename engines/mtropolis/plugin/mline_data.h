@@ -19,39 +19,37 @@
  *
  */
 
-#ifndef MTROPOLIS_PLUGINS_H
-#define MTROPOLIS_PLUGINS_H
+#ifndef MTROPOLIS_PLUGIN_FTTS_DATA_H
+#define MTROPOLIS_PLUGIN_FTTS_DATA_H
 
-#include "common/ptr.h"
-
-class MidiDriver;
+#include "mtropolis/data.h"
 
 namespace MTropolis {
 
-namespace Obsidian {
+namespace Data {
 
-class WordGameData;
+namespace MLine {
 
-} // End of namespace Obsidian
+struct MLineLauncherModifier : public PlugInModifierData {
+	PlugInTypeTaggedValue unknown1String;
+	PlugInTypeTaggedValue unknown2String;
+	PlugInTypeTaggedValue unknown3String;
+	PlugInTypeTaggedValue unknown4Int;
+	PlugInTypeTaggedValue unknown5Int;
+	PlugInTypeTaggedValue unknown6Bool;
+	PlugInTypeTaggedValue unknown7Event;
+	PlugInTypeTaggedValue unknown8Bool;
+	PlugInTypeTaggedValue unknown9Bool;
+	PlugInTypeTaggedValue unknown10Bool;
+	PlugInTypeTaggedValue unknown11Bool;
+	PlugInTypeTaggedValue unknown12Bool;
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
 
-class PlugIn;
+} // End of namespace MLine
 
-namespace PlugIns {
-
-Common::SharedPtr<PlugIn> createMIDI();
-Common::SharedPtr<PlugIn> createStandard();
-Common::SharedPtr<PlugIn> createObsidian(const Common::SharedPtr<Obsidian::WordGameData> &wgData);
-Common::SharedPtr<PlugIn> createMTI();
-Common::SharedPtr<PlugIn> createFTTS();
-
-Common::SharedPtr<PlugIn> createKnowWonder();
-
-Common::SharedPtr<PlugIn> createAXLogic();
-Common::SharedPtr<PlugIn> createHoologic();
-Common::SharedPtr<PlugIn> createMLine();
-Common::SharedPtr<PlugIn> createThereware();
-
-} // End of namespace PlugIns
+} // End of namespace Data
 
 } // End of namespace MTropolis
 
