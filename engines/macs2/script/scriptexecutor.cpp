@@ -1911,13 +1911,15 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			Func9F4D(throwaway1, throwaway2);
 		}
 		else if (opcode1 == 0x26) {
-			// TODO: This handles some bookkeeping and loading, but we skip this for now
-			// Only do the right amount of reads
-			uint16 throwaway1;
-			uint16 throwaway2;
-			Func9F4D(throwaway1, throwaway2);
-			Func9F4D(throwaway1, throwaway2);
-			ReadByte();
+			// This one loads a special animation set
+			uint32 id = Func9F4D_32() - 0x400;
+			// No idea yet what this one does
+			Func9F4D_Placeholder();
+			uint8 animationID = ReadByte();
+			Common::Array<uint8> blob = Scenes::instance().ReadSpecialAnimBlob(animationID, g_engine->_fileStream);
+			GameObject *object = GameObjects::GetObjectByIndex(id);
+			object->Blobs.push_back(blob);
+			GameObjects::GetObjectByIndex(id)->testOverloadAnimation = object->Blobs.size() - 1;
 		} else if (opcode1 == 0x27) {
 			// TODO: Implement 0037h:0C858h
 			// TODO: Again, seems to be about writing a variable to an object

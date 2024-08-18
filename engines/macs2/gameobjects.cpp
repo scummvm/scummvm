@@ -86,9 +86,11 @@ Common::MemoryReadStream *Macs2::Scenes::ReadSceneStrings(uint16 sceneIndex, Com
 }
 
 Common::Array<uint8> Macs2::Scenes::ReadSpecialAnimBlob(uint16 index, Common::MemoryReadStream *fileStream) {
-	uint16 offset = CurrentSceneSpecialAnimOffsets[index];
+	uint32 offset = CurrentSceneSpecialAnimOffsets[index];
 	fileStream->seek(offset, SEEK_SET);
-	// TODO: Continue here
+	uint32 length = fileStream->readUint32LE();
+	Common::Array<uint8> result(length);
+	fileStream->read(result.data(), length);
 	return Common::Array<uint8>();
 }
 

@@ -77,6 +77,7 @@ private:
 
 
 	public:
+
 	Common::Point GetPosition() const;
 		void SetPosition(const Common::Point &newPosition);
 		Macs2::GameObject *GameObject;
