@@ -71,6 +71,34 @@ int16 Darkseed::UseCode::getUseLibraryCardTosIdx(uint16 objNum) {
 	return libraryCardTextTbl[objNum];
 }
 
+int16 UseCode::getUseBobbyPinTosIdx(uint16 objNum) {
+	if (objNum >= Objects::MAX_OBJECTS) {
+		error("getUseBobbyPinTosIdx: Object Index out of range! %d", objNum);
+	}
+	return bobbyPinTextTbl[objNum];
+}
+
+int16 UseCode::getUseKeysTosIdx(uint16 objNum) {
+	if (objNum >= Objects::MAX_OBJECTS) {
+		error("getUseKeysTosIdx: Object Index out of range! %d", objNum);
+	}
+	return keysTextTbl[objNum];
+}
+
+int16 UseCode::getUseBinocularsTosIdx(uint16 objNum) {
+	if (objNum >= Objects::MAX_OBJECTS) {
+		error("getUseBinocularsTosIdx: Object Index out of range! %d", objNum);
+	}
+	return binocularsTextTbl[objNum];
+}
+
+int16 UseCode::getUseShovelTosIdx(uint16 objNum) {
+	if (objNum >= Objects::MAX_OBJECTS) {
+		error("getUseShovelTosIdx: Object Index out of range! %d", objNum);
+	}
+	return shovelTextTbl[objNum];
+}
+
 void Darkseed::UseCode::useCode(int objNum) {
 	debug("useCode: objNum = %d", objNum);
 	
@@ -1034,15 +1062,175 @@ void UseCode::useCodeLibraryCard(int16 targetObjNum) {
 	}
 }
 
+void UseCode::useCodeBobbyPin(int16 targetObjNum) {
+	int16 tosIdx = getUseBobbyPinTosIdx(targetObjNum);
+	if (tosIdx != 0) {
+		if (tosIdx < 979) {
+			_console->printTosText(tosIdx);
+		} else {
+			genericresponse(11, targetObjNum, tosIdx);
+		}
+	}
+
+	if (targetObjNum == 190) {
+		if (_objectVar[190] == 0) {
+			_console->printTosText(882);
+			g_engine->playSound(18,5,-1);
+			_objectVar[190] = 1;
+		} else if (_objectVar[190] == 1) {
+			_console->printTosText(883);
+			g_engine->playSound(18,5,-1);
+			_objectVar[190] = 2;
+		} else {
+			_console->printTosText(963);
+		}
+	} else if (targetObjNum == 48) {
+		if (_objectVar[48] == 0) {
+			_objectVar[48] = 1;
+			_console->printTosText(869);
+			g_engine->_room->removeObjectFromRoom(48);
+			_inventory.addItem(21);
+			_inventory.removeItem(11);
+		}
+	} else if (targetObjNum == 113) {
+		putobjunderpillow(11);
+	}
+}
+
+void UseCode::useCodeKeys(int16 actionObjNum, int16 targetObjNum) {
+	if ((actionObjNum == 13) && (targetObjNum == 151)) {
+		_objectVar[151] = 1;
+		g_engine->showFullscreenPic("cclock02.pic");
+	} else if (targetObjNum == 71) {
+		if (actionObjNum == 26) {
+			if (_objectVar[44] == 0) {
+				g_engine->playSound(16, 5, -1);
+				_console->printTosText(708);
+			} else if (_objectVar[71] == 0) {
+				g_engine->playSound(11, 5, -1);
+				_objectVar[71] = 2;
+				_console->printTosText(709);
+				_inventory.removeItem(26);
+			}
+		} else {
+			_console->printTosText(707);
+		}
+	} else if (targetObjNum == 113) {
+		putobjunderpillow(actionObjNum);
+	} else if ((actionObjNum == 26) &&
+			   ((((targetObjNum == 175 || (targetObjNum == 62)) || (targetObjNum == 176)) || (targetObjNum == 44)))) {
+		_console->printTosText(720);
+	} else if ((actionObjNum == 26) && (targetObjNum == 191)) {
+		_console->printTosText(890);
+	} else {
+		int16 tosIdx = getUseKeysTosIdx(targetObjNum);
+		if (tosIdx != 0) {
+			if (tosIdx < 979) {
+				_console->printTosText(tosIdx);
+			} else {
+				genericresponse(actionObjNum, targetObjNum, tosIdx);
+			}
+		}
+	}
+}
+
+void UseCode::useCodeMirrorShard(int16 targetObjNum) {
+	if (targetObjNum == 137) {
+		_console->printTosText(298);
+		_inventory.removeItem(15);
+		_objectVar[137] = 1;
+		_player->loadAnimations("mglow.nsp");
+		g_engine->setupOtherNspAnimation(0, 59);
+	} else if (targetObjNum == 124) {
+		_console->printTosText(20);
+	} else if (targetObjNum == 129) {
+		genericresponse(15, 129, 998);
+	} else if (targetObjNum == 23 || targetObjNum == 103 || targetObjNum == 170) {
+		genericresponse(15, targetObjNum, 999);
+	} else if (targetObjNum == 52) {
+		_console->printTosText(197);
+	} else if (targetObjNum == 112) {
+		_console->printTosText(235);
+	} else if (targetObjNum == 130) {
+		genericresponse(15, 130, 991);
+	} else if (targetObjNum == 108) {
+		_console->printTosText(386);
+	} else if (targetObjNum == 110) {
+		_console->printTosText(392);
+	} else {
+		genericresponse(15, targetObjNum, 997);
+	}
+}
+
+void UseCode::useCodeBinoculars(int16 targetObjNum) {
+	int16 tosIdx = getUseBinocularsTosIdx(targetObjNum);
+	if (tosIdx != 0) {
+		if (tosIdx < 979) {
+			_console->printTosText(tosIdx);
+		} else {
+			genericresponse(16, targetObjNum, tosIdx);
+		}
+	}
+	if ((targetObjNum == 162) && (g_engine->_room->_roomNumber == 36)) {
+		_objectVar[162] = 1;
+		g_engine->showFullscreenPic("bnoc.pic");
+	}
+	if ((targetObjNum == 118) && (g_engine->_room->_roomNumber == 43)) {
+		g_engine->showFullscreenPic("darkbnoc.pic");
+		_console->printTosText(800);
+	}
+}
+
+void UseCode::useCodeShovel(int16 targetObjNum) {
+	int16 tosIdx = getUseShovelTosIdx(targetObjNum);
+	if (tosIdx != 0) {
+		if (tosIdx < 979) {
+			_console->printTosText(tosIdx);
+		} else {
+			genericresponse(17, targetObjNum, tosIdx);
+		}
+	}
+	if (targetObjNum > 86 && targetObjNum < 99) {
+		startdigging(targetObjNum + -87);
+	}
+}
+
 void UseCode::genericresponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx) {
 	// TODO implement me!
 }
+
 void UseCode::putobjunderpillow(int objNum) {
-	// TODO
+	_objectVar[113] = 1;
+	_inventory.removeItem(objNum);
+	_objectVar.setMoveObjectRoom(objNum, 250);
+	g_engine->_cursor.setCursorType(Pointer);
+	_console->printTosText(946);
+	_console->addToCurrentLine(Common::String::format("%s", g_engine->_objectVar.getObjectName(objNum)));
+	_console->printTosText(947);
 }
 
 void UseCode::gancanim() {
 	// TODO
+}
+
+static constexpr bool diggingxflipTbl[12] = {
+	true, true, true, true,
+	true, false, false, true,
+	true, true, true, false
+};
+
+void UseCode::startdigging(int16 targetObjNum) {
+	if (targetObjNum == 0) {
+		_player->loadAnimations("lgravedg.nsp");
+		g_engine->setupOtherNspAnimation(0,21);
+	} else if (diggingxflipTbl[targetObjNum]) {
+		_player->loadAnimations("lgravedg.nsp");
+		g_engine->setupOtherNspAnimation(0,4);
+	} else {
+		_player->loadAnimations("rgravedg.nsp");
+		g_engine->setupOtherNspAnimation(0,22);
+	}
+	g_engine->playSound(14,5,-1);
 }
 
 }
