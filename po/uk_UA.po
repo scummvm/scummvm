@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-17 14:51+0000\n"
-"PO-Revision-Date: 2024-08-15 19:23+0000\n"
+"PO-Revision-Date: 2024-08-18 06:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -6411,10 +6411,8 @@ msgstr "Перемикання звукових ефектів"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:347
-#, fuzzy
-#| msgid "Switching characters:"
 msgid "Switch characters"
-msgstr "Переключення героїв:"
+msgstr "Переключити героїв"
 
 #: engines/agos/metaengine.cpp:353
 #, fuzzy
@@ -7994,10 +7992,8 @@ msgid "GroovieV2 support is not compiled in"
 msgstr "Підтримку для версії GroovieV2 не скомпільовано"
 
 #: engines/groovie/metaengine.cpp:201
-#, fuzzy
-#| msgid "Available engines:"
 msgid "Groovie engine"
-msgstr "Доступні движки:"
+msgstr "Движок Groovie"
 
 #: engines/groovie/metaengine.cpp:217
 #, fuzzy
@@ -8563,16 +8559,12 @@ msgid "Yes/No keymappings"
 msgstr "Мапа клавіш гри"
 
 #: engines/lure/metaengine.cpp:197 engines/mads/metaengine.cpp:311
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restore game"
-msgstr "Відновити гру:"
+msgstr "Відновити гру"
 
 #: engines/lure/metaengine.cpp:203
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restart game"
-msgstr "Відновити гру:"
+msgstr "Гра с початку"
 
 #. I18N: Shift Cursor during fight to top left
 #: engines/lure/metaengine.cpp:233
@@ -8721,16 +8713,12 @@ msgid "Scroll bar down"
 msgstr "Прокручення донизу"
 
 #: engines/mads/metaengine.cpp:331
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Start game"
-msgstr "Відновити гру:"
+msgstr "Почати гру"
 
 #: engines/mads/metaengine.cpp:337
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Resume game"
-msgstr "Відновити гру:"
+msgstr "Продовжити гру"
 
 #: engines/mads/metaengine.cpp:343
 #, fuzzy
