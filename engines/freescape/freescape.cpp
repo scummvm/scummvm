@@ -191,6 +191,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_avoidRenderingFrames = 0;
 	_endGamePlayerEndArea = false;
 	_endGameKeyPressed = false;
+	_endGameDelayTicks = 0;
 
 	_maxShield = 63;
 	_maxEnergy = 63;
@@ -762,6 +763,13 @@ Common::Error FreescapeEngine::run() {
 }
 
 void FreescapeEngine::endGame() {
+	if (_gameStateControl == kFreescapeGameStateEnd) {
+		if (_endGameDelayTicks > 0) {
+			_endGameDelayTicks--;
+			return;
+		}
+	}
+
 	_shootingFrames = 0;
 	_delayedShootObject = nullptr;
 	if (_gameStateControl == kFreescapeGameStateEnd && !isPlayingSound() && !_endGamePlayerEndArea) {
@@ -844,6 +852,9 @@ bool FreescapeEngine::checkIfGameEnded() {
 		if (!_crushedMessage.empty())
 			insertTemporaryMessage(_crushedMessage, _countdown - 4);
 		_gameStateControl = kFreescapeGameStateEnd;
+		// If the player is crushed, there are a few skipped frames
+		// so no need to wait for the end of the game
+		_endGameDelayTicks = 0;
 	} else if (_forceEndGame) {
 		playSound(_soundIndexForceEndGame, true);
 
@@ -873,6 +884,7 @@ uint16 FreescapeEngine::getGameBit(int index) {
 
 void FreescapeEngine::initGameState() {
 	_gameStateControl = kFreescapeGameStatePlaying;
+	_endGameDelayTicks = int(2 * 60); // 2.5 seconds at 60 frames per second
 
 	for (int i = 0; i < k8bitMaxVariable; i++) // TODO: check maximum variable
 		_gameStateVars[i] = 0;

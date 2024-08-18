@@ -520,6 +520,7 @@ public:
 	uint32 _gameStateBits;
 	virtual bool checkIfGameEnded();
 	virtual void endGame();
+	int _endGameDelayTicks;
 	bool _endGameKeyPressed;
 	bool _endGamePlayerEndArea;
 	bool _forceEndGame;

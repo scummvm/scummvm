@@ -301,6 +301,7 @@ void DrillerEngine::loadAssets() {
 	_noShieldMessage = _messagesList[15];
 	_noEnergyMessage = _messagesList[16];
 	_fallenMessage = _messagesList[17];
+	_forceEndGameMessage = _messagesList[18];
 	// Small extra feature: allow player to be crushed in Driller
 	_crushedMessage = "CRUSHED!";
 }
