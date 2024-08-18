@@ -208,7 +208,7 @@ int AgiLoader_v1::loadResource(int16 resourceType, int16 resourceNr) {
 	case RESOURCETYPE_LOGIC:
 		if (~_vm->_game.dirLogic[resourceNr].flags & RES_LOADED) {
 			debugC(3, kDebugLevelResources, "loading logic resource %d", resourceNr);
-			_vm->agiUnloadResource(RESOURCETYPE_LOGIC, resourceNr);
+			_vm->unloadResource(RESOURCETYPE_LOGIC, resourceNr);
 
 			// load raw resource into data
 			data = loadVolRes(&_vm->_game.dirLogic[resourceNr]);
@@ -232,7 +232,7 @@ int AgiLoader_v1::loadResource(int16 resourceType, int16 resourceNr) {
 
 		// if loaded but not cached, unload it
 		// if cached but not loaded, etc
-		_vm->agiUnloadResource(RESOURCETYPE_PICTURE, resourceNr);
+		_vm->unloadResource(RESOURCETYPE_PICTURE, resourceNr);
 		data = loadVolRes(&_vm->_game.dirPic[resourceNr]);
 
 		if (data != nullptr) {
@@ -267,7 +267,7 @@ int AgiLoader_v1::loadResource(int16 resourceType, int16 resourceNr) {
 			break;
 
 		debugC(3, kDebugLevelResources, "loading view resource %d", resourceNr);
-		_vm->agiUnloadResource(RESOURCETYPE_VIEW, resourceNr);
+		_vm->unloadResource(RESOURCETYPE_VIEW, resourceNr);
 		data = loadVolRes(&_vm->_game.dirView[resourceNr]);
 		if (data) {
 			_vm->_game.dirView[resourceNr].flags |= RES_LOADED;

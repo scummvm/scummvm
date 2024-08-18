@@ -426,7 +426,7 @@ void AgiEngine::setView(ScreenObjEntry *screenObj, int16 viewNr) {
 		// Original interpreter bombs out in this situation saying "view not loaded, Press ESC to quit"
 		warning("setView() called on screen object %d to use view %d, but view not loaded", screenObj->objectNr, viewNr);
 		warning("probably game script bug, trying to load view into memory");
-		if (agiLoadResource(RESOURCETYPE_VIEW, viewNr) != errOK) {
+		if (loadResource(RESOURCETYPE_VIEW, viewNr) != errOK) {
 			// loading failed, we better error() out now
 			error("setView() called to set view %d for screen object %d, which is not loaded atm and loading failed", viewNr, screenObj->objectNr);
 			return;

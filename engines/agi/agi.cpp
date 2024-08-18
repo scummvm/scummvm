@@ -171,15 +171,15 @@ int AgiEngine::agiInit() {
 	return ec;
 }
 
-void AgiEngine::agiUnloadResources() {
+void AgiEngine::unloadResources() {
 	// Make sure logic 0 is always loaded
 	for (int i = 1; i < MAX_DIRECTORY_ENTRIES; i++) {
-		agiUnloadResource(RESOURCETYPE_LOGIC, i);
+		unloadResource(RESOURCETYPE_LOGIC, i);
 	}
 	for (int i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
-		agiUnloadResource(RESOURCETYPE_VIEW, i);
-		agiUnloadResource(RESOURCETYPE_PICTURE, i);
-		agiUnloadResource(RESOURCETYPE_SOUND, i);
+		unloadResource(RESOURCETYPE_VIEW, i);
+		unloadResource(RESOURCETYPE_PICTURE, i);
+		unloadResource(RESOURCETYPE_SOUND, i);
 	}
 }
 
@@ -188,15 +188,15 @@ void AgiEngine::agiDeinit() {
 		return;
 
 	_words->clearEgoWords(); // remove all words from memory
-	agiUnloadResources();    // unload resources in memory
-	agiUnloadResource(RESOURCETYPE_LOGIC, 0);
+	unloadResources();    // unload resources in memory
+	unloadResource(RESOURCETYPE_LOGIC, 0);
 	_objects.clear();
 	_words->unloadDictionary();
 
 	clearImageStack();
 }
 
-int AgiEngine::agiLoadResource(int16 resourceType, int16 resourceNr) {
+int AgiEngine::loadResource(int16 resourceType, int16 resourceNr) {
 	int ec = _loader->loadResource(resourceType, resourceNr);
 
 	// WORKAROUND: Patches broken picture 147 in a corrupted Amiga version of Gold Rush! (v2.05 1989-03-09).
@@ -218,7 +218,7 @@ int AgiEngine::agiLoadResource(int16 resourceType, int16 resourceNr) {
 	return ec;
 }
 
-void AgiEngine::agiUnloadResource(int16 resourceType, int16 resourceNr) {
+void AgiEngine::unloadResource(int16 resourceType, int16 resourceNr) {
 	switch (resourceType) {
 	case RESOURCETYPE_LOGIC:
 		unloadLogic(resourceNr);

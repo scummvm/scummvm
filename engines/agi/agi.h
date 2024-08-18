@@ -850,9 +850,12 @@ public:
 
 	int agiInit();
 	void agiDeinit();
-	int agiLoadResource(int16 resourceType, int16 resourceNr);
-	void agiUnloadResource(int16 resourceType, int16 resourceNr);
-	void agiUnloadResources();
+	int loadResource(int16 resourceType, int16 resourceNr);
+	void unloadResource(int16 resourceType, int16 resourceNr);
+	/**
+	 * Unload all resources except Logic 0
+	 */
+	void unloadResources();
 
 	int getKeypress() override;
 	bool isKeypress() override;

@@ -573,32 +573,32 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 
 	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
 		if (in->readByte() & RES_LOADED)
-			agiLoadResource(RESOURCETYPE_LOGIC, i);
+			loadResource(RESOURCETYPE_LOGIC, i);
 		else
-			agiUnloadResource(RESOURCETYPE_LOGIC, i);
+			unloadResource(RESOURCETYPE_LOGIC, i);
 		_game.logics[i].sIP = in->readSint16BE();
 		_game.logics[i].cIP = in->readSint16BE();
 	}
 
 	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
 		if (in->readByte() & RES_LOADED)
-			agiLoadResource(RESOURCETYPE_PICTURE, i);
+			loadResource(RESOURCETYPE_PICTURE, i);
 		else
-			agiUnloadResource(RESOURCETYPE_PICTURE, i);
+			unloadResource(RESOURCETYPE_PICTURE, i);
 	}
 
 	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
 		if (in->readByte() & RES_LOADED)
-			agiLoadResource(RESOURCETYPE_VIEW, i);
+			loadResource(RESOURCETYPE_VIEW, i);
 		else
-			agiUnloadResource(RESOURCETYPE_VIEW, i);
+			unloadResource(RESOURCETYPE_VIEW, i);
 	}
 
 	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
 		if (in->readByte() & RES_LOADED)
-			agiLoadResource(RESOURCETYPE_SOUND, i);
+			loadResource(RESOURCETYPE_SOUND, i);
 		else
-			agiUnloadResource(RESOURCETYPE_SOUND, i);
+			unloadResource(RESOURCETYPE_SOUND, i);
 	}
 
 	// game.pictures - loaded above
@@ -705,7 +705,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 			continue;
 
 		if (!(_game.dirView[screenObj->currentViewNr].flags & RES_LOADED))
-			agiLoadResource(RESOURCETYPE_VIEW, screenObj->currentViewNr);
+			loadResource(RESOURCETYPE_VIEW, screenObj->currentViewNr);
 
 		setView(screenObj, screenObj->currentViewNr);   // Fix v->view_data
 		setLoop(screenObj, screenObj->currentLoopNr);   // Fix v->loop_data
@@ -1037,11 +1037,11 @@ void AgiEngine::replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
 	switch (type) {
 	case ADD_PIC:
 		debugC(8, kDebugLevelMain, "--- decoding picture %d ---", p1);
-		agiLoadResource(RESOURCETYPE_PICTURE, p1);
+		loadResource(RESOURCETYPE_PICTURE, p1);
 		_picture->decodePicture(p1, p2, p3 != 0);
 		break;
 	case ADD_VIEW:
-		agiLoadResource(RESOURCETYPE_VIEW, p1);
+		loadResource(RESOURCETYPE_VIEW, p1);
 		_sprites->addToPic(p1, p2, p3, p4, p5, p6, p7);
 		break;
 	default:
