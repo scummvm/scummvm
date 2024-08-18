@@ -2057,6 +2057,11 @@ const Game games[] = {
 		MTBOOT_C9SAMPLER_WIN_EN,
 		&BootScriptContext::bootGeneric
 	},
+	// Adobe 24 Hours Tools Sampler - Windows - English
+	{
+		MTBOOT_ADOBE24_WIN_EN,
+		&BootScriptContext::bootGeneric
+	},
 };
 
 } // End of namespace Games
