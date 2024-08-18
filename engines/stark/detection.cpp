@@ -21,8 +21,6 @@
 
 #include "engines/advancedDetector.h"
 
-#include "common/translation.h"
-
 #include "stark/detection.h"
 #include "stark/debug.h"
 

@@ -23,8 +23,6 @@
 
 #include "engines/advancedDetector.h"
 
-#include "common/translation.h"
-
 #include "cge/fileio.h"
 #include "cge/cge.h"
 #include "cge/detection.h"

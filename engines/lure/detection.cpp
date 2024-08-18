@@ -23,8 +23,6 @@
 
 #include "engines/advancedDetector.h"
 
-#include "common/translation.h"
-
 #include "lure/detection.h"
 #include "lure/lure.h"
 

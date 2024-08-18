@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/translation.h"
-
 namespace Mohawk {
 
 #define GUI_OPTIONS_MYST                   GUIO4(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOMIDI)

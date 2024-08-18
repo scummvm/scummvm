@@ -22,7 +22,6 @@
 #include "common/algorithm.h"
 
 #include "base/plugins.h"
-#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 #include "teenagent/teenagent.h"

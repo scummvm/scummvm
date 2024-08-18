@@ -24,7 +24,6 @@
 #include "engines/advancedDetector.h"
 
 #include "common/config-manager.h"
-#include "common/translation.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/system.h"
