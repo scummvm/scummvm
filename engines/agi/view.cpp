@@ -396,9 +396,7 @@ void AgiEngine::unloadView(int16 viewNr) {
 		delete[] loopData->cel;
 	}
 	delete[] viewData->loop;
-
-	if (viewData->description)
-		delete[] viewData->description;
+	delete[] viewData->description;
 
 	viewData->headerCycleTime = 0;
 	viewData->headerStepSize = 0;

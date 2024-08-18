@@ -985,14 +985,13 @@ int PictureMgr::decodePicture(byte *data, uint32 length, int clr, int pic_width,
  * resource data.
  * @param picNr AGI picture resource number
  */
-int PictureMgr::unloadPicture(int picNr) {
+void PictureMgr::unloadPicture(int picNr) {
 	// remove visual buffer & priority buffer if they exist
 	if (_vm->_game.dirPic[picNr].flags & RES_LOADED) {
 		free(_vm->_game.pictures[picNr].rdata);
+		_vm->_game.pictures[picNr].rdata = nullptr;
 		_vm->_game.dirPic[picNr].flags &= ~RES_LOADED;
 	}
-
-	return errOK;
 }
 
 void PictureMgr::clear() {
