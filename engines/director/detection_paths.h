@@ -53,8 +53,6 @@ const char *const directoryGlobs[] = {
 	"win_demo",
 	"file",
 	"mfile",
-	"scr",
-	"scr_mov",						// Cardcaptor Sakura screen savers
 	"lingo expo",					// D4 sample movies
 	"main",							// Meet MediaBand
 	"bellinin bikinit",				// Bellini 3 (Finnish)
@@ -62,13 +60,10 @@ const char *const directoryGlobs[] = {
 //	"123",							// Ktar Alarkam
 	"vlaams",
 	"ned",							// I Spy School Days (Dutch)
-	"fl1",
-	"flipper",						// Flipper games (Yoram Gross)
+	"fl1",							// Flipper & Lopaka
 	"cipdemo",
 	"cipher",						// Jewels of the Oracle
 	"gems",							// Gems of Darkness / Jewels II
-	"hdfiles",
-	"creator",						// Get a Head series
 	"xn--t8jo8k",					// Perfect Blue screen savers
 	"maccurio",
 	"wincurio",						// Curio City
