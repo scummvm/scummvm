@@ -567,7 +567,6 @@ void gui_on_mouse_up(const int wasongui, const int wasbutdown) {
 			_G(mouse_ifacebut_yoffs) = _G(mousey) - (guio->Y) - _GP(guis)[wasongui].Y;
 			int iit = offset_over_inv((GUIInvWindow *)guio);
 			if (iit >= 0) {
-				_G(evblocknum) = iit;
 				_GP(play).used_inv_on = iit;
 				if (_GP(game).options[OPT_HANDLEINVCLICKS]) {
 					// Let the script handle the click
@@ -579,7 +578,6 @@ void gui_on_mouse_up(const int wasongui, const int wasbutdown) {
 					SetActiveInventory(iit);
 				else
 					RunInventoryInteraction(iit, _G(cur_mode));
-				_G(evblocknum) = -1;
 			}
 		} else quit("clicked on unknown control type");
 		if (_GP(guis)[wasongui].PopupStyle == kGUIPopupMouseY)

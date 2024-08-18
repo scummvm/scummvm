@@ -33,6 +33,7 @@
 
 namespace AGS3 {
 
+using AGS::Shared::String;
 using AGS::Shared::Interaction;
 using AGS::Shared::InteractionCommandList;
 using AGS::Shared::InteractionScripts;
@@ -42,10 +43,31 @@ using AGS::Shared::InteractionVariable;
 #define REP_EXEC_ALWAYS_NAME "repeatedly_execute_always"
 #define REP_EXEC_NAME "repeatedly_execute"
 
+// ObjectEvent - a struct holds data of the object's interaction event,
+// such as object's reference and accompanying parameters
+struct ObjectEvent {
+	// Name of the script block to run, may be used as a formatting string;
+	// has a form of "objecttype%d"
+	String BlockName;
+	// Script block's ID, commonly corresponds to the object's ID
+	int BlockID = 0;
+
+	ObjectEvent() = default;
+	ObjectEvent(const String &block_name, int block_id = 0)
+		: BlockName(block_name), BlockID(block_id) {}
+};
+
 int     run_dialog_request(int parmtr);
 void    run_function_on_non_blocking_thread(NonBlockingScriptFunction *funcToRun);
-int     run_interaction_event(Interaction *nint, int evnt, int chkAny = -1, int isInv = 0);
-int     run_interaction_script(InteractionScripts *nint, int evnt, int chkAny = -1);
+// Runs the ObjectEvent using an old interaction callback type of 'evnt' index,
+// or alternatively of 'chkAny' index, if previous does not exist;
+// 'isInv' tells if this is a inventory event (it has a slightly different handling for that)
+int     run_interaction_event(const ObjectEvent &obj_evt, Interaction *nint, int evnt, int chkAny = -1, int isInv = 0);
+// Runs the ObjectEvent using a script callback of 'evnt' index,
+// or alternatively of 'chkAny' index, if previous does not exist
+int     run_interaction_script(const ObjectEvent &obj_evt, InteractionScripts *nint, int evnt, int chkAny = -1);
+int     run_interaction_commandlist(const ObjectEvent &obj_evt, InteractionCommandList *nicl, int *timesrun, int *cmdsrun);
+void    run_unhandled_event(const ObjectEvent &obj_evt, int evnt);
 int     create_global_script();
 void    cancel_all_scripts();
 
@@ -68,7 +90,7 @@ int     RunScriptFunctionInRoom(const char *tsname, size_t param_count = 0,
 int     RunScriptFunctionAuto(ScriptInstType sc_inst, const char *fn_name, size_t param_count = 0,
 	const RuntimeScriptValue *params = nullptr);
 
-AGS::Shared::String GetScriptName(ccInstance *sci);
+String  GetScriptName(ccInstance *sci);
 
 //=============================================================================
 
@@ -79,15 +101,13 @@ char *make_ts_func_name(const char *base, int iii, int subd);
 void    post_script_cleanup();
 void    quit_with_script_error(const char *functionName);
 int     get_nivalue(InteractionCommandList *nic, int idx, int parm);
-int     run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int *cmdsrun);
 InteractionVariable *get_interaction_variable(int varindx);
 InteractionVariable *FindGraphicalVariable(const char *varName);
-void    run_unhandled_event(int evnt);
 void    can_run_delayed_command();
 
 // Gets current running script position
 bool    get_script_position(ScriptPosition &script_pos);
-AGS::Shared::String cc_get_callstack(int max_lines = INT_MAX);
+String  cc_get_callstack(int max_lines = INT_MAX);
 
 } // namespace AGS3
 

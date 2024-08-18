@@ -143,24 +143,12 @@ void RunRegionInteraction(int regnum, int mood) {
 	if ((mood < 0) || (mood > 2))
 		quit("!RunRegionInteraction: invalid event specified");
 
-	// We need a backup, because region interactions can run
-	// while another interaction (eg. hotspot) is in a Wait
-	// command, and leaving our basename would call the wrong
-	// script later on
-	const char *oldbasename = _G(evblockbasename);
-	int   oldblocknum = _G(evblocknum);
-
-	_G(evblockbasename) = "region%d";
-	_G(evblocknum) = regnum;
-
+	const auto obj_evt = ObjectEvent("region%d", regnum);
 	if (_GP(thisroom).Regions[regnum].EventHandlers != nullptr) {
-		run_interaction_script(_GP(thisroom).Regions[regnum].EventHandlers.get(), mood);
+		run_interaction_script(obj_evt, _GP(thisroom).Regions[regnum].EventHandlers.get(), mood);
 	} else {
-		run_interaction_event(&_G(croom)->intrRegion[regnum], mood);
+		run_interaction_event(obj_evt, &_G(croom)->intrRegion[regnum], mood);
 	}
-
-	_G(evblockbasename) = oldbasename;
-	_G(evblocknum) = oldblocknum;
 }
 
 } // namespace AGS3

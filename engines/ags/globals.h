@@ -688,9 +688,6 @@ public:
 
 	std::vector<EventHappened> *_events;
 
-	const char *_evblockbasename = nullptr;
-	int _evblocknum = 0;
-
 	int _inside_processevent = 0;
 	int _eventClaimed = 0;
 
