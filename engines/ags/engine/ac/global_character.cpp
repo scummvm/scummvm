@@ -368,27 +368,37 @@ void RunCharacterInteraction(int cc, int mood) {
 	if (!is_valid_character(cc))
 		quit("!RunCharacterInteraction: invalid character");
 
-	int passon = -1, cdata = -1;
-	if (mood == MODE_LOOK) passon = 0;
-	else if (mood == MODE_HAND) passon = 1;
-	else if (mood == MODE_TALK) passon = 2;
-	else if (mood == MODE_USE) {
-		passon = 3;
-		cdata = _G(playerchar)->activeinv;
-		_GP(play).usedinv = cdata;
-	} else if (mood == MODE_PICKUP) passon = 5;
-	else if (mood == MODE_CUSTOM1) passon = 6;
-	else if (mood == MODE_CUSTOM2) passon = 7;
+	// convert cursor mode to event index (in character event table)
+	// TODO: probably move this conversion table elsewhere? should be a global info
+	int evnt;
+	switch (mood) {
+		case MODE_LOOK:	evnt = 0; break;
+		case MODE_HAND:	evnt = 1; break;
+		case MODE_TALK:	evnt = 2; break;
+		case MODE_USE: evnt = 3; break;
+		case MODE_PICKUP: evnt = 5;	break;
+		case MODE_CUSTOM1: evnt = 6; break;
+		case MODE_CUSTOM2: evnt = 7; break;
+		default: evnt = -1;	break;
+	}
+	const int anyclick_evt = 4; // TODO: make global constant (character any-click evt)
+
+	// For USE verb: remember active inventory
+	if (mood == MODE_USE) {
+		_GP(play).usedinv = _G(playerchar)->activeinv;
+	}
 
 	const auto obj_evt = ObjectEvent("character%d", cc);
 	if (_G(loaded_game_file_version) > kGameVersion_272) {
-		if (passon >= 0)
-			run_interaction_script(obj_evt, _GP(game).charScripts[cc].get(), passon, 4);
-		run_interaction_script(obj_evt, _GP(game).charScripts[cc].get(), 4);  // any click on char
+		if ((evnt >= 0) &&
+			run_interaction_script(obj_evt, _GP(game).charScripts[cc].get(), evnt, anyclick_evt) < 0)
+			return; // game state changed, don't do "any click"
+		run_interaction_script(obj_evt, _GP(game).charScripts[cc].get(), anyclick_evt); // any click on char
 	} else {
-		if (passon >= 0)
-			run_interaction_event(obj_evt, _GP(game).intrChar[cc].get(), passon, 4, (passon == 3));
-		run_interaction_event(obj_evt, _GP(game).intrChar[cc].get(), 4);  // any click on char
+		if ((evnt >= 0) &&
+			run_interaction_event(obj_evt, _GP(game).intrChar[cc].get(), evnt, anyclick_evt, (mood == MODE_USE)) < 0)
+			return; // game state changed, don't do "any click"
+		run_interaction_event(obj_evt, _GP(game).intrChar[cc].get(), anyclick_evt); // any click on char
 	}
 }
 
