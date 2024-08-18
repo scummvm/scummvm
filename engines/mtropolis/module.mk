@@ -19,14 +19,26 @@ MODULE_OBJS = \
 	modifiers.o \
 	modifier_factory.o \
 	mtropolis.o \
+	plugin/axlogic.o \
+	plugin/axlogic_data.o \
+	plugin/ftts.o \
+	plugin/ftts_data.o \
+	plugin/hoologic.o \
+	plugin/hoologic_data.o \
+	plugin/kw.o \
+	plugin/kw_data.o \
 	plugin/midi.o \
 	plugin/midi_data.o \
+	plugin/mline.o \
+	plugin/mline_data.o \
 	plugin/mti.o \
 	plugin/mti_data.o \
 	plugin/obsidian.o \
 	plugin/obsidian_data.o \
 	plugin/standard.o \
 	plugin/standard_data.o \
+	plugin/thereware.o \
+	plugin/thereware_data.o \
 	render.o \
 	runtime.o \
 	saveload.o \

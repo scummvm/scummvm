@@ -1078,6 +1078,12 @@ public:
 		kPlugInStandard,
 		kPlugInObsidian,
 		kPlugInMIDI,
+		kPlugInFTTS,
+		kPlugInKnowWonder,
+		kPlugInAxLogic,
+		kPlugInHoologic,
+		kPlugInMLine,
+		kPlugInThereware,
 	};
 
 	enum BitDepth {
@@ -1465,7 +1471,13 @@ void BootScriptContext::executeFunction(const Common::String &functionName, cons
 	const EnumBinding plugInEnum[] = {ENUM_BINDING(kPlugInMTI),
 									  ENUM_BINDING(kPlugInStandard),
 									  ENUM_BINDING(kPlugInObsidian),
-									  ENUM_BINDING(kPlugInMIDI)};
+									  ENUM_BINDING(kPlugInMIDI),
+									  ENUM_BINDING(kPlugInFTTS),
+									  ENUM_BINDING(kPlugInKnowWonder),
+									  ENUM_BINDING(kPlugInAxLogic),
+									  ENUM_BINDING(kPlugInHoologic),
+									  ENUM_BINDING(kPlugInMLine),
+									  ENUM_BINDING(kPlugInThereware),};
 
 	const EnumBinding bitDepthEnum[] = {ENUM_BINDING(kBitDepthAuto),
 										ENUM_BINDING(kBitDepth8),
@@ -2105,6 +2117,36 @@ Common::SharedPtr<MTropolis::PlugIn> loadObsidianPlugIn(const MTropolisGameDescr
 Common::SharedPtr<MTropolis::PlugIn> loadMTIPlugIn(const MTropolisGameDescription &gameDesc) {
 	Common::SharedPtr<MTropolis::PlugIn> mtiPlugIn(PlugIns::createMTI());
 	return mtiPlugIn;
+}
+
+Common::SharedPtr<MTropolis::PlugIn> loadFTTSPlugIn(const MTropolisGameDescription &gameDesc) {
+	Common::SharedPtr<MTropolis::PlugIn> fttsPlugIn(PlugIns::createFTTS());
+	return fttsPlugIn;
+}
+
+Common::SharedPtr<MTropolis::PlugIn> loadKnowWonderPlugIn(const MTropolisGameDescription &gameDesc) {
+	Common::SharedPtr<MTropolis::PlugIn> kwPlugIn(PlugIns::createKnowWonder());
+	return kwPlugIn;
+}
+
+Common::SharedPtr<MTropolis::PlugIn> loadAXLogicPlugIn(const MTropolisGameDescription &gameDesc) {
+	Common::SharedPtr<MTropolis::PlugIn> axPlugIn(PlugIns::createAXLogic());
+	return axPlugIn;
+}
+
+Common::SharedPtr<MTropolis::PlugIn> loadHoologicPlugIn(const MTropolisGameDescription &gameDesc) {
+	Common::SharedPtr<MTropolis::PlugIn> hlPlugIn(PlugIns::createHoologic());
+	return hlPlugIn;
+}
+
+Common::SharedPtr<MTropolis::PlugIn> loadMLinePlugIn(const MTropolisGameDescription &gameDesc) {
+	Common::SharedPtr<MTropolis::PlugIn> mlinePlugIn(PlugIns::createMLine());
+	return mlinePlugIn;
+}
+
+Common::SharedPtr<MTropolis::PlugIn> loadTherewarePlugIn(const MTropolisGameDescription &gameDesc) {
+	Common::SharedPtr<MTropolis::PlugIn> twPlugIn(PlugIns::createThereware());
+	return twPlugIn;
 }
 
 enum PlayerType {
@@ -2978,6 +3020,24 @@ BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 			plugIns.push_back(Boot::loadObsidianPlugIn(gameDesc, *vfs, pluginsLocation));
 			break;
 		case Boot::BootScriptContext::kPlugInMTI:
+			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
+			break;
+		case Boot::BootScriptContext::kPlugInFTTS:
+			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
+			break;
+		case Boot::BootScriptContext::kPlugInKnowWonder:
+			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
+			break;
+		case Boot::BootScriptContext::kPlugInAxLogic:
+			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
+			break;
+		case Boot::BootScriptContext::kPlugInHoologic:
+			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
+			break;
+		case Boot::BootScriptContext::kPlugInMLine:
+			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
+			break;
+		case Boot::BootScriptContext::kPlugInThereware:
 			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
 			break;
 		default:
