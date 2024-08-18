@@ -846,6 +846,9 @@ uint16 View1::GetHitObjectID(const Common::Point& pos) const {
 }
 
 bool Character::HandleWalkability(Character *c) {
+	// TODO: Disabling it as it seems like I have it slightly off, it causes us to wrap around
+	// when walking off the right of the screen in scene 11
+	return false;
 	// Read the map to find out if we moved into a non-walkable area
 	// TODO: This is where the lerping will be off, since the game does this
 	// every time it adjusts by one pixel
@@ -942,7 +945,9 @@ uint8 Character::getMirroredAnimation(uint8 original) const {
 Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	// We choose looking towards the screen first
 	int blobIndex = GameObject->Orientation - 1;
-	if (isAnimationMirrored()) {
+	if (GameObject->testOverloadAnimation > -1) {
+		blobIndex = GameObject->testOverloadAnimation;
+	} else if (isAnimationMirrored()) {
 		blobIndex = getMirroredAnimation(GameObject->Orientation) - 1;
 		// blobIndex = GameObject->Orientation - 1 -
 	}
