@@ -36,7 +36,7 @@ namespace QDEngine {
 qdGameObjectMouse::qdGameObjectMouse() : _object(NULL),
 	_object_screen_region(grScreenRegion_EMPTY) {
 	set_flag(QD_OBJ_SCREEN_COORDS_FLAG);
-	set_name("Мышь");
+	set_name("\xcc\xfb\xf8\xfc"); // "Мышь" -- mouse
 
 	_screen_pos_offset = _screen_pos_offset_delta = Vect2f(0, 0);
 
@@ -48,7 +48,7 @@ qdGameObjectMouse::qdGameObjectMouse(const qdGameObjectMouse &obj) : qdGameObjec
 	_object(NULL),
 	_object_screen_region(grScreenRegion_EMPTY) {
 	set_flag(QD_OBJ_SCREEN_COORDS_FLAG);
-	set_name("Мышь");
+	set_name("\xcc\xfb\xf8\xfc"); // "Мышь" -- mouse
 
 	for (int i = 0; i < MAX_CURSOR_ID; i++)
 		_default_cursors[i] = 0;
