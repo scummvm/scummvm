@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MTROPOLIS_PLUGIN_FTTS_DATA_H
-#define MTROPOLIS_PLUGIN_FTTS_DATA_H
+#ifndef MTROPOLIS_PLUGIN_MLINE_DATA_H
+#define MTROPOLIS_PLUGIN_MLINE_DATA_H
 
 #include "mtropolis/data.h"
 

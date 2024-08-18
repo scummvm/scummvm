@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MTROPOLIS_PLUGIN_Hoologic_DATA_H
-#define MTROPOLIS_PLUGIN_Hoologic_DATA_H
+#ifndef MTROPOLIS_PLUGIN_HOOLOGIC_DATA_H
+#define MTROPOLIS_PLUGIN_HOOLOGIC_DATA_H
 
 #include "mtropolis/data.h"
 
