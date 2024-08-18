@@ -529,7 +529,9 @@ void AgiEngine::initialize() {
 
 	_text->charAttrib_Set(15, 0);
 
-	if (getVersion() <= 0x2001) {
+	if (getPlatform() == Common::kPlatformApple2) {
+		_loader = new AgiLoader_A2(this);
+	} else if (getVersion() <= 0x2001) {
 		_loader = new AgiLoader_v1(this);
 	} else if (getVersion() <= 0x2999) {
 		_loader = new AgiLoader_v2(this);

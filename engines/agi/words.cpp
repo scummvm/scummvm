@@ -36,7 +36,7 @@ Words::~Words() {
 	clearEgoWords();
 }
 
-int Words::loadDictionary_v1(Common::File &f) {
+int Words::loadDictionary_v1(Common::SeekableReadStream &stream) {
 	char str[64];
 	int k;
 
@@ -44,11 +44,11 @@ int Words::loadDictionary_v1(Common::File &f) {
 
 	// Loop through alphabet, as words in the dictionary file are sorted by
 	// first character
-	f.seek(f.pos() + 26 * 2, SEEK_SET);
+	stream.seek(26 * 2, SEEK_CUR);
 	do {
 		// Read next word
 		for (k = 0; k < (int)sizeof(str) - 1; k++) {
-			str[k] = f.readByte();
+			str[k] = stream.readByte();
 			if (str[k] == 0 || (uint8)str[k] == 0xFF)
 				break;
 		}
@@ -59,7 +59,7 @@ int Words::loadDictionary_v1(Common::File &f) {
 			byte firstCharNr = str[0] - 'a';
 
 			newWord->word = Common::String(str, k + 1); // myStrndup(str, k + 1);
-			newWord->id = f.readUint16LE();
+			newWord->id = stream.readUint16LE();
 
 			_dictionaryWords[firstCharNr].push_back(newWord);
 			debug(3, "'%s' (%d)", newWord->word.c_str(), newWord->id);
@@ -73,26 +73,31 @@ int Words::loadDictionary(const char *fname) {
 	Common::File fp;
 
 	if (!fp.open(fname)) {
-		warning("loadWords: can't open %s", fname);
+		warning("loadDictionary: can't open %s", fname);
 		return errOK; // err_BadFileOpen
 	}
-	debug(0, "Loading dictionary: %s", fname);
 
+	debug(0, "Loading dictionary: %s", fname);
+	return loadDictionary(fp);
+}
+
+int Words::loadDictionary(Common::SeekableReadStream &stream) {
 	// Loop through alphabet, as words in the dictionary file are sorted by
 	// first character
+	uint32 start = stream.pos();
 	char str[64] = { 0 };
 	char c;
 	for (int i = 0; i < 26; i++) {
-		fp.seek(i * 2, SEEK_SET);
-		int offset = fp.readUint16BE();
+		stream.seek(start + i * 2);
+		int offset = stream.readUint16BE();
 		if (offset == 0)
 			continue;
-		fp.seek(offset, SEEK_SET);
-		int k = fp.readByte();
-		while (!fp.eos() && !fp.err()) {
+		stream.seek(start + offset);
+		int k = stream.readByte();
+		while (!stream.eos() && !stream.err()) {
 			// Read next word
 			do {
-				c = fp.readByte();
+				c = stream.readByte();
 				str[k++] = (c ^ 0x7F) & 0x7F;
 			} while (!(c & 0x80) && k < (int)sizeof(str) - 1);
 			str[k] = 0;
@@ -105,13 +110,13 @@ int Words::loadDictionary(const char *fname) {
 				// And store it in our internal dictionary
 				WordEntry *newWord = new WordEntry;
 				newWord->word = Common::String(str, k);
-				newWord->id = fp.readUint16BE();
+				newWord->id = stream.readUint16BE();
 				_dictionaryWords[i].push_back(newWord);
 			} else {
-				fp.readUint16BE();
+				stream.readUint16BE();
 			}
 
-			k = fp.readByte();
+			k = stream.readByte();
 
 			// Are there more words with an already known prefix?
 			// WORKAROUND: We only break after already seeing words with the

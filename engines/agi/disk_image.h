@@ -54,6 +54,45 @@ static const char * const pcDiskImageExtensions[] = { ".ima", ".img" };
 #define PC_INITDIR_WORDS_INDEX_V2001     9
 #define PC_INITDIR_VOL0_INDEX_V2001      14
 
+// A2 disk image values and helpers for AgiLoader_A2 and AgiMetaEngineDetection
+
+// Disk image detection requires that image files have a known extension
+static const char * const a2DiskImageExtensions[] = { ".do", ".dsk" };
+
+#define A2_DISK_SIZE                     (35 * 16 * 256)
+#define A2_DISK_POSITION(t, s, o)        ((((t * 16) + s) * 256) + o)
+
+#define A2_INITDIR_POSITION              A2_DISK_POSITION(1, 3, 0)
+#define A2_INITDIR_ENTRY_SIZE            4
+
+#define A2_INITDIR_LOGDIR_INDEX          3
+#define A2_INITDIR_PICDIR_INDEX          4
+#define A2_INITDIR_VIEWDIR_INDEX         5
+#define A2_INITDIR_SOUNDDIR_INDEX        6
+#define A2_INITDIR_OBJECTS_INDEX         1
+#define A2_INITDIR_WORDS_INDEX           2
+#define A2_INITDIR_VOLUME_MAP_POSITION   (A2_INITDIR_POSITION + 5 + 33)
+
+#define A2_KQ2_LOGDIR_POSITION           A2_DISK_POSITION(1,  0,  0)
+#define A2_KQ2_PICDIR_POSITION           A2_DISK_POSITION(1,  3,  0)
+#define A2_KQ2_VIEWDIR_POSITION          A2_DISK_POSITION(1,  6,  0)
+#define A2_KQ2_SOUNDDIR_POSITION         A2_DISK_POSITION(1,  9,  0)
+#define A2_KQ2_OBJECTS_POSITION          A2_DISK_POSITION(2,  9,  0)
+#define A2_KQ2_WORDS_POSITION            A2_DISK_POSITION(3,  0,  0)
+#define A2_KQ2_VOL0_POSITION             A2_DISK_POSITION(26, 0,  0)
+#define A2_KQ2_VOL1_POSITION             A2_DISK_POSITION(18, 0,  0)
+#define A2_KQ2_DISK_COUNT                5
+
+#define A2_BC_LOGDIR_POSITION            A2_DISK_POSITION(1,  7,  0)
+#define A2_BC_PICDIR_POSITION            A2_DISK_POSITION(1,  12, 0)
+#define A2_BC_VIEWDIR_POSITION           A2_DISK_POSITION(1,  9,  0)
+#define A2_BC_SOUNDDIR_POSITION          A2_DISK_POSITION(1,  13, 0)
+#define A2_BC_OBJECTS_POSITION           A2_DISK_POSITION(1,  3,  0)
+#define A2_BC_WORDS_POSITION             A2_DISK_POSITION(1,  5,  0)
+#define A2_BC_VOLUME_MAP_POSITION        A2_DISK_POSITION(7,  11, 254)
+#define A2_BC_DISK_COUNT                 5
+#define A2_BC_VOLUME_COUNT               9
+
 } // End of namespace Agi
 
 #endif /* AGI_DISK_IMAGE_H */

@@ -101,7 +101,8 @@ enum AgiGameType {
 	GType_PreAGI = 0,
 	GType_V1 = 1,
 	GType_V2 = 2,
-	GType_V3 = 3
+	GType_V3 = 3,
+	GType_A2 = 4
 };
 
 enum AgiGameFeatures {
@@ -537,6 +538,15 @@ struct AgiDiskVolume {
 	AgiDiskVolume(uint32 d, uint32 o) : disk(d), offset(o) {}
 };
 
+/**
+ * Apple II version of the format for LOGDIR, VIEWDIR, etc.
+ * See AgiLoader_A2::loadDir for more details.
+ */
+enum A2DirVersion {
+	A2DirVersionOld,  // 4 bits for volume, 8 for track
+	A2DirVersionNew,  // 5 bits for volume, 7 for track
+};
+
 class AgiLoader {
 public:
 	AgiLoader(AgiEngine *vm) : _vm(vm) {}
@@ -571,6 +581,35 @@ public:
 
 protected:
 	AgiEngine *_vm;
+};
+
+class AgiLoader_A2 : public AgiLoader {
+public:
+	AgiLoader_A2(AgiEngine *vm) : AgiLoader(vm) {}
+
+	void init() override;
+	int loadDirs() override;
+	uint8 *loadVolumeResource(AgiDir *agid) override;
+	int loadObjects() override;
+	int loadWords() override;
+
+private:
+	Common::Array<Common::String> _imageFiles;
+	Common::Array<AgiDiskVolume> _volumes;
+	AgiDir _logDir;
+	AgiDir _picDir;
+	AgiDir _viewDir;
+	AgiDir _soundDir;
+	AgiDir _objects;
+	AgiDir _words;
+
+	int readDiskOne(Common::SeekableReadStream &stream, Common::Array<uint32> &volumeMap);
+	static bool readInitDir(Common::SeekableReadStream &stream, byte index, AgiDir &agid);
+	static bool readDir(Common::SeekableReadStream &stream, int position, AgiDir &agid);
+	static bool readVolumeMap(Common::SeekableReadStream &stream, uint32 position, uint32 bufferLength, Common::Array<uint32> &volumeMap);
+
+	A2DirVersion detectDirVersion(Common::SeekableReadStream &stream);
+	bool loadDir(AgiDir *dir, Common::File &disk, uint32 dirOffset, uint32 dirLength, A2DirVersion dirVersion);
 };
 
 class AgiLoader_v1 : public AgiLoader {

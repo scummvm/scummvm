@@ -124,6 +124,9 @@ private:
 	static Common::String getLogDirHashFromPcDiskImageV1(Common::SeekableReadStream &stream);
 	static Common::String getLogDirHashFromPcDiskImageV2001(Common::SeekableReadStream &stream);
 
+	static ADDetectedGame detectA2DiskImageGame(const FileMap &allFiles, uint32 skipADFlags);
+	static Common::String getLogDirHashFromA2DiskImage(Common::SeekableReadStream &stream);
+
 	static Common::String getLogDirHashFromDiskImage(Common::SeekableReadStream &stream, uint32 position);
 };
 
@@ -320,6 +323,16 @@ ADDetectedGames AgiMetaEngineDetection::detectGame(
 		}
 	}
 
+	// Detect games within Apple II disk images. This detection will find one game at most.
+	if (matched.empty() &&
+		(language == Common::UNK_LANG || language == Common::EN_ANY) &&
+		(platform == Common::kPlatformUnknown || platform == Common::kPlatformApple2)) {
+		ADDetectedGame game = detectA2DiskImageGame(allFiles, skipADFlags);
+		if (game.desc != nullptr) {
+			matched.push_back(game);
+		}
+	}
+
 	return matched;
 }
 
@@ -458,6 +471,109 @@ Common::String AgiMetaEngineDetection::getLogDirHashFromPcDiskImageV2001(Common:
 	return getLogDirHashFromDiskImage(stream, position);
 }
 
+/**
+ * Detects an Apple II game by searching for 140k floppy images, reading LOGDIR,
+ * hashing LOGDIR, and comparing to Apple II entries in the detection table.
+ * See AgiLoader_A2 in loader_a2.cpp for more details.
+ */
+ADDetectedGame AgiMetaEngineDetection::detectA2DiskImageGame(const FileMap &allFiles, uint32 skipADFlags) {
+	// build array of files with a2 disk image extensions
+	Common::Array<Common::Path> imageFiles;
+	getPotentialDiskImages(allFiles, a2DiskImageExtensions, ARRAYSIZE(a2DiskImageExtensions), imageFiles);
+
+	// find disk one by reading potential images until a match is found
+	for (const Common::Path &imageFile : imageFiles) {
+		Common::SeekableReadStream *stream = allFiles[imageFile].createReadStream();
+		if (stream == nullptr) {
+			warning("unable to open disk image: %s", imageFile.baseName().c_str());
+			continue;
+		}
+
+		// image file size must be 140k.
+		// this simple check will be removed when more image formats are supported.
+		int64 fileSize = stream->size();
+		if (fileSize != A2_DISK_SIZE) {
+			delete stream;
+			continue;
+		}
+
+		// attempt to locate and hash logdir by reading initdir,
+		// and also known logdir locations for games without initdir.
+		Common::String logdirHashInitdir = getLogDirHashFromA2DiskImage(*stream);
+		Common::String logdirHashBc = getLogDirHashFromDiskImage(*stream, A2_BC_LOGDIR_POSITION);
+		Common::String logdirHashKq2 = getLogDirHashFromDiskImage(*stream, A2_KQ2_LOGDIR_POSITION);
+		delete stream;
+
+		if (!logdirHashInitdir.empty()) {
+			debug(3, "disk image logdir hash: %s, %s", logdirHashInitdir.c_str(), imageFile.baseName().c_str());
+		}
+		if (!logdirHashBc.empty()) {
+			debug(3, "disk image logdir hash: %s, %s", logdirHashBc.c_str(), imageFile.baseName().c_str());
+		}
+		if (!logdirHashKq2.empty()) {
+			debug(3, "disk image logdir hash: %s, %s", logdirHashKq2.c_str(), imageFile.baseName().c_str());
+		}
+
+		// if logdir hash found then compare against hashes of Apple II entries
+		if (!logdirHashInitdir.empty() || !logdirHashBc.empty() || !logdirHashKq2.empty()) {
+			for (const AGIGameDescription *game = gameDescriptions; game->desc.gameId != nullptr; game++) {
+				if (game->desc.platform == Common::kPlatformApple2 && !(game->desc.flags & skipADFlags)) {
+					const ADGameFileDescription *file;
+					for (file = game->desc.filesDescriptions; file->fileName != nullptr; file++) {
+						// select the logdir hash to use
+						Common::String &logdirHash = (game->gameID == GID_BC)  ? logdirHashBc :
+						                             (game->gameID == GID_KQ2) ? logdirHashKq2 :
+						                             logdirHashInitdir;
+						if (file->md5 != nullptr && !logdirHash.empty() && file->md5 == logdirHash) {
+							debug(3, "disk image match: %s, %s, %s", game->desc.gameId, game->desc.extra, imageFile.baseName().c_str());
+
+							// logdir hash match found
+							ADDetectedGame detectedGame(&game->desc);
+							FileProperties fileProps;
+							fileProps.md5 = file->md5;
+							fileProps.md5prop = kMD5Archive;
+							fileProps.size = fileSize;
+							detectedGame.matchedFiles[imageFile] = fileProps;
+							return detectedGame;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return ADDetectedGame();
+}
+
+Common::String AgiMetaEngineDetection::getLogDirHashFromA2DiskImage(Common::SeekableReadStream &stream) {
+	// read magic number from initdir resource header
+	stream.seek(A2_INITDIR_POSITION);
+	uint16 magic = stream.readUint16BE();
+	if (magic != 0x1234) {
+		return "";
+	}
+
+	// seek to initdir entry for logdir (and skip remaining 3 bytes of header)
+	// also skip the one-byte volume number at the start of initdir
+	stream.skip(3 + 1 + (A2_INITDIR_LOGDIR_INDEX * A2_INITDIR_ENTRY_SIZE));
+
+	// read logdir location
+	byte volume = stream.readByte();
+	byte track = stream.readByte();
+	byte sector = stream.readByte();
+	byte offset = stream.readByte();
+
+	// logdir volume must be one
+	if (volume != 1) {
+		return "";
+	}
+
+	// read logdir
+	uint32 logDirPosition = A2_DISK_POSITION(track, sector, offset);
+	return getLogDirHashFromDiskImage(stream, logDirPosition);
+}
+
+// this works for both pc and a2 disk images
 Common::String AgiMetaEngineDetection::getLogDirHashFromDiskImage(Common::SeekableReadStream &stream, uint32 position) {
 	stream.seek(position);
 	uint16 magic = stream.readUint16BE();
