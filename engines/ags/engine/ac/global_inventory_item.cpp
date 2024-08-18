@@ -20,7 +20,9 @@
  */
 
 #include "ags/shared/ac/common.h"
+#include "ags/engine/ac/event.h"
 #include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_gui.h"
 #include "ags/engine/ac/global_inventory_item.h"
 #include "ags/engine/ac/global_translation.h"
@@ -30,8 +32,7 @@
 #include "ags/engine/ac/string.h"
 #include "ags/shared/gui/gui_main.h"
 #include "ags/shared/gui/gui_inv.h"
-#include "ags/engine/ac/event.h"
-#include "ags/engine/ac/game_state.h"
+#include "ags/engine/script/script.h"
 
 namespace AGS3 {
 
@@ -91,21 +92,36 @@ int GetInvGraphic(int indx) {
 	return _GP(game).invinfo[indx].pic;
 }
 
-void RunInventoryInteraction(int iit, int modd) {
+void RunInventoryInteraction(int iit, int mood) {
 	if ((iit < 0) || (iit >= _GP(game).numinvitems))
 		quit("!RunInventoryInteraction: invalid inventory number");
 
-	if (modd == MODE_LOOK)
-		run_event_block_inv(iit, 0);
-	else if (modd == MODE_HAND)
-		run_event_block_inv(iit, 1);
-	else if (modd == MODE_USE) {
+	// convert cursor mode to event index (in inventoryitem event table)
+	// TODO: probably move this conversion table elsewhere? should be a global info
+	int evnt;
+	switch (mood) {
+		case MODE_LOOK:	evnt = 0; break;
+		case MODE_HAND:	evnt = 1; break;
+		case MODE_TALK:	evnt = 2; break;
+		case MODE_USE: evnt = 3; break;
+		default: evnt = -1; break;
+	}
+	const int otherclick_evt = 4; // TODO: make global constant (inventory other-click evt)
+
+	// For USE verb: remember active inventory
+	if (mood == MODE_USE) {
 		_GP(play).usedinv = _G(playerchar)->activeinv;
-		run_event_block_inv(iit, 3);
-	} else if (modd == MODE_TALK)
-		run_event_block_inv(iit, 2);
-	else // other click on inventory
-		run_event_block_inv(iit, 4);
+	}
+
+	if (evnt < 0) // on any non-supported mode - use "other-click"
+		evnt = otherclick_evt;
+
+	auto obj_evt = ObjectEvent("inventory%d", iit);
+	if (_G(loaded_game_file_version) > kGameVersion_272) {
+		run_interaction_script(obj_evt, _GP(game).invScripts[iit].get(), evnt);
+	} else {
+		run_interaction_event(obj_evt, _GP(game).intrInv[iit].get(), evnt);
+	}
 }
 
 int IsInventoryInteractionAvailable(int item, int mood) {

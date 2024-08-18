@@ -29,22 +29,24 @@
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/global_character.h"
 #include "ags/engine/ac/global_display.h"
+#include "ags/engine/ac/global_inventory_item.h"
 #include "ags/engine/ac/global_room.h"
 #include "ags/engine/ac/mouse.h"
+#include "ags/shared/ac/sprite_cache.h"
 #include "ags/engine/ac/sys_events.h"
+#include "ags/engine/ac/timer.h"
+#include "ags/engine/ac/dynobj/cc_character.h"
+#include "ags/engine/ac/dynobj/cc_inventory.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/gui/gui_dialog.h"
 #include "ags/shared/gui/gui_main.h"
 #include "ags/engine/main/game_run.h"
-#include "ags/engine/platform/base/ags_platform_driver.h"
-#include "ags/shared/ac/sprite_cache.h"
-#include "ags/engine/script/runtime_script_value.h"
-#include "ags/engine/ac/dynobj/cc_character.h"
-#include "ags/engine/ac/dynobj/cc_inventory.h"
-#include "ags/shared/util/math.h"
 #include "ags/engine/media/audio/audio_system.h"
-#include "ags/engine/ac/timer.h"
+#include "ags/engine/platform/base/ags_platform_driver.h"
+#include "ags/engine/script/runtime_script_value.h"
+#include "ags/shared/util/math.h"
 #include "ags/shared/util/wgt2_allg.h"
+
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
@@ -386,7 +388,7 @@ bool InventoryScreen::Run() {
 			_GP(play).used_inv_on = dii[clickedon].num;
 
 			if (cmode == MODE_LOOK) {
-				run_event_block_inv(dii[clickedon].num, 0);
+				RunInventoryInteraction(dii[clickedon].num, MODE_LOOK);
 				// in case the script did anything to the screen, redraw it
 				UpdateGameOnce();
 
@@ -400,7 +402,7 @@ bool InventoryScreen::Run() {
 				int activeinvwas = _G(playerchar)->activeinv;
 				_G(playerchar)->activeinv = toret;
 
-				run_event_block_inv(dii[clickedon].num, 3);
+				RunInventoryInteraction(dii[clickedon].num, MODE_USE);
 
 				// if the script didn't change it, then put it back
 				if (_G(playerchar)->activeinv == toret)
