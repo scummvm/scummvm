@@ -28,7 +28,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 void InventoryItemInfo::ReadFromFile(Stream *in) {
-	StrUtil::ReadCStrCount(name, in, MAX_INVENTORY_NAME_LENGTH);
+	name.ReadCount(in, LEGACY_MAX_INVENTORY_NAME_LENGTH);
 	in->Seek(3); // alignment padding to int32
 	pic = in->ReadInt32();
 	cursorPic = in->ReadInt32();
@@ -40,7 +40,7 @@ void InventoryItemInfo::ReadFromFile(Stream *in) {
 }
 
 void InventoryItemInfo::WriteToFile(Stream *out) {
-	out->Write(name, MAX_INVENTORY_NAME_LENGTH);
+	name.WriteCount(out, LEGACY_MAX_INVENTORY_NAME_LENGTH);
 	out->WriteByteCount(0, 3); // alignment padding to int32
 	out->WriteInt32(pic);
 	out->WriteInt32(cursorPic);
@@ -52,7 +52,7 @@ void InventoryItemInfo::WriteToFile(Stream *out) {
 }
 
 void InventoryItemInfo::ReadFromSavegame(Stream *in) {
-	StrUtil::ReadString(name, in, 25);
+	name = StrUtil::ReadString(in);
 	pic = in->ReadInt32();
 	cursorPic = in->ReadInt32();
 }
