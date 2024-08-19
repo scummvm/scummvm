@@ -571,7 +571,7 @@ void gui_on_mouse_up(const int wasongui, const int wasbutdown) {
 				if (_GP(game).options[OPT_HANDLEINVCLICKS]) {
 					// Let the script handle the click
 					// LEFTINV is 5, RIGHTINV is 6
-					force_event(EV_TEXTSCRIPT, TS_MCLICK, wasbutdown + 4);
+					force_event(EV_TEXTSCRIPT, kTS_MouseClick, wasbutdown + 4);
 				} else if (wasbutdown == kMouseRight)  // right-click is always Look
 					RunInventoryInteraction(iit, MODE_LOOK);
 				else if (_G(cur_mode) == MODE_HAND)

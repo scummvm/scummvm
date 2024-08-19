@@ -691,7 +691,7 @@ public:
 	int _inside_processevent = 0;
 	int _eventClaimed = 0;
 
-	const char *_tsnames[TS_NUM] = { nullptr, REP_EXEC_NAME, "on_key_press", "on_mouse_click", "on_text_input" };
+	const char *_tsnames[kTS_Num] = { nullptr, REP_EXEC_NAME, "on_key_press", "on_mouse_click", "on_text_input" };
 
 	/**@}*/
 
