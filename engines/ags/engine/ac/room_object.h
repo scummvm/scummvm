@@ -114,6 +114,8 @@ struct RoomObject {
 	}
 
 	void UpdateCyclingView(int ref_id);
+	// Calculate wanted frame sound volume based on multiple factors
+	int  GetFrameSoundVolume() const;
 	// Process the current animation frame for the room object:
 	// play linked sounds, and so forth.
 	void CheckViewFrame();

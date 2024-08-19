@@ -20,11 +20,22 @@
  */
 
 #include "ags/engine/ac/character_extras.h"
+#include "ags/engine/ac/view_frame.h"
 #include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 
 using AGS::Shared::Stream;
+
+int CharacterExtras::GetFrameSoundVolume(CharacterInfo *chi) const {
+	return AGS3::CalcFrameSoundVolume(
+		anim_volume, cur_anim_volume,
+		(chi->flags & CHF_SCALEVOLUME) ? zoom : 100);
+}
+
+void CharacterExtras::CheckViewFrame(CharacterInfo *chi) {
+	AGS3::CheckViewFrame(chi->view, chi->loop, chi->frame, GetFrameSoundVolume(chi));
+}
 
 void CharacterExtras::ReadFromSavegame(Stream *in, int save_ver) {
 	in->ReadArrayOfInt16(invorder, MAX_INVORDER);
