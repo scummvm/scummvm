@@ -1311,10 +1311,24 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 						scaledSpriteWidth,
 						scaledSpriteHeight,
 						player_sprite_related_2c85_82f3);
-				} else if (otherNspAnimationType_maybe == 22) {
-					error("anim: 22"); // TODO
-				} else if (otherNspAnimationType_maybe == 4 || otherNspAnimationType_maybe == 21) {
-					error("anim: 4 || 21"); // TODO
+				} else if (otherNspAnimationType_maybe == 22) { // dig grave
+					_sprites.addSpriteToDrawList(
+						_player->_position.x - ((scaledWalkSpeed_maybe * 30) / 1000),
+						_player->_position.y - scaledSpriteHeight,
+						&_player->_animations.getSpriteAt(_player->_frameIdx),
+						240 - _player->_position.y,
+						scaledSpriteWidth,
+						scaledSpriteHeight,
+						player_sprite_related_2c85_82f3);
+				} else if (otherNspAnimationType_maybe == 4 || otherNspAnimationType_maybe == 21) { // dig grave
+					_sprites.addSpriteToDrawList(
+						_player->_position.x - ((scaledWalkSpeed_maybe * 95) / 1000),
+						_player->_position.y - scaledSpriteHeight,
+						&_player->_animations.getSpriteAt(_player->_frameIdx),
+						240 - _player->_position.y,
+						scaledSpriteWidth,
+						scaledSpriteHeight,
+						player_sprite_related_2c85_82f3);
 				} else if (otherNspAnimationType_maybe == 39) {
 					error("anim: 39"); // TODO
 				} else if (otherNspAnimationType_maybe == 47) {
@@ -1510,6 +1524,34 @@ void DarkseedEngine::updateAnimation() {
 				}
 				gotonextmorning();
 				playDayChangeCutscene();
+			}
+		}
+		break;
+	case 4:
+	case 21:
+	case 22: // dig up grave
+		advanceAnimationFrame(0);
+		if (_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]] % 5 == 3 &&
+			_player->_animations.getAnimAt(0).frameDuration[animIndexTbl[0]] == spriteAnimCountdownTimer[0]) {
+			playSound(14, 5, -1);
+		}
+		if (!isAnimFinished_maybe) {
+			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]];
+		} else {
+			isPlayingAnimation_maybe = false;
+			_objectVar[52] = 1;
+			if (otherNspAnimationType_maybe == 21 && _objectVar[151] != 0) {
+				if (_objectVar[87] == 0) {
+					_objectVar[88] = 1;
+					_objectVar[87] = 1;
+					_console->printTosText(581);
+					_inventory.addItem(29);
+				} else {
+					_console->printTosText(582);
+				}
+			} else {
+				_objectVar[88] = 1;
+				_console->printTosText(580);
 			}
 		}
 		break;
