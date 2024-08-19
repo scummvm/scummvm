@@ -575,7 +575,7 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 			if (_GP(play).get_loc_name_last_time != 1000 + mover)
 				GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Overhotspot);
 			_GP(play).get_loc_name_last_time = 1000 + mover;
-			snprintf(tempo, MAX_MAXSTRLEN, "%s", get_translation(_GP(game).invinfo[mover].name));
+			snprintf(tempo, MAX_MAXSTRLEN, "%s", get_translation(_GP(game).invinfo[mover].name.GetCStr()));
 		} else if ((_GP(play).get_loc_name_last_time > 1000) && (_GP(play).get_loc_name_last_time < 1000 + MAX_INV)) {
 			// no longer selecting an item
 			GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Overhotspot);
