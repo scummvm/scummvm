@@ -1286,7 +1286,7 @@ AnimFrame BackgroundAnimationBlob::GetFrame(uint32 index) {
 	// TODO: Think about proper memory management
 }
 
-bool BackgroundAnimationBlob::GetIsAutoUpdated() const {
+bool BackgroundAnimationBlob::GetIsAutoUpdated(uint16 bpp8) const {
 	Common::MemoryReadStreamEndian stream(Blob.data(), Blob.size(), false);
 
 
@@ -1311,16 +1311,49 @@ bool BackgroundAnimationBlob::GetIsAutoUpdated() const {
 	uint16 bp10 = stream.readUint16();
 	// bp-0Eh
 	uint16 bp0E = stream.readUint16() + 1;
-	if (bp6 >= bp0E) {
-		bp6 = 1;
-	}
 
 	stream.seek(bp6 - 1, SEEK_CUR);
 	uint8 bp0C = stream.readByte();
-	if (bp0C == 0x1) {
+	if (bpp8 == 0x1) {
 		// l00B7_14B4:
-		// TODO: Continue here
+		bp8 = 0x00;
+		bp10 = 0x00;
+		bp6 = 0x01;
+		
+	} else if (bpp8 >= 0x65) {
+		if (bpp8 <= 0xA4) {
+			bp6 = bpp8 - 0x64;
+			bp8 = bp10 = 0x00;
+			if (bp6 > bp0E) {
+				bp6 = 0x01;
+			}
+		}
 	}
+	// l00B7_14EF:
+	// TODO: Do I have the comparisons right between bp6 and bp0E throughout the function?
+	if (bp6 >= bp0E) {
+		// l00B7_14F7:
+		bp6 = 1;
+	}
+
+	// l00B7_14FD:
+	// TODO: Look end condition
+	while (true) {
+		if (bp6 >= bp0E) {
+			// l00B7_14F7:
+			bp6 = 1;
+		}
+		// l00B7_150A:
+		stream.seek(0x0B, SEEK_SET);
+		stream.seek(bp6);
+		bp0C = stream.readByte();
+		if (bp0C == 0x01) {
+			// l00B7_151F:
+			// TODO: Continue here
+		}
+
+	}
+
 
 
 	// l00B7_14FD:
