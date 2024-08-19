@@ -111,7 +111,7 @@ static void game_loop_do_early_script_update() {
 	if (_G(in_new_room) == 0) {
 		// Run the room and game script repeatedly_execute
 		run_function_on_non_blocking_thread(&_GP(repExecAlways));
-		setevent(EV_TEXTSCRIPT, TS_REPEAT);
+		setevent(EV_TEXTSCRIPT, kTS_Repeat);
 		setevent(EV_RUNEVBLOCK, EVB_ROOM, 0, EVROM_REPEXEC);
 	}
 }
@@ -228,13 +228,13 @@ static void check_mouse_controls() {
 			_G(wasongui) = mongu;
 			_G(wasbutdown) = mbut;
 		} else
-			setevent(EV_TEXTSCRIPT, TS_MCLICK, mbut);
+			setevent(EV_TEXTSCRIPT, kTS_MouseClick, mbut);
 	}
 
 	if (mwheelz < 0)
-		setevent(EV_TEXTSCRIPT, TS_MCLICK, 9);
+		setevent(EV_TEXTSCRIPT, kTS_MouseClick, 9);
 	else if (mwheelz > 0)
-		setevent(EV_TEXTSCRIPT, TS_MCLICK, 8);
+		setevent(EV_TEXTSCRIPT, kTS_MouseClick, 8);
 }
 
 
@@ -525,11 +525,11 @@ static void check_keyboard_controls() {
 		const int sckeymod = ki.Mod;
 		if (old_keyhandle || (ki.UChar == 0)) {
 			debug_script_log("Running on_key_press keycode %d, mod %d", sckey, sckeymod);
-			setevent(EV_TEXTSCRIPT, TS_KEYPRESS, sckey, sckeymod);
+			setevent(EV_TEXTSCRIPT, kTS_KeyPress, sckey, sckeymod);
 		}
 		if (!old_keyhandle && (ki.UChar > 0)) {
 			debug_script_log("Running on_text_input char %s (%d)", ki.Text, ki.UChar);
-			setevent(EV_TEXTSCRIPT, TS_TEXTINPUT, ki.UChar);
+			setevent(EV_TEXTSCRIPT, kTS_TextInput, ki.UChar);
 		}
 	}
 }
