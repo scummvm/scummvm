@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-17 14:51+0000\n"
+"POT-Creation-Date: 2024-08-19 04:40+0000\n"
 "PO-Revision-Date: 2024-08-17 08:06+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -6146,7 +6146,7 @@ msgstr "Toujours utiliser du texte noir et blanc net"
 msgid "Do not emulate NTSC artifacts for text"
 msgstr "Ne pas émuler les artefacts NTSC pour le texte"
 
-#: engines/agi/detection_tables.h:313
+#: engines/agi/detection_tables.h:253
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
 msgstr ""
 "Les premiers jeux AGI pour Tandy Color Computer ne sont pas encore supportés."
@@ -6238,13 +6238,13 @@ msgstr "Ajouter le menu de vitesse"
 msgid "Add game speed menu (similar to PC version)"
 msgstr "Ajoute un menu de vitesse (similaire à celui de la version PC)"
 
-#: engines/agi/metaengine.cpp:409 engines/asylum/asylum.cpp:655
+#: engines/agi/metaengine.cpp:410 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
 msgid "This game does not support loading"
 msgstr "Le chargement de sauvegarde n'est pas pris en charge pour ce jeu"
 
-#: engines/agi/metaengine.cpp:431 engines/asylum/asylum.cpp:666
+#: engines/agi/metaengine.cpp:432 engines/asylum/asylum.cpp:666
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
 msgid "This game does not support saving"

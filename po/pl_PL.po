@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-17 14:51+0000\n"
+"POT-Creation-Date: 2024-08-19 04:40+0000\n"
 "PO-Revision-Date: 2024-02-08 20:26+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -6092,7 +6092,7 @@ msgstr "Zawsze używaj ostrego, monochromatycznego tekstu"
 msgid "Do not emulate NTSC artifacts for text"
 msgstr "Nie emuluj artefaktów NTSC dla tekstu"
 
-#: engines/agi/detection_tables.h:313
+#: engines/agi/detection_tables.h:253
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
 msgstr "Wczesne gry AGI dla Tandy Color Computer nie są jeszcze obsługiwane."
 
@@ -6182,13 +6182,13 @@ msgstr "Dodaj menu szybkości"
 msgid "Add game speed menu (similar to PC version)"
 msgstr "Dodaj menu szybkości gry (podobnie jak w wersji PC)"
 
-#: engines/agi/metaengine.cpp:409 engines/asylum/asylum.cpp:655
+#: engines/agi/metaengine.cpp:410 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
 msgid "This game does not support loading"
 msgstr "Ta gra nie obsługuje wczytywania stanu gry"
 
-#: engines/agi/metaengine.cpp:431 engines/asylum/asylum.cpp:666
+#: engines/agi/metaengine.cpp:432 engines/asylum/asylum.cpp:666
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
 msgid "This game does not support saving"
