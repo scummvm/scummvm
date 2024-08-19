@@ -121,7 +121,7 @@ void InitAndRegisterCharacters(GameSetupStruct &game) {
 		ccRegisterManagedObject(&game.chars[i], &_GP(ccDynamicCharacter));
 
 		// export the character's script object
-		ccAddExternalScriptObject(game.chars[i].scrname, &game.chars[i], &_GP(ccDynamicCharacter));
+		ccAddExternalScriptObject(game.chars[i].scrname.GetCStr(), &game.chars[i], &_GP(ccDynamicCharacter));
 	}
 }
 

@@ -75,13 +75,15 @@ void CharacterInfo::ReadFromFileImpl(Stream *in, GameDataVersion data_ver, int s
 	in->ReadArrayOfInt16(inv, MAX_INV);
 	actx = in->ReadInt16();
 	acty = in->ReadInt16();
-	StrUtil::ReadCStrCount(name, in, MAX_CHAR_NAME_LEN);
-	StrUtil::ReadCStrCount(scrname, in, MAX_SCRIPT_NAME_LEN);
+	StrUtil::ReadCStrCount(legacy_name, in, LEGACY_MAX_CHAR_NAME_LEN);
+	StrUtil::ReadCStrCount(legacy_scrname, in, LEGACY_MAX_SCRIPT_NAME_LEN);
 	on = in->ReadInt8();
 	if (do_align_pad)
 		in->ReadInt8(); // alignment padding to int32
 
 	// Upgrade data
+	name = legacy_name;
+	scrname = legacy_scrname;
 	if ((data_ver > kGameVersion_Undefined && data_ver < kGameVersion_360_16) ||
 		((data_ver == kGameVersion_Undefined) && save_ver >= 0 && save_ver < 2)) {
 		idle_anim_speed = animspeed + 5;
@@ -133,8 +135,8 @@ void CharacterInfo::WriteToFileImpl(Stream *out, bool is_save) const {
 	out->WriteArrayOfInt16(inv, MAX_INV);
 	out->WriteInt16(actx);
 	out->WriteInt16(acty);
-	out->Write(name, 40);
-	out->Write(scrname, MAX_SCRIPT_NAME_LEN);
+	out->Write(legacy_name, LEGACY_MAX_CHAR_NAME_LEN);
+	out->Write(legacy_scrname, LEGACY_MAX_SCRIPT_NAME_LEN);
 	out->WriteInt8(on);
 	if (do_align_pad)
 		out->WriteInt8(0); // alignment padding to int32
