@@ -108,8 +108,10 @@ bool qdInterfaceScreen::quant(float dt) {
 		else
 			_autohide_phase += delta;
 
-		if (_autohide_phase < 0.0f) _autohide_phase = 0.0f;
-		if (_autohide_phase > 1.0f) _autohide_phase = 1.0f;
+		if (_autohide_phase < 0.0f)
+			_autohide_phase = 0.0f;
+		if (_autohide_phase > 1.0f)
+			_autohide_phase = 1.0f;
 
 		int x = round(float(_autohide_offset.x) * _autohide_phase);
 		int y = round(float(_autohide_offset.y) * _autohide_phase);
@@ -174,8 +176,8 @@ bool qdInterfaceScreen::load_script(const xml::tag *p) {
 			set_name(it->data());
 			break;
 		case QDSCR_INTERFACE_ELEMENT:
-			if (const xml::tag * tg = it->search_subtag(QDSCR_TYPE)) {
-				if (qdInterfaceElement * el = qdInterfaceElement::create_element(static_cast<qdInterfaceElement::element_type>(xml::tag_buffer(*tg).get_int()))) {
+			if (const xml::tag *tg = it->search_subtag(QDSCR_TYPE)) {
+				if (qdInterfaceElement *el = qdInterfaceElement::create_element(static_cast<qdInterfaceElement::element_type>(xml::tag_buffer(*tg).get_int()))) {
 					el->set_owner(this);
 					el->load_script(&*it);
 					add_element(el);
@@ -264,8 +266,8 @@ bool qdInterfaceScreen::char_input_handler(int vkey) {
 }
 
 qdResource *qdInterfaceScreen::add_resource(const char *file_name, const qdInterfaceElementState *res_owner) {
-	if (qdInterfaceDispatcher * dp = dynamic_cast<qdInterfaceDispatcher * >(owner())) {
-		if (qdResource * p = dp->add_resource(file_name, res_owner)) {
+	if (qdInterfaceDispatcher *dp = dynamic_cast<qdInterfaceDispatcher * >(owner())) {
+		if (qdResource *p = dp->add_resource(file_name, res_owner)) {
 			_resources.register_resource(p, res_owner);
 			if (dp->is_screen_active(this) && !p->is_resource_loaded())
 				p->load_resource();
@@ -278,8 +280,8 @@ qdResource *qdInterfaceScreen::add_resource(const char *file_name, const qdInter
 }
 
 bool qdInterfaceScreen::remove_resource(const char *file_name, const qdInterfaceElementState *res_owner) {
-	if (qdInterfaceDispatcher * dp = dynamic_cast<qdInterfaceDispatcher * >(owner())) {
-		if (qdResource * p = dp->get_resource(file_name)) {
+	if (qdInterfaceDispatcher *dp = dynamic_cast<qdInterfaceDispatcher * >(owner())) {
+		if (qdResource *p = dp->get_resource(file_name)) {
 			_resources.unregister_resource(p, res_owner);
 			return dp->remove_resource(file_name, res_owner);
 		}
@@ -301,7 +303,7 @@ bool qdInterfaceScreen::init(bool is_game_active) {
 }
 
 bool qdInterfaceScreen::hide_element(const char *element_name, bool temporary_hide) {
-	if (qdInterfaceElement * p = get_element(element_name))
+	if (qdInterfaceElement *p = get_element(element_name))
 		return hide_element(p, temporary_hide);
 
 	return false;
@@ -319,7 +321,7 @@ bool qdInterfaceScreen::hide_element(qdInterfaceElement *p, bool temporary_hide)
 }
 
 bool qdInterfaceScreen::show_element(const char *element_name) {
-	if (qdInterfaceElement * p = get_element(element_name))
+	if (qdInterfaceElement *p = get_element(element_name))
 		return show_element(p);
 
 	return false;
@@ -357,8 +359,8 @@ bool qdInterfaceScreen::build_visible_elements_list() {
 
 void qdInterfaceScreen::activate_personage_buttons(const qdNamedObject *p) {
 	for (element_list_t::const_iterator it = element_list().begin(); it != element_list().end(); ++it) {
-		if (qdInterfaceButton * bt = dynamic_cast<qdInterfaceButton * >(*it)) {
-			if (const qdInterfaceEvent * ev = bt->find_event(qdInterfaceEvent::EVENT_ACTIVATE_PERSONAGE)) {
+		if (qdInterfaceButton *bt = dynamic_cast<qdInterfaceButton *>(*it)) {
+			if (const qdInterfaceEvent *ev = bt->find_event(qdInterfaceEvent::EVENT_ACTIVATE_PERSONAGE)) {
 				if (p) {
 					if (ev->has_data() && !strcmp(p->name(), ev->event_data()))
 						bt->activate_state(1);
@@ -379,7 +381,7 @@ void qdInterfaceScreen::update_personage_buttons() {
 	if (!sp) return;
 
 	for (element_list_t::const_iterator it = element_list().begin(); it != element_list().end(); ++it) {
-		if (qdInterfaceButton * bt = dynamic_cast<qdInterfaceButton * >(*it)) {
+		if (qdInterfaceButton *bt = dynamic_cast<qdInterfaceButton * >(*it)) {
 			if (!sp->set_personage_button(bt)) {
 				if (bt->find_event(qdInterfaceEvent::EVENT_ACTIVATE_PERSONAGE))
 					hide_element(bt);
