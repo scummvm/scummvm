@@ -84,7 +84,7 @@ struct BackgroundAnimationBlob {
 	Common::Array<uint8> Blob;
 	uint32 FrameIndex;
 	AnimFrame GetFrame(uint32 index);
-	bool GetIsAutoUpdated() const;
+	bool GetIsAutoUpdated(uint16 bpp8) const;
 
 	// Placing reference implementation here for now
 	static void Func1480(bool writeResult, Common::MemoryReadStream *stream);
