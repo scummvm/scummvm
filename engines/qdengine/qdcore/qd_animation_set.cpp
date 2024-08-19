@@ -269,7 +269,7 @@ bool qdAnimationSet::save_script(Common::WriteStream &fh, int indent) const {
 }
 
 bool qdAnimationSet::load_animations(const qdNamedObject *res_owner) {
-	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
+	if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher()) {
 		for (auto &it : _animations) {
 			if (qdAnimation *p = it.animation()) {
 				dp->load_resource(p, res_owner);
@@ -305,7 +305,7 @@ bool qdAnimationSet::load_animations(const qdNamedObject *res_owner) {
 }
 
 bool qdAnimationSet::free_animations(const qdNamedObject *res_owner) {
-	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
+	if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher()) {
 		for (auto &it : _animations) {
 			if (qdAnimation *p = it.animation()) {
 				dp->release_resource(p, res_owner);
@@ -370,7 +370,7 @@ bool qdAnimationSet::scale_animations(float coeff_x, float coeff_y) {
 }
 
 bool qdAnimationSet::register_resources(const qdNamedObject *res_owner) {
-	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
+	if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher()) {
 		for (auto &it : _animations) {
 			if (qdAnimation *p = it.animation())
 				dp->register_resource(p, res_owner);
@@ -396,7 +396,7 @@ bool qdAnimationSet::register_resources(const qdNamedObject *res_owner) {
 }
 
 bool qdAnimationSet::unregister_resources(const qdNamedObject *res_owner) {
-	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
+	if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher()) {
 		for (auto &it : _animations) {
 			if (qdAnimation *p = it.animation())
 				dp->unregister_resource(p, res_owner);

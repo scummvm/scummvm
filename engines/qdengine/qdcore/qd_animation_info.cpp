@@ -49,7 +49,6 @@ qdAnimationInfo::~qdAnimationInfo() {
 }
 
 void qdAnimationInfo::load_script(const xml::tag *p) {
-#ifndef __QD_SYSLIB__
 	int fl;
 	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		switch (it->ID()) {
@@ -68,7 +67,6 @@ void qdAnimationInfo::load_script(const xml::tag *p) {
 			break;
 		}
 	}
-#endif
 }
 
 bool qdAnimationInfo::save_script(Common::WriteStream &fh, int indent) const {
@@ -99,7 +97,8 @@ bool qdAnimationInfo::save_script(Common::WriteStream &fh, int indent) const {
 }
 
 qdAnimationInfo &qdAnimationInfo::operator = (const qdAnimationInfo &p) {
-	if (this == &p) return *this;
+	if (this == &p)
+		return *this;
 
 	*static_cast<qdNamedObject *>(this) = p;
 
@@ -112,12 +111,12 @@ qdAnimationInfo &qdAnimationInfo::operator = (const qdAnimationInfo &p) {
 qdAnimation *qdAnimationInfo::animation() const {
 #ifndef __QD_SYSLIB__
 	if (animation_name()) {
-		if (qdGameScene * p = static_cast<qdGameScene * >(owner(QD_NAMED_OBJECT_SCENE))) {
-			if (qdAnimation * anm = p->get_animation(animation_name()))
+		if (qdGameScene *p = static_cast<qdGameScene *>(owner(QD_NAMED_OBJECT_SCENE))) {
+			if (qdAnimation *anm = p->get_animation(animation_name()))
 				return anm;
 		}
 
-		if (qdGameDispatcher * p = qd_get_game_dispatcher())
+		if (qdGameDispatcher *p = qd_get_game_dispatcher())
 			return p->get_animation(animation_name());
 	}
 #endif
