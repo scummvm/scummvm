@@ -51,10 +51,17 @@ struct ObjectEvent {
 	String BlockName;
 	// Script block's ID, commonly corresponds to the object's ID
 	int BlockID = 0;
+	// Dynamic object this event was called for (if applicable)
+	RuntimeScriptValue DynObj;
+	// Interaction mode that triggered this event (if applicable)
+	int Mode = MODE_NONE;
 
 	ObjectEvent() = default;
 	ObjectEvent(const String &block_name, int block_id = 0)
 		: BlockName(block_name), BlockID(block_id) {}
+	ObjectEvent(const String &block_name, int block_id,
+				const RuntimeScriptValue &dyn_obj, int mode = MODE_NONE)
+		: BlockName(block_name), BlockID(block_id), DynObj(dyn_obj), Mode(mode) {}
 };
 
 int     run_dialog_request(int parmtr);
