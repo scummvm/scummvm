@@ -127,7 +127,7 @@ HError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 			if (data_ver >= kRoomVersion_3415)
 				room->Hotspots[i].ScriptName = StrUtil::ReadString(in);
 			else
-				room->Hotspots[i].ScriptName = String::FromStreamCount(in, MAX_SCRIPT_NAME_LEN);
+				room->Hotspots[i].ScriptName = String::FromStreamCount(in, LEGACY_MAX_SCRIPT_NAME_LEN);
 		}
 	}
 
@@ -357,7 +357,7 @@ HError ReadObjScNamesBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ve
 		if (data_ver >= kRoomVersion_3415)
 			obj.ScriptName = StrUtil::ReadString(in);
 		else
-			obj.ScriptName.ReadCount(in, MAX_SCRIPT_NAME_LEN);
+			obj.ScriptName.ReadCount(in, LEGACY_MAX_SCRIPT_NAME_LEN);
 	}
 	return HError::None();
 }
