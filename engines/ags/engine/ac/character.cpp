@@ -2056,23 +2056,13 @@ void animate_character(CharacterInfo *chap, int loopn, int sppd, int rept, int n
 	chap->wait = sppd + _GP(views)[chap->view].loops[loopn].frames[chap->frame].speed;
 	_GP(charextra)[chap->index_id].cur_anim_volume = Math::Clamp(volume, 0, 100);
 
-	CheckViewFrameForCharacter(chap);
+	_GP(charextra)[chap->index_id].CheckViewFrame(chap);
 }
 
 void stop_character_anim(CharacterInfo *chap) { // TODO: may expand with resetting more properties,
   // but have to be careful to not break logic somewhere
 	chap->animating = 0;
 	_GP(charextra)[chap->index_id].cur_anim_volume = 100;
-}
-
-// Process the current animation frame for the character:
-// play linked sounds, and so forth.
-void CheckViewFrameForCharacter(CharacterInfo *chi) {
-	const auto &chex = _GP(charextra)[chi->index_id];
-	const int frame_vol = CalcFrameSoundVolume(
-		chex.anim_volume, chex.cur_anim_volume,
-		(chi->flags & CHF_SCALEVOLUME) ? chex.zoom : 100);
-	CheckViewFrame(chi->view, chi->loop, chi->frame, frame_vol);
 }
 
 int GetCharacterFrameVolume(CharacterInfo *chi) {
