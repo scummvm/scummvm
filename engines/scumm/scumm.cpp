@@ -2506,7 +2506,7 @@ Common::Error ScummEngine::go() {
 
 void ScummEngine::waitForTimer(int quarterFrames, bool freezeMacGui) {
 	uint32 endTime, cur;
-	uint32 msecDelay = getIntegralTime(quarterFrames * (1000 / _timerFrequency));
+	uint32 msecDelay = getIntegralTime(quarterFrames * (1000 / getTimerFrequency()));
 
 	if (_fastMode & 2)
 		msecDelay = 0;
@@ -2613,6 +2613,32 @@ void ScummEngine::setTimerAndShakeFrequency() {
 }
 
 double ScummEngine::getTimerFrequency() {
+	// HACK for bug #9591:
+	// "SCUMM: ZAK (FM-Towns): Intro animation runs faster than intro music".
+	//
+	// There is no way around it: the original game relied on the (low) speed of the hardware
+	// for keeping the intro song in sync with the visuals. And by "sync" I mean just having
+	// the song end when the visuals are done. Just two checks are being done on VAR_MUSIC_TIMER
+	// within the relevant scripts at the beginning of the intro, and then in the end there is
+	// this check which fails because at that point Var[151 Bit 8] seems to be deactivated:
+	// 
+	// if (Var[151 Bit 8]) {
+	//   breakHere();
+	//   VAR_RESULT = isSoundRunning(93);
+	//   unless (!VAR_RESULT) goto 0441;
+	// } else {
+	//   delay(240);
+	// }
+	//
+	// Even if the check above worked, we would end up with the visual finishing about 14 seconds
+	// earlier than the audio, and stalling until the audio is done, which is not pretty.
+	//
+	// The best fit for the simulated slowdown seems to a quarter-frame rate of 200.0 Hz (50 Hz),
+	// while the CD audio timer continues to operate at 60.0 Hz, as it should.
+
+	if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns && _sound->getCurrentCDSound() == 93)
+		return 200.0;
+
 	return _timerFrequency;
 }
 
@@ -2620,7 +2646,7 @@ double ScummEngine::getAmigaMusicTimerFrequency() {
 	// Similarly to MI1, LOOM in PAL mode operates at 50Hz but the audio engine
 	// compensates the speed factor to play music at the correct speed.
 	// We simply feed the NTSC speed to the Paula audio engine to account for that.
-	return _game.id == GID_LOOM ? AMIGA_NTSC_VBLANK_RATE : _timerFrequency;
+	return _game.id == GID_LOOM ? AMIGA_NTSC_VBLANK_RATE : getTimerFrequency();
 }
 
 void ScummEngine_v0::scummLoop(int delta) {
@@ -2711,7 +2737,7 @@ void ScummEngine::scummLoop(int delta) {
 			VAR(VAR_MUSIC_TIMER) = _sound->getMusicTimer();
 		} else if (_musicEngine) {
 			// The music engine generates the timer data for us.
-			VAR(VAR_MUSIC_TIMER) = _musicEngine->getMusicTimer() * _timerFrequency / 240.0;
+			VAR(VAR_MUSIC_TIMER) = _musicEngine->getMusicTimer() * getTimerFrequency() / 240.0;
 		}
 	}
 
