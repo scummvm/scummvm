@@ -684,7 +684,7 @@ bool qdCamera::draw_grid() const {
 					color = grDispatcher::make_rgb565u(0xff, 0xff, 0xff);
 
 				if (_grid[cnt].attributes() & sGridCell::CELL_OCCUPIED)
-					warning("occupied");
+					color = grDispatcher::make_rgb565u(0x00, 0x00, 0xff);
 				if (_grid[cnt].attributes() & sGridCell::CELL_PERSONAGE_PATH)
 					warning("path");
 
