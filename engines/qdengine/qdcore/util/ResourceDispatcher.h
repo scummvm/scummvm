@@ -99,16 +99,16 @@ protected:
 /////////////////////////////////////////////////////////////////////////////////////////
 class ResourceDispatcher {
 public:
-	ResourceDispatcher() : start_log(false) { }
+	ResourceDispatcher() : _start_log(false) { }
 	void setTimer(int syncro_by_clock, time_type time_per_frame, time_type max_time_interval_) {
-		syncro_timer.set(syncro_by_clock, time_per_frame, max_time_interval = max_time_interval_);
+		_syncro_timer.set(syncro_by_clock, time_per_frame, _max_time_interval = max_time_interval_);
 	}
 
 	void attach(ResourceUser *user) {
 		PtrHandle<ResourceUser> p(0);
 		users.push_back(p);
 		users.back() = user;
-		user->init_time(syncro_timer());
+		user->init_time(_syncro_timer());
 	}
 	void attach(void (*func)(), time_type dtime) {
 		attach(new VoidFunctionCallResourceUser(func, dtime));
@@ -124,15 +124,15 @@ public:
 	}
 
 	void start() {
-		start_log = true;
+		_start_log = true;
 	}
 	void reset();
 	void skip_time() {
-		syncro_timer.skip();
+		_syncro_timer.skip();
 	}
 	void quant();
 	void set_speed(float speed) {
-		syncro_timer.setSpeed(speed);
+		_syncro_timer.setSpeed(speed);
 	}
 
 private:
@@ -140,9 +140,9 @@ private:
 	typedef Std::list<PtrHandle<ResourceUser> > UserList;
 	UserList users;
 
-	SyncroTimer syncro_timer;
-	time_type max_time_interval;
-	bool start_log;
+	SyncroTimer _syncro_timer;
+	time_type _max_time_interval;
+	bool _start_log;
 
 	void do_start();
 };

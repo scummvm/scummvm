@@ -31,17 +31,17 @@ namespace QDEngine {
 int ResourceUser::IDs;
 
 void ResourceDispatcher::do_start() {
-	if (start_log) {
-		start_log = false;
-		syncro_timer.setTime(1);
+	if (_start_log) {
+		_start_log = false;
+		_syncro_timer.setTime(1);
 		for (UserList::iterator i = users.begin(); i != users.end(); ++i)
-			(*i)->time = syncro_timer();
+			(*i)->time = _syncro_timer();
 	}
 }
 
 void ResourceDispatcher::reset() {
 	for (UserList::iterator i = users.begin(); i != users.end(); ++i)
-		(*i)->time = syncro_timer();
+		(*i)->time = _syncro_timer();
 }
 
 void ResourceDispatcher::quant() {
@@ -51,7 +51,7 @@ void ResourceDispatcher::quant() {
 
 	do_start();
 
-	syncro_timer.next_frame();
+	_syncro_timer.next_frame();
 
 	for (;;) {
 		time_type t_min = users.front()->time;
@@ -63,7 +63,7 @@ void ResourceDispatcher::quant() {
 				user_min = &u;
 			}
 		}
-		if (t_min < syncro_timer()) {
+		if (t_min < _syncro_timer()) {
 			if (!user_min->quant()) {
 				debugC(3, kDebugQuant, "ResourceDispatcher::quant() user_min->time = %d", user_min->time);
 				detach(user_min);
