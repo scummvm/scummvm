@@ -43,7 +43,7 @@ void FreescapeEngine::titleScreen() {
 				break;
 			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				switch (event.customType) {
-				case kActionChangeModeOrSkip:
+				case kActionSkip:
 					maxWait = -1;
 					break;
 				default:
@@ -205,7 +205,7 @@ void FreescapeEngine::drawBorderScreenAndWait(Graphics::Surface *surface, int ma
 				break;
 			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				switch (event.customType) {
-				case kActionChangeModeOrSkip:
+				case kActionSkip:
 					maxWait = -1;
 					break;
 				default:

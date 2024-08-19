@@ -522,7 +522,7 @@ void CastleEngine::drawFullscreenRiddleAndWait(uint16 riddle) {
 			// Events
 			switch (event.type) {
 			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-				if (event.customType == kActionChangeModeOrSkip) {
+				if (event.customType == kActionSkip) {
 					cont = false;
 				}
 				break;

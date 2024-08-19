@@ -554,7 +554,7 @@ void FreescapeEngine::processInput() {
 				delete _savedScreen;
 				_savedScreen = nullptr;
 				break;
-			case kActionChangeModeOrSkip:
+			case kActionChangeMode:
 				_shootMode = !_shootMode;
 				centerCrossair();
 				if (!_shootMode) {
