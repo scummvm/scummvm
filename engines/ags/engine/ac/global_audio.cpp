@@ -477,9 +477,9 @@ String get_cue_filename(int charid, int sndid) {
 	if (charid >= 0) {
 		// append the first 4 characters of the script name to the filename
 		if (_GP(game).chars[charid].scrname[0] == 'c')
-			script_name.SetString(&_GP(game).chars[charid].scrname[1], 4);
+			script_name.SetString(_GP(game).chars[charid].scrname.GetCStr() + 1, 4);
 		else
-			script_name.SetString(_GP(game).chars[charid].scrname, 4);
+			script_name.SetString(_GP(game).chars[charid].scrname.GetCStr(), 4);
 	} else {
 		script_name = "NARR";
 	}

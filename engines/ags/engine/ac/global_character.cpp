@@ -117,9 +117,9 @@ int GetCharacterWidth(int ww) {
 
 	if (_GP(charextra)[ww].width < 1) {
 		if ((char1->view < 0) ||
-		        (char1->loop >= _GP(views)[char1->view].numLoops) ||
-		        (char1->frame >= _GP(views)[char1->view].loops[char1->loop].numFrames)) {
-			debug_script_warn("GetCharacterWidth: Character %s has invalid frame: view %d, loop %d, frame %d", char1->scrname, char1->view + 1, char1->loop, char1->frame);
+			(char1->loop >= _GP(views)[char1->view].numLoops) ||
+			(char1->frame >= _GP(views)[char1->view].loops[char1->loop].numFrames)) {
+			debug_script_warn("GetCharacterWidth: Character %s has invalid frame: view %d, loop %d, frame %d", char1->scrname.GetCStr(), char1->view + 1, char1->loop, char1->frame);
 			return data_to_game_coord(4);
 		}
 
@@ -135,7 +135,8 @@ int GetCharacterHeight(int charid) {
 		if ((char1->view < 0) ||
 		        (char1->loop >= _GP(views)[char1->view].numLoops) ||
 		        (char1->frame >= _GP(views)[char1->view].loops[char1->loop].numFrames)) {
-			debug_script_warn("GetCharacterHeight: Character %s has invalid frame: view %d, loop %d, frame %d", char1->scrname, char1->view + 1, char1->loop, char1->frame);
+			debug_script_warn("GetCharacterHeight: Character %s has invalid frame: view %d, loop %d, frame %d",
+							  char1->scrname.GetCStr(), char1->view + 1, char1->loop, char1->frame);
 			return data_to_game_coord(2);
 		}
 
