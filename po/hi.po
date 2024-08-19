@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-19 04:40+0000\n"
+"POT-Creation-Date: 2024-08-19 07:15+0000\n"
 "PO-Revision-Date: 2024-07-11 17:47+0000\n"
 "Last-Translator: Krish <ganatrakrish2882005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -6329,7 +6329,7 @@ msgstr ""
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330
 #: engines/freescape/games/dark/dark.cpp:183
-#: engines/freescape/games/driller/driller.cpp:114
+#: engines/freescape/games/driller/driller.cpp:121
 #: engines/pegasus/pegasus.cpp:2825
 msgid "Save Game"
 msgstr "गेम सेव करें"
@@ -6340,7 +6340,7 @@ msgstr "गेम सेव करें"
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339
 #: engines/freescape/games/dark/dark.cpp:188
-#: engines/freescape/games/driller/driller.cpp:119
+#: engines/freescape/games/driller/driller.cpp:126
 #: engines/pegasus/pegasus.cpp:2831
 msgid "Load Game"
 msgstr "गेम लोड करें"
@@ -6375,7 +6375,7 @@ msgstr ""
 #. QUIT GAME
 #: engines/bladerunner/metaengine.cpp:375 engines/dragons/metaengine.cpp:224
 #: engines/freescape/games/dark/dark.cpp:193
-#: engines/freescape/games/driller/driller.cpp:124
+#: engines/freescape/games/driller/driller.cpp:131
 msgid "Quit Game"
 msgstr "गेम quit करें"
 
@@ -7003,41 +7003,41 @@ msgid "Info Menu"
 msgstr ""
 
 #: engines/freescape/games/dark/dark.cpp:203
-#: engines/freescape/games/driller/driller.cpp:132
+#: engines/freescape/games/driller/driller.cpp:139
 msgid "Toggle Sound"
 msgstr ""
 
 #: engines/freescape/games/dark/dark.cpp:209
-#: engines/freescape/games/driller/driller.cpp:138
+#: engines/freescape/games/driller/driller.cpp:145
 #, fuzzy
 #| msgid "Strafe Left"
 msgid "Rotate Left"
 msgstr "बाएं Strafe करें"
 
 #: engines/freescape/games/dark/dark.cpp:214
-#: engines/freescape/games/driller/driller.cpp:143
+#: engines/freescape/games/driller/driller.cpp:150
 #, fuzzy
 #| msgid "Strafe Right"
 msgid "Rotate Right"
 msgstr "दाहिने strafe करें"
 
 #: engines/freescape/games/dark/dark.cpp:219
-#: engines/freescape/games/driller/driller.cpp:148
+#: engines/freescape/games/driller/driller.cpp:155
 msgid "Increase Step Size"
 msgstr ""
 
 #: engines/freescape/games/dark/dark.cpp:224
-#: engines/freescape/games/driller/driller.cpp:153
+#: engines/freescape/games/driller/driller.cpp:160
 msgid "Decrease Step Size"
 msgstr ""
 
 #: engines/freescape/games/dark/dark.cpp:229
-#: engines/freescape/games/driller/driller.cpp:158
+#: engines/freescape/games/driller/driller.cpp:165
 msgid "Rise/Fly up"
 msgstr ""
 
 #: engines/freescape/games/dark/dark.cpp:235
-#: engines/freescape/games/driller/driller.cpp:164
+#: engines/freescape/games/driller/driller.cpp:171
 #, fuzzy
 #| msgid "Move down"
 msgid "Lower/Fly down"
@@ -7047,11 +7047,11 @@ msgstr "नीचे को चलें"
 msgid "Enable/Disable Jetpack"
 msgstr ""
 
-#: engines/freescape/games/driller/driller.cpp:170
+#: engines/freescape/games/driller/driller.cpp:177
 msgid "Deploy drilling rig"
 msgstr ""
 
-#: engines/freescape/games/driller/driller.cpp:176
+#: engines/freescape/games/driller/driller.cpp:183
 msgid "Collect drilling rig"
 msgstr ""
 

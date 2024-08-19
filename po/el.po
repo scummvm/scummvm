@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-19 04:40+0000\n"
+"POT-Creation-Date: 2024-08-19 07:15+0000\n"
 "PO-Revision-Date: 2024-08-13 10:19+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -7144,7 +7144,7 @@ msgstr "Εναλλαγή Ιδιωτικότητας Ευρημάτων"
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330
 #: engines/freescape/games/dark/dark.cpp:183
-#: engines/freescape/games/driller/driller.cpp:114
+#: engines/freescape/games/driller/driller.cpp:121
 #: engines/pegasus/pegasus.cpp:2825
 msgid "Save Game"
 msgstr "Αποθήκευση παιχνιδιού"
@@ -7155,7 +7155,7 @@ msgstr "Αποθήκευση παιχνιδιού"
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339
 #: engines/freescape/games/dark/dark.cpp:188
-#: engines/freescape/games/driller/driller.cpp:119
+#: engines/freescape/games/driller/driller.cpp:126
 #: engines/pegasus/pegasus.cpp:2831
 msgid "Load Game"
 msgstr "Φόρτωση Παιχνιδιού"
@@ -7190,7 +7190,7 @@ msgstr "Βάση Δεδομένων Στοιχείων Έρευνας"
 #. QUIT GAME
 #: engines/bladerunner/metaengine.cpp:375 engines/dragons/metaengine.cpp:224
 #: engines/freescape/games/dark/dark.cpp:193
-#: engines/freescape/games/driller/driller.cpp:124
+#: engines/freescape/games/driller/driller.cpp:131
 msgid "Quit Game"
 msgstr "Έξοδος από το παιχνίδι"
 
@@ -7862,43 +7862,43 @@ msgid "Info Menu"
 msgstr "Μενού Πληροφοριών"
 
 #: engines/freescape/games/dark/dark.cpp:203
-#: engines/freescape/games/driller/driller.cpp:132
+#: engines/freescape/games/driller/driller.cpp:139
 #, fuzzy
 #| msgid "Toggle mute"
 msgid "Toggle Sound"
 msgstr "Εναλλαγή σίγασης"
 
 #: engines/freescape/games/dark/dark.cpp:209
-#: engines/freescape/games/driller/driller.cpp:138
+#: engines/freescape/games/driller/driller.cpp:145
 msgid "Rotate Left"
 msgstr "Περιστροφή Αριστερά"
 
 #: engines/freescape/games/dark/dark.cpp:214
-#: engines/freescape/games/driller/driller.cpp:143
+#: engines/freescape/games/driller/driller.cpp:150
 msgid "Rotate Right"
 msgstr "Περιστροφή Δεξιά"
 
 #: engines/freescape/games/dark/dark.cpp:219
-#: engines/freescape/games/driller/driller.cpp:148
+#: engines/freescape/games/driller/driller.cpp:155
 #, fuzzy
 #| msgid "Increase the scale factor"
 msgid "Increase Step Size"
 msgstr "Αύξηση συντελεστή κλίμακας"
 
 #: engines/freescape/games/dark/dark.cpp:224
-#: engines/freescape/games/driller/driller.cpp:153
+#: engines/freescape/games/driller/driller.cpp:160
 #, fuzzy
 #| msgid "Decrease the scale factor"
 msgid "Decrease Step Size"
 msgstr "Μείωση συντελεστή κλίμακας"
 
 #: engines/freescape/games/dark/dark.cpp:229
-#: engines/freescape/games/driller/driller.cpp:158
+#: engines/freescape/games/driller/driller.cpp:165
 msgid "Rise/Fly up"
 msgstr "Σήκω/Πέτα ψηλότερα"
 
 #: engines/freescape/games/dark/dark.cpp:235
-#: engines/freescape/games/driller/driller.cpp:164
+#: engines/freescape/games/driller/driller.cpp:171
 msgid "Lower/Fly down"
 msgstr "Κατέβα/Πέτα χαμηλότερα"
 
@@ -7906,13 +7906,13 @@ msgstr "Κατέβα/Πέτα χαμηλότερα"
 msgid "Enable/Disable Jetpack"
 msgstr ""
 
-#: engines/freescape/games/driller/driller.cpp:170
+#: engines/freescape/games/driller/driller.cpp:177
 #, fuzzy
 #| msgid "Debug Apply Celling Grid"
 msgid "Deploy drilling rig"
 msgstr "Αποσφαλμάτωση: Εφαρμογή Πλέγματος στο Ταβάνι"
 
-#: engines/freescape/games/driller/driller.cpp:176
+#: engines/freescape/games/driller/driller.cpp:183
 msgid "Collect drilling rig"
 msgstr ""
 

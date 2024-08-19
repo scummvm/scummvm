@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-19 04:40+0000\n"
+"POT-Creation-Date: 2024-08-19 07:15+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -6625,7 +6625,7 @@ msgstr "음소거 전환"
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330
 #: engines/freescape/games/dark/dark.cpp:183
-#: engines/freescape/games/driller/driller.cpp:114
+#: engines/freescape/games/driller/driller.cpp:121
 #: engines/pegasus/pegasus.cpp:2825
 msgid "Save Game"
 msgstr "게임 저장"
@@ -6636,7 +6636,7 @@ msgstr "게임 저장"
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339
 #: engines/freescape/games/dark/dark.cpp:188
-#: engines/freescape/games/driller/driller.cpp:119
+#: engines/freescape/games/driller/driller.cpp:126
 #: engines/pegasus/pegasus.cpp:2831
 msgid "Load Game"
 msgstr "게임 불러오기"
@@ -6671,7 +6671,7 @@ msgstr "단서 데이터베이스"
 #. QUIT GAME
 #: engines/bladerunner/metaengine.cpp:375 engines/dragons/metaengine.cpp:224
 #: engines/freescape/games/dark/dark.cpp:193
-#: engines/freescape/games/driller/driller.cpp:124
+#: engines/freescape/games/driller/driller.cpp:131
 msgid "Quit Game"
 msgstr "게임 종료"
 
@@ -7363,47 +7363,47 @@ msgid "Info Menu"
 msgstr "메뉴"
 
 #: engines/freescape/games/dark/dark.cpp:203
-#: engines/freescape/games/driller/driller.cpp:132
+#: engines/freescape/games/driller/driller.cpp:139
 #, fuzzy
 #| msgid "Toggle mute"
 msgid "Toggle Sound"
 msgstr "음소거 전환"
 
 #: engines/freescape/games/dark/dark.cpp:209
-#: engines/freescape/games/driller/driller.cpp:138
+#: engines/freescape/games/driller/driller.cpp:145
 #, fuzzy
 #| msgid "Slide Left"
 msgid "Rotate Left"
 msgstr "왼쪽으로"
 
 #: engines/freescape/games/dark/dark.cpp:214
-#: engines/freescape/games/driller/driller.cpp:143
+#: engines/freescape/games/driller/driller.cpp:150
 #, fuzzy
 #| msgid "Slide Right"
 msgid "Rotate Right"
 msgstr "오른쪽으로"
 
 #: engines/freescape/games/dark/dark.cpp:219
-#: engines/freescape/games/driller/driller.cpp:148
+#: engines/freescape/games/driller/driller.cpp:155
 #, fuzzy
 #| msgid "Increase the scale factor"
 msgid "Increase Step Size"
 msgstr "확대 비율 증가"
 
 #: engines/freescape/games/dark/dark.cpp:224
-#: engines/freescape/games/driller/driller.cpp:153
+#: engines/freescape/games/driller/driller.cpp:160
 #, fuzzy
 #| msgid "Decrease the scale factor"
 msgid "Decrease Step Size"
 msgstr "확대 비율 감소"
 
 #: engines/freescape/games/dark/dark.cpp:229
-#: engines/freescape/games/driller/driller.cpp:158
+#: engines/freescape/games/driller/driller.cpp:165
 msgid "Rise/Fly up"
 msgstr ""
 
 #: engines/freescape/games/dark/dark.cpp:235
-#: engines/freescape/games/driller/driller.cpp:164
+#: engines/freescape/games/driller/driller.cpp:171
 #, fuzzy
 #| msgid "Fly down"
 msgid "Lower/Fly down"
@@ -7413,13 +7413,13 @@ msgstr "아래로 비행"
 msgid "Enable/Disable Jetpack"
 msgstr ""
 
-#: engines/freescape/games/driller/driller.cpp:170
+#: engines/freescape/games/driller/driller.cpp:177
 #, fuzzy
 #| msgid "Debug Apply Celling Grid"
 msgid "Deploy drilling rig"
 msgstr "셀 그리드를 적용"
 
-#: engines/freescape/games/driller/driller.cpp:176
+#: engines/freescape/games/driller/driller.cpp:183
 msgid "Collect drilling rig"
 msgstr ""
 

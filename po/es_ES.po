@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-19 04:40+0000\n"
+"POT-Creation-Date: 2024-08-19 07:15+0000\n"
 "PO-Revision-Date: 2024-08-17 20:23+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -6984,7 +6984,7 @@ msgstr "Ocultar pista"
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330
 #: engines/freescape/games/dark/dark.cpp:183
-#: engines/freescape/games/driller/driller.cpp:114
+#: engines/freescape/games/driller/driller.cpp:121
 #: engines/pegasus/pegasus.cpp:2825
 msgid "Save Game"
 msgstr "Guardar partida"
@@ -6995,7 +6995,7 @@ msgstr "Guardar partida"
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339
 #: engines/freescape/games/dark/dark.cpp:188
-#: engines/freescape/games/driller/driller.cpp:119
+#: engines/freescape/games/driller/driller.cpp:126
 #: engines/pegasus/pegasus.cpp:2831
 msgid "Load Game"
 msgstr "Cargar partida"
@@ -7030,7 +7030,7 @@ msgstr "Base de datos de pistas"
 #. QUIT GAME
 #: engines/bladerunner/metaengine.cpp:375 engines/dragons/metaengine.cpp:224
 #: engines/freescape/games/dark/dark.cpp:193
-#: engines/freescape/games/driller/driller.cpp:124
+#: engines/freescape/games/driller/driller.cpp:131
 msgid "Quit Game"
 msgstr "Salir del juego"
 
@@ -7658,37 +7658,37 @@ msgid "Info Menu"
 msgstr "Menú de información"
 
 #: engines/freescape/games/dark/dark.cpp:203
-#: engines/freescape/games/driller/driller.cpp:132
+#: engines/freescape/games/driller/driller.cpp:139
 msgid "Toggle Sound"
 msgstr "Alternar sonido"
 
 #: engines/freescape/games/dark/dark.cpp:209
-#: engines/freescape/games/driller/driller.cpp:138
+#: engines/freescape/games/driller/driller.cpp:145
 msgid "Rotate Left"
 msgstr "Rotar a la izquierda"
 
 #: engines/freescape/games/dark/dark.cpp:214
-#: engines/freescape/games/driller/driller.cpp:143
+#: engines/freescape/games/driller/driller.cpp:150
 msgid "Rotate Right"
 msgstr "Rotar a la derecha"
 
 #: engines/freescape/games/dark/dark.cpp:219
-#: engines/freescape/games/driller/driller.cpp:148
+#: engines/freescape/games/driller/driller.cpp:155
 msgid "Increase Step Size"
 msgstr "Aumentar longitud de pasos"
 
 #: engines/freescape/games/dark/dark.cpp:224
-#: engines/freescape/games/driller/driller.cpp:153
+#: engines/freescape/games/driller/driller.cpp:160
 msgid "Decrease Step Size"
 msgstr "Reducir longitud de pasos"
 
 #: engines/freescape/games/dark/dark.cpp:229
-#: engines/freescape/games/driller/driller.cpp:158
+#: engines/freescape/games/driller/driller.cpp:165
 msgid "Rise/Fly up"
 msgstr "Ascender/Volar arriba"
 
 #: engines/freescape/games/dark/dark.cpp:235
-#: engines/freescape/games/driller/driller.cpp:164
+#: engines/freescape/games/driller/driller.cpp:171
 msgid "Lower/Fly down"
 msgstr "Descender/Volar abajo"
 
@@ -7696,11 +7696,11 @@ msgstr "Descender/Volar abajo"
 msgid "Enable/Disable Jetpack"
 msgstr "Activar/Desactivar jetpack"
 
-#: engines/freescape/games/driller/driller.cpp:170
+#: engines/freescape/games/driller/driller.cpp:177
 msgid "Deploy drilling rig"
 msgstr "Desplegar perforadora"
 
-#: engines/freescape/games/driller/driller.cpp:176
+#: engines/freescape/games/driller/driller.cpp:183
 msgid "Collect drilling rig"
 msgstr "Retirar perforadora"
 

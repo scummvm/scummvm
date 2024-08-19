@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-19 04:40+0000\n"
+"POT-Creation-Date: 2024-08-19 07:15+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -6524,7 +6524,7 @@ msgstr ""
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330
 #: engines/freescape/games/dark/dark.cpp:183
-#: engines/freescape/games/driller/driller.cpp:114
+#: engines/freescape/games/driller/driller.cpp:121
 #: engines/pegasus/pegasus.cpp:2825
 #, fuzzy
 msgid "Save Game"
@@ -6536,7 +6536,7 @@ msgstr "~O~yunu kaldır"
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339
 #: engines/freescape/games/dark/dark.cpp:188
-#: engines/freescape/games/driller/driller.cpp:119
+#: engines/freescape/games/driller/driller.cpp:126
 #: engines/pegasus/pegasus.cpp:2831
 #, fuzzy
 msgid "Load Game"
@@ -6572,7 +6572,7 @@ msgstr ""
 #. QUIT GAME
 #: engines/bladerunner/metaengine.cpp:375 engines/dragons/metaengine.cpp:224
 #: engines/freescape/games/dark/dark.cpp:193
-#: engines/freescape/games/driller/driller.cpp:124
+#: engines/freescape/games/driller/driller.cpp:131
 #, fuzzy
 msgid "Quit Game"
 msgstr "Oyun"
@@ -7204,40 +7204,40 @@ msgid "Info Menu"
 msgstr ""
 
 #: engines/freescape/games/dark/dark.cpp:203
-#: engines/freescape/games/driller/driller.cpp:132
+#: engines/freescape/games/driller/driller.cpp:139
 #, fuzzy
 msgid "Toggle Sound"
 msgstr "Altyazılar"
 
 #: engines/freescape/games/dark/dark.cpp:209
-#: engines/freescape/games/driller/driller.cpp:138
+#: engines/freescape/games/driller/driller.cpp:145
 #, fuzzy
 msgid "Rotate Left"
 msgstr "Sol"
 
 #: engines/freescape/games/dark/dark.cpp:214
-#: engines/freescape/games/driller/driller.cpp:143
+#: engines/freescape/games/driller/driller.cpp:150
 #, fuzzy
 msgid "Rotate Right"
 msgstr "Sağ"
 
 #: engines/freescape/games/dark/dark.cpp:219
-#: engines/freescape/games/driller/driller.cpp:148
+#: engines/freescape/games/driller/driller.cpp:155
 msgid "Increase Step Size"
 msgstr ""
 
 #: engines/freescape/games/dark/dark.cpp:224
-#: engines/freescape/games/driller/driller.cpp:153
+#: engines/freescape/games/driller/driller.cpp:160
 msgid "Decrease Step Size"
 msgstr ""
 
 #: engines/freescape/games/dark/dark.cpp:229
-#: engines/freescape/games/driller/driller.cpp:158
+#: engines/freescape/games/driller/driller.cpp:165
 msgid "Rise/Fly up"
 msgstr ""
 
 #: engines/freescape/games/dark/dark.cpp:235
-#: engines/freescape/games/driller/driller.cpp:164
+#: engines/freescape/games/driller/driller.cpp:171
 #, fuzzy
 msgid "Lower/Fly down"
 msgstr "Aşağı"
@@ -7246,11 +7246,11 @@ msgstr "Aşağı"
 msgid "Enable/Disable Jetpack"
 msgstr ""
 
-#: engines/freescape/games/driller/driller.cpp:170
+#: engines/freescape/games/driller/driller.cpp:177
 msgid "Deploy drilling rig"
 msgstr ""
 
-#: engines/freescape/games/driller/driller.cpp:176
+#: engines/freescape/games/driller/driller.cpp:183
 msgid "Collect drilling rig"
 msgstr ""
 
