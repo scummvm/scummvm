@@ -44,8 +44,8 @@ void CharacterExtras::ReadFromSavegame(Stream *in, int save_ver) {
 	animwait = in->ReadInt16();
 	if (save_ver >= 2) // expanded at ver 2
 	{
-		anim_volume = in->ReadInt8();
-		cur_anim_volume = in->ReadInt8();
+		anim_volume = static_cast<uint8_t>(in->ReadInt8());
+		cur_anim_volume = static_cast<uint8_t>(in->ReadInt8());
 		in->ReadInt8(); // reserved to fill int32
 		in->ReadInt8();
 	}

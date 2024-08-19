@@ -130,6 +130,7 @@ int     SetFirstAnimFrame(int view, int loop, int sframe, int direction);
 // loop and frame values are passed by reference and will be updated;
 // returns whether the animation should continue.
 bool    CycleViewAnim(int view, uint16_t &loop, uint16_t &frame, bool forwards, int repeat);
+void	CheckViewFrameForObject(RoomObject *obj);
 
 } // namespace AGS3
 

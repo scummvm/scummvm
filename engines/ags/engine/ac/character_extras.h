@@ -43,7 +43,7 @@ struct CharacterExtras {
 	// TODO: consider having both fixed AABB and volatile one that changes with animation frame (unless you change how anims work)
 	short width = 0;
 	short height = 0;
-	short zoom = 0;
+	short zoom = 100;
 	short xwas = 0;
 	short ywas = 0;
 	short tint_r = 0;
