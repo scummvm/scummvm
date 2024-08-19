@@ -146,7 +146,7 @@ int run_interaction_event(const ObjectEvent &obj_evt, Interaction *nint, int evn
 // (eg. a room change occurred)
 int run_interaction_script(const ObjectEvent &obj_evt, InteractionScripts *nint, int evnt, int chkAny) {
 
-	if (((int)nint->ScriptFuncNames.size() <= evnt) || nint->ScriptFuncNames[evnt].IsEmpty()) {
+	if (evnt < 0 || static_cast<size_t>(evnt) >= nint->ScriptFuncNames.size() || nint->ScriptFuncNames[evnt].IsEmpty()) {
 		// no response defined for this event
 		// If there is a response for "Any Click", then abort now so as to
 		// run that instead
@@ -166,13 +166,25 @@ int run_interaction_script(const ObjectEvent &obj_evt, InteractionScripts *nint,
 
 	int room_was = _GP(play).room_changes;
 
-	if ((strstr(obj_evt.BlockName.GetCStr(), "character") != nullptr) ||
-		(strstr(obj_evt.BlockName.GetCStr(), "inventory") != nullptr)) {
-		// Character or Inventory (global script)
-		QueueScriptFunction(kScInstGame, nint->ScriptFuncNames[evnt].GetCStr());
-	} else {
-		// Other (room script)
-		QueueScriptFunction(kScInstRoom, nint->ScriptFuncNames[evnt].GetCStr());
+	// TODO: find a way to generalize all the following hard-coded behavior
+
+	// Character or Inventory require a global script call
+	const ScriptInstType inst_type = (strstr(obj_evt.BlockName.GetCStr(), "character") != nullptr) || (strstr(obj_evt.BlockName.GetCStr(), "inventory") != nullptr) ?
+		kScInstGame : kScInstRoom;
+
+	// Room events do not require additional params
+	if ((strstr(obj_evt.BlockName.GetCStr(), "room") != nullptr)) {
+		QueueScriptFunction(inst_type, nint->ScriptFuncNames[evnt].GetCStr());
+	}
+	// Regions only require 1 param - dynobj ref
+	else if ((strstr(obj_evt.BlockName.GetCStr(), "region") != nullptr)) {
+		QueueScriptFunction(inst_type, nint->ScriptFuncNames[evnt].GetCStr(), 1, &obj_evt.DynObj);
+	}
+	// Other types (characters, objects, invitems, hotspots) require
+	// 2 params - dynobj ref and the interaction mode (aka verb)
+	else {
+		RuntimeScriptValue params[]{obj_evt.DynObj, RuntimeScriptValue().SetInt32(obj_evt.Mode)};
+		QueueScriptFunction(inst_type, nint->ScriptFuncNames[evnt].GetCStr(), 2, params);
 	}
 
 	// if the room changed within the action
