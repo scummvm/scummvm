@@ -2106,7 +2106,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	},
 
 	{ // Adobe 24 Hours Tools Sampler (English, Windows)
-	  // Published by Agains All Odds Productions, 1996
+	  // Published by Against All Odds Productions, 1996
 		{
 			"adobe24",
 			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
