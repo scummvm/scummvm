@@ -2667,7 +2667,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 			textcol = -textcol;
 			overlayPositionFixed = true;
 			// Process the first portrait view frame
-			const int frame_vol = GetCharacterFrameVolume(_G(facetalkchar));
+			const int frame_vol = _GP(charextra)[_G(facetalkchar)->index_id].GetFrameSoundVolume(_G(facetalkchar));
 			CheckViewFrame(_G(facetalkview), _G(facetalkloop), _G(facetalkframe), frame_vol);
 		} else if (useview >= 0) {
 			// Lucasarts-style speech
