@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-19 13:46+0000\n"
-"PO-Revision-Date: 2024-08-17 08:06+0000\n"
+"PO-Revision-Date: 2024-08-19 14:45+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -7649,10 +7649,8 @@ msgid "Rotate down"
 msgstr "Pivoter bas"
 
 #: engines/freescape/movement.cpp:89
-#, fuzzy
-#| msgid "Change mode/Skip"
 msgid "Change mode"
-msgstr "Changer de mode/Passer"
+msgstr "Changer de mode"
 
 #. I18N: ESC key
 #: engines/freescape/movement.cpp:95 engines/lure/metaengine.cpp:209
