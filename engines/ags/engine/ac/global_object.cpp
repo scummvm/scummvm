@@ -179,7 +179,7 @@ bool SetObjectFrameSimple(int obn, int viw, int lop, int fra) {
 void SetObjectFrame(int obn, int viw, int lop, int fra) {
 	if (!SetObjectFrameSimple(obn, viw, lop, fra))
 		return;
-	CheckViewFrame(_G(objs)[obn].view, _G(objs)[obn].loop, _G(objs)[obn].frame);
+	_G(objs)[obn].CheckViewFrame();
 }
 
 // pass trans=0 for fully solid, trans=100 for fully transparent
@@ -238,8 +238,9 @@ void AnimateObjectImpl(int obn, int loopn, int spdd, int rept, int direction, in
 	obj.num = Math::InRangeOrDef<uint16_t>(pic, 0);
 	if (pic > UINT16_MAX)
 		debug_script_warn("Warning: object's (id %d) sprite %d is outside of internal range (%d), reset to 0", obn, pic, UINT16_MAX);
-	obj.anim_volume = Math::Clamp(volume, 0, 100);
-	CheckViewFrame(obj.view, loopn, obj.frame, obj.anim_volume);
+	obj.cur_anim_volume = Math::Clamp(volume, 0, 100);
+
+	_G(objs)[obn].CheckViewFrame();
 
 	if (blocking)
 		GameLoopUntilValueIsZero(&obj.cycling);

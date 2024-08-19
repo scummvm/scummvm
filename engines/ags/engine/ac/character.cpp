@@ -1083,7 +1083,7 @@ int Character_GetAnimationVolume(CharacterInfo *chaa) {
 
 void Character_SetAnimationVolume(CharacterInfo *chaa, int newval) {
 
-	_GP(charextra)[chaa->index_id].anim_volume = std::min(newval, 100); // negative means default
+	_GP(charextra)[chaa->index_id].anim_volume = Math::Clamp(newval, 0, 100);
 }
 
 int Character_GetBaseline(CharacterInfo *chaa) {
@@ -2065,11 +2065,17 @@ void stop_character_anim(CharacterInfo *chap) { // TODO: may expand with resetti
 	_GP(charextra)[chap->index_id].cur_anim_volume = 100;
 }
 
+// Process the current animation frame for the character:
+// play linked sounds, and so forth.
 void CheckViewFrameForCharacter(CharacterInfo *chi) {
-	CheckViewFrame(chi->view, chi->loop, chi->frame, GetCharacterFrameVolume(chi));
+	const auto &chex = _GP(charextra)[chi->index_id];
+	const int frame_vol = CalcFrameSoundVolume(
+		chex.anim_volume, chex.cur_anim_volume,
+		(chi->flags & CHF_SCALEVOLUME) ? chex.zoom : 100);
+	CheckViewFrame(chi->view, chi->loop, chi->frame, frame_vol);
 }
 
-int GetCharacterFrameVolume(CharacterInfo * chi) {
+int GetCharacterFrameVolume(CharacterInfo *chi) {
 	// We view the audio property relation as the relation of the entities:
 	// system -> audio type -> audio emitter (character) -> animation's audio
 	// therefore the sound volume is a multiplication of factors.
