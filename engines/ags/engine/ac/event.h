@@ -53,16 +53,20 @@ namespace AGS3 {
 // new room event
 #define EV_NEWROOM    5
 // Text script callback types:
+enum kTS_CallbackTypes {
+	kTS_None = 0,
 // repeatedly execute
-#define TS_REPEAT     1
+	kTS_Repeat,
 // on key press
-#define TS_KEYPRESS   2
+	kTS_KeyPress,
 // mouse click
-#define TS_MCLICK     3
+	kTS_MouseClick,
 // on text input
-#define TS_TEXTINPUT  4
+	kTS_TextInput,
 // script callback types number
-#define TS_NUM        5
+	kTS_Num
+};
+
 // Room event types:
 // hotspot event
 #define EVB_HOTSPOT   1
