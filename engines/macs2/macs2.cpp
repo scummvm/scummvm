@@ -1349,6 +1349,12 @@ bool BackgroundAnimationBlob::GetIsAutoUpdated(uint16 bpp8) const {
 		bp0C = stream.readByte();
 		if (bp0C == 0x01) {
 			// l00B7_151F:
+			bp6++;
+			bp8 = stream.readByte();
+			bp6++;
+			bp0A = bp6;
+		} else if (bp0C == 0x02) {
+			// l00B7_1539:
 			// TODO: Continue here
 		}
 
