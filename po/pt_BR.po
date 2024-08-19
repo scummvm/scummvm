@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-19 07:15+0000\n"
+"POT-Creation-Date: 2024-08-19 08:37+0000\n"
 "PO-Revision-Date: 2024-08-09 21:43+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -3778,10 +3778,10 @@ msgstr "Pausar"
 msgid "Game menu"
 msgstr "Menu do jogo"
 
-#: engines/metaengine.cpp:92 engines/grim/grim.cpp:524
-#: engines/grim/grim.cpp:620 engines/made/metaengine.cpp:121
-#: engines/mohawk/myst.cpp:566 engines/mohawk/riven.cpp:847
-#: engines/wintermute/keymapper_tables.h:220
+#: engines/metaengine.cpp:92 engines/freescape/movement.cpp:82
+#: engines/grim/grim.cpp:524 engines/grim/grim.cpp:620
+#: engines/made/metaengine.cpp:121 engines/mohawk/myst.cpp:566
+#: engines/mohawk/riven.cpp:847 engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
 #: engines/wintermute/keymapper_tables.h:1276
 #: engines/wintermute/keymapper_tables.h:1601
@@ -7605,21 +7605,21 @@ msgstr "Girar"
 msgid "Rotate down"
 msgstr "Girar"
 
-#: engines/freescape/movement.cpp:82
+#: engines/freescape/movement.cpp:89
 #, fuzzy
 #| msgid "Change mode"
-msgid "Change mode/Skip"
+msgid "Change mode"
 msgstr "Alterar modo"
 
 #. I18N: ESC key
-#: engines/freescape/movement.cpp:88 engines/lure/metaengine.cpp:209
+#: engines/freescape/movement.cpp:95 engines/lure/metaengine.cpp:209
 #: engines/mads/metaengine.cpp:292 engines/mm/mm1/metaengine.cpp:41
 #: engines/mm/mm1/metaengine.cpp:47 engines/saga/metaengine.cpp:328
 #: engines/twine/metaengine.cpp:436 engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
 msgstr "Fugir"
 
-#: engines/freescape/movement.cpp:93
+#: engines/freescape/movement.cpp:100
 msgid "Info Menu"
 msgstr "Menu de Informação"
 
