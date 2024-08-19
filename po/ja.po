@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-19 13:46+0000\n"
-"PO-Revision-Date: 2024-08-05 00:43+0000\n"
+"PO-Revision-Date: 2024-08-19 21:43+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -9488,8 +9488,6 @@ msgid "Look at"
 msgstr "見る"
 
 #: engines/saga/metaengine.cpp:359
-#, fuzzy
-#| msgid "Pick up"
 msgid "Pickup"
 msgstr "拾う"
 
@@ -9522,37 +9520,27 @@ msgstr "押す"
 
 #: engines/saga/metaengine.cpp:399
 msgid "Swallow"
-msgstr ""
+msgstr "飲む"
 
 #: engines/saga/metaengine.cpp:406
-#, fuzzy
-#| msgid "Reading data failed"
 msgid "Reading speed"
-msgstr "データの読み取りを失敗しました"
+msgstr "読み込み速度"
 
 #: engines/saga/metaengine.cpp:411
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change music"
-msgstr "フォントサイズの変更"
+msgstr "BGMを変更"
 
 #: engines/saga/metaengine.cpp:416
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change sound"
-msgstr "モード変更"
+msgstr "SEを変更"
 
 #: engines/saga/metaengine.cpp:421
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change voices"
-msgstr "モード変更"
+msgstr "音声を変更"
 
 #: engines/saga/metaengine.cpp:426
-#, fuzzy
-#| msgid "Continue"
 msgid "Continue game"
-msgstr "つづく"
+msgstr "ゲームを続行"
 
 #: engines/saga/metaengine.cpp:436 engines/trecision/metaengine.cpp:156
 #: engines/vcruise/metaengine.cpp:166
@@ -9560,14 +9548,12 @@ msgid "Quit game"
 msgstr "ゲーム終了"
 
 #: engines/saga/metaengine.cpp:453
-#, fuzzy
-#| msgid "Cancel input"
 msgid "Cancel quit"
-msgstr "入力をキャンセル"
+msgstr "キャンセル"
 
 #: engines/saga/metaengine.cpp:458
 msgid "Okay"
-msgstr ""
+msgstr "OK"
 
 #: engines/saga/metaengine.cpp:463
 msgid "Cancel load"
@@ -10122,12 +10108,12 @@ msgstr "可"
 #: engines/scumm/dialogs.cpp:1485
 #, c-format
 msgid "Hardware Rating: %s   -   "
-msgstr ""
+msgstr "ハードレート: %s   -   "
 
 #: engines/scumm/dialogs.cpp:1485
 #, c-format
 msgid "Quality Selection: %s"
-msgstr ""
+msgstr "品質セレクション: %s"
 
 #: engines/scumm/dialogs.cpp:1499
 msgid "Playback Adjust:"
@@ -10851,14 +10837,12 @@ msgstr ""
 "だし、字幕が完全に翻訳されていない場合がありますのでご了承ください。"
 
 #: engines/scumm/metaengine.cpp:756
-#, fuzzy
-#| msgid "Disable demo mode"
 msgid "Enable demo/kiosk mode"
-msgstr "デモを無効化"
+msgstr "デモ/店頭モードを有効化"
 
 #: engines/scumm/metaengine.cpp:757
 msgid "Enable demo/kiosk mode in the full retail version of Maniac Mansion."
-msgstr ""
+msgstr "Maniac Mansion製品版で、デモ/店頭モードを有効化します。"
 
 #: engines/scumm/metaengine.cpp:851
 msgid "Down Left"
@@ -11017,18 +11001,16 @@ msgstr "ランダム"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:67
 msgid "Picks the map algorithm randomly."
-msgstr ""
+msgstr "マップアルゴリズムをランダム選択。"
 
 #. I18N: Map sizes
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:70
 msgid "Size"
-msgstr ""
+msgstr "サイズ"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:74
-#, fuzzy
-#| msgid "75% - Small"
 msgid "Small"
-msgstr "75% - 小"
+msgstr "小"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:76
 msgid "Large"
@@ -11036,32 +11018,28 @@ msgstr "ラージ"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:77
 msgid "Huge"
-msgstr ""
+msgstr "大"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:78
 msgid "SAI"
-msgstr ""
+msgstr "SAI"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:79
 msgid "Ridiculous"
-msgstr ""
+msgstr "ジョーク"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:80
-#, fuzzy
-#| msgid "Map"
 msgid "Max"
-msgstr "マップ"
+msgstr "最大"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:82
 msgid "Picks the map size randomly."
-msgstr ""
+msgstr "マップサイズをランダム選択。"
 
 #. I18N: Map tilesets
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:85
-#, fuzzy
-#| msgid "Reset"
 msgid "Tileset"
-msgstr "リセット"
+msgstr "タイルセット"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:99
 msgid "Picks the map tileset randomly."
