@@ -2131,6 +2131,9 @@ void DarkseedEngine::handleObjCollision(int targetObjNum) {
 			case 17:
 				_useCode->useCodeShovel(targetObjNum);
 				break;
+			case 18:
+				_useCode->useCodeDelbertsCard(targetObjNum);
+				break;
 			// TODO lots of extra switch cases here for inventory usages.
 			default:
 				break;

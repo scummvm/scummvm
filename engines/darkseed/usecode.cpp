@@ -99,6 +99,13 @@ int16 UseCode::getUseShovelTosIdx(uint16 objNum) {
 	return shovelTextTbl[objNum];
 }
 
+int16 UseCode::getUseDelbertsCardTosIdx(uint16 objNum) {
+	if (objNum >= Objects::MAX_OBJECTS) {
+		error("getUseDelbertsCardTosIdx: Object Index out of range! %d", objNum);
+	}
+	return delbertsCardTextTbl[objNum];
+}
+
 void Darkseed::UseCode::useCode(int objNum) {
 	debug("useCode: objNum = %d", objNum);
 	
@@ -1192,6 +1199,25 @@ void UseCode::useCodeShovel(int16 targetObjNum) {
 	}
 	if (targetObjNum > 86 && targetObjNum < 99) {
 		startdigging(targetObjNum + -87);
+	}
+}
+
+void UseCode::useCodeDelbertsCard(int16 targetObjNum) {
+	int16 tosIdx = getUseDelbertsCardTosIdx(targetObjNum);
+	if (tosIdx != 0) {
+		if (tosIdx < 979) {
+			_console->printTosText(tosIdx);
+		} else {
+			genericresponse(18, targetObjNum, tosIdx);
+		}
+	}
+	if (targetObjNum == 64) {
+		if (g_engine->_room->_roomNumber == 30) {
+			g_engine->setupOtherNspAnimation(1, 40);
+		}
+		else {
+			_console->printTosText(488);
+		}
 	}
 }
 
