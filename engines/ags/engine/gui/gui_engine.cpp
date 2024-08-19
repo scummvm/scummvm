@@ -140,7 +140,7 @@ void GUIObject::ClearChanged() {
 }
 
 int GUILabel::PrepareTextToDraw() {
-	const bool is_translated = Flags & kGUICtrl_Translated;
+	const bool is_translated = (Flags & kGUICtrl_Translated) != 0;
 	replace_macro_tokens(is_translated ? get_translation(Text.GetCStr()) : Text.GetCStr(), _textToDraw);
 	return GUI::SplitLinesForDrawing(_textToDraw.GetCStr(), is_translated, _GP(Lines), Font, Width);
 }
