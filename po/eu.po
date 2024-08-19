@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-19 08:37+0000\n"
+"POT-Creation-Date: 2024-08-19 13:46+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -311,7 +311,7 @@ msgstr "Beste biltegiratzen bat dago orain martxan. Gelditu nahi al duzu?"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:601 engines/kyra/gui/saveload_eob.cpp:634
 #: engines/parallaction/metaengine.cpp:143
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3967
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3993
 #: engines/toon/toon.cpp:1538
 msgid "Yes"
 msgstr "Bai"
@@ -324,7 +324,7 @@ msgstr "Bai"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:601 engines/kyra/gui/saveload_eob.cpp:634
 #: engines/parallaction/metaengine.cpp:149
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3967
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3993
 #: engines/toon/toon.cpp:1538
 msgid "No"
 msgstr "Ez"
@@ -5966,7 +5966,7 @@ msgstr "Kargatu"
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2948
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2974
 #, fuzzy, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -5977,7 +5977,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2935
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2961
 #, fuzzy, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -5988,7 +5988,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2968
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2994
 #, fuzzy, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -9911,7 +9911,7 @@ msgid "Your Name:"
 msgstr "Izena:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3973
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3999
 msgid "Host"
 msgstr ""
 
@@ -9923,7 +9923,7 @@ msgid "Querying games..."
 msgstr "Jokoa gordetzen..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3973
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3999
 msgid "Join"
 msgstr ""
 
@@ -10914,7 +10914,7 @@ msgid ""
 "required resources for MT-32. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:3862
+#: engines/scumm/scumm.cpp:3888
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -10924,7 +10924,7 @@ msgstr ""
 "fitxategiak 'Maniac' direktorio barruan egon behar dira, Tentacle jokoko "
 "direktorioan, eta jokoa ScummVM-ra gehitu behar da."
 
-#: engines/scumm/scumm.cpp:3973
+#: engines/scumm/scumm.cpp:3999
 #, fuzzy
 msgid "Would you like to host or join a network play session?"
 msgstr "Jokoa kargatu edo gorde nahi duzu?"
