@@ -117,6 +117,22 @@ void precache_view(int view) {
 	}
 }
 
+int CalcFrameSoundVolume(int obj_vol, int anim_vol, int scale) {
+	// We view the audio property relation as the relation of the entities:
+	// system -> audio type -> audio emitter (object, character) -> animation's audio
+	// therefore the sound volume is a multiplication of factors.
+	int frame_vol = 100; // default to full volume
+	// Object's animation volume property
+	frame_vol = frame_vol * obj_vol / 100;
+	// Active animation volume
+	frame_vol = frame_vol * anim_vol / 100;
+	// Zoom volume scaling (optional)
+	// NOTE: historically scales only in 0-100 range :/
+	scale = Math::Clamp(scale, 0, 100);
+	frame_vol = frame_vol * scale / 100;
+	return frame_vol;
+}
+
 // Handle the new animation frame (play linked sounds, etc)
 void CheckViewFrame(int view, int loop, int frame, int sound_volume) {
 	ScriptAudioChannel *channel = nullptr;
@@ -139,7 +155,7 @@ void CheckViewFrame(int view, int loop, int frame, int sound_volume) {
 			channel = play_audio_clip_by_index(_GP(views)[view].loops[loop].frames[frame].sound);
 		}
 	}
-	if (channel && (sound_volume >= 0)) {
+	if (channel) {
 		sound_volume = Math::Clamp(sound_volume, 0, 100);
 		auto *ch = AudioChans::GetChannel(channel->id);
 		if (ch)
