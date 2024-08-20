@@ -2105,6 +2105,26 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_WT_EXTREME_WIN_EN,
 	},
 
+	{ // Adobe 24 Hours Tools Sampler (English, Windows)
+	  // Published by Against All Odds Productions, 1996
+		{
+			"adobe24",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "ADOBE32.EXE", 0, "b5efd541d37b23ab6a587e0929b05c2e", 1218048 },
+				{ "DATA.MPL", 0, "e5d4f39ab5685556115ba0b34103bc2e", 27625660 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_ADOBE24,
+		0,
+		MTBOOT_ADOBE24_WIN_EN,
+	},
+
 
 	{ AD_TABLE_END_MARKER, 0, 0, MTBOOT_INVALID }
 };
