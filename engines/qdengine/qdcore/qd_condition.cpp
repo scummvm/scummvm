@@ -328,7 +328,7 @@ bool qdCondition::load_script(const xml::tag *p) {
 				inverse(false);
 			break;
 		case QDSCR_CONDITION_OBJECT:
-			if (const xml::tag * tp = it->search_subtag(QDSCR_ID)) {
+			if (const xml::tag *tp = it->search_subtag(QDSCR_ID)) {
 				int object_idx = xml::tag_buffer(*tp).get_int();
 
 				if (object_idx >= 0 && object_idx < _objects.size())
@@ -439,7 +439,7 @@ bool qdCondition::save_data(Common::WriteStream &fh) const {
 
 bool qdCondition::check() {
 	bool result = false;
-	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher()) {
+	if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher()) {
 		if (dp->check_condition(this))
 			result = !_is_inversed;
 		else

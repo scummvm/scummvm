@@ -48,7 +48,7 @@ qdGameEnd &qdGameEnd::operator = (const qdGameEnd &end) {
 }
 
 qdConditionalObject::trigger_start_mode qdGameEnd::trigger_start() {
-	if (qdGameDispatcher * p = qdGameDispatcher::get_dispatcher()) {
+	if (qdGameDispatcher *p = qdGameDispatcher::get_dispatcher()) {
 		p->set_game_end(this);
 		return qdConditionalObject::TRIGGER_START_ACTIVATE;
 	}
