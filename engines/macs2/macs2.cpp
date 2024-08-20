@@ -1356,9 +1356,48 @@ bool BackgroundAnimationBlob::GetIsAutoUpdated(uint16 bpp8) const {
 		} else if (bp0C == 0x02) {
 			// l00B7_1539:
 			// TODO: Continue here
+			bp6++;
+			bp10 = stream.readByte();
+			bp6++;
+		} else if (bp0C == 0x03) {
+			// l00B7_154B:
+			// TODO: No idea why we would increment first
+			bp6++;
+			bp6 = stream.readByte();
+		} else {
+			break;
 		}
-
 	}
+	// l00B7_1554:
+	uint16 cx = bp0C - 0xA;
+	stream.seek(0xB);
+	stream.seek(bp0E, SEEK_CUR);
+	uint16 bp24 = stream.readUint16();
+	if (cx > bp24) {
+		// l00B7_156A:
+		cx = 1;
+	}
+	// l00B7_156D:
+	for (; cx > 0; cx--) {
+		// TODO: Check if the logic for the loop works out like this
+		uint16 bp1A = stream.readUint16();
+		uint16 bp1C = stream.readUint16();
+		stream.seek(0x2, SEEK_CUR);
+		uint16 bp16 = stream.readUint16();
+		uint16 bp18 = stream.readUint16();
+		uint16 bx = bp16 * bp18;
+
+		// TODO: Use the logic properly for the loop - either implement verbatim or adjust
+	mov	bx,ax
+	dec	cx
+	jz	158Dh
+
+l00B7_1589:
+	;; If cx != 0, add bx = [bp-16] * [bp-18h] to si, and loop
+	add	si,bx
+	jmp	156Dh
+	}
+	
 
 
 
