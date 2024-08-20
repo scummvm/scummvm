@@ -317,7 +317,7 @@ qdGameObjectAnimated *qdCoordsAnimation::object() const {
 	if (owner() && owner()->named_object_type() == QD_NAMED_OBJECT_OBJ_STATE) {
 		qdNamedObject *p = owner()->owner();
 		if (p && (p->named_object_type() == QD_NAMED_OBJECT_ANIMATED_OBJ || p->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ))
-			return static_cast<qdGameObjectAnimated * >(p);
+			return static_cast<qdGameObjectAnimated *>(p);
 	}
 
 	return 0;
@@ -368,7 +368,7 @@ bool qdCoordsAnimation::set_cur_point(int point_num) const {
 				if (!check_flag(QD_COORDS_ANM_LOOP_FLAG)) {
 					stop();
 					if (p->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ)
-						static_cast<qdGameObjectMoving * >(p)->adjust_z();
+						static_cast<qdGameObjectMoving *>(p)->adjust_z();
 
 					return false;
 				}

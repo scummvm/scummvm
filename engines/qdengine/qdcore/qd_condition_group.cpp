@@ -71,7 +71,7 @@ bool qdConditionGroup::remove_condition(int condition_id) {
 bool qdConditionGroup::load_script(const xml::tag *p) {
 	_conditions.reserve(p->data_size());
 
-	if (const xml::tag * tp = p->search_subtag(QDSCR_TYPE))
+	if (const xml::tag *tp = p->search_subtag(QDSCR_TYPE))
 		_conditions_mode = conditions_mode_t(xml::tag_buffer(*tp).get_int());
 
 	xml::tag_buffer buf(*p);

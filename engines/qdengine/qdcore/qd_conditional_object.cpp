@@ -143,7 +143,7 @@ bool qdConditionalObject::load_conditions_script(const xml::tag *p) {
 	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		switch (it->ID()) {
 		case QDSCR_CONDITION:
-			if (const xml::tag * tp = it->search_subtag(QDSCR_TYPE)) {
+			if (const xml::tag *tp = it->search_subtag(QDSCR_TYPE)) {
 				qdCondition *cp = &*ict;
 				cp->set_type(qdCondition::ConditionType(xml::tag_buffer(*tp).get_int()));
 				cp->load_script(&*it);
@@ -152,7 +152,7 @@ bool qdConditionalObject::load_conditions_script(const xml::tag *p) {
 			++ict;
 			break;
 		case QDSCR_CONDITION_GROUP:
-			if (const xml::tag * tp = it->search_subtag(QDSCR_TYPE))
+			if (const xml::tag *tp = it->search_subtag(QDSCR_TYPE))
 				igt->set_conditions_mode(qdConditionGroup::conditions_mode_t(xml::tag_buffer(*tp).get_int()));
 			igt->load_script(&*it);
 			++igt;
@@ -299,7 +299,7 @@ bool qdConditionalObject::init() {
 }
 
 bool qdConditionalObject::trigger_can_start() const {
-	if (const qdGameScene * p = static_cast<const qdGameScene * >(owner(QD_NAMED_OBJECT_SCENE)))
+	if (const qdGameScene *p = static_cast<const qdGameScene *>(owner(QD_NAMED_OBJECT_SCENE)))
 		return p->is_active();
 
 	return true;
