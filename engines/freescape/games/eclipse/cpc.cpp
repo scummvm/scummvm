@@ -196,6 +196,14 @@ void EclipseEngine::drawCPCUI(Graphics::Surface *surface) {
 	drawIndicator(surface, 45, 4, 12);
 	drawEclipseIndicator(surface, 228, 0, front, other);
 
+	uint32 blue = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x55, 0x55, 0xFF);
+
+	Common::Rect jarBackground(124, 165, 148, 192);
+	surface->fillRect(jarBackground, back);
+
+	Common::Rect jarWater(124, 192 - _gameStateVars[k8bitVariableEnergy], 148, 192);
+	surface->fillRect(jarWater, blue);
+
 	surface->fillRect(Common::Rect(225, 168, 235, 187), front);
 	drawCompass(surface, 229, 177, _yaw, 10, back);
 
