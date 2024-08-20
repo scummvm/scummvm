@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-19 13:46+0000\n"
-"PO-Revision-Date: 2024-08-07 10:43+0000\n"
+"PO-Revision-Date: 2024-08-20 10:21+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -390,7 +390,7 @@ msgstr ""
 
 #: gui/dlcsdialog.cpp:52
 msgid "Fetching DLCs..."
-msgstr ""
+msgstr "DLC-ების გამოთხოვა..."
 
 #: gui/dlcsdialog.cpp:60
 msgid "All Downloads"
@@ -648,7 +648,7 @@ msgstr "ბილიკები"
 
 #: gui/editgamedialog.cpp:291
 msgid "Check Integrity"
-msgstr ""
+msgstr "მთლიანობის შემოწმება"
 
 #: gui/editgamedialog.cpp:291
 msgid "Perform integrity check for all game files"
@@ -1661,7 +1661,7 @@ msgstr "ჯოისტიკის მკვდარი ზონა:"
 
 #: gui/options.cpp:1421 gui/options.cpp:1423 gui/options.cpp:1424
 msgid "Analog joystick Deadzone"
-msgstr ""
+msgstr "ანალოგური ჯოისტიკის მკვდარი ზონა"
 
 #: gui/options.cpp:1423
 msgctxt "lowres"
@@ -1676,7 +1676,7 @@ msgstr ""
 #: gui/options.cpp:1524
 #, c-format
 msgid "Achievements unlocked: %d/%d"
-msgstr ""
+msgstr "მიღწეულია მიღწევა: %d/%d"
 
 #: gui/options.cpp:1570
 msgid "Graphics mode:"
@@ -2652,7 +2652,7 @@ msgstr ""
 
 #: gui/shaderbrowser-dialog.cpp:70
 msgid "Pick file instead..."
-msgstr ""
+msgstr "აირჩიეთ ფაილი..."
 
 #: gui/shaderbrowser-dialog.cpp:70
 msgid "Pick shader from file system"
@@ -3132,11 +3132,11 @@ msgstr "თამაშის ხატულა"
 
 #: dists/android.strings.xml.cpp:60
 msgid "Shortcut label"
-msgstr ""
+msgstr "მალსახმობის ჭდე"
 
 #: dists/android.strings.xml.cpp:61
 msgid "Shortcut icon"
-msgstr ""
+msgstr "მალსახმობის ხატულა"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:32
@@ -3439,14 +3439,12 @@ msgid "Matched game IDs for the %s engine:"
 msgstr ""
 
 #: engines/metaengine.cpp:39
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "Game not implemented"
-msgstr "თამაშის ID მხარდაჭერილი არაა"
+msgstr "თამაში განხორციელებული არაა"
 
 #: engines/metaengine.cpp:58 engines/saga/metaengine.cpp:267
 msgid "Default game keymap"
-msgstr ""
+msgstr "ნაგულისხმევი თამაშების ღილაკების ასახვა"
 
 #: engines/metaengine.cpp:62 backends/platform/maemo/maemo.cpp:161
 #: engines/asylum/metaengine.cpp:159 engines/hdb/metaengine.cpp:207
@@ -4976,7 +4974,7 @@ msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:64
 msgid "Generate playlist"
-msgstr ""
+msgstr "დასაკრავი სიის გენერაცია"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:66
 msgid "Status: "
@@ -5000,7 +4998,7 @@ msgstr "აირჩიეთ დასაკრავი სიის საქ
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:173
 msgid "Libretro playlist"
-msgstr ""
+msgstr "დასაკრავი სია Libertro"
 
 #: backends/platform/libretro/src/libretro-os-utils.cpp:176
 msgid ""
@@ -5677,7 +5675,7 @@ msgstr ""
 #. It is never disabled and it is not game specific
 #: engines/agos/metaengine.cpp:227
 msgid "AGOS main"
-msgstr ""
+msgstr "მთავარი AGOS"
 
 #: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
 #: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:103
@@ -5985,7 +5983,7 @@ msgstr "წინა რესურსი"
 
 #: engines/asylum/metaengine.cpp:245
 msgid "Next resource"
-msgstr ""
+msgstr "შემდეგი რესურსი"
 
 #: engines/asylum/metaengine.cpp:252
 msgid "Previous palette"
@@ -6322,10 +6320,8 @@ msgid "Game Keymappings"
 msgstr "თამაშის კლავიატურის მალსახმობები"
 
 #: engines/cge/metaengine.cpp:215
-#, fuzzy
-#| msgid "Skip"
 msgid "Exit/Skip"
-msgstr "გამოტოვება"
+msgstr "გასვლა/გამოტოვება"
 
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:162
@@ -6359,7 +6355,7 @@ msgstr "გასვლის კითხვა"
 #. In order to escape the dice game loop press Right/Left Alt
 #: engines/cge/metaengine.cpp:250
 msgid "ALTered Item"
-msgstr ""
+msgstr "ალტერნატიული ნივთი"
 
 #: engines/cge/metaengine.cpp:257
 msgid "Inventory Item 1 (Select/Deselect)"
@@ -6823,20 +6819,14 @@ msgid "Shoot"
 msgstr "სროლა"
 
 #: engines/freescape/movement.cpp:72
-#, fuzzy
-#| msgid "Rotate"
 msgid "Rotate up"
-msgstr "დატრიალება"
+msgstr "დატრიალება მაღლა"
 
 #: engines/freescape/movement.cpp:77
-#, fuzzy
-#| msgid "Rotate"
 msgid "Rotate down"
-msgstr "დატრიალება"
+msgstr "დატრიალება დაბლა"
 
 #: engines/freescape/movement.cpp:89
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change mode"
 msgstr "რეჟიმის შეცვლა"
 
@@ -6854,10 +6844,8 @@ msgstr "ინფორმაციის მენიუ"
 
 #: engines/freescape/games/dark/dark.cpp:203
 #: engines/freescape/games/driller/driller.cpp:139
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Sound"
-msgstr "დადუმების გადართვა"
+msgstr "ხმის გადართვა"
 
 #: engines/freescape/games/dark/dark.cpp:209
 #: engines/freescape/games/driller/driller.cpp:145
@@ -6871,22 +6859,18 @@ msgstr "მარჯვნივ შებრუნება"
 
 #: engines/freescape/games/dark/dark.cpp:219
 #: engines/freescape/games/driller/driller.cpp:155
-#, fuzzy
-#| msgid "Increase the scale factor"
 msgid "Increase Step Size"
-msgstr "მასშტაბის ფაქტორის გაზრდა"
+msgstr "ნაბიჯის ზომის გაზრდა"
 
 #: engines/freescape/games/dark/dark.cpp:224
 #: engines/freescape/games/driller/driller.cpp:160
-#, fuzzy
-#| msgid "Decrease the scale factor"
 msgid "Decrease Step Size"
-msgstr "მასშტაბის ფაქტორის შემცირება"
+msgstr "ნაბიჯის ზომის შემცირება"
 
 #: engines/freescape/games/dark/dark.cpp:229
 #: engines/freescape/games/driller/driller.cpp:165
 msgid "Rise/Fly up"
-msgstr ""
+msgstr "ადგომა/აფრენა"
 
 #: engines/freescape/games/dark/dark.cpp:235
 #: engines/freescape/games/driller/driller.cpp:171
@@ -6895,7 +6879,7 @@ msgstr "ქვემოთ ჩამოწევა/ჩამოფრენა"
 
 #: engines/freescape/games/dark/dark.cpp:241
 msgid "Enable/Disable Jetpack"
-msgstr ""
+msgstr "ჯეტპაკის ჩართვა/გამორთვა"
 
 #: engines/freescape/games/driller/driller.cpp:177
 msgid "Deploy drilling rig"
@@ -8404,7 +8388,7 @@ msgstr ""
 
 #: engines/nancy/input.cpp:178
 msgid "Nancy Drew"
-msgstr ""
+msgstr "ნენსი დრიუ"
 
 #: engines/nancy/input.cpp:181
 msgid "Left Click Interact"
@@ -8454,7 +8438,7 @@ msgstr ""
 
 #: engines/nancy/metaengine.cpp:71
 msgid "Fix softlocks"
-msgstr ""
+msgstr "ჩიხების გასწორება"
 
 #: engines/nancy/metaengine.cpp:72
 msgid ""
@@ -8464,7 +8448,7 @@ msgstr ""
 
 #: engines/nancy/metaengine.cpp:82
 msgid "Fix annoyances"
-msgstr ""
+msgstr "უსიამოვნებების გასწორება"
 
 #: engines/nancy/metaengine.cpp:83
 msgid "Fix various minor annoyances."
@@ -8671,7 +8655,7 @@ msgstr "შუა წკაპი"
 #. typically to avoid detection if someone, like a boss, walks by while they are playing.
 #: engines/saga/metaengine.cpp:298
 msgid "Boss key"
-msgstr ""
+msgstr "უფროსის ღილაკი"
 
 #: engines/saga/metaengine.cpp:303
 msgid "Show options"
@@ -9182,7 +9166,7 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1148
 msgid "Audio-visual improvements"
-msgstr ""
+msgstr "აუდიო-ვიზუალური გაუმჯობესებები"
 
 #: engines/scumm/dialogs.cpp:1149
 msgid ""
@@ -9233,7 +9217,7 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1391
 msgid "Music Quality:"
-msgstr ""
+msgstr "მუსიკის ხარისხი:"
 
 #: engines/scumm/dialogs.cpp:1395
 msgid ""
@@ -9974,10 +9958,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:756
-#, fuzzy
-#| msgid "Disable demo mode"
 msgid "Enable demo/kiosk mode"
-msgstr "დემო რეჟიმის გამორთვა"
+msgstr "დემო/კიოსკის რეჟიმის ჩართვა"
 
 #: engines/scumm/metaengine.cpp:757
 msgid "Enable demo/kiosk mode in the full retail version of Maniac Mansion."
@@ -10738,7 +10720,7 @@ msgstr "სპეციალური ქმედება"
 
 #: engines/twine/metaengine.cpp:432
 msgid "Scenery Zoom"
-msgstr ""
+msgstr "სცენის მასშტაბი"
 
 #: engines/twine/metaengine.cpp:470 engines/twine/metaengine.cpp:522
 #: engines/twine/metaengine.cpp:538
@@ -10816,7 +10798,7 @@ msgstr ""
 #. I18N: Setting to enable or disable additional jokes in the game.
 #: engines/twp/dialogs.cpp:41
 msgid "Annoying in-jokes"
-msgstr ""
+msgstr "მოსაწყენი ხუმრობები"
 
 #: engines/twp/dialogs.cpp:42
 msgid ""
@@ -10838,17 +10820,17 @@ msgstr ""
 #. I18N: Setting to use retro or modern fonts.
 #: engines/twp/dialogs.cpp:50
 msgid "Retro Fonts"
-msgstr ""
+msgstr "რეტრო ფონტები"
 
 #. I18N: Setting to use retro or modern verbs.
 #: engines/twp/dialogs.cpp:52
 msgid "Retro Verbs"
-msgstr ""
+msgstr "რეტრო ზმნები"
 
 #. I18N: Setting to use classic sentence or modern sentence.
 #: engines/twp/dialogs.cpp:54
 msgid "Classic Sentence"
-msgstr ""
+msgstr "კლასიკური წინადადება"
 
 #. I18N: Settings to enable or disable Ransome unbeeped DLC.
 #: engines/twp/dialogs.cpp:57
@@ -11035,11 +11017,11 @@ msgstr "ორიგინალური შენახული"
 
 #: engines/ultima/nuvie/metaengine.cpp:206
 msgid "Ultima VI"
-msgstr ""
+msgstr "Ultima VI"
 
 #: engines/ultima/nuvie/metaengine.cpp:208
 msgid "Martian Dreams"
-msgstr ""
+msgstr "Martian Dreams"
 
 #: engines/ultima/nuvie/metaengine.cpp:210
 msgid "The Savage Empire"
@@ -11530,7 +11512,7 @@ msgstr "წინა ქმედება"
 
 #: engines/wintermute/keymapper_tables.h:826
 msgid "Volume off"
-msgstr ""
+msgstr "ხმის გამორთვა"
 
 #: engines/wintermute/keymapper_tables.h:840
 msgid "Change font size"
@@ -11552,7 +11534,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1314
 #: engines/wintermute/keymapper_tables.h:1872
 msgid "Cancel waiting"
-msgstr ""
+msgstr "მოლოდინის გაუქმება"
 
 #: engines/wintermute/keymapper_tables.h:965
 msgid "First page"
@@ -11609,35 +11591,35 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1052
 msgid "Ability: Telekinesis"
-msgstr ""
+msgstr "შესაძლებლობა: ტელეკინეზი"
 
 #: engines/wintermute/keymapper_tables.h:1057
 msgid "Ability: Push"
-msgstr ""
+msgstr "შესაძლებლობა: მიწოლა"
 
 #: engines/wintermute/keymapper_tables.h:1062
 msgid "Ability: Lightning"
-msgstr ""
+msgstr "შესაძლებლობა: ელვა"
 
 #: engines/wintermute/keymapper_tables.h:1067
 msgid "Ability: Light"
-msgstr ""
+msgstr "შესაძლებლობა: სინათლე"
 
 #: engines/wintermute/keymapper_tables.h:1072
 msgid "Ability: Wind"
-msgstr ""
+msgstr "შესაძლებლობა: ქარი"
 
 #: engines/wintermute/keymapper_tables.h:1077
 msgid "Ability: Sound"
-msgstr ""
+msgstr "შესაძლებლობა: ხმა"
 
 #: engines/wintermute/keymapper_tables.h:1082
 msgid "Ability: Esence"
-msgstr ""
+msgstr "შესაძლებლობა: სუნი"
 
 #: engines/wintermute/keymapper_tables.h:1087
 msgid "Ability: Exorcist"
-msgstr ""
+msgstr "შესაძლებლობა: ეგზორცისტი"
 
 #: engines/wintermute/keymapper_tables.h:1200
 msgid "Show hints / Dance move"
@@ -11661,7 +11643,7 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1283
 msgid "Cancel input"
-msgstr ""
+msgstr "შეყვანის გაუქმება"
 
 #: engines/wintermute/keymapper_tables.h:1345
 msgid "Toggle subtitles"
@@ -11669,18 +11651,18 @@ msgstr "სუბტიტრების გადართვა"
 
 #: engines/wintermute/keymapper_tables.h:1409
 msgid "Hide hints"
-msgstr ""
+msgstr "მინიშნებების დამალვა"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1464
 msgid "Shift key"
-msgstr ""
+msgstr "ღილაკი Shift"
 
 #. I18N: Chapayev is the name of game character, Vasily Chapayev
 #. This action makes Chapayev interact with item instead of Petka
 #: engines/wintermute/keymapper_tables.h:1566
 msgid "Chapayev's action"
-msgstr ""
+msgstr "ჩაპაევის ქმედება"
 
 #: engines/wintermute/keymapper_tables.h:1614
 #: engines/wintermute/keymapper_tables.h:1867
@@ -11725,17 +11707,17 @@ msgstr "გადიდება"
 #: engines/wintermute/keymapper_tables.h:1751
 #: engines/wintermute/keymapper_tables.h:1957
 msgid "Show journal"
-msgstr ""
+msgstr "ჟურნალის ჩვენება"
 
 #. I18N: Displays a debug interface with Bezier curves
 #: engines/wintermute/keymapper_tables.h:1884
 msgid "Bezier window"
-msgstr ""
+msgstr "ბეზიეს ფანჯარა"
 
 #. I18N: Use droid to perform an action
 #: engines/wintermute/keymapper_tables.h:1901
 msgid "Droid's action"
-msgstr ""
+msgstr "დროიდის ქმედება"
 
 #. I18N: It's a Tetris game clone, this action rotates current tetris item
 #: engines/wintermute/keymapper_tables.h:2009
@@ -11782,7 +11764,7 @@ msgstr ""
 #. I18N: Displays a debug FPS counter
 #: engines/wintermute/keymapper_tables.h:2084
 msgid "Debug FPS"
-msgstr ""
+msgstr "FPS-ის გამართვა"
 
 #: engines/wintermute/keymapper_tables.h:2181
 msgid "F1"
@@ -11790,7 +11772,7 @@ msgstr "F1"
 
 #: engines/wintermute/keymapper_tables.h:2186
 msgid "Key i"
-msgstr ""
+msgstr "ღილაკი i"
 
 #: engines/zvision/file/save_manager.cpp:221
 #, c-format
@@ -11801,7 +11783,7 @@ msgstr ""
 
 #: engines/zvision/metaengine.cpp:58
 msgid "Double FPS"
-msgstr ""
+msgstr "ორმაგი FPS"
 
 #: engines/zvision/metaengine.cpp:59
 msgid "Increase framerate from 30 to 60 FPS"
@@ -11809,7 +11791,7 @@ msgstr ""
 
 #: engines/zvision/metaengine.cpp:70
 msgid "Enable Venus"
-msgstr ""
+msgstr "Venus-ის ჩართვა"
 
 #: engines/zvision/metaengine.cpp:71
 msgid "Enable the Venus help system"
@@ -11833,11 +11815,11 @@ msgstr ""
 
 #: engines/zvision/metaengine.cpp:197
 msgid "Look Up"
-msgstr ""
+msgstr "მაღლა ახედვა"
 
 #: engines/zvision/metaengine.cpp:203
 msgid "Look Down"
-msgstr ""
+msgstr "დაბლა დახედვა"
 
 #: engines/zvision/metaengine.cpp:238
 msgid "Spellbook"
@@ -11853,7 +11835,7 @@ msgstr ""
 
 #: engines/zvision/metaengine.cpp:256
 msgid "Extract coin"
-msgstr ""
+msgstr "მონეტის გამოღება"
 
 #: engines/zvision/metaengine.cpp:277
 msgid "Preferences"
