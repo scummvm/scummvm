@@ -1,6 +1,0 @@
-*.o
-*.a
-.deps
-.vscode
-compile_flags.txt
-*.jukit/
