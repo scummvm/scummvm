@@ -165,6 +165,8 @@ void CastleEngine::loadAssetsZXFullGame() {
 	_noEnergyMessage = _messagesList[1];
 	_fallenMessage = _messagesList[4];
 	_crushedMessage = _messagesList[3];
+	_outOfReachMessage = _messagesList[7];
+	_noEffectMessage = _messagesList[8];
 }
 
 void CastleEngine::drawZXUI(Graphics::Surface *surface) {
@@ -185,6 +187,7 @@ void CastleEngine::drawZXUI(Graphics::Surface *surface) {
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
+		//debug("deadline: %d countdown: %d", deadline, _countdown);
 		drawStringInSurface(message, 120, 179, front, black, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
