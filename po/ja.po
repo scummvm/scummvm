@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-19 13:46+0000\n"
-"PO-Revision-Date: 2024-08-19 21:43+0000\n"
+"PO-Revision-Date: 2024-08-20 10:21+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -11043,17 +11043,17 @@ msgstr "タイルセット"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:99
 msgid "Picks the map tileset randomly."
-msgstr ""
+msgstr "タイルセットをランダム選択。"
 
 #. I18N: Percentage of energy pools
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:102
 msgid "Energy"
-msgstr ""
+msgstr "エナジー"
 
 #. I18N: Energy slider label
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:107
 msgid "Scarce - Lots"
-msgstr ""
+msgstr "少 - 多"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:112
 msgid "Picks the random amount of energy pools."
