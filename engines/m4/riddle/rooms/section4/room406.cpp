@@ -27,6 +27,25 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+static const char *const SAID[][2] = {
+	{ "DART BOARD",            "406r03" },
+	{ "MESSAGES",              "406r14" },
+	{ "PAINTING",              "456r01" },
+	{ "OVERHANGING LAMP",      "406r04" },
+	{ "GAMES CABINET",         "406r06" },
+	{ "GAMES CABINET DRAWER",  "406r47" },
+	{ "BROKEN MIRROR",         "406r43" },
+	{ "WRITING DESK",          "406r09a" },
+	{ "WRITING DESK DRAWER",   "406r21" },
+	{ "DESK DRAWER OPEN",      "406r09a" },
+	{ "WRITING DESK ",         "406r09" },
+	{ "LAMP",                  "406r11" },
+	{ "TABLE",                 "406r11" },
+	{ "CHAIR",                 "406r12" },
+	{ "PAINTING ",             "406r13" },
+	{ nullptr, nullptr }
+};
+
 void Room406::preload() {
 	_G(player).walker_type = 1;
 	_G(player).shadow_type = 1;
@@ -259,7 +278,7 @@ void Room406::pre_parser() {
 		_G(player).resetWalk();
 	}
 }
-
+#define LOOK(ITEM) (lookFlag && player_said(ITEM) && inv_object_is_here(ITEM))
 void Room406::parser() {
 	bool lookFlag = player_said_any("look", "look at");
 	bool takeFlag = player_said("take");
@@ -275,6 +294,201 @@ void Room406::parser() {
 		digi_play("406r24", 1);
 	} else if (takeFlag && player_said("BILLIARD BALL") && takeBilliardBall()) {
 		// No implementation
+	} else if (player_said("BILLIARD BALL", "BILLIARD TABLE") && billiardBallOnTable()) {
+		// No implementation
+	} else if (lookFlag && player_said_any("BILLIARD TABLE", "BILLIARD TABLE ")) {
+		if (!_G(flags)[V030])
+			digi_play("406r41", 1);
+		else if (!_G(flags)[V321])
+			digi_play("406r02", 1);
+		else
+			digi_play("406r28", 1);
+	} else if (lookFlag && player_said("CUE CABINET")) {
+		if (_G(flags)[V030])
+			digi_play("406r42", 1);
+		else if (_G(flags)[V321])
+			digi_play("406r29", 1);
+		else
+			digi_play("406r05", 1);
+	} else if (lookFlag && player_said("BALL RACK")) {
+		if (_G(flags)[V030])
+			digi_play("406r42", 1);
+		else if (_G(flags)[V321])
+			digi_play("406r29", 1);
+		else
+			digi_play("406r49", 1);
+	} else if (lookFlag && player_said("GAMES CABINET ")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			digi_play("406r25", 1);
+			if (!_G(flags)[V317]) {
+				player_set_commands_allowed(false);
+				_G(flags)[V317] = 1;
+			}
+			break;
+		case 2:
+			digi_play("406r25a", 1, 255, 3);
+			break;
+		case 3:
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("CABINET DRAWER OPEN")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			if (_G(flags)[V311])
+				digi_play("406r23", 1, 255, 2);
+			else
+				digi_play("406r23", 1, 255, 3);
+			break;
+		case 2:
+			digi_play("406r23a", 1, 255, 3);
+			break;
+		case 3:
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("MIRROR")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			digi_preload("406_s13");
+			_G(flags)[V316] = 1;
+			_lookMirror = series_load("406 RIP LOOKS MIRROR");
+			ws_hide_walker();
+			_ripAction = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x700, 0,
+				triggerMachineByHashCallbackAlways, "rip looks at mirror");
+			sendWSMessage_10000(1, _ripAction, _lookMirror, 1, 17, 2,
+				_lookMirror, 17, 17, 0);
+			break;
+
+		case 1:
+			kernel_timing_trigger(10, 2);
+			break;
+
+		case 2:
+			_mirror = series_place_sprite("CRACKED MIRROR IN BILLIARD RM",
+				0, 0, 0, 100, 0xf00);
+			digi_play("406_s13", 2, 255, 3);
+			break;
+
+		case 3:
+			digi_play("406r07", 1);
+			kernel_timing_trigger(40, 4);
+			break;
+
+		case 4:
+			sendWSMessage_10000(1, _ripAction, _lookMirror, 17, 1, 5,
+				_lookMirror, 1, 1, 0);
+			break;
+
+		case 5:
+			terminateMachineAndNull(_ripAction);
+			series_unload(_lookMirror);
+			ws_unhide_walker();
+			digi_play("406r07A", 1, 255, 6);
+			break;
+
+		case 6:
+			hotspot_set_active("BROKEN MIRROR", true);
+			hotspot_set_active("MIRROR", false);
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("ACE OF SPADES")) {
+		_G(flags)[V311] = 1;
+		digi_play(_G(flags)[V030] ? "406r44" : "406r08", 1);
+	} else if (lookFlag && player_said_any("SWITCH", "ACE OF SPADES ")) {
+		digi_play(player_been_here(456) ? "406r44" : "456r03", 1);
+	} else if (LOOK("BILLIARD BALL")) {
+		digi_play("406r10", 1);
+	} else if (lookFlag && _G(walker).ripley_said(SAID)) {
+		// No implementation
+	} else if (LOOK("ENVELOPE")) {
+		digi_play("406r15", 1);
+	} else if (LOOK("KEYS")) {
+		digi_play("406r16", 1);
+	} else if (lookFlag && player_said("MESSAGE")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			digi_play("406r18", 1, 255, 2);
+			break;
+		case 2:
+			digi_play("406r18a", 1, 255, 3);
+			break;
+		case 3:
+			digi_play("406r18b", 1, 255, 4);
+			break;
+		case 4:
+			digi_play("406r18c", 1, 255, 5);
+			break;
+		case 5:
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("STAMP")) {
+		digi_play("406r19", 1);
+	} else if (lookFlag && player_said(" ")) {
+		digi_play(_G(flags)[V030] ? "406r40" : "406r01", 1);
+	} else if (useFlag && player_said("DART BOARD")) {
+		digi_play("406r20", 1);
+	} else if (useFlag && player_said_any("BILLIARD TABLE",
+			"BILLIARD TABLE ") && _G(flags)[V312] == 1) {
+		switch (_G(kernel).trigger) {
+		case 1:
+			_rptmr15 = series_load("RPTMR15");
+			setGlobals1(_rptmr15, 1, 12, 12, 12, 0, 12, 1, 1, 1);
+			sendWSMessage_110000(2);
+			break;
+		case 2:
+			sendWSMessage_120000(4);
+			_tableRaises = series_load("808 BILLIARDS TABLE RAISES");
+			digi_play("406_s11", 2);
+			terminateMachineAndNull(_billiardTable);
+			_billiardTable = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x200, 0,
+				triggerMachineByHashCallbackAlways, "Table raises");
+			sendWSMessage_10000(1, _billiardTable, _tableRaises, 1, 24, 6,
+				_tableRaises, 24, 24, 0);
+			break;
+		case 4:
+			sendWSMessage_150000(5);
+			break;
+		case 5:
+			series_unload(_rptmr15);
+			break;
+		case 6:
+			terminateMachineAndNull(_billiardTable);
+			series_unload(_tableRaises);
+			hotspot_set_active("BILLIARD TABLE", false);
+			hotspot_set_active("BILLIARD TABLE ", false);
+			hotspot_set_active("STAIRS", true);
+			_billiardTable = series_place_sprite("406 BILLIARD TABLE UP", 0, 0, 0, 100, 0x200);
+			_G(flags)[V312] = 2;
+			player_set_commands_allowed(true);
+			break;
+		case 69:
+			player_set_commands_allowed(false);
+			ws_walk(205, 333, nullptr, 1, 5);
+			break;
+		default:
+			break;
+		}
+	} else if (useFlag && player_said("SWITCH")) {
+		if (_G(flags)[kPaintingOpen])
+			useSwitchPaintingOpen();
+		else
+			useSwitchPaintingClosed();
 	}
 	// TODO
 	else {
@@ -283,6 +497,7 @@ void Room406::parser() {
 
 	_G(player).command_ready = false;
 }
+#undef LOOK
 
 void Room406::disableHotspots() {
 	for (auto *hs = _G(currentSceneDef).hotspots; hs; hs = hs->next)
@@ -380,9 +595,56 @@ bool Room406::takeBilliardBall() {
 			_pickupBall = series_load("406 RIP PICKUP BALL");
 			ws_hide_walker();
 
-			_ripPickupBall = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
+			_ripAction = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, false,
 				triggerMachineByHashCallbackAlways, "RIP picks up ball");
-			// TODO
+			sendWSMessage_10000(1, _ripAction, _pickupBall, 1, 14, 2,
+				_pickupBall, 14, 14, 0);
+			return true;
+		}
+		break;
+
+	case 2:
+		terminateMachineAndNull(_poolBall);
+		inv_give_to_player("BILLIARD BALL");
+		hotspot_set_active("BILLIARD BALL", false);
+		kernel_examine_inventory_object("PING BILLIARD BALL", _G(master_palette),
+			5, 1, 125, 240, 3, 0, -1);
+		return true;
+
+	case 3:
+		sendWSMessage_10000(1, _ripAction, _pickupBall, 14, 1, 4,
+			_pickupBall, 1, 1, 0);
+		return true;
+
+	case 4:
+		terminateMachineAndNull(_ripAction);
+		ws_unhide_walker();
+		series_unload(_pickupBall);
+		player_set_commands_allowed(true);
+		return true;
+
+	default:
+		break;
+	}
+
+	return false;
+}
+
+bool Room406::billiardBallOnTable() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		return true;
+
+	case 1:
+		if (inv_player_has("BILLIARD BALL")) {
+			player_set_commands_allowed(false);
+			_pickupBall = series_load("406 RIP PICKUP BALL");
+			ws_hide_walker();
+			_ripAction = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+				triggerMachineByHashCallbackAlways, "RIP picks up ball");
+			sendWSMessage_10000(1, _ripAction, _pickupBall, 1, 14, 2,
+				_pickupBall, 14, 14, 0);
+			return true;
 		}
 		break;
 
@@ -391,6 +653,102 @@ bool Room406::takeBilliardBall() {
 	}
 
 	return false;
+}
+
+void Room406::useSwitchPaintingOpen() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_ripHiHand = series_load("rip trek hi 1 hand");
+		setGlobals1(_ripHiHand, 1, 5, 5, 5, 0, 5, 1, 1, 1);
+		sendWSMessage_110000(1);
+		break;
+
+	case 1:
+		hotspot_set_active("PAINTING", true);
+		hotspot_set_active("SMOKING HUTCH", false);
+		terminateMachineAndNull(_painting);
+		_paintingOpening = series_load("406 PAINTING OPENING");
+		digi_play("406_s07", 2, 255, 69);
+		_painting = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+			triggerMachineByHashCallbackAlways, "HUTCH painting opens");
+		sendWSMessage_10000(1, _painting, _paintingOpening, 30, 1, 2,
+			_paintingOpening, 1, 1, 0);
+		break;
+
+	case 2:
+		terminateMachineAndNull(_painting);
+		series_unload(_paintingOpening);
+		_painting = series_place_sprite("406 PAINTING CLOSED",
+			0, 0, 0, 100, 0xf00);
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripHiHand);
+		_G(flags)[kPaintingOpen] = 0;
+		player_set_commands_allowed(true);
+		break;
+
+	case 69:
+		digi_play("406_s09", 2);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room406::useSwitchPaintingClosed() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_ripHiHand = series_load("rip trek hi 1 hand");
+		setGlobals1(_ripHiHand, 1, 5, 5, 5, 0, 5, 1, 1, 1);
+		sendWSMessage_110000(1);
+		break;
+
+	case 1:
+		hotspot_set_active("PAINTING", false);
+		hotspot_set_active("SMOKING HUTCH", true);
+		terminateMachineAndNull(_painting);
+		_paintingOpening = series_load("406 PAINTING OPENING");
+		digi_play("406_s07", 2, 255, 69);
+		_painting = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+			triggerMachineByHashCallbackAlways, "HUTCH painting opens");
+		sendWSMessage_10000(1, _painting, _paintingOpening, 1, 30, 2,
+			_paintingOpening, 30, 30, 0);
+		break;
+
+	case 2:
+		terminateMachineAndNull(_painting);
+		series_unload(_paintingOpening);
+		_painting = series_place_sprite("406 PAINTING OPEN",
+			0, 0, 0, 100, 0xf00);
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripHiHand);
+		_G(flags)[kPaintingOpen] = 1;
+		player_set_commands_allowed(true);
+		break;
+
+	case 69:
+		digi_play("406_s08", 2);
+		break;
+
+	default:
+		break;
+	}
 }
 
 } // namespace Rooms
