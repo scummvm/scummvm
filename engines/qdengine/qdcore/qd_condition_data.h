@@ -51,11 +51,11 @@ public:
 	}
 
 	int get_int(int index = 0) const {
-		return reinterpret_cast<const int *>(&*_data.begin())[index];
+		return reinterpret_cast<const int32 *>(&*_data.begin())[index];
 	}
 	bool put_int(int value, int index = 0) {
-		if (static_cast<int>(_data.size()) >= static_cast<int>((index - 1) * sizeof(int))) {
-			reinterpret_cast<int *>(&*_data.begin())[index] = value;
+		if (static_cast<int>(_data.size()) >= static_cast<int>((index - 1) * sizeof(int32))) {
+			reinterpret_cast<int32 *>(&*_data.begin())[index] = value;
 			return true;
 		}
 
