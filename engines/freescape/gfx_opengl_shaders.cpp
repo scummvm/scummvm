@@ -223,7 +223,6 @@ void OpenGLShaderRenderer::renderPlayerShootBall(byte color, const Common::Point
 	Common::Point initial_position(viewArea.left + viewArea.width() / 2 + 2, _screenH - (viewArea.height() + viewArea.top));
 	Common::Point ball_position = coef * position + (1 - coef) * initial_position;
 
-	glEnableClientState(GL_VERTEX_ARRAY);
 	copyToVertexArray(0, Math::Vector3d(remap(ball_position.x, _screenW), remap(ball_position.y, _screenH), 0));
 
 	for(int i = 0; i <= triangleAmount; i++) {
@@ -326,7 +325,6 @@ void OpenGLShaderRenderer::drawCelestialBody(Math::Vector3d position, float radi
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
-	glEnableClientState(GL_VERTEX_ARRAY);
 	copyToVertexArray(0, position);
 
 	for(int i = 0; i <= triangleAmount; i++) {
