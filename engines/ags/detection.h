@@ -67,6 +67,7 @@ class AGSMetaEngineDetection : public AdvancedMetaEngineDetection<AGS::AGSGameDe
 	mutable Common::String _gameid;
 	mutable Common::String _extra;
 	mutable Common::Path _filename;
+	mutable Common::String _filenameStr;
 	mutable Common::String _md5;
 
 	static const DebugChannelDef debugFlagList[];

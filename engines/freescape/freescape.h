@@ -74,7 +74,8 @@ enum FREESCAPEAction {
 	kActionToggleRiseLower,
 	kActionRiseOrFlyUp,
 	kActionLowerOrFlyDown,
-	kActionChangeModeOrSkip,
+	kActionChangeMode,
+	kActionSkip,
 	kActionFaceForward,
 	kActionRotateUp,
 	kActionRotateDown,
@@ -383,7 +384,7 @@ public:
 	bool executeObjectConditions(GeometricObject *obj, bool shot, bool collided, bool activated);
 	void executeEntranceConditions(Entrance *entrance);
 	void executeLocalGlobalConditions(bool shot, bool collided, bool timer);
-	void executeCode(FCLInstructionVector &code, bool shot, bool collided, bool timer, bool activated);
+	bool executeCode(FCLInstructionVector &code, bool shot, bool collided, bool timer, bool activated);
 
 	// Instructions
 	bool checkConditional(FCLInstruction &instruction, bool shot, bool collided, bool timer, bool activated);
@@ -492,6 +493,8 @@ public:
 	Common::String _timeoutMessage;
 	Common::String _forceEndGameMessage;
 	Common::String _crushedMessage;
+	Common::String _outOfReachMessage;
+	Common::String _noEffectMessage;
 
 	void loadMessagesFixedSize(Common::SeekableReadStream *file, int offset, int size, int number);
 	virtual void loadMessagesVariableSize(Common::SeekableReadStream *file, int offset, int number);
@@ -520,6 +523,7 @@ public:
 	uint32 _gameStateBits;
 	virtual bool checkIfGameEnded();
 	virtual void endGame();
+	int _endGameDelayTicks;
 	bool _endGameKeyPressed;
 	bool _endGamePlayerEndArea;
 	bool _forceEndGame;

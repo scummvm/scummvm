@@ -29,6 +29,8 @@
 #include "common/savefile.h"
 #include "common/textconsole.h"
 
+#include "backends/keymapper/keymapper.h"
+
 #include "engines/util.h"
 
 #include "graphics/cursorman.h"
@@ -641,40 +643,34 @@ void TuckerEngine::parseEvents() {
 	Common::Event ev;
 	while (_eventMan->pollEvent(ev)) {
 		switch (ev.type) {
-		case Common::EVENT_KEYDOWN:
-			switch (ev.kbd.ascii) {
-			// do not use KEYCODE_PERIOD here so that it works with most keyboard layouts
-			case '.':
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			switch (ev.customType) {
+			case kActionEscape:
+				_inputKeys[kInputKeyEscape] = true;
+				// fall through
+			case kActionSkipSpeech:
 				_inputKeys[kInputKeySkipSpeech] = true;
 				break;
-			default:
+			case kActionFastMode:
+				_fastMode = !_fastMode;
 				break;
-			}
-			switch (ev.kbd.keycode) {
-			case Common::KEYCODE_f:
-				if (ev.kbd.hasFlags(Common::KBD_CTRL)) {
-					_fastMode = !_fastMode;
-				}
-				break;
-			case Common::KEYCODE_p:
+			case kActionPause:
 				_inputKeys[kInputKeyPause] = true;
 				break;
-			case Common::KEYCODE_F1:
+			case kActionTogglePanelStyle:
 				_inputKeys[kInputKeyTogglePanelStyle] = true;
 				break;
-			case Common::KEYCODE_F2:
+			case kActionToggleTextSpeech:
 				_inputKeys[kInputKeyToggleTextSpeech] = true;
 				break;
-			case Common::KEYCODE_F3:
+			case kActionHelp:
 				_inputKeys[kInputKeyHelp] = true;
-				break;
-			case Common::KEYCODE_ESCAPE:
-				_inputKeys[kInputKeyEscape] = true;
-				_inputKeys[kInputKeySkipSpeech] = true;
 				break;
 			default:
 				break;
 			}
+			break;
+		case Common::EVENT_KEYDOWN:
 			_lastKeyPressed = ev.kbd.keycode;
 			break;
 		case Common::EVENT_MOUSEMOVE:
@@ -1638,6 +1634,13 @@ void TuckerEngine::drawData3() {
 }
 
 void TuckerEngine::execData3PreUpdate() {
+	Common::Keymapper *keymapper = _eventMan->getKeymapper();
+	if (_location == kLocationComputerScreen) {
+		keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	} else {
+		keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+	}
+
 	switch (_location) {
 	case 1:
 		execData3PreUpdate_locationNum1();

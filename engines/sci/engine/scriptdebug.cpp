@@ -626,7 +626,7 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 	Resource *script = _resMan->findResource(ResourceId(kResourceTypeScript, scriptNumber), false);
 
 	if (!script) {
-		warning("dissectScript(): Script not found!\n");
+		warning("dissectScript(): Script not found");
 		return;
 	}
 

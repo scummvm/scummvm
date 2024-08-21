@@ -43,7 +43,7 @@ void FreescapeEngine::titleScreen() {
 				break;
 			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				switch (event.customType) {
-				case kActionChangeModeOrSkip:
+				case kActionSkip:
 					maxWait = -1;
 					break;
 				default:
@@ -137,23 +137,24 @@ void FreescapeEngine::borderScreen() {
 	if (isDOS() || isSpectrum()) {
 		Common::Array<Common::String> lines;
 		if (isDOS())
-			lines.push_back(centerAndPadString("Configuration Menu", 25));
+			lines.push_back(centerAndPadString("Configuration Menu", 30));
 		else
-			lines.push_back(centerAndPadString("Control Options", 21));
+			lines.push_back(centerAndPadString("Control Options", 25));
 		lines.push_back("");
-		lines.push_back("1: KEYBOARD ONLY");
-		lines.push_back("2: IBM JOYSTICK");
-		lines.push_back("3: AMSTRAD JOYSTICK");
+		lines.push_back(centerAndPadString("1: KEYBOARD ONLY   ", isDOS() ? 30 : 25));
+		lines.push_back(centerAndPadString("2: IBM JOYSTICK    ", isDOS() ? 30 : 25));
+		lines.push_back(centerAndPadString("3: AMSTRAD JOYSTICK", isDOS() ? 30 : 25));
 		lines.push_back("");
-		if (isDOS())
-			lines.push_back(" SPACEBAR:  BEGIN MISSION");
-		else
-			lines.push_back(centerAndPadString("Enter: Begin Mission", 21));
 		lines.push_back("");
 		if (isDOS())
-			lines.push_back(" COPYRIGHT 1988 INCENTIVE");
+			lines.push_back(centerAndPadString("SPACEBAR:  BEGIN MISSION", 30));
 		else
-			lines.push_back(centerAndPadString("(c) 1988 Incentive", 22));
+			lines.push_back(centerAndPadString("Enter: Begin Mission", 25));
+		lines.push_back("");
+		if (isDOS())
+			lines.push_back(centerAndPadString("COPYRIGHT 1988 INCENTIVE", 30));
+		else
+			lines.push_back(centerAndPadString("(c) 1988 Incentive", 25));
 
 		lines.push_back("");
 		Graphics::Surface *surface = drawStringsInSurface(lines);
@@ -204,7 +205,7 @@ void FreescapeEngine::drawBorderScreenAndWait(Graphics::Surface *surface, int ma
 				break;
 			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				switch (event.customType) {
-				case kActionChangeModeOrSkip:
+				case kActionSkip:
 					maxWait = -1;
 					break;
 				default:

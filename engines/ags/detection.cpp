@@ -177,7 +177,9 @@ ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 
 			AGS::g_fallbackDesc.desc.gameId = _gameid.c_str();
 			AGS::g_fallbackDesc.desc.extra = _extra.c_str();
-			AGS::g_fallbackDesc.desc.filesDescriptions[0].fileName = _filename.toString('/').c_str();
+
+			_filenameStr = _filename.toString('/');
+			AGS::g_fallbackDesc.desc.filesDescriptions[0].fileName = _filenameStr.c_str();
 			AGS::g_fallbackDesc.desc.filesDescriptions[0].fileSize = (f.size() >= 0xffffffff) ? AD_NO_SIZE : f.size();
 			AGS::g_fallbackDesc.desc.filesDescriptions[0].md5 = _md5.c_str();
 

@@ -55,6 +55,10 @@ void Room::triggerMachineByHashCallbackNegative(frac16 myMessage, machine *) {
 		kernel_trigger_dispatchx(hi);
 }
 
+void Room::triggerMachineByHashCallbackAlways(frac16 myMessage, machine *sender) {
+	kernel_trigger_dispatchx(myMessage);
+}
+
 void Room::triggerMachineByHashCallback3000(frac16 myMessage, machine *sender) {
 	int triggerType = _G(globals)[GLB_TEMP_1] >> 16;
 	int param = _G(globals)[GLB_TEMP_2] >> 16;

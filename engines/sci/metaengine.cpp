@@ -125,7 +125,7 @@ static Common::String convertSierraGameId(Common::String sierraId, SciVersion sc
 			return "msastrochicken";
 	}
 
-	for (const GameIdStrToEnum *cur = s_gameIdStrToEnum; cur->gameidStr; ++cur) {
+	for (const GameIdStrToEnum *cur = gameIdStrToEnum; cur->gameidStr; ++cur) {
 		if (sierraId == cur->sierraIdStr) {
 			// Distinguish same IDs via the SCI version
 			if (cur->version != SCI_VERSION_NONE && cur->version != sciVersion)
@@ -204,7 +204,7 @@ public:
 };
 
 Common::Error SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const GameIdStrToEnum *g = s_gameIdStrToEnum;
+	const GameIdStrToEnum *g = gameIdStrToEnum;
 	for (; g->gameidStr; ++g) {
 		if (0 == strcmp(desc->gameId, g->gameidStr)) {
 #ifndef ENABLE_SCI32

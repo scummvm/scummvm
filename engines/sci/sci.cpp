@@ -384,7 +384,7 @@ Common::Error SciEngine::run() {
 	// we try to find the super class address of the game object, we can't do that earlier
 	const Object *gameObject = segMan->getObject(_gameObjectAddress);
 	if (!gameObject) {
-		warning("Could not get game object, aborting...");
+		warning("Could not get game object, aborting");
 		return Common::kUnknownError;
 	}
 

@@ -79,9 +79,16 @@ void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *
 	act->addDefaultInputMapping("l");
 	engineKeyMap->addAction(act);
 
-	// I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
-	act = new Common::Action("SWITCH", _("Change mode/Skip"));
-	act->setCustomEngineActionEvent(kActionChangeModeOrSkip);
+	act = new Common::Action("SKIP", _("Skip"));
+	act->setCustomEngineActionEvent(kActionSkip);
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("RETURN");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+  // I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
+	act = new Common::Action("SWITCH", _("Change mode"));
+	act->setCustomEngineActionEvent(kActionChangeMode);
 	act->addDefaultInputMapping("SPACE");
 	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
@@ -433,16 +440,21 @@ bool FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, 
 
 	Math::Vector3d direction = newPosition - lastPosition;
 	direction.normalize();
-	ray = Math::Ray(lastPosition, direction);
 	int rayLenght = 45;
 	if (_currentArea->getScale() >= 5)
 		rayLenght = MAX(5, 45 / (2 * _currentArea->getScale()));
 
-	collided = _currentArea->checkCollisionRay(ray, rayLenght);
-	if (collided) {
-		gobj = (GeometricObject *)collided;
-		debugC(1, kFreescapeDebugMove, "Collided with object id %d of size %f %f %f", gobj->getObjectID(), gobj->getSize().x(), gobj->getSize().y(), gobj->getSize().z());
-		executed |= executeObjectConditions(gobj, false, true, false);
+	for (int i = 0; i <= 2; i++) {
+		Math::Vector3d rayPosition = lastPosition;
+		rayPosition.y() = rayPosition.y() - _playerHeight * (i / 4.0);
+		ray = Math::Ray(rayPosition, direction);
+		collided = _currentArea->checkCollisionRay(ray, rayLenght);
+		if (collided) {
+			gobj = (GeometricObject *)collided;
+			debugC(1, kFreescapeDebugMove, "Collided with object id %d of size %f %f %f", gobj->getObjectID(), gobj->getSize().x(), gobj->getSize().y(), gobj->getSize().z());
+			executed |= executeObjectConditions(gobj, false, true, false);
+			break;
+		}
 	}
 
 	return executed;

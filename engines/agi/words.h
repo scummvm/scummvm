@@ -52,8 +52,9 @@ public:
 	const char *getEgoWord(int16 wordNr);
 	uint16 getEgoWordId(int16 wordNr);
 
-	int  loadDictionary_v1(Common::File &f);
+	int  loadDictionary_v1(Common::SeekableReadStream &stream);
 	int  loadDictionary(const char *fname);
+	int  loadDictionary(Common::SeekableReadStream &stream);
 	// used for fan made translations requiring extended char set
 	int  loadExtendedDictionary(const char *fname);
 	void unloadDictionary();

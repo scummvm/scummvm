@@ -304,7 +304,7 @@ void Console::postEnter() {
 			playVideo(*videoDecoder);
 			_engine->_gfxCursor->kernelShow();
 		} else
-			warning("Could not play video %s\n", _videoFile.toString(Common::Path::kNativeSeparator).c_str());
+			warning("Could not play video %s", _videoFile.toString(Common::Path::kNativeSeparator).c_str());
 
 		_videoFile.clear();
 		_videoFrameDelay = 0;

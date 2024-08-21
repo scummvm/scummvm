@@ -115,9 +115,12 @@ bool FreescapeEngine::executeObjectConditions(GeometricObject *obj, bool shot, b
 			debugC(1, kFreescapeDebugCode, "Executing with activated flag: %s", obj->_conditionSource.c_str());
 		else
 			error("Neither shot or collided flag is set!");
-		executeCode(obj->_condition, shot, collided, false, activated); // TODO: check this last parameter
-		executed = true;
+		executed = executeCode(obj->_condition, shot, collided, false, activated); // TODO: check this last parameter
 	}
+	if (activated && !executed)
+		if (!_noEffectMessage.empty())
+			insertTemporaryMessage(_noEffectMessage, _countdown - 2);
+
 	return executed;
 }
 
@@ -140,9 +143,10 @@ void FreescapeEngine::executeLocalGlobalConditions(bool shot, bool collided, boo
 	_executingGlobalCode = false;
 }
 
-void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool collided, bool timer, bool activated) {
+bool FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool collided, bool timer, bool activated) {
 	int ip = 0;
 	bool skip = false;
+	bool executed = false;
 	int codeSize = code.size();
 	assert(codeSize > 0);
 	while (ip <= codeSize - 1) {
@@ -154,6 +158,9 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			ip++;
 			continue;
 		}
+
+		if (instruction.getType() != Token::CONDITIONAL)
+			executed = true;
 
 		switch (instruction.getType()) {
 		default:
@@ -273,6 +280,7 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 		}
 		ip++;
 	}
+	return executed;
 }
 
 void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {

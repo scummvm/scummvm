@@ -58,7 +58,7 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 		screenObj.cycleTimeCount = 1;
 		screenObj.stepSize = 1;
 	}
-	agiUnloadResources();
+	unloadResources();
 
 	_game.playerControl = true;
 	_game.block.active = false;
@@ -69,7 +69,7 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 	setVar(VM_VAR_BORDER_CODE, 0);
 	setVar(VM_VAR_EGO_VIEW_RESOURCE, screenObjEgo->currentViewNr);
 
-	agiLoadResource(RESOURCETYPE_LOGIC, newRoomNr);
+	loadResource(RESOURCETYPE_LOGIC, newRoomNr);
 
 	// Reposition ego in the new room
 	switch (getVar(VM_VAR_BORDER_TOUCH_EGO)) {
@@ -96,7 +96,7 @@ void AgiEngine::newRoom(int16 newRoomNr) {
 
 		screenObjEgo->flags &= ~fDidntMove;
 		// animateObject(0);
-		agiLoadResource(RESOURCETYPE_VIEW, screenObjEgo->currentViewNr);
+		loadResource(RESOURCETYPE_VIEW, screenObjEgo->currentViewNr);
 		setView(screenObjEgo, screenObjEgo->currentViewNr);
 
 	} else {
@@ -343,7 +343,7 @@ int AgiEngine::playGame() {
 	_game.gfxMode = true;
 	_text->promptRow_Set(22);
 
-	debug(0, "Running AGI script.\n");
+	debug(0, "Running AGI script");
 
 	setFlag(VM_FLAG_ENTERED_CLI, false);
 	setFlag(VM_FLAG_SAID_ACCEPTED_INPUT, false);

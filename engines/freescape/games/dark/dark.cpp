@@ -753,6 +753,9 @@ void DarkEngine::drawBinaryClock(Graphics::Surface *surface, int xPosition, int 
 	if (_gameStateControl == kFreescapeGameStatePlaying)
 		number = _ticks / 2;
 	else if (_gameStateControl == kFreescapeGameStateEnd) {
+		if (_endGameDelayTicks > 0) // Wait until the endgame is ready
+			return;
+
 		if (_gameStateVars[kVariableDarkEnding] == 0)
 			number = (1 << 15) - 1;
 		else
