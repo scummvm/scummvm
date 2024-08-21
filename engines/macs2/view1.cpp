@@ -991,7 +991,8 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	}
 	*/
 
-	AnimationReader testReader(this->GameObject->Blobs[blobIndex]);
+	// Old code from before 1480 implementation here
+	/* AnimationReader testReader(this->GameObject->Blobs[blobIndex]);
 	uint16 numAnimations = testReader.readNumAnimations();
 	debug("Number of animation frames: %.4", numAnimations);
 
@@ -1011,8 +1012,12 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	// testReader.SeekToAnimation(0);
 	// Skip ahead to the width and height
 	testReader.readStream->seek(6, SEEK_CUR);
-	
-	result->ReadFromStream(testReader.readStream);
+	*/
+	uint16 offset = BackgroundAnimationBlob::Func1480(GameObject->Blobs[blobIndex], false, 0);
+	AnimFrame *result = new AnimFrame();
+	Common::MemoryReadStream stream(GameObject->Blobs[blobIndex].data(), GameObject->Blobs[blobIndex].size());
+	stream.seek(offset);
+	result->ReadFromStream(&stream);
 	return result;
 	// TODO: Think about proper memory management
 }
