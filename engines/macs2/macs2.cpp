@@ -1286,7 +1286,7 @@ AnimFrame BackgroundAnimationBlob::GetFrame(uint32 index) {
 	// TODO: Think about proper memory management
 }
 
-bool BackgroundAnimationBlob::GetIsAutoUpdated(uint16 bpp8) const {
+bool BackgroundAnimationBlob::GetIsAutoUpdated(bool bpp6, uint16 bpp8) const {
 	Common::MemoryReadStreamEndian stream(Blob.data(), Blob.size(), false);
 
 
@@ -1385,19 +1385,43 @@ bool BackgroundAnimationBlob::GetIsAutoUpdated(uint16 bpp8) const {
 		stream.seek(0x2, SEEK_CUR);
 		uint16 bp16 = stream.readUint16();
 		uint16 bp18 = stream.readUint16();
+		// This is the amount of bytes of the frame (width * height)
 		uint16 bx = bp16 * bp18;
-
-		// TODO: Use the logic properly for the loop - either implement verbatim or adjust
-	mov	bx,ax
-	dec	cx
-	jz	158Dh
-
-l00B7_1589:
-	;; If cx != 0, add bx = [bp-16] * [bp-18h] to si, and loop
-	add	si,bx
-	jmp	156Dh
+		stream.seek(bx, SEEK_CUR);
 	}
-	
+
+	// l00B7_158D:
+	stream.seek(-6, SEEK_CUR);
+	uint16 bp12 = stream.pos();
+	// TODO: Check if indendation is right here
+	if (bpp8 == 0x02) {
+		if (bp0C < 0xA) {
+			// l00B7_15A2:
+			bp6++;
+			if (bp10 > 0) {
+				bp10--;
+			}
+			// l00B7_15AE:
+			if (bp10 == 0) {
+				// l00B7_15B4:
+				if (bp8 > 0) {
+					// l00B7_15BA:
+					bp8--;
+					bp6 = bp0A;
+				}
+			}
+		}
+	}
+	// l00B7_15C3:
+	if (bp6 >= bp0E) {
+		bp6 = 1;
+	}
+	// l00B7_15D0:
+	if (bpp6) {
+		// l00B7_15D6:
+		// TODO: FInish here
+	}
+
 
 
 
