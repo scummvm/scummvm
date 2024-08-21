@@ -531,10 +531,10 @@ bool qdCamera::save_script(Common::WriteStream &fh, int indent) const {
 
 const Vect2i qdCamera::screen_center_limit_x() const {
 	int x0, x1;
-	if (_scrSize.x < qdGameConfig::get_config().screen_sx()) {
-		x0 = x1 = qdGameConfig::get_config().screen_sx() / 2;
+	if (_scrSize.x < g_engine->_screenW) {
+		x0 = x1 = g_engine->_screenW / 2;
 	} else {
-		x0 = -_scrSize.x / 2 + qdGameConfig::get_config().screen_sx();
+		x0 = -_scrSize.x / 2 + g_engine->_screenW;
 		x1 = _scrSize.x / 2;
 	}
 
@@ -548,10 +548,10 @@ const Vect2i qdCamera::screen_center_limit_x() const {
 
 const Vect2i qdCamera::screen_center_limit_y() const {
 	int y0, y1;
-	if (_scrSize.y < qdGameConfig::get_config().screen_sy()) {
-		y0 = y1 = qdGameConfig::get_config().screen_sy() / 2;
+	if (_scrSize.y < g_engine->_screenH) {
+		y0 = y1 = g_engine->_screenH / 2;
 	} else {
-		y0 = -_scrSize.y / 2 + qdGameConfig::get_config().screen_sy();
+		y0 = -_scrSize.y / 2 + g_engine->_screenH;
 		y1 = _scrSize.y / 2;
 	}
 
@@ -571,17 +571,17 @@ void qdCamera::move_scr_center(int dxc, int dyc) {
 }
 
 float qdCamera::scrolling_phase_x() const {
-	if (_scrSize.x <= qdGameConfig::get_config().screen_sx())
+	if (_scrSize.x <= g_engine->_screenW)
 		return 0.0f;
 	else
-		return float(_scrCenter.x * 2 + _scrSize.x - qdGameConfig::get_config().screen_sx() * 2) / float(_scrSize.x - qdGameConfig::get_config().screen_sx()) - 1.0f;
+		return float(_scrCenter.x * 2 + _scrSize.x - g_engine->_screenW * 2) / float(_scrSize.x - g_engine->_screenW) - 1.0f;
 }
 
 float qdCamera::scrolling_phase_y() const {
-	if (_scrSize.y <= qdGameConfig::get_config().screen_sy())
+	if (_scrSize.y <= g_engine->_screenH)
 		return 0.0f;
 	else
-		return float(_scrCenter.y * 2 + _scrSize.y - qdGameConfig::get_config().screen_sy() * 2) / float(_scrSize.x - qdGameConfig::get_config().screen_sy()) - 1.0f;
+		return float(_scrCenter.y * 2 + _scrSize.y - g_engine->_screenH * 2) / float(_scrSize.x - g_engine->_screenH) - 1.0f;
 }
 
 bool qdCamera::draw_grid() const {
@@ -1038,8 +1038,8 @@ bool qdCamera::quant(float dt) {
 		if (p) {
 			Vect2i r = p->screen_pos() + _current_mode.center_offset();
 
-			int cx = _scrCenter.x + qdGameConfig::get_config().screen_sx() / 2 - r.x;
-			int cy = _scrCenter.y + qdGameConfig::get_config().screen_sy() / 2 - r.y;
+			int cx = _scrCenter.x + g_engine->_screenW / 2 - r.x;
+			int cy = _scrCenter.y + g_engine->_screenH / 2 - r.y;
 
 			clip_center_coords(cx, cy);
 
@@ -1068,15 +1068,15 @@ bool qdCamera::quant(float dt) {
 
 			int dx = 0;
 			int dy = 0;
-			if (r.x + sz + _current_mode.scrolling_distance() >= qdGameConfig::get_config().screen_sx()) {
-				dx = qdGameConfig::get_config().screen_sx() - (r.x + sz + _current_mode.scrolling_distance());
+			if (r.x + sz + _current_mode.scrolling_distance() >= g_engine->_screenW) {
+				dx = g_engine->_screenW - (r.x + sz + _current_mode.scrolling_distance());
 			} else {
 				if (r.x - sz - _current_mode.scrolling_distance() < 0)
 					dx = -r.x + sz + _current_mode.scrolling_distance();
 			}
 
-			if (r.y + sz + _current_mode.scrolling_distance() >= qdGameConfig::get_config().screen_sy()) {
-				dy = qdGameConfig::get_config().screen_sy() - (r.y + sz + _current_mode.scrolling_distance());
+			if (r.y + sz + _current_mode.scrolling_distance() >= g_engine->_screenH) {
+				dy = g_engine->_screenH - (r.y + sz + _current_mode.scrolling_distance());
 			} else {
 				if (r.y - sz - _current_mode.scrolling_distance() < 0)
 					dy = -r.y + sz + _current_mode.scrolling_distance();
@@ -1108,8 +1108,8 @@ bool qdCamera::quant(float dt) {
 	case qdCameraMode::MODE_FOLLOW_OBJECT:
 		if (p) {
 			Vect2s r = p->screen_pos() + _current_mode.center_offset();
-			int dx = -r.x + qdGameConfig::get_config().screen_sx() / 2;
-			int dy = -r.y + qdGameConfig::get_config().screen_sy() / 2;
+			int dx = -r.x + g_engine->_screenW / 2;
+			int dy = -r.y + g_engine->_screenH / 2;
 
 			if (dx || dy) {
 				Vect2f dr(dx, dy);
@@ -1131,23 +1131,23 @@ bool qdCamera::quant(float dt) {
 
 			int dx = 0;
 			int dy = 0;
-			if (r.x + sz + _current_mode.scrolling_distance() >= qdGameConfig::get_config().screen_sx()) {
-				dx = qdGameConfig::get_config().screen_sx() - (r.x + sz + _current_mode.scrolling_distance());
+			if (r.x + sz + _current_mode.scrolling_distance() >= g_engine->_screenW) {
+				dx = g_engine->_screenW - (r.x + sz + _current_mode.scrolling_distance());
 			} else {
 				if (r.x - sz - _current_mode.scrolling_distance() < 0)
 					dx = -r.x + sz + _current_mode.scrolling_distance();
 			}
 
-			if (r.y + sz + _current_mode.scrolling_distance() >= qdGameConfig::get_config().screen_sy()) {
-				dy = qdGameConfig::get_config().screen_sy() - (r.y + sz + _current_mode.scrolling_distance());
+			if (r.y + sz + _current_mode.scrolling_distance() >= g_engine->_screenH) {
+				dy = g_engine->_screenH - (r.y + sz + _current_mode.scrolling_distance());
 			} else {
 				if (r.y - sz - _current_mode.scrolling_distance() < 0)
 					dy = -r.y + sz + _current_mode.scrolling_distance();
 			}
 
 			if (dx || dy) {
-				int dx1 = -r.x + qdGameConfig::get_config().screen_sx() / 2;
-				int dy1 = -r.y + qdGameConfig::get_config().screen_sy() / 2;
+				int dx1 = -r.x + g_engine->_screenW / 2;
+				int dy1 = -r.y + g_engine->_screenH / 2;
 
 				Vect2f dr(dx1, dy1);
 
@@ -1422,8 +1422,8 @@ void qdCamera::clip_center_coords(int &x, int &y) const {
 }
 
 bool qdCamera::is_visible(const Vect2i &center_offs) const {
-	int sx = qdGameConfig::get_config().screen_sx() / 2;
-	int sy = qdGameConfig::get_config().screen_sy() / 2;
+	int sx = g_engine->_screenW / 2;
+	int sy = g_engine->_screenH / 2;
 
 	Vect2s pos = scr2rscr(Vect2s(sx, sy));
 

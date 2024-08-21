@@ -392,7 +392,8 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 		case QDSCR_SCREEN_SIZE: {
 			int x, y;
 			xml::tag_buffer(*it) > x > y;
-			qdGameConfig::get_config().set_screen_size(x, y);
+			g_engine->_screenW = x;
+			g_engine->_screenH = y;
 		}
 		break;
 		case QDSCR_MOVING_OBJECT:
@@ -531,7 +532,7 @@ bool qdGameDispatcher::save_script(Common::SeekableWriteStream &fh) const {
 		fh.writeString(Common::String::format("\t<cd_key>%s</cd_key>\r\n", qdscr_XML_string(_cd_key.c_str())));
 	}
 
-	fh.writeString(Common::String::format("\t<screen_size>%d %d</screen_size>\r\n", qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy()));
+	fh.writeString(Common::String::format("\t<screen_size>%d %d</screen_size>\r\n", g_engine->_screenW, g_engine->_screenH));
 
 	_screen_texts.save_script(fh, 1);
 
@@ -799,8 +800,7 @@ void qdGameDispatcher::redraw_scene(bool draw_interface) {
 				phase = 1.f - phase;
 
 			grDispatcher::instance()->rectangleAlpha(0, 0,
-			        qdGameConfig::get_config().screen_sx(),
-			        qdGameConfig::get_config().screen_sy(),
+					g_engine->_screenW, g_engine->_screenH,
 			        0, round(phase * 255.f));
 		}
 	}
@@ -1908,14 +1908,14 @@ bool qdGameDispatcher::play_video(qdVideo *p) {
 	_cur_video = p;
 
 	if (p->check_flag(qdVideo::VID_FULLSCREEN_FLAG)) {
-		_video_player.set_window(0, 0, qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy());
+		_video_player.set_window(0, 0, g_engine->_screenW, g_engine->_screenH);
 	} else {
 		int sx, sy;
 		_video_player.get_movie_size(sx, sy);
 
 		if (p->check_flag(qdVideo::VID_CENTER_FLAG)) {
-			int x = (qdGameConfig::get_config().screen_sx() - sx) >> 1;
-			int y = (qdGameConfig::get_config().screen_sy() - sy) >> 1;
+			int x = (g_engine->_screenW - sx) >> 1;
+			int y = (g_engine->_screenH - sy) >> 1;
 
 			_video_player.set_window(x, y, sx, sy);
 		} else
@@ -2775,8 +2775,8 @@ bool qdGameDispatcher::init() {
 	if (!_screen_texts.get_text_set(TEXT_SET_DIALOGS)) {
 		qdScreenTextSet set;
 		set.set_ID(TEXT_SET_DIALOGS);
-		set.set_screen_pos(Vect2i(qdGameConfig::get_config().screen_sx() / 2, qdGameConfig::get_config().screen_sy() / 2));
-		set.set_screen_size(Vect2i(qdGameConfig::get_config().screen_sx(), qdGameConfig::get_config().screen_sy() - qdGameConfig::get_config().screen_sy() / 4));
+		set.set_screen_pos(Vect2i(g_engine->_screenW / 2, g_engine->_screenH / 2));
+		set.set_screen_size(Vect2i(g_engine->_screenW, g_engine->_screenH - g_engine->_screenH / 4));
 
 		_screen_texts.add_text_set(set);
 	}
@@ -2814,8 +2814,8 @@ bool qdGameDispatcher::init() {
 }
 
 bool qdGameDispatcher::game_screenshot(Graphics::Surface &thumb) const {
-	int w = qdGameConfig::get_config().screen_sx();
-	int h = qdGameConfig::get_config().screen_sy();
+	int w = g_engine->_screenW;
+	int h = g_engine->_screenH;
 
 	thumb.create(w, h, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 

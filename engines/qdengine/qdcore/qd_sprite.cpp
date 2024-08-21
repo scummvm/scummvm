@@ -218,8 +218,8 @@ bool qdSprite::load(const char *fname) {
 			_data = new byte[_size.x * _size.y * 2];
 
 			// Scale image down
-			float rx = static_cast<float>(qdGameConfig::get_config().screen_sx()) / g_engine->_thumbSizeX;
-			float ry = static_cast<float>(qdGameConfig::get_config().screen_sy()) / g_engine->_thumbSizeY;
+			float rx = static_cast<float>(g_engine->_screenW) / g_engine->_thumbSizeX;
+			float ry = static_cast<float>(g_engine->_screenH) / g_engine->_thumbSizeY;
 
 			for (int i = 0; i < _size.y; i++) {
 				uint16 *dst = (uint16 *)&_data[2 * _size.x * i];
