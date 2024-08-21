@@ -348,7 +348,7 @@ bool qdCondition::save_script(Common::WriteStream &fh, int indent) const {
 	fh.writeString(Common::String::format("<condition type=\"%d\"", _type));
 
 	if (is_inversed()) {
-		fh.writeString("condition_inverse=\"1\"");
+		fh.writeString(" condition_inverse=\"1\"");
 	}
 
 	fh.writeString(">\r\n");
