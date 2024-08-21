@@ -1378,7 +1378,7 @@ AnimFrame BackgroundAnimationBlob::GetFrame(uint32 index) {
 		cx = 1;
 	}
 	// l00B7_156D:
-	for (; cx > 0; cx--) {
+	for (; cx > 1; cx--) {
 		// TODO: Check if the logic for the loop works out like this
 		uint16 bp1A = stream.readUint16LE();
 		uint16 bp1C = stream.readUint16LE();
@@ -1391,7 +1391,9 @@ AnimFrame BackgroundAnimationBlob::GetFrame(uint32 index) {
 	}
 
 	// l00B7_158D:
-	stream.seek(-6, SEEK_CUR);
+	// TODO: Due to difference in implementation of the loop, I don't need to rewind,
+	// but am probably doing a 
+	// stream.seek(-6, SEEK_CUR);
 	uint16 bp12 = stream.pos();
 	// TODO: Check if indendation is right here
 	if (bpp8 == 0x02) {
