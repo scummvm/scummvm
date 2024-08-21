@@ -19,41 +19,26 @@
  *
  */
 
-#ifndef MTROPOLIS_PLUGINS_H
-#define MTROPOLIS_PLUGINS_H
-
-#include "common/ptr.h"
-
-class MidiDriver;
+#include "mtropolis/plugin/rwc_data.h"
 
 namespace MTropolis {
 
-namespace Obsidian {
+namespace Data {
 
-class WordGameData;
+namespace RWC {
 
-} // End of namespace Obsidian
+DataReadErrorCode ThighBlasterModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 1)
+		return kDataReadErrorUnsupportedRevision;
 
-class PlugIn;
+	if (!unknown1Int.load(reader))
+		return kDataReadErrorReadFailed;
 
-namespace PlugIns {
+	return kDataReadErrorNone;
+}
 
-Common::SharedPtr<PlugIn> createMIDI();
-Common::SharedPtr<PlugIn> createStandard();
-Common::SharedPtr<PlugIn> createObsidian(const Common::SharedPtr<Obsidian::WordGameData> &wgData);
-Common::SharedPtr<PlugIn> createMTI();
-Common::SharedPtr<PlugIn> createFTTS();
-Common::SharedPtr<PlugIn> createRWC();
+} // End of namespace RWC
 
-Common::SharedPtr<PlugIn> createKnowWonder();
-
-Common::SharedPtr<PlugIn> createAXLogic();
-Common::SharedPtr<PlugIn> createHoologic();
-Common::SharedPtr<PlugIn> createMLine();
-Common::SharedPtr<PlugIn> createThereware();
-
-} // End of namespace PlugIns
+} // End of namespace Data
 
 } // End of namespace MTropolis
-
-#endif
