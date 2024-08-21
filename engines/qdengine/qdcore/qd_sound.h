@@ -77,19 +77,13 @@ public:
 	handle нужен для дальнейшего управления звуком и отслеживания его состояния,
 	start_position - начальная позиция при запуске звука, значения - [0.0, 1.0]
 	*/
-	bool play(const qdSoundHandle *handle = NULL, bool loop = false, float start_position = 0.0f) const;
+	bool play(const qdSoundHandle *handle = NULL, bool loop = false) const;
 	//! Останавливает проигрывание звука.
 	/**
 	Если handle нулевой - то выключится первый попавшийся активный звук с данными
 	из sound_, если ненулевой - первый соответствующий этому хэндлу.
 	*/
 	bool stop(const qdSoundHandle *handle = NULL) const;
-
-	//! Возвращает текущую позицию звука, диапазон возвращаемых значений - [0.0, 1.0].
-	/**
-	Если звук не играется, текущая позиция считается нулевой.
-	*/
-	float position(const qdSoundHandle *handle = NULL) const;
 
 	//! Изменение частоты звука в frequency_coeff число раз.
 	bool set_frequency(const qdSoundHandle *handle, float frequency_coeff) const;

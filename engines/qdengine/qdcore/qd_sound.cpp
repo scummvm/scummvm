@@ -98,7 +98,7 @@ bool qdSound::save_script(Common::WriteStream &fh, int indent) const {
 	return true;
 }
 
-bool qdSound::play(const qdSoundHandle *handle, bool loop, float start_position) const {
+bool qdSound::play(const qdSoundHandle *handle, bool loop) const {
 	if (handle && handle->owner()) {
 		debugCN(3, kDebugSound, "[%d] sound start %p owner: %s", g_system->getMillis(), (void *)this, handle->owner()->toString().c_str());
 
@@ -109,7 +109,7 @@ bool qdSound::play(const qdSoundHandle *handle, bool loop, float start_position)
 
 	if (sndDispatcher *p = sndDispatcher::get_dispatcher()) {
 		sndSound sound(&_sound, handle);
-		return p->play_sound(&sound, loop, start_position, _volume);
+		return p->play_sound(&sound, loop, _volume);
 	}
 
 	return false;
@@ -127,16 +127,6 @@ bool qdSound::stop(const qdSoundHandle *handle) const {
 	}
 
 	return false;
-}
-
-float qdSound::position(const qdSoundHandle *handle) const {
-	if (!handle)
-		return 0.0f;
-
-	if (sndDispatcher *p = sndDispatcher::get_dispatcher())
-		return p->sound_position(handle);
-
-	return 0.0f;
 }
 
 bool qdSound::is_stopped(const qdSoundHandle *handle) const {

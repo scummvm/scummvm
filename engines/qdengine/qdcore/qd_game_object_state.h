@@ -292,7 +292,7 @@ public:
 		return &_sound_handle;
 	}
 	//! Запускает звук, position - стартовяя позиция, от 0.0 до 1.0.
-	bool play_sound(float position = 0.0f);
+	bool play_sound();
 	//! Останавливает звук.
 	bool stop_sound() const;
 	//! Установка частоты звука.

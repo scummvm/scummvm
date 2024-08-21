@@ -102,11 +102,6 @@ public:
 
 	bool change_frequency(float coeff = 1.0f);
 
-	//! Возвращает текущую позицию звука, диапазон возвращаемых значений - [0.0, 1.0].
-	float position() const;
-	//! Устанавливает текущую позицию звука, диапазон значений параметра - [0.0, 1.0].
-	bool set_position(float pos);
-
 	//! Создает DirectSoundBuffer.
 	bool create_sound_buffer();
 	//! Удаляет DirectSoundBuffer.
