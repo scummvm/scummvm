@@ -400,6 +400,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "pystmake",			"The Making of Pyst" },
 	{ "quantumgate2",		"The Vortex: Quantum Gate II" },
 	{ "quizwiz",			"Quiz Wiz: Cyber Trivia" },
+	{ "quijoteint",			"El Quijote Interactivo" },  // Spanish title, English selectable in-game
 	{ "rainbowfish1",		"Rainbow Fish: The most beautiful fish in the ocean!" },
 	{ "rainbowfish2",		"Rainbow Fish and the Whale" },
 	{ "realpool",			"RealPool" },
@@ -644,6 +645,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "msdinosaurs",		"Microsoft Dinosaurs" },
 	{ "msoceans",			"Microsoft Oceans" },
 	{ "mswine",				"Microsoft Wine Guide" },
+	{ "multimediastudio",	"The Multimedia Cartoon Studio" },
 	{ "mysteriousegypt",	"Mysterious Egypt" }, // aka Voyage in Egypt
 	{ "newslinks",			"ABC NewsLinks" },
 	{ "nia4",				"News in Action 4" },
@@ -1457,6 +1459,7 @@ static const PlainGameDescriptor directorGames[] = {
 
 	// Titles containing Director extras
 	{ "amgpremiere",		"The American Girls Premiere" },
+	{ "aquazonedx",			"Aquazone Deluxe" },
 	{ "darylfgates",		"Police Quest Q&A with Daryl F. Gates" },
 	{ "dcanyoncd",			"Dino CD Audio Player" },
 	{ "freeallangels",		"Ash: Free All Angels Video Mixer" },
@@ -1476,9 +1479,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "ultrobotss",			"Screen Saver Viewer" },
 	{ "urubonus",			"Uru: Ages Beyond Myst Bonus CD" },
 	{ "williamsbts",		"Williams Arcade Classics: Behind the Scenes" },
-//	{ "aquazonelibrary",	"Aquazone Library" },
-//	{ "aquazoneshop",		"Aquazone Shop" },
-//	{ "aquazoneuserguide",	"Aquazone User's Guide" },
 
 	// DVD-ROM bonus content
 	{ "planetrav",			"Planetary Traveler" },
@@ -1787,8 +1787,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "vug2005",			"Vivendi Universal Games 2005 E3 DPK" },
 	{ "westwood",			"Westwood Studios Digital Press Kit 2000" },
 
-	// Unknown (to sort)
-	{ "multimediastudio",	"The Multimedia Cartoon Studio" },
 	{ 0, 0 }
 };
 
@@ -3530,6 +3528,16 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACDEMO1_l("aquazone", "Demo (Version 1.5)", "AZ demo", "97474208c44c78f26bef8b2011d341aa", 487303, Common::JA_JPN, 404),
 	WINDEMO1t_l("aquazone", "Demo", "AZDEMO.EXE", "4644e6e5015ed2c7e4a30619c5efc464", 4011337, Common::JA_JPN, 404),
+
+	// Only extras are Director
+	// Win User's Guide is D5
+	MACGAME1("aquazonedx", "Library",	   "AZ Library",		"r:6959850ead8a673f324fb381f0abf0fb",  483490, 404),
+	MACGAME1("aquazonedx", "Shop",		   "AZ Shop",			"r:9119c79fc7e16c1ca1b1eedc7ea5234e",  705417, 404),
+	MACGAME2("aquazonedx", "User's Guide", "User's Guide",  	"rt:e9142e428628e8d43252c70af96145f4", 705417,
+										   "xn--Icon-ja6e", 	"r:aad55d6e2c9c1a96096ba06003e5a7db",    2264, 404),
+	WINGAME2("aquazonedx", "Library",	   "LIBRARY.EXE",	    "t:2414b3987a76cc060d187d4789b196ad",  690377,
+										   "FILES/LIBRARY.DIR", "d:5350e942fe2f744448b1168ba69fcdaf", 1605010, 404),
+	WINGAME1("aquazonedx", "Shop",		   "AZSHOP.EXE",		"t:9ac82e2bb82fa061313b16cee4cdcb41",  697169, 404),
 
 	MACGAME2_l("aramata", "", "START", "0c7bbb4b24823e5ab871cb4c1d6f3710", 484095,
 							  "SRC/MACLOBBY.Dxr", "2332900b20b0d33e0617e5e7505923e8", 290058, Common::JA_JPN, 404),
@@ -5447,6 +5455,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("pyrethrum1", "Demo", "xn--Vol.1 Demo(PPC)-u825b41x5o6e", "422270206b9bd6aff43bbe95047f6ce9", 60665, Common::JA_JPN, 404),
 	WINDEMO1t_l("pyrethrum1", "Demo", "VOL1DEMO.EXE", "bbe7ddbe439266f2ed57b9723f8a5c6c", 746843, Common::JA_JPN, 404),
 
+	// Bilingual Eng-Esp
+	WINGAME1("quijoteint", "", "DQUIJOTE.EXE", "t:4016edf8ec9240c649e8c2a0881669a6", 697019, 404),
+
 	// Original filename is 'ボルテックス'
 	MACDEMO1_l("quantumgate2", "Demo",	 "xn--pckua2al3iyd", "b7e69c37b7355022d400c14aa97c5d54", 484067, Common::JA_JPN, 404),
 	// Decomposed variant of the above filename
@@ -6128,6 +6139,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACDEMO1("aptesampler", "", "Product Sampler", "aa6a527c1314eae56f00d9b9fb587683", 719033, 501),
 	WINDEMO1t("aptesampler", "", "APTE32.EXE", "a42cd36dd6224f4382f676f946e48914", 1410355, 501),
+
+	// Mac version is D4
+	WINGAME1("aquazonedx", "User's Guide", "AZGUIDE.EXE", "t:c1326952834ff759a24da42f44c2b251", 3151425, 500),
 
 	WINGAME1("arad", "", "arad95nt.exe", "3460ad87d2ba57104e2810a77b53c220", 2623135, 500),
 
