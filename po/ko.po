@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-19 13:46+0000\n"
+"POT-Creation-Date: 2024-08-21 11:07+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -7342,21 +7342,22 @@ msgstr "회전"
 msgid "Rotate down"
 msgstr "회전"
 
-#: engines/freescape/movement.cpp:89
+#. I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
+#: engines/freescape/movement.cpp:90
 #, fuzzy
 #| msgid "Change Command"
 msgid "Change mode"
 msgstr "변경 명령"
 
 #. I18N: ESC key
-#: engines/freescape/movement.cpp:95 engines/lure/metaengine.cpp:209
+#: engines/freescape/movement.cpp:96 engines/lure/metaengine.cpp:209
 #: engines/mads/metaengine.cpp:292 engines/mm/mm1/metaengine.cpp:41
 #: engines/mm/mm1/metaengine.cpp:47 engines/saga/metaengine.cpp:328
 #: engines/twine/metaengine.cpp:436 engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
 msgstr "탈출"
 
-#: engines/freescape/movement.cpp:100
+#: engines/freescape/movement.cpp:101
 #, fuzzy
 #| msgid "Menu"
 msgid "Info Menu"
@@ -7383,43 +7384,47 @@ msgstr "왼쪽으로"
 msgid "Rotate Right"
 msgstr "오른쪽으로"
 
-#: engines/freescape/games/dark/dark.cpp:219
-#: engines/freescape/games/driller/driller.cpp:155
+#. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
+#: engines/freescape/games/dark/dark.cpp:220
+#: engines/freescape/games/driller/driller.cpp:156
 #, fuzzy
 #| msgid "Increase the scale factor"
 msgid "Increase Step Size"
 msgstr "확대 비율 증가"
 
-#: engines/freescape/games/dark/dark.cpp:224
-#: engines/freescape/games/driller/driller.cpp:160
+#. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
+#: engines/freescape/games/dark/dark.cpp:226
+#: engines/freescape/games/driller/driller.cpp:162
 #, fuzzy
 #| msgid "Decrease the scale factor"
 msgid "Decrease Step Size"
 msgstr "확대 비율 감소"
 
-#: engines/freescape/games/dark/dark.cpp:229
-#: engines/freescape/games/driller/driller.cpp:165
+#: engines/freescape/games/dark/dark.cpp:231
+#: engines/freescape/games/driller/driller.cpp:167
 msgid "Rise/Fly up"
 msgstr ""
 
-#: engines/freescape/games/dark/dark.cpp:235
-#: engines/freescape/games/driller/driller.cpp:171
+#: engines/freescape/games/dark/dark.cpp:237
+#: engines/freescape/games/driller/driller.cpp:173
 #, fuzzy
 #| msgid "Fly down"
 msgid "Lower/Fly down"
 msgstr "아래로 비행"
 
-#: engines/freescape/games/dark/dark.cpp:241
+#: engines/freescape/games/dark/dark.cpp:243
 msgid "Enable/Disable Jetpack"
 msgstr ""
 
-#: engines/freescape/games/driller/driller.cpp:177
+#. I18N: drilling rig is an in game item
+#: engines/freescape/games/driller/driller.cpp:180
 #, fuzzy
 #| msgid "Debug Apply Celling Grid"
 msgid "Deploy drilling rig"
 msgstr "셀 그리드를 적용"
 
-#: engines/freescape/games/driller/driller.cpp:183
+#. I18N: drilling rig is an in game item
+#: engines/freescape/games/driller/driller.cpp:187
 msgid "Collect drilling rig"
 msgstr ""
 

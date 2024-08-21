@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-19 13:46+0000\n"
+"POT-Creation-Date: 2024-08-21 11:07+0000\n"
 "PO-Revision-Date: 2024-02-08 20:26+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -7674,21 +7674,22 @@ msgstr "Obrót"
 msgid "Rotate down"
 msgstr "Obrót"
 
-#: engines/freescape/movement.cpp:89
+#. I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
+#: engines/freescape/movement.cpp:90
 #, fuzzy
 #| msgid "Change mode"
 msgid "Change mode"
 msgstr "Zmień tryb"
 
 #. I18N: ESC key
-#: engines/freescape/movement.cpp:95 engines/lure/metaengine.cpp:209
+#: engines/freescape/movement.cpp:96 engines/lure/metaengine.cpp:209
 #: engines/mads/metaengine.cpp:292 engines/mm/mm1/metaengine.cpp:41
 #: engines/mm/mm1/metaengine.cpp:47 engines/saga/metaengine.cpp:328
 #: engines/twine/metaengine.cpp:436 engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
 msgstr "Escape"
 
-#: engines/freescape/movement.cpp:100
+#: engines/freescape/movement.cpp:101
 msgid "Info Menu"
 msgstr "Menu informacyjne"
 
@@ -7709,41 +7710,45 @@ msgstr "Obrót w lewo"
 msgid "Rotate Right"
 msgstr "Obrót w prawo"
 
-#: engines/freescape/games/dark/dark.cpp:219
-#: engines/freescape/games/driller/driller.cpp:155
+#. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
+#: engines/freescape/games/dark/dark.cpp:220
+#: engines/freescape/games/driller/driller.cpp:156
 #, fuzzy
 #| msgid "Increase the scale factor"
 msgid "Increase Step Size"
 msgstr "Zwiększ współczynnik skalowania"
 
-#: engines/freescape/games/dark/dark.cpp:224
-#: engines/freescape/games/driller/driller.cpp:160
+#. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
+#: engines/freescape/games/dark/dark.cpp:226
+#: engines/freescape/games/driller/driller.cpp:162
 #, fuzzy
 #| msgid "Decrease the scale factor"
 msgid "Decrease Step Size"
 msgstr "Zmniejsz współczynnik skalowania"
 
-#: engines/freescape/games/dark/dark.cpp:229
-#: engines/freescape/games/driller/driller.cpp:165
+#: engines/freescape/games/dark/dark.cpp:231
+#: engines/freescape/games/driller/driller.cpp:167
 msgid "Rise/Fly up"
 msgstr "Wyżej/Leć w górę"
 
-#: engines/freescape/games/dark/dark.cpp:235
-#: engines/freescape/games/driller/driller.cpp:171
+#: engines/freescape/games/dark/dark.cpp:237
+#: engines/freescape/games/driller/driller.cpp:173
 msgid "Lower/Fly down"
 msgstr "Niżej/Leć w dół"
 
-#: engines/freescape/games/dark/dark.cpp:241
+#: engines/freescape/games/dark/dark.cpp:243
 msgid "Enable/Disable Jetpack"
 msgstr ""
 
-#: engines/freescape/games/driller/driller.cpp:177
+#. I18N: drilling rig is an in game item
+#: engines/freescape/games/driller/driller.cpp:180
 #, fuzzy
 #| msgid "Debug Apply Celling Grid"
 msgid "Deploy drilling rig"
 msgstr "Debuguj stosowanie siatki komórkowej"
 
-#: engines/freescape/games/driller/driller.cpp:183
+#. I18N: drilling rig is an in game item
+#: engines/freescape/games/driller/driller.cpp:187
 msgid "Collect drilling rig"
 msgstr ""
 

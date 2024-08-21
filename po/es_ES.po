@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-19 13:46+0000\n"
+"POT-Creation-Date: 2024-08-21 11:07+0000\n"
 "PO-Revision-Date: 2024-08-20 10:21+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -7641,19 +7641,20 @@ msgstr "Rotar hacia arriba"
 msgid "Rotate down"
 msgstr "Rotar hacia abajo"
 
-#: engines/freescape/movement.cpp:89
+#. I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
+#: engines/freescape/movement.cpp:90
 msgid "Change mode"
 msgstr "Cambiar modo"
 
 #. I18N: ESC key
-#: engines/freescape/movement.cpp:95 engines/lure/metaengine.cpp:209
+#: engines/freescape/movement.cpp:96 engines/lure/metaengine.cpp:209
 #: engines/mads/metaengine.cpp:292 engines/mm/mm1/metaengine.cpp:41
 #: engines/mm/mm1/metaengine.cpp:47 engines/saga/metaengine.cpp:328
 #: engines/twine/metaengine.cpp:436 engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
 msgstr "Escapar"
 
-#: engines/freescape/movement.cpp:100
+#: engines/freescape/movement.cpp:101
 msgid "Info Menu"
 msgstr "Menú de información"
 
@@ -7672,35 +7673,39 @@ msgstr "Rotar a la izquierda"
 msgid "Rotate Right"
 msgstr "Rotar a la derecha"
 
-#: engines/freescape/games/dark/dark.cpp:219
-#: engines/freescape/games/driller/driller.cpp:155
+#. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
+#: engines/freescape/games/dark/dark.cpp:220
+#: engines/freescape/games/driller/driller.cpp:156
 msgid "Increase Step Size"
 msgstr "Aumentar longitud de pasos"
 
-#: engines/freescape/games/dark/dark.cpp:224
-#: engines/freescape/games/driller/driller.cpp:160
+#. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
+#: engines/freescape/games/dark/dark.cpp:226
+#: engines/freescape/games/driller/driller.cpp:162
 msgid "Decrease Step Size"
 msgstr "Reducir longitud de pasos"
 
-#: engines/freescape/games/dark/dark.cpp:229
-#: engines/freescape/games/driller/driller.cpp:165
+#: engines/freescape/games/dark/dark.cpp:231
+#: engines/freescape/games/driller/driller.cpp:167
 msgid "Rise/Fly up"
 msgstr "Ascender/Volar arriba"
 
-#: engines/freescape/games/dark/dark.cpp:235
-#: engines/freescape/games/driller/driller.cpp:171
+#: engines/freescape/games/dark/dark.cpp:237
+#: engines/freescape/games/driller/driller.cpp:173
 msgid "Lower/Fly down"
 msgstr "Descender/Volar abajo"
 
-#: engines/freescape/games/dark/dark.cpp:241
+#: engines/freescape/games/dark/dark.cpp:243
 msgid "Enable/Disable Jetpack"
 msgstr "Activar/Desactivar jetpack"
 
-#: engines/freescape/games/driller/driller.cpp:177
+#. I18N: drilling rig is an in game item
+#: engines/freescape/games/driller/driller.cpp:180
 msgid "Deploy drilling rig"
 msgstr "Desplegar perforadora"
 
-#: engines/freescape/games/driller/driller.cpp:183
+#. I18N: drilling rig is an in game item
+#: engines/freescape/games/driller/driller.cpp:187
 msgid "Collect drilling rig"
 msgstr "Retirar perforadora"
 
