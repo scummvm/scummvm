@@ -69,7 +69,6 @@ RWCPlugIn::~RWCPlugIn() {
 }
 
 void RWCPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) const {
-	//URLaunch modifier by mLine
 	registrar->registerPlugInModifier("ThighBlaster", &_thighBlasterModifierFactory);
 }
 
