@@ -145,8 +145,8 @@ bool qdVideo::draw_background() {
 		_background.load();
 
 		grDispatcher::instance()->fill(0);
-		int x = qdGameConfig::get_config().screen_sx() >> 1;
-		int y = qdGameConfig::get_config().screen_sy() >> 1;
+		int x = g_engine->_screenW >> 1;
+		int y = g_engine->_screenH >> 1;
 		_background.redraw(x, y, 0);
 		grDispatcher::instance()->flush();
 
