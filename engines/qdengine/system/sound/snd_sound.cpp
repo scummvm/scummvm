@@ -118,32 +118,4 @@ bool sndSound::change_frequency(float coeff) {
 	return true;
 }
 
-float sndSound::position() const {
-	warning("STUB: sndSound::position()");
-#if 0
-	int32 pos = 0;
-	if (_sound_buffer->GetCurrentPosition(&pos, NULL) == DS_OK) {
-		float norm_pos = float(pos) / float(sound()->data_length());
-
-		if (norm_pos < 0.0f) norm_pos = 0.0f;
-		if (norm_pos > 1.0f) norm_pos = 1.0f;
-
-		return norm_pos;
-	}
-#endif
-	return 0.0f;
-}
-
-bool sndSound::set_position(float pos) {
-	if (pos != 0.0)
-		warning("STUB: sndSound::set_position(%f) '%s'", pos, transCyrillic(sound()->_fname.c_str()));
-#if 0
-	int32 npos = int32(float(sound()->data_length() * pos));
-
-	if (_sound_buffer->SetCurrentPosition(npos) == DS_OK)
-		return true;
-#endif
-
-	return false;
-}
 } // namespace QDEngine

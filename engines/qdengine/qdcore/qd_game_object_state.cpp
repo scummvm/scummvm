@@ -551,11 +551,11 @@ qdSound *qdGameObjectState::sound() const {
 	return NULL;
 }
 
-bool qdGameObjectState::play_sound(float position) {
+bool qdGameObjectState::play_sound() {
 	if (qdSound *p = sound()) {
 		p->stop(sound_handle());
 		_is_sound_started = true;
-		return p->play(sound_handle(), check_sound_flag(qdSoundInfo::LOOP_SOUND_FLAG), position);
+		return p->play(sound_handle(), check_sound_flag(qdSoundInfo::LOOP_SOUND_FLAG));
 	}
 
 	return false;
@@ -615,12 +615,12 @@ bool qdGameObjectState::load_data(Common::SeekableReadStream &fh, int save_versi
 	if (cidx) {
 		cidx = fh.readByte();
 		if (cidx) {
-			float pos = fh.readFloatLE();
+			/* float pos = */fh.readFloatLE();
 
 			if (qdSound *snd = sound()) {
 				if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher()) {
 					dp->load_resource(snd, this);
-					play_sound(pos);
+					play_sound();
 				}
 			}
 
@@ -656,7 +656,7 @@ bool qdGameObjectState::save_data(Common::WriteStream &fh) const {
 
 		if (const qdSound *snd = sound()) {
 			if (!snd->is_stopped(&_sound_handle)) {
-				float pos = snd->position(&_sound_handle);
+				float pos = 0.0;
 				fh.writeByte(1);
 				fh.writeFloatLE(pos);
 			} else

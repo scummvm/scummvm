@@ -85,7 +85,7 @@ void sndDispatcher::quant() {
 	}
 }
 
-bool sndDispatcher::play_sound(const sndSound *snd, bool loop, float start_position, int vol) {
+bool sndDispatcher::play_sound(const sndSound *snd, bool loop, int vol) {
 	if (is_enabled()) {
 		_sounds.push_back(sndSound(*snd));
 		sndSound &p = _sounds.back();
@@ -98,7 +98,6 @@ bool sndDispatcher::play_sound(const sndSound *snd, bool loop, float start_posit
 		p.create_sound_buffer();
 		p.set_volume(snd_volume);
 		p.change_frequency(frequency_coeff());
-		p.set_position(start_position);
 
 		if (!is_paused()) {
 			if (!p.play()) return false;
@@ -187,15 +186,6 @@ bool sndDispatcher::set_sound_frequency(const sndHandle *snd, float coeff) {
 	}
 
 	return false;
-}
-
-float sndDispatcher::sound_position(const sndHandle *snd) const {
-	sound_list_t::const_iterator it = Common::find(_sounds.begin(), _sounds.end(), *snd);
-
-	if (it != _sounds.end())
-		return it->position();
-
-	return 0.0f;
 }
 
 void sndDispatcher::pause_sounds() {
