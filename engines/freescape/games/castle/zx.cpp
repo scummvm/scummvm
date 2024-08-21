@@ -156,8 +156,9 @@ void CastleEngine::loadAssetsZXFullGame() {
 	// Discard the first three global conditions
 	// It is unclear why they hide/unhide objects that formed the spirits
 	for (int i = 0; i < 3; i++) {
-		_conditions.remove_at(i);
-		_conditionSources.remove_at(i);
+		debugC(kFreescapeDebugParser, "Discarding condition %s", _conditionSources[0].c_str());
+		_conditions.remove_at(0);
+		_conditionSources.remove_at(0);
 	}
 
 	_timeoutMessage = _messagesList[1];
