@@ -1286,8 +1286,8 @@ AnimFrame BackgroundAnimationBlob::GetFrame(uint32 index) {
 	// TODO: Think about proper memory management
 }
 
-bool BackgroundAnimationBlob::GetIsAutoUpdated(bool bpp6, uint16 bpp8) const {
-	Common::MemoryReadStreamEndian stream(Blob.data(), Blob.size(), false);
+	uint16 BackgroundAnimationBlob::Func1480(Common::Array<uint8> &blob, bool bpp6, uint16 bpp8) {
+	Common::MemorySeekableReadWriteStream stream(blob.data(), blob.size());
 
 
 	/* Arguments:
@@ -1300,17 +1300,17 @@ bool BackgroundAnimationBlob::GetIsAutoUpdated(bool bpp6, uint16 bpp8) const {
 
 	
 	// bp-22h
-	uint16 bp22 = stream.readUint16();
+	uint16 bp22 = stream.readUint16LE();
 	// bp-6h
-	uint16 bp6 = stream.readUint16();
+	uint16 bp6 = stream.readUint16LE();
 	// bp-8h
-	uint16 bp8 = stream.readUint16();
+	uint16 bp8 = stream.readUint16LE();
 	// bp-0Ah
-	uint16 bp0A = stream.readUint16();
+	uint16 bp0A = stream.readUint16LE();
 	// bp-10h
-	uint16 bp10 = stream.readUint16();
+	uint16 bp10 = stream.readUint16LE();
 	// bp-0Eh
-	uint16 bp0E = stream.readUint16() + 1;
+	uint16 bp0E = stream.readUint16LE() + 1;
 
 	stream.seek(bp6 - 1, SEEK_CUR);
 	uint8 bp0C = stream.readByte();
@@ -1345,7 +1345,7 @@ bool BackgroundAnimationBlob::GetIsAutoUpdated(bool bpp6, uint16 bpp8) const {
 		}
 		// l00B7_150A:
 		stream.seek(0x0B, SEEK_SET);
-		stream.seek(bp6);
+		stream.seek(bp6, SEEK_CUR);
 		bp0C = stream.readByte();
 		if (bp0C == 0x01) {
 			// l00B7_151F:
@@ -1370,9 +1370,9 @@ bool BackgroundAnimationBlob::GetIsAutoUpdated(bool bpp6, uint16 bpp8) const {
 	}
 	// l00B7_1554:
 	uint16 cx = bp0C - 0xA;
-	stream.seek(0xB);
+	stream.seek(0xB,SEEK_SET);
 	stream.seek(bp0E, SEEK_CUR);
-	uint16 bp24 = stream.readUint16();
+	uint16 bp24 = stream.readUint16LE();
 	if (cx > bp24) {
 		// l00B7_156A:
 		cx = 1;
@@ -1380,11 +1380,11 @@ bool BackgroundAnimationBlob::GetIsAutoUpdated(bool bpp6, uint16 bpp8) const {
 	// l00B7_156D:
 	for (; cx > 0; cx--) {
 		// TODO: Check if the logic for the loop works out like this
-		uint16 bp1A = stream.readUint16();
-		uint16 bp1C = stream.readUint16();
+		uint16 bp1A = stream.readUint16LE();
+		uint16 bp1C = stream.readUint16LE();
 		stream.seek(0x2, SEEK_CUR);
-		uint16 bp16 = stream.readUint16();
-		uint16 bp18 = stream.readUint16();
+		uint16 bp16 = stream.readUint16LE();
+		uint16 bp18 = stream.readUint16LE();
 		// This is the amount of bytes of the frame (width * height)
 		uint16 bx = bp16 * bp18;
 		stream.seek(bx, SEEK_CUR);
@@ -1419,357 +1419,27 @@ bool BackgroundAnimationBlob::GetIsAutoUpdated(bool bpp6, uint16 bpp8) const {
 	// l00B7_15D0:
 	if (bpp6) {
 		// l00B7_15D6:
-		// TODO: FInish here
+		stream.seek(0, SEEK_SET);
+		stream.writeUint16LE(bp22);
+		stream.writeUint16LE(bp6);
+		stream.writeUint16LE(bp8);
+		stream.writeUint16LE(bp0A);
+		stream.writeUint16LE(bp10);
 	}
 
-
-
-
-	// l00B7_14FD:
-	// This would be a loop, but we will stop after the first round anyway
-
-	
-
-	return false;
-}
-
-void BackgroundAnimationBlob::Func1480(bool writeResult, Common::MemoryReadStream *stream) {
+	// l00B7_15EF:
+	// TODO: Check what these writes are
 	/*
-	;; Arguments
-;; [bp+6h]
-;; [bp+8h]
-;; [bp+Ah]
-;; [bp+Ch]
-;; [bp+Eh]
-;; [bp+10h]
-;; [bp+12h] - Pointer to the segment in which the animation data lives
-fn00B7_1480 proc
-	enter	24h,0h
-	push	ds
-	;; Load DS:SI from [bp+12h] argument - presumably the address of the animation blob data
-	lds	si,[bp+12h]
-	;; Load the first words in to -22h, -6h, -8h, -0Ah, -10h, -0Eh (note: last one increased by 1)
-	;; TODO: Could this be an animation counter?
-	lodsw
-	mov	[bp-22h],ax
-	lodsw
-	mov	[bp-6h],ax
-	lodsw
-	mov	[bp-8h],ax
-	lodsw
-	mov	[bp-0Ah],ax
-	lodsw
-	mov	[bp-10h],ax
-	lodsw
-	inc	ax
-	mov	[bp-0Eh],ax
-	;; PRINT: Print locals here
-	;; Add [bp-6h] - 1(second read word decremented by 1) to SI
-	add	si,[bp-6h]
-	dec	si
-	xor	ah,ah
-	;; Load a byte from the adjusted SI and save it to [bp-0Ch]
-	lodsb
-	mov	[bp-0Ch],ax
-	pop	ds
-	;; Compare argument [bp+8h] with 1 (can be several values, not just a bool)
-	mov	ax,[bp+8h]
-	;; PRINT: Print control flow here
-	;; 14AC
-	cmp	ax,1h
-	jnz	14C5h
-
-l00B7_14B4:
-	;; if [bp+8h] == 1
-	xor	ax,ax
-	;; Reset [bp-8h] and [bp-10h] (both read at the start) to 0
-	mov	[bp-8h],ax
-	xor	ax,ax
-	mov	[bp-10h],ax
-	;; [bp-6h] is set to 1 (was originally read from the data)
-	mov	word ptr [bp-6h],1h
-	jmp	14EFh
-
-l00B7_14C5:
-	cmp	ax,65h
-	jl	14EFh
-
-l00B7_14CA:
-	;; if [bp+8h] >= 0x65
-	cmp	ax,0A4h
-	jg	14EFh
-
-l00B7_14CF:
-	;; [bp+8h] >= 0x65 && <= 0xA4
-	;; Bring it back to starting at 0 by subtracting 0x64
-	mov	ax,[bp+8h]
-	sub	ax,64h
-	;; Set [bp-6h] to the adjusted value (seems to be always set from this source)
-	mov	[bp-6h],ax
-	;; Reset [bp-8h] and [bp-10h]
-	xor	ax,ax
-	mov	[bp-8h],ax
-	xor	ax,ax
-	mov	[bp-10h],ax
-	;; Compare the adjusted value with [bp-0Eh] (the last read value which was incremented by 1)
-	mov	ax,[bp-6h]
-	cmp	ax,[bp-0Eh]
-	jbe	14EFh
-
-l00B7_14EA:
-	;; PRINT: Consider printing this part
-	;; if [bp-6h] > [bp-0Eh]: Set [bp-6h] to 1
-	mov	word ptr [bp-6h],1h
-
-l00B7_14EF:
-	;; [bp+8h] > 0xA4 or >= 0x65 and was adjusted
-	;; Prep of the loop - reset to 1 in case we need to wrap
-	mov	ax,[bp-6h]
-	cmp	ax,[bp-0Eh]
-	;; Jump if below
-	jc	14FCh
-
-l00B7_14F7:
-	;; PRINT: Consider this part
-	;; Do the check again (probably for the case where we skipped the last one)
-	mov	word ptr [bp-6h],1h
-
-l00B7_14FC:
-	push	ds
-
-l00B7_14FD:
-	;; Start of a loop over [bp-6h]
-	;; This gets us to the right SI position which will be returned
-	;; Which SI do we start from here?
-	mov	ax,[bp-6h]
-	cmp	ax,[bp-0Eh]
-	jc	150Ah
-
-l00B7_1505:
-	;; PRINT: Consider this part
-	;; if [bp-6h] >= [bp-0Eh] set it to 1
-	mov	word ptr [bp-6h],1h
-
-l00B7_150A:
-	;; Load DS:SI again from [bp+12h]
-	lds	si,[bp+12h]
-	;; Skip 0Bh bytes ahead - puts us on the address behind the "header" read above
-	add	si,0Bh
-	;; Skip ahead by [bp-6h] and load the byte at that point, save it to [bp-0Ch]
-	add	si,[bp-6h]
-	xor	ah,ah
-	lodsb
-	mov	[bp-0Ch],ax
-	;; Check if the read value is 1
-	;; PRINT: Print the read value and the control flow afterwards
-	cmp	word ptr [bp-0Ch],1h
-	jnz	1533h
-
-l00B7_151F:
-	;; If the read value == 1
-	;; Jump ahead by 1, load a byte, and jump ahead again (are these bytes in a word array?)
-	inc	word ptr [bp-6h]
-	lodsb
-	inc	word ptr [bp-6h]
-	;; Save result to [bp-8h]
-	mov	[bp-8h],ax
-	;; Save [bp-6h] to [bp-0Ah]
-	mov	ax,[bp-6h]
-	mov	[bp-0Ah],ax
-	xor	ax,ax
-	;; Loop
-	jmp	14FDh
-
-l00B7_1533:
-	;; Check for the read value being 2h
-	cmp	word ptr [bp-0Ch],2h
-	jnz	1545h
-
-l00B7_1539:
-	;; if the read value == 0x2h
-	;; Load a byte and save it to [bp-10h]
-	inc	word ptr [bp-6h]
-	lodsb
-	mov	[bp-10h],ax
-	inc	word ptr [bp-6h]
-	;; Loop
-	jmp	14FDh
-
-l00B7_1545:
-	;; Check if the read value is 3h
-	cmp	word ptr [bp-0Ch],3h
-	jnz	1554h
-
-l00B7_154B:
-	;; if [bp-0Ch] is 3h - this means we are wrapping around or rather that we skip to a specific
-	;; place read from the data
-	;; Load a byte and save to to [bp-6h]
-	inc	word ptr [bp-6h]
-	lodsb
-	mov	[bp-6h],ax
-	;; Loop
-	;; PRINT: Print the read value and that we are looping
-	jmp	14FDh
-
-l00B7_1554:
-	;; if read value was not one of 1,2 or 3
-	;; And the first instruction after the loop
-	;; Load a value from the [bp-0Eh] additional offset and save it to [bp-24h]
-	;; The result = cx is the number of animation frames to skip forward
-	;; E.g. for opening the box bg anim, this is 0xC and is pulled back to 0x2
-	sub	ax,0Ah
-	mov	cx,ax
-	lds	si,[bp+12h]
-	;; Load start address again - this is the last time we do this,
-	;; we navigate to the right frame afterwards
-	add	si,0Bh
-	add	si,[bp-0Eh]
-	lodsw
-	mov	[bp-24h],ax
-	;; PRINT: Print values here
-	;; Check if CX (set from AX - TODO which value remains there after the loop?) is <= [bp-24h]
-	cmp	cx,ax
-	jbe	156Dh
-
-l00B7_156A:
-	;; if cx > [bp-24h], set cx to 1
-	;; This seems to be the point where we wrap around
-	mov	cx,1h
-
-l00B7_156D:
-	;; Loop determined by the count in CX
-	;; This one moves us ahead to the right offset of the animation frame we want to get to,
-	;; so we continue up here to see where it is set initially
-	;; We read words into [bp-1A], [bp-1C], skip 2 bytes, [bp-16]=bx, [bp-18]
-	lodsw
-	mov	[bp-1Ah],ax
-	lodsw
-	mov	[bp-1Ch],ax
-	add	si,2h
-	lodsw
-	mov	[bp-16h],ax
-	mov	bx,ax
-	lodsw
-	mov	[bp-18h],ax
-	mul	bx
-	;; Multiply [bp-16] and [bp-18], result goes to bx
-	;; TODO: Very probably these are the width and height
-	mov	bx,ax
-	dec	cx
-	jz	158Dh
-
-l00B7_1589:
-	;; If cx != 0, add bx = [bp-16] * [bp-18h] to si, and loop
-	add	si,bx
-	jmp	156Dh
-
-l00B7_158D:
-	;; We are done with the loop
-	;; #path_anim_result: Subtract 6 from SI
-	sub	si,6h
-	;; #path_anim_result: This is the offset for the animation, so it is set from SI
-	mov	[bp-12h],si
-	pop	ds
-	;; Skip if a lot if [bp+8h] != 2
-	mov	ax,[bp+8h]
-	cmp	ax,2h
-	jnz	15C3h
-
-l00B7_159C:
-	;; if [bp+8h] == 2
-	cmp	word ptr [bp-0Ch],0Ah
-	;; SKip a lot of [bp-0Ch] >= 0Ah
-	jc	15C3h
-
-l00B7_15A2:
-	;; [bp-0Ch] < 0xAh
-	;; Increase [bp-6h]
-	inc	word ptr [bp-6h]
-	;; Compare [bp-10h] with 0
-	cmp	word ptr [bp-10h],0h
-	jbe	15AEh
-
-l00B7_15AB:
-	// if [bp-10h] > 0, decrease by one
-	dec	word ptr [bp-10h]
-
-l00B7_15AE:
-	cmp	word ptr [bp-10h],0h
-	;; If [bp-10h] != 0, skip ahead
-	jnz	15C3h
-
-l00B7_15B4:
-	;; if [bp-10h] == 0
-	cmp	word ptr [bp-8h],0h
-	;; Skip ahead if [bp-8h] <= 0
-	jbe	15C3h
-
-l00B7_15BA:
-	;; Decrease [bp-8h]
-	dec	word ptr [bp-8h]
-	;; Copy [bp-0Ah] value to [bp-6h]
-	mov	ax,[bp-0Ah]
-	mov	[bp-6h],ax
-
-l00B7_15C3:
-	;; Compare [bp-6] with [bp-0Eh]
-	mov	ax,[bp-6h]
-	cmp	ax,[bp-0Eh]
-	jc	15D0h
-
-l00B7_15CB:
-	;; if [bp-6] >= [bp-0E], reset it to 1
-	mov	word ptr [bp-6h],1h
-
-l00B7_15D0:
-	cmp	byte ptr [bp+6h],0h
-	jz	15EFh
-
-l00B7_15D6:
-	;; if [bp+6h] != 0
-	;; [bp+6h] is one of the separating variables between an auto-animated background animation
-	;; and a manually changed background animation like a door
-	push	es
-	les	di,[bp+12h]
-	;; TODO: This is where we write the data into the anim frame header
-	mov	ax,[bp-22h]
-	stosw
-	;; The AH value is the second one read
-	mov	ax,[bp-6h]
-	stosw
-	mov	ax,[bp-8h]
-	stosw
-	mov	ax,[bp-0Ah]
-	stosw
-	mov	ax,[bp-10h]
-	stosw
-	pop	es
-
-l00B7_15EF:
-	;; fallthrough and case [bp+6h] == 0
-	;; Save some more data
-	mov	ax,[bp-1Ah]
+	* mov	ax,[bp-1Ah]
 	les	di,[bp+0Eh]
 	mov	es:[di],ax
 	mov	ax,[bp-1Ch]
 	les	di,[bp+0Ah]
 	mov	es:[di],ax
-	;; #path_anim_result: The offset comes from [bp-12h]
-	mov	ax,[bp-12h]
-	les	di,[bp+12h]
-	;; #path_anim_result: The segment comes from [bp+12h] - so already decided before?
-	mov	dx,es
-	mov	[bp-4h],ax
-	mov	[bp-2h],dx
-	;; #path_anim_result: These are the segment and offset where the animation data is loaded from
-	;; ax is the offset
-	;; dx is the segment
-	mov	ax,[bp-4h]
-	mov	dx,[bp-2h]
-	leave
-	retf	10h
 	*/
+	return stream.pos();
 }
+
 
 } // End of namespace Macs2
 
