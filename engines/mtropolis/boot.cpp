@@ -2886,25 +2886,25 @@ BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
 			break;
 		case Boot::BootScriptContext::kPlugInFTTS:
-			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
+			plugIns.push_back(Boot::loadFTTSPlugIn(gameDesc));
 			break;
 		case Boot::BootScriptContext::kPlugInRWC:
-			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
+			plugIns.push_back(Boot::loadRWCPlugIn(gameDesc));
 			break;
 		case Boot::BootScriptContext::kPlugInKnowWonder:
-			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
+			plugIns.push_back(Boot::loadKnowWonderPlugIn(gameDesc));
 			break;
 		case Boot::BootScriptContext::kPlugInAxLogic:
-			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
+			plugIns.push_back(Boot::loadAXLogicPlugIn(gameDesc));
 			break;
 		case Boot::BootScriptContext::kPlugInHoologic:
-			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
+			plugIns.push_back(Boot::loadHoologicPlugIn(gameDesc));
 			break;
 		case Boot::BootScriptContext::kPlugInMLine:
-			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
+			plugIns.push_back(Boot::loadMLinePlugIn(gameDesc));
 			break;
 		case Boot::BootScriptContext::kPlugInThereware:
-			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
+			plugIns.push_back(Boot::loadTherewarePlugIn(gameDesc));
 			break;
 		default:
 			error("Unknown plug-in ID");
