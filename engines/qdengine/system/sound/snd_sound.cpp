@@ -52,6 +52,8 @@ bool sndSound::play() {
 
 	_flags &= ~SOUND_FLAG_PAUSED;
 
+	_sound->_audioStream->rewind();
+
 	if (_flags & SOUND_FLAG_LOOPING) {
 		Audio::AudioStream *audio = new Audio::LoopingAudioStream(_sound->_audioStream, 0, DisposeAfterUse::NO);
 		g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_audHandle, audio, -1, Audio::Mixer::kMaxChannelVolume, 0,  DisposeAfterUse::NO);
