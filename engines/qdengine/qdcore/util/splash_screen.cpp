@@ -83,7 +83,7 @@ void SplashScreen::show() {
 	g_system->fillScreen(0);
 	g_system->getPaletteManager()->setPalette(_palette, 0, _paletteCount);
 
-	start_time_ = g_system->getMillis();
+	_start_time = g_system->getMillis();
 
 	if (!_splash)
 		return;
@@ -96,8 +96,8 @@ void SplashScreen::show() {
 }
 
 void SplashScreen::wait(int time) {
-	if (g_system->getMillis() - start_time_ < time)
-		g_system->delayMillis(time - (g_system->getMillis() - start_time_));
+	if (g_system->getMillis() - _start_time < time)
+		g_system->delayMillis(time - (g_system->getMillis() - _start_time));
 }
 
 void SplashScreen::hide() {

@@ -30,7 +30,7 @@ namespace QDEngine {
 
 class SplashScreen {
 public:
-	SplashScreen() : start_time_(0) { }
+	SplashScreen() : _start_time(0) { }
 	~SplashScreen() {
 		destroy();
 	}
@@ -50,7 +50,7 @@ public:
 
 private:
 
-	int start_time_ = 0;
+	int _start_time = 0;
 
 	Graphics::Surface *_splash = nullptr;
 	byte *_palette = nullptr;
