@@ -1269,6 +1269,7 @@ void Room406::useAceOfSpades1() {
 		_ripHiHand = series_load("rip trek hi 1 hand");
 		setGlobals1(_ripHiHand, 1, 5, 5, 5, 0, 5, 1, 1, 1);
 		sendWSMessage_110000(1);
+		break;
 
 	case 1:
 		terminateMachineAndNull(_cardDoor);
@@ -1300,6 +1301,7 @@ void Room406::useAceOfSpades2() {
 		_ripHiHand = series_load("rip trek hi 1 hand");
 		setGlobals1(_ripHiHand, 1, 5, 5, 5, 0, 5, 1, 1, 1);
 		sendWSMessage_110000(1);
+		break;
 
 	case 1:
 		_cardDoor = series_place_sprite("406 CARD DOOR OPEN BY PICT", 0, 0, 0, 100, 0xf00);

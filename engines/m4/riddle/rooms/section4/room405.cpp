@@ -462,6 +462,7 @@ void Room405::daemon() {
 			case 2103:
 				sendWSMessage_10000(1, _baronWalker, _baronTalkLoop, 1, 1, -1,
 					_baronTalkLoop, 1, 1, 0);
+				break;
 
 			case 2110:
 				_G(kernel).call_daemon_every_loop = true;
