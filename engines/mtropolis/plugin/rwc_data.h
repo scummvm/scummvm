@@ -19,40 +19,33 @@
  *
  */
 
-#ifndef MTROPOLIS_PLUGINS_H
-#define MTROPOLIS_PLUGINS_H
+#ifndef MTROPOLIS_PLUGIN_MLINE_DATA_H
+#define MTROPOLIS_PLUGIN_MLINE_DATA_H
 
-#include "common/ptr.h"
-
-class MidiDriver;
+#include "mtropolis/data.h"
 
 namespace MTropolis {
 
-namespace Obsidian {
+namespace Data {
 
-class WordGameData;
+namespace RWC {
 
-} // End of namespace Obsidian
+// Known Real Wild Child! Australian Rock Music 1950s-90s custom modifiers:
+// - Invalidate
+// - Ripple
+// - Spraycan
+// - ThighBlaster
 
-class PlugIn;
 
-namespace PlugIns {
+struct ThighBlasterModifier : public PlugInModifierData {
+	PlugInTypeTaggedValue unknown1Int;
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
 
-Common::SharedPtr<PlugIn> createMIDI();
-Common::SharedPtr<PlugIn> createStandard();
-Common::SharedPtr<PlugIn> createObsidian(const Common::SharedPtr<Obsidian::WordGameData> &wgData);
-Common::SharedPtr<PlugIn> createMTI();
-Common::SharedPtr<PlugIn> createFTTS();
-Common::SharedPtr<PlugIn> createRWC();
+} // End of namespace RWC
 
-Common::SharedPtr<PlugIn> createKnowWonder();
-
-Common::SharedPtr<PlugIn> createAXLogic();
-Common::SharedPtr<PlugIn> createHoologic();
-Common::SharedPtr<PlugIn> createMLine();
-Common::SharedPtr<PlugIn> createThereware();
-
-} // End of namespace PlugIns
+} // End of namespace Data
 
 } // End of namespace MTropolis
 

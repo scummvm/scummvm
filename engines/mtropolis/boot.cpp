@@ -1079,6 +1079,7 @@ public:
 		kPlugInObsidian,
 		kPlugInMIDI,
 		kPlugInFTTS,
+		kPlugInRWC,
 		kPlugInKnowWonder,
 		kPlugInAxLogic,
 		kPlugInHoologic,
@@ -1473,6 +1474,7 @@ void BootScriptContext::executeFunction(const Common::String &functionName, cons
 									  ENUM_BINDING(kPlugInObsidian),
 									  ENUM_BINDING(kPlugInMIDI),
 									  ENUM_BINDING(kPlugInFTTS),
+									  ENUM_BINDING(kPlugInRWC),
 									  ENUM_BINDING(kPlugInKnowWonder),
 									  ENUM_BINDING(kPlugInAxLogic),
 									  ENUM_BINDING(kPlugInHoologic),
@@ -2122,6 +2124,11 @@ Common::SharedPtr<MTropolis::PlugIn> loadMTIPlugIn(const MTropolisGameDescriptio
 Common::SharedPtr<MTropolis::PlugIn> loadFTTSPlugIn(const MTropolisGameDescription &gameDesc) {
 	Common::SharedPtr<MTropolis::PlugIn> fttsPlugIn(PlugIns::createFTTS());
 	return fttsPlugIn;
+}
+
+Common::SharedPtr<MTropolis::PlugIn> loadRWCPlugIn(const MTropolisGameDescription &gameDesc) {
+	Common::SharedPtr<MTropolis::PlugIn> rwcPlugIn(PlugIns::createRWC());
+	return rwcPlugIn;
 }
 
 Common::SharedPtr<MTropolis::PlugIn> loadKnowWonderPlugIn(const MTropolisGameDescription &gameDesc) {
@@ -3023,6 +3030,9 @@ BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
 			break;
 		case Boot::BootScriptContext::kPlugInFTTS:
+			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
+			break;
+		case Boot::BootScriptContext::kPlugInRWC:
 			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
 			break;
 		case Boot::BootScriptContext::kPlugInKnowWonder:
