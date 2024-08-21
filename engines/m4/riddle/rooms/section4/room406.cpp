@@ -219,6 +219,90 @@ void Room406::init() {
 }
 
 void Room406::daemon() {
+	switch (_G(kernel).trigger) {
+	case 10:
+		player_set_commands_allowed(false);
+		digi_play("406_s03", 2);
+		terminateMachineAndNull(_cards);
+		sendWSMessage_120000(12);
+		break;
+
+	case 12:
+		setHotspots();
+		sendWSMessage_150000(13);
+		break;
+
+	case 13:
+		series_unload(_ripReachHand);
+		player_set_commands_allowed(true);
+		break;
+
+	case 20:
+		player_set_commands_allowed(false);
+		digi_play("406_s03", 2);
+		terminateMachineAndNull(_emptyDrawer);
+
+		if (inv_object_is_here("ENVELOPE"))
+			terminateMachineAndNull(_envelope);
+		if (inv_object_is_here("KEYS"))
+			terminateMachineAndNull(_keys);
+
+		sendWSMessage_120000(22);
+		return;
+
+	case 22:
+		sendWSMessage_150000(23);
+		return;
+
+	case 23:
+		series_unload(_rptmhr);
+		player_set_commands_allowed(true);
+		break;
+
+	case 300:
+		player_set_commands_allowed(true);
+		break;
+
+	case 310:
+		hotspot_set_active("PAINTING", true);
+		hotspot_set_active("SMOKING HUTCH", false);
+		digi_play("406_s07", 2, 255, 311);
+		_paintingOpening = series_load("406 PAINTING OPENING");
+		_painting = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+			triggerMachineByHashCallbackAlways, "HUTCH painting opens");
+		sendWSMessage_10000(1, _painting, _paintingOpening, 30, 1, 312,
+			_paintingOpening, 1, 1, 0);
+		break;
+
+	case 311:
+		digi_play("406_s08", 2);
+		break;
+
+	case 312:
+		terminateMachineAndNull(_painting);
+		series_unload(_paintingOpening);
+		_painting = series_place_sprite("406 PAINTING CLOSED", 0, 0, 0, 100, 0xf00);
+		sendWSMessage_120000(313);
+		break;
+
+	case 313:
+		sendWSMessage_150000(314);
+		break;
+
+	case 314:
+		series_unload(_ripHiHand);
+		_G(flags)[kPaintingOpen] = 0;
+		player_set_commands_allowed(true);
+		break;
+
+	case 700:
+		if (_G(flags)[V322])
+			digi_play("456_s03", 3, 255, 700);
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Room406::pre_parser() {
