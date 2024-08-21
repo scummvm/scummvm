@@ -119,7 +119,7 @@ void Room406::init() {
 			0, 0, 0, 100, 0xf00);
 	}
 
-	if (_G(flags)[V309]) {
+	if (_G(flags)[kWritingDeskDrawerOpen]) {
 		hotspot_set_active("WRITING DESK", false);
 		_desk = series_place_sprite("406 DESK OPEN", 0, 0, 0, 100, 0x600);
 	} else {
@@ -278,6 +278,7 @@ void Room406::pre_parser() {
 		_G(player).resetWalk();
 	}
 }
+
 #define LOOK(ITEM) (lookFlag && player_said(ITEM) && inv_object_is_here(ITEM))
 void Room406::parser() {
 	bool lookFlag = player_said_any("look", "look at");
@@ -285,7 +286,22 @@ void Room406::parser() {
 	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (takeFlag && player_said("ENVELOPE")) {
-		// No implementation
+		switch (_G(kernel).trigger) {
+		case -1:
+			if (inv_object_is_here("ENVELOPE")) {
+				inv_give_to_player("ENVELOPE");
+				hotspot_set_active("ENVELOPE", false);
+				terminateMachineAndNull(_envelope);
+				kernel_examine_inventory_object("PING ENVELOPE", _G(master_palette),
+					5, 1, 398, 220, 8, 0, -1);
+			}
+			break;
+		case 8:
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
 	} else if (takeFlag && player_said("KEYS") && takeKeys()) {
 		// No implementation
 	} else if (takeFlag && player_said("DESK DRAWER OPEN")) {
@@ -489,9 +505,420 @@ void Room406::parser() {
 			useSwitchPaintingOpen();
 		else
 			useSwitchPaintingClosed();
-	}
-	// TODO
-	else {
+	} else if (useFlag && player_said_any("ACE OF SPADES", "ACE OF SPADES ")) {
+		// Note: The original had two separate blocks for use ace of spades.
+		// Since the second version could never be called, I've ommitted it
+		if (_G(flags)[V310])
+			useAceOfSpades1();
+		else
+			useAceOfSpades2();
+	} else if (player_said("CUBE CABINET", "KEYS")) {
+		digi_play("406r27", 1);
+	} else if (player_said("DART BOARD", "KEYS")) {
+		digi_play("406r26", 1);
+	} else if (useFlag && player_said("CUE CABINET")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripReachHand = series_load("RIP TREK MED REACH HAND POS1");
+			break;
+		case 1:
+			digi_play("406_s04", 2, 255, 2);
+			break;
+		case 2:
+			digi_play(inv_player_has("KEYS") ? "406r27" : "406r20", 1);
+			break;
+		case 4:
+			sendWSMessage_150000(5);
+			break;
+		case 5:
+			series_unload(_ripReachHand);
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (useFlag && player_said("WRITING DESK DRAWER")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_rptmhr = series_load("RPTMHR11");
+			setGlobals1(_rptmhr, 1, 5, 5, 5, 0, 5, 1, 1, 1);
+			sendWSMessage_110000(1);
+			break;
+		case 1:
+			_val2 = 1000;
+			_emptyDrawer = series_place_sprite("406 DESK DRAWER EMPTY", 0, 0, 0, 100, 0x200);
+			digi_play("406_s02", 2);
+			hotspot_set_active(" ", true);
+			hotspot_set_active("DESK DRAWER OPEN", true);
+			hotspot_set_active("MESSAGES", true);
+
+			if (inv_object_is_here("ENVELOPE")) {
+				_envelope = series_place_sprite("406 DESK DRAWER ENVELOPE", 0, 0, 0, 100, 0x200);
+				hotspot_set_active("ENVELOPE", true);
+			}
+
+			if (!inv_player_has("KEYS")) {
+				_keys = series_place_sprite("406 DESK DRAWER WITH KEYS", 0, 0, 0, 100, 0x200);
+				hotspot_set_active("KEYS", true);
+			}
+
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (useFlag && player_said("GAMES CABINET DRAWER")) {
+		if (_G(flags)[V307]) {
+			switch (_G(kernel).trigger) {
+			case -1:
+				player_set_commands_allowed(false);
+				_ripReachHand = series_load("RIP TREK MED REACH HAND POS1");
+				setGlobals1(_ripReachHand, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+				sendWSMessage_110000(1);
+				break;
+			case 1:
+				if (_G(flags)[V308]) {
+					_val1 = 1000;
+					_cards = series_place_sprite("406 GAMES DRAWER WITH CARDS", 0, 0, 0, 100, 0x100);
+					digi_play("406_s02", 2);
+					hotspot_set_active(" ", true);
+					hotspot_set_active("CABINET DRAW OPEN", true);
+					player_set_commands_allowed(true);
+				} else {
+					digi_play("406r20", 1);
+					sendWSMessage_120000(4);
+				}
+				break;
+			case 4:
+				sendWSMessage_150000(5);
+				break;
+			case 5:
+				series_unload(_ripReachHand);
+				player_set_commands_allowed(true);
+				break;
+			default:
+				break;
+			}
+		} else {
+			digi_play("406r20", 1);
+		}
+	} else if (player_said("GAMES CABINET DRAWER", "KEYS")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripReachHand = series_load("RIP TREK MED REACH HAND POS1");
+			setGlobals1(_ripReachHand, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+			sendWSMessage_110000(1);
+			break;
+		case 1:
+			if (_G(flags)[V308]) {
+				_G(flags)[V308] = 0;
+				digi_play("406_s06", 2);
+			} else {
+				digi_play("406_s05", 2);
+				_G(flags)[V308] = 1;
+			}
+			break;
+		case 4:
+			sendWSMessage_150000(5);
+			break;
+		case 5:
+			series_unload(_ripReachHand);
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("GAMES CABINET", "KEYS")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripReachHand = series_load("RIP TREK MED REACH HAND POS1");
+			setGlobals1(_ripReachHand, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+			sendWSMessage_110000(1);
+			break;
+		case 1:
+			if (_G(flags)[V307]) {
+				_G(flags)[V307] = 0;
+				digi_play("406_s06", 2);
+			} else {
+				digi_play("406_s05", 2);
+				_G(flags)[V307] = 1;
+			}
+			break;
+		case 4:
+			sendWSMessage_150000(5);
+			break;
+		case 5:
+			series_unload(_ripReachHand);
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (useFlag && player_said("BILLIARD BALL") && lookBilliardBall()) {
+		// No implementation
+	} else if (useFlag && player_said("WRITING DESK")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripReachHand = series_load("RIP TREK MED REACH HAND POS1");
+			setGlobals1(_ripReachHand, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+			sendWSMessage_110000(1);
+			break;
+		case 1:
+			terminateMachineAndNull(_desk);
+			_deskOpening = series_load("406 DESK OPENING");
+			digi_play("406_s05", 2, 255, -1, 406);
+			_desk = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x500, 0,
+				triggerMachineByHashCallbackAlways, "writing desk opens");
+			sendWSMessage_10000(1, _desk, _deskOpening, 1, 15, 2,
+				_deskOpening, 15, 15, 0);
+			break;
+		case 2:
+			terminateMachineAndNull(_desk);
+			_desk = series_place_sprite("406 DESK OPEN", 0, 0, 0, 100, 0x600);
+			hotspot_set_active("WRITING DESK", false);
+			hotspot_set_active("WRITING DESK ", true);
+			hotspot_set_active("WRITING DESK DRAWER", true);
+			sendWSMessage_120000(3);
+			break;
+		case 3:
+			sendWSMessage_150000(4);
+			break;
+		case 4:
+			series_unload(_deskOpening);
+			series_unload(_ripReachHand);
+			_G(flags)[kWritingDeskDrawerOpen] = 1;
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (useFlag && player_said("WRITING DESK ")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripReachHand = series_load("RIP TREK MED REACH HAND POS1");
+			setGlobals1(_ripReachHand, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+			sendWSMessage_110000(1);
+			break;
+		case 1:
+			terminateMachineAndNull(_desk);
+			_deskOpening = series_load("406 DESK OPENING");
+			digi_play("406_s05", 2, 255, -1, 406);
+			_desk = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0x500, 0,
+				triggerMachineByHashCallbackAlways, "writing desk opens");
+			sendWSMessage_10000(1, _desk, _deskOpening, 15, 1, 2,
+				_deskOpening, 1, 1, 0);
+			break;
+		case 2:
+			terminateMachineAndNull(_desk);
+			_desk = series_place_sprite("406 DESK CLOSE", 0, 0, 0, 100, 0x600);
+			hotspot_set_active("WRITING DESK", true);
+			hotspot_set_active("WRITING DESK ", false);
+			hotspot_set_active("WRITING DESK DRAWER", false);
+			sendWSMessage_120000(3);
+			break;
+		case 3:
+			sendWSMessage_150000(4);
+			break;
+		case 4:
+			series_unload(_deskOpening);
+			series_unload(_ripReachHand);
+			_G(flags)[kWritingDeskDrawerOpen] = 0;
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (useFlag && player_said("GAMES CABINET")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripReachHand = series_load("RIP TREK MED REACH HAND POS1");
+			setGlobals1(_ripReachHand, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+			sendWSMessage_110000(1);
+			break;
+		case 1:
+			if (_G(flags)[V307]) {
+				terminateMachineAndNull(_gamesCabinet);
+				_cabinetOpens = series_load("406 GAMES CABINET OPENS");
+				digi_play("950_s36", 2, 255, -1, 950);
+				_gamesCabinet = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, 0,
+					triggerMachineByHashCallbackAlways, "game cabinet opens");
+				sendWSMessage_10000(1, _gamesCabinet, _cabinetOpens, 1, 10, 2,
+					_cabinetOpens, 10, 10, 0);
+			} else {
+				digi_play("406r20", 1, 255, 3);
+			}
+			break;
+		case 2:
+			terminateMachineAndNull(_gamesCabinet);
+			_gamesCabinet = series_place_sprite("406 GAMES CABINET OPEN", 0, 0, 0, 100, 0xf00);
+			hotspot_set_active("GAMES CABINET", false);
+			hotspot_set_active("GAMES CABINET ", true);
+			hotspot_set_active("GAMES CABINET DRAWER", true);
+			hotspot_set_active("CABINET DRAWER OPEN", false);
+			_G(flags)[V306] = 1;
+			kernel_timing_trigger(1, 3);
+			break;
+		case 3:
+			sendWSMessage_120000(4);
+			break;
+		case 4:
+			sendWSMessage_150000(5);
+			break;
+		case 5:
+			series_unload(_ripReachHand);
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (useFlag && player_said("GAMES CABINET ")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripReachHand = series_load("RIP TREK MED REACH HAND POS1");
+			setGlobals1(_ripReachHand, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+			sendWSMessage_110000(1);
+			break;
+		case 1:
+			terminateMachineAndNull(_gamesCabinet);
+			_cabinetOpens = series_load("406 GAMES CABINET OPENS");
+			digi_play("950_s36", 2, 255, -1, 950);
+			_gamesCabinet = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, 0,
+				triggerMachineByHashCallbackAlways, "game cabinet opens");
+			sendWSMessage_10000(1, _gamesCabinet, _cabinetOpens, 10, 1, 2,
+				_cabinetOpens, 1, 1, 0);
+			break;
+		case 2:
+			if (player_said("KEYS"))
+				digi_play("406_s06", 2);
+
+			terminateMachineAndNull(_gamesCabinet);
+			_desk = series_place_sprite("406 GAMES CABINET CLOSED", 0, 0, 0, 100, 0xf00);
+			hotspot_set_active("GAMES CABINET", true);
+			hotspot_set_active("GAMES CABINET ", false);
+			hotspot_set_active("GAMES CABINET DRAWER", false);
+			sendWSMessage_120000(3);
+			break;
+		case 3:
+			sendWSMessage_150000(4);
+			break;
+		case 4:
+			series_unload(_cabinetOpens);
+			series_unload(_ripReachHand);
+			_G(flags)[V306] = 0;
+
+			if (player_said("GAMES CABINET ", "KEYS"))
+				_G(flags)[V307] = 0;
+
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("GAMES CABINET ", "KEYS")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripReachHand = series_load("RIP TREK MED REACH HAND POS1");
+			setGlobals1(_ripReachHand, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+			sendWSMessage_110000(1);
+			break;
+		case 1:
+			terminateMachineAndNull(_gamesCabinet);
+			_cabinetOpens = series_load("406 GAMES CABINET OPENS");
+			digi_play("950_s36", 2, 255, -1, 950);
+			_gamesCabinet = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xf00, 0,
+				triggerMachineByHashCallbackAlways, "game cabinet opens");
+			sendWSMessage_10000(1, _gamesCabinet, _cabinetOpens, 10, 1, 2,
+				_cabinetOpens, 1, 1, 0);
+			break;
+		case 2:
+			if (player_said("KEYS"))
+				digi_play("406_s06", 2);
+
+			terminateMachineAndNull(_gamesCabinet);
+			_gamesCabinet = series_place_sprite("406 GAMES CABINET CLOSED", 0, 0, 0, 100, 0xf00);
+			hotspot_set_active("GAMES CABINET", true);
+			hotspot_set_active("GAMES CABINET ", false);
+			hotspot_set_active("GAMES CABINET DRAWER", false);
+			sendWSMessage_120000(3);
+			break;
+		case 3:
+			sendWSMessage_150000(5);
+			break;
+		case 4:
+			series_unload(_cabinetOpens);
+			series_unload(_ripReachHand);
+			_G(flags)[V306] = 0;
+
+			if (player_said("GAMES CABINET ", "KEYS"))
+				_G(flags)[V307] = 0;
+
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("DOWN", "STAIRS")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(2);
+			break;
+		case 2:
+			_G(flags)[V312] = 0;
+			_G(game).setRoom(407);
+			break;
+		default:
+			break;
+		}
+	} else if ((useFlag || lookFlag) && player_said("SMOKING HUTCH")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(2);
+			break;
+		case 2:
+			_G(game).setRoom(456);
+
+			if (_G(flags)[V322]) {
+				adv_kill_digi_between_rooms(false);
+				digi_play_loop("456_s03a", 3, 255, 700, 456);
+			}
+			break;
+		default:
+			break;							
+		}
+	} else if (player_said("WALK TO", "DOOR")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			disable_player_commands_and_fade_init(2);
+			break;
+		case 2:
+			_G(game).setRoom(404);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("journal") && !takeFlag && !lookFlag &&
+			!inv_player_has(_G(player).noun)) {
+		if (_G(flags)[kCastleCartoon])
+			digi_play("com016", 1);
+		else if (_G(kernel).trigger != 6)
+			sendWSMessage_multi("com015");
+		else {
+			_G(flags)[kCastleCartoon] = 1;
+			sendWSMessage_multi("com015");
+		}
+	} else {
 		return;
 	}
 
@@ -517,7 +944,7 @@ void Room406::setHotspots() {
 		hotspot_set_active("GAMES CABINET DRAWER", false);
 	}
 
-	if (_G(flags)[V309]) {
+	if (_G(flags)[kWritingDeskDrawerOpen]) {
 		hotspot_set_active("WRITING DESK", false);
 	} else {
 		hotspot_set_active("WRITING DESK ", false);
@@ -749,6 +1176,106 @@ void Room406::useSwitchPaintingClosed() {
 	default:
 		break;
 	}
+}
+
+void Room406::useAceOfSpades1() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_ripHiHand = series_load("rip trek hi 1 hand");
+		setGlobals1(_ripHiHand, 1, 5, 5, 5, 0, 5, 1, 1, 1);
+		sendWSMessage_110000(1);
+
+	case 1:
+		terminateMachineAndNull(_cardDoor);
+		hotspot_set_active("ACE OF SPADES", true);
+		hotspot_set_active("ACE OF SPADES ", false);
+		hotspot_set_active("SWITCH", false);
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripHiHand);
+		_G(flags)[V310] = 0;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room406::useAceOfSpades2() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_ripHiHand = series_load("rip trek hi 1 hand");
+		setGlobals1(_ripHiHand, 1, 5, 5, 5, 0, 5, 1, 1, 1);
+		sendWSMessage_110000(1);
+
+	case 1:
+		_cardDoor = series_place_sprite("406 CARD DOOR OPEN BY PICT", 0, 0, 0, 100, 0xf00);
+		hotspot_set_active("ACE OF SPADES", false);
+		hotspot_set_active("ACE OF SPADES ", true);
+		hotspot_set_active("SWITCH", true);
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripHiHand);
+		_G(flags)[V310] = 1;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+bool Room406::lookBilliardBall() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (inv_object_is_here("BILLIARD BALL")) {
+			player_set_commands_allowed(false);
+			_ripThrowsBall = series_load("406 RIP THROWS BALL");
+			digi_preload("406_s12");
+			terminateMachineAndNull(_poolBall);
+			ws_hide_walker();
+			_poolBall = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+				triggerMachineByHashCallbackAlways, "RIP throws ball");
+			sendWSMessage_10000(1, _poolBall, _ripThrowsBall, 1, 31, 2,
+				_ripThrowsBall, 31, 31, 0);
+			return true;
+		}
+		break;
+
+	case 2:
+		sendWSMessage_10000(1, _poolBall, _ripThrowsBall, 32, 66, 3,
+			_ripThrowsBall, 66, 66, 0);
+		digi_play("406_s12", 2);
+		return true;
+
+	case 3:
+		terminateMachineAndNull(_poolBall);
+		ws_unhide_walker();
+		series_unload(_ripThrowsBall);
+		_poolBall = series_place_sprite("BILLIARD BALL", 0, 0, 0, 100, 0x200);
+		player_set_commands_allowed(true);
+		return true;
+
+	default:
+		break;
+	}
+
+	return false;
 }
 
 } // namespace Rooms
