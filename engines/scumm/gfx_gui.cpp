@@ -2031,6 +2031,9 @@ void ScummEngine::setMusicVolume(int volume) {
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume * 2);
 	ConfMan.setInt("music_volume", volume * 2);
 	ConfMan.flushToDisk();
+
+	if (_game.version < 7)
+		ScummEngine::syncSoundSettings();
 }
 
 void ScummEngine::setSpeechVolume(int volume) {
@@ -2039,6 +2042,9 @@ void ScummEngine::setSpeechVolume(int volume) {
 		_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume * 2);
 	ConfMan.setInt("speech_volume", volume * 2);
 	ConfMan.flushToDisk();
+
+	if (_game.version < 7)
+		ScummEngine::syncSoundSettings();
 }
 
 void ScummEngine::setSFXVolume(int volume) {
@@ -2047,6 +2053,9 @@ void ScummEngine::setSFXVolume(int volume) {
 		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume * 2);
 	ConfMan.setInt("sfx_volume", volume * 2);
 	ConfMan.flushToDisk();
+
+	if (_game.version < 7)
+		ScummEngine::syncSoundSettings();
 }
 
 int ScummEngine::getMusicVolume() {

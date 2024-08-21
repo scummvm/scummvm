@@ -1339,6 +1339,10 @@ void Sound::stopSpeechTimer() {
 	_vm->getTimerManager()->removeTimerProc(&speechTimerHandler);
 }
 
+bool Sound::speechIsPlaying() {
+	return _mixer->isSoundHandleActive(*_talkChannelHandle);
+}
+
 static void cdTimerHandler(void *refCon) {
 	Sound *snd = (Sound *)refCon;
 
