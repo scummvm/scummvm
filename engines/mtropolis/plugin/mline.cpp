@@ -69,7 +69,7 @@ MLinePlugIn::~MLinePlugIn() {
 }
 
 void MLinePlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) const {
-	//URLaunch modifier by mLine
+	//URLaunch plugin by mLine
 	registrar->registerPlugInModifier("mLine_launcher", &_mlineLauncherModifierFactory);
 }
 
