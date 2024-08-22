@@ -190,6 +190,7 @@ int QDEngineEngine::engineMain() {
 
 	if (ConfMan.getBool("dump_scripts")) {
 		qd_gameD->save_script("qd_game.xml");
+		debug("Dumped qd_game.xml");
 	}
 
 	qd_gameD->set_scene_loading_progress_callback(qd_show_load_progress);

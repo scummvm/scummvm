@@ -97,6 +97,8 @@ public:
 	enum {
 		//! Объект спрятан.
 		QD_OBJ_STATE_FLAG_HIDDEN            = 0x01,
+		//! The state is not in triggers. Deprecated, replaced with is_in_triggers()
+		QD_OBJ_STATE_FLAG_NOT_IN_TRIGGERS  = 0x02,
 		//! Восстанавливать предыдущее состояние по окончании состояния.
 		QD_OBJ_STATE_FLAG_RESTORE_PREV_STATE        = 0x04,
 		//! Прятать объект по окончании состояния.
@@ -577,6 +579,8 @@ protected:
 
 	//! Возвращает true, если надо перезапустить звук.
 	virtual bool need_sound_restart() const;
+
+	Common::String flag2str(int fl) const;
 
 private:
 
