@@ -171,7 +171,7 @@ int QDEngineEngine::engineMain() {
 	qdGameConfig::get_config().load();
 
 	SplashScreen sp;
-	if (qdGameConfig::get_config().is_splash_enabled()) {
+	if (ConfMan.getBool("splash_enabled")) {
 		sp.create(IDB_SPLASH);
 		sp.set_mask(IDB_SPLASH_MASK);
 		sp.show();
@@ -195,8 +195,8 @@ int QDEngineEngine::engineMain() {
 
 	qd_gameD->set_scene_loading_progress_callback(qd_show_load_progress);
 
-	if (qdGameConfig::get_config().is_splash_enabled()) {
-		sp.wait(qdGameConfig::get_config().splash_time());
+	if (ConfMan.getBool("splash_enabled")) {
+		sp.wait(ConfMan.getInt("splash_time"));
 		sp.destroy();
 	}
 
