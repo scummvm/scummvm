@@ -258,6 +258,8 @@ void qdGameObjectAnimated::quant(float dt) {
 	for (qdGameObjectStateVector::iterator it = _states.begin(); it != _states.end(); ++it)
 		(*it)->quant(dt);
 
+	debugC(1, kDebugQuant, "qdGameObjectAnimated::quant(): obj: '%s', state: %d  flags: %s", transCyrillic(name()), _cur_state, flag2str(flags()).c_str());
+
 	if (_cur_state != -1) {
 		if (!_states[_cur_state]->coords_animation()->is_empty())
 			_states[_cur_state]->coords_animation()->quant(dt);
