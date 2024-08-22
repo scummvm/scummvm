@@ -1332,7 +1332,25 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 						scaledSpriteHeight,
 						player_sprite_related_2c85_82f3);
 				} else if (otherNspAnimationType_maybe == 39) {
-					error("anim: 39"); // TODO
+					int16 spriteX = 110;
+					int16 spriteY = _player->_position.y;
+					if (_room->_roomNumber == 10) {
+						spriteX = 330;
+						spriteY = 224;
+					}
+					const Sprite &sprite = _room->_locationSprites.getSpriteAt(_player->_frameIdx);
+					_room->calculateScaledSpriteDimensions(
+						sprite.width,
+						sprite.height,
+						spriteX);
+					_sprites.addSpriteToDrawList(
+						spriteX,
+						spriteY - scaledSpriteHeight,
+						&sprite,
+						240 - _player->_position.y,
+						scaledSpriteWidth,
+						scaledSpriteHeight,
+						player_sprite_related_2c85_82f3);
 				} else if (otherNspAnimationType_maybe == 47) {
 					const Sprite &sprite = _room->_locationSprites.getSpriteAt(_player->_frameIdx);
 					_room->calculateScaledSpriteDimensions(
@@ -2160,7 +2178,37 @@ void DarkseedEngine::handleObjCollision(int targetObjNum) {
 			case 19:
 				_useCode->useCodeStick(targetObjNum);
 				break;
-			// TODO lots of extra switch cases here for inventory usages.
+			case 20:
+				_useCode->useCodeAxeHandle(targetObjNum);
+				break;
+			case 23:
+				_useCode->useCodeRope(targetObjNum);
+				break;
+			case 24:
+				_useCode->useCodeMicroFilm(targetObjNum);
+				break;
+			case 25:
+			case 27:
+				_useCode->useCodeSpecialHammer(_actionMode, targetObjNum);
+				break;
+			case 28:
+				_useCode->useCodeGun(targetObjNum);
+				break;
+			case 30:
+				_useCode->useCodeMoversNote(targetObjNum);
+				break;
+			case 34:
+				_useCode->useCodeBluePrints(targetObjNum);
+				break;
+			case 35:
+				_useCode->useCodeWatch(targetObjNum);
+				break;
+			case 41:
+				_useCode->useCodeTinCup(targetObjNum);
+				break;
+			case 85: // this code appears to be wrong and unused.
+				_useCode->useCodeEmptyUrn(targetObjNum);
+				break;
 			default:
 				break;
 			}

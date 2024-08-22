@@ -113,6 +113,48 @@ int16 UseCode::getUseStickTosIdx(uint16 objNum) {
 	return stickTextTbl[objNum];
 }
 
+int16 UseCode::getUseAxeHandleTosIdx(uint16 objNum) {
+	if (objNum >= Objects::MAX_OBJECTS) {
+		error("getUseAxeHandleTosIdx: Object Index out of range! %d", objNum);
+	}
+	return axeHandleTextTbl[objNum];
+}
+
+int16 UseCode::getUseRopeTosIdx(uint16 objNum) {
+	if (objNum >= Objects::MAX_OBJECTS) {
+		error("getUseRopeTosIdx: Object Index out of range! %d", objNum);
+	}
+	return ropeTextTbl[objNum];
+}
+
+int16 UseCode::getUseMicroFilmTosIdx(uint16 objNum) {
+	if (objNum >= Objects::MAX_OBJECTS) {
+		error("getUseMicroFilmTosIdx: Object Index out of range! %d", objNum);
+	}
+	return microFilmTextTbl[objNum];
+}
+
+int16 UseCode::getUseSpecialHammerTosIdx(uint16 objNum) {
+	if (objNum >= Objects::MAX_OBJECTS) {
+		error("getUseSpecialHammerTosIdx: Object Index out of range! %d", objNum);
+	}
+	return specialHammerTextTbl[objNum];
+}
+
+int16 UseCode::getUseGunTosIdx(uint16 objNum) {
+	if (objNum >= Objects::MAX_OBJECTS) {
+		error("getUseGunTosIdx: Object Index out of range! %d", objNum);
+	}
+	return gunTextTbl[objNum];
+}
+
+int16 UseCode::getUseWatchTosIdx(uint16 objNum) {
+	if (objNum >= Objects::MAX_OBJECTS) {
+		error("getUseWatchTosIdx: Object Index out of range! %d", objNum);
+	}
+	return watchTextTbl[objNum];
+}
+
 void Darkseed::UseCode::useCode(int objNum) {
 	debug("useCode: objNum = %d", objNum);
 	
@@ -1242,6 +1284,285 @@ void UseCode::useCodeStick(int16 targetObjNum) {
 		g_engine->setupOtherNspAnimation(2, 47);
 	} else if (targetObjNum == 53) {
 		g_engine->throwmikeinjail();
+	}
+}
+
+void UseCode::useCodeAxeHandle(int16 targetObjNum) {
+	int16 tosIdx = getUseAxeHandleTosIdx(targetObjNum);
+	if (tosIdx != 0) {
+		if (tosIdx < 979) {
+			_console->printTosText(tosIdx);
+		} else {
+			genericresponse(20, targetObjNum, tosIdx);
+		}
+	}
+	if (targetObjNum == 53) {
+		g_engine->throwmikeinjail();
+	}
+}
+
+void UseCode::useCodeRope(int16 targetObjNum) {
+	int16 tosIdx = getUseRopeTosIdx(targetObjNum);
+	if (tosIdx != 0) {
+		if (tosIdx < 979) {
+			_console->printTosText(tosIdx);
+		} else {
+			genericresponse(23, targetObjNum, tosIdx);
+		}
+	}
+	if (targetObjNum == 61) {
+		_objectVar[23] = 1;
+		_player->loadAnimations("opendoor.nsp");
+		g_engine->setupOtherNspAnimation(0, 15);
+		_inventory.removeItem(23);
+	}
+	if (targetObjNum == 53) {
+		g_engine->throwmikeinjail();
+	}
+}
+
+void UseCode::useCodeMicroFilm(int16 targetObjNum) {
+	int16 tosIdx = getUseMicroFilmTosIdx(targetObjNum);
+	if (tosIdx != 0) {
+		if (tosIdx < 979) {
+			_console->printTosText(tosIdx);
+		} else {
+			genericresponse(24, targetObjNum, tosIdx);
+		}
+	}
+	if (targetObjNum == 80) {
+		if (_objectVar[80] == 1 || _objectVar[80] == 3) {
+			_objectVar[80] = 3;
+			g_engine->showFullscreenPic("cfilm01.pic");
+			_console->printTosText(557);
+		} else {
+			_console->printTosText(964);
+		}
+	}
+	else if (targetObjNum == 113) {
+		putobjunderpillow(24);
+	}
+}
+
+void UseCode::useCodeSpecialHammer(int16 actionObjNum, int16 targetObjNum) {
+	if ((actionObjNum == 27) && (targetObjNum == 124)) {
+		_console->printTosText(24);
+	} else if ((actionObjNum == 27) && (targetObjNum == 49)) {
+		_console->printTosText(250);
+	} else if ((actionObjNum == 25) && (targetObjNum == 78)) {
+		_console->printTosText(41);
+	} else if ((actionObjNum == 27) && (targetObjNum == 126)) {
+		_console->printTosText(85);
+	} else if ((actionObjNum == 25) && (targetObjNum == 127)) {
+		_console->printTosText(109);
+	} else if ((actionObjNum == 25) && (targetObjNum == 123)) {
+		_console->printTosText(131);
+	} else if ((actionObjNum == 25) && (targetObjNum == 100)) {
+		_console->printTosText(155);
+	} else if ((actionObjNum == 25) && (targetObjNum == 142)) {
+		_console->printTosText(178);
+	} else if ((actionObjNum == 25) && (targetObjNum == 52)) {
+		_console->printTosText(204);
+	} else if ((actionObjNum == 25) && (targetObjNum == 108)) {
+		_console->printTosText(386);
+	} else if ((actionObjNum == 25) && (targetObjNum == 11)) {
+		_console->printTosText(524);
+	} else if ((actionObjNum == 25) && (targetObjNum == 173)) {
+		_console->printTosText(686);
+	} else if ((actionObjNum == 25) && (targetObjNum == 79)) {
+		_console->printTosText(833);
+	} else if (actionObjNum == 25) {
+		genericresponse(25, targetObjNum, 999);
+	} else if (actionObjNum == 27) {
+		int16 tosIdx = getUseSpecialHammerTosIdx(targetObjNum);
+		if (tosIdx != 0) {
+			if (tosIdx < 979) {
+				_console->printTosText(tosIdx);
+			} else {
+				genericresponse(27, targetObjNum, tosIdx);
+			}
+		}
+	}
+	if ((actionObjNum == 27) && (targetObjNum == 137)) {
+		if (_objectVar[57] == 0) {
+			_console->printTosText(301);
+		} else {
+			_player->loadAnimations("smash.nsp");
+			g_engine->setupOtherNspAnimation(0, 36);
+		}
+	} else if (targetObjNum == 53) {
+		g_engine->throwmikeinjail();
+	}
+}
+
+void UseCode::useCodeGun(int16 targetObjNum) {
+	int16 tosIdx = getUseGunTosIdx(targetObjNum);
+	if (tosIdx != 0) {
+		if (tosIdx < 979) {
+			_console->printTosText(tosIdx);
+		} else {
+			genericresponse(28, targetObjNum, tosIdx);
+		}
+	}
+	if (targetObjNum == 53) {
+		g_engine->throwmikeinjail();
+	}
+}
+
+void UseCode::useCodeMoversNote(int16 targetObjNum) {
+	if (targetObjNum == 47) {
+		_console->printTosText(57);
+	} else if (targetObjNum == 172) {
+		_console->printTosText(93);
+	} else if (targetObjNum == 129) {
+		genericresponse(30, 129, 998);
+	} else if (targetObjNum == 52) {
+		_console->printTosText(205);
+	} else if (targetObjNum == 145) {
+		_console->printTosText(222);
+	} else if (targetObjNum == 112) {
+		genericresponse(30, 112, 996);
+	} else if (targetObjNum == 146) {
+		_console->printTosText(289);
+	} else if (targetObjNum == 137) {
+		_console->printTosText(302);
+	} else if (targetObjNum == 147) {
+		_console->printTosText(309);
+	} else if (targetObjNum == 197) {
+		genericresponse(30, 197, 993);
+	} else if (targetObjNum == 109) {
+		genericresponse(30, 109, 992);
+	} else if (targetObjNum == 130) {
+		genericresponse(30, 130, 991);
+	} else if (targetObjNum == 121) {
+		genericresponse(30, 121, 990);
+	} else if (targetObjNum == 194) {
+		genericresponse(30, 194, 989);
+	} else if (targetObjNum == 172) {
+		genericresponse(30, 172, 988);
+	} else if (targetObjNum == 71) {
+		genericresponse(30, 71, 987);
+	} else if (targetObjNum == 101) {
+		genericresponse(30, 101, 986);
+	} else if (targetObjNum == 184) {
+		genericresponse(30, 184, 980);
+	} else if (targetObjNum == 185) {
+		genericresponse(30, 185, 982);
+	} else if (targetObjNum == 108) {
+		_console->printTosText(386);
+	} else if (targetObjNum == 110) {
+		_console->printTosText(392);
+	} else if (targetObjNum == 61) {
+		_console->printTosText(455);
+	} else if (targetObjNum == 156) {
+		_console->printTosText(550);
+	} else if (targetObjNum == 159) {
+		_console->printTosText(577);
+	} else if (targetObjNum == 113) {
+		putobjunderpillow(113);
+	} else if (targetObjNum == 120) {
+		_console->printTosText(804);
+	} else if (targetObjNum == 188) {
+		_console->printTosText(864);
+	} else if (targetObjNum == 48) {
+		_console->printTosText(860);
+	} else {
+		genericresponse(30, targetObjNum, 999);
+	}
+}
+
+void UseCode::useCodeBluePrints(int16 targetObjNum) {
+	if (targetObjNum == 126) {
+		_console->printTosText(82);
+	} else if (targetObjNum == 127) {
+		_console->printTosText(113);
+	} else if (targetObjNum == 123) {
+		_console->printTosText(133);
+	} else if (targetObjNum == 52) {
+		_console->printTosText(208);
+	} else if (targetObjNum == 100) {
+		_console->printTosText(158);
+	} else if (targetObjNum == 109) {
+		_console->printTosText(992);
+	} else if (targetObjNum == 108) {
+		_console->printTosText(386);
+	} else if (targetObjNum == 110) {
+		_console->printTosText(392);
+	} else if (targetObjNum == 61) {
+		_console->printTosText(455);
+	} else if (targetObjNum == 156) {
+		_console->printTosText(550);
+	} else if (targetObjNum == 159) {
+		_console->printTosText(577);
+	} else if (targetObjNum == 41) {
+		_console->printTosText(757);
+	} else if (targetObjNum == 120) {
+		_console->printTosText(804);
+	} else if (targetObjNum == 114) {
+		_console->printTosText(817);
+	} else if (targetObjNum == 188) {
+		_console->printTosText(864);
+	} else if (targetObjNum == 48) {
+		_console->printTosText(868);
+	} else if (targetObjNum == 185) {
+		genericresponse(34, 185, 982);
+	} else if (targetObjNum == 184) {
+		genericresponse(34, 184, 980);
+	} else if (targetObjNum == 130) {
+		genericresponse(34, 130, 991);
+	} else if (targetObjNum == 197) {
+		genericresponse(34, 197, 993);
+	} else if (targetObjNum == 112) {
+		genericresponse(34, 112, 996);
+	} else if (targetObjNum == 129) {
+		genericresponse(34, 129, 998);
+	} else if (targetObjNum == 121) {
+		genericresponse(34, 121, 990);
+	} else if (targetObjNum == 194) {
+		genericresponse(34, 194, 989);
+	} else if (targetObjNum == 172) {
+		genericresponse(34, 172, 988);
+	} else if (targetObjNum == 71) {
+		genericresponse(34, 71, 987);
+	} else if (targetObjNum == 101) {
+		genericresponse(34, 101, 986);
+	} else if (targetObjNum == 113) {
+		putobjunderpillow(34);
+	} else {
+		genericresponse(34, targetObjNum, 999);
+	}
+}
+
+void UseCode::useCodeWatch(int16 targetObjNum) {
+	if (((targetObjNum == 61) || (targetObjNum == 194)) || (targetObjNum == 156)) {
+		g_engine->printTime();
+	} else if (targetObjNum == 113) {
+		putobjunderpillow(35);
+	} else {
+		int16 tosIdx = getUseWatchTosIdx(targetObjNum);
+		if (tosIdx != 0) {
+			if (tosIdx < 979) {
+				_console->printTosText(tosIdx);
+			} else {
+				genericresponse(35, targetObjNum, tosIdx);
+			}
+		}
+	}
+}
+
+void UseCode::useCodeTinCup(int16 targetObjNum) {
+	if (targetObjNum == 189) {
+		_player->loadAnimations("cuphit.nsp");
+		g_engine->setupOtherNspAnimation(0, 62);
+		_player->_frameIdx = 3;
+	} else if (targetObjNum == 113) {
+		_console->printTosText(753);
+	}
+}
+
+void UseCode::useCodeEmptyUrn(int16 targetObjNum) {
+	if ((targetObjNum == 2) || (targetObjNum == 3)) {
+		_console->printTosText(964);
 	}
 }
 

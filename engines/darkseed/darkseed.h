@@ -213,6 +213,7 @@ public:
 	void runObjects();
 	void getPackageObj(int packageType);
 	void libanim(bool pickingUpReservedBook);
+	void printTime();
 
 private:
 	void updateAnimation();
@@ -227,7 +228,6 @@ private:
 	void changeToRoom(int newRoomNumber);
 
 	void wongame();
-	void printTime();
 	void keeperanim();
 	void sargoanim();
 
