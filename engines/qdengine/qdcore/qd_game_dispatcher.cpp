@@ -19,11 +19,13 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/stream.h"
 #include "common/system.h"
+
 #include "video/video_decoder.h"
 #include "video/mpegps_decoder.h"
 
@@ -165,7 +167,7 @@ void qdGameDispatcher::quant() {
 		drop_flag(SKIP_REDRAW_FLAG);
 		toggle_full_redraw();
 	}
-	int idt = qdGameConfig::get_config().logic_period();
+	int idt = ConfMan.getInt("logic_period");
 
 	if (!_scene_saved && _cur_scene && _cur_scene->autosave_slot() != -1) {
 		debugC(3, kDebugQuant, "qdGameDispatcher::quant() Autosaving...");

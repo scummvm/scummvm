@@ -233,8 +233,8 @@ int QDEngineEngine::engineMain() {
 	qd_gameD->quant();
 
 	ResourceDispatcher resD;
-	resD.setTimer(qdGameConfig::get_config().logic_synchro_by_clock(), qdGameConfig::get_config().logic_period(), 300);
-	resD.attach(new MemberFunctionCallResourceUser<qdGameDispatcher>(*qd_gameD, &qdGameDispatcher::quant, qdGameConfig::get_config().logic_period()));
+	resD.setTimer(ConfMan.getBool("logic_synchro_by_clock"), ConfMan.getInt("logic_period"), 300);
+	resD.attach(new MemberFunctionCallResourceUser<qdGameDispatcher>(*qd_gameD, &qdGameDispatcher::quant, ConfMan.getInt("logic_period")));
 	sndD->set_frequency_coeff(qdGameConfig::get_config().game_speed());
 	resD.set_speed(qdGameConfig::get_config().game_speed());
 	resD.start();
