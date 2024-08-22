@@ -185,4 +185,47 @@ bool qdGameObject::init() {
 	return true;
 }
 
+#define defFlag(x) { x, #x }
+
+struct FlagsList {
+	int f;
+	const char *s;
+} static flagList[] = {
+	defFlag(QD_OBJ_MOVING_FLAG),
+	defFlag(QD_OBJ_HIDDEN_FLAG),
+	defFlag(QD_OBJ_INVERSE_PERSPECTIVE_FLAG),
+	defFlag(QD_OBJ_SHOW_NAME_FLAG),
+	defFlag(QD_OBJ_NO_SCALE_FLAG),
+	defFlag(QD_OBJ_SCREEN_COORDS_FLAG),
+	defFlag(QD_OBJ_NON_PLAYER_PERSONAGE_FLAG),
+	defFlag(QD_OBJ_HAS_BOUND_FLAG),
+	defFlag(QD_OBJ_DISABLE_MOVEMENT_FLAG),
+	defFlag(QD_OBJ_DISABLE_MOUSE_FLAG),
+	defFlag(QD_OBJ_IS_IN_TRIGGER_FLAG),
+	defFlag(QD_OBJ_STATE_CHANGE_FLAG),
+	defFlag(QD_OBJ_IS_IN_INVENTORY_FLAG),
+	defFlag(QD_OBJ_KEYBOARD_CONTROL_FLAG),
+	defFlag(QD_OBJ_FIXED_SCREEN_COORDS_FLAG),
+};
+
+Common::String qdGameObject::flag2str(int fl) const {
+	Common::String res;
+
+	for (int i = 0; i < ARRAYSIZE(flagList); i++) {
+		if (fl & flagList[i].f) {
+			if (!res.empty())
+				res += " | ";
+
+			res += flagList[i].s;
+
+			fl &= ~flagList[i].f;
+		}
+	}
+
+	if (fl)
+		res += Common::String::format(" | %x", fl);
+
+	return res;
+}
+
 } // namespace QDEngine

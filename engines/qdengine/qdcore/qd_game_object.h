@@ -156,6 +156,8 @@ public:
 	void setTempPosInList(uint pos) { _tempPosInList = pos; }
 	uint tempPosInList() const { return _tempPosInList; }
 
+	Common::String flag2str(int flags) const;
+
 protected:
 
 	virtual bool load_script_body(const xml::tag *p);

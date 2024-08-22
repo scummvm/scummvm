@@ -233,7 +233,7 @@ bool qdGameObjectState::is_default() const {
 struct FlagsList {
 	int f;
 	const char *s;
-} flagList[] = {
+} static flagList[] = {
 	defFlag(QD_OBJ_STATE_FLAG_HIDDEN),
 	defFlag(QD_OBJ_STATE_FLAG_NOT_IN_TRIGGERS),
 	defFlag(QD_OBJ_STATE_FLAG_RESTORE_PREV_STATE),
