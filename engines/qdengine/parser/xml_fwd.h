@@ -29,7 +29,7 @@ namespace xml {
 class tag;
 class tag_buffer;
 class parser;
-}; /* namespace xml */
+} /* namespace xml */
 
 } // namespace QDEngine
 
