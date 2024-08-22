@@ -933,7 +933,7 @@ bool Scene::checkConditions(const Common::Array<SceneConditions> &conds) const {
 bool SDSScene::_dlgWithFlagLo8IsClosing = false;
 DialogFlags SDSScene::_sceneDialogFlags = kDlgFlagNone;
 
-SDSScene::SDSScene() : _num(-1), _dragItem(nullptr), _shouldClearDlg(false), _ignoreMouseUp(false), _field6_0x14(0), _rbuttonDown(false) {
+SDSScene::SDSScene() : _num(-1), _dragItem(nullptr), _shouldClearDlg(false), _ignoreMouseUp(false), _field6_0x14(0), _rbuttonDown(false), _lbuttonDown(false) {
 }
 
 bool SDSScene::load(const Common::String &filename, ResourceManager *resourceManager, Decompressor *decompressor) {
@@ -1676,6 +1676,7 @@ void SDSScene::mouseMoved(const Common::Point &pt) {
 }
 
 void SDSScene::mouseLDown(const Common::Point &pt) {
+	_lbuttonDown = true;
 	if (hasVisibleDialog()) {
 		debug(9, "Mouse LDown on at %d,%d clearing visible dialog", pt.x, pt.y);
 		_shouldClearDlg = true;
@@ -1716,6 +1717,7 @@ static const ObjectInteraction * _findInteraction(const Common::Array<ObjectInte
 }
 
 void SDSScene::mouseLUp(const Common::Point &pt) {
+	_lbuttonDown = false;
 	if (_ignoreMouseUp) {
 		debug(9, "Ignoring mouseup at %d,%d as it was used to clear a dialog", pt.x, pt.y);
 		_ignoreMouseUp = false;

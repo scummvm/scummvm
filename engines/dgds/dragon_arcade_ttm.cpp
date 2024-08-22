@@ -29,7 +29,12 @@
 
 namespace Dgds {
 
-DragonArcadeTTM::DragonArcadeTTM(ArcadeNPCState *npcState) : _npcState(npcState) {
+DragonArcadeTTM::DragonArcadeTTM(ArcadeNPCState *npcState) : _npcState(npcState),
+_currentTTMNum(0), _currentNPCRunningTTM(0), _drawXOffset(0), _drawYOffset(0),
+_startYOffset(0), _doingInit(false), _drawColBG(0), _drawColFG(0)
+{
+	ARRAYCLEAR(_shapes3);
+	ARRAYCLEAR(_brushes);
 }
 
 void DragonArcadeTTM::clearDataPtrs() {
@@ -282,6 +287,29 @@ int16 DragonArcadeTTM::runScriptPage(int16 pageNum) {
 	return 1;
 
 }
+
+void DragonArcadeTTM::runPagesForEachNPC(int16 xScrollOffset) {
+	for (_currentNPCRunningTTM = 19; _currentNPCRunningTTM > 0; _currentNPCRunningTTM--) {
+		ArcadeNPCState &npcState = _npcState[_currentNPCRunningTTM];
+		if (npcState.byte12) {
+			npcState.x_21 = 0;
+			npcState.x_11 = 0;
+			npcState.x_22 = 0;
+			npcState.x_12 = 0;
+			npcState.y_21 = 0;
+			npcState.y_11 = 0;
+			npcState.y_22 = 0;
+			npcState.y_12 = 0;
+			 _drawXOffset = npcState.val1 - xScrollOffset * 8 - 152;
+			 _drawYOffset = npcState.val2;
+			_currentTTMNum = npcState.byte14;
+			if (_drawXOffset > -20 || _drawXOffset < 340) {
+				runNextPage(npcState.ttmPage);
+			}
+		}
+	}
+}
+
 
 void DragonArcadeTTM::freePages(uint16 num) {
 	delete _ttmEnvs[num].scr;
