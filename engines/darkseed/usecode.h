@@ -55,6 +55,16 @@ public:
 	void useCodeShovel(int16 targetObjNum);
 	void useCodeDelbertsCard(int16 targetObjNum);
 	void useCodeStick(int16 targetObjNum);
+	void useCodeAxeHandle(int16 targetObjNum);
+	void useCodeRope(int16 targetObjNum);
+	void useCodeMicroFilm(int16 targetObjNum);
+	void useCodeSpecialHammer(int16 actionObjNum, int16 targetObjNum);
+	void useCodeGun(int16 targetObjNum);
+	void useCodeMoversNote(int16 targetObjNum);
+	void useCodeBluePrints(int16 targetObjNum);
+	void useCodeWatch(int16 targetObjNum);
+	void useCodeTinCup(int16 targetObjNum);
+	void useCodeEmptyUrn(int16 targetObjNum);
 
 private:
 	int getHandDescriptionTosIdx(uint16 objNum);
@@ -69,6 +79,12 @@ private:
 	int16 getUseShovelTosIdx(uint16 objNum);
 	int16 getUseDelbertsCardTosIdx(uint16 objNum);
 	int16 getUseStickTosIdx(uint16 objNum);
+	int16 getUseAxeHandleTosIdx(uint16 objNum);
+	int16 getUseRopeTosIdx(uint16 objNum);
+	int16 getUseMicroFilmTosIdx(uint16 objNum);
+	int16 getUseSpecialHammerTosIdx(uint16 objNum);
+	int16 getUseGunTosIdx(uint16 objNum);
+	int16 getUseWatchTosIdx(uint16 objNum);
 
 	void gancanim();
 	void putobjunderpillow(int objNum);
