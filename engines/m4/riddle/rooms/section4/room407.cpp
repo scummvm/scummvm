@@ -212,8 +212,9 @@ void Room407::init() {
 			hotspot_set_active("BUTTON  ", true);
 			hotspot_set_active("BUTTON   ", true);
 
+		} else {
+			setHotspots();
 		}
-			// TODO
 	} else {
 		static const char *HOTSPOTS[] = {
 			"GARDEN HOSE", "RUBBER PLUG", "SURGICAL TUBE",
@@ -302,6 +303,156 @@ void Room407::pre_parser() {
 
 void Room407::parser() {
 	// TODO
+}
+
+void Room407::setHotspots() {
+	disableHotspots();
+
+	hotspot_set_active(" ", true);
+
+	if (_val5 == 1010) {
+		if (_xyzzy2 == 1101)
+			hotspot_set_active("GARDEN HOSE", true);
+		if (_xyzzy5 == 1101)
+			hotspot_set_active("RUBBER PLUG", true);
+		if (_xyzzy3 == 1101)
+			hotspot_set_active("SURGICAL TUBE", true);
+		if (_xyzzy4 == 1101)
+			hotspot_set_active("PUMP GRIPS", true);
+
+	} else if (_frotz10 == 1030 || _int1 == 1030 ||
+			_int3 == 1030 || _int4 == 1030 || _int2 == 1030 ||
+			_int5 == 1030 || _int6 == 1030) {
+		// No implementation
+	} else if (_int7 == 1030) {
+		hotspot_set_active("BUTTON", true);
+		hotspot_set_active("BUTTON ", true);
+		hotspot_set_active("BUTTON  ", true);
+		hotspot_set_active("BUTTON   ", true);
+
+	} else {
+		enableHotspots();
+
+		hotspot_set_active("GARDEN HOSE", false);
+		hotspot_set_active("RUBBER PLUG", false);
+		hotspot_set_active("SURGICAL TUBE", false);
+		hotspot_set_active("PUMP GRIPS", false);
+		hotspot_set_active("BUTTON", false);
+		hotspot_set_active("BUTTON ", false);
+		hotspot_set_active("BUTTON  ", false);
+		hotspot_set_active("BUTTON   ", false);
+
+		if (_xyzzy4 != 1115)
+			hotspot_set_active("PUMP GRIPS ", false);
+		if (_xyzzy1 != 1115)
+			hotspot_set_active("PUMP ROD", false);
+		if (_xyzzy1 != 1114)
+			hotspot_set_active("PUMP ROD ", false);
+		if (_val9 != 1100)
+			hotspot_set_active("FAUCET HANDLE", false);
+		if (_val8 != 1100)
+			hotspot_set_active("FAUCET PIPE", false);
+		if (_val9 != 1110)
+			hotspot_set_active("AIR VALVE/HANDLE", false);
+		if (_val9 != 1110)
+			hotspot_set_active("AIR VALVE", false);
+		if (_val10 != 1112)
+			hotspot_set_active("LEVER KEY", false);
+		if (_val10 != 1113)
+			hotspot_set_active("LEVER KEY ", false);
+		if (_val10 != 1114)
+			hotspot_set_active("LEVER KEY  ", false);
+		if (_val10 != 1117)
+			hotspot_set_active("NOZZLES/TUBE", false);
+		if (_xyzzy3 != 1117)
+			hotspot_set_active("NOZZLES", false);
+		if (_xyzzy6 != 1112)
+			hotspot_set_active("PERIODIC TABLE", false);
+		if (_xyzzy6 != 1116)
+			hotspot_set_active("PERIODIC TABLE/JAR", false);
+		if (_xyzzy6 != 1120)
+			hotspot_set_active("PERIODIC TABLE ", false);
+
+		if (inv_object_is_here("EMERALD/CORK"))
+			hotspot_set_active("EMERALD/CORK", false);
+
+		if (_xyzzy7 == 1112) {
+			if (_xyzzy5 != 1116)
+				hotspot_set_active("JAR/RUBBER PLUG", false);
+			if (_xyzzy9 != 1116)
+				hotspot_set_active("JAR/CORK", false);
+			if (_xyzzy8 != 1116)
+				hotspot_set_active("EMERALD PIN/CORK", false);
+		} else {
+			hotspot_set_active("GLASS JAR", false);
+			hotspot_set_active("JAR/RUBBER PLUG", false);
+			hotspot_set_active("JAR/CORK", false);
+			hotspot_set_active("EMERALD PIN/CORK", false);
+		}
+
+		if (_xyzzy7 != 1114 && _xyzzy7 != 1140) {
+			hotspot_set_active("JAR/CORK ", false);
+			hotspot_set_active("JAR/GRIPS ", false);
+			hotspot_set_active("GLASS JAR ", false);
+			hotspot_set_active("JAR/RUBBER PLUG ", false);
+		} else {
+			if (_xyzzy5 != 1116 && _xyzzy5 != 1130)
+				hotspot_set_active("JAR/RUBBER PLUG ", false);
+			if (_xyzzy9 != 1116 && _xyzzy9 != 1130)
+				hotspot_set_active("JAR/CORK ", false);
+			if (_xyzzy4 != 1116 && _xyzzy4 != 1130)
+				hotspot_set_active("JAR/GRIP ", false);
+		}
+
+		if (_val8 != 1116 && _val8 != 1140)
+			hotspot_set_active("FAUCET PIPE ", false);
+		if (_xyzzy2 != 1116)
+			hotspot_set_active("GARDEN HOSE ", false);
+		if (_xyzzy3 != 1116)
+			hotspot_set_active("SURGICAL TUBE ", false);
+		if (_xyzzy2 != 1130)
+			hotspot_set_active("GARDEN HOSE  ", false);
+		if (_val8 != 1130)
+			hotspot_set_active("FAUCET PIPE  ", false);
+		if (_xyzzy3 != 1130 && _xyzzy3 != 1140)
+			hotspot_set_active("SURGICAL TUBE  ", false);
+		if (_xyzzy3 != 1100)
+			hotspot_set_active("SURGICAL TUBE   ", false);
+		if (_xyzzy2 != 1140)
+			hotspot_set_active("GARDEN HOSE   ", false);
+		if (_xyzzy2 != 1100)
+			hotspot_set_active("GARDEN HOSE    ", false);
+
+		if (_frotz2) {
+			hotspot_set_active("ARMORED CABINET", false);
+
+			if (_frotz4)
+				hotspot_set_active("LETTER", false);
+			if (!_frotz4)
+				hotspot_set_active("BUTTONS", false);
+
+		} else {
+			hotspot_set_active("MICROSCOPE", false);
+			hotspot_set_active("BUTTONS", false);
+			hotspot_set_active("LETTER", false);
+		}
+
+		hotspot_set_active("WATER", false);
+		hotspot_set_active("WATER ", false);
+		hotspot_set_active("WATER  ", false);
+
+		if (!_val4) {
+			if (_val8 == 1100) {
+				if (_xyzzy3 != 1100)
+					hotspot_set_active("WATER", true);
+				else if (_xyzzy2 != 1100)
+					hotspot_set_active("WATER ", true);
+			} else {
+				if (_xyzzy3 == 1130 && _xyzzy2 != 1130)
+					hotspot_set_active("WATER  ", true);
+			}
+		}
+	}
 }
 
 } // namespace Rooms

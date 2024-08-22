@@ -582,6 +582,11 @@ void Room::disableHotspots() {
 		hs->active = false;
 }
 
+void Room::enableHotspots() {
+	for (auto *hs = _G(currentSceneDef).hotspots; hs; hs = hs->next)
+		hs->active = true;
+}
+
 } // namespace Rooms
 } // namespace Riddle
 } // namespace M4

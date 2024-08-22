@@ -117,6 +117,11 @@ protected:
 	 */
 	void disableHotspots();
 
+	/**
+	 * Sets all the hotspots to be active
+	 */
+	void enableHotspots();
+
 public:
 	Room() : M4::Room() {}
 	~Room() override {}
