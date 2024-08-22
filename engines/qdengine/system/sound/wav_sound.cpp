@@ -19,6 +19,7 @@
  *
  */
 
+#include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
 #include "common/debug.h"
 #include "common/system.h"
@@ -79,8 +80,36 @@ bool wavSound::wav_file_load(const char *fname) {
 	Common::Path fpath(fname, '\\');
 	Common::SeekableReadStream *stream;
 
-	if (qdFileManager::instance().open_file(&stream, fpath.toString().c_str(), false))
+	if (qdFileManager::instance().open_file(&stream, fpath.toString().c_str(), false)) {
+		int size, rate;
+		byte flags;
+		uint16 type;
+		int blockAlign;
+
+		if (!Audio::loadWAVFromStream(*stream, size, rate, flags, &type, &blockAlign)) {
+			warning("Error loading wav file header: '%s", fname);
+			delete stream;
+			return false;
+		}
+
+		int bits = 8;
+		if (flags & Audio::FLAG_UNSIGNED)
+			bits = 8;
+		else if (flags & Audio::FLAG_16BITS)
+			bits = 16;
+		else if (flags & Audio::FLAG_24BITS)
+			bits = 24;
+
+		int channels = 1;
+		if (flags & Audio::FLAG_STEREO)
+			channels = 2;
+
+		init(size, bits, channels, rate);
+
+		stream->seek(0);
+
 		_audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::NO);
+	}
 
 	return true;
 }
