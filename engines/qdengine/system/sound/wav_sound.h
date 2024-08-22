@@ -22,7 +22,9 @@
 #ifndef QDENGINE_SYSTEM_SOUND_WAV_SOUND_H
 #define QDENGINE_SYSTEM_SOUND_WAV_SOUND_H
 
-#include "audio/decoders/wave.h"
+namespace Audio {
+	class SeekableAudioStream;
+}
 
 namespace QDEngine {
 
