@@ -63,7 +63,7 @@ void ResourceDispatcher::quant() {
 				user_min = &u;
 			}
 		}
-		if (t_min < _syncro_timer()) {
+		if (t_min < _syncro_timer.operator()()) {
 			if (!user_min->quant()) {
 				debugC(3, kDebugQuant, "ResourceDispatcher::quant() user_min->time = %d", user_min->time);
 				detach(user_min);
