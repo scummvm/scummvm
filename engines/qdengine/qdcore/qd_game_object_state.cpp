@@ -228,6 +228,62 @@ bool qdGameObjectState::is_default() const {
 	return false;
 }
 
+#define defFlag(x) { qdGameObjectState::x, #x }
+
+struct FlagsList {
+	int f;
+	const char *s;
+} flagList[] = {
+	defFlag(QD_OBJ_STATE_FLAG_HIDDEN),
+	defFlag(QD_OBJ_STATE_FLAG_NOT_IN_TRIGGERS),
+	defFlag(QD_OBJ_STATE_FLAG_RESTORE_PREV_STATE),
+	defFlag(QD_OBJ_STATE_FLAG_HIDE_OBJECT),
+	defFlag(QD_OBJ_STATE_FLAG_GLOBAL_OWNER),
+	defFlag(QD_OBJ_STATE_FLAG_INVENTORY),
+	defFlag(QD_OBJ_STATE_FLAG_MOVE_TO_INVENTORY),
+	defFlag(QD_OBJ_STATE_FLAG_MOVE_TO_INVENTORY_FAILED),
+	defFlag(QD_OBJ_STATE_FLAG_HAS_BOUND),
+	defFlag(QD_OBJ_STATE_FLAG_ACTIVATION_TIMER),
+	defFlag(QD_OBJ_STATE_FLAG_ACTIVATION_TIMER_END),
+	defFlag(QD_OBJ_STATE_FLAG_DIALOG_PHRASE),
+	defFlag(QD_OBJ_STATE_FLAG_SOUND_SYNC),
+	defFlag(QD_OBJ_STATE_FLAG_ENABLE_INTERRUPT),
+	defFlag(QD_OBJ_STATE_FLAG_WAS_ACTIVATED),
+	defFlag(QD_OBJ_STATE_FLAG_DISABLE_WALK_INTERRUPT),
+	defFlag(QD_OBJ_STATE_FLAG_MOUSE_STATE),
+	defFlag(QD_OBJ_STATE_FLAG_MOUSE_HOVER_STATE),
+	defFlag(QD_OBJ_STATE_FLAG_STAY_IN_INVENTORY),
+	defFlag(QD_OBJ_STATE_FLAG_FORCED_LOAD),
+	defFlag(QD_OBJ_STATE_FLAG_ENABLE_SKIP),
+	defFlag(QD_OBJ_STATE_FLAG_MOVE_TO_ZONE),
+	defFlag(QD_OBJ_STATE_FLAG_MOVE_ON_OBJECT),
+	defFlag(QD_OBJ_STATE_FLAG_ACTIVATE_PERSONAGE),
+	defFlag(QD_OBJ_STATE_FLAG_AUTO_LOAD),
+	defFlag(QD_OBJ_STATE_FLAG_AUTO_SAVE),
+	defFlag(QD_OBJ_STATE_FLAG_FADE_IN),
+	defFlag(QD_OBJ_STATE_FLAG_FADE_OUT),
+};
+
+Common::String qdGameObjectState::flag2str(int fl) const {
+	Common::String res;
+
+	for (int i = 0; i < ARRAYSIZE(flagList); i++) {
+		if (fl & flagList[i].f) {
+			if (!res.empty())
+				res += " | ";
+
+			res += flagList[i].s;
+
+			fl &= ~flagList[i].f;
+		}
+	}
+
+	if (fl)
+		res += Common::String::format(" | %x", fl);
+
+	return res;
+}
+
 qdConditionalObject::trigger_start_mode qdGameObjectState::trigger_start() {
 	if (!owner()) return qdConditionalObject::TRIGGER_START_FAILED;
 
@@ -375,7 +431,10 @@ bool qdGameObjectState::save_script_body(Common::WriteStream &fh, int indent) co
 	fh.writeString(Common::String::format(" save_slot=\"%d\"", _autosave_slot));
 
 	if (flags()) {
-		fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
+		if (debugChannelSet(-1, kDebugLog))
+			fh.writeString(Common::String::format(" flags=\"%s\"", flag2str(flags()).c_str()));
+		else
+			fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
 	}
 
 	if (_work_time > 0.001f) {
