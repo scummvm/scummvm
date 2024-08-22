@@ -67,8 +67,8 @@ public:
 	Graphics::PixelFormat _pixelformat;
 	int _tagMap[QDSCR_MAX_KEYWORD_ID];
 
-	int32 _screenW;
-	int32 _screenH;
+	int _screenW;
+	int _screenH;
 public:
 	QDEngineEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~QDEngineEngine() override;
