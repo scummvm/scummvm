@@ -1013,7 +1013,7 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	// Skip ahead to the width and height
 	testReader.readStream->seek(6, SEEK_CUR);
 	*/
-	uint16 offset = BackgroundAnimationBlob::Func1480(GameObject->Blobs[blobIndex], false, 0);
+	uint16 offset = BackgroundAnimationBlob::Func1480(GameObject->Blobs[blobIndex],false, 0x2);
 	// My remaining code expects to get dialed to the width and height directly - TODO make uniform
 	offset += 6;
 	AnimFrame *result = new AnimFrame();
