@@ -903,7 +903,7 @@ void Darkseed::Room::runRoomObjects() {
 				}
 				updateRoomObj(48, xPos, sprite.width, yPos, sprite.height);
 			} else if (_roomNumber == 5 && g_engine->isPlayingAnimation_maybe && g_engine->otherNspAnimationType_maybe == 7) {
-				const Sprite &sprite = _locationSprites.getSpriteAt(roomObj.spriteNum);
+				const Sprite &sprite = _locationSprites.getSpriteAt(spriteNum);
 				g_engine->_sprites.addSpriteToDrawList(
 					xPos,
 					yPos,
@@ -914,7 +914,7 @@ void Darkseed::Room::runRoomObjects() {
 					false);
 			} else if (_roomNumber == 53) {
 				if (g_engine->_objectVar[79] != 3) {
-					const Sprite &sprite = _locationSprites.getSpriteAt(roomObj.spriteNum);
+					const Sprite &sprite = _locationSprites.getSpriteAt(spriteNum);
 					g_engine->_sprites.addSpriteToDrawList(
 						xPos,
 						yPos,
@@ -1284,7 +1284,7 @@ bool Darkseed::Room::advanceFrame(int animIdx) {
 	return g_engine->_FrameAdvanced;
 }
 
-void Darkseed::Room::runAnim47() {
+void Darkseed::Room::mikeStickThrowAnim() {
 	advanceFrame(2);
 	if (!_ObjRestarted) {
 		g_engine->_player->_frameIdx = _locationSprites.getAnimAt(2).frameNo[_locObjFrame[2]];
