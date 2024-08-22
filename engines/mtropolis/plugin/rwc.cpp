@@ -58,7 +58,7 @@ Common::SharedPtr<Modifier> ThighBlasterModifier::shallowClone() const {
 }
 
 const char *ThighBlasterModifier::getDefaultName() const {
-	return "mLine Launcher Modifier"; // ???
+	return "ThighBlaster Modifier"; // ???
 }
 
 RWCPlugIn::RWCPlugIn()
