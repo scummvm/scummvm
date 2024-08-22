@@ -577,6 +577,11 @@ const char *Room::getItemsPlacedDigi() const {
 	return (val >= 1 && val <= 5) ? NAMES[val - 1] : nullptr;
 }
 
+void Room::disableHotspots() {
+	for (auto *hs = _G(currentSceneDef).hotspots; hs; hs = hs->next)
+		hs->active = false;
+}
+
 } // namespace Rooms
 } // namespace Riddle
 } // namespace M4

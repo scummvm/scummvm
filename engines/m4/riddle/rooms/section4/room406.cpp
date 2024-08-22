@@ -1010,11 +1010,6 @@ void Room406::parser() {
 }
 #undef LOOK
 
-void Room406::disableHotspots() {
-	for (auto *hs = _G(currentSceneDef).hotspots; hs; hs = hs->next)
-		hs->active = false;
-}
-
 void Room406::setHotspots() {
 	for (auto *hs = _G(currentSceneDef).hotspots; hs; hs = hs->next)
 		hs->active = true;

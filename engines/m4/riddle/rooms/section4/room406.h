@@ -56,7 +56,6 @@ private:
 	int _deskOpening = 0;
 	int _cabinetOpens = 0;
 
-	void disableHotspots();
 	void setHotspots();
 	bool takeKeys();
 	bool takeBilliardBall();

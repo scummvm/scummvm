@@ -46,10 +46,174 @@ void Room407::init() {
 
 	if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
 		if (_val5 == 1010) {
-			// TODO
-		} else {
-			// TODO
+			ws_demand_facing(9);
+			_ripMedReach = series_load("RIP TREK MED REACH POS3");
+			setGlobals1(_ripMedReach, 10, 10, 10, 10, 0, 10, 1, 1, 1);
+			sendWSMessage_110000(-1);
+			_drawerPopup = series_place_sprite("407 DRAWER POPUP", 0, 0, 0, 100, 0x200);
+			disableHotspots();
+			hotspot_set_active(" ", true);
+
+			if (_xyzzy2 == 1101) {
+				_drawerPopupHose = series_place_sprite("407 DRAWER POPUP HOSE", 0, 0, 0, 100, 0x100);
+				hotspot_set_active("GARDEN HOSE", true);
+			}
+
+			if (_xyzzy5 == 1101) {
+				_stopperInDrawer = series_place_sprite("407 STOPPER IN DRAWER", 0, 0, 0, 100, 0x100);
+				hotspot_set_active("RUBBER PLUG", true);
+			}
+
+			if (_xyzzy3 == 1101) {
+				_tubeInDrawer = series_place_sprite("407 TUBE IN DRAWER", 0, 0, 0, 100, 0x100);
+				hotspot_set_active("SURGICAL TUBE", true);
+			}
+
+			if (_xyzzy4 == 1101) {
+				_handleInDrawer = series_place_sprite("407 PUMP HANDLE IN DRAWER", 0, 0, 0, 100, 0x100);
+				hotspot_set_active("PUMP GRIPS", true);
+			}
+		} else if (_frotz10 == 1030) {
+			_tabletopPopup = series_place_sprite("407 TABLETOP POPUP", 0, 0, 0, 100, 0x200);
+			disableHotspots();
+			hotspot_set_active(" ", true);
+
+			if (_xyzzy3 == 1117)
+				_tabletopPopupWithItems1 = series_place_sprite(
+					"407 TABLETOP POPUP WITH ITEMS", 0, 0, 0, 100, 0);
+
+			if (_val9 == 1110)
+				_tabletopPopupWithItems1 = series_place_sprite(
+					"407 TABLETOP POPUP WITH ITEMS",
+					(_val3 == 1010) ? 1 : 2,
+					0, 0, 100, 0x100);
+
+			if (_val10 == 1113)
+				_tabletopPopupWithItems1 = series_place_sprite(
+					"407 TABLETOP POPUP WITH ITEMS", 3, 0, 0, 100, 0x100);
+
+		} else if (_int1 == 1030) {
+			_pivotPopup = series_place_sprite("407 PIVOT POPUP", 0, 0, 0, 100, 0x200);
+
+			if (_val10 == 1113)
+				_tabletopPopupWithItems3 = series_place_sprite(
+					"407 TABLE PIVOT WITH LEVER", 0, 0, 0, 100, 0x200);
+
+			disableHotspots();
+			hotspot_set_active(" ", true);
+
+		} else if (_int3 == 1030) {
+			_glassTopPopup = series_place_sprite("407 GLASS TOP POPUP", 0, 0, 0, 100, 0x200);
+
+			if (_val6 == 1010)
+				_glassTopPopupWithItems1 = series_place_sprite(
+					"407 GLASS TOP POPUP WITH ITEMS", 1, 0, 0, 100, 0x100);
+			else if (_xyzzy6 == 1116)
+				_glassTopPopupWithItems2 = series_place_sprite(
+					"407 GLASS TOP POPUP WITH ITEMS", 0, 0, 0, 100, 0x100);
+
+			disableHotspots();
+			hotspot_set_active(" ", true);
+
+		} else if (_int4 == 1030) {
+			_glassTopPopup = series_place_sprite("407 GLASS BOTTOM POPUP", 0, 0, 0, 100, 0x200);
+
+			if (_xyzzy6 == 1116)
+				_glassTopPopupWithItems2 = series_place_sprite(
+					"407 GLS BOTTOM PU WITH ITEMS", 0, 0, 0, 100, 0x100);
+
+			if (_xyzzy8 == 1116)
+				_glassBottomWithItems1 = series_place_sprite(
+					"407 GLS BOTTOM PU WITH ITEMS", 1, 0, 0, 100, 0x100);
+
+			if (_xyzzy5 == 1116)
+				_glassBottomWithItems2 = series_place_sprite(
+					"407 GLS BOTTOM PU WITH ITEMS", 4, 0, 0, 100, 0x100);
+
+			if (_val10 == 1113)
+				_tabletopPopupWithItems3 = series_place_sprite(
+					"407 GLS BOTTOM PU WITH ITEMS", 5, 0, 0, 100, 0x100);
+
+			disableHotspots();
+			hotspot_set_active(" ", true);
+
+		} else if (_int2 == 1030) {
+			_glassTopPopup = series_place_sprite("407 FULL GLASS POPUP",
+				0, 0, 0, 100, 0x200);
+
+			if (_xyzzy6 == 1116)
+				_glassTopPopupWithItems2 = series_place_sprite(
+					"407 FULL GLASS POPUP", 0, 0, 0, 100, 0x100);
+
+			if (_xyzzy8 == 1116)
+				_glassBottomWithItems1 = series_place_sprite(
+					"407 FULL GLASS POPUP WITH ITEMS", 1, 0, 0, 100, 0x100);
+
+			if (_xyzzy5 == 1116)
+				_glassBottomWithItems1 = series_place_sprite(
+					"407 FULL GLASS POPUP WITH ITEMS", 4, 0, 0, 100, 0x100);
+
+			disableHotspots();
+			hotspot_set_active(" ", true);
+
+		} else if (_int5 == 1030) {
+			_roofPiston = series_place_sprite("407 ROOF PISTON/BRACE", 0, 0, 0, 100, 0x200);
+
+			if (_val10 == 1114)
+				_tabletopPopupWithItems3 = series_place_sprite(
+					"407 ROOF PISTON WITH ITEMS", 1, 0, 0, 100, 0x100);
+
+			if (_xyzzy1 == 1114)
+				_roofPistonWithItems = series_place_sprite(
+					"407 ROOF PISTON WITH ITEMS", 0, 0, 0, 100, 0);
+
+			disableHotspots();
+			hotspot_set_active(" ", true);
+
+		} else if (_int6 == 1030) {
+			_glassGone = series_place_sprite("407 GLASS GONE CU PU", 0, 0, 0, 100, 0x200);
+			disableHotspots();
+			hotspot_set_active(" ", true);
+
+		} else if (_int7 == 1030) {
+			_comboLockPopup = series_place_sprite(
+				"407 COMBINATION LOCK POPUP", 0, 0, 0, 100, 0x200);
+			disableHotspots();
+			hotspot_set_active(" ", true);
+			_comboLockNumerals = series_load("407 COMBINATION LOCK NUMERALS");
+			_407pu08b = series_load("407PU08B");
+			_407pu08c = series_load("407PU08C");
+			_407pu08d = series_load("407PU08D");
+
+			_lockButton1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+				triggerMachineByHashCallbackNegative, "LOCK button 1");
+			_lockButton2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+				triggerMachineByHashCallbackNegative, "LOCK button 2");
+			_lockButton3 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+				triggerMachineByHashCallbackNegative, "LOCK button 3");
+			_lockButton4 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+				triggerMachineByHashCallbackNegative, "LOCK button 4");
+
+			sendWSMessage_10000(1, _lockButton1, _comboLockNumerals,
+				_buttonFrame1 * 2 + 1, _buttonFrame1 * 2 + 1, -1,
+				_comboLockNumerals, _buttonFrame1 * 2 + 1,
+				_buttonFrame1 * 2 + 1, 0);
+			sendWSMessage_10000(1, _lockButton2, _comboLockNumerals,
+				_buttonFrame1 * 2 + 1, _buttonFrame1 * 2 + 1, -1,
+				_comboLockNumerals, _buttonFrame1 * 2 + 1,
+				_buttonFrame1 * 2 + 1, 0);
+			sendWSMessage_10000(1, _lockButton3, _comboLockNumerals,
+				_buttonFrame1 * 2 + 1, _buttonFrame1 * 2 + 1, -1,
+				_comboLockNumerals, _buttonFrame1 * 2 + 1,
+				_buttonFrame1 * 2 + 1, 0);
+
+			hotspot_set_active("BUTTON", true);
+			hotspot_set_active("BUTTON ", true);
+			hotspot_set_active("BUTTON  ", true);
+			hotspot_set_active("BUTTON   ", true);
+
 		}
+			// TODO
 	} else {
 		static const char *HOTSPOTS[] = {
 			"GARDEN HOSE", "RUBBER PLUG", "SURGICAL TUBE",
@@ -104,10 +268,10 @@ void Room407::init() {
 		_int5 = 1031;
 		_int6 = 1031;
 		_int7 = 1031;
-		_int10 = 0;
-		_int11 = 0;
-		_int12 = 0;
-		_int13 = 0;
+		_buttonFrame1 = 0;
+		_buttonFrame2 = 0;
+		_buttonFrame3 = 0;
+		_buttonFrame4 = 0;
 		_int14 = 0;
 
 		_bottle = series_place_sprite("407BOTLE", 0, 0, -53, 100, 0xf00);

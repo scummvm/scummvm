@@ -67,10 +67,10 @@ private:
 	int _int5 = 0;
 	int _int6 = 0;
 	int _int7 = 0;
-	int _int10 = 0;
-	int _int11 = 0;
-	int _int12 = 0;
-	int _int13 = 0;
+	int _buttonFrame1 = 0;
+	int _buttonFrame2 = 0;
+	int _buttonFrame3 = 0;
+	int _buttonFrame4 = 0;
 	int _int14 = 0;
 
 	int _waterFlowTube = 0;
@@ -87,6 +87,36 @@ private:
 	machine *_niche = nullptr;
 	machine *_tpist = nullptr;
 	machine *_pump = nullptr;
+	int _ripMedReach = 0;
+	machine *_drawerPopup = nullptr;
+	machine *_drawerPopupHose = nullptr;
+	machine *_stopperInDrawer = nullptr;
+	machine *_tubeInDrawer = nullptr;
+	machine *_handleInDrawer = nullptr;
+	machine *_tabletopPopup = nullptr;
+	machine *_tabletopPopupWithItems1 = nullptr;
+	machine *_tabletopPopupWithItems2 = nullptr;
+	machine *_tabletopPopupWithItems3 = nullptr;
+	machine *_pivotPopup = nullptr;
+	machine *_glassTopPopup = nullptr;
+	machine *_glassTopPopupWithItems1 = nullptr;
+	machine *_glassTopPopupWithItems2 = nullptr;
+	machine *_glassBottomWithItems1 = nullptr;
+	machine *_glassBottomWithItems2 = nullptr;
+	machine *_roofPiston = nullptr;
+	machine *_roofPistonWithItems = nullptr;
+	machine *_glassGone = nullptr;
+	machine *_comboLockPopup = nullptr;
+	int _comboLockNumerals = 0;
+	int _407pu08b = 0;
+	int _407pu08c = 0;
+	int _407pu08d = 0;
+	machine *_lockButton1 = nullptr;
+	machine *_lockButton2 = nullptr;
+	machine *_lockButton3 = nullptr;
+	machine *_lockButton4 = nullptr;
+
+	void setHotspots();
 
 public:
 	Room407() : Room() {}

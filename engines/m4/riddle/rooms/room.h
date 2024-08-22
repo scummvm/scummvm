@@ -112,6 +112,11 @@ protected:
 	bool setItemsPlacedFlags();
 	const char *getItemsPlacedDigi() const;
 
+	/**
+	 * Sets all the hotspots to be inactive
+	 */
+	void disableHotspots();
+
 public:
 	Room() : M4::Room() {}
 	~Room() override {}
