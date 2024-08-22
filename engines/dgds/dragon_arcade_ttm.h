@@ -31,6 +31,7 @@
 namespace Dgds {
 
 struct ArcadeLevelData {
+	ArcadeLevelData() : x(0), y(0), data(0), flag(false) {}
 	int16 x;
 	int16 y;
 	byte data;
@@ -50,6 +51,7 @@ public:
 	int16 runNextPage(int16 pageNum);
 	void freePages(uint16 num);
 	void freeShapes();
+	void runPagesForEachNPC(int16 xScrollOffset);
 
 	uint16 _currentTTMNum;
 	int16 _currentNPCRunningTTM;

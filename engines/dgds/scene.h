@@ -470,6 +470,8 @@ public:
 	void nextChoice();
 	void activateChoice();
 	bool isTriggerEnabled(uint16 num);
+	bool isLButtonDown() const { return _lbuttonDown; }
+	bool isRButtonDown() const { return _rbuttonDown; }
 
 protected:
 	HotArea *findAreaUnderMouse(const Common::Point &pt);
@@ -506,6 +508,7 @@ private:
 	GameItem *_dragItem;
 	bool _shouldClearDlg;
 	bool _ignoreMouseUp;
+	bool _lbuttonDown;
 	bool _rbuttonDown;
 
 	static bool _dlgWithFlagLo8IsClosing;
