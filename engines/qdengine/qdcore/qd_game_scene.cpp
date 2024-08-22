@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/stream.h"
 
@@ -472,7 +473,7 @@ void qdGameScene::free_resources() {
 }
 
 void qdGameScene::debug_redraw() {
-	if (qdGameConfig::get_config().show_fps())
+	if (ConfMan.getBool("show_fps"))
 		grDispatcher::instance()->drawText(10, 10, grDispatcher::instance()->make_rgb888(255, 255, 255), _fps_string);
 
 	if (g_engine->_debugDraw) {
@@ -976,7 +977,7 @@ void qdGameScene::pre_redraw() {
 	init_visible_objects_list();
 
 	if (!dp->need_full_redraw()) {
-		if (qdGameConfig::get_config().show_fps()) {
+		if (ConfMan.getBool("show_fps")) {
 			const int sx = 80;
 			const int sy = 20;
 			dp->add_redraw_region(grScreenRegion(10 + sx / 2, 10 + sy / 2, sx, sy));
@@ -995,7 +996,7 @@ void qdGameScene::pre_redraw() {
 			dp->add_redraw_region(_fps_region_last);
 	}
 
-	if (qdGameConfig::get_config().show_fps()) {
+	if (ConfMan.getBool("show_fps")) {
 		if (fps_counter()->fps_value() > 0.0f)
 			snprintf(_fps_string, 255, "%.1f fps", fps_counter()->fps_value());
 		else
