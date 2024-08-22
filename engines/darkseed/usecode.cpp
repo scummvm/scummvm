@@ -106,6 +106,13 @@ int16 UseCode::getUseDelbertsCardTosIdx(uint16 objNum) {
 	return delbertsCardTextTbl[objNum];
 }
 
+int16 UseCode::getUseStickTosIdx(uint16 objNum) {
+	if (objNum >= Objects::MAX_OBJECTS) {
+		error("getUseStickTosIdx: Object Index out of range! %d", objNum);
+	}
+	return stickTextTbl[objNum];
+}
+
 void Darkseed::UseCode::useCode(int objNum) {
 	debug("useCode: objNum = %d", objNum);
 	
@@ -1218,6 +1225,23 @@ void UseCode::useCodeDelbertsCard(int16 targetObjNum) {
 		else {
 			_console->printTosText(488);
 		}
+	}
+}
+
+void UseCode::useCodeStick(int16 targetObjNum) {
+	int16 tosIdx = getUseStickTosIdx(targetObjNum);
+	if (tosIdx != 0) {
+		if (tosIdx < 979) {
+			_console->printTosText(tosIdx);
+		} else {
+			genericresponse(19, targetObjNum, tosIdx);
+		}
+	}
+	if (targetObjNum == 116) {
+		g_engine->_room->loadLocationSprites("mthrow.nsp");
+		g_engine->setupOtherNspAnimation(2, 47);
+	} else if (targetObjNum == 53) {
+		g_engine->throwmikeinjail();
 	}
 }
 

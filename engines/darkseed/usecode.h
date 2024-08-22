@@ -54,6 +54,7 @@ public:
 	void useCodeBinoculars(int16 targetObjNum);
 	void useCodeShovel(int16 targetObjNum);
 	void useCodeDelbertsCard(int16 targetObjNum);
+	void useCodeStick(int16 targetObjNum);
 
 private:
 	int getHandDescriptionTosIdx(uint16 objNum);
@@ -67,6 +68,7 @@ private:
 	int16 getUseBinocularsTosIdx(uint16 objNum);
 	int16 getUseShovelTosIdx(uint16 objNum);
 	int16 getUseDelbertsCardTosIdx(uint16 objNum);
+	int16 getUseStickTosIdx(uint16 objNum);
 
 	void gancanim();
 	void putobjunderpillow(int objNum);

@@ -100,7 +100,7 @@ public:
 	void removeObjectFromRoom(int16 objNum);
 	void updateRoomObj(int16 objNum, int16 x, int16 width, int16 y, int16 height);
 	bool advanceFrame(int animIdx);
-	void runAnim47();
+	void mikeStickThrowAnim();
 	void loadRoom61AWalkableLocations();
 	void restorePalette();
 	void darkenSky();

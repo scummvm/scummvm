@@ -1205,10 +1205,12 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 					}
 				}
 
-				_room->calculateScaledSpriteDimensions(
-					_player->_animations.getSpriteAt(_player->_frameIdx).width,
-					_player->_animations.getSpriteAt(_player->_frameIdx).height,
-					nsp_sprite_scaling_y_position != 0 ? nsp_sprite_scaling_y_position : _player->_position.y);
+				if (_player->_animations.containsSpriteAt(_player->_frameIdx)) { // we need this check as the original logic calls the function below when it isn't initialised
+					_room->calculateScaledSpriteDimensions(
+						_player->_animations.getSpriteAt(_player->_frameIdx).width,
+						_player->_animations.getSpriteAt(_player->_frameIdx).height,
+						nsp_sprite_scaling_y_position != 0 ? nsp_sprite_scaling_y_position : _player->_position.y);
+				}
 
 				if (otherNspAnimationType_maybe == 3) { // fall unconscious outside.
 					int curScaledWidth = g_engine->scaledSpriteWidth;
@@ -1332,7 +1334,19 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 				} else if (otherNspAnimationType_maybe == 39) {
 					error("anim: 39"); // TODO
 				} else if (otherNspAnimationType_maybe == 47) {
-					error("anim: 47"); // TODO
+					const Sprite &sprite = _room->_locationSprites.getSpriteAt(_player->_frameIdx);
+					_room->calculateScaledSpriteDimensions(
+						sprite.width,
+						sprite.height,
+						_player->_position.y);
+					_sprites.addSpriteToDrawList(
+						_player->_position.x,
+						_player->_position.y - scaledSpriteHeight,
+						&sprite,
+						240 - _player->_position.y,
+						scaledSpriteWidth,
+						scaledSpriteHeight,
+						player_sprite_related_2c85_82f3);
 				} else {
 					_sprites.addSpriteToDrawList(
 						_player->_position.x - scaledSpriteWidth / 2,
@@ -1375,10 +1389,15 @@ void DarkseedEngine::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 	_scaleSequence = false;
 
 	animIndexTbl[nspAnimIdx] = 0;
-	spriteAnimCountdownTimer[nspAnimIdx] = _player->_animations.getAnimAt(nspAnimIdx).frameDuration[0];
+	if (_player->_animations.getTotalAnim() > nspAnimIdx) {
+		spriteAnimCountdownTimer[nspAnimIdx] = _player->_animations.getAnimAt(nspAnimIdx).frameDuration[0];
+		_player->_frameIdx = _player->_animations.getAnimAt(nspAnimIdx).frameNo[0];
+	} else {
+		spriteAnimCountdownTimer[nspAnimIdx] = 0;
+		_player->_frameIdx = 0;
+	}
 	isPlayingAnimation_maybe = true;
 	otherNspAnimationType_maybe = animId;
-	_player->_frameIdx = _player->_animations.getAnimAt(nspAnimIdx).frameNo[0];
 
 	player_sprite_related_2c85_82f3 = 0;
 	isAnimFinished_maybe = false;
@@ -1451,6 +1470,10 @@ void DarkseedEngine::setupOtherNspAnimation(int nspAnimIdx, int animId) {
 	case 44:
 	case 46:
 		playSound(30,5,-1);
+		break;
+	case 47:
+		_scaleSequence = true;
+		_player->_frameIdx = _room->_locationSprites.getAnimAt(nspAnimIdx).frameNo[0];
 		break;
 	case 53 :
 	case 54 :
@@ -1932,7 +1955,7 @@ void DarkseedEngine::updateAnimation() {
 		break;
 	}
 	case 47:
-		_room->runAnim47();
+		_room->mikeStickThrowAnim();
 		break;
 	case 48:
 	case 49:
@@ -2133,6 +2156,9 @@ void DarkseedEngine::handleObjCollision(int targetObjNum) {
 				break;
 			case 18:
 				_useCode->useCodeDelbertsCard(targetObjNum);
+				break;
+			case 19:
+				_useCode->useCodeStick(targetObjNum);
 				break;
 			// TODO lots of extra switch cases here for inventory usages.
 			default:
@@ -2765,7 +2791,7 @@ void DarkseedEngine::runObjects() {
 				_console->printTosText(908);
 				_sound->waitForSpeech();
 			}
-			else if (*(char *)&_delbertspeech == 65) {
+			else if (_delbertspeech == 65) {
 				setupOtherNspAnimation(3, 20);
 				spriteAnimCountdownTimer[1] = 3;
 				_delbertspeech = 72;
