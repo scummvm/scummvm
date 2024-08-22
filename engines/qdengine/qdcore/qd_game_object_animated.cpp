@@ -927,16 +927,16 @@ qdGameObjectAnimated::StateStatus qdGameObjectAnimated::state_status(const qdGam
 
 		switch (p->state_type()) {
 		case qdGameObjectState::STATE_STATIC: {
-			const qdGameObjectStateStatic *sp = static_cast<const qdGameObjectStateStatic *>(p);
-			if (const qdAnimation * anm = sp->animation()) {
-				if (anm->is_reference(get_animation())) {
-					if (!_animation.is_finished())
-						return STATE_ACTIVE;
-				} else
-					return STATE_INACTIVE;
+				const qdGameObjectStateStatic *sp = static_cast<const qdGameObjectStateStatic *>(p);
+				if (const qdAnimation * anm = sp->animation()) {
+					if (anm->is_reference(get_animation())) {
+						if (!_animation.is_finished())
+							return STATE_ACTIVE;
+					} else
+						return STATE_INACTIVE;
+				}
 			}
-		}
-		return STATE_DONE;
+			return STATE_DONE;
 		case qdGameObjectState::STATE_WALK:
 			return STATE_DONE;
 		case qdGameObjectState::STATE_MASK:
