@@ -33,6 +33,7 @@
  *  - hopkins
  *  - mohawk
  *  - prince
+ *  - qdengine
  *  - saga
  *  - sci
  *  - scumm
