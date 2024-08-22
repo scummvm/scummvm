@@ -47,6 +47,8 @@ QDEngineEngine::QDEngineEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_screenW = 640;
 	_screenH = 480;
 
+	ConfMan.registerDefault("splash_enabled", true);
+	ConfMan.registerDefault("splash_time", 3000);
 }
 
 QDEngineEngine::~QDEngineEngine() {
