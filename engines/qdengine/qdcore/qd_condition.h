@@ -565,7 +565,7 @@ public:
 private:
 
 	ConditionType _type;
-	const qdNamedObject *_owner;
+	const qdNamedObject *_owner = nullptr;
 
 	typedef Std::vector<qdConditionData> data_container_t;
 	data_container_t _data;
