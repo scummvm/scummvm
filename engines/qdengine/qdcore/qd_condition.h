@@ -492,6 +492,8 @@ public:
 	}
 	void set_type(ConditionType tp);
 
+	static const char *type2str(uint type);
+
 	bool put_value(int idx, const char *str);
 
 	bool is_click_condition() const {

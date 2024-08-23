@@ -132,7 +132,10 @@ bool qdNamedObjectReference::save_script(Common::WriteStream &fh, int indent) co
 
 	fh.writeString(Common::String::format(" types=\"%d", num_levels()));
 	for (int i = 0; i < num_levels(); i++) {
-		fh.writeString(Common::String::format(" %d", _object_types[i]));
+		if (debugChannelSet(-1, kDebugLog))
+			fh.writeString(Common::String::format(" %s", objectType2str(_object_types[i])));
+		else
+			fh.writeString(Common::String::format(" %d", _object_types[i]));
 	}
 	fh.writeString("\"");
 	fh.writeString(">\r\n");
