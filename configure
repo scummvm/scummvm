@@ -2286,21 +2286,27 @@ if test "$have_gcc" = yes; then
 	else
 		cxx_version="GCC $cxx_version, ok"
 
-		# Way too many false positives before GCC 5
+		# Some warnings exist in earlier GCC releases, but produce way
+		# too many false positives...
+
 		if test $_cxx_major -ge 5; then
 			append_var CXXFLAGS "-Wshadow"
 		else
 			append_var CXXFLAGS "-Wno-missing-field-initializers"
-		fi
 
-		# Many false positives before GCC 4.8, e.g. with templates
-		if test $_cxx_major -eq 4 && test $_cxx_minor -le 7; then
-			append_var CXXFLAGS "-Wno-type-limits"
-			append_var CXXFLAGS "-Wno-uninitialized"
-			append_var CXXFLAGS "-Wno-maybe-uninitialized"
-			append_var CXXFLAGS "-Wno-array-bounds"
-		fi
+			if test $_cxx_major -eq 4; then
+				# Many false positives with templates
+				if test $_cxx_minor -le 7; then
+					append_var CXXFLAGS "-Wno-type-limits"
+					append_var CXXFLAGS "-Wno-uninitialized"
+					append_var CXXFLAGS "-Wno-array-bounds"
+				fi
 
+				if test $_cxx_minor -le 8; then
+					append_var CXXFLAGS "-Wno-maybe-uninitialized"
+				fi
+			fi
+		fi
 	fi
 elif test "$have_icc" = yes; then
 	cxx_version="`( $CXX -dumpversion ) 2>/dev/null`"
