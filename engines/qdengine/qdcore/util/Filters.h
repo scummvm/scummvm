@@ -114,7 +114,7 @@ public:
 	}
 };
 
-}; // namespace scl
+} // namespace scl
 
 } // namespace QDEngine
 

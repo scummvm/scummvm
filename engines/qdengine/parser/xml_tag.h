@@ -193,7 +193,7 @@ private:
 	subtags_t _subtags;
 };
 
-}; /* namespace xml */
+} /* namespace xml */
 
 } // namespace QDEngine
 

@@ -270,7 +270,7 @@ uint32 *C2PassScale<FilterClass>::scale(uint32 *pOrigImage, uint32 uOrigWidth, u
 	return pDstImage;
 }
 
-}; // namespace scl
+} // namespace scl
 
 } // namespace QDEngine
 
