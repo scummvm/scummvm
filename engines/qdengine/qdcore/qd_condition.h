@@ -581,7 +581,7 @@ private:
 	static bool _successful_object_click;
 
 	bool init_data(int data_index, qdConditionData::data_t data_type, int data_size = 0) {
-		assert(data_index >= 0 && data_index < _data.size());
+		assert(data_index >= 0 && data_index < (int)_data.size());
 
 		_data[data_index].set_type(data_type);
 		if (data_size)

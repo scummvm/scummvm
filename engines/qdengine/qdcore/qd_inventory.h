@@ -71,15 +71,15 @@ public:
 	}
 
 	void set_cells_pos(int set_id, const Vect2s &pos) {
-		if (set_id >= 0 && set_id < _cell_sets.size())
+		if (set_id >= 0 && set_id < (int)_cell_sets.size())
 			_cell_sets[set_id].set_screen_pos(pos);
 	}
 	void set_cells_type(int set_id, const qdInventoryCellType &tp) {
-		if (set_id >= 0 && set_id < _cell_sets.size())
+		if (set_id >= 0 && set_id < (int)_cell_sets.size())
 			_cell_sets[set_id].set_cell_type(tp);
 	}
 	void set_cells_size(int set_id, const Vect2s &sz) {
-		if (set_id >= 0 && set_id < _cell_sets.size())
+		if (set_id >= 0 && set_id < (int)_cell_sets.size())
 			_cell_sets[set_id].set_size(sz);
 	}
 
