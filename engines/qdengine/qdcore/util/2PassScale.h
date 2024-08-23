@@ -32,8 +32,8 @@ namespace QDEngine {
 namespace scl {
 
 typedef struct {
-	double *Weights;  // Normalized weights of neighboring pixels
-	int Left, Right;  // Bounds of source pixels window
+	double *weights;  // Normalized weights of neighboring pixels
+	int left, right;  // Bounds of source pixels window
 } ContributionType;   // Contirbution information for a single pixel
 
 typedef struct {
@@ -103,7 +103,7 @@ LineContribType *C2PassScale<FilterClass>::allocContributions(uint32 uLineLength
 	double *p = &*_weights_buffer.begin();
 
 	for (uint32 u = 0; u < uLineLength; u++) {
-		line_ct.contribRow[u].Weights = p;
+		line_ct.contribRow[u].weights = p;
 		p += uWindowSize;
 	}
 	return &line_ct;
@@ -111,11 +111,11 @@ LineContribType *C2PassScale<FilterClass>::allocContributions(uint32 uLineLength
 
 template <class FilterClass>
 LineContribType *C2PassScale<FilterClass>::calcContributions(uint32 uLineSize, uint32 uSrcSize, double dScale) {
-	FilterClass CurFilter;
+	FilterClass curFilter;
 
 	double dWidth;
 	double dFScale = 1.0;
-	double dFilterWidth = CurFilter.GetWidth();
+	double dFilterWidth = curFilter.GetWidth();
 
 	if (dScale < 1.0) { // Minification
 		dWidth = dFilterWidth / dScale;
@@ -146,20 +146,20 @@ LineContribType *C2PassScale<FilterClass>::calcContributions(uint32 uLineSize, u
 			}
 		}
 
-		res->contribRow[u].Left = iLeft;
-		res->contribRow[u].Right = iRight;
+		res->contribRow[u].left = iLeft;
+		res->contribRow[u].right = iRight;
 
 		double dTotalWeight = 0.0;  // Zero sum of weights
 		for (int iSrc = iLeft; iSrc <= iRight; iSrc++) {
 			// Calculate weights
-			dTotalWeight += (res->contribRow[u].Weights[iSrc - iLeft] = dFScale * CurFilter.Filter(dFScale * (dCenter - (double)iSrc)));
+			dTotalWeight += (res->contribRow[u].weights[iSrc - iLeft] = dFScale * curFilter.Filter(dFScale * (dCenter - (double)iSrc)));
 		}
 		ASSERT(dTotalWeight >= 0.0);   // An error in the filter function can cause this
 		if (dTotalWeight > 0.0) {
 			// Normalize weight of neighbouring points
 			for (int iSrc = iLeft; iSrc <= iRight; iSrc++) {
 				// Normalize point
-				res->contribRow[u].Weights[iSrc - iLeft] /= dTotalWeight;
+				res->contribRow[u].weights[iSrc - iLeft] /= dTotalWeight;
 			}
 		}
 	}
@@ -167,7 +167,7 @@ LineContribType *C2PassScale<FilterClass>::calcContributions(uint32 uLineSize, u
 }
 
 template <class FilterClass>
-void C2PassScale<FilterClass>::scaleRow(uint32 *pSrc, uint32 uSrcWidth, uint32 *pRes, uint32 uResWidth, uint32 uRow, LineContribType *Contrib) {
+void C2PassScale<FilterClass>::scaleRow(uint32 *pSrc, uint32 uSrcWidth, uint32 *pRes, uint32 uResWidth, uint32 uRow, LineContribType *contrib) {
 	uint32 *pSrcRow = &(pSrc[uRow * uSrcWidth]);
 	uint32 *pDstRow = &(pRes[uRow * uResWidth]);
 	for (uint32 x = 0; x < uResWidth; x++) {
@@ -177,15 +177,15 @@ void C2PassScale<FilterClass>::scaleRow(uint32 *pSrc, uint32 uSrcWidth, uint32 *
 		double db = 0.0;
 		double da = 0.0;
 
-		int iLeft = Contrib->contribRow[x].Left;    // Retrieve left boundries
-		int iRight = Contrib->contribRow[x].Right;  // Retrieve right boundries
+		int iLeft = contrib->contribRow[x].left;    // Retrieve left boundries
+		int iRight = contrib->contribRow[x].right;  // Retrieve right boundries
 		for (int i = iLeft; i <= iRight; i++) {
 			// Scan between boundries
 			// Accumulate weighted effect of each neighboring pixel
-			dr += Contrib->contribRow[x].Weights[i - iLeft] * (double)(make_r(pSrcRow[i]));
-			dg += Contrib->contribRow[x].Weights[i - iLeft] * (double)(make_g(pSrcRow[i]));
-			db += Contrib->contribRow[x].Weights[i - iLeft] * (double)(make_b(pSrcRow[i]));
-			da += Contrib->contribRow[x].Weights[i - iLeft] * (double)(make_a(pSrcRow[i]));
+			dr += contrib->contribRow[x].weights[i - iLeft] * (double)(make_r(pSrcRow[i]));
+			dg += contrib->contribRow[x].weights[i - iLeft] * (double)(make_g(pSrcRow[i]));
+			db += contrib->contribRow[x].weights[i - iLeft] * (double)(make_b(pSrcRow[i]));
+			da += contrib->contribRow[x].weights[i - iLeft] * (double)(make_a(pSrcRow[i]));
 		}
 
 		uint32 r = round(dr);
@@ -206,13 +206,13 @@ void C2PassScale<FilterClass>::horizScale(uint32 *pSrc, uint32 uSrcWidth, uint32
 		return;
 	}
 	// Allocate and calculate the contributions
-	LineContribType *Contrib = calcContributions(uResWidth, uSrcWidth, double(uResWidth) / double(uSrcWidth));
+	LineContribType *contrib = calcContributions(uResWidth, uSrcWidth, double(uResWidth) / double(uSrcWidth));
 	for (uint32 u = 0; u < uResHeight; u++)
-		scaleRow(pSrc, uSrcWidth, pDst, uResWidth, u, Contrib); // Scale each row
+		scaleRow(pSrc, uSrcWidth, pDst, uResWidth, u, contrib); // Scale each row
 }
 
 template <class FilterClass>
-void C2PassScale<FilterClass>::scaleCol(uint32 *pSrc, uint32 uSrcWidth, uint32 *pRes, uint32 uResWidth, uint32 uResHeight, uint32 uCol, LineContribType *Contrib) {
+void C2PassScale<FilterClass>::scaleCol(uint32 *pSrc, uint32 uSrcWidth, uint32 *pRes, uint32 uResWidth, uint32 uResHeight, uint32 uCol, LineContribType *contrib) {
 	for (uint32 y = 0; y < uResHeight; y++) {
 		// Loop through column
 		double dr = 0.0;
@@ -220,16 +220,16 @@ void C2PassScale<FilterClass>::scaleCol(uint32 *pSrc, uint32 uSrcWidth, uint32 *
 		double db = 0.0;
 		double da = 0.0;
 
-		int iLeft = Contrib->contribRow[y].Left;    // Retrieve left boundries
-		int iRight = Contrib->contribRow[y].Right;  // Retrieve right boundries
+		int iLeft = contrib->contribRow[y].left;    // Retrieve left boundries
+		int iRight = contrib->contribRow[y].right;  // Retrieve right boundries
 		for (int i = iLeft; i <= iRight; i++) {
 			// Scan between boundries
 			// Accumulate weighted effect of each neighboring pixel
 			uint32 pCurSrc = pSrc[i * uSrcWidth + uCol];
-			dr += Contrib->contribRow[y].Weights[i - iLeft] * (double)(make_r(pCurSrc));
-			dg += Contrib->contribRow[y].Weights[i - iLeft] * (double)(make_g(pCurSrc));
-			db += Contrib->contribRow[y].Weights[i - iLeft] * (double)(make_b(pCurSrc));
-			da += Contrib->contribRow[y].Weights[i - iLeft] * (double)(make_a(pCurSrc));
+			dr += contrib->contribRow[y].weights[i - iLeft] * (double)(make_r(pCurSrc));
+			dg += contrib->contribRow[y].weights[i - iLeft] * (double)(make_g(pCurSrc));
+			db += contrib->contribRow[y].weights[i - iLeft] * (double)(make_b(pCurSrc));
+			da += contrib->contribRow[y].weights[i - iLeft] * (double)(make_a(pCurSrc));
 		}
 
 		uint32 r = round(dr);
