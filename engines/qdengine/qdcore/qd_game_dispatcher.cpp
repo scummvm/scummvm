@@ -2947,12 +2947,6 @@ bool qdGameDispatcher::is_counter_in_list(qdCounter *p) {
 	return _counters.is_in_list(p);
 }
 
-static Common::String change_ext(const char *file_name, const char *new_ext) {
-	Common::String fpath(file_name);
-	Common::replace(fpath, ".tga", new_ext);
-	return fpath;
-}
-
 bool qdGameDispatcher::start_intro_videos() {
 	for (auto &it : video_list()) {
 		if (it->is_intro_movie()) {
