@@ -309,7 +309,7 @@ int RLEBuffer::line_length() {
 	uint sz = (_header_offset.size() > 1) ? _header_offset[1] : _header.size();
 
 	uint len = 0;
-	for (int i = 0; i < sz; i++) {
+	for (uint i = 0; i < sz; i++) {
 		len += abs(_header[i]);
 	}
 
@@ -317,7 +317,7 @@ int RLEBuffer::line_length() {
 }
 
 int RLEBuffer::line_header_length(int line_num) const {
-	if (line_num < _header_offset.size() - 1)
+	if (line_num < (int)_header_offset.size() - 1)
 		return _header_offset[line_num + 1] - _header_offset[line_num];
 	else
 		return _header.size() - _header_offset[line_num];

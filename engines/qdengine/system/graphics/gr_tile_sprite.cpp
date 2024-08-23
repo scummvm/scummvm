@@ -153,7 +153,7 @@ bool grTileSprite::operator == (const grTileSprite &sprite) const {
 	const byte *ptr1 = (const byte *)sprite._data;
 
 	for (int i = 0; i < GR_TILE_SPRITE_SIZE_BYTES; i++, ptr0++, ptr1++) {
-		if (abs(*ptr0 - *ptr1) > _comprasionTolerance)
+		if ((uint)abs(*ptr0 - *ptr1) > _comprasionTolerance)
 			return false;
 	}
 

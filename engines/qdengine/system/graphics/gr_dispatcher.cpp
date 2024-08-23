@@ -1040,7 +1040,7 @@ int grDispatcher::textHeight(const char *str, int vspace, const grFont *font) co
 
 	int sy = font->size_y() + vspace;
 
-	for (int i = 0; i < strlen(str); i++) {
+	for (uint i = 0; i < strlen(str); i++) {
 		if (str[i] == '\n')
 			sy += font->size_y() + vspace;
 	}
