@@ -196,7 +196,8 @@ View1::View1() : UIElement("View1") {
 			BackgroundAnimation& current = g_engine->_backgroundAnimations[i];
 			BackgroundAnimationBlob &currentBlob = g_engine->_backgroundAnimationsBlobs[i];
 			// AnimFrame &currentFrame = current.Frames[current.FrameIndex];
-			AnimFrame currentFrame = currentBlob.GetFrame(currentBlob.FrameIndex);
+			// AnimFrame currentFrame = currentBlob.GetFrame(currentBlob.FrameIndex);
+			AnimFrame currentFrame = currentBlob.GetCurrentFrame();
 			DrawSprite(current.X, current.Y, currentFrame.Width, currentFrame.Height, currentFrame.Data, s, false);
 		}
 	}
@@ -1011,7 +1012,7 @@ Macs2::AnimFrame *Character::GetCurrentAnimationFrame() {
 	testReader.SeekToAnimation((animationIndex - 1) % numAnimations);
 	// testReader.SeekToAnimation(0);
 	// Skip ahead to the width and height
-	testReader.readStream->seek(6, SEEK_CUR);
+	testReader.readStream->seek(6, SEEK_CUR
 	*/
 	uint16 offset = BackgroundAnimationBlob::Func1480(GameObject->Blobs[blobIndex],false, 0x2);
 	// My remaining code expects to get dialed to the width and height directly - TODO make uniform
