@@ -296,7 +296,7 @@ void RLEBuffer::resize_buffers() {
 	uint32 len = line_length() * sizeof(uint32);
 
 	if (g_buffersLen < len) {
-		if (!realloc(g_buffer0, len) || !realloc(g_buffer1, len))
+		if (!(g_buffer0 = (byte *)realloc(g_buffer0, len)) || !(g_buffer1 = (byte *)realloc(g_buffer1, len)))
 			error("RLEBuffer::resize_buffers(): Cannot realloc buffers");
 
 		g_buffersLen = len;
