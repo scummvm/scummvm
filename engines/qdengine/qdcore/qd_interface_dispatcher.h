@@ -249,9 +249,6 @@ public:
 	*/
 	bool handle_event(int event_code, const char *event_data, qdInterfaceObjectBase *sender = NULL);
 
-	//! Пишет список всех файлов ресурсов в list.
-	bool get_file_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const;
-
 	void toggle_end_game_mode(bool state) {
 		_end_game_mode = state;
 	}

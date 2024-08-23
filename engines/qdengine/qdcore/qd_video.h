@@ -84,8 +84,6 @@ public:
 
 	qdConditionalObject::trigger_start_mode trigger_start();
 
-	bool get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const;
-
 	bool is_intro_movie() const {
 		return check_flag(VID_INTRO_MOVIE);
 	}

@@ -172,13 +172,4 @@ qdConditionalObject::trigger_start_mode qdVideo::trigger_start() {
 	return qdConditionalObject::TRIGGER_START_ACTIVATE;
 }
 
-bool qdVideo::get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const {
-	if (!_file_name.empty())
-		files_to_copy.push_back(_file_name);
-
-	if (background_file_name())
-		files_to_pack.push_back(background_file_name());
-
-	return true;
-}
 } // namespace QDEngine

@@ -64,8 +64,6 @@ public:
 	}
 	//! Возвращает всех владельцев ресурсов
 	void get_owners(Std::list<T *> &owners);
-	//! Пишет список всех файлов в list.
-	bool get_file_list(qdFileNameList &list) const;
 
 private:
 
@@ -173,15 +171,6 @@ void qdResourceContainer<T>::get_owners(Std::list<T *> &owners) {
 			owners.push_back(ptr);
 		}
 	}
-}
-
-template<class T>
-bool qdResourceContainer<T>::get_file_list(qdFileNameList &list) const {
-	for (resource_list_t::const_iterator it = _resource_list.begin(); it != _resource_list.end(); ++it) {
-		if ((*it)->resource_file())
-			list.push_back((*it)->resource_file());
-	}
-	return true;
 }
 
 } // namespace QDEngine

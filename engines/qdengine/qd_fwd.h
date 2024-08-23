@@ -93,8 +93,6 @@ class qdInterfaceButton;
 
 class qdGameDispatcher;
 
-typedef Std::list<Common::String> qdFileNameList;
-
 class qdFontInfo;
 typedef Std::list<qdFontInfo *> qdFontInfoList;
 

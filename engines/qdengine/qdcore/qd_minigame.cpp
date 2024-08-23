@@ -243,21 +243,6 @@ bool qdMiniGame::load_config() {
 	return true;
 }
 
-bool qdMiniGame::get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const {
-	if (has_dll())
-		files_to_copy.push_back(dll_name());
-
-	if (has_config_file())
-		files_to_copy.push_back(config_file_name());
-
-	for (config_container_t::const_iterator it = _config.begin(); it != _config.end(); ++it) {
-		if (it->data_type() == qdMinigameConfigParameter::PRM_DATA_FILE)
-			files_to_copy.push_back(it->data_string());
-	}
-
-	return true;
-}
-
 const char *qdMiniGame::config_parameter_value(const char *cfg_param_name) const {
 	config_container_t::const_iterator it = Common::find(_config.begin(), _config.end(), cfg_param_name);
 	if (it != _config.end())

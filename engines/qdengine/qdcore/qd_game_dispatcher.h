@@ -478,12 +478,6 @@ public:
 
 	bool game_screenshot(Graphics::Surface &thumb) const;
 
-	/**
-	    Собирает все файлы находящиеся НЕ внутри рабочей дирректории в collect_dir,
-	    исправляя пути файлов в соответствующих им объектах
-	*/
-	bool get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const;
-
 	void set_game_title(const char *p) {
 		_game_title = p;
 	}

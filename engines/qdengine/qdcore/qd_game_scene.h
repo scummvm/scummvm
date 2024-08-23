@@ -235,8 +235,6 @@ public:
 		_interface_screen_name = name;
 	}
 
-	bool get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const;
-
 	qdGameObject *get_hitted_obj(int x, int y);
 
 	bool set_camera_mode(const qdCameraMode &mode, qdGameObjectAnimated *object);

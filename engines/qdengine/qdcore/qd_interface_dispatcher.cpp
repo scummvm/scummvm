@@ -637,17 +637,6 @@ bool qdInterfaceDispatcher::handle_event(int event_code, const char *event_data,
 	return false;
 }
 
-bool qdInterfaceDispatcher::get_file_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const {
-	for (screen_list_t::const_iterator it = screen_list().begin(); it != screen_list().end(); ++it) {
-		if ((*it)->has_music_track())
-			files_to_copy.push_back((*it)->music_track().file_name());
-	}
-
-	_resources.get_file_list(files_to_pack);
-
-	return true;
-}
-
 int qdInterfaceDispatcher::option_value(int option_id, const char *option_data) {
 	switch (option_id) {
 	case qdInterfaceElement::OPTION_SOUND:

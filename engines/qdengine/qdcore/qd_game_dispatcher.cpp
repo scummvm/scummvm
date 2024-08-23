@@ -2954,39 +2954,6 @@ static Common::String change_ext(const char *file_name, const char *new_ext) {
 	return fpath;
 }
 
-bool qdGameDispatcher::get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const {
-	files_to_pack.push_back("Resource/Cursors/default.tga");
-	files_to_pack.push_back("Resource/Fonts/font00.idx");
-	files_to_pack.push_back("Resource/Fonts/font00.tga");
-
-	if (!_texts_database.empty())
-		files_to_pack.push_back(texts_database());
-
-	for (qdMiniGameList::const_iterator it = minigame_list().begin(); it != minigame_list().end(); ++it)
-		(*it)->get_files_list(files_to_copy, files_to_pack);
-
-	for (qdSoundList::const_iterator it = sound_list().begin(); it != sound_list().end(); ++it)
-		files_to_pack.push_back((*it)->file_name());
-
-	for (qdAnimationList::const_iterator it = animation_list().begin(); it != animation_list().end(); ++it)
-		files_to_pack.push_back((*it)->qda_file());
-
-	for (qdInventoryCellTypeVector::const_iterator it = inventory_cell_types().begin(); it != inventory_cell_types().end(); ++it)
-		files_to_pack.push_back(it->sprite_file());
-
-	_interface_dispatcher.get_file_list(files_to_copy, files_to_pack);
-
-	for (auto &it : fonts_list()) {
-		files_to_pack.push_back(it->font_file_name()); // tga
-		files_to_pack.push_back(change_ext(it->font_file_name(), ".idx").c_str());
-	}
-
-	if (_hall_of_fame_size)
-		files_to_copy.push_back("Resource/hof.dat");
-
-	return true;
-}
-
 bool qdGameDispatcher::start_intro_videos() {
 	for (auto &it : video_list()) {
 		if (it->is_intro_movie()) {

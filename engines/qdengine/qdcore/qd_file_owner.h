@@ -29,8 +29,6 @@ public:
 	qdFileOwner() : _cd_info(0) { }
 	virtual ~qdFileOwner() {}
 
-	virtual bool get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const = 0;
-
 	void add_to_CD(int cd_number) {
 		_cd_info |= 1 << cd_number;
 	}

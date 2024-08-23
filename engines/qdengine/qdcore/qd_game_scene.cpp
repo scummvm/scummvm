@@ -1622,28 +1622,6 @@ bool qdGameScene::set_personage_button(qdInterfaceButton *p) {
 	return ret;
 }
 
-bool qdGameScene::get_files_list(qdFileNameList &files_to_copy, qdFileNameList &files_to_pack) const {
-	for (qdMusicTrackList::const_iterator it = music_track_list().begin(); it != music_track_list().end(); ++it)
-		files_to_copy.push_back((*it)->file_name());
-
-	for (qdSoundList::const_iterator it = sound_list().begin(); it != sound_list().end(); ++it)
-		files_to_pack.push_back((*it)->file_name());
-
-	for (qdAnimationList::const_iterator it = animation_list().begin(); it != animation_list().end(); ++it)
-		files_to_pack.push_back((*it)->qda_file());
-
-	for (qdGameObjectList::const_iterator it = object_list().begin(); it != object_list().end(); ++it) {
-		if ((*it)->named_object_type() == QD_NAMED_OBJECT_STATIC_OBJ) {
-			qdGameObjectStatic *obj = static_cast<qdGameObjectStatic *>(*it);
-			if (obj->get_sprite()->file())
-				files_to_pack.push_back(obj->get_sprite()->file());
-		}
-	}
-
-	return true;
-}
-
-
 void qdGameScene::personages_quant() {
 	for (personages_container_t::const_iterator it = _personages.begin(); it != _personages.end(); ++it) {
 		if ((*it)->button()) {
