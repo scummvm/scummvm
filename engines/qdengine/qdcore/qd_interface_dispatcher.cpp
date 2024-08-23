@@ -98,9 +98,10 @@ bool qdInterfaceDispatcher::select_screen(const char *screen_name, bool lock_res
 			debugC(3, kDebugQuant, "qdInterfaceDispatcher::select_screen() Selecting screen: %s", transCyrillic(screen_name));
 			for (resource_container_t::resource_list_t::const_iterator it = _resources.resource_list().begin(); it != _resources.resource_list().end(); ++it) {
 				if (p->has_references(*it)) {
-					if (!(*it)->is_resource_loaded())
+					if (!(*it)->is_resource_loaded()) {
 						debugC(3, kDebugQuant, "qdInterfaceDispatcher::select_screen() Resource is used in both screens %s and %s", transCyrillic(_cur_screen->name()), transCyrillic(p->name()));
 						(*it)->load_resource();
+					}
 				} else {
 					if ((*it)->is_resource_loaded() && !_cur_screen->has_references(*it))
 						(*it)->free_resource();
