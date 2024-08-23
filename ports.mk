@@ -361,6 +361,7 @@ endif
 	cp $(srcdir)/dists/ios7/Images.xcassets/LaunchImage.launchimage/ScummVM-splash-2208x1242.png $(bundle_name)/LaunchImage-800-Landscape-736h@3x.png
 	cp $(srcdir)/dists/ios7/Images.xcassets/LaunchImage.launchimage/ScummVM-splash-750x1334.png $(bundle_name)/LaunchImage-800-667h@2x.png
 	cp $(srcdir)/dists/ios7/Assets.car $(bundle_name)/Assets.car
+	cp $(srcdir)/dists/ios7/PrivacyInfo.xcprivacy $(bundle_name)/PrivacyInfo.xcprivacy
 	codesign -s - --deep --force $(bundle_name)
 
 tvosbundle: scummvm-static-ios
@@ -436,6 +437,7 @@ endif
 	chmod 755 scummvm
 	cp scummvm $(bundle_name)/ScummVM
 	cp -r $(srcdir)/dists/tvos/Assets.car $(bundle_name)/Assets.car
+	cp $(srcdir)/dists/tvos/PrivacyInfo.xcprivacy $(bundle_name)/PrivacyInfo.xcprivacy
 	codesign -s - --deep --force $(bundle_name)
 
 ifndef WITHOUT_SDL
