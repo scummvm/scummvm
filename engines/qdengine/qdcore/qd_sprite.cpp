@@ -1013,20 +1013,22 @@ void qdSprite::qda_load(Common::SeekableReadStream *fh, int version) {
 			switch (_format) {
 			case GR_RGB565:
 			case GR_ARGB1555:
-				if (!al_flag)
+				if (!al_flag) {
 					_data = new byte[_picture_size.x * _picture_size.y * 2];
-				else
+				} else {
 					warning("qdSprite::qda_load(): al_flag is set, check the sprite picture"); // TODO)
 					_data = new byte[_picture_size.x * _picture_size.y * 4];
+				}
 
 				fh->read(_data, _picture_size.x * _picture_size.y * 2);
 				break;
 			case GR_RGB888:
-				if (!al_flag)
+				if (!al_flag) {
 					_data = new byte[_picture_size.x * _picture_size.y * 3];
-				else
+				} else {
 					warning("qdSprite::qda_load(): al_flag is set, check the sprite picture"); // TODO
 					_data = new byte[_picture_size.x * _picture_size.y * 4];
+				}
 
 				fh->read(_data, _picture_size.x * _picture_size.y * 3);
 				break;
