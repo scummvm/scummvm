@@ -1211,8 +1211,7 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 			return false;
 
 		return true;
-	}
-	return false;
+		}
 	case qdCondition::CONDITION_PERSONAGE_STATIC_DIRECTION: {
 		const qdGameObjectMoving *p = dynamic_cast<const qdGameObjectMoving *>(cnd->get_object(qdCondition::PERSONAGE_NAME));
 		if (!p) {
@@ -1238,20 +1237,20 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 			return false;
 
 		return true;
-	}
-	return false;
+		}
 	case qdCondition::CONDITION_TIMER: {
 		int state;
-		if (!cnd->get_value(qdCondition::TIMER_RND, state, 1) || !state) return false;
+		if (!cnd->get_value(qdCondition::TIMER_RND, state, 1) || !state)
+			return false;
 		return true;
-	}
-	return false;
+		}
 	case qdCondition::CONDITION_MOUSE_DIALOG_CLICK: {
-		if (!check_flag(DIALOG_CLICK_FLAG) || _mouse_click_obj) return false;
+		if (!check_flag(DIALOG_CLICK_FLAG) || _mouse_click_obj)
+			return false;
 		if (cnd->owner() && cnd->owner() == _mouse_click_state)
 			return true;
-	}
-	return false;
+		return false;
+		}
 	case qdCondition::CONDITION_MINIGAME_STATE:
 		return false;
 	case qdCondition::CONDITION_OBJECT_STATE: {
@@ -1281,8 +1280,8 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 				return p->is_state_active(state_name);
 			}
 		}
-	}
-	return false;
+		return false;
+		}
 	case qdCondition::CONDITION_MOUSE_ZONE_CLICK:
 		if (mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_LEFT_DOWN)) {
 			if (check_flag(OBJECT_CLICK_FLAG | DIALOG_CLICK_FLAG) || _mouse_click_obj) return false;
@@ -1374,8 +1373,8 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 				return p->was_state_active(state_name);
 			}
 		}
-	}
-	return false;
+		return false;
+		}
 	case qdCondition::CONDITION_OBJECTS_DISTANCE: {
 		const char *object_name;
 
@@ -1405,9 +1404,11 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 		Vect3f dr = obj2->R() - obj1->R();
 		dr.z = 0.0f;
 
-		if (dr.norm2() < dist * dist) return true;
-	}
-	return false;
+		if (dr.norm2() < dist * dist)
+			return true;
+
+		return false;
+		}
 	case qdCondition::CONDITION_PERSONAGE_ACTIVE:
 		if (get_active_personage()) {
 			const qdGameObjectMoving *p = dynamic_cast<const qdGameObjectMoving *>(cnd->get_object(qdCondition::PERSONAGE_NAME));
@@ -1452,8 +1453,8 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 				return p->is_state_waiting(state_name);
 			}
 		}
-	}
-	return false;
+		return false;
+		}
 	case qdCondition::CONDITION_OBJECT_STATE_ANIMATION_PHASE: {
 		const qdGameObject *obj = dynamic_cast<const qdGameObject *>(cnd->get_object(qdCondition::OBJECT_NAME));
 		if (!obj) {
@@ -1492,8 +1493,8 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 			if (phase >= phase0 && phase <= phase1)
 				return true;
 		}
-	}
-	return false;
+		return false;
+		}
 	case qdCondition::CONDITION_OBJECT_PREV_STATE: {
 		const qdGameObject *obj = dynamic_cast<const qdGameObject *>(cnd->get_object(qdCondition::OBJECT_NAME));
 		if (!obj) {
@@ -1521,8 +1522,8 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 				return p->was_state_previous(state_name);
 			}
 		}
-	}
-	return false;
+		return false;
+		}
 	case qdCondition::CONDITION_STATE_TIME_GREATER_THAN_VALUE:
 		if (const qdNamedObject *p = cnd->get_object(0)) {
 			if (p->named_object_type() != QD_NAMED_OBJECT_OBJ_STATE) return false;
@@ -1660,8 +1661,7 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 		const qdGameObject *obj = dynamic_cast<const qdGameObject *>(cnd->get_object(qdCondition::OBJECT_NAME));
 		if (!obj) return false;
 		return !obj->is_visible();
-	}
-	return false;
+		}
 	case qdCondition::CONDITION_MOUSE_RIGHT_ZONE_CLICK:
 		if (mouseDispatcher::instance()->is_event_active(mouseDispatcher::EV_RIGHT_DOWN)) {
 			if (check_flag(OBJECT_CLICK_FLAG | DIALOG_CLICK_FLAG) || _mouse_click_obj) return false;
@@ -1676,7 +1676,8 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 			}
 
 			const qdGridZone *zone = dynamic_cast<const qdGridZone *>(cnd->get_object(qdCondition::CLICK_ZONE_NAME));
-			if (!zone) return false;
+			if (!zone)
+				return false;
 
 			return zone->is_point_in_zone(sc->mouse_click_pos());
 		}
@@ -1856,8 +1857,7 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 		dr1.z = dr2.z = 0;
 
 		return (dr1.norm2() < dr2.norm2());
-	}
-	return false;
+		}
 	case qdCondition::CONDITION_ANIMATED_OBJECT_IDLE_GREATER_THAN_VALUE: {
 		const qdGameObjectAnimated *anim_obj =
 		    dynamic_cast<const qdGameObjectAnimated *>(cnd->get_object(0));
@@ -1869,7 +1869,7 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 			return false;
 
 		return (anim_obj->idle_time() > value);
-	}
+		}
 	return false;
 	case qdCondition::CONDITION_ANIMATED_OBJECTS_INTERSECTIONAL_BOUNDS: {
 		const qdGameObjectAnimated *anim1 =
@@ -1881,8 +1881,7 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 			return false;
 
 		return anim1->inters_with_bound(anim2->bound(), anim2->R());
-	}
-	return false;
+		}
 	default:
 		break;
 	}
