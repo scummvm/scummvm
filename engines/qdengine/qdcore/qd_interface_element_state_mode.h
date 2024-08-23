@@ -23,8 +23,8 @@
 #ifndef QDENGINE_QDCORE_QD_INTERFACE_ELEMENT_STATE_MODE_H
 #define QDENGINE_QDCORE_QD_INTERFACE_ELEMENT_STATE_MODE_H
 
+#include "common/path.h"
 #include "qdengine/qdcore/qd_contour.h"
-
 
 namespace QDEngine {
 
@@ -45,10 +45,10 @@ public:
 	/**
 	Если надо убрать звук - передать NULL в качестве имени файла.
 	*/
-	void set_sound_file(const char *name);
+	void set_sound_file(const Common::Path name);
 	//! Возвращает имя файла звука.
-	const char *sound_file() const {
-		return _sound_file.c_str();
+	const Common::Path sound_file() const {
+		return _sound_file;
 	}
 	//! Устанавливает звук события.
 	void set_sound(const qdSound *p) {
@@ -67,10 +67,10 @@ public:
 	/**
 	Если надо убрать анимацию - передать NULL в качестве имени файла.
 	*/
-	void set_animation_file(const char *name);
+	void set_animation_file(const Common::Path name);
 	//! Возвращает имя файла для анимации.
-	const char *animation_file() const {
-		return _animation_file.c_str();
+	const Common::Path animation_file() const {
+		return _animation_file;
 	}
 	//! Возвращает флаги анимации.
 	int animation_flags() const {
@@ -134,13 +134,13 @@ public:
 private:
 
 	//! Имя файла звука.
-	Common::String _sound_file;
+	Common::Path _sound_file;
 
 	//! Звук, включаемый событием.
 	const qdSound *_sound;
 
 	//! Имя файла для анимации
-	Common::String _animation_file;
+	Common::Path _animation_file;
 	//! Флаги для анимации.
 	int _animation_flags;
 

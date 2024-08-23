@@ -100,13 +100,13 @@ void qdFileManager::Finit() {
 	delete mgr;
 }
 
-bool qdFileManager::open_file(Common::SeekableReadStream **fh, const char *file_name, bool err_message) {
-	debugC(4, kDebugLoad, "qdFileManager::open_file(%s)", transCyrillic(file_name));
+bool qdFileManager::open_file(Common::SeekableReadStream **fh, const Common::Path file_name, bool err_message) {
+	debugC(4, kDebugLoad, "qdFileManager::open_file(%s)", transCyrillic(file_name.toString()));
 
-	if (SearchMan.hasFile(Common::Path(file_name))) {
+	if (SearchMan.hasFile(file_name)) {
 		Common::File *f = new Common::File;
 
-		if (f->open(Common::Path(file_name)))
+		if (f->open(file_name))
 			*fh = f;
 		else
 			return false;
@@ -122,20 +122,20 @@ bool qdFileManager::open_file(Common::SeekableReadStream **fh, const char *file_
 			continue;
 
 		if (_packages[i]._container->hasFile(file_name)) {
-			debugC(5, kDebugLoad, "qdFileManager::open_file(%s): found in %s", transCyrillic(file_name), _packages[i].file_name());
+			debugC(5, kDebugLoad, "qdFileManager::open_file(%s): found in %s", transCyrillic(file_name.toString()), _packages[i].file_name());
 
 			*fh = _packages[i]._container->createReadStreamForMember(file_name);
 
 			if (*fh)
 				return true;
 
-			debugC(4, kDebugLoad, "qdFileManager::open_file(%s): Cannot read file", transCyrillic(file_name));
+			debugC(4, kDebugLoad, "qdFileManager::open_file(%s): Cannot read file", transCyrillic(file_name.toString()));
 
 			return false;
 		}
 	}
 
-	debugC(4, kDebugLoad, "qdFileManager::open_file(%s): NOT FOUND", transCyrillic(file_name));
+	debugC(4, kDebugLoad, "qdFileManager::open_file(%s): NOT FOUND", transCyrillic(file_name.toString()));
 
 	return false;
 }

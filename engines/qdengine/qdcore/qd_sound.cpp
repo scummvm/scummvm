@@ -54,7 +54,7 @@ bool qdSound::load_resource() {
 
 	toggle_resource_status(true);
 
-	return _sound.wav_file_load(_file_name.c_str());
+	return _sound.wav_file_load(_file_name);
 }
 
 void qdSound::load_script(const xml::tag *p) {
@@ -91,7 +91,7 @@ bool qdSound::save_script(Common::WriteStream &fh, int indent) const {
 	}
 
 	if (!_file_name.empty()) {
-		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(_file_name.c_str())));
+		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(_file_name.toString('\\'))));
 	}
 
 	fh.writeString("/>\r\n");

@@ -46,20 +46,18 @@ qdResource &qdResource::operator = (const qdResource &res) {
 qdResource::~qdResource() {
 }
 
-qdResource::file_format_t qdResource::file_format(const char *file_name) {
-	char ext[10];
-	uint len = strlen(file_name);
+qdResource::file_format_t qdResource::file_format(const Common::Path path) {
+	Common::String file_name(path.baseName());
 
-	if (len < 4)
+	if (file_name.size() < 4)
 		return RES_UNKNOWN;
 
-	if (!strncmp(file_name, "save:", 5)) return RES_SPRITE;
+	if (path.isRelativeTo("scummvm"))
+		return RES_SPRITE;
 
-	Common::strlcpy(ext, &file_name[len - 4], 10);
-
-	if (!scumm_stricmp(ext, ".qda")) return RES_ANIMATION;
-	if (!scumm_stricmp(ext, ".tga")) return RES_SPRITE;
-	if (!scumm_stricmp(ext, ".wav")) return RES_SOUND;
+	if (file_name.hasSuffixIgnoreCase(".qda")) return RES_ANIMATION;
+	if (file_name.hasSuffixIgnoreCase(".tga")) return RES_SPRITE;
+	if (file_name.hasSuffixIgnoreCase(".wav")) return RES_SOUND;
 
 	return RES_UNKNOWN;
 }

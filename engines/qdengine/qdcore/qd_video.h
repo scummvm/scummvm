@@ -55,18 +55,18 @@ public:
 		return QD_NAMED_OBJECT_VIDEO;
 	}
 
-	const char *file_name() const {
-		return _file_name.c_str();
+	const Common::Path file_name() const {
+		return _file_name;
 	}
-	void set_file_name(const char *fname) {
+	void set_file_name(const Common::Path fname) {
 		_file_name = fname;
 	}
 
 	// Фон, на котором будет проигрываться видео
-	void set_background_file_name(const char *fname) {
+	void set_background_file_name(const Common::Path fname) {
 		_background.set_file(fname);
 	}
-	const char *background_file_name() const {
+	const Common::Path background_file_name() const {
 		return _background.file();
 	}
 	bool draw_background();
@@ -91,7 +91,7 @@ public:
 private:
 
 	Vect2s _position;
-	Common::String _file_name;
+	Common::Path _file_name;
 
 	qdSprite _background;
 };

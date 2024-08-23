@@ -49,11 +49,11 @@ public:
 	bool load_resource();
 	bool free_resource();
 	//! Устанавливает имя файла, в котором хранятся данные ресурса.
-	void set_resource_file(const char *file_name) {
+	void set_resource_file(const Common::Path file_name) {
 		set_file_name(file_name);
 	}
 	//! Возвращает имя файла, в котором хранится анимация.
-	const char *resource_file() const {
+	const Common::Path resource_file() const {
 		return file_name();
 	}
 #ifdef __QD_DEBUG_ENABLE__
@@ -63,12 +63,11 @@ public:
 #endif
 
 	//! Возвращает имя файла, в котором хранится звук.
-	const char *file_name() const {
-		if (!_file_name.empty()) return _file_name.c_str();
-		return 0;
+	const Common::Path file_name() const {
+		return _file_name;
 	}
 	//! Устанавливает имя файла, в котором хранится звук.
-	void set_file_name(const char *fname) {
+	void set_file_name(const Common::Path fname) {
 		_file_name = fname;
 	}
 
@@ -105,7 +104,7 @@ public:
 
 private:
 
-	Common::String _file_name;
+	Common::Path _file_name;
 	//! Sound volume, [0, 255].
 	int _volume;
 	wavSound _sound;

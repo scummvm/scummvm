@@ -396,7 +396,7 @@ void qdAnimation::load_script(const xml::tag *p) {
 			set_name(it->data());
 			break;
 		case QDSCR_ANIMATION_FILE:
-			qda_set_file(Common::Path(it->data(), '\\').toString().c_str());
+			qda_set_file(Common::Path(it->data(), '\\'));
 			break;
 		case QDSCR_FLAG:
 			set_flag(xml::tag_buffer(*it).get_int());
@@ -425,8 +425,8 @@ bool qdAnimation::save_script(Common::WriteStream &fh, int indent) const {
 		fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
 	}
 
-	if (qda_file()) {
-		fh.writeString(Common::String::format(" animation_file=\"%s\"", qdscr_XML_string(qda_file())));
+	if (!qda_file().empty()) {
+		fh.writeString(Common::String::format(" animation_file=\"%s\"", qdscr_XML_string(qda_file().toString('\\'))));
 	}
 
 	fh.writeString("/>\r\n");
@@ -434,10 +434,10 @@ bool qdAnimation::save_script(Common::WriteStream &fh, int indent) const {
 }
 
 bool qdAnimation::load_resources() {
-	debugC(3, kDebugLoad, "qdAnimation::load_resources(): '%s' name: %s", transCyrillic(qda_file()), transCyrillic(name()));
+	debugC(3, kDebugLoad, "qdAnimation::load_resources(): '%s' name: %s", transCyrillic(qda_file().toString()), transCyrillic(name()));
 	if (check_flag(QD_ANIMATION_FLAG_REFERENCE)) return false;
 
-	if (!qda_file()) {
+	if (qda_file().empty()) {
 		qdAnimationFrameList::iterator iaf;
 		for (iaf = _frames.begin(); iaf != _frames.end(); ++iaf) {
 			(*iaf)->load_resources();
@@ -531,12 +531,11 @@ bool qdAnimation::hit(int x, int y, float scale) const {
 	return false;
 }
 
-bool qdAnimation::qda_load(const char *fname) {
+bool qdAnimation::qda_load(Common::Path fpath) {
 	clear_frames();
 
-	debugC(3, kDebugLoad, "qdAnimation::qda_load(%s)", transCyrillic(fname));
+	debugC(3, kDebugLoad, "qdAnimation::qda_load(%s)", transCyrillic(fpath.toString()));
 
-	Common::Path fpath(fname, '\\');
 	Common::SeekableReadStream *fh;
 	if (!qdFileManager::instance().open_file(&fh, fpath.toString().c_str())) {
 		return false;
@@ -599,7 +598,7 @@ bool qdAnimation::qda_load(const char *fname) {
 			add_frame(p);
 		}
 
-		debugC(1, kDebugLoad, "qdAnimation::qda_load() tileAnimation %s", transCyrillic(fname));
+		debugC(1, kDebugLoad, "qdAnimation::qda_load() tileAnimation %s", transCyrillic(fpath.toString()));
 		_tileAnimation = new grTileAnimation;
 		_tileAnimation->load(fh);
 	}
@@ -609,11 +608,8 @@ bool qdAnimation::qda_load(const char *fname) {
 	return true;
 }
 
-void qdAnimation::qda_set_file(const char *fname) {
-	if (fname)
-		_qda_file = fname;
-	else
-		_qda_file.clear();
+void qdAnimation::qda_set_file(Common::Path fname) {
+	_qda_file = fname;
 }
 
 bool qdAnimation::crop() {

@@ -167,7 +167,7 @@ bool qdInterfaceSave::init(bool is_game_active) {
 
 		delete saveFile;
 
-		_thumbnail.set_animation_file(Common::String::format("save:%s", saveFileName.c_str()).c_str());
+		_thumbnail.set_animation_file(Common::Path(Common::String::format("scummvm/%s", saveFileName.c_str())));
 	} else {
 		_save_title = "";
 	}

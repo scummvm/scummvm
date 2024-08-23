@@ -64,8 +64,8 @@ bool qdInventoryCellType::save_script(Common::WriteStream &fh, int indent) const
 	}
 
 	fh.writeString(Common::String::format("<inventory_cell_type type=\"%d\"", _type));
-	if (strlen(_sprite.file())) {
-		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(_sprite.file())));
+	if (!_sprite.file().empty()) {
+		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(_sprite.file().toString('\\'))));
 	}
 	fh.writeString("/>\r\n");
 

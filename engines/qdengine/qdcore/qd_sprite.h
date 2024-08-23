@@ -92,19 +92,19 @@ public:
 	}
 	uint32 data_size() const;
 
-	void set_file(const char *fname) {
-		if (fname) _file = fname;
-		else _file.clear();
+	void set_file(const Common::Path fname) {
+		_file = fname;
 	}
-	const char *file() const {
-		return _file.c_str();
+	const Common::Path file() const {
+		return _file;
 	}
 	bool has_file() const {
 		return !_file.empty();
 	}
 
-	bool load(const char *fname = 0);
-	void save(const char *fname = 0);
+	bool load(const Common::Path fname);
+	bool load();
+	void save(const Common::Path fname);
 	void free();
 
 	virtual void qda_load(Common::SeekableReadStream *fh, int version = 100);
@@ -174,14 +174,14 @@ public:
 	}
 
 	//! Устанавливает имя файла, в котором хранятся данные ресурса.
-	void set_resource_file(const char *_filename) {
+	void set_resource_file(const Common::Path _filename) {
 		set_file(_filename);
 	}
 	//! Возвращает имя файла, в котором хранятся данные ресурса.
 	/**
 	Если оно не задано, должна возвращаеть NULL.
 	*/
-	const char *resource_file() const {
+	const Common::Path resource_file() const {
 		if (has_file()) return file();
 		return NULL;
 	}
@@ -211,7 +211,7 @@ private:
 	byte *_data;
 	class RLEBuffer *_rle_data;
 
-	Common::String _file;
+	Common::Path _file;
 
 	friend bool operator == (const qdSprite &sp1, const qdSprite &sp2);
 };

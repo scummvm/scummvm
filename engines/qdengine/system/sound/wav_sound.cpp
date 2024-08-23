@@ -68,16 +68,15 @@ void wavSound::free_data() {
 	_samples_per_sec = 0;
 }
 
-bool wavSound::wav_file_load(const char *fname) {
-	debugC(3, kDebugSound, "[%d] Loading Wav: %s", g_system->getMillis(), transCyrillic(fname));
+bool wavSound::wav_file_load(const Common::Path fpath) {
+	debugC(3, kDebugSound, "[%d] Loading Wav: %s", g_system->getMillis(), transCyrillic(fpath.toString()));
 
-	if (!fname) {
+	if (fpath.empty()) {
 		return false;
 	}
 
-	_fname = fname;
+	_fname = fpath;
 
-	Common::Path fpath(fname, '\\');
 	Common::SeekableReadStream *stream;
 
 	if (qdFileManager::instance().open_file(&stream, fpath.toString().c_str(), false)) {
@@ -87,7 +86,7 @@ bool wavSound::wav_file_load(const char *fname) {
 		int blockAlign;
 
 		if (!Audio::loadWAVFromStream(*stream, size, rate, flags, &type, &blockAlign)) {
-			warning("Error loading wav file header: '%s", fname);
+			warning("Error loading wav file header: '%s", fpath.toString().c_str());
 			delete stream;
 			return false;
 		}

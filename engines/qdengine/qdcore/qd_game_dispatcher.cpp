@@ -1898,7 +1898,7 @@ bool qdGameDispatcher::play_video(const char *vid_name) {
 }
 
 bool qdGameDispatcher::play_video(qdVideo *p) {
-	if (!_video_player.open_file(find_file(p->file_name(), *p).c_str()))
+	if (!_video_player.open_file(find_file(p->file_name(), *p)))
 		return false;
 
 	if (!p->check_flag(qdVideo::VID_ENABLE_MUSIC)) {
@@ -2656,7 +2656,7 @@ bool qdGameDispatcher::play_music_track(const qdMusicTrack *p, bool interface_mo
 		_cur_interface_music_track = p;
 	}
 
-	Common::String fname;
+	Common::Path fname;
 
 	if (_cur_scene)
 		fname = find_file(p->file_name(), *_cur_scene);
@@ -2665,9 +2665,9 @@ bool qdGameDispatcher::play_music_track(const qdMusicTrack *p, bool interface_mo
 
 	_interface_music_mode = interface_mode;
 
-	debugC(3, kDebugLoad, "qdGameDispatcher::play_music_track() %s", transCyrillic(fname));
+	debugC(3, kDebugLoad, "qdGameDispatcher::play_music_track() %s", transCyrillic(fname.toString()));
 
-	return mpegPlayer::instance().play(fname.c_str(), p->is_cycled(), p->volume());
+	return mpegPlayer::instance().play(fname, p->is_cycled(), p->volume());
 }
 
 bool qdGameDispatcher::stop_music() {
@@ -2986,15 +2986,8 @@ void qdGameDispatcher::request_file_package(const qdFileOwner &file_owner) const
 	error("Requested file package is not avaliable");
 }
 
-Common::String qdGameDispatcher::find_file(const char *file_name, const qdFileOwner &file_owner) const {
-	debugC(4, kDebugLoad, "qdGameDispatcher::find_file(%s)", file_name);
-
-	if (_enable_file_packages && !SearchMan.hasFile(Common::Path(file_name))) {
-		Common::String fname;
-		fname += qdFileManager::instance().CD_path(file_owner);
-		fname += file_name;
-		return fname;
-	}
+Common::Path qdGameDispatcher::find_file(const Common::Path file_name, const qdFileOwner &file_owner) const {
+	debugC(4, kDebugLoad, "qdGameDispatcher::find_file(%s)", file_name.toString().c_str());
 
 	return file_name;
 }

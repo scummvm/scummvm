@@ -70,7 +70,7 @@ public:
 
 	void enable_packages() {}
 
-	bool open_file(Common::SeekableReadStream **fh, const char *file_name, bool err_message = true);
+	bool open_file(Common::SeekableReadStream **fh, const Common::Path file_name, bool err_message = true);
 
 	int last_CD_id() const {
 		return 1;
@@ -89,8 +89,6 @@ public:
 		return _packages[idx].is_open();
 	}
 	bool is_package_available(const qdFileOwner &file_owner);
-
-	const char *CD_path(const qdFileOwner &file_owner) const { return ""; }
 
 	bool scan_drives(const qdFileOwner *file_owner = NULL) { return true; }
 	bool scan_drives(int cd_id) { return true; }

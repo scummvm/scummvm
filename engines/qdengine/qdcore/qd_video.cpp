@@ -122,13 +122,13 @@ bool qdVideo::save_script(Common::WriteStream &fh, int indent) const {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<video_background>%s</video_background>", qdscr_XML_string(background_file_name())));
+		fh.writeString(Common::String::format("<video_background>%s</video_background>", qdscr_XML_string(background_file_name().toString('\\'))));
 	}
 
 	for (int i = 0; i <= indent; i++) {
 		fh.writeString("\t");
 	}
-	fh.writeString(Common::String::format("<file>%s</file>\r\n", qdscr_XML_string(_file_name.c_str())));
+	fh.writeString(Common::String::format("<file>%s</file>\r\n", qdscr_XML_string(_file_name.toString('\\'))));
 
 	save_conditions_script(fh, indent);
 

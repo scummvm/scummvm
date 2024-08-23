@@ -94,7 +94,7 @@ public:
 	}
 
 	void request_file_package(const qdFileOwner &file_owner) const;
-	Common::String find_file(const char *file_name, const qdFileOwner &file_owner) const;
+	Common::Path find_file(const Common::Path file_name, const qdFileOwner &file_owner) const;
 	void startup_check() const;
 
 	qdLoadingProgressFnc set_scene_loading_progress_callback(qdLoadingProgressFnc p, void *dp = 0) {

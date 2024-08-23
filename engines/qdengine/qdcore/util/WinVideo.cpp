@@ -69,11 +69,11 @@ void winVideo::set_window(int x, int y, int xsize, int ysize) {
 		_tempSurf = new Graphics::ManagedSurface(xsize, ysize, g_engine->_pixelformat);
 }
 
-bool winVideo::open_file(const char *fname) {
+bool winVideo::open_file(const Common::Path fname) {
 	_videostream = new Common::File();
 
 	if (!_videostream->open(fname)) {
-		warning("WinVideo::open: Failed to open file %s", fname);
+		warning("WinVideo::open: Failed to open file %s", fname.toString().c_str());
 		delete _videostream;
 		return false;
 	}

@@ -114,7 +114,7 @@ bool sndSound::set_volume(int vol) {
 
 bool sndSound::change_frequency(float coeff) {
 	if (coeff != 1.0)
-		warning("STUB: sndSound::change_frequency(%f) '%s'", coeff, transCyrillic(sound()->_fname.c_str()));
+		warning("STUB: sndSound::change_frequency(%f) '%s'", coeff, transCyrillic(sound()->_fname.toString()));
 	return true;
 }
 

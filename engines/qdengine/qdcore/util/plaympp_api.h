@@ -44,7 +44,7 @@ public:
 
 	~mpegPlayer();
 
-	bool play(const char *file, bool loop = false, int vol = 256);
+	bool play(const Common::Path file, bool loop = false, int vol = 256);
 	bool stop();
 	bool pause();
 	bool resume();
@@ -94,7 +94,7 @@ private:
 
 	Common::SeekableReadStream *_stream = nullptr;
 
-	Common::String _file;
+	Common::Path _file;
 };
 
 } // namespace QDEngine

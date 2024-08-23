@@ -173,13 +173,12 @@ public:
 	void load_script(const xml::tag *p);
 	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 
-	const char *qda_file() const {
-		if (!_qda_file.empty()) return _qda_file.c_str();
-		return 0;
+	const Common::Path qda_file() const {
+		return _qda_file;
 	}
-	void qda_set_file(const char *fname);
+	void qda_set_file(const Common::Path fname);
 
-	bool qda_load(const char *fname);
+	bool qda_load(const Common::Path fname);
 
 	bool load_resources();
 	void free_resources();
@@ -231,12 +230,12 @@ public:
 	bool load_resource();
 	bool free_resource();
 	//! Устанавливает имя файла, в котором хранятся данные ресурса.
-	void set_resource_file(const char *file_name) {
+	void set_resource_file(const Common::Path file_name) {
 		qda_set_file(file_name);
 	}
 	//! Возвращает имя файла, в котором хранится анимация.
-	const char *resource_file() const {
-		if (!qda_file()) {
+	const Common::Path resource_file() const {
+		if (qda_file().empty()) {
 			if (!check_flag(QD_ANIMATION_FLAG_REFERENCE) && !_frames.empty()) {
 				if (_frames.front()->has_file())
 					return _frames.front()->file();
@@ -294,7 +293,7 @@ private:
 	int _status;
 	bool _is_finished;
 
-	Common::String _qda_file;
+	Common::Path _qda_file;
 
 	const qdAnimation *_parent;
 

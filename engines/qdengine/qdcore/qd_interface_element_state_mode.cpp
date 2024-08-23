@@ -59,18 +59,12 @@ qdInterfaceElementStateMode &qdInterfaceElementStateMode::operator = (const qdIn
 	return *this;
 }
 
-void qdInterfaceElementStateMode::set_sound_file(const char *name) {
-	if (name)
-		_sound_file = name;
-	else
-		_sound_file.clear();
+void qdInterfaceElementStateMode::set_sound_file(const Common::Path name) {
+	_sound_file = name;
 }
 
-void qdInterfaceElementStateMode::set_animation_file(const char *name) {
-	if (name)
-		_animation_file = name;
-	else
-		_animation_file.clear();
+void qdInterfaceElementStateMode::set_animation_file(const Common::Path name) {
+	_animation_file = name;
 }
 
 bool qdInterfaceElementStateMode::save_script(Common::WriteStream &fh, int type_id, int indent) const {
@@ -80,7 +74,7 @@ bool qdInterfaceElementStateMode::save_script(Common::WriteStream &fh, int type_
 	fh.writeString(Common::String::format("<state_mode type=\"%d\"", type_id));
 
 	if (has_animation()) {
-		fh.writeString(Common::String::format(" animation=\"%s\"", qdscr_XML_string(animation_file())));
+		fh.writeString(Common::String::format(" animation=\"%s\"", qdscr_XML_string(animation_file().toString('\\'))));
 	}
 
 	if (_animation_flags) {
@@ -88,7 +82,7 @@ bool qdInterfaceElementStateMode::save_script(Common::WriteStream &fh, int type_
 	}
 
 	if (has_sound()) {
-		fh.writeString(Common::String::format(" sound=\"%s\"", qdscr_XML_string(sound_file())));
+		fh.writeString(Common::String::format(" sound=\"%s\"", qdscr_XML_string(sound_file().toString('\\'))));
 	}
 
 	if (has_contour()) {
@@ -115,7 +109,7 @@ bool qdInterfaceElementStateMode::load_script(const xml::tag *p) {
 			xml::tag_buffer(*it) > _animation_flags;
 			break;
 		case QDSCR_ANIMATION:
-			set_animation_file(it->data());
+			set_animation_file(Common::Path(it->data(), '\\'));
 			break;
 		case QDSCR_CONTOUR_CIRCLE:
 			_contour.set_contour_type(qdContour::CONTOUR_CIRCLE);

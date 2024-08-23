@@ -68,10 +68,10 @@ public:
 		return float(_data_length / _channels / (_bits_per_sample >> 3)) / float(_samples_per_sec);
 	}
 
-	bool wav_file_load(const char *fname);
+	bool wav_file_load(const Common::Path fname);
 
 	Audio::SeekableAudioStream *_audioStream = nullptr;
-	Common::String _fname;
+	Common::Path _fname;
 
 private:
 

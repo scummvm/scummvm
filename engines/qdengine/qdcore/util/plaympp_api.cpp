@@ -42,10 +42,10 @@ mpegPlayer::mpegPlayer() : _is_enabled(true),
 mpegPlayer::~mpegPlayer() {
 }
 
-bool mpegPlayer::play(const char *file, bool loop, int vol) {
-	bool isOGG = Common::String(file).hasSuffix(".ogg");
+bool mpegPlayer::play(const Common::Path file, bool loop, int vol) {
+	bool isOGG = file.baseName().hasSuffix(".ogg");
 
-	debugC(1, kDebugSound, "mpegPlayer::play(%s, %d, %d)", file, loop, vol);
+	debugC(1, kDebugSound, "mpegPlayer::play(%s, %d, %d)", file.toString().c_str(), loop, vol);
 
 	_file = file;
 
@@ -58,14 +58,14 @@ bool mpegPlayer::play(const char *file, bool loop, int vol) {
 #ifdef USE_VORBIS
 			audiostream = Audio::makeVorbisStream(_stream, DisposeAfterUse::YES);
 #else
-			warning("mpegPlayer::play(: Vorbis support not compiled", file, loop, vol);
+			warning("mpegPlayer::play(%s, %d, %d): Vorbis support not compiled", file.toString().c_str(), loop, vol);
 			return false;
 #endif
 		} else {
 #ifdef USE_MPCDEC
 			audiostream = Audio::makeMPCStream(_stream, DisposeAfterUse::YES);
 #else
-			warning("mpegPlayer::play(%s, %d, %d): MPC support not compiled", file, loop, vol);
+			warning("mpegPlayer::play(%s, %d, %d): MPC support not compiled", file.toString().c_str(), loop, vol);
 			return false;
 #endif
 		}
@@ -83,13 +83,13 @@ bool mpegPlayer::play(const char *file, bool loop, int vol) {
 
 	_paused = false;
 
-	debugC(1, kDebugSound, "mpegPlayer::play(%s)", _file.c_str());
+	debugC(1, kDebugSound, "mpegPlayer::play(%s)", _file.toString().c_str());
 
 	return true;
 }
 
 bool mpegPlayer::stop() {
-	debugC(1, kDebugSound, "mpegPlayer::stop(%s)", _file.c_str());
+	debugC(1, kDebugSound, "mpegPlayer::stop(%s)", _file.toString().c_str());
 
 	g_system->getMixer()->stopHandle(_soundHandle);
 	return true;
@@ -99,7 +99,7 @@ bool mpegPlayer::pause() {
 	if (_paused)
 		return true;
 
-	debugC(1, kDebugSound, "mpegPlayer::pause(%s)", _file.c_str());
+	debugC(1, kDebugSound, "mpegPlayer::pause(%s)", _file.toString().c_str());
 
 	g_system->getMixer()->pauseHandle(_soundHandle, true);
 	_paused = true;
@@ -110,7 +110,7 @@ bool mpegPlayer::resume() {
 	if (!_paused)
 		return true;
 
-	debugC(1, kDebugSound, "mpegPlayer::resume(%s)", _file.c_str());
+	debugC(1, kDebugSound, "mpegPlayer::resume(%s)", _file.toString().c_str());
 
 	g_system->getMixer()->pauseHandle(_soundHandle, false);
 	_paused = false;
@@ -132,13 +132,13 @@ mpegPlayer::mpeg_status_t mpegPlayer::status() const {
 	else
 		res = MPEG_STOPPED;
 
-	debugC(7, kDebugSound, "mpegPlayer::status(%s), status: %d", _file.c_str(), res);
+	debugC(7, kDebugSound, "mpegPlayer::status(%s), status: %d", _file.toString().c_str(), res);
 
 	return res;
 }
 
 void mpegPlayer::set_volume(uint32 vol) {
-	debugC(1, kDebugSound, "mpegPlayer::set_volume(%s), vol: %d", _file.c_str(), vol);
+	debugC(1, kDebugSound, "mpegPlayer::set_volume(%s), vol: %d", _file.toString().c_str(), vol);
 
 	_volume = vol;
 

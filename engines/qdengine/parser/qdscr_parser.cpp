@@ -380,4 +380,9 @@ const char *qdscr_XML_string(const char *p) {
 	return (const char *)transCyrillic(conv_str.c_str());
 }
 
+const char *qdscr_XML_string(const Common::String s) {
+	return qdscr_XML_string(s.c_str());
+}
+
+
 } // namespace QDEngine

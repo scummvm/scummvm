@@ -80,8 +80,8 @@ bool qdGameObjectStatic::save_script_body(Common::WriteStream &fh, int indent) c
 		fh.writeString("\t");
 	}
 
-	if (_sprite.file()) {
-		fh.writeString(Common::String::format("<file>%s</file>\r\n", qdscr_XML_string(_sprite.file())));
+	if (!_sprite.file().empty()) {
+		fh.writeString(Common::String::format("<file>%s</file>\r\n", qdscr_XML_string(_sprite.file().toString('\\'))));
 	}
 
 	return true;

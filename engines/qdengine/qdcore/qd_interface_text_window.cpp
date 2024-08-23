@@ -233,7 +233,7 @@ bool qdInterfaceTextWindow::save_script_body(Common::WriteStream &fh, int indent
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<border_back>%s</border_back>\r\n", qdscr_XML_string(_border_background.animation_file())));
+		fh.writeString(Common::String::format("<border_back>%s</border_back>\r\n", qdscr_XML_string(_border_background.animation_file().toString('\\'))));
 	}
 
 	if (!_slider_name.empty()) {

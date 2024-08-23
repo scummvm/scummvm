@@ -49,10 +49,10 @@ public:
 		_type = tp;
 	}
 
-	void set_sprite_file(const char *fname) {
+	void set_sprite_file(const Common::Path fname) {
 		_sprite.set_file(fname);
 	}
-	const char *sprite_file() const {
+	const Common::Path sprite_file() const {
 		return _sprite.file();
 	}
 

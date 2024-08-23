@@ -191,22 +191,24 @@ void qdSprite::free() {
 	drop_flag(ALPHA_FLAG);
 }
 
-bool qdSprite::load(const char *fname) {
+bool qdSprite::load(const Common::Path fpath) {
+	set_file(fpath);
+
+	load();
+}
+
+bool qdSprite::load() {
 	free();
 
-	debugC(3, kDebugLoad, "qdSprite::load(%s, %s)", transCyrillic(fname), transCyrillic(_file.c_str()));
-
-	if (fname)
-		set_file(fname);
+	debugC(3, kDebugLoad, "qdSprite::load(%s)", transCyrillic(_file.toString()));
 
 	int sx, sy, flags, ssx, colors;
 	byte header[18];
 
 	Common::SeekableReadStream *fh;
-	Common::Path fpath(_file.c_str(), '\\');
 
-	if (!strncmp(_file.c_str(), "save:", 5)) {
-		Common::InSaveFile *saveFile = g_engine->getSaveFileManager()->openForLoading(&_file.c_str()[5]);
+	if (_file.isRelativeTo("scummvm")) {
+		Common::InSaveFile *saveFile = g_engine->getSaveFileManager()->openForLoading(_file.baseName());
 
 		ExtendedSavegameHeader saveHeader;
 		if (MetaEngine::readSavegameHeader(saveFile, &saveHeader, false)) {
@@ -234,7 +236,7 @@ bool qdSprite::load(const char *fname) {
 		return true;
 	}
 
-	if (!qdFileManager::instance().open_file(&fh, fpath.toString().c_str())) {
+	if (!qdFileManager::instance().open_file(&fh, _file)) {
 		return false;
 	}
 
@@ -247,13 +249,13 @@ bool qdSprite::load(const char *fname) {
 	// ColorMapType. 0 - цветовой таблицы нет. 1 - есть. Остальное не соотв. стандарту.
 	// Изображения с цветовой таблицей не обрабатываем.
 	if (header[1]) {
-		warning("qdSprite::load(): Bad file format: '%s'", transCyrillic(_file.c_str()));
+		warning("qdSprite::load(): Bad file format: '%s'", transCyrillic(_file.toString()));
 		return false;
 	}
 
 	// ImageType. 2 - truecolor без сжатия, 10 - truecolor со сжатием (RLE).
 	if ((header[2] != 2) && (header[2] != 10)) {
-		warning("qdSprite::load(): Bad file format: '%s'", transCyrillic(_file.c_str()));
+		warning("qdSprite::load(): Bad file format: '%s'", transCyrillic(_file.toString()));
 		return false;
 	}
 
@@ -280,7 +282,7 @@ bool qdSprite::load(const char *fname) {
 		break;
 	// Иначе неверный формат файла
 	default: {
-		warning("qdSprite::load(): Bad file format: '%s'", transCyrillic(_file.c_str()));
+		warning("qdSprite::load(): Bad file format: '%s'", transCyrillic(_file.toString()));
 		return false;
 	}
 	}
@@ -385,10 +387,10 @@ bool qdSprite::load(const char *fname) {
 	return true;
 }
 
-void qdSprite::save(const char *fname) {
+void qdSprite::save(const Common::Path fname) {
 	if (_format != GR_RGB888 && _format != GR_ARGB8888) return;
 
-	const char *out_file = (fname) ? fname : _file.c_str();
+	const Common::Path out_file = !fname.empty() ? fname : _file;
 
 	static byte header[18];
 

@@ -22,6 +22,7 @@
 #ifndef QDENGINE_QDCORE_QD_RESOURCE_H
 #define QDENGINE_QDCORE_QD_RESOURCE_H
 
+#include "common/path.h"
 
 
 //! Базовый класс для игровых ресурсов.
@@ -56,19 +57,19 @@ public:
 	virtual bool free_resource() = 0;
 
 	//! Устанавливает имя файла, в котором хранятся данные ресурса.
-	virtual void set_resource_file(const char *file_name) = 0;
+	virtual void set_resource_file(const Common::Path file_name) = 0;
 	//! Возвращает имя файла, в котором хранятся данные ресурса.
 	/**
 	Если оно не задано, должна возвращаеть NULL.
 	*/
-	virtual const char *resource_file() const = 0;
+	virtual const Common::Path resource_file() const = 0;
 
 	//! Возвращает true, если данные ресурса загружены в память.
 	bool is_resource_loaded() const {
 		return _is_loaded;
 	}
 
-	static file_format_t file_format(const char *file_name);
+	static file_format_t file_format(const Common::Path file_name);
 
 #ifdef __QD_DEBUG_ENABLE__
 	virtual uint32 resource_data_size() const = 0;

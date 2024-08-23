@@ -122,11 +122,11 @@ public:
 	/**
 	Если надо убрать анимацию - передать NULL в качестве имени файла.
 	*/
-	void set_frame_animation_file(const char *name, qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) {
+	void set_frame_animation_file(const Common::Path name, qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) {
 		_frame.set_animation_file(name, mode);
 	}
 	//! Возвращает имя файла для анимации.
-	const char *frame_animation_file(qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) const {
+	const Common::Path frame_animation_file(qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) const {
 		return _frame.animation_file(mode);
 	}
 	//! Возвращает флаги анимации.
@@ -155,7 +155,7 @@ public:
 	void set_frame_sound_file(const char *name, qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) {
 		_frame.set_sound_file(name, mode);
 	}
-	const char *frame_sound_file(qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) const {
+	const Common::Path frame_sound_file(qdInterfaceElementState::state_mode_t mode = qdInterfaceElementState::MOUSE_HOVER_MODE) const {
 		return _frame.sound_file(mode);
 	}
 
