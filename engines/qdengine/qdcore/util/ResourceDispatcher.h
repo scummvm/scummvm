@@ -63,8 +63,8 @@ class VoidFunctionCallResourceUser : public ResourceUser {
 public:
 	typedef void (*type)();
 
-	VoidFunctionCallResourceUser(type func_, time_type dtime) :
-		ResourceUser(dtime), func(func_) {}
+	VoidFunctionCallResourceUser(type func_, time_type dtime_) :
+		ResourceUser(dtime_), func(func_) {}
 	virtual ~VoidFunctionCallResourceUser() {}
 	int quant() {
 		func();
@@ -80,8 +80,8 @@ class MemberFunctionCallResourceUser : public ResourceUser {
 public:
 	typedef void (T::*type)();
 
-	MemberFunctionCallResourceUser(T &object_, type func_, time_type dtime) :
-		ResourceUser(dtime), object(object_), func(func_) {}
+	MemberFunctionCallResourceUser(T &object_, type func_, time_type dtime_) :
+		ResourceUser(dtime_), object(object_), func(func_) {}
 	virtual ~MemberFunctionCallResourceUser() {}
 	int quant() {
 		(object.*func)();

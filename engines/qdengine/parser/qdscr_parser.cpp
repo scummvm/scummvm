@@ -337,7 +337,7 @@ const char *qdscr_XML_string(const char *p) {
 
 	conv_str = p;
 
-	int pos = Common::String::npos;
+	uint32 pos = Common::String::npos;
 	do {
 		pos = conv_str.find("&", pos + 1);
 		if (pos != Common::String::npos)

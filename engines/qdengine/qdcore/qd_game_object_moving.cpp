@@ -1979,7 +1979,7 @@ bool qdGameObjectMoving::set_walk_animation() {
 		switch (_movement_mode) {
 		case MOVEMENT_MODE_TURN:
 			if (qdAnimationSet * set = wst->animation_set()) {
-				if (qdAnimation * anm = set->get_turn_animation()) {
+				if (/*qdAnimation * anm = */set->get_turn_animation()) {
 					set_animation_info(set->get_turn_animation_info());
 					get_animation()->set_time_rel(cycleAngle(_direction_angle) / (2.f * M_PI));
 					set_flag(QD_OBJ_MOVING_FLAG);
@@ -2618,10 +2618,7 @@ const qdGameObjectStateWalk *qdGameObjectMoving::current_walk_state() const {
 	const qdGameObjectState *st = get_cur_state();
 	if (!st || st->state_type() != qdGameObjectState::STATE_WALK) {
 		st = _last_walk_state;
-		if (!st || st->state_type() != qdGameObjectState::STATE_WALK)
-			st = get_default_state();
-		else
-			st = get_default_state();
+		st = get_default_state();
 		if (!st) st = get_state(0);
 	}
 

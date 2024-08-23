@@ -100,11 +100,11 @@ bool qdSound::save_script(Common::WriteStream &fh, int indent) const {
 
 bool qdSound::play(const qdSoundHandle *handle, bool loop) const {
 	if (handle && handle->owner()) {
-		debugCN(3, kDebugSound, "[%d] sound start %p owner: %s", g_system->getMillis(), (void *)this, handle->owner()->toString().c_str());
+		debugCN(3, kDebugSound, "[%d] sound start %p owner: %s", g_system->getMillis(), (const void *)this, handle->owner()->toString().c_str());
 
 		if (loop)
 			debugCN(3, kDebugSound, " cycled");
-		debugC(3, kDebugSound, "");
+		debugC(3, kDebugSound, "%s", "");
 	}
 
 	if (sndDispatcher *p = sndDispatcher::get_dispatcher()) {
@@ -116,7 +116,7 @@ bool qdSound::play(const qdSoundHandle *handle, bool loop) const {
 }
 
 bool qdSound::stop(const qdSoundHandle *handle) const {
-	debugC(3, kDebugSound, "[%d] sound stop %p owner: %s", g_system->getMillis(), (void *)this, handle->owner()->toString().c_str());
+	debugC(3, kDebugSound, "[%d] sound stop %p owner: %s", g_system->getMillis(), (const void *)this, handle->owner()->toString().c_str());
 	if (sndDispatcher *p = sndDispatcher::get_dispatcher()) {
 		if (!handle) {
 			sndSound sound(&_sound);

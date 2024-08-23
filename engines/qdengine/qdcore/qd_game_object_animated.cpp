@@ -1165,7 +1165,7 @@ bool qdGameObjectAnimated::handle_state_end() {
 	}
 
 	if (sp->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOVE_TO_INVENTORY) && !sp->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOVE_TO_INVENTORY_FAILED)) {
-		if (qdGameObjectState * p = get_inventory_state()) {
+		if (/*qdGameObjectState * p = */get_inventory_state()) {
 			qdGameDispatcher *gp = qd_get_game_dispatcher();
 			if (!gp || !gp->put_to_inventory(this))
 				sp->set_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_MOVE_TO_INVENTORY_FAILED);

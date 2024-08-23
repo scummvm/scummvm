@@ -102,7 +102,7 @@ bool qdInterfaceSave::mouse_handler(int x, int y, mouseDispatcher::mouseEvent ev
 	switch (ev) {
 	case mouseDispatcher::EV_LEFT_DOWN:
 	case mouseDispatcher::EV_RIGHT_DOWN:
-		if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher()) {
+		if (/*qdGameDispatcher *dp = */qdGameDispatcher::get_dispatcher()) {
 			debugC(1, kDebugSave, "qdInterfaceSave::mouse_handler(): _save_mode = %d", _save_mode);
 			clear_screen_region();
 
