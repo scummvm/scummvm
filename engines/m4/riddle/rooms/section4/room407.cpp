@@ -531,7 +531,182 @@ void Room407::pre_parser() {
 	bool lookFlag = player_said_any("look", "look at");
 	bool takeFlag = player_said("take");
 	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
-	// TODO
+
+	if ((player_said("SURGICAL TUBE", "FAUCET PIPE") || player_said("TUBE/HOSE", "FAUCET PIPE")) &&
+			_val8 == 1100) {
+		_G(player).resetWalk();
+		kernel_timing_trigger(1, 777, KT_PARSE, KT_PREPARSE);
+	}
+
+	if (player_said("LEVER KEY  ", "GLASS JAR") ||
+			player_said("LEVER KEY  ", "JAR/RUBBER PLUG") ||
+			player_said("LEVER KEY  ", "JAR/CORK") ||
+			player_said("LEVER KEY  ", "JAR/GRIPS") ||
+			player_said("LEVER KEY  ", "JAR/CORK/PLUG") ||
+			player_said("LEVER KEY  ", "JAR/PLUG/GRIPS") ||
+			player_said("LEVER KEY  ", "JAR/CORK/GRIPS") ||
+			player_said("LEVER KEY  ", "JAR/PLUG/CORK/GRIPS") ||
+			player_said("FAUCET PIPE ", "TUBE/HOSE") ||
+			player_said("FAUCET PIPE ", "GARDEN HOSE") ||
+			(takeFlag && player_said("GARDEN HOSE ")) ||
+			player_said("GLASS JAR ", "FAUCET PIPE") ||
+			player_said("GLASS JAR ", "FAUCET PIPE/HOSE") ||
+			player_said("GLASS JAR ", "FAUCET PIPE/HOSE/TUBE")) {
+		_G(player).resetWalk();
+		kernel_timing_trigger(1, 777, KT_PARSE, KT_PREPARSE);
+	}
+
+	if (useFlag && player_said("LEVER KEY  ")) {
+		_G(player).resetWalk();
+		kernel_timing_trigger(1, 777, KT_PARSE, KT_PREPARSE);
+	}
+
+	if (player_said("SURGICAL TUBE  ", "GARDEN HOSE ")) {
+		player_set_commands_allowed(false);
+		_G(player).resetWalk();
+		intr_cancel_sentence();
+		kernel_timing_trigger(1, 310, KT_DAEMON, KT_PARSE);
+	}
+
+	if (player_said("GARDEN HOSE  ", "FAUCET PIPE ")) {
+		player_set_commands_allowed(false);
+		_G(player).resetWalk();
+		kernel_timing_trigger(1, 300, KT_DAEMON, KT_PARSE);
+	}
+
+	if (player_said("FAUCET PIPE  ", "GLASS JAR ") ||
+			player_said("SURGICAL TUBE ", "FAUCET STEM")) {
+		player_set_commands_allowed(false);
+		_G(player).resetWalk();
+		intr_cancel_sentence();
+		kernel_timing_trigger(1, 300, KT_DAEMON, KT_PARSE);
+	}
+
+	if (useFlag && player_said("SURGICAL TUBE  ") && _xyzzy2 != 1130) {
+		mouse_set_sprite(43);
+		intr_freshen_sentence();
+	}
+
+	if (useFlag && player_said("SURGICAL TUBE ")) {
+		mouse_set_sprite(43);
+		intr_freshen_sentence();
+	}
+
+	if (useFlag && player_said("GARDEN HOSE  ") && _val8 != 1130) {
+		if (_val4 != 1101) {
+			digi_play("407R99E", 1);
+			intr_cancel_sentence();
+			return;
+		}
+
+		mouse_set_sprite(36);
+		intr_freshen_sentence();
+	}
+
+	if (useFlag && player_said("GARDEN HOSE ") && _xyzzy3 != 1116) {
+		mouse_set_sprite(36);
+		intr_freshen_sentence();
+	}
+
+	if (useFlag && player_said("FAUCET PIPE  ")) {
+		mouse_set_sprite(44);
+		intr_freshen_sentence();
+	}
+
+	if (useFlag && player_said("FAUCET PIPE ") && _xyzzy2 != 1116) {
+		mouse_set_sprite(44);
+		intr_freshen_sentence();
+	}
+
+	if (_val15 == 1030) {
+		_G(player).resetWalk();
+
+		if (player_said(" ")) {
+			intr_cancel_sentence();
+			_val15 = 1031;
+			kernel_timing_trigger(1, 216, KT_DAEMON, KT_PARSE);
+		}
+	} else if (_val5 == 1010) {
+		_G(player).resetWalk();
+
+		if (player_said(" ") || (lookFlag && player_said("MESSAGE LOG"))) {
+			intr_cancel_sentence();
+			_val5 = 1011;
+			kernel_timing_trigger(1, 10, KT_DAEMON, KT_PARSE);
+		}
+	} else if (_frotz10 == 1030) {
+		_G(player).resetWalk();
+
+		if (player_said(" ")) {
+			intr_cancel_sentence();
+			_frotz10 = 1031;
+			kernel_timing_trigger(1, 200, KT_DAEMON, KT_PARSE);
+		}
+	} else if (_int1 == 1030) {
+		_G(player).resetWalk();
+
+		if (player_said(" ")) {
+			intr_cancel_sentence();
+			_int1 = 1031;
+			kernel_timing_trigger(1, 202, KT_DAEMON, KT_PARSE);
+		}
+	} else if (_int3 == 1030) {
+		_G(player).resetWalk();
+
+		if (player_said(" ")) {
+			intr_cancel_sentence();
+			_int3 = 1031;
+			kernel_timing_trigger(1, 204, KT_DAEMON, KT_PARSE);
+		}
+	} else if (_int4 == 1030) {
+		_G(player).resetWalk();
+
+		if (player_said(" ")) {
+			intr_cancel_sentence();
+			_int4 = 1031;
+			kernel_timing_trigger(1, 206, KT_DAEMON, KT_PARSE);
+		}
+	} else if (_int2 == 1030) {
+		_G(player).resetWalk();
+
+		if (player_said(" ")) {
+			intr_cancel_sentence();
+			_int2 = 1031;
+			kernel_timing_trigger(1, 208, KT_DAEMON, KT_PARSE);
+		}
+	} else if (_int5 == 1030) {
+		_G(player).resetWalk();
+
+		if (player_said(" ")) {
+			intr_cancel_sentence();
+			_int5 = 1031;
+			kernel_timing_trigger(1, 210, KT_DAEMON, KT_PARSE);
+		}
+	} else if (_int6 == 1030) {
+		_G(player).resetWalk();
+
+		if (player_said(" ")) {
+			intr_cancel_sentence();
+			_int6 = 1031;
+			kernel_timing_trigger(1, 212, KT_DAEMON, KT_PARSE);
+		}
+	} else if (_int7 == 1030) {
+		_G(player).resetWalk();
+
+		if (player_said(" ")) {
+			intr_cancel_sentence();
+			_int7 = 1031;
+			kernel_timing_trigger(1, 214, KT_DAEMON, KT_PARSE);
+		}
+	} else if (_val16 == 1030) {
+		_G(player).resetWalk();
+
+		if (player_said(" ")) {
+			intr_cancel_sentence();
+			_val16 = 1031;
+			kernel_timing_trigger(1, 218, KT_DAEMON, KT_PARSE);
+		}
+	}
 }
 
 void Room407::parser() {
