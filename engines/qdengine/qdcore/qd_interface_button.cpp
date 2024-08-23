@@ -110,8 +110,7 @@ bool qdInterfaceButton::activate_state(const char *state_name) {
 }
 
 bool qdInterfaceButton::set_option_value(int value) {
-	if (value < 0) value = 0;
-	if (value >= _states.size()) value = _states.size() - 1;
+	value = CLIP<int>(value, 0, _states.size() - 1);
 
 	activate_state(value);
 	return true;
