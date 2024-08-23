@@ -125,14 +125,24 @@
 	#include <ctype.h>
 
 	// The C++11 standard removed the C99 requirement that some <inttypes.h>
-	// features should only be available when the following macros are
-	// defined. But on some systems (such as RISC OS), the libc is not
-	// necessarily up to date with this change. So, continue defining them,
-	// in order to avoid build failures on some environments.
+	// features should only be available when the following macros are defined.
+	// But on some systems (such as RISC OS or macOS < 10.7), the system headers
+	// are not necessarily up to date with this change. So, continue defining
+	// them, in order to avoid build failures on some environments.
 	#define __STDC_CONSTANT_MACROS
 	#define __STDC_FORMAT_MACROS
 	#define __STDC_LIMIT_MACROS
 	#include <inttypes.h>
+
+	// macOS 10.4 inttypes.h woes -- fixed in 10.5 SDK
+	#if defined(MACOSX) && defined(__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__) && __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ < 1050
+		#undef __PRI_8_LENGTH_MODIFIER__
+		#undef __PRI_64_LENGTH_MODIFIER__
+		#undef __SCN_64_LENGTH_MODIFIER__
+		#define __PRI_8_LENGTH_MODIFIER__ "hh"
+		#define __PRI_64_LENGTH_MODIFIER__ "ll"
+		#define __SCN_64_LENGTH_MODIFIER__ "ll"
+	#endif
 
 	#include <limits.h>
 	// MSVC does not define M_PI, M_SQRT2 and other math defines by default.
