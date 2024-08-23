@@ -60,11 +60,11 @@ public:
 		_type = tp;
 	}
 
-	void set_font_file_name(const char *fname) {
+	void set_font_file_name(const Common::Path fname) {
 		_font_file_name = fname;
 	}
-	const char *font_file_name() const {
-		return _font_file_name.c_str();
+	const Common::Path font_file_name() const {
+		return _font_file_name;
 	}
 
 	const grFont *font() const {
@@ -83,7 +83,7 @@ private:
 	//! Тип шрифта.
 	int _type;
 	//! Файл шрифта (*.tga).
-	Common::String _font_file_name;
+	Common::Path _font_file_name;
 	//! Сам шрифт
 	grFont *_font;
 };

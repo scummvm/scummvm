@@ -22,6 +22,7 @@
 #ifndef QDENGINE_SYSTEM_GRAPHICS_GR_FONT_H
 #define QDENGINE_SYSTEM_GRAPHICS_GR_FONT_H
 
+#include "common/path.h"
 #include "qdengine/system/graphics/gr_screen_region.h"
 
 namespace Common {
@@ -35,7 +36,7 @@ public:
 	grFont();
 	~grFont();
 
-	bool load(const char *fname);
+	bool load(const Common::Path fname);
 
 	bool load_index(Common::SeekableReadStream *fh);
 	bool load_alpha(Common::SeekableReadStream *fh);

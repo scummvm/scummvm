@@ -128,7 +128,7 @@ qdGameDispatcher::qdGameDispatcher() : _is_paused(false),
 	_mouse_cursor_pos = Vect2f(0, 0);
 
 	qdAnimationFrame *p = new qdAnimationFrame;
-	p->set_file("Resource\\Cursors\\default.tga");
+	p->set_file(Common::Path("Resource/Cursors/default.tga"));
 
 	_mouse_animation->add_frame(p);
 
@@ -340,8 +340,8 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 			debug("> Game title: '%s', id: %d", transCyrillic(_game_title.c_str()), it->origID());
 			break;
 		case QDSCR_TEXT_DB:
-			_texts_database = it->data();
-			debug("> Text db: '%s', id: %d", transCyrillic(_texts_database.c_str()), it->origID());
+			_texts_database = Common::Path(it->data(), '\\');
+			debug("> Text db: '%s', id: %d", transCyrillic(_texts_database.toString()), it->origID());
 			break;
 		case QDSCR_CD_KEY:
 			_cd_key = it->data();
@@ -471,13 +471,12 @@ void qdGameDispatcher::load_script(const xml::tag *p) {
 
 	if (!_texts_database.empty()) {
 		Common::SeekableReadStream *fh;
-		Common::Path textsdbPath(_texts_database.c_str(), '\\');
 
-		if (qdFileManager::instance().open_file(&fh, textsdbPath.toString().c_str(), false)) {
+		if (qdFileManager::instance().open_file(&fh, _texts_database, false)) {
 			qdTextDB::instance().load(fh);
 			delete fh;
 		} else {
-			warning("Cannot open textsdbPath: '%s'", transCyrillic(textsdbPath.toString().c_str()));
+			warning("Cannot open textsdbPath: '%s'", transCyrillic(_texts_database.toString().c_str()));
 		}
 	} else
 		qdTextDB::instance().clear();
@@ -527,7 +526,7 @@ bool qdGameDispatcher::save_script(Common::SeekableWriteStream &fh) const {
 	}
 
 	if (!_texts_database.empty()) {
-		fh.writeString(Common::String::format("\t<text_db>%s</text_db>\r\n", qdscr_XML_string(_texts_database.c_str())));
+		fh.writeString(Common::String::format("\t<text_db>%s</text_db>\r\n", qdscr_XML_string(_texts_database.toString('\\'))));
 	}
 
 	if (!_cd_key.empty()) {
@@ -2641,7 +2640,7 @@ bool qdGameDispatcher::save_save(Common::WriteStream *fh) const {
 }
 
 bool qdGameDispatcher::play_music_track(const qdMusicTrack *p, bool interface_mode) {
-	debugC(3, kDebugLog, "[%d] music start->%s", g_system->getMillis(), transCyrillic(p->file_name()));
+	debugC(3, kDebugLog, "[%d] music start->%s", g_system->getMillis(), transCyrillic(p->file_name().toString()));
 
 	if (!interface_mode) {
 		if (p->check_flag(QD_MUSIC_TRACK_DISABLE_RESTART) && _cur_music_track == p)

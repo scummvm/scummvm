@@ -498,7 +498,7 @@ void qdGameScene::debug_redraw() {
 
 		if (qdGameDispatcher *dp = qdGameDispatcher::get_dispatcher()) {
 			if (dp->current_music()) {
-				grDispatcher::instance()->drawText(10, 130, grDispatcher::instance()->make_rgb888(255, 255, 255), dp->current_music()->file_name());
+				grDispatcher::instance()->drawText(10, 130, grDispatcher::instance()->make_rgb888(255, 255, 255), dp->current_music()->file_name().toString().c_str());
 			}
 		}
 

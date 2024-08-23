@@ -485,11 +485,11 @@ public:
 		return _game_title.c_str();
 	}
 
-	void set_texts_database(const char *file_name) {
+	void set_texts_database(const Common::Path file_name) {
 		_texts_database = file_name;
 	}
-	const char *texts_database() const {
-		return _texts_database.c_str();
+	const Common::Path texts_database() const {
+		return _texts_database;
 	}
 
 	void set_cd_key(const char *key) {
@@ -623,7 +623,7 @@ private:
 	Common::String _startup_scene;
 
 	//! Файл с субтитрами.
-	Common::String _texts_database;
+	Common::Path _texts_database;
 
 	//! Название игры.
 	Common::String _game_title;

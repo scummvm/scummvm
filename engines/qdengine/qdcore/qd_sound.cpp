@@ -64,7 +64,7 @@ void qdSound::load_script(const xml::tag *p) {
 			set_name(it->data());
 			break;
 		case QDSCR_FILE:
-			set_file_name(Common::Path(it->data(), '\\').toString().c_str());
+			set_file_name(Common::Path(it->data(), '\\'));
 			break;
 		case QDSCR_SOUND_VOLUME:
 			xml::tag_buffer(*it) > _volume;

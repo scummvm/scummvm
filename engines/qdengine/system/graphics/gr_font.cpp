@@ -43,15 +43,15 @@ grFont::~grFont() {
 	delete _alpha_buffer;
 }
 
-bool grFont::load(const char *fname) {
-	Common::String str(fname);
+bool grFont::load(const Common::Path fname) {
+	Common::String str(fname.toString());
 	str += ".tga";
 
 	Common::File file;
-	file.open(Common::Path(str, '\\'));
+	file.open(Common::Path(str));
 
 	if (load_alpha(&file)) {
-		str = fname;
+		str = fname.toString();
 		str += ".idx";
 
 		file.open(Common::Path(str));

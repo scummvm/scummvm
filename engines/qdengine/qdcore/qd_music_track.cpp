@@ -70,7 +70,7 @@ bool qdMusicTrack::load_script(const xml::tag *p) {
 				toggle_cycle(false);
 			break;
 		case QDSCR_FILE:
-			set_file_name(Common::Path(it->data(), '\\').toString().c_str());
+			set_file_name(Common::Path(it->data(), '\\'));
 			break;
 		case QDSCR_SOUND_VOLUME:
 			set_volume(xml::tag_buffer(*it).get_int());
@@ -93,7 +93,7 @@ bool qdMusicTrack::save_script(Common::WriteStream &fh, int indent) const {
 	fh.writeString(Common::String::format(" flags=\"%d\"", flags()));
 
 	if (!_file_name.empty()) {
-		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(_file_name.c_str())));
+		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(_file_name.toString('\\'))));
 	}
 
 	if (is_cycled()) {

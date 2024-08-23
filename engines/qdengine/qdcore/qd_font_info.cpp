@@ -68,7 +68,7 @@ bool qdFontInfo::load_script(const xml::tag *p) {
 			set_type(xml::tag_buffer(*it).get_int());
 			break;
 		case QDSCR_FILE:
-			set_font_file_name(Common::Path(it->data(), '\\').toString().c_str());
+			set_font_file_name(Common::Path(it->data(), '\\'));
 			break;
 		case QDSCR_NAME:
 			set_name(it->data());
@@ -86,7 +86,7 @@ bool qdFontInfo::save_script(Common::WriteStream &fh, int indent) const {
 	fh.writeString(Common::String::format("<fontinfo type=\"%d\"", _type));
 
 	if (!_font_file_name.empty()) {
-		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(_font_file_name.c_str())));
+		fh.writeString(Common::String::format(" file=\"%s\"", qdscr_XML_string(_font_file_name.toString('\\'))));
 	}
 
 	if (name()) {
@@ -107,14 +107,14 @@ bool qdFontInfo::load_font() {
 		// Грузим альфу шрифта из .tga
 		if (buf_font->load_alpha(fh)) {
 			// Меняем расширение с .tga на .idx
-			Common::String fpath(font_file_name());
+			Common::String fpath(font_file_name().toString());
 			Common::String tgaExt = ".tga";
 			Common::String idxExt = ".idx";
 
 			Common::replace(fpath, tgaExt, idxExt);
 
 			// Открываем .idx и грузим индекс
-			if (qdFileManager::instance().open_file(&fh, fpath.c_str(), false)) {
+			if (qdFileManager::instance().open_file(&fh, Common::Path(fpath), false)) {
 				if (buf_font->load_index(fh))
 					load_fl = true;
 			}

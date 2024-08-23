@@ -52,11 +52,11 @@ public:
 		return QD_NAMED_OBJECT_MUSIC_TRACK;
 	}
 
-	void set_file_name(const char *fname) {
+	void set_file_name(const Common::Path fname) {
 		_file_name = fname;
 	}
-	const char *file_name() const {
-		return _file_name.c_str();
+	const Common::Path file_name() const {
+		return _file_name;
 	}
 	bool has_file_name() const {
 		return !_file_name.empty();
@@ -89,7 +89,7 @@ public:
 private:
 
 	//! Имя mp+ файла.
-	Common::String _file_name;
+	Common::Path _file_name;
 
 	//! Громкость, [0, 256].
 	int _volume;
