@@ -177,9 +177,10 @@ bool qdInterfaceDispatcher::select_background_screen(qdInterfaceScreen *p) {
 }
 
 bool qdInterfaceDispatcher::select_ingame_screen(bool inventory_state) {
-	if (has_ingame_screen(inventory_state))
+	if (has_ingame_screen(inventory_state)) {
 		debugC(3, kDebugQuant, "qdInterfaceDispatcher::select_ingame_screen(): Selecting ingame screen: %s", transCyrillic(ingame_screen_name(inventory_state)));
 		return select_screen(ingame_screen_name(inventory_state), true);
+	}
 
 	return select_screen(NULL);
 }
