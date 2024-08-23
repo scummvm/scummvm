@@ -98,6 +98,7 @@ template<class Heuristic, class TypeH>
 AIAStar<Heuristic, TypeH>::AIAStar() {
 	chart = NULL;
 	heuristic = NULL;
+	num_find_erase = 0;
 }
 
 template<class Heuristic, class TypeH>
