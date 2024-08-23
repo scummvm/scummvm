@@ -64,7 +64,7 @@ bool qdConditionData::alloc_data(int size) {
 		break;
 	}
 
-	if (_data.size() < size)
+	if ((int)_data.size() < size)
 		_data.resize(size);
 
 	return true;
@@ -100,14 +100,14 @@ bool qdConditionData::save_script(Common::WriteStream &fh, int indent) const {
 	switch (_type) {
 	case DATA_INT:
 		fh.writeString(Common::String::format("<condition_data_int>%lu", _data.size() / sizeof(int32)));
-		for (int i = 0; i < _data.size() / sizeof(int32); i++) {
+		for (uint i = 0; i < _data.size() / sizeof(int32); i++) {
 			fh.writeString(Common::String::format(" %d", get_int(i)));
 		}
 		fh.writeString("</condition_data_int>\r\n");
 		break;
 	case DATA_FLOAT:
 		fh.writeString(Common::String::format("<condition_data_float>%lu", _data.size() / sizeof(float)));
-		for (int i = 0; i < _data.size() / sizeof(float); i++) {
+		for (uint i = 0; i < _data.size() / sizeof(float); i++) {
 			fh.writeString(Common::String::format(" %f", get_float(i)));
 		}
 		fh.writeString("</condition_data_float>\r\n");

@@ -86,7 +86,7 @@ bool qdInterfaceElementState::save_script(Common::WriteStream &fh, int indent) c
 
 	fh.writeString(">\r\n");
 
-	for (int j = 0; j < _events.size(); j++) {
+	for (uint j = 0; j < _events.size(); j++) {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
@@ -331,7 +331,7 @@ bool qdInterfaceElementState::keyboard_handler(Common::KeyCode vkey) {
 
 bool qdInterfaceElementState::handle_events(qdInterfaceEvent::activation_t activation_type, bool before_animation) {
 	if (qdInterfaceDispatcher * dp = qdInterfaceDispatcher::get_dispatcher()) {
-		for (int i = 0; i < _events.size(); i++) {
+		for (uint i = 0; i < _events.size(); i++) {
 			if (_events[i].activation() == activation_type && _events[i].is_before_animation() == before_animation) {
 				dp->handle_event(_events[i].event(), _events[i].event_data(), owner());
 			}
@@ -354,7 +354,7 @@ bool qdInterfaceElementState::set_contour(state_mode_t mode, const qdContour &cn
 }
 
 bool qdInterfaceElementState::need_active_game() const {
-	for (int i = 0; i < _events.size(); i++) {
+	for (uint i = 0; i < _events.size(); i++) {
 		if (_events[i].event() == qdInterfaceEvent::EVENT_SAVE_GAME)
 			return true;
 		if (_events[i].event() == qdInterfaceEvent::EVENT_CHANGE_PERSONAGE)

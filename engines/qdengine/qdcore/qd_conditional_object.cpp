@@ -261,7 +261,7 @@ bool qdConditionalObject::update_condition_group(int num, const qdConditionGroup
 	qdConditionGroup &gr = _condition_groups[num];
 	gr = p;
 
-	for (int i = 0; i < _conditions.size(); i++) {
+	for (uint i = 0; i < _conditions.size(); i++) {
 		if (is_condition_in_group(i))
 			_conditions[i].add_group_reference();
 		else

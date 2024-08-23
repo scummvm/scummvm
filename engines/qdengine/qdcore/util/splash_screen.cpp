@@ -95,7 +95,7 @@ void SplashScreen::show() {
 
 }
 
-void SplashScreen::wait(int time) {
+void SplashScreen::wait(uint time) {
 	if (g_system->getMillis() - _start_time < time)
 		g_system->delayMillis(time - (g_system->getMillis() - _start_time));
 }

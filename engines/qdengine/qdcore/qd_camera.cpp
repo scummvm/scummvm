@@ -1295,7 +1295,7 @@ int qdCamera::cells_num_with_exact_attributes(const Vect2s &center_pos, const Ve
 	for (int y = y0; y < y1; y++) {
 		const sGridCell *p = cells;
 		for (int x = x0; x < x1; x++, p++) {
-			if (p->attributes() == attr)
+			if (p->attributes() == (uint)attr)
 				ret++;
 		}
 

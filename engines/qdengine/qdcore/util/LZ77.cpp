@@ -145,7 +145,7 @@ int32 CLZ77::decode(byte *target, int32 &tlen, const byte *source, int32 slen) {
 	border = 1;             // offset can`t be more then border
 	for (s = (const byte *)source + 1; (s < source + slen) && (t - target < tlen);) {
 		if (shift > BITS_LEN)
-			while (t - target >= border) {
+			while (t - target >= (int)border) {
 				if (shift <= BITS_LEN) break;
 				border = border << 1;
 				shift--;

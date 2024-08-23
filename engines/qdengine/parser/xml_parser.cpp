@@ -65,7 +65,7 @@ bool tag::readTag(Common::SeekableReadStream *ff, tag &tg) {
 
 	uint32 num_subtags = ff->readUint32LE();
 
-	for (int i = 0; i < num_subtags; i++) {
+	for (uint32 i = 0; i < num_subtags; i++) {
 		tag stg;
 		readTag(ff, stg);
 

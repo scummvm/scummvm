@@ -58,7 +58,7 @@ void qdContour::add_contour_point(const Vect2s &pt) {
 }
 
 void qdContour::insert_contour_point(const Vect2s &pt, int insert_pos) {
-	if (insert_pos < _contour.size()) {
+	if (insert_pos < (int)_contour.size()) {
 		if (insert_pos < 0) insert_pos = 0;
 		_contour.insert(_contour.begin() + insert_pos, pt);
 	} else {
@@ -67,7 +67,7 @@ void qdContour::insert_contour_point(const Vect2s &pt, int insert_pos) {
 }
 
 bool qdContour::remove_contour_point(int pos) {
-	if (pos >= 0 && pos < _contour.size()) {
+	if (pos >= 0 && pos < (int)_contour.size()) {
 		_contour.erase(_contour.begin() + pos);
 		return true;
 	}
@@ -75,7 +75,7 @@ bool qdContour::remove_contour_point(int pos) {
 }
 
 bool qdContour::update_contour_point(const Vect2s &pt, int pos) {
-	if (pos >= 0 && pos < _contour.size()) {
+	if (pos >= 0 && pos < (int)_contour.size()) {
 		_contour[pos] = pt;
 		return true;
 	}
@@ -93,7 +93,7 @@ bool qdContour::update_contour() {
 	int y0 = _contour[0].y;
 	int y1 = _contour[0].y;
 
-	for (int i = 0; i < _contour.size(); i++) {
+	for (uint i = 0; i < _contour.size(); i++) {
 		if (_contour[i].x < x0) x0 = _contour[i].x;
 		if (_contour[i].x > x1) x1 = _contour[i].x;
 		if (_contour[i].y < y0) y0 = _contour[i].y;
@@ -122,7 +122,7 @@ bool qdContour::is_inside(const Vect2s &pos) const {
 		int intersections_gt0 = 0;
 		int intersections_lt1 = 0;
 		int intersections_gt1 = 0;
-		for (int i = 0; i < _contour.size(); i ++) {
+		for (uint i = 0; i < _contour.size(); i ++) {
 			Vect2s p0 = _contour[i];
 			Vect2s p1 = (i < _contour.size() - 1) ? _contour[i + 1] : _contour[0];
 			if (p0.y != p1.y) {

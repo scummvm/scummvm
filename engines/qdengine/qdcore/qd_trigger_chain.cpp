@@ -271,7 +271,7 @@ bool qdTriggerChain::load_data(Common::SeekableReadStream &fh, int save_version)
 	debugC(4, kDebugSave, "    qdTriggerChain::load_data before: %ld", fh.pos());
 	int32 size = fh.readSint32LE();
 
-	if (size != _elements.size()) {
+	if (size != (int)_elements.size()) {
 		return false;
 	}
 

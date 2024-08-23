@@ -46,11 +46,11 @@ public:
 	void show();
 	void hide();
 
-	void wait(int time);
+	void wait(uint time);
 
 private:
 
-	int _start_time = 0;
+	uint _start_time = 0;
 
 	Graphics::Surface *_splash = nullptr;
 	byte *_palette = nullptr;
