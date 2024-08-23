@@ -416,12 +416,12 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 	phobj.init(trg);
 
 	qdAStar pfobj;
-	pfobj.Init(qdCamera::current_camera()->get_grid_sx(), qdCamera::current_camera()->get_grid_sy());
+	pfobj.init(qdCamera::current_camera()->get_grid_sx(), qdCamera::current_camera()->get_grid_sy());
 
 	int dirs_count = (allowed_directions_count() > 4) ? 8 : 4;
 
 	Std::vector<Vect2i> path_vect;
-	pfobj.FindPath(cell_idx, &phobj, path_vect, dirs_count);
+	pfobj.findPath(cell_idx, &phobj, path_vect, dirs_count);
 
 	int idx = 0;
 	bool correct = true;
@@ -448,7 +448,7 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 
 		// Считаем путь с новым концом
 		phobj.init(trg);
-		pfobj.FindPath(cell_idx, &phobj, path_vect, dirs_count);
+		pfobj.findPath(cell_idx, &phobj, path_vect, dirs_count);
 
 		// Проверяем путь на проходимость
 		correct = true;

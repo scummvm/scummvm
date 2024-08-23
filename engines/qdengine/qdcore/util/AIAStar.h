@@ -72,20 +72,20 @@ public:
 	AIAStar();
 	~AIAStar();
 
-	void Init(int dx, int dy);
-	bool FindPath(Vect2i from, Heuristic *h, Std::vector<Vect2i> &path, int directions_count = 8);
-	void GetStatistic(int *num_point_examine, int *num_find_erase);
+	void init(int dx, int dy);
+	bool findPath(Vect2i from, Heuristic *h, Std::vector<Vect2i> &path, int directions_count = 8);
+	void getStatistic(int *num_point_examine, int *num_find_erase);
 
 	//Debug
-	OnePoint *GetInternalBuffer() {
+	OnePoint *getInternalBuffer() {
 		return _chart;
 	};
-	int GetUsedNum() {
+	int getUsedNum() {
 		return _is_used_num;
 	}
 protected:
 	void clear();
-	inline Vect2i PosBy(OnePoint *p) {
+	inline Vect2i posBy(OnePoint *p) {
 		int offset = p - _chart;
 		Vect2i pos;
 		pos.x = offset % _dx;
@@ -102,7 +102,7 @@ AIAStar<Heuristic, TypeH>::AIAStar() {
 }
 
 template<class Heuristic, class TypeH>
-void AIAStar<Heuristic, TypeH>::Init(int dx_, int dy_) {
+void AIAStar<Heuristic, TypeH>::init(int dx_, int dy_) {
 	_dx = dx_;
 	_dy = dy_;
 
@@ -125,7 +125,7 @@ AIAStar<Heuristic, TypeH>::~AIAStar() {
 }
 
 template<class Heuristic, class TypeH>
-bool AIAStar<Heuristic, TypeH>::FindPath(Vect2i from, Heuristic *hr, Std::vector<Vect2i> &path, int directions_count) {
+bool AIAStar<Heuristic, TypeH>::findPath(Vect2i from, Heuristic *hr, Std::vector<Vect2i> &path, int directions_count) {
 	_num_point_examine = 0;
 	_num_find_erase = 0;
 
@@ -166,12 +166,12 @@ bool AIAStar<Heuristic, TypeH>::FindPath(Vect2i from, Heuristic *hr, Std::vector
 			//сконструировать путь
 			Vect2i vp;
 			while (parent) {
-				vp = PosBy(parent);;
+				vp = posBy(parent);;
 				path.push_back(vp);
 
 				if (parent->parent) {
 					Vect2i pp;
-					pp = PosBy(parent->parent);
+					pp = posBy(parent->parent);
 					assert(abs(vp.x - pp.x) <= 1 &&
 					       abs(vp.y - pp.y) <= 1);
 				}
@@ -243,7 +243,7 @@ bool AIAStar<Heuristic, TypeH>::FindPath(Vect2i from, Heuristic *hr, Std::vector
 }
 
 template<class Heuristic, class TypeH>
-void AIAStar<Heuristic, TypeH>::GetStatistic(
+void AIAStar<Heuristic, TypeH>::getStatistic(
     int *p_num_point_examine, int *p_num_find_erase) {
 	if (p_num_point_examine)
 		*p_num_point_examine = _num_point_examine;
@@ -307,21 +307,21 @@ public:
 
 	//Общее количество узлов. Константа, которая не должна меняться,
 	//пока существует класс, указывающий на неё.
-	void Init(Std::vector<Node> &all_node);
+	void init(Std::vector<Node> &all_node);
 
-	bool FindPath(Node *from, Heuristic *h, Std::vector<Node *> &path);
-	void GetStatistic(int *num_point_examine, int *num_find_erase);
+	bool findPath(Node *from, Heuristic *h, Std::vector<Node *> &path);
+	void getStatistic(int *num_point_examine, int *num_find_erase);
 
 	//Debug
-	OnePoint *GetInternalBuffer() {
+	OnePoint *getInternalBuffer() {
 		return _chart;
 	};
-	int GetUsedNum() {
+	int getUsedNum() {
 		return _is_used_num;
 	}
 protected:
 	void clear();
-	inline Node *PosBy(OnePoint *p) {
+	inline Node *posBy(OnePoint *p) {
 		return p->node;
 	}
 };
@@ -332,7 +332,7 @@ AIAStarGraph<Heuristic, Node, TypeH>::AIAStarGraph() {
 }
 
 template<class Heuristic, class Node, class TypeH>
-void AIAStarGraph<Heuristic, Node, TypeH>::Init(Std::vector<Node> &all_node) {
+void AIAStarGraph<Heuristic, Node, TypeH>::init(Std::vector<Node> &all_node) {
 	int size = all_node.size();
 	_chart.resize(size);
 
@@ -357,7 +357,7 @@ AIAStarGraph<Heuristic, Node, TypeH>::~AIAStarGraph() {
 }
 
 template<class Heuristic, class Node, class TypeH>
-bool AIAStarGraph<Heuristic, Node, TypeH>::FindPath(Node *from, Heuristic *hr, Std::vector<Node *> &path) {
+bool AIAStarGraph<Heuristic, Node, TypeH>::findPath(Node *from, Heuristic *hr, Std::vector<Node *> &path) {
 	_num_point_examine = 0;
 	_num_find_erase = 0;
 
@@ -434,7 +434,7 @@ bool AIAStarGraph<Heuristic, Node, TypeH>::FindPath(Node *from, Heuristic *hr, S
 }
 
 template<class Heuristic, class Node, class TypeH>
-void AIAStarGraph<Heuristic, Node, TypeH>::GetStatistic(
+void AIAStarGraph<Heuristic, Node, TypeH>::getStatistic(
     int *p_num_point_examine, int *p_num_find_erase) {
 	if (p_num_point_examine)
 		*p_num_point_examine = _num_point_examine;
