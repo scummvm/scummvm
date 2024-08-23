@@ -235,7 +235,15 @@ public:
 	byte getPlayId() const override;
 	int getPolyphony() const override { return 3; }
 	bool hasRhythmChannel() const override { return false; }
-	void setVolume(byte volume) override { static_cast<MidiDriver_PCJr *>(_driver)->_global_volume = volume; }
+
+	void setVolume(byte volume) override {
+		byte volTable[16] = {
+			0, 5, 6, 8, 10, 12, 15, 20,
+			25, 31, 40, 50, 64, 80, 100, 127
+		};
+
+		static_cast<MidiDriver_PCJr *>(_driver)->_global_volume = volTable[CLIP<byte>(volume, 0, 15)];
+	}
 };
 
 byte MidiPlayer_PCJr::getPlayId() const {
