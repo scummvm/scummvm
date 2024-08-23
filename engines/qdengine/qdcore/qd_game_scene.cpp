@@ -1073,7 +1073,7 @@ void qdGameScene::update_mouse_cursor() {
 
 		qdInterfaceDispatcher *ip = qdInterfaceDispatcher::get_dispatcher();
 		if (ip && ip->is_mouse_hover()) {
-			if (qdGameDispatcher *dsp = qdGameDispatcher::get_dispatcher())
+			if (qdGameDispatcher::get_dispatcher() != nullptr)
 				mouse_cursor = qdGameObjectMouse::INGAME_INTERFACE_CURSOR;
 		} else {
 			Vect2f r = _camera.scr2plane(Vect2s(dp->mouse_cursor_pos().x, dp->mouse_cursor_pos().y));
