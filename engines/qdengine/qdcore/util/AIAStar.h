@@ -59,15 +59,15 @@ public:
 		}
 	};
 protected:
-	int dx, dy;
-	OnePoint *chart;
-	type_point_map open_map;
+	int _dx, _dy;
+	OnePoint *_chart;
+	type_point_map _open_map;
 
-	int is_used_num;//Если is_used_num==used, то ячейка используется
+	int _is_used_num;//Если _is_used_num==used, то ячейка используется
 
-	int num_point_examine;//количество посещённых ячеек
-	int num_find_erase;//Сколько суммарно искали ячейки для удаления
-	Heuristic *heuristic;
+	int _num_point_examine;//количество посещённых ячеек
+	int _num_find_erase;//Сколько суммарно искали ячейки для удаления
+	Heuristic *_heuristic;
 public:
 	AIAStar();
 	~AIAStar();
@@ -78,73 +78,73 @@ public:
 
 	//Debug
 	OnePoint *GetInternalBuffer() {
-		return chart;
+		return _chart;
 	};
 	int GetUsedNum() {
-		return is_used_num;
+		return _is_used_num;
 	}
 protected:
 	void clear();
 	inline Vect2i PosBy(OnePoint *p) {
-		int offset = p - chart;
+		int offset = p - _chart;
 		Vect2i pos;
-		pos.x = offset % dx;
-		pos.y = offset / dx;
+		pos.x = offset % _dx;
+		pos.y = offset / _dx;
 		return pos;
 	}
 };
 
 template<class Heuristic, class TypeH>
 AIAStar<Heuristic, TypeH>::AIAStar() {
-	chart = NULL;
-	heuristic = NULL;
-	num_find_erase = 0;
+	_chart = NULL;
+	_heuristic = NULL;
+	_num_find_erase = 0;
 }
 
 template<class Heuristic, class TypeH>
-void AIAStar<Heuristic, TypeH>::Init(int _dx, int _dy) {
-	dx = _dx;
-	dy = _dy;
+void AIAStar<Heuristic, TypeH>::Init(int dx_, int dy_) {
+	_dx = dx_;
+	_dy = dy_;
 
-	int size = dx * dy;
-	chart = new OnePoint[size];
+	int size = _dx * _dy;
+	_chart = new OnePoint[size];
 	clear();
 }
 
 template<class Heuristic, class TypeH>
 void AIAStar<Heuristic, TypeH>::clear() {
-	int size = dx * dy;
-	is_used_num = 0;
+	int size = _dx * _dy;
+	_is_used_num = 0;
 	for (int i = 0; i < size; i++)
-		chart[i].used = 0;
+		_chart[i].used = 0;
 }
 
 template<class Heuristic, class TypeH>
 AIAStar<Heuristic, TypeH>::~AIAStar() {
-	delete[] chart;
+	delete[] _chart;
 }
 
 template<class Heuristic, class TypeH>
 bool AIAStar<Heuristic, TypeH>::FindPath(Vect2i from, Heuristic *hr, Std::vector<Vect2i> &path, int directions_count) {
-	num_point_examine = 0;
-	num_find_erase = 0;
+	_num_point_examine = 0;
+	_num_find_erase = 0;
 
-	is_used_num++;
-	open_map.clear();
+	_is_used_num++;
+	_open_map.clear();
 	path.clear();
-	if (is_used_num == 0)
+	if (_is_used_num == 0)
 		clear();//Для того, чтобы вызвалась эта строчка, необходимо гиганское время
-	assert(from.x >= 0 && from.x < dx && from.y >= 0 && from.y < dy);
-	heuristic = hr;
+	assert(from.x >= 0 && from.x < _dx && from.y >= 0 && from.y < _dy);
+	_heuristic = hr;
 
-	OnePoint *p = chart + from.y * dx + from.x;
+	OnePoint *p = _chart + from.y * _dx + from.x;
 	p->g = 0;
-	p->h = heuristic->GetH(from.x, from.y);
-	p->used = is_used_num;
+	p->h = _heuristic->GetH(from.x, from.y);
+	p->used = _is_used_num;
 	p->is_open = true;
 	p->parent = NULL;
 
-	open_map.insert(typename type_point_map::value_type(p->f(), from));
+	_open_map.insert(typename type_point_map::value_type(p->f(), from));
 
 	const int sx[8] = { 0, -1, 0, +1, -1, +1, +1, -1,};
 	const int sy[8] = {-1, 0, +1, 0, -1, -1, +1, +1 };
@@ -154,15 +154,15 @@ bool AIAStar<Heuristic, TypeH>::FindPath(Vect2i from, Heuristic *hr, Std::vector
 
 	const int size_child = directions_count;
 
-	while (!open_map.empty()) {
-		typename type_point_map::iterator low = open_map.begin();
+	while (!_open_map.empty()) {
+		typename type_point_map::iterator low = _open_map.begin();
 		Vect2i pt = (*low).second;
-		OnePoint *parent = chart + pt.y * dx + pt.x;
+		OnePoint *parent = _chart + pt.y * _dx + pt.x;
 
 		parent->is_open = false;
-		open_map.erase(low);
+		_open_map.erase(low);
 
-		if (heuristic->IsEndPoint(pt.x, pt.y)) {
+		if (_heuristic->IsEndPoint(pt.x, pt.y)) {
 			//сконструировать путь
 			Vect2i vp;
 			while (parent) {
@@ -186,35 +186,35 @@ bool AIAStar<Heuristic, TypeH>::FindPath(Vect2i from, Heuristic *hr, Std::vector
 		//для каждого наследника child узла parent
 		for (int i = 0; i < size_child; i++) {
 			Vect2i child = Vect2i(pt.x + sx[i], pt.y + sy[i]);
-			num_point_examine++;
+			_num_point_examine++;
 
 			if (child.x < 0 || child.y < 0 ||
-			        child.x >= dx || child.y >= dy)continue;
-			p = chart + child.y * dx + child.x;
+			        child.x >= _dx || child.y >= _dy)continue;
+			p = _chart + child.y * _dx + child.x;
 
 
-			TypeH addg = heuristic->GetG(pt.x, pt.y, child.x, child.y);
+			TypeH addg = _heuristic->GetG(pt.x, pt.y, child.x, child.y);
 			TypeH newg = parent->g + addg;
 
-			if (p->used == is_used_num) {
+			if (p->used == _is_used_num) {
 				if (!p->is_open)continue;
 				if (p->g <= newg)continue;
 
-				//Удаляем элемент из open_map
+				//Удаляем элемент из _open_map
 				TypeH f = p->f();
-				typename type_point_map::iterator cur = open_map.find(p->f());
+				typename type_point_map::iterator cur = _open_map.find(p->f());
 				bool erase = false;
-				while (cur != open_map.end()) {
+				while (cur != _open_map.end()) {
 					if ((*cur).first != f)break;
 					if ((*cur).second.x == child.x && (*cur).second.y == child.y) {
-						open_map.erase(cur);
+						_open_map.erase(cur);
 						erase = true;
 						break;
 					}
-					num_find_erase++;
+					_num_find_erase++;
 					cur++;
 				}
-				num_find_erase++;
+				_num_find_erase++;
 				//assert(erase);
 				if (!erase)
 					continue;
@@ -230,12 +230,12 @@ bool AIAStar<Heuristic, TypeH>::FindPath(Vect2i from, Heuristic *hr, Std::vector
 			            }
 			*/
 			p->g = newg;
-			p->h = heuristic->GetH(child.x, child.y);
+			p->h = _heuristic->GetH(child.x, child.y);
 
-			open_map.insert(typename type_point_map::value_type(p->f(), child));
+			_open_map.insert(typename type_point_map::value_type(p->f(), child));
 
 			p->is_open = true;
-			p->used = is_used_num;
+			p->used = _is_used_num;
 		}
 	}
 
@@ -246,9 +246,9 @@ template<class Heuristic, class TypeH>
 void AIAStar<Heuristic, TypeH>::GetStatistic(
     int *p_num_point_examine, int *p_num_find_erase) {
 	if (p_num_point_examine)
-		*p_num_point_examine = num_point_examine;
+		*p_num_point_examine = _num_point_examine;
 	if (p_num_find_erase)
-		*p_num_find_erase = num_find_erase;
+		*p_num_find_erase = _num_find_erase;
 }
 
 ///////////////////////AIAStarGraph/////////////
@@ -293,14 +293,14 @@ public:
 		}
 	};
 protected:
-	Std::vector<OnePoint> chart;
-	type_point_map open_map;
+	Std::vector<OnePoint> _chart;
+	type_point_map _open_map;
 
-	int is_used_num;//Если is_used_num==used, то ячейка используется
+	int _is_used_num;//Если _is_used_num==used, то ячейка используется
 
-	int num_point_examine;//количество посещённых ячеек
-	int num_find_erase;//Сколько суммарно искали ячейки для удаления
-	Heuristic *heuristic;
+	int _num_point_examine;//количество посещённых ячеек
+	int _num_find_erase;//Сколько суммарно искали ячейки для удаления
+	Heuristic *_heuristic;
 public:
 	AIAStarGraph();
 	~AIAStarGraph();
@@ -314,10 +314,10 @@ public:
 
 	//Debug
 	OnePoint *GetInternalBuffer() {
-		return chart;
+		return _chart;
 	};
 	int GetUsedNum() {
-		return is_used_num;
+		return _is_used_num;
 	}
 protected:
 	void clear();
@@ -328,16 +328,16 @@ protected:
 
 template<class Heuristic, class Node, class TypeH>
 AIAStarGraph<Heuristic, Node, TypeH>::AIAStarGraph() {
-	heuristic = NULL;
+	_heuristic = NULL;
 }
 
 template<class Heuristic, class Node, class TypeH>
 void AIAStarGraph<Heuristic, Node, TypeH>::Init(Std::vector<Node> &all_node) {
 	int size = all_node.size();
-	chart.resize(size);
+	_chart.resize(size);
 
 	for (int i = 0; i < size; i++) {
-		OnePoint *c = &chart[i];
+		OnePoint *c = &_chart[i];
 		c->node = &all_node[i];
 		c->node->AIAStarPointer = (void *)c;
 	}
@@ -346,8 +346,8 @@ void AIAStarGraph<Heuristic, Node, TypeH>::Init(Std::vector<Node> &all_node) {
 
 template<class Heuristic, class Node, class TypeH>
 void AIAStarGraph<Heuristic, Node, TypeH>::clear() {
-	is_used_num = 0;
-	for (auto &it : chart) {
+	_is_used_num = 0;
+	for (auto &it : _chart) {
 		it.used = 0;
 	}
 }
@@ -358,41 +358,41 @@ AIAStarGraph<Heuristic, Node, TypeH>::~AIAStarGraph() {
 
 template<class Heuristic, class Node, class TypeH>
 bool AIAStarGraph<Heuristic, Node, TypeH>::FindPath(Node *from, Heuristic *hr, Std::vector<Node *> &path) {
-	num_point_examine = 0;
-	num_find_erase = 0;
+	_num_point_examine = 0;
+	_num_find_erase = 0;
 
-	is_used_num++;
-	open_map.clear();
+	_is_used_num++;
+	_open_map.clear();
 	path.clear();
-	if (is_used_num == 0)
+	if (_is_used_num == 0)
 		clear();//Для того, чтобы вызвалась эта строчка, необходимо гиганское время
-	heuristic = hr;
+	_heuristic = hr;
 
 	OnePoint *p = (OnePoint *)from->AIAStarPointer;
 	Node *from_node = p->node;
 	p->g = 0;
-	p->h = heuristic->GetH(p->node);
-	p->used = is_used_num;
+	p->h = _heuristic->GetH(p->node);
+	p->used = _is_used_num;
 	p->is_open = true;
 	p->parent = NULL;
 
-	p->self_it = open_map.insert(type_point_map::value_type(p->f(), p));
+	p->self_it = _open_map.insert(type_point_map::value_type(p->f(), p));
 
-	while (!open_map.empty()) {
-		typename type_point_map::iterator low = open_map.begin();
+	while (!_open_map.empty()) {
+		typename type_point_map::iterator low = _open_map.begin();
 
 		OnePoint *parent = low->second;
 		Node *node = parent->node;
 
 		parent->is_open = false;
-		open_map.erase(low);
+		_open_map.erase(low);
 
-		if (heuristic->IsEndPoint(node)) {
+		if (_heuristic->IsEndPoint(node)) {
 			//сконструировать путь
 			Node *np;
 			while (parent) {
 				np = PosBy(parent);
-				assert(parent->used == is_used_num);
+				assert(parent->used == _is_used_num);
 
 				path.push_back(np);
 				parent = parent->parent;
@@ -406,27 +406,27 @@ bool AIAStarGraph<Heuristic, Node, TypeH>::FindPath(Node *from, Heuristic *hr, S
 		for (auto &it : *node) {
 			Node *cur_node = *it;
 			OnePoint *op = (OnePoint *)cur_node->AIAStarPointer;
-			num_point_examine++;
+			_num_point_examine++;
 
-			TypeH addg = heuristic->GetG(node, cur_node);
+			TypeH addg = _heuristic->GetG(node, cur_node);
 			TypeH newg = parent->g + addg;
 
-			if (op->used == is_used_num) {
+			if (op->used == _is_used_num) {
 				if (!op->is_open)continue;
 				if (op->g <= newg)continue;
 
-				open_map.erase(op->self_it);
-				num_find_erase++;
+				_open_map.erase(op->self_it);
+				_num_find_erase++;
 			}
 
 			op->parent = parent;
 			op->g = newg;
-			op->h = heuristic->GetH(cur_node);
+			op->h = _heuristic->GetH(cur_node);
 
-			op->self_it = open_map.insert(type_point_map::value_type(op->f(), op));
+			op->self_it = _open_map.insert(type_point_map::value_type(op->f(), op));
 
 			op->is_open = true;
-			op->used = is_used_num;
+			op->used = _is_used_num;
 		}
 	}
 
@@ -437,9 +437,9 @@ template<class Heuristic, class Node, class TypeH>
 void AIAStarGraph<Heuristic, Node, TypeH>::GetStatistic(
     int *p_num_point_examine, int *p_num_find_erase) {
 	if (p_num_point_examine)
-		*p_num_point_examine = num_point_examine;
+		*p_num_point_examine = _num_point_examine;
 	if (p_num_find_erase)
-		*p_num_find_erase = num_find_erase;
+		*p_num_find_erase = _num_find_erase;
 }
 
 ///////////////////////AIFindMaxium/////////////
