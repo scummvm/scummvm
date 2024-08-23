@@ -166,7 +166,7 @@ uint32 grTileSprite::compress(const uint32 *in_data, uint32 *out_data, grTileCom
 	} else if (compress_method == TILE_COMPRESS_LZ77) {
 		CLZ77 encoder;
 		int32 len = 0;
-		encoder.Encode((byte *)(out_data + 1), len, (const byte *)in_data, GR_TILE_SPRITE_SIZE_BYTES);
+		encoder.encode((byte *)(out_data + 1), len, (const byte *)in_data, GR_TILE_SPRITE_SIZE_BYTES);
 		assert(len);
 		out_data[0] = len;
 		return len / 4 + 2;
@@ -182,7 +182,7 @@ bool grTileSprite::uncompress(const uint32 *in_data, uint32 in_data_length, uint
 		CLZ77 decoder;
 		int32 len = 0;
 		in_data_length = in_data[0];
-		decoder.Decode((byte *)out_data, len, (const byte *)(in_data + 1), in_data_length);
+		decoder.decode((byte *)out_data, len, (const byte *)(in_data + 1), in_data_length);
 		return true;
 	}
 
