@@ -329,7 +329,7 @@ private:
 	qdMinigameSceneInterface *_scene = nullptr;
 
 	qdMinigameObjectInterface *_pieces[24];
-	const int *_pieceCoords;
+	const int *_pieceCoords = nullptr;
 
 	qdMinigameObjectInterface *_objFinal = nullptr;
 	qdMinigameObjectInterface *_objRan = nullptr;
