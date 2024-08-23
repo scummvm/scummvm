@@ -72,7 +72,8 @@ private:
 	int _buttonFrame3 = 0;
 	int _buttonFrame4 = 0;
 	int _int14 = 0;
-
+	int _val15 = 0;
+	int _val16 = 0;
 	int _waterFlowTube = 0;
 	int _waterFlowFaucet = 0;
 	int _waterFlowStem = 0;

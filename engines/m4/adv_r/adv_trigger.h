@@ -63,6 +63,8 @@ bool kernel_trigger_dispatchx(int32 trigger_num);
 bool kernel_trigger_dispatch_now(int32 trigger_num);
 void kernel_timing_trigger(int32 ticks, int16 trigger, const char *name = nullptr);
 void kernel_timing_trigger_daemon(int32 ticks, int16 trigger);
+void kernel_timing_trigger(int32 ticks, int16 trigger,
+	KernelTriggerType preMode, KernelTriggerType postMode);
 
 void cisco_dispatch_triggers();
 void cisco_clear_triggers();
