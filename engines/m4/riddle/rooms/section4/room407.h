@@ -87,6 +87,10 @@ private:
 	machine *_niche = nullptr;
 	machine *_tpist = nullptr;
 	machine *_pump = nullptr;
+	machine *_bits = nullptr;
+	machine *_star2 = nullptr;
+	machine *_gears = nullptr;
+	machine *_letter = nullptr;
 	int _ripMedReach = 0;
 	machine *_drawerPopup = nullptr;
 	machine *_drawerPopupHose = nullptr;
@@ -115,6 +119,10 @@ private:
 	machine *_lockButton2 = nullptr;
 	machine *_lockButton3 = nullptr;
 	machine *_lockButton4 = nullptr;
+	int _407h = 0;
+	int _ripEnters = 0;
+	int _stair = 0;
+	machine *_ripley = nullptr;
 
 	void setHotspots();
 

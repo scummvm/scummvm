@@ -287,7 +287,240 @@ void Room407::init() {
 		_tpist = series_place_sprite("407TPIST", 0, 0, -53, 100, 0xf00);
 		_pump = series_place_sprite("407pump", 0, 0, -53, 100, 0xf00);
 	}
-	// TODO
+
+	if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
+		_tpist = series_place_sprite("407TPIST", 0, 0, -53, 100, 0xf00);
+		_drawer = series_place_sprite("407DRAWR", 0, 0, -53, 100, 0xf00);
+		_escape = series_place_sprite("407ESCAP", 0, 0, -53, 100, 0xd00);
+		_star2 = series_place_sprite("407STAR2", 0, 0, -53, 100, 0xf00);
+
+		if (_val4 == 1010) {
+			if (_val8 == 1100) {
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_timing_trigger(1, 410);
+				_G(kernel).trigger_mode = KT_PARSE;
+			} else if (_xyzzy3 == 1130) {
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_timing_trigger(1, 410);
+				_G(kernel).trigger_mode = KT_PARSE;
+			}
+		}
+
+		if (_val6 == 1010)
+			_gears = series_place_sprite("407GEARS", 0, 0, -53, 100, 0xf00);
+
+		if (_frotz2 != 0) {
+			_407h = series_load("407H");
+			_niche = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xb00, 0,
+				triggerMachineByHashCallbackNegative, "Jar opens cabinet door");
+			sendWSMessage_10000(1, _niche, _407h, 29, 29, -1, _407h, 29, 29, 0);
+
+			if (_frotz4 == 0)
+				_letter = series_place_sprite("407 letter", 0, 0, 0, 100, 0xc00);
+
+		} else {
+			_cpist = series_place_sprite("407CPIST", 0, 0, -53, 100, 0xf00);
+			_niche = series_place_sprite("407NICH", 0, 0, -53, 100, 0xf00);
+
+			if (_xyzzy9 == 1116 || _xyzzy9 == 1130) {
+				_bits = series_place_sprite("407BITSR", 3, 0, -53, 100, 0xa00);
+			} else if (_xyzzy7 == 1112) {
+				_bits = series_place_sprite("407bbits", 0, 0, -53, 100, 0xa00);
+			}
+
+			switch (_xyzzy3) {
+			case 1100:
+				_tubeInDrawer = series_place_sprite("407 TUBING BY ITSELF", 1, 0, 0, 100, 0xa00);
+				break;
+			case 1116:
+				_tubeInDrawer = series_place_sprite("407 HOSE HANG FROM JAR", 1, 0, 0, 100, 0xa00);
+				break;
+			case 1117:
+				_tubeInDrawer = series_place_sprite("407surgn", 0, 0, -53, 100, 0xa00);
+				break;
+			case 1130:
+				_tubeInDrawer = series_place_sprite("407 TUBING BY ITSELF", 0, 0, 0, 100, 0xa00);
+				break;
+			default:
+				break;
+			}
+
+			switch (_xyzzy5) {
+			case 1112:
+				_stopperInDrawer = series_place_sprite("407bbits", 2, 0, -53, 100, 0xa00);
+				break;
+			case 1116:
+			case 1130:
+				_stopperInDrawer = series_place_sprite("407BITSR", 0, 0, -53, 100, 0xa00);
+				break;
+			default:
+				break;
+			}
+
+			switch (_xyzzy1) {
+			case 1114:
+				_pump = series_place_sprite("407PMROD", 0, 0, -53, 100, 0xa00);
+				break;
+			case 1115:
+				_pump = series_place_sprite("407pump", 0, 0, -53, 100, 0xf00);
+				break;
+			default:
+				break;
+			}
+
+			switch (_xyzzy4) {
+			case 1115:
+				_handleInDrawer = series_place_sprite("407pump", 1, 0, -53, 100, 0xa00);
+				break;
+			case 1116:
+			case 1130:
+				if (_xyzzy7 == 1114 || _xyzzy7 == 1140)
+					_handleInDrawer = series_place_sprite("407BITSR", 2, 0, -53, 100, 0xa00);
+				break;
+			default:
+				break;
+			}
+
+			switch (_val10) {
+			case 1112:
+				_lever = series_place_sprite("407LEVRW", 0, 0, -53, 100, 0xa00);
+				break;
+			case 1113:
+				_lever = series_place_sprite("407LEVRW", 0, 0, -53, 100, 0xb00);
+				break;
+			case 1114:
+				if (!_frotz2)
+					_lever = series_place_sprite("407LEVRW", 1, 0, -53, 100, 0xa00);
+				break;
+			default:
+				break;
+			}
+
+			switch (_xyzzy7) {
+			case 1112:
+				if (!inv_object_is_here("EMERALD/CORK"))
+					_bottle = series_place_sprite("sprite ofempty bottle", 0, 0, -53, 100, 0xf00);
+				else
+					_bottle = series_place_sprite((_val6 == 1010) ? "407BOTL2" : "407BOTLE",
+						0, 0, -53, 100, 0xf00);
+				break;
+			case 1114:
+			case 1140:
+				_bottle = series_place_sprite("407BOTLR", 0, 0, -53, 100, 0xa00);
+				break;
+			default:
+				break;
+			}
+
+			switch (_xyzzy2) {
+			case 1100:
+				_drawerPopupHose = series_place_sprite(
+					"407 TUBE AND HOSE INTO SINK", 1, 0, 0, 100, 0xb00);
+				break;
+			case 1116:
+				_drawerPopupHose = series_place_sprite(
+					"407 HOSE HANG FROM JAR", 0, 0, 0, 100, 0xb00);
+				break;
+			case 1130:
+				_drawerPopupHose = series_place_sprite(
+					"407 TUBE AND HOSE INTO SINK", 0, 0, 0, 100, 0xb00);
+				break;
+			case 1140:
+				_drawerPopupHose = series_place_sprite(
+					"407 TUBE AND HOSE TO JAR", 0, 0, 0, 100, 0xb00);
+				break;
+			default:
+				break;
+			}
+
+			switch (_val8) {
+			case 1100:
+				_faucet1 = series_place_sprite("407FAUC", 2, 0, 0, 100, 0xb00);
+				break;
+			case 1116:
+			case 1140:
+				_faucet1 = series_place_sprite("407BITSR", 1, 0, -53, 100, 0xb00);
+				break;
+			case 1130:
+				_faucet1 = series_place_sprite("407 FAUCET IN SINK", 0, 0, 0, 100, 0xb00);
+				break;
+			default:
+				break;
+			}
+		}
+
+		switch (_xyzzy6) {
+		case 1112:
+			_chart = series_place_sprite("407CHART", 0, 0, -53, 100, 0xf00);
+			break;
+		case 1116:
+			_chart = series_place_sprite("407bbits", 0, 0, -53, 100, 0xa00);
+			break;
+		case 1120:
+			_chart = series_place_sprite("407chrt2", 0, 0, -53, 100, 0xa00);
+			break;
+		default:
+			break;
+		}
+
+		switch (_xyzzy9) {
+		case 1011:
+			_faucet2 = series_place_sprite("407FAUC",
+				(_val3 == 1011) ? 1 : 0, 0, 0, 100, 0xe00);
+			break;
+		case 1110:
+			_faucet2 = series_place_sprite("407 AIR VALVE HANDLE",
+				(_val3 == 1011) ? 1 : 0, 0, 0, 100, 0xe00);
+			break;
+		default:
+			break;
+		}
+
+		player_set_commands_allowed(true);
+
+	} else if (!_G(kittyScreaming)) {
+		midi_play("DRAMA1", 255, 0, -1, 949);
+		_ripEnters = series_load("407 RIP ENTERS");
+		_stair = series_load("407STAIR");
+		ws_demand_location(250, 331, 3);
+		ws_hide_walker();
+
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+			triggerMachineByHashCallbackNegative, "RIP enters");
+		sendWSMessage_10000(1, _ripley, _ripEnters, 1, 27, 400,
+			_ripEnters, 27, 27, 0);
+
+	} else {
+		terminateMachineAndNull(_faucet1);
+		terminateMachineAndNull(_tubeInDrawer);
+		terminateMachineAndNull(_drawerPopupHose);
+		terminateMachineAndNull(_bottle);
+		terminateMachineAndNull(_stopperInDrawer);
+		terminateMachineAndNull(_bits);
+		terminateMachineAndNull(_handleInDrawer);
+		terminateMachineAndNull(_niche);
+		terminateMachineAndNull(_lever);
+
+		_407h = series_load("407H");
+		_niche = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xb00, 0,
+			triggerMachineByHashCallbackNegative, "Jar opens cabinet door");
+		sendWSMessage_10000(1, _niche, _407h, 29, 29, -1,
+			_407h, 29, 29, 0);
+		inv_give_to_player("EMERALD/CORK");
+
+		_xyzzy8 = 1000;
+		_frotz2 = 1;
+		_val8 = 1140;
+		_xyzzy2 = 1140;
+		_xyzzy3 = 1140;
+		_xyzzy7 = 1140;
+		_xyzzy5 = 1130;
+		_xyzzy9 = 1130;
+		_xyzzy4 = 1130;
+
+		setHotspots();
+		ws_demand_location(260, 335, 3);
+	}
 }
 
 void Room407::daemon() {
