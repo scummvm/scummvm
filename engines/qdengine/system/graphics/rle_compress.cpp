@@ -31,14 +31,14 @@ namespace QDEngine {
 
 byte *g_buffer0 = nullptr;
 byte *g_buffer1 = nullptr;
-int g_buffersLen = 0;
+uint32 g_buffersLen = 0;
 
 static void ensureBuffers() {
 	if (g_buffer0 == nullptr) {
 		g_buffer0 = (byte *)calloc(4096, 1);
 		g_buffer1 = (byte *)calloc(4096, 1);
 
-		g_buffersLen = 4096;
+		g_buffersLen = 4096U;
 	}
 }
 
@@ -306,9 +306,9 @@ void RLEBuffer::resize_buffers() {
 int RLEBuffer::line_length() {
 	if (_header_offset.empty()) return 0;
 
-	int sz = (_header_offset.size() > 1) ? _header_offset[1] : _header.size();
+	uint sz = (_header_offset.size() > 1) ? _header_offset[1] : _header.size();
 
-	int len = 0;
+	uint len = 0;
 	for (int i = 0; i < sz; i++) {
 		len += abs(_header[i]);
 	}
@@ -325,7 +325,7 @@ int RLEBuffer::line_header_length(int line_num) const {
 
 
 bool RLEBuffer::load(Common::SeekableReadStream *fh) {
-	int32 sz = fh->readUint32LE();
+	uint32 sz = fh->readUint32LE();
 	_header_offset.resize(sz);
 
 	sz = fh->readSint32LE();
@@ -338,19 +338,19 @@ bool RLEBuffer::load(Common::SeekableReadStream *fh) {
 	sz = fh->readSint32LE();
 	_data.resize(sz);
 
-	for (int i = 0; i < _header_offset.size(); i++) {
+	for (uint i = 0; i < _header_offset.size(); i++) {
 		_header_offset[i] = fh->readUint32LE();
 	}
 
-	for (int i = 0; i < _data_offset.size(); i++) {
+	for (uint i = 0; i < _data_offset.size(); i++) {
 		_data_offset[i] = fh->readUint32LE();
 	}
 
-	for (int i = 0; i < _header.size() - 1; i++) {
+	for (uint i = 0; i < _header.size() - 1; i++) {
 		_header[i] = fh->readByte();
 	}
 
-	for (int i = 0; i < _data.size(); i++) {
+	for (uint i = 0; i < _data.size(); i++) {
 		_data[i] = fh->readUint32LE();
 	}
 

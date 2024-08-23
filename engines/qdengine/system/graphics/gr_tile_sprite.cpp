@@ -80,11 +80,11 @@ bool decodeRLE(const uint32 *in_data, uint32 *out_data) {
 		uint32 count = *in_buf++;
 		if (count & RLE_SEQUENCE_MASK) {
 			count ^= RLE_SEQUENCE_MASK;
-			for (int i = 0; i < count; i++)
+			for (uint i = 0; i < count; i++)
 				*out_buf++ = *in_buf++;
 		} else {
 			uint32 color = *in_buf++;
-			for (int i = 0; i < count; i++)
+			for (uint i = 0; i < count; i++)
 				*out_buf++ = color;
 		}
 

@@ -64,7 +64,7 @@ int qdConditionalObject::add_condition(const qdCondition *p) {
 }
 
 bool qdConditionalObject::update_condition(int num, const qdCondition &p) {
-	assert(num >= 0 && num < _conditions.size());
+	assert(num >= 0 && num < (int)_conditions.size());
 
 	qdCondition &cond = _conditions[num];
 	cond = p;
@@ -109,7 +109,7 @@ bool qdConditionalObject::check_conditions() {
 }
 
 bool qdConditionalObject::remove_conditon(int idx) {
-	assert(idx >= 0 && idx < _conditions.size());
+	assert(idx >= 0 && idx < (int)_conditions.size());
 
 	_conditions.erase(_conditions.begin() + idx);
 
@@ -163,7 +163,7 @@ bool qdConditionalObject::load_conditions_script(const xml::tag *p) {
 		}
 	}
 
-	for (int i = 0; i < _conditions.size(); i++) {
+	for (uint i = 0; i < _conditions.size(); i++) {
 		if (is_condition_in_group(i))
 			_conditions[i].add_group_reference();
 	}
@@ -256,7 +256,7 @@ int qdConditionalObject::add_condition_group(const qdConditionGroup *p) {
 }
 
 bool qdConditionalObject::update_condition_group(int num, const qdConditionGroup &p) {
-	assert(num >= 0 && num < _condition_groups.size());
+	assert(num >= 0 && num < (int)_condition_groups.size());
 
 	qdConditionGroup &gr = _condition_groups[num];
 	gr = p;
@@ -272,11 +272,11 @@ bool qdConditionalObject::update_condition_group(int num, const qdConditionGroup
 }
 
 bool qdConditionalObject::remove_conditon_group(int idx) {
-	assert(idx >= 0 && idx < _condition_groups.size());
+	assert(idx >= 0 && idx < (int)_condition_groups.size());
 
 	_condition_groups.erase(_condition_groups.begin() + idx);
 
-	for (int i = 0; i < _conditions.size(); i++) {
+	for (uint i = 0; i < _conditions.size(); i++) {
 		if (is_condition_in_group(i))
 			_conditions[i].add_group_reference();
 		else
@@ -290,7 +290,7 @@ bool qdConditionalObject::remove_conditon_group(int idx) {
 bool qdConditionalObject::init() {
 	bool result = true;
 
-	for (int i = 0; i < _conditions.size(); i++) {
+	for (uint i = 0; i < _conditions.size(); i++) {
 		if (!_conditions[i].init())
 			result = false;
 	}

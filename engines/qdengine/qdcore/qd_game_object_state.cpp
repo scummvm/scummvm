@@ -1119,7 +1119,7 @@ const Vect2i &qdGameObjectStateWalk::center_offset(int direction_index, OffsetTy
 		break;
 	}
 
-	if (direction_index < 0 || direction_index >= vect->size()) {
+	if (direction_index < 0 || direction_index >= (int)vect->size()) {
 		static Vect2i v(0, 0);
 		return v;
 	} else
@@ -1154,14 +1154,14 @@ void qdGameObjectStateWalk::set_center_offset(int direction_index, const Vect2i 
 		break;
 	}
 
-	if (direction_index >= vect->size())
+	if (direction_index >= (int)vect->size())
 		vect->resize(direction_index + 1, Vect2i(0, 0));
 
 	(*vect)[direction_index] = offs;
 }
 
 float qdGameObjectStateWalk::walk_sound_frequency(int direction_index) const {
-	if (direction_index < 0 || direction_index >= _walk_sound_frequency.size())
+	if (direction_index < 0 || direction_index >= (int)_walk_sound_frequency.size())
 		return 1;
 	else
 		return _walk_sound_frequency[direction_index];
@@ -1178,7 +1178,7 @@ float qdGameObjectStateWalk::walk_sound_frequency(float direction_angle) const {
 void qdGameObjectStateWalk::set_walk_sound_frequency(int direction_index, float freq) {
 	assert(direction_index >= 0);
 
-	if (direction_index >= _walk_sound_frequency.size())
+	if (direction_index >= (int)_walk_sound_frequency.size())
 		_walk_sound_frequency.resize(direction_index + 1, 1);
 
 	_walk_sound_frequency[direction_index] = freq;
@@ -1276,7 +1276,7 @@ bool qdGameObjectStateWalk::save_script(Common::WriteStream &fh, int indent) con
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<center_offsets>%u", _center_offsets.size() * 2));
-		for (int i = 0; i < _center_offsets.size(); i++) {
+		for (uint i = 0; i < _center_offsets.size(); i++) {
 			fh.writeString(Common::String::format(" %d %d", _center_offsets[i].x, _center_offsets[i].y));
 		}
 		fh.writeString("</center_offsets>\r\n");
@@ -1287,7 +1287,7 @@ bool qdGameObjectStateWalk::save_script(Common::WriteStream &fh, int indent) con
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<static_center_offsets>%u", _static_center_offsets.size() * 2));
-		for (int i = 0; i < _static_center_offsets.size(); i++) {
+		for (uint i = 0; i < _static_center_offsets.size(); i++) {
 			fh.writeString(Common::String::format(" %d %d", _static_center_offsets[i].x, _static_center_offsets[i].y));
 		}
 		fh.writeString("</static_center_offsets>\r\n");
@@ -1298,7 +1298,7 @@ bool qdGameObjectStateWalk::save_script(Common::WriteStream &fh, int indent) con
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<start_center_offsets>%u", _start_center_offsets.size() * 2));
-		for (int i = 0; i < _start_center_offsets.size(); i++){
+		for (uint i = 0; i < _start_center_offsets.size(); i++){
 			fh.writeString(Common::String::format(" %d %d", _start_center_offsets[i].x, _start_center_offsets[i].y));
 		}
 		fh.writeString("</start_center_offsets>\r\n");
@@ -1309,7 +1309,7 @@ bool qdGameObjectStateWalk::save_script(Common::WriteStream &fh, int indent) con
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<stop_center_offsets>%u", _stop_center_offsets.size() * 2));
-		for (int i = 0; i < _stop_center_offsets.size(); i++) {
+		for (uint i = 0; i < _stop_center_offsets.size(); i++) {
 			fh.writeString(Common::String::format(" %d %d", _stop_center_offsets[i].x, _stop_center_offsets[i].y));
 		}
 		fh.writeString("</stop_center_offsets>\r\n");
@@ -1320,7 +1320,7 @@ bool qdGameObjectStateWalk::save_script(Common::WriteStream &fh, int indent) con
 			fh.writeString("\t");
 		}
 		fh.writeString(Common::String::format("<walk_sound_frequency>%u", _walk_sound_frequency.size()));
-		for (int i = 0; i < _walk_sound_frequency.size(); i++) {
+		for (uint i = 0; i < _walk_sound_frequency.size(); i++) {
 			fh.writeString(Common::String::format(" %f", _walk_sound_frequency[i]));
 		}
 		fh.writeString("</walk_sound_frequency>\r\n");

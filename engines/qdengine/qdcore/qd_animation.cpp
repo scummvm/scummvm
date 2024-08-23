@@ -1029,7 +1029,7 @@ bool qdAnimation::create_scaled_frames() {
 		delete *it;
 	_scaled_frames.clear();
 
-	for (int i = 0; i < _scales.size(); i++) {
+	for (uint i = 0; i < _scales.size(); i++) {
 		for (qdAnimationFrameList::iterator it = _frames.begin(); it != _frames.end(); ++it) {
 			_scaled_frames.push_back((*it)->clone());
 			_scaled_frames.back()->scale(_scales[i], _scales[i]);
@@ -1045,7 +1045,7 @@ int qdAnimation::get_scale_index(float &scale_value) const {
 
 	const Std::vector<float> &scales_vect = (check_flag(QD_ANIMATION_FLAG_REFERENCE) && _parent) ? _parent->_scales : _scales;
 
-	for (int i = 0; i < scales_vect.size(); i++) {
+	for (uint i = 0; i < scales_vect.size(); i++) {
 		if (fabs(scale_value - scl) > fabs(scale_value - scales_vect[i])) {
 			scl = scales_vect[i];
 			index = i;

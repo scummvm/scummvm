@@ -98,11 +98,11 @@ void qdCoordsAnimation::insert_point(const qdCoordsAnimationPoint *p, int insert
 }
 
 void qdCoordsAnimation::remove_point(int num) {
-	assert(0 <= num && num < _points.size());
+	assert(0 <= num && num < (int)_points.size());
 
 	_points.erase(_points.begin() + num);
 
-	if (_cur_point >= _points.size())
+	if (_cur_point >= (int)_points.size())
 		_cur_point = _points.size() - 1;
 
 	calc_paths();
@@ -174,7 +174,7 @@ void qdCoordsAnimation::quant(float dt) const {
 	if (_type == CA_INTERPOLATE_COORDS) {
 		float path = _speed * dt;
 		while (_points[_cur_point].move(path)) {
-			if (++_cur_point >= _points.size()) {
+			if (++_cur_point >= (int)_points.size()) {
 				_is_finished = true;
 				if (!check_flag(QD_COORDS_ANM_LOOP_FLAG)) {
 					_cur_point --;
@@ -200,7 +200,7 @@ void qdCoordsAnimation::quant(float dt) const {
 			qdGameObjectMoving *p = static_cast<qdGameObjectMoving *>(obj);
 
 			if (p->is_in_position(_points[_cur_point].dest_pos() - _del)) {
-				if (++_cur_point >= _points.size()) {
+				if (++_cur_point >= (int)_points.size()) {
 					_is_finished = true;
 					if (!check_flag(QD_COORDS_ANM_LOOP_FLAG)) {
 						stop();
@@ -338,7 +338,7 @@ bool qdCoordsAnimation::set_cur_point(int point_num) const {
 		p->skip_movement();
 
 		for (int i = 0; i < point_num; i++) {
-			if (++_cur_point >= _points.size()) {
+			if (++_cur_point >= (int)_points.size()) {
 				if (!check_flag(QD_COORDS_ANM_LOOP_FLAG)) {
 					stop();
 					return false;
@@ -364,7 +364,7 @@ bool qdCoordsAnimation::set_cur_point(int point_num) const {
 		p->set_pos(cur_pos());
 
 		for (int i = 0; i < point_num; i++) {
-			if (++_cur_point >= _points.size()) {
+			if (++_cur_point >= (int)_points.size()) {
 				if (!check_flag(QD_COORDS_ANM_LOOP_FLAG)) {
 					stop();
 					if (p->named_object_type() == QD_NAMED_OBJECT_MOVING_OBJ)
@@ -430,7 +430,7 @@ bool qdCoordsAnimation::load_data(Common::SeekableReadStream &fh, int save_versi
 
 	_cur_point = fh.readSint32LE();
 	v = fh.readSint32LE();
-	if (_points.size() != v) return false;
+	if ((int)_points.size() != v) return false;
 
 	if (save_version >= 101) {
 		_del.x = fh.readFloatLE();

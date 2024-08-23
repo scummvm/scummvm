@@ -60,7 +60,7 @@ public:
 
 	//! Возвращает указатель на состояние кнопки.
 	const qdInterfaceElementState *get_state(int state_num) const {
-		assert(state_num >= 0 && state_num < _states.size());
+		assert(state_num >= 0 && state_num < (int)_states.size());
 #ifndef _QD_INTERFACE_BUTTON_PTR_CONTAINER
 		return &_states[state_num];
 #else
@@ -69,7 +69,7 @@ public:
 	}
 	//! Возвращает указатель на состояние кнопки.
 	qdInterfaceElementState *get_state(int state_num) {
-		assert(state_num >= 0 && state_num < _states.size());
+		assert(state_num >= 0 && state_num < (int)_states.size());
 #ifndef _QD_INTERFACE_BUTTON_PTR_CONTAINER
 		return &_states[state_num];
 #else
@@ -98,7 +98,7 @@ public:
 	Соответствующему состоянию присваивается значение st.
 	*/
 	bool modify_state(int state_num, const qdInterfaceElementState &st) {
-		assert(state_num >= 0 && state_num < _states.size());
+		assert(state_num >= 0 && state_num < (int)_states.size());
 #ifdef _QD_INTERFACE_BUTTON_PTR_CONTAINER
 		*_states[state_num] = st;
 		_states[state_num]->set_owner(this);

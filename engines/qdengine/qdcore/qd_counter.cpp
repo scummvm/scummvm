@@ -176,7 +176,7 @@ bool qdCounter::remove_element(const qdGameObjectState *p) {
 }
 
 bool qdCounter::remove_element(int idx) {
-	assert(idx >= 0 && idx < _elements.size());
+	assert(idx >= 0 && idx < (int)_elements.size());
 
 	_elements.erase(_elements.begin() + idx);
 	return true;
@@ -275,7 +275,7 @@ bool qdCounter::load_data(Common::SeekableReadStream &fh, int save_version) {
 	_value = fh.readSint32LE();
 	sz = fh.readSint32LE();
 
-	if (sz != _elements.size())
+	if (sz != (int)_elements.size())
 		return false;
 
 	for (auto &it : _elements)

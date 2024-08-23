@@ -253,7 +253,7 @@ bool qdAnimationSet::save_script(Common::WriteStream &fh, int indent) const {
 		}
 
 		fh.writeString(Common::String::format("<walk_sound_frequency>%u", _walk_sound_frequency.size()));
-		for (int i = 0; i < _walk_sound_frequency.size(); i++) {
+		for (uint i = 0; i < _walk_sound_frequency.size(); i++) {
 			fh.writeString(Common::String::format(" %f", _walk_sound_frequency[i]));
 		}
 
@@ -429,7 +429,7 @@ float qdAnimationSet::adjust_angle(float angle) const {
 }
 
 float qdAnimationSet::walk_sound_frequency(int direction_index) const {
-	if (direction_index < 0 || direction_index >= _walk_sound_frequency.size())
+	if (direction_index < 0 || direction_index >= (int)_walk_sound_frequency.size())
 		return 1;
 	else
 		return _walk_sound_frequency[direction_index];
@@ -443,7 +443,7 @@ float qdAnimationSet::walk_sound_frequency(float direction_angle) const {
 void qdAnimationSet::set_walk_sound_frequency(int direction_index, float freq) {
 	assert(direction_index >= 0);
 
-	if (direction_index >= _walk_sound_frequency.size())
+	if (direction_index >= (int)_walk_sound_frequency.size())
 		_walk_sound_frequency.resize(direction_index + 1, 1);
 
 	_walk_sound_frequency[direction_index] = freq;

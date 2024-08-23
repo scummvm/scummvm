@@ -353,7 +353,7 @@ void dump_vect(const V &vect) {
 	debugC(3, kDebugLog, "------------");
 	debugC(3, kDebugLog, "%u", vect.size());
 
-	for (int i = 0; i < vect.size(); i++) {
+	for (uint i = 0; i < vect.size(); i++) {
 		debugC(3, kDebugLog, "%d %d", (int)vect[i].x, (int)vect[i].y);
 	}
 
@@ -482,7 +482,7 @@ bool qdGameObjectMoving::find_path(const Vect3f target, bool lock_target) {
 		Std::vector<Vect3f> final_path;
 		finalize_path(R(), trg, path_vect, final_path);
 
-		for (int i = 0; i < final_path.size(); i++)
+		for (uint i = 0; i < final_path.size(); i++)
 			_path[i] = final_path[i];
 
 		idx = final_path.size();
@@ -1846,7 +1846,7 @@ bool qdGameObjectMoving::save_data(Common::WriteStream &fh) const {
 	fh.writeUint32LE(_follow_condition);
 
 	fh.writeUint32LE(_circuit_objs.size());
-	for (int i = 0; i < _circuit_objs.size(); i++) {
+	for (uint i = 0; i < _circuit_objs.size(); i++) {
 		qdNamedObjectReference circ_ref(_circuit_objs[i]);
 		circ_ref.save_data(fh);
 	}
@@ -2389,7 +2389,7 @@ void qdGameObjectMoving::finalize_path(const Vect3f &from, const Vect3f &to, con
 	qdCamera *cp = qdCamera::current_camera();
 
 	out_path.resize(path.size(), Vect3f(0, 0, 0));
-	for (int i = 0; i < path.size(); i++)
+	for (uint i = 0; i < path.size(); i++)
 		out_path[i] = cp->get_cell_coords(path[i].x, path[i].y);
 
 	Vect2f d = to - out_path.back();

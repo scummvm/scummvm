@@ -83,7 +83,7 @@ qdInterfaceButton &qdInterfaceButton::operator = (const qdInterfaceButton &bt) {
 }
 
 bool qdInterfaceButton::activate_state(int state_num) {
-	if (state_num >= _states.size())
+	if (state_num >= (int)_states.size())
 		state_num = _states.size() - 1;
 
 	if (!_states.size() || _cur_state == state_num) return false;
@@ -93,7 +93,7 @@ bool qdInterfaceButton::activate_state(int state_num) {
 
 	_cur_state = state_num;
 
-	if (state_num >= 0 && state_num < _states.size())
+	if (state_num >= 0 && state_num < (int)_states.size())
 		return set_state(get_state(state_num));
 
 	return true;
@@ -130,7 +130,7 @@ bool qdInterfaceButton::add_state(const qdInterfaceElementState &st) {
 }
 
 bool qdInterfaceButton::insert_state(int insert_before, const qdInterfaceElementState &st) {
-	assert(insert_before >= 0 && insert_before < _states.size());
+	assert(insert_before >= 0 && insert_before < (int)_states.size());
 
 #ifdef _QD_INTERFACE_BUTTON_PTR_CONTAINER
 	_states.insert(_states.begin() + insert_before, new qdInterfaceElementState(st));
@@ -145,7 +145,7 @@ bool qdInterfaceButton::insert_state(int insert_before, const qdInterfaceElement
 }
 
 bool qdInterfaceButton::erase_state(int state_num) {
-	assert(state_num >= 0 && state_num < _states.size());
+	assert(state_num >= 0 && state_num < (int)_states.size());
 
 #ifdef _QD_INTERFACE_BUTTON_PTR_CONTAINER
 //	delete *(_states.begin() + state_num);

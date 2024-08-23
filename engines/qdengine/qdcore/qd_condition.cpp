@@ -272,22 +272,22 @@ void qdCondition::set_type(ConditionType tp) {
 }
 
 bool qdCondition::put_value(int idx, const char *str) {
-	assert(idx >= 0 && idx < _data.size());
+	assert(idx >= 0 && idx < (int)_data.size());
 	return _data[idx].put_string(str);
 }
 
 bool qdCondition::put_value(int idx, int val, int val_index) {
-	assert(idx >= 0 && idx < _data.size());
+	assert(idx >= 0 && idx < (int)_data.size());
 	return _data[idx].put_int(val, val_index);
 }
 
 bool qdCondition::put_value(int idx, float val, int val_index) {
-	assert(idx >= 0 && idx < _data.size());
+	assert(idx >= 0 && idx < (int)_data.size());
 	return _data[idx].put_float(val, val_index);
 }
 
 bool qdCondition::get_value(int idx, const char *&str) const {
-	assert(idx >= 0 && idx < _data.size());
+	assert(idx >= 0 && idx < (int)_data.size());
 
 	if (_data[idx].get_string()) {
 		str = _data[idx].get_string();
@@ -298,14 +298,14 @@ bool qdCondition::get_value(int idx, const char *&str) const {
 }
 
 bool qdCondition::get_value(int idx, int &val, int val_index) const {
-	assert(idx >= 0 && idx < _data.size());
+	assert(idx >= 0 && idx < (int)_data.size());
 	val = _data[idx].get_int(val_index);
 
 	return true;
 }
 
 bool qdCondition::get_value(int idx, float &val, int val_index) const {
-	assert(idx >= 0 && idx < _data.size());
+	assert(idx >= 0 && idx < (int)_data.size());
 	val = _data[idx].get_float(val_index);
 
 	return true;
@@ -318,7 +318,7 @@ bool qdCondition::load_script(const xml::tag *p) {
 		case QDSCR_CONDITION_DATA_INT:
 		case QDSCR_CONDITION_DATA_FLOAT:
 		case QDSCR_CONDITION_DATA_STRING:
-			if (data_idx < _data.size())
+			if (data_idx < (int)_data.size())
 				_data[data_idx++].load_script(&*it);
 			break;
 		case QDSCR_CONDITION_INVERSE:
@@ -331,7 +331,7 @@ bool qdCondition::load_script(const xml::tag *p) {
 			if (const xml::tag *tp = it->search_subtag(QDSCR_ID)) {
 				int object_idx = xml::tag_buffer(*tp).get_int();
 
-				if (object_idx >= 0 && object_idx < _objects.size())
+				if (object_idx >= 0 && object_idx < (int)_objects.size())
 					_objects[object_idx].load_script(&*it);
 			}
 			break;
@@ -357,7 +357,7 @@ bool qdCondition::save_script(Common::WriteStream &fh, int indent) const {
 		it.save_script(fh, indent + 1);
 	}
 
-	for (int i = 0; i < _objects.size(); i++) {
+	for (uint i = 0; i < _objects.size(); i++) {
 		if (_objects[i].object())
 			_objects[i].save_script(fh, indent + 1, i);
 	}
@@ -457,13 +457,13 @@ bool qdCondition::check() {
 }
 
 bool qdCondition::put_object(int idx, qdNamedObject *obj) {
-	assert(idx >= 0 && idx < _objects.size());
+	assert(idx >= 0 && idx < (int)_objects.size());
 	_objects[idx].set_object(obj);
 	return true;
 }
 
 const qdNamedObject *qdCondition::get_object(int idx) {
-	if (idx >= 0 && idx < _objects.size()) {
+	if (idx >= 0 && idx < (int)_objects.size()) {
 		if (!_objects[idx].object())
 			_objects[idx].find_object();
 

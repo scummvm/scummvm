@@ -1223,7 +1223,7 @@ void qdGameObjectAnimated::set_default_state() {
 }
 
 qdGameObjectState *qdGameObjectAnimated::get_default_state() {
-	for (int i = 0; i < _states.size(); i++) {
+	for (uint i = 0; i < _states.size(); i++) {
 		if (!_states[i]->is_in_triggers() && !_states[i]->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY))
 			return _states[i];
 	}
@@ -1232,7 +1232,7 @@ qdGameObjectState *qdGameObjectAnimated::get_default_state() {
 }
 
 const qdGameObjectState *qdGameObjectAnimated::get_default_state() const {
-	for (int i = 0; i < _states.size(); i++) {
+	for (uint i = 0; i < _states.size(); i++) {
 		if (!_states[i]->is_in_triggers() && !_states[i]->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_INVENTORY))
 			return _states[i];
 	}
@@ -1241,7 +1241,7 @@ const qdGameObjectState *qdGameObjectAnimated::get_default_state() const {
 }
 
 int qdGameObjectAnimated::get_state_index(const qdGameObjectState *p) const {
-	for (int i = 0; i < _states.size(); i++) {
+	for (uint i = 0; i < _states.size(); i++) {
 		if (_states[i] == p)
 			return i;
 	}
@@ -1255,7 +1255,7 @@ bool qdGameObjectAnimated::load_data(Common::SeekableReadStream &fh, int save_ve
 
 	_cur_state = fh.readSint32LE();
 
-	for (int i = 0; i < _states.size(); i++) {
+	for (uint i = 0; i < _states.size(); i++) {
 		if (!_states[i]->load_data(fh, save_version))
 			return false;
 	}
@@ -1296,7 +1296,7 @@ bool qdGameObjectAnimated::save_data(Common::WriteStream &fh) const {
 
 	fh.writeSint32LE(_cur_state);
 
-	for (int i = 0; i < _states.size(); i++) {
+	for (uint i = 0; i < _states.size(); i++) {
 		if (!_states[i]->save_data(fh))
 			return false;
 	}
@@ -1348,7 +1348,7 @@ bool qdGameObjectAnimated::is_state_waiting(const char *state_name) const {
 }
 
 bool qdGameObjectAnimated::was_state_active(const char *state_name) const {
-	for (int i = 0; i < _states.size(); i++) {
+	for (uint i = 0; i < _states.size(); i++) {
 		if (!strcmp(_states[i]->name(), state_name))
 			return _states[i]->check_flag(qdGameObjectState::QD_OBJ_STATE_FLAG_WAS_ACTIVATED);
 	}
@@ -1474,7 +1474,7 @@ bool qdGameObjectAnimated::init() {
 	_queued_state = NULL;
 	_last_inventory_state = NULL;
 
-	for (int i = 0; i < _states.size(); i++)
+	for (uint i = 0; i < _states.size(); i++)
 		_states[i]->init();
 
 	return true;
