@@ -215,7 +215,7 @@ void qdInventoryCellSet::redraw(int offs_x, int offs_y, bool inactive_mode) cons
 	for (int i = _cells_shift.y; i < _size.y + _cells_shift.y; i++) {
 		idx = i * (_size.x + _additional_cells.x) + _cells_shift.x;
 		for (int j = _cells_shift.x; j < _size.x + _cells_shift.x; j++) {
-			assert(idx >= 0 && idx < _cells.size());
+			assert(idx >= 0 && idx < (int)_cells.size());
 			_cells[idx].redraw(offs_x + pos.x, offs_y + pos.y, inactive_mode);
 			pos.x += _cells[idx].size_x();
 			idx++;
@@ -269,7 +269,7 @@ bool qdInventoryCellSet::put_object(qdGameObjectAnimated *p, const Vect2s &pos) 
 	// Двигаем индекс на текущее смещение ячеек
 	idx += _cells_shift.y * (_size.x + _additional_cells.x) + _cells_shift.x;
 
-	if (idx >= 0 && idx < _cells.size() && _cells[idx].is_empty() && _cells[idx].type() == p->inventory_type()) {
+	if (idx >= 0 && idx < (int)_cells.size() && _cells[idx].is_empty() && _cells[idx].type() == p->inventory_type()) {
 		_cells[idx].set_object(p);
 		return true;
 	}
@@ -286,7 +286,7 @@ qdGameObjectAnimated *qdInventoryCellSet::get_object(const Vect2s &pos) const {
 	// Двигаем индекс на текущее смещение ячеек
 	idx += _cells_shift.y * (_size.x + _additional_cells.x) + _cells_shift.x;
 
-	if (idx >= 0 && idx < _cells.size())
+	if (idx >= 0 && idx < (int)_cells.size())
 		return _cells[idx].object();
 
 	return NULL;
@@ -438,7 +438,7 @@ int qdInventoryCellSet::cell_index(const qdGameObjectAnimated *obj) const {
 }
 
 Vect2s qdInventoryCellSet::cell_position(int cell_idx) const {
-	if (cell_idx >= 0 && cell_idx < _cells.size()) {
+	if (cell_idx >= 0 && cell_idx < (int)_cells.size()) {
 		int x = (cell_idx % _size.x) * _cells.front().size_x() + screen_pos().x;
 		int y = (cell_idx / _size.x) * _cells.front().size_y() + screen_pos().y;
 		// Делаем поправку на смещение ячеек
@@ -485,7 +485,7 @@ void qdInventoryCellSet::pre_redraw() const {
 	for (int i = _cells_shift.y; i < size().y + _cells_shift.y; i++) {
 		idx = i * (_size.x + _additional_cells.x) + _cells_shift.x;
 		for (int j = _cells_shift.x; j < size().x + _cells_shift.x; j++) {
-			assert(idx >= 0 && idx < _cells.size());
+			assert(idx >= 0 && idx < (int)_cells.size());
 			if (!_cells[idx].is_empty() && _cells[idx].object()->need_redraw()) {
 				dp->add_redraw_region(_cells[idx].object()->last_screen_region());
 				dp->add_redraw_region(_cells[idx].object()->screen_region());
@@ -506,7 +506,7 @@ void qdInventoryCellSet::post_redraw() {
 	for (int i = _cells_shift.y; i < size().y + _cells_shift.y; i++) {
 		idx = i * (_size.x + _additional_cells.x) + _cells_shift.x;
 		for (int j = _cells_shift.x; j < size().x + _cells_shift.x; j++) {
-			assert(idx >= 0 && idx < _cells.size());
+			assert(idx >= 0 && idx < (int)_cells.size());
 			if (!_cells[idx].is_empty())
 				_cells[idx].object()->post_redraw();
 			idx++;
@@ -521,7 +521,7 @@ bool qdInventoryCellSet::has_rect_objects(int left, int top, int right, int bott
 	for (int i = top; i <= bottom; i++)
 		for (int j = left; j <= right; j++) {
 			idx = i * (_size.x + _additional_cells.x) + j;
-			assert(idx >= 0 && idx < _cells.size());
+			assert(idx >= 0 && idx < (int)_cells.size());
 			// Нашли объект вне видимой области - значит скроллинг нужен
 			if (!_cells[idx].is_empty())
 				return true;

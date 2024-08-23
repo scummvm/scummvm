@@ -1377,7 +1377,7 @@ bool qdSprite::scale(float coeff_x, float coeff_y) {
 	byte *src_data = _data;
 
 	if (_format == GR_RGB888) {
-		if (temp_buffer.size() < _picture_size.x * _picture_size.y * 4)
+		if ((int)temp_buffer.size() < _picture_size.x * _picture_size.y * 4)
 			temp_buffer.resize(_picture_size.x * _picture_size.y * 4);
 
 		src_data = &*temp_buffer.begin();

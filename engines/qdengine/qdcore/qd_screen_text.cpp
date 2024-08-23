@@ -194,7 +194,7 @@ bool qdScreenText::format_text(int max_width) {
 					// space we will trigger attempt to format the string ending)
 					// The space will not affect the output because it is at the end.
 
-	for (int i = 0; i < _data.size(); i++) {
+	for (uint i = 0; i < _data.size(); i++) {
 		if (_data[i] == '\n') {
 			if (cur_wid > max_width) {
 				// Safe space is present, so it is safe to split it (e.g. everything fits max_width)

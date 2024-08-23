@@ -168,7 +168,7 @@ bool qdInterfaceTextWindow::char_input_handler(int input) {
 	bool ret = __super::char_input_handler(input);
 #endif
 	if (_windowType == WINDOW_EDIT && _isEditing) {
-		if (!_inputStringLimit || _inputString.size() < _inputStringLimit) {
+		if (!_inputStringLimit || (int)_inputString.size() < _inputStringLimit) {
 			if (Common::isPrint(input) || input == '_' || input == '-' || input == ' ') {
 				_inputString.insertChar(input, _caretPose++);
 				return true;
@@ -617,17 +617,17 @@ bool qdInterfaceTextWindow::edit_input(Common::KeyCode vkey) {
 			return true;
 
 		case Common::KEYCODE_RIGHT:
-			if (_caretPose < _inputString.size())
+			if (_caretPose < (int)_inputString.size())
 				++_caretPose;
 			return true;
 
 		case Common::KEYCODE_BACKSPACE:
-			if (_caretPose > 0 && _caretPose <= _inputString.size())
+			if (_caretPose > 0 && _caretPose <= (int)_inputString.size())
 				_inputString.erase(--_caretPose, 1);
 			return true;
 
 		case Common::KEYCODE_DELETE:
-			if (_caretPose >= 0 && _caretPose < _inputString.size())
+			if (_caretPose >= 0 && _caretPose < (int)_inputString.size())
 				_inputString.erase(_caretPose, 1);
 
 			return true;
