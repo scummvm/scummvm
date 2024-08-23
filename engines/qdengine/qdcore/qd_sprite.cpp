@@ -194,7 +194,7 @@ void qdSprite::free() {
 bool qdSprite::load(const Common::Path fpath) {
 	set_file(fpath);
 
-	load();
+	return load();
 }
 
 bool qdSprite::load() {
