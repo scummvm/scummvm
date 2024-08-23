@@ -36,9 +36,9 @@ public:
 	qdHeuristic();
 	~qdHeuristic();
 
-	int GetH(int x, int y);
-	int GetG(int x1, int y1, int x2, int y2);
-	bool IsEndPoint(int x, int y) {
+	int getH(int x, int y);
+	int getG(int x1, int y1, int x2, int y2);
+	bool isEndPoint(int x, int y) {
 		return (x == _target.x && y == _target.y);
 	}
 

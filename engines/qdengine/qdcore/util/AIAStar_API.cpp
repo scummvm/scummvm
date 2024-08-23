@@ -34,7 +34,7 @@ qdHeuristic::qdHeuristic() : _camera_ptr(NULL), _object_ptr(NULL) {
 qdHeuristic::~qdHeuristic() {
 }
 
-int qdHeuristic::GetH(int x, int y) {
+int qdHeuristic::getH(int x, int y) {
 	x -= _target.x;
 	y -= _target.y;
 
@@ -43,7 +43,7 @@ int qdHeuristic::GetH(int x, int y) {
 	return static_cast<float>(x * x + y * y);
 }
 
-int qdHeuristic::GetG(int x1, int y1, int x2, int y2) {
+int qdHeuristic::getG(int x1, int y1, int x2, int y2) {
 	if (!_object_ptr->is_walkable(Vect2s(x2, y2)))
 		return 10000;
 	// Для диагональных перемещений смотрим еще и перемещения по катетам,

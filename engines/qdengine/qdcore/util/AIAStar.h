@@ -33,8 +33,8 @@
 /*
 class Heuristic
 {
-    float GetH(int x,int y);//Предполагаемые затраты на продвижение из pos1 к окончанию
-    float GetG(int x1,int y1,int x2,int y2);//Затраты на продвижение из pos1 в pos2
+    float getH(int x,int y);//Предполагаемые затраты на продвижение из pos1 к окончанию
+    float getG(int x1,int y1,int x2,int y2);//Затраты на продвижение из pos1 в pos2
     bool IsEndPoint(int x,int y);//Рекурсия должна окончиться здесь
     //то есть класс AIAStar позволяет задавать несколько точек окончания поиска пути
 };
@@ -139,7 +139,7 @@ bool AIAStar<Heuristic, TypeH>::findPath(Vect2i from, Heuristic *hr, Std::vector
 
 	OnePoint *p = _chart + from.y * _dx + from.x;
 	p->g = 0;
-	p->h = _heuristic->GetH(from.x, from.y);
+	p->h = _heuristic->getH(from.x, from.y);
 	p->used = _is_used_num;
 	p->is_open = true;
 	p->parent = NULL;
@@ -162,7 +162,7 @@ bool AIAStar<Heuristic, TypeH>::findPath(Vect2i from, Heuristic *hr, Std::vector
 		parent->is_open = false;
 		_open_map.erase(low);
 
-		if (_heuristic->IsEndPoint(pt.x, pt.y)) {
+		if (_heuristic->isEndPoint(pt.x, pt.y)) {
 			//сконструировать путь
 			Vect2i vp;
 			while (parent) {
@@ -193,7 +193,7 @@ bool AIAStar<Heuristic, TypeH>::findPath(Vect2i from, Heuristic *hr, Std::vector
 			p = _chart + child.y * _dx + child.x;
 
 
-			TypeH addg = _heuristic->GetG(pt.x, pt.y, child.x, child.y);
+			TypeH addg = _heuristic->getG(pt.x, pt.y, child.x, child.y);
 			TypeH newg = parent->g + addg;
 
 			if (p->used == _is_used_num) {
@@ -223,14 +223,14 @@ bool AIAStar<Heuristic, TypeH>::findPath(Vect2i from, Heuristic *hr, Std::vector
 			p->parent = parent;
 			/*
 			            {
-			                Vect2i pp=PosBy(parent);
-			                Vect2i pc=PosBy(p);
+			                Vect2i pp=posBy(parent);
+			                Vect2i pc=posBy(p);
 			                assert(abs(pc.x-pp.x)<=1 &&
 			                        abs(pc.y-pp.y)<=1);
 			            }
 			*/
 			p->g = newg;
-			p->h = _heuristic->GetH(child.x, child.y);
+			p->h = _heuristic->getH(child.x, child.y);
 
 			_open_map.insert(typename type_point_map::value_type(p->f(), child));
 
@@ -265,8 +265,8 @@ class Node
 
 class Heuristic
 {
-    float GetH(Node* pos);//Предполагаемые затраты на продвижение из pos1 к окончанию
-    float GetG(Node* pos1,Node* pos2);//Затраты на продвижение из pos1 в pos2
+    float getH(Node* pos);//Предполагаемые затраты на продвижение из pos1 к окончанию
+    float getG(Node* pos1,Node* pos2);//Затраты на продвижение из pos1 в pos2
     bool IsEndPoint(Node* pos);//Рекурсия должна окончиться здесь
     //то есть класс AIAStar позволяет задавать несколько точек окончания поиска пути
 };
@@ -371,7 +371,7 @@ bool AIAStarGraph<Heuristic, Node, TypeH>::findPath(Node *from, Heuristic *hr, S
 	OnePoint *p = (OnePoint *)from->AIAStarPointer;
 	Node *from_node = p->node;
 	p->g = 0;
-	p->h = _heuristic->GetH(p->node);
+	p->h = _heuristic->getH(p->node);
 	p->used = _is_used_num;
 	p->is_open = true;
 	p->parent = NULL;
@@ -408,7 +408,7 @@ bool AIAStarGraph<Heuristic, Node, TypeH>::findPath(Node *from, Heuristic *hr, S
 			OnePoint *op = (OnePoint *)cur_node->AIAStarPointer;
 			_num_point_examine++;
 
-			TypeH addg = _heuristic->GetG(node, cur_node);
+			TypeH addg = _heuristic->getG(node, cur_node);
 			TypeH newg = parent->g + addg;
 
 			if (op->used == _is_used_num) {
@@ -421,7 +421,7 @@ bool AIAStarGraph<Heuristic, Node, TypeH>::findPath(Node *from, Heuristic *hr, S
 
 			op->parent = parent;
 			op->g = newg;
-			op->h = _heuristic->GetH(cur_node);
+			op->h = _heuristic->getH(cur_node);
 
 			op->self_it = _open_map.insert(type_point_map::value_type(op->f(), op));
 
@@ -448,7 +448,7 @@ void AIAStarGraph<Heuristic, Node, TypeH>::getStatistic(
 struct Maps
 {
     //Значение чего нибудь в точке (x,y)
-    TypeH Get(int x,int y);
+    TypeH get(int x,int y);
 
     //Дальнейшие поиски можно прекратить
     bool IsOptiumGood(TypeH optium,int x,int y);
@@ -460,7 +460,7 @@ template<class Maps>
 Vect2i AIFindMinium(int x, int y,
                     Maps &maps,
                     int dx, int dy) {
-	typename Maps::TypeH optium = maps.Get(x, y);
+	typename Maps::TypeH optium = maps.get(x, y);
 	int optiumx = x, optiumy = y;
 
 	int maxi = MAX(MAX(x, dx - x), MAX(y, dy - y));
@@ -472,7 +472,7 @@ Vect2i AIFindMinium(int x, int y,
 		cury = y - i;
 		if (cury >= 0)
 			for (curx = xmin; curx <= xmax; curx++) {
-				typename Maps::TypeH o = maps.Get(curx, cury);
+				typename Maps::TypeH o = maps.get(curx, cury);
 				if (o < optium) {
 					optium = o;
 					optiumx = curx;
@@ -484,7 +484,7 @@ Vect2i AIFindMinium(int x, int y,
 		cury = y + i;
 		if (cury < dy)
 			for (curx = xmin; curx <= xmax; curx++) {
-				typename Maps::TypeH o = maps.Get(curx, cury);
+				typename Maps::TypeH o = maps.get(curx, cury);
 				if (o < optium) {
 					optium = o;
 					optiumx = curx;
@@ -496,7 +496,7 @@ Vect2i AIFindMinium(int x, int y,
 		curx = x - i;
 		if (curx >= 0)
 			for (cury = ymin; cury <= ymax; cury++) {
-				typename Maps::TypeH o = maps.Get(curx, cury);
+				typename Maps::TypeH o = maps.get(curx, cury);
 				if (o < optium) {
 					optium = o;
 					optiumx = curx;
@@ -508,7 +508,7 @@ Vect2i AIFindMinium(int x, int y,
 		curx = x + i;
 		if (curx < dx)
 			for (cury = ymin; cury <= ymax; cury++) {
-				typename Maps::TypeH o = maps.Get(curx, cury);
+				typename Maps::TypeH o = maps.get(curx, cury);
 				if (o < optium) {
 					optium = o;
 					optiumx = curx;
