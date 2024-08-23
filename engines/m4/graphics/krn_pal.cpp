@@ -47,7 +47,6 @@ namespace M4 {
 #define NUM_FREE     FREE_END-(FREE_START)+1
 
 static HotkeyCB remember_esc_key;
-static bool examining_inventory_object;
 static HotSpotRec *exam_saved_hotspots;
 
 void krn_pal_game_task() {
