@@ -167,6 +167,10 @@ bool shouldSkipFileForTarget(const std::string &fileID, const std::string &targe
 		if (name.length() > 4 && name.substr(0, 4) == "ios-") {
 			return true;
 		}
+		// macOS target: we skip the xcprivacy file required for iOS and tvOS targets
+		if (ext == "xcprivacy") {
+			return true;
+		}
 		// parent directory
 		const std::string directory = fileID.substr(0, fileID.length() - fileName.length());
 		static const std::string iphone_directory = "backends/platform/ios7";
@@ -300,7 +304,9 @@ XcodeProvider::XcodeProvider(StringList &global_warnings, std::map<std::string, 
 
 void XcodeProvider::addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) {
 	includeList.push_back(setup.srcDir + "/dists/ios7/Info.plist");
+	includeList.push_back(setup.srcDir + "/dists/ios7/PrivacyInfo.xcprivacy");
 	includeList.push_back(setup.srcDir + "/dists/tvos/Info.plist");
+	includeList.push_back(setup.srcDir + "/dists/tvos/PrivacyInfo.xcprivacy");
 
 	ValueList &resources = getResourceFiles(setup);
 	for (ValueList::iterator it = resources.begin(); it != resources.end(); ++it) {
@@ -1040,7 +1046,9 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 		files.push_back("gui/themes/translations.dat");
 		files.push_back("dists/ios7/ios-help.zip");
 		files.push_back("dists/ios7/LaunchScreen_ios.storyboard");
+		files.push_back("dists/ios7/PrivacyInfo.xcprivacy");
 		files.push_back("dists/tvos/LaunchScreen_tvos.storyboard");
+		files.push_back("dists/tvos/PrivacyInfo.xcprivacy");
 		files.push_back("dists/networking/wwwroot.zip");
 		if (CONTAINS_DEFINE(setup.defines, "ENABLE_GRIM")) {
 			files.push_back("engines/grim/shaders/grim_dim.fragment");
