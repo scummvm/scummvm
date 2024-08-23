@@ -1397,7 +1397,7 @@ bool qdSprite::scale(float coeff_x, float coeff_y) {
 
 	byte *dest_data = new byte[sx * sy * 4];
 
-	scale_engine.Scale(reinterpret_cast<uint32 *>(src_data), _picture_size.x, _picture_size.y, reinterpret_cast<uint32 *>(dest_data), sx, sy);
+	scale_engine.scale(reinterpret_cast<uint32 *>(src_data), _picture_size.x, _picture_size.y, reinterpret_cast<uint32 *>(dest_data), sx, sy);
 
 	delete [] _data;
 

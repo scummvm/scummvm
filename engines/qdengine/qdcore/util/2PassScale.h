@@ -37,9 +37,9 @@ typedef struct {
 } ContributionType;   // Contirbution information for a single pixel
 
 typedef struct {
-	ContributionType *ContribRow; // Row (or column) of contribution weights
-	uint32 WindowSize,              // Filter window size (of affecting source pixels)
-	     LineLength;           // Length of line (no. or rows / cols)
+	ContributionType *contribRow; // Row (or column) of contribution weights
+	uint32 windowSize,              // Filter window size (of affecting source pixels)
+	     lineLength;           // Length of line (no. or rows / cols)
 } LineContribType;                    // Contribution information for an entire line (row or column)
 
 template <class FilterClass>
@@ -49,7 +49,7 @@ public:
 	C2PassScale() : _temp_buffer(65536, 0), _weights_buffer(16384, 0.0), _contribution_buffer(500) { }
 	virtual ~C2PassScale() { }
 
-	uint32 *Scale(uint32 *pOrigImage, uint32 uOrigWidth, uint32 uOrigHeight, uint32 *pDstImage, uint32 uNewWidth, uint32 uNewHeight);
+	uint32 *scale(uint32 *pOrigImage, uint32 uOrigWidth, uint32 uOrigHeight, uint32 *pDstImage, uint32 uNewWidth, uint32 uNewHeight);
 
 private:
 
@@ -59,13 +59,13 @@ private:
 	Std::vector<double> _weights_buffer;
 	Std::vector<ContributionType> _contribution_buffer;
 
-	LineContribType *AllocContributions(uint32 uLineLength, uint32 uWindowSize);
-	LineContribType *CalcContributions(uint32 uLineSize, uint32 uSrcSize, double dScale);
+	LineContribType *allocContributions(uint32 uLineLength, uint32 uWindowSize);
+	LineContribType *calcContributions(uint32 uLineSize, uint32 uSrcSize, double dScale);
 
-	void ScaleRow(uint32 *pSrc, uint32 uSrcWidth, uint32 *pRes, uint32 uResWidth, uint32 uRow, LineContribType *Contrib);
-	void HorizScale(uint32 *pSrc, uint32 uSrcWidth, uint32 uSrcHeight, uint32 *pDst, uint32 uResWidth, uint32 uResHeight);
-	void ScaleCol(uint32 *pSrc, uint32 uSrcWidth, uint32 *pRes, uint32 uResWidth, uint32 uResHeight, uint32 uCol, LineContribType *Contrib);
-	void VertScale(uint32 *pSrc, uint32 uSrcWidth, uint32 uSrcHeight, uint32 *pDst, uint32 uResWidth, uint32 uResHeight);
+	void scaleRow(uint32 *pSrc, uint32 uSrcWidth, uint32 *pRes, uint32 uResWidth, uint32 uRow, LineContribType *Contrib);
+	void horizScale(uint32 *pSrc, uint32 uSrcWidth, uint32 uSrcHeight, uint32 *pDst, uint32 uResWidth, uint32 uResHeight);
+	void scaleCol(uint32 *pSrc, uint32 uSrcWidth, uint32 *pRes, uint32 uResWidth, uint32 uResHeight, uint32 uCol, LineContribType *Contrib);
+	void vertScale(uint32 *pSrc, uint32 uSrcWidth, uint32 uSrcHeight, uint32 *pDst, uint32 uResWidth, uint32 uResHeight);
 
 	static inline byte make_r(uint32 col) {
 		return reinterpret_cast<byte *>(&col)[2];
@@ -86,16 +86,16 @@ private:
 };
 
 template<class FilterClass>
-LineContribType *C2PassScale<FilterClass>::AllocContributions(uint32 uLineLength, uint32 uWindowSize) {
+LineContribType *C2PassScale<FilterClass>::allocContributions(uint32 uLineLength, uint32 uWindowSize) {
 	static LineContribType line_ct;
 
-	line_ct.WindowSize = uWindowSize;
-	line_ct.LineLength = uLineLength;
+	line_ct.windowSize = uWindowSize;
+	line_ct.lineLength = uLineLength;
 
 	if (_contribution_buffer.size() < uLineLength)
 		_contribution_buffer.resize(uLineLength);
 
-	line_ct.ContribRow = &*_contribution_buffer.begin();
+	line_ct.contribRow = &*_contribution_buffer.begin();
 
 	if (_weights_buffer.size() < uLineLength * uWindowSize)
 		_weights_buffer.resize(uLineLength * uWindowSize);
@@ -103,14 +103,14 @@ LineContribType *C2PassScale<FilterClass>::AllocContributions(uint32 uLineLength
 	double *p = &*_weights_buffer.begin();
 
 	for (uint32 u = 0; u < uLineLength; u++) {
-		line_ct.ContribRow[u].Weights = p;
+		line_ct.contribRow[u].Weights = p;
 		p += uWindowSize;
 	}
 	return &line_ct;
 }
 
 template <class FilterClass>
-LineContribType *C2PassScale<FilterClass>::CalcContributions(uint32 uLineSize, uint32 uSrcSize, double dScale) {
+LineContribType *C2PassScale<FilterClass>::calcContributions(uint32 uLineSize, uint32 uSrcSize, double dScale) {
 	FilterClass CurFilter;
 
 	double dWidth;
@@ -128,7 +128,7 @@ LineContribType *C2PassScale<FilterClass>::CalcContributions(uint32 uLineSize, u
 	int iWindowSize = 2 * (int)ceil(dWidth) + 1;
 
 	// Allocate a new line contributions strucutre
-	LineContribType *res = AllocContributions(uLineSize, iWindowSize);
+	LineContribType *res = allocContributions(uLineSize, iWindowSize);
 
 	for (uint32 u = 0; u < uLineSize; u++) {
 		// Scan through line of contributions
@@ -146,20 +146,20 @@ LineContribType *C2PassScale<FilterClass>::CalcContributions(uint32 uLineSize, u
 			}
 		}
 
-		res->ContribRow[u].Left = iLeft;
-		res->ContribRow[u].Right = iRight;
+		res->contribRow[u].Left = iLeft;
+		res->contribRow[u].Right = iRight;
 
 		double dTotalWeight = 0.0;  // Zero sum of weights
 		for (int iSrc = iLeft; iSrc <= iRight; iSrc++) {
 			// Calculate weights
-			dTotalWeight += (res->ContribRow[u].Weights[iSrc - iLeft] = dFScale * CurFilter.Filter(dFScale * (dCenter - (double)iSrc)));
+			dTotalWeight += (res->contribRow[u].Weights[iSrc - iLeft] = dFScale * CurFilter.Filter(dFScale * (dCenter - (double)iSrc)));
 		}
 		ASSERT(dTotalWeight >= 0.0);   // An error in the filter function can cause this
 		if (dTotalWeight > 0.0) {
 			// Normalize weight of neighbouring points
 			for (int iSrc = iLeft; iSrc <= iRight; iSrc++) {
 				// Normalize point
-				res->ContribRow[u].Weights[iSrc - iLeft] /= dTotalWeight;
+				res->contribRow[u].Weights[iSrc - iLeft] /= dTotalWeight;
 			}
 		}
 	}
@@ -167,7 +167,7 @@ LineContribType *C2PassScale<FilterClass>::CalcContributions(uint32 uLineSize, u
 }
 
 template <class FilterClass>
-void C2PassScale<FilterClass>::ScaleRow(uint32 *pSrc, uint32 uSrcWidth, uint32 *pRes, uint32 uResWidth, uint32 uRow, LineContribType *Contrib) {
+void C2PassScale<FilterClass>::scaleRow(uint32 *pSrc, uint32 uSrcWidth, uint32 *pRes, uint32 uResWidth, uint32 uRow, LineContribType *Contrib) {
 	uint32 *pSrcRow = &(pSrc[uRow * uSrcWidth]);
 	uint32 *pDstRow = &(pRes[uRow * uResWidth]);
 	for (uint32 x = 0; x < uResWidth; x++) {
@@ -177,15 +177,15 @@ void C2PassScale<FilterClass>::ScaleRow(uint32 *pSrc, uint32 uSrcWidth, uint32 *
 		double db = 0.0;
 		double da = 0.0;
 
-		int iLeft = Contrib->ContribRow[x].Left;    // Retrieve left boundries
-		int iRight = Contrib->ContribRow[x].Right;  // Retrieve right boundries
+		int iLeft = Contrib->contribRow[x].Left;    // Retrieve left boundries
+		int iRight = Contrib->contribRow[x].Right;  // Retrieve right boundries
 		for (int i = iLeft; i <= iRight; i++) {
 			// Scan between boundries
 			// Accumulate weighted effect of each neighboring pixel
-			dr += Contrib->ContribRow[x].Weights[i - iLeft] * (double)(make_r(pSrcRow[i]));
-			dg += Contrib->ContribRow[x].Weights[i - iLeft] * (double)(make_g(pSrcRow[i]));
-			db += Contrib->ContribRow[x].Weights[i - iLeft] * (double)(make_b(pSrcRow[i]));
-			da += Contrib->ContribRow[x].Weights[i - iLeft] * (double)(make_a(pSrcRow[i]));
+			dr += Contrib->contribRow[x].Weights[i - iLeft] * (double)(make_r(pSrcRow[i]));
+			dg += Contrib->contribRow[x].Weights[i - iLeft] * (double)(make_g(pSrcRow[i]));
+			db += Contrib->contribRow[x].Weights[i - iLeft] * (double)(make_b(pSrcRow[i]));
+			da += Contrib->contribRow[x].Weights[i - iLeft] * (double)(make_a(pSrcRow[i]));
 		}
 
 		uint32 r = round(dr);
@@ -198,7 +198,7 @@ void C2PassScale<FilterClass>::ScaleRow(uint32 *pSrc, uint32 uSrcWidth, uint32 *
 }
 
 template <class FilterClass>
-void C2PassScale<FilterClass>::HorizScale(uint32 *pSrc, uint32 uSrcWidth, uint32 uSrcHeight, uint32 *pDst, uint32 uResWidth, uint32 uResHeight) {
+void C2PassScale<FilterClass>::horizScale(uint32 *pSrc, uint32 uSrcWidth, uint32 uSrcHeight, uint32 *pDst, uint32 uResWidth, uint32 uResHeight) {
 	TRACE("Performing horizontal scaling...\n");
 	if (uResWidth == uSrcWidth) {
 		// No scaling required, just copy
@@ -206,13 +206,13 @@ void C2PassScale<FilterClass>::HorizScale(uint32 *pSrc, uint32 uSrcWidth, uint32
 		return;
 	}
 	// Allocate and calculate the contributions
-	LineContribType *Contrib = CalcContributions(uResWidth, uSrcWidth, double(uResWidth) / double(uSrcWidth));
+	LineContribType *Contrib = calcContributions(uResWidth, uSrcWidth, double(uResWidth) / double(uSrcWidth));
 	for (uint32 u = 0; u < uResHeight; u++)
-		ScaleRow(pSrc, uSrcWidth, pDst, uResWidth, u, Contrib); // Scale each row
+		scaleRow(pSrc, uSrcWidth, pDst, uResWidth, u, Contrib); // Scale each row
 }
 
 template <class FilterClass>
-void C2PassScale<FilterClass>::ScaleCol(uint32 *pSrc, uint32 uSrcWidth, uint32 *pRes, uint32 uResWidth, uint32 uResHeight, uint32 uCol, LineContribType *Contrib) {
+void C2PassScale<FilterClass>::scaleCol(uint32 *pSrc, uint32 uSrcWidth, uint32 *pRes, uint32 uResWidth, uint32 uResHeight, uint32 uCol, LineContribType *Contrib) {
 	for (uint32 y = 0; y < uResHeight; y++) {
 		// Loop through column
 		double dr = 0.0;
@@ -220,16 +220,16 @@ void C2PassScale<FilterClass>::ScaleCol(uint32 *pSrc, uint32 uSrcWidth, uint32 *
 		double db = 0.0;
 		double da = 0.0;
 
-		int iLeft = Contrib->ContribRow[y].Left;    // Retrieve left boundries
-		int iRight = Contrib->ContribRow[y].Right;  // Retrieve right boundries
+		int iLeft = Contrib->contribRow[y].Left;    // Retrieve left boundries
+		int iRight = Contrib->contribRow[y].Right;  // Retrieve right boundries
 		for (int i = iLeft; i <= iRight; i++) {
 			// Scan between boundries
 			// Accumulate weighted effect of each neighboring pixel
 			uint32 pCurSrc = pSrc[i * uSrcWidth + uCol];
-			dr += Contrib->ContribRow[y].Weights[i - iLeft] * (double)(make_r(pCurSrc));
-			dg += Contrib->ContribRow[y].Weights[i - iLeft] * (double)(make_g(pCurSrc));
-			db += Contrib->ContribRow[y].Weights[i - iLeft] * (double)(make_b(pCurSrc));
-			da += Contrib->ContribRow[y].Weights[i - iLeft] * (double)(make_a(pCurSrc));
+			dr += Contrib->contribRow[y].Weights[i - iLeft] * (double)(make_r(pCurSrc));
+			dg += Contrib->contribRow[y].Weights[i - iLeft] * (double)(make_g(pCurSrc));
+			db += Contrib->contribRow[y].Weights[i - iLeft] * (double)(make_b(pCurSrc));
+			da += Contrib->contribRow[y].Weights[i - iLeft] * (double)(make_a(pCurSrc));
 		}
 
 		uint32 r = round(dr);
@@ -242,7 +242,7 @@ void C2PassScale<FilterClass>::ScaleCol(uint32 *pSrc, uint32 uSrcWidth, uint32 *
 }
 
 template <class FilterClass>
-void C2PassScale<FilterClass>::VertScale(uint32 *pSrc, uint32 uSrcWidth, uint32 uSrcHeight, uint32 *pDst, uint32 uResWidth, uint32 uResHeight) {
+void C2PassScale<FilterClass>::vertScale(uint32 *pSrc, uint32 uSrcWidth, uint32 uSrcHeight, uint32 *pDst, uint32 uResWidth, uint32 uResHeight) {
 	TRACE("Performing vertical scaling...");
 
 	if (uSrcHeight == uResHeight) {
@@ -251,21 +251,21 @@ void C2PassScale<FilterClass>::VertScale(uint32 *pSrc, uint32 uSrcWidth, uint32 
 		return;
 	}
 	// Allocate and calculate the contributions
-	LineContribType *Contrib = CalcContributions(uResHeight, uSrcHeight, double(uResHeight) / double(uSrcHeight));
+	LineContribType *Contrib = calcContributions(uResHeight, uSrcHeight, double(uResHeight) / double(uSrcHeight));
 	for (uint32 u = 0; u < uResWidth; u++)
-		ScaleCol(pSrc, uSrcWidth, pDst, uResWidth, uResHeight, u, Contrib); // Scale each column
+		scaleCol(pSrc, uSrcWidth, pDst, uResWidth, uResHeight, u, Contrib); // Scale each column
 }
 
 template <class FilterClass>
-uint32 *C2PassScale<FilterClass>::Scale(uint32 *pOrigImage, uint32 uOrigWidth, uint32 uOrigHeight, uint32 *pDstImage, uint32 uNewWidth, uint32 uNewHeight) {
+uint32 *C2PassScale<FilterClass>::scale(uint32 *pOrigImage, uint32 uOrigWidth, uint32 uOrigHeight, uint32 *pDstImage, uint32 uNewWidth, uint32 uNewHeight) {
 	if (_temp_buffer.size() < uNewWidth * uOrigHeight)
 		_temp_buffer.resize(uNewWidth * uOrigHeight);
 
 	uint32 *pTemp = reinterpret_cast<uint32 *>(&*_temp_buffer.begin());
-	HorizScale(pOrigImage, uOrigWidth, uOrigHeight, pTemp, uNewWidth, uOrigHeight);
+	horizScale(pOrigImage, uOrigWidth, uOrigHeight, pTemp, uNewWidth, uOrigHeight);
 
 	// Scale temporary image vertically into result image
-	VertScale(pTemp, uNewWidth, uOrigHeight, pDstImage, uNewWidth, uNewHeight);
+	vertScale(pTemp, uNewWidth, uOrigHeight, pDstImage, uNewWidth, uNewHeight);
 
 	return pDstImage;
 }
