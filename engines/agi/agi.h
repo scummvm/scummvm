@@ -261,6 +261,7 @@ enum AgiMonitorType {
  */
 enum AgiComputerType {
 	kAgiComputerPC = 0,
+	kAgiComputerApple2 = 3,
 	kAgiComputerAtariST = 4,
 	kAgiComputerAmiga = 5,
 	kAgiComputerApple2GS = 7
