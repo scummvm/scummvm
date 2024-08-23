@@ -115,7 +115,7 @@ LineContribType *C2PassScale<FilterClass>::calcContributions(uint32 uLineSize, u
 
 	double dWidth;
 	double dFScale = 1.0;
-	double dFilterWidth = curFilter.GetWidth();
+	double dFilterWidth = curFilter.getWidth();
 
 	if (dScale < 1.0) { // Minification
 		dWidth = dFilterWidth / dScale;
@@ -152,7 +152,7 @@ LineContribType *C2PassScale<FilterClass>::calcContributions(uint32 uLineSize, u
 		double dTotalWeight = 0.0;  // Zero sum of weights
 		for (int iSrc = iLeft; iSrc <= iRight; iSrc++) {
 			// Calculate weights
-			dTotalWeight += (res->contribRow[u].weights[iSrc - iLeft] = dFScale * curFilter.Filter(dFScale * (dCenter - (double)iSrc)));
+			dTotalWeight += (res->contribRow[u].weights[iSrc - iLeft] = dFScale * curFilter.filter(dFScale * (dCenter - (double)iSrc)));
 		}
 		ASSERT(dTotalWeight >= 0.0);   // An error in the filter function can cause this
 		if (dTotalWeight > 0.0) {
