@@ -40,7 +40,7 @@ grFont::grFont() : _alpha_buffer(NULL) {
 }
 
 grFont::~grFont() {
-	delete _alpha_buffer;
+	delete[] _alpha_buffer;
 }
 
 bool grFont::load(const Common::Path fname) {
