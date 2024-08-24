@@ -93,7 +93,7 @@ bool qdInterfaceButton::activate_state(int state_num) {
 
 	_cur_state = state_num;
 
-	if (state_num >= 0 && state_num < (int)_states.size())
+	if (state_num < (int)_states.size())
 		return set_state(get_state(state_num));
 
 	return true;
