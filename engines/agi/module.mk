@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	checks.o \
 	console.o \
 	cycle.o \
+	disk_image.o \
 	font.o \
 	global.o \
 	graphics.o \
@@ -57,3 +58,10 @@ DETECT_OBJS += $(MODULE)/detection.o
 # This is unneeded by the engine module itself,
 # so separate it completely.
 DETECT_OBJS += $(MODULE)/wagparser.o
+
+# Skip building the following objects if a static
+# module is enabled, because it already has the contents.
+ifneq ($(ENABLE_AGI), STATIC_PLUGIN)
+# External dependencies for detection.
+DETECT_OBJS += $(MODULE)/disk_image.o
+endif

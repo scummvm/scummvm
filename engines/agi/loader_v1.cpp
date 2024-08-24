@@ -80,16 +80,8 @@ void AgiLoader_v1::init() {
 	uint diskOneIndex;
 	for (diskOneIndex = 0; diskOneIndex < imageFiles.size(); diskOneIndex++) {
 		const Common::Path &imageFile = imageFiles[diskOneIndex];
-		Common::SeekableReadStream *stream = fileMap[imageFile].createReadStream();
+		Common::SeekableReadStream *stream = openPCDiskImage(imageFile, fileMap[imageFile]);
 		if (stream == nullptr) {
-			warning("AgiLoader_v1: unable to open disk image: %s", imageFile.baseName().c_str());
-			continue;
-		}
-
-		// image file size must be 360k
-		int32 fileSize = stream->size();
-		if (fileSize != PC_DISK_SIZE) {
-			delete stream;
 			continue;
 		}
 
@@ -139,26 +131,17 @@ void AgiLoader_v1::init() {
 		uint diskTwoIndex = (diskOneIndex + i) % imageFiles.size();
 		Common::Path &imageFile = imageFiles[diskTwoIndex];
 
-		Common::SeekableReadStream *stream = fileMap[imageFile].createReadStream();
+		Common::SeekableReadStream *stream = openPCDiskImage(imageFile, fileMap[imageFile]);
 		if (stream == nullptr) {
-			warning("AgiLoader_v1: unable to open disk image: %s", imageFile.baseName().c_str());
-			continue;
-		}
-
-		// image file size must be 360k
-		int64 fileSize = stream->size();
-		if (fileSize != PC_DISK_SIZE) {
-			delete stream;
 			continue;
 		}
 
 		// read resource header
 		uint16 magic = stream->readUint16BE();
 		byte volume = stream->readByte();
-		uint16 size = stream->readUint16LE();
 		delete stream;
 
-		if (magic == 0x1234 && volume == 2 && 5 + size <= PC_DISK_SIZE) {
+		if (magic == 0x1234 && volume == 2) {
 			debugC(3, "AgiLoader_v1: disk two found: %s", imageFile.baseName().c_str());
 			_imageFiles.push_back(imageFile.baseName());
 			_volumes.push_back(AgiDiskVolume(_imageFiles.size() - 1, 0));

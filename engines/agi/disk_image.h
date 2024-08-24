@@ -22,6 +22,11 @@
 #ifndef AGI_DISK_IMAGE_H
 #define AGI_DISK_IMAGE_H
 
+namespace Common {
+class SeekableReadStream;
+class Path;
+}
+
 namespace Agi {
 
 // PC disk image values and helpers for AgiLoader_v1 and AgiMetaEngineDetection
@@ -57,7 +62,7 @@ static const char * const pcDiskImageExtensions[] = { ".ima", ".img" };
 // A2 disk image values and helpers for AgiLoader_A2 and AgiMetaEngineDetection
 
 // Disk image detection requires that image files have a known extension
-static const char * const a2DiskImageExtensions[] = { ".do", ".dsk" };
+static const char * const a2DiskImageExtensions[] = { ".do", ".dsk", ".img", ".nib", ".woz" };
 
 #define A2_DISK_SIZE                     (35 * 16 * 256)
 #define A2_DISK_POSITION(t, s, o)        ((((t * 16) + s) * 256) + o)
@@ -92,6 +97,9 @@ static const char * const a2DiskImageExtensions[] = { ".do", ".dsk" };
 #define A2_BC_VOLUME_MAP_POSITION        A2_DISK_POSITION(7,  11, 254)
 #define A2_BC_DISK_COUNT                 5
 #define A2_BC_VOLUME_COUNT               9
+
+Common::SeekableReadStream *openPCDiskImage(const Common::Path &path, const Common::FSNode &node);
+Common::SeekableReadStream *openA2DiskImage(const Common::Path &path, const Common::FSNode &node, bool loadAllTracks = true);
 
 } // End of namespace Agi
 

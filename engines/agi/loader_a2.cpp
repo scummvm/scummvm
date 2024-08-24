@@ -24,7 +24,9 @@
 #include "agi/words.h"
 
 #include "common/config-manager.h"
+#include "common/formats/disk_image.h"
 #include "common/fs.h"
+#include "common/memstream.h"
 
 namespace Agi {
 
@@ -33,9 +35,8 @@ namespace Agi {
 // Floppy disks have two sides; each side is a disk with its own image file.
 // All disk sides are 140k with 35 tracks and 16 sectors per track.
 //
-// Currently, the only supported image format is "raw", with sectors in logical
-// order. Each image file must be exactly 143,360 bytes.
-// TODO: Add support for other image formats with ADL's disk iamge code.
+// Multiple disk image formats are supported; see Common::DiskImage. The file
+// extension determines the format. For example: .do, .dsk, .nib, .woz.
 //
 // The disks do not use a standard file system. Instead, file locations are
 // stored in an INITDIR structure at a fixed location. KQ2 and BC don't have
@@ -59,6 +60,12 @@ namespace Agi {
 
 typedef Common::HashMap<Common::Path, Common::FSNode, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> FileMap;
 
+AgiLoader_A2::~AgiLoader_A2() {
+	for (uint d = 0; d < _disks.size(); d++) {
+		delete _disks[d];
+	}
+}
+
 void AgiLoader_A2::init() {
 	// get all files in game directory
 	Common::FSList allFiles;
@@ -77,6 +84,7 @@ void AgiLoader_A2::init() {
 				Common::Path path = file.getPath();
 				imageFiles.push_back(path);
 				fileMap[path] = file;
+				break;
 			}
 		}
 	}
@@ -90,28 +98,21 @@ void AgiLoader_A2::init() {
 	uint diskOneIndex;
 	for (diskOneIndex = 0; diskOneIndex < imageFiles.size(); diskOneIndex++) {
 		const Common::Path &imageFile = imageFiles[diskOneIndex];
-		Common::SeekableReadStream *stream = fileMap[imageFile].createReadStream();
+		Common::SeekableReadStream *stream = openA2DiskImage(imageFile, fileMap[imageFile]);
 		if (stream == nullptr) {
 			warning("AgiLoader_A2: unable to open disk image: %s", imageFile.baseName().c_str());
 			continue;
 		}
 
-		// image file size must be 140k
-		int64 fileSize = stream->size();
-		if (fileSize != A2_DISK_SIZE) {
-			delete stream;
-			continue;
-		}
-
 		// read image as disk one
 		diskCount = readDiskOne(*stream, volumeMap);
-		delete stream;
-
 		if (diskCount > 0) {
 			debugC(3, "AgiLoader_A2: disk one found: %s", imageFile.baseName().c_str());
-			_imageFiles.resize(diskCount);
-			_imageFiles[0] = imageFile.baseName();
+			_disks.resize(diskCount);
+			_disks[0] = stream;
 			break;
+		} else {
+			delete stream;
 		}
 	}
 
@@ -132,23 +133,16 @@ void AgiLoader_A2::init() {
 		uint imageFileIndex = (diskOneIndex + i) % imageFiles.size();
 		Common::Path &imageFile = imageFiles[imageFileIndex];
 
-		Common::SeekableReadStream *stream = fileMap[imageFile].createReadStream();
+		Common::SeekableReadStream *stream = openA2DiskImage(imageFile, fileMap[imageFile]);
 		if (stream == nullptr) {
-			warning("AgiLoader_A2: unable to open disk image: %s", imageFile.baseName().c_str());
-			continue;
-		}
-
-		// image file size must be 140k
-		int32 fileSize = stream->size();
-		if (fileSize != A2_DISK_SIZE) {
-			delete stream;
 			continue;
 		}
 
 		// check each disk
+		bool diskFound = false;
 		for (int d = 1; d < diskCount; d++) {
 			// has disk already been found?
-			if (!_imageFiles[d].empty()) {
+			if (_disks[d] != nullptr) {
 				continue;
 			}
 
@@ -173,13 +167,16 @@ void AgiLoader_A2::init() {
 			}
 
 			if (match) {
-				_imageFiles[d] = imageFile.baseName();
+				_disks[d] = stream;
 				disksFound++;
+				diskFound = true;
 				break;
 			}
 		}
 
-		delete stream;
+		if (!diskFound) {
+			delete stream;
+		}
 	}
 
 	// populate _volumes with the locations of the ones we will use.
@@ -332,21 +329,18 @@ bool AgiLoader_A2::readVolumeMap(
 
 int AgiLoader_A2::loadDirs() {
 	// if init didn't find disks then fail
-	if (_imageFiles.empty()) {
+	if (_disks.empty()) {
 		return errFilesNotFound;
 	}
-	for (uint32 i = 0; i < _imageFiles.size(); i++) {
-		if (_imageFiles.empty()) {
-			warning("AgiLoader_A2: disk %d not found", i);
+	for (uint d = 0; d < _disks.size(); d++) {
+		if (_disks[d] == nullptr) {
+			warning("AgiLoader_A2: disk %d not found", d);
 			return errFilesNotFound;
 		}
 	}
 
-	// open disk one
-	Common::File disk;
-	if (!disk.open(Common::Path(_imageFiles[0]))) {
-		return errBadFileOpen;
-	}
+	// all dirs are on disk one
+	Common::SeekableReadStream &disk = *_disks[0];
 
 	// detect dir format
 	A2DirVersion dirVersion = detectDirVersion(disk);
@@ -388,7 +382,7 @@ A2DirVersion AgiLoader_A2::detectDirVersion(Common::SeekableReadStream &stream) 
 	return A2DirVersionOld;
 }
 
-bool AgiLoader_A2::loadDir(AgiDir *dir, Common::File &disk, uint32 dirOffset, uint32 dirLength, A2DirVersion dirVersion) {
+bool AgiLoader_A2::loadDir(AgiDir *dir, Common::SeekableReadStream &disk, uint32 dirOffset, uint32 dirLength, A2DirVersion dirVersion) {
 	// seek to directory on disk
 	disk.seek(dirOffset);
 
@@ -440,12 +434,8 @@ uint8 *AgiLoader_A2::loadVolumeResource(AgiDir *agid) {
 		return nullptr;
 	}
 
-	Common::File disk;
 	int diskIndex = _volumes[agid->volume].disk;
-	if (!disk.open(Common::Path(_imageFiles[diskIndex]))) {
-		warning("AgiLoader_A2: unable to open disk image: %s", _imageFiles[diskIndex].c_str());
-		return nullptr;
-	}
+	Common::SeekableReadStream &disk = *_disks[diskIndex];
 
 	// seek to resource and validate header
 	int offset = _volumes[agid->volume].offset + agid->offset;
@@ -469,22 +459,22 @@ uint8 *AgiLoader_A2::loadVolumeResource(AgiDir *agid) {
 }
 
 int AgiLoader_A2::loadObjects() {
-	Common::File disk;
-	if (!disk.open(Common::Path(_imageFiles[0]))) {
-		return errBadFileOpen;
+	if (_disks.empty()) {
+		return errFilesNotFound;
 	}
 
+	Common::SeekableReadStream &disk = *_disks[0];
 	disk.seek(_objects.offset);
 	return _vm->loadObjects(disk, _objects.len);
 }
 
 int AgiLoader_A2::loadWords() {
-	Common::File disk;
-	if (!disk.open(Common::Path(_imageFiles[0]))) {
-		return errBadFileOpen;
+	if (_disks.empty()) {
+		return errFilesNotFound;
 	}
 
 	// TODO: pass length and validate in parser
+	Common::SeekableReadStream &disk = *_disks[0];
 	disk.seek(_words.offset);
 	if (_vm->getVersion() < 0x2000) {
 		return _vm->_words->loadDictionary_v1(disk);

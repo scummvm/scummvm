@@ -95,16 +95,14 @@ int AgiEngine::loadObjects(const char *fname) {
  * @param  fp    File pointer
  * @param  flen  File length
  */
-int AgiEngine::loadObjects(Common::File &fp, int flen) {
+int AgiEngine::loadObjects(Common::SeekableReadStream &fp, int flen) {
 	uint8 *mem;
 
 	if ((mem = (uint8 *)calloc(1, flen + 32)) == nullptr) {
-		fp.close();
 		return errNotEnoughMemory;
 	}
 
 	fp.read(mem, flen);
-	fp.close();
 
 	decodeObjects(mem, flen);
 	free(mem);
