@@ -116,10 +116,10 @@ public:
 	/** The name of keymapper domain used to store the key maps. */
 	static char const *const kKeymapperDomain;
 
-	/** The name of the session domain where configs are put 
-	 * for the entire session or until they are overwritten or removed. 
+	/** The name of the session domain where configs are put
+	 * for the entire session or until they are overwritten or removed.
 	 * These settings don't get saved to disk. */
-	static char const *const kSessionDomain; 
+	static char const *const kSessionDomain;
 
 #ifdef USE_CLOUD
 	/** The name of cloud domain used to store the user's tokens. */
@@ -245,7 +245,7 @@ private:
 
 	Domain			_keymapperDomain;
 
-	Domain          _sessionDomain; 	
+	Domain          _sessionDomain;
 
 #ifdef USE_CLOUD
 	Domain			_cloudDomain;
