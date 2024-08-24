@@ -27,6 +27,50 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+static const char *const SAID[][2] = {
+	{ "WATER",       "407R99M" },
+	{ "WATER ",      "407R99M" },
+	{ "WATER  ",     "407R99M" },
+	{ "BUTTONS",     "407R99G" },
+	{ "BUTTON",      "407R99G" },
+	{ "BUTTON ",     "407R99G" },
+	{ "BUTTON  ",    "407R99G" },
+	{ "BUTTON   ",   "407R99G" },
+	{ "HIDDEN DOOR", "407R02" },
+	{ "WORK TABLE",  "407R03" },
+	{ "DRAWER",      "407R04" },
+	{ "SINK",        "407R05" },
+	{ "PISTON ON TABLE", "407R11" },
+	{ "PUMP",        "407R12a" },
+	{ "COMPRESSED AIR TANK", "407R14" },
+	{ "LARGE GEAR",  "407R20" },
+	{ "ARMORED CABINET", "407R23" },
+	{ "METAL DOOR",  "407R27" },
+	{ "SHELVES",     "407R29" },
+	{ "SURGICAL TUBE ", "407R86" },
+	{ "SURGICAL TUBE  ", "407R90" },
+	{ "SURGICAL TUBE   ", "407R31" },
+	{ "GARDEN HOSE ",  "407R85" },
+	{ "GARDEN HOSE  ", "407R91" },
+	{ "GARDEN HOSE   ", "407R87" },
+	{ "GLASS JAR ",    "407R15A" },
+	{ "FAUCET PIPE  ", "407R92" },
+	{ "FAUCET PIPE   ", "407R07" },
+	{ "FAUCET STEM",    "407R07" },
+	{ "JAR/RUBBER PLUG ", "407R77" },
+	{ "JAR/CORK ",        "407R78" },
+	{ "JAR/CORK/PLUG ",   "407R79" },
+	{ "JAR/GRIPS ",       "407R80" },
+	{ "JAR/PLUG/GRIPS ",  "407R81" },
+	{ "JAR/PLUG/CORK/GRIPS ", "407R83" },
+	{ "FAUCET PIPE/HOSE ", "407R94" },
+	{ "FAUCET PIPE/HOSE/TUBE ", "407R95" },
+	{ "MICROSCOPE",        "407R60" },
+	{ "PERIODIC TABLE ",   "407R99C" },
+	{ " ",                 "407R01" },
+	{ nullptr, nullptr }
+};
+
 void Room407::preload() {
 	_G(player).walker_type = 1;
 	_G(player).shadow_type = 1;
@@ -710,7 +754,82 @@ void Room407::pre_parser() {
 }
 
 void Room407::parser() {
+	bool lookFlag = player_said_any("look", "look at");
+	bool takeFlag = player_said("take");
+	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
+
+	if (lookFlag && _G(walker).ripley_said(SAID)) {
+		// No implementation
+	} else if (lookFlag && player_said("ROMANOV EMERALD")) {
+		lookItem("PING ROMANOV EMERALD", "407R34");
+	} else if (lookFlag && player_said("JAR/RUBBER PLUG")) {
+		lookItem("PING JAR/RUBBER PLUG", "407R77");
+	} else if (lookFlag && player_said("JAR/CORK")) {
+		lookItem("PING JAR/CORK", "407R78");
+	} else if (lookFlag && player_said("JAR/CORK/PLUG")) {
+		lookItem("PING JAR/CORK/PLUG", "407R79");
+	} else if (lookFlag && player_said("JAR/GRIPS")) {
+		lookItem("PING JAR/GRIPS", "407R80");
+	} else if (lookFlag && player_said("JAR/PLUG/GRIPS")) {
+		lookItem("PING JAR/PLUG/GRIPS", "407R81");
+	} else if (lookFlag && player_said("JAR/CORK/GRIPS")) {
+		lookItem("PING JAR/CORK/GRIPS", "407R82");
+	} else if (lookFlag && player_said("JAR/PLUG/CORK/GRIPS")) {
+		lookItem("PING JAR/PLUG/CORK/GRIPS", "407R83");
+	} else if (lookFlag && player_said("TUBE/HOSE")) {
+		lookItem("PING TUBE/HOSE", "407R93");
+	} else if (lookFlag && player_said("FAUCET PIPE/HOSE")) {
+		lookItem("PING FAUCET PIPE/HOSE", "407R94");
+	} else if (lookFlag && player_said("FAUCET PIPE ")) {
+		digi_play((_xyzzy3 == 1116) ? "407R86" : "407R07", 1);
+	} else if (lookFlag && player_said("FAUCET PIPE/HOSE/TUBE")) {
+		lookItem("PING FAUCET PIPE/HOSE/TUBE", "407R95");
+	} else if ((useFlag && player_said("MICROSCOPE")) ||
+			player_said("ROMANOV EMERALD", "MICROSCOPE")) {
+		useMicroscope();
+	} else if (lookFlag && player_said("LETTER") &&
+			inv_object_is_here("MENENDEZ'S LETTER")) {
+		digi_play("407r38", 1);
+	} else if (lookFlag && player_said("SURGICAL TUBE") &&
+			inv_object_is_here("SURGICAL TUBE")) {
+		digi_play("407r31", 1);
+	} else if (lookFlag && player_said("WALL PISTON")) {
+		digi_play("407r99r", 1);
+	} else if (lookFlag && player_said("PUMP ROD ")) {
+		digi_play("407r13", 1);
+	} else if (lookFlag && player_said("LEVER KEY  ")) {
+		lookLeverKey();
+		digi_play("407r26a", 1);
+	} else if (lookFlag && player_said("RUBBER PLUG") &&
+			inv_object_is_here("RUBBER PLUG")) {
+		digi_play("407r06", 1);
+	} else if (lookFlag && player_said("JAR/RUBBER PLUG") &&
+			inv_object_is_here("JAR/RUBBER PLUG")) {
+		if (_xyzzy7 == 1112)
+			lookGlassBottom();
+		digi_play("407r77", 1);
+	} else if (lookFlag && player_said("FAUCET PIPE") &&
+			inv_object_is_here("FAUCET PIPE")) {
+		digi_play("407r07", 1);
+	} else if (lookFlag && player_said("SURGICAL TUBE   ") &&
+			inv_object_is_here("SURGICAL TUBE")) {
+		digi_play("407r31", 1);
+	} else if (lookFlag && player_said("FAUCET HANDLE") &&
+			inv_object_is_here("FAUCET HANDLE")) {
+		digi_play("407r08", 1);
+	} else if (lookFlag && player_said("TABLE PIVOT")) {
+		lookPivot();
+		digi_play("407r09", 1);
+	} else if (lookFlag && player_said("NOZZLES")) {
+		lookNozzles();
+		digi_play("407r10", 1);
+	}
 	// TODO
+	else {
+		return;
+	}
+
+	_G(player).command_ready = false;
 }
 
 void Room407::setHotspots() {
@@ -860,6 +979,127 @@ void Room407::setHotspots() {
 					hotspot_set_active("WATER  ", true);
 			}
 		}
+	}
+}
+
+void Room407::lookItem(const char *item, const char *digi) {
+	switch (_G(kernel).trigger) {
+	case -1:
+		kernel_examine_inventory_object(item, _G(master_palette),
+			5, 1, 175, 150, 1, digi, -1);
+		break;
+	case 1:
+		player_set_commands_allowed(true);
+		break;
+	default:
+		break;
+	}
+}
+
+void Room407::useMicroscope() {
+	if (_G(kernel).trigger == -1) {
+		_val16 = 1030;
+
+		if (player_said("ROMANOV EMERALD", "MICROSCOPE")) {
+			_frotz5 = 1;
+			_microscopeCloseup = series_place_sprite("407 MICROSCOPE CLOSEUP",
+				0, 200, 150, 100, 0x200);
+			digi_play("407r42", 1);
+		} else {
+			_microscopeCloseup = series_place_sprite("407pu07A", 0, 0, 0, 100, 0x200);
+		}
+
+		hotspot_set_active(" ", true);
+		player_set_commands_allowed(true);
+	}
+}
+
+void Room407::lookLeverKey() {
+	if (_G(kernel).trigger == -1) {
+		_int5 = 1030;
+		_roofPiston = series_place_sprite("407 ROOF PISTON/BRACE",
+			0, 0, 0, 100, 0x200);
+
+		if (_val10 == 1114) {
+			_tabletopPopupWithItems3 = series_place_sprite(
+				"407 ROOF PISTON WITH ITEMS", 1, 0, 0, 100, 0x100);
+		}
+
+		if (_xyzzy1 == 1114) {
+			_roofPistonWithItems = series_place_sprite(
+				"407 ROOF PISTON WITH ITEMS", 0, 0, 0, 100, 0);
+		}
+
+		hotspot_set_active(" ", true);
+		player_set_commands_allowed(true);
+	}
+}
+
+void Room407::lookGlassBottom() {
+	if (_G(kernel).trigger == -1) {
+		_int4 = 1030;
+		_glassTopPopup = series_place_sprite(
+			"407 GLASS BOTTOM POPUP", 0, 0, 0, 100, 0x200);
+
+		if (_xyzzy6 == 1116)
+			_glassTopPopupWithItems2 = series_place_sprite(
+				"407 GLS BOTTOM PU WITH ITEMS", 0, 0, 0, 100, 0x100);
+
+		if (_xyzzy8 == 1116)
+			_glassBottomWithItems1 = series_place_sprite(
+				"407 GLS BOTTOM PU WITH ITEMS", 1, 0, 0, 100, 0x100);
+
+		if (_xyzzy5 == 1116)
+			_glassBottomWithItems2 = series_place_sprite(
+				"407 GLS BOTTOM PU WITH ITEMS", 4, 0, 0, 100, 0x100);
+
+		if (_val10 == 1113)
+			_tabletopPopupWithItems3 = series_place_sprite(
+				"407 GLS BOTTOM PU WITH ITEMS", 1, 0, 0, 100, 0x100);
+
+		hotspot_set_active(" ", true);
+		player_set_commands_allowed(true);
+	}
+}
+
+void Room407::lookPivot() {
+	if (_G(kernel).trigger == -1) {
+		_int1 = 1030;
+		_pivotPopup = series_place_sprite("407 PIVOT POPUP",
+			0, 0, 0, 100, 0x200);
+
+		if (_val10 == 1113)
+			_tabletopPopupWithItems3 = series_place_sprite(
+				"407 TABLE PIVOT WITH LEVER", 0, 0, 0, 100, 0x200);
+
+		disableHotspots();
+		hotspot_set_active(" ", true);
+		player_set_commands_allowed(true);
+	}
+}
+
+void Room407::lookNozzles() {
+	if (_G(kernel).trigger == -1) {
+		_frotz10 = 1030;
+		_tabletopPopup = series_place_sprite("407 TABLETOP POPUP",
+			0, 0, 0, 100, 0x200);
+		disableHotspots();
+		hotspot_set_active(" ", true);
+
+		if (_xyzzy3 == 1117)
+			_tabletopPopupWithItems1 = series_place_sprite(
+				"407 TABLETOP POPUP WITH ITEMS", 0, 0, 0, 100, 0);
+
+		if (_val9 == 1110)
+			_tabletopPopupWithItems2 = series_place_sprite(
+				"407 TABLETOP POPUP WITH ITEMS",
+				(_val3 == 1010) ? 1 : 2, 0, 0, 100, 0x100);
+
+		if (_val10 == 1113)
+			_tabletopPopupWithItems3 = series_place_sprite(
+				"407 TABLETOP POPUP WITH ITEMS", 0, 0, 0, 100, 0x100);
+
+		player_set_commands_allowed(true);
 	}
 }
 

@@ -154,7 +154,7 @@ void kernel_timing_trigger(int32 ticks, int16 trigger,
 void kernel_timing_trigger_daemon(int32 ticks, int16 trigger) {
 	KernelTriggerType oldMode = _G(kernel).trigger_mode;
 	_G(kernel).trigger_mode = KT_DAEMON;
-	kernel_timing_trigger(ticks, trigger);
+	kernel_timing_trigger(ticks, trigger, nullptr);
 	_G(kernel).trigger_mode = oldMode;
 }
 

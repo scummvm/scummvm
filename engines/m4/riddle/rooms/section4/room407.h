@@ -124,8 +124,15 @@ private:
 	int _ripEnters = 0;
 	int _stair = 0;
 	machine *_ripley = nullptr;
+	machine *_microscopeCloseup = nullptr;
 
 	void setHotspots();
+	void lookItem(const char *item, const char *digi);
+	void useMicroscope();
+	void lookLeverKey();
+	void lookGlassBottom();
+	void lookPivot();
+	void lookNozzles();
 
 public:
 	Room407() : Room() {}
