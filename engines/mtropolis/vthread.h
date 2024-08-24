@@ -26,6 +26,8 @@
 
 namespace MTropolis {
 
+class VThread;
+
 // Virtual thread, really a task stack
 enum VThreadState {
 	kVThreadReturn,
@@ -49,9 +51,7 @@ public:
 	VThreadTaskData();
 	virtual ~VThreadTaskData();
 
-	virtual VThreadState destructAndRunTask() = 0;
-	virtual void relocateTo(void *newPosition) = 0;
-	virtual bool handlesFault(const VThreadFaultIdentifier *faultID) const = 0;
+	virtual VThreadState execute(VThread *thread) = 0;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 public:
@@ -67,14 +67,27 @@ protected:
 #endif
 };
 
-struct VThreadStackFrame {
-	size_t taskDataOffset;	// Offset to VThreadTaskData
-	size_t prevFrameOffset;
+struct VThreadStackFrame;
 
-#ifdef MTROPOLIS_DEBUG_VTHREAD_STACKS
+class VThreadStackChunk {
+public:
+	explicit VThreadStackChunk(size_t capacity);
+	VThreadStackChunk(VThreadStackChunk &&other);
+	~VThreadStackChunk();
+
+	VThreadStackFrame *_topFrame;
+	byte *_memory;
+	size_t _size;
+
+private:
+	VThreadStackChunk() = delete;
+	VThreadStackChunk(const VThreadStackChunk &) = delete;
+};
+
+struct VThreadStackFrame {
 	VThreadTaskData *data;
 	VThreadStackFrame *prevFrame;
-#endif
+	bool isLastInChunk;
 };
 
 template<typename TClass, typename TData>
@@ -84,9 +97,7 @@ public:
 	VThreadMethodData(const VThreadMethodData &other);
 	VThreadMethodData(VThreadMethodData &&other);
 
-	VThreadState destructAndRunTask() override;
-	void relocateTo(void *newPosition) override;
-	bool handlesFault(const VThreadFaultIdentifier *faultID) const override;
+	VThreadState execute(VThread *thread) override;
 
 	TData &getData();
 
@@ -106,9 +117,7 @@ public:
 
 	VThreadFunctionData(VThreadFunctionData &&other);
 
-	VThreadState destructAndRunTask() override;
-	void relocateTo(void *newPosition) override;
-	bool handlesFault(const VThreadFaultIdentifier *faultID) const override;
+	VThreadState execute(VThread *thread) override;
 
 	TData &getData();
 
@@ -119,7 +128,6 @@ private:
 };
 
 class VThread {
-
 public:
 	VThread();
 	~VThread();
@@ -130,36 +138,24 @@ public:
 	template<typename TData>
 	TData *pushTask(const char *name, VThreadState (*func)(const TData &data));
 
-	template<typename TFaultType, typename TClass, typename TData>
-	TData *pushFaultHandler(const char *name, TClass *obj, VThreadState (TClass::*method)(const TData &data));
-
-	template<typename TFaultType, typename TData>
-	TData *pushFaultHandler(const char *name, VThreadState (*func)(const TData &data));
-
 	VThreadState step();
 
 	bool hasTasks() const;
 
+	bool popFrame();
+
 private:
+	void reserveFrame(size_t frameAlignment, size_t frameSize, VThreadStackFrame *&outFramePtr, size_t dataAlignment, size_t dataSize, void *&outDataPtr, bool &outIsNewChunk);
+	static bool reserveFrameInChunk(VThreadStackChunk *chunk, size_t frameAlignment, size_t frameSize, VThreadStackFrame *&outFramePtr, size_t dataAlignment, size_t dataSize, void *&outDataPtr);
+
 	template<typename TClass, typename TData>
 	TData *pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, const char *name, TClass *obj, VThreadState (TClass::*method)(const TData &data));
 
 	template<typename TData>
 	TData *pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, const char *name, VThreadState (*func)(const TData &data));
 
-	void reserveFrame(size_t size, size_t alignment, void *&outFramePtr, void *&outUnadjustedDataPtr, size_t &outPrevFrameOffset);
-	bool popFrame(void *&dataPtr, void *&outFramePtr);
-
-	void *_stackUnalignedBase;
-	void *_stackAlignedBase;
-	//size_t _size;
-	size_t _alignment;
-	size_t _used;
-	VThreadFaultIdentifier *_faultID;
-
-#ifdef MTROPOLIS_DEBUG_VTHREAD_STACKS
-	const VThreadStackFrame *_topFrame;
-#endif
+	Common::Array<VThreadStackChunk> _stackChunks;
+	uint _numActiveStackChunks;
 };
 
 template<typename TClass, typename TData>
@@ -178,27 +174,15 @@ VThreadMethodData<TClass, TData>::VThreadMethodData(VThreadMethodData &&other)
 }
 
 template<typename TClass, typename TData>
-VThreadState VThreadMethodData<TClass, TData>::destructAndRunTask() {
+VThreadState VThreadMethodData<TClass, TData>::execute(VThread *thread) {
 	TData data(static_cast<TData &&>(_data));
 
 	TClass *target = _target;
 	VThreadState (TClass::*method)(const TData &) = _method;
 
-	this->~VThreadMethodData<TClass, TData>();
+	thread->popFrame();
 
 	return (target->*method)(data);
-}
-
-template<typename TClass, typename TData>
-void VThreadMethodData<TClass, TData>::relocateTo(void *newPosition) {
-	void *adjustedPtr = static_cast<VThreadMethodData<TClass, TData> *>(static_cast<VThreadTaskData *>(newPosition));
-
-	new (adjustedPtr) VThreadMethodData<TClass, TData>(static_cast<VThreadMethodData<TClass, TData> &&>(*this));
-}
-
-template<typename TClass, typename TData>
-bool VThreadMethodData<TClass, TData>::handlesFault(const VThreadFaultIdentifier* faultID) const {
-	return _faultID == faultID;
 }
 
 template<typename TClass, typename TData>
@@ -222,26 +206,14 @@ VThreadFunctionData<TData>::VThreadFunctionData(VThreadFunctionData &&other)
 }
 
 template<typename TData>
-VThreadState VThreadFunctionData<TData>::destructAndRunTask() {
+VThreadState VThreadFunctionData<TData>::execute(VThread *thread) {
 	TData data(static_cast<TData &&>(_data));
 
 	VThreadState (*func)(const TData &) = _func;
 
-	this->~VThreadFunctionData<TData>();
+	thread->popFrame();
 
 	return func(data);
-}
-
-template<typename TData>
-void VThreadFunctionData<TData>::relocateTo(void *newPosition) {
-	void *adjustedPtr = static_cast<VThreadFunctionData<TData> *>(static_cast<VThreadTaskData *>(newPosition));
-
-	new (adjustedPtr) VThreadFunctionData<TData>(static_cast<VThreadFunctionData<TData> &&>(*this));
-}
-
-template<typename TData>
-bool VThreadFunctionData<TData>::handlesFault(const VThreadFaultIdentifier *faultID) const {
-	return _faultID == faultID;
 }
 
 template<typename TData>
@@ -259,44 +231,29 @@ TData *VThread::pushTask(const char *name, VThreadState (*func)(const TData &dat
 	return this->pushTaskWithFaultHandler(nullptr, name, func);
 }
 
-template<typename TFaultType, typename TClass, typename TData>
-TData *VThread::pushFaultHandler(const char *name, TClass *obj, VThreadState (TClass::*method)(const TData &data)) {
-	return this->pushTaskWithFaultHandler(&VThreadFaultIdentifierSingleton<TFaultType>::_identifier, name, obj, method);
-}
-
-template<typename TFaultType, typename TData>
-TData *VThread::pushFaultHandler(const char *name, VThreadState (*func)(const TData &data)) {
-	return this->pushTaskWithFaultHandler(&VThreadFaultIdentifierSingleton<TFaultType>::_identifier, name, func);
-}
-
-
 template<typename TClass, typename TData>
 TData *VThread::pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, const char *name, TClass *obj, VThreadState (TClass::*method)(const TData &data)) {
 	typedef VThreadMethodData<TClass, TData> FrameData_t;
 
 	const size_t frameAlignment = alignof(VThreadStackFrame);
 	const size_t dataAlignment = alignof(FrameData_t);
-	const size_t maxAlignment = (frameAlignment < dataAlignment) ? dataAlignment : frameAlignment;
 
-	void *framePtr;
-	void *dataPtr;
-	size_t prevFrameOffset;
-	reserveFrame(sizeof(FrameData_t), maxAlignment, framePtr, dataPtr, prevFrameOffset);
+	VThreadStackFrame *prevFrame = nullptr;
+	if (_numActiveStackChunks > 0)
+		prevFrame = _stackChunks[_numActiveStackChunks - 1]._topFrame;
+
+	VThreadStackFrame *framePtr = nullptr;
+	void *dataPtr = nullptr;
+	bool isNewChunk = false;
+	reserveFrame(frameAlignment, sizeof(VThreadStackFrame), framePtr, dataAlignment, sizeof(FrameData_t), dataPtr, isNewChunk);
 
 	VThreadStackFrame *frame = new (framePtr) VThreadStackFrame();
-	frame->prevFrameOffset = prevFrameOffset;
-
 	FrameData_t *frameData = new (dataPtr) FrameData_t(faultID, obj, method);
-	frame->taskDataOffset = reinterpret_cast<char *>(static_cast<VThreadTaskData *>(frameData)) - static_cast<char *>(_stackAlignedBase);
-
-#ifdef MTROPOLIS_DEBUG_VTHREAD_STACKS
-	if (frame->prevFrameOffset == 0)
-		frame->prevFrame = nullptr;
-	else
-		frame->prevFrame = reinterpret_cast<VThreadStackFrame *>(static_cast<char *>(_stackAlignedBase) + prevFrameOffset);
 
 	frame->data = frameData;
-#endif
+	frame->prevFrame = prevFrame;
+	frame->isLastInChunk = isNewChunk;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	frameData->debugInit(name);
 #endif
@@ -310,27 +267,23 @@ TData *VThread::pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, 
 
 	const size_t frameAlignment = alignof(VThreadStackFrame);
 	const size_t dataAlignment = alignof(FrameData_t);
-	const size_t maxAlignment = (frameAlignment < dataAlignment) ? dataAlignment : frameAlignment;
 
-	void *framePtr;
-	void *dataPtr;
-	size_t prevFrameOffset;
-	reserveFrame(sizeof(FrameData_t), maxAlignment, framePtr, dataPtr, prevFrameOffset);
+	VThreadStackFrame *prevFrame = nullptr;
+	if (_numActiveStackChunks > 0)
+		prevFrame = _stackChunks[_numActiveStackChunks - 1]._topFrame;
+
+	VThreadStackFrame *framePtr = nullptr;
+	void *dataPtr = nullptr;
+	bool isNewChunk = false;
+	reserveFrame(frameAlignment, sizeof(VThreadStackFrame), framePtr, dataAlignment, sizeof(FrameData_t), dataPtr, isNewChunk);
 
 	VThreadStackFrame *frame = new (framePtr) VThreadStackFrame();
-	frame->prevFrameOffset = prevFrameOffset;
-
 	FrameData_t *frameData = new (dataPtr) FrameData_t(faultID, func);
-	frame->taskDataOffset = reinterpret_cast<char *>(static_cast<VThreadTaskData *>(frameData)) - static_cast<char *>(_stackAlignedBase);
-
-#ifdef MTROPOLIS_DEBUG_VTHREAD_STACKS
-	if (frame->prevFrameOffset == 0)
-		frame->prevFrame = nullptr;
-	else
-		frame->prevFrame = reinterpret_cast<VThreadStackFrame *>(static_cast<char *>(_stackAlignedBase) + prevFrameOffset);
 
 	frame->data = frameData;
-#endif
+	frame->prevFrame = prevFrame;
+	frame->isLastInChunk = isNewChunk;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	frameData->debugInit(name);
 #endif

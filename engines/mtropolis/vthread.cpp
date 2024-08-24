@@ -29,6 +29,26 @@ VThreadTaskData::VThreadTaskData() {
 VThreadTaskData::~VThreadTaskData() {
 }
 
+VThreadStackChunk::VThreadStackChunk(size_t capacity)
+	: _memory(nullptr), _size(capacity), _topFrame(nullptr) {
+
+	_memory = static_cast<byte *>(malloc(capacity));
+	if (!_memory)
+		error("Out of memory");
+}
+
+VThreadStackChunk::VThreadStackChunk(VThreadStackChunk &&other)
+	: _memory(other._memory), _size(other._size), _topFrame(other._topFrame) {
+	other._memory = nullptr;
+	other._size = 0;
+	other._topFrame = nullptr;
+}
+
+VThreadStackChunk::~VThreadStackChunk() {
+	if (_memory)
+		free(_memory);
+}
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 void VThreadTaskData::debugInit(const char *name) {
 	_debugName = name;
@@ -39,176 +59,145 @@ void VThreadTaskData::debugInspect(IDebugInspectionReport *report) const {
 #endif
 
 VThread::VThread()
-	: _faultID(nullptr), _stackUnalignedBase(nullptr), _stackAlignedBase(nullptr), /* _size(0), */_alignment(1), _used(0)
-#ifdef MTROPOLIS_DEBUG_VTHREAD_STACKS
-	, _topFrame(nullptr)
-#endif
+	: _numActiveStackChunks(0)
 {
 }
 
 VThread::~VThread() {
-	void *dataPtr;
-	void *framePtr;
-	while (popFrame(dataPtr, framePtr)) {
-		static_cast<VThreadStackFrame *>(framePtr)->~VThreadStackFrame();
-		static_cast<VThreadTaskData *>(dataPtr)->~VThreadTaskData();
+	while (popFrame()) {
 	}
-
-	if (_stackUnalignedBase)
-		free(_stackUnalignedBase);
 }
 
 VThreadState VThread::step() {
-	void *dataPtr;
-	void *framePtr;
-	while (popFrame(dataPtr, framePtr)) {
-		VThreadTaskData *data = static_cast<VThreadTaskData *>(dataPtr);
+	while (hasTasks()) {
+		VThreadStackFrame *frame = _stackChunks[_numActiveStackChunks - 1]._topFrame;
 
-		VThreadStackFrame *stackFrame = static_cast<VThreadStackFrame *>(framePtr);
-
-		const bool isHandling = (data->handlesFault(_faultID));
-		stackFrame->~VThreadStackFrame();
-		if (isHandling) {
-			_faultID = nullptr;
-			VThreadState state = data->destructAndRunTask();
-			if (state != kVThreadReturn)
-				return state;
-		} else {
-			static_cast<VThreadTaskData *>(dataPtr)->~VThreadTaskData();
-		}
+		VThreadState state = frame->data->execute(this);
+		if (state != kVThreadReturn)
+			return state;
 	}
 
 	return kVThreadReturn;
 }
 
 bool VThread::hasTasks() const {
-	return _used > 0;
+	return _numActiveStackChunks > 0;
 }
 
-void VThread::reserveFrame(size_t size, size_t alignment, void *&outFramePtr, void *&outUnadjustedDataPtr, size_t &outPrevFrameOffset) {
-	const size_t frameAlignment = alignof(VThreadStackFrame);
-	const size_t frameAlignmentMask = frameAlignment - 1;
+bool VThread::reserveFrameInChunk(VThreadStackChunk *chunk, size_t frameAlignment, size_t frameSize, VThreadStackFrame *&outFramePtr, size_t dataAlignment, size_t dataSize, void *&outDataPtr) {
+	VThreadStackFrame *framePtr = nullptr;
+	void *dataPtr = nullptr;
 
-	size_t dataAlignmentMask = alignment - 1;
+	uintptr address = 0;
+	size_t bytesAvailable = 0;
 
-	bool needToReallocate = false;
-	if (alignment > _alignment || frameAlignment > _alignment) {
-		if ((reinterpret_cast<uintptr>(_stackAlignedBase) & dataAlignmentMask) != 0) {
-			needToReallocate = true;
-		}
+	if (chunk->_topFrame) {
+		address = reinterpret_cast<uintptr>(chunk->_topFrame);
+		bytesAvailable = static_cast<size_t>(reinterpret_cast<const byte *>(chunk->_topFrame) - chunk->_memory);
+	} else {
+		address = reinterpret_cast<uintptr>(chunk->_memory + chunk->_size);
+		bytesAvailable = chunk->_size;
 	}
 
-	size_t dataAlignmentPaddingNeeded = (alignment - (_used & dataAlignmentMask));
-	if (dataAlignmentPaddingNeeded == alignment)
-		dataAlignmentPaddingNeeded = 0;
-
-	size_t offsetOfData = dataAlignmentPaddingNeeded + _used;
-	size_t offsetOfEndOfData = offsetOfData + size;
-	size_t frameAlignmentPaddingNeeded = (frameAlignment - (offsetOfData & frameAlignmentMask));
-	if (frameAlignmentPaddingNeeded == frameAlignment)
-		frameAlignmentPaddingNeeded = 0;
-
-	size_t offsetOfFrame = offsetOfEndOfData + frameAlignmentPaddingNeeded;
-	size_t offsetOfEndOfFrame = offsetOfFrame + sizeof(VThreadStackFrame);
-
-	size_t offsetOfPrevFrame = 0;
-	if (_used > 0)
-		offsetOfPrevFrame = _used - sizeof(VThreadStackFrame);
-
-	if (offsetOfEndOfFrame > _used)
-		needToReallocate = true;
-
-	if (needToReallocate) {
-		size_t maxAlignment = alignment;
-		if (maxAlignment < frameAlignment)
-			maxAlignment = frameAlignment;
-
-		void *unalignedBase = malloc(offsetOfEndOfFrame + maxAlignment - 1);
-		size_t alignPadding = maxAlignment - (reinterpret_cast<uintptr>(unalignedBase) % maxAlignment);
-		if (alignPadding == maxAlignment)
-			alignPadding = 0;
-
-		void *alignedBase = static_cast<char *>(unalignedBase) + alignPadding;
-
-		// Copy the previous frames
-		size_t framePos = 0;
-		if (_used > 0) {
-			framePos = _used - sizeof(VThreadStackFrame);
-#ifdef MTROPOLIS_DEBUG_VTHREAD_STACKS
-			VThreadStackFrame *nextFrame = nullptr;
-#endif
-
-			while (framePos != 0) {
-				VThreadStackFrame *oldFrame = reinterpret_cast<VThreadStackFrame *>(static_cast<char *>(_stackAlignedBase) + framePos);
-				size_t dataPos = oldFrame->taskDataOffset;
-				VThreadTaskData *oldData = reinterpret_cast<VThreadTaskData *>(static_cast<char *>(_stackAlignedBase) + dataPos);
-				size_t nextPos = oldFrame->prevFrameOffset;
-
-				VThreadStackFrame *newFrame = reinterpret_cast<VThreadStackFrame *>(static_cast<char *>(alignedBase) + framePos);
-				VThreadTaskData *newData = reinterpret_cast<VThreadTaskData *>(static_cast<char *>(alignedBase) + dataPos);
-
-				// Relocate the frame
-				new (newFrame) VThreadStackFrame(*oldFrame);
-				oldFrame->~VThreadStackFrame();
-
-				// Relocate the data
-				oldData->relocateTo(newData);
-				oldData->~VThreadTaskData();
-
-#ifdef MTROPOLIS_DEBUG_VTHREAD_STACKS
-				newFrame->data = newData;
-				newFrame->prevFrame = nullptr;
-				if (nextFrame)
-					nextFrame->prevFrame = newFrame;
-
-				nextFrame = newFrame;
-#endif
-
-				framePos = nextPos;
-			}
-		}
-
-		if (_stackUnalignedBase)
-			free(_stackUnalignedBase);
-
-		_stackUnalignedBase = unalignedBase;
-		_stackAlignedBase = alignedBase;
-	}
-
-	VThreadStackFrame *newFrame = reinterpret_cast<VThreadStackFrame *>(static_cast<char *>(_stackAlignedBase) + offsetOfFrame);
-	void *newData = static_cast<char *>(_stackAlignedBase) + offsetOfData;
-	_used = offsetOfEndOfFrame;
-
-	outFramePtr = newFrame;
-	outUnadjustedDataPtr = newData;
-	outPrevFrameOffset = offsetOfPrevFrame;
-
-#ifdef MTROPOLIS_DEBUG_VTHREAD_STACKS
-	_topFrame = newFrame;
-#endif
-}
-
-bool VThread::popFrame(void *&dataPtr, void *&outFramePtr) {
-	if (_used == 0)
+	if (bytesAvailable < dataSize)
 		return false;
 
-	VThreadStackFrame *frame = reinterpret_cast<VThreadStackFrame *>(static_cast<char *>(_stackAlignedBase) + _used - sizeof(VThreadStackFrame));
-	VThreadTaskData *data = reinterpret_cast<VThreadTaskData *>(static_cast<char *>(_stackAlignedBase) + frame->taskDataOffset);
+	bytesAvailable -= dataSize;
+	address -= dataSize;
 
-	dataPtr = data;
-	outFramePtr = frame;
+	size_t dataAlignPadding = static_cast<size_t>(dataAlignment % dataAlignment);
 
-	if (frame->prevFrameOffset == 0)
-		_used = 0;
-	else
-		_used = frame->prevFrameOffset + sizeof(VThreadStackFrame);
+	if (bytesAvailable < dataAlignPadding)
+		return false;
 
-#ifdef MTROPOLIS_DEBUG_VTHREAD_STACKS
-	if (_used == 0)
-		_topFrame = nullptr;
-	else
-		_topFrame = reinterpret_cast<VThreadStackFrame *>(static_cast<char *>(_stackAlignedBase) + frame->prevFrameOffset);
-#endif
+	bytesAvailable -= dataAlignPadding;
+	address -= dataAlignPadding;
+
+	dataPtr = reinterpret_cast<void *>(address);
+
+	if (bytesAvailable < frameSize)
+		return false;
+
+	bytesAvailable -= frameSize;
+	address -= frameSize;
+
+	size_t frameAlignPadding = static_cast<size_t>(address % frameAlignment);
+
+	if (bytesAvailable < frameAlignPadding)
+		return false;
+
+	bytesAvailable -= frameAlignPadding;
+	address -= frameAlignPadding;
+
+	framePtr = reinterpret_cast<VThreadStackFrame *>(address);
+
+	chunk->_topFrame = framePtr;
+
+	outDataPtr = dataPtr;
+	outFramePtr = framePtr;
+
+	return true;
+}
+
+void VThread::reserveFrame(size_t frameAlignment, size_t frameSize, VThreadStackFrame *&outFramePtr, size_t dataAlignment, size_t dataSize, void *&outDataPtr, bool &outIsNewChunk) {
+	// See if this fits in the last active chunk
+	if (_numActiveStackChunks > 0) {
+		VThreadStackChunk &lastChunk = _stackChunks[_numActiveStackChunks - 1];
+
+		if (reserveFrameInChunk(&lastChunk, frameAlignment, frameSize, outFramePtr, dataAlignment, dataSize, outDataPtr)) {
+			outIsNewChunk = false;
+			return;
+		}
+	}
+
+	// Didn't fit, this is the first one in the chunk
+	size_t requiredSize = (frameAlignment - 1) + (dataAlignment - 1) + frameSize + dataSize;
+
+	if (_numActiveStackChunks >= _stackChunks.size() || _stackChunks[_numActiveStackChunks]._size < requiredSize) {
+		// Doesn't fit in the next chunk, deallocate the chunk and all subsequent chunks and reallocate
+
+		const size_t kChunkMinSize = 1024 * 1024;	// 1MB chunks
+		size_t chunkSize = requiredSize;
+		if (chunkSize < kChunkMinSize)
+			chunkSize = kChunkMinSize;
+
+		while (_stackChunks.size() > _numActiveStackChunks)
+			_stackChunks.pop_back();
+
+		_stackChunks.push_back(VThreadStackChunk(chunkSize));
+	}
+
+	VThreadStackChunk &lastChunk = _stackChunks[_numActiveStackChunks++];
+
+	bool reservedOK = reserveFrameInChunk(&lastChunk, frameAlignment, frameSize, outFramePtr, dataAlignment, dataSize, outDataPtr);
+	assert(reservedOK);
+	(void)reservedOK;
+
+	outIsNewChunk = true;
+}
+
+bool VThread::popFrame() {
+	if (_numActiveStackChunks == 0)
+		return false;
+
+	VThreadStackChunk &lastChunk = _stackChunks[_numActiveStackChunks - 1];
+	VThreadStackFrame *topFrame = lastChunk._topFrame;
+
+	VThreadStackFrame *secondFrame = topFrame->prevFrame;
+	bool isLastFrameInChunk = topFrame->isLastInChunk;
+
+	if (isLastFrameInChunk) {
+		lastChunk._topFrame = nullptr;
+		_numActiveStackChunks--;
+	} else {
+		assert(reinterpret_cast<byte *>(secondFrame) >= lastChunk._memory);
+		assert(reinterpret_cast<byte *>(secondFrame) < lastChunk._memory + lastChunk._size);
+
+		lastChunk._topFrame = secondFrame;
+	}
+
+	topFrame->data->~VThreadTaskData();
+	topFrame->~VThreadStackFrame();
 
 	return true;
 }
