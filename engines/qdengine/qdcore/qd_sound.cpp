@@ -116,7 +116,7 @@ bool qdSound::play(const qdSoundHandle *handle, bool loop) const {
 }
 
 bool qdSound::stop(const qdSoundHandle *handle) const {
-	debugC(3, kDebugSound, "[%d] sound stop %p owner: %s", g_system->getMillis(), (const void *)this, handle->owner()->toString().c_str());
+	debugC(3, kDebugSound, "[%d] sound stop %p owner: %s", g_system->getMillis(), (const void *)this, handle ? handle->owner()->toString().c_str() : "<null>");
 	if (sndDispatcher *p = sndDispatcher::get_dispatcher()) {
 		if (!handle) {
 			sndSound sound(&_sound);
