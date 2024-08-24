@@ -337,8 +337,6 @@ void init_graphics() {
 	if (!init_graphics_dispatcher())
 		return;
 
-	qdGameConfig::get_config().set_pixel_format(grDispatcher::instance()->pixel_format());
-
 	grDispatcher::instance()->setClip();
 	grDispatcher::instance()->setClipMode(1);
 
