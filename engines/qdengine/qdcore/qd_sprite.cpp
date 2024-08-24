@@ -144,7 +144,7 @@ qdSprite &qdSprite::operator = (const qdSprite &spr) {
 
 	delete [] _data;
 	if (spr._data) {
-		int ssx = 2;
+		int ssx;
 		switch (_format) {
 		case GR_RGB565:
 		case GR_ARGB1555:
@@ -158,6 +158,9 @@ qdSprite &qdSprite::operator = (const qdSprite &spr) {
 			break;
 		case GR_ARGB8888:
 			ssx = 4;
+			break;
+		default:
+			ssx = 2;
 			break;
 		}
 
