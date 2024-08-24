@@ -594,9 +594,9 @@ Common::Error AgiEngine::go() {
 	}
 	inGameTimerReset();
 
-	runGame();
+	int ec = runGame();
 
-	return Common::kNoError;
+	return (ec == errOK) ? Common::kNoError : Common::kUnknownError;
 }
 
 void AgiEngine::syncSoundSettings() {

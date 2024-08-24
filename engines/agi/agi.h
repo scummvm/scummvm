@@ -922,7 +922,7 @@ public:
 	void newRoom(int16 newRoomNr);
 	void resetControllers();
 	void interpretCycle();
-	int playGame();
+	void playGame();
 
 	void allowSynthetic(bool);
 	void processScummVMEvents();
