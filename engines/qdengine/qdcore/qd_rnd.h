@@ -28,6 +28,9 @@ namespace QDEngine {
 
 /// Возвращает случайное значение в интервале [0, m-1].
 inline uint32 qd_rnd(uint32 m) {
+	if (!m)
+		return 0;
+
 	return g_engine->getRandomNumber(m - 1);
 }
 /// Возвращает случайное значение в интервале [-x, x].
