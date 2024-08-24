@@ -2618,8 +2618,8 @@ const qdGameObjectStateWalk *qdGameObjectMoving::current_walk_state() const {
 	const qdGameObjectState *st = get_cur_state();
 	if (!st || st->state_type() != qdGameObjectState::STATE_WALK) {
 		st = _last_walk_state;
-		st = get_default_state();
-		if (!st) st = get_state(0);
+		if (!st || st->state_type() != qdGameObjectState::STATE_WALK)
+			st = get_default_state();
 	}
 
 	if (st && st->state_type() == qdGameObjectState::STATE_WALK)
