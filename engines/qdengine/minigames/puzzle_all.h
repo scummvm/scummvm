@@ -77,7 +77,10 @@ const int puzzle_ep13[] = {
 
 class qdPuzzleAllMiniGameInterface : public qdMiniGameInterface {
 public:
-	qdPuzzleAllMiniGameInterface(Common::String dll, Common::Language language) : _dll(dll), _language(language) {}
+	qdPuzzleAllMiniGameInterface(Common::String dll, Common::Language language) : _dll(dll), _language(language) {
+		for (uint i = 0; i < ARRAYSIZE(_pieces); i++)
+			_pieces[i] = nullptr;
+	}
 	~qdPuzzleAllMiniGameInterface() {};
 
 	//! Инициализация игры.
