@@ -239,6 +239,10 @@ static bool decodeTrack(Common::SeekableReadStream &stream, uint trackLen, bool 
 }
 
 static void printGoodSectors(Common::Array<bool> &goodSectors, uint sectorsPerTrack) {
+	if (gDebugLevel < 1) {
+		return;
+	}
+
 	if (Common::find(goodSectors.begin(), goodSectors.end(), false) != goodSectors.end()) {
 		debugN(1, "NIB: Bad/missing sectors:");
 
@@ -405,8 +409,11 @@ static Common::SeekableReadStream *readImage_WOZ(Common::File &f, bool dos33, ui
 		StreamPtr stream(readTrack_WOZ(f, track, version == 2));
 
 		if (stream) {
-			if (!decodeTrack(*stream, stream->size(), dos33, diskImage, tracks, goodSectors))
-				error("WOZ: error reading '%s'", f.getName());
+			if (!decodeTrack(*stream, stream->size(), dos33, diskImage, tracks, goodSectors)) {
+				warning("WOZ: error reading '%s'", f.getName());
+				free(diskImage);
+				return nullptr;
+			}
 		}
 	}
 
@@ -416,30 +423,46 @@ static Common::SeekableReadStream *readImage_WOZ(Common::File &f, bool dos33, ui
 }
 
 bool DiskImage::open(const Common::Path &filename) {
-	Common::File *f = new Common::File;
-
+	Common::File *file = new Common::File();
 	debug(1, "Opening '%s'", filename.toString(Common::Path::kNativeSeparator).c_str());
-
-	if (!f->open(filename)) {
+	if (file->open(filename)) {
+		if (open(filename.baseName(), file)) {
+			return true;
+		}
+	} else {
 		warning("Failed to open '%s'", filename.toString(Common::Path::kNativeSeparator).c_str());
-		delete f;
-		return false;
 	}
+	delete file;
+	return false;
+}
 
-	Common::String lcName(filename.baseName());
-	lcName.toLowercase();
+bool DiskImage::open(const Common::FSNode &node) {
+	Common::File *file = new Common::File();
+	debug(1, "Opening '%s'", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
+	if (file->open(node)) {
+		if (open(node.getFileName(), file)) {
+			return true;
+		}
+	} else {
+		warning("Failed to open '%s'", node.getPath().toString(Common::Path::kNativeSeparator).c_str());
+	}
+	delete file;
+	return false;
+}
 
-	if (lcName.hasSuffix(".dsk")) {
+bool DiskImage::open(const Common::String &name, Common::File *f) {
+	if (name.hasSuffixIgnoreCase(".dsk") ||
+		name.hasSuffixIgnoreCase(".do")) {
 		_tracks = 35;
 		_sectorsPerTrack = 16;
 		_bytesPerSector = 256;
 		_stream = f;
-	} else if (lcName.hasSuffix(".d13")) {
+	} else if (name.hasSuffixIgnoreCase(".d13")) {
 		_tracks = 35;
 		_sectorsPerTrack = 13;
 		_bytesPerSector = 256;
 		_stream = f;
-	} else if (lcName.hasSuffix(".nib")) {
+	} else if (name.hasSuffixIgnoreCase(".nib")) {
 		_tracks = 35;
 
 		if (detectDOS33(*f, kNibTrackLen))
@@ -450,8 +473,7 @@ bool DiskImage::open(const Common::Path &filename) {
 		_bytesPerSector = 256;
 		f->seek(0);
 		_stream = readImage_NIB(*f, _sectorsPerTrack == 16);
-		delete f;
-	} else if (lcName.hasSuffix(".woz")) {
+	} else if (name.hasSuffixIgnoreCase(".woz")) {
 		_tracks = 35;
 		_sectorsPerTrack = 13;
 		_bytesPerSector = 256;
@@ -468,14 +490,12 @@ bool DiskImage::open(const Common::Path &filename) {
 				warning("WOZ: failed to load bitstream for track 0 in '%s'", f->getName());
 			}
 		}
-
-		delete f;
-	} else if (lcName.hasSuffix(".xfd")) {
+	} else if (name.hasSuffixIgnoreCase(".xfd")) {
 		_tracks = 40;
 		_sectorsPerTrack = 18;
 		_bytesPerSector = 128;
 		_stream = f;
-	} else if (lcName.hasSuffix(".img")) {
+	} else if (name.hasSuffixIgnoreCase(".img")) {
 		_tracks = 40;
 		_sectorsPerTrack = 8;
 		_bytesPerSector = 512;
@@ -485,12 +505,22 @@ bool DiskImage::open(const Common::Path &filename) {
 
 	int expectedSize = _tracks * _sectorsPerTrack * _bytesPerSector;
 
-	if (!_stream)
+	if (_stream == nullptr) {
 		return false;
+	}
 
-	if (_stream->size() != expectedSize)
-		error("Unrecognized disk image '%s' of size %d bytes (expected %d bytes)", filename.toString(Common::Path::kNativeSeparator).c_str(), (int)_stream->size(), expectedSize);
+	if (_stream->size() != expectedSize) {
+		warning("Unrecognized disk image '%s' of size %d bytes (expected %d bytes)", f->getName(), (int)_stream->size(), expectedSize);
+		if (_stream != f) {
+			delete _stream;
+			_stream = nullptr;
+		}
+		return false;
+	};
 
+	if (_stream != f) {
+		delete f;
+	}
 	return true;
 }
 
@@ -506,8 +536,11 @@ Common::SeekableReadStream *DiskImage::createReadStream(uint track, uint sector,
 	if (sectorLimit == 0)
 		sectorLimit = _sectorsPerTrack;
 
-	if (sector < _firstSector || sector >= sectorLimit + _firstSector)
-		error("Sector %u is out of bounds for %u-sector %u-based reading", sector, sectorLimit, _firstSector);
+	if (sector < _firstSector || sector >= sectorLimit + _firstSector) {
+		warning("Sector %u is out of bounds for %u-sector %u-based reading", sector, sectorLimit, _firstSector);
+		free(data);
+		return nullptr;
+	}
 
 	sector -= _firstSector;
 
@@ -518,8 +551,11 @@ Common::SeekableReadStream *DiskImage::createReadStream(uint track, uint sector,
 		if (bytesToRead - dataOffset < bytesRemInTrack)
 			bytesRemInTrack = bytesToRead - dataOffset;
 
-		if (_stream->read(data + dataOffset, bytesRemInTrack) < bytesRemInTrack)
-			error("Error reading disk image at track %d; sector %d", track, sector);
+		if (_stream->read(data + dataOffset, bytesRemInTrack) < bytesRemInTrack) {
+			warning("Error reading disk image at track %d; sector %d", track, sector);
+			free(data);
+			return nullptr;
+		}
 
 		++track;
 
@@ -530,6 +566,20 @@ Common::SeekableReadStream *DiskImage::createReadStream(uint track, uint sector,
 	}
 
 	return new Common::MemoryReadStream(data, bytesToRead, DisposeAfterUse::YES);
+}
+
+Common::SeekableReadStream *DiskImage::releaseStream() {
+	Common::SeekableReadStream *stream = _stream;
+	
+	// reset class
+	_stream = nullptr;
+	_tracks = 0;
+	_sectorsPerTrack = 0;
+	_bytesPerSector = 0;
+	_sectorLimit = 0;
+	_firstSector = 0;
+
+	return stream;
 }
 
 int32 computeMD5(const Common::FSNode &node, Common::String &md5, uint32 md5Bytes) {

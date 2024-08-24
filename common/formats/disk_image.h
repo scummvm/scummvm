@@ -86,8 +86,10 @@ public:
 	}
 
 	bool open(const Common::Path &filename);
+	bool open(const Common::FSNode &node);
 	const DataBlockPtr getDataBlock(uint track, uint sector, uint offset = 0, uint size = 0) const;
 	Common::SeekableReadStream *createReadStream(uint track, uint sector, uint offset = 0, uint size = 0, uint sectorsUsed = 0) const;
+	Common::SeekableReadStream *releaseStream();
 	void setSectorLimit(uint sectorLimit) { _sectorLimit = sectorLimit; } // Maximum number of sectors to read per track before stepping
 	uint getBytesPerSector() const { return _bytesPerSector; }
 	uint getSectorsPerTrack() const { return _sectorsPerTrack; }
@@ -117,6 +119,9 @@ protected:
 	Common::SeekableReadStream *_stream;
 	uint _tracks, _sectorsPerTrack, _bytesPerSector, _firstSector;
 	uint _sectorLimit;
+	
+private:
+	bool open(const Common::String &name, Common::File *f);
 };
 
 // Data in plain files
