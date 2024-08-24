@@ -1393,7 +1393,7 @@ void qdGameObjectAnimated::draw_grid_zone(const Vect2s sz) const {
 }
 
 bool qdGameObjectAnimated::set_grid_zone_attributes(const Vect2f &r, int attr) const {
-	debugC(5, kDebugMovement, "qdGameObjectAnimated::set_grid_zone_attributes(): has_bound: %d named_object_type: %d", has_bound(), owner()->named_object_type());
+	debugC(5, kDebugMovement, "qdGameObjectAnimated::set_grid_zone_attributes(): has_bound: %d named_object_type: %d", has_bound(), owner() ? owner()->named_object_type() : -1);
 
 	if (has_bound() && owner() && owner()->named_object_type() == QD_NAMED_OBJECT_SCENE) {
 		qdCamera *cp = static_cast<qdGameScene *>(owner())->get_camera();
