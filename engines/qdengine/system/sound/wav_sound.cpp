@@ -91,13 +91,15 @@ bool wavSound::wav_file_load(const Common::Path fpath) {
 			return false;
 		}
 
-		int bits = 8;
+		int bits;
 		if (flags & Audio::FLAG_UNSIGNED)
 			bits = 8;
 		else if (flags & Audio::FLAG_16BITS)
 			bits = 16;
 		else if (flags & Audio::FLAG_24BITS)
 			bits = 24;
+		else
+			bits = 8;
 
 		int channels = 1;
 		if (flags & Audio::FLAG_STEREO)
