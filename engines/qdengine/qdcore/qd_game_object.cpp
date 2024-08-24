@@ -100,7 +100,7 @@ bool qdGameObject::save_script_body(Common::WriteStream &fh, int indent) const {
 		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
-		fh.writeString(Common::String::format("<parallax_offset>%d %d</parallax_offset>", _parallax_offset.x, _parallax_offset.y));
+		fh.writeString(Common::String::format("<parallax_offset>%d %d</parallax_offset>\r\n", _parallax_offset.x, _parallax_offset.y));
 	}
 
 	if (flags()) {
