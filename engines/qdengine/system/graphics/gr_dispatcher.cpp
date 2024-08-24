@@ -848,7 +848,7 @@ char *grDispatcher::temp_buffer(int size) {
 	if (size <= 0) size = 1;
 
 	if (size > _temp_buffer_size) {
-		delete _temp_buffer;
+		delete[] _temp_buffer;
 		_temp_buffer = new char[size];
 		_temp_buffer_size = size;
 	}
