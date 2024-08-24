@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/bitarray.h"
 #include "common/ptr.h"
 #include "common/file.h"
 #include "common/debug.h"
@@ -28,8 +29,43 @@
 
 namespace Common {
 
+// Disk image parsers / decoders
+//
+// These classes handle floppy disk image files. Multiple formats are supported.
+// An image's file name extension determines its format. DiskImage::open selects
+// the format and expected disk size. Data can be read by track/sector/offset
+// or by the calculated stream position. Several file systems can also be read.
+//
+// Supported image formats:
+//  .do   Apple II disk sectors. 35 tracks, 16 sectors, no encoding.
+//  .dsk  Same as .do. Note that alternative sector orders are not handled.
+//        Currently, if clients want to support images with a different sector
+//        order, then they will have to detect and handle it themselves.
+//  .d13  Apple II disk sectors. 35 tracks, 13 sectors, no encoding.
+//  .nib  Apple II disk nibbles. 35 tracks, 13 or 16 sectors, nibble-encoded.
+//  .woz  Apple II comprehensive disk bitstream. 35 tracks, 13 or 16 sectors.
+//        This encoding format takes a noticeable amount of time to decode.
+//  .img  PC disk sectors. 40 tracks, 8 sectors, no encoding.
+//  .xfd  Atari disk sectors. 40 tracks, 18 sectors, no encoding.
+//
+// For encoded formats, the default behavior is to decode every track when
+// opening an image. Lazy decoding can also be enabled, causing tracks to be
+// decoded when they are first accessed. This can significantly speed up access
+// if the format is expensive to decode but only a little data is needed.
+//
+// This code was originally part of the ADL engine.
+
 class SeekableReadStream;
 class String;
+
+/**
+ * Disk image formats that require decoding to read their sectors
+ */
+enum DiskImageEncoding {
+	DiskImageEncodingNone,
+	DiskImageEncodingNib,
+	DiskImageEncodingWoz
+};
 
 // Used for disk image detection
 int32 computeMD5(const Common::FSNode &node, Common::String &md5, uint32 md5Bytes);
@@ -74,7 +110,11 @@ protected:
 class DiskImage {
 public:
 	DiskImage() :
-			_stream(nullptr),
+			_inputStream(nullptr),
+			_decodeStream(nullptr),
+			_decodeBuffer(nullptr),
+			_encoding(DiskImageEncodingNone),
+			_lazyDecoding(false),
 			_tracks(0),
 			_sectorsPerTrack(0),
 			_bytesPerSector(0),
@@ -82,7 +122,8 @@ public:
 			_firstSector(0) { }
 
 	~DiskImage() {
-		delete _stream;
+		delete _inputStream;
+		delete _decodeStream; // frees _decodeBuffer
 	}
 
 	bool open(const Common::Path &filename);
@@ -90,6 +131,9 @@ public:
 	const DataBlockPtr getDataBlock(uint track, uint sector, uint offset = 0, uint size = 0) const;
 	Common::SeekableReadStream *createReadStream(uint track, uint sector, uint offset = 0, uint size = 0, uint sectorsUsed = 0) const;
 	Common::SeekableReadStream *releaseStream();
+	Common::SeekableReadStream *getDiskStream() const { return _decodeBuffer ? _decodeStream : _inputStream; }
+	uint32 read(void *dataPtr, uint32 diskPosition, uint32 dataSize);
+	void setLazyDecoding(bool lazyDecoding) { _lazyDecoding = lazyDecoding; }
 	void setSectorLimit(uint sectorLimit) { _sectorLimit = sectorLimit; } // Maximum number of sectors to read per track before stepping
 	uint getBytesPerSector() const { return _bytesPerSector; }
 	uint getSectorsPerTrack() const { return _sectorsPerTrack; }
@@ -116,12 +160,20 @@ protected:
 		const DiskImage *_disk;
 	};
 
-	Common::SeekableReadStream *_stream;
+	Common::String _name;
+	Common::SeekableReadStream *_inputStream;
+	Common::SeekableReadStream *_decodeStream;
+	byte *_decodeBuffer;
+	Common::BitArray _decodedTracks;
+	DiskImageEncoding _encoding;
+	bool _lazyDecoding;
+
 	uint _tracks, _sectorsPerTrack, _bytesPerSector, _firstSector;
 	uint _sectorLimit;
-	
+
 private:
 	bool open(const Common::String &name, Common::File *f);
+	void decodeTrack(uint track);
 };
 
 // Data in plain files
