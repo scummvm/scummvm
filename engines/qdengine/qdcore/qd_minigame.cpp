@@ -50,6 +50,7 @@ qdMiniGame::qdMiniGame(const qdMiniGame &mg) : qdNamedObject(mg),
 }
 
 qdMiniGame::~qdMiniGame() {
+	release_interface();
 }
 
 bool qdMiniGame::start() {
@@ -315,6 +316,8 @@ bool qdMiniGame::load_interface() {
 }
 
 bool qdMiniGame::release_interface() {
+	delete _interface;
+	_interface = nullptr;
 	return true;
 }
 } // namespace QDEngine
