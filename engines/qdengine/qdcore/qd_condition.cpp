@@ -540,7 +540,7 @@ const char *types[] = {
 };
 
 const char *qdCondition::type2str(uint type) {
-	if (type > ARRAYSIZE(types))
+	if (type >= ARRAYSIZE(types))
 		return "???";
 
 	return types[type];
