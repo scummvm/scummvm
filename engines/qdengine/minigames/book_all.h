@@ -354,8 +354,8 @@ public:
 	}
 
 private:
-	const float *_artTimeStamps;
-	float _pageDurations[3];
+	const float *_artTimeStamps = nullptr;
+	float _pageDurations[3] = { 0.0, 0.0, 0.0 };
 
 	const qdEngineInterface *_engine = nullptr;
 	qdMinigameSceneInterface *_scene = nullptr;
@@ -367,7 +367,7 @@ private:
 	int _pageNum = 0;
 	bool _playbackOn = false;
 	int _currentPageArt = 1;
-	int _totalPageArts[3];
+	int _totalPageArts[3] = { 0, 0, 0 };
 	float _time = 0.0f;
 
 	Common::String _dll;
