@@ -193,33 +193,31 @@ void qdCoordsAnimation::quant(float dt) const {
 
 		qdGameObjectAnimated *obj = object();
 		if (obj) obj->set_pos(cur_pos());
-	} else {
-		if (_type == CA_WALK) {
-			qdGameObjectAnimated *obj = object();
-			if (obj->named_object_type() != QD_NAMED_OBJECT_MOVING_OBJ) return;
-			qdGameObjectMoving *p = static_cast<qdGameObjectMoving *>(obj);
+	} else { // _type == CA_WALK
+		qdGameObjectAnimated *obj = object();
+		if (obj->named_object_type() != QD_NAMED_OBJECT_MOVING_OBJ) return;
+		qdGameObjectMoving *p = static_cast<qdGameObjectMoving *>(obj);
 
-			if (p->is_in_position(_points[_cur_point].dest_pos() - _del)) {
-				if (++_cur_point >= (int)_points.size()) {
-					_is_finished = true;
-					if (!check_flag(QD_COORDS_ANM_LOOP_FLAG)) {
-						stop();
-						return;
-					}
-
-					_start_point.set_dest_pos(_points[_points.size() - 1].dest_pos() - _del);
-					// Расстояние считаем, переместившись в глобальне координаты
-					_points[0].calc_path(_start_point, _del);
-
-					_cur_point = 0;
+		if (p->is_in_position(_points[_cur_point].dest_pos() - _del)) {
+			if (++_cur_point >= (int)_points.size()) {
+				_is_finished = true;
+				if (!check_flag(QD_COORDS_ANM_LOOP_FLAG)) {
+					stop();
+					return;
 				}
 
-				_points[_cur_point].start();
+				_start_point.set_dest_pos(_points[_points.size() - 1].dest_pos() - _del);
+				// Расстояние считаем, переместившись в глобальне координаты
+				_points[0].calc_path(_start_point, _del);
+
+				_cur_point = 0;
 			}
 
-			if (!p->is_moving())
-				p->move(_points[_cur_point].dest_pos() - _del, _points[_cur_point].direction_angle());
+			_points[_cur_point].start();
 		}
+
+		if (!p->is_moving())
+			p->move(_points[_cur_point].dest_pos() - _del, _points[_cur_point].direction_angle());
 	}
 }
 
