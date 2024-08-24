@@ -571,6 +571,22 @@ Path ConfigManager::getPath(const String &key, const String &domName) const {
 	return Path::fromConfig(get(key, domName));
 }
 
+float ConfigManager::getFloat(const String &key, const String &domName) const {
+	String value(get(key, domName));
+	char *pend;
+
+	if (value.empty()) {
+		return 0.0f;
+	}
+
+	float fvalue = strtof(value.c_str(), &pend);
+	if (value.c_str() == pend)
+		error("ConfigManager::getFloat(%s,%s): '%s' is not a valid float",
+		      key.c_str(), domName.c_str(), value.c_str());
+
+	return fvalue;
+}
+
 
 #pragma mark -
 
@@ -659,6 +675,10 @@ void ConfigManager::setBool(const String &key, bool value, const String &domName
 
 void ConfigManager::setPath(const String &key, const Path &value, const String &domName) {
 	set(key, value.toConfig(), domName);
+}
+
+void ConfigManager::setFloat(const String &key, float value, const String &domName) {
+	set(key, String::format("%f", value), domName);
 }
 
 
