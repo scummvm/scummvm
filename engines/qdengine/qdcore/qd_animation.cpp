@@ -45,6 +45,7 @@ namespace QDEngine {
 
 qdAnimation::qdAnimation() : _parent(NULL) {
 	_tileAnimation = 0;
+	_num_frames = 0;
 
 	_length = _cur_time = 0.0f;
 	_status = QD_ANIMATION_STOPPED;
