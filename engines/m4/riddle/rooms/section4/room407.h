@@ -129,10 +129,17 @@ private:
 	void setHotspots();
 	void lookItem(const char *item, const char *digi);
 	void useMicroscope();
-	void lookLeverKey();
-	void lookGlassBottom();
-	void lookPivot();
-	void lookNozzles();
+	void roofPistonPopup();
+	void glassBottomPopup();
+	void glassTopPopup();
+	void glassGonePopup();
+	void pivotPopup();
+	void tabletopPopup();
+	bool lookGlassJar();
+	void fullglassPopup();
+	bool lookEmeraldCork();
+	void periodicTablePopup();
+	bool lookLeverKey();
 
 public:
 	Room407() : Room() {}

@@ -798,7 +798,7 @@ void Room407::parser() {
 	} else if (lookFlag && player_said("PUMP ROD ")) {
 		digi_play("407r13", 1);
 	} else if (lookFlag && player_said("LEVER KEY  ")) {
-		lookLeverKey();
+		roofPistonPopup();
 		digi_play("407r26a", 1);
 	} else if (lookFlag && player_said("RUBBER PLUG") &&
 			inv_object_is_here("RUBBER PLUG")) {
@@ -806,7 +806,7 @@ void Room407::parser() {
 	} else if (lookFlag && player_said("JAR/RUBBER PLUG") &&
 			inv_object_is_here("JAR/RUBBER PLUG")) {
 		if (_xyzzy7 == 1112)
-			lookGlassBottom();
+			glassBottomPopup();
 		digi_play("407r77", 1);
 	} else if (lookFlag && player_said("FAUCET PIPE") &&
 			inv_object_is_here("FAUCET PIPE")) {
@@ -818,11 +818,64 @@ void Room407::parser() {
 			inv_object_is_here("FAUCET HANDLE")) {
 		digi_play("407r08", 1);
 	} else if (lookFlag && player_said("TABLE PIVOT")) {
-		lookPivot();
+		pivotPopup();
 		digi_play("407r09", 1);
 	} else if (lookFlag && player_said("NOZZLES")) {
-		lookNozzles();
+		tabletopPopup();
 		digi_play("407r10", 1);
+	} else if (lookFlag && player_said("PUMP ROD") &&
+			inv_object_is_here("PUMP ROD")) {
+		digi_play("407r13", 1);
+	} else if (lookFlag && player_said("GLASS JAR") &&
+			inv_object_is_here("GLASS JAR") && lookGlassJar()) {
+		// No implementation
+	} else if (lookFlag && player_said("EMERALD/CORK") &&
+			inv_object_is_here("EMERALD/CORK") && lookEmeraldCork()) {
+		// No implementation
+	} else if (lookFlag && player_said("IRON SUPPORT")) {
+		if (_xyzzy7 == 1112) {
+			glassTopPopup();
+		} else {
+			glassGonePopup();
+		}
+	} else if (lookFlag && player_said("SMALL GEAR WHEEL")) {
+		if (_xyzzy7 == 1112) {
+			glassTopPopup();
+		} else {
+			glassGonePopup();
+		}
+
+		digi_play("407r21", 1);
+	} else if (lookFlag && player_said("PERIODIC TABLE/JAR") && _xyzzy7 == 1112) {
+		glassTopPopup();
+	} else if (lookFlag && player_said("PERIODIC TABLE")) {
+		if (inv_player_has("PERIODIC TABLE")) {
+			periodicTablePopup();
+		} else {
+			digi_play(_frotz8 ? "407r99c" : "407r22", 1);
+		}
+	} else if (lookFlag && player_said("BRACKET")) {
+		roofPistonPopup();
+		digi_play("407r24", 1);
+	} else if (lookFlag && player_said("CEILING PISTON")) {
+		roofPistonPopup();
+		digi_play("407r25", 1);
+	} else if (lookFlag && player_said("LEVER KEY") &&
+			inv_object_is_here("LEVER KEY") && lookLeverKey()) {
+		// No implementation
+	} else if (lookFlag && player_said("LEVER KEY ") &&
+			inv_object_is_here("LEVER KEY")) {
+		pivotPopup();
+		digi_play("407r64", 1);
+	} else if (lookFlag && player_said("AIR VALVE/HANDLE")) {
+		tabletopPopup();
+		digi_play("407r63", 1);
+	} else if (lookFlag && player_said("AIR VALVE")) {
+		tabletopPopup();
+		digi_play("407r62", 1);
+	} else if (lookFlag && player_said("NOZZLES/TUBE")) {
+		tabletopPopup();
+		digi_play("407r31", 1);
 	}
 	// TODO
 	else {
@@ -1014,7 +1067,7 @@ void Room407::useMicroscope() {
 	}
 }
 
-void Room407::lookLeverKey() {
+void Room407::roofPistonPopup() {
 	if (_G(kernel).trigger == -1) {
 		_int5 = 1030;
 		_roofPiston = series_place_sprite("407 ROOF PISTON/BRACE",
@@ -1035,7 +1088,7 @@ void Room407::lookLeverKey() {
 	}
 }
 
-void Room407::lookGlassBottom() {
+void Room407::glassBottomPopup() {
 	if (_G(kernel).trigger == -1) {
 		_int4 = 1030;
 		_glassTopPopup = series_place_sprite(
@@ -1062,7 +1115,45 @@ void Room407::lookGlassBottom() {
 	}
 }
 
-void Room407::lookPivot() {
+void Room407::glassTopPopup() {
+	if (_G(kernel).trigger == -1) {
+		_int3 = 1030;
+		_glassTopPopup = series_place_sprite("407 GLASS TOP POPUP",
+			0, 0, 0, 100, 0x200);
+
+		if (_val6 == 1010) {
+			_glassTopPopupWithItems1 = series_place_sprite(
+				"407 GLASS TOP POPUP WITH ITEMS", 1, 0, 0, 100, 0x100);
+
+			if (!player_said("SMALL GEAR WHEEL"))
+				digi_play("407r66a", 1);
+
+		} else if (_xyzzy6 == 1116) {
+			_glassTopPopupWithItems2 = series_place_sprite(
+				"407 GLASS TOP POPUP WITH ITEMS", 0, 0, 0, 100, 0x100);
+
+			if (!player_said("SMALL GEAR WHEEL"))
+				digi_play("407r99a", 1);
+
+		} else {
+			if (!player_said("SMALL GEAR WHEEL"))
+				digi_play("407r19", 1);
+		}
+	}
+}
+
+void Room407::glassGonePopup() {
+	if (_G(kernel).trigger == -1) {
+		_int6 = 1030;
+		_glassGone = series_place_sprite("407 GLASS GONE CU PU",
+			0, 0, 0, 100, 0x200);
+		disableHotspots();
+		hotspot_set_active(" ", true);
+		player_set_commands_allowed(true);
+	}
+}
+
+void Room407::pivotPopup() {
 	if (_G(kernel).trigger == -1) {
 		_int1 = 1030;
 		_pivotPopup = series_place_sprite("407 PIVOT POPUP",
@@ -1078,7 +1169,7 @@ void Room407::lookPivot() {
 	}
 }
 
-void Room407::lookNozzles() {
+void Room407::tabletopPopup() {
 	if (_G(kernel).trigger == -1) {
 		_frotz10 = 1030;
 		_tabletopPopup = series_place_sprite("407 TABLETOP POPUP",
@@ -1101,6 +1192,124 @@ void Room407::lookNozzles() {
 
 		player_set_commands_allowed(true);
 	}
+}
+
+bool Room407::lookGlassJar() {
+	if (_xyzzy7 == 1112) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			lookGlassJar();
+
+			if (!inv_object_is_here("EMERALD/CORK")) {
+				digi_play("407r99a", 1);
+			} else if (!_frotz6 && !_frotz7) {
+				_frotz7 = 1;
+				digi_play("407r15", 1);
+			} else {
+				_frotz7 = 1;
+				digi_play("407r15", 1, 255, _frotz6 ? 2 : -1);
+			}
+			return true;
+		case 1:
+			digi_play("407r16", 1);
+			return true;
+		case 2:
+			digi_play("407r16a", 1);
+			return true;
+		default:
+			break;
+		}
+	}
+
+	return false;
+}
+
+void Room407::fullglassPopup() {
+	if (_G(kernel).trigger == -1) {
+		_int2 = 1030;
+		_glassTopPopup = series_place_sprite("407 FULL GLASS POPUP",
+			0, 0, 0, 100, 0x200);
+
+		if (_xyzzy6 == 1116)
+			_glassTopPopupWithItems2 = series_place_sprite(
+				"407 FULL GLASS POPUP WITH ITEMS", 0, 0, 0, 100, 0x100);
+
+		if (_xyzzy8 == 1116)
+			_glassBottomWithItems1 = series_place_sprite(
+				"407 FULL GLASS POPUP WITH ITEMS", 1, 0, 0, 100, 0x100);
+
+		if (_xyzzy5 == 1116)
+			_glassBottomWithItems2 = series_place_sprite(
+				"407 FULL GLASS POPUP WITH ITEMS", 4, 0, 0, 100, 0x100);
+
+		if (_val6 == 1010)
+			_glassTopPopupWithItems1 = series_place_sprite(
+				"407 FULL GLASS POPUP WITH ITEMS", 6, 0, 0, 100, 0x100);
+
+		disableHotspots();
+		hotspot_set_active(" ", true);
+		player_set_commands_allowed(true);
+	}
+}
+
+bool Room407::lookEmeraldCork() {
+	if (_xyzzy7 == 1112) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			glassBottomPopup();
+
+			if (_frotz6) {
+				digi_play("407r17", 1);
+			} else {
+				_frotz6 = 1;
+				digi_play("407r17", 1, 255, 1);
+			}
+			return true;
+
+		case 1:
+			digi_play("407r17a", 1);
+			return true;
+
+		default:
+			break;
+		}
+	}
+
+	return false;
+}
+
+void Room407::periodicTablePopup() {
+	if (_G(kernel).trigger == -1) {
+		_val15 = 1030;
+		_glassTopPopupWithItems2 = series_place_sprite(
+			"Large periodic table", 0, 0, 0, 100, 0);
+		disableHotspots();
+		hotspot_set_active(" ", true);
+		player_set_commands_allowed(true);
+	}
+}
+
+bool Room407::lookLeverKey() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (_frotz9) {
+			digi_play("407r26a", 1);
+		} else {
+			digi_play("407r26", 1, 255, 2);
+			_frotz9 = 1;
+		}
+
+		return true;
+
+	case 2:
+		digi_play("407r26a", 1);
+		return true;
+
+	default:
+		break;
+	}
+
+	return false;
 }
 
 } // namespace Rooms
