@@ -425,6 +425,33 @@ void CastleEngine::executePrint(FCLInstruction &instruction) {
 }
 
 
+void CastleEngine::loadAssets() {
+	FreescapeEngine::loadAssets();
+	if (isDOS()) {
+		_menu = loadBundledImage("castle_menu");
+		assert(_menu);
+		_menu->convertToInPlace(_gfx->_texturePixelFormat);
+
+		_strenghtBackgroundFrame = loadBundledImage("castle_strength_background");
+		_strenghtBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat);
+
+		_strenghtBarFrame = loadBundledImage("castle_strength_bar");
+		_strenghtBarFrame->convertToInPlace(_gfx->_texturePixelFormat);
+
+		_strenghtWeightsFrames.push_back(loadBundledImage("castle_strength_weight_0"));
+		_strenghtWeightsFrames[0]->convertToInPlace(_gfx->_texturePixelFormat);
+
+		_strenghtWeightsFrames.push_back(loadBundledImage("castle_strength_weight_1"));
+		_strenghtWeightsFrames[1]->convertToInPlace(_gfx->_texturePixelFormat);
+
+		_strenghtWeightsFrames.push_back(loadBundledImage("castle_strength_weight_2"));
+		_strenghtWeightsFrames[2]->convertToInPlace(_gfx->_texturePixelFormat);
+
+		_strenghtWeightsFrames.push_back(loadBundledImage("castle_strength_weight_3"));
+		_strenghtWeightsFrames[3]->convertToInPlace(_gfx->_texturePixelFormat);
+	}
+}
+
 void CastleEngine::loadRiddles(Common::SeekableReadStream *file, int offset, int number) {
 	file->seek(offset);
 	debugC(1, kFreescapeDebugParser, "Riddle table:");

@@ -34,6 +34,7 @@ public:
 	void endGame() override;
 
 	void drawInfoMenu() override;
+	void loadAssets() override;
 	void loadAssetsDOSFullGame() override;
 	void loadAssetsDOSDemo() override;
 	void loadAssetsAmigaDemo() override;
