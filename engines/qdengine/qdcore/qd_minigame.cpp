@@ -139,14 +139,12 @@ bool qdMiniGame::load_script(const xml::tag *p) {
 			_config.reserve(_config.size() + config_size);
 			break;
 		case QDSCR_MINIGAME_CONFIG_PARAMETER: {
-			if (!qdGameConfig::get_config().minigame_read_only_ini()) {
-				qdMinigameConfigParameter prm;
-				prm.load_script(&*it);
-				config_container_t::iterator cfg_it = Common::find(_config.begin(), _config.end(), prm);
-				if (cfg_it != _config.end()) {
-					cfg_it->set_data_string(prm.data_string());
-					cfg_it->set_data_count(prm.data_count());
-				}
+			qdMinigameConfigParameter prm;
+			prm.load_script(&*it);
+			config_container_t::iterator cfg_it = Common::find(_config.begin(), _config.end(), prm);
+			if (cfg_it != _config.end()) {
+				cfg_it->set_data_string(prm.data_string());
+				cfg_it->set_data_count(prm.data_count());
 			}
 		}
 		break;

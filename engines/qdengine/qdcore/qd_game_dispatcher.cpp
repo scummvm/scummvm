@@ -748,7 +748,7 @@ void qdGameDispatcher::redraw() {
 			grDispatcher::instance()->flush();
 #endif
 		}
-		if (!qdGameConfig::get_config().force_full_redraw())
+		if (!g_engine->_forceFullRedraw)
 			drop_flag(FULLSCREEN_REDRAW_FLAG);
 		post_redraw();
 	}

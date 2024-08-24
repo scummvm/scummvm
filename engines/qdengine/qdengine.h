@@ -69,6 +69,8 @@ public:
 
 	int _screenW;
 	int _screenH;
+
+	bool _forceFullRedraw = false;
 public:
 	QDEngineEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~QDEngineEngine() override;
