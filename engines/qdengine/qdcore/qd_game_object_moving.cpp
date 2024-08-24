@@ -1605,9 +1605,6 @@ Vect2s qdGameObjectMoving::get_nearest_walkable_point(const Vect2s &target) cons
 		} while (--dy >= 0);
 	}
 
-	// Если шаг так и не был сделан
-	if (fir_step) return trg;
-
 	r -= dr;
 	return Vect2s(r.xi(), r.yi());
 }
