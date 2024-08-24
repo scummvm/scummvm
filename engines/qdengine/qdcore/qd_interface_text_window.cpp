@@ -500,7 +500,7 @@ void qdInterfaceTextWindow::update_text_position() {
 		Vect2f rr = r() - text_size() / 2 + _text_set->screen_size() / 2;
 		switch (_textVAlign) {
 		case VALIGN_CENTER:
-			rr.y += (text_size().y - _text_set->screen_size().y) / 2;
+			rr.y += (float)(text_size().y - _text_set->screen_size().y) / 2.0;
 			break;
 		case VALIGN_BOTTOM:
 			rr.y += text_size().y - _text_set->screen_size().y;
