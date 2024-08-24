@@ -55,7 +55,7 @@ WM_LBUTTONUP
 WM_RBUTTONUP
 */
 bool mouse_wndproc(const Common::Event &event, mouseDispatcher *dsp);
-};
+}
 
 } // namespace QDEngine
 

@@ -57,7 +57,7 @@ qdGridZone::qdGridZone(const qdGridZone &gz) : qdNamedObject(gz), qdContour(gz),
 }
 
 qdGridZone::~qdGridZone() {
-};
+}
 
 qdGridZone &qdGridZone::operator = (const qdGridZone &gz) {
 	if (this == &gz) return *this;

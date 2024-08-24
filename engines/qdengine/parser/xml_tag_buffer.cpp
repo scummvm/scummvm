@@ -107,6 +107,6 @@ tag_buffer &tag_buffer::operator >= (float &var) {
 	return *this;
 }
 
-}; /* namespace xml */
+} /* namespace xml */
 
 } // namespace QDEngine

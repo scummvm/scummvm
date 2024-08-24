@@ -56,7 +56,7 @@ grDispatcher *grD = NULL;
 
 qdGameDispatcher *qd_gameD = NULL;
 
-}; // namespace qdrt
+} // namespace qdrt
 
 using namespace qdrt;
 
@@ -381,5 +381,6 @@ void restore_graphics() {
 void restore() {
 }
 
-}; // namespace main
+} // namespace main
+
 } // namespace QDEngine

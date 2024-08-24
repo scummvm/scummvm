@@ -94,7 +94,7 @@ bool decodeRLE(const uint32 *in_data, uint32 *out_data) {
 	return true;
 }
 
-}; // namespace tile_compress
+} // namespace tile_compress
 
 void grDispatcher::putTileSpr(int x, int y, const grTileSprite &sprite, bool has_alpha, int mode) {
 	int px = 0;

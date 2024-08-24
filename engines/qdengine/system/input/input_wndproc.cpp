@@ -80,6 +80,6 @@ bool mouse_wndproc(const Common::Event &event, mouseDispatcher *dsp) {
 	return false;
 }
 
-}; /* namespace input */
+} /* namespace input */
 
 } // namespace QDEngine

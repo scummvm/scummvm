@@ -220,7 +220,7 @@ private:
 	qdCounter *_counter;
 };
 
-}; // namespace qdmg
+} // namespace qdmg
 
 /* ----------------------------- EXTERN SECTION ----------------------------- */
 /* --------------------------- PROTOTYPE SECTION ---------------------------- */
@@ -580,5 +580,5 @@ void qdMinigameCounterInterfaceImpl::add_value(int value_delta) {
 		_counter->add_value(value_delta);
 }
 
-}; // namespace qdmg
+} // namespace qdmg
 } // namespace QDEngine

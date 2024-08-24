@@ -187,35 +187,35 @@ const Vect3f qdCamera::rscr2global(const Vect2s rScrPoint, const float zInCamera
 	Vect3f _t = rscr2camera_coord(rScrPoint, zInCameraCoord);
 	//Преобразование координаты в системе камеры - в координаты глобальные(в системе основной плоскости)
 	return camera_coord2global(_t);
-};
+}
 
 const Vect3f qdCamera::global2camera_coord(const Vect3f &glCoord) const {
 	return TransformVector(glCoord, _m_cam);
-};
+}
 
 const Vect3f qdCamera::rscr2camera_coord(const Vect2s &rScrPoint, float z) const {
 	float x = ((float)rScrPoint.x * (z + _focus)) / _focus;
 	float y = ((float)rScrPoint.y * (z + _focus)) / _focus;
 	return Vect3f(x, y, z);
-};
+}
 
 const Vect2s qdCamera::camera_coord2rscr(const Vect3f &coord) const {
 	int16 sx = round(coord.x * _focus / (coord.z + _focus));
 	int16 sy = round(coord.y * _focus / (coord.z + _focus));
 	return Vect2s(sx, sy);
-};
+}
 
 const Vect2s qdCamera::camera_coord2scr(const Vect3f &coord) const {
 	return rscr2scr(camera_coord2rscr(coord));
-};
+}
 
 const Vect2s qdCamera::global2scr(const Vect3f &glCoord) const {
 	return camera_coord2scr(global2camera_coord(glCoord));
-};
+}
 
 const Vect2s qdCamera::global2rscr(const Vect3f &glCoord) const {
 	return camera_coord2rscr(global2camera_coord(glCoord));
-};
+}
 
 void qdCamera::set_R(const float r) {
 	_m_fR = r;

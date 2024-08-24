@@ -110,6 +110,6 @@ bool parser::is_script_binary(const char *fname) const {
 	return false;
 }
 
-}; /* namespace xml */
+} /* namespace xml */
 
 } // namespace QDEngine

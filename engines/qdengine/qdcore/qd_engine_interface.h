@@ -79,7 +79,7 @@ public:
 	}
 };
 
-}; // namespace qdmg
+} // namespace qdmg
 
 } // namespace QDEngine
 

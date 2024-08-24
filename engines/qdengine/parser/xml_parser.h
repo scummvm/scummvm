@@ -93,7 +93,7 @@ private:
 	bool _skip_mode;
 };
 
-}; /* namespace xml */
+} /* namespace xml */
 
 } // namespace QDEngine
 
