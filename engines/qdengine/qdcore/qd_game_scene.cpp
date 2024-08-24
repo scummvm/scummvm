@@ -1136,9 +1136,6 @@ bool qdGameScene::follow_path_seek(qdGameObjectMoving *pObj, bool lock_target) {
 		_selected_object->set_grid_zone_attributes(sGridCell::CELL_SELECTED);
 
 	return pObj->move(_selected_object->last_move_order(), lock_target);
-
-	if (qdGameObjectMoving::FOLLOW_UPDATE_PATH == pObj->follow_condition())
-		_selected_object->drop_grid_zone_attributes(sGridCell::CELL_SELECTED);
 }
 
 /*
