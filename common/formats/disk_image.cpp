@@ -106,7 +106,7 @@ static uint8 read44(byte *buffer, uint size, uint &pos) {
 	return ((ret << 1) | 1) & buffer[pos++ % size];
 }
 
-static bool decodeTrack(Common::SeekableReadStream &stream, uint trackLen, bool dos33, byte *const diskImage, uint tracks, Common::Array<bool> &goodSectors) {
+static bool decodeTrack(Common::SeekableReadStream &stream, uint trackLen, bool dos33, byte *const diskImage, uint tracks, Common::BitArray &goodSectors) {
 	// starting at 0xaa, 64 is invalid (see below)
 	const byte c_5and3_lookup[] = { 64, 0, 64, 1, 2, 3, 64, 64, 64, 64, 64, 4, 5, 6, 64, 64, 7, 8, 64, 9, 10, 11, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 12, 13, 64, 64, 14, 15, 64, 16, 17, 18, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 19, 20, 64, 21, 22, 23, 64, 64, 64, 64, 64, 24, 25, 26, 64, 64, 27, 28, 64, 29, 30, 31 };
 	// starting at 0x96, 64 is invalid (see below)
@@ -231,60 +231,82 @@ static bool decodeTrack(Common::SeekableReadStream &stream, uint trackLen, bool 
 			output[255] = (inbuffer[409] << 3) | (inbuffer[0] & 0x7);
 		}
 
-		goodSectors[track * sectorsPerTrack + sector] = true;
+		goodSectors.set(track * sectorsPerTrack + sector);
 	}
 
 	free(buffer);
 	return true;
 }
 
-static void printGoodSectors(Common::Array<bool> &goodSectors, uint sectorsPerTrack) {
+static void printGoodSectors(const Common::BitArray &goodSectors, uint sectorsPerTrack) {
 	if (gDebugLevel < 1) {
 		return;
 	}
 
-	if (Common::find(goodSectors.begin(), goodSectors.end(), false) != goodSectors.end()) {
-		debugN(1, "NIB: Bad/missing sectors:");
-
-		for (uint i = 0; i < goodSectors.size(); ++i) {
-			if (!goodSectors[i])
-				debugN(1, " (%d, %d)", i / sectorsPerTrack, i % sectorsPerTrack);
+	bool foundBadSector = false;
+	for (uint i = 0; i < goodSectors.size(); ++i) {
+		if (!goodSectors.get(i)) {
+			if (!foundBadSector) {
+				debugN(1, "Bad/missing sectors:");
+				foundBadSector = true;
+			}
+			debugN(1, " (%d, %d)", i / sectorsPerTrack, i % sectorsPerTrack);
 		}
-
+	}
+	if (foundBadSector) {
 		debugN(1, "\n");
 	}
 }
 
-static Common::SeekableReadStream *readImage_NIB(Common::File &f, bool dos33, uint tracks = 35) {
+static bool readImage_NIB(
+	const char *filename,
+	Common::SeekableReadStream &f,
+	byte *diskImage,
+	bool dos33,
+	uint startTrack = 0,
+	uint tracksToRead = 35) {
+
 	if (f.size() != 35 * kNibTrackLen) {
-		warning("NIB: image '%s' has invalid size of %d bytes", f.getName(), (int)f.size());
-		return nullptr;
+		warning("NIB: image '%s' has invalid size of %d bytes", filename, (int)f.size());
+		return false;
 	}
 
 	const uint sectorsPerTrack = (dos33 ? 16 : 13);
-	const uint imageSize = tracks * sectorsPerTrack * 256;
-	byte *const diskImage = (byte *)calloc(imageSize, 1);
-	Common::Array<bool> goodSectors(tracks * sectorsPerTrack);
+	Common::BitArray goodSectors(35 * sectorsPerTrack);
 
-	for (uint track = 0; track < tracks; ++track) {
-		if (!decodeTrack(f, kNibTrackLen, dos33, diskImage, tracks, goodSectors)) {
-			warning("NIB: error reading '%s'", f.getName());
-			free(diskImage);
-			return nullptr;
+	f.seek(startTrack * kNibTrackLen);
+	uint endTrack = startTrack + tracksToRead - 1;
+	for (uint track = startTrack; track <= endTrack; ++track) {
+		if (!decodeTrack(f, kNibTrackLen, dos33, diskImage, 35, goodSectors)) {
+			warning("NIB: error decoding track %d in '%s'", track, filename);
+			return false;
 		}
 	}
 
 	printGoodSectors(goodSectors, sectorsPerTrack);
+	return true;
+}
+
+static Common::SeekableReadStream *readImageToStream_NIB(Common::File &f, bool dos33, uint tracks = 35) {
+	const uint sectorsPerTrack = (dos33 ? 16 : 13);
+	const uint imageSize = tracks * sectorsPerTrack * 256;
+	byte *const diskImage = (byte *)calloc(imageSize, 1);
+
+	if (!readImage_NIB(f.getName(), f, diskImage, dos33, 0, tracks)) {
+		warning("NIB: error reading '%s'", f.getName());
+		free(diskImage);
+		return nullptr;
+	}
 
 	return new Common::MemoryReadStream(diskImage, imageSize, DisposeAfterUse::YES);
 }
 
-static int getVersion_WOZ(Common::File &f) {
+static int getVersion_WOZ(const char *filename, Common::SeekableReadStream &f) {
 	f.seek(0);
 	const uint32 fileId = f.readUint32BE();
 
 	if (f.eos() || f.err()) {
-		warning("WOZ: error reading '%s'", f.getName());
+		warning("WOZ: error reading '%s'", filename);
 		return 0;
 	}
 
@@ -293,16 +315,16 @@ static int getVersion_WOZ(Common::File &f) {
 	else if (fileId == MKTAG('W', 'O', 'Z', '2'))
 		return 2;
 
-	warning("WOZ: unsupported ID '%s' found in '%s'", tag2str(fileId), f.getName());
+	warning("WOZ: unsupported ID '%s' found in '%s'", tag2str(fileId), filename);
 	return 0;
 }
 
-static Common::SeekableReadStream *readTrack_WOZ(Common::File &f, uint track, bool woz2) {
+static Common::SeekableReadStream *readTrack_WOZ(const char *filename, Common::SeekableReadStream &f, uint track, bool woz2) {
 	f.seek(88 + track * 4);
 	const byte index = f.readByte();
 
 	if (index == 0xff) {
-		warning("WOZ: track %u not found in '%s', skipping", track, f.getName());
+		warning("WOZ: track %u not found in '%s', skipping", track, filename);
 		return nullptr;
 	}
 
@@ -323,7 +345,7 @@ static Common::SeekableReadStream *readTrack_WOZ(Common::File &f, uint track, bo
 	f.seek(offset);
 
 	if (f.eos() || f.err() || byteSize == 0) {
-		warning("WOZ: failed to read track %u in '%s', aborting", track, f.getName());
+		warning("WOZ: failed to read track %u in '%s', aborting", track, filename);
 		return nullptr;
 	}
 
@@ -331,14 +353,14 @@ static Common::SeekableReadStream *readTrack_WOZ(Common::File &f, uint track, bo
 	byte *outBuf = (byte *)malloc(byteSize);
 	uint32 outSize = 0;
 	if (!inBuf || !outBuf) {
-		warning("WOZ: failed to create buffers of size %u for track %u in '%s'", byteSize, track, f.getName());
+		warning("WOZ: failed to create buffers of size %u for track %u in '%s'", byteSize, track, filename);
 		free(inBuf);
 		free(outBuf);
 		return nullptr;
 	}
 
 	if (f.read(inBuf, byteSize) < byteSize) {
-		warning("WOZ: error reading track %u in '%s'", track, f.getName());
+		warning("WOZ: error reading track %u in '%s'", track, filename);
 		free(inBuf);
 		free(outBuf);
 		return nullptr;
@@ -360,7 +382,7 @@ static Common::SeekableReadStream *readTrack_WOZ(Common::File &f, uint track, bo
 		if (bitStream.pos() == bitSize) {
 			bitStream.rewind();
 			if (stop) {
-				warning("WOZ: failed to find sync point for track %u in '%s'", track, f.getName());
+				warning("WOZ: failed to find sync point for track %u in '%s'", track, filename);
 				break;
 			}
 			stop = true;
@@ -383,10 +405,10 @@ static Common::SeekableReadStream *readTrack_WOZ(Common::File &f, uint track, bo
 	} while (bitsRead < bitSize);
 
 	if (nibble != 0)
-		warning("WOZ: failed to sync track %u in '%s'", track, f.getName());
+		warning("WOZ: failed to sync track %u in '%s'", track, filename);
 
 	if (outSize == 0) {
-		warning("WOZ: track %u in '%s' is empty", track, f.getName());
+		warning("WOZ: track %u in '%s' is empty", track, filename);
 		free(outBuf);
 		return nullptr;
 	}
@@ -394,30 +416,48 @@ static Common::SeekableReadStream *readTrack_WOZ(Common::File &f, uint track, bo
 	return new Common::MemoryReadStream(outBuf, outSize, DisposeAfterUse::YES);
 }
 
-static Common::SeekableReadStream *readImage_WOZ(Common::File &f, bool dos33, uint tracks = 35) {
-	int version = getVersion_WOZ(f);
+static bool readImage_WOZ(
+	const char *filename,
+	Common::SeekableReadStream &f,
+	byte *diskImage,
+	bool dos33,
+	uint startTrack = 0,
+	uint tracksToRead = 35) {
 
-	if (version == 0)
-		return nullptr;
+	int version = getVersion_WOZ(filename, f);
+	if (version == 0) {
+		return false;
+	}
 
 	const uint sectorsPerTrack = (dos33 ? 16 : 13);
-	const uint imageSize = tracks * sectorsPerTrack * 256;
-	byte *const diskImage = (byte *)calloc(imageSize, 1);
-	Common::Array<bool> goodSectors(tracks * sectorsPerTrack);
+	Common::BitArray goodSectors(35 * sectorsPerTrack);
 
-	for (uint track = 0; track < tracks; ++track) {
-		StreamPtr stream(readTrack_WOZ(f, track, version == 2));
+	uint endTrack = startTrack + tracksToRead - 1;
+	for (uint track = startTrack; track <= endTrack; ++track) {
+		StreamPtr stream(readTrack_WOZ(filename, f, track, version == 2));
 
 		if (stream) {
-			if (!decodeTrack(*stream, stream->size(), dos33, diskImage, tracks, goodSectors)) {
-				warning("WOZ: error reading '%s'", f.getName());
-				free(diskImage);
-				return nullptr;
+			if (!decodeTrack(*stream, stream->size(), dos33, diskImage, 35, goodSectors)) {
+				warning("WOZ: error decoding track %d in '%s'", track, filename);
+				return false;
 			}
 		}
 	}
 
 	printGoodSectors(goodSectors, sectorsPerTrack);
+	return true;
+}
+
+static Common::SeekableReadStream *readImageToStream_WOZ(Common::File &f, bool dos33, uint tracks = 35) {
+	const uint sectorsPerTrack = (dos33 ? 16 : 13);
+	const uint imageSize = tracks * sectorsPerTrack * 256;
+	byte *const diskImage = (byte *)calloc(imageSize, 1);
+
+	if (!readImage_WOZ(f.getName(), f, diskImage, dos33, 0, tracks)) {
+		warning("WOZ: error reading '%s'", f.getName());
+		free(diskImage);
+		return nullptr;
+	}
 
 	return new Common::MemoryReadStream(diskImage, imageSize, DisposeAfterUse::YES);
 }
@@ -456,12 +496,12 @@ bool DiskImage::open(const Common::String &name, Common::File *f) {
 		_tracks = 35;
 		_sectorsPerTrack = 16;
 		_bytesPerSector = 256;
-		_stream = f;
+		_inputStream = f;
 	} else if (name.hasSuffixIgnoreCase(".d13")) {
 		_tracks = 35;
 		_sectorsPerTrack = 13;
 		_bytesPerSector = 256;
-		_stream = f;
+		_inputStream = f;
 	} else if (name.hasSuffixIgnoreCase(".nib")) {
 		_tracks = 35;
 
@@ -471,56 +511,83 @@ bool DiskImage::open(const Common::String &name, Common::File *f) {
 			_sectorsPerTrack = 13;
 
 		_bytesPerSector = 256;
-		f->seek(0);
-		_stream = readImage_NIB(*f, _sectorsPerTrack == 16);
+		if (_lazyDecoding) {
+			// store the file stream and create an empty decode stream.
+			// tracks will be decoded into the decode stream as they're read.
+			uint32 imageSize = _tracks * _sectorsPerTrack * _bytesPerSector;
+			_inputStream = f;
+			_decodeBuffer = (byte *)calloc(imageSize, 1);
+			_decodeStream = new Common::MemoryReadStream(_decodeBuffer, imageSize, DisposeAfterUse::YES);
+			_decodedTracks.set_size(_tracks);
+			_encoding = DiskImageEncodingNib;
+		} else {
+			// decode the entire image
+			_inputStream = readImageToStream_NIB(*f, (_sectorsPerTrack == 16));
+		}
 	} else if (name.hasSuffixIgnoreCase(".woz")) {
 		_tracks = 35;
 		_sectorsPerTrack = 13;
 		_bytesPerSector = 256;
 
-		int version = getVersion_WOZ(*f);
+		int version = getVersion_WOZ(name.c_str(), *f);
 
 		if (version > 0) {
-			StreamPtr bitStream(readTrack_WOZ(*f, 0, version == 2));
+			StreamPtr bitStream(readTrack_WOZ(name.c_str(), *f, 0, version == 2));
 			if (bitStream) {
 				if (detectDOS33(*bitStream, bitStream->size()))
 					_sectorsPerTrack = 16;
-				_stream = readImage_WOZ(*f, _sectorsPerTrack == 16);
+
+				if (_lazyDecoding) {
+					// store the file stream and create an empty decode stream.
+					// tracks will be decoded into the decode stream as they're read.
+					uint32 imageSize = _tracks * _sectorsPerTrack * _bytesPerSector;
+					_inputStream = f;
+					_decodeBuffer = (byte *)calloc(imageSize, 1);
+					_decodeStream = new Common::MemoryReadStream(_decodeBuffer, imageSize, DisposeAfterUse::YES);
+					_decodedTracks.set_size(_tracks);
+					_encoding = DiskImageEncodingWoz;
+				} else {
+					// decode the entire image
+					_inputStream = readImageToStream_WOZ(*f, (_sectorsPerTrack == 16), _tracks);
+				}
 			} else {
-				warning("WOZ: failed to load bitstream for track 0 in '%s'", f->getName());
+				warning("WOZ: failed to load bitstream for track 0 in '%s'", name.c_str());
 			}
 		}
 	} else if (name.hasSuffixIgnoreCase(".xfd")) {
 		_tracks = 40;
 		_sectorsPerTrack = 18;
 		_bytesPerSector = 128;
-		_stream = f;
+		_inputStream = f;
 	} else if (name.hasSuffixIgnoreCase(".img")) {
 		_tracks = 40;
 		_sectorsPerTrack = 8;
 		_bytesPerSector = 512;
 		_firstSector = 1;
-		_stream = f;
+		_inputStream = f;
+	}
+	
+	if (_inputStream == nullptr) {
+		return false;
 	}
 
 	int expectedSize = _tracks * _sectorsPerTrack * _bytesPerSector;
-
-	if (_stream == nullptr) {
-		return false;
-	}
-
-	if (_stream->size() != expectedSize) {
-		warning("Unrecognized disk image '%s' of size %d bytes (expected %d bytes)", f->getName(), (int)_stream->size(), expectedSize);
-		if (_stream != f) {
-			delete _stream;
-			_stream = nullptr;
+	if (getDiskStream()->size() != expectedSize) {
+		warning("Unrecognized disk image '%s' of size %d bytes (expected %d bytes)", name.c_str(), (int)getDiskStream()->size(), expectedSize);
+		if (_inputStream != f) {
+			delete _inputStream;
+			_inputStream = nullptr;
 		}
+		delete _decodeStream;
+		_decodeStream = nullptr;
 		return false;
 	};
 
-	if (_stream != f) {
+	if (_inputStream != f) {
 		delete f;
 	}
+
+	_name = name;
 	return true;
 }
 
@@ -542,16 +609,32 @@ Common::SeekableReadStream *DiskImage::createReadStream(uint track, uint sector,
 		return nullptr;
 	}
 
-	sector -= _firstSector;
+	// lazy decoding not supported for createReadStream(), because decoding
+	// tracks here requires removing way too many existing const keywords.
+	// if it's ever needed, enable this code and remove all those consts.
+#if 0
+	if (_decodeBuffer != nullptr) {
+		// lazy decoding
+		uint32 bytesPerTrack = _sectorsPerTrack * _bytesPerSector;
+		uint32 endTrack = track + (((sector - _firstSector) * _bytesPerSector + offset + bytesToRead - 1) / bytesPerTrack);
+		for (uint32 t = track; t <= endTrack; t++) {
+			if (!_decodedTracks.get(t)) {
+				decodeTrack(t);
+			}
+		}
+	}
+#endif
 
+	sector -= _firstSector;
+	Common::SeekableReadStream *stream = getDiskStream();
 	while (dataOffset < bytesToRead) {
 		uint bytesRemInTrack = (sectorLimit - 1 - sector) * _bytesPerSector + _bytesPerSector - offset;
-		_stream->seek((track * _sectorsPerTrack + sector) * _bytesPerSector + offset);
+		stream->seek((track * _sectorsPerTrack + sector) * _bytesPerSector + offset);
 
 		if (bytesToRead - dataOffset < bytesRemInTrack)
 			bytesRemInTrack = bytesToRead - dataOffset;
 
-		if (_stream->read(data + dataOffset, bytesRemInTrack) < bytesRemInTrack) {
+		if (stream->read(data + dataOffset, bytesRemInTrack) < bytesRemInTrack) {
 			warning("Error reading disk image at track %d; sector %d", track, sector);
 			free(data);
 			return nullptr;
@@ -569,10 +652,19 @@ Common::SeekableReadStream *DiskImage::createReadStream(uint track, uint sector,
 }
 
 Common::SeekableReadStream *DiskImage::releaseStream() {
-	Common::SeekableReadStream *stream = _stream;
+	Common::SeekableReadStream *stream = getDiskStream();
 	
 	// reset class
-	_stream = nullptr;
+	if (stream != _inputStream) {
+		delete _inputStream;
+	}
+	_inputStream = nullptr;
+	_decodeStream = nullptr;
+	_decodeBuffer = nullptr;
+	_decodedTracks.clear();
+	_encoding = DiskImageEncodingNone;
+	_lazyDecoding = false;
+
 	_tracks = 0;
 	_sectorsPerTrack = 0;
 	_bytesPerSector = 0;
@@ -580,6 +672,42 @@ Common::SeekableReadStream *DiskImage::releaseStream() {
 	_firstSector = 0;
 
 	return stream;
+}
+
+uint32 DiskImage::read(void *dataPtr, uint32 diskPosition, uint32 dataSize) {
+	Common::SeekableReadStream *stream;
+	if (_decodeBuffer != nullptr) {
+		// lazy decoding
+		uint32 bytesPerTrack = _sectorsPerTrack * _bytesPerSector;
+		uint32 startTrack = diskPosition / bytesPerTrack;
+		uint32 endTrack = (diskPosition + dataSize - 1) / bytesPerTrack;
+		for (uint32 t = startTrack; t <= endTrack; t++) {
+			if (!_decodedTracks.get(t)) {
+				decodeTrack(t);
+			}
+		}
+		stream = _decodeStream;
+	}
+	else {
+		stream = _inputStream;
+	}
+	stream->seek(diskPosition);
+	return stream->read(dataPtr, dataSize);
+}
+
+void DiskImage::decodeTrack(uint track) {
+	switch (_encoding) {
+	case DiskImageEncodingNib:
+		readImage_NIB(_name.c_str(), *_inputStream, _decodeBuffer, (_sectorsPerTrack == 16), track, 1);
+		break;
+	case DiskImageEncodingWoz:
+		readImage_WOZ(_name.c_str(), *_inputStream, _decodeBuffer, (_sectorsPerTrack == 16), track, 1);
+		break;
+	default:
+		return;
+	}
+
+	_decodedTracks.set(track);
 }
 
 int32 computeMD5(const Common::FSNode &node, Common::String &md5, uint32 md5Bytes) {
@@ -593,8 +721,7 @@ int32 computeMD5(const Common::FSNode &node, Common::String &md5, uint32 md5Byte
 	if (node.getName().matchString("*.nib", true) && f.size() == 35 * kNibTrackLen) {
 		bool isDOS33 = detectDOS33(f, kNibTrackLen);
 
-		f.seek(0);
-		Common::SeekableReadStream *stream = readImage_NIB(f, isDOS33, tracks);
+		Common::SeekableReadStream *stream = readImageToStream_NIB(f, isDOS33, tracks);
 		if (stream) {
 			md5 = Common::computeStreamMD5AsString(*stream, md5Bytes);
 			delete stream;
@@ -603,13 +730,13 @@ int32 computeMD5(const Common::FSNode &node, Common::String &md5, uint32 md5Byte
 
 		return -1;
 	} else if (node.getName().matchString("*.woz", true)) {
-		int version = getVersion_WOZ(f);
+		int version = getVersion_WOZ(f.getName(), f);
 
 		if (version > 0) {
-			StreamPtr nibbles(readTrack_WOZ(f, 0, version == 2));
+			StreamPtr nibbles(readTrack_WOZ(f.getName(), f, 0, version == 2));
 			if (nibbles) {
 				bool isDOS33 = detectDOS33(*nibbles, nibbles->size());
-				StreamPtr stream(readImage_WOZ(f, isDOS33, tracks));
+				StreamPtr stream(readImageToStream_WOZ(f, isDOS33, tracks));
 				if (stream) {
 					md5 = Common::computeStreamMD5AsString(*stream, md5Bytes);
 					return 35 * (isDOS33 ? 16 : 13) * 256;
