@@ -61,6 +61,8 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_optionTexture = nullptr;
 	_keysFrame = nullptr;
 	_spiritsMeterIndicatorFrame = nullptr;
+	_strenghtBackgroundFrame = nullptr;
+	_strenghtBarFrame = nullptr;
 	_menu = nullptr;
 
 	_numberKeys = 0;
@@ -77,6 +79,13 @@ CastleEngine::~CastleEngine() {
 	if (_option) {
 		_option->free();
 		delete _option;
+	}
+
+	for (int i = 0; i < int(_strenghtWeightsFrames.size()); i++) {
+		if (_strenghtWeightsFrames[i]) {
+			_strenghtWeightsFrames[i]->free();
+			delete _strenghtWeightsFrames[i];
+		}
 	}
 }
 
@@ -629,21 +638,57 @@ void CastleEngine::drawStringInSurface(const Common::String &str, int x, int y, 
 }
 
 void CastleEngine::drawEnergyMeter(Graphics::Surface *surface) {
-	uint32 back = 0;
+	/*uint32 back = 0;
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 	Common::Rect weightRect;
 	Common::Rect barRect;
-	Common::Rect backRect;
+	Common::Rect backRect;*/
+	Common::Point origin;
 
 	if (isDOS()) {
-		back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xA7, 0x00, 0x00);
+		/*back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xA7, 0x00, 0x00);
 		barRect = Common::Rect(45, 164, 110, 166);
 		weightRect = Common::Rect(57, 158, 59, 172);
 		backRect = Common::Rect(45, 157, 112, 173);
 		if (_gameStateVars[k8bitVariableShield] > 16)
-			weightRect.translate(3, 0);
+			weightRect.translate(3, 0);*/
+	} if (isSpectrum()) {
+		origin = Common::Point(63, 154);
+		surface->copyRectToSurface((const Graphics::Surface)*_strenghtBackgroundFrame, origin.x, origin.y, Common::Rect(0, 0, _strenghtBackgroundFrame->w, _strenghtBackgroundFrame->h));
+		surface->copyRectToSurface((const Graphics::Surface)*_strenghtBarFrame, origin.x, origin.y + 6, Common::Rect(0, 0, _strenghtBarFrame->w, _strenghtBarFrame->h));
+
+		Common::Point weightPoint;
+		int frameIdx = -1;
+
+		weightPoint = Common::Point(origin.x + 5, origin.y + 1);
+		frameIdx = 3 - _gameStateVars[k8bitVariableShield] % 4;
+		frameIdx++;
+		frameIdx = frameIdx % 4;
+
+		surface->copyRectToSurface((const Graphics::Surface)*_strenghtWeightsFrames[frameIdx], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[frameIdx]->h));
+		weightPoint += Common::Point(3, 0);
+
+		for (int i = 0; i < _gameStateVars[k8bitVariableShield] / 4 - 1; i++) {
+			surface->copyRectToSurface((const Graphics::Surface)*_strenghtWeightsFrames[0], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[0]->h));
+			weightPoint += Common::Point(3, 0);
+		}
+
+		weightPoint = Common::Point(origin.x + 64, origin.y + 1);
+		frameIdx = 3 - _gameStateVars[k8bitVariableShield] % 4;
+		frameIdx++;
+		frameIdx = frameIdx % 4;
+
+		surface->copyRectToSurface((const Graphics::Surface)*_strenghtWeightsFrames[frameIdx], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[frameIdx]->h));
+		weightPoint += Common::Point(-3, 0);
+
+		for (int i = 0; i < _gameStateVars[k8bitVariableShield] / 4 - 1; i++) {
+			surface->copyRectToSurface((const Graphics::Surface)*_strenghtWeightsFrames[0], weightPoint.x, weightPoint.y, Common::Rect(0, 0, 3, _strenghtWeightsFrames[0]->h));
+			weightPoint += Common::Point(-3, 0);
+		}
+		return;
 	}
-	surface->fillRect(backRect, black);
+
+	/*surface->fillRect(backRect, black);
 	surface->fillRect(barRect, back);
 
 	for (int i = 0; i < _gameStateVars[k8bitVariableShield] / 4; i++) {
@@ -656,7 +701,7 @@ void CastleEngine::drawEnergyMeter(Graphics::Surface *surface) {
 		weightRect.translate(0, remainder / 2);
 		weightRect.setHeight(weightRect.height() - remainder);
 		surface->fillRect(weightRect, back);
-	}
+	}*/
 }
 
 void CastleEngine::addGhosts() {
