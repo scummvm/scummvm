@@ -180,7 +180,7 @@ bool qdGameObject::save_data(Common::WriteStream &fh) const {
 
 bool qdGameObject::init() {
 	drop_flag(QD_OBJ_SCREEN_COORDS_FLAG);
-	drop_flag(QD_OBJ_STATE_CHANGE_FLAG | QD_OBJ_IS_IN_TRIGGER_FLAG | QD_OBJ_STATE_CHANGE_FLAG | QD_OBJ_IS_IN_INVENTORY_FLAG);
+	drop_flag(QD_OBJ_STATE_CHANGE_FLAG | QD_OBJ_IS_IN_TRIGGER_FLAG | QD_OBJ_IS_IN_INVENTORY_FLAG);
 	drop_flag(QD_OBJ_HIDDEN_FLAG);
 	return true;
 }
