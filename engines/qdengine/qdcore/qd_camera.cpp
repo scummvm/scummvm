@@ -886,10 +886,9 @@ sGridCell *qdCamera::backup(sGridCell *ptrBuff) {
 bool qdCamera::restore(sGridCell *grid, int sx, int sy, int csx, int csy) {
 	if (_grid)
 		delete [] _grid;
+
 	_grid  = new sGridCell[sx * sy];
-	if (!_grid)
-		return false;
-	memcpy(_grid, grid, sizeof(sGridCell)*sx * sy);
+	memcpy(_grid, grid, sizeof(sGridCell) * sx * sy);
 
 	_GSX = sx;
 	_GSY = sy;
