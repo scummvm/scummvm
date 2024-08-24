@@ -68,6 +68,9 @@ public:
 		return _bits[bit / 8] & (1 << (bit % 8));
 	}
 
+	uint size() const {
+		return _bitcount;
+	}
 private:
 	uint _bitcount;
 	byte *_bits;
