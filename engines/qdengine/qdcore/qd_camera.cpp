@@ -1470,7 +1470,7 @@ bool qdCamera::set_grid_line_attributes(const Vect2s &start_pos, const Vect2s &e
 	int dy = end_pos.y - start_pos.y;
 
 	Vect2f dr(dx, dy);
-	float d = _cellSX / 3;
+	float d = (float)_cellSX / 3.0;
 	if (d < 0.5f) d = 0.5f;
 	dr.normalize(d);
 
@@ -1503,7 +1503,7 @@ bool qdCamera::drop_grid_line_attributes(const Vect2s &start_pos, const Vect2s &
 	int dy = end_pos.y - start_pos.y;
 
 	Vect2f dr(dx, dy);
-	float d = _cellSX / 3;
+	float d = (float)_cellSX / 3.0;
 	if (d < 0.5f) d = 0.5f;
 	dr.normalize(d);
 
@@ -1534,7 +1534,7 @@ bool qdCamera::check_grid_line_attributes(const Vect2s &start_pos, const Vect2s 
 	int dy = end_pos.y - start_pos.y;
 
 	Vect2f dr(dx, dy);
-	float d = _cellSX / 3;
+	float d = (float)_cellSX / 3.0;
 	if (d < 0.5f) d = 0.5f;
 	dr.normalize(d);
 
