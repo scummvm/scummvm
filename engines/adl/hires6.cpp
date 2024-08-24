@@ -161,13 +161,13 @@ bool HiRes6Engine::canSaveGameStateCurrently(Common::U32String *msg) {
 #define SECTORS_PER_TRACK 16
 #define BYTES_PER_SECTOR 256
 
-static Common::MemoryReadStream *loadSectors(DiskImage *disk, byte track, byte sector = SECTORS_PER_TRACK - 1, byte count = SECTORS_PER_TRACK) {
+static Common::MemoryReadStream *loadSectors(Common::DiskImage *disk, byte track, byte sector = SECTORS_PER_TRACK - 1, byte count = SECTORS_PER_TRACK) {
 	const int bufSize = count * BYTES_PER_SECTOR;
 	byte *const buf = (byte *)malloc(bufSize);
 	byte *p = buf;
 
 	while (count-- > 0) {
-		StreamPtr stream(disk->createReadStream(track, sector, 0, 0));
+		Common::StreamPtr stream(disk->createReadStream(track, sector, 0, 0));
 		stream->read(p, BYTES_PER_SECTOR);
 
 		if (stream->err() || stream->eos())
@@ -195,7 +195,7 @@ void HiRes6Engine::runIntro() {
 
 	insertDisk(0);
 
-	StreamPtr stream(loadSectors(_disk, 11, 1, 96));
+	Common::StreamPtr stream(loadSectors(_disk, 11, 1, 96));
 
 	display->setMode(Display::kModeGraphics);
 	display->loadFrameBuffer(*stream);
@@ -209,7 +209,7 @@ void HiRes6Engine::runIntro() {
 	display->loadFrameBuffer(*stream);
 
 	// Load copyright string from boot file
-	Files_AppleDOS *files(new Files_AppleDOS());
+	Common::Files_AppleDOS *files(new Common::Files_AppleDOS());
 
 	if (!files->open(getDiskImageName(0)))
 		error("Failed to open disk volume 0");
@@ -232,7 +232,7 @@ void HiRes6Engine::init() {
 
 	insertDisk(0);
 
-	StreamPtr stream(_disk->createReadStream(0x3, 0xf, 0x05));
+	Common::StreamPtr stream(_disk->createReadStream(0x3, 0xf, 0x05));
 	loadRegionLocations(*stream, kRegions);
 
 	stream.reset(_disk->createReadStream(0x5, 0xa, 0x07));
@@ -273,7 +273,7 @@ void HiRes6Engine::initGameState() {
 
 	insertDisk(0);
 
-	StreamPtr stream(_disk->createReadStream(0x3, 0xe, 0x03));
+	Common::StreamPtr stream(_disk->createReadStream(0x3, 0xe, 0x03));
 	loadItems(*stream);
 
 	// A combined total of 91 rooms

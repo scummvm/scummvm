@@ -243,7 +243,7 @@ void HiRes5Engine::runIntro() {
 
 	insertDisk(2);
 
-	StreamPtr stream(_disk->createReadStream(0x10, 0x0, 0x00, 31));
+	Common::StreamPtr stream(_disk->createReadStream(0x10, 0x0, 0x00, 31));
 
 	display->setMode(Display::kModeGraphics);
 	display->loadFrameBuffer(*stream);
@@ -274,7 +274,7 @@ void HiRes5Engine::init() {
 
 	insertDisk(2);
 
-	StreamPtr stream(_disk->createReadStream(0x5, 0x0, 0x02));
+	Common::StreamPtr stream(_disk->createReadStream(0x5, 0x0, 0x02));
 	loadRegionLocations(*stream, kRegions);
 
 	stream.reset(_disk->createReadStream(0xd, 0x2, 0x04));
@@ -331,7 +331,7 @@ void HiRes5Engine::initGameState() {
 
 	insertDisk(2);
 
-	StreamPtr stream(_disk->createReadStream(0x5, 0x1, 0x00, 3));
+	Common::StreamPtr stream(_disk->createReadStream(0x5, 0x1, 0x00, 3));
 	loadItems(*stream);
 
 	// A combined total of 1213 rooms

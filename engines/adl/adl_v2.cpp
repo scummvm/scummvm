@@ -66,7 +66,7 @@ void AdlEngine_v2::mapExeStrings(const Common::StringArray &strings) {
 
 void AdlEngine_v2::insertDisk(byte volume) {
 	delete _disk;
-	_disk = new DiskImage();
+	_disk = new Common::DiskImage();
 
 	if (!_disk->open(getDiskImageName(volume)))
 		error("Failed to open disk volume %d", volume);
@@ -164,7 +164,7 @@ void AdlEngine_v2::handleTextOverflow() {
 
 Common::String AdlEngine_v2::loadMessage(uint idx) const {
 	if (_messages[idx]) {
-		StreamPtr strStream(_messages[idx]->createReadStream());
+		Common::StreamPtr strStream(_messages[idx]->createReadStream());
 		return readString(*strStream, 0xff);
 	}
 
@@ -216,7 +216,7 @@ void AdlEngine_v2::drawItem(Item &item, const Common::Point &pos) {
 		return;
 	}
 
-	StreamPtr stream(_itemPics[item.picture - 1]->createReadStream());
+	Common::StreamPtr stream(_itemPics[item.picture - 1]->createReadStream());
 	stream->readByte(); // Skip clear opcode
 	_graphics->drawPic(*stream, pos);
 }
@@ -231,7 +231,7 @@ void AdlEngine_v2::loadRoom(byte roomNr) {
 	}
 
 	Room &room = getRoom(roomNr);
-	StreamPtr stream(room.data->createReadStream());
+	Common::StreamPtr stream(room.data->createReadStream());
 
 	uint16 descOffset = stream->readUint16LE();
 	uint16 commandOffset = stream->readUint16LE();
@@ -352,7 +352,7 @@ void AdlEngine_v2::drawItems() {
 	}
 }
 
-DataBlockPtr AdlEngine_v2::readDataBlockPtr(Common::ReadStream &f) const {
+Common::DataBlockPtr AdlEngine_v2::readDataBlockPtr(Common::ReadStream &f) const {
 	byte track = f.readByte();
 	byte sector = f.readByte();
 	byte offset = f.readByte();
@@ -362,7 +362,7 @@ DataBlockPtr AdlEngine_v2::readDataBlockPtr(Common::ReadStream &f) const {
 		error("Error reading DataBlockPtr");
 
 	if (track == 0 && sector == 0 && offset == 0 && size == 0)
-		return DataBlockPtr();
+		return Common::DataBlockPtr();
 
 	adjustDataBlockPtr(track, sector, offset, size);
 
