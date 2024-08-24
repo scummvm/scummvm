@@ -370,7 +370,7 @@ public:
 		//! персонаж или объект в определенном месте сетки
 		CONDITION_OBJECT_IN_ZONE,
 		//! персонаж движется в определенном направлении
-		CONDITION_PERSONAGE_WALK_DIRECTION,
+		CONDITION_PERSONAGE_WALK_DIRECTION,									// 5
 		//! персонаж стоит и ориентирован в определенном направлении
 		CONDITION_PERSONAGE_STATIC_DIRECTION,
 		//! условие выпоняется с некоторой периодичностью
@@ -380,7 +380,7 @@ public:
 		//! мини-игра находится в определенном состоянии
 		CONDITION_MINIGAME_STATE,
 		//! объект находится в определенном состоянии
-		CONDITION_OBJECT_STATE,
+		CONDITION_OBJECT_STATE,												// 10
 		//! клик мышью по зоне на сетке сцены
 		CONDITION_MOUSE_ZONE_CLICK,
 		//! клик объектом по зоне на сетке сцены
@@ -390,7 +390,7 @@ public:
 		//! состояние объекта не активировалось
 		CONDITION_OBJECT_STATE_WAS_NOT_ACTIVATED,
 		//! объект не находится в определенном состоянии
-		CONDITION_OBJECT_NOT_IN_STATE,
+		CONDITION_OBJECT_NOT_IN_STATE,										// 15
 		//! расстояние по сетке между двумя объектами меньше заданного
 		CONDITION_OBJECTS_DISTANCE,
 		//! персонаж активен
@@ -400,7 +400,7 @@ public:
 		//! состояние в определенной фазе анимации
 		CONDITION_OBJECT_STATE_ANIMATION_PHASE,
 		//! предыдущее состояние объекта
-		CONDITION_OBJECT_PREV_STATE,
+		CONDITION_OBJECT_PREV_STATE,										// 20
 		//! время работы состояния больше значения
 		CONDITION_STATE_TIME_GREATER_THAN_VALUE,
 		//! время работы одного состояния больше времени работы другого
@@ -410,7 +410,7 @@ public:
 		//! значние счетчика больше числа
 		CONDITION_COUNTER_GREATER_THAN_VALUE,
 		//! значние счетчика меньше числа
-		CONDITION_COUNTER_LESS_THAN_VALUE,
+		CONDITION_COUNTER_LESS_THAN_VALUE,									// 25
 		//! значние счетчика больше значения другого счетчика
 		CONDITION_COUNTER_GREATER_THAN_COUNTER,
 		//! значние счетчика в интервале
@@ -420,7 +420,7 @@ public:
 		//! кнопка нажата
 		CONDITION_KEYPRESS,
 		//! в зоне хотя бы один персонаж
-		CONDITION_ANY_PERSONAGE_IN_ZONE,
+		CONDITION_ANY_PERSONAGE_IN_ZONE,									// 30
 		//! правый клик мыши по объекту
 		CONDITION_MOUSE_RIGHT_CLICK,
 		//! правый клик объектом на мыши по объекту
@@ -430,7 +430,7 @@ public:
 		//! правый клик объектом по зоне на сетке сцены
 		CONDITION_MOUSE_RIGHT_OBJECT_ZONE_CLICK,
 		//! объект скрыт
-		CONDITION_OBJECT_HIDDEN,
+		CONDITION_OBJECT_HIDDEN,											// 35
 		//! мышь наведена на объект
 		CONDITION_MOUSE_HOVER,
 		//! мышь наведена на объект, на мыши объект
@@ -440,7 +440,7 @@ public:
 		//! мышь наведена на зону, на мыши объект
 		CONDITION_MOUSE_OBJECT_HOVER_ZONE,
 		//! неудачный клик мыши
-		CONDITION_MOUSE_CLICK_FAILED,
+		CONDITION_MOUSE_CLICK_FAILED,										// 40
 		//! неудачный клик объектом на мыши
 		CONDITION_MOUSE_OBJECT_CLICK_FAILED,
 		//! был клик мыши
@@ -450,7 +450,7 @@ public:
 		//! был клик правой кнопкой мыши
 		CONDITION_MOUSE_RIGHT_CLICK_EVENT,
 		//! был клик правой кнопкой объектом на мыши
-		CONDITION_MOUSE_RIGHT_OBJECT_CLICK_EVENT,
+		CONDITION_MOUSE_RIGHT_OBJECT_CLICK_EVENT,							// 45
 		//! клик по фразе определённого состояния
 		CONDITION_MOUSE_STATE_PHRASE_CLICK,
 		//! расстояние до одного объекта меньше чем до другого
