@@ -348,6 +348,7 @@ void AgiMetaEngineDetection::getPotentialDiskImages(
 			if (f->_key.baseName().hasSuffixIgnoreCase(imageExtensions[i])) {
 				debug(3, "potential disk image: %s", f->_key.baseName().c_str());
 				imageFiles.push_back(f->_key);
+				break;
 			}
 		}
 	}
@@ -368,16 +369,8 @@ ADDetectedGame AgiMetaEngineDetection::detectPcDiskImageGame(const FileMap &allF
 
 	// find disk one by reading potential images until a match is found
 	for (const Common::Path &imageFile : imageFiles) {
-		Common::SeekableReadStream *stream = allFiles[imageFile].createReadStream();
+		Common::SeekableReadStream *stream = openPCDiskImage(imageFile, allFiles[imageFile]);
 		if (stream == nullptr) {
-			warning("unable to open disk image: %s", imageFile.baseName().c_str());
-			continue;
-		}
-
-		// image file size must be 360k
-		int64 fileSize = stream->size();
-		if (fileSize != PC_DISK_SIZE) {
-			delete stream;
 			continue;
 		}
 
@@ -409,7 +402,7 @@ ADDetectedGame AgiMetaEngineDetection::detectPcDiskImageGame(const FileMap &allF
 							FileProperties fileProps;
 							fileProps.md5 = file->md5;
 							fileProps.md5prop = kMD5Archive;
-							fileProps.size = fileSize;
+							fileProps.size = PC_DISK_SIZE;
 							detectedGame.matchedFiles[imageFile] = fileProps;
 							return detectedGame;
 						}
@@ -483,17 +476,13 @@ ADDetectedGame AgiMetaEngineDetection::detectA2DiskImageGame(const FileMap &allF
 
 	// find disk one by reading potential images until a match is found
 	for (const Common::Path &imageFile : imageFiles) {
-		Common::SeekableReadStream *stream = allFiles[imageFile].createReadStream();
+		// lazily-load disk image tracks as they're accessed.
+		// prevents decoding entire disks just to read a few dynamic sectors.
+		// this would create a significant delay for images in the .woz format.
+		const bool loadAllTracks = false;
+		Common::SeekableReadStream *stream = openA2DiskImage(imageFile, allFiles[imageFile], loadAllTracks);
 		if (stream == nullptr) {
 			warning("unable to open disk image: %s", imageFile.baseName().c_str());
-			continue;
-		}
-
-		// image file size must be 140k.
-		// this simple check will be removed when more image formats are supported.
-		int64 fileSize = stream->size();
-		if (fileSize != A2_DISK_SIZE) {
-			delete stream;
 			continue;
 		}
 
@@ -532,7 +521,7 @@ ADDetectedGame AgiMetaEngineDetection::detectA2DiskImageGame(const FileMap &allF
 							FileProperties fileProps;
 							fileProps.md5 = file->md5;
 							fileProps.md5prop = kMD5Archive;
-							fileProps.size = fileSize;
+							fileProps.size = A2_DISK_SIZE;
 							detectedGame.matchedFiles[imageFile] = fileProps;
 							return detectedGame;
 						}

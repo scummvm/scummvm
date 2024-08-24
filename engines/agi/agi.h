@@ -587,6 +587,7 @@ protected:
 class AgiLoader_A2 : public AgiLoader {
 public:
 	AgiLoader_A2(AgiEngine *vm) : AgiLoader(vm) {}
+	~AgiLoader_A2() override;
 
 	void init() override;
 	int loadDirs() override;
@@ -595,7 +596,7 @@ public:
 	int loadWords() override;
 
 private:
-	Common::Array<Common::String> _imageFiles;
+	Common::Array<Common::SeekableReadStream *> _disks;
 	Common::Array<AgiDiskVolume> _volumes;
 	AgiDir _logDir;
 	AgiDir _picDir;
@@ -610,7 +611,7 @@ private:
 	static bool readVolumeMap(Common::SeekableReadStream &stream, uint32 position, uint32 bufferLength, Common::Array<uint32> &volumeMap);
 
 	A2DirVersion detectDirVersion(Common::SeekableReadStream &stream);
-	bool loadDir(AgiDir *dir, Common::File &disk, uint32 dirOffset, uint32 dirLength, A2DirVersion dirVersion);
+	bool loadDir(AgiDir *dir, Common::SeekableReadStream &disk, uint32 dirOffset, uint32 dirLength, A2DirVersion dirVersion);
 };
 
 class AgiLoader_v1 : public AgiLoader {
@@ -933,7 +934,7 @@ public:
 	// Objects
 public:
 	int loadObjects(const char *fname);
-	int loadObjects(Common::File &fp, int flen);
+	int loadObjects(Common::SeekableReadStream &fp, int flen);
 	const char *objectName(uint16 objectNr);
 	int objectGetLocation(uint16 objectNr);
 	void objectSetLocation(uint16 objectNr, int location);
