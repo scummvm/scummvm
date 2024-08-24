@@ -89,7 +89,6 @@ bool grDispatcher::finit() {
 	_flags &= ~GR_INITED;
 	_sizeX = _sizeY = 0;
 	_wndPosX = _wndPosY = 0;
-	_screenBuf = NULL;
 	delete _screenBuf;
 	_screenBuf = nullptr;
 	delete  _yTable;
