@@ -125,6 +125,9 @@ private:
 	int _stair = 0;
 	machine *_ripley = nullptr;
 	machine *_microscopeCloseup = nullptr;
+	int _ripHiHand1 = 0;
+	int _ripMedHand1 = 0;
+	int _ripLowHand1 = 0;
 
 	void setHotspots();
 	void lookItem(const char *item, const char *digi);
@@ -140,6 +143,15 @@ private:
 	bool lookEmeraldCork();
 	void periodicTablePopup();
 	bool lookLeverKey();
+	void gardenHoseSurgicalTube();
+	void gardenHoseSurgicalTube2();
+	void surgicalTubeFaucetPipe();
+	void surgicalTubeStem();
+	void reachHand(int frame);
+	void faucetPipeGardenHose();
+	void faucetPipeGlassJar();
+	void gardenHoseFaucetPipe();
+	void surgicalTubeGardenHose();
 
 public:
 	Room407() : Room() {}

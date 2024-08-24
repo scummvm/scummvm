@@ -876,6 +876,39 @@ void Room407::parser() {
 	} else if (lookFlag && player_said("NOZZLES/TUBE")) {
 		tabletopPopup();
 		digi_play("407r31", 1);
+	} else if (lookFlag && player_said("GARDEN HOSE") &&
+			inv_object_is_here("GARDEN HOSE")) {
+		digi_play("407r28", 1);
+	} else if (lookFlag && player_said("PUMP GRIPS ") &&
+			inv_object_is_here("PUMP GRIPS")) {
+		digi_play("407r99", 1);
+	} else if (lookFlag && player_said("PUMP GRIPS") &&
+			inv_object_is_here("PUMP GRIPS")) {
+		digi_play("407r30", 1);
+	} else if (player_said("GARDEN HOSE", "SURGICAL TUBE   ") && _xyzzy3 == 1100) {
+		gardenHoseSurgicalTube();
+	} else if ((player_said("SURGICAL TUBE", "FAUCET PIPE") ||
+			player_said("TUBE/HOSE", "FAUCET PIPE")) && _val8 == 1100) {
+		surgicalTubeFaucetPipe();
+	} else if ((player_said("SURGICAL TUBE", "FAUCET STEM") ||
+			player_said("TUBE/HOSE", "FAUCET STEM") ||
+			player_said("FAUCET PIPE/HOSE/TUBE", "FAUCET STEM")) &&
+			_val8 != 1100) {
+		surgicalTubeStem();
+	} else if (player_said("GARDEN HOSE", "SURGICAL TUBE  ") ||
+			player_said("FAUCET PIPE/HOSE", "SURGICAL TUBE  ")) {
+		gardenHoseSurgicalTube2();
+	} else if (player_said("FAUCET PIPE", "GARDEN HOSE  ")) {
+		faucetPipeGardenHose();
+	} else if (player_said("FAUCET PIPE", "GLASS JAR ") ||
+			player_said("FAUCET PIPE/HOSE", "GLASS JAR ") ||
+			player_said("FAUCET PIPE/HOSE/TUBE", "GLASS JAR ")) {
+		faucetPipeGlassJar();
+	} else if (player_said("GARDEN HOSE", "FAUCET PIPE ") ||
+			player_said("TUBE/HOSE", "FAUCET PIPE ")) {
+		gardenHoseFaucetPipe();
+	} else if (player_said("SURGICAL TUBE", "GARDEN HOSE ")) {
+		surgicalTubeGardenHose();
 	}
 	// TODO
 	else {
@@ -1310,6 +1343,363 @@ bool Room407::lookLeverKey() {
 	}
 
 	return false;
+}
+
+void Room407::gardenHoseSurgicalTube() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		ws_walk(170, 335, nullptr, 0, 11, 1);
+		break;
+	case 0:
+		if (_val4 == 1010) {
+			digi_play("407r99e", 1);
+		} else {
+			player_set_commands_allowed(false);
+			_ripHiHand1 = series_load("rip trek hi 1 hand");
+			setGlobals1(_ripHiHand1, 1, 5, 5, 5, 0, 5, 1, 1, 1);
+			sendWSMessage_110000(1);
+		}
+		break;
+
+	case 1:
+		_drawerPopupHose = series_place_sprite("407 TUBE AND HOSE INTO SINK",
+			1, 0, 0, 100, 0xe00);
+		hotspot_set_active("GARDEN HOSE    ", true);
+		inv_move_object("GARDEN HOSE", 407);
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripHiHand1);
+		_xyzzy2 = 1100;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::gardenHoseSurgicalTube2() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (_val4 == 1010)
+			digi_play("407r99e", 1);
+		else
+			reachHand(10);
+		break;
+
+	case 1:
+		_drawerPopupHose = series_place_sprite(
+			"407 TUBE AND HOSE INTO SINK", 0, 0, 0, 100, 0xe00);
+		hotspot_set_active("GARDEN HOSE  ", true);
+
+		if (_xyzzy2 == 1061) {
+			inv_move_object("GARDEN HOSE", 407);
+		} else {
+			_faucet1 = series_place_sprite("407 FAUCET IN SINK",
+				0, 0, 0, 100, 0xe00);
+			hotspot_set_active("FAUCET PIPE  ", true);
+			inv_move_object("FAUCET PIPE/HOSE", 407);
+		}
+
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripMedHand1);
+		if (_xyzzy2 == 1061)
+			_val8 = 1130;
+
+		_xyzzy2 = 1130;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::surgicalTubeFaucetPipe() {
+	switch (_G(kernel).trigger) {
+	case -1:
+	case 0:
+		if (_val4 == 1010) {
+			digi_play("407r99e", 1);
+		} else {
+			player_set_commands_allowed(false);
+			_ripHiHand1 = series_load("rip trek hi 1 hand");
+			setGlobals1(_ripHiHand1, 1, 6, 6, 6, 0, 6, 1, 1, 1);
+			sendWSMessage_110000(1);
+		}
+		break;
+
+	case 1:
+		inv_move_object("SURGICAL TUBE", 407);
+		_tubeInDrawer = series_place_sprite("407 TUBING BY ITSELF",
+			1, 0, 0, 100, 0xe00);
+		hotspot_set_active("SURGICAL TUBE   ", true);
+
+		if (_xyzzy3 == 1111) {
+			_drawerPopupHose = series_place_sprite("407 TUBE AND HOSE INTO SINK",
+				1, 0, 0, 100, 0xe00);
+			hotspot_set_active("GARDEN HOSE    ", true);
+			inv_move_object("TUBE/HOSE", 407);
+			_xyzzy2 = 1100;
+		}
+
+		digi_play("407_s06", 2, 255, 2);
+		break;
+
+	case 2:
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripHiHand1);
+		_xyzzy3 = 1100;
+		player_set_commands_allowed(true);
+		break;
+
+	case 777:
+		ws_walk(170, 335, nullptr, 0, 11);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::surgicalTubeStem() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		reachHand(10);
+		break;
+
+	case 1:
+		if (_xyzzy3 != 1111) {
+			inv_move_object("SURGICAL TUBE", 407);
+		} else if (_xyzzy2 == 1060) {
+			_drawerPopupHose = series_place_sprite(
+				"407 TUBE AND HOSE INTO SINK", 0, 0, 0, 100, 0xe00);
+			hotspot_set_active("GARDEN HOSE  ", true);
+			inv_move_object("TUBE/HOSE", 407);
+			_xyzzy2 = 1130;
+		} else if (_xyzzy2 == 1062) {
+			_drawerPopupHose = series_place_sprite(
+				"407 TUBE AND HOSE INTO SINK", 0, 0, 0, 100, 0xe00);
+			hotspot_set_active("GARDEN HOSE  ", true);
+			_faucet1 = series_place_sprite("407 FAUCET IN SINK", 0, 0, 0, 100, 0xe00);
+			hotspot_set_active("FAUCET PIPE  ", true);
+			inv_move_object("FAUCET PIPE/HOSE/TUBE", 407);
+			_val8 = 1130;
+			_xyzzy2 = 1130;
+		}
+
+		_tubeInDrawer = series_place_sprite("407 TUBING BY ITSELF",
+			0, 0, 0, 100, 0xe00);
+		hotspot_set_active("SURGICAL TUBE  ", true);
+		digi_play("407_s06", 2, 255, 2);
+		break;
+
+	case 2:
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripMedHand1);
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::reachHand(int frame) {
+	player_set_commands_allowed(false);
+	_ripMedHand1 = series_load("RIP TREK MED REACH HAND POS1");
+	setGlobals1(_ripMedHand1, 1, frame, frame, frame, 0, frame, 1, 1, 1);
+	sendWSMessage_110000(1);
+}
+
+void Room407::faucetPipeGardenHose() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (_val4 == 1010)
+			digi_play("407r99e", 1);
+		else
+			reachHand(10);
+		break;
+
+	case 1:
+		_faucet1 = series_place_sprite("407 FAUCET IN SINK",
+			0, 0, 0, 100, 0xe00);
+		hotspot_set_active("FAUCET PIPE  ", true);
+		inv_move_object("FAUCET PIPE", 407);
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripMedHand1);
+		_val8 = 1130;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::faucetPipeGlassJar() {
+	switch (_G(kernel).trigger) {
+	case 1:
+		if (_val8 != 1111) {
+			inv_move_object("FAUCET PIPE", 407);
+		} else if (_xyzzy2 == 1061) {
+			_drawerPopupHose = series_place_sprite(
+				"407 HOSE HANG FROM JAR", 0, 0, 0, 100, 0xb00);
+			hotspot_set_active("GARDEN HOSE ", true);
+			inv_move_object("FAUCET PIPE/HOSE", 407);
+			_xyzzy2 = 1116;
+		} else if (_xyzzy2 == 1062) {
+			_drawerPopupHose = series_place_sprite(
+				"407 HOSE HANG FROM JAR", 0, 0, 0, 100, 0xb00);
+			hotspot_set_active("GARDEN HOSE ", true);
+			_tubeInDrawer = series_place_sprite("407 HOSE HANG FROM JAR",
+				1, 0, 0, 100, 0xb00);
+			hotspot_set_active("SURGICAL TUBE ", true);
+			inv_move_object("FAUCET PIPE/HOSE/TUBE", 407);
+			_xyzzy3 = 1116;
+			_xyzzy2 = 1116;
+		}
+
+		_faucet1 = series_place_sprite("407BITSR", 1, 0, -53, 100, 0xb00);
+		hotspot_set_active("FAUCET PIPE ", true);
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripHiHand1);
+		_val8 = 1116;
+		player_set_commands_allowed(true);
+		break;
+
+	case 70:
+		player_set_commands_allowed(false);
+		_ripHiHand1 = series_load("rip trek hi 1 hand");
+		setGlobals1(_ripHiHand1, 1, 12, 12, 12, 0, 12, 1, 1, 1);
+		sendWSMessage_110000(1);
+		break;
+
+	case 777:
+		ws_walk(436, 331, nullptr, 70, 1);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::gardenHoseFaucetPipe() {
+	switch (_G(kernel).trigger) {
+	case 1:
+		_drawerPopupHose = series_place_sprite(
+			"407 HOSE HANG FROM JAR", 0, 0, 0, 100, 0xb00);
+		hotspot_set_active("GARDEN HOSE ", true);
+
+		if (_xyzzy2 == 1060) {
+			_tubeInDrawer = series_place_sprite(
+				"407 HOSE HANG FROM JAR", 1, 0, 0, 100, 0xb00);
+			inv_move_object("TUBE/HOSE", 407);
+			hotspot_set_active("SURGICAL TUBE ", true);
+		} else {
+			inv_move_object("GARDEN HOSE", 407);
+		}
+
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripHiHand1);
+		if (_xyzzy2 == 1060)
+			_xyzzy3 = 1116;
+
+		_xyzzy2 = 1116;
+		player_set_commands_allowed(true);
+		break;
+
+	case 70:
+		_ripHiHand1 = series_load("rip trek hi 1 hand");
+		setGlobals1(_ripHiHand1, 1, 12, 12, 12, 0, 12, 1, 1, 1);
+		break;
+
+	case 777:
+		ws_walk(436, 331, nullptr, 70, 1);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::surgicalTubeGardenHose() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_ripLowHand1 = series_load("RIP LOW REACH POS1");
+		setGlobals1(_ripLowHand1, 1, 11, 11, 11, 0, 11, 1, 1, 1);
+		sendWSMessage_110000(1);
+		break;
+
+	case 1:
+		_tubeInDrawer = series_place_sprite("407 HOSE HANG FROM JAR", 1, 0, 0, 100, 0xb00);
+		inv_move_object("SURGICAL TUBE", 407);
+		hotspot_set_active("SURGICAL TUBE ", true);
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripLowHand1);
+		_xyzzy3 = 1116;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
 }
 
 } // namespace Rooms
