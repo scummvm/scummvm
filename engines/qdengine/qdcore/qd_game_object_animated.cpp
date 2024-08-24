@@ -45,6 +45,7 @@ qdGameObjectAnimated::qdGameObjectAnimated() : _cur_state(-1),
 	_queued_state(NULL),
 	_last_frame(NULL),
 	_inventory_cell_index(-1),
+	_last_inventory_state(nullptr),
 	_shadow_alpha(QD_NO_SHADOW_ALPHA),
 	_shadow_color(0) {
 	set_animation(NULL);

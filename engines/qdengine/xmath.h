@@ -116,7 +116,7 @@ class Vect2f {
 public:
 	float x, y;
 
-	inline Vect2f()                              { }
+	inline Vect2f()                              { x = y = 0.0; }
 	inline Vect2f(float x_, float y_)                 {
 		x = x_;
 		y = y_;
@@ -267,7 +267,7 @@ class Vect2i {
 public:
 	int x, y;
 
-	inline Vect2i()                              { }
+	inline Vect2i()                              { x = y = 0; }
 	inline Vect2i(int x_, int y_)                        {
 		x = x_;
 		y = y_;
@@ -418,7 +418,7 @@ class Vect2s {
 public:
 	int16 x, y;
 
-	inline Vect2s()                                      { }
+	inline Vect2s()                                      { x = y = 0; }
 	inline Vect2s(int x_, int y_)                         {
 		x = x_;
 		y = y_;
@@ -537,7 +537,7 @@ public:
 
 	// constructors //////////////////////////////////////////////////////////////
 
-	inline Vect3f() {}
+	inline Vect3f() { x = y = z = 0.0;}
 	inline Vect3f(float x_, float y_, float z_) {
 		x = x_;
 		y = y_;

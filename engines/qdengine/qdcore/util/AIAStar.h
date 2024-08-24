@@ -99,6 +99,9 @@ AIAStar<Heuristic, TypeH>::AIAStar() {
 	_chart = NULL;
 	_heuristic = NULL;
 	_num_find_erase = 0;
+	_dx = _dy = 0;
+	_is_used_num = 0;
+	_num_point_examine = 0;
 }
 
 template<class Heuristic, class TypeH>
@@ -329,6 +332,9 @@ protected:
 template<class Heuristic, class Node, class TypeH>
 AIAStarGraph<Heuristic, Node, TypeH>::AIAStarGraph() {
 	_heuristic = NULL;
+	_is_used_num = 0;
+	_num_point_examine = 0;
+	_num_find_erase = 0;
 }
 
 template<class Heuristic, class Node, class TypeH>

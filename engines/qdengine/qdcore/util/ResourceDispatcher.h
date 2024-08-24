@@ -99,7 +99,7 @@ protected:
 /////////////////////////////////////////////////////////////////////////////////////////
 class ResourceDispatcher {
 public:
-	ResourceDispatcher() : _start_log(false) { }
+	ResourceDispatcher() : _start_log(false), _max_time_interval(0) { }
 	void setTimer(int syncro_by_clock, time_type time_per_frame, time_type max_time_interval_) {
 		_syncro_timer.set(syncro_by_clock, time_per_frame, _max_time_interval = max_time_interval_);
 	}

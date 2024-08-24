@@ -38,7 +38,7 @@ namespace QDEngine {
 
 struct sPlane4f {
 	float A, B, C, D;
-	sPlane4f()                                              { }
+	sPlane4f() { A = B = C = D = 0.0; }
 	sPlane4f(float a, float b, float c, float d)               {
 		A = a, B = b, C = c, D = d;
 	}

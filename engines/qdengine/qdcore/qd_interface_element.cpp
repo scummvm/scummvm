@@ -54,6 +54,7 @@ qdInterfaceElement::qdInterfaceElement(const qdInterfaceElement &el) : qdInterfa
 	_option_data(el._option_data),
 	_screen_depth(el._screen_depth),
 	_is_visible(el._is_visible),
+	_is_locked(el._is_locked),
 	_last_animation_frame(NULL) {
 }
 

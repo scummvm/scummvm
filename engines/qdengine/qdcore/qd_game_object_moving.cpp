@@ -83,6 +83,9 @@ qdGameObjectMoving::qdGameObjectMoving() :
 }
 
 qdGameObjectMoving::qdGameObjectMoving(const qdGameObjectMoving &obj) : qdGameObjectAnimated(obj),
+	_collision_radius(obj.collision_radius()),
+	_collision_delay(obj.collision_delay()),
+	_collision_path(obj.collision_path()),
 	_follow_min_radius(obj.follow_min_radius()),
 	_follow_max_radius(obj.follow_min_radius()),
 	_follow_condition(obj.follow_condition()),

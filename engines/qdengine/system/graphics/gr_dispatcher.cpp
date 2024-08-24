@@ -70,6 +70,8 @@ grDispatcher::grDispatcher() : _screenBuf(NULL),
 
 	_pixel_format = GR_RGB565;
 
+	setClip();
+
 	if (!_dispatcher_ptr) _dispatcher_ptr = this;
 }
 

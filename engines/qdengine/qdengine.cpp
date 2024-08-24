@@ -52,6 +52,8 @@ QDEngineEngine::QDEngineEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	ConfMan.registerDefault("show_fps", false);
 	ConfMan.registerDefault("splash_enabled", true);
 	ConfMan.registerDefault("splash_time", 3000);
+
+	memset(_tagMap, 0, sizeof(_tagMap));
 }
 
 QDEngineEngine::~QDEngineEngine() {

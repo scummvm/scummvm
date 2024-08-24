@@ -139,7 +139,8 @@ bool qdScreenTextFormat::save_script(Common::WriteStream &fh, int indent) const 
 
 qdScreenText::qdScreenText(const char *p, const Vect2i &pos, qdGameObjectState *owner) : _pos(pos),
 	_size(0, 0),
-	_owner(owner) {
+	_owner(owner),
+	_hover_mode(false) {
 	set_data(p);
 }
 

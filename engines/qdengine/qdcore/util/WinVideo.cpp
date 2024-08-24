@@ -35,6 +35,9 @@ bool winVideo::_is_initialized = false;
 
 winVideo::winVideo() {
 	_decoder = new Video::MPEGPSDecoder();
+	_x = _y = 0;
+	_vidWidth = _vidHeight = 0;
+	_videostream = nullptr;
 }
 
 winVideo::~winVideo() {
