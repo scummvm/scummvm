@@ -531,7 +531,7 @@ mcodeFunctionReturnCodes _game_session::fn_snap_face_object(int32 &, int32 *para
 	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	if (id == 0xffffffff)
-		Fatal_error("fn_snap_face_object cant find target object %s", object_name);
+		Fatal_error("fn_snap_face_object can't find target object %s", object_name);
 
 	log = Fetch_object_struct(id);
 
@@ -1489,7 +1489,7 @@ mcodeFunctionReturnCodes _game_session::fn_apply_anim_y(int32 &, int32 *params) 
 		}
 	}
 
-	Fatal_error("fn_apply_anim_y [%s] cant find generic anim [%s]", CGameObject::GetName(object), anim_name);
+	Fatal_error("fn_apply_anim_y [%s] can't find generic anim [%s]", CGameObject::GetName(object), anim_name);
 
 	return IR_CONT;
 }
@@ -1500,7 +1500,7 @@ mcodeFunctionReturnCodes _game_session::fn_add_y(int32 &, int32 *params) {
 	// params        0   value
 
 	if (L->image_type == PROP)
-		Fatal_error("fn_add_y cant be used on a prop - %s", CGameObject::GetName(object));
+		Fatal_error("fn_add_y can't be used on a prop - %s", CGameObject::GetName(object));
 
 	M->actor_xyz.y += params[0];
 
