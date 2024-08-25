@@ -90,7 +90,7 @@ mcodeFunctionReturnCodes _game_session::fn_get_speech_status(int32 &result, int3
 
 	if (g_icb->getGameType() == GType_ICB) {
 		if ((cur_id == player.Fetch_player_id()) && (player.player_status == REMORA))
-			Fatal_error("fn_get_speech_status - player cant start conversation inside remora!");
+			Fatal_error("fn_get_speech_status - player can't start conversation inside remora!");
 
 		if ((cur_id == player.Fetch_player_id()) && (g_oIconMenu->IsActive()))
 			g_oIconMenu->CloseDownIconMenu();
@@ -888,7 +888,7 @@ mcodeFunctionReturnCodes _game_session::speak_set_custom(int32 &, int32 *params)
 	speaker_id = LinkedDataObject::Fetch_item_number_by_name(objects, person_name);
 
 	if (speaker_id == -1)
-		Fatal_error("speak_set_custom cant find object [%s]", person_name);
+		Fatal_error("speak_set_custom can't find object [%s]", person_name);
 
 	Set_string(custom_name, logic_structs[speaker_id]->mega->custom_set, MAX_CUSTOM_NAME_LENGTH);
 	logic_structs[speaker_id]->mega->custom = TRUE8;
