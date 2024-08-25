@@ -493,7 +493,7 @@ void _game_session::Init_objects() {
 			itemName = "scenes";
 		id = LinkedDataObject::Fetch_item_number_by_name(objects, itemName.c_str()); // returns -1 if object not in existence
 		if (id == 0xffffffff)
-			Fatal_error("Init_objects cant find '%s'", itemName.c_str());
+			Fatal_error("Init_objects can't find '%s'", itemName.c_str());
 		Common::String hashString = itemName + "::globals";
 		script_hash = HashString(hashString.c_str());
 		const char *pc = (const char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, script_hash);
