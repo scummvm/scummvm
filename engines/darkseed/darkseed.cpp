@@ -1851,13 +1851,13 @@ void DarkseedEngine::updateAnimation() {
 			}
 		}
 		break;
-	case 26: // climb down rope.
+	case 26: // climb up rope.
 		advanceAnimationFrame(1);
 		if (!isAnimFinished_maybe) {
 			_player->_frameIdx = _player->_animations.getAnimAt(1).frameNo[_player->_animations.getAnimAt(1).frameNo[animIndexTbl[1]]];
 		} else {
 			_previousRoomNumber = _room->_roomNumber;
-			changeToRoom(32);
+			changeToRoom(13);
 		}
 		break;
 	case 27:
@@ -2137,7 +2137,7 @@ void DarkseedEngine::handleObjCollision(int targetObjNum) {
 			if (_objectVar[80] < 2 ||
 				((_actionMode != 25 || targetObjNum != 19) && (_actionMode != 19 || targetObjNum != 25))) {
 				if ((_actionMode == 25 && targetObjNum == 20) || (_actionMode == 20 && targetObjNum == 25)) {
-					if (_objectVar[25] > 99) {
+					if (_objectVar[25] > 99) { // Assemble special hammer
 						_console->printTosText(969);
 						_inventory.removeItem(20);
 						_inventory.removeItem(25);
