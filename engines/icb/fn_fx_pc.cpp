@@ -66,7 +66,7 @@ mcodeFunctionReturnCodes _game_session::fx_narrow_screen(int32 &, int32 *params)
 		surface_manager->BorderGreen() = (uint8)green;
 		surface_manager->BorderBlue() = (uint8)blue;
 
-		// Semi-non-persistance(ish)... If percentage is not 0 make sure we start from 0
+		// Semi-non-persistence(ish)... If percentage is not 0 make sure we start from 0
 		if (percent) {
 			border.top = 0;
 			border.bottom = SCREEN_DEPTH;
