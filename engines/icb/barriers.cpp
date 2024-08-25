@@ -1165,7 +1165,7 @@ void _barrier_handler::Prepare_animating_barriers() {
 
 											if (!anim_slices[cur_slice].anim_parents[f]) {
 												anim_slices[cur_slice].anim_parents[f] = &anim_parent_table[parents_used++];
-												Tdebug("anim_barriers.txt", "        new aparent");
+												Tdebug("anim_barriers.txt", "        new parent");
 											}
 
 											pbar_num = anim_slices[cur_slice].anim_parents[f]->num_props;
