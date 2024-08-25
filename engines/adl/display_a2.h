@@ -68,10 +68,12 @@ protected:
 		static uint16 getBits(const Display_A2 *display, uint y, uint x) {
 			const uint charPos = (y >> 3) * kTextWidth + x;
 			byte m = display->_textBuf[charPos];
-			byte b;
+			byte b = _font[m & 0x3f][y % 8];
 
 			if (display->_showCursor && charPos == display->_cursorPos) {
-				if (display->_enableApple2eCursor) {
+				if (!display->_enableApple2eCursor) {
+					m = (m & 0x3f) | 0x40;
+				} else {
 					if (display->_blink) {
 						byte cursor[] = {
 							0x00, 0x00, 0x2a, 0x14,
@@ -79,12 +81,9 @@ protected:
 						};
 
 						b = cursor[y % 8];
-					} else
-						b = _font[m & 0x3f][y % 8];
-				} else
-					m = (m & 0x3f) | 0x40;
-			} else
-				b = _font[m & 0x3f][y % 8];
+					}
+				}
+			}
 
 			if (!(m & 0x80) && (!(m & 0x40) || display->_blink))
 				b = ~b;
