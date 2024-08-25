@@ -166,7 +166,7 @@ mcodeFunctionReturnCodes _game_session::fn_request_speech(int32 &result, int32 *
 
 	S.script_pc = (char *)LinkedDataObject::Try_fetch_item_by_name(scripts, temp_buf); // run init script
 
-	//	conversation script doesnt exist
+	//	conversation script doesn't exist
 	if (!S.script_pc)
 		Fatal_error("object [%d] tried to start conversation script [%s] which doesnt exist", cur_id, (const char *)temp_buf);
 
@@ -229,7 +229,7 @@ mcodeFunctionReturnCodes _game_session::fn_add_talker(int32 &, int32 *params) {
 		S.total_subscribers++;
 
 	} else {
-		//		named object doesnt exist which is pretty serious
+		//		named object doesn't exist which is pretty serious
 		Fatal_error("tried to add non existent object [%s] to conversation", object_name);
 	}
 
@@ -345,7 +345,7 @@ mcodeFunctionReturnCodes _game_session::fn_anon_speech_invite(int32 &result, int
 }
 
 mcodeFunctionReturnCodes _game_session::fn_kill_conversations(int32 &, int32 *) {
-	// current conversations end - allowing a new one to interupt
+	// current conversations end - allowing a new one to interrupt
 
 	// if there are conversations on going them kill em (it)
 	if (total_convs)
@@ -1186,7 +1186,7 @@ mcodeFunctionReturnCodes _game_session::speak_chosen(int32 &result, int32 *param
 }
 
 mcodeFunctionReturnCodes _game_session::speak_menu_still_active(int32 &result, int32 *) {
-	// says if menu is still active - i.e user hasnt chosen a quit icon
+	// says if menu is still active - i.e user hasn't chosen a quit icon
 
 	result = TRUE8;
 
