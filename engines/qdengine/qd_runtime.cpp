@@ -261,16 +261,19 @@ int QDEngineEngine::engineMain() {
 					ConfMan.setFloat("game_speed", speed);
 					sndD->set_frequency_coeff(speed);
 					resD.set_speed(ConfMan.getFloat("game_speed"));
+					ConfMan.flushToDisk();
 				} else if (event.kbd.keycode == Common::KEYCODE_PAGEUP) {
 					float speed = ConfMan.getFloat("game_speed") * 1.1f;
 					if (speed > 10.0f) speed = 10.0f;
 					ConfMan.setFloat("game_speed", speed);
 					sndD->set_frequency_coeff(speed);
 					resD.set_speed(ConfMan.getFloat("game_speed"));
+					ConfMan.flushToDisk();
 				} else if (event.kbd.keycode == Common::KEYCODE_HOME) {
 					ConfMan.setFloat("game_speed", 1.0f);
 					sndD->set_frequency_coeff(1.0f);
 					resD.set_speed(ConfMan.getFloat("game_speed"));
+					ConfMan.flushToDisk();
 				} else if (event.kbd.ascii == 'g')
 					qdGameConfig::get_config().toggle_show_grid();
 #endif
