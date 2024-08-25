@@ -367,7 +367,7 @@ uint32 _mission::Game_cycle() {
 	// now do a loop of logic
 	// get start time
 	MS->prev_save_state = MS->Can_save(); // get previous state - used by lifts to see if player is active
-	MS->Set_can_save(FALSE8);             // cant save as default - this is reversed by states that allow save this game cycle
+	MS->Set_can_save(FALSE8);             // can't save as default - this is reversed by states that allow save this game cycle
 
 	g_px->logic_timing = TRUE8;
 	logic_time = GetMicroTimer();
@@ -545,7 +545,7 @@ void _mission::Restore_micro_session_coords(bool8 from_disk) {
 
 				// if mega then restore coord
 				if (session->logic_structs[i]->image_type == VOXEL) {
-					// from disk, or doesnt have exclusives or (does have exclusives) but is chi and chi is not
+					// from disk, or doesn't have exclusives (or does have exclusives) but is chi and chi is not
 					// following
 					if ((from_disk) || (!session->logic_structs[i]->mega->has_exclusive_coords) ||
 					    ((session->chi_id == i) && (session->chi_think_mode != __FOLLOWING))) {

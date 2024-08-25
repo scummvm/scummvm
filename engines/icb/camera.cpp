@@ -124,7 +124,7 @@ void _game_session::Build_camera_table() {
 			while ((k < num_cameras) && (strcmp(camera_name_list[k], (((char *)floor) + floor->camera_name_offset))))
 				++k;
 
-			if (k == num_cameras) { // didnt find this camera
+			if (k == num_cameras) { // didn't find this camera
 				Zdebug(" new camera %d [%s] [%s]", num_cameras, (((char *)floor) + floor->camera_name_offset), floor->camera_cluster);
 				camera_name_list[num_cameras] = (((char *)floor) + floor->camera_name_offset); // add camera name to list of names
 				camera_cluster_list[num_cameras] = floor->camera_cluster;
@@ -337,9 +337,9 @@ void _game_session::Camera_director() {
 	// not on a WA camera so check via the floor rects
 
 	if (this_rect == PXNULL) { // object not on a rect??
-		// we cant pick a camera set view
+		// we can't pick a camera set view
 		// if a set is set up then that will continue to be used
-		// if there isnt a set at all (this is first cycle) then engine will switch to nethack mode
+		// if there isn't a set at all (this is first cycle) then engine will switch to nethack mode
 		return;
 	}
 

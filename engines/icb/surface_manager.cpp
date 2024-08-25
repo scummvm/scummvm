@@ -47,7 +47,7 @@ namespace ICB {
 
 uint32 working_buffer_id;
 uint32 bg_buffer_id;
-uint32 effect_time; // Time spent doing postprocessing effects (fades ect)
+uint32 effect_time; // Time spent doing postprocessing effects (fades etc)
 uint32 flipTime;
 
 _surface::~_surface() {

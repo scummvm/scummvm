@@ -108,7 +108,7 @@ bool8 MusicManager::LoadMusic(const char *clusterName, uint32 byteOffsetToWav, i
 	if (stream == nullptr)
 		return FALSE8;
 
-	// Need to seek to the correct postion in the cluster
+	// Need to seek to the correct position in the cluster
 	stream->seek(byteOffsetToWav, SEEK_SET);
 
 	// Read in header information and make buffer

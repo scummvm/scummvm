@@ -463,7 +463,7 @@ void _game_session::Animate_turn_to_pan(__mega_set_names anim_type, uint32 speed
 	//PXreal znext = z2 - z1;
 
 	// update pc
-	L->anim_pc = next_pc; // allready computed
+	L->anim_pc = next_pc; // already computed
 
 	// get the pan unwind value of the frame to be printed
 	PXreal pan;
@@ -650,7 +650,7 @@ void _game_session::Soft_start_single_anim(__mega_set_names next_anim) {
 
 	// next anim not in CAPS
 	if ((!L->voxel_info->IsAnimTable(next_anim))) {
-		// cant go on without a major anim - this is not a link so cant just be skipped
+		// can't go on without a major anim - this is not a link so can't just be skipped
 		Shut_down_object("by Soft_start_single_anim next anim don't exist");
 		return;
 	}
@@ -671,7 +671,7 @@ void _game_session::Hard_start_single_anim(__mega_set_names next_anim) {
 
 	// next anim not in CAPS
 	if ((!L->voxel_info->IsAnimTable(next_anim))) {
-		// cant go on without a major anim - this is not a link so cant just be skipped
+		// can't go on without a major anim - this is not a link so can't just be skipped
 		Shut_down_object("by Hard_start_single_anim next anim don't exist");
 		return;
 	}

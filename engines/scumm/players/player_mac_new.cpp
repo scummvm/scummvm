@@ -522,8 +522,12 @@ MacSndChannel::~MacSndChannel() {
 }
 
 MacLowLevelPCMDriver::ChanHandle MacSndChannel::getHandle() const {
-	const void *ptr = this;
-	return *reinterpret_cast<const int*>(&ptr);
+	union {
+		const void *ptr;
+		int hdl;
+	} cnv;
+	cnv.ptr = this;
+	return cnv.hdl;
 }
 
 void MacSndChannel::playSamples(const MacLowLevelPCMDriver::PCMSound *snd) {

@@ -759,7 +759,7 @@ public:
 #define CONV_ID 0
 
 	uint32 menu_number;
-	uint32 no_click_zone; // cant click past text until this reaches a certain number
+	uint32 no_click_zone; // can't click past text until this reaches a certain number
 
 	// The object ID of the currently highlighted prop
 	int32 selected_prop_id;
@@ -1123,21 +1123,21 @@ inline uint32 _game_session::Fetch_no_megas_nudge_barriers() {
 
 inline uint32 _game_session::External_fetch_no_megas_barriers(uint32 id) {
 	// return number of current barriers
-	// we are not in logic loop so cant rely on M, I, L etc.
+	// we are not in logic loop so can't rely on M, I, L etc.
 
 	return (logic_structs[id]->mega->number_of_barriers);
 }
 
 inline uint32 _game_session::External_fetch_no_megas_anim_barriers(uint32 id) {
 	// return number of current barriers
-	// we are not in logic loop so cant rely on M, I, L etc.
+	// we are not in logic loop so can't rely on M, I, L etc.
 
 	return (logic_structs[id]->mega->number_of_animating);
 }
 
 inline uint32 _game_session::External_fetch_no_megas_nudge_barriers(uint32 id) {
 	// return number of current special player nudgebarriers
-	// we are not in logic loop so cant rely on M, I, L etc.
+	// we are not in logic loop so can't rely on M, I, L etc.
 
 	return (logic_structs[id]->mega->number_of_nudge);
 }

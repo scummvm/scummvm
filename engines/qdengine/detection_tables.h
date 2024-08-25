@@ -70,9 +70,8 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	GAME("nupogodi3", "7394a5d28590680cfeb6a037101a9c81", 1675230,
 			"qd_game.exe", "d5e942e1d588fbd127c812551c0b67ef", 909312),
 	// Na, palauk! Zuikio dainos
-	// FIXME. Add language
-	GAME("nupogodi3", "3fbcdd27bf0a3defb6195c92b9b0a95f", 1675036, //Common::LT_LIT),
-			"qd_game.exe", "18b4260f3f25ac0f394a8c618203dcba", 1855208),
+	GAMEl("nupogodi3", "3fbcdd27bf0a3defb6195c92b9b0a95f", 1675036,
+			"qd_game.exe", "18b4260f3f25ac0f394a8c618203dcba", 1855208, Common::LT_LTU),
 
 	// Братья Пилоты. Обратная сторона Земли
 	// 2004/06/11. K D-Lab / Pipe Studio

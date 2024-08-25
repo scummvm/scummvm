@@ -45,7 +45,7 @@ typedef struct psxActor {
 	SVECTOR pos;
 	int32 style;
 
-	// Screen postion
+	// Screen position
 	SVECTOR sPos;
 
 	// Bounding box on the screen
