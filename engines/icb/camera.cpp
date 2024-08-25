@@ -337,7 +337,7 @@ void _game_session::Camera_director() {
 	// not on a WA camera so check via the floor rects
 
 	if (this_rect == PXNULL) { // object not on a rect??
-		// we cant pick a camera set view
+		// we can't pick a camera set view
 		// if a set is set up then that will continue to be used
 		// if there isn't a set at all (this is first cycle) then engine will switch to nethack mode
 		return;
