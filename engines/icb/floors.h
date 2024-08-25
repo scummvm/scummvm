@@ -92,7 +92,7 @@ inline PXreal _floor_world::Fetch_floors_volume_height(uint32 num) { return floo
 
 inline PXreal _floor_world::Fetch_height(uint32 height) {
 	if (height >= total_heights) {
-		Fatal_error("cant get %d height of %d", height, total_heights);
+		Fatal_error("can't get %d height of %d", height, total_heights);
 	}
 
 	return (heights[height]);
