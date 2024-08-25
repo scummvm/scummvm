@@ -376,7 +376,7 @@ mcodeFunctionReturnCodes _game_session::fn_prime_player_history(int32 &, int32 *
 	pre_interact_floor = history[cur_history].id;
 
 	if (history[cur_history].id == PXNULL)
-		Message_box("fn_prime_player_history hasnt got a legal coordinate from player?");
+		Message_box("fn_prime_player_history hasn't got a legal coordinate from player?");
 
 	Tdebug("history.txt", ">> %d", history[cur_history].id);
 
