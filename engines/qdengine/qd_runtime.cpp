@@ -237,8 +237,8 @@ int QDEngineEngine::engineMain() {
 	ResourceDispatcher resD;
 	resD.setTimer(ConfMan.getBool("logic_synchro_by_clock"), ConfMan.getInt("logic_period"), 300);
 	resD.attach(new MemberFunctionCallResourceUser<qdGameDispatcher>(*qd_gameD, &qdGameDispatcher::quant, ConfMan.getInt("logic_period")));
-	sndD->set_frequency_coeff(qdGameConfig::get_config().game_speed());
-	resD.set_speed(qdGameConfig::get_config().game_speed());
+	sndD->set_frequency_coeff(ConfMan.getFloat("game_speed"));
+	resD.set_speed(ConfMan.getFloat("game_speed"));
 	resD.start();
 
 	bool exit_flag = false;
@@ -261,21 +261,21 @@ int QDEngineEngine::engineMain() {
 					qdGameConfig::get_config().toggle_fps();
 #ifdef __QD_DEBUG_ENABLE__
 				else if (event.kbd.keycode == Common::KEYCODE_PAGEDOWN) {
-					float speed = qdGameConfig::get_config().game_speed() * 0.9f;
+					float speed = ConfMan.getFloat("game_speed") * 0.9f;
 					if (speed < 0.1f) speed = 0.1f;
-					qdGameConfig::get_config().set_game_speed(speed);
+					ConfMan.setFloat("game_speed", speed);
 					sndD->set_frequency_coeff(speed);
-					resD.set_speed(qdGameConfig::get_config().game_speed());
+					resD.set_speed(ConfMan.getFloat("game_speed"));
 				} else if (event.kbd.keycode == Common::KEYCODE_PAGEUP) {
-					float speed = qdGameConfig::get_config().game_speed() * 1.1f;
+					float speed = ConfMan.getFloat("game_speed") * 1.1f;
 					if (speed > 10.0f) speed = 10.0f;
-					qdGameConfig::get_config().set_game_speed(speed);
+					ConfMan.setFloat("game_speed", speed);
 					sndD->set_frequency_coeff(speed);
-					resD.set_speed(qdGameConfig::get_config().game_speed());
+					resD.set_speed(ConfMan.getFloat("game_speed"));
 				} else if (event.kbd.keycode == Common::KEYCODE_HOME) {
-					qdGameConfig::get_config().set_game_speed(1.0f);
+					ConfMan.setFloat("game_speed", 1.0f);
 					sndD->set_frequency_coeff(1.0f);
-					resD.set_speed(qdGameConfig::get_config().game_speed());
+					resD.set_speed(ConfMan.getFloat("game_speed"));
 				} else if (event.kbd.ascii == 'g')
 					qdGameConfig::get_config().toggle_show_grid();
 #endif
