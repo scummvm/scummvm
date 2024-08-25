@@ -62,7 +62,7 @@ void _prim_route_builder::Add_barrier(RouteBarrier *new_barrier) {
 
 void _prim_route_builder::Give_barrier_list(_route_description *route) {
 	// this may seem daft, but now we're giving the barriers back - for NETHACK diagnostics, not the logic
-	// this wont be called in final .exe
+	// this won't be called in final .exe
 
 	if (!total_points) {
 		route->number_of_diag_bars = 0;
