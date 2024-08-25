@@ -168,8 +168,6 @@ int QDEngineEngine::engineMain() {
 
 	grD->showMouse(); // FIXME HACK
 
-	qdGameConfig::get_config().load();
-
 	SplashScreen sp;
 	if (ConfMan.getBool("splash_enabled")) {
 		sp.create(IDB_SPLASH);
