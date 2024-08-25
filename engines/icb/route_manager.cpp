@@ -561,7 +561,7 @@ mcodeFunctionReturnCodes _game_session::fn_interact_near_mega(int32 &result, int
 			return IR_REPEAT;
 		}
 
-		// dont even build route if too close already
+		// don't even build route if too close already
 		if (len < (PXreal)(params[2] * params[2])) {
 			L->looping = 0;
 			result = TRUE8;
@@ -815,7 +815,7 @@ mcodeFunctionReturnCodes _game_session::Route_to_near_mega_core(const char *name
 		if (Is_router_busy())
 			return IR_REPEAT;
 
-		// dont even build route if too close already
+		// don't even build route if too close already
 		if (len < (int32)(dist * dist)) {
 			result = TRUE8;
 			L->looping = 0;
