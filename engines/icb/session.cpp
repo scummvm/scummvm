@@ -67,7 +67,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	uint32 buf_hash;
 
 	// begin with no set object
-	// a camera will be choosen after the first logic cycle based upon the player objects position
+	// a camera will be chosen after the first logic cycle based upon the player objects position
 	set.Reset();
 
 	// no special footsteps set
@@ -1025,7 +1025,7 @@ void _game_session::Script_cycle() {
 
 uint32 _game_session::Fetch_prop_state(char *prop_name) {
 	// return a props state
-	// if the prop object doesnt exist we create a dummy - the system continues regardless - which is nice
+	// if the prop object doesn't exist we create a dummy - the system continues regardless - which is nice
 
 	uint32 prop_number;
 	uint32 j;
@@ -1046,7 +1046,7 @@ uint32 _game_session::Fetch_prop_state(char *prop_name) {
 	while ((j < number_of_missing_objects) && (strcmp(missing_obs[j], prop_name)))
 		++j;
 
-	// didnt find the object
+	// didn't find the object
 	if (j == number_of_missing_objects) {
 		// create entry for the object
 		if (strcmp(prop_name, "not a prop") && (camera_hack == FALSE8)) // dont report dummy lights
@@ -1066,7 +1066,7 @@ uint32 _game_session::Fetch_prop_state(char *prop_name) {
 
 void _game_session::Set_prop_state(char *prop_name, uint32 value) {
 	// set a prop state
-	// if the prop doesnt exist we skip it - and assume it will soon be built
+	// if the prop doesn't exist we skip it - and assume it will soon be built
 	// there is no scope checking
 
 	uint32 prop_number;
@@ -1087,7 +1087,7 @@ void _game_session::Set_prop_state(char *prop_name, uint32 value) {
 	while ((j < number_of_missing_objects) && (strcmp(missing_obs[j], prop_name)))
 		++j;
 
-	// didnt find the object
+	// didn't find the object
 	if (j == number_of_missing_objects)
 		return;
 
@@ -1160,7 +1160,7 @@ void _game_session::Idle_manager() {
 
 			script_hash = HashString("idle");
 
-			// try and find a script with the passed extention i.e. ???::looping
+			// try and find a script with the passed extension i.e. ???::looping
 			for (k = 0; k < CGameObject::GetNoScripts(object); k++) {
 				if (script_hash == CGameObject::GetScriptNamePartHash(object, k)) {
 					//          script k is the one to run
