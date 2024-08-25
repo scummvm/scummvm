@@ -592,7 +592,7 @@ mcodeFunctionReturnCodes _game_session::fn_init_from_marker_file(int32 &, int32 
 	start_pos = (_map_marker *)markers.Fetch_marker_by_object_name(const_cast<char *>(CGameObject::GetName(object)));
 
 	if (!start_pos) {
-		Message_box("fn_init_from_marker_file missing map marker file entry for item %s.  You must edit the markers - dont play the game.", CGameObject::GetName(object));
+		Message_box("fn_init_from_marker_file missing map marker file entry for item %s.  You must edit the markers - don't play the game.", CGameObject::GetName(object));
 		Shut_down_object("fn_init_from_marker_file");
 		return IR_STOP;
 	}
@@ -907,7 +907,7 @@ bool8 _game_session::Call_socket(uint32 id, const char *script, int32 *retval) {
 	// get target object
 	socket_object = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, id);
 	if (!socket_object)
-		Fatal_error("internal Call_socket - named object dont exist");
+		Fatal_error("internal Call_socket - named object don't exist");
 
 	Zdebug("\nCall_socket - obj %s, script %s", CGameObject::GetName(socket_object), script);
 
