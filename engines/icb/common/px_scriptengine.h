@@ -39,7 +39,7 @@ namespace ICB {
 enum scriptInterpreterReturnCodes {
 	IR_RET_END_THE_CYCLE = 0,   // done enough this cycle
 	IR_RET_SCRIPT_FINISHED = 1, // current script has finished and hit closing brace
-	IR_RET_CONT_THIS_CYCLE = 2  // FN_ returned an IR_TERMINATE to interpretter so we just go around - new script or gosub
+	IR_RET_CONT_THIS_CYCLE = 2  // FN_ returned an IR_TERMINATE to interpreter so we just go around - new script or gosub
 };
 
 scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to the script data that can be modified
