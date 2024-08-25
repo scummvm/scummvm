@@ -72,7 +72,7 @@ void CastleEngine::loadDOSFonts(Common::SeekableReadStream *file, int pos) {
 		}
 		//debugN("\n");
 	}
-	debug("%" PRIx64, file->pos());
+	//debug("%" PRIx64, file->pos());
 	_fontPlane1.set_size(64 * 59);
 	_fontPlane1.set_bits(bufferPlane1);
 
@@ -142,11 +142,6 @@ void CastleEngine::loadAssetsDOSFullGame() {
 
 		stream = decryptFile("CMEDF");
 		load8bitBinary(stream, 0, 16);
-		for (auto &it : _areaMap)
-			it._value->addStructure(_areaMap[255]);
-
-		_areaMap[1]->addFloor();
-		_areaMap[2]->addFloor();
 		delete stream;
 	} else
 		error("Not implemented yet");
@@ -198,11 +193,6 @@ void CastleEngine::loadAssetsDOSDemo() {
 
 		stream = decryptFile("CDEDF");
 		load8bitBinary(stream, 0, 16);
-		for (auto &it : _areaMap)
-			it._value->addStructure(_areaMap[255]);
-
-		_areaMap[1]->addFloor();
-		_areaMap[2]->addFloor();
 		delete stream;
 	} else
 		error("Not implemented yet");

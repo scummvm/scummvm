@@ -428,6 +428,12 @@ void CastleEngine::executePrint(FCLInstruction &instruction) {
 void CastleEngine::loadAssets() {
 	FreescapeEngine::loadAssets();
 	if (isDOS()) {
+		for (auto &it : _areaMap)
+			it._value->addStructure(_areaMap[255]);
+
+		_areaMap[1]->addFloor();
+		_areaMap[2]->addFloor();
+
 		_menu = loadBundledImage("castle_menu");
 		assert(_menu);
 		_menu->convertToInPlace(_gfx->_texturePixelFormat);
