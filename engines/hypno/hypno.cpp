@@ -595,8 +595,10 @@ void HypnoEngine::playSound(const Common::String &filename, uint32 loops, uint32
 		if (file->open(name)) {
 			stream = new Audio::LoopingAudioStream(Audio::makeRawStream(file, sampleRate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), loops);
 			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
-		} else
+		} else {
 			debugC(1, kHypnoDebugMedia, "%s not found!", name.toString().c_str());
+			delete file;
+		}
 	}
 }
 
