@@ -452,7 +452,7 @@ void res_man::Res_purge(const char *url, uint32 url_hash, const char *cluster, u
 			mem_list[search].state = MEM_null; // we're gone and can be used again later
 
 			total_blocks--; // one less block
-		} else { // we cant merge into our parent because it isnt free (or we are block 0) so we become
+		} else { // we cant merge into our parent because it isn't free (or we are block 0) so we become
 			// a MEM_free floating block with no file
 			mem_list[search].state = MEM_free; // block remains but is free to be defragged
 		}
@@ -619,7 +619,7 @@ void res_man::Res_purge_all() {
 				mem_list[search].state = MEM_null; // we're gone and can be used again later
 
 				total_blocks--; // one less block
-			} else { // we cant merge into our parent because it isnt free (or we are block 0) so we become
+			} else { // we cant merge into our parent because it isn't free (or we are block 0) so we become
 				// a MEM_free floating block with no file
 				mem_list[search].state = MEM_free; // block remains but is free to be defragged
 			}
@@ -831,7 +831,7 @@ uint32 res_man::FindMemBlock(uint32 adj_len, RMParams *params) {
 								break;
 						}
 
-						if (j == total_age) { // didnt find this items age in table
+						if (j == total_age) { // didn't find this items age in table
 							age_table[total_age++] = age;
 						}
 					} else
@@ -913,7 +913,7 @@ uint32 res_man::FindMemBlock(uint32 adj_len, RMParams *params) {
 							total_blocks--; // one less block
 
 							search = mem_list[parent].child; // continue the search from our parent new child - was ours remember
-						} else { // we cant merge into our parent because it isnt free so we become a MEM_free floating block with no file
+						} else { // we cant merge into our parent because it isn't free so we become a MEM_free floating block with no file
 							mem_list[search].state = MEM_free; // block remains but is free to be defragged
 							search = mem_list[search].child; // move on to the next file
 						}
