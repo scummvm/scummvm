@@ -376,7 +376,7 @@ mcodeFunctionReturnCodes _game_session::fn_prime_player_history(int32 &, int32 *
 	pre_interact_floor = history[cur_history].id;
 
 	if (history[cur_history].id == PXNULL)
-		Message_box("fn_prime_player_history hasnt got a legal coordinate from player?");
+		Message_box("fn_prime_player_history hasn't got a legal coordinate from player?");
 
 	Tdebug("history.txt", ">> %d", history[cur_history].id);
 
@@ -3158,7 +3158,7 @@ void _game_session::Restart_player() {
 
 	var_num = CGameObject::GetVariable(ob, "hits");
 	if (var_num == -1)
-		Fatal_error("Restart_player cant fetch hits");
+		Fatal_error("Restart_player can't fetch hits");
 	CGameObject::SetIntegerVariable(ob, var_num, MAX_HITS); // another 10 hits
 
 	L->logic_level = 0; // restart

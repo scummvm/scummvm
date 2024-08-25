@@ -509,7 +509,7 @@ mcodeFunctionReturnCodes _game_session::fn_route_to_nico(int32 &result, int32 *p
 		monica = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 
 		if (!monica)
-			Fatal_error("fn_route_to_nico - object [%s] cant find nico [%s]", CGameObject::GetName(object), nico_name);
+			Fatal_error("fn_route_to_nico - object [%s] can't find nico [%s]", CGameObject::GetName(object), nico_name);
 
 		// build route
 		if (!Setup_route(result, (int32)monica->x, (int32)monica->z, params[1], __FULL, TRUE8)) {
@@ -897,7 +897,7 @@ mcodeFunctionReturnCodes _game_session::fn_route_to_marker(int32 &result, int32 
 		marker = (_map_marker *)markers.Fetch_marker_by_object_name(marker_name);
 
 		if (!marker)
-			Fatal_error("fn_route_to_marker - object [%s] cant find marker [%s]", CGameObject::GetName(object), marker_name);
+			Fatal_error("fn_route_to_marker - object [%s] can't find marker [%s]", CGameObject::GetName(object), marker_name);
 
 		// build route
 		if (!Setup_route(result, (int32)FROM_LE_FLOAT32(marker->x), (int32)FROM_LE_FLOAT32(marker->z), params[1], __FULL, TRUE8)) {

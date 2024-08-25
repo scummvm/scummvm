@@ -127,7 +127,7 @@ mcodeFunctionReturnCodes _game_session::fn_mega_interacts(int32 &, int32 *params
 	// get target object
 	target_object = (CGame *)LinkedDataObject::Try_fetch_item_by_name(MS->objects, object_name);
 	if (!target_object)
-		Fatal_error("fn_mega_interacts - named object [%s] dont exist", object_name);
+		Fatal_error("fn_mega_interacts - named object [%s] don't exist", object_name);
 
 	// set socket_id ready for any special socket functions
 	M->target_id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
@@ -178,7 +178,7 @@ mcodeFunctionReturnCodes _game_session::fn_mega_generic_interact(int32 &, int32 
 	// get target object
 	target_object = (CGame *)LinkedDataObject::Try_fetch_item_by_name(MS->objects, object_name);
 	if (!target_object)
-		Fatal_error("fn_mega_generic_interact - named object [%s] dont exist", object_name);
+		Fatal_error("fn_mega_generic_interact - named object [%s] don't exist", object_name);
 
 	// set socket_id ready for any special socket functions
 	M->target_id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
@@ -227,7 +227,7 @@ bool8 _game_session::chi_interacts(int32 id, const char *script_name) {
 	// get target object
 	target_object = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, id);
 	if (!target_object)
-		Fatal_error("chi_interacts - object [%d] dont exist", id);
+		Fatal_error("chi_interacts - object [%d] don't exist", id);
 
 	// set socket_id ready for any special socket functions
 	M->target_id = id;

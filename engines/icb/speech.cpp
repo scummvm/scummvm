@@ -90,7 +90,7 @@ mcodeFunctionReturnCodes _game_session::fn_get_speech_status(int32 &result, int3
 
 	if (g_icb->getGameType() == GType_ICB) {
 		if ((cur_id == player.Fetch_player_id()) && (player.player_status == REMORA))
-			Fatal_error("fn_get_speech_status - player cant start conversation inside remora!");
+			Fatal_error("fn_get_speech_status - player can't start conversation inside remora!");
 
 		if ((cur_id == player.Fetch_player_id()) && (g_oIconMenu->IsActive()))
 			g_oIconMenu->CloseDownIconMenu();
@@ -168,7 +168,7 @@ mcodeFunctionReturnCodes _game_session::fn_request_speech(int32 &result, int32 *
 
 	//	conversation script doesn't exist
 	if (!S.script_pc)
-		Fatal_error("object [%d] tried to start conversation script [%s] which doesnt exist", cur_id, (const char *)temp_buf);
+		Fatal_error("object [%d] tried to start conversation script [%s] which doesn't exist", cur_id, (const char *)temp_buf);
 
 	// reset number of subs
 	S.total_subscribers = 0; // everyone but us initially
@@ -214,7 +214,7 @@ mcodeFunctionReturnCodes _game_session::fn_add_talker(int32 &, int32 *params) {
 		Fatal_error("fn_add_talker finds [%s] is not a real object", object_name);
 
 	if (cur_id == talk_id)
-		Fatal_error("[%s] calls fn_add_talker('%s') which isnt necessary and may cause strange lock up effects!", object_name, object_name);
+		Fatal_error("[%s] calls fn_add_talker('%s') which isn't necessary and may cause strange lock up effects!", object_name, object_name);
 
 	Zdebug("talk id %d", talk_id);
 
@@ -888,7 +888,7 @@ mcodeFunctionReturnCodes _game_session::speak_set_custom(int32 &, int32 *params)
 	speaker_id = LinkedDataObject::Fetch_item_number_by_name(objects, person_name);
 
 	if (speaker_id == -1)
-		Fatal_error("speak_set_custom cant find object [%s]", person_name);
+		Fatal_error("speak_set_custom can't find object [%s]", person_name);
 
 	Set_string(custom_name, logic_structs[speaker_id]->mega->custom_set, MAX_CUSTOM_NAME_LENGTH);
 	logic_structs[speaker_id]->mega->custom = TRUE8;
