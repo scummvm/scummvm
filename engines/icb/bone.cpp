@@ -265,7 +265,7 @@ void UpdatePlayerLook() {
 		PXreal dx, dy, dz;
 		int32 playerEye;
 
-		// get postion of players head
+		// get position of players head
 
 		// raw position (foot)
 		log->GetPosition(px, py, pz);
@@ -278,7 +278,7 @@ void UpdatePlayerLook() {
 		// height increases to eye...
 		py += playerEye;
 
-		// get position of targetting object
+		// get position of targeting object
 
 		target = MS->logic_structs[sel_id];
 
@@ -365,7 +365,7 @@ void UpdatePlayerLook() {
 		if ((status == STATUS_BODY) && (!armed))
 			status = STATUS_NONE;
 
-		// if looking with head but armed then status is none (in preperation for going to STATUS_HEAD)
+		// if looking with head but armed then status is none (in preparation for going to STATUS_HEAD)
 		if ((status == STATUS_HEAD) && (armed))
 			status = STATUS_NONE;
 
