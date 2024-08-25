@@ -218,7 +218,7 @@ mcodeFunctionReturnCodes _game_session::fn_test_prop_anim(int32 &result, int32 *
 		}
 	}
 
-	Message_box("fn_test_prop_anim didnt find anim [%s] for object [%s]", anim_name, CGameObject::GetName(object));
+	Message_box("fn_test_prop_anim didn't find anim [%s] for object [%s]", anim_name, CGameObject::GetName(object));
 
 	result = 0;
 
@@ -251,7 +251,7 @@ uint32 _game_session::Validate_prop_anim(const char *anim_name) {
 		}
 	}
 
-	Fatal_error("Validate_prop_anim didnt find anim [%s] for object [%s]", anim_name, CGameObject::GetName(object));
+	Fatal_error("Validate_prop_anim didn't find anim [%s] for object [%s]", anim_name, CGameObject::GetName(object));
 	return (FALSE8);
 }
 
