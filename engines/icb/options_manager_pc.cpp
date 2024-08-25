@@ -6553,7 +6553,7 @@ linesDone:
 			m_cursor += 2;
 			// Increment line height
 			m_currentHeight += CREDIT_LINE_SPACING;
-			// Dont draw this line
+			// Don't draw this line
 		} else if (ret == IGNORE_LINE) {
 			// Skip the special character
 			m_cursor++;
