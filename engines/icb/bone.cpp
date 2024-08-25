@@ -420,7 +420,7 @@ void UpdatePlayerLook() {
 		}
 	}
 
-	// dont do an update here...
+	// don't do an update here...
 }
 
 mcodeFunctionReturnCodes fn_set_neck_bone(int32 &result, int32 *params) { return (MS->fn_set_neck_bone(result, params)); }
