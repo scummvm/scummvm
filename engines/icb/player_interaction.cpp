@@ -417,7 +417,7 @@ bool8 _game_session::Engine_start_interaction(const char *script, uint32 id) {
 	// get target object
 	iobject = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, id);
 	if (!iobject)
-		Fatal_error("Engine_start_interaction - named object dont exist"); // should never happen
+		Fatal_error("Engine_start_interaction - named object don't exist"); // should never happen
 
 	// now try and find a script with the passed extention i.e. ???::looping
 	for (uint32 k = 0; k < CGameObject::GetNoScripts(iobject); k++) {
