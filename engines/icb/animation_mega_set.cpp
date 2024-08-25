@@ -358,7 +358,7 @@ bool8 _game_session::Start_generic_ascii_anim(const char *ascii_name) {
 	// search for named anim and setup if found
 	uint32 k;
 
-	// search for the named generic anim - cant use __ANIM_NAME from script unfortunately
+	// search for the named generic anim - can't use __ANIM_NAME from script unfortunately
 	for (k = 0; k < __TOTAL_ANIMS; k++) {
 		// we must search the table
 
@@ -387,7 +387,7 @@ __mega_set_names _game_session::Fetch_generic_anim_from_ascii(const char *ascii_
 	// pass name of a generic anim and return the type
 	uint32 k;
 
-	// search for the named generic anim - cant use __ANIM_NAME from script unfortunately
+	// search for the named generic anim - can't use __ANIM_NAME from script unfortunately
 	for (k = 0; k < __TOTAL_ANIMS; k++) {
 		if (!strcmp(const_cast<char *>(ascii_name), master_anim_name_table[k].name)) {
 			// found!
