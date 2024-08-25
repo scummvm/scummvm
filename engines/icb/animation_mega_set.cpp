@@ -392,12 +392,12 @@ __mega_set_names _game_session::Fetch_generic_anim_from_ascii(const char *ascii_
 		if (!strcmp(const_cast<char *>(ascii_name), master_anim_name_table[k].name)) {
 			// found!
 			if (I->IsAnimTable(L->cur_anim_type) == (int8)-1)
-				Fatal_error("Fetch_generic_anim_from_ascii cant find on drive %s", ascii_name);
+				Fatal_error("Fetch_generic_anim_from_ascii can't find on drive %s", ascii_name);
 			return (master_anim_name_table[k].ref);
 		}
 	}
 
-	Fatal_error("Fetch_generic_anim_from_ascii cant find %s", ascii_name);
+	Fatal_error("Fetch_generic_anim_from_ascii can't find %s", ascii_name);
 	return __NON_GENERIC;
 }
 
