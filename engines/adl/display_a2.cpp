@@ -492,6 +492,7 @@ Display_A2::Display_A2() :
 		_enableColor(false),
 		_enableScanlines(false),
 		_enableMonoText(false),
+		_enableApple2eCursor(false),
 		_blink(false) { }
 
 Display_A2::~Display_A2() {
@@ -506,6 +507,7 @@ void Display_A2::init() {
 	_enableColor = ConfMan.getBool("color");
 	_enableScanlines = ConfMan.getBool("scanlines");
 	_enableMonoText = ConfMan.getBool("monotext");
+	_enableApple2eCursor = ConfMan.getBool("apple2e_cursor");
 }
 
 void Display_A2::loadFrameBuffer(Common::ReadStream &stream, byte *dst) const {

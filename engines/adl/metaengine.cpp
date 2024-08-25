@@ -98,6 +98,18 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+	{
+		GAMEOPTION_APPLE2E_CURSOR,
+		{
+			_s("Use checkered cursor"),
+			_s("Use the checkered cursor from later Apple II models"),
+			"apple2e_cursor",
+			false,
+			0,
+			0
+		}
+	},
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
