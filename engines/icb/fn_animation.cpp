@@ -1322,11 +1322,11 @@ mcodeFunctionReturnCodes _game_session::fn_new_apply_bullet(int32 &, int32 *para
 	// default is 1
 	int32 shotType = CGameObject::GetIntegerValueOrDefault(object, "gun_effects", 1);
 
-	// if mega then do dynamic light (only if shotType isnt 0
+	// if mega then do dynamic light (only if shotType isn't 0)
 	if ((logic_structs[cur_id]->image_type == VOXEL) && (shotType == 1)) {
 		// dynamic light
 		M->SetDynamicLight(1, 255, 255, 255, 0, 150, 100, 200); // 2 metres
-		// Hey we are shooting someone (muzzle flash on / cartridge case on (we my want to split this!)
+		// Hey we are shooting someone (muzzle flash on / cartridge case on) - we may want to split this!
 		M->is_shooting = TRUE8;
 	}
 
