@@ -211,7 +211,7 @@ void _player::Find_current_player_interact_object() {
 	}
 
 	// mega if armed, nearest prop or live mega, dead mega
-	if ((prop_id) && (nearest < nearest_mega)) { // UNARMED prop nearer than mega (wont be a prop if armed)
+	if ((prop_id) && (nearest < nearest_mega)) { // UNARMED prop nearer than mega (won't be a prop if armed)
 		cur_interact_id = (prop_id - 1);
 		interact_selected = TRUE8;
 	} else if ((mega_id) && (!dead_mega)) { // live mega
