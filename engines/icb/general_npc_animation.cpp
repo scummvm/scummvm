@@ -876,7 +876,7 @@ void _game_session::Change_pose_in_current_anim_set() {
 uint32 _game_session::Fetch_last_frame(__mega_set_names anima) {
 	// return final frame number in animation
 	if ((!I->IsAnimTable(anima))) {
-		Fatal_error("Fetch_last_frame cant access illegal anim [%s]", master_anim_name_table[anima].name);
+		Fatal_error("Fetch_last_frame can't access illegal anim [%s]", master_anim_name_table[anima].name);
 	}
 
 	PXanim *pAnim = (PXanim *)rs_anims->Res_open(I->get_info_name(anima), I->info_name_hash[anima], I->base_path, I->base_path_hash);
