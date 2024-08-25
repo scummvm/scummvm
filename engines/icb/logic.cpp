@@ -733,7 +733,7 @@ mcodeFunctionReturnCodes _game_session::fn_new_script(int32 &, int32 *params) {
 			if (L->mega)
 				M->custom = FALSE8; // reset
 
-			// script interpretter shouldn't write a pc back
+			// script interpreter shouldn't write a pc back
 			return (IR_TERMINATE);
 		}
 	}
@@ -777,7 +777,7 @@ mcodeFunctionReturnCodes _game_session::fn_gosub(int32 &, int32 *params) {
 
 			L->old_looping = 0; // gets popped on dropoff
 
-			// script interpretter shouldn't write a pc back
+			// script interpreter shouldn't write a pc back
 			return (IR_GOSUB);
 		}
 	}
