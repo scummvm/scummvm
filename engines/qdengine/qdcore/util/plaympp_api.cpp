@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/stream.h"
 
@@ -155,6 +156,15 @@ void mpegPlayer::deinit_library() {
 mpegPlayer &mpegPlayer::instance() {
 	static mpegPlayer player;
 	return player;
+}
+
+void mpegPlayer::syncMusicSettings() {
+	set_volume(ConfMan.getInt("music_volume"));
+
+	if (ConfMan.getBool("enable_music"))
+		enable();
+	else
+		disable();
 }
 
 } // namespace QDEngine

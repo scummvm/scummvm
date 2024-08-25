@@ -113,6 +113,8 @@ public:
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
+	void syncSoundSettings() override;
+
 	int engineMain();
 
 	int _thumbSizeX = 0, _thumbSizeY = 0;

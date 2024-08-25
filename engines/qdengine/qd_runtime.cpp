@@ -204,8 +204,7 @@ int QDEngineEngine::engineMain() {
 
 	sndDispatcher *sndD = new sndDispatcher;
 
-	qdGameConfig::get_config().update_sound_settings();
-	qdGameConfig::get_config().update_music_settings();
+	g_engine->syncSoundSettings();
 
 	winVideo::init();
 

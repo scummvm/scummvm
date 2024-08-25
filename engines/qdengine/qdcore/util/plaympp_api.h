@@ -73,6 +73,8 @@ public:
 	}
 	void set_volume(uint32 vol);
 
+	void syncMusicSettings();
+
 	static bool init_library(void *dsound_device);
 	static void deinit_library();
 
