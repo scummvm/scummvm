@@ -352,7 +352,7 @@ private:
 	// Clustering.
 	uint32 m_nRemoraClusterHash;
 
-	// These are here at the end to keep the data alligned.
+	// These are here at the end to keep the data aligned.
 	bool8 m_bModeChanged;       // Set to true when there is a mode change.
 	uint8 m_nNextAvailableRow;  // Last line text has been written to.
 	uint8 m_nFirstLineToDraw;   // Display from this point (to do scrolling).
