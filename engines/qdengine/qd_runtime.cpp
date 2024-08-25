@@ -113,8 +113,10 @@ void searchTagMap(int id, int targetVal) {
 static int detectVersion(Common::String gameID) {
 	if (gameID == "karliknos") {
 		return 20030919;		// QDSCR_GAME_TITLE = 182, 06b1cf45d
-	} else if (gameID == "nupogodi3") {
+	} else if (gameID == "nupogodi3" && g_engine->getLanguage() == Common::RU_RUS) {
 		return 20031014;		// QDSCR_TEXT_DB = 184, d864cc279
+	} else if (gameID == "nupogodi3" && g_engine->getLanguage() == Common::LT_LTU) {
+		return 20031206;		// QDSCR_TEXT_DB = 185
 	} else if (gameID == "pilots3") {
 		return 20040519;		// QDSCR_GAME_TITLE = 203
 	} else if (gameID == "rybalka") {
