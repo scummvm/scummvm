@@ -402,7 +402,7 @@ mcodeFunctionReturnCodes _game_session::fn_start_player_interaction(int32 &, int
 
 	L->looping = 0; // reset to 0 for new logics
 
-	// script interpretter shouldn't write a pc back
+	// script interpreter shouldn't write a pc back
 	return (IR_TERMINATE);
 }
 
