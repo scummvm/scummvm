@@ -498,7 +498,7 @@ mcodeFunctionReturnCodes _game_session::fn_player(int32 &, int32 *) {
 
 	if ((!local_count_down) && (prev_save_state)) {
 		//		ok, we're pinned to last spot
-		//		unless we've moved significantly then we dont record another position
+		//		unless we've moved significantly then we don't record another position
 
 		sub1 = (PXreal)M->actor_xyz.x - hist_pin_x;
 		sub2 = (PXreal)M->actor_xyz.z - hist_pin_z;
