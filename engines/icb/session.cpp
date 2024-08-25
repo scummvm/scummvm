@@ -1186,7 +1186,7 @@ void _game_session::Idle_manager() {
 }
 
 void _game_session::Set_init_voxel_floors() {
-	// set all mega characters floors - called after game restore because logics may begin by checking the floor number but it wont be set until end of first cycle
+	// set all mega characters floors - called after game restore because logics may begin by checking the floor number but it won't be set until end of first cycle
 	uint32 j;
 
 	for (j = 0; j < number_of_voxel_ids; j++)
