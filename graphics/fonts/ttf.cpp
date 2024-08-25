@@ -995,6 +995,7 @@ Font *findTTFace(const Common::Array<Common::Path> &files, const Common::U32Stri
 	for (Common::Array<Common::Path>::const_iterator it = files.begin(); it != files.end(); it++) {
 		Common::File *ttfFile = new Common::File();
 		if (!ttfFile->open(*it)) {
+			delete ttfFile;
 			continue;
 		}
 
@@ -1004,8 +1005,6 @@ Font *findTTFace(const Common::Array<Common::Path> &files, const Common::U32Stri
 		// Load face index -1 to get the count
 		if (!g_ttf.loadFont(ttfFile, &stream, -1, face)) {
 			delete ttfFile;
-			ttfFile = 0;
-
 			continue;
 		}
 
