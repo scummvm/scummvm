@@ -463,7 +463,7 @@ void _game_session::Animate_turn_to_pan(__mega_set_names anim_type, uint32 speed
 	//PXreal znext = z2 - z1;
 
 	// update pc
-	L->anim_pc = next_pc; // allready computed
+	L->anim_pc = next_pc; // already computed
 
 	// get the pan unwind value of the frame to be printed
 	PXreal pan;
