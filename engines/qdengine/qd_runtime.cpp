@@ -255,7 +255,7 @@ int QDEngineEngine::engineMain() {
 				break;
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.ascii == 'f')
-					qdGameConfig::get_config().toggle_fps();
+					ConfMan.setBool("show_fps", !ConfMan.getBool("show_fps"));
 #ifdef __QD_DEBUG_ENABLE__
 				else if (event.kbd.keycode == Common::KEYCODE_PAGEDOWN) {
 					float speed = ConfMan.getFloat("game_speed") * 0.9f;
