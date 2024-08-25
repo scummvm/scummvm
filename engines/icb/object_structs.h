@@ -215,7 +215,7 @@ public:
 	uint32 cur_slice;        // for speedups
 
 	uint32 barrier_list[MAX_bars]; // including animating ones
-	uint32 nudge_list[MAX_bars];   // only player builds this - i cant be bothered with putting it in the player struct however
+	uint32 nudge_list[MAX_bars];   // only player builds this - i can't be bothered with putting it in the player struct however
 
 	uint32 number_of_barriers;  // kept for safety
 	uint32 number_of_nudge;     // kept for safety
