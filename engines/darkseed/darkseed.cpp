@@ -2133,9 +2133,28 @@ void DarkseedEngine::handleObjCollision(int targetObjNum) {
 		targetObjNum = 22;
 	}
 	if (_actionMode == LookAction || _actionMode == HandAction || targetObjNum != 115) {
-		if (_cursor.getY() < 10 && _actionMode > LookAction) {
-			// TODO handle inventory
-			// 171d:53c3
+		if (_cursor.getY() < 40 && _actionMode > LookAction) {
+			if (_objectVar[80] < 2 ||
+				((_actionMode != 25 || targetObjNum != 19) && (_actionMode != 19 || targetObjNum != 25))) {
+				if ((_actionMode == 25 && targetObjNum == 20) || (_actionMode == 20 && targetObjNum == 25)) {
+					if (_objectVar[25] > 99) {
+						_console->printTosText(969);
+						_inventory.removeItem(20);
+						_inventory.removeItem(25);
+						updateDisplay();
+						playSound(17,5,-1);
+						_inventory.addItem(27);
+//						waitxticks(30); TODO do we need to add delay here?
+						return;
+					}
+					_useCode->genericresponse(_actionMode, targetObjNum, 999);
+				} else {
+					_useCode->genericresponse(_actionMode, targetObjNum, 999);
+				}
+			} else {
+				_console->printTosText(695);
+			}
+			return;
 		} else {
 			switch (_actionMode) {
 			case HandAction:
@@ -2230,10 +2249,75 @@ void DarkseedEngine::handleObjCollision(int targetObjNum) {
 			}
 		}
 	} else {
-		// 171d:51dc or 1018:61e7
-		// power nexus
 		_player->loadAnimations("pownex.nsp");
-		// TODO
+		animIndexTbl[0] = 0;
+		spriteAnimCountdownTimer[0] = _player->_animations.getAnimAt(0).frameDuration[0];
+		isAnimFinished_maybe = false;
+		int16 frameIdx = 0;
+		int16 prevFrameIdx = 0;
+		while(!isAnimFinished_maybe) {
+			prevFrameIdx = frameIdx;
+			for (int i = 0; i < 6; i++) {
+				wait();
+			}
+
+			_sprites.clearSpriteDrawList();
+			_frame.draw();
+			_console->draw();
+
+			advanceAnimationFrame(0);
+			frameIdx = _player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]];
+			const Sprite &sprite = _player->_animations.getSpriteAt(frameIdx);
+			_sprites.addSpriteToDrawList(152, 89, &sprite, 255, sprite.width, sprite.height, false);
+			_room->draw();
+			_sprites.drawSprites();
+
+			_screen->makeAllDirty();
+			_screen->update();
+
+		}
+
+		isAnimFinished_maybe = false;
+		while(!isAnimFinished_maybe) {
+			for (int i = 0; i < 6; i++) {
+				wait();
+			}
+			_sprites.clearSpriteDrawList();
+			_frame.draw();
+			_console->draw();
+
+			advanceAnimationFrame(1);
+
+			const Sprite &sprite = _player->_animations.getSpriteAt(_player->_animations.getAnimAt(1).frameNo[animIndexTbl[1]]);
+			_sprites.addSpriteToDrawList(152, 129, &sprite, 255, sprite.width, sprite.height, false);
+
+			const Sprite &mikeSprite = _player->_animations.getSpriteAt(prevFrameIdx);
+			_sprites.addSpriteToDrawList(152, 89, &mikeSprite, 255, mikeSprite.width, mikeSprite.height, false);
+
+			_room->draw();
+			_sprites.drawSprites();
+
+			_screen->makeAllDirty();
+			_screen->update();
+		}
+
+		if (_actionMode == 25) {
+			if (_objectVar[25] < 100) {
+				_objectVar[25] = _objectVar[25] + 100;
+			}
+			_console->printTosText(930);
+		} else if (_actionMode == 27) {
+			_console->printTosText(929);
+		}
+		else {
+			_console->printTosText(967);
+			_console->addToCurrentLine(_objectVar.getObjectName(_actionMode)); // TODO remove newline after object name
+			_console->printTosText(968);
+			_inventory.removeItem(_actionMode);
+		}
+		if (_actionMode > 4) {
+			_cursor.setCursorType(Pointer);
+		}
 	}
 }
 
