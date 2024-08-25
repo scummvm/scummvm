@@ -349,7 +349,7 @@ void init_graphics() {
 }
 
 bool init_graphics_dispatcher() {
-	grDispatcher::instance()->init(g_engine->_screenW, g_engine->_screenH, (grPixelFormat)qdGameConfig::get_config().pixel_format());
+	grDispatcher::instance()->init(g_engine->_screenW, g_engine->_screenH, GR_RGB565);
 	return true;
 }
 
