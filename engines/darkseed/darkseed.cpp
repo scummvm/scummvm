@@ -1161,16 +1161,15 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 				}
 			} else {
 				if (otherNspAnimationType_maybe == 37) {
-					error("anim: 37"); // TODO
-//					uVar1 = (uint)BYTE_ARRAY_2c85_41e7[1];
-//					uVar7 = *(undefined2 *)((int)CPlayerSpriteWidthTbl + uVar1 * 2);
-//					uVar4 = *(undefined2 *)((int)CPlayerSpriteHeightTbl + uVar1 * 2);
-//					calculateScaledPlayerSpriteDimensions(uVar7,uVar4,playerSpriteY_maybe);
-//					addSpriteToDraw(playerSpriteX_maybe - (_curPlayerSpriteWidth & 0xff) / 2,
-//									playerSpriteY_maybe - (_curPlayerSpriteHeight_maybe & 0xff),uVar7,uVar4,
-//									*(undefined2 *)((int)CPlayerSpritePtrTbl + uVar1 * 4),
-//									*(undefined2 *)((int)&CPlayerSpritePtrTbl[0].Offset + uVar1 * 4),240 - playerSpriteY_maybe ,
-//									_curPlayerSpriteWidth,_curPlayerSpriteHeight_maybe,_player_sprite_related_2c85_82f3);
+					const Sprite &playerSprite = _player->getSprite(26);
+					_room->calculateScaledSpriteDimensions(playerSprite.width, playerSprite.height, _player->_position.y);
+					_sprites.addSpriteToDrawList(
+						_player->_position.x,
+						_player->_position.y - scaledSpriteHeight,
+						&playerSprite,
+						240 - _player->_position.y,
+						scaledSpriteWidth,
+						scaledSpriteHeight, player_sprite_related_2c85_82f3);
 				}
 				if (otherNspAnimationType_maybe == 39 || otherNspAnimationType_maybe == 59 ||
 					 otherNspAnimationType_maybe == 60 || otherNspAnimationType_maybe == 61) {
@@ -1922,6 +1921,23 @@ void DarkseedEngine::updateAnimation() {
 			_console->printTosText(927);
 		}
 		break;
+	case 36:
+	case 37:
+		advanceAnimationFrame(otherNspAnimationType_maybe - 36);
+		_player->_frameIdx = _player->_animations.getAnimAt(otherNspAnimationType_maybe - 36).frameNo[animIndexTbl[otherNspAnimationType_maybe - 36]];
+		if (animFrameChanged && otherNspAnimationType_maybe == 36 && _player->_frameIdx == 4) {
+			playSound(28, 5, -1);
+		}
+		if (isAnimFinished_maybe) {
+			if (otherNspAnimationType_maybe == 36) {
+				setupOtherNspAnimation(1, 37);
+			} else {
+				_objectVar[137] = 2;
+				_player->_isAutoWalkingToBed = true;
+				_player->setplayertowardsbedroom();
+			}
+		}
+		break;
 	case 41:
 		advanceAnimationFrame(0);
 		if (!isAnimFinished_maybe) {
@@ -2214,8 +2230,10 @@ void DarkseedEngine::handleObjCollision(int targetObjNum) {
 			}
 		}
 	} else {
+		// 171d:51dc or 1018:61e7
+		// power nexus
+		_player->loadAnimations("pownex.nsp");
 		// TODO
-		// 171d:51dc
 	}
 }
 
