@@ -70,17 +70,23 @@ protected:
 			byte m = display->_textBuf[charPos];
 			byte b;
 
-			if (display->_showCursor && charPos == display->_cursorPos && display->_blink) {
-				byte cursor[] = {
-					0x00, 0x00, 0x2a, 0x14,
-					0x2a, 0x14, 0x2a, 0x00
-				};
+			if (display->_showCursor && charPos == display->_cursorPos) {
+				if (display->_enableApple2eCursor) {
+					if (display->_blink) {
+						byte cursor[] = {
+							0x00, 0x00, 0x2a, 0x14,
+							0x2a, 0x14, 0x2a, 0x00
+						};
 
-				b = cursor[y % 8];
+						b = cursor[y % 8];
+					} else
+						b = _font[m & 0x3f][y % 8];
+				} else
+					m = (m & 0x3f) | 0x40;
 			} else
 				b = _font[m & 0x3f][y % 8];
 
-			if (!(m & 0x80))
+			if (!(m & 0x80) && (!(m & 0x40) || display->_blink))
 				b = ~b;
 
 			return b & 0x7f;
@@ -117,6 +123,7 @@ protected:
 	bool _enableColor;
 	bool _enableScanlines;
 	bool _enableMonoText;
+	bool _enableApple2eCursor;
 	bool _blink;
 
 private:
