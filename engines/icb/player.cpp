@@ -3158,7 +3158,7 @@ void _game_session::Restart_player() {
 
 	var_num = CGameObject::GetVariable(ob, "hits");
 	if (var_num == -1)
-		Fatal_error("Restart_player can`'t fetch hits");
+		Fatal_error("Restart_player can't fetch hits");
 	CGameObject::SetIntegerVariable(ob, var_num, MAX_HITS); // another 10 hits
 
 	L->logic_level = 0; // restart
