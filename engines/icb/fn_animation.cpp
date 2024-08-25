@@ -1274,7 +1274,7 @@ mcodeFunctionReturnCodes _game_session::fn_sync_with_mega(int32 &, int32 *params
 	if (!L->looping) {
 		L->list[0] = LinkedDataObject::Fetch_item_number_by_name(objects, mega_name);
 		L->list[1] = 42;    // we are here
-		L->looping = TRUE8; // dont do this again
+		L->looping = TRUE8; // don't do this again
 	}
 
 	if (logic_structs[L->list[0]]->list[1] == 42) {
