@@ -1027,7 +1027,7 @@ void _game_session::End_conversation(uint32 uid) {
 		for (j = 0; j < speech_info[uid].total_subscribers; j++) {
 			if (speech_info[uid].subscribers_requested[j] == player.Fetch_player_id()) {
 				if (logic_structs[player.Fetch_player_id()]->conversation_uid !=
-				    NO_SPEECH_REQUEST) { // dont reset player if he never joined - for request failures on ladders, etc.
+				    NO_SPEECH_REQUEST) { // don't reset player if he never joined - for request failures on ladders, etc.
 					player.Pop_player_stat(); // stood or aiming, etc
 				}
 			}
@@ -1116,7 +1116,7 @@ mcodeFunctionReturnCodes _game_session::speak_add_chooser_icon(int32 &, int32 *p
 
 mcodeFunctionReturnCodes _game_session::speak_add_special_chooser_icon(int32 &, int32 *params) {
 	// add icon to speech menu
-	// these icons dont count as items that must be selected to finish with the menu
+	// these icons don't count as items that must be selected to finish with the menu
 
 	// params    0   ascii name of icon
 	const char *icon_name = (const char *)MemoryUtil::resolvePtr(params[0]);
