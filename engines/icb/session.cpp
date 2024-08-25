@@ -573,7 +573,7 @@ void _game_session::Init_objects() {
 
 			//          set base logic to logic context script
 			logic_structs[j]->logic[0] = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, CGameObject::GetScriptNameFullHash(object, OB_LOGIC_CONTEXT));
-			//          **note, we dont need to set up the script reference (logic_ref) for level 0
+			//          **note, we don't need to set up the script reference (logic_ref) for level 0
 		} else
 			Shut_down_object("by initialise - no init script");
 
@@ -637,7 +637,7 @@ void _game_session::Init_objects() {
 }
 
 void _game_session::Pre_initialise_objects() {
-	// prepare gameworld and objects but dont run init scripts yet
+	// prepare gameworld and objects but don't run init scripts yet
 
 	// so PSX can have nice session loading screen and details (for timing and to stop player getting bored)
 	StartInit(total_objects + 6); // +6 because also floors, barriers, markers, camera_table, plan_view, player
@@ -1049,7 +1049,7 @@ uint32 _game_session::Fetch_prop_state(char *prop_name) {
 	// didn't find the object
 	if (j == number_of_missing_objects) {
 		// create entry for the object
-		if (strcmp(prop_name, "not a prop") && (camera_hack == FALSE8)) // dont report dummy lights
+		if (strcmp(prop_name, "not a prop") && (camera_hack == FALSE8)) // don't report dummy lights
 			Message_box("object missing for prop [%s]", prop_name);
 
 		Set_string(prop_name, missing_obs[number_of_missing_objects], MAX_missing_object_name_length);
@@ -1117,7 +1117,7 @@ void _game_session::Process_player_floor_status() {
 
 	player_floor = logic_structs[player.Fetch_player_id()]->owner_floor_rect;
 
-	// dont need to tell the player he's on the players floor
+	// don't need to tell the player he's on the players floor
 	if (player.Fetch_player_id() == cur_id)
 		return;
 
