@@ -650,7 +650,7 @@ void _game_session::Pre_initialise_objects() {
 	InitMsg("Floors");
 
 	// initialise the floor area definition file
-	// uses the private resman so mission->session-> need to be initialised so this cant be on session contructor
+	// uses the private resman so mission->session-> need to be initialised so this can't be on session contructor
 	floor_def = g_icb_session_floors;
 	g_icb_session_floors->___init();
 
