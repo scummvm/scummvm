@@ -594,7 +594,7 @@ bool8 _game_session::Process_chi() {
 					if (!res) {                      // no interaction portal for chi - actually not possible now she can use the normal
 						                         // 'interact' script
 						chi_think_mode = __LOST; // oh dear, we must be lost. Not legal but lets handle it for now
-						Tdebug("chi.txt", "chi cant follow player via %d", history[next_room].id);
+						Tdebug("chi.txt", "chi can't follow player via %d", history[next_room].id);
 						return TRUE8;
 					} else {
 						// ok, back to script
