@@ -392,7 +392,7 @@ bool qdInterfaceTextWindow::redraw() const {
 
 			grDispatcher::instance()->setClip(l_clip, t_clip, r_clip, b_clip);
 
-			if (qdGameConfig::get_config().debug_draw())
+			if (g_engine->_debugDraw)
 				grDispatcher::instance()->rectangle(ar.x - _text_size.x / 2, ar.y - _text_size.y / 2, _text_size.x, _text_size.y, 0xFFFFFF, 0, GR_OUTLINED, 3);
 		}
 	} else if (_windowType == WINDOW_EDIT || _windowType == WINDOW_TEXT) {
