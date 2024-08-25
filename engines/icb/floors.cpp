@@ -158,7 +158,7 @@ bool8 _floor_world::On_a_floor(_mega *mega) {
 	return FALSE8;
 }
 
-void _floor_world::Allign_with_floor(_mega *mega) {
+void _floor_world::Align_with_floor(_mega *mega) {
 	uint32 j;
 
 	// check against actualy heights

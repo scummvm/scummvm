@@ -3132,7 +3132,7 @@ uint32 _game_session::Register_stair_or_ladder(const char *target, bool8 top, ui
 mcodeFunctionReturnCodes _game_session::fn_align_with_floor(int32 &, int32 *) {
 	// mega climbing stairs and ladder calls this afterward to realign with artist misaligned floors
 
-	floor_def->Allign_with_floor(M);
+	floor_def->Align_with_floor(M);
 
 	return IR_CONT;
 }

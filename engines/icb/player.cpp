@@ -921,7 +921,7 @@ mcodeFunctionReturnCodes _player::Gateway() {
 			break;
 		case LEAVE_LADDER_BOTTOM:
 			log->pan += HALF_TURN;
-			MS->floor_def->Allign_with_floor(log->mega);
+			MS->floor_def->Align_with_floor(log->mega);
 			Start_new_mode(STOOD);
 			ret = __MORE_THIS_CYCLE;
 			break;
@@ -1893,7 +1893,7 @@ void _player::Leave_stair() {
 	// align with floor
 	// set next mode according to momentum
 
-	MS->floor_def->Allign_with_floor(log->mega);
+	MS->floor_def->Align_with_floor(log->mega);
 
 	// coming off the stair
 	if (MS->stairs[stair_num].is_stair) {
@@ -2040,7 +2040,7 @@ __mode_return _player::Player_ladder() {
 __mode_return _player::Player_slide_on_ladder() {
 	if (stair_unit == (MS->stairs[stair_num].units + 1)) {
 
-		MS->floor_def->Allign_with_floor(log->mega);
+		MS->floor_def->Align_with_floor(log->mega);
 
 		log->mega->drawShadow = TRUE8; // shadows on
 		Easy_start_new_mode(STOOD, __SLIDE_DOWN_LADDER_TO_STAND); // get off
@@ -2354,7 +2354,7 @@ __mode_return _player::Player_stood() {
 	log->cur_anim_type = __STAND;
 	MS->Set_motion(__MOTION_WALK); // back to walk in-case were running
 	MS->Set_can_save(TRUE8); // can save
-	MS->floor_def->Allign_with_floor(log->mega);
+	MS->floor_def->Align_with_floor(log->mega);
 
 	MS->Process_guard_alert(__ASTOOD);
 

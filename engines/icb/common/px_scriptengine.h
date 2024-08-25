@@ -101,7 +101,7 @@ extern CpxGlobalScriptVariables *g_globalScriptVariables;
 #define OP_PLUS 31     // '+'
 #define OP_TIMES 32    // '*'
 #define OP_MINUS 33    // '-'
-#define OP_DEVIDE 34   // '/'
+#define OP_DIVIDE 34   // '/'
 #define OP_LSTHAN 35   // <
 #define OP_NOTEQUAL 36 // '!='
 #define OP_ANDAND 37   // &&
