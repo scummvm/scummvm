@@ -168,7 +168,7 @@ mcodeFunctionReturnCodes _game_session::fn_request_speech(int32 &result, int32 *
 
 	//	conversation script doesnt exist
 	if (!S.script_pc)
-		Fatal_error("object [%d] tried to start conversation script [%s] which doesnt exist", cur_id, (const char *)temp_buf);
+		Fatal_error("object [%d] tried to start conversation script [%s] which doesn't exist", cur_id, (const char *)temp_buf);
 
 	// reset number of subs
 	S.total_subscribers = 0; // everyone but us initially
@@ -214,7 +214,7 @@ mcodeFunctionReturnCodes _game_session::fn_add_talker(int32 &, int32 *params) {
 		Fatal_error("fn_add_talker finds [%s] is not a real object", object_name);
 
 	if (cur_id == talk_id)
-		Fatal_error("[%s] calls fn_add_talker('%s') which isnt necessary and may cause strange lock up effects!", object_name, object_name);
+		Fatal_error("[%s] calls fn_add_talker('%s') which isn't necessary and may cause strange lock up effects!", object_name, object_name);
 
 	Zdebug("talk id %d", talk_id);
 
