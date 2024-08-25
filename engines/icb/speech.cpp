@@ -671,7 +671,7 @@ mcodeFunctionReturnCodes _game_session::fn_speak(int32 &, int32 *params) {
 			Fatal_error("Speech xa file is 0 game cycles see, int32");
 	}
 
-	no_click_zone = 0; // cant click past for specified period
+	no_click_zone = 0; // can't click past for specified period
 
 	// set conv mode
 	speech_info[CONV_ID].current_talker = speaker_id;
