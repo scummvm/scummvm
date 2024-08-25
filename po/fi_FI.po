@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-21 11:07+0000\n"
-"PO-Revision-Date: 2024-08-09 21:43+0000\n"
+"PO-Revision-Date: 2024-08-25 17:43+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -3699,10 +3699,8 @@ msgid "Matched game IDs for the %s engine:"
 msgstr "Täsmäävät tunnisteet pelimoottorille %s:"
 
 #: engines/metaengine.cpp:39
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "Game not implemented"
-msgstr "Pelin tunniste ei ole tuettu"
+msgstr "Pelillä ei ole toteutusta"
 
 #: engines/metaengine.cpp:58 engines/saga/metaengine.cpp:267
 msgid "Default game keymap"
@@ -7001,10 +6999,8 @@ msgid "Game Keymappings"
 msgstr "Pelin näppäinkartta"
 
 #: engines/cge/metaengine.cpp:215
-#, fuzzy
-#| msgid "Skip"
 msgid "Exit/Skip"
-msgstr "Ohita"
+msgstr "Poistu/Ohita"
 
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:162
@@ -7527,21 +7523,15 @@ msgid "Shoot"
 msgstr "Ammu"
 
 #: engines/freescape/movement.cpp:72
-#, fuzzy
-#| msgid "Rotate"
 msgid "Rotate up"
-msgstr "Käännä"
+msgstr "Käännä ylös"
 
 #: engines/freescape/movement.cpp:77
-#, fuzzy
-#| msgid "Rotate"
 msgid "Rotate down"
-msgstr "Käännä"
+msgstr "Käännä alas"
 
 #. I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
 #: engines/freescape/movement.cpp:90
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change mode"
 msgstr "Vaihda tilaa"
 
@@ -7559,10 +7549,8 @@ msgstr "Infovalikko"
 
 #: engines/freescape/games/dark/dark.cpp:203
 #: engines/freescape/games/driller/driller.cpp:139
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Sound"
-msgstr "Äänien mykistys päälle / pois"
+msgstr "Äänet päälle / pois"
 
 #: engines/freescape/games/dark/dark.cpp:209
 #: engines/freescape/games/driller/driller.cpp:145
@@ -7577,18 +7565,14 @@ msgstr "Kierrä oikealle"
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:220
 #: engines/freescape/games/driller/driller.cpp:156
-#, fuzzy
-#| msgid "Increase the scale factor"
 msgid "Increase Step Size"
-msgstr "Kasvata skaalauskerrointa"
+msgstr "Kasvata askelen pituutta"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:226
 #: engines/freescape/games/driller/driller.cpp:162
-#, fuzzy
-#| msgid "Decrease the scale factor"
 msgid "Decrease Step Size"
-msgstr "Pienennä skaalauskerrointa"
+msgstr "Pienennä askelen pituutta"
 
 #: engines/freescape/games/dark/dark.cpp:231
 #: engines/freescape/games/driller/driller.cpp:167
@@ -10929,11 +10913,6 @@ msgid ""
 msgstr "Salli vähemmän pehmeä vieritys intron nopeissa kameraliikkeissä."
 
 #: engines/scumm/metaengine.cpp:717
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu. \t\tUse it together with the \"Ask for confirmation on "
-#| "exit\" for a more complete experience."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
@@ -10943,7 +10922,8 @@ msgstr ""
 "Salli pelin käyttää pelimoottorin sisäistä graafista käyttöliittymää sekä "
 "alkuperäistä tallennus/latausvalikkoa. \t\tKäytä tätä yhdessä 'Varmista että "
 "peli tai ohjelma halutaan sulkea'-asetuksen kanssa saadaksesi "
-"kokonaisvaltaisemman kokemuksen."
+"kokonaisvaltaisemman kokemuksen. \t\tAutomaattitallennus ei ole päällä tässä "
+"tilassa."
 
 #: engines/scumm/metaengine.cpp:727
 msgid "Enable low latency audio mode"
@@ -10974,14 +10954,12 @@ msgstr ""
 "vajavaiset."
 
 #: engines/scumm/metaengine.cpp:756
-#, fuzzy
-#| msgid "Disable demo mode"
 msgid "Enable demo/kiosk mode"
-msgstr "Ei demotilaa"
+msgstr "Demotila päälle/pois"
 
 #: engines/scumm/metaengine.cpp:757
 msgid "Enable demo/kiosk mode in the full retail version of Maniac Mansion."
-msgstr ""
+msgstr "Demotila Maniac Mansion:in täyspitkälle myyntiversiolle."
 
 #: engines/scumm/metaengine.cpp:851
 msgid "Down Left"
@@ -11021,6 +10999,15 @@ msgid ""
 "Please change the audio configuration accordingly in order to properly load "
 "this save file."
 msgstr ""
+"Varoitus: käytössä olevat ääniasetukset ovat epäyhteensopivat tämän "
+"pelitallenteen kanssa.\n"
+"\n"
+"Tämänhetkinen musiikkilaite: %s (id %d)\n"
+"Pelitallennuksen musiikkilaite: %s (id %d)\n"
+"\n"
+"Latausta yritetään, mutta peli saattaa toimia väärin tai jopa kaatua.\n"
+"Ole hyvä ja muuta ääniasetuksesi niin että pelitallenne voidaan ladata "
+"virheettä."
 
 #: engines/scumm/scumm.cpp:292
 msgid ""
