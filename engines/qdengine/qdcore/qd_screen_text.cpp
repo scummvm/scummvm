@@ -166,7 +166,7 @@ void qdScreenText::redraw(const Vect2i &owner_pos) const {
 	                     find_font(_text_format.font_type());
 
 	grDispatcher::instance()->drawAlignedText(x, y, _size.x, _size.y, col, data(), grTextAlign(_text_format.alignment()), 0, 0, font);
-	if (qdGameConfig::get_config().debug_draw())
+	if (g_engine->_debugDraw)
 		grDispatcher::instance()->rectangle(x, y, _size.x, _size.y, col, 0, GR_OUTLINED);
 }
 
