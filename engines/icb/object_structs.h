@@ -237,7 +237,7 @@ public:
 	__weapon weapon; // what weapon the mega is carrying
 	__motion motion; // walking, running, used by high level anim functions
 
-	// To maintain allignment, the sizes of these arrays must be a multiple of 4.
+	// To maintain alignment, the sizes of these arrays must be a multiple of 4.
 	char chr_name[MAX_CHAR_NAME_LENGTH];     // i.e. cord
 	char anim_set[MAX_OUTFIT_NAME_LENGTH];   // i.e. casual_wear
 	char custom_set[MAX_CUSTOM_NAME_LENGTH]; // i.e. mine
@@ -268,7 +268,7 @@ public:
 
 	bool8 bulletOn;
 
-	// NOTE THAT THE FOLLOWING DATA MEMBERS HAVE BEEN ARRANGED TO MAKE 4-BYTE ALLIGNMENT CLEAR.
+	// NOTE THAT THE FOLLOWING DATA MEMBERS HAVE BEEN ARRANGED TO MAKE 4-BYTE ALIGNMENT CLEAR.
 
 	// A status flag containing info if the MEGA was in view last cycle,
 	// and is in view this cycle, a change in view state causes an event
