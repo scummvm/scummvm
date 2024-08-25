@@ -673,7 +673,7 @@ mcodeFunctionReturnCodes _game_session::fn_object_rerun_logic_context(int32 &, i
 
 	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
-		Fatal_error("fn_object_rerun_logic_context cant find object [%s]", object_name);
+		Fatal_error("fn_object_rerun_logic_context can't find object [%s]", object_name);
 
 	logic_structs[id]->context_request = TRUE8;
 
@@ -738,7 +738,7 @@ mcodeFunctionReturnCodes _game_session::fn_new_script(int32 &, int32 *params) {
 		}
 	}
 
-	Fatal_error("fn_new_script - cant find script [%s] in object [%s]", script_name, CGameObject::GetName(object));
+	Fatal_error("fn_new_script - can't find script [%s] in object [%s]", script_name, CGameObject::GetName(object));
 	return IR_CONT; // keep daft compiler happy
 }
 
@@ -782,7 +782,7 @@ mcodeFunctionReturnCodes _game_session::fn_gosub(int32 &, int32 *params) {
 		}
 	}
 
-	Fatal_error("fn_gosub - cant find script [%s] in object [%s]", script_name, CGameObject::GetName(object));
+	Fatal_error("fn_gosub - can't find script [%s] in object [%s]", script_name, CGameObject::GetName(object));
 	return IR_CONT; // keep daft compiler happy
 }
 
