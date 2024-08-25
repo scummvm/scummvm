@@ -967,7 +967,7 @@ void _game_session::Script_cycle() {
 		// this can change within a cycle
 		if ((L->image_type == VOXEL) && (M->interacting)) { // check for megas who are interacting
 			// object is running someone elses interaction script
-			// so get their object and pass to interpretter so that local vars can be accessed correctly
+			// so get their object and pass to interpreter so that local vars can be accessed correctly
 			script_owner = (CGame *)LinkedDataObject::Fetch_item_by_number(objects, M->target_id);
 		} else {
 			script_owner = object; // object running its own script
