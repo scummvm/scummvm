@@ -503,7 +503,7 @@ mcodeFunctionReturnCodes _game_session::fn_kill_object(int32 &, int32 *params) {
 		Fatal_error("fn_kill_object finds [%s] does not exist", object_name);
 
 	if (id == cur_id)
-		Fatal_error("fn_kill_object - dont use this function to shut self down [%s]", object_name);
+		Fatal_error("fn_kill_object - don't use this function to shut self down [%s]", object_name);
 
 	// Tell the event manager to stop handling events for this object.
 	g_oEventManager->ShutDownEventProcessingForObject(id);
