@@ -47,6 +47,7 @@ QDEngineEngine::QDEngineEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_screenW = 640;
 	_screenH = 480;
 
+	ConfMan.registerDefault("game_speed", 1);
 	ConfMan.registerDefault("logic_period", 25);
 	ConfMan.registerDefault("logic_synchro_by_clock", true);
 	ConfMan.registerDefault("show_fps", false);
