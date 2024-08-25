@@ -65,6 +65,7 @@ public:
 	void useCodeWatch(int16 targetObjNum);
 	void useCodeTinCup(int16 targetObjNum);
 	void useCodeEmptyUrn(int16 targetObjNum);
+	void genericresponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx);
 
 private:
 	int getHandDescriptionTosIdx(uint16 objNum);
@@ -88,7 +89,7 @@ private:
 
 	void gancanim();
 	void putobjunderpillow(int objNum);
-	void genericresponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx);
+
 	void startdigging(int16 targetObjNum);
 };
 } // namespace Darkseed
