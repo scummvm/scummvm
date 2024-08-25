@@ -755,7 +755,7 @@ void Room407::pre_parser() {
 
 void Room407::parser() {
 	bool lookFlag = player_said_any("look", "look at");
-	bool takeFlag = player_said("take");
+	//bool takeFlag = player_said("take");
 	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (lookFlag && _G(walker).ripley_said(SAID)) {
