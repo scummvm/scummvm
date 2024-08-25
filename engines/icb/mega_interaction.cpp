@@ -94,7 +94,7 @@ mcodeFunctionReturnCodes _game_session::fn_interact_with_id(int32 &, int32 *para
 			L->logic_level = 2; // reset to level 2
 			// action script will fall back to looping level 1
 
-			// script interpretter shouldn't write a pc back
+			// script interpreter shouldn't write a pc back
 			return (IR_GOSUB);
 		}
 	}
@@ -152,7 +152,7 @@ mcodeFunctionReturnCodes _game_session::fn_mega_interacts(int32 &, int32 *params
 			L->logic_level = 2; // reset to level 2
 			// action script will fall back to looping level 1
 
-			// script interpretter shouldn't write a pc back
+			// script interpreter shouldn't write a pc back
 			return (IR_GOSUB);
 		}
 	}
@@ -204,7 +204,7 @@ mcodeFunctionReturnCodes _game_session::fn_mega_generic_interact(int32 &, int32 
 			L->logic_level = 2; // reset to level 2
 			// action script will fall back to looping level 1
 
-			// script interpretter shouldn't write a pc back
+			// script interpreter shouldn't write a pc back
 			return (IR_GOSUB);
 		}
 	}
@@ -251,7 +251,7 @@ bool8 _game_session::chi_interacts(int32 id, const char *script_name) {
 			L->logic_level = 2; // reset to level 2
 			// action script will fall back to looping level 1
 
-			// script interpretter shouldn't write a pc back
+			// script interpreter shouldn't write a pc back
 			return TRUE8;
 		}
 	}
