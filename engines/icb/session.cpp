@@ -207,7 +207,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 		Fatal_error("%s version check failed (file has %d, engine has %d)", temp_buf, LinkedDataObject::GetHeaderVersion(prop_anims), VERSION_PXWGPROPANIMS);
 
 	// init features file
-	// we stick this in the private cache so it hangs around and later in-game references wont cause a main pool reload
+	// we stick this in the private cache so it hangs around and later in-game references won't cause a main pool reload
 
 	// When clustered the session files have the base stripped
 	Common::strcpy_s(temp_buf, "pxwgfeatures");
