@@ -183,7 +183,7 @@ __mode_return _player::Player_press_fire_button() {
 
 	// check for interact button
 	if ((being_shot == 0) && (cur_state.IsButtonSet(__ATTACK)) && (!fire_lock) && (GetNoBullets())) {
-		// cant shoot at non evils
+		// can't shoot at non evils
 		if ((interact_selected) && (!MS->logic_structs[cur_interact_id]->mega->is_evil)) {
 			if (!MS->Engine_start_interaction("non_evil_interact", cur_interact_id))
 				return __MORE_THIS_CYCLE;
@@ -255,7 +255,7 @@ __mode_return _player::Player_press_fire_button() {
 			else
 				RegisterSound(player_id, defaultRicochetSfx, ricochetDesc); // use small version as we have string not hash
 
-			// now, we hit nothing, but if chi cant see us then set her permission
+			// now, we hit nothing, but if chi can't see us then set her permission
 			if (!g_oLineOfSight->LineOfSight(MS->chi_id, Fetch_player_id()))
 				MS->Set_chi_permission(); // if chi's around she gets permission to start shooting
 		}
@@ -309,7 +309,7 @@ __mode_return _player::Player_press_strike_button() {
 
 		fire_lock = TRUE8; // switch the lock on
 
-		// physically cant punch chi or no evils
+		// physically can't punch chi or no evils
 		if ((interact_selected) && (MS->logic_structs[cur_interact_id]->image_type == VOXEL) && (!MS->logic_structs[cur_interact_id]->mega->is_evil)) {
 			PXreal sub1, sub2, dist;
 
@@ -3015,7 +3015,7 @@ void _game_session::Process_guard_alert(__alert alert_type) {
 
 	for (j = 0; j < number_of_voxel_ids; j++) {
 		if (cur_id != voxel_id_list[j]) { // not us
-			if (!g_oLineOfSight->LineOfSight(voxel_id_list[j], player.Fetch_player_id())) { // cant see
+			if (!g_oLineOfSight->LineOfSight(voxel_id_list[j], player.Fetch_player_id())) { // can't see
 				if (PXfabs(logic_structs[voxel_id_list[j]]->mega->actor_xyz.y - M->actor_xyz.y) < (200 * REAL_ONE)) { // slack for height calc
 					PXreal sub1 = logic_structs[voxel_id_list[j]]->mega->actor_xyz.x - M->actor_xyz.x;
 					PXreal sub2 = logic_structs[voxel_id_list[j]]->mega->actor_xyz.z - M->actor_xyz.z;
