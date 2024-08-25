@@ -472,7 +472,7 @@ __barrier_result _game_session::Check_this_barrier(RouteBarrier *bar, PXreal new
 					else if (pdist < 0)
 						normalAngle = bar->m_pan - QUARTER_TURN;
 				} else {
-					// cant adjust
+					// can't adjust
 					return (__BLOCKED);
 				}
 			} else
