@@ -94,7 +94,7 @@ void _prim_route_builder::Give_route(_route_description *route) {
 	if (!final_points)
 		Fatal_error("_prim_route_builder::Give_route no route to give!");
 
-	// do a check for length exceeding MAX_final_route as this isnt really done anyway - it will have already scribbled of course but hey we're hanging on in there
+	// do a check for length exceeding MAX_final_route as this isn't really done anyway - it will have already scribbled of course but hey we're hanging on in there
 
 	if (final_points + 1 >= MAX_final_route)
 		Fatal_error("route too big");
