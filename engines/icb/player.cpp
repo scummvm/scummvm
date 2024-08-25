@@ -1678,7 +1678,7 @@ __mode_return _player::Player_running_on_stairs() {
 				return (__MORE_THIS_CYCLE);
 			}
 
-			if (!begun_at_bottom) // didnt begin at bottom so write the history
+			if (!begun_at_bottom) // didn't begin at bottom so write the history
 				Add_to_interact_history();
 
 			Leave_stair();
@@ -1783,7 +1783,7 @@ __mode_return _player::Player_stairs() {
 
 		if (stair_unit == MS->stairs[stair_num].units) {
 
-			if (!begun_at_bottom) // didnt begin at bottom so write the history
+			if (!begun_at_bottom) // didn't begin at bottom so write the history
 				Add_to_interact_history();
 
 			Leave_stair();
@@ -1962,7 +1962,7 @@ __mode_return _player::Player_ladder() {
 			if (cur_state.momentum == __FORWARD_2) {
 				stair_unit = (uint8)((MS->stairs[stair_num].units - stair_unit));
 
-				if (!begun_at_bottom) // didnt begin at bottom so write the history
+				if (!begun_at_bottom) // didn't begin at bottom so write the history
 					Add_to_interact_history();
 
 				Set_to_first_frame(__SLIDE_DOWN_LADDER); //
@@ -1986,7 +1986,7 @@ __mode_return _player::Player_ladder() {
 			log->mega->actor_xyz.y -= (REAL_ONE * 24);
 
 		if (stair_unit == (MS->stairs[stair_num].units + 0)) {
-			if (!begun_at_bottom) // didnt begin at bottom so write the history
+			if (!begun_at_bottom) // didn't begin at bottom so write the history
 				Add_to_interact_history();
 
 			log->mega->actor_xyz.y -= (REAL_ONE * 24);
@@ -2012,7 +2012,7 @@ __mode_return _player::Player_ladder() {
 				return __MORE_THIS_CYCLE;
 			}
 			if (cur_state.IsButtonSet(__JOG)) {
-				if (!begun_at_bottom) // didnt begin at bottom so write the history
+				if (!begun_at_bottom) // didn't begin at bottom so write the history
 					Add_to_interact_history();
 
 				log->pan = MS->stairs[stair_num].pan_ref; // if we are not traveling in the stairs original direction then we reverse the pan by 180deg
@@ -2846,7 +2846,7 @@ bool8 _player::Reverse_frame_motion_and_pan(__mega_set_names anim_type) {
 	znext = z1 - z2;
 
 	// update pc
-	log->anim_pc = next_pc; // allready computed
+	log->anim_pc = next_pc; // already computed
 
 	// get the pan unwind value of the frame to be printed
 	PXreal pan;
