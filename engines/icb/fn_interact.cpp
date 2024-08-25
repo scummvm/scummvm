@@ -281,7 +281,7 @@ mcodeFunctionReturnCodes _game_session::Core_prop_interact(int32 & /*result*/, i
 				Fatal_error("Core_prop_interact cant indentify animation %s", anim_name);
 
 			if (!I->IsAnimTable(anim))
-				Fatal_error("Core_prop_interact finds [%s] doesnt have a [%s] animation", CGameObject::GetName(object), params[0]);
+				Fatal_error("Core_prop_interact finds [%s] doesn't have a [%s] animation", CGameObject::GetName(object), params[0]);
 		} else {
 			Zdebug("calc *custom* target anim [%s]", anim_name);
 			I->Init_custom_animation(anim_name);
