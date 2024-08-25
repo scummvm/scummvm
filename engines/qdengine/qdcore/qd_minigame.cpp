@@ -139,6 +139,9 @@ bool qdMiniGame::load_script(const xml::tag *p) {
 			_config.reserve(_config.size() + config_size);
 			break;
 		case QDSCR_MINIGAME_CONFIG_PARAMETER: {
+			/* if (!qdGameConfig::get_config().minigame_read_only_ini())
+			 * has been removed since none of the games require this setting
+			 */
 			qdMinigameConfigParameter prm;
 			prm.load_script(&*it);
 			config_container_t::iterator cfg_it = Common::find(_config.begin(), _config.end(), prm);
