@@ -55,14 +55,4 @@ const char *getIniKey(const char *fname, const char *section, const char *key) {
 	return buf.c_str();
 }
 
-void putIniKey(const char *fname, const char *section, const char *key, int val) {
-	Common::String str;
-	str += Common::String::format("%d", val);
-	putIniKey(fname, section, key, str.c_str());
-}
-
-void putIniKey(const char *fname, const char *section, const char *key, const char *val) {
-	warning("STUB: putIniKey");
-}
-
 } // namespace QDEngine
