@@ -281,11 +281,12 @@ bool8 _vox_image::Init_custom_animation(const char *anim) {
 
 	// check for no weapon being set
 	if (custom == FALSE8 /*__NONE*/) {
-// custom must be in the current weapon set - bah, shouldn't have done it like this - it's daft
-		// rav (or equiverlant always come from pcp directory...
+		// custom must be in the current weapon set - bah, shouldn't have done it like this - it's daft
+		
+		// rav (or equivalent) always come from pcp directory...
 		len = Common::sprintf_s(custom_image_path_rav, "%s\\", weapon_text[MS->Fetch_cur_megas_pose()]);
 
-		// rai (or equiverlant always come from base path...
+		// rai (or equivalent) always come from base path...
 		len = Common::sprintf_s(custom_image_path_rai, "%s\\", weapon_text[MS->Fetch_cur_megas_pose()]);
 
 		// pose mesh name
@@ -293,7 +294,8 @@ bool8 _vox_image::Init_custom_animation(const char *anim) {
 
 		custom_pose_hash = HashString(custom_pose_name);
 	} else {
-// we have specified a custom type - i.e. the anim is not part of the current weapon set, but instead sits parallel to weapon directory
+		// we have specified a custom type - i.e. the anim is not part of the current weapon set, but
+		// instead sits parallel to weapon directory
 		len = Common::sprintf_s(custom_image_path_rav, "%s\\", MS->Fetch_cur_megas_custom_text());
 		len = Common::sprintf_s(custom_image_path_rai, "%s\\", MS->Fetch_cur_megas_custom_text());
 		len = Common::sprintf_s(custom_pose_name, "%s\\pose.rap", MS->Fetch_cur_megas_custom_text());
