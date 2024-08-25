@@ -281,7 +281,7 @@ bool8 _vox_image::Init_custom_animation(const char *anim) {
 
 	// check for no weapon being set
 	if (custom == FALSE8 /*__NONE*/) {
-// custom must be in the current weapon set - bah, shouldn't have done it like this - its daft
+// custom must be in the current weapon set - bah, shouldn't have done it like this - it's daft
 		// rav (or equiverlant always come from pcp directory...
 		len = Common::sprintf_s(custom_image_path_rav, "%s\\", weapon_text[MS->Fetch_cur_megas_pose()]);
 
