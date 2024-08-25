@@ -598,7 +598,7 @@ bool8 _game_session::Process_chi() {
 						return TRUE8;
 					} else {
 						// ok, back to script
-						// script interpretter shouldn't write a pc back
+						// script interpreter shouldn't write a pc back
 
 						chi_do_mode = __INTERACT_FOLLOW;
 
