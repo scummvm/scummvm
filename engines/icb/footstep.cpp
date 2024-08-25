@@ -88,11 +88,11 @@ mcodeFunctionReturnCodes _game_session::fn_set_footstep_weight(int32 &, int32 *p
 
 	// check must be mega
 	if (!M)
-		Fatal_error("Cant set footstep weight for non-mega %s\n", L->GetName());
+		Fatal_error("Can't set footstep weight for non-mega %s\n", L->GetName());
 
 	// check allow
 	if ((w < 0) || (w > 200))
-		Fatal_error("Cant set %s footstep weight to %d, allowed range is 0-200%%", L->GetName(), w);
+		Fatal_error("Can't set %s footstep weight to %d, allowed range is 0-200%%", L->GetName(), w);
 
 	M->footstep_weight = (uint8)w;
 
@@ -105,7 +105,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_special_footstep(int32 &, int32 *
 	// error checking
 	// must be mega
 	if (!M)
-		Fatal_error("Cant set special footsteps for non-mega %s\n", L->GetName());
+		Fatal_error("Can't set special footsteps for non-mega %s\n", L->GetName());
 
 	// must have special footstep set
 	if ((specialFootSfx == 0) && (params[0]))
