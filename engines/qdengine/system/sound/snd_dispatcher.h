@@ -106,6 +106,8 @@ public:
 		stop_sounds();
 	}
 
+	void syncSoundSettings();
+
 	//! Возвращает указатель на текущий диспетчер.
 	static inline sndDispatcher *get_dispatcher() {
 		return _dispatcher_ptr;

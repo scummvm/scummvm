@@ -34,6 +34,8 @@
 #include "qdengine/console.h"
 #include "qdengine/parser/qdscr_parser.h"
 #include "qdengine/qdcore/qd_game_dispatcher.h"
+#include "qdengine/qdcore/util/plaympp_api.h"
+#include "qdengine/system/sound/snd_dispatcher.h"
 
 namespace QDEngine {
 
@@ -48,9 +50,13 @@ QDEngineEngine::QDEngineEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_screenH = 480;
 
 	ConfMan.registerDefault("game_speed", 1);
+	ConfMan.registerDefault("enable_sound", true);
+	ConfMan.registerDefault("enable_music", true);
 	ConfMan.registerDefault("logic_period", 25);
 	ConfMan.registerDefault("logic_synchro_by_clock", true);
+	ConfMan.registerDefault("music_volume", 255);
 	ConfMan.registerDefault("show_fps", false);
+	ConfMan.registerDefault("sound_volume", 255);
 	ConfMan.registerDefault("splash_enabled", true);
 	ConfMan.registerDefault("splash_time", 3000);
 
@@ -132,6 +138,13 @@ Common::Error QDEngineEngine::loadGameStream(Common::SeekableReadStream *stream)
 		return Common::kNoError;
 
 	return Common::kReadingFailed;
+}
+
+void QDEngineEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	sndDispatcher::get_dispatcher()->syncSoundSettings();
+	mpegPlayer::instance().syncMusicSettings();
 }
 
 } // namespace QDEngine

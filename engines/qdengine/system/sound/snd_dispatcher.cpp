@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "qdengine/qd_fwd.h"
 #include "qdengine/xmath.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
@@ -199,4 +200,14 @@ void sndDispatcher::resume_sounds() {
 			it->resume();
 	}
 }
+
+void sndDispatcher::syncSoundSettings() {
+	set_volume(ConfMan.getInt("sound_volume"));
+
+	if (ConfMan.getBool("enable_sound"))
+		enable();
+	else
+		disable();
+}
+
 } // namespace QDEngine

@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/savefile.h"
 
@@ -642,13 +643,13 @@ bool qdInterfaceDispatcher::handle_event(int event_code, const char *event_data,
 int qdInterfaceDispatcher::option_value(int option_id, const char *option_data) {
 	switch (option_id) {
 	case qdInterfaceElement::OPTION_SOUND:
-		return (int)qdGameConfig::get_config().is_sound_enabled();
+		return ConfMan.getBool("enable_sound");
 	case qdInterfaceElement::OPTION_SOUND_VOLUME:
-		return qdGameConfig::get_config().sound_volume();
+		return ConfMan.getInt("sound_volume");
 	case qdInterfaceElement::OPTION_MUSIC:
-		return (int)qdGameConfig::get_config().is_music_enabled();
+		return ConfMan.getBool("enable_music");
 	case qdInterfaceElement::OPTION_MUSIC_VOLUME:
-		return qdGameConfig::get_config().music_volume();
+		return ConfMan.getInt("music_volume");
 	case qdInterfaceElement::OPTION_ACTIVE_PERSONAGE:
 		if (option_data) {
 			if (qdGameObjectMoving * p = qdGameDispatcher::get_dispatcher()->get_active_personage()) {
@@ -663,24 +664,20 @@ int qdInterfaceDispatcher::option_value(int option_id, const char *option_data) 
 bool qdInterfaceDispatcher::set_option_value(int option_id, int value, const char *option_data) {
 	switch (option_id) {
 	case qdInterfaceElement::OPTION_SOUND:
-		qdGameConfig::get_config().toggle_sound(value > 0);
-		qdGameConfig::get_config().update_sound_settings();
-		qdGameConfig::get_config().save();
+		ConfMan.setBool("enable_sound", value > 0);
+		g_engine->syncSoundSettings();
 		return true;
 	case qdInterfaceElement::OPTION_SOUND_VOLUME:
-		qdGameConfig::get_config().set_sound_volume(value);
-		qdGameConfig::get_config().update_sound_settings();
-		qdGameConfig::get_config().save();
+		ConfMan.setInt("sound_volume", value);
+		g_engine->syncSoundSettings();
 		return true;
 	case qdInterfaceElement::OPTION_MUSIC:
-		qdGameConfig::get_config().toggle_music(value > 0);
-		qdGameConfig::get_config().update_music_settings();
-		qdGameConfig::get_config().save();
+		ConfMan.setBool("enable_music", value > 0);
+		g_engine->syncSoundSettings();
 		return true;
 	case qdInterfaceElement::OPTION_MUSIC_VOLUME:
-		qdGameConfig::get_config().set_music_volume(value);
-		qdGameConfig::get_config().update_music_settings();
-		qdGameConfig::get_config().save();
+		ConfMan.setInt("music_volume", value);
+		g_engine->syncSoundSettings();
 		return true;
 	case qdInterfaceElement::OPTION_ACTIVE_PERSONAGE:
 		if (option_data) {
@@ -747,4 +744,5 @@ const char *qdInterfaceDispatcher::get_save_title() const {
 
 	return nullptr;
 }
+
 } // namespace QDEngine
