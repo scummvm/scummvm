@@ -103,12 +103,12 @@ inline int32 _floor_world::Fetch_total_heights() { return (total_heights); }
 inline uint32 _floor_world::Fetch_total_floors() { return (total_floors); }
 
 inline _floor *_floor_world::Fetch_named_floor(const char *name) {
-	// return a pointer to a named floor to an external routine - most likely a fn_funtion
+	// return a pointer to a named floor to an external routine - most likely a fn_function
 	return ((_floor *)LinkedDataObject::Fetch_item_by_name(floors, name));
 }
 
 inline _floor *_floor_world::Fetch_floor_number(uint32 num) {
-	// return a pointer to a named floor to an external routine - most likely a fn_funtion
+	// return a pointer to a named floor to an external routine - most likely a fn_function
 	return ((_floor *)LinkedDataObject::Fetch_item_by_number(floors, num));
 }
 
