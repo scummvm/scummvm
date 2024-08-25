@@ -386,7 +386,7 @@ bool8 _mega::Fetch_custom(void) {
 
 void _game_session::Reset_cur_megas_custom_type() {
 	// resets to __NONE the current custom type
-	// this is probably desireable and will save scripters doing it - or not and forgetting
+	// this is probably desirable and will save scripters doing it - or not and forgetting
 
 	if (!M)
 		Fatal_error("%d not a mega but called Reset_cur_megas_custom_type", cur_id);
@@ -713,7 +713,7 @@ mcodeFunctionReturnCodes _game_session::fn_new_script(int32 &, int32 *params) {
 
 	script_hash = HashString(script_name);
 
-	// try and find a script with the passed extention i.e. ???::looping
+	// try and find a script with the passed extension i.e. ???::looping
 	for (k = 0; k < CGameObject::GetNoScripts(object); k++) {
 		if (script_hash == CGameObject::GetScriptNamePartHash(object, k)) {
 			// script k is the one to run
@@ -733,7 +733,7 @@ mcodeFunctionReturnCodes _game_session::fn_new_script(int32 &, int32 *params) {
 			if (L->mega)
 				M->custom = FALSE8; // reset
 
-			// script interpretter shouldnt write a pc back
+			// script interpreter shouldn't write a pc back
 			return (IR_TERMINATE);
 		}
 	}
@@ -756,7 +756,7 @@ mcodeFunctionReturnCodes _game_session::fn_gosub(int32 &, int32 *params) {
 	if (L->logic_level != 1)
 		Fatal_error("object [%s] has performed an illegal gosub", CGameObject::GetName(object));
 
-	// try and find a script with the passed extention i.e. ???::looping
+	// try and find a script with the passed extension i.e. ???::looping
 	for (k = 0; k < CGameObject::GetNoScripts(object); k++) {
 		// now check for actual script name
 		if (script_hash == CGameObject::GetScriptNamePartHash(object, k)) {
@@ -777,7 +777,7 @@ mcodeFunctionReturnCodes _game_session::fn_gosub(int32 &, int32 *params) {
 
 			L->old_looping = 0; // gets popped on dropoff
 
-			// script interpretter shouldnt write a pc back
+			// script interpreter shouldn't write a pc back
 			return (IR_GOSUB);
 		}
 	}
@@ -833,7 +833,7 @@ void _mega::InitDynamicLight(void) {
 	dynLight.ba = 0;            // means nothing for an OMNI
 	dynLight.bs = 0;            // means nothing for an OMNI
 
-	dynLight.states[0].ans2 = 0; // dont think these things are used...
+	dynLight.states[0].ans2 = 0; // don't think these things are used...
 	dynLight.states[0].ane2 = (100 * 1) * (100 * 1);
 
 	dynLight.states[0].m = 128; // no shade...
@@ -949,7 +949,7 @@ void AddDynamicLight(PSXLampList &lamplist, _logic *log) {
 
 void _game_session::UpdateMegaFX() {
 	// first do things which are done for all megas
-	// next do things that are only done for visable ones...
+	// next do things that are only done for visible ones...
 
 	// do the check
 	if (!Object_visible_to_camera(cur_id))

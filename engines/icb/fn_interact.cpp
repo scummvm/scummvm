@@ -100,7 +100,7 @@ mcodeFunctionReturnCodes _game_session::fn_clear_interacting(int32 &, int32 *) {
 }
 
 mcodeFunctionReturnCodes _game_session::fn_route_to_generic_prop_interact(int32 &result, int32 *params) {
-	// WALK-TO interact with a prop BUT DOESNT play a generic animation
+	// WALK-TO interact with a prop BUT DOESN'T play a generic animation
 	// will call a trigger script if finds marker and script
 
 	// params        0   name of generic animation
@@ -119,7 +119,7 @@ mcodeFunctionReturnCodes _game_session::fn_route_to_generic_prop_interact(int32 
 }
 
 mcodeFunctionReturnCodes _game_session::fn_route_to_custom_prop_interact(int32 &result, int32 *params) {
-	// WALK-TO interact with a prop BUT DOESNT play a custom non generic animation
+	// WALK-TO interact with a prop BUT DOESN'T play a custom non generic animation
 	// then return to script
 
 	// params        0   name of custom animation

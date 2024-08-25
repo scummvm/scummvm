@@ -351,7 +351,7 @@ mcodeFunctionReturnCodes _game_session::fn_tiny_route(int32 &result, int32 *para
 mcodeFunctionReturnCodes _game_session::fn_room_route(int32 &result, int32 *params) {
 	// auto-route a mega character characters x,z to specified x1,z1 in an adjacent room
 	// player or mega
-	// doesnt end on stand
+	// doesn't end on stand
 
 	// params    0   x
 	//			1  z
@@ -388,7 +388,7 @@ mcodeFunctionReturnCodes _game_session::fn_room_route(int32 &result, int32 *para
 mcodeFunctionReturnCodes _game_session::fn_sharp_route(int32 &result, int32 *params) {
 	// auto-route a mega character characters x,z to specified x1,z1 from the same or adjoining floor rects
 	// player or mega
-	// doesnt end on stand
+	// doesn't end on stand
 
 	// params    0   x   INT32's to be cast to floats :| hmmm...
 	//			1  z
@@ -447,7 +447,7 @@ mcodeFunctionReturnCodes _game_session::fn_sharp_route(int32 &result, int32 *par
 mcodeFunctionReturnCodes _game_session::fn_laser_route(int32 &result, int32 *params) {
 	// auto-route a mega character characters x,z to specified x1,z1 from the same or adjoining floor rects
 	// player or mega
-	// doesnt end on stand
+	// doesn't end on stand
 
 	// params    0   x   INT32's to be cast to floats :| hmmm...
 	//			1  z
@@ -561,7 +561,7 @@ mcodeFunctionReturnCodes _game_session::fn_interact_near_mega(int32 &result, int
 			return IR_REPEAT;
 		}
 
-		// dont even build route if too close already
+		// don't even build route if too close already
 		if (len < (PXreal)(params[2] * params[2])) {
 			L->looping = 0;
 			result = TRUE8;
@@ -815,7 +815,7 @@ mcodeFunctionReturnCodes _game_session::Route_to_near_mega_core(const char *name
 		if (Is_router_busy())
 			return IR_REPEAT;
 
-		// dont even build route if too close already
+		// don't even build route if too close already
 		if (len < (int32)(dist * dist)) {
 			result = TRUE8;
 			L->looping = 0;

@@ -3378,7 +3378,7 @@ bool8 OptionsManager::VerifyLabel() {
 
 	// Another difficulty arises when the length exceeds expected limits but NOT
 	// before the imposed 22 character limit is reached ie all capital w's...
-	// Perhaps I need to watch this everytime a character is input to the label
+	// Perhaps I need to watch this every time a character is input to the label
 	// and refuse any further input if the string exceeds the slot blitting box.
 
 	return TRUE8;
@@ -3793,7 +3793,7 @@ void OptionsManager::DrawMovieSlots(uint32 offset, uint32 surface_id /* = workin
 	if (m_M_MOVIE_selected < NOTHANKS) {
 		uint32 selectMovie = m_M_MOVIE_selected + offset;
 
-		// Is this movie availble
+		// Is this movie available
 		if (g_movieLibrary[selectMovie].visible) {
 			// Get the nice name to go with the nice piccy
 			if (selectMovie < 10)
@@ -6553,7 +6553,7 @@ linesDone:
 			m_cursor += 2;
 			// Increment line height
 			m_currentHeight += CREDIT_LINE_SPACING;
-			// Dont draw this line
+			// Don't draw this line
 		} else if (ret == IGNORE_LINE) {
 			// Skip the special character
 			m_cursor++;

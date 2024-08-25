@@ -246,7 +246,7 @@ void OpenTexture(const char *tex_name, uint32 tex_hash, const char *pal_name, ui
 	rs_anims->Res_purge(tex_name, tex_hash, base, base_hash, 0);
 }
 
-// gets a handle to a texture, loading it in if necesary
+// gets a handle to a texture, loading it in if necessary
 TextureHandle *GetRegisteredTexture(const char *tex_name, uint32 tex_hash, const char *pal_name, uint32 pal_hash, const char *base, uint32 base_hash) {
 	int32 i;
 
@@ -1978,7 +1978,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 	// Draw weather effects
 	set->DrawWeather();
 
-	// Draw the screen effects (widescreen fades ect)
+	// Draw the screen effects (widescreen fades etc)
 	surface_manager->DrawEffects(working_buffer_id);
 }
 
