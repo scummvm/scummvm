@@ -48,13 +48,13 @@ public:
 		return _diskImage->read(dataPtr, pos(), dataSize);
 	}
 
-	bool eos() const { return _stream->eos(); }
-	void clearErr() { _stream->clearErr(); }
+	bool eos() const override { return _stream->eos(); }
+	void clearErr() override { _stream->clearErr(); }
 
-	int64 pos() const { return _stream->pos(); }
-	int64 size() const { return _stream->size(); }
+	int64 pos() const override{ return _stream->pos(); }
+	int64 size() const override { return _stream->size(); }
 
-	bool seek(int64 offs, int whence = SEEK_SET) { return _stream->seek(offs, whence); }
+	bool seek(int64 offs, int whence = SEEK_SET) override { return _stream->seek(offs, whence); }
 
 private:
 	Common::DiskImage *_diskImage;
