@@ -545,7 +545,7 @@ void _mission::Restore_micro_session_coords(bool8 from_disk) {
 
 				// if mega then restore coord
 				if (session->logic_structs[i]->image_type == VOXEL) {
-					// from disk, or doesnt have exclusives or (does have exclusives) but is chi and chi is not
+					// from disk, or doesn't have exclusives (or does have exclusives) but is chi and chi is not
 					// following
 					if ((from_disk) || (!session->logic_structs[i]->mega->has_exclusive_coords) ||
 					    ((session->chi_id == i) && (session->chi_think_mode != __FOLLOWING))) {
