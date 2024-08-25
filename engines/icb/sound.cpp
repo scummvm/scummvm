@@ -636,7 +636,7 @@ bool8 CRegisteredSound::SetHearable() {
 
 		ch = GetSoundCloser(m_objID, m_x, m_y, m_z);
 		if (ch == -1)
-			return TRUE8; // still don't return true just dont set a channel
+			return TRUE8; // still don't return true just don't set a channel
 	}
 
 	SET_CHANNEL_USED(ch);
