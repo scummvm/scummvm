@@ -28,14 +28,12 @@
 #include "qdengine/system/graphics/gr_dispatcher.h"
 #include "qdengine/system/graphics/gr_tile_animation.h"
 
-#ifndef __QD_SYSLIB__
 #include "qdengine/parser/qdscr_parser.h"
 #include "qdengine/parser/xml_tag_buffer.h"
 
 #include "qdengine/qdcore/qd_animation_info.h"
 #include "qdengine/qdcore/qd_named_object_reference.h"
 #include "qdengine/qdcore/qd_game_dispatcher.h"
-#endif
 
 #include "qdengine/qdcore/qd_animation.h"
 #include "qdengine/qdcore/qd_file_manager.h"
@@ -389,7 +387,6 @@ void qdAnimation::init_size() {
 }
 
 void qdAnimation::load_script(const xml::tag *p) {
-#ifndef __QD_SYSLIB__
 	for (xml::tag::subtag_iterator it = p->subtags_begin(); it != p->subtags_end(); ++it) {
 		switch (it->ID()) {
 		case QDSCR_NAME:
@@ -405,7 +402,6 @@ void qdAnimation::load_script(const xml::tag *p) {
 	}
 
 	init_size();
-#endif
 }
 
 bool qdAnimation::save_script(Common::WriteStream &fh, int indent) const {
@@ -479,7 +475,6 @@ void qdAnimation::create_reference(qdAnimation *p, const qdAnimationInfo *inf) c
 
 	debugC(1, kDebugTemp, "num_frames_: %d empty?: %d, is_empty()?: %d", _num_frames, _frames.empty(), is_empty());
 
-#ifndef __QD_SYSLIB__
 	if (inf) {
 		if (inf->check_flag(QD_ANIMATION_FLAG_LOOP))
 			p->set_flag(QD_ANIMATION_FLAG_LOOP);
@@ -492,7 +487,6 @@ void qdAnimation::create_reference(qdAnimation *p, const qdAnimationInfo *inf) c
 
 		p->_playback_speed = inf->animation_speed();
 	}
-#endif
 
 	p->_parent = this;
 }

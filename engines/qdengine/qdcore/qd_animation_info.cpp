@@ -22,13 +22,11 @@
 #include "qdengine/qd_fwd.h"
 #include "qdengine/xmath.h"
 
-#ifndef __QD_SYSLIB__
 #include "qdengine/parser/xml_tag_buffer.h"
 #include "qdengine/parser/qdscr_parser.h"
 
 #include "qdengine/qdcore/qd_game_scene.h"
 #include "qdengine/qdcore/qd_game_dispatcher.h"
-#endif
 
 #include "qdengine/qdcore/qd_named_object.h"
 #include "qdengine/qdcore/qd_animation_info.h"
@@ -109,7 +107,6 @@ qdAnimationInfo &qdAnimationInfo::operator = (const qdAnimationInfo &p) {
 }
 
 qdAnimation *qdAnimationInfo::animation() const {
-#ifndef __QD_SYSLIB__
 	if (animation_name()) {
 		if (qdGameScene *p = static_cast<qdGameScene *>(owner(QD_NAMED_OBJECT_SCENE))) {
 			if (qdAnimation *anm = p->get_animation(animation_name()))
@@ -119,7 +116,6 @@ qdAnimation *qdAnimationInfo::animation() const {
 		if (qdGameDispatcher *p = qd_get_game_dispatcher())
 			return p->get_animation(animation_name());
 	}
-#endif
 	return NULL;
 }
 

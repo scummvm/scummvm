@@ -26,11 +26,9 @@
 #include "qdengine/qdcore/qd_setup.h"
 #include "qdengine/system/graphics/gr_dispatcher.h"
 
-#ifndef __QD_SYSLIB__
 #include "qdengine/system/sound/snd_dispatcher.h"
 #include "qdengine/qdcore/qd_game_scene.h"
 #include "qdengine/qdcore/util/plaympp_api.h"
-#endif
 
 namespace QDEngine {
 
@@ -196,10 +194,8 @@ void qdGameConfig::load() {
 	p = getIniKey(_ini_name, "game", "locale");
 	if (strlen(p)) _locale = p;
 
-#ifndef __QD_SYSLIB__
 	p = getIniKey(_ini_name, "game", "fps_period");
 	if (strlen(p)) qdGameScene::fps_counter()->set_period(atoi(p));
-#endif
 
 	if (atoi(getIniKey(_ini_name, "debug", "full_redraw")))
 		_force_full_redraw = true;
@@ -254,11 +250,9 @@ bool qdGameConfig::update_sound_settings() const {
 }
 
 bool qdGameConfig::update_music_settings() const {
-#ifndef __QD_SYSLIB__
 	mpegPlayer::instance().set_volume(_music_volume);
 	if (_enable_music) mpegPlayer::instance().enable();
 	else mpegPlayer::instance().disable();
-#endif
 	return true;
 }
 } // namespace QDEngine
