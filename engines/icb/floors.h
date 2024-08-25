@@ -64,7 +64,7 @@ public:
 
 	PXreal Floor_safe_gravitise_y(PXreal fY);
 
-	void Allign_with_floor(_mega *mega);
+	void Align_with_floor(_mega *mega);
 	PXreal Return_true_y(PXreal y);
 	bool8 On_a_floor(_mega *mega);
 
