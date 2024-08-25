@@ -1365,7 +1365,7 @@ mcodeFunctionReturnCodes _game_session::fn_new_apply_bullet(int32 &, int32 *para
 
 				// kick kinematic for the player if we are shooting the player
 				if (tid == player.Fetch_player_id()) {
-					MS->player.being_shot = 3;            // cant shoot for 3 cycles (engine anim over three frames)
+					MS->player.being_shot = 3;            // can't shoot for 3 cycles (engine anim over three frames)
 					MS->player.shot_by_id = (int8)cur_id; // shot by us...!
 
 					CGame *ob = (CGame *)LinkedDataObject::Fetch_item_by_number(objects, player.Fetch_player_id());
@@ -1464,7 +1464,7 @@ mcodeFunctionReturnCodes _game_session::fn_apply_anim_y(int32 &, int32 *params) 
 
 	const char *anim_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	// search for the named generic anim - cant use __ANIM_NAME from script unfortunately
+	// search for the named generic anim - can't use __ANIM_NAME from script unfortunately
 	for (k = 0; k < __TOTAL_ANIMS; k++) {
 		// we must search the table
 		if (!strcmp(anim_name, master_anim_name_table[k].name)) {
