@@ -2903,7 +2903,7 @@ void _player::Set_player_id(uint32 id) {
 
 	Zdebug("\nSet_player_id %d", player_id);
 
-	// get player structures - we can be sure they wont get moved
+	// get player structures - we can be sure they won't get moved
 	log = g_mission->session->Fetch_object_struct(player_id);
 
 	if (g_icb->getGameType() == GType_ICB) {
