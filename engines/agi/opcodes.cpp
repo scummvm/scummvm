@@ -85,7 +85,7 @@ static const AgiOpCodeDefinitionEntry opCodesV1[] = {
 	{ "reverse.loop",       "nn",       &cmdReverseLoopV1 },    // 1E
 	{ "move.obj",           "nnnnn",    &cmdMoveObj },          // 1F
 	{ "set.view",           "nn",       &cmdSetView },          // 20
-	{ "follow.ego",         "nnn",      &cmdFollowEgo },        // 21
+	{ "follow.ego",         "nnv",      &cmdFollowEgo },        // 21
 	{ "block",              "nnnn",     &cmdBlock },            // 22
 	{ "unblock",            "",         &cmdUnblock },          // 23
 	{ "ignore.blocks",      "n",        &cmdIgnoreBlocks },     // 24
@@ -120,36 +120,37 @@ static const AgiOpCodeDefinitionEntry opCodesV1[] = {
 	{ "quit",               "",         &cmdQuitV1 },           // 41
 	{ "set.speed",          "v",        &cmdSetSpeed },         // 42
 	{ "move.obj.v",         "nvvvv",    &cmdMoveObjF },         // 43
-	{ "...",                "nn",       &cmdUnknown },          // 44
+	{ "get.num",            "nv",       &cmdUnknown },          // 44
 	{ "get.v",              "v",        &cmdUnknown },          // 45
 	{ "assign.v",           "vv",       &cmdUnknown },          // 46
-	{ "...",                "n",        &cmdUnknown },          // 47 # printvar.v
+	{ "printvar",           "v",        &cmdUnknown },          // 47 prints a variable (debug script)
 	{ "get.priority",       "nv",       &cmdGetPriority },      // 48
 	{ "ignore.objs",        "n",        &cmdIgnoreObjs },       // 49
 	{ "observe.objs",       "n",        &cmdObserveObjs },      // 4A
 	{ "distance",           "nnv",      &cmdDistance },         // 4B
 	{ "object.on.land",     "n",        &cmdObjectOnLand },     // 4C
-	{ "...",                "nv",       &cmdUnknown },          // 4D # set.priority.f
+	{ "set.priority.v",     "nv",       &cmdUnknown },          // 4D # set.priority.v / set.priority.f
 	{ "show.obj",           "n",        &cmdShowObj },          // 4E # show.obj (KQ2)
 	{ "load.logics",        "n",        &cmdLoadLogic },        // 4F # load.global.logics
 	{ "display",            "nnns",     &cmdDisplay },          // 50 TODO: 4 vs 3 args
 	{ "prevent.input???",   "",         &cmdUnknown },          // 51
 	{ "...",                "",         &cmdUnknown },          // 52 # nop
-	{ "...",                "n",        &cmdUnknown },          // 53 # text.screen
-	{ "...",                "",         &cmdUnknown },          // 54 ???
-	{ "stop.motion",        "",         &cmdStopMotion },       // 55 or force.update??
+	{ "text.screen",        "n",        &cmdUnknown },          // 53
+	{ "graphics",           "",         &cmdUnknown },          // 54
+	{ "stop.motion",        "",         &cmdStopMotion },       // 55
 	{ "discard.view",       "n",        &cmdDiscardView },      // 56
 	{ "discard.pic",        "v",        &cmdDiscardPic },       // 57
 	{ "set.item.view",      "nn",       &cmdSetItemView },      // 58
-	{ "...",                "",         &cmdUnknown },          // 59 # reverse.cycle
+	{ "...",                "",         &cmdUnknown },          // 59 # reverse.cycle, unused in KQ2 or BC
 	{ "last.cel",           "nv",       &cmdLastCel },          // 5A
 	{ "set.cel.v",          "nv",       &cmdSetCelF },          // 5B
-	{ "...",                "",         &cmdUnknown },          // 5C # normal.cycle
+	{ "...",                "",         &cmdUnknown },          // 5C # normal.cycle, unused in KQ2 or BC
 	{ "load.view",          "n",        &cmdLoadView },         // 5D
-	{ "...",                "",         &cmdUnknown },          // 5E
-	{ "...",                "",         &cmdUnknown },          // 5F
+	{ "...",                "",         &cmdUnknown },          // 5E unused in KQ2 or BC
+	{ "...",                "",         &cmdUnknown },          // 5F BC script 102 when attempting to fill flask
 	{ "setbit",             "nv",       &cmdUnknown },          // 60
-	{ "...",                "nv",       &cmdUnknown },          // 61 # clearbit
+	{ "...",                "nv",       &cmdUnknown },          // 61 # clearbit, unused in KQ2 or BC
+	{ "set.upper.left",     "nn",       &cmdSetUpperLeft }      // 62 BC Apple II
 };
 
 static const AgiOpCodeDefinitionEntry opCodesV2Cond[] = {
@@ -331,7 +332,7 @@ static const AgiOpCodeDefinitionEntry opCodesV2[] = {
 	{ "print.at.v",         "vnnn",     &cmdPrintAtV },         // 98
 	{ "discard.view.v",     "v",        &cmdDiscardView},       // 99
 	{ "clear.text.rect",    "nnnnn",    &cmdClearTextRect },    // 9A
-	{ "set.upper.left",     "nn",       &cmdSetUpperLeft },     // 9B
+	{ "set.upper.left",     "nn",       &cmdSetUpperLeft },     // 9B Apple II
 	{ "set.menu",           "s",        &cmdSetMenu },          // 9C
 	{ "set.menu.item",      "sn",       &cmdSetMenuItem },      // 9D
 	{ "submit.menu",        "",         &cmdSubmitMenu },       // 9E
