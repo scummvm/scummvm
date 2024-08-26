@@ -576,8 +576,8 @@ bool DiskImage::open(const Common::String &name, Common::File *f) {
 		warning("Unrecognized disk image '%s' of size %d bytes (expected %d bytes)", name.c_str(), (int)getDiskStream()->size(), expectedSize);
 		if (_inputStream != f) {
 			delete _inputStream;
-			_inputStream = nullptr;
 		}
+		_inputStream = nullptr;
 		delete _decodeStream;
 		_decodeStream = nullptr;
 		return false;
