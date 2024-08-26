@@ -32,6 +32,11 @@
 #include "qdengine/qdcore/qd_engine_interface.h"
 
 #include "qdengine/minigames/qd_empty_minigame_interface.h"
+
+// maski
+#include "qdengine/minigames/kartiny.h"
+
+// 2mice1
 #include "qdengine/minigames/book_all.h"
 #include "qdengine/minigames/puzzle_all.h"
 
