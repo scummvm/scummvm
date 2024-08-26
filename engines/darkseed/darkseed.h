@@ -214,6 +214,7 @@ public:
 	void getPackageObj(int packageType);
 	void libanim(bool pickingUpReservedBook);
 	void printTime();
+	void changeToRoom(int newRoomNumber);
 
 private:
 	void updateAnimation();
@@ -225,7 +226,6 @@ private:
 	void wait();
 	void handlePointerAction();
 	void loadRoom(int roomNumber);
-	void changeToRoom(int newRoomNumber);
 
 	void wongame();
 	void keeperanim();

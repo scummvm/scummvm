@@ -1011,7 +1011,7 @@ void DarkseedEngine::loadRoom(int roomNumber) {
 	}
 }
 
-void DarkseedEngine::changeToRoom(int newRoomNumber) {
+void DarkseedEngine::changeToRoom(int newRoomNumber) { // AKA LoadNewRoom
 	_objectVar[99] = 0;
 	_objectVar[66] = 0;
 	_objectVar[67] = 0;
@@ -1750,7 +1750,7 @@ void DarkseedEngine::updateAnimation() {
 			_player->updateSprite();
 		}
 		break;
-	case 16:
+	case 16: // climb down rope
 		advanceAnimationFrame(0);
 		if (!isAnimFinished_maybe) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]];
@@ -1854,7 +1854,7 @@ void DarkseedEngine::updateAnimation() {
 	case 26: // climb up rope.
 		advanceAnimationFrame(1);
 		if (!isAnimFinished_maybe) {
-			_player->_frameIdx = _player->_animations.getAnimAt(1).frameNo[_player->_animations.getAnimAt(1).frameNo[animIndexTbl[1]]];
+			_player->_frameIdx = _player->_animations.getAnimAt(1).frameNo[animIndexTbl[1]];
 		} else {
 			_previousRoomNumber = _room->_roomNumber;
 			changeToRoom(13);
@@ -1863,7 +1863,7 @@ void DarkseedEngine::updateAnimation() {
 	case 27:
 		advanceAnimationFrame(0);
 		if (!isAnimFinished_maybe) {
-			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]];
+			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[_player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]]]; // TODO check if this is correct.
 		} else {
 			_previousRoomNumber = _room->_roomNumber;
 			changeToRoom(38);

@@ -172,12 +172,12 @@ void Darkseed::Player::calculateWalkTarget() {
 		_walkTarget.y = g_engine->_cursor.getY();
 	} else {
 		int currentRoomNumber = g_engine->_room->_roomNumber;
-		if (currentRoomNumber == 0x22 || (currentRoomNumber > 0x12 && currentRoomNumber < 0x18)) {
+		if (currentRoomNumber == 34 || (currentRoomNumber > 18 && currentRoomNumber < 24)) {
 			g_engine->_previousRoomNumber = currentRoomNumber;
-			if (currentRoomNumber == 0x22) {
-				// TODO FUN_171d_88f4_change_rooms_maybe(0); // also set current room to 0x21
+			if (currentRoomNumber == 34) {
+				g_engine->changeToRoom(33);
 			} else {
-				// TODO FUN_171d_88f4_change_rooms_maybe(0); // also set current room to 0x1c
+				g_engine->changeToRoom(28);
 			}
 			return;
 		}
