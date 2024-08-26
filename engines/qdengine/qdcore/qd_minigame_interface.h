@@ -102,7 +102,20 @@ public:
 		return 0;
 	}
 
-	/// Версия интерфейса игры, трогать не надо.
+	// maski, 20060129, no version yet
+	// version 100, 20060414, qdMinigameCounterInterface added, version added, no other changes
+	// version 101, 20060607
+	// version 102, 20060629
+	// version 103, 20060715
+	// version 104, never released
+	// version 105, 20061026
+	// version 106, 20070214
+	// version 107, 20070404 09:13
+	// version 108, 20070404 10:12
+	// version 109, 20070416
+	// version 110, 20070419
+	// version 111, 20070420
+	// version 112, 20070507
 	enum { INTERFACE_VERSION = 112 };
 	virtual int version() const {
 		return INTERFACE_VERSION;
