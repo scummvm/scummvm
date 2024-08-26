@@ -8,7 +8,7 @@ MODULE_OBJS = \
 	drawChr.o \
 	flameSet.o \
 	immortal.o \
-	kernal.o \
+	kernel.o \
 	level.o \
 	logic.o \
 	metaengine.o \
