@@ -423,7 +423,49 @@ private:
 	}
 
 	bool checkSolution() {
-		return false;
+		if (_scene->screen_depth(_bg1_l2Obj->R()) < _scene->screen_depth(_bg2_l2Obj->R()))
+			return false;
+
+		if (_scene->screen_depth(_bg2_l2Obj->R()) < _scene->screen_depth(_bg3_l2Obj->R()))
+			return false;
+
+		if (_scene->screen_depth(_bg3_l2Obj->R()) < _scene->screen_depth(_bg4_l2Obj->R()))
+			return false;
+
+		if (ABS(_bg1_l2Obj->screen_R().x - 399) > 5
+				|| ABS(_bg1_l2Obj->screen_R().y - 278) > 5
+				|| (ABS(_bg2_l2Obj->screen_R().x - 407) > 10
+				&& ABS(_bg2_l2Obj->screen_R().x - 420) > 10)) // copy/paste error in the originaL?
+			return false;
+
+		if (ABS(_bg2_l2Obj->screen_R().y - 267) > 10)
+			return false;
+
+		if (_bg2_l2Obj->screen_R().x - _bg3_l2Obj->screen_R().x > 6)
+			return false;
+
+		if (_bg3_l2Obj->screen_R().x - _bg2_l2Obj->screen_R().x > 5)
+			return false;
+
+		if (ABS(_bg3_l2Obj->screen_R().y + 43) > 10)
+			return false;
+
+		if (_bg4_l2Obj->screen_R().x - _bg3_l2Obj->screen_R().x > 5)
+			return false;
+
+		if (_bg3_l2Obj->screen_R().x - _bg4_l2Obj->screen_R().x > 3)
+			return false;
+
+		if (ABS(_bg4_l2Obj->screen_R().y + 42) > 10)
+			return false;
+
+		if (ABS(_bg4_l2Obj->screen_R().y) - ABS(_bg3_l2Obj->screen_R().y) > 3)
+			return false;
+
+
+		_doneObj->set_state("true");
+
+		return true;
 	}
 
 private:
