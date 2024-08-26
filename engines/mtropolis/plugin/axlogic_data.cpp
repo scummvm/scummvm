@@ -31,7 +31,7 @@ DataReadErrorCode AlienWriterModifier::load(PlugIn &plugIn, const PlugInModifier
 	if (prefix.plugInRevision != 1)
 		return kDataReadErrorUnsupportedRevision;
 
-    error("Data structure loading for the AlienWriter modifier is not implemented.");
+	error("Data structure loading for the AlienWriter modifier is not implemented.");
 
 	return kDataReadErrorNone;
 }
