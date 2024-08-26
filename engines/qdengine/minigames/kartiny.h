@@ -34,7 +34,6 @@ public:
 	qdKartinyMiniGameInterface() {}
 	~qdKartinyMiniGameInterface() {}
 
-	//! Инициализация игры.
 	bool init(const qdEngineInterface *engine_interface) {
 		debugC(1, kDebugMinigames, "Kartiny::init()");
 
@@ -59,14 +58,251 @@ public:
 		return true;
 	}
 
-	//! Обсчёт логики игры, параметр - время, которое должно пройти в игре (в секундах).
 	bool quant(float dt) {
 		debugC(3, kDebugMinigames, "Kartiny::quant(%f)", dt);
+
+		mgVect3f newPiecePos;
+		mgVect2i piecePos;
+
+		float depth1 = _scene->screen_depth(_bg1_l2Obj->R());
+		float depth2 = _scene->screen_depth(_bg2_l2Obj->R());
+		float depth3 = _scene->screen_depth(_bg3_l2Obj->R());
+		float depth4 = _scene->screen_depth(_bg4_l2Obj->R());
+
+		if (depth4 >= depth3 || depth3 >= depth2 || depth2 >= depth1)
+			_zFlagObj->set_state("\xed\xe5\xf2");	// "нет"
+		else
+			_zFlagObj->set_state("\xe4\xe0");		// "да"
+
+		if (!_wasInited) {
+			if (_startObj->is_state_active("\xe7\xe0\xe4\xed\xeb\xea\xeb \xee\xef\xf3\xf9\xe5\xed\xfb"))	// "задники опущены"
+				_wasInited = 1;
+
+			if (!_wasInited) {
+				if (_startObj->is_state_active("\xed\xe5\xf2")) { // "нет"
+					piecePos.x = 400;
+					piecePos.y = -300;
+					_bg1_l2Obj->set_R(_scene->screen2world_coords(piecePos, 600.0));
+
+					piecePos.x = 200;
+					piecePos.y = -300;
+					_bg2_l2Obj->set_R(_scene->screen2world_coords(piecePos, 400.0));
+
+					piecePos.x = 400;
+					piecePos.y = -300;
+					_bg3_l2Obj->set_R(_scene->screen2world_coords(piecePos, 200.0));
+
+					piecePos.x = 600;
+					piecePos.y = -300;
+					_bg3_l2Obj->set_R(_scene->screen2world_coords(piecePos, 0.0));
+
+					_stage = 4;
+					_artDepth = -50.0;
+
+					_activateObj->set_state("\xe7\xe0\xe4\xed\xe8\xea\x34"); // "задник4"
+					_startObj->set_state("\xe4\xe0");	// "да"
+				} else {
+					if (_startObj->is_state_active("\xe4\xe0")) { // "да"
+						if (_bg1_l2Obj->screen_R().y < 100) {
+							piecePos.x = 400;
+							piecePos.y = _bg1_l2Obj->screen_R().y + 3;
+							_bg1_l2Obj->set_R(_scene->screen2world_coords(piecePos, 600.0));
+						}
+
+						if (_bg2_l2Obj->screen_R().y < 50) {
+							piecePos.x = 200;
+							piecePos.y = _bg2_l2Obj->screen_R().y + 2;
+							_bg2_l2Obj->set_R(_scene->screen2world_coords(piecePos, 400.0));
+						}
+
+						if (_bg3_l2Obj->screen_R().y < 85) {
+							piecePos.x = 400;
+							piecePos.y = _bg3_l2Obj->screen_R().y + 2;
+							_bg3_l2Obj->set_R(_scene->screen2world_coords(piecePos, 200.0));
+						}
+
+						if (_bg4_l2Obj->screen_R().y < 0) {
+							piecePos.x = 600;
+							piecePos.y = _bg4_l2Obj->screen_R().y + 2;
+							_bg4_l2Obj->set_R(_scene->screen2world_coords(piecePos, 0.0));
+						}
+
+						if (_bg1_l2Obj->screen_R().y >= 100
+								&& _bg2_l2Obj->screen_R().y >= 50
+								&& _bg3_l2Obj->screen_R().y >= 85
+								&& _bg4_l2Obj->screen_R().y >= 0) {
+							_wasInited = 1;
+							_startObj->set_state("\xe7\xe0\xe4\xed\xeb\xea\xeb \xee\xef\xf3\xf9\xe5\xed\xfb");	// "задники опущены"
+						}
+					}
+
+					if (_startObj->is_state_active("\xe7\xe0\xe4\xed\xeb\xea\xeb \xee\xef\xf3\xf9\xe5\xed\xfb")	// "задники опущены"
+							&& _artDepth == -1.0) {
+						_artState[0].depth = _scene->screen_depth(_bg1_l2Obj->R());
+						_artState[0].num = 1;
+						_artState[1].depth = _scene->screen_depth(_bg2_l2Obj->R());
+						_artState[1].num = 2;
+						_artState[2].depth = _scene->screen_depth(_bg3_l2Obj->R());
+						_artState[2].num = 3;
+						_artState[3].depth = _scene->screen_depth(_bg4_l2Obj->R());
+						_artState[3].num = 4;
+
+						// Sort
+						for (int i = 0; i < 3; i++) {
+							while (_artState[i + 1].depth < _artState[i].depth) {
+								int num = _artState[i].num;
+								float depth = _artState[i].depth;
+
+								_artState[i].depth = _artState[i + 1].depth;
+								_artState[i].num = _artState[i + 1].num;
+								_artState[i + 1].depth = depth;
+								_artState[i + 1].num = num;
+
+								i = 0;
+							}
+						}
+
+						_wasInited = 1;
+
+						_stage = _artState[0].num;
+						_artDepth = _artState[0].depth;
+					}
+				}
+			}
+		}
+
+		if (!checkSolution() && _wasInited) {
+			_doneObj->set_state("false");
+
+			if (_engine->is_key_pressed(Common::KEYCODE_LEFT)
+					|| _engine->is_key_pressed(Common::KEYCODE_RIGHT)
+					|| _engine->is_key_pressed(Common::KEYCODE_UP)
+					|| _engine->is_key_pressed(Common::KEYCODE_DOWN)) {
+				++_keyDownCounter;
+			} else {
+				_keyDownCounter = 0;
+			}
+
+			if (_engine->is_key_pressed(Common::KEYCODE_LEFT)) {
+				switch (_stage) {
+				case 1:
+					moveLeft(_bg1_l2Obj);
+					break;
+				case 2:
+					moveLeft(_bg2_l2Obj);
+					break;
+				case 3:
+					moveLeft(_bg3_l2Obj);
+					break;
+				case 4:
+					moveLeft(_bg4_l2Obj);
+					break;
+				default:
+					break;
+				}
+			}
+
+			if (_engine->is_key_pressed(Common::KEYCODE_RIGHT)) {
+				switch (_stage) {
+				case 1:
+					moveRight(_bg1_l2Obj);
+					break;
+				case 2:
+					moveRight(_bg2_l2Obj);
+					break;
+				case 3:
+					moveRight(_bg3_l2Obj);
+					break;
+				case 4:
+					moveRight(_bg4_l2Obj);
+					break;
+				default:
+					break;
+				}
+			}
+
+			if (_engine->is_key_pressed(Common::KEYCODE_UP)) {
+				switch (_stage) {
+				case 1:
+					moveUp(_bg1_l2Obj);
+					break;
+				case 2:
+					moveUp(_bg2_l2Obj);
+					break;
+				case 3:
+					moveUp(_bg3_l2Obj);
+					break;
+				case 4:
+					moveUp(_bg4_l2Obj);
+					break;
+				default:
+					break;
+				}
+			}
+
+			if (_engine->is_key_pressed(Common::KEYCODE_DOWN)) {
+				switch (_stage) {
+				case 1:
+					moveDown(_bg1_l2Obj);
+					break;
+				case 2:
+					moveDown(_bg2_l2Obj);
+					break;
+				case 3:
+					moveDown(_bg3_l2Obj);
+					break;
+				case 4:
+					moveDown(_bg4_l2Obj);
+					break;
+				default:
+					break;
+				}
+			}
+
+			if ((_bg_clickObj->is_state_active("zad1_level2")
+					|| _activateObj->is_state_active("\xe7\xe0\xe4\xed\xe8\xea\x31")) && _stage != 1) { // "задник1"
+				_stage = 1;
+				_activateObj->set_state("\xe7\xe0\xe4\xed\xe8\xea\x31"); // "задник1"
+				_artDepth -= 200.0;
+				_bg1_l2Obj->set_R(_scene->screen2world_coords(_bg1_l2Obj->screen_R(), _artDepth));
+
+				snapPieces();
+			}
+
+			if ((_bg_clickObj->is_state_active("zad2_level2")
+					|| _activateObj->is_state_active("\xe7\xe0\xe4\xed\xe8\xea\x32")) && _stage != 2) { // "задник2"
+				_stage = 2;
+				_activateObj->set_state("\xe7\xe0\xe4\xed\xe8\xea\x32"); // "задник2"
+				_artDepth -= 200.0;
+				_bg2_l2Obj->set_R(_scene->screen2world_coords(_bg2_l2Obj->screen_R(), _artDepth));
+
+				snapPieces();
+			}
+
+			if ((_bg_clickObj->is_state_active("zad3_level2")
+					|| _activateObj->is_state_active("\xe7\xe0\xe4\xed\xe8\xea\x33")) && _stage != 3) { // "задник3"
+				_stage = 3;
+				_activateObj->set_state("\xe7\xe0\xe4\xed\xe8\xea\x33"); // "задник3"
+				_artDepth -= 200.0;
+				_bg3_l2Obj->set_R(_scene->screen2world_coords(_bg3_l2Obj->screen_R(), _artDepth));
+
+				snapPieces();
+			}
+
+			if ((_bg_clickObj->is_state_active("zad4_level2")
+					|| _activateObj->is_state_active("\xe7\xe0\xe4\xed\xe8\xea\x34")) && _stage != 4) { // "задник4"
+				_stage = 4;
+				_activateObj->set_state("\xe7\xe0\xe4\xed\xe8\xea\x34"); // "задник4"
+				_artDepth -= 200.0;
+				_bg4_l2Obj->set_R(_scene->screen2world_coords(_bg4_l2Obj->screen_R(), _artDepth));
+
+				snapPieces();
+			}
+		}
 
 		return true;
 	}
 
-	//! Деинициализация игры.
 	bool finit() {
 		debugC(1, kDebugMinigames, "Kartiny::finit()");
 
@@ -78,20 +314,18 @@ public:
  		return true;
 	}
 
-	/// Инициализация миниигры, вызывается при старте и перезапуске игры.
 	bool new_game(const qdEngineInterface *engine_interface) {
 		return true;
 	}
-	/// Сохранение данных, вызывается при сохранении сцены, на которую повешена миниигра.
+
 	int save_game(const qdEngineInterface *engine_interface, const qdMinigameSceneInterface *scene_interface, char *buffer, int buffer_size) {
 		return 0;
 	}
-	/// Загрузка данных, вызывается при загрузке сцены, на которую повешена миниигра.
+
 	int load_game(const qdEngineInterface *engine_interface, const qdMinigameSceneInterface *scene_interface, const char *buffer, int buffer_size) {
 		return 0;
 	}
 
-	/// Версия интерфейса игры, трогать не надо.
 	enum { INTERFACE_VERSION = 99 };
 	int version() const {
 		return INTERFACE_VERSION;
@@ -188,6 +422,10 @@ private:
 		obj->set_R(_scene->screen2world_coords(objPos, _artDepth));
 	}
 
+	bool checkSolution() {
+		return false;
+	}
+
 private:
 	const qdEngineInterface *_engine = nullptr;
 	qdMinigameSceneInterface *_scene = nullptr;
@@ -206,6 +444,13 @@ private:
 	bool _wasInited = false;
 	float _artDepth = -1.0;
 	int _keyDownCounter = 0;
+
+	int _stage = 0;
+
+	struct {
+		float depth;
+		int num;
+	} _artState[4];
 };
 
 } // namespace QDEngine
