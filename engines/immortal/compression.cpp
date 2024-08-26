@@ -23,7 +23,7 @@
 
 /* Decompression:
  * This decompression algorithm follows the source assembly very closely,
- * which is itself a modification to LZW (a derivitive of LZ78).
+ * which is itself a modification to LZW (a derivative of LZ78).
  * In: Source data as File, size of data
  * Out: Pointer to uncompressed data as SeekableReadStream
  */

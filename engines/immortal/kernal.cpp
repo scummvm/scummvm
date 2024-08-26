@@ -19,10 +19,10 @@
  *
  */
 
-/* This file covers both Kernal.GS and Driver.GS.
+/* This file covers both Kernel.GS and Driver.GS.
  * This is because most of Driver.GS is hardware specific,
  * and what is not (the slightly abstracted aspects), is
- * directly connected to kernal, and might as well be
+ * directly connected to kernel, and might as well be
  * considered part of the same process.
  */
 
@@ -440,7 +440,7 @@ void ImmortalEngine::printChr(char c) {
 		_penX -= 2;
 	}
 
-	// If the letter was a captial T, the next letter should be a little closer
+	// If the letter was a capital T, the next letter should be a little closer
 	if (c == 'T') {
 		_penX -= 2;
 	}
@@ -592,7 +592,7 @@ void ImmortalEngine::loadSprites() {
 	 * ie. file_pointer[file_index]+((sprite_num<<3)+4) = center_x.
 	 * We aren't going to have the sprite properties inside the file data, so instead
 	 * we have an array of all game sprites _dataSprites which is indexed
-	 * soley by a sprite number now. This also means that a sprite itself has a reference to
+	 * solely by a sprite number now. This also means that a sprite itself has a reference to
 	 * a datasprite, instead of the sprite index and separately the file pointer. Datasprite
 	 * is what needs the file, so that's where the pointer is. The index isn't used by
 	 * the sprite or datasprite themselves, so it isn't a member of either of them.
@@ -975,7 +975,7 @@ void ImmortalEngine::waitKey() {
 	}
 }
 
-// This was originally in Motives, which is weird since it seems more like an engine level function, so it's in kernal now
+// This was originally in Motives, which is weird since it seems more like an engine level function, so it's in kernel now
 void ImmortalEngine::waitClick() {
 	bool wait = true;
 	while (wait == true) {

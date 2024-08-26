@@ -174,7 +174,7 @@ public:
 	bool cycleAdvance(int c);
 	CycID getCycList(int c);
 
-	/* Unneccessary cycle functions
+	/* Unnecessary cycle functions
 	void cycleInit();
 	void cycleFree();
 	void cycleGetNumFrames();
@@ -184,7 +184,7 @@ public:
 	 * [flameSet.cpp] Functions from flameSet.GS
 	 */
 
-	//void flameNew() does not need to exist, because we create the duplicate SFlame in Level, and the array in immortal.h is not accessable from here
+	//void flameNew() does not need to exist, because we create the duplicate SFlame in Level, and the array in immortal.h is not accessible from here
 	void flameInit();
 	void flameDrawAll(uint16 vX, uint16 vY);
 	bool roomLighted();
