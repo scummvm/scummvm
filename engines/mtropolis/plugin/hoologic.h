@@ -219,8 +219,6 @@ public:
 
 	void disable(Runtime *runtime) override;
 
-	// bool isVariable() const override { return true; }
-
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "KeyState Modifier"; }
 	void debugInspect(IDebugInspectionReport *report) const override;
