@@ -184,13 +184,13 @@ void Darkseed::Player::calculateWalkTarget() {
 		g_engine->_room->getWalkTargetForObjectType_maybe(selectedObjNum);
 	}
 
-	if (_walkTarget.y > 0xed) {
-		_walkTarget.y = 0xee;
+	if (_walkTarget.y > 237) {
+		_walkTarget.y = 238;
 	}
 
 	if (!g_engine->_room->canWalkAtLocation(_walkTarget.x, _walkTarget.y)) {
 		int ty = _walkTarget.y;
-		for (; !g_engine->_room->canWalkAtLocation(_walkTarget.x, ty) && ty <= 0xe9;) {
+		for (; !g_engine->_room->canWalkAtLocation(_walkTarget.x, ty) && ty <= 233;) {
 			ty += 4;
 		}
 		if (ty < 235) {
