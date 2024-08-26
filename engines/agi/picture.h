@@ -78,6 +78,7 @@ private:
 	void plotBrush();
 
 	byte getNextByte();
+	bool getNextParamByte(byte &b);
 	byte getNextNibble();
 
 public:
