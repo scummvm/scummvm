@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-26 06:09+0000\n"
-"PO-Revision-Date: 2024-08-09 05:43+0000\n"
+"PO-Revision-Date: 2024-08-27 03:43+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -3620,10 +3620,8 @@ msgid "Matched game IDs for the %s engine:"
 msgstr "IDs de joc disponibles per al motor %s:"
 
 #: engines/metaengine.cpp:39
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "Game not implemented"
-msgstr "Identificador de joc no suportat"
+msgstr "Joc no implementat"
 
 #: engines/metaengine.cpp:58 engines/saga/metaengine.cpp:267
 msgid "Default game keymap"
@@ -5655,10 +5653,8 @@ msgid "Do not emulate NTSC artifacts for text"
 msgstr "No s'ha d'emular els artefactes NTSC per al text"
 
 #: engines/adl/metaengine.cpp:104
-#, fuzzy
-#| msgid "Use silver cursors"
 msgid "Use checkered cursor"
-msgstr "Utilitza cursors platejats"
+msgstr "Utilitzeu el cursor amb quadrícula"
 
 #: engines/adl/metaengine.cpp:105
 msgid "Use the checkered cursor from later Apple II models"
@@ -6600,10 +6596,8 @@ msgid "Game Keymappings"
 msgstr "Assignacions de tecles del joc"
 
 #: engines/cge/metaengine.cpp:215
-#, fuzzy
-#| msgid "Skip"
 msgid "Exit/Skip"
-msgstr "Salta"
+msgstr "Sortir/Salta"
 
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:162
@@ -7115,21 +7109,15 @@ msgid "Shoot"
 msgstr "Dispara"
 
 #: engines/freescape/movement.cpp:72
-#, fuzzy
-#| msgid "Rotate"
 msgid "Rotate up"
-msgstr "Rotar"
+msgstr "Rota cap amunt"
 
 #: engines/freescape/movement.cpp:77
-#, fuzzy
-#| msgid "Rotate"
 msgid "Rotate down"
-msgstr "Rotar"
+msgstr "Rota cap avall"
 
 #. I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
 #: engines/freescape/movement.cpp:90
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change mode"
 msgstr "Canvia el mode"
 
@@ -7147,10 +7135,8 @@ msgstr "Menú d'informació"
 
 #: engines/freescape/games/dark/dark.cpp:203
 #: engines/freescape/games/driller/driller.cpp:139
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Sound"
-msgstr "Commuta el silenci"
+msgstr "Commuta el so"
 
 #: engines/freescape/games/dark/dark.cpp:209
 #: engines/freescape/games/driller/driller.cpp:145
@@ -7165,18 +7151,14 @@ msgstr "Gira cap a la dreta"
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:220
 #: engines/freescape/games/driller/driller.cpp:156
-#, fuzzy
-#| msgid "Increase the scale factor"
 msgid "Increase Step Size"
-msgstr "Augmenta el factor d'escala"
+msgstr "Augmenta la mida dels passos"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:226
 #: engines/freescape/games/driller/driller.cpp:162
-#, fuzzy
-#| msgid "Decrease the scale factor"
 msgid "Decrease Step Size"
-msgstr "Disminueix el factor d'escala"
+msgstr "Disminueix la mida dels passos"
 
 #: engines/freescape/games/dark/dark.cpp:231
 #: engines/freescape/games/driller/driller.cpp:167
@@ -10319,10 +10301,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:756
-#, fuzzy
-#| msgid "Disable demo mode"
 msgid "Enable demo/kiosk mode"
-msgstr "Desactiva el mode de demostració"
+msgstr "Activa el mode de demostració/quiosc"
 
 #: engines/scumm/metaengine.cpp:757
 msgid "Enable demo/kiosk mode in the full retail version of Maniac Mansion."
