@@ -103,7 +103,7 @@ DataReadErrorCode PainterModifier::load(PlugIn &plugIn, const PlugInModifier &pr
 	if (prefix.plugInRevision != 0)
 		return kDataReadErrorUnsupportedRevision;
 
-    error("Data structure loading for the Painter modifier is not implemented.");
+	error("Data structure loading for the Painter modifier is not implemented.");
 
 	return kDataReadErrorNone;
 }
