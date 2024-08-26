@@ -909,6 +909,52 @@ void Room407::parser() {
 		gardenHoseFaucetPipe();
 	} else if (player_said("SURGICAL TUBE", "GARDEN HOSE ")) {
 		surgicalTubeGardenHose();
+	} else if (player_said("ROMANOV EMERALD", "IRON SUPPORT") && _val6 == 1011) {
+		emeraldIronSupport();
+	} else if (player_said("GLASS JAR", "LEVER KEY  ") ||
+			player_said("JAR/RUBBER PLUG", "LEVER KEY  ") ||
+			player_said("JAR/CORK", "LEVER KEY  ") ||
+			player_said("JAR/GRIPS", "LEVER KEY  ") ||
+			player_said("JAR/CORK/PLUG", "LEVER KEY  ") ||
+			player_said("JAR/PLUG/GRIPS", "LEVER KEY  ") ||
+			player_said("JAR/CORK/GRIPS", "LEVER KEY  ") ||
+			player_said("JAR/PLUG/CORK/GRIPS", "LEVER KEY  ")) {
+		reachLeverKey();
+	} else if (player_said("LEVER KEY/PUMP ROD", "BRACKET")) {
+		placeLeverKey();
+	} else if (player_said("RUBBER PLUG", "GLASS JAR") && _xyzzy7 == 1112) {
+		rubberPlugGlassJar();
+	} else if (player_said("CORK", "GLASS JAR") && _xyzzy7 == 1112) {
+		corkGlassJar();
+	} else if (player_said("pump grips", "glass jar") &&
+			(_xyzzy7 == 1114 || _xyzzy7 == 1140)) {
+		pumpGripsGlassJar();
+	} else if (player_said("rubber plug", "glass jar ") &&
+			(_xyzzy7 == 1114 || _xyzzy7 == 1140)) {
+		rubberPlugGlassJar2();
+	} else if (player_said("CORK", "GLASS JAR ") &&
+			(_xyzzy7 == 1114 || _xyzzy7 == 1140)) {
+		corkGlassJar2();
+	} else if (player_said("PERIODIC TABLE", "GLASS JAR") && _xyzzy6 == 1000) {
+		periodicTableGlassJar();
+	} else if (player_said("SURGICAL TUBE", "NOZZLES") && _xyzzy3 == 1000) {
+		surgicalTubeNozzles();
+	} else if (player_said("LEVER KEY", "TABLE PIVOT") && _val10 == 1000) {
+		leverKeyTablePivot();
+	} else if (player_said("PUMP ROD", "BRACKET") && _xyzzy1 == 1000) {
+		pumpRodBracket();
+	} else if ((player_said("LEVER KEY", "BRACKET") ||
+			player_said("LEVER KEY", "PUMP ROD ")) ||
+			_val10 == 1000) {
+		if (_xyzzy1 == 1114)
+			leverKey1();
+		else
+			leverKey2();
+	} if (player_said("FAUCET HANDLE", "AIR VALVE") && _val9 == 1000) {
+		faucetHandleAirValve();
+	} else if (player_said("FAUCET PIPE", "FAUCET HANDLE") &&
+			_val9 == 1000 && _val8 == 1100) {
+		faucetPipeFaucetHandle();
 	}
 	// TODO
 	else {
@@ -1539,6 +1585,113 @@ void Room407::reachHand(int frame) {
 	sendWSMessage_110000(1);
 }
 
+void Room407::reachLeverKey() {
+	switch (_G(kernel).trigger) {
+	case -1:
+	case 0:
+		player_set_commands_allowed(false);
+		_ripHiHand2 = series_load("rip trek hi reach 2hnd");
+		setGlobals1(_ripHiHand2, 1, 13, 13, 13, 0, 13, 1, 1, 1);
+		sendWSMessage_110000(1);
+		break;
+
+	case 1:
+		inv_move_object("GLASS JAR", 407);
+		hotspot_set_active("GLASS JAR ", true);
+		_bottle = series_place_sprite("407BOTLR", 0, 0, -53, 100, 0xe00);
+
+		switch (_xyzzy7) {
+		case 1050:
+			_xyzzy5 = 1116;
+			hotspot_set_active("JAR/RUBBER PLUG ", true);
+			inv_move_object("JAR/RUBBER PLUG", 407);
+			_stopperInDrawer = series_place_sprite(
+				"407BITSR", 0, 0, -53, 100, 0xb00);
+			break;
+
+		case 1051:
+			_xyzzy9 = 1116;
+			hotspot_set_active("JAR/CORK ", true);
+			inv_move_object("JAR/CORK", 407);
+			_bits = series_place_sprite("407BITSR", 3, 0, -53, 100, 0xb00);
+			break;
+
+		case 1052:
+			_xyzzy4 = 1116;
+			hotspot_set_active("JAR/GRIPS ", true);
+			inv_move_object("JAR/GRIPS", 407);
+			_bits = series_place_sprite("407BITSR", 2, 0, -53, 100, 0xb00);
+			break;
+
+		case 1053:
+			_xyzzy9 = 1116;
+			_xyzzy5 = 1116;
+			hotspot_set_active("JAR/RUBBER PLUG ", true);
+			hotspot_set_active("JAR/CORK ", true);
+			inv_move_object("JAR/CORK/PLUG", 407);
+			_stopperInDrawer = series_place_sprite("407BITSR", 3, 0, -53, 100, 0xb00);
+			_bits = series_place_sprite("407BITSR", 3, 0, -53, 100, 0xb00);
+			break;
+
+		case 1054:
+			_xyzzy4 = 1116;
+			_xyzzy5 = 1116;
+			hotspot_set_active("JAR/RUBBER PLUG ", true);
+			hotspot_set_active("JAR/GRIPS ", true);
+			inv_move_object("JAR/PLUG/GRIPS", 407);
+			_stopperInDrawer = series_place_sprite("407BITSR", 0, 0, -53, 100, 0xb00);
+			_bits = series_place_sprite("407BITSR", 2, 0, -53, 100, 0xb00);
+			break;
+
+		case 1055:
+			_xyzzy9 = 1116;
+			_xyzzy4 = 1116;
+			hotspot_set_active("JAR/CORK ", true);
+			hotspot_set_active("JAR/GRIPS ", true);
+			inv_move_object("JAR/CORK/GRIPS", 407);
+			_bits = series_place_sprite("407BITSR", 3, 0, -53, 100, 0xe00);
+			_handleInDrawer = series_place_sprite("407BITSR", 2, 0, -53, 100, 0xb00);
+			break;
+
+		case 1056:
+			_xyzzy9 = 1116;
+			_xyzzy4 = 1116;
+			_xyzzy5 = 1116;
+			hotspot_set_active("JAR/RUBBER PLUG ", true);
+			hotspot_set_active("JAR/CORK ", true);
+			hotspot_set_active("JAR/GRIPS ", true);
+			inv_move_object("JAR/PLUG/CORK/GRIPS", 407);
+			_stopperInDrawer = series_place_sprite("407BITSR", 0, 0, -53, 100, 0xb00);
+			_bits = series_place_sprite("407BITSR", 2, 0, -53, 100, 0xb00);
+			break;
+
+		default:
+			break;
+		}
+
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripHiHand2);
+		_xyzzy7 = 1114;
+		player_set_commands_allowed(true);
+		break;
+
+	case 777:
+		player_set_commands_allowed(false);
+		ws_walk(463, 323, nullptr, 0, 1);
+		break;
+
+	default:
+		break;
+	}
+}
+
 void Room407::faucetPipeGardenHose() {
 	switch (_G(kernel).trigger) {
 	case -1:
@@ -1694,6 +1847,532 @@ void Room407::surgicalTubeGardenHose() {
 	case 4:
 		series_unload(_ripLowHand1);
 		_xyzzy3 = 1116;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::emeraldIronSupport() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_ripHiHand2 = series_load("rip trek hi reach 2hnd");
+		setGlobals1(_ripHiHand2, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+		sendWSMessage_110000(1);
+		break;
+
+	case 1:
+		terminateMachineAndNull(_bottle);
+		_gears = series_place_sprite("407GEARS", 0, 0, -53, 100, 0xf00);
+		_bottle = series_place_sprite("407BOTL2", 0, 0, -53, 100, 0xe00);
+		digi_play("407_s29", 2);
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripHiHand2);
+		_val6 = 1010;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::placeLeverKey() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_placeLeverKey = series_load("407 PLACE LEVER KEY");
+		player_update_info();
+		_safariShadow = series_place_sprite("SAFARI SHADOW 1", 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
+		ws_hide_walker();
+
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, 0,
+			triggerMachineByHashCallbackNegative, "RIP levers ceiling");
+		sendWSMessage_10000(1, _ripley, _placeLeverKey, 1, 42, 2,
+			_placeLeverKey, 42, 42, 0);
+		break;
+
+	case 2:
+		digi_play("407_s07a", 1);
+		sendWSMessage_10000(1, _ripley, _placeLeverKey, 42, 70, 3,
+			_placeLeverKey, 70, 70, 0);
+		break;
+
+	case 3:
+		terminateMachineAndNull(_ripley);
+		ws_unhide_walker();
+		_pump = series_place_sprite("407PMROD", 0, 0, -53, 100, 0xf00);
+		_lever = series_place_sprite("407LEVRW", 1, 0, -53, 100, 0xf00);
+		hotspot_set_active("LEVER KEY  ", true);
+		hotspot_set_active("PUMP ROD ", true);
+		inv_move_object("LEVER KEY/PUMP ROD", 407);
+		_val10 = 1114;
+		_xyzzy1 = 1114;
+		_xyzzy10 = 1040;
+		series_unload(_placeLeverKey);
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::rubberPlugGlassJar() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		reachHand(10);
+		break;
+
+	case 1:
+		_stopperInDrawer = series_place_sprite("407bbits", 2, 0, -53, 100, 0xe00);
+		inv_move_object("RUBBER PLUG", 407);
+		hotspot_set_active("JAR/RUBBER PLUG", true);
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripMedHand1);
+		_xyzzy5 = 1116;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::rubberPlugGlassJar2() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_ripHiHand1 = series_load("rip trek hi 1 hand");
+		setGlobals1(_ripHiHand1, 1, 6, 6, 6, 0, 6, 1, 1, 1);
+		sendWSMessage_110000(1);
+		break;
+
+	case 1:
+		_stopperInDrawer = series_place_sprite("407BITSR", 0, 0, -53, 100, 0xe00);
+		inv_move_object("RUBBER PLUG", 407);
+		hotspot_set_active("JAR/RUBBER PLUG ", true);
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripHiHand1);
+		_xyzzy5 = 1116;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::corkGlassJar() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		reachHand(10);
+		break;
+
+	case 1:
+		_stopperInDrawer = series_place_sprite("407bbits", 0, 0, -53, 100, 0xe00);
+		inv_move_object("CORK", 407);
+		hotspot_set_active("JAR/CORK", true);
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripMedHand1);
+		_xyzzy5 = 1116;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::corkGlassJar2() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_ripHiHand1 = series_load("rip trek hi 1 hand");
+		setGlobals1(_ripHiHand1, 1, 5, 5, 5, 0, 5, 1, 1, 1);
+		sendWSMessage_110000(1);
+		break;
+
+	case 1:
+		_stopperInDrawer = series_place_sprite("407BITSR", 3, 0, -53, 100, 0xe00);
+		inv_move_object("CORK", 407);
+		hotspot_set_active("JAR/CORK ", true);
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripHiHand1);
+		_xyzzy5 = 1116;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::pumpGripsGlassJar() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_ripHiHand1 = series_load("rip trek hi 1 hand");
+		setGlobals1(_ripHiHand1, 1, 7, 7, 7, 0, 7, 1, 1, 1);
+		sendWSMessage_110000(1);
+		break;
+
+	case 1:
+		_handleInDrawer = series_place_sprite("407BITSR", 2, 0, -53, 100, 0xe00);
+		inv_move_object("PUMP GRIPS", 407);
+		hotspot_set_active("JAR/GRIPS ", true);
+		sendWSMessage_110000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripHiHand1);
+		_xyzzy4 = 1116;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::periodicTableGlassJar() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (inv_object_is_here("EMERALD/CORK")) {
+			player_set_commands_allowed(false);
+			_rollStuff = series_load("407 ROLL STUFF");
+			player_update_info();
+			_safariShadow = series_place_sprite("SAFARI SHADOW 1", 0,
+				_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
+			ws_hide_walker();
+
+			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, 0,
+				triggerMachineByHashCallbackNegative, "RIP folds table into jar");
+			sendWSMessage_10000(1, _ripley, _rollStuff, 1, 90, 2,
+				_rollStuff, 90, 90, 0);
+			kernel_timing_trigger(130, 1);
+		} else {
+			digi_play("com118", 1);
+		}
+		break;
+
+	case 1:
+		digi_play("407_s14", 2);
+		break;
+
+	case 2:
+		sendWSMessage_10000(1, _ripley, _rollStuff, 91, 109, 3,
+			_rollStuff, 109, 109, 0);
+		break;
+
+	case 3:
+		terminateMachineAndNull(_ripley);
+		ws_unhide_walker();
+		_chart = series_place_sprite("407bbits", 1, 0, -53, 100, 0xe00);
+		series_unload(_rollStuff);
+		inv_move_object("PERIODIC TABLE", 407);
+		hotspot_set_active("PERIODIC TABLE/JAR", true);
+		_xyzzy6 = 1116;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::surgicalTubeNozzles() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		reachHand(10);
+		break;
+
+	case 1:
+		_tubeInDrawer = series_place_sprite("407surgn", 0, 0, -53, 100, 0xa00);
+		inv_move_object("SURGICAL TUBE", 407);
+		hotspot_set_active("NOZZLES/TUBE", true);
+		hotspot_set_active("NOZZLES", false);
+		digi_play("407_s06", 2, 255, 2);
+		break;
+
+	case 2:
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripMedHand1);
+		digi_play("407r75", 1);
+		_xyzzy3 = 1117;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::leverKeyTablePivot() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		reachHand(10);
+		break;
+
+	case 1:
+		_lever = series_place_sprite("407LEVRW", 2, 0, -53, 100, 0xb00);
+		inv_move_object("LEVER KEY", 407);
+		hotspot_set_active("LEVER KEY ", true);
+		digi_play("407_s07a", 2);
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripMedHand1);
+		_val10 = 1113;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::pumpRodBracket() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_407rp99 = series_load("407RP99");
+		player_update_info();
+		_safariShadow = series_place_sprite(
+			"SAFARI SHADOW 1", 0, _G(player_info).x,
+			_G(player_info).y, _G(player_info).scale, 0xf00);
+		ws_hide_walker();
+
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, 0,
+			triggerMachineByHashCallbackNegative, "RIP levers ceiling");
+		sendWSMessage_10000(1, _ripley, _407rp99, 1, 35, 2,
+			_407rp99, 35, 35, 0);
+		break;
+
+	case 2:
+		digi_play("407_s07a", 1);
+		sendWSMessage_10000(1, _ripley, _407rp99, 36, 61, 3,
+			_407rp99, 61, 61, 0);
+		break;
+
+	case 3:
+		terminateMachineAndNull(_ripley);
+		terminateMachineAndNull(_safariShadow);
+		ws_unhide_walker();
+		_pump = series_place_sprite("407PMROD", 0, 0, -53, 100, 0xf00);
+
+		hotspot_set_active("PUMP ROD ", true);
+		inv_move_object("PUMP ROD", 407);
+		_xyzzy1 = 1114;
+
+		series_unload(_407rp99);
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::leverKey1() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_407rp98 = series_load("407RP98");
+		terminateMachineAndNull(_pump);
+		player_update_info();
+		_safariShadow = series_place_sprite(
+			"SAFARI SHADOW 1", 0, _G(player_info).x,
+			_G(player_info).y, _G(player_info).scale, 0xf00);
+		ws_hide_walker();
+
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, 0,
+			triggerMachineByHashCallbackNegative, "RIP levers ceiling");
+		sendWSMessage_10000(1, _ripley, _407rp98, 1, 53, 2,
+			_407rp98, 53, 53, 0);
+		break;
+
+	case 2:
+		digi_play("407_s07a", 1);
+		sendWSMessage_10000(1, _ripley, _407rp98, 54, 81, 3,
+			_407rp98, 81, 81, 0);
+		break;
+
+	case 3:
+		digi_play("407_s07a", 1);
+		sendWSMessage_10000(1, _ripley, _407rp98, 81, 101, 4,
+			_407rp98, 101, 101, 0);
+		break;
+
+	case 4:
+		terminateMachineAndNull(_ripley);
+		terminateMachineAndNull(_safariShadow);
+		ws_unhide_walker();
+		_pump = series_place_sprite("407PMROD", 0, 0, -53, 100, 0xf00);
+		_lever = series_place_sprite("407LEVRW", 1, 0, -53, 100, 0xf00);
+		hotspot_set_active("LEVER KEY  ", true);
+		inv_move_object("LEVER KEY", 407);
+		_val10 = 1114;
+
+		series_unload(_407rp98);
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::leverKey2() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_placeLeverKey = series_load("407 PLACE LEVER KEY");
+		player_update_info();
+		_safariShadow = series_place_sprite(
+			"SAFARI SHADOW 1", 0, _G(player_info).x,
+			_G(player_info).y, _G(player_info).scale, 0xf00);
+		ws_hide_walker();
+
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, 0,
+			triggerMachineByHashCallbackNegative, "RIP levers ceiling");
+		sendWSMessage_10000(1, _ripley, _placeLeverKey, 1, 30, 1,
+			_placeLeverKey, 30, 30, 0);
+		break;
+
+	case 1:
+		digi_play("com105", 1, 255, 2, 997);
+		break;
+
+	case 2:
+		sendWSMessage_10000(1, _ripley, _placeLeverKey, 32, 1, 3,
+			_placeLeverKey, 1, 1, 0);
+		break;
+
+	case 3:
+		terminateMachineAndNull(_ripley);
+		terminateMachineAndNull(_safariShadow);
+		ws_unhide_walker();
+		series_unload(_placeLeverKey);
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::faucetHandleAirValve() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		reachHand(4);
+		break;
+
+	case 1:
+		digi_play("407_s13", 2);
+		_faucet2 = series_place_sprite("407 AIR VALVE HANDLE",
+			(_val3 == 1011) ? 1 : 0, 0, 0, 100, 0xe00);
+
+		inv_move_object("FAUCET HANDLE", 407);
+		hotspot_set_active("AIR VALVE/HANDLE", true);
+		hotspot_set_active("AIR VALVE", false);
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripMedHand1);
+		digi_play("407r73", 1);
+		_val9 = 1110;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::faucetPipeFaucetHandle() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		reachHand(10);
+		break;
+
+	case 1:
+		digi_play("407_s04", 2);
+		_faucet2 = series_place_sprite("407FAUC",
+			(_val3 == 1011) ? 1 : 0, 0, 0, 100, 0xe00);
+
+		inv_move_object("FAUCET HANDLE", 407);
+		hotspot_set_active("FAUCET HANDLE", true);
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripMedHand1);
+		_val9 = 1100;
 		player_set_commands_allowed(true);
 		break;
 

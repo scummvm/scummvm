@@ -126,8 +126,14 @@ private:
 	machine *_ripley = nullptr;
 	machine *_microscopeCloseup = nullptr;
 	int _ripHiHand1 = 0;
+	int _ripHiHand2 = 0;
 	int _ripMedHand1 = 0;
 	int _ripLowHand1 = 0;
+	int _placeLeverKey = 0;
+	machine *_safariShadow = nullptr;
+	int _rollStuff = 0;
+	int _407rp98 = 0;
+	int _407rp99 = 0;
 
 	void setHotspots();
 	void lookItem(const char *item, const char *digi);
@@ -148,10 +154,26 @@ private:
 	void surgicalTubeFaucetPipe();
 	void surgicalTubeStem();
 	void reachHand(int frame);
+	void reachLeverKey();
 	void faucetPipeGardenHose();
 	void faucetPipeGlassJar();
 	void gardenHoseFaucetPipe();
 	void surgicalTubeGardenHose();
+	void emeraldIronSupport();
+	void placeLeverKey();
+	void rubberPlugGlassJar();
+	void rubberPlugGlassJar2();
+	void corkGlassJar();
+	void corkGlassJar2();
+	void pumpGripsGlassJar();
+	void periodicTableGlassJar();
+	void surgicalTubeNozzles();
+	void leverKeyTablePivot();
+	void pumpRodBracket();
+	void leverKey1();
+	void leverKey2();
+	void faucetHandleAirValve();
+	void faucetPipeFaucetHandle();
 
 public:
 	Room407() : Room() {}
