@@ -92,9 +92,100 @@ public:
 	}
 
 	/// Версия интерфейса игры, трогать не надо.
-	enum { INTERFACE_VERSION = 112 };
+	enum { INTERFACE_VERSION = 99 };
 	int version() const {
 		return INTERFACE_VERSION;
+	}
+
+private:
+	void snapPieces() {
+		mgVect2i piecePos;
+		mgVect3f newPiecePos;
+		float depth;
+
+		piecePos = _bg1_l2Obj->screen_R();
+		depth = _scene->screen_depth(_bg1_l2Obj->R());
+
+		if (ABS(399 - ABS(piecePos.x)) <= 10 && ABS(278 - ABS(piecePos.y)) <= 10) {
+			piecePos.x = 399;
+			piecePos.y = 278;
+
+			newPiecePos = _scene->screen2world_coords(piecePos, depth);
+			_bg1_l2Obj->set_R(newPiecePos);
+		}
+
+		piecePos = _bg2_l2Obj->screen_R();
+		depth = _scene->screen_depth(_bg2_l2Obj->R());
+
+		if (piecePos.x >= 387 && piecePos.x <= 440 && ABS(267 - ABS(piecePos.y)) <= 20) {
+			piecePos.x = 408;
+			piecePos.y = 267;
+
+			newPiecePos = _scene->screen2world_coords(piecePos, depth);
+			_bg2_l2Obj->set_R(newPiecePos);
+		}
+
+		piecePos = _bg3_l2Obj->screen_R();
+		depth = _scene->screen_depth(_bg3_l2Obj->R());
+
+		if (ABS(ABS(piecePos.x) - 413) < 25 && ABS(ABS(piecePos.y) - 43) < 40) {
+			piecePos.x = 406;
+			piecePos.y = -43;
+
+			newPiecePos = _scene->screen2world_coords(piecePos, depth);
+			_bg3_l2Obj->set_R(newPiecePos);
+		}
+	}
+
+	void moveDown(qdMinigameObjectInterface *obj) {
+		int speed = MAX(10, _keyDownCounter / 10 + 1);
+		int maxCoords;
+
+		if (obj == _bg1_l2Obj)
+			maxCoords = 279;
+		else if (obj == _bg2_l2Obj)
+			maxCoords = 267;
+		else if (obj == _bg3_l2Obj)
+			maxCoords = 258;
+		else
+			maxCoords = 258;
+
+		mgVect2i objPos = obj->screen_R();
+
+		if (objPos.y + speed < maxCoords)
+			objPos.y += speed;
+
+		obj->set_R(_scene->screen2world_coords(objPos, _artDepth));
+	}
+
+	void moveUp(qdMinigameObjectInterface *obj) {
+		int speed = MAX(10, _keyDownCounter / 10 + 1);
+		mgVect2i objPos = obj->screen_R();
+
+		if (objPos.y > -100)
+			objPos.y -= speed;
+
+		obj->set_R(_scene->screen2world_coords(objPos, _artDepth));
+	}
+
+	void moveRight(qdMinigameObjectInterface *obj) {
+		int speed = MAX(10, _keyDownCounter / 10 + 1);
+		mgVect2i objPos = obj->screen_R();
+
+		if (objPos.x < 900)
+			objPos.x += speed;
+
+		obj->set_R(_scene->screen2world_coords(objPos, _artDepth));
+	}
+
+	void moveLeft(qdMinigameObjectInterface *obj) {
+		int speed = MAX(10, _keyDownCounter / 10 + 1);
+		mgVect2i objPos = obj->screen_R();
+
+		if (objPos.x > -100)
+			objPos.x -= speed;
+
+		obj->set_R(_scene->screen2world_coords(objPos, _artDepth));
 	}
 
 private:
@@ -114,6 +205,7 @@ private:
 
 	bool _wasInited = false;
 	float _artDepth = -1.0;
+	int _keyDownCounter = 0;
 };
 
 } // namespace QDEngine
