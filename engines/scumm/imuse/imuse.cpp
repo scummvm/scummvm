@@ -348,7 +348,8 @@ void IMuseInternal::on_timer(MidiDriver *midi) {
 	if (_paused || !_initialized)
 		return;
 
-	musicVolumeReduction(midi);
+	if (_game_id == GID_SAMNMAX)
+		musicVolumeReduction(midi);
 
 	if (midi == _midi_native || !_midi_native)
 		handleDeferredCommands(midi);
