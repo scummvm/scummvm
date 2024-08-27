@@ -1272,8 +1272,7 @@ void DarkseedEngine::updateDisplay() { // AKA ServiceRoom
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
 						_sprites.addSpriteToDrawList(303, 105, &animSprite, 240 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
 					} else if (otherNspAnimationType_maybe == 62) {
-						// TODO
-						error("anim display 62");
+						error("anim display 62"); // TODO
 					} else if (otherNspAnimationType_maybe == 45 || otherNspAnimationType_maybe == 46) { // pull lever
 						const Sprite &animSprite = _player->_animations.getSpriteAt(_player->_frameIdx);
 						_sprites.addSpriteToDrawList(446, 124, &animSprite, 240 - _player->_position.y, animSprite.width, animSprite.height, player_sprite_related_2c85_82f3);
@@ -2022,7 +2021,7 @@ void DarkseedEngine::updateAnimation() {
 	case 50:
 	case 51:
 	case 52:
-		// open/close cupbords, oven
+		// open/close cupboards, oven
 		advanceAnimationFrame(0);
 		if (!isAnimFinished_maybe) {
 			_player->_frameIdx = _player->_animations.getAnimAt(0).frameNo[animIndexTbl[0]];
@@ -2586,10 +2585,9 @@ void DarkseedEngine::lookCode(int objNum) {
 		if (eyeTosIdx < 979 && eyeTosIdx != 0)  {
 			_console->printTosText(eyeTosIdx);
 		}
-		// TODO
-//		else if (978 < *(int *)((int)_eyedescriptions + objNum * 2)) {
-//			genericresponse(3,objNum,*(undefined2 *)((int)_eyedescriptions + objNum * 2));
-//		}
+		if (eyeTosIdx > 978) {
+			_useCode->genericresponse(3, objNum, eyeTosIdx);
+		}
 		return;
 	}
 	_console->addTextLine(Common::String::format("You see the %s.", _objectVar.getObjectName(objNum)));
@@ -3193,8 +3191,7 @@ void DarkseedEngine::moveplayertodelbert() {
 }
 
 void DarkseedEngine::rundrekethsequence() {
-	// TODO
-	error("implement rundrekethsequence()");
+	error("implement rundrekethsequence()"); // TODO
 }
 
 void DarkseedEngine::delthrowstick(int16 spriteNum) {
