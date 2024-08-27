@@ -2033,7 +2033,7 @@ void ScummEngine::setMusicVolume(int volume) {
 	ConfMan.flushToDisk();
 
 	if (_game.version < 7)
-		ScummEngine::syncSoundSettings();
+		ScummEngine::syncSoundSettings(); // Immediately update volume for old iMUSE and sound systems
 }
 
 void ScummEngine::setSpeechVolume(int volume) {
@@ -2044,7 +2044,7 @@ void ScummEngine::setSpeechVolume(int volume) {
 	ConfMan.flushToDisk();
 
 	if (_game.version < 7)
-		ScummEngine::syncSoundSettings();
+		ScummEngine::syncSoundSettings(); // Immediately update volume for old iMUSE and sound systems
 }
 
 void ScummEngine::setSFXVolume(int volume) {
@@ -2055,7 +2055,7 @@ void ScummEngine::setSFXVolume(int volume) {
 	ConfMan.flushToDisk();
 
 	if (_game.version < 7)
-		ScummEngine::syncSoundSettings();
+		ScummEngine::syncSoundSettings(); // Immediately update volume for old iMUSE and sound systems
 }
 
 int ScummEngine::getMusicVolume() {
