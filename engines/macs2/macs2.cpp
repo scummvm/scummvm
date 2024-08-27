@@ -1294,7 +1294,9 @@ AnimFrame BackgroundAnimationBlob::GetFrame(uint32 index) {
 
 AnimFrame BackgroundAnimationBlob::GetCurrentFrame() {
 	// TODO: Check the arguments used by the original
-	uint16 offset = Func1480(Blob, true, 0x0);
+	// TODO: TBC: There seem to be two used sets of args, false and 0 for getting the current
+	// frame and true and 2 for advancing the frame
+	uint16 offset = Func1480(Blob, true, 0x2);
 	Common::MemoryReadStream* stream = new Common::MemoryReadStream(Blob.data(), Blob.size());
 	offset += 6;
 	stream->seek(offset);
@@ -1418,7 +1420,7 @@ uint16 BackgroundAnimationBlob::Func1480(Common::Array<uint8> &blob, bool bpp6, 
 	uint16 bp12 = stream.pos();
 	// TODO: Check if indendation is right here
 	if (bpp8 == 0x02) {
-		if (bp0C < 0xA) {
+		if (bp0C >= 0xA) {
 			// l00B7_15A2:
 			bp6++;
 			if (bp10 > 0) {
