@@ -2664,6 +2664,7 @@ bool qdGameDispatcher::play_music_track(const qdMusicTrack *p, bool interface_mo
 	_interface_music_mode = interface_mode;
 
 	debugC(3, kDebugLoad, "qdGameDispatcher::play_music_track() %s", transCyrillic(fname.toString()));
+	fname = Common::Path((char *)transCyrillic(fname.toString()));
 
 	return mpegPlayer::instance().play(fname, p->is_cycled(), p->volume());
 }
