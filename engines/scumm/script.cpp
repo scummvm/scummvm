@@ -1526,7 +1526,7 @@ int ScummEngine::resStrLen(const byte *src) {
 			// WORKAROUND for bugs #1675 and #2715, script bugs in German Indy3.
 			// For more information, See the the corresponding workaround in
 			// ScummEngine::convertMessageToString().
-			if (_game.id == GID_INDY3 && _language == Common::DE_DEU &&
+			if (enhancementEnabled(kEnhTextLocFixes) && _game.id == GID_INDY3 && _language == Common::DE_DEU &&
 			    ((_roomResource == 23 && chr == 0x2E) ||
 			     (_roomResource == 21 && chr == 0x20))) {
 				num--;

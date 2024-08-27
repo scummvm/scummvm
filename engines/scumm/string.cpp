@@ -1444,7 +1444,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 			// here. At least the DOS and Amiga German releases are affected.
 			//
 			// See also ScummEngine::resStrLen().
-			if (_game.id == GID_INDY3 && _language == Common::DE_DEU &&
+			if (enhancementEnabled(kEnhTextLocFixes) && _game.id == GID_INDY3 && _language == Common::DE_DEU &&
 				((_roomResource == 23 && chr == 0x2E) ||
 				 (_roomResource == 21 && chr == 0x20))) {
 				num--;
