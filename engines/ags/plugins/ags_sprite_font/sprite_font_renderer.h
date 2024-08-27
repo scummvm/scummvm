@@ -34,7 +34,7 @@ class SpriteFontRenderer : public IAGSFontRenderer2 {
 protected:
 	IAGSEngine *_engine;
 	SpriteFont *getFontFor(int fontNum);
-	void Draw(BITMAP *src, BITMAP *dest, int destx, int desty, int srcx, int srcy, int width, int height);
+	void Draw(BITMAP *src, BITMAP *dest, int destx, int desty, int srcx, int srcy, int width, int height, int colour);
 	std::vector<SpriteFont *> _fonts;
 
 public:
