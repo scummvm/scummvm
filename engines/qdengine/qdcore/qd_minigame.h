@@ -47,10 +47,10 @@ public:
 	//! Инициализация данных, вызывается при старте и перезапуске основной игры.
 	bool init();
 
-	const char *config_file_name() const {
-		return _config_file_name.c_str();
+	const Common::Path config_file_name() const {
+		return _config_file_name;
 	}
-	void set_config_file_name(const char *file_name) {
+	void set_config_file_name(const Common::Path file_name) {
 		_config_file_name = file_name;
 	}
 	bool has_config_file() const {
@@ -115,7 +115,7 @@ private:
 	//! Имя подгружаемой для игры dll.
 	Common::String _dll_name;
 	//! .ini файл с настройками игры.
-	Common::String _config_file_name;
+	Common::Path _config_file_name;
 	//! Имя игры, по которому она ищется в dll.
 	Common::String _game_name;
 	//! Хэндл подгруженной dll.

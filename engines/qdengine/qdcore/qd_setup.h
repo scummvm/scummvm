@@ -26,8 +26,8 @@
 
 namespace QDEngine {
 
-const char *getIniKey(const char *fname, const char *section, const char *key);
-bool enumerateIniSections(const char *fname, Common::INIFile::SectionList &section_list);
+const Common::String getIniKey(const Common::Path fname, const char *section, const char *key);
+bool enumerateIniSections(const Common::Path fname, Common::INIFile::SectionList &section_list);
 
 } // namespace QDEngine
 

@@ -22,6 +22,8 @@
 #ifndef QDENGINE_QDCORE_QD_MINIGAME_CONFIG_H
 #define QDENGINE_QDCORE_QD_MINIGAME_CONFIG_H
 
+#include "common/path.h"
+
 namespace QDEngine {
 /// Конфигурационные данные для миниигры.
 /**
@@ -117,7 +119,7 @@ public:
 	bool save_script(Common::WriteStream &fh, int indent = 0) const;
 
 	//! Загрузка данных из .ini файла.
-	bool load_ini(const char *ini_file, const char *ini_section);
+	bool load_ini(const Common::Path ini_file, const char *ini_section);
 
 private:
 

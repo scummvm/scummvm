@@ -92,30 +92,30 @@ bool qdMinigameConfigParameter::validate_data() {
 	return true;
 }
 
-bool qdMinigameConfigParameter::load_ini(const char *ini_file, const char *ini_section) {
+bool qdMinigameConfigParameter::load_ini(const Common::Path ini_file, const char *ini_section) {
 	set_name(ini_section);
-	const char *str = getIniKey(ini_file, ini_section, "type");
-	if (strlen(str)) {
-		if (!scumm_stricmp(str, "string"))
+	Common::String str = getIniKey(ini_file, ini_section, "type");
+	if (!str.empty()) {
+		if (str.equalsIgnoreCase("string"))
 			set_data_type(PRM_DATA_STRING);
-		else if (!scumm_stricmp(str, "file"))
+		else if (str.equalsIgnoreCase("file"))
 			set_data_type(PRM_DATA_FILE);
-		else if (!scumm_stricmp(str, "object"))
+		else if (str.equalsIgnoreCase("object"))
 			set_data_type(PRM_DATA_OBJECT);
 	}
 
 	str = getIniKey(ini_file, ini_section, "count");
-	if (strlen(str))
-		set_data_count(atoi(str));
+	if (!str.empty())
+		set_data_count(atoi(str.c_str()));
 
 	str = getIniKey(ini_file, ini_section, "value");
-	if (strlen(str)) {
-		set_data_string(str);
+	if (!str.empty()) {
+		set_data_string(str.c_str());
 	}
 
 	str = getIniKey(ini_file, ini_section, "comment");
-	if (strlen(str))
-		set_comment(str);
+	if (!str.empty())
+		set_comment(str.c_str());
 
 	return true;
 }

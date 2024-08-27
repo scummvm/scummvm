@@ -140,7 +140,7 @@ bool qdMiniGame::load_script(const xml::tag *p) {
 			set_game_name(it->data());
 			break;
 		case QDSCR_MINIGAME_CONFIG_FILE:
-			set_config_file_name(it->data());
+			set_config_file_name(Common::Path(it->data(), '\\'));
 			load_config();
 			_config.reserve(_config.size() + config_size);
 			break;
@@ -179,7 +179,7 @@ bool qdMiniGame::save_script(Common::WriteStream &fh, int indent) const {
 	}
 
 	if (!_config_file_name.empty()) {
-		fh.writeString(Common::String::format(" config_file=\"%s\"", qdscr_XML_string(config_file_name())));
+		fh.writeString(Common::String::format(" config_file=\"%s\"", qdscr_XML_string(config_file_name().toString('\\'))));
 	}
 
 	if (!_dll_name.empty()) {

@@ -26,10 +26,11 @@
 
 namespace QDEngine {
 
-bool enumerateIniSections(const char *fname, Common::INIFile::SectionList &sectionList) {
+bool enumerateIniSections(const Common::Path fname, Common::INIFile::SectionList &sectionList) {
 
 	Common::INIFile ini;
 	Common::Path iniFilePath(fname);
+	ini.allowNonEnglishCharacters();
 	ini.loadFromFile(iniFilePath);
 	sectionList = ini.getSections();
 	int size = sectionList.size();
@@ -41,10 +42,11 @@ bool enumerateIniSections(const char *fname, Common::INIFile::SectionList &secti
 	return true;
 }
 
-const char *getIniKey(const char *fname, const char *section, const char *key) {
+const Common::String getIniKey(const Common::Path fname, const char *section, const char *key) {
 	Common::INIFile ini;
 	Common::String buf;
 
+	ini.allowNonEnglishCharacters();
 	ini.loadFromFile(fname);
 	bool hasValue = ini.getKey(key, section, buf);
 
@@ -52,7 +54,7 @@ const char *getIniKey(const char *fname, const char *section, const char *key) {
 		return "";
 	}
 
-	return buf.c_str();
+	return buf;
 }
 
 } // namespace QDEngine
