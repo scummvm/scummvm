@@ -244,6 +244,7 @@ private:
 	void leavepackage();
 
 	void removeFullscreenPic();
+	void zeromousebuttons();
 };
 
 extern DarkseedEngine *g_engine;
