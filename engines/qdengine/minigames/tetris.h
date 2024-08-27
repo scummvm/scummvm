@@ -67,7 +67,7 @@ public:
 
 		_lastRowObj = _scene->object_interface(_scene->minigame_parameter("last_row"));
 
-  		return true;
+		return true;
 	}
 
 	bool quant(float dt) {
@@ -124,7 +124,7 @@ public:
 	}
 
 private:
-    int getActiveColumn() {
+	int getActiveColumn() {
 		if (_lastRowObj->is_state_active("0"))
 			return 0;
 		if (_lastRowObj->is_state_active("1"))
@@ -177,7 +177,7 @@ private:
 			return 24;
 
 		return 0;
-    }
+	}
 
 private:
 	const qdEngineInterface *_engine = nullptr;
