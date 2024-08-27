@@ -85,6 +85,7 @@ bool qdMusicTrack::save_script(Common::WriteStream &fh, int indent) const {
 	for (int i = 0; i < indent; i++) {
 		fh.writeString("\t");
 	}
+	fh.writeString("<music_track");
 
 	if (name()) {
 		fh.writeString(Common::String::format(" name=\"%s\"", qdscr_XML_string(name())));
