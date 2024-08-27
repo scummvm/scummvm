@@ -270,7 +270,14 @@ void DarkseedEngine::gameloop() {
 				}
 			}
 			_room->darkenSky();
-			// TODO lots of logic
+			if (_currentDay < 3 && _currentTimeInSeconds > 79199 && !_player->_isAutoWalkingToBed &&
+				(_room->_roomNumber < 10 || _room->_roomNumber == 13 || _room->_roomNumber == 61 || _room->_roomNumber == 62)) {
+				_player->_walkToSequence = false;
+				_player->_actionToPerform = false;
+				_player->_isAutoWalkingToBed = true;
+				_player->setplayertowardsbedroom();
+				_console->printTosText(944);
+			}
 			if (_currentTimeInSeconds > 79199 && !_player->_isAutoWalkingToBed) {
 				if (_room->isOutside() && _room->_roomNumber != 30) {
 					_inventory.endOfDayOutsideLogic();
@@ -465,7 +472,7 @@ void DarkseedEngine::handleInput() {
 					}
 					_player->updateSprite();
 				}
-				if (_isLeftMouseClicked && _cursor.getY() > 0x28 && !_player->isPlayerWalking_maybe) { // prevLeftMouseButtonState == 0 &&
+				if (_isLeftMouseClicked && _cursor.getY() > 0x28 && !_player->_actionToPerform) { // prevLeftMouseButtonState == 0 &&
 					if (_actionMode == PointerAction) {
 						_player->calculateWalkTarget();
 						_player->playerFaceWalkTarget();
@@ -569,14 +576,14 @@ void DarkseedEngine::handleInput() {
 
 							_cursor.updatePosition(currentCursorPos.x, currentCursorPos.y);
 							_player->playerFaceWalkTarget();
-							_player->isPlayerWalking_maybe = true;
+							_player->_actionToPerform = true;
 						}
 					}
 				}
 				int xDistToTarget = ABS(_player->_walkTarget.x - _player->_position.x);
 				int yDistToTarget = ABS(_player->_walkTarget.y - _player->_position.y);
 
-				if (_isRightMouseClicked && !_player->isPlayerWalking_maybe) {
+				if (_isRightMouseClicked && !_player->_actionToPerform) {
 					if (_actionMode == LookAction) {
 						_actionMode = PointerAction;
 					} else if (_actionMode == PointerAction) {
@@ -596,7 +603,7 @@ void DarkseedEngine::handleInput() {
 				}
 				_room->calculateScaledSpriteDimensions(_player->getWidth(), _player->getHeight(), _player->_position.y);
 
-				if (_player->isAtWalkTarget() && _player->_heroMoving && !_player->isPlayerWalking_maybe) {
+				if (_player->isAtWalkTarget() && _player->_heroMoving && !_player->_actionToPerform) {
 					if (useDoorTarget) {
 						_player->changeDirection(_player->_direction, targetPlayerDirection);
 						useDoorTarget = false;
@@ -752,7 +759,7 @@ void DarkseedEngine::handleInput() {
 						}
 					}
 				}
-				if (_player->isAtWalkTarget() && _player->isPlayerWalking_maybe) {
+				if (_player->isAtWalkTarget() && _player->_actionToPerform) {
 					if (_player->_sequenceRotation != -1) {
 						_player->changeDirection(_player->_direction, _player->_sequenceRotation);
 						_player->updateSprite();
@@ -760,7 +767,7 @@ void DarkseedEngine::handleInput() {
 						return;
 					}
 					_player->_heroMoving = false;
-					_player->isPlayerWalking_maybe = false;
+					_player->_actionToPerform = false;
 					// TODO complete at final destination logic. 2022:879d
 					Common::Point currentCursorPos = _cursor.getPosition();
 					if (_player->_walkToSequence) {
@@ -910,7 +917,7 @@ void DarkseedEngine::handleInput() {
 						}
 						_doorEnabled = false;
 						if (_player->_isAutoWalkingToBed && _player->isAtWalkTarget()) {
-							_player->updateBedAutoWalkSequence();
+							_player->setplayertowardsbedroom();
 						}
 					} else {
 						if (_player->_walkTarget.x < _player->_position.x) {
@@ -960,7 +967,7 @@ void DarkseedEngine::handleInput() {
 	} else {
 		updateAnimation();
 		if (!isPlayingAnimation_maybe && _player->_isAutoWalkingToBed) {
-			_player->updateBedAutoWalkSequence();
+			_player->setplayertowardsbedroom();
 		}
 	}
 }
@@ -1631,9 +1638,9 @@ void DarkseedEngine::updateAnimation() {
 				_previousRoomNumber = 6;
 				changeToRoom(5);
 			}
-//			if (isAutoWalkingToBed != False) {
-//				_player->updateBedAutoWalkSequence();
-//			}
+			if (_player->_isAutoWalkingToBed) {
+				_player->setplayertowardsbedroom();
+			}
 		}
 		break;
 	case 7: // stairs down
@@ -1922,7 +1929,7 @@ void DarkseedEngine::updateAnimation() {
 		}
 		break;
 	case 36:
-	case 37:
+	case 37: // smash mirror
 		advanceAnimationFrame(otherNspAnimationType_maybe - 36);
 		_player->_frameIdx = _player->_animations.getAnimAt(otherNspAnimationType_maybe - 36).frameNo[animIndexTbl[otherNspAnimationType_maybe - 36]];
 		if (animFrameChanged && otherNspAnimationType_maybe == 36 && _player->_frameIdx == 4) {
@@ -2717,7 +2724,7 @@ void DarkseedEngine::initDelbertAtSide() {
 	if (!isPlayingAnimation_maybe || otherNspAnimationType_maybe != 26) {
 		_player->_heroMoving = false;
 		_player->_walkTarget = _player->_position;
-		//*(undefined *)&_ActionToPerform = 0; TODO
+		_player->_actionToPerform = false;
 	}
 }
 

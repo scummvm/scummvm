@@ -303,10 +303,6 @@ void Darkseed::Player::updatePlayerPositionAfterRoomChange() {
 	}
 }
 
-void Darkseed::Player::updateBedAutoWalkSequence() {
-	// TODO updateBedAutoWalkSequence.
-}
-
 void Darkseed::Player::createConnectorPathToDest() {
 	constexpr Common::Point noConnectorFound(-1,-1);
 	Common::Point origWalkTarget = _walkTarget;
@@ -437,6 +433,45 @@ void Darkseed::Player::OptimisePath() {
 	}
 }
 
+static constexpr uint8 _closerroom[10] = {
+	0, 5, 0, 9,
+	0, 0, 5, 6,
+	7, 6
+};
+
 void Darkseed::Player::setplayertowardsbedroom() {
-	// TODO
+	if (g_engine->isPlayingAnimation_maybe) {
+		return;
+	}
+	Common::Point currentCursor = g_engine->_cursor.getPosition();
+	uint8 currentRoomNumber = g_engine->_room->_roomNumber;
+	if (currentRoomNumber == 0) {
+		Common::Point target = {223, 190};
+		g_engine->_cursor.setPosition(target);
+	} else {
+		uint8 local_a = 0;
+		if (currentRoomNumber < 10) {
+			local_a = _closerroom[currentRoomNumber];
+		} else if (currentRoomNumber == 13) {
+			local_a = 61;
+		} else if (currentRoomNumber == 61) {
+			local_a = 5;
+		} else if (currentRoomNumber == 62) {
+			local_a = 8;
+		}
+		if (currentRoomNumber == 6 && g_engine->_objectVar[137] == 2) {
+			local_a = 10;
+		}
+
+		Common::Point exitPosition = g_engine->_room->getExitPointForRoom(local_a);
+		g_engine->_cursor.setPosition(exitPosition);
+		uint16 exitObjNum = g_engine->_room->getRoomExitAtCursor();
+		g_engine->_room->getWalkTargetForObjectType_maybe(exitObjNum);
+
+		g_engine->_cursor.setPosition(_walkTarget);
+	}
+
+	calculateWalkTarget();
+	playerFaceWalkTarget();
+	g_engine->_cursor.setPosition(currentCursor);
 }
