@@ -555,6 +555,9 @@ bool qdAnimation::qda_load(Common::Path fpath) {
 		tile_flag = fh->readByte();
 	}
 
+	if (version > 104)
+		warning("qdAnimation::qda_load(): Animation version > 104: %d, '%s'", version, transCyrillic(fpath.toString()));
+
 	if (!tile_flag) {
 		if (num_scales) {
 			_scales.resize(num_scales);
