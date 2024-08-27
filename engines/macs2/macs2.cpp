@@ -490,6 +490,12 @@ void Macs2Engine::ReadBackgroundAnimations(Common::MemoryReadStream *stream) {
 		uint16 unknown2 = stream->readByte();
 		// Local offset +Fh
 		uint16 unknown3 = stream->readByte();
+
+		// Initialize the blob
+		// TODO: There is a lot more going on in the function that does this. It is around
+		// -- Caller (1): 01e7:7a5b
+		// --Caller(2) : 01e7 : 8820
+		Macs2::BackgroundAnimationBlob::Func1480(currentBlob.Blob, true, 0x64 + current.numFrames);
 	}
 }
 
@@ -1288,7 +1294,7 @@ AnimFrame BackgroundAnimationBlob::GetFrame(uint32 index) {
 
 AnimFrame BackgroundAnimationBlob::GetCurrentFrame() {
 	// TODO: Check the arguments used by the original
-	uint16 offset = Func1480(Blob, true, 0x2);
+	uint16 offset = Func1480(Blob, true, 0x0);
 	Common::MemoryReadStream* stream = new Common::MemoryReadStream(Blob.data(), Blob.size());
 	offset += 6;
 	stream->seek(offset);
