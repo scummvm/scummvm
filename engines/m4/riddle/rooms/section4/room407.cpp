@@ -224,7 +224,7 @@ void Room407::init() {
 				"407 COMBINATION LOCK POPUP", 0, 0, 0, 100, 0x200);
 			disableHotspots();
 			hotspot_set_active(" ", true);
-			_comboLockNumerals = series_load("407 COMBINATION LOCK NUMERALS");
+			_407pu08a = series_load("407 COMBINATION LOCK NUMERALS");
 			_407pu08b = series_load("407PU08B");
 			_407pu08c = series_load("407PU08C");
 			_407pu08d = series_load("407PU08D");
@@ -238,17 +238,17 @@ void Room407::init() {
 			_lockButton4 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
 				triggerMachineByHashCallbackNegative, "LOCK button 4");
 
-			sendWSMessage_10000(1, _lockButton1, _comboLockNumerals,
+			sendWSMessage_10000(1, _lockButton1, _407pu08a,
 				_buttonFrame1 * 2 + 1, _buttonFrame1 * 2 + 1, -1,
-				_comboLockNumerals, _buttonFrame1 * 2 + 1,
+				_407pu08a, _buttonFrame1 * 2 + 1,
 				_buttonFrame1 * 2 + 1, 0);
-			sendWSMessage_10000(1, _lockButton2, _comboLockNumerals,
+			sendWSMessage_10000(1, _lockButton2, _407pu08a,
 				_buttonFrame1 * 2 + 1, _buttonFrame1 * 2 + 1, -1,
-				_comboLockNumerals, _buttonFrame1 * 2 + 1,
+				_407pu08a, _buttonFrame1 * 2 + 1,
 				_buttonFrame1 * 2 + 1, 0);
-			sendWSMessage_10000(1, _lockButton3, _comboLockNumerals,
+			sendWSMessage_10000(1, _lockButton3, _407pu08a,
 				_buttonFrame1 * 2 + 1, _buttonFrame1 * 2 + 1, -1,
-				_comboLockNumerals, _buttonFrame1 * 2 + 1,
+				_407pu08a, _buttonFrame1 * 2 + 1,
 				_buttonFrame1 * 2 + 1, 0);
 
 			hotspot_set_active("BUTTON", true);
@@ -317,7 +317,7 @@ void Room407::init() {
 		_buttonFrame2 = 0;
 		_buttonFrame3 = 0;
 		_buttonFrame4 = 0;
-		_int14 = 0;
+		_codeCorrect = false;
 
 		_bottle = series_place_sprite("407BOTLE", 0, 0, -53, 100, 0xf00);
 		_chart = series_place_sprite("407CHART", 0, 0, -53, 100, 0xf00);
@@ -954,7 +954,92 @@ void Room407::parser() {
 		faucetHandleAirValve();
 	} else if (player_said("FAUCET PIPE", "FAUCET HANDLE") &&
 			_val9 == 1000 && _val8 == 1100) {
-		faucetPipeFaucetHandle();
+		faucetPipeFaucetHandle1();
+	} else if (player_said("FAUCET PIPE", "FAUCET HANDLE") &&
+			_val8 == 1000 && _val9 == 1100 && _xyzzy3 != 1130) {
+		faucetPipeFaucetHandle2();
+	} else if ((player_said("FAUCET PIPE", "FAUCET STEM") ||
+			player_said("FAUCET PIPE/TUBE", "FAUCET STEM") ||
+			player_said("FAUCET PIPE/TUBE", "FAUCET HANDLE") ||
+			player_said("FAUCET PIPE/TUBE", "SINK") ||
+			player_said("FAUCET PIPE", "SINK")) ||
+			_xyzzy3 != 1130) {
+		faucetPipeFaucetHandle2();
+	} else if (player_said("FAUCET HANDLE", "FAUCET STEM") && _val9 == 1000) {
+		faucetPipeFaucetHandle1();
+	} else if (player_said("PUMP ROD", "PUMP") && _xyzzy1 == 1000) {
+		pumpRodPump();
+	} else if ((player_said("PUMP GRIPS", "PUMP") ||
+			player_said("PUMP GRIPS", "PUMP ROD"))
+			&& _xyzzy1 == 1115) {
+		pumpGripsPump();
+	} else if (player_said("RUBBER PLUG", "SINK")) {
+		digi_play("407R35", 1);
+	} else if (player_said("FAUCET PIPE", "GLASS JAR") ||
+		player_said("FAUCET PIPE", "IRON SUPPORT")) {
+		digi_play("407R67", 1);
+
+	} else if (useFlag && player_said(" ")) {
+		switch (imath_ranged_rand(1, 3)) {
+		case 1:
+			digi_play("com006", 1);
+			break;
+		case 2:
+			digi_play("com011", 1);
+			break;
+		case 3:
+			digi_play("com018", 1);
+			break;
+		default:
+			break;
+		}
+	} else if (useFlag && player_said("BUTTON")) {
+		useButton1();
+	} else if (useFlag && player_said("BUTTON ")) {
+		useButton2();
+	} else if (useFlag && player_said("BUTTON  ")) {
+		useButton3();
+	} else if (useFlag && player_said("BUTTON   ")) {
+		useButton4();
+	} else if (useFlag && player_said("BUTTONS")) {
+		useButtons();
+	} else if (useFlag && player_said("LEVER KEY  ") &&
+			_val10 == 1114 && _xyzzy7 != 1114 && _xyzzy7 != 1140) {
+		useLeverKey();
+	} else if (useFlag && player_said_any("FAUCET HANDLE", "FAUCET STEM") &&
+			_val10 == 1100 && inv_object_is_here("FAUCET HANDLE")) {
+		if (_frotz2) {
+			digi_play("407r99e", 1);
+		} else if (_val8 == 1100) {
+			if (_xyzzy6 == 1120)
+				digi_play("407r99o", 1);
+			else
+				useFaucet();
+		} else if (_xyzzy3 == 1130 && _val8 != 1130) {
+			if (_xyzzy6 == 1120)
+				digi_play("407r99o", 1);
+			else
+				useFaucet();
+		} else if (_frotz1) {
+			useFaucet();
+		} else if (_val8 == 1100 || _xyzzy3 == 1130 || _frotz1) {
+			digi_play("407r99e", 1);
+		} else {
+			digi_play("407r99n", 1);
+		}
+	} else if (useFlag && player_said("AIR VALVE/HANDLE")
+			&& _val9 == 1110 && inv_object_is_here("FAUCET HANDLE")) {
+		if (inv_object_is_here("EMERALD/CORK") || _val6 != 1110 ||
+				_xyzzy7 != 1112 || _val7 != 1021) {
+			useValveHandle();
+		} else {
+			digi_play("com090a", 1);
+		}
+	} else if (useFlag && player_said_any("PUMP GRIPS ", "PUMP", "PUMP ROD")
+			&& usePump()) {
+		// No implementation
+	} else if (useFlag && player_said("DRAWER")) {
+		// TODO
 	}
 	// TODO
 	else {
@@ -2350,7 +2435,7 @@ void Room407::faucetHandleAirValve() {
 	}
 }
 
-void Room407::faucetPipeFaucetHandle() {
+void Room407::faucetPipeFaucetHandle1() {
 	switch (_G(kernel).trigger) {
 	case -1:
 		reachHand(10);
@@ -2373,6 +2458,563 @@ void Room407::faucetPipeFaucetHandle() {
 	case 4:
 		series_unload(_ripMedHand1);
 		_val9 = 1100;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::faucetPipeFaucetHandle2() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		reachHand(10);
+		break;
+
+	case 1:
+		_faucet1 = series_place_sprite("407FAUC", 2, 0, 0, 100, 0xe00);
+		inv_move_object("FAUCET PIPE", 407);
+		hotspot_set_active("FAUCET PIPE", true);
+
+		if (_xyzzy3 == 1061) {
+			_tubeInDrawer = series_place_sprite("407 TUBING BY ITSELF",
+				1, 0, 0, 100, 0xb00);
+			hotspot_set_active("SURGICAL TUBE   ", true);
+			_xyzzy3 = 1100;
+			inv_move_object("FAUCET PIPE/TUBE", 407);
+		}
+
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripMedHand1);
+		_val8 = 1100;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::pumpRodPump() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_pump407 = series_load("407 PUMP");
+		player_update_info();
+		_safariShadow = series_place_sprite("SAFARI SHADOW 1", 0,
+			_G(player_info).x, _G(player_info).y,
+			_G(player_info).scale, 0xf00);
+
+		ws_hide_walker();
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+			triggerMachineByHashCallbackNegative, "RIP pumps");
+		sendWSMessage_10000(1, _ripley, _pump407, 1, 40, 1,
+			_pump407, 40, 40, 0);
+		kernel_timing_trigger(150, 69);
+		break;
+
+	case 1:
+		_pump = series_place_sprite("407pump", 0, 0, -53, 100, 0xf00);
+		inv_move_object("PUMP ROD", 407);
+		hotspot_set_active("PUMP ROD", true);
+		sendWSMessage_10000(1, _ripley, _pump407, 40, 1, 4,
+			_pump407, 1, 1, 0);
+		break;
+
+	case 4:
+		terminateMachineAndNull(_ripley);
+		terminateMachineAndNull(_safariShadow);
+		ws_unhide_walker();
+		series_unload(_pump407);
+		_xyzzy1 = 1115;
+		player_set_commands_allowed(true);
+		break;
+
+	case 69:
+		digi_play("407_s07", 2);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::pumpGripsPump() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_pump407 = series_load("407 PUMP");
+		player_update_info();
+		_safariShadow = series_place_sprite("SAFARI SHADOW 1", 0,
+			_G(player_info).x, _G(player_info).y,
+			_G(player_info).scale, 0xf00);
+		ws_hide_walker();
+
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+			triggerMachineByHashCallbackNegative, "RIP pumps");
+		sendWSMessage_10000(1, _ripley, _pump407, 1, 40, 1,
+			_pump407, 40, 40, 0);
+		kernel_timing_trigger(180, 69);
+		break;
+
+	case 1:
+		_handleInDrawer = series_place_sprite("407pump", 1, 0, -53, 100, 0xe00);
+		inv_move_object("PUMP GRIPS", 407);
+		hotspot_set_active("PUMP GRIPS ", true);
+		sendWSMessage_10000(1, _ripley, _pump407, 40, 1, 4,
+			_pump407, 1, 1, 0);
+		break;
+
+	case 4:
+		terminateMachineAndNull(_ripley);
+		terminateMachineAndNull(_safariShadow);
+		ws_unhide_walker();
+		series_unload(_pump407);
+		_xyzzy4 = 1115;
+		player_set_commands_allowed(true);
+		break;
+
+	case 69:
+		digi_play("407_s07", 2);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::useButton1() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		sendWSMessage_10000(1, _lockButton1,
+			_407pu08a, _buttonFrame1 * 2 + 2,
+			_buttonFrame1 * 2 + 2, 1,
+			_407pu08a, _buttonFrame1 * 2 + 2,
+			_buttonFrame1 * 2 + 2, 0);
+		digi_play("407_s26", 2);
+		break;
+
+	case 1:
+		if (++_buttonFrame1 == 10)
+			_buttonFrame1 = 0;
+
+		sendWSMessage_10000(1, _lockButton1,
+			_407pu08a, _buttonFrame1 * 2 + 1,
+			_buttonFrame1 * 2 + 1, 2,
+			_407pu08a, _buttonFrame1 * 2 + 1,
+			_buttonFrame1 * 2 + 1, 0);
+		break;
+
+	case 2:
+		if (_buttonFrame1 == 3)
+			checkCode();
+
+		if (_codeCorrect) {
+			kernel_timing_trigger(1, 360, KT_DAEMON, KT_PARSE);
+		} else {
+			player_set_commands_allowed(true);
+		}
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::useButton2() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		sendWSMessage_10000(1, _lockButton2,
+			_407pu08b, _buttonFrame2 * 2 + 2,
+			_buttonFrame2 * 2 + 2, 1,
+			_407pu08b, _buttonFrame2 * 2 + 2,
+			_buttonFrame2 * 2 + 2, 0);
+		digi_play("407_s26", 2);
+		break;
+
+	case 1:
+		if (++_buttonFrame2 == 10)
+			_buttonFrame2 = 0;
+
+		sendWSMessage_10000(1, _lockButton2,
+			_407pu08b, _buttonFrame2 * 2 + 1,
+			_buttonFrame2 * 2 + 1, 2,
+			_407pu08b, _buttonFrame2 * 2 + 1,
+			_buttonFrame2 * 2 + 1, 0);
+		break;
+
+	case 2:
+		if (_buttonFrame2 == 4)
+			checkCode();
+
+		if (_codeCorrect) {
+			kernel_timing_trigger(1, 360, KT_DAEMON, KT_PARSE);
+		} else {
+			player_set_commands_allowed(true);
+		}
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::useButton3() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		sendWSMessage_10000(1, _lockButton3,
+			_407pu08c, _buttonFrame3 * 2 + 2,
+			_buttonFrame3 * 2 + 2, 1,
+			_407pu08c, _buttonFrame3 * 2 + 2,
+			_buttonFrame3 * 2 + 2, 0);
+		digi_play("407_s26", 2);
+		break;
+
+	case 1:
+		if (++_buttonFrame3 == 1)
+			_buttonFrame3 = 0;
+
+		sendWSMessage_10000(1, _lockButton3,
+			_407pu08c, _buttonFrame3 * 2 + 1,
+			_buttonFrame3 * 2 + 1, 2,
+			_407pu08c, _buttonFrame3 * 2 + 1,
+			_buttonFrame3 * 2 + 1, 0);
+		break;
+
+	case 2:
+		if (_buttonFrame3 == 4)
+			checkCode();
+
+		if (_codeCorrect) {
+			kernel_timing_trigger(1, 360, KT_DAEMON, KT_PARSE);
+		} else {
+			player_set_commands_allowed(true);
+		}
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::useButton4() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		sendWSMessage_10000(1, _lockButton4,
+			_407pu08d, _buttonFrame4 * 2 + 2,
+			_buttonFrame4 * 2 + 2, 1,
+			_407pu08d, _buttonFrame4 * 2 + 2,
+			_buttonFrame4 * 2 + 2, 0);
+		digi_play("407_s26", 2);
+		break;
+
+	case 1:
+		if (++_buttonFrame4 == 10)
+			_buttonFrame4 = 0;
+
+		sendWSMessage_10000(1, _lockButton4,
+			_407pu08d, _buttonFrame4 * 2 + 1,
+			_buttonFrame4 * 2 + 1, 2,
+			_407pu08d, _buttonFrame4 * 2 + 1,
+			_buttonFrame4 * 2 + 1, 0);
+		break;
+
+	case 2:
+		if (_buttonFrame4 == 1)
+			checkCode();
+
+		if (_codeCorrect) {
+			kernel_timing_trigger(1, 360, KT_DAEMON, KT_PARSE);
+		} else {
+			player_set_commands_allowed(true);
+		}
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::checkCode() {
+	if (_buttonFrame1 == 3 && _buttonFrame2 == 4 &&
+		_buttonFrame3 == 1 && _buttonFrame4 == 1)
+		_codeCorrect = true;
+}
+
+void Room407::useButtons() {
+	if (_G(kernel).trigger == -1) {
+		player_set_commands_allowed(false);
+		_int7 = 1030;
+		_comboLockPopup = series_place_sprite("407 COMBINATION LOCK POPUP",
+			0, 0, 0, 100, 0x200);
+		disableHotspots();
+		hotspot_set_active(" ", true);
+
+		_407pu08a = series_load("407 COMBINATION LOCK NUMERALS");
+		_407pu08b = series_load("407PU08B");
+		_407pu08c = series_load("407PU08C");
+		_407pu08d = series_load("407PU08D");
+
+		_lockButton1 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+			triggerMachineByHashCallbackNegative, "LOCK button 1");
+		_lockButton2 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+			triggerMachineByHashCallbackNegative, "LOCK button 2");
+		_lockButton3 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+			triggerMachineByHashCallbackNegative, "LOCK button 3");
+		_lockButton4 = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+			triggerMachineByHashCallbackNegative, "LOCK button 4");
+
+		int frame1 = _buttonFrame1 * 2 + 1;
+		int frame2 = _buttonFrame2 * 2 + 1;
+		int frame3 = _buttonFrame3 * 2 + 1;
+		int frame4 = _buttonFrame4 * 2 + 1;
+		sendWSMessage_10000(1, _lockButton1, _407pu08a, frame1, frame1, -1,
+			_407pu08a, frame1, frame1, 0);
+		sendWSMessage_10000(1, _lockButton2, _407pu08b, frame2, frame2, -1,
+			_407pu08b, frame2, frame2, 0);
+		sendWSMessage_10000(1, _lockButton1, _407pu08c, frame3, frame3, -1,
+			_407pu08c, frame3, frame3, 0);
+		sendWSMessage_10000(1, _lockButton1, _407pu08d, frame4, frame4, -1,
+			_407pu08d, frame4, frame4, 0);
+
+		hotspot_set_active("BUTTON", true);
+		hotspot_set_active("BUTTON ", true);
+		hotspot_set_active("BUTTON  ", true);
+		hotspot_set_active("BUTTON   ", true);
+		player_set_commands_allowed(true);
+	}
+}
+
+void Room407::useLeverKey() {
+	switch (_G(kernel).trigger) {
+	case 1:
+		_hangRip = series_load("407 HANG RIP");
+		terminateMachineAndNull(_niche);
+		terminateMachineAndNull(_cpist);
+		terminateMachineAndNull(_lever);
+
+		player_update_info();
+		_safariShadow = series_place_sprite("SAFARI SHADOW 1", 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
+		ws_hide_walker();
+
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+			triggerMachineByHashCallbackNegative, "RIP hangs from lever");
+		sendWSMessage_10000(1, _ripley, _hangRip, 1, 25, 2,
+			_hangRip, 25, 25, 0);
+		break;
+
+	case 2:
+		sendWSMessage_10000(1, _ripley, _hangRip, 25, 63, 3,
+			_hangRip, 63, 63, 0);
+		digi_play("407_s23", 2);
+		break;
+
+	case 3:
+		terminateMachineAndNull(_ripley);
+		terminateMachineAndNull(_safariShadow);
+		ws_unhide_walker();
+
+		_niche = series_place_sprite("407NICH", 0, 0, -53, 100, 0xf00);
+		_cpist = series_place_sprite("407CPIST", 0, 0, -53, 100, 0xf00);
+		_lever = series_place_sprite("407LEVRW", 1, 0, -53, 100, 0xf00);
+		series_unload(_hangRip);
+		player_set_commands_allowed(true);
+		break;
+
+	case 777:
+		player_set_commands_allowed(false);
+		ws_walk(466, 330, nullptr, 1, 1);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::useFaucet() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		reachHand(10);
+		break;
+
+	case 1:
+		digi_play("407_s04", 2);
+		terminateMachineAndNull(_faucet2);
+
+		if (_val4 != 1010) {
+			_val4 = 1010;
+			_faucet2 = series_place_sprite("407FAUC", 0, 0, 0, 100, 0xe00);
+		} else {
+			_val4 = 1011;
+			_faucet2 = series_place_sprite("407FAUC", 1, 0, 0, 100, 0xe00);
+
+			if (_val8 == 1100) {
+				kernel_timing_trigger(1, 430, KT_DAEMON, KT_PARSE);
+			} else if (_xyzzy3 == 1130) {
+				kernel_timing_trigger(1, 440, KT_DAEMON, KT_PARSE);
+			}
+		}
+
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripMedHand1);
+
+		if (_frotz1 && _val4 == 1010)
+			kernel_timing_trigger(1, 320, KT_DAEMON, KT_PARSE);
+		else if (_val4 == 1010 && _val8 == 1100)
+			kernel_timing_trigger(1, 410, KT_DAEMON, KT_PARSE);
+		else if (_xyzzy3 == 1130)
+			kernel_timing_trigger(1, 420, KT_DAEMON, KT_PARSE);
+		else
+			player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::useValveHandle() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		reachHand(4);
+		break;
+
+	case 1:
+		digi_play("407_s13", 2);
+		terminateMachineAndNull(_faucet2);
+
+		if (_val3 != 1011) {
+			_val3 = 1011;
+			_faucet2 = series_place_sprite("407 AIR VALVE HANDLE", 1, 0, 0, 100, 0xe00);
+			digi_play("407r74a", 1);
+		} else {
+			_val3 = 1010;
+			_faucet2 = series_place_sprite("407 AIR VALVE HANDLE", 0, 0, 0, 100, 0xe00);
+
+			if (_val7 == 1021) {
+				_val7 = 1020;
+
+				if (_xyzzy3 == 1117) {
+					_frotz3 = 1;
+					kernel_timing_trigger(1, 20, KT_DAEMON, KT_PARSE);
+				} else {
+					digi_play("407_s09", 2);
+					digi_play("407r76", 1);
+				}
+			} else {
+				digi_play("407r74", 1);
+			}
+		}
+
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripMedHand1);
+
+		if (_frotz3)
+			_frotz3 = 0;
+		else
+			player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+bool Room407::usePump() {
+	if (_val7 != 1020) {
+		digi_play("407r70", 1);
+	} else if (_xyzzy1 == 1115 && _xyzzy4 == 1115) {
+		if (inv_object_is_here("EMERALD/CORK") || _xyzzy7 != 1112 ||
+				_val6 != 1010) {
+			usePump2();
+		} else {
+			digi_play("com090a", 1);
+		}
+	} else if (_xyzzy1 == 1115) {
+		digi_play("407r72", 1);
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+void Room407::usePump2() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_pump407 = series_load("407 PUMP");
+
+		player_update_info();
+		_safariShadow = series_place_sprite("SAFARI SHADOW 1", 0,
+			_G(player_info).x, _G(player_info).y,
+			_G(player_info).scale, 0xf00);
+		ws_hide_walker();
+
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+			triggerMachineByHashCallbackNegative, "RIP pumps");
+		sendWSMessage_10000(1, _ripley, _pump407, 81, 62, 1,
+			_pump407, 62, 62, 0);
+		_val11 = 1;
+		break;
+
+	case 1:
+		digi_play("407_s11", 2);
+		sendWSMessage_10000(1, _ripley, _pump407, 62, 46, 2,
+			_pump407, 46, 46, 0);
+		break;
+
+	case 2:
+		sendWSMessage_10000(1, _ripley, _pump407, 46, 66, 3,
+			_pump407, 66, 66, 0);
+		break;
+
+	case 3:
+		sendWSMessage_10000(1, _ripley, _pump407, 67, 81, 4,
+			_pump407, 81, 81, 0);
+		break;
+
+	case 4:
+		_handleInDrawer = series_place_sprite("407pump", 1, 0, -53, 100, 0xf00);
+		terminateMachineAndNull(_ripley);
+		terminateMachineAndNull(_safariShadow);
+		ws_unhide_walker();
+		series_unload(_pump407);
+
+		if (_val3 == 1011) {
+			_val7 = 1021;
+			digi_play("407r69", 1);
+		} else {
+			digi_play("407r71", 1);
+		}
+
 		player_set_commands_allowed(true);
 		break;
 

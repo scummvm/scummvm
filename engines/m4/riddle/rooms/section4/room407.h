@@ -71,7 +71,8 @@ private:
 	int _buttonFrame2 = 0;
 	int _buttonFrame3 = 0;
 	int _buttonFrame4 = 0;
-	int _int14 = 0;
+	bool _codeCorrect = false;
+	int _val11 = 0;
 	int _val15 = 0;
 	int _val16 = 0;
 	int _waterFlowTube = 0;
@@ -112,7 +113,7 @@ private:
 	machine *_roofPistonWithItems = nullptr;
 	machine *_glassGone = nullptr;
 	machine *_comboLockPopup = nullptr;
-	int _comboLockNumerals = 0;
+	int _407pu08a = 0;
 	int _407pu08b = 0;
 	int _407pu08c = 0;
 	int _407pu08d = 0;
@@ -134,6 +135,8 @@ private:
 	int _rollStuff = 0;
 	int _407rp98 = 0;
 	int _407rp99 = 0;
+	int _pump407 = 0;
+	int _hangRip = 0;
 
 	void setHotspots();
 	void lookItem(const char *item, const char *digi);
@@ -173,7 +176,21 @@ private:
 	void leverKey1();
 	void leverKey2();
 	void faucetHandleAirValve();
-	void faucetPipeFaucetHandle();
+	void faucetPipeFaucetHandle1();
+	void faucetPipeFaucetHandle2();
+	void pumpRodPump();
+	void pumpGripsPump();
+	void useButton1();
+	void useButton2();
+	void useButton3();
+	void useButton4();
+	void checkCode();
+	void useButtons();
+	void useLeverKey();
+	void useFaucet();
+	void useValveHandle();
+	bool usePump();
+	void usePump2();
 
 public:
 	Room407() : Room() {}
