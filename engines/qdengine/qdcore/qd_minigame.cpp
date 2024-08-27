@@ -35,6 +35,7 @@
 
 // maski
 #include "qdengine/minigames/kartiny.h"
+#include "qdengine/minigames/scroll.h"
 #include "qdengine/minigames/tetris.h"
 
 // 2mice1
@@ -269,8 +270,11 @@ bool qdMiniGame::load_interface() {
 		// maski_21_random.dll
 		// orchestra.dll
 		// scroll.dll
-		if (_dll_name == "DLL\\tetris.dll") {
+		if (_dll_name == "Resource\\DLL\\tetris.dll") {
 			_interface = new qdTetrisMiniGame();
+			return true;
+		} else if (_dll_name == "Resource\\DLL\\scroll.dll") {
+			_interface = new qdScrollMiniGame();
 			return true;
 
 		// 3mice1
