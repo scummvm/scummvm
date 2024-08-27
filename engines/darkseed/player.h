@@ -45,7 +45,7 @@ public:
 	int16 playerWalkFrameDeltaOffset = 0;
 	int16 playerNewFacingDirection_maybe = 0;
 	uint16 playerWalkFrameIdx = 0;
-	bool isPlayerWalking_maybe = false; // player is pathfinding to some destination?
+	bool _actionToPerform = false; // player is pathfinding to some destination?
 	bool _playerIsChangingDirection = false; // AKA _Rotating
 	bool _isAutoWalkingToBed = false;
 	bool _heroMoving = false; // maybe set to true while player is walking around the room.
@@ -73,7 +73,6 @@ public:
 	int getWidth();
 	int getHeight();
 	void updatePlayerPositionAfterRoomChange();
-	void updateBedAutoWalkSequence();
 	void setplayertowardsbedroom();
 	void walkToNextConnector();
 

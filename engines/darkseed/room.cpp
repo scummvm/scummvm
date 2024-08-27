@@ -1335,3 +1335,12 @@ void Darkseed::Room::darkenSky() {
 void Darkseed::Room::loadLocationSprites(const Common::Path &path) {
 	_locationSprites.load(path);
 }
+
+Common::Point Darkseed::Room::getExitPointForRoom(uint8 roomNumber) {
+	for (int i = 0; i < room1.size(); i++) {
+		if (room1[i].roomNumber == roomNumber) {
+			return Common::Point(room1[i].x, room1[i].y);
+		}
+	}
+	return Common::Point();
+}

@@ -105,6 +105,7 @@ public:
 	void restorePalette();
 	void darkenSky();
 	void loadLocationSprites(const Common::Path &path);
+	Common::Point getExitPointForRoom(uint8 roomNumber);
 private:
 	bool load();
 	static Common::String stripSpaces(Common::String source);
