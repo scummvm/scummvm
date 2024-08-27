@@ -86,7 +86,7 @@ bool wavSound::wav_file_load(const Common::Path fpath) {
 		int blockAlign;
 
 		if (!Audio::loadWAVFromStream(*stream, size, rate, flags, &type, &blockAlign)) {
-			warning("Error loading wav file header: '%s", fpath.toString().c_str());
+			warning("Error loading wav file header: '%s", transCyrillic(fpath.toString()));
 			delete stream;
 			return false;
 		}
