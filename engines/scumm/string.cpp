@@ -529,8 +529,8 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 			endLoop = endText = true;
 			break;
 		default:
-			// Ignore the control code, reset the buffer position...
-			buffer--;
+			// Ignore the control code...
+			warning("ScummEngine_v72he::handleNextCharsetCode(): Ignoring invalid control code");
 		}
 	}
 	_charsetBufPos = buffer - _charsetBuffer;
@@ -1499,8 +1499,8 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 					}
 					break;
 				default:
-					// Invalid control code. Just print the character...
-					*dst++ = chr;
+					// Invalid control code. Just ignore it and set the buffer index where it should be...
+					num -= 2;
 				}
 				num += (_game.version == 8) ? 4 : 2;
 			}
