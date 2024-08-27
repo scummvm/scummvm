@@ -35,6 +35,7 @@
 
 // maski
 #include "qdengine/minigames/kartiny.h"
+#include "qdengine/minigames/masky_order.h"
 #include "qdengine/minigames/scroll.h"
 #include "qdengine/minigames/tetris.h"
 
@@ -275,6 +276,9 @@ bool qdMiniGame::load_interface() {
 			return true;
 		} else if (_dll_name == "Resource\\DLL\\scroll.dll") {
 			_interface = new qdScrollMiniGame();
+			return true;
+		} else if (_dll_name == "Resource\\DLL\\MaskyOrder.dll") {
+			_interface = new qdMaskyOrderMiniGame();
 			return true;
 
 		// 3mice1
