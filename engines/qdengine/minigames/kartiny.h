@@ -29,10 +29,10 @@
 
 namespace QDEngine {
 
-class qdKartinyMiniGameInterface : public qdMiniGameInterface {
+class qdKartinyMiniGame : public qdMiniGameInterface {
 public:
-	qdKartinyMiniGameInterface() {}
-	~qdKartinyMiniGameInterface() {}
+	qdKartinyMiniGame() {}
+	~qdKartinyMiniGame() {}
 
 	bool init(const qdEngineInterface *engine_interface) {
 		debugC(1, kDebugMinigames, "Kartiny::init()");

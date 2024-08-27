@@ -173,10 +173,10 @@ const float bookBuhtaCZ[95 * 2] = {
 	 0.000f,  0.000f,  0.000f,  0.000f,  0.000f,
 };
 
-class qdBookAllMiniGameInterface : public qdMiniGameInterface {
+class qdBookAllMiniGame : public qdMiniGameInterface {
 public:
-	qdBookAllMiniGameInterface(Common::String dll, Common::Language language) : _dll(dll), _language(language) {}
-	~qdBookAllMiniGameInterface() { };
+	qdBookAllMiniGame(Common::String dll, Common::Language language) : _dll(dll), _language(language) {}
+	~qdBookAllMiniGame() { };
 
 	//! Инициализация игры.
 	bool init(const qdEngineInterface *engine_interface) {

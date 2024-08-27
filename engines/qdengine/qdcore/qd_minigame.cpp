@@ -273,13 +273,13 @@ bool qdMiniGame::load_interface() {
 		// 3mice1
 		if (_dll_name == "DLL\\Book_gusenica.dll" || _dll_name == "DLL\\Book_les.dll"
 				|| _dll_name == "DLL\\Book_buhta.dll") {
-			_interface = new qdBookAllMiniGameInterface(_dll_name, g_engine->getLanguage());
+			_interface = new qdBookAllMiniGame(_dll_name, g_engine->getLanguage());
 			return true;
 		} else if (_dll_name == "DLL\\Puzzle_ep01.dll" || _dll_name == "DLL\\Puzzle_ep02.dll"
 				|| _dll_name == "DLL\\Puzzle_ep04.dll" || _dll_name == "DLL\\Puzzle_ep05.dll"
 				|| _dll_name == "DLL\\Puzzle_ep07.dll" || _dll_name == "DLL\\Puzzle_ep08.dll"
 				|| _dll_name == "DLL\\Puzzle_ep13.dll") {
-			_interface = new qdPuzzleAllMiniGameInterface(_dll_name, g_engine->getLanguage());
+			_interface = new qdPuzzleAllMiniGame(_dll_name, g_engine->getLanguage());
 			return true;
 
 		// shveik

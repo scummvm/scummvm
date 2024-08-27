@@ -75,13 +75,13 @@ const int puzzle_ep13[] = {
 	357, 430, 440, 427, 526, 416, 601, 412
 };
 
-class qdPuzzleAllMiniGameInterface : public qdMiniGameInterface {
+class qdPuzzleAllMiniGame : public qdMiniGameInterface {
 public:
-	qdPuzzleAllMiniGameInterface(Common::String dll, Common::Language language) : _dll(dll), _language(language) {
+	qdPuzzleAllMiniGame(Common::String dll, Common::Language language) : _dll(dll), _language(language) {
 		for (uint i = 0; i < ARRAYSIZE(_pieces); i++)
 			_pieces[i] = nullptr;
 	}
-	~qdPuzzleAllMiniGameInterface() {};
+	~qdPuzzleAllMiniGame() {};
 
 	//! Инициализация игры.
 	bool init(const qdEngineInterface *engine_interface) {
