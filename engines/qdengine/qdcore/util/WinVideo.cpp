@@ -73,10 +73,13 @@ void winVideo::set_window(int x, int y, int xsize, int ysize) {
 }
 
 bool winVideo::open_file(const Common::Path fname) {
+	Common::String filename = (char *)transCyrillic(fname.toString());
+	debugC(3, kDebugLoad, "winVideo::open_file(%s)", filename.c_str());
+
 	_videostream = new Common::File();
 
-	if (!_videostream->open(fname)) {
-		warning("WinVideo::open: Failed to open file %s", transCyrillic(fname.toString()));
+	if (!_videostream->open(filename.c_str())) {
+		warning("WinVideo::open: Failed to open file %s", filename.c_str());
 		delete _videostream;
 		return false;
 	}
