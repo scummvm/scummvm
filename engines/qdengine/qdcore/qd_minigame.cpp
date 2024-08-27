@@ -35,6 +35,7 @@
 
 // maski
 #include "qdengine/minigames/kartiny.h"
+#include "qdengine/minigames/tetris.h"
 
 // 2mice1
 #include "qdengine/minigames/book_all.h"
@@ -268,10 +269,12 @@ bool qdMiniGame::load_interface() {
 		// maski_21_random.dll
 		// orchestra.dll
 		// scroll.dll
-		// tetris.dll
+		if (_dll_name == "DLL\\tetris.dll") {
+			_interface = new qdTetrisMiniGame();
+			return true;
 
 		// 3mice1
-		if (_dll_name == "DLL\\Book_gusenica.dll" || _dll_name == "DLL\\Book_les.dll"
+		} else if (_dll_name == "DLL\\Book_gusenica.dll" || _dll_name == "DLL\\Book_les.dll"
 				|| _dll_name == "DLL\\Book_buhta.dll") {
 			_interface = new qdBookAllMiniGame(_dll_name, g_engine->getLanguage());
 			return true;
