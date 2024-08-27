@@ -181,7 +181,6 @@ void DarkseedEngine::gameloop() {
 		}
 		counter_2c85_888b = (counter_2c85_888b + 1) & 0xff;
 		if (systemTimerCounter == 5) {
-			handleInput();
 			if (_objectVar[1] != 0) {
 				if (_room->_roomNumber == 30) {
 					if (!_inventory.hasObject(18)) {
@@ -307,9 +306,29 @@ void DarkseedEngine::gameloop() {
 				gotosleepinjail();
 			}
 			updateDisplay(); // Aka serviceRoom()
+//			if (((*(int *)&_CursorX < 70) || (570 < *(int *)&_CursorX)) && (*(int *)&_DrawCursorNum < 90)) { TODO do we need this restriction?
+//				zeromousebuttons();
+//			}
+			if (_player->_isAutoWalkingToBed ||
+				(_room->_roomNumber == 10 && _player->_position.x < 369 &&
+				  ((_currentDay == 3 && _currentTimeInSeconds > 43200) || _objectVar[88] != 0))) {
+				zeromousebuttons();
+			}
+			if ((_objectVar[141] > 0 && _objectVar[141] < 4) ||
+				_objectVar[141] == 9 ||
+				  _player->_herowaiting || _objectVar[141] == 10 || _objectVar[141] == 8)  {
+				zeromousebuttons();
+			}
+			if (_room->_roomNumber == 32 && _currentDay == 2 &&
+				_currentTimeInSeconds > 64799 && _currentTimeInSeconds < 68401 &&
+				  (_objectVar[141] == 5 || _objectVar[141] == 6 || _objectVar[141] == 4
+					 || _objectVar[141] == 12) && !isPlayingAnimation_maybe) {
+				zeromousebuttons();
+			}
+			updateHeadache();
+			handleInput();
 			_isRightMouseClicked = false;
 			_isLeftMouseClicked = false;
-			updateHeadache();
 		}
 		_room->update();
 		_frame.draw();
@@ -3286,6 +3305,11 @@ void DarkseedEngine::removeFullscreenPic() {
 		_fullscreenPic = nullptr;
 		_room->restorePalette();
 	}
+}
+
+void DarkseedEngine::zeromousebuttons() {
+	_isLeftMouseClicked = false;
+	_isRightMouseClicked = false;
 }
 
 } // End of namespace Darkseed
