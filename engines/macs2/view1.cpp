@@ -193,9 +193,9 @@ View1::View1() : UIElement("View1") {
 
 	void View1::drawBackgroundAnimations(Graphics::ManagedSurface &s) {
 		for (int i = 0; i < g_engine->_numBackgroundAnimations; i++) {
-			if (i != 7) {
+			/*  if (i != 7) {
 				continue;
-			}
+			} */
 			BackgroundAnimation& current = g_engine->_backgroundAnimations[i];
 			BackgroundAnimationBlob &currentBlob = g_engine->_backgroundAnimationsBlobs[i];
 			// AnimFrame &currentFrame = current.Frames[current.FrameIndex];
