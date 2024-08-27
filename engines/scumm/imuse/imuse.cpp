@@ -1360,8 +1360,8 @@ void IMuseInternal::musicVolumeReduction(MidiDriver *midi) {
 		return;
 
 	_musicVolumeReductionTimer += midi->getBaseTempo();
-	while (_musicVolumeReductionTimer >= 16667) {
-		_musicVolumeReductionTimer -= 16667;
+	while (_musicVolumeReductionTimer >= MUS_REDUCTION_TIMER_TICKS) {
+		_musicVolumeReductionTimer -= MUS_REDUCTION_TIMER_TICKS;
 		curVol = _music_volume / factor;
 
 		if (_vm->_sound->speechIsPlaying())

@@ -59,6 +59,8 @@ class  IMuseSysex_Scumm;
 
 #define MDPG_TAG "MDpg"
 
+#define MUS_REDUCTION_TIMER_TICKS 16667 // 60 Hz
+
 
 ////////////////////////////////////////
 //
