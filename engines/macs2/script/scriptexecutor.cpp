@@ -1566,8 +1566,11 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			uint16 interacted1;
 			uint16 interacted2;
 			Func9F4D(interacted1, interacted2);
-			uint16 object2 = Func9F4D_16();
+			// TODO: I had these the other way around before, but switched them for fixing
+			// the stone throw at the start of chapter 2. Not sure if this is really correct
+			// however, it might break other cases of this opcode
 			uint16 object1 = Func9F4D_16();
+			uint16 object2 = Func9F4D_16();
 			// TODO: This one might also do a skip
 			if (!((interacted1 == object1) && (interacted2 == object2))) {
 				// Skip
