@@ -526,7 +526,8 @@ bool qdGameObjectMoving::stop_movement() {
 
 			if (qdAnimationSet * set = wst->animation_set()) {
 				qdAnimationInfo *inf = set->get_stop_animation_info(_direction_angle);
-				if (qdAnimation * anm = inf->animation()) {
+				qdAnimation *anm;
+				if (inf && (anm = inf->animation())) {
 					_movement_mode = MOVEMENT_MODE_END;
 					float phase = get_animation()->cur_time_rel();
 					_movement_mode_time = anm->length() * (1.f - phase);
@@ -666,9 +667,10 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool &end_movement, bool real_
 		if (st && st->state_type() == qdGameObjectState::STATE_WALK) {
 			qdGameObjectStateWalk *wst = static_cast<qdGameObjectStateWalk *>(st);
 
-			if (qdAnimationSet * set = wst->animation_set()) {
+			if (qdAnimationSet *set = wst->animation_set()) {
 				qdAnimationInfo *inf = set->get_start_animation_info(_direction_angle);
-				if (qdAnimation * anm = inf->animation()) {
+				qdAnimation *anm;
+				if (inf && (anm = inf->animation())) {
 					if (real_moving) {
 						_movement_mode = MOVEMENT_MODE_START;
 						_movement_mode_time = anm->length();
@@ -1048,7 +1050,7 @@ bool qdGameObjectMoving::update_screen_pos() {
 				case MOVEMENT_MODE_MOVE:
 					offs_type = qdGameObjectStateWalk::OFFSET_WALK;
 					break;
-				case MOVEMENT_MODE_END:
+			case MOVEMENT_MODE_END:
 					offs_type = qdGameObjectStateWalk::OFFSET_END;
 					break;
 				}
