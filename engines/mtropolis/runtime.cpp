@@ -38,6 +38,8 @@
 #include "audio/mixer.h"
 
 #include "mtropolis/runtime.h"
+#include "mtropolis/coroutine_manager.h"
+#include "mtropolis/coroutines.h"
 #include "mtropolis/data.h"
 #include "mtropolis/vthread.h"
 #include "mtropolis/asset_factory.h"
@@ -3818,93 +3820,109 @@ void Structural::materializeDescendents(Runtime *runtime, ObjectLinkingScope *ou
 	}
 }
 
-VThreadState Structural::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	if (Event(EventIDs::kUnpause, 0).respondsTo(msg->getEvent())) {
-		if (_paused) {
-			_paused = false;
-			onPauseStateChanged();
-		}
-
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kUnpause, 0), DynamicValue(), getSelfReference()));
-		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-		runtime->sendMessageOnVThread(dispatch);
-
-		return kVThreadReturn;
-	}
-	if (Event(EventIDs::kPause, 0).respondsTo(msg->getEvent())) {
-		if (!_paused) {
-			_paused = true;
-			onPauseStateChanged();
-		}
-
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kPause, 0), DynamicValue(), getSelfReference()));
-		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-		runtime->sendMessageOnVThread(dispatch);
-
-		return kVThreadReturn;
-	}
-	if (msg->getEvent().eventType == EventIDs::kAttribSet) {
-		const uint32 attribID = msg->getEvent().eventInfo;
-
-		const Common::String *attribName = runtime->resolveAttributeIDName(attribID);
-		if (attribName == nullptr) {
-#ifdef MTROPOLIS_DEBUG_ENABLE
-			if (Debugger *debugger = runtime->debugGetDebugger())
-				debugger->notifyFmt(kDebugSeverityError, "Attribute ID '%i' couldn't be resolved for Set Attribute message", static_cast<int>(attribID));
-#endif
-			return kVThreadError;
-		}
-
-		MiniscriptThread miniscriptThread(runtime, msg, nullptr, nullptr, nullptr);
-
+CORO_BEGIN_DEFINITION(Structural::StructuralConsumeCommandCoroutine)
+	struct Locals {
+		Common::ScopedPtr<MiniscriptThread> miniscriptThread;
+		uint32 attribID;
+		const Common::String *attribName;
 		DynamicValueWriteProxy writeProxy;
-		MiniscriptInstructionOutcome outcome = this->writeRefAttribute(&miniscriptThread, writeProxy, *attribName);
-		if (outcome == kMiniscriptInstructionOutcomeFailed)
-			return kVThreadError;
-
-		outcome = writeProxy.pod.ifc->write(&miniscriptThread, msg->getValue(), writeProxy.pod.objectRef, writeProxy.pod.ptrOrOffset);
-		if (outcome == kMiniscriptInstructionOutcomeFailed)
-			return kVThreadError;
-
-		return kVThreadReturn;
-	}
-	if (msg->getEvent().eventType == EventIDs::kAttribGet) {
-		const uint32 attribID = msg->getEvent().eventInfo;
-
-		const Common::String *attribName = runtime->resolveAttributeIDName(attribID);
-		if (attribName == nullptr) {
-#ifdef MTROPOLIS_DEBUG_ENABLE
-			if (Debugger *debugger = runtime->debugGetDebugger())
-				debugger->notifyFmt(kDebugSeverityError, "Attribute ID '%i' couldn't be resolved for Get Attribute message", static_cast<int>(attribID));
-#endif
-			return kVThreadError;
-		}
-
-		MiniscriptThread miniscriptThread(runtime, msg, nullptr, nullptr, nullptr);
-
-		DynamicValue result;
-		if (!readAttribute(&miniscriptThread, result, *attribName))
-			return kVThreadError;
-
-		msg->setValue(result);
-
-		return kVThreadReturn;
-	}
-
-	// Just ignore these
-	const EventIDs::EventID ignoredIDs[] = {
-		EventIDs::kPreloadMedia,
-		EventIDs::kFlushMedia,
-		EventIDs::kFlushAllMedia,
-		EventIDs::kPrerollMedia
+		DynamicValue attribGetResult;
+		bool quietlyDiscard;
 	};
 
-	for (EventIDs::EventID evtID : ignoredIDs) {
-		if (Event(evtID, 0).respondsTo(msg->getEvent()))
-			return kVThreadReturn;
-	}
+	CORO_BEGIN_FUNCTION
+		CORO_IF(Event(EventIDs::kUnpause, 0).respondsTo(params->msg->getEvent()))
+			if (params->self->_paused) {
+				params->self->_paused = false;
+				params->self->onPauseStateChanged();
+			}
 
-	warning("Command type %i was ignored", msg->getEvent().eventType);
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kUnpause, 0), DynamicValue(), params->self->getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, params->self, false, true, false));
+
+			CORO_CALL(Runtime::SendMessageOnVThreadCoroutine, params->runtime, dispatch);
+
+			CORO_RETURN;
+		CORO_ELSE_IF(Event(EventIDs::kPause, 0).respondsTo(params->msg->getEvent()))
+			if (params->self->_paused) {
+				params->self->_paused = false;
+				params->self->onPauseStateChanged();
+			}
+
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kPause, 0), DynamicValue(), params->self->getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, params->self, false, true, false));
+
+			CORO_CALL(Runtime::SendMessageOnVThreadCoroutine, params->runtime, dispatch);
+
+			CORO_RETURN;
+		CORO_ELSE_IF(params->msg->getEvent().eventType == EventIDs::kAttribSet)
+			locals->attribID = params->msg->getEvent().eventInfo;
+
+			locals->attribName = params->runtime->resolveAttributeIDName(locals->attribID);
+
+			CORO_IF(locals->attribName == nullptr)
+#ifdef MTROPOLIS_DEBUG_ENABLE
+				if (Debugger *debugger = params->runtime->debugGetDebugger())
+					debugger->notifyFmt(kDebugSeverityError, "Attribute ID '%i' couldn't be resolved for Set Attribute message", static_cast<int>(locals->attribID));
+#endif
+				CORO_ERROR;
+			CORO_END_IF
+
+			locals->miniscriptThread.reset(new MiniscriptThread(params->runtime, params->msg, nullptr, nullptr, nullptr));
+
+			CORO_AWAIT_MINISCRIPT(params->self->writeRefAttribute(locals->miniscriptThread.get(), locals->writeProxy, *locals->attribName));
+
+			CORO_AWAIT_MINISCRIPT(locals->writeProxy.pod.ifc->write(locals->miniscriptThread.get(), params->msg->getValue(), locals->writeProxy.pod.objectRef, locals->writeProxy.pod.ptrOrOffset));
+
+			CORO_RETURN;
+		CORO_ELSE_IF(params->msg->getEvent().eventType == EventIDs::kAttribGet)
+			locals->attribID = params->msg->getEvent().eventInfo;
+
+			locals->attribName = params->runtime->resolveAttributeIDName(locals->attribID);
+			CORO_IF(locals->attribName == nullptr)
+#ifdef MTROPOLIS_DEBUG_ENABLE
+				if (Debugger *debugger = params->runtime->debugGetDebugger())
+					debugger->notifyFmt(kDebugSeverityError, "Attribute ID '%i' couldn't be resolved for Set Attribute message", static_cast<int>(locals->attribID));
+#endif
+				CORO_ERROR;
+			CORO_END_IF
+				
+			locals->miniscriptThread.reset(new MiniscriptThread(params->runtime, params->msg, nullptr, nullptr, nullptr));
+
+			CORO_IF(!params->self->readAttribute(locals->miniscriptThread.get(), locals->attribGetResult, *locals->attribName))
+				CORO_ERROR;
+			CORO_END_IF
+
+			params->msg->setValue(locals->attribGetResult);
+
+			CORO_RETURN;
+		CORO_END_IF
+
+		locals->quietlyDiscard = false;
+
+		// Just ignore these
+		const EventIDs::EventID ignoredIDs[] = {
+			EventIDs::kPreloadMedia,
+			EventIDs::kFlushMedia,
+			EventIDs::kFlushAllMedia,
+			EventIDs::kPrerollMedia
+		};
+
+		for (EventIDs::EventID evtID : ignoredIDs) {
+			if (Event(evtID, 0).respondsTo(params->msg->getEvent())) {
+				locals->quietlyDiscard = true;
+				break;
+			}
+		}
+
+		if (!locals->quietlyDiscard)
+			warning("Command type %i was ignored", params->msg->getEvent().eventType);
+	CORO_END_FUNCTION
+	
+CORO_END_DEFINITION
+
+VThreadState Structural::asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	runtime->getVThread().pushCoroutine<StructuralConsumeCommandCoroutine>(this, runtime, msg);
 	return kVThreadReturn;
 }
 
@@ -4720,7 +4738,8 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 	  _pendingSceneReturnCount(0) {
 	_random.reset(new Common::RandomSource("mtropolis"));
 
-	_vthread.reset(new VThread());
+	_coroManager.reset(ICoroutineManager::create());
+	_vthread.reset(new VThread(_coroManager.get()));
 
 	for (int i = 0; i < kColorDepthModeCount; i++) {
 		_displayModeSupported[i] = false;
@@ -6031,6 +6050,15 @@ void Runtime::loadScene(const Common::SharedPtr<Structural> &scene) {
 	}
 }
 
+CORO_BEGIN_DEFINITION(Runtime::SendMessageOnVThreadCoroutine)
+	struct Locals {
+	};
+
+	CORO_BEGIN_FUNCTION
+		CORO_AWAIT(params->runtime->sendMessageOnVThread(params->dispatch));
+	CORO_END_FUNCTION
+CORO_END_DEFINITION
+
 void Runtime::sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dispatch) {
 	EventIDs::EventID eventID = dispatch->getMsg()->getEvent().eventType;
 
@@ -6378,7 +6406,7 @@ VThreadState Runtime::consumeMessageTask(const ConsumeMessageTaskData &data) {
 
 VThreadState Runtime::consumeCommandTask(const ConsumeCommandTaskData &data) {
 	Structural *structural = data.structural;
-	return structural->consumeCommand(this, data.message);
+	return structural->asyncConsumeCommand(this, data.message);
 }
 
 VThreadState Runtime::updateMouseStateTask(const UpdateMouseStateTaskData &data) {
@@ -7339,7 +7367,7 @@ void Runtime::unloadProject() {
 	_pendingSceneTransitions.clear();
 	_pendingTeardowns.clear();
 	_messageQueue.clear();
-	_vthread.reset(new VThread());
+	_vthread.reset(new VThread(_coroManager.get()));
 
 	if (!_mainWindow.expired()) {
 		removeWindow(_mainWindow.lock().get());
@@ -7770,13 +7798,13 @@ Project::~Project() {
 	_resources.reset();
 }
 
-VThreadState Project::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+VThreadState Project::asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (Event(EventIDs::kCloseProject, 0).respondsTo(msg->getEvent())) {
 		runtime->closeProject();
 		return kVThreadReturn;
 	}
 
-	return Structural::consumeCommand(runtime, msg);
+	return Structural::asyncConsumeCommand(runtime, msg);
 }
 
 MiniscriptInstructionOutcome Project::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
@@ -9088,38 +9116,48 @@ void VisualElement::setLayer(uint16 layer) {
 	}
 }
 
-VThreadState VisualElement::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	if (Event(EventIDs::kElementShow, 0).respondsTo(msg->getEvent())) {
-		if (!_visible) {
-			_visible = true;
-			runtime->setSceneGraphDirty();
-		}
+CORO_BEGIN_DEFINITION(VisualElement::VisualElementConsumeCommandCoroutine)
+	struct Locals {
+	};
 
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kElementShow, 0), DynamicValue(), getSelfReference()));
-		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-		runtime->sendMessageOnVThread(dispatch);
+	CORO_BEGIN_FUNCTION
+		CORO_IF(Event(EventIDs::kElementShow, 0).respondsTo(params->msg->getEvent()))
+			if (!params->self->_visible) {
+				params->self->_visible = true;
+				params->runtime->setSceneGraphDirty();
+			}
 
-		return kVThreadReturn;
-	}
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kElementShow, 0), DynamicValue(), params->self->getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, params->self, false, true, false));
 
-	if (Event(EventIDs::kElementHide, 0).respondsTo(msg->getEvent())) {
-		if (_visible) {
-			_visible = false;
+			CORO_CALL(Runtime::SendMessageOnVThreadCoroutine, params->runtime, dispatch);
+			
+			CORO_RETURN;
+		CORO_ELSE_IF(Event(EventIDs::kElementHide, 0).respondsTo(params->msg->getEvent()))
+			if (params->self->_visible) {
+				params->self->_visible = false;
 
-			if (_hooks)
-				_hooks->onHidden(this, _visible);
+				if (params->self->_hooks)
+					params->self->_hooks->onHidden(params->self, params->self->_visible);
 
-			runtime->setSceneGraphDirty();
-		}
+				params->runtime->setSceneGraphDirty();
+			}
 
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kElementHide, 0), DynamicValue(), getSelfReference()));
-		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-		runtime->sendMessageOnVThread(dispatch);
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kElementHide, 0), DynamicValue(), params->self->getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, params->self, false, true, false));
 
-		return kVThreadReturn;
-	}
+			CORO_CALL(Runtime::SendMessageOnVThreadCoroutine, params->runtime, dispatch);
 
-	return Element::consumeCommand(runtime, msg);
+			CORO_RETURN;
+		CORO_END_IF
+
+		CORO_CALL(Element::ElementConsumeCommandCoroutine, params->self, params->runtime, params->msg);
+	CORO_END_FUNCTION
+CORO_END_DEFINITION
+
+VThreadState VisualElement::asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	runtime->getVThread().pushCoroutine<VisualElementConsumeCommandCoroutine>(this, runtime, msg);
+	return kVThreadReturn;
 }
 
 bool VisualElement::respondsToEvent(const Event &evt) const {
@@ -9786,6 +9824,22 @@ void VisualElement::offsetTranslate(int32 xDelta, int32 yDelta, bool cachedOrigi
 Common::Point VisualElement::getCenterPosition() const {
 	return Common::Point((_rect.left + _rect.right) / 2, (_rect.top + _rect.bottom) / 2);
 }
+
+CORO_BEGIN_DEFINITION(VisualElement::ChangeVisibilityCoroutine)
+	struct Locals {
+	};
+
+	CORO_BEGIN_FUNCTION
+		CORO_IF(params->self->_visible != params->desiredFlag)
+			params->self->setVisible(params->runtime, params->desiredFlag);
+
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(params->desiredFlag ? EventIDs::kElementShow : EventIDs::kElementHide, 0), DynamicValue(), params->self->getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, params->self, false, true, false));
+
+			CORO_CALL(Runtime::SendMessageOnVThreadCoroutine, params->runtime, dispatch);
+		CORO_END_IF
+	CORO_END_FUNCTION
+CORO_END_DEFINITION
 
 VThreadState VisualElement::changeVisibilityTask(const ChangeFlagTaskData &taskData) {
 	if (_visible != taskData.desiredFlag) {

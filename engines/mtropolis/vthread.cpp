@@ -19,6 +19,8 @@
  *
  */
 
+#include "mtropolis/coroutines.h"
+#include "mtropolis/coroutine_manager.h"
 #include "mtropolis/vthread.h"
 
 namespace MTropolis {
@@ -58,9 +60,8 @@ void VThreadTaskData::debugInspect(IDebugInspectionReport *report) const {
 }
 #endif
 
-VThread::VThread()
-	: _numActiveStackChunks(0)
-{
+VThread::VThread(ICoroutineManager *coroManager)
+	: _numActiveStackChunks(0), _coroManager(coroManager) {
 }
 
 VThread::~VThread() {
@@ -174,6 +175,43 @@ void VThread::reserveFrame(size_t frameAlignment, size_t frameSize, VThreadStack
 	(void)reservedOK;
 
 	outIsNewChunk = true;
+}
+
+void VThread::pushCoroutineInternal(CompiledCoroutine **compiledCoroPtr, CoroutineCompileFunction_t compileFunction, bool isVoidReturn, const CoroutineParamsBase &params, const CoroutineReturnValueRefBase &returnValueRef) {
+	const CompiledCoroutine *compiledCoro = *compiledCoroPtr;
+	if (compiledCoro == nullptr) {
+		_coroManager->compileCoroutine(compiledCoroPtr, compileFunction, isVoidReturn);
+		compiledCoro = *compiledCoroPtr;
+		assert(compiledCoro);
+	}
+
+	pushCoroutineFrame(compiledCoro, params, returnValueRef);
+}
+
+VThreadTaskData *VThread::pushCoroutineFrame(const CompiledCoroutine *compiledCoro, const CoroutineParamsBase &params, const CoroutineReturnValueRefBase &returnValueRef) {
+	const size_t frameAlignment = alignof(VThreadStackFrame);
+	size_t dataAlignment = 0;
+	size_t dataSize = 0;
+
+	compiledCoro->_getFrameParameters(dataSize, dataAlignment);
+
+	VThreadStackFrame *prevFrame = nullptr;
+	if (_numActiveStackChunks > 0)
+		prevFrame = _stackChunks[_numActiveStackChunks - 1]._topFrame;
+
+	VThreadStackFrame *framePtr = nullptr;
+	void *dataPtr = nullptr;
+	bool isNewChunk = false;
+	reserveFrame(frameAlignment, sizeof(VThreadStackFrame), framePtr, dataAlignment, dataSize, dataPtr, isNewChunk);
+
+	VThreadStackFrame *frame = new (framePtr) VThreadStackFrame();
+	VThreadTaskData *frameData = compiledCoro->_frameConstructor(dataPtr, compiledCoro, params, returnValueRef);
+
+	frame->data = frameData;
+	frame->prevFrame = prevFrame;
+	frame->isLastInChunk = isNewChunk;
+
+	return frameData;
 }
 
 bool VThread::popFrame() {

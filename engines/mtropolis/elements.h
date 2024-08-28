@@ -28,6 +28,7 @@
 #include "mtropolis/data.h"
 #include "mtropolis/runtime.h"
 #include "mtropolis/render.h"
+#include "mtropolis/coroutine_protos.h"
 
 namespace Video {
 
@@ -97,7 +98,7 @@ public:
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
 
-	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	VThreadState asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 	void activate() override;
 	void deactivate() override;
@@ -124,6 +125,11 @@ public:
 protected:
 	void onPauseStateChanged() override;
 	void onSegmentUnloaded(int segmentIndex) override;
+
+	struct MovieElementConsumeCommandCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_3(MovieElement *, self, Runtime *, runtime, Common::SharedPtr<MessageProperties>, msg);
+	};
 
 private:
 	IntRange computeRealRange() const;
@@ -152,6 +158,16 @@ private:
 
 		Runtime *runtime;
 		uint32 timestamp;
+	};
+
+	struct StartPlayingCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_2(MovieElement *, self, Runtime *, runtime);
+	};
+
+	struct SeekToTimeCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_2(Runtime *, runtime, uint32, timestamp);
 	};
 
 	VThreadState startPlayingTask(const StartPlayingTaskData &taskData);
@@ -236,7 +252,7 @@ public:
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
 
-	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	VThreadState asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 	void activate() override;
 	void deactivate() override;
@@ -411,7 +427,7 @@ public:
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) override;
 
-	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	VThreadState asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 	void activate() override;
 	void deactivate() override;

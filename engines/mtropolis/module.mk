@@ -6,6 +6,9 @@ MODULE_OBJS = \
 	audio_player.o \
 	boot.o \
 	core.o \
+	coroutine_exec.o \
+	coroutine_manager.o \
+	coroutines.o \
 	data.o \
 	debug.o \
 	element_factory.o \

@@ -22,10 +22,13 @@
 #ifndef MTROPOLIS_VTHREAD_H
 #define MTROPOLIS_VTHREAD_H
 
+#include "mtropolis/coroutine_protos.h"
+#include "mtropolis/coroutine_return_value.h"
 #include "mtropolis/debug.h"
 
 namespace MTropolis {
 
+struct ICoroutineManager;
 class VThread;
 
 // Virtual thread, really a task stack
@@ -129,7 +132,7 @@ private:
 
 class VThread {
 public:
-	VThread();
+	explicit VThread(ICoroutineManager *coroManager);
 	~VThread();
 
 	template<typename TClass, typename TData>
@@ -144,9 +147,26 @@ public:
 
 	bool popFrame();
 
+	VThreadTaskData *pushCoroutineFrame(const CompiledCoroutine *compiledCoro, const CoroutineParamsBase &params, const CoroutineReturnValueRefBase &returnValueRef);
+
+	template<typename TCoroutine, typename TReturnValue, typename ...TParams>
+	void pushCoroutineWithReturn(TReturnValue *returnValuePtr, TParams &&...args);
+
+	template<typename TCoroutine, typename TReturnValue>
+	void pushCoroutineWithReturn(TReturnValue *returnValuePtr);
+
+	template<typename TCoroutine, typename... TParams>
+	void pushCoroutine(TParams &&...args);
+
+	template<typename TCoroutine>
+	void pushCoroutine();
+
+
 private:
 	void reserveFrame(size_t frameAlignment, size_t frameSize, VThreadStackFrame *&outFramePtr, size_t dataAlignment, size_t dataSize, void *&outDataPtr, bool &outIsNewChunk);
 	static bool reserveFrameInChunk(VThreadStackChunk *chunk, size_t frameAlignment, size_t frameSize, VThreadStackFrame *&outFramePtr, size_t dataAlignment, size_t dataSize, void *&outDataPtr);
+
+	void pushCoroutineInternal(CompiledCoroutine **compiledCoroPtr, CoroutineCompileFunction_t compileFunc, bool isVoidReturn, const CoroutineParamsBase &params, const CoroutineReturnValueRefBase &returnValueRef);
 
 	template<typename TClass, typename TData>
 	TData *pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, const char *name, TClass *obj, VThreadState (TClass::*method)(const TData &data));
@@ -155,6 +175,7 @@ private:
 	TData *pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, const char *name, VThreadState (*func)(const TData &data));
 
 	Common::Array<VThreadStackChunk> _stackChunks;
+	ICoroutineManager *_coroManager;
 	uint _numActiveStackChunks;
 };
 
@@ -219,6 +240,28 @@ VThreadState VThreadFunctionData<TData>::execute(VThread *thread) {
 template<typename TData>
 TData &VThreadFunctionData<TData>::getData() {
 	return _data;
+}
+
+template<typename TCoroutine, typename TReturnValue, typename... TParams>
+void VThread::pushCoroutineWithReturn(TReturnValue *returnValuePtr, TParams &&...args) {
+	assert(returnValuePtr != nullptr);
+	this->pushCoroutineInternal(&TCoroutine::ms_compiledCoro, TCoroutine::compileCoroutine, CoroutineReturnValueRef<typename TCoroutine::ReturnValue_t>::isVoid(), typename TCoroutine::Params(Common::forward<TParams>(args)...), CoroutineReturnValueRef<typename TCoroutine::ReturnValue_t>(returnValuePtr));
+}
+
+template<typename TCoroutine, typename TReturnValue>
+void VThread::pushCoroutineWithReturn(TReturnValue *returnValuePtr) {
+	assert(returnValuePtr != nullptr);
+	this->pushCoroutineInternal(&TCoroutine::ms_compiledCoro, TCoroutine::compileCoroutine, CoroutineReturnValueRef<typename TCoroutine::ReturnValue_t>::isVoid(), typename TCoroutine::Params(), CoroutineReturnValueRef<typename TCoroutine::ReturnValue_t>(returnValuePtr));
+}
+
+template<typename TCoroutine, typename... TParams>
+void VThread::pushCoroutine(TParams &&...args) {
+	this->pushCoroutineInternal(&TCoroutine::ms_compiledCoro, TCoroutine::compileCoroutine, CoroutineReturnValueRef<typename TCoroutine::ReturnValue_t>::isVoid(), typename TCoroutine::Params(Common::forward<TParams>(args)...), CoroutineReturnValueRef<typename TCoroutine::ReturnValue_t>());
+}
+
+template<typename TCoroutine>
+void VThread::pushCoroutine() {
+	this->pushCoroutineInternal(&TCoroutine::ms_compiledCoro, TCoroutine::compileCoroutine, CoroutineReturnValueRef<typename TCoroutine::ReturnValue_t>::isVoid(), typename TCoroutine::Params(), CoroutineReturnValueRef<typename TCoroutine::ReturnValue_t>());
 }
 
 template<typename TClass, typename TData>

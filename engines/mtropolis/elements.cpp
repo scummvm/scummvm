@@ -33,6 +33,7 @@
 
 #include "mtropolis/assets.h"
 #include "mtropolis/audio_player.h"
+#include "mtropolis/coroutines.h"
 #include "mtropolis/elements.h"
 #include "mtropolis/element_factory.h"
 #include "mtropolis/miniscript.h"
@@ -574,21 +575,82 @@ MiniscriptInstructionOutcome MovieElement::writeRefAttribute(MiniscriptThread *t
 	return VisualElement::writeRefAttribute(thread, result, attrib);
 }
 
-VThreadState MovieElement::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	// The reaction to the Play command should be to fire Unpaused and then fire Played.
+CORO_BEGIN_DEFINITION(MovieElement::MovieElementConsumeCommandCoroutine)
+	// The reaction to the Play command should be Shown -> Unpaused -> Played
 	// At First Cel is NOT fired by Play commands for some reason.
+	// The reaction to the Stop command should be Paused -> Hidden -> Stopped
+	struct Locals {
+		bool wasPaused;
+	};
+
+	CORO_BEGIN_FUNCTION
+		CORO_IF(Event(EventIDs::kPlay, 0).respondsTo(params->msg->getEvent()))
+			locals->wasPaused = params->self->_paused;
+
+			CORO_CALL(ChangeVisibilityCoroutine, params->self, params->runtime, true);
+
+			CORO_CALL(StartPlayingCoroutine, params->self, params->runtime);
+
+			CORO_IF(locals->wasPaused)
+				Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kUnpause, 0), DynamicValue(), params->self->getSelfReference()));
+				Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, params->self, false, true, false));
+
+				CORO_CALL(Runtime::SendMessageOnVThreadCoroutine, params->runtime, dispatch);
+			CORO_END_IF
+
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kPlay, 0), DynamicValue(), params->self->getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, params->self, false, true, false));
+			CORO_CALL(Runtime::SendMessageOnVThreadCoroutine, params->runtime, dispatch);
+
+			CORO_RETURN;
+		CORO_ELSE_IF(Event(EventIDs::kStop, 0).respondsTo(params->msg->getEvent()))
+			CORO_IF(!params->self->_paused)
+				params->self->stopSubtitles();
+
+				params->self->_paused = true;
+
+				Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kPause, 0), DynamicValue(), params->self->getSelfReference()));
+				Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, params->self, false, true, false));
+
+				CORO_CALL(Runtime::SendMessageOnVThreadCoroutine, params->runtime, dispatch);
+			CORO_END_IF
+
+			CORO_CALL(ChangeVisibilityCoroutine, params->self, params->runtime, false);
+
+			params->self->_paused = true;
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kPause, 0), DynamicValue(), params->self->getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, params->self, false, true, false));
+
+			CORO_CALL(Runtime::SendMessageOnVThreadCoroutine, params->runtime, dispatch);
+
+			CORO_RETURN;
+		CORO_END_IF
+
+		CORO_CALL(VisualElement::VisualElementConsumeCommandCoroutine, params->self, params->runtime, params->msg);
+	CORO_END_FUNCTION
+
+CORO_END_DEFINITION
+
+VThreadState MovieElement::asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	// The reaction to the Play command should be Shown -> Unpaused -> Played
+	// At First Cel is NOT fired by Play commands for some reason.
+	// The reaction to the Stop command should be Paused -> Hidden -> Stopped
+
+	if (true) {
+		runtime->getVThread().pushCoroutine<MovieElement::MovieElementConsumeCommandCoroutine>(this, runtime, msg);
+		return kVThreadReturn;
+	}
 
 	if (Event(EventIDs::kPlay, 0).respondsTo(msg->getEvent())) {
-		if (_paused)
 		{
-			_paused = false;
-			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kUnpause, 0), DynamicValue(), getSelfReference()));
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
 			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
 			runtime->sendMessageOnVThread(dispatch);
 		}
 
-		{
-			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
+		if (_paused) {
+			_paused = false;
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kUnpause, 0), DynamicValue(), getSelfReference()));
 			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
 			runtime->sendMessageOnVThread(dispatch);
 		}
@@ -603,15 +665,6 @@ VThreadState MovieElement::consumeCommand(Runtime *runtime, const Common::Shared
 		return kVThreadReturn;
 	}
 	if (Event(EventIDs::kStop, 0).respondsTo(msg->getEvent())) {
-		if (!_paused) {
-			stopSubtitles();
-
-			_paused = true;
-			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kPause, 0), DynamicValue(), getSelfReference()));
-			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-			runtime->sendMessageOnVThread(dispatch);
-		}
-
 		{
 			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kStop, 0), DynamicValue(), getSelfReference()));
 			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
@@ -622,10 +675,19 @@ VThreadState MovieElement::consumeCommand(Runtime *runtime, const Common::Shared
 		becomeVisibleTaskData->desiredFlag = false;
 		becomeVisibleTaskData->runtime = runtime;
 
+		if (!_paused) {
+			stopSubtitles();
+
+			_paused = true;
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kPause, 0), DynamicValue(), getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+			runtime->sendMessageOnVThread(dispatch);
+		}
+
 		return kVThreadReturn;
 	}
 
-	return VisualElement::consumeCommand(runtime, msg);
+	return VisualElement::asyncConsumeCommand(runtime, msg);
 }
 
 void MovieElement::activate() {
@@ -1132,6 +1194,28 @@ MiniscriptInstructionOutcome MovieElement::scriptSetRangeTyped(MiniscriptThread 
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
+CORO_BEGIN_DEFINITION(MovieElement::StartPlayingCoroutine)
+	struct Locals {
+	};
+
+	CORO_BEGIN_FUNCTION
+		MovieElement *self = params->self;
+
+		if (self->_videoDecoder) {
+			self->_videoDecoder->stop();
+			self->_currentPlayState = kMediaStateStopped;
+			self->_needsReset = true;
+			self->_contentsDirty = true;
+			self->_currentTimestamp = self->_reversed ? self->_playRange.max : self->_playRange.min;
+
+			self->_shouldPlayIfNotPaused = true;
+			self->_paused = false;
+
+			self->stopSubtitles();
+		}
+	CORO_END_FUNCTION
+CORO_END_DEFINITION
+
 VThreadState MovieElement::startPlayingTask(const StartPlayingTaskData &taskData) {
 	if (_videoDecoder) {
 		_videoDecoder->stop();
@@ -1407,7 +1491,7 @@ MiniscriptInstructionOutcome MToonElement::writeRefAttribute(MiniscriptThread *t
 	return VisualElement::writeRefAttribute(thread, result, attrib);
 }
 
-VThreadState MToonElement::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+VThreadState MToonElement::asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (Event(EventIDs::kPlay, 0).respondsTo(msg->getEvent())) {
 		// If the range set fails, then the mToon should play anyway, so ignore the result
 		(void)scriptSetRange(nullptr, msg->getValue());
@@ -1443,7 +1527,7 @@ VThreadState MToonElement::consumeCommand(Runtime *runtime, const Common::Shared
 		return kVThreadReturn;
 	}
 
-	return VisualElement::consumeCommand(runtime, msg);
+	return VisualElement::asyncConsumeCommand(runtime, msg);
 }
 
 void MToonElement::activate() {
@@ -2441,7 +2525,7 @@ MiniscriptInstructionOutcome SoundElement::writeRefAttribute(MiniscriptThread *t
 	return NonVisualElement::writeRefAttribute(thread, writeProxy, attrib);
 }
 
-VThreadState SoundElement::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+VThreadState SoundElement::asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (Event(EventIDs::kPlay, 0).respondsTo(msg->getEvent())) {
 		StartPlayingTaskData *startPlayingTaskData = runtime->getVThread().pushTask("SoundElement::startPlayingTask", this, &SoundElement::startPlayingTask);
 		startPlayingTaskData->runtime = runtime;
@@ -2455,7 +2539,7 @@ VThreadState SoundElement::consumeCommand(Runtime *runtime, const Common::Shared
 		return kVThreadReturn;
 	}
 
-	return NonVisualElement::consumeCommand(runtime, msg);
+	return NonVisualElement::asyncConsumeCommand(runtime, msg);
 }
 
 void SoundElement::initSubtitles() {
