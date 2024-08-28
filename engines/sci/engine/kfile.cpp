@@ -1286,6 +1286,8 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 			g_sci->_soundCmd->pauseAll(false); // unpause music
 		else
 			g_sci->_soundCmd->resetGlobalPauseCounter(); // reset music global pause counter without affecting the individual sounds
+	} else if (s->r_acc.isNull() && g_sci->_soundCmd->isGlobalPauseActive()) {
+		g_sci->_soundCmd->resetGlobalPauseCounter(); // reset music global pause counter without affecting the individual sounds
 	}
 
 	return s->r_acc;
