@@ -59,7 +59,7 @@ public:
 		if (!_scene)
 			return false;
 
-		for (int i = 0; i < _numPieces; i++)
+		for (int i = 0; i < 12; i++)
 			_pieces[i] = _scene->object_interface(_scene->minigame_parameter(Common::String::format("object_%i", i + 1).c_str()));
 
 		_finalObj = _scene->object_interface(_scene->minigame_parameter("final"));
@@ -171,20 +171,22 @@ public:
 		if (_scene->mouse_object_interface())
 			return false;
 
-		if (_pieces[0]->is_state_active("front"))
+		if (_pieces[0]->is_state_active("front")) {
 			for (int i = 0; i < 12; i++)
 				if (!_pieces[0]->is_state_active("front"))
 					return false;
-
-		if (_pieces[0]->is_state_active("back"))
+		} else if (_pieces[0]->is_state_active("back")) {
 			for (int i = 0; i < 12; i++)
 				if (!_pieces[0]->is_state_active("back"))
 					return false;
+		} else {
+			return false;
+		}
 
 		mgVect2i piecePos;
 
 		if (_pieces[0]->is_state_active("front"))
-			for (int i = 0; i < _numPieces; i++) {
+			for (int i = 0; i < 12; i++) {
 				piecePos = _pieces[i]->screen_R();
 
 				if (ABS(pieceCoordsFront[i * 2 + 0] - piecePos.x) > 10 ||
@@ -193,7 +195,7 @@ public:
 			}
 
 		if (_pieces[0]->is_state_active("back"))
-			for (int i = 0; i < _numPieces; i++) {
+			for (int i = 0; i < 12; i++) {
 				piecePos = _pieces[i]->screen_R();
 
 				if (ABS(pieceCoordsBack[i * 2 + 0] - piecePos.x) > 10 ||
@@ -322,8 +324,6 @@ private:
 	int _rotatingPiece = -1;
 	bool _pieceIsPut = true;
 	int _currentPieceState = 0;
-
-	int _numPieces = 12;
 
 	Common::String _dll;
 	Common::Language _language;
