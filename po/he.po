@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-28 14:39+0000\n"
+"POT-Creation-Date: 2024-08-28 16:16+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -4045,7 +4045,7 @@ msgstr "מיתוג מסך מלא"
 msgid "Toggle mouse capture"
 msgstr "מיתוג לכידת עכבר"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:458
+#: backends/graphics/sdl/sdl-graphics.cpp:458 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
@@ -5951,7 +5951,7 @@ msgstr ""
 #: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
 #: engines/hopkins/metaengine.cpp:209 engines/lure/metaengine.cpp:169
 #: engines/made/metaengine.cpp:103 engines/mads/metaengine.cpp:275
-#: engines/trecision/metaengine.cpp:121
+#: engines/stark/metaengine.cpp:185 engines/trecision/metaengine.cpp:121
 #, fuzzy
 #| msgid "Game Options"
 msgid "Game keymappings"
@@ -5968,7 +5968,7 @@ msgstr "א~פ~שרויות משחק"
 #: engines/groovie/metaengine.cpp:205 engines/hopkins/metaengine.cpp:213
 #: engines/lure/metaengine.cpp:177 engines/made/metaengine.cpp:107
 #: engines/mads/metaengine.cpp:280 engines/saga/metaengine.cpp:278
-#: engines/trecision/metaengine.cpp:125
+#: engines/stark/metaengine.cpp:189 engines/trecision/metaengine.cpp:125
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left click"
@@ -5979,7 +5979,7 @@ msgstr "לחיצה שמאלית"
 #: engines/groovie/metaengine.cpp:211 engines/hopkins/metaengine.cpp:219
 #: engines/lure/metaengine.cpp:183 engines/made/metaengine.cpp:114
 #: engines/mads/metaengine.cpp:286 engines/saga/metaengine.cpp:289
-#: engines/trecision/metaengine.cpp:131
+#: engines/stark/metaengine.cpp:195 engines/trecision/metaengine.cpp:131
 msgid "Right click"
 msgstr "מקש ימני"
 
@@ -6691,8 +6691,9 @@ msgstr "דילוג"
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
 #: engines/hopkins/metaengine.cpp:238 engines/lure/metaengine.cpp:191
 #: engines/made/metaengine.cpp:162 engines/mads/metaengine.cpp:305
-#: engines/saga/metaengine.cpp:441 engines/trecision/metaengine.cpp:169
-#: engines/vcruise/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:920
+#: engines/saga/metaengine.cpp:441 engines/stark/metaengine.cpp:208
+#: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:151
+#: engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "שמירת משחק"
 
@@ -6700,8 +6701,8 @@ msgstr "שמירת משחק"
 #: engines/hopkins/metaengine.cpp:244 engines/made/metaengine.cpp:168
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:431
-#: engines/trecision/metaengine.cpp:175 engines/vcruise/metaengine.cpp:156
-#: engines/wintermute/keymapper_tables.h:925
+#: engines/stark/metaengine.cpp:213 engines/trecision/metaengine.cpp:175
+#: engines/vcruise/metaengine.cpp:156 engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
 msgstr "טוען משחק"
@@ -6909,8 +6910,8 @@ msgstr "להמריא"
 #: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:94
 #: engines/icb/icb.cpp:101 engines/icb/icb.cpp:179 engines/scumm/help.cpp:229
 #: engines/scumm/help.cpp:238 engines/scumm/help.cpp:245
-#: engines/scumm/help.cpp:253 engines/twine/metaengine.cpp:418
-#: engines/zvision/metaengine.cpp:232
+#: engines/scumm/help.cpp:253 engines/stark/metaengine.cpp:267
+#: engines/twine/metaengine.cpp:418 engines/zvision/metaengine.cpp:232
 msgid "Inventory"
 msgstr "מלאי"
 
@@ -8464,7 +8465,7 @@ msgstr "הצגת כתוביות סיום"
 msgid "Show quotes"
 msgstr "אפשרויות דיבור"
 
-#: engines/mads/metaengine.cpp:361
+#: engines/mads/metaengine.cpp:361 engines/stark/metaengine.cpp:280
 #, fuzzy
 #| msgid "Quit Game"
 msgid "Exit game"
@@ -9387,7 +9388,8 @@ msgid "Conversation position - Down"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:333 engines/scumm/help.cpp:80
-#: engines/trecision/metaengine.cpp:150 engines/vcruise/metaengine.cpp:171
+#: engines/stark/metaengine.cpp:286 engines/trecision/metaengine.cpp:150
+#: engines/vcruise/metaengine.cpp:171
 msgid "Pause game"
 msgstr "השהה משחק"
 
@@ -11167,19 +11169,19 @@ msgstr "השתמש במבוא גרסת התקליטונים (גרסת CD בלב�
 msgid "WARNING: Deleting the autosave slot is not supported by this engine"
 msgstr "אזהרה: מחיקת משבצת השמירה האוטומטית אינה נתמכת במנוע זה"
 
-#: engines/stark/metaengine.cpp:37
+#: engines/stark/metaengine.cpp:41
 msgid "Load modded assets"
 msgstr "טעינת משאבים שנשתנו"
 
-#: engines/stark/metaengine.cpp:38
+#: engines/stark/metaengine.cpp:42
 msgid "Enable loading of external replacement assets."
 msgstr "הפעלת טעינה של משאבים חלופיים חיצוניים."
 
-#: engines/stark/metaengine.cpp:48
+#: engines/stark/metaengine.cpp:52
 msgid "Enable linear filtering of the backgrounds images"
 msgstr "הפעלת סינון לינארי של תמונות הרקע"
 
-#: engines/stark/metaengine.cpp:49
+#: engines/stark/metaengine.cpp:53
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
@@ -11187,23 +11189,125 @@ msgstr ""
 "כאשר סינון לינארי מופעל תמונות הרקע יהיו חלקות יותר במצב מסך מלא, על חשבון "
 "פרטים מסוימים."
 
-#: engines/stark/metaengine.cpp:59 engines/ultima/metaengine.cpp:140
+#: engines/stark/metaengine.cpp:63 engines/ultima/metaengine.cpp:140
 msgid "Enable font anti-aliasing"
 msgstr "הפעלת החלקת עקומות עבור גופנים"
 
-#: engines/stark/metaengine.cpp:60 engines/ultima/metaengine.cpp:141
+#: engines/stark/metaengine.cpp:64 engines/ultima/metaengine.cpp:141
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "כאשר החלקת-עקומות של גופנים מופעלת, הטקסט חלק יותר."
+
+#: engines/stark/metaengine.cpp:184
+#, fuzzy
+#| msgid "Default game keymap"
+msgid "Default keymapppings"
+msgstr "מיפוי מקלדת"
+
+#. I18N: Opens in-game Diary
+#: engines/stark/metaengine.cpp:202
+#, fuzzy
+#| msgid "Game menu"
+msgid "Diary menu"
+msgstr "תפריט משחק"
+
+#. I18N: Opens in-game conversation log
+#: engines/stark/metaengine.cpp:219
+#, fuzzy
+#| msgid "Next location"
+msgid "Conversation log"
+msgstr "המיקום הבא"
+
+#. I18N: Opens in-game Diary
+#: engines/stark/metaengine.cpp:225
+msgid "April's diary (initially disabled)"
+msgstr ""
+
+#: engines/stark/metaengine.cpp:230
+#, fuzzy
+#| msgid "Fast replay"
+msgid "Video replay"
+msgstr "הילוך חוזר מהיר"
+
+#: engines/stark/metaengine.cpp:235
+#, fuzzy
+#| msgid "Game Options"
+msgid "Game settings"
+msgstr "א~פ~שרויות משחק"
+
+#: engines/stark/metaengine.cpp:245 engines/wintermute/keymapper_tables.h:1345
+msgid "Toggle subtitles"
+msgstr "מיתוג כתוביות"
+
+#: engines/stark/metaengine.cpp:250
+#, fuzzy
+#| msgid "Quit Game"
+msgid "Quit to menu"
+msgstr "יציאה מהמשחק"
+
+#: engines/stark/metaengine.cpp:255
+msgid "Cycle back through inventory cursor items"
+msgstr ""
+
+#: engines/stark/metaengine.cpp:261
+msgid "Cycle forward through inventory cursor items"
+msgstr ""
+
+#. I18N: A popup on screen shows shows the exits
+#: engines/stark/metaengine.cpp:274
+msgid "Display all exits on current location"
+msgstr ""
+
+#: engines/stark/metaengine.cpp:292
+#, fuzzy
+#| msgid "Open/Close Inventory"
+msgid "Scroll up in inventory"
+msgstr "מלאי פתוח / סגור"
+
+#: engines/stark/metaengine.cpp:299
+#, fuzzy
+#| msgid "Show inventory"
+msgid "Scroll down in inventory"
+msgstr "הצגת מצאי"
+
+#: engines/stark/metaengine.cpp:306
+msgid "Scroll up in your dialogues"
+msgstr ""
+
+#: engines/stark/metaengine.cpp:312
+msgid "Scroll down in your dialogues"
+msgstr ""
+
+#: engines/stark/metaengine.cpp:318
+#, fuzzy
+#| msgid "Highlight next dialogue"
+msgid "go to next dialogue"
+msgstr "הדגש את הדיאלוג הבא"
+
+#: engines/stark/metaengine.cpp:323
+#, fuzzy
+#| msgid "Go to previous directory level"
+msgid "go to previous dialogues"
+msgstr "חזרה אל רמת התיקיה הקודמת"
+
+#: engines/stark/metaengine.cpp:328
+#, fuzzy
+#| msgid "Skip dialogue"
+msgid "Select dialogue"
+msgstr "דילוג על שיחה"
+
+#: engines/stark/metaengine.cpp:335
+msgid "Skip video sequence or dialogue"
+msgstr ""
 
 #: engines/stark/stark.cpp:106
 msgid "Software renderer does not support modded assets"
 msgstr "מצב מסירה של תוכנה לא תומך המשאבים שנשתנו"
 
-#: engines/stark/stark.cpp:291
+#: engines/stark/stark.cpp:292
 msgid "You are missing recommended data files:"
 msgstr "חסרים לך קבצי הנתונים Riven הבאים:"
 
-#: engines/stark/stark.cpp:305
+#: engines/stark/stark.cpp:306
 msgid ""
 "The 'fonts' folder is required to experience the text style as it was "
 "designed. The Steam release is known to be missing it. You can get the fonts "
@@ -11212,17 +11316,17 @@ msgstr ""
 "התיקיה 'fonts' נדרשת כדי לחוות את סגנון הטקסט כפי שעוצב. גרסת Stream ידועה "
 "כחסרה תיקיה זו. ניתן להשיג את הגופנים מגרסת ההדגמה של המשחק."
 
-#: engines/stark/stark.cpp:312
+#: engines/stark/stark.cpp:313
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
 msgstr "מומלץ להשתמש ב-'gui.ini' עבור הגדרות גופן ראויות לגיור המשחק."
 
-#: engines/stark/stark.cpp:318
+#: engines/stark/stark.cpp:319
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr "מומלץ להשתמש ב-'language.ini' עבור שיחות אישור מגוירות."
 
-#: engines/stark/stark.cpp:324
+#: engines/stark/stark.cpp:325
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr "מומלץ להשתמש ב-'game.exe' עבור שיחות אישור מסוגננות."
 
@@ -12620,10 +12724,6 @@ msgstr "צעד ריקוד ימינה"
 #: engines/wintermute/keymapper_tables.h:1283
 msgid "Cancel input"
 msgstr "ביטול קלט"
-
-#: engines/wintermute/keymapper_tables.h:1345
-msgid "Toggle subtitles"
-msgstr "מיתוג כתוביות"
 
 #: engines/wintermute/keymapper_tables.h:1409
 msgid "Hide hints"

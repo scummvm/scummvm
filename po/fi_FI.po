@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-28 14:39+0000\n"
+"POT-Creation-Date: 2024-08-28 16:16+0000\n"
 "PO-Revision-Date: 2024-08-27 03:43+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4147,7 +4147,7 @@ msgstr "Kokoruututilan vaihto"
 msgid "Toggle mouse capture"
 msgstr "Kytke hiiren kaappaus päälle tai pois"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:458
+#: backends/graphics/sdl/sdl-graphics.cpp:458 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
@@ -6311,7 +6311,7 @@ msgstr "AGOS päätaso"
 #: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
 #: engines/hopkins/metaengine.cpp:209 engines/lure/metaengine.cpp:169
 #: engines/made/metaengine.cpp:103 engines/mads/metaengine.cpp:275
-#: engines/trecision/metaengine.cpp:121
+#: engines/stark/metaengine.cpp:185 engines/trecision/metaengine.cpp:121
 msgid "Game keymappings"
 msgstr "Pelin näppäinkartoitukset"
 
@@ -6324,7 +6324,7 @@ msgstr "Näppäinkartoitukset päällä/pois"
 #: engines/groovie/metaengine.cpp:205 engines/hopkins/metaengine.cpp:213
 #: engines/lure/metaengine.cpp:177 engines/made/metaengine.cpp:107
 #: engines/mads/metaengine.cpp:280 engines/saga/metaengine.cpp:278
-#: engines/trecision/metaengine.cpp:125
+#: engines/stark/metaengine.cpp:189 engines/trecision/metaengine.cpp:125
 msgid "Left click"
 msgstr "Vasen napsautus"
 
@@ -6333,7 +6333,7 @@ msgstr "Vasen napsautus"
 #: engines/groovie/metaengine.cpp:211 engines/hopkins/metaengine.cpp:219
 #: engines/lure/metaengine.cpp:183 engines/made/metaengine.cpp:114
 #: engines/mads/metaengine.cpp:286 engines/saga/metaengine.cpp:289
-#: engines/trecision/metaengine.cpp:131
+#: engines/stark/metaengine.cpp:195 engines/trecision/metaengine.cpp:131
 msgid "Right click"
 msgstr "Oikea klikkaus"
 
@@ -7016,8 +7016,9 @@ msgstr "Poistu/Ohita"
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
 #: engines/hopkins/metaengine.cpp:238 engines/lure/metaengine.cpp:191
 #: engines/made/metaengine.cpp:162 engines/mads/metaengine.cpp:305
-#: engines/saga/metaengine.cpp:441 engines/trecision/metaengine.cpp:169
-#: engines/vcruise/metaengine.cpp:151 engines/wintermute/keymapper_tables.h:920
+#: engines/saga/metaengine.cpp:441 engines/stark/metaengine.cpp:208
+#: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:151
+#: engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Luo pelitallennus"
 
@@ -7025,8 +7026,8 @@ msgstr "Luo pelitallennus"
 #: engines/hopkins/metaengine.cpp:244 engines/made/metaengine.cpp:168
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:431
-#: engines/trecision/metaengine.cpp:175 engines/vcruise/metaengine.cpp:156
-#: engines/wintermute/keymapper_tables.h:925
+#: engines/stark/metaengine.cpp:213 engines/trecision/metaengine.cpp:175
+#: engines/vcruise/metaengine.cpp:156 engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
 msgstr "Lataa peli"
@@ -7211,8 +7212,8 @@ msgstr "Ota"
 #: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:94
 #: engines/icb/icb.cpp:101 engines/icb/icb.cpp:179 engines/scumm/help.cpp:229
 #: engines/scumm/help.cpp:238 engines/scumm/help.cpp:245
-#: engines/scumm/help.cpp:253 engines/twine/metaengine.cpp:418
-#: engines/zvision/metaengine.cpp:232
+#: engines/scumm/help.cpp:253 engines/stark/metaengine.cpp:267
+#: engines/twine/metaengine.cpp:418 engines/zvision/metaengine.cpp:232
 msgid "Inventory"
 msgstr "Tavarat"
 
@@ -8650,7 +8651,7 @@ msgstr "Näytä lopputekstit"
 msgid "Show quotes"
 msgstr "Näytä lainaukset"
 
-#: engines/mads/metaengine.cpp:361
+#: engines/mads/metaengine.cpp:361 engines/stark/metaengine.cpp:280
 msgid "Exit game"
 msgstr "Lopeta peli"
 
@@ -9572,7 +9573,8 @@ msgid "Conversation position - Down"
 msgstr "Keskustelun sijainti - alhaalla"
 
 #: engines/saga/metaengine.cpp:333 engines/scumm/help.cpp:80
-#: engines/trecision/metaengine.cpp:150 engines/vcruise/metaengine.cpp:171
+#: engines/stark/metaengine.cpp:286 engines/trecision/metaengine.cpp:150
+#: engines/vcruise/metaengine.cpp:171
 msgid "Pause game"
 msgstr "Pause"
 
@@ -11353,19 +11355,19 @@ msgstr ""
 "VAROITUS: Automaattitallennuksen poistaminen ei ole tuettu tässä "
 "pelimoottorissa"
 
-#: engines/stark/metaengine.cpp:37
+#: engines/stark/metaengine.cpp:41
 msgid "Load modded assets"
 msgstr "Lataa modattuja peliresursseja"
 
-#: engines/stark/metaengine.cpp:38
+#: engines/stark/metaengine.cpp:42
 msgid "Enable loading of external replacement assets."
 msgstr "Mahdollista ulkoisten korvaavien peliresurssien lataus."
 
-#: engines/stark/metaengine.cpp:48
+#: engines/stark/metaengine.cpp:52
 msgid "Enable linear filtering of the backgrounds images"
 msgstr "Taustakuvien lineaarinen suodatus"
 
-#: engines/stark/metaengine.cpp:49
+#: engines/stark/metaengine.cpp:53
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
@@ -11373,23 +11375,125 @@ msgstr ""
 "Kun lineaarinen suodatus on päällä, taustakuvat ovat pehmeämpiä "
 "kokoruututilassa, mutta menettävät hieman yksityiskohtia."
 
-#: engines/stark/metaengine.cpp:59 engines/ultima/metaengine.cpp:140
+#: engines/stark/metaengine.cpp:63 engines/ultima/metaengine.cpp:140
 msgid "Enable font anti-aliasing"
 msgstr "Fonttien antialiasointi"
 
-#: engines/stark/metaengine.cpp:60 engines/ultima/metaengine.cpp:141
+#: engines/stark/metaengine.cpp:64 engines/ultima/metaengine.cpp:141
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "Kirjaimet näyttävät sileämmiltä kun antialiasointi on päällä."
+
+#: engines/stark/metaengine.cpp:184
+#, fuzzy
+#| msgid "Default keymappings"
+msgid "Default keymapppings"
+msgstr "Näppäinten oletuskartoitukset"
+
+#. I18N: Opens in-game Diary
+#: engines/stark/metaengine.cpp:202
+#, fuzzy
+#| msgid "Game menu"
+msgid "Diary menu"
+msgstr "Pelivalikko"
+
+#. I18N: Opens in-game conversation log
+#: engines/stark/metaengine.cpp:219
+#, fuzzy
+#| msgid "Conversation position - Up"
+msgid "Conversation log"
+msgstr "Keskustelun sijainti - ylhäällä"
+
+#. I18N: Opens in-game Diary
+#: engines/stark/metaengine.cpp:225
+msgid "April's diary (initially disabled)"
+msgstr ""
+
+#: engines/stark/metaengine.cpp:230
+#, fuzzy
+#| msgid "Fast replay"
+msgid "Video replay"
+msgstr "Nopea toisto"
+
+#: engines/stark/metaengine.cpp:235
+#, fuzzy
+#| msgid "Game Options"
+msgid "Game settings"
+msgstr "Pelin asetukset"
+
+#: engines/stark/metaengine.cpp:245 engines/wintermute/keymapper_tables.h:1345
+msgid "Toggle subtitles"
+msgstr "Tekstitys päälle / pois"
+
+#: engines/stark/metaengine.cpp:250
+#, fuzzy
+#| msgid "Quit Game"
+msgid "Quit to menu"
+msgstr "Lopeta peli"
+
+#: engines/stark/metaengine.cpp:255
+msgid "Cycle back through inventory cursor items"
+msgstr ""
+
+#: engines/stark/metaengine.cpp:261
+msgid "Cycle forward through inventory cursor items"
+msgstr ""
+
+#. I18N: A popup on screen shows shows the exits
+#: engines/stark/metaengine.cpp:274
+msgid "Display all exits on current location"
+msgstr ""
+
+#: engines/stark/metaengine.cpp:292
+#, fuzzy
+#| msgid "Open/Close Inventory"
+msgid "Scroll up in inventory"
+msgstr "Avaa/Sulje Inventaario"
+
+#: engines/stark/metaengine.cpp:299
+#, fuzzy
+#| msgid "Show inventory"
+msgid "Scroll down in inventory"
+msgstr "Näytä inventaario"
+
+#: engines/stark/metaengine.cpp:306
+msgid "Scroll up in your dialogues"
+msgstr ""
+
+#: engines/stark/metaengine.cpp:312
+msgid "Scroll down in your dialogues"
+msgstr ""
+
+#: engines/stark/metaengine.cpp:318
+#, fuzzy
+#| msgid "Highlight next dialogue"
+msgid "go to next dialogue"
+msgstr "Korosta seuraavaa dialogia"
+
+#: engines/stark/metaengine.cpp:323
+#, fuzzy
+#| msgid "Go to previous index"
+msgid "go to previous dialogues"
+msgstr "Siirry edelliseen indeksiin"
+
+#: engines/stark/metaengine.cpp:328
+#, fuzzy
+#| msgid "Skip dialogue"
+msgid "Select dialogue"
+msgstr "Ohita dialogi"
+
+#: engines/stark/metaengine.cpp:335
+msgid "Skip video sequence or dialogue"
+msgstr ""
 
 #: engines/stark/stark.cpp:106
 msgid "Software renderer does not support modded assets"
 msgstr "Ohjelmistorenderöijä ei tue muokattuja peliresursseja"
 
-#: engines/stark/stark.cpp:291
+#: engines/stark/stark.cpp:292
 msgid "You are missing recommended data files:"
 msgstr "Sinulta puuttuu seuraavat suositellut datatiedostot:"
 
-#: engines/stark/stark.cpp:305
+#: engines/stark/stark.cpp:306
 msgid ""
 "The 'fonts' folder is required to experience the text style as it was "
 "designed. The Steam release is known to be missing it. You can get the fonts "
@@ -11399,7 +11503,7 @@ msgstr ""
 "on suunniteltu. Pelin Steam-julkaisusta sen tiedetään puuttuvan. Voit "
 "kopioida fontit pelin demoversiosta."
 
-#: engines/stark/stark.cpp:312
+#: engines/stark/stark.cpp:313
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
@@ -11407,12 +11511,12 @@ msgstr ""
 "'gui.ini':ä suositellaan jotta saat sopivat fonttiasetukset pelin "
 "lokalisaatiolle."
 
-#: engines/stark/stark.cpp:318
+#: engines/stark/stark.cpp:319
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
 "'language.ini':ä suositellaan jotta saat lokalisoidut vahvistusdialogit."
 
-#: engines/stark/stark.cpp:324
+#: engines/stark/stark.cpp:325
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr "'game.exe':ä suositellaan jotta saat tyylitellyt vahvistusdialogit."
 
@@ -12770,10 +12874,6 @@ msgstr "Tanssiliike oikealle"
 #: engines/wintermute/keymapper_tables.h:1283
 msgid "Cancel input"
 msgstr "Peruuta syöte"
-
-#: engines/wintermute/keymapper_tables.h:1345
-msgid "Toggle subtitles"
-msgstr "Tekstitys päälle / pois"
 
 #: engines/wintermute/keymapper_tables.h:1409
 msgid "Hide hints"
