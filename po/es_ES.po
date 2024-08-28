@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-27 19:55+0000\n"
-"PO-Revision-Date: 2024-08-26 09:32+0000\n"
+"PO-Revision-Date: 2024-08-28 09:26+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -8121,16 +8121,12 @@ msgid "Enable Gore Mode when available"
 msgstr "Activa el modo sangriento si está disponible"
 
 #: engines/hopkins/metaengine.cpp:231
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Open inventory"
-msgstr "Abrir/Cerrar inventario"
+msgstr "Abrir inventario"
 
 #: engines/hopkins/metaengine.cpp:250
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Option dialog"
-msgstr "Omitir diálogo"
+msgstr "Ventana de opciones"
 
 #: engines/hpl1/metaengine.cpp:76
 msgid "Forward"
