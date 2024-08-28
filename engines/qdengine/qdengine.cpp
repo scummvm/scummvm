@@ -202,10 +202,16 @@ byte *transCyrillic(const Common::String &str) {
 				}
 			}
 
-			if (!trans[j]) {
-				warning("transCyrillic: no mapping for %d (0x%x)", *p, *p);
-				tmp[i++] = '?';
-				tmp[i++] = '?';
+			if (*p == 0x96) {  // "–" -- EN DASH
+				tmp[i++] = 0xE2;
+				tmp[i++] = 0x80;
+				tmp[i++] = 0x93;
+			} else {
+				if (!trans[j]) {
+					warning("transCyrillic: no mapping for %d (0x%x)", *p, *p);
+					tmp[i++] = '?';
+					tmp[i++] = '?';
+				}
 			}
 		}
 #endif
