@@ -263,6 +263,7 @@ void ToonEngine::parseInput() {
 			default:
 				break;
 			}
+			break;
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.flags & Common::KBD_ALT) {
 				int slotNum = event.kbd.keycode - (event.kbd.keycode >= Common::KEYCODE_KP0 ? Common::KEYCODE_KP0 : Common::KEYCODE_0);
