@@ -31,7 +31,7 @@ namespace QDEngine {
 
 class qdMaski21MiniGame : public qdMiniGameInterface {
 public:
-	qdMaski21MiniGame() {}
+	qdMaski21MiniGame(bool randomDll) { _randomDll = randomDll; }
 	~qdMaski21MiniGame() {}
 
 	bool init(const qdEngineInterface *engine_interface) {
@@ -43,7 +43,9 @@ public:
 			return false;
 
 		_flagObj = _scene->object_interface(_scene->minigame_parameter("command_object"));
-		_commandObj = _scene->object_interface(_scene->minigame_parameter("command_object"));
+
+		if (!_randomDll)
+			_commandObj = _scene->object_interface(_scene->minigame_parameter("command_object"));
 
 		// srand(time(0))
 
@@ -55,23 +57,25 @@ public:
 	bool quant(float dt) {
 		debugC(3, kDebugMinigames, "Maski21::quant(%f)", dt);
 
-		mgVect2i pos = _engine->mouse_cursor_position();
+		if (!_randomDll) {
+			mgVect2i pos = _engine->mouse_cursor_position();
 
-		if (pos.x < 25)
-			_commandObj->set_state("\xe2\xeb\xe5\xe2\xee");		// "влево"
+			if (pos.x < 25)
+				_commandObj->set_state("\xe2\xeb\xe5\xe2\xee");		// "влево"
 
-		if (pos.x > 775)
-			_commandObj->set_state("\xe2\xef\xf0\xe0\xe2\xee");	// "вправо"
+			if (pos.x > 775)
+				_commandObj->set_state("\xe2\xef\xf0\xe0\xe2\xee");	// "вправо"
 
-		if (pos.x > 25 && pos.x < 775)
-			_commandObj->set_state("\xed\xe5\xf2");				// "нет"
+			if (pos.x > 25 && pos.x < 775)
+				_commandObj->set_state("\xed\xe5\xf2");				// "нет"
+		}
 
 		if (_flagObj->is_state_active("\xe7\xe0\xef\xf3\xf1\xea")) {	// "запуск"
 			_timePassed = 0.0;
 			_targetTime = qd_rnd(20) + 10;
 
 			_flagObj->set_state("\xe2\xfb\xef\xee\xeb\xed\xe5\xed\xe8\xe5");	// "выполнение"
-		} else if ( _flagObj->is_state_active("\xe2\xfb\xef\xee\xeb\xed\xe5\xed\xe8\xe5") ) {	// "выполнение"
+		} else if (_flagObj->is_state_active("\xe2\xfb\xef\xee\xeb\xed\xe5\xed\xe8\xe5")) {	// "выполнение"
 			_timePassed += dt;
 		}
 
@@ -120,6 +124,8 @@ private:
 
 	float _timePassed = -1.0;
 	int _targetTime = 0;
+
+	bool _randomDll = false;
 };
 
 } // namespace QDEngine

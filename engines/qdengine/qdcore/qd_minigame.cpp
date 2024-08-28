@@ -267,7 +267,6 @@ bool qdMiniGame::load_interface() {
 		// maski
 		// Arkada_avtomat.dll
 		// kartiny.dll
-		// maski_21_random.dll
 		// orchestra.dll
 		if (_dll_name == "Resource\\DLL\\tetris.dll") {
 			_interface = new qdTetrisMiniGame();
@@ -279,8 +278,12 @@ bool qdMiniGame::load_interface() {
 			_interface = new qdMaskyOrderMiniGame();
 			return true;
 		} else if (_dll_name == "Resource\\DLL\\maski_21.dll") {
-			_interface = new qdMaski21MiniGame();
+			_interface = new qdMaski21MiniGame(false);
 			return true;
+		} else if (_dll_name == "Resource\\DLL\\maski_21_random.dll") {
+			_interface = new qdMaski21MiniGame(true);
+			return true;
+
 
 		// 3mice1
 		} else if (_dll_name == "DLL\\Book_gusenica.dll" || _dll_name == "DLL\\Book_les.dll"
