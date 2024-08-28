@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-27 19:55+0000\n"
+"POT-Creation-Date: 2024-08-28 14:39+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -328,7 +328,7 @@ msgstr "تخزين آخر يعمل الآن. هل تريد مقاطعته؟"
 #: engines/kyra/gui/saveload_eob.cpp:601 engines/kyra/gui/saveload_eob.cpp:634
 #: engines/parallaction/metaengine.cpp:143
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3993
-#: engines/toon/toon.cpp:1538
+#: engines/toon/toon.cpp:1542
 msgid "Yes"
 msgstr "نعم"
 
@@ -341,7 +341,7 @@ msgstr "نعم"
 #: engines/kyra/gui/saveload_eob.cpp:601 engines/kyra/gui/saveload_eob.cpp:634
 #: engines/parallaction/metaengine.cpp:149
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3993
-#: engines/toon/toon.cpp:1538
+#: engines/toon/toon.cpp:1542
 msgid "No"
 msgstr "لا"
 
@@ -3464,7 +3464,7 @@ msgstr "~ ال~عودة إلى المشغل"
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:746
 #: engines/sci/engine/kfile.cpp:1104 engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3808
+#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3812
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
 #: engines/wage/saveload.cpp:746 engines/zvision/file/save_manager.cpp:48
 msgid "Save game:"
@@ -3487,7 +3487,7 @@ msgstr "حفظ اللعبة:"
 #: engines/sci/engine/guest_additions.cpp:747 engines/sci/engine/kfile.cpp:1104
 #: engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3808
+#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3812
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
 #: engines/wage/saveload.cpp:746 engines/zvision/file/save_manager.cpp:48
 #: engines/zvision/metaengine.cpp:262
@@ -5762,7 +5762,7 @@ msgstr "تحقق من وجود تحديثات..."
 #: engines/hugo/hugo.cpp:427 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:300 engines/sky/compact.cpp:129
 #: engines/supernova/supernova.cpp:463 engines/teenagent/resources.cpp:97
-#: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5413
+#: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5417
 #: engines/ultima/ultima8/ultima8.cpp:187
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
@@ -5771,7 +5771,7 @@ msgstr "غير قادر على تحديد موقع ملف بيانات المح�
 #: engines/access/resources.cpp:51 engines/drascula/drascula.cpp:956
 #: engines/hugo/hugo.cpp:439 engines/lure/lure.cpp:66
 #: engines/mortevielle/mortevielle.cpp:308 engines/supernova/supernova.cpp:468
-#: engines/tony/tony.cpp:200 engines/toon/toon.cpp:5426
+#: engines/tony/tony.cpp:200 engines/toon/toon.cpp:5430
 #, c-format
 msgid "The '%s' engine data file is corrupt."
 msgstr "ملف بيانات المحرك '%s' تالف."
@@ -5779,7 +5779,7 @@ msgstr "ملف بيانات المحرك '%s' تالف."
 #: engines/access/resources.cpp:60 engines/drascula/drascula.cpp:967
 #: engines/hugo/hugo.cpp:449 engines/lure/lure.cpp:69
 #: engines/mortevielle/mortevielle.cpp:318 engines/tony/tony.cpp:211
-#: engines/toon/toon.cpp:5437
+#: engines/toon/toon.cpp:5441
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
@@ -5944,7 +5944,7 @@ msgstr "هذه اللعبة غير مدعومة."
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:749
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3902
+#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3906
 #: engines/zvision/file/save_manager.cpp:61
 msgid "Restore game:"
 msgstr "استرجاع لعبة:"
@@ -5964,7 +5964,7 @@ msgstr "استرجاع لعبة:"
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:750
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3902
+#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3906
 #: engines/zvision/file/save_manager.cpp:61 engines/zvision/metaengine.cpp:267
 msgid "Restore"
 msgstr "استرجع"
@@ -11554,31 +11554,31 @@ msgstr ""
 msgid "Font variant not present in '%s' engine data file."
 msgstr "متغير الخط غير موجود في ملف بيانات المحرك '%s'."
 
-#: engines/toon/toon.cpp:268
+#: engines/toon/toon.cpp:272
 #, c-format
 msgid "Saved game in slot #%d "
 msgstr "اللعبة المحفوظة في الفتحة #%d "
 
-#: engines/toon/toon.cpp:272
+#: engines/toon/toon.cpp:276
 #, c-format
 msgid "Could not quick save into slot #%d"
 msgstr "تعذر الحفظ السريع في الفتحة #%d"
 
-#: engines/toon/toon.cpp:285
+#: engines/toon/toon.cpp:289
 #, c-format
 msgid "Saved game #%d quick loaded"
 msgstr "تحميل سريع للعبة المحفوظة #%d"
 
-#: engines/toon/toon.cpp:289
+#: engines/toon/toon.cpp:293
 #, c-format
 msgid "Could not quick load the saved game #%d"
 msgstr "تعذر التحميل السريع للعبة المحفوظة #%d"
 
-#: engines/toon/toon.cpp:1538
+#: engines/toon/toon.cpp:1542
 msgid "Are you sure you want to exit?"
 msgstr "هل أنت متأكد أنك تريد الخروج؟"
 
-#: engines/toon/toon.cpp:1948
+#: engines/toon/toon.cpp:1952
 #, c-format
 msgid "Unable to locate the '%s' data file."
 msgstr "غير قادر على تحديد موقع ملف البيانات '%s'."
