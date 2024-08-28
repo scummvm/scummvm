@@ -29,28 +29,175 @@
 #include "common/system.h"
 #include "common/translation.h"
 
+#include "engines/dialogs.h"
+
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 
+#include "gui/ThemeEval.h"
+#include "gui/widget.h"
+#include "gui/widgets/popup.h"
+
 namespace Sword1 {
 		
-#define GAMEOPTION_WINDOWS_AUDIO_MODE GUIO_GAMEOPTIONS1
+#define GAMEOPTION_WINDOWS_AUDIO_MODE     GUIO_GAMEOPTIONS1
+#define GAMEOPTION_MULTILANGUAGE          GUIO_GAMEOPTIONS2
+#define GAMEOPTION_MULTILANGUAGE_EXTENDED GUIO_GAMEOPTIONS3
 
-static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_WINDOWS_AUDIO_MODE,
-		{
-			_s("Simulate the audio engine from the Windows executable"),
-			_s("Makes the game use softer (logarithmic) audio curves, but removes fade-in and fade-out for "
-			   "sound effects, fade-in for music, and automatic music volume attenuation for when speech is playing"),
-			"windows_audio_mode",
-			false,
-			0,
-			0
-		}
-	},
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+class Sword1OptionsWidget : public GUI::OptionsContainerWidget {
+public:
+	explicit Sword1OptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain);
+
+	// OptionsContainerWidget API
+	void load() override;
+	bool save() override;
+
+private:
+	// OptionsContainerWidget API
+	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
+	Common::StringArray _availableLangCodes = {"en", "de", "fr", "it", "es", "pt", "cs"};
+	Common::StringArray _availableLangs = {_("English"), _("German"), _("French"), _("Italian"), _("Spanish"), _("Brazilian Portuguese"), _("Czech")};
+	uint32 _numAvailableLangs = 0;
+	bool _atLeastOneAdditionalOpt = false;
+
+	GUI::PopUpWidget *_langPopUp;
+	GUI::CheckboxWidget *_windowsAudioMode;
 };
+
+Sword1OptionsWidget::Sword1OptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
+	OptionsContainerWidget(boss, name, "Sword1GameOptionsDialog", domain) {
+
+	if (Common::checkGameGUIOption(GAMEOPTION_MULTILANGUAGE, ConfMan.get("guioptions", domain))) {
+		_numAvailableLangs = 5;
+	} else if (Common::checkGameGUIOption(GAMEOPTION_MULTILANGUAGE_EXTENDED, ConfMan.get("guioptions", domain))) {
+		_numAvailableLangs = 7;
+	}
+
+	// Language
+	if (Common::checkGameGUIOption(GAMEOPTION_MULTILANGUAGE, ConfMan.get("guioptions", domain)) ||
+		Common::checkGameGUIOption(GAMEOPTION_MULTILANGUAGE_EXTENDED, ConfMan.get("guioptions", domain))) {
+		GUI::StaticTextWidget *textWidget = new GUI::StaticTextWidget(
+			widgetsBoss(),
+			_dialogLayout + ".subtitles_lang_desc",
+			_("Text language:"),
+			_("Set the language for the subtitles. This will not affect voices.")
+		);
+
+		textWidget->setAlign(Graphics::kTextAlignLeft);
+
+		_langPopUp = new GUI::PopUpWidget(
+			widgetsBoss(),
+			_dialogLayout + ".subtitles_lang",
+			_("Set the language for the subtitles. This will not affect voices.")
+		);
+
+		_langPopUp->appendEntry(_("<default>"), (uint32)-1);
+
+		for (uint32 i = 0; i < _numAvailableLangs; i++) {
+			_langPopUp->appendEntry(_availableLangs[i], i);
+		}
+
+		_atLeastOneAdditionalOpt = true;
+	} else {
+		_langPopUp = nullptr;
+	}
+
+	// Windows audio mode
+	if (Common::checkGameGUIOption(GAMEOPTION_WINDOWS_AUDIO_MODE, ConfMan.get("guioptions", domain))) {
+		_windowsAudioMode = new GUI::CheckboxWidget(
+			widgetsBoss(),
+			_dialogLayout + ".windows_audio_mode",
+			_("Simulate the audio engine from the Windows executable"),
+			_("Makes the game use softer (logarithmic) audio curves, but removes fade-in and fade-out for "
+			  "sound effects, fade-in for music, and automatic music volume attenuation for when speech is playing"));
+
+		_atLeastOneAdditionalOpt = true;
+	} else {
+		_windowsAudioMode = nullptr;
+	}
+
+	if (_atLeastOneAdditionalOpt) {
+		GUI::StaticTextWidget *additionalOptsWidget = new GUI::StaticTextWidget(
+			widgetsBoss(),
+			_dialogLayout + ".additional_opts_label",
+			_("Additional options:"));
+
+		additionalOptsWidget->setAlign(Graphics::kTextAlignLeft);
+	}
+}
+
+void Sword1OptionsWidget::load() {
+	Common::ConfigManager::Domain *gameConfig = ConfMan.getDomain(_domain);
+	if (!gameConfig)
+		return;
+
+	if (_langPopUp) {
+		uint32 curLangIndex = (uint32)-1;
+		Common::String curLang;
+		gameConfig->tryGetVal("subtitles_language_override", curLang);
+		if (!curLang.empty()) {
+			for (uint i = 0; i < _numAvailableLangs; ++i) {
+				if (_availableLangCodes[i].equalsIgnoreCase(curLang)) {
+					curLangIndex = i;
+					break;
+				}
+			}
+		}
+
+		_langPopUp->setSelectedTag(curLangIndex);
+	}
+
+	if (_windowsAudioMode) {
+		Common::String windowsAudioMode;
+		gameConfig->tryGetVal("windows_audio_mode", windowsAudioMode);
+		if (!windowsAudioMode.empty()) {
+			bool val;
+			if (parseBool(windowsAudioMode, val))
+				_windowsAudioMode->setState(val);
+		}
+	}
+}
+
+bool Sword1OptionsWidget::save() {
+	if (_langPopUp) {
+		uint langIndex = _langPopUp->getSelectedTag();
+		if (langIndex < _numAvailableLangs)
+			ConfMan.set("subtitles_language_override", _availableLangCodes[langIndex], _domain);
+		else
+			ConfMan.removeKey("subtitles_language_override", _domain);
+	}
+
+	if (_windowsAudioMode)
+		ConfMan.setBool("windows_audio_mode", _windowsAudioMode->getState(), _domain);
+
+	return true;
+}
+
+void Sword1OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
+	layouts.addDialog(layoutName, overlayedLayout);
+
+	layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(16, 0, 0, 0); // Layout 1
+
+		layouts.addWidget("additional_opts_label", "OptionsLabel");
+		layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(8, 0, 4, 0); // Layout 2
+
+			layouts.addWidget("subtitles_lang_desc", "OptionsLabel");
+			layouts.addWidget("subtitles_lang", "PopUp");
+
+			// This third layout is added for further separation from the dropdown list
+			layouts.addLayout(GUI::ThemeLayout::kLayoutVertical).addPadding(0, 0, 0, 0); // Layout 3
+
+				if (_langPopUp) // Don't draw padding if there's no lang selection
+					layouts.addPadding(0, 0, 8, 0);
+
+				layouts.addWidget("windows_audio_mode", "Checkbox");
+
+			layouts.closeLayout(); // Close layout 3
+
+		layouts.closeLayout(); // Close layout 2
+
+	layouts.closeLayout().closeDialog(); // Close layout 1
+}
 
 } // End of namespace Sword1
 
@@ -66,9 +213,8 @@ public:
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
-		return Sword1::optionsList;
-	}
+
+	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
@@ -96,6 +242,10 @@ bool Sword1::SwordEngine::hasFeature(EngineFeature f) const {
 	    (f == kSupportsReturnToLauncher) ||
 	    (f == kSupportsSavingDuringRuntime) ||
 	    (f == kSupportsLoadingDuringRuntime);
+}
+
+GUI::OptionsContainerWidget *SwordMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+	return new Sword1::Sword1OptionsWidget(boss, name, target);
 }
 
 Common::Error SwordMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
