@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-28 16:41+0000\n"
-"PO-Revision-Date: 2024-08-28 09:26+0000\n"
+"PO-Revision-Date: 2024-08-28 20:22+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -11569,106 +11569,84 @@ msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "Al activar esta opción, los textos se mostrarán más suavizados."
 
 #: engines/stark/metaengine.cpp:184
-#, fuzzy
-#| msgid "Default keymappings"
 msgid "Default keymapppings"
 msgstr "Asignaciones predeterminadas"
 
 #. I18N: Opens in-game Diary
 #: engines/stark/metaengine.cpp:202
-#, fuzzy
-#| msgid "Game menu"
 msgid "Diary menu"
-msgstr "Menú del juego"
+msgstr "Menú del diario"
 
 #. I18N: Opens in-game conversation log
 #: engines/stark/metaengine.cpp:219
-#, fuzzy
-#| msgid "Conversation position - Up"
 msgid "Conversation log"
-msgstr "Conversación: subir posición"
+msgstr "Registro de conversaciones"
 
 #. I18N: Opens in-game Diary
 #: engines/stark/metaengine.cpp:225
 msgid "April's diary (initially disabled)"
-msgstr ""
+msgstr "Diario de April (desactivado al principio)"
 
 #: engines/stark/metaengine.cpp:230
-#, fuzzy
-#| msgid "Fast replay"
 msgid "Video replay"
-msgstr "Repetición rápida"
+msgstr "Repetir vídeo"
 
 #: engines/stark/metaengine.cpp:235
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game settings"
-msgstr "Opciones del juego"
+msgstr "Ajustes del juego"
 
 #: engines/stark/metaengine.cpp:245 engines/wintermute/keymapper_tables.h:1345
 msgid "Toggle subtitles"
 msgstr "Subtítulos"
 
 #: engines/stark/metaengine.cpp:250
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit to menu"
-msgstr "Salir del juego"
+msgstr "Salir al menú"
 
 #: engines/stark/metaengine.cpp:255
 msgid "Cycle back through inventory cursor items"
-msgstr ""
+msgstr "Objeto anterior del cursor de inventario"
 
 #: engines/stark/metaengine.cpp:261
 msgid "Cycle forward through inventory cursor items"
-msgstr ""
+msgstr "Objeto siguiente del cursor de inventario"
 
 #. I18N: A popup on screen shows shows the exits
 #: engines/stark/metaengine.cpp:274
 msgid "Display all exits on current location"
-msgstr ""
+msgstr "Mostrar todas las salidas de la ubicación actual"
 
 #: engines/stark/metaengine.cpp:292
-#, fuzzy
-#| msgid "Open inventory"
 msgid "Scroll up in inventory"
-msgstr "Abrir inventario"
+msgstr "Avanzar en el inventario"
 
 #: engines/stark/metaengine.cpp:299
-#, fuzzy
-#| msgid "Show inventory"
 msgid "Scroll down in inventory"
-msgstr "Mostrar inventario"
+msgstr "Retroceder en el inventario"
 
 #: engines/stark/metaengine.cpp:306
 msgid "Scroll up in your dialogues"
-msgstr ""
+msgstr "Subir en lista de diálogos"
 
 #: engines/stark/metaengine.cpp:312
 msgid "Scroll down in your dialogues"
-msgstr ""
+msgstr "Bajar en lista de diálogos"
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "Highlight next dialogue"
 msgid "go to next dialogue"
-msgstr "Seleccionar diálogo siguiente"
+msgstr "Ir al diálogo siguiente"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "Go to previous index"
 msgid "go to previous dialogues"
-msgstr "Ir a índice anterior"
+msgstr "Ir a diálogos anteriores"
 
 #: engines/stark/metaengine.cpp:328
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Select dialogue"
-msgstr "Omitir diálogo"
+msgstr "Seleccionar diálogo"
 
 #: engines/stark/metaengine.cpp:335
 msgid "Skip video sequence or dialogue"
-msgstr ""
+msgstr "Omitir secuencia de vídeo o diálogo"
 
 #: engines/stark/stark.cpp:106
 msgid "Software renderer does not support modded assets"
