@@ -36,7 +36,7 @@
 #include "graphics/managed_surface.h"
 #include "graphics/thumbnail.h"
 
-const char *MetaEngineDetection::GAME_NOT_IMPLEMENTED = _s("Game not implemented");
+const char MetaEngineDetection::GAME_NOT_IMPLEMENTED[] = _s("Game not implemented");
 
 Common::String MetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
 	if (!target)
