@@ -35,6 +35,7 @@
 
 // maski
 #include "qdengine/minigames/kartiny.h"
+#include "qdengine/minigames/maski_21.h"
 #include "qdengine/minigames/masky_order.h"
 #include "qdengine/minigames/scroll.h"
 #include "qdengine/minigames/tetris.h"
@@ -266,7 +267,6 @@ bool qdMiniGame::load_interface() {
 		// maski
 		// Arkada_avtomat.dll
 		// kartiny.dll
-		// maski_21.dll
 		// maski_21_random.dll
 		// orchestra.dll
 		if (_dll_name == "Resource\\DLL\\tetris.dll") {
@@ -277,6 +277,9 @@ bool qdMiniGame::load_interface() {
 			return true;
 		} else if (_dll_name == "Resource\\DLL\\MaskyOrder.dll") {
 			_interface = new qdMaskyOrderMiniGame();
+			return true;
+		} else if (_dll_name == "Resource\\DLL\\maski_21.dll") {
+			_interface = new qdMaski21MiniGame();
 			return true;
 
 		// 3mice1

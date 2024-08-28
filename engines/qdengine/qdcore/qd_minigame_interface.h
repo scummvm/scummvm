@@ -108,7 +108,7 @@ public:
 	// version 102, 20060629
 	// version 103, 20060715
 	// version 104, never released
-	// version 105, 20061026
+	// version 105, 20061026, b945e65
 	// version 106, 20070214
 	// version 107, 20070404 09:13
 	// version 108, 20070404 10:12
