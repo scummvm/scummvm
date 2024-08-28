@@ -265,12 +265,10 @@ bool qdMiniGame::load_interface() {
 
 		// maski
 		// Arkada_avtomat.dll
-		// MaskyOrder.dll
 		// kartiny.dll
 		// maski_21.dll
 		// maski_21_random.dll
 		// orchestra.dll
-		// scroll.dll
 		if (_dll_name == "Resource\\DLL\\tetris.dll") {
 			_interface = new qdTetrisMiniGame();
 			return true;

@@ -50,7 +50,6 @@ public:
 	}
 	~qdMaskyOrderMiniGame() {};
 
-	//! Инициализация игры.
 	bool init(const qdEngineInterface *engine_interface) {
 		debugC(1, kDebugMinigames, "MaskyOrder::init(), dll: %s lang: %d", _dll.c_str(), _language);
 
@@ -75,7 +74,6 @@ public:
 		return true;
 	}
 
-	//! Обсчёт логики игры, параметр - время, которое должно пройти в игре (в секундах).
 	bool quant(float dt) {
 		debugC(3, kDebugMinigames, "MaskyOrder::quant(%f)", dt);
 
@@ -247,7 +245,6 @@ public:
 		}
 	}
 
-	//! Деинициализация игры.
 	bool finit() {
 		debugC(1, kDebugMinigames, "MaskyOrder::finit()");
 
@@ -259,20 +256,18 @@ public:
  		return true;
 	}
 
-	/// Инициализация миниигры, вызывается при старте и перезапуске игры.
 	bool new_game(const qdEngineInterface *engine_interface) {
 		return true;
 	}
-	/// Сохранение данных, вызывается при сохранении сцены, на которую повешена миниигра.
+
 	int save_game(const qdEngineInterface *engine_interface, const qdMinigameSceneInterface *scene_interface, char *buffer, int buffer_size) {
 		return 0;
 	}
-	/// Загрузка данных, вызывается при загрузке сцены, на которую повешена миниигра.
+
 	int load_game(const qdEngineInterface *engine_interface, const qdMinigameSceneInterface *scene_interface, const char *buffer, int buffer_size) {
 		return 0;
 	}
 
-	/// Версия интерфейса игры, трогать не надо.
 	enum { INTERFACE_VERSION = 112 };
 	int version() const {
 		return INTERFACE_VERSION;

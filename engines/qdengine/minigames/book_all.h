@@ -178,7 +178,6 @@ public:
 	qdBookAllMiniGame(Common::String dll, Common::Language language) : _dll(dll), _language(language) {}
 	~qdBookAllMiniGame() { };
 
-	//! Инициализация игры.
 	bool init(const qdEngineInterface *engine_interface) {
 		debugC(1, kDebugMinigames, "BookAll::init()");
 
@@ -272,7 +271,6 @@ public:
 		return true;
 	}
 
-	//! Обсчёт логики игры, параметр - время, которое должно пройти в игре (в секундах).
 	bool quant(float dt) {
 		debugC(3, kDebugMinigames, "BookAll::quant(%f). _playbackOn: %d _playbackOn: %d _currentPageArt: %d _totalPageArts: %d _time: %f",
 				dt, _playbackOn, _playbackOn, _currentPageArt, _totalPageArts[_pageNum], _time);
@@ -322,7 +320,6 @@ public:
 		return true;
 	}
 
-	//! Деинициализация игры.
 	bool finit() {
 		debugC(1, kDebugMinigames, "BookAll::finit()");
 
@@ -334,20 +331,18 @@ public:
  		return true;
 	}
 
-	/// Инициализация миниигры, вызывается при старте и перезапуске игры.
 	bool new_game(const qdEngineInterface *engine_interface) {
 		return true;
 	}
-	/// Сохранение данных, вызывается при сохранении сцены, на которую повешена миниигра.
+
 	int save_game(const qdEngineInterface *engine_interface, const qdMinigameSceneInterface *scene_interface, char *buffer, int buffer_size) {
 		return 0;
 	}
-	/// Загрузка данных, вызывается при загрузке сцены, на которую повешена миниигра.
+
 	int load_game(const qdEngineInterface *engine_interface, const qdMinigameSceneInterface *scene_interface, const char *buffer, int buffer_size) {
 		return 0;
 	}
 
-	/// Версия интерфейса игры, трогать не надо.
 	enum { INTERFACE_VERSION = 112 };
 	int version() const {
 		return INTERFACE_VERSION;
