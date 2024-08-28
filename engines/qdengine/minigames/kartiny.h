@@ -174,16 +174,16 @@ public:
 		if (!checkSolution() && _wasInited) {
 			_doneObj->set_state("false");
 
-			if (_engine->is_key_pressed(Common::KEYCODE_LEFT)
-					|| _engine->is_key_pressed(Common::KEYCODE_RIGHT)
-					|| _engine->is_key_pressed(Common::KEYCODE_UP)
-					|| _engine->is_key_pressed(Common::KEYCODE_DOWN)) {
+			if (_engine->is_key_pressed(VK_LEFT)
+					|| _engine->is_key_pressed(VK_RIGHT)
+					|| _engine->is_key_pressed(VK_UP)
+					|| _engine->is_key_pressed(VK_DOWN)) {
 				++_keyDownCounter;
 			} else {
 				_keyDownCounter = 0;
 			}
 
-			if (_engine->is_key_pressed(Common::KEYCODE_LEFT)) {
+			if (_engine->is_key_pressed(VK_LEFT)) {
 				switch (_stage) {
 				case 1:
 					moveLeft(_bg1_l2Obj);
@@ -202,7 +202,7 @@ public:
 				}
 			}
 
-			if (_engine->is_key_pressed(Common::KEYCODE_RIGHT)) {
+			if (_engine->is_key_pressed(VK_RIGHT)) {
 				switch (_stage) {
 				case 1:
 					moveRight(_bg1_l2Obj);
@@ -221,7 +221,7 @@ public:
 				}
 			}
 
-			if (_engine->is_key_pressed(Common::KEYCODE_UP)) {
+			if (_engine->is_key_pressed(VK_UP)) {
 				switch (_stage) {
 				case 1:
 					moveUp(_bg1_l2Obj);
@@ -240,7 +240,7 @@ public:
 				}
 			}
 
-			if (_engine->is_key_pressed(Common::KEYCODE_DOWN)) {
+			if (_engine->is_key_pressed(VK_DOWN)) {
 				switch (_stage) {
 				case 1:
 					moveDown(_bg1_l2Obj);
