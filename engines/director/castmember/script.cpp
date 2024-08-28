@@ -57,8 +57,7 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 
 		debugC(3, kDebugLoading, "CASt: Script type: %s (%d), unk1: %d", scriptType2str(_scriptType), type, unk1);
 
-		stream.readByte(); // There should be no more data
-		assert(stream.eos());
+		assert(stream.pos() == stream.size()); // There should be no more data
 	} else {
 		warning("STUB: ScriptCastMember::ScriptCastMember(): Scripts not yet supported for version %d", version);
 	}
