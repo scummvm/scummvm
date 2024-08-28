@@ -1095,6 +1095,9 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		castInfoSize = 0;
 		break;
 	}
+	if (castStream.eos()) {
+		warning("BUILDBOT: Read past dataStream for id: %d", id);
+	}
 
 	if (_loadedCast->contains(id)) { // Skip unhandled casts
 		debugCN(3, kDebugLoading, "Children: ");
