@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-28 16:41+0000\n"
-"PO-Revision-Date: 2023-12-09 22:05+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2024-08-29 03:43+0000\n"
+"Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
 "Language: sv_SE\n"
@@ -32,27 +32,21 @@ msgid "Features compiled in:"
 msgstr "Funktioner kompilerade i:"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "not supported"
-msgstr "Spel-ID stöds inte"
+msgstr "stöds inte"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "disabled"
-msgstr "Inaktiverad"
+msgstr "inaktiverad"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "enabled"
-msgstr "Inaktiverad"
+msgstr "aktiverad"
 
 #. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
 #: gui/about.cpp:142
 msgid "CPU extensions support:"
-msgstr ""
+msgstr "CPU-utökningsstöd:"
 
 #: gui/about.cpp:155
 msgid "Available engines:"
@@ -337,10 +331,8 @@ msgid "No"
 msgstr "Nej"
 
 #: gui/cloudconnectionwizard.cpp:508
-#, fuzzy
-#| msgid "Wait until current Storage finishes up and try again."
 msgid "Wait until current Storage finishes and try again."
-msgstr "Vänta tills det nuvarande lagret är färdigt och försök igen."
+msgstr "Vänta tills nuvarande Storage blir färdigt och försök igen."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:536
@@ -403,17 +395,15 @@ msgstr "Kunde inte ladda JSON-filen"
 
 #: gui/dlcsdialog.cpp:41
 msgid "Download Freeware Games and Demos"
-msgstr ""
+msgstr "Ladda ner gratis spel och demos"
 
 #: gui/dlcsdialog.cpp:52
 msgid "Fetching DLCs..."
-msgstr ""
+msgstr "Hämtar DLC:er..."
 
 #: gui/dlcsdialog.cpp:60
-#, fuzzy
-#| msgid "Download"
 msgid "All Downloads"
-msgstr "Ladda ner"
+msgstr "Alla nerladdningar"
 
 #: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:267
 msgid "Download"
@@ -478,8 +468,8 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
-"\"%s\" existerar redan i den angivna katalogen. Vill du verkligen ladda ner "
-"filer i den katalogen?"
+"\"%s\" existerar redan i den angivna katalogen.\n"
+"Vill du verkligen ladda ner filer i den katalogen?"
 
 #: gui/downloaddialog.cpp:198 gui/downloaddlcsdialog.cpp:70
 #: gui/downloadpacksdialog.cpp:368
@@ -493,16 +483,12 @@ msgid "Download speed: %s %S/s"
 msgstr "Nedladdningshastighet: %s %S/s"
 
 #: gui/downloaddlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download game files"
 msgid "Currently Downloading Games"
-msgstr "Ladda ner spelfiler"
+msgstr "Laddar för närvarande ner spel"
 
 #: gui/downloaddlcsdialog.cpp:55
-#, fuzzy
-#| msgid "Download"
 msgid "Pending Downloads"
-msgstr "Ladda ner"
+msgstr "Väntande nedladdningar"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
@@ -677,11 +663,11 @@ msgstr "Sökvägar"
 
 #: gui/editgamedialog.cpp:291
 msgid "Check Integrity"
-msgstr ""
+msgstr "Kontrollera integritet"
 
 #: gui/editgamedialog.cpp:291
 msgid "Perform integrity check for all game files"
-msgstr ""
+msgstr "Utför integritetskontroll för alla spelfiler"
 
 #: gui/editgamedialog.cpp:296
 msgid "Game Path:"
@@ -854,26 +840,25 @@ msgstr "Anteckningar:"
 msgid ""
 "Verifying file integrity may take a long time to complete. Please wait...\n"
 msgstr ""
+"Verifikation av filintegritet kan ta lång tid att genomföra. Vänligen "
+"vänta...\n"
 
 #: gui/integrity-dialog.cpp:107 gui/integrity-dialog.cpp:168
 msgid "Calculating file checksums..."
-msgstr ""
+msgstr "Beräknar kontrollsumma för fil..."
 
 #: gui/integrity-dialog.cpp:120
 msgid "Launch Email Client"
-msgstr ""
+msgstr "Starta epostklient"
 
 #: gui/integrity-dialog.cpp:174
-#, fuzzy
-#| msgid "Scan complete!"
 msgid "Calculation complete"
-msgstr "Scanning färdig!"
+msgstr "Beräkning färdig"
 
 #: gui/integrity-dialog.cpp:263
-#, fuzzy, c-format
-#| msgid "Downloaded %s %S / %s %S"
+#, c-format
 msgid "Calculated %s %S / %s %S"
-msgstr "Laddade ner %s %S / %s %S"
+msgstr "Beräknade %s %S / %s %S"
 
 #: gui/integrity-dialog.cpp:513
 msgid ""
@@ -883,21 +868,29 @@ msgid ""
 "If you are sure that this is a valid unknown variant, please send the "
 "following e-mail to integrity@scummvm.org"
 msgstr ""
+"### Resultat\n"
+"Din uppsättning av spelfiler förefaller vara okänd för oss.\n"
+"\n"
+"Om du är säker på att du har en giltig okänd variant, vänligen skicka "
+"följande e-postmeddelande till integrity@scummvm.org"
 
 #: gui/integrity-dialog.cpp:537
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr ""
+"Spelet verkar inte ha några filer. Är du säker på att sökvägen är korrekt?"
 
 #: gui/integrity-dialog.cpp:542
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
 msgstr ""
+"Sepelet verkar inte ha någon metadata associerad med det, så det kan inte "
+"matchas. Vänligen fyll i den korrekta metadatan för spelet."
 
 #: gui/integrity-dialog.cpp:569
 msgid "Files all OK"
-msgstr ""
+msgstr "Filerna är alla OK"
 
 #: gui/filebrowser-dialog.cpp:53
 msgid "Choose file for loading"
@@ -1081,8 +1074,6 @@ msgid "Backspace"
 msgstr "Baksteg"
 
 #: gui/gui-manager.cpp:206
-#, fuzzy
-#| msgid "Delete char"
 msgid "Delete Character"
 msgstr "Radera tecken"
 
@@ -1137,7 +1128,7 @@ msgstr "???"
 
 #: gui/helpdialog.cpp:38
 msgid "General"
-msgstr ""
+msgstr "Allmänt"
 
 #: gui/helpdialog.cpp:41
 msgid ""
@@ -1306,16 +1297,15 @@ msgstr "Plattform"
 #: gui/launcher.cpp:120
 msgctxt "year"
 msgid "Year"
-msgstr ""
+msgstr "År"
 
 #: gui/launcher.cpp:230
 msgid "Select Group by"
 msgstr "Välj grupp utifrån"
 
 #: gui/launcher.cpp:234 gui/launcher.cpp:898
-#, fuzzy
 msgid "Group:"
-msgstr "Gruppera efter:"
+msgstr "Grupp:"
 
 #: gui/launcher.cpp:236
 msgid "Select a criteria to group the entries"
@@ -1323,7 +1313,7 @@ msgstr "Välj urvalskriterium för gruppering"
 
 #: gui/launcher.cpp:263
 msgid "Click here to see Help"
-msgstr ""
+msgstr "Klicka här för att se Hjälp"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
 #: gui/launcher.cpp:267 engines/dialogs.cpp:91
@@ -1336,9 +1326,8 @@ msgstr "Avsluta ScummVM"
 
 #. I18N: Button About ScummVM program. b is the shortcut, Ctrl+b, put it in parens for non-latin (~b~)
 #: gui/launcher.cpp:271
-#, fuzzy
 msgid "A~b~out"
-msgstr "O~m~..."
+msgstr "O~m~"
 
 #: gui/launcher.cpp:271 backends/platform/sdl/macosx/appmenu_osx.mm:296
 msgid "About ScummVM"
@@ -1346,19 +1335,17 @@ msgstr "Om ScummVM"
 
 #. I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
 #: gui/launcher.cpp:273
-#, fuzzy
 msgid "Global ~O~ptions..."
-msgstr "~I~nställningar..."
+msgstr "Gobala ~I~nställningar..."
 
 #: gui/launcher.cpp:273
 msgid "Change global ScummVM options"
 msgstr "Redigera globala ScummVM-inställningar"
 
 #: gui/launcher.cpp:273
-#, fuzzy
 msgctxt "lowres"
 msgid "Global ~O~pts..."
-msgstr "~I~nställningar..."
+msgstr "Gobala ~I~nställningar..."
 
 #: gui/launcher.cpp:277
 msgid "Download Games"
@@ -1459,6 +1446,8 @@ msgid ""
 "Did you add this directory to the SAF? Press the help button [?] on the top "
 "for detailed instructions"
 msgstr ""
+"Lade du till denna katalog till SAF? Tryck på hjälpknappen [?] i toppen för "
+"detaljerade instruktioner"
 
 #: gui/launcher.cpp:686
 msgid "ScummVM could not find any game in the specified directory!"
@@ -1498,19 +1487,17 @@ msgid "Record..."
 msgstr "Spela in..."
 
 #: gui/launcher.cpp:1114
-#, fuzzy
 msgid "~G~ame Options..."
-msgstr "~I~nställningar..."
+msgstr "Spel~i~nställningar..."
 
 #: gui/launcher.cpp:1114
 msgid "Change game options"
 msgstr "Redigera spelinställningarna"
 
 #: gui/launcher.cpp:1114
-#, fuzzy
 msgctxt "lowres"
 msgid "~G~ame Opts..."
-msgstr "~I~nställningar..."
+msgstr "Spel~i~nställningar..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
@@ -1543,10 +1530,8 @@ msgstr "Plattform ej upptäckt"
 
 #. I18N: List group when no year is specified
 #: gui/launcher.cpp:1291 gui/launcher.cpp:1487
-#, fuzzy
-#| msgid "Unknown error"
 msgid "Unknown Year"
-msgstr "Okänt fel"
+msgstr "Okänt år"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1494 gui/widgets/groupedlist.cpp:81
@@ -1618,57 +1603,49 @@ msgstr "Var 30:e minut"
 
 #. I18N: Extremely large GUI scale
 #: gui/options.cpp:155
-#, fuzzy, c-format
-#| msgid "Very large"
+#, c-format
 msgid "200% - Extremely large"
-msgstr "Väldigt"
+msgstr "200% - Extremt stort"
 
 #. I18N: Very very large GUI scale
 #: gui/options.cpp:157
-#, fuzzy
-#| msgid "Very large"
 msgid "175% - Very large"
-msgstr "Väldigt"
+msgstr "175% - Väldigt stort"
 
 #. I18N: Very large GUI scale
 #: gui/options.cpp:159
 #, c-format
 msgid "150% - Larger"
-msgstr ""
+msgstr "150% - Större"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:161
 #, c-format
 msgid "125% - Large"
-msgstr ""
+msgstr "125% - Stort"
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:163
-#, fuzzy
-#| msgid "Medium"
 msgid "100% - Medium"
-msgstr "Mellan"
+msgstr "100% - Medium"
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:165
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "75% - Small"
-msgstr "Liten"
+msgstr "75% - Litet"
 
 #. I18N: Smaller GUI scale
 #: gui/options.cpp:167
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "50% - Smaller"
-msgstr "Liten"
+msgstr "50% - Mindre"
 
 #. I18N: Smallest GUI scale
 #: gui/options.cpp:169
-#, fuzzy, c-format
-#| msgid "Small"
+#, c-format
 msgid "25% - Smallest"
-msgstr "Liten"
+msgstr "25% - Minst"
 
 #: gui/options.cpp:816
 msgid "Failed to apply some of the graphic options changes:"
@@ -1695,14 +1672,12 @@ msgid "the filtering setting could not be changed"
 msgstr "filterinställningen kunde inte ändras"
 
 #: gui/options.cpp:865
-#, fuzzy
 msgid "the vsync setting could not be changed"
-msgstr "fullskärmsinställningen kunde inte ändras"
+msgstr "vsync-inställningen kunde inte ändras"
 
 #: gui/options.cpp:879
-#, fuzzy
 msgid "the shader could not be changed"
-msgstr "skalningsläget kunde inte ändras"
+msgstr "shadern kunde inte ändras"
 
 #: gui/options.cpp:1403
 msgid "Touchpad mouse mode"
@@ -1769,9 +1744,8 @@ msgid "Shader:"
 msgstr "Shader:"
 
 #: gui/options.cpp:1632 gui/options.cpp:1634 gui/options.cpp:1635
-#, fuzzy
 msgid "Specifies path to the shader used for scaling the game screen"
-msgstr "Anger sökvägen till ytterligare data som spelet använder"
+msgstr "Anger sökvägen till shadern som används för att skala spelskärmen"
 
 #: gui/options.cpp:1634
 msgctxt "lowres"
@@ -1779,21 +1753,17 @@ msgid "Shader Path:"
 msgstr "Shader sökväg:"
 
 #: gui/options.cpp:1635
-#, fuzzy
 msgctxt "shader"
 msgid "None"
 msgstr "Ingen"
 
 #: gui/options.cpp:1640
-#, fuzzy
-#| msgid "Download game files"
 msgid "Download Shaders"
-msgstr "Ladda ner spelfiler"
+msgstr "Ladda ner shaders"
 
 #: gui/options.cpp:1640
-#, fuzzy
 msgid "Check on the scummvm.org website for updates of shader packs"
-msgstr "Sök efter uppdateringar..."
+msgstr "Leta på webbplatsen scummvm.org efter uppdateringar av shader-paket"
 
 #: gui/options.cpp:1646 backends/graphics/sdl/sdl-graphics.cpp:433
 msgid "Fullscreen mode"
@@ -1804,21 +1774,21 @@ msgid "V-Sync"
 msgstr "V-Synk"
 
 #: gui/options.cpp:1649
-#, fuzzy
 msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
-msgstr "Uppdatera inte skärmen innan bildrutan är färdigritad"
+msgstr ""
+"Vänta på att vertikal sync uppdaterar skärmen för att unvika visuella "
+"brytningar i grafiken"
 
 #: gui/options.cpp:1654
 msgid "Game 3D Renderer:"
 msgstr "3D-rendering för spel:"
 
 #: gui/options.cpp:1656
-#, fuzzy
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
-msgstr "3D-rendering för spel:"
+msgstr "3D-renderare för spel:"
 
 #: gui/options.cpp:1673
 msgid "3D Anti-aliasing:"
@@ -2101,7 +2071,7 @@ msgid ""
 "is temporary and will not get saved"
 msgstr ""
 "Anger var sparade spel placeras. Rödfärg anger ett temporärt värde som inte "
-"kommer att sparas."
+"kommer att sparas"
 
 #: gui/options.cpp:2474
 msgid "Theme Path:"
@@ -2122,7 +2092,6 @@ msgid "Icon Path:"
 msgstr "Ikon sökväg:"
 
 #: gui/options.cpp:2485 gui/options.cpp:2495
-#, fuzzy
 msgctxt "path"
 msgid "Default"
 msgstr "Standard"
@@ -2178,16 +2147,15 @@ msgstr "GUI-skala:"
 #: gui/options.cpp:2579
 #, c-format
 msgid "%d%% - Custom"
-msgstr ""
+msgstr "%d%% - Anpassad"
 
 #: gui/options.cpp:2583
 msgid "GUI renderer:"
 msgstr "GUI-rendering:"
 
 #: gui/options.cpp:2596
-#, fuzzy
 msgid "Return to the launcher when leaving a game"
-msgstr "Återvänd alltid till start när spel avslutas"
+msgstr "Återvänd till start när ett spel avslutas"
 
 #: gui/options.cpp:2597
 msgid ""
@@ -2195,7 +2163,8 @@ msgid ""
 "(this feature is not supported by all games)."
 msgstr ""
 "Återvänd till spellistan när ett spel avslutas i stället för att avsluta "
-"ScummVM (stöds ej av alla spel)."
+"ScummVM\n"
+"(denna funktion stöds ej av alla spel)."
 
 #: gui/options.cpp:2604
 msgid "Ask for confirmation on exit"
@@ -2207,15 +2176,15 @@ msgstr "Fråga om tillstånd att lämna ett spel eller avsluta ScummVM."
 
 #: gui/options.cpp:2611
 msgid "Disable fixed font scaling"
-msgstr "Avaktivera skalering av fasta typsnitt."
+msgstr "Avaktivera skalering av fasta typsnitt"
 
 #: gui/options.cpp:2612
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
 msgstr ""
-"Uppskalera inte fasta typsnitt i GUI. Detta reducerar artefakter på skärmar "
-"med låg upplösning."
+"Uppskala inte fasta typsnitt i GUI:t. Detta reducerar artefakter på skärmar "
+"med låg upplösning"
 
 #: gui/options.cpp:2618
 msgid "GUI language:"
@@ -2252,15 +2221,12 @@ msgstr ""
 "filer och kataloger."
 
 #: gui/options.cpp:2665
-#, fuzzy
-#| msgid "Download"
 msgid "Download Icons"
-msgstr "Ladda ner"
+msgstr "Ladda ner ikoner"
 
 #: gui/options.cpp:2665
-#, fuzzy
 msgid "Check on the scummvm.org website for updates of icon packs"
-msgstr "Sök efter uppdateringar..."
+msgstr "Leta på webbplatsen scummvm.org efter uppdateringar av ikon-paket"
 
 #: gui/options.cpp:2671
 msgid "Autosave:"
@@ -2425,11 +2391,10 @@ msgstr ""
 "upp igen:"
 
 #: gui/options.cpp:2773
-#, fuzzy
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
-"För att byta konto för den här lagringen kopplar du ned och kopplar sedan "
-"upp igen:"
+"För att byta konto för den här lagringen, koppla ned och koppla sedan upp "
+"igen:"
 
 #: gui/options.cpp:2774
 msgid "Disconnect"
@@ -2449,8 +2414,6 @@ msgid "This storage is not connected yet!"
 msgstr "Den här lagringen är inte ansluten än!"
 
 #: gui/options.cpp:2780
-#, fuzzy
-#| msgid "3. Connect"
 msgid "Connect"
 msgstr "Anslut"
 
@@ -2491,12 +2454,11 @@ msgstr "Om du stänger dialogrutan avslutas servern."
 
 #: gui/options.cpp:2810
 msgid "Run server to manage files with browser (in the same network)."
-msgstr "Kör server för att hantera filer i webbläsare (inom samma nätverk)"
+msgstr "Kör server för att hantera filer i webbläsare (inom samma nätverk)."
 
 #: gui/options.cpp:2811
-#, fuzzy
 msgid "Closing options dialog will stop the server."
-msgstr "Om du stänger dialogrutan avslutas servern."
+msgstr "Om du stänger inställningsdialogrutan stoppas servern."
 
 #: gui/options.cpp:2822
 msgid "Use Text to speech"
@@ -2504,7 +2466,7 @@ msgstr "Använd automatisk uppläsning"
 
 #: gui/options.cpp:2822
 msgid "Will read text in gui on mouse over."
-msgstr "Läser gränssnittets text under muspekaren"
+msgstr "Läser gränssnittets text när muspekaren flyttas över."
 
 #: gui/options.cpp:2903
 msgid "Ignore"
@@ -2777,7 +2739,7 @@ msgstr "Välj fil..."
 
 #: gui/shaderbrowser-dialog.cpp:70
 msgid "Pick shader from file system"
-msgstr "Välj shader från filsystem."
+msgstr "Välj shader från filsystem"
 
 #: gui/shaderbrowser-dialog.cpp:136
 msgid "Select shader"
@@ -2873,9 +2835,8 @@ msgid "Play"
 msgstr "Spela"
 
 #: gui/widgets/grid.cpp:287
-#, fuzzy
 msgid "Saves"
-msgstr "Spara"
+msgstr "Sparar"
 
 #: base/main.cpp:585
 msgid "Bad config file format. overwrite?"
@@ -2949,16 +2910,14 @@ msgid "Could not find any engine capable of running the selected game"
 msgstr "Kunde inte hitta en motor kapabel till att köra det valda spelet"
 
 #: common/engine_data.cpp:279 engines/ultima/shared/engine/data_archive.cpp:88
-#, fuzzy, c-format
+#, c-format
 msgid "Could not locate engine data %s"
-msgstr "Kunde inte hitta spelmotorns datafil '%s'."
+msgstr "Kunde inte hitta spelmotorndata %s"
 
 #: common/engine_data.cpp:297 engines/ultima/shared/engine/data_archive.cpp:106
-#, fuzzy, c-format
+#, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
-msgstr ""
-"Felaktig version av datafilen '%s' hittades. Version %d.%d krävs, hittade %d."
-"%d."
+msgstr "Gammal spelmotordata hittades. Version %d.%d krävs, hittade %d.%d"
 
 #: common/error.cpp:37
 msgid "No error"
@@ -3047,10 +3006,8 @@ msgid "PC-9801 (16 Colors)"
 msgstr "PC-9801 (16 färger)"
 
 #: common/rendermode.cpp:48
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "PC-9801 (8 Colors)"
-msgstr "PC-9801 (16 färger)"
+msgstr "PC-9801 (8 färger)"
 
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:53
@@ -3059,7 +3016,7 @@ msgstr "Machibtosh s/v"
 
 #: common/rendermode.cpp:57
 msgid "VGA Grey Scale"
-msgstr ""
+msgstr "VGA-gråskala"
 
 #: common/rendermode.cpp:92
 msgctxt "lowres"
@@ -3120,39 +3077,35 @@ msgstr "TB"
 
 #: common/formats/formatinfo.cpp:102
 msgid "Bitmap Image File"
-msgstr ""
+msgstr "Bitmap-bildfil"
 
 #: common/formats/formatinfo.cpp:104
 msgid "PNG Image File"
-msgstr ""
+msgstr "PNG-bildfil"
 
 #: common/formats/formatinfo.cpp:106
 msgid "JPEG Image File"
-msgstr ""
+msgstr "JPEG-bildfil"
 
 #: common/formats/formatinfo.cpp:108
 msgid "QuickDraw PICT Image File"
-msgstr ""
+msgstr "QuickDraw PICT-bildfil"
 
 #: common/formats/formatinfo.cpp:111
 msgid "Data File"
-msgstr ""
+msgstr "Datafil"
 
 #: dists/android.strings.xml.cpp:30
-#, fuzzy
-#| msgid "Quit ScummVM"
 msgid "ScummVM"
-msgstr "Avsluta ScummVM"
+msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
-#, fuzzy
-#| msgid "Quit ScummVM"
 msgid "ScummVM (debug)"
-msgstr "Avsluta ScummVM"
+msgstr "ScummVM (felsökning)"
 
 #: dists/android.strings.xml.cpp:32
 msgid "Graphic adventure game engine"
-msgstr ""
+msgstr "Grafisk äventyrsspelmotor"
 
 #: dists/android.strings.xml.cpp:34
 #: backends/events/default/default-events.cpp:217
@@ -3166,54 +3119,48 @@ msgid "Quit"
 msgstr "Avsluta"
 
 #: dists/android.strings.xml.cpp:35
-#, fuzzy
-#| msgid "No error"
 msgid "Log File Error"
-msgstr "Inget fel"
+msgstr "Loggfilsfel"
 
 #: dists/android.strings.xml.cpp:36
 msgid "Unable to read ScummVM log file or create a new one!"
-msgstr ""
+msgstr "Kan inte läsa ScummVM-loggfil eller skapa en ny!"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Config File Error"
-msgstr ""
+msgstr "Konfigurationsfilsfel"
 
 #: dists/android.strings.xml.cpp:38
 msgid "Unable to read ScummVM config file or create a new one!"
-msgstr ""
+msgstr "Kan inte läsa ScummVM-konfigurationsfil eller skapa en ny!"
 
 #: dists/android.strings.xml.cpp:39
-#, fuzzy
-#| msgid "Save Path:"
 msgid "Save Path Error"
-msgstr "Sparsökväg:"
+msgstr "Sparsökvägsfel"
 
 #: dists/android.strings.xml.cpp:40
 msgid "Unable to create or access default save path!"
-msgstr ""
+msgstr "Kan inte skapa eller komma åt standardsökväg för sparningar!"
 
 #: dists/android.strings.xml.cpp:41
-#, fuzzy
-#| msgid "Icon Path:"
 msgid "Icons Path Error"
-msgstr "Ikon sökväg:"
+msgstr "Ikonsökvägsfel"
 
 #: dists/android.strings.xml.cpp:42
 msgid "Unable to create or access default icons and shaders path!"
-msgstr ""
+msgstr "Kan inte skapa eller komma åt standard sökväg för ikoner och shaders!"
 
 #: dists/android.strings.xml.cpp:43
 msgid ""
 "Unable to access the globally set save path! Please revert to default from "
 "ScummVM Options"
 msgstr ""
+"Kan inte komma åt den globalt inställda sökvägen! Vänligen återgå till "
+"standard i ScummVM-inställningar"
 
 #: dists/android.strings.xml.cpp:44
-#, fuzzy
-#| msgid "Virtual keyboard"
 msgid "Toggle virtual keyboard"
-msgstr "Virtuellt tangentbord"
+msgstr "Växla virtuellt tangentbord"
 
 #: dists/android.strings.xml.cpp:45 engines/scumm/help.cpp:82
 #: engines/scumm/help.cpp:86 engines/scumm/help.cpp:88
@@ -3225,15 +3172,15 @@ msgstr "Alt"
 #: dists/android.strings.xml.cpp:48
 #: backends/platform/libretro/src/libretro-options-widget.cpp:222
 msgid "Done"
-msgstr ""
+msgstr "Klar"
 
 #: dists/android.strings.xml.cpp:49
 msgid "Mode change"
-msgstr ""
+msgstr "Ändra läge"
 
 #: dists/android.strings.xml.cpp:50
 msgid "Shift"
-msgstr ""
+msgstr "Skift"
 
 #: dists/android.strings.xml.cpp:51 engines/dragons/metaengine.cpp:153
 #: engines/scumm/help.cpp:88 engines/scumm/help.cpp:91
@@ -3241,54 +3188,48 @@ msgid "Enter"
 msgstr "Enter"
 
 #: dists/android.strings.xml.cpp:52
-#, fuzzy
-#| msgid "Close"
 msgid "Close popup"
-msgstr "Stäng"
+msgstr "Stäng popup"
 
 #: dists/android.strings.xml.cpp:53
 msgid ""
 "Please select the *root* of your external (physical) SD card. This is "
 "required for ScummVM to access this path: "
 msgstr ""
+"Vänligen välj *root* som ditt external (fysiska) SD-kort. Detta krävs för "
+"att ScummVM ska kunna komma åt denna sökväg: "
 
 #: dists/android.strings.xml.cpp:54
 msgid "Storage Access Framework Permissions for ScummVM were revoked!"
-msgstr ""
+msgstr "Storage Access Framework-rättigheter för ScummVM har återkallats!"
 
 #: dists/android.strings.xml.cpp:55
-#, fuzzy
-#| msgid "the video mode could not be changed"
 msgid "Configuration file could not be parsed"
-msgstr "videoläget kunde inte ändras"
+msgstr "Konfigurationsfilen kunde inte tolkas"
 
 #: dists/android.strings.xml.cpp:56
-#, fuzzy
 msgid "Run a game"
-msgstr "V-Sync i 3D-spel"
+msgstr "Kör ett spel"
 
 #: dists/android.strings.xml.cpp:57
-#, fuzzy
-#| msgid "Search in game list"
 msgid "Search a game"
-msgstr "Sök i spellistan"
+msgstr "Sök efter ett spel"
 
 #: dists/android.strings.xml.cpp:58
 msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
 msgstr ""
+"Inga spel (än)\n"
+"Öppna ScummVM och lägg till dina spel här."
 
 #: dists/android.strings.xml.cpp:59
-#, fuzzy
 msgid "Game icon"
-msgstr "~I~nställningar..."
+msgstr "Spelikon"
 
 #: dists/android.strings.xml.cpp:60
-#, fuzzy
-#| msgid "Show object labels"
 msgid "Shortcut label"
-msgstr "Visa etiketter"
+msgstr "Genvägsetikett"
 
 #: dists/android.strings.xml.cpp:61
 msgid "Shortcut icon"
@@ -3332,7 +3273,7 @@ msgstr "Achievement upplåst!"
 
 #: engines/advancedDetector.cpp:237
 msgid "Illegitimate game copy detected. We provide no support in such cases"
-msgstr "Olaglig kopia av spel. Vi ger ingen hjälp för sådana."
+msgstr "Olaglig kopia av spel identifierad. Vi ger ingen hjälp för sådana"
 
 #: engines/dialogs.cpp:68
 msgid "~R~esume"
@@ -3356,7 +3297,7 @@ msgstr "~H~jälp"
 
 #: engines/dialogs.cpp:82
 msgid "~A~bout"
-msgstr "O~m~..."
+msgstr "O~m~"
 
 #: engines/dialogs.cpp:85 engines/dialogs.cpp:156
 msgid "~R~eturn to Launcher"
@@ -3872,8 +3813,8 @@ msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
-"Synkningen av sparade speldata misslyckades. Kontrollera din "
-"internetanslutning."
+"Synkningen av sparade speldata misslyckades.\n"
+"Kontrollera din internetanslutning."
 
 #: backends/cloud/storage.cpp:352
 #, c-format
@@ -4416,7 +4357,7 @@ msgstr "Ladda upp filer"
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:70
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:225
 msgid "Type new directory name:"
-msgstr "Skriv in nytt katalognamn"
+msgstr "Skriv in nytt katalognamn:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:71
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:226
@@ -4430,7 +4371,7 @@ msgstr "Eller välj en katalog (fungerar bara i Chrome):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:73
 msgid "Index of "
-msgstr "Filer i"
+msgstr "Index för "
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
 msgid "Error occurred"
@@ -4444,7 +4385,7 @@ msgstr "Filsystemsrot"
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:81
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:45
 msgid "Saved games"
-msgstr "Spara spel:"
+msgstr "Sparade spel"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:116
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:82
@@ -4452,9 +4393,8 @@ msgid "Parent directory"
 msgstr "Överkatalog"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:214
-#, fuzzy
 msgid "ScummVM couldn't list the directory you specified."
-msgstr "ScummVM kunde inte öppna katalogen!"
+msgstr "ScummVM kunde inte lista katalogen du angav."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
 msgid "Index of"
@@ -4462,7 +4402,7 @@ msgstr "Filer i"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:41
 msgid "This is a local webserver index page."
-msgstr "Det här är en indexsida från en lokal webbserver"
+msgstr "Det här är en indexsida från en lokal webbserver."
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 #, fuzzy
@@ -4496,9 +4436,8 @@ msgid "Invalid request: headers are too long!"
 msgstr "Ogiltig förfrågan: headers är för långa!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:151
-#, fuzzy
 msgid "Failed to upload the file!"
-msgstr "Kunde inte radera filen."
+msgstr "Kunde inte ladda upp filen!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:180
 msgid "No file was passed!"
@@ -5242,10 +5181,8 @@ msgid "Generate playlist"
 msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:66
-#, fuzzy
-#| msgid "Status:"
 msgid "Status: "
-msgstr "Status:"
+msgstr "Status: "
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:148
 #, fuzzy
@@ -5260,10 +5197,8 @@ msgid "cleaning failed"
 msgstr "Inläsning misslyckades"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:226
-#, fuzzy
-#| msgid "Failed to read the file!"
 msgid "Failed, can't create hook files"
-msgstr "Kunde inte läsa filen!"
+msgstr "Misslyckades, kan inte skapa krokfiler"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:236
 #, fuzzy
@@ -6050,10 +5985,8 @@ msgid "Music volume down"
 msgstr "Musikvolym höj / sänk"
 
 #: engines/agos/metaengine.cpp:262 engines/vcruise/metaengine.cpp:192
-#, fuzzy
-#| msgid "Music volume: "
 msgid "Music volume up"
-msgstr "Musikvolym: "
+msgstr "Musikvolym upp"
 
 #: engines/agos/metaengine.cpp:268 engines/vcruise/metaengine.cpp:177
 #, fuzzy
@@ -6408,9 +6341,8 @@ msgid "General Keys"
 msgstr ""
 
 #: engines/bladerunner/bladerunner.cpp:405
-#, fuzzy
 msgid "Failed to initialize resources"
-msgstr "Kunde inte ändra molnlager!"
+msgstr "Misslyckades med att initiera resurser"
 
 #: engines/bladerunner/bladerunner.cpp:1177
 msgid "A required game resource was not found"
@@ -7509,9 +7441,8 @@ msgid "Saved.\n"
 msgstr "Spara\n"
 
 #: engines/glk/zcode/zcode.cpp:144
-#, fuzzy
 msgid "Error writing save file\n"
-msgstr "Fel under körning av spel:"
+msgstr "Fel vid sparning av fil\n"
 
 #: engines/glk/hugo/hugo.cpp:182
 msgid "Incorrect rs file."
@@ -8178,14 +8109,7 @@ msgid "Choose Spell"
 msgstr "Välj trollformel"
 
 #: engines/kyra/gui/saveload_eob.cpp:601
-#, fuzzy, c-format
-#| msgid ""
-#| "The following original saved game file has been found in your game path:\n"
-#| "\n"
-#| "%s %s\n"
-#| "\n"
-#| "Do you wish to use this saved game file with ScummVM?\n"
-#| "\n"
+#, c-format
 msgid ""
 "The following original saved game file has been found in your game path:\n"
 "\n"
@@ -8194,12 +8118,11 @@ msgid ""
 "Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
-"Följande originalspardata hittades i sökvägen för ditt spel:\n"
+"Följande originalsparfil hittades i sökvägen för ditt spel:\n"
 "\n"
-"%s %s\n"
+"%s %S\n"
 "\n"
 "Vill du använda den här spardatan med ScummVM?\n"
-"\n"
 "\n"
 
 #: engines/kyra/gui/saveload_eob.cpp:634
@@ -8937,7 +8860,9 @@ msgstr ""
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
-msgstr "För fortsatt utforskande krävs den fullständiga versionen av spelet."
+msgstr ""
+"För fortsatt utforskande efter denna punkten krävs den fullständiga\n"
+"versionen av spelet."
 
 #: engines/mohawk/riven_stacks/aspit.cpp:428
 msgid ""
@@ -9133,9 +9058,8 @@ msgid "Show/hide maze map"
 msgstr "Visa tangentbord"
 
 #: engines/nancy/metaengine.cpp:38
-#, fuzzy
 msgid "Player Speech"
-msgstr "Speltid: "
+msgstr "Spelartal"
 
 #: engines/nancy/metaengine.cpp:39
 msgid ""
@@ -9705,9 +9629,8 @@ msgid "Casio CT-460 / CSM-1"
 msgstr ""
 
 #: engines/sci/detection_tables.h:1419 engines/sci/detection_tables.h:1430
-#, fuzzy
 msgid "Game does not contain menu resources"
-msgstr "Kunde inte ändra molnlager!"
+msgstr "Spel innehåller inte menyresurser"
 
 #: engines/sci/detection_tables.h:4594
 msgid "This demo uses an unimplemented version of Robot videos"
@@ -9919,9 +9842,9 @@ msgstr ""
 
 #. I18N: Online multiplayer games were found
 #: engines/scumm/dialog-sessionselector.cpp:118
-#, fuzzy, c-format
+#, c-format
 msgid "Found %d available games."
-msgstr "Inga nya icon packet tillgängliga"
+msgstr "Hittade %d tillgängliga spel."
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:285
@@ -11298,9 +11221,8 @@ msgid "Software renderer does not support modded assets"
 msgstr "Aktuell plugin kan inte spara spel"
 
 #: engines/stark/stark.cpp:292
-#, fuzzy
 msgid "You are missing recommended data files:"
-msgstr "Du saknar följande obligatoriska datafiler för Riven:\n"
+msgstr "Du saknar följande obligatoriska datafiler:"
 
 #: engines/stark/stark.cpp:306
 msgid ""
@@ -11324,9 +11246,9 @@ msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr ""
 
 #: engines/supernova/supernova.cpp:191
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the text for %s language in engine data file."
-msgstr "Kunde inte hitta språk %s i spelmotorns datafil '%s'."
+msgstr "Kunde inte hitta texten för språk %s i spelmotorns datafil."
 
 #: engines/supernova/supernova.cpp:475
 #, c-format
@@ -12694,39 +12616,32 @@ msgid "Select next music record"
 msgstr "Spela nästa musikskiva"
 
 #: engines/wintermute/keymapper_tables.h:1009
-#, fuzzy
 msgid "Play note 1: A"
-msgstr "Speltid: "
+msgstr "Spela not 1: A"
 
 #: engines/wintermute/keymapper_tables.h:1014
-#, fuzzy
 msgid "Play note 2: F#"
-msgstr "Speltid: "
+msgstr "Spela not 2: F#"
 
 #: engines/wintermute/keymapper_tables.h:1019
-#, fuzzy
 msgid "Play note 3: D#"
-msgstr "Speltid: "
+msgstr "Spela not 3: D#"
 
 #: engines/wintermute/keymapper_tables.h:1024
-#, fuzzy
 msgid "Play note 4: C#"
-msgstr "Speltid: "
+msgstr "Spela not 4: C#"
 
 #: engines/wintermute/keymapper_tables.h:1029
-#, fuzzy
 msgid "Play note 5: E"
-msgstr "Speltid: "
+msgstr "Spela not 5: E"
 
 #: engines/wintermute/keymapper_tables.h:1034
-#, fuzzy
 msgid "Play note 6: G#"
-msgstr "Speltid: "
+msgstr "Spela not 6: G#"
 
 #: engines/wintermute/keymapper_tables.h:1039
-#, fuzzy
 msgid "Play note 7: B"
-msgstr "Speltid: "
+msgstr "Spela not 7: B"
 
 #: engines/wintermute/keymapper_tables.h:1052
 msgid "Ability: Telekinesis"
@@ -12876,39 +12791,32 @@ msgid "Drop"
 msgstr "Släpp si~d~a"
 
 #: engines/wintermute/keymapper_tables.h:2043
-#, fuzzy
 msgid "Player 1: Up"
-msgstr "Speltid: "
+msgstr "Spelare 1: Upp"
 
 #: engines/wintermute/keymapper_tables.h:2048
-#, fuzzy
 msgid "Player 1: Left"
-msgstr "Speltid: "
+msgstr "Spelare 1: Vänster"
 
 #: engines/wintermute/keymapper_tables.h:2053
-#, fuzzy
 msgid "Player 1: Down"
-msgstr "Speltid: "
+msgstr "Spelare 1: Ner"
 
 #: engines/wintermute/keymapper_tables.h:2058
-#, fuzzy
 msgid "Player 1: Right"
-msgstr "Speltid: "
+msgstr "Spelare 1: Höger"
 
 #: engines/wintermute/keymapper_tables.h:2063
-#, fuzzy
 msgid "Player 2: Up"
-msgstr "Speltid: "
+msgstr "Spelare 2: Upp"
 
 #: engines/wintermute/keymapper_tables.h:2068
-#, fuzzy
 msgid "Player 2: Left"
-msgstr "Speltid: "
+msgstr "Spelare 2: Vänster"
 
 #: engines/wintermute/keymapper_tables.h:2073
-#, fuzzy
 msgid "Player 2: Down"
-msgstr "Speltid: "
+msgstr "Spelare 2: Ner"
 
 #: engines/wintermute/keymapper_tables.h:2078
 #, fuzzy
