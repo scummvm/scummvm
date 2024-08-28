@@ -191,6 +191,14 @@ private:
 	void useValveHandle();
 	bool usePump();
 	void usePump2();
+	void takeLetter();
+	void takeFaucetPipe1();
+	void takeFaucetPipe2();
+	void takeSurgicalTube1();
+	void takeSurgicalTube2();
+	void takeGardenHose1();
+	void takeGardenHose2();
+	void takeGardenHose3();
 
 public:
 	Room407() : Room() {}

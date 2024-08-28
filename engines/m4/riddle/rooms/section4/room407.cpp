@@ -755,7 +755,7 @@ void Room407::pre_parser() {
 
 void Room407::parser() {
 	bool lookFlag = player_said_any("look", "look at");
-	//bool takeFlag = player_said("take");
+	bool takeFlag = player_said("take");
 	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
 
 	if (lookFlag && _G(walker).ripley_said(SAID)) {
@@ -1039,7 +1039,66 @@ void Room407::parser() {
 			&& usePump()) {
 		// No implementation
 	} else if (useFlag && player_said("DRAWER")) {
-		// TODO
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripMedReach = series_load("RIP TREK MED REACH POS3");
+			setGlobals1(_ripMedReach, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+			sendWSMessage_110000(1);
+			break;
+
+		case 1:
+			_val5 = 1010;
+			_drawerPopup = series_place_sprite("407 DRAWER POPUP", 0, 0, 0, 100, 0x200);
+			hotspot_set_active(" ", true);
+
+			if (_xyzzy2 == 1101) {
+				_drawerPopupHose = series_place_sprite("407 DRAWER POPUP HOSE", 0, 0, 0, 100, 0x100);
+				hotspot_set_active("GARDEN HOSE", true);
+			}
+
+			if (_xyzzy5 == 1101) {
+				_stopperInDrawer = series_place_sprite("407 STOPPER IN DRAWER",
+					0, 0, 0, 100, 0x100);
+				hotspot_set_active("RUBBER PLUG", true);
+			}
+
+			if (_xyzzy3 == 1101) {
+				_tubeInDrawer = series_place_sprite("407 TUBE IN DRAWER",
+					0, 0, 0, 100, 0x100);
+				hotspot_set_active("SURGICAL TUBE", true);
+			}
+
+			if (_xyzzy4 == 1101) {
+				_handleInDrawer = series_place_sprite(
+					"407 PUMP HANDLE IN DRAWER", 0, 0, 0, 100, 0x100);
+				hotspot_set_active("PUMP GRIPS", true);
+			}
+
+			digi_play("407_s01", 2);
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+
+	} else if (takeFlag && player_said("LETTER")) {
+		takeLetter();
+	} else if (takeFlag && player_said("FAUCET PIPE  ") && _val8 == 1130) {
+		takeFaucetPipe1();
+	} else if (takeFlag && player_said("SURGICAL TUBE   ") && _xyzzy3 == 1100) {
+		takeSurgicalTube1();
+	} else if (takeFlag && player_said("GARDEN HOSE    ") && _xyzzy2 == 1100) {
+		takeGardenHose1();
+	} else if (takeFlag && player_said("GARDEN HOSE  ") && _xyzzy2 == 1130) {
+		takeGardenHose2();
+	} else if (takeFlag && player_said("SURGICAL TUBE  ") && _xyzzy3 == 1130) {
+		takeSurgicalTube2();
+	} else if (takeFlag && player_said("FAUCET PIPE ") && _val8 == 1116) {
+		takeFaucetPipe2();
+	} else if (takeFlag && player_said("GARDEN HOSE ") && _xyzzy2 == 1116) {
+		takeGardenHose3();
 	}
 	// TODO
 	else {
@@ -3016,6 +3075,397 @@ void Room407::usePump2() {
 		}
 
 		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::takeLetter() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (inv_object_is_here("MENENDEZ'S LETTER")) {
+			player_set_commands_allowed(false);
+			_ripMedHand1 = series_load("RIP TREK MED REACH HAND POS1");
+			setGlobals1(_ripMedHand1, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+			sendWSMessage_110000(11);
+		}
+		break;
+
+	case 8:
+		series_unload(_ripMedHand1);
+		break;
+
+	case 11:
+		terminateMachineAndNull(_letter);
+		hotspot_set_active("LETTER", false);
+		hotspot_set_active("BUTTONS", true);
+		digi_play("407r39", 1, 255, 13);
+		break;
+
+	case 13:
+		kernel_examine_inventory_object("PING MENENDEZ'S LETTER",
+			_G(master_palette), 5, 1, 270, 150, 14, "407r41", -1);
+		_G(flags)[GLB_TEMP_11] = 1;
+		_G(flags)[V280] = 1;
+		break;
+
+	case 14:
+		digi_stop(1);
+		inv_give_to_player("MENENDEZ'S LETTER");
+		_frotz4 = 1;
+		_G(flags)[V370] = 1;
+		sendWSMessage_120000(15);
+		break;
+
+	case 15:
+		sendWSMessage_150000(8);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::takeFaucetPipe1() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		reachHand(10);
+		break;
+
+	case 1:
+		terminateMachineAndNull(_faucet1);
+		inv_give_to_player("FAUCET PIPE");
+		hotspot_set_active("FAUCET PIPE  ", false);
+		kernel_examine_inventory_object("PING FAUCET PIPE",
+			_G(master_palette), 5, 1, 100, 200, 3, nullptr, -1);
+		break;
+
+	case 3:
+		sendWSMessage_120000(4);
+		break;
+
+	case 4:
+		sendWSMessage_150000(5);
+		break;
+
+	case 5:
+		series_unload(_ripMedHand1);
+		_val8 = 1000;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::takeFaucetPipe2() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_ripHiHand1 = series_load("rip trek hi 1 hand");
+		setGlobals1(_ripHiHand1, 1, 12, 12, 12, 0, 12, 1, 1, 1);
+		sendWSMessage_110000(1);
+		break;
+
+	case 1:
+		terminateMachineAndNull(_faucet1);
+		hotspot_set_active("FAUCET PIPE ", false);
+		inv_give_to_player("FAUCET PIPE");
+
+		if (_xyzzy3 == 1116) {
+			terminateMachineAndNull(_tubeInDrawer);
+			hotspot_set_active("SURGICAL TUBE ", false);
+			inv_give_to_player("SURGICAL TUBE");
+			_xyzzy3 = 1000;
+
+			terminateMachineAndNull(_drawerPopupHose);
+			hotspot_set_active("GARDEN HOSE ", false);
+			inv_give_to_player("GARDEN HOSE");
+			_xyzzy2 = 1000;
+
+			kernel_examine_inventory_object("PING FAUCET PIPE/HOSE/TUBE",
+				_G(master_palette), 5, 1, 400, 150, 3, 0, -1);
+		} else if (_xyzzy2 == 1116) {
+			terminateMachineAndNull(_drawerPopupHose);
+			inv_give_to_player("GARDEN HOSE");
+			hotspot_set_active("GARDEN HOSE ", false);
+			_xyzzy2 = 1000;
+
+			kernel_examine_inventory_object("PING FAUCET PIPE/HOSE",
+				_G(master_palette), 5, 1, 400, 150, 3, 0, -1);
+		} else {
+			kernel_examine_inventory_object("PING FAUCET PIPE",
+				_G(master_palette), 5, 1, 400, 150, 3, 0, -1);
+		}
+		break;
+
+	case 3:
+		sendWSMessage_120000(4);
+		break;
+
+	case 4:
+		sendWSMessage_150000(5);
+		break;
+
+	case 5:
+		series_unload(_ripHiHand1);
+		_val8 = 1000;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::takeSurgicalTube1() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (_val4 == 1010) {
+			digi_play("407r99e", 1);
+		} else {
+			player_set_commands_allowed(false);
+			_ripHiHand1 = series_load("rip trek hi 1 hand");
+			setGlobals1(_ripHiHand1, 1, 6, 6, 6, 0, 6, 1, 1, 1);
+			sendWSMessage_110000(1);
+		}
+		break;
+
+	case 1:
+		terminateMachineAndNull(_tubeInDrawer);
+		hotspot_set_active("SURGICAL TUBE   ", false);
+		inv_give_to_player("SURGICAL TUBE");
+
+		if (_xyzzy2 == 1100) {
+			terminateMachineAndNull(_drawerPopupHose);
+			inv_give_to_player("GARDEN HOSE");
+			hotspot_set_active("GARDEN HOSE    ", false);
+			_xyzzy2 = 1000;
+			kernel_examine_inventory_object("PING TUBE/HOSE",
+				_G(master_palette), 5, 1, 75, 200, 2, "407_s06", -1);
+		} else {
+			kernel_examine_inventory_object("PING SURGICAL TUBE",
+				_G(master_palette), 5, 1, 75, 200, 2, "407_s06", -1);
+		}
+		break;
+
+	case 2:
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripHiHand1);
+		_xyzzy3 = 1000;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::takeSurgicalTube2() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (_val4 == 1010) {
+			digi_play("407r99e", 1);
+		} else {
+			reachHand(10);
+		}
+		break;
+
+	case 1:
+		terminateMachineAndNull(_tubeInDrawer);
+		hotspot_set_active("SURGICAL TUBE  ", false);
+		inv_give_to_player("SURGICAL TUBE");
+
+		if (_val8 == 1130) {
+			terminateMachineAndNull(_faucet1);
+			hotspot_set_active("GARDEN HOSE  ", false);
+			inv_give_to_player("FAUCET PIPE");
+			_val8 = 1000;
+
+			terminateMachineAndNull(_drawerPopupHose);
+			hotspot_set_active("GARDEN HOSE  ", false);
+			inv_give_to_player("GARDEN HOSE");
+			_xyzzy2 = 1000;
+
+			kernel_examine_inventory_object("PING FAUCET PIPE/HOSE/TUBE",
+				_G(master_palette), 5, 1, 175, 150, 3, "407_s06", -1);
+		} else if (_xyzzy2 == 1130) {
+			terminateMachineAndNull(_drawerPopupHose);
+			inv_give_to_player("GARDEN HOSE");
+			hotspot_set_active("GARDEN HOSE  ", false);
+			_xyzzy2 = 1000;
+
+			kernel_examine_inventory_object("PING TUBE/HOSE",
+				_G(master_palette), 5, 1, 175, 150, 3, "407_s06", -1);
+		} else {
+			kernel_examine_inventory_object("PING SURGICAL TUBE",
+				_G(master_palette), 5, 1, 175, 150, 3, "407_s06", -1);
+		}
+		break;
+
+	case 3:
+		sendWSMessage_120000(4);
+		break;
+
+	case 4:
+		sendWSMessage_150000(5);
+		break;
+
+	case 5:
+		series_unload(_ripMedHand1);
+		_xyzzy3 = 1000;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::takeGardenHose1() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (_val4 == 1010) {
+			digi_play("407r99e", 1);
+		} else {
+			player_set_commands_allowed(false);
+			_ripHiHand1 = series_load("rip trek hi 1 hand");
+			setGlobals1(_ripHiHand1, 1, 5, 5, 5, 0, 5, 1, 1, 1);
+			sendWSMessage_110000(1);
+		}
+		break;
+
+	case 1:
+		terminateMachineAndNull(_drawerPopupHose);
+		inv_give_to_player("GARDEN HOSE");
+		hotspot_set_active("GARDEN HOSE    ", false);
+		kernel_examine_inventory_object("PING GARDEN HOSE",
+			_G(master_palette), 5, 1, 75, 200, 2, nullptr, -1);
+		break;
+
+	case 2:
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripHiHand1);
+		_xyzzy2 = 1000;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::takeGardenHose2() {
+	switch (_G(kernel).trigger) {
+	case 1:
+		terminateMachineAndNull(_drawerPopupHose);
+		inv_give_to_player("GARDEN HOSE");
+		hotspot_set_active("GARDEN HOSE  ", false);
+
+		if (_val8 == 1130) {
+			terminateMachineAndNull(_faucet1);
+			hotspot_set_active("FAUCET PIPE  ", false);
+			inv_give_to_player("FAUCET PIPE");
+			_val8 = 1000;
+			kernel_examine_inventory_object("PING FAUCET PIPE/HOSE",
+				_G(master_palette), 5, 1, 175, 150, 3, 0, -1);
+		} else {
+			kernel_examine_inventory_object("PING GARDEN HOSE",
+				_G(master_palette), 5, 1, 175, 150, 3, 0, -1);
+		}
+		break;
+
+	case 3:
+		sendWSMessage_120000(4);
+		break;
+
+	case 4:
+		sendWSMessage_150000(5);
+		break;
+
+	case 5:
+		series_unload(_ripMedHand1);
+		_xyzzy2 = 1000;
+		player_set_commands_allowed(true);
+		break;
+
+	case 70:
+		if (_val4 == 1010) {
+			digi_play("407r99e", 1);
+		} else {
+			reachHand(10);
+		}
+		break;
+
+	case 777:
+		ws_walk(170, 335, nullptr, 70, 11);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::takeGardenHose3() {
+	switch (_G(kernel).trigger) {
+	case 1:
+		terminateMachineAndNull(_drawerPopupHose);
+		inv_give_to_player("GARDEN HOSE");
+		hotspot_set_active("GARDEN HOSE ", false);
+
+		if (_xyzzy3 == 1116) {
+			terminateMachineAndNull(_tubeInDrawer);
+			hotspot_set_active("SURGICAL TUBE ", false);
+			inv_give_to_player("SURGICAL TUBE");
+			_xyzzy3 = 1000;
+			kernel_examine_inventory_object("PING FAUCET PIPE/HOSE",
+				_G(master_palette), 5, 1, 400, 150, 3, 0, -1);
+		} else {
+			kernel_examine_inventory_object("PING GARDEN HOSE",
+				_G(master_palette), 5, 1, 400, 150, 3, 0, -1);
+		}
+		break;
+
+	case 3:
+		sendWSMessage_120000(4);
+		break;
+
+	case 4:
+		sendWSMessage_150000(5);
+		break;
+
+	case 5:
+		series_unload(_ripHiHand1);
+		_xyzzy2 = 1000;
+		player_set_commands_allowed(true);
+		break;
+
+	case 70:
+		player_set_commands_allowed(false);
+		_ripHiHand1 = series_load("rip trek hi 1 hand");
+		setGlobals1(_ripHiHand1, 1, 12, 12, 12, 0, 12, 1, 1, 1);
+		sendWSMessage_110000(1);
+		break;
+
+	case 777:
+		ws_walk(436, 331, nullptr, 70, 1);
 		break;
 
 	default:
