@@ -39,10 +39,7 @@ public:
 	~keyboardDispatcher();
 
 	//! Возвращает true, если кнопка с кодом vkey в данный момент нажата.
-	bool is_pressed(int vkey) const {
-		assert(vkey >= 0 && vkey < 256);
-		return _key_states[vkey];
-	}
+	bool is_pressed(int vkey) const;
 
 	//! Устанавливает обработчик нажатий/отжатий кнопок.
 	event_handler_t set_handler(event_handler_t h) {
@@ -52,11 +49,7 @@ public:
 	}
 
 	//! Обрабатывает нажатие (event == true) или отжатие (event == false) кнопки с кодом vkey.
-	bool handle_event(Common::KeyCode vkey, bool event) {
-		_key_states[vkey] = event;
-		if (_handler) return (*_handler)(vkey, event);
-		return false;
-	}
+	bool handle_event(Common::KeyCode vkey, bool event);
 
 	//! Возвращает диспетчер по-умолчанию.
 	static keyboardDispatcher *instance();
