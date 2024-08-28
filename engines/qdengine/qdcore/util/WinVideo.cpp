@@ -76,7 +76,7 @@ bool winVideo::open_file(const Common::Path fname) {
 	_videostream = new Common::File();
 
 	if (!_videostream->open(fname)) {
-		warning("WinVideo::open: Failed to open file %s", fname.toString().c_str());
+		warning("WinVideo::open: Failed to open file %s", transCyrillic(fname.toString()));
 		delete _videostream;
 		return false;
 	}
