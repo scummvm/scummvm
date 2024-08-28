@@ -143,6 +143,10 @@ void CastleEngine::loadAssetsDOSFullGame() {
 
 			uint32 darkRed = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x7f, 0x00, 0x00);
 
+
+			stream->seek(0x1c700);
+			_background = loadFrameFromPlanes(stream, 252, 42, lightGray, darkGray, lightGray, darkGray);
+
 			//stream->seek(0x221e6);
 			stream->seek(0x221ad);
 			_menu = loadFrameFromPlanes(stream, 112, 114, lightGray, lightGray, darkRed, yellow);
