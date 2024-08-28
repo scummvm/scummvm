@@ -63,7 +63,20 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_spiritsMeterIndicatorFrame = nullptr;
 	_strenghtBackgroundFrame = nullptr;
 	_strenghtBarFrame = nullptr;
+	_thunderFrame = nullptr;
 	_menu = nullptr;
+	_menuButtons = nullptr;
+
+	_menuCrawlIndicator = nullptr;
+	_menuWalkIndicator = nullptr;
+	_menuRunIndicator = nullptr;
+	_menuFxOnIndicator = nullptr;
+	_menuFxOffIndicator = nullptr;
+
+	_flagFrames[0] = nullptr;
+	_flagFrames[1] = nullptr;
+	_flagFrames[2] = nullptr;
+	_flagFrames[3] = nullptr;
 
 	_numberKeys = 0;
 	_spiritsDestroyed = 0;
@@ -433,10 +446,6 @@ void CastleEngine::loadAssets() {
 
 		_areaMap[1]->addFloor();
 		_areaMap[2]->addFloor();
-
-		_menu = loadBundledImage("castle_menu");
-		assert(_menu);
-		_menu->convertToInPlace(_gfx->_texturePixelFormat);
 
 		_strenghtBackgroundFrame = loadBundledImage("castle_strength_background");
 		_strenghtBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat);

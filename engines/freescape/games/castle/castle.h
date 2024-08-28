@@ -26,7 +26,15 @@ public:
 	CastleEngine(OSystem *syst, const ADGameDescription *gd);
 	~CastleEngine();
 
+	// Only in DOS
 	Graphics::ManagedSurface *_option;
+	Graphics::Surface *_menuButtons;
+	Graphics::Surface *_menuCrawlIndicator;
+	Graphics::Surface *_menuWalkIndicator;
+	Graphics::Surface *_menuRunIndicator;
+	Graphics::Surface *_menuFxOnIndicator;
+	Graphics::Surface *_menuFxOffIndicator;
+	Graphics::Surface *_something;
 	Graphics::Surface *_menu;
 
 	void initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) override;
@@ -70,12 +78,16 @@ public:
 	Common::Array<Graphics::Surface *> loadFramesWithHeader(Common::SeekableReadStream *file, int pos, int numFrames, uint32 front, uint32 back);
 	Graphics::Surface *loadFrameWithHeader(Common::SeekableReadStream *file, int pos, uint32 front, uint32 back);
 	Graphics::Surface *loadFrame(Common::SeekableReadStream *file, Graphics::Surface *surface, int width, int height, uint32 back);
+	Graphics::Surface *loadFrameFromPlanes(Common::SeekableReadStream *file, int widthInBytes, int height, uint32 front0, uint32 front1, uint32 front2, uint32 front3);
+	Graphics::Surface *loadFrameFromPlanesInternal(Common::SeekableReadStream *file, Graphics::Surface *surface, int width, int height, uint32 front0, uint32 front1, uint32 front2, uint32 front3);
 
 	Graphics::Surface *_keysFrame;
 	Graphics::Surface *_spiritsMeterIndicatorFrame;
 	Graphics::Surface *_strenghtBackgroundFrame;
 	Graphics::Surface *_strenghtBarFrame;
 	Common::Array<Graphics::Surface *> _strenghtWeightsFrames;
+	Graphics::Surface *_flagFrames[4];
+	Graphics::Surface *_thunderFrame;
 
 	int _numberKeys;
 	bool _useRockTravel;
