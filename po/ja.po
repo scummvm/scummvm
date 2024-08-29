@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-28 16:41+0000\n"
-"PO-Revision-Date: 2024-08-20 10:21+0000\n"
+"PO-Revision-Date: 2024-08-29 16:43+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -9423,42 +9423,30 @@ msgid "I Have No Mouth support not compiled in"
 msgstr "I Have No Mouthのサポートはコンパイルされていません"
 
 #: engines/saga/metaengine.cpp:268
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Game keymapping"
-msgstr "キーマッピング"
+msgstr "ゲームキーマップ"
 
 #: engines/saga/metaengine.cpp:269
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Option panel keymapping"
-msgstr "キーマッピング"
+msgstr "オプションキーマップ"
 
 #: engines/saga/metaengine.cpp:270
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Save panel keymapping"
-msgstr "キーマッピング"
+msgstr "セーブキーマップ"
 
 #: engines/saga/metaengine.cpp:271
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Load panel keymapping"
-msgstr "キーマッピング"
+msgstr "ロードキーマップ"
 
 #: engines/saga/metaengine.cpp:272
-#, fuzzy
-#| msgid "Game Keymappings"
 msgid "Quit panel keymapping"
-msgstr "キーマッピング"
+msgstr "終了キーマップ"
 
 #: engines/saga/metaengine.cpp:273
 msgid "Converse panel keymapping"
-msgstr ""
+msgstr "会話パネルキーマップ"
 
 #: engines/saga/metaengine.cpp:284
-#, fuzzy
-#| msgid "Middle Click"
 msgid "Middle click"
 msgstr "中クリック"
 
