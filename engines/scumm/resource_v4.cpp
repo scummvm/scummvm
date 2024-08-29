@@ -48,8 +48,11 @@ int ScummEngine_v4::readResTypeList(ResType type) {
 		_res->_types[type][idx]._roomoffs = _fileHandle->readUint32LE();
 	}
 
-	// WORKAROUND: The French floppy EGA had it own Roland MT-32 patch which is not available.
-	// This allows using the official Roland MT-32 patch available from LucasArts along with any EGA version
+	// WORKAROUND: It seems that the French floppy EGA had its own Roland MT-32 patch, with
+	// a DISK09.LEC file different from the one still distributed by LucasFilm Games/Disney
+	// today. Unfortunately, if different patches existed back then, they appear to be lost.
+	//
+	// This allows using the official English Roland MT-32 patch along with any EGA version,
 	// by adjusting the sound directory offsets to match the available patch.
 	if (type == rtSound && _game.id == GID_MONKEY_EGA && _sound->_musicType == MDT_MIDI) {
 		Common::File rolandPatchFile;
