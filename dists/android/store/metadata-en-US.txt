@@ -21,9 +21,10 @@ A quick-start guide is available on our website at https://docs.scummvm.org/en/v
 https://forums.scummvm.org/viewforum.php?f=17 is our web forum where you can discuss the Android version.
 
 *** Current release:
-2.8.1
+2.8.1.1
 
 *** Release notes (limit is 500 characters):
 - Fixed reported graphical glitches and app crashes
+- Upgrade to Android 14
 
 Full release notes: https://scummvm.org/frs/scummvm/2.8.1/ReleaseNotes.html
