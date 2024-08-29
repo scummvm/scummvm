@@ -406,7 +406,8 @@ int ScummEngine_v6::readArray(int array, int idx, int base) {
 	// ...
 	// So it checks for invalid array indices only *after* using them to access
 	// the array. Ouch.
-	if (_game.id == GID_FT && array == 447 && _currentRoom == 95 && vm.slot[_currentScript].number == 2010 && idx == -1 && base == -1) {
+	if (_game.id == GID_FT && array == 447 && _currentRoom == 95 && vm.slot[_currentScript].number == 2010 && idx == -1 && base == -1 &&
+		enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		return 0;
 	}
 
@@ -1029,9 +1030,10 @@ void ScummEngine_v6::o6_jump() {
 	// This is a script bug, due to a missing jump in one segment of the script,
 	// and it also happens with the original interpreters.
 	//
-	// Intentionally not using enhancementEnabled, since having the game hang
+	// Intentionally using `kEnhGameBreakingBugFixes`, since having the game hang
 	// is not useful to anyone.
-	if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 101 && readVar(0x8000 + 97) == 1 && offset == 1) {
+	if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 101 && readVar(0x8000 + 97) == 1 && offset == 1 &&
+		enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		offset = -18;
 	}
 
@@ -2696,10 +2698,12 @@ void ScummEngine_v6::o6_soundKludge() {
 	// slight bug causing it to busy-wait for a sound to finish. Even under
 	// the best of circumstances, this will cause the game to hang briefly.
 	// On platforms where threading is cooperative, it will cause the game
-	// to hang indefinitely. We identify the buggy part of the script by
-	// looking for a soundKludge() opcode immediately followed by a jump.
+	// to hang indefinitely (hence the use of `kEnhGameBreakingBugFixes`).
+	// We identify the buggy part of the script by looking for a
+	// soundKludge() opcode immediately followed by a jump.
 
-	if (_game.id == GID_CMI && _roomResource == 11 && vm.slot[_currentScript].number == 2016 && *_scriptPointer == 0x66) {
+	if (_game.id == GID_CMI && _roomResource == 11 && vm.slot[_currentScript].number == 2016 && *_scriptPointer == 0x66 &&
+		enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		debug(3, "Working around script bug in room-11-2016");
 		o6_breakHere();
 	}

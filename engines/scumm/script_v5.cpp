@@ -1443,7 +1443,8 @@ void ScummEngine_v5::o5_isScriptRunning() {
 	// cutscenes and are abrubtly stopped by the endcutscene in script 204 at 0x0060.
 	// This patch changes the result of isScriptRunning(164) to also wait for any
 	// inventory scripts that are in a cutscene state, preventing the crash.
-	if (_game.id == GID_MONKEY && _currentScript != 0xFF && vm.slot [_currentScript].number == 204 && _currentRoom == 25) {
+	if (_game.id == GID_MONKEY && _currentScript != 0xFF && vm.slot [_currentScript].number == 204 && _currentRoom == 25 &&
+		enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		ScriptSlot *ss = vm.slot;
 		for (int i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
 			if (ss->status != ssDead && ss->where == WIO_INVENTORY && ss->cutsceneOverride) {
@@ -1478,7 +1479,7 @@ void ScummEngine_v5::o5_ifClassOfIs() {
 		// Hostel door from the outside.
 		if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns &&
 		    vm.slot[_currentScript].number == 205 && _currentRoom == 185 &&
-		    obj == 465 && cls == 0) {
+		    obj == 465 && cls == 0 && enhancementEnabled(kEnhGameBreakingBugFixes)) {
 			cond = (getState(obj) == 0);
 		} else {
 			b = getClass(obj, cls);
@@ -1600,11 +1601,11 @@ void ScummEngine_v5::o5_isLessEqual() {
 	// This is broken under UNZ too; the script does an incorrect signed
 	// comparison, possibly with the intent of checking for a gamepad.
 	//
-	// Since the biplane is unplayable without this, we don't check for
-	// enhancementEnabled, and always enable this fix.
+	// Since the biplane is unplayable without this, we use
+	// `kEnhGameBreakingBugFixes`.
 	if (_game.id == GID_INDY3 && (_game.platform == Common::kPlatformFMTowns) &&
 	    (vm.slot[_currentScript].number == 200 || vm.slot[_currentScript].number == 203) &&
-	    _currentRoom == 70 && b == -256) {
+	    _currentRoom == 70 && b == -256 && enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		o5_jumpRelative();
 		return;
 	}
@@ -1705,7 +1706,8 @@ void ScummEngine_v5::o5_equalZero() {
 	// If the bit has been set, we simulate a WaitForMessage() instruction
 	// here, so that the script pauses until the "Wow!" message is gone.
 
-	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && vm.slot[_currentScript].number == 109) {
+	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && vm.slot[_currentScript].number == 109 &&
+		enhancementEnabled(kEnhMinorBugFixes)) {
 		int var = fetchScriptWord();
 		a = readVar(var);
 
@@ -2526,9 +2528,9 @@ void ScummEngine_v5::o5_setObjectName() {
 	// Script 68 contains the code for handling the mugs. The issue occurs when a mug
 	// changes state. It will call setObjectName for the new state which in its turn
 	// restarts objects in inventory. Some objects (kidnap note) can be in a cutscene state
-	// what causes a crash if the object gets restarted. This workaroud waits for cutscenes
+	// what causes a crash if the object gets restarted. This workaround waits for cutscenes
 	// to end, preventing the crash.
-	if (_game.id == GID_MONKEY && vm.slot[_currentScript].number == 68) {
+	if (_game.id == GID_MONKEY && vm.slot[_currentScript].number == 68 && enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		ScriptSlot *ss = vm.slot;
 		for (int i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
 			if (ss->status != ssDead && ss->where == WIO_INVENTORY && ss->cutsceneOverride) {
@@ -2732,7 +2734,7 @@ void ScummEngine_v5::o5_startScript() {
 
 	// WORKAROUND bug #2198: Script 171 loads a complete room resource,
 	// instead of the actual script, causing invalid opcode cases
-	if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns && script == 171)
+	if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns && script == 171 && enhancementEnabled(kEnhGameBreakingBugFixes))
 		return;
 
 	// WORKAROUND bug #5709 (also occurs in original): Some old versions of
@@ -3090,11 +3092,12 @@ void ScummEngine_v5::o5_walkActorTo() {
 	// This is because the box matrix is initialized too late in the entry
 	// script for that room, so we have to do it a bit earlier.
 	//
-	// Intentionally not using enhancementEnabled, since you can get
+	// Intentionally using `kEnhGameBreakingBugFixes`, since you can get
 	// completely stuck.
 	if (_game.id == GID_INDY4 && _currentScript != 0xFF && vm.slot[_currentScript].number == 10002 &&
 		_currentRoom == (_game.platform == Common::kPlatformAmiga ? 58 : 60) &&
-		VAR(224) == 140 && a->_number == VAR(VAR_EGO) && x == 45 && y == 137) {
+		VAR(224) == 140 && a->_number == VAR(VAR_EGO) && x == 45 && y == 137 &&
+		enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		// If the elevator isn't on the current floor yet...
 		if (whereIsObject(829) == WIO_ROOM && getState(829) == 0 && getBoxFlags(7) != 128) {
 			// ...immediately set its box flags so that you can't walk on it
@@ -3403,6 +3406,7 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 			printString(textSlot, _scriptPointer);
 		}
 	} else if (_game.id == GID_MONKEY_EGA && _roomResource == 30 && _currentScript != 0xFF && vm.slot[_currentScript].number == 411 &&
+		enhancementEnabled(kEnhTextLocFixes) &&
 		strstr((const char *)_scriptPointer, "NCREDIT-NOTE-AMOUNT")) {
 		// WORKAROUND for bug #4886 (MI1EGA German: Credit text incorrect)
 		// The script contains buggy text.
@@ -3428,7 +3432,7 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 		_string[textSlot].color = (_game.platform == Common::kPlatformFMTowns) ? 0x0A : 0xF9;
 		printString(textSlot, _scriptPointer);
 	} else if (_game.id == GID_MONKEY && !(_game.features & GF_ULTIMATE_TALKIE) &&
-			_game.platform != Common::kPlatformSegaCD && _currentScript != 0xFF && 
+			_game.platform != Common::kPlatformSegaCD && _currentScript != 0xFF &&
 			(vm.slot[_currentScript].number == 140 || vm.slot[_currentScript].number == 294) &&
 			_actorToPrintStrFor == 255 && _string[textSlot].color == 0x06 &&
 			enhancementEnabled(kEnhSubFmtCntChanges)) {

@@ -611,12 +611,6 @@ static int compareMP3OffsetTable(const void *a, const void *b) {
 }
 
 static Audio::AudioStream *checkForBrokenIndy4Sample(Common::SeekableReadStream *file, uint32 offset) {
-	// WORKAROUND: Check for original Indy4 MONSTER.SOU bug
-	// The speech sample at VCTL offset 0x76ccbca ("Hey you!") which is used
-	// when Indy gets caught on the German submarine seems to not be a VOC
-	// but raw PCM s16be at (this is a guess) 44.1 kHz with a bogus VOC header.
-	// To work around this we skip the VOC header and decode the raw PCM data.
-	// Fixes Trac#10559
 	byte vocHeader[32];
 
 	file->read(vocHeader, 32);
@@ -892,7 +886,16 @@ void Sound::startTalkSound(uint32 offset, uint32 length, int mode, Audio::SoundH
 #endif
 			break;
 		default:
-			if (mode == 2 && _vm->_game.id == GID_INDY4 && offset == 0x76ccbd4)
+			// WORKAROUND: Check for original Indy4 MONSTER.SOU bug
+			// The speech sample at VCTL offset 0x76ccbca ("Hey you!") which is used
+			// when Indy gets caught on the German submarine seems to not be a VOC
+			// but raw PCM s16be at (this is a guess) 44.1 kHz with a bogus VOC header.
+			// To work around this we skip the VOC header and decode the raw PCM data.
+			// Fixes Trac#10559
+			//
+			// We use `kEnhGameBreakingBugFixes` because the original bug causes some terrible
+			// harsh white noise which could damage one's ears when wearing headphones.
+			if (mode == 2 && _vm->_game.id == GID_INDY4 && offset == 0x76ccbd4 && _vm->enhancementEnabled(kEnhGameBreakingBugFixes))
 				input = checkForBrokenIndy4Sample(file.release(), offset);
 
 			if (!input) {
