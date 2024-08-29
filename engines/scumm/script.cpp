@@ -49,16 +49,16 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 	if (enhancementEnabled(kEnhGameBreakingBugFixes) && _game.id == GID_MANIAC &&
 		_game.version == 0 && (_game.features & GF_DEMO) && script == 43)
 		return;
-    
-    // WORKAROUND for bug in v0/v1 Zak McKracken:
-    // Picking up the yellow shard in the Mexican Temple while playing as Annie was not possible.
-    // This was fixed in v2.
-    if (enhancementEnabled(kEnhGameBreakingBugFixes) && _game.id == GID_ZAK &&
-        _game.version < 2 && script == 119 && VAR(VAR_EGO) == 2) {
-        addObjectToInventory(56, 14);
-        putOwner(56, VAR(VAR_EGO));
-    }
-    
+
+	// WORKAROUND for bug in v0/v1 Zak McKracken:
+	// Picking up the yellow shard in the Mexican Temple while playing as Annie was not possible.
+	// This was fixed in v2.
+	if (enhancementEnabled(kEnhGameBreakingBugFixes) && _game.id == GID_ZAK &&
+		_game.version < 2 && script == 119 && VAR(VAR_EGO) == 2) {
+		addObjectToInventory(56, 14);
+		putOwner(56, VAR(VAR_EGO));
+	}
+
  	if (!script)
 		return;
 
