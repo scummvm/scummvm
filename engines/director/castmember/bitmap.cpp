@@ -99,12 +99,12 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 		_regY = stream.readUint16();
 		_regX = stream.readUint16();
 
-		stream.readByte();
-		_bitsPerPixel = stream.readByte();
+		_bitsPerPixel = 0;
 
-		if (stream.eos()) {
-			_bitsPerPixel = 0;
-		} else {
+		if (stream.pos() < stream.size()) {
+			// castSize is > 22 bytes
+			stream.readByte();
+			_bitsPerPixel = stream.readByte();
 			int clutCastLib = -1;
 			if (version >= kFileVer500) {
 				clutCastLib = stream.readSint16();
@@ -119,14 +119,17 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 				}
 				_clut = CastMemberID(clutId, clutCastLib);
 			}
-			stream.readUint16();
-			/* uint16 unk1 = */ stream.readUint16();
-			stream.readUint16();
+			if (stream.pos() < stream.size()) {
+				// castSize > 28 bytes on D4, > 30 bytes on D5
+				stream.readUint16();
+				/* uint16 unk1 = */ stream.readUint16();
+				stream.readUint16();
 
-			stream.readUint32();
-			stream.readUint32();
+				stream.readUint32();
+				stream.readUint32();
 
-			_flags2 = stream.readUint16();
+				_flags2 = stream.readUint16();
+			}
 		}
 
 		if (_bitsPerPixel == 0)
