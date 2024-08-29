@@ -154,8 +154,8 @@ public:
 private:
 	GobEngine *_vm;
 
-	bool _hasAdLib;
-	bool _hasAdLibBg;
+	bool _hasAdLib   = false;
+	bool _hasAdLibBg = false;
 
 	SoundDesc _sounds[kSoundsCount];
 

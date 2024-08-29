@@ -55,9 +55,7 @@ Sound::Sound(GobEngine *vm) : _vm(vm) {
 	_cdrom = nullptr;
 	_bgatmos = nullptr;
 
-	_hasAdLib = (!_vm->_noMusic && _vm->hasAdLib());
-
-	_hasAdLibBg = _hasAdLib;
+	_hasAdLibBg = _hasAdLib = (!_vm->_noMusic && _vm->hasAdLib());
 
 	if (!_vm->_noMusic && (_vm->getPlatform() == Common::kPlatformAmiga)) {
 		_infogrames = new Infogrames(*_vm->_mixer);
@@ -337,7 +335,7 @@ void Sound::adlibPlayTrack(const char *trackname) {
 }
 
 void Sound::adlibPlayBgMusic() {
-	if (!_hasAdLib || _hasAdLibBg)
+	if (!_hasAdLib || !_hasAdLibBg) // If one of those is disabled, then stop there 
 		return;
 
 	createADLPlayer();
