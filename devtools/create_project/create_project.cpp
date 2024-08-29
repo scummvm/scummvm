@@ -748,8 +748,8 @@ void displayHelp(const char *exe) {
 	        " --output-dir path          overwrite path, where the project files are placed\n"
 	        "                            By default this is \".\", i.e. the current working\n"
 	        "                            directory\n"
-			" --include-dir path         add a path to the include search path"
-			" --library-dir path         add a path to the library search path"
+			" --include-dir path         add a path to the include search path\n"
+			" --library-dir path         add a path to the library search path\n"
 	        "\n"
 	        "MSVC specific settings:\n"
 	        " --msvc-version version     set the targeted MSVC version. Possible values:\n";
