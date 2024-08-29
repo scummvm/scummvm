@@ -37,6 +37,7 @@
 #include "qdengine/minigames/kartiny.h"
 #include "qdengine/minigames/maski_21.h"
 #include "qdengine/minigames/masky_order.h"
+#include "qdengine/minigames/orchestra.h"
 #include "qdengine/minigames/scroll.h"
 #include "qdengine/minigames/tetris.h"
 
@@ -266,7 +267,6 @@ bool qdMiniGame::load_interface() {
 
 		// maski
 		// Arkada_avtomat.dll
-		// orchestra.dll
 		if (_dll_name == "Resource\\DLL\\tetris.dll") {
 			_interface = new qdTetrisMiniGame();
 			return true;
@@ -284,6 +284,9 @@ bool qdMiniGame::load_interface() {
 			return true;
 		} else if (_dll_name == "Resource\\DLL\\kartiny.dll") {
 			_interface = new qdKartinyMiniGame();
+			return true;
+		} else if (_dll_name == "Resource\\DLL\\orchestra.dll") {
+			_interface = new qdOrchestraMiniGame();
 			return true;
 
 
