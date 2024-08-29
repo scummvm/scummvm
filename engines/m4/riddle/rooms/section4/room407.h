@@ -137,6 +137,7 @@ private:
 	int _407rp99 = 0;
 	int _pump407 = 0;
 	int _hangRip = 0;
+	int _rptmhr11 = 0;
 
 	void setHotspots();
 	void lookItem(const char *item, const char *digi);
@@ -194,11 +195,27 @@ private:
 	void takeLetter();
 	void takeFaucetPipe1();
 	void takeFaucetPipe2();
+	void takeFaucetPipe3();
 	void takeSurgicalTube1();
 	void takeSurgicalTube2();
+	void takeSurgicalTube3();
 	void takeGardenHose1();
 	void takeGardenHose2();
 	void takeGardenHose3();
+	void takeGlassJar1();
+	void takeGlassJar2();
+	void takePeriodicTable1();
+	void takePeriodicTable2();
+	void takeJarGrips();
+	void takeJarCork1();
+	void takeJarCork2();
+	void takeJarRubberPlug1();
+	void takeJarRubberPlug2();
+	void takeNozzlesTube();
+	void takeLeverKey1();
+	void takeLeverKey2();
+	void takeAirValveHandle();
+	void takeFaucetHandle();
 
 public:
 	Room407() : Room() {}
