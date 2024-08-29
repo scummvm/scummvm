@@ -2100,4 +2100,11 @@ MiniscriptInstructionOutcome MiniscriptThread::tryLoadVariable(MiniscriptStackVa
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
+MiniscriptInstructionOutcome miniscriptIgnoreFailure(MiniscriptInstructionOutcome outcome) {
+	if (outcome == kMiniscriptInstructionOutcomeFailed)
+		return kMiniscriptInstructionOutcomeContinue;
+
+	return outcome;
+}
+
 } // End of namespace MTropolis

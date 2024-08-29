@@ -1419,43 +1419,53 @@ MiniscriptInstructionOutcome MToonElement::writeRefAttribute(MiniscriptThread *t
 	return VisualElement::writeRefAttribute(thread, result, attrib);
 }
 
+CORO_BEGIN_DEFINITION(MToonElement::MToonConsumeCommandCoroutine)
+	struct Locals {
+	};
+
+	CORO_BEGIN_FUNCTION
+		CORO_IF (Event(EventIDs::kPlay, 0).respondsTo(params->msg->getEvent()))
+			// If the range set fails, then the mToon should play anyway, so ignore the result
+			CORO_AWAIT_MINISCRIPT(miniscriptIgnoreFailure(params->self->scriptSetRange(nullptr, params->msg->getValue())));
+
+			MToonElement *self = params->self;
+
+			if (self->_isStopped) {
+				self->_isStopped = false;
+				params->runtime->setSceneGraphDirty();
+			}
+
+			CORO_CALL(MToonElement::ChangeVisibilityCoroutine, params->self, params->runtime, true);
+
+			CORO_CALL(MToonElement::StartPlayingCoroutine, params->self, params->runtime);
+
+			CORO_RETURN;
+		CORO_ELSE_IF(Event(EventIDs::kStop, 0).respondsTo(params->msg->getEvent()))
+			// mTropolis 1.0 will not fire a Hidden event when an mToon is stopped even though it is hidden in the process.
+			// MTI depends on this, otherwise 2 hints will play at once when clicking a song button on the piano.
+			// This same bug does NOT apply to the "Shown" event firing on Play (as happens above).
+			
+			MToonElement *self = params->self;
+			
+			if (params->runtime->getProject()->getRuntimeVersion() <= kRuntimeVersion100)
+				self->setVisible(params->runtime, false);
+
+			CORO_CALL(MToonElement::StopPlayingCoroutine, params->self, params->runtime);
+
+			CORO_IF (params->runtime->getProject()->getRuntimeVersion() > kRuntimeVersion100)
+				CORO_CALL(MToonElement::ChangeVisibilityCoroutine, params->self, params->runtime, false);
+			CORO_END_IF
+
+			CORO_RETURN;
+		CORO_END_IF
+
+		CORO_CALL(VisualElement::VisualElementConsumeCommandCoroutine, params->self, params->runtime, params->msg);
+	CORO_END_FUNCTION
+CORO_END_DEFINITION
+
 VThreadState MToonElement::asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	if (Event(EventIDs::kPlay, 0).respondsTo(msg->getEvent())) {
-		// If the range set fails, then the mToon should play anyway, so ignore the result
-		(void)scriptSetRange(nullptr, msg->getValue());
-
-		StartPlayingTaskData *startPlayingTaskData = runtime->getVThread().pushTask("MToonElement::startPlayingTask", this, &MToonElement::startPlayingTask);
-		startPlayingTaskData->runtime = runtime;
-
-		ChangeFlagTaskData *becomeVisibleTaskData = runtime->getVThread().pushTask("MToonElement::changeVisibilityTask", static_cast<VisualElement *>(this), &MToonElement::changeVisibilityTask);
-		becomeVisibleTaskData->desiredFlag = true;
-		becomeVisibleTaskData->runtime = runtime;
-
-		if (_isStopped) {
-			_isStopped = false;
-			runtime->setSceneGraphDirty();
-		}
-
-		return kVThreadReturn;
-	}
-	if (Event(EventIDs::kStop, 0).respondsTo(msg->getEvent())) {
-		// mTropolis 1.0 will not fire a Hidden event when an mToon is stopped even though it is hidden in the process.
-		// MTI depends on this, otherwise 2 hints will play at once when clicking a song button on the piano.
-		// This same bug does NOT apply to the "Shown" event firing on Play (as happens above).
-		if (runtime->getProject()->getRuntimeVersion() > kRuntimeVersion100) {
-			ChangeFlagTaskData *hideTaskData = runtime->getVThread().pushTask("MToonElement::changeVisibilityTask", static_cast<VisualElement *>(this), &MToonElement::changeVisibilityTask);
-			hideTaskData->desiredFlag = false;
-			hideTaskData->runtime = runtime;
-		} else
-			setVisible(runtime, false);
-
-		StopPlayingTaskData *stopPlayingTaskData = runtime->getVThread().pushTask("MToonElement::stopPlayingTask", this, &MToonElement::stopPlayingTask);
-		stopPlayingTaskData->runtime = runtime;
-
-		return kVThreadReturn;
-	}
-
-	return VisualElement::asyncConsumeCommand(runtime, msg);
+	runtime->getVThread().pushCoroutine<MToonElement::MToonConsumeCommandCoroutine>(this, runtime, msg);
+	return kVThreadReturn;
 }
 
 void MToonElement::activate() {
@@ -1653,50 +1663,59 @@ void MToonElement::debugInspect(IDebugInspectionReport *report) const {
 }
 #endif
 
-VThreadState MToonElement::startPlayingTask(const StartPlayingTaskData &taskData) {
-	if (_rateTimes100000 < 0)
-		_cel = _playRange.max;
-	else
-		_cel = _playRange.min;
+CORO_BEGIN_DEFINITION(MToonElement::StartPlayingCoroutine)
+	struct Locals {
+	};
 
-	_paused = false;
-	_isPlaying = false;	// Reset play state, it starts for real in playMedia
+	CORO_BEGIN_FUNCTION
+		MToonElement *self = params->self;
 
-	_contentsDirty = true;
+		if (self->_rateTimes100000 < 0)
+			self->_cel = self->_playRange.max;
+		else
+			self->_cel = self->_playRange.min;
 
-	// These send in reverse order
-	{
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kAtFirstCel, 0), DynamicValue(), getSelfReference()));
-		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-		taskData.runtime->sendMessageOnVThread(dispatch);
-	}
+		self->_paused = false;
+		self->_isPlaying = false; // Reset play state, it starts for real in playMedia
 
-	{
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
-		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-		taskData.runtime->sendMessageOnVThread(dispatch);
-	}
+		self->_contentsDirty = true;
 
-	return kVThreadReturn;
-}
+		Common::SharedPtr<MessageProperties> playMsgProps(new MessageProperties(Event(EventIDs::kPlay, 0), DynamicValue(), self->getSelfReference()));
+		Common::SharedPtr<MessageDispatch> playDispatch(new MessageDispatch(playMsgProps, self, false, true, false));
+		CORO_CALL(Runtime::SendMessageOnVThreadCoroutine, params->runtime, playDispatch);
 
-VThreadState MToonElement::stopPlayingTask(const StopPlayingTaskData &taskData) {
-	_contentsDirty = true;
-	_isPlaying = false;
+		Common::SharedPtr<MessageProperties> afcMsgProps(new MessageProperties(Event(EventIDs::kAtFirstCel, 0), DynamicValue(), params->self->getSelfReference()));
+		Common::SharedPtr<MessageDispatch> afcDispatch(new MessageDispatch(afcMsgProps, params->self, false, true, false));
+		CORO_CALL(Runtime::SendMessageOnVThreadCoroutine, params->runtime, afcDispatch);
+	CORO_END_FUNCTION
+CORO_END_DEFINITION
 
-	if (!_isStopped) {
-		_isStopped = true;
 
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kStop, 0), DynamicValue(), getSelfReference()));
-		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-		taskData.runtime->sendMessageOnVThread(dispatch);
-	}
+CORO_BEGIN_DEFINITION(MToonElement::StopPlayingCoroutine)
+	struct Locals {
+		bool needsStop = false;
+	};
 
-	if (_hooks)
-		_hooks->onStopPlayingMToon(this, _visible, _isStopped, _renderSurface.get());
+	CORO_BEGIN_FUNCTION
+		MToonElement *self = params->self;
 
-	return kVThreadReturn;
-}
+		self->_contentsDirty = true;
+		self->_isPlaying = false;
+
+		locals->needsStop = !self->_isStopped;
+
+		self->_isStopped = true;
+
+		if (self->_hooks)
+			self->_hooks->onStopPlayingMToon(self, self->_visible, self->_isStopped, self->_renderSurface.get());
+
+		CORO_IF (locals->needsStop)
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kStop, 0), DynamicValue(), params->self->getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, params->self, false, true, false));
+			CORO_CALL(Runtime::SendMessageOnVThreadCoroutine, params->runtime, dispatch);
+		CORO_END_IF
+	CORO_END_FUNCTION
+CORO_END_DEFINITION
 
 void MToonElement::playMedia(Runtime *runtime, Project *project) {
 	if (_paused)

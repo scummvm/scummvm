@@ -263,27 +263,25 @@ public:
 private:
 	MToonElement(const MToonElement &other);
 
-	struct StartPlayingTaskData {
-		StartPlayingTaskData() : runtime(nullptr) {}
-
-		Runtime *runtime;
+	struct MToonConsumeCommandCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_3(MToonElement *, self, Runtime *, runtime, Common::SharedPtr<MessageProperties>, msg);
 	};
 
-	struct StopPlayingTaskData {
-		StopPlayingTaskData() : runtime(nullptr) {}
-
-		Runtime *runtime;
+	struct StartPlayingCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_2(MToonElement *, self, Runtime *, runtime);
 	};
 
-	struct ChangeFrameTaskData {
-		ChangeFrameTaskData() : runtime(nullptr), frame(0) {}
-
-		Runtime *runtime;
-		uint32 frame;
+	struct StopPlayingCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_2(MToonElement *, self, Runtime *, runtime);
 	};
 
-	VThreadState startPlayingTask(const StartPlayingTaskData &taskData);
-	VThreadState stopPlayingTask(const StopPlayingTaskData &taskData);
+	struct ChangeFrameCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_3(MToonElement *, self, Runtime *, runtime, uint32, frame);
+	};
 
 	void playMedia(Runtime *runtime, Project *project) override;
 	MiniscriptInstructionOutcome scriptSetRate(MiniscriptThread *thread, const DynamicValue &value);

@@ -471,6 +471,8 @@ private:
 	bool _failed;
 };
 
+MiniscriptInstructionOutcome miniscriptIgnoreFailure(MiniscriptInstructionOutcome outcome);
+
 } // End of namespace MTropolis
 
 #endif
