@@ -52,6 +52,7 @@ public:
 	void freePages(uint16 num);
 	void freeShapes();
 	void runPagesForEachNPC(int16 xScrollOffset);
+	const Common::Array<ArcadeLevelData> &getLevelData() { return _levelData; }
 
 	uint16 _currentTTMNum;
 	int16 _currentNPCRunningTTM;
