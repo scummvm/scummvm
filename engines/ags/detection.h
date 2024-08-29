@@ -66,7 +66,6 @@ extern const AGSGameDescription GAME_DESCRIPTIONS[];
 class AGSMetaEngineDetection : public AdvancedMetaEngineDetection<AGS::AGSGameDescription> {
 	mutable Common::String _gameid;
 	mutable Common::String _extra;
-	mutable Common::Path _filename;
 	mutable Common::String _filenameStr;
 	mutable Common::String _md5;
 

@@ -159,7 +159,6 @@ ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 			continue;
 
 		if (AGS3::isAGSFile(f)) {
-			_filename = filename;
 			f.seek(0);
 			_md5 = Common::computeStreamMD5AsString(f, 5000);
 
@@ -178,14 +177,14 @@ ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 			AGS::g_fallbackDesc.desc.gameId = _gameid.c_str();
 			AGS::g_fallbackDesc.desc.extra = _extra.c_str();
 
-			_filenameStr = _filename.toString('/');
+			_filenameStr = filename.toString('/');
 			AGS::g_fallbackDesc.desc.filesDescriptions[0].fileName = _filenameStr.c_str();
 			AGS::g_fallbackDesc.desc.filesDescriptions[0].fileSize = (f.size() >= 0xffffffff) ? AD_NO_SIZE : f.size();
 			AGS::g_fallbackDesc.desc.filesDescriptions[0].md5 = _md5.c_str();
 
 			ADDetectedGame game(&AGS::g_fallbackDesc.desc);
-			game.matchedFiles[_filename].md5 = _md5;
-			game.matchedFiles[_filename].size = f.size();
+			game.matchedFiles[filename].md5 = _md5;
+			game.matchedFiles[filename].size = f.size();
 
 			game.hasUnknownFiles = hasUnknownFiles;
 			return game;
