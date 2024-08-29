@@ -406,6 +406,8 @@ int ScummEngine_v6::readArray(int array, int idx, int base) {
 	// ...
 	// So it checks for invalid array indices only *after* using them to access
 	// the array. Ouch.
+	//
+	// TODO: what did the original interpreter precisely do in this case?
 	if (_game.id == GID_FT && array == 447 && _currentRoom == 95 && vm.slot[_currentScript].number == 2010 && idx == -1 && base == -1 &&
 		enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		return 0;
@@ -2671,6 +2673,8 @@ void ScummEngine_v6::o6_wait() {
 		//
 		// For now, if the value passed in is divisible by 45, assume it is an
 		// angle, and use _curActor as the actor to wait for.
+		//
+		// TODO: what did the original interpreter do in this case?
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		if (actnum % 45 == 0) {

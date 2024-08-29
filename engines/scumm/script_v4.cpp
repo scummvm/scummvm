@@ -74,6 +74,8 @@ void ScummEngine_v4::o4_ifState() {
 	// though you're not supposed to. However if you escape WITHOUT getting
 	// caught, you get 0 IQ points (supposed to get 25 IQ points)."
 	// This workaround is meant to address that.
+	//
+	// TODO: choose an Enhancement class for this
 	if (_game.id == GID_INDY3 && a == 367 &&
 	    vm.slot[_currentScript].number == 363 && _currentRoom == 25) {
 		b = 0;

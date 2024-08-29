@@ -1477,6 +1477,9 @@ void ScummEngine_v5::o5_ifClassOfIs() {
 		// used to test and set the state of various objects (e.g. the inside
 		// door (object 465) of the of the Hostel on Mars), when opening the
 		// Hostel door from the outside.
+		//
+		// TODO: check the behavior of the original interpreter against ours,
+		// in this particular case.
 		if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns &&
 		    vm.slot[_currentScript].number == 205 && _currentRoom == 185 &&
 		    obj == 465 && cls == 0 && enhancementEnabled(kEnhGameBreakingBugFixes)) {
@@ -2530,6 +2533,8 @@ void ScummEngine_v5::o5_setObjectName() {
 	// restarts objects in inventory. Some objects (kidnap note) can be in a cutscene state
 	// what causes a crash if the object gets restarted. This workaround waits for cutscenes
 	// to end, preventing the crash.
+	//
+	// TODO: analyze the behavior of the original interpreter in this case.
 	if (_game.id == GID_MONKEY && vm.slot[_currentScript].number == 68 && enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		ScriptSlot *ss = vm.slot;
 		for (int i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
@@ -2734,6 +2739,8 @@ void ScummEngine_v5::o5_startScript() {
 
 	// WORKAROUND bug #2198: Script 171 loads a complete room resource,
 	// instead of the actual script, causing invalid opcode cases
+	//
+	// TODO: what does the original interpreter do in this case?
 	if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns && script == 171 && enhancementEnabled(kEnhGameBreakingBugFixes))
 		return;
 
