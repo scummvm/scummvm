@@ -1526,7 +1526,13 @@ int ScummEngine::resStrLen(const byte *src) {
 			// WORKAROUND for bugs #1675 and #2715, script bugs in German Indy3.
 			// For more information, See the the corresponding workaround in
 			// ScummEngine::convertMessageToString().
-			if (enhancementEnabled(kEnhTextLocFixes) && _game.id == GID_INDY3 && _language == Common::DE_DEU &&
+			//
+			// While the twin workaround in convertMessageToString() can be optional,
+			// our code diverges from the original just enough that we can't ignore the
+			// invalid control code at least in INDY3 VGA DE, so the following has to
+			// run regardless of the enhancement settings. Therefore, kEnhGameBreakingBugFixes
+			// is the appropriate class here.
+			if (enhancementEnabled(kEnhGameBreakingBugFixes) && _game.id == GID_INDY3 && _language == Common::DE_DEU &&
 			    ((_roomResource == 23 && chr == 0x2E) ||
 			     (_roomResource == 21 && chr == 0x20))) {
 				num--;
