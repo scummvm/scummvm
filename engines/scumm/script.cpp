@@ -170,6 +170,11 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 
 	// WORKAROUND for bug #2826: Disallow pulling the rope if it's
 	// already in the player's inventory.
+	//
+	// TODO: it would be nice to explore what the impacted original
+	// interpreter did in this case, and decide which Enhancement
+	// value we give to this, but so far, I couldn't locate an
+	// original release (interpreter?) showing this issue.  -dwa
 	if (_game.id == GID_MONKEY2 && obj == 1047 && entry == 6 && whereIsObject(obj) == WIO_INVENTORY) {
 		return 0;
 	}
