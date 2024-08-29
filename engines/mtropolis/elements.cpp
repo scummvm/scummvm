@@ -632,62 +632,8 @@ CORO_BEGIN_DEFINITION(MovieElement::MovieElementConsumeCommandCoroutine)
 CORO_END_DEFINITION
 
 VThreadState MovieElement::asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	// The reaction to the Play command should be Shown -> Unpaused -> Played
-	// At First Cel is NOT fired by Play commands for some reason.
-	// The reaction to the Stop command should be Paused -> Hidden -> Stopped
-
-	if (true) {
-		runtime->getVThread().pushCoroutine<MovieElement::MovieElementConsumeCommandCoroutine>(this, runtime, msg);
-		return kVThreadReturn;
-	}
-
-	if (Event(EventIDs::kPlay, 0).respondsTo(msg->getEvent())) {
-		{
-			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
-			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-			runtime->sendMessageOnVThread(dispatch);
-		}
-
-		if (_paused) {
-			_paused = false;
-			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kUnpause, 0), DynamicValue(), getSelfReference()));
-			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-			runtime->sendMessageOnVThread(dispatch);
-		}
-
-		StartPlayingTaskData *startPlayingTaskData = runtime->getVThread().pushTask("MovieElement::startPlayingTask", this, &MovieElement::startPlayingTask);
-		startPlayingTaskData->runtime = runtime;
-
-		ChangeFlagTaskData *becomeVisibleTaskData = runtime->getVThread().pushTask("MovieElement::changeVisibilityTask", static_cast<VisualElement *>(this), &MovieElement::changeVisibilityTask);
-		becomeVisibleTaskData->desiredFlag = true;
-		becomeVisibleTaskData->runtime = runtime;
-
-		return kVThreadReturn;
-	}
-	if (Event(EventIDs::kStop, 0).respondsTo(msg->getEvent())) {
-		{
-			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kStop, 0), DynamicValue(), getSelfReference()));
-			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-			runtime->sendMessageOnVThread(dispatch);
-		}
-
-		ChangeFlagTaskData *becomeVisibleTaskData = runtime->getVThread().pushTask("MovieElement::changeVisibilityTask", static_cast<VisualElement *>(this), &MovieElement::changeVisibilityTask);
-		becomeVisibleTaskData->desiredFlag = false;
-		becomeVisibleTaskData->runtime = runtime;
-
-		if (!_paused) {
-			stopSubtitles();
-
-			_paused = true;
-			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kPause, 0), DynamicValue(), getSelfReference()));
-			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-			runtime->sendMessageOnVThread(dispatch);
-		}
-
-		return kVThreadReturn;
-	}
-
-	return VisualElement::asyncConsumeCommand(runtime, msg);
+	runtime->getVThread().pushCoroutine<MovieElement::MovieElementConsumeCommandCoroutine>(this, runtime, msg);
+	return kVThreadReturn;
 }
 
 void MovieElement::activate() {
@@ -1110,10 +1056,7 @@ MiniscriptInstructionOutcome MovieElement::scriptSetTimestamp(MiniscriptThread *
 		asInteger = _playRange.max;
 
 	if (asInteger != (int32)_currentTimestamp) {
-		SeekToTimeTaskData *taskData = thread->getRuntime()->getVThread().pushTask("MovieElement::seekToTimeTask", this, &MovieElement::seekToTimeTask);
-		taskData->runtime = getRuntime();
-		taskData->timestamp = asInteger;
-
+		thread->getRuntime()->getVThread().pushCoroutine<MovieElement::SeekToTimeCoroutine>(this, getRuntime(), asInteger);
 		return kMiniscriptInstructionOutcomeYieldToVThreadNoRetry;
 	}
 
@@ -1184,10 +1127,7 @@ MiniscriptInstructionOutcome MovieElement::scriptSetRangeTyped(MiniscriptThread 
 		targetTS = _reversed ? maxTS : minTS;
 
 	if (targetTS != _currentTimestamp) {
-		SeekToTimeTaskData *taskData = thread->getRuntime()->getVThread().pushTask("MovieElement::seekToTimeTask", this, &MovieElement::seekToTimeTask);
-		taskData->runtime = getRuntime();
-		taskData->timestamp = targetTS;
-
+		thread->getRuntime()->getVThread().pushCoroutine<MovieElement::SeekToTimeCoroutine>(this, getRuntime(), targetTS);
 		return kMiniscriptInstructionOutcomeYieldToVThreadNoRetry;
 	}
 
@@ -1216,49 +1156,37 @@ CORO_BEGIN_DEFINITION(MovieElement::StartPlayingCoroutine)
 	CORO_END_FUNCTION
 CORO_END_DEFINITION
 
-VThreadState MovieElement::startPlayingTask(const StartPlayingTaskData &taskData) {
-	if (_videoDecoder) {
-		_videoDecoder->stop();
-		_currentPlayState = kMediaStateStopped;
-		_needsReset = true;
-		_contentsDirty = true;
-		_currentTimestamp = _reversed ? _playRange.max : _playRange.min;
 
-		_shouldPlayIfNotPaused = true;
-		_paused = false;
+CORO_BEGIN_DEFINITION(MovieElement::SeekToTimeCoroutine)
+	struct Locals {
+	};
 
-		stopSubtitles();
-	}
+	CORO_BEGIN_FUNCTION
+		MovieElement *self = params->self;
 
-	return kVThreadReturn;
-}
+		uint32 minTS = self->_playRange.min;
+		uint32 maxTS = self->_playRange.max;
 
-VThreadState MovieElement::seekToTimeTask(const SeekToTimeTaskData &taskData) {
-	uint32 minTS = _playRange.min;
-	uint32 maxTS = _playRange.max;
+		uint32 targetTS = params->timestamp;
 
-	uint32 targetTS = taskData.timestamp;
+		if (targetTS < minTS)
+			targetTS = minTS;
+		if (targetTS > maxTS)
+			targetTS = maxTS;
 
-	if (targetTS < minTS)
-		targetTS = minTS;
-	if (targetTS > maxTS)
-		targetTS = maxTS;
+		if (targetTS != self->_currentTimestamp) {
+			self->_currentTimestamp = targetTS;
+			if (self->_videoDecoder) {
+				self->_videoDecoder->stop();
+				self->_currentPlayState = kMediaStateStopped;
+			}
+			self->_needsReset = true;
+			self->_contentsDirty = true;
 
-	if (targetTS == _currentTimestamp)
-		return kVThreadReturn;
-
-	_currentTimestamp = targetTS;
-	if (_videoDecoder) {
-		_videoDecoder->stop();
-		_currentPlayState = kMediaStateStopped;
-	}
-	_needsReset = true;
-	_contentsDirty = true;
-
-	stopSubtitles();
-
-	return kVThreadReturn;
-}
+			self->stopSubtitles();
+		}
+	CORO_END_FUNCTION
+CORO_END_DEFINITION
 
 ImageElement::ImageElement() : _cacheBitmap(false), _assetID(0) {
 }

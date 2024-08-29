@@ -147,19 +147,6 @@ private:
 
 	MiniscriptInstructionOutcome scriptSetRangeTyped(MiniscriptThread *thread, const IntRange &range);
 
-	struct StartPlayingTaskData {
-		StartPlayingTaskData() : runtime(nullptr) {}
-
-		Runtime *runtime;
-	};
-
-	struct SeekToTimeTaskData {
-		SeekToTimeTaskData() : runtime(nullptr), timestamp(0) {}
-
-		Runtime *runtime;
-		uint32 timestamp;
-	};
-
 	struct StartPlayingCoroutine {
 		CORO_DEFINE_RETURN_TYPE(void);
 		CORO_DEFINE_PARAMS_2(MovieElement *, self, Runtime *, runtime);
@@ -167,11 +154,8 @@ private:
 
 	struct SeekToTimeCoroutine {
 		CORO_DEFINE_RETURN_TYPE(void);
-		CORO_DEFINE_PARAMS_2(Runtime *, runtime, uint32, timestamp);
+		CORO_DEFINE_PARAMS_3(MovieElement *, self, Runtime *, runtime, uint32, timestamp);
 	};
-
-	VThreadState startPlayingTask(const StartPlayingTaskData &taskData);
-	VThreadState seekToTimeTask(const SeekToTimeTaskData &taskData);
 
 	bool _cacheBitmap;
 	bool _alternate;
