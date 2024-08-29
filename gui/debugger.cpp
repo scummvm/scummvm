@@ -42,6 +42,7 @@
 #elif defined(USE_READLINE)
 	#include <readline/readline.h>
 	#include <readline/history.h>
+	#include <signal.h>
 	#include "common/events.h"
 #endif
 
@@ -211,6 +212,17 @@ char *readline_completionFunction(const char *text, int state) {
 	return g_readline_debugger->readlineComplete(text, state);
 }
 
+void intHandler(int signum) {
+	Debugger *d= g_readline_debugger;
+
+	if (d->isActive()){
+		d->debugPrintf("game is running do you want to quit? y?\n");
+		char c = getchar();
+		if(c == 'y') exit(0);
+	} else
+		d->attach();
+}
+
 void readline_eventFunction() {
 	Common::EventManager *eventMan = g_system->getEventManager();
 
@@ -257,6 +269,8 @@ void Debugger::enter() {
 	g_readline_debugger = this;
 	rl_completion_entry_function = (RLCompFunc_t *)&readline_completionFunction;
 	rl_event_hook = (rl_hook_func_t *)&readline_eventFunction;
+
+	signal(SIGINT, intHandler);
 
 	char *line_read = 0;
 	do {
