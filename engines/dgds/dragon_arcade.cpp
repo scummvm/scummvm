@@ -80,7 +80,7 @@ bool DragonArcade::doTickUpdate() {
 
 	int16 findResult = findValuesIn3d30Array();
 	arcade2754(findResult);
-	
+
 	switch (_loadedArcadeStage) {
 	case 0:
 	case 1:
@@ -103,41 +103,41 @@ bool DragonArcade::doTickUpdate() {
 		break;
 	}
 
-    updateBullets();
-    //setSomeVideoFlags();
-    runThenDrawBulletsInFlight();
-    checkBladeFireAllStages();
+	updateBullets();
+	//setSomeVideoFlags();
+	runThenDrawBulletsInFlight();
+	checkBladeFireAllStages();
 	switch(_loadedArcadeStage) {
-      case 0:
-      case 1:
-      case 2:
-      case 4:
-        checkEnemyFireStage0124();
-        break;
-      case 3:
-        checkBossFireStage3();
-        break;
-      case 6:
-        checkBossFireStage6();
-        break;
-      default:
+	case 0:
+	case 1:
+	case 2:
+	case 4:
+		checkEnemyFireStage0124();
 		break;
-    }
-    drawHealthBars();
-    //do { } while (_arcadeTickDelay != 0);
-    //_arcadeTickDelay = 4;
-    _nTickUpdates++;
-    
+	case 3:
+		checkBossFireStage3();
+		break;
+	case 6:
+		checkBossFireStage6();
+		break;
+	default:
+		break;
+	}
+	drawHealthBars();
+	//do { } while (_arcadeTickDelay != 0);
+	//_arcadeTickDelay = 4;
+	_nTickUpdates++;
+
 	return true;
 }
 
 void DragonArcade::updateBullets() {
-	for (int i = 19; i > 0; i++) {
+	for (int i = 19; i > 0; i--) {
 		if (_bullets[i]._state == 2 || _bullets[i]._state == 3) {
 			_bullets[i]._state = kBulletInactive;
 			continue;
 		}
-		
+
 		if (_bullets[i]._state == kBulletFlying) {
 			if (_bullets[i]._var1 == 3) {
 				_bullets[i]._y += _bullets[i]._speed;
@@ -175,7 +175,116 @@ void DragonArcade::updateBullets() {
 }
 
 int16 DragonArcade::checkBulletCollision(int16 num) {
-	error("TODO: Implement me");
+	int yoff = 0;
+	for (int i = 19; i >= 0; i--) {
+		if (_npcState[i].byte12 <= 0)
+			continue;
+
+		if (_bullets[num]._var1 == 3) {
+			yoff = 7;
+		}
+		if (_bullets[num]._var1 != 1 || i == 0) {
+			if (_bullets[num]._x < _npcState[i].x_11 || _npcState[i].x_12 < _bullets[num]._x ||
+				_bullets[num]._y + yoff < _npcState[i].y_11 || _npcState[i].y_12 < _bullets[num]._y + yoff) {
+				if (_bullets[num]._x < _npcState[i].x_21 || _npcState[i].x_22 < _bullets[num]._x ||
+					_bullets[num]._y + yoff < _npcState[i].y_21 || _npcState[i].y_22 < _bullets[num]._y + yoff)
+					continue;
+				if (i == 0)
+					return -1;
+
+				if (_loadedArcadeStage == 3) {
+					if (_bullets[num]._var1 == 3)
+						continue;
+				} else {
+					if (_loadedArcadeStage == 4) {
+						if (_bullets[num]._var1 == 1 || _bullets[num]._var1 == 3)
+							continue;
+					} else if (_loadedArcadeStage != 6) {
+						return -1;
+					}
+				}
+
+				if (_bullets[num]._var1 != 2) {
+					return -1;
+				}
+			} else {
+				if (i == 0) {
+					bladeTakeHit();
+					if (_npcState[0].health != 0)
+						return 1;
+
+					if (_bullets[num]._var1 != 3) {
+						return 1;
+					}
+					_shouldUpdateState = 3;
+					return 1;
+				}
+
+				if (6 < _loadedArcadeStage) {
+					return 1;
+				}
+
+				switch (_loadedArcadeStage) {
+				case 0:
+				case 1:
+				case 2:
+				case 4:
+					if (_loadedArcadeStage == 4 || _npcState[i].byte12 < '\x1e') {
+						if (_bullets[num]._var1 != 1) {
+							playSfx(0x56);
+							_npcState[i].byte12 = 1;
+							if (_npcState[i].ttmPage < 0x1c) {
+								_npcState[i].ttmPage = 0x15;
+							} else {
+								_npcState[i].ttmPage = 0x31;
+							}
+							return 1;
+						}
+						break;
+					}
+					if (_npcState[i].byte12 == '\x1e') {
+						_flag40ee = 0;
+					} else {
+						_flag40ef = 0;
+					}
+					_npcState[i].byte12 = 0xf8;
+					_npcState[i].ttmPage = 0x21;
+					break;
+				case 3:
+					if (_bullets[num]._var1 != 3) {
+						if (_npcState[i].byte12 == 1) {
+							_npcState[i].byte12 = 7;
+							_npcState[i].ttmPage = 0x4b;
+						}
+						if (_haveBigGun) {
+							decBossHealth();
+						}
+						decBossHealth();
+						if (_npcState[i].health != 0) {
+							return 1;
+						}
+						_npcState[i].byte12 = 8;
+						_npcState[i].ttmPage = 0x4f;
+						setFinishCountdownIfLessThan0(0x78);
+						return 1;
+					}
+					break;
+				case 6:
+					if (_bullets[num]._var1 != 2) {
+						if (_haveBigGun) {
+							decBossHealthAndCheck();
+						}
+						decBossHealthAndCheck();
+						return 1;
+					}
+					break;
+				default:
+					return 1;
+				}
+			}
+		}
+	}
+	return 0;
 }
 
 
@@ -199,7 +308,7 @@ void DragonArcade::checkBladeFireAllStages() {
 	int16 yoff;
 	int16 sndno;
 	ImageFlipMode flipMode;
-	
+
 	_bladeHasFired = false;
 	if (_npcState[0].byte14 != 0)
 		return;
@@ -211,10 +320,10 @@ void DragonArcade::checkBladeFireAllStages() {
 			} else {
 				flipMode = kImageFlipV;
 			}
-			if (_haveBigGun == 0) {
-				yoff = FIRE_Y_OFFSETS_SMALL_GUN[i];
-			} else {
+			if (_haveBigGun) {
 				yoff = FIRE_Y_OFFSETS_BIG_GUN[i];
+			} else {
+				yoff = FIRE_Y_OFFSETS_SMALL_GUN[i];
 			}
 
 			createBullet(FIRE_X_OFFSETS[i] + _npcState[0].x - 0xa0,
@@ -234,7 +343,7 @@ void DragonArcade::checkBladeFireAllStages() {
 }
 
 
-static const int16 ENEMY_FIRE_ALLOWABLE_PAGES[] =  { 3, 0xC, 0x1F, 0x28 };
+static const int16 ENEMY_FIRE_ALLOWABLE_PAGES[] = { 3, 0xC, 0x1F, 0x28 };
 static const int16 ENEMY_FIRE_X_OFFSETS[] = { 0xB1, 0xB3, 0x77, 0x75, };
 static const int16 ENEMY_FIRE_Y_OFFSETS[] = { 0x4E, 0x56, 0x4D, 0x55,};
 
@@ -271,7 +380,7 @@ void DragonArcade::checkBossFireStage6() {
 		createBullet(_npcState[1].val1 - _scrollXOffset * 8 - 19,
 						_npcState[1].val2 + 86, flipMode, 2);
 		playSfx(0x24);
-  }
+	}
 }
 
 void DragonArcade::limitToCenterOfScreenAndUpdateCursor() {
@@ -280,19 +389,20 @@ void DragonArcade::limitToCenterOfScreenAndUpdateCursor() {
 	lastMouse.x = CLIP((int)lastMouse.x, 144, 190);
 	lastMouse.y = CLIP((int)lastMouse.y, 135, 180);
 	g_system->warpMouse(lastMouse.x, lastMouse.y);
-	
+
 	int16 arrowNum = (lastMouse.x - 144) / 16 + ((lastMouse.y - 136) / 16) * 3;
 
-    if (_currentArrowNum != arrowNum && arrowNum < 9) {
+	if (_currentArrowNum != arrowNum && arrowNum < 9) {
 		_currentArrowNum = arrowNum;
 		CursorMan.replaceCursor(*(_arrowImg->getSurface(arrowNum)->surfacePtr()), 0, 0, 0, 0);
-    }
-    //if (g_arcadeNeedsBufferCopy == 0) {
-    //  Arcade_MouseCursorDraw();
-    //}
+	}
+	//if (g_arcadeNeedsBufferCopy == 0) {
+	//  Arcade_MouseCursorDraw();
+	//}
 }
 
 void DragonArcade::keyboardUpdate() {
+	warning("TODO: Keyboard update");
 	// TODO: Keyboard update.
 }
 
@@ -369,35 +479,491 @@ void DragonArcade::updateMouseAndJoystickStates() {
 }
 
 int16 DragonArcade::findValuesIn3d30Array() {
-	error("DragonArcade::findValuesIn3d30Array: Implement me");
+	fill3d30ArrayFromLevelData();
+	if (_bladeState1 == 1 || _bladeState1 == 2) {
+		if ((_bladeStateOffset + 0x38 == _npcState[0].ttmPage) ||
+			(_bladeStateOffset + 0x16 == _npcState[0].ttmPage)) {
+			findMatchOrMinOrMax();
+		} else {
+			findMinIn3d30ArrayLast();
+			if (isAbsFoundValOver990()) {
+				_foundValueFrom3d30Array = -0x100;
+			}
+		}
+	} else if ((_bladeMoveFlag & kBladeMoveDown) == kBladeMoveNone) {
+		if ((_bladeMoveFlag & kBladeMoveUp) == kBladeMoveNone) {
+			findMatchIn3d30Array();
+			if (isAbsFoundValOver990()) {
+				findMinIn3d30ArrayFirst();
+				if (isAbsFoundValOver990()) {
+					findMaxIn3d30Array();
+					if (isAbsFoundValOver990()) {
+						_foundValueFrom3d30Array = -0x100;
+					}
+				}
+			}
+		} else {
+			/* Move up */
+			findMaxIn3d30Array();
+			if (isAbsFoundValOver990()) {
+				findMatchIn3d30Array();
+				if (isAbsFoundValOver990()) {
+					findMinIn3d30ArrayFirst();
+					if (isAbsFoundValOver990()) {
+						_foundValueFrom3d30Array = -0x100;
+					}
+				}
+			}
+		}
+	} else {
+		/* Move down */
+		findMinIn3d30ArrayFirst();
+		if (isAbsFoundValOver990()) {
+			findMatchIn3d30Array();
+			if (isAbsFoundValOver990()) {
+				findMaxIn3d30Array();
+				if (isAbsFoundValOver990()) {
+					_foundValueFrom3d30Array = -0x100;
+				}
+			}
+		}
+	}
+	return _foundValueFrom3d30Array;
 }
 
 bool DragonArcade::isNpcInsideXRange(int16 num) {
 	return _npcState[num].x < 321 && _npcState[num].x > 1;
 }
 
+void DragonArcade::arcade16bc() {
+	_bladeState1 = 5;
+	_npcState[0].ttmPage = _bladeStateOffset + 0x40;
+	_arcadeTTM._startYOffset++;
+	_int0b54 = _arcadeTTM._startYOffset;
+	_uint0a17++;
+}
+
+void DragonArcade::arcade1e83() {
+	_scrollXOffset -= _scrollXIncrement;
+	_npcState[0].x = _npcState[0].x - _bladeXMove;
+}
+
+void DragonArcade::arcade16de(int16 param) {
+	if (_bladeState1 == 2) {
+		_npcState[0].ttmPage = _bladeStateOffset + 0x39;
+	}
+	else {
+		_npcState[0].ttmPage = _bladeStateOffset + 0x17;
+	}
+	_npcState[0].byte14 = 0;
+	_arcadeTTM._startYOffset = param;
+	_uint0a17 = 0;
+	_bladeState1 = 0;
+	// TODO: What are these ?
+	_int3d18 = 0;
+	//INT_39e5_0b5a = 0xf;
+}
 
 void DragonArcade::arcade4085() {
-	error("DragonArcade::arcade4085: implement me");
+	for (int i = 0; i < 2; i = i + 1) {
+		if (_someCounter40f0 == 0x14) {
+			_somethingArray[i].val10 = 0;
+		}
+		_somethingArray[i].val10++;
+		if (_somethingArray[i].val10 < 1 || 0xe < _somethingArray[i].val10) {
+			_somethingArray[i].val12 = 0;
+		}
+		else {
+			if (_somethingArray[i].val10 == 1) {
+				if (isNpcInsideXRange(i + 10))
+					playSfx(0x1d);
+			}
+			_somethingArray[i].val12 = 0xfb;
+			if (_npcState[0].health && _somethingArray[i].val0 - 0x10 <= _npcState[0].val1 &&
+				_npcState[0].val1 <= _somethingArray[i].val0 + 0x37) {
+				bladeTakeHit();
+			}
+		}
+	}
+
+	if ((_someCounter40f0 & 3) == 0) {
+		_somethingArray[2].val10++;
+		_somethingArray[3].val10++;
+		if (0x1e < _somethingArray[2].val10) {
+			_somethingArray[2].val10 = 0xf;
+			_somethingArray[3].val10 = 0xf;
+		}
+	}
+
+	for (int i = 0; i < 2; i = i + 1) {
+		if (_somethingArray[i].val10 == 0x1d) {
+			if (isNpcInsideXRange(i + 0xc))
+				playSfx(0x59);
+			if (_npcState[0].health && _somethingArray[i].val2 - 0x10 <= _npcState[0].val1 && _npcState[0].val1 <= _somethingArray[i].val2 + 0x23) {
+				bladeTakeHit();
+				bladeTakeHit();
+			}
+		}
+	}
+
+	_somethingArray[4].val10++;
+	if (0x35 < _somethingArray[4].val10) {
+		if (isNpcInsideXRange(0xe))
+			playSfx(0x58);
+		_somethingArray[4].val10 = 0x28;
+	}
+	if (_npcState[0].health != 0 && ((_bladeMoveFlag & kBladeMoveDown) == kBladeMoveNone || _arcadeTTM._startYOffset < -6)
+		&& _somethingArray[4].val0 - 0x10 <= _npcState[0].val1 && _npcState[0].val1 <= _somethingArray[4].val0 + 0x23) {
+		bladeTakeHit();
+		bladeTakeHit();
+		if (_npcState[0].health == 0) {
+			/* blade dies! */
+			_npcState[0].byte14 = 2;
+			_npcState[0].ttmPage = 0x22;
+			_npcState[0].byte12 = 14;
+			_bladeState1 = 14;
+			_shouldUpdateState = 2;
+		}
+	}
+
+	_someCounter40f0++;
+	if (_someCounter40f0 == 0x3c) {
+		_someCounter40f0 = 0;
+	}
+}
+
+bool DragonArcade::isAbsFoundValOver990() {
+	return abs(_foundValueFrom3d30Array) > 990;
+}
+
+
+uint16 DragonArcade::moveToNextStage() {
+	int xblock = _scrollXOffset + _npcState[0].x / 8;
+
+	switch(_loadedArcadeStage) {
+	case 0:
+		if (0x31 < _scrollXOffset) {
+			_loadedArcadeStage = 1;
+		}
+		break;
+	case 1:
+		/* stage 1 */
+		if (!_isMovingStage && xblock == 0x80 && 0 < _int0b5c && _bladeState1 == 0) {
+			_scrollXOffset -= _int0b5c;
+			arcade2445();
+			return 1;
+		}
+
+		if (0x89 < xblock && xblock < 0x8d && 0x14 < _arcadeTTM._startYOffset &&
+			_arcadeTTM._startYOffset < 0x46 && _bladeStateOffset == 0) {
+			_scrollXOffset = 0x89 - _npcState[0].x / 8;
+			_arcadeTTM._startYOffset = -0xd;
+			playSFX55AndStuff();
+			_loadedArcadeStage = 2;
+			initValuesForStage2();
+			return 1;
+		}
+		break;
+	case 2:
+		/* stage 2 */
+		if ((!_isMovingStage && xblock == 0x90 && 0 < _int0b5c && _bladeState1 == 0) ||
+			(!_isMovingStage && xblock == 0xe9 && 0 < _int0b5c && _bladeState1 == 0)) {
+			_scrollXOffset -= _int0b5c;
+			arcade2445();
+			return 1;
+		}
+
+		if (0x99 < xblock && xblock < 0x9c && 0x14 < _arcadeTTM._startYOffset &&
+			  _arcadeTTM._startYOffset < 0x46 && _bladeStateOffset == 0) {
+			_scrollXOffset = 0x9a - _npcState[0].x / 8;
+			_arcadeTTM._startYOffset = -0xd;
+			playSFX55AndStuff();
+			return 1;
+		}
+
+		if (_scrollXOffset < 0x100) {
+			if (0xf3 < xblock && xblock < 0xf6 && 0x1e < _arcadeTTM._startYOffset &&
+				 _arcadeTTM._startYOffset < 0x3c && _bladeStateOffset == 0 && _startDifficultyMaybe != 3) {
+				_scrollXOffset = 0xf4 - _npcState[0].x / 8;
+				_arcadeTTM._startYOffset = -0x1a;
+				playSFX55AndStuff();
+				return 1;
+			}
+		} else if (_bladeState1 == 0) {
+			//Arcade_VidPtrs_SrcFront_DstBack();
+			//ResetFlagAt_48a0();
+			//SetFlagAt_48a0_andMaybeMouseUpdate();
+			loadTTMScriptsForStage(3);
+		}
+		break;
+	case 4:
+		/* stage 4 */
+		if (-2 < _arcadeTTM._startYOffset && 0x81 < _npcState[0].val1 && _npcState[0].val1 < 0xc9 && _npcState[0].health != 0) {
+			playSfx(0x57);
+			setFinishCountdownIfLessThan0(0x14);
+			if (_haveBigGun) {
+				_npcState[0].ttmPage = 0x3a;
+			} else {
+				_npcState[0].ttmPage = 0x36;
+			}
+			_bladeState1 = 0xd;
+			_mouseButtonWentDown = 0x80;
+			_npcState[0].byte12 = 13;
+			_npcState[0].health = 0;
+			_npcState[0].byte14 = 2;
+			return 1;
+		}
+
+		if (_scrollXOffset < 0x100) {
+			if (_isMovingStage == 0 && xblock == 0x54 && 0 < _int0b5c && _bladeState1 == 0) {
+				_scrollXOffset -= _int0b5c;
+				arcade2445();
+				return 1;
+			}
+		} else if (_bladeState1 == 0) {
+			//Arcade_VidPtrs_SrcFront_DstBack();
+			//SetFlagAt_48a0_andMaybeMouseUpdate();
+			//ResetFlagAt_48a0();
+			loadTTMScriptsForStage(6);
+		}
+		break;
+	case 6:
+		/* stage 6 */
+		if (_stillLoadingScriptsMaybe == 0 && _scrollXOffset < 0x100) {
+			_scrollXOffset = 0x100;
+			_npcState[0].x -= 8;
+			if (_npcState[0].x < 0) {
+				_npcState[0].x = 0;
+			}
+		} else if (0x11f < xblock && _arcadeNotMovingLeftFlag == 0) {
+			_arcadeNotMovingLeftFlag = 1;
+		}
+	default:
+		break;
+	}
+
+	return 0;
+}
+
+void DragonArcade::playSFX55AndStuff() {
+	_isMovingStage = 0;
+	playSfx(0x55);
+	_bladeState1 = 7;
+	_uint0a17 = 0;
+	// TODO: What are thess?
+	_int3d18 = 0;
+	//INT_39e5_0b5a = 0xf;
+	_int0b5c = 0;
+	_npcState[0].ttmPage = _bladeStateOffset + 0x43;
+}
+
+
+void DragonArcade::fill3d30ArrayFromLevelData() {
+	_array3d30.clear();
+	_array3d1c.clear();
+	Common::Array<uint> offsets;
+	const Common::Array<ArcadeLevelData> &levelData = _arcadeTTM.getLevelData();
+
+	for (uint i = 0; i < levelData.size(); i++) {
+		if (levelData[i].x <= _npcState[0].val1 && _npcState[0].val1 <= levelData[i].x + levelData[i].y) {
+		_array3d30.push_back(levelData[i].data - 108);
+		_array3d1c.push_back(levelData[i].flag);
+		}
+	}
+}
+
+void DragonArcade::findMinIn3d30ArrayLast() {
+	_foundValueFrom3d30Array = 999;
+	for (uint i = 0; i < _array3d30.size(); i++) {
+		if (_int0b54 <= _array3d30[i] && _array3d30[i] < _foundValueFrom3d30Array) {
+			_foundValueFrom3d30Array = _array3d30[i];
+			_foundValueFrom3d1cArray = _array3d1c[i];
+		}
+	}
+}
+
+void DragonArcade::findMinIn3d30ArrayFirst() {
+	_foundValueFrom3d30Array = 999;
+	for (uint i = 0; i < _array3d30.size(); i++) {
+		if (_int0b54 < _array3d30[i] && _array3d30[i] < _foundValueFrom3d30Array) {
+			_foundValueFrom3d30Array = _array3d30[i];
+			_foundValueFrom3d1cArray = _array3d1c[i];
+		}
+	}
+}
+
+void DragonArcade::findMatchIn3d30Array() {
+	_foundValueFrom3d30Array = -999;
+	for (uint i = 0; i < _array3d30.size(); i++) {
+		if (_array3d30[i] == _int0b54) {
+			_foundValueFrom3d30Array = _array3d30[i];
+			_foundValueFrom3d1cArray = _array3d1c[i];
+		}
+	}
+}
+
+void DragonArcade::findMaxIn3d30Array() {
+	_foundValueFrom3d30Array = -999;
+	for (uint i = 0; i < _array3d30.size(); i++) {
+		if (_array3d30[i] < _int0b54 && _foundValueFrom3d30Array < _array3d30[i]) {
+			_foundValueFrom3d30Array = _array3d30[i];
+			_foundValueFrom3d1cArray = _array3d1c[i];
+		}
+	}
+}
+
+void DragonArcade::findMatchOrMinOrMax() {
+	findMatchIn3d30Array();
+	if (isAbsFoundValOver990()) {
+		findMinIn3d30ArrayFirst();
+		if (isAbsFoundValOver990()) {
+			findMaxIn3d30Array();
+		}
+	}
+}
+
+
+void DragonArcade::arcade2445() {
+	_int0b5c = 0;
+	_bladeState1 = 6;
+	_npcState[0].ttmPage += 0x4e;
+	_isMovingStage = true;
+}
+
+static const int16 STAGE_2_VAL1[] = {
+	0x6A3, 0x6CD, 0x7C3
+};
+
+static const int16 STAGE_2_VAL2[] = {
+	0, 0, 0xe9
+};
+
+static const byte STAGE_2_BYTE12[] = {
+	4, 5, 4
+};
+
+static const int16 STAGE_2_TTMPAGE[] = {
+	0x1E, 0x27, 0x1E
+};
+
+static const int16 STAGE_2_VAL1_PART2[] = {
+	0x547, 0x557, 0x567, 0x577
+};
+
+void DragonArcade::initValuesForStage2() {
+	for (int i = 7; i != 0; i--) {
+		_npcState[i].byte12 = 0;
+	}
+	for (int i = 3; i != 0; i--) {
+		_npcState[i].val1 = STAGE_2_VAL1[i - 1];
+		_npcState[i].val2 = STAGE_2_VAL2[i - 1];
+		_npcState[i].byte12 = STAGE_2_BYTE12[i - 1];
+		_npcState[i].ttmPage = STAGE_2_TTMPAGE[i - 1];
+		_npcState[i].byte14 = 1;
+	}
+	for (int i = 10; i < 14; i++) {
+		_npcState[i].val1 = STAGE_2_VAL1_PART2[i - 10];
+	}
+	/*
+	 TODO: What are these?
+	 INT_39e5_3f6c = 0x52f;
+	 INT_39e5_3f6e = -0xd;
+	 BYTE_39e5_3f7e = 0x1f;
+	 INT_39e5_3f7c = 0x20;
+	 BYTE_39e5_3f81 = 2;
+	 */
 }
 
 void DragonArcade::arcade2754(int16 findResult) {
-	error("DragonArcade::arcade2754: implement me");
+	if (0 < _finishCountdown) {
+		_finishCountdown--;
+	}
+	if (_finishCountdown == 0) {
+		if (_npcState[0].health == 0) {
+			if (_shouldUpdateState == 0) {
+				_shouldUpdateState = 1;
+			}
+		} else {
+			_shouldUpdateState = 0;
+		}
+	} else {
+		_flag3d14 = 0;
+		if (100 < _arcadeTTM._startYOffset) {
+			_npcState[0].health = 0;
+			if (_finishCountdown < 1) {
+				setFinishCountdownIfLessThan0(20);
+			} else {
+				_arcadeTTM._startYOffset = 100;
+			}
+		}
+		if (!moveToNextStage()) {
+			if (findResult < _arcadeTTM._startYOffset && _int0b54 <= findResult) {
+				arcade16de(findResult);
+			} else if (_2754Val < _arcadeTTM._startYOffset && _int0b54 <= _2754Val) {
+				arcade1e83();
+				findResult = _2754Val;
+				arcade16de(_2754Val);
+			} else if (_bladeState1 == 0) {
+				if (findResult == -0x100) {
+					arcade16bc();
+				} else if (_2754Val != -0x100) {
+					if (abs(_2754Val - findResult) < 16 || _nTickUpdates == 0) {
+						_arcadeTTM._startYOffset = findResult;
+					} else if (findResult < _2754Val) {
+						findMatchIn3d30Array();
+						if (((_bladeMoveFlag & kBladeMoveUp) == kBladeMoveNone) ||
+							(_2754Val != _foundValueFrom3d30Array)) {
+							findMinIn3d30ArrayFirst();
+							if (!isAbsFoundValOver990()) {
+								_arcadeTTM._startYOffset = _foundValueFrom3d30Array;
+								findResult = _foundValueFrom3d30Array;
+							} else {
+								arcade16bc();
+							}
+						} else {
+							_arcadeTTM._startYOffset = _2754Val;
+							findResult = _2754Val;
+						}
+					} else if (_2754Val < findResult) {
+						if ((_bladeMoveFlag & kBladeMoveDown) == kBladeMoveNone) {
+							if (_arcadeTTM._startYOffset + 0x14 < findResult) {
+								_bladeState1 = 1;
+								_npcState[0].ttmPage = _bladeStateOffset + 0x16;
+								_arcadeTTM._startYOffset += 10;
+								_uint0a17++;
+							} else {
+								_arcadeTTM._startYOffset = findResult;
+							}
+						} else {
+							findMatchOrMinOrMax();
+							_arcadeTTM._startYOffset = _foundValueFrom3d30Array;
+							findResult = _foundValueFrom3d30Array;
+						}
+					}
+				}
+			} else if ((_bladeState1 == 3 || _bladeState1 == 4) && 0x19 < abs(_2754Val - findResult) && _nTickUpdates) {
+				findResult = _2754Val;
+			}
+		}
+		_npcState[0].val1 = _scrollXOffset * 8 + _npcState[0].x;
+		_int0b54 = _arcadeTTM._startYOffset;
+		_2754Val = findResult;
+	}
 }
 
 
 static const int16 arrayC5A[4][7] {
-    { 0x8, 0x19, 0x5A, 0x78, 0x8C, 0xA5, 0xBE },
-    { 0x6, 0x28, 0x5A, 0x87, 0x96, 0xAA, 0xC0 },
-    { 0x4, 0x37, 0x69, 0x79, 0x91, 0xA0, 0xC2 },
-    { 0x2, 0x46, 0x69, 0x87, 0x9B, 0xAF, 0xC4 },
+	{ 0x8, 0x19, 0x5A, 0x78, 0x8C, 0xA5, 0xBE },
+	{ 0x6, 0x28, 0x5A, 0x87, 0x96, 0xAA, 0xC0 },
+	{ 0x4, 0x37, 0x69, 0x79, 0x91, 0xA0, 0xC2 },
+	{ 0x2, 0x46, 0x69, 0x87, 0x9B, 0xAF, 0xC4 },
 };
 
 static const int16 arrayC92[4][7] {
 	{ 0xA, 0x37, 0x46, 0x55, 0x91, 0xAA, 0xC8 },
 	{ 0x19, 0x5F, 0x87, 0x9B, 0xB9, 0xD7, -0x1 },
 	{ 0x19, 0x23, 0x69, 0x7D, 0x9B, 0xB9, 0xD7 },
-	{ 0xA, 0x37, 0x46, 0x73,  0xAA, 0xC8,  -0x1 },
+	{ 0xA, 0x37, 0x46, 0x73, 0xAA, 0xC8, -0x1 },
 };
 
 
@@ -439,10 +1005,10 @@ void DragonArcade::arcade3e96() {
 				setFinishCountdownIfLessThan0(20);
 				_npcState[0].byte14 = 2;
 				_npcState[0].health = 0;
-				if (_haveBigGun == 0) {
-					_npcState[0].ttmPage = 0x22;
-				} else {
+				if (_haveBigGun) {
 					_npcState[0].ttmPage = 0x19;
+				} else {
+					_npcState[0].ttmPage = 0x22;
 				}
 				_npcState[0].byte12 = 12;
 				_bladeState1 = 0xc;
@@ -452,14 +1018,14 @@ void DragonArcade::arcade3e96() {
 	}
 	_someCounter40f0++;
 	if (_someCounter40f0 == 221) {
-        _someCounter40f0 = 0;
+		_someCounter40f0 = 0;
 	}
 
 }
 
 void DragonArcade::updateBlade() {
 	int16 local_6 = 0;
-	
+
 	for (int i = 9; i > 0; i--) {
 		if (_npcState[i].byte12 == 0)
 			continue;
@@ -469,7 +1035,7 @@ void DragonArcade::updateBlade() {
 		if (_npcState[i].byte13 == 0 &&
 			((startPage != 0 && _npcState[i].val1 < _npcState[0].val1) ||
 			 (startPage == 0 && _npcState[0].val1 < _npcState[i].val1))) {
-			
+
 			if (_npcState[i].byte12 == 4 || _npcState[i].byte12 == 5) {
 				if (_npcState[i].byte12 == 4) {
 					_npcState[i].byte13 = 5;
@@ -486,7 +1052,7 @@ void DragonArcade::updateBlade() {
 
 		if (local_6 != 0)
 			continue;
-		
+
 		switch (_npcState[i].byte12 - 1) {
 		case 5:
 			if ( _npcState[i].ttmPage < startPage + 11) {
@@ -665,8 +1231,7 @@ void DragonArcade::updateBoss() {
 	case 4:
 		if (_npcState[1].ttmPage < 37) {
 			_npcState[1].ttmPage++;
-			// TODO: does UINT_39e5_0a17 ever get modified? It's set 0 in resetStageState
-			if (bossIsClose && absDistToBoss < 50 && /*UINT_39e5_0a17 == 0 &&*/ 33 < _npcState[1].ttmPage && _npcState[1].ttmPage < 37) {
+			if (bossIsClose && absDistToBoss < 50 && _uint0a17 == 0 && 33 < _npcState[1].ttmPage && _npcState[1].ttmPage < 37) {
 				_npcState[0].byte12 = 10;
 				_bladeState1 = 10;
 				_npcState[0].ttmPage = 76;
@@ -704,9 +1269,6 @@ void DragonArcade::updateBoss() {
 }
 
 
-// FIXME: remove this
-uint16 UINT_39e5_0be6 = 0;
-
 static const int16 BOSS_2_PAGE_OFFSETS[] = { 2, 2, 0xe, 0x1b, 0x21, 0x2a, 0x34, 0x3b };
 
 void DragonArcade::updateBoss2() {
@@ -715,31 +1277,31 @@ void DragonArcade::updateBoss2() {
 		_scrollXOffset++;
 		_npcState[0].x -= 8;
 	}
-	
+
 	if (_bladeState1 == 5) {
 		return;
 	}
-	
+
 	int distToBoss = _npcState[1].x - _npcState[0].x;
 	int absDistToBoss = abs(distToBoss);
-	
+
 	switch (_npcState[1].byte12 - 1) {
 	case 0:
 		if (_npcState[1].x - _npcState[0].x < 1) {
-			UINT_39e5_0be6 = 0;
+			_uint0be6 = 0;
 		} else {
-			UINT_39e5_0be6 = 31;
+			_uint0be6 = 31;
 		}
 		if ((_nextRandomVal & 0xfU) == 0xf) {
 			if (abs(_npcState[1].y - _npcState[0].y) > 35)
 				return;
-			
+
 			_npcState[1].byte12 = 4;
-			_npcState[1].ttmPage = UINT_39e5_0be6 + 9;
+			_npcState[1].ttmPage = _uint0be6 + 9;
 		}
 		if ((_nextRandomVal & 0xfU) == 7 && absDistToBoss > 20 && _npcState[1].val1 < 0x938) {
 			_npcState[1].byte12 = 2;
-			_npcState[1].ttmPage = UINT_39e5_0be6 + 2;
+			_npcState[1].ttmPage = _uint0be6 + 2;
 		}
 		else if (_bladeHasFired == 0 || _npcState[1].val1 < 0x939) {
 			if (absDistToBoss < 0x1e) {
@@ -748,28 +1310,28 @@ void DragonArcade::updateBoss2() {
 		}
 		else {
 			_npcState[1].byte12 = 6;
-			_npcState[1].ttmPage = UINT_39e5_0be6 + 13;
+			_npcState[1].ttmPage = _uint0be6 + 13;
 		}
 		break;
 	case 4:
-		if (_npcState[1].ttmPage < (UINT_39e5_0be6 + 0x1f)) {
+		if (_npcState[1].ttmPage < (_uint0be6 + 0x1f)) {
 			_npcState[1].ttmPage = _npcState[1].ttmPage + 1;
 		}
 		break;
 	case 3:
-		if (_npcState[1].ttmPage < (UINT_39e5_0be6 + 12)) {
+		if (_npcState[1].ttmPage < (_uint0be6 + 12)) {
 			_npcState[1].ttmPage = _npcState[1].ttmPage + 1;
 		} else {
 			_npcState[1].byte12 = 1;
-			_npcState[1].ttmPage = UINT_39e5_0be6 + 1;
+			_npcState[1].ttmPage = _uint0be6 + 1;
 		}
 		break;
 	case 1:
 		_npcState[1].ttmPage = _npcState[1].ttmPage + 1;
-		if ((UINT_39e5_0be6 + 8) <= _npcState[1].ttmPage) {
-			_npcState[1].ttmPage = UINT_39e5_0be6 + 2;
+		if ((_uint0be6 + 8) <= _npcState[1].ttmPage) {
+			_npcState[1].ttmPage = _uint0be6 + 2;
 		}
-		if (UINT_39e5_0be6 == 0) {
+		if (_uint0be6 == 0) {
 			_npcState[1].val1 = _npcState[1].val1 + 8;
 		} else {
 			_npcState[1].val1 = _npcState[1].val1 - 8;
@@ -779,18 +1341,18 @@ void DragonArcade::updateBoss2() {
 		}
 		break;
 	case 5:
-		if (_npcState[1].ttmPage < (int)(UINT_39e5_0be6 + 20)) {
+		if (_npcState[1].ttmPage < (int)(_uint0be6 + 20)) {
 			_npcState[1].ttmPage = _npcState[1].ttmPage + 1;
 		} else {
 			_npcState[1].byte12 = 7;
-			_npcState[1].ttmPage = UINT_39e5_0be6 + 21;
+			_npcState[1].ttmPage = _uint0be6 + 21;
 		}
 		break;
 	case 6:
-		if (_npcState[1].ttmPage < (int)(UINT_39e5_0be6 + 24)) {
+		if (_npcState[1].ttmPage < (int)(_uint0be6 + 24)) {
 			if (_nTickUpdates & 1) {
 				_npcState[1].ttmPage = _npcState[1].ttmPage + 1;
-				if (UINT_39e5_0be6 == 0) {
+				if (_uint0be6 == 0) {
 					_npcState[1].val1 = _npcState[1].val1 + 6;
 				} else {
 					_npcState[1].val1 = _npcState[1].val1 + -6;
@@ -798,10 +1360,10 @@ void DragonArcade::updateBoss2() {
 			}
 		} else if (absDistToBoss < 40 || _npcState[1].val1 < 0x8d4) {
 			_npcState[1].byte12 = 8;
-			_npcState[1].ttmPage = UINT_39e5_0be6 + 25;
+			_npcState[1].ttmPage = _uint0be6 + 25;
 		} else if (_nTickUpdates & 1) {
-			_npcState[1].ttmPage = UINT_39e5_0be6 + 21;
-			if (UINT_39e5_0be6 == 0) {
+			_npcState[1].ttmPage = _uint0be6 + 21;
+			if (_uint0be6 == 0) {
 				_npcState[1].val1 = _npcState[1].val1 + 6;
 			} else {
 				_npcState[1].val1 = _npcState[1].val1 + -6;
@@ -809,20 +1371,20 @@ void DragonArcade::updateBoss2() {
 		}
 		break;
 	case 7:
-		if (_npcState[1].ttmPage < (int)(UINT_39e5_0be6 + 0x1b)) {
+		if (_npcState[1].ttmPage < (int)(_uint0be6 + 0x1b)) {
 			_npcState[1].ttmPage = _npcState[1].ttmPage + 1;
 		} else if (absDistToBoss < 40) {
 			arcade34b4();
 		} else {
 			_npcState[1].byte12 = 1;
-			_npcState[1].ttmPage = UINT_39e5_0be6 + 1;
+			_npcState[1].ttmPage = _uint0be6 + 1;
 		}
 		break;
 	case 2:
 	default:
 		if (_stillLoadingScriptsMaybe != 0) {
 			if ((_int0b5c == -1 && _npcState[1].x < 0x96) || (_int0b5c == 1 && 160 < _npcState[1].x)) {
-				arcade1d57();
+				arcadeUpdateXScrollOffset();
 			}
 			byte bossByte12 = _npcState[1].byte12;
 			// TODO: do these ever get changed?
@@ -883,7 +1445,7 @@ void DragonArcade::updateBoss2() {
 	}
 }
 
-void DragonArcade::arcade1d57() {
+void DragonArcade::arcadeUpdateXScrollOffset() {
 	int16 lastScrollOffset = _scrollXOffset;
 	_scrollXOffset = CLIP(_scrollXOffset + _int0b5c, 0, 282);
 	if (lastScrollOffset != _scrollXOffset) {
@@ -938,11 +1500,11 @@ void DragonArcade::bladeTakeHit() {
 	if (_npcState[0].health) {
 		_npcState[0].health--;
 	}
-	
+
 	if (!_enemyHasSmallGun && _npcState[0].health) {
 		_npcState[0].health--;
 	}
-	
+
 	if (_npcState[0].health == 0) {
 		/* dead! */
 		playSfx(0x4b);
@@ -1028,18 +1590,250 @@ void DragonArcade::initIfNeeded() {
 void DragonArcade::updateBladeWithInputs() {
 	if (_stillLoadingScriptsMaybe)
 		return;
-	
-	error("TODO: updateBladeWithInputs: Finish me");
+
+	// TODO: What are these?
+	//if ((INT_39e5_0b5a != 0) && (INT_39e5_0b5a--, INT_39e5_0b5a == 0)) {
+	//	INT_39e5_0b58 = 0;
+	//}
+
+	if ((_bladeHorizMoveAttempt & 1) == 0) {
+		_bladeStateOffset = 0;
+	} else {
+		_bladeStateOffset = 0x7a;
+	}
+	if (_bladeState1 == 0) {
+		if (!_flag3d14) {
+			_npcState[0].ttmPage++;
+		}
+		handleMouseStates();
+		return;
+	}
+
+	int16 newPage = 0;
+
+	switch (_bladeState1 - 1) {
+	case 0:
+		if (_bladeStateOffset + 0x1a == _npcState[0].ttmPage) {
+			_npcState[0].ttmPage = _bladeStateOffset + 0x16;
+		}
+		newPage = _bladeStateOffset + 0x19;
+		break;
+	case 1:
+		if (_bladeStateOffset + 0x3e == _npcState[0].ttmPage) {
+			_npcState[0].ttmPage = _bladeStateOffset + 0x38;
+		}
+		newPage = _bladeStateOffset + 0x3d;
+		if ((_bladeStateOffset + 0x32 < _npcState[0].ttmPage) &&
+			(_npcState[0].ttmPage <= _bladeStateOffset + 0x38)) {
+			moveBladeX();
+		}
+		break;
+	case 2:
+		newPage = _bladeStateOffset + 0x7b;
+		break;
+	case 3:
+		newPage = _bladeStateOffset + 0x2c;
+		break;
+	case 4:
+		_npcState[0].ttmPage = _bladeStateOffset + 0x40;
+		moveBladeX();
+		newPage = 999;
+		break;
+	case 5:
+		newPage = _bladeStateOffset + 0x61;
+		break;
+	case 6:
+		newPage = _bladeStateOffset + 0x4d;
+		if (_bladeStateOffset == 0) {
+			_int0b5c = 1;
+		} else {
+			_int0b5c = -1;
+		}
+		if (newPage <= _npcState[0].ttmPage + 2 && _npcState[0].ttmPage <= newPage) {
+			_npcState[0].x = _npcState[0].x + 4;
+		}
+		break;
+	case 7:
+		if (_npcState[0].ttmPage + 1 <= _bladeStateOffset + 0x66) {
+			_npcState[0].ttmPage++;
+		} else {
+			_npcState[0].ttmPage = _bladeStateOffset + 0x66;
+		}
+		return;
+	case 8:
+		if (_npcState[0].ttmPage + 1 <= _bladeStateOffset + 0x6c) {
+			_npcState[0].ttmPage++;
+		} else {
+			_npcState[0].ttmPage = _bladeStateOffset + 0x6c;
+		}
+		return;
+	case 9:
+		if (_npcState[0].ttmPage < 0x4f) {
+			_npcState[0].ttmPage++;
+			_int0b5c = -1;
+			moveBladeX();
+		} else {
+			handleMouseStates();
+		}
+		return;
+	case 10:
+		if (_haveBigGun == 0) {
+			newPage = 0xe;
+		} else {
+			newPage = 0x19;
+		}
+		if (_npcState[0].ttmPage < newPage) {
+			_npcState[0].ttmPage++;
+		} else {
+			_npcState[3].val1 = _npcState[0].val1 + 0x16;
+			_npcState[3].val2 = -0x20;
+			_npcState[3].byte12 = -2;
+			_npcState[3].ttmPage = 0x21;
+			_npcState[3].byte14 = 2;
+			_npcState[3].health = 20;
+			_npcState[0].byte14 = 0;
+			handleMouseStates();
+		}
+		return;
+	case 11:
+		if (_haveBigGun == 0) {
+			newPage = 0x28;
+		} else {
+			newPage = 0x1f;
+		}
+		if (newPage < _npcState[0].ttmPage + 1) {
+			_npcState[0].ttmPage = newPage;
+		} else {
+			_npcState[0].ttmPage++;
+		}
+		return;
+	case 12:
+		if ((_nTickUpdates & 1) == 0) {
+			return;
+		}
+		_npcState[0].ttmPage = _npcState[0].ttmPage + 1;
+		if (_haveBigGun != 0) {
+			if (_npcState[0].ttmPage >= 0x3e)
+				_npcState[0].ttmPage = 0x3d;
+		} else {
+			if (_npcState[0].ttmPage >= 0x3a) {
+				_npcState[0].ttmPage = 0x39;
+			}
+		}
+		return;
+	case 13:
+		if ((_nTickUpdates & 1) == 0) {
+			return;
+		}
+		if (_npcState[0].ttmPage + 1 < 0x26) {
+			_npcState[0].ttmPage++;
+		} else {
+			_npcState[0].ttmPage = 0x22;
+		}
+		return;
+	default:
+		break;
+	}
+
+	if (!_flag3d14)
+		_npcState[0].ttmPage++;
+
+	if (newPage < _npcState[0].ttmPage) {
+		handleMouseStates();
+	} else if (_uint0a17 == 0) {
+		if (_bladeState1 == 1) {
+			if (_bladeStateOffset + 0x16 == _npcState[0].ttmPage) {
+				_int3d18 = _int0b58 * -4;
+				_uint0a17 = 1;
+			}
+		}
+		else if ((_bladeState1 == 2) &&
+				 (_bladeStateOffset + 0x38 == _npcState[0].ttmPage)) {
+			_int3d18 = _int0b58 * -4;
+			_uint0a17 = 1;
+		}
+	} else {
+		if (_mouseButtonWentDown == 1) {
+			_mouseButtonWentDown = 0;
+			if (_bladeState1 == 2) {
+				_npcState[0].ttmPage = _bladeStateOffset + 0x3f;
+			} else if (_bladeState1 == 1) {
+				_npcState[0].ttmPage = _bladeStateOffset + 0x1b;
+			}
+		}
+		if (_bladeState1 == 1 || _bladeState1 == 2 || _bladeState1 == 5) {
+			_int3d18 += 2;
+			_arcadeTTM._startYOffset += _int3d18;
+			_npcState[0].ttmPage--;
+		}
+	}
 }
+
+void DragonArcade::moveBladeX() {
+	if (_flag3d14)
+		return;
+
+	if (_arcadeNotMovingLeftFlag != 0)
+		return;
+
+	if (_int0b5c < 1) {
+		if (-1 < _int0b5c) {
+			// nothing
+		} else if (_scrollXOffset == 0) {
+			if (0 < _npcState[0].x)
+				_bladeXMove = -4;
+		} else if (0x104 < _npcState[0].x) {
+			_bladeXMove = -4;
+			_int0b60 = 0;
+		} else if (_npcState[0].x < 0xa0) {
+			_int0b60 = 1;
+			_bladeXMove = 4;
+			updateXScrollOffset();
+		} else if (_int0b60 == 1) {
+			updateXScrollOffset();
+			_bladeXMove = 4;
+		} else {
+			_bladeXMove = -4;
+			return;
+		}
+		_npcState[0].x += _bladeXMove;
+		return;
+	} else {
+		if (_scrollXOffset == 0x11a) {
+			if (_npcState[0].x < 0x140)
+				_bladeXMove = 4;
+
+		} else if (0xa0 < _npcState[0].x) {
+			_int0b60 = -1;
+			_bladeXMove = -4;
+			updateXScrollOffset();
+		} else if (_npcState[0].x < 0x3c) {
+			_int0b60 = 0;
+			_bladeXMove = 4;
+		} else if (_int0b60 != -1) {
+			_bladeXMove = 4;
+		} else {
+			updateXScrollOffset();
+			_bladeXMove = -4;
+			return;
+		}
+	}
+	_npcState[0].x += _bladeXMove;
+}
+
+void DragonArcade::handleMouseStates() {
+	error("TODO: handleMouseStates: Implement me");
+}
+
 
 void DragonArcade::resetStageState() {
 	clearAllNPCStates();
 	clearAllBulletStates();
 	_scrollXOffset = 0;
 	_nTickUpdates = 0;
-	//BYTE_39e5_0a14 = 0;
-	//INT_39e5_3d18 = 0;
-	//UINT_39e5_0a17 = 0;
+	_isMovingStage = false;
+	_int3d18 = 0;
+	_uint0a17 = 0;
 	_shouldUpdateState = 0;
 	_arcadeNotMovingLeftFlag = 0;
 	_npcState[0].byte12 = 1;
@@ -1052,7 +1846,6 @@ void DragonArcade::resetStageState() {
 	_bladeState1 = 0;
 	_mouseButtonWentDown = 0;
 	_bladeMoveFlag = kBladeMoveNone;
-	// TODO: Work out what those commented out variables are..
 }
 
 static const int STAGE_0_VAL1[] = {
@@ -1123,21 +1916,38 @@ void DragonArcade::initValuesForStage() {
 	}
 }
 
+static const int16 STAGE_0_ST_INT0[] = {
+	0x13F, 0x150, 0x161, 0x172
+};
+
+static const int16 STAGE_0_ST_INT0_2[] = {
+	0x317, 0x328, 0x339, 0x34A
+};
+
+static const int16 STAGE_0_ST_VAL10[] = {
+	 0, 0x1E, 0xF, 0
+};
+
 void DragonArcade::initValuesForStage0() {
 	_someCounter40f0 = 0;
 	for (int i = 0; i < 4; i++) {
+		_somethingArray[i].val0 = STAGE_0_ST_INT0[i];
+		_somethingArray[i].val2 = 2;
+		_somethingArray[i].val10 = STAGE_0_ST_VAL10[i];
+		_somethingArray[i].val15 = 2;
 
+		_somethingArray[i + 4].val0 = STAGE_0_ST_INT0_2[i];
+		_somethingArray[i + 4].val2 = -37;
+		_somethingArray[i + 4].val10 = STAGE_0_ST_VAL10[i];
+		_somethingArray[i + 4].val15 = 2;
 	}
 	_flag40ee = true;
 	_flag40ef = true;
-	/*
-	INT_39e5_3f6c = 0x11f;
-	INT_39e5_3f6e = -0xd;
-	BYTE_39e5_3f7e = 0x1e;
-	INT_39e5_3f7c = 0x20;
-	BYTE_39e5_3f81 = 2;
-	*/
-	error("TODO: initValuesForStage0 Implement me");
+	_somethingArray[8].val0 = 0x11f;
+	_somethingArray[8].val2 = -0xd;
+	_somethingArray[8].val12 = 0x1e;
+	_somethingArray[8].val10 = 0x20;
+	_somethingArray[8].val15 = 2;
 }
 
 void DragonArcade::initValuesForStage3() {
@@ -1158,11 +1968,32 @@ void DragonArcade::initValuesForStage3() {
 	_npcState[2].byte14 = 1;
 }
 
+static const int16 STAGE_4_ST_INT0[] = {
+	0x1F9, 0x551, 0x362, 0x592, 0x7AF
+};
+
+static const int16 STAGE_4_ST_INT2[] = {
+	8, 8, 6, 6, 6
+};
+
+static const int16 STAGE_4_ST_INT10[] = {
+	0, 0, 0xf, 0xf, 0x28
+};
+
+static const byte STAGE_4_ST_BYTE12[] = {
+	0, 0, 0xfa, 0xfa, 0xf9
+};
+
 void DragonArcade::initValuesForStage4() {
 	_someCounter40f0 = 0;
 	for (int i = 0; i < 5; i++) {
+		_somethingArray[i].val0 = STAGE_4_ST_INT0[i];
+		_somethingArray[i].val2 = STAGE_4_ST_INT2[i];
+		_somethingArray[i].val10 = STAGE_4_ST_INT10[i];
+		_somethingArray[i].val12 = STAGE_4_ST_BYTE12[i];
+		_somethingArray[i].val14 = 1;
+		_somethingArray[i].val15 = 2;
 	}
-	error("TODO: initValuesForStage4 Implement me");
 }
 
 void DragonArcade::initValuesForStage6() {
@@ -1217,26 +2048,26 @@ void DragonArcade::arcadeTick() {
 		globals->setArcadeState(30);
 		return;
 	case 30:
-        loadTTMScriptsForStage(_nextStage);
-        // These don't seem to ever be used?
-        // UINT_39e5_0d0e = 0;
-        // UINT_39e5_0d10 = 0;
-        globals->setArcadeState(5);
-        _arcadeNeedsBufferCopy = true;
-        _flagInventoryOpened = false;
-        return;
+		loadTTMScriptsForStage(_nextStage);
+		// These don't seem to ever be used?
+		// UINT_39e5_0d0e = 0;
+		// UINT_39e5_0d10 = 0;
+		globals->setArcadeState(5);
+		_arcadeNeedsBufferCopy = true;
+		_flagInventoryOpened = false;
+		return;
 	default:
 		_haveBomb = arcadeState > 20;
 		if (_haveBomb)
-		  globals->setArcadeState(arcadeState - 20);
+			globals->setArcadeState(arcadeState - 20);
 
 		_enemyHasSmallGun = arcadeState > 10;
 		if (_enemyHasSmallGun != 0)
-		  globals->setArcadeState(arcadeState - 10);
+			globals->setArcadeState(arcadeState - 10);
 
 		bool _haveBigGun = arcadeState > 2;
-		if (_haveBigGun != 0)
-		  globals->setArcadeState(arcadeState - 2);
+		if (_haveBigGun)
+			globals->setArcadeState(arcadeState - 2);
 
 		_nextStage = (arcadeState & 1) ? 4 : 0;
 
@@ -1250,7 +2081,7 @@ void DragonArcade::loadTTMScriptsForStage(uint16 stage) {
 	const char *ttm2;
 
 	switch(stage) {
-    case 0:
+	case 0:
 		resetStageState();
 		ttm1 = "STATIONA.TTM";
 		ttm2 = "FLAMDEAD.TTM";
@@ -1262,7 +2093,7 @@ void DragonArcade::loadTTMScriptsForStage(uint16 stage) {
 		ttm1 = "DRAGON.TTM";
 		ttm2 = "GRENADE.TTM";
 		break;
-    case 4:
+	case 4:
 		resetStageState();
 		ttm1 = "STATIONA.TTM";
 		ttm2 = "AARC.TTM";
@@ -1270,7 +2101,7 @@ void DragonArcade::loadTTMScriptsForStage(uint16 stage) {
 		_npcState[0].val1 = 140;
 		_arcadeTTM._startYOffset = -43;
 		break;
-    case 6:
+	case 6:
 		_arcadeTTM._currentNPCRunningTTM = 0;
 		_arcadeTTM.runNextPage(276);
 		ttm1 = "SNAKERUN.TTM";
@@ -1279,9 +2110,9 @@ void DragonArcade::loadTTMScriptsForStage(uint16 stage) {
 		else
 			ttm2 = "LITFIGHT.TTM";
 		break;
-    default:
+	default:
 		return;
-    }
+	}
 
 	if (stage != _loadedArcadeStage) {
 		_currentArcadeTT3Num = 1;
@@ -1303,7 +2134,8 @@ void DragonArcade::loadTTMScriptsForStage(uint16 stage) {
 		_arcadeTTM.finishTTMParse(envNum);
 		_arcadeTTM.runNextPage(0);
 	}
-	//INT_39e5_0b54 = _startYOffset;
+
+	_int0b54 = _arcadeTTM._startYOffset;
 	_finishCountdown = -1;
 	//INT_39e5_0be4 = 0; // this only ever gets set 0?
 	_loadedArcadeStage = stage;
