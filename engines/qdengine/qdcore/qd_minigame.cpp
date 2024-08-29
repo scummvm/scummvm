@@ -34,6 +34,7 @@
 #include "qdengine/minigames/qd_empty_minigame_interface.h"
 
 // maski
+#include "qdengine/minigames/arkada_avtomat.h"
 #include "qdengine/minigames/kartiny.h"
 #include "qdengine/minigames/maski_21.h"
 #include "qdengine/minigames/masky_order.h"
