@@ -132,22 +132,16 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 		if (_bitsPerPixel == 0)
 			_bitsPerPixel = 1;
 
-		int tail = 0;
-		byte buf[256];
-
-		while (!stream.eos()) {
-			byte c = stream.readByte();
-			if (tail < 256)
-				buf[tail] = c;
-			tail++;
-		}
-
-		if (tail)
+		int tail = stream.size() - stream.pos();
+		if (tail > 0) {
 			warning("BUILDBOT: BitmapCastMember: %d bytes left", tail);
-
-		if (tail && debugChannelSet(2, kDebugLoading)) {
-			debug("BitmapCastMember: tail");
-			Common::hexdump(buf, tail);
+			if (debugChannelSet(2, kDebugLoading)) {
+				byte buf[256];
+				tail = MIN(256, tail);
+				stream.read(buf, tail);
+				debug("BitmapCastMember: tail");
+				Common::hexdump(buf, tail);
+			}
 		}
 	} else {
 		warning("STUB: BitmapCastMember::BitmapCastMember(): Bitmaps not yet supported for version %d", version);
