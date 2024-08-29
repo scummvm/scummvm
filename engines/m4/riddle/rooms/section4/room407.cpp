@@ -1141,6 +1141,14 @@ void Room407::parser() {
 		takeFaucetHandle();
 	} else if (takeFlag && player_said("FAUCET PIPE") && _val8 == 1100) {
 		takeFaucetPipe3();
+	} else if (takeFlag && player_said("PUMP ROD") && _xyzzy1 == 1115) {
+		takePumpRod1();
+	} else if (takeFlag && player_said("PUMP ROD ") &&
+			_xyzzy7 != 1114 && _xyzzy7 != 1140) {
+		if (_val10 == 1114)
+			takePumpRod2();
+		else
+			takePumpRod3();
 	}
 	// TODO
 	else {
@@ -3308,11 +3316,11 @@ void Room407::takeFaucetPipe3() {
 		sendWSMessage_120000(4);
 		break;
 
-	case 4:
+	case 3:
 		sendWSMessage_150000(5);
 		break;
 
-	case 5:
+	case 4:
 		series_unload(_ripHiHand1);
 		_val8 = 1000;
 		player_set_commands_allowed(true);
@@ -4133,6 +4141,160 @@ void Room407::takeFaucetHandle() {
 	case 4:
 		series_unload(_ripMedHand1);
 		_val9 = 1000;
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::takePumpRod1() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_pump407 = series_load("407 PUMP");
+		player_update_info();
+		_safariShadow = series_place_sprite("SAFARI SHADOW 1", 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
+
+		ws_hide_walker();
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+			triggerMachineByHashCallbackNegative, "RIP pumps");
+		sendWSMessage_10000(1, _ripley, _pump407, 1, 40, 1,
+			_pump407, 40, 40, 0);
+		kernel_timing_trigger(150, 69);
+		break;
+
+	case 1:
+		if (_xyzzy4 == 1115) {
+			terminateMachineAndNull(_handleInDrawer);
+			inv_give_to_player("PUMP GRIPS");
+			hotspot_set_active("PUMP GRIPS ", false);
+			_xyzzy4 = 1000;
+			kernel_examine_inventory_object("PING PUMP GRIPS",
+				_G(master_palette), 5, 1, 125, 200, 2, nullptr, -1);
+		} else {
+			kernel_timing_trigger(1, 2);
+		}
+		break;
+
+	case 3:
+		kernel_examine_inventory_object("PING PUMP ROD",
+			_G(master_palette), 5, 1, 125, 200, 4, nullptr, -1);
+		break;
+
+	case 5:
+		terminateMachineAndNull(_pump);
+		hotspot_set_active("PUMP ROD", false);
+		inv_give_to_player("PUMP ROD");
+		sendWSMessage_10000(1, _ripley, _pump407, 14, 1, 6,
+			_pump407, 1, 1, 0);
+		break;
+
+	case 6:
+		terminateMachineAndNull(_ripley);
+		terminateMachineAndNull(_safariShadow);
+		ws_hide_walker();
+		series_unload(_pump407);
+		_xyzzy1 = 1000;
+		player_set_commands_allowed(true);
+		break;
+
+	case 69:
+		digi_play("407_s07", 2);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::takePumpRod2() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (inv_object_is_here("PUMP ROD")) {
+			player_set_commands_allowed(false);
+			_placeLeverKey = series_load("407 PLACE LEVER KEY");
+			terminateMachineAndNull(_lever);
+			terminateMachineAndNull(_pump);
+			player_update_info();
+
+			_safariShadow = series_place_sprite("SAFARI SHADOW 1", 0,
+				_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
+
+			ws_hide_walker();
+			_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, 0,
+				triggerMachineByHashCallbackNegative, "RIP levers ceiling");
+			sendWSMessage_10000(1, _ripley, _placeLeverKey, 70, 49, 2,
+				_placeLeverKey, 49, 49, 0);
+		}
+		break;
+
+	case 2:
+		kernel_examine_inventory_object("PING LEVER KEY/PUMP ROD",
+			_G(master_palette), 5, 1, 350, 150, 3, "407_s07a", -1);
+		break;
+
+	case 3:
+		sendWSMessage_10000(1, _ripley, _placeLeverKey, 48, 1, 4,
+			_placeLeverKey, 1, 1, 0);
+		break;
+
+	case 4:
+		terminateMachineAndNull(_ripley);
+		ws_unhide_walker();
+		hotspot_set_active("LEVER KEY  ", false);
+		hotspot_set_active("PUMP ROD ", false);
+		inv_give_to_player("PUMP ROD");
+		_val10 = 1000;
+		_xyzzy1 = 1000;
+		series_unload(_placeLeverKey);
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::takePumpRod3() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_407rp99 = series_load("407rp99");
+		ws_hide_walker();
+		terminateMachineAndNull(_pump);
+		player_update_info();
+
+		_safariShadow = series_place_sprite("SAFARI SHADOW 1", 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
+
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, 0,
+			triggerMachineByHashCallbackNegative, "RIP takes pump rod from ceiling");
+		sendWSMessage_10000(1, _ripley, _407rp99, 61, 42, 2,
+			_407rp99, 42, 42, 0);
+		break;
+
+	case 2:
+		digi_play("407_s07a", 1);
+		kernel_examine_inventory_object("PING PUMP ROD",
+			_G(master_palette), 5, 1, 350, 150, 3, "407_s07a", -1);
+		break;
+
+	case 3:
+		sendWSMessage_10000(1, _ripley, _407rp99, 41, 1, 4,
+			_407rp99, 1, 1, 0);
+		break;
+
+	case 4:
+		terminateMachineAndNull(_ripley);
+		terminateMachineAndNull(_safariShadow);
+		ws_unhide_walker();
+		hotspot_set_active("PUMP ROD ", false);
+		inv_give_to_player("PUMP ROD");
+		_xyzzy1 = 1000;
+		series_unload(_407rp99);
 		player_set_commands_allowed(true);
 		break;
 

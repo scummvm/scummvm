@@ -216,6 +216,9 @@ private:
 	void takeLeverKey2();
 	void takeAirValveHandle();
 	void takeFaucetHandle();
+	void takePumpRod1();
+	void takePumpRod2();
+	void takePumpRod3();
 
 public:
 	Room407() : Room() {}
