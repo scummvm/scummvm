@@ -2472,21 +2472,26 @@ MiniscriptInstructionOutcome SoundElement::writeRefAttribute(MiniscriptThread *t
 	return NonVisualElement::writeRefAttribute(thread, writeProxy, attrib);
 }
 
+CORO_BEGIN_DEFINITION(SoundElement::SoundElementConsumeCommandCoroutine)
+	struct Locals {
+	};
+
+	CORO_BEGIN_FUNCTION
+		CORO_IF (Event(EventIDs::kPlay, 0).respondsTo(params->msg->getEvent()))
+			CORO_CALL(SoundElement::StartPlayingCoroutine, params->self, params->runtime);
+			CORO_RETURN
+		CORO_ELSE_IF(Event(EventIDs::kStop, 0).respondsTo(params->msg->getEvent()))
+			CORO_CALL(SoundElement::StopPlayingCoroutine, params->self, params->runtime);
+			CORO_RETURN;
+		CORO_END_IF
+
+		CORO_CALL(NonVisualElement::NonVisualElementConsumeCommandCoroutine, params->self, params->runtime, params->msg);
+	CORO_END_FUNCTION
+CORO_END_DEFINITION
+
 VThreadState SoundElement::asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	if (Event(EventIDs::kPlay, 0).respondsTo(msg->getEvent())) {
-		StartPlayingTaskData *startPlayingTaskData = runtime->getVThread().pushTask("SoundElement::startPlayingTask", this, &SoundElement::startPlayingTask);
-		startPlayingTaskData->runtime = runtime;
-
-		return kVThreadReturn;
-	}
-	if (Event(EventIDs::kStop, 0).respondsTo(msg->getEvent())) {
-		StartPlayingTaskData *startPlayingTaskData = runtime->getVThread().pushTask("SoundElement::stopPlayingTask", this, &SoundElement::stopPlayingTask);
-		startPlayingTaskData->runtime = runtime;
-
-		return kVThreadReturn;
-	}
-
-	return NonVisualElement::asyncConsumeCommand(runtime, msg);
+	runtime->getVThread().pushCoroutine<SoundElementConsumeCommandCoroutine>(this, runtime, msg);
+	return kVThreadReturn;
 }
 
 void SoundElement::initSubtitles() {
@@ -2760,39 +2765,47 @@ void SoundElement::setBalance(int16 balance) {
 	setVolume((_leftVolume + _rightVolume) / 2);
 }
 
-VThreadState SoundElement::startPlayingTask(const StartPlayingTaskData &taskData) {
-	// Pushed in reverse order, actual order is Unpaused -> Played
-	{
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
-		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-		taskData.runtime->sendMessageOnVThread(dispatch);
-	}
+CORO_BEGIN_DEFINITION(SoundElement::StartPlayingCoroutine)
+	struct Locals {
+	};
 
-	if (_paused) {
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kUnpause, 0), DynamicValue(), getSelfReference()));
-		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-		taskData.runtime->sendMessageOnVThread(dispatch);
+	CORO_BEGIN_FUNCTION
+		// Unpaused -> Played
 
-		_paused = false;
-	}
+		params->self->_shouldPlayIfNotPaused = true;
+		params->self->_needsReset = true;
 
-	_shouldPlayIfNotPaused = true;
-	_needsReset = true;
+		CORO_IF (params->self->_paused)
+			params->self->_paused = false;
+		
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kUnpause, 0), DynamicValue(), params->self->getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, params->self, false, true, false));
 
-	return kVThreadReturn;
-}
+			CORO_CALL(Runtime::SendMessageOnVThreadCoroutine, params->runtime, dispatch);
+		CORO_END_IF
 
-VThreadState SoundElement::stopPlayingTask(const StartPlayingTaskData &taskData) {
-	if (_shouldPlayIfNotPaused) {
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kStop, 0), DynamicValue(), getSelfReference()));
-		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-		taskData.runtime->sendMessageOnVThread(dispatch);
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kPlay, 0), DynamicValue(), params->self->getSelfReference()));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, params->self, false, true, false));
 
-		_shouldPlayIfNotPaused = false;
-		_needsReset = true;
-	}
+		CORO_CALL(Runtime::SendMessageOnVThreadCoroutine, params->runtime, dispatch);
+	CORO_END_FUNCTION
+CORO_END_DEFINITION
 
-	return kVThreadReturn;
-}
+CORO_BEGIN_DEFINITION(SoundElement::StopPlayingCoroutine)
+	struct Locals {
+	};
+
+	CORO_BEGIN_FUNCTION
+		CORO_IF (params->self->_shouldPlayIfNotPaused)
+			params->self->_shouldPlayIfNotPaused = false;
+			params->self->_needsReset = true;
+
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kStop, 0), DynamicValue(), params->self->getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, params->self, false, true, false));
+
+			CORO_CALL(Runtime::SendMessageOnVThreadCoroutine, params->runtime, dispatch);
+		CORO_END_IF
+	CORO_END_FUNCTION
+CORO_END_DEFINITION
 
 } // End of namespace MTropolis

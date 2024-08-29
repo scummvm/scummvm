@@ -2996,6 +2996,8 @@ public:
 	bool isVisual() const override;
 
 	bool loadCommon(const Common::String &name, uint32 guid, uint32 elementFlags);
+
+	typedef ElementConsumeCommandCoroutine NonVisualElementConsumeCommandCoroutine;
 };
 
 struct ModifierFlags {

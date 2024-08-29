@@ -441,14 +441,20 @@ private:
 	MiniscriptInstructionOutcome scriptSetBalance(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetAsset(MiniscriptThread *thread, const DynamicValue &value);
 
-	struct StartPlayingTaskData {
-		StartPlayingTaskData() : runtime(nullptr) {}
-
-		Runtime *runtime;
+	struct SoundElementConsumeCommandCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_3(SoundElement *, self, Runtime *, runtime, Common::SharedPtr<MessageProperties>, msg);
 	};
 
-	VThreadState startPlayingTask(const StartPlayingTaskData &taskData);
-	VThreadState stopPlayingTask(const StartPlayingTaskData &taskData);
+	struct StartPlayingCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_2(SoundElement *, self, Runtime *, runtime);
+	};
+
+	struct StopPlayingCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_2(SoundElement *, self, Runtime *, runtime);
+	};
 
 	void setLoop(bool loop);
 	void setVolume(uint16 volume);
