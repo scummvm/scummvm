@@ -75,7 +75,7 @@ public:
 			_zFlagObj->set_state("\xe4\xe0");		// "да"
 
 		if (!_wasInited) {
-			if (_startObj->is_state_active("\xe7\xe0\xe4\xed\xeb\xea\xeb \xee\xef\xf3\xf9\xe5\xed\xfb"))	// "задники опущены"
+			if (_startObj->is_state_active("\xe7\xe0\xe4\xed\xe8\xea\xe8 \xee\xef\xf3\xf9\xe5\xed\xfb"))	// "задники опущены"
 				_wasInited = 1;
 
 			if (!_wasInited) {
@@ -94,7 +94,7 @@ public:
 
 					piecePos.x = 600;
 					piecePos.y = -300;
-					_bg3_l2Obj->set_R(_scene->screen2world_coords(piecePos, 0.0));
+					_bg4_l2Obj->set_R(_scene->screen2world_coords(piecePos, 0.0));
 
 					_stage = 4;
 					_artDepth = -50.0;
@@ -132,11 +132,11 @@ public:
 								&& _bg3_l2Obj->screen_R().y >= 85
 								&& _bg4_l2Obj->screen_R().y >= 0) {
 							_wasInited = 1;
-							_startObj->set_state("\xe7\xe0\xe4\xed\xeb\xea\xeb \xee\xef\xf3\xf9\xe5\xed\xfb");	// "задники опущены"
+							_startObj->set_state("\xe7\xe0\xe4\xed\xe8\xea\xe8 \xee\xef\xf3\xf9\xe5\xed\xfb");	// "задники опущены"
 						}
 					}
 
-					if (_startObj->is_state_active("\xe7\xe0\xe4\xed\xeb\xea\xeb \xee\xef\xf3\xf9\xe5\xed\xfb")	// "задники опущены"
+					if (_startObj->is_state_active("\xe7\xe0\xe4\xed\xe8\xea\xe8 \xee\xef\xf3\xf9\xe5\xed\xfb")	// "задники опущены"
 							&& _artDepth == -1.0) {
 						_artState[0].depth = _scene->screen_depth(_bg1_l2Obj->R());
 						_artState[0].num = 1;
