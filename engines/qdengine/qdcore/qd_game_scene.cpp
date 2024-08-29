@@ -399,7 +399,7 @@ bool qdGameScene::save_script(Common::WriteStream &fh, int indent) const {
 	fh.writeString(">\r\n");
 
 	if (has_interface_screen()) {
-		for (int i = 0; i < indent; i++) {
+		for (int i = 0; i <= indent; i++) {
 			fh.writeString("\t");
 		}
 
