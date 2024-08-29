@@ -1437,13 +1437,15 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 		if (chr == 0xFF) {
 			chr = src[num++];
 
-			// WORKAROUND for bugs #1675 and #2715, script bugs in German Indy3.
-			// Some German 'sz' (Eszett) characters were encoded incorrectly as
-			// 0xFF instead of 0xE1, triggering convertMessageToString() and then
-			// causing a fatal error there. We replace this by the correct encoding
-			// here. At least the DOS and Amiga German releases are affected.
+			// WORKAROUND: In the German releases of Indy3, some Eszett characters
+			// were encoded incorrectly as 0xFF instead of 0xE1 (see bugs #1675 and
+			// #2715). At least the DOS and Amiga German releases are affected.
+			// We've been fixing this since ScummVM 0.10.0 in order to prevent a
+			// fatal error, but since ScummVM 2.9.0 our convertMessageToString()
+			// is more accurate and won't cause an error anymore, so fixing the
+			// invalid characters now becomes a typo-fix Enhancement.
 			//
-			// See also ScummEngine::resStrLen().
+			// See also the corresponding ScummEngine::resStrLen() workaround.
 			if (enhancementEnabled(kEnhTextLocFixes) && _game.id == GID_INDY3 && _language == Common::DE_DEU &&
 				((_roomResource == 23 && chr == 0x2E) ||
 				 (_roomResource == 21 && chr == 0x20))) {
