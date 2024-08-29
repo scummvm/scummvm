@@ -405,9 +405,9 @@ void ScummEngine_v2::decodeParseString() {
 	// So we add some extra spaces at the end of the string if it's too short; this
 	// unblocks the cutscene and also lets Sandy react as intended.
 	//
-	// (Not using enhancementEnabled because some users could be really confused
+	// (Using `kEnhGameBreakingBugFixes`, because some users could be really confused
 	// by the game hanging and they may not know about the Esc key.)
-	if (_game.id == GID_MANIAC && _game.platform != Common::kPlatformNES && _language == Common::FR_FRA && _currentScript != 0xFF && vm.slot [_currentScript].number == 155 && _roomResource == 31 && _actorToPrintStrFor == 9) {
+	if (_game.id == GID_MANIAC && _game.platform != Common::kPlatformNES && _language == Common::FR_FRA && _currentScript != 0xFF && vm.slot [_currentScript].number == 155 && _roomResource == 31 && _actorToPrintStrFor == 9 && enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		while (ptr - buffer < 100) {
 			*ptr++ = ' ';
 		}
@@ -1089,7 +1089,7 @@ void ScummEngine_v2::o2_walkActorTo() {
 	// WORKAROUND bug #2110: crash when trying to fly back to San Francisco.
 	// walkActorTo() is called with an invalid actor number by script 115,
 	// after the room is loaded. The original DOS interpreter probably let
-	// this slip by.
+	// this slip by (TODO: confirm this? and chose an Enhancement class).
 	if (_game.id == GID_ZAK && _game.version == 1 && vm.slot[_currentScript].number == 115 && act == 249) {
 		act = VAR(VAR_EGO);
 	}

@@ -1081,6 +1081,10 @@ void ScummEngine::killScriptsAndResources() {
 					// In FOA in the sentry room, in the chest plate of the statue,
 					// the pegs may be renamed to mouth: this custom name is lost
 					// when leaving the room; this hack prevents this).
+					//
+					// TODO: investigate this bug report from 2004, and see if the
+					// issue appears with an original interpreter, and with our current
+					// (much more accurate) SCUMMv5 implementation.
 					if (owner == OF_OWNER_ROOM && _game.id == GID_INDY4 && 336 <= obj && obj <= 340)
 						continue;
 
@@ -1594,6 +1598,10 @@ void ScummEngine::endCutscene() {
 		// WORKAROUND bug #5624: Due to poor translation of the v2 script to
 		// v5 an if statement jumps in the middle of a cutscene causing a
 		// endCutscene() without a begin cutscene()
+		//
+		// TODO: see what the original interpreter did when encountering this
+		// script bug (with UNZ, DREAMM or TOWNSEMU), and decide which
+		// Enhancement setting should be used in this case.
 		if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns &&
 			vm.slot[_currentScript].number == 205 && _currentRoom == 185) {
 			return;
