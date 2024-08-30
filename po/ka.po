@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-29 23:58+0000\n"
-"PO-Revision-Date: 2024-08-27 10:43+0000\n"
+"PO-Revision-Date: 2024-08-31 05:43+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -3498,7 +3498,7 @@ msgstr "ხაზის გამოტოვება"
 
 #: engines/metaengine.cpp:106
 msgid "Predictive input dialog"
-msgstr ""
+msgstr "პროგნოზირებადი შეყვანის დიალოგი"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows confirming popup dialogue prompts (eg. for save game deletion or overwriting)
@@ -6246,7 +6246,7 @@ msgstr "თამაშის ჩატვირთვა"
 #. CRIME SCENE DATABASE
 #: engines/bladerunner/metaengine.cpp:348
 msgid "Crime Scene Database"
-msgstr ""
+msgstr "დანაშაულის სცენების მონაცემთა ბაზა"
 
 #. I18N: This keymap opens KIA's SUSPECT DATABASE tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -6310,7 +6310,7 @@ msgstr ""
 
 #: engines/cge/metaengine.cpp:43 engines/cge2/metaengine.cpp:46
 msgid "Color Blind Mode"
-msgstr ""
+msgstr "რეჟიმი დალტონიკებისთვის"
 
 #: engines/cge/metaengine.cpp:44 engines/cge2/metaengine.cpp:47
 msgid "Enable Color Blind Mode by default"
@@ -7254,16 +7254,12 @@ msgid "Enable Gore Mode when available"
 msgstr "სისხლის რეჟიმის ჩართვა, როცა ხელმისაწვდომია"
 
 #: engines/hopkins/metaengine.cpp:231
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Open inventory"
-msgstr "ინვენტარის გახსნა/დახურვა"
+msgstr "ინვენტარის გახსნა"
 
 #: engines/hopkins/metaengine.cpp:250
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Option dialog"
-msgstr "დიალოგის გამოტოვება"
+msgstr "არჩევნის დიალოგი"
 
 #: engines/hpl1/metaengine.cpp:76
 msgid "Forward"
@@ -10351,24 +10347,18 @@ msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 
 #: engines/stark/metaengine.cpp:184
-#, fuzzy
-#| msgid "Default keymappings"
 msgid "Default keymapppings"
 msgstr "ნაგულისხმევი კლავიატურის მალსახმობები"
 
 #. I18N: Opens in-game Diary
 #: engines/stark/metaengine.cpp:202
-#, fuzzy
-#| msgid "Game menu"
 msgid "Diary menu"
-msgstr "თამაშის მენიუ"
+msgstr "დღიურის მენიუ"
 
 #. I18N: Opens in-game conversation log
 #: engines/stark/metaengine.cpp:219
-#, fuzzy
-#| msgid "Exit conversation"
 msgid "Conversation log"
-msgstr "საუბრიდან გასვლა"
+msgstr "საუბრის ჟურნალი"
 
 #. I18N: Opens in-game Diary
 #: engines/stark/metaengine.cpp:225
@@ -10376,14 +10366,10 @@ msgid "April's diary (initially disabled)"
 msgstr ""
 
 #: engines/stark/metaengine.cpp:230
-#, fuzzy
-#| msgid "Fast replay"
 msgid "Video replay"
-msgstr "სწრაფი გამეორება"
+msgstr "ვიდეოს თავიდან დაკვრა"
 
 #: engines/stark/metaengine.cpp:235
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game settings"
 msgstr "თამაშის მორგება"
 
@@ -10392,10 +10378,8 @@ msgid "Toggle subtitles"
 msgstr "სუბტიტრების გადართვა"
 
 #: engines/stark/metaengine.cpp:250
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit to menu"
-msgstr "თამაშიდან გასვლა"
+msgstr "მენიუში გასვლა"
 
 #: engines/stark/metaengine.cpp:255
 msgid "Cycle back through inventory cursor items"
@@ -10411,16 +10395,12 @@ msgid "Display all exits on current location"
 msgstr ""
 
 #: engines/stark/metaengine.cpp:292
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Scroll up in inventory"
-msgstr "ინვენტარის გახსნა/დახურვა"
+msgstr "ინვენტარში მაღლა აწევა"
 
 #: engines/stark/metaengine.cpp:299
-#, fuzzy
-#| msgid "Show inventory"
 msgid "Scroll down in inventory"
-msgstr "ინვენტარის ჩვენება"
+msgstr "ინვენტარში დაბლა ჩამოწევა"
 
 #: engines/stark/metaengine.cpp:306
 msgid "Scroll up in your dialogues"
@@ -10431,22 +10411,16 @@ msgid "Scroll down in your dialogues"
 msgstr ""
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "Show dialogue"
 msgid "go to next dialogue"
-msgstr "დიალოგის ჩვენება"
+msgstr "გადასვლა შემდეგ დიალოგზე"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "Go to previous index"
 msgid "go to previous dialogues"
-msgstr "გადასვლა წინა ინდექსზე"
+msgstr "გადასვლა წინა დიალოგებზე"
 
 #: engines/stark/metaengine.cpp:328
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Select dialogue"
-msgstr "დიალოგის გამოტოვება"
+msgstr "აირჩიეთ დიალოგი"
 
 #: engines/stark/metaengine.cpp:335
 msgid "Skip video sequence or dialogue"
