@@ -1436,11 +1436,103 @@ void Room407::parser() {
 			break;
 		}
 
-	} else if (useFlag && player_said("FAUCET PIPE/HOSE/TUBE")) {
-		// TODO
-	}
-	// TODO
-	else {
+	} else if (useFlag && player_said("FAUCET PIPE/HOSE/TUBE") &&
+			_xyzzy2 == 1062) {
+		_xyzzy2 = 1000;
+		_xyzzy3 = 1000;
+		_val8 = 1000;
+		inv_move_object("FAUCET PIPE/HOSE/TUBE", 407);
+		inv_give_to_player("GARDEN HOSE");
+		inv_give_to_player("SURGICAL TUBE");
+		inv_give_to_player("FAUCET PIPE");
+	} else if (useFlag && player_said("TUBE/HOSE") && _xyzzy2 == 1060) {
+		_xyzzy2 = 1000;
+		_xyzzy3 = 1000;
+		inv_move_object("TUBE/HOSE", 407);
+		inv_give_to_player("GARDEN HOSE");
+		inv_give_to_player("SURGICAL TUBE");
+	} else if (useFlag && player_said("FAUCET PIPE/HOSE") && _xyzzy2 == 1061) {
+		_xyzzy2 = 1000;
+		_val8 = 1000;
+		inv_move_object("FAUCET PIPE/HOSE", 407);
+		inv_give_to_player("GARDEN HOSE");
+		inv_give_to_player("FAUCET PIPE");
+	} else if (useFlag && player_said("FAUCET PIPE/TUBE") && _xyzzy3 == 1061) {
+		_xyzzy3 = 1000;
+		_val8 = 1000;
+		inv_move_object("FAUCET PIPE/TUBE", 407);
+		inv_give_to_player("SURGICAL TUBE");
+		inv_give_to_player("FAUCET PIPE");
+	} else if (useFlag && player_said("JAR/PLUG/CORK/GRIPS") && _xyzzy7 == 1056) {
+		_xyzzy7 = 1000;
+		_xyzzy9 = 1000;
+		_xyzzy4 = 1000;
+		_xyzzy5 = 1000;
+		inv_move_object("JAR/PLUG/CORK/GRIPS", 407);
+		inv_give_to_player("GLASS JAR");
+		inv_give_to_player("PUMP GRIPS");
+		inv_give_to_player("CORK");
+		inv_give_to_player("RUBBER PLUG");
+	} else if (useFlag && player_said("JAR/CORK/PLUG") && _xyzzy7 == 1053) {
+		_xyzzy7 = 1000;
+		_xyzzy9 = 1000;
+		_xyzzy5 = 1000;
+		inv_move_object("JAR/CORK/PLUG", 407);
+		inv_give_to_player("GLASS JAR");
+		inv_give_to_player("RUBBER PLUG");
+		inv_give_to_player("CORK");
+	} else if (useFlag && player_said("JAR/CORK/GRIPS") && _xyzzy7 == 1055) {
+		_xyzzy7 = 1000;
+		_xyzzy9 = 1000;
+		_xyzzy4 = 1000;
+		inv_move_object("JAR/CORK/GRIPS", 407);
+		inv_give_to_player("GLASS JAR");
+		inv_give_to_player("PUMP GRIPS");
+		inv_give_to_player("CORK");
+	} else if (useFlag && player_said("JAR/PLUG/GRIPS") && _xyzzy7 == 1054) {
+		_xyzzy7 = 1000;
+		_xyzzy5 = 1000;
+		_xyzzy4 = 1000;
+		inv_move_object("JAR/PLUG/GRIPS", 407);
+		inv_give_to_player("GLASS JAR");
+		inv_give_to_player("PUMP GRIPS");
+		inv_give_to_player("RUBBER PLUG");
+	} else if (useFlag && player_said("JAR/GRIPS") && _xyzzy7 == 1052) {
+		_xyzzy7 = 1000;
+		_xyzzy4 = 1000;
+		inv_move_object("JAR/GRIPS", 407);
+		inv_give_to_player("GLASS JAR");
+		inv_give_to_player("PUMP GRIPS");
+	} else if (useFlag && player_said("JAR/CORK") && _xyzzy7 == 1051) {
+		_xyzzy7 = 1000;
+		_xyzzy9 = 1000;
+		inv_move_object("JAR/CORK", 407);
+		inv_give_to_player("GLASS JAR");
+		inv_give_to_player("CORK");
+	} else if (useFlag && player_said("JAR/RUBBER PLUG") && _xyzzy7 == 1050) {
+		_xyzzy7 = 1000;
+		_xyzzy5 = 1000;
+		inv_move_object("JAR/RUBBER PLUG", 407);
+		inv_give_to_player("GLASS JAR");
+		inv_give_to_player("RUBBER PLUG");
+	} else if (useFlag && player_said("LEVER KEY/PUMP ROD") && _xyzzy10 == 1041) {
+		_val10 = 1000;
+		_xyzzy1 = 1000;
+		_xyzzy10 = 1040;
+		inv_move_object("LEVER KEY/PUMP ROD", 407);
+		inv_give_to_player("LEVER KEY");
+		inv_give_to_player("PUMP ROD");
+	} else if (useFlag && player_said("EMERALD/CORK") &&
+			inv_player_has("EMERALD/CORK")) {
+		_xyzzy8 = 1000;
+		_xyzzy9 = 1000;
+		inv_move_object("EMERALD/CORK", NOWHERE);
+		inv_give_to_player("ROMANOV EMERALD");
+		inv_give_to_player("CORK");
+	} else if (player_said("journal") &&
+			!takeFlag && !lookFlag && !inv_player_has(_G(player).noun)) {
+		digi_play("407r59", 1);
+	} else {
 		return;
 	}
 
