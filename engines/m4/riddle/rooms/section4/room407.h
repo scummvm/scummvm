@@ -202,6 +202,7 @@ private:
 	void takeGardenHose1();
 	void takeGardenHose2();
 	void takeGardenHose3();
+	void takeGardenHose4();
 	void takeGlassJar1();
 	void takeGlassJar2();
 	void takePeriodicTable1();
@@ -214,11 +215,16 @@ private:
 	void takeNozzlesTube();
 	void takeLeverKey1();
 	void takeLeverKey2();
+	void takeLeverKey3();
 	void takeAirValveHandle();
 	void takeFaucetHandle();
 	void takePumpRod1();
 	void takePumpRod2();
 	void takePumpRod3();
+	void takePumpGrips1();
+	void takePumpGrips2();
+	void takeRubberPlug();
+	void takeSurgicalTube();
 
 public:
 	Room407() : Room() {}

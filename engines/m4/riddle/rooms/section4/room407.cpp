@@ -1144,11 +1144,300 @@ void Room407::parser() {
 	} else if (takeFlag && player_said("PUMP ROD") && _xyzzy1 == 1115) {
 		takePumpRod1();
 	} else if (takeFlag && player_said("PUMP ROD ") &&
-			_xyzzy7 != 1114 && _xyzzy7 != 1140) {
+		_xyzzy7 != 1114 && _xyzzy7 != 1140) {
 		if (_val10 == 1114)
 			takePumpRod2();
 		else
 			takePumpRod3();
+	} else if (takeFlag && player_said("LEVER KEY  ")) {
+		if (_val10 != 1114 || _xyzzy7 == 1114 || _xyzzy7 == 1140)
+			digi_play("com129", 1);
+		else
+			takeLeverKey3();
+	} else if (takeFlag && player_said("PUMP GRIPS")) {
+		takePumpGrips1();
+		return;
+	} else if (takeFlag && player_said("PUMP GRIPS ")) {
+		takePumpGrips2();
+	} else if (takeFlag && player_said("GARDEN HOSE")) {
+		takeGardenHose4();
+		return;
+	} else if (takeFlag && player_said("RUBBER PLUG")) {
+		takeRubberPlug();
+		return;
+	} else if (takeFlag && player_said("SURGICAL TUBE")) {
+		takeSurgicalTube();
+		return;
+	} else if (takeFlag && player_said("MICROSCOPE")) {
+		digi_play("407r61", 1);
+	} else if (takeFlag && (
+		player_said("DRAIN") ||
+		player_said("FAUCET STEM") ||
+		player_said("IRON SUPPORT") ||
+		player_said("AIR VALVE") ||
+		player_said("NOZZLES") ||
+		player_said("TALBE PIVOT") ||
+		player_said("HIDDEN DOOR") ||
+		player_said("CEILING PISTON") ||
+		player_said("DRAWER") ||
+		player_said("PISTON ON TABLE") ||
+		player_said("BUTTONS") ||
+		player_said("COMPRESSED AIR TANK") ||
+		player_said("WALL PISTON") ||
+		player_said("BRACKET") ||
+		player_said("LARGE GEAR") ||
+		player_said("SMALL GEAR WHEEL") ||
+		player_said("METAL DOOR") ||
+		player_said("ARMORED CABINET")
+		)) {
+		digi_play("com066", 1);
+	} else if ((player_said("FAUCET PIPE/HOSE", "SURGICAL TUBE") ||
+			player_said("TUBE/HOSE", "FAUCET PIPE") ||
+			player_said("FAUCET PIPE/TUBE", "GARDEN HOSE")) &&
+			(_xyzzy2 == 1060 || _xyzzy2 == 1061 || _xyzzy3 == 1061)) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			kernel_examine_inventory_object("PING FAUCET PIPE/HOSE/TUBE",
+				_G(master_palette), 5, 1, 270, 150, 2, nullptr, -1);
+			break;
+		case 2:
+			_xyzzy2 = 1062;
+			_val8 = 1111;
+			_xyzzy3 = 1111;
+			inv_move_object("SURGICAL TUBE", 407);
+			inv_move_object("FAUCET PIPE", 407);
+			inv_move_object("GARDEN HOSE", 407);
+			inv_move_object("FAUCET PIPE/HOSE", 407);
+			inv_move_object("FAUCET PIPE/TUBE", 407);
+			inv_move_object("TUBE/HOSE", 407);
+			inv_give_to_player("FAUCET PIPE/HOSE/TUBE");
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("FAUCET PIPE", "GARDEN HOSE") &&
+		_xyzzy2 == 1000 && _val8 == 1000) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			kernel_examine_inventory_object("PING FAUCET PIPE/HOSE",
+				_G(master_palette), 5, 1, 270, 150, 2, nullptr, -1);
+			break;
+		case 2:
+			_xyzzy2 = 1061;
+			_val8 = 1111;
+			inv_move_object("GARDEN HOSE", 407);
+			inv_move_object("FAUCET PIPE", 407);
+			inv_give_to_player("FAUCET PIPE/HOSE");
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("GARDEN HOSE", "SURGICAL TUBE") &&
+			_xyzzy2 == 1000 && _xyzzy3 == 1000) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			kernel_examine_inventory_object("PING TUBE/HOSE",
+				_G(master_palette), 5, 1, 270, 150, 2, nullptr, -1);
+			break;
+		case 2:
+			_xyzzy2 = 1060;
+			_xyzzy3 = 1111;
+			inv_move_object("GARDEN HOSE", 407);
+			inv_move_object("SURGICAL TUBE", 407);
+			inv_give_to_player("TUBE/HOSE");
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("FAUCET PIPE", "SURGICAL TUBE") &&
+			_val8 == 1000 && _xyzzy3 == 1000) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			kernel_examine_inventory_object("PING FAUCET PIPE/TUBE",
+				_G(master_palette), 5, 1, 270, 150, 2, nullptr, -1);
+			break;
+		case 2:
+			_val8 = 1060;
+			_xyzzy3 = 1061;
+			inv_move_object("FAUCET PIPE", 407);
+			inv_move_object("SURGICAL TUBE", 407);
+			inv_give_to_player("FAUCET PIPE/TUBE");
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if ((player_said("JAR/PLUG/GRIPS", "CORK") ||
+			player_said("JAR/CORK/PLUG", "PUMP GRIPS") ||
+			player_said("JAR/CORK/GRIPS", "RUBBER PLUG")) &&
+			(_xyzzy7 == 1054 || _xyzzy7 == 1053 || _xyzzy7 == 1055)) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			kernel_examine_inventory_object("PING JAR/PLUG/CORK/GRIPS",
+				_G(master_palette), 5, 1, 270, 150, 2, nullptr, -1);
+			break;
+		case 2:
+			_xyzzy7 = 1056;
+			_xyzzy9 = 1116;
+			_xyzzy5 = 1116;
+			_xyzzy4 = 1116;
+			inv_move_object("JAR/PLUG/GRIPS", 407);
+			inv_move_object("JAR/CORK/PLUG", 407);
+			inv_move_object("JAR/CORK/GRIPS", 407);
+			inv_move_object("RUBBER PLUG", 407);
+			inv_move_object("CORK", 407);
+			inv_move_object("PUMP GRIPS", 407);
+			inv_give_to_player("JAR/PLUG/CORK/GRIPS");
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if ((player_said("JAR/RUBBER PLUG", "CORK") ||
+			player_said("JAR/CORK", "RUBBER PLUG")) &&
+			(_xyzzy7 == 1050 || _xyzzy7 == 1051)) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			kernel_examine_inventory_object("PING JAR/CORK/PLUG",
+				_G(master_palette), 5, 1, 270, 150, 2, nullptr, -1);
+			break;
+		case 2:
+			_xyzzy7 = 1053;
+			_xyzzy9 = 1116;
+			_xyzzy5 = 1116;
+			inv_move_object("JAR/RUBBER PLUG", 407);
+			inv_move_object("JAR/CORK", 407);
+			inv_move_object("RUBBER PLUG", 407);
+			inv_move_object("CORK", 407);
+			inv_give_to_player("JAR/CORK/PLUG");
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if ((player_said("JAR/GRIPS", "CORK") ||
+			player_said("JAR/CORK", "PUMP GRIPS")) &&
+			(_xyzzy7 == 1052 || _xyzzy7 == 1051)) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			kernel_examine_inventory_object("PING JAR/CORK/GRIPS",
+				_G(master_palette), 5, 1, 270, 150, 2, nullptr, -1);
+			break;
+		case 2:
+			_xyzzy7 = 1055;
+			_xyzzy9 = 1116;
+			_xyzzy4 = 1116;
+			inv_move_object("JAR/GRIPS", 407);
+			inv_move_object("JAR/CORK", 407);
+			inv_move_object("PUMP GRIPS", 407);
+			inv_move_object("CORK", 407);
+			inv_give_to_player("JAR/CORK/GRIPS");
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if ((player_said("JAR/GRIPS", "RUBBER PLUG") ||
+			player_said("JAR/RUBBER PLUG", "PUMP GRIPS")) &&
+			(_xyzzy7 == 1052 || _xyzzy7 == 1050)) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			kernel_examine_inventory_object("PING JAR/PLUG/GRIPS",
+				_G(master_palette), 5, 1, 270, 150, 2, nullptr, -1);
+			break;
+		case 2:
+			_xyzzy7 = 1055;
+			_xyzzy5 = 1116;
+			_xyzzy4 = 1116;
+			inv_move_object("JAR/GRIPS", 407);
+			inv_move_object("JAR/RUBBER PLUG", 407);
+			inv_move_object("PUMP GRIPS", 407);
+			inv_move_object("RUBBER PLUG", 407);
+			inv_give_to_player("JAR/PLUG/GRIPS");
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("GLASS JAR", "CORK") &&
+			_xyzzy7 == 1000 && _xyzzy9 == 1000) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			kernel_examine_inventory_object("PING JAR/CORK",
+				_G(master_palette), 5, 1, 270, 150, 2, nullptr, -1);
+			break;
+		case 2:
+			_xyzzy7 = 1051;
+			_xyzzy9 = 1116;
+			inv_move_object("GLASS JAR", 407);
+			inv_move_object("CORK", 407);
+			inv_give_to_player("JAR/CORK");
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("GLASS JAR", "PUMP GRIPS") &&
+			_xyzzy7 == 1000 && _xyzzy4 == 1000) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			kernel_examine_inventory_object("PING JAR/GRIPS",
+				_G(master_palette), 5, 1, 270, 150, 2, nullptr, -1);
+			break;
+		case 2:
+			_xyzzy7 = 1052;
+			_xyzzy4 = 1116;
+			inv_move_object("GLASS JAR", 407);
+			inv_move_object("PUMP GRIPS", 407);
+			inv_give_to_player("JAR/GRIPS");
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("GLASS JAR", "RUBBER PLUG") &&
+			_xyzzy7 == 1000 && _xyzzy5 == 1000) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			kernel_examine_inventory_object("PING JAR/RUBBER PLUG",
+				_G(master_palette), 5, 1, 270, 150, 2, nullptr, -1);
+			break;
+		case 2:
+			_xyzzy7 = 1050;
+			_xyzzy5 = 1116;
+			inv_move_object("GLASS JAR", 407);
+			inv_move_object("RUBBER PLUG", 407);
+			inv_give_to_player("JAR/RUBBER PLUG");
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("LEVER KEY", "PUMP ROD") &&
+			_val10 == 1000 && _xyzzy1 == 1000) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			kernel_examine_inventory_object("PING LEVER KEY/PUMP ROD",
+				_G(master_palette), 5, 1, 270, 150, 2, nullptr, -1);
+			break;
+		case 2:
+			_val10 = 1041;
+			_xyzzy1 = 1041;
+			_xyzzy10 = 1041;
+			inv_move_object("LEVER KEY", 407);
+			inv_move_object("PUMP ROD", 407);
+			inv_give_to_player("LEVER KEY/PUMP ROD");
+			player_set_commands_allowed(true);
+			break;
+		default:
+			break;
+		}
+
+	} else if (useFlag && player_said("FAUCET PIPE/HOSE/TUBE")) {
+		// TODO
 	}
 	// TODO
 	else {
@@ -3619,6 +3908,30 @@ void Room407::takeGardenHose3() {
 	}
 }
 
+void Room407::takeGardenHose4() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (inv_object_is_here("GARDEN HOSE")) {
+			inv_give_to_player("GARDEN HOSE");
+			hotspot_set_active("GARDEN HOSE", false);
+			terminateMachineAndNull(_drawerPopupHose);
+			kernel_examine_inventory_object("PING GARDEN HOSE",
+				_G(master_palette), 5, 1, 25, 190, 2, nullptr, -1);
+
+			_G(player).command_ready = false;
+		}
+		break;
+
+	case 2:
+		player_set_commands_allowed(true);
+		_G(player).command_ready = false;
+		break;
+
+	default:
+		break;
+	}
+}
+
 void Room407::takeGlassJar1() {
 	switch (_G(kernel).trigger) {
 	case -1:
@@ -4073,6 +4386,60 @@ void Room407::takeLeverKey2() {
 	}
 }
 
+void Room407::takeLeverKey3() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_407rp98 = series_load("407RP98");
+		terminateMachineAndNull(_lever);
+		terminateMachineAndNull(_pump);
+
+		player_update_info();
+		_safariShadow = series_place_sprite("SAFARI SHADOW 1", 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
+
+		ws_hide_walker();
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0, 0,
+			triggerMachineByHashCallbackNegative, "RIP levers ceiling");
+		sendWSMessage_10000(1, _ripley, _407rp98, 101, 81, 2,
+			_407rp98, 81, 81, 0);
+		break;
+
+	case 2:
+		digi_play("407_s07a", 1);
+		sendWSMessage_10000(1, _ripley, _407rp98, 80, 53, 3,
+			_407rp98, 53, 53, 0);
+		break;
+
+	case 3:
+		kernel_examine_inventory_object("PING LEVER KEY",
+			_G(master_palette), 5, 1, 350, 150, 4, "407_s07a", -1);
+		break;
+
+	case 4:
+		sendWSMessage_10000(1, _ripley, _407rp98, 52, 1, 5,
+			_407rp98, 1, 1, 0);
+		break;
+
+	case 5:
+		terminateMachineAndNull(_ripley);
+		terminateMachineAndNull(_safariShadow);
+		ws_unhide_walker();
+
+		_pump = series_place_sprite("407PMROD", 0, 0, -53, 100, 0xf00);
+		hotspot_set_active("LEVER KEY  ", false);
+		inv_give_to_player("LEVER KEY");
+		_val10 = 1000;
+
+		series_unload(_407rp98);
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
 void Room407::takeAirValveHandle() {
 	switch (_G(kernel).trigger) {
 	case -1:
@@ -4296,6 +4663,127 @@ void Room407::takePumpRod3() {
 		_xyzzy1 = 1000;
 		series_unload(_407rp99);
 		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::takePumpGrips1() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (inv_object_is_here("PUMP GRIPS")) {
+			inv_give_to_player("PUMP GRIPS");
+			_xyzzy4 = 1000;
+
+			hotspot_set_active("PUMP GRIPS", false);
+			terminateMachineAndNull(_handleInDrawer);
+			kernel_examine_inventory_object("PING PUMP GRIPS",
+				_G(master_palette), 5, 1, 85, 190, 2, nullptr, -1);
+			_G(player).command_ready = false;
+		}
+		break;
+
+	case 2:
+		player_set_commands_allowed(true);
+		_G(player).command_ready = false;
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::takePumpGrips2() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		player_set_commands_allowed(false);
+		_pump407 = series_load("407 PUMP");
+
+		player_update_info();
+		_safariShadow = series_place_sprite("SAFARI SHADOW 1", 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0xf00);
+		ws_hide_walker();
+
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
+			triggerMachineByHashCallbackNegative, "RIP pumps");
+		sendWSMessage_10000(1, _ripley, _pump407, 1, 40, 1,
+			_pump407, 40, 40, 0);
+		kernel_timing_trigger(150, 69);
+		break;
+
+	case 1:
+		terminateMachineAndNull(_handleInDrawer);
+		inv_give_to_player("PUMP GRIPS");
+		hotspot_set_active("PUMP GRIPS ", false);
+		kernel_examine_inventory_object("PING PUMP GRIPS",
+			_G(master_palette), 5, 1, 125, 200, 2, nullptr, -1);
+		break;
+
+	case 2:
+		sendWSMessage_10000(1, _ripley, _pump407, 14, 1, 4,
+			_pump407, 1, 1, 0);
+		break;
+
+	case 4:
+		terminateMachineAndNull(_ripley);
+		terminateMachineAndNull(_safariShadow);
+		series_unload(_pump407);
+		player_set_commands_allowed(true);
+		break;
+
+	case 69:
+		digi_play("407_s07", 2);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::takeRubberPlug() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (inv_object_is_here("RUBBER PLUG")) {
+			inv_give_to_player("RUBBER PLUG");
+			hotspot_set_active("RUBBER PLUG", false);
+			terminateMachineAndNull(_stopperInDrawer);
+			kernel_examine_inventory_object("PING RUBBER PLUG",
+				_G(master_palette), 5, 1, 75, 210, 2, nullptr, -1);
+
+			_G(player).command_ready = false;
+		}
+		break;
+
+	case 2:
+		player_set_commands_allowed(true);
+		_G(player).command_ready = false;
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room407::takeSurgicalTube() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (inv_object_is_here("SURGICAL TUBE")) {
+			inv_give_to_player("SURGICAL TUBE");
+			_xyzzy3 = 1000;
+			hotspot_set_active("SURGICAL TUBE", false);
+			terminateMachineAndNull(_tubeInDrawer);
+			kernel_examine_inventory_object("PING SURGICAL TUBE",
+				_G(master_palette), 5, 1, 85, 210, 2, nullptr, -1);
+
+			_G(player).command_ready = false;
+		}
+		break;
+
+	case 2:
+		player_set_commands_allowed(true);
+		_G(player).command_ready = false;
 		break;
 
 	default:
