@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-29 23:58+0000\n"
-"PO-Revision-Date: 2024-08-20 09:05+0000\n"
+"PO-Revision-Date: 2024-08-30 18:24+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -6117,14 +6117,12 @@ msgid "Do not emulate NTSC artifacts for text"
 msgstr "Non emulare gli artefatti NTSC nei testi"
 
 #: engines/adl/metaengine.cpp:104
-#, fuzzy
-#| msgid "Use silver cursors"
 msgid "Use checkered cursor"
-msgstr "Usa cursori d'argento"
+msgstr "Usa cursore quadrettato"
 
 #: engines/adl/metaengine.cpp:105
 msgid "Use the checkered cursor from later Apple II models"
-msgstr ""
+msgstr "Usa il cursore quadrettato presente nei modelli più recenti di Apple II"
 
 #: engines/agi/detection_tables.h:253
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
@@ -8093,16 +8091,12 @@ msgid "Enable Gore Mode when available"
 msgstr "Abilita scene sanguinose (se disponibili)"
 
 #: engines/hopkins/metaengine.cpp:231
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Open inventory"
-msgstr "Apri/Chiudi l'inventario"
+msgstr "Apri Inventario"
 
 #: engines/hopkins/metaengine.cpp:250
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Option dialog"
-msgstr "Salta battuta dialogo"
+msgstr "Finestra Opzioni"
 
 #: engines/hpl1/metaengine.cpp:76
 msgid "Forward"
@@ -11550,106 +11544,84 @@ msgstr ""
 "gradevoli."
 
 #: engines/stark/metaengine.cpp:184
-#, fuzzy
-#| msgid "Default keymappings"
 msgid "Default keymapppings"
 msgstr "Mappe tasti predefinite"
 
 #. I18N: Opens in-game Diary
 #: engines/stark/metaengine.cpp:202
-#, fuzzy
-#| msgid "Game menu"
 msgid "Diary menu"
-msgstr "Menù di gioco"
+msgstr "Menù del diario"
 
 #. I18N: Opens in-game conversation log
 #: engines/stark/metaengine.cpp:219
-#, fuzzy
-#| msgid "Conversation position - Up"
 msgid "Conversation log"
-msgstr "Posizione conversazione - Su"
+msgstr "Diario delle conversazioni"
 
 #. I18N: Opens in-game Diary
 #: engines/stark/metaengine.cpp:225
 msgid "April's diary (initially disabled)"
-msgstr ""
+msgstr "Diario di April (non disponibile all'inizio)"
 
 #: engines/stark/metaengine.cpp:230
-#, fuzzy
-#| msgid "Fast replay"
 msgid "Video replay"
-msgstr "Riproduzione veloce"
+msgstr "Archivio video"
 
 #: engines/stark/metaengine.cpp:235
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game settings"
-msgstr "Opzioni Gioco"
+msgstr "Opzioni gioco"
 
 #: engines/stark/metaengine.cpp:245 engines/wintermute/keymapper_tables.h:1345
 msgid "Toggle subtitles"
 msgstr "Sottotitoli si/no"
 
 #: engines/stark/metaengine.cpp:250
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit to menu"
-msgstr "Esci dal gioco"
+msgstr "Esci al menù principale"
 
 #: engines/stark/metaengine.cpp:255
 msgid "Cycle back through inventory cursor items"
-msgstr ""
+msgstr "Seleziona oggetto precedente nell'inventario"
 
 #: engines/stark/metaengine.cpp:261
 msgid "Cycle forward through inventory cursor items"
-msgstr ""
+msgstr "Seleziona oggetto successivo nell'inventario"
 
 #. I18N: A popup on screen shows shows the exits
 #: engines/stark/metaengine.cpp:274
 msgid "Display all exits on current location"
-msgstr ""
+msgstr "Mostra uscite dalla locazione corrente"
 
 #: engines/stark/metaengine.cpp:292
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Scroll up in inventory"
-msgstr "Apri/Chiudi l'inventario"
+msgstr "Scorri inventario verso l'alto"
 
 #: engines/stark/metaengine.cpp:299
-#, fuzzy
-#| msgid "Show inventory"
 msgid "Scroll down in inventory"
-msgstr "Visualizza inventario"
+msgstr "Scorri inventario verso il basso"
 
 #: engines/stark/metaengine.cpp:306
 msgid "Scroll up in your dialogues"
-msgstr ""
+msgstr "Scorri log dialoghi verso l'alto"
 
 #: engines/stark/metaengine.cpp:312
 msgid "Scroll down in your dialogues"
-msgstr ""
+msgstr "Scorri log dialoghi verso il basso"
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "Highlight next dialogue"
 msgid "go to next dialogue"
-msgstr "Evidenzia dialogo successivo"
+msgstr "Dialogo successivo"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "Go to previous index"
 msgid "go to previous dialogues"
-msgstr "Indice precedente"
+msgstr "Dialogo precedente"
 
 #: engines/stark/metaengine.cpp:328
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Select dialogue"
-msgstr "Salta battuta dialogo"
+msgstr "Seleziona dialogo"
 
 #: engines/stark/metaengine.cpp:335
 msgid "Skip video sequence or dialogue"
-msgstr ""
+msgstr "Salta sequenza d'intermezzo o dialogo"
 
 #: engines/stark/stark.cpp:106
 msgid "Software renderer does not support modded assets"
