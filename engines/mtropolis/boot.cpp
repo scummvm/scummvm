@@ -2820,14 +2820,14 @@ BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 				debug("    %s%c%s", arcJunction._archiveName.c_str(), pathSeparator, archiveMember->getPathInArchive().toString(pathSeparator).c_str());
 			}
 
-			debug("");
+			debug("%s", "");
 		}
 
 		debug("Virtual-to-physical path mappings:");
 		for (const VirtualFileSystemLayout::PathJunction &pathJunction : vfsLayout._pathJunctions) {
 			debug("    %s -> %s", pathJunction._srcPath.c_str(), pathJunction._destPath.c_str());
 		}
-		debug("");
+		debug("%s", "");
 
 		debug("Exclusions:");
 
@@ -2837,7 +2837,7 @@ BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 		for (const Common::String &str : vfsLayout._exclusions)
 			debug("    %s", str.c_str());
 
-		debug("");
+		debug("%s", "");
 	}
 
 	Common::SharedPtr<VirtualFileSystem> vfs(new VirtualFileSystem(bootScriptContext.getVFSLayout()));
