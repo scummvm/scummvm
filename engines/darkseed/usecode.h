@@ -35,6 +35,7 @@ private:
 	Player *_player = nullptr;
 	Objects &_objectVar;
 	Inventory &_inventory;
+	uint8 _genericResponseCounter = 0;
 
 public:
 	UseCode(Console *console, Player *player, Objects &objectVar, Inventory &inventory);

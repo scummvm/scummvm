@@ -1567,7 +1567,179 @@ void UseCode::useCodeEmptyUrn(int16 targetObjNum) {
 }
 
 void UseCode::genericresponse(int16 useObjNum, int16 targetObjNum, int16 tosIdx) {
-	// TODO implement me!
+	_genericResponseCounter++;
+	if (_genericResponseCounter > 4) {
+		_genericResponseCounter = 0;
+	}
+	switch (tosIdx) {
+	case 979:
+		_console->addTextLine(
+			Common::String::format(
+				"This sentry cannot be stopped with a %s.",
+				_objectVar.getObjectName(useObjNum)));
+		break;
+	case 980:
+		_console->addTextLine(
+			Common::String::format(
+				"The %s has no effect on the alien tubes.",
+				_objectVar.getObjectName(useObjNum)));
+		break;
+	case 981:
+		_console->addTextLine(
+			Common::String::format(
+				"You incinerate the %s inside the power nexus!.",
+				_objectVar.getObjectName(useObjNum)));
+		break;
+	case 982:
+		_console->addTextLine(
+			Common::String::format(
+				"The %s has no effect on this alien monstrosity.",
+				_objectVar.getObjectName(useObjNum)));
+		break;
+	case 983:
+		_console->addTextLine(
+			Common::String::format(
+				"The %s is not strong enough to cut the cables.\nPerhaps if you had some wire cutters?",
+				_objectVar.getObjectName(useObjNum)));
+		break;
+	case 984:
+		_console->addTextLine(
+			Common::String::format(
+				"The %s has no effect on the protected ancient.",
+				_objectVar.getObjectName(useObjNum)));
+		break;
+	case 985:
+		_console->addTextLine(
+			Common::String::format(
+				"You hide the %s under the pillow.",
+				_objectVar.getObjectName(useObjNum)));
+		break;
+	case 986:
+		_console->addTextLine(
+			Common::String::format(
+				"Don't put the %s in the trunk, you'll forget it.",
+				_objectVar.getObjectName(useObjNum)));
+		break;
+	case 987:
+		_console->addTextLine(
+			Common::String::format(
+				"The car won't start with the %s.",
+				_objectVar.getObjectName(useObjNum)));
+		break;
+	case 988:
+		_console->addTextLine(
+			Common::String::format(
+				"If you put the %s in the trunk, you'll forget it.",
+				_objectVar.getObjectName(useObjNum)));
+		break;
+	case 989:
+		_console->addTextLine(
+			Common::String::format(
+				"The %s is yours, you haven't lost it.",
+				_objectVar.getObjectName(useObjNum)));
+		break;
+	case 990:
+		_console->addTextLine(
+			Common::String::format(
+				"Not a good place to hide the %s.",
+				_objectVar.getObjectName(useObjNum)));
+		break;
+	case 991:
+		_console->addTextLine(
+			Common::String::format(
+				"You try to put the %s inside, but the door won't open",
+				_objectVar.getObjectName(useObjNum)));
+		break;
+	case 992:
+		_console->addTextLine(
+			Common::String::format(
+				"The kitchen is no place to keep the %s.",
+				_objectVar.getObjectName(useObjNum)));
+		break;
+	case 993:
+		_console->addTextLine(
+			Common::String::format(
+				"You'll forget the %s here.",
+				_objectVar.getObjectName(useObjNum)));
+		break;
+	case 994:
+		_console->addTextLine(
+			Common::String::format(
+				"You'd rather have the %s with you.",
+				_objectVar.getObjectName(useObjNum)));
+		break;
+	case 995:
+		_console->addTextLine(
+			Common::String::format(
+				"The %s has no effect.",
+				_objectVar.getObjectName(useObjNum)));
+		break;
+	case 996:
+		_console->addTextLine(
+			Common::String::format(
+				"This is not a good place for the %s.",
+				_objectVar.getObjectName(useObjNum)));
+		break;
+	case 997:
+		_console->addTextLine(
+			Common::String::format(
+				"You see a reflection of the %s.",
+				_objectVar.getObjectName(useObjNum)));
+		break;
+	case 998:
+		_console->addTextLine(
+			Common::String::format(
+				"You don't want to leave the %s under the bed.",
+				_objectVar.getObjectName(useObjNum)));
+		break;
+	case 999:
+		switch (_genericResponseCounter) {
+		case 0:
+			_console->addTextLine(
+				Common::String::format(
+					"Using the %s on the %s doesn't make any sense, it must be your headaches!",
+					_objectVar.getObjectName(useObjNum),
+					_objectVar.getObjectName(targetObjNum)
+					)
+				);
+			break;
+		case 1:
+			_console->addTextLine(
+				Common::String::format(
+					"The %s will do nothing to the %s.",
+					_objectVar.getObjectName(useObjNum),
+					_objectVar.getObjectName(targetObjNum)
+						)
+			);
+			break;
+		case 2:
+			_console->addTextLine(
+				Common::String::format(
+					"The %s doesn't have any effect on the %s.",
+					_objectVar.getObjectName(useObjNum),
+					_objectVar.getObjectName(targetObjNum)
+						)
+			);
+			break;
+		case 3:
+			_console->addTextLine(
+				Common::String::format(
+					"The %s has nothing to do with %s.",
+					_objectVar.getObjectName(useObjNum),
+					_objectVar.getObjectName(targetObjNum)
+						)
+			);
+			break;
+		case 4:
+			_console->addTextLine("Are you feeling alright?");
+			break;
+		default:
+			error("Unhandled _genericResponseCounter value");
+		}
+		break;
+	default:
+		break;
+	}
 }
 
 void UseCode::putobjunderpillow(int objNum) {
