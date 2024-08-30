@@ -55,7 +55,9 @@ Sound::Sound(GobEngine *vm) : _vm(vm) {
 	_cdrom = nullptr;
 	_bgatmos = nullptr;
 
-	_hasAdLibBg = _hasAdLib = (!_vm->_noMusic && _vm->hasAdLib());
+	_hasAdLib = (!_vm->_noMusic && _vm->hasAdLib());
+
+	_hasAdLibBg = _hasAdLib;
 
 	if (!_vm->_noMusic && (_vm->getPlatform() == Common::kPlatformAmiga)) {
 		_infogrames = new Infogrames(*_vm->_mixer);
