@@ -39,28 +39,38 @@ namespace Macs2 {
 	private:
 		OPL::OPL *_opl;
 
-
-		// TODO: Maybe we need to add the caller, fn0017_24FD proc
-		void Func2686();
-		void Func2792(byte registerIndex, byte value);
-		void Func2792r(byte value, byte registerIndex) {
-			Func2792(registerIndex, value);
-		}
-		// TODO: Maybe need to add the caller
-		void Func24FD();
-		// TODO: Consider adding the caller
-		void Func2839();
-
-		uint16 Func19BE(uint8 offset);
-
 		void Func1A03();
-
 
 		// 01D7:1AA7
 		void OnTimer();
 
+		uint16 Func19BE(uint8 offset);
+
+		// TODO: Maybe need to add the caller
+		void Func24FD();
+
+		// TODO: Maybe we need to add the caller, fn0017_24FD proc
+		void Func2686();
+
+		void Func2792(byte registerIndex, byte value);
+		void Func2792r(byte value, byte registerIndex) {
+			Func2792(registerIndex, value);
+		}
+		
+		// TODO: Consider adding the caller
+		void Func2839();
+
 		// 	[2254h] and [2256h]
 		uint32 _nextEventTimer;
+
+		// [2296h] - TODO: Initialization
+		uint16 g2296;
+
+		// [2298h] - TODO: Initialization
+		uint16 g2298;
+
+		bool g229A;
+	
 
 	public:
 	void Init();
