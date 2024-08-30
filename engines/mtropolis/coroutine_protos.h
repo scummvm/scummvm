@@ -104,6 +104,27 @@ struct CoroutineParamsBase {
 		Params() = delete;																\
 	}
 
+#define CORO_DEFINE_PARAMS_4(type1, name1, type2, name2, type3, name3, type4, name4)	\
+	CORO_STUB																			\
+	struct Params : public CoroutineParamsBase {										\
+		typedef type1 ParamType1_t;														\
+		typedef type2 ParamType2_t;														\
+		typedef type3 ParamType3_t;														\
+		typedef type4 ParamType4_t;														\
+																						\
+		ParamType1_t name1;																\
+		ParamType2_t name2;																\
+		ParamType3_t name3;																\
+		ParamType4_t name4;																\
+																						\
+		explicit Params(const ParamType1_t &p_##name1, const ParamType2_t &p_##name2, const ParamType3_t &p_##name3, const ParamType4_t &p_##name4)	\
+			: name1(p_##name1), name2(p_##name2), name3(p_##name3), name4(p_##name4) {	\
+		}																				\
+																						\
+	private:																			\
+		Params() = delete;																\
+	}
+
 #define CORO_DEFINE_RETURN_TYPE(type)	\
 	typedef type ReturnValue_t
 

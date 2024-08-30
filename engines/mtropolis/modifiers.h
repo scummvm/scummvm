@@ -707,21 +707,15 @@ public:
 #endif
 
 private:
-	struct EvaluateAndSendTaskData {
-		EvaluateAndSendTaskData() : runtime(nullptr) {}
-
-		Common::SharedPtr<MiniscriptThread> thread;
-		Common::WeakPtr<RuntimeObject> triggerSource;
-		Runtime *runtime;
-		DynamicValue incomingData;
+	struct RunEvaluateAndSendCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_3(IfMessengerModifier *, self, Runtime *, runtime, Common::SharedPtr<MessageProperties>, msg);
 	};
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
 	const char *getDefaultName() const override;
 	void linkInternalReferences(ObjectLinkingScope *scope) override;
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
-
-	VThreadState evaluateAndSendTask(const EvaluateAndSendTaskData &taskData);
 
 	Event _when;
 	MessengerSendSpec _sendSpec;

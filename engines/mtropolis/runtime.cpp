@@ -4006,7 +4006,7 @@ MiniscriptInstructionOutcome Structural::scriptSetPaused(MiniscriptThread *threa
 		thread->getRuntime()->sendMessageOnVThread(dispatch);
 	}
 
-	return kMiniscriptInstructionOutcomeYieldToVThreadNoRetry;
+	return kMiniscriptInstructionOutcomeYieldToVThread;
 }
 
 MiniscriptInstructionOutcome Structural::scriptSetLoop(MiniscriptThread *thread, const DynamicValue &value) {

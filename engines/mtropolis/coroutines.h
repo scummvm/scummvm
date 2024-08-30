@@ -129,7 +129,10 @@ struct ICoroutineCompiler {
 		Locals *locals = &static_cast<CoroStackFrame *>(coroRuntime._frame)->_locals;											\
 		CoroutineReturnValueRef<ReturnValue_t> coroReturnValueRef = (static_cast<CoroStackFrame *>(coroRuntime._frame)->_rvRef);
 
-#define CORO_DISUSE_CODE_BLOCK_VARS	\
+#define CORO_AWAIT_PUSHED_TASK					\
+	return kVThreadReturn
+
+#define CORO_DISUSE_CODE_BLOCK_VARS				\
 		(void)params;							\
 		(void)locals;							\
 		(void)coroReturnValueRef;
@@ -209,11 +212,11 @@ void type::compileCoroutine(ICoroutineCompiler *compiler) {
 #define CORO_WHILE(expr)						\
 	CORO_END_CODE_BLOCK							\
 	CORO_START_CODE_BLOCK(CoroOps::WhileCond)	\
-		coroCondition = !!(expr);				\
+		coroRuntime._condition = !!(expr);		\
 	CORO_END_CODE_BLOCK							\
 	CORO_START_CODE_BLOCK(CoroOps::WhileBody)
 
-#define CORO_END_WHILE(expr)					\
+#define CORO_END_WHILE							\
 	CORO_END_CODE_BLOCK							\
 	CORO_START_CODE_BLOCK(CoroOps::EndWhile)
 

@@ -25,10 +25,9 @@
 namespace MTropolis {
 
 enum MiniscriptInstructionOutcome {
-	kMiniscriptInstructionOutcomeContinue,               // Continue executing next instruction
-	kMiniscriptInstructionOutcomeYieldToVThreadNoRetry,  // Instruction pushed a VThread task and should be retried when the task completes
-	kMiniscriptInstructionOutcomeYieldToVThreadAndRetry, // Instruction pushed a VThread task and completed
-	kMiniscriptInstructionOutcomeFailed,                 // Instruction errored
+	kMiniscriptInstructionOutcomeContinue,			// Continue executing next instruction
+	kMiniscriptInstructionOutcomeYieldToVThread,	// Instruction pushed a VThread task
+	kMiniscriptInstructionOutcomeFailed,			// Instruction errored
 };
 
 } // End of namespace MTropolis

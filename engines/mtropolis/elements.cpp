@@ -1057,7 +1057,7 @@ MiniscriptInstructionOutcome MovieElement::scriptSetTimestamp(MiniscriptThread *
 
 	if (asInteger != (int32)_currentTimestamp) {
 		thread->getRuntime()->getVThread().pushCoroutine<MovieElement::SeekToTimeCoroutine>(this, getRuntime(), asInteger);
-		return kMiniscriptInstructionOutcomeYieldToVThreadNoRetry;
+		return kMiniscriptInstructionOutcomeYieldToVThread;
 	}
 
 	return kMiniscriptInstructionOutcomeContinue;
@@ -1128,7 +1128,7 @@ MiniscriptInstructionOutcome MovieElement::scriptSetRangeTyped(MiniscriptThread 
 
 	if (targetTS != _currentTimestamp) {
 		thread->getRuntime()->getVThread().pushCoroutine<MovieElement::SeekToTimeCoroutine>(this, getRuntime(), targetTS);
-		return kMiniscriptInstructionOutcomeYieldToVThreadNoRetry;
+		return kMiniscriptInstructionOutcomeYieldToVThread;
 	}
 
 	return kMiniscriptInstructionOutcomeContinue;

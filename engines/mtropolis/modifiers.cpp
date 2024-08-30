@@ -26,6 +26,7 @@
 
 #include "mtropolis/assets.h"
 #include "mtropolis/audio_player.h"
+#include "mtropolis/coroutines.h"
 #include "mtropolis/miniscript.h"
 #include "mtropolis/modifiers.h"
 #include "mtropolis/modifier_factory.h"
@@ -252,7 +253,7 @@ bool MiniscriptModifier::respondsToEvent(const Event &evt) const {
 VThreadState MiniscriptModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (_enableWhen.respondsTo(msg->getEvent())) {
 		Common::SharedPtr<MiniscriptThread> thread(new MiniscriptThread(runtime, msg, _program, _references, this));
-		MiniscriptThread::runOnVThread(runtime->getVThread(), thread);
+		runtime->getVThread().pushCoroutine<MiniscriptThread::ResumeThreadCoroutine>(thread);
 	}
 
 	return kVThreadReturn;
@@ -1855,18 +1856,36 @@ bool IfMessengerModifier::respondsToEvent(const Event &evt) const {
 	return _when.respondsTo(evt);
 }
 
+CORO_BEGIN_DEFINITION(IfMessengerModifier::RunEvaluateAndSendCoroutine)
+	struct Locals {
+		Common::WeakPtr<RuntimeObject> triggerSource;
+		DynamicValue incomingData;
+		bool isTrue = false;
+		Common::SharedPtr<MiniscriptThread> thread;
+	};
+
+	CORO_BEGIN_FUNCTION
+		// Is this the right place for this?  Not sure if Miniscript can change incomingData
+		locals->triggerSource = params->msg->getSource();
+		locals->incomingData = params->msg->getValue();
+
+		locals->thread.reset(new MiniscriptThread(params->runtime, params->msg, params->self->_program, params->self->_references, params->self));
+
+		CORO_CALL(MiniscriptThread::ResumeThreadCoroutine, locals->thread);
+
+		CORO_IF (!locals->thread->evaluateTruthOfResult(locals->isTrue))
+			CORO_ERROR;
+		CORO_END_IF
+
+		CORO_IF(locals->isTrue)
+			CORO_AWAIT(params->self->_sendSpec.sendFromMessenger(params->runtime, params->self, locals->triggerSource.lock().get(), locals->incomingData, nullptr));
+		CORO_END_IF
+	CORO_END_FUNCTION
+CORO_END_DEFINITION
+
 VThreadState IfMessengerModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	if (_when.respondsTo(msg->getEvent())) {
-		Common::SharedPtr<MiniscriptThread> thread(new MiniscriptThread(runtime, msg, _program, _references, this));
-
-		EvaluateAndSendTaskData *evalAndSendData = runtime->getVThread().pushTask("IfMessengerModifier::evaluateAndSendTask", this, &IfMessengerModifier::evaluateAndSendTask);
-		evalAndSendData->thread = thread;
-		evalAndSendData->runtime = runtime;
-		evalAndSendData->incomingData = msg->getValue();
-		evalAndSendData->triggerSource = msg->getSource();
-
-		MiniscriptThread::runOnVThread(runtime->getVThread(), thread);
-	}
+	if (_when.respondsTo(msg->getEvent()))
+		runtime->getVThread().pushCoroutine<IfMessengerModifier::RunEvaluateAndSendCoroutine>(this, runtime, msg);
 
 	return kVThreadReturn;
 }
@@ -1893,20 +1912,6 @@ void IfMessengerModifier::linkInternalReferences(ObjectLinkingScope *scope) {
 void IfMessengerModifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
 	_sendSpec.visitInternalReferences(visitor);
 	_references->visitInternalReferences(visitor);
-}
-
-
-VThreadState IfMessengerModifier::evaluateAndSendTask(const EvaluateAndSendTaskData &taskData) {
-	MiniscriptThread *thread = taskData.thread.get();
-
-	bool isTrue = false;
-	if (!thread->evaluateTruthOfResult(isTrue))
-		return kVThreadError;
-
-	if (isTrue)
-		_sendSpec.sendFromMessenger(taskData.runtime, this, taskData.triggerSource.lock().get(), taskData.incomingData, nullptr);
-
-	return kVThreadReturn;
 }
 
 TimerMessengerModifier::TimerMessengerModifier() : _milliseconds(0), _looping(false) {

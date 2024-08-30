@@ -79,7 +79,7 @@ VThreadState CoroutineStackFrame2::execute(VThread *thread) {
 				return kVThreadError;
 			else if (runtimeState._miniscriptOutcome == kMiniscriptInstructionOutcomeContinue)
 				break;
-			else if (runtimeState._miniscriptOutcome == kMiniscriptInstructionOutcomeYieldToVThreadNoRetry) {
+			else if (runtimeState._miniscriptOutcome == kMiniscriptInstructionOutcomeYieldToVThread) {
 				_nextInstr = ip;
 				return kVThreadReturn;
 			} else {
