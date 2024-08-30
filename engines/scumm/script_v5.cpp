@@ -1443,6 +1443,9 @@ void ScummEngine_v5::o5_isScriptRunning() {
 	// cutscenes and are abrubtly stopped by the endcutscene in script 204 at 0x0060.
 	// This patch changes the result of isScriptRunning(164) to also wait for any
 	// inventory scripts that are in a cutscene state, preventing the crash.
+	//
+	// (The original interpreter would print a fatal "Object xxx stopped with active
+	// cutscene/override" error.)
 	if (_game.id == GID_MONKEY && _currentScript != 0xFF && vm.slot [_currentScript].number == 204 && _currentRoom == 25 &&
 		enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		ScriptSlot *ss = vm.slot;
@@ -2296,7 +2299,7 @@ void ScummEngine_v5::o5_roomOps() {
 	case 10:	// SO_ROOM_FADE
 		a = getVarOrDirectWord(PARAM_1);
 		if (a) {
-	#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			if (_game.platform == Common::kPlatformFMTowns) {
 				switch (a) {
 				case 8:
@@ -2534,7 +2537,8 @@ void ScummEngine_v5::o5_setObjectName() {
 	// what causes a crash if the object gets restarted. This workaround waits for cutscenes
 	// to end, preventing the crash.
 	//
-	// TODO: analyze the behavior of the original interpreter in this case.
+	// (The original interpreter would print a fatal "Object xxx stopped with active
+	// cutscene/override" error.)
 	if (_game.id == GID_MONKEY && vm.slot[_currentScript].number == 68 && enhancementEnabled(kEnhGameBreakingBugFixes)) {
 		ScriptSlot *ss = vm.slot;
 		for (int i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
