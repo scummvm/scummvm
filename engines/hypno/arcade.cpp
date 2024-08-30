@@ -281,7 +281,9 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 	bool vsync = g_system->getFeatureState(OSystem::kFeatureVSync);
 	// Disable vsync for arcade sequences, since these require a fixed frame rate
+	g_system->beginGFXTransaction();
 	g_system->setFeatureState(OSystem::kFeatureVSync, false);
+	g_system->endGFXTransaction();
 
 	debugC(1, kHypnoDebugArcade, "Using frame delay: %d", arc->frameDelay);
 	Graphics::FrameLimiter limiter(g_system, 1000.0 / arc->frameDelay);
@@ -567,8 +569,10 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 		limiter.startFrame();
 	}
 
+	g_system->beginGFXTransaction();
 	// Restore vsync state
 	g_system->setFeatureState(OSystem::kFeatureVSync, vsync);
+	g_system->endGFXTransaction();
 
 	// Deallocate shoots
 	for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
