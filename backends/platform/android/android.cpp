@@ -557,6 +557,10 @@ void OSystem_Android::initBackend() {
 	_audio_thread_exit = false;
 	pthread_create(&_audio_thread, 0, audioThreadFunc, this);
 
+	JNI::DPIValues dpi;
+	JNI::getDPI(dpi);
+	_touchControls.init(dpi[2]);
+
 	_graphicsManager = new AndroidGraphicsManager();
 
 	// renice this thread to boost the audio thread
