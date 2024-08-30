@@ -7447,6 +7447,10 @@ typedef $unsigned_type_ptr uintptr;
 #endif
 #endif
 
+#if defined(__ANDROID__) && !defined(POSIX)
+#define ANDROID_API
+#endif
+
 #endif /* CONFIG_H */
 EOF
 rm -f config.h.engines
