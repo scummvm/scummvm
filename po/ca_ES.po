@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-29 23:58+0000\n"
-"PO-Revision-Date: 2024-08-27 03:43+0000\n"
+"PO-Revision-Date: 2024-08-31 05:43+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -7543,16 +7543,12 @@ msgid "Enable Gore Mode when available"
 msgstr "Activa el mode “Gore” quan estigui disponible"
 
 #: engines/hopkins/metaengine.cpp:231
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Open inventory"
-msgstr "Obre/Tanca l'inventari"
+msgstr "Obre l'inventari"
 
 #: engines/hopkins/metaengine.cpp:250
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Option dialog"
-msgstr "Omet la línia de diàleg"
+msgstr "Finestra d'opcions"
 
 #: engines/hpl1/metaengine.cpp:76
 msgid "Forward"
@@ -10688,24 +10684,18 @@ msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 
 #: engines/stark/metaengine.cpp:184
-#, fuzzy
-#| msgid "Default keymappings"
 msgid "Default keymapppings"
 msgstr "Assignació de tecles per defecte"
 
 #. I18N: Opens in-game Diary
 #: engines/stark/metaengine.cpp:202
-#, fuzzy
-#| msgid "Game menu"
 msgid "Diary menu"
-msgstr "Menú del joc"
+msgstr "Menú del diari"
 
 #. I18N: Opens in-game conversation log
 #: engines/stark/metaengine.cpp:219
-#, fuzzy
-#| msgid "Exit conversation"
 msgid "Conversation log"
-msgstr "Surt de la conversa"
+msgstr "Registre de converses"
 
 #. I18N: Opens in-game Diary
 #: engines/stark/metaengine.cpp:225
@@ -10713,26 +10703,20 @@ msgid "April's diary (initially disabled)"
 msgstr ""
 
 #: engines/stark/metaengine.cpp:230
-#, fuzzy
-#| msgid "Fast replay"
 msgid "Video replay"
-msgstr "Repetició ràpida"
+msgstr "Repetició de vídeo"
 
 #: engines/stark/metaengine.cpp:235
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game settings"
-msgstr "Opcions del joc"
+msgstr "Configuració del joc"
 
 #: engines/stark/metaengine.cpp:245 engines/wintermute/keymapper_tables.h:1345
 msgid "Toggle subtitles"
 msgstr "Commuta els subtítols"
 
 #: engines/stark/metaengine.cpp:250
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit to menu"
-msgstr "Surt del joc"
+msgstr "Surt al menú"
 
 #: engines/stark/metaengine.cpp:255
 msgid "Cycle back through inventory cursor items"
@@ -10748,16 +10732,12 @@ msgid "Display all exits on current location"
 msgstr ""
 
 #: engines/stark/metaengine.cpp:292
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Scroll up in inventory"
-msgstr "Obre/Tanca l'inventari"
+msgstr "Desplaça't cap amunt a l'inventari"
 
 #: engines/stark/metaengine.cpp:299
-#, fuzzy
-#| msgid "Show inventory"
 msgid "Scroll down in inventory"
-msgstr "Mostra l'inventari"
+msgstr "Desplaça't cap avall en l'inventari"
 
 #: engines/stark/metaengine.cpp:306
 msgid "Scroll up in your dialogues"
@@ -10768,22 +10748,16 @@ msgid "Scroll down in your dialogues"
 msgstr ""
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "Highlight next dialogue"
 msgid "go to next dialogue"
-msgstr "Remarcar el diàleg següent"
+msgstr "ves al diàleg següent"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "Go to previous index"
 msgid "go to previous dialogues"
-msgstr "Ves a l'índex anterior"
+msgstr "ves als diàlegs anteriors"
 
 #: engines/stark/metaengine.cpp:328
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Select dialogue"
-msgstr "Omet la línia de diàleg"
+msgstr "Seleccioneu un diàleg"
 
 #: engines/stark/metaengine.cpp:335
 msgid "Skip video sequence or dialogue"
