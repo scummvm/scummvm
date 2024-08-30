@@ -564,9 +564,33 @@ void Adlib::Func2839() {
 }
 
 void Adlib::OnTimer() {
-	// TODO: Skipping a lot of code above
 
-	// l0017_1B1A - Start of the large loop
+	/* TODO: Skipped:
+	mov	ax,0DDh
+	mov	ds,ax
+	*/
+	g2296++;
+
+	if (g2296 >= g2298) {
+		// l0017_1ABD:
+		g2296 = 0;
+
+		/* TODO: Skipped parts
+		xor	ax,ax
+		mov	[2296h],ax
+		pushf
+		call	dword ptr [2292h]
+		mov	byte ptr [229Ah],1h
+		jmp	1AD3h
+		*/
+	} else {
+		// l0017_1ACE:
+		g229A = false;
+	}
+	// l0017_1AD3:
+	// TODO: Continue here
+	
+	
 }
 
 uint16 Adlib::Func19BE(uint8 offset) {
@@ -591,7 +615,6 @@ void Adlib::Func1A03() {
 	bp1 = data->readByte();
 	// Go back to allow 19BE below to handle it properly
 	data->seek(-1, SEEK_CUR);
-
 
 	uint32 timer = _nextEventTimer;
 	// TODO: Not sure what this does in practice
