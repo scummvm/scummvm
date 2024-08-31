@@ -1386,6 +1386,7 @@ protected:
 	virtual void palManipulateInit(int resID, int start, int end, int time);
 	void palManipulate();
 	uint32 findClosestPaletteColor(byte *palette, int paletteLength, byte r, byte g, byte b);
+	void applyGrayscaleToPaletteRange(int min, int max); // For Sam&Max original noir mode
 
 public:
 	uint8 *getHEPaletteSlot(uint16 palSlot);

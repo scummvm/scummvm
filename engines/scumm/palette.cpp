@@ -419,6 +419,9 @@ void ScummEngine::setPaletteFromPtr(const byte *ptr, int numcolor) {
 	}
 
 	setDirtyColors(firstIndex, numcolor - 1);
+
+	if (_game.id == GID_SAMNMAX && !enhancementEnabled(kEnhMinorBugFixes))
+		VAR(77) = 0;
 }
 
 void ScummEngine::setAmigaPaletteFromPtr(const byte *ptr) {
@@ -1180,6 +1183,10 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 			}
 			if (_game.heversion != 70)
 				setDirtyColors(startColor, endColor);
+
+			// Original noir mode behavior
+			if (_game.id == GID_SAMNMAX && !enhancementEnabled(kEnhMinorBugFixes) && VAR(77) == 1)
+				applyGrayscaleToPaletteRange(startColor, endColor);
 		}
 	}
 }
@@ -1384,6 +1391,10 @@ void ScummEngine::copyPalColor(int dst, int src) {
 		_16BitPalette[dst] = get16BitColor(sp[0], sp[1], sp[2]);
 
 	setDirtyColors(dst, dst);
+
+	// Original noir mode behavior
+	if (_game.id == GID_SAMNMAX && !enhancementEnabled(kEnhMinorBugFixes) && VAR(77) == 1)
+		applyGrayscaleToPaletteRange(src, src);
 }
 
 void ScummEngine::setPalColor(int idx, int r, int g, int b) {
@@ -1447,6 +1458,10 @@ void ScummEngine::setPalColor(int idx, int r, int g, int b) {
 		_16BitPalette[idx] = get16BitColor(r, g, b);
 
 	setDirtyColors(idx, idx);
+
+	// Original noir mode behavior
+	if (_game.id == GID_SAMNMAX && !enhancementEnabled(kEnhMinorBugFixes) && VAR(77) == 1)
+		applyGrayscaleToPaletteRange(idx, idx);
 }
 
 void ScummEngine::setCurrentPalette(int palindex) {
@@ -1583,6 +1598,37 @@ uint32 ScummEngine::findClosestPaletteColor(byte *palette, int paletteLength, by
 	return (uint32)_pl.findBestColor(r, g, b, true);
 }
 
+void ScummEngine::applyGrayscaleToPaletteRange(int min, int max) {
+	assertRange(0, min, 256, "ScummEngine::applyGrayscaleToPaletteRange(): min");
+	assertRange(0, max, 256, "ScummEngine::applyGrayscaleToPaletteRange(): min");
+
+	if (min <= max) {
+		int count = max - min + 1;
+		byte *paletteEntry = &_currentPalette[3 * min];
+
+		for (int i = 0; i < count; i++) {
+			int r = paletteEntry[0];
+			int g = paletteEntry[1];
+			int b = paletteEntry[2];
+			byte average = (byte)((r + g + b) / 3);
+
+			// The original checks for colors to be < 126,
+			// but we handle things a little bit differently,
+			// so this is not needed...
+			// 
+			// if (r < 126 || g < 126 || b < 126) {
+				paletteEntry[0] = average;
+				paletteEntry[1] = average;
+				paletteEntry[2] = average;
+			// }
+
+			paletteEntry += 3;
+		}
+	}
+
+	setDirtyColors(min, max);
+}
+
 void ScummEngine::updatePalette() {
 	if (_game.features & GF_16BIT_COLOR)
 		return;
@@ -1623,7 +1669,7 @@ void ScummEngine::updatePalette() {
 
 		_system->getPaletteManager()->setPalette(mouseCursorPalette, 252, 3);
 	} else {
-		bool noir_mode = (_game.id == GID_SAMNMAX && readVar(0x8000));
+		bool noirMode = (_game.id == GID_SAMNMAX && readVar(0x8000));
 		int i;
 
 		first = _palDirtyMin;
@@ -1637,10 +1683,9 @@ void ScummEngine::updatePalette() {
 			else
 				data = _currentPalette + i * 3;
 
-			// Sam & Max film noir mode. Convert the colors to grayscale
-			// before uploading them to the backend.
-
-			if (noir_mode) {
+			// Sam & Max film noir mode - Enhanced version.
+			// Convert the colors to grayscale before uploading them to the backend.
+			if (noirMode && enhancementEnabled(kEnhMinorBugFixes)) {
 				int r, g, b;
 				byte brightness;
 
@@ -1648,7 +1693,7 @@ void ScummEngine::updatePalette() {
 				g = data[1];
 				b = data[2];
 
-				brightness = (byte)((0.299 * r + 0.587 * g + 0.114 * b) + 0.5);
+				brightness = (byte)((r + g + b) / 3);
 
 				*p++ = brightness;
 				*p++ = brightness;
