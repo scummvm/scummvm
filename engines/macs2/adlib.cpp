@@ -588,7 +588,6 @@ void Adlib::OnTimer() {
 		g229A = false;
 	}
 	// l0017_1AD3:
-	// TODO: Continue here
 	if (!g229A) {
 		// l0017_1ADA:
 		// TODO: Nothing to do in our implementation, the original confirms we are handling the
@@ -603,7 +602,42 @@ void Adlib::OnTimer() {
 		g2258 |= 0x40;
 	}
 	// l0017_1AF7:
-	// TODO: Continue from here
+
+	// TODO: This is a huge jump, maybe should go for a separate function
+	if (g2258 & 0xC3) {
+		// l0017_1B03:
+		if (_nextEventTimer != 0) {
+			_nextEventTimer--;
+			// TODO: There is some more to do in theory, but might be neglible
+			/*
+			* l0017_2438:
+				cmp	byte ptr [229Ah],0h
+				jnz	2443h
+
+			l0017_243F:
+				mov	al,20h
+				out	20h,al
+			*/
+			return;
+		}
+		// l0017_1B19:
+		// TODO: Code does a cli, but probably neglible
+
+		// TODO: Handle the loop properly
+		for (;;) {
+			// l0017_1B1A:
+			uint8 current = data->readByte();
+			if (current & 0x80) {
+				// l0017_1B27:
+				// TODO: Continue from here
+			}
+	
+		}
+
+
+		
+	}
+	// TODO: This needs to be l0017_2425
 	
 	
 }
