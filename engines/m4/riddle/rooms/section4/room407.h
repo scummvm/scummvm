@@ -121,7 +121,6 @@ private:
 	machine *_lockButton2 = nullptr;
 	machine *_lockButton3 = nullptr;
 	machine *_lockButton4 = nullptr;
-	int _407h = 0;
 	int _ripEnters = 0;
 	int _stair = 0;
 	machine *_ripley = nullptr;
@@ -138,6 +137,22 @@ private:
 	int _pump407 = 0;
 	int _hangRip = 0;
 	int _rptmhr11 = 0;
+	int _407tpis2 = 0;
+	int _407a = 0;
+	int _407b = 0;
+	int _407c = 0;
+	int _407d = 0;
+	int _407h = 0;
+	int _407j = 0;
+	int _407k = 0;
+	int _407l = 0;
+	int _407m = 0;
+	int _407o = 0;
+	int _407p = 0;
+	int _407q = 0;
+	int _407r = 0;
+	int _407s = 0;
+	int _exit = 0;
 
 	void setHotspots();
 	void lookItem(const char *item, const char *digi);

@@ -568,7 +568,602 @@ void Room407::init() {
 }
 
 void Room407::daemon() {
-	// TODO
+	switch (_G(kernel).trigger) {
+	case 10:
+		player_set_commands_allowed(false);
+		digi_play("407_s02", 2);
+		terminateMachineAndNull(_drawerPopup);
+
+		if (_xyzzy2 == 1101)
+			terminateMachineAndNull(_drawerPopupHose);
+		if (_xyzzy5 == 1101)
+			terminateMachineAndNull(_stopperInDrawer);
+		if (_xyzzy3 == 1101)
+			terminateMachineAndNull(_tubeInDrawer);
+		if (_xyzzy4 == 1101)
+			terminateMachineAndNull(_handleInDrawer);
+
+		sendWSMessage_120000(12);
+		break;
+
+	case 12:
+		setHotspots();
+		sendWSMessage_150000(13);
+		break;
+
+	case 13:
+		series_unload(_ripMedReach);
+		player_set_commands_allowed(true);
+		break;
+
+	case 20:
+		if (_val10 != 1113) {
+			_407tpis2 = series_load("407tpis2");
+			terminateMachineAndNull(_tpist);
+			_tpist = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+				triggerMachineByHashCallbackNegative, "PISTON ONLY");
+			sendWSMessage_10000(1, _tpist, _407tpis2, 1, 33, 40,
+				_407tpis2, 33, 33, 0);
+			digi_play("407_s18", 2);
+		} else if (_xyzzy7 != 1112) {
+			kernel_timing_trigger(1, 90);
+		} else if (!inv_object_is_here("EMERALD/CORK")) {
+			kernel_timing_trigger(1, 50);
+		} else if (_xyzzy6 != 1116) {
+			kernel_timing_trigger(1, (_xyzzy5 == 1116) ? 70 : 50);
+		} else {
+			kernel_timing_trigger(1, (_xyzzy5 == 1116) ? 80 : 60);
+		}
+		break;
+
+	case 40:
+		terminateMachineAndNull(_tpist);
+		series_unload(_407tpis2);
+		_tpist = series_place_sprite("407TPIST", 0, 0, -53, 100, 0xf00);
+
+		if (_xyzzy7 != 1112)
+			kernel_timing_trigger(1, 180);
+		else if (!inv_object_is_here("EMERALD/CORK"))
+			kernel_timing_trigger(1, 185);
+		else if (_xyzzy6 != 1116)
+			kernel_timing_trigger(1, (_xyzzy5 == 1116) ? 170 : 150);
+		else
+			kernel_timing_trigger(1, (_xyzzy5 == 1116) ? 175 : 160);
+		break;
+
+	case 50:
+		_407j = series_load("407j");
+		terminateMachineAndNull(_lever);
+		terminateMachineAndNull(_tpist);
+
+		_tpist = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+			triggerMachineByHashCallbackNegative, "PISTON & LEVER");
+		sendWSMessage_10000(1, _tpist, _407j, 1, 33, 52,
+			_407j, 33, 33, 0);
+		digi_play("407_s18", 2);
+		break;
+
+	case 52:
+		terminateMachineAndNull(_tpist);
+		series_unload(_407j);
+		_lever = series_place_sprite("407LEVRW", 2, 0, -53, 100, 0xb00);
+		_tpist = series_place_sprite("407TPIST", 0, 0, -53, 100, 0xf00);
+
+		kernel_timing_trigger(1, inv_object_is_here("EMERALD/CORK") ? 150 : 185);
+		break;
+
+	case 60:
+		_407o = series_load("407o");
+		_407k = series_load("407k");
+		terminateMachineAndNull(_lever);
+		terminateMachineAndNull(_tpist);
+
+		_tpist = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+			triggerMachineByHashCallbackNegative, "PISTON & LEVER");
+		sendWSMessage_10000(1, _tpist, _407k, 1, 33, 61, _407k, 33, 33, 0);
+		digi_play("407_s18", 2);
+		break;
+
+	case 61:
+		digi_stop(2);
+		terminateMachineAndNull(_tpist);
+		series_unload(_407k);
+
+		_lever = series_place_sprite("407LEVRW", 2, 0, -53, 100, 0xb00);
+		_tpist = series_place_sprite("407TPIST", 0, 0, -53, 100, 0xf00);
+		terminateMachineAndNull(_bottle);
+		terminateMachineAndNull(_chart);
+
+		_bottle = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+			triggerMachineByHashCallbackNegative, "GLASS JAR SHAKES");
+		sendWSMessage_10000(1, _bottle, _407o, 1, 51, 62,
+			_407o, 51, 51, 0);
+		digi_play("407_s16", 3);
+		break;
+
+	case 62:
+		digi_play("407_s19", 1);
+		sendWSMessage_10000(1, _bottle, _407o, 52, 66, 63, _407o, 66, 66, 0);
+		break;
+
+	case 63:
+		digi_play("407_s28", 1);
+		sendWSMessage_10000(1, _bottle, _407o, 67, 91, 64, _407o, 91, 91, 0);
+		break;
+
+	case 64:
+		terminateMachineAndNull(_bottle);
+		_bottle = series_place_sprite("sprite ofempty bottle", 0, 0, -53, 100, 0xf00);
+		_chart = series_place_sprite("407chrt2", 0, 0, -53, 100, 0xf00);
+
+		series_unload(_407o);
+		kernel_timing_trigger(1, 190);
+		break;
+
+	case 70:
+		_407l = series_load("407l");
+		terminateMachineAndNull(_lever);
+		terminateMachineAndNull(_tpist);
+
+		_tpist = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+			triggerMachineByHashCallbackNegative, "PISTON & LEVER");
+		sendWSMessage_10000(1, _tpist, _407l, 1, 33, 72, _407l, 33, 33, 0);
+		digi_play("407_s18", 2);
+		break;
+
+	case 72:
+		terminateMachineAndNull(_tpist);
+		series_unload(_407l);
+
+		_lever = series_place_sprite("407LEVRW", 2, 0, -53, 100, 0xb00);
+		_tpist = series_place_sprite("407TPIST", 0, 0, -53, 100, 0xf00);
+		kernel_timing_trigger(1, 170);
+		break;
+
+	case 80:
+		_407p = series_load("407p");
+		_407m = series_load("407m");
+
+		terminateMachineAndNull(_lever);
+		terminateMachineAndNull(_tpist);
+		_tpist = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+			triggerMachineByHashCallbackNegative, "PISTON & LEVER");
+		sendWSMessage_10000(1, _tpist, _407m, 1, 33, 81, _407m, 33, 33, 0);
+		digi_play("407_s18", 2);
+		break;
+
+	case 81:
+		digi_stop(2);
+		terminateMachineAndNull(_tpist);
+
+		_lever = series_place_sprite("407LEVRW", 2, 0, -53, 100, 0xb00);
+		_tpist = series_place_sprite("407TPIST", 0, 0, -53, 100, 0xf00);
+		terminateMachineAndNull(_stopperInDrawer);
+		terminateMachineAndNull(_bottle);
+		terminateMachineAndNull(_chart);
+
+		_bottle = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+			triggerMachineByHashCallbackNegative, "GLASS JAR TURNS");
+		sendWSMessage_10000(1, _bottle, _407p, 1, 51, 82, _407p, 51, 51, 0);
+		break;
+
+	case 82:
+		digi_play("407_s19", 1);
+		sendWSMessage_10000(1, _bottle, _407p, 52, 66, 83, _407p, 66, 66, 0);
+		break;
+
+	case 83:
+		sendWSMessage_10000(1, _bottle, _407p, 67, 91, 84, _407p, 91, 91, 0);
+		break;
+
+	case 84:
+		terminateMachineAndNull(_bottle);
+		_bottle = series_place_sprite("sprite ofempty bottle", 0, 0, -53, 100, 0xf00);
+		_stopperInDrawer = series_place_sprite("407bbits", 2, 0, -53, 100, 0xe00);
+		_chart = series_place_sprite("407chrt2", 0, 0, -53, 100, 0xf00);
+
+		series_unload(_407p);
+		kernel_timing_trigger(1, 190);
+		break;
+
+	case 90:
+		_407q = series_load("407q");
+		terminateMachineAndNull(_lever);
+		terminateMachineAndNull(_tpist);
+
+		_tpist = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+			triggerMachineByHashCallbackNegative, "PISTON & LEVER");
+		sendWSMessage_10000(1, _tpist, _407q, 1, 33, 92, _407q, 33, 33, 0);
+		digi_play("407_s18", 2);
+		break;
+
+	case 92:
+		terminateMachineAndNull(_tpist);
+		series_unload(_407q);
+		_lever = series_place_sprite("407LEVRW", 2, 0, -53, 100, 0xb00);
+		_tpist = series_place_sprite("407TPIST", 0, 0, -53, 100, 0xf00);
+		kernel_timing_trigger(1, 180);
+		break;
+
+	case 150:
+		digi_stop(2);
+		terminateMachineAndNull(_bottle);
+
+		_407a = series_load("407a");
+		_bottle = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+			triggerMachineByHashCallbackNegative, "GLASS JAR TURNS");
+		sendWSMessage_10000(1, _bottle, _407a, 1, 30, 151, _407a, 30, 30, 0);
+		digi_play("407_s16", 3);
+
+		if (inv_object_is_here("EMERALD/CORK"))
+			kernel_timing_trigger(240, 450);
+		break;
+
+	case 151:
+		sendWSMessage_10000(1, _bottle, _407a, 31, 61, 152, _407a, 61, 61, 0);
+		digi_play("407_s17", 3);
+		break;
+
+	case 152:
+		terminateMachineAndNull(_bottle);
+		_bottle = series_place_sprite("407BOTLE", 0, 0, -53, 100, 0xf00);
+		series_unload(_407a);
+		player_set_commands_allowed(true);
+		break;
+
+	case 160:
+		digi_stop(2);
+		terminateMachineAndNull(_bottle);
+		terminateMachineAndNull(_chart);
+
+		_407b = series_load("407b");
+		_bottle = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+			triggerMachineByHashCallbackNegative, "GLASS JAR TURNS");
+		sendWSMessage_10000(1, _bottle, _407b, 1, 30, 161, _407b, 30, 30, 0);
+		digi_play("407_s16", 3);
+		kernel_timing_trigger(240, 450);
+		break;
+
+	case 161:
+		sendWSMessage_10000(1, _bottle, _407b, 31, 61, 162, _407b, 61, 61, 0);
+		digi_play("407_s17", 3);
+		break;
+
+	case 162:
+		terminateMachineAndNull(_bottle);
+		_bottle = series_place_sprite("407BOTLE", 0, 0, -53, 100, 0xf00);
+		_chart = series_place_sprite("407bbits", 1, 0, -53, 100, 0xe00);
+		series_unload(_407b);
+		player_set_commands_allowed(true);
+		break;
+
+	case 170:
+		digi_stop(2);
+		terminateMachineAndNull(_bottle);
+		terminateMachineAndNull(_stopperInDrawer);
+
+		_407c = series_load("407c");
+		_bottle = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+			triggerMachineByHashCallbackNegative, "GLASS JAR TURNS");
+		sendWSMessage_10000(1, _bottle, _407c, 1, 30, 171, _407c, 30, 30, 0);
+		digi_play("407_s16", 3);
+		kernel_timing_trigger(240, 450);
+		break;
+
+	case 171:
+		sendWSMessage_10000(1, _bottle, _407c, 31, 61, 172, _407c, 61, 61, 0);
+		digi_play("407_s17", 3);
+		break;
+
+	case 172:
+		terminateMachineAndNull(_bottle);
+		_bottle = series_place_sprite("407BOTLE", 0, 0, -53, 100, 0xf00);
+		_stopperInDrawer = series_place_sprite("407bbits", 2, 0, -53, 100, 0xe00);
+		series_unload(_407c);
+		player_set_commands_allowed(true);
+		break;
+
+	case 175:
+		digi_stop(2);
+		terminateMachineAndNull(_stopperInDrawer);
+		terminateMachineAndNull(_bottle);
+		terminateMachineAndNull(_chart);
+
+		_407d = series_load("407d");
+		_bottle = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+			triggerMachineByHashCallbackNegative, "GLASS JAR TURNS");
+		sendWSMessage_10000(1, _bottle, _407d, 1, 30, 176, _407d, 30, 30, 0);
+		digi_play("407_s16", 3);
+		kernel_timing_trigger(240, 450);
+		break;
+
+	case 176:
+		sendWSMessage_10000(1, _bottle, _407d, 31, 61, 177, _407d, 61, 61, 0);
+		digi_play("407_s17", 3);
+		break;
+
+	case 177:
+		terminateMachineAndNull(_bottle);
+		_bottle = series_place_sprite("407BOTLE", 0, 0, -53, 100, 0xf00);
+		_stopperInDrawer = series_place_sprite("407bbits", 2, 0, -53, 100, 0xe00);
+		_chart = series_place_sprite("407bbits", 1, 0, -53, 100, 0xe00);
+		series_unload(_407d);
+		player_set_commands_allowed(true);
+		break;
+
+	case 180:
+		digi_stop(2);
+		terminateMachineAndNull(_gears);
+
+		_407s = series_load("407s");
+		_gears = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+			triggerMachineByHashCallbackNegative, "GEARS TURN");
+		sendWSMessage_10000(1, _bottle, _407s, 1, 30, 181, _407s, 30, 30, 0);
+		digi_play("407_s16", 3);
+		break;
+
+	case 181:
+		sendWSMessage_10000(1, _gears, _407s, 31, 60, 182, _407s, 60, 60, 0);
+		digi_play("407_s17", 3);
+		break;
+
+	case 182:
+		terminateMachineAndNull(_gears);
+		_gears = series_place_sprite("407GEARS", 0, 0, -53, 100, 0xf00);
+		series_unload(_407s);
+		player_set_commands_allowed(true);
+		break;
+
+	case 185:
+		digi_stop(2);
+		terminateMachineAndNull(_bottle);
+
+		_407r = series_load("407r");
+		_bottle = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+			triggerMachineByHashCallbackNegative, "GLASS JAR TURNS");
+		sendWSMessage_10000(1, _bottle, _407r, 1, 30, 186, _407r, 30, 30, 0);
+		digi_play("407_s16", 3);
+		break;
+
+	case 186:
+		sendWSMessage_10000(1, _bottle, _407r, 31, 61, 187, _407r, 61, 61, 0);
+		digi_play("407_s17", 3);
+		break;
+
+	case 187:
+		terminateMachineAndNull(_bottle);
+		_bottle = series_place_sprite("sprite ofempty bottle", 0, 0, -53, 100, 0xf00);
+		series_unload(_407r);
+		player_set_commands_allowed(true);
+		break;
+
+	case 190:
+		ws_walk(155, 335, nullptr, 192, 11);
+		break;
+
+	case 192:
+		_ripMedHand1 = series_load("RIP TREK MED REACH HAND POS1");
+		setGlobals1(_ripMedHand1, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+		sendWSMessage_110000(193);
+		break;
+
+	case 193:
+		inv_give_to_player("EMERALD/CORK");
+		hotspot_set_active("EMERALD/CORK", false);
+		hotspot_set_active("PERIODIC TABLE/JAR", false);
+		hotspot_set_active("PERIODIC TABLE ", true);
+		_xyzzy6 = 1120;
+
+		midi_play("EMERALD", 255, 0, 194, 949);
+		kernel_examine_inventory_object("PING EMERALD/CORK",
+			_G(master_palette), 5, 1, 50, 200, 195, nullptr, -1);
+		break;
+
+	case 194:
+		digi_play("407r32", 1);
+		break;
+
+	case 195:
+		sendWSMessage_120000(196);
+		break;
+
+	case 196:
+		sendWSMessage_150000(197);
+		break;
+
+	case 197:
+		series_unload(_ripMedHand1);
+		_xyzzy8 = 1000;
+		player_set_commands_allowed(true);
+		break;
+
+	case 200:
+		player_set_commands_allowed(false);
+		digi_stop(1);
+		terminateMachineAndNull(_tabletopPopup);
+
+		if (_xyzzy3 == 1117)
+			terminateMachineAndNull(_tabletopPopupWithItems1);
+		if (_val9 == 1110)
+			terminateMachineAndNull(_tabletopPopupWithItems2);
+		if (_val10 == 1113)
+			terminateMachineAndNull(_tabletopPopupWithItems3);
+
+		setHotspots();
+		player_set_commands_allowed(true);
+		break;
+
+	case 202:
+		player_set_commands_allowed(false);
+		digi_stop(1);
+		terminateMachineAndNull(_pivotPopup);
+
+		if (_val10 == 1113)
+			terminateMachineAndNull(_tabletopPopupWithItems3);
+
+		setHotspots();
+		player_set_commands_allowed(true);
+		break;
+
+	case 204:
+		player_set_commands_allowed(false);
+		digi_stop(1);
+		terminateMachineAndNull(_glassTopPopup);
+
+		if (_xyzzy6 == 1116)
+			terminateMachineAndNull(_tabletopPopupWithItems2);
+		if (_val6 == 1010)
+			terminateMachineAndNull(_tabletopPopupWithItems1);
+
+		setHotspots();
+		player_set_commands_allowed(true);
+		break;
+
+	case 206:
+		player_set_commands_allowed(false);
+		digi_stop(1);
+		terminateMachineAndNull(_glassTopPopup);
+
+		if (_xyzzy6 == 1116)
+			terminateMachineAndNull(_tabletopPopupWithItems2);
+		if (_xyzzy8 == 1116)
+			terminateMachineAndNull(_glassBottomWithItems1);
+		if (_xyzzy5 == 1116)
+			terminateMachineAndNull(_glassBottomWithItems2);
+
+		setHotspots();
+		player_set_commands_allowed(true);
+		break;
+
+	case 208:
+		player_set_commands_allowed(false);
+		digi_stop(1);
+		terminateMachineAndNull(_glassTopPopup);
+
+		if (_xyzzy6 == 1116)
+			terminateMachineAndNull(_glassTopPopupWithItems2);
+		if (_xyzzy8 == 1116)
+			terminateMachineAndNull(_glassBottomWithItems1);
+		if (_xyzzy5 == 1116)
+			terminateMachineAndNull(_glassBottomWithItems2);
+		if (_val6 == 1010)
+			terminateMachineAndNull(_glassTopPopupWithItems1);
+
+		setHotspots();
+		player_set_commands_allowed(true);
+		break;
+
+	case 210:
+		player_set_commands_allowed(false);
+		digi_stop(1);
+		terminateMachineAndNull(_roofPiston);
+
+		if (_val10 == 1114)
+			terminateMachineAndNull(_tabletopPopupWithItems3);
+		if (_xyzzy1 == 1114)
+			terminateMachineAndNull(_roofPistonWithItems);
+
+		setHotspots();
+		player_set_commands_allowed(true);
+		break;
+
+	case 212:
+		player_set_commands_allowed(false);
+		digi_stop(1);
+		terminateMachineAndNull(_glassGone);
+
+		setHotspots();
+		player_set_commands_allowed(true);
+		break;
+
+	case 214:
+		player_set_commands_allowed(false);
+		terminateMachineAndNull(_comboLockPopup);
+		terminateMachineAndNull(_lockButton1);
+		terminateMachineAndNull(_lockButton2);
+		terminateMachineAndNull(_lockButton3);
+		terminateMachineAndNull(_lockButton4);
+		series_unload(_407pu08d);
+		series_unload(_407pu08c);
+		series_unload(_407pu08b);
+		series_unload(_407pu08a);
+
+		setHotspots();
+		player_set_commands_allowed(true);
+		break;
+
+	case 216:
+		terminateMachineAndNull(_glassTopPopupWithItems2);
+		setHotspots();
+		interface_show();
+		player_set_commands_allowed(true);
+		break;
+
+	case 218:
+		player_set_commands_allowed(false);
+		digi_stop(1);
+		terminateMachineAndNull(_microscopeCloseup);
+
+		setHotspots();
+		player_set_commands_allowed(true);
+		break;
+
+	case 300:
+		ws_walk(441, 331, nullptr, 302, 1);
+		break;
+
+	case 302:
+		_ripHiHand1 = series_load("rip trek hi 1 hand");
+		setGlobals1(1, _ripHiHand1, 12, 12, 12, 0, 12, 1, 1, 1);
+		sendWSMessage_110000(303);
+		break;
+
+	case 303:
+		terminateMachineAndNull(_tubeInDrawer);
+		terminateMachineAndNull(_drawerPopupHose);
+		terminateMachineAndNull(_faucet1);
+
+		hotspot_set_active("GARDEN HOSE ", false);
+		hotspot_set_active("GARDEN HOSE  ", false);
+		hotspot_set_active("FAUCET PIPE  ", false);
+		hotspot_set_active("FAUCET PIPE ", true);
+		hotspot_set_active("SURGICAL TUBE  ", true);
+		hotspot_set_active("SURGICAL TUBE ", false);
+		hotspot_set_active("GARDEN HOSE   ", true);
+
+		_val8 = 1140;
+		_xyzzy2 = 1140;
+		_xyzzy3 = 1140;
+		_xyzzy7 = 1140;
+		_drawerPopupHose = series_place_sprite("407 TUBE AND HOSE TO JAR",
+			0, 0, 0, 100, 0xb00);
+		_faucet1 = series_place_sprite("407BITSR", 1, 0, -53, 100, 0xb00);
+		sendWSMessage_120000(304);
+		break;
+
+	case 304:
+		sendWSMessage_150000(305);
+		break;
+
+	case 305:
+		series_unload(_ripHiHand1);
+		_frotz1 = 1;
+		player_set_commands_allowed(true);
+		break;
+
+	case 310:
+		ws_walk(441, 331, nullptr, 312, 1);
+		break;
+
+	case 312:
+		_ripHiHand1 = series_load("rip trek hi 1 hand");
+		setGlobals1(_ripHiHand1, 1, 12, 12, 12, 0, 12, 1, 1, 1);
+		sendWSMessage_110000(313);
+		break;
+// TODO
+	default:
+		break;
+	}
 }
 
 void Room407::pre_parser() {
