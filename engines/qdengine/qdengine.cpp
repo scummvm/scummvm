@@ -54,15 +54,11 @@
 namespace QDEngine {
 
 QDEngineEngine *g_engine;
-grDispatcher *grD = NULL;
-qdGameDispatcher *qd_gameD = NULL;
 
 static void generateTagMap(int date, bool verbose = true);
 void searchTagMap(int id, int targetVal);
 static int detectVersion(Common::String gameID);
 
-static void init_graphics();
-static bool init_graphics_dispatcher();
 static void restore_graphics();
 
 static void qd_show_load_progress(int percents_loaded, void *p);
@@ -140,11 +136,7 @@ Common::Error QDEngineEngine::run() {
 		return Common::kNoGameDataFoundError;
 	}
 
-	grD = new grDispatcher();
-
-	grD->hideMouse();
-
-	grD->showMouse(); // FIXME HACK
+	_grD = new grDispatcher();
 
 	SplashScreen sp;
 	if (ConfMan.getBool("splash_enabled")) {
@@ -161,15 +153,15 @@ Common::Error QDEngineEngine::run() {
 
 	grDispatcher::set_default_font(qdGameDispatcher::create_font(0));
 
-	qd_gameD = new qdGameDispatcher;
-	qd_gameD->load_script(script_name.c_str());
+	_gameD = new qdGameDispatcher;
+	_gameD->load_script(script_name.c_str());
 
 	if (ConfMan.getBool("dump_scripts")) {
-		qd_gameD->save_script("qd_game.xml");
+		_gameD->save_script("qd_game.xml");
 		debug("Dumped qd_game.xml%s", debugChannelSet(-1, kDebugLog) ? " in human-readable form" : "");
 	}
 
-	qd_gameD->set_scene_loading_progress_callback(qd_show_load_progress);
+	_gameD->set_scene_loading_progress_callback(qd_show_load_progress);
 
 	if (ConfMan.getBool("splash_enabled")) {
 		sp.wait(ConfMan.getInt("splash_time"));
@@ -184,18 +176,18 @@ Common::Error QDEngineEngine::run() {
 
 	winVideo::init();
 
-	qd_gameD->load_resources();
+	_gameD->load_resources();
 
 	if (ConfMan.hasKey("boot_param")) {
 		const char *scene_name = ""; // FIXME. Implement actual scene selection
-		if (!qd_gameD->select_scene(scene_name))
+		if (!_gameD->select_scene(scene_name))
 			error("Cannot find the startup scene");
 	} else {
 		bool music_enabled = mpegPlayer::instance().is_enabled();
 		mpegPlayer::instance().disable();
 
-		qd_gameD->toggle_main_menu(true);
-		if (!qd_gameD->start_intro_videos()) {
+		_gameD->toggle_main_menu(true);
+		if (!_gameD->start_intro_videos()) {
 			if (music_enabled)
 				mpegPlayer::instance().enable(true);
 		} else {
@@ -204,12 +196,12 @@ Common::Error QDEngineEngine::run() {
 		}
 	}
 
-	qd_gameD->update_time();
-	qd_gameD->quant();
+	_gameD->update_time();
+	_gameD->quant();
 
 	ResourceDispatcher resD;
 	resD.setTimer(ConfMan.getBool("logic_synchro_by_clock"), ConfMan.getInt("logic_period"), 300);
-	resD.attach(new MemberFunctionCallResourceUser<qdGameDispatcher>(*qd_gameD, &qdGameDispatcher::quant, ConfMan.getInt("logic_period")));
+	resD.attach(new MemberFunctionCallResourceUser<qdGameDispatcher>(*_gameD, &qdGameDispatcher::quant, ConfMan.getInt("logic_period")));
 	sndD->set_frequency_coeff(ConfMan.getFloat("game_speed"));
 	resD.set_speed(ConfMan.getFloat("game_speed"));
 	resD.start();
@@ -222,7 +214,7 @@ Common::Error QDEngineEngine::run() {
 
 	Common::Event event;
 
-	while (!exit_flag && !qd_gameD->need_exit()) {
+	while (!exit_flag && !_gameD->need_exit()) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
@@ -277,7 +269,7 @@ Common::Error QDEngineEngine::run() {
 				g_system->delayMillis(500);
 			}
 			resD.quant();
-			qd_gameD->redraw();
+			_gameD->redraw();
 
 		} else {
 			was_inactive = true;
@@ -288,14 +280,14 @@ Common::Error QDEngineEngine::run() {
 		g_system->updateScreen();
 	}
 
-	delete qd_gameD;
+	delete _gameD;
 
 	grDispatcher::instance()->finit();
 
 	qdFileManager::instance().Finit();
 
 	delete sndD;
-	delete grD;
+	delete _grD;
 
 	winVideo::done();
 
@@ -417,14 +409,13 @@ static int detectVersion(Common::String gameID) {
 	}
 }
 
-void init_graphics() {
+void QDEngineEngine::init_graphics() {
 	grDispatcher::set_restore_handler(restore_graphics);
 	grDispatcher::instance()->finit();
 
-	grDispatcher::set_instance(grD);
+	grDispatcher::set_instance(_grD);
 
-	if (!init_graphics_dispatcher())
-		return;
+	grDispatcher::instance()->init(g_engine->_screenW, g_engine->_screenH, GR_RGB565);
 
 	grDispatcher::instance()->setClip();
 	grDispatcher::instance()->setClipMode(1);
@@ -434,11 +425,6 @@ void init_graphics() {
 	g_system->updateScreen();
 
 	grDispatcher::instance()->flush();
-}
-
-bool init_graphics_dispatcher() {
-	grDispatcher::instance()->init(g_engine->_screenW, g_engine->_screenH, GR_RGB565);
-	return true;
 }
 
 void qd_show_load_progress(int percents_loaded, void *p) {
