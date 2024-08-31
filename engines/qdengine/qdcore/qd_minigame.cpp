@@ -267,7 +267,6 @@ bool qdMiniGame::load_interface() {
 	if (!_dll_name.empty()) {
 
 		// maski
-		// Arkada_avtomat.dll
 		if (_dll_name == "Resource\\DLL\\tetris.dll") {
 			_interface = new qdTetrisMiniGame();
 			return true;
@@ -288,6 +287,9 @@ bool qdMiniGame::load_interface() {
 			return true;
 		} else if (_dll_name == "Resource\\DLL\\orchestra.dll") {
 			_interface = new qdOrchestraMiniGame();
+			return true;
+		} else if (_dll_name == "Resource\\DLL\\Arkada_avtomat.dll") {
+			_interface = new qdArkadaAvtomatMiniGame();
 			return true;
 
 
