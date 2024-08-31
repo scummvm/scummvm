@@ -39,25 +39,6 @@ namespace Agi {
 #define SOUND_EMU_MIDI 7
 
 /**
- * AGI sound note structure.
- */
-struct AgiNote {
-	uint16 duration;    ///< Note duration
-	uint16 freqDiv;     ///< Note frequency divisor (10-bit)
-	uint8  attenuation; ///< Note volume attenuation (4-bit)
-
-	/** Reads an AgiNote through the given pointer. */
-	void read(const uint8 *ptr) {
-		duration = READ_LE_UINT16(ptr);
-		uint16 freqByte0 = *(ptr + 2); // Bits 4-9 of the frequency divisor
-		uint16 freqByte1 = *(ptr + 3); // Bits 0-3 of the frequency divisor
-		// Merge the frequency divisor's bits together into a single variable
-		freqDiv = ((freqByte0 & 0x3F) << 4) | (freqByte1 & 0x0F);
-		attenuation = *(ptr + 4) & 0x0F;
-	}
-};
-
-/**
  * AGI sound resource types.
  * It's probably coincidence that all the values here are powers of two
  * as they're simply the different used values in AGI sound resources'
