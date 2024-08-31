@@ -124,6 +124,13 @@ private:
 		return is_in_list_helper(t, is_in_list_value<T, ts>()...);
 	}
 
+	struct SpeechActData {
+		Character *speaker = nullptr;
+		Common::Array<Common::String> strings;
+		Common::Point position;
+		bool onRightSide;
+	};
+
 class View1 : public UIElement {
 	// TODO: Clean up private and public
 		public:
@@ -151,6 +158,7 @@ class View1 : public UIElement {
 	bool _isShowingInventory = false;
 
 	Character *speakingCharacter = nullptr;
+	SpeechActData currentSpeechActData;
 
 
 	Graphics::ManagedSurface _backgroundSurface;
