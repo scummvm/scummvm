@@ -59,19 +59,19 @@ public:
 
 		_goingLeft = false;
 		_goingRight = false;
-		_field_64 = 2;
+		_manSpeed = 2;
 		_doingJump = false;
-		_field_54 = -1;
+		_stepsToJump = -1;
 
 		// stand(time(0));
 
-		_someSwitchBackup = -1;
+		_jumpNextPhase = -1;
 		_shotsTomatoCounter = 9;
 		_shotsBananaCounter = 10;
 		_shoteEggCounter = 10;
 		_livesCounter = 5;
 		_isFinal = false;
-		_someSwitch = 2;
+		_jumpPhase = 2;
 		_doingWalk = false;
 		_jumpFlag = false;
 
@@ -82,7 +82,7 @@ public:
 		debugC(3, kDebugMinigames, "ArkadaAvtomat::quant(%f)", dt);
 
 		mgVect2i menCoords;
-		int tmp = 0;
+		int randomCond = 0;
 
 		menCoords = _scene->world2screen_coords(_menObj->R());
 		_bublObj->set_R(_scene->screen2world_coords(menCoords, -5000.0));
@@ -102,16 +102,16 @@ public:
 
 			updateStats();
 
-			_field_64 = 2;
+			_manSpeed = 2;
 		}
 
 		if (!_doingJump) {
-			if (_scene->world2screen_coords(_menObj->R()).x < _field_8C
+			if (_scene->world2screen_coords(_menObj->R()).x < _jumpingPhase3Y
 					&& _menObj->is_state_active("\xf1\xf2\xee\xe8\xf2")) { // "стоит"
 				_menObj->set_R(_menCoords);
 
 				_bloodObj->set_R(_scene->screen2world_coords(_scene->world2screen_coords(_menCoords), 0.0)); // check 0.0 v96
-				_field_54 = -1;
+				_stepsToJump = -1;
 			}
 		}
 
@@ -128,95 +128,95 @@ LABEL_44:
 					goto LABEL_47;
 				goto LABEL_45;
 			}
-			_field_4C = -1;
-			_field_50 = -1;
+			_stepsToLeft = -1;
+			_stepsToRight = -1;
 
 			switch (qd_rnd(5)) {
 			case 0:
 			case 3: {
 					_goingRight = true;
-					int v21 = (500 - _menObj->screen_R().x) / _field_64;
+					int maxSteps = (500 - _menObj->screen_R().x) / _manSpeed;
 
-					if (v21 < 10)
-						v21 = 10;
+					if (maxSteps < 10)
+						maxSteps = 10;
 
-					_field_50 = qd_rnd(v21);
+					_stepsToRight = qd_rnd(maxSteps);
 					_menObj->set_state("\xe8\xe4\xe5\xf2 \xe2\xef\xf0\xe0\xe2\xee"); // "идет вправо"
 					goto LABEL_44;
 				}
 			case 1:
 			case 4: {
 					_goingLeft = true;
-					int v25 = (_menObj->screen_R().x - 300) / _field_64;
-					if (v25 < 10)
-						v25 = 10;
+					int maxSteps = (_menObj->screen_R().x - 300) / _manSpeed;
+					if (maxSteps < 10)
+						maxSteps = 10;
 
-					_field_4C = qd_rnd(v25);
+					_stepsToLeft = qd_rnd(maxSteps);
 					_menObj->set_state("\xe8\xe4\xe5\xf2 \xe2\xeb\xe5\xe2\xee"); // "идет влево"
 					goto LABEL_44;
 			}
 			case 2:
 				_doingJump = true;
-				_field_54 = 30;
+				_stepsToJump = 30;
 				_menCoords = _menObj->R();
 				{
 					int y = _scene->world2screen_coords(_menObj->R()).y;
 
-					_field_84 = y;
-					_field_8C = y;
-					_field_88 = y - 60;
+					_manOrigPosY = y;
+					_jumpingPhase3Y = y;
+					_jumpHeight = y - 60;
 				}
 
-				tmp = qd_rnd(3);
+				randomCond = qd_rnd(3);
 
-				switch (_someSwitch) {
+				switch (_jumpPhase) {
 				case 1:
-					if (!tmp) {
-						_field_8C = _field_84;
+					if (!randomCond) {
+						_jumpingPhase3Y = _manOrigPosY;
 						goto LABEL_43;
 					}
-					if (tmp == 1)
+					if (randomCond == 1)
 						goto LABEL_29;
-					if (tmp != 2)
+					if (randomCond != 2)
 						goto LABEL_43;
 					break;
 				case 2:
-					if (!tmp) {
-						_field_8C = _field_84;
+					if (!randomCond) {
+						_jumpingPhase3Y = _manOrigPosY;
 						goto LABEL_43;
 					}
-					if (tmp == 1) {
-						_field_8C = 307;
-						_someSwitchBackup = 1;
+					if (randomCond == 1) {
+						_jumpingPhase3Y = 307;
+						_jumpNextPhase = 1;
 						goto LABEL_43;
 					}
-					if (tmp != 2)
+					if (randomCond != 2)
 						goto LABEL_43;
 					break;
 				case 3:
-					if (!tmp) {
-						_field_8C = _field_84;
+					if (!randomCond) {
+						_jumpingPhase3Y = _manOrigPosY;
 						goto LABEL_43;
 					}
-					if (tmp != 1) {
-						if (tmp == 2) {
-							_field_8C = 307;
-							_someSwitchBackup = 1;
+					if (randomCond != 1) {
+						if (randomCond == 2) {
+							_jumpingPhase3Y = 307;
+							_jumpNextPhase = 1;
 						}
 						goto LABEL_43;
 					}
 		LABEL_29:
-					_field_8C = 332;
-					_someSwitchBackup = 2;
+					_jumpingPhase3Y = 332;
+					_jumpNextPhase = 2;
 					goto LABEL_43;
 				default:
 		LABEL_43:
-					_flag4 = 0;
+					_jumpPhaseIsGoingDown = false;
 					goto LABEL_44;
 				}
 
-				_field_8C = 357;
-				_someSwitchBackup = 3;
+				_jumpingPhase3Y = 357;
+				_jumpNextPhase = 3;
 				goto LABEL_43;
 			default:
 				goto LABEL_44;
@@ -225,77 +225,77 @@ LABEL_44:
 
 LABEL_45:
 		{
-			mgVect2i v37 = _scene->world2screen_coords(_menObj->R());
-			v37.x += _field_64;
-			_menObj->set_R(_scene->screen2world_coords(v37, 0.0));
+			mgVect2i pos = _scene->world2screen_coords(_menObj->R());
+			pos.x += _manSpeed;
+			_menObj->set_R(_scene->screen2world_coords(pos, 0.0));
 		}
-		_field_50--;
+		_stepsToRight--;
 
-		if (_field_50 <= 0)
+		if (_stepsToRight <= 0)
 			_goingRight = false;
 
 LABEL_47:
 		if (_goingLeft) {
-			mgVect2i v45 = _scene->world2screen_coords(_menObj->R());
-			v45.x -= _field_64;
-			_menObj->set_R(_scene->screen2world_coords(v45, 0.0));
-			_field_4C--;
+			mgVect2i pos = _scene->world2screen_coords(_menObj->R());
+			pos.x -= _manSpeed;
+			_menObj->set_R(_scene->screen2world_coords(pos, 0.0));
+			_stepsToLeft--;
 
-			if (_field_4C <= 0)
+			if (_stepsToLeft <= 0)
 				_goingLeft = false;
 		}
 
 		if (_doingJump) {
-			mgVect2i v53 = _scene->world2screen_coords(_menObj->R());
+			mgVect2i pos = _scene->world2screen_coords(_menObj->R());
 
-			if (v53.y >= _field_84 - 10) {
-				if (!_menObj->is_state_active("\xef\xf0\xfb\xe3\xe0\xe5\xf2\x31") && !_flag4)		// "прыгает1"
+			if (pos.y >= _manOrigPosY - 10) {
+				if (!_menObj->is_state_active("\xef\xf0\xfb\xe3\xe0\xe5\xf2\x31") && !_jumpPhaseIsGoingDown)		// "прыгает1"
 					_menObj->set_state("\xef\xf0\xfb\xe3\xe0\xe5\xf2\x31");	// "прыгает1"
 			}
 
-			if (v53.y <= _field_84 - 10) {
-				if (_menObj->is_state_active("\xef\xf0\xfb\xe3\xe0\xe5\xf2\x31") && !_flag4)		// "прыгает1"
+			if (pos.y <= _manOrigPosY - 10) {
+				if (_menObj->is_state_active("\xef\xf0\xfb\xe3\xe0\xe5\xf2\x31") && !_jumpPhaseIsGoingDown)		// "прыгает1"
 					_menObj->set_state("\xef\xf0\xfb\xe3\xe0\xe5\xf2\x32");							// "прыгает2"
 			}
 
-			if (v53.y >= _field_8C - 10) {
-				if (_menObj->is_state_active("\xef\xf0\xfb\xe3\xe0\xe5\xf2\x32") && _flag4)			// "прыгает2"
+			if (pos.y >= _jumpingPhase3Y - 10) {
+				if (_menObj->is_state_active("\xef\xf0\xfb\xe3\xe0\xe5\xf2\x32") && _jumpPhaseIsGoingDown)			// "прыгает2"
 					_menObj->set_state("\xef\xf0\xfb\xe3\xe0\xe5\xf2\x33");							// "прыгает3"
 			}
 
-			if (v53.y <= _field_88)
+			if (pos.y <= _jumpHeight)
 				goto LABEL_176;
 
-			if (!_flag4) {
-				v53.y -= 4;
+			if (!_jumpPhaseIsGoingDown) {
+				pos.y -= 4;
 LABEL_75:
 LABEL_76:
-				if (v53.y < _field_8C) {
+				if (pos.y < _jumpingPhase3Y) {
 LABEL_79:
-					_menObj->set_R(_scene->screen2world_coords(v53, 0.0));
+					_menObj->set_R(_scene->screen2world_coords(pos, 0.0));
 					goto LABEL_80;
 				}
 LABEL_77:
-				if (_flag4) {
+				if (_jumpPhaseIsGoingDown) {
 					_doingJump = false;
-					_someSwitch = _someSwitchBackup;
+					_jumpPhase = _jumpNextPhase;
 				}
 				goto LABEL_79;
 			}
-			if (v53.y > _field_88) {
-				if (!_flag4)
+			if (pos.y > _jumpHeight) {
+				if (!_jumpPhaseIsGoingDown)
 					goto LABEL_76;
 				} else {
 LABEL_176:
-				if (!_flag4) {
-					_flag4 = 1;
+				if (!_jumpPhaseIsGoingDown) {
+					_jumpPhaseIsGoingDown = true;
 					goto LABEL_76;
 				}
 			}
-			if (v53.y > _field_8C)
+			if (pos.y > _jumpingPhase3Y)
 				goto LABEL_77;
 
-			v53.y += 4;
+			pos.y += 4;
 			goto LABEL_75;
 		}
 LABEL_80:
@@ -435,10 +435,10 @@ LABEL_108:
 				updateStats();
 
 				_doingJump = false;
-				_field_64 = 7 - _livesCounter;
+				_manSpeed = 7 - _livesCounter;
 
-				if (_field_64 > 4)
-					_field_64 = 4;
+				if (_manSpeed > 4)
+					_manSpeed = 4;
 			}
 		}
 
@@ -459,31 +459,29 @@ LABEL_108:
 		if ((_goingLeft || _goingRight) && !_doingWalk) {
 			_doingWalk = true;
 			_walkFlagObj->set_state("\xe4\xe0");		// "да"
+
+			_jumpFlag = false;
+			_jumpFlagObj->set_state("\xed\xe5\xf2");	// "нет"
+
+			return;
 		}
 
-		if ((_goingLeft || _goingRight) && !_doingJump)
-			goto LABEL_177;
-
-		if (_doingWalk) {
+		if (_doingJump) {
 			_doingWalk = false;
 			_walkFlagObj->set_state("\xed\xe5\xf2");	// "нет"
-		}
 
-		if (_doingJump)
-			goto LABEL_177;
-
-		if (!_doingWalk) {
 			_jumpFlag = true;
 			_jumpFlagObj->set_state("\xe4\xe0");		// "да"
+
+			return;
 		}
 
-		if (!_doingJump) {
-LABEL_177:
-			if (_doingWalk) {
-				_jumpFlag = false;
-				_jumpFlagObj->set_state("\xed\xe5\xf2");	// "нет"
-			}
-		}
+
+		_doingWalk = false;
+		_walkFlagObj->set_state("\xed\xe5\xf2");	// "нет"
+
+		_jumpFlag = false;
+		_jumpFlagObj->set_state("\xed\xe5\xf2");	// "нет"
 	}
 
 	bool finit() {
@@ -547,12 +545,12 @@ private:
 	bool _doingWalk = false;
 	bool _jumpFlag = false;
 
-	int _field_4C = 0;
-	int _field_50 = 0;
-	int _field_54 = -1;
+	int _stepsToLeft = 0;
+	int _stepsToRight = 0;
+	int _stepsToJump = -1;
 
 	mgVect3f _menCoords;
-	int _field_64 = 2;
+	int _manSpeed = 2;
 
 	int _shotsTomatoCounter = 9;
 	int _shotsBananaCounter = 10;
@@ -563,15 +561,14 @@ private:
 
 	mgVect2i _cursorPos;
 
-	int _field_84 = 0;
-	int _field_88 = 0;
-	int _field_8C = 0;
+	int _manOrigPosY = 0;
+	int _jumpHeight = 0;
+	int _jumpingPhase3Y = 0;
 
-	bool _flag4 = false;
+	bool _jumpPhaseIsGoingDown = false;
 
-	int _someSwitch = 2;
-	int _someSwitchBackup = -1;
-
+	int _jumpPhase = 2;
+	int _jumpNextPhase = -1;
 };
 
 } // namespace QDEngine
