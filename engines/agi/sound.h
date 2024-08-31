@@ -129,6 +129,7 @@ public:
 	void stopSound();
 
 	void soundIsFinished();
+	bool isPlaying() const { return _playingSound != -1; }
 
 private:
 	int _endflag;

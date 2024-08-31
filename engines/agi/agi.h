@@ -1036,6 +1036,7 @@ public:
 
 	int waitKey();
 	int waitAnyKey();
+	void waitAnyKeyOrFinishedSound();
 
 	void nonBlockingText_IsShown();
 	void nonBlockingText_Forget();
