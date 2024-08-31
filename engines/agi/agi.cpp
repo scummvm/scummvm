@@ -480,9 +480,11 @@ void AgiEngine::initialize() {
 	//       drivers, and I'm not sure what they are. For now, they might
 	//       as well be called "PC Speaker" and "Not PC Speaker".
 
-	// If used platform is Apple IIGS then we must use Apple IIGS sound emulation
-	// because Apple IIGS AGI games use only Apple IIGS specific sound resources.
-	if (getPlatform() == Common::kPlatformApple2GS) {
+	// If platform is Apple or CoCo3 then their sound emulation must be used.
+	// The sound resources in these games have platform-specific formats.
+	if (getPlatform() == Common::kPlatformApple2) {
+		_soundemu = SOUND_EMU_APPLE2;
+	} else if (getPlatform() == Common::kPlatformApple2GS) {
 		_soundemu = SOUND_EMU_APPLE2GS;
 	} else if (getPlatform() == Common::kPlatformCoCo3) {
 		_soundemu = SOUND_EMU_COCO3;

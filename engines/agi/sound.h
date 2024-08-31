@@ -34,20 +34,22 @@ namespace Agi {
 #define SOUND_EMU_PCJR  2
 #define SOUND_EMU_MAC   3
 #define SOUND_EMU_AMIGA 4
-#define SOUND_EMU_APPLE2GS 5
-#define SOUND_EMU_COCO3 6
-#define SOUND_EMU_MIDI 7
+#define SOUND_EMU_APPLE2 5
+#define SOUND_EMU_APPLE2GS 6
+#define SOUND_EMU_COCO3 7
+#define SOUND_EMU_MIDI 8
 
 /**
  * AGI sound resource types.
- * It's probably coincidence that all the values here are powers of two
- * as they're simply the different used values in AGI sound resources'
- * starts (The first 16-bit little endian word, to be precise).
+ * These values are the first 16-bit LE words of each resource's header,
+ * except for Apple II and CoCo3, which do not have headers.
  */
 enum AgiSoundEmuType {
 	AGI_SOUND_SAMPLE    = 0x0001,
 	AGI_SOUND_MIDI      = 0x0002,
-	AGI_SOUND_4CHN      = 0x0008
+	AGI_SOUND_4CHN      = 0x0008,
+	AGI_SOUND_APPLE2    = 0xffff,
+	AGI_SOUND_COCO3     = 0xfffe
 };
 
 class SoundMgr;

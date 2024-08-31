@@ -19,18 +19,18 @@
  *
  */
 
-#ifndef AGI_SOUND_COCO3_H
-#define AGI_SOUND_COCO3_H
+#ifndef AGI_SOUND_A2_H
+#define AGI_SOUND_A2_H
 
 #include "audio/audiostream.h"
 #include "audio/softsynth/pcspk.h"
 
 namespace Agi {
 
-class SoundGenCoCo3 : public SoundGen, public Audio::AudioStream {
+class SoundGenA2 : public SoundGen, public Audio::AudioStream {
 public:
-	SoundGenCoCo3(AgiBase *vm, Audio::Mixer *pMixer);
-	~SoundGenCoCo3() override;
+	SoundGenA2(AgiBase *vm, Audio::Mixer *pMixer);
+	~SoundGenA2() override;
 
 	void play(int resnum) override;
 	void stop() override;
@@ -57,4 +57,4 @@ private:
 
 } // End of namespace Agi
 
-#endif /* AGI_SOUND_COCO3_H */
+#endif /* AGI_SOUND_A2_H */
