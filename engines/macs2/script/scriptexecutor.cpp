@@ -1572,7 +1572,10 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			uint16 object1 = Func9F4D_16();
 			uint16 object2 = Func9F4D_16();
 			// TODO: This one might also do a skip
-			if (!((interacted1 == object1) && (interacted2 == object2))) {
+			// Note: Need to check both combinations as order seems to not be important
+			const bool match1 = (interacted1 == object1) && (interacted2 == object2);
+			const bool match2 = (interacted1 == object2) && (interacted2 == object1);
+			if (!(match1 || match2)) {
 				// Skip
 				// TODO: Would it make more sense to return and then to start skipping?
 				FuncA3D2();

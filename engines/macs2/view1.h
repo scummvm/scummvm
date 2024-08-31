@@ -157,7 +157,6 @@ class View1 : public UIElement {
 
 	bool _isShowingInventory = false;
 
-	Character *speakingCharacter = nullptr;
 	SpeechActData currentSpeechActData;
 
 
@@ -169,6 +168,7 @@ class View1 : public UIElement {
 
 	void drawBackgroundAnimations(Graphics::ManagedSurface &s);
 	void drawBackgroundAnimationNumbers(Graphics::ManagedSurface &s);
+	void drawCurrentSpeaker(Graphics::ManagedSurface &s);
 
 	void renderString(uint16 x, uint16 y, Common::String s);
 
