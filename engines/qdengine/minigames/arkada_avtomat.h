@@ -82,9 +82,6 @@ public:
 		debugC(3, kDebugMinigames, "ArkadaAvtomat::quant(%f)", dt);
 
 		mgVect2i menCoords;
-		mgVect2i pos;
-		bool v61 = false;
-		bool v97 = false;
 		int tmp = 0;
 
 		menCoords = _scene->world2screen_coords(_menObj->R());
@@ -355,7 +352,7 @@ LABEL_80:
 					goto LABEL_107;
 				}
 				if (_shoteEggCounter <= 0) {
-			LABEL_107:
+LABEL_107:
 					updateStats();
 					goto LABEL_108;
 				}
@@ -367,7 +364,7 @@ LABEL_80:
 			--_shoteEggCounter;
 			goto LABEL_107;
 		}
-		LABEL_108:
+LABEL_108:
 		if (_engine->is_mouse_event_active(qdmg::qdEngineInterfaceImpl::MOUSE_EV_LEFT_DOWN)
 				&& !_bloodObj->is_state_active("\xe5\xf1\xf2\xfc")						// "есть"
 				&& !_patronTomatoObj->is_state_active("\xef\xee\xec\xe8\xe4\xee\xf0")	// "помидор"
@@ -424,45 +421,25 @@ LABEL_80:
 			}
 		}
 
-		if (!_fazaObj->is_state_active("\xe4\xe0")		// "да"
-				|| _bloodObj->is_state_active("\xe5\xf1\xf2\xfc")) {	// "есть"
-			goto LABEL_156;
-		}
+		// Hit check
+		if (_fazaObj->is_state_active("\xe4\xe0")		// "да"
+				&& !_bloodObj->is_state_active("\xe5\xf1\xf2\xfc")) {	// "есть"
+			mgVect2i pos = _menObj->screen_R();
 
-		pos = _menObj->screen_R();
-
-		if (pos.x <= _cursorPos.x) {
-			if (_cursorPos.x - pos.x > 15)
-				goto LABEL_147;
-		} else if (pos.x - _cursorPos.x > 15) {
-			goto LABEL_147;
-		}
-		v61 = true;
-
-LABEL_147:
-		v97 = false;
-
-		if (pos.y <= _cursorPos.y) {
-			if (_cursorPos.y - pos.y <= 35)
-LABEL_151:
-			v97 = true;
-		} else if (pos.y - _cursorPos.y <= 35) {
-			goto LABEL_151;
-		}
-
-		if (v61) {
-			if (v97) {
+			if (ABS(pos.x - _cursorPos.x) <= 15 && ABS(pos.y - _cursorPos.y) <= 35) {
 				_killObj->set_state("\xe4\xe0");		// "да"
 				--_livesCounter;
+
 				updateStats();
+
 				_flag3 = 0;
 				_field_64 = 7 - _livesCounter;
+
 				if (_field_64 > 4)
 					_field_64 = 4;
 			}
 		}
 
-LABEL_156:
 		if (!_livesCounter) {
 			_someFlag5 = 1;
 			_doneObj->set_state("\xe4\xe0");		// "да"
