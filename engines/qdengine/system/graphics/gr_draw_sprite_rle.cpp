@@ -248,8 +248,6 @@ void grDispatcher::putSprMask_rle(int x, int y, int sx, int sy, const RLEBuffer 
 	int dx = -1;
 	int dy = -1;
 
-	x *= 2;
-
 	if (mode & GR_FLIP_HORIZONTAL) {
 		x += (psx - 1) * 2;
 		px = sx - px - psx;
