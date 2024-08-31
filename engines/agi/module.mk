@@ -29,6 +29,7 @@ MODULE_OBJS := \
 	saveload.o \
 	sound.o \
 	sound_2gs.o \
+	sound_a2.o \
 	sound_coco3.o \
 	sound_midi.o \
 	sound_pcjr.o \

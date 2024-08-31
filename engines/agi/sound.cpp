@@ -22,6 +22,7 @@
 #include "agi/agi.h"
 
 #include "agi/sound_2gs.h"
+#include "agi/sound_a2.h"
 #include "agi/sound_coco3.h"
 #include "agi/sound_midi.h"
 #include "agi/sound_sarien.h"
@@ -48,6 +49,15 @@ SoundGen::~SoundGen() {
 AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, int soundemu) {
 	if (data == nullptr || len < 2) // Check for too small resource or no resource at all
 		return nullptr;
+
+	// Handle platform-specific formats that can't be detected by contents.
+	// These formats have no headers or predictable first bytes.
+	if (soundemu == SOUND_EMU_APPLE2) {
+		return new AgiSound(resnum, data, len, AGI_SOUND_APPLE2);
+	} else if (soundemu == SOUND_EMU_COCO3) {
+		return new AgiSound(resnum, data, len, AGI_SOUND_COCO3);
+	}
+
 	uint16 type = READ_LE_UINT16(data);
 
 	// For V1 sound resources
@@ -199,6 +209,9 @@ SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) {
 		break;
 	case SOUND_EMU_PCJR:
 		_soundGen = new SoundGenPCJr(_vm, pMixer);
+		break;
+	case SOUND_EMU_APPLE2:
+		_soundGen = new SoundGenA2(_vm, pMixer);
 		break;
 	case SOUND_EMU_APPLE2GS:
 		_soundGen = new SoundGen2GS(_vm, pMixer);

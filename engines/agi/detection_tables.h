@@ -456,7 +456,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	// TRAC #13494
 	GAME_LPS("kq3", "2.14 1988-03-15 3.5\"", "87956c92d23f53d81bf2ee9e08fdc64c", 390, Common::ES_ESP, 0x2936, GID_KQ3, Common::kPlatformDOS),
 
-	// King's Quest 3 (CoCo3 158k/360k) 1.0C [AGI 2.023]
+	// King's Quest 3 (CoCo3 158k/360k) 1.0C 6/27/88 [AGI 2.023]
 	// Official port by Sierra
 	GAME_PS("kq3", "", "5a6be7d16b1c742c369ef5cc64fefdd2", 429, 0x2440, GID_KQ3, Common::kPlatformCoCo3),
 
