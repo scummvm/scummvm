@@ -279,7 +279,7 @@ Common::KeymapArray TinselMetaEngine::initKeymaps(const char *target) const {
 
 	act = new Action("MOVERIGHT", _("Move right"));
 	act->setCustomEngineActionEvent(kActionMoveRight);
-	act->addDefaultInputMapping("Right");
+	act->addDefaultInputMapping("RIGHT");
 	act->addDefaultInputMapping("KP6");
 	gameKeyMap->addAction(act);
 
