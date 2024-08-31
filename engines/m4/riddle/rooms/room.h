@@ -125,6 +125,8 @@ protected:
 public:
 	Room() : M4::Room() {}
 	~Room() override {}
+
+	void preload();
 };
 
 } // namespace Rooms

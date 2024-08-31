@@ -29,6 +29,12 @@ namespace Rooms {
 
 int Room::_ripSketching;
 
+void Room::preload() {
+	_G(player).walker_type = 1;
+	_G(player).shadow_type = 1;
+	LoadWSAssets("OTHER SCRIPT");
+}
+
 void Room::restoreAutosave() {
 	if (g_engine->autosaveExists()) {
 		_G(kernel).restore_slot = 0;
