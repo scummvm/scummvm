@@ -1160,7 +1160,421 @@ void Room407::daemon() {
 		setGlobals1(_ripHiHand1, 1, 12, 12, 12, 0, 12, 1, 1, 1);
 		sendWSMessage_110000(313);
 		break;
-// TODO
+
+	case 313:
+		terminateMachineAndNull(_tubeInDrawer);
+		terminateMachineAndNull(_drawerPopupHose);
+		terminateMachineAndNull(_faucet1);
+
+		hotspot_set_active("GARDEN HOSE ", false);
+		hotspot_set_active("GARDEN HOSE  ", false);
+		hotspot_set_active("FAUCET PIPE  ", false);
+		hotspot_set_active("FAUCET PIPE ", true);
+		hotspot_set_active("SURGICAL TUBE  ", true);
+		hotspot_set_active("SURGICAL TUBE ", false);
+		hotspot_set_active("GARDEN HOSE   ", true);
+
+		_val8 = 1140;
+		_xyzzy2 = 1140;
+		_xyzzy3 = 1140;
+		_xyzzy7 = 1140;
+
+		sendWSMessage_120000(314);
+		break;
+
+	case 314:
+		sendWSMessage_150000(315);
+		break;
+
+	case 315:
+		series_unload(_ripHiHand1);
+		ws_walk(155, 335, nullptr, 316, 11);
+		break;
+
+	case 316:
+		_ripMedHand1 = series_load("RIP TREK MED REACH HAND POS1");
+		setGlobals1(_ripMedHand1, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+		sendWSMessage_110000(317);
+		break;
+
+	case 317:
+		_drawerPopupHose = series_place_sprite("407 TUBE AND HOSE TO JAR",
+			0, 0, 0, 100, 0xb00);
+		_faucet1 = series_place_sprite("407BITSR", 1, 0, -53, 100, 0xb00);
+		sendWSMessage_120000(318);
+		break;
+
+	case 318:
+		sendWSMessage_150000(319);
+		break;
+
+	case 319:
+		series_unload(_ripMedHand1);
+		_frotz1 = 1;
+		player_set_commands_allowed(true);
+		break;
+
+	case 320:
+		_ripHeadTurn = series_load("RIP TREK HEAD TURN POS1");
+		setGlobals1(_ripHeadTurn, 1, 3, 3, 3, 0, 3, 1, 1, 1);
+		sendWSMessage_110000(322);
+		break;
+
+	case 322:
+		if (_xyzzy5 == 1116 && _xyzzy9 == 1116 && _xyzzy4 == 1116) {
+			terminateMachineAndNull(_faucet1);
+			terminateMachineAndNull(_tubeInDrawer);
+			terminateMachineAndNull(_drawerPopupHose);
+			terminateMachineAndNull(_bottle);
+			terminateMachineAndNull(_stopperInDrawer);
+			terminateMachineAndNull(_bits);
+			terminateMachineAndNull(_handleInDrawer);
+			terminateMachineAndNull(_niche);
+			terminateMachineAndNull(_lever);
+
+			_letter = series_place_sprite("407 letter", 0, 0, 0, 100, 0xc00);
+			_407h = series_load("407H");
+			_niche = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xb00, 0,
+				triggerMachineByHashCallbackNegative, "Jar opens cabinet door");
+			sendWSMessage_10000(1, _niche, _407h, 1, 29, 330, _407h, 29, 29, 0);
+			digi_play("407_s21", 2);
+		} else {
+			if (_xyzzy5 == 1116) {
+				_jarWaterFallingLeft = series_load("407 JAR WATER FALLING LEFT");
+				_jarLeft = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+					triggerMachineByHashCallbackNegative, "407 JAR WATER FALLING LEFT");
+				sendWSMessage_10000(1, _jarLeft, _jarWaterFallingLeft, 1, 13, 323,
+					_jarWaterFallingLeft, 14, 19, 0);
+			}
+
+			if (_xyzzy9 != 1116) {
+				_jarWaterFallingCentre = series_load("407 JAR WATER FALLING CENTRE");
+				_jarCentre = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+					triggerMachineByHashCallbackNegative, "Center jar hole leaks");
+				sendWSMessage_10000(1, _jarCentre, _jarWaterFallingCentre, 1, 11, 323,
+					_jarWaterFallingCentre, 12, 15, 0);
+			}
+
+			if (_xyzzy4 != 1116) {
+				_jarWaterFallingRight = series_load("407 JAR WATER FALLING RIGHT");
+				_jarRight = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+					triggerMachineByHashCallbackNegative, "Right jar hole leaks");
+				sendWSMessage_10000(1, _jarRight, _jarWaterFallingRight, 1, 13, 323,
+					_jarWaterFallingRight, 14, 20, 0);
+			}
+
+			kernel_timing_trigger(200, 340);
+		}
+		break;
+
+	case 323:
+		digi_play_loop("407_s10", 2);
+		break;
+
+	case 330:
+		digi_preload("407r37");
+		digi_play("407r37", 1, 255, 666);
+		_frotz2 = 1;
+		_xyzzy5 = 1130;
+		_xyzzy9 = 1130;
+		_xyzzy4 = 1130;
+
+		hotspot_set_active("MICROSCOPE", true);
+		hotspot_set_active("LETTER", true);
+		hotspot_set_active("ARMORED CABINET", false);
+		kernel_timing_trigger(1, 340);
+		break;
+
+	case 340:
+		sendWSMessage_120000(342);
+		break;
+
+	case 342:
+		sendWSMessage_150000(343);
+		break;
+
+	case 343:
+		series_unload(_ripHeadTurn);
+		_ripMedHand1 = series_load("RIP TREK MED REACH HAND POS1");
+		setGlobals1(_ripMedHand1, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+		sendWSMessage_110000(344);
+		break;
+
+	case 344:
+		if (!_frotz2) {
+			if (_xyzzy5 != 1115)
+				sendWSMessage_10000(1, _jarLeft, _jarWaterFallingLeft, 20, 35, 350,
+					_jarWaterFallingLeft, 35, 35, 0);
+			if (_xyzzy9 != 1116)
+				sendWSMessage_10000(1, _jarCentre, _jarWaterFallingCentre, 16, 28, 351,
+					_jarWaterFallingCentre, 28, 28, 0);
+			if (_xyzzy4 != 1116)
+				sendWSMessage_10000(1, _jarRight, _jarWaterFallingRight, 21, 35, 352,
+					_jarWaterFallingRight, 35, 35, 0);
+		}
+
+		terminateMachineAndNull(_faucet2);
+		_val4 = 1011;
+		_faucet2 = series_place_sprite("407FAUC", 1, 0, 0, 100, 0xe00);
+		sendWSMessage_120000(345);
+		break;
+
+	case 345:
+		sendWSMessage_150000(346);
+		break;
+
+	case 346:
+		series_unload(_ripMedHand1);
+		player_set_commands_allowed(true);
+		break;
+
+	case 350:
+		digi_stop(2);
+		terminateMachineAndNull(_jarLeft);
+		series_unload(_jarWaterFallingLeft);
+		break;
+
+	case 351:
+		digi_stop(2);
+		terminateMachineAndNull(_jarCentre);
+		series_unload(_jarWaterFallingCentre);
+		break;
+
+	case 352:
+		digi_stop(2);
+		terminateMachineAndNull(_jarRight);
+		series_unload(_jarWaterFallingRight);
+		break;
+
+	case 360:
+		_int7 = 1031;
+		digi_preload("407_s24");
+		digi_preload("407_s27");
+		digi_preload("407_s27a");
+		digi_preload("407_s27b");
+		digi_preload("407_s27c");
+
+		terminateMachineAndNull(_comboLockPopup);
+		terminateMachineAndNull(_lockButton1);
+		terminateMachineAndNull(_lockButton2);
+		terminateMachineAndNull(_lockButton3);
+		terminateMachineAndNull(_lockButton4);
+		series_unload(_407pu08d);
+		series_unload(_407pu08c);
+		series_unload(_407pu08b);
+		series_unload(_407pu08a);
+
+		setHotspots();
+		_407e = series_load("407E");
+		terminateMachineAndNull(_escape);
+		_escape = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xd00, 0,
+			triggerMachineByHashCallbackNegative, "METAL DOOR");
+		sendWSMessage_10000(1, _escape, _407e, 1, 30, 364, _407e, 30, 30, 0);
+		digi_play("407_s24", 2);
+		kernel_timing_trigger(30, 362);
+		break;
+
+	case 362:
+		player_update_info();
+		ws_walk(_G(player_info).x, _G(player_info).y, nullptr, 363, 1);
+		break;
+
+	case 363:
+		_exit = series_load("407 EXIT");
+
+		if (_frotz5)
+			digi_play("407r43", 1);
+		break;
+
+	case 364:
+		ws_walk(409, 320, nullptr, 365, 1);
+		break;
+
+	case 365:
+		ws_hide_walker();
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+			triggerMachineByHashCallbackNegative, "RIP exits");
+		sendWSMessage_10000(1, _ripley, _exit, 1, 22, 366, _exit, 22, 22, 0);
+		break;
+
+	case 366:
+		digi_play("407_s03", 3);
+		digi_play("407r44", 1);
+		sendWSMessage_10000(1, _ripley, _exit, 22, 65, 367, _exit, 65, 65, 0);
+		break;
+
+	case 367:
+		sendWSMessage_10000(1, _ripley, _exit, 66, 81, -1, _exit, 81, 81, 0);
+		sendWSMessage_10000(1, _escape, _407e, 30, 1, 368, _407e, 1, 1, 0);
+		digi_play("407_s24", 2);
+		break;
+
+	case 368:
+		digi_play("407_s25", 2, 255, 369);
+		break;
+
+	case 369:
+		kernel_timing_trigger(60, 370);
+		break;
+
+	case 370:
+		digi_play("407r45", 1);
+		kernel_timing_trigger(60, 371);
+		break;
+
+	case 371:
+		disable_player_commands_and_fade_init(380);
+		break;
+
+	case 380:
+		kernel_timing_trigger(60, 381);
+		break;
+
+	case 381:
+		digi_play("407_s27a", 3, 255, 382);
+		break;
+
+	case 382:
+		digi_play("407_s27", 3, 255, 383);
+		break;
+
+	case 383:
+		kernel_timing_trigger(60, 384);
+		break;
+
+	case 384:
+		digi_play("407r46", 1, 255, 385);
+		break;
+
+	case 385:
+		digi_play("407_s27b", 3, 255, 386);
+		break;
+
+	case 386:
+		digi_play("407_s27", 3, 255, 390);
+		break;
+
+	case 390:
+		digi_play("407_s27a", 3);
+		digi_play("407r44", 1, 255, 391);
+		break;
+
+	case 391:
+		digi_play("407r47", 1, 255, 392);
+		break;
+
+	case 392:
+		digi_play("407_s7b", 3, 255, 393);
+		break;
+
+	case 393:
+		digi_play("407_s30", 3, 255, 395);
+		break;
+
+	case 395:
+		_G(flags)[V030] = 1;
+		midi_stop();
+		digi_stop(3);
+		_G(game).setRoom(408);
+		break;
+
+	case 400:
+		ws_unhide_walker();
+		sendWSMessage_10000(1, _ripley, _stair, 1, 30, 402, _stair, 30, 30, 0);
+		kernel_timing_trigger(60, 401);
+		ws_walk(347, 331, nullptr, -1, 9);
+		break;
+
+	case 401:
+		digi_play("407_s12", 2);
+		break;
+
+	case 402:
+		terminateMachineAndNull(_ripley);
+		_star2 = series_place_sprite("407STAR2", 0, 0, -53, 100, 0xf00);
+		series_unload(_stair);
+		series_unload(_ripEnters);
+		player_set_commands_allowed(true);
+		break;
+
+	case 410:
+		if (_xyzzy2 == 1100) {
+			digi_play("407_s32", 3);
+		} else if (_xyzzy3 == 1100) {
+			digi_play_loop("407_s31", 3);
+			_sink = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0xe00, 0,
+				triggerMachineByHashCallbackNegative, "water into sink");
+			sendWSMessage_10000(1, _sink, _waterFlowTube, 1, 4, -1,
+				_waterFlowTube, 1, 4, 0);
+			hotspot_set_active("WATER ", true);
+		} else {
+			_sink = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+				triggerMachineByHashCallbackNegative, "water into sink");
+			sendWSMessage_10000(1, _sink, _waterFlowFaucet, 1, 4, -1,
+				_waterFlowFaucet, 1, 4, 0);
+			hotspot_set_active("WATER", true);
+			digi_play("407_s31", 3);
+		}
+
+		player_set_commands_allowed(true);
+		break;
+
+	case 420:
+		if (_xyzzy2 == 1130) {
+			digi_play_loop("407_s32", 3);
+		} else {
+			digi_play_loop("407_s31", 3);
+			_sink = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0xe00, 0,
+				triggerMachineByHashCallbackNegative, "water into sink");
+			sendWSMessage_10000(1, _sink, _waterFlowStem, 1, 4, -1,
+				_waterFlowStem, 1, 4, 0);
+			hotspot_set_active("WATER  ", true);
+		}
+
+		player_set_commands_allowed(true);
+		break;
+
+	case 430:
+		digi_stop(3);
+
+		if (_xyzzy2 != 1100) {
+			hotspot_set_active("WATER ", false);
+			hotspot_set_active("WATER", false);
+			terminateMachineAndNull(_sink);
+		}
+		break;
+
+	case 440:
+		digi_stop(3);
+
+		if (_xyzzy2 != 1130) {
+			hotspot_set_active("WATER  ", false);
+			terminateMachineAndNull(_sink);
+		}
+		break;
+
+	case 450:
+		digi_play("407_s16a", 1);
+		break;
+
+	case 666:
+		digi_unload("407r37");
+		break;
+
+	case 1200:
+		if (_val4 == 1010) {
+			digi_play("407_s31", 3);
+			kernel_timing_trigger(_val1, 1200);
+		}
+		break;
+
+	case 1202:
+		if (_val4 == 1010) {
+			digi_play("407_s32", 3);
+			kernel_timing_trigger(_val2, 1202);
+		}
+		break;
+
 	default:
 		break;
 	}
