@@ -348,7 +348,8 @@ void IMuseInternal::on_timer(MidiDriver *midi) {
 	if (_paused || !_initialized)
 		return;
 
-	if (_game_id == GID_SAMNMAX)
+	// CD version only
+	if (_game_id == GID_SAMNMAX && strcmp(_vm->_game.variant, "Floppy"))
 		musicVolumeReduction(midi);
 
 	if (midi == _midi_native || !_midi_native)
