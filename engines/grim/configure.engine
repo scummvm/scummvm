@@ -1,4 +1,4 @@
 # This file is included from the main "configure" script
 # add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps]
 add_engine grim "Grim" yes "monkey4" "Grim Fandango" "16bit highres"
-add_engine monkey4 "Escape from Monkey Island" no "" "" "bink mpeg2"
+add_engine monkey4 "Escape from Monkey Island" no "" "" "bink"

@@ -28,8 +28,9 @@
 namespace MTropolis {
 
 struct ElementLoaderContext {
-	ElementLoaderContext(Runtime *elc_runtime, size_t elc_streamIndex);
+	ElementLoaderContext(Runtime *pRuntime, Project *pProject, size_t pStreamIndex);
 
+	Project *project;
 	Runtime *runtime;
 	size_t streamIndex;
 };

@@ -249,6 +249,8 @@ TheEntityField fields[] = {
 	{ kTheCast,		"textHeight",	kTheTextHeight,	300 },//		D3 p
 	{ kTheCast,		"textSize",		kTheTextSize,	300 },//		D3 p
 	{ kTheCast,		"textStyle",	kTheTextStyle,	300 },//		D3 p
+	{ kTheCast,		"scrollTop",	kTheScrollTop,  500 },//						D5 p
+
 
 	// Field fields
 	{ kTheField,	"foreColor",	kTheForeColor,	400 },//				D4 p
@@ -260,6 +262,7 @@ TheEntityField fields[] = {
 	{ kTheField,	"textHeight",	kTheTextHeight,	300 },//		D3 p
 	{ kTheField,	"textSize",		kTheTextSize,	300 },//		D3 p
 	{ kTheField,	"textStyle",	kTheTextStyle,	300 },//		D3 p
+	{ kTheField,	"scrollTop",	kTheScrollTop,  500 },//						D5 p
 
 	// Chunk fields
 	{ kTheChunk,	"foreColor",	kTheForeColor,	400 },//				D4 p
@@ -1327,6 +1330,9 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 	case kTheBottom:
 		d = channel->getBbox().bottom;
 		break;
+	case kTheMember:
+		d = sprite->_castId;
+		break;
 	case kTheCastNum:
 	case kTheMemberNum:
 		d = sprite->_castId.member;
@@ -1494,6 +1500,20 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 
 			// Based on Director in a Nutshell, page 15
 			sprite->setAutoPuppet(kAPBlend, true);
+		}
+		break;
+	case kTheMember:
+		{
+			CastMemberID targetMember = d.asMemberID();
+
+			if (targetMember != sprite->_castId) {
+				movie->getWindow()->addDirtyRect(channel->getBbox());
+				movie->duplicateCastMember(targetMember, sprite->_castId);
+				channel->_sprite->setCast(sprite->_castId);
+				// Ensure the new sprite, whether larger or smaller, appears correctly on the screen
+				movie->getWindow()->addDirtyRect(channel->getBbox());
+				channel->_dirty = true;
+			}
 		}
 		break;
 	case kTheCastNum:

@@ -175,7 +175,12 @@ void GfxTinyGL::clearDepthBuffer() {
 	tglClear(TGL_DEPTH_BUFFER_BIT);
 }
 
-void GfxTinyGL::flipBuffer() {
+void GfxTinyGL::flipBuffer(bool opportunistic) {
+	if (opportunistic) {
+		g_system->updateScreen();
+		return;
+	}
+
 	Common::List<Common::Rect> dirtyAreas;
 	TinyGL::presentBuffer(dirtyAreas);
 

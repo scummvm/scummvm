@@ -6,6 +6,9 @@ MODULE_OBJS = \
 	audio_player.o \
 	boot.o \
 	core.o \
+	coroutine_exec.o \
+	coroutine_manager.o \
+	coroutines.o \
 	data.o \
 	debug.o \
 	element_factory.o \
@@ -22,8 +25,6 @@ MODULE_OBJS = \
 	plugin/mti_data.o \
 	plugin/obsidian.o \
 	plugin/obsidian_data.o \
-	plugin/spqr.o \
-	plugin/spqr_data.o \
 	plugin/standard.o \
 	plugin/standard_data.o \
 	render.o \

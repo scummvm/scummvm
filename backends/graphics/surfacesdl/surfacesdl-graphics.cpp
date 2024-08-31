@@ -141,9 +141,9 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_mouseKeyColor(0), _disableMouseKeyColor(false) {
 
 	// allocate palette storage
-	_currentPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
-	_overlayPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
-	_cursorPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
+	_currentPalette = (SDL_Color *)calloc(256, sizeof(SDL_Color));
+	_overlayPalette = (SDL_Color *)calloc(256, sizeof(SDL_Color));
+	_cursorPalette = (SDL_Color *)calloc(256, sizeof(SDL_Color));
 
 	// Generate RGB332 palette for overlay
 	for (uint i = 0; i < 256; i++) {

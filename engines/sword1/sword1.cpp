@@ -124,7 +124,20 @@ Common::Error SwordEngine::init() {
 	_systemVars.fastMode = false;
 	_systemVars.parallaxOn = true;
 
-	switch (_systemVars.realLanguage) {
+	Common::Language langOverride = Common::UNK_LANG;
+
+	if (ConfMan.hasKey("subtitles_language_override", _targetName)) {
+		langOverride = Common::parseLanguage(ConfMan.get("subtitles_language_override"));
+
+		// Versions with extended language support have seven languages instead of five...
+		bool hasExtendedLangSupport = (_systemVars.realLanguage == Common::PT_BRA || _systemVars.realLanguage == Common::CS_CZE);
+
+		// ...but let's avoid setting one of the extra languages in a five-languages edition
+		if (!hasExtendedLangSupport && (langOverride == Common::PT_BRA || langOverride == Common::CS_CZE))
+			langOverride = Common::UNK_LANG;
+	}
+
+	switch (langOverride != Common::UNK_LANG ? langOverride : _systemVars.realLanguage) {
 	case Common::DE_DEU:
 		_systemVars.language = BS1_GERMAN;
 		break;

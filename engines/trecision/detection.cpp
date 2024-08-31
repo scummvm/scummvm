@@ -198,7 +198,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"aot",
-		_s("Missing game code"),
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 		{
 			{"dialogue.dat", 0, "afc71fe29b1be3a9b145b8d61dfa4539", 166155130},
 			{"sentence.dat", 0, "f38afcd22e7de14f9a2343e911eaa126", 75668232},

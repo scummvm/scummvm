@@ -73,11 +73,11 @@ mcodeFunctionReturnCodes _game_session::fn_floor_and_floor_camera_linked(int32 &
 
 	home_floor_num = floor_def->Fetch_floor_number_by_name(home_floor_name);
 	if (home_floor_num == PX_LINKED_DATA_FILE_ERROR)
-		Fatal_error("fn_floor_and_floor_camera_linked cant find floor [%s]", home_floor_name);
+		Fatal_error("fn_floor_and_floor_camera_linked can't find floor [%s]", home_floor_name);
 
 	floor_num = floor_def->Fetch_floor_number_by_name(floor_name);
 	if (floor_num == PX_LINKED_DATA_FILE_ERROR)
-		Fatal_error("fn_floor_and_floor_camera_linked cant find floor [%s]", floor_name);
+		Fatal_error("fn_floor_and_floor_camera_linked can't find floor [%s]", floor_name);
 
 	if (home_floor_num == floor_num)
 		Fatal_error("fn_floor_and_floor_camera_linked finds [%s] and [%s] are same floor!", home_floor_name, floor_name);
@@ -124,7 +124,7 @@ void _game_session::Build_camera_table() {
 			while ((k < num_cameras) && (strcmp(camera_name_list[k], (((char *)floor) + floor->camera_name_offset))))
 				++k;
 
-			if (k == num_cameras) { // didnt find this camera
+			if (k == num_cameras) { // didn't find this camera
 				Zdebug(" new camera %d [%s] [%s]", num_cameras, (((char *)floor) + floor->camera_name_offset), floor->camera_cluster);
 				camera_name_list[num_cameras] = (((char *)floor) + floor->camera_name_offset); // add camera name to list of names
 				camera_cluster_list[num_cameras] = floor->camera_cluster;
@@ -337,9 +337,9 @@ void _game_session::Camera_director() {
 	// not on a WA camera so check via the floor rects
 
 	if (this_rect == PXNULL) { // object not on a rect??
-		// we cant pick a camera set view
+		// we can't pick a camera set view
 		// if a set is set up then that will continue to be used
-		// if there isnt a set at all (this is first cycle) then engine will switch to nethack mode
+		// if there isn't a set at all (this is first cycle) then engine will switch to nethack mode
 		return;
 	}
 
@@ -393,10 +393,10 @@ void _game_session::Prepare_camera_floors() {
 	// get a mega class objects world position - can be player or other mega
 	if (!g_mission->camera_follow_id_overide) {
 		if (!player.Player_exists())
-			Fatal_error("camera director cant choose a scene as player object has been shut down");
+			Fatal_error("camera director can't choose a scene as player object has been shut down");
 
 		if (logic_structs[player.Fetch_player_id()]->ob_status == OB_STATUS_HELD)
-			Fatal_error("camera director cant choose a scene as player object has been shut down");
+			Fatal_error("camera director can't choose a scene as player object has been shut down");
 
 		posi = (PXvector *)&logic_structs[player.Fetch_player_id()]->mega->actor_xyz;
 

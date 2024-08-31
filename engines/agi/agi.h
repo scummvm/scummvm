@@ -62,12 +62,6 @@ class RandomSource;
  */
 namespace Agi {
 
-typedef signed int Err;
-
-//
-// Version and other definitions
-//
-
 #define TITLE       "AGI engine"
 
 #define DIR_        "dir"
@@ -103,16 +97,12 @@ typedef signed int Err;
 
 #define CMD_BSIZE 12
 
-enum {
-	NO_GAMEDIR = 0,
-	GAMEDIR
-};
-
 enum AgiGameType {
 	GType_PreAGI = 0,
 	GType_V1 = 1,
 	GType_V2 = 2,
-	GType_V3 = 3
+	GType_V3 = 3,
+	GType_A2 = 4
 };
 
 enum AgiGameFeatures {
@@ -122,11 +112,6 @@ enum AgiGameFeatures {
 	GF_FANMADE     = (1 << 3), // marks fanmade games
 	GF_2GSOLDSOUND = (1 << 5),
 	GF_EXTCHAR     = (1 << 6)  // use WORDS.TOK.EXTENDED
-};
-
-enum BooterDisks {
-	BooterDisk1 = 0,
-	BooterDisk2 = 1
 };
 
 enum AgiGameID {
@@ -155,16 +140,10 @@ enum AgiGameID {
 
 enum AGIErrors {
 	errOK = 0,
-	errDoNothing,
-	errBadCLISwitch,
-	errInvalidAGIFile,
+	errFilesNotFound,
 	errBadFileOpen,
 	errNotEnoughMemory,
 	errBadResource,
-	errUnknownAGIVersion,
-	errNoLoopsInView,
-	errViewDataError,
-	errNoGameList,
 	errIOError,
 
 	errUnk = 127
@@ -282,6 +261,7 @@ enum AgiMonitorType {
  */
 enum AgiComputerType {
 	kAgiComputerPC = 0,
+	kAgiComputerApple2 = 3,
 	kAgiComputerAtariST = 4,
 	kAgiComputerAmiga = 5,
 	kAgiComputerApple2GS = 7
@@ -342,8 +322,8 @@ struct AgiDir {
 	uint8 flags;
 
 	void reset() {
-		volume = 0;
-		offset = 0;
+		volume = 0xff;
+		offset = _EMPTY;
 		len = 0;
 		clen = 0;
 		flags = 0;
@@ -392,7 +372,6 @@ struct AgiGame {
 	int adjMouseX;  /**< last given adj.ego.move.to.x.y-command's 1st parameter */
 	int adjMouseY;  /**< last given adj.ego.move.to.x.y-command's 2nd parameter */
 
-	char name[8];   /**< lead in id (e.g. `GR' for goldrush) */
 	char id[8];     /**< game id */
 	uint32 crc;     /**< game CRC */
 
@@ -484,7 +463,6 @@ struct AgiGame {
 		adjMouseX = 0;
 		adjMouseY = 0;
 
-		memset(name, 0, sizeof(name));
 		memset(id, 0, sizeof(id));
 		crc = 0;
 		memset(flags, 0, sizeof(flags));
@@ -553,84 +531,147 @@ struct AgiGame {
 	}
 };
 
+struct AgiDiskVolume {
+	uint32 disk;
+	uint32 offset;
+
+	AgiDiskVolume() : disk(_EMPTY), offset(0) {}
+	AgiDiskVolume(uint32 d, uint32 o) : disk(d), offset(o) {}
+};
+
+/**
+ * Apple II version of the format for LOGDIR, VIEWDIR, etc.
+ * See AgiLoader_A2::loadDir for more details.
+ */
+enum A2DirVersion {
+	A2DirVersionOld,  // 4 bits for volume, 8 for track
+	A2DirVersionNew,  // 5 bits for volume, 7 for track
+};
+
 class AgiLoader {
 public:
-
-	AgiLoader() {}
+	AgiLoader(AgiEngine *vm) : _vm(vm) {}
 	virtual ~AgiLoader() {}
 
-	virtual int init() = 0;
-	virtual int detectGame() = 0;
-	virtual int loadResource(int16 resourceType, int16 resourceNr) = 0;
-	virtual void unloadResource(int16 resourceType, int16 resourceNr) = 0;
-	virtual int loadObjects(const char *fname) = 0;
-	virtual int loadWords(const char *fname) = 0;
+	/**
+	 * Performs one-time initializations, such as locating files
+	 * with dynamic names.
+	 */
+	virtual void init() {}
+
+	/**
+	 * Loads all AGI directory entries from disk and and populates
+	 * the AgiDir arrays in AgiGame with them.
+	 */
+	virtual int loadDirs() = 0;
+
+	/**
+	 * Loads a volume resource from disk.
+	 */
+	virtual uint8 *loadVolumeResource(AgiDir *agid) = 0;
+
+	/**
+	 * Loads AgiEngine::_objects from disk.
+	 */
+	virtual int loadObjects() = 0;
+
+	/**
+	 * Loads AgiBase::_words from disk.
+	 */
+	virtual int loadWords() = 0;
+
+protected:
+	AgiEngine *_vm;
+};
+
+class AgiLoader_A2 : public AgiLoader {
+public:
+	AgiLoader_A2(AgiEngine *vm) : AgiLoader(vm) {}
+	~AgiLoader_A2() override;
+
+	void init() override;
+	int loadDirs() override;
+	uint8 *loadVolumeResource(AgiDir *agid) override;
+	int loadObjects() override;
+	int loadWords() override;
+
+private:
+	Common::Array<Common::SeekableReadStream *> _disks;
+	Common::Array<AgiDiskVolume> _volumes;
+	AgiDir _logDir;
+	AgiDir _picDir;
+	AgiDir _viewDir;
+	AgiDir _soundDir;
+	AgiDir _objects;
+	AgiDir _words;
+
+	int readDiskOne(Common::SeekableReadStream &stream, Common::Array<uint32> &volumeMap);
+	static bool readInitDir(Common::SeekableReadStream &stream, byte index, AgiDir &agid);
+	static bool readDir(Common::SeekableReadStream &stream, int position, AgiDir &agid);
+	static bool readVolumeMap(Common::SeekableReadStream &stream, uint32 position, uint32 bufferLength, Common::Array<uint32> &volumeMap);
+
+	A2DirVersion detectDirVersion(Common::SeekableReadStream &stream);
+	bool loadDir(AgiDir *dir, Common::SeekableReadStream &disk, uint32 dirOffset, uint32 dirLength, A2DirVersion dirVersion);
 };
 
 class AgiLoader_v1 : public AgiLoader {
-private:
-	AgiEngine *_vm;
-	Common::Path _filenameDisk0;
-	Common::Path _filenameDisk1;
-
-	int loadDir_DDP(AgiDir *agid, int offset, int max);
-	int loadDir_BC(AgiDir *agid, int offset, int max);
-	uint8 *loadVolRes(AgiDir *agid);
-
 public:
-	AgiLoader_v1(AgiEngine *vm);
+	AgiLoader_v1(AgiEngine *vm) : AgiLoader(vm) {}
 
-	int init() override;
-	int detectGame() override;
-	int loadResource(int16 resourceType, int16 resourceNr) override;
-	void unloadResource(int16 resourceType, int16 resourceNr) override;
-	int loadObjects(const char *fname) override;
-	int loadWords(const char *fname) override;
+	void init() override;
+	int loadDirs() override;
+	uint8 *loadVolumeResource(AgiDir *agid) override;
+	int loadObjects() override;
+	int loadWords() override;
+
+private:
+	Common::Array<Common::String> _imageFiles;
+	Common::Array<AgiDiskVolume> _volumes;
+	AgiDir _logDir;
+	AgiDir _picDir;
+	AgiDir _viewDir;
+	AgiDir _soundDir;
+	AgiDir _objects;
+	AgiDir _words;
+
+	bool readDiskOneV1(Common::SeekableReadStream &stream);
+	bool readDiskOneV2001(Common::SeekableReadStream &stream, int &vol0Offset);
+	static bool readInitDirV1(Common::SeekableReadStream &stream, byte index, AgiDir &agid);
+	static bool readInitDirV2001(Common::SeekableReadStream &stream, byte index, AgiDir &agid);
+
+	bool loadDir(AgiDir *dir, Common::File &disk, uint32 dirOffset, uint32 dirLength);
 };
 
 class AgiLoader_v2 : public AgiLoader {
 private:
-	AgiEngine *_vm;
 	bool _hasV3VolumeFormat;
 
 	int loadDir(AgiDir *agid, const char *fname);
-	uint8 *loadVolRes(AgiDir *agid);
 	bool detectV3VolumeFormat();
 
 public:
+	AgiLoader_v2(AgiEngine *vm) : _hasV3VolumeFormat(false), AgiLoader(vm) {}
 
-	AgiLoader_v2(AgiEngine *vm) {
-		_vm = vm;
-		_hasV3VolumeFormat = false;
-	}
-
-	int init() override;
-	int detectGame() override;
-	int loadResource(int16 resourceType, int16 resourceNr) override;
-	void unloadResource(int16 resourceType, int16 resourceNr) override;
-	int loadObjects(const char *fname) override;
-	int loadWords(const char *fname) override;
+	int loadDirs() override;
+	uint8 *loadVolumeResource(AgiDir *agid) override;
+	int loadObjects() override;
+	int loadWords() override;
 };
 
 class AgiLoader_v3 : public AgiLoader {
 private:
-	AgiEngine *_vm;
+	Common::String _name; /**< prefix in directory and/or volume file names (`GR' for goldrush) */
 
 	int loadDir(AgiDir *agid, Common::File *fp, uint32 offs, uint32 len);
-	uint8 *loadVolRes(AgiDir *agid);
 
 public:
+	AgiLoader_v3(AgiEngine *vm) : AgiLoader(vm) {}
 
-	AgiLoader_v3(AgiEngine *vm) {
-		_vm = vm;
-	}
-
-	int init() override;
-	int detectGame() override;
-	int loadResource(int16 resourceType, int16 resourceNr) override;
-	void unloadResource(int16 resourceType, int16 resourceNr) override;
-	int loadObjects(const char *fname) override;
-	int loadWords(const char *fname) override;
+	void init() override;
+	int loadDirs() override;
+	uint8 *loadVolumeResource(AgiDir *agid) override;
+	int loadObjects() override;
+	int loadWords() override;
 };
 
 class GfxFont;
@@ -854,9 +895,12 @@ public:
 
 	int agiInit();
 	void agiDeinit();
-	int agiLoadResource(int16 resourceType, int16 resourceNr);
-	void agiUnloadResource(int16 resourceType, int16 resourceNr);
-	void agiUnloadResources();
+	int loadResource(int16 resourceType, int16 resourceNr);
+	void unloadResource(int16 resourceType, int16 resourceNr);
+	/**
+	 * Unload all resources except Logic 0
+	 */
+	void unloadResources();
 
 	int getKeypress() override;
 	bool isKeypress() override;
@@ -879,7 +923,7 @@ public:
 	void newRoom(int16 newRoomNr);
 	void resetControllers();
 	void interpretCycle();
-	int playGame();
+	void playGame();
 
 	void allowSynthetic(bool);
 	void processScummVMEvents();
@@ -890,13 +934,12 @@ public:
 	// Objects
 public:
 	int loadObjects(const char *fname);
-	int loadObjects(Common::File &fp);
+	int loadObjects(Common::SeekableReadStream &fp, int flen);
 	const char *objectName(uint16 objectNr);
 	int objectGetLocation(uint16 objectNr);
 	void objectSetLocation(uint16 objectNr, int location);
 private:
 	int decodeObjects(uint8 *mem, uint32 flen);
-	int readObjects(Common::File &fp, int flen);
 
 	// Logic
 public:
@@ -952,8 +995,8 @@ public:
 	int decodeView(byte *resourceData, uint16 resourceSize, int16 viewNr);
 
 private:
-	void unpackViewCelData(AgiViewCel *celData, byte *compressedData, uint16 compressedSize);
-	void unpackViewCelDataAGI256(AgiViewCel *celData, byte *compressedData, uint16 compressedSize);
+	void unpackViewCelData(AgiViewCel *celData, byte *compressedData, uint16 compressedSize, int16 viewNr);
+	void unpackViewCelDataAGI256(AgiViewCel *celData, byte *compressedData, uint16 compressedSize, int16 viewNr);
 
 public:
 	bool isEgoView(const ScreenObjEntry *screenObj);
@@ -993,6 +1036,7 @@ public:
 
 	int waitKey();
 	int waitAnyKey();
+	void waitAnyKeyOrFinishedSound();
 
 	void nonBlockingText_IsShown();
 	void nonBlockingText_Forget();

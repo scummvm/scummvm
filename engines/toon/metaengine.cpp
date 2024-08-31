@@ -30,6 +30,12 @@
 #include "engines/advancedDetector.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "base/plugins.h"
 #include "graphics/thumbnail.h"
 #include "toon/toon.h"
@@ -47,6 +53,8 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	void removeSaveState(const char *target, int slot) const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool ToonMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -64,6 +72,90 @@ bool ToonMetaEngine::hasFeature(MetaEngineFeature f) const {
 void ToonMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
+}
+
+Common::KeymapArray ToonMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Toon;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "toon-default", _("Default keymappings"));
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Left click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Right click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("ESCAPE", _("Skip intro"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_BACK");
+	gameKeyMap->addAction(act);
+
+	// I18N: Skips current line being spoken by a character
+	act = new Action("STOPCURRENTVOICE", _("Stop current voice"));
+	act->setCustomEngineActionEvent(kActionStopCurrentVoice);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_X");
+	gameKeyMap->addAction(act);
+
+	act = new Action("SAVEGAME", _("Save game"));
+	act->setCustomEngineActionEvent(kActionSaveGame);
+	act->addDefaultInputMapping("F5");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	gameKeyMap->addAction(act);
+
+	act = new Action("LOADGAME", _("Load game"));
+	act->setCustomEngineActionEvent(kActionLoadGame);
+	act->addDefaultInputMapping("F6");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	gameKeyMap->addAction(act);
+
+	act = new Action("SUBTITLES", _("Toggle subtitles"));
+	act->setCustomEngineActionEvent(kActionSubtitles);
+	act->addDefaultInputMapping("t");
+	act->addDefaultInputMapping("JOY_UP");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MUTEMUSIC", _("Mute music"));
+	act->setCustomEngineActionEvent(kActionMuteMusic);
+	act->addDefaultInputMapping("m");
+	act->addDefaultInputMapping("JOY_DOWN");
+	gameKeyMap->addAction(act);
+
+	act = new Action("SPEECHMUTE", _("Mute speech"));
+	act->setCustomEngineActionEvent(kActionSpeechMute);
+	act->addDefaultInputMapping("d");
+	act->addDefaultInputMapping("JOY_LEFT");
+	gameKeyMap->addAction(act);
+
+	act = new Action("SFXMUTE", _("Mute sound effects"));
+	act->setCustomEngineActionEvent(kActionSFXMute);
+	act->addDefaultInputMapping("s");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	gameKeyMap->addAction(act);
+
+	act = new Action("SHOWOPTIONS", _("Show options"));
+	act->setCustomEngineActionEvent(kActionShowOptions);
+	act->addDefaultInputMapping("F1");
+	act->addDefaultInputMapping("JOY_Y");
+	gameKeyMap->addAction(act);
+
+	KeymapArray keymaps(2);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeyMap;
+
+	return keymaps;
 }
 
 int ToonMetaEngine::getMaximumSaveSlot() const { return MAX_SAVE_SLOT; }

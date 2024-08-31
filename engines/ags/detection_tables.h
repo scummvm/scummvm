@@ -4201,6 +4201,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.exe", "ffc42a6ea2562dc1fb91c03a2d0c5cbe", 48454110, 0),  // v3.4b
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.exe", "ffc42a6ea2562dc1fb91c03a2d0c5cbe", 48457210, 0),  // v3.5
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.exe", "ffc42a6ea2562dc1fb91c03a2d0c5cbe", 48460291, 0),  // v3.5a
+	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.exe", "ffc42a6ea2562dc1fb91c03a2d0c5cbe", 48491927, 0),  // v3.6
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.ags", "9f7e0d47caa495c98d8ea781fb52be49", 45246635, 0),  // Linux v3.0
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.ags", "504d537cc8af0b027ac7c2474a364ff9", 45250405, 0),  // Linux v3.1
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.ags", "7bcf1414a4196709cb58975772e09ff2", 45252817, 0),  // Linux v3.2
@@ -4209,6 +4210,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.ags", "dd5b95bdc060b1a88911cf8f678173e6", 45261258, 0),  // Linux v3.4b
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.ags", "b197730f059f9537efa5811da10ffa61", 45264358, 0),  // Linux v3.5
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.ags", "164fb92c9efc0ff928cc6ba82fd554fb", 45267439, 0),  // Linux v3.5a
+	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.ags", "2bf7d1146061cd8a02b80802ca269977", 45299075, 0),  // Linux v3.6
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell1", "ac2game.dat", "7865a17a36ff5a1844cd5359071eb04b", 64183795, 0),
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell1", "ac2game.dat", "5b63e0d2bc117cc9d32b88bfb5de167c", 64199320, 0),
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell1", "ac2game.dat", "6d17d5534a5c77a419117975053a1e90", 64199782, 0), // Mac v2.3
@@ -4220,6 +4222,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell1", "ac2game.dat", "dd5b95bdc060b1a88911cf8f678173e6", 45261258, 0), // Mac v3.4b
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell1", "ac2game.dat", "b197730f059f9537efa5811da10ffa61", 45264358, 0), // Mac v3.5
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell1", "ac2game.dat", "164fb92c9efc0ff928cc6ba82fd554fb", 45267439, 0), // Mac v3.5a
+	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell1", "ac2game.dat", "2bf7d1146061cd8a02b80802ca269977", 45299075, 0), // Mac v3.6
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18824597, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 19757071, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "blackwell1.exe", "e5a75b86a0ea8143e1784261f5f52e83", 67241529, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE),
@@ -4231,6 +4234,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "ac2game.dat", "ab9d20216445fc247089bc797441e9be", 45261053, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE), // Mac 3.4b
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "ac2game.dat", "9788ea2eb3bbccc950ed8cb8589c23b0", 45264153, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE), // Mac 3.5
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "ac2game.dat", "595e214d2a2aa94d8c301f90e3a783aa", 45267234, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE), // Mac 3.5a
+	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "ac2game.dat", "698f09fd8c63da0e437e7ae773c8bfda", 45298870, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE), // Mac 3.6
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.exe", "ffc42a6ea2562dc1fb91c03a2d0c5cbe", 48439274, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE), // Win 3.0
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.exe", "ffc42a6ea2562dc1fb91c03a2d0c5cbe", 48443044, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE), // Win 3.1
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.exe", "ffc42a6ea2562dc1fb91c03a2d0c5cbe", 48443052, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE), // Win 3.1 updated
@@ -4240,6 +4244,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.exe", "ffc42a6ea2562dc1fb91c03a2d0c5cbe", 48453905, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE), // Win 3.4b
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.exe", "ffc42a6ea2562dc1fb91c03a2d0c5cbe", 48457005, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE), // Win 3.5
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.exe", "ffc42a6ea2562dc1fb91c03a2d0c5cbe", 48460086, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE), // Win 3.5a
+	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.exe", "ffc42a6ea2562dc1fb91c03a2d0c5cbe", 48491722, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE), // Win 3.6
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.ags", "670f3eaa22243dc1742964b697108ee8", 45246422, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE), // Linux 3.0
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.ags", "ea3ea2ce1958205810eafa9f826c4dd6", 45250192, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE), // Linux 3.1
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.ags", "1f6a8615f1da54cac5c98672a2341819", 45252612, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE), // Linux 3.2
@@ -4248,6 +4253,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.ags", "ab9d20216445fc247089bc797441e9be", 45261053, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE), // Linux 3.4b
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.ags", "9788ea2eb3bbccc950ed8cb8589c23b0", 45264153, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE), // Linux 3.5
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.ags", "595e214d2a2aa94d8c301f90e3a783aa", 45267234, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE), // Linux 3.5a
+	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.ags", "698f09fd8c63da0e437e7ae773c8bfda", 45298870, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE), // Linux 3.6
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell1", "Blackwell Legacy.ags", "99f4ff1080509c856be96ba55e644380", 45277507, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE), // Steamdeck
 	GAME_ENTRY_EN("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18824247), // Humble Bundle (Windows)
 	GAME_ENTRY_EN("blackwell1", "ac2game.dat", "a81e47e6077f7049706ee59356435286", 18798215), // Big Fish Games (Windows)
@@ -4399,6 +4405,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("content", "Content.exe", "1e950496692a009ea163eb276702e008", 29813674),  // Eng-Kor
 	GAME_ENTRY_EN("cosmosquest3", "cq3.exe", "18b284c22010850f79bc5c20054a70c4", 8674790),
 	GAME_ENTRY_EN("cosmosquest4", "cq4.exe", "e3962995a70923a8d5a8f1cf8f932eee", 17062325),
+	GAME_ENTRY_EN_STEAM("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 159585457), // Final Release Win
+	GAME_ENTRY_EN_STEAM("crimsondiamond", "game.ags", "38a49a28c0af599633006c09fe6c2f72", 159579164), // Final Release Mac
+	GAME_ENTRY_EN_STEAM("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 159589239), // itch.io 1.02b
 	GAME_ENTRY_STEAM("crystalshardadventurebundle", "bundle.exe", "1c45d5c239d9eeef61e283983b6e6851", 4645713),  // Multilang
 	GAME_ENTRY_STEAM("crystalshardadventurebundle", "bundle.ags", "9b7610e4330a7aa2118bc3bdb8d2ce7e", 1935844),  // Multilang
 	GAME_ENTRY_EN("danewguys2", "jackass.exe", "029aab0fef5e9fff7b95ddf5d79d7718", 23932842), // Humble Store
@@ -4428,6 +4437,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DETECTION_ENTRY_GUIO("dustbowl", "dustbowl.exe", "aa349d52fd620cf9642935cd5bdec5d8", 63365026, Common::EN_ANY, "Steam", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), ADGF_NO_FLAGS, 0),
 	GAME_ENTRY_EN("dustbowl", "dustbowl.exe", "aa349d52fd620cf9642935cd5bdec5d8", 82185295),
 	DETECTION_ENTRY_GUIO("englishhaunting", "An English Haunting.exe", "de2b4205a56fce1b199a692a8b65e161", 987485394, Common::UNK_LANG, nullptr, GUIO2(GUIO_NOLANG, GAMEOPTION_NO_AUTOSAVE), ADGF_NO_FLAGS, 0), // itch.io Eng-Esp
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("englishhaunting", "An English Haunting.exe", "de2b4205a56fce1b199a692a8b65e161", 987491517, 0),
 	DETECTION_ENTRY_GUIO("excavationhb", "TEOHB.exe", "f176b46bc89e227f745dae9878171676", 566323169, Common::EN_ANY, "Steam", GUIO3(GUIO_NOLANG, GUIO_NOLAUNCHLOAD, GAMEOPTION_NO_AUTOSAVE), ADGF_NO_FLAGS, 0), // Win
 	DETECTION_ENTRY_GUIO("excavationhb", "ac2game.dat", "e5553f7c45d26d5fbc8b376a859bb87c", 563281442, Common::EN_ANY, "Steam", GUIO3(GUIO_NOLANG, GUIO_NOLAUNCHLOAD, GAMEOPTION_NO_AUTOSAVE), ADGF_NO_FLAGS, GAMEFLAG_PLUGINS_AGSSPRITEFONT_CLIFFTOP), // Mac
 	DETECTION_ENTRY_GUIO("excavationhb", "ac2game.dat", "e5553f7c45d26d5fbc8b376a859bb87c", 563283917, Common::EN_ANY, "Steam", GUIO3(GUIO_NOLANG, GUIO_NOLAUNCHLOAD, GAMEOPTION_NO_AUTOSAVE), ADGF_NO_FLAGS, GAMEFLAG_PLUGINS_AGSSPRITEFONT_CLIFFTOP), // Mac
@@ -4606,12 +4616,15 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866341644, 0), // v3.5b
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866341856, 0), // v3.7
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866342835, 0), // v3.8
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866344821, 0), // v3.9
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866348102, 0), // v4.0
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "agsgame.dat", "22313e59c3233001488c26f18c80cc08", 973495830, 0), // Linux
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "ac2game.dat", "7755b4df8706de91f31ddeee98bd20e9", 976474850, 0), // Mac
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "ac2game.dat", "7755b4df8706de91f31ddeee98bd20e9", 976475347, 0), // Mac v2.7a
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "ac2game.dat", "7755b4df8706de91f31ddeee98bd20e9", 976476198, 0), // Mac v3
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 977991488, 0), // Mac v3.0a
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866341456, 0), // Mac v3.5a
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866342835, 0), // Mac v3.9
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377182, 0),
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 979602678, 0),  // with Ita translation
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 979603766, 0),
@@ -4621,11 +4634,14 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866341392, 0),  // v3.6 updated2
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866341604, 0),  // v3.7
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866342583, 0),  // v3.8
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866344569, 0),  // v3.9
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866347850, 0),  // v4.0
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "ac2game.dat", "7755b4df8706de91f31ddeee98bd20e9", 976475938, 0),  // Mac
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866341384, 0),  // Mac v3.6 updated
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866341392, 0),  // Mac v3.6 updated2
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866341604, 0),  // Mac v3.7
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866342583, 0),  // Mac v3.8
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866344569, 0),  // Mac v3.9
 	GAME_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973154021), // DVD version
 	GAME_ENTRY("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 978722743),
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("projectorface", "Projector Face.exe", "d26528c4933649f147c6c4338bcb9e0a", 42610502, 0),  // En-De-It
@@ -4823,6 +4839,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "ac2game.dat", "140570a663877cb81e3656b4f29c63f6", 1752927680, 0), // Mac
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "ac2game.dat", "f311000c476689a6e77d25f002f412db", 1617818900, 0), // Mac
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "ac2game.dat", "f311000c476689a6e77d25f002f412db", 1617819275, 0), // Mac v1.1.1
+	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "ac2game.dat", "f311000c476689a6e77d25f002f412db", 1617819875, 0), // Mac v1.2.1
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "Unavowed.exe", "b1ff7d96667707daf4266975cea2bf90", 1755451248, 0), // Windows/Linux
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "Unavowed.exe", "52c411caa3bfb65788ed8768ceaa0c30", 1756036604, 0), // Windows/Linux v0.9.0 (GOG v1.2)
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "Unavowed.exe", "52c411caa3bfb65788ed8768ceaa0c30", 1756040045, 0), // Windows?/Linux v1.0.0
@@ -4830,6 +4847,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617816607, 0), // Windows/Linux v1.1.0
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617818775, 0), // Windows/Linux v1.1.0 updated
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617819275, 0), // Windows/Linux v1.1.1
+	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617819875, 0), // Windows/Linux v1.2.1
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "Unavowed.exe", "b1ff7d96667707daf4266975cea2bf90", 1755451248, 0), // Windows/Linux
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "Unavowed.exe", "52c411caa3bfb65788ed8768ceaa0c30", 1756036604, 0), // Windows/Linux v0.9.0 (GOG v1.2)
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "Unavowed.exe", "52c411caa3bfb65788ed8768ceaa0c30", 1756037170, 0), // Windows/Linux v0.9.0 (GOG v1.3)
@@ -4839,7 +4857,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617816924, 0), // Windows/Linux v1.1.0 (GOG v2.0)
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617819092, 0), // Windows/Linux v1.1.0 updated (GOG v2.0.1)
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617819592, 0), // Windows/Linux v1.1.1 (GOG v2.0.2)
+	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617820192, 0), // Windows/Linux v1.2.1 (GOG v2.1)
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "ac2game.dat", "f311000c476689a6e77d25f002f412db", 1617819592, 0), // Mac v1.1.1 (GOG v2.0.2)
+	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "ac2game.dat", "f311000c476689a6e77d25f002f412db", 1617820192, 0), // Mac v1.2.1 (GOG v2.1)
 	GAME_ENTRY_EN_STEAM("unlikelyprometheus", "The Unlikely Prometheus.exe", "a370a1db43a1d376d09e43469abba1d1", 129124983),
 	GAME_ENTRY_EN_STEAM("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1089857773), // Steam
 	GAME_ENTRY_EN_STEAM("waitingfortheloop", "waitingfortheloop.exe", "0241777c2537fc5d077c05cde10bfa9f", 51472537),

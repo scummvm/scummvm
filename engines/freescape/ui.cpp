@@ -41,10 +41,10 @@ void FreescapeEngine::titleScreen() {
 				_gfx->computeScreenViewport();
 				_gfx->clear(0, 0, 0, true);
 				break;
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_SPACE:
-					i = maxWait;
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				switch (event.customType) {
+				case kActionSkip:
+					maxWait = -1;
 					break;
 				default:
 					break;
@@ -54,7 +54,7 @@ void FreescapeEngine::titleScreen() {
 				// fallthrough
 			case Common::EVENT_LBUTTONDOWN:
 				if (g_system->hasFeature(OSystem::kFeatureTouchscreen))
-					i = maxWait;
+					maxWait = -1;
 				break;
 			default:
 				break;
@@ -103,8 +103,8 @@ Graphics::Surface *FreescapeEngine::drawStringsInSurface(const Common::Array<Com
 
 	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
-	int x = _viewArea.left;
-	int y = _viewArea.top;
+	int x = _viewArea.left + 3;
+	int y = _viewArea.top + 3;
 
 	for (int i = 0; i < int(lines.size()); i++) {
 		drawStringInSurface(lines[i], x, y, front, back, surface);
@@ -112,6 +112,8 @@ Graphics::Surface *FreescapeEngine::drawStringsInSurface(const Common::Array<Com
 	}
 	return surface;
 }
+
+extern Common::String centerAndPadString(const Common::String &x, int y);
 
 void FreescapeEngine::borderScreen() {
 	if (!_border)
@@ -135,23 +137,24 @@ void FreescapeEngine::borderScreen() {
 	if (isDOS() || isSpectrum()) {
 		Common::Array<Common::String> lines;
 		if (isDOS())
-			lines.push_back("    CONFIGURATION MENU  ");
+			lines.push_back(centerAndPadString("Configuration Menu", 30));
 		else
-			lines.push_back("    CONTROL  OPTIONS  ");
+			lines.push_back(centerAndPadString("Control Options", 25));
 		lines.push_back("");
-		lines.push_back("   1: KEYBOARD ONLY   ");
-		lines.push_back("   2: IBM JOYSTICK    ");
-		lines.push_back("   3: AMSTRAD JOYSTICK");
+		lines.push_back(centerAndPadString("1: KEYBOARD ONLY   ", isDOS() ? 30 : 25));
+		lines.push_back(centerAndPadString("2: IBM JOYSTICK    ", isDOS() ? 30 : 25));
+		lines.push_back(centerAndPadString("3: AMSTRAD JOYSTICK", isDOS() ? 30 : 25));
 		lines.push_back("");
-		if (isDOS())
-			lines.push_back(" SPACEBAR:  BEGIN MISSION");
-		else
-			lines.push_back("   ENTER: BEGIN MISSION");
 		lines.push_back("");
 		if (isDOS())
-			lines.push_back(" COPYRIGHT 1988 INCENTIVE");
+			lines.push_back(centerAndPadString("SPACEBAR:  BEGIN MISSION", 30));
 		else
-			lines.push_back("   (C) 1988 INCENTIVE");
+			lines.push_back(centerAndPadString("Enter: Begin Mission", 25));
+		lines.push_back("");
+		if (isDOS())
+			lines.push_back(centerAndPadString("COPYRIGHT 1988 INCENTIVE", 30));
+		else
+			lines.push_back(centerAndPadString("(c) 1988 Incentive", 25));
 
 		lines.push_back("");
 		Graphics::Surface *surface = drawStringsInSurface(lines);
@@ -200,11 +203,17 @@ void FreescapeEngine::drawBorderScreenAndWait(Graphics::Surface *surface, int ma
 				_gfx->computeScreenViewport();
 				_gfx->clear(0, 0, 0, true);
 				break;
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_SPACE:
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				switch (event.customType) {
+				case kActionSkip:
 					maxWait = -1;
 					break;
+				default:
+					break;
+				}
+				break;
+			case Common::EVENT_KEYDOWN:
+				switch (event.kbd.keycode) {
 				case Common::KEYCODE_d:
 					_demoMode = true;
 					maxWait = -1;
@@ -217,7 +226,7 @@ void FreescapeEngine::drawBorderScreenAndWait(Graphics::Surface *surface, int ma
 				// fallthrough
 			case Common::EVENT_LBUTTONDOWN:
 				if (g_system->hasFeature(OSystem::kFeatureTouchscreen))
-					i = maxWait;
+					maxWait = -1;
 				break;
 			default:
 				break;
@@ -232,7 +241,7 @@ void FreescapeEngine::drawBorderScreenAndWait(Graphics::Surface *surface, int ma
 		g_system->updateScreen();
 		g_system->delayMillis(15); // try to target ~60 FPS
 	}
-
+	playSound(_soundIndexMenu, false);
 	_gfx->clear(0, 0, 0, true);
 }
 

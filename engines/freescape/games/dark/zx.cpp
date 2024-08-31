@@ -33,12 +33,21 @@ void DarkEngine::initZX() {
 	_maxShield = 63;
 
 	_soundIndexShoot = 5;
-	_soundIndexCollide = 2;
+	_soundIndexCollide = -1; // Scripted
 	_soundIndexFall = 3;
-	_soundIndexClimb = -1;
-	_soundIndexMenu = -1;
-	_soundIndexStart = -1;
-	_soundIndexAreaChange = -1;
+	_soundIndexClimb = 4;
+	_soundIndexMenu = 25;
+	_soundIndexStart = 11;
+	_soundIndexAreaChange = 0x1c;
+	_soundIndexRestoreECD = 30;
+
+	_soundIndexNoShield = 14;
+	_soundIndexNoEnergy = 14;
+	_soundIndexFallen = 7;
+	_soundIndexTimeout = 14;
+	_soundIndexForceEndGame = 14;
+	_soundIndexCrushed = 25;
+	_soundIndexMissionComplete = 8;
 }
 
 void DarkEngine::loadAssetsZXFullGame() {

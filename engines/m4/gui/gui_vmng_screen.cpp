@@ -269,6 +269,10 @@ bool MoveScreenDelta(ScreenContext *myScreen, int32 parmX, int32 parmY) {
 	return MoveScreen(myScreen, parmX, parmY, true);
 }
 
+bool MoveScreenDelta(int32 parmX, int32 parmY) {
+	return MoveScreen(_G(game_buff_ptr), parmX, parmY, true);
+}
+
 void vmng_screen_to_back(void *scrnContent) {
 	ScreenContext *myScreen, *tempScreen;
 	if ((myScreen = ExtractScreen(scrnContent, SCRN_ANY)) == nullptr) return;

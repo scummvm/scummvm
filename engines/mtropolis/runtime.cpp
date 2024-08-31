@@ -38,6 +38,8 @@
 #include "audio/mixer.h"
 
 #include "mtropolis/runtime.h"
+#include "mtropolis/coroutine_manager.h"
+#include "mtropolis/coroutines.h"
 #include "mtropolis/data.h"
 #include "mtropolis/vthread.h"
 #include "mtropolis/asset_factory.h"
@@ -3301,12 +3303,19 @@ ProjectPresentationSettings::ProjectPresentationSettings() : width(640), height(
 Structural::Structural() : Structural(nullptr) {
 }
 
-Structural::Structural(Runtime *runtime) : _parent(nullptr), _paused(false), _loop(false), _flushPriority(0), _runtime(runtime) {
+Structural::Structural(Runtime *runtime)
+	: _parent(nullptr)
+	, _paused(false)
+	, _loop(false)
+	, _flushPriority(0)
+	, _runtime(runtime)
+	, _sceneLoadState(SceneLoadState::kNotAScene) {
 }
 
 Structural::Structural(const Structural &other)
 	: RuntimeObject(other), Debuggable(other), _parent(other._parent), _children(other._children), _modifiers(other._modifiers), _name(other._name), _assets(other._assets)
-	, _paused(other._paused), _loop(other._loop), _flushPriority(other._flushPriority)/*, _hooks(other._hooks)*/, _runtime(other._runtime) {
+	, _paused(other._paused), _loop(other._loop), _flushPriority(other._flushPriority)/*, _hooks(other._hooks)*/, _runtime(other._runtime)
+	, _sceneLoadState(SceneLoadState::kNotAScene) {
 }
 
 Structural::~Structural() {
@@ -3331,6 +3340,15 @@ void Structural::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
 bool Structural::isStructural() const {
 	return true;
 }
+
+Structural::SceneLoadState Structural::getSceneLoadState() const {
+	return _sceneLoadState;
+}
+
+void Structural::setSceneLoadState(SceneLoadState sceneLoadState) {
+	_sceneLoadState = sceneLoadState;
+}
+
 
 bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
 	if (attrib == "name") {
@@ -3488,6 +3506,16 @@ bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, c
 		return true;
 	}
 
+	if (RuntimeObject::readAttribute(thread, result, attrib))
+		return true;
+
+	if (_sceneLoadState == Structural::SceneLoadState::kSceneNotLoaded) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+		if (Debugger *debugger = thread->getRuntime()->debugGetDebugger())
+			debugger->notify(kDebugSeverityError, "Hot-loading scenes is not yet implemented (readAttribute)");
+#endif
+	}
+
 	// Traverse children (modifiers must be first)
 	for (const Common::SharedPtr<Modifier> &modifier : _modifiers) {
 		if (caseInsensitiveEqual(modifier->getName(), attrib)) {
@@ -3503,7 +3531,7 @@ bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, c
 		}
 	}
 
-	return RuntimeObject::readAttribute(thread, result, attrib);
+	return false;
 }
 
 MiniscriptInstructionOutcome Structural::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
@@ -3551,6 +3579,9 @@ MiniscriptInstructionOutcome Structural::writeRefAttribute(MiniscriptThread *thr
 	} else if (attrib == "flushpriority") {
 		DynamicValueWriteIntegerHelper<int32>::create(&_flushPriority, result);
 		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "unload") {
+		DynamicValueWriteFuncHelper<Structural, &Structural::scriptSetUnload, false>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
 	// Attempt to resolve as a child object
@@ -3574,6 +3605,13 @@ MiniscriptInstructionOutcome Structural::writeRefAttribute(MiniscriptThread *thr
 
 bool Structural::readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index) {
 	if (attrib == "nthelement") {
+		if (_sceneLoadState == Structural::SceneLoadState::kSceneNotLoaded) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+			if (Debugger *debugger = thread->getRuntime()->debugGetDebugger())
+				debugger->notify(kDebugSeverityError, "Hot-loading scenes is not yet implemented (readAttributeIndexed)");
+#endif
+		}
+
 		DynamicValue indexConverted;
 		if (!index.convertToType(DynamicValueTypes::kInteger, indexConverted)) {
 			thread->error("Invalid index for 'nthelement'");
@@ -3782,93 +3820,109 @@ void Structural::materializeDescendents(Runtime *runtime, ObjectLinkingScope *ou
 	}
 }
 
-VThreadState Structural::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	if (Event(EventIDs::kUnpause, 0).respondsTo(msg->getEvent())) {
-		if (_paused) {
-			_paused = false;
-			onPauseStateChanged();
-		}
-
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kUnpause, 0), DynamicValue(), getSelfReference()));
-		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-		runtime->sendMessageOnVThread(dispatch);
-
-		return kVThreadReturn;
-	}
-	if (Event(EventIDs::kPause, 0).respondsTo(msg->getEvent())) {
-		if (!_paused) {
-			_paused = true;
-			onPauseStateChanged();
-		}
-
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kPause, 0), DynamicValue(), getSelfReference()));
-		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-		runtime->sendMessageOnVThread(dispatch);
-
-		return kVThreadReturn;
-	}
-	if (msg->getEvent().eventType == EventIDs::kAttribSet) {
-		const uint32 attribID = msg->getEvent().eventInfo;
-
-		const Common::String *attribName = runtime->resolveAttributeIDName(attribID);
-		if (attribName == nullptr) {
-#ifdef MTROPOLIS_DEBUG_ENABLE
-			if (Debugger *debugger = runtime->debugGetDebugger())
-				debugger->notifyFmt(kDebugSeverityError, "Attribute ID '%i' couldn't be resolved for Set Attribute message", static_cast<int>(attribID));
-#endif
-			return kVThreadError;
-		}
-
-		MiniscriptThread miniscriptThread(runtime, msg, nullptr, nullptr, nullptr);
-
+CORO_BEGIN_DEFINITION(Structural::StructuralConsumeCommandCoroutine)
+	struct Locals {
+		Common::ScopedPtr<MiniscriptThread> miniscriptThread;
+		uint32 attribID;
+		const Common::String *attribName;
 		DynamicValueWriteProxy writeProxy;
-		MiniscriptInstructionOutcome outcome = this->writeRefAttribute(&miniscriptThread, writeProxy, *attribName);
-		if (outcome == kMiniscriptInstructionOutcomeFailed)
-			return kVThreadError;
-
-		outcome = writeProxy.pod.ifc->write(&miniscriptThread, msg->getValue(), writeProxy.pod.objectRef, writeProxy.pod.ptrOrOffset);
-		if (outcome == kMiniscriptInstructionOutcomeFailed)
-			return kVThreadError;
-
-		return kVThreadReturn;
-	}
-	if (msg->getEvent().eventType == EventIDs::kAttribGet) {
-		const uint32 attribID = msg->getEvent().eventInfo;
-
-		const Common::String *attribName = runtime->resolveAttributeIDName(attribID);
-		if (attribName == nullptr) {
-#ifdef MTROPOLIS_DEBUG_ENABLE
-			if (Debugger *debugger = runtime->debugGetDebugger())
-				debugger->notifyFmt(kDebugSeverityError, "Attribute ID '%i' couldn't be resolved for Get Attribute message", static_cast<int>(attribID));
-#endif
-			return kVThreadError;
-		}
-
-		MiniscriptThread miniscriptThread(runtime, msg, nullptr, nullptr, nullptr);
-
-		DynamicValue result;
-		if (!readAttribute(&miniscriptThread, result, *attribName))
-			return kVThreadError;
-
-		msg->setValue(result);
-
-		return kVThreadReturn;
-	}
-
-	// Just ignore these
-	const EventIDs::EventID ignoredIDs[] = {
-		EventIDs::kPreloadMedia,
-		EventIDs::kFlushMedia,
-		EventIDs::kFlushAllMedia,
-		EventIDs::kPrerollMedia
+		DynamicValue attribGetResult;
+		bool quietlyDiscard;
 	};
 
-	for (EventIDs::EventID evtID : ignoredIDs) {
-		if (Event(evtID, 0).respondsTo(msg->getEvent()))
-			return kVThreadReturn;
-	}
+	CORO_BEGIN_FUNCTION
+		CORO_IF(Event(EventIDs::kUnpause, 0).respondsTo(params->msg->getEvent()))
+			if (params->self->_paused) {
+				params->self->_paused = false;
+				params->self->onPauseStateChanged();
+			}
 
-	warning("Command type %i was ignored", msg->getEvent().eventType);
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kUnpause, 0), DynamicValue(), params->self->getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, params->self, false, true, false));
+
+			CORO_CALL(Runtime::SendMessageOnVThreadCoroutine, params->runtime, dispatch);
+
+			CORO_RETURN;
+		CORO_ELSE_IF(Event(EventIDs::kPause, 0).respondsTo(params->msg->getEvent()))
+			if (params->self->_paused) {
+				params->self->_paused = false;
+				params->self->onPauseStateChanged();
+			}
+
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kPause, 0), DynamicValue(), params->self->getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, params->self, false, true, false));
+
+			CORO_CALL(Runtime::SendMessageOnVThreadCoroutine, params->runtime, dispatch);
+
+			CORO_RETURN;
+		CORO_ELSE_IF(params->msg->getEvent().eventType == EventIDs::kAttribSet)
+			locals->attribID = params->msg->getEvent().eventInfo;
+
+			locals->attribName = params->runtime->resolveAttributeIDName(locals->attribID);
+
+			CORO_IF(locals->attribName == nullptr)
+#ifdef MTROPOLIS_DEBUG_ENABLE
+				if (Debugger *debugger = params->runtime->debugGetDebugger())
+					debugger->notifyFmt(kDebugSeverityError, "Attribute ID '%i' couldn't be resolved for Set Attribute message", static_cast<int>(locals->attribID));
+#endif
+				CORO_ERROR;
+			CORO_END_IF
+
+			locals->miniscriptThread.reset(new MiniscriptThread(params->runtime, params->msg, nullptr, nullptr, nullptr));
+
+			CORO_AWAIT_MINISCRIPT(params->self->writeRefAttribute(locals->miniscriptThread.get(), locals->writeProxy, *locals->attribName));
+
+			CORO_AWAIT_MINISCRIPT(locals->writeProxy.pod.ifc->write(locals->miniscriptThread.get(), params->msg->getValue(), locals->writeProxy.pod.objectRef, locals->writeProxy.pod.ptrOrOffset));
+
+			CORO_RETURN;
+		CORO_ELSE_IF(params->msg->getEvent().eventType == EventIDs::kAttribGet)
+			locals->attribID = params->msg->getEvent().eventInfo;
+
+			locals->attribName = params->runtime->resolveAttributeIDName(locals->attribID);
+			CORO_IF(locals->attribName == nullptr)
+#ifdef MTROPOLIS_DEBUG_ENABLE
+				if (Debugger *debugger = params->runtime->debugGetDebugger())
+					debugger->notifyFmt(kDebugSeverityError, "Attribute ID '%i' couldn't be resolved for Set Attribute message", static_cast<int>(locals->attribID));
+#endif
+				CORO_ERROR;
+			CORO_END_IF
+				
+			locals->miniscriptThread.reset(new MiniscriptThread(params->runtime, params->msg, nullptr, nullptr, nullptr));
+
+			CORO_IF(!params->self->readAttribute(locals->miniscriptThread.get(), locals->attribGetResult, *locals->attribName))
+				CORO_ERROR;
+			CORO_END_IF
+
+			params->msg->setValue(locals->attribGetResult);
+
+			CORO_RETURN;
+		CORO_END_IF
+
+		locals->quietlyDiscard = false;
+
+		// Just ignore these
+		const EventIDs::EventID ignoredIDs[] = {
+			EventIDs::kPreloadMedia,
+			EventIDs::kFlushMedia,
+			EventIDs::kFlushAllMedia,
+			EventIDs::kPrerollMedia
+		};
+
+		for (EventIDs::EventID evtID : ignoredIDs) {
+			if (Event(evtID, 0).respondsTo(params->msg->getEvent())) {
+				locals->quietlyDiscard = true;
+				break;
+			}
+		}
+
+		if (!locals->quietlyDiscard)
+			warning("Command type %i was ignored", params->msg->getEvent().eventType);
+	CORO_END_FUNCTION
+	
+CORO_END_DEFINITION
+
+VThreadState Structural::asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	runtime->getVThread().pushCoroutine<StructuralConsumeCommandCoroutine>(this, runtime, msg);
 	return kVThreadReturn;
 }
 
@@ -3952,7 +4006,7 @@ MiniscriptInstructionOutcome Structural::scriptSetPaused(MiniscriptThread *threa
 		thread->getRuntime()->sendMessageOnVThread(dispatch);
 	}
 
-	return kMiniscriptInstructionOutcomeYieldToVThreadNoRetry;
+	return kMiniscriptInstructionOutcomeYieldToVThread;
 }
 
 MiniscriptInstructionOutcome Structural::scriptSetLoop(MiniscriptThread *thread, const DynamicValue &value) {
@@ -3965,6 +4019,14 @@ MiniscriptInstructionOutcome Structural::scriptSetLoop(MiniscriptThread *thread,
 }
 
 MiniscriptInstructionOutcome Structural::scriptSetDebug(MiniscriptThread *thread, const DynamicValue &value) {
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome Structural::scriptSetUnload(MiniscriptThread *thread, const DynamicValue &value) {
+	// Doesn't matter what value this is set to, it always tries to unload.
+	if (_sceneLoadState != SceneLoadState::kNotAScene)
+		thread->getRuntime()->addSceneStateTransition(HighLevelSceneTransition(getSelfReference().lock().staticCast<Structural>(), HighLevelSceneTransition::kTypeRequestUnloadScene, false, false));
+
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
@@ -4216,7 +4278,9 @@ VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
 			} break;
 		case PropagationStack::kStageSendToStructuralChildren: {
 				Structural *structural = stackTop.ptr.structural;
+
 				const Common::Array<Common::SharedPtr<Structural> > &children = structural->getChildren();
+
 				if (stackTop.index >= children.size()) {
 					_propagationStack.pop_back();
 				} else {
@@ -4255,6 +4319,9 @@ VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
 			} break;
 		case PropagationStack::kStageSendToStructuralModifiers: {
 				Structural *structural = stackTop.ptr.structural;
+
+				if (structural->getSceneLoadState() == Structural::SceneLoadState::kSceneNotLoaded)
+					runtime->hotLoadScene(structural);
 
 				// Once done with modifiers, propagate to children if set to cascade
 				if (_cascade) {
@@ -4671,7 +4738,8 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 	  _pendingSceneReturnCount(0) {
 	_random.reset(new Common::RandomSource("mtropolis"));
 
-	_vthread.reset(new VThread());
+	_coroManager.reset(ICoroutineManager::create());
+	_vthread.reset(new VThread(_coroManager.get()));
 
 	for (int i = 0; i < kColorDepthModeCount; i++) {
 		_displayModeSupported[i] = false;
@@ -4839,6 +4907,13 @@ bool Runtime::runFrame() {
 
 			debug(1, "Materializing project...");
 			_project->materializeSelfAndDescendents(this, &_rootLinkingScope);
+
+			for (const Common::SharedPtr<Structural> &section : _project->getChildren()) {
+				for (const Common::SharedPtr<Structural> &subsection : section->getChildren()) {
+					for (const Common::SharedPtr<Structural> &scene : subsection->getChildren())
+						scene->setSceneLoadState(Structural::SceneLoadState::kSceneNotLoaded);
+				}
+			}
 
 			debug(1, "Project is fully loaded!  Starting up...");
 
@@ -5249,6 +5324,9 @@ void Runtime::executeTeardown(const Teardown &teardown) {
 			structural->removeAllChildren();
 			structural->removeAllModifiers();
 			structural->removeAllAssets();
+
+			assert(structural->getSceneLoadState() == Structural::SceneLoadState::kSceneLoaded);
+			structural->setSceneLoadState(Structural::SceneLoadState::kSceneNotLoaded);
 		} else {
 			Structural *parent = structural->getParent();
 
@@ -5288,6 +5366,9 @@ void Runtime::executeLowLevelSceneStateTransition(const LowLevelSceneStateTransi
 		break;
 	case LowLevelSceneStateTransitionAction::kLoad:
 		loadScene(action.getScene());
+
+		// Refresh play time so anything time-based doesn't skip ahead
+		refreshPlayTime();
 		break;
 	case LowLevelSceneStateTransitionAction::kUnload: {
 			Teardown teardown;
@@ -5653,7 +5734,8 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 
 			// This check may not be accurate, but we need to avoid adding the existing scene to the return list.
 			// SPQR depends on this behavior: Hitting Esc while in the menu will fire off another transition to
-			// the menu scene with addToReturnList set.  We want to avoid returning back to 
+			// the menu scene with addToReturnList set.  We want to avoid adding the menu to the return list
+			// multiple times since it will prevent the exit button from working properly.
 			if ((transition.addToDestinationScene || transition.addToReturnList) && targetScene != _activeMainScene) {
 				SceneReturnListEntry returnListEntry;
 				returnListEntry.isAddToDestinationSceneTransition = transition.addToDestinationScene;
@@ -5756,6 +5838,18 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(transition.scene, LowLevelSceneStateTransitionAction::kLoad));
 			queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kParentEnabled, 0), transition.scene.get(), true, true);
 			queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneStarted, 0), transition.scene.get(), true, true);
+		} break;
+	case HighLevelSceneTransition::kTypeRequestUnloadScene: {
+			bool isActiveScene = false;
+			for (const SceneStackEntry &stackEntry : _sceneStack) {
+				if (stackEntry.scene == transition.scene) {
+					isActiveScene = true;
+					break;
+				}
+			}
+
+			if (!isActiveScene)
+				_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(transition.scene, LowLevelSceneStateTransitionAction::kUnload));
 		} break;
 	default:
 		error("Unknown high-level scene transition type");
@@ -5923,34 +6017,47 @@ void Runtime::queueEventAsLowLevelSceneStateTransitionAction(const Event &evt, S
 	_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(msg));
 }
 
-void Runtime::loadScene(const Common::SharedPtr<Structural>& scene) {
-	debug(1, "Loading scene '%s'", scene->getName().c_str());
-	Element *element = static_cast<Element *>(scene.get());
-	uint32 streamID = element->getStreamLocator() & 0xffff; // Not actually sure how many bits are legal here
+void Runtime::loadScene(const Common::SharedPtr<Structural> &scene) {
+	assert(scene->getSceneLoadState() != Structural::SceneLoadState::kNotAScene);
 
-	Subsection *subsection = static_cast<Subsection *>(scene->getParent());
+	if (scene->getSceneLoadState() == Structural::SceneLoadState::kSceneNotLoaded) {
+		scene->setSceneLoadState(Structural::SceneLoadState::kSceneLoaded);
 
-	if (streamID == 0) {
-		debug(1, "Scene is empty");
-	} else {
-		_project->loadSceneFromStream(scene, streamID, getHacks());
-		debug(1, "Scene loaded OK, materializing objects...");
-		scene->materializeDescendents(this, subsection->getSceneLoadMaterializeScope());
-		debug(1, "Scene materialized OK");
-	}
+		debug(1, "Loading scene '%s'", scene->getName().c_str());
+		Element *element = static_cast<Element *>(scene.get());
+		uint32 streamID = element->getStreamLocator() & 0xffff; // Not actually sure how many bits are legal here
 
-	recursiveActivateStructural(scene.get());
-	debug(1, "Structural elements activated OK");
+		Subsection *subsection = static_cast<Subsection *>(scene->getParent());
+
+		if (streamID == 0) {
+			debug(1, "Scene is empty");
+		} else {
+			_project->loadSceneFromStream(scene, streamID, getHacks());
+			debug(1, "Scene loaded OK, materializing objects...");
+			scene->materializeDescendents(this, subsection->getSceneLoadMaterializeScope());
+			debug(1, "Scene materialized OK");
+		}
+
+		recursiveActivateStructural(scene.get());
+		debug(1, "Structural elements activated OK");
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
-	if (_debugger) {
-		_debugger->complainAboutUnfinished(scene.get());
-		_debugger->refreshSceneStatus();
-	}
+		if (_debugger) {
+			_debugger->complainAboutUnfinished(scene.get());
+			_debugger->refreshSceneStatus();
+		}
 #endif
-
-	refreshPlayTime();
+	}
 }
+
+CORO_BEGIN_DEFINITION(Runtime::SendMessageOnVThreadCoroutine)
+	struct Locals {
+	};
+
+	CORO_BEGIN_FUNCTION
+		CORO_AWAIT(params->runtime->sendMessageOnVThread(params->dispatch));
+	CORO_END_FUNCTION
+CORO_END_DEFINITION
 
 void Runtime::sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dispatch) {
 	EventIDs::EventID eventID = dispatch->getMsg()->getEvent().eventType;
@@ -6299,7 +6406,7 @@ VThreadState Runtime::consumeMessageTask(const ConsumeMessageTaskData &data) {
 
 VThreadState Runtime::consumeCommandTask(const ConsumeCommandTaskData &data) {
 	Structural *structural = data.structural;
-	return structural->consumeCommand(this, data.message);
+	return structural->asyncConsumeCommand(this, data.message);
 }
 
 VThreadState Runtime::updateMouseStateTask(const UpdateMouseStateTaskData &data) {
@@ -7225,6 +7332,11 @@ void Runtime::queueChangeObjectParent(const Common::WeakPtr<RuntimeObject> &obj,
 	_pendingParentChanges.push_back(ObjectParentChange(obj, newParent));
 }
 
+void Runtime::hotLoadScene(Structural *structural) {
+	assert(structural->getSceneLoadState() != Structural::SceneLoadState::kNotAScene);
+	loadScene(structural->getSelfReference().lock().staticCast<Structural>());
+}
+
 void Runtime::ensureMainWindowExists() {
 	// Maybe there's a better spot for this
 	if (_mainWindow.expired() && _project) {
@@ -7255,7 +7367,7 @@ void Runtime::unloadProject() {
 	_pendingSceneTransitions.clear();
 	_pendingTeardowns.clear();
 	_messageQueue.clear();
-	_vthread.reset(new VThread());
+	_vthread.reset(new VThread(_coroManager.get()));
 
 	if (!_mainWindow.expired()) {
 		removeWindow(_mainWindow.lock().get());
@@ -7686,13 +7798,13 @@ Project::~Project() {
 	_resources.reset();
 }
 
-VThreadState Project::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+VThreadState Project::asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (Event(EventIDs::kCloseProject, 0).respondsTo(msg->getEvent())) {
 		runtime->closeProject();
 		return kVThreadReturn;
 	}
 
-	return Structural::consumeCommand(runtime, msg);
+	return Structural::asyncConsumeCommand(runtime, msg);
 }
 
 MiniscriptInstructionOutcome Project::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
@@ -8617,7 +8729,7 @@ void Project::loadContextualObject(size_t streamIndex, ChildLoaderStack &stack, 
 					error("No element factory defined for structural object");
 				}
 
-				ElementLoaderContext elementLoaderContext(getRuntime(), streamIndex);
+				ElementLoaderContext elementLoaderContext(getRuntime(), this, streamIndex);
 				Common::SharedPtr<Element> element = elementFactory->createElement(elementLoaderContext, dataObject);
 
 				uint32 guid = element->getStaticGUID();
@@ -8802,6 +8914,9 @@ void Element::triggerAutoPlay(Runtime *runtime) {
 	_haveCheckedAutoPlay = true;
 
 	queueAutoPlayEvents(runtime, canAutoPlay());
+}
+
+void Element::tryAutoSetName(Runtime *runtime, Project *project) {
 }
 
 bool Element::resolveMediaMarkerLabel(const Label& label, int32 &outResolution) const {
@@ -9001,38 +9116,48 @@ void VisualElement::setLayer(uint16 layer) {
 	}
 }
 
-VThreadState VisualElement::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	if (Event(EventIDs::kElementShow, 0).respondsTo(msg->getEvent())) {
-		if (!_visible) {
-			_visible = true;
-			runtime->setSceneGraphDirty();
-		}
+CORO_BEGIN_DEFINITION(VisualElement::VisualElementConsumeCommandCoroutine)
+	struct Locals {
+	};
 
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kElementShow, 0), DynamicValue(), getSelfReference()));
-		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-		runtime->sendMessageOnVThread(dispatch);
+	CORO_BEGIN_FUNCTION
+		CORO_IF(Event(EventIDs::kElementShow, 0).respondsTo(params->msg->getEvent()))
+			if (!params->self->_visible) {
+				params->self->_visible = true;
+				params->runtime->setSceneGraphDirty();
+			}
 
-		return kVThreadReturn;
-	}
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kElementShow, 0), DynamicValue(), params->self->getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, params->self, false, true, false));
 
-	if (Event(EventIDs::kElementHide, 0).respondsTo(msg->getEvent())) {
-		if (_visible) {
-			_visible = false;
+			CORO_CALL(Runtime::SendMessageOnVThreadCoroutine, params->runtime, dispatch);
+			
+			CORO_RETURN;
+		CORO_ELSE_IF(Event(EventIDs::kElementHide, 0).respondsTo(params->msg->getEvent()))
+			if (params->self->_visible) {
+				params->self->_visible = false;
 
-			if (_hooks)
-				_hooks->onHidden(this, _visible);
+				if (params->self->_hooks)
+					params->self->_hooks->onHidden(params->self, params->self->_visible);
 
-			runtime->setSceneGraphDirty();
-		}
+				params->runtime->setSceneGraphDirty();
+			}
 
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kElementHide, 0), DynamicValue(), getSelfReference()));
-		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-		runtime->sendMessageOnVThread(dispatch);
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(EventIDs::kElementHide, 0), DynamicValue(), params->self->getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, params->self, false, true, false));
 
-		return kVThreadReturn;
-	}
+			CORO_CALL(Runtime::SendMessageOnVThreadCoroutine, params->runtime, dispatch);
 
-	return Element::consumeCommand(runtime, msg);
+			CORO_RETURN;
+		CORO_END_IF
+
+		CORO_CALL(Element::ElementConsumeCommandCoroutine, params->self, params->runtime, params->msg);
+	CORO_END_FUNCTION
+CORO_END_DEFINITION
+
+VThreadState VisualElement::asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	runtime->getVThread().pushCoroutine<VisualElementConsumeCommandCoroutine>(this, runtime, msg);
+	return kVThreadReturn;
 }
 
 bool VisualElement::respondsToEvent(const Event &evt) const {
@@ -9248,12 +9373,6 @@ MiniscriptInstructionOutcome VisualElement::writeRefAttribute(MiniscriptThread *
 		// Not sure what this does, MTI uses it frequently
 		DynamicValueWriteDiscardHelper::create(writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
-	} else if (attrib == "unload") {
-		if (getRuntime()->getHacks().ignoreSceneUnloads) {
-			DynamicValueWriteDiscardHelper::create(writeProxy);
-			return kMiniscriptInstructionOutcomeContinue;
-		} else
-			return kMiniscriptInstructionOutcomeFailed;
 	}
 
 	return Element::writeRefAttribute(thread, writeProxy, attrib);
@@ -9705,6 +9824,22 @@ void VisualElement::offsetTranslate(int32 xDelta, int32 yDelta, bool cachedOrigi
 Common::Point VisualElement::getCenterPosition() const {
 	return Common::Point((_rect.left + _rect.right) / 2, (_rect.top + _rect.bottom) / 2);
 }
+
+CORO_BEGIN_DEFINITION(VisualElement::ChangeVisibilityCoroutine)
+	struct Locals {
+	};
+
+	CORO_BEGIN_FUNCTION
+		CORO_IF(params->self->_visible != params->desiredFlag)
+			params->self->setVisible(params->runtime, params->desiredFlag);
+
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(params->desiredFlag ? EventIDs::kElementShow : EventIDs::kElementHide, 0), DynamicValue(), params->self->getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, params->self, false, true, false));
+
+			CORO_CALL(Runtime::SendMessageOnVThreadCoroutine, params->runtime, dispatch);
+		CORO_END_IF
+	CORO_END_FUNCTION
+CORO_END_DEFINITION
 
 VThreadState VisualElement::changeVisibilityTask(const ChangeFlagTaskData &taskData) {
 	if (_visible != taskData.desiredFlag) {

@@ -188,7 +188,7 @@ cFileSearcher *cResources::GetFileSearcher() {
 //-----------------------------------------------------------------------
 
 /**
- * \todo File searcher should check so if the dir is allready added and if so return false and not add
+ * \todo File searcher should check so if the dir is already added and if so return false and not add
  * \param &asDir
  * \param &asMask
  * \return

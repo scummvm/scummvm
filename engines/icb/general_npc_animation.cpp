@@ -463,7 +463,7 @@ void _game_session::Animate_turn_to_pan(__mega_set_names anim_type, uint32 speed
 	//PXreal znext = z2 - z1;
 
 	// update pc
-	L->anim_pc = next_pc; // allready computed
+	L->anim_pc = next_pc; // already computed
 
 	// get the pan unwind value of the frame to be printed
 	PXreal pan;
@@ -650,8 +650,8 @@ void _game_session::Soft_start_single_anim(__mega_set_names next_anim) {
 
 	// next anim not in CAPS
 	if ((!L->voxel_info->IsAnimTable(next_anim))) {
-		// cant go on without a major anim - this is not a link so cant just be skipped
-		Shut_down_object("by Soft_start_single_anim next anim dont exist");
+		// can't go on without a major anim - this is not a link so can't just be skipped
+		Shut_down_object("by Soft_start_single_anim next anim don't exist");
 		return;
 	}
 
@@ -671,8 +671,8 @@ void _game_session::Hard_start_single_anim(__mega_set_names next_anim) {
 
 	// next anim not in CAPS
 	if ((!L->voxel_info->IsAnimTable(next_anim))) {
-		// cant go on without a major anim - this is not a link so cant just be skipped
-		Shut_down_object("by Hard_start_single_anim next anim dont exist");
+		// can't go on without a major anim - this is not a link so can't just be skipped
+		Shut_down_object("by Hard_start_single_anim next anim don't exist");
 		return;
 	}
 
@@ -876,7 +876,7 @@ void _game_session::Change_pose_in_current_anim_set() {
 uint32 _game_session::Fetch_last_frame(__mega_set_names anima) {
 	// return final frame number in animation
 	if ((!I->IsAnimTable(anima))) {
-		Fatal_error("Fetch_last_frame cant access illegal anim [%s]", master_anim_name_table[anima].name);
+		Fatal_error("Fetch_last_frame can't access illegal anim [%s]", master_anim_name_table[anima].name);
 	}
 
 	PXanim *pAnim = (PXanim *)rs_anims->Res_open(I->get_info_name(anima), I->info_name_hash[anima], I->base_path, I->base_path_hash);

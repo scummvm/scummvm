@@ -28,6 +28,7 @@ namespace Freescape {
 
 void DrillerEngine::initZX() {
 	_viewArea = Common::Rect(56, 20, 264, 124);
+	_soundIndexAreaChange = 10;
 }
 
 void DrillerEngine::loadAssetsZXFullGame() {

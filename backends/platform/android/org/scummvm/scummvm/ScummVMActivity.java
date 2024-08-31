@@ -778,23 +778,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		@Override
-		protected Bitmap getBitmapResource(int resource) {
-			int id;
-			switch(resource) {
-				case 0: // TOUCH_ARROWS_BITMAP
-					id = R.drawable.touch_arrows;
-					break;
-				default:
-					return null;
-			}
-
-			BitmapFactory.Options opts = new BitmapFactory.Options();
-			opts.inScaled = false;
-
-			return BitmapFactory.decodeResource(getResources(), id, opts);
-		}
-
-		@Override
 		protected void setTouchMode(final int touchMode) {
 			if (_events.getTouchMode() == touchMode) {
 				return;
@@ -1002,6 +985,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		                                                        	if (!_finishing) finish();
 		                                                        }
 		                                                    });
+
+		// We need to register on root as something is eating the events between the surface and the root
+		CompatHelpers.SystemInsets.registerSystemInsetsListener(_main_surface.getRootView(), _scummvm);
 
 		float[] dpiValues = new float[] { 0.0f, 0.0f, 0.0f };
 		_scummvm.getDPI(dpiValues);

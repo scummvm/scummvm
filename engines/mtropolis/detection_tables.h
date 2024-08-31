@@ -581,7 +581,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Tivola, 1998
 		{
 			"albert1",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "Albert.exe",   0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 				{ "album411.MPL", 0, "08a742f5087d25e8ee45c2fcd57ad9a6", 17979781 },
@@ -607,7 +607,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by VTech, 1999
 		{
 			"albert1",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{"ALBUM.EXE",    0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"album411.MPL", 0, "ad34822a1d7a4fd2c69487566c383b2e", 17658069},
@@ -634,7 +634,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 1998
 		{
 			"albert1",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{"MTPLAY95.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"album421.MPL", 0, "2f3cc30f13ecc99e8e4818353cef1d34", 18879823},
@@ -661,7 +661,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 1999
 		{
 			"albert1",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{"Boek.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"boek1.MPL", 0, "4d10ee9943bdf9d8b751c7527e1c3a13", 18053917},
@@ -688,7 +688,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Tivola, 2000
 		{
 			"albert2",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "reise.exe",    0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 				{ "voyage1.MPL",  0, "fe202ad897cb6cf5303f2f046e8123d5", 26122297 },
@@ -714,7 +714,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 2000
 		{
 			"albert2",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{"voyage.exe",  0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"voyage1.MPL", 0, "1859b9507c118f52402ecb248fa4ae9c", 25972983},
@@ -741,7 +741,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 1999
 		{
 			"albert2",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{"voyage.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"voyage1.MPL", 0, "174683d29a1c8511830262940223cc8a", 27889879},
@@ -768,7 +768,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 1999
 		{
 			"albert2",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{"reis.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"voyage1.MPL", 0, "1bda2dd6149cc398296031439dc3d25b", 25618601},
@@ -795,7 +795,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Tivola, 2001
 		{
 			"albert3",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "insel.exe",      0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 				{ "ile_myst1.MPL",  0, "44ac2e944a61303f4028408165bafeb4", 24080377 },
@@ -821,7 +821,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 2000
 		{
 			"albert3",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{"Ile_myst.exe",  0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"ile_myst1.MPL", 0, "90a71952e2336bddd30d0bacd59aa510", 22167812},
@@ -848,7 +848,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 2000
 		{
 			"albert3",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{"Ile_myst.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"ile_myst1.MPL", 0, "426868b7ea8fa555fa9240594c5e9903", 22181982},
@@ -875,7 +875,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 2001
 		{
 			"albert3",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{"Eiland.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"ile_myst1.MPL", 0, "d851ca7a48c7adc98445624e154dc0bb", 21866179},
@@ -902,7 +902,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme, 2001
 		{
 			"albert3",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{"Ile_Myst.exe", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760},
 				{"ile_myst1.MPL", 0, "9ca7bddd55bf755df6508dd4aca3fa69", 21280759},
@@ -985,7 +985,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	{ // Star Trek: The Game Show
 		{
 			"sttgs",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				// { "MTPLAY95.EXE", 0, "3ce9559e8c8047243fb7393a90d8b8f5", 756736 },
 				{"Trektriv.mpl", 0, "1a3e920c9334f4ddb02a0fca0a55b8e2", 540573701},
@@ -1024,7 +1024,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Macmillan, 1996
 		{
 			"mindgym",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "MTPLAY95.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 			 	{ "MINDGYM1.MPL", 0, "90a71952e2336bddd30d0bacd59aa510", 22167812 },
@@ -1046,7 +1046,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Ravensburger, 1997
 		{
 			"mindgym",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "MTPLAY95.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 				{ "MINDGYM1.MPL", 0, "8fd1e5e8d269da5d442b77023a2854d0", 21632226 },
@@ -1067,7 +1067,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by The Voyager Company, 1997
 		{
 			"architecture",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "MTPLAY95.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 			 	{ "FWA1041.MPL", 0, "90a71952e2336bddd30d0bacd59aa510", 22167812 },
@@ -1087,7 +1087,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Europress Software, 1997
 		{
 			"beatrix",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "POTTER95.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 			 	{ "DATA.MPL", 0, "90a71952e2336bddd30d0bacd59aa510", 22167812 },
@@ -1108,7 +1108,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Valusoft, 1998
 		{
 			"wtimpact",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "WTIMPACT.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 			 	{ "DATA.MPL", 0, "90a71952e2336bddd30d0bacd59aa510", 22167812 },
@@ -1128,7 +1128,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Houghton Mifflin Interactive, 1997
 		{
 			"worldbroke",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "TDTWB.EXE", 0, "ead983d2002f2b7b18da7f2f173fd425", 757760 },
 			 	{ "TDTWB1.MPL", 0, "18d48974dbaff13829addbd47a5c374b", 5883239 },
@@ -1150,7 +1150,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		// Published by KnowWonder, 1997
 		{
 			"dilbert",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "Hijinks.exe", 0, "418335f719bebcab41af9f23dd3ae27c", 30104 },
 				// { "ALIENS2.MPX", 0, "9cc257dd254860bd20fd4204e7a2fb87", 46348146 },
@@ -1179,7 +1179,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Sound Source Interactive, 1997
 		{
 			"freewilly",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "MTPLAY95.EXE", 0, "3ce9559e8c8047243fb7393a90d8b8f5", 756736 },
 				{ "FWAC.MPL", 0, "0b847e5ac895fcdc669ea40f8930b0c6", 77218688 },
@@ -1199,7 +1199,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Sound Source Interactive, 1997
 		{
 			"hercules",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "MTPLAY95.EXE", 0, "3ce9559e8c8047243fb7393a90d8b8f5", 756736 },
 		 		{ "HERCXENA.MPL", 0, "549f965bc589a86d149c24f2ebd15bdc", 169595018 },
@@ -1219,7 +1219,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Macmillan, 1997
 		{
 			"idino",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "WBDFR1.C9A", 0, "e6ec553f1f5ff0a420a7aed8b0543123", 584374209 },
 				AD_LISTEND
@@ -1234,30 +1234,11 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_IDINO_RETAIL_EN,
 	},
 
-	{ // I Can Be a Dinosaur Finder - Demo (English, Windows)
-	  // Published by Macmillan, 1998
-		{
-			"idino",
-			"Demo",
-			{
-				{ "WBDFS.C9A", 0, "d28310a331ae07801e4e2fdc30a323b6", 172110125},
-			 	AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_UNSUPPORTED | ADGF_DEMO,
-			GUIO0()
-		},
-		GID_IDINO,
-		0,
-		MTBOOT_IDINO_DEMO_EN,
-	},
-
 	{ // I Can Be an Animal Doctor (English, Windows)
 	  // Published by Macmillan, 1998
 		{
 			"idoctor",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "VET.C9A", 0, "6409415e9879c9287d0f72f900cfb4c7", 537078248 },
 				AD_LISTEND
@@ -1272,13 +1253,15 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_IDOCTOR_RETAIL_EN,
 	},
 
-	{ // I Can Be an Animal Doctor - Demo (English, Windows)
-	  // Published by Macmillan, 1998
+	{ // Cloud 9 CD Sampler Volume 2 - Demo (English, Windows)
+	  // Published by Cloud 9 Interactive, 1997
 		{
-			"idoctor",
+			"c9sampler",
 			"Demo",
 			{
-				{"VETS.C9A", 0, "836765ba5202c146c5228933309e90cd", 149747132},
+				{ "RUNSAMP.C9A", 0, "349d9318b181ac4f6e0326a4b8fe7238", 5954633 },
+				//{ "VETS.C9A", 0, "836765ba5202c146c5228933309e90cd", 149747132 },
+				//{ "WBDFS.C9A", 0, "d28310a331ae07801e4e2fdc30a323b6", 172110125 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -1286,16 +1269,16 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			ADGF_UNSUPPORTED | ADGF_DEMO,
 			GUIO0()
 		},
-		GID_IDINO,
+		GID_C9SAMPLER,
 		0,
-		MTBOOT_IDINO_DEMO_EN,
+		MTBOOT_C9SAMPLER_WIN_EN,
 	},
 
 	{ // How to Draw the Marvel Way (English, Windows)
 	  // Published by Marvel Studios, 1996
 		{
 			"drawmarvelway",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{"MDRAW.C9A", 0, "601539f3e9f9e169aa6b2fac5a4e82c7", 369901410},
 				AD_LISTEND
@@ -1314,7 +1297,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Knowledge Adventure, 1999
 		{
 			"ftts",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "FAIRIES.EXE", 0, "b37ecc3aa2b1f24ddfbf27841f15442e", 758272 },
 			 	{ "FT_1.MPL", 0, "76282d2f5a8f0eea5c73289e065d66d2", 800203 },
@@ -1359,7 +1342,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Nabisco, 1996
 		{
 			"chomp",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "MPLAY_95.EXE", 0, "369e485a92c4aaf1d7037214fc641848", 721920 },
 			 	{ "MINIGAME.MPL", 0, "ad79f779eb6f87da5eecee7718fba483", 7768522 },
@@ -1372,13 +1355,33 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		},
 		GID_CHOMP,
 		0,
-		MTBOOT_CHOMP_WIN_EN,
+		MTBOOT_CHOMP_RETAIL_WIN_EN,
+	},
+
+	{ // Chomp! The Video Game Demo (English, Windows)
+	  // Published by Nabisco, 1996
+		{
+			"chomp",
+			"Demo",
+			{
+				{ "MTPLAY32.EXE", 0, "5bc345c80c615e7c8c633468ba9bd7b4", 681984 },
+				{ "JUMBLE.MPL", 0, "6f1c9e3e83e0eb87506b500b71a6e73c", 6473576 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED | ADGF_DEMO,
+			GUIO0()
+		},
+		GID_CHOMP,
+		0,
+		MTBOOT_CHOMP_DEMO_WIN_EN,
 	},
 
 	{ // 24 Hours in Cyberspace (English, Windows)
 		{
 		 	"cyber24",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 		 	{
 				{ "ABC32.EXE", 0, "b5efd541d37b23ab6a587e0929b05c2e", 1218048 },
 				{ "DATA1.MPL", 0, "7fb0b50e9db45dd069a1ca96efdefa5a", 1227933 },
@@ -1398,7 +1401,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // A presentation of some dental medicine technology
 		{
 			"ivoclar",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 		 		{ "RUN95NT.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 				{ "DATA.MPL", 0, "d963537b9996b969492e095dca4c5b2a", 1717658 },
@@ -1417,7 +1420,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	{ // Real Wild Child! Australian Rock Music 1950s-90s (English, Windows)
 		{
 			"realwild",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 		 		{ "RWC.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 		  		{ "RWC_DATA.MPL", 0, "7c271bed9ef7ea012896860358590791", 90144089 },
@@ -1436,7 +1439,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	{ // How to Build a Telemedicine Program (English, Windows)
 		{
 			"telemed",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 		 		{ "TELEMED.EXE", 0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
 				{ "TELEMED.MPL", 0, "cd73ec482fb21508a34daeff6773623c", 44022984 },
@@ -1456,7 +1459,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Mattel Interactive, 2000
 		{
 			"angelica",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "MTPLAY32.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
 				// { "BedRm.mfx", 0, "ff59f93ec9d61f43be11fa05f339495b", 13919113 },
@@ -1487,7 +1490,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Sound Source Interactive, 1999
 		{
 			"babe",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "BabeER.exe", 0, "a77039aa17f3f81f6b06e34bd6cc62db", 1041920 },
 				{ "BabeER.mfx", 0, "890b294288581b20abac226c4ab37748", 15113800 },
@@ -1507,7 +1510,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	{ // Biologia Cellulare Evoluzione E Varietà Della Vita (Italian, Windows)
 		{
 			"biocellevo",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "BIO.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
 				{ "BIO1.mfx", 0, "7ae8e3384da3860e4b6b3a2de40d231a", 542088601 },
@@ -1527,7 +1530,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Hasbro, 1999
 		{
 			"easybake",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "Mtplay32.exe", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
 				// { "BAKESESS.MFX", 0, "1aa7b078b614b21e91022dab97d167b9", 78386865 },
@@ -1557,7 +1560,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by DreamCatcher Interactive, 1999
 		{
 			"forgotten",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "Forgot.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
 				{ "Forgotten.mfw", 0, "d54d5b0d7e6e2d000fa3284d6bb3b1b7", 102093801 },
@@ -1578,7 +1581,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Young Genius Software, 1998
 		{
 			"greveholm2",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "Planutus.exe", 0, "15c9a577478fdee6bfc7aa32e0edc10b", 1085952 },
 				{ "pData.mfw", 0, "9f17d1caab9be5078639e73a2c326969", 10690754 },
@@ -1616,7 +1619,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Emme Interactive, 1999
 		{
 			"itacante",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "itacante.exe", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
 				{ "machina.mfx", 0, "d500d15fb68cbc96988bbd868df316d0", 37537889 },
@@ -1637,7 +1640,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by A-Sharp, 1999
 		{
 			"kingofdragonpass",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "Mtplay95.exe", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
 				{ "opal.mfx", 0, "cb1d4f044a0293458e3816185a50a2b6", 36377208 },
@@ -1658,7 +1661,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	{ // The Times: Key Stage 1 English (English, Windows)
 		{
 			"ks1eng",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "POWER.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
 				{ "PmdataT.mfx", 0, "9eda23aece0732e7b69b9b9234301164", 86965804 },
@@ -1678,7 +1681,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Simon & Schuster, 1999
 		{
 			"maisy",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "Maisy.exe", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
 				{ "data.mfx", 0, "04f20a0a5e721ff0c4f84ee900c99530", 4588716 },
@@ -1699,7 +1702,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Microsoft, 1999
 		{
 			"msb_animal",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "MTPLAY32.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952},
 				// { "reports.mfw", 0, "bb588986e16f9e9ae12816c6d9f51268", 35712973},
@@ -1746,7 +1749,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Microsoft, 2000
 		{
 			"msb_bugs",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "MTPLAY32.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
 				// { "Bus.mfw", 0, "cdbe91cfaa4634c5920413a3ee56b1dd", 19193104 },
@@ -1794,7 +1797,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Microsoft, 2000
 		{
 			"msb_concert",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "MTPLAY32.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
 				// { "Acoust.mfx", 0, "112ea6c2a4a8b3a49770443ad9859190", 17246635 },
@@ -1824,7 +1827,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Microsoft, 2000
 		{
 			"msb_flight",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "MTPLAY32.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
 				// { "balloon.mfx", 0, "bafca52d8e8bcbe6f9b5f7bfeb2be29b", 4827052 },
@@ -1854,7 +1857,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Microsoft, 2000
 		{
 			"msb_mars",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "Mtplay32.exe", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
 				// { "Bus.mfx", 0, "b72a82877c8dfe8d0dd1f96f8f9259e2", 51951667 },
@@ -1884,7 +1887,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Microsoft, 2001
 		{
 			"msb_volcano",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "Mtplay32.exe", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
 				// { "Art.mfx", 0, "672cf2da2dd8233074746e1e657c2f62", 7297320 },
@@ -1914,7 +1917,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Microsoft, 2001
 		{
 			"msb_whales",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "Mtplay32.exe", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
 				// { "BOB.mfx", 0, "d4d6abc27f96febfcd70258d05be39be", 20627391 },
@@ -1945,7 +1948,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Tivola, 2000
 		{
 			"mykropolis",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "mykropolis.exe", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
 				{ "machina.mfx", 0, "4cb398466b078280a237b9437c7a934a", 39111217 },
@@ -1966,7 +1969,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by Pleasant Company, 1999
 		{
 			"notebook",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "Mtplay32.exe", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
 				// { "Bedroom.mfx", 0, "994009fcad48d713f4168503c2ebcb63", 54491655 },
@@ -1990,7 +1993,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by dtp entertainment, 2003
 		{
 			"pferdpony",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "hast.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
 				{ "Start.mfw", 0, "66d0b37f3580d2d66f84ae100690aef6", 13609 },
@@ -2009,7 +2012,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	{ // Pinnacle Systems miroVideo Studio DC10 Plus (German, Windows)
 		{
 			"mirodc10",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "MTPLAY32.EXE", 0, "c23dccd2b7a525a9f7bb8505f7c7f2d4", 1085952 },
 				{ "Studio Guided Tour.mfw", 0, "67f8ebfde1fe329b5c282f35fc885a8b", 54496799 },
@@ -2028,7 +2031,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	{ // Pinnacle Systems miroVideo Studio DC10 Plus (English, Windows)
 		{
 			"mirodc10",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "MTPLAY32.EXE", 0, "c23dccd2b7a525a9f7bb8505f7c7f2d4", 1085952 },
 				{ "Studio Guided Tour.mfw", 0, "47263c3d7f5bebba2d5dbcb4ed8aab1a", 32270329 },
@@ -2047,7 +2050,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	{ // Poser 3 content sampler on the sampler disc "Stuff for Poser" (English, Windows)
 		{
 			"poser3_sampler_zygote",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "ClickMe.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
 				{ "summer98.mfw", 0, "c079c98d39833ea733669e88e42cae03", 96352413 },
@@ -2066,7 +2069,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	{ // Poser 3 content sampler on the disc for Poser 3 (English, Windows)
 		{
 			"poser3_zygote",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "CLICKME.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
 				{ "ZYGOTE.MFW", 0, "7b98d86857bd412af291cae3e214d331", 18642284 },
@@ -2086,7 +2089,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 	  // Published by ValuSoft, 1999
 		{
 			"wtextreme",
-			_s("Missing game code"),
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
 			{
 				{ "WTX.EXE", 0, "ed776bfe63d17a7d57d9625c3efe5a0a", 1085952 },
 				{ "DATA.MFW", 0, "aa1d4694b3400f01e4fd55530331794d", 220904580 },
@@ -2100,6 +2103,26 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		GID_WTEXTREME,
 		0,
 		MTBOOT_WT_EXTREME_WIN_EN,
+	},
+
+	{ // Adobe 24 Hours Tools Sampler (English, Windows)
+	  // Published by Against All Odds Productions, 1996
+		{
+			"adobe24",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "ADOBE32.EXE", 0, "b5efd541d37b23ab6a587e0929b05c2e", 1218048 },
+				{ "DATA.MPL", 0, "e5d4f39ab5685556115ba0b34103bc2e", 27625660 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_ADOBE24,
+		0,
+		MTBOOT_ADOBE24_WIN_EN,
 	},
 
 

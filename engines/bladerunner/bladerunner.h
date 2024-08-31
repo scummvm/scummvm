@@ -213,6 +213,7 @@ public:
 	ZBuffer           *_zbuffer;
 
 	Common::RandomSource _rnd;
+	uint32 _newGameRandomSeed;
 
 	Debugger *_debugger;
 

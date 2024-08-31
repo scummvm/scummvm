@@ -673,11 +673,13 @@ void Scene::initSceneVars() {
 }
 
 void Scene::playSceneMusic() {
-	if (_currentSceneIdx == LBA1SceneId::Tippet_Island_Twinsun_Cafe && _engine->_gameState->hasArrivedHamalayi()) {
-		_engine->_music->playTrackMusic(8);
-	} else {
-		_engine->_music->playMidiMusic(_sceneMusic);
+	if (_engine->isLBA1()) {
+		if (_currentSceneIdx == LBA1SceneId::Tippet_Island_Twinsun_Cafe && _engine->_gameState->hasArrivedHamalayi()) {
+			_engine->_music->playTrackMusic(8);
+			return;
+		}
 	}
+	_engine->_music->playMidiMusic(_sceneMusic);
 }
 
 void Scene::processEnvironmentSound() {

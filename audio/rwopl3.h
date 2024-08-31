@@ -60,7 +60,6 @@ public:
 	void reset() override;
 
 	void write(int portAddress, int value) override;
-	byte read(int portAddress) override;
 
 	void writeReg(int reg, int value) override;
 

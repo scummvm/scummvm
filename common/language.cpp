@@ -76,6 +76,7 @@ const LanguageDescription g_languages[] = {
 	{ "it", "it_IT", "Italian", IT_ITA },
 	{ "ja", "ja_JP", "Japanese", JA_JPN },
 	{ "ko", "ko_KR", "Korean", KO_KOR },
+	{ "lt", "lt_LT", "Lithuanian", LT_LTU },
 	{ "lv", "lv_LV", "Latvian", LV_LVA },
 	{ "nb", "nb_NO", "Norwegian (Bokm\xC3\xA5l)", NB_NOR },
 	{ "fa", "fa_IR", "Persian", FA_IRN },

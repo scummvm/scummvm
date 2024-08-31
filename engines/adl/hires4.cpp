@@ -59,7 +59,7 @@ protected:
 	void init() override;
 	void initGameState() override;
 
-	DiskImage *_boot;
+	Common::DiskImage *_boot;
 };
 
 HiRes4BaseEngine::HiRes4BaseEngine(OSystem *syst, const AdlGameDescription *gd) :
@@ -81,7 +81,7 @@ HiRes4BaseEngine::~HiRes4BaseEngine() {
 void HiRes4BaseEngine::init() {
 	_graphics = new GraphicsMan_v2<Display_A2>(*static_cast<Display_A2 *>(_display));
 
-	_boot = new DiskImage();
+	_boot = new Common::DiskImage();
 	if (!_boot->open(getDiskImageName(0)))
 		error("Failed to open disk image '%s'", getDiskImageName(0).toString(Common::Path::kNativeSeparator).c_str());
 
@@ -104,7 +104,7 @@ private:
 };
 
 void HiRes4Engine_v1_0::runIntro() {
-	StreamPtr stream(_boot->createReadStream(0x06, 0x3, 0xb9, 1));
+	Common::StreamPtr stream(_boot->createReadStream(0x06, 0x3, 0xb9, 1));
 
 	_display->setMode(Display::kModeText);
 
@@ -121,7 +121,7 @@ void HiRes4Engine_v1_0::runIntro() {
 void HiRes4Engine_v1_0::init() {
 	HiRes4BaseEngine::init();
 
-	StreamPtr stream(_boot->createReadStream(0x9, 0x1, 0x00, 13));
+	Common::StreamPtr stream(_boot->createReadStream(0x9, 0x1, 0x00, 13));
 	Common::StringArray exeStrings;
 	extractExeStrings(*stream, 0x1566, exeStrings);
 	mapExeStrings(exeStrings);
@@ -157,7 +157,7 @@ void HiRes4Engine_v1_0::init() {
 void HiRes4Engine_v1_0::initGameState() {
 	HiRes4BaseEngine::initGameState();
 
-	StreamPtr stream(_boot->createReadStream(0x04, 0xa, 0x0e, 9, 13));
+	Common::StreamPtr stream(_boot->createReadStream(0x04, 0xa, 0x0e, 9, 13));
 	loadRooms(*stream, IDI_HR4_NUM_ROOMS);
 
 	stream.reset(_boot->createReadStream(0x04, 0x5, 0x00, 12, 13));
@@ -177,7 +177,7 @@ private:
 
 // TODO: It might be worth replacing this with a more generic variant that
 // can be used in both hires4 and hires6
-static Common::MemoryReadStream *readSkewedSectors(DiskImage *disk, byte track, byte sector, byte count) {
+static Common::MemoryReadStream *readSkewedSectors(Common::DiskImage *disk, byte track, byte sector, byte count) {
 	const uint bytesPerSector = disk->getBytesPerSector();
 	const uint sectorsPerTrack = disk->getSectorsPerTrack();
 	const uint bufSize = count * bytesPerSector;
@@ -185,7 +185,7 @@ static Common::MemoryReadStream *readSkewedSectors(DiskImage *disk, byte track, 
 	byte *p = buf;
 
 	while (count-- != 0) {
-		StreamPtr stream(disk->createReadStream(track, sector));
+		Common::StreamPtr stream(disk->createReadStream(track, sector));
 		stream->read(p, bytesPerSector);
 
 		if (stream->err() || stream->eos())
@@ -222,10 +222,10 @@ static Common::MemoryReadStream *decodeData(Common::SeekableReadStream &stream, 
 }
 
 void HiRes4Engine_v1_1::runIntro() {
-	Common::ScopedPtr<Files_AppleDOS> files(new Files_AppleDOS());
+	Common::ScopedPtr<Common::Files_AppleDOS> files(new Common::Files_AppleDOS());
 	files->open(getDiskImageName(0));
 
-	StreamPtr menu(files->createReadStream("\b\b\b\b\b\b\bULYSSES\r(C) 1982"));
+	Common::StreamPtr menu(files->createReadStream("\b\b\b\b\b\b\bULYSSES\r(C) 1982"));
 	menu->seek(0x2eb);
 
 	for (uint i = 0; i < 4; ++i) {
@@ -241,7 +241,7 @@ void HiRes4Engine_v1_1::runIntro() {
 void HiRes4Engine_v1_1::init() {
 	HiRes4BaseEngine::init();
 
-	StreamPtr stream(readSkewedSectors(_boot, 0x05, 0x6, 1));
+	Common::StreamPtr stream(readSkewedSectors(_boot, 0x05, 0x6, 1));
 	_strings.verbError = readStringAt(*stream, 0x4f);
 	_strings.nounError = readStringAt(*stream, 0x8e);
 	_strings.enterCommand = readStringAt(*stream, 0xbc);
@@ -297,7 +297,7 @@ void HiRes4Engine_v1_1::init() {
 void HiRes4Engine_v1_1::initGameState() {
 	HiRes4BaseEngine::initGameState();
 
-	StreamPtr stream(readSkewedSectors(_boot, 0x0b, 0x9, 10));
+	Common::StreamPtr stream(readSkewedSectors(_boot, 0x0b, 0x9, 10));
 	stream->skip(0x0e);
 	loadRooms(*stream, IDI_HR4_NUM_ROOMS);
 
@@ -420,7 +420,7 @@ void HiRes4Engine_LNG::runIntroLogo(Common::SeekableReadStream &ms2) {
 
 void HiRes4Engine_LNG::runIntroTitle(Common::SeekableReadStream &menu, Common::SeekableReadStream &ms2) {
 	ms2.seek(0x2290);
-	StreamPtr shapeTable(ms2.readStream(0x450));
+	Common::StreamPtr shapeTable(ms2.readStream(0x450));
 	if (ms2.err() || ms2.eos())
 		error("Failed to read shape table");
 
@@ -543,17 +543,17 @@ void HiRes4Engine_LNG::runIntroLoading(Common::SeekableReadStream &adventure) {
 }
 
 void HiRes4Engine_LNG::runIntro() {
-	Common::ScopedPtr<Files_AppleDOS> files(new Files_AppleDOS());
+	Common::ScopedPtr<Common::Files_AppleDOS> files(new Common::Files_AppleDOS());
 	files->open(getDiskImageName(0));
 
 	while (!shouldQuit()) {
-		StreamPtr menu(files->createReadStream("MENU"));
+		Common::StreamPtr menu(files->createReadStream("MENU"));
 
 		const bool oldVersion = files->exists("MS2");
 
 		if (oldVersion) {
 			// Version 0.0
-			StreamPtr ms2(files->createReadStream("MS2"));
+			Common::StreamPtr ms2(files->createReadStream("MS2"));
 			runIntroLogo(*ms2);
 
 			if (shouldQuit())
@@ -591,11 +591,11 @@ void HiRes4Engine_LNG::runIntro() {
 				return;
 
 			if (key == _display->asciiToNative('1')) {
-				StreamPtr instructions(files->createReadStream("INSTRUCTIONS"));
+				Common::StreamPtr instructions(files->createReadStream("INSTRUCTIONS"));
 				runIntroInstructions(*instructions);
 				break;
 			} else if (key == _display->asciiToNative('2')) {
-				StreamPtr adventure(files->createReadStream("THE ADVENTURE"));
+				Common::StreamPtr adventure(files->createReadStream("THE ADVENTURE"));
 				runIntroLoading(*adventure);
 				return;
 			}
@@ -622,12 +622,12 @@ private:
 	// AdlEngine_v2
 	void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const override;
 
-	Common::SeekableReadStream *createReadStream(DiskImage *disk, byte track, byte sector, byte offset = 0, byte size = 0) const;
+	Common::SeekableReadStream *createReadStream(Common::DiskImage *disk, byte track, byte sector, byte offset = 0, byte size = 0) const;
 	void loadCommonData();
 	void insertDisk(byte diskNr);
 	void rebindDisk();
 
-	DiskImage *_boot;
+	Common::DiskImage *_boot;
 	byte _curDisk;
 };
 
@@ -640,14 +640,14 @@ HiRes4Engine_Atari::~HiRes4Engine_Atari() {
 void HiRes4Engine_Atari::init() {
 	_graphics = new GraphicsMan_v2<Display_A2>(*static_cast<Display_A2 *>(_display));
 
-	_boot = new DiskImage();
+	_boot = new Common::DiskImage();
 	if (!_boot->open(atariDisks[0]))
 		error("Failed to open disk image '%s'", atariDisks[0]);
 
 	insertDisk(1);
 	loadCommonData();
 
-	StreamPtr stream(createReadStream(_boot, 0x06, 0x2));
+	Common::StreamPtr stream(createReadStream(_boot, 0x06, 0x2));
 	_strings.verbError = readStringAt(*stream, 0x4f);
 	_strings.nounError = readStringAt(*stream, 0x83);
 	_strings.enterCommand = readStringAt(*stream, 0xa6);
@@ -725,18 +725,18 @@ void HiRes4Engine_Atari::insertDisk(byte diskNr) {
 	_curDisk = diskNr;
 
 	delete _disk;
-	_disk = new DiskImage();
+	_disk = new Common::DiskImage();
 	if (!_disk->open(atariDisks[diskNr]))
 		error("Failed to open disk image '%s'", atariDisks[diskNr]);
 }
 
 void HiRes4Engine_Atari::rebindDisk() {
-	// As room.data is bound to the DiskImage, we need to rebind them here
+	// As room.data is bound to the Common::DiskImage, we need to rebind them here
 	// We cannot simply reload the rooms as that would reset their state
 
-	// FIXME: Remove DataBlockPtr-DiskImage coupling?
+	// FIXME: Remove DataBlockPtr-Common::DiskImage coupling?
 
-	StreamPtr stream(createReadStream(_boot, 0x03, 0x1, 0x0e, 9));
+	Common::StreamPtr stream(createReadStream(_boot, 0x03, 0x1, 0x0e, 9));
 	for (uint i = 0; i < IDI_HR4_NUM_ROOMS; ++i) {
 		stream->skip(7);
 		_state.rooms[i].data = readDataBlockPtr(*stream);
@@ -749,7 +749,7 @@ void HiRes4Engine_Atari::rebindDisk() {
 
 void HiRes4Engine_Atari::loadCommonData() {
 	_messages.clear();
-	StreamPtr stream(createReadStream(_boot, 0x0a, 0x4, 0x00, 3));
+	Common::StreamPtr stream(createReadStream(_boot, 0x0a, 0x4, 0x00, 3));
 	loadMessages(*stream, IDI_HR4_NUM_MESSAGES);
 
 	_pictures.clear();
@@ -764,7 +764,7 @@ void HiRes4Engine_Atari::loadCommonData() {
 void HiRes4Engine_Atari::initGameState() {
 	_state.vars.resize(IDI_HR4_NUM_VARS);
 
-	StreamPtr stream(createReadStream(_boot, 0x03, 0x1, 0x0e, 9));
+	Common::StreamPtr stream(createReadStream(_boot, 0x03, 0x1, 0x0e, 9));
 	loadRooms(*stream, IDI_HR4_NUM_ROOMS);
 
 	stream.reset(createReadStream(_boot, 0x02, 0xc, 0x00, 12));
@@ -774,7 +774,7 @@ void HiRes4Engine_Atari::initGameState() {
 	_display->moveCursorTo(Common::Point(0, 23));
 }
 
-Common::SeekableReadStream *HiRes4Engine_Atari::createReadStream(DiskImage *disk, byte track, byte sector, byte offset, byte size) const {
+Common::SeekableReadStream *HiRes4Engine_Atari::createReadStream(Common::DiskImage *disk, byte track, byte sector, byte offset, byte size) const {
 	adjustDataBlockPtr(track, sector, offset, size);
 	return disk->createReadStream(track, sector, offset, size);
 }

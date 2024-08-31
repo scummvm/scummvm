@@ -43,7 +43,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{
 		{
 			"ite",
-			_s("Missing game code"), // Reason for being unsupported
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 			{
 				{"ite.rsc",		GAME_RESOURCEFILE,					"986c79c4d2939dbe555576529fd37932", AD_NO_SIZE},
 				//{"ite.dmo",	GAME_DEMOFILE,						"0b9a70eb4e120b6f00579b46c8cae29e", AD_NO_SIZE},

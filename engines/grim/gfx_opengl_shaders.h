@@ -65,7 +65,7 @@ public:
 	/**
 	 * Swap the buffers, making the drawn screen visible
 	 */
-	void flipBuffer() override;
+	void flipBuffer(bool opportunistic = false) override;
 
 	void getScreenBoundingBox(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) override;
 	void getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) override;

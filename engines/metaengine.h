@@ -125,6 +125,12 @@ struct ExtendedSavegameHeader {
  */
 class MetaEngineDetection : public PluginObject {
 public:
+	/**
+	 * This is the message to use in detection tables when
+	 * the game logic is not implemented
+	 */
+	static const char GAME_NOT_IMPLEMENTED[];
+
 	virtual ~MetaEngineDetection() {}
 
 	/** Get the engine ID. */

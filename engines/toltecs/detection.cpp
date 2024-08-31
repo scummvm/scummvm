@@ -207,7 +207,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 		// Fenimore Fillmore: 3 Skulls of the Toltecs, 2019 Casual Brothers remaster (GOG, Steam)
 		{
 			"toltecs",
-			_s("Missing game code"), // Reason for being unsupported
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 			AD_ENTRY1s("RData.lzma", "e0adae53ab5e821595a64032a4c2d5bc", 653477695),
 			Common::UNK_LANG,
 			Common::kPlatformWindows,

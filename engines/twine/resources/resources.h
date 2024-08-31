@@ -24,6 +24,7 @@
 
 #include "common/hashmap.h"
 #include "common/scummsys.h"
+#include "twine/parser/anim3ds.h"
 #include "twine/parser/body.h"
 #include "twine/parser/holomap.h"
 #include "twine/parser/sprite.h"
@@ -134,8 +135,10 @@ private:
 	void initPalettes();
 	/** Preload all sprites */
 	void preloadSprites();
+
 	/** Preload all animations */
 	void preloadAnimations();
+	void preloadAnim3DS();
 	void preloadSamples();
 	void loadMovieInfo();
 
@@ -145,6 +148,7 @@ private:
 	TrajectoryData _trajectories;
 
 	TextData _textData;
+	Anim3DSData _anim3DSData;
 
 public:
 	Resources(TwinEEngine *engine) : _engine(engine) {}
@@ -194,6 +198,7 @@ public:
 	const Trajectory *getTrajectory(int index) const;
 
 	const TextEntry *getText(TextBankId textBankId, TextId index) const;
+	const T_ANIM_3DS *getAnim(int index) const;
 
 	int findSmkMovieIndex(const char *name) const;
 
@@ -233,6 +238,7 @@ public:
 	static constexpr const char *HQR_BODY_FILE = "body.hqr";
 	// animations
 	static constexpr const char *HQR_ANIM_FILE = "anim.hqr";
+	static constexpr const char *HQR_ANIM3DS_FILE = "anim3ds.hqr";
 	// inventory objects
 	static constexpr const char *HQR_INVOBJ_FILE = "invobj.hqr";
 

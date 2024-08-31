@@ -673,6 +673,22 @@ int AgiEngine::waitAnyKey() {
 	return key;
 }
 
+/**
+ * Waits on any key to be pressed or for a finished sound.
+ * This is used on platforms where sound playback would block the
+ * interpreter until the sound finished or was interrupted.
+ */
+void AgiEngine::waitAnyKeyOrFinishedSound() {
+	clearKeyQueue();
+
+	while (!(shouldQuit() || _restartGame || !_sound->isPlaying())) {
+		wait(10);
+		if (doPollKeyboard()) {
+			break;
+		}
+	}
+}
+
 bool AgiEngine::isKeypress() {
 	processScummVMEvents();
 	return _keyQueueStart != _keyQueueEnd;

@@ -78,6 +78,8 @@ static const PlainGameDescriptor mTropolisGames[] = {
 	{"poser3_sampler_zygote", "Poser 3 Zygote Sampler Disc"},
 	{"poser3_zygote", "Poser 3 Zygote Promo"},
 	{"wtextreme", "Whitetail Extreme"},
+	{"c9sampler", "Cloud 9 CD Sampler Volume 2"},
+	{"adobe24", "Adobe 24 Hours Tools Sampler"},
 
 
 	{"mtropolis", "mTropolis Title"},

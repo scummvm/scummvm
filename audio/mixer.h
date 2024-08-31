@@ -254,7 +254,7 @@ public:
 
 	/**
 	 * Set the sample rate for the given handle.
-	 * 
+	 *
 	 * @param handle 	The sound to affect.
 	 * @param rate		The new sample rate. Must be less than 131072
 	*/
@@ -262,9 +262,9 @@ public:
 
 	/**
 	 * Get the sample rate for the given handle.
-	 * 
+	 *
 	 * @param handle 	The sound to affect.
-	 * 
+	 *
 	 * @return The current sample rate of the channel.
 	*/
 	virtual uint32 getChannelRate(SoundHandle handle) = 0;
@@ -272,7 +272,7 @@ public:
 	/**
 	 * Reset the sample rate of the channel back to its
 	 * AudioStream's native rate.
-	 * 
+	 *
 	 * @param handle 	The sound to affect.
 	*/
 	virtual void resetChannelRate(SoundHandle handle) = 0;

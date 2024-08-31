@@ -385,7 +385,7 @@ void cPlayerState_Grab::EnterState(iPlayerState *apPrevState) {
 	}
 	mpPlayer->SetSpeedMul(mfSpeedMul);
 
-	// If we want to use the normal mass,reset the divison
+	// If we want to use the normal mass, reset the division
 	if (mpPlayer->mbUseNormalMass)
 		mpPushBody->SetMass(mfDefaultMass);
 

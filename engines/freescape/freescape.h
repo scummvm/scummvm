@@ -57,6 +57,46 @@ enum CameraMovement {
 	kRightMovement
 };
 
+enum FREESCAPEAction {
+	kActionNone,
+	kActionEscape,
+	kActionSave,
+	kActionLoad,
+	kActionToggleSound,
+	kActionMoveUp,
+	kActionMoveDown,
+	kActionMoveLeft,
+	kActionMoveRight,
+	kActionShoot,
+	kActionRunMode,
+	kActionChangeAngle,
+	kActionChangeStepSize,
+	kActionToggleRiseLower,
+	kActionRiseOrFlyUp,
+	kActionLowerOrFlyDown,
+	kActionChangeMode,
+	kActionSkip,
+	kActionFaceForward,
+	kActionRotateUp,
+	kActionRotateDown,
+	kActionRotateLeft,
+	kActionRotateRight,
+	kActionTurnBack,
+	kActionInfoMenu,
+	kActionIncreaseStepSize,
+	kActionDecreaseStepSize,
+	kActionToggleFlyMode,
+	kActionToggleClipMode,
+	// Driller
+	kActionDeployDrillingRig,
+	kActionCollectDrillingRig,
+	// Total Eclipse
+	kActionRest,
+	// Castle
+	kActionSelectPrince,
+	kActionSelectPrincess,
+};
+
 typedef Common::HashMap<uint16, Area *> AreaMap;
 typedef Common::Array<byte *> ColorMap;
 typedef Common::HashMap<uint16, int32> StateVars;
@@ -101,6 +141,7 @@ private:
 	Common::EventManager *_delegate;
 
 	Common::KeyState _currentKeyDown;
+	Common::CustomEventType _currentActionDown;
 	uint32 _keyRepeatTime;
 };
 
@@ -269,7 +310,7 @@ public:
 	bool _shootMode;
 	bool _noClipMode;
 	bool _invertY;
-	virtual void initKeymaps(Common::Keymap *engineKeyMap, const char *target);
+	virtual void initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target);
 	EventManagerWrapper *_eventManager;
 	void processInput();
 	void resetInput();
@@ -343,7 +384,7 @@ public:
 	bool executeObjectConditions(GeometricObject *obj, bool shot, bool collided, bool activated);
 	void executeEntranceConditions(Entrance *entrance);
 	void executeLocalGlobalConditions(bool shot, bool collided, bool timer);
-	void executeCode(FCLInstructionVector &code, bool shot, bool collided, bool timer, bool activated);
+	bool executeCode(FCLInstructionVector &code, bool shot, bool collided, bool timer, bool activated);
 
 	// Instructions
 	bool checkConditional(FCLInstruction &instruction, bool shot, bool collided, bool timer, bool activated);
@@ -409,6 +450,15 @@ public:
 	int _soundIndexMenu;
 	int _soundIndexStart;
 	int _soundIndexAreaChange;
+	int _soundIndexHit;
+
+	int _soundIndexNoShield;
+	int _soundIndexNoEnergy;
+	int _soundIndexFallen;
+	int _soundIndexTimeout;
+	int _soundIndexForceEndGame;
+	int _soundIndexCrushed;
+	int _soundIndexMissionComplete;
 
 	// Rendering
 	int _screenW, _screenH;
@@ -443,6 +493,8 @@ public:
 	Common::String _timeoutMessage;
 	Common::String _forceEndGameMessage;
 	Common::String _crushedMessage;
+	Common::String _outOfReachMessage;
+	Common::String _noEffectMessage;
 
 	void loadMessagesFixedSize(Common::SeekableReadStream *file, int offset, int size, int number);
 	virtual void loadMessagesVariableSize(Common::SeekableReadStream *file, int offset, int number);
@@ -471,6 +523,7 @@ public:
 	uint32 _gameStateBits;
 	virtual bool checkIfGameEnded();
 	virtual void endGame();
+	int _endGameDelayTicks;
 	bool _endGameKeyPressed;
 	bool _endGamePlayerEndArea;
 	bool _forceEndGame;
@@ -483,7 +536,7 @@ public:
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return true; }
 	bool canSaveAutosaveCurrently() override { return false; }
-	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return true; }
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return _gameStateControl == kFreescapeGameStatePlaying && _currentArea; }
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	virtual Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false);

@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.4.1'
+        classpath 'com.android.tools.build:gradle:8.5.1'
     }
 }
 
@@ -30,7 +30,7 @@ tasks.withType(JavaCompile).configureEach {
 apply plugin: 'com.android.application'
 
 android {
-    compileSdk 33
+    compileSdk 34
     ndkVersion "21.3.6528147"
 
     namespace "org.scummvm.scummvm"
@@ -41,7 +41,7 @@ android {
         base.archivesName = "ScummVM"
 
         minSdkVersion 16
-        targetSdkVersion 33
+        targetSdkVersion 34
 
         versionName "2.9.0"
         versionCode 2090001

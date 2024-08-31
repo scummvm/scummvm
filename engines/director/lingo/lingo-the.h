@@ -189,6 +189,7 @@ enum TheFieldType {
 	kTheLocV,
 	kTheLong,
 	kTheLoop,
+	kTheMember,
 	kTheMemberNum,
 	kTheModal,
 	kTheModified,
@@ -236,6 +237,7 @@ enum TheFieldType {
 	kTheVolume,
 	kTheWidth,
 	kTheWindowType,
+	kTheScrollTop,
 	kTheMaxTheFieldType		// This must be always last
 };
 

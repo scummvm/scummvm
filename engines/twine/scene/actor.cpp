@@ -133,13 +133,92 @@ void Actor::setBehaviour(HeroBehaviourType behaviour) {
 	_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, OWN_ACTOR_SCENE_INDEX);
 }
 
-// InitSprite
-void Actor::initSpriteActor(int32 actorIdx) {
+void Actor::setFrame(int32 actorIdx, uint32 frame) {
+#if 0
+	// TODO: converted from asm - not yet adapted
+	ActorStruct *obj = _engine->_scene->getActor(actorIdx);
+	T_PTR_NUM tempNextBody = obj->NextBody;
+	void *tempNextTexture = obj->NextTexture;
+
+	if (frame >= obj->NbFrames) {
+		return;
+	}
+
+	obj->_body = tempNextBody;
+	obj->Texture = tempNextTexture;
+
+	T_PTR_NUM tempAnim = obj->_anim;
+	void (*TransFctAnim)() = nullptr; // Couldn't find this yet
+
+	if (TransFctAnim != nullptr) {
+		uint32 ebp = frame;
+		TransFctAnim();
+		tempAnim = (T_PTR_NUM)(void *)tempAnim.Ptr;
+		frame = ebp;
+	}
+
+	obj->Interpolator = 0;
+	obj->LastAnimStepX = 0;
+	obj->LastAnimStepY = 0;
+	obj->LastAnimStepZ = 0;
+
+	uint16 nbGroups = *((uint16 *)(tempAnim.Ptr + 2));
+
+	obj->LastAnimStepAlpha = 0;
+	obj->LastAnimStepBeta = 0;
+	obj->LastAnimStepGamma = 0;
+	obj->LastOfsIsPtr = 0;
+
+	uint32 lastOfsFrame = nbGroups * 8 + 8; // infos frame + 4 WORDs per group
+
+	obj->LastNbGroups = nbGroups;
+	obj->NextNbGroups = nbGroups;
+	obj->NbGroups = nbGroups;
+
+	lastOfsFrame *= frame;
+	uint32 timerRefHR = 0; // Replace with actual TimerRefHR
+
+	lastOfsFrame += 8; // Skip header
+
+	obj->LastTimer = timerRefHR;
+	obj->Time = timerRefHR;
+	obj->Status = 1; // STATUS_FRAME
+	obj->LastOfsFrame = lastOfsFrame;
+	obj->LastFrame = frame;
+
+	uint32 ecx = nbGroups * 2 - 2; // 2 DWORDs per group, no group 0
+	T_PTR_NUM ebpPtr = tempAnim;
+	tempAnim.Ptr = tempAnim.Ptr + lastOfsFrame + 16;
+
+	memcpy(obj->CurrentFrame, tempAnim.Ptr, ecx);
+
+	if (++frame == obj->NbFrames) {
+		uint16 time = *((uint16 *)(ebpPtr.Ptr + 8));
+		frame = 0;
+		tempAnim.Ptr = (void *)(8);
+	} else {
+		uint16 time = *((uint16 *)tempAnim.Ptr);
+		tempAnim.Ptr -= ebpPtr.Ptr;
+		tempAnim.Num += obj->LastTimer;
+		obj->NextFrame = frame;
+		obj->NextOfsFrame = (uint32)(tempAnim.Ptr);
+		obj->NextTimer = time;
+		obj->Master = *((uint16 *)(tempAnim.Ptr + 8));
+		obj->Status = 1; // STATUS_FRAME
+	}
+#endif
+}
+
+void Actor::initSprite(int32 spriteNum, int32 actorIdx) {
 	ActorStruct *localActor = _engine->_scene->getActor(actorIdx);
 
-	if (localActor->_staticFlags.bIsSpriteActor && localActor->_sprite != -1 && localActor->_body != localActor->_sprite) {
-		const BoundingBox *spritebbox = _engine->_resources->_spriteBoundingBox.bbox(localActor->_sprite);
-		localActor->_body = localActor->_sprite;
+	localActor->_sprite = spriteNum;
+	if (!localActor->_staticFlags.bIsSpriteActor) {
+		return;
+	}
+	if (spriteNum != -1 && localActor->_body != spriteNum) {
+		const BoundingBox *spritebbox = _engine->_resources->_spriteBoundingBox.bbox(spriteNum);
+		localActor->_body = spriteNum;
 		localActor->_boundingBox = *spritebbox;
 	}
 }
@@ -249,7 +328,7 @@ void Actor::startInitObj(int16 actorIdx) {
 
 		actor->_body = -1;
 
-		initSpriteActor(actorIdx);
+		initSprite(actor->_sprite, actorIdx);
 
 		_engine->_movements->initRealAngle(LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, &actor->realAngle);
 
@@ -279,7 +358,7 @@ void Actor::startInitObj(int16 actorIdx) {
 
 void Actor::initObject(int16 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	*actor = ActorStruct();
+	*actor = ActorStruct(_engine->getMaxLife());
 
 	actor->_actorIdx = actorIdx;
 	actor->_pos = IVec3(0, SIZE_BRICK_Y, 0);

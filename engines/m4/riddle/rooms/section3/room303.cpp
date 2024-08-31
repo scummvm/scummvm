@@ -34,7 +34,7 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-static const char *SAID[][2] = {
+static const char *const SAID[][2] = {
 	{ "IRON MAIDEN",     "303R29" },
 	{ "MUMMY WITH HAIR", "303R30" },
 	{ "MAN WITH HAMMER", "303R33" },

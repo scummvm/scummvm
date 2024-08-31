@@ -107,7 +107,6 @@ public:
 	static int32 lSET_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx);
 	static int32 lSET_COMPORTEMENT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx);
 	static int32 lEND_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx);
-	static int32 lSET_FLAG_GAME(TwinEEngine *engine, LifeScriptContext &ctx);
 	static int32 lKILL_OBJ(TwinEEngine *engine, LifeScriptContext &ctx);
 	static int32 lSUICIDE(TwinEEngine *engine, LifeScriptContext &ctx);
 	static int32 lUSE_ONE_LITTLE_KEY(TwinEEngine *engine, LifeScriptContext &ctx);

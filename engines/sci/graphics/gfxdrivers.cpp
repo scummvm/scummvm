@@ -502,9 +502,10 @@ SCI0_CGADriver::~SCI0_CGADriver() {
 void SCI0_CGADriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod*, const byte*) {
 	GFXDRV_ASSERT_READY;
 
+	byte diff = srcX & 1;
 	srcX &= ~1;
 	destX &= ~1;
-	w = (w + 1) & ~1;
+	w = (w + diff + 1) & ~1;
 
 	src += (srcY * pitch + srcX);
 
@@ -637,9 +638,10 @@ void SCI0_CGABWDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int
 
 	if (_earlyVersion) {
 		++ty;
+		byte diff = srcX & 1;
 		srcX &= ~1;
 		destX &= ~1;
-		w = (w + 1) & ~1;
+		w = (w + diff + 1) & ~1;
 	}
 
 	src += (srcY * pitch + srcX);
@@ -1175,7 +1177,7 @@ template <typename T> void scale2x(byte *dst, const byte *src, int pitch, int w,
 
 UpscaledGfxDriver::UpscaledGfxDriver(uint16 screenWidth, uint16 screenHeight, uint16 textAlignX, bool scaleCursor, bool rgbRendering) :
 	GfxDefaultDriver(screenWidth << 1, screenHeight << 1, false, rgbRendering), _textAlignX(textAlignX), _scaleCursor(scaleCursor), _needCursorBuffer(false),
-	_scaledBitmap(nullptr), _renderScaled(nullptr), _renderGlyph(nullptr), _fixedTextColor(-1), _cursorWidth(0), _cursorHeight(0) {
+	_scaledBitmap(nullptr), _renderScaled(nullptr), _renderGlyph(nullptr), _cursorWidth(0), _cursorHeight(0) {
 	_virtualW = screenWidth;
 	_virtualH = screenHeight;
 }
@@ -1184,7 +1186,7 @@ UpscaledGfxDriver::~UpscaledGfxDriver() {
 	delete[] _scaledBitmap;
 }
 
-void renderGlyph(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h, int transpCol, int) {
+void renderGlyph(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h, int transpCol) {
 	dstPitch -= w;
 	srcPitch -= w;
 
@@ -1265,7 +1267,7 @@ void UpscaledGfxDriver::drawTextFontGlyph(const byte *src, int pitch, int hiresD
 	GFXDRV_ASSERT_READY;
 	hiresDestX &= ~(_textAlignX - 1);
 	byte *scb = _scaledBitmap + hiresDestY * _screenW * _srcPixelSize + hiresDestX * _srcPixelSize;
-	_renderGlyph(scb, _screenW, src, pitch, hiresW, hiresH, transpColor, _fixedTextColor);
+	_renderGlyph(scb, _screenW, src, pitch, hiresW, hiresH, transpColor);
 	updateScreen(hiresDestX, hiresDestY, hiresW, hiresH, palMods, palModMapping);
 }
 
@@ -1300,8 +1302,9 @@ void UpscaledGfxDriver::adjustCursorBuffer(uint16 newWidth, uint16 newHeight) {
 	}
 }
 
-PC98Gfx16ColorsDriver::PC98Gfx16ColorsDriver(int textAlignX, bool cursorScaleWidth, bool cursorScaleHeight, SjisFontStyle sjisFontStyle, int sjisTextModeColor, bool rgbRendering, bool needsUnditheringPalette) :
-	UpscaledGfxDriver(320, 200, textAlignX, cursorScaleWidth && cursorScaleHeight, rgbRendering), _fontStyle(sjisFontStyle), _cursorScaleHeightOnly(!cursorScaleWidth && cursorScaleHeight), _convPalette(nullptr) {
+PC98Gfx16ColorsDriver::PC98Gfx16ColorsDriver(int textAlignX, bool cursorScaleWidth, bool cursorScaleHeight, SjisFontStyle sjisFontStyle, bool rgbRendering, bool needsUnditheringPalette) :
+	UpscaledGfxDriver(320, 200, textAlignX, cursorScaleWidth && cursorScaleHeight, rgbRendering), _textModePalette(nullptr), _fontStyle(sjisFontStyle),
+		_cursorScaleHeightOnly(!cursorScaleWidth && cursorScaleHeight), _needsUnditheringPalette(needsUnditheringPalette), _convPalette(nullptr) {
 	// Palette taken from driver file (identical for all versions of the
 	// driver I have seen so far, also same for SCI0 and SCI1)
 	static const byte pc98colorsV16[] = {
@@ -1319,34 +1322,25 @@ PC98Gfx16ColorsDriver::PC98Gfx16ColorsDriver(int textAlignX, bool cursorScaleWid
 		col[a + 0] = (s[1] * 0x11);
 		col[a + 1] = (s[0] * 0x11);
 		col[a + 2] = (s[2] * 0x11);
-		s+=3;
+		s += 3;
 	}
 
-	if (sjisTextModeColor != -1) {
+	if (_fontStyle == kFontStyleTextMode) {
 		byte *d = &col[48];
 		for (uint8 i = 0; i < 8; ++i) {
 			*d++ = (i & 4) ? 0xff : 0;
 			*d++ = (i & 2) ? 0xff : 0;
 			*d++ = (i & 1) ? 0xff : 0;
 		}
-		_fixedTextColor = sjisTextModeColor + 0x10;
 	}
 
-	if (needsUnditheringPalette) {		
-		if (sjisTextModeColor != -1) {
-			// If we need the rest of the CLUT8 for the undithering, we can't use that space for the
-			// text mode colors, but this really only matters for the blue text color in PQ2. We try
-			// to relocate that color which should work for the blue color that PQ2 uses...
-			for (int i = 0; i < 16; ++i) {
-				if (col[i * 3] != col[_fixedTextColor * 3] || col[i * 3 + 1] != col[_fixedTextColor * 3 + 1] || col[i * 3 + 2] != col[_fixedTextColor * 3 + 2])
-					continue;
-				_fixedTextColor = i;
-				break;
-			}
-			if (_fixedTextColor >= 16)
-				_fixedTextColor = -1;
+	if (needsUnditheringPalette) {
+		// We store the text mode color separately, since we need the slots for the undithering.
+		if (_fontStyle == kFontStyleTextMode) {
+			byte *tpal = new byte[24]();
+			memcpy(tpal, &col[48], 24);
+			_textModePalette = tpal;
 		}
-
 		// For the undithered mode, we generate the missing colors using the same formula as for EGA.
 		byte *d = &col[48];
 		for (int i = 16; i < 256; i++) {
@@ -1362,9 +1356,10 @@ PC98Gfx16ColorsDriver::PC98Gfx16ColorsDriver(int textAlignX, bool cursorScaleWid
 
 PC98Gfx16ColorsDriver::~PC98Gfx16ColorsDriver() {
 	delete[] _convPalette;
+	delete[] _textModePalette;
 }
 
-void renderPC98GlyphFat(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h, int transpCol, int fixedCol) {
+void renderPC98GlyphFat(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h, int transpCol) {
 	dstPitch -= w;
 	srcPitch -= w;
 
@@ -1373,9 +1368,9 @@ void renderPC98GlyphFat(byte *dst, int dstPitch, const byte *src, int srcPitch, 
 			uint8 a = *src++;
 			uint8 b = *src;
 			if (a != transpCol)
-				*dst = (fixedCol == -1) ? a : fixedCol;
+				*dst = a;
 			else if (b != transpCol)
-				*dst = (fixedCol == -1) ? b : fixedCol;
+				*dst = b;
 			++dst;
 		}
 		byte l = *src++;
@@ -1387,7 +1382,7 @@ void renderPC98GlyphFat(byte *dst, int dstPitch, const byte *src, int srcPitch, 
 	}
 }
 
-void renderPC98GlyphSpecial(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h, int transpCol, int) {
+void renderPC98GlyphSpecial(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h, int transpCol) {
 	assert(h == 16); // This is really not suitable for anything but the special SCI1 PC98 glyph drawing
 	dstPitch -= w;
 	srcPitch -= w;
@@ -1426,7 +1421,7 @@ void PC98Gfx16ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
 	assert(_convPalette);
 	GfxDefaultDriver::setPalette(_convPalette, 0, 256, true, nullptr, nullptr);
 
-	if (_fontStyle == kFontStyleFat)
+	if (_fontStyle == kFontStyleTextMode)
 		_renderGlyph = &renderPC98GlyphFat;
 
 	if (_fontStyle != kFontStyleSpecialSCI1)
@@ -1458,8 +1453,45 @@ void PC98Gfx16ColorsDriver::replaceCursor(const void *cursor, uint w, uint h, in
 	CursorMan.replaceCursor(_compositeBuffer, w, h << 1, hotspotX, hotspotY << 1, keycolor);
 }
 
-SCI0_PC98Gfx8ColorsDriver::SCI0_PC98Gfx8ColorsDriver(bool cursorScaleHeight, SjisFontStyle sjisFontStyle, int sjisTextModeColor, bool rgbRendering) :
-	UpscaledGfxDriver(320, 200, 8, false, rgbRendering), _cursorScaleHeightOnly(cursorScaleHeight), _fontStyle(sjisFontStyle), _convPalette(nullptr) {
+byte PC98Gfx16ColorsDriver::remapTextColor(byte color) const {
+	if (_fontStyle != kFontStyleTextMode)
+		return color;
+
+	color &= 7;
+	// This seems to be a bug in the original PQ2 interpreter, which I replicate, so that we get the same colors.
+	// What they were trying to do is just getting the rgb bits in the right order (switch red and green). But
+	// instead, before checking and setting the bits, they also copy the full color byte to the target color. So,
+	// the extra bits come just on top. The result: All green and red colors are turned into yellow, all magenta
+	// and cyan colors are turned into white.
+	if (color & 2)
+		color |= 4;
+	if (color & 4)
+		color |= 2;
+	// This is the blue color that PQ2 uses basically for all Japanese text...
+	if (color == 0)
+		color = 1;
+
+	byte textCol = color;
+	color += 0x10;
+
+	if (_textModePalette) {
+		// If we have used up the whole space of the CLUT8 for the undithering, we try
+		// to relocate the color which will work for all text mode colors with the default
+		// palette that is used by the PC-98 ports...
+		for (int i = 0; i < 256; ++i) {
+			if (_convPalette[i * 3] != _textModePalette[textCol * 3] || _convPalette[i * 3 + 1] != _textModePalette[textCol * 3 + 1] || _convPalette[i * 3 + 2] != _textModePalette[textCol * 3 + 2])
+				continue;
+			color = i;
+			break;
+		}
+		if (color >= 16)
+			color = 0;
+	}
+	return color;
+}
+
+SCI0_PC98Gfx8ColorsDriver::SCI0_PC98Gfx8ColorsDriver(bool cursorScaleHeight, bool useTextModeForSJISChars, bool rgbRendering) :
+	UpscaledGfxDriver(320, 200, 8, false, rgbRendering), _cursorScaleHeightOnly(cursorScaleHeight), _useTextMode(useTextModeForSJISChars), _convPalette(nullptr) {
 	byte *col = new byte[8 * 3]();
 	_convPalette = col;
 
@@ -1468,8 +1500,6 @@ SCI0_PC98Gfx8ColorsDriver::SCI0_PC98Gfx8ColorsDriver(bool cursorScaleHeight, Sji
 		*col++ = (i & 2) ? 0xff : 0;
 		*col++ = (i & 1) ? 0xff : 0;
 	}
-
-	_fixedTextColor = sjisTextModeColor;
 }
 
 SCI0_PC98Gfx8ColorsDriver::~SCI0_PC98Gfx8ColorsDriver() {
@@ -1500,7 +1530,7 @@ void pc98SimpleDither(byte *dst, const byte *src, int pitch, int w, int h) {
 void SCI0_PC98Gfx8ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
 	UpscaledGfxDriver::initScreen(format);
 	_renderScaled = &pc98SimpleDither;
-	if (_fontStyle == kFontStyleFat)
+	if (_useTextMode)
 		_renderGlyph = &renderPC98GlyphFat;
 	assert(_convPalette);
 	GfxDefaultDriver::setPalette(_convPalette, 0, 8, true, nullptr, nullptr);
@@ -1537,6 +1567,27 @@ void SCI0_PC98Gfx8ColorsDriver::replaceCursor(const void *cursor, uint w, uint h
 	}
 
 	CursorMan.replaceCursor(_compositeBuffer, w, h, hotspotX, hotspotY, newKeyColor);
+}
+
+byte SCI0_PC98Gfx8ColorsDriver::remapTextColor(byte color) const {
+	if (!_useTextMode)
+		return color;
+
+	color &= 7;
+	// This seems to be a bug in the original PQ2 interpreter, which I replicate, so that we get the same colors.
+	// What they were trying to do is just getting the rgb bits in the right order (switch red and green). But
+	// instead, before checking and setting the bits, they also copy the full color byte to the target color. So,
+	// the extra bits come just on top. The result: All green and red colors are turned into yellow, all magenta
+	// and cyan colors are turned into white.
+	if (color & 2)
+		color |= 4;
+	if (color & 4)
+		color |= 2;
+	// This is the blue color that PQ2 uses basically for all Japanese text...
+	if (color == 0)
+		color = 1;
+
+	return color;
 }
 
 const char *SCI0_PC98Gfx8ColorsDriver::_driverFiles[2] = { "9801V8M.DRV", "9801VID.DRV" };
@@ -1628,22 +1679,19 @@ void renderPlanarMatrix(byte *dst, const byte *src, int pitch, int w, int h, con
 	byte *d2 = d1 + dstPitch;
 	pitch -= w;
 	dstPitch += (pitch << 1);
-	byte c[6];
 
 	while (h--) {
-		for (int i = 0; i < (w >> 2); ++i) {
-			const byte *t1 = &tbl[(src[0] << 4 | src[1]) * 6];
-			const byte *t2 = &tbl[(src[2] << 4 | src[3]) * 6];
-
-			for (int ii = 0; ii < 6; ++ii)
-				c[ii] = (t1[ii] & 0xF0) | (t2[ii] & 0x0F);
-
-			for (int ii = 0; ii < 8; ++ii) {
+		byte sh = 0;
+		for (int i = 0; i < (w >> 1); ++i) {
+			const byte *c = &tbl[(src[0] << 4 | src[1]) * 6];
+			for (int ii = sh; ii < sh + 4; ++ii) {
 				*d1++ = (((c[0] >> (7 - ii)) & 1) << 2) | (((c[1] >> (7 - ii)) & 1) << 1) | ((c[2] >> (7 - ii)) & 1);
 				*d2++ = (((c[3] >> (7 - ii)) & 1) << 2) | (((c[4] >> (7 - ii)) & 1) << 1) | ((c[5] >> (7 - ii)) & 1);
 			}
-			src += 4;
+			src += 2;
+			sh ^= 4;
 		}
+
 		src += pitch;
 		d1 += dstPitch;
 		d2 += dstPitch;
@@ -1662,9 +1710,10 @@ void SCI1_PC98Gfx8ColorsDriver::initScreen(const Graphics::PixelFormat *format) 
 void SCI1_PC98Gfx8ColorsDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) {
 	GFXDRV_ASSERT_READY;
 
+	byte diff = srcX & 7;
 	srcX &= ~7;
 	destX &= ~7;
-	w = (w + 7) & ~7;
+	w = (w + diff + 7) & ~7;
 
 	src += (srcY * pitch + srcX * _srcPixelSize);
 	if (src != _currentBitmap)

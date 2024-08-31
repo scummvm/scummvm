@@ -147,6 +147,10 @@ public:
 		_is_game_texture = true;
 	}
 
+	void setAlpha(float alpha) {
+		_alpha = alpha;
+	}
+
 protected:
 	void initSize();
 
@@ -192,6 +196,8 @@ protected:
 	Graphics::PixelFormat _palettePixelFormat;
 
 	bool _is_game_texture;
+
+	GLfloat _alpha;
 
 	static bool _npot_supported;
 	static OpenGL::Shader *_box_shader;

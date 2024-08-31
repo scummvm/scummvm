@@ -97,7 +97,7 @@ Type &T_MYACTARRAY::operator[](uint32 n) {
 
 MY_TEMPLATE
 const Type &T_MYACTARRAY::operator[](uint32 n) const {
-	// It is permissable to look at an element that has not been defined, as the constructor assures
+	// It is permissible to look at an element that has not been defined, as the constructor assures
 	// that the contents are valid
 	if (n >= m_userPosition) {
 		// Remove any 'constness' for a resize
@@ -198,7 +198,7 @@ Type *&T_MYPTRARRAY::operator[](uint32 n) {
 
 MY_TEMPLATE
 const Type *&T_MYPTRARRAY::operator[](uint32 n) const {
-	// It is permissable to look at an element that has not been defined, as it will be defined as NULL
+	// It is permissible to look at an element that has not been defined, as it will be defined as NULL
 	if (n >= m_userPosition) {
 		(const_cast<rcAutoPtrArray<Type> *>(this))->ResizeArray(n);
 		(const_cast<rcAutoPtrArray<Type> *>(this))->m_userPosition = n + 1;
@@ -301,7 +301,7 @@ template <class Type> Type &rcIntArray<Type>::operator[](uint32 index) {
 
 // This version of [] allows the array to be part of a const function
 template <class Type> const Type rcIntArray<Type>::operator[](uint32 index) const {
-	// It is permissable to look at an element that has not been defined, as it will have been set to 0
+	// It is permissible to look at an element that has not been defined, as it will have been set to 0
 	if (index >= m_userPosition) {
 		// Remove any 'constness' for a resize
 		(const_cast<rcIntArray<Type> *>(this))->ResizeArray(index);

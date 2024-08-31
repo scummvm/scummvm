@@ -47,6 +47,7 @@ bool Archive::openFile(const Common::Path &fileName) {
 	}
 
 	if (!openStream(file)) {
+		delete file;
 		close();
 		return false;
 	}

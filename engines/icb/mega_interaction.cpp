@@ -76,7 +76,7 @@ mcodeFunctionReturnCodes _game_session::fn_interact_with_id(int32 &, int32 *para
 	// set this flag to avoid interact with id=0 based problems
 	M->interacting = TRUE8;
 
-	// now try and find a script with the passed extention i.e. ???::looping
+	// now try and find a script with the passed extension i.e. ???::looping
 	for (uint32 k = 0; k < CGameObject::GetNoScripts(target_object); k++) {
 		if (script_hash == CGameObject::GetScriptNamePartHash(target_object, k)) {
 			Zdebug("found target interact script", k);
@@ -94,7 +94,7 @@ mcodeFunctionReturnCodes _game_session::fn_interact_with_id(int32 &, int32 *para
 			L->logic_level = 2; // reset to level 2
 			// action script will fall back to looping level 1
 
-			// script interpretter shouldnt write a pc back
+			// script interpreter shouldn't write a pc back
 			return (IR_GOSUB);
 		}
 	}
@@ -127,7 +127,7 @@ mcodeFunctionReturnCodes _game_session::fn_mega_interacts(int32 &, int32 *params
 	// get target object
 	target_object = (CGame *)LinkedDataObject::Try_fetch_item_by_name(MS->objects, object_name);
 	if (!target_object)
-		Fatal_error("fn_mega_interacts - named object [%s] dont exist", object_name);
+		Fatal_error("fn_mega_interacts - named object [%s] don't exist", object_name);
 
 	// set socket_id ready for any special socket functions
 	M->target_id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
@@ -135,7 +135,7 @@ mcodeFunctionReturnCodes _game_session::fn_mega_interacts(int32 &, int32 *params
 	// set this flag to avoid interact with id=0 based problems
 	M->interacting = TRUE8;
 
-	// now try and find a script with the passed extention i.e. ???::looping
+	// now try and find a script with the passed extension i.e. ???::looping
 	for (uint32 k = 0; k < CGameObject::GetNoScripts(target_object); k++) {
 		if (script_hash == CGameObject::GetScriptNamePartHash(target_object, k)) {
 			Zdebug("found target interact script", k);
@@ -152,7 +152,7 @@ mcodeFunctionReturnCodes _game_session::fn_mega_interacts(int32 &, int32 *params
 			L->logic_level = 2; // reset to level 2
 			// action script will fall back to looping level 1
 
-			// script interpretter shouldnt write a pc back
+			// script interpreter shouldn't write a pc back
 			return (IR_GOSUB);
 		}
 	}
@@ -178,7 +178,7 @@ mcodeFunctionReturnCodes _game_session::fn_mega_generic_interact(int32 &, int32 
 	// get target object
 	target_object = (CGame *)LinkedDataObject::Try_fetch_item_by_name(MS->objects, object_name);
 	if (!target_object)
-		Fatal_error("fn_mega_generic_interact - named object [%s] dont exist", object_name);
+		Fatal_error("fn_mega_generic_interact - named object [%s] don't exist", object_name);
 
 	// set socket_id ready for any special socket functions
 	M->target_id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
@@ -186,7 +186,7 @@ mcodeFunctionReturnCodes _game_session::fn_mega_generic_interact(int32 &, int32 
 	// set this flag to avoid interact with id=0 based problems
 	M->interacting = TRUE8;
 
-	// now try and find a script with the 'interact' extention i.e. ???::interact
+	// now try and find a script with the 'interact' extension i.e. ???::interact
 	for (uint32 k = 0; k < CGameObject::GetNoScripts(target_object); k++) {
 		if (script_hash == CGameObject::GetScriptNamePartHash(target_object, k)) {
 			Zdebug("found target interact script", k);
@@ -204,7 +204,7 @@ mcodeFunctionReturnCodes _game_session::fn_mega_generic_interact(int32 &, int32 
 			L->logic_level = 2; // reset to level 2
 			// action script will fall back to looping level 1
 
-			// script interpretter shouldnt write a pc back
+			// script interpreter shouldn't write a pc back
 			return (IR_GOSUB);
 		}
 	}
@@ -227,7 +227,7 @@ bool8 _game_session::chi_interacts(int32 id, const char *script_name) {
 	// get target object
 	target_object = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, id);
 	if (!target_object)
-		Fatal_error("chi_interacts - object [%d] dont exist", id);
+		Fatal_error("chi_interacts - object [%d] don't exist", id);
 
 	// set socket_id ready for any special socket functions
 	M->target_id = id;
@@ -235,7 +235,7 @@ bool8 _game_session::chi_interacts(int32 id, const char *script_name) {
 	// set this flag to avoid interact with id=0 based problems
 	M->interacting = TRUE8;
 
-	// now try and find a script with the passed extention i.e. ???::looping
+	// now try and find a script with the passed extension i.e. ???::looping
 	for (uint32 k = 0; k < CGameObject::GetNoScripts(target_object); k++) {
 		if (script_hash == CGameObject::GetScriptNamePartHash(target_object, k)) {
 			// script k is the one to run
@@ -251,7 +251,7 @@ bool8 _game_session::chi_interacts(int32 id, const char *script_name) {
 			L->logic_level = 2; // reset to level 2
 			// action script will fall back to looping level 1
 
-			// script interpretter shouldnt write a pc back
+			// script interpreter shouldn't write a pc back
 			return TRUE8;
 		}
 	}

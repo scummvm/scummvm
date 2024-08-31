@@ -26,12 +26,23 @@ public:
 	CastleEngine(OSystem *syst, const ADGameDescription *gd);
 	~CastleEngine();
 
+	// Only in DOS
 	Graphics::ManagedSurface *_option;
-	Graphics::Surface *_menu;
+	Graphics::ManagedSurface *_menuButtons;
+	Graphics::ManagedSurface *_menuCrawlIndicator;
+	Graphics::ManagedSurface *_menuWalkIndicator;
+	Graphics::ManagedSurface *_menuRunIndicator;
+	Graphics::ManagedSurface *_menuFxOnIndicator;
+	Graphics::ManagedSurface *_menuFxOffIndicator;
+	Graphics::ManagedSurface *_something;
+	Graphics::ManagedSurface *_menu;
+
+	void initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) override;
 	void initGameState() override;
 	void endGame() override;
 
 	void drawInfoMenu() override;
+	void loadAssets() override;
 	void loadAssetsDOSFullGame() override;
 	void loadAssetsDOSDemo() override;
 	void loadAssetsAmigaDemo() override;
@@ -64,11 +75,20 @@ public:
 
 	void drawStringInSurface(const Common::String &str, int x, int y, uint32 fontColor, uint32 backColor, Graphics::Surface *surface, int offset = 0) override;
 	//void drawStringInSurface(const Common::String &str, int x, int y, uint32 primaryFontColor, uint32 secondaryFontColor, uint32 backColor, Graphics::Surface *surface, int offset = 0) override;
-	Graphics::Surface *loadFramesWithHeader(Common::SeekableReadStream *file, int pos, int numFrames, uint32 back);
-	Graphics::Surface *loadFrames(Common::SeekableReadStream *file, Graphics::Surface *surface, int width, int height, uint32 back);
+	Common::Array<Graphics::Surface *> loadFramesWithHeader(Common::SeekableReadStream *file, int pos, int numFrames, uint32 front, uint32 back);
+	Graphics::Surface *loadFrameWithHeader(Common::SeekableReadStream *file, int pos, uint32 front, uint32 back);
+	Graphics::Surface *loadFrame(Common::SeekableReadStream *file, Graphics::Surface *surface, int width, int height, uint32 back);
+	Graphics::ManagedSurface *loadFrameFromPlanes(Common::SeekableReadStream *file, int widthInBytes, int height);
+	Graphics::ManagedSurface *loadFrameFromPlanesInternal(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int width, int height);
 
 	Graphics::Surface *_keysFrame;
 	Graphics::Surface *_spiritsMeterIndicatorFrame;
+	Graphics::Surface *_strenghtBackgroundFrame;
+	Graphics::Surface *_strenghtBarFrame;
+	Common::Array<Graphics::Surface *> _strenghtWeightsFrames;
+	Graphics::ManagedSurface *_flagFrames[4];
+	Graphics::Surface *_thunderFrame;
+
 	int _numberKeys;
 	bool _useRockTravel;
 	int _spiritsDestroyed;

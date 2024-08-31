@@ -568,7 +568,7 @@ void cMesh::CreateJointsAndBodies(Common::Array<iPhysicsBody *> *apBodyVec, cMes
 					// if(pSubEntity->GetParent())
 					//	Log("Node parent: %s\n",static_cast<cNode3D*>(pSubEntity->GetParent())->GetName());
 
-					// The scale should allready been removed.
+					// The scale should already been removed.
 					/*cMatrixf mtxScale = cMath::MatrixScale(pSubMesh->GetModelScale());
 					mtxSub = cMath::MatrixMul(mtxSub, cMath::MatrixInverse(mtxScale));*/
 

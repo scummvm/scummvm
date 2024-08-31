@@ -87,6 +87,8 @@ struct Player {
 	int32 click_x = 0, click_y = 0;
 
 	void syncGame(Common::Serializer &s);
+
+	void resetWalk();
 };
 
 struct PlayerInfo {

@@ -136,6 +136,7 @@ public:
 	bool cmdOuttake(int argc, const char** argv);
 	bool cmdPlayVqa(int argc, const char** argv);
 	bool cmdAmmo(int argc, const char** argv);
+	bool cmdCheatReport(int argc, const char** argv);
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	bool cmdEffect(int argc, const char **argv);

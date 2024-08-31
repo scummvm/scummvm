@@ -316,7 +316,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Provided by Faalargon, Bugreport #11883 (#1440 in Residualvm)
 	// Folder structure is completely different. Unsupported for now
 	{
-		"tlj", _s("Missing game code"), // Reason for being unsupported
+		"tlj", MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 		AD_ENTRY2s("x.xarc",		"6c6c388f757adcc49e7f33b0b2cccf96", 2904,
 				   "chapters.ini",	"6ee43a176a5eb94153c2d813261c3226", 252),
 		Common::PL_POL,

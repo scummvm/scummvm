@@ -146,8 +146,9 @@ private:
 
 	int16 _samplePlayed = 0;
 
-	int16 _sceneMusic = 0;
-
+public:
+	int16 _sceneMusic = 0;  // CubeJingle
+private:
 	IVec3 _sceneHeroPos;
 	IVec3 _zoneHeroPos;
 
@@ -209,10 +210,10 @@ public:
 
 	bool _enableGridTileRendering = true;
 
-	uint8 _listFlagCube[NUM_SCENES_FLAGS]{0};
+	uint8 _listFlagCube[NUM_SCENES_FLAGS]{0}; // ListVarCube
 
-	int32 _sceneNumZones = 0;
-	ZoneStruct _sceneZones[NUM_MAX_ZONES];
+	int32 _sceneNumZones = 0; // NbZones
+	ZoneStruct _sceneZones[NUM_MAX_ZONES]; // ListZone
 
 	ActorStruct *getActor(int32 actorIdx); // ListObjet
 

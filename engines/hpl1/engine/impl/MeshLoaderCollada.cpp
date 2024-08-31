@@ -214,7 +214,7 @@ static cColladaNode *GetNodeFromController(const tString &asGeomId,
 				asGeomId.c_str(), sControlId.c_str());
 
 	if (sControlId == "") {
-		Warning("No controller refered to the geometry!\n");
+		Warning("No controller referred to the geometry!\n");
 		return NULL;
 	}
 
@@ -493,12 +493,12 @@ cMesh *cMeshLoaderCollada::LoadMesh(const tString &asFile, tMeshLoadFlag aFlags)
 					vOffset = vOffset * pNode->mvScale;
 					// Log("Centre is not a correct location! Offset: %s\n",vOffset.ToString().c_str());
 
-					// Local postion add
+					// Local position add
 					/*cMatrixf mtxTrans = cMath::MatrixTranslate(vOffset);
 					pCollider->m_mtxOffset = cMath::MatrixMul( pNode->m_mtxWorldTransform,
 																mtxTrans);*/
 
-					// World postion add
+					// World position add
 					pCollider->m_mtxOffset = pNode->m_mtxWorldTransform;
 					cVector3f vRotOffset = cMath::MatrixMul(pCollider->m_mtxOffset.GetRotation(),
 															vOffset);

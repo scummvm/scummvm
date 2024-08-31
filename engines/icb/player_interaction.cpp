@@ -181,7 +181,7 @@ void _player::Find_current_player_interact_object() {
 						// we are nearer or the current is dead
 						// see if object is dead
 						if ((MS->logic_structs[j]->mega->dead) &&
-						    (crouch_status)) { // this mega is dead and we're crouched - only register him if there isnt another
+						    (crouch_status)) { // this mega is dead and we're crouched - only register him if there isn't another
 							if ((!mega_id) && (len < DEAD_MEGA_DISTANCE * DEAD_MEGA_DISTANCE)) { // dead mega chosen - must be within prop type range
 								nearest_mega = len;
 								mega_id = j + 1;
@@ -211,7 +211,7 @@ void _player::Find_current_player_interact_object() {
 	}
 
 	// mega if armed, nearest prop or live mega, dead mega
-	if ((prop_id) && (nearest < nearest_mega)) { // UNARMED prop nearer than mega (wont be a prop if armed)
+	if ((prop_id) && (nearest < nearest_mega)) { // UNARMED prop nearer than mega (won't be a prop if armed)
 		cur_interact_id = (prop_id - 1);
 		interact_selected = TRUE8;
 	} else if ((mega_id) && (!dead_mega)) { // live mega
@@ -402,7 +402,7 @@ mcodeFunctionReturnCodes _game_session::fn_start_player_interaction(int32 &, int
 
 	L->looping = 0; // reset to 0 for new logics
 
-	// script interpretter shouldnt write a pc back
+	// script interpreter shouldn't write a pc back
 	return (IR_TERMINATE);
 }
 
@@ -417,9 +417,9 @@ bool8 _game_session::Engine_start_interaction(const char *script, uint32 id) {
 	// get target object
 	iobject = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, id);
 	if (!iobject)
-		Fatal_error("Engine_start_interaction - named object dont exist"); // should never happen
+		Fatal_error("Engine_start_interaction - named object don't exist"); // should never happen
 
-	// now try and find a script with the passed extention i.e. ???::looping
+	// now try and find a script with the passed extension i.e. ???::looping
 	for (uint32 k = 0; k < CGameObject::GetNoScripts(iobject); k++) {
 
 		if (script_hash == CGameObject::GetScriptNamePartHash(iobject, k)) {
@@ -448,7 +448,7 @@ bool8 _game_session::Engine_start_interaction(const char *script, uint32 id) {
 		}
 	}
 
-	// didnt find the named script
+	// didn't find the named script
 
 	return (FALSE8);
 }

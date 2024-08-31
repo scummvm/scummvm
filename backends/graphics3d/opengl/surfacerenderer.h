@@ -109,7 +109,10 @@ private:
 	GLboolean _prevStateDepthWriteMask;
 	GLboolean _prevStateBlend;
 	GLboolean _prevStateScissorTest;
-	GLint _prevStateBlendFunc;
+	GLint _prevStateBlendSrcRGB;
+	GLint _prevStateBlendDstRGB;
+	GLint _prevStateBlendSrcAlpha;
+	GLint _prevStateBlendDstAlpha;
 	GLint _prevStateViewport[4];
 };
 

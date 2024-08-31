@@ -88,8 +88,9 @@ public:
 
 	float getHiDPIScreenFactor() const override;
 
+	void touchControlInitSurface(const Graphics::ManagedSurface &surf) override;
 	void touchControlNotifyChanged() override;
-	void touchControlDraw(int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) override;
+	void touchControlDraw(uint8 alpha, int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) override;
 
 protected:
 	void setSystemMousePosition(const int x, const int y) override {}

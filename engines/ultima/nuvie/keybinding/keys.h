@@ -102,6 +102,7 @@ public:
 	bool handle_always_available_keys(ActionType a);
 
 	void ShowKeys() const;
+    void AddIosBindings();
 
 	uint8 get_axis(uint8 index) const;
 	void set_axis(uint8 index, uint8 value);

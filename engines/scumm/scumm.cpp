@@ -1082,7 +1082,7 @@ Common::Error ScummEngine::init() {
 			// files. The rescumm utility used to be used to extract those files.
 			// While that is still possible, we now support reading those files
 			// directly. The first step is to check whether one of them is present
-			// (we do that here); the rest is handled by the  ScummFile class and
+			// (we do that here); the rest is handled by the ScummFile class and
 			// code in openResourceFile() (and in the Sound class, for MONSTER.SOU
 			// handling).
 			assert(_game.version >= 5 && _game.heversion == 0);
@@ -1229,18 +1229,18 @@ Common::Error ScummEngine::init() {
 			// turn the space into an underscore.
 
 			static const char *monkeyIslandFileNames[] = {
-			        "Monkey Island",
-			        "Monkey_Island"
+				"Monkey Island",
+				"Monkey_Island"
 			};
 
-		       for (int i = 0; i < ARRAYSIZE(monkeyIslandFileNames); i++) {
-		                if (resource.exists(monkeyIslandFileNames[i])) {
-		                        macResourceFile = monkeyIslandFileNames[i];
-		                }
-		        }
+			for (int i = 0; i < ARRAYSIZE(monkeyIslandFileNames); i++) {
+				if (resource.exists(monkeyIslandFileNames[i])) {
+					macResourceFile = monkeyIslandFileNames[i];
+				}
+			}
 
 			if (macResourceFile.empty()) {
-			        GUI::MessageDialog dialog(_(
+				GUI::MessageDialog dialog(_(
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."), _("OK"));
 				dialog.runModal();
@@ -1731,12 +1731,16 @@ void ScummEngine::resetScumm() {
 		_macGui->reset();
 	}
 
-	if (_game.version == 0) {
+	if ((_game.id == GID_MANIAC) && (_game.platform == Common::kPlatformC64)) {
+		initScreens(9, 145); // The main virtual screen is offset lower by one pixel
+	} else if (_game.version == 0) {
 		initScreens(8, 144);
 	} else if ((_game.id == GID_MANIAC) && (_game.version <= 1) && !(_game.platform == Common::kPlatformNES)) {
 		initScreens(16, 152);
 	} else if (_game.version >= 7 || _game.heversion >= 71) {
 		initScreens(0, _screenHeight);
+	} else if ((_game.id == GID_ZAK) && (_game.platform == Common::kPlatformC64)) {
+		initScreens(17, 145); // The main virtual screen is offset lower by one pixel
 	} else {
 		initScreens(16, 144);
 	}
@@ -2437,7 +2441,7 @@ Common::Error ScummEngine::go() {
 		// expected. The timer resolution is lower than the frame-time
 		// derived from it, i.e., one tick represents three frames. We need
 		// to round up VAR_TIMER_NEXT to the nearest multiple of three.
-		if (_game.id == GID_MANIAC && _game.version == 1) {
+		if (_game.id == GID_MANIAC && _game.version == 1 && _game.platform != Common::kPlatformNES) {
 			delta = ceil(delta / 3.0) * 3;
 		}
 
@@ -2502,7 +2506,7 @@ Common::Error ScummEngine::go() {
 
 void ScummEngine::waitForTimer(int quarterFrames, bool freezeMacGui) {
 	uint32 endTime, cur;
-	uint32 msecDelay = getIntegralTime(quarterFrames * (1000 / _timerFrequency));
+	uint32 msecDelay = getIntegralTime(quarterFrames * (1000 / getTimerFrequency()));
 
 	if (_fastMode & 2)
 		msecDelay = 0;
@@ -2609,6 +2613,32 @@ void ScummEngine::setTimerAndShakeFrequency() {
 }
 
 double ScummEngine::getTimerFrequency() {
+	// HACK for bug #9591:
+	// "SCUMM: ZAK (FM-Towns): Intro animation runs faster than intro music".
+	//
+	// There is no way around it: the original game relied on the (low) speed of the hardware
+	// for keeping the intro song in sync with the visuals. And by "sync" I mean just having
+	// the song end when the visuals are done. Just two checks are being done on VAR_MUSIC_TIMER
+	// within the relevant scripts at the beginning of the intro, and then in the end there is
+	// this check which fails because at that point Var[151 Bit 8] seems to be deactivated:
+	// 
+	// if (Var[151 Bit 8]) {
+	//   breakHere();
+	//   VAR_RESULT = isSoundRunning(93);
+	//   unless (!VAR_RESULT) goto 0441;
+	// } else {
+	//   delay(240);
+	// }
+	//
+	// Even if the check above worked, we would end up with the visual finishing about 14 seconds
+	// earlier than the audio, and stalling until the audio is done, which is not pretty.
+	//
+	// The best fit for the simulated slowdown seems to a quarter-frame rate of 200.0 Hz (50 Hz),
+	// while the CD audio timer continues to operate at 60.0 Hz, as it should.
+
+	if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns && _sound->getCurrentCDSound() == 93)
+		return 200.0;
+
 	return _timerFrequency;
 }
 
@@ -2616,7 +2646,7 @@ double ScummEngine::getAmigaMusicTimerFrequency() {
 	// Similarly to MI1, LOOM in PAL mode operates at 50Hz but the audio engine
 	// compensates the speed factor to play music at the correct speed.
 	// We simply feed the NTSC speed to the Paula audio engine to account for that.
-	return _game.id == GID_LOOM ? AMIGA_NTSC_VBLANK_RATE : _timerFrequency;
+	return _game.id == GID_LOOM ? AMIGA_NTSC_VBLANK_RATE : getTimerFrequency();
 }
 
 void ScummEngine_v0::scummLoop(int delta) {
@@ -2666,10 +2696,12 @@ void ScummEngine::scummLoop(int delta) {
 	if (_game.version <= 3)
 		displayDialog();
 
+	bool isFTDOSDemo = (_game.id == GID_FT) && (_game.features & GF_DEMO) && (_game.platform == Common::kPlatformDOS);
+
 	// In v7 we have to run processInput() at the end of the loop,
 	// to allow one frame time to pass between checkExecVerbs() and runAllScripts().
 	// Several time-based effects (e.g. shaking) depend on this...
-	if (_game.version != 7) {
+	if (_game.version != 7 || isFTDOSDemo) {
 		processInput();
 
 		// Additionally, v8 runs checkExecVerbs() at the end of processInput()...
@@ -2705,7 +2737,7 @@ void ScummEngine::scummLoop(int delta) {
 			VAR(VAR_MUSIC_TIMER) = _sound->getMusicTimer();
 		} else if (_musicEngine) {
 			// The music engine generates the timer data for us.
-			VAR(VAR_MUSIC_TIMER) = _musicEngine->getMusicTimer() * _timerFrequency / 240.0;
+			VAR(VAR_MUSIC_TIMER) = _musicEngine->getMusicTimer() * getTimerFrequency() / 240.0;
 		}
 	}
 
@@ -2737,7 +2769,7 @@ load_game:
 		((SoundHE *)_sound)->handleSoundFrame();
 	}
 
-	if (_game.version < 7) {
+	if (_game.version < 7 || isFTDOSDemo) {
 		runAllScripts();
 		checkExecVerbs();
 	}
@@ -2754,7 +2786,7 @@ load_game:
 	// 
 	// Again, from the disasms, we call runAllScripts() on a loop,
 	// while the _saveLoadFlag is active.
-	if (_game.version == 7) {
+	if (_game.version == 7 && !isFTDOSDemo) {
 		do {
 			runAllScripts();
 			scummLoop_handleSaveLoad();
@@ -2825,7 +2857,7 @@ load_game:
 	// these two functions should be called; this will delay the
 	// scripts executions between checkExecVerbs() and runAllScripts()
 	// by exactly one frame.
-	if (_game.version == 7) {
+	if (_game.version == 7 && !isFTDOSDemo) {
 		processInput();
 		checkExecVerbs();
 	}
@@ -3794,9 +3826,9 @@ void ScummEngine::runBootscript() {
 	args[0] = _bootParam;
 
 	if ((_game.id == GID_MANIAC && (_game.features & GF_DEMO) && (_game.platform != Common::kPlatformC64)) || ConfMan.getBool("enable_demo_mode"))
-    	runScript(9, 0, 0, args);
+		runScript(9, 0, 0, args);
 	else
-    	runScript(1, 0, 0, args);
+		runScript(1, 0, 0, args);
 }
 
 #ifdef ENABLE_HE

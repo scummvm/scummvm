@@ -604,7 +604,7 @@ void ScummEngine::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool 
 
 	if (waitTime && waitTime != -1) {
 		uint32 millis = _system->getMillis();
-		while (((_system->getMillis() - millis) * (_timerFrequency / 4) / 1000) < waitTime) {
+		while (((_system->getMillis() - millis) * (getTimerFrequency() / 4) / 1000) < waitTime) {
 			waitForTimer(1); // Allow the engine to update the screen and fetch new inputs...
 
 			if (_game.version < 7 && (_guiCursorAnimCounter++ & 16)) {

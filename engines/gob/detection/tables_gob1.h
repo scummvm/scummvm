@@ -608,8 +608,7 @@
 	{
 		"gob1",
 		"",
-		AD_ENTRY2s("intro.stk", "c65e9cc8ba23a38456242e1f2b1caad4", 135561,
-		           "disk1.stk", "6797b5dbdace1518ecf93dc0414970d8", 367110),
+		AD_ENTRY1s("intro.stk", "c65e9cc8ba23a38456242e1f2b1caad4", 135561),
 		UNK_LANG,
 		kPlatformAmiga,
 		ADGF_NO_FLAGS,

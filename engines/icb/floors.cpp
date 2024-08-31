@@ -158,10 +158,10 @@ bool8 _floor_world::On_a_floor(_mega *mega) {
 	return FALSE8;
 }
 
-void _floor_world::Allign_with_floor(_mega *mega) {
+void _floor_world::Align_with_floor(_mega *mega) {
 	uint32 j;
 
-	// check against actualy heights
+	// check against actual heights
 	for (j = 0; j < total_heights; j++) {
 		if (mega->actor_xyz.y == heights[j])
 			return;
@@ -181,7 +181,7 @@ PXreal _floor_world::Return_true_y(PXreal y) {
 	// used by walk area camera director
 	uint32 j;
 
-	// check against actualy heights
+	// check against actual heights
 	for (j = 0; j < total_heights; j++)
 		if (y == heights[j])
 			return y;
@@ -202,7 +202,7 @@ _floor_world::~_floor_world() {
 }
 
 uint32 _floor_world::Fetch_floor_number_by_name(const char *name) {
-	// return a pointer to a named floor to an external routine - most likely a fn_funtion
+	// return a pointer to a named floor to an external routine - most likely a fn_function
 	return (LinkedDataObject::Fetch_item_number_by_name(floors, name));
 }
 

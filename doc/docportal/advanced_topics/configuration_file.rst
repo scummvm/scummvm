@@ -219,6 +219,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`font_override <fontoverride>`",boolean,false,
 		":ref:`footsteps <footsteps>`",boolean,true,
 		":ref:`force_2d_renderer <2d>`",boolean,false,
+		forced_dpi_scaling,integer,,"Overrides DPI scaling factor reported by the system."
 		":ref:`frameLimit <framelimit>`",boolean,true,
 		":ref:`frameSkip <frameskip>`",boolean,false,
 		":ref:`frames_per_secondfl <fpsfl>`",boolean,false,

@@ -765,7 +765,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"zoombini",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("ZOOMBINI.MHK", "98b758fec55104c096cfd129048be9a6"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -780,7 +780,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"zoombini",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("ZOOMBINI.MHK", "0672f65c40dd065840c896e41c13f980"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -795,7 +795,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"zoombini",
-			_s("Missing game code"), // Reason for being unsupported // "v2.0",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported // "v2.0",
 			AD_ENTRY1("ZOOMBINI.MHK", "506b1122ffa740e2566cf0b583d24478"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -809,7 +809,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"zoombini",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("ZOOMBINI.MHK", "6ae0bdf791266b1fe3d4fabbf44c3faa"),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
@@ -823,7 +823,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"zoombini",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("ZOOMBINI.MHK", "8231e58525143ccf6e8b747df34b139f"),
 			Common::FR_FRA,
 			Common::kPlatformWindows,
@@ -837,7 +837,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"zoombini",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("ZOOMBINI.MHK", "6d95ef2148043b51ef31d3a35d3b7521", 23853146),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
@@ -851,7 +851,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"zoombini",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("ZOOMBINI.MHK", "8191a3568facff94cecc8d99f83a7772", 1964112),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -865,7 +865,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"zoombini",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("ZOOMBINI.MHK", "cfa2db71d571a40a4ae692606547e391", 1492603),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -879,7 +879,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"zoombini",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("ZOOMBINI.MHK", "3133e8d164958f8a3f740cb1f4e49f15", 24120142),
 			Common::JA_JPN,
 			Common::kPlatformMacintosh,
@@ -894,7 +894,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"orly",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("DEMO_STO.MHK", "9ab19aa65e72ae34ce3ec2c54f4e6f8b", 6245780),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -909,7 +909,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"alientales",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("ATDEMO.DAT", "7ac30ba63080cd5ad6af9946707e01cc", 1656768),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -924,7 +924,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"csworld",
-			_s("Missing game code"), // Reason for being unsupported // "v3.0",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported // "v3.0",
 			AD_ENTRY1("C2K.MHK", "605fe88380848031bbd0ff84ade6fe40"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -938,7 +938,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"csworld",
-			_s("Missing game code"), // Reason for being unsupported // "v3.5",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported // "v3.5",
 			AD_ENTRY1("C2K.MHK", "d4857aeb0f5e2e0c4ac556aa74f38c23"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -953,7 +953,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"csamtrak",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("AMTRAK.MHK", "2f95301f0bb950d555bb7b0e3b1b7eb1"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -970,7 +970,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"mathsworkshop",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("MAINSCRN.DAT", "5fc18dc4e12ed4988182af17d1f1cf8c", 10972138),
 			Common::EN_USA,
 			Common::kPlatformWindows,
@@ -988,7 +988,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"mathsworkshop",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("MAINSCRN.DAE", "f42b70727bb3d5b224c85735339d4489", 7751154),
 			Common::EN_GRB,
 			Common::kPlatformWindows,
@@ -1002,7 +1002,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"mathsworkshop",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("MAINSCRN.DAD", "9d75b524de80ac99e6ef43e679c97340", 7748061),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
@@ -1016,7 +1016,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"mathsworkshop",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("MAINSCRN.DAF", "260ba9aec6c16b3aee6377afe7e212e6", 7667595),
 			Common::FR_FRA,
 			Common::kPlatformWindows,
@@ -1033,7 +1033,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"mathsworkshopdx",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("MAINSCRN.DAT", "338563e58ac1313bc7606c5584a3576a", 7756078),
 			Common::EN_USA,
 			Common::kPlatformWindows,
@@ -1051,7 +1051,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"wricamact",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("SYSTEM.MHK", "ed7dec6e3a5d3a5f74307faaf12242bf", 460),
 			Common::FR_FRA,
 			Common::kPlatformWindows,
@@ -1068,7 +1068,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"amazingwriting",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1s("system.dat", "h:6d65aa2cc7d437bb352aa18c0d63e332", 131),
 			Common::FR_FRA,
 			Common::kPlatformMacintosh,
@@ -1348,7 +1348,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"jamesmath",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("BRODER.MHK", "007299da8b2c6e8ec1cde9598c243024"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1364,7 +1364,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"jamesmath",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("BRODER.MHK", "53c000938a50dca92860fd9b546dd276"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1379,7 +1379,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"treehouse",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("MAINROOM.MHK", "12f51894d7f838af639ea9bf1bc8f45b"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1425,7 +1425,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{ // Version 2.0, has lots of additional livingbooks_code
 		{
 			"greeneggs",
-			_s("Missing game code"), // Reason for being unsupported
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 			AD_ENTRY1s("Outline", "bca2320b800f616118c2be239628a964", 3022),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
@@ -1547,7 +1547,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{ // Version 1.0, built on unsupported LivingBooks version
 		{
 			"seussps",
-			_s("Missing game code"), // Reason for being unsupported
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 			AD_ENTRY1s("SEUSS_PS.CFG", "627afcfa170460f0e2b7ed4fa734361c", 1439),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1562,7 +1562,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{ // Bugreport #11184, version 2.0
 		{
 			"seussps",
-			_s("Missing game code"), // Reason for being unsupported
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 			AD_ENTRY1("SEUSS_PS.CFG", "a2fc5596e6f1511d17acbc687e27a4ac"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1577,7 +1577,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"1stdegree",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("AL236_1.MHK", "3ba145492a7b8b4dee0ef4222c5639c3"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1595,7 +1595,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"1stdegree",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("AL236_1.MHK", "0e0c70b1b702b6ddca61a1192ada1282"),
 			Common::FR_FRA,
 			Common::kPlatformWindows,
@@ -1610,7 +1610,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"csusa",
-			_s("Missing game code"), // Reason for being unsupported,
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
 			AD_ENTRY1("USAC2K.MHK", "b8c9d3a2586f62bce3a48b50d7a700e9"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -2659,7 +2659,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"arthurreading",
-			_s("Missing game code"), // Reason for being unsupported
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 			AD_ENTRY1s("ARG32.LB", "51be80dff4be9fd07c32b3b207320677", 3355),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -2674,7 +2674,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"arthurreading",
-			_s("Missing game code"), // Reason for being unsupported
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 			AD_ENTRY1s("Bookoutline", "394e06287031512c8487b0940abe1049", 3166),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
@@ -3794,7 +3794,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"drseussreading",
-			_s("Missing game code"), // Reason for being unsupported
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 			AD_ENTRY1s("Outline", "1f522d42174e8e98537db10bc715aa97", 5330),
 			Common::EN_ANY,
 			Common::kPlatformUnknown, // identical on both Win and Mac partitions of disc
@@ -3809,7 +3809,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"wsg",
-			_s("Missing game code"), // Reason for being unsupported
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 			AD_ENTRY1s("WSKL.CFG", "0d0d1156387ad51bf2b0c6bdc380f751", 1269),
 			Common::EN_ANY,
 			Common::kPlatformWindows,

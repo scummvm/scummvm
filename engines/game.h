@@ -173,7 +173,7 @@ struct DetectedGame {
 	/**
 	 * A game was detected and is selected in the Mass Add list.
 	 */
-	bool isSelected;
+	bool isSelected = false;
 
 	/**
 	 * An optional list of the files that were used to match the game with the engine's detection tables

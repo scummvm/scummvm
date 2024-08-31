@@ -221,45 +221,50 @@ void ToonEngine::parseInput() {
 			breakPollEventloop = true;
 			break;
 
-		case Common::EVENT_KEYDOWN:
-			if ((event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_SPACE) && !hasModifier) {
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			switch (event.customType) {
+			case kActionStopCurrentVoice:
 				_audioManager->stopCurrentVoice();
-			}
-			if (event.kbd.keycode == Common::KEYCODE_F5 && !hasModifier) {
+				break;
+			case kActionSaveGame:
 				if (_gameState->_inMenu) {
 					playSoundWrong();
 				} else if (canSaveGameStateCurrently())
 					saveGame(-1, "");
-			}
-			if (event.kbd.keycode == Common::KEYCODE_F6 && !hasModifier) {
+				break;
+			case kActionLoadGame:
 				if (_gameState->_inMenu) {
 					playSoundWrong();
 				} else if (canLoadGameStateCurrently())
 					loadGame(-1);
-			}
-			if (event.kbd.keycode == Common::KEYCODE_t && !hasModifier) {
+				break;
+			case kActionSubtitles:
 				ConfMan.setBool("subtitles", !ConfMan.getBool("subtitles"));
 				syncSoundSettings();
-			}
-			if (event.kbd.keycode == Common::KEYCODE_m && !hasModifier) {
+				break;
+			case kActionMuteMusic:
 				ConfMan.setBool("music_mute", !ConfMan.getBool("music_mute"));
 				syncSoundSettings();
-			}
-			if (event.kbd.keycode == Common::KEYCODE_d && !hasModifier) {
+				break;
+			case kActionSpeechMute:
 				ConfMan.setBool("speech_mute", !ConfMan.getBool("speech_mute"));
 				syncSoundSettings();
-			}
-			if (event.kbd.keycode == Common::KEYCODE_s && !hasModifier) {
+				break;
+			case kActionSFXMute:
 				ConfMan.setBool("sfx_mute", !ConfMan.getBool("sfx_mute"));
 				syncSoundSettings();
-			}
-			if (event.kbd.keycode == Common::KEYCODE_F1 && !hasModifier) {
+				break;
+			case kActionShowOptions:
 				if (_gameState->_inMenu) {
 					playSoundWrong();
 				} else
 					showOptions();
+				break;
+			default:
+				break;
 			}
-
+			break;
+		case Common::EVENT_KEYDOWN:
 			if (event.kbd.flags & Common::KBD_ALT) {
 				int slotNum = event.kbd.keycode - (event.kbd.keycode >= Common::KEYCODE_KP0 ? Common::KEYCODE_KP0 : Common::KEYCODE_0);
 				if (slotNum >= 0 && slotNum <= 9 && canSaveGameStateCurrently()) {
@@ -1839,8 +1844,6 @@ void ToonEngine::fixPaletteEntries(uint8 *palette, int num) {
 
 // adapted from KyraEngine
 void ToonEngine::updateAnimationSceneScripts(int32 timeElapsed) {
-	static int32 numReentrant = 0;
-	++numReentrant;
 	const int startScript = _lastProcessedSceneScript;
 
 	_updatingSceneScriptRunFlag = true;
@@ -1878,7 +1881,6 @@ void ToonEngine::updateAnimationSceneScripts(int32 timeElapsed) {
 	} while (_lastProcessedSceneScript != startScript && !_shouldQuit);
 
 	_updatingSceneScriptRunFlag = false;
-	--numReentrant;
 }
 
 void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {

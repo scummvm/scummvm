@@ -36,9 +36,11 @@
 
 #include "mtropolis/actions.h"
 #include "mtropolis/core.h"
+#include "mtropolis/coroutine_protos.h"
 #include "mtropolis/data.h"
 #include "mtropolis/debug.h"
 #include "mtropolis/hacks.h"
+#include "mtropolis/miniscript_protos.h"
 #include "mtropolis/subtitles.h"
 #include "mtropolis/vthread.h"
 
@@ -72,6 +74,7 @@ namespace MTropolis {
 
 class Asset;
 class AssetManagerInterface;
+class CoroutineManager;
 class CursorGraphic;
 class CursorGraphicCollection;
 class Element;
@@ -109,13 +112,6 @@ struct ModifierLoaderContext;
 struct PlugInModifierLoaderContext;
 struct SIModifierFactory;
 template<typename TElement, typename TElementData> class ElementFactory;
-
-enum MiniscriptInstructionOutcome {
-	kMiniscriptInstructionOutcomeContinue,					// Continue executing next instruction
-	kMiniscriptInstructionOutcomeYieldToVThreadNoRetry,		// Instruction pushed a VThread task and should be retried when the task completes
-	kMiniscriptInstructionOutcomeYieldToVThreadAndRetry,	// Instruction pushed a VThread task and completed
-	kMiniscriptInstructionOutcomeFailed,					// Instruction errored
-};
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 class DebugPrimaryTaskList;
@@ -1366,6 +1362,7 @@ struct HighLevelSceneTransition {
 		kTypeChangeToScene,
 		kTypeChangeSharedScene,
 		kTypeForceLoadScene,
+		kTypeRequestUnloadScene,
 	};
 
 	HighLevelSceneTransition(const Common::SharedPtr<Structural> &hlst_scene, Type hlst_type, bool hlst_addToDestinationScene, bool hlst_addToReturnList);
@@ -1655,6 +1652,12 @@ public:
 
 	// Sending a message on the VThread means "immediately"
 	void sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dispatch);
+
+	struct SendMessageOnVThreadCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_2(Runtime *, runtime, Common::SharedPtr<MessageDispatch>, dispatch);
+	};
+
 	void queueMessage(const Common::SharedPtr<MessageDispatch> &dispatch);
 
 	void queueOSEvent(const Common::SharedPtr<OSEvent> &osEvent);
@@ -1737,6 +1740,8 @@ public:
 	void queueCloneObject(const Common::WeakPtr<RuntimeObject> &obj);
 	void queueKillObject(const Common::WeakPtr<RuntimeObject> &obj);
 	void queueChangeObjectParent(const Common::WeakPtr<RuntimeObject> &obj, const Common::WeakPtr<RuntimeObject> &newParent);
+
+	void hotLoadScene(Structural *structural);
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
@@ -1889,6 +1894,8 @@ private:
 
 	static void recursiveFindColliders(Structural *structural, size_t sceneStackDepth, Common::Array<ColliderInfo> &colliders, int32 parentOriginX, int32 parentOriginY, bool isRoot);
 	static bool sortColliderPredicate(const ColliderInfo &a, const ColliderInfo &b);
+
+	Common::ScopedPtr<ICoroutineManager> _coroManager;
 
 	Common::Array<VolumeState> _volumes;
 	Common::SharedPtr<ProjectDescription> _queuedProjectDesc;
@@ -2187,11 +2194,19 @@ public:
 
 class Structural : public RuntimeObject, public IModifierContainer, public IMessageConsumer, public Debuggable {
 public:
+	enum class SceneLoadState {
+		kNotAScene,
+		kSceneNotLoaded,
+		kSceneLoaded,
+	};
+
 	Structural();
 	explicit Structural(Runtime *runtime);
 	virtual ~Structural();
 
 	bool isStructural() const override;
+	SceneLoadState getSceneLoadState() const;
+	void setSceneLoadState(SceneLoadState sceneLoadState);
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	bool readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index) override;
@@ -2226,7 +2241,12 @@ public:
 	void materializeSelfAndDescendents(Runtime *runtime, ObjectLinkingScope *outerScope);
 	void materializeDescendents(Runtime *runtime, ObjectLinkingScope *outerScope);
 
-	virtual VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg);
+	struct StructuralConsumeCommandCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_3(Structural *, self, Runtime *, runtime, Common::SharedPtr<MessageProperties>, msg);
+	};
+
+	virtual VThreadState asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg);
 
 	virtual void activate();
 	virtual void deactivate();
@@ -2258,6 +2278,7 @@ protected:
 	MiniscriptInstructionOutcome scriptSetPaused(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetLoop(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetDebug(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetUnload(MiniscriptThread *thread, const DynamicValue &value);
 
 	// If you override this, you must override visitInternalReferences too.
 	virtual void linkInternalReferences(ObjectLinkingScope *outerScope);
@@ -2283,6 +2304,7 @@ protected:
 	bool _loop;
 
 	int32 _flushPriority;
+	SceneLoadState _sceneLoadState;
 
 	Common::SharedPtr<StructuralHooks> _hooks;
 
@@ -2452,7 +2474,7 @@ public:
 	explicit Project(Runtime *runtime);
 	~Project();
 
-	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	VThreadState asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
 
@@ -2684,10 +2706,13 @@ public:
 	void removeMediaCue(const MediaCueState *mediaCue);
 
 	void triggerAutoPlay(Runtime *runtime);
+	virtual void tryAutoSetName(Runtime *runtime, Project *project);
 
 	virtual bool resolveMediaMarkerLabel(const Label &label, int32 &outResolution) const;
 
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
+
+	typedef StructuralConsumeCommandCoroutine ElementConsumeCommandCoroutine;
 
 protected:
 	Element(const Element &other);
@@ -2806,7 +2831,12 @@ public:
 	bool isVisual() const override;
 	virtual bool isTextLabel() const;
 
-	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	struct VisualElementConsumeCommandCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_3(VisualElement *, self, Runtime *, runtime, Common::SharedPtr<MessageProperties>, msg);
+	};
+
+	VThreadState asyncConsumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
@@ -2906,6 +2936,11 @@ protected:
 
 	Common::Point getCenterPosition() const;
 
+	struct ChangeVisibilityCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_3(VisualElement *, self, Runtime *, runtime, bool, desiredFlag);
+	};
+
 	struct ChangeFlagTaskData {
 		ChangeFlagTaskData() : desiredFlag(false), runtime(nullptr) {}
 
@@ -2961,6 +2996,8 @@ public:
 	bool isVisual() const override;
 
 	bool loadCommon(const Common::String &name, uint32 guid, uint32 elementFlags);
+
+	typedef ElementConsumeCommandCoroutine NonVisualElementConsumeCommandCoroutine;
 };
 
 struct ModifierFlags {

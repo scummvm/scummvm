@@ -156,8 +156,15 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_soundIndexMenu = -1;
 	_soundIndexStart = -1;
 	_soundIndexAreaChange = -1;
-	//_soundIndexEndGame = -1;
-	//_soundIndexSensor = -1;
+	_soundIndexHit = -1;
+
+	_soundIndexNoShield = -1;
+	_soundIndexNoEnergy = -1;
+	_soundIndexFallen = -1;
+	_soundIndexTimeout = -1;
+	_soundIndexForceEndGame = -1;
+	_soundIndexCrushed = -1;
+	_soundIndexMissionComplete = -1;
 
 	_fullscreenViewArea = Common::Rect(0, 0, _screenW, _screenH);
 	_viewArea = _fullscreenViewArea;
@@ -184,6 +191,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_avoidRenderingFrames = 0;
 	_endGamePlayerEndArea = false;
 	_endGameKeyPressed = false;
+	_endGameDelayTicks = 0;
 
 	_maxShield = 63;
 	_maxEnergy = 63;
@@ -246,6 +254,11 @@ FreescapeEngine::~FreescapeEngine() {
 			free(it._value->data);
 			free(it._value);
 		}
+	}
+
+	if (_savedScreen) {
+		_savedScreen->free();
+		delete _savedScreen;
 	}
 }
 
@@ -489,80 +502,59 @@ void FreescapeEngine::processInput() {
 		if (_gameStateControl != kFreescapeGameStatePlaying) {
 			if (event.type == Common::EVENT_SCREEN_CHANGED)
 				; // Allow event
-			else if (_gameStateControl == kFreescapeGameStateEnd && event.type == Common::EVENT_KEYDOWN) {
+			else if (_gameStateControl == kFreescapeGameStateEnd
+						&& (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START)) {
 				_endGameKeyPressed = true;
 				continue;
-			} else if (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE)
+			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START && event.customType == kActionEscape)
 				; // Allow event
 			else if (event.customType != 0xde00)
 				continue;
 		}
 
 		switch (event.type) {
-		case Common::EVENT_JOYBUTTON_DOWN:
-			if (_hasFallen || _playerWasCrushed)
-				break;
-			switch (event.joystick.button) {
-			case Common::JOYSTICK_BUTTON_B:
-			case Common::JOYSTICK_BUTTON_DPAD_UP:
-				move(kForwardMovement, _scaleVector.x(), deltaTime);
-				break;
-			case Common::JOYSTICK_BUTTON_DPAD_DOWN:
-				move(kBackwardMovement, _scaleVector.x(), deltaTime);
-				break;
-			case Common::JOYSTICK_BUTTON_DPAD_LEFT:
-				move(kLeftMovement, _scaleVector.y(), deltaTime);
-				break;
-			case Common::JOYSTICK_BUTTON_DPAD_RIGHT:
-				move(kRightMovement, _scaleVector.y(), deltaTime);
-				break;
-			}
-		break;
-		case Common::EVENT_KEYDOWN:
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 			if (_hasFallen)
 				break;
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_o:
-			case Common::KEYCODE_UP:
+			switch (event.customType) {
+			case kActionMoveUp:
 				move(kForwardMovement, _scaleVector.x(), deltaTime);
 				break;
-			case Common::KEYCODE_k:
-			case Common::KEYCODE_DOWN:
+			case kActionMoveDown:
 				move(kBackwardMovement, _scaleVector.x(), deltaTime);
 				break;
-			case Common::KEYCODE_LEFT:
+			case kActionMoveLeft:
 				move(kLeftMovement, _scaleVector.y(), deltaTime);
 				break;
-			case Common::KEYCODE_RIGHT:
+			case kActionMoveRight:
 				move(kRightMovement, _scaleVector.y(), deltaTime);
 				break;
-			case Common::KEYCODE_KP5:
-			case Common::KEYCODE_KP0:
-			case Common::KEYCODE_0:
+			case kActionShoot:
 				shoot();
 				break;
-			case Common::KEYCODE_p:
+			case kActionRotateUp:
 				rotate(0, 5);
 				break;
-			case Common::KEYCODE_l:
+			case kActionRotateDown:
 				rotate(0, -5);
 				break;
-			case Common::KEYCODE_u:
+			case kActionTurnBack:
 				rotate(180, 0);
 				break;
-			case Common::KEYCODE_n:
+			case kActionToggleClipMode:
 				_noClipMode = !_noClipMode;
 				_flyMode = _noClipMode;
 				break;
-			case Common::KEYCODE_ESCAPE:
+			case kActionEscape:
 				drawFrame();
 				_savedScreen = _gfx->getScreenshot();
 				openMainMenuDialog();
 				_gfx->computeScreenViewport();
 				_savedScreen->free();
 				delete _savedScreen;
+				_savedScreen = nullptr;
 				break;
-			case Common::KEYCODE_SPACE:
+			case kActionChangeMode:
 				_shootMode = !_shootMode;
 				centerCrossair();
 				if (!_shootMode) {
@@ -574,13 +566,19 @@ void FreescapeEngine::processInput() {
 					_eventManager->purgeKeyboardEvents();
 				}
 				break;
-			case Common::KEYCODE_i:
+			case kActionInfoMenu:
 				drawInfoMenu();
 				break;
 			default:
-				pressedKey(event.kbd.keycode);
+				pressedKey(event.customType);
 				break;
 			}
+			break;
+		case Common::EVENT_KEYDOWN:
+			if (_hasFallen)
+				break;
+
+			pressedKey(event.kbd.keycode);
 			break;
 
 		case Common::EVENT_KEYUP:
@@ -765,6 +763,13 @@ Common::Error FreescapeEngine::run() {
 }
 
 void FreescapeEngine::endGame() {
+	if (_gameStateControl == kFreescapeGameStateEnd) {
+		if (_endGameDelayTicks > 0) {
+			_endGameDelayTicks--;
+			return;
+		}
+	}
+
 	_shootingFrames = 0;
 	_delayedShootObject = nullptr;
 	if (_gameStateControl == kFreescapeGameStateEnd && !isPlayingSound() && !_endGamePlayerEndArea) {
@@ -816,45 +821,43 @@ bool FreescapeEngine::checkIfGameEnded() {
 		return false;
 
 	if (_gameStateVars[k8bitVariableShield] == 0) {
-		if (isSpectrum())
-			playSound(14, true);
+		playSound(_soundIndexNoShield, true);
 
 		if (!_noShieldMessage.empty())
 			insertTemporaryMessage(_noShieldMessage, _countdown - 2);
 		_gameStateControl = kFreescapeGameStateEnd;
 	} else if (_gameStateVars[k8bitVariableEnergy] == 0) {
-		if (isSpectrum())
-			playSound(14, true);
+		playSound(_soundIndexNoEnergy, true);
 
 		if (!_noEnergyMessage.empty())
 			insertTemporaryMessage(_noEnergyMessage, _countdown - 2);
 		_gameStateControl = kFreescapeGameStateEnd;
 	} else if (_hasFallen) {
 		_hasFallen = false;
-		if (isSpectrum())
-			playSound(14, false);
+		playSound(_soundIndexFallen, false);
 
 		if (!_fallenMessage.empty())
 			insertTemporaryMessage(_fallenMessage, _countdown - 4);
 		_gameStateControl = kFreescapeGameStateEnd;
 	} else if (_countdown <= 0) {
-		if (isSpectrum())
-			playSound(14, false);
+		playSound(_soundIndexTimeout, false);
 
 		if (!_timeoutMessage.empty())
 			insertTemporaryMessage(_timeoutMessage, _countdown - 4);
 		_gameStateControl = kFreescapeGameStateEnd;
 	} else if (_playerWasCrushed) {
-		if (isSpectrum())
-			playSound(25, true);
+		playSound(_soundIndexCrushed, true);
 
 		_playerWasCrushed = false;
 		if (!_crushedMessage.empty())
 			insertTemporaryMessage(_crushedMessage, _countdown - 4);
 		_gameStateControl = kFreescapeGameStateEnd;
+		// If the player is crushed, there are a few skipped frames
+		// so no need to wait for the end of the game
+		_endGameDelayTicks = 0;
 	} else if (_forceEndGame) {
-		if (isSpectrum())
-			playSound(14, true);
+		playSound(_soundIndexForceEndGame, true);
+
 		_forceEndGame = false;
 		if (!_forceEndGameMessage.empty())
 			insertTemporaryMessage(_forceEndGameMessage, _countdown - 4);
@@ -881,6 +884,7 @@ uint16 FreescapeEngine::getGameBit(int index) {
 
 void FreescapeEngine::initGameState() {
 	_gameStateControl = kFreescapeGameStatePlaying;
+	_endGameDelayTicks = int(2 * 60); // 2.5 seconds at 60 frames per second
 
 	for (int i = 0; i < k8bitMaxVariable; i++) // TODO: check maximum variable
 		_gameStateVars[i] = 0;
@@ -1035,7 +1039,7 @@ Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream
 	if (!_currentArea || _currentArea->getAreaID() != areaID)
 		gotoArea(areaID, -1); // Do not change position nor rotation
 
-	_playerHeight = 32 * (_playerHeightNumber + 1) - 16 / _currentArea->_scale;
+	_playerHeight = 32 * (_playerHeightNumber + 1) - 16 / float(_currentArea->_scale);
 	return loadGameStreamExtended(stream);
 }
 
@@ -1043,6 +1047,7 @@ Common::Error FreescapeEngine::saveGameStream(Common::WriteStream *stream, bool 
 	if (isAutosave)
 		return Common::kNoError;
 
+	assert(_currentArea);
 	stream->writeUint16LE(_currentArea->getAreaID());
 
 	for (int i = 0; i < 3; i++)
@@ -1165,6 +1170,13 @@ void FreescapeEngine::removeTimers() {
 }
 
 void FreescapeEngine::pauseEngineIntern(bool pause) {
+	drawFrame();
+	if (_savedScreen) {
+		_savedScreen->free();
+		delete _savedScreen;
+	}
+	_savedScreen = _gfx->getScreenshot();
+
 	Engine::pauseEngineIntern(pause);
 
 	// TODO: Handle the viewport here
@@ -1175,6 +1187,8 @@ void FreescapeEngine::pauseEngineIntern(bool pause) {
 	if (!_shootMode) {
 		_system->lockMouse(!pause);
 	}
+
+	// We don't know when savedScreen will be used, so we do not deallocate it here
 }
 
 } // namespace Freescape

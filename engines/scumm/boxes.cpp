@@ -165,6 +165,10 @@ static Common::Point closestPtOnLine(const Common::Point &lineStart, const Commo
 byte ScummEngine::getMaskFromBox(int box) {
 	// WORKAROUND for bug #791 and #897. This appears to have been a
 	// long standing bug in the original engine?
+	//
+	// TODO: check whether the original interpreter did a lucky
+	// out-of-bound access, as theorized in the 2003-06-30 comment
+	// from bug #791 above.
 	if (_game.version <= 3 && box == kOldInvalidBox)
 		return 1;
 

@@ -782,8 +782,8 @@ void ScummEngine_v2::setBuiltinCursor(int idx) {
 
 	memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
 
-	if (_game.platform == Common::kPlatformC64)
-		color = default_v0_cursor_colors[idx];
+	if (_game.platform == Common::kPlatformC64 || _game.platform == Common::kPlatformApple2GS)
+		color = (_game.platform == Common::kPlatformApple2GS && !enhancementEnabled(kEnhVisualChanges)) ? 1 : default_v0_cursor_colors[idx];
 	else if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp)
 		color = (idx & 1) * 3;
 	else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG || _renderMode == Common::kRenderCGA_BW)
@@ -851,6 +851,24 @@ void ScummEngine_v2::setBuiltinCursor(int idx) {
 			*(hotspot - _cursor.width * (3 + i) + i) = color;
 			*(hotspot + _cursor.width * (3 + i) + i) = color;
 		}
+	} else if (_game.platform == Common::kPlatformApple2GS && !enhancementEnabled(kEnhVisualChanges)) {
+		_cursor.width = 23;
+		_cursor.height = 21;
+		_cursor.hotspotX = 11;
+		_cursor.hotspotY = 10;
+
+		byte *hotspot = _grabbedCursor + _cursor.hotspotY * _cursor.width + _cursor.hotspotX;
+
+		// A simple crosshair
+		for (i = 0; i < 8; i++) {
+			*(hotspot - 4 - i) = color;
+			*(hotspot + 4 + i) = color;
+		}
+
+		for (i = 0; i < 8; i++) {
+			*(hotspot - _cursor.width * (3 + i)) = color;
+			*(hotspot + _cursor.width * (3 + i)) = color;
+		}
 	} else {
 		_cursor.width = 23;
 		_cursor.height = 21;
@@ -905,7 +923,7 @@ void ScummEngine_v2::setBuiltinCursor(int idx) {
 
 void ScummEngine_v2::setSnailCursor() {
 	byte color;
-	if (_game.platform == Common::kPlatformC64)
+	if (_game.platform == Common::kPlatformC64 || _game.platform == Common::kPlatformApple2GS)
 		color = default_v0_cursor_colors[1];
 	else if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp)
 		color = 3;

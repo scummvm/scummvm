@@ -349,7 +349,7 @@ public:
 
 	/**
 	 * Spherical Linear Interpolation between quaternions A and B
-	 * \param afT The amount inbetween the quaternions. 0.0 is A and 1 is B.
+	 * \param afT The amount in-between the quaternions. 0.0 is A and 1 is B.
 	 * \param abShortestPath Move the the shortest path.
 	 * \return
 	 */
@@ -364,7 +364,7 @@ public:
 
 	/**
 	 * Spherical Linear Interpolation between matrix A and B
-	 * \param afT The amount inbetween the quaternions. 0.0 is A and 1 is B.
+	 * \param afT The amount in-between the quaternions. 0.0 is A and 1 is B.
 	 * \param abShortestPath Move the the shortest path.
 	 * \return
 	 */
@@ -380,7 +380,7 @@ public:
 	 */
 	static cVector3f MatrixMul(const cMatrixf &a_mtxA, const cVector3f &avB);
 	/**
-	 * Multiply and matrix and a 3d vector and devide the result with W.
+	 * Multiply and matrix and a 3d vector and divide the result with W.
 	 */
 	static cVector3f MatrixMulDivideW(const cMatrixf &a_mtxA, const cVector3f &avB);
 

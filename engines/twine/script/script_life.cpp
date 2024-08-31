@@ -924,8 +924,10 @@ int32 ScriptLife::lMESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	}
 
 	engine->_text->drawTextProgressive(textIdx);
-	if (engine->_scene->_currentSceneIdx == LBA1SceneId::Principal_Island_Library && engine->_scene->_talkingActor == 8 && textIdx == TextId::kStarWarsFanBoy) {
-		engine->unlockAchievement("LBA_ACH_008");
+	if (engine->isLBA1()) {
+		if (engine->_scene->_currentSceneIdx == LBA1SceneId::Principal_Island_Library && engine->_scene->_talkingActor == 8 && textIdx == TextId::kStarWarsFanBoy) {
+			engine->unlockAchievement("LBA_ACH_008");
+		}
 	}
 	engine->_redraw->redrawEngineActions(true);
 
@@ -1066,18 +1068,6 @@ int32 ScriptLife::lSET_COMPORTEMENT_OBJ(TwinEEngine *engine, LifeScriptContext &
 int32 ScriptLife::lEND_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::END_COMPORTEMENT()");
 	return 1; // break
-}
-
-/**
- * Set a new value for the game flag (Paramter = Game Flag Index, Parameter = Value)
- * @note Opcode @c 0x24
- */
-int32 ScriptLife::lSET_FLAG_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const uint8 flagIdx = ctx.stream.readByte();
-	const uint8 flagValue = ctx.stream.readByte();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_FLAG_GAME(%i, %i)", (int)flagIdx, (int)flagValue);
-	engine->_gameState->setGameFlag(flagIdx, flagValue);
-	return 0;
 }
 
 /**
@@ -1656,6 +1646,9 @@ int32 ScriptLife::lCLR_HOLO_POS(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLife::lADD_FUEL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int16 value = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ADD_FUEL(%i)", (int)value);
+	if (engine->isLBA2()) {
+		return 0;
+	}
 	engine->_gameState->addGas(value);
 	return 0;
 }
@@ -1667,6 +1660,9 @@ int32 ScriptLife::lADD_FUEL(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLife::lSUB_FUEL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int16 value = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SUB_FUEL(%i)", (int)value);
+	if (engine->isLBA2()) {
+		return 0;
+	}
 	engine->_gameState->addGas(-value);
 	return 0;
 }
@@ -1721,7 +1717,7 @@ int32 ScriptLife::lSAY_MESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) 
  */
 int32 ScriptLife::lFULL_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::FULL_POINT()");
-	engine->_scene->_sceneHero->setLife(kActorMaxLife);
+	engine->_scene->_sceneHero->setLife(engine->getMaxLife());
 	engine->_gameState->setMaxMagicPoints();
 	return 0;
 }
@@ -1963,8 +1959,9 @@ int32 ScriptLife::lTHE_END(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::THE_END()");
 	engine->_sceneLoopState = SceneLoopState::Finished;
 	engine->_gameState->setLeafs(0);
-	engine->_scene->_sceneHero->setLife(kActorMaxLife);
+	engine->_scene->_sceneHero->setLife(engine->getMaxLife());
 	engine->_gameState->setMagicPoints(80);
+	// TODO: lba2 has a different ending
 	engine->_scene->_currentSceneIdx = LBA1SceneId::Polar_Island_Final_Battle;
 	engine->_actor->_heroBehaviour = engine->_actor->_previousHeroBehaviour;
 	engine->_scene->_newHeroPos.x = -1;

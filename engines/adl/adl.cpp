@@ -537,10 +537,10 @@ void AdlEngine::loadDroppedItemOffsets(Common::ReadStream &stream, byte count) {
 
 void AdlEngine::drawPic(byte pic, Common::Point pos) const {
 	if (_roomData.pictures.contains(pic)) {
-		StreamPtr stream(_roomData.pictures[pic]->createReadStream());
+		Common::StreamPtr stream(_roomData.pictures[pic]->createReadStream());
 		_graphics->drawPic(*stream, pos);
 	} else if (_pictures.contains(pic)) {
-		StreamPtr stream(_pictures[pic]->createReadStream());
+		Common::StreamPtr stream(_pictures[pic]->createReadStream());
 		_graphics->drawPic(*stream, pos);
 	} else
 		error("Picture %d not found", pic);

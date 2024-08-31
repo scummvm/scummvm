@@ -34,6 +34,7 @@
 #include "scumm/imuse/instrument.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
+#include "scumm/sound.h"
 
 namespace Scumm {
 
@@ -44,6 +45,7 @@ namespace Scumm {
 ////////////////////////////////////////
 
 IMuseInternal::IMuseInternal(ScummEngine *vm, MidiDriverFlags sndType, bool nativeMT32) :
+	_vm(vm),
 	_native_mt32(nativeMT32),
 	_newSystem(vm && vm->_game.id == GID_SAMNMAX),
 	_dynamicChanAllocation(vm && (vm->_game.id != GID_MONKEY2 && vm->_game.id != GID_INDY4)), // For the non-iMuse games that (unfortunately) run on this player we need to pretend we're on the more modern version
@@ -63,6 +65,7 @@ IMuseInternal::IMuseInternal(ScummEngine *vm, MidiDriverFlags sndType, bool nati
 	_queue_cleared(0),
 	_master_volume(0),
 	_music_volume(0),
+	_music_volume_eff(0),
 	_trigger_count(0),
 	_snm_trigger_index(0),
 	_soundType(sndType),
@@ -345,6 +348,10 @@ void IMuseInternal::on_timer(MidiDriver *midi) {
 	if (_paused || !_initialized)
 		return;
 
+	// CD version only
+	if (_game_id == GID_SAMNMAX && strcmp(_vm->_game.variant, "Floppy"))
+		musicVolumeReduction(midi);
+
 	if (midi == _midi_native || !_midi_native)
 		handleDeferredCommands(midi);
 	sequencer_timers(midi);
@@ -354,11 +361,11 @@ void IMuseInternal::pause(bool paused) {
 	Common::StackLock lock(_mutex);
 	if (_paused == paused)
 		return;
-	int vol = _music_volume;
+	int vol = _music_volume_eff;
 	if (paused)
-		_music_volume = 0;
+		_music_volume_eff = 0;
 	update_volumes();
-	_music_volume = vol;
+	_music_volume_eff = vol;
 
 	// Fix for Bug #1263. The MT-32 apparently fails
 	// sometimes to respond to a channel volume message
@@ -512,8 +519,11 @@ void IMuseInternal::setMusicVolume(int vol) {
 		vol = 255;
 	if (_music_volume == vol)
 		return;
+
 	_music_volume = vol;
-	vol = _master_volume * _music_volume / 255;
+	_music_volume_eff = _music_volume;
+
+	vol = _master_volume * _music_volume_eff / 255;
 	for (uint i = 0; i < ARRAYSIZE(_channel_volume); i++) {
 		_channel_volume_eff[i] = _channel_volume[i] * vol / 255;
 	}
@@ -1042,7 +1052,7 @@ void IMuseInternal::handle_marker(uint id, byte data) {
 int IMuseInternal::get_channel_volume(uint a) {
 	if (a < 8)
 		return _channel_volume_eff[a];
-	return (_master_volume * _music_volume / 255) / 2;
+	return (_master_volume * _music_volume_eff / 255) / 2;
 }
 
 Part *IMuseInternal::allocate_part(byte pri, MidiDriver *midi) {
@@ -1202,7 +1212,7 @@ int IMuseInternal::setImuseMasterVolume(uint vol) {
 	if (_master_volume == vol)
 		return 0;
 	_master_volume = vol;
-	vol = _master_volume * _music_volume / 255;
+	vol = _master_volume * _music_volume_eff / 255;
 	for (uint i = 0; i < ARRAYSIZE(_channel_volume); i++) {
 		_channel_volume_eff[i] = _channel_volume[i] * vol / 255;
 	}
@@ -1327,7 +1337,7 @@ int IMuseInternal::set_channel_volume(uint chan, uint vol) {
 		return -1;
 
 	_channel_volume[chan] = vol;
-	_channel_volume_eff[chan] = _master_volume * _music_volume * vol / 255 / 255;
+	_channel_volume_eff[chan] = _master_volume * _music_volume_eff * vol / 255 / 255;
 	update_volumes();
 	return 0;
 }
@@ -1340,6 +1350,40 @@ void IMuseInternal::update_volumes() {
 		if (player->isActive())
 			player->setVolume(player->getVolume());
 	}
+}
+
+void IMuseInternal::musicVolumeReduction(MidiDriver *midi) {
+	int curVol;
+	int curEffVol;
+	int factor = 2; // The music volume variables are 0-255, and we need 0-127
+
+	if (_paused)
+		return;
+
+	_musicVolumeReductionTimer += midi->getBaseTempo();
+	while (_musicVolumeReductionTimer >= MUS_REDUCTION_TIMER_TICKS) {
+		_musicVolumeReductionTimer -= MUS_REDUCTION_TIMER_TICKS;
+		curVol = _music_volume / factor;
+
+		if (_vm->_sound->speechIsPlaying())
+			curVol = (90 * curVol) >> 7;
+
+		curEffVol = _music_volume_eff / factor;
+
+		// The reduction curve is pretty slow, but running
+		// the original through a debugger shows the same behavior...
+		if (curEffVol > curVol)
+			_music_volume_eff = (curEffVol - 1) * factor;
+
+		if (curEffVol < curVol)
+			_music_volume_eff = (curEffVol + 1) * factor;
+	}
+
+	for (uint i = 0; i < ARRAYSIZE(_channel_volume); i++) {
+		_channel_volume_eff[i] = _channel_volume[i] * (_master_volume * _music_volume_eff / 255) / 255;
+	}
+
+	update_volumes();
 }
 
 int IMuseInternal::set_volchan_entry(uint a, uint b) {

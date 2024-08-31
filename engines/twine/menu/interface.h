@@ -41,6 +41,7 @@ private:
 public:
 	Interface(TwinEEngine *engine);
 	Common::Rect _clip { 0, 0, 0, 0 };
+	bool _animateTexture = false; // lba2: AnimateTexture
 
 	/**
 	 * Draw button line

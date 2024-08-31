@@ -176,7 +176,7 @@ void AdlEngine_v4::saveState(Common::WriteStream &stream) {
 
 Common::String AdlEngine_v4::loadMessage(uint idx) const {
 	if (_messages[idx]) {
-		StreamPtr strStream(_messages[idx]->createReadStream());
+		Common::StreamPtr strStream(_messages[idx]->createReadStream());
 		return readString(*strStream, 0xff, "AVISDURGAN");
 	}
 
@@ -293,7 +293,7 @@ void AdlEngine_v4::loadRegion(byte region) {
 	fixupDiskOffset(track, sector);
 
 	for (uint block = 0; block < 7; ++block) {
-		StreamPtr stream(_disk->createReadStream(track, sector, offset, 1));
+		Common::StreamPtr stream(_disk->createReadStream(track, sector, offset, 1));
 
 		uint16 addr = stream->readUint16LE();
 		uint16 size = stream->readUint16LE();

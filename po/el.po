@@ -2,15 +2,12 @@
 # Copyright (C) 2016-2017 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Filippos Karapetis <md5@scummvm.org>, 2016.
-#: engines/twp/dialogs.cpp:48 engines/twp/dialogs.cpp:50
-#: engines/twp/dialogs.cpp:52 engines/twp/dialogs.cpp:54
-#: engines/twp/dialogs.cpp:57
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-06 05:47+0000\n"
-"PO-Revision-Date: 2024-05-16 08:20+0000\n"
+"POT-Creation-Date: 2024-08-31 14:45+0000\n"
+"PO-Revision-Date: 2024-08-13 10:19+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -161,23 +158,23 @@ msgstr ""
 "Σε αυτή τη λειτουργία, ένας Τοπικός Διακομιστής Ιστού πρέπει να εκτελείται,\n"
 "ώστε ο πλοηγητής σας να μπορεί να προωθεί δεδομένα στο ScummVM"
 
-#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3757
+#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3761
 msgid "Stop server"
 msgstr "Διακοπή διακομιστή"
 
-#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:2787
+#: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:2789
 msgid "Run server"
 msgstr "Εκτέλεση διακομιστή"
 
-#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:3758
+#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:3762
 msgid "Stop local webserver"
 msgstr "Διακοπή Τοπικού Διακομιστή Ιστού"
 
-#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:2787
+#: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:2789
 msgid "Run local webserver"
 msgstr "Εκτέλεση Τοπικού Διακομιστή Ιστού"
 
-#: gui/cloudconnectionwizard.cpp:248 gui/options.cpp:2788 gui/options.cpp:3765
+#: gui/cloudconnectionwizard.cpp:248 gui/options.cpp:2790 gui/options.cpp:3769
 msgid "Not running"
 msgstr "Δεν εκτελείται"
 
@@ -311,27 +308,27 @@ msgstr ""
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
-#: gui/launcher.cpp:502 gui/options.cpp:3459 gui/options.cpp:3842
+#: gui/launcher.cpp:502 gui/options.cpp:3463 gui/options.cpp:3846
 #: base/main.cpp:585 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:601 engines/kyra/gui/saveload_eob.cpp:634
 #: engines/parallaction/metaengine.cpp:143
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3937
-#: engines/toon/toon.cpp:1538
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3993
+#: engines/toon/toon.cpp:1543
 msgid "Yes"
 msgstr "Ναι"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:421 gui/launcher.cpp:450
-#: gui/launcher.cpp:502 gui/options.cpp:3459 gui/options.cpp:3842
+#: gui/launcher.cpp:502 gui/options.cpp:3463 gui/options.cpp:3846
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:100
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:601 engines/kyra/gui/saveload_eob.cpp:634
 #: engines/parallaction/metaengine.cpp:149
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3937
-#: engines/toon/toon.cpp:1538
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3993
+#: engines/toon/toon.cpp:1543
 msgid "No"
 msgstr "Όχι"
 
@@ -360,8 +357,8 @@ msgstr "Τα περιεχόμενα του κώδικα JSON δεν έχουν �
 #: engines/mtropolis/mtropolis.cpp:124 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:76
 #: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1245
-#: engines/scumm/scumm.cpp:1618 engines/scumm/scumm.cpp:2102
-#: engines/scumm/scumm.cpp:2118 engines/sky/compact.cpp:140
+#: engines/scumm/scumm.cpp:1618 engines/scumm/scumm.cpp:2106
+#: engines/scumm/scumm.cpp:2122 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2798
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
@@ -380,7 +377,7 @@ msgstr "Εσφαλμένο JSON."
 msgid "Interrupted."
 msgstr "Διακόπηκε."
 
-#: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3450
+#: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3454
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -549,11 +546,11 @@ msgstr ""
 msgid "Proceed"
 msgstr "Προχώρα"
 
-#: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3294
+#: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3298
 msgid "icon packs"
 msgstr "πακέτα εικονιδίων"
 
-#: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3305
+#: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3309
 msgid "shader packs"
 msgstr "πακέτα σκιαστών"
 
@@ -684,7 +681,7 @@ msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Φάκελος Παιχνιδιού:"
 
-#: gui/editgamedialog.cpp:303 gui/options.cpp:2500
+#: gui/editgamedialog.cpp:303 gui/options.cpp:2502
 msgid "Extra Path:"
 msgstr "Πρόσθετα:"
 
@@ -694,33 +691,33 @@ msgid "Specifies path to additional data used by the game"
 msgstr ""
 "Καθορίζει διαδρομή για πρόσθετα δεδομένα που χρησιμοποιούνται από το παιχνίδι"
 
-#: gui/editgamedialog.cpp:305 gui/options.cpp:2502
+#: gui/editgamedialog.cpp:305 gui/options.cpp:2504
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Πρόσθετα:"
 
-#: gui/editgamedialog.cpp:306 gui/options.cpp:2475 gui/options.cpp:2503
-#: gui/options.cpp:2512 gui/options.cpp:2795
+#: gui/editgamedialog.cpp:306 gui/options.cpp:2477 gui/options.cpp:2505
+#: gui/options.cpp:2514 gui/options.cpp:2797
 #: backends/platform/libretro/src/libretro-options-widget.cpp:244
 msgctxt "path"
 msgid "None"
 msgstr "Δεν έχει προσδιοριστεί"
 
-#: gui/editgamedialog.cpp:312 gui/options.cpp:2464
+#: gui/editgamedialog.cpp:312 gui/options.cpp:2466
 msgid "Save Path:"
 msgstr "Φάκελος Αποθήκευσης:"
 
 #: gui/editgamedialog.cpp:312 gui/editgamedialog.cpp:314
-#: gui/editgamedialog.cpp:315 gui/options.cpp:2464 gui/options.cpp:2466
+#: gui/editgamedialog.cpp:315 gui/options.cpp:2466 gui/options.cpp:2468
 msgid "Specifies where your saved games are put"
 msgstr "Καθορίζει την τοποθεσία των αποθηκευμένων παιχνιδιών σας"
 
-#: gui/editgamedialog.cpp:314 gui/options.cpp:2466
+#: gui/editgamedialog.cpp:314 gui/options.cpp:2468
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Φάκελος Αποθ.:"
 
-#: gui/editgamedialog.cpp:315 gui/options.cpp:1791 gui/options.cpp:2467
+#: gui/editgamedialog.cpp:315 gui/options.cpp:1791 gui/options.cpp:2469
 #: backends/platform/wii/options.cpp:55
 msgid "Default"
 msgstr "Προκαθορισμένο"
@@ -782,8 +779,8 @@ msgstr ""
 #: gui/editgamedialog.cpp:365 gui/editgamedialog.cpp:380 gui/options.cpp:1575
 #: gui/options.cpp:1590 gui/options.cpp:1607 gui/options.cpp:1621
 #: gui/options.cpp:1659 gui/options.cpp:1675 gui/options.cpp:2087
-#: gui/options.cpp:2545 gui/options.cpp:2619 gui/options.cpp:2835
-#: gui/options.cpp:3337 audio/null.cpp:45
+#: gui/options.cpp:2547 gui/options.cpp:2621 gui/options.cpp:2837
+#: gui/options.cpp:3341 audio/null.cpp:45
 #: backends/platform/android/options.cpp:150
 #: backends/platform/android/options.cpp:151
 #: backends/platform/android/options.cpp:179
@@ -807,7 +804,7 @@ msgctxt "lowres"
 msgid "Platform:"
 msgstr "Πλατφόρμα:"
 
-#: gui/editgamedialog.cpp:558 gui/options.cpp:3361
+#: gui/editgamedialog.cpp:558 gui/options.cpp:3365
 msgid "Select SoundFont"
 msgstr "Επιλέξτε SoundFont"
 
@@ -815,11 +812,11 @@ msgstr "Επιλέξτε SoundFont"
 msgid "Select additional game directory"
 msgstr "Επιλέξτε πρόσθετο φάκελο παιχνιδιού"
 
-#: gui/editgamedialog.cpp:610 gui/options.cpp:3208
+#: gui/editgamedialog.cpp:610 gui/options.cpp:3212
 msgid "Select directory for saved games"
 msgstr "Επιλέξτε φάκελο για αποθηκευμένα παιχνίδια"
 
-#: gui/editgamedialog.cpp:617 gui/options.cpp:3215
+#: gui/editgamedialog.cpp:617 gui/options.cpp:3219
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr ""
 "Δεν ήταν δυνατή η εγγραφή στον επιλεγμένο φάκελο. Παρακαλώ επιλέξτε κάποιον "
@@ -862,10 +859,8 @@ msgid "Launch Email Client"
 msgstr ""
 
 #: gui/integrity-dialog.cpp:174
-#, fuzzy
-#| msgid "Scan complete!"
 msgid "Calculation complete"
-msgstr "Η σάρωση ολοκληρώθηκε!"
+msgstr "Ο υπολογισμός ολοκληρώθηκε"
 
 #: gui/integrity-dialog.cpp:263
 #, fuzzy, c-format
@@ -1014,13 +1009,13 @@ msgstr "ΓΔΧ"
 msgid "Interact"
 msgstr "Αλληλεπίδραση"
 
-#: gui/gui-manager.cpp:176 engines/metaengine.cpp:115
+#: gui/gui-manager.cpp:176 engines/metaengine.cpp:117
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
 #: engines/dragons/metaengine.cpp:159 engines/freescape/movement.cpp:35
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:473
 #: engines/grim/grim.cpp:554 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
-#: engines/scumm/metaengine.cpp:875 engines/twine/metaengine.cpp:465
-#: engines/twine/metaengine.cpp:532 engines/twp/metaengine.cpp:154
+#: engines/scumm/metaengine.cpp:890 engines/twine/metaengine.cpp:478
+#: engines/twine/metaengine.cpp:545 engines/twp/metaengine.cpp:154
 #: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
 #: engines/wintermute/keymapper_tables.h:1449
@@ -1029,13 +1024,13 @@ msgstr "Αλληλεπίδραση"
 msgid "Up"
 msgstr "Πάνω"
 
-#: gui/gui-manager.cpp:182 engines/metaengine.cpp:121
+#: gui/gui-manager.cpp:182 engines/metaengine.cpp:123
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
-#: engines/dragons/metaengine.cpp:165 engines/freescape/movement.cpp:41
+#: engines/dragons/metaengine.cpp:165 engines/freescape/movement.cpp:42
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:478
 #: engines/grim/grim.cpp:559 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
-#: engines/scumm/metaengine.cpp:842 engines/twine/metaengine.cpp:472
-#: engines/twine/metaengine.cpp:540 engines/twp/metaengine.cpp:155
+#: engines/scumm/metaengine.cpp:857 engines/twine/metaengine.cpp:485
+#: engines/twine/metaengine.cpp:553 engines/twp/metaengine.cpp:155
 #: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
 #: engines/wintermute/keymapper_tables.h:1456
@@ -1044,12 +1039,12 @@ msgstr "Πάνω"
 msgid "Down"
 msgstr "Κάτω"
 
-#: gui/gui-manager.cpp:188 engines/metaengine.cpp:127
+#: gui/gui-manager.cpp:188 engines/metaengine.cpp:129
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:171 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:483 engines/grim/grim.cpp:564 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:855
-#: engines/twine/metaengine.cpp:487 engines/twine/metaengine.cpp:555
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:870
+#: engines/twine/metaengine.cpp:500 engines/twine/metaengine.cpp:568
 #: engines/twp/metaengine.cpp:152 engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
 #: engines/wintermute/keymapper_tables.h:1385
@@ -1059,12 +1054,12 @@ msgstr "Κάτω"
 msgid "Left"
 msgstr "Αριστερά"
 
-#: gui/gui-manager.cpp:194 engines/metaengine.cpp:133
+#: gui/gui-manager.cpp:194 engines/metaengine.cpp:135
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:177 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:488 engines/grim/grim.cpp:569 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:862
-#: engines/twine/metaengine.cpp:479 engines/twine/metaengine.cpp:548
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:877
+#: engines/twine/metaengine.cpp:492 engines/twine/metaengine.cpp:561
 #: engines/twp/metaengine.cpp:153 engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
 #: engines/wintermute/keymapper_tables.h:1391
@@ -2183,11 +2178,11 @@ msgstr "Εφαρμογή των αλλαγών χωρίς να κλείσει τ
 msgid "Apply changes and close the dialog"
 msgstr "Εφαρμογή των αλλαγών και κλείσιμο του παράθυρου"
 
-#: gui/options.cpp:2453
+#: gui/options.cpp:2455
 msgid "FluidSynth Settings"
 msgstr "Ρυθμίσεις FluidSynth"
 
-#: gui/options.cpp:2467
+#: gui/options.cpp:2469
 msgid ""
 "Specifies where your saved games are put. A red coloring indicates the value "
 "is temporary and will not get saved"
@@ -2196,92 +2191,92 @@ msgstr ""
 "games). Ο κόκκινος χρωματισμός υποδεικνύει ότι η τιμή αυτή είναι προσωρινή "
 "και δεν θα αποθηκευτεί"
 
-#: gui/options.cpp:2472
+#: gui/options.cpp:2474
 msgid "Theme Path:"
 msgstr "Φάκελος Θέματος:"
 
-#: gui/options.cpp:2474
+#: gui/options.cpp:2476
 msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "Φάκελος Θέματος:"
-
-#: gui/options.cpp:2480
-msgid "Icon Path:"
-msgstr "Διαδρομή Εικονιδίων:"
 
 #: gui/options.cpp:2482
+msgid "Icon Path:"
+msgstr "Διαδρομή Εικονιδίων:"
+
+#: gui/options.cpp:2484
 msgctxt "lowres"
 msgid "Icon Path:"
 msgstr "Διαδρομή Εικονιδίων:"
 
-#: gui/options.cpp:2483 gui/options.cpp:2493
+#: gui/options.cpp:2485 gui/options.cpp:2495
 msgctxt "path"
 msgid "Default"
 msgstr "Προκαθορισμένη"
 
-#: gui/options.cpp:2490
+#: gui/options.cpp:2492
 msgid "DLC Path:"
 msgstr "Φάκελος για DLC:"
 
-#: gui/options.cpp:2492
+#: gui/options.cpp:2494
 msgctxt "lowres"
 msgid "DLC Path:"
 msgstr "Φάκελος για DLC:"
 
-#: gui/options.cpp:2500 gui/options.cpp:2502 gui/options.cpp:2503
+#: gui/options.cpp:2502 gui/options.cpp:2504 gui/options.cpp:2505
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr ""
 "Καθορίζει τη διαδρομή για πρόσθετα δεδομένα που χρησιμοποιούνται από όλα τα "
 "παιχνίδια ή το ScummVM"
 
-#: gui/options.cpp:2509
+#: gui/options.cpp:2511
 msgid "Plugins Path:"
 msgstr "Διαδρομή Πρόσθετων:"
 
-#: gui/options.cpp:2511
+#: gui/options.cpp:2513
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "Διαδρ. Πρόσθ.:"
 
-#: gui/options.cpp:2521
+#: gui/options.cpp:2523
 msgid "ScummVM config path: "
 msgstr "Διαδρομή Ρυθμίσεων: "
 
-#: gui/options.cpp:2535
+#: gui/options.cpp:2537
 msgid "ScummVM log path: "
 msgstr "Διαδρομή Αρχείου Καταγραφής: "
 
-#: gui/options.cpp:2540
+#: gui/options.cpp:2542
 msgid "View"
 msgstr "Επισκόπηση"
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2550 gui/options.cpp:3337
+#: gui/options.cpp:2552 gui/options.cpp:3341
 msgid "Last browser path: "
 msgstr "Πρόσφατη διαδρομή πλοηγητή: "
 
-#: gui/options.cpp:2555
+#: gui/options.cpp:2557
 msgid "Theme:"
 msgstr "Θέμα:"
 
-#: gui/options.cpp:2560
+#: gui/options.cpp:2562
 msgid "GUI scale:"
 msgstr "Κλιμάκωση ΓΔΧ:"
 
-#: gui/options.cpp:2577
+#: gui/options.cpp:2579
 #, c-format
 msgid "%d%% - Custom"
 msgstr "%d%% - Προσαρμοσμένο"
 
-#: gui/options.cpp:2581
+#: gui/options.cpp:2583
 msgid "GUI renderer:"
 msgstr "Απόδοση εικόνας ΓΔΧ:"
 
-#: gui/options.cpp:2594
+#: gui/options.cpp:2596
 msgid "Return to the launcher when leaving a game"
 msgstr "Επιστροφή στον Πλοηγητή (launcher) μετά την έξοδο από παιχνίδι"
 
-#: gui/options.cpp:2595
+#: gui/options.cpp:2597
 msgid ""
 "Return to the launcher when leaving a game instead of closing ScummVM\n"
 "(this feature is not supported by all games)."
@@ -2290,21 +2285,21 @@ msgstr ""
 "παιχνίδι, αντί να κλείνει η εφαρμογή του ScummVM.\n"
 "(αυτήν την δυνατότητα δεν την υποστηρίζουν όλα τα παιχνίδια)."
 
-#: gui/options.cpp:2602
+#: gui/options.cpp:2604
 msgid "Ask for confirmation on exit"
 msgstr "Να ζητείται επιβεβαίωση κατά την έξοδο"
 
-#: gui/options.cpp:2603
+#: gui/options.cpp:2605
 msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr ""
 "Να ζητείται επιβεβαίωση από τον χρήστη κατά το κλείσιμο του ScummVM ή την "
 "έξοδο από ένα παιχνίδι."
 
-#: gui/options.cpp:2609
+#: gui/options.cpp:2611
 msgid "Disable fixed font scaling"
 msgstr "Χωρίς κλιμάκωση των γραμματοσειρών σταθερών διαστάσεων"
 
-#: gui/options.cpp:2610
+#: gui/options.cpp:2612
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
@@ -2313,19 +2308,19 @@ msgstr ""
 "περιβάλλον διεπαφής (GUI). Έτσι περιορίζονται οι \"μουντζούρες\" (artefacts) "
 "σε οθόνες χαμηλής ανάλυσης"
 
-#: gui/options.cpp:2616
+#: gui/options.cpp:2618
 msgid "GUI language:"
 msgstr "Γλώσσα ΓΔΧ:"
 
-#: gui/options.cpp:2616
+#: gui/options.cpp:2618
 msgid "Language of ScummVM GUI"
 msgstr "Γλώσσα για τη ΓΔΧ (GUI) του ScummVM"
 
-#: gui/options.cpp:2642
+#: gui/options.cpp:2644
 msgid "Switch the ScummVM GUI language to the game language"
 msgstr "Χρήση γλώσσας παιχνιδιού ως γλώσσα για τη ΓΔΧ (GUI) του ScummVM"
 
-#: gui/options.cpp:2643
+#: gui/options.cpp:2645
 msgid ""
 "When starting a game, change the ScummVM GUI language to the game language. "
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
@@ -2336,11 +2331,11 @@ msgstr ""
 "χρησιμοποιεί τα παράθυρα διαλόγου του ScummVM για αποθήκευση και φόρτωση, "
 "αυτά θα είναι στην ίδια γλώσσα με το παιχνίδι."
 
-#: gui/options.cpp:2655
+#: gui/options.cpp:2657
 msgid "Use native system file browser"
 msgstr "Χρήση του εγγενούς περιηγητή αρχείων"
 
-#: gui/options.cpp:2656
+#: gui/options.cpp:2658
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
@@ -2348,50 +2343,50 @@ msgstr ""
 "Χρήση του εγγενούς περιηγητή αρχείων που παρέχει το λειτουργικό σύστημα αντί "
 "αυτού από το ScummVM για την επιλογή αρχείου ή καταλόγου."
 
-#: gui/options.cpp:2663
+#: gui/options.cpp:2665
 msgid "Download Icons"
 msgstr "Λήψη Εικονιδιών"
 
-#: gui/options.cpp:2663
+#: gui/options.cpp:2665
 msgid "Check on the scummvm.org website for updates of icon packs"
 msgstr "Έλεγχος στον ιστότοπο scummvm.org για ενημερώσεις σε πακέτα εικονιδίων"
 
-#: gui/options.cpp:2669
+#: gui/options.cpp:2671
 msgid "Autosave:"
 msgstr "Αυτόματη αποθήκευση:"
 
-#: gui/options.cpp:2671
+#: gui/options.cpp:2673
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "Αυτόμ. αποθ.:"
 
-#: gui/options.cpp:2682
+#: gui/options.cpp:2684
 msgid "Random seed:"
 msgstr "Φύτρα τυχαίων αριθμών:"
 
-#: gui/options.cpp:2682
+#: gui/options.cpp:2684
 msgid "Seed for initializing all random number generators"
 msgstr "Φύτρα (seed) για την αρχικοποίηση όλων των γεννητριών τυχαίων αριθμών"
 
-#: gui/options.cpp:2690
+#: gui/options.cpp:2692
 msgid "Debug level:"
 msgstr "Επίπεδο Αποσφαλμάτωσης:"
 
 #. I18N: Debug level -1, no messages
-#: gui/options.cpp:2694 gui/options.cpp:2833
+#: gui/options.cpp:2696 gui/options.cpp:2835
 msgid "None"
 msgstr "Δεν έχει προσδιοριστεί"
 
 #. I18N: Debug level 11, all messages
-#: gui/options.cpp:2700
+#: gui/options.cpp:2702
 msgid "11 (all)"
 msgstr "11 (όλα)"
 
-#: gui/options.cpp:2704
+#: gui/options.cpp:2706
 msgid "Enable Discord integration"
 msgstr "Ενεργοποίηση διασύνδεσης με DIscord"
 
-#: gui/options.cpp:2705
+#: gui/options.cpp:2707
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
@@ -2399,27 +2394,27 @@ msgstr ""
 "Εμφανίζει στο Discord πληροφορίες για τα παιχνίδια που παίζετε, αν το "
 "πρόγραμμα Discord εκτελείται."
 
-#: gui/options.cpp:2715 gui/updates-dialog.cpp:85
+#: gui/options.cpp:2717 gui/updates-dialog.cpp:85
 msgid "Update check:"
 msgstr "Έλεγχος αναβαθμίσεων:"
 
-#: gui/options.cpp:2715
+#: gui/options.cpp:2717
 msgid "How often to check ScummVM updates"
 msgstr "Συχνότητα ελέγχου ενημερώσεων του ScummVM"
 
-#: gui/options.cpp:2726
+#: gui/options.cpp:2728
 msgid "Check now"
 msgstr "Ελέγξτε τώρα"
 
-#: gui/options.cpp:2734
+#: gui/options.cpp:2736
 msgid "Active storage:"
 msgstr "Ενεργή αποθήκη:"
 
-#: gui/options.cpp:2734
+#: gui/options.cpp:2736
 msgid "Active cloud storage"
 msgstr "Ενεργή αποθήκη Νέφους"
 
-#: gui/options.cpp:2743
+#: gui/options.cpp:2745
 msgctxt "lowres"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
@@ -2427,202 +2422,202 @@ msgstr ""
 "Η αποθήκευση είναι απενεργοποιημένη. Επιβεβαιώστε ότι το όνομα χρήστη είναι "
 "σωστό και ενεργοποιήστε τη:"
 
-#: gui/options.cpp:2745
+#: gui/options.cpp:2747
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
 "Η αποθήκευση δεν είναι ακόμα ενεργοποιημένη. Επιβεβαιώστε ότι το όνομα "
 "χρήστη είναι σωστό και ενεργοποιήστε τη:"
 
-#: gui/options.cpp:2746
+#: gui/options.cpp:2748
 msgid "Enable storage"
 msgstr "Ενεργοποίηση αποθήκευσης"
 
-#: gui/options.cpp:2746
+#: gui/options.cpp:2748
 msgid "Confirm you want to use this account for this storage"
 msgstr ""
 "Επιβεβαιώστε ότι επιθυμείτε να χρησιμοποιήσετε αυτόν τον λογαριασμό για αυτή "
 "την αποθήκευση"
 
-#: gui/options.cpp:2748 backends/platform/wii/options.cpp:113
+#: gui/options.cpp:2750 backends/platform/wii/options.cpp:113
 msgid "Username:"
 msgstr "Όνομα χρήστη:"
 
-#: gui/options.cpp:2748
+#: gui/options.cpp:2750
 msgid "Username used by this storage"
 msgstr "Το όνομα χρήστη που χρησιμοποιεί αυτή η αποθήκη"
 
-#: gui/options.cpp:2749
+#: gui/options.cpp:2751
 msgid "<none>"
 msgstr "<δεν έχει δοθεί>"
 
-#: gui/options.cpp:2751
+#: gui/options.cpp:2753
 msgid "Used space:"
 msgstr "Χρησιμοποιημένος χώρος:"
 
-#: gui/options.cpp:2751
+#: gui/options.cpp:2753
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr ""
 "Χώρος που χρησιμοποιείται από τα αποθηκευμένα παιχνίδια του ScummVM σε αυτή "
 "την αποθήκη Νέφους"
 
-#: gui/options.cpp:2754
+#: gui/options.cpp:2756
 msgid "Last sync:"
 msgstr "Πρόσφατος συγχρονισμός:"
 
-#: gui/options.cpp:2754
+#: gui/options.cpp:2756
 msgid "When was the last time saved games were synced with this storage"
 msgstr ""
 "Πότε πραγματοποιήθηκε ο πιο πρόσφατος συγχρονισμός αποθηκευμένων παιχνιδιών"
 
-#: gui/options.cpp:2755 gui/options.cpp:3673
+#: gui/options.cpp:2757 gui/options.cpp:3677
 msgid "<never>"
 msgstr "<ποτέ>"
 
-#: gui/options.cpp:2757
+#: gui/options.cpp:2759
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "Τα αποθηκευμένα παιχνίδια συγχρονίζονται αυτόματα κατά την εκκίνηση, μετά "
 "την αποθήκευση και κατά τη φόρτωση."
 
-#: gui/options.cpp:2759
+#: gui/options.cpp:2761
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "Τα αποθηκευμένα παιχνίδια συγχρονίζονται αυτόματα κατά την εκκίνηση, μετά "
 "την αποθήκευση και κατά τη φόρτωση."
 
-#: gui/options.cpp:2760
+#: gui/options.cpp:2762
 msgid "Sync now"
 msgstr "Συγχρονισμός τώρα"
 
-#: gui/options.cpp:2760
+#: gui/options.cpp:2762
 msgid "Start saved games sync"
 msgstr "Εκκίνηση συγχρονισμού αποθηκευμένων παιχνιδιών"
 
-#: gui/options.cpp:2763
+#: gui/options.cpp:2765
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
 "Μπορείτε να μεταφορτώσετε αρχεία παιχνιδιού από τον δικό σας φάκελο Νέφους "
 "για το ScummVM:"
 
-#: gui/options.cpp:2765
+#: gui/options.cpp:2767
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
 "Μπορείτε να μεταφορτώσετε αρχεία παιχνιδιού από τον δικό σας φάκελο Νέφους "
 "για το ScummVM:"
 
-#: gui/options.cpp:2766
+#: gui/options.cpp:2768
 msgid "Download game files"
 msgstr "Κατεβάστε αρχεία παιχνιδιού"
 
-#: gui/options.cpp:2766
+#: gui/options.cpp:2768
 msgid "Open downloads manager dialog"
 msgstr "Άνοιγμα διαλόγου διαχείρισης μεταφορτώσεων"
 
-#: gui/options.cpp:2769
+#: gui/options.cpp:2771
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
 "Για να αλλάξετε το λογαριασμό για αυτή την αποθήκη, αποσυνδεθείτε και "
 "συνδεθείτε εκ νέου:"
 
-#: gui/options.cpp:2771
+#: gui/options.cpp:2773
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
 "Για να αλλάξετε το λογαριασμό για αυτή την αποθήκη, αποσυνδεθείτε και "
 "συνδεθείτε εκ νέου:"
 
-#: gui/options.cpp:2772
+#: gui/options.cpp:2774
 msgid "Disconnect"
 msgstr "Αποσύνδεση"
 
-#: gui/options.cpp:2772
+#: gui/options.cpp:2774
 msgid "Stop using this storage on this device"
 msgstr "Διακοπή χρήσης αυτής της αποθήκης σε αυτή τη συσκευή"
 
-#: gui/options.cpp:2775
+#: gui/options.cpp:2777
 msgctxt "lowres"
 msgid "This storage is not connected yet!"
 msgstr "Η αποθήκη αυτή δεν είναι ακόμα συνδεδεμένη!"
 
-#: gui/options.cpp:2777
+#: gui/options.cpp:2779
 msgid "This storage is not connected yet!"
 msgstr "Η αποθήκη αυτή δεν είναι ακόμα συνδεδεμένη!"
 
-#: gui/options.cpp:2778
+#: gui/options.cpp:2780
 msgid "Connect"
 msgstr "Σύνδεση"
 
-#: gui/options.cpp:2778
+#: gui/options.cpp:2780
 msgid "Connect your cloud storage account"
 msgstr "Συνδέστε τον λογαριασμό της δικής σας αποθήκης στο Νέφος"
 
-#: gui/options.cpp:2792
+#: gui/options.cpp:2794
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr "/root/ Διαδρομή:"
 
-#: gui/options.cpp:2792 gui/options.cpp:2794 gui/options.cpp:2795
+#: gui/options.cpp:2794 gui/options.cpp:2796 gui/options.cpp:2797
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr ""
 "Επιλέξτε το φάκελο που θα εμφανίζεται ως κορυφαίος /root/ στη Διαχείριση "
 "Αρχείων"
 
-#: gui/options.cpp:2794
+#: gui/options.cpp:2796
 msgid "/root/ Path:"
 msgstr "/root/ Διαδρομή:"
 
-#: gui/options.cpp:2800
+#: gui/options.cpp:2802
 msgid "Server's port:"
 msgstr "Θύρα Διακομιστή:"
 
-#: gui/options.cpp:2800
+#: gui/options.cpp:2802
 msgid "Port for server to use"
 msgstr "Η θύρα (port) που θα χρησιμοποιεί ο διακομιστής"
 
-#: gui/options.cpp:2805
+#: gui/options.cpp:2807
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 "Εκκινήστε τον διακομιστή για να διαχειριστείτε αρχεία με κάποιο browser "
 "(εντός του ίδιου δικτύου)."
 
-#: gui/options.cpp:2806
+#: gui/options.cpp:2808
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
 msgstr "Κλείνοντας το μενού Επιλογών θα σταματήσει ο Διακομιστής."
 
-#: gui/options.cpp:2808
+#: gui/options.cpp:2810
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 "Εκκινήστε τον διακομιστή για να διαχειριστείτε αρχεία με κάποιο browser "
 "(εντός του ίδιου δικτύου)."
 
-#: gui/options.cpp:2809
+#: gui/options.cpp:2811
 msgid "Closing options dialog will stop the server."
 msgstr "Κλείνοντας το μενού Επιλογών θα σταματήσει ο διακομιστής."
 
-#: gui/options.cpp:2820
+#: gui/options.cpp:2822
 msgid "Use Text to speech"
 msgstr "Μετατροπή κειμένου σε ομιλία"
 
-#: gui/options.cpp:2820
+#: gui/options.cpp:2822
 msgid "Will read text in gui on mouse over."
 msgstr ""
 "Θα διαβάσει το κείμενο που βρίσκεται κάτω από το ποντίκι στη γραφική διεπαφή "
 "χρήστη (ΓΔΧ ή αλλιώς GUI)."
 
-#: gui/options.cpp:2901
+#: gui/options.cpp:2903
 msgid "Ignore"
 msgstr "Αγνόηση"
 
-#: gui/options.cpp:2902
+#: gui/options.cpp:2904
 msgid "Disable autosave"
 msgstr "Χωρίς αυτόματη αποθήκευση"
 
-#: gui/options.cpp:2903
+#: gui/options.cpp:2905
 msgid ""
 "WARNING: Autosave was enabled. Some of your games have existing saved games "
 "on the autosave slot. You can either move the existing saves to new slots, "
@@ -2638,7 +2633,7 @@ msgstr ""
 "αντικαταστήσει κάποιο υπάρχον αποθηκευμένο παιχνίδι).\n"
 "Λίστα παιχνιδιών:\n"
 
-#: gui/options.cpp:2912
+#: gui/options.cpp:2914
 msgid ""
 "\n"
 "And more..."
@@ -2646,31 +2641,31 @@ msgstr ""
 "\n"
 "Και άλλα..."
 
-#: gui/options.cpp:2913 engines/engine.cpp:619
+#: gui/options.cpp:2915 engines/engine.cpp:619
 msgid "Move"
 msgstr "Μετακίνηση"
 
-#: gui/options.cpp:2932
+#: gui/options.cpp:2934
 msgid "ERROR: Failed to move the following saved games:\n"
 msgstr "ΣΦΑΛΜΑ: Αποτυχία μετακίνησης των παρακάτω αποθηκεμένων παιχνιδιών:\n"
 
-#: gui/options.cpp:3027
+#: gui/options.cpp:3031
 msgid "Failed to change cloud storage!"
 msgstr "Αδυναμία αλλαγής αποθήκης Νέφους!"
 
-#: gui/options.cpp:3030
+#: gui/options.cpp:3034
 msgid "Another cloud storage is already active."
 msgstr "Μια άλλη αποθήκη Νέφους είναι ήδη ενεργή."
 
-#: gui/options.cpp:3146
+#: gui/options.cpp:3150
 msgid "Theme does not support selected language!"
 msgstr "Το θέμα δεν υποστηρίζει την επιλεγμένη γλώσσα!"
 
-#: gui/options.cpp:3149
+#: gui/options.cpp:3153
 msgid "Theme cannot be loaded!"
 msgstr "Το θέμα δεν φορτώθηκε!"
 
-#: gui/options.cpp:3152
+#: gui/options.cpp:3156
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -2678,49 +2673,49 @@ msgstr ""
 "\n"
 "Επαναφορά αρχικών τιμών στις λοιπές ρυθμίσεις."
 
-#: gui/options.cpp:3224
+#: gui/options.cpp:3228
 msgid "Select directory for GUI themes"
 msgstr ""
 "Επιλέξτε φάκελο θεμάτων (themes) για τη γραφική διεπαφή χρήστη (ΓΔΧ ή αλλιώς "
 "GUI)"
 
-#: gui/options.cpp:3234
+#: gui/options.cpp:3238
 msgid "Select directory for GUI launcher thumbnails"
 msgstr ""
 "Επιλέξτε φάκελο για τα εικονίδια παιχνιδιών που θα εμφανίζονται στη γραφική "
 "διεπαφή χρήστη (ΓΔΧ ή αλλιώς GUI) του Πλοηγητή (launcher)"
 
-#: gui/options.cpp:3245
+#: gui/options.cpp:3249
 msgid "Select directory for DLC downloads"
 msgstr "Επιλέξτε φάκελο για DLC"
 
-#: gui/options.cpp:3256
+#: gui/options.cpp:3260
 msgid "Select directory for extra files"
 msgstr "Επιλέξτε φάκελο για πρόσθετα αρχεία"
 
-#: gui/options.cpp:3267
+#: gui/options.cpp:3271
 msgid "Select directory for plugins"
 msgstr "Επιλέξτε φάκελο για πρόσθετα"
 
-#: gui/options.cpp:3280
+#: gui/options.cpp:3284
 msgid "Select directory for Files Manager /root/"
 msgstr "Επιλέξτε φάκελο για το /root/ του Διαχειριστή Αρχείων"
 
-#: gui/options.cpp:3459
+#: gui/options.cpp:3463
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr ""
 "Αυτή η αποθήκη Νέφους έχει εργασία σε εξέλιξη αυτή τη στιγμή. Επιθυμείτε να "
 "τη διακόψετε;"
 
-#: gui/options.cpp:3468
+#: gui/options.cpp:3472
 msgid "Wait until current Storage finishes up and try again."
 msgstr "Περιμένετε να ολοκληρωθεί η τρέχουσα Αποθήκευση και δοκιμάστε ξανά."
 
-#: gui/options.cpp:3671 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:3675 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<άμεσα>"
 
-#: gui/options.cpp:3816
+#: gui/options.cpp:3820
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -2728,7 +2723,7 @@ msgstr ""
 "Το αίτημα απέτυχε.\n"
 "Ελέγξτε τη σύνδεσή σας στο Διαδίκτυο."
 
-#: gui/options.cpp:3840
+#: gui/options.cpp:3844
 msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
@@ -2736,7 +2731,7 @@ msgstr ""
 "Το δοκιμαστικό σχέδιο που εμφανίζεται αποτελεί προεπισκόπηση των αλλαγών.\n"
 "Θέλετε να διατηρήσετε τις νέες ρυθμίσεις σκιαστή κλιμάκωσης (shader scaler);"
 
-#: gui/options.cpp:3843
+#: gui/options.cpp:3847
 #, c-format
 msgid "Reverting automatically in %d seconds"
 msgstr "Αυτόματη επαναφορά των προηγούμενων ρυθμίσεων σε %d δευτερόλεπτα"
@@ -3318,12 +3313,11 @@ msgstr "ScummVM"
 msgid "Graphic adventure game engine"
 msgstr "Μηχανή παιχνιδιών περιπέτειας"
 
-#. I18N: This directly quits the game.
 #: dists/android.strings.xml.cpp:34
 #: backends/events/default/default-events.cpp:217
 #: backends/events/default/default-events.cpp:358
-#: engines/adl/metaengine.cpp:326 engines/cge2/metaengine.cpp:239
-#: engines/hdb/metaengine.cpp:275 engines/mohawk/myst_stacks/menu.cpp:317
+#: engines/adl/metaengine.cpp:338 engines/hdb/metaengine.cpp:275
+#: engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454 engines/saga/metaengine.cpp:448
 #: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
 #: engines/zvision/metaengine.cpp:272 engines/zvision/metaengine.cpp:290
@@ -3574,7 +3568,7 @@ msgstr "Επισ~τ~ρ. σε Πλοηγητή"
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:746
 #: engines/sci/engine/kfile.cpp:1104 engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3811
+#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3813
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
 #: engines/wage/saveload.cpp:746 engines/zvision/file/save_manager.cpp:48
 msgid "Save game:"
@@ -3597,7 +3591,7 @@ msgstr "Αποθήκευση παιχνιδιού:"
 #: engines/sci/engine/guest_additions.cpp:747 engines/sci/engine/kfile.cpp:1104
 #: engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3811
+#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3813
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
 #: engines/wage/saveload.cpp:746 engines/zvision/file/save_manager.cpp:48
 #: engines/zvision/metaengine.cpp:262
@@ -3616,7 +3610,7 @@ msgstr ""
 "βοήθεια."
 
 #: engines/dialogs.cpp:193 engines/ags/ags.cpp:349
-#: engines/glk/magnetic/magnetic.cpp:197 engines/scumm/saveload.cpp:170
+#: engines/glk/magnetic/magnetic.cpp:197 engines/scumm/saveload.cpp:171
 msgid "This game does not support saving from the menu. Use in-game interface"
 msgstr ""
 "Αυτό το παιχνίδι δεν υποστηρίζει αποθήκευση παιχνιδιών από το καθολικό "
@@ -3639,7 +3633,7 @@ msgstr ""
 "πώς να λάβετε περαιτέρω βοήθεια."
 
 #: engines/dialogs.cpp:234 engines/ags/ags.cpp:334
-#: engines/glk/magnetic/magnetic.cpp:187 engines/scumm/saveload.cpp:98
+#: engines/glk/magnetic/magnetic.cpp:187 engines/scumm/saveload.cpp:99
 msgid "This game does not support loading from the menu. Use in-game interface"
 msgstr ""
 "Αυτό το παιχνίδι δεν υποστηρίζει φόρτωση παιχνιδιών από το καθολικό μενού. "
@@ -3828,32 +3822,38 @@ msgstr ""
 msgid "Matched game IDs for the %s engine:"
 msgstr "Αντιστοιχισμένα αναγνωριστικά παιχνιδιού για την μηχανή %s:"
 
-#: engines/metaengine.cpp:56 engines/saga/metaengine.cpp:267
+#: engines/metaengine.cpp:39
+#, fuzzy
+#| msgid "Game id not supported"
+msgid "Game not implemented"
+msgstr "Το αναγνωριστικό παιχνιδιού δεν υποστηρίζεται"
+
+#: engines/metaengine.cpp:58 engines/saga/metaengine.cpp:267
 msgid "Default game keymap"
 msgstr "Προκαθορισμένες αντιστοιχίες"
 
-#: engines/metaengine.cpp:60 backends/platform/maemo/maemo.cpp:161
+#: engines/metaengine.cpp:62 backends/platform/maemo/maemo.cpp:161
 #: engines/asylum/metaengine.cpp:159 engines/hdb/metaengine.cpp:207
 #: engines/parallaction/metaengine.cpp:112
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
 msgstr "Αριστερό Click"
 
-#: engines/metaengine.cpp:66 backends/platform/maemo/maemo.cpp:165
+#: engines/metaengine.cpp:68 backends/platform/maemo/maemo.cpp:165
 #: engines/wintermute/keymapper_tables.h:256
 #: engines/wintermute/keymapper_tables.h:300
 #: engines/wintermute/keymapper_tables.h:2166
 msgid "Middle Click"
 msgstr "Μεσαίο Click"
 
-#: engines/metaengine.cpp:71 backends/platform/maemo/maemo.cpp:169
+#: engines/metaengine.cpp:73 backends/platform/maemo/maemo.cpp:169
 #: engines/asylum/metaengine.cpp:165 engines/parallaction/metaengine.cpp:118
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr "Δεξί Click"
 
 #. I18N: Action in In Cold Blood
-#: engines/metaengine.cpp:77 engines/agos/metaengine.cpp:252
+#: engines/metaengine.cpp:79 engines/agos/metaengine.cpp:252
 #: engines/crab/input/input.cpp:261 engines/grim/grim.cpp:541
 #: engines/hdb/metaengine.cpp:258 engines/icb/icb.cpp:137
 #: engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
@@ -3862,14 +3862,14 @@ msgstr "Δεξί Click"
 msgid "Pause"
 msgstr "Παύση"
 
-#: engines/metaengine.cpp:83 engines/parallaction/metaengine.cpp:137
+#: engines/metaengine.cpp:85 engines/parallaction/metaengine.cpp:137
 msgid "Game menu"
 msgstr "Μενού παιχνιδιού"
 
-#: engines/metaengine.cpp:90 engines/grim/grim.cpp:524
-#: engines/grim/grim.cpp:620 engines/made/metaengine.cpp:121
-#: engines/mohawk/myst.cpp:566 engines/mohawk/riven.cpp:847
-#: engines/wintermute/keymapper_tables.h:220
+#: engines/metaengine.cpp:92 engines/freescape/movement.cpp:82
+#: engines/grim/grim.cpp:524 engines/grim/grim.cpp:620
+#: engines/made/metaengine.cpp:121 engines/mohawk/myst.cpp:566
+#: engines/mohawk/riven.cpp:847 engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
 #: engines/wintermute/keymapper_tables.h:1276
 #: engines/wintermute/keymapper_tables.h:1601
@@ -3878,29 +3878,29 @@ msgstr "Μενού παιχνιδιού"
 msgid "Skip"
 msgstr "Παράλειψη"
 
-#: engines/metaengine.cpp:97 engines/sky/metaengine.cpp:121
+#: engines/metaengine.cpp:99 engines/sky/metaengine.cpp:121
 msgid "Skip line"
 msgstr "Παράλειψη γραμμής"
 
-#: engines/metaengine.cpp:104
+#: engines/metaengine.cpp:106
 msgid "Predictive input dialog"
 msgstr "Παράθυρο διαλόγου με πρόβλεψη κειμένου"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows confirming popup dialogue prompts (eg. for save game deletion or overwriting)
 #. and also submitting a new save game name, or choosing an existing save game for overwriting.
-#: engines/metaengine.cpp:109 engines/bladerunner/metaengine.cpp:273
+#: engines/metaengine.cpp:111 engines/bladerunner/metaengine.cpp:273
 #: engines/griffon/metaengine.cpp:115 engines/grim/grim.cpp:530
 #: engines/grim/grim.cpp:626 engines/sky/metaengine.cpp:101
 #: engines/wintermute/keymapper_tables.h:54
 msgid "Confirm"
 msgstr "Επιβεβαίωση"
 
-#: engines/metaengine.cpp:412
+#: engines/metaengine.cpp:414
 msgid "Autosave on"
 msgstr "Με αυτόματη αποθήκευση"
 
-#: engines/metaengine.cpp:412
+#: engines/metaengine.cpp:414
 msgid "Autosave off"
 msgstr "Χωρίς αυτόματη αποθήκευση"
 
@@ -4276,7 +4276,7 @@ msgstr "Λειτουργία πλήρους οθόνης"
 msgid "Toggle mouse capture"
 msgstr "Εναλλαγή κράτησης ποντικιού"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:458
+#: backends/graphics/sdl/sdl-graphics.cpp:458 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
@@ -4880,12 +4880,12 @@ msgstr ""
 msgid "Magnify Mode Off"
 msgstr "Η Λειτουργία Μεγέθυνσης Απενεργοποιήθηκε"
 
-#: backends/platform/android/android.cpp:1052
+#: backends/platform/android/android.cpp:1056
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 msgid "Getting help"
 msgstr "Πηγές βοήθειας"
 
-#: backends/platform/android/android.cpp:1055
+#: backends/platform/android/android.cpp:1059
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -4930,13 +4930,13 @@ msgstr ""
 "κολλήσει στην πρόοδο σας σε ένα παιχνίδι, σκεφτείτε να κοιτάξετε κάποιον "
 "οδηγό για το παιχνίδι. Καλή σας τύχη!\n"
 
-#: backends/platform/android/android.cpp:1064
+#: backends/platform/android/android.cpp:1068
 #: backends/platform/ios7/ios7_osys_misc.mm:261
 #: backends/platform/ios7/ios7_osys_misc.mm:357
 msgid "Touch Controls"
 msgstr "Χειρισμός Αφής"
 
-#: backends/platform/android/android.cpp:1067
+#: backends/platform/android/android.cpp:1071
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -5082,13 +5082,13 @@ msgstr ""
 "{w=10em}\n"
 "\n"
 
-#: backends/platform/android/android.cpp:1123
+#: backends/platform/android/android.cpp:1127
 #: backends/platform/ios7/ios7_osys_misc.mm:336
 #: backends/platform/ios7/ios7_osys_misc.mm:380
 msgid "Adding Games"
 msgstr "Προσθήκη Παιχνιδιών"
 
-#: backends/platform/android/android.cpp:1126
+#: backends/platform/android/android.cpp:1130
 msgid ""
 "## Adding Games \n"
 "\n"
@@ -5685,58 +5685,46 @@ msgid "(check '? > Libretro playlist' for detailed info)"
 msgstr ""
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:48
-#, fuzzy
-#| msgid "Plugins Path:"
 msgid "Playlists Path"
-msgstr "Διαδρομή Πρόσθετων:"
+msgstr "Διαδρομή για Playlists"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:49
-#, fuzzy
-#| msgid "Specifies where your saved games are put"
 msgid "Specifies where your playlist will be saved."
-msgstr "Καθορίζει την τοποθεσία των αποθηκευμένων παιχνιδιών σας"
+msgstr ""
+"Καθορίζει την τοποθεσία όπου θα αποθηκευτεί η λίστα παιχνιδιών σας "
+"(playlist)."
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:52
-#, fuzzy
-#| msgid "Platform:"
 msgid "Playlist format:"
-msgstr "Πλατφόρμα:"
+msgstr "Μορφοποίηση Playlist:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:57
-#, fuzzy
-#| msgid "Goto location"
 msgid "Hooks location:"
-msgstr "Μετάβαση στην περιοχή"
+msgstr "Τοποθεσία για hooks:"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:59
-#, fuzzy
-#| msgid "Add a new folder"
 msgid "All in save folder"
-msgstr "Προσθήκη νέου φακέλου"
+msgstr "Όλα στο φάκελο αποθήκευσης"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:60
 msgid "One in each game folder"
-msgstr ""
+msgstr "Ένα σε κάθε φάκελο παιχνιδιού"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:62
 msgid "Clear existing hooks"
-msgstr ""
+msgstr "Καθαρισμός υπαρχόντων hooks"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:64
 msgid "Generate playlist"
-msgstr ""
+msgstr "Δημιουργία playlist"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:66
-#, fuzzy
-#| msgid "Status:"
 msgid "Status: "
-msgstr "Κατάσταση:"
+msgstr "Κατάσταση: "
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:148
-#, fuzzy
-#| msgid "Failed to save game to file."
 msgid "Failed, can't access playlist file"
-msgstr "Η εγγραφή αποθηκευμένου παιχνιδιού σε αρχείο απέτυχε."
+msgstr "Αποτυχία λόγω αδυναμίας πρόσβασης στο αρχείο playlist"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:224
 #, fuzzy
@@ -5745,10 +5733,8 @@ msgid "cleaning failed"
 msgstr "Η ανάγνωση δεδομένων απέτυχε"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:226
-#, fuzzy
-#| msgid "Failed to read the file!"
 msgid "Failed, can't create hook files"
-msgstr "Η ανάγνωση του αρχείου απέτυχε!"
+msgstr "Αποτυχία λόγω αδυναμίας δημιουργίας αρχείων hook"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:236
 #, fuzzy
@@ -6202,7 +6188,7 @@ msgstr "Έλεγχος Ενημερώσεων..."
 #: engines/hugo/hugo.cpp:427 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:300 engines/sky/compact.cpp:129
 #: engines/supernova/supernova.cpp:463 engines/teenagent/resources.cpp:97
-#: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5416
+#: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5418
 #: engines/ultima/ultima8/ultima8.cpp:187
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
@@ -6211,7 +6197,7 @@ msgstr "Δεν ήταν δυνατή η εύρεση του αρχείου πα�
 #: engines/access/resources.cpp:51 engines/drascula/drascula.cpp:956
 #: engines/hugo/hugo.cpp:439 engines/lure/lure.cpp:66
 #: engines/mortevielle/mortevielle.cpp:308 engines/supernova/supernova.cpp:468
-#: engines/tony/tony.cpp:200 engines/toon/toon.cpp:5429
+#: engines/tony/tony.cpp:200 engines/toon/toon.cpp:5431
 #, c-format
 msgid "The '%s' engine data file is corrupt."
 msgstr "Το αρχειο παιχνιδιού '%s' είναι κατεστραμμένο."
@@ -6219,7 +6205,7 @@ msgstr "Το αρχειο παιχνιδιού '%s' είναι κατεστρα�
 #: engines/access/resources.cpp:60 engines/drascula/drascula.cpp:967
 #: engines/hugo/hugo.cpp:449 engines/lure/lure.cpp:69
 #: engines/mortevielle/mortevielle.cpp:318 engines/tony/tony.cpp:211
-#: engines/toon/toon.cpp:5440
+#: engines/toon/toon.cpp:5442
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
@@ -6261,7 +6247,17 @@ msgstr "Να γίνεται πάντα χρήση μονόχρωμου κειμ�
 msgid "Do not emulate NTSC artifacts for text"
 msgstr "Να μη γίνει προσομοίωση \"παράσιτων\" του NTSC για το κείμενο"
 
-#: engines/agi/detection_tables.h:313
+#: engines/adl/metaengine.cpp:104
+#, fuzzy
+#| msgid "Use silver cursors"
+msgid "Use checkered cursor"
+msgstr "Χρήση ασημένιων δρομέων"
+
+#: engines/adl/metaengine.cpp:105
+msgid "Use the checkered cursor from later Apple II models"
+msgstr ""
+
+#: engines/agi/detection_tables.h:253
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
 msgstr ""
 "Τα πρώτα AGI παιχνίδια για Tandy Color Computer δεν υποστηρίζονται ακόμα."
@@ -6353,13 +6349,13 @@ msgstr "Προσθήκη μενού ταχύτητας"
 msgid "Add game speed menu (similar to PC version)"
 msgstr "Προσθήκη ενός μενού ταχύτητας (παρόμοιο με της έκδοσης για PC)"
 
-#: engines/agi/metaengine.cpp:409 engines/asylum/asylum.cpp:655
+#: engines/agi/metaengine.cpp:410 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
 msgid "This game does not support loading"
 msgstr "Αυτό το παιχνίδι δεν υποστηρίζει φόρτωση αποθηκευμένων παιχνιδιών"
 
-#: engines/agi/metaengine.cpp:431 engines/asylum/asylum.cpp:666
+#: engines/agi/metaengine.cpp:432 engines/asylum/asylum.cpp:666
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
 msgid "This game does not support saving"
@@ -6379,7 +6375,7 @@ msgstr "Αυτό το παιχνίδι δεν υποστηρίζει απόθή�
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:749
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3905
+#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3907
 #: engines/zvision/file/save_manager.cpp:61
 msgid "Restore game:"
 msgstr "Επαναφορά παιχνιδιού:"
@@ -6399,7 +6395,7 @@ msgstr "Επαναφορά παιχνιδιού:"
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:750
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3905
+#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3907
 #: engines/zvision/file/save_manager.cpp:61 engines/zvision/metaengine.cpp:267
 msgid "Restore"
 msgstr "Επαναφορά"
@@ -6410,7 +6406,7 @@ msgstr ""
 "Η γρήγορη φόρτωση ή αποθήκευση παιχνιδιού δεν υποστηρίζεται σε αυτή την "
 "περιοχή"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2918
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2974
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -6421,7 +6417,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2905
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2961
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -6432,7 +6428,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2938
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2994
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6451,7 +6447,7 @@ msgstr "Δεν βρέθηκε το αρχείο ενδιάμεσης σκηνή�
 #: engines/agos/metaengine.cpp:44 engines/dreamweb/metaengine.cpp:36
 #: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:51
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
-#: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:746
+#: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:747
 #, fuzzy
 #| msgid "Enable Discord integration"
 msgid "Enable copy protection"
@@ -6460,7 +6456,7 @@ msgstr "Ενεργοποίηση διασύνδεσης με DIscord"
 #: engines/agos/metaengine.cpp:45 engines/dreamweb/metaengine.cpp:37
 #: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:52
 #: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
-#: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:747
+#: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:748
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
 
@@ -6522,8 +6518,9 @@ msgid "AGOS main"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:228 engines/cine/metaengine.cpp:259
-#: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:103
-#: engines/mads/metaengine.cpp:275 engines/trecision/metaengine.cpp:121
+#: engines/hopkins/metaengine.cpp:209 engines/lure/metaengine.cpp:169
+#: engines/made/metaengine.cpp:103 engines/mads/metaengine.cpp:275
+#: engines/stark/metaengine.cpp:185 engines/trecision/metaengine.cpp:121
 #, fuzzy
 #| msgid "Game Keymappings"
 msgid "Game keymappings"
@@ -6535,19 +6532,23 @@ msgstr "Αντιστοίχιση Πλήκτρων"
 msgid "Yes/No keymapping"
 msgstr "Αντιστοίχιση Πλήκτρων"
 
-#: engines/agos/metaengine.cpp:232 engines/cine/metaengine.cpp:265
-#: engines/groovie/metaengine.cpp:205 engines/lure/metaengine.cpp:177
-#: engines/made/metaengine.cpp:107 engines/mads/metaengine.cpp:280
-#: engines/saga/metaengine.cpp:278 engines/trecision/metaengine.cpp:125
+#: engines/agos/metaengine.cpp:232 engines/cge/metaengine.cpp:203
+#: engines/cge2/metaengine.cpp:216 engines/cine/metaengine.cpp:265
+#: engines/groovie/metaengine.cpp:205 engines/hopkins/metaengine.cpp:213
+#: engines/lure/metaengine.cpp:177 engines/made/metaengine.cpp:107
+#: engines/mads/metaengine.cpp:280 engines/saga/metaengine.cpp:278
+#: engines/stark/metaengine.cpp:189 engines/trecision/metaengine.cpp:125
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left click"
 msgstr "Αριστερό Click"
 
-#: engines/agos/metaengine.cpp:238 engines/cine/metaengine.cpp:271
-#: engines/groovie/metaengine.cpp:211 engines/lure/metaengine.cpp:183
-#: engines/made/metaengine.cpp:114 engines/mads/metaengine.cpp:286
-#: engines/saga/metaengine.cpp:289 engines/trecision/metaengine.cpp:131
+#: engines/agos/metaengine.cpp:238 engines/cge/metaengine.cpp:209
+#: engines/cge2/metaengine.cpp:222 engines/cine/metaengine.cpp:271
+#: engines/groovie/metaengine.cpp:211 engines/hopkins/metaengine.cpp:219
+#: engines/lure/metaengine.cpp:183 engines/made/metaengine.cpp:114
+#: engines/mads/metaengine.cpp:286 engines/saga/metaengine.cpp:289
+#: engines/stark/metaengine.cpp:195 engines/trecision/metaengine.cpp:131
 msgid "Right click"
 msgstr "Δεξί click"
 
@@ -6642,10 +6643,8 @@ msgstr "Εναλλαγή ηχητικών εφέ με/χωρίς"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:347
-#, fuzzy
-#| msgid "Switching characters:"
 msgid "Switch characters"
-msgstr "Εναλλαγή χαρακτήρων:"
+msgstr "Αλλαγή χαρακτήρα"
 
 #: engines/agos/metaengine.cpp:353
 #, fuzzy
@@ -6935,15 +6934,15 @@ msgstr ""
 msgid "General Keys"
 msgstr "Γενικά"
 
-#: engines/bladerunner/bladerunner.cpp:404
+#: engines/bladerunner/bladerunner.cpp:405
 msgid "Failed to initialize resources"
 msgstr "Αποτυχία αρχικοποίησης πόρων"
 
-#: engines/bladerunner/bladerunner.cpp:1168
+#: engines/bladerunner/bladerunner.cpp:1177
 msgid "A required game resource was not found"
 msgstr "Δεν βρέθηκε ένας απαιτούμενος πόρος του παιχνιδιού"
 
-#: engines/bladerunner/bladerunner.cpp:2755
+#: engines/bladerunner/bladerunner.cpp:2764
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -6954,7 +6953,7 @@ msgstr ""
 "λειτουργία θα αλλάξει σε \"Αποκατεστημένου Περιεχομένου\" για αυτή τη "
 "συνεδρία μέχρι να βγείτε εντελώς από το παιχνίδι."
 
-#: engines/bladerunner/bladerunner.cpp:2757
+#: engines/bladerunner/bladerunner.cpp:2766
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -6965,7 +6964,7 @@ msgstr ""
 "θα αλλάξει σε \"Αρχικού Περιεχομένου\" για αυτή τη συνεδρία μέχρι να βγείτε "
 "εντελώς από το παιχνίδι."
 
-#: engines/bladerunner/bladerunner.cpp:2759
+#: engines/bladerunner/bladerunner.cpp:2768
 msgid "Continue"
 msgstr "Συνέχεια"
 
@@ -6980,71 +6979,6 @@ msgid ""
 msgstr ""
 "Ο ανεπίσημος μεταφραστής δεν επιθυμεί να ενσωματωθεί η μετάφρασή του στο "
 "ScummVM."
-
-#: engines/bladerunner/detection_tables.h:123 engines/cge/detection.cpp:54
-#: engines/cge/detection.cpp:60 engines/cge/detection.cpp:66
-#: engines/gob/detection/tables_adi5.h:43
-#: engines/gob/detection/tables_adi5.h:57
-#: engines/gob/detection/tables_adi5.h:74
-#: engines/gob/detection/tables_adi5.h:88
-#: engines/gob/detection/tables_adi5.h:102
-#: engines/gob/detection/tables_adi5.h:119
-#: engines/gob/detection/tables_adibou3.h:42
-#: engines/gob/detection/tables_adibou3.h:55
-#: engines/gob/detection/tables_adibou3.h:68
-#: engines/gob/detection/tables_adibou3.h:85
-#: engines/gob/detection/tables_adibou3.h:100
-#: engines/gob/detection/tables_adibou3.h:115
-#: engines/gob/detection/tables_adibou3.h:129
-#: engines/gob/detection/tables_adibou3.h:143
-#: engines/gob/detection/tables_adibou3.h:160
-#: engines/gob/detection/tables_adibou3.h:174
-#: engines/gob/detection/tables_adibou3.h:191
-#: engines/gob/detection/tables_adibou3.h:208
-#: engines/gob/detection/tables_adibou3.h:222
-#: engines/gob/detection/tables_adibou3.h:236
-#: engines/gob/detection/tables_adiboupresente.h:41
-#: engines/gob/detection/tables_adiboupresente.h:57
-#: engines/gob/detection/tables_adiboupresente.h:73
-#: engines/gob/detection/tables_adiboudchou.h:42
-#: engines/gob/detection/tables_adiboudchou.h:58
-#: engines/gob/detection/tables_adiboudchou.h:72
-#: engines/gob/detection/tables_adiboudchou.h:85
-#: engines/gob/detection/tables_adiboudchou.h:98
-#: engines/gob/detection/tables_pierresmagiques.h:42
-#: engines/groovie/detection.cpp:100 engines/lure/detection.cpp:229
-#: engines/mohawk/detection_tables.h:768 engines/mohawk/detection_tables.h:783
-#: engines/mohawk/detection_tables.h:798 engines/mohawk/detection_tables.h:812
-#: engines/mohawk/detection_tables.h:826 engines/mohawk/detection_tables.h:840
-#: engines/mohawk/detection_tables.h:854 engines/mohawk/detection_tables.h:868
-#: engines/mohawk/detection_tables.h:882 engines/mohawk/detection_tables.h:897
-#: engines/mohawk/detection_tables.h:912 engines/mohawk/detection_tables.h:927
-#: engines/mohawk/detection_tables.h:941 engines/mohawk/detection_tables.h:956
-#: engines/mohawk/detection_tables.h:973 engines/mohawk/detection_tables.h:991
-#: engines/mohawk/detection_tables.h:1005
-#: engines/mohawk/detection_tables.h:1019
-#: engines/mohawk/detection_tables.h:1036
-#: engines/mohawk/detection_tables.h:1054
-#: engines/mohawk/detection_tables.h:1071
-#: engines/mohawk/detection_tables.h:1351
-#: engines/mohawk/detection_tables.h:1367
-#: engines/mohawk/detection_tables.h:1382
-#: engines/mohawk/detection_tables.h:1428
-#: engines/mohawk/detection_tables.h:1550
-#: engines/mohawk/detection_tables.h:1565
-#: engines/mohawk/detection_tables.h:1580
-#: engines/mohawk/detection_tables.h:1598
-#: engines/mohawk/detection_tables.h:1613
-#: engines/mohawk/detection_tables.h:2662
-#: engines/mohawk/detection_tables.h:2677
-#: engines/mohawk/detection_tables.h:3797
-#: engines/mohawk/detection_tables.h:3812 engines/myst3/detection.cpp:142
-#: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5358
-#: engines/sci/detection_tables.h:5366 engines/stark/detection.cpp:319
-#: engines/teenagent/detection.cpp:117 engines/toltecs/detection.cpp:210
-#: engines/trecision/detection.cpp:201 engines/zvision/detection_tables.h:129
-msgid "Missing game code"
-msgstr "Λείπουν τμήματα απαραίτητου κώδικα για αυτή την έκδοση του παιχνιδιού"
 
 #. I18N: Blade Runner Enhanced Edition is a trademark, so please keep the capitalization
 #. for Enhanced Edition as is.
@@ -7165,7 +7099,7 @@ msgstr "Εναλλαγή Ετοιμότητας για Μάχη"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:901 engines/twp/metaengine.cpp:162
+#: engines/scumm/metaengine.cpp:916 engines/twp/metaengine.cpp:162
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "Παράλειψη ταινίας"
@@ -7221,7 +7155,9 @@ msgstr "Εναλλαγή Ιδιωτικότητας Ευρημάτων"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SAVE GAME
-#: engines/bladerunner/metaengine.cpp:330 engines/cge2/metaengine.cpp:221
+#: engines/bladerunner/metaengine.cpp:330
+#: engines/freescape/games/dark/dark.cpp:183
+#: engines/freescape/games/driller/driller.cpp:121
 #: engines/pegasus/pegasus.cpp:2825
 msgid "Save Game"
 msgstr "Αποθήκευση παιχνιδιού"
@@ -7230,7 +7166,9 @@ msgstr "Αποθήκευση παιχνιδιού"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. LOAD GAME
-#: engines/bladerunner/metaengine.cpp:339 engines/cge2/metaengine.cpp:226
+#: engines/bladerunner/metaengine.cpp:339
+#: engines/freescape/games/dark/dark.cpp:188
+#: engines/freescape/games/driller/driller.cpp:126
 #: engines/pegasus/pegasus.cpp:2831
 msgid "Load Game"
 msgstr "Φόρτωση Παιχνιδιού"
@@ -7264,6 +7202,8 @@ msgstr "Βάση Δεδομένων Στοιχείων Έρευνας"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. QUIT GAME
 #: engines/bladerunner/metaengine.cpp:375 engines/dragons/metaengine.cpp:224
+#: engines/freescape/games/dark/dark.cpp:193
+#: engines/freescape/games/driller/driller.cpp:131
 msgid "Quit Game"
 msgstr "Έξοδος από το παιχνίδι"
 
@@ -7332,79 +7272,104 @@ msgstr "Χρήση TTS για την ανάγνωση κειμένου στο π
 msgid "Game Keymappings"
 msgstr "Αντιστοίχιση Πλήκτρων"
 
+#: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:225
+#, fuzzy
+#| msgid "Skip"
+msgid "Exit/Skip"
+msgstr "Παράλειψη"
+
+#: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
+#: engines/hopkins/metaengine.cpp:238 engines/lure/metaengine.cpp:191
+#: engines/made/metaengine.cpp:162 engines/mads/metaengine.cpp:305
+#: engines/saga/metaengine.cpp:441 engines/stark/metaengine.cpp:208
+#: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:151
+#: engines/wintermute/keymapper_tables.h:920
+msgid "Save game"
+msgstr "Αποθήκευση παιχνιδιού"
+
+#: engines/cge/metaengine.cpp:227 engines/cge2/metaengine.cpp:241
+#: engines/hopkins/metaengine.cpp:244 engines/made/metaengine.cpp:168
+#: engines/mohawk/myst_stacks/menu.cpp:283
+#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:431
+#: engines/stark/metaengine.cpp:213 engines/trecision/metaengine.cpp:175
+#: engines/vcruise/metaengine.cpp:156 engines/wintermute/keymapper_tables.h:925
+#: engines/wintermute/keymapper_tables.h:1265
+msgid "Load game"
+msgstr "Φόρτωση παιχνιδιού"
+
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
-#: engines/cge/metaengine.cpp:204 engines/cge2/metaengine.cpp:216
+#: engines/cge/metaengine.cpp:234 engines/cge2/metaengine.cpp:248
 msgid "Game Info"
 msgstr "Πληροφορίες Παιχνιδιού"
 
 #. I18N: This opens a Quit Prompt where you have to choose
 #. [Confirm] or [Continue Playing] lines with Left Click.
-#: engines/cge/metaengine.cpp:211 engines/cge2/metaengine.cpp:233
+#: engines/cge/metaengine.cpp:242 engines/cge2/metaengine.cpp:256
 msgid "Quit Prompt"
 msgstr "Έξοδος"
 
 #. I18N: Here ALTered Item refers to the dice that has been altered/changed.
 #. In order to escape the dice game loop press Right/Left Alt
-#: engines/cge/metaengine.cpp:218
+#: engines/cge/metaengine.cpp:250
 msgid "ALTered Item"
 msgstr "Κάλπικο Αντικείμενο"
 
-#: engines/cge/metaengine.cpp:224
+#: engines/cge/metaengine.cpp:257
 msgid "Inventory Item 1 (Select/Deselect)"
 msgstr "Αντικείμενο Υπαρχόντων 1 (Απ/Επιλογή)"
 
-#: engines/cge/metaengine.cpp:229
+#: engines/cge/metaengine.cpp:262
 msgid "Inventory Item 2 (Select/Deselect)"
 msgstr "Αντικείμενο Υπαρχόντων 2 (Απ/Επιλογή)"
 
-#: engines/cge/metaengine.cpp:234
+#: engines/cge/metaengine.cpp:267
 msgid "Inventory Item 3 (Select/Deselect)"
 msgstr "Αντικείμενο Υπαρχόντων 3 (Απ/Επιλογή)"
 
-#: engines/cge/metaengine.cpp:239
+#: engines/cge/metaengine.cpp:272
 msgid "Inventory Item 4 (Select/Deselect)"
 msgstr "Αντικείμενο Υπαρχόντων 4 (Απ/Επιλογή)"
 
-#: engines/cge/metaengine.cpp:244
+#: engines/cge/metaengine.cpp:277
 msgid "Inventory Item 5 (Select/Deselect)"
 msgstr "Αντικείμενο Υπαρχόντων 5 (Απ/Επιλογή)"
 
-#: engines/cge/metaengine.cpp:249
+#: engines/cge/metaengine.cpp:282
 msgid "Inventory Item 6 (Select/Deselect)"
 msgstr "Αντικείμενο Υπαρχόντων 6 (Απ/Επιλογή)"
 
-#: engines/cge/metaengine.cpp:254
+#: engines/cge/metaengine.cpp:287
 msgid "Inventory Item 7 (Select/Deselect)"
 msgstr "Αντικείμενο Υπαρχόντων 7 (Απ/Επιλογή)"
 
-#: engines/cge/metaengine.cpp:259
+#: engines/cge/metaengine.cpp:292
 msgid "Inventory Item 8 (Select/Deselect)"
 msgstr "Αντικείμενο Υπαρχόντων 8 (Απ/Επιλογή)"
 
 #. I18N: There are 24 single-room/screen locations in the game.
 #. You switch between them from numbered buttons on interface.
 #. Sets the current access to only the first Location
-#: engines/cge/metaengine.cpp:267
+#: engines/cge/metaengine.cpp:300
 msgid "DEBUG: Access to Location 1"
 msgstr "ΑΠΟΣΦΑΛΜΑΤΩΣΗ: Πρόσβαση σε Τοποθεσία 1"
 
 #. I18N: Sets the current access to Locations 1 to 8.
-#: engines/cge/metaengine.cpp:273
+#: engines/cge/metaengine.cpp:306
 msgid "DEBUG: Access to Locations 1-8"
 msgstr "ΑΠΟΣΦΑΛΜΑΤΩΣΗ: Πρόσβαση σε Τοποθεσίες 1-8"
 
 #. I18N: Sets the current access to Locations 1 to 16.
-#: engines/cge/metaengine.cpp:279
+#: engines/cge/metaengine.cpp:312
 msgid "DEBUG: Access to Locations 1-16"
 msgstr "ΑΠΟΣΦΑΛΜΑΤΩΣΗ: Πρόσβαση σε Τοποθεσίες 1-16"
 
 #. I18N: Sets the current access to Locations 1 to 23.
-#: engines/cge/metaengine.cpp:285
+#: engines/cge/metaengine.cpp:318
 msgid "DEBUG: Access to Locations 1-23"
 msgstr "ΑΠΟΣΦΑΛΜΑΤΩΣΗ: Πρόσβαση σε Τοποθεσίες 1-23"
 
 #. I18N: Sets the current access to Locations 1 to 24.
-#: engines/cge/metaengine.cpp:291
+#: engines/cge/metaengine.cpp:324
 msgid "DEBUG: Access to Locations 1-24"
 msgstr "ΑΠΟΣΦΑΛΜΑΤΩΣΗ: Πρόσβαση σε Τοποθεσίες 1-24"
 
@@ -7433,7 +7398,7 @@ msgstr ""
 "είναι διαθέσιμη)"
 
 #. I18N: This closes the Dialogue/text box.
-#: engines/cge2/metaengine.cpp:245
+#: engines/cge2/metaengine.cpp:229
 msgid "Close the Dialogue box"
 msgstr "Κλείσιμο παραθύρου διαλόγου"
 
@@ -7461,9 +7426,9 @@ msgstr "Αποθηκευμένο παιχνίδι χωρίς όνομα"
 msgid "Empty autosave"
 msgstr "Κενή αυτόματη αποθήκευση"
 
-#: engines/cine/metaengine.cpp:258 engines/lure/metaengine.cpp:168
-#: engines/made/metaengine.cpp:102 engines/mads/metaengine.cpp:274
-#: engines/trecision/metaengine.cpp:120
+#: engines/cine/metaengine.cpp:258 engines/hopkins/metaengine.cpp:208
+#: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:102
+#: engines/mads/metaengine.cpp:274 engines/trecision/metaengine.cpp:120
 #, fuzzy
 #| msgid "Default game keymap"
 msgid "Default keymappings"
@@ -7534,8 +7499,8 @@ msgstr "Βγάλε"
 #: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:94
 #: engines/icb/icb.cpp:101 engines/icb/icb.cpp:179 engines/scumm/help.cpp:229
 #: engines/scumm/help.cpp:238 engines/scumm/help.cpp:245
-#: engines/scumm/help.cpp:253 engines/twine/metaengine.cpp:418
-#: engines/zvision/metaengine.cpp:232
+#: engines/scumm/help.cpp:253 engines/stark/metaengine.cpp:267
+#: engines/twine/metaengine.cpp:418 engines/zvision/metaengine.cpp:232
 msgid "Inventory"
 msgstr "Υπάρχοντα"
 
@@ -7633,7 +7598,7 @@ msgstr "Μίλα/Αλληλεπίδρασε"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:888
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:903
 msgid "Attack"
 msgstr "Επίθεση"
 
@@ -7642,7 +7607,7 @@ msgstr "Επίθεση"
 msgid "Block"
 msgstr "Μπλόκαρε"
 
-#: engines/crab/input/input.cpp:169 engines/twine/metaengine.cpp:449
+#: engines/crab/input/input.cpp:169 engines/twine/metaengine.cpp:462
 msgid "Accept"
 msgstr "Αποδοχή"
 
@@ -7674,7 +7639,7 @@ msgstr "Απάντηση 5"
 msgid "Reply 6"
 msgstr "Απάντηση 6"
 
-#: engines/crab/input/input.cpp:221 engines/twine/metaengine.cpp:495
+#: engines/crab/input/input.cpp:221 engines/twine/metaengine.cpp:508
 msgid "Next Page"
 msgstr "Επόμενη Σελίδα"
 
@@ -7788,134 +7753,186 @@ msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr ""
 "Αφήγηση κειμένου για Αντικείμενα, Επιλογές, και το Απόφθευγμα της Βίβλου"
 
-#: engines/freescape/metaengine.cpp:40
+#: engines/freescape/metaengine.cpp:42
 msgid "Prerecorded sounds"
 msgstr "Προηχογραφημένα ηχητικά εφέ"
 
-#: engines/freescape/metaengine.cpp:41
+#: engines/freescape/metaengine.cpp:43
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
 "Χρήση προ-ηχογραφημένων ηχητικών εφέ υψηλής ποιότητας αντί ήχου εξομοίωσης "
 "ηχείου PC (PC speaker)"
 
-#: engines/freescape/metaengine.cpp:51
+#: engines/freescape/metaengine.cpp:53
 msgid "Extended timer"
 msgstr "Επαυξημένο χρονόμετρο"
 
-#: engines/freescape/metaengine.cpp:52
+#: engines/freescape/metaengine.cpp:54
 msgid "Start the game timer at 99:59:59"
 msgstr "Εκκίνηση του χρονομέτρου παιχνιδιού από 99:59:59"
 
-#: engines/freescape/metaengine.cpp:62
+#: engines/freescape/metaengine.cpp:64
 msgid "Automatic drilling"
 msgstr "Αυτόματη γεώτρηση"
 
-#: engines/freescape/metaengine.cpp:63
+#: engines/freescape/metaengine.cpp:65
 msgid "Allow to succefully drill in any part of the area in Driller"
 msgstr "Επιτρέπει την επιτυχημένη γεώτρηση σε οποιαδήποτε περιοχή στο Driller"
 
-#: engines/freescape/metaengine.cpp:73
+#: engines/freescape/metaengine.cpp:75
 msgid "Disable demo mode"
 msgstr "Απενεργοποίηση λειτουργίας demo"
 
-#: engines/freescape/metaengine.cpp:74
+#: engines/freescape/metaengine.cpp:76
 msgid "Never activate demo mode"
 msgstr "Να μην ενεργοποιηθεί ποτέ η λειτουργία demo"
 
-#: engines/freescape/metaengine.cpp:84
+#: engines/freescape/metaengine.cpp:86
 msgid "Disable sensors"
 msgstr "Απενεργοποίηση αισθητήρων"
 
-#: engines/freescape/metaengine.cpp:85
+#: engines/freescape/metaengine.cpp:87
 msgid "Sensors will not shoot the player"
 msgstr "Οι αισθητήρες δεν θα πυροβολούν τον παίκτη"
 
-#: engines/freescape/metaengine.cpp:95
+#: engines/freescape/metaengine.cpp:97
 msgid "Disable falling"
 msgstr "Απενεργοποίηση πτώσης"
 
-#: engines/freescape/metaengine.cpp:96
+#: engines/freescape/metaengine.cpp:98
 msgid "Player cannot fall over edges"
 msgstr "Ο παίκτης δεν θα μπορεί να πέσει από τις άκρες"
 
-#: engines/freescape/metaengine.cpp:106
+#: engines/freescape/metaengine.cpp:108
 msgid "Invert Y-axis on mouse"
 msgstr "Αντιστροφή άξονα-Y στο ποντίκι"
 
-#: engines/freescape/metaengine.cpp:107
+#: engines/freescape/metaengine.cpp:109
 msgid "Use alternative camera controls"
 msgstr "Εναλλακτικός χειρισμός κάμερας"
 
-#: engines/freescape/metaengine.cpp:117
+#: engines/freescape/metaengine.cpp:119
 #, fuzzy
 #| msgid "Filter graphics"
 msgid "Authentic graphics"
 msgstr "Φίλτρο γραφικών"
 
-#: engines/freescape/metaengine.cpp:118
+#: engines/freescape/metaengine.cpp:120
 msgid "Keep graphics as close as possible to the original"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:128
+#: engines/freescape/metaengine.cpp:130
 #, fuzzy
 #| msgid "Enable storage"
 msgid "Enable rock travel"
 msgstr "Ενεργοποίηση αποθήκευσης"
 
-#: engines/freescape/metaengine.cpp:129
+#: engines/freescape/metaengine.cpp:131
 msgid "Enable traveling using a rock shoot at start"
 msgstr ""
 
-#: engines/freescape/movement.cpp:47 engines/hpl1/metaengine.cpp:78
+#: engines/freescape/movement.cpp:49 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
 msgid "Strafe Left"
 msgstr "Πλάγια στα Αριστερά"
 
-#: engines/freescape/movement.cpp:53 engines/hpl1/metaengine.cpp:79
+#: engines/freescape/movement.cpp:56 engines/hpl1/metaengine.cpp:79
 #: engines/mm/mm1/metaengine.cpp:100
 msgid "Strafe Right"
 msgstr "Πλάγια στα Δεξιά"
 
 #. I18N: Combat command in Might & Magic 1
-#: engines/freescape/movement.cpp:59 engines/mm/mm1/metaengine.cpp:79
+#: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
 msgstr "Πυροβόλησε"
 
-#: engines/freescape/movement.cpp:65
-msgid "Rise/Fly up"
-msgstr "Σήκω/Πέτα ψηλότερα"
-
-#: engines/freescape/movement.cpp:71
-msgid "Lower/Fly down"
-msgstr "Κατέβα/Πέτα χαμηλότερα"
+#: engines/freescape/movement.cpp:72
+#, fuzzy
+#| msgid "Rotate"
+msgid "Rotate up"
+msgstr "Περιστροφή"
 
 #: engines/freescape/movement.cpp:77
+#, fuzzy
+#| msgid "Rotate"
+msgid "Rotate down"
+msgstr "Περιστροφή"
+
+#. I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
+#: engines/freescape/movement.cpp:90
+#, fuzzy
+#| msgid "Change mode"
 msgid "Change mode"
 msgstr "Αλλαγή λειτουργίας"
 
-#: engines/freescape/movement.cpp:83
-msgid "Rotate Left"
-msgstr "Περιστροφή Αριστερά"
+#. I18N: ESC key
+#: engines/freescape/movement.cpp:96 engines/lure/metaengine.cpp:209
+#: engines/mads/metaengine.cpp:292 engines/mm/mm1/metaengine.cpp:41
+#: engines/mm/mm1/metaengine.cpp:47 engines/saga/metaengine.cpp:328
+#: engines/twine/metaengine.cpp:436 engines/wintermute/keymapper_tables.h:60
+msgid "Escape"
+msgstr "Πλήκτρο Escape"
 
-#: engines/freescape/movement.cpp:88
-msgid "Rotate Right"
-msgstr "Περιστροφή Δεξιά"
-
-#: engines/freescape/movement.cpp:93
+#: engines/freescape/movement.cpp:101
 msgid "Info Menu"
 msgstr "Μενού Πληροφοριών"
 
-#: engines/freescape/games/dark/dark.cpp:164
+#: engines/freescape/games/dark/dark.cpp:203
+#: engines/freescape/games/driller/driller.cpp:139
+#, fuzzy
+#| msgid "Toggle mute"
+msgid "Toggle Sound"
+msgstr "Εναλλαγή σίγασης"
+
+#: engines/freescape/games/dark/dark.cpp:209
+#: engines/freescape/games/driller/driller.cpp:145
+msgid "Rotate Left"
+msgstr "Περιστροφή Αριστερά"
+
+#: engines/freescape/games/dark/dark.cpp:214
+#: engines/freescape/games/driller/driller.cpp:150
+msgid "Rotate Right"
+msgstr "Περιστροφή Δεξιά"
+
+#. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
+#: engines/freescape/games/dark/dark.cpp:220
+#: engines/freescape/games/driller/driller.cpp:156
+#, fuzzy
+#| msgid "Increase the scale factor"
+msgid "Increase Step Size"
+msgstr "Αύξηση συντελεστή κλίμακας"
+
+#. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
+#: engines/freescape/games/dark/dark.cpp:226
+#: engines/freescape/games/driller/driller.cpp:162
+#, fuzzy
+#| msgid "Decrease the scale factor"
+msgid "Decrease Step Size"
+msgstr "Μείωση συντελεστή κλίμακας"
+
+#: engines/freescape/games/dark/dark.cpp:231
+#: engines/freescape/games/driller/driller.cpp:167
+msgid "Rise/Fly up"
+msgstr "Σήκω/Πέτα ψηλότερα"
+
+#: engines/freescape/games/dark/dark.cpp:237
+#: engines/freescape/games/driller/driller.cpp:173
+msgid "Lower/Fly down"
+msgstr "Κατέβα/Πέτα χαμηλότερα"
+
+#: engines/freescape/games/dark/dark.cpp:243
 msgid "Enable/Disable Jetpack"
 msgstr ""
 
-#: engines/freescape/games/driller/driller.cpp:105
+#. I18N: drilling rig is an in game item
+#: engines/freescape/games/driller/driller.cpp:180
 #, fuzzy
 #| msgid "Debug Apply Celling Grid"
 msgid "Deploy drilling rig"
 msgstr "Αποσφαλμάτωση: Εφαρμογή Πλέγματος στο Ταβάνι"
 
-#: engines/freescape/games/driller/driller.cpp:111
+#. I18N: drilling rig is an in game item
+#: engines/freescape/games/driller/driller.cpp:187
 msgid "Collect drilling rig"
 msgstr ""
 
@@ -8260,10 +8277,8 @@ msgid "GroovieV2 support is not compiled in"
 msgstr "Η υποστήριξη της GroovieV2 δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
 #: engines/groovie/metaengine.cpp:201
-#, fuzzy
-#| msgid "Available engines:"
 msgid "Groovie engine"
-msgstr "Διαθέσιμες μηχανές:"
+msgstr "Μηχανή Groovie"
 
 #: engines/groovie/metaengine.cpp:217
 #, fuzzy
@@ -8312,13 +8327,25 @@ msgstr "Σβήσιμο σημείων προορισμού"
 msgid "Debug"
 msgstr "Αποσφαλμάτωση"
 
-#: engines/hopkins/metaengine.cpp:43 engines/hopkins/metaengine.cpp:55
+#: engines/hopkins/metaengine.cpp:47 engines/hopkins/metaengine.cpp:59
 msgid "Gore Mode"
 msgstr "Λειτουργία Αίματος"
 
-#: engines/hopkins/metaengine.cpp:44 engines/hopkins/metaengine.cpp:56
+#: engines/hopkins/metaengine.cpp:48 engines/hopkins/metaengine.cpp:60
 msgid "Enable Gore Mode when available"
 msgstr "Ενεργοποίηση Λειτουργίας Αίματος όταν υπάρχει διαθεσιμότητα"
+
+#: engines/hopkins/metaengine.cpp:231
+#, fuzzy
+#| msgid "Open/Close Inventory"
+msgid "Open inventory"
+msgstr "Άνοιγμα/Κλείσιμο Υπαρχόντων"
+
+#: engines/hopkins/metaengine.cpp:250
+#, fuzzy
+#| msgid "Skip dialogue"
+msgid "Option dialog"
+msgstr "Παράκαμψη διαλόγου"
 
 #: engines/hpl1/metaengine.cpp:76
 msgid "Forward"
@@ -8842,32 +8869,13 @@ msgstr "Αντιστοίχιση Πλήκτρων"
 msgid "Yes/No keymappings"
 msgstr "Αντιστοίχιση Πλήκτρων"
 
-#: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:162
-#: engines/mads/metaengine.cpp:305 engines/saga/metaengine.cpp:441
-#: engines/trecision/metaengine.cpp:169 engines/vcruise/metaengine.cpp:151
-#: engines/wintermute/keymapper_tables.h:920
-msgid "Save game"
-msgstr "Αποθήκευση παιχνιδιού"
-
 #: engines/lure/metaengine.cpp:197 engines/mads/metaengine.cpp:311
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restore game"
-msgstr "Επαναφορά παιχνιδιού:"
+msgstr "Επαναφορά παιχνιδιού"
 
 #: engines/lure/metaengine.cpp:203
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Restart game"
-msgstr "Επαναφορά παιχνιδιού:"
-
-#. I18N: ESC key
-#: engines/lure/metaengine.cpp:209 engines/mads/metaengine.cpp:292
-#: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
-#: engines/saga/metaengine.cpp:328 engines/twine/metaengine.cpp:436
-#: engines/wintermute/keymapper_tables.h:60
-msgid "Escape"
-msgstr "Πλήκτρο Escape"
+msgstr "Επανέναρξη παιχνιδιού"
 
 #. I18N: Shift Cursor during fight to top left
 #: engines/lure/metaengine.cpp:233
@@ -8965,14 +8973,6 @@ msgstr "Δρομέας Αριστερά"
 msgid "Cursor right"
 msgstr "Δρομέας Δεξιά"
 
-#: engines/made/metaengine.cpp:168 engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:349 engines/saga/metaengine.cpp:431
-#: engines/trecision/metaengine.cpp:175 engines/vcruise/metaengine.cpp:156
-#: engines/wintermute/keymapper_tables.h:925
-#: engines/wintermute/keymapper_tables.h:1265
-msgid "Load game"
-msgstr "Φόρτωση παιχνιδιού"
-
 #: engines/made/metaengine.cpp:174
 #, fuzzy
 #| msgid "Reload last save"
@@ -9025,16 +9025,12 @@ msgid "Scroll bar down"
 msgstr "Κύλιση κάτω"
 
 #: engines/mads/metaengine.cpp:331
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Start game"
-msgstr "Επαναφορά παιχνιδιού:"
+msgstr "Έναρξη παιχνιδιού"
 
 #: engines/mads/metaengine.cpp:337
-#, fuzzy
-#| msgid "Restore game:"
 msgid "Resume game"
-msgstr "Επαναφορά παιχνιδιού:"
+msgstr "Συνέχιση παιχνιδιού"
 
 #: engines/mads/metaengine.cpp:343
 #, fuzzy
@@ -9052,7 +9048,7 @@ msgstr "Προβολή συντελεστών"
 msgid "Show quotes"
 msgstr "Επιλογές Ομιλίας"
 
-#: engines/mads/metaengine.cpp:361
+#: engines/mads/metaengine.cpp:361 engines/stark/metaengine.cpp:280
 #, fuzzy
 #| msgid "Quit game"
 msgid "Exit game"
@@ -10035,7 +10031,8 @@ msgid "Conversation position - Down"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:333 engines/scumm/help.cpp:80
-#: engines/trecision/metaengine.cpp:150 engines/vcruise/metaengine.cpp:171
+#: engines/stark/metaengine.cpp:286 engines/trecision/metaengine.cpp:150
+#: engines/vcruise/metaengine.cpp:171
 msgid "Pause game"
 msgstr "Παύση παιχνιδιού"
 
@@ -10562,7 +10559,7 @@ msgid "Your Name:"
 msgstr "Το Όνομά σας:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3943
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3999
 msgid "Host"
 msgstr "Φιλοξενία"
 
@@ -10572,7 +10569,7 @@ msgid "Querying games..."
 msgstr "Αναζήτηση παιχνιδιών..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3943
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3999
 msgid "Join"
 msgstr "Συμμετοχή"
 
@@ -11466,21 +11463,27 @@ msgstr ""
 "κάμερας στην εισαγωγή."
 
 #: engines/scumm/metaengine.cpp:717
+#, fuzzy
+#| msgid ""
+#| "Allow the game to use the in-engine graphical interface and the original "
+#| "save/load menu. \t\tUse it together with the \"Ask for confirmation on "
+#| "exit\" for a more complete experience."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
-"\" for a more complete experience."
+"\" for a more complete experience. \t\tAutosaving is disabled when this mode "
+"is active."
 msgstr ""
 "Επιτρέπει στο παιχνίδι να χρησιμοποιήσει το εγγενές γραφικό περιβάλλον "
 "διεπαφής και το αρχικό μενού αποθήκευσης/φόρτωσης. \t\tΣε συνδυασμό με την "
 "επιλογή \"Να ζητείται επιβεβαίωση κατά την έξοδο\" προσφέρει μια πιο "
 "ολοκληρωμένη εμπειρία."
 
-#: engines/scumm/metaengine.cpp:726
+#: engines/scumm/metaengine.cpp:727
 msgid "Enable low latency audio mode"
 msgstr "Ενεργοποίηση γρήγορης απόκρισης ήχου"
 
-#: engines/scumm/metaengine.cpp:727
+#: engines/scumm/metaengine.cpp:728
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. \t"
 "\tIt is recommended to enable this feature only if you incur in audio "
@@ -11491,11 +11494,11 @@ msgstr ""
 "ενεργοποιήσετε αυτή τη δυνατότητα μόνο αν αντιμετωπίζετε θέματα καθυστέρησης "
 "του ήχου όσο παίζετε το κυρίως παιχνίδι."
 
-#: engines/scumm/metaengine.cpp:736
+#: engines/scumm/metaengine.cpp:737
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr "Χρήση του τραγουδιού \"A Pirate I Was Meant To Be\""
 
-#: engines/scumm/metaengine.cpp:737
+#: engines/scumm/metaengine.cpp:738
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", \t\twhich was cut in international releases. Beware though: "
@@ -11505,30 +11508,54 @@ msgstr ""
 "Pirate I Was Meant To Be\", \t\tπου είχε αφαιρεθεί από τις διεθνείς "
 "εκδόσεις. Προσοχή: οι υπότιτλοι μπορεί να μην είναι πλήρως μεταφρασμένοι."
 
-#: engines/scumm/metaengine.cpp:836
+#: engines/scumm/metaengine.cpp:756
+#, fuzzy
+#| msgid "Disable demo mode"
+msgid "Enable demo/kiosk mode"
+msgstr "Απενεργοποίηση λειτουργίας demo"
+
+#: engines/scumm/metaengine.cpp:757
+msgid "Enable demo/kiosk mode in the full retail version of Maniac Mansion."
+msgstr ""
+
+#: engines/scumm/metaengine.cpp:851
 msgid "Down Left"
 msgstr "Κάτω Αριστερά"
 
-#: engines/scumm/metaengine.cpp:849
+#: engines/scumm/metaengine.cpp:864
 msgid "Down Right"
 msgstr "Κάτω Δεξιά"
 
-#: engines/scumm/metaengine.cpp:869
+#: engines/scumm/metaengine.cpp:884
 msgid "Up Left"
 msgstr "Πάνω Αριστερά"
 
-#: engines/scumm/metaengine.cpp:882
+#: engines/scumm/metaengine.cpp:897
 msgid "Up Right"
 msgstr "Πάνω Δεξιά"
 
-#: engines/scumm/metaengine.cpp:894
+#: engines/scumm/metaengine.cpp:909
 msgid "Switch weapon"
 msgstr "Αλλαγή όπλου"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:908
+#: engines/scumm/metaengine.cpp:923
 msgid "Win the bike fight cheat"
 msgstr "Κόλπο για νίκη στη μάχη με τις μηχανές"
+
+#: engines/scumm/saveload.cpp:1969
+#, c-format
+msgid ""
+"Warning: incompatible sound settings detected between the current "
+"configuration and this saved game.\n"
+"\n"
+"Current music device: %s (id %d)\n"
+"Save file music device: %s (id %d)\n"
+"\n"
+"Loading will be attempted, but the game may behave incorrectly or crash.\n"
+"Please change the audio configuration accordingly in order to properly load "
+"this save file."
+msgstr ""
 
 #: engines/scumm/scumm.cpp:292
 msgid ""
@@ -11587,7 +11614,7 @@ msgstr ""
 "Παρακαλούμε να αντιγράψετε τα αυθεντικά (original) ασυμπίεστα αρχεία ήχου "
 "του παιχνιδιού."
 
-#: engines/scumm/scumm.cpp:2100
+#: engines/scumm/scumm.cpp:2104
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -11596,7 +11623,7 @@ msgstr ""
 "Η υποστήριξη εγγενούς MIDI απαιτεί την Αναβάθμιση Roland από τη LucasArts,\n"
 "αλλά το %s λείπει. Αντ' αυτού θα γίνει χρήση AdLib."
 
-#: engines/scumm/scumm.cpp:2116
+#: engines/scumm/scumm.cpp:2120
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
@@ -11605,7 +11632,7 @@ msgstr ""
 "απαραίτητα\n"
 "δεδομένα για την υποστήριξη του MT-32. Αντ' αυτού θα γίνει χρήση AdLib."
 
-#: engines/scumm/scumm.cpp:3832
+#: engines/scumm/scumm.cpp:3888
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -11616,7 +11643,7 @@ msgstr ""
 "φάκελο 'Maniac' μέσα στο φάκελο παιχνιδιού του Tentacle, και το παιχνίδι "
 "πρέπει να προστεθεί στο ScummVM."
 
-#: engines/scumm/scumm.cpp:3943
+#: engines/scumm/scumm.cpp:3999
 msgid "Would you like to host or join a network play session?"
 msgstr "Θέλετε να φιλοξενήσετε ή να συμμετέχετε σε online συνεδρία παιχνιδιού;"
 
@@ -11654,10 +11681,8 @@ msgstr ""
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:112
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:124
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:136
-#, fuzzy
-#| msgid "Random seed:"
 msgid "Random"
-msgstr "Φύτρα τυχαίων αριθμών:"
+msgstr "Τυχαίο"
 
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:67
 msgid "Picks the map algorithm randomly."
@@ -11870,21 +11895,21 @@ msgstr ""
 "ΠΡΟΣΟΧΗ: Η διαγραφή της θυρίδας αυτόματης αποθήκευσης δεν υποστηρίζεται από "
 "αυτή τη μηχανή"
 
-#: engines/stark/metaengine.cpp:37
+#: engines/stark/metaengine.cpp:41
 msgid "Load modded assets"
 msgstr "Φόρτωση τροποποιημένων στοιχείων"
 
-#: engines/stark/metaengine.cpp:38
+#: engines/stark/metaengine.cpp:42
 msgid "Enable loading of external replacement assets."
 msgstr ""
 "Ενεργοποίηση φόρτωσης εξωτερικών στοιχείων (assets) που θα αντικαταστήσουν "
 "αυτά του παιχνιδιού."
 
-#: engines/stark/metaengine.cpp:48
+#: engines/stark/metaengine.cpp:52
 msgid "Enable linear filtering of the backgrounds images"
 msgstr "Ενεργοποίηση γραμμικού φίλτρου στις εικόνες φόντου"
 
-#: engines/stark/metaengine.cpp:49
+#: engines/stark/metaengine.cpp:53
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
@@ -11893,15 +11918,117 @@ msgstr ""
 "ομαλά σε λειτουργία πλήρους οθόνης, με αντίτιμο την απώλεια κάποιας "
 "λεπτομέρειας."
 
-#: engines/stark/metaengine.cpp:59 engines/ultima/metaengine.cpp:140
+#: engines/stark/metaengine.cpp:63 engines/ultima/metaengine.cpp:140
 msgid "Enable font anti-aliasing"
 msgstr "Ενεργοποίηση εξομάλυνσης γραμματοσειράς"
 
-#: engines/stark/metaengine.cpp:60 engines/ultima/metaengine.cpp:141
+#: engines/stark/metaengine.cpp:64 engines/ultima/metaengine.cpp:141
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 "Όταν η εξομάλυνση γραμματοσειράς (font anti-aliasing) είναι ενεργοποιημένη, "
 "το κείμενο απεικονίζεται με λιγότερο τραχύ περίγραμμα."
+
+#: engines/stark/metaengine.cpp:184
+#, fuzzy
+#| msgid "Default game keymap"
+msgid "Default keymapppings"
+msgstr "Προκαθορισμένες αντιστοιχίες"
+
+#. I18N: Opens in-game Diary
+#: engines/stark/metaengine.cpp:202
+#, fuzzy
+#| msgid "Game menu"
+msgid "Diary menu"
+msgstr "Μενού παιχνιδιού"
+
+#. I18N: Opens in-game conversation log
+#: engines/stark/metaengine.cpp:219
+#, fuzzy
+#| msgid "Next location"
+msgid "Conversation log"
+msgstr "Επόμενο μέρος"
+
+#. I18N: Opens in-game Diary
+#: engines/stark/metaengine.cpp:225
+msgid "April's diary (initially disabled)"
+msgstr ""
+
+#: engines/stark/metaengine.cpp:230
+#, fuzzy
+#| msgid "Fast replay"
+msgid "Video replay"
+msgstr "Γρήγορη επανάληψη"
+
+#: engines/stark/metaengine.cpp:235
+#, fuzzy
+#| msgid "Game Options"
+msgid "Game settings"
+msgstr "Ρυθμίσεις Παιχνιδιού"
+
+#: engines/stark/metaengine.cpp:245 engines/wintermute/keymapper_tables.h:1345
+msgid "Toggle subtitles"
+msgstr "Εναλλαγή υποτίτλων"
+
+#: engines/stark/metaengine.cpp:250
+#, fuzzy
+#| msgid "Quit Game"
+msgid "Quit to menu"
+msgstr "Έξοδος από το παιχνίδι"
+
+#: engines/stark/metaengine.cpp:255
+msgid "Cycle back through inventory cursor items"
+msgstr ""
+
+#: engines/stark/metaengine.cpp:261
+msgid "Cycle forward through inventory cursor items"
+msgstr ""
+
+#. I18N: A popup on screen shows shows the exits
+#: engines/stark/metaengine.cpp:274
+msgid "Display all exits on current location"
+msgstr ""
+
+#: engines/stark/metaengine.cpp:292
+#, fuzzy
+#| msgid "Open/Close Inventory"
+msgid "Scroll up in inventory"
+msgstr "Άνοιγμα/Κλείσιμο Υπαρχόντων"
+
+#: engines/stark/metaengine.cpp:299
+#, fuzzy
+#| msgid "Show inventory"
+msgid "Scroll down in inventory"
+msgstr "Προβολή υπαρχόντων"
+
+#: engines/stark/metaengine.cpp:306
+msgid "Scroll up in your dialogues"
+msgstr ""
+
+#: engines/stark/metaengine.cpp:312
+msgid "Scroll down in your dialogues"
+msgstr ""
+
+#: engines/stark/metaengine.cpp:318
+#, fuzzy
+#| msgid "Highlight next dialogue"
+msgid "go to next dialogue"
+msgstr "Επισήμανση επόμενου διαλόγου"
+
+#: engines/stark/metaengine.cpp:323
+#, fuzzy
+#| msgid "Go to previous directory level"
+msgid "go to previous dialogues"
+msgstr "Μετάβαση στο προηγούμενο επίπεδο καταλόγου"
+
+#: engines/stark/metaengine.cpp:328
+#, fuzzy
+#| msgid "Skip dialogue"
+msgid "Select dialogue"
+msgstr "Παράκαμψη διαλόγου"
+
+#: engines/stark/metaengine.cpp:335
+msgid "Skip video sequence or dialogue"
+msgstr ""
 
 #: engines/stark/stark.cpp:106
 msgid "Software renderer does not support modded assets"
@@ -11909,11 +12036,11 @@ msgstr ""
 "Η απόδοση εικόνας μέσω λογισμικού δεν υποστηρίζει τροποποιημένα στοιχεία "
 "(modded assets)"
 
-#: engines/stark/stark.cpp:291
+#: engines/stark/stark.cpp:292
 msgid "You are missing recommended data files:"
 msgstr "Λείπουν τα ακόλουθα συνιστώμενα αρχεία δεδομένων:"
 
-#: engines/stark/stark.cpp:305
+#: engines/stark/stark.cpp:306
 msgid ""
 "The 'fonts' folder is required to experience the text style as it was "
 "designed. The Steam release is known to be missing it. You can get the fonts "
@@ -11923,7 +12050,7 @@ msgstr ""
 "είχε σχεδιαστεί. Είναι γνωστό πως η έκδοση από το Steam δεν τον περιέχει. "
 "Μπορείτε να βρείτε τις γραμματοσειρές από την έκδοση demo του παιχνιδιού."
 
-#: engines/stark/stark.cpp:312
+#: engines/stark/stark.cpp:313
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
@@ -11932,13 +12059,13 @@ msgstr ""
 "γραμματοσειράς για τις μεταφράσεις του παιχνιδιού σε άλλες γλώσσες "
 "(localization)."
 
-#: engines/stark/stark.cpp:318
+#: engines/stark/stark.cpp:319
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
 "Το 'language.ini' προτείνεται για να μπορείτε να έχετε τα παράθυρα με "
 "διαλόγους επιβεβαίωσης και σε άλλες γλώσσες."
 
-#: engines/stark/stark.cpp:324
+#: engines/stark/stark.cpp:325
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr ""
 "Το 'game.exe' προτείνεται για να έχουν ξεχωριστό στιλ τα παράθυρα με "
@@ -12121,31 +12248,31 @@ msgid "Font variant not present in '%s' engine data file."
 msgstr ""
 "H παραλλαγή γραμματοσειράς δεν υπάρχει στο αρχείο δεδομένων '%s' της μηχανής."
 
-#: engines/toon/toon.cpp:268
+#: engines/toon/toon.cpp:273
 #, c-format
 msgid "Saved game in slot #%d "
 msgstr "Έγινε αποθήκευση παιχνιδιού στη θυρίδα #%d "
 
-#: engines/toon/toon.cpp:272
+#: engines/toon/toon.cpp:277
 #, c-format
 msgid "Could not quick save into slot #%d"
 msgstr "Αδυναμία γρήγορης αποθήκευσης στη θυρίδα #%d"
 
-#: engines/toon/toon.cpp:285
+#: engines/toon/toon.cpp:290
 #, c-format
 msgid "Saved game #%d quick loaded"
 msgstr "Το αποθηκευμένη παιχνίδι #%d φορτώθηκε γρήγορα"
 
-#: engines/toon/toon.cpp:289
+#: engines/toon/toon.cpp:294
 #, c-format
 msgid "Could not quick load the saved game #%d"
 msgstr "Δεν ήταν δυνατή η γρήγορη φόρτωση του αποθηκευμένου παιχνιδιού #%d"
 
-#: engines/toon/toon.cpp:1538
+#: engines/toon/toon.cpp:1543
 msgid "Are you sure you want to exit?"
 msgstr "Σίγουρα επιθυμείτε έξοδο από το παιχνίδι;"
 
-#: engines/toon/toon.cpp:1951
+#: engines/toon/toon.cpp:1953
 #, c-format
 msgid "Unable to locate the '%s' data file."
 msgstr "Αδυναμία εντοπισμού του αρχείου παιχνιδιού '%s'."
@@ -12363,16 +12490,16 @@ msgstr "Ειδική Ενέργεια"
 msgid "Scenery Zoom"
 msgstr "Ζουμ Εικόνας"
 
-#: engines/twine/metaengine.cpp:457 engines/twine/metaengine.cpp:509
-#: engines/twine/metaengine.cpp:525
+#: engines/twine/metaengine.cpp:470 engines/twine/metaengine.cpp:522
+#: engines/twine/metaengine.cpp:538
 msgid "Abort"
 msgstr "Ακύρωση"
 
-#: engines/twine/metaengine.cpp:562
+#: engines/twine/metaengine.cpp:575
 msgid "Previous location"
 msgstr "Προηγούμενο μέρος"
 
-#: engines/twine/metaengine.cpp:567
+#: engines/twine/metaengine.cpp:580
 msgid "Next location"
 msgstr "Επόμενο μέρος"
 
@@ -13344,10 +13471,6 @@ msgstr "Χορευτική κίνηση δεξιά"
 msgid "Cancel input"
 msgstr "Ακύρωση εντολής"
 
-#: engines/wintermute/keymapper_tables.h:1345
-msgid "Toggle subtitles"
-msgstr "Εναλλαγή υποτίτλων"
-
 #: engines/wintermute/keymapper_tables.h:1409
 msgid "Hide hints"
 msgstr "Απόκρυψη Υποδείξεων"
@@ -13563,6 +13686,10 @@ msgstr ""
 "Liberation Fonts ή το πακέτο GNU FreeFont. Θα χρειαστείτε όλα τα fonts από "
 "το πακέτο με fonts που θα επιλέξετε, δηλαδή, LiberationMono, LiberationSans "
 "και LiberationSerif, ή FreeMono, FreeSans και FreeSerif αντίστοιχα."
+
+#~ msgid "Missing game code"
+#~ msgstr ""
+#~ "Λείπουν τμήματα απαραίτητου κώδικα για αυτή την έκδοση του παιχνιδιού"
 
 #, fuzzy
 #~| msgid "Toggle music on/off"

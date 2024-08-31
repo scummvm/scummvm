@@ -226,7 +226,7 @@ static const LureGameDescription gameDescriptions[] = {
 	{
 		{
 			"lure",
-			_s("Missing game code"), // Reason for being unsupported
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported
 			AD_ENTRY1s("disk1.vga", "7a6aa0e958450c33b70b664d9f841ad1", 621984),
 			Common::RU_RUS,
 			Common::kPlatformDOS,

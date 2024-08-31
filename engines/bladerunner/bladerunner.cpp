@@ -106,6 +106,7 @@ const char *BladeRunnerEngine::kCommonKeymapId = "bladerunner-common";
 BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *desc)
 	: Engine(syst),
 	  _rnd("bladerunner") {
+	_newGameRandomSeed = _rnd.getSeed();
 
 	_windowIsActive     = true;
 	_gameIsRunning      = true;
@@ -498,12 +499,14 @@ Common::Error BladeRunnerEngine::run() {
 			} else if (hasSavegames) {
 				_kia->_forceOpen = true;
 				_kia->open(kKIASectionLoad);
+			} else {
+				// Despite the redundancy (wrt initializations done in startup()),
+				// newGame() also does some additional setting up explicitly,
+				// so better to keep this here (helps with code readability too
+				// and with using the proper seed for randomization).
+				newGame(kGameDifficultyMedium);
 			}
 		}
-		// TODO: why is the game starting a new game here when everything is done in startup?
-		//  else {
-		// 	newGame(kGameDifficultyMedium);
-		// }
 		gameLoop();
 
 		_mouse->disable();
@@ -839,6 +842,36 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 		_aiScripts = new AIScripts(this, actorCount);
 
 		initChapterAndScene();
+
+		// Handle Boot Params here:
+		// If this process (loading an explicit set of Chapter, Set and Scene) fails,
+		// then the game will keep with the default Chapter, Set and Scene for a New Game
+		// as set in the initChapterAndScene() above.
+		// If the process succeeds (_bootParam will be true), then in run()
+		// we skip auto-starting a New Game proper or showing the KIA to load a saved game / start new game,
+		// and go directly to gameLoop() to start the game with the custom settings for Chapter, Set and Scene.
+		if (ConfMan.hasKey("boot_param")) {
+			int param = ConfMan.getInt("boot_param"); // CTTTSSS
+			if (param < 1000000 || param >= 6000000) {
+				debug("Invalid boot parameter. Valid format is: CTTTSSS");
+			} else {
+				int chapter = param / 1000000;
+				param -= chapter * 1000000;
+				int set = param / 1000;
+				param -= set * 1000;
+				int scene = param;
+
+				// init chapter to default first chapter (required by dbgAttemptToLoadChapterSetScene())
+				_settings->setChapter(1);
+				_validBootParam = _debugger->dbgAttemptToLoadChapterSetScene(chapter, set, scene);
+				if (_validBootParam) {
+					debug("Explicitly loading Chapter: %d Set: %d Scene: %d", chapter, set, scene);
+				} else {
+					debug("Invalid combination of Chapter Set and Scene ids as boot parameters");
+				}
+			}
+		}
+
 	}
 	return true;
 }
@@ -856,32 +889,8 @@ void BladeRunnerEngine::initChapterAndScene() {
 		_actors[i]->movementTrackNext(true);
 	}
 
-	if (ConfMan.hasKey("boot_param")) {
-		int param = ConfMan.getInt("boot_param"); // CTTTSSS
-		if (param < 1000000 || param >= 6000000) {
-			debug("Invalid boot parameter. Valid format is: CTTTSSS");
-		} else {
-			int chapter = param / 1000000;
-			param -= chapter * 1000000;
-			int set = param / 1000;
-			param -= set * 1000;
-			int scene = param;
-
-			// init chapter to default first chapter (required by dbgAttemptToLoadChapterSetScene())
-			_settings->setChapter(1);
-			_validBootParam = _debugger->dbgAttemptToLoadChapterSetScene(chapter, set, scene);
-			if (_validBootParam) {
-				debug("Explicitly loading Chapter: %d Set: %d Scene: %d", chapter, set, scene);
-			} else {
-				debug("Invalid combination of Chapter Set and Scene ids");
-			}
-		}
-	}
-
-	if (!_validBootParam) {
-		_settings->setChapter(1);
-		_settings->setNewSetAndScene(_gameInfo->getInitialSetId(), _gameInfo->getInitialSceneId());
-	}
+	_settings->setChapter(1);
+	_settings->setNewSetAndScene(_gameInfo->getInitialSetId(), _gameInfo->getInitialSceneId());
 }
 
 void BladeRunnerEngine::shutdown() {
@@ -2800,6 +2809,13 @@ bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream, int version
 }
 
 void BladeRunnerEngine::newGame(int difficulty) {
+	// Set a (new) seed for randomness when starting a new game.
+	// This also makes sure that if there's a custom random seed set in ScummVM's configuration,
+	// that's the one that will be used.
+	_newGameRandomSeed = Common::RandomSource::generateNewSeed();
+	_rnd.setSeed(_newGameRandomSeed );
+	//debug("Random seed for the New Game is: %u", _newGameRandomSeed );
+
 	_settings->reset();
 	_combat->reset();
 

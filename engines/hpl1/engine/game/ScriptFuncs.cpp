@@ -668,7 +668,7 @@ SCRIPT_DEFINE_FUNC_17(void, SetLight3DFlicker, string,
 //-----------------------------------------------------------------------
 
 /**
- * Creates a sound entity at the postion of an area.
+ * Creates a sound entity at the position of an area.
  * \param asName Name of the sound area
  * \param asFile The snt file to load.
  * \param asArea The area to create at.

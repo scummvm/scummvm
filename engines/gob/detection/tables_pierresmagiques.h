@@ -31,15 +31,13 @@
 #ifndef GOB_DETECTION_TABLES_PIERRESMAGIQUES_H
 #define GOB_DETECTION_TABLES_PIERRESMAGIQUES_H
 
-//#include "common/translation.h"  // Make release checker happy
-
 // -- French: Le pays des Pierres Magiques --
 
 {
 	{
 
 		"pierresmagiques",
-		_s("Missing game code"), // Le pays des Pierres Magiques (Engine: DEV7 version 1.2.0.0)
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Le pays des Pierres Magiques (Engine: DEV7 version 1.2.0.0)
 		AD_ENTRY2s("ed4.stk", "98721a7cfdc5a358d7ac56b7c6d3ba3d", 541882,
 				   "ed4cd.itk", "0627a91d9a6f4772c33747ce752024c2", 606993908),
 		FR_FRA,

@@ -20,6 +20,7 @@
  */
 
 #include "twine/script/script_move_v2.h"
+#include "twine/resources/resources.h"
 #include "twine/twine.h"
 
 namespace TwinE {
@@ -149,18 +150,32 @@ int32 ScriptMoveV2::mWAIT_NB_SECOND_RND(TwinEEngine *engine, MoveScriptContext &
 int32 ScriptMoveV2::mSPRITE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int16 num = ctx.stream.readSint16LE();
 	if (ctx.actor->_staticFlags.bIsSpriteActor) {
-		ctx.actor->_sprite = num;
-		engine->_actor->initSpriteActor(ctx.actorIdx);
+		engine->_actor->initSprite(num, ctx.actorIdx);
 	}
 	return 0;
 }
 
 int32 ScriptMoveV2::mSET_FRAME(TwinEEngine *engine, MoveScriptContext &ctx) {
-	return -1;
+	const uint8 num = ctx.stream.readByte();
+	if (!ctx.actor->_staticFlags.bIsSpriteActor) {
+		engine->_actor->setFrame(ctx.actorIdx, num);
+	}
+	return 0;
 }
 
 int32 ScriptMoveV2::mSET_FRAME_3DS(TwinEEngine *engine, MoveScriptContext &ctx) {
-	return -1;
+	int32 num = ctx.stream.readByte();
+	if (ctx.actor->_staticFlags.bHasSpriteAnim3D) {
+		const T_ANIM_3DS *anim = engine->_resources->getAnim(ctx.actor->A3DS.Num);
+		if (num > (anim->Fin - anim->Deb)) {
+			num = anim->Fin - anim->Deb;
+		}
+
+		num += anim->Deb;
+
+		engine->_actor->initSprite(num, ctx.actorIdx);
+	}
+	return 0;
 }
 
 int32 ScriptMoveV2::mSET_START_3DS(TwinEEngine *engine, MoveScriptContext &ctx) {

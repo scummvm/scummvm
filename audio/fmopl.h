@@ -140,14 +140,6 @@ public:
 	virtual void write(int a, int v) = 0;
 
 	/**
-	 * Reads a byte from the given I/O port.
-	 *
-	 * @param a		port address
-	 * @return		value read
-	 */
-	virtual byte read(int a) = 0;
-
-	/**
 	 * Function to directly write to a specific OPL register.
 	 * This writes to *both* chips for a Dual OPL2. We allow
 	 * writing to secondary OPL registers by using register

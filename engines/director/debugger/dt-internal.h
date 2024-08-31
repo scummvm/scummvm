@@ -250,6 +250,6 @@ extern ImGuiState *_state;
 
 }
 
-};
+}
 
 #endif

@@ -592,6 +592,7 @@ public:
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveAutosaveCurrently() override;
 
 	void pauseEngineIntern(bool pause) override;
 
@@ -1385,6 +1386,7 @@ protected:
 	virtual void palManipulateInit(int resID, int start, int end, int time);
 	void palManipulate();
 	uint32 findClosestPaletteColor(byte *palette, int paletteLength, byte r, byte g, byte b);
+	void applyGrayscaleToPaletteRange(int min, int max); // For Sam&Max original noir mode
 
 public:
 	uint8 *getHEPaletteSlot(uint16 palSlot);

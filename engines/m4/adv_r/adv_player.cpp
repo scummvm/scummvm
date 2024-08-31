@@ -59,6 +59,12 @@ void Player::syncGame(Common::Serializer &s) {
 	s.syncAsSint32LE(click_y);
 }
 
+void Player::resetWalk() {
+	need_to_walk = false;
+	ready_to_walk = true;
+	waiting_for_walk = false;
+}
+
 void PlayerInfo::syncGame(Common::Serializer &s) {
 	s.syncAsSint32LE(x);
 	s.syncAsSint32LE(y);

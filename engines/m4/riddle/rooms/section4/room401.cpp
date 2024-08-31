@@ -27,6 +27,23 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+static const char *const SAID[][2] = {
+	{ "POSTCARD RACK", "401R08" },
+	{ "POSTER",        "COM002" },
+	{ "WINDOW",        "401R10" },
+	{ "MAGAZINE",      "COM003" },
+	{ "RAILING",       "401R22" },
+	{ "DESK",          "401R23" },
+	{ "FAN",           "401R24" },
+	{ "BUSH",          "401R25" },
+	{ "AGENT",         "401R12" },
+	{ "CHAIR",         "COM023" },
+	{ "SOFA",          "COM023" },
+	{ "TELEPHONE",     "COM024" },
+	{ "COAT",          "401R41" },
+	{ nullptr, nullptr }
+};
+
 void Room401::preload() {
 	_G(player).walker_type = 1;
 	_G(player).shadow_type = 1;
@@ -475,6 +492,7 @@ void Room401::daemon() {
 		sendWSMessage_110000(511);
 		_val6 = 5;
 		digi_play("401x10", 1, 255, 512);
+		break;
 
 	case 511:
 		sendWSMessage_29a0000(_rip2);
@@ -892,7 +910,7 @@ void Room401::parser() {
 				break;
 			}
 		}
-	} else if (lookFlag && player_said("POSTCARD RACK")) {
+	} else if (lookFlag && _G(walker).ripley_said(SAID)) {
 		// No implementation
 	} else if (useFlag && player_said_any("SOFA", "CHAIR")) {
 		digi_play("COM025", 1, 255, -1, 997);

@@ -139,7 +139,7 @@ static const Myst3GameDescription gameDescriptions[] = {
 		// Chinese (Simplified) CD release (1.22LC)
 		{
 			"myst3",
-			_s("Missing game code"), // Lacks OVER101.m3o file
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Lacks OVER101.m3o file
 			{
 				{ "RSRC.m3r",      0, "a2c8ed69800f60bf5667e5c76a88e481", 1223862 },
 				{ "localized.m3t", 0, "3a9f299f8d061ce3d2862d985edb84e3", 2341588 },

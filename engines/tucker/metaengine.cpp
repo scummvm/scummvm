@@ -22,6 +22,12 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/fs.h"
+#include "common/translation.h"
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "engines/advancedDetector.h"
 #include "base/plugins.h"
 #include "graphics/thumbnail.h"
@@ -150,7 +156,81 @@ public:
 			target = getName();
 		return Tucker::generateGameStateFileName(target, saveGameIdx, saveGameIdx == kSavegameFilePattern);
 	}
+	
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
+
+Common::KeymapArray TuckerMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Tucker;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "tucker-default", _("Default keymappings"));
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
+
+	Common::Action *act;
+
+	act = new Common::Action(kStandardActionLeftClick, _("Left click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action(kStandardActionRightClick, _("Right click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("PAUSE", _("Pause"));
+	act->setCustomEngineActionEvent(kActionPause);
+	act->addDefaultInputMapping("p");
+	act->addDefaultInputMapping("JOY_X");
+	gameKeyMap->addAction(act);
+
+	act = new Common::Action("SKIP_SPEECH", _("Skip speech"));
+	act->setCustomEngineActionEvent(kActionSkipSpeech);
+	act->addDefaultInputMapping("PERIOD");
+	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
+	gameKeyMap->addAction(act);
+
+	act = new Common::Action("FAST_MODE", _("Fast mode"));
+	act->setCustomEngineActionEvent(kActionFastMode);
+	act->addDefaultInputMapping("C+f");
+	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
+	gameKeyMap->addAction(act);
+
+	// I18N: Panel contains all actor actions and the artstyle is toggled
+	act = new Common::Action("TOGGLE_PANEL_STYLE", _("Toggle panel style"));
+	act->setCustomEngineActionEvent(kActionTogglePanelStyle);
+	act->addDefaultInputMapping("F1");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	gameKeyMap->addAction(act);
+
+	act = new Common::Action("TOGGLE_TEXT_SPEECH", _("Toggle text speech"));
+	act->setCustomEngineActionEvent(kActionToggleTextSpeech);
+	act->addDefaultInputMapping("F2");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	gameKeyMap->addAction(act);
+
+	act = new Common::Action("HELP", _("Help"));
+	act->setCustomEngineActionEvent(kActionHelp);
+	act->addDefaultInputMapping("F3");
+	act->addDefaultInputMapping("JOY_Y");
+	gameKeyMap->addAction(act);
+
+	act = new Common::Action("ESCAPE", _("Escape"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_BACK");
+	gameKeyMap->addAction(act);
+
+	KeymapArray keymaps(2);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeyMap;
+
+	return keymaps;
+}
+
 
 #if PLUGIN_ENABLED_DYNAMIC(TUCKER)
 	REGISTER_PLUGIN_DYNAMIC(TUCKER, PLUGIN_TYPE_ENGINE, TuckerMetaEngine);

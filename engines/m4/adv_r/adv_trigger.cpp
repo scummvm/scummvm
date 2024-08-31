@@ -144,10 +144,17 @@ void kernel_timing_trigger(int32 ticks, int16 trigger, const char *name) {
 	}
 }
 
+void kernel_timing_trigger(int32 ticks, int16 trigger,
+		KernelTriggerType preMode, KernelTriggerType postMode) {
+	_G(kernel).trigger_mode = preMode;
+	kernel_timing_trigger(ticks, trigger, nullptr);
+	_G(kernel).trigger_mode = postMode;
+}
+
 void kernel_timing_trigger_daemon(int32 ticks, int16 trigger) {
 	KernelTriggerType oldMode = _G(kernel).trigger_mode;
 	_G(kernel).trigger_mode = KT_DAEMON;
-	kernel_timing_trigger(ticks, trigger);
+	kernel_timing_trigger(ticks, trigger, nullptr);
 	_G(kernel).trigger_mode = oldMode;
 }
 

@@ -337,7 +337,7 @@ void Sound::adlibPlayTrack(const char *trackname) {
 }
 
 void Sound::adlibPlayBgMusic() {
-	if (!_hasAdLib || _hasAdLibBg)
+	if (!_hasAdLib || !_hasAdLibBg) // If one of those is disabled, then stop there 
 		return;
 
 	createADLPlayer();

@@ -33,6 +33,25 @@
 namespace Freescape {
 
 DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
+	// These sounds can be overriden by the class of each platform
+	_soundIndexShoot = 8;
+	_soundIndexCollide = -1;
+	_soundIndexFall = 3;
+	_soundIndexClimb = 4;
+	_soundIndexMenu = -1;
+	_soundIndexStart = 9;
+	_soundIndexAreaChange = 5;
+	_soundIndexHit = 2;
+	_soundIndexRestoreECD = 19;
+
+	_soundIndexNoShield = -1;
+	_soundIndexNoEnergy = -1;
+	_soundIndexFallen = -1;
+	_soundIndexTimeout = -1;
+	_soundIndexForceEndGame = -1;
+	_soundIndexCrushed = -1;
+	_soundIndexMissionComplete = -1;
+
 	if (isDOS())
 		initDOS();
 	else if (isSpectrum())
@@ -157,12 +176,72 @@ bool DarkEngine::checkECD(uint16 areaID, int index) {
 	return !obj->isDestroyed();
 }
 
-void DarkEngine::initKeymaps(Common::Keymap *engineKeyMap, const char *target) {
-	FreescapeEngine::initKeymaps(engineKeyMap, target);
+void DarkEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) {
+	FreescapeEngine::initKeymaps(engineKeyMap, infoScreenKeyMap, target);
 	Common::Action *act;
 
+	act = new Common::Action("SAVE", _("Save Game"));
+	act->setCustomEngineActionEvent(kActionSave);
+	act->addDefaultInputMapping("s");
+	infoScreenKeyMap->addAction(act);
+
+	act = new Common::Action("LOAD", _("Load Game"));
+	act->setCustomEngineActionEvent(kActionLoad);
+	act->addDefaultInputMapping("l");
+	infoScreenKeyMap->addAction(act);
+
+	act = new Common::Action("QUIT", _("Quit Game"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	if (isSpectrum())
+		act->addDefaultInputMapping("1");
+	else
+		act->addDefaultInputMapping("ESCAPE");
+
+	infoScreenKeyMap->addAction(act);
+
+	if (!(isAmiga() || isAtariST())) {
+		act = new Common::Action("TOGGLESOUND", _("Toggle Sound"));
+		act->setCustomEngineActionEvent(kActionToggleSound);
+		act->addDefaultInputMapping("t");
+		infoScreenKeyMap->addAction(act);
+	}
+
+	act = new Common::Action("ROTL", _("Rotate Left"));
+	act->setCustomEngineActionEvent(kActionRotateLeft);
+	act->addDefaultInputMapping("q");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("ROTR", _("Rotate Right"));
+	act->setCustomEngineActionEvent(kActionRotateRight);
+	act->addDefaultInputMapping("w");
+	engineKeyMap->addAction(act);
+
+	// I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
+	act = new Common::Action("INCSTEPSIZE", _("Increase Step Size"));
+	act->setCustomEngineActionEvent(kActionIncreaseStepSize);
+	act->addDefaultInputMapping("s");
+	engineKeyMap->addAction(act);
+
+	// I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
+	act = new Common::Action("DECSTEPSIZE", _("Decrease Step Size"));
+	act->setCustomEngineActionEvent(kActionDecreaseStepSize);
+	act->addDefaultInputMapping("x");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("RISE", _("Rise/Fly up"));
+	act->setCustomEngineActionEvent(kActionRiseOrFlyUp);
+	act->addDefaultInputMapping("JOY_B");
+	act->addDefaultInputMapping("r");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("LOWER", _("Lower/Fly down"));
+	act->setCustomEngineActionEvent(kActionLowerOrFlyDown);
+	act->addDefaultInputMapping("JOY_Y");
+	act->addDefaultInputMapping("f");
+	engineKeyMap->addAction(act);
+
 	act = new Common::Action("JETPACK", _("Enable/Disable Jetpack"));
-	act->setKeyEvent(Common::KeyState(Common::KEYCODE_j, 'j'));
+	act->setCustomEngineActionEvent(kActionToggleFlyMode);
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	act->addDefaultInputMapping("j");
@@ -203,15 +282,6 @@ void DarkEngine::loadAssets() {
 	_noEnergyMessage = _messagesList[16];
 	_fallenMessage = _messagesList[17];
 	_crushedMessage = _messagesList[10];
-
-	// These sounds can be overriden by the class of each platform
-	_soundIndexShoot = 8;
-	_soundIndexCollide = -1;
-	_soundIndexFall = -1;
-	_soundIndexClimb = -1;
-	_soundIndexMenu = -1;
-	_soundIndexStart = -1;
-	_soundIndexAreaChange = -1;
 }
 
 bool DarkEngine::tryDestroyECDFullGame(int index) {
@@ -231,9 +301,9 @@ bool DarkEngine::tryDestroyECDFullGame(int index) {
 		case 8:
 			assert(index <= 1);
 			if (index == 0)
-				return true;
-			else if (index == 1)
 				return !(checkECD(18, 0) && checkECD(10, 0)); // Check both
+			else if (index == 1)
+				return true;
 			break;
 
 		case 10:
@@ -339,7 +409,7 @@ bool DarkEngine::tryDestroyECDFullGame(int index) {
 
 bool DarkEngine::tryDestroyECD(int index) {
 	if (isDemo()) {
-		if (index == 1) {
+		if (index == 0) {
 			return false;
 		}
 		return true;
@@ -402,8 +472,6 @@ bool DarkEngine::checkIfGameEnded() {
 	if (_gameStateVars[kVariableDarkECD] > 0) {
 		int index = _gameStateVars[kVariableDarkECD] - 1;
 		bool destroyed = tryDestroyECD(index);
-		if (isSpectrum())
-			playSound(7, false);
 
 		if (destroyed) {
 			_gameStateVars[kVariableActiveECDs] -= 4;
@@ -412,10 +480,8 @@ bool DarkEngine::checkIfGameEnded() {
 		} else {
 			restoreECD(*_currentArea, index);
 			insertTemporaryMessage(_messagesList[1], _countdown - 2);
-			if (isSpectrum())
-				playSound(30, false);
-			else
-				playSound(19, true);
+			stopAllSounds();
+			playSound(_soundIndexRestoreECD, false);
 		}
 		_gameStateVars[kVariableDarkECD] = 0;
 
@@ -550,17 +616,11 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (areaID == _startArea && entranceID == _startEntrance) {
 		_yaw = 90;
 		_pitch = 0;
-		if (isSpectrum())
-			playSound(11, true);
-		else
-			playSound(9, true);
+		playSound(_soundIndexStart, true);
 	} else if (areaID == _endArea && entranceID == _endEntrance) {
 		_pitch = 10;
 	} else {
-		if (isSpectrum())
-			playSound(0x1c, false);
-		else
-			playSound(5, false);
+		playSound(_soundIndexAreaChange, false);
 	}
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
@@ -582,19 +642,19 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 
 void DarkEngine::pressedKey(const int keycode) {
 	// This code is duplicated in the DrillerEngine::pressedKey (except for the J case)
-	if (keycode == Common::KEYCODE_q) {
+	if (keycode == kActionRotateLeft) {
 		rotate(-_angleRotations[_angleRotationIndex], 0);
-	} else if (keycode == Common::KEYCODE_w) {
+	} else if (keycode == kActionRotateRight) {
 		rotate(_angleRotations[_angleRotationIndex], 0);
-	} else if (keycode == Common::KEYCODE_s) {
+	} else if (keycode == kActionIncreaseStepSize) {
 		increaseStepSize();
-	} else if (keycode ==  Common::KEYCODE_x) {
+	} else if (keycode == kActionDecreaseStepSize) {
 		decreaseStepSize();
-	} else if (keycode == Common::KEYCODE_r) {
+	} else if (keycode == kActionRiseOrFlyUp) {
 		rise();
-	} else if (keycode == Common::KEYCODE_f) {
+	} else if (keycode == kActionLowerOrFlyDown) {
 		lower();
-	} else if (keycode == Common::KEYCODE_j) {
+	} else if (keycode == kActionToggleFlyMode) {
 		_flyMode = !_flyMode;
 		//debugC(1, kFreescapeDebugMedia, "raw %d, hz: %f", freq, hzFreq);
 
@@ -693,6 +753,9 @@ void DarkEngine::drawBinaryClock(Graphics::Surface *surface, int xPosition, int 
 	if (_gameStateControl == kFreescapeGameStatePlaying)
 		number = _ticks / 2;
 	else if (_gameStateControl == kFreescapeGameStateEnd) {
+		if (_endGameDelayTicks > 0) // Wait until the endgame is ready
+			return;
+
 		if (_gameStateVars[kVariableDarkEnding] == 0)
 			number = (1 << 15) - 1;
 		else
@@ -735,8 +798,7 @@ void DarkEngine::drawIndicator(Graphics::Surface *surface, int xPosition, int yP
 void DarkEngine::drawSensorShoot(Sensor *sensor) {
 	if (_gameStateControl == kFreescapeGameStatePlaying) {
 		// Avoid playing new sounds, so the endgame can progress
-		if (isSpectrum())
-			playSound(2, true);
+		playSound(_soundIndexHit, true);
 	}
 
 	Math::Vector3d target;
@@ -757,6 +819,10 @@ void DarkEngine::drawSensorShoot(Sensor *sensor) {
 
 void DarkEngine::drawInfoMenu() {
 	PauseToken pauseToken = pauseEngine();
+	if (_savedScreen) {
+		_savedScreen->free();
+		delete _savedScreen;
+	}
 	_savedScreen = _gfx->getScreenshot();
 	uint32 color = 0;
 	switch (_renderMode) {
@@ -810,26 +876,25 @@ void DarkEngine::drawInfoMenu() {
 
 			// Events
 			switch (event.type) {
-				case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_l) {
+				case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionLoad) {
 					_gfx->setViewport(_fullscreenViewArea);
 					_eventManager->purgeKeyboardEvents();
 					loadGameDialog();
 					_gfx->setViewport(_viewArea);
-				} else if (event.kbd.keycode == Common::KEYCODE_s) {
+				} else if (event.customType == kActionSave) {
 					_gfx->setViewport(_fullscreenViewArea);
 					_eventManager->purgeKeyboardEvents();
 					saveGameDialog();
 					_gfx->setViewport(_viewArea);
-				} else if (isDOS() && event.kbd.keycode == Common::KEYCODE_t) {
+				} else if (isDOS() && event.customType == kActionToggleSound) {
 					playSound(6, true);
-				} else if (!isSpectrum() && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				} else if (event.customType == kActionEscape) {
 					_forceEndGame = true;
 					cont = false;
-				} else if (isSpectrum() && event.kbd.keycode == Common::KEYCODE_1) {
-					_forceEndGame = true;
-					cont = false;
-				} else
+				}
+				break;
+				case Common::EVENT_KEYDOWN:
 					cont = false;
 				break;
 			case Common::EVENT_SCREEN_CHANGED:
@@ -850,6 +915,7 @@ void DarkEngine::drawInfoMenu() {
 
 	_savedScreen->free();
 	delete _savedScreen;
+	_savedScreen = nullptr;
 	surface->free();
 	delete surface;
 

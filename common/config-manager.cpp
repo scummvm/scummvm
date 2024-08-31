@@ -39,7 +39,7 @@ DECLARE_SINGLETON(ConfigManager);
 
 char const *const ConfigManager::kApplicationDomain = "scummvm";
 char const *const ConfigManager::kTransientDomain = "__TRANSIENT";
-char const *const ConfigManager::kSessionDomain = "__SESSION"; 
+char const *const ConfigManager::kSessionDomain = "__SESSION";
 
 char const *const ConfigManager::kKeymapperDomain = "keymapper";
 
@@ -67,7 +67,7 @@ void ConfigManager::copyFrom(ConfigManager &source) {
 	_appDomain = source._appDomain;
 	_defaultsDomain = source._defaultsDomain;
 	_keymapperDomain = source._keymapperDomain;
-	_sessionDomain = source._sessionDomain; 
+	_sessionDomain = source._sessionDomain;
 #ifdef USE_CLOUD
 	_cloudDomain = source._cloudDomain;
 #endif
@@ -182,7 +182,7 @@ bool ConfigManager::loadFromStream(SeekableReadStream &stream) {
 	_miscDomains.clear();
 	_transientDomain.clear();
 	_domainSaveOrder.clear();
-	_sessionDomain.clear(); 
+	_sessionDomain.clear();
 
 	_keymapperDomain.clear();
 #ifdef USE_CLOUD
@@ -401,7 +401,7 @@ const ConfigManager::Domain *ConfigManager::getDomain(const String &domName) con
 	if (domName == kKeymapperDomain)
 		return &_keymapperDomain;
 	if (domName == kSessionDomain)
-		return &_sessionDomain; 
+		return &_sessionDomain;
 #ifdef USE_CLOUD
 	if (domName == kCloudDomain)
 		return &_cloudDomain;
@@ -425,7 +425,7 @@ ConfigManager::Domain *ConfigManager::getDomain(const String &domName) {
 	if (domName == kKeymapperDomain)
 		return &_keymapperDomain;
 	if (domName == kSessionDomain)
-		return &_sessionDomain; 
+		return &_sessionDomain;
 #ifdef USE_CLOUD
 	if (domName == kCloudDomain)
 		return &_cloudDomain;
@@ -445,7 +445,7 @@ ConfigManager::Domain *ConfigManager::getDomain(const String &domName) {
 bool ConfigManager::hasKey(const String &key) const {
 	// Search the domains in the following order:
 	// 1) the transient domain,
-	// 2) the session domain, 
+	// 2) the session domain,
 	// 3) the active game domain (if any),
 	// 4) the application domain.
 	// The defaults domain is explicitly *not* checked.
@@ -454,7 +454,7 @@ bool ConfigManager::hasKey(const String &key) const {
 		return true;
 
 	if (_sessionDomain.contains(key))
-		return true; 
+		return true;
 
 	if (_activeDomain && _activeDomain->contains(key))
 		return true;
@@ -473,7 +473,7 @@ bool ConfigManager::hasKey(const String &key, const String &domName) const {
 		return hasKey(key);
 
 	if (_sessionDomain.contains(key))
-		return true; 
+		return true;
 
 	const Domain *domain = getDomain(domName);
 
@@ -494,7 +494,7 @@ void ConfigManager::removeKey(const String &key, const String &domName) {
 		      key.c_str(), domName.c_str());
 
 	domain->erase(key);
-	_sessionDomain.erase(key); 
+	_sessionDomain.erase(key);
 }
 
 
@@ -505,7 +505,7 @@ const String &ConfigManager::get(const String &key) const {
 	if (_transientDomain.contains(key))
 		return _transientDomain[key];
 	else if (_sessionDomain.contains(key))
-		return _sessionDomain[key]; 
+		return _sessionDomain[key];
 	else if (_activeDomain && _activeDomain->contains(key))
 		return (*_activeDomain)[key];
 	else if (_appDomain.contains(key))
@@ -522,7 +522,7 @@ const String &ConfigManager::get(const String &key, const String &domName) const
 		return get(key);
 
 	if (_sessionDomain.contains(key))
-		return _sessionDomain.getVal(key); 
+		return _sessionDomain.getVal(key);
 
 	const Domain *domain = getDomain(domName);
 
@@ -571,6 +571,22 @@ Path ConfigManager::getPath(const String &key, const String &domName) const {
 	return Path::fromConfig(get(key, domName));
 }
 
+float ConfigManager::getFloat(const String &key, const String &domName) const {
+	String value(get(key, domName));
+	char *pend;
+
+	if (value.empty()) {
+		return 0.0f;
+	}
+
+	float fvalue = strtof(value.c_str(), &pend);
+	if (value.c_str() == pend)
+		error("ConfigManager::getFloat(%s,%s): '%s' is not a valid float",
+		      key.c_str(), domName.c_str(), value.c_str());
+
+	return fvalue;
+}
+
 
 #pragma mark -
 
@@ -578,7 +594,7 @@ Path ConfigManager::getPath(const String &key, const String &domName) const {
 void ConfigManager::set(const String &key, const String &value) {
 	// Remove the transient and session domain value, if any.
 	_transientDomain.erase(key);
-	_sessionDomain.erase(key); 
+	_sessionDomain.erase(key);
 
 	// Write the new key/value pair into the active domain, resp. into
 	// the application domain if no game domain is active.
@@ -617,7 +633,7 @@ void ConfigManager::set(const String &key, const String &value, const String &do
 		      key.c_str(), value.c_str(), domName.c_str());
 
 	if (domName != kSessionDomain && domName != kTransientDomain)
-		_sessionDomain.erase(key); 
+		_sessionDomain.erase(key);
 
 	(*domain).setVal(key, value);
 
@@ -659,6 +675,10 @@ void ConfigManager::setBool(const String &key, bool value, const String &domName
 
 void ConfigManager::setPath(const String &key, const Path &value, const String &domName) {
 	set(key, value.toConfig(), domName);
+}
+
+void ConfigManager::setFloat(const String &key, float value, const String &domName) {
+	set(key, String::format("%f", value), domName);
 }
 
 

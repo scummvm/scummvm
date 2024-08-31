@@ -36,6 +36,20 @@ bool EventManagerWrapper::pollEvent(Common::Event &event) {
 
 	if (gotEvent) {
 		switch (event.type) {
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			if (event.customType == kActionEscape)
+				break;
+			_currentActionDown = event.customType;
+			_keyRepeatTime = time + kKeyRepeatInitialDelay;
+			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			if (event.customType == kActionEscape)
+				break;
+			if (event.customType == _currentActionDown) {
+				// Only stop firing events if it's the current key
+				_currentActionDown = kActionNone;
+			}
+			break;
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd == Common::KEYCODE_ESCAPE || event.kbd == Common::KEYCODE_F5)
 				break;
@@ -68,8 +82,15 @@ bool EventManagerWrapper::pollEvent(Common::Event &event) {
 			event.kbdRepeat = true;
 			event.kbd = _currentKeyDown;
 			_keyRepeatTime = time + kKeyRepeatSustainDelay;
-
 			return true;
+		}
+		if (_currentActionDown != kActionNone && _keyRepeatTime <= time) {
+			event.type = Common::EVENT_CUSTOM_ENGINE_ACTION_START;
+			event.kbdRepeat = true;
+			event.customType = _currentActionDown;
+			_keyRepeatTime = time + kKeyRepeatSustainDelay;
+			return true;
+
 		}
 
 		return false;
@@ -79,6 +100,7 @@ bool EventManagerWrapper::pollEvent(Common::Event &event) {
 void EventManagerWrapper::purgeKeyboardEvents() {
 	_delegate->purgeKeyboardEvents();
 	_currentKeyDown.keycode = Common::KEYCODE_INVALID;
+	_currentActionDown = kActionNone;
 }
 
 void EventManagerWrapper::purgeMouseEvents() {

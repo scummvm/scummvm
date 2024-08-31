@@ -98,7 +98,7 @@ void GameState::initHeroVars() {
 	_usingSabre = false;
 
 	_engine->_scene->_sceneHero->_genBody = BodyType::btNormal;
-	_engine->_scene->_sceneHero->setLife(kActorMaxLife);
+	_engine->_scene->_sceneHero->setLife(_engine->getMaxLife());
 	_engine->_scene->_sceneHero->_talkColor = COLOR_BRIGHT_BLUE;
 }
 
@@ -149,6 +149,11 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 		return false;
 	}
 
+	if (!_engine->isLBA1()) {
+		warning("Loading not implemented for lba2");
+		return false;
+	}
+
 	debug(2, "Load game");
 	const byte saveFileVersion = file->readByte();
 	// 4 is dotemu enhanced version of lba1
@@ -173,8 +178,8 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 	} while (true);
 
 	byte numGameFlags = file->readByte();
-	if (numGameFlags != NUM_GAME_FLAGS) {
-		warning("Failed to load gameflags. Expected %u, but got %u", NUM_GAME_FLAGS, numGameFlags);
+	if (numGameFlags != NUM_GAME_FLAGS_LBA1) {
+		warning("Failed to load gameflags. Expected %u, but got %u", NUM_GAME_FLAGS_LBA1, numGameFlags);
 		return false;
 	}
 	for (uint8 i = 0; i < numGameFlags; ++i) {
@@ -248,9 +253,9 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->writeByte(0x03);
 	file->writeString(_engine->_menuOptions->_saveGameName);
 	file->writeByte('\0');
-	file->writeByte(NUM_GAME_FLAGS);
-	for (uint8 i = 0; i < NUM_GAME_FLAGS; ++i) {
-		file->writeByte(hasGameFlag(i));
+	file->writeByte(NUM_GAME_FLAGS_LBA1);
+	for (uint8 i = 0; i < NUM_GAME_FLAGS_LBA1; ++i) {
+		file->writeByte((uint8)hasGameFlag(i));
 	}
 	file->writeByte(sceneIdx);
 	file->writeByte(getChapter());
@@ -605,6 +610,11 @@ int16 GameState::setKashes(int16 value) {
 	return _goldPieces;
 }
 
+int16 GameState::setZlitos(int16 value) {
+	_zlitosPieces = CLIP<int16>(value, 0, 999);
+	return _zlitosPieces;
+}
+
 int16 GameState::setKeys(int16 value) {
 	_inventoryNumKeys = MAX<int16>(0, value);
 	return _inventoryNumKeys;
@@ -669,7 +679,7 @@ void GameState::clearGameFlags() {
 	Common::fill(&_listFlagGame[0], &_listFlagGame[NUM_GAME_FLAGS], 0);
 }
 
-uint8 GameState::hasGameFlag(uint8 index) const {
+int16 GameState::hasGameFlag(uint8 index) const {
 	debug(6, "Query gameStateFlags[%u]=%u", index, _listFlagGame[index]);
 	return _listFlagGame[index];
 }

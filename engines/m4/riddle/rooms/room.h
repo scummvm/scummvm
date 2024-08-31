@@ -33,11 +33,15 @@ namespace Riddle {
 namespace Rooms {
 
 class Room : public M4::Room {
+private:
+	static int _ripSketching;
+
 protected:
 	static void intrMsgNull(frac16 myMessage, machine *sender) {}
 	static void triggerMachineByHashCallback(frac16 myMessage, machine *sender = nullptr);
 	static void triggerMachineByHashCallbackNegative(frac16 myMessage, machine *sender = nullptr);
 	static void triggerMachineByHashCallback3000(frac16 myMessage, machine *sender = nullptr);
+	static void triggerMachineByHashCallbackAlways(frac16 myMessage, machine *sender = nullptr);
 
 	void restoreAutosave();
 
@@ -94,9 +98,11 @@ protected:
 	void sendWSMessage_160000(machine *mach, int val1, int trigger);
 	void sendWSMessage_160000(int val1, int trigger);
 	void sendWSMessage_190000(machine *recv, int trigger);
+	void sendWSMessage_190000(int trigger);
 	void sendWSMessage_1a0000(machine *recv, int trigger);
 	void sendWSMessage_29a0000(machine *recv, int val1);
 	void sendWSMessage_29a0000(int val1);
+	void sendWSMessage_multi(const char *name);
 
 	/**
 	 * Get the number of key items placed in room 305 (display room)
@@ -105,6 +111,16 @@ protected:
 
 	bool setItemsPlacedFlags();
 	const char *getItemsPlacedDigi() const;
+
+	/**
+	 * Sets all the hotspots to be inactive
+	 */
+	void disableHotspots();
+
+	/**
+	 * Sets all the hotspots to be active
+	 */
+	void enableHotspots();
 
 public:
 	Room() : M4::Room() {}

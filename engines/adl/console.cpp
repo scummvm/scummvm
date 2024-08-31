@@ -397,7 +397,7 @@ bool Console::Cmd_ConvertDisk(int argc, const char **argv) {
 		return true;
 	}
 
-	DiskImage inDisk;
+	Common::DiskImage inDisk;
 	if (!inDisk.open(argv[1])) {
 		debugPrintf("Failed to open '%s' for reading\n", argv[1]);
 		return true;
@@ -414,7 +414,7 @@ bool Console::Cmd_ConvertDisk(int argc, const char **argv) {
 
 	byte *const buf = new byte[size];
 
-	StreamPtr stream(inDisk.createReadStream(0, 0, 0, sectors - 1));
+	Common::StreamPtr stream(inDisk.createReadStream(0, 0, 0, sectors - 1));
 	if (stream->read(buf, size) < size) {
 		debugPrintf("Failed to read from stream");
 		delete[] buf;

@@ -34,39 +34,22 @@ namespace Agi {
 #define SOUND_EMU_PCJR  2
 #define SOUND_EMU_MAC   3
 #define SOUND_EMU_AMIGA 4
-#define SOUND_EMU_APPLE2GS 5
-#define SOUND_EMU_COCO3 6
-#define SOUND_EMU_MIDI 7
-
-/**
- * AGI sound note structure.
- */
-struct AgiNote {
-	uint16 duration;    ///< Note duration
-	uint16 freqDiv;     ///< Note frequency divisor (10-bit)
-	uint8  attenuation; ///< Note volume attenuation (4-bit)
-
-	/** Reads an AgiNote through the given pointer. */
-	void read(const uint8 *ptr) {
-		duration = READ_LE_UINT16(ptr);
-		uint16 freqByte0 = *(ptr + 2); // Bits 4-9 of the frequency divisor
-		uint16 freqByte1 = *(ptr + 3); // Bits 0-3 of the frequency divisor
-		// Merge the frequency divisor's bits together into a single variable
-		freqDiv = ((freqByte0 & 0x3F) << 4) | (freqByte1 & 0x0F);
-		attenuation = *(ptr + 4) & 0x0F;
-	}
-};
+#define SOUND_EMU_APPLE2 5
+#define SOUND_EMU_APPLE2GS 6
+#define SOUND_EMU_COCO3 7
+#define SOUND_EMU_MIDI 8
 
 /**
  * AGI sound resource types.
- * It's probably coincidence that all the values here are powers of two
- * as they're simply the different used values in AGI sound resources'
- * starts (The first 16-bit little endian word, to be precise).
+ * These values are the first 16-bit LE words of each resource's header,
+ * except for Apple II and CoCo3, which do not have headers.
  */
 enum AgiSoundEmuType {
 	AGI_SOUND_SAMPLE    = 0x0001,
 	AGI_SOUND_MIDI      = 0x0002,
-	AGI_SOUND_4CHN      = 0x0008
+	AGI_SOUND_4CHN      = 0x0008,
+	AGI_SOUND_APPLE2    = 0xffff,
+	AGI_SOUND_COCO3     = 0xfffe
 };
 
 class SoundMgr;
@@ -92,12 +75,22 @@ public:
  */
 class AgiSound {
 public:
-	AgiSound() : _isPlaying(false), _isValid(false) {}
-	virtual ~AgiSound() {}
+	AgiSound(byte resourceNr, byte *data, uint32 length, uint16 type) :
+		_resourceNr(resourceNr),
+		_data(data),
+		_length(length),
+		_type(type),
+		_isPlaying(false) {}
+
+	virtual ~AgiSound()      { free(_data); }
+
 	virtual void play()      { _isPlaying = true; }
 	virtual void stop()      { _isPlaying = false; }
 	virtual bool isPlaying() { return _isPlaying; }
-	virtual uint16 type() = 0;
+	byte *getData()          { return _data; }
+	uint32 getLength()       { return _length; }
+	virtual uint16 type()    { return _type; }
+	virtual bool isValid()   { return true; }
 
 	/**
 	 * A named constructor for creating different types of AgiSound objects
@@ -110,22 +103,17 @@ public:
 	static AgiSound *createFromRawResource(uint8 *data, uint32 len, int resnum, int soundemu);
 
 protected:
-	bool _isPlaying;    ///< Is the sound playing?
-	bool _isValid;      ///< Is this a valid sound object?
+	byte _resourceNr;
+	byte *_data;
+	uint32 _length;
+	uint16 _type;
+	bool _isPlaying;
 };
 
 class PCjrSound : public AgiSound {
 public:
-	PCjrSound(uint8 *data, uint32 len, int resnum);
-	~PCjrSound() override { free(_data); }
-	uint16 type() override { return _type; }
+	PCjrSound(byte resourceNr, byte *data, uint32 length, uint16 type);
 	const uint8 *getVoicePointer(uint voiceNum);
-	uint8 *getData() { return _data; }
-	uint32 getLength() { return _len; }
-protected:
-	uint8 *_data; ///< Raw sound resource data
-	uint32 _len;  ///< Length of the raw sound resource
-	uint16 _type; ///< Sound resource type
 };
 
 class SoundMgr {
@@ -141,6 +129,7 @@ public:
 	void stopSound();
 
 	void soundIsFinished();
+	bool isPlaying() const { return _playingSound != -1; }
 
 private:
 	int _endflag;

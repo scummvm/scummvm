@@ -112,6 +112,13 @@ bool VideoDecoder::needsUpdate() const {
 	return false;
 }
 
+void VideoDecoder::delayMillis(uint msecs) {
+	if (!needsUpdate())
+		g_system->delayMillis(MIN<uint>(msecs, getTimeToNextFrame()));
+	else
+		g_system->delayMillis(1); /* This is needed to keep the mixer and timers active */
+}
+
 void VideoDecoder::pauseVideo(bool pause) {
 	if (pause) {
 		_pauseLevel++;

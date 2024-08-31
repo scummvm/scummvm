@@ -52,43 +52,6 @@ private:
 	bool cmdToggleShowTouchingItems(int argc, const char **argv);
 	bool cmdCloseItemGumps(int argc, const char **argv);
 
-	// Avatar mover
-	bool cmdStartJump(int argc, const char **argv);
-	bool cmdStopJump(int argc, const char **argv);
-	bool cmdStartTurnLeft(int argc, const char **argv);
-	bool cmdStartTurnRight(int argc, const char **argv);
-	bool cmdStartMoveForward(int argc, const char **argv);
-	bool cmdStartMoveBack(int argc, const char **argv);
-	bool cmdStopTurnLeft(int argc, const char **argv);
-	bool cmdStopTurnRight(int argc, const char **argv);
-	bool cmdStopMoveForward(int argc, const char **argv);
-	bool cmdStopMoveBack(int argc, const char **argv);
-	bool cmdStartMoveUp(int argc, const char **argv);
-	bool cmdStartMoveDown(int argc, const char **argv);
-	bool cmdStartMoveLeft(int argc, const char **argv);
-	bool cmdStartMoveRight(int argc, const char **argv);
-	bool cmdStopMoveUp(int argc, const char **argv);
-	bool cmdStopMoveDown(int argc, const char **argv);
-	bool cmdStopMoveLeft(int argc, const char **argv);
-	bool cmdStopMoveRight(int argc, const char **argv);
-
-	bool cmdStartMoveRun(int argc, const char **argv);
-	bool cmdStopMoveRun(int argc, const char **argv);
-	bool cmdStartMoveStep(int argc, const char **argv);
-	bool cmdStopMoveStep(int argc, const char **argv);
-	bool cmdStartAttack(int argc, const char **argv);
-	bool cmdStopAttack(int argc, const char **argv);
-
-	// One-shot Avatar mover commands
-	bool cmdShortJump(int argc, const char **argv);
-	bool cmdStepLeft(int argc, const char **argv);
-	bool cmdStepRight(int argc, const char **argv);
-	bool cmdStepForward(int argc, const char **argv);
-	bool cmdStepBack(int argc, const char **argv);
-	bool cmdRollLeft(int argc, const char **argv);
-	bool cmdRollRight(int argc, const char **argv);
-	bool cmdToggleCrouch(int argc, const char **argv);
-
 	bool cmdCameraOnAvatar(int argc, const char **argv);
 
 	// Audio Process

@@ -73,7 +73,6 @@ public:
 	void reset();
 
 	void write(int a, int v);
-	byte read(int a);
 
 	void writeReg(int r, int v);
 };
@@ -232,10 +231,6 @@ void OPL::write(int port, int val) {
 			break;
 		}
 	}
-}
-
-byte OPL::read(int port) {
-	return 0;
 }
 
 void OPL::writeReg(int r, int v) {

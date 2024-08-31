@@ -127,7 +127,7 @@ void ObjectHandler_v1d::updateImages() {
 						obj->_frameTimer = obj->_frameInterval;
 						for (int j = 0; j < obj->_seqNumb; j++) {
 							if (obj->_currImagePtr->_nextSeqPtr == obj->_seqList[j]._seqPtr) {
-								if (obj->_cycleNumb) { // Decr cycleNumb if Non-continous
+								if (obj->_cycleNumb) { // Decr cycleNumb if Non-continuous
 									if (!--obj->_cycleNumb)
 										obj->_cycling = kCycleNotCycling;
 								}
@@ -148,7 +148,7 @@ void ObjectHandler_v1d::updateImages() {
 						obj->_frameTimer = obj->_frameInterval;
 						for (int j = 0; j < obj->_seqNumb; j++) {
 							if (obj->_currImagePtr == obj->_seqList[j]._seqPtr) {
-								if (obj->_cycleNumb){ // Decr cycleNumb if Non-continous
+								if (obj->_cycleNumb){ // Decr cycleNumb if Non-contiunous
 									if (!--obj->_cycleNumb)
 										obj->_cycling = kCycleNotCycling;
 								}

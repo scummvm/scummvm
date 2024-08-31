@@ -312,7 +312,7 @@ bool cGameEnemyState_Spider_Hunt::OnHearNoise(const cVector3f &avPosition, float
 			// Check if a node is found near the sound.
 			cAINode *pNode = mpMover->GetAINodeAtPosInRange(avPosition, 0.0f, 5.0f, true, 0.1f);
 			if (pNode) {
-				// Update last player postion.
+				// Update last player position.
 				mbLostPlayer = false;
 				mfUpdatePathCount = 0;
 				mpEnemy->SetLastPlayerPos(pNode->GetPosition());

@@ -29,7 +29,6 @@
 #define GOB_DETECTION_TABLES_H
 
 // Struct "GOBGameDescription"
-#include "common/translation.h"
 #include "gob/detection/detection.h"
 
 using namespace Common;

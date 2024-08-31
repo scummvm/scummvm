@@ -31,14 +31,12 @@
 #ifndef GOB_DETECTION_TABLES_ADIBOUPRESENTE_H
 #define GOB_DETECTION_TABLES_ADIBOUPRESENTE_H
 
-//#include "common/translation.h"  // Make release checker happy
-
 // -- French: Adibou présente Dessin --
 
 {
 	{ // Supplied by BJNFNE
 		"adiboudessin",
-		_s("Missing game code"), // Adibou présente Dessin 1.00 (Engine: DEV7 version 1.10a)
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Adibou présente Dessin 1.00 (Engine: DEV7 version 1.10a)
 		AD_ENTRY1s("adibou.stk", "14e3f8e9c237d4236d93e08c60b784bc", 217172),
 		FR_FRA,
 		kPlatformWindows,
@@ -54,7 +52,7 @@
 {
 	{ // Supplied by BJNFNE
 		"adiboucuisine",
-		_s("Missing game code"), // Adibou présente Cuisine 1.00 (Engine: DEV7 version 1.0.0.0)
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Adibou présente Cuisine 1.00 (Engine: DEV7 version 1.0.0.0)
 		AD_ENTRY1s("adibou.stk", "cb2d576f6d546485af7693d4eaf1142b", 174027),
 		FR_FRA,
 		kPlatformWindows,
@@ -70,7 +68,7 @@
 {
 	{
 		"adiboumagie",
-		_s("Missing game code"), // Adibou présente Magie 1.00 (Engine: DEV7 version 1.0.0.0)
+		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Adibou présente Magie 1.00 (Engine: DEV7 version 1.0.0.0)
 		AD_ENTRY2s("adibou.stk", "977d2449d398f3df23238d718fca35b5", 61097,
 				   "magic.stk", "9776765dead3e338a32c43bf344b5819", 302664),
 		FR_FRA,

@@ -50,6 +50,15 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 		_game.version == 0 && (_game.features & GF_DEMO) && script == 43)
 		return;
 
+	// WORKAROUND for bug in v0/v1 Zak McKracken:
+	// Picking up the yellow shard in the Mexican Temple while playing as Annie was not possible.
+	// This was fixed in v2.
+	if (enhancementEnabled(kEnhGameBreakingBugFixes) && _game.id == GID_ZAK &&
+		_game.version < 2 && script == 119 && VAR(VAR_EGO) == 2) {
+		addObjectToInventory(56, 14);
+		putOwner(56, VAR(VAR_EGO));
+	}
+
  	if (!script)
 		return;
 
@@ -161,6 +170,11 @@ int ScummEngine::getVerbEntrypoint(int obj, int entry) {
 
 	// WORKAROUND for bug #2826: Disallow pulling the rope if it's
 	// already in the player's inventory.
+	//
+	// TODO: it would be nice to explore what the impacted original
+	// interpreter did in this case, and decide which Enhancement
+	// value we give to this, but so far, I couldn't locate an
+	// original release (interpreter?) showing this issue.  -dwa
 	if (_game.id == GID_MONKEY2 && obj == 1047 && entry == 6 && whereIsObject(obj) == WIO_INVENTORY) {
 		return 0;
 	}
@@ -1067,6 +1081,10 @@ void ScummEngine::killScriptsAndResources() {
 					// In FOA in the sentry room, in the chest plate of the statue,
 					// the pegs may be renamed to mouth: this custom name is lost
 					// when leaving the room; this hack prevents this).
+					//
+					// TODO: investigate this bug report from 2004, and see if the
+					// issue appears with an original interpreter, and with our current
+					// (much more accurate) SCUMMv5 implementation.
 					if (owner == OF_OWNER_ROOM && _game.id == GID_INDY4 && 336 <= obj && obj <= 340)
 						continue;
 
@@ -1514,9 +1532,20 @@ int ScummEngine::resStrLen(const byte *src) {
 			chr = *src++;
 			num++;
 
-			// WORKAROUND for bug #1675, a script bug in Indy3. See also
-			// the corresponding code in ScummEngine::convertMessageToString().
-			if (_game.id == GID_INDY3 && chr == 0x2E) {
+			// WORKAROUND for bugs #1675 and #2715, script bugs in German Indy3.
+			// For more information, See the the corresponding workaround in
+			// ScummEngine::convertMessageToString().
+			//
+			// While the twin workaround in convertMessageToString() can be optional,
+			// our code diverges from the original just enough that we can't ignore the
+			// invalid control code at least in INDY3 VGA DE, so the following has to
+			// run regardless of the enhancement settings. Therefore, kEnhGameBreakingBugFixes
+			// is the appropriate class here.
+			if (enhancementEnabled(kEnhGameBreakingBugFixes) && _game.id == GID_INDY3 && _language == Common::DE_DEU &&
+			    ((_roomResource == 23 && chr == 0x2E) ||
+			     (_roomResource == 21 && chr == 0x20))) {
+				num--;
+				src--;
 				continue;
 			}
 
@@ -1569,6 +1598,10 @@ void ScummEngine::endCutscene() {
 		// WORKAROUND bug #5624: Due to poor translation of the v2 script to
 		// v5 an if statement jumps in the middle of a cutscene causing a
 		// endCutscene() without a begin cutscene()
+		//
+		// TODO: see what the original interpreter did when encountering this
+		// script bug (with UNZ, DREAMM or TOWNSEMU), and decide which
+		// Enhancement setting should be used in this case.
 		if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns &&
 			vm.slot[_currentScript].number == 205 && _currentRoom == 185) {
 			return;

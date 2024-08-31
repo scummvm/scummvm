@@ -145,8 +145,10 @@ bool MemoryReadStream::seek(int64 offs, int whence) {
 		_pos += offs;
 		break;
 	}
-	// Post-Condition
-	assert(_pos <= _size);
+	
+	if (!(_pos <= _size)) {
+		_pos = _size;
+	}
 
 	// Reset end-of-stream flag on a successful seek
 	_eos = false;

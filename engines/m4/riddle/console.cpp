@@ -28,6 +28,7 @@ namespace Riddle {
 
 Console::Console() : M4::Console() {
 	registerCmd("global", WRAP_METHOD(Console, cmdGlobal));
+	registerCmd("kitty", WRAP_METHOD(Console, cmdKittyScreaming));
 }
 
 bool Console::cmdGlobal(int argc, const char **argv) {
@@ -43,6 +44,17 @@ bool Console::cmdGlobal(int argc, const char **argv) {
 		debugPrintf("Global <num> [<value>]\n");
 	}
 
+	return true;
+}
+
+bool Console::cmdKittyScreaming(int argc, const char **argv) {
+	if (argc == 1) {
+		_G(kittyScreaming) = !_G(kittyScreaming);
+	} else {
+		_G(kittyScreaming) = !strcmp(argv[1], "on");
+	}
+
+	debugPrintf("Kitty screaming is %s\n", _G(kittyScreaming) ? "on" : "off");
 	return true;
 }
 
