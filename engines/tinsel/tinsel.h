@@ -69,6 +69,28 @@ class SystemReel;
 
 typedef Common::List<Common::Rect> RectList;
 
+enum TINSELAction {
+	kActionNone,
+	kActionWalkTo,
+	kActionAction,
+	kActionLook,
+	kActionEscape,
+	kActionOptionsDialog,
+	kActionInventory,
+	kActionNotebook,
+	kActionSave,
+	kActionLoad,
+	kActionQuit,
+	kActionPageUp,
+	kActionPageDown,
+	kActionHome,
+	kActionEnd,
+	kActionMoveUp,
+	kActionMoveDown,
+	kActionMoveLeft,
+	kActionMoveRight
+};
+
 enum {
 	kTinselDebugAnimations = 1 << 0,
 	kTinselDebugActions = 1 << 1,
@@ -85,7 +107,7 @@ enum TinselKeyDirection {
 	MSK_DIRECTION = MSK_LEFT | MSK_RIGHT | MSK_UP | MSK_DOWN
 };
 
-typedef bool (*KEYFPTR)(const Common::KeyState &);
+typedef bool (*KEYFPTR)(const Common::KeyState &, const Common::CustomEventType &);
 
 #define	SCREEN_WIDTH	(_vm->screen().w)	// PC screen dimensions
 #define	SCREEN_HEIGHT	(_vm->screen().h)
