@@ -57,10 +57,10 @@ public:
 		_walkFlagObj     = _scene->object_interface(_scene->minigame_parameter("walk_flag"));
 		_jumpFlagObj     = _scene->object_interface(_scene->minigame_parameter("jump_flag"));
 
-		_flag1 = 0;
-		_flag2 = 0;
+		_goingLeft = false;
+		_goingRight = false;
 		_field_64 = 2;
-		_flag3 = 0;
+		_doingJump = false;
 		_field_54 = -1;
 
 		// stand(time(0));
@@ -70,10 +70,10 @@ public:
 		_shotsBananaCounter = 10;
 		_shoteEggCounter = 10;
 		_livesCounter = 5;
-		_someFlag5 = 0;
+		_isFinal = false;
 		_someSwitch = 2;
-		_someFlag6 = 0;
-		_jumpFlag = 0;
+		_doingWalk = false;
+		_jumpFlag = false;
 
    		return true;
 	}
@@ -87,8 +87,10 @@ public:
 		menCoords = _scene->world2screen_coords(_menObj->R());
 		_bublObj->set_R(_scene->screen2world_coords(menCoords, -5000.0));
 
-		if (_someFlag5)
-			goto LABEL_158;
+		if (_isFinal) {
+			updateWalkState();
+			return true;
+		}
 
 		if (!_shotsTomatoCounter && !_shotsBananaCounter && !_shoteEggCounter) {
 			_shotsTomatoCounter = 9;
@@ -103,7 +105,7 @@ public:
 			_field_64 = 2;
 		}
 
-		if (!_flag3) {
+		if (!_doingJump) {
 			if (_scene->world2screen_coords(_menObj->R()).x < _field_8C
 					&& _menObj->is_state_active("\xf1\xf2\xee\xe8\xf2")) { // "стоит"
 				_menObj->set_R(_menCoords);
@@ -114,15 +116,15 @@ public:
 		}
 
 		if (_menObj->is_state_active("\xf1\xf2\xee\xe8\xf2")) { // "стоит"
-			_flag1 = 0;
-			_flag2 = 0;
-			_flag3 = 0;
+			_goingLeft = false;
+			_goingRight = false;
+			_doingJump = false;
 		}
 
-		if (!_flag2) {
-			if (_flag1 || _flag3 || _menObj->is_state_active("\xf1\xf2\xee\xe8\xf2")) { // "стоит"
+		if (!_goingRight) {
+			if (_goingLeft || _doingJump || _menObj->is_state_active("\xf1\xf2\xee\xe8\xf2")) { // "стоит"
 LABEL_44:
-				if (!_flag2)
+				if (!_goingRight)
 					goto LABEL_47;
 				goto LABEL_45;
 			}
@@ -132,7 +134,7 @@ LABEL_44:
 			switch (qd_rnd(5)) {
 			case 0:
 			case 3: {
-					_flag2 = 1;
+					_goingRight = true;
 					int v21 = (500 - _menObj->screen_R().x) / _field_64;
 
 					if (v21 < 10)
@@ -144,7 +146,7 @@ LABEL_44:
 				}
 			case 1:
 			case 4: {
-					_flag1 = 1;
+					_goingLeft = true;
 					int v25 = (_menObj->screen_R().x - 300) / _field_64;
 					if (v25 < 10)
 						v25 = 10;
@@ -154,7 +156,7 @@ LABEL_44:
 					goto LABEL_44;
 			}
 			case 2:
-				_flag3 = 1;
+				_doingJump = true;
 				_field_54 = 30;
 				_menCoords = _menObj->R();
 				{
@@ -230,20 +232,20 @@ LABEL_45:
 		_field_50--;
 
 		if (_field_50 <= 0)
-			_flag2 = 0;
+			_goingRight = false;
 
 LABEL_47:
-		if (_flag1) {
+		if (_goingLeft) {
 			mgVect2i v45 = _scene->world2screen_coords(_menObj->R());
 			v45.y -= _field_64;
 			_menObj->set_R(_scene->screen2world_coords(v45, 0.0));
 			_field_4C--;
 
 			if (_field_4C <= 0)
-				_flag1 = 0;
+				_goingLeft = false;
 		}
 
-		if (_flag3) {
+		if (_doingJump) {
 			mgVect2i v53 = _scene->world2screen_coords(_menObj->R());
 
 			if (v53.y >= _field_84 - 10) {
@@ -275,7 +277,7 @@ LABEL_79:
 				}
 LABEL_77:
 				if (_flag4) {
-					_flag3 = 0;
+					_doingJump = false;
 					_someSwitch = _someSwitchBackup;
 				}
 				goto LABEL_79;
@@ -432,7 +434,7 @@ LABEL_108:
 
 				updateStats();
 
-				_flag3 = 0;
+				_doingJump = false;
 				_field_64 = 7 - _livesCounter;
 
 				if (_field_64 > 4)
@@ -441,43 +443,47 @@ LABEL_108:
 		}
 
 		if (!_livesCounter) {
-			_someFlag5 = 1;
+			_isFinal = true;
 			_doneObj->set_state("\xe4\xe0");		// "да"
-			_flag1 = 0;
-			_flag2 = 0;
-			_flag3 = 0;
+			_goingLeft = false;
+			_goingRight = false;
+			_doingJump = false;
 		}
 
-LABEL_158:
-		if ((_flag1 || _flag2) && !_someFlag6) {
-			_someFlag6 = 1;
+		updateWalkState();
+
+		return true;
+	}
+
+	void updateWalkState() {
+		if ((_goingLeft || _goingRight) && !_doingWalk) {
+			_doingWalk = true;
 			_walkFlagObj->set_state("\xe4\xe0");		// "да"
 		}
 
-		if ((_flag1 || _flag2) && !_flag3)
+		if ((_goingLeft || _goingRight) && !_doingJump)
 			goto LABEL_177;
 
-		if (_someFlag6) {
-			_someFlag6 = 0;
+		if (_doingWalk) {
+			_doingWalk = false;
 			_walkFlagObj->set_state("\xed\xe5\xf2");	// "нет"
 		}
 
-		if (!_flag3)
+		if (_doingJump)
 			goto LABEL_177;
 
-		if (!_someFlag6) {
-			_jumpFlag = 1;
+		if (!_doingWalk) {
+			_jumpFlag = true;
 			_jumpFlagObj->set_state("\xe4\xe0");		// "да"
 		}
-		if (!_flag3) {
+
+		if (!_doingJump) {
 LABEL_177:
-			if (_someFlag6) {
-				_jumpFlag = 0;
+			if (_doingWalk) {
+				_jumpFlag = false;
 				_jumpFlagObj->set_state("\xed\xe5\xf2");	// "нет"
 			}
 		}
-
-		return true;
 	}
 
 	bool finit() {
@@ -535,10 +541,10 @@ private:
 	qdMinigameObjectInterface *_walkFlagObj;
 	qdMinigameObjectInterface *_jumpFlagObj;
 
-	bool _flag1 = false;
-	bool _flag2 = false;
-	bool _flag3 = false;
-	bool _someFlag6 = false;
+	bool _goingLeft = false;
+	bool _goingRight = false;
+	bool _doingJump = false;
+	bool _doingWalk = false;
 	bool _jumpFlag = false;
 
 	int _field_4C = 0;
@@ -553,7 +559,7 @@ private:
 	int _shoteEggCounter = 10;
 	int _livesCounter = 5;
 
-	bool _someFlag5 = false;
+	bool _isFinal = false;
 
 	mgVect2i _cursorPos;
 
