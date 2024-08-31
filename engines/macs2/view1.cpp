@@ -212,6 +212,20 @@ View1::View1() : UIElement("View1") {
 		}
 	}
 
+	void View1::drawCurrentSpeaker(Graphics::ManagedSurface &s) {
+		// TODO: Draw the border
+
+		AnimFrame *frame = currentSpeechActData.speaker->GetCurrentPortrait();
+		if (currentSpeechActData.onRightSide) {
+			// TODO: Need to measure the string box for this one
+		}
+		// TODO: Add the else block
+		// See l0037_B462: for the calculation
+		Common::Point pos = currentSpeechActData.position + Common::Point(7, 7);
+		DrawSprite(pos, frame->Width, frame->Height, frame->Data, s, false);
+
+	}
+
 	void View1::renderString(uint16 x, uint16 y, Common::String s) {
 		Graphics::ManagedSurface surf = getSurface();
 		uint16 currentX = x;
@@ -313,7 +327,7 @@ View1::View1() : UIElement("View1") {
 
 	void View1::clearStringBox() {
 		_isShowingStringBox = false;
-		speakingCharacter = nullptr;
+		currentSpeechActData.speaker = nullptr;
 		redraw();
 		if (_continueScriptAfterUI) {
 			_continueScriptAfterUI = false;
@@ -561,11 +575,9 @@ void View1::draw() {
 	// drawStringBackground(50, 50, 100, 50);
 	if (_isShowingStringBox) {
 		showStringBox(_drawnStringBox);
-		if (speakingCharacter != nullptr) {
+		if (currentSpeechActData.speaker != nullptr) {
 			// TODO: Improve addressing of the memory
-			AnimFrame *frame = speakingCharacter->GetCurrentPortrait();
-
-			DrawSprite(Common::Point(0xa, 0xa), frame->Width, frame->Height, frame->Data, s, false);
+			drawCurrentSpeaker(s);
 		}
 	}
 
@@ -801,14 +813,12 @@ void View1::DrawCharacters(Graphics::ManagedSurface &s) {
 }
 
 void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::String> &strings, const Common::Point &position, bool onRightSide) {
-	// TODO: Handle setting up the updated drawing better
-	speakingCharacter = GetCharacterByIndex(characterIndex);
-	// TODO: Need to reset this
-	// TODO: Add position: position.x, position.y,
+	 
+	
 	setStringBox(strings);
 	_continueScriptAfterUI = true;
 
-	currentSpeechActData.speaker = speakingCharacter;
+	currentSpeechActData.speaker = GetCharacterByIndex(characterIndex);
 	currentSpeechActData.strings = strings;
 	currentSpeechActData.position = position;
 	currentSpeechActData.onRightSide = onRightSide;
