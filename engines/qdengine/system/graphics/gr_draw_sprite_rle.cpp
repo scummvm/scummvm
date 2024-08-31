@@ -262,7 +262,6 @@ void grDispatcher::putSprMask_rle(int x, int y, int sx, int sy, const RLEBuffer 
 	} else
 		dy = 1;
 
-	warning("STUB: grDispatcher::putSprMask_rle");
 	for (int i = 0; i < psy; i++) {
 		uint16 *scr_buf = reinterpret_cast<uint16 *>(_screenBuf->getBasePtr(x, y));
 
