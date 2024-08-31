@@ -2754,7 +2754,10 @@ void ScummEngine_v5::o5_startScript() {
 	// book or KO the guy. The PC version correctly gives 10 points for puzzle
 	// 29 for KO and 15 for puzzle 30 when giving the book."
 	// This workaround is meant to address that.
-	if (_game.id == GID_INDY3 && _currentScript != 0xFF && vm.slot[_currentScript].number == 106 && script == 125 && VAR(115) != 2) {
+	//
+	// See also the similar ScummEngine_v4::o4_ifState() workaround.
+	if (_game.id == GID_INDY3 && _currentScript != 0xFF && vm.slot[_currentScript].number == 106 && script == 125 && VAR(115) != 2 &&
+		enhancementEnabled(kEnhMinorBugFixes)) {
 		// If Var[115] != 2, then:
 		// Correct: startScript(125,[29,10]);
 		// Wrong : startScript(125,[30,15]);
