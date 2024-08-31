@@ -808,6 +808,11 @@ void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 	setStringBox(strings);
 	_continueScriptAfterUI = true;
 
+	currentSpeechActData.speaker = speakingCharacter;
+	currentSpeechActData.strings = strings;
+	currentSpeechActData.position = position;
+	currentSpeechActData.onRightSide = onRightSide;
+
 	if (autoclickActive) {
 		clearStringBox();
 	}

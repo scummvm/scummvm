@@ -575,7 +575,7 @@ void Adlib::OnTimer() {
 		// l0017_1ABD:
 		g2296 = 0;
 
-		/* TODO: Skipped parts
+		/* TODO: Skipped parts with a function pointer
 		xor	ax,ax
 		mov	[2296h],ax
 		pushf
@@ -589,6 +589,21 @@ void Adlib::OnTimer() {
 	}
 	// l0017_1AD3:
 	// TODO: Continue here
+	if (!g229A) {
+		// l0017_1ADA:
+		// TODO: Nothing to do in our implementation, the original confirms we are handling the
+		// interrupt
+	}
+	// l0017_1ADE:
+	;
+	;
+	g2258 = g2258 & 0xDF;
+	if (g2258 & 0x2) {
+		// l0017_1AEF:
+		g2258 |= 0x40;
+	}
+	// l0017_1AF7:
+	// TODO: Continue from here
 	
 	
 }
