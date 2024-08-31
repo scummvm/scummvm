@@ -1688,7 +1688,21 @@ int ScummEngine::convertNameMessage(byte *dst, int dstSize, int var) {
 	num = readVar(var);
 	if (num) {
 		const byte *ptr = getObjOrActorName(num);
+
 		if (ptr) {
+			// WORKAROUND: Some releases of Indy3 miss the description of one of the
+			// tunnels in the catacombs. For example, it's there in the Macintosh or
+			// in the Japanese FM-TOWNS release, but missing from the English FM-TOWNS
+			// or the DOS VGA releases. This is a minor issue, but since LEC themselves
+			// fixed this for some releases, we can do the same... just copy the object
+			// description from the other tunnel, if the former is empty.
+			if (_game.id == GID_INDY3 && _roomResource == 59 && num == 725 && *ptr == 0 &&
+				whereIsObject(724) != WIO_NOT_FOUND && enhancementEnabled(kEnhMinorBugFixes)) {
+				const byte *fallbackObjPtr = getObjOrActorName(724);
+				if (fallbackObjPtr)
+					ptr = fallbackObjPtr;
+			}
+
 			int increment = convertMessageToString(ptr, dst, dstSize);
 			// Save the final consonant (jongsung) of the last Korean character
 			// Used by Korean fan translated games (monkey1, monkey2)
