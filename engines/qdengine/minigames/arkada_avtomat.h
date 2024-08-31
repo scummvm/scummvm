@@ -81,6 +81,425 @@ public:
 	bool quant(float dt) {
 		debugC(3, kDebugMinigames, "ArkadaAvtomat::quant(%f)", dt);
 
+		mgVect2i menCoords;
+		mgVect2i pos;
+		bool v61 = false;
+		bool v97 = false;
+		int tmp = 0;
+
+		menCoords = _scene->world2screen_coords(_menObj->R());
+		_bublObj->set_R(_scene->screen2world_coords(menCoords, -5000.0));
+
+		if (_someFlag5)
+			goto LABEL_158;
+
+		if (!_shotsTomatoCounter && !_shotsBananaCounter && !_shoteEggCounter) {
+			_shotsTomatoCounter = 9;
+			_shotsBananaCounter = 10;
+			_shoteEggCounter = 10;
+			_livesCounter = 5;
+
+			_patronMouseObj->set_state("\xef\xee\xec\xe8\xe4\xee\xf0");	// "помидор"
+
+			updateStats();
+
+			_field_64 = 2;
+		}
+
+		if (!_flag3) {
+			if (_scene->world2screen_coords(_menObj->R()).x < _field_8C
+					&& _menObj->is_state_active("\xf1\xf2\xee\xe8\xf2")) { // "стоит"
+				_menObj->set_R(_menCoords);
+
+				_bloodObj->set_R(_scene->screen2world_coords(_scene->world2screen_coords(_menCoords), 0.0)); // check 0.0 v96
+				_field_54 = -1;
+			}
+		}
+
+		if (_menObj->is_state_active("\xf1\xf2\xee\xe8\xf2")) { // "стоит"
+			_flag1 = 0;
+			_flag2 = 0;
+			_flag3 = 0;
+		}
+
+		if (!_flag2) {
+			if (_flag1 || _flag3 || _menObj->is_state_active("\xf1\xf2\xee\xe8\xf2")) { // "стоит"
+LABEL_44:
+				if (!_flag2)
+					goto LABEL_47;
+				goto LABEL_45;
+			}
+			_field_4C = -1;
+			_field_50 = -1;
+
+			switch (qd_rnd(5)) {
+			case 0:
+			case 3: {
+					_flag2 = 1;
+					int v21 = (500 - _menObj->screen_R().x) / _field_64;
+
+					if (v21 < 10)
+						v21 = 10;
+
+					_field_50 = qd_rnd(v21);
+					_menObj->set_state("\xe8\xe4\xe5\xf2 \xe2\xef\xf0\xe0\xe2\xee"); // "идет вправо"
+					goto LABEL_44;
+				}
+			case 1:
+			case 4: {
+					_flag1 = 1;
+					int v25 = (_menObj->screen_R().x - 300) / _field_64;
+					if (v25 < 10)
+						v25 = 10;
+
+					_field_4C = qd_rnd(v25);
+					_menObj->set_state("\xe8\xe4\xe5\xf2 \xe2\xeb\xe5\xe2\xee"); // "идет влево"
+					goto LABEL_44;
+			}
+			case 2:
+				_flag3 = 1;
+				_field_54 = 30;
+				_menCoords = _menObj->R();
+				{
+					int y = _scene->world2screen_coords(_menObj->R()).y;
+
+					_field_84 = y;
+					_field_8C = y;
+					_field_88 = y - 60;
+				}
+
+				tmp = qd_rnd(3);
+
+				switch (_someSwitch) {
+				case 1:
+					if (!tmp) {
+						_field_8C = _field_84;
+						goto LABEL_43;
+					}
+					if (tmp == 1)
+						goto LABEL_29;
+					if (tmp != 2)
+						goto LABEL_43;
+					break;
+				case 2:
+					if (!tmp) {
+						_field_8C = _field_84;
+						goto LABEL_43;
+					}
+					if (tmp == 1) {
+						_field_8C = 307;
+						_someSwitchBackup = 1;
+						goto LABEL_43;
+					}
+					if (tmp != 2)
+						goto LABEL_43;
+					break;
+				case 3:
+					if (!tmp) {
+						_field_8C = _field_84;
+						goto LABEL_43;
+					}
+					if (tmp != 1) {
+						if (tmp == 2) {
+							_field_8C = 307;
+							_someSwitchBackup = 1;
+						}
+						goto LABEL_43;
+					}
+		LABEL_29:
+					_field_8C = 332;
+					_someSwitchBackup = 2;
+					goto LABEL_43;
+				default:
+		LABEL_43:
+					_flag4 = 0;
+					goto LABEL_44;
+				}
+
+				_field_8C = 357;
+				_someSwitchBackup = 3;
+				goto LABEL_43;
+			default:
+				goto LABEL_44;
+			}
+		}
+
+LABEL_45:
+		{
+			mgVect2i v37 = _scene->world2screen_coords(_menObj->R());
+			v37.y += _field_64;
+			_menObj->set_R(_scene->screen2world_coords(v37, 0.0));
+		}
+		_field_50--;
+
+		if (_field_50 <= 0)
+			_flag2 = 0;
+
+LABEL_47:
+		if (_flag1) {
+			mgVect2i v45 = _scene->world2screen_coords(_menObj->R());
+			v45.y -= _field_64;
+			_menObj->set_R(_scene->screen2world_coords(v45, 0.0));
+			_field_4C--;
+
+			if (_field_4C <= 0)
+				_flag1 = 0;
+		}
+
+		if (_flag3) {
+			mgVect2i v53 = _scene->world2screen_coords(_menObj->R());
+
+			if (v53.y >= _field_84 - 10) {
+				if (!_menObj->is_state_active("\xef\xf0\xfb\xe3\xe0\xe5\xf2\x31") && !_flag4)		// "прыгает1"
+					_menObj->set_state("\xef\xf0\xfb\xe3\xe0\xe5\xf2\x31");	// "прыгает1"
+			}
+
+			if (v53.y <= _field_84 - 10) {
+				if (_menObj->is_state_active("\xef\xf0\xfb\xe3\xe0\xe5\xf2\x31") && !_flag4)		// "прыгает1"
+					_menObj->set_state("\xef\xf0\xfb\xe3\xe0\xe5\xf2\x32");							// "прыгает2"
+			}
+
+			if (v53.y >= _field_8C - 10) {
+				if (_menObj->is_state_active("\xef\xf0\xfb\xe3\xe0\xe5\xf2\x32") && _flag4)			// "прыгает2"
+					_menObj->set_state("\xef\xf0\xfb\xe3\xe0\xe5\xf2\x33");							// "прыгает3"
+			}
+
+			if (v53.y <= _field_88)
+				goto LABEL_176;
+
+			if (!_flag4) {
+				v53.y -= 4;
+LABEL_75:
+LABEL_76:
+				if (v53.y < _field_8C) {
+LABEL_79:
+					_menObj->set_R(_scene->screen2world_coords(v53, 0.0));
+					goto LABEL_80;
+				}
+LABEL_77:
+				if (_flag4) {
+					_flag3 = 0;
+					_someSwitch = _someSwitchBackup;
+				}
+				goto LABEL_79;
+			}
+			if (v53.y > _field_88) {
+				if (!_flag4)
+					goto LABEL_76;
+				} else {
+LABEL_176:
+				if (!_flag4) {
+					_flag4 = 1;
+					goto LABEL_76;
+				}
+			}
+			if (v53.y > _field_8C)
+				goto LABEL_77;
+
+			v53.y += 4;
+			goto LABEL_75;
+		}
+LABEL_80:
+
+		_patronMouseObj->set_R(_scene->screen2world_coords(_engine->mouse_cursor_position(), -5000.0));
+
+		if (_engine->is_mouse_event_active(qdmg::qdEngineInterfaceImpl::MOUSE_EV_RIGHT_DOWN)) {
+			if (_patronMouseObj->is_state_active("\xef\xee\xec\xe8\xe4\xee\xf0")) {		// "помидор"
+				if (_shoteEggCounter <= 0) {
+					if (_shotsBananaCounter > 0) {
+						_patronMouseObj->set_state("\xe1\xe0\xed\xe0\xed");				// "банан"
+
+						if (_shotsTomatoCounter > 0)
+							_shotsTomatoCounter++;
+
+						--_shotsBananaCounter;
+					}
+					goto LABEL_107;
+				}
+				_patronMouseObj->set_state("\xff\xe9\xf6\xee");		// "яйцо"
+
+				if (_shotsTomatoCounter > 0)
+					_shotsTomatoCounter++;
+			} else {
+				if (_patronMouseObj->is_state_active("\xff\xe9\xf6\xee")) {				// "яйцо"
+					if (_shotsBananaCounter <= 0) {
+						if (_shotsTomatoCounter > 0) {
+							_patronMouseObj->set_state("\xef\xee\xec\xe8\xe4\xee\xf0");	// "помидор"
+
+							if (_shoteEggCounter > 0)
+								_shoteEggCounter++;
+
+							--_shotsTomatoCounter;
+						}
+					} else {
+						_patronMouseObj->set_state("\xe1\xe0\xed\xe0\xed");		// "банан"
+
+						if (_shoteEggCounter > 0)
+							_shoteEggCounter++;
+
+						--_shotsBananaCounter;
+					}
+					goto LABEL_107;
+				}
+
+				if (!_patronMouseObj->is_state_active("\xe1\xe0\xed\xe0\xed"))		// "банан"
+					goto LABEL_107;
+
+				if (_shotsTomatoCounter > 0) {
+					_patronMouseObj->set_state("\xef\xee\xec\xe8\xe4\xee\xf0");	// "помидор"
+
+					if (_shotsBananaCounter > 0)
+						_shotsBananaCounter++;
+
+					--_shotsTomatoCounter;
+					goto LABEL_107;
+				}
+				if (_shoteEggCounter <= 0) {
+			LABEL_107:
+					updateStats();
+					goto LABEL_108;
+				}
+				_patronMouseObj->set_state("\xff\xe9\xf6\xee");		// "яйцо"
+
+				if (_shotsBananaCounter > 0)
+					_shotsBananaCounter = _shotsBananaCounter + 1;
+			}
+			--_shoteEggCounter;
+			goto LABEL_107;
+		}
+		LABEL_108:
+		if (_engine->is_mouse_event_active(qdmg::qdEngineInterfaceImpl::MOUSE_EV_LEFT_DOWN)
+				&& !_bloodObj->is_state_active("\xe5\xf1\xf2\xfc")						// "есть"
+				&& !_patronTomatoObj->is_state_active("\xef\xee\xec\xe8\xe4\xee\xf0")	// "помидор"
+				&& !_patronTomatoObj->is_state_active("\xff\xe9\xf6\xee")				// "яйцо"
+				&& !_patronTomatoObj->is_state_active("\xe1\xe0\xed\xe0\xed")) {		// "банан"
+			_cursorPos = _engine->mouse_cursor_position();
+
+			_patronTomatoObj->set_R(_patronMouseObj->R());
+
+			if (_patronMouseObj->is_state_active("\xef\xee\xec\xe8\xe4\xee\xf0")) {		// "помидор"
+				_patronTomatoObj->set_state("\xef\xee\xec\xe8\xe4\xee\xf0");			// "помидор"
+				--_shotsTomatoCounter;
+			} else if (_patronMouseObj->is_state_active("\xff\xe9\xf6\xee")) {		// "яйцо"
+				_patronTomatoObj->set_state("\xff\xe9\xf6\xee");					// "яйцо"
+				--_shoteEggCounter;
+			} else if (_patronMouseObj->is_state_active("\xe1\xe0\xed\xe0\xed")) {		// "банан"
+				_patronTomatoObj->set_state("\xe1\xe0\xed\xe0\xed");					// "банан"
+				--_shotsBananaCounter;
+			}
+
+			_bloodObj->set_R(_patronMouseObj->R());
+			updateStats();
+
+			if (_shotsTomatoCounter <= 0
+					&& _patronTomatoObj->is_state_active("\xef\xee\xec\xe8\xe4\xee\xf0")) {	// "помидор"
+				if (_shoteEggCounter <= 0) {
+					if (_shotsBananaCounter <= 0)
+						_patronMouseObj->set_state("\xed\xe8\xf7\xe5\xe3\xee");			// "ничего"
+					else
+						_patronMouseObj->set_state("\xe1\xe0\xed\xe0\xed");					// "банан"
+				} else {
+					_patronMouseObj->set_state("\xff\xe9\xf6\xee");							// "яйцо"
+				}
+			}
+			if (_shoteEggCounter <= 0 && _patronTomatoObj->is_state_active("\xff\xe9\xf6\xee")) {	// "яйцо"
+				if (_shotsBananaCounter <= 0) {
+					if (_shotsTomatoCounter <= 0)
+						_patronMouseObj->set_state("\xed\xe8\xf7\xe5\xe3\xee");		// "ничего"
+					else
+						_patronMouseObj->set_state("\xef\xee\xec\xe8\xe4\xee\xf0");	// "помидор"
+				} else {
+					_patronMouseObj->set_state("\xe1\xe0\xed\xe0\xed");				// "банан"
+				}
+			}
+			if (_shotsBananaCounter <= 0 && _patronTomatoObj->is_state_active("\xe1\xe0\xed\xe0\xed")) {	// "банан"
+				if (_shotsTomatoCounter <= 0) {
+					if (_shoteEggCounter <= 0)
+						_patronMouseObj->set_state("\xed\xe8\xf7\xe5\xe3\xee");	// "ничего"
+					else
+						_patronMouseObj->set_state("\xff\xe9\xf6\xee");			// "яйцо"
+				} else {
+					_patronMouseObj->set_state("\xef\xee\xec\xe8\xe4\xee\xf0");	// "помидор"
+				}
+			}
+		}
+
+		if (!_fazaObj->is_state_active("\xe4\xe0")		// "да"
+				|| _bloodObj->is_state_active("\xe5\xf1\xf2\xfc")) {	// "есть"
+			goto LABEL_156;
+		}
+
+		pos = _menObj->screen_R();
+
+		if (pos.x <= _cursorPos.x) {
+			if (_cursorPos.x - pos.x > 15)
+				goto LABEL_147;
+		} else if (pos.x - _cursorPos.x > 15) {
+			goto LABEL_147;
+		}
+		v61 = true;
+
+LABEL_147:
+		v97 = false;
+
+		if (pos.y <= _cursorPos.y) {
+			if (_cursorPos.y - pos.y <= 35)
+LABEL_151:
+			v97 = true;
+		} else if (pos.y - _cursorPos.y <= 35) {
+			goto LABEL_151;
+		}
+
+		if (v61) {
+			if (v97) {
+				_killObj->set_state("\xe4\xe0");		// "да"
+				--_livesCounter;
+				updateStats();
+				_flag3 = 0;
+				_field_64 = 7 - _livesCounter;
+				if (_field_64 > 4)
+					_field_64 = 4;
+			}
+		}
+
+LABEL_156:
+		if (!_livesCounter) {
+			_someFlag5 = 1;
+			_doneObj->set_state("\xe4\xe0");		// "да"
+			_flag1 = 0;
+			_flag2 = 0;
+			_flag3 = 0;
+		}
+
+LABEL_158:
+		if ((_flag1 || _flag2) && !_someFlag6) {
+			_someFlag6 = 1;
+			_walkFlagObj->set_state("\xe4\xe0");		// "да"
+		}
+
+		if ((_flag1 || _flag2) && !_flag3)
+			goto LABEL_177;
+
+		if (_someFlag6) {
+			_someFlag6 = 0;
+			_walkFlagObj->set_state("\xed\xe5\xf2");	// "нет"
+		}
+
+		if (!_flag3)
+			goto LABEL_177;
+
+		if (!_someFlag6) {
+			_jumpFlag = 1;
+			_jumpFlagObj->set_state("\xe4\xe0");		// "да"
+		}
+		if (!_flag3) {
+LABEL_177:
+			if (_someFlag6) {
+				_jumpFlag = 0;
+				_jumpFlagObj->set_state("\xed\xe5\xf2");	// "нет"
+			}
+		}
+
 		return true;
 	}
 
@@ -113,6 +532,14 @@ public:
 	}
 
 private:
+	void  updateStats() {
+		_shotsEggObj->set_state(Common::String::format("%i", _shoteEggCounter).c_str());
+		_shotsBananObj->set_state(Common::String::format("%i", _shotsBananaCounter).c_str());
+		_shotsTomatoObj->set_state(Common::String::format("%d", _shotsTomatoCounter).c_str());
+		_livesObj->set_state(Common::String::format("%d", _livesCounter).c_str());
+	}
+
+private:
 	const qdEngineInterface *_engine = nullptr;
 	qdMinigameSceneInterface *_scene = nullptr;
 
@@ -131,23 +558,37 @@ private:
 	qdMinigameObjectInterface *_walkFlagObj;
 	qdMinigameObjectInterface *_jumpFlagObj;
 
-	bool _flag1 = 0;
-	bool _flag2 = 0;
-	int _field_64 = 2;
-	bool _flag3 = 0;
+	bool _flag1 = false;
+	bool _flag2 = false;
+	bool _flag3 = false;
+	bool _someFlag6 = false;
+	bool _jumpFlag = false;
+
+	int _field_4C = 0;
+	int _field_50 = 0;
 	int _field_54 = -1;
 
-	int _someSwitch = 2;
-	int _someSwitchBackup = -1;
+	mgVect3f _menCoords;
+	int _field_64 = 2;
 
 	int _shotsTomatoCounter = 9;
 	int _shotsBananaCounter = 10;
 	int _shoteEggCounter = 10;
 	int _livesCounter = 5;
 
-	bool _someFlag5 = 0;
-	bool _someFlag6 = 0;
-	bool _jumpFlag = 0;
+	bool _someFlag5 = false;
+
+	mgVect2i _cursorPos;
+
+	int _field_84 = 0;
+	int _field_88 = 0;
+	int _field_8C = 0;
+
+	bool _flag4 = false;
+
+	int _someSwitch = 2;
+	int _someSwitchBackup = -1;
+
 };
 
 } // namespace QDEngine
