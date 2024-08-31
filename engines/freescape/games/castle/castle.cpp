@@ -311,7 +311,7 @@ void CastleEngine::drawInfoMenu() {
 	if (isDOS()) {
 		g_system->lockMouse(false);
 		g_system->showMouse(true);
-		surface->copyRectToSurface(*_menu, 40, 33, Common::Rect(0, 0, _menu->w, _menu->h));
+		surface->copyRectToSurface(*_menu, 47, 35, Common::Rect(0, 0, _menu->w, _menu->h));
 
 		_gfx->readFromPalette(10, r, g, b);
 		front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);

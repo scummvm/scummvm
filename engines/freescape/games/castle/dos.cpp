@@ -87,21 +87,19 @@ void CastleEngine::loadDOSFonts(Common::SeekableReadStream *file, int pos) {
 	free(bufferPlane3);
 }
 
-Graphics::Surface *CastleEngine::loadFrameFromPlanes(Common::SeekableReadStream *file, int widthInBytes, int height, uint32 front0, uint32 front1, uint32 front2, uint32 front3) {
-	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(widthInBytes * 8 / 4, height, _gfx->_texturePixelFormat);
-	surface->fillRect(Common::Rect(0, 0, widthInBytes * 8 / 4, height), _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00));
-	loadFrameFromPlanesInternal(file, surface, widthInBytes, height, front0, front1, front2, front3);
+Graphics::ManagedSurface *CastleEngine::loadFrameFromPlanes(Common::SeekableReadStream *file, int widthInBytes, int height) {
+	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
+	surface->create(widthInBytes * 8 / 4, height, Graphics::PixelFormat::createFormatCLUT8());
+	surface->fillRect(Common::Rect(0, 0, widthInBytes * 8 / 4, height), 0);
+	loadFrameFromPlanesInternal(file, surface, widthInBytes, height);
 	return surface;
 }
 
-Graphics::Surface *CastleEngine::loadFrameFromPlanesInternal(Common::SeekableReadStream *file, Graphics::Surface *surface, int width, int height, uint32 front0, uint32 front1, uint32 front2, uint32 front3) {
-	uint32 palette[4] = {front0, front1, front2, front3};
+Graphics::ManagedSurface *CastleEngine::loadFrameFromPlanesInternal(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int width, int height) {
 	byte *colors = (byte *)malloc(sizeof(byte) * height * width);
 	file->read(colors, height * width);
 
-	// Planes are rendered in reverse order
-	for (int p = 3; p >= 0; p--) {
+	for (int p = 0; p < 4; p++) {
 		for (int i = 0; i < height * width; i++) {
 			byte color = colors[i];
 			for (int n = 0; n < 8; n++) {
@@ -111,9 +109,10 @@ Graphics::Surface *CastleEngine::loadFrameFromPlanesInternal(Common::SeekableRea
 				if (x < width * (8 / 4) * p || x >= width * (8 / 4) * (p + 1))
 					continue;
 
-				bool setPixel = color & (1 << n);
-				if (setPixel)
-					surface->setPixel(x % (width * 8 / 4), y, palette[x / (width * 8 / 4)]);
+				int bit = ((color >> n) & 0x01) << p;
+				int sample = surface->getPixel(x % (width * 8 / 4), y) | bit;
+				assert(sample < 16);
+				surface->setPixel(x % (width * 8 / 4), y, sample);
 			}
 		}
 	}
@@ -133,55 +132,57 @@ void CastleEngine::loadAssetsDOSFullGame() {
 			loadSpeakerFxDOS(stream, 0x636d + 0x200, 0x63ed + 0x200);
 			loadDOSFonts(stream, 0x29696);
 
-			uint32 transparent = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
-			uint32 lightGray = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xAA, 0xAA, 0xAA);
-			uint32 darkGray = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x55, 0x55, 0x55);
+			//stream->seek(0x1c700);
+			//_background = loadFrameFromPlanes(stream, 252, 42);
+			//_background->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
 
-			uint32 lightGreen = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x7f, 0xF4, 0x65);
-			uint32 darkGreen = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x45, 0xA1, 0x2A);
-			uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0x66);
+			stream->seek(0x221ae);
+			_menu = loadFrameFromPlanes(stream, 112, 114);
+			_menu->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
 
-			uint32 darkRed = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x7f, 0x00, 0x00);
-
-
-			stream->seek(0x1c700);
-			_background = loadFrameFromPlanes(stream, 252, 42, lightGray, darkGray, lightGray, darkGray);
-
-			//stream->seek(0x221e6);
-			stream->seek(0x221ad);
-			_menu = loadFrameFromPlanes(stream, 112, 114, lightGray, lightGray, darkRed, yellow);
 			//debug("%lx", stream->pos());
 			// TODO: some space here from the menu image
-			stream->seek(0x25414);
+			/*stream->seek(0x25414);
 			_menuCrawlIndicator = loadFrameFromPlanes(stream, 16, 12, lightGray, lightGray, lightGray, darkGray);
 			_menuWalkIndicator = loadFrameFromPlanes(stream, 16, 12, lightGray, lightGray, lightGray, darkGray);
 			_menuRunIndicator = loadFrameFromPlanes(stream, 16, 12, lightGray, lightGray, lightGray, darkGray);
 			_menuFxOffIndicator = loadFrameFromPlanes(stream, 16, 12, lightGray, lightGray, lightGray, darkGray);
-			_menuFxOnIndicator = loadFrameFromPlanes(stream, 16, 12, lightGray, lightGray, lightGray, darkGray);
+			_menuFxOnIndicator = loadFrameFromPlanes(stream, 16, 12, lightGray, lightGray, lightGray, darkGray);*/
 
 			// This end in 0x257d4??
+			byte flagPalette[4][3] = {
+				{0x00, 0x00, 0x00},
+				{0x00, 0xaa, 0x00},
+				{0x55, 0xff, 0x55},
+				{0xff, 0xff, 0xff}
+			};
+
 			stream->seek(0x257cc);
-			_flagFrames[0] = loadFrameFromPlanes(stream, 16, 11, lightGreen, transparent, darkGreen, transparent);
-			_flagFrames[1] = loadFrameFromPlanes(stream, 16, 11, lightGreen, transparent, darkGreen, transparent);
-			_flagFrames[2] = loadFrameFromPlanes(stream, 16, 11, lightGreen, transparent, darkGreen, transparent);
-			_flagFrames[3] = loadFrameFromPlanes(stream, 16, 11, lightGreen, transparent, darkGreen, transparent);
+			_flagFrames[0] = loadFrameFromPlanes(stream, 16, 11);
+			_flagFrames[0]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&flagPalette, 4);
+			_flagFrames[1] = loadFrameFromPlanes(stream, 16, 11);
+			_flagFrames[1]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&flagPalette, 4);
+			_flagFrames[2] = loadFrameFromPlanes(stream, 16, 11);
+			_flagFrames[2]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&flagPalette, 4);
+			_flagFrames[3] = loadFrameFromPlanes(stream, 16, 11);
+			_flagFrames[3]->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&flagPalette, 4);
 
 			//debug("%lx", stream->pos());
 			//stream->seek(0x25a90);
 			// This has only two planes?
 			//_riddleTopFrames[0] = loadFrameFromPlanes(stream, 30, ??, lightGreen, transparent, darkGreen, transparent);
-			//_riddleBottomFrames[0] = loadFrameFromPlanes(stream, 30, ??, lightGreen, transparent, darkGreen, transparent);
+			//_riddleBottomFrames[0] = loadFrameFromPlanes(stream, 30, ??, lightGreen, transparent, darkGreen, transparent);*/
 
 			/*stream->seek(0x25a94 + 0xe00);
-			widthInBytes = 36;
-			height = 82;
+			byte *grayPalette = (byte *)malloc(16 * 3);
+			for (int i = 0; i < 16; i++) { // gray scale palette
+				grayPalette[i * 3 + 0] = i * (255 / 16);
+				grayPalette[i * 3 + 1] = i * (255 / 16);
+				grayPalette[i * 3 + 2] = i * (255 / 16);
+			}
 
-			_something = new Graphics::Surface();
-			_something->create(widthInBytes * 8, height, _gfx->_texturePixelFormat);
-			_something->fillRect(Common::Rect(0, 0, widthInBytes * 8, height), _gfx->_texturePixelFormat.ARGBToColor(0x0, 0, 0, 0));
-			loadFrameFromPlanes(stream, _something, widthInBytes, height, lightGreen, darkGray, darkGreen, lightGray);
-			debug("%lx", stream->pos());
-			//assert(0);*/
+			_something = loadFrameFromPlanes(stream, 36, 82);
+			_something->convertToInPlace(_gfx->_texturePixelFormat, grayPalette, 16);*/
 		}
 
 		delete stream;
@@ -309,6 +310,7 @@ void CastleEngine::drawDOSUI(Graphics::Surface *surface) {
 	drawEnergyMeter(surface);
 	int flagFrameIndex = (_ticks / 10) % 4;
 	surface->copyRectToSurface(*_flagFrames[flagFrameIndex], 282, 5, Common::Rect(10, 0, _flagFrames[flagFrameIndex]->w, _flagFrames[flagFrameIndex]->h));
+	//surface->copyRectToSurface(*_something, 100, 50, Common::Rect(0, 0, _something->w, _something->h));
 }
 
 } // End of namespace Freescape
