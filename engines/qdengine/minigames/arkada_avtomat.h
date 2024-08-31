@@ -226,7 +226,7 @@ LABEL_44:
 LABEL_45:
 		{
 			mgVect2i v37 = _scene->world2screen_coords(_menObj->R());
-			v37.y += _field_64;
+			v37.x += _field_64;
 			_menObj->set_R(_scene->screen2world_coords(v37, 0.0));
 		}
 		_field_50--;
@@ -237,7 +237,7 @@ LABEL_45:
 LABEL_47:
 		if (_goingLeft) {
 			mgVect2i v45 = _scene->world2screen_coords(_menObj->R());
-			v45.y -= _field_64;
+			v45.x -= _field_64;
 			_menObj->set_R(_scene->screen2world_coords(v45, 0.0));
 			_field_4C--;
 
