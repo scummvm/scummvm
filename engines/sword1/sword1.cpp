@@ -246,7 +246,7 @@ void SwordEngine::checkKeys() {
 		_sound->pauseMusic();
 		_sound->pauseFx();
 
-		while (_keyPressed.keycode != Common::KEYCODE_p && !Engine::shouldQuit()) {
+		while (_customType != kActionPause && !Engine::shouldQuit()) {
 			pollInput(0);
 			_sound->updateMusicStreaming();
 		}
@@ -257,11 +257,12 @@ void SwordEngine::checkKeys() {
 
 		_systemVars.gamePaused = false;
 		_keyPressed.reset();
+		_customType = kActionNone;
 	}
 
-	switch (_keyPressed.keycode) {
-	case Common::KEYCODE_F5:
-	case Common::KEYCODE_ESCAPE:
+	switch (_customType) {
+	case kActionMainPanel:
+	case kActionEscape:
 		if ((Logic::_scriptVars[MOUSE_STATUS] & 1) &&
 			(Logic::_scriptVars[GEORGE_HOLDING_PIECE] == 0) &&
 			(Logic::_scriptVars[SCREEN] != 91)) { // Disable the save screen on the phone envelope room!
@@ -270,12 +271,11 @@ void SwordEngine::checkKeys() {
 		}
 
 		break;
-	case Common::KEYCODE_q:
-		if (_keyPressed.hasFlags(Common::KBD_CTRL))
-			Engine::quitGame();
+	case kActionQuit:
+		Engine::quitGame();
 
 		break;
-	case Common::KEYCODE_p:
+	case kActionPause:
 		_systemVars.gamePaused = true;
 		break;
 	default:
@@ -949,7 +949,7 @@ void SwordEngine::askForCd() {
 				break;
 		}
 
-		while (_keyPressed.keycode == Common::KEYCODE_INVALID && !shouldQuit()) {
+		while (_customType == kActionNone && _keyPressed.keycode == Common::KEYCODE_INVALID && !shouldQuit()) {
 			pollInput(0);
 		}
 
@@ -974,6 +974,7 @@ void SwordEngine::askForCd() {
 		};
 
 		_keyPressed.reset();
+		_customType = kActionNone;
 
 		// At this point the original code sets colors 1 to 180 to grey;
 		// the only visible effect of this is that the screen flashes when
@@ -992,6 +993,7 @@ void SwordEngine::askForCd() {
 
 uint8 SwordEngine::mainLoop() {
 	_keyPressed.reset();
+	_customType = kActionNone;
 	_systemVars.gameCycle = 1;
 
 	do {
@@ -1068,6 +1070,7 @@ uint8 SwordEngine::mainLoop() {
 
 			_mouseState = 0;
 			_keyPressed.reset();
+			_customType = kActionNone;
 
 		} while ((Logic::_scriptVars[SCREEN] == Logic::_scriptVars[NEW_SCREEN]) &&
 			(_systemVars.saveGameFlag == SGF_DONE || _systemVars.saveGameFlag == SGF_SAVE) &&
@@ -1111,6 +1114,9 @@ void SwordEngine::pollInput(uint32 delay) { //copied and mutilated from sky.cpp
 	do {
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				_customType = event.customType;
+				break;
 			case Common::EVENT_KEYDOWN:
 				_keyPressed = event.kbd;
 				break;

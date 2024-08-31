@@ -29,6 +29,8 @@
 #include "common/translation.h"
 #include "common/memstream.h"
 
+#include "backends/keymapper/keymapper.h"
+
 #include "graphics/thumbnail.h"
 #include "gui/message.h"
 
@@ -242,6 +244,7 @@ void Control::getPlayerOptions() {
 	_vm->waitForFade();
 	_sound->clearAllFx();
 	_keyPressed.reset();
+	_customType = kActionNone;
 
 	while (SwordEngine::_systemVars.snrStatus != SNR_BLANK && !Engine::shouldQuit()) {
 		delay(DEFAULT_FRAME_TIME / 2);
@@ -254,6 +257,7 @@ void Control::getPlayerOptions() {
 	}
 
 	_keyPressed.reset();
+	_customType = kActionNone;
 
 	saveRestoreScreen();
 
@@ -1502,10 +1506,10 @@ void Control::editDescription() {
 	char string[40];
 	int32 len;
 	int32 index;
-
 	if (_keyPressed.keycode) {
 		uint16 ch = _keyPressed.ascii;
 		_keyPressed.reset();
+		_customType = kActionNone;
 
 		index = _editingDescription + _firstDescription - 1;
 		len = Common::strnlen((char *)_fileDescriptions[index], sizeof(_fileDescriptions[index]));
@@ -1566,6 +1570,7 @@ void Control::restoreSelected() {
 	if (_keyPressed.keycode) {
 		char ch = _keyPressed.ascii;
 		_keyPressed.reset();
+		_customType = kActionNone;
 
 		if ((ch == ESCAPE) || (ch == CR)) {
 			if (ch == ESCAPE) {
@@ -1602,6 +1607,9 @@ bool Control::saveGame() {
 }
 
 void Control::initialiseSave() {
+	Common::Keymapper *keymapper = _vm->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+
 	uint8 *src, *dst;
 	int32 size;
 	FrameHeader *f;
@@ -1976,6 +1984,9 @@ void Control::removeSave() {
 	}
 
 	_sound->setVolumes();
+
+	Common::Keymapper *keymapper = _vm->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 }
 
 bool Control::restoreGame() {
@@ -2637,12 +2648,16 @@ void Control::delay(uint32 msecs) {
 	uint32 now = _system->getMillis();
 	uint32 endTime = now + msecs;
 	_keyPressed.reset();
+	_customType = kActionNone;
 	_mouseState = 0;
 
 	do {
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				_customType = event.customType;
+				return;
 			case Common::EVENT_KEYDOWN:
 				_keyPressed = event.kbd;
 				// we skip the rest of the delay and return immediately
@@ -3607,10 +3622,11 @@ void Control::psxEndCredits() {
 	}
 
 	_keyPressed.reset();
+	_customType = kActionNone;
 
 	while (allSet && creditsHeight[PSX_NUM_CREDITS - 1] > -120 &&
 		!Engine::shouldQuit() &&
-		_keyPressed.keycode != Common::KEYCODE_ESCAPE) {
+		_customType != kActionEscape) {
 		memset(creditsScreenBuf, 0, SCREEN_WIDTH * SCREEN_FULL_DEPTH);
 
 		for (int i = 0; i < PSX_NUM_CREDITS; i++) {
@@ -3719,6 +3735,7 @@ void Control::psxEndCredits() {
 	free(creditsScreenBuf);
 
 	_keyPressed.reset();
+	_customType = kActionNone;
 }
 
 } // End of namespace Sword1

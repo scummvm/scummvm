@@ -229,6 +229,7 @@ private:
 	Logic *_logic;
 	uint8 *_screenBuf;
 	Common::KeyState _keyPressed;
+	Common::CustomEventType _customType;
 
 	Common::Point _mouseCoord;
 	uint16 _mouseState;
