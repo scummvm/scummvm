@@ -73,12 +73,22 @@ public:
  */
 class AgiSound {
 public:
-	AgiSound() : _isPlaying(false), _isValid(false) {}
-	virtual ~AgiSound() {}
+	AgiSound(byte resourceNr, byte *data, uint32 length, uint16 type) :
+		_resourceNr(resourceNr),
+		_data(data),
+		_length(length),
+		_type(type),
+		_isPlaying(false) {}
+
+	virtual ~AgiSound()      { free(_data); }
+
 	virtual void play()      { _isPlaying = true; }
 	virtual void stop()      { _isPlaying = false; }
 	virtual bool isPlaying() { return _isPlaying; }
-	virtual uint16 type() = 0;
+	byte *getData()          { return _data; }
+	uint32 getLength()       { return _length; }
+	virtual uint16 type()    { return _type; }
+	virtual bool isValid()   { return true; }
 
 	/**
 	 * A named constructor for creating different types of AgiSound objects
@@ -91,22 +101,17 @@ public:
 	static AgiSound *createFromRawResource(uint8 *data, uint32 len, int resnum, int soundemu);
 
 protected:
-	bool _isPlaying;    ///< Is the sound playing?
-	bool _isValid;      ///< Is this a valid sound object?
+	byte _resourceNr;
+	byte *_data;
+	uint32 _length;
+	uint16 _type;
+	bool _isPlaying;
 };
 
 class PCjrSound : public AgiSound {
 public:
-	PCjrSound(uint8 *data, uint32 len, int resnum);
-	~PCjrSound() override { free(_data); }
-	uint16 type() override { return _type; }
+	PCjrSound(byte resourceNr, byte *data, uint32 length, uint16 type);
 	const uint8 *getVoicePointer(uint voiceNum);
-	uint8 *getData() { return _data; }
-	uint32 getLength() { return _len; }
-protected:
-	uint8 *_data; ///< Raw sound resource data
-	uint32 _len;  ///< Length of the raw sound resource
-	uint16 _type; ///< Sound resource type
 };
 
 class SoundMgr {

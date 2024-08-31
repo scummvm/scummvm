@@ -51,19 +51,19 @@ AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, i
 	uint16 type = READ_LE_UINT16(data);
 
 	// For V1 sound resources
-	if (type != AGI_SOUND_SAMPLE && (type & 0xFF) == 0x01)
-		return new PCjrSound(data, len, resnum);
+	if (type != AGI_SOUND_SAMPLE && (type & 0xFF) == AGI_SOUND_4CHN)
+		return new PCjrSound(resnum, data, len, AGI_SOUND_4CHN);
 
 	switch (type) { // Create a sound object based on the type
 	case AGI_SOUND_SAMPLE:
-		return new IIgsSample(data, len, resnum);
+		return new IIgsSample(resnum, data, len, type);
 	case AGI_SOUND_MIDI:
-		return new IIgsMidi(data, len, resnum);
+		return new IIgsMidi(resnum, data, len, type);
 	case AGI_SOUND_4CHN:
 		if (soundemu == SOUND_EMU_MIDI) {
-			return new MIDISound(data, len, resnum);
+			return new AgiSound(resnum, data, len, type);
 		} else {
-			return new PCjrSound(data, len, resnum);
+			return new PCjrSound(resnum, data, len, type);
 		}
 	default:
 		break;
@@ -73,19 +73,12 @@ AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, i
 	return nullptr;
 }
 
-PCjrSound::PCjrSound(uint8 *data, uint32 len, int resnum) : AgiSound() {
-	_data = data; // Save the resource pointer
-	_len  = len;  // Save the resource's length
-	_type = READ_LE_UINT16(data); // Read sound resource's type
+PCjrSound::PCjrSound(byte resourceNr, byte *data, uint32 length, uint16 type) :
+	AgiSound(resourceNr, data, length, type) {
 
-	// Detect V1 sound resources
-	if ((_type & 0xFF) == 0x01)
-		_type = AGI_SOUND_4CHN;
-
-	_isValid = (_type == AGI_SOUND_4CHN) && (_data != nullptr) && (_len >= 2);
-
-	if (!_isValid) // Check for errors
-		warning("Error creating PCjr 4-channel sound from resource %d (Type %d, length %d)", resnum, _type, len);
+	bool isValid = (_type == AGI_SOUND_4CHN) && (_data != nullptr) && (_length >= 2);
+	if (!isValid) // Check for errors
+		warning("Error creating PCjr 4-channel sound from resource %d (Type %d, length %d)", _resourceNr, _type, _length);
 }
 
 const uint8 *PCjrSound::getVoicePointer(uint voiceNum) {
@@ -129,19 +122,22 @@ void SoundMgr::unloadSound(int resnum) {
  * @param flag    the flag that is wished to be set true when finished
  */
 void SoundMgr::startSound(int resnum, int flag) {
-	debugC(3, kDebugLevelSound, "startSound(resnum = %d, flag = %d)", resnum, flag);
-
-	if (_vm->_game.sounds[resnum] == nullptr) // Is this needed at all?
+	AgiSound *sound = _vm->_game.sounds[resnum];
+	debugC(3, kDebugLevelSound, "startSound(resnum = %d, flag = %d, type = %d)", resnum, flag, sound ? sound->type() : 0);
+	if (sound == nullptr) {
+		warning("startSound: sound %d does not exist", resnum);
 		return;
+	}
 
 	stopSound();
 
-	AgiSoundEmuType type = (AgiSoundEmuType)_vm->_game.sounds[resnum]->type();
-	if (type != AGI_SOUND_SAMPLE && type != AGI_SOUND_MIDI && type != AGI_SOUND_4CHN)
+	// This check handles an Apple IIgs sample with an invalid header
+	if (!sound->isValid()) {
+		warning("startSound: sound %d is invalid", resnum);
 		return;
-	debugC(3, kDebugLevelSound, "    type = %d", type);
+	}
 
-	_vm->_game.sounds[resnum]->play();
+	sound->play();
 	_playingSound = resnum;
 	_soundGen->play(resnum);
 
