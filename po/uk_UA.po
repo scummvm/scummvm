@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-31 14:45+0000\n"
+"POT-Creation-Date: 2024-08-31 19:22+0000\n"
 "PO-Revision-Date: 2024-08-18 06:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -117,7 +117,7 @@ msgstr "Вгору"
 #: engines/scumm/dialog-createsession.cpp:47
 #: engines/scumm/dialog-sessionselector.cpp:67
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:138
-#: engines/sword1/control.cpp:2798 engines/wintermute/wintermute.cpp:182
+#: engines/sword1/control.cpp:2813 engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "Відміна"
 
@@ -359,7 +359,7 @@ msgstr "Невірний формат JSON-коду."
 #: engines/scumm/scumm.cpp:1618 engines/scumm/scumm.cpp:2106
 #: engines/scumm/scumm.cpp:2122 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
-#: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2798
+#: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2813
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
 #: engines/vcruise/vcruise.cpp:101 engines/vcruise/vcruise.cpp:111
@@ -11737,7 +11737,7 @@ msgstr ""
 msgid "Cutscene '%s' not found"
 msgstr "Ролик '%s' не знайдено"
 
-#: engines/sword1/control.cpp:2796
+#: engines/sword1/control.cpp:2811
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -11754,7 +11754,7 @@ msgstr ""
 "Натисніть ОК, щоб перевести їх зараз, інакше це повідомлення з'явиться при "
 "наступному запуску гри.\n"
 
-#: engines/sword1/control.cpp:2982
+#: engines/sword1/control.cpp:2997
 #, c-format
 msgid ""
 "Target new saved game already exists!\n"
@@ -11763,11 +11763,11 @@ msgstr ""
 "Збережена гра з такою назвою вже існує!\n"
 "Чи ви хочете лишити стару збережену гру (%s) або нову (%s)?\n"
 
-#: engines/sword1/control.cpp:2985
+#: engines/sword1/control.cpp:3000
 msgid "Keep the old one"
 msgstr "Лишити стару"
 
-#: engines/sword1/control.cpp:2985
+#: engines/sword1/control.cpp:3000
 msgid "Keep the new one"
 msgstr "Взяти нову"
 

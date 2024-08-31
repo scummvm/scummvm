@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-31 14:45+0000\n"
+"POT-Creation-Date: 2024-08-31 19:22+0000\n"
 "PO-Revision-Date: 2024-08-27 03:43+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -118,7 +118,7 @@ msgstr "Para cima"
 #: engines/scumm/dialog-createsession.cpp:47
 #: engines/scumm/dialog-sessionselector.cpp:67
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:138
-#: engines/sword1/control.cpp:2798 engines/wintermute/wintermute.cpp:182
+#: engines/sword1/control.cpp:2813 engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -363,7 +363,7 @@ msgstr "O conteúdo do código JSON está incorreto."
 #: engines/scumm/scumm.cpp:1618 engines/scumm/scumm.cpp:2106
 #: engines/scumm/scumm.cpp:2122 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
-#: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2798
+#: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2813
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
 #: engines/vcruise/vcruise.cpp:101 engines/vcruise/vcruise.cpp:111
@@ -11705,7 +11705,7 @@ msgstr ""
 msgid "Cutscene '%s' not found"
 msgstr "Vídeo '%s' não encontrado"
 
-#: engines/sword1/control.cpp:2796
+#: engines/sword1/control.cpp:2811
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -11723,7 +11723,7 @@ msgstr ""
 "Pressione OK para convertê-los agora, caso contrário você será solicitado "
 "novamente da próxima vez em que iniciar o jogo.\n"
 
-#: engines/sword1/control.cpp:2982
+#: engines/sword1/control.cpp:2997
 #, c-format
 msgid ""
 "Target new saved game already exists!\n"
@@ -11732,11 +11732,11 @@ msgstr ""
 "Já existe um jogo salvo no destino!\n"
 "Você gostaria de manter o jogo salvo (%s) ou o novo (%s)?\n"
 
-#: engines/sword1/control.cpp:2985
+#: engines/sword1/control.cpp:3000
 msgid "Keep the old one"
 msgstr "Mantenha o antigo"
 
-#: engines/sword1/control.cpp:2985
+#: engines/sword1/control.cpp:3000
 msgid "Keep the new one"
 msgstr "Mantenha o novo"
 
