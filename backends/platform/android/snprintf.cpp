@@ -183,8 +183,6 @@
  *
  */
 
-#if defined(__ANDROID__)
-
 // Allow use of stuff in <time.h>
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
@@ -1318,5 +1316,4 @@ static LDOUBLE mypow10(int exponent) {
 	}
 	return result;
 }
-#endif // defined(__ANDROID__)
 /* vim: set joinspaces noexpandtab textwidth=80 cinoptions=(4,u0: */

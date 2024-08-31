@@ -22,8 +22,6 @@
 #ifndef _ANDROID_JNI_H_
 #define _ANDROID_JNI_H_
 
-#if defined(__ANDROID__)
-
 #include <jni.h>
 #include <semaphore.h>
 #include <pthread.h>
@@ -226,5 +224,4 @@ inline int JNI::writeAudio(JNIEnv *env, jbyteArray &data, int offset, int size) 
 								offset, size);
 }
 
-#endif
 #endif

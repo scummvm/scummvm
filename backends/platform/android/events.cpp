@@ -19,8 +19,6 @@
  *
  */
 
-#if defined(__ANDROID__)
-
 // Allow use of stuff in <time.h>
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
@@ -1551,5 +1549,3 @@ void OSystem_Android::setupTouchMode(int oldValue, int newValue) {
 		_touch_pt_scroll.y = -1;
 	}
 }
-
-#endif

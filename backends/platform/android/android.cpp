@@ -19,8 +19,6 @@
  *
  */
 
-#if defined(__ANDROID__)
-
 #define FORBIDDEN_SYMBOL_EXCEPTION_getenv(a)
 
 // Allow use of stuff in <time.h>
@@ -1160,5 +1158,3 @@ _s(
 const char * const *OSystem_Android::buildHelpDialogData() {
 	return helpTabs;
 }
-
-#endif
