@@ -704,7 +704,20 @@ void cmdSound(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 resourceNr = parameter[0];
 	uint16 flagNr = parameter[1];
 
-	vm->_sound->startSound(resourceNr, flagNr);
+	if (vm->getPlatform() == Common::kPlatformApple2 ||
+		vm->getPlatform() == Common::kPlatformCoCo3) {
+		// Play the sound until it finishes or until a key is pressed.
+		// Sound playback is a blocking operation on these platforms.
+		// If sound is off then playback is not started.
+		if (vm->getFlag(VM_FLAG_SOUND_ON)) {
+			vm->_sound->startSound(resourceNr, flagNr);
+			vm->waitAnyKeyOrFinishedSound();
+			vm->_sound->stopSound();
+		}
+		vm->setFlag(flagNr, true);
+	} else {
+		vm->_sound->startSound(resourceNr, flagNr);
+	}
 }
 
 void cmdStopSound(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
