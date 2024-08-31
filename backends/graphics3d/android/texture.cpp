@@ -103,9 +103,10 @@ static const char *controlFragment =
 		"precision mediump float;\n"
 	"#endif\n"
 	"varying vec2 Texcoord;\n"
+	"uniform float alpha;\n"
 	"uniform sampler2D tex;\n"
 	"void main() {\n"
-		"gl_FragColor = texture2D(tex, Texcoord);\n"
+		"gl_FragColor = texture2D(tex, Texcoord) * vec4(1.0, 1.0, 1.0, alpha);\n"
 	"}\n";
 
 void GLESBaseTexture::initGL() {
@@ -135,6 +136,7 @@ GLESBaseTexture::GLESBaseTexture(GLenum glFormat, GLenum glType,
 	_surface(),
 	_texture_width(0),
 	_texture_height(0),
+	_alpha(1.f),
 	_draw_rect(),
 	_all_dirty(false),
 	_dirty_rect(),
@@ -266,6 +268,7 @@ void GLESBaseTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h,
 	clipV.w() /= _texture_height;
 //	LOGD("*** Drawing at (%f,%f) , size %f x %f", float(x) / float(_surface.w), float(y) / float(_surface.h),  tex_width, tex_height);
 
+	_box_shader->setUniform1f("alpha", _alpha);
 	_box_shader->setUniform("offsetXY", Math::Vector2d(offsetX, offsetY));
 	_box_shader->setUniform("sizeWH", Math::Vector2d(sizeW, sizeH));
 	_box_shader->setUniform("clip", clipV);
