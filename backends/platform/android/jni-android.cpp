@@ -19,8 +19,6 @@
  *
  */
 
-#if defined(__ANDROID__)
-
 // Allow use of stuff in <time.h> and abort()
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_abort
@@ -1127,5 +1125,3 @@ jobject JNI::findSAFTree(const Common::String &name) {
 
 	return tree;
 }
-
-#endif

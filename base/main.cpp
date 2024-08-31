@@ -92,7 +92,7 @@
 #include "gui/updates-dialog.h"
 #endif
 
-#ifdef __ANDROID__
+#ifdef ANDROID_BACKEND
 #include "backends/fs/android/android-fs-factory.h"
 #endif
 
@@ -618,7 +618,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	}
 #endif
 
-#ifdef __ANDROID__
+#ifdef ANDROID_BACKEND
 	// This early popup message for Android, informing the users about important
 	// changes to file access, needs to be *after* language for the GUI has been selected.
 	// Hence, we instantiate GUI Manager here, to take care of this.

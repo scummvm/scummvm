@@ -19,8 +19,6 @@
  *
  */
 
-#if defined(__ANDROID__)
-
 // For remove()
 #include <stdio.h>
 
@@ -43,5 +41,3 @@ bool AndroidPOSIXFilesystemNode::remove() {
 	setFlags();
 	return true;
 }
-
-#endif
