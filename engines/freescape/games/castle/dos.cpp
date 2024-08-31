@@ -132,9 +132,9 @@ void CastleEngine::loadAssetsDOSFullGame() {
 			loadSpeakerFxDOS(stream, 0x636d + 0x200, 0x63ed + 0x200);
 			loadDOSFonts(stream, 0x29696);
 
-			//stream->seek(0x1c700);
-			//_background = loadFrameFromPlanes(stream, 252, 42);
-			//_background->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
+			stream->seek(0x1c700);
+			_background = loadFrameFromPlanes(stream, 252, 42);
+			_background->convertToInPlace(_gfx->_texturePixelFormat, (byte *)&kEGADefaultPalette, 16);
 
 			stream->seek(0x221ae);
 			_menu = loadFrameFromPlanes(stream, 112, 114);

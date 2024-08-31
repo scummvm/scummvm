@@ -403,7 +403,7 @@ void FreescapeEngine::drawBackground() {
 
 	if (isCastle() && _background) {
 		if (!_skyTexture)
-			_skyTexture = _gfx->createTexture(_background);
+			_skyTexture = _gfx->createTexture(_background->surfacePtr());
 		_gfx->drawSkybox(_skyTexture, _position);
 	}
 }

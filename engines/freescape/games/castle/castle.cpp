@@ -446,24 +446,6 @@ void CastleEngine::loadAssets() {
 
 		_areaMap[1]->addFloor();
 		_areaMap[2]->addFloor();
-
-		_strenghtBackgroundFrame = loadBundledImage("castle_strength_background");
-		_strenghtBackgroundFrame->convertToInPlace(_gfx->_texturePixelFormat);
-
-		_strenghtBarFrame = loadBundledImage("castle_strength_bar");
-		_strenghtBarFrame->convertToInPlace(_gfx->_texturePixelFormat);
-
-		_strenghtWeightsFrames.push_back(loadBundledImage("castle_strength_weight_0"));
-		_strenghtWeightsFrames[0]->convertToInPlace(_gfx->_texturePixelFormat);
-
-		_strenghtWeightsFrames.push_back(loadBundledImage("castle_strength_weight_1"));
-		_strenghtWeightsFrames[1]->convertToInPlace(_gfx->_texturePixelFormat);
-
-		_strenghtWeightsFrames.push_back(loadBundledImage("castle_strength_weight_2"));
-		_strenghtWeightsFrames[2]->convertToInPlace(_gfx->_texturePixelFormat);
-
-		_strenghtWeightsFrames.push_back(loadBundledImage("castle_strength_weight_3"));
-		_strenghtWeightsFrames[3]->convertToInPlace(_gfx->_texturePixelFormat);
 	}
 }
 

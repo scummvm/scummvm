@@ -75,19 +75,19 @@ public:
 
 	void drawStringInSurface(const Common::String &str, int x, int y, uint32 fontColor, uint32 backColor, Graphics::Surface *surface, int offset = 0) override;
 	//void drawStringInSurface(const Common::String &str, int x, int y, uint32 primaryFontColor, uint32 secondaryFontColor, uint32 backColor, Graphics::Surface *surface, int offset = 0) override;
-	Common::Array<Graphics::Surface *> loadFramesWithHeader(Common::SeekableReadStream *file, int pos, int numFrames, uint32 front, uint32 back);
-	Graphics::Surface *loadFrameWithHeader(Common::SeekableReadStream *file, int pos, uint32 front, uint32 back);
-	Graphics::Surface *loadFrame(Common::SeekableReadStream *file, Graphics::Surface *surface, int width, int height, uint32 back);
+	Common::Array<Graphics::ManagedSurface *> loadFramesWithHeader(Common::SeekableReadStream *file, int pos, int numFrames, uint32 front, uint32 back);
+	Graphics::ManagedSurface *loadFrameWithHeader(Common::SeekableReadStream *file, int pos, uint32 front, uint32 back);
+	Graphics::ManagedSurface *loadFrame(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int width, int height, uint32 back);
 	Graphics::ManagedSurface *loadFrameFromPlanes(Common::SeekableReadStream *file, int widthInBytes, int height);
 	Graphics::ManagedSurface *loadFrameFromPlanesInternal(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int width, int height);
 
-	Graphics::Surface *_keysFrame;
-	Graphics::Surface *_spiritsMeterIndicatorFrame;
-	Graphics::Surface *_strenghtBackgroundFrame;
-	Graphics::Surface *_strenghtBarFrame;
-	Common::Array<Graphics::Surface *> _strenghtWeightsFrames;
+	Graphics::ManagedSurface *_keysFrame;
+	Graphics::ManagedSurface *_spiritsMeterIndicatorFrame;
+	Graphics::ManagedSurface *_strenghtBackgroundFrame;
+	Graphics::ManagedSurface *_strenghtBarFrame;
+	Common::Array<Graphics::ManagedSurface *> _strenghtWeightsFrames;
 	Graphics::ManagedSurface *_flagFrames[4];
-	Graphics::Surface *_thunderFrame;
+	Graphics::ManagedSurface *_thunderFrame;
 
 	int _numberKeys;
 	bool _useRockTravel;

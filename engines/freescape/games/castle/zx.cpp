@@ -41,8 +41,8 @@ void CastleEngine::initZX() {
 	_soundIndexAreaChange = 5;
 }
 
-Graphics::Surface *CastleEngine::loadFrameWithHeader(Common::SeekableReadStream *file, int pos, uint32 front, uint32 back) {
-	Graphics::Surface *surface = new Graphics::Surface();
+Graphics::ManagedSurface *CastleEngine::loadFrameWithHeader(Common::SeekableReadStream *file, int pos, uint32 front, uint32 back) {
+	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
 	file->seek(pos);
 	int16 width = file->readByte();
 	int16 height = file->readByte();
@@ -55,17 +55,17 @@ Graphics::Surface *CastleEngine::loadFrameWithHeader(Common::SeekableReadStream 
 	return loadFrame(file, surface, width, height, front);
 }
 
-Common::Array<Graphics::Surface *> CastleEngine::loadFramesWithHeader(Common::SeekableReadStream *file, int pos, int numFrames, uint32 front, uint32 back) {
-	Graphics::Surface *surface = nullptr;
+Common::Array<Graphics::ManagedSurface *> CastleEngine::loadFramesWithHeader(Common::SeekableReadStream *file, int pos, int numFrames, uint32 front, uint32 back) {
+	Graphics::ManagedSurface *surface = nullptr;
 	file->seek(pos);
 	int16 width = file->readByte();
 	int16 height = file->readByte();
 	/*byte mask =*/ file->readByte();
 
 	/*int frameSize =*/ file->readUint16LE();
-	Common::Array<Graphics::Surface *> frames;
+	Common::Array<Graphics::ManagedSurface *> frames;
 	for (int i = 0; i < numFrames; i++) {
-		surface = new Graphics::Surface();
+		surface = new Graphics::ManagedSurface();
 		surface->create(width * 8, height, _gfx->_texturePixelFormat);
 		surface->fillRect(Common::Rect(0, 0, width * 8, height), back);
 		frames.push_back(loadFrame(file, surface, width, height, front));
@@ -75,7 +75,7 @@ Common::Array<Graphics::Surface *> CastleEngine::loadFramesWithHeader(Common::Se
 }
 
 
-Graphics::Surface *CastleEngine::loadFrame(Common::SeekableReadStream *file, Graphics::Surface *surface, int width, int height, uint32 front) {
+Graphics::ManagedSurface *CastleEngine::loadFrame(Common::SeekableReadStream *file, Graphics::ManagedSurface *surface, int width, int height, uint32 front) {
 	for (int i = 0; i < width * height; i++) {
 		byte color = file->readByte();
 		for (int n = 0; n < 8; n++) {
@@ -142,7 +142,7 @@ void CastleEngine::loadAssetsZXFullGame() {
 	uint32 green = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0, 0xff, 0);
 	_spiritsMeterIndicatorFrame = loadFrameWithHeader(&file, _language == Common::ES_ESP ? 0xe5e : 0xe4f, green, white);
 
-	Graphics::Surface *background = new Graphics::Surface();
+	Graphics::ManagedSurface *background = new Graphics::ManagedSurface();
 
 	_gfx->readFromPalette(4, r, g, b);
 	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);

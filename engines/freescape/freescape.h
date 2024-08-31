@@ -195,7 +195,7 @@ public:
 	virtual void drawCrossair(Graphics::Surface *surface);
 	Graphics::ManagedSurface *_border;
 	Graphics::ManagedSurface *_title;
-	Graphics::Surface *_background;
+	Graphics::ManagedSurface *_background;
 
 	Texture *_borderTexture;
 	Texture *_titleTexture;
