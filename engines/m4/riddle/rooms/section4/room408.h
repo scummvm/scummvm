@@ -34,7 +34,7 @@ private:
 	int _val2 = 0;
 	int _val3 = 0;
 	int _val4 = 0;
-	int _val5 = 0;
+	int _currentNode = 0;
 	int _val6 = 0;
 	int _val7 = 0;
 	int _val8 = 0;
@@ -45,6 +45,11 @@ private:
 	machine *_plank = nullptr;
 	int _wolf = 0;
 	machine *_wolfie = nullptr;
+	int _ripLowReacher = 0;
+
+	void conv408a();
+	bool takePlank();
+	bool takeEdger();
 
 public:
 	Room408() : Room() {}

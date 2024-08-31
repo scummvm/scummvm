@@ -36,7 +36,7 @@ void Room408::init() {
 		_val2 = -1;
 		_val3 = 0;
 		_val4 = -1;
-		_val5 = -1;
+		_currentNode = -1;
 		_val6 = 0;
 		_val7 = 0;
 		_val8 = 0;
@@ -143,7 +143,7 @@ void Room408::init() {
 
 			_exit = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, 0, 100, 0, 0,
 				triggerMachineByHashCallbackNegative, "RIP ENTERS from GIZMO");
-			sendWSMessage_10000(1, _exit, _ripExits, 1, 75, 40, _ripExists, 75, 75, 0);
+			sendWSMessage_10000(1, _exit, _ripExits, 1, 75, 40, _ripExits, 75, 75, 0);
 			digi_play("408_s01", 2);
 			break;
 
@@ -183,6 +183,296 @@ void Room408::init() {
 }
 
 void Room408::daemon() {
+}
+
+void Room408::pre_parser() {
+	bool takeFlag = player_said("take");
+	bool lookFlag = player_said_any("look", "look at");
+	bool enterFlag = player_said("enter");
+
+	if (lookFlag && player_said(" "))
+		_G(player).resetWalk();
+
+	if (enterFlag && player_said("GRAVEYARD"))
+		_G(player).resetWalk();
+
+	if (player_said("journal") && !takeFlag && !lookFlag &&
+			_G(kernel).trigger == -1)
+		_G(player).resetWalk();
+}
+
+void Room408::parser() {
+	bool lookFlag = player_said_any("look", "look at");
+	bool talkFlag = player_said("talk", "talk to");
+	bool takeFlag = player_said("take");
+	bool enterFlag = player_said("enter");
+	bool useFlag = player_said_any("push", "pull", "gear", "open", "close");
+
+	if (player_said("conv408a")) {
+		if (_G(kernel).trigger == -1) {
+			_val7 = 1103;
+			_val9 = 2102;
+			conv_resume();
+		} else {
+			conv408a();
+		}
+	} else if (talkFlag && player_said("WOLF")) {
+		player_set_commands_allowed(false);
+		_val4 = -1;
+		_val6 = 1000;
+		_val7 = 1100;
+		kernel_timing_trigger(1, 102, KT_DAEMON, KT_PARSE);
+	} else if (lookFlag && player_said("WINDOW")) {
+		digi_play("408r03", 1);
+	} else if (lookFlag && player_said("CASTLE")) {
+		digi_play("408r01", 1);
+	} else if (lookFlag && player_said("TOPIARY")) {
+		digi_play("408r02", 1);
+	} else if (lookFlag && player_said("SUNDIAL")) {
+		digi_play(player_been_here(408) ? "408r32" : "408r04", 1);
+	} else if (lookFlag && player_said_any("BUSH", "BUSH ")) {
+		digi_play("408r05", 1);
+	} else if (lookFlag && player_said("PLANK") && inv_object_is_here("PLANK")) {
+		digi_play("408r20", 1);
+	} else if (lookFlag && player_said("EDGER") && inv_object_is_here("EDGER")) {
+		digi_play("408r35", 1);
+	} else if (lookFlag && player_said("WOLF")) {
+		digi_play("408r21", 1);
+	} else if (takeFlag && player_said("TOPIARY")) {
+		digi_play("408r06", 1);
+	} else if (takeFlag && player_said("SUNDIAL")) {
+		digi_play("408r08", 1);
+	} else if (takeFlag && player_said("PLANK") && takePlank()) {
+		// No implementation
+	} else if (takeFlag && player_said("EDGER") && takeEdger()) {
+		// No implementation
+	} else if (player_said("EDGER", "BUSH")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_ripLowReacher = series_load("RIP TREK MED REACH HAND POS1");
+			setGlobals1(_ripLowReacher, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+			sendWSMessage_110000(1);
+			break;
+
+		case 1:
+			_edger = series_place_sprite("Edger gone", 0, 0, -53, 100, 0xf00);
+			hotspot_set_active("EDGER", true);
+			inv_move_object("EDGER", 408);
+			sendWSMessage_120000(3);
+			break;
+
+		case 3:
+			sendWSMessage_150000(4);
+			break;
+
+		case 4:
+			series_unload(_ripLowReacher);
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+	} else if (player_said("PLANK", "TOPIARY")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			if (_G(flags)[V131] != 408) {
+				player_set_commands_allowed(false);
+				_ripLowReacher = series_load("RIP TREK LOW REACHER POS1");
+				setGlobals1(_ripLowReacher, 1, 7, 7, 7, 0, 7, 1, 1, 1);
+				sendWSMessage_110000(1);
+			}
+			break;
+
+		case 1:
+			_plank = series_place_sprite("Plank gone", 0, 0, 0, 100, 0xf00);
+			inv_move_object("PLANK", 408);
+			hotspot_set_active("PLANK", true);
+			sendWSMessage_120000(3);
+			break;
+
+		case 2:
+			_G(game).setRoom(403);
+			break;
+
+		default:
+			break;
+		}
+	} else if (useFlag && player_said("TOPIARY")) {
+		digi_play("408r07", 1);
+	} else if (useFlag && player_said("SUNDIAL")) {
+		digi_play(player_been_here(407) ? "408r34" : "408r09", 1);
+	} else if (useFlag && player_said("WINDOW")) {
+		digi_play("408r10", 1);
+	} else if (player_said("POMERANIAN MARKS", "WOLF") &&
+			inv_player_has("POMERANIAN MARKS")) {
+		digi_play("408w07", 1);
+	} else if (enterFlag && player_said("CASTLE GROUNDS")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			ws_walk(-20, 345, nullptr, 1, 9);
+			break;
+		case 1:
+			disable_player_commands_and_fade_init(2);
+			break;
+		case 2:
+			adv_kill_digi_between_rooms(false);
+			digi_play_loop("950_s22", 3, 255, -1, 950);
+			_G(game).setRoom(402);
+			break;
+		default:
+			break;
+		}
+	} else if (enterFlag && player_said("GRAVEYARD")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			ws_walk(660, 345, nullptr, 1, 3);
+			break;
+		case 1:
+			disable_player_commands_and_fade_init(2);
+			break;
+		case 2:
+			_G(game).setRoom(403);
+			break;
+		default:
+			break;
+		}
+	} else if (player_said("journal") && !takeFlag && !lookFlag &&
+			!inv_player_has(_G(player).noun)) {
+		if (_G(flags)[kCastleCartoon]) {
+			digi_play("com016", 1);
+		} else if (_G(kernel).trigger == 6) {
+			_G(flags)[kCastleCartoon] = 1;
+			sendWSMessage_multi("com015");
+		} else {
+			sendWSMessage_multi("com015");
+		}
+	} else if (lookFlag && player_said(" ")) {
+		digi_play("408r01", 1);
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
+}
+
+void Room408::conv408a() {
+	int who = conv_whos_talking();
+	_currentNode = conv_current_node();
+	const char *sound = conv_sound_to_play();
+
+	if (sound) {
+		if (who <= 0) {
+			_val9 = 2101;
+			digi_play(sound, 1);
+		} else if (who == 1) {
+			_val7 = 1102;
+			digi_play(sound, 1);
+		}
+	} else {
+		conv_resume();
+	}
+}
+
+bool Room408::takePlank() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (inv_player_has("PLANK")) {
+			player_set_commands_allowed(false);
+
+			if (_G(flags)[V131] == 408) {
+				digi_play("408r29", 1, 255, 5);
+			} else {
+				_ripLowReacher = series_load("RIP TREK LOW REACHER POS1");
+				setGlobals1(_ripLowReacher, 1, 7, 7, 7, 0, 7, 1, 1, 1);
+				sendWSMessage_110000(1);
+			}
+			break;
+		}
+		return false;
+
+	case 1:
+		terminateMachineAndNull(_plank);
+		inv_give_to_player("PLANK");
+		hotspot_set_active("PLANK", false);
+		kernel_examine_inventory_object("PING PLANK",
+			_G(master_palette), 5, 1, 362, 225, 2, "408_s02", -1);
+		break;
+
+	case 2:
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripLowReacher);
+		player_set_commands_allowed(true);
+		break;
+
+	case 5:
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		return false;
+	}
+
+	return true;
+}
+
+bool Room408::takeEdger() {
+	switch (_G(kernel).trigger) {
+	case -1:
+		if (!inv_player_has("EDGER")) {
+			player_set_commands_allowed(false);
+
+			if (_G(flags)[V131] == 408) {
+				digi_play("408r30", 1, 255, 5);
+			} else {
+				_ripLowReacher = series_load("RIP TREK MED REACH HAND POS1");
+				setGlobals1(_ripLowReacher, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+				sendWSMessage_110000(1);
+			}
+			break;
+		}
+		return false;
+
+	case 1:
+		terminateMachineAndNull(_edger);
+		hotspot_set_active("EDGER", false);
+		inv_give_to_player("EDGER");
+		kernel_examine_inventory_object("PING EDGER", _G(master_palette),
+			5, 1, 190, 215, 2, nullptr, -1);
+		break;
+
+	case 2:
+		sendWSMessage_120000(3);
+		break;
+
+	case 3:
+		sendWSMessage_150000(4);
+		break;
+
+	case 4:
+		series_unload(_ripLowReacher);
+		player_set_commands_allowed(true);
+		break;
+
+	case 5:
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		break;
+	}
+
+	return true;
 }
 
 } // namespace Rooms
