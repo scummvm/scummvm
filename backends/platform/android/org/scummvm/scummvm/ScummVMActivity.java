@@ -1169,6 +1169,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 		super.onDestroy();
 
+		if (isScreenKeyboardShown()) {
+			hideScreenKeyboard();
+		}
+
 		if (_events != null) {
 			_finishing = true;
 
@@ -1193,9 +1197,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			_scummvm = null;
 		}
 
-		if (isScreenKeyboardShown()) {
-			hideScreenKeyboard();
-		}
 		showToggleOnScreenBtnIcons(0);
 	}
 
