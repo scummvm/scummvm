@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-31 19:29+0000\n"
-"PO-Revision-Date: 2024-08-28 19:20+0000\n"
+"PO-Revision-Date: 2024-09-01 09:10+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -11907,40 +11907,28 @@ msgstr ""
 "à 4:3."
 
 #: engines/tinsel/metaengine.cpp:241
-#, fuzzy
-#| msgid "Yes/No keymappings"
 msgid "Save/Load keymappings"
-msgstr "Conf. des touches Oui/Non"
+msgstr "Conf. des touches Sauvegarder/Charger"
 
 #: engines/tinsel/metaengine.cpp:306
-#, fuzzy
-#| msgid "Option dialog"
 msgid "Options Dialog"
 msgstr "Fenêtre Options"
 
 #: engines/tinsel/metaengine.cpp:340
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Page Up in save/load menu"
-msgstr "Vers le menu sauvegarder/charger"
+msgstr "Page sup. dans le menu sauvegarder/charger"
 
 #: engines/tinsel/metaengine.cpp:346
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Page down in save/load menu"
-msgstr "Vers le menu sauvegarder/charger"
+msgstr "Page inf. dans le menu sauvegarder/charger"
 
 #: engines/tinsel/metaengine.cpp:352
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Go to start of save/load menu"
-msgstr "Vers le menu sauvegarder/charger"
+msgstr "Début dans le menu sauvegarder/charger"
 
 #: engines/tinsel/metaengine.cpp:358
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Go to end of save/load menu"
-msgstr "Vers le menu sauvegarder/charger"
+msgstr "Fin dans le menu sauvegarder/charger"
 
 #: engines/tony/tony.cpp:248
 #, c-format
