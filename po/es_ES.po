@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-31 19:29+0000\n"
-"PO-Revision-Date: 2024-08-30 09:04+0000\n"
+"PO-Revision-Date: 2024-09-01 09:06+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -11865,40 +11865,28 @@ msgstr ""
 "aspecto sea más ancha que 4:3."
 
 #: engines/tinsel/metaengine.cpp:241
-#, fuzzy
-#| msgid "Yes/No keymappings"
 msgid "Save/Load keymappings"
-msgstr "Asignaciones de Sí/No"
+msgstr "Asignaciones de guardado/carga"
 
 #: engines/tinsel/metaengine.cpp:306
-#, fuzzy
-#| msgid "Option dialog"
 msgid "Options Dialog"
 msgstr "Ventana de opciones"
 
 #: engines/tinsel/metaengine.cpp:340
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Page Up in save/load menu"
-msgstr "Ir al menú de guardado/carga"
+msgstr "Subir página en menú de guardado/carga"
 
 #: engines/tinsel/metaengine.cpp:346
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Page down in save/load menu"
-msgstr "Ir al menú de guardado/carga"
+msgstr "Bajar página en menú de guardado/carga"
 
 #: engines/tinsel/metaengine.cpp:352
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Go to start of save/load menu"
-msgstr "Ir al menú de guardado/carga"
+msgstr "Inicio del menú de guardado/carga"
 
 #: engines/tinsel/metaengine.cpp:358
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Go to end of save/load menu"
-msgstr "Ir al menú de guardado/carga"
+msgstr "Final del menú de guardado/carga"
 
 #: engines/tony/tony.cpp:248
 #, c-format
