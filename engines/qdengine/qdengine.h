@@ -46,6 +46,7 @@ class qdGameDispatcher;
 
 enum QDEngineDebugChannels {
 	kDebugGraphics = 1,
+	kDebugImGui,
 	kDebugInput,
 	kDebugLoad,
 	kDebugLog,
