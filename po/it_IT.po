@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2024-08-31 19:29+0000\n"
-"PO-Revision-Date: 2024-08-30 18:24+0000\n"
+"PO-Revision-Date: 2024-09-01 10:39+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -11847,40 +11847,28 @@ msgstr ""
 "d'aspetto superiore a 4:3."
 
 #: engines/tinsel/metaengine.cpp:241
-#, fuzzy
-#| msgid "Yes/No keymappings"
 msgid "Save/Load keymappings"
-msgstr "Mappatura Si/No"
+msgstr "Mappa tasti Salvataggio/Caricamento"
 
 #: engines/tinsel/metaengine.cpp:306
-#, fuzzy
-#| msgid "Option dialog"
 msgid "Options Dialog"
 msgstr "Finestra Opzioni"
 
 #: engines/tinsel/metaengine.cpp:340
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Page Up in save/load menu"
-msgstr "Vai al menù di salvataggio/caricamento"
+msgstr "Pagina precedente del menù salva/carica"
 
 #: engines/tinsel/metaengine.cpp:346
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Page down in save/load menu"
-msgstr "Vai al menù di salvataggio/caricamento"
+msgstr "Pagina seguente del menù salva/carica"
 
 #: engines/tinsel/metaengine.cpp:352
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Go to start of save/load menu"
-msgstr "Vai al menù di salvataggio/caricamento"
+msgstr "Vai all'inizio del menù salva/carica"
 
 #: engines/tinsel/metaengine.cpp:358
-#, fuzzy
-#| msgid "Go to save/load menu"
 msgid "Go to end of save/load menu"
-msgstr "Vai al menù di salvataggio/caricamento"
+msgstr "Vai alla fine del menù salva/carica"
 
 #: engines/tony/tony.cpp:248
 #, c-format
