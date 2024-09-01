@@ -24,13 +24,23 @@
 // Without this ifdef the iOS backend breaks, please do not remove
 #ifdef SCUMMVM_NEON
 
-#include <arm_neon.h>
 #include "ags/globals.h"
 #include "ags/lib/allegro/color.h"
 #include "ags/lib/allegro/flood.h"
 #include "ags/lib/allegro/gfx.h"
 #include "common/textconsole.h"
 #include "graphics/screen.h"
+
+#include <arm_neon.h>
+
+#ifdef __GNUC__
+#pragma GCC push_options
+
+#if !defined(__aarch64__)
+#pragma GCC target("fpu=neon")
+#endif // !defined(__aarch64__)
+
+#endif // __GNUC__
 
 namespace AGS3 {
 
@@ -963,5 +973,9 @@ template void BITMAP::drawNEON<false>(DrawInnerArgs &);
 template void BITMAP::drawNEON<true>(DrawInnerArgs &);
 
 } // namespace AGS3
+
+#ifdef __GNUC__
+#pragma GCC pop_options
+#endif
 
 #endif // SCUMMVM_NEON

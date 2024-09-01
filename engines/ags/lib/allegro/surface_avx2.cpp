@@ -19,7 +19,6 @@
  *
  */
 
-#include <immintrin.h>
 #include "ags/lib/allegro/gfx.h"
 #include "ags/lib/allegro/color.h"
 #include "ags/lib/allegro/flood.h"
@@ -27,6 +26,13 @@
 #include "ags/globals.h"
 #include "common/textconsole.h"
 #include "graphics/screen.h"
+
+#include <immintrin.h>
+
+#ifdef __GNUC__
+#pragma GCC push_options
+#pragma GCC target("avx2")
+#endif
 
 namespace AGS3 {
 
@@ -1003,3 +1009,7 @@ template void BITMAP::drawAVX2<false>(DrawInnerArgs &);
 template void BITMAP::drawAVX2<true>(DrawInnerArgs &);
 
 } // namespace AGS3
+
+#ifdef __GNUC__
+#pragma GCC pop_options
+#endif

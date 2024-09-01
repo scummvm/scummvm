@@ -19,7 +19,6 @@
  *
  */
 
-#include <emmintrin.h>
 #include "ags/ags.h"
 #include "ags/globals.h"
 #include "ags/lib/allegro/color.h"
@@ -27,6 +26,17 @@
 #include "ags/lib/allegro/gfx.h"
 #include "common/textconsole.h"
 #include "graphics/screen.h"
+
+#include <emmintrin.h>
+
+#ifdef __GNUC__
+#pragma GCC push_options
+
+#ifndef __x86_64__
+#pragma GCC target("sse2")
+#endif
+
+#endif
 
 namespace AGS3 {
 
@@ -990,3 +1000,7 @@ template void BITMAP::drawSSE2<false>(DrawInnerArgs &);
 template void BITMAP::drawSSE2<true>(DrawInnerArgs &);
 
 } // namespace AGS3
+
+#ifdef __GNUC__
+#pragma GCC pop_options
+#endif
