@@ -126,7 +126,7 @@ public:
 	Room() : M4::Room() {}
 	~Room() override {}
 
-	void preload();
+	void preload() override;
 };
 
 } // namespace Rooms
