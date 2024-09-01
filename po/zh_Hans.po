@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-08-31 19:29+0000\n"
+"POT-Creation-Date: 2024-09-01 10:35+0000\n"
 "PO-Revision-Date: 2024-07-04 15:43+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translations.scummvm.org/"
@@ -991,7 +991,7 @@ msgstr "互动"
 #: engines/dragons/metaengine.cpp:159 engines/freescape/movement.cpp:35
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:473
 #: engines/grim/grim.cpp:554 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
-#: engines/scumm/metaengine.cpp:890 engines/twine/metaengine.cpp:478
+#: engines/scumm/metaengine.cpp:899 engines/twine/metaengine.cpp:478
 #: engines/twine/metaengine.cpp:545 engines/twp/metaengine.cpp:154
 #: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
@@ -1006,7 +1006,7 @@ msgstr "向上"
 #: engines/dragons/metaengine.cpp:165 engines/freescape/movement.cpp:42
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:478
 #: engines/grim/grim.cpp:559 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
-#: engines/scumm/metaengine.cpp:857 engines/twine/metaengine.cpp:485
+#: engines/scumm/metaengine.cpp:866 engines/twine/metaengine.cpp:485
 #: engines/twine/metaengine.cpp:553 engines/twp/metaengine.cpp:155
 #: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
@@ -1020,7 +1020,7 @@ msgstr "向下"
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:171 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:483 engines/grim/grim.cpp:564 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:870
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:879
 #: engines/twine/metaengine.cpp:500 engines/twine/metaengine.cpp:568
 #: engines/twp/metaengine.cpp:152 engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
@@ -1035,7 +1035,7 @@ msgstr "向左"
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:177 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:488 engines/grim/grim.cpp:569 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:877
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:886
 #: engines/twine/metaengine.cpp:492 engines/twine/metaengine.cpp:561
 #: engines/twp/metaengine.cpp:153 engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
@@ -6080,14 +6080,14 @@ msgstr "找不到转场文件“%s”！"
 #: engines/agos/metaengine.cpp:44 engines/dreamweb/metaengine.cpp:36
 #: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:51
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
-#: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:747
+#: engines/scumm/dialogs.cpp:1188 engines/scumm/metaengine.cpp:756
 msgid "Enable copy protection"
 msgstr "启用复制保护"
 
 #: engines/agos/metaengine.cpp:45 engines/dreamweb/metaengine.cpp:37
 #: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:52
 #: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
-#: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:748
+#: engines/scumm/dialogs.cpp:1189 engines/scumm/metaengine.cpp:757
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr "启用默认跳过的所有复制保护。"
 
@@ -6674,7 +6674,7 @@ msgstr "开关战斗"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:916 engines/twp/metaengine.cpp:162
+#: engines/scumm/metaengine.cpp:925 engines/twp/metaengine.cpp:162
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "跳过过场动画"
@@ -7160,7 +7160,7 @@ msgstr "交流/互动"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:903
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:912
 msgid "Attack"
 msgstr "攻击"
 
@@ -10042,7 +10042,7 @@ msgid ""
 msgstr ""
 "增强现代特性；例如移除 Sam&Max 虚假的音效加载屏幕，并且让早期存档菜单更轻巧。"
 
-#: engines/scumm/dialogs.cpp:1181 engines/scumm/metaengine.cpp:716
+#: engines/scumm/dialogs.cpp:1181 engines/scumm/metaengine.cpp:725
 msgid "Enable the original GUI and Menu"
 msgstr "启用原版 GUI 与菜单"
 
@@ -10158,11 +10158,11 @@ msgstr ""
 "前景音乐时开场音轨的一部分。此选项会调节播放起点位置。如果音乐被截断，或者你"
 "听到了前一音乐的一部分，可以使用此选项。"
 
-#: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:707
+#: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:716
 msgid "Load modded audio"
 msgstr "加载更改音频"
 
-#: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:708
+#: engines/scumm/dialogs.cpp:1702 engines/scumm/metaengine.cpp:717
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
@@ -10711,7 +10711,7 @@ msgstr "音乐音量： "
 msgid "Subtitle speed: "
 msgstr "字幕速度： "
 
-#: engines/scumm/metaengine.cpp:367
+#: engines/scumm/metaengine.cpp:376
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -10720,78 +10720,78 @@ msgstr ""
 "为避免盗版，Putt-Putt Saves the Zoo 的 iOS Lite 版本未受支持。\n"
 "可在 iTunes Store 购买完整版。"
 
-#: engines/scumm/metaengine.cpp:466
+#: engines/scumm/metaengine.cpp:475
 msgid "HE v71+ support is not compiled in"
 msgstr "未编入 HE v71+ 支持"
 
-#: engines/scumm/metaengine.cpp:490
+#: engines/scumm/metaengine.cpp:499
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "未编入 SCUMM v7-8 支持"
 
-#: engines/scumm/metaengine.cpp:636
+#: engines/scumm/metaengine.cpp:645
 msgid "Show Object Line"
 msgstr "显示物品行"
 
-#: engines/scumm/metaengine.cpp:637
+#: engines/scumm/metaengine.cpp:646
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "在屏幕底部显示物品名称"
 
-#: engines/scumm/metaengine.cpp:645
+#: engines/scumm/metaengine.cpp:654
 msgid "Use NES Classic Palette"
 msgstr "使用 NES Classic 调色板"
 
-#: engines/scumm/metaengine.cpp:646
+#: engines/scumm/metaengine.cpp:655
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr "使用更能模拟 NES Classic 的自然调色板"
 
-#: engines/scumm/metaengine.cpp:654
+#: engines/scumm/metaengine.cpp:663
 msgid "Trim FM-TOWNS games to 200 pixels height"
 msgstr "将 FM-TOWNS 游戏高度缩减到 200 像素"
 
-#: engines/scumm/metaengine.cpp:655
+#: engines/scumm/metaengine.cpp:664
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
 msgstr ""
 "削除屏幕底部多出的 40 像素，将其变为标准 200 像素高度，以便使用“宽高比矫正”"
 
-#: engines/scumm/metaengine.cpp:663
+#: engines/scumm/metaengine.cpp:672
 msgid "Run in original 640 x 480 resolution"
 msgstr "以原始 640 x 480 分辨率运行"
 
-#: engines/scumm/metaengine.cpp:664
+#: engines/scumm/metaengine.cpp:673
 msgid ""
 "This allows more accurate pause/restart banners, but might impact "
 "performance or shader/scaler usage."
 msgstr "可使暂停/重试横幅更精确，但可能影响性能或着色器/缩放器占用。"
 
-#: engines/scumm/metaengine.cpp:671
+#: engines/scumm/metaengine.cpp:680
 msgid "Play simplified music"
 msgstr "播放简版音乐"
 
-#: engines/scumm/metaengine.cpp:672
+#: engines/scumm/metaengine.cpp:681
 msgid "This music was intended for low-end Macs, and uses only one channel."
 msgstr "音乐有意为低端 Mac 设备设计，仅使用单声道。"
 
-#: engines/scumm/metaengine.cpp:680
+#: engines/scumm/metaengine.cpp:689
 msgid "Enable smooth scrolling"
 msgstr "启用平滑滚动"
 
-#: engines/scumm/metaengine.cpp:681
+#: engines/scumm/metaengine.cpp:690
 msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "（替代常规的一次 8 像素滚动）"
 
-#: engines/scumm/metaengine.cpp:689
+#: engines/scumm/metaengine.cpp:698
 msgid "Allow semi-smooth scrolling"
 msgstr "允许半平滑滚动"
 
-#: engines/scumm/metaengine.cpp:690
+#: engines/scumm/metaengine.cpp:699
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
 msgstr "在序章的快速相机移动期间，允许滚动粗糙一些。"
 
-#: engines/scumm/metaengine.cpp:717
+#: engines/scumm/metaengine.cpp:726
 #, fuzzy
 #| msgid ""
 #| "Allow the game to use the in-engine graphical interface and the original "
@@ -10806,11 +10806,11 @@ msgstr ""
 "允许游戏使用引擎内置的图形界面与原版保存/载入菜单。\t\t将其与“退出时确认”一起"
 "使用，以获取更完整的体验。"
 
-#: engines/scumm/metaengine.cpp:727
+#: engines/scumm/metaengine.cpp:736
 msgid "Enable low latency audio mode"
 msgstr "启用低延迟音频模式"
 
-#: engines/scumm/metaengine.cpp:728
+#: engines/scumm/metaengine.cpp:737
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. \t"
 "\tIt is recommended to enable this feature only if you incur in audio "
@@ -10819,11 +10819,11 @@ msgstr ""
 "允许游戏以降低声音精确度为代价，使用低延迟音频。\t\t建议仅在你正常游玩遇到音"
 "频延迟问题时启用此功能。"
 
-#: engines/scumm/metaengine.cpp:737
+#: engines/scumm/metaengine.cpp:746
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr "启用“A Pirate I Was Meant To Be”歌曲"
 
-#: engines/scumm/metaengine.cpp:738
+#: engines/scumm/metaengine.cpp:747
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", \t\twhich was cut in international releases. Beware though: "
@@ -10832,38 +10832,38 @@ msgstr ""
 "启用游戏第三部分的歌曲“A Pirate I Was Meant To Be”，\t\t此歌曲在国际版中被删"
 "除。但请注意：字幕翻译可能不完整。"
 
-#: engines/scumm/metaengine.cpp:756
+#: engines/scumm/metaengine.cpp:765
 #, fuzzy
 #| msgid "Disable demo mode"
 msgid "Enable demo/kiosk mode"
 msgstr "禁用演示模式"
 
-#: engines/scumm/metaengine.cpp:757
+#: engines/scumm/metaengine.cpp:766
 msgid "Enable demo/kiosk mode in the full retail version of Maniac Mansion."
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:851
+#: engines/scumm/metaengine.cpp:860
 msgid "Down Left"
 msgstr "左下"
 
-#: engines/scumm/metaengine.cpp:864
+#: engines/scumm/metaengine.cpp:873
 msgid "Down Right"
 msgstr "右下"
 
-#: engines/scumm/metaengine.cpp:884
+#: engines/scumm/metaengine.cpp:893
 msgid "Up Left"
 msgstr "左上"
 
-#: engines/scumm/metaengine.cpp:897
+#: engines/scumm/metaengine.cpp:906
 msgid "Up Right"
 msgstr "右上"
 
-#: engines/scumm/metaengine.cpp:909
+#: engines/scumm/metaengine.cpp:918
 msgid "Switch weapon"
 msgstr "切换武器"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:923
+#: engines/scumm/metaengine.cpp:932
 msgid "Win the bike fight cheat"
 msgstr "自行车战争获胜作弊"
 
