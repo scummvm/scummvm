@@ -67,7 +67,7 @@ public:
 
 	void addFrame(const uint32 *frame_data);
 
-	bool load(Common::SeekableReadStream *fh);
+	bool load(Common::SeekableReadStream *fh, int version);
 
 	void drawFrame(const Vect2i &position, int32 frame_index, int32 mode = 0) const;
 	void drawFrame(const Vect2i &position, int frame_index, float angle, int mode = 0) const;
@@ -95,6 +95,8 @@ private:
 	int _frameCount;
 
 	typedef Std::vector<uint32> FrameIndex;
+	Std::vector<float> _scaleArray;
+
 	/// индекс кадров - номера тайлов, из которых состоят кадры
 	/// _frameTileSize.x * _frameTileSize.y на кадр
 	FrameIndex _frameIndex;
@@ -106,6 +108,8 @@ private:
 	/// данные тайлов
 	TileData _tileData;
 
+	Std::vector<Vect2i> _frameSizeArray;
+
 	static CompressionProgressHandler _progressHandler;
 	static void *_progressHandlerContext;
 };
@@ -113,4 +117,3 @@ private:
 } // namespace QDEngine
 
 #endif // QDENGINE_SYSTEM_GRAPHICS_GR_TILE_ANIMATION_H
-

@@ -555,9 +555,6 @@ bool qdAnimation::qda_load(Common::Path fpath) {
 		tile_flag = fh->readByte();
 	}
 
-	if (version > 104)
-		warning("qdAnimation::qda_load(): Animation version > 104: %d, '%s'", version, transCyrillic(fpath.toString()));
-
 	if (!tile_flag) {
 		if (num_scales) {
 			_scales.resize(num_scales);
@@ -598,7 +595,7 @@ bool qdAnimation::qda_load(Common::Path fpath) {
 
 		debugC(1, kDebugLoad, "qdAnimation::qda_load() tileAnimation %s", transCyrillic(fpath.toString()));
 		_tileAnimation = new grTileAnimation;
-		_tileAnimation->load(fh);
+		_tileAnimation->load(fh, version);
 	}
 
 	init_size();
