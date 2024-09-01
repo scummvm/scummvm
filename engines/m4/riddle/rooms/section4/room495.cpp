@@ -169,7 +169,7 @@ void Room495::init() {
 }
 
 void Room495::daemon() {
-	switch (_G(kernel).track_open_close) {
+	switch (_G(kernel).trigger) {
 	case 500:
 		kernel_timing_trigger(1, 502);
 		disable_player_commands_and_fade_init(-1);
