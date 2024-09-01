@@ -1908,6 +1908,20 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			Character *c = currentView->GetCharacterByIndex(objectID);
 			c->StartLerpTo(Common::Point(x, y), 2 * 1000);
 			isAwaitingCallback = true;
+		} else if (opcode1 == 0x24) {
+			// TODO: No idea yet what this might do. Happens when the hat is used on the dog
+			// in chapter 2
+			// ;; fn0037_C7E6: 0037:C7E6
+			Func9F4D_Placeholder();
+			Func9F4D_Placeholder();
+
+			// Mock function A334 here
+			uint8 v = ReadByte();
+			// TODO: We should check the value of v
+			// TODO: This seems to result in an error if it is malformed
+			// TODO: Check where that error reporting value leads to, could be interesting
+			// where the game does its error checking
+			ReadWord();
 		} else if (opcode1 == 0x25) {
 			// TODO: No visual difference, so only implementing mocked reads here
 			// TODO: There is the weird "rewind" in the log here, to be investigated separately
