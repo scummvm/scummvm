@@ -29,10 +29,19 @@ namespace Riddle {
 namespace Rooms {
 
 class Room493 : public Room {
+private:
+	machine *_credits = nullptr;
+	int _panning = 0;
+
+	static void escape_key_pressed(void *, void *);
+	void setTrigger(int trigger);
+	void crunch();
+
 public:
 	Room493() : Room() {}
 	~Room493() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
 };

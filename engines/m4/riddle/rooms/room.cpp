@@ -593,6 +593,10 @@ void Room::enableHotspots() {
 		hs->active = true;
 }
 
+bool Room::checkStrings() const {
+	return _G(string1).empty() && _G(string2).empty() && _G(string3).empty();
+}
+
 } // namespace Rooms
 } // namespace Riddle
 } // namespace M4

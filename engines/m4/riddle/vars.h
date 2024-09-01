@@ -56,6 +56,9 @@ public:
 	int _global301 = 0;
 	int _flag1 = 0;
 	bool _kittyScreaming = false;
+	Common::String _string1;
+	Common::String _string2;
+	Common::String _string3;
 
 public:
 	Vars();

@@ -122,6 +122,8 @@ protected:
 	 */
 	void enableHotspots();
 
+	bool checkStrings() const;
+
 public:
 	Room() : M4::Room() {}
 	~Room() override {}
