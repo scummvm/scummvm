@@ -1594,8 +1594,9 @@ void ScummEngine_v2::o2_pickupObject() {
 	if (getObjectIndex(obj) == -1)
 		return;
 
-	if (whereIsObject(obj) == WIO_INVENTORY)	/* Don't take an */
-		return;											/* object twice */
+	// Don't take an object twice
+	if (whereIsObject(obj) == WIO_INVENTORY)
+		return;
 
 	addObjectToInventory(obj, _roomResource);
 	markObjectRectAsDirty(obj);
@@ -1605,7 +1606,7 @@ void ScummEngine_v2::o2_pickupObject() {
 
 	runInventoryScript(1);
 	if (_game.platform == Common::kPlatformNES)
-		_sound->startSound(51);	// play 'pickup' sound
+		_sound->triggerSound(51); // play 'pickup' sound (not using the queue; see Trac#2536)
 }
 
 void ScummEngine_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
