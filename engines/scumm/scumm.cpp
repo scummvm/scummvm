@@ -3786,7 +3786,7 @@ void ScummEngine::restart() {
 	runBootscript();
 }
 
-bool ScummEngine::isUsingOriginalGUI() {
+bool ScummEngine::isUsingOriginalGUI() const {
 	if (_game.id == GID_MONKEY2 && (_game.features & GF_DEMO))
 		return false;
 

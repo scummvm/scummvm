@@ -2129,7 +2129,9 @@ void ScummEngine::queryQuit(bool returnToLauncher) {
 				event.type = Common::EVENT_RETURN_TO_LAUNCHER;
 				getEventManager()->pushEvent(event);
 			} else {
-				quitGame();
+				Common::Event event;
+				event.type = Common::EVENT_QUIT;
+				getEventManager()->pushEvent(event);
 			}
 		}
 	}

@@ -246,11 +246,20 @@ bool ScummEngine::hasFeature(EngineFeature f) const {
 			(Common::String(_game.guioptions).contains(GAMEOPTION_AUDIO_OVERRIDE) ||
 			 Common::String(_game.guioptions).contains(GAMEOPTION_NETWORK))
 		) ||
-		(f == kSupportsQuitDialogOverride && (_useOriginalGUI || !ChainedGamesMan.empty()));
+		(f == kSupportsQuitDialogOverride && (gameSupportsQuitDialogOverride() || !ChainedGamesMan.empty()));
 }
 
 bool Scumm::ScummEngine::enhancementEnabled(int32 cls) {
 	return _activeEnhancements & cls;
+}
+
+bool ScummEngine::gameSupportsQuitDialogOverride() const {
+	bool supportsOverride = isUsingOriginalGUI();
+
+	supportsOverride &= !(_game.platform == Common::kPlatformNES);
+	supportsOverride &= !(_game.platform == Common::kPlatformSegaCD);
+
+	return supportsOverride;
 }
 
 
