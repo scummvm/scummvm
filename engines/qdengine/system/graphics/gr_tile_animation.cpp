@@ -259,7 +259,7 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 		_tileData[i] = fh->readUint32LE();
 	}
 
-	debugC(2, kDebugLoad, "  --> grTileAnimation::load(): pos: %ld remaining: %ld", fh->pos(), fh->size() - fh->pos());
+	debugC(debugLevel, kDebugLoad, "  --> grTileAnimation::load(): pos: %ld remaining: %ld", fh->pos(), fh->size() - fh->pos());
 
 	return true;
 }
