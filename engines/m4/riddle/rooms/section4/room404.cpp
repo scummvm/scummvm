@@ -49,12 +49,6 @@ static const char *const SAID[][2] = {
 	{ nullptr, nullptr }
 };
 
-void Room404::preload() {
-	_G(player).walker_type = 1;
-	_G(player).shadow_type = 1;
-	LoadWSAssets("OTHER SCRIPT");
-}
-
 void Room404::init() {
 	_door = series_place_sprite("404DOORA", 0, 0, 0, 100, 0xf00);
 

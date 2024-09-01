@@ -50,12 +50,6 @@ static const char *const SAID[][2] = {
 	{ nullptr, nullptr }
 };
 
-void Room403::preload() {
-	_G(player).walker_type = 1;
-	_G(player).shadow_type = 1;
-	LoadWSAssets("OTHER SCRIPT");
-}
-
 void Room403::init() {
 	digi_preload("403_s02");
 	digi_preload("403_s02a");

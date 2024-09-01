@@ -76,7 +76,6 @@ public:
 	Room301() : Room() {}
 	~Room301() override {}
 
-	void preload() override;
 	void init() override;
 	void daemon() override;
 	void pre_parser() override;

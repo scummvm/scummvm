@@ -73,7 +73,6 @@ public:
 	Room405() : Room() {}
 	~Room405() override {}
 
-	void preload() override;
 	void init() override;
 	void daemon() override;
 	void pre_parser() override;

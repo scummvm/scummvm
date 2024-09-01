@@ -27,13 +27,6 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-void Room301::preload() {
-	_G(player).walker_type = 1;
-	_G(player).shadow_type = 1;
-	_G(player).walker_in_this_scene = true;
-	LoadWSAssets("OTHER SCRIPT");
-}
-
 void Room301::init() {
 	_G(flags)[V000] = 1;
 	digi_preload("950_s01");
