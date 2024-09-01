@@ -35,6 +35,7 @@
 
 static const DebugChannelDef debugFlagList[] = {
 	{ QDEngine::kDebugGraphics, "graphics", "Graphics debug level" },
+	{ QDEngine::kDebugImGui, "imgui", "Imgui debug output"},
 	{ QDEngine::kDebugInput, "input", "Enable user input tracing"},
 	{ QDEngine::kDebugLoad, "load", "Enable load tracing" },
 	{ QDEngine::kDebugLog, "log", "See log messages"},
