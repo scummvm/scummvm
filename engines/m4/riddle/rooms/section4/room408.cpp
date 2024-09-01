@@ -183,6 +183,395 @@ void Room408::init() {
 }
 
 void Room408::daemon() {
+	int frame;
+
+	switch (_G(kernel).trigger) {
+	case 20:
+	case 30:
+		player_set_commands_allowed(true);
+		break;
+
+	case 40:
+		digi_play("408_s03", 2);
+		sendWSMessage_10000(1, _exit, _ripExits, 76, 85, 42, _ripExits, 85, 85, 0);
+		break;
+
+	case 42:
+		ws_unhide_walker();
+		DisposePath(_G(my_walker)->walkPath);
+		_G(my_walker)->walkPath = CreateCustomPath(250, 235, -1);
+		ws_custom_walk(_G(my_walker), 4, -1);
+		sendWSMessage_10000(1, _exit, _ripExits, 31, 1, 44, _ripExits, 1, 1, 0);
+		digi_play("408r31", 1);
+		break;
+
+	case 44:
+		terminateMachineAndNull(_exit);
+		series_unload(_ripExits);
+		_exit = series_show("RIP EXITS 407", 0xf00, 16);
+		player_set_commands_allowed(true);
+		break;
+
+	case 100:
+		kernel_timing_trigger(1, 102);
+		break;
+
+	case 101:
+		_val6 = 1000;
+		_val7 = 1105;
+		break;
+
+	case 102:
+		if (_val2 != -1) {
+			kernel_timing_trigger(1, _val2);
+			_val2 = -1;
+		} else {
+			kernel_timing_trigger(1, 103);
+		}
+		break;
+
+	case 103:
+		if (_val6 == 1000) {
+			switch (_val7) {
+			case 1100:
+				ws_hide_walker();
+				player_set_commands_allowed(false);
+				_ripHandsBehindBack = series_load("RIP TREK HANDS BEHIND BACK POS2");
+
+				player_update_info();
+				_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+					_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x100, 0,
+					triggerMachineByHashCallbackNegative, "rip talks wolf");
+				_ripleyShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+					_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x100, 0,
+					triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+
+				sendWSMessage_10000(1, _ripley, _ripHandsBehindBack, 1, 15, 102,
+					_ripHandsBehindBack, 15, 15, 0);
+				sendWSMessage_10000(1, _ripleyShadow, _ripShadowSeries, 1, 1, -1,
+					_ripShadowSeries, 1, 1, 0);
+				_val7 = 1101;
+				_val8 = 2000;
+				_val9 = 2100;
+				kernel_timing_trigger(1, 110);
+				break;
+
+			case 1101:
+				_val7 = 1103;
+				kernel_timing_trigger(1, 102);
+				conv_load("conv408a", 0, 10, 101);
+				conv_export_value_curr(_G(flags)[V117], 0);
+				conv_export_value_curr(_G(flags)[V118], 1);
+				conv_play();
+				break;
+
+			case 1102:
+				sendWSMessage_10000(1, _ripley, _ripHandsBehindBack, 15, 15, 102,
+					_ripHandsBehindBack, 15, 15, 0);
+				break;
+
+			case 1103:
+				sendWSMessage_10000(1, _ripley, _ripHandsBehindBack, 15, 15, 102,
+					_ripHandsBehindBack, 15, 15, 0);
+				break;
+
+			case 1104:
+				sendWSMessage_10000(1, _ripley, _ripHandsBehindBack, 15, 15, -1,
+					_ripHandsBehindBack, 15, 15, 0);
+				break;
+
+			case 1105:
+				sendWSMessage_10000(1, _ripley, _ripHandsBehindBack, 15, 1, 103,
+					_ripHandsBehindBack, 1, 1, 0);
+				_val7 = 1106;
+				_val9 = 2103;
+				break;
+
+			case 1106:
+				terminateMachineAndNull(_ripley);
+				terminateMachineAndNull(_ripleyShadow);
+				ws_unhide_walker();
+				series_unload(_ripHandsBehindBack);
+
+				if (_currentNode != 8 && _currentNode != 9) {
+					_val8 = 2001;
+					_val9 = 2200;
+					kernel_timing_trigger(1, 110);
+					player_set_commands_allowed(true);
+				} else {
+					_val4 = 320;
+					kernel_timing_trigger(1, 110);
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+		break;
+
+	case 110:
+		switch (_val8) {
+		case 2000:
+			if (_val9 >= 2100 && _val9 <= 2104) {
+				if (_val4 != -1) {
+					kernel_timing_trigger(1, _val4);
+					_val4 = -1;
+				} else {
+					kernel_timing_trigger(1, 111);
+				}
+			}
+			break;
+
+		case 2001:
+			if (_val9 == 2200) {
+				if (_val4 != -1) {
+					kernel_timing_trigger(1, _val4);
+					_val4 = -1;
+				} else {
+					kernel_timing_trigger(1, 111);
+				}
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 111:
+		switch (_val8) {
+		case 2000:
+			switch (_val9) {
+			case 2100:
+				sendWSMessage_10000(1, _wolfie, _wolf, 10, 13, 110, _wolf, 13, 13, 0);
+				_val9 = 2102;
+				break;
+			case 2101:
+				frame = imath_ranged_rand(14, 16);
+				sendWSMessage_10000(1, _wolfie, _wolf, frame, frame, 110,
+					_wolf, frame, frame, 0);
+				break;
+			case 2102:
+				sendWSMessage_10000(1, _wolfie, _wolf, 13, 13, 110, _wolf, 13, 13, 0);
+				_val9 = 2102;
+				break;
+			case 2103:
+				sendWSMessage_10000(1, _wolfie, _wolf, 13, 10, -1, _wolf, 10, 10, 0);
+				break;
+			case 2104:
+				sendWSMessage_10000(1, _wolfie, _wolf, 1, 9, 110, _wolf, 9, 9, 0);
+				break;
+			default:
+				break;
+			}
+			break;
+
+		case 2001:
+			if (_val9 == 2200) {
+				sendWSMessage_10000(1, _wolfie, _wolf, 1, 9, 110, _wolf, 9, 9, 0);
+
+				switch (imath_ranged_rand(1, 3)) {
+				case 1:
+					digi_play("950_s19", 2);
+					break;
+				case 2:
+					digi_play("950_s20", 2);
+					break;
+				case 3:
+					digi_play("950_s21", 2);
+					break;
+				default:
+					break;
+				}
+			}
+			break;
+		default:
+			break;
+		}
+		break;
+
+	case 220:
+		_val8 = 2000;
+		_val9 = 2100;
+
+		kernel_timing_trigger(1, 110);
+		_ripTrekTwoHandTalk = series_load("RIP TREK TWO HAND TALK POS2");
+
+		player_update_info();
+		_ripley = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale,
+			0x100, 0, triggerMachineByHashCallbackNegative, "rip talks wolf");
+		_ripleyShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
+			_G(player_info).x, _G(player_info).y, _G(player_info).scale,
+			0x100, 0, triggerMachineByHashCallbackNegative, "rip talks wolf SHADOW");
+
+		sendWSMessage_10000(1, _ripleyShadow, _ripShadowSeries, 1, 1, -1,
+			_ripShadowSeries, 1, 1, 0);
+		sendWSMessage_10000(1, _ripley, _ripTrekTwoHandTalk, 1, 6, 222,
+			_ripTrekTwoHandTalk, 6, 6, 0);
+		break;
+
+	case 222:
+		_val9 = 2101;
+		kernel_timing_trigger(1, 110);
+		digi_play("402w008", 1, 255, 226);
+		kernel_timing_trigger(45, 224);
+		break;
+
+	case 225:
+		terminateMachineAndNull(_ripley);
+		terminateMachineAndNull(_ripleyShadow);
+		ws_unhide_walker();
+		series_unload(_ripTrekTwoHandTalk);
+		break;
+
+	case 226:
+		_val9 = 2103;
+		kernel_timing_trigger(30, 227);
+		break;
+
+	case 227:
+		_val8 = 2001;
+		_val9 = 2200;
+		kernel_timing_trigger(1, 110);
+		player_set_commands_allowed(true);
+		break;
+
+	case 300:
+		_wolfWalker = triggerMachineByHash_3000(8, 8, S4_NORMAL_DIRS, S4_SHADOW_DIRS,
+			-20, 345, 3, triggerMachineByHashCallback3000, "WOLF_WALKER");
+		sendWSMessage_10000(_wolfWalker, 660, 345, 9, -1, 0);
+		kernel_timing_trigger(400, 302);
+		kernel_timing_trigger(450, 303);
+		break;
+
+	case 302:
+		ws_unhide_walker();
+		player_first_walk(-20, 345, 3, 660, 345, 9, false);
+		break;
+
+	case 303:
+		disable_player_commands_and_fade_init(304);
+		break;
+
+	case 304:
+		_G(game).setRoom(403);
+		break;
+
+	case 320:
+		terminateMachineAndNull(_wolfie);
+		_wolfie = series_stream("WOLF STPS DOWN DRPS CLIPPERS", 6, 0xd00, 323);
+		series_stream_break_on_frame(_wolfie, 100, 322);
+		break;
+
+	case 322:
+		ws_walk(414, 336, nullptr, -1, 9);
+		break;
+
+	case 323:
+		hotspot_set_active("WOLF", false);
+		_G(flags)[V131] = 402;
+		player_set_commands_allowed(true);
+		break;
+
+	case 350:
+		_ripLowReacher = series_load("RIP TREK LOW REACHER POS1");
+		setGlobals1(_ripLowReacher, 1, 7, 7, 7, 0, 7, 1, 1, 1);
+		sendWSMessage_110000(352);
+		break;
+
+	case 352:
+		_plank = series_place_sprite("Plank gone", 0, 0, 0, 100, 0xf00);
+		inv_move_object("PLANK", 408);
+		hotspot_set_active("PLANK", true);
+		sendWSMessage_120000(353);
+		break;
+
+	case 353:
+		sendWSMessage_150000(354);
+		break;
+
+	case 354:
+		series_unload(_ripLowReacher);
+		ws_walk(234, 319, nullptr, 355, 1);
+		_ripLowReacher = series_load("RIP TREK MED REACH HAND POS1");
+		break;
+
+	case 355:
+		setGlobals1(_ripLowReacher, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+		sendWSMessage_110000(356);
+		break;
+
+	case 356:
+		_edger = series_place_sprite("Edger gone", 0, 0, -53, 100, 0xf00);
+		hotspot_set_active("EDGER", true);
+		inv_move_object("EDGER", 408);
+		sendWSMessage_120000(357);
+		break;
+
+	case 357:
+		sendWSMessage_150000(358);
+		break;
+
+	case 358:
+		series_unload(_ripLowReacher);
+		ws_walk(-20, 345, nullptr, -1, 9);
+		kernel_timing_trigger(60, 359);
+		break;
+
+	case 359:
+		disable_player_commands_and_fade_init(360);
+		break;
+
+	case 360:
+		digi_stop(3);
+		_G(game).setRoom(402);
+		break;
+
+	case 400:
+		_ripLowReacher = series_load("RIP TREK LOW REACHER POS1");
+		setGlobals1(_ripLowReacher, 1, 7, 7, 7, 0, 7, 1, 1, 1);
+		sendWSMessage_110000(402);
+		break;
+
+	case 402:
+		_plank = series_place_sprite("Plank gone", 0, 0, 0, 100, 0xf00);
+		inv_move_object("PLANK", 408);
+		hotspot_set_active("PLANK", true);
+		sendWSMessage_120000(403);
+		break;
+
+	case 403:
+		sendWSMessage_150000(404);
+		break;
+
+	case 404:
+	case 424:
+		series_unload(_ripLowReacher);
+		player_set_commands_allowed(true);
+		break;
+
+	case 420:
+		_ripLowReacher = series_load("RIP TREK MED REACH HAND POS1");
+		setGlobals1(_ripLowReacher, 1, 10, 10, 10, 0, 10, 1, 1, 1);
+		sendWSMessage_110000(422);
+		break;
+
+	case 422:
+		_edger = series_place_sprite("Edger gone", 0, 0, -53, 100, 0xf00);
+		hotspot_set_active("EDGER", true);
+		inv_move_object("EDGER", 408);
+		sendWSMessage_120000(423);
+		break;
+
+	case 423:
+		sendWSMessage_150000(424);
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Room408::pre_parser() {

@@ -45,7 +45,13 @@ private:
 	machine *_plank = nullptr;
 	int _wolf = 0;
 	machine *_wolfie = nullptr;
+	machine *_wolfWalker = nullptr;
 	int _ripLowReacher = 0;
+	int _ripHandsBehindBack = 0;
+	machine *_ripley = nullptr;
+	machine *_ripleyShadow = nullptr;
+	int _ripShadowSeries = 0;
+	int _ripTrekTwoHandTalk = 0;
 
 	void conv408a();
 	bool takePlank();
