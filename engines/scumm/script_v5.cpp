@@ -1525,6 +1525,24 @@ void ScummEngine_v5::o5_isEqual() {
 	a = readVar(var);
 	b = getVarOrDirectWord(PARAM_1);
 
+	// WORKAROUND: Looking at the map on Hook Isle or in Meathook's house
+	// causes various issues. The CD release prevented this by making
+	// Guybrush say "I don't need to look at a map right now." instead, so
+	// backport this fix to the floppy EGA/VGA releases.
+	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA) && _currentScript != 0xFF && vm.slot [_currentScript].number == 120 && var == VAR_ROOM && b == 29) {
+		// In Meathook's house; check is missing from both EGA and VGA SCUMMv4
+		// releases. It can cause a fatal "ERROR: (63:49:0x14A): Local script 207
+		// is not in room 63!" error, if one looks at the map instead of using
+		// any verb on the parrot, so this requires `kEnhGameBreakingBugFixes`.
+		if (a == 37 && enhancementEnabled(kEnhGameBreakingBugFixes))
+			b = a;
+
+		// Hook Isle Shore; check is missing from EGA SCUMMv4 releases only.
+		// It just causes strange animations, so `kEnhMinorBugFixes` is enough.
+		if (_game.id == GID_MONKEY_EGA && a == 48 && enhancementEnabled(kEnhMinorBugFixes))
+			b = a;
+	}
+
 	// HACK: See bug report #441. The sound effects for Largo's screams
 	// are only played on type 5 soundcards. However, there is at least one
 	// other sound effect (the bartender spitting) which is only played on
@@ -1541,9 +1559,9 @@ void ScummEngine_v5::o5_isEqual() {
 	// exists in this fan-made edition which was made for enhancements.
 	if (_game.id == GID_MONKEY2 && (_game.features & GF_ULTIMATE_TALKIE) && _roomResource == 48 && _currentScript != 0xFF && vm.slot [_currentScript].number == 215 && a == vm.localvar[_currentScript][0]) {
 		if (a == 550 && b == 530)
-			b = 550;
+			b = a;
 		else if (a == 549 && b == 529)
-			b = 549;
+			b = a;
 	}
 
 	// WORKAROUND: The Ultimate Talkie edition of Monkey Island 2 has no
