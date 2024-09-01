@@ -391,17 +391,14 @@ endif
 ifdef SCUMMVM_NEON
 MODULE_OBJS += \
 	lib/allegro/surface_neon.o
-$(MODULE)/lib/allegro/surface_neon.o: CXXFLAGS += $(NEON_CXXFLAGS)
 endif
 ifdef SCUMMVM_SSE2
 MODULE_OBJS += \
 	lib/allegro/surface_sse2.o
-$(MODULE)/lib/allegro/surface_sse2.o: CXXFLAGS += -msse2
 endif
 ifdef SCUMMVM_AVX2
 MODULE_OBJS += \
 	lib/allegro/surface_avx2.o
-$(MODULE)/lib/allegro/surface_avx2.o: CXXFLAGS += -mavx2 -mavx -msse2
 endif
 
 # This module can be built as a plugin

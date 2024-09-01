@@ -7122,10 +7122,6 @@ case $_host_cpu in
 		if test "$_ext_neon" = auto ; then
 			_ext_neon=no
 		fi
-		if test "$_ext_neon" = yes ; then
-			# -mfpu=neon doesn't work with aarch64 but neon is available
-			add_line_to_config_mk 'NEON_CXXFLAGS = -mfpu=neon'
-		fi
 		_ext_sse2=no
 		_ext_avx2=no
 		;;
