@@ -29,7 +29,9 @@
 
 #include <immintrin.h>
 
-#ifdef __GNUC__
+#if defined(__clang__)
+#pragma clang attribute push (__attribute__((target("avx2"))), apply_to=function)
+#elif defined(__GNUC__)
 #pragma GCC push_options
 #pragma GCC target("avx2")
 #endif
@@ -1010,6 +1012,8 @@ template void BITMAP::drawAVX2<true>(DrawInnerArgs &);
 
 } // namespace AGS3
 
-#ifdef __GNUC__
+#if defined(__clang__)
+#pragma clang attribute pop
+#elif defined(__GNUC__)
 #pragma GCC pop_options
 #endif

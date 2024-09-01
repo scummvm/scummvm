@@ -29,14 +29,16 @@
 
 #include <emmintrin.h>
 
-#ifdef __GNUC__
-#pragma GCC push_options
+#if !defined(__x86_64__)
 
-#ifndef __x86_64__
+#if defined(__clang__)
+#pragma clang attribute push (__attribute__((target("sse2"))), apply_to=function)
+#elif defined(__GNUC__)
+#pragma GCC push_options
 #pragma GCC target("sse2")
 #endif
 
-#endif
+#endif // !defined(__x86_64__)
 
 namespace AGS3 {
 
@@ -1001,6 +1003,12 @@ template void BITMAP::drawSSE2<true>(DrawInnerArgs &);
 
 } // namespace AGS3
 
-#ifdef __GNUC__
+#if !defined(__x86_64__)
+
+#if defined(__clang__)
+#pragma clang attribute pop
+#elif defined(__GNUC__)
 #pragma GCC pop_options
 #endif
+
+#endif // !defined(__x86_64__)
