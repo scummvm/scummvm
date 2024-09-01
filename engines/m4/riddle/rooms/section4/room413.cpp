@@ -27,10 +27,54 @@ namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
+void Room413::preload() {
+	_G(player).walker_in_this_scene = false;
+}
+
 void Room413::init() {
+	_buttonFlag = false;
+	interface_hide();
+	player_set_commands_allowed(false);
+	kernel_timing_trigger(1, 25);
+	_G(kernel).call_daemon_every_loop = true;
 }
 
 void Room413::daemon() {
+	switch (_G(kernel).trigger) {
+	case 25:
+		kernel_timing_trigger(30, 27);
+		break;
+
+	case 27:
+		digi_play(_G(game).previous_room == 301 ? "413r02" : "4013r01", 1, 255, 30);
+		break;
+
+	case 30:
+		kernel_timing_trigger(30, 50);
+		break;
+
+	case 50:
+		disable_player_commands_and_fade_init(75);
+		break;
+
+	case 75:
+		interface_show();
+		restoreAutosave();
+		break;
+
+	default:
+		break;
+	}
+
+	if (_G(MouseState).ButtonState) {
+		if (!_buttonFlag) {
+			_G(MouseState).Event = 0;
+			_G(kernel).call_daemon_every_loop = false;
+			kernel_timing_trigger(1, 50);
+		}
+
+		_buttonFlag = true;
+	}
 }
 
 } // namespace Rooms
