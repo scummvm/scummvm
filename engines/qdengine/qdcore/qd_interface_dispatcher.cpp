@@ -665,18 +665,22 @@ bool qdInterfaceDispatcher::set_option_value(int option_id, int value, const cha
 	switch (option_id) {
 	case qdInterfaceElement::OPTION_SOUND:
 		ConfMan.setBool("enable_sound", value > 0);
+		ConfMan.flushToDisk();
 		g_engine->syncSoundSettings();
 		return true;
 	case qdInterfaceElement::OPTION_SOUND_VOLUME:
 		ConfMan.setInt("sound_volume", value);
+		ConfMan.flushToDisk();
 		g_engine->syncSoundSettings();
 		return true;
 	case qdInterfaceElement::OPTION_MUSIC:
 		ConfMan.setBool("enable_music", value > 0);
+		ConfMan.flushToDisk();
 		g_engine->syncSoundSettings();
 		return true;
 	case qdInterfaceElement::OPTION_MUSIC_VOLUME:
 		ConfMan.setInt("music_volume", value);
+		ConfMan.flushToDisk();
 		g_engine->syncSoundSettings();
 		return true;
 	case qdInterfaceElement::OPTION_ACTIVE_PERSONAGE:
