@@ -626,12 +626,16 @@ void Adlib::OnTimer() {
 		// TODO: Handle the loop properly
 		for (;;) {
 			// l0017_1B1A:
-			uint8 current = data->readByte();
+			uint8 current = peekByte();
 			if (current & 0x80) {
 				// l0017_1B27:
-				// TODO: Continue from here
+				uint8 copy = peekByte();
+				g229B = copy;
+				g223E = copy;
+				data->seek(Func19BE(1), SEEK_SET);
+				g225A++;
 			}
-	
+			// TODO: Continue from here
 		}
 
 
@@ -677,6 +681,12 @@ void Adlib::Func1A03() {
 	// add	word ptr [225Ah],1h
 	// adc word ptr[225Ch], 0h
 	} while ((bp1 & 0x80) != 0);
+}
+
+uint8 Adlib::peekByte() {
+	uint8 result = data->readByte();
+	data->seek(-1, SEEK_CUR);
+	return result;
 }
 
 void Adlib::Init() {
