@@ -220,7 +220,13 @@ View1::View1() : UIElement("View1") {
 			// TODO: Need to measure the string box for this one
 		}
 		// TODO: Add the else block
-		// See l0037_B462: for the calculation
+
+		// See l0037_B462: for the calculations below
+		// Draw the border
+		const Common::Point borderSize(frame->Width + 0xD, frame->Height + 0xD);
+		DrawBorder(currentSpeechActData.position, borderSize, s);
+		
+		// Draw the portrait over the border
 		Common::Point pos = currentSpeechActData.position + Common::Point(7, 7);
 		DrawSprite(pos, frame->Width, frame->Height, frame->Data, s, false);
 
@@ -826,6 +832,14 @@ void View1::ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 	if (autoclickActive) {
 		clearStringBox();
 	}
+}
+
+void View1::DrawBorder(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
+	// fn0037_A65D proc
+	// TODO: Not sure what cmp	word ptr [2026h],1h does
+	// Draw the background
+	drawDarkRectangle(pos.x + 1, pos.y + 1, size.x - 1, size.y - 1);
+	// TODO: Continue here
 }
 
 void View1::ShowDialogueChoice(const Common::Array<Common::StringArray> &choices, const Common::Point &position, bool onRightSide) {

@@ -236,6 +236,7 @@ public:
 	void DrawCharacters(Graphics::ManagedSurface &s);
 
 	void ShowSpeechAct(uint16 characterIndex, const Common::Array<Common::String> &strings, const Common::Point &position, bool onRightSide = false);
+	void DrawBorder(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s);
 
 	void ShowDialogueChoice(const Common::Array<Common::StringArray> &choices, const Common::Point &position, bool onRightSide = false);
 
