@@ -1954,6 +1954,10 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncArray(_roomVars, _numRoomVariables, Common::Serializer::Sint32LE, VER(38));
 
 	int currentSoundCard = VAR_SOUNDCARD != 0xFF ? VAR(VAR_SOUNDCARD) : -1;
+	bool isMonkey1MacDefaultSoundCardValue =
+		(_game.id == GID_MONKEY &&
+		(_sound->_musicType & MidiDriverFlags::MDT_MACINTOSH) &&
+		currentSoundCard == 0xFFFF);
 
 	// The variables grew from 16 to 32 bit.
 	if (s.getVersion() < VER(15))
@@ -1962,7 +1966,7 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncArray(_scummVars, _numVariables, Common::Serializer::Sint32LE);
 
 	if (s.isLoading() && VAR_SOUNDCARD != 0xFF && (_game.heversion < 70 && _game.version <= 6)) {
-		if (currentSoundCard != VAR(VAR_SOUNDCARD)) {
+		if (currentSoundCard != VAR(VAR_SOUNDCARD) && !isMonkey1MacDefaultSoundCardValue) {
 			Common::String soundCards[] = {"PC Speaker", "IBM PCjr/Tandy", "Creative Music System", "AdLib", "Roland MT-32/CM-32L"};
 			
 			GUI::MessageDialog dialog(
