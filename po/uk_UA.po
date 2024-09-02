@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-01 16:14+0000\n"
+"POT-Creation-Date: 2024-09-02 17:54+0000\n"
 "PO-Revision-Date: 2024-08-18 06:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -4031,13 +4031,13 @@ msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
 msgstr "Режим дотику у тачскріні - Проліт (клік DPad)"
 
 #. I18N: This is displayed in the file browser to let the user choose a new folder for Android Storage Attached Framework
-#: backends/fs/android/android-saf-fs.cpp:696
-#: backends/fs/android/android-saf-fs.cpp:700
+#: backends/fs/android/android-saf-fs.cpp:694
+#: backends/fs/android/android-saf-fs.cpp:698
 msgid "Add a new folder"
 msgstr "Додати нову папку"
 
 #. I18N: This may be displayed in the Android UI used to add a Storage Attach Framework authorization
-#: backends/fs/android/android-saf-fs.cpp:812
+#: backends/fs/android/android-saf-fs.cpp:810
 msgid "Choose a new folder"
 msgstr "Вибрати нову папку"
 
@@ -4752,12 +4752,12 @@ msgstr "Режим збільшення вимкнено. Вмикаю режи�
 msgid "Magnify Mode Off"
 msgstr "Режим збільшення вимкнено"
 
-#: backends/platform/android/android.cpp:1056
+#: backends/platform/android/android.cpp:1054
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 msgid "Getting help"
 msgstr "Допомога"
 
-#: backends/platform/android/android.cpp:1059
+#: backends/platform/android/android.cpp:1057
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -4797,13 +4797,13 @@ msgstr ""
 "навіть карколомні. Якщо ви застрягли в грі, можливо вам потрібно звернутися "
 "до її покрокового проходження. Успіхів!\n"
 
-#: backends/platform/android/android.cpp:1068
+#: backends/platform/android/android.cpp:1066
 #: backends/platform/ios7/ios7_osys_misc.mm:261
 #: backends/platform/ios7/ios7_osys_misc.mm:357
 msgid "Touch Controls"
 msgstr "Керування дотиком"
 
-#: backends/platform/android/android.cpp:1071
+#: backends/platform/android/android.cpp:1069
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -4939,13 +4939,13 @@ msgstr ""
 "   ![Піктограма Клавіатури](keyboard.png \"Піктограма клавіатури\"){w=10em}\n"
 "\n"
 
-#: backends/platform/android/android.cpp:1127
+#: backends/platform/android/android.cpp:1125
 #: backends/platform/ios7/ios7_osys_misc.mm:336
 #: backends/platform/ios7/ios7_osys_misc.mm:380
 msgid "Adding Games"
 msgstr "Додавання ігор"
 
-#: backends/platform/android/android.cpp:1130
+#: backends/platform/android/android.cpp:1128
 msgid ""
 "## Adding Games \n"
 "\n"

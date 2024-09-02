@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-01 16:14+0000\n"
+"POT-Creation-Date: 2024-09-02 17:54+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -4036,13 +4036,13 @@ msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
 msgstr "شاشة اللمس \"وضع النقر\" - تحوم (نقرات DPad)"
 
 #. I18N: This is displayed in the file browser to let the user choose a new folder for Android Storage Attached Framework
-#: backends/fs/android/android-saf-fs.cpp:696
-#: backends/fs/android/android-saf-fs.cpp:700
+#: backends/fs/android/android-saf-fs.cpp:694
+#: backends/fs/android/android-saf-fs.cpp:698
 msgid "Add a new folder"
 msgstr "أضف مجلدًا جديدًا"
 
 #. I18N: This may be displayed in the Android UI used to add a Storage Attach Framework authorization
-#: backends/fs/android/android-saf-fs.cpp:812
+#: backends/fs/android/android-saf-fs.cpp:810
 msgid "Choose a new folder"
 msgstr "اختر مجلدًا جديدًا"
 
@@ -4757,14 +4757,14 @@ msgstr "وضع التكبير متوقف. إعادة تنشيط وضع السح�
 msgid "Magnify Mode Off"
 msgstr "وضع التكبير متوقف"
 
-#: backends/platform/android/android.cpp:1056
+#: backends/platform/android/android.cpp:1054
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 #, fuzzy
 #| msgid "Settings"
 msgid "Getting help"
 msgstr "إعدادات"
 
-#: backends/platform/android/android.cpp:1059
+#: backends/platform/android/android.cpp:1057
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -4786,7 +4786,7 @@ msgid ""
 "checking out a game walkthrough. Good luck!\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1068
+#: backends/platform/android/android.cpp:1066
 #: backends/platform/ios7/ios7_osys_misc.mm:261
 #: backends/platform/ios7/ios7_osys_misc.mm:357
 #, fuzzy
@@ -4794,7 +4794,7 @@ msgstr ""
 msgid "Touch Controls"
 msgstr "تحكم"
 
-#: backends/platform/android/android.cpp:1071
+#: backends/platform/android/android.cpp:1069
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -4863,7 +4863,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1127
+#: backends/platform/android/android.cpp:1125
 #: backends/platform/ios7/ios7_osys_misc.mm:336
 #: backends/platform/ios7/ios7_osys_misc.mm:380
 #, fuzzy
@@ -4871,7 +4871,7 @@ msgstr ""
 msgid "Adding Games"
 msgstr "~أ~ضف اللعبة ..."
 
-#: backends/platform/android/android.cpp:1130
+#: backends/platform/android/android.cpp:1128
 #, fuzzy
 #| msgid ""
 #| "In this new version of ScummVM Android, significant changes were made to "
