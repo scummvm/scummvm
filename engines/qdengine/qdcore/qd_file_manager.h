@@ -89,6 +89,10 @@ public:
 		return _packages[idx].is_open();
 	}
 	bool is_package_available(const qdFileOwner &file_owner);
+	Common::Archive *get_package(int idx) {
+		assert(idx >= 0 && idx < _packageCount);
+		return _packages[idx]._container;
+	}
 
 	bool scan_drives(const qdFileOwner *file_owner = NULL) { return true; }
 	bool scan_drives(int cd_id) { return true; }
