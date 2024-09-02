@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2024-09-02 17:54+0000\n"
+"POT-Creation-Date: 2024-09-02 20:58+0000\n"
 "PO-Revision-Date: 2024-08-27 03:43+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -11129,7 +11129,7 @@ msgstr "Trocar arma"
 msgid "Win the bike fight cheat"
 msgstr "Trapaça para vencer a briga de motos"
 
-#: engines/scumm/saveload.cpp:1969
+#: engines/scumm/saveload.cpp:1973
 #, c-format
 msgid ""
 "Warning: incompatible sound settings detected between the current "
