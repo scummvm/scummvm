@@ -1967,7 +1967,10 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 
 	if (s.isLoading() && VAR_SOUNDCARD != 0xFF && (_game.heversion < 70 && _game.version <= 6)) {
 		if (currentSoundCard != VAR(VAR_SOUNDCARD) && !isMonkey1MacDefaultSoundCardValue) {
-			Common::String soundCards[] = {"PC Speaker", "IBM PCjr/Tandy", "Creative Music System", "AdLib", "Roland MT-32/CM-32L"};
+			Common::String soundCards[] = {
+				"PC Speaker", "IBM PCjr/Tandy", "Creative Music System", "AdLib", "Roland MT-32/CM-32L"
+				"", "", "", "", "", "", "Macintosh Low Quality Sound", "Macintosh High Quality Sound"
+			};
 			
 			GUI::MessageDialog dialog(
 				Common::U32String::format(_("Warning: incompatible sound settings detected between the current configuration and this saved game.\n\n"
