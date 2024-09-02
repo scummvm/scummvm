@@ -153,9 +153,13 @@ bool mpegPlayer::init_library(void *dsound_device) {
 void mpegPlayer::deinit_library() {
 }
 
+mpegPlayer *g_mpegPlayer = nullptr;
+
 mpegPlayer &mpegPlayer::instance() {
-	static mpegPlayer player;
-	return player;
+	if (!g_mpegPlayer)
+		g_mpegPlayer = new mpegPlayer;
+
+	return *g_mpegPlayer;
 }
 
 void mpegPlayer::syncMusicSettings() {
