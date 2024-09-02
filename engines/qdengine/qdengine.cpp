@@ -19,6 +19,9 @@
  *
  */
 
+#include "backends/imgui/imgui.h"
+
+#include "common/system.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -33,6 +36,8 @@
 #include "qdengine/qdengine.h"
 #include "qdengine/console.h"
 #include "qdengine/resource.h"
+
+#include "qdengine/debugger/debugtools.h"
 
 #include "qdengine/parser/qdscr_parser.h"
 
@@ -209,6 +214,15 @@ Common::Error QDEngineEngine::run() {
 	bool exit_flag = false;
 	bool was_inactive = false;
 
+#ifdef USE_IMGUI
+	ImGuiCallbacks callbacks;
+	bool drawImGui = debugChannelSet(-1, kDebugImGui);
+	callbacks.init = QDEngine::onImGuiInit;
+	callbacks.render = drawImGui ? QDEngine::onImGuiRender : nullptr;
+	callbacks.cleanup = QDEngine::onImGuiCleanup;
+	_system->setImGuiCallbacks(callbacks);
+#endif
+
 	// Activate the window
 	grDispatcher::activate(true);
 
@@ -255,6 +269,15 @@ Common::Error QDEngineEngine::run() {
 			input::keyboard_wndproc(event, keyboardDispatcher::instance());
 			input::mouse_wndproc(event, mouseDispatcher::instance());
 		}
+
+		// For performance reasons, disable the renderer callback if the ImGui debug flag isn't set
+#ifdef USE_IMGUI
+		if (debugChannelSet(-1, kDebugImGui) != drawImGui) {
+			drawImGui = !drawImGui;
+			callbacks.render = drawImGui ? QDEngine::onImGuiRender : nullptr;
+			_system->setImGuiCallbacks(callbacks);
+		}
+#endif
 
 		if (grDispatcher::instance()->is_mouse_hidden())
 			grDispatcher::instance()->set_null_mouse_cursor();
