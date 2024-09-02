@@ -85,13 +85,10 @@ void showArchives() {
 			if (archive && ImGui::TreeNode(Common::String::format("Resource/resource%d.pak", i).c_str())) {
 
 				for (auto &it : members) {
-					if (ImGui::TreeNode(Common::String::format("%s", transCyrillic(it->getFileName().c_str())).c_str())) {
 
-						if (ImGui::Selectable(Common::String::format("%d", i).c_str())) {
-						}
-
-						ImGui::TreePop();
+					if (ImGui::Selectable(Common::String::format("%s", it->getFileName().c_str()).c_str())) {
 					}
+
 				}
 
 				ImGui::TreePop();
