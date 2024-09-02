@@ -86,6 +86,8 @@ decode_map = {
 }
 # fmt: on
 
+SPECIAL_SYMBOLS = '/":*|\\?%<>\x7f'
+
 
 class FileSystem(Enum):
     hybrid = 'hybrid'
@@ -225,7 +227,7 @@ def escape_string(s: str) -> str:
     for char in s:
         if char == "\x81":
             new_name += "\x81\x79"
-        elif char in '/":*|\\?%<>\x7f' or ord(char) < 0x20:
+        elif char in SPECIAL_SYMBOLS or ord(char) < 0x20:
             new_name += "\x81" + chr(0x80 + ord(char))
         else:
             new_name += char
@@ -259,7 +261,9 @@ def needs_punyencoding(orig: str) -> bool:
     - contains a char that should be escaped or
     - ends with a dot or a space.
     """
-    if orig != escape_string(orig):
+    if not all(
+        (0x20 <= ord(c) < 0x80) and
+        c not in SPECIAL_SYMBOLS for c in orig):
         return True
     if orig[-1] in " .":
         return True
@@ -1164,7 +1168,7 @@ def test_needs_punyencoding():
     checks = [
         ["Icon\r", True],
         ["ascii", False],
-        ["バッドデイ(Power PC)", False],
+        ["バッドデイ(Power PC)", True],
         ["ends_with_dot .", True],
         ["ends_with_space ", True],
         ["Big[test]", False],
