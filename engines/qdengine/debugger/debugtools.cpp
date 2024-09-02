@@ -20,6 +20,7 @@
  */
 
 #include "backends/imgui/imgui.h"
+#include "backends/imgui/imgui_fonts.h"
 
 #include "common/archive.h"
 #include "common/compression/unzip.h"
@@ -115,6 +116,16 @@ static void showScore() {
 }
 
 void onImGuiInit() {
+	ImGuiIO &io = ImGui::GetIO();
+
+	static const ImWchar cyrillic_ranges[] = {
+		0x0020, 0x00FF, // Basic Latin + Latin Supplement
+		0x0400, 0x04FF, // Cyrillic
+		0
+	};
+
+	io.FontDefault = ImGui::addTTFFontFromArchive("FreeSans.ttf", 16.0f, nullptr, cyrillic_ranges);;
+
 	_state = new ImGuiState();
 	memset(_state, 0, sizeof(ImGuiState));
 }
