@@ -1916,12 +1916,13 @@ ExecutionResult Script::ScriptExecutor::ExecuteScript() {
 			Func9F4D_Placeholder();
 
 			// Mock function A334 here
-			uint8 v = ReadByte();
+			// TODO: No idea why but it only works out with offsets if is left out
+			// uint8 v = ReadByte();
 			// TODO: We should check the value of v
 			// TODO: This seems to result in an error if it is malformed
 			// TODO: Check where that error reporting value leads to, could be interesting
 			// where the game does its error checking
-			ReadWord();
+			// ReadWord();
 		} else if (opcode1 == 0x25) {
 			// TODO: No visual difference, so only implementing mocked reads here
 			// TODO: There is the weird "rewind" in the log here, to be investigated separately
