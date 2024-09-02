@@ -34,39 +34,8 @@ public:
 	wavSound();
 	~wavSound();
 
-	const char *data() const {
-		return _data;
-	}
-	int data_length() const {
-		return _data_length;
-	}
-	int bits_per_sample() const {
-		return _bits_per_sample;
-	}
-	int channels() const {
-		return _channels;
-	}
-	int samples_per_sec() const {
-		return _samples_per_sec;
-	}
-
-	bool init(int data_len, int bits, int chn, int samples);
-	void free_data();
-
-	//! Возвращает true, если звук валиден (т.е. параметры допустимые).
-	bool is_valid() const {
-		if (_bits_per_sample != 8 && _bits_per_sample != 16) return false;
-		if (_channels != 1 && _channels != 2) return false;
-		if (!_samples_per_sec) return false;
-
-		return true;
-	}
-
-	//! Возвращает длительность звука в секундах.
-	float length() const {
-		if (!is_valid()) return 0.0f;
-		return float(_data_length / _channels / (_bits_per_sample >> 3)) / float(_samples_per_sec);
-	}
+	//! Returns sound length in seconds
+	float length() const { return _length; }
 
 	bool wav_file_load(const Common::Path fname);
 
@@ -74,20 +43,7 @@ public:
 	Common::Path _fname;
 
 private:
-
-	//! Данные.
-	char *_data;
-	//! Длина данных.
-	int _data_length;
-	//! Количество бит на сэмпл (8/16).
-	int _bits_per_sample;
-	//! Количество каналов (1/2 - моно/стерео).
-	int _channels;
-	//! Частота дискретизации - количество сэмплов в секунду.
-	/**
-	Значения: 8.0, 11.025, 22.05, 44.1 x1000 Hz.
-	 */
-	int _samples_per_sec;
+	float _length = 0.0;
 };
 
 } // namespace QDEngine

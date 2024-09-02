@@ -39,12 +39,10 @@ qdSound::qdSound() : _volume(255) {
 }
 
 qdSound::~qdSound() {
-	_sound.free_data();
 }
 
 bool qdSound::free_resource() {
 	toggle_resource_status(false);
-	_sound.free_data();
 
 	return true;
 }
