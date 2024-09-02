@@ -20,7 +20,7 @@
  */
 
 #include "audio/audiostream.h"
-#include "audio/decoders/raw.h"
+#include "audio/decoders/vorbis.h"
 #include "audio/decoders/wave.h"
 #include "common/debug.h"
 #include "common/system.h"
@@ -48,11 +48,17 @@ bool wavSound::wav_file_load(const Common::Path fpath) {
 
 	Common::SeekableReadStream *stream;
 
-	if (_fname.baseName().hasSuffixIgnoreCase(".ogg")) {
-	}
-
 	if (qdFileManager::instance().open_file(&stream, fpath.toString().c_str(), false)) {
-		_audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::NO);
+		if (_fname.baseName().hasSuffixIgnoreCase(".ogg")) {
+#ifdef USE_VORBIS
+			_audioStream = Audio::makeVorbisStream(stream, DisposeAfterUse::NO);
+#else
+			warning("wavSound::wav_file_load(%s): Vorbis support not compiled", fpath.toString().c_str());
+			return false;
+#endif
+		} else {
+			_audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::NO);
+		}
 
 		_length = (float)_audioStream->getLength().msecs() / 1000.0;
 	}
