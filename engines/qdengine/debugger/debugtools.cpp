@@ -56,8 +56,8 @@ void showArchives() {
 
 	// Calculate the window size
 	ImVec2 windowSize = ImVec2(
-		viewportSize.x * 0.5f,
-		viewportSize.y * 0.5f
+		viewportSize.x * 0.7f,
+		viewportSize.y * 0.7f
 	);
 
 	// Calculate the centered position
@@ -73,12 +73,15 @@ void showArchives() {
 	if (ImGui::Begin("Archives", &_state->_showArchives)) {
 		ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x * 0.3f, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_None);
 
+		// Iterate through the 3 resource pak files
 		for (int i = 0; i < 3; i++) {
-			Common::Archive *archive = qdFileManager::instance().get_package(0);
+			Common::Archive *archive = qdFileManager::instance().get_package(i);
 			Common::ArchiveMemberList members;
-			archive->listMembers(members);
 
-			if (ImGui::TreeNode(Common::String::format("Resource/resource%d.pak", i).c_str())) {
+			if (archive)
+				archive->listMembers(members);
+
+			if (archive && ImGui::TreeNode(Common::String::format("Resource/resource%d.pak", i).c_str())) {
 
 				for (auto &it : members) {
 					if (ImGui::TreeNode(Common::String::format("%s", transCyrillic(it->getFileName().c_str())).c_str())) {
@@ -150,4 +153,5 @@ void onImGuiCleanup() {
 	delete _state;
 	_state = nullptr;
 }
+
 } // namespace QDEngine

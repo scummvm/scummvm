@@ -90,7 +90,6 @@ public:
 	}
 	bool is_package_available(const qdFileOwner &file_owner);
 	Common::Archive *get_package(int idx) {
-		assert(idx >= 0 && idx < _packageCount);
 		return _packages[idx]._container;
 	}
 
