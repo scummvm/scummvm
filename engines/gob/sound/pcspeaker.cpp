@@ -47,7 +47,10 @@ void PCSpeaker::speakerOn(int16 frequency, int32 length) {
 }
 
 void PCSpeaker::speakerOff() {
-	_stream->stop();
+	// Allow the last samples to be run before turning off the speaker
+	// BUGSTORY: #15341
+	// https://bugs.scummvm.org/ticket/15341
+	_stream->stop(1);
 }
 
 void PCSpeaker::onUpdate(uint32 millis) {
