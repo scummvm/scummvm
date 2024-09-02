@@ -110,19 +110,26 @@ void Group::run() {
 		debugC(1, kFreescapeDebugCode, "Executing group condition %s", _operations[_step]->conditionSource.c_str());
 		g_freescape->executeCode(_operations[_step]->condition, false, true, false, false);
 	} else if (opcode == 0x04) {
-		debugC(1, kFreescapeDebugCode, "Ignoring unknown opcode");
+		debugC(1, kFreescapeDebugCode, "Ignoring unknown opcode 0x04");
 	} else if (opcode == 0x10) {
 		uint32 groupSize = _objects.size();
 		for (uint32 i = 0; i < groupSize ; i++)
 			assemble(i);
 		_active = false;
 		_step++;
+	} else if (opcode == 0x48) {
+		// TODO: not sure the difference with 0x6e
+		uint32 groupSize = _objects.size();
+		for (uint32 i = 0; i < groupSize ; i++)
+			_objects[i]->makeInvisible();
 	} else if (opcode == 0x6e) {
 		uint32 groupSize = _objects.size();
 		for (uint32 i = 0; i < groupSize ; i++)
 			_objects[i]->makeInvisible();
+	} else if (opcode == 0x6c) {
+		debugC(1, kFreescapeDebugCode, "Ignoring unknown opcode 0x6c");
 	} else if (opcode == 0x68) {
-		debugC(1, kFreescapeDebugCode, "Ignoring unknown opcode");
+		debugC(1, kFreescapeDebugCode, "Ignoring unknown opcode 0x68");
 	} else if (opcode == 0x0) {
 		debugC(1, kFreescapeDebugCode, "Executing group assemble");
 		uint32 groupSize = _objects.size();
