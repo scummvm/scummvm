@@ -112,6 +112,8 @@ const char *QDEngineEngine::getExeName() const {
 	return _gameDescription->filesDescriptions[1].fileName;
 }
 
+void scan_qda();
+
 Common::Error QDEngineEngine::run() {
 	initGraphics(640, 480);
 	_screen = new Graphics::Screen();
@@ -225,6 +227,8 @@ Common::Error QDEngineEngine::run() {
 
 	// Activate the window
 	grDispatcher::activate(true);
+
+	//scan_qda();
 
 	Common::Event event;
 
@@ -472,6 +476,46 @@ void restore_graphics() {
 
 	if (qdGameDispatcher * dp = qdGameDispatcher::get_dispatcher())
 		dp->set_flag(qdGameDispatcher::FULLSCREEN_REDRAW_FLAG);
+}
+
+void scan_qda() {
+	for (int i = 0; i < 3; i++) {
+		Common::Archive *archive = qdFileManager::instance().get_package(i);
+		Common::ArchiveMemberList members;
+
+		if (archive)
+			archive->listMembers(members);
+
+			for (auto &it : members) {
+				if (it->getFileName().hasSuffixIgnoreCase(".qda")) {
+					Common::SeekableReadStream *fh;
+
+					if (!qdFileManager::instance().open_file(&fh, it->getPathInArchive()))
+						continue;
+
+					int32 version = fh->readSint32LE();
+
+					if (version < 105)
+						continue;
+
+					/* int sx = */fh->readSint32LE();
+					/* int sy = */fh->readSint32LE();
+					/* int length = */fh->readFloatLE();
+					/* int32 fl = */fh->readSint32LE();
+					/* int32 num_fr = */fh->readSint32LE();
+
+					/*int num_scales = */fh->readSint32LE();
+
+					char tile_flag = fh->readByte();
+
+					if (tile_flag) {
+						qdAnimation anim;
+
+						anim.qda_load(it->getPathInArchive());
+					}
+				}
+			}
+	}
 }
 
 } // namespace QDEngine
