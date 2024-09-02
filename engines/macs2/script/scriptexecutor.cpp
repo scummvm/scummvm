@@ -1154,7 +1154,7 @@ void ScriptExecutor::Step() {
 	_stream->seek(0, SEEK_SET);
 	scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 	_state = ExecutorState::Idle;
-	g_engine->_scriptExecutor->global1032 = true;
+	g_engine->_scriptExecutor->global1032 = false;
 }
 	
 	

@@ -1129,7 +1129,7 @@ void Character::Update() {
 		// TODO: Consider which run function to use
 		if (ExecuteScriptOnFinishLerp) {
 			ExecuteScriptOnFinishLerp = false;
-			g_engine->_scriptExecutor->global1032 = false;
+			g_engine->_scriptExecutor->global1032 = true;
 			g_engine->ScheduleRun();
 		}
 		return;
@@ -1161,7 +1161,7 @@ void Character::Update() {
 		// TODO: Consider which run function to use
 		if (ExecuteScriptOnFinishLerp) {
 			ExecuteScriptOnFinishLerp = false;
-			g_engine->_scriptExecutor->global1032 = false;
+			g_engine->_scriptExecutor->global1032 = true;
 			g_engine->ScheduleRun();
 		}
 
