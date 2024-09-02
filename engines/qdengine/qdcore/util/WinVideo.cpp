@@ -155,7 +155,8 @@ bool winVideo::get_movie_size(int &sx, int &sy) {
 }
 
 void winVideo::close_file() {
-	_videostream->close();
+	if (_videostream)
+		_videostream->close();
 }
 
 } // namespace QDEngine
