@@ -129,6 +129,8 @@ private:
 	int _flags;
 
 	Audio::SoundHandle _audHandle;
+
+	bool _isStopped = false;
 };
 
 } // namespace QDEngine

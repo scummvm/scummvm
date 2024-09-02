@@ -76,6 +76,8 @@ bool sndSound::stop() {
 	if (_sound && _sound->_audioStream)
 		_sound->_audioStream->seek(0);
 
+	_isStopped = true;
+
 	return true;
 }
 
@@ -93,6 +95,9 @@ void sndSound::resume() {
 }
 
 sndSound::status_t sndSound::status() const {
+	if (_isStopped)
+		return SOUND_STOPPED;
+
 	if (is_paused())
 		return sndSound::SOUND_PAUSED;
 
