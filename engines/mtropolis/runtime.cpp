@@ -4161,195 +4161,21 @@ SceneTransitionEffect::SceneTransitionEffect()
 }
 
 MessageDispatch::MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Structural *root, bool cascade, bool relay, bool couldBeCommand)
-	: _cascade(cascade), _relay(relay), _terminated(false), _msg(msgProps), _isCommand(false), _rootType(RootType::Structural) {
+	: _cascade(cascade), _relay(relay), _msg(msgProps), _isCommand(false), _rootType(RootType::Structural) {
 	if (couldBeCommand && EventIDs::isCommand(msgProps->getEvent().eventType)) {
 		_isCommand = true;
-
-		PropagationStack topEntry;
-		topEntry.index = 0;
-		topEntry.propagationStage = PropagationStack::kStageCheckAndSendCommand;
-		topEntry.ptr.structural = root;
-
-		_propagationStack.push_back(topEntry);
-
 		_rootType = RootType::Command;
-	} else {
-		PropagationStack topEntry;
-		topEntry.index = 0;
-		topEntry.propagationStage = PropagationStack::kStageCheckAndSendToStructural;
-		topEntry.ptr.structural = root;
-
-		_propagationStack.push_back(topEntry);
 	}
 
 	_root = root->getSelfReference();
 }
 
 MessageDispatch::MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Modifier *root, bool cascade, bool relay, bool couldBeCommand)
-	: _cascade(cascade), _relay(relay), _terminated(false), _msg(msgProps), _isCommand(false), _rootType(RootType::Modifier) {
+	: _cascade(cascade), _relay(relay), _msg(msgProps), _isCommand(false), _rootType(RootType::Modifier) {
 
 	// Apparently if a command message is sent to a modifier, it's handled as a message.
 	// SPQR depends on this to send "Element Select" messages to pick the palette.
-	PropagationStack topEntry;
-	topEntry.index = 0;
-	topEntry.propagationStage = PropagationStack::kStageCheckAndSendToModifier;
-	topEntry.ptr.modifier = root;
-
-	_isCommand = false;
-
-	_propagationStack.push_back(topEntry);
-
 	_root = root->getSelfReference();
-}
-
-bool MessageDispatch::isTerminated() const {
-	return _terminated;
-}
-
-VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
-	// By the point this function is called, continuePropagating has been re-posted to the VThread,
-	// so any propagation state changed in this function will be handled after any VThread tasks
-	// posted here.
-	while (_propagationStack.size() > 0) {
-		PropagationStack &stackTop = _propagationStack.back();
-
-		switch (stackTop.propagationStage) {
-		case PropagationStack::kStageCheckAndSendCommand:
-			if (_root.expired()) {
-				_terminated = true;
-				return kVThreadReturn;
-			}
-			stackTop.propagationStage = PropagationStack::kStageSendCommand;
-			break;
-		case PropagationStack::kStageCheckAndSendToStructural:
-			if (_root.expired()) {
-				_terminated = true;
-				return kVThreadReturn;
-			}
-			stackTop.propagationStage = PropagationStack::kStageSendToStructuralSelf;
-			break;
-		case PropagationStack::kStageCheckAndSendToModifier:
-			if (_root.expired()) {
-				_terminated = true;
-				return kVThreadReturn;
-			}
-			stackTop.propagationStage = PropagationStack::kStageSendToModifier;
-			break;
-		case PropagationStack::kStageSendToModifier: {
-				Modifier *modifier = stackTop.ptr.modifier;
-				_propagationStack.pop_back();
-
-				// Handle the action in the VThread
-				bool responds = modifier->respondsToEvent(_msg->getEvent());
-
-				// Queue propagation to children, if any, when the VThread task is done
-				if (responds && !_relay) {
-					_terminated = true;
-				} else {
-					IModifierContainer *childContainer = modifier->getMessagePropagationContainer();
-					if (childContainer && childContainer->getModifiers().size() > 0) {
-						PropagationStack childPropagation;
-						childPropagation.propagationStage = PropagationStack::kStageSendToModifierContainer;
-						childPropagation.index = 0;
-						childPropagation.ptr.modifierContainer = childContainer;
-						_propagationStack.push_back(childPropagation);
-					}
-				}
-
-				// Post to the message action itself to VThread
-				if (responds) {
-					debug(3, "Modifier %x '%s' consumed message (%i,%i)", modifier->getStaticGUID(), modifier->getName().c_str(), _msg->getEvent().eventType, _msg->getEvent().eventInfo);
-					runtime->postConsumeMessageTask(modifier, _msg);
-					return kVThreadReturn;
-				}
-			} break;
-		case PropagationStack::kStageSendToModifierContainer: {
-				IModifierContainer *container = stackTop.ptr.modifierContainer;
-				const Common::Array<Common::SharedPtr<Modifier> > &children = container->getModifiers();
-				if (stackTop.index >= children.size()) {
-					_propagationStack.pop_back();
-				} else {
-					Common::SharedPtr<Modifier> target = children[stackTop.index++];
-
-					PropagationStack modifierPropagation;
-					modifierPropagation.propagationStage = PropagationStack::kStageSendToModifier;
-					modifierPropagation.index = 0;
-					modifierPropagation.ptr.modifier = target.get();
-					_propagationStack.push_back(modifierPropagation);
-				}
-			} break;
-		case PropagationStack::kStageSendToStructuralChildren: {
-				Structural *structural = stackTop.ptr.structural;
-
-				const Common::Array<Common::SharedPtr<Structural> > &children = structural->getChildren();
-
-				if (stackTop.index >= children.size()) {
-					_propagationStack.pop_back();
-				} else {
-					PropagationStack childPropagation;
-					childPropagation.propagationStage = PropagationStack::kStageSendToStructuralSelf;
-					childPropagation.index = 0;
-					childPropagation.ptr.structural = children[stackTop.index++].get();
-					_propagationStack.push_back(childPropagation);
-				}
-			} break;
-		case PropagationStack::kStageSendToStructuralSelf: {
-				Structural *structural = stackTop.ptr.structural;
-				stackTop.propagationStage = PropagationStack::kStageSendToStructuralModifiers;
-				stackTop.index = 0;
-				stackTop.ptr.structural = structural;
-
-				bool responds = structural->respondsToEvent(_msg->getEvent());
-
-				if (responds && !_relay) {
-					_terminated = true;
-				}
-
-				if (responds)
-					runtime->postConsumeMessageTask(structural, _msg);
-
-				return kVThreadReturn;
-			} break;
-		case PropagationStack::kStageSendCommand: {
-				Structural *structural = stackTop.ptr.structural;
-				_propagationStack.pop_back();
-				_terminated = true;
-
-				runtime->postConsumeCommandTask(structural, _msg);
-
-				return kVThreadReturn;
-			} break;
-		case PropagationStack::kStageSendToStructuralModifiers: {
-				Structural *structural = stackTop.ptr.structural;
-
-				if (structural->getSceneLoadState() == Structural::SceneLoadState::kSceneNotLoaded)
-					runtime->hotLoadScene(structural);
-
-				// Once done with modifiers, propagate to children if set to cascade
-				if (_cascade) {
-					stackTop.propagationStage = PropagationStack::kStageSendToStructuralChildren;
-					stackTop.index = 0;
-					stackTop.ptr.structural = structural;
-				} else {
-					_propagationStack.pop_back();
-				}
-
-				if (structural->getModifiers().size() > 0) {
-					PropagationStack modifierContainerPropagation;
-					modifierContainerPropagation.propagationStage = PropagationStack::kStageSendToModifierContainer;
-					modifierContainerPropagation.index = 0;
-					modifierContainerPropagation.ptr.modifierContainer = structural;
-					_propagationStack.push_back(modifierContainerPropagation);
-				}
-			} break;
-		default:
-			return kVThreadError;
-		}
-	}
-
-	_terminated = true;
-
-	return kVThreadReturn;
 }
 
 const Common::SharedPtr<MessageProperties> &MessageDispatch::getMsg() const {
@@ -4374,26 +4200,7 @@ const Common::WeakPtr<RuntimeObject> &MessageDispatch::getRootWeakPtr() const {
 
 
 RuntimeObject *MessageDispatch::getRootPropagator() const {
-	if (_propagationStack.size() > 0) {
-		const PropagationStack &lowest = _propagationStack[0];
-		switch (lowest.propagationStage) {
-		case PropagationStack::kStageSendToModifier:
-			return lowest.ptr.modifier;
-		case PropagationStack::kStageSendCommand:
-		case PropagationStack::kStageSendToStructuralChildren:
-		case PropagationStack::kStageSendToStructuralModifiers:
-		case PropagationStack::kStageSendToStructuralSelf:
-			return lowest.ptr.structural;
-		case PropagationStack::kStageCheckAndSendToModifier:
-		case PropagationStack::kStageCheckAndSendToStructural:
-		case PropagationStack::kStageCheckAndSendCommand:
-			return _root.lock().get();
-		default:
-			break;
-		}
-	}
-
-	return nullptr;
+	return _root.lock().get();
 }
 
 KeyEventDispatch::KeyEventDispatch(const Common::SharedPtr<KeyboardInputEvent> &evt) : _dispatchIndex(0), _evt(evt) {
@@ -6472,21 +6279,6 @@ CORO_BEGIN_DEFINITION(Runtime::SendMessageToModifierCoroutine)
 		CORO_END_IF
 	CORO_END_FUNCTION
 CORO_END_DEFINITION
-
-VThreadState Runtime::dispatchMessageTask(const DispatchMethodTaskData &data) {
-	Common::SharedPtr<MessageDispatch> dispatchPtr = data.dispatch;
-	MessageDispatch &dispatch = *dispatchPtr.get();
-
-	if (dispatch.isTerminated())
-		return kVThreadReturn;
-	else {
-		// Requeue propagation after whatever happens with this propagation step
-		DispatchMethodTaskData *requeueData = _vthread->pushTask("Runtime::dispatchMessageTask", this, &Runtime::dispatchMessageTask);
-		requeueData->dispatch = dispatchPtr;
-
-		return dispatch.continuePropagating(this);
-	}
-}
 
 VThreadState Runtime::dispatchKeyTask(const DispatchKeyTaskData &data) {
 	Common::SharedPtr<KeyEventDispatch> dispatchPtr = data.dispatch;

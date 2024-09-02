@@ -1395,9 +1395,6 @@ public:
 	MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Structural *root, bool cascade, bool relay, bool couldBeCommand);
 	MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Modifier *root, bool cascade, bool relay, bool couldBeCommand);
 
-	bool isTerminated() const;
-	VThreadState continuePropagating(Runtime *runtime);
-
 	const Common::SharedPtr<MessageProperties> &getMsg() const;
 	RuntimeObject *getRootPropagator() const;
 
@@ -1408,41 +1405,12 @@ public:
 	const Common::WeakPtr<RuntimeObject> &getRootWeakPtr() const;
 
 private:
-	struct PropagationStack {
-		union Ptr {
-			Structural *structural;
-			Modifier *modifier;
-			IModifierContainer *modifierContainer;
-		};
-
-		enum PropagationStage {
-			kStageSendToModifier,
-			kStageSendToModifierContainer,
-
-			kStageSendToStructuralSelf,
-			kStageSendToStructuralModifiers,
-			kStageSendToStructuralChildren,
-
-			kStageCheckAndSendToModifier,
-			kStageCheckAndSendToStructural,
-			kStageCheckAndSendCommand,
-
-			kStageSendCommand,
-		};
-
-		PropagationStage propagationStage;
-		size_t index;
-		Ptr ptr;
-	};
-
-	Common::Array<PropagationStack> _propagationStack;
 	Common::SharedPtr<MessageProperties> _msg;
 
 	Common::WeakPtr<RuntimeObject> _root;
 
 	bool _cascade; // Traverses structure tree
 	bool _relay;   // Fire on multiple modifiers
-	bool _terminated;
 	bool _isCommand;
 
 	RootType _rootType;
@@ -1914,7 +1882,6 @@ private:
 		CORO_DEFINE_PARAMS_4(Runtime *, runtime, bool *, isTerminatedPtr, Modifier *, modifier, MessageDispatch *, dispatch);
 	};
 
-	VThreadState dispatchMessageTask(const DispatchMethodTaskData &data);
 	VThreadState dispatchKeyTask(const DispatchKeyTaskData &data);
 	VThreadState dispatchActionTask(const DispatchActionTaskData &data);
 	VThreadState consumeMessageTask(const ConsumeMessageTaskData &data);
