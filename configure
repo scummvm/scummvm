@@ -7105,6 +7105,12 @@ case $_host_cpu in
 			_ext_avx2=yes
 		fi
 		_ext_neon=no
+		# SSE2 is always available on x86_64
+		if !(test "$have_clang" = yes && (test $_clang_major -gt 5) || (test $_clang_major -eq 5 && test $_clang_minor -gt 0)) &&
+		   !(test "$have_gcc" = yes && (test $_cxx_major -gt 4) || (test $_cxx_major -eq 4 && test $_cxx_minor -gt 9)); then
+			# Need GCC 4.9+ or Clang 5.0+ for target pragma
+			_ext_avx2=no
+		fi
 		;;
 	i[3-6]86)
 		if test "$_ext_sse2" = auto ; then
@@ -7114,6 +7120,12 @@ case $_host_cpu in
 			_ext_avx2=no
 		fi
 		_ext_neon=no
+		if !(test "$have_clang" = yes && (test $_clang_major -gt 5) || (test $_clang_major -eq 5 && test $_clang_minor -gt 0)) &&
+		   !(test "$have_gcc" = yes && (test $_cxx_major -gt 4) || (test $_cxx_major -eq 4 && test $_cxx_minor -gt 9)); then
+			# Need GCC 4.9+ or Clang 5.0+ for target pragma
+			_ext_sse2=no
+			_ext_avx2=no
+		fi
 		;;
 	aarch64)
 		if test "$_ext_neon" = auto ; then
@@ -7121,6 +7133,7 @@ case $_host_cpu in
 		fi
 		_ext_sse2=no
 		_ext_avx2=no
+		# On aarch64 neon is always available and doesn't need a target pragma
 		;;
 	arm*)
 		if test "$_ext_neon" = auto ; then
@@ -7128,6 +7141,11 @@ case $_host_cpu in
 		fi
 		_ext_sse2=no
 		_ext_avx2=no
+		if !(test "$have_clang" = yes && (test $_clang_major -gt 19) || (test $_clang_major -eq 19 && test $_clang_minor -gt 1)) &&
+		   !(test "$have_gcc" = yes && (test $_cxx_major -gt 4) || (test $_cxx_major -eq 4 && test $_cxx_minor -gt 9)); then
+			# Need GCC 4.9+ or Clang 19.1+ for target pragma
+			_ext_neon=no
+		fi
 		;;
 	*)
 		_ext_sse2=no
@@ -7135,43 +7153,6 @@ case $_host_cpu in
 		_ext_neon=no
 		;;
 esac
-
-if test "$have_clang" = yes; then
-	# Clang has variable support to target gating of intrinsics
-	case $_host_cpu in
-	i[3-6]86)
-		# SSE2 and AVX2 has been target gated since LLVM 5.0
-		if (test $_clang_major -lt 5) || (test $_clang_major -eq 5 && test $_clang_minor -lt 0); then
-			_ext_sse2=no
-			_ext_avx2=no
-		fi
-		;;
-	arm*)
-		# NEON has been target gated since LLVM 19.1
-		if (test $_clang_major -lt 19) || (test $_clang_major -eq 19 && test $_clang_minor -lt 1); then
-			# But several platforms enables it globally...
-			if ! echo "$CXXFLAGS" | grep -q -e -mfpu=neon; then
-				_ext_neon=no
-			fi
-		fi
-		;;
-	x86_64 | amd64)
-		# AVX2 has been target gated since LLVM 5.0
-		# x86_64 always supports SSE2, no need of gating
-		if (test $_clang_major -lt 5) || (test $_clang_major -eq 5 && test $_clang_minor -lt 0); then
-			_ext_avx2=no
-		fi
-		;;
-	# aarch64 always supports NEON, no need of gating
-	esac
-elif test "$have_gcc" = yes; then
-	# Need 4.9 for pragma target
-	if (test $_cxx_major -lt 4) || (test $_cxx_major -eq 4 && test $_cxx_minor -lt 9); then
-		_ext_sse2=no
-		_ext_avx2=no
-		_ext_neon=no
-	fi
-fi
 
 define_in_config_if_yes "$_ext_sse2" 'SCUMMVM_SSE2'
 echo_n "Enabling x86/amd64 SSE2... "
