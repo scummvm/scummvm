@@ -4,7 +4,6 @@ MODULE_OBJS = \
 	qdengine.o \
 	console.o \
 	metaengine.o \
-	debugger/debugtools.o \
 	parser/qdscr_parser.o \
 	parser/xml_parser.o \
 	parser/xml_tag_buffer.o \
@@ -98,6 +97,11 @@ MODULE_OBJS = \
 	qdcore/qd_trigger_chain.o \
 	qdcore/qd_trigger_element.o \
 	qdcore/qd_video.o
+
+ifdef USE_IMGUI
+MODULE_OBJS += \
+	debugger/debugtools.o
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_QDENGINE), DYNAMIC_PLUGIN)
