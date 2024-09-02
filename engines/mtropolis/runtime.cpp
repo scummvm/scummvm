@@ -4161,7 +4161,7 @@ SceneTransitionEffect::SceneTransitionEffect()
 }
 
 MessageDispatch::MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Structural *root, bool cascade, bool relay, bool couldBeCommand)
-	: _cascade(cascade), _relay(relay), _terminated(false), _msg(msgProps), _isCommand(false) {
+	: _cascade(cascade), _relay(relay), _terminated(false), _msg(msgProps), _isCommand(false), _rootType(RootType::Structural) {
 	if (couldBeCommand && EventIDs::isCommand(msgProps->getEvent().eventType)) {
 		_isCommand = true;
 
@@ -4171,6 +4171,8 @@ MessageDispatch::MessageDispatch(const Common::SharedPtr<MessageProperties> &msg
 		topEntry.ptr.structural = root;
 
 		_propagationStack.push_back(topEntry);
+
+		_rootType = RootType::Command;
 	} else {
 		PropagationStack topEntry;
 		topEntry.index = 0;
@@ -4184,7 +4186,7 @@ MessageDispatch::MessageDispatch(const Common::SharedPtr<MessageProperties> &msg
 }
 
 MessageDispatch::MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Modifier *root, bool cascade, bool relay, bool couldBeCommand)
-	: _cascade(cascade), _relay(relay), _terminated(false), _msg(msgProps), _isCommand(false) {
+	: _cascade(cascade), _relay(relay), _terminated(false), _msg(msgProps), _isCommand(false), _rootType(RootType::Modifier) {
 
 	// Apparently if a command message is sent to a modifier, it's handled as a message.
 	// SPQR depends on this to send "Element Select" messages to pick the palette.
@@ -4360,6 +4362,14 @@ bool MessageDispatch::isCascade() const {
 
 bool MessageDispatch::isRelay() const {
 	return _relay;
+}
+
+MessageDispatch::RootType MessageDispatch::getRootType() const {
+	return _rootType;
+}
+
+const Common::WeakPtr<RuntimeObject> &MessageDispatch::getRootWeakPtr() const {
+	return _root;
 }
 
 
@@ -6348,9 +6358,120 @@ void Runtime::sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dis
 	}
 #endif
 
-	DispatchMethodTaskData *taskData = _vthread->pushTask("Runtime::dispatchMessageTask", this, &Runtime::dispatchMessageTask);
-	taskData->dispatch = dispatch;
+	_vthread->pushCoroutine<DispatchMessageCoroutine>(this, dispatch);
 }
+
+CORO_BEGIN_DEFINITION(Runtime::DispatchMessageCoroutine)
+	struct Locals {
+		bool isTerminated = false;
+		RuntimeObject *rootObject = nullptr;
+		MessageDispatch::RootType rootType = MessageDispatch::RootType::Invalid;
+	};
+
+	CORO_BEGIN_FUNCTION
+		locals->rootObject = params->dispatch->getRootWeakPtr().lock().get();
+		CORO_IF(locals->rootObject != nullptr)
+			locals->rootType = params->dispatch->getRootType();
+			CORO_IF (locals->rootType == MessageDispatch::RootType::Command)
+				CORO_AWAIT(static_cast<Structural *>(locals->rootObject)->asyncConsumeCommand(params->runtime, params->dispatch->getMsg()));
+			CORO_ELSE_IF (locals->rootType == MessageDispatch::RootType::Structural)
+				CORO_CALL(SendMessageToStructuralCoroutine, params->runtime, &locals->isTerminated, static_cast<Structural *>(locals->rootObject), params->dispatch.get());
+			CORO_ELSE
+				if (params->dispatch->getRootType() != MessageDispatch::RootType::Modifier)
+					error("Internal error: Message propagation target was something other than structural or modifier");
+
+				CORO_CALL(SendMessageToModifierCoroutine, params->runtime, &locals->isTerminated, static_cast<Modifier *>(locals->rootObject), params->dispatch.get());
+			CORO_END_IF
+		CORO_END_IF
+	CORO_END_FUNCTION
+CORO_END_DEFINITION
+
+CORO_BEGIN_DEFINITION(Runtime::SendMessageToStructuralCoroutine)
+	struct Locals {
+		const Common::Array<Common::SharedPtr<Structural> > *childrenArray = nullptr;
+		uint childIndex = 0;
+	};
+
+	CORO_BEGIN_FUNCTION
+		// Send to the structural object.  Structural objects only consume commands.
+		CORO_IF (params->structural->respondsToEvent(params->dispatch->getMsg()->getEvent()))
+			CORO_AWAIT(params->runtime->postConsumeCommandTask(params->structural, params->dispatch->getMsg()));
+
+			CORO_IF (!params->dispatch->isRelay())
+				*params->isTerminatedPtr = true;
+				CORO_RETURN;
+			CORO_END_IF
+		CORO_END_IF
+
+		// Send to modifiers
+		if (params->structural->getSceneLoadState() == Structural::SceneLoadState::kSceneNotLoaded)
+			params->runtime->hotLoadScene(params->structural);
+
+		CORO_IF (params->structural->getModifiers().size() > 0)
+			CORO_CALL(Runtime::SendMessageToModifierContainerCoroutine, params->runtime, params->isTerminatedPtr, params->structural, params->dispatch);
+
+			CORO_IF(*params->isTerminatedPtr)
+				CORO_RETURN;
+			CORO_END_IF
+		CORO_END_IF
+
+		// Send to children if cascade
+		CORO_IF(params->dispatch->isCascade())
+			CORO_FOR((locals->childrenArray = &params->structural->getChildren()), (locals->childIndex < locals->childrenArray->size()), (locals->childIndex++))
+				debug("traversing into child %u: %s", locals->childIndex, (*locals->childrenArray)[locals->childIndex]->debugGetName().c_str());
+				CORO_CALL(Runtime::SendMessageToStructuralCoroutine, params->runtime, params->isTerminatedPtr, (*locals->childrenArray)[locals->childIndex].get(), params->dispatch);
+
+				CORO_IF (*params->isTerminatedPtr)
+					CORO_RETURN;
+				CORO_END_IF
+			CORO_END_FOR
+		CORO_END_IF
+	CORO_END_FUNCTION
+CORO_END_DEFINITION
+
+CORO_BEGIN_DEFINITION(Runtime::SendMessageToModifierContainerCoroutine)
+	struct Locals {
+		const Common::Array<Common::SharedPtr<Modifier> > *childrenArray = nullptr;
+		uint childIndex = 0;
+	};
+
+	CORO_BEGIN_FUNCTION
+		locals->childrenArray = &params->modifierContainer->getModifiers();
+
+		CORO_FOR((locals->childIndex = 0), (locals->childIndex < locals->childrenArray->size() && !*(params->isTerminatedPtr)), (locals->childIndex++))
+			CORO_CALL(SendMessageToModifierCoroutine, params->runtime, params->isTerminatedPtr, (*locals->childrenArray)[locals->childIndex].get(), params->dispatch);
+		CORO_END_FOR
+	CORO_END_FUNCTION
+CORO_END_DEFINITION
+
+CORO_BEGIN_DEFINITION(Runtime::SendMessageToModifierCoroutine)
+	struct Locals {
+		bool responds = false;
+		IModifierContainer *childContainer = nullptr;
+	};
+
+	CORO_BEGIN_FUNCTION
+		// Handle the action in the VThread
+		locals->responds = params->modifier->respondsToEvent(params->dispatch->getMsg()->getEvent());
+
+		// Queue propagation to children, if any, when the VThread task is done
+		if (locals->responds && !params->dispatch->isRelay()) {
+			*params->isTerminatedPtr = true;
+		} else {
+			locals->childContainer = params->modifier->getMessagePropagationContainer();
+		}
+
+		// Post to the message action itself to VThread
+		CORO_IF (locals->responds)
+			debug(3, "Modifier %x '%s' consumed message (%i,%i)", params->modifier->getStaticGUID(), params->modifier->getName().c_str(), params->dispatch->getMsg()->getEvent().eventType, params->dispatch->getMsg()->getEvent().eventInfo);
+			CORO_AWAIT(params->runtime->postConsumeMessageTask(params->modifier, params->dispatch->getMsg()));
+		CORO_END_IF
+
+		CORO_IF(locals->childContainer && !(*params->isTerminatedPtr))
+			CORO_CALL(SendMessageToModifierContainerCoroutine, params->runtime, params->isTerminatedPtr, locals->childContainer, params->dispatch);
+		CORO_END_IF
+	CORO_END_FUNCTION
+CORO_END_DEFINITION
 
 VThreadState Runtime::dispatchMessageTask(const DispatchMethodTaskData &data) {
 	Common::SharedPtr<MessageDispatch> dispatchPtr = data.dispatch;

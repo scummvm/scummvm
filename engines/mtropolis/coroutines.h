@@ -238,11 +238,11 @@ void type::compileCoroutine(ICoroutineCompiler *compiler) {
 		(nextExpr);								\
 	CORO_END_CODE_BLOCK							\
 	CORO_START_CODE_BLOCK(CoroOps::ForCond)		\
-		coroRuntime._condition = !!(condExpr));	\
+		coroRuntime._condition = !!(condExpr);	\
 	CORO_END_CODE_BLOCK							\
 	CORO_START_CODE_BLOCK(CoroOps::ForBody)
 
-#define CORO_END_FOR(expr)						\
+#define CORO_END_FOR							\
 	CORO_END_CODE_BLOCK							\
 	CORO_START_CODE_BLOCK(CoroOps::EndFor)
 

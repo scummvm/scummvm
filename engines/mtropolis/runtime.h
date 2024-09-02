@@ -1384,6 +1384,14 @@ struct SceneTransitionEffect {
 
 class MessageDispatch {
 public:
+	enum class RootType {
+		Invalid,
+
+		Command,
+		Structural,
+		Modifier,
+	};
+
 	MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Structural *root, bool cascade, bool relay, bool couldBeCommand);
 	MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Modifier *root, bool cascade, bool relay, bool couldBeCommand);
 
@@ -1395,6 +1403,9 @@ public:
 
 	bool isCascade() const;
 	bool isRelay() const;
+
+	RootType getRootType() const;
+	const Common::WeakPtr<RuntimeObject> &getRootWeakPtr() const;
 
 private:
 	struct PropagationStack {
@@ -1433,6 +1444,8 @@ private:
 	bool _relay;   // Fire on multiple modifiers
 	bool _terminated;
 	bool _isCommand;
+
+	RootType _rootType;
 };
 
 class KeyEventDispatch {
@@ -1880,6 +1893,26 @@ private:
 
 	void unloadProject();
 	void refreshPlayTime();	// Updates play time to be in sync with the system clock.  Used so that events occurring after storage access don't skip.
+
+	struct DispatchMessageCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_2(Runtime *, runtime, Common::SharedPtr<MessageDispatch>, dispatch);
+	};
+
+	struct SendMessageToStructuralCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_4(Runtime *, runtime, bool *, isTerminatedPtr, Structural *, structural, MessageDispatch *, dispatch);
+	};
+
+	struct SendMessageToModifierContainerCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_4(Runtime *, runtime, bool *, isTerminatedPtr, IModifierContainer *, modifierContainer, MessageDispatch *, dispatch);
+	};
+
+	struct SendMessageToModifierCoroutine {
+		CORO_DEFINE_RETURN_TYPE(void);
+		CORO_DEFINE_PARAMS_4(Runtime *, runtime, bool *, isTerminatedPtr, Modifier *, modifier, MessageDispatch *, dispatch);
+	};
 
 	VThreadState dispatchMessageTask(const DispatchMethodTaskData &data);
 	VThreadState dispatchKeyTask(const DispatchKeyTaskData &data);
