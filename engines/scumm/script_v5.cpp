@@ -1529,6 +1529,9 @@ void ScummEngine_v5::o5_isEqual() {
 	// causes various issues. The CD release prevented this by making
 	// Guybrush say "I don't need to look at a map right now." instead, so
 	// backport this fix to the floppy EGA/VGA releases.
+	//
+	// (It looks like the (or some?) Amiga releases already have this
+	// fix, but it's written in a way so that it can't hurt.)
 	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA) && _currentScript != 0xFF && vm.slot [_currentScript].number == 120 && var == VAR_ROOM && b == 29) {
 		// In Meathook's house; check is missing from both EGA and VGA SCUMMv4
 		// releases. It can cause a fatal "ERROR: (63:49:0x14A): Local script 207
