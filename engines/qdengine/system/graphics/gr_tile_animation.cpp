@@ -211,8 +211,21 @@ bool grTileAnimation::load(Common::SeekableReadStream *fh, int version) {
 		debugCN(3, kDebugLoad, "   ");
 
 		for (uint i = 0; i < size; i++) {
-			_scaleArray[i] = fh->readFloatLE();
-			debugCN(3, kDebugLoad, " %f ", _scaleArray[i]);
+			float scale = fh->readFloatLE();
+
+			_scaleArray[i]._scale = scale;
+			_scaleArray[i]._frameSize.x = (int)((float)_frameSize.x * scale);
+			_scaleArray[i]._frameSize.y = (int)((float)_frameSize.y * scale);
+			_scaleArray[i]._pitch.x = (_scaleArray[i]._frameSize.x + 15) / 16;
+			_scaleArray[i]._pitch.y = (_scaleArray[i]._frameSize.y + 15) / 16;
+
+			if (i == 0)
+				_scaleArray[i]._numTiles = _frameTileSize.x * _frameTileSize.y * _frameCount;
+			else
+				_scaleArray[i]._numTiles = _scaleArray[i - 1]._numTiles
+	                 + _frameCount * _scaleArray[i - 1]._pitch.y * _scaleArray[i - 1]._pitch.x;
+
+			debugCN(3, kDebugLoad, " %f ", _scaleArray[i]._scale);
 		}
 		debugCN(3, kDebugLoad, "\n");
 	}

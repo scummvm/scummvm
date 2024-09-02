@@ -95,7 +95,15 @@ private:
 	int _frameCount;
 
 	typedef Std::vector<uint32> FrameIndex;
-	Std::vector<float> _scaleArray;
+
+	struct ScaleArray {
+		float _scale;
+		Vect2i _frameSize;
+		Vect2i _pitch;
+		int _numTiles;
+	};
+
+	Std::vector<ScaleArray> _scaleArray;
 
 	/// индекс кадров - номера тайлов, из которых состоят кадры
 	/// _frameTileSize.x * _frameTileSize.y на кадр
