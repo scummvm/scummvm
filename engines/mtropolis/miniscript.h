@@ -466,7 +466,6 @@ private:
 	Common::SharedPtr<MiniscriptReferences> _refs;
 	Common::SharedPtr<MessageProperties> _msgProps;
 
-	const Common::Array<MiniscriptInstruction *> &_instructions;
 	Modifier *_modifier;
 	Runtime *_runtime;
 	Common::Array<MiniscriptStackValue> _stack;

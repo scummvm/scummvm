@@ -1908,7 +1908,7 @@ MiniscriptInstructionOutcome Jump::execute(MiniscriptThread *thread) const {
 } // End of namespace MiniscriptInstructions
 
 MiniscriptThread::MiniscriptThread(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msgProps, const Common::SharedPtr<MiniscriptProgram> &program, const Common::SharedPtr<MiniscriptReferences> &refs, Modifier *modifier)
-	: _runtime(runtime), _msgProps(msgProps), _program(program), _instructions(program->getInstructions()), _refs(refs), _modifier(modifier), _currentInstruction(0), _failed(false) {
+	: _runtime(runtime), _msgProps(msgProps), _program(program), _refs(refs), _modifier(modifier), _currentInstruction(0), _failed(false) {
 }
 
 void MiniscriptThread::error(const Common::String &message) {
@@ -2064,7 +2064,7 @@ CORO_BEGIN_DEFINITION(MiniscriptThread::ResumeThreadCoroutine)
 CORO_END_DEFINITION
 
 MiniscriptInstructionOutcome MiniscriptThread::runNextInstruction() {
-	const MiniscriptInstruction *instr = _instructions[_currentInstruction++];
+	const MiniscriptInstruction *instr = _program->getInstructions()[_currentInstruction++];
 
 	MiniscriptInstructionOutcome outcome = instr->execute(this);
 
